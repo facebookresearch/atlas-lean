@@ -45,12 +45,18 @@ namespace Cslib.Algorithms.Lean.Parallel.ListRanking
 
 variable {n : ℕ}
 
-/-- The node `k` steps down the list from `v`, if any. -/
+/-- **Iterated successor.** For a successor map $\mathrm{succ}$ on the nodes $0, \dots, n-1$, where
+$\mathrm{succ}(v)$ is either a node or undefined, the $k$-step jump from $v$ is the node reached by
+applying $\mathrm{succ}$ $k$ times starting at $v$, and is undefined if some step is undefined: the
+$0$-step jump from $v$ is $v$, and the $(k+1)$-step jump is $\mathrm{succ}$ of the $k$-step jump. -/
 def jump (succ : Fin n → Option (Fin n)) : ℕ → Fin n → Option (Fin n)
   | 0, v => some v
   | k + 1, v => (jump succ k v).bind succ
 
-/-- The lists end: from every node, `n` steps run off the end. -/
+/-- **Terminating successor functions.** A successor function $\mathrm{succ}$ on the nodes
+$0, \dots, n - 1$, mapping each node to its successor or to nothing, terminates when from every
+node $v$ the walk of $n$ steps along $\mathrm{succ}$ runs off the end, that is, there is no node
+$n$ steps down the list from $v$. -/
 def Terminates (succ : Fin n → Option (Fin n)) : Prop := ∀ v, jump succ n v = none
 
 variable {succ : Fin n → Option (Fin n)}
@@ -70,15 +76,20 @@ theorem jump_eq_none_mono {a b : ℕ} (hab : a ≤ b) {v : Fin n} (h : jump succ
   rw [jump_add, h]
   rfl
 
-/-- The rank of `v`: the number of nodes after it. -/
+/-- **Rank of a node in a linked list.** Let $\mathrm{succ}$ be a successor map on the nodes
+$0, \dots, n-1$ whose lists terminate. The rank of a node $v$ is the least $k$ such that following
+$\mathrm{succ}$ for $k + 1$ steps from $v$ runs off the end of the list, that is, the number of
+nodes after $v$ in its list. -/
 noncomputable def rank (hs : Terminates succ) (v : Fin n) : ℕ :=
   Nat.find (p := fun k => jump succ (k + 1) v = none) ⟨n - 1, by
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · exact v.elim0
     · rw [Nat.sub_add_cancel hn]; exact hs v⟩
 
-/-- **The characteristic property of the rank**: `k` steps run off the end exactly when
-`k > rank v`. -/
+/-- **The characteristic property of the rank.** Let $\mathrm{succ}$ be a successor map on the
+nodes $0, \dots, n-1$ whose lists terminate. For every node $v$ and every $k \in \mathbb{N}$,
+following $\mathrm{succ}$ for $k$ steps from $v$ runs off the end of the list if and only if
+$k > \operatorname{rank}(v)$. -/
 theorem jump_eq_none_iff (hs : Terminates succ) (v : Fin n) (k : ℕ) :
     jump succ k v = none ↔ rank hs v < k := by
   constructor
@@ -95,7 +106,10 @@ private theorem eq_of_lt_iff {r r' : ℕ} (h : ∀ k, r < k ↔ r' < k) : r = r'
   have h2 := (h (r' + 1)).2 (Nat.lt_succ_self r')
   omega
 
-/-- After `a` steps landing at `u`, the rank drops by `a`. -/
+/-- **Rank decreases along jumps.** Let $\mathrm{succ}$ be a successor map on the nodes
+$0, \dots, n-1$ whose lists terminate. If following $\mathrm{succ}$ for $a$ steps from a node $v$
+reaches the node $u$, then $a \le \operatorname{rank}(v)$ and
+$\operatorname{rank}(u) = \operatorname{rank}(v) - a$. -/
 theorem rank_of_jump (hs : Terminates succ) {a : ℕ} {v u : Fin n} (h : jump succ a v = some u) :
     a ≤ rank hs v ∧ rank hs u = rank hs v - a := by
   have ha : a ≤ rank hs v := by
@@ -113,31 +127,46 @@ theorem rank_lt (hs : Terminates succ) (v : Fin n) : rank hs v < n :=
 
 /-! ## Pointer jumping -/
 
-/-- The state of pointer jumping: each node's pointer and its distance along the list. -/
+/-- **Pointer-jumping state for list ranking.** A pointer-jumping state on the nodes
+$0, \dots, n - 1$ assigns to each node a pointer, which is either a node or empty (once it points
+past the end of the list), and a distance in $\mathbb{N}$, the distance covered by the pointer. -/
 structure State (n : ℕ) where
   /-- The node's pointer (`none` once it points past the end). -/
   ptr : Fin n → Option (Fin n)
   /-- The distance covered by the pointer. -/
   dist : Fin n → ℕ
 
-/-- The initial state: pointers are the successors, distances `1` (or `0` at the end). -/
+/-- **Initial state of pointer jumping.** For a successor map $\mathrm{succ}$ on the nodes
+$0, \dots, n-1$, where $\mathrm{succ}(v)$ is either a node or undefined (at the end of a list), the
+initial pointer-jumping state gives each node $v$ the pointer $\mathrm{succ}(v)$ and the distance
+$0$ if $\mathrm{succ}(v)$ is undefined and $1$ otherwise. -/
 def init (succ : Fin n → Option (Fin n)) : State n :=
   ⟨succ, fun v => if succ v = none then 0 else 1⟩
 
-/-- One parallel round: every node adds its target's distance and jumps to its target's target. -/
+/-- **One round of pointer jumping.** In one parallel round, every node $v$ whose pointer is a node
+$u$ adds the distance of $u$ to its own distance and moves its pointer to the pointer of $u$
+(undefined if that of $u$ is); a node whose pointer is undefined keeps its distance and its
+undefined pointer. -/
 def round (s : State n) : State n :=
   ⟨fun v => (s.ptr v).bind s.ptr, fun v =>
     match s.ptr v with
     | none => s.dist v
     | some u => s.dist v + s.dist u⟩
 
-/-- The state after `t` rounds. -/
+/-- **The list-ranking state after $t$ rounds.** For a successor function $\mathrm{succ}$ on the
+nodes $0, \dots, n - 1$, the pointer-jumping state after $t$ rounds is defined by recursion on
+$t$: after $0$ rounds it is the initial state of $\mathrm{succ}$, and after $t + 1$ rounds it is
+one round of pointer jumping applied to the state after $t$ rounds. -/
 def rounds (succ : Fin n → Option (Fin n)) : ℕ → State n
   | 0 => init succ
   | t + 1 => round (rounds succ t)
 
-/-- **The invariant of pointer jumping**: after `t` rounds each pointer is `2 ^ t` steps ahead and
-the distance is `min (2 ^ t) (rank v)`. -/
+/-- **The invariant of pointer jumping for list ranking.** Let $\mathrm{succ}$ map each of the
+nodes $0, \dots, n - 1$ to its successor or to nothing, and suppose the lists terminate: from
+every node, $n$ steps run off the end. Write $\mathrm{rank}(v)$ for the number of nodes after
+$v$. Then for every $t \ge 0$ and every node $v$, after $t$ rounds of pointer jumping, the
+pointer of $v$ is the node $2^t$ steps down the list from $v$ (no node if the list ends before
+that), and the distance of $v$ is $\min(2^t, \mathrm{rank}(v))$. -/
 theorem rounds_spec (hs : Terminates succ) : ∀ t v,
     (rounds succ t).ptr v = jump succ (2 ^ t) v ∧
       (rounds succ t).dist v = min (2 ^ t) (rank hs v)
@@ -168,7 +197,10 @@ theorem rounds_spec (hs : Terminates succ) : ∀ t v,
             simp only [hd, (rounds_spec hs t u).2, hu]
             omega
 
-/-- After `t` rounds with `n ≤ 2 ^ t`, every distance is the rank. -/
+/-- **After enough rounds, the distances are the ranks.** Let $\mathrm{succ}$ be a successor map
+on the nodes $0, \dots, n-1$ whose lists terminate, and let $t$ be a natural number with
+$n \le 2^t$. Then after $t$ rounds of pointer jumping from the initial state, the distance of
+every node $v$ is the rank of $v$. -/
 theorem rounds_dist (hs : Terminates succ) {t : ℕ} (ht : n ≤ 2 ^ t) (v : Fin n) :
     (rounds succ t).dist v = rank hs v := by
   rw [(rounds_spec hs t v).2]
@@ -177,13 +209,22 @@ theorem rounds_dist (hs : Terminates succ) {t : ℕ} (ht : n ≤ 2 ^ t) (v : Fin
 
 /-! ## Tabulated rounds -/
 
-/-- A state stored in arrays. Evaluating `rounds` directly re-reads earlier rounds' pointers at
-every query, a cost growing exponentially with the number of rounds; the tabulated rounds cost
-`O(n)` array operations each. -/
+/-- **Tabulating a list-ranking state.** The tabulation of a pointer-jumping state $s$ on the
+nodes $0, \dots, n - 1$ is the pair of arrays of length $n$ whose entries at $v$ are the pointer
+and the distance of $v$ in $s$.
+
+Evaluating the state after $t$ rounds directly re-reads earlier rounds' pointers at every query,
+a cost growing exponentially with the number of rounds; the tabulated rounds cost $O(n)$ array
+operations each. -/
 def tabulate (s : State n) : Array (Option (Fin n)) × Array ℕ :=
   (Array.ofFn s.ptr, Array.ofFn s.dist)
 
-/-- One round on arrays. -/
+/-- **One pointer-jumping round on arrays.** Given an array $P$ of pointers (each a node among
+$0, \dots, n-1$ or undefined) and an array $D$ of natural-number distances, one round returns
+arrays $P'$ and $D'$ of length $n$ where, for each node $v$, $P'[v]$ is $P[u]$ if $P[v] = u$ and is
+undefined if $P[v]$ is undefined, and $D'[v] = D[v] + D[u]$ if $P[v] = u$ and $D'[v] = D[v]$ if
+$P[v]$ is undefined. Entries missing from the input arrays are read as undefined pointers and
+distance $0$. -/
 def roundTab (s : Array (Option (Fin n)) × Array ℕ) : Array (Option (Fin n)) × Array ℕ :=
   (Array.ofFn fun v : Fin n => (s.1.getD v none).bind fun u => s.1.getD u none,
     Array.ofFn fun v : Fin n =>
@@ -191,7 +232,11 @@ def roundTab (s : Array (Option (Fin n)) × Array ℕ) : Array (Option (Fin n)) 
       | none => s.2.getD v 0
       | some u => s.2.getD v 0 + s.2.getD u 0)
 
-/-- The arrays after `t` rounds. -/
+/-- **List-ranking rounds on arrays.** For a successor function $\mathrm{succ}$ on the nodes
+$0, \dots, n - 1$ and $t \ge 0$, the arrays after $t$ rounds are a pair of arrays (pointers and
+distances) defined by recursion on $t$: after $0$ rounds they are the tabulation of the initial
+state of $\mathrm{succ}$, and after $t + 1$ rounds they are one round on arrays applied to the
+arrays after $t$ rounds. -/
 def roundsTab (succ : Fin n → Option (Fin n)) : ℕ → Array (Option (Fin n)) × Array ℕ
   | 0 => tabulate (init succ)
   | t + 1 => roundTab (roundsTab succ t)
@@ -208,14 +253,21 @@ theorem roundsTab_eq (succ : Fin n → Option (Fin n)) :
   | 0 => rfl
   | t + 1 => by rw [roundsTab, roundsTab_eq succ t, roundTab_tabulate]; rfl
 
-/-- List ranking by pointer jumping: `⌈log₂ n⌉` rounds (`Nat.clog 2 n`) on arrays, returning the
-whole table of ranks (entry `v` is the rank of node `v`). -/
+/-- **List ranking by pointer jumping.** For a successor map $\mathrm{succ}$ on the nodes
+$0, \dots, n-1$, list ranking by pointer jumping runs $\lceil \log_2 n \rceil$ rounds of pointer
+jumping on arrays, starting from the initial state, and returns the resulting array of distances,
+whose entry $v$ is the distance of node $v$.
+
+When the lists terminate, entry $v$ is the rank of node $v$. -/
 def listRanks (succ : Fin n → Option (Fin n)) : Array ℕ := (roundsTab succ (Nat.clog 2 n)).2
 
 theorem size_listRanks (succ : Fin n → Option (Fin n)) : (listRanks succ).size = n := by
   rw [listRanks, roundsTab_eq, tabulate, Array.size_ofFn]
 
-/-- **Pointer jumping ranks every list in `⌈log₂ n⌉` rounds.** -/
+/-- **Pointer jumping ranks every list in ⌈log₂ n⌉ rounds.** Let $\mathrm{succ}$ be a successor map
+on the nodes $0, \dots, n-1$ whose lists terminate. Then for every node $v$, entry $v$ of the table
+returned by list ranking by pointer jumping, which runs $\lceil \log_2 n \rceil$ rounds, is the
+rank of $v$. -/
 theorem listRanks_getD (hs : Terminates succ) (v : Fin n) :
     (listRanks succ).getD v 0 = rank hs v := by
   rw [listRanks, roundsTab_eq, tabulate, getD_ofFn]

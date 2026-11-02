@@ -60,14 +60,21 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [FloorRin
 
 /-! ## Rounding to an integer -/
 
-/-- Round to the nearest integer, ties to the even one. -/
+/-- **Nearest-integer rounding with ties to even.** For $m$ in a linearly ordered field $K$ with a
+floor function, $\operatorname{rne}(m)$ is the integer $\lfloor m \rfloor$ if
+$m - \lfloor m \rfloor < 1/2$, the integer $\lfloor m \rfloor + 1$ if
+$m - \lfloor m \rfloor > 1/2$, and, when $m - \lfloor m \rfloor = 1/2$, whichever of
+$\lfloor m \rfloor$ and $\lfloor m \rfloor + 1$ is even. -/
 def rne (m : K) : ℤ :=
   if m - ⌊m⌋ < 1 / 2 then ⌊m⌋
   else if 1 / 2 < m - ⌊m⌋ then ⌊m⌋ + 1
   else if Even ⌊m⌋ then ⌊m⌋ else ⌊m⌋ + 1
 
-/-- The rounding error is at most the distance to the floor and at most the distance to the
-ceiling. -/
+/-- **Rounding error bounded by the distances to neighbouring integers.** Let $K$ be a linearly
+ordered field with a floor function. For every $m \in K$, the integer $\operatorname{rne}(m)$
+obtained by rounding $m$ to the nearest integer, ties to even, satisfies
+$|\operatorname{rne}(m) - m| \le m - \lfloor m \rfloor$ and
+$|\operatorname{rne}(m) - m| \le \lfloor m \rfloor + 1 - m$. -/
 theorem abs_rne_sub_le_min (m : K) :
     |(rne m : K) - m| ≤ m - ⌊m⌋ ∧ |(rne m : K) - m| ≤ ⌊m⌋ + 1 - m := by
   have h0 := Int.floor_le m
@@ -85,7 +92,10 @@ theorem abs_rne_sub_le_min (m : K) :
     rw [abs_of_nonneg (by linarith)]
     constructor <;> linarith
 
-/-- **Round to nearest**: no integer is closer than `rne m`. -/
+/-- **Round to nearest integer.** Let $K$ be a linearly ordered field with a floor function. For
+every $m \in K$ and every integer $k$, the integer $\operatorname{rne}(m)$ obtained by rounding
+$m$ to the nearest integer, ties to even, satisfies $|\operatorname{rne}(m) - m| \le |k - m|$:
+no integer is closer to $m$ than $\operatorname{rne}(m)$. -/
 theorem abs_rne_sub_le (m : K) (k : ℤ) : |(rne m : K) - m| ≤ |(k : K) - m| := by
   obtain ⟨h₁, h₂⟩ := abs_rne_sub_le_min m
   rcases le_or_gt k ⌊m⌋ with hk | hk
@@ -96,14 +106,20 @@ theorem abs_rne_sub_le (m : K) (k : ℤ) : |(rne m : K) - m| ≤ |(k : K) - m| :
     rw [abs_of_nonneg (show 0 ≤ (k : K) - m by linarith [Int.lt_floor_add_one m])]
     linarith
 
-/-- The rounding error is at most `1/2`. -/
+/-- **Rounding to the nearest integer is within one half.** Let $K$ be a linearly ordered field
+with a floor function. For every $m \in K$, the integer $\operatorname{rne}(m)$ obtained by
+rounding $m$ to the nearest integer, ties to even, satisfies
+$|\operatorname{rne}(m) - m| \le 1/2$. -/
 theorem abs_rne_sub_le_half (m : K) : |(rne m : K) - m| ≤ 1 / 2 := by
   obtain ⟨h₁, h₂⟩ := abs_rne_sub_le_min m
   by_contra h
   push Not at h
   linarith
 
-/-- **Ties to even**: when `m` is halfway between two integers, `rne m` is the even one. -/
+/-- **Ties to even for the nearest integer.** Let $K$ be a linearly ordered field with a floor
+function, let $m \in K$, and let $\operatorname{rne}(m)$ be the integer obtained by rounding $m$
+to the nearest integer, ties to even. If $|\operatorname{rne}(m) - m| = 1/2$, that is, $m$ is
+halfway between two consecutive integers, then $\operatorname{rne}(m)$ is even. -/
 theorem even_rne_of_abs_sub_eq_half {m : K} (h : |(rne m : K) - m| = 1 / 2) : Even (rne m) := by
   have h0 := Int.floor_le m
   have h1 := Int.lt_floor_add_one m
@@ -125,7 +141,10 @@ theorem rne_intCast (k : ℤ) : rne (k : K) = k := by
     linarith [abs_eq_zero.1 (le_antisymm h this)]
   exact_mod_cast h'
 
-/-- Rounding does not cross an integer: `m ≤ k` gives `rne m ≤ k`. -/
+/-- **Rounding to nearest preserves integer upper bounds.** Let $K$ be a linearly ordered field
+with a floor function, let $m \in K$ and let $k$ be an integer. If $m \le k$, then
+$\operatorname{rne}(m) \le k$, where $\operatorname{rne}(m)$ is $m$ rounded to the nearest
+integer with ties to even. -/
 theorem rne_le_of_le {m : K} {k : ℤ} (h : m ≤ k) : rne m ≤ k := by
   by_contra hlt
   push Not at hlt
@@ -134,7 +153,10 @@ theorem rne_le_of_le {m : K} {k : ℤ} (h : m ≤ k) : rne m ≤ k := by
   rw [abs_of_nonneg (by linarith), abs_of_nonneg (by linarith)] at this
   linarith
 
-/-- Rounding does not cross an integer: `k ≤ m` gives `k ≤ rne m`. -/
+/-- **Rounding to nearest preserves integer lower bounds.** Let $K$ be a linearly ordered field
+with a floor function, let $m \in K$ and let $k$ be an integer. If $k \le m$, then
+$k \le \operatorname{rne}(m)$, where $\operatorname{rne}(m)$ is $m$ rounded to the nearest
+integer with ties to even. -/
 theorem le_rne_of_le {m : K} {k : ℤ} (h : (k : K) ≤ m) : k ≤ rne m := by
   by_contra hlt
   push Not at hlt
@@ -147,13 +169,19 @@ theorem le_rne_of_le {m : K} {k : ℤ} (h : (k : K) ≤ m) : k ≤ rne m := by
 
 variable (p : ℕ)
 
-/-- `x` is a binary floating-point number with a `p`-bit significand and unbounded exponent:
-`x = m 2^e` with `|m| < 2^p`. -/
+/-- **Binary floating-point numbers.** For a natural number $p$, an element $x$ of a linearly
+ordered field with a floor function is a binary floating-point number with a $p$-bit significand
+and unbounded exponent when $x = m \cdot 2^e$ for some integers $m$ and $e$ with $|m| < 2^p$. -/
 def IsFloat (x : K) : Prop := ∃ m e : ℤ, |m| < 2 ^ p ∧ x = m * 2 ^ e
 
-/-- `x` is a number of the binary format with `p`-bit significands whose last place has exponent
-in `[qmin, qmax]`: zero, the subnormal numbers and the normal numbers. (In IEEE 754 terms,
-`qmin = emin - p + 1` and `qmax = emax - p + 1`.) -/
+/-- **Floating-point numbers of a bounded format.** For a natural number $p$ and integers
+$q_{\min}$ and $q_{\max}$, an element $x$ of a linearly ordered field with a floor function is a
+number of the binary format with $p$-bit significands and last-place exponents in
+$[q_{\min}, q_{\max}]$ when $x = m \cdot 2^e$ for some integers $m$ and $e$ with $|m| < 2^p$ and
+$q_{\min} \le e \le q_{\max}$. These are zero, the subnormal numbers and the normal numbers of
+the format.
+
+In IEEE 754 terms, $q_{\min} = e_{\min} - p + 1$ and $q_{\max} = e_{\max} - p + 1$. -/
 def IsFloatIn (qmin qmax : ℤ) (x : K) : Prop :=
   ∃ m e : ℤ, |m| < 2 ^ p ∧ qmin ≤ e ∧ e ≤ qmax ∧ x = m * 2 ^ e
 
@@ -164,18 +192,28 @@ theorem IsFloatIn.isFloat {qmin qmax : ℤ} {x : K} (h : IsFloatIn p qmin qmax x
   obtain ⟨m, e, hm, -, -, rfl⟩ := h
   exact ⟨m, e, hm, rfl⟩
 
-/-- The exponent of the last place of `x`: `⌊log₂ |x|⌋ - (p - 1)`. -/
+/-- **Exponent of the last place.** For a natural number $p$ (the significand length) and $x$ in a
+linearly ordered field $K$ with a floor function, the exponent of the last place of $x$ is the
+integer $\lfloor \log_2 |x| \rfloor - (p - 1)$. Here $\lfloor \log_2 |x| \rfloor$ is the integer
+logarithm: the largest integer $n$ with $2^n \le |x|$ when $x \ne 0$, and $0$ when $x = 0$. -/
 def ulpExp (x : K) : ℤ := Int.log 2 |x| - ((p : ℤ) - 1)
 
-/-- **Round to nearest, ties to even**: scale `x` so that its last place is the units digit,
-round to the nearest integer with ties to even, and scale back. -/
+/-- **Round to nearest, ties to even.** For a natural number $p$ and an element $x$ of a linearly
+ordered field with a floor function, let $e$ be the exponent of the last place of $x$ at precision
+$p$, and let $\operatorname{rne}$ round to the nearest integer with ties to the even one. The
+rounding of $x$ to nearest, ties to even, is
+$\mathrm{fl}_p(x) = \operatorname{rne}(x / 2^e) \cdot 2^e$: scale $x$ so that its last place is the
+units digit, round to the nearest integer with ties to even, and scale back. -/
 def fl (x : K) : K := rne (x / 2 ^ ulpExp p x) * 2 ^ ulpExp p x
 
 variable {p}
 
 theorem two_zpow_pos (e : ℤ) : (0 : K) < 2 ^ e := zpow_pos two_pos e
 
-/-- The scaled significand `x / 2^ulpExp x` of a nonzero `x` has `p` bits. -/
+/-- **Bounds on the scaled significand.** Let $K$ be a linearly ordered field with a floor
+function, let $p \ge 1$ be a natural number and let $x \in K$ be nonzero. Let
+$e = \lfloor \log_2 |x| \rfloor - (p - 1)$ be the exponent of the last place of $x$ for
+$p$-bit significands. Then $2^{p-1} \le |x / 2^e|$ and $|x / 2^e| < 2^p$. -/
 theorem scaled_bounds (hp : 1 ≤ p) {x : K} (hx : x ≠ 0) :
     (2 : K) ^ (p - 1) ≤ |x / 2 ^ ulpExp p x| ∧ |x / 2 ^ ulpExp p x| < 2 ^ p := by
   have hax : 0 < |x| := abs_pos.2 hx
@@ -199,7 +237,12 @@ theorem scaled_bounds (hp : 1 ≤ p) {x : K} (hx : x ≠ 0) :
   rw [h₁, h₂]
   exact ⟨hL₁, hL₂⟩
 
-/-- The rounding error at the scale of the last place. -/
+/-- **The rounding error at the scale of the last place.** Let $x$ be an element of a linearly
+ordered field with a floor function, let $p$ be a natural number, and let $e$ be the exponent of
+the last place of $x$ at precision $p$. Writing $\operatorname{rne}$ for rounding to the nearest
+integer with ties to even, the rounding $\mathrm{fl}_p(x)$ of $x$ to nearest, ties to even, at
+precision $p$ has the error
+$\mathrm{fl}_p(x) - x = (\operatorname{rne}(x / 2^e) - x / 2^e) \cdot 2^e$. -/
 theorem fl_sub_eq (x : K) :
     fl p x - x = ((rne (x / 2 ^ ulpExp p x) : K) - x / 2 ^ ulpExp p x) * 2 ^ ulpExp p x := by
   have he := (two_zpow_pos (K := K) (ulpExp p x)).ne'
@@ -213,7 +256,12 @@ theorem fl_zero : fl p (0 : K) = 0 := by
   have : rne (0 : K) = 0 := by exact_mod_cast rne_intCast (K := K) 0
   simp [fl, this]
 
-/-- **The relative error bound**: `|fl x - x| ≤ u |x|` with the unit roundoff `u = 2^(-p)`. -/
+/-- **The relative error bound.** Let $K$ be a linearly ordered field with a floor function and
+let $p$ be a natural number. For every $x \in K$, the rounding $\mathrm{fl}(x)$ of $x$ to
+nearest, ties to even, with $p$-bit significands satisfies
+$|\mathrm{fl}(x) - x| \le u\,|x|$, where $u = 2^{-p}$ is the unit roundoff.
+
+The exponent is unbounded, so the bound holds for every $x$, with no underflow or overflow. -/
 theorem abs_fl_sub_le (x : K) : |fl p x - x| ≤ 2 ^ (-(p : ℤ)) * |x| := by
   rcases eq_or_ne x 0 with rfl | hx
   · simp [fl_zero]
@@ -232,7 +280,12 @@ theorem abs_fl_sub_le (x : K) : |fl p x - x| ≤ 2 ^ (-(p : ℤ)) * |x| := by
         ring
     _ ≤ 2 ^ (-(p : ℤ)) * |x| := mul_le_mul_of_nonneg_left hL₁ (two_zpow_pos _).le
 
-/-- **Round to nearest**: no floating-point number is closer to `x` than `fl x`. -/
+/-- **Round to nearest for floating-point numbers.** Let $K$ be a linearly ordered field with a
+floor function and let $p \ge 1$. For every $x \in K$ and every binary floating-point number
+$f \in K$ with a $p$-bit significand (and unbounded exponent), the rounding $\mathrm{fl}(x)$ of
+$x$ to nearest, ties to even, with $p$-bit significands satisfies
+$|\mathrm{fl}(x) - x| \le |f - x|$: no floating-point number is closer to $x$ than
+$\mathrm{fl}(x)$. -/
 theorem abs_fl_sub_le_of_isFloat (hp : 1 ≤ p) (x : K) {f : K} (hf : IsFloat p f) :
     |fl p x - x| ≤ |f - x| := by
   rcases eq_or_ne x 0 with rfl | hx
@@ -292,14 +345,21 @@ theorem abs_fl_sub_le_of_isFloat (hp : 1 ≤ p) (x : K) {f : K} (hf : IsFloat p 
           rw [abs_sub_comm] at this
           linarith
 
-/-- Floating-point numbers round to themselves. -/
+/-- **Floating-point numbers round to themselves.** Let $p \ge 1$ and let $x$ be an element of a
+linearly ordered field with a floor function. If $x$ is a binary floating-point number with a
+$p$-bit significand, that is, $x = m \cdot 2^e$ for some integers $m$ and $e$ with $|m| < 2^p$,
+then rounding $x$ to nearest, ties to even, at precision $p$ returns $x$: $\mathrm{fl}_p(x) = x$. -/
 theorem fl_eq_self (hp : 1 ≤ p) {x : K} (hx : IsFloat p x) : fl p x = x := by
   have h := abs_fl_sub_le_of_isFloat hp x hx
   rw [sub_self, abs_zero] at h
   exact sub_eq_zero.1 (abs_nonpos_iff.1 h)
 
-/-- **Ties to even**: if `x` is halfway between the two floating-point numbers around it, the
-significand of `fl x` at the last place of `x` is even. -/
+/-- **Ties to even for floating-point rounding.** Let $K$ be a linearly ordered field with a floor
+function, let $p$ be a natural number, let $x \in K$, and let $e$ be the exponent of the last
+place of $x$, which is $\lfloor \log_2 |x| \rfloor - (p - 1)$ for $x \ne 0$. If the rounding
+$\mathrm{fl}(x)$ of $x$ to nearest, ties to even, with $p$-bit significands satisfies
+$|\mathrm{fl}(x) - x| = 2^e / 2$, then the integer $\operatorname{rne}(x / 2^e)$, the significand
+of $\mathrm{fl}(x)$ at the last place of $x$, is even. -/
 theorem even_of_abs_fl_sub_eq {x : K} (h : |fl p x - x| = 2 ^ ulpExp p x / 2) :
     Even (rne (x / 2 ^ ulpExp p x)) := by
   apply even_rne_of_abs_sub_eq_half
@@ -309,8 +369,14 @@ theorem even_of_abs_fl_sub_eq {x : K} (h : |fl p x - x| = 2 ^ ulpExp p x / 2) :
       1 / 2 * 2 ^ ulpExp p x := by rw [h]; ring
   exact mul_right_cancel₀ he.ne' h'
 
-/-- The significand of a rounded nonzero number has at most `p + 1` bits, `2^p` only when the
-rounding carries into the next binade. -/
+/-- **Bound on the rounded significand.** Let $K$ be a linearly ordered field with a floor
+function, let $p \ge 1$, let $x \in K$ be nonzero, and let
+$e = \lfloor \log_2 |x| \rfloor - (p - 1)$ be the exponent of the last place of $x$. Then
+$|\operatorname{rne}(x / 2^e)| \le 2^p$, where $\operatorname{rne}$ rounds to the nearest
+integer, ties to even.
+
+Since $|x / 2^e| < 2^p$, the value $2^p$ occurs only when rounding carries into the next
+binade. -/
 theorem abs_rne_le (hp : 1 ≤ p) {x : K} (hx : x ≠ 0) :
     |rne (x / 2 ^ ulpExp p x)| ≤ 2 ^ p := by
   obtain ⟨-, h₂⟩ := scaled_bounds hp hx
@@ -320,7 +386,10 @@ theorem abs_rne_le (hp : 1 ≤ p) {x : K} (hx : x ≠ 0) :
   · exact le_rne_of_le (by push_cast; linarith)
   · exact rne_le_of_le (by push_cast; linarith)
 
-/-- **`fl x` is a floating-point number.** -/
+/-- **Rounding gives a floating-point number.** Let $p \ge 1$. For every element $x$ of a linearly
+ordered field with a floor function, the rounding $\mathrm{fl}_p(x)$ of $x$ to nearest, ties to
+even, is a binary floating-point number with a $p$-bit significand: $\mathrm{fl}_p(x) = m \cdot 2^e$
+for some integers $m$ and $e$ with $|m| < 2^p$. -/
 theorem isFloat_fl (hp : 1 ≤ p) (x : K) : IsFloat p (fl p x) := by
   rcases eq_or_ne x 0 with rfl | hx
   · exact ⟨0, 0, by simp [abs_zero], by simp [fl_zero]⟩
@@ -345,11 +414,15 @@ theorem isFloat_fl (hp : 1 ≤ p) (x : K) : IsFloat p (fl p x) := by
 
 /-! ## The normal range of a bounded format -/
 
-/-- **In the normal range, rounding stays in the format**: if `2^(qmin + p - 1) ≤ |x|` (at least
-the smallest normal number) and `|x| ≤ (2^p - 1) 2^qmax` (at most the largest finite number),
-then `fl x` is a number of the format with last-place exponents in `[qmin, qmax]`. With
-`abs_fl_sub_le` and `abs_fl_sub_le_of_isFloatIn`, rounding in the format is the nearest-even
-rounding `fl`, with relative error at most `2^(-p)`. -/
+/-- **In the normal range, rounding stays in the format.** Let $p \ge 1$, let $q_{\min}$ and
+$q_{\max}$ be integers, and let $x$ be an element of a linearly ordered field with a floor
+function. If $2^{q_{\min} + p - 1} \le |x|$ ($x$ is at least the smallest normal number) and
+$|x| \le (2^p - 1) \cdot 2^{q_{\max}}$ ($x$ is at most the largest finite number), then the
+rounding $\mathrm{fl}_p(x)$ of $x$ to nearest, ties to even, is a number of the binary format
+with $p$-bit significands whose last place has exponent in $[q_{\min}, q_{\max}]$.
+
+Since $\mathrm{fl}_p(x)$ is also a nearest number of the format to $x$, with relative error at
+most $2^{-p}$, rounding in the format in the normal range is the nearest-even rounding. -/
 theorem isFloatIn_fl (hp : 1 ≤ p) {qmin qmax : ℤ} {x : K}
     (hlo : (2 : K) ^ (qmin + ((p : ℤ) - 1)) ≤ |x|) (hhi : |x| ≤ (2 ^ p - 1) * 2 ^ qmax) :
     IsFloatIn p qmin qmax (fl p x) := by
@@ -398,15 +471,22 @@ theorem isFloatIn_fl (hp : 1 ≤ p) {qmin qmax : ℤ} {x : K}
         ring
     exact ⟨m, ulpExp p x + 1, hm, by omega, he₃, hfx⟩
 
-/-- Round to nearest within a bounded format. -/
+/-- **Round to nearest in a bounded format.** Let $K$ be a linearly ordered field with a floor
+function, let $p \ge 1$, and let $q_{\min}$ and $q_{\max}$ be integers. For every $x \in K$ and
+every number $f$ of the binary format with $p$-bit significands and last-place exponents in
+$[q_{\min}, q_{\max}]$, the rounding $\mathrm{fl}(x)$ of $x$ to nearest, ties to even, with
+$p$-bit significands satisfies $|\mathrm{fl}(x) - x| \le |f - x|$. -/
 theorem abs_fl_sub_le_of_isFloatIn (hp : 1 ≤ p) (x : K) {qmin qmax : ℤ} {f : K}
     (hf : IsFloatIn p qmin qmax f) : |fl p x - x| ≤ |f - x| :=
   abs_fl_sub_le_of_isFloat hp x hf.isFloat
 
 /-! ## Sterbenz's lemma -/
 
-/-- The difference of two floating-point numbers within a factor of two of each other is a
-multiple of the smaller last place with a `p`-bit significand. -/
+/-- **The difference of floating-point numbers within a factor of two.** Let $K$ be a linearly
+ordered field with a floor function and let $p$ be a natural number. Let $x, y \in K$ and let
+$m_x, m_y, e_x, e_y$ be integers with $|m_x| < 2^p$, $|m_y| < 2^p$, $x = m_x 2^{e_x}$ and
+$y = m_y 2^{e_y}$. If $y / 2 \le x \le 2y$, then there is an integer $k$ with $|k| < 2^p$ and
+$x - y = k \cdot 2^{\min(e_x, e_y)}$. -/
 theorem exists_sub_eq_of_le {x y : K} {mx my ex ey : ℤ} (hmx : |mx| < 2 ^ p)
     (hmy : |my| < 2 ^ p) (hx : x = mx * 2 ^ ex) (hy : y = my * 2 ^ ey) (h₁ : y / 2 ≤ x)
     (h₂ : x ≤ 2 * y) : ∃ k : ℤ, |k| < 2 ^ p ∧ x - y = k * 2 ^ min ex ey := by
@@ -445,7 +525,10 @@ theorem exists_sub_eq_of_le {x y : K} {mx my ex ey : ℤ} (hmx : |mx| < 2 ^ p)
     have : |k| ≤ |my| := by exact_mod_cast this
     omega
 
-/-- **Sterbenz's lemma**: if `y / 2 ≤ x ≤ 2 y`, then `x - y` is a floating-point number. -/
+/-- **Sterbenz's lemma.** Let $p$ be a natural number and let $x$ and $y$ be binary floating-point
+numbers with $p$-bit significands (and unbounded exponent) in a linearly ordered field with a
+floor function. If $y / 2 \le x \le 2y$, then $x - y$ is also a binary floating-point number
+with a $p$-bit significand. -/
 theorem isFloat_sub {x y : K} (hx : IsFloat p x) (hy : IsFloat p y) (h₁ : y / 2 ≤ x)
     (h₂ : x ≤ 2 * y) : IsFloat p (x - y) := by
   obtain ⟨mx, ex, hmx, rfl⟩ := hx
@@ -453,7 +536,11 @@ theorem isFloat_sub {x y : K} (hx : IsFloat p x) (hy : IsFloat p y) (h₁ : y / 
   obtain ⟨k, hk, hsub⟩ := exists_sub_eq_of_le hmx hmy rfl rfl h₁ h₂
   exact ⟨k, _, hk, hsub⟩
 
-/-- **Sterbenz's lemma in a bounded format** (including subnormal numbers). -/
+/-- **Sterbenz's lemma in a bounded format.** Let $p$ be a natural number, let $q_{\min}$ and
+$q_{\max}$ be integers, and let $x$ and $y$ be numbers of the binary format with $p$-bit
+significands whose last place has exponent in $[q_{\min}, q_{\max}]$ (subnormal numbers
+included), in a linearly ordered field with a floor function. If $y / 2 \le x \le 2y$, then
+$x - y$ is also a number of this format. -/
 theorem isFloatIn_sub {qmin qmax : ℤ} {x y : K} (hx : IsFloatIn p qmin qmax x)
     (hy : IsFloatIn p qmin qmax y) (h₁ : y / 2 ≤ x) (h₂ : x ≤ 2 * y) :
     IsFloatIn p qmin qmax (x - y) := by
@@ -462,7 +549,10 @@ theorem isFloatIn_sub {qmin qmax : ℤ} {x y : K} (hx : IsFloatIn p qmin qmax x)
   obtain ⟨k, hk, hsub⟩ := exists_sub_eq_of_le hmx hmy rfl rfl h₁ h₂
   exact ⟨k, _, hk, le_min hex₁ hey₁, (min_le_left _ _).trans hex₂, hsub⟩
 
-/-- **The subtraction is exact**: under Sterbenz's condition, `fl (x - y) = x - y`. -/
+/-- **Floating-point subtraction is exact under Sterbenz's condition.** Let $p \ge 1$ and let $x$
+and $y$ be binary floating-point numbers with $p$-bit significands in a linearly ordered field
+with a floor function. If $y / 2 \le x \le 2y$, then rounding $x - y$ to nearest, ties to even,
+at precision $p$ returns it exactly: $\mathrm{fl}_p(x - y) = x - y$. -/
 theorem fl_sub_eq_sub (hp : 1 ≤ p) {x y : K} (hx : IsFloat p x) (hy : IsFloat p y)
     (h₁ : y / 2 ≤ x) (h₂ : x ≤ 2 * y) : fl p (x - y) = x - y :=
   fl_eq_self hp (isFloat_sub hx hy h₁ h₂)

@@ -51,8 +51,9 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.Parallel.Brent
 
-/-- A computation DAG on `n` unit-time tasks, numbered in a topological order: every predecessor
-of a task has a smaller number. -/
+/-- **Computation DAG.** A computation DAG on $n$ unit-time tasks, numbered $0, \dots, n - 1$,
+assigns to each task $v$ a list of predecessors (the tasks $v$ waits for), each numbered below
+$v$; so the numbering is a topological order. -/
 structure Dag (n : ℕ) where
   /-- The tasks each task waits for. -/
   preds : Fin n → List (Fin n)
@@ -61,13 +62,16 @@ structure Dag (n : ℕ) where
 
 variable {n : ℕ} (G : Dag n)
 
-/-- The depth of a task: the number of tasks on a longest path ending at it. -/
+/-- **Depth of a task in a computation DAG.** The depth of a task $v$ is the number of tasks on a
+longest path ending at $v$: it is $1$ plus the largest depth of a predecessor of $v$, or $1$ if
+$v$ has no predecessors. -/
 def depth (v : Fin n) : ℕ :=
   1 + ((G.preds v).attach.map fun u => depth u.1).foldr max 0
 termination_by v.val
 decreasing_by exact G.topo v u.1 u.2
 
-/-- The span: the number of tasks on a longest path. -/
+/-- **Span of a computation DAG.** The span of a computation DAG is the number of tasks on a
+longest path, that is, the largest depth of a task, and $0$ when there are no tasks. -/
 def span : ℕ := Finset.univ.sup (depth G)
 
 private theorem le_foldr_max {a : ℕ} : ∀ {l : List ℕ}, a ∈ l → a ≤ l.foldr max 0
@@ -84,7 +88,8 @@ private theorem foldr_max_le {B : ℕ} : ∀ {l : List ℕ}, (∀ a ∈ l, a ≤
 theorem one_le_depth (v : Fin n) : 1 ≤ depth G v := by
   rw [depth]; omega
 
-/-- A predecessor is strictly shallower. -/
+/-- **Predecessors have smaller depth.** In a computation DAG, if $u$ is a predecessor of $v$,
+then the depth of $u$ is strictly less than the depth of $v$. -/
 theorem depth_lt_of_mem {u v : Fin n} (hu : u ∈ G.preds v) : depth G u < depth G v := by
   conv_rhs => rw [depth]
   have : depth G u ≤ ((G.preds v).attach.map fun u => depth G u.1).foldr max 0 :=
@@ -96,16 +101,23 @@ theorem depth_le_span (v : Fin n) : depth G v ≤ span G :=
 
 /-! ## Tabulated depths -/
 
-/-- The depths of tasks `0, …, k - 1`, computed in topological order. -/
+/-- **Depths of an initial segment of tasks.** For $k \le n$, the list of the depths of tasks
+$0, \dots, k - 1$ of a computation DAG on $n$ tasks, computed in topological order: the empty
+list for $k = 0$, and for $k + 1$ the list for $k$ followed by $1$ plus the largest entry of that
+list at a predecessor of task $k$ (or $1$ if task $k$ has no predecessors). -/
 def depthsUpTo : (k : ℕ) → k ≤ n → List ℕ
   | 0, _ => []
   | k + 1, h =>
       let acc := depthsUpTo k (Nat.le_of_succ_le h)
       acc ++ [1 + ((G.preds ⟨k, h⟩).map fun u => acc.getD u.val 0).foldr max 0]
 
-/-- The depths of all tasks, tabulated: each depth is computed once, from its predecessors'
-entries. With lists (append and indexed reads are linear) this costs `O(n² + n |E|)`, polynomial,
-where evaluating `depth` directly recomputes shared subpaths exponentially often. -/
+/-- **Table of depths.** The list of the depths of tasks $0, \dots, n - 1$ of a computation DAG on
+$n$ tasks, computed once each in topological order: the entry for task $k$ is $1$ plus the largest
+entry at a predecessor of $k$, or $1$ if $k$ has no predecessors.
+
+With lists (appending and indexed reads take linear time) this costs $O(n^2 + n|E|)$, where $|E|$
+is the total number of predecessor entries; evaluating the depth directly from its recursive
+definition instead recomputes shared subpaths exponentially often. -/
 def depthTable : List ℕ := depthsUpTo G n (Nat.le_refl n)
 
 theorem length_depthsUpTo : ∀ (k : ℕ) (h : k ≤ n), (depthsUpTo G k h).length = k
@@ -130,14 +142,17 @@ theorem getD_depthsUpTo : ∀ (k : ℕ) (h : k ≤ n) (i : ℕ) (hi : i < k),
         refine List.map_congr_left fun u hu => ?_
         exact getD_depthsUpTo i _ u.val (G.topo _ u hu)
 
-/-- The tabulated depths are the depths. -/
+/-- **The table of depths is correct.** For every task $v$ of a computation DAG, the entry of the
+table of depths at position $v$ equals the depth of $v$. -/
 theorem getD_depthTable (v : Fin n) : (depthTable G).getD v.val 0 = depth G v :=
   getD_depthsUpTo G n _ v.val v.isLt
 
 /-! ## Schedules -/
 
-/-- A schedule on `p` processors: each task runs in one time step, after its predecessors, and
-at most `p` tasks share a step. -/
+/-- **Schedule of a computation DAG.** A schedule of a computation DAG on $n$ tasks on $p$
+processors assigns to each task $v$ a step $t(v) \in \mathbb{N}$ in which it runs, such that
+$t(u) < t(v)$ whenever $u$ is a predecessor of $v$, and for every step $s$ at most $p$ tasks $v$
+have $t(v) = s$. -/
 structure Schedule (p : ℕ) where
   /-- The step in which each task runs. -/
   time : Fin n → ℕ
@@ -148,13 +163,17 @@ structure Schedule (p : ℕ) where
 
 variable {G}
 
-/-- The number of steps a schedule takes. -/
+/-- **Length of a schedule.** The length of a schedule is the number of steps it takes: one more
+than the latest step in which a task runs (steps are numbered from $0$), or $0$ if there are no
+tasks. -/
 def Schedule.length {p : ℕ} (S : Schedule G p) : ℕ := Finset.univ.sup fun v => S.time v + 1
 
 theorem Schedule.time_lt_length {p : ℕ} (S : Schedule G p) (v : Fin n) : S.time v < S.length :=
   Finset.le_sup (f := fun v => S.time v + 1) (Finset.mem_univ v)
 
-/-- **The work law**: `p` processors need at least `n / p` steps, `n ≤ p * length`. -/
+/-- **The work law.** For a computation DAG on $n$ tasks, every schedule of it on $p$ processors
+that takes $T$ steps satisfies $n \le p T$. In particular, for $p > 0$ the schedule takes at
+least $n / p$ steps. -/
 theorem Schedule.work_le {p : ℕ} (S : Schedule G p) : n ≤ p * S.length := by
   have h := Finset.card_eq_sum_card_fiberwise (s := Finset.univ) (t := Finset.range S.length)
     (f := S.time) fun v _ => Finset.mem_range.2 (S.time_lt_length v)
@@ -164,7 +183,9 @@ theorem Schedule.work_le {p : ℕ} (S : Schedule G p) : n ≤ p * S.length := by
     _ = p * S.length := by rw [Finset.sum_const_nat (fun _ _ => rfl), Finset.card_range,
         Nat.mul_comm]
 
-/-- Every task runs no earlier than its depth allows. -/
+/-- **Depth bounds the step of a task.** For every schedule of a computation DAG on $p$
+processors, with steps numbered from $0$, every task $v$ runs in a step $t$ with
+$\operatorname{depth}(v) \le t + 1$. -/
 theorem Schedule.depth_le_time {p : ℕ} (S : Schedule G p) (v : Fin n) :
     depth G v ≤ S.time v + 1 := by
   have : ((G.preds v).attach.map fun u => depth G u.1).foldr max 0 ≤ S.time v :=
@@ -187,19 +208,34 @@ theorem Schedule.span_le {p : ℕ} (S : Schedule G p) : span G ≤ S.length :=
 
 variable (G)
 
-/-- The number of tasks at depth `d`. -/
+/-- **Level size.** For a computation DAG and a natural number $d$, the size of level $d$ is the
+number of tasks of depth $d$. -/
 def levelCard (d : ℕ) : ℕ := (Finset.univ.filter fun v => depth G v = d).card
 
-/-- The steps level `d` takes on `p` processors: `⌈levelCard d / p⌉`. -/
+/-- **Steps of a level.** For a computation DAG and natural numbers $p$ and $d$, let $L_d$ be the
+number of tasks of depth $d$. The number of steps of level $d$ on $p$ processors is
+$\lceil L_d / p \rceil$ if $p \ge 1$, and $0$ if $p = 0$. -/
 def levelSteps (p d : ℕ) : ℕ := (levelCard G d + p - 1) / p
 
-/-- The first step of level `d`. -/
+/-- **First step of a level.** For a computation DAG and natural numbers $p$ and $d$, let $s_e$
+be the number of steps of level $e$ on $p$ processors: $\lceil L_e / p \rceil$ if $p \ge 1$ and
+$0$ if $p = 0$, where $L_e$ is the number of tasks of depth $e$. The first step of level $d$ is
+$\sum_{e < d} s_e$. -/
 def offset (p d : ℕ) : ℕ := ∑ e ∈ Finset.range d, levelSteps G p e
 
-/-- The rank of a task within its level (tasks of the level in numbering order). -/
+/-- **Rank within a level.** In a computation DAG, the rank of a task $v$ is the number of tasks
+of the same depth as $v$ with a smaller number than $v$. Taken in numbering order, the tasks of a
+level have ranks $0, 1, 2, \dots$ -/
 def rank (v : Fin n) : ℕ := (Finset.univ.filter fun u => depth G u = depth G v ∧ u < v).card
 
-/-- Brent's schedule: level by level, each level in `⌈levelCard / p⌉` steps of `p` tasks. -/
+/-- **Step of a task in Brent's schedule.** Let $G$ be a computation DAG and $p$ a natural number.
+If $p \ge 1$, for each $d$ let $L_d$ be the number of tasks of depth $d$ and
+$o_d = \sum_{e < d} \lceil L_e / p \rceil$, and for each task $v$ let $r(v)$ be the number of tasks
+of the same depth as $v$ with a smaller number; the step of a task $v$ is
+$o_{\operatorname{depth}(v)} + \lfloor r(v) / p \rfloor$. If $p = 0$, the step of every task is $0$.
+
+For $p \ge 1$ this runs the tasks level by level, each level of $L_d$ tasks in
+$\lceil L_d / p \rceil$ steps of at most $p$ tasks. -/
 def levelTime (p : ℕ) (v : Fin n) : ℕ := offset G p (depth G v) + rank G v / p
 
 theorem rank_lt_levelCard (v : Fin n) : rank G v < levelCard G (depth G v) := by
@@ -232,7 +268,9 @@ theorem levelTime_lt {p : ℕ} (hp : 1 ≤ p) (v : Fin n) :
   unfold levelTime
   omega
 
-/-- Tasks in the same step lie in the same level. -/
+/-- **No step of Brent's level schedule mixes levels.** Let $G$ be a computation DAG and
+$p \ge 1$. If two tasks $u$ and $v$ run in the same step of Brent's level-by-level schedule on
+$p$ processors, then $u$ and $v$ have the same depth. -/
 theorem depth_eq_of_levelTime_eq {p : ℕ} (hp : 1 ≤ p) {u v : Fin n}
     (h : levelTime G p u = levelTime G p v) : depth G u = depth G v := by
   by_contra hne
@@ -246,7 +284,10 @@ theorem depth_eq_of_levelTime_eq {p : ℕ} (hp : 1 ≤ p) {u v : Fin n}
     have h3 : offset G p (depth G u) ≤ levelTime G p u := Nat.le_add_right _ _
     omega
 
-/-- Ranks are distinct within a level. -/
+/-- **Ranks increase within a level.** In a computation DAG, if tasks $u$ and $v$ have the same
+depth and $u$ has a smaller number than $v$, then the rank of $u$ is smaller than the rank of
+$v$, where the rank of a task is the number of tasks of the same depth with a smaller number.
+In particular, ranks are distinct within a level. -/
 theorem rank_lt_rank {u v : Fin n} (hd : depth G u = depth G v) (h : u < v) :
     rank G u < rank G v := by
   apply Finset.card_lt_card
@@ -256,7 +297,14 @@ theorem rank_lt_rank {u v : Fin n} (hd : depth G u = depth G v) (h : u < v) :
   · have := hsub (Finset.mem_filter.2 ⟨Finset.mem_univ u, hd, h⟩)
     simp at this
 
-/-- **Brent's level schedule** is a schedule on `p ≥ 1` processors. -/
+/-- **Brent's level schedule.** Let $G$ be a computation DAG and $p \ge 1$. For each $d$ let
+$L_d$ be the number of tasks of depth $d$ and $o_d = \sum_{e < d} \lceil L_e / p \rceil$, and for
+each task $v$ let $r(v)$ be the number of tasks of the same depth as $v$ with a smaller number.
+Brent's level schedule is the schedule of $G$ on $p$ processors that runs each task $v$ at step
+$o_{\operatorname{depth}(v)} + \lfloor r(v) / p \rfloor$.
+
+It runs the tasks level by level, in order of depth, each level of $L_d$ tasks in
+$\lceil L_d / p \rceil$ steps of at most $p$ tasks. -/
 def levelSchedule {p : ℕ} (hp : 1 ≤ p) : Schedule G p where
   time := levelTime G p
   prec v u hu := by
@@ -299,15 +347,17 @@ def levelSchedule {p : ℕ} (hp : 1 ≤ p) : Schedule G p where
     · rw [Finset.not_nonempty_iff_eq_empty.1 hne, Finset.card_empty]
       exact Nat.zero_le _
 
-/-- No task has depth `0`, so level `0` is empty. -/
+/-- **Level $0$ is empty.** In every computation DAG no task has depth $0$, so the number of
+tasks of depth $0$ is $0$. -/
 theorem levelCard_zero : levelCard G 0 = 0 := by
   rw [levelCard, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   intro v _
   have := one_le_depth G v
   omega
 
-/-- **Brent's theorem**: on `p ≥ 1` processors the level schedule takes `T` steps with
-`p T ≤ n + (p - 1) D`, i.e. `T ≤ (n - D) / p + D` for work `n` and span `D`. -/
+/-- **Brent's theorem.** Let $G$ be a computation DAG with $n$ tasks and span $D$, and let
+$p \ge 1$. If Brent's level schedule of $G$ on $p$ processors takes $T$ steps, then
+$pT \le n + (p - 1) D$, that is, $T \le (n - D)/p + D$. -/
 theorem levelSchedule_length {p : ℕ} (hp : 1 ≤ p) :
     p * (levelSchedule G hp).length ≤ n + (p - 1) * span G := by
   set D := span G
@@ -346,8 +396,10 @@ theorem levelSchedule_length {p : ℕ} (hp : 1 ≤ p) :
   calc p * (levelSchedule G hp).length ≤ p * offset G p (D + 1) := Nat.mul_le_mul_left p hlen
     _ ≤ n + (p - 1) * D := hoff
 
-/-- **Brent's theorem, with the laws**: the optimal schedule length `T` on `p` processors
-satisfies `max (n / p) D ≤ T` (work and span laws) and `p T ≤ n + (p - 1) D`. -/
+/-- **Brent's theorem with the work and span laws.** Let $G$ be a computation DAG on $n$
+unit-time tasks with span $D$, and let $p \ge 1$. Then some schedule of $G$ on $p$ processors
+has length $T$ with $pT \le n + (p - 1)D$, and every schedule of $G$ on $p$ processors has a
+length $T'$ with $n \le pT'$ (the work law) and $D \le T'$ (the span law). -/
 theorem brent {p : ℕ} (hp : 1 ≤ p) :
     ∃ S : Schedule G p, p * S.length ≤ n + (p - 1) * span G ∧
       ∀ S' : Schedule G p, n ≤ p * S'.length ∧ span G ≤ S'.length :=

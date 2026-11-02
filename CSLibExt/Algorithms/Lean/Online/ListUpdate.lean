@@ -65,49 +65,80 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ## Costs -/
 
-/-- The cost of accessing `x` in list `L`: its position, counting from `1`. -/
+/-- **Access cost.** The cost of accessing an item $x$ in a list $L$ is its position in $L$,
+counting from $1$: one more than the index of the first occurrence of $x$ in $L$. If $x$ does not
+occur in $L$, the cost is the length of $L$ plus one. -/
 def accessCost (L : List α) (x : α) : ℕ := L.idxOf x + 1
 
-/-- Move-to-front: after accessing `x`, move it to the front. -/
+/-- **Move-to-front.** For a list $L$ and an item $x$, moving $x$ to the front gives the list
+consisting of $x$ followed by $L$ with its first occurrence of $x$ removed; if $x$ does not
+occur in $L$, this is $x$ followed by $L$. -/
 def mtf (L : List α) (x : α) : List α := x :: L.erase x
 
-/-- The total access cost of move-to-front on a request sequence. -/
+/-- **Cost of move-to-front.** Starting from a list $L$, move-to-front serves a request sequence
+$\sigma$ one request at a time: a request $x$ costs the position of $x$ in the current list,
+counting from $1$ (an item not in the list costs its length plus one), and then $x$ is moved to
+the front (inserted at the front if absent). The cost of move-to-front on $\sigma$ from $L$ is
+the sum of these access costs. -/
 def mtfCost : List α → List α → ℕ
   | _, [] => 0
   | L, x :: σ => accessCost L x + mtfCost (mtf L x) σ
 
-/-- The list move-to-front ends with. -/
+/-- **Final list of move-to-front.** Starting from a list $L$ and serving a request sequence
+$\sigma$, move-to-front moves each request $x$ in turn to the front of the current list
+(inserting it at the front if it is absent). The final list of move-to-front on $\sigma$ from
+$L$ is the list it ends with. -/
 def mtfFinal : List α → List α → List α
   | L, [] => L
   | L, x :: σ => mtfFinal (mtf L x) σ
 
-/-- The pairs `(a, b)` that `M` and `L` order differently: `a` before `b` in `M`, `b` before `a`
-in `L`. -/
+/-- **Inversion set of two lists.** For lists $M$ and $L$, the inversion set is the set of pairs
+$(a, b)$ of items of $M$ with $a$ before $b$ in $M$ and $b$ before $a$ in $L$, that is, the pairs
+that $M$ and $L$ order differently. Here the position of an item in a list is the index of its
+first occurrence, and an item that does not occur in the list sits at the position equal to the
+length of the list. -/
 def invSet (M L : List α) : Finset (α × α) :=
   (M.toFinset ×ˢ M.toFinset).filter fun ab => M.idxOf ab.1 < M.idxOf ab.2 ∧
     L.idxOf ab.2 < L.idxOf ab.1
 
-/-- The number of inversions between two lists: the pairs of items they order differently
-(Kendall's tau distance). -/
+/-- **Number of inversions between two lists.** For lists $M$ and $L$, the number of inversions
+of $L$ against $M$ is the size of their inversion set: the number of pairs $(a, b)$ of items of
+$M$ with $a$ before $b$ in $M$ and $b$ before $a$ in $L$, where the position of an item in a list
+is the index of its first occurrence, or the length of the list if it does not occur.
+
+When $L$ is a rearrangement of a list $M$ without duplicates, this is the Kendall tau distance
+between them. -/
 def inv (M L : List α) : ℕ := (invSet M L).card
 
-/-- The cost of an offline algorithm without free exchanges: it serves request `t` with list
-`L t` and then rearranges it into `L (t + 1)`, paying one for each pair of items whose relative
-order it changes (`inv (L t) (L (t + 1))`). `offlineCostFree` adds free exchanges. -/
+/-- **Offline cost without free exchanges.** Given lists $L_0, L_1, L_2, \dots$, the offline cost
+of a request sequence $\sigma = x_0 x_1 \cdots x_{m-1}$ is the sum over $t < m$ of the access cost
+of $x_t$ in $L_t$ (its position, counting from $1$) plus the number of inversions between $L_t$
+and $L_{t+1}$. That is, the algorithm serves request $t$ with $L_t$ and then rearranges it into
+$L_{t+1}$, paying one for each pair of items whose relative order it changes.
+
+Adding free exchanges gives the offline cost with free exchanges. -/
 def offlineCost (L : ℕ → List α) : List α → ℕ
   | [] => 0
   | x :: σ => accessCost (L 0) x + inv (L 0) (L 1) + offlineCost (fun t => L (t + 1)) σ
 
-/-- A free exchange (Sleator and Tarjan): right after accessing `x`, move it forward to position
-`j`, at no charge. A target `j` at or past `x`'s position leaves the list unchanged, so `x` never
-moves backward for free. -/
+/-- **Free move.** A free exchange (Sleator and Tarjan): right after accessing $x$ in a list $L$,
+move $x$ forward to index $j$ (indices counted from $0$), at no charge. If the index of $x$ in
+$L$ is at most $j$, the list is unchanged, so $x$ never moves backward for free; otherwise the
+result is obtained by erasing the first occurrence of $x$ from $L$ and inserting $x$ back so that
+it has index $j$. -/
 def freeMove (L : List α) (x : α) (j : ℕ) : List α :=
   if L.idxOf x ≤ j then L else (L.erase x).take j ++ x :: (L.erase x).drop j
 
-/-- The cost of an offline algorithm with free exchanges, the model of Sleator and Tarjan: it
-serves request `t` with list `L t`, moves the accessed item forward to position `J t` for free
-(`freeMove`), and pays one per reordered pair (`inv`) to reach `L (t + 1)`. With no free moves
-this is `offlineCost` (`offlineCostFree_noMove`). -/
+/-- **Offline cost with free exchanges.** Given lists $L_0, L_1, L_2, \dots$, target indices
+$J_0, J_1, J_2, \dots$ and a request sequence $\sigma = x_0 x_1 \cdots x_{m-1}$, let $L_t'$ be the
+list obtained from $L_t$ by the free exchange that moves $x_t$ forward to index $J_t$ (counting
+from $0$); it equals $L_t$ if $x_t$ already has index at most $J_t$. The offline cost with free
+exchanges of $\sigma$ is the sum over $t < m$ of the access cost of $x_t$ in $L_t$ (its position,
+counting from $1$) plus the number of inversions between $L_t'$ and $L_{t+1}$.
+
+This is the model of Sleator and Tarjan: the free exchange costs nothing, and each pair of items
+whose relative order changes from $L_t'$ to $L_{t+1}$ costs one. With no free moves it is the
+offline cost without free exchanges. -/
 def offlineCostFree (L : ℕ → List α) (J : ℕ → ℕ) : List α → ℕ
   | [] => 0
   | x :: σ => accessCost (L 0) x + inv (freeMove (L 0) x (J 0)) (L 1) +
@@ -115,7 +146,9 @@ def offlineCostFree (L : ℕ → List α) (J : ℕ → ℕ) : List α → ℕ
 
 /-! ## Order facts -/
 
-/-- Erasing `x` keeps the relative order of the other items. -/
+/-- **Indices after erasing an entry.** Let $M$ be a list with no repeated entries and let
+$a \ne x$ be entries of $M$. After erasing $x$ from $M$, the index of $a$ is unchanged if $a$
+comes before $x$ in $M$, and is one less if $a$ comes after $x$ (indices counted from $0$). -/
 theorem idxOf_erase {x a : α} : ∀ {M : List α}, M.Nodup → a ≠ x → a ∈ M → x ∈ M →
     (M.erase x).idxOf a = if M.idxOf a < M.idxOf x then M.idxOf a else M.idxOf a - 1
   | [], _, _, ha, _ => absurd ha List.not_mem_nil
@@ -138,7 +171,10 @@ theorem idxOf_erase {x a : α} : ∀ {M : List α}, M.Nodup → a ≠ x → a �
           have hne : M.idxOf a ≠ M.idxOf x := fun h => hax ((List.idxOf_inj ha').1 h)
           split_ifs <;> omega
 
-/-- In `mtf M x`, the items other than `x` keep their relative order. -/
+/-- **Move-to-front keeps the relative order of the other items.** Let $M$ be a list without
+duplicates, $x$ an item of $M$, and let $M'$ be the list obtained from $M$ by moving $x$ to the
+front. For any items $a \ne x$ and $b \ne x$ of $M$, $a$ comes before $b$ in $M'$ if and only if
+$a$ comes before $b$ in $M$. -/
 theorem idxOf_mtf_lt_iff {M : List α} (hnd : M.Nodup) {x a b : α} (hx : x ∈ M) (ha : a ∈ M)
     (hb : b ∈ M) (hax : a ≠ x) (hbx : b ≠ x) :
     (mtf M x).idxOf a < (mtf M x).idxOf b ↔ M.idxOf a < M.idxOf b := by
@@ -148,7 +184,9 @@ theorem idxOf_mtf_lt_iff {M : List α} (hnd : M.Nodup) {x a b : α} (hx : x ∈ 
   have hne' : M.idxOf b ≠ M.idxOf x := fun h => hbx ((List.idxOf_inj hb).1 h)
   split_ifs <;> omega
 
-/-- The items before `x` in a list number `idxOf x`. -/
+/-- **Counting the entries before an entry.** If $L$ is a list with no repeated entries and $x$
+is an entry of $L$, then the number of entries of $L$ whose index is less than the index of $x$
+equals the index of $x$ (indices counted from $0$). -/
 theorem card_before {L : List α} (hnd : L.Nodup) {x : α} (hx : x ∈ L) :
     (L.toFinset.filter fun a => L.idxOf a < L.idxOf x).card = L.idxOf x := by
   have : (L.toFinset.filter fun a => L.idxOf a < L.idxOf x) = (L.take (L.idxOf x)).toFinset := by
@@ -164,6 +202,11 @@ theorem card_before {L : List α} (hnd : L.Nodup) {x : α} (hx : x ∈ L) :
 
 /-! ## The potential: inversions against the offline list -/
 
+/-- **Members of the inversion set.** Let $M$ and $L$ be lists. If a pair $(a, b)$ belongs to the
+inversion set of $M$ and $L$, then $a$ and $b$ are items of $M$, $a$ comes before $b$ in $M$, and
+$b$ comes before $a$ in $L$. Here the position of an item in a list is the index of its first
+occurrence, and an item that does not occur in the list sits at the position equal to the length
+of the list. -/
 theorem mem_of_mem_invSet {M L : List α} {ab : α × α} (h : ab ∈ invSet M L) :
     ab.1 ∈ M ∧ ab.2 ∈ M ∧ M.idxOf ab.1 < M.idxOf ab.2 ∧ L.idxOf ab.2 < L.idxOf ab.1 := by
   simp only [invSet, Finset.mem_filter, Finset.mem_product, List.mem_toFinset] at h
@@ -179,8 +222,9 @@ theorem inv_self (L : List α) : inv L L = 0 := by
   intro ab _ h
   omega
 
-/-- **The triangle inequality** for inversions: rearranging `L` into `L'` changes the inversions
-against `M` by at most `inv L L'`. -/
+/-- **Triangle inequality for inversions.** Let $M$, $L$ and $L'$ be lists with $L$ a
+rearrangement of $M$. Then the number of inversions of $L'$ against $M$ is at most the number of
+inversions of $L$ against $M$ plus the number of inversions of $L'$ against $L$. -/
 theorem inv_triangle {M L L' : List α} (hL : L.Perm M) :
     inv M L' ≤ inv M L + inv L L' := by
   unfold inv
@@ -194,9 +238,14 @@ theorem inv_triangle {M L L' : List α} (hL : L.Perm M) :
   · exact Finset.mem_union_right _ (mem_invSet haL hbL h h2)
   · exact Finset.mem_union_left _ (mem_invSet ha hb h1 h)
 
-/-- **The amortized cost of a move-to-front step** (Sleator and Tarjan): accessing `x` costs at
-most `2 i - 1` in amortized terms, where `i` is the position of `x` in the offline list,
-`k + Φ' ≤ Φ + 2 i - 1`. -/
+/-- **The amortized cost of a move-to-front step.** Let $M$ be a list of distinct items, $L$ a
+rearrangement of $M$ (the offline list), and $x$ an item of $M$ at position $k$ in $M$ and
+position $i$ in $L$, counting from $1$. Let $\Phi$ be the number of inversions between $M$ and
+$L$ (the pairs of items that the two lists order differently), and $\Phi'$ the number of
+inversions between the list obtained from $M$ by moving $x$ to the front and $L$. Then
+$k + \Phi' \le \Phi + 2i - 1$.
+
+This is the amortized step of Sleator and Tarjan's analysis, with potential $\Phi$. -/
 theorem mtf_step {M L : List α} (hnd : M.Nodup) (hL : L.Perm M) {x : α} (hx : x ∈ M) :
     accessCost M x + inv (mtf M x) L + 1 ≤ inv M L + 2 * accessCost L x := by
   have hndL : L.Nodup := hL.nodup_iff.2 hnd
@@ -261,6 +310,8 @@ theorem mtf_step {M L : List α} (hnd : M.Nodup) (hL : L.Perm M) {x : α} (hx : 
 
 /-! ## Move-to-front is `2`-competitive -/
 
+/-- **Move-to-front rearranges the list.** If $x$ is an item of a list $M$, then the list
+obtained from $M$ by moving $x$ to the front is a rearrangement (permutation) of $M$. -/
 theorem mtf_perm {M : List α} {x : α} (hx : x ∈ M) : (mtf M x).Perm M :=
   (List.perm_cons_erase hx).symm
 
@@ -269,6 +320,9 @@ theorem mtf_nodup {M : List α} (hnd : M.Nodup) (x : α) : (mtf M x).Nodup :=
 
 /-! ## Free exchanges -/
 
+/-- **A free move rearranges the list.** If $x$ is an item of a list $L$, then for every index
+$j$ (counting from $0$), the list obtained from $L$ by the free move of $x$ to index $j$ is a
+rearrangement (permutation) of $L$. -/
 theorem freeMove_perm {L : List α} {x : α} (hx : x ∈ L) (j : ℕ) : (freeMove L x j).Perm L := by
   unfold freeMove
   split_ifs
@@ -311,8 +365,14 @@ private theorem idxOf_freeMove {L : List α} (hnd : L.Nodup) {x : α} (hx : x �
       simp only [hge, ↓reduceIte]
       omega
 
-/-- **A free move of `x` forward never adds inversions against a list that starts with `x`**
-(such as move-to-front's list right after accessing `x`). -/
+/-- **Free moves never add inversions against a list headed by the moved item.** Let $L$ be a list
+without duplicates, $x$ an item of $L$, and $N$ a list that is empty or starts with $x$, all of
+whose items occur in $L$. For every $j \in \mathbb{N}$, let $L'$ be the list obtained from $L$ by
+moving $x$ forward for free so that exactly $j$ items precede it, where $L' = L$ if at most $j$
+items already precede $x$ in $L$. Then the number of inversions of $L'$ against $N$ is at most the
+number of inversions of $L$ against $N$.
+
+This applies to move-to-front's list right after accessing $x$. -/
 theorem inv_freeMove_le {N L : List α} {x : α} (hN : N.idxOf x = 0) (hNL : ∀ a ∈ N, a ∈ L)
     (hnd : L.Nodup) (hx : x ∈ L) (j : ℕ) : inv N (freeMove L x j) ≤ inv N L := by
   by_cases hj : L.idxOf x ≤ j
@@ -337,7 +397,20 @@ theorem inv_freeMove_le {N L : List α} {x : α} (hN : N.idxOf x = 0) (hNL : ∀
     have hea := idxOf_erase hnd hax haL hx
     split_ifs at h2 hea heb <;> omega
 
-/-- The potential argument over a whole request sequence, with free exchanges. -/
+/-- **Amortized bound for move-to-front over a request sequence, with free exchanges.** Let $M$ be
+a list without duplicates, $\sigma$ a sequence of $m$ requests, each an item of $M$, $L_0, L_1,
+\dots$ lists that are each a rearrangement of $M$, and $J_0, J_1, \dots$ natural numbers.
+Accessing the item at position $i$ of a list, counting from $1$, costs $i$. Let $C$ be the total
+access cost of move-to-front on $\sigma$ starting from $M$, $F$ the list it ends with, and $D$
+the cost on $\sigma$ of the offline algorithm with free exchanges that serves the $t$-th request
+(counting from $0$) with list $L_t$, paying its access cost, then moves the accessed item forward
+for free so that exactly $J_t$ items precede it (no move if at most $J_t$ items already precede
+it), and finally rearranges the resulting list into $L_{t+1}$, paying one for each pair of items
+whose relative order changes. Writing $\mathrm{inv}(N, K)$ for the number of inversions of $K$
+against $N$,
+
+$$C + \mathrm{inv}(F, L_m) + m \le 2D + \mathrm{inv}(M, L_0).$$
+-/
 theorem mtfCost_add_inv_le_free : ∀ (σ M : List α) (L : ℕ → List α) (J : ℕ → ℕ), M.Nodup →
     (∀ t, (L t).Perm M) → (∀ x ∈ σ, x ∈ M) →
     mtfCost M σ + inv (mtfFinal M σ) (L σ.length) + σ.length ≤
@@ -359,7 +432,11 @@ theorem mtfCost_add_inv_le_free : ∀ (σ M : List α) (L : ℕ → List α) (J 
       simp only [mtfCost, mtfFinal, offlineCostFree, List.length_cons, Nat.zero_add] at ih ⊢
       omega
 
-/-- With no free moves (targets past every position), the free-exchange cost is `offlineCost`. -/
+/-- **Without free moves the two offline costs agree.** Let $K$ be a natural number and let
+$L_0, L_1, L_2, \dots$ be lists, each of length at most $K$. Take every free-exchange target to be
+$K$; this moves nothing, since every item already has index at most $K$. Then for every request
+sequence $\sigma$, the offline cost with free exchanges of serving $\sigma$ with $L_0, L_1, \dots$
+equals the offline cost without free exchanges of serving $\sigma$ with $L_0, L_1, \dots$. -/
 theorem offlineCostFree_noMove {K : ℕ} : ∀ (σ : List α) (L : ℕ → List α),
     (∀ t, (L t).length ≤ K) → offlineCostFree L (fun _ => K) σ = offlineCost L σ
   | [], _, _ => rfl
@@ -369,7 +446,17 @@ theorem offlineCostFree_noMove {K : ℕ} : ∀ (σ : List α) (L : ℕ → List 
       simp only [offlineCostFree, offlineCost, hmove,
         offlineCostFree_noMove σ (fun t => L (t + 1)) fun t => hK (t + 1)]
 
-/-- The potential argument over a whole request sequence, against `offlineCost`. -/
+/-- **Amortized bound for move-to-front over a request sequence.** Let $M$ be a list without
+duplicates, $\sigma$ a sequence of $m$ requests, each an item of $M$, and $L_0, L_1, \dots$ lists
+that are each a rearrangement of $M$. Accessing the item at position $i$ of a list, counting from
+$1$, costs $i$. Let $C$ be the total access cost of move-to-front on $\sigma$ starting from $M$,
+$F$ the list it ends with, and $D$ the cost on $\sigma$ of the offline algorithm without free
+exchanges that serves the $t$-th request (counting from $0$) with list $L_t$, paying its access
+cost, and then rearranges it into $L_{t+1}$, paying one for each pair of items whose relative
+order changes. Writing $\mathrm{inv}(N, K)$ for the number of inversions of $K$ against $N$,
+
+$$C + \mathrm{inv}(F, L_m) + m \le 2D + \mathrm{inv}(M, L_0).$$
+-/
 theorem mtfCost_add_inv_le (σ M : List α) (L : ℕ → List α) (hnd : M.Nodup)
     (hL : ∀ t, (L t).Perm M) (hσ : ∀ x ∈ σ, x ∈ M) :
     mtfCost M σ + inv (mtfFinal M σ) (L σ.length) + σ.length ≤
@@ -377,10 +464,16 @@ theorem mtfCost_add_inv_le (σ M : List α) (L : ℕ → List α) (hnd : M.Nodup
   have := mtfCost_add_inv_le_free σ M L (fun _ => M.length) hnd hL hσ
   rwa [offlineCostFree_noMove σ L fun t => (hL t).length_eq.le] at this
 
-/-- **Move-to-front is `2`-competitive** (Sleator and Tarjan, 1985), in their model with free
-exchanges: starting from the same list, move-to-front's access cost is at most twice the cost of
-any offline algorithm (access, plus one per paid adjacent transposition; free exchanges cost
-nothing), minus the number of requests. -/
+/-- **Move-to-front is 2-competitive.** In the model of Sleator and Tarjan (1985) with free
+exchanges, let $M$ be a list of distinct items and $\sigma$ a sequence of $m$ requests, each an
+item of $M$. Consider an offline algorithm given by lists $L_0, L_1, \ldots$, each a
+rearrangement of $M$ with $L_0 = M$, and natural numbers $J_0, J_1, \ldots$. It serves request
+$t$ (counting from $0$) with the list $L_t$ and pays the position of the request in $L_t$
+(counting from $1$). If more than $J_t$ items precede the request in $L_t$, it then moves the
+request forward for free so that exactly $J_t$ items precede it, keeping the order of the other
+items. Finally it pays one for each pair of items whose relative order differs between the
+resulting list and $L_{t+1}$. Then the access cost of move-to-front on $\sigma$ starting from
+$M$, plus $m$, is at most twice the total cost of the offline algorithm. -/
 theorem mtfCost_le_free (σ : List α) {M : List α} (hnd : M.Nodup) (L : ℕ → List α)
     (J : ℕ → ℕ) (hL : ∀ t, (L t).Perm M) (h0 : L 0 = M) (hσ : ∀ x ∈ σ, x ∈ M) :
     mtfCost M σ + σ.length ≤ 2 * offlineCostFree L J σ := by
@@ -388,9 +481,15 @@ theorem mtfCost_le_free (σ : List α) {M : List α} (hnd : M.Nodup) (L : ℕ �
   rw [h0, inv_self] at this
   omega
 
-/-- Against an offline algorithm without free exchanges (`offlineCost`, the special case
-`offlineCostFree_noMove`): move-to-front's access cost is at most twice its cost, minus the
-number of requests. -/
+/-- **Move-to-front is 2-competitive without free exchanges.** Let $M$ be a list of distinct
+items and $\sigma$ a sequence of $m$ requests, each an item of $M$. Consider an offline
+algorithm that serves request $t$ with a list $L_t$, where every $L_t$ is a rearrangement of
+$M$ and $L_0 = M$: it pays the position of the request in $L_t$ (counting from $1$), and then
+one for each pair of items whose relative order differs between $L_t$ and $L_{t+1}$. Then the
+access cost of move-to-front on $\sigma$ starting from $M$, plus $m$, is at most twice the
+total cost of the offline algorithm.
+
+This is the special case of the model with free exchanges in which no free exchange is made. -/
 theorem mtfCost_le (σ : List α) {M : List α} (hnd : M.Nodup) (L : ℕ → List α)
     (hL : ∀ t, (L t).Perm M) (h0 : L 0 = M) (hσ : ∀ x ∈ σ, x ∈ M) :
     mtfCost M σ + σ.length ≤ 2 * offlineCost L σ := by
@@ -398,8 +497,12 @@ theorem mtfCost_le (σ : List α) {M : List α} (hnd : M.Nodup) (L : ℕ → Lis
   rw [h0, inv_self] at this
   omega
 
-/-- Against the best static list (no rearranging), move-to-front pays at most twice its cost,
-plus the initial disagreement `inv M L`. -/
+/-- **Move-to-front against a static list.** Let $M$ be a list of distinct items, $L$ a
+rearrangement of $M$, and $\sigma$ a sequence of $m$ requests, each an item of $M$. Then the
+access cost of move-to-front on $\sigma$ starting from $M$, plus $m$, is at most twice the cost
+of serving $\sigma$ with the fixed list $L$ (the sum over the requests of their positions in $L$,
+counting from $1$), plus the number of inversions between $M$ and $L$ (the pairs of items that
+$M$ and $L$ order differently). -/
 theorem mtfCost_le_static (σ : List α) {M L : List α} (hnd : M.Nodup) (hL : L.Perm M)
     (hσ : ∀ x ∈ σ, x ∈ M) :
     mtfCost M σ + σ.length ≤ 2 * (σ.map (accessCost L)).sum + inv M L := by
@@ -433,13 +536,19 @@ namespace OnlineListUpdate
 
 variable {M : List α} (A : OnlineListUpdate α M)
 
-/-- The access cost of an online algorithm on a request sequence. -/
+/-- **Cost of an online list-update algorithm.** The cost of a deterministic online list-update
+algorithm $A$ on a request sequence $x_1, \dots, x_m$ from a state $q_0$ is
+$c_1 + \dots + c_m$, where $q_i$ is the state $A$ moves to from $q_{i-1}$ on request $x_i$ and
+$c_i$ is the access cost of $x_i$ in the list of state $q_{i-1}$. The empty sequence costs $0$. -/
 def cost : A.State → List α → ℕ
   | _, [] => 0
   | q, x :: σ => accessCost (A.list q) x + cost (A.step q x) σ
 
-/-- The adversary: request the last item of the algorithm's current list, `n` times (`d` is a
-default item, used only if the list is empty). -/
+/-- **The list-update adversary.** Given a deterministic online list-update algorithm $A$, a
+default item $d$, a number $n$ and a state $q$ of $A$, the adversary's sequence is the sequence of
+$n$ requests that starts in state $q$, always requests the last item of $A$'s current list, and
+then moves $A$ to its next state on that request. If the current list is empty, the default item
+$d$ is requested instead. -/
 def adversary (d : α) : ℕ → A.State → List α
   | 0, _ => []
   | n + 1, q => (A.list q).getLastD d :: adversary d n (A.step q ((A.list q).getLastD d))
@@ -450,7 +559,9 @@ theorem length_adversary (d : α) : ∀ n q, (A.adversary d n q).length = n
   | n + 1, q => by simp [adversary, length_adversary d n]
 
 omit [DecidableEq α] in
-/-- The list is never empty when `M` is not. -/
+/-- **The list of an algorithm on a nonempty list is never empty.** Let $A$ be a deterministic
+online list-update algorithm on the items of a nonempty list $M$. Then in every state of $A$, the
+list of $A$ is nonempty. -/
 theorem list_ne_nil (hM : M ≠ []) (q : A.State) : A.list q ≠ [] := fun h => by
   have := A.perm q
   rw [h] at this
@@ -467,7 +578,11 @@ theorem adversary_mem (d : α) (hM : M ≠ []) : ∀ n q, ∀ x ∈ A.adversary 
         exact (A.perm q).subset (List.getLast_mem hne)
       · exact adversary_mem d hM n _ x h
 
-/-- **The adversary makes every access cost the full length of the list.** -/
+/-- **The adversary makes every access cost the full length of the list.** Let $M$ be a nonempty
+list of $\ell$ distinct items and let $A$ be a deterministic online list-update algorithm on the
+items of $M$. For every default item $d$, every natural number $n$ and every state $q$ of $A$,
+the cost of $A$ from state $q$ on the adversary's sequence of $n$ requests from $q$ with default
+item $d$ is $n \ell$. -/
 theorem cost_adversary {d : α} (hnd : M.Nodup) (hM : M ≠ []) :
     ∀ n q, A.cost q (A.adversary d n q) = n * M.length
   | 0, _ => by simp [adversary, cost]
@@ -483,7 +598,10 @@ theorem cost_adversary {d : α} (hnd : M.Nodup) (hM : M ≠ []) :
 
 end OnlineListUpdate
 
-/-- Move-to-front as an online algorithm (requests outside `M` are ignored). -/
+/-- **Online move-to-front.** For a list $M$, online move-to-front is the online list-update
+algorithm on the items of $M$ whose states are the rearrangements of $M$, starting from $M$
+itself: on a request $x$ that is in the current list it moves $x$ to the front, and it ignores
+requests that are not in the current list. -/
 def mtfOnline (M : List α) : OnlineListUpdate α M where
   State := {L : List α // L.Perm M}
   init := ⟨M, List.Perm.refl M⟩
@@ -491,7 +609,10 @@ def mtfOnline (M : List α) : OnlineListUpdate α M where
   step q x := if hx : x ∈ q.1 then ⟨mtf q.1 x, (mtf_perm hx).trans q.2⟩ else q
   perm q := q.2
 
-/-- The online move-to-front pays exactly `mtfCost`. -/
+/-- **Online move-to-front pays the move-to-front cost.** Let $M$ be a list and $\sigma$ a
+request sequence whose requests are all items of $M$. From any state of online move-to-front
+on $M$, its access cost on $\sigma$ equals the cost of move-to-front on $\sigma$ starting from
+the list of that state. -/
 theorem mtfOnline_cost (M : List α) :
     ∀ (σ : List α) (q : (mtfOnline M).State), (∀ x ∈ σ, x ∈ M) →
       (mtfOnline M).cost q σ = mtfCost ((mtfOnline M).list q) σ
@@ -504,16 +625,23 @@ theorem mtfOnline_cost (M : List α) :
       simp only [mtfOnline] at hx ⊢
       simp [hx]
 
-/-- The cost of serving a request sequence with the fixed list `L`. -/
+/-- **Static cost.** The static cost of serving a request sequence $\sigma = x_0 x_1 \cdots x_{m-1}$
+with a fixed list $L$ is the sum over $t < m$ of the access cost of $x_t$ in $L$, its position in
+$L$ counting from $1$. -/
 def staticCost (L σ : List α) : ℕ := (σ.map (accessCost L)).sum
 
-/-- The static competitor is the offline algorithm with a constant list. -/
+/-- **The static cost is the offline cost of a constant list.** For every list $L$ and every
+request sequence $\sigma$, the offline cost (without free exchanges) of serving $\sigma$ with the
+constant sequence of lists $L, L, L, \dots$ equals the static cost of serving $\sigma$ with $L$. -/
 theorem offlineCost_const (L σ : List α) : offlineCost (fun _ => L) σ = staticCost L σ := by
   induction σ with
   | nil => rfl
   | cons y σ ih => simp [offlineCost, inv_self, ih, staticCost]
 
-/-- An item's positions in a list and in its reverse add up to the length plus one. -/
+/-- **Positions in a list and in its reverse.** If $L$ is a list of length $\ell$ with no
+repeated entries and $x$ is an entry of $L$, then the access cost of $x$ in $L$ plus the access
+cost of $x$ in the reverse of $L$ equals $\ell + 1$: the positions of $x$ in $L$ and in its
+reverse, counting from $1$, add up to $\ell + 1$. -/
 theorem accessCost_add_reverse {L : List α} (hnd : L.Nodup) {x : α} (hx : x ∈ L) :
     accessCost L x + accessCost L.reverse x = L.length + 1 := by
   have hi : L.idxOf x < L.length := List.idxOf_lt_length_of_mem hx
@@ -527,7 +655,12 @@ theorem accessCost_add_reverse {L : List α} (hnd : L.Nodup) {x : α} (hx : x �
   simp only [accessCost, this]
   omega
 
-/-- **A list or its reverse serves any sequence at average cost at most `(ℓ + 1) / 2`.** -/
+/-- **A list or its reverse serves any sequence at average cost at most $(\ell + 1)/2$.** Let $L$
+be a list of $\ell$ distinct items. For every request sequence $\sigma$ of $m$ items of $L$, the
+static cost of serving $\sigma$ with $L$ plus the static cost of serving $\sigma$ with the reverse
+of $L$ equals $m(\ell + 1)$.
+
+In particular, one of the two static costs is at most $m(\ell + 1)/2$. -/
 theorem staticCost_add_reverse {L : List α} (hnd : L.Nodup) :
     ∀ σ : List α, (∀ x ∈ σ, x ∈ L) →
       staticCost L σ + staticCost L.reverse σ = σ.length * (L.length + 1)
@@ -539,7 +672,8 @@ theorem staticCost_add_reverse {L : List α} (hnd : L.Nodup) :
       rw [Nat.add_mul, Nat.one_mul]
       omega
 
-/-- Any rearrangement costs at most `ℓ²` inversions. -/
+/-- **Inversions are at most the squared length.** For any lists $M$ and $L$, the number of
+inversions of $L$ against $M$ is at most $\ell^2$, where $\ell$ is the length of $M$. -/
 theorem inv_le_sq (M L : List α) : inv M L ≤ M.length * M.length := by
   unfold inv invSet
   calc ((M.toFinset ×ˢ M.toFinset).filter _).card ≤ (M.toFinset ×ˢ M.toFinset).card :=
@@ -547,8 +681,11 @@ theorem inv_le_sq (M L : List α) : inv M L ≤ M.length * M.length := by
     _ = M.toFinset.card * M.toFinset.card := Finset.card_product _ _
     _ ≤ M.length * M.length := Nat.mul_le_mul (List.toFinset_card_le M) (List.toFinset_card_le M)
 
-/-- The offline algorithm that serves the first request with `M`, then switches to `R` for good,
-pays at most `ℓ + inv M R` more than the static list `R`. -/
+/-- **Switching lists after the first request.** Let $M$ be a list of length $\ell$ and $R$ a list,
+and write $\mathrm{inv}(M, R)$ for the number of inversions between $M$ and $R$. For every request
+sequence $\sigma$ of items of $M$, the offline cost (without free exchanges) of serving $\sigma$
+with the lists $M, R, R, R, \dots$ is at most $\ell + \mathrm{inv}(M, R)$ plus the static cost of
+serving $\sigma$ with $R$. -/
 theorem offlineCost_switch_le {M R : List α} :
     ∀ σ : List α, (∀ x ∈ σ, x ∈ M) →
       offlineCost (fun t => if t = 0 then M else R) σ ≤ M.length + inv M R + staticCost R σ
@@ -561,9 +698,13 @@ theorem offlineCost_switch_le {M R : List α} :
       simp only [accessCost, staticCost, List.map_cons, List.sum_cons]
       omega
 
-/-- **On the adversary's sequence**, the online algorithm pays `ℓ` per request while an offline
-algorithm from the same list (a static list or its reverse after the first request) pays about
-`(ℓ + 1) / 2`. -/
+/-- **Online and offline costs on the adversary's sequence.** Let $M$ be a nonempty list of $\ell$
+distinct items, let $A$ be a deterministic online list-update algorithm on the items of $M$, let
+$d$ be an item and $n$ a natural number, and let $\sigma$ be the adversary's sequence of $n$
+requests against $A$ from its initial state, with default item $d$. Then the cost of $A$ on
+$\sigma$ from its initial state is $n \ell$, and there are lists $L_0, L_1, L_2, \dots$, each a
+rearrangement of $M$, with $L_0 = M$ such that the offline cost $C$ of this sequence of lists on
+$\sigma$ satisfies $2 C \le n (\ell + 1) + 2 (\ell + \ell^2)$. -/
 theorem adversary_vs_offline {M : List α} (hnd : M.Nodup) (hM : M ≠ [])
     (A : OnlineListUpdate α M) (d : α) (n : ℕ) :
     A.cost A.init (A.adversary d n A.init) = n * M.length ∧
@@ -590,12 +731,20 @@ theorem adversary_vs_offline {M : List α} (hnd : M.Nodup) (hM : M ≠ [])
       have h2 := inv_le_sq M M.reverse
       omega
 
-/-- **No deterministic online algorithm beats `2 - 2 / (ℓ + 1)`** (due to Karp and Raghavan, see
-Irani, *Two results on the list update problem*, IPL 38, 1991; Borodin and El-Yaniv, Chapter 1):
-for every ratio `c / d < 2 ℓ / (ℓ + 1)` and every additive constant `b`, some request sequence
-makes the online algorithm pay more than `c / d` times an offline algorithm from the same list,
-plus `b` (stated multiplied by `d`). The offline algorithm makes no free exchanges, so the same
-holds with `offlineCostFree` (`offlineCostFree_noMove`). -/
+/-- **No deterministic online list-update algorithm beats $2 - 2/(\ell + 1)$.** Let $M$ be a
+nonempty list of $\ell$ distinct items and let $A$ be a deterministic online list-update
+algorithm on the items of $M$. Let $c$, $d$ and $b$ be natural numbers with
+$c (\ell + 1) < 2 \ell d$ (so $d \ge 1$ and $c / d < 2\ell / (\ell + 1) = 2 - 2/(\ell + 1)$).
+Then there are a request sequence $\sigma$, each request an item of $M$, and lists
+$L_0, L_1, L_2, \dots$, each a rearrangement of $M$, with $L_0 = M$, such that
+$c \cdot C + d \cdot b < d \cdot K$, where $C$ is the offline cost without free exchanges of
+$L_0, L_1, \dots$ on $\sigma$ and $K$ is the cost of $A$ on $\sigma$ from its initial state.
+
+The offline lists make no free exchanges, so the same holds with the offline cost with free
+exchanges in place of $C$.
+
+Source: Karp and Raghavan, see Irani, *Two results on the list update problem*, IPL 38, 1991;
+Borodin and El-Yaniv, Chapter 1. -/
 theorem not_competitive {M : List α} (hnd : M.Nodup) (hM : M ≠ []) (A : OnlineListUpdate α M)
     {c d b : ℕ} (h : c * (M.length + 1) < 2 * M.length * d) :
     ∃ σ : List α, (∀ x ∈ σ, x ∈ M) ∧ ∃ L : ℕ → List α, L 0 = M ∧ (∀ t, (L t).Perm M) ∧

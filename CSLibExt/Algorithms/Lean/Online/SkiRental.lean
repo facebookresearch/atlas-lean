@@ -44,22 +44,33 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.Online.SkiRental
 
-/-- A deterministic strategy: buy on day `t ≥ 1` (`some t`), or rent forever (`none`). -/
+/-- **Deterministic ski-rental strategy.** A deterministic strategy is either a day
+$t \in \mathbb{N}$ on which to buy the skis, after renting on the days before it, or the choice to
+rent forever. Days are numbered from $1$; the value $t = 0$ is also a strategy, and the cost
+treats it as renting forever. -/
 abbrev Strategy := Option ℕ
 
-/-- The cost of a strategy when the season lasts `d` days: rent for `t - 1` days and buy on day
-`t` if `t ≤ d`, otherwise rent every day. -/
+/-- **Cost of a ski-rental strategy.** Renting skis costs $1$ per day and buying them costs a
+natural number $B$. The cost $\mathrm{cost}_B(s, d) \in \mathbb{N}$ of a strategy $s$ for a season
+of $d \in \mathbb{N}$ days is $(t - 1) + B$ if $s$ buys on a day $t$ with $1 \le t \le d$ (rent for
+$t - 1$ days, then buy), and $d$ otherwise, that is, if $s$ rents forever or buys on a day $t$
+with $t = 0$ or $t > d$ (rent every day). -/
 def cost (B : ℕ) : Strategy → ℕ → ℕ
   | some t, d => if 1 ≤ t ∧ t ≤ d then (t - 1) + B else d
   | none, d => d
 
-/-- The offline optimum: rent every day or buy on day one, whichever is cheaper. -/
+/-- **Offline optimum for ski rental.** For a purchase price $B \in \mathbb{N}$ and a season of
+$d \in \mathbb{N}$ days, the offline optimum is $\mathrm{opt}_B(d) = \min(d, B)$: rent every day
+or buy on day one, whichever is cheaper. -/
 def opt (B d : ℕ) : ℕ := min d B
 
-/-- The break-even strategy: buy on day `B`. -/
+/-- **Break-even strategy.** For a purchase price $B$, the break-even strategy is the deterministic
+strategy that buys on day $B$. -/
 def breakEven (B : ℕ) : Strategy := some B
 
-/-- The offline optimum is a lower bound for every strategy's cost. -/
+/-- **The offline optimum bounds every strategy's cost.** For every purchase price $B$, every
+deterministic strategy $s$ and every season length $d$, the offline optimum $\mathrm{opt}_B(d)$ is
+at most the cost $\mathrm{cost}_B(s, d)$ of $s$ for a season of $d$ days. -/
 theorem opt_le_cost (B : ℕ) (s : Strategy) (d : ℕ) : opt B d ≤ cost B s d := by
   unfold opt
   cases s with
@@ -70,8 +81,11 @@ theorem opt_le_cost (B : ℕ) (s : Strategy) (d : ℕ) : opt B d ≤ cost B s d 
       · exact (min_le_right _ _).trans (by omega)
       · exact min_le_left _ _
 
-/-- **Upper bound**: the break-even strategy pays at most `(2 - 1/B)` times the optimum,
-`B * cost ≤ (2 B - 1) * opt`. -/
+/-- **Ski-rental upper bound for the break-even strategy.** For every purchase price $B \ge 1$ and
+every season length $d$, the break-even strategy $\mathrm{breakEven}_B$ pays at most $2 - 1/B$
+times the offline optimum $\mathrm{opt}_B(d)$: its cost $\mathrm{cost}_B(\mathrm{breakEven}_B, d)$
+for a season of $d$ days satisfies
+$B \cdot \mathrm{cost}_B(\mathrm{breakEven}_B, d) \le (2B - 1) \cdot \mathrm{opt}_B(d)$. -/
 theorem cost_breakEven_le {B : ℕ} (hB : 1 ≤ B) (d : ℕ) :
     B * cost B (breakEven B) d ≤ (2 * B - 1) * opt B d := by
   simp only [cost, breakEven, opt]
@@ -83,7 +97,11 @@ theorem cost_breakEven_le {B : ℕ} (hB : 1 ≤ B) (d : ℕ) :
     have : B ≤ 2 * B - 1 := by omega
     exact Nat.mul_le_mul_right d this
 
-/-- The break-even strategy is `2`-competitive. -/
+/-- **The break-even strategy pays at most twice the optimum.** For every purchase price $B \ge 1$
+and every season length $d \in \mathbb{N}$, the cost $\mathrm{cost}_B(\mathrm{breakEven}_B, d)$ of
+the break-even strategy for a season of $d$ days is at most $2 \cdot \mathrm{opt}_B(d)$, twice
+the offline optimum $\mathrm{opt}_B(d)$. In particular, the break-even strategy is
+$2$-competitive. -/
 theorem cost_breakEven_le_two_mul {B : ℕ} (hB : 1 ≤ B) (d : ℕ) :
     cost B (breakEven B) d ≤ 2 * opt B d := by
   have h := cost_breakEven_le hB d

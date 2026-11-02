@@ -52,23 +52,37 @@ namespace Cslib.Algorithms.Lean.SortingNetworks
 
 variable {n : ℕ} {α β : Type*} [LinearOrder α] [LinearOrder β]
 
-/-- A comparator network: the comparators `(i, j)`, applied in list order. -/
+/-- **Comparator network.** A comparator network on $n$ wires is a finite list of pairs $(i, j)$
+of wires $i, j \in \{0, \dots, n - 1\}$, each pair standing for the comparator $(i, j)$; the
+comparators are applied in list order. -/
 abbrev Network (n : ℕ) := List (Fin n × Fin n)
 
-/-- The comparator `(i, j)`: the minimum of wires `i` and `j` goes to wire `i`, the maximum to
-wire `j`. -/
+/-- **Comparator.** Let $\alpha$ be a linear order, let $n$ be a natural number, and let $v$
+assign a value $v(k) \in \alpha$ to each wire $k \in \{0, \dots, n - 1\}$. For wires $i$ and $j$,
+the comparator $(i, j)$ sends $v$ to the assignment that has $\min(v(i), v(j))$ on wire $i$,
+$\max(v(i), v(j))$ on wire $j$ when $j \ne i$, and $v(k)$ on every other wire $k$. -/
 def comparator (i j : Fin n) (v : Fin n → α) : Fin n → α :=
   fun k => if k = i then min (v i) (v j) else if k = j then max (v i) (v j) else v k
 
-/-- Run a network on the input `v`. -/
+/-- **Running a comparator network.** Let $\alpha$ be a linear order. The output of a comparator
+network on an assignment $v$ of a value in $\alpha$ to each of its $n$ wires is obtained by
+starting from $v$ and applying the comparators of the network one after another, in list
+order. -/
 def run (net : Network n) (v : Fin n → α) : Fin n → α :=
   net.foldl (fun w c => comparator c.1 c.2 w) v
 
-/-- A network sorts inputs over `α` if every output is monotone in the wire order. -/
+/-- **Networks that sort.** A comparator network on $n$ wires sorts inputs over a linearly
+ordered type $\alpha$ if, for every input $v$ assigning a value in $\alpha$ to each wire, the
+output of running the network on $v$ is monotone in the wire order: for all wires $i \le j$, the
+output value on wire $i$ is at most the output value on wire $j$. -/
 def Sorts (net : Network n) (α : Type*) [LinearOrder α] : Prop :=
   ∀ v : Fin n → α, Monotone (run net v)
 
-/-- Comparators commute with monotone maps. -/
+/-- **Comparators commute with monotone maps.** Let $\alpha$ and $\beta$ be linear orders, let
+$f : \alpha \to \beta$ be monotone, and let $n$ be a natural number. For all wires
+$i, j \in \{0, \dots, n - 1\}$ and every assignment $v$ of a value in $\alpha$ to each wire, the
+comparator $(i, j)$ applied to $f \circ v$ gives $f \circ w$, where $w$ is the output of the
+comparator $(i, j)$ on $v$. -/
 theorem comparator_comp {f : α → β} (hf : Monotone f) (i j : Fin n) (v : Fin n → α) :
     comparator i j (f ∘ v) = f ∘ comparator i j v := by
   funext k
@@ -78,7 +92,12 @@ theorem comparator_comp {f : α → β} (hf : Monotone f) (i j : Fin n) (v : Fin
   · exact (hf.map_max).symm
   · rfl
 
-/-- **Networks commute with monotone maps** (CLRS Lemma 27.1). -/
+/-- **Networks commute with monotone maps.** Let $\alpha$ and $\beta$ be linear orders and let
+$f : \alpha \to \beta$ be monotone. For every comparator network on $n$ wires and every assignment
+$v$ of a value in $\alpha$ to each wire, the output of the network on $f \circ v$ is $f \circ w$,
+where $w$ is the output of the network on $v$.
+
+Source: CLRS, second edition, Lemma 27.1. -/
 theorem run_comp {f : α → β} (hf : Monotone f) :
     ∀ (net : Network n) (v : Fin n → α), run net (f ∘ v) = f ∘ run net v
   | [], _ => rfl
@@ -87,7 +106,10 @@ theorem run_comp {f : α → β} (hf : Monotone f) :
       rw [comparator_comp hf]
       exact run_comp hf net _
 
-/-- A comparator permutes its inputs. -/
+/-- **A comparator permutes its inputs.** Let $\alpha$ be a linear order and let $n$ be a natural
+number. For all wires $i, j \in \{0, \dots, n - 1\}$ and every assignment $v$ of a value in
+$\alpha$ to each wire, there is a permutation $\sigma$ of the wires such that the output of the
+comparator $(i, j)$ on $v$ is $v \circ \sigma$. -/
 theorem comparator_perm (i j : Fin n) (v : Fin n → α) :
     ∃ σ : Equiv.Perm (Fin n), comparator i j v = v ∘ σ := by
   by_cases hij : i = j
@@ -110,7 +132,10 @@ theorem comparator_perm (i j : Fin n) (v : Fin n → α) :
       · subst h2; simp
       · rw [Equiv.swap_apply_of_ne_of_ne h1 h2]
 
-/-- **The output is a permutation of the input.** -/
+/-- **The output of a comparator network is a permutation of its input.** Let $\alpha$ be a linear
+order. For every comparator network on $n$ wires and every assignment $v$ of a value in $\alpha$
+to each wire, there is a permutation $\sigma$ of the wires such that the output of the network
+on $v$ is $v \circ \sigma$. -/
 theorem run_perm : ∀ (net : Network n) (v : Fin n → α),
     ∃ σ : Equiv.Perm (Fin n), run net v = v ∘ σ
   | [], v => ⟨1, rfl⟩
@@ -146,15 +171,25 @@ theorem sorts_of_sorts_bool {net : Network n} (h : Sorts net Bool) (α : Type*) 
   rw [hb] at this
   exact absurd this (by decide)
 
-/-- Decide whether a network sorts every Boolean input, by running it on all `2 ^ n` of them. -/
+/-- **Boolean sorting test.** The Boolean sorting test of a comparator network on $n$ wires
+returns true exactly when, for every assignment $v$ of a Boolean value to each wire, the output
+$w$ of the network on $v$ satisfies $w(i) \le w(j)$ for all wires $i \le j$, where
+$\mathrm{false} < \mathrm{true}$.
+
+It is computed by running the network on all $2^n$ Boolean inputs. -/
 def sortsBool (net : Network n) : Bool :=
   decide (∀ v : Fin n → Bool, ∀ i j : Fin n, i ≤ j → run net v i ≤ run net v j)
 
-/-- `sortsBool` decides whether a network sorts every Boolean input. -/
+/-- **The Boolean sorting test is correct.** A comparator network passes the Boolean sorting test
+if and only if it sorts inputs over the Booleans, that is, for every assignment of a Boolean
+value to each wire, the output of the network is monotone in the wire order. -/
 theorem sortsBool_eq_true_iff {net : Network n} : sortsBool net = true ↔ Sorts net Bool := by
   simp only [sortsBool, decide_eq_true_iff, Sorts, Monotone]
 
-/-- **A network that passes `sortsBool` sorts every input over every linear order.** -/
+/-- **A network that passes the Boolean sorting test sorts over every linear order.** If a
+comparator network on $n$ wires passes the Boolean sorting test, then for every linear order
+$\alpha$ it sorts inputs over $\alpha$: for every assignment $v$ of a value in $\alpha$ to each
+wire, the output of the network on $v$ is monotone in the wire order. -/
 theorem sorts_of_sortsBool {net : Network n} (h : sortsBool net = true) (α : Type*)
     [LinearOrder α] : Sorts net α :=
   sorts_of_sorts_bool (sortsBool_eq_true_iff.1 h) α

@@ -22,20 +22,31 @@ open scoped ENNReal
 
 namespace Cslib.Algorithms.Lean.Matrix
 
-/-- Uniform complete binary seeds, mapped through the actual charged trial.
-This law supplies no PRNG implementation or assumed error oracle. -/
+/-- **Freivalds trial law.** For $n \times n$ matrices $A$, $B$, $C$ over
+$\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$, given as arrays, the Freivalds trial law is the
+probability distribution on $\{\mathrm{true}, \mathrm{false}\}$ of the value returned by the
+Freivalds trial on $A$, $B$, $C$ with seed $r$, where $r$ is drawn uniformly from
+$\mathbb{F}_2^n$.
+
+The seeds are exactly uniform; no pseudorandom generator or assumed error probability is
+involved. -/
 noncomputable def freivaldsTrialLaw {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (Fin n → ZMod 2)).map
     fun r => (freivaldsTrial A B C r).ret
 
-/-- Each complete binary assignment has its exact uniform point mass. -/
+/-- **Uniform mass of a Freivalds seed.** Let $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$. For every
+$n$ and every vector $r \in \mathbb{F}_2^n$, the uniform probability distribution on
+$\mathbb{F}_2^n$ assigns to $r$ the probability $(2^n)^{-1}$. -/
 theorem freivaldsSeed_pointMass {n : Nat} (r : Fin n → ZMod 2) :
     Cslib.Probability.PMF.uniformOfFintype (Fin n → ZMod 2) r = ((2 : ℝ≥0∞) ^ n)⁻¹ := by
   simp [Cslib.Probability.PMF.uniformOfFintype_apply]
 
-/-- Acceptance is the canonical uniform mass of seeds accepted by the actual
-executor. Canonical outer-measure pushforward supplies the fiber count. -/
+/-- **Acceptance probability of the Freivalds trial as a seed count.** Let $A$, $B$, $C$ be
+$n \times n$ matrices over $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$, given as arrays. The
+probability that the Freivalds trial law of $A$, $B$, $C$ returns true equals the number of
+seeds $r \in \mathbb{F}_2^n$ on which the Freivalds trial on $A$, $B$, $C$ with seed $r$
+accepts, divided by the number $|\mathbb{F}_2^n|$ of all seeds. -/
 theorem freivaldsTrialLaw_acceptance {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n) :
     freivaldsTrialLaw A B C true =
@@ -58,8 +69,10 @@ theorem freivaldsTrialLaw_acceptance {n : Nat}
       rw [← Fintype.card_subtype]
       rfl
 
-/-- A correct product has acceptance probability one under the same actual
-trial law, including empty matrices. -/
+/-- **The Freivalds trial accepts a correct product with probability one.** Let $A$, $B$, $C$ be
+$n \times n$ matrices over $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$, given as arrays. If
+$AB = C$, then the Freivalds trial law of $A$, $B$, $C$ returns true with probability $1$.
+This includes the case $n = 0$ of empty matrices. -/
 theorem freivaldsTrialLaw_complete {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (correct : freivaldsMatrix A * freivaldsMatrix B = freivaldsMatrix C) :
@@ -77,8 +90,10 @@ theorem freivaldsTrialLaw_complete {n : Nat}
   exact ENNReal.div_self
     (by exact_mod_cast (Fintype.card_ne_zero (α := Fin n → ZMod 2))) (by simp)
 
-/-- An incorrect product is accepted with probability at most one half.
-The bound follows from the executor's finite seed pairing. -/
+/-- **The Freivalds trial accepts a wrong product with probability at most one half.** Let $A$,
+$B$, $C$ be $n \times n$ matrices over $\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$, given as arrays.
+If $AB \ne C$, then the Freivalds trial law of $A$, $B$, $C$ returns true with probability at
+most $1/2$. -/
 theorem freivaldsTrialLaw_sound {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (wrong : freivaldsMatrix A * freivaldsMatrix B ≠ freivaldsMatrix C) :

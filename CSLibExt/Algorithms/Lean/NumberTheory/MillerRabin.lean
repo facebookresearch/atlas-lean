@@ -52,7 +52,9 @@ namespace Cslib.Algorithms.Lean.MillerRabin
 
 open Cslib.Algorithms.Lean TimeM ModularExponentiation
 
-/-- The split `m = 2^t * u` with `u` odd, as `(t, u)`, for `m > 0` (and `(0, 0)` for `m = 0`). -/
+/-- **Splitting off the power of two.** For a natural number $m > 0$, the two-adic split of $m$
+is the pair $(t, u)$ of natural numbers with $m = 2^t u$ and $u$ odd. For $m = 0$ it is
+$(0, 0)$. -/
 def twoAdicSplit (m : ℕ) : ℕ × ℕ :=
   if m ≠ 0 ∧ m % 2 = 0 then
     let r := twoAdicSplit (m / 2)
@@ -75,7 +77,13 @@ theorem twoAdicSplit_spec (m : ℕ) (hm : 0 < m) :
       simp only
       omega
 
-/-- The squaring loop: `k` squarings remain and `x` is the current value. -/
+/-- **The Miller–Rabin squaring loop.** Fix a modulus $n$. With no squarings remaining, the loop
+at the current value $x$ reports a witness exactly when $x \ne 1$, at no cost. With $k + 1$
+squarings remaining, it costs one modular multiplication and computes $y = x^2 \bmod n$; it
+reports a witness if $y = 1$, $x \ne 1$ and $x \ne n - 1$, and otherwise continues at $y$ with
+$k$ squarings remaining.
+
+Here $x^2 \bmod 0 = x^2$, and $n - 1$ is $0$ when $n = 0$. -/
 def witnessLoop (n : ℕ) : ℕ → ℕ → TimeM ℕ Bool
   | 0, x => pure (x != 1)
   | k + 1, x => do
@@ -83,18 +91,31 @@ def witnessLoop (n : ℕ) : ℕ → ℕ → TimeM ℕ Bool
       let y := x * x % n
       if y = 1 ∧ x ≠ 1 ∧ x ≠ n - 1 then pure true else witnessLoop n k y
 
-/-- CLRS `WITNESS(a, n)`. For a base with `0 < a < n`, `true` proves `n` composite
-(`not_prime_of_witness`); outside that range the answer carries no such guarantee (for example
-`witness 2 2 = true`), as in CLRS, whose bases are drawn from `1, …, n - 1`. -/
+/-- **Miller–Rabin witness test.** For natural numbers $a$ and $n$, write $n - 1 = 2^t u$ with $u$
+odd (here $n - 1$ is truncated at $0$, and $t = u = 0$ when $n \le 1$). The test sets $x_0$ to the
+result of modular exponentiation of $a$ to the power $u$ modulo $n$, which is $a^u \bmod n$ when
+$u > 0$ and $1$ when $u = 0$. For $i = 1, \dots, t$ it computes $x_i = x_{i-1}^2 \bmod n$ and
+returns true as soon as $x_i = 1$, $x_{i-1} \ne 1$ and $x_{i-1} \ne n - 1$. If no such step
+occurs, it returns true exactly when $x_t \ne 1$. Its cost is the cost of the modular
+exponentiation plus one for each squaring performed.
+
+For a base with $0 < a < n$, the answer true proves that $n$ is composite; outside that range the
+answer carries no such guarantee (for example, the test returns true for $a = n = 2$), as in CLRS,
+whose bases are drawn from $1, \dots, n - 1$. -/
 def witness (a n : ℕ) : TimeM ℕ Bool := do
   let tu := twoAdicSplit (n - 1)
   let x ← modularExponentiation a tu.2 n
   witnessLoop n tu.1 x
 
-/-- CLRS `MILLER-RABIN(n, s)` with the bases given explicitly: `false` (*composite*) as soon as a
-base is a witness, `true` (*prime*) otherwise. The caller supplies bases in `1, …, n - 1`, as
-CLRS's `RANDOM(1, n - 1)` does; only then is a *composite* answer guaranteed correct
-(`not_prime_of_millerRabin_eq_false`). -/
+/-- **The Miller–Rabin test.** Given a natural number $n$ and a list of bases
+$a_1, \dots, a_s$, the test runs the witness test for $n$ on each base in turn. It answers
+*composite* as soon as some base $a_i$ is a witness to the compositeness of $n$, and *prime* if
+none is (in particular on the empty list). Its cost is the sum of the costs of the witness tests
+it runs.
+
+This is CLRS `MILLER-RABIN(n, s)` with the bases given explicitly instead of drawn by
+`RANDOM(1, n - 1)`. A *composite* answer is guaranteed correct only when every base lies in
+$1, \dots, n - 1$. -/
 def millerRabin (n : ℕ) : List ℕ → TimeM ℕ Bool
   | [] => pure true
   | a :: as => do
@@ -103,6 +124,9 @@ def millerRabin (n : ℕ) : List ℕ → TimeM ℕ Bool
 
 /-! ## Cost -/
 
+/-- **Cost bound for the Miller–Rabin squaring loop.** For all natural numbers $n$, $k$ and $x$,
+the cost of the squaring loop modulo $n$ started at $x$ with $k$ squarings remaining is at most
+$k$. -/
 @[simp]
 theorem witnessLoop_time_le (n k x : ℕ) : (witnessLoop n k x).time ≤ k := by
   induction k generalizing x with
@@ -114,8 +138,11 @@ theorem witnessLoop_time_le (n k x : ℕ) : (witnessLoop n k x).time ≤ k := by
       · have := ih (x * x % n)
         omega
 
-/-- A witness test costs the modular exponentiation plus at most one multiplication per
-squaring. -/
+/-- **Cost of the Miller–Rabin witness test.** For natural numbers $a$ and $n$, write
+$n - 1 = 2^t u$ with $u$ odd (here $n - 1$ is truncated at $0$, and $t = u = 0$ when $n \le 1$).
+The cost of the witness test on base $a$ and modulus $n$ is at most the cost of the modular
+exponentiation of $a$ to the power $u$ modulo $n$ plus $t$: at most one multiplication for each
+of the $t$ squarings. -/
 theorem witness_time_le (a n : ℕ) :
     (witness a n).time ≤ (modularExponentiation a (twoAdicSplit (n - 1)).2 n).time +
       (twoAdicSplit (n - 1)).1 := by
@@ -141,7 +168,9 @@ private theorem eq_one_or_eq_sub_one_of_mul_mod {p x : ℕ} (hp : p.Prime) (hx :
     rw [ZMod.val_neg_one] at this
     omega
 
-/-- On a prime, the loop finds no witness if the final value `x^(2^k)` is `1`. -/
+/-- **The squaring loop modulo a prime finds no witness when it ends at 1.** Let $p$ be a prime
+and let $k$ and $x$ be natural numbers with $x < p$ and $x^{2^k} \bmod p = 1$. Then the squaring
+loop modulo $p$ started at $x$ with $k$ squarings remaining reports no witness. -/
 theorem witnessLoop_eq_false {p : ℕ} (hp : p.Prime) :
     ∀ k x, x < p → x ^ (2 ^ k) % p = 1 → (witnessLoop p k x).ret = false := by
   intro k
@@ -164,7 +193,11 @@ theorem witnessLoop_eq_false {p : ℕ} (hp : p.Prime) :
         · exact hc.2.2 h1
       · exact ih _ hylt hy
 
-/-- CLRS Section 31.8: a prime `n` has no witnesses `a` with `0 < a < n`. -/
+/-- **A prime has no Miller–Rabin witnesses in range.** Let $n$ be a prime and $a$ a natural
+number with $0 < a < n$. Then the witness test does not report $a$ as a witness to the
+compositeness of $n$.
+
+Source: CLRS Section 31.8. -/
 theorem witness_eq_false_of_prime {n a : ℕ} (hn : n.Prime) (ha : 0 < a) (han : a < n) :
     (witness a n).ret = false := by
   have := Fact.mk hn
@@ -185,12 +218,16 @@ theorem witness_eq_false_of_prime {n a : ℕ} (hn : n.Prime) (ha : 0 < a) (han :
     (ZMod.natCast_eq_natCast_iff' _ _ _).1 (by rw [Nat.cast_pow, Nat.cast_one]; exact hfermat)
   rwa [Nat.one_mod_eq_one.2 hn.one_lt.ne'] at h
 
-/-- A witness proves compositeness. -/
+/-- **A Miller–Rabin witness in range proves compositeness.** Let $n$ and $a$ be natural numbers
+with $0 < a < n$. If the witness test reports $a$ as a witness to the compositeness of $n$, then
+$n$ is not prime. -/
 theorem not_prime_of_witness {n a : ℕ} (ha : 0 < a) (han : a < n)
     (h : (witness a n).ret = true) : ¬ n.Prime := fun hn => by
   simp [witness_eq_false_of_prime hn ha han] at h
 
-/-- On a prime, `MILLER-RABIN` answers *prime* for every list of bases in `1, …, n - 1`. -/
+/-- **The Miller–Rabin test never rejects a prime when its bases lie in range.** Let $n$ be a
+prime. For every list of bases $a_1, \dots, a_s$ (possibly empty) with $0 < a_i < n$ for each
+$i$, the Miller–Rabin test run on $n$ with these bases answers *prime*. -/
 theorem millerRabin_of_prime {n : ℕ} (hn : n.Prime) :
     ∀ bases : List ℕ, (∀ a ∈ bases, 0 < a ∧ a < n) → (millerRabin n bases).ret = true
   | [], _ => by simp [millerRabin]
@@ -200,12 +237,16 @@ theorem millerRabin_of_prime {n : ℕ} (hn : n.Prime) :
         ite_false]
       exact millerRabin_of_prime hn as (fun b hb' => hb b (List.mem_cons_of_mem _ hb'))
 
-/-- A *composite* answer from `MILLER-RABIN` is always correct. -/
+/-- **With bases in range, a composite answer of the Miller–Rabin test is correct.** Let $n$ be
+a natural number and $a_1, \dots, a_s$ a list of bases with $0 < a_i < n$ for each $i$. If the
+Miller–Rabin test run on $n$ with these bases answers *composite*, then $n$ is not prime. -/
 theorem not_prime_of_millerRabin_eq_false {n : ℕ} {bases : List ℕ}
     (hb : ∀ a ∈ bases, 0 < a ∧ a < n) (h : (millerRabin n bases).ret = false) : ¬ n.Prime :=
   fun hn => by simp [millerRabin_of_prime hn bases hb] at h
 
-/-- If the final value `x^(2^k)` is not `1`, the loop reports a witness. -/
+/-- **The squaring loop reports a witness when it does not end at 1.** Let $n$, $k$ and $x$ be
+natural numbers with $n > 0$, $x < n$ and $x^{2^k} \bmod n \ne 1$. Then the squaring loop modulo
+$n$ started at $x$ with $k$ squarings remaining reports a witness. -/
 theorem witnessLoop_eq_true {n : ℕ} (hn : 0 < n) :
     ∀ k x, x < n → x ^ (2 ^ k) % n ≠ 1 → (witnessLoop n k x).ret = true := by
   intro k
@@ -224,8 +265,9 @@ theorem witnessLoop_eq_true {n : ℕ} (hn : 0 < n) :
       · rfl
       · exact ih _ (Nat.mod_lt _ hn) hy
 
-/-- Every Fermat witness is a Miller–Rabin witness: if `a^(n-1) ≢ 1 (mod n)` then `WITNESS(a, n)`
-returns `true`. -/
+/-- **Fermat witnesses are Miller–Rabin witnesses.** Let $a$ and $n$ be natural numbers with
+$n > 1$. If $a^{n-1} \bmod n \ne 1$, that is, $a^{n-1} \not\equiv 1 \pmod{n}$, then the Miller–Rabin
+witness test on base $a$ and modulus $n$ returns true. -/
 theorem witness_of_pow_ne_one {n a : ℕ} (hn : 1 < n) (h : a ^ (n - 1) % n ≠ 1) :
     (witness a n).ret = true := by
   obtain ⟨hsplit, hodd⟩ := twoAdicSplit_spec (n - 1) (by omega)

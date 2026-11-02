@@ -64,7 +64,13 @@ namespace Cslib.Algorithms.Lean.MarkovDecision
 
 open Filter Topology
 
-/-- A finite Markov decision process: rewards and transition probabilities in `K`. -/
+/-- **Markov decision process.** A Markov decision process with states in $S$, actions in $A$ and
+values in $K$ consists of a reward $r(s, a) \in K$ for taking action $a$ in state $s$ and, for all
+states $s, s'$ and actions $a$, a value $p(s, a, s') \in K$, the probability of moving from $s$ to
+$s'$ under action $a$.
+
+No condition is imposed here: finiteness of the states and actions, an order on $K$ and the
+stochasticity of $p$ are hypotheses of the results that use them. -/
 structure MDP (S A K : Type*) where
   /-- The reward for taking action `a` in state `s`. -/
   reward : S → A → K
@@ -74,41 +80,80 @@ structure MDP (S A K : Type*) where
 variable {S A K : Type*} [Fintype S] [Fintype A] [Nonempty A]
   [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- Transition probabilities are nonnegative and each row sums to `1`. -/
+/-- **Stochastic Markov decision process.** A Markov decision process with finitely many states
+and transition probabilities $P(s,a,s')$ in a field $K$ with a linear order is stochastic when
+$0 \le P(s,a,s')$ for all states $s, s'$ and actions $a$, and
+$\sum_{s'} P(s,a,s') = 1$ for every state $s$ and action $a$. -/
 def MDP.Stochastic (M : MDP S A K) : Prop :=
   (∀ s a s', 0 ≤ M.prob s a s') ∧ ∀ s a, ∑ s', M.prob s a s' = 1
 
-/-- The value of action `a` in state `s` against the value estimate `V`. -/
+/-- **Q-value of an action.** Let $M$ be a Markov decision process with a finite set of states
+$S$ and with rewards $r(s,a)$ and transition probabilities $P(s,a,s')$ in a field $K$, and let
+$\gamma \in K$. The Q-value of action $a$ in state $s$ against a value estimate
+$V : S \to K$ is $r(s,a) + \gamma \sum_{s'} P(s,a,s') \, V(s')$. -/
 def qValue (M : MDP S A K) (γ : K) (V : S → K) (s : S) (a : A) : K :=
   M.reward s a + γ * ∑ s', M.prob s a s' * V s'
 
-/-- The Bellman optimality operator: the best action value in each state. -/
+/-- **Bellman optimality operator.** Let $M$ be a Markov decision process with finitely many
+states $s$, a nonempty finite set of actions $a$, rewards $r(s, a)$ and transition probabilities
+$p(s, a, s')$ in a field $K$ carrying a linear order, and let $\gamma \in K$ be a discount factor.
+The Bellman optimality operator $T$ sends a function $V$ from states to $K$ to the function
+$$(TV)(s) = \max_a \Big( r(s, a) + \gamma \sum_{s'} p(s, a, s') V(s') \Big),$$
+the largest action value in state $s$. -/
 def bellman (M : MDP S A K) (γ : K) (V : S → K) : S → K :=
   fun s => Finset.univ.sup' Finset.univ_nonempty (qValue M γ V s)
 
-/-- The Bellman operator of the deterministic stationary policy `π`. -/
+/-- **Bellman operator of a policy.** Let $M$ be a Markov decision process with a finite set of
+states $S$, a set of actions $A$, and rewards $r(s,a)$ and transition probabilities $P(s,a,s')$
+in a field $K$, let $\gamma \in K$ be a discount factor, and let $\pi : S \to A$ be a
+deterministic stationary policy. The Bellman operator of $\pi$ sends a value estimate
+$V : S \to K$ to the function
+$s \mapsto r(s,\pi(s)) + \gamma \sum_{s'} P(s,\pi(s),s') \, V(s')$. -/
 def policyBellman (M : MDP S A K) (γ : K) (π : S → A) (V : S → K) : S → K :=
   fun s => qValue M γ V s (π s)
 
-/-- Value iteration, as a mathematical iterate: `n` Bellman updates from `V`. Evaluating it
-directly recomputes earlier iterates; `valueIterationVec` is the tabulated program. -/
+/-- **Value iteration.** Let $M$ be a Markov decision process with finitely many states, a
+nonempty finite set of actions, and rewards and transition probabilities in a field $K$ carrying
+a linear order, let $\gamma \in K$, and let $T$ be the Bellman optimality operator of $M$ with
+discount $\gamma$. For $n \in \mathbb{N}$ and a function $V$ from states to $K$, $n$ steps of
+value iteration from $V$ give the $n$-fold iterate $T^n V$, where $T^0 V = V$.
+
+Evaluated directly, this definition recomputes earlier iterates; tabulated value iteration
+stores each update instead. -/
 def valueIteration (M : MDP S A K) (γ : K) (n : ℕ) (V : S → K) : S → K :=
   (bellman M γ)^[n] V
 
-/-- Value iteration as a program on `Fin m` states: each update is tabulated in a vector, so
-update `k + 1` reads the stored values of update `k`. -/
+/-- **Tabulated value iteration.** Let $M$ be a Markov decision process with states
+$\{0, \dots, m-1\}$, a nonempty finite set of actions, and rewards and transition probabilities
+in a field $K$ carrying a linear order, let $\gamma \in K$, and let $T$ be the Bellman optimality
+operator of $M$ with discount $\gamma$. Tabulated value iteration takes a number of steps
+$n \in \mathbb{N}$ and a vector $v \in K^m$, read as a function on states: with $0$ steps it
+returns $v$, and with $k + 1$ steps it computes the vector $\bigl((Tv)(0), \dots, (Tv)(m-1)\bigr)$
+and then runs $k$ steps from that vector.
+
+Each update is stored as a vector, so update $k + 1$ reads the stored values of update $k$. -/
 def valueIterationVec {m : ℕ} (M : MDP (Fin m) A K) (γ : K) : ℕ → Vector K m → Vector K m
   | 0, v => v
   | k + 1, v => valueIterationVec M γ k (Vector.ofFn (bellman M γ fun s => v.get s))
 
-/-- A policy greedy with respect to `V`: in each state, an action of largest value. -/
+/-- **Greedy policy.** Let $M$ be a Markov decision process with finitely many states, a nonempty
+finite set of actions, and rewards $r(s, a)$ and transition probabilities $p(s, a, s')$ in a field
+$K$ carrying a linear order, let $\gamma \in K$, and let $V$ be a function from states to $K$. The
+greedy policy for $V$ chooses in each state $s$ an action $a$ maximizing the action value
+$r(s, a) + \gamma \sum_{s'} p(s, a, s') V(s')$; when several actions attain the maximum, one of
+them is fixed by choice. -/
 noncomputable def greedy (M : MDP S A K) (γ : K) (V : S → K) (s : S) : A :=
   (Finset.univ.exists_max_image (qValue M γ V s) Finset.univ_nonempty).choose
 
 variable {M : MDP S A K} {γ : K}
 
 omit [Fintype S] [IsStrictOrderedRing K] in
-/-- The tabulated program computes value iteration. -/
+/-- **Tabulated value iteration is correct.** Let $M$ be a Markov decision process with states
+$\{0, \dots, m-1\}$, a nonempty finite set of actions and values in a field $K$ with a linear
+order, let $\gamma \in K$, and let $T$ be the Bellman optimality operator of $M$ with discount
+$\gamma$. For every $n \in \mathbb{N}$, every vector $v \in K^m$ and every state $s$, entry $s$ of
+the vector computed by $n$ steps of tabulated value iteration from $v$ equals $(T^n v)(s)$, where
+$v$ is read as a function on states. -/
 theorem valueIterationVec_get {m : ℕ} (M : MDP (Fin m) A K) (γ : K) :
     ∀ (n : ℕ) (v : Vector K m) (s : Fin m),
       (valueIterationVec M γ n v).get s = valueIteration M γ n (fun s => v.get s) s
@@ -141,13 +186,27 @@ theorem policyBellman_mono (hM : M.Stochastic) (hγ : 0 ≤ γ) (π : S → A) {
   qValue_mono hM hγ h s (π s)
 
 omit [IsStrictOrderedRing K] in
-/-- A policy's update never exceeds the optimal update. -/
+/-- **A policy's Bellman update is at most the optimal one.** Let $M$ be a Markov decision
+process with a finite set of states $S$, a finite nonempty set of actions $A$, and rewards
+$r(s,a)$ and transition probabilities $P(s,a,s')$ in a field $K$ with a linear order, let
+$\gamma \in K$, and let $\pi : S \to A$ be a deterministic stationary policy. For every
+$V : S \to K$ and every state $s$, the Bellman operator of $\pi$ applied to $V$ is at most the
+Bellman optimality operator applied to $V$ at $s$:
+$r(s,\pi(s)) + \gamma \sum_{s'} P(s,\pi(s),s') \, V(s') \le
+\max_a \bigl(r(s,a) + \gamma \sum_{s'} P(s,a,s') \, V(s')\bigr)$. -/
 theorem policyBellman_le_bellman (π : S → A) (V : S → K) :
     policyBellman M γ π V ≤ bellman M γ V := fun s =>
   Finset.le_sup' (qValue M γ V s) (Finset.mem_univ (π s))
 
 omit [IsStrictOrderedRing K] in
-/-- The greedy action attains the maximum. -/
+/-- **The greedy action attains the Bellman maximum.** Let $M$ be a Markov decision process
+with a finite set of states $S$, a finite nonempty set of actions, and rewards $r(s,a)$ and
+transition probabilities $P(s,a,s')$ in a field $K$ with a linear order, and let $\gamma \in K$.
+For every $V : S \to K$ and every state $s$, the action $g$ that the greedy policy for $V$
+chooses in $s$ satisfies
+$r(s,g) + \gamma \sum_{s'} P(s,g,s') \, V(s') =
+\max_a \bigl(r(s,a) + \gamma \sum_{s'} P(s,a,s') \, V(s')\bigr)$, so its action value equals
+the value of the Bellman optimality operator applied to $V$ at $s$. -/
 theorem qValue_greedy (V : S → K) (s : S) :
     qValue M γ V s (greedy M γ V s) = bellman M γ V s := by
   have h := (Finset.univ.exists_max_image (qValue M γ V s) Finset.univ_nonempty).choose_spec
@@ -174,7 +233,12 @@ theorem abs_qValue_sub_le (hM : M.Stochastic) (hγ : 0 ≤ γ) {V W : S → K} {
         Finset.sum_le_sum fun s' _ => mul_le_mul_of_nonneg_left (h s') (hM.1 s a s')
     _ = d := by rw [← Finset.sum_mul, hM.2 s a, one_mul]
 
-/-- **The Bellman operator contracts by `γ`** in the sup norm. -/
+/-- **The Bellman operator contracts by $\gamma$.** Let $M$ be a Markov decision process with
+finitely many states, a nonempty finite set of actions, and rewards and stochastic transition
+probabilities in a linearly ordered field $K$, let $\gamma \ge 0$ in $K$, and let $T$ be the
+Bellman optimality operator of $M$ with discount $\gamma$. If two functions $V, W$ from states
+to $K$ satisfy $|V(s) - W(s)| \le d$ for every state $s$, where $d \in K$, then
+$|(TV)(s) - (TW)(s)| \le \gamma d$ for every state $s$. -/
 theorem abs_bellman_sub_le (hM : M.Stochastic) (hγ : 0 ≤ γ) {V W : S → K} {d : K}
     (h : ∀ s, |V s - W s| ≤ d) (s : S) : |bellman M γ V s - bellman M γ W s| ≤ γ * d := by
   have hq := abs_qValue_sub_le hM hγ h s
@@ -211,7 +275,14 @@ private theorem contractingWith_of_abs_le {T : (S → ℝ) → S → ℝ} (hγ0 
   rw [Real.dist_eq]
   exact hT V W _ (fun s' => by rw [← Real.dist_eq]; exact dist_le_pi_dist V W s') s
 
-/-- **Bellman's operator is a contraction** (Puterman, Theorem 6.2.3). -/
+/-- **Bellman's operator is a contraction.** Let $M$ be a Markov decision process with finitely
+many states, a nonempty finite set of actions, real rewards and stochastic transition
+probabilities, and let $0 \le \gamma < 1$. Then the Bellman optimality operator $T$ of $M$ with
+discount $\gamma$, acting on real-valued functions on the states with the sup metric, is a
+contraction with constant $\gamma$: for all such functions $V$ and $W$,
+$\|TV - TW\|_\infty \le \gamma \|V - W\|_\infty$.
+
+Source: Puterman, Theorem 6.2.3. -/
 theorem bellman_contracting (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1) :
     ContractingWith γ.toNNReal (bellman M γ) :=
   contractingWith_of_abs_le hγ0 hγ1 fun _ _ _ h => abs_bellman_sub_le hM hγ0 h
@@ -221,12 +292,25 @@ theorem policyBellman_contracting (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : 
     (π : S → A) : ContractingWith γ.toNNReal (policyBellman M γ π) :=
   contractingWith_of_abs_le hγ0 hγ1 fun _ _ _ h => abs_policyBellman_sub_le hM hγ0 π h
 
-/-- The optimal value: the unique fixed point of the Bellman operator. -/
+/-- **Optimal value of a discounted Markov decision process.** Let $M$ be a Markov decision
+process with finitely many states $S$, finitely many actions (at least one), real rewards
+$r(s,a)$, and transition probabilities $P(s,a,s')$ that are nonnegative and sum to $1$ over
+$s'$, and let $0 \le \gamma < 1$. The optimal value of $M$ with discount $\gamma$ is the unique
+function $V^* : S \to \mathbb{R}$ that is a fixed point of the Bellman optimality operator, that
+is, $V^*(s) = \max_a \bigl(r(s,a) + \gamma \sum_{s'} P(s,a,s') \, V^*(s')\bigr)$ for every
+state $s$. It exists and is unique because this operator is a $\gamma$-contraction in the sup
+metric. -/
 noncomputable def optimalValue (M : MDP S A ℝ) (γ : ℝ) (hM : M.Stochastic) (hγ0 : 0 ≤ γ)
     (hγ1 : γ < 1) : S → ℝ :=
   ContractingWith.fixedPoint _ (bellman_contracting hM hγ0 hγ1)
 
-/-- The value of the policy `π`: the unique fixed point of its Bellman operator. -/
+/-- **Value of a policy.** Let $M$ be a Markov decision process with a finite set of states $S$,
+a set of actions $A$, real rewards $r(s,a)$, and transition probabilities $P(s,a,s')$ that are
+nonnegative and sum to $1$ over $s'$, let $0 \le \gamma < 1$, and let $\pi : S \to A$ be a
+deterministic stationary policy. The value of $\pi$ is the unique function
+$V^\pi : S \to \mathbb{R}$ that is a fixed point of the Bellman operator of $\pi$, that is,
+$V^\pi(s) = r(s,\pi(s)) + \gamma \sum_{s'} P(s,\pi(s),s') \, V^\pi(s')$ for every state $s$.
+It exists and is unique because this operator is a $\gamma$-contraction in the sup metric. -/
 noncomputable def policyValue (M : MDP S A ℝ) (γ : ℝ) (hM : M.Stochastic) (hγ0 : 0 ≤ γ)
     (hγ1 : γ < 1) (π : S → A) : S → ℝ :=
   ContractingWith.fixedPoint _ (policyBellman_contracting hM hγ0 hγ1 π)
@@ -234,48 +318,85 @@ noncomputable def policyValue (M : MDP S A ℝ) (γ : ℝ) (hM : M.Stochastic) (
 variable (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
 include hM hγ0 hγ1
 
-/-- The optimal value satisfies the Bellman optimality equation. -/
+/-- **The optimal value solves the Bellman optimality equation.** Let $M$ be a Markov decision
+process with finitely many states, a nonempty finite set of actions, real rewards and stochastic
+transition probabilities, and let $0 \le \gamma < 1$. Then the optimal value $V^*$ of $M$ with
+discount $\gamma$ is a fixed point of the Bellman optimality operator $T$ of $M$ with discount
+$\gamma$: $T V^* = V^*$. -/
 theorem bellman_optimalValue : bellman M γ (optimalValue M γ hM hγ0 hγ1) =
     optimalValue M γ hM hγ0 hγ1 :=
   ContractingWith.fixedPoint_isFixedPt (bellman_contracting hM hγ0 hγ1)
 
-/-- The optimal value is the only solution of the Bellman optimality equation. -/
+/-- **Uniqueness of the solution of the Bellman optimality equation.** Let $M$ be a Markov
+decision process with finitely many states, a nonempty finite set of actions, real rewards and
+stochastic transition probabilities, and let $0 \le \gamma < 1$. If a real-valued function $V$ on
+the states satisfies $TV = V$, where $T$ is the Bellman optimality operator of $M$ with discount
+$\gamma$, then $V$ is the optimal value of $M$ with discount $\gamma$. -/
 theorem eq_optimalValue_of_bellman_eq {V : S → ℝ} (h : bellman M γ V = V) :
     V = optimalValue M γ hM hγ0 hγ1 :=
   ContractingWith.fixedPoint_unique (bellman_contracting hM hγ0 hγ1) h
 
 omit [Fintype A] [Nonempty A] in
-/-- The value of a policy satisfies the policy's Bellman equation. -/
+/-- **A policy's value satisfies its Bellman equation.** Let $M$ be a Markov decision process
+with finitely many states, real rewards $r(s,a)$, and transition probabilities $P(s,a,s')$ that
+are nonnegative and sum to $1$ over $s'$, let $0 \le \gamma < 1$, and let $\pi$ be a
+deterministic stationary policy with value $V^\pi$. Then $V^\pi$ is a fixed point of the
+Bellman operator of $\pi$: for every state $s$,
+$V^\pi(s) = r(s,\pi(s)) + \gamma \sum_{s'} P(s,\pi(s),s') \, V^\pi(s')$. -/
 theorem policyBellman_policyValue (π : S → A) :
     policyBellman M γ π (policyValue M γ hM hγ0 hγ1 π) = policyValue M γ hM hγ0 hγ1 π :=
   ContractingWith.fixedPoint_isFixedPt (policyBellman_contracting hM hγ0 hγ1 π)
 
 omit [Fintype A] [Nonempty A] in
-/-- The value of a policy is the only solution of the policy's Bellman equation. -/
+/-- **Uniqueness of the solution of a policy's Bellman equation.** Let $M$ be a Markov decision
+process with finitely many states, real rewards and stochastic transition probabilities, let
+$0 \le \gamma < 1$, and let $\pi$ be a deterministic stationary policy, a map from states to
+actions. If a real-valued function $V$ on the states satisfies $T_\pi V = V$, where $T_\pi$ is the
+Bellman operator of $\pi$ in $M$ with discount $\gamma$, then $V$ is the value of $\pi$. -/
 theorem eq_policyValue_of_policyBellman_eq (π : S → A) {V : S → ℝ}
     (h : policyBellman M γ π V = V) : V = policyValue M γ hM hγ0 hγ1 π :=
   ContractingWith.fixedPoint_unique (policyBellman_contracting hM hγ0 hγ1 π) h
 
-/-- **Value iteration converges** to the optimal value from any start. -/
+/-- **Value iteration converges.** Let $M$ be a Markov decision process with finitely many states
+$S$, a nonempty finite set of actions, real rewards and stochastic transition probabilities
+(nonnegative, each row summing to $1$), and let $0 \le \gamma < 1$ be a discount factor. Let $T$ be
+the Bellman optimality operator of $M$ with discount $\gamma$. Then for every initial value
+function $V : S \to \mathbb{R}$, the value iterates $T^n V$ converge to the optimal value of $M$
+with discount $\gamma$ as $n \to \infty$. -/
 theorem tendsto_valueIteration (V : S → ℝ) :
     Tendsto (fun n => valueIteration M γ n V) atTop (𝓝 (optimalValue M γ hM hγ0 hγ1)) :=
   ContractingWith.tendsto_iterate_fixedPoint (bellman_contracting hM hγ0 hγ1) V
 
-/-- **A priori error bound** for value iteration: geometric in `γ`. -/
+/-- **A priori error bound for value iteration.** Let $M$ be a Markov decision process with
+finitely many states, a nonempty finite set of actions, real rewards and stochastic transition
+probabilities, let $0 \le \gamma < 1$, and let $T$ be the Bellman optimality operator and $V^*$
+the optimal value of $M$ with discount $\gamma$. For every real-valued function $V$ on the states
+and every $n \in \mathbb{N}$, the result $T^n V$ of $n$ steps of value iteration from $V$ satisfies
+$\|T^n V - V^*\|_\infty \le \|V - TV\|_\infty \, \gamma^n / (1 - \gamma)$, where
+$\|\cdot\|_\infty$ is the sup norm. -/
 theorem dist_valueIteration_le (V : S → ℝ) (n : ℕ) :
     dist (valueIteration M γ n V) (optimalValue M γ hM hγ0 hγ1) ≤
       dist V (bellman M γ V) * γ ^ n / (1 - γ) := by
   have := ContractingWith.apriori_dist_iterate_fixedPoint_le (bellman_contracting hM hγ0 hγ1) V n
   rwa [Real.coe_toNNReal γ hγ0] at this
 
-/-- **Stopping test**: one update moving `V` by `ε` puts `V` within `ε / (1 - γ)` of the optimal
-value. -/
+/-- **Stopping test.** Let $M$ be a Markov decision process with finitely many states,
+a nonempty finite set of actions, real rewards and stochastic transition probabilities, let
+$0 \le \gamma < 1$, and let $T$ be the Bellman optimality operator and $V^*$ the optimal value of
+$M$ with discount $\gamma$. For every real-valued function $V$ on the states,
+$\|V - V^*\|_\infty \le \|V - TV\|_\infty / (1 - \gamma)$, where $\|\cdot\|_\infty$ is the sup
+norm. So if one Bellman update moves $V$ by at most $\varepsilon$, then $V$ is within
+$\varepsilon / (1 - \gamma)$ of the optimal value. -/
 theorem dist_optimalValue_le (V : S → ℝ) :
     dist V (optimalValue M γ hM hγ0 hγ1) ≤ dist V (bellman M γ V) / (1 - γ) := by
   have := ContractingWith.dist_fixedPoint_le (bellman_contracting hM hγ0 hγ1) V
   rwa [Real.coe_toNNReal γ hγ0] at this
 
-/-- **No policy beats the optimal value.** -/
+/-- **No policy beats the optimal value.** Let $M$ be a Markov decision process with finitely
+many states, finitely many actions (at least one), real rewards $r(s,a)$, and transition
+probabilities $P(s,a,s')$ that are nonnegative and sum to $1$ over $s'$, and let
+$0 \le \gamma < 1$. For every deterministic stationary policy $\pi$, the value $V^\pi$ of $\pi$
+is at most the optimal value $V^*$ in every state: $V^\pi(s) \le V^*(s)$ for all states $s$. -/
 theorem policyValue_le_optimalValue (π : S → A) :
     policyValue M γ hM hγ0 hγ1 π ≤ optimalValue M γ hM hγ0 hγ1 := by
   set V := optimalValue M γ hM hγ0 hγ1
@@ -293,7 +414,12 @@ theorem policyValue_le_optimalValue (π : S → A) :
   intro s
   exact le_of_tendsto' ((continuous_apply s).continuousAt.tendsto.comp ht) fun n => hle n s
 
-/-- **A greedy policy for the optimal value is optimal.** -/
+/-- **A greedy policy for the optimal value is optimal.** Let $M$ be a Markov decision process
+with finitely many states, finitely many actions (at least one), real rewards $r(s,a)$, and
+transition probabilities $P(s,a,s')$ that are nonnegative and sum to $1$ over $s'$, let
+$0 \le \gamma < 1$, and let $V^*$ be the optimal value. Let $\pi$ be the greedy policy for
+$V^*$, which in each state $s$ chooses an action $a$ maximizing
+$r(s,a) + \gamma \sum_{s'} P(s,a,s') \, V^*(s')$. Then the value of $\pi$ equals $V^*$. -/
 theorem policyValue_greedy :
     policyValue M γ hM hγ0 hγ1 (greedy M γ (optimalValue M γ hM hγ0 hγ1)) =
       optimalValue M γ hM hγ0 hγ1 := by

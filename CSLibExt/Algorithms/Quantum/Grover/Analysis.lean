@@ -73,7 +73,9 @@ private theorem sin_two_arcsin_sqrt_div (m u n : ℝ) (hm : 0 ≤ m)
   rw [Real.sq_sqrt hnnonneg]
   ring
 
-/-- Grover's angle for a marked subset of a finite search space. -/
+/-- **Grover angle.** For a finite search space $\alpha$ and a marked set $M \subseteq \alpha$, the
+Grover angle of $M$ is $\theta = \arcsin \sqrt{|M| / |\alpha|}$, where the quotient
+$|M| / |\alpha|$ is taken to be $0$ when $\alpha$ is empty. -/
 noncomputable def groverAngle {α : Type*} [Fintype α] (marked : Finset α) : ℝ :=
   Real.arcsin (Real.sqrt ((marked.card : ℝ) / Fintype.card α))
 
@@ -132,8 +134,13 @@ theorem sin_two_groverAngle {α : Type*} [Fintype α] [DecidableEq α]
   have hn0 : (Fintype.card α : ℝ) ≠ 0 := by nlinarith
   exact sin_two_arcsin_sqrt_div _ _ _ hm hu hn hn0
 
-/-- Symmetric state whose total marked and unmarked coordinates are
-`sin φ` and `cos φ`, respectively. -/
+/-- **Symmetric Grover state at a given angle.** Let $\alpha$ be a finite search space and
+$M \subseteq \alpha$ a marked set with complement $M^c$. For a real number $\varphi$, this is the
+real amplitude vector on $\alpha$ whose value is $\sin\varphi / \sqrt{|M|}$ at every point of $M$
+and $\cos\varphi / \sqrt{|M^c|}$ at every point of $M^c$.
+
+When $M$ and $M^c$ are nonempty, the marked and unmarked parts of this vector have Euclidean
+norms $|\sin\varphi|$ and $|\cos\varphi|$. -/
 noncomputable def angleAmplitude {α : Type*} [Fintype α] [DecidableEq α]
     (marked : Finset α) (φ : ℝ) : Amplitude α :=
   symmetricAmplitude marked (Real.sin φ / Real.sqrt marked.card)
@@ -248,12 +255,19 @@ theorem angleAmplitude_groverAngle_eq_uniform {α : Type*} [Fintype α]
   rw [hmCancel, huCancel]
   exact (uniformAmplitude_eq_symmetricAmplitude marked).symm
 
-/-- Apply the Grover step `k` times. -/
+/-- **Grover iterate.** Let $\alpha$ be a finite search space and $M \subseteq \alpha$ a marked
+set. For $k \in \mathbb{N}$ and a real amplitude vector $\psi : \alpha \to \mathbb{R}$, the $k$-th
+Grover iterate of $\psi$ is the vector obtained by applying the Grover step for $M$ to $\psi$
+$k$ times; the $0$-th iterate is $\psi$ itself. -/
 noncomputable def groverIterate {α : Type*} [Fintype α] [DecidableEq α]
     (marked : Finset α) (k : ℕ) (ψ : Amplitude α) : Amplitude α :=
   (groverStep marked)^[k] ψ
 
-/-- Every finite sequence of Grover steps preserves squared norm. -/
+/-- **Grover iteration preserves the squared norm.** Let $\alpha$ be a nonempty finite search
+space and $M \subseteq \alpha$ a marked set. For every real amplitude vector
+$\psi : \alpha \to \mathbb{R}$ and every $k \in \mathbb{N}$, let $\psi_k$ be the vector obtained
+from $\psi$ by applying the Grover step for $M$ $k$ times. Then
+$\sum_{x \in \alpha} \psi_k(x)^2 = \sum_{x \in \alpha} \psi(x)^2$. -/
 @[simp]
 theorem amplitudeNormSq_groverIterate {α : Type*} [Fintype α]
     [DecidableEq α] [Nonempty α] (marked : Finset α) (k : ℕ)
@@ -265,14 +279,23 @@ theorem amplitudeNormSq_groverIterate {α : Type*} [Fintype α]
       rw [groverIterate, Function.iterate_succ_apply', amplitudeNormSq_groverStep]
       simpa [groverIterate] using ih
 
-/-- Grover iteration preserves normalization of the uniform initial state. -/
+/-- **Grover iterates of the uniform state are unit vectors.** Let $\alpha$ be a nonempty finite
+search space, $M \subseteq \alpha$ a marked set, and $u$ the uniform amplitude vector, given by
+$u(x) = 1/\sqrt{|\alpha|}$ for every $x \in \alpha$. For every $k \in \mathbb{N}$, let $\psi_k$
+be the vector obtained from $u$ by applying the Grover step for $M$ $k$ times. Then
+$\sum_{x \in \alpha} \psi_k(x)^2 = 1$. -/
 @[simp]
 theorem amplitudeNormSq_groverIterate_uniform {α : Type*} [Fintype α]
     [DecidableEq α] [Nonempty α] (marked : Finset α) (k : ℕ) :
     amplitudeNormSq (groverIterate marked k (uniformAmplitude α)) = 1 := by
   rw [amplitudeNormSq_groverIterate, amplitudeNormSq_uniformAmplitude]
 
-/-- Phase reached from the uniform initial state after `k` iterations. -/
+/-- **Grover phase.** Let $\alpha$ be a finite search space, $M \subseteq \alpha$ a marked set and
+$\theta$ the Grover angle of $M$. For $k \in \mathbb{N}$, the Grover phase of $M$ after $k$
+iterations is the real number $(2k + 1)\theta$.
+
+When $M$ and its complement are both nonempty, this is the phase reached from the uniform
+initial state after $k$ Grover steps. -/
 noncomputable def groverPhase {α : Type*} [Fintype α]
     (marked : Finset α) (k : ℕ) : ℝ :=
   (2 * (k : ℝ) + 1) * groverAngle marked
@@ -306,7 +329,12 @@ theorem markedProbability_angleAmplitude {α : Type*} [Fintype α]
     Real.sq_sqrt hmpos.le]
   field_simp
 
-/-- Exact success probability of standard Grover search after `k` iterations. -/
+/-- **Exact success probability of Grover search.** Let $\alpha$ be a finite search space and
+$M \subseteq \alpha$ a marked set such that both $M$ and its complement are nonempty, and let
+$\theta = \arcsin \sqrt{|M| / |\alpha|}$ be the Grover angle of $M$. For $k \in \mathbb{N}$, let
+$\psi_k$ be the vector obtained by applying the Grover step for $M$ $k$ times to the uniform
+amplitude vector, whose value is $1/\sqrt{|\alpha|}$ at every point. Then the marked probability
+of $\psi_k$ is $\sum_{x \in M} \psi_k(x)^2 = \sin^2((2k + 1)\theta)$. -/
 theorem markedProbability_groverIterate_uniform {α : Type*} [Fintype α]
     [DecidableEq α] (marked : Finset α) (hMarked : marked.Nonempty)
     (hUnmarked : markedᶜ.Nonempty) (k : ℕ) :

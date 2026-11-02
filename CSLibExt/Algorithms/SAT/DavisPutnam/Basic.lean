@@ -54,17 +54,23 @@ namespace Cslib.Logic.PL
 
 namespace CNF
 
-/-- Clauses containing `x` positively and not negatively. -/
+/-- **Clauses containing a variable only positively.** For a variable $x$ and a CNF formula
+$\varphi$, the formula consisting of the clauses of $\varphi$, in their order, that contain the
+literal $x$ and do not contain the literal $\neg x$. -/
 def posClauses (x : Nat) (φ : CNF) : CNF :=
   φ.filter fun C ↦ (x, true) ∈ C ∧ (x, false) ∉ C
 
-/-- Clauses containing `x` negatively and not positively. -/
+/-- **Clauses containing a variable only negatively.** For a variable $x$ and a CNF formula
+$\varphi$, the formula consisting of the clauses of $\varphi$, in their order, that contain the
+literal $\neg x$ and do not contain the literal $x$. -/
 def negClauses (x : Nat) (φ : CNF) : CNF :=
   φ.filter fun C ↦ (x, false) ∈ C ∧ (x, true) ∉ C
 
-/-- One Davis-Putnam step: keep the clauses that do not mention `x`, and add every resolvent
-on `x` of a clause of `posClauses x φ` with one of `negClauses x φ` (computed once). Clauses
-containing both `x` and `¬x` are dropped. -/
+/-- **Davis-Putnam elimination of a variable.** Eliminating a variable $x$ from a CNF formula
+$\varphi$ gives the formula consisting of the clauses of $\varphi$ that contain neither $x$ nor
+$\neg x$, followed by the resolvents on $x$ of $C$ and $D$, for every clause $C$ of $\varphi$ that
+contains $x$ but not $\neg x$ and every clause $D$ of $\varphi$ that contains $\neg x$ but not $x$.
+Clauses containing both $x$ and $\neg x$ are dropped. -/
 def eliminate (x : Nat) (φ : CNF) : CNF :=
   let neg := negClauses x φ
   φ.filter (fun C ↦ (x, true) ∉ C ∧ (x, false) ∉ C) ++
@@ -77,7 +83,11 @@ theorem mem_eliminate {x : Nat} {φ : CNF} {E : CNFClause} :
         ∃ D ∈ φ, ((x, false) ∈ D ∧ (x, true) ∉ D) ∧ CNFClause.resolvent x C D = E := by
   simp [eliminate, posClauses, negClauses, and_assoc]
 
-/-- The resolvents added by `eliminate` do not mention `x`. -/
+/-- **Resolvents do not mention the resolved variable.** Let $x$ be a variable and let $C$ and $D$
+be clauses such that $C$ does not contain $\neg x$ and $D$ does not contain $x$. Then no literal
+of the resolvent of $C$ and $D$ on $x$ has variable $x$.
+
+In particular, the resolvents added when eliminating $x$ do not mention $x$. -/
 theorem fst_ne_of_mem_resolvent {x : Nat} {C D : CNFClause} (hC : (x, false) ∉ C)
     (hD : (x, true) ∉ D) {l : Nat × Bool} (hl : l ∈ CNFClause.resolvent x C D) : l.1 ≠ x := by
   obtain ⟨y, b⟩ := l
@@ -107,7 +117,9 @@ theorem vars_eliminate_subset (x : Nat) (φ : CNF) : (eliminate x φ).vars ⊆ �
 theorem not_mem_vars_eliminate (x : Nat) (φ : CNF) : x ∉ (eliminate x φ).vars := fun h ↦
   (Finset.mem_erase.mp (vars_eliminate_subset x φ h)).1 rfl
 
-/-- Soundness of a step: an assignment satisfying `φ` satisfies `eliminate x φ`. -/
+/-- **Soundness of a Davis-Putnam step.** Let $x$ be a variable and $\varphi$ a CNF formula. Every
+assignment that satisfies $\varphi$ also satisfies the formula obtained from $\varphi$ by
+eliminating $x$. -/
 theorem satisfies_eliminate {x : Nat} {φ : CNF} {σ : Nat → Bool} (h : φ.Satisfies σ) :
     (eliminate x φ).Satisfies σ := by
   intro E hE
@@ -123,8 +135,10 @@ private theorem clause_satisfies_update {x : Nat} {C : CNFClause} {σ : Nat → 
   simp only [CNFLiteral.satisfies_def, Function.update_of_ne (hx l hl)] at hls ⊢
   exact hls
 
-/-- Completeness of a step: from an assignment satisfying `eliminate x φ`, changing the value
-of `x` alone gives one satisfying `φ`. -/
+/-- **Completeness of a Davis-Putnam step.** Let $x$ be a variable, $\varphi$ a CNF formula and
+$\sigma$ an assignment that satisfies the formula obtained from $\varphi$ by eliminating $x$. Then
+there is a truth value $b$ such that the assignment that agrees with $\sigma$ except that it sends
+$x$ to $b$ satisfies $\varphi$. -/
 theorem exists_satisfies_update_of_satisfies_eliminate {x : Nat} {φ : CNF} {σ : Nat → Bool}
     (h : (eliminate x φ).Satisfies σ) : ∃ b, φ.Satisfies (Function.update σ x b) := by
   classical
@@ -182,7 +196,9 @@ theorem exists_satisfies_update_of_satisfies_eliminate {x : Nat} {φ : CNF} {σ 
         exact hls
     · exact hkeep E hE ht hf true
 
-/-- **Davis-Putnam step**: eliminating a variable preserves satisfiability. -/
+/-- **Davis-Putnam elimination preserves satisfiability.** For every variable $x$ and every CNF
+formula $\varphi$, the formula obtained from $\varphi$ by eliminating $x$ is satisfiable if and
+only if $\varphi$ is satisfiable. -/
 theorem cnfSat_eliminate_iff (x : Nat) (φ : CNF) : CNFSat (eliminate x φ) ↔ CNFSat φ := by
   rw [cnfSat_iff_exists_satisfies, cnfSat_iff_exists_satisfies]
   constructor
@@ -194,7 +210,9 @@ theorem cnfSat_eliminate_iff (x : Nat) (φ : CNF) : CNFSat (eliminate x φ) ↔ 
 
 /-! ### The procedure -/
 
-/-- Eliminate the variables of `xs`, first to last. -/
+/-- **Successive elimination of a list of variables.** Given a list $x_1, \dots, x_n$ of variables
+and a CNF formula $\varphi$, eliminate $x_1$ from $\varphi$, then $x_2$ from the result, and so on
+up to $x_n$. For the empty list the result is $\varphi$. -/
 def eliminateAll : List Nat → CNF → CNF
   | [], φ => φ
   | x :: xs, φ => eliminateAll xs (eliminate x φ)
@@ -219,17 +237,27 @@ theorem vars_eliminateAll_subset (xs : List Nat) (φ : CNF) :
       not_or] at h1 ⊢
     exact ⟨h2.2, h2.1, h1.2⟩
 
-/-- The variables of `φ` as a list without repetitions (`eraseDups` is quadratic in the number
-of literal occurrences, which the eliminations dominate). -/
+/-- **Variable list for Davis–Putnam elimination.** For a CNF formula $\varphi$, the list of the
+variables occurring in the literals of $\varphi$, each listed exactly once, in order of first
+occurrence when the clauses of $\varphi$, and the literals within each clause, are read from left
+to right.
+
+Removing the repetitions takes time quadratic in the number of literal occurrences, which the
+eliminations dominate. -/
 def varList (φ : CNF) : List Nat := (φ.flatMap (List.map Prod.fst)).eraseDups
 
 theorem mem_varList {x : Nat} {φ : CNF} : x ∈ varList φ ↔ x ∈ φ.vars := by
   simp [varList, List.mem_eraseDups, mem_vars]
 
-/-- The Davis-Putnam procedure: eliminate every variable, then check for the empty clause. -/
+/-- **The Davis-Putnam procedure.** Given a CNF formula $\varphi$, eliminate the variables
+that occur in $\varphi$ one after another, each exactly once, in the order of their first
+occurrence in $\varphi$, each elimination being applied to the result of the previous one. The
+procedure returns true if the resulting formula does not contain the empty clause, and false if
+it does. -/
 def davisPutnam (φ : CNF) : Bool := decide ([] ∉ eliminateAll (varList φ) φ)
 
-/-- **Correctness of the Davis-Putnam procedure.** -/
+/-- **Correctness of the Davis-Putnam procedure.** For every CNF formula $\varphi$, the
+Davis-Putnam procedure returns true on $\varphi$ if and only if $\varphi$ is satisfiable. -/
 theorem davisPutnam_eq_true_iff (φ : CNF) : davisPutnam φ = true ↔ CNFSat φ := by
   rw [davisPutnam, decide_eq_true_iff, ← cnfSat_eliminateAll_iff (varList φ) φ]
   have hvars : (eliminateAll (varList φ) φ).vars = ∅ := by

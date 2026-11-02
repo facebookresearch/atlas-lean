@@ -42,60 +42,81 @@ set_option autoImplicit false
 
 universe u
 
-/-- A binary coding tree whose leaves retain their symbols and weights. -/
+/-- **Huffman tree.** A Huffman tree over an alphabet $\alpha$ is either a leaf, which carries a
+symbol $a \in \alpha$ and a natural-number weight $w$, or a fork, which joins a left and a right
+Huffman tree over $\alpha$. -/
 inductive HuffmanTree (α : Type u) where
   | leaf (symbol : α) (weight : Nat)
   | fork (left right : HuffmanTree α)
 deriving DecidableEq, Repr
 
-/-- The weighted leaves, in left-to-right order. -/
+/-- **Weighted leaves of a Huffman tree.** The list of pairs $(s, w)$, one for each leaf of a
+Huffman tree, where $s$ is the symbol and $w$ the weight at that leaf, read from left to
+right. -/
 def HuffmanTree.weightedLeaves {α : Type u} : HuffmanTree α → List (α × Nat)
   | .leaf symbol weight => [(symbol, weight)]
   | .fork left right => left.weightedLeaves ++ right.weightedLeaves
 
-/-- The leaf symbols, in left-to-right order. -/
+/-- **List of leaf symbols of a Huffman tree.** The list of the symbols at the leaves of a
+Huffman tree, read from left to right, with one entry per leaf. -/
 def HuffmanTree.symbols {α : Type u} (tree : HuffmanTree α) : List α :=
   tree.weightedLeaves.map Prod.fst
 
-/-- The total weight of all leaves. -/
+/-- **Total weight of a Huffman tree.** The sum of the weights at all leaves of a Huffman tree,
+counted once per leaf. -/
 def HuffmanTree.totalWeight {α : Type u} : HuffmanTree α → Nat
   | .leaf _ weight => weight
   | .fork left right => left.totalWeight + right.totalWeight
 
-/-- The standard weighted external path length, with the root at depth zero. -/
+/-- **Weighted path length.** The weighted path length of a Huffman tree is defined recursively:
+a single leaf has weighted path length $0$, and the tree with left subtree $L$ and right subtree
+$R$ has weighted path length equal to the weighted path length of $L$ plus that of $R$ plus the
+total weight of $L$ plus the total weight of $R$.
+
+Equivalently, it is the sum over the leaves of each leaf's weight times its depth, with the root
+at depth zero (the standard weighted external path length). -/
 def HuffmanTree.weightedPathLength {α : Type u} : HuffmanTree α → Nat
   | .leaf _ _ => 0
   | .fork left right =>
       left.weightedPathLength + right.weightedPathLength +
         left.totalWeight + right.totalWeight
 
-/-- Merging two trees increases weighted path length by their total weights. -/
+/-- **Weighted path length of a merged tree.** For Huffman trees $L$ and $R$, the weighted path
+length of the tree with left subtree $L$ and right subtree $R$ equals the weighted path length of
+$L$ plus the weighted path length of $R$ plus the total weight of $L$ plus the total weight of
+$R$. -/
 theorem HuffmanTree.weightedPathLength_fork {α : Type u} (left right : HuffmanTree α) :
     (HuffmanTree.fork left right).weightedPathLength =
       left.weightedPathLength + right.weightedPathLength +
         left.totalWeight + right.totalWeight := by
   rfl
 
-/-- The structural encoded-length objective: weighted path length with a one-bit
-convention at a lone leaf, so a singleton leaf of weight `w` costs `w`. This agrees
-with the public encoder's emitted cost (weight times codeword length, summed over
-the weighted leaves) whenever the leaf symbols are unique; see
-`HuffmanTree.encodedLength_eq_sum_codeLengths`. For trees with repeated symbols the
-encoder resolves each symbol to its first leaf, so on such trees this function is
-the structural path cost rather than the emitted encoder cost. -/
+/-- **Encoded length of a coding tree.** The encoded length of a leaf of weight $w$ is $w$ (its
+lone symbol receives a one-bit codeword). The encoded length of the tree with left subtree $L$
+and right subtree $R$ is $P(L) + P(R) + W(L) + W(R)$, where $P$ is the weighted path length and
+$W$ the total weight; this is the weighted path length of that tree.
+
+When the leaf symbols are distinct, the encoded length equals the encoder's emitted cost, the
+sum over the weighted leaves of weight times codeword length. When symbols repeat, the encoder
+resolves each symbol to its first leaf, so on such trees the encoded length is the structural
+path cost rather than the emitted cost. -/
 def HuffmanTree.encodedLength {α : Type u} : HuffmanTree α → Nat
   | .leaf _ weight => weight
   | .fork left right =>
       left.weightedPathLength + right.weightedPathLength +
         left.totalWeight + right.totalWeight
 
-/-- At a fork, the encoded-length objective agrees with weighted path length. -/
+/-- **Encoded length of a fork.** For any two coding trees $L$ and $R$, the encoded length of the
+tree with left subtree $L$ and right subtree $R$ equals its weighted path length. -/
 theorem HuffmanTree.encodedLength_fork {α : Type u} (left right : HuffmanTree α) :
     (HuffmanTree.fork left right).encodedLength =
       (HuffmanTree.fork left right).weightedPathLength := by
   rfl
 
-/-- The root-to-leaf path for a symbol, using the empty path for a leaf root. -/
+/-- **Root-to-leaf path code.** For a Huffman tree $T$ and a symbol $s$, the path code of $s$
+in $T$ records the edges on the path from the root of $T$ to the leftmost leaf labelled $s$,
+writing false for a left edge and true for a right edge. If $T$ is a single leaf labelled $s$,
+the path code is empty; if no leaf of $T$ is labelled $s$, there is no path code. -/
 def HuffmanTree.pathCode? {α : Type u} [DecidableEq α] :
     HuffmanTree α → α → Option (List Bool)
   | .leaf symbol _, target => if target = symbol then some [] else none
@@ -104,10 +125,11 @@ def HuffmanTree.pathCode? {α : Type u} [DecidableEq α] :
       | some bits => some (false :: bits)
       | none => (HuffmanTree.pathCode? right target).map (true :: ·)
 
-/-- The codeword for a symbol, when the symbol occurs in the tree.
-
-A singleton tree uses `[false]`; larger trees use `false` for a left edge and
-`true` for a right edge. -/
+/-- **Codeword lookup in a Huffman tree.** Let $T$ be a Huffman tree and $a$ a symbol, and write
+$0$ for the bit false and $1$ for the bit true. If $T$ is a single leaf labelled $s$, the codeword
+of $a$ is the one-bit word $0$ when $a = s$ and is undefined otherwise. Otherwise the codeword of
+$a$ records the edges from the root of $T$ to the leftmost leaf labelled $a$, with $0$ for a left
+edge and $1$ for a right edge; it is undefined when no leaf of $T$ is labelled $a$. -/
 def HuffmanTree.code? {α : Type u} [DecidableEq α] :
     HuffmanTree α → α → Option (List Bool)
   | .leaf symbol _, target => if target = symbol then some [false] else none
@@ -135,7 +157,12 @@ private theorem HuffmanTree.pathCode?_isSome_of_mem_symbols {α : Type u}
         · simpa [HuffmanTree.pathCode?, result] using ihRight h
         · simp [HuffmanTree.pathCode?, result]
 
-/-- Decode one path after the root choice, leaving unconsumed bits. -/
+/-- **Following a path in a Huffman tree.** Let $T$ be a Huffman tree and $w$ a bit string, and
+write $0$ for the bit false and $1$ for the bit true. Following $w$ in $T$ starts at the root
+and reads the bits of $w$ one at a time, moving to the left subtree on $0$ and to the right
+subtree on $1$, until it reaches a leaf; it then returns the label of that leaf together with
+the unread bits of $w$. It fails if $w$ runs out before a leaf is reached. In particular, if
+$T$ is a single leaf, it returns its label and all of $w$. -/
 def HuffmanTree.decodePath? {α : Type u} :
     HuffmanTree α → List Bool → Option (α × List Bool)
   | .leaf symbol _, bits => some (symbol, bits)
@@ -143,7 +170,14 @@ def HuffmanTree.decodePath? {α : Type u} :
   | .fork left right, bit :: bits =>
       if bit then right.decodePath? bits else left.decodePath? bits
 
-/-- Decode one nonempty codeword, leaving unconsumed bits. -/
+/-- **Decoding one codeword.** Let $T$ be a Huffman tree and $w$ a bit string, and write $0$ for
+the bit false and $1$ for the bit true. If $T$ is a single leaf labelled $s$, decoding one
+codeword from $w$ returns $s$ together with the rest of $w$ when $w$ starts with $0$, and fails
+otherwise. If $T$ is a fork with left subtree $L$ and right subtree $R$, it fails when $w$ is
+empty; when $w$ is a bit $b$ followed by $w'$, it follows $w'$ from the root of $R$ if $b = 1$
+and from the root of $L$ if $b = 0$, reading one bit at a time, moving to the left subtree on
+$0$ and to the right subtree on $1$, until it reaches a leaf. It then returns the label of that
+leaf together with the unread bits, and fails if $w'$ runs out before a leaf is reached. -/
 def HuffmanTree.decodeOne? {α : Type u} :
     HuffmanTree α → List Bool → Option (α × List Bool)
   | .leaf symbol _, false :: bits => some (symbol, bits)
@@ -192,7 +226,11 @@ private theorem HuffmanTree.decodeOne?_rest_lt {α : Type u}
           · exact Nat.lt_succ_of_le (right.decodePath?_rest_le h)
           · exact Nat.lt_succ_of_le (left.decodePath?_rest_le h)
 
-/-- Decode a complete bit string, rejecting an incomplete or invalid final codeword. -/
+/-- **Decoding a bit string.** Let $T$ be a Huffman tree. Decoding the empty bit string with $T$
+returns the empty sequence of symbols. To decode a nonempty bit string $w$, decode one codeword
+from $w$ with $T$, obtaining a symbol $s$ and the unread bits $w'$, and return $s$ followed by
+the decoding of $w'$; decoding fails if decoding one codeword from $w$ fails or if decoding
+$w'$ fails. -/
 def HuffmanTree.decode? {α : Type u} (tree : HuffmanTree α) :
     List Bool → Option (List α)
   | [] => some []
@@ -204,7 +242,10 @@ termination_by bits => bits.length
 decreasing_by
   exact tree.decodeOne?_rest_lt _h
 
-/-- Encode a message when every symbol occurs in the tree. -/
+/-- **Huffman encoding of a message.** Given a coding tree $T$, the empty message encodes to the
+empty bit string, and a message $s_1 s_2 \cdots s_n$ encodes to the concatenation, in order, of
+the codewords of $s_1, \dots, s_n$ in $T$. If some $s_i$ has no codeword in $T$, the message has
+no encoding. -/
 def HuffmanTree.encode? {α : Type u} [DecidableEq α] (tree : HuffmanTree α) :
     List α → Option (List Bool)
   | [] => some []
@@ -213,16 +254,23 @@ def HuffmanTree.encode? {α : Type u} [DecidableEq α] (tree : HuffmanTree α) :
       let suffix ← tree.encode? message
       pure (code ++ suffix)
 
-/-- The subtype of symbols occurring as leaves of a tree. -/
+/-- **Type of leaf symbols of a Huffman tree.** For a Huffman tree $T$ over an alphabet
+$\alpha$, the type of leaf symbols of $T$ is the subtype of those $a \in \alpha$ that occur in
+the list of leaf symbols of $T$. -/
 abbrev HuffmanTree.LeafSymbol {α : Type u} (tree : HuffmanTree α) :=
   {symbol : α // symbol ∈ tree.symbols}
 
-/-- The total code on the leaf-symbol subtype. -/
+/-- **Codeword of a leaf symbol.** For a Huffman tree $T$ and a symbol $s$ occurring at a
+leaf of $T$, the codeword of $s$ is the word that the codeword lookup of $T$ returns for $s$,
+or the empty word if the lookup fails.
+
+The lookup never fails on a leaf symbol, so the empty-word default is never used. -/
 def HuffmanTree.codeOfLeaf {α : Type u} [DecidableEq α]
     (tree : HuffmanTree α) (symbol : tree.LeafSymbol) : List Bool :=
   (tree.code? symbol.1).getD []
 
-/-- Every leaf symbol has a codeword. -/
+/-- **Every leaf symbol has a codeword.** Let $T$ be a Huffman tree and $s$ a symbol occurring at
+a leaf of $T$. Then the codeword lookup of $s$ in $T$ succeeds. -/
 theorem HuffmanTree.code?_isSome_of_mem_symbols {α : Type u} [DecidableEq α]
     {tree : HuffmanTree α} {symbol : α} (h : symbol ∈ tree.symbols) :
     (tree.code? symbol).isSome := by
@@ -234,7 +282,9 @@ theorem HuffmanTree.code?_isSome_of_mem_symbols {α : Type u} [DecidableEq α]
       change ((HuffmanTree.fork left right).pathCode? symbol).isSome
       exact HuffmanTree.pathCode?_isSome_of_mem_symbols h
 
-/-- Looking up a leaf symbol returns its total codeword. -/
+/-- **Codeword lookup agrees with the leaf code.** Let $T$ be a Huffman tree and $s$ a symbol
+occurring at a leaf of $T$. Then the codeword lookup of $s$ in $T$ succeeds and returns the
+codeword of $s$ as a leaf symbol of $T$. -/
 theorem HuffmanTree.code?_codeOfLeaf {α : Type u} [DecidableEq α]
     (tree : HuffmanTree α) (symbol : tree.LeafSymbol) :
     tree.code? symbol.1 = some (tree.codeOfLeaf symbol) := by
@@ -301,7 +351,9 @@ private theorem HuffmanTree.decodeOne?_code?_append {α : Type u}
               subst code
               simpa [HuffmanTree.decodeOne?] using right.decodePath?_pathCode?_append hright
 
-/-- Codewords of distinct leaf symbols are prefix-free. -/
+/-- **Huffman tree codes are prefix-free.** For every Huffman tree $T$, the codeword map on the
+symbols occurring as leaves of $T$ is prefix-free: if $a$ and $b$ are distinct leaf symbols of
+$T$, then the codeword of $a$ is not a prefix of the codeword of $b$. -/
 theorem HuffmanTree.prefixFree {α : Type u} [DecidableEq α] (tree : HuffmanTree α) :
     MathlibExt.InformationTheory.IsPrefixFree tree.codeOfLeaf := by
   intro first second hne hprefix
@@ -328,7 +380,10 @@ private theorem HuffmanTree.decode?_cons_of_decodeOne? {α : Type u}
       rw [hone]
       simp [htail]
 
-/-- Decoding concatenated leaf codewords recovers their symbols. -/
+/-- **Decoding inverts the leaf code.** Let $T$ be a Huffman tree and let $s_1, \dots, s_n$
+($n \ge 0$) be symbols occurring at leaves of $T$, with codewords $c(s_1), \dots, c(s_n)$ as
+leaf symbols of $T$. Decoding the concatenation $c(s_1) c(s_2) \cdots c(s_n)$ with $T$ succeeds
+and returns the sequence $s_1, \dots, s_n$. -/
 theorem HuffmanTree.decode_codeOfLeaf {α : Type u} [DecidableEq α]
     (tree : HuffmanTree α) (message : List tree.LeafSymbol) :
     tree.decode? (message.flatMap tree.codeOfLeaf) = some (message.map Subtype.val) := by
@@ -340,7 +395,10 @@ theorem HuffmanTree.decode_codeOfLeaf {α : Type u} [DecidableEq α]
       · exact tree.decodeOne?_code?_append (tree.code?_codeOfLeaf symbol)
       · exact ih
 
-/-- Encoding leaf-subtype messages concatenates their total codewords. -/
+/-- **Encoding concatenates leaf codewords.** Let $T$ be a Huffman tree and let
+$s_1, \dots, s_n$ ($n \ge 0$) be symbols occurring at leaves of $T$, with codewords
+$c(s_1), \dots, c(s_n)$ as leaf symbols of $T$. Encoding $s_1, \dots, s_n$ with $T$ succeeds
+and returns the concatenation $c(s_1) c(s_2) \cdots c(s_n)$. -/
 theorem HuffmanTree.encode_codeOfLeaf {α : Type u} [DecidableEq α]
     (tree : HuffmanTree α) (message : List tree.LeafSymbol) :
     tree.encode? (message.map Subtype.val) =
@@ -352,7 +410,10 @@ theorem HuffmanTree.encode_codeOfLeaf {α : Type u} [DecidableEq α]
       rw [tree.code?_codeOfLeaf symbol, ih]
       rfl
 
-/-- Encoding and then decoding any leaf-subtype message is a round trip. -/
+/-- **Decoding inverts encoding.** Let $T$ be a Huffman tree and let $s_1, \dots, s_n$
+($n \ge 0$) be symbols occurring at leaves of $T$. Encoding $s_1, \dots, s_n$ with $T$ and then
+decoding the resulting bit string with $T$, failing if the encoding fails, returns
+$s_1, \dots, s_n$. In particular, the encoding succeeds. -/
 theorem HuffmanTree.decode_encode_leafSymbols {α : Type u} [DecidableEq α]
     (tree : HuffmanTree α) (message : List tree.LeafSymbol) :
     (match tree.encode? (message.map Subtype.val) with
@@ -362,7 +423,9 @@ theorem HuffmanTree.decode_encode_leafSymbols {α : Type u} [DecidableEq α]
   rw [tree.encode_codeOfLeaf message]
   exact tree.decode_codeOfLeaf message
 
-/-- A symbol has no root-to-leaf path exactly when it is not a leaf symbol. -/
+/-- **A symbol has a path code exactly when it labels a leaf.** For a Huffman tree $T$ over an
+alphabet $\alpha$ with decidable equality and a symbol $a \in \alpha$, the root-to-leaf path code
+of $a$ in $T$ is undefined exactly when $a$ is not among the leaf symbols of $T$. -/
 theorem HuffmanTree.pathCode?_eq_none_iff {α : Type u} [DecidableEq α]
     {tree : HuffmanTree α} {symbol : α} :
     tree.pathCode? symbol = none ↔ symbol ∉ tree.symbols := by
@@ -415,8 +478,10 @@ private theorem sum_map_add_pair {α : Type u} (l : List (α × Nat))
   | nil => simp
   | cons x xs ih => simp only [List.map_cons, List.sum_cons, ih]; omega
 
-/-- With unique symbols, weighted path length is the sum over the weighted
-leaves of weight times root-to-leaf path length. -/
+/-- **Weighted path length as a sum over leaves.** Let $T$ be a Huffman tree whose leaf symbols
+are pairwise distinct. Then the weighted path length of $T$ equals the sum, over the leaves of
+$T$ with symbol $s$ and weight $w$, of $w$ times the length of the root-to-leaf path of $s$ in
+$T$ (the depth of that leaf, with the root at depth zero). -/
 theorem HuffmanTree.weightedPathLength_eq_sum_pathLengths {α : Type u}
     [DecidableEq α] {tree : HuffmanTree α} (hnd : tree.symbols.Nodup) :
     (tree.weightedLeaves.map
@@ -468,10 +533,13 @@ theorem HuffmanTree.weightedPathLength_eq_sum_pathLengths {α : Type u}
         HuffmanTree.weightedPathLength]
       omega
 
-/-- With unique symbols, `encodedLength` is exactly the encoder's total cost:
-the sum over the weighted leaves of weight times emitted codeword length.
-Without unique symbols the encoder resolves repeated symbols to their first
-leaf, and `encodedLength` remains the structural path cost. -/
+/-- **Encoded length is the total weighted codeword length.** Let $T$ be a coding tree whose leaf
+symbols are pairwise distinct. For a symbol $s$, let $\ell(s)$ be the length of the codeword of
+$s$ in $T$, or $0$ if $s$ has no codeword. Then the encoded length of $T$ equals
+$\sum_{(s, w)} w \cdot \ell(s)$, the sum over the weighted leaves $(s, w)$ of $T$.
+
+Without distinct symbols, the encoder resolves a repeated symbol to its first leaf, and the
+encoded length remains the structural weighted path cost. -/
 theorem HuffmanTree.encodedLength_eq_sum_codeLengths {α : Type u}
     [DecidableEq α] {tree : HuffmanTree α} (hnd : tree.symbols.Nodup) :
     (tree.weightedLeaves.map
@@ -524,7 +592,11 @@ theorem HuffmanTree.encodedLength_eq_sum_codeLengths {α : Type u}
         HuffmanTree.encodedLength]
       omega
 
-/-- A Huffman queue priority. Serial numbers make equal-weight choices stable. -/
+/-- **Huffman priority.** A Huffman priority is a pair $(w, s)$ of natural numbers: a weight $w$
+and a serial number $s$.
+
+Priorities are ordered lexicographically, first by weight and then by serial number, so serial
+numbers break ties between equal weights deterministically. -/
 structure HuffmanPriority where
   weight : Nat
   serial : Nat
@@ -540,19 +612,29 @@ instance : LinearOrder HuffmanPriority :=
       cases hpairs
       rfl
 
-/-- A tree paired with the serial used to find it after heap extraction. -/
+/-- **Huffman work item.** A work item over an alphabet $\alpha$ pairs a Huffman priority, that
+is, a natural-number weight and a natural-number serial, with a Huffman tree over $\alpha$.
+
+The serial is used to find the tree again after its priority is extracted from the heap. -/
 structure HuffmanWorkItem (α : Type u) where
   priority : HuffmanPriority
   tree : HuffmanTree α
 deriving DecidableEq, Repr
 
-/-- The two successive minima and the heap left after extracting them. -/
+/-- **Result of a two-minimum extraction.** A record consisting of two Huffman priorities, the
+first and the second, together with a binary min-heap of Huffman priorities, the rest.
+
+The two-minimum extraction fills it with the two successive minima of a heap and the heap left
+after removing them. -/
 structure HuffmanTwoMin where
   first : HuffmanPriority
   second : HuffmanPriority
   rest : MinHeap HuffmanPriority
 
-/-- Extract two priorities in increasing lexicographic order. -/
+/-- **Extracting two minima from a Huffman heap.** Given a binary min-heap $h$ of Huffman
+priorities, extract the minimum of $h$, obtaining a priority $p_1$ and a heap $h_1$, then extract
+the minimum of $h_1$, obtaining a priority $p_2$ and a heap $h_2$. The result is the triple
+$(p_1, p_2, h_2)$; if either extraction meets an empty heap, there is no result. -/
 def extractTwoMin? (heap : MinHeap HuffmanPriority) : Option HuffmanTwoMin :=
   match heap.extractMin with
   | none => none
@@ -561,7 +643,10 @@ def extractTwoMin? (heap : MinHeap HuffmanPriority) : Option HuffmanTwoMin :=
       | none => none
       | some (second, rest) => some ⟨first, second, rest⟩
 
-/-- Two-minimum extraction partitions the original heap without losing multiplicities. -/
+/-- **Extracting two minima preserves the heap's elements.** If extracting two minima from a
+binary min-heap $h$ of Huffman priorities succeeds with first priority $p_1$, second priority
+$p_2$ and remaining heap $h'$, then the multiset of elements of $h$ equals the multiset of
+elements of $h'$ with $p_1$ and $p_2$ added, counted with multiplicity. -/
 theorem extractTwoMin_cons_elements {heap : MinHeap HuffmanPriority}
     {choice : HuffmanTwoMin} (h : extractTwoMin? heap = some choice) :
     choice.first ::ₘ choice.second ::ₘ choice.rest.elements = heap.elements := by
@@ -583,7 +668,11 @@ theorem extractTwoMin_cons_elements {heap : MinHeap HuffmanPriority}
               congrArg (first ::ₘ ·) (afterFirst.extractMin_cons_elements hsecond)
             _ = heap.elements := heap.extractMin_cons_elements hfirst
 
-/-- Each extracted priority is minimal in the heap from which it is removed. -/
+/-- **Two-minimum extraction is greedy.** Order Huffman priorities lexicographically by weight and
+then serial number. If extracting two minima from a binary min-heap $h$ of Huffman priorities
+succeeds with first priority $p_1$, second priority $p_2$ and remaining heap $h'$, then
+$p_1 \le q$ for every element $q$ of $h$, and $p_2 \le q$ for every $q$ that is $p_2$ or an
+element of $h'$. -/
 theorem extractTwoMin_greedy {heap : MinHeap HuffmanPriority}
     {choice : HuffmanTwoMin} (h : extractTwoMin? heap = some choice) :
     (∀ item ∈ heap.elements, choice.first ≤ item) ∧
@@ -607,13 +696,22 @@ theorem extractTwoMin_greedy {heap : MinHeap HuffmanPriority}
             apply afterFirst.extractMin_le hsecond
             simpa [afterFirst.extractMin_cons_elements hsecond] using hitem
 
-/-- The work items still available to merge, read off the serial-indexed table. -/
+/-- **Work forest of a table.** For a table $T$ whose cells each hold at most one work item, the
+work forest of $T$ is the list of the work items held in the cells of $T$, in increasing cell
+order; empty cells are skipped.
+
+In the Huffman loop these are the work items still available to merge. -/
 def huffmanTableForest {α : Type u} (table : Array (Option (HuffmanWorkItem α))) :
     List (HuffmanWorkItem α) :=
   table.toList.filterMap id
 
-/-- Remove the work item with a given serial number. The table is indexed
-directly by serial, so this is one indexed lookup and one indexed update
+/-- **Removing a work item by serial.** Given a serial number $s$ and a table $t$ of optional
+Huffman work items, look up the entry of $t$ at index $s$. If that entry is a work item whose
+serial number is $s$, the result is its tree together with the table obtained from $t$ by
+emptying the entry at $s$; otherwise (the index is out of bounds, the entry is empty, or it
+holds an item with a different serial number) the removal fails.
+
+The table is indexed directly by serial, so this is one indexed lookup and one indexed update
 rather than a scan of the work forest. -/
 def takeSerial? {α : Type u} (serial : Nat)
     (table : Array (Option (HuffmanWorkItem α))) :
@@ -626,7 +724,8 @@ def takeSerial? {α : Type u} (serial : Nat)
           none
     | none => none
 
-/-- The weighted leaves represented by a work forest. -/
+/-- **Weighted leaves of a Huffman work forest.** The weighted leaves of a list of Huffman work
+items are the concatenation, in list order, of the weighted leaves of the items' trees. -/
 def huffmanForestLeaves {α : Type u} (forest : List (HuffmanWorkItem α)) :
     List (α × Nat) :=
   forest.flatMap (fun item => item.tree.weightedLeaves)
@@ -656,7 +755,11 @@ private theorem filterMap_id_set_perm {β : Type u} {l : List (Option β)} {i : 
           | some z =>
               exact (List.Perm.swap x z _).symm.trans (List.Perm.cons z (ih h'))
 
-/-- Taking a serial removes exactly the work item stored at that index. -/
+/-- **Removing a serial removes one work item from the forest.** Let $t$ be a table of optional
+Huffman work items, and call the list of work items present in a table its work forest. If
+removing serial number $s$ from $t$ succeeds and returns a tree $T$ and an updated table $t'$,
+then there is a work item $w$ with tree $T$ and serial number $s$ such that $w$ followed by the
+work forest of $t'$ is a permutation of the work forest of $t$. -/
 theorem takeSerial?_item {α : Type u} {serial : Nat}
     {table remaining : Array (Option (HuffmanWorkItem α))} {tree : HuffmanTree α}
     (h : takeSerial? serial table = some (tree, remaining)) :
@@ -679,7 +782,9 @@ theorem takeSerial?_item {α : Type u} {serial : Nat}
               filterMap_id_set_perm hget
           · simp at h
 
-/-- Taking a serial preserves the size of the table. -/
+/-- **Removing a serial preserves the table size.** Let $t$ be a table of optional Huffman work
+items. If removing serial number $s$ from $t$ succeeds and returns a tree together with an
+updated table $t'$, then $t'$ has the same size as $t$. -/
 theorem takeSerial?_size {α : Type u} {serial : Nat}
     {table remaining : Array (Option (HuffmanWorkItem α))} {tree : HuffmanTree α}
     (h : takeSerial? serial table = some (tree, remaining)) :
@@ -697,7 +802,10 @@ theorem takeSerial?_size {α : Type u} {serial : Nat}
             exact Array.size_setIfInBounds
           · simp at h
 
-/-- Taking one serial leaves every other table cell unchanged. -/
+/-- **Removing a serial leaves the other table entries unchanged.** Let $t$ be a table of
+optional Huffman work items. If removing serial number $s$ from $t$ succeeds and returns a tree
+together with an updated table $t'$, then for every index $j \ne s$ the entry of $t'$ at $j$
+equals the entry of $t$ at $j$ (both are absent when $j$ is out of bounds). -/
 theorem takeSerial?_getElem?_of_ne {α : Type u} {serial : Nat}
     {table remaining : Array (Option (HuffmanWorkItem α))} {tree : HuffmanTree α}
     (h : takeSerial? serial table = some (tree, remaining)) {j : Nat}
@@ -717,7 +825,10 @@ theorem takeSerial?_getElem?_of_ne {α : Type u} {serial : Nat}
             simp [show serial ≠ j from fun hh => hj hh.symm]
           · simp at h
 
-/-- A work item stored at its own serial can always be taken from the table. -/
+/-- **A stored work item can be removed by its serial.** Let $t$ be a table of optional Huffman
+work items and let $w$ be a work item with serial number $s$. If the entry of $t$ at index $s$
+is $w$, then removing serial $s$ from $t$ succeeds and returns the tree of $w$ together with an
+updated table. -/
 theorem takeSerial?_isSome_of_stored {α : Type u}
     {table : Array (Option (HuffmanWorkItem α))} {item : HuffmanWorkItem α}
     (h : table[item.priority.serial]? = some (some item)) :
@@ -734,7 +845,10 @@ private theorem takeSerial?_leaves_perm {α : Type u} {serial : Nat}
   have := (hperm.map fun item => item.tree.weightedLeaves).flatten
   simpa [huffmanForestLeaves, List.flatMap_def] using this
 
-/-- Turn weighted symbols into serial-numbered leaf work items. -/
+/-- **Numbered leaf work items.** Given a starting serial number $s$ and a list of pairs
+$(a_0, w_0), \dots, (a_{k-1}, w_{k-1})$ of symbols and natural-number weights, this is the list
+of $k$ Huffman work items whose $i$-th entry has priority (weight $w_i$, serial $s + i$) and whose
+tree is the leaf with symbol $a_i$ and weight $w_i$. -/
 def initialHuffmanForestFrom {α : Type u} :
     Nat → List (α × Nat) → List (HuffmanWorkItem α)
   | _, [] => []
@@ -742,34 +856,60 @@ def initialHuffmanForestFrom {α : Type u} :
       ⟨⟨weight, serial⟩, .leaf symbol weight⟩ ::
         initialHuffmanForestFrom (serial + 1) input
 
-/-- The initial leaf forest, numbered in input order. -/
+/-- **Initial Huffman forest.** For a list of pairs $(a_0, w_0), \dots, (a_{k-1}, w_{k-1})$ of
+symbols and natural-number weights, the initial forest is the list of $k$ Huffman work items
+whose $i$-th entry has priority (weight $w_i$, serial $i$) and whose tree is the leaf with symbol
+$a_i$ and weight $w_i$. -/
 def initialHuffmanForest {α : Type u} (input : List (α × Nat)) :
     List (HuffmanWorkItem α) :=
   initialHuffmanForestFrom 0 input
 
-/-- The initial serial-indexed table: cell `i` holds the leaf with serial `i`. -/
+/-- **Initial Huffman table.** For a list of $k$ pairs $(a_0, w_0), \dots, (a_{k-1}, w_{k-1})$ of
+symbols and natural-number weights, the initial table is the array of length $k$ of optional
+Huffman work items whose cell $i$ is present and holds the work item with priority (weight $w_i$,
+serial $i$) and tree the leaf with symbol $a_i$ and weight $w_i$; that is, it is the initial
+Huffman forest with every entry marked present. -/
 def initialHuffmanTable {α : Type u} (input : List (α × Nat)) :
     Array (Option (HuffmanWorkItem α)) :=
   ((initialHuffmanForest input).map some).toArray
 
-/-- The initial table represents exactly the initial leaf forest. -/
+/-- **The initial table holds the initial forest.** For every list of weighted symbols, the work
+forest read off the initial serial-indexed table of the list is exactly the initial leaf forest
+of the list, in the same order. -/
 theorem huffmanTableForest_initial {α : Type u} (input : List (α × Nat)) :
     huffmanTableForest (initialHuffmanTable input) = initialHuffmanForest input := by
   simp [huffmanTableForest, initialHuffmanTable]
 
-/-- Appending a merged work item to the table appends it to the work forest. -/
+/-- **Appending to the table appends to the forest.** For every table $T$ whose cells each hold at
+most one work item and every work item $x$, the work forest of the table obtained from $T$ by
+appending a new last cell holding $x$ is the work forest of $T$ followed by $x$. -/
 theorem huffmanTableForest_push_some {α : Type u}
     (table : Array (Option (HuffmanWorkItem α))) (item : HuffmanWorkItem α) :
     huffmanTableForest (table.push (some item)) =
       huffmanTableForest table ++ [item] := by
   simp [huffmanTableForest, Array.toList_push, List.filterMap_append]
 
-/-- Insert all priorities from a forest into a fresh binary heap. -/
+/-- **Heap of a Huffman work forest.** The heap of a list of Huffman work items is obtained from
+the empty binary min-heap by inserting the priorities of the items one at a time, in list
+order. -/
 def huffmanHeapOfForest {α : Type u} (forest : List (HuffmanWorkItem α)) :
     MinHeap HuffmanPriority :=
   forest.foldl (fun heap item => heap.push item.priority) MinHeap.empty
 
-/-- Run a bounded sequence of Huffman merges. -/
+/-- **Bounded Huffman merge loop.** The loop takes a fuel $n$, a next serial number $s$, a binary
+min-heap $H$ of Huffman priorities, ordered lexicographically by weight and then serial number,
+and a table $T$ whose cells each hold at most one work item. Taking serial $i$ from a table
+succeeds when cell $i$ holds a work item whose priority has serial number $i$, and returns that
+item's tree together with the table with cell $i$ emptied. With fuel $0$, the loop extracts the
+minimum $p$ of $H$, leaving a heap $H'$, and takes the serial number of $p$ from $T$, obtaining a
+tree $t$ and a table $T'$; it returns $t$ if $H'$ is empty and no cell of $T'$ holds a work item,
+and fails otherwise. With fuel $n + 1$, it extracts the minimum $p_1 = (w_1, s_1)$ of $H$ and then
+the minimum $p_2 = (w_2, s_2)$ of the remaining heap, leaving a heap $H'$; it takes $s_1$ from $T$
+and then $s_2$ from the resulting table, obtaining trees $t_1$, $t_2$ and a table $T'$. It then
+runs with fuel $n$, next serial number $s + 1$, the heap $H'$ with the priority
+$p = (w_1 + w_2, s)$ inserted, and the table $T'$ with a new last cell holding the work item of
+priority $p$ whose tree has left subtree $t_1$ and right subtree $t_2$. If any extraction or take
+fails, the loop fails. -/
 def huffmanLoop {α : Type u} :
     Nat → Nat → MinHeap HuffmanPriority → Array (Option (HuffmanWorkItem α)) →
       Option (HuffmanTree α)
@@ -799,11 +939,23 @@ def huffmanLoop {α : Type u} :
                   huffmanLoop fuel (nextSerial + 1) (choice.rest.push priority)
                     (remaining.push (some ⟨priority, tree⟩))
 
-/-- Accumulator form of `huffmanLoopWithLookupCount`: `count` is the number
-of indexed reads already performed, threaded through the recursion so a
-successful run uses constant stack in `fuel` just like `huffmanLoop`.
-`huffmanLoopWithLookupCount` is the `count = 0` special case, and
-`huffmanLoopWithLookupCountAux_eq` is its characteristic equation. -/
+/-- **Huffman loop with an accumulated lookup count.** The loop takes a fuel $n$, a next serial
+number $s$, a binary min-heap $H$ of Huffman priorities, ordered lexicographically by weight and
+then serial number, a table $T$ whose cells each hold at most one work item, and a counter $c$.
+Taking serial $i$ from a table succeeds when cell $i$ holds a work item whose priority has serial
+number $i$, and returns that item's tree together with the table with cell $i$ emptied. With fuel
+$0$, the loop extracts the minimum $p$ of $H$, leaving a heap $H'$, and takes the serial number of
+$p$ from $T$, obtaining a tree $t$ and a table $T'$; it returns $(t, c + 1)$ if $H'$ is empty and
+no cell of $T'$ holds a work item, and fails otherwise. With fuel $n + 1$, it extracts the minimum
+$p_1 = (w_1, s_1)$ of $H$ and then the minimum $p_2 = (w_2, s_2)$ of the remaining heap, leaving a
+heap $H'$; it takes $s_1$ from $T$ and then $s_2$ from the resulting table, obtaining trees $t_1$,
+$t_2$ and a table $T'$. It then runs with fuel $n$, next serial number $s + 1$, the heap $H'$ with
+the priority $p = (w_1 + w_2, s)$ inserted, the table $T'$ with a new last cell holding the work
+item of priority $p$ whose tree has left subtree $t_1$ and right subtree $t_2$, and counter
+$c + 2$. If any extraction or take fails, the loop fails.
+
+The counter thus grows by one for each work item taken from the table. The Huffman loop with
+lookup count is the case $c = 0$. -/
 def huffmanLoopWithLookupCountAux {α : Type u} :
     Nat → Nat → MinHeap HuffmanPriority → Array (Option (HuffmanWorkItem α)) →
       Nat → Option (HuffmanTree α × Nat)
@@ -834,10 +986,15 @@ def huffmanLoopWithLookupCountAux {α : Type u} :
                     (choice.rest.push priority)
                     (remaining.push (some ⟨priority, tree⟩)) (count + 2)
 
-/-- Instrumented Huffman execution that reports indexed payload-table reads on
-successful runs. Each call to `takeSerial?` performs one `table[serial]?` read.
-The count excludes heap operations, table writes (cell clearing and merged-item
-insertion), and the terminal `huffmanTableForest` scan. -/
+/-- **Huffman loop with lookup count.** For a fuel $n$, a next serial number $s$, a binary min-heap
+$H$ of Huffman priorities and a table $T$ whose cells each hold at most one work item, the Huffman
+loop with lookup count on $(n, s, H, T)$ is the Huffman loop with an accumulated lookup count on
+$(n, s, H, T)$ started with counter $0$. It runs the bounded sequence of Huffman merges and counts
+indexed table lookups, one for each work item taken from the table: two per merge and one at the
+final step. On success it returns the resulting tree together with the count; otherwise it fails.
+
+The count excludes heap operations, table writes (emptying cells and appending merged work items)
+and the final check that the table holds no work item. -/
 def huffmanLoopWithLookupCount {α : Type u} :
     Nat → Nat → MinHeap HuffmanPriority → Array (Option (HuffmanWorkItem α)) →
       Option (HuffmanTree α × Nat) :=
@@ -895,8 +1052,11 @@ theorem huffmanLoopWithLookupCountAux_eq {α : Type u} (fuel nextSerial : Nat)
                       Nat.mul_succ]
                     exact ⟨True.intro, by omega⟩
 
-/-- Instrumenting the loop preserves its result and, on success, reports two
-indexed payload reads per merge followed by one final indexed read. -/
+/-- **Lookup count of the instrumented Huffman loop.** For every fuel $n$, next serial number $s$,
+binary min-heap $H$ of Huffman priorities and table $T$ whose cells each hold at most one work
+item, the Huffman loop with lookup count on $(n, s, H, T)$ fails exactly when the bounded Huffman
+merge loop on $(n, s, H, T)$ fails, and returns $(t, 2n + 1)$ when the merge loop returns the tree
+$t$: two indexed table reads for each of the $n$ merges and one for the final step. -/
 theorem huffmanLoopWithLookupCount_eq {α : Type u} (fuel nextSerial : Nat)
     (heap : MinHeap HuffmanPriority) (table : Array (Option (HuffmanWorkItem α))) :
     huffmanLoopWithLookupCount fuel nextSerial heap table =
@@ -904,7 +1064,11 @@ theorem huffmanLoopWithLookupCount_eq {α : Type u} (fuel nextSerial : Nat)
   simpa [huffmanLoopWithLookupCount] using
     huffmanLoopWithLookupCountAux_eq fuel nextSerial heap table 0
 
-/-- Forgetting the instrumentation yields exactly the existing loop result. -/
+/-- **Discarding the lookup count recovers the Huffman loop.** For every fuel $n$, next serial
+number $s$, binary min-heap $H$ of Huffman priorities and table $T$ whose cells each hold at most
+one work item, discarding the count from the result of the Huffman loop with lookup count on
+$(n, s, H, T)$ gives the result of the bounded Huffman merge loop on $(n, s, H, T)$: the two fail
+together, and otherwise they return the same tree. -/
 theorem huffmanLoopWithLookupCount_map_fst {α : Type u} (fuel nextSerial : Nat)
     (heap : MinHeap HuffmanPriority) (table : Array (Option (HuffmanWorkItem α))) :
     (huffmanLoopWithLookupCount fuel nextSerial heap table).map Prod.fst =
@@ -912,7 +1076,11 @@ theorem huffmanLoopWithLookupCount_map_fst {α : Type u} (fuel nextSerial : Nat)
   rw [huffmanLoopWithLookupCount_eq]
   cases huffmanLoop fuel nextSerial heap table <;> rfl
 
-/-- A successful loop performs exactly `2 * fuel + 1` indexed payload reads. -/
+/-- **Indexed reads of a successful Huffman loop.** Let $k$ be a merge budget, $n$ a next serial
+number, $h$ a binary min-heap of Huffman priorities and $t$ a serial-indexed table of optional
+Huffman work items. If the Huffman loop with budget $k$ on $n$, $h$ and $t$ returns a tree $T$,
+then the Huffman loop with lookup counting on the same arguments returns $T$ together with the
+count $2k + 1$ of indexed payload-table reads. -/
 theorem huffmanLoop_lookupCount {α : Type u} {fuel nextSerial : Nat}
     {heap : MinHeap HuffmanPriority} {table : Array (Option (HuffmanWorkItem α))}
     {tree : HuffmanTree α} (hresult : huffmanLoop fuel nextSerial heap table = some tree) :
@@ -1011,7 +1179,17 @@ private theorem initialHuffmanForest_leaves {α : Type u}
     huffmanForestLeaves (initialHuffmanForest input) = input := by
   exact initialHuffmanForestFrom_leaves 0 input
 
-/-- Construct a deterministic Huffman tree, rejecting empty inputs and repeated symbols. -/
+/-- **Huffman's algorithm.** Let $L$ be a list of $n$ pairs $(a_0, w_0), \dots, (a_{n-1}, w_{n-1})$
+of symbols and natural-number weights, with decidable equality on symbols. The construction
+fails when $L$ is empty or two pairs share a symbol. Otherwise it starts from $n$ leaves, the
+leaf for $(a_i, w_i)$ having priority (weight $w_i$, serial $i$), and performs $n - 1$ merges:
+each merge removes the two trees whose priorities are least in the lexicographic order on
+(weight, serial), and adds the fork with the first removed tree on the left, with priority the
+sum of the two weights and the next unused serial $n, n + 1, \dots$. If exactly one tree then
+remains, it is returned; otherwise the construction fails.
+
+Ties between equal weights are broken by serial: leaves come before merged trees, leaves in input
+order and merged trees in creation order. -/
 def huffman {α : Type u} [DecidableEq α]
     (input : List (α × Nat)) : Option (HuffmanTree α) :=
   if input.isEmpty || !(input.map Prod.fst).Nodup then
@@ -1021,7 +1199,10 @@ def huffman {α : Type u} [DecidableEq α]
     huffmanLoop (input.length - 1) input.length (huffmanHeapOfForest forest)
       (initialHuffmanTable input)
 
-/-- A successful construction preserves every weighted input symbol exactly once. -/
+/-- **Huffman's construction keeps the weighted leaves.** Let $L$ be a list of pairs $(a, w)$ of
+a symbol $a$ and a natural-number weight $w$, with decidable equality on symbols. If the Huffman
+construction on $L$ succeeds with a tree $T$, then the list of weighted leaves of $T$, read left
+to right, is a permutation of $L$. -/
 theorem huffman_weightedLeaves_perm {α : Type u} [DecidableEq α]
     {input : List (α × Nat)} {tree : HuffmanTree α}
     (h : huffman input = some tree) : tree.weightedLeaves.Perm input := by
@@ -1032,7 +1213,9 @@ theorem huffman_weightedLeaves_perm {α : Type u} [DecidableEq α]
       (List.Perm.of_eq (by
         rw [huffmanTableForest_initial, initialHuffmanForest_leaves]))
 
-/-- Every successfully constructed Huffman tree supplies prefix-free codewords. -/
+/-- **Huffman codes are prefix-free.** If the Huffman construction succeeds on a list of weighted
+symbols and returns a tree $T$, then the code of $T$ on its leaf symbols is prefix-free: for any
+two distinct leaf symbols of $T$, neither codeword is a prefix of the other. -/
 theorem huffman_prefixFree {α : Type u} [DecidableEq α]
     {input : List (α × Nat)} {tree : HuffmanTree α}
     (_h : huffman input = some tree) :
