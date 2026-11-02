@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Phylogenetics.BalancedMinimumEvolution
+import Mathlib.Data.Fintype.Fin
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 /-!
