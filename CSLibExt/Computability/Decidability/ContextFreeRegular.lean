@@ -45,41 +45,65 @@ variable {T : Type*} [DecidableEq T]
 
 /-! ## The procedure -/
 
-/-- Whether a symbol can start at state `p`, given the states `S` where the rest can start and
-the items `R` found so far. -/
+/-- **Whether a symbol fits at a DFA state.** Let $D$ be an encoded DFA, $R$ and $S$ lists of
+natural numbers (the items found so far and the states where the rest of a right-hand side can
+start), $X$ a grammar symbol and $p \in \mathbb{N}$. The test is true exactly when either $X$ is a
+terminal $a$ and the step of $D$ from $p$ on $a$ lies in $S$, or $X$ is a nonterminal $B$ and some
+$k$ in $S$ has $\langle B, \langle p, k \rangle \rangle$ in $R$, where
+$\langle \cdot, \cdot \rangle$ is the natural-number pairing. -/
 def dfaSymFits (D : EncodedDFA T) (R S : List ℕ) (X : ℕ ⊕ T) (p : ℕ) : Bool :=
   match X with
   | .inr a => Decidability.memB S (D.step p a)
   | .inl B => S.any fun k => Decidability.memB R (Nat.pair B (Nat.pair p k))
 
-/-- The states from which a right-hand side yields a word taking `D` to `q`, given the items `R`
-found so far. -/
+/-- **Start states of a right-hand side in a DFA.** Let $D$ be an encoded DFA, $R$ a list of
+natural numbers (the items found so far) and $q \in \mathbb{N}$. The start states of a right-hand
+side $\beta$, a list of grammar symbols, for $q$ given $R$ are defined by recursion on $\beta$: for
+the empty right-hand side they are the one-element list $[q]$, and for a symbol $X$ followed by
+$\beta'$ they are the states of $D$, in order, at which $X$ fits given $R$ and the start states of
+$\beta'$ for $q$ given $R$. -/
 def dfaStarts (D : EncodedDFA T) (R : List ℕ) (q : ℕ) (rhs : List (ℕ ⊕ T)) : List ℕ :=
   rhs.foldr (fun X S => D.states.filter (dfaSymFits D R S X)) [q]
 
-/-- One round: the items `(A, p, q)` for productions `A → rhs` and states `p` from which `rhs`
-yields a word taking `D` to `q`. -/
+/-- **One round of the item search against a DFA.** For an encoded grammar $g$, an encoded DFA
+$D$ and a list $R$ of natural numbers (the items found so far), one round produces the list of the
+codes $\langle A, \langle p, q \rangle \rangle$, where $\langle \cdot, \cdot \rangle$ is the
+natural-number pairing, for every production $A \to \beta$ of $g$, every state $q$ of $D$ and
+every start state $p$ of $\beta$ for $q$ given $R$. -/
 def dfaStep (g : EncodedCFG T) (D : EncodedDFA T) (R : List ℕ) : List ℕ :=
   g.rules.flatMap fun e => D.states.flatMap fun q =>
     (dfaStarts D R q e.2).map fun p => Nat.pair e.1 (Nat.pair p q)
 
-/-- All items `(A, p, q)` with `A` a left-hand side and `p, q` listed states. -/
+/-- **Candidate items for a grammar and a DFA.** For an encoded grammar $g$ and an encoded DFA
+$D$, the candidate items form the list of the codes $\langle A, \langle p, q \rangle \rangle$, where
+$\langle \cdot, \cdot \rangle$ is the natural-number pairing, for every left-hand side $A$ of a
+production of $g$ (listed once per production) and all states $p$ and $q$ of $D$. -/
 def dfaItems (g : EncodedCFG T) (D : EncodedDFA T) : List ℕ :=
   (g.rules.map Prod.fst).flatMap fun A => D.states.flatMap fun q =>
     D.states.map fun p => Nat.pair A (Nat.pair p q)
 
-/-- The items found: the closure of `dfaStep`. -/
+/-- **Items found for a grammar and a DFA.** For an encoded grammar $g$ and an encoded DFA $D$,
+the found items are the list obtained from the empty list by applying one round of the item
+search of $g$ and $D$ as many times as the length of the list of candidate items of $g$ and
+$D$. -/
 def dfaFound (g : EncodedCFG T) (D : EncodedDFA T) : List ℕ :=
   (dfaStep g D)^[(dfaItems g D).length] []
 
-/-- **The emptiness test** for the intersection: no accepting state `f` has the item
-`(start, D.start, f)`. -/
+/-- **The intersection-emptiness test for a grammar and a DFA.** Let $g$ be an encoded grammar with
+start nonterminal $S$, let $D$ be an encoded DFA with start state $s$, and write
+$\langle \cdot, \cdot \rangle$ for the natural-number pairing. The test of $g$ and $D$ is true
+exactly when there is no accepting state $f$ of $D$ that is also one of the states of $D$ and for
+which the code $\langle S, \langle s, f \rangle \rangle$ is among the found items of $g$ and
+$D$. -/
 def interEmptyB (g : EncodedCFG T) (D : EncodedDFA T) : Bool :=
   !(D.accept.any fun f => Decidability.memB D.states f &&
     Decidability.memB (dfaFound g D) (Nat.pair g.start (Nat.pair D.start f)))
 
 /-! ## Stabilization -/
 
+/-- **Start states of a right-hand side are states of the DFA.** Let $D$ be an encoded DFA, $R$ a
+list of natural numbers and $q$ one of the states of $D$. Then for every right-hand side $\beta$,
+every start state of $\beta$ for $q$ given $R$ is one of the states of $D$. -/
 theorem dfaStarts_subset {D : EncodedDFA T} {R : List ℕ} {q : ℕ} (hq : q ∈ D.states)
     (rhs : List (ℕ ⊕ T)) : ∀ p ∈ dfaStarts D R q rhs, p ∈ D.states := by
   cases rhs with
@@ -134,8 +158,11 @@ theorem dfaStep_dfaFound_subset (g : EncodedCFG T) (D : EncodedDFA T) :
 
 /-! ## Soundness -/
 
-/-- An item is sound when it codes `(A, p, q)` with `A` yielding a word that takes `D` from `p`
-to `q`. -/
+/-- **Sound items for a grammar and a DFA.** For an encoded grammar $g$ and an encoded DFA $D$, a
+natural number $x$ is a sound item when there are natural numbers $A$, $p$, $q$ and a word $w$
+such that $x = \langle A, \langle p, q \rangle \rangle$, where $\langle \cdot, \cdot \rangle$ is the
+natural-number pairing, the nonterminal $A$ yields $w$ in the grammar denoted by $g$, and the
+automaton denoted by $D$, run on $w$ from state $p$, ends in state $q$. -/
 def DfaSoundItem (g : EncodedCFG T) (D : EncodedDFA T) (x : ℕ) : Prop :=
   ∃ A p q w, x = Nat.pair A (Nat.pair p q) ∧ Yields g.toCFG [.nonterminal A] w ∧
     D.toDFA.evalFrom p w = q
@@ -195,6 +222,11 @@ theorem dfaFound_sound (g : EncodedCFG T) (D : EncodedDFA T) :
 
 /-! ## Completeness -/
 
+/-- **Completeness of the start states in a DFA.** Let $g$ be an encoded context-free grammar and
+$D$ an encoded DFA over an alphabet $T$ with decidable equality, and let $\rho$ be an encoded
+right-hand side whose decoding yields a word $u$ in the grammar that $g$ denotes. If $p$ is one
+of the states of $D$ and the automaton that $D$ denotes, run on $u$ from state $p$, ends in state
+$q$, then $p$ is a start state of $\rho$ for $q$ given the items found for $g$ and $D$. -/
 theorem mem_dfaStarts_of_yields {g : EncodedCFG T} {D : EncodedDFA T}
     {β : List (Symbol T g.toCFG.NT)} {u : List T} (h : Yields g.toCFG β u) :
     ∀ (rhs : List (ℕ ⊕ T)) (p q : ℕ), β = rhs.map decodeSymbol → p ∈ D.states →
@@ -251,7 +283,9 @@ theorem mem_dfaStarts_of_yields {g : EncodedCFG T} {D : EncodedDFA T}
       simp only [dfaSymFits, List.any_eq_true, Decidability.memB_iff]
       exact ⟨k, hkrest, hitem⟩
 
-/-- **Correctness of the intersection-emptiness test.** -/
+/-- **Correctness of the intersection-emptiness test.** For every encoded grammar $g$ and every
+encoded DFA $D$, the intersection-emptiness test of $g$ and $D$ returns true if and only if the
+intersection of the language of $g$ and the language of $D$ is empty. -/
 theorem interEmptyB_iff {g : EncodedCFG T} {D : EncodedDFA T} :
     interEmptyB g D = true ↔ g.language ⊓ D.language = 0 := by
   rw [interEmptyB, Bool.not_eq_true', ← Bool.not_eq_true, List.any_eq_true]
@@ -287,11 +321,16 @@ theorem interEmptyB_iff {g : EncodedCFG T} {D : EncodedDFA T} :
     rw [h] at hw
     exact Language.notMem_zero w hw
 
-/-- The inclusion test: the intersection with the complement is empty. -/
+/-- **The inclusion test for a grammar and a DFA.** For an encoded context-free grammar $g$ and an
+encoded DFA $D$ over the same alphabet $T$, where $T$ has decidable equality, the inclusion test on
+$g$ and $D$ is the Boolean value of the emptiness test on $g$ and the complement of $D$. -/
 def subsetB (g : EncodedCFG T) (D : EncodedDFA T) : Bool :=
   interEmptyB g D.compl
 
-/-- **Correctness of the inclusion test.** -/
+/-- **Correctness of the inclusion test.** For every alphabet $T$ with decidable equality, every
+encoded context-free grammar $g$ over $T$ and every encoded DFA $D$ over $T$, the inclusion test
+on $g$ and $D$ returns true if and only if the language of $g$ is contained in the language of
+$D$. -/
 theorem subsetB_iff {g : EncodedCFG T} {D : EncodedDFA T} :
     subsetB g D = true ↔ g.language ≤ D.language := by
   rw [subsetB, interEmptyB_iff]
@@ -397,14 +436,20 @@ theorem primrec_interEmptyB : Primrec₂ (interEmptyB (T := T)) :=
 theorem primrec_subsetB : Primrec₂ (subsetB (T := T)) :=
   primrec_interEmptyB.comp₂ Primrec₂.left (EncodedDFA.primrec_compl.comp₂ Primrec₂.right)
 
-/-- **Emptiness of the intersection of a context-free and a regular language is decidable** by a
-multi-stack machine. -/
+/-- **Emptiness of the intersection of a context-free and a regular language is decidable.** For
+every alphabet $T$ with decidable equality and a primitive recursive encoding, the property of a
+pair $(g, D)$, where $g$ is an encoded context-free grammar over $T$ and $D$ is an encoded DFA
+over $T$, that the intersection of the language of $g$ and the language of $D$ is empty is
+decidable by a multi-stack machine. -/
 theorem tm2Decidable_inter_eq_zero :
     TM2Decidable fun p : EncodedCFG T × EncodedDFA T => p.1.language ⊓ p.2.language = 0 :=
   tm2Decidable_iff_computablePred.2
     (computablePred_of_primrec_bool primrec_interEmptyB fun _ => interEmptyB_iff)
 
-/-- **Inclusion of a context-free language in a regular language is decidable** by a multi-stack
+/-- **Inclusion of a context-free language in a regular language is decidable.** For every
+alphabet $T$ with decidable equality and a primitive recursive encoding, the property of a pair
+$(g, D)$, where $g$ is an encoded context-free grammar over $T$ and $D$ is an encoded DFA over
+$T$, that the language of $g$ is contained in the language of $D$ is decidable by a multi-stack
 machine. -/
 theorem tm2Decidable_language_le :
     TM2Decidable fun p : EncodedCFG T × EncodedDFA T => p.1.language ≤ p.2.language :=

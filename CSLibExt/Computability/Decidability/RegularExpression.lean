@@ -54,8 +54,10 @@ namespace Cslib.Language
 
 open Cslib.Decidability
 
-/-- One node of an encoded regular expression; the arguments of `plus`, `comp` and `star` are
-indices of nodes. -/
+/-- **Regular-expression node.** A node of an encoded regular expression over an alphabet
+$\alpha$ is one of six kinds: zero, epsilon, a letter $a \in \alpha$, a sum with arguments
+$i, j \in \mathbb{N}$, a product (concatenation) with arguments $i, j \in \mathbb{N}$, or a star
+with argument $i \in \mathbb{N}$, where the arguments are indices of nodes. -/
 inductive RegexNode (α : Type*) where
   | zero
   | epsilon
@@ -64,9 +66,11 @@ inductive RegexNode (α : Type*) where
   | comp (i j : ℕ)
   | star (i : ℕ)
 
-/-- A regular expression as data: a list of nodes whose arguments are node indices, with the last
-node as the root. Any list is allowed: arguments that are not earlier nodes read as `0`, and the
-empty list denotes `0` (see `regexAt`, `toRegex`). -/
+/-- **Encoded regular expressions.** An encoded regular expression over an alphabet $\alpha$ is a
+list of regular-expression nodes, each a constant ($0$, $1$ or a letter) or an operator (sum,
+concatenation or star) whose arguments are node indices; the last node is the root. Any list is
+allowed: in the semantics, an argument that is not the index of an earlier node reads as $0$,
+and the empty list denotes $0$. -/
 structure EncodedRegex (α : Type*) where
   /-- The nodes. -/
   nodes : List (RegexNode α)
@@ -77,11 +81,18 @@ variable {α : Type*}
 
 /-! ## Semantics -/
 
-/-- The node at index `k` (`zero` past the end). -/
+/-- **Node at an index.** For an encoded regular expression $e$ and a natural number $k$, the
+node of $e$ at index $k$ is the entry at position $k$ (counting from $0$) of its list of
+nodes, or the zero node when $k$ is at least the length of the list. -/
 def node (e : EncodedRegex α) (k : ℕ) : RegexNode α :=
   e.nodes.getD k .zero
 
-/-- The regular expression at node `k`; an argument that is not an earlier node reads as `0`. -/
+/-- **Regular expression at a node.** For an encoded regular expression $e$ and $k \in \mathbb{N}$,
+the regular expression at node $k$ is defined by recursion on $k$ from the node of $e$ at index
+$k$ (a zero node when $k$ is past the end): a zero node gives $0$, an epsilon node gives $1$, a
+node for a letter $a$ gives $a$, and a sum, product or star node gives the sum, product or star
+of the regular expressions at its arguments, where an argument that is not smaller than $k$
+reads as $0$. -/
 def regexAt (e : EncodedRegex α) (k : ℕ) : RegularExpression α :=
   match e.node k with
   | .zero => 0
@@ -92,8 +103,9 @@ def regexAt (e : EncodedRegex α) (k : ℕ) : RegularExpression α :=
   | .star i => .star (if _ : i < k then e.regexAt i else 0)
 termination_by k
 
-/-- The regular expression an encoding denotes: the one at the last node (`0` for the empty
-list, where `node` reads past the end). -/
+/-- **The regular expression denoted by an encoding.** An encoded regular expression $e$ with $n$
+nodes denotes the regular expression at its node $n - 1$, the last node. For $n = 0$ this is the
+expression at node $0$, which lies past the end of the list and is the empty expression $0$. -/
 def toRegex (e : EncodedRegex α) : RegularExpression α :=
   e.regexAt (e.nodes.length - 1)
 
@@ -134,7 +146,10 @@ theorem node_append {l m : List (RegexNode α)} {k : ℕ} (hk : k < l.length) :
     (⟨l ++ m⟩ : EncodedRegex α).node k = (⟨l⟩ : EncodedRegex α).node k :=
   List.getD_append _ _ _ _ hk
 
-/-- The expression at a node only depends on the nodes up to it. -/
+/-- **Appending nodes does not change earlier expressions.** Let $l$ and $m$ be lists of
+regular-expression nodes and let $k$ be smaller than the length of $l$. Then the regular
+expression at node $k$ of the encoding with nodes $l$ followed by $m$ equals the regular
+expression at node $k$ of the encoding with nodes $l$. -/
 theorem regexAt_append {l m : List (RegexNode α)} {k : ℕ} (hk : k < l.length) :
     (⟨l ++ m⟩ : EncodedRegex α).regexAt k = (⟨l⟩ : EncodedRegex α).regexAt k := by
   induction k using Nat.strong_induction_on with
@@ -152,7 +167,13 @@ theorem regexAt_append {l m : List (RegexNode α)} {k : ℕ} (hk : k < l.length)
 
 /-! ## Every regular expression has an encoding -/
 
-/-- Append the nodes of `r` after `l`, in postorder: the root of `r` is the last node. -/
+/-- **Postorder encoding after a prefix.** For a regular expression $r$ and a list $l$ of nodes,
+the nodes of $r$ are appended after $l$ in postorder, by recursion on $r$. For $0$, $1$ and a
+letter $a$, append the single node $0$, $1$ or $a$. For a sum $s + t$ (respectively a
+concatenation $st$), append the nodes of $s$ after $l$, giving $l_1$, then the nodes of $t$ after
+$l_1$, giving $l_2$, then a sum (respectively concatenation) node with arguments $|l_1| - 1$ and
+$|l_2| - 1$. For a star $s^*$, append the nodes of $s$ after $l$, giving $l_1$, then a star node
+with argument $|l_1| - 1$. The root of $r$ is the last node. -/
 def flattenAux : RegularExpression α → List (RegexNode α) → List (RegexNode α)
   | .zero, l => l ++ [.zero]
   | .epsilon, l => l ++ [.epsilon]
@@ -169,7 +190,9 @@ def flattenAux : RegularExpression α → List (RegexNode α) → List (RegexNod
       let l₁ := flattenAux r l
       l₁ ++ [.star (l₁.length - 1)]
 
-/-- The encoding of a regular expression. -/
+/-- **Encoding of a regular expression.** The encoding of a regular expression $r$ is the list of
+nodes obtained by appending the nodes of $r$ in postorder after the empty list, so that the root
+of $r$ is the last node. -/
 def flatten (r : RegularExpression α) : EncodedRegex α :=
   ⟨flattenAux r []⟩
 
@@ -242,7 +265,9 @@ theorem regexAt_flattenAux (r : RegularExpression α) (l : List (RegexNode α)) 
         regexAt_of_star (node_last _ _), ite_eq_left (show l₁.length - 1 < l₁.length by omega),
         regexAt_append (by omega), hr]
 
-/-- **Every regular expression has an encoding.** -/
+/-- **Every regular expression has an encoding.** For every regular expression $r$ over an
+alphabet $\alpha$, the encoded regular expression obtained by flattening $r$ (listing the nodes of
+its subexpressions in postorder, so that the root of $r$ is the last node) denotes $r$. -/
 theorem toRegex_flatten (r : RegularExpression α) : (flatten r).toRegex = r :=
   regexAt_flattenAux r []
 
@@ -252,23 +277,45 @@ Three flags per node, computed from the flags of earlier nodes: the language is 
 a nonempty word, and it is infinite. A product is infinite when one factor is infinite and the
 other nonempty; a star is infinite exactly when its argument has a nonempty word. -/
 
-/-- The flags of the empty language (also read for arguments that are not earlier nodes). -/
+/-- **Flags of the empty language.** The flag triple of the empty language is
+$(\mathrm{false}, \mathrm{false}, \mathrm{false})$; the three flags of a language say whether it is
+nonempty, whether it has a nonempty word, and whether it is infinite. This triple is also read for
+an argument of a node that is not an earlier node. -/
 def zeroFlags : Bool × Bool × Bool :=
   (false, false, false)
 
-/-- The flags of a sum. -/
+/-- **Flags of a sum.** For triples of booleans $b = (b_1, b_2, b_3)$ and
+$c = (c_1, c_2, c_3)$, the flags of the sum are $(b_1 \lor c_1, b_2 \lor c_2, b_3 \lor c_3)$.
+
+If $b$ and $c$ record whether languages $L$ and $M$ are nonempty, contain a nonempty word and
+are infinite, then the flags of the sum record the same for their union $L \cup M$. -/
 def plusFlags (b c : Bool × Bool × Bool) : Bool × Bool × Bool :=
   (b.1 || c.1, b.2.1 || c.2.1, b.2.2 || c.2.2)
 
-/-- The flags of a product: infinite when one factor is infinite and the other nonempty. -/
+/-- **Flags of a concatenation.** For triples of Booleans $b = (b_1, b_2, b_3)$ and
+$c = (c_1, c_2, c_3)$, the flags of the product are
+$(b_1 \land c_1,\ (b_2 \land c_1) \lor (b_1 \land c_2),\ (b_3 \land c_1) \lor (b_1 \land c_3))$.
+
+If $b$ and $c$ record whether languages $L$ and $M$ are nonempty, contain a nonempty word,
+and are infinite, the result records the same for $LM$: in particular $LM$ is infinite when
+one factor is infinite and the other nonempty. -/
 def compFlags (b c : Bool × Bool × Bool) : Bool × Bool × Bool :=
   (b.1 && c.1, b.2.1 && c.1 || b.1 && c.2.1, b.2.2 && c.1 || b.1 && c.2.2)
 
-/-- The flags of a star: infinite exactly when the argument has a nonempty word. -/
+/-- **Flags of a star.** Given a triple of Booleans $(b_1, b_2, b_3)$, the flags of its star are
+$(\mathrm{true}, b_2, b_2)$. Read as the flags (nonempty, has a nonempty word, infinite) of a
+language, a star is always nonempty, and it has a nonempty word, and is infinite, exactly when
+the argument has a nonempty word. -/
 def starFlags (b : Bool × Bool × Bool) : Bool × Bool × Bool :=
   (true, b.2.1, b.2.1)
 
-/-- The flags of a node from the flags `acc` of the nodes before it. -/
+/-- **Flags of the next node.** Given the list $A$ of flag triples of the nodes before it, the
+flag triple of a node is $(\mathrm{false}, \mathrm{false}, \mathrm{false})$ for a zero node,
+$(\mathrm{true}, \mathrm{false}, \mathrm{false})$ for an epsilon node and
+$(\mathrm{true}, \mathrm{true}, \mathrm{false})$ for a letter node. For a sum, product or star
+node it is the flags of a sum, product or star applied to the entries of $A$ at its arguments,
+where an argument that is not an index of $A$ reads as
+$(\mathrm{false}, \mathrm{false}, \mathrm{false})$. -/
 def stepFlags (acc : List (Bool × Bool × Bool)) : RegexNode α → Bool × Bool × Bool
   | .zero => zeroFlags
   | .epsilon => (true, false, false)
@@ -277,11 +324,15 @@ def stepFlags (acc : List (Bool × Bool × Bool)) : RegexNode α → Bool × Boo
   | .comp i j => compFlags (acc.getD i zeroFlags) (acc.getD j zeroFlags)
   | .star i => starFlags (acc.getD i zeroFlags)
 
-/-- The flags of all nodes, in one left-to-right pass. -/
+/-- **Flags of all nodes.** For a list of nodes $n_0, \dots, n_{m-1}$, the flags
+$f_0, \dots, f_{m-1}$ are computed in one left-to-right pass: $f_k$ is the step flags of node
+$n_k$ computed from the flags $f_0, \dots, f_{k-1}$ of the nodes before it. -/
 def flags (l : List (RegexNode α)) : List (Bool × Bool × Bool) :=
   l.foldl (fun acc n => acc ++ [stepFlags acc n]) []
 
-/-- The flags describe a language: nonempty, has a nonempty word, infinite. -/
+/-- **Flags of a language.** A triple of Booleans $(b_1, b_2, b_3)$ describes a language $L$ when
+$b_1$ is true exactly when $L$ is nonempty, $b_2$ is true exactly when $L$ contains a nonempty
+word, and $b_3$ is true exactly when $L$ is infinite. -/
 def FlagsOK (b : Bool × Bool × Bool) (L : Language α) : Prop :=
   (b.1 = true ↔ ∃ w, w ∈ L) ∧ (b.2.1 = true ↔ ∃ w ∈ L, w ≠ []) ∧ (b.2.2 = true ↔ L.Infinite)
 
@@ -405,7 +456,11 @@ theorem flags_append_singleton (l : List (RegexNode α)) (n : RegexNode α) :
   rw [flags, List.foldl_append, ← flags]
   rfl
 
-/-- The flags of every node describe the language of its expression. -/
+/-- **Correctness of the flag pass.** For a list $l$ of nodes and a natural number $k$, let $f_k$
+be the entry at position $k$ of the flags of $l$, or the zero flags
+$(\mathrm{false}, \mathrm{false}, \mathrm{false})$ if $k$ is at least the length of $l$. Then
+$f_k$ describes the language of the regular expression at node $k$ of the encoding $l$ when $k$
+is less than the length of $l$, and describes the empty language otherwise. -/
 theorem flagsOK_flags (l : List (RegexNode α)) :
     ∀ k, FlagsOK ((flags l).getD k zeroFlags)
       (if k < l.length then (⟨l⟩ : EncodedRegex α).regexAt k else 0).matches' := by
@@ -452,8 +507,14 @@ theorem flagsOK_flags (l : List (RegexNode α)) :
         simp only [hk', ↓reduceIte]
         exact flagsOK_zero
 
-/-- **Infiniteness test**: the infiniteness flag of the root, from one structural pass over the
-nodes. -/
+/-- **Infiniteness test for encoded regular expressions.** Let $e$ be an encoded regular
+expression with nodes $n_0, \dots, n_{m-1}$, and let $f_0, \dots, f_{m-1}$ be the flags of all
+nodes of $e$, the triples of Booleans computed in one left-to-right pass over the nodes. The
+infiniteness test of $e$ is the third component of $f_{m-1}$, the flag triple of the last node
+(the root); when $e$ has no nodes it is false.
+
+The three flags of a node say whether its language is nonempty, contains a nonempty word and is
+infinite, so the test returns true exactly when the language of $e$ is infinite. -/
 def infiniteB (e : EncodedRegex α) : Bool :=
   ((flags e.nodes).getD (e.nodes.length - 1) zeroFlags).2.2
 
@@ -467,21 +528,33 @@ theorem infiniteB_iff {e : EncodedRegex α} : e.infiniteB = true ↔ e.toRegex.m
 
 /-! ## The grammar of an encoded regular expression -/
 
-/-- The productions of a `plus` node: a unit production to each argument that is an earlier
-node. -/
+/-- **Productions of a sum node.** For natural numbers $k$, $i$ and $j$, the productions of a
+sum node $k$ with arguments $i$ and $j$ are the unit production $k \to i$ if $i < k$, followed
+by the unit production $k \to j$ if $j < k$ (and nothing else). Nonterminals are node indices. -/
 def plusRules (k i j : ℕ) : List (ℕ × List (ℕ ⊕ α)) :=
   (if i < k then [(k, [.inl i])] else []) ++ (if j < k then [(k, [.inl j])] else [])
 
-/-- The productions of a `comp` node: `k → i j` when both arguments are earlier nodes. -/
+/-- **Productions of a concatenation node.** For natural numbers $k$, $i$ and $j$, the
+productions of a concatenation node $k$ with arguments $i$ and $j$ are the single production
+$k \to i\,j$ (nonterminal $i$ followed by nonterminal $j$) when $i < k$ and $j < k$, and there
+are none otherwise. -/
 def compRules (k i j : ℕ) : List (ℕ × List (ℕ ⊕ α)) :=
   if i < k ∧ j < k then [(k, [.inl i, .inl j])] else []
 
-/-- The productions of a `star` node: `k → ε`, and `k → i k` when the argument is an earlier
-node. -/
+/-- **Productions of a star node.** For natural numbers $k$ and $i$, the productions of a star
+node $k$ with argument $i$ are $k \to \varepsilon$, followed by $k \to i\,k$ if $i < k$ (and
+nothing else). Nonterminals are node indices. -/
 def starRules (k i : ℕ) : List (ℕ × List (ℕ ⊕ α)) :=
   (k, []) :: (if i < k then [(k, [.inl i, .inl k])] else [])
 
-/-- The productions of node `k`, with left-hand side `k`. -/
+/-- **Productions of a node.** For a natural number $k$ and a node $n$, the productions of
+node $k$ are the following encoded productions, all with left-hand side $k$, where nonterminal
+$i$ stands for node $i$: none if $n$ is the zero node; $k \to \varepsilon$ if $n$ is the
+empty-word node; $k \to a$ if $n$ is the character $a$; if $n$ is a sum with arguments $i$ and
+$j$, the unit production $k \to i$ when $i < k$ and the unit production $k \to j$ when
+$j < k$; if $n$ is a product with arguments $i$ and $j$, the production $k \to i\,j$ when
+$i < k$ and $j < k$; if $n$ is a star with argument $i$, the production $k \to \varepsilon$
+together with $k \to i\,k$ when $i < k$. -/
 def nodeRules (k : ℕ) : RegexNode α → List (ℕ × List (ℕ ⊕ α))
   | .zero => []
   | .epsilon => [(k, [])]
@@ -490,8 +563,15 @@ def nodeRules (k : ℕ) : RegexNode α → List (ℕ × List (ℕ ⊕ α))
   | .comp i j => compRules k i j
   | .star i => starRules k i
 
-/-- The grammar of an encoded regular expression: one nonterminal per node, the root as start
-symbol. -/
+/-- **The grammar of an encoded regular expression.** For an encoded regular expression $e$ with
+$n$ nodes, its grammar is the encoded context-free grammar with start nonterminal $n - 1$
+(truncated subtraction, so $0$ when $n = 0$), in which nonterminal $k$ stands for node $k$. Its
+productions are, for each node $k < n$: none if node $k$ is $0$; $k \to \varepsilon$ if it is
+$\varepsilon$; if it is the letter $a$, the production $k \to a$; if it is the sum of nodes $i$
+and $j$, the productions $k \to i$ (when $i < k$) and $k \to j$ (when $j < k$); if it is the
+product of nodes $i$ and $j$, the production $k \to i\,j$ (when $i < k$ and $j < k$); and if it
+is the star of node $i$, the productions $k \to \varepsilon$ and $k \to i\,k$ (when $i < k$).
+There are no other productions. -/
 def toGrammar (e : EncodedRegex α) : EncodedCFG α :=
   ⟨e.nodes.length - 1, (List.range e.nodes.length).flatMap fun k => nodeRules k (e.node k)⟩
 
@@ -526,8 +606,11 @@ theorem mem_rules_iff {e : EncodedRegex α} {k : ℕ} {x : ℕ × List (ℕ ⊕ 
     rw [node_of_le (not_lt.1 hk)] at hx
     simp [nodeRules] at hx
 
-/-- The language of a sentential form, where nonterminal `k` stands for the language of node
-`k`. -/
+/-- **Language of a sentential form.** For an encoded regular expression $e$, the language of a
+sentential form $X_1 \cdots X_n$ (terminals in $\alpha$, nonterminals in $\mathbb{N}$) is the
+product $L_1 \cdots L_n$, where $L_i$ is $\{a\}$, the language of the one-letter word $a$, when
+$X_i$ is the terminal $a$, and the language of the regular expression at node $k$ of $e$ when
+$X_i$ is the nonterminal $k$. The empty form has language $\{\varepsilon\}$. -/
 def formLang (e : EncodedRegex α) : List (Symbol α ℕ) → Language α
   | [] => 1
   | .terminal a :: u => {[a]} * e.formLang u
@@ -542,7 +625,12 @@ theorem mem_formLang_two {e : EncodedRegex α} {i j : ℕ} {w : List α} :
       w ∈ (e.regexAt i).matches' * (e.regexAt j).matches' := by
   simp [formLang]
 
-/-- A production of node `k` only produces words of the language of node `k`. -/
+/-- **A production of a node only produces words of its language.** Let $e$ be an encoded
+regular expression, $k$ a natural number and $x$ one of the productions of node $k$ built from
+the node of $e$ at index $k$. If a word $w$ belongs to the language of the right-hand side of
+$x$ (the concatenation, over its symbols, of $\{a\}$ for a terminal $a$ and of the language of
+the regular expression at node $i$ for a nonterminal $i$), then $w$ belongs to the language of
+the regular expression at node $k$. -/
 theorem mem_matches_of_mem_nodeRules {e : EncodedRegex α} {k : ℕ} {x : ℕ × List (ℕ ⊕ α)}
     {w : List α} (hx : x ∈ nodeRules k (e.node k))
     (hw : w ∈ e.formLang (x.2.map EncodedCFG.decodeSymbol)) : w ∈ (e.regexAt k).matches' := by
@@ -628,7 +716,11 @@ theorem yields_singleton_iff {e : EncodedRegex α} {k : ℕ} {w : List α} :
     obtain ⟨hx', hk⟩ := mem_rules_iff.2 hx
     exact ⟨EncodedCFG.decodeRule x, EncodedCFG.mem_toCFG_rules.2 ⟨x, hx', rfl⟩, hk, hw⟩
 
-/-- Soundness: a sentential form only yields words of its language. -/
+/-- **Soundness of the grammar of a regular expression.** Let $e$ be an encoded regular
+expression. If a sentential form $u$ of the context-free grammar of $e$ yields a terminal word
+$w$, then $w$ belongs to the language of $u$: the concatenation, over the symbols of $u$, of
+$\{a\}$ for a terminal $a$ and of the language of the regular expression at node $k$ for a
+nonterminal $k$. -/
 theorem mem_formLang_of_yields {e : EncodedRegex α} {u : List (Symbol α e.toGrammar.toCFG.NT)}
     {w : List α}
     (h : Yields e.toGrammar.toCFG u w) : w ∈ e.formLang u := by
@@ -640,7 +732,10 @@ theorem mem_formLang_of_yields {e : EncodedRegex α} {u : List (Symbol α e.toGr
       obtain ⟨x, hx, rfl⟩ := EncodedCFG.mem_toCFG_rules.1 hr
       exact mem_matches_of_mem_nodeRules (mem_rules_iff.1 ⟨hx, rfl⟩) ihout
 
-/-- Completeness: node `k` yields every word of its language. -/
+/-- **Completeness of the grammar of an encoded regular expression.** Let $\alpha$ be an alphabet
+with decidable equality, $e$ an encoded regular expression over $\alpha$ and $k$ a natural number.
+Every word in the language of the regular expression at node $k$ of $e$ is yielded by the
+sentential form consisting of the single nonterminal $k$ in the context-free grammar of $e$. -/
 theorem yields_of_mem_matches {e : EncodedRegex α} :
     ∀ k {w : List α}, w ∈ (e.regexAt k).matches' → Yields e.toGrammar.toCFG [.nonterminal k] w := by
   intro k
@@ -712,20 +807,27 @@ theorem yields_iff_mem_matches {e : EncodedRegex α} {k : ℕ} {w : List α} :
     Yields e.toGrammar.toCFG [.nonterminal k] w ↔ w ∈ (e.regexAt k).matches' :=
   ⟨fun h => mem_formLang_one.1 (mem_formLang_of_yields h), yields_of_mem_matches k⟩
 
-/-- **The grammar generates the language of the expression.** -/
+/-- **The grammar generates the language of the expression.** For every encoded regular
+expression $e$, the language of the context-free grammar of $e$ (one nonterminal per node, the
+root as start symbol) equals the language of the regular expression that $e$ denotes. -/
 theorem language_toGrammar (e : EncodedRegex α) : e.toGrammar.language = e.toRegex.matches' := by
   ext w
   rw [EncodedCFG.language, mem_language_iff_yields]
   exact yields_iff_mem_matches
 
-/-- **Membership test**: run the A_CFG decider on the grammar of the expression. -/
+/-- **Membership test for regular expressions.** For an encoded regular expression $e$ and a
+word $w$, the test returns the answer of the membership test for encoded context-free grammars
+on the word $w$ and the grammar of $e$, which has one nonterminal per node and the root as
+start symbol. -/
 def memB (e : EncodedRegex α) (w : List α) : Bool :=
   e.toGrammar.memLanguageB w
 
 theorem memB_iff {e : EncodedRegex α} {w : List α} : e.memB w = true ↔ w ∈ e.toRegex.matches' := by
   rw [memB, EncodedCFG.memLanguageB_iff, language_toGrammar]
 
-/-- **Emptiness test**: run the E_CFG decider on the grammar of the expression. -/
+/-- **Emptiness test for regular expressions.** For an encoded regular expression $e$, the test
+returns the answer of the emptiness test for encoded context-free grammars on the grammar of
+$e$, which has one nonterminal per node and the root as start symbol. -/
 def isEmptyB (e : EncodedRegex α) : Bool :=
   e.toGrammar.isEmptyB
 
@@ -734,7 +836,9 @@ theorem isEmptyB_iff {e : EncodedRegex α} : e.isEmptyB = true ↔ e.toRegex.mat
   classical
   rw [isEmptyB, EncodedCFG.isEmptyB_iff, language_toGrammar]
 
-/-- **Inclusion test**: run the CFG ⊆ DFA decider on the grammar of the expression. -/
+/-- **Inclusion test.** For an encoded regular expression $e$ and an encoded DFA $D$, the
+inclusion test returns the Boolean computed by the CFG ⊆ DFA inclusion test on the grammar of
+$e$ and the automaton $D$. -/
 def subsetB (e : EncodedRegex α) (D : Cslib.Automata.EncodedDFA α) : Bool :=
   EncodedCFG.subsetB e.toGrammar D
 
@@ -746,7 +850,13 @@ theorem subsetB_iff {e : EncodedRegex α} {D : Cslib.Automata.EncodedDFA α} :
 
 section Computable
 
-/-- Nodes as a sum type. -/
+/-- **Regex nodes as a sum type.** The bijection between the nodes of encoded regular
+expressions over $\alpha$ and $1 \oplus 1 \oplus \alpha \oplus (\mathbb{N} \times \mathbb{N}) \oplus
+(\mathbb{N} \times \mathbb{N}) \oplus \mathbb{N}$, where $1$ is the one-point type, that sends the
+zero node and the empty-word node to the first and second copies of $1$, a character node $a$
+to $a$, a sum node with arguments $i, j$ to $(i, j)$ in the first copy of
+$\mathbb{N} \times \mathbb{N}$, a product node with arguments $i, j$ to $(i, j)$ in the second,
+and a star node with argument $i$ to $i$. -/
 def nodeEquiv : RegexNode α ≃ Unit ⊕ Unit ⊕ α ⊕ (ℕ × ℕ) ⊕ (ℕ × ℕ) ⊕ ℕ where
   toFun
     | .zero => .inl ()
@@ -765,7 +875,9 @@ def nodeEquiv : RegexNode α ≃ Unit ⊕ Unit ⊕ α ⊕ (ℕ × ℕ) ⊕ (ℕ 
   left_inv n := by cases n <;> rfl
   right_inv s := by rcases s with _ | _ | _ | ⟨_, _⟩ | ⟨_, _⟩ | _ <;> rfl
 
-/-- Encoded regular expressions as lists of nodes. -/
+/-- **Encodings are lists of nodes.** The map sending an encoded regular expression over $\alpha$
+to its list of nodes is a bijection onto the lists of regular-expression nodes over $\alpha$; its
+inverse wraps a list of nodes as an encoding. -/
 def equivList : EncodedRegex α ≃ List (RegexNode α) where
   toFun e := e.nodes
   invFun l := ⟨l⟩
@@ -877,8 +989,12 @@ theorem primrec_memB : Primrec₂ (memB (α := α)) :=
   EncodedCFG.primrec_memLanguageB.comp (primrec_toGrammar.comp Primrec.fst) Primrec.snd
 
 omit [DecidableEq α] in
-/-- **Sipser, Theorem 4.3**: membership for regular expressions (A_REX) is decidable by a
-multi-stack machine. -/
+/-- **Membership for regular expressions is decidable.** Let $\alpha$ be an alphabet with a
+primitive recursive coding by natural numbers. The set of pairs $(e, w)$ of an encoded regular
+expression $e$ over $\alpha$ and a word $w$ over $\alpha$ such that $w$ belongs to the language of
+the regular expression denoted by $e$ is decidable by a multi-stack machine.
+
+Source: Sipser, Introduction to the Theory of Computation, Theorem 4.3 ($A_{\mathsf{REX}}$). -/
 theorem tm2Decidable_mem_matches :
     TM2Decidable fun p : EncodedRegex α × List α => p.2 ∈ p.1.toRegex.matches' := by
   classical
@@ -890,7 +1006,9 @@ theorem primrec_isEmptyB : Primrec (isEmptyB (α := α)) :=
   EncodedCFG.primrec_isEmptyB.comp primrec_toGrammar
 
 omit [DecidableEq α] in
-/-- Emptiness for regular expressions (E_REX) is decidable by a multi-stack machine. -/
+/-- **Emptiness of regular expressions is decidable.** For an alphabet $\alpha$ with a primitive
+recursive encoding, the property of an encoded regular expression over $\alpha$ that the
+language it denotes is empty (E_REX) is decidable by a multi-stack machine. -/
 theorem tm2Decidable_matches_eq_zero :
     TM2Decidable fun e : EncodedRegex α => e.toRegex.matches' = 0 := by
   classical
@@ -994,15 +1112,20 @@ theorem primrec_subsetB : Primrec₂ (subsetB (α := α)) :=
   EncodedCFG.primrec_subsetB.comp (primrec_toGrammar.comp Primrec.fst) Primrec.snd
 
 omit [DecidableEq α] in
-/-- Infiniteness for regular expressions is decidable by a multi-stack machine. -/
+/-- **Infiniteness of regular expressions is decidable.** For an alphabet $\alpha$ with a
+primitive recursive encoding, the property of an encoded regular expression over $\alpha$ that
+the language it denotes is infinite is decidable by a multi-stack machine. -/
 theorem tm2Decidable_matches_infinite :
     TM2Decidable fun e : EncodedRegex α => e.toRegex.matches'.Infinite := by
   classical
   exact tm2Decidable_iff_computablePred.2
     (computablePred_of_primrec_bool primrec_infiniteB fun _ => infiniteB_iff)
 
-/-- Inclusion of a regular expression's language in an encoded DFA's language is decidable by a
-multi-stack machine. -/
+/-- **Inclusion of a regular language in a DFA language is decidable.** Let $\alpha$ be an
+alphabet with decidable equality and a primitive recursive coding by natural numbers. The set of
+pairs $(e, D)$ of an encoded regular expression $e$ over $\alpha$ and an encoded DFA $D$ over
+$\alpha$ such that the language of the regular expression denoted by $e$ is contained in the
+language of $D$ is decidable by a multi-stack machine. -/
 theorem tm2Decidable_matches_le :
     TM2Decidable fun p : EncodedRegex α × Cslib.Automata.EncodedDFA α =>
       p.1.toRegex.matches' ≤ p.2.language :=

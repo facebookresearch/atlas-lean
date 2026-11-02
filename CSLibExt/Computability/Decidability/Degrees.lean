@@ -36,8 +36,12 @@ namespace Cslib.Decidability
 
 open scoped Computability
 
-/-- Oracle codes: `Nat.Partrec.Code` extended with an `oracle` instruction
-that queries the oracle on its (single) input.
+/-- **Oracle codes.** Oracle codes are the finite programs built from the basic codes
+$\mathtt{zero}$, $\mathtt{succ}$, $\mathtt{left}$, $\mathtt{right}$ and $\mathtt{oracle}$ by the
+binary constructors $\mathtt{pair}$, $\mathtt{comp}$ and $\mathtt{prec}$ and the unary constructor
+$\mathtt{rfind}$. They are the codes for partial recursive functions (constant zero, successor,
+the two unpairing projections, pairing, composition, primitive recursion and unbounded search)
+extended by an instruction $\mathtt{oracle}$ that queries the oracle on its input.
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, §2 (oracle computations). -/
 inductive OracleCode where
   | zero : OracleCode
@@ -50,7 +54,19 @@ inductive OracleCode where
   | rfind : OracleCode → OracleCode
   | oracle : OracleCode
 
-/-- A Gödel numbering of oracle codes: an injection into `ℕ`.
+/-- **The Gödel numbering of oracle codes.** Write $\langle a, b \rangle$ for the pairing of
+natural numbers equal to $b^2 + a$ if $a < b$ and to $a^2 + a + b$ otherwise. The code number
+$\ulcorner c \urcorner$ of an oracle code $c$ is defined by recursion on $c$: $\mathsf{zero}$,
+$\mathsf{succ}$, $\mathsf{left}$, $\mathsf{right}$ and $\mathsf{oracle}$ have code numbers
+$\langle 0, 0 \rangle$, $\langle 1, 0 \rangle$, $\langle 2, 0 \rangle$, $\langle 3, 0 \rangle$ and
+$\langle 8, 0 \rangle$; $\mathsf{pair}(a, b)$, $\mathsf{comp}(a, b)$ and $\mathsf{prec}(a, b)$
+have code numbers $\langle 4, \langle \ulcorner a \urcorner, \ulcorner b \urcorner \rangle \rangle$,
+$\langle 5, \langle \ulcorner a \urcorner, \ulcorner b \urcorner \rangle \rangle$ and
+$\langle 6, \langle \ulcorner a \urcorner, \ulcorner b \urcorner \rangle \rangle$; and
+$\mathsf{rfind}(a)$ has code number $\langle 7, \ulcorner a \urcorner \rangle$.
+
+This numbering is an injection into $\mathbb{N}$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings). -/
 def encodeOracleCode : OracleCode → ℕ
@@ -96,14 +112,18 @@ theorem encodeOracleCode_injective : Function.Injective encodeOracleCode := by
         | exact absurd hab.1 (by decide)
         | exact congrArg OracleCode.rfind (ih hab.2)
 
-/-- **Pairing is at least its first argument.**
+/-- **Pairing is at least its first argument.** Let $\langle a, b \rangle$ denote the pairing of
+natural numbers, equal to $b^2 + a$ if $a < b$ and to $a^2 + a + b$ otherwise. For all natural
+numbers $a$ and $b$, $a \le \langle a, b \rangle$.
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
 theorem pair_ge_fst (a b : ℕ) : a ≤ Nat.pair a b := by
   unfold Nat.pair
   split_ifs <;> omega
 
-/-- **Pairing is at least its second argument.**
+/-- **Pairing is at least its second argument.** Let $\langle a, b \rangle$ denote the pairing of
+natural numbers, equal to $b^2 + a$ if $a < b$ and to $a^2 + a + b$ otherwise. For all natural
+numbers $a$ and $b$, $b \le \langle a, b \rangle$.
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
 theorem pair_ge_snd (a b : ℕ) : b ≤ Nat.pair a b := by
@@ -114,7 +134,9 @@ theorem pair_ge_snd (a b : ℕ) : b ≤ Nat.pair a b := by
   · have hb : b ≤ a := Nat.le_of_not_lt h
     omega
 
-/-- **Pairing with `4` strictly increases.**
+/-- **Pairing with $4$ strictly increases the second argument.** Let $\langle a, b \rangle$ denote
+the pairing of natural numbers, equal to $b^2 + a$ if $a < b$ and to $a^2 + a + b$ otherwise.
+For every natural number $x$, $x < \langle 4, x \rangle$.
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
 theorem pair_four_gt (x : ℕ) : x < Nat.pair 4 x := by
@@ -124,7 +146,10 @@ theorem pair_four_gt (x : ℕ) : x < Nat.pair 4 x := by
     omega
   · omega
 
-/-- **Pairing with a positive first argument strictly increases the second.**
+/-- **Pairing with a positive first argument strictly increases the second.** Let
+$\langle a, b \rangle$ denote the pairing of natural numbers, equal to $b^2 + a$ if $a < b$ and to
+$a^2 + a + b$ otherwise. For all natural numbers $t$ and $x$ with $t \ge 1$,
+$x < \langle t, x \rangle$.
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
 theorem pair_gt_snd_of_pos {t x : ℕ} (ht : 1 ≤ t) : x < Nat.pair t x := by
@@ -138,14 +163,22 @@ theorem pair_gt_snd_of_pos {t x : ℕ} (ht : 1 ≤ t) : x < Nat.pair t x := by
   · have hpos : 0 < t * t := Nat.mul_pos ht ht
     omega
 
-/-- **The first unpairing component is at most the number.**
+/-- **The first unpairing component is at most the number.** Let
+$\mathrm{pair} : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ be the pairing bijection with
+$\mathrm{pair}(a, b) = b^2 + a$ if $a < b$ and $\mathrm{pair}(a, b) = a^2 + a + b$ otherwise.
+For every natural number $n$, the first component of $\mathrm{pair}^{-1}(n)$ is at most $n$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
 theorem unpair_fst_le (n : ℕ) : n.unpair.1 ≤ n := by
   conv_rhs => rw [← Nat.pair_unpair n]
   exact pair_ge_fst _ _
 
-/-- **The second unpairing component is at most the number.**
+/-- **The second unpairing component is at most the number.** Let
+$\mathrm{pair} : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ be the pairing bijection with
+$\mathrm{pair}(a, b) = b^2 + a$ if $a < b$ and $\mathrm{pair}(a, b) = a^2 + a + b$ otherwise.
+For every natural number $n$, the second component of $\mathrm{pair}^{-1}(n)$ is at most $n$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
 theorem unpair_snd_le (n : ℕ) : n.unpair.2 ≤ n := by
@@ -167,12 +200,21 @@ def oracleCodeDepth : OracleCode → ℕ
   | .prec a b => max (oracleCodeDepth a) (oracleCodeDepth b) + 1
   | .rfind a => oracleCodeDepth a + 1
 
-/-- Fuel-indexed **computable decoder** for `encodeOracleCode`. Given fuel,
-a tag and a payload, it reconstructs the oracle code whose encoding has
-that tag and payload, by recursion on the fuel (one per constructor level).
-Unlike `Encodable.ofCountable`, this decoder is defined by structural
-recursion with no classical choice, so it is a computable function and is
-extensionally tied to `encodeOracleCode` by `decodeOracleCode_encode`.
+/-- **Fuel-indexed decoder of oracle codes.** Write $\langle a, b \rangle$ for the pairing
+bijection $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ of the Gödel numbering. Given a fuel $f$,
+a tag $t$ and a payload $p$, the decoder either returns an oracle code or fails; to decode a
+number $n = \langle n_1, n_2 \rangle$ with fuel $f$ means to run it with fuel $f$, tag $n_1$ and
+payload $n_2$. With fuel $0$ it fails. With fuel $f + 1$, writing $p = \langle p_1, p_2 \rangle$:
+if $p = 0$ and $t$ is $0$, $1$, $2$, $3$ or $8$, it returns the instruction zero, successor, left
+projection, right projection or oracle query respectively; if $t$ is $4$, $5$ or $6$, it decodes
+$p_1$ and $p_2$ with fuel $f$ and, when these give codes $a$ and $b$, returns the pairing,
+composition or primitive recursion code built from $a$ and $b$ respectively, failing otherwise;
+if $t = 7$, it decodes $p$ with fuel $f$ and, when this gives a code $a$, returns the unbounded
+search code built from $a$, failing otherwise; in all other cases it fails.
+
+The recursion is structural in the fuel and uses no classical choice, so the decoder is a
+computable function; with enough fuel it inverts the Gödel numbering of oracle codes.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 def decodeOracleCodeFuel : ℕ → ℕ → ℕ → Option OracleCode
@@ -210,7 +252,11 @@ def decodeOracleCodeFuel : ℕ → ℕ → ℕ → Option OracleCode
     else if tag = 8 ∧ payload = 0 then some .oracle
     else none
 
-/-- **The decoder inverts the encoder** at any fuel above the code depth.
+/-- **The fuel-indexed decoder inverts the encoder.** Write $\langle a, b \rangle$ for the pairing
+bijection $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ of the Gödel numbering. Let $c$ be an
+oracle code with Gödel number $\langle t, p \rangle$. For every fuel $f$ strictly greater than the
+depth of $c$, the fuel-indexed decoder with fuel $f$, tag $t$ and payload $p$ returns $c$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem decodeOracleCodeFuel_complete : ∀ (c : OracleCode) (fuel : ℕ),
@@ -292,10 +338,14 @@ theorem decodeOracleCodeFuel_complete : ∀ (c : OracleCode) (fuel : ℕ),
       have e1 := ih fuel ha
       simp [encodeOracleCode, Nat.unpair_pair, decodeOracleCodeFuel, e1]
 
-/-- **Decoder soundness**: whatever the fuel-indexed decoder produces, its
-encoding is the input pair. Together with `decodeOracleCodeFuel_complete`
-this says the decoder is exactly the inverse of `encodeOracleCode` on its
-image.
+/-- **Decoder soundness.** Write $\langle a, b \rangle$ for the pairing bijection
+$\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ of the Gödel numbering. For every fuel $f$, tag
+$t$, payload $p$ and oracle code $c$, if the fuel-indexed decoder with fuel $f$, tag $t$ and
+payload $p$ returns $c$, then the Gödel number of $c$ is $\langle t, p \rangle$.
+
+Together with the fact that the fuel-indexed decoder inverts the encoder at any fuel above the
+code depth, this says that the decoder is exactly the inverse of the Gödel numbering on its image.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem decodeOracleCodeFuel_sound : ∀ (fuel : ℕ) (tag payload : ℕ)
@@ -422,7 +472,9 @@ theorem decodeOracleCodeFuel_sound : ∀ (fuel : ℕ) (tag payload : ℕ)
         ite_eq_right h8] at h
       simp at h
 
-/-- **Depth is bounded by the code.**
+/-- **Depth is bounded by the code number.** For every oracle code $c$, the depth of $c$ is at most
+the code number of $c$ under the Gödel numbering of oracle codes.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; size bounds). -/
 theorem oracleCodeDepth_le_encode : ∀ c : OracleCode,
@@ -472,14 +524,20 @@ theorem oracleCodeDepth_le_encode : ∀ c : OracleCode,
     have h2 := pair_gt_snd_of_pos (t := 7) (x := encodeOracleCode a) (by decide)
     omega
 
-/-- The **computable decoder** for `encodeOracleCode`: decode with fuel
-`n + 1`, more than enough since depth is at most the code.
+/-- **Decoding oracle codes.** The computable decoder for the Gödel numbering of oracle codes
+sends a natural number $n$ to the result of the fuel-indexed decoder with fuel $n + 1$, tag $n_1$
+and payload $n_2$, where $(n_1, n_2)$ is the unpairing of $n$; the result is either an oracle code
+or undefined. The fuel $n + 1$ is more than enough, since the depth of an oracle code is at most
+its code number.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 def decodeOracleCode (n : ℕ) : Option OracleCode :=
   decodeOracleCodeFuel (n + 1) n.unpair.1 n.unpair.2
 
-/-- **The computable decoder inverts the encoder.**
+/-- **The computable decoder inverts the encoder.** For every oracle code $c$, the computable
+decoder applied to the Gödel number of $c$ returns $c$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem decodeOracleCode_encode (c : OracleCode) :
@@ -529,11 +587,20 @@ theorem decodeOracleCodeFuel_eq_decode {fuel tag payload : ℕ}
     rw [Nat.unpair_pair]
     exact hcomp.symm
 
-/-- **The decoder, by cases on the tag**: decoding a code number unfolds to
-decoding strictly smaller code numbers (the subcode numbers are
-`payload.unpair.1`, `payload.unpair.2`, `payload`, all below the code number
-by the pairing lemmas). This is the recursion equation used for the
-primitive-recursiveness proof below.
+/-- **The decoder, by cases on the tag.** Write $\langle t, p \rangle$ for the pairing of natural
+numbers used by the Gödel numbering of oracle codes, $(p_1, p_2)$ for the unpairing of $p$ (so that
+$\langle p_1, p_2 \rangle = p$), and $\mathrm{dec}(n)$ for the result of the computable decoder on
+$n$, which is either an oracle code or undefined. Then for all natural numbers $t$ and $p$, the
+value $\mathrm{dec}\langle t, p \rangle$ is: $\mathsf{zero}$, $\mathsf{succ}$, $\mathsf{left}$,
+$\mathsf{right}$ or $\mathsf{oracle}$ when $p = 0$ and $t$ is $0$, $1$, $2$, $3$ or $8$
+respectively; $\mathsf{pair}(a, b)$, $\mathsf{comp}(a, b)$ or $\mathsf{prec}(a, b)$ when $t$ is
+$4$, $5$ or $6$ respectively and $\mathrm{dec}(p_1) = a$ and $\mathrm{dec}(p_2) = b$ are both
+defined; $\mathsf{rfind}(a)$ when $t = 7$ and $\mathrm{dec}(p) = a$ is defined; and undefined in
+every other case.
+
+For $t \in \{4, 5, 6, 7\}$ the numbers decoded on the right, $p_1$, $p_2$ and $p$, are at most $p$
+and hence strictly below $\langle t, p \rangle$, so this is a recursion on the code number.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem decodeOracleCode_pair (tag payload : ℕ) :
@@ -679,16 +746,27 @@ theorem decodeOracleCode_pair (tag payload : ℕ) :
       ite_eq_right h4, ite_eq_right h5, ite_eq_right h6, ite_eq_right h7,
       ite_eq_right h8]
 
-/-- **Whether a code number decodes**: `decodeOracleCode n` is defined exactly
-when `n` is a well-formed code number. This is the Boolean form of
-`decodeOracleCode_pair`, used for the primitive-recursiveness proof.
+/-- **Whether a code number decodes.** For a natural number $n$, this is the Boolean value that is
+true exactly when the computable decoder of oracle codes returns an oracle code on $n$.
+
+By decoder soundness and the inversion of the encoder, this holds exactly when $n$ is the Gödel
+number of an oracle code.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 def decodeIsSome (n : ℕ) : Bool :=
   (decodeOracleCode n).isSome
 
-/-- **The definedness predicate, by cases on the tag**: definedness of a code
-number unfolds to definedness of strictly smaller code numbers.
+/-- **The definedness predicate, by cases on the tag.** Write $\langle a, b \rangle$ for the
+pairing bijection $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ of the Gödel numbering, and say
+that a natural number decodes when the computable decoder returns an oracle code on it. Let $t$
+and $p$ be natural numbers and write $p = \langle p_1, p_2 \rangle$. Then $\langle t, p \rangle$
+decodes if and only if one of the following holds: $t$ is $0$, $1$, $2$, $3$ or $8$ and $p = 0$;
+$t$ is $4$, $5$ or $6$ and both $p_1$ and $p_2$ decode; or $t = 7$ and $p$ decodes.
+
+In the recursive cases $t \ge 1$, so $p_1$, $p_2$ and $p$ are strictly smaller than
+$\langle t, p \rangle$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem decodeIsSome_pair (tag payload : ℕ) :
@@ -768,10 +846,19 @@ theorem decodeIsSome_pair (tag payload : ℕ) :
       ite_eq_right h2, ite_eq_right h3, ite_eq_right h4, ite_eq_right h5,
       ite_eq_right h6, ite_eq_right h7, ite_eq_right h8, Option.isSome_none]
 
-/-- **One step of the course-of-values recursion for `decodeIsSome`**: given the
-table `L` of `(decodeIsSome k).toNat` for `k < m` (so `m = L.length`), compute
-`(decodeIsSome m).toNat` from the table, using `decodeIsSome_pair` (the
-subcode numbers are strictly smaller than `m`, hence already in the table).
+/-- **One step of the course-of-values recursion for definedness.** Write $\langle a, b \rangle$
+for the pairing bijection $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ of the Gödel numbering.
+The step takes an argument of the unit type, which it ignores, and a list $L$ of natural numbers;
+for $i \in \mathbb{N}$ write $L_i$ for the entry of $L$ at position $i$ (counting from $0$), with
+$L_i = 0$ when $i$ is at least the length of $L$. Let $m$ be the length of $L$, and write
+$m = \langle t, p \rangle$ and $p = \langle p_1, p_2 \rangle$. The step always returns a value,
+namely $1$ if one of the following holds and $0$ otherwise: $t$ is $0$, $1$, $2$, $3$ or $8$ and
+$p = 0$; $t$ is $4$, $5$ or $6$ and $L_{p_1} = L_{p_2} = 1$; or $t = 7$ and $L_p = 1$.
+
+Applied to the list whose entry at position $k < m$ is $1$ if $k$ decodes to an oracle code and
+$0$ otherwise, it returns the corresponding value for $m$, because in the recursive cases $p_1$,
+$p_2$ and $p$ are smaller than $m$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 def decodeIsSomeStep : Unit → List ℕ → Option ℕ := fun _ L =>
@@ -793,7 +880,10 @@ def decodeIsSomeStep : Unit → List ℕ → Option ℕ := fun _ L =>
   else if (L.length).unpair.1 = 8 then some (if (L.length).unpair.2 = 0 then 1 else 0)
   else some 0
 
-/-- **The step function is primitive recursive.**
+/-- **The course-of-values step for definedness is primitive recursive.** One step of the
+course-of-values recursion for definedness is primitive recursive as a function of its two
+arguments, an element of the unit type and a list of natural numbers.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem primrec₂_decodeIsSomeStep : Primrec₂ decodeIsSomeStep := by
@@ -876,8 +966,11 @@ theorem primrec₂_decodeIsSomeStep : Primrec₂ decodeIsSomeStep := by
     (Primrec.ite htag6 vBin (Primrec.ite htag7 vRfind (Primrec.ite htag8 vLeaf
     vElse))))))))
 
-/-- **The step function is correct**: applied to the table of definedness
-bits below `m`, it computes the definedness bit of `m`.
+/-- **The definedness step function is correct.** For a natural number $n$, let $b_n$ be $1$ if
+the computable decoder returns an oracle code on $n$, and $0$ otherwise. For every natural number
+$m$, the one-step function of the course-of-values recursion for definedness, applied to the list
+$(b_0, b_1, \dots, b_{m-1})$, returns $b_m$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem decodeIsSomeStep_correct (m : ℕ) :
@@ -1011,7 +1104,10 @@ theorem decodeIsSomeStep_correct (m : ℕ) :
       ite_eq_right h3, ite_eq_right h4, ite_eq_right h5, ite_eq_right h6,
       ite_eq_right h7, ite_eq_right h8]
 
-/-- **The definedness predicate is primitive recursive.**
+/-- **The definedness predicate is primitive recursive.** The function $\mathbb{N} \to \mathbb{N}$
+sending $n$ to $1$ if $n$ decodes to an oracle code under the computable decoder and to $0$
+otherwise is primitive recursive.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem natPrimrec_decodeIsSome :
@@ -1043,16 +1139,19 @@ Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 instance : Encodable OracleCode :=
   ⟨encodeOracleCode, decodeOracleCode, decodeOracleCode_encode⟩
 
-/-- An enumeration of oracle codes, from the explicit computable decoder
-(defaulting to `zero` off the image). Because the decoder inverts
-`encodeOracleCode`, this is an effective enumeration tied to the explicit
-Gödel numbering, not an arbitrary countable encoding.
+/-- **Effective enumeration of oracle codes.** The $n$-th oracle code is the code that the
+computable decoder of the Gödel numbering of oracle codes assigns to $n$, or the basic code
+$\mathtt{zero}$ (the constant $0$ program) when $n$ is not the number of any code. Because the
+decoder inverts the Gödel numbering, this is an effective enumeration tied to that numbering,
+not an arbitrary countable encoding.
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (standard enumerations). -/
 def oracleCodeOfNat : ℕ → OracleCode :=
   fun n ↦ (decodeOracleCode n).getD OracleCode.zero
 
-/-- **The effective enumeration inverts the Gödel numbering.**
+/-- **The effective enumeration is a left inverse of the Gödel numbering.** For every oracle code
+$c$, the effective enumeration of oracle codes sends the code number of $c$ to $c$.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (standard enumerations). -/
 theorem oracleCodeOfNat_encode (c : OracleCode) :
@@ -1092,19 +1191,30 @@ instance : Primcodable OracleCode := by
       have henc' : Encodable.encode c = n := henc
       simp [decodeIsSome, hdec, henc']
 
-/-- **The Gödel encoding of oracle codes is primitive recursive.**
+/-- **The Gödel encoding of oracle codes is primitive recursive.** Regard oracle codes as coded
+by their Gödel numbers, with the computable decoder as decoding. Then the map sending each oracle
+code to its Gödel number is primitive recursive.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings). -/
 theorem primrec_encodeOracleCode : Primrec encodeOracleCode :=
   Primrec.of_eq Primrec.encode fun _ => rfl
 
-/-- **The Gödel decoder of oracle codes is primitive recursive.**
+/-- **The Gödel decoder of oracle codes is primitive recursive.** Regard oracle codes as coded
+by their Gödel numbers. Then the computable decoder, which sends a natural number $n$ to the
+oracle code with Gödel number $n$ when there is one and to no value otherwise, is primitive
+recursive as a map from natural numbers to optional oracle codes.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (Gödel numberings; decoding). -/
 theorem primrec_decodeOracleCode : Primrec decodeOracleCode :=
   Primrec.of_eq Primrec.decode fun _ => rfl
 
-/-- **The effective enumeration of oracle codes is primitive recursive.**
+/-- **The effective enumeration of oracle codes is primitive recursive.** Regard oracle codes as
+coded by their Gödel numbers. Then the effective enumeration of oracle codes, which sends a
+natural number $n$ to the oracle code with Gödel number $n$ when there is one and to the zero
+code otherwise, is primitive recursive.
+
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.6 (standard enumerations). -/
 theorem primrec_oracleCodeOfNat : Primrec oracleCodeOfNat :=
@@ -1117,7 +1227,24 @@ theorem computable_oracleCodeOfNat : Computable oracleCodeOfNat :=
   primrec_oracleCodeOfNat.to_comp
 
 
-/-- Fuel-indexed evaluation of oracle codes, mirroring `Nat.Partrec.Code.evaln`.
+/-- **Fuel-indexed evaluation of oracle codes.** Write $\langle a, b \rangle$ for the pairing of
+natural numbers. For an oracle $o$ assigning to each natural number a natural number or no
+value, a fuel $k$, an oracle code $c$ and an input $n$, the evaluator $E_k(c, n)$ returns a
+natural number or fails. $E_0(c, n)$ always fails. $E_{k+1}(c, n)$ fails if $n > k$;
+otherwise, with $n = \langle a, m \rangle$:
+
+- $\mathtt{zero}$ returns $0$, $\mathtt{succ}$ returns $n + 1$, $\mathtt{left}$ returns $a$ and
+  $\mathtt{right}$ returns $m$;
+- $\mathtt{pair}(f, g)$ returns $\langle E_{k+1}(f, n), E_{k+1}(g, n) \rangle$;
+- $\mathtt{comp}(f, g)$ returns $E_{k+1}(f, x)$ where $x = E_{k+1}(g, n)$;
+- $\mathtt{prec}(f, g)$ returns $E_{k+1}(f, a)$ if $m = 0$, and if $m = y + 1$ it returns
+  $E_{k+1}(g, \langle a, \langle y, i \rangle \rangle)$ where $i = E_k(\mathtt{prec}(f, g),
+  \langle a, y \rangle)$;
+- $\mathtt{rfind}(f)$ computes $x = E_{k+1}(f, \langle a, m \rangle)$ and returns $m$ if $x = 0$,
+  and $E_k(\mathtt{rfind}(f), \langle a, m + 1 \rangle)$ otherwise;
+- $\mathtt{oracle}$ returns $o(n)$, failing if $o$ has no value at $n$.
+
+In every case the result fails if any evaluation it uses fails.
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, §2 (oracle computations). -/
 def oracleEvaln : (ℕ → Option ℕ) → ℕ → OracleCode → ℕ → Option ℕ
   | _, 0, _ => fun _ => Option.none
@@ -1158,8 +1285,9 @@ def oracleEvaln : (ℕ → Option ℕ) → ℕ → OracleCode → ℕ → Option
       guard (n ≤ k)
       o n
 
-/-- **Fuel bounds the inputs**: the finite evaluator only accepts inputs
-strictly below the fuel (the `guard (n ≤ k)` in every step).
+/-- **Fuel bounds the inputs.** For every oracle $o$, fuel $k$, oracle code $c$ and input $n$,
+if the fuel-indexed evaluator with fuel $k$ returns a value on $c$ and $n$ relative to $o$, then
+$n < k$.
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, §2 (oracle computations). -/
 theorem oracleEvaln_bound {o : ℕ → Option ℕ} {k c n x}
     (h : x ∈ oracleEvaln o k c n) : n < k := by
@@ -1173,45 +1301,65 @@ theorem oracleEvaln_bound {o : ℕ → Option ℕ} {k c n x}
       rw [hnone] at h
       simp at h
 
-/-- The partial function computed by an oracle code with oracle `o`.
+/-- **Evaluation of oracle codes.** Let $o$ be an oracle that assigns to each natural number
+either a natural number or no value, $c$ an oracle code and $n$ a natural number. The value of
+$c$ on $n$ relative to $o$ is the value returned by the fuel-indexed evaluator of $c$ on $n$
+relative to $o$ at the least fuel $k$ for which that evaluator returns a value; it is undefined
+when there is no such $k$.
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, §2 (oracle computations). -/
 def oracleEval (o : ℕ → Option ℕ) (c : OracleCode) (n : ℕ) : Part ℕ :=
   Nat.rfindOpt fun k ↦ oracleEvaln o k c n
 
-/-- The **Turing jump** of `P`: the diagonal halting set of the universal
-oracle machine with oracle `P` — the set of indices `n` for which the `n`-th
-oracle program halts on input `n`, where the `n`-th program is given by the
-effective enumeration `oracleCodeOfNat` (the computable decoder for the
-explicit Gödel numbering `encodeOracleCode`).
+/-- **The Turing jump.** For a predicate $P$ on $\mathbb{N}$, the Turing jump $P'$ is the
+predicate that holds at $n$ exactly when the $n$-th oracle code in the effective enumeration of
+oracle codes, evaluated with the oracle that answers $1$ at $m$ if $P(m)$ holds and $0$ otherwise,
+halts on input $n$. Thus $P'$ is the diagonal halting set of the universal oracle machine with
+oracle $P$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 2.1 (the jump). -/
 def Jump (P : ℕ → Prop) : ℕ → Prop :=
   fun n ↦ (oracleEval (fun m ↦ @ite (Option ℕ) (P m) (Classical.propDecidable _) (some 1) (some 0))
     (oracleCodeOfNat n) n).Dom
 
-/-- A predicate is **Turing reducible** to another when its characteristic
-function is Turing reducible to the other's.
+/-- **Turing reducibility of predicates.** A predicate $P$ on the natural numbers is Turing
+reducible to a predicate $Q$ on the natural numbers when the characteristic function of $P$ is
+Turing reducible to the characteristic function of $Q$, that is, partial recursive relative to an
+oracle for the characteristic function of $Q$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 2.2. -/
 def TuringReduciblePred (P Q : ℕ → Prop) : Prop :=
   charFun P ≤ᵀ charFun Q
 
-/-- Two predicates are **Turing equivalent** when each is Turing reducible
-to the other.
+/-- **Turing equivalence of predicates.** Two predicates $P$ and $Q$ on the natural numbers are
+Turing equivalent when the characteristic function of $P$ is Turing reducible to the
+characteristic function of $Q$ and the characteristic function of $Q$ is Turing reducible to the
+characteristic function of $P$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 2.2. -/
 def TuringEquivalentPred (P Q : ℕ → Prop) : Prop :=
   charFun P ≡ᵀ charFun Q
 
-/-- The **Turing degree** of a predicate: the degree of its characteristic function.
+/-- **Turing degree of a predicate.** The Turing degree of a predicate $P$ on the natural numbers
+is the Turing degree of its characteristic function, that is, the class of the characteristic
+function of $P$ under Turing equivalence of partial functions
+$\mathbb{N} \rightharpoonup \mathbb{N}$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Definition 2.3. -/
 noncomputable def turingDegreeOf (P : ℕ → Prop) : TuringDegree :=
   Quotient.mk _ (charFun P)
 
-/-- **Turing reducibility is reflexive.**
+/-- **Turing reducibility is reflexive.** Every predicate $P$ on the natural numbers is Turing
+reducible to itself.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 2.4. -/
 theorem turingReduciblePred_refl (P : ℕ → Prop) : TuringReduciblePred P P := by
   change charFun P ≤ᵀ charFun P
   exact TuringReducible.refl _
 
-/-- **Turing reducibility is transitive.**
+/-- **Turing reducibility is transitive.** For predicates $P$, $Q$ and $R$ on the natural
+numbers, if $P$ is Turing reducible to $Q$ and $Q$ is Turing reducible to $R$, then $P$ is Turing
+reducible to $R$.
+
 Source: Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 2.4. -/
 theorem turingReduciblePred_trans {P Q R : ℕ → Prop}
     (hPQ : TuringReduciblePred P Q) (hQR : TuringReduciblePred Q R) :

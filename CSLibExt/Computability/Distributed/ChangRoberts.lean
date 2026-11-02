@@ -50,25 +50,32 @@ namespace Cslib.Distributed.ChangRoberts
 
 variable {n : ℕ}
 
-/-- Global states: the FIFO channel into each process (holding the origins of
-the identifiers in transit) and the processes that have declared themselves
-leader. -/
+/-- **Chang–Roberts global states.** For a ring of $n + 1$ processes $0, \dots, n$, a global
+state assigns to each process $k$ the FIFO channel of messages waiting at $k$, oldest first,
+where each message is the index of the process whose identifier it carries, and records for
+each process whether it has declared itself leader. -/
 structure State (n : ℕ) where
   /-- Messages waiting at each process, oldest first. -/
   chan : Fin (n + 1) → List (Fin (n + 1))
   /-- Whether each process has declared itself leader. -/
   leader : Fin (n + 1) → Bool
 
-/-- The successor on the ring. -/
+/-- **Successor on the Chang–Roberts ring.** On the ring of $n + 1$ processes $0, \dots, n$, the
+successor of process $k$ is $k + 1$ when $k < n$, and $0$ when $k = n$. -/
 def succ (k : Fin (n + 1)) : Fin (n + 1) :=
   if h : k.val + 1 < n + 1 then ⟨k.val + 1, h⟩ else ⟨0, Nat.succ_pos n⟩
 
-/-- The predecessor on the ring. -/
+/-- **Predecessor on the ring.** On a ring of $n + 1$ processes numbered $0, \dots, n$, the
+predecessor of $k$ is $k - 1$ if $k \ne 0$, and $n$ if $k = 0$. -/
 def pred (k : Fin (n + 1)) : Fin (n + 1) :=
   if k.val = 0 then ⟨n, Nat.lt_succ_self n⟩ else ⟨k.val - 1, by omega⟩
 
-/-- Process `k` receives the oldest message in its channel: forward a larger
-identifier, discard a smaller one, become leader on its own. -/
+/-- **Delivering a message in the Chang–Roberts ring.** On a ring of $n + 1$ processes with
+identifiers $\mathrm{id}$, process $k$ receives the oldest message in its channel in state $s$.
+If the channel of $k$ is empty there is no step. Otherwise let $j$ be the origin of that message,
+which is removed from the channel: if $\mathrm{id}(k) < \mathrm{id}(j)$, process $k$ forwards it
+by appending $j$ to the end of the channel of its successor on the ring; otherwise, if $j = k$,
+process $k$ declares itself leader; otherwise the message is discarded. Nothing else changes. -/
 def deliver (id : Fin (n + 1) → ℕ) (s : State n) (k : Fin (n + 1)) : Option (State n) :=
   match s.chan k with
   | [] => none
@@ -81,33 +88,47 @@ def deliver (id : Fin (n + 1) → ℕ) (s : State n) (k : Fin (n + 1)) : Option 
       else
         some ⟨c, s.leader⟩
 
-/-- The algorithm as a labelled transition system; the label is the receiving
-process. -/
+/-- **The Chang–Roberts transition system.** For identifiers $\mathrm{id}$, the algorithm is the
+labelled transition system whose states are the global states and whose labels are processes:
+there is a transition from $s$ to $t$ labelled $k$ exactly when delivering the oldest message in
+the channel of process $k$ in state $s$ gives $t$. -/
 def lts (id : Fin (n + 1) → ℕ) : LTS (State n) (Fin (n + 1)) where
   Tr s k t := deliver id s k = some t
 
-/-- The initial state: every process has sent its identifier to its successor,
-and nobody is leader. -/
+/-- **Initial state of the Chang–Roberts ring.** In the initial state the channel into each
+process $k$ holds exactly one message, whose origin is the predecessor of $k$ on the ring (so
+every process has sent its identifier to its successor), and no process is leader. -/
 def initial : State n := ⟨fun k => [pred k], fun _ => false⟩
 
-/-- The states reachable from the initial state, by upstream `LTS.CanReach`
-(a multistep transition `LTS.MTr` along some delivery schedule). -/
+/-- **Reachable states of Chang–Roberts.** Given a natural-number identifier $\mathrm{id}(k)$ for
+each process $k$ of the ring of $n + 1$ processes, a global state $s$ is reachable when the
+Chang–Roberts transition system with these identifiers leads from the initial state to $s$ by a
+multistep transition along some finite list of labels, that is, of receiving processes. -/
 def Reachable (id : Fin (n + 1) → ℕ) (s : State n) : Prop := (lts id).CanReach initial s
 
 theorem reachable_initial (id : Fin (n + 1) → ℕ) : Reachable id (initial : State n) :=
   ⟨[], .refl⟩
 
-/-- The distance from `j` to `m` going around the ring, in `[0, n]`. -/
+/-- **Forward distance on the ring.** For processes $j$ and $m$ on a ring of $n + 1$ processes
+numbered $0, \dots, n$, the gap from $j$ to $m$ is the number of successor steps from $j$ to
+$m$: it is $m - j$ if $j \le m$, and $m + (n + 1) - j$ otherwise. It lies in $[0, n]$. -/
 def gap (j m : Fin (n + 1)) : ℕ :=
   if j.val ≤ m.val then m.val - j.val else m.val + (n + 1) - j.val
 
-/-- A message from `j` waiting at `k` has travelled `gap j k` links, or the
-whole ring when it is back at `j`. -/
+/-- **Distance travelled by a message.** For processes $j, k$ of the ring of $n + 1$ processes,
+the distance travelled by a message from $j$ waiting at $k$ is $n + 1$, the whole ring, when
+$k = j$, and otherwise the ring distance from $j$ to $k$, the number of links from $j$ forward
+to $k$. -/
 def travelled (j k : Fin (n + 1)) : ℕ := if k = j then n + 1 else gap j k
 
-/-- The invariant: every process strictly between the origin of a message and
-its current position has a smaller identifier, and a leader's identifier is
-larger than every other. -/
+/-- **The Chang–Roberts invariant.** Given identifiers $\mathrm{id}$ on a ring of $n + 1$
+processes, a state satisfies the invariant when two conditions hold. First, for every message
+from origin $j$ waiting in the channel of process $k$, every process $m \ne j$ that the message
+has already passed has a smaller identifier, $\mathrm{id}(m) < \mathrm{id}(j)$; here $m$ has been
+passed when its forward distance from $j$ is less than the distance the message has travelled,
+which is the forward distance from $j$ to $k$ if $k \ne j$, and $n + 1$ (the whole ring) if
+$k = j$. Second, for every leader $i$ and every process $m \ne i$, we have
+$\mathrm{id}(m) < \mathrm{id}(i)$. -/
 structure Inv (id : Fin (n + 1) → ℕ) (s : State n) : Prop where
   msg : ∀ k j, j ∈ s.chan k → ∀ m, m ≠ j → gap j m < travelled j k → id m < id j
   leader : ∀ i, s.leader i = true → ∀ m, m ≠ i → id m < id i
@@ -125,8 +146,9 @@ theorem eq_of_gap_eq {j m m' : Fin (n + 1)} (h : gap j m = gap j m') : m = m' :=
 theorem eq_of_gap_eq_zero {j m : Fin (n + 1)} (h : gap j m = 0) : m = j :=
   eq_of_gap_eq (h.trans (by simp [gap]))
 
-/-- One more link: forwarding from `k ≠ j` adds one to the distance
-travelled. -/
+/-- **Forwarding adds one link.** For processes $j$ and $k$ of the ring with $k \ne j$, the
+distance travelled by a message from $j$ waiting at the successor of $k$ is the number of links
+from $j$ forward to $k$, plus one. -/
 theorem travelled_succ {j k : Fin (n + 1)} (hk : k ≠ j) :
     travelled j (succ k) = gap j k + 1 := by
   have := j.isLt; have := k.isLt
@@ -135,7 +157,8 @@ theorem travelled_succ {j k : Fin (n + 1)} (hk : k ≠ j) :
   split_ifs with h1 h2 h3 h4 h5 h6 h7 <;>
     simp only [Fin.ext_iff] at * <;> omega
 
-/-- The initial message at `k` has travelled one link. -/
+/-- **The initial messages have travelled one link.** For every process $k$ of the ring, the
+distance travelled by a message from the predecessor of $k$ waiting at $k$ is $1$. -/
 theorem travelled_pred (k : Fin (n + 1)) : travelled (pred k) k = 1 := by
   have hk := k.isLt
   by_cases hk0 : k.val = 0
@@ -202,36 +225,51 @@ theorem inv_step {id : Fin (n + 1) → ℕ} {s t : State n} {k : Fin (n + 1)} (h
       obtain rfl := Option.some.inj h
       exact ⟨fun k' x hx m hm hgap => hs.msg k' x (hc k' x hx) m hm hgap, hs.leader⟩
 
-/-- Multistep transitions preserve the invariant. -/
+/-- **The Chang–Roberts invariant is preserved along runs.** For every assignment of identifiers,
+if the invariant holds in a state $s$ and the state $t$ is reached from $s$ by delivering messages
+along some schedule of receiving processes (a multistep transition of the algorithm's labelled
+transition system), then the invariant holds in $t$. -/
 theorem inv_mtr {id : Fin (n + 1) → ℕ} {s t : State n} {ks : List (Fin (n + 1))}
     (hm : (lts id).MTr s ks t) (hs : Inv id s) : Inv id t := by
   induction hm with
   | refl => exact hs
   | stepL htr _ ih => exact ih (inv_step hs htr)
 
-/-- The invariant holds in every reachable state. -/
+/-- **The Chang–Roberts invariant holds in every reachable state.** For every assignment of
+identifiers, every state reachable from the initial state satisfies the invariant. -/
 theorem inv_reachable {id : Fin (n + 1) → ℕ} {s : State n} (h : Reachable id s) : Inv id s :=
   let ⟨_, hm⟩ := h
   inv_mtr hm (inv_initial id)
 
-/-- **Only the maximum is elected**: a leader's identifier is larger than every
-other process's. -/
+/-- **Only the maximum is elected.** Let $\mathrm{id}$ assign a natural-number identifier, not
+necessarily distinct, to each process $0, \dots, n$ of the Chang–Roberts ring. In every state
+reachable with these identifiers, if process $i$ has declared itself leader, then
+$\mathrm{id}(m) < \mathrm{id}(i)$ for every process $m \ne i$. -/
 theorem leader_max {id : Fin (n + 1) → ℕ} {s : State n} (h : Reachable id s) {i : Fin (n + 1)}
     (hi : s.leader i = true) {m : Fin (n + 1)} (hm : m ≠ i) : id m < id i :=
   (inv_reachable h).leader i hi m hm
 
-/-- **There is at most one leader.** -/
+/-- **There is at most one leader.** In every state of the Chang–Roberts algorithm reachable from
+the initial state, any two processes that have declared themselves leader are equal. -/
 theorem leader_unique {id : Fin (n + 1) → ℕ} {s : State n} (h : Reachable id s)
     {i i' : Fin (n + 1)} (hi : s.leader i = true) (hi' : s.leader i' = true) : i = i' := by
   by_contra hne
   exact lt_asymm (leader_max h hi (Ne.symm hne)) (leader_max h hi' hne)
 
-/-- Deliver a sequence of messages, failing on an empty channel. -/
+/-- **Running a delivery schedule.** Given a natural-number identifier $\mathrm{id}(k)$ for each
+process $k$ of the ring, a global state $s$ and a list $k_1, \dots, k_r$ of processes, the run
+applies the Chang–Roberts delivery step at $k_1$, then at $k_2$, and so on. It returns the final
+state, or no state as soon as some $k_i$ has an empty channel at its turn; on the empty list it
+returns $s$. -/
 def run (id : Fin (n + 1) → ℕ) : State n → List (Fin (n + 1)) → Option (State n)
   | s, [] => some s
   | s, k :: ks => (deliver id s k).bind fun t => run id t ks
 
-/-- Running a schedule is exactly a multistep transition along it. -/
+/-- **Runs are multistep transitions.** Given a natural-number identifier $\mathrm{id}(k)$ for
+each process $k$ of the ring, for all global states $s, t$ and every list $\kappa$ of processes,
+running the schedule $\kappa$ from $s$ returns $t$ if and only if the Chang–Roberts transition
+system with identifiers $\mathrm{id}$ has a multistep transition from $s$ to $t$ labelled by
+$\kappa$. -/
 theorem run_eq_some_iff {id : Fin (n + 1) → ℕ} :
     ∀ {s t : State n} {ks : List (Fin (n + 1))}, run id s ks = some t ↔ (lts id).MTr s ks t
   | s, t, [] => by simp [run]

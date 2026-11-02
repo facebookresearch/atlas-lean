@@ -29,15 +29,22 @@ set_option autoImplicit false
 
 namespace Cslib.Decidability
 
-/-- A **counter-machine instruction**: increment a register, decrement a
-register (saturating at `0`), or jump if a register is zero.
+/-- **Counter-machine instructions.** A counter-machine instruction is one of: increment register
+$r$, decrement register $r$, or jump to instruction $q$ if register $r$ is zero, where the
+register index $r$ and the jump target $q$ are natural numbers.
+
+Decrementing a register that holds $0$ leaves it at $0$.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 inductive CounterInstr where
   | inc : ℕ → CounterInstr
   | dec : ℕ → CounterInstr
   | jz : ℕ → ℕ → CounterInstr
 
-/-- A **counter-machine state**: program counter plus register contents.
+/-- **Counter-machine states.** A counter-machine state consists of a program counter, which is a
+natural number, and the register contents, a function assigning a natural number to every
+register index $i \in \mathbb{N}$.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 structure CounterState where
   /-- The program counter. -/
@@ -45,8 +52,17 @@ structure CounterState where
   /-- The register contents. -/
   regs : ℕ → ℕ
 
-/-- One step of a counter machine. The step is sticky at halting states
-(program counter past the end of the program), so iteration never fails.
+/-- **One step of a counter machine.** Let $p$ be a counter-machine program, a list of
+instructions indexed from $0$, and let $s$ be a state with program counter $c$. If $c$ is at
+least the length of $p$ (the machine has halted), the step leaves $s$ unchanged. Otherwise it
+executes instruction $c$ of $p$: increment register $r$ adds $1$ to register $r$ and sets the
+program counter to $c + 1$; decrement register $r$ subtracts $1$ from register $r$ if it is
+positive, leaves it at $0$ otherwise, and sets the program counter to $c + 1$; jump to $q$ if
+register $r$ is zero leaves the registers unchanged and sets the program counter to $q$ if
+register $r$ holds $0$ and to $c + 1$ otherwise.
+
+Because halted states are fixed, the step can be iterated any number of times.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 def counterStep (prog : List CounterInstr) (s : CounterState) : CounterState :=
   match prog[s.pc]? with
@@ -58,18 +74,28 @@ def counterStep (prog : List CounterInstr) (s : CounterState) : CounterState :=
   | some (.jz r q) =>
       { pc := if s.regs r = 0 then q else s.pc + 1, regs := s.regs }
 
-/-- The initial counter-machine state on the given inputs (in registers `0, 1, …`).
+/-- **Initial state of a counter machine.** The initial counter-machine state on a list of inputs
+$x_0, \dots, x_{k-1}$ has program counter $0$, register $i$ holding $x_i$ for each $i < k$, and
+every other register holding $0$.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 def counterInit (inputs : List ℕ) : CounterState :=
   { pc := 0, regs := fun i ↦ inputs.getD i 0 }
 
-/-- Bounded execution of a counter machine: `t` steps from the initial state.
+/-- **Bounded execution of a counter machine.** For a counter-machine program $p$, a natural
+number $t$ and a state $s$, the execution of $p$ for $t$ steps from $s$ is the state obtained from
+$s$ by applying $t$ single steps of $p$.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 def counterExecN (prog : List CounterInstr) (t : ℕ) (s : CounterState) : CounterState :=
   (counterStep prog)^[t] s
 
-/-- The output of a counter machine: the contents of register `0` once halted,
-undefined while still running.
+/-- **Output of a counter machine.** The output of a counter-machine program $p$ on a list of
+inputs is the partial natural number obtained as follows: run $p$ from the initial state on those
+inputs; if for some number $t$ of steps the program counter is at least the length of $p$ (the
+machine has halted), the output is the content of register $0$ after the least such $t$; if no
+such $t$ exists, the output is undefined.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 def counterEval (prog : List CounterInstr) (inputs : List ℕ) : Part ℕ :=
   Nat.rfindOpt fun t ↦
@@ -84,7 +110,11 @@ theorem counterStep_sticky {prog : List CounterInstr} {s : CounterState}
   unfold counterStep
   rw [List.getElem?_eq_none_iff.2 h]
 
-/-- **Bounded execution is stable once halted**: one more step changes nothing.
+/-- **Counter-machine execution is stable once halted.** Let $p$ be a counter-machine program,
+$s$ a state and $t$ a natural number. If the state reached from $s$ after $t$ steps of $p$ has
+program counter at least the length of $p$, then the state reached from $s$ after $t + 1$ steps
+equals the state reached after $t$ steps.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 theorem counterExecN_stable {prog : List CounterInstr} {t : ℕ} {s : CounterState}
     (h : prog.length ≤ (counterExecN prog t s).pc) :
@@ -92,7 +122,11 @@ theorem counterExecN_stable {prog : List CounterInstr} {t : ℕ} {s : CounterSta
   simp only [counterExecN, Function.iterate_succ_apply']
   exact counterStep_sticky h
 
-/-- **Bounded execution stays at its halted value.**
+/-- **Counter-machine execution is constant after halting.** Let $p$ be a counter-machine
+program, $s$ a state, and $t_1 \le t_2$ natural numbers. If the state reached from $s$ after
+$t_1$ steps of $p$ has program counter at least the length of $p$, then the state reached from $s$
+after $t_2$ steps equals the state reached after $t_1$ steps.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 theorem counterExecN_eq_of_halted {prog : List CounterInstr} {t₁ t₂ : ℕ}
     {s : CounterState}
@@ -109,8 +143,12 @@ theorem counterExecN_eq_of_halted {prog : List CounterInstr} {t₁ t₂ : ℕ}
       rw [ih]; exact h
     rw [show t₁ + (k + 1) = t₁ + k + 1 from by omega, hstable, ih]
 
-/-- **Output membership for counter machines**: if the machine has halted by
-step `t` with output `y` in register `0`, then `y` is the evaluation result.
+/-- **Output membership for counter machines.** Let $P$ be a counter-machine program, let $x$ be
+a list of natural-number inputs, and let $t$ and $y$ be natural numbers. If the state reached
+after $t$ steps of $P$ from the initial state on $x$ has program counter at least the length
+of $P$ (so the machine has halted) and register $0$ holds $y$ in that state, then the output
+of $P$ on $x$ is defined and equals $y$.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 theorem mem_counterEval_of_halted {prog : List CounterInstr} {inputs : List ℕ}
     {y : ℕ} {t : ℕ}
@@ -139,8 +177,11 @@ theorem mem_counterEval_of_halted {prog : List CounterInstr} {inputs : List ℕ}
   rw [ite_eq_left hhalt, hout]
   exact Option.mem_def.2 rfl
 
-/-- A predicate is **counter-machine decidable** when a counter machine
-computes its characteristic function.
+/-- **Counter-machine decidable predicates.** A predicate $P$ on the natural numbers is
+counter-machine decidable when some counter-machine program computes its characteristic
+function: for every natural number $n$, the output of the program on the single input $n$ is
+defined and equals $1$ if $P(n)$ holds and $0$ otherwise.
+
 Source: Minsky, *Computation: Finite and Infinite Machines*, 1967, §11. -/
 def CounterDecidable (P : ℕ → Prop) : Prop :=
   ∃ prog : List CounterInstr, ∀ n, counterEval prog [n] = charFun P n
