@@ -316,6 +316,7 @@ theorem not_fourGametes_iff (i j : Fin s) :
     · obtain ⟨r, hri, hrj⟩ := h a (!b)
       have : r ∈ carriers M j b := hsub (by simp [carriers, hri])
       simp only [carriers, Finset.mem_filter, Finset.mem_univ, true_and] at this
+      have hrj : M r j = !b := hrj
       rw [this] at hrj
       cases b <;> simp at hrj
     · obtain ⟨r, hri, hrj⟩ := h a b
