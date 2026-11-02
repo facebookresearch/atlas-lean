@@ -38,37 +38,63 @@ The notebook distinguishes two quantifier orders, one target each: (a) `f` may d
 subgroup, of any finite size.
 -/
 
-/-- The norm `‖α‖ = max (|α(x₀)|, …, |α(xₙ₋₁)|)` of an automorphism `α` of `F_n`, where `|·|` is the
-reduced word length in the basis `x₀, …, xₙ₋₁`. -/
+/-- **Norm of an automorphism of a free group.** Let $F_n$ be the free group on the basis
+$x_0, \dots, x_{n-1}$, and for $w \in F_n$ let $|w|$ be the length of the reduced word
+representing $w$. The norm of an automorphism $\alpha$ of $F_n$ is
+$\|\alpha\| = \max(|\alpha(x_0)|, \dots, |\alpha(x_{n-1})|)$, taken to be $0$ when $n = 0$. -/
 def autNorm {n : ℕ} (α : MulAut (FreeGroup (Fin n))) : ℕ :=
   Finset.univ.sup fun i => (α (FreeGroup.of i)).norm
 
-/-- The fixed subgroup `Fix(α) = {x | α x = x}`. -/
+/-- **Fixed subgroup of a free group automorphism.** For an automorphism $\alpha$ of the free
+group $F_n$ on $x_0, \dots, x_{n-1}$, the fixed subgroup of $\alpha$ is the subgroup
+$\mathrm{Fix}(\alpha) = \{x \in F_n \mid \alpha(x) = x\}$ of $F_n$. -/
 def fixedSubgroup {n : ℕ} (α : MulAut (FreeGroup (Fin n))) : Subgroup (FreeGroup (Fin n)) :=
   (α : FreeGroup (Fin n) →* FreeGroup (Fin n)).eqLocus (MonoidHom.id _)
 
-/-- `Fix(α)` has a free basis all of whose elements have length at most `L`. -/
+/-- **Fixed subgroups with a short free basis.** Let $\alpha$ be an automorphism of the free group
+$F_n$ on $x_0, \dots, x_{n-1}$, let $|w|$ be the length of the reduced word representing
+$w \in F_n$, and let $L$ be a natural number. The fixed subgroup $\mathrm{Fix}(\alpha)$ has a
+short free basis with bound $L$ when, for some $k \ge 0$, it has a free basis
+$y_1, \dots, y_k$ with $|y_i| \le L$ for every $i$. -/
 def HasShortFixedBasis {n : ℕ} (α : MulAut (FreeGroup (Fin n))) (L : ℕ) : Prop :=
   ∃ (k : ℕ) (b : FreeGroupBasis (Fin k) (fixedSubgroup α)),
     ∀ i, ((b i : fixedSubgroup α) : FreeGroup (Fin n)).norm ≤ L
 
-/-- Kourovka 14.23 (O. V. Bogopolski), for each fixed rank: for every `n` there is a recursive
-function `f : ℕ → ℕ` such that for every `α ∈ Aut F_n` the subgroup `Fix(α)` has a free basis of
-elements of length at most `f(‖α‖)`. -/
+/-- **Kourovka Problem 14.23, rank-dependent form.** For every $n$ there is a computable
+function $f : \mathbb{N} \to \mathbb{N}$ such that for every automorphism $\alpha$ of the free
+group $F_n$ on $x_0, \dots, x_{n-1}$, the fixed subgroup $\mathrm{Fix}(\alpha)$ has a finite
+free basis all of whose elements have reduced word length at most $f(\|\alpha\|)$, where
+$\|\alpha\|$ is the maximum of the reduced word lengths of $\alpha(x_0), \dots, \alpha(x_{n-1})$.
+
+This is the form of Kourovka Notebook Problem 14.23 (O. V. Bogopolski) in which $f$ may depend
+on the rank $n$. -/
 def fixedSubgroupBasisRecursiveBoundEachRank : Prop :=
   ∀ n : ℕ, ∃ f : ℕ → ℕ, Computable f ∧
     ∀ α : MulAut (FreeGroup (Fin n)), HasShortFixedBasis α (f (autNorm α))
 
-/-- Kourovka 14.23 (O. V. Bogopolski), uniformly in the rank: one recursive function
-`f : ℕ → ℕ` works for every `n` and every `α ∈ Aut F_n`. -/
+/-- **Kourovka Problem 14.23, rank-uniform form.** There is a computable function
+$f : \mathbb{N} \to \mathbb{N}$ such that for every $n$ and every automorphism $\alpha$ of the
+free group $F_n$ on $x_0, \dots, x_{n-1}$, the fixed subgroup $\mathrm{Fix}(\alpha)$ has a
+finite free basis all of whose elements have reduced word length at most $f(\|\alpha\|)$, where
+$\|\alpha\|$ is the maximum of the reduced word lengths of $\alpha(x_0), \dots, \alpha(x_{n-1})$.
+
+This is the form of Kourovka Notebook Problem 14.23 (O. V. Bogopolski) in which one $f$ must
+work for all ranks $n$. -/
 def fixedSubgroupBasisRecursiveBoundUniform : Prop :=
   ∃ f : ℕ → ℕ, Computable f ∧
     ∀ (n : ℕ) (α : MulAut (FreeGroup (Fin n))), HasShortFixedBasis α (f (autNorm α))
 
 /--
-Resolved true: for each fixed rank such a recursive function exists, as a consequence of the
-algorithm computing a basis of `Fix(α)` (Kharlampovich, Proposition 2); the Kourovka Notebook (21st
-issue) records this answer. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
+**Kourovka Problem 14.23 holds for each rank.** For every $n$ there is a computable function
+$f : \mathbb{N} \to \mathbb{N}$ such that for every automorphism $\alpha$ of the free group $F_n$
+on $x_0, \dots, x_{n-1}$, the fixed subgroup $\mathrm{Fix}(\alpha)$ has a finite free basis all
+of whose elements have reduced word length at most $f(\|\alpha\|)$, where $\|\alpha\|$ is the
+maximum of the reduced word lengths of $\alpha(x_0), \dots, \alpha(x_{n-1})$.
+
+This follows from the algorithm computing a basis of $\mathrm{Fix}(\alpha)$ (Kharlampovich,
+Proposition 2); the Kourovka Notebook (21st issue) records this answer.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
 Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.23 (O. V.
 Bogopolski); resolution: O. Kharlampovich, Two observations on Problems 14.23 and 17.32 of the
 Kourovka Notebook, preprint (2026), Proposition 2 (each rank); O. Kharlampovich, A counterexample to
@@ -81,10 +107,18 @@ public theorem_wanted fixedSubgroupBasisRecursiveBoundEachRank_holds :
     fixedSubgroupBasisRecursiveBoundEachRank
 
 /--
-Resolved false: for every `r ≥ 3` there is an automorphism `α_r` of the free group of rank `2r - 1`
-with `‖α_r‖ = 3` such that every generating set of `Fix(α_r)` contains an element of length at least
-`r` (Kharlampovich, Theorem 1), so no function at all, recursive or not, works for all ranks; the
-Kourovka Notebook (21st issue) records this answer. Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**Kourovka Problem 14.23 fails uniformly in the rank.** There is no computable function
+$f : \mathbb{N} \to \mathbb{N}$ such that for every $n$ and every automorphism $\alpha$ of the
+free group $F_n$ on $x_0, \dots, x_{n-1}$, the fixed subgroup $\mathrm{Fix}(\alpha)$ has a
+finite free basis all of whose elements have reduced word length at most $f(\|\alpha\|)$, where
+$\|\alpha\|$ is the maximum of the reduced word lengths of $\alpha(x_0), \dots, \alpha(x_{n-1})$.
+
+Kharlampovich (Theorem 1) proves more: for every $r \ge 3$ there is an automorphism $\alpha_r$
+of the free group of rank $2r - 1$ with $\|\alpha_r\| = 3$ such that every generating set of
+$\mathrm{Fix}(\alpha_r)$ contains an element of length at least $r$, so no function at all,
+computable or not, works for all ranks; the Kourovka Notebook (21st issue) records this answer.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Problem 14.23 (O. V. Bogopolski); resolution: O. Kharlampovich, Two observations on Problems 14.23
 and 17.32 of the Kourovka Notebook, preprint (2026), Proposition 2 (each rank); O. Kharlampovich, A

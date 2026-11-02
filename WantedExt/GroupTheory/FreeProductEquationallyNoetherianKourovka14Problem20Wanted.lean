@@ -34,25 +34,40 @@ H`. The problem concerns two factors; free products of infinitely many equationa
 groups can fail (Groves-Hull).
 -/
 
-/-- The value at the assignment `x : Fin n → G` of a word `w ∈ G ∗ F(x₀, …, xₙ₋₁)` (an equation
-over `G` with coefficients in `G` and unknowns `x₀, …, xₙ₋₁`). -/
+/-- **Evaluation of an equation at an assignment (Kourovka 14.20).** For a group $G$, let $F_n$ be
+the free group on the unknowns $t_0, \dots, t_{n-1}$. For an assignment
+$x = (x_0, \dots, x_{n-1}) \in G^n$, evaluation at $x$ is the group homomorphism $G * F_n \to G$
+from the free product of $G$ and $F_n$ that is the identity on $G$ and sends $t_i$ to $x_i$ for
+each $i < n$; it sends an equation $w \in G * F_n$ over $G$ to its value $w(x)$ at $x$. -/
 def evalEquation {G : Type*} [Group G] {n : ℕ} (x : Fin n → G) :
     Monoid.Coprod G (FreeGroup (Fin n)) →* G :=
   Monoid.Coprod.lift (MonoidHom.id G) (FreeGroup.lift x)
 
-/-- The solution set in `G` of the system of equations `S`. -/
+/-- **Solution set of a system of equations (Kourovka 14.20).** For a group $G$, let $F_n$ be the
+free group on the unknowns $t_0, \dots, t_{n-1}$. The solution set of a set $S \subseteq G * F_n$
+of equations over $G$ is the set of assignments $x = (x_0, \dots, x_{n-1}) \in G^n$ such that
+$w(x) = 1$ for every $w \in S$, where $w(x)$ is the image of $w$ under the homomorphism
+$G * F_n \to G$ that is the identity on $G$ and sends $t_i$ to $x_i$. -/
 def solutions {G : Type*} [Group G] {n : ℕ} (S : Set (Monoid.Coprod G (FreeGroup (Fin n)))) :
     Set (Fin n → G) :=
   {x | ∀ w ∈ S, evalEquation x w = 1}
 
-/-- `G` has the Noetherian Equation Property (is equationally Noetherian): every system of
-equations over `G` in finitely many unknowns has the same solutions as some finite subsystem. -/
+/-- **Equationally Noetherian groups (Kourovka 14.20).** A group $G$ is equationally Noetherian
+(has the Noetherian Equation Property) if for every $n \in \mathbb{N}$ and every set $S$ of
+equations over $G$ in the unknowns $t_0, \dots, t_{n-1}$, that is, every subset $S$ of the free
+product $G * F_n$ of $G$ with the free group $F_n$ on $t_0, \dots, t_{n-1}$, there is a finite
+subset $S_0 \subseteq S$ with the same solution set as $S$. Here the solution set of a set of
+equations is the set of assignments $x = (x_0, \dots, x_{n-1}) \in G^n$ at which every equation in
+it evaluates to $1$. -/
 def EquationallyNoetherian (G : Type*) [Group G] : Prop :=
   ∀ (n : ℕ) (S : Set (Monoid.Coprod G (FreeGroup (Fin n)))),
     ∃ S₀ ⊆ S, S₀.Finite ∧ solutions S₀ = solutions S
 
-/-- Kourovka 14.20 (G. Baumslag, A. G. Myasnikov, V. N. Remeslennikov): the free product `G ∗ H` of
-two groups with the Noetherian Equation Property has the Noetherian Equation Property. -/
+/-- **Kourovka Problem 14.20 (free products of equationally Noetherian groups).** The statement
+that for all groups $G$ and $H$, if $G$ and $H$ are equationally Noetherian (have the Noetherian
+Equation Property), then their free product $G * H$ is equationally Noetherian.
+
+Kourovka Notebook Problem 14.20 is due to G. Baumslag, A. G. Myasnikov and V. N. Remeslennikov. -/
 def freeProductEquationallyNoetherian : Prop :=
   ∀ (G H : Type) [Group G] [Group H], EquationallyNoetherian G → EquationallyNoetherian H →
     EquationallyNoetherian (Monoid.Coprod G H)

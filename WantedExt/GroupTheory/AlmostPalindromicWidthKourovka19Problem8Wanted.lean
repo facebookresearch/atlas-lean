@@ -35,23 +35,36 @@ unreduced words gives more almost palindromes than reduced words do, so the refu
 the reduced reading.
 -/
 
-/-- A word `w` in the letters `x^{±1}, y^{±1}` (a list of pairs `(i, b)` with `i : Fin 2`, the
-letter being inverted when `b = false`) is an almost `m`-palindrome: it differs from a palindrome
-of the same length in at most `m` positions. The word need not be reduced. -/
+/-- **Almost palindromes.** For a natural number $m$, a word $w$ in the letters $x^{\pm 1}$ and
+$y^{\pm 1}$ is an almost $m$-palindrome if there is a palindrome $p$ in the same letters with the
+same length as $w$ such that $w$ and $p$ differ in at most $m$ positions. The word $w$ need not be
+reduced. -/
 def IsAlmostPalindrome (m : ℕ) (w : List (Fin 2 × Bool)) : Prop :=
   ∃ p : List (Fin 2 × Bool), p.length = w.length ∧ p.reverse = p ∧
     (List.zip w p).countP (fun q => q.1 ≠ q.2) ≤ m
 
-/-- Kourovka 19.8 (V. G. Bardakov): there are positive integers `m` and `c` such that every element
-of the free group `F₂ = ⟨x, y⟩` is a product of at most `c` almost `m`-palindromes. -/
+/-- **Finite almost-palindromic width of $F_2$ (Kourovka 19.8).** The proposition that there are
+positive integers $m$ and $c$ such that every element of the free group $F_2$ on generators $x, y$
+is a product of at most $c$ elements, each represented by an almost $m$-palindrome, that is, by a
+word in $x^{\pm 1}, y^{\pm 1}$ (not necessarily reduced) that differs from a palindrome of the
+same length in at most $m$ positions.
+
+This is the question posed by V. G. Bardakov as Kourovka Problem 19.8. -/
 def almostPalindromicWidthFinite : Prop :=
   ∃ m c : ℕ, 0 < m ∧ 0 < c ∧ ∀ g : FreeGroup (Fin 2), ∃ ws : List (List (Fin 2 × Bool)),
     ws.length ≤ c ∧ (∀ w ∈ ws, IsAlmostPalindrome m w) ∧ (ws.map FreeGroup.mk).prod = g
 
 /--
-Resolved false: Staiger (Theorem 1) proves that for every `m ≥ 0` the `m`-almost-palindromic width
-of a non-abelian free group is infinite, so no `c` works; the 21st issue of the Kourovka Notebook
-marks 19.8 solved ("No, there are no such integers"). Source: E. I. Khukhro and V. D. Mazurov
+**The almost-palindromic width of $F_2$ is infinite (Kourovka 19.8).** There are no positive
+integers $m$ and $c$ such that every element of the free group $F_2$ on generators $x, y$ is a
+product of at most $c$ elements, each represented by an almost $m$-palindrome, that is, by a word
+in $x^{\pm 1}, y^{\pm 1}$ (not necessarily reduced) that differs from a palindrome of the same
+length in at most $m$ positions. So the question of Kourovka Problem 19.8 has a negative answer.
+
+Staiger proved more: for every $m \ge 0$, the $m$-almost-palindromic width of every non-abelian
+free group is infinite.
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Problem 19.8 (V. G. Bardakov); resolution: M. Staiger, On the almost-palindromic width of
 free groups, J. Algebra 659 (2024), 475-481 (arXiv:2306.15752), Section 1: m-almost-palindromes are
