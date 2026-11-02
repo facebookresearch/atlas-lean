@@ -325,28 +325,8 @@ theorem integral_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb
   have : (b + c) ^ (a + k) ≠ 0 := (Real.rpow_pos_of_pos hbc _).ne'
   field_simp
 
-/-- The mean of `Gamma(a, b)` is `a / b`. -/
-theorem integral_id_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
-    ∫ x, x ∂gammaMeasure a b = a / b := by
-  have h := integral_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 1
-  simp only [pow_one, zero_mul, neg_zero, Real.exp_zero, mul_one, add_zero, Polynomial.ascPochhammer_one,
-    Polynomial.eval_X, Nat.cast_one] at h
-  rw [h, Real.rpow_add hb, Real.rpow_one]
-  have : b ^ a ≠ 0 := (Real.rpow_pos_of_pos hb a).ne'
-  field_simp
-
-/-- The second moment of `Gamma(a, b)` is `a (a + 1) / b²`. -/
-theorem integral_sq_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
-    ∫ x, x ^ 2 ∂gammaMeasure a b = a * (a + 1) / b ^ 2 := by
-  have h := integral_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 2
-  simp only [zero_mul, neg_zero, Real.exp_zero, mul_one, add_zero] at h
-  rw [h, Real.rpow_add hb, Real.rpow_natCast, Polynomial.ascPochhammer_succ_eval, Polynomial.ascPochhammer_one,
-    Polynomial.eval_X]
-  have : b ^ a ≠ 0 := (Real.rpow_pos_of_pos hb a).ne'
-  field_simp
-  push_cast
-  ring
-
+-- The mean (`integral_id_gammaMeasure`) and second moment (`integral_sq_gammaMeasure`) live
+-- in `MathlibExt.Probability.Distributions.GammaMoments`; they are not redeclared here.
 
 /-- `x ↦ x` is integrable for `Gamma(a, b)`. -/
 theorem integrable_id_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :

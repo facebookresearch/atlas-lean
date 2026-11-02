@@ -13,6 +13,7 @@ public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 
 import MathlibExt.Probability.Distributions.Gamma
+import MathlibExt.Probability.Distributions.GammaMoments
 
 /-!
 # The negative binomial distribution as a Gamma–Poisson mixture

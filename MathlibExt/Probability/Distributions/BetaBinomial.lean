@@ -11,6 +11,7 @@ module
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Probability.Distributions.NegativeBinomialSplitting
 
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
@@ -31,17 +32,15 @@ parametrization of Dolzhenko and Smith (2014), used for overdispersed methylatio
 
 `E M = n π`, `Var M = n π (1 - π) (1 + (n - 1) γ)`.
 
-## Main definitions
-
-* `ProbabilityTheory.betaBinomialReal n α β k`: the beta-binomial mass function.
+The mass function, the Chu–Vandermonde identity
+(`ascPochhammer_eval_add_eq_sum`) and normalization (`sum_betaBinomialPMF`) are reused from
+`MathlibExt.Probability.Distributions.NegativeBinomialSplitting`; this file adds only the
+moment results for `betaBinomialPMF`.
 
 ## Main results
 
-* `sum_ascPochhammer_mul_ascPochhammer`: the Chu–Vandermonde identity
-  `∑ₖ C(n, k) α⁽ᵏ⁾ β⁽ⁿ⁻ᵏ⁾ = (α + β)⁽ⁿ⁾`.
-* `sum_betaBinomialReal`: normalization.
-* `sum_mul_betaBinomialReal`: `E M = n π`.
-* `sum_mul_sub_one_betaBinomialReal`: `E[M (M - 1)] = n (n - 1) α (α + 1) / ((α + β) (α + β + 1))`.
+* `sum_mul_betaBinomialPMF`: `E M = n π`.
+* `sum_mul_sub_one_betaBinomialPMF`: `E[M (M - 1)] = n (n - 1) α (α + 1) / ((α + β) (α + β + 1))`.
 * `variance_betaBinomial`: `Var M = n π (1 - π) (1 + (n - 1) γ)`.
 
 The representation as a Beta mixture of binomial laws is not formalized here.
@@ -60,54 +59,6 @@ The representation as a Beta mixture of binomial laws is not formalized here.
 open Finset Polynomial
 
 namespace ProbabilityTheory
-
-/-- The beta-binomial mass function `C(n, k) α⁽ᵏ⁾ β⁽ⁿ⁻ᵏ⁾ / (α + β)⁽ⁿ⁾` for `k ≤ n` (and `0` for
-`k > n`), with rising factorials `x⁽ᵐ⁾`. The parameter domain is `α, β > 0`; there the
-denominator is positive. -/
-noncomputable def betaBinomialReal (n : ℕ) (α β : ℝ) (k : ℕ) : ℝ :=
-  if k ≤ n then
-    n.choose k * (ascPochhammer ℝ k).eval α * (ascPochhammer ℝ (n - k)).eval β /
-      (ascPochhammer ℝ n).eval (α + β)
-  else 0
-
-/-- The beta-binomial mass function is nonnegative for `α, β > 0`. -/
-theorem betaBinomialReal_nonneg {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) (k : ℕ) :
-    0 ≤ betaBinomialReal n α β k := by
-  unfold betaBinomialReal
-  split_ifs
-  · have h1 := ascPochhammer_pos k α hα
-    have h2 := ascPochhammer_pos (n - k) β hβ
-    have h3 := ascPochhammer_pos n (α + β) (add_pos hα hβ)
-    positivity
-  · exact le_rfl
-
-/-- Chu–Vandermonde over the antidiagonal: `(α + β)⁽ⁿ⁾ = ∑_{i + j = n} C(n, i) α⁽ⁱ⁾ β⁽ʲ⁾`. -/
-private lemma ascPochhammer_eval_add_antidiagonal (n : ℕ) (α β : ℝ) :
-    (ascPochhammer ℝ n).eval (α + β) = ∑ ij ∈ antidiagonal n,
-      (n.choose ij.1 : ℝ) * ((ascPochhammer ℝ ij.1).eval α * (ascPochhammer ℝ ij.2).eval β) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [sum_antidiagonal_choose_succ_mul
-      (fun i j => (ascPochhammer ℝ i).eval α * (ascPochhammer ℝ j).eval β),
-      ascPochhammer_succ_eval, ih, sum_mul, ← sum_add_distrib]
-    refine sum_congr rfl fun ij hij => ?_
-    have hij' : ij.1 + ij.2 = n := mem_antidiagonal.1 hij
-    rw [Nat.choose_symm_of_eq_add hij'.symm, ascPochhammer_succ_eval, ascPochhammer_succ_eval]
-    rw [← hij']
-    push_cast
-    ring
-
-/-- **Chu–Vandermonde identity for rising factorials.**
-`∑ₖ C(n, k) α⁽ᵏ⁾ β⁽ⁿ⁻ᵏ⁾ = (α + β)⁽ⁿ⁾` for all real `α, β`. -/
-theorem sum_ascPochhammer_mul_ascPochhammer (n : ℕ) (α β : ℝ) :
-    ∑ k ∈ range (n + 1),
-        (n.choose k : ℝ) * (ascPochhammer ℝ k).eval α * (ascPochhammer ℝ (n - k)).eval β =
-      (ascPochhammer ℝ n).eval (α + β) := by
-  rw [ascPochhammer_eval_add_antidiagonal, Nat.sum_antidiagonal_eq_sum_range_succ
-    (fun i j => (n.choose i : ℝ) * ((ascPochhammer ℝ i).eval α * (ascPochhammer ℝ j).eval β))]
-  refine sum_congr rfl fun k _ => ?_
-  ring
 
 /-- **Shift identity.** Weighting by the count `k` lowers the number of trials and raises `α`:
 `∑_{k ≤ m + 1} k g(k) C(m + 1, k) α⁽ᵏ⁾ β⁽ᵐ⁺¹⁻ᵏ⁾ =
@@ -133,31 +84,23 @@ private lemma ascPochhammer_add_pos {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) 
   ascPochhammer_pos n _ (add_pos hα hβ)
 
 /-- The sum of `f(k) P(k)` over `k ≤ n`, with the denominator pulled out. -/
-private lemma sum_mul_betaBinomialReal_eq (n : ℕ) (α β : ℝ) (f : ℕ → ℝ) :
-    ∑ k ∈ range (n + 1), f k * betaBinomialReal n α β k =
+private lemma sum_mul_betaBinomialPMF_eq (n : ℕ) (α β : ℝ) (f : ℕ → ℝ) :
+    ∑ k ∈ range (n + 1), f k * betaBinomialPMF n α β k =
       (∑ k ∈ range (n + 1), f k * (n.choose k * (ascPochhammer ℝ k).eval α *
         (ascPochhammer ℝ (n - k)).eval β)) / (ascPochhammer ℝ n).eval (α + β) := by
   rw [sum_div]
-  refine sum_congr rfl fun k hk => ?_
-  rw [betaBinomialReal, ite_eq_left (Nat.lt_succ_iff.1 (mem_range.1 hk))]
-  ring
-
-/-- **Normalization.** For `α, β > 0` the beta-binomial masses sum to one. -/
-theorem sum_betaBinomialReal {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
-    ∑ k ∈ range (n + 1), betaBinomialReal n α β k = 1 := by
-  have h := sum_mul_betaBinomialReal_eq n α β (fun _ => 1)
-  simp only [one_mul] at h
-  rw [h, sum_ascPochhammer_mul_ascPochhammer, div_self (ascPochhammer_add_pos hα hβ n).ne']
+  refine sum_congr rfl fun k _ => ?_
+  rw [betaBinomialPMF, mul_div_assoc]
 
 /-- **Mean.** For `α, β > 0`, `E M = n α / (α + β) = n π`. -/
-theorem sum_mul_betaBinomialReal {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
-    ∑ k ∈ range (n + 1), (k : ℝ) * betaBinomialReal n α β k = n * α / (α + β) := by
-  rw [sum_mul_betaBinomialReal_eq]
+theorem sum_mul_betaBinomialPMF {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
+    ∑ k ∈ range (n + 1), (k : ℝ) * betaBinomialPMF n α β k = n * α / (α + β) := by
+  rw [sum_mul_betaBinomialPMF_eq]
   rcases n with _ | m
   · simp
   · have h := sum_mul_choose_ascPochhammer_succ m α β (fun _ => 1)
     simp only [mul_one, one_mul] at h
-    rw [h, sum_ascPochhammer_mul_ascPochhammer, ascPochhammer_succ_left, eval_mul, eval_X,
+    rw [h, ← ascPochhammer_eval_add_eq_sum, ascPochhammer_succ_left, eval_mul, eval_X,
       eval_comp, eval_add, eval_X, eval_one, show α + 1 + β = α + β + 1 by ring]
     have h1 := ascPochhammer_pos m (α + β + 1) (by linarith)
     have h2 : α + β ≠ 0 := by linarith
@@ -166,10 +109,10 @@ theorem sum_mul_betaBinomialReal {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0
 
 /-- **Second factorial moment.** For `α, β > 0`,
 `E[M (M - 1)] = n (n - 1) α (α + 1) / ((α + β) (α + β + 1))`. -/
-theorem sum_mul_sub_one_betaBinomialReal {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
-    ∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) * betaBinomialReal n α β k =
+theorem sum_mul_sub_one_betaBinomialPMF {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
+    ∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) * betaBinomialPMF n α β k =
       n * (n - 1) * α * (α + 1) / ((α + β) * (α + β + 1)) := by
-  rw [sum_mul_betaBinomialReal_eq]
+  rw [sum_mul_betaBinomialPMF_eq]
   rcases n with _ | m
   · simp
   have h := sum_mul_choose_ascPochhammer_succ m α β (fun k => (k : ℝ) - 1)
@@ -180,7 +123,7 @@ theorem sum_mul_sub_one_betaBinomialReal {n : ℕ} {α β : ℝ} (hα : 0 < α) 
   · simp
   have h' := sum_mul_choose_ascPochhammer_succ l (α + 1) β (fun _ => 1)
   simp only [mul_one, one_mul, mul_assoc] at h'
-  have hV := sum_ascPochhammer_mul_ascPochhammer l (α + 1 + 1) β
+  have hV := (ascPochhammer_eval_add_eq_sum (α + 1 + 1) β l).symm
   simp only [mul_assoc] at hV
   rw [h', hV, ascPochhammer_succ_left, eval_mul, eval_X,
     eval_comp, eval_add, eval_X, eval_one, ascPochhammer_succ_left, eval_mul, eval_X,
@@ -195,15 +138,15 @@ theorem sum_mul_sub_one_betaBinomialReal {n : ℕ} {α β : ℝ} (hα : 0 < α) 
 /-- **Variance** (Dolzhenko–Smith parametrization). For `α, β > 0`, with `π = α / (α + β)` and
 `γ = 1 / (α + β + 1)`, `Var M = E M² - (E M)² = n π (1 - π) (1 + (n - 1) γ)`. -/
 theorem variance_betaBinomial {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
-    ∑ k ∈ range (n + 1), (k : ℝ) ^ 2 * betaBinomialReal n α β k -
-        (∑ k ∈ range (n + 1), (k : ℝ) * betaBinomialReal n α β k) ^ 2 =
+    ∑ k ∈ range (n + 1), (k : ℝ) ^ 2 * betaBinomialPMF n α β k -
+        (∑ k ∈ range (n + 1), (k : ℝ) * betaBinomialPMF n α β k) ^ 2 =
       n * (α / (α + β)) * (1 - α / (α + β)) * (1 + (n - 1) * (1 / (α + β + 1))) := by
-  have hsq : ∑ k ∈ range (n + 1), (k : ℝ) ^ 2 * betaBinomialReal n α β k =
-      ∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) * betaBinomialReal n α β k +
-        ∑ k ∈ range (n + 1), (k : ℝ) * betaBinomialReal n α β k := by
+  have hsq : ∑ k ∈ range (n + 1), (k : ℝ) ^ 2 * betaBinomialPMF n α β k =
+      ∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) * betaBinomialPMF n α β k +
+        ∑ k ∈ range (n + 1), (k : ℝ) * betaBinomialPMF n α β k := by
     rw [← sum_add_distrib]
     exact sum_congr rfl fun k _ => by ring
-  rw [hsq, sum_mul_sub_one_betaBinomialReal hα hβ, sum_mul_betaBinomialReal hα hβ]
+  rw [hsq, sum_mul_sub_one_betaBinomialPMF hα hβ, sum_mul_betaBinomialPMF hα hβ]
   have h2 : α + β ≠ 0 := by linarith
   have h3 : α + β + 1 ≠ 0 := by linarith
   field_simp
