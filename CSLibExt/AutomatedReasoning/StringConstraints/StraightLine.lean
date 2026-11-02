@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# The straight-line fragment is decidable
+# The closed straight-line fragment is decidable
 -/
 module
 
@@ -15,32 +15,38 @@ public import CSLibExt.AutomatedReasoning.StringConstraints.Syntax
 public import Mathlib.Tactic.Ring
 
 /-!
-# The straight-line fragment is decidable
+# The closed straight-line fragment is decidable
 
-A **straight-line** (SSA) string-constraint system defines each
+A **closed straight-line** (SSA) string-constraint system defines each
 variable once, by a term that mentions only earlier variables, and then
-asserts a formula over the defined variables. Every *defined*
-variable's value is forced by the earlier ones, so there is at most
-one assignment on defined variables; it is computed by a left fold
-over the definitions, and satisfiability is then a single check on
-that candidate. (Variables past the end of the definition list are
-unconstrained; only the defined ones are forced.) In particular,
-straight-line satisfiability is decidable even though string lengths
-are unbounded — unlike the bounded fragment, no length bound is
-needed.
+asserts a formula over the defined variables. This is the **closed /
+ground** sub-fragment of the straight-line fragment of the
+string-solving literature: there are no free input variables. Every
+variable occurring in a definition or in the query is itself defined,
+so unfolding the definitions terminates at ground (variable-free)
+terms, and every defined variable's value is forced. A program such as
+`x₁ := x₀ ++ [a]` with a genuinely free input `x₀` is *not* in this
+fragment unless `x₀` also receives a definition (which then fixes its
+value, e.g. `x₀ := [a]`). In the full straight-line fragment inputs
+are free and satisfiability is a search over their values; that
+fragment is not formalized here.
 
-This is the straight-line fragment of the string-solving literature:
-each assignment in the program defines one variable from earlier ones
-(SSA form), and the assertions are checked on the resulting values.
-Modern string solvers decide SSA-form programs this way.
+Because the system is closed, there is at most one assignment on
+defined variables; it is computed by a left fold over the definitions,
+and satisfiability is then a single check on that candidate.
+(Variables past the end of the definition list are unconstrained and
+irrelevant: the query mentions only defined variables, and only the
+defined ones are forced.) In particular, closed straight-line
+satisfiability is decidable even though string lengths are unbounded
+— unlike the bounded fragment, no length bound is needed.
 
 ## Main results
 
-- `SLSys`, `Acyclic`, `SLSat`: straight-line systems and their
+- `SLSys`, `Acyclic`, `SLSat`: closed straight-line systems and their
   semantics.
 - `sol_satisfies_defs`: the folded assignment satisfies the definitions.
 - `eq_sol_of_sat`: any satisfying assignment agrees with the folded one.
-- `decidable_exists_sat_of_acyclic`: satisfiability of an acyclic
+- `decidable_exists_sat_of_acyclic`: satisfiability of a closed acyclic
   straight-line system is decidable.
 
 ## References
@@ -61,23 +67,26 @@ namespace Cslib.AutomatedReasoning.StringConstraints
 
 variable {α : Type*}
 
-/-- A **straight-line system**: one defining term per variable, plus a
+/-- A **closed straight-line system**: one defining term per variable, plus a
 query formula. The definition at position `k` is the definition of
-variable `k`. -/
+variable `k`. There are no free input variables: every variable the
+system talks about must be defined by the system itself. -/
 structure SLSys (α : Type*) where
   /-- The defining terms, in variable order. -/
   defs : List (Term α ℕ)
   /-- The query formula. -/
   query : Formula α ℕ
 
-/-- A straight-line system is **acyclic** when every defining term
+/-- A closed straight-line system is **acyclic** when every defining term
 mentions only earlier variables, and the query mentions only defined
-variables. -/
+variables. Hence every variable occurring anywhere in the system is
+defined, and unfolding the definitions terminates at ground terms:
+there is no free input variable. -/
 def Acyclic (S : SLSys α) : Prop :=
   (∀ k (h : k < S.defs.length), ∀ j ∈ varsOf (S.defs[k]'h), j < k) ∧
     ∀ j ∈ varsOfFormula S.query, j < S.defs.length
 
-/-- Satisfaction of a straight-line system: the assignment obeys every
+/-- Satisfaction of a closed straight-line system: the assignment obeys every
 definition and satisfies the query. -/
 def SLSat (S : SLSys α) (σ : ℕ → List α) : Prop :=
   (∀ k (h : k < S.defs.length), σ k = eval σ (S.defs[k]'h)) ∧ Sat σ S.query
@@ -260,7 +269,7 @@ theorem eq_sol_of_sat {S : SLSys α} {σ : ℕ → List α} (hacy : Acyclic S)
       have : j < S.defs.length := by omega
       exact this)
 
-/-- Satisfiability of a straight-line system is equivalent to the query
+/-- Satisfiability of a closed straight-line system is equivalent to the query
 holding on the candidate assignment. -/
 theorem exists_sat_iff_sat_sol (S : SLSys α) (hacy : Acyclic S) :
     (∃ σ, SLSat S σ) ↔ Sat (sol S) S.query := by
@@ -275,7 +284,9 @@ theorem exists_sat_iff_sat_sol (S : SLSys α) (hacy : Acyclic S) :
     intro k hk
     exact sol_satisfies_defs S hacy k hk
 
-/-- **Satisfiability of an acyclic straight-line system is decidable.** -/
+/-- **Satisfiability of a closed acyclic straight-line system is decidable.**
+The decision procedure checks the query on the unique ground assignment;
+it does not search over free inputs, because the closed fragment has none. -/
 def decidableExistsSatOfAcyclic (S : SLSys α) (hacy : Acyclic S) [DecidableEq α] :
     Decidable (∃ σ, SLSat S σ) := by
   haveI : Decidable (Sat (sol S) S.query) := by

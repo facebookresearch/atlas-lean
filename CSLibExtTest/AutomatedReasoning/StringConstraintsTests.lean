@@ -12,14 +12,14 @@ public import CSLibExt.AutomatedReasoning.StringConstraints.Bounded
 public import CSLibExt.AutomatedReasoning.StringConstraints.Complexity
 public import CSLibExt.AutomatedReasoning.StringConstraints.Levi
 public import CSLibExt.AutomatedReasoning.StringConstraints.StraightLine
-public import CSLibExt.AutomatedReasoning.StringConstraints.Undecidable
+public import CSLibExt.AutomatedReasoning.StringConstraints.PCPCharacterization
 
 /-!
 # String-constraint tests: boundary checks
 
 End-to-end exercises for the string-constraint formalization: Levi's
 lemma, the bounded solver on a satisfiable and an unsatisfiable
-formula, the straight-line fold on a two-definition system, the PCP
+formula, the closed straight-line fold on a two-definition system, the PCP
 encoding on a two-domino instance, and the SAT encoding on a
 one-clause formula. The bounded-solver checks go through
 `boundedSatB_iff` (the solver is `noncomputable`, so they are not
@@ -36,7 +36,7 @@ open Cslib.Logic.PL
 
 /-- Levi's lemma: cancellation of a common prefix. -/
 example {a b : List Bool} (h : [true] ++ a = [true] ++ b) : a = b :=
-  append_left_cancel h
+  List.append_cancel_left h
 
 /-- The bounded solver reports a satisfiable equation. -/
 example : boundedSatB [0]
@@ -63,7 +63,7 @@ example : boundedSatB [0]
   simp [sat_and, SatAtom] at hSat
   simp [hSat.1] at hSat
 
-/-- A two-definition straight-line system. -/
+/-- A two-definition closed straight-line system. -/
 def twoDefSys : SLSys Bool where
   defs := [Term.const [true],
     Term.append (Term.var 0) (Term.const [false])]
@@ -83,7 +83,7 @@ theorem twoDefSys_acyclic : Acyclic twoDefSys := by
     simp [twoDefSys, varsOfFormula, varsOfAtom] at hj
     omega
 
-/-- The straight-line system is satisfiable, with value `[true, false]`
+/-- The closed straight-line system is satisfiable, with value `[true, false]`
 at variable `1`. -/
 example : ∃ σ, SLSat twoDefSys σ := by
   refine ⟨sol twoDefSys, ?_, ?_⟩
@@ -142,7 +142,7 @@ example : Sat (fun _ : Fin 1 => [true])
       (Term.const [true, false]))) := by
   simp [Sat, SatAtom, eval]
 
-/-- An unsatisfiable straight-line system: `x₀ = [true]` but the query
+/-- An unsatisfiable closed straight-line system: `x₀ = [true]` but the query
 demands `x₀ = [false]`. -/
 def unsatSys : SLSys Bool where
   defs := [Term.const [true]]
@@ -159,7 +159,7 @@ theorem unsatSys_acyclic : Acyclic unsatSys := by
     simp [unsatSys, varsOfFormula, varsOfAtom] at hj
     omega
 
-/-- The unsatisfiable straight-line system has no satisfying assignment. -/
+/-- The unsatisfiable closed straight-line system has no satisfying assignment. -/
 example : ¬ ∃ σ, SLSat unsatSys σ := by
   intro h
   have h2 := (exists_sat_iff_sat_sol unsatSys unsatSys_acyclic).mp h

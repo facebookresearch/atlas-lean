@@ -7,21 +7,20 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# String constraints with morphisms are undecidable: PCP
+# PCP characterization of a string-constraint family
 -/
 module
 
 public import CSLibExt.AutomatedReasoning.StringConstraints.Syntax
 public import CSLibExt.Computability.Decidability.PCP
-public import CSLibExt.Computability.Decidability.PCPUndecidable
 public import Mathlib.Computability.RegularExpressions
 
 /-!
-# String constraints with morphisms are undecidable: PCP
+# PCP characterization of a string-constraint family
 
 The PCP-indexed family of string constraints — word equations,
 regular membership, length bounds, and letter-to-word morphisms —
-is undecidable: a PCP instance `P` becomes the constraint
+characterizes PCP: a PCP instance `P` becomes the constraint
 
 * `s ∈ (dominoes of P)⁺`, a regular membership atom, and
 * `hom topFun s = hom botFun s`, a word equation between the two
@@ -37,25 +36,29 @@ The morphism (transducer) is essential: word equations plus regular
 membership alone do not obviously encode PCP, because the block
 boundaries of the top and bottom parses of one word need not line up.
 With morphisms, the index word itself carries the shared domino
-sequence. This is the same boundary that makes the straight-line
-fragment (with morphisms) decidable while the general problem is not.
+sequence. This is the same boundary that makes the closed
+straight-line fragment (with morphisms) decidable while the general
+problem is not.
 
-What is *not* proved here: undecidability of the formula-indexed
-problem `fun φ : Formula … => ∃ σ, Sat σ φ`. That step would need a
-computable encoding `P ↦ pcpConstraint P` and a `Primcodable` /
-encoding setup for `Formula`, neither of which is formalized. The
-reduction correctness (`pcp_iff_stringSat`) is the mathematical
-content; the `TM2Decidable` transfer is stated for the PCP-indexed
-family, which is why it needs no `Computable` / `Primcodable`
-instance for the constraint syntax.
+What is *not* proved here, and no claim about it is made: undecidability
+of string-constraint satisfiability, in particular undecidability of
+the formula-indexed problem `fun φ : Formula … => ∃ σ, Sat σ φ`.
+That step would need a computable encoding `P ↦ pcpConstraint P` and a
+`Primcodable` / encoding setup for `Formula`, neither of which is
+formalized, and no computable many-one reduction to a
+formula-indexed satisfiability predicate is established. The only
+result here is the semantic characterization `pcp_iff_stringSat`:
+for each PCP instance `P`, `PCP P` holds iff the encoding constraint
+`pcpConstraint P` is satisfiable. The predicate whose (un)decidability
+one might transfer is indexed by the PCP instance `P` itself, not by
+a string-constraint formula, so this file does not establish an
+undecidability boundary for string-constraint satisfiability.
 
 ## Main results
 
 - `pcp_iff_stringSat`: `PCP P` iff the encoding constraint is
-  satisfiable.
-- `exists_not_tm2Decidable_stringSat`: the PCP-indexed encoding
-  family is undecidable, by composing the reduction with CSLibExt's
-  undecidability of PCP.
+  satisfiable. This is a semantic PCP characterization, not an
+  undecidability theorem for string-constraint satisfiability.
 
 ## References
 
@@ -197,7 +200,10 @@ theorem map_inl_flatten (s : List (Post.Domino α)) :
     rw [ih]
     rfl
 
-/-- **PCP reduces to string-constraint satisfiability.** -/
+/-- **PCP is characterized by string-constraint satisfiability:** for each
+PCP instance `P`, `PCP P` holds iff the encoding constraint is satisfiable.
+This is a semantic characterization, not a computable reduction to a
+formula-indexed satisfiability predicate (see the module header). -/
 theorem pcp_iff_stringSat (P : List (Post.Domino α)) :
     Post.PCP P ↔ ∃ σ : Fin 1 → List (BlockSym α), Sat σ (pcpConstraint P) := by
   constructor
@@ -274,21 +280,5 @@ theorem pcp_iff_stringSat (P : List (Post.Domino α)) :
       rw [← hbd]
       exact hd'
     exact ⟨bs.map blockDomino, hsne, hsP, htopbot⟩
-
-/-- **The PCP-indexed encoding family is undecidable** (the
-formula-indexed undecidability statement is not formalized; see the
-module header). -/
-theorem exists_not_tm2Decidable_stringSat :
-    ∃ (α : Type) (_ : Fintype α) (_ : Primcodable α),
-      ¬ TM2Decidable
-        (fun P : List (Post.Domino α) =>
-          ∃ σ : Fin 1 → List (BlockSym α), Sat σ (pcpConstraint P)) := by
-  obtain ⟨α, hfin, hprim, hund⟩ := exists_not_tm2Decidable_pcp
-  refine ⟨α, hfin, hprim, fun h => hund ?_⟩
-  obtain ⟨f, hcomp, hiff⟩ := h
-  refine ⟨f, hcomp, fun P => ?_⟩
-  have hiff' : f (Encodable.encode P) = 1 ↔
-      ∃ σ : Fin 1 → List (BlockSym α), Sat σ (pcpConstraint P) := hiff P
-  exact hiff'.trans (pcp_iff_stringSat P).symm
 
 end Cslib.AutomatedReasoning.StringConstraints

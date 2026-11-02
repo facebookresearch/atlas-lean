@@ -28,8 +28,10 @@ formalized here; the cited algorithms are background.
 - `levi`: Levi's lemma.
 - `levi_of_le`: the length-directed form: when the left factor is no
   longer than the other, the split is determined.
-- `append_left_cancel`, `append_right_cancel`: cancellation of a common
-  prefix or suffix in a word equation.
+
+Cancellation of a common prefix or suffix is Mathlib's
+`List.append_cancel_left` / `List.append_cancel_right`; no wrappers are
+defined here.
 
 ## References
 
@@ -67,13 +69,5 @@ theorem levi_of_le {u v x y : List α} (h : u ++ v = x ++ y)
       exact List.eq_nil_of_length_eq_zero h0
     subst hw
     exact ⟨[], by simpa using hu.symm, by simpa using hy.symm⟩
-
-/-- Cancellation of a common prefix in a word equation. -/
-theorem append_left_cancel {u v w : List α} (h : u ++ v = u ++ w) : v = w :=
-  List.append_cancel_left h
-
-/-- Cancellation of a common suffix in a word equation. -/
-theorem append_right_cancel {u v w : List α} (h : v ++ u = w ++ u) : v = w :=
-  List.append_cancel_right h
 
 end Cslib.AutomatedReasoning.StringConstraints
