@@ -29,6 +29,14 @@ example : negBinomialReal 2 2 0 = 1 / 4 ∧ negBinomialReal 2 2 1 = 1 / 4 := by
     norm_num [negBinomialReal, ascPochhammer_one, show (2 : ℝ) = (2 : ℕ) by norm_num,
       Real.rpow_natCast]
 
+/-- The mean parametrization is the canonical `p`-parametrization at `p = θ / (θ + μ)`:
+`NB(2, 2)` is `negBinomialPMF 2 (1 / 2)`. -/
+example (k : ℕ) : negBinomialReal 2 2 k = negBinomialPMF 2 (1 / 2) k := by
+  have h := negBinomialReal_eq_negBinomialPMF (θ := 2) (μ := 2) (by norm_num) (by norm_num) k
+  have h2 : (2 : ℝ) / (2 + 2) = 1 / 2 := by norm_num
+  rw [h2] at h
+  exact h
+
 /-- Boundary: mean `0` is the point mass at `0`. -/
 example : negBinomialReal 3 0 0 = 1 ∧ negBinomialReal 3 0 5 = 0 := by
   rw [negBinomialReal_mean_zero (by norm_num), negBinomialReal_mean_zero (by norm_num)]

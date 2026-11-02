@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Distributions.PoissonMixture
+public import MathlibExt.Probability.Distributions.NegativeBinomialSplitting
 public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 
@@ -78,6 +79,17 @@ namespace ProbabilityTheory
 probability mass function. -/
 noncomputable def negBinomialReal (θ μ : ℝ) (k : ℕ) : ℝ :=
   (ascPochhammer ℝ k).eval θ / k ! * (θ / (θ + μ)) ^ θ * (μ / (θ + μ)) ^ k
+
+/-- **Mean parametrization is the canonical `p`-parametrization.** For `θ > 0` and `μ ≥ 0`,
+`negBinomialReal θ μ` is `negBinomialPMF θ p` at `p = θ / (θ + μ)`, since
+`1 - p = μ / (θ + μ)`. The two APIs are the same law; reuse the splitting and
+conditioning results proved for `negBinomialPMF` through this equivalence. -/
+theorem negBinomialReal_eq_negBinomialPMF {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) (k : ℕ) :
+    negBinomialReal θ μ k = negBinomialPMF θ (θ / (θ + μ)) k := by
+  have hne : θ + μ ≠ 0 := ne_of_gt (by linarith)
+  have h1 : 1 - θ / (θ + μ) = μ / (θ + μ) := by
+    rw [eq_div_iff hne, sub_mul, one_mul, div_mul_cancel₀ _ hne, add_sub_cancel_left]
+  simp only [negBinomialReal, negBinomialPMF, h1]
 
 /-- The negative binomial mass function is nonnegative on the parameter domain. -/
 theorem negBinomialReal_nonneg {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) (k : ℕ) :
@@ -156,7 +168,10 @@ private lemma hasSum_mul_negBinomialReal_mean_zero {θ : ℝ} (hθ : 0 < θ) (f 
   rw [h]
   exact hasSum_ite_eq 0 (f 0)
 
-/-- **Normalization.** For `θ > 0` and `μ ≥ 0` the negative binomial masses sum to one. -/
+/-- **Normalization.** For `θ > 0` and `μ ≥ 0` the negative binomial masses sum to one.
+For `μ > 0` this is `hasSum_negBinomialPMF` transported along
+`negBinomialReal_eq_negBinomialPMF`, so the mean parametrization shares the canonical
+law's normalization instead of re-proving it. -/
 theorem hasSum_negBinomialReal {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) :
     HasSum (negBinomialReal θ μ) 1 := by
   rcases hμ.eq_or_lt with rfl | hμ
@@ -164,9 +179,15 @@ theorem hasSum_negBinomialReal {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) :
       funext (negBinomialReal_mean_zero hθ)
     rw [h]
     exact hasSum_ite_eq 0 1
-  · have := isProbabilityMeasure_gammaMeasure hθ (div_pos hθ hμ)
-    have h := hasSum_poissonMixtureReal (ae_nonneg_gammaMeasure θ (θ / μ))
-    rwa [funext (poissonMixtureReal_gammaMeasure_mean hθ hμ)] at h
+  · have hsum : 0 < θ + μ := by linarith
+    have hp : 0 < θ / (θ + μ) := div_pos hθ hsum
+    have hp1 : θ / (θ + μ) ≤ 1 := by
+      rw [div_le_one hsum]; linarith
+    have h := hasSum_negBinomialPMF hθ hp hp1
+    have heq : negBinomialReal θ μ = negBinomialPMF θ (θ / (θ + μ)) :=
+      funext (negBinomialReal_eq_negBinomialPMF hθ hμ.le)
+    rw [heq]
+    exact h
 
 /-- **Mean.** For `θ > 0` and `μ ≥ 0` the negative binomial law has mean `μ`. -/
 theorem hasSum_mul_negBinomialReal {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) :
