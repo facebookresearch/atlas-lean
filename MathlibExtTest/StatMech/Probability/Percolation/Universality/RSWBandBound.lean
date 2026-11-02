@@ -13,9 +13,8 @@ public import MathlibExt.Probability.Percolation.Universality.RSWBandBound
 /-!
 # Tests for `MathlibExt.Probability.Percolation.Universality.RSWBandBound`
 
-* `rbb_band_crossing_lb` on the one-site box `[0, 0] × [0, 0]` (the only kind of box where its
-  separation hypothesis is known to hold).
-* `rbb_band_crossing_sqrt_lb` for a Dirac measure (positively associated) on the same box.
+* `rbb_band_crossing_sqrt_lb` for a Dirac measure (positively associated) on the one-site box
+  `[0, 0] × [0, 0]`. (`rbb_band_crossing_lb` was removed with the self-duality bound it used.)
 -/
 
 @[expose] public section
@@ -52,12 +51,6 @@ theorem pa_dirac (ω₀ : ConfigSpace (Sym2 (Site 2))) :
 theorem real_univ_eq (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
     {A : Set (ConfigSpace (Sym2 (Site 2)))} (h : A = Set.univ) : μ.real A = 1 := by
   rw [h, probReal_univ]
-
-example : (1 : ℝ) / 2 ≤ halfMeasure.real (verticalCrossingEvent 0 0 0 0) :=
-  rbb_band_crossing_lb 0 0 0 0 (measurableSet_horizontalCrossingEvent 0 0 0 0)
-    (measurableSet_verticalCrossingEvent 0 0 0 0)
-    (by rw [hCross_thin 0 0 0 le_rfl, Set.compl_univ]; exact Set.empty_subset _)
-    (by rw [real_univ_eq _ (vCross_flat 0 0 0 le_rfl), real_univ_eq _ (hCross_thin 0 0 0 le_rfl)])
 
 example (ω₀ : ConfigSpace (Sym2 (Site 2))) :
     1 - Real.sqrt (1 - 1) ≤ (Measure.dirac ω₀).real (verticalCrossingEvent 0 0 0 0) :=

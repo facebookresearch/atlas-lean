@@ -20,8 +20,9 @@ keeps crossing constants positive when the aspect ratio grows.
 ## Main results
 
 * `StatMech.Universality.rcm_aspect_step`, `StatMech.Universality.rcm_aspect_step_pos`.
-* `StatMech.Universality.rcm_aspect_step_selfDual`: the `ℙ_{1/2}` version, with the band bound from
-  `rbb_band_crossing_lb` (and hence its separation hypothesis, which fails for `[0, 2]²`).
+
+The `ℙ_{1/2}` version `rcm_aspect_step_selfDual` was removed: it supplied the band bound from
+`rbb_band_crossing_lb`, whose separation hypothesis fails for `[0, 2]²`.
 -/
 
 @[expose] public section
@@ -77,24 +78,6 @@ theorem rcm_aspect_step_pos
     (le_of_lt hcL) (le_of_lt hcR) hL hR hVlb
   have hpos : 0 < cL * (1 / 2) * cR := by positivity
   exact lt_of_lt_of_le hpos hstep
-
-/-- `rcm_aspect_step` for `ℙ_{1/2}`, with the band bound supplied by `rbb_band_crossing_lb`; this
-inherits its separation hypothesis `hsepB`, which fails for `[0, 2]²`. -/
-theorem rcm_aspect_step_selfDual
-    (hpa : PositivelyAssociated halfMeasure) {a m m' b c d : ℤ} {cL cR : ℝ}
-    (ham : a ≤ m) (hmm' : m ≤ m') (hm'b : m' ≤ b)
-    (hamL : a < m') (hmbR : m < b) (hcd : c ≤ d)
-    (hcL0 : 0 ≤ cL) (hcR0 : 0 ≤ cR)
-    (hL : cL ≤ halfMeasure.real (horizontalCrossingEvent a m' c d))
-    (hR : cR ≤ halfMeasure.real (horizontalCrossingEvent m b c d))
-    (hmeasHB : MeasurableSet (horizontalCrossingEvent m m' c d))
-    (hmeasVB : MeasurableSet (verticalCrossingEvent m m' c d))
-    (hsepB : (horizontalCrossingEvent m m' c d)ᶜ ⊆ dualVerticalCrossingEvent m m' c d)
-    (hsqsymB : halfMeasure.real (verticalCrossingEvent m m' c d)
-                = halfMeasure.real (horizontalCrossingEvent m m' c d)) :
-    cL * (1 / 2) * cR ≤ halfMeasure.real (horizontalCrossingEvent a b c d) :=
-  rcm_aspect_step halfMeasure hpa ham hmm' hm'b hamL hmbR hcd hcL0 hcR0 hL hR
-    (rbb_band_crossing_lb m m' c d hmeasHB hmeasVB hsepB hsqsymB)
 
 end Universality
 

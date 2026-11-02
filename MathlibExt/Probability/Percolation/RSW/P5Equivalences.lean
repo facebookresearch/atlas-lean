@@ -31,20 +31,24 @@ conditions) is proved here.
 
 ## Main results
 
-* `StatMech.RSW.Box.rp5_p5_equiv`: under the hypotheses `hcmp`, `hglue`, `hchain`,
-  `P5 ↔ P5a`, `P5a → P5b` and `P5b → P5`. No `P5 ↔ P5c` component is claimed: the
-  two-sided form `P5c` is defined in `Defs`, and `P5c.p5` gives `P5c → P5`, but an
-  equivalence would need non-circular comparison hypotheses, which are not proved here.
+* `StatMech.RSW.Box.rp5_p5_p5a`: `P5 → P5a`, given a gluing bound.
+* `StatMech.RSW.Box.rp5_p5a_p5b`: `P5a → P5b`, given a boundary-condition comparison.
+* `StatMech.RSW.Box.rp5_p5b_p5_upper`: an upper crossing bound from a lower bound on the
+  complementary quantity.
+
+No `P5 ↔ P5c` component is claimed: the two-sided form `P5c` is defined in `Defs`, and
+`P5c.p5` gives `P5c → P5`, but an equivalence would need non-circular comparison hypotheses,
+which are not proved here.
 
 ## Implementation notes
 
-The hypothesis `hchain` (used for `P5b → P5`) asks for one bound
-`ν 2 n (annulusEvent n) ≤ μ n (boxCrossingEvent α n)` valid for *every* `α`. For a genuine
-Bernoulli measure with `0 < p < 1` and fixed `n ≥ 1`, the crossing probability of
-`[0, ⌊αn⌋] × [0, n]` tends to `0` as `α → ∞`, so `hchain` then forces `ν 2 n (annulusEvent n) ≤ 0`.
-Thus `hchain` is not satisfied by the intended percolation quantities (the literature constant
-depends on `α`); the results using it are meaningful only for abstract set functions. This is
-argued by hand, not proved in Lean.
+The `P5b → P5` step and the combined equivalence `rp5_p5_equiv` were removed: they needed a
+hypothesis `hchain` asking for one bound `ν 2 n (annulusEvent n) ≤ μ n (boxCrossingEvent α n)`
+valid for *every* `α`. For a genuine Bernoulli measure with `0 < p < 1` and fixed `n ≥ 1`, the
+crossing probability of `[0, ⌊αn⌋] × [0, n]` tends to `0` as `α → ∞`, so `hchain` then forces
+`ν 2 n (annulusEvent n) ≤ 0`. Thus `hchain` is not satisfied by the intended percolation quantities
+(the literature constant depends on `α`); the removed results were meaningful only for abstract
+set functions. This is argued by hand, not proved in Lean.
 
 ## References
 
@@ -106,20 +110,6 @@ theorem rp5_p5_p5a
   have hcle : c ≤ μ n (boxCrossingEvent 10 n) := hμ n
   exact pow_le_pow_left₀ hc.le hcle 4
 
-/-- `P5b → P5`, given `hchain`: one bound `ν 2 n (annulus) ≤ lam n (box crossing, ratio α)`
-valid for every `α`. See the implementation note in the module docstring: this hypothesis is not
-met by genuine percolation measures. -/
-theorem rp5_p5b_p5_lower
-    {ν : ℕ → ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ}
-    {lam : ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ}
-    (hchain : ∀ (α : ℝ) (n : ℕ),
-      ν 2 n (annulusEvent n) ≤ lam n (boxCrossingEvent α n))
-    (h : rp5_P5b ν) : P5 lam := by
-  obtain ⟨c, hc, hν⟩ := h 2 le_rfl
-  intro α _hα
-  refine ⟨c, hc, fun n => ?_⟩
-  exact (hν n).trans (hchain α n)
-
 /-- Upper crossing bound from a lower bound on the complementary quantity: if
 `μ n (B) + compl n (B) = 1` and `compl n (B) ≥ c`, then `μ n (B) ≤ 1 - c`. -/
 theorem rp5_p5b_p5_upper
@@ -134,35 +124,6 @@ theorem rp5_p5b_p5_upper
   have h := hnorm n
   have hd := hdual n
   linarith
-
-/-- Abstract form of the equivalence of the box-crossing properties `P5`, `P5a`, `P5b`
-(Duminil-Copin–Tassion). For set functions `μ ξ n`, `ν R n` it gives `P5 ↔ P5a`, `P5a → P5b`
-and `P5b → P5` for the base point `ξ₀`.
-
-The hypotheses carry the content: `hcmp` (boundary-condition comparison), `hglue` (four
-crossings make a circuit) and `hchain` (a circuit bound for crossings of every aspect ratio, with
-one constant for all `α`; not satisfied by genuine Bernoulli measures with `0 < p < 1`, see the
-module docstring). No `P5 ↔ P5c` component is included: the only hypothesis that would prove it
-is `P5c μ` itself, which would make the component circular. -/
-theorem rp5_p5_equiv
-    {Ξ : Type*} (ξ₀ : Ξ)
-    {μ : Ξ → ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ}
-    {ν : ℕ → ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ}
-    (hcmp : ∀ R n : ℕ, μ ξ₀ n (annulusEvent n) ≤ ν R n (annulusEvent n))
-    (hglue : ∀ n : ℕ,
-      (μ ξ₀ n (boxCrossingEvent 10 n)) ^ 4 ≤ μ ξ₀ n (annulusEvent n))
-    (hchain : ∀ (α : ℝ) (n : ℕ),
-      ν 2 n (annulusEvent n) ≤ μ ξ₀ n (boxCrossingEvent α n)) :
-    (P5 (μ ξ₀) ↔ rp5_P5a (μ ξ₀)) ∧
-    (rp5_P5a (μ ξ₀) → rp5_P5b ν) ∧
-    (rp5_P5b ν → P5 (μ ξ₀)) := by
-  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
-  · intro h; exact rp5_p5_p5a hglue h
-  · intro h
-    have hb : rp5_P5b ν := rp5_p5a_p5b hcmp h
-    exact rp5_p5b_p5_lower hchain hb
-  · intro h; exact rp5_p5a_p5b hcmp h
-  · intro h; exact rp5_p5b_p5_lower hchain h
 
 end Box
 

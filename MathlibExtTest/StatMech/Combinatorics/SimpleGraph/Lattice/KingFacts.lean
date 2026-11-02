@@ -16,8 +16,9 @@ public import Mathlib
 
 * `kf_hyperAdj_kingAdj` on the edge from the origin to `(1, 0)`; `KingAdj` for the diagonal step.
 * `kf_boundaryKingConnected` for an arbitrary set.
-* `kf_interfaceConnected_of_orbitResidues` for `K = ∅` (its transport hypothesis is false for
-  every finite nonempty `K`, see `ifg_not_orbitKingTransport_of_finite`).
+* `InterfaceConnected` for `K = ∅`, directly. The orbit-residues reduction
+  `kf_interfaceConnected_of_orbitResidues` was removed: its transport hypothesis is false for every
+  finite nonempty `K` (see `ifg_not_orbitKingTransport_of_finite`).
 -/
 
 @[expose] public section
@@ -34,8 +35,8 @@ example : KingAdj (0 : Site 2) ![1, 1] := ⟨by
 
 example (K : Set (Site 2)) : BoundaryKingConnected K := kf_boundaryKingConnected K
 
-example : InterfaceConnected (∅ : Set (Site 2)) :=
-  kf_interfaceConnected_of_orbitResidues ∅ (fun e he => absurd he.1 (by simp))
-    (fun e he => absurd he.1 (by simp))
+example : InterfaceConnected (∅ : Set (Site 2)) := by
+  intro e f he hf hreach
+  exact absurd he.1 (by simp)
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.KingFacts
