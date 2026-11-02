@@ -53,7 +53,12 @@ universe u v
 
 variable {Atom : Type u} {World : Type v}
 
-/-- CSLib's modal propositions in the `⊥`, `→`, `□` basis. -/
+/-- **Translation of CSLib's modal propositions.** CSLib's unimodal propositions are translated into
+modal formulas in the $\bot$, $\to$, $\Box$ basis by recursion, writing $\varphi'$ for the
+translation of $\varphi$: an atom $p$ goes to $p$, falsehood to $\bot$, $\neg\varphi$ to
+$\varphi' \to \bot$, $\varphi \lor \psi$ to $(\varphi' \to \bot) \to \psi'$, and the diamond
+(the unimodal triangle) applied to $\varphi$ goes to $\Diamond\varphi'$, that is, to
+$\Box(\varphi' \to \bot) \to \bot$. -/
 def Formula.ofProposition : Logic.Modal.Unimodal.Proposition Atom → Formula Atom
   | .atom p => .atom p
   | .false => .bot
@@ -62,14 +67,19 @@ def Formula.ofProposition : Logic.Modal.Unimodal.Proposition Atom → Formula At
   | .triangle _ phis => (ofProposition (phis default)).dia
 termination_by structural phi => phi
 
-/-- A CSLib model on a nonempty type of worlds, as a Kripke model. -/
+/-- **Kripke model of a CSLib model.** For a CSLib unimodal model $m$ on a nonempty type of worlds,
+the associated Kripke model has the same worlds, the binary accessibility relation of $m$ as its
+accessibility relation, and the valuation of $m$ as its valuation. -/
 def KripkeModel.ofModel [Nonempty World] (m : Logic.Modal.Unimodal.Model World Atom) :
     KripkeModel World Atom where
   nonempty_world := inferInstance
   rel := m.rel
   valuation := m.v
 
-/-- The translation preserves satisfaction. -/
+/-- **The translation preserves satisfaction.** Let $m$ be a CSLib unimodal model on a nonempty type
+of worlds, $w$ a world and $\varphi$ a CSLib unimodal proposition. Then the translation of $\varphi$
+into the $\bot$, $\to$, $\Box$ basis holds at $w$ in the Kripke model of $m$ if and only if
+$\varphi$ holds at $w$ in $m$. -/
 theorem satisfies_ofProposition [Nonempty World]
     (m : Logic.Modal.Unimodal.Model World Atom) (w : World)
     (phi : Logic.Modal.Unimodal.Proposition Atom) :
@@ -98,23 +108,25 @@ theorem satisfies_ofProposition [Nonempty World]
       exact congrArg m.toFrame.diagonal (Subsingleton.elim op default)
     simpa only [hrel, KripkeModel.ofModel] using hsem.symm
 
-/-- A Kripke model as a CSLib unimodal model: the frame built from the
-accessibility relation, with the same valuation. -/
+/-- **The CSLib unimodal model of a Kripke model.** A Kripke model $k$ on worlds $W$ gives the
+CSLib unimodal model on $W$ whose frame is the unimodal frame built from the accessibility
+relation of $k$ and whose valuation is the valuation of $k$. -/
 def KripkeModel.toModel (k : KripkeModel World Atom) :
     Logic.Modal.Unimodal.Model World Atom where
   toFrame := Frame.ofRelation k.rel
   v := k.valuation
 
-/-- From a Kripke model to a CSLib model and back is the identity (the
-`Nonempty World` instance, a proposition, agrees with the model's
-`nonempty_world` field by proof irrelevance). -/
+/-- **Kripke to CSLib and back is the identity.** Let $k$ be a Kripke model on a nonempty type of
+worlds. Converting $k$ to a CSLib unimodal model and converting that model back to a Kripke model
+gives $k$. -/
 theorem KripkeModel.ofModel_toModel [Nonempty World] (k : KripkeModel World Atom) :
     KripkeModel.ofModel (KripkeModel.toModel k) = k := by
   cases k with
   | mk hne rel val => rfl
 
-/-- From a CSLib model to a Kripke model and back is the identity: a
-unimodal frame is determined by its binary accessibility relation. -/
+/-- **Round trip from CSLib models through Kripke models.** For a nonempty type of worlds $W$,
+converting a CSLib unimodal model $m$ on $W$ into a Kripke model and then back into a CSLib
+unimodal model returns $m$: a unimodal frame is determined by its binary accessibility relation. -/
 theorem KripkeModel.toModel_ofModel [Nonempty World]
     (m : Logic.Modal.Unimodal.Model World Atom) :
     (KripkeModel.ofModel m).toModel = m := by
@@ -127,19 +139,25 @@ theorem KripkeModel.toModel_ofModel [Nonempty World]
     Logic.Modal.Unimodal.Model World Atom) = ⟨f, v⟩
   rw [hframe]
 
-/-- Formulas in the `⊥`, `→`, `□` basis as CSLib unimodal propositions
-(`⊥ ↦ false`, `φ → ψ ↦ ¬φ ∨ ψ`, `□φ ↦ ¬◇¬φ`). -/
+/-- **Translation of modal formulas into CSLib propositions.** Each modal formula built from
+atoms, $\bot$, $\to$ and $\Box$ is translated into a CSLib unimodal proposition by recursion:
+an atom $p$ goes to the atom $p$, $\bot$ goes to false, $\varphi \to \psi$ goes to
+$\neg\varphi' \lor \psi'$, and $\Box\varphi$ goes to $\neg\Diamond\neg\varphi'$, where
+$\varphi'$ and $\psi'$ are the translations of $\varphi$ and $\psi$ and $\Diamond$ is the
+possibility operator of CSLib's unimodal language. -/
 def Formula.toProposition : Formula Atom → Logic.Modal.Unimodal.Proposition Atom
   | .atom p => .atom p
   | .bot => .false
   | .imp phi psi => .or (.not (toProposition phi)) (toProposition psi)
   | .box phi => .not (.triangle default (fun _ => .not (toProposition phi)))
 
-/-- The reverse translation also preserves satisfaction: a formula holds
-at a world of a Kripke model iff its translation holds there in the
-associated CSLib model.  Together with `satisfies_ofProposition` and the
-model round trips, the two presentations have the same unimodal
-semantics. -/
+/-- **The reverse translation preserves satisfaction.** Let $k$ be a Kripke model, $w$ a world
+and $\varphi$ a modal formula in the $\bot$, $\to$, $\Box$ basis. Then $\varphi$ holds at $w$ in $k$
+if and only if its translation into a CSLib unimodal proposition holds at $w$ in the CSLib model
+associated with $k$.
+
+Together with the preservation of satisfaction by the forward translation and the two model round
+trips, this shows that the two presentations have the same unimodal semantics. -/
 theorem satisfies_toProposition (k : KripkeModel World Atom) (w : World)
     (phi : Formula Atom) :
     k.Satisfies w phi ↔ Logic.Modal.Satisfies k.toModel w (Formula.toProposition phi) := by
@@ -179,16 +197,21 @@ theorem satisfies_toProposition (k : KripkeModel World Atom) (w : World)
         h (hsem.mpr ⟨next, (hdiag w next).mpr hnext,
           fun hsat => hnot ((ih next).mpr hsat)⟩)
 
-/-- Validity transfers to the associated CSLib model under the reverse
-translation. -/
+/-- **Validity agrees with its CSLib translation.** A modal formula $\varphi$ is
+valid in a Kripke model $k$ (true at every world of $k$) if and only if its translation into a
+CSLib unimodal proposition is satisfied at every world of the CSLib unimodal model associated
+with $k$. -/
 theorem KripkeModel.valid_toProposition (k : KripkeModel World Atom)
     (phi : Formula Atom) :
     k.Valid phi ↔
       ∀ w, Logic.Modal.Satisfies k.toModel w (Formula.toProposition phi) :=
   forall_congr' fun w => satisfies_toProposition k w phi
 
-/-- A proposition whose translation is valid in the Kripke model of every CSLib model in a class
-belongs to CSLib's semantic logic of that class. -/
+/-- **Validity of the translation gives membership in CSLib's logic.** Let $S$ be a class of CSLib
+unimodal models on a type of worlds and $\varphi$ a CSLib unimodal proposition. Suppose that, if
+the type of worlds is nonempty, the translation of $\varphi$ into the $\bot$, $\to$, $\Box$ basis is
+valid in the Kripke model of every model in $S$. Then $\varphi$ belongs to CSLib's semantic logic
+of $S$: it holds at every world of every model in $S$. -/
 theorem mem_logic_of_valid {S : Set (Logic.Modal.Unimodal.Model World Atom)}
     {phi : Logic.Modal.Unimodal.Proposition Atom}
     (h : ∀ m ∈ S, ∀ _ : Nonempty World, (KripkeModel.ofModel m).Valid (Formula.ofProposition phi)) :
@@ -201,23 +224,36 @@ namespace Derivable
 
 variable {phi : Logic.Modal.Unimodal.Proposition Atom}
 
-/-- **Soundness for CSLib's K**: translated K-theorems are in `Cslib.Logic.Modal.Unimodal.K`. -/
+/-- **Soundness for CSLib's K.** Let $\varphi$ be a CSLib unimodal proposition. If the translation
+of $\varphi$ into the $\bot$, $\to$, $\Box$ basis is a theorem of the Hilbert system K, then, for
+every type of worlds, $\varphi$ belongs to CSLib's modal logic K: it holds at every world of every
+CSLib unimodal model on that type. -/
 theorem mem_K (h : Derivable Axioms.K (Formula.ofProposition phi)) :
     phi ∈ Logic.Modal.Unimodal.K World Atom :=
   mem_logic_of_valid fun _ _ _ ↦ h.valid_K
 
-/-- **Soundness for CSLib's T**: translated T-theorems are in `Cslib.Logic.Modal.Unimodal.T`. -/
+/-- **Soundness for CSLib's T.** Let $\varphi$ be a CSLib unimodal proposition. If the translation
+of $\varphi$ into the $\bot$, $\to$, $\Box$ basis is a theorem of the Hilbert system T, then, for
+every type of worlds, $\varphi$ belongs to CSLib's modal logic T: it holds at every world of every
+CSLib unimodal model on that type whose accessibility relation is reflexive. -/
 theorem mem_T (h : Derivable Axioms.T (Formula.ofProposition phi)) :
     phi ∈ Logic.Modal.Unimodal.T World Atom :=
   mem_logic_of_valid fun _ hm _ ↦ h.valid_T (fun w ↦ hm.refl w)
 
-/-- **Soundness for CSLib's S4**: translated S4-theorems are in `Cslib.Logic.Modal.Unimodal.S4`. -/
+/-- **Soundness for CSLib's S4.** Let $\varphi$ be a CSLib unimodal proposition. If the translation
+of $\varphi$ into the $\bot$, $\to$, $\Box$ basis is a theorem of the Hilbert system S4, then, for
+every type of worlds, $\varphi$ belongs to CSLib's modal logic S4: it holds at every world of every
+CSLib unimodal model on that type whose accessibility relation is reflexive and transitive. -/
 theorem mem_S4 (h : Derivable Axioms.S4 (Formula.ofProposition phi)) :
     phi ∈ Logic.Modal.Unimodal.S4 World Atom :=
   mem_logic_of_valid fun _ hm _ ↦
     h.valid_S4 (fun w ↦ hm.1.refl w) (fun h₁ h₂ ↦ hm.2.trans _ _ _ h₁ h₂)
 
-/-- **Soundness for CSLib's S5**: translated S5-theorems are in `Cslib.Logic.Modal.Unimodal.S5`. -/
+/-- **Soundness for CSLib's S5.** Let $\varphi$ be a CSLib unimodal proposition. If the translation
+of $\varphi$ into the $\bot$, $\to$, $\Box$ basis is a theorem of the Hilbert system S5, then, for
+every type of worlds, $\varphi$ belongs to CSLib's modal logic S5: it holds at every world of every
+CSLib unimodal model on that type whose accessibility relation $R$ is reflexive, transitive and
+Euclidean ($R(w, u)$ and $R(w, v)$ imply $R(u, v)$). -/
 theorem mem_S5 (h : Derivable Axioms.S5 (Formula.ofProposition phi)) :
     phi ∈ Logic.Modal.Unimodal.S5 World Atom := by
   refine mem_logic_of_valid fun m hm _ ↦ h.valid_S5 ?_

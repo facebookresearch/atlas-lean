@@ -57,12 +57,20 @@ open Finset RealInnerProductSpace
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {ι : Type*} {k : ℕ}
 
-/-- The centroid of the points in `s` (the zero vector if `s` is empty). -/
+/-- **Centroid.** Let $x_i$ be points in a real inner product space and $s$ a finite set of
+indices. The centroid of the points indexed by $s$ is $\frac{1}{|s|} \sum_{i \in s} x_i$; when $s$
+is empty it is the zero vector. -/
 noncomputable def centroid (x : ι → E) (s : Finset ι) : E :=
   (s.card : ℝ)⁻¹ • ∑ i ∈ s, x i
 
-/-- **The centroid minimizes the sum of squared distances**: for every point `c`,
-`∑ ‖x i - c‖² = ∑ ‖x i - μ‖² + |s| ‖μ - c‖²` with `μ` the centroid. -/
+/-- **Sum of squared distances about the centroid.** Let $x_i$ ($i \in \iota$) be points in a
+real inner product space $E$, let $s$ be a finite set of indices, and let $\mu$ be the centroid of
+the points $x_i$ with $i \in s$. Then for every point $c \in E$,
+$$
+\sum_{i \in s} \|x_i - c\|^2 = \sum_{i \in s} \|x_i - \mu\|^2 + |s| \, \|\mu - c\|^2.
+$$
+
+Consequently the centroid minimizes the sum of squared distances to the points $x_i$, $i \in s$. -/
 theorem sum_sq_eq (x : ι → E) (s : Finset ι) (c : E) :
     ∑ i ∈ s, ‖x i - c‖ ^ 2 =
       ∑ i ∈ s, ‖x i - centroid x s‖ ^ 2 + s.card * ‖centroid x s - c‖ ^ 2 := by
@@ -85,12 +93,17 @@ theorem sum_sq_centroid_le (x : ι → E) (s : Finset ι) (c : E) :
   have : 0 ≤ (s.card : ℝ) * ‖centroid x s - c‖ ^ 2 := by positivity
   linarith
 
-/-- `a` assigns every point to a nearest center. -/
+/-- **Nearest-center assignment.** Given points $x_i$ ($i \in \iota$) in a normed additive
+commutative group $E$ and centers $c_0, \dots, c_{k-1} \in E$, an assignment
+$a : \iota \to \{0, \dots, k-1\}$ assigns every point to a nearest center when
+$\|x_i - c_{a(i)}\| \le \|x_i - c_j\|$ for every index $i \in \iota$ and every $j < k$. -/
 def Nearest (x : ι → E) (c : Fin k → E) (a : ι → Fin k) : Prop :=
   ∀ i j, ‖x i - c (a i)‖ ≤ ‖x i - c j‖
 
 omit [InnerProductSpace ℝ E] in
-/-- With at least one center, a nearest-center assignment exists. -/
+/-- **Nearest-center assignments exist.** For any points $x_i$ in a normed additive commutative
+group and any centers $c_0, \dots, c_{k-1}$ with $k \ge 1$, there is an assignment that sends
+every point to a nearest center. -/
 theorem exists_nearest (x : ι → E) (c : Fin k → E) (hk : 0 < k) : ∃ a, Nearest x c a := by
   have hne : (univ : Finset (Fin k)).Nonempty := ⟨⟨0, hk⟩, mem_univ _⟩
   choose a _ ha using fun i => exists_min_image univ (fun j => ‖x i - c j‖) hne
@@ -102,20 +115,29 @@ The points are indexed by any finite type `ι` (for example `Fin n`). -/
 
 variable [Fintype ι]
 
-/-- The `k`-means cost of assigning point `i` to cluster `a i` with centers `c`: the sum of squared
-distances to the assigned centers. -/
+/-- **The k-means cost.** For points $x_i$ ($i \in \iota$, a finite type) in a normed additive
+commutative group, an assignment $a$ of each point $i$ to a cluster $a(i) \in \{0, \dots, k-1\}$
+and centers $c_0, \dots, c_{k-1}$, the $k$-means cost is
+$\sum_{i \in \iota} \lVert x_i - c_{a(i)} \rVert^2$, the sum of the squared distances from the
+points to their assigned centers. -/
 def cost (x : ι → E) (a : ι → Fin k) (c : Fin k → E) : ℝ := ∑ i, ‖x i - c (a i)‖ ^ 2
 
 omit [InnerProductSpace ℝ E] in
-/-- The cost, cluster by cluster. -/
+/-- **The cost as a sum over clusters.** For points $x_i$ ($i \in \iota$, a finite type) in a
+normed additive commutative group, an assignment $a$ of each point $i$ to a cluster
+$a(i) \in \{0, \dots, k-1\}$ and centers $c_0, \dots, c_{k-1}$, the $k$-means cost equals
+$\sum_{j} \sum_{i : a(i) = j} \lVert x_i - c_j \rVert^2$: for each cluster $j$, add up the squared
+distances from the points assigned to $j$ to its center $c_j$. -/
 theorem cost_eq_sum_clusters (x : ι → E) (a : ι → Fin k) (c : Fin k → E) :
     cost x a c = ∑ j, ∑ i ∈ univ.filter (fun i => a i = j), ‖x i - c j‖ ^ 2 := by
   rw [cost, ← Finset.sum_fiberwise univ a]
   refine sum_congr rfl fun j _ => sum_congr rfl fun i hi => ?_
   rw [(mem_filter.1 hi).2]
 
-/-- The update step: move each center to the centroid of its cluster (an empty cluster's center
-moves to `0`, which does not affect the cost). -/
+/-- **The centroid update step.** Let $x_i$ ($i \in \iota$, a finite type) be points in a real
+inner product space and let $a$ assign each point $i$ to a cluster $a(i) \in \{0, \dots, k-1\}$.
+The updated centers send each cluster $j$ to the centroid of the points $x_i$ with $a(i) = j$.
+A cluster with no points gets the center $0$, which does not affect the $k$-means cost of $a$. -/
 noncomputable def centers (x : ι → E) (a : ι → Fin k) : Fin k → E :=
   fun j => centroid x (univ.filter fun i => a i = j)
 
@@ -142,9 +164,13 @@ theorem cost_lloyd_le {x : ι → E} {a a' : ι → Fin k} (c : Fin k → E)
     (h : Nearest x (centers x a) a') : cost x a' (centers x a) ≤ cost x a c :=
   (cost_nearest_le h a).trans (cost_centers_le x a c)
 
-/-- A run of Lloyd's algorithm: assignments `as t` and centers `cs t`, where each round moves the
-centers to the centroids of the previous assignment and reassigns every point to a nearest new
-center. -/
+/-- **Run of Lloyd's algorithm.** Let $x_i$ ($i \in \iota$, a finite index set) be points in a
+real inner product space $E$. Sequences of assignments $a_t : \iota \to \{0, \dots, k-1\}$ and of
+centers $c_t : \{0, \dots, k-1\} \to E$, indexed by $t \in \mathbb{N}$, form a run of Lloyd's
+algorithm when for every $t$: for each $j < k$ the center $c_{t+1}(j)$ is the centroid of the
+cluster $\{i : a_t(i) = j\}$ (the zero vector if this cluster is empty), and $a_{t+1}$ assigns
+every point to a nearest center of $c_{t+1}$. The initial assignment $a_0$ and centers $c_0$ are
+arbitrary. -/
 def IsRun (x : ι → E) (as : ℕ → ι → Fin k) (cs : ℕ → Fin k → E) : Prop :=
   ∀ t, cs (t + 1) = centers x (as t) ∧ Nearest x (cs (t + 1)) (as (t + 1))
 
@@ -156,7 +182,11 @@ theorem IsRun.antitone {x : ι → E} {as : ℕ → ι → Fin k} {cs : ℕ → 
   rw [hc] at ha ⊢
   exact cost_lloyd_le (cs t) ha
 
-/-- With at least one center, every starting assignment and centers extend to a run. -/
+/-- **Runs of Lloyd's algorithm exist.** Let $x_i$ ($i \in \iota$, a finite type) be points in a
+real inner product space and let $k \ge 1$. Every starting assignment $a_0$ of the points to
+clusters $0, \dots, k-1$ and every choice of starting centers $c_0$ extend to a run of Lloyd's
+algorithm: there are assignments $a_t$ and centers $c_t$ for $t \in \mathbb{N}$, equal to $a_0$
+and $c_0$ at $t = 0$, that form a run. -/
 theorem exists_run (x : ι → E) (hk : 0 < k) (a₀ : ι → Fin k) (c₀ : Fin k → E) :
     ∃ as cs, as 0 = a₀ ∧ cs 0 = c₀ ∧ IsRun x as cs := by
   choose step hstep using fun a : ι → Fin k => exists_nearest x (centers x a) hk

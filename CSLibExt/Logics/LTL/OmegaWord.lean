@@ -61,8 +61,15 @@ open Filter
 
 variable {Atom Symbol : Type*}
 
-/-- Satisfaction of an LTL formula on an ω-word under a valuation of atoms on letters.  The
-temporal operators recurse on suffixes of the word. -/
+/-- **Satisfaction of LTL formulas on ω-words.** Let $v$ be a valuation that says which atoms are
+true at each letter, and for an ω-word $w$ and a natural number $k$ let $w^{(k)}$ be the suffix
+$i \mapsto w(k + i)$. Whether $w$ satisfies an LTL formula $\varphi$ under $v$, written
+$w \models \varphi$, is defined by recursion on $\varphi$: an atom $a$ holds when $v$ makes $a$
+true at the first letter $w(0)$; truth always holds; $\neg \varphi$ holds when $\varphi$ does
+not; $\varphi \wedge \psi$ holds when both $\varphi$ and $\psi$ do; $\mathsf{X}\, \varphi$ (next
+$\varphi$) holds when $w^{(1)} \models \varphi$; and $\varphi \mathbin{\mathsf{U}} \psi$
+($\varphi$ until $\psi$) holds when there is a $k$ with $w^{(k)} \models \psi$ and
+$w^{(j)} \models \varphi$ for all $j < k$. -/
 def Satisfies (valuation : Symbol → Atom → Prop) (w : ωSequence Symbol) :
     Formula Atom → Prop
   | .atom a => valuation (w 0) a
@@ -73,12 +80,16 @@ def Satisfies (valuation : Symbol → Atom → Prop) (w : ωSequence Symbol) :
   | .until φ ψ =>
       ∃ k, Satisfies valuation (w.drop k) ψ ∧ ∀ j < k, Satisfies valuation (w.drop j) φ
 
-/-- Satisfaction at position `k` of an ω-word: satisfaction on the suffix starting at `k`. -/
+/-- **Satisfaction at a position.** Let $v$ be a valuation of atoms on letters, $w$ an ω-word, $k$
+a natural number and $\varphi$ an LTL formula. Then $\varphi$ holds at position $k$ of $w$ under
+$v$ when the suffix of $w$ starting at position $k$, the ω-word $i \mapsto w(k + i)$, satisfies
+$\varphi$ under $v$. -/
 def SatisfiesAt (valuation : Symbol → Atom → Prop) (w : ωSequence Symbol) (k : ℕ)
     (φ : Formula Atom) : Prop :=
   Satisfies valuation (w.drop k) φ
 
-/-- The ω-language of an LTL formula: the words satisfying it. -/
+/-- **Language of an LTL formula.** Given a valuation $v$ of atoms on letters, the ω-language of
+an LTL formula $\varphi$ is the set of ω-words that satisfy $\varphi$ under $v$. -/
 def language (valuation : Symbol → Atom → Prop) (φ : Formula Atom) : ωLanguage Symbol :=
   { w : ωSequence Symbol | Satisfies valuation w φ }
 
@@ -87,12 +98,17 @@ variable {valuation : Symbol → Atom → Prop} {w : ωSequence Symbol} {φ ψ :
 
 /-! ### Positions and suffixes -/
 
+/-- **Satisfaction at position zero.** For every valuation of atoms on letters, ω-word $w$ and LTL
+formula $\varphi$, $\varphi$ holds at position $0$ of $w$ if and only if $w$ satisfies $\varphi$. -/
 @[simp]
 theorem satisfiesAt_zero : SatisfiesAt valuation w 0 φ ↔ Satisfies valuation w φ :=
   Iff.rfl
 
-/-- Satisfaction is well defined on suffixes: position `j` of the suffix at `k` is position
-`k + j` of the word. -/
+/-- **Satisfaction on a suffix.** Let $w$ be an ω-word and, for a natural number $k$, let
+$w^{(k)}$ be its suffix starting at position $k$, the ω-word $i \mapsto w(k + i)$. For every
+valuation of atoms on letters, every LTL formula $\varphi$ and every natural number $j$,
+$\varphi$ holds at position $j$ of $w^{(k)}$ if and only if $\varphi$ holds at position $k + j$
+of $w$. -/
 theorem satisfiesAt_drop {k j : ℕ} :
     SatisfiesAt valuation (w.drop k) j φ ↔ SatisfiesAt valuation w (k + j) φ := by
   rw [SatisfiesAt, SatisfiesAt, ωSequence.drop_drop]
@@ -108,6 +124,9 @@ namespace Satisfies
 
 /-! ### Primitive connectives -/
 
+/-- **Satisfaction of an atom.** For every valuation $v$ of atoms on letters, every ω-word $w$
+and every atom $a$, the word $w$ satisfies the atomic formula $a$ under $v$ if and only if $v$
+makes $a$ true at the first letter $w_0$ of $w$. -/
 theorem atom_iff : Satisfies valuation w (.atom a) ↔ valuation (w 0) a :=
   Iff.rfl
 
@@ -131,6 +150,8 @@ theorem until_iff :
 
 /-! ### Derived propositional connectives -/
 
+/-- **Falsity is never satisfied.** For every valuation $v$ of atoms on letters and every
+ω-word $w$, the word $w$ does not satisfy the LTL formula $\bot$ (falsity) under $v$. -/
 theorem bot_iff : Satisfies valuation w (Formula.bot : Formula Atom) ↔ False := by
   simp [Formula.bot, Satisfies]
 
@@ -153,6 +174,10 @@ theorem iff_iff :
 
 /-! ### Derived temporal operators -/
 
+/-- **Semantics of eventually.** For every valuation $v$ of atoms on letters, every ω-word $w$
+and every LTL formula $\varphi$, the word $w$ satisfies $\mathbf{F}\,\varphi$ (eventually
+$\varphi$) under $v$ if and only if for some $k \in \mathbb{N}$ the suffix of $w$ starting at
+position $k$ satisfies $\varphi$ under $v$. -/
 theorem eventually_iff :
     Satisfies valuation w (Formula.eventually φ) ↔ ∃ k, SatisfiesAt valuation w k φ := by
   simp [Formula.eventually, until_iff, SatisfiesAt, Satisfies]
@@ -162,7 +187,10 @@ theorem always_iff :
   rw [Formula.always, not_iff, eventually_iff]
   simp [SatisfiesAt, Satisfies]
 
-/-- `φ R ψ`: at every position `ψ` holds, unless `φ` already held at an earlier position. -/
+/-- **Semantics of release.** For a valuation of atoms on letters, an ω-word $w$ and LTL formulas
+$\varphi$ and $\psi$, $w$ satisfies $\varphi \mathbin{\mathsf{R}} \psi$ ($\varphi$ releases $\psi$)
+if and only if for every position $k$, either $\psi$ holds at position $k$ of $w$ or $\varphi$
+holds at some position $j < k$ of $w$. -/
 theorem release_iff :
     Satisfies valuation w (Formula.release φ ψ) ↔
       ∀ k, SatisfiesAt valuation w k ψ ∨ ∃ j < k, SatisfiesAt valuation w j φ := by
@@ -173,7 +201,9 @@ theorem release_iff :
 
 /-! ### Duality -/
 
-/-- `next` is self-dual on ω-words. -/
+/-- **Next is self-dual.** For every valuation $v$ of atoms on letters, every ω-word $w$ and every
+LTL formula $\varphi$, the word $w$ satisfies $\neg\mathbf{X}\,\varphi$ under $v$ if and only if
+it satisfies $\mathbf{X}\,\neg\varphi$ under $v$, where $\mathbf{X}$ is the next operator. -/
 theorem not_next :
     Satisfies valuation w (.not (.next φ)) ↔ Satisfies valuation w (.next (.not φ)) :=
   Iff.rfl
@@ -202,8 +232,10 @@ theorem not_always :
 
 /-! ### Expansion laws -/
 
-/-- The expansion law for `until`: either the target holds now, or the guard holds now and the
-`until` is postponed by one step. -/
+/-- **Expansion law for until.** For every valuation of atoms on letters, ω-word $w$ and LTL
+formulas $\varphi$ and $\psi$, $w$ satisfies $\varphi \mathbin{\mathsf{U}} \psi$ ($\varphi$ until
+$\psi$) if and only if either $w$ satisfies $\psi$, or $w$ satisfies $\varphi$ and also satisfies
+$\mathsf{X}(\varphi \mathbin{\mathsf{U}} \psi)$, that is, next ($\varphi$ until $\psi$). -/
 theorem until_expansion :
     Satisfies valuation w (.until φ ψ) ↔
       Satisfies valuation w ψ ∨
@@ -228,8 +260,11 @@ theorem until_expansion :
           rw [Nat.add_comm]
           exact hφs j (by omega)
 
-/-- The expansion law for `release`: the second argument holds now, and either the first
-argument holds now or the `release` is postponed by one step. -/
+/-- **Expansion law for release.** For every valuation $v$ of atoms on letters, every ω-word $w$
+and all LTL formulas $\varphi$ and $\psi$, the word $w$ satisfies
+$\varphi \mathbin{\mathcal{R}} \psi$ ($\varphi$ releases $\psi$) under $v$ if and only if it
+satisfies $\psi$ and it satisfies $\varphi$ or $\mathbf{X}(\varphi \mathbin{\mathcal{R}} \psi)$,
+all under $v$, where $\mathbf{X}$ is the next operator. -/
 theorem release_expansion :
     Satisfies valuation w (Formula.release φ ψ) ↔
       Satisfies valuation w ψ ∧
@@ -253,6 +288,10 @@ theorem always_expansion :
 
 /-! ### Idempotence and recurrence -/
 
+/-- **Idempotence of always.** For every valuation $v$ of atoms on letters, every ω-word $w$ and
+every LTL formula $\varphi$, the word $w$ satisfies $\mathbf{G}\,\mathbf{G}\,\varphi$ under $v$
+if and only if it satisfies $\mathbf{G}\,\varphi$ under $v$, where $\mathbf{G}$ is the always
+operator. -/
 theorem always_always :
     Satisfies valuation w (Formula.always (Formula.always φ)) ↔
       Satisfies valuation w (Formula.always φ) := by
@@ -265,7 +304,11 @@ theorem eventually_eventually :
   simp only [eventually_iff, SatisfiesAt, ωSequence.drop_drop]
   exact ⟨fun ⟨k, j, h⟩ => ⟨k + j, h⟩, fun ⟨k, h⟩ => ⟨0, k, by simpa using h⟩⟩
 
-/-- `G F φ`: `φ` holds at infinitely many positions. -/
+/-- **Always eventually means infinitely often.** For every valuation $v$ of atoms on letters,
+every ω-word $w$ and every LTL formula $\varphi$, the word $w$ satisfies
+$\mathbf{G}\,\mathbf{F}\,\varphi$ (always eventually $\varphi$) under $v$ if and only if there are
+infinitely many $k \in \mathbb{N}$ such that the suffix of $w$ starting at position $k$ satisfies
+$\varphi$ under $v$. -/
 theorem always_eventually_iff :
     Satisfies valuation w (Formula.always (Formula.eventually φ)) ↔
       ∃ᶠ k in atTop, SatisfiesAt valuation w k φ := by
@@ -276,7 +319,11 @@ theorem always_eventually_iff :
   exact ⟨fun ⟨j, h⟩ => ⟨k + j, by omega, h⟩,
     fun ⟨m, hm, h⟩ => ⟨m - k, by rwa [Nat.add_sub_cancel' hm]⟩⟩
 
-/-- `F G φ`: `φ` holds at all but finitely many positions. -/
+/-- **Eventually always means from some point on.** For every valuation $v$ of atoms on letters,
+every ω-word $w$ and every LTL formula $\varphi$, the word $w$ satisfies
+$\mathbf{F}\,\mathbf{G}\,\varphi$ (eventually always $\varphi$) under $v$ if and only if there is
+$n \in \mathbb{N}$ such that for every $k \ge n$ the suffix of $w$ starting at position $k$
+satisfies $\varphi$ under $v$. -/
 theorem eventually_always_iff :
     Satisfies valuation w (Formula.eventually (Formula.always φ)) ↔
       ∀ᶠ k in atTop, SatisfiesAt valuation w k φ := by
@@ -291,6 +338,9 @@ end Satisfies
 
 /-! ### Positional forms -/
 
+/-- **Satisfaction of an atom at a position.** Let $v$ be a valuation of atoms on letters, $w$ an
+ω-word, $a$ an atom and $k$ a natural number. The atomic formula $a$ holds at position $k$ of $w$
+under $v$ if and only if $v$ makes $a$ true at the letter $w(k)$. -/
 theorem satisfiesAt_atom {k : ℕ} : SatisfiesAt valuation w k (.atom a) ↔ valuation (w k) a := by
   simp [SatisfiesAt, Satisfies]
 
@@ -311,7 +361,11 @@ theorem satisfiesAt_eventually {k : ℕ} :
 
 /-! ### Relabelling letters -/
 
-/-- Satisfaction on a relabelled word is satisfaction under the composed valuation. -/
+/-- **Relabelling the letters of an ω-word.** Let $v$ be a valuation of atoms on letters of an
+alphabet $\Sigma$, let $f \colon \Sigma' \to \Sigma$ be a map, and let $w$ be an ω-word over
+$\Sigma'$. For every LTL formula $\varphi$, the relabelled word $i \mapsto f(w(i))$ satisfies
+$\varphi$ under $v$ if and only if $w$ satisfies $\varphi$ under the valuation that makes an atom
+$a$ true at a letter $s$ of $\Sigma'$ exactly when $v$ makes $a$ true at $f(s)$. -/
 theorem satisfies_map {Symbol' : Type*} (f : Symbol' → Symbol) :
     ∀ (φ : Formula Atom) (w : ωSequence Symbol'),
       Satisfies valuation (w.map f) φ ↔ Satisfies (fun s a => valuation (f s) a) w φ
@@ -331,6 +385,9 @@ theorem satisfies_map {Symbol' : Type*} (f : Symbol' → Symbol) :
 
 /-! ### Languages -/
 
+/-- **Membership in the language of a formula.** For every valuation $v$ of atoms on letters,
+every ω-word $w$ and every LTL formula $\varphi$, the word $w$ belongs to the ω-language of
+$\varphi$ under $v$ if and only if $w$ satisfies $\varphi$ under $v$. -/
 @[simp]
 theorem mem_language : w ∈ language valuation φ ↔ Satisfies valuation w φ :=
   Iff.rfl

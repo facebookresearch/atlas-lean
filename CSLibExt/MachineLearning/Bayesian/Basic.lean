@@ -60,13 +60,25 @@ open scoped ENNReal
 
 variable {Θ 𝓧 : Type*} [MeasurableSpace Θ] [MeasurableSpace 𝓧]
 
-/-- The **Bayes posterior** after observing `x`: the prior `μ` reweighted by the likelihood
-`θ ↦ κ θ {x}` and normalized by the evidence `(κ ∘ₘ μ) {x}`. It is the zero measure when the
+/-- **Bayes posterior.** Let $\kappa$ be a kernel from a measurable space $\Theta$ of hypotheses to
+a measurable space $\mathcal X$ of observations (the likelihood) and $\mu$ a measure on $\Theta$
+(the prior). The Bayes posterior after observing $x \in \mathcal X$ is the measure $\pi_x$ on
+$\Theta$ with
+$$\pi_x(s) = E(x)^{-1} \int_s \kappa_\theta(\{x\}) \, d\mu(\theta)$$
+for every measurable $s \subseteq \Theta$, where $E(x) = (\kappa \circ \mu)(\{x\})$ is the evidence
+of $x$: the mass of $\{x\}$ under the composition $\kappa \circ \mu$ of $\mu$ with $\kappa$, the
+marginal law of the observation. The inverse is taken in $[0, \infty]$, with $0^{-1} = \infty$,
+$\infty^{-1} = 0$ and $\infty \cdot 0 = 0$; in particular $\pi_x$ is the zero measure when the
 evidence is zero. -/
 noncomputable def bayesPosterior (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) : Measure Θ :=
   ((κ ∘ₘ μ) {x})⁻¹ • μ.withDensity fun θ ↦ κ θ {x}
 
-/-- The evidence of `x` is the integral of its likelihood under the prior. -/
+/-- **The evidence is the integral of the likelihood.** Let $\kappa$ be a kernel from a measurable
+space $\Theta$ to a measurable space $\mathcal X$ with measurable singletons, and $\mu$ a measure on
+$\Theta$. For every $x \in \mathcal X$,
+$$(\kappa \circ \mu)(\{x\}) = \int_\Theta \kappa_\theta(\{x\}) \, d\mu(\theta),$$
+where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$ (the marginal law of the
+observation) and the right side is the Lebesgue integral of a $[0, \infty]$-valued function. -/
 theorem comp_apply_singleton [MeasurableSingletonClass 𝓧] (κ : Kernel Θ 𝓧) (μ : Measure Θ)
     (x : 𝓧) : (κ ∘ₘ μ) {x} = ∫⁻ θ, κ θ {x} ∂μ :=
   Measure.bind_apply (measurableSet_singleton x) κ.aemeasurable
@@ -80,7 +92,14 @@ theorem bayesPosterior_apply (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) 
     bayesPosterior κ μ x s = ((κ ∘ₘ μ) {x})⁻¹ * ∫⁻ θ in s, κ θ {x} ∂μ := by
   rw [bayesPosterior, Measure.smul_apply, withDensity_apply _ hs, smul_eq_mul]
 
-/-- Multiplying the posterior back by the evidence recovers the joint mass. -/
+/-- **Evidence times posterior is the joint mass.** Let $\mathcal X$ be a measurable space with
+measurable singletons, $\kappa$ a Markov kernel from a measurable space $\Theta$ to $\mathcal X$
+and $\mu$ a finite measure on $\Theta$. Let $x \in \mathcal X$ and write $\pi_x$ for the Bayes
+posterior of $\mu$ after observing $x$ under $\kappa$. Then for every measurable set
+$s \subseteq \Theta$,
+$$(\kappa \circ \mu)(\{x\}) \cdot \pi_x(s) = \int_s \kappa_\theta(\{x\}) \, d\mu(\theta),$$
+where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$, so that the first factor is the
+evidence of $x$. -/
 theorem comp_mul_bayesPosterior [MeasurableSingletonClass 𝓧] (κ : Kernel Θ 𝓧) [IsMarkovKernel κ]
     (μ : Measure Θ) [IsFiniteMeasure μ] (x : 𝓧) {s : Set Θ} (hs : MeasurableSet s) :
     (κ ∘ₘ μ) {x} * bayesPosterior κ μ x s = ∫⁻ θ in s, κ θ {x} ∂μ := by
@@ -119,14 +138,22 @@ every singleton can have probability zero, and every candidate would qualify.) T
 therefore require these instances even though their bodies do not use them. Maximum likelihood
 needs only discrete data: the parameter space is arbitrary, e.g. `[0, 1]` for Bernoulli data. -/
 
-/-- `θ` is a **maximum-likelihood** hypothesis for the observation `x`: no hypothesis gives `x`
-higher probability. -/
+/-- **Maximum-likelihood hypothesis for a discrete observation.** Let $\kappa$ be a kernel from a
+parameter space $\Theta$ to a countable observation space $\mathcal X$ with measurable singletons,
+assigning to each hypothesis $\theta$ a measure $\kappa_\theta$ on $\mathcal X$. A hypothesis
+$\theta \in \Theta$ is a maximum-likelihood hypothesis for the observation $x \in \mathcal X$ when
+no hypothesis gives $x$ higher likelihood: $\kappa_{\theta'}(\{x\}) \le \kappa_\theta(\{x\})$ for
+every $\theta' \in \Theta$. -/
 @[nolint unusedArguments]
 def IsMLE [Countable 𝓧] [MeasurableSingletonClass 𝓧] (κ : Kernel Θ 𝓧) (x : 𝓧) (θ : Θ) : Prop :=
   ∀ θ', κ θ' {x} ≤ κ θ {x}
 
-/-- `θ` is a **maximum a posteriori** (MAP) hypothesis for the observation `x` under the prior
-`μ`: no hypothesis has higher posterior probability. -/
+/-- **Maximum a posteriori hypothesis.** Let $\Theta$ and $\mathcal X$ be countable measurable
+spaces with measurable singletons, $\kappa$ a kernel from $\Theta$ to $\mathcal X$ and $\mu$ a
+measure on $\Theta$, and write $\pi_x$ for the Bayes posterior of the prior $\mu$ after observing
+$x \in \mathcal X$ under the likelihood $\kappa$. A hypothesis $\theta \in \Theta$ is a maximum a
+posteriori (MAP) hypothesis for $x$ when $\pi_x(\{\theta'\}) \le \pi_x(\{\theta\})$ for every
+$\theta' \in \Theta$. -/
 @[nolint unusedArguments]
 def IsMAP [Countable Θ] [MeasurableSingletonClass Θ] [Countable 𝓧] [MeasurableSingletonClass 𝓧]
     (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) (θ : Θ) : Prop :=
@@ -134,7 +161,11 @@ def IsMAP [Countable Θ] [MeasurableSingletonClass Θ] [Countable 𝓧] [Measura
 
 variable [Countable 𝓧] [MeasurableSingletonClass 𝓧]
 
-/-- The Bayes posterior as a kernel, for a countable observation space. -/
+/-- **Bayes posterior kernel.** Let $\mathcal X$ be a countable measurable space with measurable
+singletons, $\kappa$ a kernel from a measurable space $\Theta$ to $\mathcal X$, and $\mu$ a measure
+on $\Theta$. The Bayes posterior kernel is the kernel from $\mathcal X$ to $\Theta$ that sends each
+observation $x \in \mathcal X$ to the Bayes posterior of the prior $\mu$ after observing $x$ under
+the likelihood $\kappa$. -/
 noncomputable def bayesKernel (κ : Kernel Θ 𝓧) (μ : Measure Θ) : Kernel 𝓧 Θ :=
   Kernel.ofFunOfCountable (bayesPosterior κ μ)
 
@@ -164,9 +195,16 @@ section Posterior
 
 variable [StandardBorelSpace Θ] [Nonempty Θ]
 
-/-- **Bayes' rule for discrete observations.** For a countable observation space, Mathlib's
-posterior kernel `κ†μ` is, at every observation of positive evidence, the prior reweighted by the
-likelihood and normalized by the evidence. -/
+/-- **Bayes' rule for discrete observations.** Let the parameter space $\Theta$ be a nonempty
+standard Borel space and the observation space $\mathcal X$ be countable with measurable
+singletons. Let $\kappa$ be a Markov kernel from $\Theta$ to $\mathcal X$ (the likelihood),
+writing $\kappa_\theta$ for the probability measure it assigns to $\theta \in \Theta$, let $\mu$
+be a finite measure on $\Theta$ (the prior), and let $\kappa^\dagger\mu$ be Mathlib's posterior
+kernel from $\mathcal X$ to $\Theta$. If the observation $x \in \mathcal X$ has nonzero evidence
+$(\kappa \circ \mu)(\{x\})$, where $\kappa \circ \mu$ is the law of the observation under the
+prior, then the posterior measure $\kappa^\dagger\mu(x)$ equals the Bayes posterior after
+observing $x$: the prior $\mu$ reweighted by the likelihood $\theta \mapsto \kappa_\theta(\{x\})$
+and divided by the evidence. -/
 theorem posterior_eq_bayesPosterior (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ)
     [IsFiniteMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) :
     (κ†μ) x = bayesPosterior κ μ x := by
@@ -182,15 +220,27 @@ section Countable
 variable [Countable Θ] [MeasurableSingletonClass Θ]
 
 omit [Countable 𝓧] in
-/-- The evidence of `x` is the prior-weighted sum of its likelihoods. -/
+/-- **The evidence as a sum over hypotheses.** Let $\Theta$ be a countable measurable space and
+$\mathcal X$ a measurable space, both with measurable singletons, let $\kappa$ be a kernel from
+$\Theta$ to $\mathcal X$ and $\mu$ a measure on $\Theta$. For every $x \in \mathcal X$,
+$$(\kappa \circ \mu)(\{x\}) = \sum_{\theta \in \Theta} \mu(\{\theta\}) \, \kappa_\theta(\{x\}),$$
+where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$ (the marginal law of the
+observation) and the sum is taken in $[0, \infty]$. -/
 theorem comp_apply_singleton_eq_tsum (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) :
     (κ ∘ₘ μ) {x} = ∑' θ, μ {θ} * κ θ {x} := by
   rw [comp_apply_singleton, lintegral_countable']
   exact tsum_congr fun θ ↦ mul_comm _ _
 
 omit [Countable 𝓧] in
-/-- **Bayes' rule for countably many hypotheses**: the posterior probability of `θ` is its prior
-times its likelihood, divided by the evidence `∑ θ', μ {θ'} * κ θ' {x}`. -/
+/-- **Bayes' rule for countably many hypotheses.** Let $\Theta$ be a countable measurable space and
+$\mathcal X$ a measurable space, both with measurable singletons, let $\kappa$ be a kernel from
+$\Theta$ to $\mathcal X$ (the likelihood) and $\mu$ a measure on $\Theta$ (the prior). For every
+observation $x \in \mathcal X$ and every $\theta \in \Theta$, the Bayes posterior $\pi_x$ of $\mu$
+after observing $x$ satisfies
+$$\pi_x(\{\theta\}) = \frac{\mu(\{\theta\}) \, \kappa_\theta(\{x\})}
+{\sum_{\theta' \in \Theta} \mu(\{\theta'\}) \, \kappa_{\theta'}(\{x\})},$$
+where the quotient is taken in $[0, \infty]$ with $0 / 0 = 0$ and $a / \infty = 0$ for every $a$.
+The denominator is the evidence of $x$. -/
 theorem bayesPosterior_apply_singleton (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) (θ : Θ) :
     bayesPosterior κ μ x {θ} = μ {θ} * κ θ {x} / ∑' θ', μ {θ'} * κ θ' {x} := by
   rw [bayesPosterior_apply κ μ x (measurableSet_singleton θ),
@@ -199,7 +249,21 @@ theorem bayesPosterior_apply_singleton (κ : Kernel Θ 𝓧) (μ : Measure Θ) (
 
 variable [StandardBorelSpace Θ] [Nonempty Θ]
 
-/-- Mathlib's posterior kernel, for countably many hypotheses and observations. -/
+/-- **Bayes' rule for Mathlib's posterior kernel with countably many hypotheses and
+observations.** Let the parameter space $\Theta$ be a nonempty countable standard Borel space and
+the observation space $\mathcal X$ be countable, both with measurable singletons. Let $\kappa$ be
+a Markov kernel from $\Theta$ to $\mathcal X$ (the likelihood), writing $\kappa_\theta$ for the
+probability measure it assigns to $\theta \in \Theta$, let $\mu$ be a finite measure on $\Theta$
+(the prior), and let $\kappa^\dagger\mu$ be Mathlib's posterior kernel from $\mathcal X$ to
+$\Theta$. If the observation $x \in \mathcal X$ has nonzero evidence $(\kappa \circ \mu)(\{x\})$,
+where $\kappa \circ \mu$ is the law of the observation under the prior, then for every
+$\theta \in \Theta$
+
+$$
+\kappa^\dagger\mu(x)(\{\theta\}) = \frac{\mu(\{\theta\})\,\kappa_\theta(\{x\})}
+{\sum_{\theta' \in \Theta} \mu(\{\theta'\})\,\kappa_{\theta'}(\{x\})}.
+$$
+-/
 theorem posterior_apply_singleton (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ)
     [IsFiniteMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (θ : Θ) :
     (κ†μ) x {θ} = μ {θ} * κ θ {x} / ∑' θ', μ {θ'} * κ θ' {x} := by
@@ -213,7 +277,16 @@ section Estimators
 
 variable [Countable Θ] [MeasurableSingletonClass Θ]
 
-/-- A MAP hypothesis maximizes prior times likelihood: the evidence is a common factor. -/
+/-- **MAP hypotheses maximize prior times likelihood.** Let $\Theta$ and $\mathcal X$ be countable
+measurable spaces with measurable singletons, $\kappa$ a Markov kernel from $\Theta$ to
+$\mathcal X$, $\mu$ a finite measure on $\Theta$, and $x \in \mathcal X$ an observation with
+$(\kappa \circ \mu)(\{x\}) \neq 0$, where $\kappa \circ \mu$ is the composition of $\mu$ with
+$\kappa$. Then $\theta \in \Theta$ is a MAP hypothesis for $x$ under the prior $\mu$ and the
+likelihood $\kappa$ if and only if
+$\mu(\{\theta'\}) \, \kappa_{\theta'}(\{x\}) \le \mu(\{\theta\}) \, \kappa_\theta(\{x\})$ for every
+$\theta' \in \Theta$.
+
+The evidence $(\kappa \circ \mu)(\{x\})$ is a common factor of all posterior masses. -/
 theorem isMAP_iff (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ) [IsFiniteMeasure μ]
     {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (θ : Θ) :
     IsMAP κ μ x θ ↔ ∀ θ', μ {θ'} * κ θ' {x} ≤ μ {θ} * κ θ {x} := by
@@ -223,7 +296,14 @@ theorem isMAP_iff (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ) [I
   simp only [IsMAP, bayesPosterior_apply_singleton, div_eq_mul_inv,
     ENNReal.mul_le_mul_iff_left (ENNReal.inv_ne_zero.mpr hnt) (ENNReal.inv_ne_top.mpr hne)]
 
-/-- **Under a uniform prior, MAP is maximum likelihood.** -/
+/-- **Under a uniform prior, MAP is maximum likelihood.** Let $\Theta$ and $\mathcal X$ be countable
+measurable spaces with measurable singletons, $\kappa$ a Markov kernel from $\Theta$ to
+$\mathcal X$, and $\mu$ a finite measure on $\Theta$ that is uniform: there is $c \in [0, \infty]$,
+$c \neq 0$, with $\mu(\{\theta\}) = c$ for every $\theta \in \Theta$. Let $x \in \mathcal X$ be an
+observation with $(\kappa \circ \mu)(\{x\}) \neq 0$, where $\kappa \circ \mu$ is the composition of
+$\mu$ with $\kappa$. Then a hypothesis $\theta \in \Theta$ is a MAP hypothesis for $x$ under the
+prior $\mu$ and the likelihood $\kappa$ if and only if it is a maximum-likelihood hypothesis for
+$x$ under $\kappa$. -/
 theorem isMAP_iff_isMLE_of_uniform (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ)
     [IsFiniteMeasure μ] {c : ℝ≥0∞} (hμ : ∀ θ, μ {θ} = c) (hc : c ≠ 0) {x : 𝓧}
     (hx : (κ ∘ₘ μ) {x} ≠ 0) (θ : Θ) : IsMAP κ μ x θ ↔ IsMLE κ x θ := by
@@ -232,7 +312,16 @@ theorem isMAP_iff_isMLE_of_uniform (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ
 
 variable [StandardBorelSpace Θ] [Nonempty Θ]
 
-/-- MAP hypotheses for Mathlib's posterior kernel. -/
+/-- **MAP hypotheses through the posterior kernel.** Let $\Theta$ be a nonempty countable standard
+Borel space, $\mathcal X$ a countable measurable space with measurable singletons, $\kappa$ a Markov
+kernel from $\Theta$ to $\mathcal X$, $\mu$ a finite measure on $\Theta$, and $x \in \mathcal X$ an
+observation with $(\kappa \circ \mu)(\{x\}) \neq 0$, where $\kappa \circ \mu$ is the composition of
+$\mu$ with $\kappa$. Write $\kappa^\dagger_\mu$ for the posterior kernel from $\mathcal X$ to
+$\Theta$, the fixed disintegration of the joint law of hypothesis and observation along the
+observation. Then $\theta \in \Theta$ is a MAP hypothesis for $x$ under the prior $\mu$ and the
+likelihood $\kappa$ if and only if
+$\kappa^\dagger_\mu(x)(\{\theta'\}) \le \kappa^\dagger_\mu(x)(\{\theta\})$ for every
+$\theta' \in \Theta$. -/
 theorem isMAP_iff_posterior (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ)
     [IsFiniteMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (θ : Θ) :
     IsMAP κ μ x θ ↔ ∀ θ', (κ†μ) x {θ'} ≤ (κ†μ) x {θ} := by

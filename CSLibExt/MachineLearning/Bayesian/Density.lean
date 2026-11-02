@@ -45,9 +45,18 @@ variable {Θ 𝓧 : Type*} [MeasurableSpace Θ] [MeasurableSpace 𝓧]
   {μ : Measure Θ} {κ : Kernel Θ 𝓧} {η : Kernel 𝓧 Θ}
   {p : Θ → ℝ≥0∞} {q : Θ → 𝓧 → ℝ≥0∞} {c : 𝓧 → ℝ≥0∞} {r : 𝓧 → Θ → ℝ≥0∞}
 
-/-- **The evidence from a factorization of densities.** If the prior has density `p` with respect
-to `ν`, the likelihood has density `q θ` with respect to `ρ`, and `p θ * q θ x = c x * r x θ` with
-each `r x` a probability density, then the marginal law of the data has density `c`. -/
+/-- **The evidence from a factorization of densities.** Let $\nu$ be an s-finite measure on a
+measurable space $\Theta$ and $\rho$ an s-finite measure on a measurable space $\mathcal{X}$. Let
+$p : \Theta \to [0, \infty]$, $q : \Theta \times \mathcal{X} \to [0, \infty]$,
+$c : \mathcal{X} \to [0, \infty]$ and $r : \mathcal{X} \times \Theta \to [0, \infty]$ be measurable
+functions such that $\int r(x, \theta) \, d\nu(\theta) = 1$ for every $x \in \mathcal{X}$ and
+$p(\theta) \, q(\theta, x) = c(x) \, r(x, \theta)$ for all $\theta \in \Theta$ and
+$x \in \mathcal{X}$. If the prior $\mu$ is the measure on $\Theta$ with density $p$ with respect
+to $\nu$, and the likelihood $\kappa$ is a kernel from $\Theta$ to $\mathcal{X}$ such that each
+$\kappa(\theta)$ has density $q(\theta, \cdot)$ with respect to $\rho$, then the marginal law of
+the data, the measure $\kappa \circ \mu$ on $\mathcal{X}$ given by
+$(\kappa \circ \mu)(s) = \int \kappa(\theta)(s) \, d\mu(\theta)$ for measurable $s$, has density
+$c$ with respect to $\rho$. -/
 theorem comp_eq_withDensity_of_mul_eq (hμ : μ = ν.withDensity p)
     (hκ : ∀ θ, κ θ = ρ.withDensity (q θ)) (hp : Measurable p) (hq : Measurable (Function.uncurry q))
     (hc : Measurable c) (hr : Measurable (Function.uncurry r)) (hr1 : ∀ x, ∫⁻ θ, r x θ ∂ν = 1)
@@ -71,8 +80,24 @@ theorem comp_eq_withDensity_of_mul_eq (hμ : μ = ν.withDensity p)
         have hrx : Measurable fun θ ↦ r x θ := hr.comp measurable_prodMk_left
         rw [lintegral_const_mul _ hrx, hr1, mul_one]
 
-/-- Under the same factorization, the marginal `ρ.withDensity c` and the kernel `η` with densities
-`r x` disintegrate the joint law of the data and the parameter. -/
+/-- **Disintegration of the joint law from a factorization of densities.** Let $\nu$ be an
+s-finite measure on a measurable space $\Theta$ and $\rho$ an s-finite measure on a measurable
+space $\mathcal{X}$. Let $p : \Theta \to [0, \infty]$,
+$q : \Theta \times \mathcal{X} \to [0, \infty]$, $c : \mathcal{X} \to [0, \infty]$ and
+$r : \mathcal{X} \times \Theta \to [0, \infty]$ be measurable functions such that
+$\int r(x, \theta) \, d\nu(\theta) = 1$ for every $x \in \mathcal{X}$ and
+$p(\theta) \, q(\theta, x) = c(x) \, r(x, \theta)$ for all $\theta \in \Theta$ and
+$x \in \mathcal{X}$. Let the prior $\mu$ be an s-finite measure on $\Theta$ with density $p$ with
+respect to $\nu$, let the likelihood $\kappa$ be an s-finite kernel from $\Theta$ to $\mathcal{X}$
+such that each $\kappa(\theta)$ has density $q(\theta, \cdot)$ with respect to $\rho$, and let
+$\eta$ be an s-finite kernel from $\mathcal{X}$ to $\Theta$ such that each $\eta(x)$ has density
+$r(x, \cdot)$ with respect to $\nu$. Write $\kappa \circ \mu$ for the marginal law of the data,
+$(\kappa \circ \mu)(s) = \int \kappa(\theta)(s) \, d\mu(\theta)$, and $\mu \otimes \kappa$ for the
+joint law on $\Theta \times \mathcal{X}$,
+$(\mu \otimes \kappa)(t) = \int \kappa(\theta)(\{x : (\theta, x) \in t\}) \, d\mu(\theta)$, and
+similarly $(\kappa \circ \mu) \otimes \eta$ on $\mathcal{X} \times \Theta$. Then
+$(\kappa \circ \mu) \otimes \eta$ is the image of $\mu \otimes \kappa$ under the swap
+$(\theta, x) \mapsto (x, \theta)$. -/
 theorem compProd_eq_of_mul_eq [SFinite μ] [IsSFiniteKernel κ] [IsSFiniteKernel η]
     (hμ : μ = ν.withDensity p)
     (hκ : ∀ θ, κ θ = ρ.withDensity (q θ)) (hη : ∀ x, η x = ν.withDensity (r x))
@@ -124,10 +149,19 @@ theorem compProd_eq_of_mul_eq [SFinite μ] [IsSFiniteKernel κ] [IsSFiniteKernel
         funext x
         by_cases hxθ : (x, θ) ∈ s <;> simp [hxθ]
 
-/-- **Bayes' rule for densities.** If prior density times likelihood factors as
-`p θ * q θ x = c x * r x θ` with each `r x` a probability density, then for almost every
-observation `x` the posterior is `ν.withDensity (r x)`, and `c` is the density of the evidence
-(`comp_eq_withDensity_of_mul_eq`). -/
+/-- **Bayes' rule for densities.** Let $\Theta$ be a nonempty standard Borel space, $\nu$ an
+s-finite measure on $\Theta$ and $\rho$ an s-finite measure on a measurable space $\mathcal{X}$.
+Let $p : \Theta \to [0, \infty]$, $q : \Theta \times \mathcal{X} \to [0, \infty]$,
+$c : \mathcal{X} \to [0, \infty]$ and $r : \mathcal{X} \times \Theta \to [0, \infty]$ be measurable
+functions such that $\int r(x, \theta) \, d\nu(\theta) = 1$ for every $x \in \mathcal{X}$ and
+$p(\theta) \, q(\theta, x) = c(x) \, r(x, \theta)$ for all $\theta \in \Theta$ and
+$x \in \mathcal{X}$. Let the prior $\mu$ be a finite measure on $\Theta$ with density $p$ with
+respect to $\nu$, and let the likelihood $\kappa$ be a Markov kernel from $\Theta$ to
+$\mathcal{X}$ such that each $\kappa(\theta)$ has density $q(\theta, \cdot)$ with respect to
+$\rho$. Then for almost every $x$ with respect to the marginal law of the data
+$\kappa \circ \mu$, given by $(\kappa \circ \mu)(s) = \int \kappa(\theta)(s) \, d\mu(\theta)$, the
+posterior $\kappa^\dagger_\mu(x)$ of $\kappa$ with respect to $\mu$ is the measure with density
+$r(x, \cdot)$ with respect to $\nu$. -/
 theorem posterior_ae_eq_of_mul_eq [StandardBorelSpace Θ] [Nonempty Θ] [IsFiniteMeasure μ]
     [IsMarkovKernel κ] (hμ : μ = ν.withDensity p) (hκ : ∀ θ, κ θ = ρ.withDensity (q θ))
     (hp : Measurable p) (hq : Measurable (Function.uncurry q)) (hc : Measurable c)
