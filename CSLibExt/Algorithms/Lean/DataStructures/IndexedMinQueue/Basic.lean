@@ -38,7 +38,14 @@ set_option autoImplicit false
 universe u
 
 set_option linter.dupNamespace false in
-/-- A binary min-heap paired with the exact inverse location of every identity. -/
+/-- **Indexed minimum queue.** Let $W$ be a linearly ordered type, let $W \cup \{\top\}$ be $W$
+with a new greatest element $\top$ adjoined, and let $n$ be a natural number. An indexed
+minimum queue over the identities $0, \dots, n-1$ consists of a binary min-heap whose entries are
+pairs $(k, v)$ of a key $k \in W \cup \{\top\}$ and an identity $v < n$, ordered lexicographically
+(first by key, then by identity), together with a position vector assigning to each identity
+$v < n$ either nothing or an index $i < n$. It is required that the heap has at most $n$ entries
+and that, for all identities $v < n$ and indices $i < n$, the position of $v$ is $i$ exactly
+when $i$ is a slot of the heap whose entry has identity $v$. -/
 structure IndexedMinQueue (W : Type u) [LinearOrder W] (n : Nat) where
   heap : Cslib.Algorithms.Lean.MinHeap (WithTop W ×ₗ Fin n)
   position : Vector (Option (Fin n)) n
@@ -437,19 +444,39 @@ private lemma siftDownTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
         · simp only [Array.size_swap]
       · exact hinv
 
-/-- The empty indexed queue has the canonical empty heap and no present identity. -/
+/-- **Empty indexed minimum queue.** For every linearly ordered type $W$ and every natural number
+$n$, the empty indexed minimum queue over the identities $0, \dots, n-1$, with keys in $W$ with a
+new greatest element adjoined, has the empty min-heap and a position vector that assigns nothing
+to each of the $n$ identities, so no identity is present. -/
 def empty {W : Type u} [LinearOrder W] (n : Nat) : IndexedMinQueue W n where
   heap := MinHeap.empty
   position := Vector.replicate n none
   capacity := by simp [MinHeap.empty]
   inverse := by simp [MinHeap.empty]
 
-/-- Test membership by one inverse-vector read. -/
+/-- **Membership test in an indexed minimum queue.** Costs are counted as five event counts:
+comparisons, swaps, reads of the position vector, writes to the position vector, and entry
+appends, pops or replacements. For an indexed minimum queue $q$ over the identities
+$0, \dots, n-1$ and an identity $v < n$, the membership test returns true exactly when the
+position vector of $q$ assigns an index to $v$, and its cost is one position read and no other
+event. -/
 @[no_expose] def member {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) : TimeM (Fin 5 → Nat) Bool :=
   ⟨q.position[v].isSome, event 2⟩
 
-/-- Insert one absent identity, rejecting an identity already in the queue. -/
+/-- **Insertion into an indexed minimum queue.** Let $W$ be a linearly ordered type and let
+$W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Costs are counted as five
+event counts: comparisons, swaps, reads of the position vector, writes to the position vector,
+and entry appends, pops or replacements. Given an indexed minimum queue $q$ over the identities
+$0, \dots, n-1$ with keys in $W \cup \{\top\}$, whose heap entries (pairs of a key and an
+identity) are ordered lexicographically, first by key and then by identity, an identity $v < n$
+and a key $k \in W \cup \{\top\}$, insertion fails (returns nothing) when the position vector of
+$q$ assigns an index to $v$, at the cost of one position read. Otherwise it appends the entry
+$(k, v)$ at the end of the heap, sets the position of $v$ to that slot, and sifts the entry up:
+while it is not at the root and is smaller than its parent, it is swapped with its parent and
+the positions of both swapped identities are updated. It returns the resulting queue, at the
+cost of one position read, one position write and one entry append, plus one comparison for
+each comparison with a parent and one swap and two position writes for each swap. -/
 @[no_expose] def insert {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : WithTop W) :
     TimeM (Fin 5 → Nat) (Option (IndexedMinQueue W n)) :=
@@ -519,7 +546,20 @@ private lemma set_decrease_ready {W : Type u} [LinearOrder W] {n : Nat}
     simpa only [Array.getElem_set, ite_eq_right hparent_ne.symm,
       ite_eq_right hji.symm] using hparent.trans hchild
 
-/-- Strictly lower the finite key of one present identity and sift it upward. -/
+/-- **Decrease-key in an indexed minimum queue.** Let $W$ be a linearly ordered type and let
+$W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Costs are counted as five
+event counts: comparisons, swaps, reads of the position vector, writes to the position vector,
+and entry appends, pops or replacements. Given an indexed minimum queue $q$ over the identities
+$0, \dots, n-1$ with keys in $W \cup \{\top\}$, whose heap entries (pairs of a key and an
+identity) are ordered lexicographically, first by key and then by identity, an identity $v < n$
+and a finite key $k \in W$, decrease-key fails (returns nothing) when the position vector of $q$
+assigns no index to $v$, at the cost of one position read, and when $k$ is not strictly smaller
+than the current key of $v$, at the cost of one position read and one comparison. Otherwise it
+replaces the entry of $v$ by $(k, v)$ in the same slot and sifts it up: while it is not at the
+root and is smaller than its parent, it is swapped with its parent and the positions of both
+swapped identities are updated. It returns the resulting queue, at the cost of one position
+read, one comparison and one entry replacement, plus one comparison for each comparison with a
+parent and one swap and two position writes for each swap. -/
 @[no_expose] def decreaseKey {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : W) :
     TimeM (Fin 5 → Nat) (Option (IndexedMinQueue W n)) :=
@@ -548,7 +588,20 @@ private lemma set_decrease_ready {W : Type u} [LinearOrder W] {n : Nat}
     else
       ⟨none, event 2 + event 0⟩
 
-/-- Remove and return the canonical minimum, rejecting only the empty queue. -/
+/-- **Extract-min in an indexed minimum queue.** Costs are counted as five event counts:
+comparisons, swaps, reads of the position vector, writes to the position vector, and entry
+appends, pops or replacements. Given an indexed minimum queue $q$, extract-min fails (returns
+nothing) exactly when the heap of $q$ is empty, at zero cost. Otherwise let $(k, v)$ be the root
+entry of the heap. If the heap has one entry, extract-min returns $(k, v)$ together with the
+queue whose heap is empty and in which $v$ has no position, at the cost of one position write
+and one entry pop. If the heap has at least two entries, the root is swapped with the last entry
+and the positions of both are updated, the last slot is removed, the position of $v$ is cleared,
+and the new root is sifted down: while it has a child, let $c$ be its smaller child (the left
+one on ties); if $c$ is smaller than it, the two are swapped and the positions of both are
+updated, otherwise the sift stops. It returns $(k, v)$ together with the resulting queue, at the
+cost of one swap, three position writes and one entry pop, plus, at each sift-down step, one
+comparison between the two children when both exist, one comparison with $c$, and one swap and
+two position writes when a swap is made. -/
 @[no_expose] def extractMin {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) :
     TimeM (Fin 5 → Nat)

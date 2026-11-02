@@ -44,19 +44,27 @@ universe u
 namespace Cslib.Algorithms.Lean
 namespace RedBlackTree
 
-/-- The color of a red-black tree node. -/
+/-- **Red-black node colors.** The colors of red-black tree nodes are the two values red and
+black. -/
 public inductive Color where
   | red
   | black
   deriving DecidableEq, Repr
 
-/-- A red-black tree: each node carries a color, a key, and two subtrees. -/
+/-- **Red-black tree data type.** A red-black tree with keys in a type $\alpha$ is either empty or
+a node consisting of a color (red or black), a left subtree, a key in $\alpha$, and a right
+subtree.
+
+No ordering, color or balance invariant is imposed by the type itself. -/
 public inductive Tree (α : Type u) where
   | empty
   | node (color : Color) (left : Tree α) (key : α) (right : Tree α)
 deriving DecidableEq, Repr
 
-/-- Remove colors, yielding the underlying binary search tree. -/
+/-- **Color erasure.** The color erasure of a red-black tree is the binary tree obtained by
+forgetting the node colors: the empty tree goes to the empty binary tree, and a node with key $k$
+and subtrees $l$ and $r$ goes to the binary-tree node with key $k$ whose subtrees are the color
+erasures of $l$ and $r$. -/
 public def erase {α : Type u} : Tree α → BinaryTree α
   | .empty => .nil
   | .node _ left key right => .node key (erase left) (erase right)
@@ -70,7 +78,11 @@ public def erase {α : Type u} : Tree α → BinaryTree α
     erase (.node color left key right) = .node key (erase left) (erase right) :=
   rfl
 
-/-- Structural membership, inherited from `BinarySearchTree` through `erase`. -/
+/-- **Membership in a red-black tree.** An element $x$ is a member of a red-black tree $t$ when $x$
+is a member of the binary tree obtained from $t$ by erasing its colors, that is, when $x$ equals
+the key of some node of $t$.
+
+Membership is structural: it does not use the search-tree ordering. -/
 public def Mem {α : Type u} (x : α) (tree : Tree α) : Prop :=
   BinarySearchTree.Mem x (erase tree)
 
@@ -86,13 +98,22 @@ public instance {α : Type u} : Membership α (Tree α) :=
     x ∈ Tree.node color left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
 
-/-- Append the inorder traversal of a tree to an existing suffix in linear
-time; inherited from `BinarySearchTree` through `erase`. -/
+/-- **Inorder traversal onto a suffix.** For a red-black tree $t$ and a list $s$, this is the
+accumulator form of the binary-search-tree inorder traversal applied to the color erasure of $t$:
+for the empty tree it returns $s$, and for a node with key $k$ and subtrees $l$ and $r$ it returns
+the result for $l$ with suffix the list $k$ followed by $u$, where $u$ is the result for $r$ with
+suffix $s$.
+
+Thus the result lists the keys of $t$ in inorder followed by $s$, in time linear in the size
+of $t$. -/
 public def inorderAux {α : Type u} (tree : Tree α) (suffix : List α) : List α :=
   BinarySearchTree.inorderAux (erase tree) suffix
 
-/-- The linear-time inorder traversal of a tree, inherited from
-`BinarySearchTree` through `erase`. -/
+/-- **Inorder traversal of a red-black tree.** The inorder traversal of a red-black tree $t$ is
+the binary-search-tree inorder traversal of the color erasure of $t$, computed in linear time
+with an accumulator starting from the empty list. It lists the keys of $t$ from left to right:
+the empty tree gives the empty list, and a node with key $k$ and subtrees $l$ and $r$ gives the
+traversal of $l$, then $k$, then the traversal of $r$. -/
 public def inorder {α : Type u} (tree : Tree α) : List α :=
   BinarySearchTree.inorder (erase tree)
 
@@ -106,76 +127,105 @@ public def inorder {α : Type u} (tree : Tree α) : List α :=
       inorder left ++ key :: inorder right :=
   BinarySearchTree.inorder_node key (erase left) (erase right)
 
-/-- `All p tree` states that every key in `tree` satisfies `p`; it is
-`BinarySearchTree.All` of the color-erased tree. -/
+/-- **Predicate holding at every key of a red-black tree.** For a predicate $p$ on $\alpha$ and a
+red-black tree $t$ with keys in $\alpha$, $p$ holds at every key of $t$ when $p$ holds at every key
+of the binary search tree obtained from $t$ by erasing colors. -/
 public def All {α : Type u} (p : α → Prop) (tree : Tree α) : Prop :=
   BinarySearchTree.All p (erase tree)
 
-/-- Every left key is smaller and every right key is larger, recursively; it is
-`BinarySearchTree.Ordered` of the color-erased tree. -/
+/-- **Ordered red-black tree.** Let $\alpha$ be a type with a relation $<$. A red-black tree with
+keys in $\alpha$ is ordered when, at every node with key $k$, every key $y$ in the left subtree
+satisfies $y < k$ and every key $z$ in the right subtree satisfies $k < z$.
+
+Equivalently, the binary tree obtained by erasing the colors is an ordered binary search tree. -/
 public def Ordered {α : Type u} [LT α] (tree : Tree α) : Prop :=
   BinarySearchTree.Ordered (erase tree)
 
-/-- Membership in a red-black tree is `BinarySearchTree` membership in its
-color-erased tree, by definition. -/
+/-- **Red-black membership is membership in the underlying binary tree.** For every red-black tree
+$t$ and every $x$, $x$ is a member of $t$ if and only if $x$ is a member of the binary tree obtained
+from $t$ by erasing its colors.
+
+This holds by definition. -/
 public theorem mem_erase {α : Type u} {x : α} {tree : Tree α} :
     x ∈ tree ↔ x ∈ erase tree :=
   Iff.rfl
 
-/-- `All` on a red-black tree is `BinarySearchTree.All` of its color-erased
-tree, by definition. -/
+/-- **All keys of a red-black tree via its color erasure.** For every predicate $p$ on $\alpha$
+and every red-black tree $t$ with keys in $\alpha$, $p$ holds at every key of $t$ if and only if
+$p$ holds at every key of the binary search tree obtained from $t$ by erasing colors. This holds
+by definition. -/
 public theorem all_erase {α : Type u} {p : α → Prop} {tree : Tree α} :
     All p tree ↔ BinarySearchTree.All p (erase tree) :=
   Iff.rfl
 
-/-- Ordering of a red-black tree is `BinarySearchTree.Ordered` of its
-color-erased tree, by definition. -/
+/-- **A red-black tree is ordered exactly when its underlying binary tree is.** For keys with a
+relation $<$, a red-black tree $t$ is ordered if and only if the binary tree obtained from $t$ by
+erasing its colors is an ordered binary search tree.
+
+This holds by definition. -/
 public theorem ordered_erase {α : Type u} [LT α] {tree : Tree α} :
     Ordered tree ↔ BinarySearchTree.Ordered (erase tree) :=
   Iff.rfl
 
-/-- The inorder traversal of a red-black tree is the `BinarySearchTree`
-inorder traversal of its color-erased tree, by definition. -/
+/-- **Inorder traversal ignores colors.** For every red-black tree $t$, the inorder traversal of
+$t$ equals the binary-search-tree inorder traversal of the color erasure of $t$; this holds by
+definition. -/
 public theorem inorder_erase {α : Type u} (tree : Tree α) :
     inorder tree = BinarySearchTree.inorder (erase tree) :=
   rfl
 
-/-- The color of the root of a tree; the empty tree counts as black. -/
+/-- **Root color.** The root color of a red-black tree is the color of its root node; the empty
+tree has root color black. -/
 public def colorOf {α : Type u} : Tree α → Color
   | .empty => .black
   | .node color _ _ _ => color
 
-/-- The red invariant: no red node has a red child. -/
+/-- **Red property of red-black trees.** A red-black tree satisfies the red property when no red
+node has a red child, where empty subtrees count as black. -/
 public def RedOk {α : Type u} : Tree α → Prop
   | .empty => True
   | .node .red left _ right =>
       RedOk left ∧ RedOk right ∧ colorOf left = .black ∧ colorOf right = .black
   | .node .black left _ right => RedOk left ∧ RedOk right
 
-/-- `RedOk` everywhere except possibly a red-red redex at the root.
+/-- **Red invariant away from the root.** A red-black tree satisfies the relaxed red invariant
+when it is empty, or when its left and right subtrees both satisfy the red invariant (no red node
+has a red child). The root itself is unconstrained, so a red root may have a red child.
 
 This is the intermediate invariant of Okasaki's unchecked insertion. -/
 public def AlmostRedOk {α : Type u} : Tree α → Prop
   | .empty => True
   | .node _ left _ right => RedOk left ∧ RedOk right
 
-/-- The number of black nodes on a root-to-leaf path, counting the leaf. -/
+/-- **Black height.** The black height of a red-black tree is the number of black nodes on its
+leftmost root-to-leaf path, counting the empty leaf as one black node: the empty tree has black
+height $1$, a red node has the black height of its left subtree, and a black node has the black
+height of its left subtree plus $1$. -/
 public def blackHeight {α : Type u} : Tree α → Nat
   | .empty => 1
   | .node .red left _ _ => blackHeight left
   | .node .black left _ _ => blackHeight left + 1
 
-/-- All root-to-leaf paths contain the same number of black nodes. -/
+/-- **Black-height balanced red-black tree.** A red-black tree is balanced when every root-to-leaf
+path contains the same number of black nodes. Recursively: the empty tree is balanced, and a node
+is balanced when both of its subtrees are balanced and have the same black height (the number of
+black nodes on the leftmost root-to-leaf path, counting the leaf). -/
 public def Balanced {α : Type u} : Tree α → Prop
   | .empty => True
   | .node _ left _ right =>
       Balanced left ∧ Balanced right ∧ blackHeight left = blackHeight right
 
-/-- A valid red-black tree: ordered, red-invariant, balanced, black root. -/
+/-- **Valid red-black tree.** Let $\alpha$ be a type with a relation $<$. A red-black tree with
+keys in $\alpha$ is valid when it is ordered, satisfies the red property (no red node has a red
+child), is balanced (every root-to-leaf path contains the same number of black nodes), and its
+root is black, where the empty tree counts as black. -/
 public def Valid {α : Type u} [LT α] (tree : Tree α) : Prop :=
   Ordered tree ∧ RedOk tree ∧ Balanced tree ∧ colorOf tree = .black
 
-/-- Search a tree by following comparisons from its root. -/
+/-- **Search in a red-black tree.** Searching a red-black tree over a linearly ordered type for a
+key $x$ returns a Boolean, ignoring colors: the empty tree gives false, and at a node with key $k$
+the search continues in the left subtree if $x < k$, continues in the right subtree if $k < x$,
+and returns true otherwise. -/
 public def contains {α : Type u} [LinearOrder α] (x : α) : Tree α → Bool
   | .empty => false
   | .node _ left key right =>
@@ -183,7 +233,15 @@ public def contains {α : Type u} [LinearOrder α] (x : α) : Tree α → Bool
       else if key < x then contains x right
       else true
 
-/-- Okasaki's rebalancing: repair a red-red redex below a black node. -/
+/-- **Okasaki's rebalancing.** Given a color $c$, red-black trees $l$ and $r$, and a key $k$,
+rebalancing produces a tree as follows. Suppose $c$ is black and one of these configurations
+occurs, taking the first that applies: $l$ is a red node with a red left child; $l$ is a red node
+with a red right child; $r$ is a red node with a red left child; $r$ is a red node with a red
+right child. The black root and the two red nodes then hold three keys and leave four subtrees,
+which read in inorder as $t_1, x, t_2, y, t_3, z, t_4$. The result is a red node with key $y$, left
+child the black node with subtrees $t_1, t_2$ and key $x$, and right child the black node with
+subtrees $t_3, t_4$ and key $z$. In every other case the result is the node with color $c$, left
+subtree $l$, key $k$ and right subtree $r$. -/
 def balance {α : Type u} : Color → Tree α → α → Tree α → Tree α
   | .black, .node .red (.node .red a x b) y c, z, d =>
       .node .red (.node .black a x b) y (.node .black c z d)
@@ -195,7 +253,15 @@ def balance {α : Type u} : Color → Tree α → α → Tree α → Tree α
       .node .red (.node .black a x b) y (.node .black c z d)
   | color, left, key, right => .node color left key right
 
-/-- Unchecked insertion; the result may violate `RedOk` at the root. -/
+/-- **Unchecked red-black insertion.** For keys from a linearly ordered type, the unchecked
+insertion of $x$ into a red-black tree is defined by recursion on the tree. Inserting $x$ into the
+empty tree gives a red node with key $x$ and two empty subtrees. Inserting $x$ into a node with
+color $c$, left subtree $l$, key $k$ and right subtree $r$ gives: if $x < k$, Okasaki's
+rebalancing of color $c$, left subtree the insertion of $x$ into $l$, key $k$ and right subtree
+$r$; if $k < x$, Okasaki's rebalancing of color $c$, left subtree $l$, key $k$ and right subtree
+the insertion of $x$ into $r$; otherwise the node itself, unchanged.
+
+The result may have a red root with a red child, so it need not satisfy the red invariant. -/
 def ins {α : Type u} [LinearOrder α] (x : α) : Tree α → Tree α
   | .empty => .node .red .empty x .empty
   | tree@(.node color left key right) =>
@@ -203,40 +269,50 @@ def ins {α : Type u} [LinearOrder α] (x : α) : Tree α → Tree α
       else if key < x then balance color left key (ins x right)
       else tree
 
-/-- Recolor the root of a tree black. -/
+/-- **Blackening the root.** Recoloring the root of a red-black tree black leaves the empty tree
+unchanged and turns a node with any color, left subtree $l$, key $k$ and right subtree $r$ into the
+black node with left subtree $l$, key $k$ and right subtree $r$. -/
 def makeBlack {α : Type u} : Tree α → Tree α
   | .empty => .empty
   | .node _ left key right => .node .black left key right
 
-/-- Recoloring the root black is invisible after erasing colors. -/
+/-- **Recoloring the root black does not change the color erasure.** For every red-black
+tree $t$, the color erasure of the tree obtained from $t$ by recoloring its root black (the empty
+tree is left unchanged) equals the color erasure of $t$. -/
 public theorem erase_makeBlack {α : Type u} {tree : Tree α} :
     erase (makeBlack tree) = erase tree := by
   cases tree <;> rfl
 
-/-- Insert a key, leaving an existing equal key unchanged. -/
+/-- **Red-black tree insertion.** For keys from a linearly ordered type, inserting $x$ into a
+red-black tree $t$ gives the unchecked insertion of $x$ into $t$ with its root recolored black. -/
 public def insert {α : Type u} [LinearOrder α] (x : α) (tree : Tree α) :
     Tree α :=
   makeBlack (ins x tree)
 
-/-- Build a tree by inserting the list from right to left. -/
+/-- **Red-black tree from a list.** The red-black tree built from a list over a linearly ordered
+type inserts the elements of the list into the empty tree from right to left: the empty list
+gives the empty tree, and a list with head $x$ and tail $xs$ gives the insertion of $x$ into the
+tree built from $xs$. -/
 public def fromList {α : Type u} [LinearOrder α] : List α → Tree α
   | [] => .empty
   | x :: xs => insert x (fromList xs)
 
-/-- `All` is equivalent to universal quantification over structural
-membership; inherited from `BinarySearchTree`. -/
+/-- **All keys versus members of a red-black tree.** For every predicate $p$ on $\alpha$ and every
+red-black tree $t$ with keys in $\alpha$, $p$ holds at every key of $t$ if and only if $p(x)$ holds
+for every $x \in \alpha$ that is a (structural) member of $t$. -/
 public theorem all_iff_forall_mem {α : Type u} {p : α → Prop} {tree : Tree α} :
     All p tree ↔ ∀ x, x ∈ tree → p x :=
   BinarySearchTree.all_iff_forall_mem
 
-/-- Inorder traversal contains exactly the structurally present keys;
-inherited from `BinarySearchTree`. -/
+/-- **Membership in the inorder traversal of a red-black tree.** For every red-black tree $t$ and
+every $x$, $x$ occurs in the inorder traversal of $t$ if and only if $x$ is a member of $t$. -/
 public theorem mem_inorder {α : Type u} {x : α} {tree : Tree α} :
     x ∈ inorder tree ↔ x ∈ tree :=
   BinarySearchTree.mem_inorder
 
-/-- The inorder traversal of an ordered tree is strictly increasing;
-inherited from `BinarySearchTree`. -/
+/-- **The inorder traversal of an ordered red-black tree is strictly increasing.** For keys from a
+linearly ordered type, if a red-black tree $t$ is ordered, then every entry of the inorder
+traversal of $t$ is strictly smaller than every later entry. -/
 public theorem ordered_inorder {α : Type u} [LinearOrder α] {tree : Tree α}
     (h : Ordered tree) : List.Pairwise (· < ·) (inorder tree) :=
   BinarySearchTree.ordered_inorder h
@@ -590,27 +666,42 @@ private theorem blackHeight_makeBlack {α : Type u} {tree : Tree α} :
   | node color left key right =>
     cases color <;> simp [makeBlack, blackHeight]
 
-/-- Inserting a key adds exactly that key to structural membership. -/
+/-- **Membership after insertion into a red-black tree.** For keys from a linearly ordered type, a
+key $y$ is a member of the red-black tree obtained by inserting $x$ into $t$ if and only if $y = x$
+or $y$ is a member of $t$. -/
 public theorem mem_insert {α : Type u} [LinearOrder α] {x y : α} {tree : Tree α} :
     y ∈ insert x tree ↔ y = x ∨ y ∈ tree := by
   simp only [insert, mem_makeBlack, mem_ins]
 
-/-- Insertion preserves the strict search-tree invariant. -/
+/-- **Red-black insertion preserves the search-tree order.** Let $\alpha$ be a linearly ordered
+type, $x \in \alpha$ a key, and $t$ a red-black tree with keys in $\alpha$. If $t$ is ordered (at
+every node with key $k$, every key in the left subtree is less than $k$ and every key in the right
+subtree is greater than $k$), then the tree obtained by inserting $x$ into $t$ is ordered. -/
 public theorem ordered_insert {α : Type u} [LinearOrder α] {x : α} {tree : Tree α}
     (h : Ordered tree) : Ordered (insert x tree) :=
   ordered_makeBlack (ordered_ins h)
 
-/-- Insertion preserves the red invariant. -/
+/-- **Red-black insertion preserves the red property.** Let $\alpha$ be a linearly ordered type,
+$x \in \alpha$ a key, and $t$ a red-black tree with keys in $\alpha$. If no red node of $t$ has a
+red child, then no red node of the tree obtained by inserting $x$ into $t$ has a red child. -/
 public theorem redOk_insert {α : Type u} [LinearOrder α] {x : α} {tree : Tree α}
     (h : RedOk tree) : RedOk (insert x tree) :=
   redOk_makeBlack (almostRedOk_ins h).1
 
-/-- Insertion preserves black-height balance. -/
+/-- **Red-black insertion preserves black-height balance.** Let $\alpha$ be a linearly ordered type.
+If a red-black tree $t$ with keys in $\alpha$ is balanced (every root-to-leaf path contains the same
+number of black nodes), then for every $x \in \alpha$ the tree obtained by inserting $x$ into $t$ is
+balanced. -/
 public theorem balanced_insert {α : Type u} [LinearOrder α] {x : α} {tree : Tree α}
     (h : Balanced tree) : Balanced (insert x tree) :=
   balanced_makeBlack (balanced_ins h)
 
-/-- Insertion preserves `blackHeight` up to the final root recoloring. -/
+/-- **Insertion raises the black height by at most one.** Let $\alpha$ be a linearly ordered type.
+For every red-black tree $t$ with keys in $\alpha$ and every $x \in \alpha$, the black height of the
+tree obtained by inserting $x$ into $t$ equals either the black height of $t$ or the black height of
+$t$ plus one.
+
+Any increase comes from recoloring the root black at the end of insertion. -/
 public theorem blackHeight_insert {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} :
     blackHeight (insert x tree) = blackHeight tree ∨
@@ -621,16 +712,22 @@ public theorem blackHeight_insert {α : Type u} [LinearOrder α] {x : α}
   · exact Or.inl (h.trans blackHeight_ins)
   · exact Or.inr (by rw [h, blackHeight_ins])
 
-/-- Insertion yields a valid tree from the three structural invariants
-`Ordered`, `RedOk`, and `Balanced`; the input root need not be black,
-since `insert` recolors the root black. -/
+/-- **Red-black insertion yields a valid tree from the invariants.** Let $\alpha$ be a linearly
+ordered type, $x \in \alpha$ a key, and $t$ a red-black tree with keys in $\alpha$ that is
+ordered, satisfies the red property (no red node has a red child), and is balanced (every
+root-to-leaf path contains the same number of black nodes). Then the tree obtained by inserting
+$x$ into $t$ is valid.
+
+The root of $t$ need not be black, since insertion recolors the root black. -/
 public theorem valid_insert_of_invariants {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hOrdered : Ordered tree) (hRedOk : RedOk tree)
     (hBalanced : Balanced tree) : Valid (insert x tree) :=
   ⟨ordered_insert hOrdered, redOk_insert hRedOk, balanced_insert hBalanced,
     colorOf_makeBlack⟩
 
-/-- Insertion preserves validity of a red-black tree. -/
+/-- **Red-black insertion preserves validity.** Let $\alpha$ be a linearly ordered type and
+$x \in \alpha$. If $t$ is a valid red-black tree with keys in $\alpha$, then the tree obtained by
+inserting $x$ into $t$ is also valid. -/
 public theorem valid_insert {α : Type u} [LinearOrder α] {x : α} {tree : Tree α}
     (h : Valid tree) : Valid (insert x tree) :=
   valid_insert_of_invariants h.1 h.2.1 h.2.2.1
@@ -648,31 +745,40 @@ private theorem contains_eq_bstContains {α : Type u} [LinearOrder α] (x : α)
         · simp [hLeft, hRight, ihRight]
         · simp [hLeft, hRight]
 
-/-- Search is equivalent to structural membership for an ordered tree;
-inherited from `BinarySearchTree` through `erase`. -/
+/-- **Search in an ordered red-black tree is correct.** Let $t$ be a red-black tree over a
+linearly ordered type that is ordered (every left key is smaller and every right key larger,
+recursively). Then for every key $x$, the search for $x$ in $t$ returns true if and only if $x$
+is a key of some node of $t$. -/
 public theorem contains_eq_true_iff {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (h : Ordered tree) :
     contains x tree = true ↔ x ∈ tree := by
   rw [contains_eq_bstContains]
   exact BinarySearchTree.contains_eq_true_iff h
 
-/-- The inorder traversal of an ordered tree has no duplicate keys. -/
+/-- **Ordered red-black trees have duplicate-free inorder traversals.** For a red-black tree $t$
+over a linearly ordered type that is ordered (every left key is smaller and every right key
+larger, recursively), the inorder traversal of $t$ contains no key twice. -/
 public theorem inorder_nodup {α : Type u} [LinearOrder α] {tree : Tree α}
     (h : Ordered tree) : (inorder tree).Nodup :=
   (ordered_inorder h).nodup
 
-/-- The empty tree is a valid red-black tree. -/
+/-- **The empty red-black tree is valid.** For every type $\alpha$ with a relation $<$, the empty
+red-black tree with keys in $\alpha$ is a valid red-black tree. -/
 public theorem valid_empty {α : Type u} [LT α] : Valid (.empty : Tree α) :=
   ⟨trivial, trivial, trivial, rfl⟩
 
-/-- Building a tree by insertion always produces a valid tree. -/
+/-- **Red-black trees built from a list are valid.** Let $\alpha$ be a linearly ordered type. For
+every list $l$ of elements of $\alpha$, the red-black tree obtained from the empty tree by
+inserting the elements of $l$ one at a time, from the last to the first, is valid. -/
 public theorem valid_fromList {α : Type u} [LinearOrder α] {xs : List α} :
     Valid (fromList xs) := by
   induction xs with
   | nil => exact valid_empty
   | cons x xs ih => exact valid_insert ih
 
-/-- A key is in a tree built from a list exactly when it is in the list. -/
+/-- **Membership in a red-black tree built from a list.** For keys from a linearly ordered type and
+every list $xs$, a key $x$ is a member of the red-black tree built from $xs$ by successive
+insertion if and only if $x$ occurs in $xs$. -/
 public theorem mem_fromList {α : Type u} [LinearOrder α] {x : α} {xs : List α} :
     x ∈ fromList xs ↔ x ∈ xs := by
   induction xs with

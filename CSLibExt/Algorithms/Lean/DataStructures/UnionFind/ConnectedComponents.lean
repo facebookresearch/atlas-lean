@@ -179,7 +179,14 @@ private theorem fin_val_transport {n m : Nat} (h : m = n) (i : Fin n) :
   cases h
   rfl
 
-/-- The canonical checked query preserves size and the complete equivalence relation. -/
+/-- **Correctness of the union-find equivalence query.** Call two natural numbers $a$ and $c$
+equivalent in a union-find structure when they have the same root, where a number that is not a
+node is its own root. Let $U$ be a union-find structure with nodes $0, \dots, N-1$ and let
+$x, y < N$. The equivalence query on $x$ and $y$, which runs FIND-SET with path compression on
+$x$ and then on $y$, returns a union-find structure $U'$ and a boolean $b$ such that $U'$ has
+$N$ nodes, $b$ is true if and only if $x$ and $y$ are equivalent in $U$, and for all natural
+numbers $a$ and $c$, $a$ and $c$ are equivalent in $U'$ if and only if they are equivalent
+in $U$. -/
 public theorem checkEquiv_spec :
   ∀ (uf : UnionFind) (x y : Fin uf.size),
     (uf.checkEquiv x y).1.size = uf.size ∧
@@ -314,7 +321,14 @@ private def allocateVertices : (n : Nat) → TimeM (Nat × Nat × Nat) {s : Unio
         simp only [UnionFind.size, UnionFind.arr_push, Array.size_push]
       exact h.trans (congrArg (fun x ↦ x + 1) s.property)⟩
 
-/-- Run CLRS CONNECTED-COMPONENTS in input order, retaining query compression on both branches. -/
+/-- **Connected components via union-find.** Given a natural number $n$ and a list $E$ of pairs
+of vertices in $\{0, \dots, n-1\}$, CONNECTED-COMPONENTS first builds the union-find structure
+with $n$ singleton nodes $0, \dots, n-1$ by $n$ MAKE-SET calls. It then processes the pairs
+$(u, v)$ of $E$ in list order: it asks whether $u$ and $v$ are equivalent using two FIND-SET
+calls, keeping the path compression done by the query, and if they are not equivalent it
+performs UNION on $u$ and $v$ (union by rank with path compression). It returns the final
+union-find structure, which has $n$ nodes, together with the numbers of MAKE-SET, FIND-SET and
+UNION calls made. -/
 public def connectedComponents (n : Nat) (edges : List (Fin n × Fin n)) :
     TimeM (Nat × Nat × Nat) {s : UnionFind // s.size = n} := do
   let initial ← allocateVertices n
@@ -344,12 +358,18 @@ private theorem allocateVertices_time (n : Nat) :
   | zero => rfl
   | succ n ih => simp [allocateVertices, ih]
 
-/-- The returned union-find has exactly the requested number of allocated vertices. -/
+/-- **Connected components allocates $n$ nodes.** For every natural number $n$ and every list
+$E$ of pairs of vertices in $\{0, \dots, n-1\}$, the union-find structure returned by
+CONNECTED-COMPONENTS on $n$ and $E$ has exactly $n$ nodes. -/
 public theorem connectedComponents_size (n : Nat) (edges : List (Fin n × Fin n)) :
     (connectedComponents n edges).ret.val.size = n :=
   (connectedComponents n edges).ret.property
 
-/-- The returned canonical partition is exactly undirected graph reachability. -/
+/-- **Connected components computes reachability.** Let $n$ be a natural number and let $E$ be a
+list of pairs of vertices in $\{0, \dots, n-1\}$. For all vertices $a, b < n$, $a$ and $b$ are
+equivalent in the union-find structure returned by CONNECTED-COMPONENTS on $n$ and $E$ if and
+only if $a$ and $b$ are joined by a path in the simple graph on $\{0, \dots, n-1\}$ whose edges
+are the unordered pairs $\{u, v\}$ with $(u, v)$ in $E$ and $u \ne v$. -/
 public theorem connectedComponents_equiv_iff_reachable (n : Nat)
     (edges : List (Fin n × Fin n)) (a b : Fin n) :
     UnionFind.Equiv (connectedComponents n edges).ret.val a.val b.val ↔
@@ -460,7 +480,15 @@ private theorem card_components_bot_fin (n : Nat) :
       (Nat.card_eq_of_bijective _ hb).symm
     _ = n := Nat.card_fin n
 
-/-- Actual MAKE-SET, FIND-SET and conditional UNION call counts, with conservation. -/
+/-- **Operation counts of connected components.** Let $n$ be a natural number, let $E$ be a list
+of pairs of vertices in $\{0, \dots, n-1\}$ and let $m$ be the length of $E$. Let $G$ be the
+simple graph on $\{0, \dots, n-1\}$ whose edges are the unordered pairs $\{u, v\}$ with $(u, v)$
+in $E$ and $u \ne v$, and let $k$ be the number of connected components of $G$. Running
+CONNECTED-COMPONENTS on $n$ and $E$ makes exactly $n$ MAKE-SET calls, $2m$ FIND-SET calls and
+$n - k$ UNION calls. Moreover, $k$ plus the number of UNION calls equals $n$, and if $n > 0$
+then the number of UNION calls is at most $n - 1$.
+
+These are the call counts recorded by the cost annotation, not bounds on parent-pointer visits. -/
 public theorem connectedComponents_time_spec :
   ∀ (n : Nat) (edges : List (Fin n × Fin n)),
     let graph : SimpleGraph (Fin n) :=

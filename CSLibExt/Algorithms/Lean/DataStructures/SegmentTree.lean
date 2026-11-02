@@ -37,8 +37,9 @@ namespace Cslib.Algorithms.Lean
 
 universe u
 
-/-- A segment tree: empty, a single leaf, or a node caching its segment aggregate
-and segment length next to its two children. -/
+/-- **Segment tree.** A segment tree with values in $\alpha$ is either empty, a leaf holding a
+value in $\alpha$, or an internal node holding a cached segment aggregate in $\alpha$, a cached
+segment length in $\mathbb{N}$, a left child and a right child, both segment trees. -/
 inductive SegmentTree (α : Type u) where
   | empty : SegmentTree α
   | leaf : α → SegmentTree α
@@ -46,33 +47,46 @@ inductive SegmentTree (α : Type u) where
 
 namespace SegmentTree
 
-/-- The cached aggregate of a tree; the empty tree has aggregate `0`. -/
+/-- **Aggregate of a segment tree.** The aggregate of a segment tree with values in an additive
+monoid is $0$ for the empty tree, $x$ for a single leaf with value $x$, and the aggregate cached at
+the root for an internal node. -/
 def agg {α : Type u} [AddMonoid α] : SegmentTree α → α
   | .empty => 0
   | .leaf x => x
   | .node cached _ _ _ => cached
 
-/-- The number of leaves of a tree, i.e. the length of its segment. Internal
-nodes answer from the cached length, in constant time; `Valid` records that the
-cache is honest. -/
+/-- **Size of a segment tree.** The size of a segment tree is $0$ for the empty tree, $1$ for a
+leaf, and, for an internal node, the segment length cached at that node.
+
+When every cached length is the sum of the sizes of the node's children, this is the number of
+leaves, and internal nodes answer in constant time. -/
 def size {α : Type u} : SegmentTree α → Nat
   | .empty => 0
   | .leaf _ => 1
   | .node _ cachedSize _ _ => cachedSize
 
-/-- Accumulator traversal threading the output suffix, so collecting the
-leaves of an `n`-leaf tree takes linear time instead of repeatedly
-appending (and copying) left-subtree results. -/
+/-- **Accumulator traversal of a segment tree.** Given a segment tree and a list $acc$, the
+accumulator traversal returns $acc$ for the empty tree, the list $acc$ with $x$ prepended for a
+leaf with value $x$, and, for an internal node with left child $L$ and right child $R$, the
+traversal of $L$ starting from the result of the traversal of $R$ starting from $acc$.
+
+Threading the output suffix this way collects the leaves of an $n$-leaf tree in linear time
+instead of repeatedly appending (and copying) left-subtree results. -/
 def toListAux {α : Type u} : SegmentTree α → List α → List α
   | .empty, acc => acc
   | .leaf x, acc => x :: acc
   | .node _ _ left right, acc => left.toListAux (right.toListAux acc)
 
-/-- The leaf values of a tree from left to right. -/
+/-- **Leaf list of a segment tree.** The leaf list of a segment tree is the list of its leaf
+values from left to right: the empty list for the empty tree, $[x]$ for a leaf with value $x$,
+and the leaf list of the left child followed by the leaf list of the right child for an
+internal node. -/
 def toList {α : Type u} (t : SegmentTree α) : List α :=
   t.toListAux []
 
-/-- The accumulator traversal prepends exactly the tree's leaves. -/
+/-- **Accumulator traversal prepends the leaf list.** For every segment tree $t$ and every list
+$acc$, the accumulator traversal of $t$ starting from $acc$ returns the leaf list of $t$ followed
+by $acc$. -/
 @[simp]
 theorem toListAux_eq {α : Type u} (t : SegmentTree α) (acc : List α) :
     t.toListAux acc = t.toList ++ acc := by
@@ -97,16 +111,24 @@ theorem toList_empty {α : Type u} : (SegmentTree.empty : SegmentTree α).toList
 theorem toList_leaf {α : Type u} (x : α) : (SegmentTree.leaf x).toList = [x] :=
   rfl
 
-/-- Characteristic equation for `toList` at an internal node; with the
-accumulator definition this is a theorem, not a definitional unfolding. -/
+/-- **Leaf list of an internal node.** For every internal node of a segment tree, with any cached
+aggregate, any cached length, left child $L$ and right child $R$, its leaf list is the leaf list
+of $L$ followed by the leaf list of $R$.
+
+With the accumulator definition of the leaf list this is a theorem, not a definitional
+unfolding. -/
 @[simp]
 theorem toList_node {α : Type u} (agg : α) (sz : Nat) (left right : SegmentTree α) :
     (SegmentTree.node agg sz left right).toList = left.toList ++ right.toList := by
   show left.toListAux (right.toListAux []) = left.toList ++ right.toList
   rw [toListAux_eq, toListAux_eq, List.append_nil]
 
-/-- A valid tree has every cached aggregate equal to the sum of its children's
-aggregates and every cached length equal to the sum of its children's lengths. -/
+/-- **Valid segment trees.** Validity of a segment tree over an additive monoid is defined
+inductively: the empty tree and every leaf are valid, and an internal node with valid left child
+$L$ and valid right child $R$ is valid when its cached aggregate is the aggregate of $L$ plus
+the aggregate of $R$ and its cached length is the size of $L$ plus the size of $R$. Here the
+aggregate and size of the empty tree are $0$ and $0$, of a leaf with value $x$ are $x$ and $1$,
+and of an internal node are its cached aggregate and cached length. -/
 inductive Valid {α : Type u} [AddMonoid α] : SegmentTree α → Prop where
   | empty : Valid .empty
   | leaf (x : α) : Valid (.leaf x)
@@ -114,7 +136,9 @@ inductive Valid {α : Type u} [AddMonoid α] : SegmentTree α → Prop where
       (hRight : Valid right) :
       Valid (.node (left.agg + right.agg) (left.size + right.size) left right)
 
-/-- In a valid tree the cached size is the length of the leaf list. -/
+/-- **Size of a valid segment tree.** If $t$ is a valid segment tree with values in an additive
+monoid, then the length of the list of leaf values of $t$, read from left to right, equals the
+size of $t$. -/
 theorem length_toList_of_valid {α : Type u} [AddMonoid α] {t : SegmentTree α}
     (h : t.Valid) : t.toList.length = t.size := by
   induction h with
@@ -122,7 +146,9 @@ theorem length_toList_of_valid {α : Type u} [AddMonoid α] {t : SegmentTree α}
   | leaf _ => rfl
   | node _ _ ihLeft ihRight => simp [size, ihLeft, ihRight]
 
-/-- In a valid tree the cached root aggregate is the sum of the leaf list. -/
+/-- **Aggregate of a valid segment tree.** If $t$ is a valid segment tree with values in an
+additive monoid, then the aggregate of $t$ equals the sum of the leaf values of $t$, taken from
+left to right. -/
 theorem agg_eq_sum_toList {α : Type u} [AddMonoid α] {t : SegmentTree α}
     (h : t.Valid) : t.agg = t.toList.sum := by
   induction t with
@@ -135,7 +161,12 @@ theorem agg_eq_sum_toList {α : Type u} [AddMonoid α] {t : SegmentTree α}
           show left.agg + right.agg = (left.toList ++ right.toList).sum
           rw [List.sum_append, ihLeft hLeft, ihRight hRight]
 
-/-- Builds a segment tree from a list by recursively splitting the list in half. -/
+/-- **Building a segment tree from a list.** The segment tree built from a list $L$ with entries
+in an additive monoid is the empty tree if $L$ is empty, and a single leaf with value $x$ if
+$L = (x)$. If $L$ has length $n \ge 2$, it is the internal node whose left child is the tree built
+from the first $\lfloor n/2 \rfloor$ entries of $L$, whose right child is the tree built from the
+remaining entries, and which caches the aggregate of the left child plus the aggregate of the
+right child, in that order, and the sum of the sizes of its children. -/
 def build {α : Type u} [AddMonoid α] : List α → SegmentTree α
   | [] => .empty
   | [x] => .leaf x
@@ -182,24 +213,29 @@ private theorem build_spec {α : Type u} [AddMonoid α] :
                 rw [hLeft.2, hRight.2]
                 exact List.take_append_drop _ _⟩
 
-/-- A tree built from a list is valid. -/
+/-- **Built segment trees are valid.** For every list $xs$ over an additive monoid, the segment
+tree built from $xs$ is valid. -/
 theorem valid_build {α : Type u} [AddMonoid α] (xs : List α) :
     (build xs).Valid :=
   (build_spec (α := α) xs).1
 
-/-- The leaf list of a tree built from a list is that list. -/
+/-- **Building a segment tree preserves the list.** For every list $xs$ with entries in an
+additive monoid, the leaf list of the segment tree built from $xs$ is $xs$. -/
 @[simp]
 theorem toList_build {α : Type u} [AddMonoid α] (xs : List α) :
     (build xs).toList = xs :=
   (build_spec (α := α) xs).2
 
-/-- The size of a tree built from a list is the length of that list. -/
+/-- **Size of a built segment tree.** For every list $xs$ with entries in an additive monoid, the
+segment tree built from $xs$ has size equal to the length of $xs$. -/
 @[simp]
 theorem size_build {α : Type u} [AddMonoid α] (xs : List α) :
     (build xs).size = xs.length := by
   rw [← length_toList_of_valid (valid_build xs), toList_build]
 
-/-- The root aggregate of a tree built from a list is the sum of that list. -/
+/-- **Aggregate of a built segment tree.** For every list $L$ with entries in an additive
+monoid, the aggregate of the segment tree built from $L$ equals the sum of the entries of $L$,
+taken from left to right. -/
 theorem agg_build {α : Type u} [AddMonoid α] (xs : List α) :
     (build xs).agg = xs.sum := by
   calc
@@ -207,13 +243,17 @@ theorem agg_build {α : Type u} [AddMonoid α] (xs : List α) :
       agg_eq_sum_toList (valid_build xs)
     _ = xs.sum := by rw [toList_build]
 
-/--
-The range aggregate over `[l, r)`, with indices relative to the tree's segment.
+/-- **Range query on a segment tree.** For a segment tree $t$ with values in an additive monoid
+and natural numbers $l, r$, the range query over $[l, r)$, with positions counted from the start
+of the segment of $t$, is defined recursively. On the empty tree it is $0$. On a leaf with value
+$x$ it is $x$ if $l = 0 < r$, and $0$ otherwise. On an internal node with cached aggregate $a$,
+cached size $s$ and children $t_1, t_2$, it is $0$ if $r \le l$ or $s \le l$; otherwise it is $a$
+if $l = 0$ and $s \le r$; and in all remaining cases it is the query over $[l, r)$ on $t_1$ plus
+the query over $[l - m, r - m)$ on $t_2$, where $m$ is the size of $t_1$ and subtraction is
+truncated at $0$.
 
-An empty range and a node disjoint from the range on either side contribute
-`0` without descending, a fully covered node contributes its cached aggregate,
-and otherwise the query recurses into both children.
--/
+An empty range and a node disjoint from the range contribute $0$ without descending, and a fully
+covered node contributes its cached aggregate. -/
 def query {α : Type u} [AddMonoid α] : SegmentTree α → Nat → Nat → α
   | .empty, _, _ => 0
   | .leaf x, l, r => if l = 0 ∧ 0 < r then x else 0
@@ -235,7 +275,11 @@ private theorem sum_take_drop_append {α : Type u} [AddMonoid α]
   rw [List.drop_append, List.take_append, List.length_drop, hcount,
     List.sum_append]
 
-/-- A range query on a valid tree is the sum of the corresponding list slice. -/
+/-- **Correctness of range queries on a valid segment tree.** Let $t$ be a valid segment tree with
+values in an additive monoid, let $(x_0, \dots, x_{n-1})$ be its leaf values from left to right,
+and let $l, r$ be natural numbers. The range query over $[l, r)$ on $t$ returns
+$\sum_{l \le k < \min(r, n)} x_k$, the sum taken in increasing order of $k$; it is $0$ when
+$\min(r, n) \le l$. -/
 theorem query_eq {α : Type u} [AddMonoid α] {t : SegmentTree α}
     (h : t.Valid) (l r : Nat) :
     t.query l r = ((t.toList.drop l).take (r - l)).sum := by
@@ -277,15 +321,22 @@ theorem query_eq {α : Type u} [AddMonoid α] {t : SegmentTree α}
                   ite_eq_right hFull, ihLeft hLeft, ihRight hRight,
                   sum_take_drop_append, length_toList_of_valid hLeft]
 
-/-- A range query on a tree built from a list is the sum of the list slice. -/
+/-- **Range queries on a built segment tree.** Let $L = (x_0, \dots, x_{n-1})$ be a list with
+entries in an additive monoid and let $l, r$ be natural numbers. The range query over $[l, r)$ on
+the segment tree built from $L$ returns $\sum_{l \le k < \min(r, n)} x_k$, the sum taken in
+increasing order of $k$; it is $0$ when $\min(r, n) \le l$. -/
 theorem query_build {α : Type u} [AddMonoid α] (xs : List α) (l r : Nat) :
     (build xs).query l r = ((xs.drop l).take (r - l)).sum := by
   rw [query_eq (valid_build xs), toList_build]
 
-/--
-Point update: replaces the leaf at a relative index and recomputes cached
-aggregates on the path back to the root.
--/
+/-- **Point update of a segment tree.** The point update of a segment tree over an additive
+monoid at an index $i \in \mathbb{N}$, relative to the tree's segment, with a value $y$ is
+defined recursively. The empty tree stays empty. A leaf becomes a leaf with value $y$ if $i = 0$
+and is unchanged otherwise. At an internal node with left child $L$ and right child $R$: if $i$
+is less than the size of $L$, then $L$ is replaced by its point update at $i$ with $y$, and
+otherwise $R$ is replaced by its point update at $i$ minus the size of $L$ with $y$; the node
+keeps its cached length, and its cached aggregate becomes the aggregate of the new left child
+plus the aggregate of the new right child. -/
 def update {α : Type u} [AddMonoid α] : SegmentTree α → Nat → α → SegmentTree α
   | .empty, _, _ => .empty
   | .leaf x, i, y => if i = 0 then .leaf y else .leaf x
@@ -297,8 +348,11 @@ def update {α : Type u} [AddMonoid α] : SegmentTree α → Nat → α → Segm
         let right' := right.update (i - left.size) y
         .node (left.agg + right'.agg) segmentSize left right'
 
-/-- Point update does not change the size of a tree: every node on the update
-path keeps its cached segment length. -/
+/-- **Point update preserves the size of a segment tree.** For every segment tree $t$ over an
+additive monoid, every index $i$ and every value $y$, the point update of $t$ at $i$ with $y$
+has the same size as $t$.
+
+Every node on the update path keeps its cached segment length. -/
 @[simp]
 theorem size_update {α : Type u} [AddMonoid α] (t : SegmentTree α)
     (i : Nat) (y : α) : (t.update i y).size = t.size := by
@@ -309,7 +363,9 @@ theorem size_update {α : Type u} [AddMonoid α] (t : SegmentTree α)
       unfold update
       split <;> rfl
 
-/-- Point update preserves validity. -/
+/-- **Point update preserves validity.** If $t$ is a valid segment tree over an additive monoid,
+then for every natural number $i$ and every value $y$, the point update of $t$ at $i$ with $y$ is
+valid. -/
 theorem Valid.update {α : Type u} [AddMonoid α] {t : SegmentTree α}
     (h : t.Valid) (i : Nat) (y : α) : (t.update i y).Valid := by
   induction t generalizing i with
@@ -333,9 +389,12 @@ theorem Valid.update {α : Type u} [AddMonoid α] {t : SegmentTree α}
             rw [← size_update right (i - left.size) y]
             exact Valid.node hLeft (ihRight hRight (i - left.size))
 
-/-- Point update at an in-range index of a valid tree updates the leaf list at
-that index. Validity is what ties the cached sizes used for routing to the
-leaf list. -/
+/-- **Leaf list after an in-range point update.** Let $t$ be a valid segment tree over an
+additive monoid and let $i$ be a natural number less than the size of $t$. Then for every value
+$y$, the leaf list of the point update of $t$ at $i$ with $y$ is the leaf list of $t$ with its
+entry at position $i$ (counting from $0$) replaced by $y$.
+
+Validity is what ties the cached sizes used for routing to the leaf list. -/
 theorem toList_update_of_lt {α : Type u} [AddMonoid α] {t : SegmentTree α}
     (h : t.Valid) {i : Nat} (hi : i < t.size) (y : α) :
     (t.update i y).toList = t.toList.set i y := by
@@ -365,8 +424,9 @@ theorem toList_update_of_lt {α : Type u} [AddMonoid α] {t : SegmentTree α}
             rw [ihRight hRight hBound, List.set_append_right i y hLeLen,
               length_toList_of_valid hLeft]
 
-/-- Point update at an out-of-range index of a valid tree leaves the leaf
-list unchanged. -/
+/-- **Out-of-range point update leaves the leaf list unchanged.** For every valid segment tree $t$
+over an additive monoid, every index $i$ at least the size of $t$ and every value $y$, the point
+update of $t$ at $i$ with $y$ has the same leaf list as $t$. -/
 theorem toList_update_of_le {α : Type u} [AddMonoid α] {t : SegmentTree α}
     (h : t.Valid) {i : Nat} (hi : t.size ≤ i) (y : α) :
     (t.update i y).toList = t.toList := by
@@ -385,7 +445,10 @@ theorem toList_update_of_le {α : Type u} [AddMonoid α] {t : SegmentTree α}
           have hR : right.size ≤ i - left.size := by omega
           simp only [update, ite_eq_right hNot, toList_node, ihRight hRight hR]
 
-/-- Updating a tree built from a list updates that list at the index. -/
+/-- **Point update of a built segment tree.** For every list $xs$ with entries in an additive
+monoid, every index $i$ smaller than the length of $xs$ and every value $y$, the leaf list of the
+segment tree built from $xs$, after the point update at $i$ with $y$, is $xs$ with its entry at
+position $i$ (counting from $0$) replaced by $y$. -/
 theorem toList_update_build {α : Type u} [AddMonoid α] {xs : List α}
     {i : Nat} (hi : i < xs.length) (y : α) :
     ((build xs).update i y).toList = xs.set i y := by
@@ -394,13 +457,23 @@ theorem toList_update_build {α : Type u} [AddMonoid α] {xs : List α}
     exact hi
   rw [toList_update_of_lt (valid_build xs) hiSize y, toList_build]
 
-/-- The root aggregate after updating a built tree is the sum of the updated list. -/
+/-- **Aggregate after a point update of a built segment tree.** Let $L = (x_0, \dots, x_{n-1})$
+be a list with entries in an additive monoid, let $i < n$, and let $y$ be an element of the
+monoid. Applying the point update at index $i$ with value $y$ to the segment tree built from $L$
+gives a tree whose aggregate is the sum, taken from left to right, of the list obtained from $L$
+by replacing $x_i$ with $y$. -/
 theorem agg_update_build {α : Type u} [AddMonoid α] {xs : List α}
     {i : Nat} (hi : i < xs.length) (y : α) :
     ((build xs).update i y).agg = (xs.set i y).sum := by
   rw [agg_eq_sum_toList ((valid_build xs).update i y), toList_update_build hi y]
 
-/-- A range query after updating a built tree is the slice sum of the updated list. -/
+/-- **Range queries after a point update of a built segment tree.** Let $L = (x_0, \dots, x_{n-1})$
+be a list with entries in an additive monoid, let $i < n$, let $y$ be an element of the monoid,
+and let $L'$ be the list obtained from $L$ by replacing $x_i$ with $y$, with entries
+$x'_0, \dots, x'_{n-1}$. Apply the point update at index $i$ with value $y$ to the segment tree
+built from $L$. For all natural numbers $l, r$, the range query over $[l, r)$ on the result
+returns $\sum_{l \le k < \min(r, n)} x'_k$, the sum taken in increasing order of $k$; it is $0$
+when $\min(r, n) \le l$. -/
 theorem query_update_build {α : Type u} [AddMonoid α] {xs : List α}
     {i : Nat} (hi : i < xs.length) (y : α) (l r : Nat) :
     ((build xs).update i y).query l r =

@@ -43,8 +43,10 @@ namespace Cslib.Algorithms.Lean
 
 universe u v
 
-/-- An LRU cache of capacity `cap`: entries most-recent-first, with the bundled invariants that
-keys are pairwise distinct and there are at most `cap` entries. -/
+/-- **Least-recently-used cache.** For a type $K$ of keys, a type $V$ of values and a
+natural number $c$, an LRU cache of capacity $c$ is a list of key-value pairs in $K \times V$,
+ordered from most to least recently used, whose keys are pairwise distinct and whose length
+is at most $c$. -/
 public structure LruCache (K : Type u) (V : Type v) (cap : Nat) where
   /-- The stored key-value pairs, most recently used first. -/
   entries : List (K × V)
@@ -55,7 +57,8 @@ public structure LruCache (K : Type u) (V : Type v) (cap : Nat) where
 
 namespace LruCache
 
-/-- Two caches with the same entries are equal; the bundled invariant proofs are irrelevant. -/
+/-- **Extensionality of LRU caches.** Two LRU caches with the same key type, value type and
+capacity are equal if their lists of entries are equal. -/
 @[ext]
 theorem ext {K : Type u} {V : Type v} {cap : Nat} {a b : LruCache K V cap}
     (h : a.entries = b.entries) : a = b := by
@@ -64,7 +67,9 @@ theorem ext {K : Type u} {V : Type v} {cap : Nat} {a b : LruCache K V cap}
     cases b with
     | mk entries' nodup' length_le' => simp_all
 
-/-- Removes every entry whose key is `k` (at most one, under the uniqueness invariant). -/
+/-- **Erasing a key from a list of entries.** Given a key $k$ and a list of key–value pairs,
+erasing $k$ deletes every pair whose key is $k$ and keeps the other pairs in their original
+order. When the keys in the list are pairwise distinct, at most one pair is deleted. -/
 def eraseKey {K : Type u} {V : Type v} [DecidableEq K] (k : K)
     (entries : List (K × V)) : List (K × V) :=
   entries.filter fun p => decide (p.1 ≠ k)
@@ -216,23 +221,27 @@ theorem find?_eq_none_of_not_mem_keys {K : Type u} {V : Type v} [DecidableEq K]
     rw [← fst_of_find?_eq_some hf]
     exact List.mem_map_of_mem (List.mem_of_find?_eq_some hf)
 
-/-- The empty cache. -/
+/-- **Empty LRU cache.** For every capacity $c$, the empty LRU cache of capacity $c$ is the cache
+with no entries. -/
 public def empty {K : Type u} {V : Type v} {cap : Nat} : LruCache K V cap where
   entries := []
   nodup_keys := by simp
   length_le := Nat.zero_le cap
 
-/-- The cached keys, most recently used first. -/
+/-- **Key list of an LRU cache.** The key list of an LRU cache is the list of the keys of its
+entries in the order of the cache, so the most recently used key comes first. -/
 public def keys {K : Type u} {V : Type v} {cap : Nat} (cache : LruCache K V cap) : List K :=
   cache.entries.map Prod.fst
 
-/-- The number of cached entries. -/
+/-- **Size of an LRU cache.** The size of an LRU cache is the number of entries it stores. -/
 public def size {K : Type u} {V : Type v} {cap : Nat} (cache : LruCache K V cap) : Nat :=
   cache.entries.length
 
 /--
-Looks up `k`. On a hit, returns the stored value and the cache with that entry promoted to the
-front; on a miss, returns `none` and the unchanged cache.
+**LRU cache lookup.** Looking up a key $k$ in an LRU cache returns an optional value
+together with a cache. If the cache stores a binding $(k, v)$, the result is $v$ together
+with the cache in which that binding is moved to the front and the other entries keep their
+order; otherwise the result is no value together with the unchanged cache.
 -/
 public def get {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) : Option V × LruCache K V cap :=
@@ -254,8 +263,10 @@ public def get {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
   | none => (none, cache)
 
 /--
-Inserts or updates the binding for `k` at the front of the cache, evicting the least recently
-used entries if the cache would exceed its capacity.
+**Insertion into an LRU cache.** Putting the binding $(k, v)$ into an LRU cache of capacity $c$
+removes any entry with key $k$, places $(k, v)$ at the front as the most recently used entry,
+and then keeps only the first $c$ entries, so the least recently used entries beyond the
+capacity are evicted.
 -/
 public def put {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) (v : V) : LruCache K V cap where
@@ -268,17 +279,20 @@ public def put {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     rw [List.length_take]
     exact Nat.min_le_left cap _
 
-/-- The keys of any cache are pairwise distinct. -/
+/-- **Keys of an LRU cache are distinct.** The keys stored in any LRU cache are pairwise
+distinct. -/
 public theorem keys_nodup {K : Type u} {V : Type v} {cap : Nat} (cache : LruCache K V cap) :
     cache.keys.Nodup :=
   cache.nodup_keys
 
-/-- The size of any cache is at most its capacity. -/
+/-- **An LRU cache never exceeds its capacity.** Every LRU cache of capacity $c$ has size at most
+$c$. -/
 public theorem size_le_cap {K : Type u} {V : Type v} {cap : Nat} (cache : LruCache K V cap) :
     cache.size ≤ cap :=
   cache.length_le
 
-/-- A lookup of an absent key misses and leaves the cache unchanged. -/
+/-- **A lookup of an absent key misses.** If the key $k$ is not stored in an LRU cache, then
+looking up $k$ returns no value and leaves the cache unchanged. -/
 public theorem get_miss {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     {cache : LruCache K V cap} {k : K} (hk : k ∉ cache.keys) :
     (cache.get k).1 = none ∧ (cache.get k).2 = cache := by
@@ -292,7 +306,8 @@ public theorem get_miss {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
   next =>
     exact ⟨rfl, rfl⟩
 
-/-- A lookup of a stored key returns its stored value. -/
+/-- **A lookup of a stored key returns its value.** If an LRU cache stores the pair $(k, v)$,
+then looking up $k$ returns $v$. -/
 public theorem get_hit {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     {cache : LruCache K V cap} {k : K} {v : V} (hmem : (k, v) ∈ cache.entries) :
     (cache.get k).1 = some v := by
@@ -308,7 +323,9 @@ public theorem get_hit {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     rw [hf] at hpf
     cases hpf
 
-/-- A successful lookup promotes the entry to the front of the cache. -/
+/-- **A successful lookup moves the entry to the front.** If an LRU cache stores the pair
+$(k, v)$, then after looking up $k$ the most recently used (first) entry of the cache is
+$(k, v)$. -/
 public theorem get_promotes {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     {cache : LruCache K V cap} {k : K} {v : V} (hmem : (k, v) ∈ cache.entries) :
     (cache.get k).2.entries.head? = some (k, v) := by
@@ -325,8 +342,9 @@ public theorem get_promotes {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K
     cases hpf
 
 /--
-Looking up a key immediately after putting it returns the stored value, provided the capacity
-is positive so the new entry is not itself evicted.
+**Lookup after insertion into an LRU cache.** For every LRU cache of positive capacity, every key
+$k$ and every value $v$, looking up $k$ in the cache obtained by putting the binding $(k, v)$
+returns $v$.
 -/
 public theorem get_put {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) (v : V) (hcap : 0 < cap) :
@@ -336,27 +354,35 @@ public theorem get_put {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
   show (k, v) ∈ ((k, v) :: eraseKey k cache.entries).take (n + 1)
   exact List.mem_cons_self
 
-/-- `put` preserves the capacity bound. -/
+/-- **Insertion respects the capacity of an LRU cache.** For every LRU cache $C$ of capacity
+$c$, key $k$ and value $v$, the cache obtained by putting the binding $(k, v)$ into $C$ has
+size at most $c$. -/
 public theorem put_size_le {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) (v : V) : (cache.put k v).size ≤ cap :=
   size_le_cap _
 
-/-- `put` preserves key uniqueness. -/
+/-- **Insertion keeps the keys of an LRU cache distinct.** For every LRU cache $C$, key $k$
+and value $v$, the keys of the cache obtained by putting the binding $(k, v)$ into $C$ are
+pairwise distinct. -/
 public theorem put_keys_nodup {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) (v : V) : (cache.put k v).keys.Nodup :=
   keys_nodup _
 
-/-- `get` preserves the capacity bound. -/
+/-- **Lookup respects the capacity.** For every LRU cache of capacity $c$ and every key
+$k$, the cache after looking up $k$ holds at most $c$ entries. -/
 public theorem get_size_le {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) : (cache.get k).2.size ≤ cap :=
   size_le_cap _
 
-/-- `get` preserves key uniqueness. -/
+/-- **Lookups keep keys distinct.** For every LRU cache and every key $k$, the keys of the cache
+obtained by looking up $k$ are pairwise distinct. -/
 public theorem get_keys_nodup {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) : (cache.get k).2.keys.Nodup :=
   keys_nodup _
 
-/-- Every entry stored by `put` is either the new binding or was already in the cache. -/
+/-- **Entries after insertion.** For every LRU cache, key $k$ and value $v$, every
+key-value pair $p$ stored in the cache after putting the binding $(k, v)$ either equals
+$(k, v)$, or was stored before and has a key different from $k$. -/
 public theorem mem_put_entries {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     {cache : LruCache K V cap} {k : K} {v : V} {p : K × V}
     (hp : p ∈ (cache.put k v).entries) :
@@ -366,8 +392,9 @@ public theorem mem_put_entries {K : Type u} {V : Type v} {cap : Nat} [DecidableE
   · exact Or.inl rfl
   · exact Or.inr (mem_eraseKey.mp hp'')
 
-/-- `get` preserves exactly the stored bindings: promotion reorders but neither adds,
-removes, nor changes any entry. -/
+/-- **Lookup preserves the stored bindings.** For every LRU cache and every key $k$, a
+key-value pair is stored in the cache after looking up $k$ if and only if it was stored in
+the cache before the lookup. -/
 public theorem mem_get_entries_iff {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) (p : K × V) :
     p ∈ (cache.get k).2.entries ↔ p ∈ cache.entries := by
@@ -391,8 +418,8 @@ public theorem mem_get_entries_iff {K : Type u} {V : Type v} {cap : Nat} [Decida
   next =>
     exact Iff.rfl
 
-/-- The entries after `get` are a permutation of the entries before: the only effect of a
-lookup on the cache state is reordering by promotion. -/
+/-- **A lookup permutes the entries.** For every LRU cache and every key $k$, the list of
+entries of the cache after looking up $k$ is a permutation of the list of entries before. -/
 public theorem get_perm {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) :
     (cache.get k).2.entries.Perm cache.entries := by
@@ -405,15 +432,17 @@ public theorem get_perm {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
   next =>
     exact List.Perm.refl _
 
-/-- `get` does not change the number of stored entries. -/
+/-- **Lookup preserves the size.** For every LRU cache and every key $k$, the cache after
+looking up $k$ holds exactly as many entries as before. -/
 public theorem get_size {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) :
     (cache.get k).2.size = cache.size :=
   (get_perm cache k).length_eq
 
-/-- When `put` evicts nothing, because the cache is not full or the key replaces an
-existing binding, the stored entries are characterized exactly: the new binding together
-with every previously stored binding for a different key, values unchanged. -/
+/-- **Insertion without eviction.** Let an LRU cache of capacity $c$ hold fewer than $c$
+entries or already store a binding for the key $k$, and let $v$ be a value. Then a key-value
+pair $p$ is stored in the cache after putting the binding $(k, v)$ if and only if $p = (k, v)$,
+or $p$ was stored before and the key of $p$ differs from $k$. -/
 public theorem mem_put_entries_iff_of_not_full {K : Type u} {V : Type v} {cap : Nat}
     [DecidableEq K] {cache : LruCache K V cap} {k : K} {v : V} {p : K × V}
     (hroom : cache.size < cap ∨ k ∈ cache.keys) :
@@ -443,15 +472,20 @@ public theorem mem_put_entries_iff_of_not_full {K : Type u} {V : Type v} {cap : 
     · exact List.mem_cons_self
     · exact List.mem_cons_of_mem _ (mem_eraseKey.mpr ⟨hp, hp1⟩)
 
-/-- With positive capacity, the binding stored by `put` is the most recent entry. -/
+/-- **With positive capacity, the inserted binding becomes the most recent entry.** Let $C$
+be an LRU cache of positive capacity, $k$ a key and $v$ a value. After the binding $(k, v)$
+is put into $C$, the first entry of the resulting cache, its most recently used entry, is
+$(k, v)$. -/
 public theorem put_head? {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     (cache : LruCache K V cap) (k : K) (v : V) (hcap : 0 < cap) :
     (cache.put k v).entries.head? = some (k, v) := by
   obtain ⟨n, rfl⟩ : ∃ n, cap = n + 1 := ⟨cap - 1, by omega⟩
   rfl
 
-/-- Looking up a different key after a `put` that evicts nothing returns exactly what the
-lookup returned before the `put`: surviving bindings keep their values. -/
+/-- **A put without eviction preserves lookups of other keys.** Let $C$ be an LRU cache of
+capacity $c$ that holds fewer than $c$ entries or already stores the key $k$. Then for every
+key $k' \ne k$ and every value $v$, looking up $k'$ in the cache obtained by putting the binding
+$(k, v)$ into $C$ returns the same optional value as looking up $k'$ in $C$. -/
 public theorem get_put_of_ne {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     {cache : LruCache K V cap} {k k' : K} {v : V} (hne : k' ≠ k)
     (hroom : cache.size < cap ∨ k ∈ cache.keys) :
@@ -476,9 +510,10 @@ public theorem get_put_of_ne {K : Type u} {V : Type v} {cap : Nat} [DecidableEq 
     rw [(get_miss hk'miss).1, (get_miss hk').1]
 
 /--
-The key evicted by inserting a new key is the least recently used one: if a stored key `k`
-disappears after putting a key `k'` that was not in the cache, the cache was full and `k` was
-the last (least recent) key.
+**The evicted key is the least recently used one.** Let $C$ be an LRU cache of capacity $c$,
+let $k'$ be a key not stored in $C$, and let $k$ be a key stored in $C$. If $k$ is no longer
+stored after putting $k'$ with any value $v$ into $C$, then $C$ held exactly $c$ entries and $k$
+is the last key of $C$, that is, the least recently used one.
 -/
 public theorem evicted_is_least_recent {K : Type u} {V : Type v} {cap : Nat} [DecidableEq K]
     {cache : LruCache K V cap} {k k' : K} {v : V}

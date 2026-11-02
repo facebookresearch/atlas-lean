@@ -192,7 +192,13 @@ private lemma siftDownTracked_bound {W : Type u} [LinearOrder W] {n : Nat}
   have hl := log2_monotone (show a.size ≤ a.size + 1 by omega)
   omega
 
-/-- Each selected INSERT event coordinate has the frozen logarithmic bound. -/
+/-- **Logarithmic event bound for indexed-queue insertion.** Let $W$ be a linearly ordered type
+and let $W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Let $q$ be an
+indexed minimum queue over the identities $0, \dots, n-1$ with keys in $W \cup \{\top\}$ whose
+heap has $s$ entries, let $v < n$ be an identity and let $k \in W \cup \{\top\}$ be a key. For
+each of the five counted events (comparisons, swaps, position reads, position writes, and entry
+appends, pops or replacements), the number of times that event occurs when inserting $v$ with
+key $k$ into $q$ is at most $20 (\lfloor \log_2 (s + 1) \rfloor + 1)$. -/
 theorem insert_time {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : WithTop W) (c : Fin 5) :
     (insert q v key).time c ≤ 20 * (Nat.log2 (q.heap.data.size + 1) + 1) := by
@@ -215,7 +221,13 @@ theorem insert_time {W : Type u} [LinearOrder W] {n : Nat}
     change event 2 c + event 3 c + event 4 c + _ ≤ _
     omega
 
-/-- Each selected DECREASE-KEY coordinate has the frozen logarithmic bound. -/
+/-- **Logarithmic event bound for indexed-queue decrease-key.** Let $W$ be a linearly ordered
+type and let $W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Let $q$ be an
+indexed minimum queue over the identities $0, \dots, n-1$ with keys in $W \cup \{\top\}$ whose
+heap has $s$ entries, let $v < n$ be an identity and let $k \in W$ be a key. For each of the five
+counted events (comparisons, swaps, position reads, position writes, and entry appends, pops or
+replacements), the number of times that event occurs when decreasing the key of $v$ to $k$ in
+$q$ is at most $20 (\lfloor \log_2 (s + 1) \rfloor + 1)$. -/
 theorem decreaseKey_time {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : W) (c : Fin 5) :
     (decreaseKey q v key).time c ≤ 20 * (Nat.log2 (q.heap.data.size + 1) + 1) := by
@@ -242,7 +254,11 @@ theorem decreaseKey_time {W : Type u} [LinearOrder W] {n : Nat}
       change event 2 c + event 0 c ≤ _
       omega
 
-/-- Each selected EXTRACT-MIN coordinate has the frozen logarithmic bound. -/
+/-- **Logarithmic event bound for indexed-queue extract-min.** Let $q$ be an indexed minimum
+queue whose heap has $s$ entries. For each of the five counted events (comparisons, swaps,
+position reads, position writes, and entry appends, pops or replacements), the number of times
+that event occurs when extracting the minimum of $q$ is at most
+$20 (\lfloor \log_2 (s + 1) \rfloor + 1)$. -/
 theorem extractMin_time {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (c : Fin 5) :
     (extractMin q).time c ≤ 20 * (Nat.log2 (q.heap.data.size + 1) + 1) := by
@@ -296,7 +312,14 @@ private lemma source_order_size {W : Type u} [LinearOrder W] {n : Nat}
     rw [(siftUp_perm _ _).size_eq, Array.size_push, ih]
     rfl
 
-/-- Source-order repeated INSERT has the frozen summed event bound. -/
+/-- **Event bound for building an indexed queue by repeated insertion.** Let $W$ be a linearly
+ordered type and let $W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Let
+$q_0, \dots, q_n$ be indexed minimum queues over the identities $0, \dots, n-1$ with keys in
+$W \cup \{\top\}$, and let $k_0, \dots, k_{n-1}$ be keys in $W \cup \{\top\}$. Suppose $q_0$ is
+the empty queue and, for each $i < n$, inserting identity $i$ with key $k_i$ into $q_i$ succeeds
+and returns $q_{i+1}$. Then for each of the five counted events (comparisons, swaps, position
+reads, position writes, and entry appends, pops or replacements), the total number of times that
+event occurs over these $n$ insertions is at most $20 n (\lfloor \log_2 (n + 1) \rfloor + 1)$. -/
 theorem repeated_insert_time {W : Type u} [LinearOrder W] {n : Nat}
     (qs : Fin (n + 1) → IndexedMinQueue W n) (keys : Fin n → WithTop W)
     (hstart : qs 0 = empty (W := W) n)

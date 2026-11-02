@@ -65,9 +65,14 @@ namespace Cslib.Algorithms.Lean
 universe u v
 
 /--
-An open-addressing hash table with `m` slots and probe sequence `probe`. No expected
-constant-time bound is claimed because the model supplies neither a probability
-distribution nor a uniform-hashing assumption about `probe`.
+**Open-addressing hash table.** Let $K$ be a type of keys, $V$ a type of values, $m$ a natural
+number, and $p$ a probe sequence assigning to each key $k$ and each $i \in \mathbb{N}$ a slot
+$p(k, i) \in \{0, \dots, m - 1\}$. An open-addressing hash table with $m$ slots and probe
+sequence $p$ consists of $m$ slots, each either empty or holding a single pair $(k, v)$ with
+$k \in K$ and $v \in V$.
+
+No expected constant-time bound is claimed because the model supplies neither a probability
+distribution nor a uniform-hashing assumption about the probe sequence.
 -/
 public structure OpenAddressing (K : Type u) (V : Type v) (m : Nat)
     (probe : K → Nat → Fin m) where
@@ -76,12 +81,16 @@ public structure OpenAddressing (K : Type u) (V : Type v) (m : Nat)
 
 namespace OpenAddressing
 
-/-- Linear probing: the `i`-th probe of `k` is `(hash k + i) % m`. -/
+/-- **Linear-probing probe sequence.** Given a hash function $h : K \to \mathbb{N}$ and a
+number of slots $m > 0$, the $i$-th probe of a key $k$ is the slot $(h(k) + i) \bmod m$ in
+$\{0, \dots, m - 1\}$. -/
 public def linearProbe {K : Type u} (hash : K → Nat) (m : Nat) (hm : 0 < m) :
     K → Nat → Fin m :=
   fun k i => ⟨(hash k + i) % m, Nat.mod_lt _ hm⟩
 
-/-- Double hashing: the `i`-th probe of `k` is `(hash1 k + i * hash2 k) % m`. -/
+/-- **Double-hashing probe sequence.** Given hash functions $h_1, h_2 : K \to \mathbb{N}$ and a
+number of slots $m > 0$, the $i$-th probe of a key $k$ is the slot
+$(h_1(k) + i \cdot h_2(k)) \bmod m$ in $\{0, \dots, m - 1\}$. -/
 public def doubleHashProbe {K : Type u} (hash1 hash2 : K → Nat) (m : Nat)
     (hm : 0 < m) : K → Nat → Fin m :=
   fun k i => ⟨(hash1 k + i * hash2 k) % m, Nat.mod_lt _ hm⟩
@@ -90,12 +99,20 @@ variable {K : Type u} {V : Type v} {m : Nat} {probe : K → Nat → Fin m}
 
 variable [DecidableEq K]
 
-/-- The empty table, with every slot vacant. -/
+/-- **Empty open-addressing table.** The open-addressing table with $m$ slots and a given probe
+sequence in which every slot is empty. -/
 public def empty : OpenAddressing K V m probe :=
   ⟨Vector.replicate m none⟩
 
-/-- Bounded probe scan used by `lookup`, starting at probe `start` with a
-remaining budget of attempts. -/
+/--
+**Bounded lookup scan.** Given a table with $m$ slots and probe sequence $p$, a key $k$, a
+starting index $s$ and a budget $f$ of probes, examine the slots $p(k, s), p(k, s + 1), \dots$ in
+order, for at most $f$ probes. The scan returns the value bound to $k$ in the first examined slot
+that holds a binding for $k$, and returns no value if it first reaches an empty slot or exhausts
+the budget.
+
+This is the helper behind lookup, which starts at index $0$ with budget $m$.
+-/
 def lookupAux (table : OpenAddressing K V m probe) (key : K) (start : Nat) :
     Nat → Option V
   | 0 => none
@@ -106,15 +123,25 @@ def lookupAux (table : OpenAddressing K V m probe) (key : K) (start : Nat) :
           if k' = key then some value else lookupAux table key (start + 1) fuel
 
 /--
-Looks up a key along its probe sequence, using at most `m` probes. Returns the value
-at the first probed slot holding the key, and `none` if an empty slot or the probe
-budget is reached first.
+**Lookup in an open-addressing table.** Let $T$ be an open-addressing hash table with $m$ slots
+and probe sequence $p$, and let $k$ be a key. The lookup of $k$ in $T$ inspects the slots
+$p(k, 0), p(k, 1), \dots, p(k, m - 1)$ in this order. It returns the value $v$ of the first
+inspected slot that holds a pair $(k, v)$, and returns nothing if an empty slot is inspected
+first or if none of the $m$ inspected slots holds the key $k$.
 -/
 public def lookup (table : OpenAddressing K V m probe) (key : K) : Option V :=
   lookupAux table key 0 m
 
-/-- Bounded probe scan used by `insert`, starting at probe `start` with a
-remaining budget of attempts. -/
+/--
+**Bounded insertion scan.** Given a table with $m$ slots and probe sequence $p$, a key $k$, a
+value $v$, a starting index $s$ and a budget $f$ of probes, examine the slots
+$p(k, s), p(k, s + 1), \dots$ in order, for at most $f$ probes. At the first examined slot that
+is empty or holds a binding for $k$, the scan returns the table with that slot overwritten by the
+binding $k \mapsto v$ and every other slot unchanged; if all $f$ examined slots hold bindings for
+other keys (in particular if $f = 0$), it fails and returns no table.
+
+This is the helper behind insertion, which starts at index $0$ with budget $m$.
+-/
 def insertAux (table : OpenAddressing K V m probe) (key : K) (value : V)
     (start : Nat) : Nat → Option (OpenAddressing K V m probe)
   | 0 => none
@@ -131,21 +158,24 @@ def insertAux (table : OpenAddressing K V m probe) (key : K) (value : V)
             insertAux table key value (start + 1) fuel
 
 /--
-Inserts a new binding or replaces the existing binding for the key, at the first
-probed slot that is empty or already holds the key. Returns `none` when the first
-`m` probed slots are all occupied by other keys.
+**Insertion into an open-addressing table.** To insert the binding $k \mapsto v$ into a table
+with $m$ slots and probe sequence $p$, examine the slots $p(k, 0), p(k, 1), \dots, p(k, m - 1)$
+in order. At the first one that is empty or already holds a binding for $k$, write $k \mapsto v$
+there, leaving every other slot unchanged, and return the updated table. If all $m$ examined
+slots hold bindings for other keys, the insertion fails and returns no table.
 -/
 public def insert (table : OpenAddressing K V m probe) (key : K) (value : V) :
     Option (OpenAddressing K V m probe) :=
   insertAux table key value 0 m
 
 /--
-The validity invariant, in two parts. Probe-closedness: every stored binding is
-reached by its key's probe sequence within `m` probes, and every earlier probed
-slot is occupied; this is the property that lets `lookup` stop at the first empty
-slot. Key uniqueness: no key is stored in two different slots, so each key has at
-most one binding and `insert` genuinely replaces it (see `stored_unique` and
-`lookup_eq_some_iff`).
+**Valid open-addressing tables.** Let $T$ be an open-addressing table with $m$ slots and probe
+sequence $p$, where $p(k, i) \in \{0, \dots, m - 1\}$ is the slot visited by the $i$-th probe of
+key $k$. Then $T$ is valid when it satisfies two conditions. Probe-closedness: whenever slot $j$
+holds a binding $k \mapsto v$, there is an $i < m$ with $p(k, i) = j$ such that the slots
+$p(k, i')$ are occupied for all $i' < i$; this is what lets a lookup stop at the first empty
+slot. Key uniqueness: if slots $j_1$ and $j_2$ hold bindings with the same key $k$, then
+$j_1 = j_2$; so each key has at most one binding and insertion genuinely replaces it.
 -/
 public def Valid (table : OpenAddressing K V m probe) : Prop :=
   (∀ (j : Fin m) (key : K) (value : V), table.slots.get j = some (key, value) →
@@ -155,7 +185,10 @@ public def Valid (table : OpenAddressing K V m probe) : Prop :=
     table.slots.get j₁ = some (key, value₁) →
     table.slots.get j₂ = some (key, value₂) → j₁ = j₂)
 
-/-- The binding `key ↦ value` is held in some slot of the table. -/
+/--
+**Stored binding in an open-addressing table.** An open-addressing hash table $T$ stores the
+binding $k \mapsto v$ when some slot of $T$ holds the pair $(k, v)$.
+-/
 public def Stored (table : OpenAddressing K V m probe) (key : K) (value : V) :
     Prop :=
   ∃ j : Fin m, table.slots.get j = some (key, value)
@@ -477,7 +510,13 @@ private theorem lookupAux_empty (key : K) :
       simp [lookupAux, slot]
 
 omit [DecidableEq K] in
-/-- The empty table satisfies the probe-closed invariant. -/
+/--
+**The empty open-addressing table is valid.** For all types $K$ and $V$, every number of
+slots $m$ and every probe sequence $p$, which assigns to each key $k$ and each $i \in \mathbb{N}$
+a slot $p(k, i) \in \{0, \dots, m - 1\}$, the empty table with $m$ slots and probe sequence $p$,
+in which every slot is vacant, is valid: it is probe-closed and no key is stored in two
+different slots.
+-/
 public theorem valid_empty :
     Valid (empty : OpenAddressing K V m probe) := by
   constructor
@@ -492,14 +531,19 @@ public theorem valid_empty :
     rw [vacant] at occupied
     exact absurd occupied (by simp)
 
-/-- Looking up any key in the empty table returns `none`. -/
+/-- **Lookup in the empty open-addressing table.** For every key $k$, looking up $k$ in the empty
+open-addressing table returns no value. -/
 @[simp]
 public theorem lookup_empty (key : K) :
     lookup (empty : OpenAddressing K V m probe) key = none := by
   simp only [lookup]
   exact lookupAux_empty key 0 m
 
-/-- Looking up a successfully inserted key returns the newly supplied value. -/
+/--
+**Lookup after a successful open-addressing insertion.** If inserting the binding $k \mapsto v$
+into an open-addressing hash table $T$ succeeds and yields the table $T'$, then looking up $k$
+in $T'$ returns $v$. No validity assumption on $T$ is needed.
+-/
 public theorem lookup_insert (table : OpenAddressing K V m probe) (key : K)
     (value : V) (updated : OpenAddressing K V m probe)
     (inserted : insert table key value = some updated) :
@@ -532,7 +576,13 @@ public theorem lookup_insert (table : OpenAddressing K V m probe) (key : K)
         (fun equal => sameSlot equal.symm)]
       exact occupied
 
-/-- Insertion or replacement preserves the probe-closed invariant. -/
+/--
+**Insertion preserves validity of an open-addressing table.** Let $T$ be a valid table with $m$
+slots and probe sequence $p$, whose keys have decidable equality. If inserting the binding
+$k \mapsto v$ into $T$ (adding it, or replacing the binding already stored for $k$) succeeds and
+returns the table $T'$, then $T'$ is valid: it is probe-closed and no key is stored in two
+different slots.
+-/
 public theorem valid_insert (table : OpenAddressing K V m probe) (key : K)
     (value : V) (updated : OpenAddressing K V m probe) (valid : Valid table)
     (inserted : insert table key value = some updated) :
@@ -635,7 +685,11 @@ public theorem valid_insert (table : OpenAddressing K V m probe) (key : K)
           exact h₂
         exact hUnique j₁ j₂ k v₁ v₂ h₁old h₂old
 
-/-- A value returned by `lookup` is stored in the table. -/
+/--
+**Open-addressing lookup returns only stored bindings.** If looking up a key $k$ in an
+open-addressing hash table $T$ returns the value $v$, then $T$ stores the binding $k \mapsto v$.
+No validity assumption is needed.
+-/
 public theorem stored_of_lookup_eq_some (table : OpenAddressing K V m probe)
     (key : K) (value : V) (found : lookup table key = some value) :
     Stored table key value := by
@@ -643,7 +697,9 @@ public theorem stored_of_lookup_eq_some (table : OpenAddressing K V m probe)
     simpa [lookup] using found
   exact stored_of_lookupAux_eq_some table key 0 m value foundAux
 
-/-- A key stored in no slot looks up to `none`, with no validity assumption. -/
+/-- **Lookup of an absent key fails.** Let $T$ be an open-addressing table and $k$ a key such that
+no slot of $T$ stores a binding $k \mapsto v$ for any value $v$. Then looking up $k$ in $T$ returns
+no value. No validity assumption on $T$ is needed. -/
 public theorem lookup_eq_none_of_not_stored (table : OpenAddressing K V m probe)
     (key : K) (absent : ∀ value : V, ¬ Stored table key value) :
     lookup table key = none := by
@@ -653,7 +709,10 @@ public theorem lookup_eq_none_of_not_stored (table : OpenAddressing K V m probe)
       exact absurd (stored_of_lookup_eq_some table key value result)
         (absent value)
 
-/-- Under `Valid`, a stored key is found by `lookup`. -/
+/--
+**Valid open-addressing tables find every stored key.** If a valid open-addressing hash table
+$T$ stores the binding $k \mapsto v$, then looking up $k$ in $T$ returns some value.
+-/
 public theorem lookup_isSome_of_stored (table : OpenAddressing K V m probe)
     (key : K) (value : V) (valid : Valid table)
     (stored : Stored table key value) :
@@ -671,10 +730,11 @@ public theorem lookup_isSome_of_stored (table : OpenAddressing K V m probe)
     simpa using occupiedEarlier
 
 /--
-Under `Valid`, a lookup succeeds if and only if the key is stored in some slot.
-This is the membership characterization used in place of a `Finmap` abstraction;
-the value found is pinned down by `stored_of_lookup_eq_some` and, after an
-insert, by `lookup_insert`.
+**Open-addressing lookup succeeds exactly on stored keys.** Let $T$ be a valid open-addressing
+hash table and $k$ a key. Looking up $k$ in $T$ returns a value if and only if $T$ stores a
+binding $k \mapsto v$ for some value $v$.
+
+This membership characterization is used in place of a finite-map abstraction of the table.
 -/
 public theorem lookup_isSome_iff (table : OpenAddressing K V m probe) (key : K)
     (valid : Valid table) :
@@ -687,7 +747,10 @@ public theorem lookup_isSome_iff (table : OpenAddressing K V m probe) (key : K)
     exact lookup_isSome_of_stored table key value valid stored
 
 omit [DecidableEq K] in
-/-- In a valid table, a key has at most one stored binding. -/
+/--
+**Bindings in a valid open-addressing table are unique.** If a valid open-addressing hash
+table $T$ stores both $k \mapsto v_1$ and $k \mapsto v_2$, then $v_1 = v_2$.
+-/
 public theorem stored_unique (table : OpenAddressing K V m probe)
     (valid : Valid table) {key : K} {value₁ value₂ : V}
     (stored₁ : Stored table key value₁) (stored₂ : Stored table key value₂) :
@@ -701,10 +764,13 @@ public theorem stored_unique (table : OpenAddressing K V m probe)
   exact h₂.2
 
 /--
-Under `Valid`, lookup returns exactly the unique stored binding: `lookup`
-returns `some value` if and only if `key ↦ value` is stored. Together with
-`lookup_insert` this says a successful insert really replaces the old
-binding: no other value for the key remains stored afterwards.
+**Lookup in a valid table returns exactly the stored binding.** Let $T$ be a valid
+open-addressing table, $k$ a key and $v$ a value. Then looking up $k$ in $T$ returns $v$ if and
+only if the binding $k \mapsto v$ is stored in some slot of $T$.
+
+Together with the fact that lookup after a successful insertion of $k \mapsto v$ returns $v$, this
+says that a successful insertion really replaces the old binding: no other value for $k$ remains
+stored afterwards.
 -/
 public theorem lookup_eq_some_iff (table : OpenAddressing K V m probe)
     (key : K) (value : V) (valid : Valid table) :
@@ -719,11 +785,13 @@ public theorem lookup_eq_some_iff (table : OpenAddressing K V m probe)
     rw [foundEq, this]
 
 /--
-A successful insert changes no other key's stored binding: for `other ≠ key`,
-`other ↦ otherValue` is stored after the insert exactly when it was stored
-before. No validity assumption is needed; the insert writes a single slot,
-previously empty or previously holding `key`, and leaves every other slot
-unchanged.
+**Open-addressing insertion leaves other keys' bindings unchanged.** Let $T$ be an
+open-addressing hash table, and suppose that inserting the binding $k \mapsto v$ into $T$
+succeeds and yields the table $T'$. Then for every key $k' \neq k$ and every value $v'$, the
+table $T'$ stores $k' \mapsto v'$ if and only if $T$ stores $k' \mapsto v'$.
+
+No validity assumption is needed: the insertion writes a single slot, previously empty or
+previously holding $k$, and leaves every other slot unchanged.
 -/
 public theorem stored_insert_of_ne (table : OpenAddressing K V m probe) (key : K)
     (value : V) (updated : OpenAddressing K V m probe)
@@ -767,10 +835,12 @@ public theorem stored_insert_of_ne (table : OpenAddressing K V m probe) (key : K
     · exact ⟨j, by rw [unchangedElsewhere j sameSlot]; exact hj⟩
 
 /--
-Frame theorem for insertion: in a valid table, looking up a key different
-from the inserted one gives the same result before and after a successful
-insert. Together with `lookup_insert` this is the map-update specification
-of `insert`, in the form of `HashTable.lookup_insert_of_ne`.
+**Insertion does not affect lookups of other keys.** Let $T$ be a valid open-addressing table and
+suppose inserting the binding $k \mapsto v$ into $T$ succeeds with result $T'$. Then for every key
+$k' \ne k$, looking up $k'$ in $T'$ gives the same result as looking up $k'$ in $T$.
+
+Together with the fact that looking up $k$ in $T'$ returns $v$, this is the map-update
+specification of insertion, matching the corresponding statement for separate chaining.
 -/
 public theorem lookup_insert_of_ne (table : OpenAddressing K V m probe) (key : K)
     (value : V) (updated : OpenAddressing K V m probe) (valid : Valid table)
@@ -800,9 +870,13 @@ public theorem lookup_insert_of_ne (table : OpenAddressing K V m probe) (key : K
         storedUpdated
 
 /--
-When `insert` fails, every one of the first `m` probed slots is occupied by a key
-different from the inserted one. For probe sequences that are permutations of the
-slots, this says exactly that the table is full with other keys.
+**Failed open-addressing insertion finds every probed slot taken.** Let $T$ be an
+open-addressing hash table with $m$ slots and probe sequence $p$. If inserting a binding
+$k \mapsto v$ into $T$ fails, then for every $i < m$ the slot $p(k, i)$ holds a pair
+$(k', v')$ with $k' \neq k$.
+
+For probe sequences that are permutations of the slots, this says that every slot of the table
+holds a key other than $k$.
 -/
 public theorem occupied_of_insert_eq_none (table : OpenAddressing K V m probe)
     (key : K) (value : V) (failed : insert table key value = none) :

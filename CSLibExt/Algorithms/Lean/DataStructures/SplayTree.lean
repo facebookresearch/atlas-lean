@@ -54,7 +54,8 @@ open BinarySearchTree
     x ∈ BinaryTree.node key left right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
 
-/-- The key at the root of a tree, if any. -/
+/-- **Root key of a splay tree.** The optional root key of a binary tree is undefined (none) for
+the empty tree, and is the key $k$ for a tree whose root node holds $k$. -/
 public def root? {α : Type u} : BinaryTree α → Option α
   | .nil => none
   | .node key _ _ => some key
@@ -69,14 +70,24 @@ public def root? {α : Type u} : BinaryTree α → Option α
   rfl
 
 /--
-Splay `x` to the root. The search descends as in a binary search tree;
-the restructuring pattern-matches the child on the search path, so each
-recursive step performs a zig (single rotation), a zig-zig (both
-rotations in the same direction, grandparent edge first), or a zig-zag
-(rotations in opposite directions, parent edge first). When `x` is
-absent, the node where the search stops is what the rotations carry
-upward; branches where the splayed grandchild is empty fall back to a
-single zig that carries that last visited node one level up.
+**Splay operation.** Let $\alpha$ be a linearly ordered type and write $(k; L, R)$ for the binary
+tree with root key $k$, left subtree $L$ and right subtree $R$. For $x \in \alpha$, the splay
+$S_x(t)$ of a binary tree $t$ with keys in $\alpha$ is defined by recursion on $t$. The empty tree
+splays to itself, and $t = (k; L, R)$ is left unchanged if $x = k$, if $x < k$ and $L$ is empty,
+or if $x > k$ and $R$ is empty. If $x < k$ and $L = (a; A, B)$, then: if $x = a$, the result is
+the zig $(a; A, (k; B, R))$; if $x < a$ and $S_x(A) = (d; A_1, A_2)$, the result is the zig-zig
+$(d; A_1, (a; A_2, (k; B, R)))$; if $x > a$ and $S_x(B) = (d; B_1, B_2)$, the result is the
+zig-zag $(d; (a; A, B_1), (k; B_2, R))$; and if the splayed subtree $S_x(A)$, respectively
+$S_x(B)$, is empty, the result is the zig $(a; A, (k; B, R))$. The case $x > k$ with
+$R = (b; C, D)$ is the mirror image: if $x = b$, the result is the zig $(b; (k; L, C), D)$; if
+$x > b$ and $S_x(D) = (d; D_1, D_2)$, it is the zig-zig $(d; (b; (k; L, C), D_1), D_2)$; if
+$x < b$ and $S_x(C) = (d; C_1, C_2)$, it is the zig-zag $(d; (k; L, C_1), (b; C_2, D))$; and if
+the splayed subtree is empty, it is the zig $(b; (k; L, C), D)$.
+
+The search path for $x$ runs from the root to the node with key $x$, or to the last node visited
+if $x$ is absent. Each recursive step consumes two edges of this path, starting at the root, so
+when the path has an odd number of edges the single rotation is performed on its last edge, the
+one farthest from the root.
 -/
 public def splay {α : Type u} [LinearOrder α] (x : α) :
     BinaryTree α → BinaryTree α
@@ -116,7 +127,8 @@ public def splay {α : Type u} [LinearOrder α] (x : α) :
               | .node d rll rlr =>
                   .node d (.node k l rll) (.node rk rlr rr)
 
-/-- Splaying the empty tree is empty. -/
+/-- **Splaying the empty tree.** For every key $x$ of a linearly ordered type, splaying $x$ in the
+empty binary tree gives the empty tree. -/
 @[simp] public theorem splay_nil {α : Type u} [LinearOrder α] (x : α) :
     splay x (.nil : BinaryTree α) = .nil :=
   rfl
@@ -382,18 +394,23 @@ private theorem inorder_splay_aux {α : Type u} [LinearOrder α] {x : α}
                           rw [splay_zigzag_right_node hxk hlt hxr hrrt hs]
                           simp [hIr, List.append_assoc]
 
-/-- Splaying preserves the inorder traversal exactly (in particular it is
-a permutation of the original traversal). -/
+/-- **Splaying preserves the inorder traversal.** For every key $x$ and every binary tree $t$
+over a linearly ordered type, the inorder traversal of the tree obtained by splaying $x$ in $t$
+equals the inorder traversal of $t$. No search-tree ordering of $t$ is assumed. -/
 public theorem inorder_splay {α : Type u} [LinearOrder α] {x : α}
     (t : BinaryTree α) : inorder (splay x t) = inorder t :=
   inorder_splay_aux t.numNodes t (by omega)
 
-/-- Splaying preserves structural membership. -/
+/-- **Splaying preserves membership.** For keys $x$ and $y$ and a binary tree $t$ over a linearly
+ordered type, $y$ is a key of the tree obtained by splaying $x$ in $t$ if and only if $y$ is a
+key of $t$. -/
 public theorem mem_splay {α : Type u} [LinearOrder α] {x y : α}
     {t : BinaryTree α} : y ∈ splay x t ↔ y ∈ t := by
   simp only [← mem_inorder, inorder_splay]
 
-/-- Splaying preserves the number of nodes. -/
+/-- **Splaying preserves the number of nodes.** For every binary tree $t$ with keys in a linearly
+ordered type and every key $x$, the tree obtained by splaying $x$ in $t$ has the same number of
+nodes as $t$. -/
 public theorem numNodes_splay {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} : (splay x t).numNodes = t.numNodes := by
   rw [numNodes_eq_length_inorder, numNodes_eq_length_inorder,
@@ -417,7 +434,11 @@ private theorem ordered_of_pairwise_inorder {α : Type u}
         intro y hy
         exact hkR y (mem_inorder.mpr hy)
 
-/-- Splaying preserves the strict search-tree invariant. -/
+/-- **Splaying preserves the search-tree property.** Let $t$ be a binary tree with keys in a
+linearly ordered type and let $x$ be a key. If $t$ is a binary search tree (at every node, every
+key of the left subtree is strictly smaller and every key of the right subtree strictly larger
+than the key of the node), then the tree obtained by splaying $x$ in $t$ is again a binary search
+tree. -/
 public theorem ordered_splay {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} (h : Ordered t) : Ordered (splay x t) :=
   ordered_of_pairwise_inorder (by
@@ -541,13 +562,20 @@ private theorem splay_eq_node_aux {α : Type u} [LinearOrder α] {x : α}
                           exact ⟨.node k l rll, .node rk rlr rr,
                             by rw [hd]⟩
 
-/-- Splaying a present key of an ordered tree brings it to the root. -/
+/-- **Splaying a present key brings it to the root.** Let $t$ be a binary search tree with keys in
+a linearly ordered type (at every node, every key of the left subtree is strictly smaller and
+every key of the right subtree strictly larger than the key of the node), and let $x$ be a key
+that occurs in $t$. Then there are binary trees $l$ and $r$ such that splaying $x$ in $t$ gives
+the tree whose root holds $x$, with left subtree $l$ and right subtree $r$. -/
 public theorem root_splay_of_mem {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∈ t) :
     ∃ l r, splay x t = .node x l r :=
   splay_eq_node_aux t.numNodes t (by omega) hOrd hx
 
-/-- The root after splaying a present key is that key. -/
+/-- **Root key after splaying a present key.** Let $t$ be a binary search tree with keys in a
+linearly ordered type (at every node, every key of the left subtree is strictly smaller and every
+key of the right subtree strictly larger than the key of the node), and let $x$ be a key that
+occurs in $t$. Then the tree obtained by splaying $x$ in $t$ is nonempty and its root key is $x$. -/
 public theorem root?_splay_of_mem {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∈ t) :
     root? (splay x t) = some x := by
@@ -556,9 +584,18 @@ public theorem root?_splay_of_mem {α : Type u} [LinearOrder α] {x : α}
   rfl
 
 /--
-Split a tree at `x` into keys below `x` and keys above `x`, dropping `x`
-itself if present. This is the plain search-tree split; `insert` applies
-it to the splayed tree.
+**Search-path split at a key.** Let $\alpha$ be a linearly ordered type, let $x \in \alpha$, and
+write $(k; L, R)$ for the binary tree with root key $k$, left subtree $L$ and right subtree $R$.
+The split of a binary tree with keys in $\alpha$ at $x$ is the pair of trees defined by
+recursion: the empty tree splits into two empty trees; if $x < k$ and $L$ splits into
+$(L_1, L_2)$, then $(k; L, R)$ splits into $(L_1, (k; L_2, R))$; if $k < x$ and $R$ splits into
+$(R_1, R_2)$, then $(k; L, R)$ splits into $((k; L, R_1), R_2)$; and if $x = k$, then
+$(k; L, R)$ splits into $(L, R)$.
+
+When the tree is a binary search tree (at every node, the keys of the left subtree are strictly
+smaller and those of the right subtree strictly larger than the node's key), the first part
+holds the keys below $x$ and the second part the keys above $x$; the key $x$, if present, is
+dropped.
 -/
 public def split {α : Type u} [LinearOrder α] (x : α) :
     BinaryTree α → BinaryTree α × BinaryTree α
@@ -619,7 +656,9 @@ private theorem split_snd_eq {α : Type u} [LinearOrder α]
     (split x (.node k l r)).2 = r := by
   rw [split_node_eq h1 h2]
 
-/-- Every key of a split part is a key of the original tree. -/
+/-- **Splay-tree split parts contain only original keys.** For keys $x$ and $y$ and a binary
+tree $t$ over a linearly ordered type, if $y$ is a key of the left part or of the right part of
+the split of $t$ at $x$, then $y$ is a key of $t$. -/
 public theorem mem_of_mem_split {α : Type u} [LinearOrder α]
     {x y : α} {t : BinaryTree α} :
     y ∈ (split x t).1 ∨ y ∈ (split x t).2 → y ∈ t := by
@@ -650,7 +689,10 @@ public theorem mem_of_mem_split {α : Type u} [LinearOrder α]
           · exact Or.inl h
           · exact Or.inr (Or.inr h)
 
-/-- Every key other than the split key survives into one of the parts. -/
+/-- **Keys other than the split key survive a split.** Let $t$ be a binary tree with keys in a
+linearly ordered type, and let $x$ and $y$ be keys with $y \ne x$. If $y$ occurs as a key of $t$,
+then $y$ occurs as a key of the left part or of the right part of the split of $t$ at $x$.
+The tree $t$ need not be a binary search tree. -/
 public theorem mem_split_of_mem {α : Type u} [LinearOrder α]
     {x y : α} {t : BinaryTree α} (h : y ∈ t) (hyx : y ≠ x) :
     y ∈ (split x t).1 ∨ y ∈ (split x t).2 := by
@@ -680,8 +722,10 @@ public theorem mem_split_of_mem {α : Type u} [LinearOrder α]
           · exact (hyx (h.trans hxk.symm)).elim
           · exact Or.inr h
 
-/-- In an ordered tree, the left split part lies below `x` and the right
-part lies above `x`. -/
+/-- **Splitting an ordered tree separates the keys around the split key.** Let $t$ be an ordered
+binary tree over a linearly ordered type and let $x$ be a key. When $t$ is split at $x$, every
+key of the left part is strictly less than $x$ and every key of the right part is strictly
+greater than $x$. -/
 public theorem all_split {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} (hOrd : Ordered t) :
     All (· < x) (split x t).1 ∧ All (x < ·) (split x t).2 := by
@@ -704,7 +748,11 @@ public theorem all_split {α : Type u} [LinearOrder α] {x : α}
           subst hxk
           exact ⟨hAllL, hAllR⟩
 
-/-- Splitting an ordered tree yields two ordered trees. -/
+/-- **Both parts of a split search tree are search trees.** Let $t$ be a binary tree with keys in a
+linearly ordered type and let $x$ be a key. If $t$ is a binary search tree (at every node, every
+key of the left subtree is strictly smaller and every key of the right subtree strictly larger
+than the key of the node), then the left part and the right part of the split of $t$ at $x$ are
+both binary search trees. -/
 public theorem ordered_split {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} (hOrd : Ordered t) :
     Ordered (split x t).1 ∧ Ordered (split x t).2 := by
@@ -728,10 +776,13 @@ public theorem ordered_split {α : Type u} [LinearOrder α] {x : α}
           exact ⟨hOrdL, hOrdR⟩
 
 /--
-Insert a key by splaying and then splitting: splay `x`, split the result
-at `x`, and attach the two parts below a fresh root holding `x`. An
-already-present key is splayed to the root and split off, so no duplicate
-is created.
+**Splay-tree insertion.** For a key $x$ and a binary tree $t$ over a linearly ordered type,
+inserting $x$ into $t$ splays $x$ in $t$, splits the resulting tree at $x$ into a left part and
+a right part, and returns the tree whose root key is $x$, whose left subtree is the left part
+and whose right subtree is the right part.
+
+In an ordered tree that already contains $x$, the key is splayed to the root and dropped by the
+split, so no duplicate is created.
 -/
 public def insert {α : Type u} [LinearOrder α] (x : α)
     (t : BinaryTree α) : BinaryTree α :=
@@ -743,24 +794,32 @@ private theorem insert_eq {α : Type u} [LinearOrder α] {x : α}
     insert x t = .node x (split x (splay x t)).1 (split x (splay x t)).2 :=
   rfl
 
-/-- Access a key: splay it and report whether it reached the root,
-together with the restructured tree. -/
+/-- **Splay-tree access.** For a key $x$ and a binary tree $t$ over a linearly ordered type, the
+access of $x$ in $t$ is the pair $(b, t')$, where $t'$ is the tree obtained by splaying $x$ in
+$t$ and $b$ is true exactly when $t'$ is nonempty and its root key is $x$. -/
 public def access {α : Type u} [LinearOrder α] (x : α)
     (t : BinaryTree α) : Bool × BinaryTree α :=
   let t' := splay x t
   (decide (root? t' = some x), t')
 
-/-- Membership test via splay: splay the key and inspect the root. -/
+/-- **Splay-tree membership test.** For a key $x$ and a binary tree $t$ over a linearly ordered
+type, the membership test of $x$ in $t$ is the Boolean component of the access of $x$ in $t$:
+it is true exactly when the tree obtained by splaying $x$ in $t$ is nonempty and its root key
+is $x$. -/
 public def contains {α : Type u} [LinearOrder α] (x : α)
     (t : BinaryTree α) : Bool :=
   (access x t).1
 
-/-- The tree returned by `access` is the splayed tree. -/
+/-- **The tree returned by a splay-tree access.** For a key $x$ and a binary tree $t$ over a
+linearly ordered type, the tree component of the access of $x$ in $t$ is the tree obtained by
+splaying $x$ in $t$. -/
 public theorem access_snd {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} : (access x t).2 = splay x t :=
   rfl
 
-/-- Inserting a key adds exactly that key to structural membership. -/
+/-- **Keys after splay-tree insertion.** For keys $x$ and $y$ and a binary tree $t$ over a
+linearly ordered type, $y$ is a key of the tree obtained by splay-tree insertion of $x$ into $t$
+if and only if $y = x$ or $y$ is a key of $t$. -/
 public theorem mem_insert {α : Type u} [LinearOrder α] {x y : α}
     {t : BinaryTree α} : y ∈ insert x t ↔ y = x ∨ y ∈ t := by
   rw [insert_eq]
@@ -779,7 +838,11 @@ public theorem mem_insert {α : Type u} [LinearOrder α] {x y : α}
         · exact Or.inl hh
         · exact Or.inr (Or.inr hh)
 
-/-- Insertion preserves the strict search-tree invariant. -/
+/-- **Splay-tree insertion preserves the search-tree property.** Let $t$ be a binary tree with keys
+in a linearly ordered type and let $x$ be a key. If $t$ is a binary search tree (at every node,
+every key of the left subtree is strictly smaller and every key of the right subtree strictly
+larger than the key of the node), then the splay-tree insertion of $x$ into $t$ is again a binary
+search tree. -/
 public theorem ordered_insert {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} (h : Ordered t) : Ordered (insert x t) := by
   rw [insert_eq]
@@ -788,13 +851,17 @@ public theorem ordered_insert {α : Type u} [LinearOrder α] {x : α}
   obtain ⟨ha1, ha2⟩ := all_split (t := splay x t) hs
   exact ⟨ho1, ho2, ha1, ha2⟩
 
-/-- The inserted key is the root of the result. -/
+/-- **Splay-tree insertion puts the inserted key at the root.** For every binary tree $t$ with keys
+in a linearly ordered type and every key $x$, the splay-tree insertion of $x$ into $t$ is a
+nonempty tree whose root key is $x$. -/
 public theorem root?_insert {α : Type u} [LinearOrder α] {x : α}
     {t : BinaryTree α} : root? (insert x t) = some x := by
   rw [insert_eq]
   rfl
 
-/-- `contains` agrees with structural membership for an ordered tree. -/
+/-- **Correctness of the splay-tree membership test.** For an ordered binary tree $t$ over a
+linearly ordered type and a key $x$, the splay-tree membership test of $x$ in $t$ returns true
+if and only if $x$ is a key of $t$. -/
 public theorem contains_eq_true_iff {α : Type u} [LinearOrder α]
     {x : α} {t : BinaryTree α} (hOrd : Ordered t) :
     contains x t = true ↔ x ∈ t := by

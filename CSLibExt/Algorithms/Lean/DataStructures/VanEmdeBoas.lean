@@ -71,10 +71,11 @@ set_option autoImplicit false
 namespace Cslib.Algorithms.Lean
 
 /--
-A two-level van Emde Boas tree over the universe `Fin (m * m)`: a summary
-bit vector of length `m` and `m` cluster bit vectors of length `m`. This is
-the two-level proto-van Emde Boas layout, not the fully recursive tree over
-universes `2 ^ 2 ^ k`; see the file documentation.
+**Two-level van Emde Boas tree.** For a natural number $m$, a two-level van Emde Boas tree over
+the universe $\{0, \dots, m^2 - 1\}$ consists of a summary bit vector of length $m$ and, for each
+$i < m$, a cluster bit vector of length $m$; bit $j$ of cluster $i$ records whether the element
+$im + j$ is stored. Unlike the fully recursive van Emde Boas tree over universes of size
+$2^{2^k}$, the summary and the clusters here are plain bit vectors, not van Emde Boas trees.
 -/
 public structure VanEmdeBoas (m : Nat) where
   /-- Bit `i` records whether cluster `i` contains a stored element. -/
@@ -572,27 +573,39 @@ private lemma lastFin?_some_of {m : Nat} {p : Fin m → Bool} {j : Fin m}
   obtain ⟨k, hk⟩ := lastBelow_some_of j.isLt hbp
   exact ⟨⟨k, lastBelow_lt hk⟩, lastFin?_eq_some_of hk⟩
 
-/-- The empty tree: every summary and cluster bit is unset. -/
+/-- **Empty van Emde Boas tree.** For a natural number $m$, the empty van Emde Boas tree over
+the universe $\{0, 1, \dots, m^2 - 1\}$ is the tree in which all $m$ summary bits and all
+$m^2$ cluster bits ($m$ clusters of $m$ bits each) are unset. -/
 public def empty {m : Nat} : VanEmdeBoas m where
   summary := fun _ => false
   clusters := fun _ _ => false
 
-/-- Whether `x` is stored in the tree, checked in its own cluster. -/
+/-- **Membership in a van Emde Boas tree.** An element $x$ of the universe
+$\{0, 1, \dots, m^2 - 1\}$ is a member of a two-level van Emde Boas tree $t$ when bit
+$x \bmod m$ of cluster $\lfloor x / m \rfloor$ of $t$ is set. The summary bits are not consulted. -/
 public def member {m : Nat} (t : VanEmdeBoas m) (x : Fin (m * m)) : Bool :=
   t.clusters (high x) (low x)
 
-/-- Inserts `x` by setting its cluster bit and the summary bit of its cluster. -/
+/-- **Insertion into a van Emde Boas tree.** Let $m$ be a natural number, let $t$ be a van Emde
+Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$ and let $x$ be an element of the
+universe. Inserting $x$ into $t$ gives the tree obtained from $t$ by setting bit $x \bmod m$ of
+cluster $\lfloor x / m \rfloor$ and summary bit $\lfloor x / m \rfloor$, leaving every other bit
+unchanged. -/
 public def insert {m : Nat} (x : Fin (m * m)) (t : VanEmdeBoas m) :
     VanEmdeBoas m where
   summary := Function.update t.summary (high x) true
   clusters := Function.update t.clusters (high x)
     (Function.update (t.clusters (high x)) (low x) true)
 
-/-- The summary bit of a cluster is set exactly when the cluster is nonempty. -/
+/-- **Summary invariant of a van Emde Boas tree.** A two-level van Emde Boas tree $t$ with $m$
+clusters is valid when, for every cluster index $i < m$, summary bit $i$ of $t$ is set exactly when
+cluster $i$ of $t$ is nonempty, that is, when some bit $j < m$ of cluster $i$ is set. -/
 public def Valid {m : Nat} (t : VanEmdeBoas m) : Prop :=
   ∀ i : Fin m, t.summary i = true ↔ ∃ j : Fin m, t.clusters i j = true
 
-/-- The finite set of stored elements. -/
+/-- **Set of stored elements of a van Emde Boas tree.** Let $m$ be a natural number. For a van
+Emde Boas tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$, the set of stored elements of
+$t$ is the finite set of those elements of the universe that are members of $t$. -/
 public def contents {m : Nat} (t : VanEmdeBoas m) : Finset (Fin (m * m)) :=
   Finset.univ.filter fun x => t.member x = true
 
@@ -613,17 +626,24 @@ private lemma insert_clusters {m : Nat} (x : Fin (m * m)) (t : VanEmdeBoas m) :
       (Function.update (t.clusters (high x)) (low x) true) :=
   rfl
 
-/-- No element is a member of the empty tree. -/
+/-- **The empty van Emde Boas tree has no members.** For every $m$ and every $x$ in the universe
+$\{0, 1, \dots, m^2 - 1\}$, $x$ is not a member of the empty two-level van Emde Boas tree over that
+universe. -/
 public theorem member_empty {m : Nat} (x : Fin (m * m)) :
     (empty : VanEmdeBoas m).member x = false := by
   simp [member, empty_clusters]
 
-/-- An inserted element is a member of the resulting tree. -/
+/-- **An inserted element is a member of a van Emde Boas tree.** For every two-level van Emde Boas
+tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$ and every $x$ in that universe, $x$ is a
+member of the tree obtained by inserting $x$ into $t$. -/
 public theorem member_insert_self {m : Nat} (x : Fin (m * m))
     (t : VanEmdeBoas m) : (insert x t).member x = true := by
   simp [member, insert_clusters]
 
-/-- Inserting `x` does not change membership of any other element. -/
+/-- **Insertion into a van Emde Boas tree leaves other elements unchanged.** For every two-level
+van Emde Boas tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$ and all $x \ne y$ in that
+universe, $y$ is a member of the tree obtained by inserting $x$ into $t$ if and only if $y$ is a
+member of $t$. -/
 public theorem member_insert_of_ne {m : Nat} {x y : Fin (m * m)}
     (h : y ≠ x) (t : VanEmdeBoas m) :
     (insert x t).member y = t.member y := by
@@ -633,7 +653,10 @@ public theorem member_insert_of_ne {m : Nat} {x y : Fin (m * m)}
     rw [hh, Function.update_self, Function.update_of_ne hl]
   · rw [Function.update_of_ne hh]
 
-/-- Membership after insertion: the new element, or a previous member. -/
+/-- **Membership after insertion into a van Emde Boas tree.** For every two-level van Emde Boas
+tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$ and all $x, y$ in that universe, $y$ is a
+member of the tree obtained by inserting $x$ into $t$ if and only if $y = x$ or $y$ is a member
+of $t$. -/
 public theorem member_insert {m : Nat} (t : VanEmdeBoas m)
     (x y : Fin (m * m)) :
     (insert x t).member y = true ↔ y = x ∨ t.member y = true := by
@@ -643,18 +666,26 @@ public theorem member_insert {m : Nat} (t : VanEmdeBoas m)
   · rw [member_insert_of_ne h]
     simp [h]
 
-/-- Membership is preserved by insertion of any element. -/
+/-- **Insertion into a van Emde Boas tree keeps existing members.** For every two-level van Emde
+Boas tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$ and all $x, y$ in that universe, if $y$
+is a member of $t$, then $y$ is a member of the tree obtained by inserting $x$ into $t$. -/
 public theorem member_insert_of_member {m : Nat} (t : VanEmdeBoas m)
     (x y : Fin (m * m)) (h : t.member y = true) :
     (insert x t).member y = true :=
   (member_insert t x y).mpr (Or.inr h)
 
-/-- The empty tree satisfies the summary invariant. -/
+/-- **The empty van Emde Boas tree is valid.** For every natural number $m$, the empty two-level
+van Emde Boas tree over the universe $\{0, \dots, m^2 - 1\}$ satisfies the summary invariant: each
+summary bit is set exactly when its cluster is nonempty. -/
 public theorem valid_empty {m : Nat} : (empty : VanEmdeBoas m).Valid := by
   intro i
   simp [empty_summary, empty_clusters]
 
-/-- Insertion preserves the summary invariant. -/
+/-- **Insertion preserves validity of van Emde Boas trees.** For every natural number $m$, every
+element $x$ of the universe $\{0, \dots, m^2 - 1\}$ and every two-level van Emde Boas tree $t$ over
+that universe that satisfies the summary invariant (each summary bit is set exactly when its
+cluster is nonempty), the tree obtained from $t$ by inserting $x$ also satisfies the summary
+invariant. -/
 public theorem valid_insert {m : Nat} (x : Fin (m * m))
     (t : VanEmdeBoas m) (hv : t.Valid) : (insert x t).Valid := by
   intro i
@@ -671,28 +702,41 @@ public theorem valid_insert {m : Nat} (x : Fin (m * m))
       Function.update_of_ne hi]
     exact hv i
 
-/-- The abstraction contains exactly the members of the tree. -/
+/-- **The contents of a van Emde Boas tree are its members.** For every two-level van Emde Boas
+tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$ and every $x$ in that universe, $x$ belongs
+to the finite set of stored elements of $t$ if and only if $x$ is a member of $t$. -/
 @[simp]
 public theorem mem_contents {m : Nat} {t : VanEmdeBoas m} {x : Fin (m * m)} :
     x ∈ t.contents ↔ t.member x = true := by
   simp [contents]
 
-/-- The empty tree abstracts to the empty finite set. -/
+/-- **Contents of the empty van Emde Boas tree.** For every natural number $m$, the set of
+stored elements of the empty van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$
+is empty. -/
 @[simp]
 public theorem contents_empty {m : Nat} :
     (empty : VanEmdeBoas m).contents = ∅ := by
   ext x
   simp [member_empty]
 
-/-- Abstracting insertion is finite-set insertion. -/
+/-- **Contents after insertion into a van Emde Boas tree.** Let $m$ be a natural number, let
+$t$ be a van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$ and let $x$ be an
+element of the universe. The set of stored elements of the tree obtained by inserting $x$ into
+$t$ is the set of stored elements of $t$ together with $x$. No validity assumption on $t$ is
+needed. -/
 public theorem contents_insert {m : Nat} (x : Fin (m * m))
     (t : VanEmdeBoas m) :
     (insert x t).contents = Insert.insert x t.contents := by
   ext y
   simp [member_insert, eq_comm (a := y) (b := x)]
 
-/-- The least stored element: the least element of the first summary-selected
-nonempty cluster, or `none` if no cluster is selected. -/
+/-- **Minimum query of a van Emde Boas tree.** Let $t$ be a two-level van Emde Boas tree over the
+universe $\{0, \dots, m^2 - 1\}$. If some summary bit of $t$ is set, let $h$ be the least cluster
+index whose summary bit is set; if cluster $h$ has a set position, let $\ell$ be the least one.
+The minimum query on $t$ then returns the element $h \cdot m + \ell$. If no summary bit is set,
+or cluster $h$ has no set position, it returns no element.
+
+In a valid tree this is the least stored element. -/
 public def min? {m : Nat} (t : VanEmdeBoas m) : Option (Fin (m * m)) :=
   match firstFin? t.summary with
   | none => none
@@ -722,14 +766,18 @@ private lemma min?_eq_some_cases {m : Nat} {t : VanEmdeBoas m}
           rw [min?_eq_some_of hs hc] at h
           exact ⟨hi, lo, rfl, hc, (Option.some.inj h).symm⟩
 
-/-- The element returned by `min?` is stored in the tree. -/
+/-- **The van Emde Boas minimum is stored.** Let $t$ be a two-level van Emde Boas tree over the
+universe $\{0, \dots, m^2 - 1\}$. If the minimum query on $t$ returns $x$, then $x$ is stored in
+$t$. -/
 public theorem min?_mem {m : Nat} {t : VanEmdeBoas m} {x : Fin (m * m)}
     (h : t.min? = some x) : t.member x = true := by
   obtain ⟨hi, lo, _, hc, rfl⟩ := min?_eq_some_cases h
   simp only [member, high_combine, low_combine]
   exact firstFin?_true hc
 
-/-- In a valid tree, the element returned by `min?` precedes every member. -/
+/-- **The van Emde Boas minimum is a lower bound.** Let $t$ be a valid two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$. If the minimum query on $t$ returns $x$, then
+$x \le y$ for every $y$ stored in $t$. -/
 public theorem min?_least {m : Nat} {t : VanEmdeBoas m} (hv : t.Valid)
     {x y : Fin (m * m)} (h : t.min? = some x) (hy : t.member y = true) :
     x.val ≤ y.val := by
@@ -751,7 +799,9 @@ public theorem min?_least {m : Nat} {t : VanEmdeBoas m} (hv : t.Valid)
     rw [hcy] at hle'
     exact hle'
 
-/-- In a valid tree, `min?` returns `none` exactly when nothing is stored. -/
+/-- **Empty minimum query in a van Emde Boas tree.** Let $t$ be a valid two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$. The minimum query on $t$ returns no element if and
+only if no element of the universe is stored in $t$. -/
 public theorem min?_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) :
     t.min? = none ↔ ∀ y : Fin (m * m), t.member y = false := by
@@ -781,7 +831,9 @@ public theorem min?_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
         rw [h (combine hi lo)] at hmember
         simp at hmember
 
-/-- In a valid tree, `min?` returns the least stored element. -/
+/-- **Characterization of the van Emde Boas minimum.** Let $t$ be a valid two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$, and let $x$ be in the universe. The minimum query
+on $t$ returns $x$ if and only if $x$ is stored in $t$ and $x \le y$ for every $y$ stored in $t$. -/
 public theorem min?_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x : Fin (m * m)} :
     t.min? = some x ↔
@@ -806,11 +858,14 @@ public theorem min?_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     rw [heq]
     exact hx'
 
-/-- The empty tree has no least element. -/
+/-- **The empty van Emde Boas tree has no minimum.** For every $m$, the minimum query of the empty
+two-level van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$ returns no element. -/
 public theorem min?_empty {m : Nat} : (empty : VanEmdeBoas m).min? = none :=
   (min?_eq_none_iff valid_empty).mpr fun y => member_empty y
 
-/-- The least element of a singleton tree is its element. -/
+/-- **Minimum of a one-element van Emde Boas tree.** For every $x$ in the universe
+$\{0, \dots, m^2 - 1\}$, the minimum query on the two-level van Emde Boas tree obtained by
+inserting $x$ into the empty tree returns $x$. -/
 public theorem min?_insert_empty {m : Nat} (x : Fin (m * m)) :
     (insert x empty).min? = some x := by
   rw [min?_eq_some_iff_of_valid (valid_insert x _ valid_empty)]
@@ -823,8 +878,12 @@ public theorem min?_insert_empty {m : Nat} (x : Fin (m * m)) :
       rw [member_empty] at h
       simp at h
 
-/-- The greatest stored element: the greatest element of the last
-summary-selected nonempty cluster, or `none` if no cluster is selected. -/
+/-- **Maximum query of a van Emde Boas tree.** For a two-level van Emde Boas tree $t$ over the
+universe $\{0, 1, \dots, m^2 - 1\}$, the maximum query first finds the greatest index $i < m$ whose
+summary bit is set, and then the greatest index $j < m$ whose bit is set in cluster $i$; it returns
+the element $i m + j$. It returns no element if no summary bit is set, or if no bit of cluster $i$
+is set. When the summary bits record exactly the nonempty clusters, this is the greatest stored
+element. -/
 public def max? {m : Nat} (t : VanEmdeBoas m) : Option (Fin (m * m)) :=
   match lastFin? t.summary with
   | none => none
@@ -854,14 +913,19 @@ private lemma max?_eq_some_cases {m : Nat} {t : VanEmdeBoas m}
           rw [max?_eq_some_of hs hc] at h
           exact ⟨hi, lo, rfl, hc, (Option.some.inj h).symm⟩
 
-/-- The element returned by `max?` is stored in the tree. -/
+/-- **The maximum query of a van Emde Boas tree returns a member.** For every two-level van Emde
+Boas tree $t$ over the universe $\{0, 1, \dots, m^2 - 1\}$ and every $x$ in that universe, if the
+maximum query of $t$ returns $x$, then $x$ is a member of $t$. No validity hypothesis on $t$ is
+needed. -/
 public theorem max?_mem {m : Nat} {t : VanEmdeBoas m} {x : Fin (m * m)}
     (h : t.max? = some x) : t.member x = true := by
   obtain ⟨hi, lo, _, hc, rfl⟩ := max?_eq_some_cases h
   simp only [member, high_combine, low_combine]
   exact lastFin?_true hc
 
-/-- In a valid tree, the element returned by `max?` follows every member. -/
+/-- **The van Emde Boas maximum query bounds every member.** Let $m$ be a natural number and let
+$t$ be a valid van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$. If the maximum
+query on $t$ returns $x$, then $y \le x$ for every member $y$ of $t$. -/
 public theorem max?_greatest {m : Nat} {t : VanEmdeBoas m} (hv : t.Valid)
     {x y : Fin (m * m)} (h : t.max? = some x) (hy : t.member y = true) :
     y.val ≤ x.val := by
@@ -883,7 +947,9 @@ public theorem max?_greatest {m : Nat} {t : VanEmdeBoas m} (hv : t.Valid)
     rw [hcy] at hle'
     exact hle'
 
-/-- In a valid tree, `max?` returns `none` exactly when nothing is stored. -/
+/-- **When the van Emde Boas maximum query returns nothing.** Let $m$ be a natural number and let
+$t$ be a valid van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$. The maximum query
+on $t$ returns no element if and only if no element of the universe is a member of $t$. -/
 public theorem max?_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) :
     t.max? = none ↔ ∀ y : Fin (m * m), t.member y = false := by
@@ -913,7 +979,10 @@ public theorem max?_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
         rw [h (combine hi lo)] at hmember
         simp at hmember
 
-/-- In a valid tree, `max?` returns the greatest stored element. -/
+/-- **Correctness of the van Emde Boas maximum query.** Let $m$ be a natural number, let $t$ be a
+valid van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$ and let $x$ be an element of
+the universe. The maximum query on $t$ returns $x$ if and only if $x$ is a member of $t$ and
+$y \le x$ for every member $y$ of $t$. -/
 public theorem max?_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x : Fin (m * m)} :
     t.max? = some x ↔
@@ -938,11 +1007,15 @@ public theorem max?_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     rw [heq]
     exact hx'
 
-/-- The empty tree has no greatest element. -/
+/-- **Maximum query on the empty van Emde Boas tree.** For every natural number $m$, the
+maximum query on the empty van Emde Boas tree over the universe $\{0, 1, \dots, m^2 - 1\}$
+returns no element. -/
 public theorem max?_empty {m : Nat} : (empty : VanEmdeBoas m).max? = none :=
   (max?_eq_none_iff valid_empty).mpr fun y => member_empty y
 
-/-- The greatest element of a singleton tree is its element. -/
+/-- **Maximum query on a one-element van Emde Boas tree.** Let $m$ be a natural number and let
+$x$ be an element of the universe $\{0, 1, \dots, m^2 - 1\}$. The maximum query on the tree
+obtained by inserting $x$ into the empty van Emde Boas tree over this universe returns $x$. -/
 public theorem max?_insert_empty {m : Nat} (x : Fin (m * m)) :
     (insert x empty).max? = some x := by
   rw [max?_eq_some_iff_of_valid (valid_insert x _ valid_empty)]
@@ -1008,9 +1081,15 @@ private lemma predSummaryPred_eq_true {m : Nat} {t : VanEmdeBoas m}
       hi.val < (high x).val ∧ t.summary hi = true := by
   simp [predSummaryPred]
 
-/-- The least stored element strictly above `x`: the next set position in
-the cluster of `x`, else the least element of the next summary-selected
-nonempty cluster, else `none`. -/
+/-- **Successor query in a two-level van Emde Boas tree.** Let $T$ be a two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$ and let $x = hm + \ell$ with $0 \le h, \ell < m$, so
+that $x$ sits at position $\ell$ of cluster $h$. If cluster $h$ has a set position after $\ell$, the
+successor of $x$ in $T$ is $hm + \ell'$ for the least such position $\ell'$. Otherwise, let $h'$ be
+the least cluster index with $h < h'$ whose summary bit is set; the successor is $h'm + \ell''$ for
+the least position $\ell''$ set in cluster $h'$. If there is no such $h'$, or cluster $h'$ has no
+set position, $x$ has no successor.
+
+In a valid tree, the successor of $x$ is the least member of $T$ greater than $x$. -/
 public def successor {m : Nat} (t : VanEmdeBoas m) (x : Fin (m * m)) :
     Option (Fin (m * m)) :=
   match firstFin? (succClusterPred t x) with
@@ -1063,7 +1142,9 @@ private lemma successor_eq_some_cases {m : Nat} {t : VanEmdeBoas m}
               rw [successor_eq_some_next h1 h2 h3] at h
               exact (Option.some.inj h).symm
 
-/-- The element returned by `successor` is stored in the tree. -/
+/-- **The van Emde Boas successor is stored.** Let $T$ be a two-level van Emde Boas tree over the
+universe $\{0, \dots, m^2 - 1\}$, not necessarily valid, and let $x$ and $y$ be elements of the
+universe. If the successor of $x$ in $T$ is $y$, then $y$ is a member of $T$. -/
 public theorem successor_mem {m : Nat} {t : VanEmdeBoas m}
     {x y : Fin (m * m)} (h : t.successor x = some y) :
     t.member y = true := by
@@ -1075,7 +1156,9 @@ public theorem successor_mem {m : Nat} {t : VanEmdeBoas m}
   · simp only [member, high_combine, low_combine]
     exact firstFin?_true hc
 
-/-- The element returned by `successor` is strictly above `x`. -/
+/-- **The van Emde Boas successor is strictly larger than its argument.** Let $T$ be a two-level
+van Emde Boas tree over the universe $\{0, \dots, m^2 - 1\}$, not necessarily valid, and let $x$
+and $y$ be elements of the universe. If the successor of $x$ in $T$ is $y$, then $x < y$. -/
 public theorem successor_gt {m : Nat} {t : VanEmdeBoas m}
     {x y : Fin (m * m)} (h : t.successor x = some y) :
     x.val < y.val := by
@@ -1090,7 +1173,10 @@ public theorem successor_gt {m : Nat} {t : VanEmdeBoas m}
     rw [combine_high_low] at hlt'
     exact hlt'
 
-/-- In a valid tree, no member above `x` precedes the returned successor. -/
+/-- **No member lies strictly between an element and its van Emde Boas successor.** Let $T$ be a
+valid two-level van Emde Boas tree over the universe $\{0, \dots, m^2 - 1\}$ and let $x$, $y$, $z$
+be elements of the universe. If the successor of $x$ in $T$ is $y$ and $z$ is a member of $T$ with
+$x < z$, then $y \le z$. -/
 public theorem successor_least {m : Nat} {t : VanEmdeBoas m} (hv : t.Valid)
     {x y z : Fin (m * m)} (h : t.successor x = some y)
     (hz : t.member z = true) (hxz : x.val < z.val) :
@@ -1151,8 +1237,10 @@ public theorem successor_least {m : Nat} {t : VanEmdeBoas m} (hv : t.Valid)
       rw [hcy] at hle'
       exact hle'
 
-/-- In a valid tree, `successor` returns `none` exactly when no stored
-element is above `x`. -/
+/-- **A van Emde Boas successor is missing exactly when nothing larger is stored.** Let $T$ be a
+valid two-level van Emde Boas tree over the universe $\{0, \dots, m^2 - 1\}$ and let $x$ be an
+element of the universe. Then $x$ has no successor in $T$ if and only if every member $z$ of $T$
+satisfies $z \le x$. -/
 public theorem successor_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x : Fin (m * m)} :
     t.successor x = none ↔
@@ -1201,7 +1289,10 @@ public theorem successor_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
         have hle : y.val ≤ x.val := h y (successor_mem h')
         exact (Nat.lt_irrefl _ (lt_of_lt_of_le hgt hle)).elim
 
-/-- In a valid tree, `successor` returns the least stored element above `x`. -/
+/-- **The van Emde Boas successor is the least larger member.** Let $T$ be a valid two-level van
+Emde Boas tree over the universe $\{0, \dots, m^2 - 1\}$ and let $x$ and $y$ be elements of the
+universe. Then the successor of $x$ in $T$ is $y$ if and only if $y$ is a member of $T$, $x < y$,
+and $y \le z$ for every member $z$ of $T$ with $x < z$. -/
 public theorem successor_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x y : Fin (m * m)} :
     t.successor x = some y ↔
@@ -1229,7 +1320,9 @@ public theorem successor_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     rw [heq]
     exact hy'
 
-/-- The empty tree has no successor for any element. -/
+/-- **The empty van Emde Boas tree has no successors.** For every $m$ and every element $x$ of the
+universe $\{0, \dots, m^2 - 1\}$, $x$ has no successor in the empty two-level van Emde Boas tree
+over that universe. -/
 public theorem successor_empty {m : Nat} (x : Fin (m * m)) :
     (empty : VanEmdeBoas m).successor x = none := by
   rw [successor_eq_none_iff valid_empty]
@@ -1237,9 +1330,15 @@ public theorem successor_empty {m : Nat} (x : Fin (m * m)) :
   rw [member_empty] at hz
   simp at hz
 
-/-- The greatest stored element strictly below `x`: the last set position
-in the cluster of `x`, else the greatest element of the previous
-summary-selected nonempty cluster, else `none`. -/
+/-- **Predecessor query in a two-level van Emde Boas tree.** Let $T$ be a two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$ and let $x = hm + \ell$ with $0 \le h, \ell < m$, so
+that $x$ sits at position $\ell$ of cluster $h$. If cluster $h$ has a set position before $\ell$,
+the predecessor of $x$ in $T$ is $hm + \ell'$ for the greatest such position $\ell'$. Otherwise,
+let $h'$ be the greatest cluster index with $h' < h$ whose summary bit is set; the predecessor is
+$h'm + \ell''$ for the greatest position $\ell''$ set in cluster $h'$. If there is no such $h'$, or
+cluster $h'$ has no set position, $x$ has no predecessor.
+
+In a valid tree, the predecessor of $x$ is the greatest member of $T$ less than $x$. -/
 public def predecessor {m : Nat} (t : VanEmdeBoas m) (x : Fin (m * m)) :
     Option (Fin (m * m)) :=
   match lastFin? (predClusterPred t x) with
@@ -1293,7 +1392,9 @@ private lemma predecessor_eq_some_cases {m : Nat} {t : VanEmdeBoas m}
               rw [predecessor_eq_some_prev h1 h2 h3] at h
               exact (Option.some.inj h).symm
 
-/-- The element returned by `predecessor` is stored in the tree. -/
+/-- **The van Emde Boas predecessor is stored.** Let $T$ be a two-level van Emde Boas tree over the
+universe $\{0, \dots, m^2 - 1\}$, not necessarily valid, and let $x$ and $y$ be elements of the
+universe. If the predecessor of $x$ in $T$ is $y$, then $y$ is a member of $T$. -/
 public theorem predecessor_mem {m : Nat} {t : VanEmdeBoas m}
     {x y : Fin (m * m)} (h : t.predecessor x = some y) :
     t.member y = true := by
@@ -1306,7 +1407,9 @@ public theorem predecessor_mem {m : Nat} {t : VanEmdeBoas m}
   · simp only [member, high_combine, low_combine]
     exact lastFin?_true hc
 
-/-- The element returned by `predecessor` is strictly below `x`. -/
+/-- **The van Emde Boas predecessor is strictly smaller than its argument.** Let $T$ be a two-level
+van Emde Boas tree over the universe $\{0, \dots, m^2 - 1\}$, not necessarily valid, and let $x$
+and $y$ be elements of the universe. If the predecessor of $x$ in $T$ is $y$, then $y < x$. -/
 public theorem predecessor_lt {m : Nat} {t : VanEmdeBoas m}
     {x y : Fin (m * m)} (h : t.predecessor x = some y) :
     y.val < x.val := by
@@ -1322,7 +1425,10 @@ public theorem predecessor_lt {m : Nat} {t : VanEmdeBoas m}
     rw [combine_high_low] at hlt'
     exact hlt'
 
-/-- In a valid tree, no member below `x` follows the returned predecessor. -/
+/-- **Maximality of the van Emde Boas predecessor.** Let $t$ be a valid two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$, and let $x$, $y$ and $z$ be in the universe. If the
+predecessor query for $x$ in $t$ returns $y$, and $z$ is stored in $t$ with $z < x$, then
+$z \le y$. -/
 public theorem predecessor_greatest {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x y z : Fin (m * m)} (h : t.predecessor x = some y)
     (hz : t.member z = true) (hxz : z.val < x.val) :
@@ -1383,8 +1489,9 @@ public theorem predecessor_greatest {m : Nat} {t : VanEmdeBoas m}
       rw [hcy] at hle'
       exact hle'
 
-/-- In a valid tree, `predecessor` returns `none` exactly when no stored
-element is below `x`. -/
+/-- **Empty predecessor query in a van Emde Boas tree.** Let $t$ be a valid two-level van Emde Boas
+tree over the universe $\{0, \dots, m^2 - 1\}$, and let $x$ be in the universe. The predecessor
+query for $x$ in $t$ returns no element if and only if $x \le z$ for every $z$ stored in $t$. -/
 public theorem predecessor_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x : Fin (m * m)} :
     t.predecessor x = none ↔
@@ -1433,8 +1540,10 @@ public theorem predecessor_eq_none_iff {m : Nat} {t : VanEmdeBoas m}
         have hle : x.val ≤ y.val := h y (predecessor_mem h')
         exact (Nat.lt_irrefl _ (lt_of_lt_of_le hlt hle)).elim
 
-/-- In a valid tree, `predecessor` returns the greatest stored element
-below `x`. -/
+/-- **Characterization of the van Emde Boas predecessor.** Let $t$ be a valid two-level van Emde
+Boas tree over the universe $\{0, \dots, m^2 - 1\}$, and let $x$ and $y$ be in the universe. The
+predecessor query for $x$ in $t$ returns $y$ if and only if $y$ is stored in $t$, $y < x$, and
+$z \le y$ for every $z$ stored in $t$ with $z < x$. -/
 public theorem predecessor_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     (hv : t.Valid) {x y : Fin (m * m)} :
     t.predecessor x = some y ↔
@@ -1462,7 +1571,9 @@ public theorem predecessor_eq_some_iff_of_valid {m : Nat} {t : VanEmdeBoas m}
     rw [heq]
     exact hy'
 
-/-- The empty tree has no predecessor for any element. -/
+/-- **Predecessor queries in the empty van Emde Boas tree.** For every $x$ in the universe
+$\{0, \dots, m^2 - 1\}$, the predecessor query for $x$ in the empty two-level van Emde Boas tree
+returns no element. -/
 public theorem predecessor_empty {m : Nat} (x : Fin (m * m)) :
     (empty : VanEmdeBoas m).predecessor x = none := by
   rw [predecessor_eq_none_iff valid_empty]

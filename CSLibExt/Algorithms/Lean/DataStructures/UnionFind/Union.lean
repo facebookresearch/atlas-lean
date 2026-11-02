@@ -34,7 +34,11 @@ open Batteries Cslib.Algorithms.Lean
 namespace Batteries.UnionFind
 
 namespace LinkInternal
-/-- Only a distinct-index tie increases the second node's saved rank. -/
+/-- **Ranks after linking two nodes of an array.** For an array $A$ of union-find nodes, write
+$\rho_A(i)$ for the rank stored at index $i$ of $A$, or $0$ if $i$ is not an index of $A$. Let
+$x, y$ be indices of $A$ and let $A'$ be the array obtained from $A$ by the Batteries link by rank
+of $x$ and $y$. Then for every natural number $i$, $\rho_{A'}(i) = \rho_A(y) + 1$ if $x \ne y$,
+$\rho_A(x) = \rho_A(y)$ and $i = y$, and $\rho_{A'}(i) = \rho_A(i)$ otherwise. -/
 theorem rankD_linkAux (arr : Array UFNode) (x y : Fin arr.size) (i : Nat) :
     UnionFind.rankD (UnionFind.linkAux arr x y) i =
       if x.val ≠ y.val ∧ arr[x.val].rank = arr[y.val].rank ∧ y.val = i then
@@ -57,7 +61,11 @@ theorem rankD_linkAux (arr : Array UFNode) (x y : Fin arr.size) (i : Nat) :
 
 end LinkInternal
 
-/-- Canonical LINK changes no rank except the distinct tied second root. -/
+/-- **Ranks after linking in a union-find structure.** Let $S$ be a union-find structure, write
+$\rho(i)$ for the rank of $i$ in $S$ ($0$ if $i$ is not a node of $S$), and let $x, y$ be nodes of
+$S$ such that $y$ is a root, that is, the parent of $y$ is $y$. Let $S'$ be the result of linking
+$x$ and $y$ by rank. Then for every natural number $i$, the rank of $i$ in $S'$ is $\rho(y) + 1$
+if $x \ne y$, $\rho(x) = \rho(y)$ and $i = y$, and is $\rho(i)$ otherwise. -/
 public theorem rank_link (self : UnionFind) (x y : Fin self.size)
     (yroot : self.parent y = y) (i : Nat) :
     (self.link x y yroot).rank i =
@@ -67,7 +75,15 @@ public theorem rank_link (self : UnionFind) (x y : Fin self.size)
   simpa only [UnionFind.rank, UnionFind.rankD_eq x.isLt,
     UnionFind.rankD_eq y.isLt] using LinkInternal.rankD_linkAux self.arr x y i
 
-/-- Canonical LINK chooses the higher-rank root, and the second root on ties. -/
+/-- **Linking two roots by rank.** Let $U$ be a union-find structure on $\{0, \dots, n-1\}$ and
+let $x, y < n$ be roots of $U$, i.e. each is its own parent. Let $U'$ be obtained by linking $x$
+and $y$ by rank: nothing changes if $x = y$; otherwise, if $\operatorname{rank}(y) <
+\operatorname{rank}(x)$ then $y$ gets parent $x$, and if not then $x$ gets parent $y$ and, when
+the two ranks are equal, the rank of $y$ increases by one. Then for every natural number $i$,
+where the root of an index $i \ge n$ is $i$ itself: if the root of $i$ in $U$ is $x$ or $y$, the
+root of $i$ in $U'$ is $x$ when $\operatorname{rank}(y) < \operatorname{rank}(x)$ and $y$
+otherwise; if the root of $i$ in $U$ is neither $x$ nor $y$, its root in $U'$ is the same as in
+$U$. -/
 public theorem rootD_link_eq_ite (self : UnionFind) (x y : Fin self.size)
     (xroot : self.parent x = x) (yroot : self.parent y = y) (i : Nat) :
     (self.link x y yroot).rootD i =
@@ -96,7 +112,14 @@ public theorem rootD_link_eq_ite (self : UnionFind) (x y : Fin self.size)
 
 namespace LinkInternal
 
-/-- UNION's second FIND reads the saved state of its first FIND. -/
+/-- **Union unfolds to two finds and a link.** Let $U$ be a union-find structure on
+$\{0, \dots, n-1\}$ and let $x, y < n$. Run find with path compression on $x$ in $U$, giving a
+structure $U_1$ and a root $r_x$; then run find on $y$ in $U_1$ (not in $U$), giving a structure
+$U_2$ and a root $r_y$. Then the node array of the union of $x$ and $y$ in $U$ equals the array
+obtained from the node array of $U_2$ by linking $r_x$ and $r_y$ by rank: nothing changes if
+$r_x = r_y$; otherwise, if $\operatorname{rank}(r_y) < \operatorname{rank}(r_x)$ then $r_y$ gets
+parent $r_x$, and if not then $r_x$ gets parent $r_y$ and, when the two ranks are equal, the rank
+of $r_y$ increases by one. -/
 theorem union_carried (self : UnionFind) (x y : Fin self.size) :
     let first := self.find x
     let y₁ : Fin first.1.size := ⟨y.val, by rw [first.2.property]; exact y.isLt⟩
@@ -106,14 +129,21 @@ theorem union_carried (self : UnionFind) (x y : Fin self.size) :
     (self.union x y).arr = UnionFind.linkAux second.1.arr rx second.2.val := by
   rfl
 
-/-- Canonical path compression preserves every rank, including default indices. -/
+/-- **Path compression preserves ranks.** Let $S$ be a union-find structure and $x$ a node of
+$S$, and let $S'$ be the structure returned by FIND on $x$ with path compression. For every
+natural number $i$, the rank of $i$ in $S'$ equals the rank of $i$ in $S$, where the rank of an
+index that is not a node is $0$. -/
 theorem rank_find (self : UnionFind) (x : Fin self.size) (i : Nat) :
     (self.find x).1.rank i = self.rank i := by
   exact UnionFind.rankD_findAux
 
 end LinkInternal
 
-/-- Both actual carried FIND calls preserve ranks before the canonical rank update. -/
+/-- **Ranks after a union.** Let $S$ be a union-find structure, write $\rho(i)$ for the rank of
+$i$ in $S$ ($0$ if $i$ is not a node of $S$) and $r(i)$ for the root of $i$ in $S$. For nodes
+$x, y$ of $S$ and every natural number $i$, the rank of $i$ in the union of $x$ and $y$ in $S$
+(union by rank with path compression) is $\rho(r(y)) + 1$ if $r(x) \ne r(y)$,
+$\rho(r(x)) = \rho(r(y))$ and $r(y) = i$, and is $\rho(i)$ otherwise. -/
 public theorem rank_union (self : UnionFind) (x y : Fin self.size) (i : Nat) :
     (self.union x y).rank i =
       if self.rootD x ≠ self.rootD y ∧
@@ -125,8 +155,15 @@ public theorem rank_union (self : UnionFind) (x y : Fin self.size) (i : Nat) :
 
 namespace LinkInternal
 
-/-- Private source refinement: rank tests, parent writes, rank writes.
-The canonical equal-index guard is not a rank test; it performs none of these events. -/
+/-- **Linking by rank with operation counts.** Given an array $A$ of union-find nodes, each
+storing a parent index and a rank, and indices $x, y$ of $A$, this computation returns an array
+together with a count $(t, p, w)$ of rank tests $t$, parent writes $p$ and rank writes $w$. If
+$x = y$ it returns $A$ with count $(0, 0, 0)$. Otherwise it makes one rank test; if the rank of $y$
+is less than the rank of $x$, it sets the parent of $y$ to $x$ (one parent write). If not, it sets
+the parent of $x$ to $y$ (one parent write) and makes a second rank test, and if the ranks of $x$
+and $y$ are equal it also increases the rank of $y$ by one (one rank write).
+
+The equality test $x = y$ is not counted as a rank test. -/
 @[no_expose] def countedLinkAux (arr : Array UFNode) (x y : Fin arr.size) :
     TimeM (Nat × Nat × Nat) (Array UFNode) := do
   if x.val = y then
@@ -148,7 +185,9 @@ The canonical equal-index guard is not a rank test; it performs none of these ev
       else
         pure arr₁
 
-/-- The saved array is exactly canonical linkAux's result, not a reference-only result. -/
+/-- **Counted linking returns the linked array.** For an array $A$ of union-find nodes and
+indices $x, y$ of $A$, the array returned by counted linking of $x$ and $y$ in $A$ is exactly the
+array produced by the uncounted Batteries link by rank of $x$ and $y$ in $A$. -/
 theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
     (countedLinkAux arr x y).ret = UnionFind.linkAux arr x y := by
   by_cases hxy : x.val = y.val
@@ -158,7 +197,12 @@ theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
     · by_cases heq : arr[x.val].rank = arr[y.val].rank <;>
         simp [countedLinkAux, UnionFind.linkAux, hxy, hgt, heq]
 
-/-- Branch counts concern the same saved-array execution that produced ret. -/
+/-- **Operation counts of linking by rank.** Let $A$ be an array of union-find nodes, let $x, y$
+be indices of $A$, and write $r_x$ and $r_y$ for the ranks stored at $x$ and $y$. Counted linking
+of $x$ and $y$ in $A$ makes $(t, p, w)$ rank tests, parent writes and rank writes, where
+$(t, p, w)$ is $(0, 0, 0)$ if $x = y$, is $(1, 1, 0)$ if $x \ne y$ and $r_y < r_x$, is
+$(2, 1, 1)$ if $x \ne y$ and $r_x = r_y$, and is $(2, 1, 0)$ otherwise, that is, if $x \ne y$
+and $r_x < r_y$. -/
 theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
     (countedLinkAux arr x y).time =
       if x.val = y.val then (0, 0, 0)
@@ -173,8 +217,13 @@ theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
     · by_cases heq : arr[x.val].rank = arr[y.val].rank <;>
         simp [countedLinkAux, hxy, hgt, heq]
 
-/-- Product coordinates preserve the frozen FIND and LINK event conventions.
-Each phase executes once and the second FIND reads the first phase's saved store. -/
+/-- **Union by rank with operation counts.** For a union-find structure $S$ and indices $x, y$
+of $S$, this computation runs counted FIND on $x$ in $S$, giving a structure $S_1$ and a root
+$r_x$; then counted FIND on $y$ in $S_1$, giving a structure $S_2$ and a root $r_y$; then counted
+linking of $r_x$ and $r_y$ in the node array of $S_2$. It returns the array produced by the
+linking, with cost $((a, b), (t, p, w))$, where $a$ and $b$ are the total numbers of root tests
+and parent writes of the two FIND calls, and $(t, p, w)$ counts the rank tests, parent writes and
+rank writes of the linking. -/
 @[no_expose] def countedUnion (self : UnionFind) (x y : Fin self.size) :
     TimeM ((Nat × Nat) × (Nat × Nat × Nat)) (Array UFNode) :=
   let first := Internal.countedFind self x
@@ -186,7 +235,9 @@ Each phase executes once and the second FIND reads the first phase's saved store
   let linked := LinkInternal.countedLinkAux second.ret.1.arr rx second.ret.2.val
   ⟨linked.ret, (first.time + second.time, linked.time)⟩
 
-/-- Full array erasure is the direct canonical UNION result, not a detached class oracle. -/
+/-- **Counted union returns the union's array.** For a union-find structure $S$ and indices
+$x, y$ of $S$, the array returned by the counted union of $x$ and $y$ in $S$ equals the node array
+of the Batteries union of $x$ and $y$ in $S$ (union by rank with path compression). -/
 theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
     (countedUnion self x y).ret = (self.union x y).arr := by
   let last (first : (s : UnionFind) × {_root : Fin s.size // s.size = self.size})
@@ -205,7 +256,10 @@ theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
   rw [LinkInternal.countedLinkAux_ret]
   exact (union_carried self x y).symm
 
-/-- Exactly two FIND root tests remain after subtracting their actual carried writes. -/
+/-- **The FIND phases of a union make two more root tests than parent writes.** For a
+union-find structure $S$ and indices $x, y$ of $S$, in the counted union of $x$ and $y$ in $S$ the
+total number of root tests made by its two FIND calls equals the total number of parent writes
+they make plus $2$. -/
 theorem countedUnion_find_balance (self : UnionFind) (x y : Fin self.size) :
     (countedUnion self x y).time.1.1 = (countedUnion self x y).time.1.2 + 2 := by
   let first := Internal.countedFind self x
