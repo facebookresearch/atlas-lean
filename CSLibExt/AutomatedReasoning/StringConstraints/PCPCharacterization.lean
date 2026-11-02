@@ -36,9 +36,9 @@ The morphism (transducer) is essential: word equations plus regular
 membership alone do not obviously encode PCP, because the block
 boundaries of the top and bottom parses of one word need not line up.
 With morphisms, the index word itself carries the shared domino
-sequence. This is the same boundary that makes the closed
-straight-line fragment (with morphisms) decidable while the general
-problem is not.
+sequence. The closed straight-line fragment (with morphisms) is
+decidable (see `StraightLine.lean`); this file makes no claim about
+the general problem.
 
 What is *not* proved here, and no claim about it is made: undecidability
 of string-constraint satisfiability, in particular undecidability of

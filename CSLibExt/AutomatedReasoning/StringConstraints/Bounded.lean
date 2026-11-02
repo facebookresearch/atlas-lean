@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Bounded string constraints are decidable: the HAMPI algorithm
+# Bounded string constraints: finite-search specification
 -/
 module
 
@@ -17,37 +17,39 @@ public import Mathlib.Data.List.FinRange
 public import Mathlib.Tactic.Ring
 
 /-!
-# Bounded string constraints are decidable: the HAMPI algorithm
+# Bounded string constraints: finite-search specification
 
-HAMPI's core idea: bound the length of every string variable, then the
-search space is finite and satisfiability is decidable by explicit
-enumeration. This module formalizes that bounded-search idea (HAMPI
-itself reduces to bit-vector constraints rather than enumerating) and
-proves it sound and complete, together with a bound on the number of
-candidate assignments it checks.
+Bound the length of every string variable, then the search space is
+finite. This module formalizes that bounded-search idea as a classical
+specification (HAMPI itself reduces to bit-vector constraints rather
+than enumerating) and proves it sound and complete, together with the
+exact number of candidate assignments it checks.
 
-`boundedSatB vs φ B` enumerates every assignment of the variables in
+`boundedSatSpec vs φ B` enumerates every assignment of the variables in
 `vs` to words of length at most `B` and checks `φ` on each one.
 
 ## Cost model
 
-Cost is stated as a bound on the number of candidate assignments
-(`assignLists_length`): at most `(|Σ| + 1) ^ (B * |vs|)`. This is a
-combinatorial bound on the enumeration, not a `TimeM` time bound;
+Cost is stated as the exact number of candidate assignments
+(`assignLists_length`): `(∑_{n ≤ B} |Σ|^n) ^ |vs|`. This is a
+combinatorial count of the enumeration, not a `TimeM` time bound;
 `TimeM` accounting for the checker is future work.
 
 The enumeration functions are `noncomputable` because enumerating an
-arbitrary `Fintype` uses choice (`Finset.toList`); the decidability
-content is the proved `boundedSatB_iff`, not executability.
-`boundedSatB_iff` is a classical soundness/completeness statement; no
-executable decision procedure is provided.
+arbitrary `Fintype` uses choice (`Finset.toList`); the content is the
+proved `boundedSatSpec_iff`, not executability.
+`boundedSatSpec_iff` is a classical soundness/completeness statement; no
+executable decision procedure, solver, or decidability result is
+provided. The exact-length layers of `wordsUpTo` enumerate each word
+once, so the search does not repeat candidate assignments.
 
 ## Main results
 
-- `boundedSatB_iff`: soundness and completeness of the bounded solver.
-- `assignLists_length`: the candidate-count bound.
-- `wordsUpTo_length`: the number of words of length at most `B`
-  (counted with multiplicity) is `(|Σ| + 1) ^ B`.
+- `boundedSatSpec_iff`: soundness and completeness of the bounded-search
+  specification.
+- `assignLists_length`: the exact candidate count.
+- `wordsUpTo_length`: the number of words of length at most `B` is
+  `∑_{n ≤ B} |Σ|^n`.
 
 ## References
 
@@ -55,7 +57,8 @@ executable decision procedure is provided.
   *HAMPI: A Solver for Word Equations over Strings, Regular
   Expressions, and Context-Free Grammars*, ACM TOSEM 21(4), Nov 2012,
   pp. 25:1–25:28. HAMPI bounds string lengths and reduces to bit-vector
-  constraints; here the finite search is carried out directly.
+  constraints; here the finite search is carried out directly, as a
+  specification rather than as HAMPI's algorithm.
 -/
 
 @[expose] public section
@@ -76,57 +79,100 @@ section Words
 
 variable {α : Type*} [Fintype α]
 
-/-- All words of length at most `B` over a finite alphabet, listed with
-multiplicity. -/
-noncomputable def wordsUpTo : ℕ → List (List α)
+/-- All words of length exactly `n` over a finite alphabet, each occurring
+once: each step extends only the words of the previous length, never the
+whole `wordsUpTo` enumeration, so no word is duplicated. -/
+noncomputable def wordsOfLength : ℕ → List (List α)
   | 0 => [[]]
-  | B + 1 =>
-    wordsUpTo B ++
-      (wordsUpTo B).flatMap (fun w =>
-        (Finset.univ : Finset α).toList.map (fun a => w ++ [a]))
+  | n + 1 =>
+    (wordsOfLength n).flatMap (fun w =>
+      (Finset.univ : Finset α).toList.map (fun a => w ++ [a]))
 
-/-- The empty word is enumerated at every bound. -/
-theorem nil_mem_wordsUpTo (B : ℕ) : [] ∈ wordsUpTo (α := α) B := by
-  induction B with
-  | zero => simp [wordsUpTo]
-  | succ B ih => simp [wordsUpTo, ih, List.mem_append]
-
-/-- Membership in the enumeration is exactly the length bound. -/
-theorem mem_wordsUpTo {w : List α} {B : ℕ} :
-    w ∈ wordsUpTo (α := α) B ↔ w.length ≤ B := by
-  induction B generalizing w with
+/-- Membership in the exact-length enumeration is exactly the length
+equality. -/
+theorem mem_wordsOfLength {w : List α} {n : ℕ} :
+    w ∈ wordsOfLength (α := α) n ↔ w.length = n := by
+  induction n generalizing w with
   | zero =>
-    simp [wordsUpTo, List.length_eq_zero_iff]
-  | succ B ih =>
+    simp [wordsOfLength, List.length_eq_zero_iff]
+  | succ n ih =>
     constructor
     · intro h
-      rw [wordsUpTo, List.mem_append] at h
-      rcases h with h | h
-      · have := ih.mp h; omega
-      · rw [List.mem_flatMap] at h
-        obtain ⟨w', hw', hw⟩ := h
-        rw [List.mem_map] at hw
-        obtain ⟨a, _, rfl⟩ := hw
-        have := ih.mp hw'
-        simp only [List.length_append, List.length_singleton] at *
-        omega
+      rw [wordsOfLength, List.mem_flatMap] at h
+      obtain ⟨w', hw', hw⟩ := h
+      rw [List.mem_map] at hw
+      obtain ⟨a, _, rfl⟩ := hw
+      have := ih.mp hw'
+      simp only [List.length_append, List.length_singleton] at *
+      omega
     · intro h
-      rw [wordsUpTo, List.mem_append]
+      rw [wordsOfLength, List.mem_flatMap]
       by_cases hw : w = []
-      · exact Or.inl (hw ▸ nil_mem_wordsUpTo B)
+      · simp only [hw, List.length_nil] at h
+        omega
       · have hne : w ≠ [] := hw
         obtain ⟨w', a, rfl⟩ : ∃ w' a, w = w' ++ [a] := by
           refine ⟨w.dropLast, w.getLast hne, ?_⟩
           exact (List.dropLast_append_getLast hne).symm
-        apply Or.inr
-        rw [List.mem_flatMap]
         refine ⟨w', ?_, ?_⟩
         · apply ih.mpr
-          have hlen : (w' ++ [a]).length ≤ B + 1 := h
+          have hlen : (w' ++ [a]).length = n + 1 := h
           simp only [List.length_append, List.length_singleton] at hlen
           omega
         · rw [List.mem_map]
           exact ⟨a, Finset.mem_toList.mpr (Finset.mem_univ a), rfl⟩
+
+/-- Counting the exact-length enumeration: `|Σ| ^ n` words. -/
+theorem wordsOfLength_length (n : ℕ) :
+    (wordsOfLength (α := α) n).length = (Fintype.card α) ^ n := by
+  induction n with
+  | zero => simp [wordsOfLength]
+  | succ n ih =>
+    have hterm : ∀ w : List α,
+        ((Finset.univ : Finset α).toList.map (fun a => w ++ [a])).length
+          = Fintype.card α := by
+      intro w
+      simp [List.length_map, Finset.length_toList]
+    have hmap : (wordsOfLength (α := α) n).map
+        (fun w => ((Finset.univ : Finset α).toList.map (fun a => w ++ [a])).length)
+        = (wordsOfLength (α := α) n).map (fun _ => Fintype.card α) := by
+      congr 1
+      funext w
+      exact hterm w
+    have hsum : ((wordsOfLength (α := α) n).map
+        (fun w => ((Finset.univ : Finset α).toList.map
+          (fun a => w ++ [a])).length)).sum
+        = (Fintype.card α) ^ n * Fintype.card α := by
+      rw [hmap, sum_map_const, ih]
+    rw [wordsOfLength, List.length_flatMap, hsum, pow_succ]
+
+/-- The number of words of length at most `B`: `∑_{n ≤ B} |Σ| ^ n`. -/
+noncomputable def wordsUpToCount (B : ℕ) : ℕ :=
+  ((List.range (B + 1)).map fun n => (Fintype.card α) ^ n).sum
+
+/-- All words of length at most `B` over a finite alphabet, each occurring
+once: the concatenation of the exact-length layers `0, …, B`. -/
+noncomputable def wordsUpTo (B : ℕ) : List (List α) :=
+  (List.range (B + 1)).flatMap (fun n => wordsOfLength (α := α) n)
+
+/-- The empty word is enumerated at every bound. -/
+theorem nil_mem_wordsUpTo (B : ℕ) : [] ∈ wordsUpTo (α := α) B := by
+  rw [wordsUpTo, List.mem_flatMap]
+  exact ⟨0, List.mem_range.mpr (Nat.zero_lt_succ B), by simp [wordsOfLength]⟩
+
+/-- Membership in the enumeration is exactly the length bound. -/
+theorem mem_wordsUpTo {w : List α} {B : ℕ} :
+    w ∈ wordsUpTo (α := α) B ↔ w.length ≤ B := by
+  constructor
+  · intro h
+    rw [wordsUpTo, List.mem_flatMap] at h
+    obtain ⟨n, hn, hw⟩ := h
+    rw [List.mem_range] at hn
+    rw [mem_wordsOfLength] at hw
+    omega
+  · intro h
+    rw [wordsUpTo, List.mem_flatMap]
+    exact ⟨w.length, List.mem_range.mpr (by omega), mem_wordsOfLength.mpr rfl⟩
 
 /-- Summing a constant over a list. -/
 theorem sum_map_const {β : Type*} {l : List β} {c : ℕ} :
@@ -135,30 +181,11 @@ theorem sum_map_const {β : Type*} {l : List β} {c : ℕ} :
   | nil => simp
   | cons _ l ih => simp only [List.map_cons, List.sum_cons, List.length_cons, ih]; ring
 
-/-- Counting the enumeration: `(|Σ| + 1) ^ B` words with multiplicity. -/
+/-- Counting the enumeration: `∑_{n ≤ B} |Σ| ^ n` words, the number of
+distinct words of length at most `B`. -/
 theorem wordsUpTo_length (B : ℕ) :
-    (wordsUpTo (α := α) B).length = (Fintype.card α + 1) ^ B := by
-  induction B with
-  | zero => simp [wordsUpTo]
-  | succ B ih =>
-    have hterm : ∀ w : List α,
-        ((Finset.univ : Finset α).toList.map (fun a => w ++ [a])).length
-          = Fintype.card α := by
-      intro w
-      simp [List.length_map, Finset.length_toList]
-    have hmap : (wordsUpTo (α := α) B).map
-        (fun w => ((Finset.univ : Finset α).toList.map (fun a => w ++ [a])).length)
-        = (wordsUpTo (α := α) B).map (fun _ => Fintype.card α) := by
-      congr 1
-      funext w
-      exact hterm w
-    have hsum : ((wordsUpTo (α := α) B).map
-        (fun w => ((Finset.univ : Finset α).toList.map
-          (fun a => w ++ [a])).length)).sum
-        = (Fintype.card α + 1) ^ B * Fintype.card α := by
-      rw [hmap, sum_map_const, ih]
-    rw [wordsUpTo, List.length_append, List.length_flatMap, ih, hsum, pow_succ]
-    ring
+    (wordsUpTo (α := α) B).length = wordsUpToCount (α := α) B := by
+  simp only [wordsUpToCount, wordsUpTo, List.length_flatMap, wordsOfLength_length]
 
 end Words
 
@@ -216,7 +243,7 @@ section Assignments
 variable {α : Type*} {V : Type*} [Fintype α]
 
 /-- All assignments of the variables in `vs` to words of length at most
-`B`, as association lists, listed with multiplicity (as in `wordsUpTo`). -/
+`B`, as association lists, each occurring once (as in `wordsUpTo`). -/
 noncomputable def assignLists : List V → ℕ → List (List (V × List α))
   | [], _ => [[]]
   | i :: vs, B => (assignLists vs B).flatMap
@@ -270,59 +297,64 @@ theorem mem_assignLists {vs : List V} {l : List (V × List α)} {B : ℕ} :
           rw [List.mem_map]
           exact ⟨w, mem_wordsUpTo.mpr hw, rfl⟩⟩
 
-/-- Counting the assignment enumeration. -/
+/-- Counting the assignment enumeration: the exact number of candidate
+assignments is `(wordsUpToCount B) ^ |vs|`. -/
 theorem assignLists_length (vs : List V) (B : ℕ) :
-    (assignLists (α := α) vs B).length = (Fintype.card α + 1) ^ (B * vs.length) := by
+    (assignLists (α := α) vs B).length
+      = (wordsUpToCount (α := α) B) ^ vs.length := by
   induction vs with
   | nil => simp [assignLists]
   | cons i vs ih =>
-    have hexp : B * (i :: vs).length = B * vs.length + B := by
-      simp [List.length_cons, Nat.mul_succ]
     have hterm : ∀ l : List (V × List α),
         ((wordsUpTo (α := α) B).map (fun w => (i, w) :: l)).length
-          = (Fintype.card α + 1) ^ B := by
+          = wordsUpToCount (α := α) B := by
       intro l
       rw [List.length_map, wordsUpTo_length]
     have hmap : (assignLists (α := α) vs B).map
         (fun l => ((wordsUpTo (α := α) B).map (fun w => (i, w) :: l)).length)
-        = (assignLists (α := α) vs B).map (fun _ => (Fintype.card α + 1) ^ B) := by
+        = (assignLists (α := α) vs B).map (fun _ => wordsUpToCount (α := α) B) := by
       congr 1
       funext l
       exact hterm l
     have hsum : ((assignLists (α := α) vs B).map
         (fun l => ((wordsUpTo (α := α) B).map (fun w => (i, w) :: l)).length)).sum
-        = (Fintype.card α + 1) ^ (B * vs.length) * (Fintype.card α + 1) ^ B := by
+        = (wordsUpToCount (α := α) B) ^ vs.length
+          * (wordsUpToCount (α := α) B) := by
       rw [hmap, sum_map_const, ih]
-    rw [assignLists, List.length_flatMap, hexp, pow_add, hsum]
+    rw [assignLists, List.length_flatMap, hsum]
+    simp only [List.length_cons, pow_succ]
 
 end Assignments
 
-section Solver
+section Specification
 
 variable {α : Type*} {V : Type*} [Fintype α] [DecidableEq α] [DecidableEq V]
 
-/-- The bounded solver: enumerate bounded assignments and check `φ` on
-each one. -/
-noncomputable def boundedSatB (vs : List V) (φ : Formula α V) (B : ℕ) : Bool :=
+/-- The bounded-search specification: enumerate bounded assignments and
+check `φ` on each one. This is a classical specification, not an
+executable decision procedure: `assignLists` is `noncomputable`, so
+this Boolean cannot be evaluated by `decide`. -/
+noncomputable def boundedSatSpec (vs : List V) (φ : Formula α V) (B : ℕ) : Bool :=
   (assignLists vs B).any (fun l => satB (getVal l) φ)
 
-/-- Soundness and completeness of the bounded solver: it reports `true`
-exactly when `φ` has a solution whose values on `vs` have length at
-most `B`. The hypothesis is that `vs` covers the variables of `φ`. -/
-theorem boundedSatB_iff (vs : List V) (φ : Formula α V) (B : ℕ)
+/-- Soundness and completeness of the bounded-search specification: it
+reports `true` exactly when `φ` has a solution whose values on `vs`
+have length at most `B`. The hypothesis is that `vs` covers the
+variables of `φ`. -/
+theorem boundedSatSpec_iff (vs : List V) (φ : Formula α V) (B : ℕ)
     (hvars : ∀ i ∈ varsOfFormula φ, i ∈ vs) :
-    boundedSatB vs φ B = true ↔
+    boundedSatSpec vs φ B = true ↔
       ∃ σ : V → List α, (∀ i ∈ vs, (σ i).length ≤ B) ∧ Sat σ φ := by
   constructor
   · intro h
-    rw [boundedSatB, List.any_eq_true] at h
+    rw [boundedSatSpec, List.any_eq_true] at h
     obtain ⟨l, hl, hsat⟩ := h
     obtain ⟨hkeys, hvals⟩ := mem_assignLists.mp hl
     refine ⟨getVal l, ?_, satB_iff.mp hsat⟩
     intro i hi
     exact getVal_length_le hvals (by rw [hkeys]; exact hi)
   · rintro ⟨σ, hbound, hsat⟩
-    rw [boundedSatB, List.any_eq_true]
+    rw [boundedSatSpec, List.any_eq_true]
     refine ⟨vs.map fun i => (i, σ i), ?_, ?_⟩
     · rw [mem_assignLists]
       refine ⟨?_, ?_⟩
@@ -336,6 +368,6 @@ theorem boundedSatB_iff (vs : List V) (φ : Formula α V) (B : ℕ)
     · rw [satB_iff]
       exact (sat_congr (fun i hi => getVal_map (hvars i hi))).mpr hsat
 
-end Solver
+end Specification
 
 end Cslib.AutomatedReasoning.StringConstraints

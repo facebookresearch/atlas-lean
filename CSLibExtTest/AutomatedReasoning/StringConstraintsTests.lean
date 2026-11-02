@@ -18,12 +18,12 @@ public import CSLibExt.AutomatedReasoning.StringConstraints.PCPCharacterization
 # String-constraint tests: boundary checks
 
 End-to-end exercises for the string-constraint formalization: Levi's
-lemma, the bounded solver on a satisfiable and an unsatisfiable
-formula, the closed straight-line fold on a two-definition system, the PCP
-encoding on a two-domino instance, and the SAT encoding on a
-one-clause formula. The bounded-solver checks go through
-`boundedSatB_iff` (the solver is `noncomputable`, so they are not
-evaluated by `decide`).
+lemma, the bounded-search specification on a satisfiable and an
+unsatisfiable formula, the closed straight-line fold on a
+two-definition system, the PCP encoding on a two-domino instance, and
+the SAT encoding on a one-clause formula. The bounded-specification
+checks go through `boundedSatSpec_iff` (the specification is
+`noncomputable`, so they are not evaluated by `decide`).
 -/
 
 @[expose] public section
@@ -38,17 +38,17 @@ open Cslib.Logic.PL
 example {a b : List Bool} (h : [true] ++ a = [true] ++ b) : a = b :=
   List.append_cancel_left h
 
-/-- The bounded solver reports a satisfiable equation. -/
-example : boundedSatB [0]
+/-- The bounded-search specification reports a satisfiable equation. -/
+example : boundedSatSpec [0]
     (Formula.atom (Atom.eq (Term.var (0 : Fin 1)) (Term.const [true]))) 1 = true := by
   have hvars : ∀ i ∈ varsOfFormula
       (Formula.atom (Atom.eq (Term.var (0 : Fin 1)) (Term.const [true]))), i ∈ [0] := by
     decide
-  rw [boundedSatB_iff _ _ _ hvars]
+  rw [boundedSatSpec_iff _ _ _ hvars]
   exact ⟨fun _ => [true], fun _ _ => by simp, by simp [SatAtom]⟩
 
-/-- The bounded solver reports a contradictory pair of equations. -/
-example : boundedSatB [0]
+/-- The bounded-search specification reports a contradictory pair of equations. -/
+example : boundedSatSpec [0]
     (Formula.and (Formula.atom (Atom.eq (Term.var (0 : Fin 1)) (Term.const [true])))
       (Formula.atom (Atom.eq (Term.var (0 : Fin 1)) (Term.const [false])))) 1
     = false := by
@@ -58,7 +58,7 @@ example : boundedSatB [0]
     decide
   rw [Bool.eq_false_iff]
   intro h
-  rw [boundedSatB_iff _ _ _ hvars] at h
+  rw [boundedSatSpec_iff _ _ _ hvars] at h
   obtain ⟨σ, -, hSat⟩ := h
   simp [sat_and, SatAtom] at hSat
   simp [hSat.1] at hSat
@@ -182,11 +182,11 @@ theorem twoClause_unsat : ¬ CNFSat ([[(0, true)], [(0, false)]] : CNF) := by
   rw [hvx] at hvx'
   simp at hvx'
 
-/-- The bounded solver rejects the encoding of the contradiction. -/
-example : boundedSatB [0]
+/-- The bounded-search specification rejects the encoding of the contradiction. -/
+example : boundedSatSpec [0]
     (encodeCNF ([[(0, true)], [(0, false)]] : CNF)) 1 = false := by
   rw [Bool.eq_false_iff, ne_eq,
-    ← cnfSat_iff_boundedSatB ([[(0, true)], [(0, false)]] : CNF) [0] (by decide)]
+    ← cnfSat_iff_boundedSatSpec ([[(0, true)], [(0, false)]] : CNF) [0] (by decide)]
   exact twoClause_unsat
 
 end StringConstraintsTests

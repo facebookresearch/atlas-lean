@@ -23,9 +23,9 @@ Boolean satisfiability translates to satisfiability of bounded string
 constraints at length bound `1`: a Boolean variable becomes a string
 variable whose value is `[true]` or `[false]`, and a clause becomes a
 disjunction of word equations. This module proves the translation
-correct (the iff), and bridges it to the bounded solver: `CNFSat φ`
-iff the bounded solver accepts the encoding at bound `1`
-(`cnfSat_iff_boundedSatB`), so the encoding lands in the finite
+correct (the iff), and bridges it to the bounded-search specification:
+`CNFSat φ` iff the specification holds of the encoding at bound `1`
+(`cnfSat_iff_boundedSatSpec`), so the encoding lands in the finite
 search space of `Bounded.lean`.
 
 What is *not* proved here: NP-hardness and NP membership of bounded
@@ -33,7 +33,7 @@ string-constraint satisfiability. NP-hardness would need a formal
 polynomial-time bound for the translation (the translation is a
 linear syntactic fold, but no formal time bound is proved), and NP
 membership would need an executable polynomial-time checker
-(`boundedSatB` is the checker by `boundedSatB_iff`, but it is
+(`boundedSatSpec` is the specification by `boundedSatSpec_iff`, but it is
 `noncomputable`, so no executable checker is formalized). Formal
 membership in CSLib's `NP` complexity class is not claimed; the scope
 note in `Bounded.lean` covers the cost model.
@@ -42,7 +42,7 @@ note in `Bounded.lean` covers the cost model.
 
 - `encodeCNF`: the SAT-to-string-constraints translation.
 - `cnfSat_iff_stringSat`: correctness of the translation.
-- `cnfSat_iff_boundedSatB`: the bridge to the bounded solver.
+- `cnfSat_iff_boundedSatSpec`: the bridge to the bounded-search specification.
 
 ## References
 
@@ -102,15 +102,15 @@ theorem cnfSat_iff_stringSat (φ : CNF) :
     | true => simp [hσ]
     | false => simp [hσ]
 
-/-- **SAT iff the bounded solver accepts the encoding** at length
-bound `1`, for any variable list covering the variables of the
-encoding. This is the bridge from the reduction to the bounded
-solver: `boundedSatB_iff` (soundness / completeness of the finite
-search) plus the reduction correctness. -/
-theorem cnfSat_iff_boundedSatB (φ : CNF) (vs : List ℕ)
+/-- **SAT iff the bounded-search specification holds of the encoding** at
+length bound `1`, for any variable list covering the variables of the
+encoding. This is the bridge from the reduction to the bounded-search
+specification: `boundedSatSpec_iff` (soundness / completeness of the
+finite search) plus the reduction correctness. -/
+theorem cnfSat_iff_boundedSatSpec (φ : CNF) (vs : List ℕ)
     (hvars : ∀ i ∈ varsOfFormula (encodeCNF φ), i ∈ vs) :
-    CNFSat φ ↔ boundedSatB vs (encodeCNF φ) 1 = true := by
-  rw [cnfSat_iff_stringSat, boundedSatB_iff vs _ 1 hvars]
+    CNFSat φ ↔ boundedSatSpec vs (encodeCNF φ) 1 = true := by
+  rw [cnfSat_iff_stringSat, boundedSatSpec_iff vs _ 1 hvars]
   constructor
   · rintro ⟨σ, hbound, hSat⟩
     exact ⟨σ, fun i _ => hbound i, hSat⟩
