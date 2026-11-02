@@ -13,8 +13,13 @@ public import CSLibExt.Languages.PiCalculus.Scoping
 /-!
 # Finite sessions with unrestricted name data
 
-This is an original restricted, sort-erased model of binary sessions on the
-existing π syntax, not a formalization of the complete session calculus.
+This is a project-authored restricted, sort-erased model of binary sessions on
+the existing π syntax, not a formalization of the complete session calculus.
+It carries forward an earlier revision of this same module, development
+revision `a578d21dd840e286f88b1799fee9403c902b6f24`, preserved verbatim at
+`docs/provenance/pi-scoping/finite-session-basic.lean.txt`.
+The directory `README.md` maps the reused and adapted declarations to that
+source snapshot and identifies the later additions.
 Its send/receive/end sequencing and duality are grounded in Honda, Vasconcelos
 and Kubo, *Language primitives and type discipline for structured
 communication-based programming*, ESOP 1998, LNCS 1381, pp. 122–138:
