@@ -15,15 +15,10 @@ public import CSLibExtTest.Complexity.BooleanFunctions.KKL.BKKKLLevel2
 
 Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2Equivalences`:
 
-* `bkt2c_remaining_iff_levelGe2`, used to transfer the dictator refutation of
-  `bkt2_levelGe2MasterResidue` (from the `BKKKLLevel2` test) to `bkt2_RemainingGoal`: both
-  predicates fail for every `q > 1/2`;
+* `ctc_remainingGoal_false_of_half_lt`: `bkt2_RemainingGoal q` fails for every `q > 1/2`;
 * `bkt2c_weightGap_eq_target_sub_damped` on the one-variable dictator (both sides are empty
   sums) and on a general two-variable function, `bkt2c_gap_vanishes_at_p_half`,
-  `bkt2_weightGap_nonneg` and `bkt2c_truncDamped_capped` at concrete parameters;
-* the conditional chain `bkt2c_remaining_of_levelGe2`, `bkt2c_levelGe2_of_remaining`,
-  `bkt2c_master_of_remaining`, `bkt2c_rhoOptimise_of_remaining` on the empty window
-  `q = 1/2`, the only instance available.
+  `bkt2_weightGap_nonneg` and `bkt2c_truncDamped_capped` at concrete parameters.
 -/
 
 @[expose] public section
@@ -33,21 +28,9 @@ namespace StatMechTest.BooleanFunctions.BKKKLLevel2Equivalences
 open Finset StatMech StatMech.OSSS StatMech.Probability
 open StatMechTest.BooleanFunctions.BKKKLLevel2 (maxInfl_constFalse)
 
-/-- Through `bkt2c_remaining_iff_levelGe2`, `bkt2_RemainingGoal q` fails for every `q > 1/2`. -/
+/-- `bkt2_RemainingGoal q` fails for every `q > 1/2`. -/
 example {q : ℝ} (hq : 1 / 2 < q) : ¬ bkt2_RemainingGoal q :=
-  fun H => ctc_levelGe2_false_of_half_lt hq (bkt2c_remaining_iff_levelGe2.mp H)
-
-/-- `bkt2_levelGe2MasterResidue q` holds vacuously for `q ≤ 1/2`. -/
-lemma levelGe2_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : bkt2_levelGe2MasterResidue q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : bkt2_RemainingGoal (1 / 2) := bkt2c_remaining_of_levelGe2 (levelGe2_of_le_half le_rfl)
-example : bkt2_levelGe2MasterResidue (1 / 2) :=
-  bkt2c_levelGe2_of_remaining (bkt2c_remaining_of_levelGe2 (levelGe2_of_le_half le_rfl))
-example : pro_PBiasedMaster (1 / 2) :=
-  bkt2c_master_of_remaining (bkt2c_remaining_iff_levelGe2.mpr (levelGe2_of_le_half le_rfl))
-example : ptn_RhoOptimise (1 / 2) :=
-  bkt2c_rhoOptimise_of_remaining (bkt2c_remaining_iff_levelGe2.mpr (levelGe2_of_le_half le_rfl))
+  ctc_remainingGoal_false_of_half_lt hq
 
 /-- `bkt2c_weightGap_eq_target_sub_damped` with cutoff `k = 1`: all three sums are empty. -/
 example {p u : ℝ} (φ : ConfigSpace (Fin 2) → Bool) :

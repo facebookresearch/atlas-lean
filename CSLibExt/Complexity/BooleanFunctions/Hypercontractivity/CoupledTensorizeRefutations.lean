@@ -267,10 +267,20 @@ theorem ctc_levelGe2_false_of_half_lt {q : ℝ} (hq : 1 / 2 < q) :
   have hpowpos : (0 : ℝ) < (1 - 1 / 2) ^ k := by positivity
   nlinarith [mul_pos hσ hpowpos]
 
-/-- `bkt2_RemainingGoal q` fails for every `q > 1/2`. Strengthens `ctc_remainingGoal_false`. -/
+/-- `bkt2_RemainingGoal q` fails for every `q > 1/2`. Strengthens `ctc_remainingGoal_false`.
+Proved directly on the dictator, not via the (removed) remaining-to-level-≥2 chain. -/
 theorem ctc_remainingGoal_false_of_half_lt {q : ℝ} (hq : 1 / 2 < q) :
-    ¬ bkt2_RemainingGoal q :=
-  fun H => ctc_levelGe2_false_of_half_lt hq (bkt2_levelGe2_of_remaining H)
+    ¬ bkt2_RemainingGoal q := by
+  intro H
+  obtain ⟨hp, hp0, hp1⟩ := ctc_windowPt_mem hq
+  set p := (1 / 2 + min q 1) / 2
+  obtain ⟨k, -, h⟩ := H p hp hp1 (fun ω : ConfigSpace (Fin 1) => ω 0) (1 / 2)
+    (by norm_num) (by norm_num)
+  rw [ctc_ge2_empty, Finset.sum_empty, ctc_maxInfl, ctc_totalInfl, ctc_L1 _ hp0 hp1] at h
+  rw [ptn_sigma_sq hp0 hp1, Real.one_rpow] at h
+  have hσ : 0 < p * (1 - p) := by nlinarith
+  have hpowpos : (0 : ℝ) < (1 - 1 / 2) ^ k := by positivity
+  nlinarith [h, mul_pos hσ hpowpos]
 
 /-- `mil_VarScalarCore q` fails for every `q > 1/2`: the one-variable dictator at the midpoint of
 the window violates it. Strengthens `ctc_varScalarCore_false` (`q > 3/4`). -/

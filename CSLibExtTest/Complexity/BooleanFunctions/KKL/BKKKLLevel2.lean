@@ -18,18 +18,14 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2`:
 
 * `bkt2_damped_le_target` and `bkt2_weightGap_nonneg` at `p = 3/4`, `u = 1/2`, `d = 3`,
   `bkt2_target_eq_damped_of_p_half`, and `bkt2_capped_levelGe2_damped` /
-  `bkt2_truncDamped_le` on the one-variable dictator, where the level-`≥ 2` sum is empty;
-* the conditional chain `bkt2_levelGe2_of_remaining`, `bkt2_master_of_levelGe2`,
-  `bkt2_master_of_remaining`, `bkt2_rhoOptimise_of_remaining` on the only instance available,
-  the empty window `q = 1/2`.
+  `bkt2_truncDamped_le` on the one-variable dictator, where the level-`≥ 2` sum is empty.
 
 Window predicates: the library refutes `bkt2_levelGe2MasterResidue q` and
 `bkt2_RemainingGoal q` for `q > 3/4` (`ctc_levelGe2_false`, `ctc_remainingGoal_false`),
 tested here at `q = 1`, and for every `q > 1/2` (`ctc_levelGe2_false_of_half_lt`,
 `ctc_remainingGoal_false_of_half_lt`), tested at `q = 3/4` and `q = 3/5`: for the one-variable
-dictator the level-`≥ 2` sum is `0`, while the right-hand side is `-4σ_p²(1-u)^k < 0`. So every
-theorem in this module that assumes one of the two predicates on a window with `q > 1/2` is
-vacuous.
+dictator the level-`≥ 2` sum is `0`, while the right-hand side is `-4σ_p²(1-u)^k < 0`. No
+theorem in this module assumes either predicate except these refutations.
 
 The maximal influence of the constant-false indicator is `0`, so
 `0 < maxInfl ν 0 ^ (u / (2 - u))` never holds; this is checked below.
@@ -45,17 +41,6 @@ example : ¬ bkt2_levelGe2MasterResidue 1 := ctc_levelGe2_false (by norm_num)
 example : ¬ bkt2_RemainingGoal 1 := ctc_remainingGoal_false (by norm_num)
 example : ¬ bkt2_levelGe2MasterResidue (3 / 4) := ctc_levelGe2_false_of_half_lt (by norm_num)
 example : ¬ bkt2_RemainingGoal (3 / 5) := ctc_remainingGoal_false_of_half_lt (by norm_num)
-
-/-- `bkt2_RemainingGoal q` holds vacuously for `q ≤ 1/2`. -/
-lemma remainingGoal_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : bkt2_RemainingGoal q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : bkt2_levelGe2MasterResidue (1 / 2) :=
-  bkt2_levelGe2_of_remaining (remainingGoal_of_le_half le_rfl)
-example : pro_PBiasedMaster (1 / 2) :=
-  bkt2_master_of_levelGe2 (bkt2_levelGe2_of_remaining (remainingGoal_of_le_half le_rfl))
-example : pro_PBiasedMaster (1 / 2) := bkt2_master_of_remaining (remainingGoal_of_le_half le_rfl)
-example : ptn_RhoOptimise (1 / 2) := bkt2_rhoOptimise_of_remaining (remainingGoal_of_le_half le_rfl)
 
 example : ((1 - 1 / 2) * (4 * (3 / 4 : ℝ) * (1 - 3 / 4))) ^ (3 - 1) ≤ (1 - 1 / 2) ^ (3 - 1) :=
   bkt2_damped_le_target (by norm_num) (by norm_num) (by norm_num) 3

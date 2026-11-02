@@ -16,9 +16,10 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2Equivalences
 
 `fs_lever` (a weighted AM–GM step), the degree-to-undegree comparison, the
 Fourier–Sobolev high-degree estimate, and `q`-norms of indicators.
-`bkt2f_meanInflResidue` is a uniform mean-influence estimate over `(1/2, q)` implying the
-level-≥2, remaining-goal, master and rho-optimise estimates. Status: the residue is
-refuted for every `q > 1/2` (`bkt2f_meanInflResidue_refutable`).
+`bkt2f_meanInflResidue` is a uniform mean-influence estimate over `(1/2, q)`. Status:
+the residue is refuted for every `q > 1/2` (`bkt2f_meanInflResidue_refutable`), and
+it is kept only as the statement of that refutation; no chain derives the level-≥2,
+remaining-goal, master or rho-optimise estimates from it.
 
 ## Main definitions
 
@@ -28,8 +29,6 @@ refuted for every `q > 1/2` (`bkt2f_meanInflResidue_refutable`).
 ## Main results
 
 * `fs_lever`, `fs_degree_to_undegree`, `bkt2f_FS_highDegree`: the Fourier–Sobolev lever.
-* `bkt2f_levelGe2_of_meanInfl`, `bkt2f_remaining_of_meanInfl`,
-  `bkt2f_master_of_meanInfl`, `bkt2f_rhoOptimise_of_meanInfl`: the conditional chain.
 -/
 
 open scoped BigOperators
@@ -204,27 +203,6 @@ def bkt2f_meanInflResidue (q : ℝ) : Prop :=
                 * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
               - 4 * ∑ S ∈ univ.filter (fun S : Finset E => S.card = 1),
                   (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
-
-theorem bkt2f_levelGe2_of_meanInfl {q : ℝ} (H : bkt2f_meanInflResidue q) :
-    bkt2_levelGe2MasterResidue q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  have hp0 : 0 < p := by have := hp.1; linarith
-  obtain ⟨u', hu'0, hlt, hcap, k, hk1, hbudget⟩ := H p hp hp1 φ u hu0 hu1
-  refine ⟨k, hk1, ?_⟩
-  have hFS := bkt2f_FS_highDegree hp0 hp1 φ hu1 hu'0 hlt hcap k
-  exact le_trans hFS hbudget
-
-theorem bkt2f_remaining_of_meanInfl {q : ℝ} (H : bkt2f_meanInflResidue q) :
-    bkt2_RemainingGoal q :=
-  bkt2c_remaining_of_levelGe2 (bkt2f_levelGe2_of_meanInfl H)
-
-theorem bkt2f_master_of_meanInfl {q : ℝ} (H : bkt2f_meanInflResidue q) :
-    pro_PBiasedMaster q :=
-  bkt2_master_of_remaining (bkt2f_remaining_of_meanInfl H)
-
-theorem bkt2f_rhoOptimise_of_meanInfl {q : ℝ} (H : bkt2f_meanInflResidue q) :
-    ptn_RhoOptimise q :=
-  bkt2_rhoOptimise_of_remaining (bkt2f_remaining_of_meanInfl H)
 
 theorem bkt2f_gap_vanishes_at_p_half {u : ℝ} (d : ℕ) :
     (1 - u) ^ (d - 1) - (((1 - u) * (4 * (1/2 : ℝ) * (1 - 1/2))) ^ (d - 1)) = 0 := by

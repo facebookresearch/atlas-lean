@@ -18,8 +18,10 @@ Fourier-mass, variance and influence computations for indicators: the variance i
 Fourier mass bounded by degree weight, the Poincaré inequality (`mil_poincare`:
 `var ≤ σ_p² · totalInfl`), level-1 and level-≥2 mass bounded by variance, and exact
 computations for the constant-true function. `mil_VarScalarCore` is a uniform var-scalar
-estimate over `(1/2, q)` implying the level-≥2, master and rho-optimise estimates.
-Status: the core is refuted for every `q > 1/2` (`ctc_varScalarCore_false_of_half_lt`).
+estimate over `(1/2, q)`.
+Status: the core is refuted for every `q > 1/2` (`ctc_varScalarCore_false_of_half_lt`),
+and it is kept only as the statement of that refutation; no chain derives the level-≥2,
+master or rho-optimise estimates from it.
 Also `bkt2f_meanInflResidue_refutable`: the mean-influence residue fails for all `q > 1/2`.
 
 ## Main definitions
@@ -31,8 +33,6 @@ Also `bkt2f_meanInflResidue_refutable`: the mean-influence residue fails for all
 
 * `mil_var_eq`, `mil_fourierMass_le_degreeWeight`, `mil_poincare`,
   `mil_level1_le_var`, `mil_levelGe2_le_var`: the variance/influence toolkit.
-* `mil_levelGe2_of_var`, `mil_master_of_varScalar`, `mil_rhoOptimise_of_varScalar`:
-  the conditional chain from the var-scalar core.
 -/
 
 open scoped BigOperators
@@ -271,29 +271,5 @@ def mil_VarScalarCore (q : ℝ) : Prop :=
                     ^ (u / (2 - u))
                   - (1 - u) ^ k)
                 * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-
-theorem mil_levelGe2_of_var {q : ℝ} (H : mil_VarScalarCore q) :
-    bkt2_levelGe2MasterResidue q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  have hp0 : 0 < p := by have := hp.1; linarith
-  obtain ⟨k, hk1, hvar⟩ := H p hp hp1 φ u hu0 hu1
-  refine ⟨k, hk1, ?_⟩
-  set μ := OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) with hμ
-  have hge2 := mil_levelGe2_le_var hp0 hp1 φ hu0 hu1 k
-  rw [← hμ] at hge2
-  have hlvl1var := mil_level1_le_var hp0 hp1 φ
-  rw [← hμ] at hlvl1var
-  have h4lvl1 : 4 * ∑ S ∈ univ.filter (fun S : Finset E => S.card = 1),
-      (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2 ≤ 4 * (μ * (1 - μ)) :=
-    mul_le_mul_of_nonneg_left hlvl1var (by norm_num)
-  linarith [hge2, hvar, h4lvl1]
-
-theorem mil_master_of_varScalar {q : ℝ} (H : mil_VarScalarCore q) :
-    pro_PBiasedMaster q :=
-  bkt2_master_of_levelGe2 (mil_levelGe2_of_var H)
-
-theorem mil_rhoOptimise_of_varScalar {q : ℝ} (H : mil_VarScalarCore q) :
-    ptn_RhoOptimise q :=
-  pro_rhoOptimise_of_master (mil_master_of_varScalar H)
 
 end StatMech.Probability

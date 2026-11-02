@@ -24,9 +24,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapImplications`:
 
 Window predicate: `vgc_VarPowerCore q` is refuted for every `q > 1/2`
 (`vgp_varPowerCore_refutable`, tested at `q = 1`; also `ctc_varPowerCore_false` for
-`q > 3/4`). The chain `vgc_varGapCore_of_varPower`, `vgc_levelGe2_of_varPower`,
-`vgc_remaining_of_varPower`, `vgc_master_of_varPower`, `vgc_rhoOptimise_of_varPower` is run
-on the empty window `q = 1/2` only.
+`q > 3/4`). No chain is run from it.
 -/
 
 @[expose] public section
@@ -70,16 +68,5 @@ example : (1 - (2 / 3 : ℝ)) ^ (4 - 1) - ((1 - 2 / 3) * (4 * (1 / 2 : ℝ) * (1
 
 example : ¬ vgc_VarPowerCore 1 := vgp_varPowerCore_refutable (by norm_num)
 example : ¬ vgc_VarPowerCore 1 := ctc_varPowerCore_false (by norm_num)
-
-/-- `vgc_VarPowerCore q` holds vacuously for `q ≤ 1/2`. -/
-lemma varPowerCore_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : vgc_VarPowerCore q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : bkt2p_VarGapCore (1 / 2) := vgc_varGapCore_of_varPower (varPowerCore_of_le_half le_rfl)
-example : bkt2_levelGe2MasterResidue (1 / 2) :=
-  vgc_levelGe2_of_varPower (varPowerCore_of_le_half le_rfl)
-example : bkt2_RemainingGoal (1 / 2) := vgc_remaining_of_varPower (varPowerCore_of_le_half le_rfl)
-example : pro_PBiasedMaster (1 / 2) := vgc_master_of_varPower (varPowerCore_of_le_half le_rfl)
-example : ptn_RhoOptimise (1 / 2) := vgc_rhoOptimise_of_varPower (varPowerCore_of_le_half le_rfl)
 
 end StatMechTest.BooleanFunctions.VarGapImplications

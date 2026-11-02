@@ -18,20 +18,17 @@ public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.GlobalLSI
 The per-coordinate log-Sobolev inequality, Dirichlet-form Fourier identities, reindexing of
 the derivative, entropy and Dirichlet forms, the global log-Sobolev inequality and its
 spectral form, and the noise-operator version. `fsc2_EntMassFamily` holds for every `p`.
-The `fsc2_DampingHardResidue` chain (residue implies damping witness, rho-optimise and
-p-biased hypercontractivity) is conditional: the residue is not proved for any `q > 1/2`.
+There is no residue chain here: the damping estimate that a residue would have packaged
+is not proved, so no API derives damping, rho-optimise or hypercontractivity from it.
 
 ## Main definitions
 
 * `fsc2_EntMassFamily`: the entropy-mass family predicate (holds for all `p`).
-* `fsc2_DampingHardResidue`: the uniform damping-hard residue over a window `(1/2, q)`.
 
 ## Main results
 
 * `fsc2_perCoord_lsi`: the per-coordinate log-Sobolev inequality.
 * `fsc2_globalLSI`, `fsc2_lsi_spectral`: the global and spectral log-Sobolev inequalities.
-* `fsc2_dampingWitness_of_residue`, `fsc2_rhoOptimise_of_residue`,
-  `fsc2_PBiasedHC_of_residue`: the conditional chain from the residue.
 -/
 
 open scoped BigOperators
@@ -230,42 +227,6 @@ theorem fsc2_entMassFamily_holds {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     {E : Type} [Fintype E] [DecidableEq E] (φ : ConfigSpace E → Bool) :
     fsc2_EntMassFamily p φ :=
   fun ρ _ _ => fsc2_lsi_spectral_noiseOp hp0 hp1 ρ (fun ω => if φ ω then (1 : ℝ) else 0)
-
-/-- The uniform damping-hard residue over a window `(1/2, q)`. Not proved for any
-`q > 1/2`. -/
-def fsc2_DampingHardResidue (q : ℝ) : Prop :=
-  ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
-    (φ : ConfigSpace E → Bool),
-    0 < OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) →
-      0 < maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) →
-      maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-        < Real.exp (-(1 / (2 * (p * (1 - p))))) →
-      fsc2_EntMassFamily p φ →
-        pen_dampedMass p (Real.exp (-(1 / (2 * (p * (1 - p)))))) (fun ω => if φ ω then (1 : ℝ) else 0)
-          ≤ maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-            * OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-
-theorem fsc2_dampingHard_of_residue {q : ℝ} (H : fsc2_DampingHardResidue q) :
-    esa_DampingHard q := by
-  intro p hp hp1 E _ _ _ φ hVar hδpos hδsmall
-  have hp0 : 0 < p := by have := hp.1; linarith
-  obtain ⟨hr0pos, hr0lt1, hr0bal⟩ := esa_logBalance_threshold hp0 hp1
-  have hfam : fsc2_EntMassFamily p φ := fsc2_entMassFamily_holds hp0 hp1 φ
-  have hDamp := H p hp hp1 φ hVar hδpos hδsmall hfam
-  refine ⟨Real.exp (-(1 / (2 * (p * (1 - p))))), hr0pos, hr0lt1, hDamp, ?_⟩
-  exact le_of_eq hr0bal
-
-theorem fsc2_dampingWitness_of_residue {q : ℝ} (H : fsc2_DampingHardResidue q) :
-    pen_DampingWitness q :=
-  esa_dampingWitness_of_hard (fsc2_dampingHard_of_residue H)
-
-theorem fsc2_rhoOptimise_of_residue {q : ℝ} (H : fsc2_DampingHardResidue q) :
-    ptn_RhoOptimise q :=
-  esa_rhoOptimise_of_hard (fsc2_dampingHard_of_residue H)
-
-theorem fsc2_PBiasedHC_of_residue {q : ℝ} (hq : q ≤ 1) (H : fsc2_DampingHardResidue q) :
-    kpb_PBiasedHC q :=
-  esa_PBiasedHC_of_hard hq (fsc2_dampingHard_of_residue H)
 
 theorem fsc2_residue_nonvac {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     {E : Type} [Fintype E] [DecidableEq E] (φ : ConfigSpace E → Bool) :

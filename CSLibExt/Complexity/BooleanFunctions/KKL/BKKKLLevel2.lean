@@ -16,10 +16,10 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLTruncation
 
 Upper bounds for the damped level-≥2 Fourier mass and the target/damped comparison, and
 the two residue predicates `bkt2_levelGe2MasterResidue` and `bkt2_RemainingGoal`, each a
-uniform estimate over `p ∈ (1/2, q)`. Both imply the low-degree master estimate, the
-master estimate and rho-optimisation. Status: both residues are refuted for every `q > 1/2`
-(`ctc_levelGe2_false_of_half_lt`, `ctc_remainingGoal_false_of_half_lt`), so every theorem
-assuming one of them on a nonempty window is vacuous.
+uniform estimate over `p ∈ (1/2, q)`. Status: both residues are refuted for every `q > 1/2`
+(`ctc_levelGe2_false_of_half_lt`, `ctc_remainingGoal_false_of_half_lt`). They are kept
+only as the statements of those refutations; no chain derives the low-degree master
+estimate, the master estimate or rho-optimisation from them.
 
 ## Main definitions
 
@@ -29,8 +29,6 @@ assuming one of them on a nonempty window is vacuous.
 ## Main results
 
 * `bkt2_capped_levelGe2_damped`, `bkt2_damped_le_target`: damped level-≥2 mass bounds.
-* `bkt2_lowDegreeMaster_of_levelGe2`, `bkt2_master_of_levelGe2`,
-  `bkt2_master_of_remaining`, `bkt2_rhoOptimise_of_remaining`: the conditional chains.
 -/
 
 open scoped BigOperators
@@ -100,21 +98,6 @@ def bkt2_levelGe2MasterResidue (q : ℝ) : Prop :=
               - 4 * ∑ S ∈ univ.filter (fun S : Finset E => S.card = 1),
                   (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
 
-theorem bkt2_lowDegreeMaster_of_levelGe2 {q : ℝ} (H : bkt2_levelGe2MasterResidue q) :
-    bkt_lowDegreeMasterResidue q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  obtain ⟨k, hk1, hk⟩ := H p hp hp1 φ u hu0 hu1
-  refine ⟨k, ?_⟩
-  set B : ℝ := (4 * (ptn_sigma p) ^ 2)
-      * ((maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
-        - (1 - u) ^ k)
-      * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) with hB
-  exact (lib_residue_iff_levelGe2 φ hk1 (B := B)).mpr hk
-
-theorem bkt2_master_of_levelGe2 {q : ℝ} (H : bkt2_levelGe2MasterResidue q) :
-    pro_PBiasedMaster q :=
-  bkt_master_of_residue (bkt2_lowDegreeMaster_of_levelGe2 H)
-
 /-- The uniform remaining-goal estimate over a window `(1/2, q)`. False for every `q > 1/2`
 (`ctc_remainingGoal_false_of_half_lt`). -/
 def bkt2_RemainingGoal (q : ℝ) : Prop :=
@@ -136,40 +119,6 @@ def bkt2_RemainingGoal (q : ℝ) : Prop :=
               - 4 * ∑ S ∈ univ.filter (fun S : Finset E => 2 ≤ S.card ∧ S.card ≤ k),
                   (S.card : ℝ) * (((1 - u) * (4 * p * (1 - p))) ^ (S.card - 1)
                     * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-
-omit [Fintype ι] [DecidableEq ι] in
-theorem bkt2_levelGe2_of_remaining {q : ℝ} (H : bkt2_RemainingGoal q) :
-    bkt2_levelGe2MasterResidue q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  obtain ⟨k, hk1, hgap⟩ := H p hp hp1 φ u hu0 hu1
-  refine ⟨k, hk1, ?_⟩
-  set c := fun S : Finset E => (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2 with hc
-  have hdecomp : 4 * ∑ S ∈ univ.filter (fun S : Finset E => 2 ≤ S.card ∧ S.card ≤ k),
-        (S.card : ℝ) * (1 - u) ^ (S.card - 1) * c S
-      = 4 * ∑ S ∈ univ.filter (fun S : Finset E => 2 ≤ S.card ∧ S.card ≤ k),
-            (S.card : ℝ) * ((1 - u) ^ (S.card - 1)
-              - ((1 - u) * (4 * p * (1 - p))) ^ (S.card - 1)) * c S
-        + 4 * ∑ S ∈ univ.filter (fun S : Finset E => 2 ≤ S.card ∧ S.card ≤ k),
-            (S.card : ℝ) * (((1 - u) * (4 * p * (1 - p))) ^ (S.card - 1) * c S) := by
-    rw [← mul_add]; congr 1
-    rw [← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl; intro S _; ring
-  rw [show (4 : ℝ) * ∑ S ∈ univ.filter (fun S : Finset E => 2 ≤ S.card ∧ S.card ≤ k),
-        (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-          * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
-      = 4 * ∑ S ∈ univ.filter (fun S : Finset E => 2 ≤ S.card ∧ S.card ≤ k),
-          (S.card : ℝ) * (1 - u) ^ (S.card - 1) * c S from by rw [hc]]
-  rw [hdecomp]
-  rw [hc] at hgap ⊢
-  linarith [hgap]
-
-theorem bkt2_master_of_remaining {q : ℝ} (H : bkt2_RemainingGoal q) :
-    pro_PBiasedMaster q :=
-  bkt2_master_of_levelGe2 (bkt2_levelGe2_of_remaining H)
-
-theorem bkt2_rhoOptimise_of_remaining {q : ℝ} (H : bkt2_RemainingGoal q) :
-    ptn_RhoOptimise q :=
-  pro_rhoOptimise_of_master (bkt2_master_of_remaining H)
 
 theorem bkt2_truncDamped_le [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (k : ℕ) :

@@ -14,15 +14,13 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2
 /-!
 # Closing the level-two estimates: truncation, equivalence, endpoint
 
-Capped truncated damping, the equivalence between the remaining goal and the level-≥2
-residue (`bkt2c_remaining_iff_levelGe2`), the gap vanishing at `p = 1/2`, and the
-conditional implications from either residue to the master estimate and rho-optimisation.
+Capped truncated damping, the weight-gap identity, and the gap vanishing at `p = 1/2`.
+There are no conditional implications from the level-≥2 or remaining-goal residues: both
+are refuted for every `q > 1/2`, so no such chain is exported.
 
 ## Main results
 
-* `bkt2c_remaining_iff_levelGe2`: the remaining goal iff the level-≥2 residue.
-* `bkt2c_remaining_of_levelGe2`, `bkt2c_levelGe2_of_remaining`,
-  `bkt2c_master_of_remaining`, `bkt2c_rhoOptimise_of_remaining`: the conditional chains.
+* `bkt2c_weightGap_eq_target_sub_damped`: the weight gap as target minus damped.
 * `bkt2c_gap_vanishes_at_p_half`: the weight gap vanishes at `p = 1/2`.
 -/
 
@@ -64,34 +62,6 @@ theorem bkt2c_weightGap_eq_target_sub_damped {p u : ℝ} (φ : ConfigSpace ι �
   apply Finset.sum_congr rfl
   intro S _
   ring
-
-omit [Fintype ι] [DecidableEq ι] in
-theorem bkt2c_remaining_of_levelGe2 {q : ℝ} (H : bkt2_levelGe2MasterResidue q) :
-    bkt2_RemainingGoal q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  obtain ⟨k, hk1, hk⟩ := H p hp hp1 φ u hu0 hu1
-  refine ⟨k, hk1, ?_⟩
-  have hgap := bkt2c_weightGap_eq_target_sub_damped (p := p) (u := u) φ k
-  rw [hgap]
-  linarith [hk]
-
-omit [Fintype ι] [DecidableEq ι] in
-/-- The remaining goal holds iff the level-≥2 residue holds. -/
-theorem bkt2c_remaining_iff_levelGe2 {q : ℝ} :
-    bkt2_RemainingGoal q ↔ bkt2_levelGe2MasterResidue q :=
-  ⟨bkt2_levelGe2_of_remaining, bkt2c_remaining_of_levelGe2⟩
-
-theorem bkt2c_levelGe2_of_remaining {q : ℝ} (H : bkt2_RemainingGoal q) :
-    bkt2_levelGe2MasterResidue q :=
-  bkt2_levelGe2_of_remaining H
-
-theorem bkt2c_master_of_remaining {q : ℝ} (H : bkt2_RemainingGoal q) :
-    pro_PBiasedMaster q :=
-  bkt2_master_of_remaining H
-
-theorem bkt2c_rhoOptimise_of_remaining {q : ℝ} (H : bkt2_RemainingGoal q) :
-    ptn_RhoOptimise q :=
-  bkt2_rhoOptimise_of_remaining H
 
 theorem bkt2c_gap_vanishes_at_p_half {u : ℝ} (d : ℕ) :
     (1 - u) ^ (d - 1) - (((1 - u) * (4 * (1/2 : ℝ) * (1 - 1/2))) ^ (d - 1)) = 0 := by
