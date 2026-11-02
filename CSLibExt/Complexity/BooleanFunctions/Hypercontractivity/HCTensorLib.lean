@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
-public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.FullRangeHC
-public import CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedRhoOptimise
 public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 
 @[expose] public section
