@@ -16,23 +16,34 @@ namespace MetaMathlibExt
 
 variable {R : Type*} [CommRing R]
 
-/-- Zero-based Hurwitz entry from Barry's JIS definition. -/
+/-- **Entries of the Hurwitz matrix.** For sequences $a, b \colon \mathbb{N} \to R$ in a commutative
+ring $R$ and indices $i, j \in \mathbb{N}$ (counted from zero), the Hurwitz entry $h_{ij}$ is $0$ if
+$i \ge 2j + 2$; otherwise it is $a_{j - i/2}$ if $i$ is even and $b_{j - (i-1)/2}$ if $i$ is odd.
+
+Source: Barry's definition in the Journal of Integer Sequences, vol. 15. -/
 def hurwitzEntry (a b : ℕ → R) (i j : ℕ) : R :=
   if 2 * j + 2 ≤ i then 0
   else if i % 2 = 0 then a (j - i / 2)
   else b (j - (i - 1) / 2)
 
-/-- Hurwitz matrix of order `n`, an `(n+1)`-by-`(n+1)` matrix.
-Concept `jis_term_6793c0b8b44e37675229ccfc`, source
+/-- **Hurwitz matrix.** For sequences $a, b \colon \mathbb{N} \to R$ in a commutative ring $R$ and
+$n \in \mathbb{N}$, the Hurwitz matrix of order $n$ is the $(n+1) \times (n+1)$ matrix whose entry
+in row $i$ and column $j$, for $0 \le i, j \le n$, is the Hurwitz entry $h_{ij}$ of $a$ and $b$.
+
+Source: concept `jis_term_6793c0b8b44e37675229ccfc`,
 `https://cs.uwaterloo.ca/journals/JIS/VOL15/Barry5/barry223.tex`. -/
 def hurwitzMatrix (a b : ℕ → R) (n : ℕ) : Matrix (Fin (n + 1)) (Fin (n + 1)) R :=
   Matrix.of fun i j => hurwitzEntry a b i.val j.val
 
-/-- The Hurwitz transform is the sequence of determinants of the Hurwitz matrices. -/
+/-- **Hurwitz transform.** For sequences $a, b \colon \mathbb{N} \to R$ in a commutative ring $R$,
+the Hurwitz transform of $a$ and $b$ is the sequence whose $n$-th term, for $n \in \mathbb{N}$, is
+the determinant of the Hurwitz matrix of $a$ and $b$ of order $n$. -/
 def hurwitzTransform (a b : ℕ → R) (n : ℕ) : R :=
   (hurwitzMatrix a b n).det
 
-/-- Single-sequence specialization from the source, with second sequence `0 ^ n`. -/
+/-- **Hurwitz transform of a single sequence.** For a sequence $a \colon \mathbb{N} \to R$ in a
+commutative ring $R$, its Hurwitz transform is the Hurwitz transform of $a$ and the sequence
+$(0^k)_{k \in \mathbb{N}}$, which is $1$ at $k = 0$ and $0$ for $k \ge 1$. -/
 def hurwitzSingle (a : ℕ → R) (n : ℕ) : R :=
   hurwitzTransform a (fun k => (0 : R) ^ k) n
 

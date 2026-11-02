@@ -75,9 +75,13 @@ variable [Algebra.Etale A B] [HenselianLocalRing C]
 namespace DVRResidue
 
 omit [IsDomain C] [IsDiscreteValuationRing C] [Module.Finite A C] in
-/-- If `beta` generates a finite étale local DVR extension and the target Henselian
-local ring is given, any image of its residue class under a residue-field algebra
-hom lifts to a root in the target of `minpoly A beta`. -/
+/-- **Lifting residue-field images to roots of a minimal polynomial.** Let $A$ and $B$ be
+discrete valuation rings with $B$ a finite étale $A$-algebra whose structure map is local, and
+let $C$ be a Henselian local ring that is an $A$-algebra whose structure map is local. Write
+$k_A$, $k_B$, $k_C$ for the residue fields. Let $\beta \in B$ generate $B$ as an $A$-algebra,
+and let $\bar\beta \in k_B$ be its residue class. Then for every $k_A$-algebra homomorphism
+$f : k_B \to k_C$ there is $\gamma \in C$ that is a root of the minimal polynomial of $\beta$
+over $A$ and whose residue class in $k_C$ is $f(\bar\beta)$. -/
 theorem exists_root_lift_of_adjoin_eq_top
     {beta : B} (hbeta : Algebra.adjoin A {beta} = ⊤)
     (f : IsLocalRing.ResidueField B →ₐ[IsLocalRing.ResidueField A]
@@ -160,8 +164,12 @@ theorem exists_root_lift_of_adjoin_eq_top
   refine ⟨gamma, ?_, hres⟩
   simpa [P, Polynomial.IsRoot.def] using hroot
 
-/-- Every residue-field algebra homomorphism from a finite etale local DVR extension into a
-Henselian local DVR extension lifts to an algebra homomorphism of the DVR extensions. -/
+/-- **Lifting residue-field homomorphisms of finite étale DVR extensions.** Let $A$, $B$, $C$ be
+discrete valuation rings, with $B$ and $C$ finite $A$-algebras whose structure maps are local,
+$B$ étale over $A$ and $C$ Henselian. Write $k_A$, $k_B$, $k_C$ for the residue fields. Then
+every $k_A$-algebra homomorphism $k_B \to k_C$ is induced by an $A$-algebra homomorphism: the
+map sending an $A$-algebra homomorphism $\varphi : B \to C$ to the induced homomorphism of
+residue fields $k_B \to k_C$, $\bar b \mapsto \overline{\varphi(b)}$, is surjective. -/
 theorem residueFieldMapAlgHom_surjective :
     Function.Surjective
       (residueFieldMapAlgHom (A := A) (B := B) (C := C)) := by

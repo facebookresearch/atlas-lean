@@ -97,7 +97,9 @@ private lemma exists_det_add_smul_vecMulVec {n K : Type*}
     rw [det_updateRow_smul]
     ring
 
-/-- The determinant is affine along a rank-one matrix direction. -/
+/-- **The determinant is affine along a rank-one direction.** Let $K$ be a field, let $B$ be a
+square matrix over $K$ indexed by a finite type $n$, and let $u, v \in K^n$. Then for every
+$t \in K$, $\det(B + t\,uv^{\mathsf T}) = \det B + t\,(\det(B + uv^{\mathsf T}) - \det B)$. -/
 public theorem det_add_smul_vecMulVec {n K : Type*} [Fintype n] [DecidableEq n] [Field K]
     (B : Matrix n n K) (u v : n → K) (t : K) :
     det (B + t • vecMulVec u v) =
@@ -108,13 +110,21 @@ public theorem det_add_smul_vecMulVec {n K : Type*} [Fintype n] [DecidableEq n] 
   rw [hc, h1]
   ring
 
-/-- The coefficient linear in a matrix direction in `det (B + X A)`, written as a sum of
-determinants with one row replaced. -/
+/-- **First-order term of the determinant.** Let $R$ be a commutative ring and let $A$ and $B$ be
+square matrices over $R$ indexed by a finite type $n$. The first-order term of the determinant
+of $B$ in the direction $A$ is $L_B(A) = \sum_{i \in n} \det B^{(i)}$, where $B^{(i)}$ is the
+matrix $B$ with its $i$-th row replaced by the $i$-th row of $A$.
+
+It is the coefficient of $X$ in the polynomial $\det(B + XA)$. -/
 public noncomputable def detLinear {n R : Type*}
     [Fintype n] [DecidableEq n] [CommRing R] (B A : Matrix n n R) : R :=
   ∑ i, det (updateRow B i (fun j ↦ A i j))
 
-/-- The coefficient of `X` in `det (B + X A)` is `Matrix.detLinear B A`. -/
+/-- **The coefficient of $X$ in $\det(B + XA)$.** Let $R$ be a commutative ring and let $A$ and
+$B$ be square matrices over $R$ indexed by a finite type $n$. Regard $B + XA$ as a matrix over
+the polynomial ring $R[X]$. Then the coefficient of $X$ in the polynomial $\det(B + XA)$ equals
+the first-order term of the determinant $L_B(A) = \sum_{i \in n} \det B^{(i)}$, where $B^{(i)}$
+is the matrix $B$ with its $i$-th row replaced by the $i$-th row of $A$. -/
 public theorem coeff_one_det_add_X_smul {n R : Type*}
     [Fintype n] [DecidableEq n] [CommRing R] (B A : Matrix n n R) :
     (det (B.map Polynomial.C + (Polynomial.X : R[X]) • A.map Polynomial.C)).coeff 1 =
@@ -196,7 +206,10 @@ public theorem coeff_one_det_add_X_smul {n R : Type*}
     simp
   · simp [hji]
 
-/-- `Matrix.detLinear B` is additive in its matrix direction. -/
+/-- **Additivity of the first-order term of the determinant.** Let $R$ be a commutative ring
+and let $A$, $B$, $C$ be square matrices over $R$ indexed by a finite type $n$. Write
+$L_B(A) = \sum_{i \in n} \det B^{(i)}_A$, where $B^{(i)}_A$ is the matrix $B$ with its $i$-th
+row replaced by the $i$-th row of $A$. Then $L_B(A + C) = L_B(A) + L_B(C)$. -/
 public theorem detLinear_add {n R : Type*} [Fintype n] [DecidableEq n] [CommRing R]
     (B A C : Matrix n n R) :
     detLinear B (A + C) = detLinear B A + detLinear B C := by
@@ -205,7 +218,10 @@ public theorem detLinear_add {n R : Type*} [Fintype n] [DecidableEq n] [CommRing
     det_updateRow_add]
   exact Finset.sum_add_distrib
 
-/-- `Matrix.detLinear B` is homogeneous in its matrix direction. -/
+/-- **Homogeneity of the first-order term of the determinant.** Let $R$ be a commutative ring,
+let $a \in R$, and let $A$ and $B$ be square matrices over $R$ indexed by a finite type $n$.
+Write $L_B(A) = \sum_{i \in n} \det B^{(i)}_A$, where $B^{(i)}_A$ is the matrix $B$ with its
+$i$-th row replaced by the $i$-th row of $A$. Then $L_B(aA) = a \, L_B(A)$. -/
 public theorem detLinear_smul {n R : Type*} [Fintype n] [DecidableEq n] [CommRing R]
     (B A : Matrix n n R) (a : R) :
     detLinear B (a • A) = a * detLinear B A := by

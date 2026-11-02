@@ -223,7 +223,10 @@ private noncomputable def negThreePeriodicityIso (A : Rep R G) (g : G)
     Rep.FiniteCyclicGroup.groupHomologyIsoEven A g hg 2 even_two ≪≫
     (negOneIso A g hg).symm)
 
-/-- Tate cohomology of a finite cyclic group is two-periodic. -/
+/-- **Periodicity of Tate cohomology for finite cyclic groups.** Let $R$ be a commutative ring,
+$G$ a finite cyclic group and $A$ a representation of $G$ over $R$. Then for every integer $n$,
+the Tate cohomology groups $\hat{H}^n(G, A)$ and $\hat{H}^{n+2}(G, A)$ are isomorphic as
+$R$-modules. -/
 theorem nonempty_periodicityIso {R G : Type u} [CommRing R] [Group G]
     [Fintype G] [IsCyclic G] (A : Rep R G) (n : ℤ) :
     Nonempty (tateCohomology A n ≅ tateCohomology A (n + 2)) := by

@@ -271,9 +271,17 @@ private lemma binary_pinsker {u v : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (hv0 : 0 < 
       linarith
 
 /--
-Finite strictly-positive Csiszar-Kullback-Pinsker inequality: for finite nonempty `α` and pmfs `p, q
-: α → ℝ` with `p a > 0`, `q a > 0` and sums `1`, `(∑ |p a - q a|)² ≤ 2 * ∑ p a * log (p a / q a)`
-with natural log, equivalent to `TV(p,q) ≤ √(D_KL/2)`.
+**Csiszár–Kullback–Pinsker inequality for strictly positive distributions.** Let $\alpha$ be a
+finite nonempty set and let $p, q : \alpha \to \mathbb{R}$ satisfy $p(a) > 0$ and $q(a) > 0$
+for every $a \in \alpha$ and $\sum_a p(a) = \sum_a q(a) = 1$. Then, with the natural logarithm,
+$$
+\Bigl(\sum_{a \in \alpha} |p(a) - q(a)|\Bigr)^2
+\le 2 \sum_{a \in \alpha} p(a) \log \frac{p(a)}{q(a)}.
+$$
+
+Equivalently, the total variation distance $\frac12 \sum_a |p(a) - q(a)|$ is at most
+$\sqrt{D/2}$, where $D = \sum_a p(a) \log (p(a)/q(a))$ is the Kullback–Leibler divergence.
+
 Source: M. S. Pinsker, Information and Information Stability of Random Variables and Processes
 (1960; English translation 1964), with I. Csiszar, Information-type measures of difference of
 probability distributions and indirect observations, Studia Sci. Math. Hungar. 2 (1967), 299-318.

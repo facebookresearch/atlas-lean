@@ -32,20 +32,28 @@ namespace MetaMathlibExt
 
 -- Logic 359: Tukey Reducibility
 
-/-- D ≤_T E if there is a convergent (Tukey) map D → E, one carrying unbounded subsets of
-D to unbounded subsets of E.
+/-- **Tukey reducibility.** For preordered sets $D$ and $E$, $D$ is Tukey reducible to $E$,
+written $D \le_T E$, if there is a map $f \colon D \to E$ that carries unbounded sets to
+unbounded sets: for every $A \subseteq D$ with no upper bound in $D$, the image $f[A]$ has no
+upper bound in $E$.
 -/
 def TukeyLE (D E : Type) [Preorder D] [Preorder E] : Prop :=
   ∃ f : D → E, ∀ A : Set D, (¬ ∃ b : D, ∀ a ∈ A, a ≤ b) → ¬ ∃ b : E, ∀ a ∈ f '' A, a ≤ b
 
 -- Logic 360: Tukey equivalence
 
-/-- D ≡_T E: cofinal (Tukey) equivalence means Tukey reducibility in both directions. -/
+/-- **Tukey equivalence.** Preordered sets $D$ and $E$ are Tukey equivalent (cofinally
+equivalent), written $D \equiv_T E$, if $D \le_T E$ and $E \le_T D$, where $\le_T$ is Tukey
+reducibility.
+-/
 def TukeyEquiv (D E : Type) [Preorder D] [Preorder E] : Prop := TukeyLE D E ∧ TukeyLE E D
 
 -- Logic 405: Cofinal type
 
-/-- A cofinal type is a ≡_T-equivalence class of preordered sets. -/
+/-- **Cofinal type.** A cofinal type is an equivalence class of preordered sets under Tukey
+equivalence $\equiv_T$, where $D \equiv_T E$ means $D \le_T E$ and $E \le_T D$ (Tukey
+reducibility in both directions).
+-/
 def CofinalType : Type 1 :=
   Quotient (α := Σ D : Type, Preorder D)
     { r := fun X Y => @TukeyEquiv X.1 Y.1 X.2 Y.2

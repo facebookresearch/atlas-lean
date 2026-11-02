@@ -30,7 +30,10 @@ namespace MathlibExt.LinearAlgebra.Matrix.PerronFrobeniusWanted
 
 variable {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n]
 
-/-- Coercion of a real matrix to complex via `Complex.ofReal`. -/
+/-- **Complexification of a real matrix.** For a real square matrix $A$ with rows and columns
+indexed by a nonempty finite set $S$, its complexification $A_{\mathbb{C}}$ is the complex matrix
+with entries $(A_{\mathbb{C}})_{ij} = A_{ij}$ for $i, j \in S$, each real entry viewed as a
+complex number. -/
 noncomputable def toComplexMatrix (A : Matrix n n ℝ) : Matrix n n ℂ :=
   A.map Complex.ofReal
 
@@ -376,8 +379,13 @@ private theorem perron_frobenius_aux
   exact le_trans hμ_le (hbound (C.mulVec a) hb_pos)
 
 /--
-Perron-Frobenius for irreducible nonnegative real matrices: there is a positive eigenvalue `r`
-with a positive eigenvector, and `r` bounds the modulus of every complex eigenvalue.
+**Perron–Frobenius theorem for irreducible nonnegative matrices.** Let $A$ be a real square matrix
+with rows and columns indexed by a nonempty finite set $S$, and suppose $A$ is irreducible: its
+entries are nonnegative, and for all $i, j \in S$ there is a path $i = i_0, i_1, \dots, i_k = j$ of
+length $k \ge 1$ with $A_{i_{t-1} i_t} > 0$ for every $t$. Then there are a real number $r > 0$ and
+a vector $v \in \mathbb{R}^S$ with $v_i > 0$ for every $i \in S$ such that $Av = rv$, and every
+complex number $\mu$ with $\det(\mu E - A_{\mathbb{C}}) = 0$ satisfies $|\mu| \le r$, where $E$ is
+the identity matrix and $A_{\mathbb{C}}$ is the complex matrix with the same entries as $A$.
 -/
 theorem _root_.Matrix.IsIrreducible.perron_frobenius
     {A : Matrix n n ℝ} (hA : A.IsIrreducible) :
@@ -388,13 +396,21 @@ theorem _root_.Matrix.IsIrreducible.perron_frobenius
 
 set_option linter.unusedVariables false in
 /--
-Every nonzero irreducible nonnegative real matrix has a positive dominant eigenvalue.
-Source: O. Perron, Math. Ann. 64 (1907), 248-263, DOI 10.1007/BF01449896; G. Frobenius, S.-Ber.
-Preuss. Akad. Wiss. Berlin (1912), 456-477.
+**Perron–Frobenius theorem for nonzero irreducible nonnegative matrices.** Let $A$ be a nonzero
+real square matrix with rows and columns indexed by a nonempty finite set $S$, and suppose $A$ is
+irreducible: its entries are nonnegative, and for all $i, j \in S$ there is a path
+$i = i_0, i_1, \dots, i_k = j$ of length $k \ge 1$ with $A_{i_{t-1} i_t} > 0$ for every $t$. Then
+there are a real number $r > 0$ and a vector $v \in \mathbb{R}^S$ with $v_i > 0$ for every
+$i \in S$ such that $Av = rv$, and every complex number $\mu$ with
+$\det(\mu E - A_{\mathbb{C}}) = 0$ satisfies $|\mu| \le r$, where $E$ is the identity matrix and
+$A_{\mathbb{C}}$ is the complexification of $A$.
 
-The nonzero hypothesis is not needed; see `Matrix.IsIrreducible.perron_frobenius`.
+The hypothesis $A \ne 0$ is not needed: irreducibility already forces some entry to be positive.
 
 Proves `Wanted` entry `perron_frobenius`.
+
+Source: O. Perron, Math. Ann. 64 (1907), 248-263, DOI 10.1007/BF01449896; G. Frobenius, S.-Ber.
+Preuss. Akad. Wiss. Berlin (1912), 456-477.
 -/
 theorem perron_frobenius
     (A : Matrix n n ℝ) (hA : A.IsIrreducible) (hA0 : A ≠ 0) :

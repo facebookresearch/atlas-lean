@@ -2196,8 +2196,12 @@ end MathlibExt.MeasureTheory.Geometry.BanachTarskiWanted
 
 namespace MathlibExt.MeasureTheory.Geometry.BanachTarskiWanted
 
-/-- Two sets are finitely equidecomposable by global bijective isometries
-partitioning each into pairwise-disjoint pieces with matching images. -/
+/-- **Finite equidecomposability by isometries.** Let $X$ be a metric space. Subsets $A$ and $B$
+of $X$ are finitely equidecomposable by isometries if there are a natural number $n$, sets
+$A_1, \dots, A_n$ and $B_1, \dots, B_n$ in $X$, and isometric bijections $g_1, \dots, g_n$ of
+$X$ onto itself such that the sets $A_i$ are pairwise disjoint, the sets $B_i$ are pairwise
+disjoint, $A = A_1 \cup \dots \cup A_n$, $B = B_1 \cup \dots \cup B_n$, and $g_i(A_i) = B_i$
+for every $i$. -/
 def FinitelyEquidecomposableByIsometries
     {X : Type*} [MetricSpace X] (A B : Set X) : Prop :=
   ∃ (n : ℕ) (As : Fin n → Set X) (Bs : Fin n → Set X) (gs : Fin n → X ≃ᵢ X),
@@ -2362,7 +2366,11 @@ private theorem btCongr_ofWanted {X : Type*} [MetricSpace X] {A B : Set X}
     exact ⟨gs (Classical.choose (hex x hxA)), Set.mem_range_self _,
       by simp only [dite_eq_left hxA]⟩
 
-/-- Finite equidecomposability holds iff there is a piecewise-isometric bijection. -/
+/-- **Equidecomposability via piecewise-isometric bijections.** Let $A$ and $B$ be subsets of a
+metric space $X$. Then $A$ is finitely equidecomposable by isometries with $B$ if and only if
+there are a map $f : X \to X$ and a finite set $S$ of isometric bijections of $X$ onto itself
+such that $f$ restricts to a bijection from $A$ onto $B$ and for every $x \in A$ there is
+$g \in S$ with $f(x) = g(x)$. -/
 public theorem finitelyEquidecomposableByIsometries_iff_bijOn
     {X : Type*} [MetricSpace X] (A B : Set X) :
     FinitelyEquidecomposableByIsometries A B ↔
@@ -2376,25 +2384,35 @@ public theorem finitelyEquidecomposableByIsometries_iff_bijOn
 
 namespace FinitelyEquidecomposableByIsometries
 
-/-- Finite equidecomposability is reflexive. -/
+/-- **Finite equidecomposability by isometries is reflexive.** Every subset $A$ of a metric
+space $X$ is finitely equidecomposable by isometries with itself. -/
 public theorem refl {X : Type*} [MetricSpace X] (A : Set X) :
     FinitelyEquidecomposableByIsometries A A :=
   btCongr_toWanted (btCongr_refl A)
 
-/-- Finite equidecomposability is symmetric. -/
+/-- **Finite equidecomposability by isometries is symmetric.** Let $A$ and $B$ be subsets of a
+metric space $X$. If $A$ is finitely equidecomposable by isometries with $B$, then $B$ is
+finitely equidecomposable by isometries with $A$. -/
 public theorem symm {X : Type*} [MetricSpace X] {A B : Set X}
     (h : FinitelyEquidecomposableByIsometries A B) :
     FinitelyEquidecomposableByIsometries B A :=
   btCongr_toWanted (btCongr_symm (btCongr_ofWanted h))
 
-/-- Finite equidecomposability is transitive. -/
+/-- **Finite equidecomposability by isometries is transitive.** Let $A$, $B$ and $C$ be subsets
+of a metric space $X$. If $A$ is finitely equidecomposable by isometries with $B$ and $B$ is
+finitely equidecomposable by isometries with $C$, then $A$ is finitely equidecomposable by
+isometries with $C$. -/
 public theorem trans {X : Type*} [MetricSpace X] {A B C : Set X}
     (h1 : FinitelyEquidecomposableByIsometries A B)
     (h2 : FinitelyEquidecomposableByIsometries B C) :
     FinitelyEquidecomposableByIsometries A C :=
   btCongr_toWanted (btCongr_trans (btCongr_ofWanted h1) (btCongr_ofWanted h2))
 
-/-- Finite equidecomposability is closed under disjoint unions. -/
+/-- **Finite equidecomposability by isometries respects disjoint unions.** Let $A_1$, $A_2$,
+$B_1$ and $B_2$ be subsets of a metric space $X$ with $A_1 \cap A_2 = \emptyset$ and
+$B_1 \cap B_2 = \emptyset$. If $A_1$ is finitely equidecomposable by isometries with $B_1$ and
+$A_2$ is finitely equidecomposable by isometries with $B_2$, then $A_1 \cup A_2$ is finitely
+equidecomposable by isometries with $B_1 \cup B_2$. -/
 public theorem union {X : Type*} [MetricSpace X] {A₁ A₂ B₁ B₂ : Set X}
     (h1 : FinitelyEquidecomposableByIsometries A₁ B₁)
     (h2 : FinitelyEquidecomposableByIsometries A₂ B₂)
@@ -2402,7 +2420,9 @@ public theorem union {X : Type*} [MetricSpace X] {A₁ A₂ B₁ B₂ : Set X}
     FinitelyEquidecomposableByIsometries (A₁ ∪ A₂) (B₁ ∪ B₂) :=
   btCongr_toWanted (btCongr_union (btCongr_ofWanted h1) (btCongr_ofWanted h2) hdA hdB)
 
-/-- An isometry maps a set to its image equidecomposably. -/
+/-- **Equidecomposability of a set with its isometric image.** Let $g$ be an isometric bijection
+of a metric space $X$ onto itself. Then every subset $A$ of $X$ is finitely equidecomposable by
+isometries with its image $g(A)$. -/
 public theorem image_isometryEquiv {X : Type*} [MetricSpace X]
     (g : X ≃ᵢ X) (A : Set X) :
     FinitelyEquidecomposableByIsometries A (g '' A) :=
@@ -2411,14 +2431,18 @@ public theorem image_isometryEquiv {X : Type*} [MetricSpace X]
 end FinitelyEquidecomposableByIsometries
 
 /--
-The closed unit ball at `0` in `EuclideanSpace ℝ (Fin 3)` is finitely equidecomposable by ambient
-bijective isometries with the disjoint union of two closed unit balls `closedBall c₁ 1 ∪
-closedBall c₂ 1` for some centres `c₁ c₂` with `Disjoint`. Source: S. Banach and A. Tarski, Fund.
+**Banach–Tarski paradox for the closed unit ball.** In three-dimensional Euclidean space
+$\mathbb{R}^3$, write $\bar B(c, r)$ for the closed ball of radius $r$ about $c$. There are points
+$c_1, c_2 \in \mathbb{R}^3$ such that $\bar B(c_1, 1)$ and $\bar B(c_2, 1)$ are disjoint and the
+closed unit ball $\bar B(0, 1)$ is finitely equidecomposable by isometries with
+$\bar B(c_1, 1) \cup \bar B(c_2, 1)$.
+
+Proves `Wanted` entry `banach_tarski_closedBall_unit`.
+
+Source: S. Banach and A. Tarski, Fund.
 Math. 6 (1924) 244–277 original paradox; S. Wagon, The Banach–Tarski Paradox, Cambridge Univ.
 Press (1993); Lean states closed unit ball duplication specialization in ℝ³ with ambient `≃ᵢ`
 equidecomposability.
-
-Proves `Wanted` entry `banach_tarski_closedBall_unit`.
 -/
 public theorem banach_tarski_closedBall_unit :
     ∃ (c₁ c₂ : EuclideanSpace ℝ (Fin 3)),

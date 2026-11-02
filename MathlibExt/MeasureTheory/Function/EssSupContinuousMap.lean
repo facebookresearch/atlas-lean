@@ -34,11 +34,11 @@ April 6, 2021 section). The first part of `essSup_properties` is Mathlib's
 `ae_le_eLpNormEssSup` and is not re-ported.
 -/
 
-/-- **Essential supremum of a continuous map.** Let `α` be compact, `μ` a Borel
-measure on `α` positive on nonempty open sets, and `f : C(α, E)` continuous.
-Then the essential supremum of `f` with respect to `μ` equals the supremum
-norm `‖f‖ₑ` of `f`. In particular, on `[a, b]` with `f ∈ C([a, b])`,
-`‖f‖_{L^∞([a, b])} = ‖f‖_∞`. -/
+/-- **Essential supremum of a continuous map.** Let $\alpha$ be a compact topological space with
+its Borel $\sigma$-algebra, let $\mu$ be a measure on $\alpha$ that is positive on every nonempty
+open set, let $E$ be a seminormed additive commutative group, and let $f : \alpha \to E$ be
+continuous. Then the essential supremum of $\|f\|$ with respect to $\mu$ equals the supremum norm
+$\sup_{x \in \alpha} \|f(x)\|$ of $f$, as an equality in $[0, \infty]$. -/
 theorem eLpNormEssSup_eq_enorm_continuousMap
     {α : Type*} [TopologicalSpace α] [CompactSpace α] [MeasurableSpace α]
     [BorelSpace α] {μ : Measure α} [μ.IsOpenPosMeasure]
@@ -62,10 +62,11 @@ theorem eLpNormEssSup_eq_enorm_continuousMap
   rw [h_essSup_eq]
   exact (ContinuousMap.enorm_eq_iSup_enorm f).symm
 
-/-- **The `L^∞` norm of a continuous map is its supremum norm.** Under the same
-hypotheses, `‖f‖_{L^∞(μ)} = ‖f‖ₑ`. The `SecondCountableTopologyEither`
-hypothesis is what current Mathlib requires for `Continuous.aestronglyMeasurable`;
-it holds, for instance, whenever `α` is second-countable. -/
+/-- **The $L^\infty$ norm of a continuous map is its supremum norm.** Let $\alpha$ be a compact
+topological space with its Borel $\sigma$-algebra, let $\mu$ be a measure on $\alpha$ that is
+positive on every nonempty open set, let $E$ be a seminormed additive commutative group such that
+$\alpha$ or $E$ is second-countable, and let $f : \alpha \to E$ be continuous. Then
+$\|f\|_{L^\infty(\mu)} = \sup_{x \in \alpha} \|f(x)\|$, as an equality in $[0, \infty]$. -/
 theorem eLpNorm_top_eq_enorm_continuousMap
     {α : Type*} [TopologicalSpace α] [CompactSpace α] [MeasurableSpace α]
     [BorelSpace α] {μ : Measure α} [μ.IsOpenPosMeasure]

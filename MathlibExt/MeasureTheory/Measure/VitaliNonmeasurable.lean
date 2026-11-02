@@ -158,7 +158,8 @@ private theorem RatIoo_infinite : (Set.Ioo (0 : Rat) 1).Infinite :=
   Set.Ioo_infinite (by linarith)
 private instance : Infinite RatIoo := RatIoo_infinite.to_subtype
 /--
-Vitali's theorem: there exists a subset of `ℝ` that is not Lebesgue measurable.
+**Vitali's theorem.** There exists a subset of $\mathbb{R}$ that is not Lebesgue measurable.
+
 Source: G. Vitali, Sul problema della misura dei gruppi di punti di una retta, Tipografia Gamberini
 e Parmeggiani, Bologna (1905). Here `NullMeasurableSet` w.r.t. `volume` is the
 Lebesgue-measurability notion, i.e. measurability for the completion of Lebesgue measure.

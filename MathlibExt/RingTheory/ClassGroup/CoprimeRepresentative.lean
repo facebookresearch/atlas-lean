@@ -24,8 +24,10 @@ open Ideal
 
 variable {A : Type*} [CommRing A] [IsDedekindDomain A]
 
-/-- A nonzero ideal can be multiplied by an ideal coprime to a prescribed nonzero ideal so that
-the product is principal. -/
+/-- **Making an ideal principal with a factor coprime to a given ideal.** Let $A$ be a
+Dedekind domain and let $I$ and $\mathfrak{a}$ be nonzero ideals of $A$. Then there is an
+ideal $J$ of $A$ with $J + \mathfrak{a} = A$ such that the product $IJ$ is a principal
+ideal. -/
 theorem Ideal.exists_isCoprime_mul_isPrincipal (I a : Ideal A) (hI : I ≠ ⊥)
     (ha : a ≠ ⊥) :
     ∃ J : Ideal A, IsCoprime J a ∧ Submodule.IsPrincipal (I * J) := by
@@ -42,7 +44,10 @@ theorem Ideal.exists_isCoprime_mul_isPrincipal (I a : Ideal A) (hI : I ≠ ⊥)
   · rw [← hJ]
     exact ⟨⟨x, rfl⟩⟩
 
-/-- Every ideal class has an integral representative coprime to any prescribed nonzero ideal. -/
+/-- **Ideal classes have representatives coprime to a given ideal.** Let $A$ be a
+Dedekind domain and let $\mathfrak{a}$ be a nonzero ideal of $A$. Then every class $c$ in the
+ideal class group of $A$ is the class of some nonzero ideal $K$ of $A$ with
+$K + \mathfrak{a} = A$. -/
 theorem ClassGroup.exists_mk0_eq_and_isCoprime (c : ClassGroup A) (a : Ideal A)
     (ha : a ≠ ⊥) :
     ∃ (K : Ideal A) (hK : K ≠ ⊥),

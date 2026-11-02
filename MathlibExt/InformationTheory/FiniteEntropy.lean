@@ -39,12 +39,16 @@ namespace InformationTheory
 
 open scoped BigOperators
 
-/-- Shannon entropy in bits of a probability law on a finite alphabet.
+/-- **Shannon entropy.** The Shannon entropy in bits of a probability mass function $p$ on a finite
+type $\alpha$ is $H(p) = -\sum_{a \in \alpha} p(a) \log_2 p(a)$, where a term with $p(a) = 0$
+contributes $0$.
+
 Source: the finite Shannon sum; Li, arXiv:2501.13736v4, entropy conventions. -/
 noncomputable def shannonEntropy {α : Type*} [Fintype α] (p : PMF α) : ℝ :=
   (∑ a, Real.negMulLog (p a).toReal) / Real.log 2
 
-/-- A deterministic finite law has zero entropy. -/
+/-- **A point mass has zero entropy.** For every outcome $a$ of a finite alphabet, the point mass
+at $a$ has Shannon entropy $0$. -/
 @[simp] theorem shannonEntropy_pure {α : Type*} [Fintype α] (a : α) :
     shannonEntropy (PMF.pure a) = 0 := by
   classical
@@ -55,13 +59,17 @@ noncomputable def shannonEntropy {α : Type*} [Fintype α] (p : PMF α) : ℝ :=
     by_cases hb : b = a <;> simp [PMF.pure_apply, hb]
   rw [h, zero_div]
 
-/-- A constant observation has zero entropy. -/
+/-- **A constant observation has zero entropy.** For any probability mass function $p$ on a type
+$\alpha$ and any point $b$ of a finite alphabet $\beta$, the image of $p$ under the constant map
+$\alpha \to \beta$ with value $b$ has Shannon entropy $0$. -/
 theorem shannonEntropy_map_const {α β : Type*} [Fintype β]
     (p : PMF α) (b : β) :
     shannonEntropy (p.map (Function.const α b)) = 0 := by
   rw [PMF.map_const, shannonEntropy_pure]
 
-/-- Relabeling a finite alphabet by a bijection preserves entropy. -/
+/-- **Entropy is invariant under relabeling.** For a probability mass function $p$ on a finite
+alphabet $\alpha$ and a bijection $e : \alpha \to \beta$ onto a finite alphabet $\beta$, the image
+of $p$ under $e$ has the same Shannon entropy as $p$. -/
 theorem shannonEntropy_map_equiv {α β : Type*} [Fintype α] [Fintype β]
     (p : PMF α) (e : α ≃ β) : shannonEntropy (p.map e) = shannonEntropy p := by
   classical
@@ -72,7 +80,9 @@ theorem shannonEntropy_map_equiv {α β : Type*} [Fintype α] [Fintype β]
   rw [← e.sum_comp (fun b => Real.negMulLog ((p.map e) b).toReal)]
   simp only [hmass]
 
-/-- Appending a deterministic singleton coordinate preserves finite entropy. -/
+/-- **Appending a singleton coordinate preserves entropy.** For a probability mass function $p$ on
+a finite alphabet $\alpha$, the image of $p$ under $a \mapsto (a, 0)$ in $\alpha \times \{0\}$
+has the same Shannon entropy as $p$. -/
 theorem shannonEntropy_map_prod_singleton {α : Type*} [Fintype α] (p : PMF α) :
     shannonEntropy (p.map (fun a => (a, (0 : Fin 1)))) = shannonEntropy p := by
   let e : α ≃ α × Fin 1 :=
@@ -89,8 +99,11 @@ open scoped ENNReal
 
 variable {α : Type*}
 
-/-- **Kullback–Leibler divergence on a finite space.** For finite measures of equal mass with
-`μ ≪ ν`, Mathlib's `klDiv μ ν` is `∑ μ{a} log (μ{a} / ν{a})`. -/
+/-- **Kullback–Leibler divergence on a finite space.** Let $\mu$ and $\nu$ be finite measures on
+a finite type $\alpha$ in which every singleton is measurable, with $\mu \ll \nu$ and
+$\mu(\alpha) = \nu(\alpha)$. Then the Kullback–Leibler divergence $\mathrm{KL}(\mu \parallel \nu)$,
+taken as a real number, equals $\sum_{a \in \alpha} \mu(\{a\}) \log (\mu(\{a\}) / \nu(\{a\}))$,
+where $\log$ is the natural logarithm and a term with $\mu(\{a\}) = 0$ is $0$. -/
 theorem toReal_klDiv_eq_sum [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
     {μ ν : Measure α} [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hμν : μ ≪ ν)
     (huniv : μ Set.univ = ν Set.univ) :
@@ -128,7 +141,12 @@ theorem toMeasure_absolutelyContinuous [MeasurableSpace α] {p q : PMF α}
   by_contra h
   exact hs ((PMF.mem_support_iff _ _).mpr h) has
 
-/-- `klDiv` of finite laws: `∑ p a log (p a / q a)`, for `p ≪ q`. -/
+/-- **Kullback–Leibler divergence of finite probability laws.** Let $p$ and $q$ be probability
+mass functions on a finite type $\alpha$ in which every singleton is measurable, such that
+$p(a) = 0$ whenever $q(a) = 0$, and let $P$ and $Q$ be the measures they define. Then the
+Kullback–Leibler divergence $\mathrm{KL}(P \parallel Q)$, taken as a real number, equals
+$\sum_{a \in \alpha} p(a) \log (p(a) / q(a))$, where $\log$ is the natural logarithm and a term
+with $p(a) = 0$ is $0$. -/
 theorem toReal_klDiv_toMeasure [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
     {p q : PMF α} (hpq : ∀ a, q a = 0 → p a = 0) :
     (klDiv p.toMeasure q.toMeasure).toReal =
@@ -136,8 +154,10 @@ theorem toReal_klDiv_toMeasure [Fintype α] [MeasurableSpace α] [MeasurableSing
   rw [toReal_klDiv_eq_sum (toMeasure_absolutelyContinuous hpq) (by simp)]
   simp only [toMeasure_real_singleton]
 
-/-- The **surprisal** (information content) `-log₂ q` of an outcome of probability `q`, in bits,
-with value `∞` for an impossible outcome. -/
+/-- **Surprisal.** The surprisal (information content) in bits of an outcome of probability
+$q$ is $-\log_2 q$, with value $\infty$ when $q = 0$. Formally $q$ ranges over the extended
+nonnegative reals $[0, \infty]$: the surprisal of $0$ is $\infty$, the surprisal of
+$q \in (0, \infty)$ is $\max(0, -\log_2 q)$, and the surprisal of $\infty$ is $0$. -/
 noncomputable def surprisal (q : ℝ≥0∞) : ℝ≥0∞ :=
   if q = 0 then ∞ else ENNReal.ofReal (-logb 2 q.toReal)
 
@@ -151,8 +171,11 @@ theorem surprisal_eq_top_iff {q : ℝ≥0∞} : surprisal q = ∞ ↔ q = 0 := b
   · simp [hq, surprisal_zero]
   · simp [surprisal_of_ne_zero hq, hq]
 
-/-- The **cross-entropy** `H(p, q) = ∑ p a · (-log₂ q a)` of `q` relative to `p`, in bits. It is
-`∞` exactly when `p` charges an outcome that `q` rules out. -/
+/-- **Cross-entropy.** For probability mass functions $p$ and $q$ on a finite alphabet, the
+cross-entropy of $q$ relative to $p$ is $H(p, q) = \sum_a p(a) \cdot (-\log_2 q(a))$ in bits, a
+value in $[0, \infty]$. Here $-\log_2 q(a)$ is the surprisal of $a$ under $q$, which is $\infty$
+when $q(a) = 0$, and a term with $p(a) = 0$ contributes $0$. So $H(p, q)$ is $\infty$ exactly
+when $p$ charges an outcome that $q$ rules out. -/
 noncomputable def crossEntropy [Fintype α] (p q : PMF α) : ℝ≥0∞ := ∑ a, p a * surprisal (q a)
 
 theorem crossEntropy_eq_top_iff [Fintype α] {p q : PMF α} :
@@ -161,13 +184,19 @@ theorem crossEntropy_eq_top_iff [Fintype α] {p q : PMF α} :
     PMF.apply_ne_top, false_and, or_false, surprisal_eq_top_iff]
   exact exists_congr fun a ↦ and_comm
 
-/-- The cross-entropy of a point mass at `y` is the surprisal of `y`. -/
+/-- **Cross-entropy of a point mass.** For an outcome $y$ of a finite alphabet and a probability
+mass function $q$ on it, the cross-entropy $H(\delta_y, q)$ of $q$ relative to the point mass
+$\delta_y$ at $y$ equals the surprisal $-\log_2 q(y)$ of $y$ under $q$, which is $\infty$ when
+$q(y) = 0$. -/
 theorem crossEntropy_pure [Fintype α] (y : α) (q : PMF α) :
     crossEntropy (PMF.pure y) q = surprisal (q y) := by
   classical
   simp [crossEntropy, PMF.pure_apply]
 
-/-- The expected surprisal `E_{a ~ p}[-log₂ q a]` is the cross-entropy. -/
+/-- **Cross-entropy is expected surprisal.** For probability mass functions $p$ and $q$ on a
+finite alphabet, the expected surprisal $\mathbb{E}_{a \sim p}[-\log_2 q(a)]$ (with
+$-\log_2 0 = \infty$), taken as the integral of a $[0, \infty]$-valued function with respect to
+the law $p$, equals the cross-entropy $H(p, q)$. -/
 theorem lintegral_surprisal [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
     (p q : PMF α) : ∫⁻ a, surprisal (q a) ∂p.toMeasure = crossEntropy p q := by
   rw [lintegral_fintype, crossEntropy]
@@ -179,8 +208,12 @@ theorem shannonEntropy_nonneg [Fintype α] (p : PMF α) : 0 ≤ shannonEntropy p
     (ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using PMF.coe_le_one p a)))
     (log_nonneg one_le_two)
 
-/-- **Cross-entropy is entropy plus divergence**: `H(p, q) = H(p) + KL(p ‖ q) / log 2` in bits,
-for all finite laws. When `p` charges an outcome `q` rules out, both sides are `∞`. -/
+/-- **Cross-entropy is entropy plus divergence.** For probability mass functions $p$ and $q$ on a
+finite alphabet, the cross-entropy $H(p, q)$ in bits equals $H(p) + D(p \parallel q) / \ln 2$,
+where $H(p)$ is the Shannon entropy of $p$ in bits and $D(p \parallel q)$ is the
+Kullback–Leibler divergence of $p$ from $q$ with the natural logarithm. The identity holds in
+$[0, \infty]$ with no support hypothesis: when $p$ charges an outcome that $q$ rules out, both
+sides are $\infty$. -/
 theorem crossEntropy_eq_shannonEntropy_add_klDiv [Fintype α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (p q : PMF α) :
     crossEntropy p q = ENNReal.ofReal (shannonEntropy p) +
@@ -235,8 +268,9 @@ theorem shannonEntropy_le_crossEntropy [Fintype α] [MeasurableSpace α]
   rw [crossEntropy_eq_shannonEntropy_add_klDiv]
   exact le_self_add
 
-/-- Equality in Gibbs' inequality holds only for `q = p`: log loss is a strictly proper scoring
-rule. -/
+/-- **Equality in Gibbs' inequality.** For probability mass functions $p$ and $q$ on a finite
+alphabet, the cross-entropy $H(p, q)$ in bits equals the Shannon entropy $H(p)$ in bits if and
+only if $q = p$. Thus log loss is a strictly proper scoring rule. -/
 theorem crossEntropy_eq_shannonEntropy_iff [Fintype α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (p q : PMF α) :
     crossEntropy p q = ENNReal.ofReal (shannonEntropy p) ↔ q = p := by

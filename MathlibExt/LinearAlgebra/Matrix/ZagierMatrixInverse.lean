@@ -639,27 +639,48 @@ private lemma zmi_bernoulli_delta (K s t : ℕ) (hs1 : 1 ≤ s) (hsK : s < K)
     rw [hsum, mul_zero]
     simp [ne_of_gt hts]
 
-/-- Zagier's `(K - 1) × (K - 1)` rational matrix, with source indices shifted from
-`1, ..., K - 1` to `Fin (K - 1)`. -/
+/-- **Zagier's matrix.** For a natural number $K$, Zagier's matrix $A_K$ is the rational matrix
+with rows and columns indexed by $1 \le i, j \le K - 1$ (empty when $K \le 1$) whose
+$(i, j)$ entry is
+
+$$(A_K)_{ij} = \binom{2K - 2j}{2i - 1} + \binom{2K - 2j}{2K - 2i},$$
+
+where $\binom{m}{k} = 0$ for $k > m$. -/
 public def zagierMatrix (K : ℕ) : Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ := fun i j =>
   (Nat.choose (2 * K - 2 * (j.val + 1)) (2 * (i.val + 1) - 1) : ℚ)
     + (Nat.choose (2 * K - 2 * (j.val + 1)) (2 * K - 2 * (i.val + 1)) : ℚ)
 
-/-- The first Bernoulli-number formula for the inverse of `zagierMatrix`. -/
+/-- **First Bernoulli formula for the inverse of Zagier's matrix.** For a natural number $K$,
+$P_K$ is the rational matrix with rows and columns indexed by $1 \le i, j \le K - 1$ (empty
+when $K \le 1$) whose $(i, j)$ entry is
+
+$$(P_K)_{ij} = \frac{2}{2i-1} \sum_{n=0}^{2K-2i} \binom{2j-1}{2K-2i-n+1} \binom{n+2i-2}{n} B_n,$$
+
+where $B_n$ is the $n$-th Bernoulli number with $B_1 = -\frac{1}{2}$ and $\binom{m}{k} = 0$
+for $k > m$. -/
 public def zagierInverseP (K : ℕ) : Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ := fun i j =>
   (2 : ℚ) / (2 * (↑(i.val + 1) : ℚ) - 1)
     * ∑ n ∈ Finset.range (2 * K - 2 * (i.val + 1) + 1),
       (Nat.choose (2 * (j.val + 1) - 1) (2 * K - 2 * (i.val + 1) - n + 1) : ℚ)
         * (Nat.choose (n + 2 * (i.val + 1) - 2) n : ℚ) * bernoulli n
 
-/-- The second Bernoulli-number formula for the inverse of `zagierMatrix`. -/
+/-- **Second Bernoulli formula for the inverse of Zagier's matrix.** For a natural number $K$,
+$Q_K$ is the rational matrix with rows and columns indexed by $1 \le i, j \le K - 1$ (empty
+when $K \le 1$) whose $(i, j)$ entry is
+
+$$(Q_K)_{ij} = -\frac{2}{2i-1} \sum_{n=0}^{2K-2i} \binom{2K-2j}{2K-2i-n+1} \binom{n+2i-2}{n} B_n,$$
+
+where $B_n$ is the $n$-th Bernoulli number with $B_1 = -\frac{1}{2}$ and $\binom{m}{k} = 0$
+for $k > m$. -/
 public def zagierInverseQ (K : ℕ) : Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ := fun i j =>
   (-2 : ℚ) / (2 * (↑(i.val + 1) : ℚ) - 1)
     * ∑ n ∈ Finset.range (2 * K - 2 * (i.val + 1) + 1),
       (Nat.choose (2 * K - 2 * (j.val + 1)) (2 * K - 2 * (i.val + 1) - n + 1) : ℚ)
         * (Nat.choose (n + 2 * (i.val + 1) - 2) n : ℚ) * bernoulli n
 
-/-- The two Bernoulli formulas defining the candidate inverse agree. -/
+/-- **The two Bernoulli formulas for the inverse of Zagier's matrix agree.** For every natural
+number $K \ge 2$, the matrices $P_K$ and $Q_K$ given by the first and second Bernoulli formulas
+for the inverse of Zagier's matrix are equal: $P_K = Q_K$. -/
 public lemma zagierInverseP_eq_zagierInverseQ (K : ℕ) (hK : 1 < K) :
     zagierInverseP K = zagierInverseQ K := by
   ext i j
@@ -811,7 +832,9 @@ private lemma zmi_product_sum (K s t : ℕ) (hs1 : 1 ≤ s) (hsK : s < K)
       dsimp only [d, common]
       exact zmi_bernoulli_delta K s t hs1 hsK ht1 htK
 
-/-- The candidate inverse is a left inverse of Zagier's matrix. -/
+/-- **Left inverse of Zagier's matrix.** For every natural number $K \ge 2$, the matrix $P_K$
+given by the first Bernoulli formula is a left inverse of Zagier's matrix $A_K$:
+$P_K A_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix. -/
 public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) (hK : 1 < K) :
     zagierInverseP K * zagierMatrix K = 1 := by
   have hPQ : zagierInverseP K = zagierInverseQ K := zagierInverseP_eq_zagierInverseQ K hK
@@ -850,23 +873,33 @@ public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) (hK : 1 < K) :
           exact Fin.ext h
         simp [hij, hval]
 
-/-- The candidate inverse is a right inverse of Zagier's matrix. -/
+/-- **Right inverse of Zagier's matrix.** For every natural number $K \ge 2$, the matrix $P_K$
+given by the first Bernoulli formula is a right inverse of Zagier's matrix $A_K$:
+$A_K P_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix. -/
 public lemma zagierMatrix_mul_zagierInverseP (K : ℕ) (hK : 1 < K) :
     zagierMatrix K * zagierInverseP K = 1 :=
   (Matrix.mul_eq_one_comm_of_card_eq _ _ _ rfl).mpr (zagierInverseP_mul_zagierMatrix K hK)
 
-/-- Zagier's matrix conjecture: the two Bernoulli-number formulas for `P`
-coincide, and `P` is the two-sided inverse of `A`. The three conjuncts are
-the equality of the two formulas for `P`, then `A * P = 1`, then `P * A = 1`.
-Source indices are 1-based; here rows and columns run over `Fin (K - 1)` with
-`i.val + 1` and `j.val + 1`.
+/-- **Zagier's matrix conjecture.** Let $K \ge 2$ be a natural number, let $B_n$ be the $n$-th
+Bernoulli number with $B_1 = -\frac{1}{2}$, and let $\binom{m}{k} = 0$ for $k > m$. Let $A$,
+$P$ and $Q$ be the $(K - 1) \times (K - 1)$ rational matrices, with rows and columns indexed
+by $1 \le i, j \le K - 1$, whose entries are
+
+$$A_{ij} = \binom{2K - 2j}{2i - 1} + \binom{2K - 2j}{2K - 2i},$$
+
+$$P_{ij} = \frac{2}{2i-1} \sum_{n=0}^{2K-2i} \binom{2j-1}{2K-2i-n+1} \binom{n+2i-2}{n} B_n,$$
+
+$$Q_{ij} = -\frac{2}{2i-1} \sum_{n=0}^{2K-2i} \binom{2K-2j}{2K-2i-n+1} \binom{n+2i-2}{n} B_n.$$
+
+Then $P = Q$, $AP = I$ and $PA = I$, where $I$ is the identity matrix; that is, the two
+Bernoulli formulas agree and give the two-sided inverse of $A$.
+
+Proves `Wanted` entry `zagier_matrix_inverse`.
 
 Source: Yawen Ma and Lee-Peng Teo, "Another Proof of Zagier's Matrix
 Conjecture," Journal of Integer Sequences 25 (2022), Article 22.6.4,
 Theorem [Zagier's conjecture], equations (eq12) and (eq13), lines 279–285,
 https://cs.uwaterloo.ca/journals/JIS/VOL25/Teo/teo4.tex
-
-Proves `Wanted` entry `zagier_matrix_inverse`.
 -/
 public theorem zagier_matrix_inverse (K : ℕ) (hK : 1 < K) :
     (Matrix.of (fun i j : Fin (K - 1) =>

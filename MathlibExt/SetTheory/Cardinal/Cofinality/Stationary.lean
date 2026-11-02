@@ -90,7 +90,11 @@ def IsNormalIdeal.{u} (κ : Cardinal.{u}) (I : Set (Set (Set.Iio κ.ord))) : Pro
 
 -- Logic 2: Regressive function
 
-/-- An ordinal function f on a set S is *regressive* if f(α )<α for all α ∈ S with α ≠ 0. -/
+/-- **Regressive functions.** Let $\kappa$ be a cardinal, identified with its initial ordinal, let
+$S$ be a set of ordinals less than $\kappa$, and let $f$ be a function from $S$ to the ordinals
+less than $\kappa$. Then $f$ is regressive if $f(\alpha) < \alpha$ for every nonzero
+$\alpha \in S$.
+-/
 def IsRegressive (κ : Cardinal)
     (S : Set (Set.Iio κ.ord)) (f : ↥S → Set.Iio κ.ord) : Prop :=
   ∀ x : ↥S, (x : Ordinal) ≠ 0 → (f x : Ordinal) < (x : Ordinal)

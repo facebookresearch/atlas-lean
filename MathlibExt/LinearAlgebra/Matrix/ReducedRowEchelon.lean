@@ -30,7 +30,12 @@ section
 variable {R : Type*} [Zero R] [One R]
 variable {m n : Type*}
 
-/-- A leading column of a matrix in reduced row echelon form is a standard basis vector. -/
+/-- **Pivot columns of a reduced row echelon matrix.** Let $R$ be a type with elements $0$ and
+$1$, and let $A$ be a matrix over $R$ in reduced row echelon form whose rows are indexed by a
+linearly ordered set and whose columns are indexed by a set with a relation $<$. Suppose that the
+leading entry of row $i$ of $A$ is in column $c$, that is, $A_{ic} \neq 0$ and $A_{ij} = 0$ for
+every column $j < c$. Then column $c$ of $A$ is the standard basis vector $e_i$: $A_{ic} = 1$ and
+$A_{kc} = 0$ for every row $k \neq i$. -/
 theorem col_eq_single_of_isLeadingEntry
     [DecidableEq m] [LinearOrder m] [LT n]
     {A : Matrix m n R} (hA : A.IsReducedRowEchelon) {i : m} {c : n}
@@ -41,7 +46,12 @@ theorem col_eq_single_of_isLeadingEntry
     simpa using hA.eq_one hc
   · simpa [hxi] using hA.eq_zero_of_ne_of_isLeadingEntry hxi hc
 
-/-- Reindexing the columns by an order isomorphism preserves reduced row echelon form. -/
+/-- **Order-preserving reindexing of columns preserves reduced row echelon form.** Let $R$ be a
+type with elements $0$ and $1$, and let $A$ be a matrix over $R$ in reduced row echelon form whose
+rows are indexed by a linearly ordered set and whose columns are indexed by a linearly ordered
+set $N$. Let $e : O \to N$ be an order isomorphism from a linearly ordered set $O$. Then the
+matrix $B$ with columns indexed by $O$ and entries $B_{ik} = A_{i\,e(k)}$ is in reduced row
+echelon form. -/
 theorem submatrix_orderIso
     [LinearOrder m] [LinearOrder n] {o : Type*} [LinearOrder o]
     {A : Matrix m n R} (hA : A.IsReducedRowEchelon)
@@ -556,17 +566,21 @@ private theorem rref_coordinates_isReducedRowEchelon (v : n → (m → K))
     · exact (hc.row_ne_zero (hzero i₂ hi₂)).elim
 
 /--
-Every matrix over a field is row-equivalent to a matrix in reduced row echelon form.
-
-Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Matrices / row-reduced matrices;
-G. Strang, Introduction to Linear Algebra, 6th ed., Wellesley-Cambridge Press (2023),
-Section 2.2.
+**Existence of the reduced row echelon form.** Let $K$ be a field, let $m$ and $n$ be finite
+linearly ordered sets, and let $A$ be an $m \times n$ matrix over $K$. Then there are an
+$m \times n$ matrix $R$ over $K$ in reduced row echelon form and an invertible $m \times m$
+matrix $P$ over $K$ with $R = PA$. In other words, $A$ is row-equivalent to a matrix in reduced
+row echelon form.
 
 Proves `Wanted` entry `exists_isReducedRowEchelon_rowEquivalent`.
 
 Proof: Choose pivot columns greedily (columns outside the span of the earlier ones), extend them
-to a basis of `m → K` whose order matches the rows, and take `R` to be the coordinate matrix of the
-columns of `A` in that basis and `P` the matrix of the coordinate map.
+to a basis of $K^m$ whose order matches the order of the rows, and take $R$ to be the coordinate
+matrix of the columns of $A$ in that basis and $P$ the matrix of the coordinate map.
+
+Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Matrices / row-reduced matrices;
+G. Strang, Introduction to Linear Algebra, 6th ed., Wellesley-Cambridge Press (2023),
+Section 2.2.
 -/
 theorem exists_isReducedRowEchelon_rowEquivalent
     (A : Matrix m n K) :
@@ -590,17 +604,22 @@ theorem exists_isReducedRowEchelon_rowEquivalent
   exact ⟨R, P, hR, hP, hPA⟩
 
 /--
-The reduced row echelon form in a row-equivalence class is unique.
+**Uniqueness of the reduced row echelon form.** Let $K$ be a field, let $m$ and $n$ be finite
+linearly ordered sets, and let $R_1$ and $R_2$ be $m \times n$ matrices over $K$ in reduced row
+echelon form. If $R_2 = P R_1$ for some invertible $m \times m$ matrix $P$ over $K$, then
+$R_1 = R_2$. In other words, a row-equivalence class contains at most one matrix in reduced row
+echelon form.
+
+Proves `Wanted` entry `isReducedRowEchelon_unique_of_rowEquivalent`.
+
+Proof: Reindex the columns along the order isomorphism between $\{0, \dots, |n| - 1\}$ and $n$.
+For columns indexed by an initial segment of the natural numbers, induct on the number of
+columns: the matrices agree on all but the last column by induction, and that forces their last
+columns to agree.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Matrices / row-reduced matrices;
 G. Strang, Introduction to Linear Algebra, 6th ed., Wellesley-Cambridge Press (2023),
 Section 2.2.
-
-Proves `Wanted` entry `isReducedRowEchelon_unique_of_rowEquivalent`.
-
-Proof: Reindex the columns along the order isomorphism with `Fin (Fintype.card n)`. For `Fin`
-columns, induct on the number of columns: the matrices agree on all but the last column by
-induction, and that forces their last columns to agree.
 -/
 theorem isReducedRowEchelon_unique_of_rowEquivalent
     (R₁ R₂ : Matrix m n K)
@@ -627,16 +646,20 @@ theorem isReducedRowEchelon_unique_of_rowEquivalent
   simpa only [e.apply_symm_apply] using hij
 
 /--
-Row operations by an invertible matrix preserve the solution set of the homogeneous system.
+**Invertible row operations preserve the null space.** Let $K$ be a field, let $m$ and $n$ be
+finite linearly ordered sets, let $A$ be an $m \times n$ matrix over $K$, and let $P$ be an
+invertible $m \times m$ matrix over $K$. Then the linear maps $x \mapsto PAx$ and $x \mapsto Ax$
+on $K^n$ have the same kernel; that is, the homogeneous systems $PAx = 0$ and $Ax = 0$ have the
+same solutions.
+
+Proves `Wanted` entry `ker_mulVecLin_mul_left_isUnit`.
+
+Proof: For every $x \in K^n$ we have $(PA)x = P(Ax)$, and multiplication by $P$ is injective
+because $P$ is invertible, so $(PA)x = 0$ if and only if $Ax = 0$.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Matrices / elementary row operations;
 G. Strang, Introduction to Linear Algebra, 6th ed., Wellesley-Cambridge Press (2023),
 Section 2.2.
-
-Proves `Wanted` entry `ker_mulVecLin_mul_left_isUnit`.
-
-Proof: `Matrix.mulVec_mulVec` rewrites `(P * A) *ᵥ x` as `P *ᵥ (A *ᵥ x)`, and `P *ᵥ ·` is
-injective because `P` is a unit.
 -/
 theorem ker_mulVecLin_mul_left_isUnit
     (P : Matrix m m K) (A : Matrix m n K) (hP : IsUnit P) :

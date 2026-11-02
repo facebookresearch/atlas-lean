@@ -25,7 +25,8 @@ their equality is not assumed by this reusable API.
 
 namespace InformationTheory
 
-/-- A joint probability law on two positive finite labeled alphabets. -/
+/-- **Finite joint law.** A finite joint law consists of positive integers $n_X$ and $n_Y$
+and a probability distribution on $\{0, \dots, n_X - 1\} \times \{0, \dots, n_Y - 1\}$. -/
 structure FiniteJointLaw where
   nx : ℕ
   ny : ℕ
@@ -33,26 +34,37 @@ structure FiniteJointLaw where
   ny_pos : 0 < ny
   law : PMF (Fin nx × Fin ny)
 
-/-- The actual X marginal of the joint law. -/
+/-- **Input law.** The input law of a finite joint law $p$ on
+$\{0, \dots, n_X - 1\} \times \{0, \dots, n_Y - 1\}$ is its first marginal: the law on
+$\{0, \dots, n_X - 1\}$ that is the image of $p$ under $(x, y) \mapsto x$. -/
 noncomputable def FiniteJointLaw.inputLaw (p : FiniteJointLaw) : PMF (Fin p.nx) :=
   p.law.map Prod.fst
 
-/-- The actual Y marginal of the joint law. -/
+/-- **Output law.** The output law of a finite joint law $p$ of an input $X$ and an output $Y$
+is the law of $Y$: the marginal of $p$ on the output alphabet, obtained by pushing $p$ forward
+along the projection onto the second coordinate. -/
 noncomputable def FiniteJointLaw.outputLaw (p : FiniteJointLaw) : PMF (Fin p.ny) :=
   p.law.map Prod.snd
 
-/-- Mutual information in bits, using the exact finite entropy identity. -/
+/-- **Mutual information.** The mutual information of a finite joint law $p$ of $(X, Y)$ is
+$I(X; Y) = H(X) + H(Y) - H(X, Y)$, where $H(X)$ and $H(Y)$ are the Shannon entropies in bits
+of the input and output laws of $p$, and $H(X, Y)$ is the Shannon entropy in bits of $p$. -/
 noncomputable def FiniteJointLaw.mutualInformation (p : FiniteJointLaw) : ℝ :=
   shannonEntropy p.inputLaw + shannonEntropy p.outputLaw - shannonEntropy p.law
 
-/-- A finite auxiliary extension with exactly the specified XY marginal. -/
+/-- **Finite extension of a joint law.** A finite extension of a finite joint law $p$ on
+$\{0, \dots, n_X - 1\} \times \{0, \dots, n_Y - 1\}$ consists of a positive integer $n_S$ and a
+probability law on triples $(x, y, s)$ with $s \in \{0, \dots, n_S - 1\}$ whose marginal on the
+pairs $(x, y)$ is exactly $p$. -/
 structure FiniteExtension (p : FiniteJointLaw) where
   ns : ℕ
   ns_pos : 0 < ns
   law : PMF ((Fin p.nx × Fin p.ny) × Fin ns)
   marginal_eq : law.map Prod.fst = p.law
 
-/-- Appending a singleton auxiliary alphabet preserves every given joint law. -/
+/-- **Trivial extension.** The trivial extension of a finite joint law $p$ of an input $X$ and an
+output $Y$ has the one-letter auxiliary alphabet $\{0\}$ and, as its law, the law of
+$((X, Y), 0)$ for $(X, Y)$ distributed according to $p$; its $(X, Y)$ marginal is $p$. -/
 noncomputable def FiniteExtension.trivial (p : FiniteJointLaw) : FiniteExtension p where
   ns := 1
   ns_pos := Nat.zero_lt_succ 0
@@ -61,42 +73,60 @@ noncomputable def FiniteExtension.trivial (p : FiniteJointLaw) : FiniteExtension
     rw [PMF.map_comp]
     exact PMF.map_id p.law
 
-/-- The actual S marginal of a finite extension. -/
+/-- **Auxiliary marginal of an extension.** For a finite extension $q$ of a finite joint law $p$,
+viewed as the law of a triple $(X, Y, S)$ with $S$ taking values in $\{0, \dots, n_S - 1\}$, the
+auxiliary law is the marginal law of $S$ under $q$. -/
 noncomputable def FiniteExtension.auxiliaryLaw {p : FiniteJointLaw}
     (q : FiniteExtension p) : PMF (Fin q.ns) :=
   q.law.map Prod.snd
 
-/-- The actual XS marginal of a finite extension. -/
+/-- **Input-auxiliary law.** Let $q$ be a finite extension of a finite joint law of $(X, Y)$,
+that is, a law of $((X, Y), S)$ with an auxiliary variable $S$. Its input-auxiliary law is the
+joint law of $(X, S)$: the image of the law of $q$ under $((x, y), s) \mapsto (x, s)$. -/
 noncomputable def FiniteExtension.inputAuxiliaryLaw {p : FiniteJointLaw}
     (q : FiniteExtension p) : PMF (Fin p.nx × Fin q.ns) :=
   q.law.map (fun z => (z.1.1, z.2))
 
-/-- The actual YS marginal of a finite extension. -/
+/-- **Output-auxiliary law.** Let $q$ be a finite extension of a finite joint law of $(X, Y)$,
+that is, a law of $((X, Y), S)$ with an auxiliary variable $S$. Its output-auxiliary law is the
+joint law of $(Y, S)$: the image of the law of $q$ under $((x, y), s) \mapsto (y, s)$. -/
 noncomputable def FiniteExtension.outputAuxiliaryLaw {p : FiniteJointLaw}
     (q : FiniteExtension p) : PMF (Fin p.ny × Fin q.ns) :=
   q.law.map (fun z => (z.1.2, z.2))
 
-/-- Mutual information between X and S in the actual extension. -/
+/-- **Mutual information between the input and the auxiliary.** For a finite extension $q$ of a
+finite joint law $p$, viewed as the law of a triple $(X, Y, S)$ whose $(X, Y)$ marginal is $p$,
+this is $I(X; S) = H(X) + H(S) - H(X, S)$, where $H(X)$ is the Shannon entropy in bits of the
+$X$ marginal of $p$, and $H(S)$ and $H(X, S)$ are the Shannon entropies in bits of the $S$ and
+$(X, S)$ marginals of $q$. -/
 noncomputable def FiniteExtension.auxiliaryInformation {p : FiniteJointLaw}
     (q : FiniteExtension p) : ℝ :=
   shannonEntropy p.inputLaw + shannonEntropy q.auxiliaryLaw -
     shannonEntropy q.inputAuxiliaryLaw
 
-/-- Conditional entropy H(Y|S) in bits, using the exact entropy identity. -/
+/-- **Conditional entropy of the output given the auxiliary.** For a finite extension $q$ of a
+finite joint law $p$, viewed as the law of a triple $(X, Y, S)$ whose $(X, Y)$ marginal is $p$,
+this is $H(Y \mid S) = H(Y, S) - H(S)$, where $H(Y, S)$ and $H(S)$ are the Shannon entropies in
+bits of the $(Y, S)$ and $S$ marginals of $q$. -/
 noncomputable def FiniteExtension.conditionalEntropy {p : FiniteJointLaw}
     (q : FiniteExtension p) : ℝ :=
   shannonEntropy q.outputAuxiliaryLaw - shannonEntropy q.auxiliaryLaw
 
-/-- Conditional entropy `H(Y | X, S)` of the output given the input and
-auxiliary in an extension: `H(X, Y, S) - H(X, S)`. It vanishes exactly
-when `Y` is recoverable from `(X, S)` (a deterministic function of the
-pair, almost surely). -/
+/-- **Conditional entropy of the output given the input and the auxiliary.** For a finite
+extension of a finite joint law, with input $X$, output $Y$ and auxiliary $S$, the conditional
+entropy of $Y$ given $(X, S)$ is $H(Y \mid X, S) = H(X, Y, S) - H(X, S)$, where $H$ denotes
+Shannon entropy in bits, $H(X, Y, S)$ is the entropy of the law of the extension and $H(X, S)$
+is the entropy of its $(X, S)$ marginal.
+
+It vanishes exactly when $Y$ is almost surely a deterministic function of $(X, S)$. -/
 noncomputable def FiniteExtension.outputGivenInputAuxiliaryEntropy {p : FiniteJointLaw}
     (q : FiniteExtension p) : ℝ :=
   shannonEntropy q.law - shannonEntropy q.inputAuxiliaryLaw
 
-/-- A singleton output is always recoverable: `H(Y | X, S) = 0` for every
-actual extension. -/
+/-- **Zero output entropy given input and auxiliary for a one-letter output.** Let $p$ be a
+finite joint law of an input $X$ and an output $Y$ whose output alphabet has exactly one letter.
+Then for every finite extension of $p$ by an auxiliary $S$, the conditional entropy
+$H(Y \mid X, S)$ of the output given the input and the auxiliary is $0$. -/
 theorem FiniteExtension.outputGivenInputAuxiliaryEntropy_eq_zero_of_output_subsingleton
     {p : FiniteJointLaw} [Subsingleton (Fin p.ny)] (q : FiniteExtension p) :
     q.outputGivenInputAuxiliaryEntropy = 0 := by
@@ -109,14 +139,18 @@ theorem FiniteExtension.outputGivenInputAuxiliaryEntropy_eq_zero_of_output_subsi
   rw [← hm, shannonEntropy_map_equiv]
   exact sub_self _
 
-/-- The constructed singleton auxiliary has its actual deterministic law. -/
+/-- **Auxiliary law of the trivial extension.** For every finite joint law $p$, the auxiliary law
+of the trivial extension of $p$ is the point mass at $0$, the only letter of its one-letter
+auxiliary alphabet $\{0\}$. -/
 @[simp] theorem FiniteExtension.trivial_auxiliaryLaw (p : FiniteJointLaw) :
     (FiniteExtension.trivial p).auxiliaryLaw = PMF.pure (0 : Fin 1) := by
   change (p.law.map (fun z => (z, (0 : Fin 1)))).map Prod.snd = PMF.pure 0
   rw [PMF.map_comp]
   exact PMF.map_const p.law (0 : Fin 1)
 
-/-- The constructed singleton auxiliary is independent of the actual input. -/
+/-- **The trivial extension has zero auxiliary information.** For every finite joint law $p$, the
+mutual information $I(X; S)$ between the input $X$ and the auxiliary $S$ in the trivial extension
+of $p$, whose auxiliary alphabet has a single letter, is $0$. -/
 @[simp] theorem FiniteExtension.trivial_auxiliaryInformation (p : FiniteJointLaw) :
     (FiniteExtension.trivial p).auxiliaryInformation = 0 := by
   change shannonEntropy p.inputLaw +
@@ -133,7 +167,9 @@ theorem FiniteExtension.outputGivenInputAuxiliaryEntropy_eq_zero_of_output_subsi
   rw [shannonEntropy_map_const]
   simp
 
-/-- A singleton auxiliary leaves the actual output entropy unchanged. -/
+/-- **Conditional entropy in the trivial extension.** For every finite joint law $p$ of an input
+$X$ and an output $Y$, the conditional entropy $H(Y \mid S)$ of the output given the auxiliary
+$S$ in the trivial extension of $p$ equals the Shannon entropy $H(Y)$ of the output law of $p$. -/
 @[simp] theorem FiniteExtension.trivial_conditionalEntropy (p : FiniteJointLaw) :
     (FiniteExtension.trivial p).conditionalEntropy = shannonEntropy p.outputLaw := by
   change shannonEntropy ((p.law.map (fun z => (z, (0 : Fin 1)))).map
@@ -150,33 +186,43 @@ theorem FiniteExtension.outputGivenInputAuxiliaryEntropy_eq_zero_of_output_subsi
   rw [shannonEntropy_map_const]
   simp
 
-/-- The XS marginal has precisely the specified X law. -/
+/-- **Input marginal of the input-auxiliary law.** Let $q$ be a finite extension of a finite
+joint law $p$ of $(X, Y)$ by an auxiliary variable $S$. Then the marginal of $X$ under the
+joint law of $(X, S)$ in $q$ equals the law of $X$ under $p$. -/
 @[simp] theorem FiniteExtension.inputAuxiliaryLaw_map_fst {p : FiniteJointLaw}
     (q : FiniteExtension p) : q.inputAuxiliaryLaw.map Prod.fst = p.inputLaw := by
   change (q.law.map (fun z => (z.1.1, z.2))).map Prod.fst = p.law.map Prod.fst
   rw [PMF.map_comp]
   simpa [PMF.map_comp, Function.comp_def] using congrArg (PMF.map Prod.fst) q.marginal_eq
 
-/-- The YS marginal has precisely the specified Y law. -/
+/-- **Output marginal of the output-auxiliary law.** Let $q$ be a finite extension of a finite
+joint law $p$ of $(X, Y)$ by an auxiliary variable $S$. Then the marginal of $Y$ under the
+joint law of $(Y, S)$ in $q$ equals the law of $Y$ under $p$. -/
 @[simp] theorem FiniteExtension.outputAuxiliaryLaw_map_fst {p : FiniteJointLaw}
     (q : FiniteExtension p) : q.outputAuxiliaryLaw.map Prod.fst = p.outputLaw := by
   change (q.law.map (fun z => (z.1.2, z.2))).map Prod.fst = p.law.map Prod.snd
   rw [PMF.map_comp]
   simpa [PMF.map_comp, Function.comp_def] using congrArg (PMF.map Prod.snd) q.marginal_eq
 
-/-- The two pair marginals have the same actual auxiliary law. -/
+/-- **Auxiliary marginal of the input-auxiliary law.** Let $q$ be a finite extension of a
+finite joint law of $(X, Y)$ by an auxiliary variable $S$. Then the marginal of $S$ under the
+joint law of $(X, S)$ in $q$ equals the law of $S$ in $q$. -/
 @[simp] theorem FiniteExtension.inputAuxiliaryLaw_map_snd {p : FiniteJointLaw}
     (q : FiniteExtension p) : q.inputAuxiliaryLaw.map Prod.snd = q.auxiliaryLaw := by
   simp [FiniteExtension.inputAuxiliaryLaw, FiniteExtension.auxiliaryLaw,
     PMF.map_comp, Function.comp_def]
 
-/-- The output/auxiliary pair has the actual auxiliary marginal. -/
+/-- **Auxiliary marginal of the output-auxiliary law.** Let $q$ be a finite extension of a
+finite joint law of $(X, Y)$ by an auxiliary variable $S$. Then the marginal of $S$ under the
+joint law of $(Y, S)$ in $q$ equals the law of $S$ in $q$. -/
 @[simp] theorem FiniteExtension.outputAuxiliaryLaw_map_snd {p : FiniteJointLaw}
     (q : FiniteExtension p) : q.outputAuxiliaryLaw.map Prod.snd = q.auxiliaryLaw := by
   simp [FiniteExtension.outputAuxiliaryLaw, FiniteExtension.auxiliaryLaw,
     PMF.map_comp, Function.comp_def]
 
-/-- A singleton output has zero conditional entropy for every actual extension. -/
+/-- **Conditional entropy vanishes for a one-letter output.** If the output alphabet of a finite
+joint law $p$ of $(X, Y)$ has exactly one element, then for every finite extension of $p$ by an
+auxiliary variable $S$, the conditional entropy $H(Y \mid S)$ is $0$. -/
 theorem FiniteExtension.conditionalEntropy_eq_zero_of_output_subsingleton
     {p : FiniteJointLaw} [Subsingleton (Fin p.ny)] (q : FiniteExtension p) :
     q.conditionalEntropy = 0 := by
@@ -193,42 +239,69 @@ theorem FiniteExtension.conditionalEntropy_eq_zero_of_output_subsingleton
   rw [← hm, shannonEntropy_map_equiv]
   exact sub_self _
 
-/-- The fixed-law conditional-prefix entropy optimum, preserving empty-infimum infinity.
+/-- **Conditional-prefix optimum of a joint law.** For a finite joint law $p$ of $(X, Y)$, this
+is the infimum in the extended reals of the conditional entropy $H(Y \mid S)$ in bits over all
+finite extensions of $p$ by an auxiliary variable $S$ such that $I(X; S) = 0$ and
+$H(Y \mid X, S) = 0$. The infimum of the empty set is $+\infty$.
+
 Source: Li, arXiv:2501.13736v4, equation cs_h_c. -/
 noncomputable def conditionalPrefixOptimum (p : FiniteJointLaw) : EReal :=
   sInf {h | ∃ q : FiniteExtension p, q.auxiliaryInformation = 0 ∧
     q.outputGivenInputAuxiliaryEntropy = 0 ∧
     h = (q.conditionalEntropy : EReal)}
 
-/-- Worst-case optimum at exactly the prescribed finite mutual information. -/
+/-- **Worst-case conditional-prefix optimum.** For a real number $t$, the worst-case optimum at
+$t$ is the supremum, taken in the extended reals, of the conditional-prefix optimum of $p$ over
+all finite joint laws $p$ of an input $X$ and an output $Y$ whose mutual information $I(X; Y)$,
+in bits, equals $t$; it is $-\infty$ when no such law exists. -/
 noncomputable def worstCaseOptimum (t : ℝ) : EReal :=
   sSup {h | ∃ p : FiniteJointLaw, p.mutualInformation = t ∧ h = conditionalPrefixOptimum p}
 
-/-- The worst-case one-shot conditional-prefix asymptotic constant term.
+/-- **Channel simulation constant.** The constant $c_c^*$ is the limit superior in the extended
+reals, as the real number $t$ tends to $+\infty$, of $W(t) - t - \log_2 t$, where $W(t)$ is the
+worst-case optimum at $t$: the supremum of the conditional-prefix optimum over all finite joint
+laws whose mutual information in bits is exactly $t$.
+
 Source: Li, arXiv:2501.13736v4, definition of c_c*. -/
 noncomputable def channelSimulationConstant : EReal :=
   Filter.limsup (fun t : ℝ => worstCaseOptimum t - (t : EReal) -
     (Real.log t / Real.log 2 : EReal)) Filter.atTop
 
-/-- A uniform additive outer constant with one positive inner constant. -/
+/-- **Uniform outer constant for channel simulation.** A real number $\alpha$ is a uniform
+outer constant when there is a real $\beta > 0$ such that for every finite joint law $p$ of
+$(X, Y)$ there is a finite extension of $p$ by an auxiliary variable $S$ with $I(X; S) = 0$
+and $H(Y \mid X, S) = 0$ and
+$$H(Y \mid S) \le I(X; Y) + \log_2\bigl(I(X; Y) + \beta\bigr) + \alpha,$$
+where all entropies and mutual informations are in bits and are computed from the law of
+$(X, Y, S)$ in the extension. -/
 def HasUniformOuterConstant (α : ℝ) : Prop :=
   ∃ β : ℝ, 0 < β ∧ ∀ p : FiniteJointLaw, ∃ q : FiniteExtension p,
     q.auxiliaryInformation = 0 ∧ q.outputGivenInputAuxiliaryEntropy = 0 ∧
     q.conditionalEntropy ≤ p.mutualInformation +
       Real.log (p.mutualInformation + β) / Real.log 2 + α
 
-/-- The infimum of uniformly admissible real outer constants, preserving infinity. -/
+/-- **Infimum of the uniform outer constants.** Call a real number $\alpha$ a uniform outer
+constant when there is a real $\beta > 0$ such that every finite joint law $p$ of an input $X$
+and an output $Y$ has a finite extension by an auxiliary $S$ with $I(X; S) = 0$,
+$H(Y \mid X, S) = 0$ and $H(Y \mid S) \le I(X; Y) + \log_2(I(X; Y) + \beta) + \alpha$, where
+entropies and mutual informations are in bits. This is the infimum of the set of uniform outer
+constants, taken in the extended reals, so it is $+\infty$ when there is none. -/
 noncomputable def uniformOuterConstantInfimum : EReal :=
   sInf {h | ∃ α : ℝ, HasUniformOuterConstant α ∧ h = (α : EReal)}
 
-/-- Every actual admissible extension bounds the fixed-law infimum from above. -/
+/-- **Each admissible extension bounds the conditional-prefix optimum.** Let $p$ be a finite
+joint law of $(X, Y)$ and let $q$ be a finite extension of $p$ by an auxiliary variable $S$ with
+$I(X; S) = 0$ and $H(Y \mid X, S) = 0$. Then the conditional-prefix optimum of $p$ is at most
+the conditional entropy $H(Y \mid S)$ of $q$. -/
 theorem conditionalPrefixOptimum_le {p : FiniteJointLaw} (q : FiniteExtension p)
     (hq : q.auxiliaryInformation = 0)
     (hqrec : q.outputGivenInputAuxiliaryEntropy = 0) :
     conditionalPrefixOptimum p ≤ (q.conditionalEntropy : EReal) := by
   exact sInf_le ⟨q, hq, hqrec, rfl⟩
 
-/-- The actual fixed-law infimum of every singleton-output law is exactly zero. -/
+/-- **The conditional-prefix optimum vanishes for a one-letter output.** If the output alphabet
+of a finite joint law $p$ has exactly one element, then the conditional-prefix optimum of $p$
+equals $0$. -/
 theorem conditionalPrefixOptimum_eq_zero_of_output_subsingleton
     (p : FiniteJointLaw) [Subsingleton (Fin p.ny)] :
     conditionalPrefixOptimum p = 0 := by
@@ -241,7 +314,9 @@ theorem conditionalPrefixOptimum_eq_zero_of_output_subsingleton
     rintro h ⟨q, _, _, rfl⟩
     simp [FiniteExtension.conditionalEntropy_eq_zero_of_output_subsingleton]
 
-/-- Every actual information-slice member contributes to the worst-case supremum. -/
+/-- **The worst-case optimum dominates each conditional-prefix optimum.** For every finite joint
+law $p$ of $(X, Y)$, the conditional-prefix optimum of $p$ is at most the worst-case optimum at
+$t = I(X; Y)$, the mutual information of $p$ in bits. -/
 theorem conditionalPrefixOptimum_le_worstCaseOptimum (p : FiniteJointLaw) :
     conditionalPrefixOptimum p ≤ worstCaseOptimum p.mutualInformation := by
   exact le_sSup ⟨p, rfl, rfl⟩

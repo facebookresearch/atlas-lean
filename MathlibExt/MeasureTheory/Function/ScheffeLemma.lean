@@ -121,9 +121,12 @@ private theorem scheffe_lintegral_eq {α : Type*} {m : MeasurableSpace α} {μ :
   congr 1
   exact (eLpNorm_one_eq_lintegral_enorm ((hfm n).sub hgm)).symm
 
-/-- **Scheffé's lemma.** If `f n → g` almost everywhere and
-`‖f n‖₁ → ‖g‖₁`, then `f n → g` in `L¹`, i.e.
-`eLpNorm (f n - g) 1 μ → 0`. -/
+/-- **Scheffé's lemma.** Let $\mu$ be a measure on a measurable space $\alpha$, let
+$f_n : \alpha \to \mathbb{R}$ ($n \in \mathbb{N}$) be $\mu$-almost everywhere strongly measurable,
+and let $g : \alpha \to \mathbb{R}$ be in $L^1(\mu)$. Write
+$\|h\|_1 = \int |h| \, d\mu \in [0, \infty]$ for the $L^1$ seminorm. If $f_n(x) \to g(x)$ for
+$\mu$-almost every $x$ and $\|f_n\|_1 \to \|g\|_1$ in $[0, \infty]$, then $\|f_n - g\|_1 \to 0$,
+that is, $f_n \to g$ in $L^1(\mu)$. -/
 theorem scheffe_lemma {α : Type*} {m : MeasurableSpace α} {μ : Measure α}
     {f : ℕ → α → ℝ} {g : α → ℝ}
     (hfm : ∀ n, AEStronglyMeasurable (f n) μ)
@@ -215,9 +218,14 @@ private theorem eLpNorm_uniformly_bounded_of_tendsto_eLpNorm_sub {α : Type*}
       _ = ↑Ctail := by push_cast; rfl
       _ ≤ ↑(Cinit ⊔ Ctail) := ENNReal.coe_le_coe.mpr le_sup_right
 
-/-- If `f n → g` in measure and `‖f n‖₁ → ‖g‖₁`, then `f n → g` in `L¹`.
-This is Scheffé's lemma applied along a further subsequence, extracted from
-every subsequence by convergence in measure. -/
+/-- **Scheffé's lemma for convergence in measure.** Let $\mu$ be a measure on a measurable space
+$\alpha$, let $f_n : \alpha \to \mathbb{R}$ ($n \in \mathbb{N}$) and $g : \alpha \to \mathbb{R}$ be
+in $L^1(\mu)$, and write $\|h\|_1 = \int |h| \, d\mu$. If $f_n \to g$ in $\mu$-measure (for every
+$\varepsilon > 0$, $\mu\{x : |f_n(x) - g(x)| \ge \varepsilon\} \to 0$) and $\|f_n\|_1 \to \|g\|_1$,
+then $\|f_n - g\|_1 \to 0$, that is, $f_n \to g$ in $L^1(\mu)$.
+
+The proof applies Scheffé's lemma along a further subsequence, extracted from every subsequence by
+convergence in measure. -/
 theorem tendsto_eLpNorm_one_of_tendstoInMeasure_of_tendsto_eLpNorm
     {α : Type*} {m : MeasurableSpace α} {μ : Measure α}
     {f : ℕ → α → ℝ} {g : α → ℝ}
@@ -233,9 +241,17 @@ theorem tendsto_eLpNorm_one_of_tendstoInMeasure_of_tendsto_eLpNorm
   exact scheffe_lemma (fun n => (hf (ns (ms n))).aestronglyMeasurable) hg hms_ae
     (hnorm.comp (hns.comp hms_mono.tendsto_atTop))
 
-/-- If `f n → g` in measure and `‖f n‖₁ → ‖g‖₁`, then the family `f n` is
-uniformly integrable in `L¹`: this is `L¹` convergence (from the previous
-theorem) plus Vitali's theorem in Mathlib. -/
+/-- **Convergence in measure with converging L¹ norms implies uniform integrability.** Let $\mu$
+be a measure on a measurable space $\alpha$, let $f_n : \alpha \to \mathbb{R}$ ($n \in \mathbb{N}$)
+and $g : \alpha \to \mathbb{R}$ be in $L^1(\mu)$, and write $\|h\|_1 = \int |h| \, d\mu$. If
+$f_n \to g$ in $\mu$-measure (for every $\varepsilon > 0$,
+$\mu\{x : |f_n(x) - g(x)| \ge \varepsilon\} \to 0$) and $\|f_n\|_1 \to \|g\|_1$, then the family
+$(f_n)$ is uniformly integrable: $\sup_n \|f_n\|_1 < \infty$, and the supremum of
+$\int_s |f_n| \, d\mu$ over all $n$ and all sets $s \subseteq \alpha$ with $\mu(s) \le \delta$
+tends to $0$ as $\delta \to 0$.
+
+The proof combines the $L^1$ convergence $\|f_n - g\|_1 \to 0$ given by Scheffé's lemma for
+convergence in measure with the Vitali convergence theorem. -/
 theorem uniformIntegrable_of_tendstoInMeasure_of_tendsto_eLpNorm
     {α : Type*} {m : MeasurableSpace α} {μ : Measure α}
     {f : ℕ → α → ℝ} {g : α → ℝ}
@@ -247,13 +263,17 @@ theorem uniformIntegrable_of_tendstoInMeasure_of_tendsto_eLpNorm
   exact ⟨unifIntegrable_of_tendsto_Lp le_rfl ENNReal.one_ne_top hf hg hL1,
     eLpNorm_uniformly_bounded_of_tendsto_eLpNorm_sub hf hg hL1⟩
 
-/-- **Uniform integrability equivalences.** Suppose `f n → g` in measure on
-a finite measure space, with `f n, g ∈ L¹`. Then the following are
-equivalent: (1) the family `f n` is uniformly integrable in `L¹`,
-(2) `f n → g` in `L¹`, (3) `‖f n‖₁ → ‖g‖₁`. The implications
-(1) `⇒` (2) and (2) `⇒` (1) are Mathlib's Vitali convergence theorem; the
-new implications are (3) `⇒` (2) via Scheffé's lemma and (2) `⇒` (3) via the
-reverse triangle inequality. -/
+/-- **Uniform integrability equivalences.** Let $\mu$ be a finite measure on a measurable space
+$\alpha$, let $f_n : \alpha \to \mathbb{R}$ ($n \in \mathbb{N}$) and $g : \alpha \to \mathbb{R}$ be
+in $L^1(\mu)$, write $\|h\|_1 = \int |h| \, d\mu$, and suppose that $f_n \to g$ in $\mu$-measure
+(for every $\varepsilon > 0$, $\mu\{x : |f_n(x) - g(x)| \ge \varepsilon\} \to 0$). Then the
+following are equivalent: (1) the family $(f_n)$ is uniformly integrable, that is,
+$\sup_n \|f_n\|_1 < \infty$ and the supremum of $\int_s |f_n| \, d\mu$ over all $n$ and all sets
+$s \subseteq \alpha$ with $\mu(s) \le \delta$ tends to $0$ as $\delta \to 0$; (2) $f_n \to g$ in
+$L^1(\mu)$, that is, $\|f_n - g\|_1 \to 0$; (3) $\|f_n\|_1 \to \|g\|_1$.
+
+The equivalence of (1) and (2) is the Vitali convergence theorem; (3) implies (2) by Scheffé's
+lemma for convergence in measure, and (2) implies (3) by the reverse triangle inequality. -/
 theorem uniformIntegrable_tfae_of_tendstoInMeasure
     {α : Type*} {m : MeasurableSpace α} {μ : Measure α}
     [IsFiniteMeasure μ]

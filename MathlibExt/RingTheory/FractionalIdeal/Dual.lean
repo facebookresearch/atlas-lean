@@ -22,7 +22,11 @@ open Module
 variable {A K : Type*} [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K]
 
 omit [IsDomain A] [IsFractionRing A K] in
-/-- Dual submodule for `mul` is the colon quotient `1 / M`. -/
+/-- **The multiplication dual is a colon quotient.** Let $A$ be a commutative ring and $K$ a field
+that is an $A$-algebra, and write $1$ for the $A$-submodule $A \cdot 1$ of $K$. For every
+$A$-submodule $M$ of $K$, the dual submodule of $M$ with respect to the multiplication form
+$(x, y) \mapsto xy$ on $K$ equals the quotient $1 / M$, the set of $x \in K$ with $xy \in A \cdot 1$
+for all $y \in M$. -/
 theorem dualSubmodule_mul_eq_div (M : Submodule A K) :
     LinearMap.BilinForm.dualSubmodule (LinearMap.mul K K : LinearMap.BilinForm K K) M =
       (1 : Submodule A K) / M := by
@@ -30,7 +34,10 @@ theorem dualSubmodule_mul_eq_div (M : Submodule A K) :
   simp only [LinearMap.BilinForm.mem_dualSubmodule, Submodule.mem_div_iff_forall_mul_mem,
     LinearMap.mul_apply']
 
-/-- Every dual element is multiplication by a fraction. -/
+/-- **Functionals on a submodule of the fraction field are multiplications.** Let $A$ be an
+integral domain with fraction field $K$ and let $M$ be a nonzero $A$-submodule of $K$. For every
+$A$-linear map $f \colon M \to A$ there is $x \in K$ such that the image of $f(m)$ in $K$ equals
+$xm$ for every $m \in M$. -/
 theorem Submodule.exists_mul_rep (M : Submodule A K) (hM : M ≠ ⊥)
     (f : Module.Dual A M) :
     ∃ x : K, ∀ m : M, algebraMap A K (f m) = x * m := by
@@ -59,7 +66,9 @@ theorem Submodule.exists_mul_rep (M : Submodule A K) (hM : M ≠ ⊥)
     _ = algebraMap A K b * (algebraMap A K (f mm) / m * (y : K)) := by rw [hcross]; ring
 
 omit [CommRing A] [IsDomain A] [Algebra A K] [IsFractionRing A K] in
-/-- Multiplication bilinear form is nondegenerate. -/
+/-- **Multiplication is a nondegenerate bilinear form.** For every field $K$, the $K$-bilinear
+form $(x, y) \mapsto xy$ on $K$ is nondegenerate: if $xy = 0$ for all $y \in K$ then $x = 0$, and
+if $xy = 0$ for all $x \in K$ then $y = 0$. -/
 theorem LinearMap.BilinForm.mul_nondegenerate :
     (LinearMap.mul K K : LinearMap.BilinForm K K).Nondegenerate := by
   constructor
@@ -67,7 +76,8 @@ theorem LinearMap.BilinForm.mul_nondegenerate :
   · intro y hy; simpa using hy 1
 
 omit [IsDomain A] [IsFractionRing A K] in
-/-- A nonzero submodule spans the fraction field. -/
+/-- **A nonzero submodule spans the field.** Let $A$ be a commutative ring and $K$ a field that is
+an $A$-algebra. Then every nonzero $A$-submodule $M$ of $K$ spans $K$ as a $K$-vector space. -/
 theorem Submodule.span_coe_eq_top (M : Submodule A K) (hM : M ≠ ⊥) :
     Submodule.span K (M : Set K) = ⊤ := by
   apply top_unique
@@ -76,7 +86,12 @@ theorem Submodule.span_coe_eq_top (M : Submodule A K) (hM : M ≠ ⊥) :
   rw [← div_mul_cancel₀ x hm0, ← smul_eq_mul]
   exact Submodule.smul_mem _ (x / m) (Submodule.subset_span hmM)
 
-/-- `dualSubmoduleToDual` for `mul` is surjective on nonzero submodules. -/
+/-- **Every functional comes from the multiplication dual.** Let $A$ be an integral domain with
+fraction field $K$, identify $A$ with its image in $K$, and let $M$ be a nonzero $A$-submodule of
+$K$. Let $M^\vee = \{x \in K : xy \in A \text{ for all } y \in M\}$ be the dual submodule of $M$
+for the multiplication form $(x, y) \mapsto xy$ on $K$. Then the $A$-linear map
+$M^\vee \to \operatorname{Hom}_A(M, A)$ sending $x$ to the functional $y \mapsto xy$ on $M$ is
+surjective. -/
 theorem Submodule.mul_dualSubmoduleToDual_surjective (M : Submodule A K) (hM : M ≠ ⊥) :
     Function.Surjective (LinearMap.BilinForm.dualSubmoduleToDual
       (LinearMap.mul K K : LinearMap.BilinForm K K) M) := by
@@ -93,7 +108,13 @@ theorem Submodule.mul_dualSubmoduleToDual_surjective (M : Submodule A K) (hM : M
     LinearMap.BilinForm.dualSubmoduleParing_spec, hx]
   rfl
 
-/-- Dual of a nonzero submodule as the multiplication dual submodule. -/
+/-- **Dual of a nonzero submodule of the fraction field.** Let $A$ be an integral domain with
+fraction field $K$, identify $A$ with its image in $K$, and let $M$ be a nonzero $A$-submodule of
+$K$. Let $M^\vee = \{x \in K : xy \in A \text{ for all } y \in M\}$ be the dual submodule of $M$
+for the multiplication form $(x, y) \mapsto xy$ on $K$. This is the $A$-linear isomorphism
+$\operatorname{Hom}_A(M, A) \to M^\vee$ inverse to the map sending $x \in M^\vee$ to the
+functional $y \mapsto xy$ on $M$; it sends $f$ to the unique $x \in M^\vee$ with $f(y) = xy$ for
+all $y \in M$. -/
 noncomputable def Submodule.dualEquivMulDualSubmodule (M : Submodule A K) (hM : M ≠ ⊥) :
     Module.Dual A M ≃ₗ[A] LinearMap.BilinForm.dualSubmodule
       (LinearMap.mul K K : LinearMap.BilinForm K K) M :=
@@ -104,7 +125,12 @@ noncomputable def Submodule.dualEquivMulDualSubmodule (M : Submodule A K) (hM : 
       (Submodule.span_coe_eq_top M hM),
       Submodule.mul_dualSubmoduleToDual_surjective M hM⟩).symm
 
-/-- Evaluation of the multiplication dual equivalence. -/
+/-- **Formula for the isomorphism onto the multiplication dual.** Let $A$ be an integral domain
+with fraction field $K$, let $M$ be a nonzero $A$-submodule of $K$, and let
+$\varphi \colon \operatorname{Hom}_A(M, A) \to M^\vee$ be the isomorphism onto the dual submodule
+$M^\vee$ of $M$ for the multiplication form $(x, y) \mapsto xy$ on $K$. Then for every
+$f \in \operatorname{Hom}_A(M, A)$ and every $m \in M$, the image of $f(m)$ in $K$ equals
+$\varphi(f) \, m$. -/
 theorem Submodule.dualEquivMulDualSubmodule_spec (M : Submodule A K) (hM : M ≠ ⊥)
     (f : Module.Dual A M) (m : M) :
     algebraMap A K (f m) = (Submodule.dualEquivMulDualSubmodule M hM f : K) * (m : K) := by
@@ -118,7 +144,11 @@ theorem Submodule.dualEquivMulDualSubmodule_spec (M : Submodule A K) (hM : M ≠
     LinearMap.BilinForm.dualSubmoduleParing_spec] at hmap
   exact hmap.symm
 
-/-- Coe of a nonzero inverse equals the multiplication dual submodule. -/
+/-- **The inverse of a nonzero fractional ideal is its multiplication dual.** Let $A$ be an
+integral domain with fraction field $K$, and let $I$ be a nonzero fractional ideal of $A$ in $K$.
+Then $I^{-1}$, viewed as an $A$-submodule of $K$, equals the dual submodule of $I$ with respect
+to the multiplication form $(x, y) \mapsto xy$ on $K$, namely the set
+$\{x \in K : xy \in A \text{ for all } y \in I\}$, where $A$ is identified with its image in $K$. -/
 theorem FractionalIdeal.coe_inv_eq_mul_dualSubmodule
     (I : FractionalIdeal A⁰ K) (hI : I ≠ 0) :
     ((I⁻¹ : FractionalIdeal A⁰ K) : Submodule A K) =
@@ -130,7 +160,11 @@ theorem FractionalIdeal.coe_inv_eq_mul_dualSubmodule
   rw [FractionalIdeal.mem_inv_iff hI]
   simp [LinearMap.BilinForm.mem_dualSubmodule, FractionalIdeal.mem_coe]
 
-/-- Dual of a nonzero fractional ideal is its inverse submodule. -/
+/-- **Dual of a nonzero fractional ideal is its inverse.** Let $A$ be an integral domain with
+fraction field $K$ and let $I$ be a nonzero fractional ideal of $A$ in $K$. This is the $A$-linear
+isomorphism $\operatorname{Hom}_A(I, A) \to I^{-1}$, with $I^{-1}$ viewed as an $A$-submodule of
+$K$, sending $f$ to the unique $x \in I^{-1}$ such that $f(y) = xy$ in $K$ for all $y \in I$
+(where $A$ is identified with its image in $K$). -/
 noncomputable def FractionalIdeal.dualEquivInv
     (I : FractionalIdeal A⁰ K) (hI : I ≠ 0) :
     Module.Dual A (I : Submodule A K) ≃ₗ[A]
@@ -141,7 +175,11 @@ noncomputable def FractionalIdeal.dualEquivInv
     (LinearEquiv.ofEq _ _
       (FractionalIdeal.coe_inv_eq_mul_dualSubmodule I hI).symm)
 
-/-- Double dual of a unit fractional ideal is the ideal itself. -/
+/-- **Double dual of an invertible fractional ideal.** Let $A$ be an integral domain with fraction
+field $K$ and let $I$ be an invertible fractional ideal of $A$ in $K$. This is the $A$-linear
+isomorphism $\operatorname{Hom}_A(\operatorname{Hom}_A(I, A), A) \to I$ inverse to the canonical
+evaluation map $I \to \operatorname{Hom}_A(\operatorname{Hom}_A(I, A), A)$,
+$x \mapsto (f \mapsto f(x))$. -/
 noncomputable def FractionalIdeal.doubleDualEquivOfIsUnit
     (I : FractionalIdeal A⁰ K) (hI : IsUnit I) :
     Module.Dual A (Module.Dual A (I : Submodule A K)) ≃ₗ[A]

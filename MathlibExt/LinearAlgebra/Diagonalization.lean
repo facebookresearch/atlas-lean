@@ -108,21 +108,24 @@ private theorem diagonalization_eigenbasis
   exact ⟨hInternal.collectedBasis_mem v (e.symm i), b₀.ne_zero _⟩
 
 /--
-A semisimple endomorphism whose characteristic polynomial splits admits a basis of
-eigenvectors.
+**Eigenbasis of a semisimple endomorphism with split characteristic polynomial.** Let $V$ be a
+finite-dimensional vector space over a field $K$ and let $f$ be a semisimple endomorphism of $V$
+(every $f$-invariant subspace has an $f$-invariant complement) whose characteristic polynomial
+splits over $K$. Then for every finite type $\iota$ with exactly $\dim_K V$ elements there are a
+basis $(b_i)_{i \in \iota}$ of $V$ and scalars $(\mu_i)_{i \in \iota}$ in $K$ such that each $b_i$
+is an eigenvector of $f$ with eigenvalue $\mu_i$.
+
+Proof: The minimal polynomial is squarefree and splits, so it is a product of distinct factors
+$X - \mu$. The kernels lemma for these factors, proved by induction from the two-factor case,
+shows that the eigenspaces span $V$, and bases of the eigenspaces are collected and reindexed.
+This is the diagonalizability criterion derived from the kernels lemma in the French Wikipedia
+article *Lemme des noyaux*, <https://fr.wikipedia.org/wiki/Lemme_des_noyaux>.
+
+Proves `Wanted` entry `exists_eigenbasis_of_isSemisimple_of_splits`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 diagonalization; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
 Press (2013), Theorem 1.3.12.
-
-Proves `Wanted` entry `exists_eigenbasis_of_isSemisimple_of_splits`.
-
-Proof: the minimal polynomial is squarefree and splits, so it is a product of distinct factors
-`X - C μ`. The kernels lemma for these factors (induction from
-`Polynomial.sup_ker_aeval_eq_ker_aeval_mul_of_coprime`) shows the eigenspaces span `V`, and bases
-of the eigenspaces are collected and reindexed. This is the diagonalizability criterion derived
-from the kernels lemma in the French Wikipedia article *Lemme des noyaux*,
-https://fr.wikipedia.org/wiki/Lemme_des_noyaux.
 -/
 theorem exists_eigenbasis_of_isSemisimple_of_splits
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -167,18 +170,22 @@ private theorem diagonalization_exists_diagonal_similar
   simp [e, f]
 
 /--
-A square matrix whose characteristic polynomial splits and whose minimal polynomial is
-squarefree is similar to a diagonal matrix.
+**Diagonalizability from a split characteristic polynomial and a squarefree minimal polynomial.**
+Let $K$ be a field and let $A$ be a square matrix over $K$ with rows and columns indexed by a
+finite type $n$. If the characteristic polynomial of $A$ splits over $K$ and the minimal
+polynomial of $A$ (that is, of the linear map $x \mapsto Ax$ on $K^n$) is squarefree, then there
+are matrices $P$ and $D$ over $K$ indexed by $n$, with $D$ diagonal and $P$ invertible, such that
+$A = P D P^{-1}$.
+
+Proof: A squarefree minimal polynomial makes the linear map $x \mapsto Ax$ semisimple, so it has a
+basis of eigenvectors by the eigenbasis theorem for semisimple endomorphisms; conjugating by the
+change-of-basis matrix from the standard basis gives the diagonal form.
+
+Proves `Wanted` entry `exists_diagonal_similar_of_splits_of_squarefree_minpoly`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 diagonalization; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
 Press (2013), Theorem 1.3.12.
-
-Proves `Wanted` entry `exists_diagonal_similar_of_splits_of_squarefree_minpoly`.
-
-Proof: a squarefree minimal polynomial makes `Matrix.toLin' A` semisimple, so it has an eigenbasis
-by `exists_eigenbasis_of_isSemisimple_of_splits`; conjugating by the change-of-basis matrix from
-the standard basis gives the diagonal form.
 -/
 theorem exists_diagonal_similar_of_splits_of_squarefree_minpoly
     {n : Type*} [Fintype n] [DecidableEq n]

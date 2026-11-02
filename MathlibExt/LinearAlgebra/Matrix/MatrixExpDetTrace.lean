@@ -237,20 +237,22 @@ private theorem matrixExp_exists_isNilpotent_isSemisimple (A : Matrix n n ℂ) :
     simpa [f] using h
 
 /--
-Jacobi's formula: the determinant of the matrix exponential is the exponential of the trace.
+**Determinant of the matrix exponential.** For every complex square matrix $A$ indexed by a
+finite set, $\det(e^A) = e^{\operatorname{tr} A}$, where $e^A$ is the matrix exponential. This
+identity is sometimes called Jacobi's formula.
+
+Proof: the three cases of B. C. Hall, An Elementary Introduction to Groups and Representations,
+https://arxiv.org/abs/math-ph/0005032, Theorem 3.10. The Jordan-Chevalley decomposition writes
+$A = N + S$ with $N$ nilpotent, $S$ semisimple and $NS = SN$, so $e^A = e^N e^S$. Diagonalizing
+$S$ gives $\det(e^S) = e^{\operatorname{tr} S}$. For the nilpotent part, where Hall uses a
+strictly upper-triangular form, $e^N - I$ is nilpotent, so $\det(e^N) = 1$, while
+$\operatorname{tr} N = 0$.
+
+Proves `Wanted` entry `matrix_det_exp_eq_exp_trace`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Exponential / matrix exponential;
 B. C. Hall, Lie Groups, Lie Algebras, and Representations, 2nd ed., Springer (2015),
 Proposition 2.23.
-
-Proves `Wanted` entry `matrix_det_exp_eq_exp_trace`.
-
-Proof: the three cases of B. C. Hall, An Elementary Introduction to Groups and Representations,
-https://arxiv.org/abs/math-ph/0005032, Theorem 3.10. The Jordan-Chevalley decomposition
-(`Module.End.exists_isNilpotent_isSemisimple`) writes `A = N + S` with `N` nilpotent, `S`
-semisimple and `N`, `S` commuting, so `exp A = exp N * exp S`. Diagonalizing `S` gives
-`det (exp S) = exp (trace S)`. For the nilpotent part, where Hall uses a strictly upper-triangular
-form, `exp N - 1` is nilpotent, so `det (exp N) = 1`, while `trace N = 0`.
 -/
 theorem matrix_det_exp_eq_exp_trace (A : Matrix n n ℂ) :
     Matrix.det (NormedSpace.exp A) = Complex.exp (Matrix.trace A) := by
@@ -262,15 +264,17 @@ theorem matrix_det_exp_eq_exp_trace (A : Matrix n n ℂ) :
     Matrix.trace_add, htraceN, zero_add, one_mul]
 
 /--
-The exponential of a nilpotent matrix is a finite partial sum of the exponential series.
+**Exponential of a nilpotent matrix.** If $A$ is a nilpotent complex square matrix indexed by a
+finite set, then there is a natural number $m$ such that
+$e^A = \sum_{k=0}^{m-1} \frac{1}{k!} A^k$, where $e^A$ is the matrix exponential.
+
+Proof: if $A^m = 0$, every term of the exponential series from index $m$ on vanishes.
+
+Proves `Wanted` entry `matrix_exp_eq_sum_of_isNilpotent`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Exponential / matrix exponential;
 R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University Press (2013),
 Section 3.2.
-
-Proves `Wanted` entry `matrix_exp_eq_sum_of_isNilpotent`.
-
-Proof: if `A ^ m = 0`, every term of the exponential series from index `m` on vanishes.
 -/
 theorem matrix_exp_eq_sum_of_isNilpotent (A : Matrix n n ℂ) (h : IsNilpotent A) :
     ∃ m : ℕ, NormedSpace.exp A = ∑ k ∈ Finset.range m, (Nat.factorial k : ℂ)⁻¹ • A ^ k := by

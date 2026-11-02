@@ -45,39 +45,55 @@ from `ℝ`-valued functions to functions valued in a normed space over `ℝ`,
 and the `1 ≤ p` hypothesis is kept, matching the book.
 -/
 
-/-- The shared clipped piecewise-linear cutoff factor, zero at `a` and `b`.
-For `δ > 0`, it equals `1` on `[a + δ, b - δ]`; this plateau is nonempty
-when `2 * δ ≤ b - a`. At `δ = 0`, the factor is identically zero.
-This compatibility name retains the existing `L^p` API. -/
+/-- **Vanishing cutoff factor.** For real numbers $a$, $b$, $\delta$ and $x$, the value at $x$
+of the vanishing cutoff factor with endpoints $a$, $b$ and width $\delta$ is
+$\max\bigl(0, \min\bigl(1, \min((x - a)/\delta, (b - x)/\delta)\bigr)\bigr)$, where division
+by $0$ is read as $0$.
+
+It vanishes at $a$ and at $b$. For $\delta > 0$ it equals $1$ on $[a + \delta, b - \delta]$,
+an interval that is nonempty when $2\delta \le b - a$. At $\delta = 0$ it is identically
+zero. -/
 noncomputable def vanishingCutoff (a b δ : ℝ) (x : ℝ) : ℝ :=
   Real.intervalCutoff a b δ x
 
-/-- The cutoff factor is nonnegative. -/
+/-- **The vanishing cutoff factor is nonnegative.** For all real numbers $a$, $b$, $\delta$
+and $x$, the value at $x$ of the vanishing cutoff factor with endpoints $a$, $b$ and width
+$\delta$ is at least $0$. -/
 theorem vanishingCutoff_nonneg (a b δ : ℝ) (x : ℝ) :
     0 ≤ vanishingCutoff a b δ x :=
   Real.intervalCutoff_nonneg a b δ x
 
-/-- The cutoff factor is at most `1`. -/
+/-- **The vanishing cutoff factor is at most one.** For all real numbers $a$, $b$, $\delta$
+and $x$, the value at $x$ of the vanishing cutoff factor with endpoints $a$, $b$ and width
+$\delta$ is at most $1$. -/
 theorem vanishingCutoff_le_one (a b δ : ℝ) (x : ℝ) :
     vanishingCutoff a b δ x ≤ 1 :=
   Real.intervalCutoff_le_one a b δ x
 
-/-- The cutoff factor is continuous. -/
+/-- **Continuity of the vanishing cutoff factor.** For all $a, b, \delta \in \mathbb{R}$, the
+vanishing cutoff factor with endpoints $a$, $b$ and width $\delta$ is a continuous function
+$\mathbb{R} \to \mathbb{R}$. -/
 theorem vanishingCutoff_continuous (a b δ : ℝ) :
     Continuous (vanishingCutoff a b δ) :=
   Real.intervalCutoff_continuous a b δ
 
-/-- The cutoff factor vanishes at the left endpoint. -/
+/-- **The vanishing cutoff factor vanishes at the left endpoint.** For all
+$a, b, \delta \in \mathbb{R}$, the vanishing cutoff factor with endpoints $a$, $b$ and width
+$\delta$ takes the value $0$ at $a$. -/
 theorem vanishingCutoff_eq_zero_left (a b δ : ℝ) :
     vanishingCutoff a b δ a = 0 :=
   Real.intervalCutoff_eq_zero_left a b δ
 
-/-- The cutoff factor vanishes at the right endpoint. -/
+/-- **The vanishing cutoff factor vanishes at the right endpoint.**
+For all real numbers $a$, $b$ and $\delta$, the vanishing cutoff factor with endpoints $a$, $b$
+and width $\delta$ takes the value $0$ at $b$. -/
 theorem vanishingCutoff_eq_zero_right (a b δ : ℝ) :
     vanishingCutoff a b δ b = 0 :=
   Real.intervalCutoff_eq_zero_right a b δ
 
-/-- The cutoff factor equals `1` away from the endpoints. -/
+/-- **The vanishing cutoff factor equals one on its plateau.** Let $a, b \in \mathbb{R}$ and
+$\delta > 0$. For every real $x$ with $a + \delta \le x \le b - \delta$, the vanishing cutoff
+factor with endpoints $a$, $b$ and width $\delta$ takes the value $1$ at $x$. -/
 theorem vanishingCutoff_eq_one (a b : ℝ) {δ : ℝ} (hδ : 0 < δ) {x : ℝ}
     (hx1 : a + δ ≤ x) (hx2 : x ≤ b - δ) :
     vanishingCutoff a b δ x = 1 :=
@@ -87,30 +103,43 @@ section CutoffApprox
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/-- The `n`-th cutoff approximant of `g₀`: `g₀` multiplied by the cutoff
-factor with width `(b - a) / (n + 1)`. -/
+/-- **Cutoff approximants.** Let $a, b \in \mathbb{R}$, let $E$ be a real normed space, let
+$g_0 : \mathbb{R} \to E$ and $n \in \mathbb{N}$, and put $\delta_n = (b - a)/(n + 1)$. The $n$-th
+cutoff approximant of $g_0$ with endpoints $a$ and $b$ is the function
+$x \mapsto \varphi(x)\, g_0(x)$, where $\varphi$ is the vanishing cutoff factor with endpoints $a$,
+$b$ and width $\delta_n$. -/
 noncomputable def cutoffApprox (a b : ℝ) (g₀ : ℝ → E) (n : ℕ) (x : ℝ) : E :=
   vanishingCutoff a b ((b - a) / ((n + 1 : ℕ) : ℝ)) x • g₀ x
 
-/-- The cutoff approximant is continuous. -/
+/-- **Continuity of the cutoff approximants.** Let $a, b \in \mathbb{R}$, let $E$ be a real
+normed space and let $g_0 : \mathbb{R} \to E$ be continuous. Then for every $n \in \mathbb{N}$
+the $n$-th cutoff approximant of $g_0$ with endpoints $a$ and $b$ is continuous. -/
 theorem cutoffApprox_continuous (a b : ℝ) (g₀ : ℝ → E) (hg₀ : Continuous g₀)
     (n : ℕ) : Continuous (cutoffApprox a b g₀ n) := by
   unfold cutoffApprox
   exact (vanishingCutoff_continuous a b _).smul hg₀
 
-/-- The cutoff approximant vanishes at the left endpoint. -/
+/-- **Cutoff approximants vanish at the left endpoint.** Let $a, b \in \mathbb{R}$, let $E$ be a
+real normed space and let $g_0 : \mathbb{R} \to E$ be any function. For every $n \in \mathbb{N}$,
+the $n$-th cutoff approximant of $g_0$ with endpoints $a$ and $b$ takes the value $0$ at $a$. -/
 theorem cutoffApprox_eq_zero_left (a b : ℝ) (g₀ : ℝ → E) (n : ℕ) :
     cutoffApprox a b g₀ n a = 0 := by
   simp [cutoffApprox, vanishingCutoff_eq_zero_left]
 
-/-- The cutoff approximant vanishes at the right endpoint. -/
+/-- **Cutoff approximants vanish at the right endpoint.** Let $a, b \in \mathbb{R}$, let $E$ be a
+real normed space and let $g_0 : \mathbb{R} \to E$ be any function. For every $n \in \mathbb{N}$,
+the $n$-th cutoff approximant of $g_0$ with endpoints $a$ and $b$ takes the value $0$ at $b$. -/
 theorem cutoffApprox_eq_zero_right (a b : ℝ) (g₀ : ℝ → E) (n : ℕ) :
     cutoffApprox a b g₀ n b = 0 := by
   simp [cutoffApprox, vanishingCutoff_eq_zero_right]
 
-/-- The cutoff approximant lies in `L^p` whenever `g₀` does, for any
-measure: it is pointwise dominated by `‖g₀‖` since the cutoff factor lies
-in `[0, 1]`. -/
+/-- **Cutoff approximants stay in $L^p$.** Let $E$ be a real normed space, let $\mu$ be a measure
+on $\mathbb{R}$, let $p \in [0, \infty]$, and let $g_0 : \mathbb{R} \to E$ be continuous with
+$g_0 \in L^p(\mu)$. Then for all $a, b \in \mathbb{R}$ and $n \in \mathbb{N}$, the $n$-th cutoff
+approximant of $g_0$ with endpoints $a$ and $b$ lies in $L^p(\mu)$.
+
+The approximant is pointwise dominated by $\|g_0\|$, since the cutoff factor takes values in
+$[0, 1]$. -/
 theorem cutoffApprox_memLp {p : ℝ≥0∞} {μ : Measure ℝ} {g₀ : ℝ → E}
     (hg₀ : MemLp g₀ p μ) (hg₀cont : Continuous g₀) (a b : ℝ)
     (n : ℕ) : MemLp (cutoffApprox a b g₀ n) p μ := by
@@ -121,7 +150,10 @@ theorem cutoffApprox_memLp {p : ℝ≥0∞} {μ : Measure ℝ} {g₀ : ℝ → E
   rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (vanishingCutoff_nonneg _ _ _ _)]
   exact mul_le_of_le_one_left (norm_nonneg _) (vanishingCutoff_le_one _ _ _ _)
 
-/-- The cutoff error at a point is dominated by `‖g₀‖`. -/
+/-- **Pointwise bound on the cutoff error.** Let $a, b \in \mathbb{R}$, let $E$ be a real normed
+space and let $g_0 : \mathbb{R} \to E$. If $g_n$ denotes the $n$-th cutoff approximant of $g_0$
+with endpoints $a$ and $b$, then $\|g_0(x) - g_n(x)\| \le \|g_0(x)\|$ for every
+$n \in \mathbb{N}$ and every $x \in \mathbb{R}$. -/
 theorem norm_sub_cutoffApprox_le (a b : ℝ) (g₀ : ℝ → E) (n : ℕ) (x : ℝ) :
     ‖g₀ x - cutoffApprox a b g₀ n x‖ ≤ ‖g₀ x‖ := by
   have h : g₀ x - cutoffApprox a b g₀ n x =
@@ -136,10 +168,12 @@ theorem norm_sub_cutoffApprox_le (a b : ℝ) (g₀ : ℝ → E) (n : ℕ) (x : �
 
 end CutoffApprox
 
-/-- **Continuous functions vanishing at the endpoints are dense in
-`L^p ([a, b])`.** For `a < b`, `1 ≤ p < ∞`, `f ∈ L^p ([a, b])` and
-`ε > 0`, there exists a continuous `g` with `g a = g b = 0`, `g ∈ L^p`,
-and `‖f - g‖_p < ε`. -/
+/-- **Continuous functions vanishing at the endpoints are dense in $L^p$ of a compact interval.**
+Let $a < b$ be real numbers, let $1 \le p < \infty$ and let $E$ be a real normed space. Write
+$L^p([a, b])$ for $L^p$ with respect to Lebesgue measure restricted to $[a, b]$. For every
+$f : \mathbb{R} \to E$ in $L^p([a, b])$ and every $\varepsilon \in (0, \infty]$, there is a
+continuous $g : \mathbb{R} \to E$ with $g(a) = g(b) = 0$, $g \in L^p([a, b])$ and
+$\|f - g\|_{L^p([a, b])} < \varepsilon$. -/
 theorem exists_continuous_vanishing_endpoints_eLpNorm_sub_lt
     (a b : ℝ) (hab : a < b) {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp_top : p ≠ ⊤)
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]

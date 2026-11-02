@@ -41,8 +41,10 @@ variable {K : Type*} [Field K]
 namespace MathlibExt.LinearAlgebra.Matrix.JordanNormalFormWanted
 
 /--
-A Jordan block of size `s` with eigenvalue `μ`: `μ` on the diagonal, `1` on the first
-superdiagonal, `0` elsewhere.
+**Jordan block.** For a natural number $s$ and a scalar $\mu$ in a field $K$, the Jordan block of
+size $s$ with eigenvalue $\mu$ is the $s \times s$ matrix over $K$, with rows and columns indexed
+by $\{0, \dots, s-1\}$, whose $(i, j)$ entry is $1$ if $j = i + 1$, $\mu$ if $i = j$, and $0$
+otherwise: it has $\mu$ on the diagonal, $1$ on the first superdiagonal and $0$ elsewhere.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 Jordan normal form; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
@@ -52,7 +54,9 @@ def jordanBlock (s : ℕ) (μ : K) : Matrix (Fin s) (Fin s) K :=
   fun i j => if i.val + 1 = j.val then 1 else if i = j then μ else 0
 
 /--
-Characteristic entrywise description of a Jordan block.
+**Entries of a Jordan block.** For a natural number $s$, a scalar $\mu$ in a field $K$ and indices
+$i, j \in \{0, \dots, s-1\}$, the $(i, j)$ entry of the Jordan block of size $s$ with eigenvalue
+$\mu$ is $1$ if $j = i + 1$, is $\mu$ if $i = j$, and is $0$ otherwise.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 Jordan normal form; https://en.wikipedia.org/wiki/Jordan_normal_form.
@@ -66,7 +70,11 @@ open MathlibExt.LinearAlgebra.Matrix.JordanNormalFormWanted
 
 namespace LinearMap
 
-/-- The matrix of a linear map on a Jordan chain is the corresponding Jordan block. -/
+/-- **Matrix of an endomorphism on a Jordan chain.** Let $V$ be a vector space over a field $K$,
+let $f$ be a linear endomorphism of $V$, let $\mu \in K$, and let $b_0, \dots, b_d$ be a basis of
+$V$ such that $f(b_0) = \mu b_0$ and $f(b_{j+1}) = \mu b_{j+1} + b_j$ for every $j < d$. Then the
+matrix of $f$ with respect to the basis $(b_0, \dots, b_d)$ is the Jordan block of size $d + 1$
+with eigenvalue $\mu$. -/
 theorem toMatrix_eq_jordanBlock
     {V : Type*} [AddCommGroup V] [Module K V]
     (d : ℕ) (b : Basis (Fin (d + 1)) K V) (f : Module.End K V) (μ : K)
@@ -94,7 +102,13 @@ theorem toMatrix_eq_jordanBlock
     have hpval : i.val ≠ q.val := fun h => hp (Fin.ext h)
     simp [jordanBlock, hp, hd, hpval]
 
-/-- The matrix of a basis partitioned into Jordan chains is block diagonal. -/
+/-- **Matrix of an endomorphism on a basis of Jordan chains.** Let $V$ be a vector space over a
+field $K$, let $f$ be a linear endomorphism of $V$, and let $\iota$ be a finite set. For each
+$i \in \iota$ let $d_i \in \mathbb{N}$ and $\mu_i \in K$, and let $(b_{i,r})$, indexed by
+$i \in \iota$ and $0 \le r \le d_i$, be a basis of $V$ such that $f(b_{i,0}) = \mu_i b_{i,0}$ and
+$f(b_{i,j+1}) = \mu_i b_{i,j+1} + b_{i,j}$ for every $i \in \iota$ and every $j < d_i$. Then the
+matrix of $f$ with respect to $b$ is the block-diagonal matrix whose $i$-th diagonal block is the
+Jordan block of size $d_i + 1$ with eigenvalue $\mu_i$. -/
 theorem toMatrix_eq_blockDiagonal_jordanBlock
     {V ι : Type*} [AddCommGroup V] [Module K V] [Fintype ι] [DecidableEq ι]
     (d : ι → ℕ) (b : Basis (Σ i, Fin (d i + 1)) K V) (f : Module.End K V) (μ : ι → K)
@@ -381,7 +395,13 @@ private theorem jordan_exists_chainBasis_of_isNilpotent_aux
 
 namespace Module.End
 
-/-- A nilpotent endomorphism has a basis made of Jordan chains. -/
+/-- **Jordan chain basis for a nilpotent endomorphism.** Let $V$ be a finite-dimensional vector
+space over a field $K$ and let $f$ be a nilpotent linear endomorphism of $V$. Then there are
+$k \in \mathbb{N}$, natural numbers $d_0, \dots, d_{k-1}$ and a basis $(b_{i,r})$ of $V$, indexed
+by $i < k$ and $0 \le r \le d_i$, such that $f(b_{i,0}) = 0$ and $f(b_{i,j+1}) = b_{i,j}$ for
+every $i < k$ and every $j < d_i$, and such that the matrix of $f$ with respect to $b$ is the
+block-diagonal matrix whose $i$-th diagonal block is the Jordan block of size $d_i + 1$ with
+eigenvalue $0$. -/
 theorem exists_jordanBasis_of_isNilpotent
     {V : Type v} [AddCommGroup V] [Module K V] [FiniteDimensional K V]
     (f : Module.End K V) (hf : IsNilpotent f) :
@@ -446,7 +466,14 @@ private theorem jordan_isInternal_maxGenEigenspace_roots
   simpa only [A, S] using
     DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top hind htop
 
-/-- An endomorphism with split characteristic polynomial has a Jordan-chain basis. -/
+/-- **Jordan chain basis for an endomorphism with split characteristic polynomial.** Let $V$ be
+a finite-dimensional vector space over a field $K$ and let $f$ be a linear endomorphism of $V$
+whose characteristic polynomial splits into linear factors over $K$. Then there are
+$k \in \mathbb{N}$, natural numbers $d_0, \dots, d_{k-1}$, scalars $\mu_0, \dots, \mu_{k-1} \in K$
+and a basis $(b_{i,r})$ of $V$, indexed by $i < k$ and $0 \le r \le d_i$, such that
+$f(b_{i,0}) = \mu_i b_{i,0}$ and $f(b_{i,j+1}) = \mu_i b_{i,j+1} + b_{i,j}$ for every $i < k$ and
+every $j < d_i$, and such that the matrix of $f$ with respect to $b$ is the block-diagonal matrix
+whose $i$-th diagonal block is the Jordan block of size $d_i + 1$ with eigenvalue $\mu_i$. -/
 theorem exists_jordanBasis_of_charpoly_splits
     {V : Type v} [AddCommGroup V] [Module K V] [FiniteDimensional K V]
     (f : Module.End K V) (hf : f.charpoly.Splits) :
@@ -527,19 +554,25 @@ end Module.End
 namespace MathlibExt.LinearAlgebra.Matrix.JordanNormalFormWanted
 
 /--
-Jordan normal form: a square matrix whose characteristic polynomial splits is similar to a
-block-diagonal matrix of Jordan blocks.
-
-Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
-Jordan normal form; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
-Press (2013), Theorem 3.4.1.
-
-Proves `Wanted` entry `exists_jordan_normal_form_of_splits`.
+**Jordan normal form.** Let $A$ be a square matrix over a field $K$, with rows and columns indexed
+by a finite set $N$, whose characteristic polynomial splits into linear factors over $K$. Then $A$
+is similar to a block-diagonal matrix of Jordan blocks: there are $k \in \mathbb{N}$, positive
+integers $s_0, \dots, s_{k-1}$, scalars $\mu_0, \dots, \mu_{k-1} \in K$, an invertible matrix $P$
+with rows and columns indexed by $N$, and a bijection $e$ from the set of pairs $(i, r)$ with
+$i < k$ and $r < s_i$ onto $N$, such that $A = P J P^{-1}$, where $J$ is the block-diagonal
+matrix whose $i$-th diagonal block is the Jordan block of size $s_i$ with eigenvalue $\mu_i$,
+with its rows and columns relabelled by $e$.
 
 Proof: Decompose into the maximal generalized eigenspaces (Axler, Linear Algebra Done Right,
 4th ed., 8.22), take a Jordan-chain basis of each nilpotent restriction, and collect them as in
 the proof of Axler 8.46. The nilpotent case is proved by induction on the range, extending chains
 by preimages and adding kernel vectors, as in Wikipedia, "Jordan normal form", section "A proof".
+
+Proves `Wanted` entry `exists_jordan_normal_form_of_splits`.
+
+Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
+Jordan normal form; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
+Press (2013), Theorem 3.4.1.
 -/
 theorem exists_jordan_normal_form_of_splits
     {n : Type*} [Fintype n] [DecidableEq n]

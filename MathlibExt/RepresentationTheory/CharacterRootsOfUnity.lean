@@ -48,9 +48,13 @@ namespace CharacterTheory
 
 universe u
 
-/-- Every eigenvalue `μ` of `ρ g` satisfies `μ ^ orderOf g = 1`: the
-minimal polynomial of `ρ g` divides `X ^ orderOf g - 1`, and `μ` is a root
-of the minimal polynomial. -/
+/-- **Eigenvalues of $\rho(g)$ are roots of unity of order dividing that of $g$.** Let $\rho$ be a
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, let
+$g \in G$, and let $\operatorname{ord}(g)$ be the order of $g$. Every eigenvalue $\mu$ of $\rho(g)$
+satisfies $\mu^{\operatorname{ord}(g)} = 1$.
+
+The minimal polynomial of $\rho(g)$ divides $X^{\operatorname{ord}(g)} - 1$, and $\mu$ is a root of
+the minimal polynomial. -/
 theorem hasEigenvalue_pow_orderOf_eq_one
     {G : Type u} [Group G] [Fintype G]
     {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
@@ -73,8 +77,11 @@ theorem hasEigenvalue_pow_orderOf_eq_one
     Polynomial.eval_X, Polynomial.eval_one] at hμ_root
   exact sub_eq_zero.mp hμ_root
 
-/-- Every eigenvalue `μ` of `ρ g` satisfies `μ ^ Fintype.card G = 1`,
-since `orderOf g` divides `|G|`. -/
+/-- **Eigenvalues of $\rho(g)$ are $|G|$-th roots of unity.** Let $\rho$ be a representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$, and let $g \in G$. Every
+eigenvalue $\mu$ of $\rho(g)$ satisfies $\mu^{|G|} = 1$.
+
+This follows because the order of $g$ divides $|G|$. -/
 theorem hasEigenvalue_pow_card_eq_one
     {G : Type u} [Group G] [Fintype G]
     {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
@@ -84,8 +91,10 @@ theorem hasEigenvalue_pow_card_eq_one
   obtain ⟨k, hk⟩ := orderOf_dvd_card (x := g)
   rw [hk, pow_mul, hasEigenvalue_pow_orderOf_eq_one ρ g hμ, one_pow]
 
-/-- Every root of the characteristic polynomial of (the matrix of) `ρ g`
-is a `|G|`-th root of unity. -/
+/-- **Characteristic roots of $\rho(g)$ are $|G|$-th roots of unity.** Let $\rho$ be a
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, and let
+$g \in G$. Every root $\mu$ of the characteristic polynomial of the matrix of $\rho(g)$ in a fixed
+basis of $V$ satisfies $\mu^{|G|} = 1$. -/
 theorem char_charpoly_roots_pow_eq_one
     {G : Type u} [Group G] [Fintype G]
     {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]

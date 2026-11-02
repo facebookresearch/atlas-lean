@@ -654,9 +654,15 @@ private theorem mono_transport {R : Type*} [CommRing R] (A Phi : PowerSeries R)
   exact hcongr
 
 section
-/-- Lagrange–Bürmann inversion formula, coefficient form, from the fixed-point equation alone:
-if `A = X * subst A phi`, then for `n ≥ 1`,
-`n * [X^n](subst A g) = [X^(n-1)](derivative g * phi ^ n)`. -/
+/-- **Lagrange–Bürmann formula from the fixed-point equation alone.** Let $R$ be a commutative
+ring and let $A$, $\varphi$ and $g$ be formal power series over $R$ with $A = X\,\varphi(A)$,
+where $\varphi(A)$ and $g(A)$ denote the substitution of $A$ into $\varphi$ and $g$. Write
+$[X^m]H$ for the coefficient of $X^m$ in a power series $H$ and $g'$ for the formal derivative
+of $g$. Then for every natural number $n \ge 1$,
+
+$$n\, [X^n]\, g(A) = [X^{n-1}]\left(g' \varphi^n\right).$$
+
+No condition on the constant term of $\varphi$ is needed. -/
 theorem fps_lagrange_burmann_coeff' {R : Type*} [CommRing R] (A phi g : PowerSeries R)
     (hfix : A = PowerSeries.X * PowerSeries.subst A phi) (n : ℕ) (hn : 0 < n) :
     (n : R) * PowerSeries.coeff n (PowerSeries.subst A g) =
@@ -675,13 +681,20 @@ theorem fps_lagrange_burmann_coeff' {R : Type*} [CommRing R] (A phi g : PowerSer
   exact reduction A phi g hsubst hfix n hn hmono
 
 set_option linter.unusedVariables false in
-/-- Lagrange–Bürmann inversion formula, coefficient form: if `A = X * subst A phi`
-with `coeff 0 phi ≠ 0`, then for `n ≥ 1`,
-`n * [X^n](subst A g) = [X^(n-1)](derivative g * phi ^ n)`.
-This is the division-free form over a commutative ring: no division by `n` is
-required. The hypothesis `hn : 0 < n` prevents truncated subtraction at zero in
-`n - 1`. No reversion or analytic variant is claimed.
-Primary source: Alexander M. Haupt, "Enumeration of S-omino Towers and
+/-- **Lagrange–Bürmann formula, coefficient form.** Let $R$ be a commutative ring and let $A$,
+$\varphi$ and $g$ be formal power series over $R$ such that the constant term of $A$ is
+nilpotent, $\varphi$ has nonzero constant term, and $A = X\,\varphi(A)$, where $\varphi(A)$ and
+$g(A)$ denote the substitution of $A$ into $\varphi$ and $g$. Write $[X^m]H$ for the coefficient
+of $X^m$ in a power series $H$ and $g'$ for the formal derivative of $g$. Then for every
+natural number $n \ge 1$,
+
+$$n\, [X^n]\, g(A) = [X^{n-1}]\left(g' \varphi^n\right).$$
+
+This is the division-free form over a commutative ring: no division by $n$ is required.
+
+Proves `Wanted` entry `fps_lagrange_burmann_coeff`.
+
+Source: Alexander M. Haupt, "Enumeration of S-omino Towers and
 Row-Convex k-omino Towers," JIS 24 (2021), proposition at lines 400–407,
 https://cs.uwaterloo.ca/journals/JIS/VOL24/Haupt/haupt4.tex, file SHA-256
 `1b412146e9dba7d9302d274268baf3e35239b8369473faf57f086f918e3b66af`, span SHA-256
@@ -694,8 +707,6 @@ https://cs.uwaterloo.ca/journals/JIS/VOL15/Kruchinin/kruchinin5.tex, file SHA-25
 `805d5ab3e7352b021e119fb2bec5cfd477f4a01469758b601fb7a9ea4c5f0d36`.
 Source concept `jis_grounded_b2a0ba5cfa34a62aa3e66f0f`;
 variants `formal_implicit_composition` and `formal_power_specialization`.
-
-Proves `Wanted` entry `fps_lagrange_burmann_coeff`.
 -/
 theorem fps_lagrange_burmann_coeff {R : Type*} [CommRing R] (A phi g : PowerSeries R)
     (hsubst : PowerSeries.HasSubst A) (hphi : PowerSeries.coeff 0 phi ≠ 0)

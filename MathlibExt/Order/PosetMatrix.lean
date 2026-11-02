@@ -14,10 +14,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Upper-triangular `(0, 1)`-poset matrix (concept `jis_sem_b6df1a00e0451f0892d6d4dd`):
-a square Boolean matrix `M` over `Fin n` with false entries strictly below the
-main diagonal (D2), true entries on the main diagonal (D3), and transitivity of
-the true entries (D4): `M i j = true` and `M j k = true` imply `M i k = true`.
+/-- **Poset matrix.** An $n \times n$ Boolean matrix $M$, with rows and columns indexed by
+$\{0, \dots, n-1\}$, is an upper-triangular $(0, 1)$-poset matrix when its entries strictly
+below the main diagonal are false ($M_{ij}$ is false whenever $j < i$), its diagonal entries
+$M_{ii}$ are true, and its true entries are transitive: if $M_{ij}$ and $M_{jk}$ are true,
+then $M_{ik}$ is true.
 
 Source: JIS `mohammad3.tex`, lines 171–176, SHA-256
 `839f29b85b01af033998ae2ca01fb12acb8b055b72ed095859474eb3f746a2b8`. -/
@@ -26,36 +27,46 @@ def IsPosetMatrix (n : ℕ) (M : Matrix (Fin n) (Fin n) Bool) : Prop :=
     (∀ i : Fin n, M i i = true) ∧
     (∀ i j k : Fin n, M i j = true → M j k = true → M i k = true)
 
-/-- The order relation represented by a Boolean matrix (R1): `xᵢ ≤ xⱼ` iff the
-`(i, j)`-entry is `true`. Defined separately from the poset-matrix predicate. -/
+/-- **Relation represented by a Boolean matrix.** Let $M$ be an $n \times n$ Boolean matrix
+with rows and columns indexed by $\{0, \dots, n-1\}$. The relation represented by $M$
+relates index $i$ to index $j$ exactly when the entry $M_{ij}$ is true.
+
+The matrix $M$ is arbitrary; it need not be a poset matrix. -/
 def IsPosetMatrix.Rel {n : ℕ} (M : Matrix (Fin n) (Fin n) Bool)
     (i j : Fin n) : Prop :=
   M i j = true
 
-/-- Projection of the upper-triangularity clause (D2). -/
+/-- **Poset matrices are upper triangular.** If $M$ is an $n \times n$ poset matrix, then
+$M_{ij}$ is false for all indices $i, j < n$ with $j < i$. -/
 theorem IsPosetMatrix.upper {n : ℕ} {M : Matrix (Fin n) (Fin n) Bool}
     (h : IsPosetMatrix n M) :
     ∀ i j : Fin n, (j : ℕ) < (i : ℕ) → M i j = false :=
   h.1
 
-/-- Projection of the diagonal clause (D3). -/
+/-- **Diagonal entries of a poset matrix.** If $M$ is an $n \times n$ poset matrix, then
+$M_{ii}$ is true for every index $i < n$. -/
 theorem IsPosetMatrix.diagonal {n : ℕ} {M : Matrix (Fin n) (Fin n) Bool}
     (h : IsPosetMatrix n M) : ∀ i : Fin n, M i i = true :=
   h.2.1
 
-/-- Projection of the transitivity clause (D4). -/
+/-- **Transitivity of the true entries of a poset matrix.** If $M$ is an $n \times n$ poset
+matrix, then for all indices $i, j, k < n$, if $M_{ij}$ and $M_{jk}$ are true, then $M_{ik}$
+is true. -/
 theorem IsPosetMatrix.transitive {n : ℕ}
     {M : Matrix (Fin n) (Fin n) Bool} (h : IsPosetMatrix n M) :
     ∀ i j k : Fin n, M i j = true → M j k = true → M i k = true :=
   h.2.2
 
-/-- The represented relation is reflexive. -/
+/-- **The relation of a poset matrix is reflexive.** If $M$ is an $n \times n$ poset matrix,
+then the relation represented by $M$ relates every index $i < n$ to itself. -/
 theorem IsPosetMatrix.rel_refl {n : ℕ} {M : Matrix (Fin n) (Fin n) Bool}
     (h : IsPosetMatrix n M) (i : Fin n) :
     IsPosetMatrix.Rel M i i :=
   h.2.1 i
 
-/-- The represented relation is transitive. -/
+/-- **The relation of a poset matrix is transitive.** If $M$ is an $n \times n$ poset matrix
+and $i, j, k < n$ are indices such that the relation represented by $M$ relates $i$ to $j$
+and $j$ to $k$, then it relates $i$ to $k$. -/
 theorem IsPosetMatrix.rel_trans {n : ℕ} {M : Matrix (Fin n) (Fin n) Bool}
     (h : IsPosetMatrix n M) (i j k : Fin n)
     (hij : IsPosetMatrix.Rel M i j)
