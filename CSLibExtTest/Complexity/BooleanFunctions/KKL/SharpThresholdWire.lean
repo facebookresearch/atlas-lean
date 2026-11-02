@@ -23,7 +23,8 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.SharpThresholdWire`:
 * the remaining goal `stw_RemainingGoal q` (definitionally `∀ p ∈ (1/2, q), PBiasedHCLib p`)
   holds for `q ≤ 1/2` (`stw_RemainingGoal_empty_window`) and fails for every `q > 9/10`
   (`dtpc_remainingGoal_false`); it holds on no nonempty window, since `PBiasedHCLib p`
-  fails for every `p > 1/2` (cubic-term argument in the `HCTensorLib` module documentation).
+  fails for every `p` with `1/2 < p < 1` (informal cubic-term argument in the
+  `HCTensorLib` module documentation; formally refuted only at `p = 9/10`).
   The conditional chain from the remaining goal to rho-optimise and sharp threshold was
   removed with the window route in `HCTensorLib`. `PBiasedHCLib` itself is non-trivial: true at
   `1/2` (`htl_lib_half`), false at `9/10` (`dtpc_pbiasedHCLib_nine_tenths_false`).

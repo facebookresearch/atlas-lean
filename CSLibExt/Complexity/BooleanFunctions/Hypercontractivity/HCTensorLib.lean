@@ -18,14 +18,19 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 `PBiasedHCLib p` is the two-point inequality
 `((1-p)u + pv)² + ρ²p(1-p)(u-v)² ≤ ((1-p)|u|^(1+ρ²) + p|v|^(1+ρ²))^(2/(1+ρ²))` for all
 `u, v` and `ρ ∈ [0, 1]`. It holds at `p = 1/2` (`htl_lib_half`) and fails for every
-`p > 1/2`: with `u = 1 + pε`, `v = 1 - (1-p)ε` and `0 < ρ < 1`, both sides agree
-through order two in `ε`, but RHS minus LHS has cubic term
+`p` with `1/2 < p < 1`: with `u = 1 + pε`, `v = 1 - (1-p)ε` and `0 < ρ < 1`, both
+sides agree through order two in `ε`, but RHS minus LHS has cubic term
 `ρ²(ρ²-1)p(1-p)(2p-1)ε³/3 < 0`, so sufficiently small positive `ε` violates the
-inequality. The formal refutation in this library is at `p = 9/10`
-(`dtpc_pbiasedHCLib_nine_tenths_false`). Assuming it at `p`, tensorization gives the
+inequality. This cubic-term argument is informal: it is not formalized here. The
+formal refutation in this library is at `p = 9/10`
+(`dtpc_pbiasedHCLib_nine_tenths_false`). At `p = 1` the inequality reduces to
+equality, and for `p > 1` the displayed cubic coefficient has the opposite sign, so
+this argument gives no refutation there. Assuming it at `p`, tensorization gives the
 `n`-coordinate hypercontractive inequality, low-degree weight bounds and per-coordinate
 hypercontractivity. The window-conditional route (assuming it on a whole window
-`(1/2, q)`) is removed: no nonempty window can satisfy the hypothesis.
+`(1/2, q)`) is removed: no nonempty window can satisfy the hypothesis, since any
+window with `q > 1/2` contains some `p` with `1/2 < p < min q 1`, refuted by the
+informal cubic-term argument.
 
 ## Main definitions
 
@@ -38,7 +43,8 @@ hypercontractivity. The window-conditional route (assuming it on a whole window
   low-degree, per-coordinate, summed and capped forms.
 * `htl_kkl_logGain_half`: the KKL log-gain at `p = 1/2`, where the inequality holds.
   The window-conditional KKL, rho-optimise and sharp-threshold consequences were
-  removed: their window hypothesis holds on no nonempty window.
+  removed: their window hypothesis holds on no nonempty window (by the informal
+  cubic-term argument above; formally refuted only at `p = 9/10`).
 -/
 
 open scoped BigOperators
@@ -54,9 +60,9 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The two-point hypercontractive inequality at bias `p`: for every `ρ ∈ [0, 1]` and
 `u, v : ℝ`, the `ρ`-noised second moment is at most the `q = 1 + ρ²` norm.
-Holds at `p = 1/2` (`htl_lib_half`); fails for every `p > 1/2` (see the module
-documentation for the cubic-term argument; formally refuted at `p = 9/10` in
-`dtpc_pbiasedHCLib_nine_tenths_false`). -/
+Holds at `p = 1/2` (`htl_lib_half`); fails for every `p` with `1/2 < p < 1` by the
+informal cubic-term argument in the module documentation (formally refuted at
+`p = 9/10` in `dtpc_pbiasedHCLib_nine_tenths_false`); at `p = 1` it is equality. -/
 def PBiasedHCLib (p : ℝ) : Prop :=
   ∀ ρ : ℝ, 0 ≤ ρ → ρ ≤ 1 → ∀ u v : ℝ,
     ((1 - p) * u + p * v) ^ 2 + ρ ^ 2 * (p * (1 - p)) * (u - v) ^ 2

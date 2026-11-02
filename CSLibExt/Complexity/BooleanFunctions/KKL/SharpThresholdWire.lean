@@ -20,9 +20,10 @@ the master range `(1, 2]` meet only at `2` (`stw_ranges_meet_only_at_two`), and 
 variance coefficient gap (equality iff `p = 1/2`). Status: the remaining goal
 `stw_RemainingGoal` (which is exactly `∀ p ∈ (1/2, q), PBiasedHCLib p`) is refuted
 for `q > 9/10` (`dtpc_remainingGoal_false`), and `PBiasedHCLib p` fails for every
-`p > 1/2` (see `HCTensorLib` for the cubic-term argument), so the remaining goal
-holds on no nonempty window; it holds for the empty window `q ≤ 1/2`
-(`stw_RemainingGoal_empty_window`). The conditional chain from the remaining goal
+`p` with `1/2 < p < 1` (see `HCTensorLib` for the informal cubic-term argument;
+formally refuted only at `p = 9/10`), so the remaining goal holds on no nonempty
+window (any window with `q > 1/2` contains such a `p`); it holds for the empty
+window `q ≤ 1/2` (`stw_RemainingGoal_empty_window`). The conditional chain from the remaining goal
 to rho-optimise and sharp threshold was removed with the window route in
 `HCTensorLib`. The final verdict `stw_verdict` combines the pieces.
 
@@ -30,7 +31,8 @@ to rho-optimise and sharp threshold was removed with the window route in
 
 * `stw_RemainingGoal`: the remaining goal over a window `(1/2, q)`, definitionally
   `∀ p ∈ Ioo (1/2) q, PBiasedHCLib p`; false for `q > 9/10`, and holding on no
-  nonempty window since `PBiasedHCLib p` fails for every `p > 1/2`.
+  nonempty window since `PBiasedHCLib p` fails for every `p` with `1/2 < p < 1`
+  (informal cubic-term argument; formally refuted only at `p = 9/10`).
 
 ## Main results
 

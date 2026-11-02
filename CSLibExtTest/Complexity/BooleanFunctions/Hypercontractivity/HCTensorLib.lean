@@ -24,9 +24,10 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.HCTensorLib`:
 * `htl_lib_rho_zero` at `p = 3/4`.
 
 The window-conditional route was removed from `HCTensorLib`: `∀ p ∈ (1/2, q), PBiasedHCLib p`
-holds on no nonempty window, since `PBiasedHCLib p` fails for every `p > 1/2`
-(cubic-term argument in the `HCTensorLib` module documentation; formally refuted at
-`p = 9/10` in `dtpc_pbiasedHCLib_nine_tenths_false`, tested in
+holds on no nonempty window, since `PBiasedHCLib p` fails for every `p` with
+`1/2 < p < 1` (informal cubic-term argument in the `HCTensorLib` module
+documentation; formally refuted at `p = 9/10` in
+`dtpc_pbiasedHCLib_nine_tenths_false`, tested in
 `DecoupledTwoPointRefutation`).
 -/
 
