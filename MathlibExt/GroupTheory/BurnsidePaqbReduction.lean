@@ -38,7 +38,9 @@ namespace BurnsidePaqb
 variable {G : Type*} [Group G] [Fintype G]
 
 open Classical in
-/-- The conjugacy class of `g`, as a finset via the `ConjAct` orbit. -/
+/-- **Conjugacy class.** For an element $g$ of a finite group $G$, the conjugacy class of $g$ is
+the finite set $\{h g h^{-1} : h \in G\}$, the orbit of $g$ under the action of $G$ on itself
+by conjugation. -/
 noncomputable def conjClass (g : G) : Finset G :=
   (MulAction.orbit (ConjAct G) g).toFinset
 
@@ -47,7 +49,9 @@ theorem mem_conjClass_iff {g h : G} : h ∈ conjClass g ↔ IsConj h g := by
   simp [conjClass, ConjAct.mem_orbit_conjAct, Set.mem_toFinset]
 
 open Classical in
-/-- Orbit-stabilizer for the class: class card times stabilizer card is group card. -/
+/-- **Orbit–stabilizer for a conjugacy class.** For every element $g$ of a finite group $G$, the
+size of the conjugacy class of $g$ times the order of the stabilizer of $g$ under the action of
+$G$ on itself by conjugation, $x \cdot y = x y x^{-1}$, equals the order of $G$. -/
 theorem conjClass_card_mul_stabilizer_card (g : G) :
     (conjClass g).card * Fintype.card (MulAction.stabilizer (ConjAct G) g) =
       Fintype.card G := by
@@ -55,7 +59,10 @@ theorem conjClass_card_mul_stabilizer_card (g : G) :
   exact MulAction.card_orbit_mul_card_stabilizer_eq_card_group (ConjAct G) g
 
 open Classical in
-/-- The centralizer of `g` is equivalent to the `ConjAct` stabilizer of `g`. -/
+/-- **Centralizer as a conjugation stabilizer.** For an element $g$ of a finite group $G$, this
+is the bijection from the centralizer $C_G(g) = \{x \in G : xg = gx\}$ onto the stabilizer of
+$g$ for the action of $G$ on itself by conjugation, $x \cdot y = x y x^{-1}$, that sends each
+element $x$ to itself. -/
 def centralizerEquivStabilizer (g : G) :
     Subgroup.centralizer {g} ≃ MulAction.stabilizer (ConjAct G) g :=
   Equiv.subtypeEquiv ConjAct.toConjAct.toEquiv (fun x => by
@@ -73,23 +80,30 @@ theorem centralizer_card_eq_stabilizer_card (g : G) :
   Fintype.card_congr (centralizerEquivStabilizer g)
 
 open Classical in
-/-- Class equation for one class: class card times centralizer card is group card. -/
+/-- **Class size times centralizer order.** Let $g$ be an element of a finite group $G$, let
+$g^G$ be its conjugacy class and let $C_G(g) = \{x \in G : xg = gx\}$ be its centralizer.
+Then $|g^G| \cdot |C_G(g)| = |G|$. -/
 theorem conjClass_card_mul_centralizer_card (g : G) :
     (conjClass g).card * Fintype.card (Subgroup.centralizer {g}) = Fintype.card G := by
   rw [centralizer_card_eq_stabilizer_card]
   exact conjClass_card_mul_stabilizer_card g
 
 open Classical in
-/-- Conjugation preserves conjugacy classes. -/
+/-- **Conjugacy classes are closed under conjugation.** Let $g$, $h$ and $x$ be elements of a
+finite group $G$. If $x$ lies in the conjugacy class of $g$, then so does $h x h^{-1}$. -/
 theorem conj_mem_conjClass (g h x : G) (hx : x ∈ conjClass g) :
     h * x * h⁻¹ ∈ conjClass g := by
   rw [mem_conjClass_iff] at hx ⊢
   exact (isConj_iff.mpr ⟨h⁻¹, by group⟩).trans hx
 
 open Classical in
-/-- A Sylow-center element has prime-power conjugacy class. From `|G| = p^a q^b`
-with `b ≥ 1`, get `g ≠ 1` in the center of a Sylow `q`-subgroup whose class has
-size `p^k`, `k ≤ a`. -/
+/-- **A nontrivial element whose class size is a power of $p$.** Let $p$ and $q$ be primes, let
+$a$ and $b$ be natural numbers with $b \ge 1$, and let $G$ be a finite group of order
+$p^a q^b$. Then there are an element $g \ne 1$ of $G$ and a natural number $k \le a$ such that
+the conjugacy class of $g$ has exactly $p^k$ elements.
+
+In the proof, $g$ is a nontrivial element of the center of a subgroup of $G$ of order $q^b$
+(a Sylow $q$-subgroup when $p \ne q$). -/
 theorem exists_ne_one_class_prime_pow {p q a b : ℕ} (hp : p.Prime)
     (hq : q.Prime) (hcard : Fintype.card G = p ^ a * q ^ b) (hb : 1 ≤ b) :
     ∃ g : G, g ≠ 1 ∧ ∃ k ≤ a, (conjClass g).card = p ^ k := by

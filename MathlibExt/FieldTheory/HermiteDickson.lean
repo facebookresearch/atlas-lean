@@ -330,11 +330,13 @@ private theorem hd_deg_le_of_bij {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
   exact hsumne hsum0
 
 /--
-Hermite–Dickson criterion: `f ∈ Fq[X]` over a finite field `Fq` of characteristic `p`
-is a permutation polynomial (evaluation map `x ↦ f.eval x` bijective) iff (1) `f`
-has exactly one root in `Fq`, and (2) for each `1 ≤ t ≤ q - 2` with `p ∤ t`, the
-remainder of `f ^ t` upon division by `X ^ q - X` has `natDegree ≤ q - 2`, where
-`q = Fintype.card Fq`.
+**Hermite–Dickson criterion.** Let $\mathbb{F}_q$ be a finite field with $q$ elements and
+characteristic $p$, and let $f \in \mathbb{F}_q[X]$. Then $f$ is a permutation polynomial of
+$\mathbb{F}_q$, that is, $x \mapsto f(x)$ is a bijection of $\mathbb{F}_q$, if and only if $f$
+has exactly one root in $\mathbb{F}_q$ and, for every integer $t$ with $1 \le t \le q - 2$ and
+$p \nmid t$, the remainder of $f^t$ upon division by $X^q - X$ has degree at most $q - 2$.
+
+Proves `Wanted` entry `hermite_dickson_permutation_criterion`.
 
 Source: Brian G. Kronenthal, "An Integer Sequence Motivated by Generalized
 Quadrangles", Journal of Integer Sequences 18 (2015), Article 15.7.8.
@@ -343,8 +345,6 @@ Hermite–Dickson statement at source lines 120–126.
 Full source SHA-256: 4968a89e5a6c165ef1c2ab57a9eb6be1a4852e1bc905ec796b3c9abf2158a78d
 Normalized no-final-newline source-span SHA-256:
 ddd646ddcecd21e43eeb4e08d3c2405988e7ff842268dd6020ed2d7e603314af
-
-Proves `Wanted` entry `hermite_dickson_permutation_criterion`.
 -/
 theorem hermite_dickson_permutation_criterion
     {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq] [DecidableEq Fq] [CharP Fq p]

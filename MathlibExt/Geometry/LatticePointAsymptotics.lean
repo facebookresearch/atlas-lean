@@ -143,9 +143,9 @@ private theorem count_lower_le {n d numMaps : ℕ} (S : Set (Fin n → ℝ))
     (cube_measure_sandwich S hS ht).2
   linarith
 
-/-- Compatibility equiv between the raw integer subtype and the subtype of the
-canonical `LatticePointEnumerator.latticePointSet`, for `0 < t`, proved directly
-via `Equiv.ofBijective` on the coordinatewise cast map. -/
+/-- **Integer points of a dilate.** Let $S \subseteq \mathbb{R}^n$ and $t > 0$. Viewing an
+integer vector as a real vector gives a bijection from the set of $x \in \mathbb{Z}^n$ with
+$x / t \in S$ onto the lattice point set $tS \cap \mathbb{Z}^n$. -/
 noncomputable def rawSubtypeEquivCanonicalPointSet {n : ℕ}
     (S : Set (Fin n → ℝ)) {t : ℝ} (ht : 0 < t) :
     {x : Fin n → ℤ | (fun i => (x i : ℝ) / t) ∈ S} ≃
@@ -197,8 +197,10 @@ noncomputable def rawSubtypeEquivCanonicalPointSet {n : ℕ}
       change ((z i : ℤ) : ℝ) = y.val i
       exact hz i⟩
 
-/-- Cardinal equality between the raw integer count and the canonical
-`LatticePointEnumerator.latticeEnumerator`. -/
+/-- **Integer count of a dilate.** Let $S \subseteq \mathbb{R}^n$ and $t > 0$. The number of
+integer vectors $x \in \mathbb{Z}^n$ with $x / t \in S$ equals the lattice enumerator of $S$ at
+$t$, the number of points of $\mathbb{Z}^n$ in the dilate $tS$; here an infinite set is counted
+as $0$. -/
 theorem card_raw_eq_latticeEnumerator {n : ℕ} (S : Set (Fin n → ℝ))
     {t : ℝ} (ht : 0 < t) :
     Nat.card {x : Fin n → ℤ | (fun i => (x i : ℝ) / t) ∈ S} =
@@ -207,8 +209,14 @@ theorem card_raw_eq_latticeEnumerator {n : ℕ} (S : Set (Fin n → ℝ))
   rw [← Nat.card_coe_set_eq]
   exact Nat.card_congr (rawSubtypeEquivCanonicalPointSet S ht)
 
-/-- Reusable error bound: the canonical lattice-point enumerator is within the summed
-chart cube counts of the volume term. -/
+/-- **Lattice-point error bound from boundary charts.** Let $S \subseteq \mathbb{R}^n$ be
+bounded, let $f_1, \dots, f_m$ be maps from the unit cube $[0,1]^d$ to $\mathbb{R}^n$ whose
+ranges cover the boundary $\partial S$, and let $t > 0$. For each $i$, let $N_i(t)$ be the number
+of $v \in \mathbb{Z}^n$ such that $t f_i(y)$ lies in the half-open cube $\prod_j [v_j, v_j + 1)$
+for some $y \in [0,1]^d$, and assume each of these sets of $v$ is finite. Then the lattice
+enumerator $L_S(t)$, the number of points of $\mathbb{Z}^n$ in $tS$, satisfies
+$|L_S(t) - \operatorname{vol}(S)\, t^n| \le N_1(t) + \dots + N_m(t)$, where $\operatorname{vol}$
+is Lebesgue (outer) measure. -/
 theorem lattice_point_count_error_bound
     {n d numMaps : ℕ} (S : Set (Fin n → ℝ))
     (hS : Bornology.IsBounded S)
@@ -228,8 +236,13 @@ theorem lattice_point_count_error_bound
   rw [Real.norm_eq_abs, abs_le]
   constructor <;> linarith
 
-/-- Eventual lattice-point asymptotics with `O(t ^ (n - 1))` error, stated through
-the canonical `LatticePointEnumerator.latticeEnumerator`. -/
+/-- **Lattice-point count of a dilate with boundary error.** Let $S \subseteq \mathbb{R}^n$ be
+bounded, and suppose its boundary $\partial S$ is $(n-1)$-Lipschitz parametrizable: it is the
+union of the ranges of finitely many Lipschitz maps from the unit cube $[0,1]^{n-1}$, where
+$n - 1$ is read as $0$ when $n = 0$. Then there is a real constant $C$ such that for all
+sufficiently large real $t$, the lattice enumerator $L_S(t)$, the number of points of
+$\mathbb{Z}^n$ in $tS$, satisfies $|L_S(t) - \operatorname{vol}(S)\, t^n| \le C\, t^{n-1}$, where
+$\operatorname{vol}$ is Lebesgue (outer) measure. -/
 theorem lattice_point_count_asymptotics
     {n : ℕ} (S : Set (Fin n → ℝ))
     (hS : Bornology.IsBounded S)

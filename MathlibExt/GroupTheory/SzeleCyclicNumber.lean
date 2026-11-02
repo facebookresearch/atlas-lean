@@ -208,8 +208,9 @@ private theorem exists_nonisCyclic_of_dvd_totient (n p : ℕ) (hn : 0 < n) (hppr
   exact not_isCyclic_semidirect_of_ne a ⟨e.symm u, Subgroup.mem_zpowers _⟩ h
 
 /--
-A positive natural number `n` is cyclic, meaning every group of order `n` is
-cyclic, if and only if `n` is relatively prime to its Euler totient.
+**Szele's criterion for cyclic numbers.** Let $n$ be a positive integer. Every group of order $n$
+is cyclic if and only if $n$ is relatively prime to $\varphi(n)$, that is,
+$\gcd(n, \varphi(n)) = 1$, where $\varphi$ is Euler's totient function.
 
 Source: Joel E. Cohen, "Conjectures about Primes and Cyclic Numbers,"
 Journal of Integer Sequences 28 (2025), Article 25.4.7, Szele's criterion,

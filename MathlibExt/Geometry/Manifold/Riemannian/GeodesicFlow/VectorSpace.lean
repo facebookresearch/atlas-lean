@@ -119,8 +119,12 @@ private theorem fiber_const_of_geodesic (u : ℝ → TangentBundle 𝓘(ℝ, F) 
 
 namespace Manifold
 
-/-- A velocity curve on Euclidean space is geodesic iff the base point is affine
-with constant velocity and the fiber is constant as an element of `F`. -/
+/-- **Geodesic velocity curves in Euclidean space.** Let $F$ be a finite-dimensional real inner
+product space, viewed as a Riemannian manifold with the metric given by its inner product, and
+identify each tangent space of $F$ with $F$, so that a point of the tangent bundle $TF$ is a pair
+$(x, v)$ with $x, v \in F$. A curve $t \mapsto u(t) = (x(t), v(t))$ in $TF$, defined for all real
+$t$, is the velocity curve of a geodesic if and only if, for every real $t$,
+$x(t) = x(0) + t\,v(0)$ and $v(t) = v(0)$. -/
 theorem isGeodesicVelocityCurve_vectorSpace_iff
     (u : ℝ → TangentBundle 𝓘(ℝ, F) F) :
     IsGeodesicVelocityCurve 𝓘(ℝ, F) u ↔ ∀ t,
@@ -219,7 +223,12 @@ theorem isGeodesicVelocityCurve_vectorSpace_iff
       rw [hFunEq, ← hValEq]
       exact hInnerF
 
-/-- The geodesic flow on Euclidean space is the straight-line flow. -/
+/-- **The geodesic flow of Euclidean space is the straight-line flow.** Let $F$ be a
+finite-dimensional real inner product space, viewed as a Riemannian manifold with the metric given
+by its inner product, and identify each tangent space of $F$ with $F$, so that a point of the
+tangent bundle $TF$ is a pair $(x, v)$ with $x, v \in F$. A family of maps
+$\varphi_t \colon TF \to TF$, $t \in \mathbb{R}$, is a geodesic flow on $TF$ if and only if
+$\varphi_t(x, v) = (x + t v, v)$ for every real $t$ and every $(x, v) \in TF$. -/
 theorem isGeodesicFlow_vectorSpace_iff
     (φ : ℝ → TangentBundle 𝓘(ℝ, F) F → TangentBundle 𝓘(ℝ, F) F) :
     IsGeodesicFlow 𝓘(ℝ, F) φ ↔ ∀ t p,
@@ -265,7 +274,13 @@ theorem isGeodesicFlow_vectorSpace_iff
       fun t => by rw [hZero v]; exact hAff t v
     exact (isGeodesicVelocityCurve_vectorSpace_iff _).mpr hOrb
 
-/-- The unit geodesic flow on Euclidean space is the straight-line flow. -/
+/-- **The unit geodesic flow of Euclidean space is the straight-line flow.** Let $F$ be a
+finite-dimensional real inner product space, viewed as a Riemannian manifold with the metric given
+by its inner product, and identify each tangent space of $F$ with $F$, so that a point of the
+tangent bundle is a pair $(x, v)$ with $x, v \in F$, and the unit tangent bundle $SF$ consists of
+the pairs with $\|v\| = 1$. A family of maps $\varphi_t \colon SF \to SF$, $t \in \mathbb{R}$, is
+a geodesic flow on $SF$ if and only if $\varphi_t(x, v) = (x + t v, v)$ for every real $t$ and
+every $(x, v) \in SF$. -/
 theorem isUnitGeodesicFlow_vectorSpace_iff
     (φ : ℝ → unitTangentBundle 𝓘(ℝ, F) F →
       unitTangentBundle 𝓘(ℝ, F) F) :

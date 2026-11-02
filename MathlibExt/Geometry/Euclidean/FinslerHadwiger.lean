@@ -46,16 +46,18 @@ private theorem finsler_hadwiger_identity (A B C D E F G O1 O2 P Q : EuclideanSp
     ring
   · module
 
-/-- Finsler–Hadwiger theorem (shared-vertex squares, centers mid-segment standard
-form): two nondegenerate squares `ABCD` and `AEFG` sharing the vertex `A`,
-encoded via 90° rotation conditions with `C = B + D - A` and `F = E + G - A`;
-with centers `O1 = (A + C) / 2`, `O2 = (A + F) / 2` and cross-segment midpoints
-`P = (B + G) / 2`, `Q = (D + E) / 2`, the centers segment `O1O2` and the
-mid-segment `PQ` are equal and perpendicular with a common midpoint.
-This is the possibly degenerate identity: when the two squares coincide (`B = E`) both
-segments are zero. `finsler_hadwiger_of_ne` adds `B ≠ E` and concludes `O1 ≠ O2`, so that
-`O1 P O2 Q` is a square as in the source. The hypotheses `B ≠ A` and `E ≠ A` are unused and
-keep the source's shape.
+/-- **Finsler–Hadwiger theorem.** Let $A, B, C, D, E, F, G$ be points of the Euclidean plane
+$\mathbb{R}^2$ with $B \ne A$ and $E \ne A$, and let $\rho(x, y) = (-y, x)$ be the
+counterclockwise rotation by $90^\circ$. Suppose that $ABCD$ and $AEFG$ are squares sharing the
+vertex $A$, in the sense that $D - A = \rho(B - A)$, $C = B + D - A$, $G - A = \rho(E - A)$ and
+$F = E + G - A$. Let $O_1 = (A + C)/2$ and $O_2 = (A + F)/2$ be their centers, and let
+$P = (B + G)/2$ and $Q = (D + E)/2$. Then $\|P - Q\| = \|O_1 - O_2\|$, the vectors $P - Q$ and
+$O_1 - O_2$ are orthogonal, and $O_1 + O_2 = P + Q$; that is, the segments $O_1O_2$ and $PQ$
+have equal length, are perpendicular and share their midpoint.
+
+The hypotheses $B \ne A$ and $E \ne A$ are not used. When $B = E$ both segments are zero; with
+$B \ne E$ one also gets $O_1 \ne O_2$, so that $O_1 P O_2 Q$ is a square as in the source.
+
 Source: https://en.wikipedia.org/wiki/Finsler%E2%80%93Hadwiger_theorem
 (statement finsler-hadwiger-s1).
 Proves `Wanted` entry `finsler_hadwiger`.
@@ -81,13 +83,17 @@ theorem finsler_hadwiger :
   intro A B C D E F G O1 O2 P Q _ _ hD0 hD1 hC hG0 hG1 hF hO1 hO2 hP hQ
   exact finsler_hadwiger_identity A B C D E F G O1 O2 P Q hD0 hD1 hC hG0 hG1 hF hO1 hO2 hP hQ
 
-/-- Finsler–Hadwiger theorem for distinct squares: two squares `ABCD` and `AEFG` sharing the
-vertex `A` (encoded as in `finsler_hadwiger`) with `B ≠ E`. The segments `O1O2` and `PQ`
-between the centers and between the cross-segment midpoints are equal, perpendicular, share a
-midpoint and are nonzero, so `O1 P O2 Q` is a square. This generalizes the source to possibly
-degenerate input squares: `B ≠ A` and `E ≠ A` are not assumed, so one of `ABCD` and `AEFG` may
-be the single point `A`, in which case `O1 P O2 Q` is a quarter of the other square.
-`finsler_hadwiger` is the source-shaped, possibly degenerate form. -/
+/-- **Finsler–Hadwiger theorem for distinct squares.** Let $A, B, C, D, E, F, G$ be points of
+the Euclidean plane $\mathbb{R}^2$ with $B \ne E$, and let $\rho(x, y) = (-y, x)$ be the
+counterclockwise rotation by $90^\circ$. Suppose that $ABCD$ and $AEFG$ are squares sharing the
+vertex $A$, in the sense that $D - A = \rho(B - A)$, $C = B + D - A$, $G - A = \rho(E - A)$ and
+$F = E + G - A$. Let $O_1 = (A + C)/2$ and $O_2 = (A + F)/2$ be their centers, and let
+$P = (B + G)/2$ and $Q = (D + E)/2$. Then $\|P - Q\| = \|O_1 - O_2\|$, the vectors $P - Q$ and
+$O_1 - O_2$ are orthogonal, $O_1 + O_2 = P + Q$ and $O_1 \ne O_2$; so the segments $O_1O_2$ and
+$PQ$ are nonzero, equal, perpendicular and share their midpoint, and $O_1 P O_2 Q$ is a square.
+
+The points $B$ and $E$ may equal $A$: if, say, $E = A$, then $AEFG$ is the single point $A$
+and $O_1 P O_2 Q$ is a quarter of $ABCD$. -/
 theorem finsler_hadwiger_of_ne (A B C D E F G O1 O2 P Q : EuclideanSpace ℝ (Fin 2))
     (hBE : B ≠ E)
     (hD0 : (D - A).ofLp 0 = -((B - A).ofLp 1)) (hD1 : (D - A).ofLp 1 = (B - A).ofLp 0)

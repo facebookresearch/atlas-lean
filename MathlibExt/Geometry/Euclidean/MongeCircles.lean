@@ -16,14 +16,16 @@ public import Mathlib.Order.CompletePartialOrder
 
 namespace MetaMathlibExt
 
-/-- Algebraic identity behind Monge's three-circle theorem: for points `c₁`, `c₂`, `c₃` of a real
-vector space and pairwise distinct real weights `r₁`, `r₂`, `r₃` of any sign, the three points
-`(rᵢ - rⱼ)⁻¹ • (rᵢ • cⱼ - rⱼ • cᵢ)` are collinear.
-The circle reading needs positive weights: read as the radii of circles centered at the `cᵢ`,
-they make these points the external homothety centers of the circle pairs. For two weights of
-opposite sign the point is the internal similarity center of the circles of radii `|rᵢ|` and
-`|rⱼ|`; e.g. `r₁ = -1`, `r₂ = 2` gives `(3 : ℝ)⁻¹ • (c₂ + 2 • c₁)`. `monge_three_circles` is the
-statement for circles with positive radii in the plane. -/
+/-- **Monge's three-circle theorem, algebraic form.** Let $V$ be a real vector space, let
+$c_1, c_2, c_3 \in V$, and let $r_1, r_2, r_3$ be pairwise distinct real numbers. Then the three
+points $(r_1 - r_2)^{-1}(r_1 c_2 - r_2 c_1)$, $(r_2 - r_3)^{-1}(r_2 c_3 - r_3 c_2)$ and
+$(r_1 - r_3)^{-1}(r_1 c_3 - r_3 c_1)$ of $V$ are collinear.
+
+For positive $r_i$, read as the radii of circles centered at the $c_i$, these points are the
+external homothety centers of the pairs of circles. If $r_i$ and $r_j$ have opposite signs, the
+point $(r_i - r_j)^{-1}(r_i c_j - r_j c_i)$ is instead the internal homothety center of the
+circles of radii $|r_i|$ and $|r_j|$ centered at $c_i$ and $c_j$; for example $r_1 = -1$ and
+$r_2 = 2$ give $\frac{1}{3}(c_2 + 2 c_1)$. -/
 theorem monge_three_circles_general {V : Type*} [AddCommGroup V] [Module ℝ V] {c₁ c₂ c₃ : V}
     {r₁ r₂ r₃ : ℝ} (h12 : r₁ ≠ r₂) (h23 : r₂ ≠ r₃) (h13 : r₁ ≠ r₃) :
     Collinear ℝ ({(r₁ - r₂)⁻¹ • (r₁ • c₂ - r₂ • c₁),
@@ -62,11 +64,12 @@ theorem monge_three_circles_general {V : Type*} [AddCommGroup V] [Module ℝ V] 
     rwa [hset] at hcol
 
 set_option linter.unusedVariables false in
-/-- Monge's theorem (three circles): three circles in the plane with positive, pairwise
-distinct radii and pairwise disjoint closed disks have collinear external homothety centers.
-Circles are center-radius pairs, and each external homothety center is the explicit
-externally-dividing ratio point on its center-line, well-defined by the distinct-radii
-hypotheses.
+/-- **Monge's three-circle theorem.** Let $c_1, c_2, c_3$ be points of the Euclidean plane
+$\mathbb{R}^2$ and let $r_1, r_2, r_3$ be pairwise distinct positive real numbers such that the
+closed disks of radius $r_i$ centered at $c_i$ are pairwise disjoint. Then the external homothety
+centers $(r_1 - r_2)^{-1}(r_1 c_2 - r_2 c_1)$, $(r_2 - r_3)^{-1}(r_2 c_3 - r_3 c_2)$ and
+$(r_1 - r_3)^{-1}(r_1 c_3 - r_3 c_1)$ of the three pairs of circles are collinear.
+
 Source: https://en.wikipedia.org/wiki/Monge%27s_theorem (statement monge-s1).
 The source's hypothesis is that no circle lies inside another; the pairwise disjointness of the
 closed disks (`hd12`, `hd23`, `hd13`) is stronger.

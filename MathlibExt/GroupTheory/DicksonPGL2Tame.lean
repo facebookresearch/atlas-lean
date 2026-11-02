@@ -778,13 +778,18 @@ private lemma dickson_isCyclic_of_fixed_point {F Q : Type*} [Field F]
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 
-/-- An algebraic closure `K p` of the finite field `𝔽_p = ZMod p`. -/
+/-- **Algebraic closure of the field with p elements.** For a prime $p$, $K_p$ denotes a fixed
+algebraic closure of the finite field $\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$. -/
 noncomputable abbrev K : Type := AlgebraicClosure (ZMod p)
 
-/-- The projective general linear group `PGL₂(K p)`. -/
+/-- **Projective general linear group of degree two.** For a prime $p$, $\mathrm{PGL}_2(K_p)$ is
+the quotient of the group $\mathrm{GL}_2(K_p)$ of invertible $2 \times 2$ matrices over the
+algebraic closure $K_p$ of $\mathbb{F}_p$ by its center. -/
 abbrev PGL : Type := Matrix.ProjGenLinGroup (Fin 2) (K p)
 
-/-- The projective special linear group `PSL₂(K p)`. -/
+/-- **Projective special linear group of degree two.** For a prime $p$, $\mathrm{PSL}_2(K_p)$ is
+the quotient of the group $\mathrm{SL}_2(K_p)$ of $2 \times 2$ matrices of determinant $1$ over
+the algebraic closure $K_p$ of $\mathbb{F}_p$ by its center. -/
 abbrev PSL : Type := Matrix.ProjectiveSpecialLinearGroup (Fin 2) (K p)
 
 private lemma dickson_lift_isSemisimple (A : GL (Fin 2) (K p)) (m : ℕ)
@@ -1981,17 +1986,18 @@ private lemma dickson_order_sixty
 
 variable [Fact (2 < p)]
 
-/-- **Dickson's classification**, tame case: a finite nontrivial subgroup of
-`PGL₂` over an algebraic closure of `𝔽_p` (odd `p`), of order prime to `p`, is
-cyclic, dihedral, or one of `A₄`, `S₄`, `A₅`.
-
-Source: L. E. Dickson, *Linear Groups with an Exposition of the Galois Field
-Theory*, Teubner (1901).
-
-Proves `Wanted` entry `classification_tame`.
+/-- **Dickson's classification, tame case.** Let $p$ be an odd prime and let $K$ be an algebraic
+closure of $\mathbb{F}_p$. Every finite nontrivial subgroup $G$ of $\mathrm{PGL}_2(K)$ whose order
+is not divisible by $p$ is cyclic, or isomorphic to the dihedral group of order $2n$ for some
+$n \ge 2$, or isomorphic to one of the groups $A_4$, $S_4$, $A_5$.
 
 Proof: Klein's orbit count on the projective line, followed by identification
 of the resulting orbit signatures.
+
+Proves `Wanted` entry `classification_tame`.
+
+Source: L. E. Dickson, *Linear Groups with an Exposition of the Galois Field
+Theory*, Teubner (1901).
 -/
 theorem classification_tame (G : Subgroup (PGL p)) [Finite G]
     (hG_tame : ¬ (p : ℕ) ∣ Nat.card G)

@@ -44,12 +44,16 @@ variable {G X : Type*} [Group G] [MulAction G X]
 def poles (G : Type*) (X : Type*) [Group G] [MulAction G X] : Set X :=
   {x : X | ∃ g : G, g ≠ 1 ∧ g • x = x}
 
-/-- Membership in the poles unfolds to the defining condition. -/
+/-- **Characterization of poles.** Let a group $G$ act on a set $X$. A point $p \in X$ is
+a pole of the action if and only if there is some $g \in G$ with $g \neq 1$ and
+$g \cdot p = p$. -/
 theorem mem_poles {p : X} : p ∈ poles G X ↔ ∃ g : G, g ≠ 1 ∧ g • p = p :=
   Iff.rfl
 
-/-- The group action sends poles to poles: if `p` is fixed by some
-nonidentity `h`, then `g • p` is fixed by the conjugate `g * h * g⁻¹`. -/
+/-- **The action sends poles to poles.** Let a group $G$ act on a set $X$. If $p \in X$ is a
+pole of the action, then $g \cdot p$ is a pole for every $g \in G$.
+
+If $p$ is fixed by $h \neq 1$, then $g \cdot p$ is fixed by the conjugate $g h g^{-1} \neq 1$. -/
 theorem smul_mem_poles (g : G) {p : X} (hp : p ∈ poles G X) :
     g • p ∈ poles G X := by
   obtain ⟨h, hne, hfix⟩ := hp
@@ -63,7 +67,9 @@ theorem smul_mem_poles (g : G) {p : X} (hp : p ∈ poles G X) :
       _ = g • (h • p) := by rw [inv_smul_smul]
       _ = g • p := by rw [hfix]
 
-/-- Acting by any `g` permutes the set of poles. -/
+/-- **The poles are invariant under the action.** Let a group $G$ act on a set $X$ and let
+$P \subseteq X$ be the set of poles of the action. For every $g \in G$, the image of $P$
+under the map $x \mapsto g \cdot x$ is $P$. -/
 theorem image_smul_poles (g : G) : (g • ·) '' poles G X = poles G X := by
   ext x
   constructor
@@ -72,7 +78,9 @@ theorem image_smul_poles (g : G) : (g • ·) '' poles G X = poles G X := by
   · intro hx
     exact ⟨g⁻¹ • x, smul_mem_poles g⁻¹ hx, smul_inv_smul g x⟩
 
-/-- The poles are the union of the fixed-point sets of the nonidentity elements. -/
+/-- **The poles as a union of fixed-point sets.** Let a group $G$ act on a set $X$. The set
+of poles equals $\bigcup_{g \in G,\, g \neq 1} \{x \in X : g \cdot x = x\}$, the union of
+the fixed-point sets of the nonidentity elements of $G$. -/
 theorem poles_eq_iUnion_fixedBy :
     poles G X = ⋃ g ∈ {g : G | g ≠ 1}, MulAction.fixedBy X g := by
   ext p

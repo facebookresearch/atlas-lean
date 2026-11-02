@@ -125,24 +125,17 @@ private theorem foldl_set_fin (pos : List ℕ) (i : Fin pos.length) (y : ℕ) :
   rw [List.get_eq_getElem]
   exact h
 
-/-- Bouton's characterization of normal-play Nim P-positions as nim-sum-zero positions.
+/-- **Bouton's move properties in Nim.** Let a Nim position be a finite list of heap sizes
+$a_1, \dots, a_n \in \mathbb{N}$, with nim-sum $a_1 \oplus \cdots \oplus a_n$, where $\oplus$
+is bitwise exclusive or and the empty list has nim-sum $0$. A move chooses an index $i$ and
+replaces $a_i$ by a natural number $y < a_i$. Then: (i) if the position has nim-sum $0$, every
+move leads to a position with nonzero nim-sum; (ii) if the position has nonzero nim-sum, some
+move leads to a position with nim-sum $0$.
 
-A position is a finite list `pos : List ℕ` of heap sizes, its nim-sum is
-`List.foldl Nat.xor 0 pos`, and a legal move chooses an index `i : Fin pos.length`
-and replaces the heap `pos.get i` by a strictly smaller `y : ℕ`, giving
-`pos.set i.val y`. The conjunction below states the two characteristic move
-properties of P-positions (previous-player-win positions): (i) from a nim-sum-zero
-position every legal move reaches a nim-sum-nonzero position, i.e. no move stays
-inside the zero class and all options of a P-position are N-positions; (ii) from a
-nim-sum-nonzero position some legal move reaches a nim-sum-zero position, i.e. every
-N-position has a move into the zero class. These two clauses are exactly the
-inductive definition of the P/N partition: the terminal positions — the empty list
-and the all-zero lists, which have nim-sum `0` and admit no legal move since
-`y < 0` is impossible (respectively there is no index at all) — satisfy the first
-clause vacuously while the second clause is inapplicable, so terminals are
-P-positions, matching the normal-play rule that a player with no move loses; the two
-clauses then fix the P/N labelling uniquely by induction on the game graph. Hence
-the zero-nim-sum positions are precisely the P-positions.
+Positions with no move (the empty list and the all-zero lists) have nim-sum $0$, so the two
+properties determine the normal-play labelling by induction on the game: the positions with
+nim-sum $0$ are exactly the P-positions (previous player wins) and the others are the
+N-positions.
 
 Source: Tanya Khovanova and Joshua Xiong, "Nim Fractals", Journal of Integer
 Sequences 17 (2014), theorem lines 155–159,

@@ -60,105 +60,157 @@ namespace LatticePointEnumerator
 
 open scoped Pointwise
 
-/-- Standard integer lattice `ℤᵈ` in `Fin d → ℝ`: integer span of `Pi.basisFun`. -/
+/-- **The standard integer lattice.** For $d \in \mathbb{N}$, the standard integer lattice
+$\mathbb{Z}^d$ is the $\mathbb{Z}$-submodule of $\mathbb{R}^d$ (the real-valued functions on
+$\{0, \dots, d-1\}$) spanned by the standard basis vectors $e_0, \dots, e_{d-1}$. -/
 noncomputable def stdLattice (d : ℕ) : Submodule ℤ (Fin d → ℝ) :=
   Submodule.span ℤ (Set.range (Pi.basisFun ℝ (Fin d)))
 
-/-- A vector is in the standard lattice exactly when all its coordinates are integers. -/
+/-- **Membership in the standard lattice.** For a natural number $d$, a vector
+$x \in \mathbb{R}^d$ lies in the standard lattice $\mathbb{Z}^d$, the integer span of the standard
+basis vectors of $\mathbb{R}^d$, exactly when every coordinate $x_i$ of $x$ is an integer. -/
 theorem mem_stdLattice_iff {d : ℕ} {x : Fin d → ℝ} :
     x ∈ stdLattice d ↔ ∀ i, ∃ z : ℤ, (z : ℝ) = x i := by
   unfold stdLattice
   rw [(Pi.basisFun ℝ (Fin d)).mem_span_iff_repr_mem ℤ x]
   simp [Pi.basisFun_repr]
 
-/-- Lattice-point set `(t • P) ∩ ℤᵈ` for a real dilate `t`. General helper; the
-source only evaluates at `t > 0` (see `latticePointSetPos`). -/
+/-- **Lattice points in a dilate.** For a natural number $d$, a set $P \subseteq \mathbb{R}^d$
+and a real number $t$, this is the set $(tP) \cap \mathbb{Z}^d$ of points of the integer lattice
+$\mathbb{Z}^d$ in the dilate $tP = \{tp : p \in P\}$.
+
+The source only uses this set for $t > 0$. -/
 noncomputable def latticePointSet (d : ℕ) (P : Set (Fin d → ℝ)) (t : ℝ) :
     Set (Fin d → ℝ) :=
   (t • P) ∩ (stdLattice d : Set (Fin d → ℝ))
 
-/-- Totalized enumerator: `ncard` of `latticePointSet`. For unbounded `P` the
-intersection can be infinite and `ncard` returns junk `0`; use
-`latticeEnumeratorPos` with a boundedness proof for source-faithful counts. -/
+/-- **Lattice-point count of a real dilate.** For a natural number $d$, a set
+$P \subseteq \mathbb{R}^d$ and a real number $t$, this is the number of elements of the set
+$(tP) \cap \mathbb{Z}^d$ of points of the integer lattice $\mathbb{Z}^d$ in the dilate
+$tP = \{tp : p \in P\}$, where an infinite set is assigned the value $0$.
+
+For unbounded $P$ the set can be infinite, so the value $0$ is a convention and not a count;
+the lattice-point enumerator for bounded $P$ and $t > 0$ is the faithful count. -/
 noncomputable def latticeEnumerator (d : ℕ) (P : Set (Fin d → ℝ)) (t : ℝ) : ℕ :=
   Set.ncard (latticePointSet d P t)
 
-/-- Translate-after-dilate set `((t • P) + {x}) ∩ ℤᵈ`, matching `F_{t,P}(x)` on
-lines 62-67. Distinct from dilate-after-translate `t • (P + {x})`. -/
+/-- **Translated lattice-point set.** For $d \in \mathbb{N}$, a set $P \subseteq \mathbb{R}^d$, a
+real $t$ and $x \in \mathbb{R}^d$, the translated lattice-point set is
+$((t \cdot P) + x) \cap \mathbb{Z}^d$, the set of points of the standard integer lattice
+$\mathbb{Z}^d$ in the dilate $t \cdot P$ translated by $x$.
+
+The dilation comes first: in general this set differs from $(t \cdot (P + x)) \cap \mathbb{Z}^d$.
+
+Source: Rocha-Neves, arXiv:2608.11078v1, lines 62-67. -/
 noncomputable def translatedLatticePointSet (d : ℕ) (P : Set (Fin d → ℝ))
     (t : ℝ) (x : Fin d → ℝ) : Set (Fin d → ℝ) :=
   ((t • P) + {x}) ∩ (stdLattice d : Set (Fin d → ℝ))
 
-/-- Totalized translated enumerator; see `translatedLatticeEnumeratorPos` for
-the bounded source-domain version. -/
+/-- **Translated lattice-point count for arbitrary sets.** For $d \in \mathbb{N}$, a set
+$P \subseteq \mathbb{R}^d$, a real $t$ and $x \in \mathbb{R}^d$, the translated lattice-point
+count is the number of elements of the translated lattice-point set
+$((t \cdot P) + x) \cap \mathbb{Z}^d$, taken to be $0$ when this set is infinite. -/
 noncomputable def translatedLatticeEnumerator (d : ℕ) (P : Set (Fin d → ℝ))
     (t : ℝ) (x : Fin d → ℝ) : ℕ :=
   Set.ncard (translatedLatticePointSet d P t x)
 
-/-- Positive-dilation helper, not a full source-domain object: no boundedness carried.
-`latticeEnumeratorPos` combines positivity with boundedness proof for Rocha-Neves lines 24-31. -/
+/-- **Lattice points in a positive dilate.** For a natural number $d$, a set
+$P \subseteq \mathbb{R}^d$ and a real number $t > 0$, this is the set $(tP) \cap \mathbb{Z}^d$ of
+points of the integer lattice $\mathbb{Z}^d$ in the dilate $tP = \{tp : p \in P\}$.
+
+No boundedness of $P$ is assumed. -/
 noncomputable def latticePointSetPos (d : ℕ) (P : Set (Fin d → ℝ))
     (t : {t : ℝ // 0 < t}) : Set (Fin d → ℝ) :=
   latticePointSet d P t.val
 
-/-- Source-domain enumerator `L_P(t)` for bounded `P` and positive `t`, as in
-Rocha-Neves, lines 24-31. The `hb` proof rules out unbounded `P`, where
-`ncard` would silently return junk `0`. -/
+/-- **Lattice-point enumerator.** For a natural number $d$, a bounded set
+$P \subseteq \mathbb{R}^d$ and a real number $t > 0$, the lattice-point enumerator $L_P(t)$ is
+the number of points of the integer lattice $\mathbb{Z}^d$ in the dilate
+$tP = \{tp : p \in P\}$, that is, $L_P(t) = |(tP) \cap \mathbb{Z}^d|$.
+
+Since $P$ is bounded, the set $(tP) \cap \mathbb{Z}^d$ is finite, so $L_P(t)$ is its actual
+number of elements.
+
+Source: Rocha-Neves, A Fourier-analytic Uniqueness Theorem for Lattice-point Enumerators,
+arXiv:2608.11078v1, lines 24-31. -/
 noncomputable def latticeEnumeratorPos (d : ℕ) (P : Set (Fin d → ℝ))
     (_hb : Bornology.IsBounded P) (t : {t : ℝ // 0 < t}) : ℕ :=
   latticeEnumerator d P t.val
 
-/-- Translate-after-dilate helper, not a full source-domain object: no boundedness.
-`translatedLatticeEnumeratorPos` gives the bounded source-facing count. -/
+/-- **Translated lattice-point set at a positive dilation.** For $d \in \mathbb{N}$, a set
+$P \subseteq \mathbb{R}^d$, a real $t > 0$ and $x \in \mathbb{R}^d$, this is the set
+$((t \cdot P) + x) \cap \mathbb{Z}^d$ of points of the standard integer lattice $\mathbb{Z}^d$
+in the dilate $t \cdot P$ translated by $x$. No boundedness of $P$ is assumed. -/
 noncomputable def translatedLatticePointSetPos (d : ℕ) (P : Set (Fin d → ℝ))
     (t : {t : ℝ // 0 < t}) (x : Fin d → ℝ) : Set (Fin d → ℝ) :=
   translatedLatticePointSet d P t.val x
 
-/-- Source-domain `F_{t,P}(x)` for bounded `P` and positive `t`, lines 62-67. -/
+/-- **Translated lattice-point enumerator of a bounded set.** Let $d \in \mathbb{N}$, let
+$P \subseteq \mathbb{R}^d$ be a bounded set, let $t > 0$ be real and let $x \in \mathbb{R}^d$. The
+translated lattice-point enumerator is $F_{t,P}(x) = |((t \cdot P) + x) \cap \mathbb{Z}^d|$, the
+number of points of the standard integer lattice $\mathbb{Z}^d$ in the dilate $t \cdot P$
+translated by $x$.
+
+Source: Rocha-Neves, arXiv:2608.11078v1, lines 62-67. -/
 noncomputable def translatedLatticeEnumeratorPos (d : ℕ) (P : Set (Fin d → ℝ))
     (_hb : Bornology.IsBounded P) (t : {t : ℝ // 0 < t}) (x : Fin d → ℝ) : ℕ :=
   translatedLatticeEnumerator d P t.val x
 
-/-- The origin lies in the standard integer lattice. -/
+/-- **The origin is a lattice point.** For every $d \in \mathbb{N}$, the origin of $\mathbb{R}^d$
+lies in the standard integer lattice $\mathbb{Z}^d$. -/
 theorem zero_mem_stdLattice (d : ℕ) : (0 : Fin d → ℝ) ∈ stdLattice d :=
   Submodule.zero_mem _
 
-/-- The empty set enumerates to zero, at any dilate. -/
+/-- **The lattice-point count of the empty set vanishes.** For every natural number $d$ and every
+real number $t$, the lattice-point count of the empty set $\emptyset \subseteq \mathbb{R}^d$ at the
+dilate $t$ is $0$. -/
 @[simp]
 theorem latticeEnumerator_empty (d : ℕ) (t : ℝ) :
     latticeEnumerator d ∅ t = 0 := by
   simp [latticeEnumerator, latticePointSet]
 
-/-- The translated empty set enumerates to zero. -/
+/-- **The translated lattice-point count of the empty set is zero.** For every $d \in \mathbb{N}$,
+every real $t$ and every $x \in \mathbb{R}^d$, the translated lattice-point count
+$|((t \cdot \emptyset) + x) \cap \mathbb{Z}^d|$ is $0$. -/
 @[simp]
 theorem translatedLatticeEnumerator_empty (d : ℕ) (t : ℝ) (x : Fin d → ℝ) :
     translatedLatticeEnumerator d ∅ t x = 0 := by
   simp [translatedLatticeEnumerator, translatedLatticePointSet]
 
-/-- The counted dilate intersection is finite for bounded `P`
-(via `ZSpan.setFinite_inter`). This holds for every real dilate `t`, so no
-positivity is assumed here; positivity is tracked structurally in the
-source-domain declarations `latticePointSetPos` / `latticeEnumeratorPos`. -/
+/-- **Finiteness of the lattice points in a dilate.** For a natural number $d$, a bounded set
+$P \subseteq \mathbb{R}^d$ and any real number $t$, the set $(tP) \cap \mathbb{Z}^d$ of points of
+the integer lattice $\mathbb{Z}^d$ in the dilate $tP = \{tp : p \in P\}$ is finite.
+
+No positivity of $t$ is needed. -/
 theorem finite_latticePointSet (d : ℕ) (P : Set (Fin d → ℝ)) (t : ℝ)
     (hb : Bornology.IsBounded P) :
     Set.Finite (latticePointSet d P t) := by
   unfold latticePointSet stdLattice
   exact ZSpan.setFinite_inter (Pi.basisFun ℝ (Fin d)) (hb.smul₀ t)
 
-/-- Source-domain finiteness: for bounded `P` and positive `t`. -/
+/-- **Finiteness of the lattice points in a positive dilate.** For a natural number $d$, a
+bounded set $P \subseteq \mathbb{R}^d$ and a real number $t > 0$, the set $(tP) \cap \mathbb{Z}^d$
+of points of the integer lattice $\mathbb{Z}^d$ in the dilate $tP = \{tp : p \in P\}$ is
+finite. -/
 theorem finite_latticePointSetPos (d : ℕ) (P : Set (Fin d → ℝ))
     (t : {t : ℝ // 0 < t}) (hb : Bornology.IsBounded P) :
     Set.Finite (latticePointSetPos d P t) :=
   finite_latticePointSet d P t.val hb
 
-/-- Translated finiteness for bounded `P`: `(t • P) + {x}` stays bounded. -/
+/-- **Finiteness of the lattice points in a translated dilate.** For a natural number $d$, a
+bounded set $P \subseteq \mathbb{R}^d$, any real number $t$ and a vector $x \in \mathbb{R}^d$,
+the set $(tP + x) \cap \mathbb{Z}^d$ of points of the integer lattice $\mathbb{Z}^d$ in the
+translated dilate $tP + x = \{tp + x : p \in P\}$ is finite. -/
 theorem finite_translatedLatticePointSet (d : ℕ) (P : Set (Fin d → ℝ))
     (t : ℝ) (x : Fin d → ℝ) (hb : Bornology.IsBounded P) :
     Set.Finite (translatedLatticePointSet d P t x) := by
   unfold translatedLatticePointSet stdLattice
   exact ZSpan.setFinite_inter _ ((hb.smul₀ t).add (Set.finite_singleton x).isBounded)
 
-/-- Source-domain translated finiteness for bounded `P` and positive `t`. -/
+/-- **Finiteness of the lattice points in a translated positive dilate.** For a natural number
+$d$, a bounded set $P \subseteq \mathbb{R}^d$, a real number $t > 0$ and a vector
+$x \in \mathbb{R}^d$, the set $(tP + x) \cap \mathbb{Z}^d$ of points of the integer lattice
+$\mathbb{Z}^d$ in the translated dilate $tP + x = \{tp + x : p \in P\}$ is finite. -/
 theorem finite_translatedLatticePointSetPos (d : ℕ) (P : Set (Fin d → ℝ))
     (t : {t : ℝ // 0 < t}) (x : Fin d → ℝ) (hb : Bornology.IsBounded P) :
     Set.Finite (translatedLatticePointSetPos d P t x) :=

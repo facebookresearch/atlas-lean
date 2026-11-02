@@ -32,7 +32,10 @@ universe u v
 
 namespace FDRep
 
-/-- An irreducible representation gives a simple object of `FDRep`. -/
+/-- **Irreducible representations are simple objects.** Let $k$ be a field, $G$ a group and
+$\rho$ an irreducible representation of $G$ on a finite-dimensional $k$-vector space $V$. Then
+$\rho$, viewed as an object of the category of finite-dimensional representations of $G$ over
+$k$, is a simple object. -/
 public theorem simple_of_isIrreducible {k V : Type u} {G : Type v} [Field k] [Group G]
     [AddCommGroup V] [Module k V] [FiniteDimensional k V]
     (ρ : Representation k G V) [ρ.IsIrreducible] : Simple (FDRep.of ρ) := by
@@ -101,8 +104,10 @@ private def irrCharPairing {G : Type*} [Group G] [Finite G] (W : FDRep ℂ G) :
           congr 1
           exact (Finset.mul_sum _ _ _).symm }
 
-/-- Characters of pairwise nonisomorphic simple finite-dimensional complex
-representations are linearly independent. -/
+/-- **Characters of nonisomorphic simple representations are linearly independent.** Let $G$ be
+a finite group and let $(V_i)_{i \in I}$ be a family of simple finite-dimensional complex
+representations of $G$ such that $V_i \cong V_j$ implies $i = j$. Then the characters of the
+$V_i$ are linearly independent over $\mathbb{C}$. -/
 public theorem linearIndependent_character {I G : Type*} [Group G] [Finite G]
     (V : I → FDRep ℂ G) [∀ i, Simple (V i)]
     (hV : ∀ ⦃i j⦄, Nonempty (V i ≅ V j) → i = j) :
@@ -430,7 +435,14 @@ private theorem irrCharRegular_op_eq_zero {G : Type*} [Group G] [Finite G]
   change irrCharOp ρ f (ρ.asModuleEquiv (ρ.asModuleEquiv.symm y)) = 0 at hy
   simpa [ρ] using hy
 
-/-- A complex class function orthogonal to every irreducible character is zero. -/
+/-- **A class function orthogonal to all irreducible characters vanishes.** Let $G$ be a finite
+group and let $f : G \to \mathbb{C}$ satisfy $f(hgh^{-1}) = f(g)$ for all $g, h \in G$. Suppose
+that for every simple finite-dimensional complex representation $W$ of $G$, with character
+$\chi_W$,
+
+$$\frac{1}{|G|} \sum_{g \in G} f(g)\, \chi_W(g^{-1}) = 0.$$
+
+Then $f = 0$. -/
 public theorem eq_zero_of_isClassFunction_of_orthogonal {G : Type*} [Group G] [Finite G]
     (f : G → ℂ) (hf : ∀ g h : G, f (h * g * h⁻¹) = f g)
     (horth : ∀ (W : FDRep ℂ G) [Simple W],
@@ -498,18 +510,21 @@ formalization); J.-P. Serre, Linear Representations of Finite Groups, GTM 42,
 -/
 
 /--
-Distinct irreducible complex characters are linearly independent as functions.
+**Irreducible characters are linearly independent.** Let $G$ be a finite group. The irreducible
+complex characters of $G$, that is, the functions $G \to \mathbb{C}$ that are the character of
+some simple finite-dimensional complex representation of $G$, are linearly independent over
+$\mathbb{C}$ in the space of functions $G \to \mathbb{C}$.
+
+Proof: Apply row orthogonality (C. Teleman, *Representation Theory*, Cambridge lecture
+notes, 2005, Theorem 8.10) as coordinate functionals to a vanishing finite linear
+combination of pairwise distinct irreducible characters.
+
+Proves `Wanted` entry `linearIndependent_irrCharacters`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "orthonormal basis of irreducible characters"; J.-P. Serre, Linear
 Representations of Finite Groups, GTM 42, §2.5 (independence of irreducible
 characters).
-
-Proves `Wanted` entry `linearIndependent_irrCharacters`.
-
-Proof: Apply row orthogonality (C. Teleman, *Representation Theory*, Cambridge lecture
-notes, 2005, Theorem 8.10) as coordinate functionals to a vanishing finite linear
-combination of pairwise distinct irreducible characters.
 -/
 public theorem linearIndependent_irrCharacters (G : Type*) [Group G]
     [Finite G] :
@@ -531,19 +546,23 @@ public theorem linearIndependent_irrCharacters (G : Type*) [Group G]
   exact (congrFun (hchar χ) g).symm
 
 /--
-Every class function is a linear combination of irreducible characters.
-
-Sources: `undergrad.yaml`, section "Representation theory of finite groups",
-entry "orthonormal basis of irreducible characters"; J.-P. Serre, Linear
-Representations of Finite Groups, GTM 42, §2.7, Theorem 6 (irreducible
-characters span the class functions).
-
-Proves `Wanted` entry `mem_span_irrCharacters_of_isClassFunction`.
+**Irreducible characters span the class functions.** Let $G$ be a finite group and let
+$f : G \to \mathbb{C}$ satisfy $f(hgh^{-1}) = f(g)$ for all $g, h \in G$. Then $f$ is a
+$\mathbb{C}$-linear combination of irreducible complex characters of $G$, that is, of functions
+$G \to \mathbb{C}$ that are the character of some simple finite-dimensional complex representation
+of $G$.
 
 Proof: Subtract the orthogonal projection onto the irreducible characters. The
 remainder vanishes by Schur's lemma, Maschke's theorem, and the regular
 representation on a small model of the complex group algebra, as in the proof of
 Teleman's Theorem 9.3 (completeness of characters).
+
+Proves `Wanted` entry `mem_span_irrCharacters_of_isClassFunction`.
+
+Sources: `undergrad.yaml`, section "Representation theory of finite groups",
+entry "orthonormal basis of irreducible characters"; J.-P. Serre, Linear
+Representations of Finite Groups, GTM 42, §2.7, Theorem 6 (irreducible
+characters span the class functions).
 -/
 public theorem mem_span_irrCharacters_of_isClassFunction (G : Type*)
     [Group G] [Finite G] (f : G → ℂ) (hf : ∀ g h : G, f (h * g * h⁻¹) = f g) :
@@ -617,20 +636,22 @@ public theorem mem_span_irrCharacters_of_isClassFunction (G : Type*)
   exact Submodule.smul_mem _ _ (Submodule.subset_span χ.property)
 
 /--
-The number of irreducible complex characters equals the number of conjugacy
-classes.
+**Number of irreducible characters.** Let $G$ be a finite group. The number of irreducible
+complex characters of $G$, that is, of functions $G \to \mathbb{C}$ that are the character of
+some simple finite-dimensional complex representation of $G$, equals the number of conjugacy
+classes of $G$.
+
+Proof: The irreducible characters are linearly independent and span the class functions, so
+they form a basis of that space; compare its cardinality with the known dimension of that
+space (P. Etingof et al., *Introduction to representation theory*, arXiv:0901.0827,
+Theorem 3.5 and Corollary 3.6).
+
+Proves `Wanted` entry `card_irrCharacters_eq_card_conjClasses`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "orthonormal basis of irreducible characters"; J.-P. Serre, Linear
 Representations of Finite Groups, GTM 42, §2.7 (number of irreducible
 characters).
-
-Proves `Wanted` entry `card_irrCharacters_eq_card_conjClasses`.
-
-Proof: The first two theorems identify the irreducible characters as a basis of
-the class functions; compare its cardinality with the known finrank of that
-space (P. Etingof et al., *Introduction to representation theory*, arXiv:0901.0827,
-Theorem 3.5 and Corollary 3.6).
 -/
 public theorem card_irrCharacters_eq_card_conjClasses (G : Type*)
     [Group G] [Finite G] :
