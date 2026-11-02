@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.OSSS.AdaptiveFibreLower
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.OSSS.AdaptiveFibreLower`

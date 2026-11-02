@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.Probability.BrownianMotion.StandardBrownianLaw
 public import MathlibExt.Probability.BrownianMotion.BrownianModificationLaw
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.BrownianMotion.StandardBrownianLaw`

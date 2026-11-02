@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.Universality.LeftReachJordanSeparation
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.Percolation.Universality.LeftReachJordanSeparation`
