@@ -24,6 +24,8 @@ No total-runtime claim is inferred from the merge-step cost equality.
 
 set_option autoImplicit false
 
+universe u
+
 namespace Cslib.Algorithms.Lean.LeftistHeapAPITests
 
 open LHeap
@@ -38,7 +40,17 @@ example (xs : List Unordered) :
     LTreeList (xs.map singleton) :=
   ⟨sumMSet_map_singleton xs, ltreeList_map_singleton xs⟩
 
-variable {α : Type} [LinearOrder α]
+-- `LHeap` supports carriers above `Type 0`.
+example : LHeap Type := singleton Nat
+
+-- Restoring the leftist invariant only needs the relation used by `heap`.
+example {β : Type u} [PartialOrder β] {x : β} {left right : LHeap β}
+    (hxl : all_le x left) (hxr : all_le x right)
+    (hl : heap left) (hr : heap right) :
+    heap (make x left right) :=
+  heap_make hxl hxr hl hr
+
+variable {α : Type u} [LinearOrder α]
 
 -- Check the complete frozen graded statement, not merely selected projections.
 example :

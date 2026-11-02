@@ -48,6 +48,8 @@ the exercise does not require output-list equality of the two passes.
 
 set_option autoImplicit false
 
+universe u
+
 namespace Cslib.Algorithms.Lean
 
 open Multiset
@@ -55,14 +57,14 @@ open Multiset
 /-! ## Leftist Heap datatype (concrete) -/
 
 /-- Leftist heap: Empty or Node rank value left right -/
-inductive LHeap (α : Type) where
+inductive LHeap (α : Type u) : Type u where
 | E : LHeap α
 | N : Nat → α → LHeap α → LHeap α → LHeap α
 deriving DecidableEq
 
 namespace LHeap
 
-variable {α : Type}
+variable {α : Type u}
 
 /-- Size (number of nodes) -/
 def size : LHeap α → Nat
@@ -215,7 +217,7 @@ open LHeap
 
 namespace LHeap
 
-variable {α : Type}
+variable {α : Type u}
 
 /-! ### Node construction and merge correctness -/
 theorem mset_make (x : α) (a b : LHeap α) :
@@ -257,7 +259,7 @@ theorem all_le_make [LE α] {x z : α} {a b : LHeap α} :
     simp only [all_le]
     exact ⟨hzx, hb, ha⟩
 
-theorem heap_make [LinearOrder α] {x : α} {a b : LHeap α} :
+theorem heap_make [LE α] {x : α} {a b : LHeap α} :
   all_le x a → all_le x b → heap a → heap b → heap (make x a b) := by
   intro ha hb hha hhb
   by_cases h : a.rank ≥ b.rank
@@ -1022,7 +1024,7 @@ open LHeap
 
 /-- Graded theorem: correctness of lheap_list2 and complexity equivalence.
     Complexity model faithful to textbook: only merge calls counted. -/
-theorem fdsa_chap15_ex04 {α : Type} [LinearOrder α] :
+theorem fdsa_chap15_ex04 {α : Type u} [LinearOrder α] :
     (∀ xs : List α, (lheap_list2 xs).mset_tree = (xs : Multiset α)) ∧
     (∀ xs : List α, (lheap_list2 xs).heap) ∧
     (∀ xs : List α, (lheap_list2 xs).ltree) ∧
@@ -1046,7 +1048,7 @@ theorem fdsa_chap15_ex04 {α : Type} [LinearOrder α] :
 
 namespace LHeap
 
-variable {α : Type} [LinearOrder α]
+variable {α : Type u} [LinearOrder α]
 
 /-- List construction preserves the entire input multiset, including duplicates. -/
 theorem mset_lheap_list2 (xs : List α) :
