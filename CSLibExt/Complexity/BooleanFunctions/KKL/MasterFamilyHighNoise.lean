@@ -15,11 +15,11 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.MasterFamilyImplications
 # The per-coordinate high-noise route to the master family
 
 `mfp2_PerCoordHighNoise` is a uniform per-coordinate estimate over `(1/2, q)` implying
-the summed high-noise estimate, the master family, the open residue, the Kesten form and
+the summed high-noise estimate, the open residue, the Kesten form and
 the KKL log-gain. Status: the predicate is refuted for `q > 9/10`
 (`ctp_perCoordHighNoise_false`), and holds at `p = 1/2`
-(`mfp2_perCoordHighNoise_half`). Also `mfp2_singleBit_q_gt_2_false`: the single-bit
-`QGt2` test fails at `9/10`.
+(`mfp2_perCoordHighNoise_half`). Also `mfp2_singleBit_q_in_12_false`: the single-bit
+`QIn12` test (exponent `q ∈ (1, 2)`) fails at `9/10`.
 
 ## Main definitions
 
@@ -45,7 +45,7 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-theorem mfp2_singleBit_q_gt_2_false : ¬ mfp_SingleBitQGt2 (9 / 10) := by
+theorem mfp2_singleBit_q_in_12_false : ¬ mfp_SingleBitQIn12 (9 / 10) := by
   intro H
   have h := H (1 / 2) (by norm_num) (by norm_num) 1 0
   rw [show |(1:ℝ)| = 1 by norm_num, show |(0:ℝ)| = 0 by norm_num] at h
@@ -236,7 +236,7 @@ theorem mfp2_perCoordHighNoise_rhs_nonneg {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
 theorem mfp2_kesten_of_perCoordHighNoise {q : ℝ} (H : mfp2_PerCoordHighNoise q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :
     KKLHypercontractive p 2 :=
-  mfp_kesten_of_masterFamily (mfp2_openResidue_of_perCoordHighNoise H) hp hp1
+  frh_kesten_of_openResidue (mfp2_openResidue_of_perCoordHighNoise H) hp hp1
 
 theorem mfp2_kkl_logGain_of_perCoordHighNoise {q : ℝ} (H : mfp2_PerCoordHighNoise q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1)
@@ -245,6 +245,6 @@ theorem mfp2_kkl_logGain_of_perCoordHighNoise {q : ℝ} (H : mfp2_PerCoordHighNo
           * (1 - OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)))
         * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
       ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  mfp_kkl_logGain_of_masterFamily (mfp2_openResidue_of_perCoordHighNoise H) hp hp1 φ
+  vgp2_kkl_logGain_of_master (mfp2_openResidue_of_perCoordHighNoise H) hp hp1 φ
 
 end StatMech.Probability

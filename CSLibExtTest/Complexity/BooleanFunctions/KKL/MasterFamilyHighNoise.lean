@@ -20,7 +20,7 @@ on `{0, 1}^Bool` (influences `1/2` at `p = 1/2`):
 * `mfp2_noiseGap_pos` at `p = 3/4`, `u = 1/2`;
 * `mfp2_perCoordHighNoise_half` at `AND`: `(2 - u)/4 ≤ (1/2)^{2/(2-u)}` for `u ∈ (0, 1)`;
 * `mfp2_master_half_via_perCoord` at `AND`;
-* `mfp2_singleBit_q_gt_2_false`;
+* `mfp2_singleBit_q_in_12_false`;
 * the window predicate `mfp2_PerCoordHighNoise q` holds for `q ≤ 1/2` (empty window) and fails for
   every `q > 9/10` (`ctp_perCoordHighNoise_false`, from the two-bit `OR` function at `p = 9/10`);
   for `q ∈ (1/2, 9/10]` it is neither proved nor refuted here. The conditional theorems
@@ -63,7 +63,7 @@ example {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :
   have h := mfp2_master_half_via_perCoord andFun hu0 hu1
   rwa [cappedSum_andInd (by norm_num) (by norm_num), maxInfl_andInd, totalInfl_andInd] at h
 
-example : ¬ mfp_SingleBitQGt2 (9 / 10) := mfp2_singleBit_q_gt_2_false
+example : ¬ mfp_SingleBitQIn12 (9 / 10) := mfp2_singleBit_q_in_12_false
 
 /-- `mfp2_PerCoordHighNoise q` for `q ≤ 1/2` holds vacuously. -/
 lemma mfp2t_perCoordHighNoise_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : mfp2_PerCoordHighNoise q :=
