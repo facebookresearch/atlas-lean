@@ -16,18 +16,19 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitExteriorEven
 
 Lattice paths that avoid a closed walk `Vc` never change the parity of the ray count, so they stay
 inside or outside `jec_leftRegion Vc`; such paths survive the removal of the boundary edges of the
-inside. If the inside and the outside are each connected by paths avoiding `Vc`, the cut lattice has
-exactly two components. The same statements are specialized to the face loop of a boundary orbit.
+inside. The same statements are specialized to the face loop of a boundary orbit.
+
+Connectivity of the outside by paths avoiding `Vc` never holds, because some vertex of `Vc` is
+outside (`StatMech.Lattice.oc_not_hOutOff`); connectivity of a nonempty inside by such paths never
+holds either (`StatMech.Lattice.oc_not_hInOff`).
 
 ## Main results
 
 * `StatMech.Lattice.jlri_sameRegion_along_offSupport_walk`: paths off `Vc` stay on one side.
 * `StatMech.Lattice.jlri_no_bdEdge_off_support`: an edge with both endpoints off `Vc` is not a
   boundary edge of the inside.
-* `StatMech.Lattice.jlri_two_components_of_offSupport_connected`: if both sides are connected off
-  `Vc`, the cut lattice has two components.
-* `StatMech.Lattice.jlri_minimalLoop_two_components`: the same for the face loop of a boundary
-  orbit.
+* `StatMech.Lattice.jlri_offSupport_walk_in_barrier`: a path off `Vc` is a path in the cut
+  lattice.
 -/
 
 @[expose] public section
@@ -81,6 +82,10 @@ theorem jlri_offSupport_walk_in_barrier {a : Site 2} (Vc : (hypercubicLattice 2)
       exact hp z (by rw [SimpleGraph.Walk.support_cons]; exact List.mem_cons_of_mem _ hz)
     exact (jlri_offSupport_adj_in_barrier Vc hadj hu hw).reachable.trans (ih htail)
 
+/-- If any two inside sites are joined by a lattice path avoiding `Vc` (`hInOff`), they are
+connected in the lattice cut along the boundary edges of the inside. The hypothesis `hInOff`
+holds only when the inside is empty: taking `s = t` it puts every inside site off `Vc`, which
+fails for a nonempty inside (`StatMech.Lattice.oc_not_hInOff`). -/
 theorem jlri_inside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hInOff : ∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
         ∃ p : (hypercubicLattice 2).Walk s t, ∀ z ∈ p.support, z ∉ Vc.support) :
@@ -89,28 +94,6 @@ theorem jlri_inside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLattic
   intro s t hs ht
   obtain ⟨p, hp⟩ := hInOff s t hs ht
   exact jlri_offSupport_walk_in_barrier Vc p hp
-
-theorem jlri_outside_reachable_of_offSupport {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    (hOutOff : ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
-        ∃ p : (hypercubicLattice 2).Walk s t, ∀ z ∈ p.support, z ∉ Vc.support) :
-    ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
-      (latticeMinusBarrier (jec_leftRegion Vc)).Reachable s t := by
-  intro s t hs ht
-  obtain ⟨p, hp⟩ := hOutOff s t hs ht
-  exact jlri_offSupport_walk_in_barrier Vc p hp
-
-theorem jlri_two_components_of_offSupport_connected {a : Site 2}
-    (Vc : (hypercubicLattice 2).Walk a a)
-    {p q : Site 2} (hp : ¬ Even (jec_rayCount p Vc))
-    (hq : ∀ w ∈ Vc.support, w 0 ≤ q 0 - 1)
-    (hInOff : ∀ s t : Site 2, s ∈ jec_leftRegion Vc → t ∈ jec_leftRegion Vc →
-        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support)
-    (hOutOff : ∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
-        ∃ pw : (hypercubicLattice 2).Walk s t, ∀ z ∈ pw.support, z ∉ Vc.support) :
-    Nat.card (latticeMinusBarrier (jec_leftRegion Vc)).ConnectedComponent = 2 :=
-  ccs_closedLoop_two_components Vc hp hq
-    (jlri_inside_reachable_of_offSupport Vc hInOff)
-    (jlri_outside_reachable_of_offSupport Vc hOutOff)
 
 theorem jlri_minimalLoop_sameRegion (K : Set (Site 2)) (a : {e : Dart // IsBoundaryDart K e})
     {x y : Site 2} (p : (hypercubicLattice 2).Walk x y)
@@ -129,21 +112,6 @@ theorem jlri_minimalLoop_offSupport_walk_in_barrier (K : Set (Site 2))
     (hp : ∀ z ∈ p.support, z ∉ (mpl_orbitLoop K a).support) :
     (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).Reachable x y :=
   jlri_offSupport_walk_in_barrier (mpl_orbitLoop K a) p hp
-
-theorem jlri_minimalLoop_two_components (K : Set (Site 2))
-    (a : {e : Dart // IsBoundaryDart K e})
-    {p q : Site 2} (hp : ¬ Even (jec_rayCount p (mpl_orbitLoop K a)))
-    (hq : ∀ w ∈ (mpl_orbitLoop K a).support, w 0 ≤ q 0 - 1)
-    (hInOff : ∀ s t : Site 2, s ∈ jec_leftRegion (mpl_orbitLoop K a) →
-        t ∈ jec_leftRegion (mpl_orbitLoop K a) →
-        ∃ pw : (hypercubicLattice 2).Walk s t,
-          ∀ z ∈ pw.support, z ∉ (mpl_orbitLoop K a).support)
-    (hOutOff : ∀ s t : Site 2, s ∉ jec_leftRegion (mpl_orbitLoop K a) →
-        t ∉ jec_leftRegion (mpl_orbitLoop K a) →
-        ∃ pw : (hypercubicLattice 2).Walk s t,
-          ∀ z ∈ pw.support, z ∉ (mpl_orbitLoop K a).support) :
-    Nat.card (latticeMinusBarrier (jec_leftRegion (mpl_orbitLoop K a))).ConnectedComponent = 2 :=
-  jlri_two_components_of_offSupport_connected (mpl_orbitLoop K a) hp hq hInOff hOutOff
 
 end Lattice
 

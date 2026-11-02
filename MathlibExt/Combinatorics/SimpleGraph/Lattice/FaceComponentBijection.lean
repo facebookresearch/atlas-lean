@@ -153,6 +153,11 @@ theorem fcb_offComplComponentCount_eq_faceCount {a : Site 2} (Vc : (hypercubicLa
   rw [fcb_two_components_of_sides Vc hxin hxoff hyout hyoff hin hout,
     jcs_cycle_faceCount_eq_two c hc]
 
+/-- If every inside site is off `Vc` and one component off `Vc` covers the inside, any two
+inside sites off `Vc` are joined by a lattice path avoiding `Vc`. The hypothesis `hoff` (every
+inside site is off `Vc`) holds only when the inside is empty: a nonempty inside contains a
+vertex of `Vc` (`StatMech.Lattice.oc_leftRegion_meets_support`), so for a nonempty inside this
+statement is vacuous. -/
 theorem fcb_inside_conn_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (hoff : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
     {sIn : Site 2} (hcovIn : jec_leftRegion Vc ⊆ offSupportComponent Vc sIn) :
@@ -173,19 +178,6 @@ theorem fcb_outside_conn_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk
   have hconn : (offSupport Vc).Reachable s t := ((hubOut s hs).symm).trans (hubOut t ht)
   exact offSupport_reachable_to_offSupportWalk Vc hconn hsoff
 
-theorem fcb_offComplComponentCount_eq_two_of_covers {a : Site 2}
-    (Vc : (hypercubicLattice 2).Walk a a)
-    (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
-    (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
-    {x y : Site 2} (hxin : x ∈ jec_leftRegion Vc) (hyout : y ∉ jec_leftRegion Vc)
-    {sIn sOut : Site 2}
-    (hcovIn : jec_leftRegion Vc ⊆ offSupportComponent Vc sIn)
-    (hcovOut : (jec_leftRegion Vc)ᶜ ⊆ offSupportComponent Vc sOut) :
-    Nat.card (fcb_offComplGraph Vc).ConnectedComponent = 2 :=
-  fcb_two_components_of_sides Vc hxin (hoffIn x hxin) hyout (hoffOut y hyout)
-    (fcb_inside_conn_of_covers Vc hoffIn hcovIn)
-    (fcb_outside_conn_of_covers Vc hcovOut)
-
 /-- Both sides of `Vc` contain sites off `Vc`, and any two sites off `Vc` on the same side are
 joined by a lattice path avoiding `Vc`. -/
 def fcb_OffComplJordanRegion {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) : Prop :=
@@ -197,18 +189,6 @@ def fcb_OffComplJordanRegion {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) 
     (∀ s t : Site 2, s ∉ jec_leftRegion Vc → t ∉ jec_leftRegion Vc →
         s ∉ Vc.support → t ∉ Vc.support →
         ∃ p : (hypercubicLattice 2).Walk s t, ∀ z ∈ p.support, z ∉ Vc.support)
-
-theorem fcb_offComplJordanRegion_of_covers {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    (hoffIn : ∀ s ∈ jec_leftRegion Vc, s ∉ Vc.support)
-    (hoffOut : ∀ s ∉ jec_leftRegion Vc, s ∉ Vc.support)
-    {x y : Site 2} (hxin : x ∈ jec_leftRegion Vc) (hyout : y ∉ jec_leftRegion Vc)
-    {sIn sOut : Site 2}
-    (hcovIn : jec_leftRegion Vc ⊆ offSupportComponent Vc sIn)
-    (hcovOut : (jec_leftRegion Vc)ᶜ ⊆ offSupportComponent Vc sOut) :
-    fcb_OffComplJordanRegion Vc :=
-  ⟨⟨x, hxin, hoffIn x hxin⟩, ⟨y, hyout, hoffOut y hyout⟩,
-    fcb_inside_conn_of_covers Vc hoffIn hcovIn,
-    fcb_outside_conn_of_covers Vc hcovOut⟩
 
 theorem fcb_two_components_of_region {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (h : fcb_OffComplJordanRegion Vc) :
