@@ -429,9 +429,10 @@ end
 /-- **Linearity (additivity).** The Itô integral is additive in the integrand: for
 `F`-progressive integrands `H₁, H₂` with `E ∫_0^t H_i² du < ∞`, the integral of the sum is almost
 surely the sum of the integrals. Together with homogeneity and the difference isometry this pins
-down the integral on the whole `L²` space of progressive integrands. -/
+down the integral on the whole `L²` space of progressive integrands. Only the pre-Brownian
+hypothesis is used; no path continuity is needed. -/
 public theorem itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
@@ -440,7 +441,7 @@ public theorem itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (hH₂2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₂ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
     itoIntegral P F B (H₁ + H₂) t =ᵐ[P]
       fun ω ↦ itoIntegral P F B H₁ t ω + itoIntegral P F B H₂ t ω := by
-  have hL2 := itoIntegralL2_add hB.toIsPreBrownianReal hBF hInd hH₁ hH₂ t hH₁2 hH₂2
+  have hL2 := itoIntegralL2_add hB hBF hInd hH₁ hH₂ t hH₁2 hH₂2
   have hL2ae : (itoIntegralL2 P F B (H₁ + H₂) t : Ω → ℝ) =ᵐ[P]
       fun ω ↦ (itoIntegralL2 P F B H₁ t : Ω → ℝ) ω +
         (itoIntegralL2 P F B H₂ t : Ω → ℝ) ω := by
@@ -451,16 +452,17 @@ public theorem itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
     hL2ae] with ω hsum h1 h2 hL2ω
   rw [hsum, h1, h2, hL2ω]
 
-/-- **Linearity (homogeneity).** The Itô integral is homogeneous in the integrand. -/
+/-- **Linearity (homogeneity).** The Itô integral is homogeneous in the integrand. Only the
+pre-Brownian hypothesis is used; no path continuity is needed. -/
 public theorem itoIntegral_smul {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
     {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (a : ℝ) (t : ℝ≥0)
     (hH2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
     itoIntegral P F B (a • H) t =ᵐ[P] fun ω ↦ a * itoIntegral P F B H t ω := by
-  have hL2 := itoIntegralL2_smul hB.toIsPreBrownianReal hBF hInd hH a t hH2
+  have hL2 := itoIntegralL2_smul hB hBF hInd hH a t hH2
   have hL2ae : (itoIntegralL2 P F B (a • H) t : Ω → ℝ) =ᵐ[P]
       fun ω ↦ a * (itoIntegralL2 P F B H t : Ω → ℝ) ω := by
     rw [hL2]
@@ -474,9 +476,9 @@ public theorem itoIntegral_smul {Ω : Type*} {mΩ : MeasurableSpace Ω}
 difference of the integrals is square-integrable and
 `E[(∫ H₁ dB - ∫ H₂ dB)²] = E ∫ (H₁ - H₂)² du`. With linearity this is the two-integrand isometry
 that, together with the elementary-integrand formula, determines the construction on the whole
-`L²` space. -/
+`L²` space. Only the pre-Brownian hypothesis is used; no path continuity is needed. -/
 public theorem itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
@@ -529,7 +531,7 @@ public theorem itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
       rw [hω]
     _ = ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
         ‖(H₁ - H₂) u.toNNReal ω‖ₑ ^ 2) ∂P :=
-      lintegral_itoIntegral_sq_of_isProgressive hB.toIsPreBrownianReal hBF hInd hsubP t hsub2
+      lintegral_itoIntegral_sq_of_isProgressive hB hBF hInd hsubP t hsub2
     _ = ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
         ‖H₁ u.toNNReal ω - H₂ u.toNNReal ω‖ₑ ^ 2) ∂P := by
       rfl
