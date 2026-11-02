@@ -32,7 +32,9 @@ open Cslib.Complexity.SatVerifier.Lookup (isBitBlock_map isBitBlock_rev)
 
 /-! ### Diamonds: one-step lemmas and the arc bits of the sites -/
 
-/-- Tokens moved between `T` and `F`. -/
+/-- **Token symbols of the HAMPATH emitter.** A symbol is a token when it is a name bit, a
+polarity marker or the clause separator $\mathsf{cl}$; the value markers and the dead marker are
+not tokens. The emitter moves tokens between its stacks $T$ and $F$. -/
 def isTok : Sym → Bool
   | .bit _ | .lit _ | .cl => true
   | _ => false
@@ -142,14 +144,25 @@ theorem neg_bits (s : MS) (m i j : ℕ) (hd : s.d = hpR m i (3 * j + 1)) (hj : s
 
 /-! ### Diamonds: the detour walk -/
 
+/-- **The tokens of a literal do not start with a clause end.** For every literal $(n, p)$ with
+variable index $n \in \mathbb{N}$ and polarity $p$, the token list of $(n, p)$ is nonempty and
+its first symbol is not the clause-end marker $\mathsf{cl}$. -/
 theorem litToks_head (l : ℕ × Bool) : ∃ x R, litToks l = x :: R ∧ x ≠ .cl := by
   obtain ⟨z, b⟩ := l
   cases h : encodeNat z with
   | nil => exact ⟨.lit b, [], by simp [litToks, h], by simp⟩
   | cons c t => exact ⟨.bit c, t.map Sym.bit ++ [Sym.lit b], by simp [litToks, h], by simp⟩
 
-/-- One literal of the detour walk: compare its name with the entry `y`, update the flags, move
-its tokens to `T`. -/
+/-- **One literal of the detour walk.** Let $y \in \mathbb{N}$ have binary encoding
+$\mathrm{bin}(y)$, let $l = (z, b)$ be a literal with token list $\tau$, let $\rho$ and $\nu$ be
+lists of symbols, let $p_+$, $p_-$ and $v$ be bits, and let $s$ be a quiescent state of the
+HAMPATH emitter such that $F$ holds $\tau$ followed by $\rho$, $V$ holds the name of $y$, then
+the clause symbol $\mathrm{cl}$, then $\nu$, and the scratch stack $X$ is empty. Then there is a
+bit $v'$ such that the emitter goes in at most $3|\mathrm{bin}(y)| + |\tau| + 5$ steps from the
+detour-walk label with clause flags $(p_+, p_-)$, state bit $v$ and the stacks of $s$ to the
+detour-walk label with clause flags $(p_+ \lor (z = y \land b), p_- \lor (z = y \land \lnot b))$
+and state bit $v'$, with the stacks of $s$ changed as follows: $F$ becomes $\rho$ and $\tau$
+reversed is prepended to $T$. -/
 theorem dlit_run (y : ℕ) (VR : List Sym) (l : ℕ × Bool) (R : List Sym) (pp pn : Bool) (s : MS)
     (v : Bool) (hf : s.f = litToks l ++ R) (hv : s.v = name y ++ Sym.cl :: VR) (hx : s.x = []) :
     ∃ v', RunLe prog (3 * (encodeNat y).length + (litToks l).length + 5)
@@ -182,7 +195,17 @@ theorem dlit_run (y : ℕ) (VR : List Sym) (l : ℕ × Bool) (R : List Sym) (pp 
   · simp [litToks]; omega
   · simp [litToks]
 
-/-- The literals `Ls` of a clause: the flags collect the occurrences of `y`. -/
+/-- **The literals of a clause in the detour walk.** Let $y \in \mathbb{N}$ have binary encoding
+$\mathrm{bin}(y)$ and let $\nu$ and $\rho$ be lists of symbols. For every list $C$ of literals
+with token list $\tau$ (the tokens of its literals in order, without a clause separator), all
+bits $p_+, p_-, b$, and every quiescent state $s$ of the emitter such that $F$ holds $\tau$
+followed by $\rho$, $V$ holds the name of $y$, then a clause separator, then $\nu$, and the
+scratch stack $X$ is empty, there is a state bit $b'$ such that the emitter goes in at most
+$|\tau|(3|\mathrm{bin}(y)| + 6)$ steps from the detour-walk label with clause flags
+$(p_+, p_-)$, state bit $b$ and the stacks of $s$ to the detour-walk label with clause flags
+$(p_+ \lor ((y, \mathrm{true}) \in C), p_- \lor ((y, \mathrm{false}) \in C))$ and state bit $b'$,
+with the stacks of $s$ changed as follows: $F$ becomes $\rho$ and $\tau$ reversed is prepended to
+$T$. -/
 theorem dlits_run (y : ℕ) (VR : List Sym) (R : List Sym) :
     ∀ (Ls : List (ℕ × Bool)) (pp pn : Bool) (s : MS) (v : Bool),
       s.f = Ls.flatMap litToks ++ R → s.v = name y ++ Sym.cl :: VR → s.x = [] →
@@ -244,7 +267,18 @@ theorem detE_bits (s : MS) (m i y j : ℕ) (C : CNFClause) (hd : s.d = hpR m i (
   by_cases h1 : (y, true) ∈ C <;> by_cases h2 : (y, false) ∈ C <;>
     simp [detE, h1, h2, ← HamVerify.edgeBits_append]
 
-/-- One clause of the detour walk: its detours are pushed, its tokens go to `T`. -/
+/-- **One clause of the detour walk.** Let $B, m, i, y, j \in \mathbb{N}$, let $C$ be a clause
+with token list $\mathrm{toks}(C)$, let $\rho$ and $\nu$ be lists of symbols and $b$ a state bit,
+and let $s$ be a quiescent state of the emitter such that $F$ holds $\mathrm{toks}(C)$ followed by
+$\rho$, $V$ holds the name of $y$, then a clause separator, then $\nu$, the scratch stack $X$ is
+empty, the counter $J$ equals $j$, the counter $D$ equals row vertex $3j + 1$ of diamond $i$ for
+$m$ clauses, each of the counters $P, N, R, J, D$ is at most $B$, and the binary encoding of $y$
+has length at most $B$. Then for some state bit $b'$ the emitter goes in at most
+$|\mathrm{toks}(C)|(3B + 6) + 16B + 26$ steps from the detour-walk label with both clause flags
+false, state bit $b$ and the stacks of $s$ back to the same label with state bit $b'$ and the
+stacks of $s$ changed as follows: $F$ becomes $\rho$, $\mathrm{toks}(C)$ reversed is prepended to
+$T$, $J$ becomes $j + 1$, $D$ increases by $3$, and the edge-bit list $q$ is extended by the bits
+of the detour arcs of clause $j$ (contents $C$) in diamond $i$ for variable $y$. -/
 theorem dclause_run (Bd m dI y j : ℕ) (C : CNFClause) (R VR : List Sym) (s : MS) (v : Bool)
     (hf : s.f = clauseToks C ++ R) (hv : s.v = name y ++ Sym.cl :: VR) (hx : s.x = [])
     (hj : s.j = j) (hd : s.d = hpR m dI (3 * j + 1)) (hB : ∀ u, s.val u ≤ Bd)
@@ -277,7 +311,28 @@ theorem dclause_run (Bd m dI y j : ℕ) (C : CNFClause) (R VR : List Sym) (s : M
     rw [hbits]
     simp [clauseToks, hj]
 
-/-- The detour walk over the clauses `post`, the clauses `pre` already walked. -/
+/-- **The detour walk of a diamond in the HAMPATH emitter.** Let $B$, $m$, $i$ and $y$ be natural
+numbers and $\varphi = C_0 \cdots C_{m-1}$ a CNF formula with $m$ clauses. Write
+$\tau = m + i(3m+2)$ for the top vertex of diamond $i$ and $\rho_l = \tau + 1 + l$ for its row
+vertices, encode an arc $(a, b)$ by the bits $1^a 0 1^b 0$, write $\mathrm{toks}(\psi)$ for the
+token sequence of a list of clauses $\psi$, and call the bits of the binary code
+$\mathrm{enc}(y)$ of $y$, as symbols, the name bits of $y$. The detour arcs of clause $j$ are
+$(\rho_{3j+1}, j)$ and $(j, \rho_{3j+2})$ if the literal $(y, \mathrm{true})$ is in $C_j$,
+followed by $(\rho_{3j+2}, j)$ and $(j, \rho_{3j+1})$ if $(y, \mathrm{false})$ is in $C_j$. Let
+$\sigma$ be a list of symbols and $q_0$ a list of bits, and suppose $|\mathrm{enc}(y)| \le B$
+and $\rho_{3m} \le B$. Then for every splitting $\varphi = \pi \kappa$ into a prefix $\pi$ and a
+suffix $\kappa$ of clauses, every quiescent state $s$ of the emitter and every internal bit $v$:
+if $F$ holds $\mathrm{toks}(\kappa)$, $T$ holds $\mathrm{toks}(\pi)$ reversed, $V$ holds the name
+bits of $y$ followed by the separator $\mathsf{cl}$ and then $\sigma$, $X$ is empty,
+$J = |\pi|$, $D = \rho_{3|\pi|+1}$, the edge bits are $q_0$ followed by the codes of the detour
+arcs of the clauses $j < |\pi|$ in increasing order of $j$, and $P$, $N$, $R$ are at most $B$,
+then there is an internal bit $v'$ such that the emitter goes, in at most
+$|\mathrm{toks}(\kappa)|(3B+6) + |\kappa|(16B+26) + 1$ steps, from label
+$\mathsf{dw}(\mathrm{false}, \mathrm{false})$ with bit $v$ and the stacks of $s$ to label
+$\mathsf{t0}$ with bit $v'$ and the stacks of the state obtained from $s$ by emptying $F$,
+setting $T$ to $\mathrm{toks}(\varphi)$ reversed, $J = m$ and $D = \rho_{3m+1}$, and setting the
+edge bits to $q_0$ followed by the codes of the detour arcs of the clauses $j < m$ in increasing
+order of $j$. -/
 theorem dwalk_run (Bd m dI y : ℕ) (φ : CNF) (hm : φ.length = m) (VR : List Sym)
     (q0 : List Bool) (hy : (encodeNat y).length ≤ Bd) (hR : hpR m dI (3 * m) ≤ Bd) :
     ∀ (post pre : CNF), φ = pre ++ post → ∀ (s : MS) (v : Bool), s.f = toks post →
@@ -336,13 +391,24 @@ theorem dwalk_run (Bd m dI y : ℕ) (φ : CNF) (hm : φ.length = m) (VR : List S
 
 /-! ### Diamonds: frame and row -/
 
-/-- The frame sites. -/
+/-- **Frame copy sites of the HAMPATH emitter.** The list of the eight copy sites of a diamond's
+frame arcs, in order: the source site and then the target site of the first, second, third and
+fourth frame arc. -/
 def frameSites : List Site := [.f1u, .f1v, .f2u, .f2v, .f3u, .f3v, .f4u, .f4v]
 
-/-- The row sites. -/
+/-- **Row copy sites of the HAMPATH emitter.** The list of the four copy sites of the two row arcs
+between consecutive row vertices of a diamond, in order: the source site and then the target site
+of the first and of the second row arc. -/
 def rowSites : List Site := [.w1u, .w1v, .w2u, .w2v]
 
-/-- The head of a diamond: `N := P + M + 1`, then the frame. -/
+/-- **Front of a diamond.** Let $B, m, i \in \mathbb{N}$, let $b$ be a state bit, and let $s$ be a
+quiescent state of the emitter whose stack $V$ is nonempty, whose counter $P$ equals the top of
+diamond $i$ for $m$ clauses, whose counter $M$ equals $3m$, whose counter $N$ is $0$, and whose
+counters $R$, $J$, $D$ are at most $B$, and suppose row vertex $3m$ of diamond $i$ is at most $B$.
+Then for some state bit $b'$ the emitter goes in at most $20B + 30$ steps from label $\mathrm{h0}$
+with state bit $b$ and the stacks of $s$ to label $\mathrm{r0}$ with state bit $b'$ and the stacks
+of $s$ with $N$ set to row vertex $3m$ of diamond $i$ and the edge-bit list $q$ extended by the
+bits of the frame arcs of diamond $i$. -/
 theorem dfront_run (Bd m dI : ℕ) (s : MS) (v : Bool) (x0 : Sym) (R0 : List Sym)
     (hv : s.v = x0 :: R0) (hp : s.p = hpT m dI) (hmm : s.mm = 3 * m) (hn : s.n = 0)
     (hr : s.r ≤ Bd) (hj : s.j ≤ Bd) (hd : s.d ≤ Bd) (hB : hpR m dI (3 * m) ≤ Bd) :
@@ -385,7 +451,16 @@ theorem dfront_run (Bd m dI : ℕ) (s : MS) (v : Bool) (x0 : Sym) (R0 : List Sym
   · have es₄ : s₄ = {s with n := hpR m dI (3 * m)} := by rw [← hn₄]
     rw [es₄]
 
-/-- The row loop: from `r3` with `R = hpR m dI 0`, push the row arcs for `l < 3 m`. -/
+/-- **The row loop of a diamond in the HAMPATH emitter.** Let $B$, $m$ and $i$ be natural
+numbers, write $\tau = m + i(3m+2)$ for the top vertex of diamond $i$ and $\rho_l = \tau + 1 + l$
+for its row vertices, and encode an arc $(a, b)$ by the bits $1^a 0 1^b 0$. Let $s$ be a quiescent
+state of the emitter whose counters satisfy $M = 3m$, $L = 0$, $R = \rho_0$, $P \le B$,
+$N \le B$, $J \le B$ and $D \le B$, and suppose $\rho_{3m} \le B$ and $3m \le B$. Then for every
+internal bit $v$ there is an internal bit $v'$ such that the emitter goes, in at most
+$B(8B+15) + 2$ steps, from label $\mathsf{r3}$ with bit $v$ and the stacks of $s$ to label
+$\mathsf{e0}$ with bit $v'$ and the stacks of the state obtained from $s$ by setting
+$R = \rho_{3m}$ and appending to its edge bits the codes of the arcs $(\rho_l, \rho_{l+1})$ and
+$(\rho_{l+1}, \rho_l)$ for $l = 0, \dots, 3m-1$, in this order. -/
 theorem drow_run (Bd m dI : ℕ) (s : MS) (v : Bool) (hmm : s.mm = 3 * m) (hl : s.l = 0)
     (hr : s.r = hpR m dI 0) (hp : s.p ≤ Bd) (hn : s.n ≤ Bd) (hj : s.j ≤ Bd) (hd : s.d ≤ Bd)
     (hB : hpR m dI (3 * m) ≤ Bd) (hmB : 3 * m ≤ Bd) :
@@ -438,17 +513,30 @@ theorem drow_run (Bd m dI : ℕ) (s : MS) (v : Bool) (hmm : s.mm = 3 * m) (hl : 
 
 /-! ### Diamonds: assembly -/
 
+/-- **Adding units along no stacks.** For every $i \in \mathbb{N}$ and all stack contents $S$ of
+the HAMPATH emitter, adding $i$ units to the stacks named in the empty list of (stack, symbol)
+pairs leaves $S$ unchanged: $\mathrm{addU}([\,], i, S) = S$. -/
 theorem addU_nil (i : ℕ) (S : ∀ k, List (Γ k)) : addU [] i S = S := by
   funext k; simp [addU]
 
-/-- Drain a counter. -/
+/-- **Draining a counter.** Let $k$ be a stack of the emitter and $\ell, \ell'$ labels such that
+the instruction at $\ell$ is the transfer loop that pops stack $k$ until it is empty, pushing
+nothing, and then goes to $\ell'$. If $S$ is an assignment of stack contents in which stack $k$
+consists of $n$ copies of a symbol $u$, then for every state bit $b$ the emitter goes in exactly
+$n + 1$ steps from label $\ell$ with state bit $b$ and stacks $S$ to label $\ell'$ with state bit
+false and the stacks $S$ with stack $k$ emptied. -/
 theorem drain_run {k : K} {self next : Lab} (h : prog self = xfer k [] self next) (u : Γ k)
     (n : ℕ) (v : Bool) (S : ∀ k, List (Γ k)) (hS : S k = cnt u n) :
     Run prog (n + 1) ⟨some self, v, S⟩ ⟨some next, false, update S k []⟩ := by
   have := xfer_run h (by simp) (by simp) u n v S hS
   rwa [addU_nil] at this
 
-/-- Move `T` back onto `F`. -/
+/-- **Moving the tokens back in the HAMPATH emitter.** Let $L$ be a list of symbols that are all
+tokens, $s$ a quiescent state of the emitter whose stack $T$ holds $L$, and $v$ an internal bit.
+Then there is an internal bit $v'$ such that the emitter goes in exactly $|L| + 1$ steps from label
+$\mathsf{t0}$ with bit $v$ and the stacks of $s$ to label $\mathsf{t1}$ with bit $v'$ and the
+stacks of the state obtained from $s$ by emptying $T$ and replacing $F$ by $L$ reversed followed
+by $F$. -/
 theorem t0_run : ∀ (L : List Sym), (∀ x ∈ L, isTok x = true) → ∀ (s : MS) (v : Bool),
     s.t = L → ∃ v', Run prog (L.length + 1) ⟨some .t0, v, s.stk⟩
       ⟨some .t1, v', {s with t := [], f := L.reverse ++ s.f}.stk⟩ := by
@@ -472,7 +560,16 @@ theorem isTok_toks (φ : CNF) : ∀ x ∈ (toks φ).reverse, isTok x = true := b
     List.mem_map, List.mem_singleton] at hx
   obtain ⟨_, -, ⟨_, -, ⟨b, -, rfl⟩ | rfl⟩ | rfl⟩ := hx <;> rfl
 
-/-- The row: `R := P + 1`, then the loop. -/
+/-- **The row of a diamond in the HAMPATH emitter.** Let $B$, $m$ and $i$ be natural numbers,
+write $\tau = m + i(3m+2)$ for the top vertex of diamond $i$ and $\rho_l = \tau + 1 + l$ for its
+row vertices, and encode an arc $(a, b)$ by the bits $1^a 0 1^b 0$. Let $s$ be a quiescent state
+of the emitter whose counters satisfy $P = \tau$, $M = 3m$, $L = 0$, $R = 0$, $N \le B$,
+$J \le B$ and $D \le B$, and suppose $\rho_{3m} \le B$. Then for every internal bit $v$ there is
+an internal bit $v'$ such that the emitter goes, in at most $B(8B+15) + 2B + 5$ steps, from label
+$\mathsf{r0}$ with bit $v$ and the stacks of $s$ to label $\mathsf{e0}$ with bit $v'$ and the
+stacks of the state obtained from $s$ by setting $R = \rho_{3m}$ and appending to its edge bits
+the codes of the arcs $(\rho_l, \rho_{l+1})$ and $(\rho_{l+1}, \rho_l)$ for $l = 0, \dots, 3m-1$,
+in this order. -/
 theorem drowFull_run (Bd m dI : ℕ) (s : MS) (v : Bool) (hp : s.p = hpT m dI)
     (hmm : s.mm = 3 * m) (hl : s.l = 0) (hr : s.r = 0) (hn : s.n ≤ Bd) (hj : s.j ≤ Bd)
     (hd : s.d ≤ Bd) (hB : hpR m dI (3 * m) ≤ Bd) :
@@ -491,7 +588,20 @@ theorem drowFull_run (Bd m dI : ℕ) (s : MS) (v : Bool) (hp : s.p = hpT m dI)
     (by simp [hp]; omega) hn hj hd hB (by omega)
   refine ⟨v₃, runLe_cast (((r₁.trans r₂).le le_rfl).trans r₃) (by rw [hp]; omega) (by simp)⟩
 
-/-- The detours: `D := P + 2`, then the walk over all clauses. -/
+/-- **The detours of a diamond.** Let $B, i, y \in \mathbb{N}$, let $\varphi$ be a CNF formula
+with $m$ clauses and token list $\mathrm{toks}(\varphi)$, let $\nu$ be a list of symbols and $b$
+a state bit, and let $s$ be a quiescent state of the emitter such that $F$ holds
+$\mathrm{toks}(\varphi)$, $T$ and the scratch stack $X$ are empty, $V$ holds the name of $y$, then
+a clause separator, then $\nu$, the counter $P$ equals the top of diamond $i$ for $m$ clauses, the
+counters $J$ and $D$ are $0$, the counters $N$ and $R$ are at most $B$, the binary encoding of $y$
+has length at most $B$, and row vertex $3m$ of diamond $i$ is at most $B$. Then for some state bit
+$b'$ the emitter goes in at most
+$|\mathrm{toks}(\varphi)|(3B + 6) + m(16B + 26) + 2B + 5$ steps from label $\mathrm{e0}$ with state
+bit $b$ and the stacks of $s$ to label $\mathrm{t0}$ with state bit $b'$ and the stacks of $s$
+changed as follows: $F$ becomes empty, $T$ becomes $\mathrm{toks}(\varphi)$ reversed, $J$ becomes
+$m$, $D$ becomes row vertex $3m + 1$ of diamond $i$, and the edge-bit list $q$ is extended by the
+bits of the detour arcs, for $j = 0, \dots, m - 1$ in order, of clause $j$ of $\varphi$ in diamond
+$i$ for variable $y$. -/
 theorem ddet_run (Bd dI y : ℕ) (φ : CNF) (VR : List Sym) (s : MS) (v : Bool)
     (hf : s.f = toks φ) (ht : s.t = []) (hv : s.v = name y ++ Sym.cl :: VR) (hx : s.x = [])
     (hp : s.p = hpT φ.length dI) (hj : s.j = 0) (hd : s.d = 0) (hn : s.n ≤ Bd) (hr : s.r ≤ Bd)
@@ -514,8 +624,17 @@ theorem ddet_run (Bd dI y : ℕ) (φ : CNF) (VR : List Sym) (s : MS) (v : Bool)
     (by simp) hpB hn hr
   refine ⟨v₃, runLe_cast (((r₁.trans r₂).le le_rfl).trans r₃) (by omega) (by simp)⟩
 
-/-- The end of a diamond: tokens back to `F`, drop the entry, `P := N + 1`, clear the
-counters. -/
+/-- **End of a diamond.** Let $\varphi$ be a CNF formula with token list $\mathrm{toks}(\varphi)$,
+let $y \in \mathbb{N}$ have binary encoding $\mathrm{bin}(y)$, let $\nu$ be a list of symbols and
+$b$ a state bit, and let $s$ be a quiescent state of the emitter whose stack $T$ holds
+$\mathrm{toks}(\varphi)$ reversed, whose stack $F$ is empty, and whose stack $V$ holds the name of
+$y$, then a clause separator, then $\nu$. Let $p, n, r, j, d$ be the values of the counters
+$P, N, R, J, D$ of $s$. Then for some state bit $b'$ the emitter goes in exactly
+$|\mathrm{toks}(\varphi)| + |\mathrm{bin}(y)| + n + p + r + j + d + 9$ steps from label
+$\mathrm{t0}$ with state bit $b$ and the stacks of $s$ to label $\mathrm{h0}$ with state bit $b'$
+and the stacks of the quiescent state obtained from $s$ by emptying $T$, setting $F$ to
+$\mathrm{toks}(\varphi)$ and $V$ to $\nu$, prepending the reversed name of $y$ to $G$, setting
+$P$ to $n + 1$, and setting $N$, $R$, $J$ and $D$ to $0$. -/
 theorem dback_run (φ : CNF) (y : ℕ) (VR : List Sym) (s : MS) (v : Bool)
     (ht : s.t = (toks φ).reverse) (hf : s.f = []) (hv : s.v = name y ++ Sym.cl :: VR) :
     ∃ v', Run prog ((toks φ).length + (encodeNat y).length + s.n + s.p + s.r + s.j + s.d + 9)
@@ -564,8 +683,18 @@ theorem dback_run (φ : CNF) (y : ℕ) (VR : List Sym) (s : MS) (v : Bool)
 theorem vstk_cons (y : ℕ) (ys : List ℕ) : vstk (y :: ys) = name y ++ Sym.cl :: vstk ys := by
   simp [vstk]
 
-/-- **One diamond**: from `h0` with the entry `y` on top of `V`, push the arcs of diamond `dI`
-and advance `P` to the next diamond top. -/
+/-- **One diamond.** Let $B, i, y \in \mathbb{N}$, let $u$ be a list of natural numbers, let
+$\varphi$ be a CNF formula with $m$ clauses and token list $\mathrm{toks}(\varphi)$, let $b$ be a
+state bit, and let $s$ be a quiescent state of the emitter such that $T$ and the scratch stack $X$
+are empty, $F$ holds $\mathrm{toks}(\varphi)$, $V$ is the variable stack of the list $y$ followed
+by $u$, the counter $P$ equals the top of diamond $i$ for $m$ clauses, the counter $M$ equals
+$3m$, the counters $N, R, L, J, D$ are $0$, and $B$ bounds the top of diamond $i + 1$, the length
+of the binary encoding of $y$, and the length of $\mathrm{toks}(\varphi)$. Then for some state bit
+$b'$ the emitter goes in at most $30B^2 + 100B + 100$ steps from label $\mathrm{h0}$ with state
+bit $b$ and the stacks of $s$ back to label $\mathrm{h0}$ with state bit $b'$ and the stacks of
+$s$ changed as follows: $V$ becomes the variable stack of $u$, $P$ becomes the top of diamond
+$i + 1$, the edge-bit list $q$ is extended by the bits of the arcs of diamond $i$ of $\varphi$ for
+variable $y$, and the reversed name of $y$ is prepended to $G$. -/
 theorem diamond_run (Bd : ℕ) (φ : CNF) (dI y : ℕ) (ys : List ℕ) (s : MS) (v : Bool)
     (ht : s.t = []) (hf : s.f = toks φ) (hv : s.v = vstk (y :: ys)) (hx : s.x = [])
     (hp : s.p = hpT φ.length dI) (hmm : s.mm = 3 * φ.length) (hn : s.n = 0) (hr : s.r = 0)
@@ -607,8 +736,20 @@ theorem diamond_run (Bd : ℕ) (φ : CNF) (dI y : ℕ) (ys : List ℕ) (s : MS) 
   · simp only [s₃, s₂, s₁, diamondEdges_eq, HamVerify.edgeBits_append, List.append_assoc]
     rw [hpT_succ_eq_hpR, ht, hf, hn, hr, hj, hd]
 
-/-- **The diamonds**: from `h0` with the variables `ys` left on `V` (`pre` already done), push
-the remaining diamonds. -/
+/-- **The diamonds.** Let $B \in \mathbb{N}$ and let $\varphi$ be a CNF formula with $m$ clauses,
+token list $\mathrm{toks}(\varphi)$ and list of distinct variables $\mathrm{vars}(\varphi)$ of
+length $k$. Suppose the top of diamond $k$ for $m$ clauses, the length of $\mathrm{toks}(\varphi)$,
+and the length of the binary encoding of every $y \in \mathrm{vars}(\varphi)$ are at most $B$.
+Let $\mathrm{vars}(\varphi)$ split as a list $\pi$ followed by a list $u$, let $b$ be a state bit,
+and let $s$ be a quiescent state of the emitter such that $T$ and the scratch stack $X$ are empty,
+$F$ holds $\mathrm{toks}(\varphi)$, $V$ is the variable stack of $u$, the counter $P$ equals the
+top of diamond $|\pi|$, the counter $M$ equals $3m$, the counters $N, R, L, J, D$ are $0$, and the
+edge-bit list $q$ is the bits of the arcs of diamonds $0, \dots, |\pi| - 1$ in order, diamond
+$i$ taken for the $i$-th entry of $\mathrm{vars}(\varphi)$. Then for some state bit $b'$ and some
+stack contents $g'$ the emitter goes in at most $|u|(30B^2 + 100B + 100)$ steps from label
+$\mathrm{h0}$ with state bit $b$ and the stacks of $s$ back to label $\mathrm{h0}$ with state bit
+$b'$ and the stacks of $s$ changed as follows: $V$ becomes empty, $P$ becomes the top of diamond
+$k$, $q$ becomes the bits of all arcs of the construction for $\varphi$, and $G$ becomes $g'$. -/
 theorem diamonds_run (Bd : ℕ) (φ : CNF) (hBd : hpT φ.length (hamVars φ).length ≤ Bd)
     (hL : (toks φ).length ≤ Bd) (hnm : ∀ y ∈ hamVars φ, (encodeNat y).length ≤ Bd) :
     ∀ (ys pre : List ℕ), hamVars φ = pre ++ ys → ∀ (s : MS) (v : Bool), s.t = [] →
@@ -646,7 +787,12 @@ theorem diamonds_run (Bd : ℕ) (φ : CNF) (hBd : hpT φ.length (hamVars φ).len
             List.flatMap_append, List.flatMap_singleton, hy, HamVerify.edgeBits_append])
       refine ⟨v₂, g₂, runLe_cast (r₁.trans r₂) (by simp only [List.length_cons]; nlinarith) rfl⟩
 
-/-- **The output**: move the arcs to `O`, then push `n = t + 1`, `t = P` and `s = C`. -/
+/-- **The output phase of the HAMPATH emitter.** Let $s$ be a quiescent state of the emitter
+whose variable stack $V$ is empty, with clause count $C = c$, diamond-top counter $P = p$, edge
+bits $q$ and output stack $o$. Then for every internal bit $v$ there are an internal bit $v'$ and
+stacks $S'$ such that the emitter goes in exactly $|q| + 4p + 2c + 11$ steps from label
+$\mathsf{h0}$ with bit $v$ and the stacks of $s$ to label $\mathsf{done}$ with bit $v'$ and stacks
+$S'$, and the output stack of $S'$ is $1^c 0 1^p 0 1^{p+1} 0$ followed by $q$ and then $o$. -/
 theorem final_run (s : MS) (v : Bool) (hv : s.v = []) :
     ∃ v' S', Run prog (s.q.length + 4 * s.p + 2 * s.c + 11) ⟨some .h0, v, s.stk⟩
       ⟨some .done, v', S'⟩ ∧ S' .O = List.replicate s.c true ++ false ::
@@ -688,9 +834,14 @@ theorem final_run (s : MS) (v : Bool) (hv : s.v = []) :
 
 /-! ### Sizes -/
 
-/-- **The emitter.** From `start`, with the token stack `(toks φ).reverse`, the output stack `o`
-and every other stack empty, the machine reaches `done` within `2000 (|toks φ| + 1)⁵` steps with
-Sipser's HAMPATH instance `toHam φ` pushed on the output stack (read top-first). -/
+/-- **Correctness and running time of the HAMPATH emitter.** Let $\varphi$ be a CNF formula with
+token sequence $\mathrm{toks}(\varphi)$, let $o$ be a list of bits, and let $S$ be stacks in which
+the token stack $T$ holds $\mathrm{toks}(\varphi)$ reversed, the output stack $O$ holds $o$, and
+every other stack is empty. Then for every internal bit $v$ there are an internal bit $v'$ and
+stacks $S'$ such that the emitter goes, in at most $2000(|\mathrm{toks}(\varphi)| + 1)^5$ steps,
+from its start label with bit $v$ and stacks $S$ to label $\mathsf{done}$ with bit $v'$ and stacks
+$S'$, and the output stack of $S'$ is Sipser's HAMPATH instance for $\varphi$ followed by $o$
+(so the instance is read top-first). -/
 theorem run (φ : CNF) (o : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hT : St .T = (toks φ).reverse) (hO : St .O = o) (h0 : ∀ k, k ≠ .T → k ≠ .O → St k = []) :
     ∃ v' S', RunLe prog (2000 * ((toks φ).length + 1) ^ 5) ⟨some start, v, St⟩

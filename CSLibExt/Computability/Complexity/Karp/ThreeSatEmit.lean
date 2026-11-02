@@ -76,7 +76,9 @@ theorem encodeNat_two_pow (z : ℕ) : encodeNat (2 ^ z) = List.replicate z false
   | succ z ih =>
       rw [pow_succ, mul_comm, encodeNat_bit0 _ (Nat.two_pow_pos z), ih]; rfl
 
-/-- Fresh names have the code `true`, `z` times `false`, `true`. -/
+/-- **Binary representation of a fresh name.** For every natural number $z$, the binary
+representation (least significant bit first) of $\mathrm{fresh}(z) = 2^{z+1} + 1$ is
+$\mathrm{true}$, then $z$ copies of $\mathrm{false}$, then $\mathrm{true}$. -/
 theorem encodeNat_fresh (z : ℕ) :
     encodeNat (fresh z) = true :: (List.replicate z false ++ [true]) := by
   rw [fresh, pow_succ, mul_comm, encodeNat_bit1, encodeNat_two_pow]
@@ -90,7 +92,10 @@ theorem delimit_eq (bs : List Bool) :
   | nil => rfl
   | cons b bs ih => simp [BitstringEncoding.delimit, ih]
 
-/-- The code of a fresh literal, in the order the machine prepends it. -/
+/-- **Code of a fresh literal.** For every natural number $z$ and every polarity $b$, the binary
+code of the literal $(\mathrm{fresh}(z), b)$, where $\mathrm{fresh}(z) = 2^{z+1} + 1$, is
+$\mathrm{true}, \mathrm{true}$, then $z$ copies of the pair $\mathrm{true}, \mathrm{false}$, then
+$\mathrm{true}, \mathrm{true}, \mathrm{false}, b$. -/
 theorem encodeLit_fresh (z : ℕ) (b : Bool) :
     encodeLit (fresh z, b) = [true, true] ++ rep [true, false] z ++ [true, true, false, b] := by
   have h : ∀ z : ℕ, (List.replicate z false).flatMap (fun b => [true, b]) = rep [true, false] z :=
@@ -99,8 +104,10 @@ theorem encodeLit_fresh (z : ℕ) (b : Bool) :
       | succ z ih => rw [List.replicate_succ, List.flatMap_cons, ih, rep_succ]
   simp [encodeLit, encodeNatPrefix, encodeNat_fresh, delimit_eq, h]
 
-/-- The code of a renamed literal: the name bits as pairs `true, b`, with a low `false` added
-for a non-empty name. -/
+/-- **Code of a renamed literal.** For every literal $(n, p)$, the binary code of the renamed
+literal $(2n, p)$ is: the pair $\mathrm{true}, \mathrm{false}$ if $n \neq 0$ and nothing if
+$n = 0$, then the pair $\mathrm{true}, b$ for each bit $b$ of the binary representation of $n$
+(least significant bit first, no bits for $n = 0$), then $\mathrm{false}, p$. -/
 theorem encodeLit_renLit (l : ℕ × Bool) :
     encodeLit (renLit l) = (if l.1 = 0 then [] else [true, false]) ++
       (encodeNat l.1).flatMap (fun b => [true, b]) ++ [false, l.2] := by
@@ -111,7 +118,9 @@ theorem encodeLit_renLit (l : ℕ × Bool) :
 
 /-! ### The machine -/
 
-/-- Stacks: tokens, output, the fresh counter, two scratch counters, the output clause count. -/
+/-- **Stacks of the 3SAT emitter.** The 3SAT emitter machine has six stacks: the token stack
+$T$, the output stack $O$, the fresh counter $U$, two scratch counters $Z$ and $W$, and the
+output clause count $C$. -/
 inductive K | T | O | U | Z | W | C
   deriving DecidableEq
 
@@ -119,16 +128,28 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.T, K.O, K.U, K.Z, K.W, K.C], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Stack alphabets: the output stack holds bits, the others token symbols (counters hold
-`Sym.cl`). -/
+/-- **Stack alphabets of the SAT-to-3SAT emitter.** The output stack of the emitter machine holds
+Booleans; each of its other stacks (the token stack, the fresh counter, the two scratch counters
+and the output clause count) holds symbols of the SAT verifier's token alphabet.
+
+The counters are unary: they hold only the clause token. -/
 @[reducible] def Γ : K → Type
   | .O => Bool
   | _ => Sym
 
-/-- Labels. `lit f`: pop a literal marker, `f` telling whether it is the first literal walked
-in its clause; `fa` to `fe`: prepend the fresh literal `(fresh z, s)` (`x` is the polarity of the
-pending literal for `s = true`, its first-flag for `s = false`); `body`, `cp`: prepend the
-renamed literal; `aft`, `sfx`: close the output clause. -/
+/-- **Control labels of the SAT-to-3SAT emitter.** The emitter machine has the labels
+$\mathrm{start}$, $\mathrm{clause}$, $\mathrm{fin}$ and $\mathrm{done}$, and, for Booleans
+$f, p, s, x, e$, the labels $\mathrm{lit}(f)$, $\mathrm{fa}(s, x)$, $\mathrm{fb}(s, x)$,
+$\mathrm{fc}(s, x)$, $\mathrm{fd}(s, x)$, $\mathrm{fe}(s, x)$, $\mathrm{body}(f, p)$,
+$\mathrm{cp}(f, e)$, $\mathrm{aft}(f)$ and $\mathrm{sfx}(f)$, all distinct; equality of labels is
+decidable.
+
+At $\mathrm{lit}(f)$ the machine pops a literal marker, $f$ telling whether it is the first
+literal walked in its clause. The labels $\mathrm{fa}$ to $\mathrm{fe}$ prepend the fresh literal
+$(2^{z+1} + 1, s)$ for the current counter $z$, where $x$ is the polarity of the pending literal
+when $s$ is true and its first-literal flag when $s$ is false. The labels $\mathrm{body}$ and
+$\mathrm{cp}$ prepend the renamed literal, and $\mathrm{aft}$ and $\mathrm{sfx}$ close the output
+clause. -/
 inductive Lab
   | start | clause | lit (f : Bool)
   | fa (s x : Bool) | fb (s x : Bool) | fc (s x : Bool) | fd (s x : Bool) | fe (s x : Bool)
@@ -144,23 +165,69 @@ instance Lab.instFintypeEnumFix : Fintype Lab :=
     (fun x => by cases x <;> (try rename_i a b; cases a <;> cases b) <;>
       (try rename_i a; cases a) <;> decide)
 
-/-- Is the top of a stack a literal marker? -/
+/-- **Literal-marker test of the 3SAT emitter.** For an optional token $s$ (the top of a stack,
+absent when the stack is empty), the test is true exactly when $s$ is present and is a literal
+marker, of either polarity. -/
 def isLit : Option Sym → Bool
   | some (.lit _) => true
   | _ => false
 
-/-- Where a literal's walk starts after its marker: directly at the name for the first literal
-walked, after the fresh literal `(fresh z, true)` otherwise. -/
+/-- **Entry label of a literal.** For Booleans $f$ and $p$, the label where the emitter continues
+after popping the marker of a literal of polarity $p$ is $\mathrm{body}(\text{true}, p)$, which
+copies the name directly, if $f$ holds (the literal is the first walked in its clause), and
+$\mathrm{fa}(\text{true}, p)$, which first prepends the fresh literal of the current counter
+with polarity true, otherwise. -/
 def pre (f p : Bool) : Lab := if f then .body true p else .fa true p
 
-/-- Where the fresh-literal subroutine returns: to the name of the pending literal of polarity
-`p` after `(fresh z, true)` (`s = true`), or to closing the output clause after
-`(fresh z, false)`. -/
+/-- **Return label of the fresh-literal subroutine.** For Booleans $s$ and $x$, the label where
+the emitter continues after prepending the fresh literal of polarity $s$ is
+$\mathrm{body}(\text{false}, x)$ if $s$ is true, which copies the name of the pending literal of
+polarity $x$, and $\mathrm{sfx}(x)$ if $s$ is false, which closes the output clause, $x$ being
+the first-literal flag. -/
 def ret : Bool → Bool → Lab
   | true, p => .body false p
   | false, f => .sfx f
 
-/-- The machine. -/
+/-- **The SAT-to-3SAT emitter machine.** The emitter is the multi-stack machine on the stacks
+$T, O, U, Z, W, C$ of the emitter ($O$ holds bits, the others token symbols), with the labels of
+the emitter and one internal Boolean variable. A unit is the clause symbol, and prepending bits
+$b_1, \dots, b_k$ to $O$ pushes them so that $O$ reads $b_1, \dots, b_k$ from the top. The labels
+act as follows.
+
+* $\mathrm{start}$: if $T$ is empty, push $\text{false}$ on $O$ and go to $\mathrm{fin}$;
+  otherwise pop $T$ and go to $\mathrm{clause}$.
+* $\mathrm{clause}$: if the top of $T$ is a literal marker, go to $\mathrm{lit}(\text{true})$;
+  otherwise push a unit on $C$, push $\text{false}$ on $O$ and go to $\mathrm{start}$.
+* $\mathrm{lit}(f)$: pop $T$, set the variable $p$ to whether the popped symbol is the literal
+  marker of polarity true, and go to $\mathrm{body}(\text{true}, p)$ if $f$ holds and to
+  $\mathrm{fa}(\text{true}, p)$ otherwise.
+* $\mathrm{fa}(s, x)$: prepend $\text{true}, \text{true}, \text{false}, s$ to $O$ and go to
+  $\mathrm{fb}(s, x)$.
+* $\mathrm{fb}(s, x)$: pop $U$ until it is empty, pushing a unit on $Z$ and on $W$ per popped
+  symbol, then go to $\mathrm{fc}(s, x)$.
+* $\mathrm{fc}(s, x)$: pop $W$ until it is empty, pushing a unit on $U$ per popped symbol, then
+  go to $\mathrm{fd}(s, x)$.
+* $\mathrm{fd}(s, x)$: pop $Z$ until it is empty, prepending $\text{true}, \text{false}$ to $O$
+  per popped symbol, then go to $\mathrm{fe}(s, x)$.
+* $\mathrm{fe}(\text{true}, p)$: push a unit on $U$, prepend $\text{true}, \text{true}$ to $O$
+  and go to $\mathrm{body}(\text{false}, p)$. $\mathrm{fe}(\text{false}, f)$: prepend
+  $\text{true}, \text{true}$ to $O$ and go to $\mathrm{sfx}(f)$.
+* $\mathrm{body}(f, p)$: prepend $\text{false}, p$ to $O$ and go to $\mathrm{cp}(f, \text{false})$.
+* $\mathrm{cp}(f, e)$: if the top of $T$ is a bit symbol $b$, pop it, prepend $\text{true}, b$ to
+  $O$ and go to $\mathrm{cp}(f, \text{true})$; otherwise prepend $\text{true}, \text{false}$ to
+  $O$ if $e$ holds, and go to $\mathrm{aft}(f)$.
+* $\mathrm{aft}(f)$: if the top of $T$ is a literal marker, go to $\mathrm{fa}(\text{false}, f)$;
+  otherwise push a unit on $C$, prepend $k$ copies of $\text{true}$ and then $\text{false}$ to
+  $O$, where $k = 1$ if $f$ holds and $k = 2$ otherwise, and go to $\mathrm{start}$.
+* $\mathrm{sfx}(f)$: push a unit on $C$, prepend $k$ copies of $\text{true}$ and then
+  $\text{false}$ to $O$, where $k = 2$ if $f$ holds and $k = 3$ otherwise, and go to
+  $\mathrm{lit}(\text{false})$.
+* $\mathrm{fin}$: pop $C$ until it is empty, prepending $\text{true}$ to $O$ per popped symbol,
+  then go to $\mathrm{done}$.
+* $\mathrm{done}$: halt.
+
+Each test of a stack top and each pop of a loop also stores its outcome in the internal
+variable. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .start => .peek .T (fun _ o => o.isNone) <| .branch id
       (.push .O (fun _ => false) (.goto fun _ => .fin))
@@ -187,13 +254,18 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
   | .fin => xferE .C .O [true] .fin .done
   | .done => .halt
 
-/-- The start label. -/
+/-- **Start label of the SAT-to-3SAT emitter.** The start label of the emitter machine is its label
+$\mathrm{start}$, at which the machine begins each input clause or, once the token stack is
+empty, moves on to its final phase, which writes the output clause count. -/
 def start : Lab := .start
 
 /-! ### Machine states -/
 
-/-- The state with token stack `t`, output `o`, fresh counter `z`, clause count `c`, and empty
-scratch counters. -/
+/-- **Stack contents of the SAT-to-3SAT emitter.** For a list $t$ of tokens, a list $o$ of bits
+and $z, c \in \mathbb{N}$, $\mathrm{st}(t, o, z, c)$ is the stack contents of the emitter machine
+in which the token stack holds $t$, the output stack holds $o$, the fresh counter holds exactly
+$z$ copies of the clause token $\mathrm{cl}$, the output clause count holds exactly $c$ copies of
+$\mathrm{cl}$, and the two scratch counters are empty. -/
 def st (t : List Sym) (o : List Bool) (z c : ℕ) : ∀ k, List (Γ k)
   | .T => t
   | .O => o
@@ -298,9 +370,21 @@ section Phases
 theorem run_cast {n n' : ℕ} {c d d' : TM2.Cfg Γ Lab Bool} (h : Run prog n c d) (hn : n = n')
     (hd : d = d') : Run prog n' c d' := hn ▸ hd ▸ h
 
-/-- The fresh literal `(fresh z, s)`: prepend `true, true, false, s`, copy the counter `U` to `Z`
-through `W`, prepend `true, false` per unit of `Z`, prepend `true, true`; for `s = true` also
-count the fresh number as used. -/
+/-- **Fresh-literal subroutine of the 3SAT emitter.** For all booleans $s$ and $x$, every token
+list $t$, output bit list $o$, natural numbers $z$ and $c$, and flag $v$, there is a flag $v'$
+such that the 3SAT emitter machine, started at the fresh-literal label for $(s, x)$ with flag
+$v$, token stack $t$, output stack $o$, fresh counter $z$, clause count $c$ and empty scratch
+counters, reaches in exactly $3z + 5$ steps the return label for $(s, x)$ with flag $v'$, token
+stack $t$, output stack the code of the literal $(\mathrm{fresh}(z), s)$ followed by $o$, where
+$\mathrm{fresh}(z) = 2^{z+1} + 1$, fresh counter $z + 1$ if $s$ is true and $z$ if $s$ is false,
+clause count $c$ and empty scratch counters. The return label is the renamed-literal label for a
+literal of polarity $x$ that is not the first walked in its clause if $s$ is true, and the
+clause-closing label for first-flag $x$ if $s$ is false.
+
+The subroutine prepends $\mathrm{true}, \mathrm{true}, \mathrm{false}, s$, copies the fresh
+counter $U$ into the scratch counter $Z$ (restoring $U$ through the scratch counter $W$),
+prepends $\mathrm{true}, \mathrm{false}$ per unit of $Z$, then prepends
+$\mathrm{true}, \mathrm{true}$, and for $s$ true adds one to $U$. -/
 theorem fresh_run (s x : Bool) (t : List Sym) (o : List Bool) (z c : ℕ) (v : Bool) :
     ∃ v', Run prog (3 * z + 5) ⟨some (.fa s x), v, st t o z c⟩
       ⟨some (ret s x), v', st t (encodeLit (fresh z, s) ++ o) (z + if s then 1 else 0) c⟩ := by
@@ -329,8 +413,19 @@ theorem fresh_run (s x : Bool) (t : List Sym) (o : List Bool) (z c : ℕ) (v : B
         simp [prog, ret, TM2.stepAux, emitR, emit, stepAux_pushList, encodeLit_fresh, ho₁])
   exact ⟨_, (((r₁.trans r₂).trans r₃).trans r₄).of_eq (by omega)⟩
 
-/-- The name copy loop: per name bit `b` (most significant first) prepend `b` then `true`; at the
-end of the name prepend the low `false` pair of `ren` if a bit was copied. -/
+/-- **Name copy loop of the 3SAT emitter.** Let $f$ and $e$ be booleans, $R$ a token list whose
+first token, if there is one, is not a name bit, $z$ and $c$ natural numbers, $b_1, \dots, b_m$
+bits, $v$ a flag and $o$ an output bit list. Then there is a flag $v'$ such that the 3SAT emitter
+machine, started at the copy label for $(f, e)$ with flag $v$, token stack the name-bit tokens
+$b_1, \dots, b_m$ followed by $R$, output stack $o$, fresh counter $z$, clause count $c$ and
+empty scratch counters, reaches in exactly $m + 1$ steps the after-literal label for $f$ with
+flag $v'$, token stack $R$, output stack
+$P, \mathrm{true}, b_m, \mathrm{true}, b_{m-1}, \dots, \mathrm{true}, b_1$ followed by $o$, and
+the same counters, where $P$ is the pair $\mathrm{true}, \mathrm{false}$ if $e$ is true or
+$m > 0$, and is empty otherwise.
+
+Each name bit $b$ read prepends $b$ and then $\mathrm{true}$; the leading pair
+$\mathrm{true}, \mathrm{false}$ codes the low bit $0$ of a renamed name $2n$. -/
 theorem cp_run (f : Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = none) (z c : ℕ) :
     ∀ (rb : List Bool) (ne v : Bool) (o : List Bool),
       ∃ v', Run prog (rb.length + 1) ⟨some (.cp f ne), v, st (rb.map Sym.bit ++ R) o z c⟩
@@ -346,7 +441,16 @@ theorem cp_run (f : Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = none) (z 
       obtain ⟨v', r⟩ := ih true b (true :: b :: o)
       exact ⟨v', run_cast ((cp_bit v o z c f ne b _).trans r) (by simp; omega) (by simp)⟩
 
-/-- The renamed name: prepend `false, p`, then copy the name. -/
+/-- **Copying a renamed name.** Write $\langle \ell, w, t, o, z, c\rangle$ for the configuration
+of the emitter machine at label $\ell$ with internal variable $w$, token stack $t$, output stack
+$o$, fresh counter $z$, output-clause count $c$ and empty scratch stacks. Let $l = (n, b)$ be a
+literal, $f$ and $v$ Booleans, $R$ a token stack whose top, if any, is not a bit symbol, $o$ an
+output stack and $z$, $c$ natural numbers. Let $B$ be the $k$ binary digits of $n$ as bit
+symbols, most significant first ($k = 0$ for $n = 0$), and $e$ the encoding of the renamed
+literal $(2n, b)$. Then for some $w'$ the machine goes in exactly $k + 2$ steps from
+$\langle \mathrm{body}(f, b), v, B R, o, z, c\rangle$ to
+$\langle \mathrm{aft}(f), w', R, e\,o, z, c\rangle$, where juxtaposition is concatenation of
+stacks, top first. -/
 theorem name_run (f : Bool) (l : ℕ × Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = none)
     (o : List Bool) (z c : ℕ) (v : Bool) :
     ∃ v', Run prog ((encodeNat l.1).length + 2)
@@ -363,7 +467,17 @@ theorem name_run (f : Bool) (l : ℕ × Bool) (R : List Sym) (hR : R.head?.bind 
   · have e : encodeNat l.1 ≠ [] := fun e => by simp [encodeNat_eq_nil.1 e] at h0
     simp [e, Nat.pos_iff_ne_zero.1 h0]
 
-/-- The literal marker, then `(fresh z, true)` unless the literal is the first walked. -/
+/-- **The 3SAT emitter reads a literal marker.** For all booleans $f$ and $p$, every token list
+$t$, output bit list $o$, natural numbers $z$ and $c$, and flag $v$, there is a flag $v'$ such
+that the 3SAT emitter machine, started at the literal label for $f$ with flag $v$, token stack
+the literal marker of polarity $p$ followed by $t$, output stack $o$, fresh counter $z$, clause
+count $c$ and empty scratch counters, reaches the renamed-literal label for $(f, p)$ with flag
+$v'$ and token stack $t$ as follows. If $f$ is true (the literal is the first walked in its
+clause), this takes exactly $1$ step and leaves the output stack and the fresh counter unchanged.
+If $f$ is false, it takes exactly $3z + 6$ steps, the output stack becomes the code of the
+literal $(\mathrm{fresh}(z), \mathrm{true})$ followed by $o$, where
+$\mathrm{fresh}(z) = 2^{z+1} + 1$, and the fresh counter becomes $z + 1$. In both cases the
+clause count stays $c$ and the scratch counters stay empty. -/
 theorem head_run (f : Bool) (p : Bool) (t : List Sym) (o : List Bool) (z c : ℕ) (v : Bool) :
     ∃ v', Run prog (if f then 1 else 3 * z + 6) ⟨some (.lit f), v, st (.lit p :: t) o z c⟩
       ⟨some (.body f p), v', st t ((if f then [] else encodeLit (fresh z, true)) ++ o)
@@ -373,8 +487,19 @@ theorem head_run (f : Bool) (p : Bool) (t : List Sym) (o : List Bool) (z c : ℕ
     exact ⟨v', run_cast ((lit_step v o z c false p t).trans r) (by simp; omega) (by simp [ret])⟩
   · exact ⟨p, by simpa [pre] using lit_step v o z c true p t⟩
 
-/-- Closing the output clause: `(fresh z, false)` unless the literal is the last walked, then
-`false` and the unary literal count. -/
+/-- **Closing an output clause in the SAT-to-3SAT emitter.** Let $f$ be a Boolean, $R$ a list of
+tokens, $o$ a list of bits and $z, c \in \mathbb{N}$, and let $m = 1$ if $f$ is true and $m = 2$
+otherwise. Start the emitter machine at its clause-closing label $\mathrm{aft}(f)$, with any
+internal state, with stack contents $\mathrm{st}(R, o, z, c)$: token stack $R$, output stack $o$,
+fresh counter $z$, output clause count $c$ and empty scratch counters.
+
+If the top of $R$ is a literal marker, then after exactly $3z + 7$ steps the machine is at the
+label $\mathrm{lit}(\mathrm{false})$ with stack contents $\mathrm{st}(R, o', z, c + 1)$, where the
+list $o'$ consists of $m + 1$ copies of true, then false, then the code of the literal
+$(\mathrm{fresh}(z), \mathrm{false})$, then $o$. Otherwise (in particular when $R$ is empty),
+after exactly one step the machine is at the label $\mathrm{start}$ with stack contents
+$\mathrm{st}(R, o', z, c + 1)$, where $o'$ consists of $m$ copies of true, then false, then $o$.
+In both cases the final internal state is unspecified. -/
 theorem tail_run (f : Bool) (R : List Sym) (o : List Bool) (z c : ℕ) (v : Bool) :
     ∃ v', Run prog (if isLit R.head? then 3 * z + 7 else 1) ⟨some (.aft f), v, st R o z c⟩
       ⟨some (if isLit R.head? then .lit false else .start), v',
@@ -395,9 +520,12 @@ end Phases
 
 section Spec
 
-/-- The output clause of a literal `l` walked with counter `z`: `l` renamed, preceded by
-`(fresh z', false)` unless it is the last literal walked in its clause (`g`), and followed by
-`(fresh z, true)` unless it is the first walked (`f`); `z'` is the counter after `l`. -/
+/-- **Output clause of one literal.** For Booleans $f$ and $g$, a counter $z$ and a literal
+$l = (n, b)$, let $z' = z$ if $f$ holds and $z' = z + 1$ otherwise. The output clause of $l$ is
+the clause consisting of, in this order: the literal $(2^{z'+1} + 1, \text{false})$ unless $g$
+holds, then the renamed literal $(2n, b)$, then the literal $(2^{z+1} + 1, \text{true})$ unless
+$f$ holds. Here $f$ tells whether $l$ is the first literal walked in its clause, $g$ whether it
+is the last one, and $z'$ is the counter after $l$. -/
 def litCl (f g : Bool) (z : ℕ) (l : ℕ × Bool) : CNFClause :=
   (if g then [] else [(fresh (z + if f then 0 else 1), false)]) ++
     renLit l :: (if f then [] else [(fresh z, true)])
@@ -409,17 +537,26 @@ theorem encodeClause_litCl (f g : Bool) (z : ℕ) (l : ℕ × Bool) :
           encodeLit (renLit l) ++ (if f then [] else encodeLit (fresh z, true))) := by
   cases f <;> cases g <;> simp [encodeClause, litCl]
 
-/-- The fresh numbers used up by walking the literals `Ls`, `f` telling whether the last of them
-is the first literal walked in its clause. -/
+/-- **Fresh numbers used by a run of literals.** For a list $L$ of literals and a Boolean $f$,
+the number of fresh numbers used up by walking $L$ is $|L| - 1$ (truncated at $0$) if $f$ holds
+and $|L|$ otherwise; $f$ tells whether the last literal of $L$ is the first literal walked in
+its clause. -/
 def nz (Ls : List (ℕ × Bool)) (f : Bool) : ℕ := if f then Ls.length - 1 else Ls.length
 
 theorem nz_cons (l : ℕ × Bool) (Ls : List (ℕ × Bool)) (f : Bool) :
     nz (l :: Ls) f = nz Ls f + if f && Ls.isEmpty then 0 else 1 := by
   cases f <;> cases Ls <;> simp [nz]
 
-/-- The output clauses of the literals `Ls` of a clause, in reading order, walked from the last
-one with counter `z`: `f` tells whether the last literal of `Ls` is the first walked in its
-clause, `g` whether the first literal of `Ls` is the last walked. -/
+/-- **Output clauses of a walked list of literals.** For a list $L$ of literals of a clause,
+Booleans $f$ and $g$, and $z \in \mathbb{N}$, $\mathrm{walkF}(L, f, g, z)$ is the list of output
+clauses of the literals of $L$, in reading order, when $L$ is walked from its last literal with
+counter $z$; $f$ tells whether the last literal of $L$ is the first walked in its clause, and $g$
+whether the first literal of $L$ is the last walked. It is defined by recursion on $L$. The empty
+list gives no clauses. If $L$ has first literal $l$ and remaining literals $L'$, the first clause
+is the output clause of $l$ whose first-walked flag is true exactly when $f$ is true and $L'$ is
+empty, whose last-walked flag is $g$, and whose counter is $z + n$, where $n$ is the number of
+fresh numbers used up by walking $L'$ ($|L'| - 1$ if $f$ is true, with $0 - 1 = 0$, and $|L'|$
+otherwise); it is followed by $\mathrm{walkF}(L', f, \mathrm{false}, z)$. -/
 def walkF : List (ℕ × Bool) → Bool → Bool → ℕ → CNF
   | [], _, _, _ => []
   | l :: Ls, f, g, z => litCl (f && Ls.isEmpty) g (z + nz Ls f) l :: walkF Ls f false z
@@ -439,7 +576,11 @@ theorem walkF_chainTail (l : ℕ × Bool) (ls : List (ℕ × Bool)) (z : ℕ) :
         omega]
       simp [litCl, nz, Nat.add_assoc]
 
-/-- Walking a non-empty clause from its last literal produces `chain`. -/
+/-- **Walking a whole clause gives its chain.** For every non-empty clause $C$ and every
+$z \in \mathbb{N}$, the output clauses of the literals of $C$, walked from its last literal with
+counter $z$, with both the first-walked flag and the last-walked flag true, that is,
+$\mathrm{walkF}(C, \mathrm{true}, \mathrm{true}, z)$, are the chain of clauses replacing $C$ with
+fresh numbers from $z$ on. -/
 theorem walkF_chain (C : CNFClause) (hC : C ≠ []) (z : ℕ) : walkF C true true z = chain C z := by
   match C, hC with
   | [l], _ => simp [walkF, chain, litCl]
@@ -494,8 +635,20 @@ theorem isLit_litRev (Ls : List (ℕ × Bool)) (l : ℕ × Bool) (R : List Sym) 
     isLit (Ls.flatMap Check.litRev ++ (Check.litRev l ++ R)).head? = true := by
   cases Ls <;> simp [Check.litRev, isLit]
 
-/-- One literal: its output clause `litCl` is prepended; the walk continues at the next literal
-if there is one, and at the next clause otherwise. -/
+/-- **One literal of the emitter.** Write $\langle \ell, w, t, o, z, c\rangle$ for the
+configuration of the emitter machine at label $\ell$ with internal variable $w$, token stack $t$,
+output stack $o$, fresh counter $z$, output-clause count $c$ and empty scratch stacks. Let
+$l = (n, b)$ be a literal, $f$ and $v$ Booleans, $R$ a token stack whose top, if any, is not a
+bit symbol, $o$ an output stack, and $z$, $c$, $Z_b$ natural numbers with $z + d \le Z_b$, where
+$d = 0$ if $f$ holds and $d = 1$ otherwise. Let $T_l$ be the token block of $l$: the literal
+marker of polarity $b$ above the binary digits of $n$, most significant first (no digits for
+$n = 0$). Let $g$ be true exactly when the top of $R$ is not a literal marker (in particular
+when $R$ is empty), let $\ell'$ be $\mathrm{start}$ if $g$ holds and $\mathrm{lit}(\text{false})$
+otherwise, and let $e$ be the encoding of the output clause of $l$ with flags $f$, $g$ and
+counter $z$. Then for some $w'$ the machine goes in at most $|T_l| + 6 Z_b + 14$ steps from
+$\langle \mathrm{lit}(f), v, T_l R, o, z, c\rangle$ to
+$\langle \ell', w', R, e\,o, z + d, c + 1\rangle$, where juxtaposition is concatenation of
+stacks, top first. -/
 theorem lit_run (Zb : ℕ) (f : Bool) (l : ℕ × Bool) (R : List Sym)
     (hR : R.head?.bind Sym.bit? = none) (o : List Bool) (z c : ℕ)
     (hz : z + (if f then 0 else 1) ≤ Zb) (v : Bool) :
@@ -516,8 +669,22 @@ theorem lit_run (Zb : ℕ) (f : Bool) (l : ℕ × Bool) (R : List Sym)
   · rw [encodeClause_litCl]
     cases f <;> cases isLit R.head? <;> simp
 
-/-- The literals `Ls` of a clause above a further literal: their output clauses are prepended,
-the counter advances by `nz Ls f`. -/
+/-- **The literals of a clause in the emitter.** Write $\langle \ell, w, t, o, z, c\rangle$ for
+the configuration of the emitter machine at label $\ell$ with internal variable $w$, token stack
+$t$, output stack $o$, fresh counter $z$, output-clause count $c$ and empty scratch stacks. Let
+$Z_b$ be a natural number, $L = (l_1, \dots, l_k)$ a list of literals, $R$ a token stack whose
+top is a literal marker, $f$ and $v$ Booleans, $o$ an output stack and $z$, $c$ natural numbers
+with $z + m \le Z_b$, where $m$ is $k - 1$ (truncated at $0$) if $f$ holds and $k$ otherwise.
+The token block of a literal $(n, b)$ is the literal marker of polarity $b$ above the binary
+digits of $n$, most significant first (no digits for $n = 0$); let $T$ be the concatenation of
+the token blocks of $l_k, \dots, l_1$, in this order. For $1 \le i \le k$ let $z_i = z + m_i$,
+where $m_i$ is $k - i - 1$ (truncated at $0$) if $f$ holds and $k - i$ otherwise, let $f_i$ be
+true exactly when $f$ holds and $i = k$, and let $e_i$ be the encoding of the output clause of
+$l_i$ with flags $f_i$, false and counter $z_i$. Let $E = e_1 \cdots e_k$ (empty for $k = 0$),
+and let $f'$ be true exactly when $f$ holds and $k = 0$. Then for some $w'$ the machine goes in
+at most $|T| + k (6 Z_b + 14)$ steps from $\langle \mathrm{lit}(f), v, T R, o, z, c\rangle$ to
+$\langle \mathrm{lit}(f'), w', R, E\,o, z + m, c + k\rangle$, where juxtaposition is
+concatenation of stacks, top first. -/
 theorem lits_run (Zb : ℕ) :
     ∀ (Ls : List (ℕ × Bool)) (R : List Sym), isLit R.head? = true →
       ∀ (f : Bool) (o : List Bool) (z c : ℕ) (v : Bool), z + nz Ls f ≤ Zb →
@@ -547,7 +714,18 @@ theorem lits_run (Zb : ℕ) :
           nz_cons, hR]
         simp [Nat.add_assoc]
 
-/-- One clause, from its `cl` token: the encodings of `chain C z` are prepended. -/
+/-- **The 3SAT emitter processes one clause.** Let $C$ be a clause, $Z_b$, $z$ and $c$ natural
+numbers with $z + \mathrm{used}(C) \le Z_b$, where $\mathrm{used}(C) = \max(|C| - 1, 0)$, let $R$
+be a token list that is empty or starts with a clause token, $o$ an output bit list and $v$ a
+flag. Let $\mathrm{clRev}(C)$ be the tokens of $C$ as they lie on the token stack (a clause token,
+then the tokens of its literals, last literal first), and let $D_1, \dots, D_k$ be the clauses of
+$\mathrm{chain}(C, z)$. Then there is a flag $v'$ such that the 3SAT emitter machine, started at
+its start label with flag $v$, token stack $\mathrm{clRev}(C)$ followed by $R$, output stack $o$,
+fresh counter $z$, clause count $c$ and empty scratch counters, reaches in at most
+$|\mathrm{clRev}(C)| \cdot (6 Z_b + 15)$ steps its start label with flag $v'$, token stack $R$,
+output stack $\mathrm{enc}(D_1) \cdots \mathrm{enc}(D_k)$ followed by $o$, fresh counter
+$z + \mathrm{used}(C)$, clause count $c + k$ and empty scratch counters, where $\mathrm{enc}$ is
+the binary clause encoding. -/
 theorem clause_run (Zb : ℕ) (C : CNFClause) (R : List Sym) (hR : R = [] ∨ R.head? = some .cl)
     (o : List Bool) (z c : ℕ) (hz : z + used C ≤ Zb) (v : Bool) :
     ∃ v', RunLe prog ((Check.clRev C).length * (6 * Zb + 15))
@@ -589,8 +767,18 @@ theorem clause_run (Zb : ℕ) (C : CNFClause) (R : List Sym) (hR : R = [] ∨ R.
         · simp [walkF, nz, used]
         · simp [walkF, walkF_length, nz, used, Nat.add_assoc]
 
-/-- The whole formula above a rest `R` (empty or a further clause), from counter `0`: the
-encodings of `to3 φ` are prepended. -/
+/-- **The 3SAT emitter processes a whole formula.** Let $\varphi = C_1 \cdots C_m$ be a CNF
+formula, $u = \sum_{i=1}^{m} \max(|C_i| - 1, 0)$ the number of fresh variables its 3SAT
+translation uses, $Z_b \ge u$ a natural number, $R$ a token list that is empty or starts with a
+clause token, $o$ an output bit list and $v$ a flag. Let $T$ be the token list
+$\mathrm{clRev}(C_m) \cdots \mathrm{clRev}(C_1)$, where $\mathrm{clRev}(C)$ is the list of tokens
+of $C$ as they lie on the token stack, and let $D_1, \dots, D_k$ be the clauses of the 3SAT
+translation $\mathrm{to3}(\varphi)$. Then there is a flag $v'$ such that the 3SAT emitter machine,
+started at its start label with flag $v$, token stack $T$ followed by $R$, output stack $o$,
+fresh counter $0$, clause count $0$ and empty scratch counters, reaches in at most
+$|T| \cdot (6 Z_b + 15)$ steps its start label with flag $v'$, token stack $R$, output stack
+$\mathrm{enc}(D_1) \cdots \mathrm{enc}(D_k)$ followed by $o$, fresh counter $u$, clause count $k$
+and empty scratch counters, where $\mathrm{enc}$ is the binary clause encoding. -/
 theorem formula_run (Zb : ℕ) :
     ∀ (φ : CNF) (R : List Sym), (R = [] ∨ R.head? = some .cl) → ∀ (o : List Bool) (v : Bool),
       (to3Aux φ).1 ≤ Zb →
@@ -625,14 +813,20 @@ end Loops
 
 /-! ### The emitter -/
 
+/-- **Repeating a single bit.** For every bit $x$ and every $n \in \mathbb{N}$, the repeated block
+$\mathrm{rep}([x], n)$ is the list consisting of $n$ copies of $x$. -/
 theorem rep_single (x : Bool) (n : ℕ) : rep [x] n = List.replicate n x := by
   induction n with
   | zero => rfl
   | succ n ih => rw [rep_succ, ih]; rfl
 
-/-- **The emitter.** From `start`, with the token stack `(toks φ).reverse`, the output stack `o`
-and every other stack empty, the machine reaches `done` within `8 (|toks φ| + 1)²` steps with
-`encodeCNF (to3 φ)` pushed on the output stack (read top-first). -/
+/-- **The SAT-to-3SAT emitter writes the encoded translation in quadratic time.** Let $\varphi$ be
+a CNF formula, $o$ a list of bits and $T$ the token sequence of $\varphi$. Start the emitter
+machine at its start label, with any internal state, with the token stack holding $T$ reversed
+(so that the first token of $T$ is at the bottom), the output stack holding $o$, and every other
+stack empty. Then after at most $8(|T| + 1)^2$ steps the machine reaches its label
+$\mathrm{done}$, with some internal state and stack contents in which the output stack, read from
+the top, holds the binary code of the SAT-to-3SAT translation of $\varphi$ followed by $o$. -/
 theorem run (φ : CNF) (o : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hT : St .T = (toks φ).reverse) (hO : St .O = o) (h0 : ∀ k, k ≠ .T → k ≠ .O → St k = []) :
     ∃ v' S', RunLe prog (8 * ((toks φ).length + 1) ^ 2) ⟨some start, v, St⟩

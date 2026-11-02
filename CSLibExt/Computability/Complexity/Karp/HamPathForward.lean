@@ -41,27 +41,48 @@ open scoped List
 
 /-! ### The path -/
 
-/-- The row of diamond `i` left to right, with clause `j` inserted right after
-`hpR m i (3 j + 1)` when `c j = i`. -/
+/-- **The row of a diamond with its clauses inserted.** Let $m$ and $i$ be natural numbers and
+$c : \mathbb{N} \to \mathbb{N}$ a map, and write $r_l = m + i(3m + 2) + 1 + l$ for the row
+vertices of diamond $i$. The row of diamond $i$ for $c$ is the list $r_0, r_1, \dots, r_{3m}$ in
+which, for every $j < m$ with $c(j) = i$, the clause vertex $j$ is inserted right after
+$r_{3j+1}$. -/
 def hfRow (m i : ℕ) (c : ℕ → ℕ) : List ℕ :=
   (List.range (3 * m + 1)).flatMap fun l =>
     hpR m i l :: if l % 3 = 1 ∧ c (l / 3) = i then [l / 3] else []
 
-/-- The clause vertices of `hfRow m i c`, in row order. -/
+/-- **Clauses picked up by a diamond.** For natural numbers $m$ and $i$ and a map
+$c : \mathbb{N} \to \mathbb{N}$, the clauses picked up by diamond $i$ are the list of all
+$j < m$ with $c(j) = i$, in increasing order.
+
+These are the clause vertices of the row of diamond $i$, in row order. -/
 def hfPicks (m i : ℕ) (c : ℕ → ℕ) : List ℕ :=
   (List.range (3 * m + 1)).flatMap fun l => if l % 3 = 1 ∧ c (l / 3) = i then [l / 3] else []
 
-/-- Diamond `i`: its top, then its row left to right if `b`, right to left otherwise. -/
+/-- **The visit of a diamond.** For $m$ clauses, a diamond $i$, a clause-to-diamond map $c$ and
+a direction $b$, the visit of diamond $i$ is the list consisting of its top
+$T_i = m + i(3m+2)$ followed by its row with the clauses sent to $i$ by $c$ inserted, read left
+to right if $b$ is true and right to left otherwise. -/
 def hfDiamond (m i : ℕ) (c : ℕ → ℕ) (b : Bool) : List ℕ :=
   hpT m i :: if b then hfRow m i c else (hfRow m i c).reverse
 
-/-- The path through the first `k` diamonds in the directions `d`, ending at `hpT m k`. -/
+/-- **The forward path through the diamonds.** Let $m$ and $k$ be natural numbers, let
+$c : \mathbb{N} \to \mathbb{N}$ be a map and let $d : \mathbb{N} \to \{\mathrm{true},
+\mathrm{false}\}$ give each diamond $i$ a direction $d(i)$. The forward path through the first
+$k$ diamonds is the list obtained by concatenating, for $i = 0, 1, \dots, k - 1$ in this order,
+the traversal of diamond $i$ for $c$ in direction $d(i)$, and then appending the vertex
+$m + k(3m + 2)$, the top of diamond $k$. Here the traversal of diamond $i$ is its top
+$m + i(3m + 2)$ followed by its row $r_0, r_1, \dots, r_{3m}$, where
+$r_l = m + i(3m + 2) + 1 + l$ and the clause vertex $j$ is inserted right after $r_{3j+1}$ for
+every $j < m$ with $c(j) = i$; the row is read left to right if $d(i)$ is true and right to left
+otherwise. -/
 def hfPath (m k : ℕ) (c : ℕ → ℕ) (d : ℕ → Bool) : List ℕ :=
   (List.range k).flatMap (fun i => hfDiamond m i c (d i)) ++ [hpT m k]
 
 /-! ### Vertex bookkeeping -/
 
-/-- The clause vertices of a row are the clauses sent to its diamond. -/
+/-- **Clause vertices picked up by a row.** Let $m$ and $i$ be natural numbers and let
+$c : \mathbb{N} \to \mathbb{N}$. A natural number $v$ is one of the clause vertices picked up by the
+row of diamond $i$ under $c$, for $m$ clauses, if and only if $v < m$ and $c(v) = i$. -/
 theorem mem_hfPicks {m i v : ℕ} {c : ℕ → ℕ} : v ∈ hfPicks m i c ↔ v < m ∧ c v = i := by
   simp only [hfPicks, List.mem_flatMap, List.mem_range]
   constructor
@@ -77,7 +98,9 @@ theorem mem_hfPicks {m i v : ℕ} {c : ℕ → ℕ} : v ∈ hfPicks m i c ↔ v 
     have h2 : (3 * v + 1) / 3 = v := by omega
     exact ⟨3 * v + 1, by omega, by simp [h1, h2]⟩
 
-/-- No clause vertex appears twice in a row. -/
+/-- **The clause vertices of a row are distinct.** For all natural numbers $m$, $i$ and every
+function $c : \mathbb{N} \to \mathbb{N}$, the list of clause vertices picked up by the row of
+diamond $i$ under $c$, for $m$ clauses, has no repeated entries. -/
 theorem nodup_hfPicks (m i : ℕ) (c : ℕ → ℕ) : (hfPicks m i c).Nodup := by
   refine List.nodup_flatMap.2 ⟨fun l _ => ?_, List.pairwise_lt_range.imp fun {l l'} hll' => ?_⟩
   · split <;> simp
@@ -92,7 +115,11 @@ theorem nodup_hfPicks (m i : ℕ) (c : ℕ → ℕ) : (hfPicks m i c).Nodup := b
       · simp at hv'
     · simp at hv
 
-/-- Over all diamonds, the rows pick up every clause exactly once. -/
+/-- **Each clause is picked up by exactly one row.** Let $m, k$ be natural numbers and let $c$
+send every clause $j < m$ to a diamond $c(j) < k$. For each diamond $i$, list the clauses
+$j < m$ with $c(j) = i$ in increasing order (the clause vertices picked up by the row of
+diamond $i$). Concatenating these lists for $i = 0, \dots, k - 1$ gives a permutation of
+$0, 1, \dots, m - 1$. -/
 theorem flatMap_hfPicks_perm {m k : ℕ} {c : ℕ → ℕ} (hc : ∀ j < m, c j < k) :
     (List.range k).flatMap (fun i => hfPicks m i c) ~ List.range m := by
   refine (List.perm_ext_iff_of_nodup ?_ List.nodup_range).2 fun j => ?_
@@ -108,7 +135,11 @@ theorem flatMap_hfPicks_perm {m k : ℕ} {c : ℕ → ℕ} (hc : ∀ j < m, c j 
     · intro hj
       exact ⟨c j, hc j hj, hj, rfl⟩
 
-/-- A row is its row vertices followed by its clause vertices, up to order. -/
+/-- **The vertices of a diamond row.** For natural numbers $m$ and $i$ and a map
+$c : \mathbb{N} \to \mathbb{N}$, let $r = m + i(3m + 2) + 1$ be the left end of the row of
+diamond $i$. The row of diamond $i$ for $c$ (with its clause vertices inserted) is a permutation
+of the concatenation of the list $r, r + 1, \dots, r + 3m$ and the list of clauses picked up by
+diamond $i$ for $c$, that is, of all $j < m$ with $c(j) = i$ in increasing order. -/
 theorem hfRow_perm (m i : ℕ) (c : ℕ → ℕ) :
     hfRow m i c ~ List.range' (hpR m i 0) (3 * m + 1) ++ hfPicks m i c := by
   have h1 : (List.range (3 * m + 1)).flatMap (fun l => [hpR m i l]) =
@@ -119,8 +150,11 @@ theorem hfRow_perm (m i : ℕ) (c : ℕ → ℕ) :
   exact (List.flatMap_append_perm (List.range (3 * m + 1)) (fun l => [hpR m i l])
     fun l => if l % 3 = 1 ∧ c (l / 3) = i then [l / 3] else []).symm
 
-/-- A diamond is a block of consecutive vertices followed by its clause vertices, up to
-order. -/
+/-- **A diamond visit is a block of consecutive vertices plus its clauses.** For $m$ clauses, a
+diamond $i$, a clause-to-diamond map $c$ and a direction $b$, let $T_i = m + i(3m+2)$ be the top
+of diamond $i$. The visit of diamond $i$ in direction $b$ is a rearrangement of the list that
+consists of $T_i, T_i + 1, \dots, T_i + 3m + 1$ and then the clauses $j < m$ with $c(j) = i$ in
+increasing order. -/
 theorem hfDiamond_perm (m i : ℕ) (c : ℕ → ℕ) (b : Bool) :
     hfDiamond m i c b ~ List.range' (hpT m i) (3 * m + 2) ++ hfPicks m i c := by
   have hrow : (if b then hfRow m i c else (hfRow m i c).reverse) ~ hfRow m i c := by
@@ -131,7 +165,11 @@ theorem hfDiamond_perm (m i : ℕ) (c : ℕ → ℕ) (b : Bool) :
   rw [List.range'_succ, ← h0, List.cons_append]
   exact (hrow.trans (hfRow_perm m i c)).cons _
 
-/-- The tops and rows of the first `t` diamonds are the vertices `m, …, hpT m t - 1`. -/
+/-- **The first $t$ diamonds occupy consecutive vertices.** For natural numbers $m$ and $t$, let
+$T_i = m + i(3m+2)$. Concatenating, for $i = 0, \dots, t - 1$, the lists
+$T_i, T_i + 1, \dots, T_i + 3m + 1$ of $3m + 2$ consecutive numbers (the top and the row of
+diamond $i$) gives the list $m, m + 1, \dots, m + t(3m+2) - 1$, that is, the numbers from $m$
+to $T_t - 1$ in increasing order. -/
 theorem flatMap_range'_hpT (m t : ℕ) :
     (List.range t).flatMap (fun i => List.range' (hpT m i) (3 * m + 2)) =
       List.range' m (t * (3 * m + 2)) := by
@@ -141,7 +179,10 @@ theorem flatMap_range'_hpT (m t : ℕ) :
     rw [List.range_succ, List.flatMap_append, ih, List.flatMap_singleton, hpT,
       List.range'_append_1, Nat.add_one_mul t]
 
-/-- The path lists every vertex `0, …, hpT m k` once, when every clause goes to a diamond. -/
+/-- **The forward path visits every vertex once.** Let $m, k$ be natural numbers, let $c$ send
+every clause $j < m$ to a diamond $c(j) < k$, let $d$ be any directions, and let
+$T_k = m + k(3m+2)$. The forward path through the first $k$ diamonds in directions $d$ with
+clause choice $c$ is a permutation of the list $0, 1, \dots, T_k$. -/
 theorem hfPath_perm {m k : ℕ} {c : ℕ → ℕ} (d : ℕ → Bool) (hc : ∀ j < m, c j < k) :
     hfPath m k c d ~ List.range (hpT m k + 1) := by
   have h1 : (List.range k).flatMap (fun i => hfDiamond m i c (d i)) ~
@@ -169,8 +210,12 @@ theorem hfPath_perm {m k : ℕ} {c : ℕ → ℕ} (d : ℕ → Bool) (hc : ∀ j
 
 /-! ### Arcs along the path -/
 
-/-- The row is a chain for any relation holding on its forward row arcs and on the detours
-`hpR m i (3 j + 1) → j → hpR m i (3 j + 2)` of the clauses `j` sent to diamond `i`. -/
+/-- **Chain condition for a diamond row.** Let $R$ be a relation on $\mathbb{N}$, let $m$ and $i$
+be natural numbers and $c : \mathbb{N} \to \mathbb{N}$ a map, and write
+$r_l = m + i(3m + 2) + 1 + l$ for the row vertices of diamond $i$. If $R(r_l, r_{l+1})$ holds
+for every $l < 3m$, and $R(r_{3j+1}, j)$ and $R(j, r_{3j+2})$ hold for every $j < m$ with
+$c(j) = i$, then the row of diamond $i$ for $c$ is a chain for $R$: every entry is related by
+$R$ to the next one. -/
 theorem isChain_hfRow {R : ℕ → ℕ → Prop} {m i : ℕ} {c : ℕ → ℕ}
     (hrow : ∀ l < 3 * m, R (hpR m i l) (hpR m i (l + 1)))
     (hdet : ∀ j < m, c j = i → R (hpR m i (3 * j + 1)) j ∧ R j (hpR m i (3 * j + 2))) :
@@ -197,17 +242,31 @@ theorem isChain_hfRow {R : ℕ → ℕ → Prop} {m i : ℕ} {c : ℕ → ℕ}
       simpa using (hdet j (by omega) h.2).2
     · simpa using hrow l hl
 
-/-- The row starts at its left end. -/
+/-- **A row starts at its left end.** For $m$ clauses, a diamond $i$ and any clause-to-diamond
+map $c$, the row of diamond $i$ read left to right, with the clauses sent to $i$ by $c$
+inserted, starts at its left end, the row vertex $T_i + 1$, where $T_i = m + i(3m+2)$ is the
+top of diamond $i$. -/
 theorem head?_hfRow (m i : ℕ) (c : ℕ → ℕ) : (hfRow m i c).head? = some (hpR m i 0) := by
   simp [hfRow, List.range_succ_eq_map]
 
-/-- The row ends at its right end. -/
+/-- **A row ends at its right end.** For $m$ clauses, a diamond $i$ and any clause-to-diamond
+map $c$, the row of diamond $i$ read left to right, with the clauses sent to $i$ by $c$
+inserted, ends at the row vertex $T_i + 1 + 3m$, where $T_i = m + i(3m+2)$ is the top of
+diamond $i$. -/
 theorem getLast?_hfRow (m i : ℕ) (c : ℕ → ℕ) :
     (hfRow m i c).getLast? = some (hpR m i (3 * m)) := by
   simp [hfRow, List.range_succ]
 
-/-- A diamond followed by the next top is a chain for any relation holding on the frame arcs,
-the row arcs in both directions, and the detours of its direction. -/
+/-- **Chain condition for a diamond traversal.** Let $R$ be a relation on $\mathbb{N}$, let $m$
+and $i$ be natural numbers, $c : \mathbb{N} \to \mathbb{N}$ a map and $b$ a boolean, and write
+$t_a = m + a(3m + 2)$ for the top of diamond $a$ and $r_l = t_i + 1 + l$ for the row vertices
+of diamond $i$. Suppose that $R(t_i, r_0)$, $R(t_i, r_{3m})$, $R(r_0, t_{i+1})$ and
+$R(r_{3m}, t_{i+1})$ hold; that $R(r_l, r_{l+1})$ and $R(r_{l+1}, r_l)$ hold for every
+$l < 3m$; that if $b$ is true, then $R(r_{3j+1}, j)$ and $R(j, r_{3j+2})$ hold for every
+$j < m$ with $c(j) = i$; and that if $b$ is false, then $R(r_{3j+2}, j)$ and $R(j, r_{3j+1})$
+hold for every $j < m$ with $c(j) = i$. Then the traversal of diamond $i$ for $c$ in
+direction $b$, followed by $t_{i+1}$, is a chain for $R$: every entry is related by $R$ to the
+next one. -/
 theorem isChain_hfDiamond {R : ℕ → ℕ → Prop} {m i : ℕ} {c : ℕ → ℕ} {b : Bool}
     (hT0 : R (hpT m i) (hpR m i 0)) (hT3 : R (hpT m i) (hpR m i (3 * m)))
     (hB0 : R (hpR m i 0) (hpT m (i + 1))) (hB3 : R (hpR m i (3 * m)) (hpT m (i + 1)))
@@ -230,7 +289,13 @@ theorem isChain_hfDiamond {R : ℕ → ℕ → Prop} {m i : ℕ} {c : ℕ → �
       true_and]
     exact ⟨hT0, isChain_hfRow (fun l hl => (hrow l hl).1) (hpos rfl), hB3⟩
 
-/-- The path is a chain when every diamond followed by the next top is. -/
+/-- **Chain condition for the forward path.** Let $R$ be a relation on $\mathbb{N}$, let $m$ and
+$k$ be natural numbers, $c : \mathbb{N} \to \mathbb{N}$ a map and $d : \mathbb{N} \to
+\{\mathrm{true}, \mathrm{false}\}$ a choice of directions, and write $t_a = m + a(3m + 2)$ for
+the top of diamond $a$. If for every $i < k$ the traversal of diamond $i$ for $c$ in direction
+$d(i)$, followed by $t_{i+1}$, is a chain for $R$ (every entry is related by $R$ to the next
+one), then the forward path through the first $k$ diamonds for $c$ and $d$ is a chain for
+$R$. -/
 theorem isChain_hfPath {R : ℕ → ℕ → Prop} {m k : ℕ} {c : ℕ → ℕ} {d : ℕ → Bool}
     (hD : ∀ i < k, (hfDiamond m i c (d i) ++ [hpT m (i + 1)]).IsChain R) :
     (hfPath m k c d).IsChain R := by
@@ -245,26 +310,37 @@ theorem isChain_hfPath {R : ℕ → ℕ → Prop} {m k : ℕ} {c : ℕ → ℕ} 
     subst hy
     exact h1.2.2 x hx _ rfl
 
-/-- The path starts at the first top. -/
+/-- **The forward path starts at the first top.** For $m$ clauses, $k$ diamonds, any
+clause-to-diamond map $c$ and any directions $d$, the forward path through the first $k$
+diamonds in directions $d$ with clause choice $c$ starts at the top $T_0 = m$ of diamond $0$. -/
 theorem head?_hfPath (m k : ℕ) (c : ℕ → ℕ) (d : ℕ → Bool) :
     (hfPath m k c d).head? = some (hpT m 0) := by
   cases k with
   | zero => simp [hfPath]
   | succ k => simp [hfPath, List.range_succ_eq_map, hfDiamond]
 
-/-- The path ends at the last top. -/
+/-- **The forward path ends at the last top.** For $m$ clauses, $k$ diamonds, any
+clause-to-diamond map $c$ and any directions $d$, the forward path through the first $k$
+diamonds in directions $d$ with clause choice $c$ ends at the top $T_k = m + k(3m+2)$. -/
 theorem getLast?_hfPath (m k : ℕ) (c : ℕ → ℕ) (d : ℕ → Bool) :
     (hfPath m k c d).getLast? = some (hpT m k) := by
   simp [hfPath]
 
 /-! ### The arcs of the construction -/
 
-/-- An arc of a diamond of the construction is an arc of the construction. -/
+/-- **Diamond arcs are arcs of the construction.** Let $\varphi$ be a CNF formula, let
+$x_0, \dots, x_{k-1}$ be its distinct variables in the order used by the construction, and let
+$i < k$. Every arc of diamond $i$ for variable $x_i$ is an arc of the HAMPATH construction for
+$\varphi$. -/
 theorem mem_hamEdges_of_mem_diamondEdges {φ : CNF} {e : ℕ × ℕ} {i : ℕ} (hi : i < (hamVars φ).length)
     (h : e ∈ diamondEdges φ i ((hamVars φ).getD i 0)) : e ∈ hamEdges φ :=
   List.mem_flatMap.2 ⟨i, List.mem_range.2 hi, h⟩
 
-/-- The four frame arcs of a diamond. -/
+/-- **The frame arcs of a diamond.** Let $\varphi$ be a CNF formula with $m$ clauses, let $i$
+and $x$ be natural numbers, and write $t_a = m + a(3m + 2)$ for the top of diamond $a$ and
+$r_l = t_i + 1 + l$ for the row vertices of diamond $i$. The four arcs $(t_i, r_0)$,
+$(t_i, r_{3m})$, $(r_0, t_{i+1})$ and $(r_{3m}, t_{i+1})$ are arcs of diamond $i$ for the
+variable $x$ in the construction for $\varphi$. -/
 theorem mem_diamondEdges_frame (φ : CNF) (i x : ℕ) :
     (hpT φ.length i, hpR φ.length i 0) ∈ diamondEdges φ i x ∧
       (hpT φ.length i, hpR φ.length i (3 * φ.length)) ∈ diamondEdges φ i x ∧
@@ -272,7 +348,10 @@ theorem mem_diamondEdges_frame (φ : CNF) (i x : ℕ) :
       (hpR φ.length i (3 * φ.length), hpT φ.length (i + 1)) ∈ diamondEdges φ i x := by
   simp [diamondEdges]
 
-/-- The row arcs of a diamond, in both directions. -/
+/-- **Row arcs of a diamond.** Let $\varphi$ be a CNF formula with $m$ clauses, let $i$ and $x$ be
+natural numbers, and write $r_i(l)$ for row vertex $l$ of diamond $i$. For every $l < 3m$, the arcs
+of diamond $i$ for variable $x$ include both the arc from $r_i(l)$ to $r_i(l+1)$ and the arc from
+$r_i(l+1)$ to $r_i(l)$. -/
 theorem mem_diamondEdges_row (φ : CNF) (i x : ℕ) {l : ℕ} (hl : l < 3 * φ.length) :
     (hpR φ.length i l, hpR φ.length i (l + 1)) ∈ diamondEdges φ i x ∧
       (hpR φ.length i (l + 1), hpR φ.length i l) ∈ diamondEdges φ i x := by
@@ -281,7 +360,11 @@ theorem mem_diamondEdges_row (φ : CNF) (i x : ℕ) {l : ℕ} (hl : l < 3 * φ.l
     exact List.mem_append_left _ (List.mem_append_right _
       (List.mem_flatMap.2 ⟨l, List.mem_range.2 hl, by simp⟩))
 
-/-- The detour of a positive occurrence: `hpR (3 j + 1) → j → hpR (3 j + 2)`. -/
+/-- **Positive detour arcs of a diamond.** Let $\varphi$ be a CNF formula with $m$ clauses, let
+$i$, $x$, $j$ be natural numbers with $j < m$, and write $r_i(l)$ for row vertex $l$ of diamond
+$i$. If the variable $x$ occurs positively in clause $j$ of $\varphi$ (counting clauses from $0$),
+then the arcs of diamond $i$ for variable $x$ include both the arc from $r_i(3j+1)$ to clause
+vertex $j$ and the arc from clause vertex $j$ to $r_i(3j+2)$. -/
 theorem mem_diamondEdges_pos {φ : CNF} {i x j : ℕ} (hj : j < φ.length)
     (h : (x, true) ∈ φ.getD j []) :
     (hpR φ.length i (3 * j + 1), j) ∈ diamondEdges φ i x ∧
@@ -292,7 +375,11 @@ theorem mem_diamondEdges_pos {φ : CNF} {i x j : ℕ} (hj : j < φ.length)
       simp only [h, ↓reduceIte]
       simp⟩)
 
-/-- The detour of a negative occurrence: `hpR (3 j + 2) → j → hpR (3 j + 1)`. -/
+/-- **The detour arcs of a negative occurrence.** Let $\varphi$ be a CNF formula with $m$
+clauses, let $i$, $x$ and $j$ be natural numbers with $j < m$, and write
+$r_l = m + i(3m + 2) + 1 + l$ for the row vertices of diamond $i$. If the negative literal
+$\neg x$ occurs in clause $j$ of $\varphi$, then $(r_{3j+2}, j)$ and $(j, r_{3j+1})$ are arcs
+of diamond $i$ for the variable $x$ in the construction for $\varphi$. -/
 theorem mem_diamondEdges_neg {φ : CNF} {i x j : ℕ} (hj : j < φ.length)
     (h : (x, false) ∈ φ.getD j []) :
     (hpR φ.length i (3 * j + 2), j) ∈ diamondEdges φ i x ∧
@@ -305,8 +392,15 @@ theorem mem_diamondEdges_neg {φ : CNF} {i x j : ℕ} (hj : j < φ.length)
 
 /-! ### The forward direction -/
 
-/-- The path for an assignment `σ` and a clause-to-diamond choice `c` (each clause `j` goes to a
-diamond whose variable, valued by `σ`, is a literal of clause `j`) is Hamiltonian. -/
+/-- **A satisfying choice gives a Hamiltonian path.** Let $\varphi$ be a CNF formula with $m$
+clauses, let $v_0, \dots, v_{k-1}$ be its distinct variables in the order used by the
+construction, let $\sigma$ assign a truth value to every variable, and write
+$t_a = m + a(3m + 2)$ for the top of diamond $a$. Let $c : \mathbb{N} \to \mathbb{N}$ be such
+that for every $j < m$ we have $c(j) < k$ and clause $j$ of $\varphi$ contains the literal over
+$v_{c(j)}$ that $\sigma$ makes true (positive if $\sigma(v_{c(j)})$ is true, negative
+otherwise). Then the forward path through the first $k$ diamonds for $c$, with diamond $i$
+traversed in direction $\sigma(v_i)$, is a Hamiltonian path from $t_0$ to $t_k$ in the digraph
+on the vertices $0, \dots, t_k$ whose arcs are the arcs of the construction for $\varphi$. -/
 theorem isHamPath_hfPath {φ : CNF} {σ : ℕ → Bool} {c : ℕ → ℕ}
     (hc : ∀ j < φ.length, c j < (hamVars φ).length ∧
       ((hamVars φ).getD (c j) 0, σ ((hamVars φ).getD (c j) 0)) ∈ φ.getD j []) :
@@ -345,8 +439,11 @@ theorem isHamPath_hfPath {φ : CNF} {σ : ℕ → Bool} {c : ℕ → ℕ}
     obtain ⟨e1, e2⟩ := mem_diamondEdges_neg (i := i) hj hmem
     exact ⟨arc e1 (hR _ (by omega)) (hJ j hj), arc e2 (hJ j hj) (hR _ (by omega))⟩
 
-/-- Forward direction of SAT ≤ HAMPATH: a satisfiable formula yields a Hamiltonian path of
-its construction. -/
+/-- **Satisfiable formulas give Hamiltonian paths (SAT ≤ HAMPATH, forward direction).** Let
+$\varphi$ be a satisfiable CNF formula with $m$ clauses and $k$ distinct variables, and let
+$T_i = m + i(3m+2)$ be the top of diamond $i$. Then the digraph on the vertices
+$0, \dots, T_k$ whose arcs are the arcs of the HAMPATH construction for $\varphi$ has a
+Hamiltonian path from $T_0$ to $T_k$. -/
 theorem exists_isHamPath_of_cnfSat {φ : CNF} (h : CNFSat φ) :
     ∃ p, IsHamPath (hpT φ.length (hamVars φ).length + 1) (hamEdges φ)
       (hpT φ.length 0) (hpT φ.length (hamVars φ).length) p := by
