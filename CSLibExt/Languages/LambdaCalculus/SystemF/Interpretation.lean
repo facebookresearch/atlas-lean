@@ -18,6 +18,25 @@ arguments. A universal type quantifies *all* beta-invariant relations on the
 fixed syntactic term model, including interpretations of quantified types.
 The quantifier lives in impredicative Prop, without a universe ladder for the
 object-language types. No typing or parametricity assumption defines a relation.
+
+## Provenance and adaptation
+
+The variable, arrow, and polymorphic relation clauses adapt Reynolds (1983,
+Sections 3 and 8), in the related-environment formulation of Wadler (1989,
+Section 6). Here both sides use the same fixed CSLib model of erased untyped
+terms: arrows use model application, and forall quantifies all beta-invariant
+binary relations on that carrier. This is a syntactic-model interpretation,
+not Reynolds' proposed set-theoretic semantics or an all-universes set model.
+Its fundamental theorem concerns erased terms modulo full-beta conversion;
+no CBV termination or normalization claim is made.
+
+## References
+
+* John C. Reynolds, *Types, Abstraction and Parametric Polymorphism*,
+  *Information Processing 83*, R. E. A. Mason (ed.), North-Holland, 1983,
+  pp. 513-523, Sections 3 and 8.
+* Philip Wadler, *Theorems for free!*, *FPCA '89*, ACM Press, 1989,
+  pp. 347-359, Section 6. <https://doi.org/10.1145/99370.99404>
 -/
 
 @[expose] public section
