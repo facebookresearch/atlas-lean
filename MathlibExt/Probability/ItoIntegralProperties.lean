@@ -26,9 +26,14 @@ linearity with the existing one-integrand Itô isometry gives the two-integrand 
 
 * `ProbabilityTheory.integrandDist_eq_dist_sq_itoIntegralL2`: the two-integrand
   `L²` distance isometry for Itô-approximable processes.
-* `ProbabilityTheory.itoIntegral_add`: additivity for progressive square-integrable integrands.
-* `ProbabilityTheory.itoIntegral_smul`: real homogeneity.
-* `ProbabilityTheory.itoIntegral_isometry_sub`: the finite `L²` difference identity.
+* `ProbabilityTheory.itoIntegral_add_of_isPreBrownianReal`: additivity for progressive
+  square-integrable integrands against a pre-Brownian motion.
+* `ProbabilityTheory.itoIntegral_smul_of_isPreBrownianReal`: real homogeneity in the same
+  generality.
+* `ProbabilityTheory.itoIntegral_isometry_sub_of_isPreBrownianReal`: the finite `L²` difference
+  identity in the same generality.
+* `ProbabilityTheory.itoIntegral_add`, `ProbabilityTheory.itoIntegral_smul`, and
+  `ProbabilityTheory.itoIntegral_isometry_sub`: the original Brownian-motion interfaces.
 -/
 
 @[expose] public section
@@ -430,9 +435,10 @@ end
 `F`-progressive integrands `H₁, H₂` with `E ∫_0^t H_i² du < ∞`, the integral of the sum is almost
 surely the sum of the integrals. Together with homogeneity and the difference isometry this pins
 down the integral on the whole `L²` space of progressive integrands. Only the pre-Brownian
-hypothesis is used; no path continuity is needed. -/
-public theorem itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
+finite-dimensional laws are used; path continuity is not required. -/
+public theorem itoIntegral_add_of_isPreBrownianReal {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
@@ -452,10 +458,28 @@ public theorem itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
     hL2ae] with ω hsum h1 h2 hL2ω
   rw [hsum, h1, h2, hL2ω]
 
-/-- **Linearity (homogeneity).** The Itô integral is homogeneous in the integrand. Only the
-pre-Brownian hypothesis is used; no path continuity is needed. -/
-public theorem itoIntegral_smul {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
+/-- **Linearity (additivity).** The Itô integral is additive in the integrand: for
+`F`-progressive integrands `H₁, H₂` with `E ∫_0^t H_i² du < ∞`, the integral of the sum is almost
+surely the sum of the integrals. Together with homogeneity and the difference isometry this pins
+down the integral on the whole `L²` space of progressive integrands. -/
+public theorem itoIntegral_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂) (t : ℝ≥0)
+    (hH₁2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₁ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞)
+    (hH₂2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₂ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
+    itoIntegral P F B (H₁ + H₂) t =ᵐ[P]
+      fun ω ↦ itoIntegral P F B H₁ t ω + itoIntegral P F B H₂ t ω := by
+  exact itoIntegral_add_of_isPreBrownianReal hB.toIsPreBrownianReal hBF hInd hH₁ hH₂ t
+    hH₁2 hH₂2
+
+/-- **Linearity (homogeneity).** The Itô integral is homogeneous in the integrand for a
+pre-Brownian integrator; path continuity is not required. -/
+public theorem itoIntegral_smul_of_isPreBrownianReal {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
@@ -472,13 +496,26 @@ public theorem itoIntegral_smul {Ω : Type*} {mΩ : MeasurableSpace Ω}
     itoIntegral_ae_eq P F B H t, hL2ae] with ω ha h hL2ω
   rw [ha, h, hL2ω]
 
+/-- **Linearity (homogeneity).** The Itô integral is homogeneous in the integrand. -/
+public theorem itoIntegral_smul {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (a : ℝ) (t : ℝ≥0)
+    (hH2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
+    itoIntegral P F B (a • H) t =ᵐ[P] fun ω ↦ a * itoIntegral P F B H t ω := by
+  exact itoIntegral_smul_of_isPreBrownianReal hB.toIsPreBrownianReal hBF hInd hH a t hH2
+
 /-- **Difference isometry.** For two `F`-progressive integrands with `E ∫_0^t H_i² du < ∞`, the
 difference of the integrals is square-integrable and
 `E[(∫ H₁ dB - ∫ H₂ dB)²] = E ∫ (H₁ - H₂)² du`. With linearity this is the two-integrand isometry
 that, together with the elementary-integrand formula, determines the construction on the whole
-`L²` space. Only the pre-Brownian hypothesis is used; no path continuity is needed. -/
-public theorem itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
+`L²` space. Only the pre-Brownian finite-dimensional laws are used; path continuity is not
+required. -/
+public theorem itoIntegral_isometry_sub_of_isPreBrownianReal {Ω : Type*}
+    {mΩ : MeasurableSpace Ω} {P : Measure Ω} {F : Filtration ℝ≥0 mΩ}
+    {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P)
@@ -514,9 +551,9 @@ public theorem itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
   have hproc : H₁ + (-1 : ℝ) • H₂ = H₁ - H₂ := by
     funext u ω
     simp [sub_eq_add_neg]
-  have hadd := itoIntegral_add hB hBF hInd hH₁ hnegP t hH₁2 hneg2
+  have hadd := itoIntegral_add_of_isPreBrownianReal hB hBF hInd hH₁ hnegP t hH₁2 hneg2
   rw [hproc] at hadd
-  have hneg := itoIntegral_smul hB hBF hInd hH₂ (-1) t hH₂2
+  have hneg := itoIntegral_smul_of_isPreBrownianReal hB hBF hInd hH₂ (-1) t hH₂2
   have hae : (fun ω ↦ itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω) =ᵐ[P]
       itoIntegral P F B (H₁ - H₂) t := by
     filter_upwards [hadd, hneg] with ω ha hn
@@ -535,5 +572,25 @@ public theorem itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
     _ = ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
         ‖H₁ u.toNNReal ω - H₂ u.toNNReal ω‖ₑ ^ 2) ∂P := by
       rfl
+
+/-- **Difference isometry.** For two `F`-progressive integrands with `E ∫_0^t H_i² du < ∞`, the
+difference of the integrals is square-integrable and
+`E[(∫ H₁ dB - ∫ H₂ dB)²] = E ∫ (H₁ - H₂)² du`. With linearity this is the two-integrand isometry
+that, together with the elementary-integrand formula, determines the construction on the whole
+`L²` space. -/
+public theorem itoIntegral_isometry_sub {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
+    (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
+      (F s) P)
+    {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂) (t : ℝ≥0)
+    (hH₁2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₁ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞)
+    (hH₂2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₂ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
+    MemLp (fun ω ↦ itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω) 2 P ∧
+      ∫⁻ ω, ‖itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω‖ₑ ^ 2 ∂P =
+        ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
+          ‖H₁ u.toNNReal ω - H₂ u.toNNReal ω‖ₑ ^ 2) ∂P := by
+  exact itoIntegral_isometry_sub_of_isPreBrownianReal hB.toIsPreBrownianReal hBF hInd hH₁ hH₂ t
+    hH₁2 hH₂2
 
 end ProbabilityTheory

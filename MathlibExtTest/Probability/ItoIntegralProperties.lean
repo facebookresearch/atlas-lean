@@ -15,10 +15,10 @@ import MathlibExtTest.Probability.ItoIntegralSampleDependent
 /-!
 # Tests for algebraic properties of the Itô integral
 
-The probes cover unequal nonzero progressive integrands, cancellation, the scalars `0`, `1`, and
-`-1`, the boundary time `0`, two distinct integration horizons, and an integrand supported only at
-time `0` or after the chosen horizon. A sample-dependent probe uses the sign selected by `B 1` on
-two adjacent elementary windows and computes its difference energy exactly. Brownian-motion
+The probes cover the exact Brownian wrappers, the broader pre-Brownian APIs, unequal nonzero
+progressive integrands, cancellation, the scalars `0`, `1`, and `-1`, the boundary time `0`, two
+distinct horizons, and off-horizon support. A sample-dependent pre-Brownian probe uses the sign
+selected by `B 1` on two adjacent windows and computes its difference energy exactly. Process
 hypotheses remain explicit because the base library has no concrete continuous Brownian
 construction; all integrand hypotheses are discharged.
 -/
@@ -44,7 +44,7 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     (hH₂2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₂ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
     itoIntegral P F B (H₁ + H₂) t =ᵐ[P]
       fun ω ↦ itoIntegral P F B H₁ t ω + itoIntegral P F B H₂ t ω :=
-  itoIntegral_add hB.toIsPreBrownianReal hBF hInd hH₁ hH₂ t hH₁2 hH₂2
+  itoIntegral_add hB hBF hInd hH₁ hH₂ t hH₁2 hH₂2
 
 example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep
@@ -52,7 +52,7 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (a : ℝ) (t : ℝ≥0)
     (hH2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
     itoIntegral P F B (a • H) t =ᵐ[P] fun ω ↦ a * itoIntegral P F B H t ω :=
-  itoIntegral_smul hB.toIsPreBrownianReal hBF hInd hH a t hH2
+  itoIntegral_smul hB hBF hInd hH a t hH2
 
 example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep
@@ -65,7 +65,41 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       ∫⁻ ω, ‖itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω‖ₑ ^ 2 ∂P =
         ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
           ‖H₁ u.toNNReal ω - H₂ u.toNNReal ω‖ₑ ^ 2) ∂P :=
-  itoIntegral_isometry_sub hB.toIsPreBrownianReal hBF hInd hH₁ hH₂ t hH₁2 hH₂2
+  itoIntegral_isometry_sub hB hBF hInd hH₁ hH₂ t hH₁2 hH₂2
+
+/-! The next three examples exercise the broader pre-Brownian APIs directly. -/
+
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep
+      (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance) (F s) P)
+    {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂)
+    (t : ℝ≥0)
+    (hH₁2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₁ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞)
+    (hH₂2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₂ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
+    itoIntegral P F B (H₁ + H₂) t =ᵐ[P]
+      fun ω ↦ itoIntegral P F B H₁ t ω + itoIntegral P F B H₂ t ω :=
+  itoIntegral_add_of_isPreBrownianReal hB hBF hInd hH₁ hH₂ t hH₁2 hH₂2
+
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep
+      (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance) (F s) P)
+    {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H) (a : ℝ) (t : ℝ≥0)
+    (hH2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
+    itoIntegral P F B (a • H) t =ᵐ[P] fun ω ↦ a * itoIntegral P F B H t ω :=
+  itoIntegral_smul_of_isPreBrownianReal hB hBF hInd hH a t hH2
+
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
+    (hInd : ∀ s t, s ≤ t → Indep
+      (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance) (F s) P)
+    {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂)
+    (t : ℝ≥0)
+    (hH₁2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₁ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞)
+    (hH₂2 : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H₂ u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞) :
+    MemLp (fun ω ↦ itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω) 2 P ∧
+      ∫⁻ ω, ‖itoIntegral P F B H₁ t ω - itoIntegral P F B H₂ t ω‖ₑ ^ 2 ∂P =
+        ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
+          ‖H₁ u.toNNReal ω - H₂ u.toNNReal ω‖ₑ ^ 2) ∂P :=
+  itoIntegral_isometry_sub_of_isPreBrownianReal hB hBF hInd hH₁ hH₂ t hH₁2 hH₂2
 
 private theorem const_energy_ne_top [IsFiniteMeasure P] (c : ℝ) (t : ℝ≥0) :
     ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t,
@@ -73,8 +107,9 @@ private theorem const_energy_ne_top [IsFiniteMeasure P] (c : ℝ) (t : ℝ≥0) 
   simp
   exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (by simp) (by simp)) (measure_ne_top P _)
 
-/-- Additivity applies to two unequal, nonzero progressive integrands. -/
-example (hB : IsBrownianReal B P) (hBF : Adapted F B)
+/-- Additivity for two unequal, nonzero progressive integrands needs only a pre-Brownian
+integrator. -/
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep
       (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance) (F s) P)
     (t : ℝ≥0) :
@@ -83,7 +118,7 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       fun ω ↦ itoIntegral P F B (fun _ _ ↦ (1 : ℝ)) t ω +
         itoIntegral P F B (fun _ _ ↦ (2 : ℝ)) t ω := by
   have := hB.isGaussianProcess.isProbabilityMeasure
-  exact itoIntegral_add hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 1)
+  exact itoIntegral_add_of_isPreBrownianReal hB hBF hInd (isProgressive_const F 1)
     (isProgressive_const F 2) t (const_energy_ne_top 1 t) (const_energy_ne_top 2 t)
 
 /-- Scalar zero sends a nonzero integrand to the zero integral. -/
@@ -95,7 +130,7 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       (fun (_ : ℝ≥0) (_ : Ω) ↦ (2 : ℝ))) t =ᵐ[P]
         fun ω ↦ (0 : ℝ) * itoIntegral P F B (fun _ _ ↦ (2 : ℝ)) t ω := by
   have := hB.isGaussianProcess.isProbabilityMeasure
-  exact itoIntegral_smul hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 2) 0 t
+  exact itoIntegral_smul hB hBF hInd (isProgressive_const F 2) 0 t
     (const_energy_ne_top 2 t)
 
 /-- Scalar one preserves the selected representative almost surely. -/
@@ -107,11 +142,11 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       (fun (_ : ℝ≥0) (_ : Ω) ↦ (2 : ℝ))) t =ᵐ[P]
       fun ω ↦ (1 : ℝ) * itoIntegral P F B (fun _ _ ↦ (2 : ℝ)) t ω := by
   have := hB.isGaussianProcess.isProbabilityMeasure
-  exact itoIntegral_smul hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 2) 1 t
+  exact itoIntegral_smul hB hBF hInd (isProgressive_const F 2) 1 t
     (const_energy_ne_top 2 t)
 
-/-- Scalar `-1` negates the integral almost surely. -/
-example (hB : IsBrownianReal B P) (hBF : Adapted F B)
+/-- Scalar `-1` negates the integral under the pre-Brownian hypotheses. -/
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep
       (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance) (F s) P)
     (t : ℝ≥0) :
@@ -119,8 +154,8 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       (fun (_ : ℝ≥0) (_ : Ω) ↦ (2 : ℝ))) t =ᵐ[P]
       fun ω ↦ -itoIntegral P F B (fun _ _ ↦ (2 : ℝ)) t ω := by
   have := hB.isGaussianProcess.isProbabilityMeasure
-  simpa using itoIntegral_smul hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 2) (-1) t
-    (const_energy_ne_top 2 t)
+  simpa using itoIntegral_smul_of_isPreBrownianReal hB hBF hInd
+    (isProgressive_const F 2) (-1) t (const_energy_ne_top 2 t)
 
 /-- Addition and scalar `-1` give cancellation for a nonzero integrand. -/
 example (hB : IsBrownianReal B P) (hBF : Adapted F B)
@@ -143,9 +178,9 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       ‖(((-1 : ℝ) • (fun (_ : ℝ≥0) (_ : Ω) ↦ (2 : ℝ))) u.toNNReal ω)‖ₑ ^ 2)
         ∂P ≠ ∞ := by
     simpa using const_energy_ne_top (P := P) (-2) t
-  filter_upwards [itoIntegral_add hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 2) hneg t
+  filter_upwards [itoIntegral_add hB hBF hInd (isProgressive_const F 2) hneg t
       (const_energy_ne_top 2 t) hneg2,
-    itoIntegral_smul hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 2) (-1) t
+    itoIntegral_smul hB hBF hInd (isProgressive_const F 2) (-1) t
       (const_energy_ne_top 2 t)] with ω hadd hsmul
   rw [hadd, hsmul]
   simp
@@ -157,7 +192,7 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     {H₁ H₂ : ℝ≥0 → Ω → ℝ} (hH₁ : IsProgressive F H₁) (hH₂ : IsProgressive F H₂) :
     MemLp (fun ω ↦ itoIntegral P F B H₁ 0 ω - itoIntegral P F B H₂ 0 ω) 2 P ∧
       ∫⁻ ω, ‖itoIntegral P F B H₁ 0 ω - itoIntegral P F B H₂ 0 ω‖ₑ ^ 2 ∂P = 0 := by
-  simpa using itoIntegral_isometry_sub hB.toIsPreBrownianReal hBF hInd hH₁ hH₂ 0 (by simp) (by simp)
+  simpa using itoIntegral_isometry_sub hB hBF hInd hH₁ hH₂ 0 (by simp) (by simp)
 
 /-- Unequal constant integrands have the expected difference energy on two distinct horizons. -/
 example (hB : IsBrownianReal B P) (hBF : Adapted F B)
@@ -169,12 +204,12 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
         itoIntegral P F B (fun _ _ ↦ (2 : ℝ)) 2 ω‖ₑ ^ 2 ∂P = 2 := by
   have := hB.isGaussianProcess.isProbabilityMeasure
   constructor
-  · have h := (itoIntegral_isometry_sub hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 1)
+  · have h := (itoIntegral_isometry_sub hB hBF hInd (isProgressive_const F 1)
       (isProgressive_const F 2) 1 (const_energy_ne_top 1 1)
         (const_energy_ne_top 2 1)).2
     norm_num [Real.enorm_eq_ofReal_abs] at h
     simpa [Real.enorm_eq_ofReal_abs] using h
-  · have h := (itoIntegral_isometry_sub hB.toIsPreBrownianReal hBF hInd (isProgressive_const F 1)
+  · have h := (itoIntegral_isometry_sub hB hBF hInd (isProgressive_const F 1)
       (isProgressive_const F 2) 2 (const_energy_ne_top 1 2)
         (const_energy_ne_top 2 2)).2
     norm_num [Real.enorm_eq_ofReal_abs] at h
@@ -217,12 +252,13 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
       itoIntegral P F B (fun _ _ ↦ (0 : ℝ)) t ω) 2 P ∧
       ∫⁻ ω, ‖itoIntegral P F B (outsideIoc t) t ω -
         itoIntegral P F B (fun _ _ ↦ (0 : ℝ)) t ω‖ₑ ^ 2 ∂P = 0 := by
-  simpa [outsideIoc_energy (P := P) t] using itoIntegral_isometry_sub hB.toIsPreBrownianReal hBF hInd
+  simpa [outsideIoc_energy (P := P) t] using itoIntegral_isometry_sub hB hBF hInd
     (outsideIoc_progressive t) (isProgressive_const F 0) t
     (by simp [outsideIoc_energy (P := P) t]) (by simp)
 
-/-- A coefficient selected by `B 1` on adjacent windows has difference energy exactly `2`. -/
-example (hB : IsBrownianReal B P) (hBF : Adapted F B)
+/-- A coefficient selected by `B 1` on adjacent windows has difference energy exactly `2`
+under the pre-Brownian hypotheses. -/
+example (hB : IsPreBrownianReal B P) (hBF : Adapted F B)
     (hInd : ∀ s t, s ≤ t → Indep
       (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance) (F s) P) :
     ∫⁻ ω, ‖itoIntegral P F B (signedWindow B 1 2) 3 ω -
@@ -234,7 +270,7 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     (by norm_num) (by norm_num) 3
   have h23e := signedWindow_energy_ne_top (P := P) hBF 2 3
     (by norm_num) (by norm_num) 3
-  rw [(itoIntegral_isometry_sub hB.toIsPreBrownianReal hBF hInd h12 h23 3 h12e h23e).2]
+  rw [(itoIntegral_isometry_sub_of_isPreBrownianReal hB hBF hInd h12 h23 3 h12e h23e).2]
   calc
     (∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) 3,
       ‖signedWindow B 1 2 u.toNNReal ω - signedWindow B 2 3 u.toNNReal ω‖ₑ ^ 2) ∂P) =
@@ -245,11 +281,17 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
     _ = 2 := by
       norm_num [lintegral_indicator, Set.Ioc_inter_Ioc, Real.volume_Ioc]
 
+#check @itoIntegral_add_of_isPreBrownianReal
+#check @itoIntegral_smul_of_isPreBrownianReal
+#check @itoIntegral_isometry_sub_of_isPreBrownianReal
 #check @itoIntegral_add
 #check @itoIntegral_smul
 #check @itoIntegral_isometry_sub
 
 #print axioms integrandDist_eq_dist_sq_itoIntegralL2
+#print axioms itoIntegral_add_of_isPreBrownianReal
+#print axioms itoIntegral_smul_of_isPreBrownianReal
+#print axioms itoIntegral_isometry_sub_of_isPreBrownianReal
 #print axioms itoIntegral_add
 #print axioms itoIntegral_smul
 #print axioms itoIntegral_isometry_sub
