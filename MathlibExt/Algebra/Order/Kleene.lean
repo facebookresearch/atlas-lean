@@ -21,6 +21,10 @@ These proofs originate in this project's Meta program-verification
 development and are reused here with unchanged statements and proof bodies.
 That development follows the style of Kozen, *Kleene algebra with tests*,
 ACM TOPLAS 19(3), 1997. No PDL or relation-algebra definitions are needed.
+
+See `docs/provenance/kleene/Algebra.lean.txt`, lines 192-215, and the
+adjacent `manifest.json` for exact source declarations, origin path/revision
+and SHA-256 receipts. These are uncompiled documentation snapshots.
 -/
 
 public section

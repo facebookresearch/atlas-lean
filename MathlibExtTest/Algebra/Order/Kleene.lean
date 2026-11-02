@@ -18,6 +18,11 @@ The abstract sliding/zero/identity consumers are reused from this project's
 Meta program-verification development. Concrete languages and their existing
 product Kleene algebra supply noninvertible simulators and proper nonzero
 subidentities.
+
+The original consumers are preserved in
+`docs/provenance/kleene/AlgebraTests.lean.txt`, lines 228-237. The adjacent
+`manifest.json` records their origin path/revision and exact SHA-256 receipts;
+the snapshots are documentation, not compiled test dependencies.
 -/
 
 open scoped Computability
