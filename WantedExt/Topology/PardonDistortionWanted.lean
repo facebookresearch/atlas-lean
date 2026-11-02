@@ -77,40 +77,53 @@ open MathlibExt.Topology.ConwayKnotShared.KnotTheory
 knot entries via `WantedExt.Topology.ConwayKnotShared` and is not copied
 here, so all knot entries speak about the same `Knot` type. -/
 
-/-- The speed of a smooth knot with its given parametrization. -/
+/-- **Speed of a knot.** For a knot $K$ with parametrization $\gamma$ and a real number $t$,
+the speed of $K$ at $t$ is the Euclidean norm $\lVert \gamma'(t) \rVert$ of the derivative of
+$\gamma$ at $t$. -/
 def speed (K : Knot) (t : ℝ) : ℝ :=
   ‖deriv K.curve t‖
 
-/-- Arclength of the parametrized arc between `s` and `t`.  The absolute value
-makes this independent of the order of the endpoints. -/
+/-- **Arc length between two parameters.** For a knot $K$ with parametrization $\gamma$ and real
+numbers $s$ and $t$, the arc length of $K$ between $s$ and $t$ is
+$\left| \int_s^t \lVert \gamma'(u) \rVert \, du \right|$, the length of the arc that $\gamma$ traces
+between the parameters $s$ and $t$. It does not depend on the order of $s$ and $t$. -/
 def parameterArcLength (K : Knot) (s t : ℝ) : ℝ :=
   |∫ u in s..t, speed K u|
 
-/-- Total arclength over the fundamental interval `[0, 2π]`. -/
+/-- **Total arc length of a knot.** For a knot $K$ with parametrization $\gamma$, the total arc
+length of $K$ is the arc length of $K$ between the parameters $0$ and $2\pi$, namely
+$\left| \int_0^{2\pi} \lVert \gamma'(u) \rVert \, du \right|$. -/
 def totalArcLength (K : Knot) : ℝ :=
   parameterArcLength K 0 (2 * Real.pi)
 
-/-- Intrinsic distance along the closed curve, for parameters in one
-fundamental interval: the shorter of the two complementary arc lengths. -/
+/-- **Intrinsic distance on a knot.** For a knot $K$ and real numbers $s$ and $t$, let $\ell$ be the
+arc length of $K$ between the parameters $s$ and $t$, and let $L$ be the total arc length of $K$.
+The intrinsic distance between $s$ and $t$ is $\min(\ell, L - \ell)$. When $s$ and $t$ lie in one
+closed interval of length $2\pi$, this is the length of the shorter of the two arcs of $K$ joining
+the points with parameters $s$ and $t$. -/
 def intrinsicDistance (K : Knot) (s t : ℝ) : ℝ :=
   min (parameterArcLength K s t) (totalArcLength K - parameterArcLength K s t)
 
-/-- The distortion ratio for the two points with parameters `s` and `t`. -/
+/-- **Distortion ratio.** For a knot $K$ with parametrization $\gamma$ and real numbers $s$ and $t$,
+the distortion ratio of $K$ at $s$ and $t$ is the intrinsic distance between $s$ and $t$ along $K$
+divided by the Euclidean distance $\lVert \gamma(s) - \gamma(t) \rVert$ in $\mathbb{R}^3$, where
+division by $0$ gives $0$. -/
 def distortionRatio (K : Knot) (s t : ℝ) : ℝ :=
   intrinsicDistance K s t / dist (K.curve s) (K.curve t)
 
-/-- Distortion of a smooth knot as an extended nonnegative real: the supremum
-of the distortion ratios over distinct parameters in the half-open fundamental
-interval `[0, 2π)`. The extended codomain also represents infinite
-distortion. -/
+/-- **Distortion of a knot.** For a knot $K$, the distortion of $K$ is the supremum in the
+extended nonnegative reals $[0, \infty]$ of the distortion ratios of $K$ at $s$ and $t$, taken
+over all distinct parameters $s \ne t$ in the half-open interval $[0, 2\pi)$. -/
 def distortion (K : Knot) : ℝ≥0∞ :=
   sSup {d : ℝ≥0∞ | ∃ s ∈ Ico (0 : ℝ) (2 * Real.pi),
     ∃ t ∈ Ico (0 : ℝ) (2 * Real.pi),
       s ≠ t ∧ d = ENNReal.ofReal (distortionRatio K s t)}
 
-/-- The standard `(p, q)`-torus curve on the torus of revolution with major
-radius `2` and minor radius `1`.  It winds `p` times around the axis of the
-torus and `q` times around a meridian. -/
+/-- **Standard torus curve.** For natural numbers $p$ and $q$, the standard $(p, q)$-torus curve is
+the map $\mathbb{R} \to \mathbb{R}^3$ sending $t$ to
+$((2 + \cos qt) \cos pt,\ (2 + \cos qt) \sin pt,\ \sin qt)$. It lies on the torus of revolution
+about the $z$-axis with major radius $2$ and minor radius $1$, and as $t$ runs over $[0, 2\pi]$ it
+winds $p$ times around the $z$-axis and $q$ times around the core circle of the torus. -/
 def standardTorusCurve (p q : ℕ) (t : ℝ) : R3 :=
   WithLp.toLp 2 (fun i : Fin 3 =>
     if i.val = 0 then
@@ -125,7 +138,18 @@ def standardTorusCurve (p q : ℕ) (t : ℝ) : R3 :=
 If `p` and `q` are positive and coprime, every smooth knot in the
 orientation-preserving smooth ambient-isotopy class of the explicit standard
 `(p, q)`-torus curve has distortion at least `min(p, q) / 160`. -/
-/-- Source: John Pardon, 'On the distortion of knots on embedded surfaces', Annals of Mathematics (2) 174 (2011), no. 1, 637-646, Theorem 1.1. https://doi.org/10.4007/annals.2011.174.1.21 Via leanprover/lean-eval@38361be, problem `pardon_torus_knot_distortion`. -/
+/-- **Pardon's lower bound for the distortion of torus knots.** Let $p$ and $q$ be coprime positive
+integers, let $T_{p,q}$ be the standard $(p, q)$-torus curve, and let $K$ be a knot with
+parametrization $\gamma$. Suppose there are an ambient isotopy $H$ of $\mathbb{R}^3$, with
+time-one map $H_1$, and a strictly increasing diffeomorphism $\sigma$ of $\mathbb{R}$ with
+$\sigma(t + 2\pi) = \sigma(t) + 2\pi$ for all real $t$, such that
+$H_1(\gamma(t)) = T_{p,q}(\sigma(t))$ for every real $t$. Then the distortion of $K$ is at least
+$\min(p, q)/160$.
+
+This is the smooth, oriented specialization of Pardon's theorem, which bounds the distortion of
+every rectifiable curve in the knot type of the $(p, q)$-torus knot.
+
+Source: John Pardon, 'On the distortion of knots on embedded surfaces', Annals of Mathematics (2) 174 (2011), no. 1, 637-646, Theorem 1.1. https://doi.org/10.4007/annals.2011.174.1.21 Via leanprover/lean-eval@38361be, problem `pardon_torus_knot_distortion`. -/
 public theorem_wanted pardon_torus_knot_distortion
     (p q : ℕ) (_hp : 0 < p) (_hq : 0 < q) (_hc : Nat.Coprime p q)
     (K : Knot)

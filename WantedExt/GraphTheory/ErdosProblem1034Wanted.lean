@@ -44,24 +44,37 @@ negation is the unregistered companion `disprovedForm`. The book lower
 bound and the Ma–Tang and K₄-free upper bounds are unregistered
 established companions. -/
 
-/-- `JoinedToTwo G T Y` holds when every vertex of `Y` is joined to at least
-two (distinct) vertices of `T`. -/
+/-- **Vertices joined to two vertices of a set.** Let $G$ be a simple graph on a vertex type $V$
+and let $T$ and $Y$ be finite sets of vertices. The set $Y$ is joined to two vertices of $T$ in
+$G$ if every vertex $y \in Y$ is adjacent in $G$ to two distinct vertices $u, v \in T$. -/
 def JoinedToTwo {V : Type*} (G : SimpleGraph V) (T Y : Finset V) : Prop :=
   ∀ y ∈ Y, ∃ u ∈ T, ∃ v ∈ T, u ≠ v ∧ G.Adj y u ∧ G.Adj y v
 
-/-- The historical Erdős–Faudree claim (disproved): dense graphs join more
-than `(1/2 - ε)n` vertices doubly to some triangle. -/
+/-- **Erdős–Faudree triangle conjecture.** For every real $\varepsilon > 0$ the following holds
+for all sufficiently large $n$: every simple graph $G$ on the vertex set $\{0, \dots, n-1\}$ with
+more than $n^2/4$ edges contains a triangle $T$ and a set $Y$ of vertices, each adjacent in $G$
+to two distinct vertices of $T$, with $|Y| > (1/2 - \varepsilon)n$.
+
+This claim (Erdős Problem 1034) was disproved by Ma and Tang. -/
 def conjecture : Prop :=
   ∀ ε : ℝ, 0 < ε → ∀ᶠ (n : ℕ) in atTop, ∀ G : SimpleGraph (Fin n),
     (n : ℝ) ^ 2 / 4 < (G.edgeSet.ncard : ℝ) →
       ∃ T : Finset (Fin n), G.IsNClique 3 T ∧ ∃ Y : Finset (Fin n),
         JoinedToTwo G T Y ∧ (1 / 2 - ε) * (n : ℝ) < (Y.card : ℝ)
 
-/-- Its disproof (companion). -/
+/-- **Negation of the Erdős–Faudree triangle conjecture.** The proposition that the
+Erdős–Faudree triangle conjecture fails, that is, that it is not the case that for every real
+$\varepsilon > 0$ and all sufficiently large $n$, every simple graph $G$ on the vertex set
+$\{0, \dots, n-1\}$ with more than $n^2/4$ edges contains a triangle $T$ and a set $Y$ of
+vertices, each adjacent in $G$ to two distinct vertices of $T$, with $|Y| > (1/2 - \varepsilon)n$.
+-/
 def disprovedForm : Prop := ¬ conjecture
 
-/-- Book lower bound (established companion): some triangle always joins at
-least `(1/6 - ε)n` vertices doubly. -/
+/-- **Book lower bound for Erdős Problem 1034.** For every real $\varepsilon > 0$ the following
+holds for all sufficiently large $n$: every simple graph $G$ on the vertex set
+$\{0, \dots, n-1\}$ with more than $n^2/4$ edges contains a triangle $T$ and a set $Y$ of
+vertices, each adjacent in $G$ to two distinct vertices of $T$, with
+$|Y| \ge (1/6 - \varepsilon)n$. -/
 def bookLowerBound : Prop :=
   ∀ (ε : ℝ), 0 < ε →
     ∀ᶠ (n : ℕ) in atTop, ∀ G : SimpleGraph (Fin n),
@@ -69,8 +82,11 @@ def bookLowerBound : Prop :=
         ∃ T : Finset (Fin n), G.IsNClique 3 T ∧ ∃ Y : Finset (Fin n),
           JoinedToTwo G T Y ∧ (1 / 6 - ε) * (n : ℝ) ≤ (Y.card : ℝ)
 
-/-- Ma–Tang upper bound (established companion): some dense graphs join at
-most `(2 - √(5/2) + ε)n` vertices doubly to every triangle. -/
+/-- **Ma–Tang upper bound for Erdős Problem 1034.** For every real $\varepsilon > 0$ the following
+holds for all sufficiently large $n$: there is a simple graph $G$ on the vertex set
+$\{0, \dots, n-1\}$ with more than $n^2/4$ edges such that for every triangle $T$ of $G$, every
+set $Y$ of vertices each adjacent in $G$ to two distinct vertices of $T$ satisfies
+$|Y| \le (2 - \sqrt{5/2} + \varepsilon)n$. -/
 def maTangUpperBound : Prop :=
   ∀ (ε : ℝ), 0 < ε →
     ∀ᶠ (n : ℕ) in atTop, ∃ G : SimpleGraph (Fin n),
@@ -79,8 +95,11 @@ def maTangUpperBound : Prop :=
           JoinedToTwo G T Y →
           (Y.card : ℝ) ≤ (2 - Real.sqrt (5 / 2) + ε) * (n : ℝ)
 
-/-- K₄-free upper bound (established companion): the refutation persists
-under a `K₄`-free hypothesis, with constant `2√3 - 3`. -/
+/-- **$K_4$-free upper bound for Erdős Problem 1034.** For every real $\varepsilon > 0$ the
+following holds for all sufficiently large $n$: there is a simple graph $G$ on the vertex set
+$\{0, \dots, n-1\}$ that contains no $K_4$ and has more than $n^2/4$ edges, such that for every
+triangle $T$ of $G$, every set $Y$ of vertices each adjacent in $G$ to two distinct vertices of
+$T$ satisfies $|Y| \le (2\sqrt{3} - 3 + \varepsilon)n$. -/
 def k4FreeUpperBound : Prop :=
   ∀ (ε : ℝ), 0 < ε →
     ∀ᶠ (n : ℕ) in atTop, ∃ G : SimpleGraph (Fin n), G.CliqueFree 4 ∧
@@ -90,7 +109,11 @@ def k4FreeUpperBound : Prop :=
           (Y.card : ℝ) ≤ (2 * Real.sqrt 3 - 3 + ε) * (n : ℝ)
 
 /--
-Resolved false: Disproved by Ma and Tang (formalized in Lean), per erdosproblems.com/1034.
+**The Erdős–Faudree triangle conjecture is false.** It is not true that for every real
+$\varepsilon > 0$ and all sufficiently large $n$, every simple graph on the vertex set
+$\{0, \dots, n-1\}$ with more than $n^2/4$ edges contains a triangle $T$ and a set of more than
+$(1/2 - \varepsilon)n$ vertices, each adjacent to two distinct vertices of $T$.
+
 Source: Ma and Tang (disproof with upper bound (2-√(5/2)+o(1))n; K₄-free sketch with
 (2√3-3+o(1))n), per erdosproblems.com/1034, https://www.erdosproblems.com/1034. Moved from
 `OpenConjectures/GraphTheory/ErdosProblem1034`.

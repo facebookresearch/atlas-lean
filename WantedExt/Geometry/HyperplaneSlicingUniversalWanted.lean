@@ -48,27 +48,31 @@ Every hypothesis, side condition, and quantifier domain in the source:
     (`ENNReal.ofReal c ≤ ...`).
 -/
 
-/-- Convex body in `ℝⁿ`: a convex, compact set with nonempty interior.
+/-- **Convex bodies in $\mathbb{R}^n$.** A set $K$ in the $n$-dimensional Euclidean space
+$\mathbb{R}^n$ is a convex body when it is convex, compact and has nonempty interior.
 
-Cites [OWR-12337-001] (DOI 10.4171/owr/2013/09): "convex body `K ⊆ ℝⁿ`". -/
+Source: `OWR-12337-001` (DOI 10.4171/owr/2013/09): "convex body `K ⊆ ℝⁿ`". -/
 def IsConvexBody (n : ℕ) (K : Set (EuclideanSpace ℝ (Fin n))) : Prop :=
   Convex ℝ K ∧ IsCompact K ∧ Set.Nonempty (interior K)
 
-/-- Hyperplane in `ℝⁿ`: a level set `{x | f x = t}` of a nonzero linear functional `f`.
+/-- **Hyperplanes in $\mathbb{R}^n$.** A set $H$ in the $n$-dimensional Euclidean space
+$\mathbb{R}^n$ is a hyperplane when $H = \{x \in \mathbb{R}^n : f(x) = t\}$ for some nonzero
+linear functional $f \colon \mathbb{R}^n \to \mathbb{R}$ and some $t \in \mathbb{R}$.
 
-Cites [OWR-12337-001] (DOI 10.4171/owr/2013/09): "hyperplane section". -/
+Source: `OWR-12337-001` (DOI 10.4171/owr/2013/09): "hyperplane section". -/
 def IsHyperplane (n : ℕ) (H : Set (EuclideanSpace ℝ (Fin n))) : Prop :=
   ∃ (f : LinearMap (RingHom.id ℝ) (EuclideanSpace ℝ (Fin n)) ℝ) (t : ℝ), f ≠ 0 ∧
     H = {x : EuclideanSpace ℝ (Fin n) | f x = t}
 
-/-- Hyperplane slicing conjecture: there exists a universal constant `c > 0` such that
-every volume-one convex body in `ℝⁿ` has a hyperplane section of `(n-1)`-volume at
-least `c`, where `(n-1)`-volume is Lebesgue volume after identifying the hyperplane
-with `ℝⁿ⁻¹` via an isometry.
+/-- **Hyperplane slicing conjecture.** The statement that there is a constant $c > 0$ such that
+for every $n \ge 1$ and every convex body $K \subseteq \mathbb{R}^n$ (a convex compact set with
+nonempty interior) of Lebesgue volume $1$ there exist a hyperplane $H \subseteq \mathbb{R}^n$ (a
+set $\{x : f(x) = t\}$ for a nonzero linear functional $f$ on $\mathbb{R}^n$ and some
+$t \in \mathbb{R}$) and an isometry $\varphi \colon \mathbb{R}^{n-1} \to \mathbb{R}^n$ with image
+$H$ such that the $(n-1)$-dimensional Lebesgue volume of $\varphi^{-1}(K \cap H)$ is at least $c$.
 
-Cites [OWR-12337-001] (DOI 10.4171/owr/2013/09), where it is posed as an open
-problem; it has since been resolved (see the entry metadata). Stated as a
-proposition with no proof in this repository. -/
+Source: `OWR-12337-001` (DOI 10.4171/owr/2013/09), where it is posed as an open problem; it has
+since been resolved. -/
 def conjecture : Prop :=
   ∃ (c : ℝ), 0 < c ∧
     ∀ (n : ℕ), 1 ≤ n →
@@ -82,10 +86,18 @@ def conjecture : Prop :=
                     ENNReal.ofReal c ≤ MeasureTheory.volume (Set.preimage φ (K ∩ H))
 
 /--
-Resolved true: Klartag and Lehec (Geom. Funct. Anal. 2025, arXiv:2412.15044), building on Guan's
-bound, proved Bourgain's slicing conjecture: every volume-one convex body in R^n has a
-hyperplane section of (n-1)-volume greater than a universal c > 0 (Theorem 1.1), equivalently
-sup_n L_n < infinity. Source: B. Klartag, J. Lehec, Affirmative resolution of Bourgain's slicing
+**Hyperplane slicing theorem.** There is a constant $c > 0$ such that for every $n \ge 1$ and
+every convex body $K \subseteq \mathbb{R}^n$ (a convex compact set with nonempty interior) of
+Lebesgue volume $1$ there exist a hyperplane $H \subseteq \mathbb{R}^n$ (a set
+$\{x : f(x) = t\}$ for a nonzero linear functional $f$ on $\mathbb{R}^n$ and some
+$t \in \mathbb{R}$) and an isometry $\varphi \colon \mathbb{R}^{n-1} \to \mathbb{R}^n$ with image
+$H$ such that the $(n-1)$-dimensional Lebesgue volume of $\varphi^{-1}(K \cap H)$ is at least $c$.
+
+This is Bourgain's slicing conjecture, proved by Klartag and Lehec building on Guan's bound
+(Theorem 1.1); equivalently, the isotropic constant of convex bodies is bounded by a universal
+constant.
+
+Source: B. Klartag, J. Lehec, Affirmative resolution of Bourgain's slicing
 problem using Guan's bound, Geometric and Functional Analysis (2025), arXiv:2412.15044,
 https://arxiv.org/abs/2412.15044. Moved from
 `OpenConjectures/Geometry/HyperplaneSlicingUniversal`.

@@ -63,7 +63,8 @@ type with a default topology. The two formulations agree for subgroups
 of `E_d` once `E_d` is given the standard Lie-group topology.
 -/
 
-/-- The Euclidean model space `ℝᵈ`. -/
+/-- **Euclidean space for wallpaper groups.** For a natural number $d$, the $d$-dimensional real
+Euclidean space $\mathbb{R}^d$ with its standard inner product. -/
 abbrev E (d : ℕ) := EuclideanSpace ℝ (Fin d)
 
 /- The Euclidean motion group `E_d`: affine isometries of `ℝᵈ`. -/
@@ -82,7 +83,15 @@ cocompactly on `ℝᵈ`). -/
 /- Count of crystallographic groups in dimension `d`, modulo affine
 equivalence, as `ℕ∞`. -/
 /- **There are exactly 17 wallpaper groups** (Pólya–Niggli 1924). -/
-/-- Source: G. Pólya, 'Über die Analogie der Kristallsymmetrie in der Ebene', Z. Kristallogr. 60 (1924) 278–282; P. Niggli, 'Die Flächensymmetrien homogener Diskontinuen', Z. Kristallogr. 60 (1924) 283–298. Listed as §94 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `wallpaper_groups_17`. -/
+/-- **There are exactly 17 wallpaper groups.** Call a group $G$ of isometries of the Euclidean
+plane $\mathbb{R}^2$ crystallographic if it is discrete, meaning that for every point $x$ and
+every $\varepsilon > 0$ only finitely many $g \in G$ satisfy
+$\operatorname{dist}(g x, x) \le \varepsilon$, and it contains translations by two linearly
+independent vectors. Call two such groups $G_1$ and $G_2$ affinely equivalent if some invertible
+affine map $\varphi$ of $\mathbb{R}^2$ satisfies $\{\varphi g \varphi^{-1} : g \in G_1\} = G_2$.
+Up to affine equivalence there are exactly $17$ crystallographic groups of the plane.
+
+Source: G. Pólya, 'Über die Analogie der Kristallsymmetrie in der Ebene', Z. Kristallogr. 60 (1924) 278–282; P. Niggli, 'Die Flächensymmetrien homogener Diskontinuen', Z. Kristallogr. 60 (1924) 283–298. Listed as §94 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `wallpaper_groups_17`. -/
 public theorem_wanted there_are_17_wallpaper_groups :
     crystallographicCount 2 = 17
 

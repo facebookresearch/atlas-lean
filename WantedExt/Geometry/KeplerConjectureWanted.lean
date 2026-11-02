@@ -62,33 +62,44 @@ unit-sphere packings, not just lattice packings.
 open scoped ENNReal
 open MeasureTheory Filter
 
-/-- The model space `ℝ^d`. -/
+/-- **Euclidean space for sphere packings.** For a natural number $d$, $\mathbb{R}^d$ denotes the
+$d$-dimensional real Euclidean space: $d$-tuples of real numbers with the Euclidean norm. -/
 abbrev E (d : ℕ) := EuclideanSpace ℝ (Fin d)
 
-/-- `X ⊆ ℝ^d` is the centre set of a **unit sphere packing**: the open
-unit balls centred at the points of `X` are pairwise disjoint. -/
+/-- **Unit sphere packing.** For a natural number $d$, a set $X \subseteq \mathbb{R}^d$ is the
+centre set of a unit sphere packing if the open balls of radius $1$ centred at any two distinct
+points of $X$ are disjoint. -/
 def IsPacking {d : ℕ} (X : Set (E d)) : Prop :=
   X.Pairwise (fun x y => Disjoint (Metric.ball x 1) (Metric.ball y 1))
 
-/-- Fraction of the ball `B_R(0)` covered by the union of the unit
-balls of the packing `X`. -/
+/-- **Covered fraction of a ball.** For a natural number $d$, a set $X \subseteq \mathbb{R}^d$ and a
+real number $R$, the covered fraction of $X$ at radius $R$ is
+$$\frac{\operatorname{vol}\bigl(B_R(0) \cap \bigcup_{x \in X} B_1(x)\bigr)}
+{\operatorname{vol}(B_R(0))},$$
+where $B_r(y)$ is the open ball of radius $r$ about $y$ and $\operatorname{vol}$ is Lebesgue
+measure; it equals $0$ when $R \le 0$. -/
 noncomputable def coveredFraction {d : ℕ} (X : Set (E d)) (R : ℝ) : ℝ :=
   (volume ((⋃ x ∈ X, Metric.ball x 1) ∩ Metric.ball (0 : E d) R)).toReal /
     (volume (Metric.ball (0 : E d) R)).toReal
 
-/-- Density of the packing `X`: `limsup_{R → ∞}` of the covered
-fraction. -/
+/-- **Density of a sphere packing.** For a natural number $d$, the density of a set
+$X \subseteq \mathbb{R}^d$ is the limit superior, as $R \to \infty$, of the covered fraction of $X$
+at radius $R$: the fraction of the open ball of radius $R$ about the origin covered by the open
+unit balls centred at points of $X$. -/
 noncomputable def density {d : ℕ} (X : Set (E d)) : ℝ :=
   Filter.limsup (coveredFraction X) Filter.atTop
 
-/-- Optimal unit-sphere-packing density in dimension `d`: the supremum
-over all packings. -/
+/-- **Optimal sphere packing density.** For a natural number $d$, $\Delta(d)$ is the supremum of
+the densities of all unit sphere packings in $\mathbb{R}^d$. -/
 noncomputable def Δ (d : ℕ) : ℝ :=
   sSup {δ : ℝ | ∃ X : Set (E d), IsPacking X ∧ density X = δ}
 
 /- **Kepler conjecture** (Hales 1998, Flyspeck 2014). The optimal
 sphere-packing density in three dimensions equals `π / √18`. -/
-/-- Source: Kepler conjecture 1611 (J. Kepler, *Strena seu de Nive Sexangula*); proof T. Hales, 'A proof of the Kepler conjecture', Ann. of Math. (2) 162 (2005) 1065–1185; formal verification in HOL Light + Isabelle by the Flyspeck project (T. Hales et al., completed August 2014), Forum Math. Pi 5 (2017) e2. Wiedijk-1000 #209; listed as §96 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `kepler_conjecture`. -/
+/-- **Kepler conjecture.** Let $\Delta(3)$ be the supremum of the densities of all unit sphere
+packings in $\mathbb{R}^3$. Then $\Delta(3) = \pi / \sqrt{18}$.
+
+Source: Kepler conjecture 1611 (J. Kepler, *Strena seu de Nive Sexangula*); proof T. Hales, 'A proof of the Kepler conjecture', Ann. of Math. (2) 162 (2005) 1065–1185; formal verification in HOL Light + Isabelle by the Flyspeck project (T. Hales et al., completed August 2014), Forum Math. Pi 5 (2017) e2. Wiedijk-1000 #209; listed as §96 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `kepler_conjecture`. -/
 public theorem_wanted kepler_conjecture : Δ 3 = Real.pi / Real.sqrt 18
 
 end KeplerConjectureProblem

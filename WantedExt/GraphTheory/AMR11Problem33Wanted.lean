@@ -50,7 +50,11 @@ universe u
 - Uniform bound: every transient graph satisfies `returnProb Γ ≤ C`.
 -/
 
-/-- Finite symmetric `k`-regular Cayley generating data for [AMR-011-0033] Question 33. -/
+/-- **Regular Cayley graph.** For a group $G$ and a natural number $k$, the data of a $k$-regular
+Cayley graph on $G$ is a finite set $S \subseteq G$ of generators such that $S$ is closed under
+inverses ($s \in S$ implies $s^{-1} \in S$), the identity $1$ does not belong to $S$, every
+element of $G$ is the product of a finite (possibly empty) list of elements of $S$, and $S$ has
+exactly $k$ elements. -/
 structure RegularCayleyGraph (G : Type u) [Group G] [DecidableEq G]
     (k : ℕ) where
   gen : Finset G
@@ -59,7 +63,14 @@ structure RegularCayleyGraph (G : Type u) [Group G] [DecidableEq G]
   connected : ∀ g : G, ∃ l : List G, (∀ s ∈ l, s ∈ gen) ∧ l.prod = g
   regular : gen.card = k
 
-/-- First-return probability at time `n` for [AMR-011-0033] Question 33. -/
+/-- **First-return probability.** Let $\Gamma$ be a $k$-regular Cayley graph on a group $G$ with
+generating set $S$. For $n \ge 1$, the first-return probability of $\Gamma$ at time $n$ is the
+real number obtained by dividing by $k^n$ the number of words $(s_1, \dots, s_n) \in S^n$ with
+$s_1 s_2 \cdots s_n = 1$ and $s_1 \cdots s_m \ne 1$ for every $0 < m < n$; at time $n = 0$ it
+is $0$.
+
+Since $S$ has $k$ elements, this is the probability that the walk $1, s_1, s_1 s_2, \dots$ with
+independent uniform steps in $S$ is back at $1$ for the first time at step $n$. -/
 noncomputable def firstReturnProb {G : Type u} [Group G]
     [DecidableEq G] {k : ℕ} (Γ : RegularCayleyGraph G k) (n : ℕ) : ℝ := by
   classical
@@ -73,12 +84,19 @@ noncomputable def firstReturnProb {G : Type u} [Group G]
             1 } : ℝ) / (k : ℝ) ^ n
     else 0
 
-/-- Simple random walk ever-return probability for [AMR-011-0033] Question 33. -/
+/-- **Return probability.** The return probability of a $k$-regular Cayley graph $\Gamma$ is the
+sum $\sum_{n \ge 0} p_n$, where $p_n$ is the first-return probability of $\Gamma$ at time $n$.
+
+It is the probability that simple random walk on $\Gamma$ started at the identity ever returns
+to the identity. -/
 noncomputable def returnProb {G : Type u} [Group G] [DecidableEq G]
     {k : ℕ} (Γ : RegularCayleyGraph G k) : ℝ :=
   ∑' n, firstReturnProb Γ n
 
-/-- Uniform return-probability gap question for [AMR-011-0033] Question 33. -/
+/-- **Uniform return-probability gap.** The statement that for every natural number $k > 1$ there
+is a real number $C < 1$ such that for every group $G$ and every $k$-regular Cayley graph
+$\Gamma$ on $G$, if the return probability of $\Gamma$ is less than $1$ (that is, $\Gamma$ is
+transient), then it is at most $C$. -/
 def returnProbUniformGap : Prop :=
   ∀ (k : ℕ), 1 < k →
     ∃ C : ℝ, C < 1 ∧
@@ -89,10 +107,16 @@ def returnProbUniformGap : Prop :=
 end AMR11Q33
 
 /--
-Resolved true: Tessera and Tointon (arXiv:2001.01467, 2020; v2 2024), Corollary 1.3, prove a
-universal c>0 such that simple random walk on every connected locally finite vertex-transitive
-graph is recurrent or escapes with probability at least c, so C(k)=1-c works for all transient
-k-regular Cayley graphs. Source: Romain Tessera and Matthew Tointon, Sharp relations between
+**Uniform return-probability gap for transient Cayley graphs.** For every natural number
+$k > 1$ there is a real number $C < 1$ such that for every group $G$ and every $k$-regular Cayley
+graph $\Gamma$ on $G$ whose return probability is less than $1$, the return probability of
+$\Gamma$ is at most $C$.
+
+This follows from Tessera and Tointon, Corollary 1.3: there is a universal $c > 0$ such that
+simple random walk on every connected, locally finite, vertex-transitive graph is recurrent or
+escapes with probability at least $c$, so $C = 1 - c$ works for every $k$.
+
+Source: Romain Tessera and Matthew Tointon, Sharp relations between
 volume growth, isoperimetry and escape probability in vertex-transitive graphs, arXiv preprint
 (2020, v2 2024), arXiv:2001.01467, https://arxiv.org/abs/2001.01467. Moved from
 `OpenConjectures/GraphTheory/AMR11Problem33`.

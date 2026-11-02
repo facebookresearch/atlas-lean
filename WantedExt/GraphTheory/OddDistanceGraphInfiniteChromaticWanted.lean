@@ -32,7 +32,9 @@ namespace ODGIC
 - Question: `χ(O) = ∞` as `chromaticNumber = ⊤`.
 -/
 
-/-- The odd distance graph on `ℝ²` (record OPG-616). -/
+/-- **Odd distance graph.** The odd distance graph is the simple graph on the Euclidean plane
+$\mathbb{R}^2$ in which two points $x$ and $y$ are adjacent when their Euclidean distance is an
+odd integer. -/
 noncomputable def OddDistanceGraph : SimpleGraph (EuclideanSpace ℝ (Fin 2)) where
   Adj x y := ∃ k : ℕ, Odd k ∧ dist x y = (k : ℝ)
   symm := ⟨by
@@ -47,16 +49,22 @@ noncomputable def OddDistanceGraph : SimpleGraph (EuclideanSpace ℝ (Fin 2)) wh
     rw [hk0] at hk
     exact Nat.not_odd_zero hk⟩
 
-/-- Question: is `χ(O) = ∞`? (record OPG-616) -/
+/-- **Infinite chromatic number of the odd distance graph.** The proposition that the odd distance
+graph on $\mathbb{R}^2$ has infinite chromatic number, that is, has no proper colouring with
+finitely many colours. -/
 def OddDistanceChromaticInfinite : Prop := OddDistanceGraph.chromaticNumber = ⊤
 
 end ODGIC
 
 /--
-Resolved true: James Davies (Odd distances in colourings of the plane, GAFA 34 (2024);
-arXiv:2209.15598), Theorem 1, proves every finite colouring of the plane has a monochromatic
-pair at odd integer distance, so the odd distance graph has no finite colouring and its
-chromatic number is infinite (countable). Source: James Davies, Odd distances in colourings of
+**Davies' odd distance theorem.** The odd distance graph on the Euclidean plane $\mathbb{R}^2$,
+in which two points are adjacent when their distance is an odd integer, has infinite chromatic
+number: it has no proper colouring with finitely many colours.
+
+Davies proves (Theorem 1) that every finite colouring of the plane has a monochromatic pair of
+points at odd integer distance.
+
+Source: James Davies, Odd distances in colourings of
 the plane, Geometric and Functional Analysis 34 (2024) 19-31, arXiv:2209.15598,
 https://arxiv.org/abs/2209.15598. Moved from
 `OpenConjectures/GraphTheory/OddDistanceGraphInfiniteChromatic`.

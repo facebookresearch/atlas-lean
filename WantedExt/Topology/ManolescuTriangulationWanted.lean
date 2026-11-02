@@ -77,11 +77,11 @@ of the Galewski–Stern obstruction — so neither the construction nor the
 obstruction is anywhere in reach.
 -/
 
-/-- A closed connected topological `n`-manifold, bundled with its
-topological-space and chart instances so its existence can be quantified over.
-Charts model `carrier` on `EuclideanSpace ℝ (Fin n)` (the whole space), so it is
-locally Euclidean with no boundary; with `CompactSpace` this is a closed
-manifold. -/
+/-- **Closed topological manifold.** For a natural number $n$, a closed topological $n$-manifold
+is a nonempty, compact, connected, Hausdorff, second-countable topological space $M$ together
+with an atlas of charts, homeomorphisms from open subsets of $M$ onto open subsets of
+$\mathbb{R}^n$, whose domains cover $M$. Since the charts land in $\mathbb{R}^n$ itself rather
+than in a half-space, $M$ has no boundary. -/
 structure ClosedTopManifold (n : ℕ) where
   /-- The underlying point set. -/
   carrier : Type
@@ -98,11 +98,14 @@ attribute [instance] ClosedTopManifold.topology ClosedTopManifold.t2
   ClosedTopManifold.secondCountable ClosedTopManifold.charted
   ClosedTopManifold.compact ClosedTopManifold.connected ClosedTopManifold.nonempty
 
-/-- `M` is **triangulable**: it is homeomorphic to the geometric realization (the
-union of the faces, with the subspace topology) of a *finite* simplicial complex
-sitting in some finite-dimensional Euclidean space `ℝᴺ`. For a compact manifold
-this is exactly the usual notion of triangulability; the finiteness of `K.faces`
-is essential (see the module docstring). -/
+/-- **Triangulable closed manifold.** A closed topological $n$-manifold $M$ is triangulable if,
+for some natural number $N$, there is a simplicial complex $K$ in $\mathbb{R}^N$ with finitely
+many faces such that $M$ is homeomorphic to the geometric realization of $K$, the union of its
+faces with the subspace topology from $\mathbb{R}^N$.
+
+For a compact manifold this is the usual notion of triangulability. Requiring finitely many faces
+is essential: otherwise any copy of $M$ embedded in $\mathbb{R}^N$ would be the realization of the
+complex whose faces are its points. -/
 def Triangulable {n : ℕ} (M : ClosedTopManifold n) : Prop :=
   ∃ (N : ℕ) (K : SimplicialComplex ℝ (EuclideanSpace ℝ (Fin N))),
     K.faces.Finite ∧ Nonempty (M.carrier ≃ₜ K.space)
@@ -110,7 +113,10 @@ def Triangulable {n : ℕ} (M : ClosedTopManifold n) : Prop :=
 /- **Manolescu's theorem (2016): the triangulation conjecture is false**, in
 every dimension `≥ 5`. For each `n ≥ 5` there is a closed connected topological
 `n`-manifold that is not homeomorphic to any simplicial complex. -/
-/-- Source: C. Manolescu, *Pin(2)-equivariant Seiberg–Witten Floer homology and the triangulation conjecture*, J. Amer. Math. Soc. 29 (2016), via the Galewski–Stern and Matumoto reduction. Earlier, the triangulation conjecture was known false in dimension 4 (Casson). Via leanprover/lean-eval@38361be, problem `manolescu_triangulation_disproof`. -/
+/-- **Manolescu's disproof of the triangulation conjecture.** For every natural number $n \ge 5$
+there is a closed connected topological $n$-manifold that is not triangulable.
+
+Source: C. Manolescu, *Pin(2)-equivariant Seiberg–Witten Floer homology and the triangulation conjecture*, J. Amer. Math. Soc. 29 (2016), via the Galewski–Stern and Matumoto reduction. Earlier, the triangulation conjecture was known false in dimension 4 (Casson). Via leanprover/lean-eval@38361be, problem `manolescu_triangulation_disproof`. -/
 public theorem_wanted manolescu_triangulation_disproof :
     ∀ n : ℕ, 5 ≤ n → ∃ M : ClosedTopManifold n, ¬ Triangulable M
 

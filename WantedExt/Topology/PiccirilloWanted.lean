@@ -77,14 +77,33 @@ edges meeting only at their shared vertex. This certifies that `conwayKnot`
 is a genuine embedded knot — the subject the slice question is about — and
 is posed as its own hole so that the proof lives in the submission rather
 than as an unchecked field of `conwayKnot`. -/
-/-- Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem `conway_knot_not_smoothly_slice`. -/
+/-- **The Conway knot polyline is a simple closed curve.** Let $K$ be the Conway knot $11n34$,
+realized as a closed polyline in $\mathbb{R}^3$ (the braid closure of a 4-strand braid word for
+it), and let $N$ be its number of vertices. The periodic piecewise-linear parametrization of $K$,
+which traverses each edge in unit time, is injective on the interval $[0, N)$.
+
+Equivalently, the vertices of $K$ are distinct, non-adjacent edges are disjoint, and adjacent
+edges meet only at their shared vertex.
+
+Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem `conway_knot_not_smoothly_slice`. -/
 public theorem_wanted conwayKnot_isSimple : conwayKnot.IsSimple
 
 /- **Piccirillo, "The Conway knot is not slice."**
 
 The Conway knot 11n34 does not bound a smoothly properly embedded 2-disk
 in `ℝ³ × [0, ∞)`. -/
-/-- Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem `conway_knot_not_smoothly_slice`. -/
+/-- **The Conway knot is not smoothly slice (Piccirillo).** Let $K$ be the Conway knot $11n34$,
+realized as a closed polyline in $\mathbb{R}^3$. There is no smooth knot $J$, that is, a smooth
+$2\pi$-periodic map $\mathbb{R} \to \mathbb{R}^3$ with nowhere vanishing derivative that is
+injective on $[0, 2\pi)$, with both of the following properties: some topological ambient isotopy
+of $\mathbb{R}^3$ carries the image of $J$ onto the image of $K$; and there is a smooth map
+$D \colon \mathbb{R}^2 \to \mathbb{R}^3 \times \mathbb{R}$ that is injective with injective
+derivative on the closed unit disk $\overline{\mathbb{D}}$, takes $\overline{\mathbb{D}}$ into the
+half-space $\mathbb{R}^3 \times [0, \infty)$, takes a point of $\overline{\mathbb{D}}$ to height
+$0$ exactly when it lies on the unit circle, and whose $\mathbb{R}^3$-component maps the unit
+circle onto the image of $J$.
+
+Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem `conway_knot_not_smoothly_slice`. -/
 public theorem_wanted conway_knot_not_smoothly_slice : ¬ conwayKnot.SmoothlySlice
 
 end KnotTheory

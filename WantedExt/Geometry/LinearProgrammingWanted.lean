@@ -64,8 +64,10 @@ results.
 
 open Matrix
 
-/-- A **linear program** in standard inequality form on `ℝ^m` with `n`
-constraints: maximise `c · x` subject to `A x ≤ b` and `0 ≤ x`. -/
+/-- **Linear program.** A linear program in standard inequality form with $m$ variables and
+$n$ constraints is given by an objective vector $c \in \mathbb{R}^m$, a right-hand side
+$b \in \mathbb{R}^n$ and an $n \times m$ real constraint matrix $A$; it stands for the problem
+of maximising $c \cdot x$ over $x \in \mathbb{R}^m$ subject to $A x \le b$ and $x \ge 0$. -/
 structure LinearProgram (m n : ℕ) where
   /-- Coefficient vector of the objective `c · x`. -/
   c : Fin m → ℝ
@@ -78,12 +80,16 @@ namespace LinearProgram
 
 variable {m n : ℕ}
 
-/-- The **feasible region** of `lp`: the vectors `x ∈ ℝ^m` with `A x ≤ b` and
-`0 ≤ x`, a convex polyhedron in `ℝ^m`. -/
+/-- **Feasible region of a linear program.** The feasible region of a linear program with
+$m$ variables, constraint matrix $A$ and right-hand side $b$ is the set of vectors
+$x \in \mathbb{R}^m$ with $A x \le b$ and $x \ge 0$, both inequalities holding componentwise.
+It is a convex polyhedron in $\mathbb{R}^m$. -/
 def feasible (lp : LinearProgram m n) : Set (Fin m → ℝ) :=
   {x | lp.A *ᵥ x ≤ lp.b ∧ 0 ≤ x}
 
-/-- The **objective** `f(x) = c · x`. -/
+/-- **Objective function of a linear program.** The objective function of a linear program
+with $m$ variables and objective vector $c \in \mathbb{R}^m$ is the map
+$f \colon \mathbb{R}^m \to \mathbb{R}$ given by $f(x) = c \cdot x = \sum_i c_i x_i$. -/
 def objective (lp : LinearProgram m n) (x : Fin m → ℝ) : ℝ :=
   lp.c ⬝ᵥ x
 
@@ -93,7 +99,14 @@ end LinearProgram
 the LP objective on the feasible region is automatically a global maximiser; and
 whenever the objective is non-constant (`c ≠ 0`), the maximiser lies on the
 topological frontier of the feasible region. -/
-/-- Source: G. B. Dantzig (1947), simplex algorithm. Listed as §101 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `lp_maximum_principle`. -/
+/-- **Maximum principle for linear programming.** Consider a linear program with $m$ variables
+and objective vector $c \in \mathbb{R}^m$, let $P \subseteq \mathbb{R}^m$ be its feasible region
+and $f(x) = c \cdot x$ its objective function, and let $x \in P$ be a local maximiser of $f$ on
+$P$, that is, $f(y) \le f(x)$ for all $y \in P$ in some neighbourhood of $x$. Then $x$ is a
+global maximiser of $f$ on $P$, and if $c \ne 0$ then $x$ lies on the topological boundary of
+$P$ in $\mathbb{R}^m$.
+
+Source: G. B. Dantzig (1947), simplex algorithm. Listed as §101 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `lp_maximum_principle`. -/
 public theorem_wanted lp_maximum_principle {m n : ℕ} (lp : LinearProgram m n)
     (x : Fin m → ℝ) (_hx : x ∈ lp.feasible)
     (_hlocal : IsLocalMaxOn lp.objective lp.feasible x) :
@@ -103,7 +116,13 @@ public theorem_wanted lp_maximum_principle {m n : ℕ} (lp : LinearProgram m n)
 /- **Vertex optimality** (§101; the existence content of Dantzig's 1947 simplex
 algorithm). Every linear program with a nonempty bounded feasible region admits a
 global maximiser that is an extreme point (vertex) of the feasible region. -/
-/-- Source: G. B. Dantzig (1947), simplex algorithm. Listed as §101 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `lp_maximum_principle`. -/
+/-- **Optimal vertices of linear programs.** Consider a linear program with $m$ variables and
+objective vector $c \in \mathbb{R}^m$, and let $P \subseteq \mathbb{R}^m$ be its feasible region
+and $f(x) = c \cdot x$ its objective function. If $P$ is nonempty and bounded, then some
+$x \in P$ maximises $f$ on $P$ and is an extreme point of $P$, that is, $x$ does not lie in the
+open segment between two distinct points of $P$.
+
+Source: G. B. Dantzig (1947), simplex algorithm. Listed as §101 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `lp_maximum_principle`. -/
 public theorem_wanted simplex_algorithm {m n : ℕ} (lp : LinearProgram m n)
     (_hfeas : lp.feasible.Nonempty) (_hbdd : Bornology.IsBounded lp.feasible) :
     ∃ x ∈ lp.feasible, IsMaxOn lp.objective lp.feasible x ∧

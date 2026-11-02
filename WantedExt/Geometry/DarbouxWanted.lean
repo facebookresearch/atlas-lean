@@ -64,22 +64,31 @@ any other proof assistant.
 open Set Function Matrix
 open scoped ContDiff
 
-/-- The model space `ℝ^{2n}` for the local Darboux theorem. -/
+/-- **Model space $\mathbb{R}^{2n}$ for Darboux's theorem.** For a natural number $n$, the model
+space is $\mathbb{R}^{2n}$, the Euclidean space of dimension $2n$ with coordinates indexed by
+$0, 1, \dots, 2n - 1$ and the standard inner product. -/
 abbrev E (n : ℕ) := EuclideanSpace ℝ (Fin (2 * n))
 
-/-- The "p" coordinate index `i ∈ Fin n` viewed in `Fin (2n)`. -/
+/-- **Index of the $i$-th $p$-coordinate in $\mathbb{R}^{2n}$.** For $i \in \{0, \dots, n - 1\}$,
+the index of the $i$-th $p$-coordinate among the coordinates $0, \dots, 2n - 1$ of
+$\mathbb{R}^{2n}$ is $i$ itself. -/
 def idxP {n : ℕ} (i : Fin n) : Fin (2 * n) :=
   ⟨i.val, by have := i.isLt; omega⟩
 
-/-- The "q" coordinate index `i ∈ Fin n` viewed in `Fin (2n)`. -/
+/-- **Index of the $i$-th $q$-coordinate in $\mathbb{R}^{2n}$.** For $i \in \{0, \dots, n - 1\}$,
+the index of the $i$-th $q$-coordinate among the coordinates $0, \dots, 2n - 1$ of
+$\mathbb{R}^{2n}$ is $i + n$. -/
 def idxQ {n : ℕ} (i : Fin n) : Fin (2 * n) :=
   ⟨i.val + n, by have := i.isLt; omega⟩
 
-/-- A continuous alternating 2-form on `E n = ℝ^{2n}` is in **Darboux normal
-form** if its values on the standard basis are the Liouville symplectic
-values: `ω(eP_i, eQ_j) = δ_{ij}`, and `ω(eP_i, eP_j) = ω(eQ_i, eQ_j) = 0`.
-By antisymmetry these conditions uniquely determine the form (it is the
-standard symplectic form `ω₀ = ∑_i dxᵢ ∧ dx_{n+i}`). -/
+/-- **Darboux normal form.** Let $n$ be a natural number and let $e_0, \dots, e_{2n-1}$ be the
+standard basis of $\mathbb{R}^{2n}$. A continuous alternating 2-form $\omega$ on $\mathbb{R}^{2n}$
+is in Darboux normal form if for all $i, j \in \{0, \dots, n - 1\}$ we have
+$\omega(e_i, e_{n+j}) = 1$ when $i = j$ and $0$ otherwise, $\omega(e_i, e_j) = 0$, and
+$\omega(e_{n+i}, e_{n+j}) = 0$.
+
+By antisymmetry these conditions determine the form uniquely: it is the standard symplectic form
+$\omega_0 = \sum_i dx_i \wedge dx_{n+i}$. -/
 def IsDarbouxNormal {n : ℕ} (α : E n [⋀^Fin 2]→L[ℝ] ℝ) : Prop :=
   (∀ i j : Fin n,
       α ![EuclideanSpace.single (idxP i) (1 : ℝ),
@@ -92,9 +101,12 @@ def IsDarbouxNormal {n : ℕ} (α : E n [⋀^Fin 2]→L[ℝ] ℝ) : Prop :=
       α ![EuclideanSpace.single (idxQ i) (1 : ℝ),
           EuclideanSpace.single (idxQ j) (1 : ℝ)] = 0)
 
-/-- A 2-form field `α` on an open set `U ⊆ ℝ^{2n}` is **symplectic** on `U`
-if it is smooth on `U`, closed on `U` (`dα = 0`), and pointwise
-non-degenerate. -/
+/-- **Symplectic 2-form fields.** Let $n$ be a natural number and $U$ a subset of
+$\mathbb{R}^{2n}$. A field $\alpha$ of continuous alternating 2-forms on $\mathbb{R}^{2n}$ is
+symplectic on $U$ if $\alpha$ is $C^\infty$ on $U$, its exterior derivative $d\alpha$ vanishes
+at every point of $U$, and $\alpha$ is non-degenerate at every point of $U$: for every $x \in U$
+and every nonzero $v \in \mathbb{R}^{2n}$ there is $w \in \mathbb{R}^{2n}$ with
+$\alpha(x)(v, w) \neq 0$. -/
 def IsSymplecticOn {n : ℕ}
     (α : E n → E n [⋀^Fin 2]→L[ℝ] ℝ) (U : Set (E n)) : Prop :=
   ContDiffOn ℝ ∞ α U ∧
@@ -107,7 +119,17 @@ def IsSymplecticOn {n : ℕ}
 `φ` (`OpenPartialHomeomorph`, smooth in both directions) whose source lies
 in `U` and contains `x`, such that on the target the pullback of `α` by
 `φ⁻¹` is in Darboux normal form (and hence equals `ω₀`) at every point. -/
-/-- Source: J. G. Darboux, Sur le problème de Pfaff, Bull. Sci. Math. 6 (1882), 14-36, 49-68. Listed as §39 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `darboux`. -/
+/-- **Darboux's theorem.** Let $n$ be a natural number, let $U$ be an open subset of the model
+space $\mathbb{R}^{2n}$, and let $\alpha$ be a field of continuous alternating 2-forms on
+$\mathbb{R}^{2n}$ that is symplectic on $U$. Then for every $x \in U$ there is an open partial
+homeomorphism $\varphi$ of $\mathbb{R}^{2n}$ whose source contains $x$ and is contained in $U$, such
+that $\varphi$ is $C^\infty$ on its source, $\varphi^{-1}$ is $C^\infty$ on its target, and for
+every $z$ in the target the pullback of $\alpha(\varphi^{-1}(z))$ by the derivative
+$D\varphi^{-1}(z)$, namely
+$(v, w) \mapsto \alpha(\varphi^{-1}(z))(D\varphi^{-1}(z)\, v, D\varphi^{-1}(z)\, w)$, is in Darboux
+normal form.
+
+Source: J. G. Darboux, Sur le problème de Pfaff, Bull. Sci. Math. 6 (1882), 14-36, 49-68. Listed as §39 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `darboux`. -/
 public theorem_wanted darboux {n : ℕ} {U : Set (E n)} (_hU : IsOpen U)
     (α : E n → E n [⋀^Fin 2]→L[ℝ] ℝ) (_hα : IsSymplecticOn α U)
     {x : E n} (_hx : x ∈ U) :

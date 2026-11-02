@@ -42,10 +42,11 @@ open MeasureTheory
 
 namespace MathlibExt.MeasureTheory.GraphMeasurableNullWanted
 
-/-- Let $\Gamma\subset \mathbb{R}^{d}\times\mathbb{R}$,
-$\Gamma=\{(x,y)\in\mathbb{R}^{d}\times\mathbb{R}:y=f(x)\}$, and assume $f$ is measurable on
-$\mathbb{R}^{d}$. Show that $\Gamma$ is a measurable subset of $\mathbb{R}^{d+1}$, and
-$m(\Gamma)=0$.
+/-- **The graph of a measurable function is a null set.** Let $d \ge 0$ be an integer and let
+$f : \mathbb{R}^d \to \mathbb{R}$ be Borel measurable. Identify $\mathbb{R}^d \times \mathbb{R}$
+with $\mathbb{R}^{d+1}$ by taking the last coordinate as $y$. Then the graph
+$\Gamma = \{(x, y) \in \mathbb{R}^d \times \mathbb{R} : y = f(x)\}$ is a Borel measurable subset
+of $\mathbb{R}^{d+1}$ and has Lebesgue measure $0$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Measure and integration;
 Classical measure theory), `benchmark/level1/ma_proofbench_l1_38.lean` at
