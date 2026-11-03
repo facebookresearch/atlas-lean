@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Counting
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Local finiteness, walk counts, and `ℓ¹` distance on `ℤ^d`

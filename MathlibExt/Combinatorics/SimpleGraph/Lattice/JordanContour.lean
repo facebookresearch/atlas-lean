@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingParity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.UniqueInfiniteComponent
+import Mathlib.Tactic.NormNum
 
 /-!
 # A discrete Jordan separation for finite open clusters

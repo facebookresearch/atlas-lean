@@ -118,4 +118,13 @@ example (x : unitInterval) :
   norm_num at h ⊢
   rw [h]
 
+/-- One-sided bounds on Kimura's fixation probability, for every `σ` (here deleterious). -/
+example {y : ℝ} (hy : y ∈ Icc (0 : ℝ) 1) :
+    0 ≤ kimuraFixation (-3) y ∧ kimuraFixation (-3) y ≤ 1 :=
+  ⟨kimuraFixation_nonneg (-3) hy.1, kimuraFixation_le_one (-3) hy.2⟩
+
+/-- Outside `[0, 1]` the formula is no longer a probability: neutral `σ = 0` at `y = 2` gives
+`2`, so `kimuraFixation_le_one` needs `y ≤ 1`. -/
+example : kimuraFixation 0 2 = 2 := kimuraFixation_neutral 2
+
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.WrightFisher

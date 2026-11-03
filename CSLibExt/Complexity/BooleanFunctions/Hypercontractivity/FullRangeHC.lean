@@ -18,7 +18,7 @@ Under the Bernoulli(`p`) measure, write the damped total weight
 `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)²` as `4p(1-p) ∑ₑ Dₑ(u)` with per-coordinate damped weights
 `Dₑ(u)` (`frh_lhs_eq`). When `1 - u = 4p(1-p)(q'-1)` for some `q' ∈ [1, 2]`, that is
 `u ≥ 1 - 4p(1-p)`, hypercontractivity of `∂ₑ 1_A` gives the capped estimate
-`∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{2/q'-1} ∑ₑ Infₑ` (`frh_capped_martingale`). The estimate also
+`∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ 4p(1-p) * δ^{2/q'-1} ∑ₑ Infₑ` (`frh_capped_martingale`). The estimate also
 holds at the endpoints `u = 0` and `u = 1`. The predicate `frh_openResidue q` is the capped
 estimate with exponent `u/(2-u)` for all `u ∈ (0, 1)` and `p ∈ (1/2, q)`; it is not proved in this
 library for any `q > 1/2`.
@@ -144,7 +144,7 @@ theorem frh_at_zero {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι �
     _ = (1 / (ptn_sigma p)^2) * ∑ S : Finset ι, (S.card : ℝ) * cc S := by rw [one_mul]
 
 /-- The capped estimate in the hypercontractive range: if `1 - u = 4p(1-p)(q'-1)` with `1 ≤ q' ≤ 2`,
-  then `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{2/q'-1} ∑ₑ Infₑ`. -/
+  then `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ 4p(1-p) * δ^{2/q'-1} ∑ₑ Infₑ`. -/
 theorem frh_capped_martingale [Nonempty ι] {p q' : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (hq1 : 1 ≤ q') (hq2 : q' ≤ 2) {u : ℝ} (hu0 : 0 ≤ u) (hu1 : u ≤ 1)
     (hrel : 1 - u = (q' - 1) * 4 * p * (1 - p)) (φ : ConfigSpace ι → Bool) :

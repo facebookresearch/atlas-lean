@@ -9,6 +9,12 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEvenBiconditional
 
+import Lean.Elab.Tactic.Omega
+import Lean.Elab.Tactic.NormCast
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Push
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # Counting faithful regions edge by edge
 

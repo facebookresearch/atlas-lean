@@ -12,6 +12,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Limits
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
 public import PhyslibExt.CondensedMatter.IsingModel.TransitionAssembly
+public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.IsingMagnetizationZero
 
 /-!
 # The FK critical point and the Ising phase transition in all dimensions `d ≥ 2`
@@ -37,7 +38,12 @@ the spontaneous magnetization vanishes for `0 < β < β_c` and is positive for `
 - `fkgq_fkTheta_monotone_in_p` : `θ_FK` is nondecreasing in `p`.
 - `fkPc_lt_one_of_two_le` : `p_c(d, q) < 1` for `d ≥ 2`, `q ≥ 1`.
 - `ising_phase_transition_of_two_le` : the Ising phase transition for `d ≥ 2`.
-- `isingBetaC_eq_fkPc_of_two_le` : `β_c = -(1/2) log (1 - p_c(d, 2))`.
+- `isingFK_betaC_eq_fkPc_of_two_le` : the sup-based `IsingFK.betaC (magnetization d)` equals
+  `-(1/2) log (1 - p_c(d, 2))`.
+- `ising_betaC_eq_sup_betaC_of_two_le` : the public `Ising.betaC d` (infimum of the
+  positive-magnetization inverse temperatures) equals the sup-based `IsingFK.betaC
+  (magnetization d)`.
+- `isingBetaC_eq_fkPc_of_two_le` : `Ising.betaC d = -(1/2) log (1 - p_c(d, 2))`.
 
 ## iii. Table of contents
 
@@ -563,9 +569,11 @@ theorem ising_phase_transition_of_two_le {d : ℕ} (hd : 2 ≤ d) :
       (∀ beta, betaC < beta → 0 < magnetization d beta) :=
   ⟨pToBeta 2 (fkPc d 2), ising_transition_at_fkPc_of_two_le hd⟩
 
-/-- The Ising critical inverse temperature in dimension `d ≥ 2` is `-(1/2) log (1 - p_c(d, 2))`, the
-image of the FK critical point. -/
-theorem isingBetaC_eq_fkPc_of_two_le {d : ℕ} (hd : 2 ≤ d) :
+/-- The sup-based critical inverse temperature `IsingFK.betaC (magnetization d)` in dimension
+`d ≥ 2` is `-(1/2) log (1 - p_c(d, 2))`, the image of the FK critical point. This is the
+supremum of the zero-magnetization inverse temperatures, not yet the public
+`Ising.betaC d` (see `ising_betaC_eq_sup_betaC_of_two_le` for the bridge). -/
+theorem isingFK_betaC_eq_fkPc_of_two_le {d : ℕ} (hd : 2 ≤ d) :
     betaC (magnetization d) = -(1 / 2) * Real.log (1 - fkPc d 2) := by
   let betaC0 := pToBeta 2 (fkPc d 2)
   obtain ⟨hbetaC0, hbelow, habove⟩ := ising_transition_at_fkPc_of_two_le hd
@@ -591,6 +599,55 @@ theorem isingBetaC_eq_fkPc_of_two_le {d : ℕ} (hd : 2 ≤ d) :
   unfold betaC
   change sSup S = _
   rw [hs, show betaC0 = pToBeta 2 (fkPc d 2) from rfl, pToBeta_two]
+
+/-- Bridge between the two critical-point definitions: the public
+`Ising.betaC d = sInf {β ≥ 0 | m*(β) > 0}` equals the sup-based
+`IsingFK.betaC (magnetization d) = sSup {β > 0 | m*(β) = 0}` in dimension `d ≥ 2`.
+The `β = 0` case is not covered by the phase-transition statement (which only speaks
+about `β > 0`), so it is settled separately: `φ_0({0}) = tanh 0 * … = 0 < 1`, hence
+the plus-state two-point function at `β = 0` is summable, hence `m*(0) = 0`. -/
+theorem ising_betaC_eq_sup_betaC_of_two_le {d : ℕ} (hd : 2 ≤ d) :
+    _root_.StatMech.Ising.betaC d = betaC (magnetization d) := by
+  obtain ⟨hβc0, hbelow, habove⟩ := ising_transition_at_fkPc_of_two_le hd
+  have hmag0 : magnetization d 0 = 0 := by
+    have hphi :
+        _root_.StatMech.Sharpness.phiIsing d 0 {Percolation.origin d} = 0 := by
+      simp [_root_.StatMech.Sharpness.phiIsing]
+    have hsum :
+        Summable (_root_.StatMech.Sharpness.plusCorr d 0 (Percolation.origin d)) :=
+      _root_.StatMech.Sharpness.plusCorr_summable_of_phi_lt_one 0 (by norm_num)
+        {Percolation.origin d} (by simp) (by rw [hphi]; norm_num)
+    exact _root_.StatMech.Sharpness.magnetization_eq_zero_of_plusCorr_summable
+      (by omega) 0 (by norm_num) hsum
+  have hbridge :
+      _root_.StatMech.Ising.betaC d = pToBeta 2 (fkPc d 2) := by
+    unfold _root_.StatMech.Ising.betaC
+    apply le_antisymm
+    · apply le_of_forall_pos_le_add
+      intro ε hε
+      refine csInf_le ⟨0, fun β hβ =>
+        (_root_.StatMech.Ising.mem_positiveMagnetizationSet.mp hβ).1⟩
+        ⟨by linarith, habove _ (by linarith)⟩
+    · refine le_csInf
+        ⟨pToBeta 2 (fkPc d 2) + 1, ⟨by linarith, habove _ (by linarith)⟩⟩ ?_
+      intro β hβ
+      obtain ⟨hβ0, hβpos⟩ :=
+        _root_.StatMech.Ising.mem_positiveMagnetizationSet.mp hβ
+      by_contra hnot
+      push_neg at hnot
+      rcases hβ0.eq_or_lt with h0 | hpos0
+      · rw [← h0, hmag0] at hβpos
+        exact lt_irrefl 0 hβpos
+      · rw [hbelow β hpos0 hnot] at hβpos
+        exact lt_irrefl 0 hβpos
+  rw [hbridge, isingFK_betaC_eq_fkPc_of_two_le hd, pToBeta_two]
+
+/-- The public Ising critical inverse temperature `Ising.betaC d` in dimension `d ≥ 2` is
+`-(1/2) log (1 - p_c(d, 2))`, the image of the FK critical point. This is the form
+usable with `ising_sharp_phase_transition`, whose `β_c` is `Ising.betaC d`. -/
+theorem isingBetaC_eq_fkPc_of_two_le {d : ℕ} (hd : 2 ≤ d) :
+    _root_.StatMech.Ising.betaC d = -(1 / 2) * Real.log (1 - fkPc d 2) := by
+  rw [ising_betaC_eq_sup_betaC_of_two_le hd, isingFK_betaC_eq_fkPc_of_two_le hd]
 
 end IsingFK
 end StatMech

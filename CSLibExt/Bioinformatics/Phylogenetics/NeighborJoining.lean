@@ -68,6 +68,10 @@ is not taken from those papers.
 * `exists_eq_pair_of_isMax`: the cherry lemma for compatible binary split systems.
 * `dist_eq_sum_darts`: the split decomposition of a tree metric.
 * `qCriterion_singleton`: the Q-criterion of two singleton clusters at the start of a run.
+* `njRun_splits_of_join`: a run on any dissimilarity forms exactly the splits of the internal
+  edges if each of its joins forms a side; `exists_splitSystem_of_partition`: on a partition into
+  sides, the tree metric is the split distance of the induced split system on the clusters plus
+  row terms. Both serve the robustness theorem in `NeighborJoiningRobustness.lean`.
 
 ## References
 
@@ -989,15 +993,19 @@ private lemma treeD_union {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [F
   unfold treeD
   linear_combination (1 / 4 : ℝ) * hs
 
-/-- The reduced cherry lemma: on a partition of the taxa into sides, a pair of clusters
-minimizing the Q-criterion for the tree distance between clusters forms a side. -/
-private lemma exists_eq_union_of_qCriterion_min {X : Type*} [Fintype X] [DecidableEq X]
-    {E : Type*} [Fintype E] {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A)
-    (hw : ∀ e, 0 < w e) {S : Finset (Finset X)} (hS : IsPart A S) (h4 : 4 ≤ S.card)
-    {D : Finset X → Finset X → ℝ} (hD : ∀ s ∈ S, ∀ t ∈ S, D s t = treeD A w s t)
-    {a b : Finset X} (ha : a ∈ S) (hb : b ∈ S) (hab : a ≠ b)
-    (hmin : ∀ a' ∈ S, ∀ b' ∈ S, a' ≠ b' → qCriterion S D a b ≤ qCriterion S D a' b') :
-    ∃ e, A e = a ∪ b := by
+universe u in
+/-- The reduction of a split system to a partition `S` into sides: the splits cutting no
+cluster, read on the clusters, form a split system of the same kind on the clusters, and the
+tree distance between clusters is half the total weight of the reduced splits separating
+them. -/
+private lemma reduce {X : Type*} [Fintype X] [DecidableEq X] {E : Type u} [Fintype E]
+    {A : E → Finset X} (hA : SplitSys A) {S : Finset (Finset X)} (hS : IsPart A S)
+    (w : E → ℝ) :
+    ∃ (E' : Type u) (_ : Fintype E') (g : E' → E) (A' : E' → Finset {s // s ∈ S}),
+      SplitSys A' ∧ (∀ e s, s ∈ A' e ↔ (s : Finset X) ⊆ A (g e)) ∧
+      (∀ e x, x ∈ A (g e) ↔ ∃ s, s ∈ A' e ∧ x ∈ (s : Finset X)) ∧
+      ∀ s t : {s // s ∈ S}, treeD A w s t =
+        (1 / 2) * ∑ e, w (g e) * (if (s ∈ A' e ↔ t ∈ A' e) then 0 else 1) := by
   classical
   have hSne : ∀ s ∈ S, s.Nonempty := fun s hs => by
     obtain ⟨e, he⟩ := hS.side s hs
@@ -1182,10 +1190,9 @@ private lemma exists_eq_union_of_qCriterion_min {X : Type*} [Fintype X] [Decidab
         · exact h.trans hsub2
       · exact hin s s.2
   -- the tree distance in reduced form
-  have hsep : ∀ (s t : Y), D s t = (1 / 2) * ∑ e : E', w e.1 *
+  have hsep : ∀ (s t : Y), treeD A w s t = (1 / 2) * ∑ e : E', w e.1 *
       (if (s ∈ A' e ↔ t ∈ A' e) then 0 else 1) := by
     intro s t
-    rw [hD s s.2 t t.2]
     unfold treeD
     congr 1
     rw [← Fintype.sum_subtype_add_sum_subtype act]
@@ -1223,23 +1230,40 @@ private lemma exists_eq_union_of_qCriterion_min {X : Type*} [Fintype X] [Decidab
     unfold sepI
     by_cases h1 : (s : Finset X) ⊆ A e.1 <;> by_cases h2 : (t : Finset X) ⊆ A e.1 <;>
       simp [h1, h2, hmemA', hout']
-  -- apply the cherry lemma to the reduced split system
-  have hcardY : 4 ≤ Fintype.card Y := by
+  exact ⟨E', inferInstance, Subtype.val, A', ⟨hne', hcompl', hcompat', hbin', hsingle⟩,
+    hmemA', hcov, hsep⟩
+
+/-- The reduced cherry lemma: on a partition of the taxa into sides, a pair of clusters
+minimizing the Q-criterion for the tree distance between clusters forms a side. -/
+private lemma exists_eq_union_of_qCriterion_min {X : Type*} [Fintype X] [DecidableEq X]
+    {E : Type*} [Fintype E] {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A)
+    (hw : ∀ e, 0 < w e) {S : Finset (Finset X)} (hS : IsPart A S) (h4 : 4 ≤ S.card)
+    {D : Finset X → Finset X → ℝ} (hD : ∀ s ∈ S, ∀ t ∈ S, D s t = treeD A w s t)
+    {a b : Finset X} (ha : a ∈ S) (hb : b ∈ S) (hab : a ≠ b)
+    (hmin : ∀ a' ∈ S, ∀ b' ∈ S, a' ≠ b' → qCriterion S D a b ≤ qCriterion S D a' b') :
+    ∃ e, A e = a ∪ b := by
+  obtain ⟨E', _, g, A', hA', -, hcov, htree⟩ := reduce hA hS w
+  have hsep : ∀ s t : {s // s ∈ S}, D s t =
+      (1 / 2) * ∑ e, w (g e) * (if (s ∈ A' e ↔ t ∈ A' e) then 0 else 1) := fun s t =>
+    (hD s s.2 t t.2).trans (htree s t)
+  have hcardY : 4 ≤ Fintype.card {s // s ∈ S} := by
     rw [Fintype.card_coe]; exact h4
-  have hQ : ∀ s t : Y, qCriterion S D s t = -∑ e : E', w e.1 * splitGain (A' e) s t := by
+  have hQ : ∀ s t : {s // s ∈ S}, qCriterion S D s t =
+      -∑ e, w (g e) * splitGain (A' e) s t := by
     intro s t
-    rw [← sub_sum_sub_sum_eq_neg_sum_splitGain A' (fun e => w e.1) (d := fun s t => D s t) hsep s t]
+    rw [← sub_sum_sub_sum_eq_neg_sum_splitGain A' (fun e => w (g e)) (d := fun s t => D s t)
+      hsep s t]
     unfold qCriterion
     rw [Fintype.card_coe]
     rw [← Finset.sum_coe_sort S (fun c => D s c), ← Finset.sum_coe_sort S (fun c => D t c)]
-  obtain ⟨e, he⟩ := exists_eq_pair_of_isMax A' (fun e => w e.1) (fun e => hw e.1) hne'
-    hcompl' hcompat' hbin' hsingle hcardY (x := ⟨a, ha⟩) (y := ⟨b, hb⟩)
+  obtain ⟨e, he⟩ := exists_eq_pair_of_isMax A' (fun e => w (g e)) (fun e => hw (g e)) hA'.ne
+    hA'.compl hA'.compat hA'.bin hA'.single hcardY (x := ⟨a, ha⟩) (y := ⟨b, hb⟩)
     (fun h => hab (congrArg Subtype.val h))
     (fun s t hst => by
       have := hmin s s.2 t t.2 (fun h => hst (Subtype.ext h))
       rw [hQ ⟨a, ha⟩ ⟨b, hb⟩, hQ s t] at this
       linarith)
-  refine ⟨e.1, ?_⟩
+  refine ⟨g e, ?_⟩
   ext x
   rw [hcov e x, he, Finset.mem_union]
   simp only [Finset.mem_insert, Finset.mem_singleton]
@@ -1266,21 +1290,18 @@ private lemma treeD_self {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fi
   have h : ¬ (s ⊆ A e ∧ s ⊆ univ \ A e) := fun h => not_out_of_in hs h.1 h.2
   simp [h]
 
-/-- The invariant of a neighbor-joining run on a tree metric, at the level of splits. -/
-private structure Inv {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fintype E]
-    (A : E → Finset X) (w : E → ℝ) (S : Finset (Finset X)) (D : Finset X → Finset X → ℝ)
-    (C : Finset (Finset X)) : Prop where
+/-- The invariant of a neighbor-joining run whose joins form sides, at the level of splits. -/
+private structure Inv {X : Type*} [Fintype X] [DecidableEq X] {E : Type*}
+    (A : E → Finset X) (S : Finset (Finset X)) (C : Finset (Finset X)) : Prop where
   part : IsPart A S
   small : ∀ s ∈ S, s.card = 1 ∨ s ∈ C
   formed : ∀ c ∈ C, (∃ e, A e = c) ∧ 2 ≤ c.card ∧ 2 ≤ (univ \ c).card
-  dist : ∀ s ∈ S, ∀ t ∈ S, D s t = treeD A w s t
   split : ∀ e, A e ∈ C ∨ univ \ A e ∈ C ∨ (A e).card ≤ 1 ∨ (univ \ A e).card ≤ 1 ∨
     ∀ s ∈ S, s ⊆ A e ∨ s ⊆ univ \ A e
 
-private lemma inv_init {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fintype E]
-    {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A) {d : X → X → ℝ}
-    (hd : ∀ x y, d x y = treeD A w {x} {y}) :
-    Inv A w (univ.image fun x => ({x} : Finset X)) (initialDist d) ∅ where
+private lemma inv_init {X : Type*} [Fintype X] [DecidableEq X] {E : Type*}
+    {A : E → Finset X} (hA : SplitSys A) :
+    Inv A (univ.image fun x => ({x} : Finset X)) ∅ where
   part :=
     { side := by
         intro s hs
@@ -1299,11 +1320,6 @@ private lemma inv_init {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fint
     obtain ⟨x, -, rfl⟩ := Finset.mem_image.mp hs
     exact Or.inl (Finset.card_singleton x)
   formed := by simp
-  dist := by
-    intro s hs t ht
-    obtain ⟨x, -, rfl⟩ := Finset.mem_image.mp hs
-    obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp ht
-    simp [initialDist, hd]
   split := by
     intro e
     right; right; right; right
@@ -1343,19 +1359,15 @@ private lemma eq_of_cpt_union {X : Type*} [Fintype X] [DecidableEq X] {B a b : F
       · exact absurd hzB (Finset.mem_sdiff.mp (hbB h')).2
     · exact fun h' => haB h'
 
-private lemma inv_join {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fintype E]
-    {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A) (hw : ∀ e, 0 < w e)
-    {S : Finset (Finset X)} {D : Finset X → Finset X → ℝ} {C : Finset (Finset X)}
-    (hI : Inv A w S D C) (h4 : 4 ≤ S.card) {a b : Finset X} (ha : a ∈ S) (hb : b ∈ S)
-    (hab : a ≠ b)
-    (hmin : ∀ a' ∈ S, ∀ b' ∈ S, a' ≠ b' → qCriterion S D a b ≤ qCriterion S D a' b') :
-    Inv A w (insert (a ∪ b) ((S.erase a).erase b)) (joinDist D a b) (insert (a ∪ b) C) := by
-  obtain ⟨eU, heU⟩ := exists_eq_union_of_qCriterion_min hA hw hI.part h4 hI.dist ha hb hab hmin
+/-- Joining two clusters whose union is a side preserves the invariant. -/
+private lemma inv_join {X : Type*} [Fintype X] [DecidableEq X] {E : Type*}
+    {A : E → Finset X} (hA : SplitSys A) {S : Finset (Finset X)} {C : Finset (Finset X)}
+    (hI : Inv A S C) (h4 : 4 ≤ S.card) {a b : Finset X} (ha : a ∈ S) (hb : b ∈ S)
+    (hab : a ≠ b) {eU : E} (heU : A eU = a ∪ b) :
+    Inv A (insert (a ∪ b) ((S.erase a).erase b)) (insert (a ∪ b) C) := by
   have hSne : ∀ s ∈ S, s.Nonempty := fun s hs => by
     obtain ⟨e, he⟩ := hI.part.side s hs
     exact he ▸ hA.ne e
-  obtain ⟨ea, hea⟩ := hI.part.side a ha
-  obtain ⟨eb, heb⟩ := hI.part.side b hb
   have hdab := hI.part.disj a ha b hb hab
   have hane := hSne a ha
   have hbne := hSne b hb
@@ -1373,7 +1385,7 @@ private lemma inv_join {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fint
     have := hdisjU t ht hta htb
     rw [← h] at this
     exact Finset.disjoint_left.mp this hz hz
-  refine ⟨⟨?_, ?_, ?_⟩, ?_, ?_, ?_, ?_⟩
+  refine ⟨⟨?_, ?_, ?_⟩, ?_, ?_, ?_⟩
   · intro t ht
     rcases (hmem t).mp ht with rfl | ⟨ht, -, -⟩
     · exact ⟨eU, heU⟩
@@ -1420,22 +1432,6 @@ private lemma inv_join {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fint
         have := (hSne c₂ hc₂.2.2).card_pos
         omega
     · exact hI.formed c hc
-  · intro s hs t ht
-    unfold joinDist
-    rcases (hmem s).mp hs with rfl | ⟨hs, hsa, hsb⟩ <;>
-      rcases (hmem t).mp ht with h | ⟨ht, hta, htb⟩
-    · rw [ite_eq_left rfl, ite_eq_left h, h]
-      exact (treeD_self A w (hane.mono Finset.subset_union_left)).symm
-    · rw [ite_eq_left rfl, ite_eq_right (hneU t ht hta htb), hI.dist a ha t ht, hI.dist b hb t ht,
-        hI.dist a ha b hb]
-      exact (treeD_union w hA hea heb heU (hSne t ht) hdab (hI.part.disj a ha t ht (Ne.symm hta))
-        (hI.part.disj b hb t ht (Ne.symm htb))).symm
-    · rw [ite_eq_right (hneU s hs hsa hsb), ite_eq_left h, hI.dist a ha s hs, hI.dist b hb s hs,
-        hI.dist a ha b hb, h, treeD_comm A w s]
-      exact (treeD_union w hA hea heb heU (hSne s hs) hdab (hI.part.disj a ha s hs (Ne.symm hsa))
-        (hI.part.disj b hb s hs (Ne.symm hsb))).symm
-    · rw [ite_eq_right (hneU s hs hsa hsb), ite_eq_right (hneU t ht hta htb)]
-      exact hI.dist s hs t ht
   · intro e
     rcases hI.split e with h | h | h | h | h
     · exact Or.inl (Finset.mem_insert_of_mem h)
@@ -1484,18 +1480,70 @@ private lemma inv_join {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fint
           · exact Or.inr (Or.inr (Or.inr (Or.inl h'')))
       · exact Or.inr (Or.inr (Or.inr (Or.inr (hact (Or.inr (Finset.union_subset ha' hb'))))))
 
+/-- Joining two clusters whose union is a side keeps the cluster dissimilarity equal to the
+tree distance. -/
+private lemma dist_join {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fintype E]
+    {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A) {S : Finset (Finset X)} (hP : IsPart A S)
+    {D : Finset X → Finset X → ℝ} (hD : ∀ s ∈ S, ∀ t ∈ S, D s t = treeD A w s t)
+    {a b : Finset X} (ha : a ∈ S) (hb : b ∈ S) (hab : a ≠ b) {eU : E} (heU : A eU = a ∪ b) :
+    ∀ s ∈ insert (a ∪ b) ((S.erase a).erase b), ∀ t ∈ insert (a ∪ b) ((S.erase a).erase b),
+      joinDist D a b s t = treeD A w s t := by
+  have hSne : ∀ s ∈ S, s.Nonempty := fun s hs => by
+    obtain ⟨e, he⟩ := hP.side s hs
+    exact he ▸ hA.ne e
+  obtain ⟨ea, hea⟩ := hP.side a ha
+  obtain ⟨eb, heb⟩ := hP.side b hb
+  have hdab := hP.disj a ha b hb hab
+  have hane := hSne a ha
+  have hmem : ∀ t, t ∈ insert (a ∪ b) ((S.erase a).erase b) ↔
+      t = a ∪ b ∨ (t ∈ S ∧ t ≠ a ∧ t ≠ b) := by
+    intro t
+    simp only [Finset.mem_insert, Finset.mem_erase]
+    tauto
+  have hneU : ∀ t ∈ S, t ≠ a → t ≠ b → t ≠ a ∪ b := by
+    intro t ht hta htb h
+    obtain ⟨z, hz⟩ := hSne t ht
+    have := Finset.disjoint_union_left.mpr ⟨hP.disj a ha t ht (Ne.symm hta),
+      hP.disj b hb t ht (Ne.symm htb)⟩
+    rw [← h] at this
+    exact Finset.disjoint_left.mp this hz hz
+  intro s hs t ht
+  unfold joinDist
+  rcases (hmem s).mp hs with rfl | ⟨hs, hsa, hsb⟩ <;>
+    rcases (hmem t).mp ht with h | ⟨ht, hta, htb⟩
+  · rw [ite_eq_left rfl, ite_eq_left h, h]
+    exact (treeD_self A w (hane.mono Finset.subset_union_left)).symm
+  · rw [ite_eq_left rfl, ite_eq_right (hneU t ht hta htb), hD a ha t ht, hD b hb t ht,
+      hD a ha b hb]
+    exact (treeD_union w hA hea heb heU (hSne t ht) hdab (hP.disj a ha t ht (Ne.symm hta))
+      (hP.disj b hb t ht (Ne.symm htb))).symm
+  · rw [ite_eq_right (hneU s hs hsa hsb), ite_eq_left h, hD a ha s hs, hD b hb s hs,
+      hD a ha b hb, h, treeD_comm A w s]
+    exact (treeD_union w hA hea heb heU (hSne s hs) hdab (hP.disj a ha s hs (Ne.symm hsa))
+      (hP.disj b hb s hs (Ne.symm hsb))).symm
+  · rw [ite_eq_right (hneU s hs hsa hsb), ite_eq_right (hneU t ht hta htb)]
+    exact hD s hs t ht
+
+/-- Along a run of neighbor joining on a tree metric, the invariant holds and the cluster
+dissimilarity is the tree distance. -/
 private lemma inv_run {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fintype E]
     {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A) (hw : ∀ e, 0 < w e) {d : X → X → ℝ}
     (hd : ∀ x y, d x y = treeD A w {x} {y}) {S : Finset (Finset X)}
     {D : Finset X → Finset X → ℝ} {C : Finset (Finset X)} (hrun : NJRun d S D C) :
-    Inv A w S D C := by
+    Inv A S C ∧ ∀ s ∈ S, ∀ t ∈ S, D s t = treeD A w s t := by
   induction hrun with
-  | init => exact inv_init hA hd
-  | join _ h4 ha hb hab hmin ih => exact inv_join hA hw ih h4 ha hb hab hmin
+  | init =>
+    refine ⟨inv_init hA, fun s hs t ht => ?_⟩
+    obtain ⟨x, -, rfl⟩ := Finset.mem_image.mp hs
+    obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp ht
+    simp [initialDist, hd]
+  | join _ h4 ha hb hab hmin ih =>
+    obtain ⟨eU, heU⟩ := exists_eq_union_of_qCriterion_min hA hw ih.1.part h4 ih.2 ha hb hab hmin
+    exact ⟨inv_join hA ih.1 h4 ha hb hab heU, dist_join hA ih.1.part ih.2 ha hb hab heU⟩
 
-private lemma inv_final {X : Type*} [Fintype X] [DecidableEq X] {E : Type*} [Fintype E]
-    {A : E → Finset X} {w : E → ℝ} (hA : SplitSys A) {S : Finset (Finset X)}
-    {D : Finset X → Finset X → ℝ} {C : Finset (Finset X)} (hI : Inv A w S D C)
+private lemma inv_final {X : Type*} [Fintype X] [DecidableEq X] {E : Type*}
+    {A : E → Finset X} (hA : SplitSys A) {S : Finset (Finset X)}
+    {C : Finset (Finset X)} (hI : Inv A S C)
     (h3 : S.card ≤ 3) (A₀ : Finset X) :
     (A₀ ∈ C ∨ univ \ A₀ ∈ C) ↔ ∃ e, A e = A₀ ∧ 2 ≤ A₀.card ∧ 2 ≤ (univ \ A₀).card := by
   have hSne : ∀ s ∈ S, s.Nonempty := fun s hs => by
@@ -1760,28 +1808,145 @@ private lemma two_le_card_side {X : Type*} [Fintype X] {V : Type*}
   have := (side_nonempty hT he.symm).card_pos
   omega
 
-/-- **Neighbor joining is exact on tree metrics.** Let `d` be the path-length metric of a
-binary phylogenetic `X`-tree `(G, ι)` with positive edge lengths `w`. Then every complete run
-of neighbor joining (stopped with at most three clusters) forms exactly the splits of the
-internal edges of the tree: a set of taxa `A` or its complement is a formed cluster if and
-only if `A` is the set of taxa on the `a`-side of an edge `{a, b}` with both endpoints
-internal.
+/-- `1` if a side of the split `B` is a proper subset of the cluster `s` and contains `x`. -/
+private noncomputable def inner {X : Type*} [Fintype X] [DecidableEq X] (B s : Finset X)
+    (x : X) : ℝ :=
+  if (B ⊂ s ∧ x ∈ B) ∨ (univ \ B ⊂ s ∧ x ∉ B) then 1 else 0
 
-Source: Saitou & Nei (1987); Studier & Keppler (1988); Gascuel (1994); Bryant (2005).
-Proves the deferred entry `njRun_splits`. -/
-theorem njRun_splits {X : Type*} [DecidableEq X] [Fintype X] {V : Type*} [Fintype V]
+/-- A split compatible with two disjoint clusters cuts at most one of them; the indicator that
+it separates `x ∈ s` from `y ∈ t` is the indicator that it separates the clusters plus terms
+depending only on `(s, x)` and on `(t, y)`. -/
+private lemma sep_eq_sepI_add_inner {X : Type*} [Fintype X] [DecidableEq X] {B s t : Finset X}
+    (hBs : Disjoint B s ∨ B ⊆ s ∨ s ⊆ B ∨ B ∪ s = univ)
+    (hBt : Disjoint B t ∨ B ⊆ t ∨ t ⊆ B ∨ B ∪ t = univ) (hst : Disjoint s t) {x y : X}
+    (hx : x ∈ s) (hy : y ∈ t) :
+    (if (x ∈ B ↔ y ∈ B) then (0 : ℝ) else 1) = sepI B s t + inner B s x + inner B t y := by
+  classical
+  rcases hBs with hBs | hBs | hBs | hBs <;>
+    rcases hBt with hBt | hBt | hBt | hBt <;>
+    by_cases hxb : x ∈ B <;> by_cases hyb : y ∈ B <;>
+    simp only [sepI, inner, Finset.ssubset_iff_subset_ne, ne_eq, Finset.ext_iff,
+      Finset.subset_iff, Finset.disjoint_left, Finset.mem_union, Finset.mem_sdiff,
+      Finset.mem_univ, true_and, iff_true] at * <;>
+    grind
+
+/-- A dart whose side holds at least two taxa starts at an internal vertex. -/
+private lemma fst_notMem_range_of_two_le_card {X : Type*} [Fintype X] {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V} (hT : IsBinaryPhylogeneticTree G ι)
-    {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e) {d : X → X → ℝ}
+    {a b : V} (hab : G.Adj a b) (h : 2 ≤ (side G ι a b).card) : a ∉ Set.range ι := by
+  rintro ⟨z, rfl⟩
+  rw [side_leaf hT hab, Finset.card_singleton] at h
+  omega
+
+universe u in
+/-- **The path metric on a partition into sides.** Let `S` partition the taxa of a binary
+phylogenetic `X`-tree `(G, ι)` with positive edge lengths `w` and path-length metric `d` into
+sides of edges. Then there is a system of splits `A e` (`e : E`) of the set of clusters with
+positive weights `w' e`, closed under complement, pairwise compatible, binary, and containing
+every trivial split, such that
+* the weight of every internal split (both sides with at least two clusters) is the length of an
+  edge with both endpoints internal;
+* a split whose side is `{s, t}` comes from an edge with side `s ∪ t`;
+* for taxa `x ∈ s` and `y ∈ t` of distinct clusters, `d x y` is half the total weight of the
+  splits separating `s` from `t`, plus a term `ρ s x` depending only on `s` and `x` and a term
+  `ρ t y`.
+In the construction, the splits are those of the edges that cut no cluster. -/
+theorem exists_splitSystem_of_partition {X : Type*} [Fintype X] [DecidableEq X] {V : Type u}
+    [Fintype V] {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V}
+    (hT : IsBinaryPhylogeneticTree G ι) {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e)
+    {d : X → X → ℝ}
     (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
-    {S : Finset (Finset X)} {D : Finset X → Finset X → ℝ} {C : Finset (Finset X)}
-    (hrun : NJRun d S D C) (hS : S.card ≤ 3) (A : Finset X) :
+    {S : Finset (Finset X)} (hside : ∀ s ∈ S, ∃ u v, G.Adj u v ∧ side G ι u v = s)
+    (hdisj : ∀ s ∈ S, ∀ t ∈ S, s ≠ t → Disjoint s t) (hcover : ∀ x, ∃ s ∈ S, x ∈ s) :
+    ∃ (E : Type u) (_ : Fintype E) (A : E → Finset {s // s ∈ S}) (w' : E → ℝ)
+      (ρ : {s // s ∈ S} → X → ℝ),
+      (∀ e, 0 < w' e) ∧ (∀ e, (A e).Nonempty) ∧ (∀ e, ∃ e', A e' = univ \ A e) ∧
+      (∀ e e', Disjoint (A e) (A e') ∨ A e ⊆ A e' ∨ A e' ⊆ A e ∨ A e ∪ A e' = univ) ∧
+      (∀ e, 2 ≤ (A e).card → ∃ e₁ e₂, Disjoint (A e₁) (A e₂) ∧ A e₁ ∪ A e₂ = A e) ∧
+      (∀ s, ∃ e, A e = {s}) ∧
+      (∀ e, 2 ≤ (A e).card → 2 ≤ (univ \ A e).card →
+        ∃ u v, G.Adj u v ∧ u ∉ Set.range ι ∧ v ∉ Set.range ι ∧ w' e = w s(u, v)) ∧
+      (∀ e s t, A e = {s, t} → ∃ u v, G.Adj u v ∧ side G ι u v = (s : Finset X) ∪ t) ∧
+      ∀ s t : {s // s ∈ S}, s ≠ t → ∀ x ∈ (s : Finset X), ∀ y ∈ (t : Finset X),
+        d x y = (1 / 2) * ∑ e, w' e * (if (s ∈ A e ↔ t ∈ A e) then 0 else 1) +
+          ρ s x + ρ t y := by
+  classical
+  have hSS := splitSys_side hT
+  have hP : IsPart (fun t : G.Dart => side G ι t.fst t.snd) S :=
+    ⟨fun s hs => by
+      obtain ⟨u, v, huv, h⟩ := hside s hs
+      exact ⟨⟨(u, v), huv⟩, h⟩, hdisj, hcover⟩
+  obtain ⟨E', _, g, A', hA', hmemA', hcov, htree⟩ := reduce hSS hP (fun t => w t.edge)
+  -- a cluster outside a reduced split lies in the complement of the original split
+  have hout : ∀ e (s : {s // s ∈ S}), s ∉ A' e →
+      (s : Finset X) ⊆ univ \ side G ι (g e).fst (g e).snd := by
+    intro e s hs x hx
+    rw [Finset.mem_sdiff]
+    refine ⟨Finset.mem_univ x, fun hxA => ?_⟩
+    obtain ⟨s', hs', hxs'⟩ := (hcov e x).mp hxA
+    have hne : (s' : Finset X) ≠ s := fun h => hs (Subtype.ext h ▸ hs')
+    exact Finset.disjoint_left.mp (hdisj s' s'.2 s s.2 hne) hxs' hx
+  have htwo : ∀ (B : Finset X) (s₁ s₂ : {s // s ∈ S}), s₁ ≠ s₂ → (s₁ : Finset X) ⊆ B →
+      (s₂ : Finset X) ⊆ B → 2 ≤ B.card := by
+    intro B s₁ s₂ h12 h1 h2
+    have h12' : (s₁ : Finset X) ≠ s₂ := fun h => h12 (Subtype.ext h)
+    have hc := Finset.card_le_card (Finset.union_subset h1 h2)
+    rw [Finset.card_union_of_disjoint (hdisj s₁ s₁.2 s₂ s₂.2 h12')] at hc
+    obtain ⟨e₁, he₁⟩ := hP.side s₁ s₁.2
+    obtain ⟨e₂, he₂⟩ := hP.side s₂ s₂.2
+    have := (he₁ ▸ hSS.ne e₁).card_pos
+    have := (he₂ ▸ hSS.ne e₂).card_pos
+    omega
+  refine ⟨E', inferInstance, A', fun e => w (g e).edge,
+    fun s x => (1 / 2) * ∑ t : G.Dart, w t.edge * inner (side G ι t.fst t.snd) s x,
+    fun e => hw _ (g e).edge_mem, hA'.ne, hA'.compl, hA'.compat, hA'.bin, hA'.single, ?_, ?_, ?_⟩
+  · intro e h1 h2
+    obtain ⟨s₁, hs₁, s₂, hs₂, h12⟩ := Finset.one_lt_card.mp h1
+    obtain ⟨t₁, ht₁, t₂, ht₂, ht12⟩ := Finset.one_lt_card.mp h2
+    have hin : 2 ≤ (side G ι (g e).fst (g e).snd).card :=
+      htwo _ s₁ s₂ h12 ((hmemA' e s₁).mp hs₁) ((hmemA' e s₂).mp hs₂)
+    have hout2 : 2 ≤ (side G ι (g e).snd (g e).fst).card := by
+      rw [side_swap hT.1 (g e).adj]
+      exact htwo _ t₁ t₂ ht12 (hout e t₁ (Finset.mem_sdiff.mp ht₁).2)
+        (hout e t₂ (Finset.mem_sdiff.mp ht₂).2)
+    exact ⟨(g e).fst, (g e).snd, (g e).adj, fst_notMem_range_of_two_le_card hT (g e).adj hin,
+      fst_notMem_range_of_two_le_card hT (g e).adj.symm hout2, rfl⟩
+  · intro e s t he
+    refine ⟨(g e).fst, (g e).snd, (g e).adj, ?_⟩
+    ext x
+    rw [hcov e x, he, Finset.mem_union]
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    constructor
+    · rintro ⟨s', rfl | rfl, hx⟩
+      · exact Or.inl hx
+      · exact Or.inr hx
+    · rintro (hx | hx)
+      · exact ⟨s, Or.inl rfl, hx⟩
+      · exact ⟨t, Or.inr rfl, hx⟩
+  · intro s t hst x hx y hy
+    have hst' : (s : Finset X) ≠ t := fun h => hst (Subtype.ext h)
+    obtain ⟨es, hes⟩ := hP.side s s.2
+    obtain ⟨et, het⟩ := hP.side t t.2
+    have key : ∀ e : G.Dart,
+        (if (x ∈ side G ι e.fst e.snd ↔ y ∈ side G ι e.fst e.snd) then (0 : ℝ) else 1) =
+          sepI (side G ι e.fst e.snd) s t + inner (side G ι e.fst e.snd) s x +
+            inner (side G ι e.fst e.snd) t y := fun e =>
+      sep_eq_sepI_add_inner (hes ▸ hSS.compat e es) (het ▸ hSS.compat e et)
+        (hdisj s s.2 t t.2 hst') hx hy
+    rw [dist_eq_sum_darts hT.1 hd x y, ← htree s t]
+    unfold treeD
+    simp only [key, mul_add, Finset.sum_add_distrib]
+
+/-- The splits formed by a run satisfying the invariant on the sides of a binary phylogenetic
+tree, once at most three clusters remain, are exactly the splits of the internal edges. -/
+private lemma splits_iff_of_inv {X : Type*} [DecidableEq X] [Fintype X] {V : Type*}
+    [Fintype V] {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V}
+    (hT : IsBinaryPhylogeneticTree G ι) {S C : Finset (Finset X)}
+    (hI : Inv (fun t : G.Dart => side G ι t.fst t.snd) S C) (hS : S.card ≤ 3) (A : Finset X) :
     (A ∈ C ∨ Finset.univ \ A ∈ C) ↔
       ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
         ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a := by
-  classical
-  have hSS := splitSys_side hT
-  have hI := inv_run hSS (fun t => hw _ t.edge_mem) (dist_eq_treeD hT.1 hd) hrun
-  rw [inv_final hSS hI hS A]
+  rw [inv_final (splitSys_side hT) hI hS A]
   constructor
   · rintro ⟨t, ht, h1, h2⟩
     have hsw : side G ι t.snd t.fst = univ \ A := (side_swap hT.1 t.adj).trans (by rw [ht])
@@ -1804,5 +1969,60 @@ theorem njRun_splits {X : Type*} [DecidableEq X] [Fintype X] {V : Type*} [Fintyp
     refine ⟨⟨(a, b), hab⟩, hside, hside ▸ two_le_card_side hT hab ha, ?_⟩
     rw [← hside, ← side_swap hT.1 hab]
     exact two_le_card_side hT hab.symm hb
+
+/-- **Neighbor joining is exact on tree metrics.** Let `d` be the path-length metric of a
+binary phylogenetic `X`-tree `(G, ι)` with positive edge lengths `w`. Then every complete run
+of neighbor joining (stopped with at most three clusters) forms exactly the splits of the
+internal edges of the tree: a set of taxa `A` or its complement is a formed cluster if and
+only if `A` is the set of taxa on the `a`-side of an edge `{a, b}` with both endpoints
+internal.
+
+Source: Saitou & Nei (1987); Studier & Keppler (1988); Gascuel (1994); Bryant (2005).
+Proves the deferred entry `njRun_splits`. -/
+theorem njRun_splits {X : Type*} [DecidableEq X] [Fintype X] {V : Type*} [Fintype V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V} (hT : IsBinaryPhylogeneticTree G ι)
+    {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e) {d : X → X → ℝ}
+    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
+    {S : Finset (Finset X)} {D : Finset X → Finset X → ℝ} {C : Finset (Finset X)}
+    (hrun : NJRun d S D C) (hS : S.card ≤ 3) (A : Finset X) :
+    (A ∈ C ∨ Finset.univ \ A ∈ C) ↔
+      ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
+        ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a := by
+  classical
+  exact splits_iff_of_inv hT
+    (inv_run (splitSys_side hT) (fun t => hw _ t.edge_mem) (dist_eq_treeD hT.1 hd) hrun).1 hS A
+
+/-- **Neighbor joining forms the splits of a tree when every join forms a side.** Let `(G, ι)`
+be a binary phylogenetic `X`-tree and `D` any dissimilarity. Suppose that whenever a run of
+neighbor joining on `D` has reached a partition `S` of the taxa into sides of edges of the tree
+(with at least four clusters) and joins two of its clusters, their union is again a side of an
+edge. Then every complete run of neighbor joining on `D` (stopped with at most three clusters)
+forms exactly the splits of the internal edges of the tree. This reduces the correctness of
+neighbor joining on `D` to its selection step. -/
+theorem njRun_splits_of_join {X : Type*} [DecidableEq X] [Fintype X] {V : Type*} [Fintype V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] {ι : X → V} (hT : IsBinaryPhylogeneticTree G ι)
+    {D : X → X → ℝ}
+    (hjoin : ∀ {S : Finset (Finset X)} {Dc : Finset X → Finset X → ℝ} {C : Finset (Finset X)}
+      {a b : Finset X}, NJRun D S Dc C → (∀ s ∈ S, ∃ u v, G.Adj u v ∧ side G ι u v = s) →
+      (∀ s ∈ S, ∀ t ∈ S, s ≠ t → Disjoint s t) → (∀ x, ∃ s ∈ S, x ∈ s) → 4 ≤ S.card →
+      a ∈ S → b ∈ S → a ≠ b →
+      (∀ a' ∈ S, ∀ b' ∈ S, a' ≠ b' → qCriterion S Dc a b ≤ qCriterion S Dc a' b') →
+      ∃ u v, G.Adj u v ∧ side G ι u v = a ∪ b)
+    {S : Finset (Finset X)} {Dc : Finset X → Finset X → ℝ} {C : Finset (Finset X)}
+    (hrun : NJRun D S Dc C) (hS : S.card ≤ 3) (A : Finset X) :
+    (A ∈ C ∨ Finset.univ \ A ∈ C) ↔
+      ∃ a b, G.Adj a b ∧ a ∉ Set.range ι ∧ b ∉ Set.range ι ∧
+        ∀ x, x ∈ A ↔ (G.deleteEdges {s(a, b)}).Reachable (ι x) a := by
+  have hSS := splitSys_side hT
+  have hI : Inv (fun t : G.Dart => side G ι t.fst t.snd) S C := by
+    clear hS
+    induction hrun with
+    | init => exact inv_init hSS
+    | join hr h4 ha hb hab hmin ih =>
+      obtain ⟨u, v, huv, hU⟩ := hjoin hr (fun s hs => by
+          obtain ⟨t, ht⟩ := ih.part.side s hs
+          exact ⟨t.fst, t.snd, t.adj, ht⟩) ih.part.disj ih.part.cover h4 ha hb hab hmin
+      exact inv_join hSS ih h4 ha hb hab (eU := ⟨(u, v), huv⟩) hU
+  exact splits_iff_of_inv hT hI hS A
 
 end Cslib.Bioinformatics.Phylogenetics.NeighborJoining

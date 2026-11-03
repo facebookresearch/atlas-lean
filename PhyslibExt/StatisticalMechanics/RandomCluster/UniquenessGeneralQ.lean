@@ -13,10 +13,15 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeWeakLimit
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MonotoneWeakLimit
 
 /-!
-# Uniqueness of the infinite-volume random-cluster measure for `q ≥ 1`
+# Per-box uniqueness for the random-cluster measures for `q ≥ 1`
 
-For `d ≥ 1` and `q ≥ 1`, the free and wired infinite-volume random-cluster measures on `ℤ^d` agree
-on every increasing event of a box `Λ_N` for all but countably many `p ∈ (0, 1)`.
+For `d ≥ 1` and `q ≥ 1`, and for each fixed box `Λ_N`, the free and wired random-cluster
+measures on `ℤ^d` agree on every increasing event of that box for all but countably many
+parameters. This is a per-box statement: the countable exceptional set may depend on `N`, it
+is stated in the logit parameter `t` (with `p = logistic t`), and it covers the restrictions
+to one finite box only. It is not equality of the infinite-volume measures: the countable
+union over all `N`, the transfer to a single exceptional set in `p ∈ (0, 1)`, and the
+derivation of equality of the infinite-volume measures are not proved here.
 
 ## i. Overview
 
@@ -45,7 +50,8 @@ theorem; for `q ≥ 1` and increasing box events the first part shows the choice
 - `fkgq_density_translation_inv_lattice`, `fkgq_free_edge_const`, `fkgq_wired_edge_const` : all
   lattice edges have the same density.
 - `fkgq_centered_deriv_eq_densities` : at differentiability points the densities equal `G'`.
-- `fkgq_countable_free_wired_disagreement` : uniqueness off a countable set.
+- `fkgq_countable_free_wired_disagreement` : per-box uniqueness off a countable set
+  (the exceptional set may depend on the box).
 
 ## iii. Table of contents
 
@@ -1700,14 +1706,17 @@ lemma fkgq_centered_deriv_eq_densities (hd : 1 ≤ d) (q : ℝ) (hq : 1 ≤ q)
     exact hfreeL.trans hfw
 
 /--
-**Uniqueness of the random-cluster measure off a countable set.** For `d ≥ 1`, `q ≥ 1`, and every
-box `Λ_N`, the free and wired infinite-volume random-cluster measures on `ℤ^d` at
-`p = logistic(t)` give the same mass to every increasing event of `Λ_N`, for all `t` outside a
-countable set.
+**Per-box uniqueness of the random-cluster measures off a countable set.** For `d ≥ 1`,
+`q ≥ 1`, and every box `Λ_N`, the free and wired infinite-volume random-cluster measures on
+`ℤ^d` at `p = logistic(t)` give the same mass to every increasing event of `Λ_N`, for all `t`
+outside a countable set.
 
-Taking the union over `N` gives one countable exceptional set for all box events; this union is
-not
-stated here. (Grimmett, *The Random-Cluster Model*, 2006, Theorem 4.60.)
+This is a per-box statement only: the countable exceptional set may depend on `N`, the
+statement is in the logit parameter `t` rather than in `p ∈ (0, 1)` directly, and it concludes
+agreement on increasing events of that one finite restriction, not equality of the
+infinite-volume measures. No declaration here takes the countable union over `N`, transfers
+it to `p`, or derives equality of the infinite-volume measures. (Grimmett, *The Random-Cluster
+Model*, 2006, Theorem 4.60.)
 -/
 theorem fkgq_countable_free_wired_disagreement (hd : 1 ≤ d) (N : ℕ)
     (q : ℝ) (hq : 1 ≤ q) :
