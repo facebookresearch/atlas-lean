@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import CSLibExt.Complexity.BooleanFunctions.KKL.EntropySubadd
+import MathlibExt.InformationTheory.LogSum
 public import CSLibExt.Complexity.BooleanFunctions.KKL.FSPerEdge
 
 /-!
