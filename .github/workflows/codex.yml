@@ -41,15 +41,18 @@ jobs:
       issues: write
     # The automerge gate (automerge.yml) binds its approval to a genuine
     # review run through the codex-verdict check below, whose conclusion
-    # reflects this output: 'approved' iff the automatic verdict is
+    # reflects this output: 'approved' iff the formal verdict is
     # approval, empty when no review was posted. `review_id` carries the
     # created review's ID so the verdict job can attest the exact review
-    # (empty when no review was posted). Only same-repo automatic runs
-    # are formal (`formal == 'true'`) and mint a verdict. Fork-PR
-    # automatic runs run the same structured review, but Submit posts
-    # them as an advisory comment with the verdict discarded; comment
-    # runs stay freeform. Fork content can never mint an approval for
-    # the gate.
+    # (empty when no review was posted). Only same-repo runs are formal
+    # (`formal == 'true'`) and mint a verdict: same-repo automatic runs,
+    # and same-repo `@codex` comment runs by a writer/maintainer/admin.
+    # Fork-PR automatic runs run the same structured review, but Submit
+    # posts them as an advisory comment with the verdict discarded;
+    # `@codex` comment runs on fork PRs stay freeform and advisory.
+    # Fork content can never mint an approval for the gate, even when
+    # a maintainer asks for the review with `@codex`: the fork diff is
+    # untrusted input and could steer the verdict.
     outputs:
       authorized: ${{ steps.check_auth.outputs.authorized }}
       formal: ${{ steps.check_auth.outputs.formal }}
@@ -78,14 +81,46 @@ jobs:
             // authors. Re-check here so a job-`if` edit alone cannot open
             // automatic fork reviews to untrusted authors. Those runs are
             // advisory only (formal == 'false'): they never mint a verdict.
-            // Same-repo automatic runs stay formal, and comment runs stay
-            // advisory, both authorized by write/maintain/admin.
+            // Same-repo automatic runs stay formal, and comment runs on
+            // same-repo PRs are formal too (below), both authorized by
+            // write/maintain/admin. Comment runs on fork PRs stay
+            // advisory: fork content must never mint an approval, even
+            // when a maintainer asks for the review with `@codex`.
             const isForkTarget =
               context.eventName === "pull_request_target";
+            const isComment =
+              context.eventName === "issue_comment" ||
+              context.eventName === "pull_request_review_comment";
+            // For comment runs, formality needs the PR's head repo, which
+            // the payload does not carry: fetch the PR. Non-PR issue
+            // comments and a missing head repo are not formal.
+            let commentSameRepo = false;
+            if (isComment) {
+              const number =
+                context.payload.issue?.number ??
+                context.payload.pull_request?.number;
+              if (number && context.payload.issue?.pull_request !== null) {
+                try {
+                  const { data: pr } = await github.rest.pulls.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: number,
+                  });
+                  commentSameRepo =
+                    pr.head.repo?.full_name ===
+                    context.payload.repository.full_name;
+                } catch (error) {
+                  if (error.status !== 404) {
+                    throw error;
+                  }
+                }
+              }
+            }
             const isFormal =
-              context.eventName === "pull_request" &&
-              context.payload.pull_request?.head?.repo?.full_name ===
-                context.payload.repository.full_name;
+              (context.eventName === "pull_request" &&
+                context.payload.pull_request?.head?.repo?.full_name ===
+                  context.payload.repository.full_name) ||
+              (isComment && commentSameRepo);
             let authorized;
             let permission = "none";
             if (isForkTarget) {
@@ -753,14 +788,16 @@ jobs:
         timeout-minutes: 25
         env:
           CODEX_IMAGE: node:24-bookworm@sha256:64af3819f9275802414d7cdc38c27e9d82bd564dec4d4da87d008255d36c63b4
-          # Structured review (schema + prompt) for every automatic run:
-          # same-repo via pull_request, fork via pull_request_target.
-          # Formality is separate and decided in Submit: only same-repo
-          # automatic runs mint a verdict. A freeform prompt here would
-          # leave an advisory fork run with no explicit review request
+          # Structured review (schema + prompt) for every automatic run
+          # (same-repo via pull_request, fork via pull_request_target)
+          # and for every formal `@codex` comment run, so Submit can
+          # parse the verdict and post a formal review. Formality is
+          # separate and decided in Submit: only same-repo runs mint a
+          # verdict. A freeform prompt here would leave an advisory
+          # fork run with no explicit review request
           # (pull_request_target carries no comment body) and its
           # REVIEWING.md verdict could leak into the posted comment.
-          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || steps.check_auth.outputs.formal == 'true' }}
           BASE_SHA: ${{ steps.target.outputs.base }}
           CONTEXT_FILE: ${{ steps.target.outputs.context }}
         run: |
@@ -986,7 +1023,8 @@ jobs:
           CODEX_OUTPUT: ${{ runner.temp }}/codex-io/codex-output.md
           REVIEW_COMMIT: ${{ steps.target.outputs.ref }}
           FORMAL_REVIEW: ${{ steps.check_auth.outputs.formal }}
-          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+          TRIGGER_EVENT: ${{ github.event_name }}
+          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || steps.check_auth.outputs.formal == 'true' }}
         with:
           script: |
             const fs = require("fs");
@@ -997,13 +1035,16 @@ jobs:
               throw new Error("Codex produced no response");
             }
             // Automatic mode and formality are separate. Every automatic
-            // run (same-repo and fork) produced structured JSON, so both
-            // are parsed the same way. Only formal (same-repo) runs post
-            // a review carrying the verdict; advisory fork runs post the
-            // same findings as an issue comment with the verdict
-            // discarded, so no verdict leaks into the posted text.
+            // run (same-repo and fork) and every formal `@codex` comment
+            // run produced structured JSON, so all of them are parsed
+            // the same way. Only formal runs (same-repo automatic plus
+            // same-repo `@codex` comment runs) post a review carrying
+            // the verdict; advisory fork runs post the same findings as
+            // an issue comment with the verdict discarded, so no
+            // verdict leaks into the posted text.
             const formal = process.env.FORMAL_REVIEW === "true";
             const automatic = process.env.AUTOMATIC_REVIEW === "true";
+            const triggerEvent = process.env.TRIGGER_EVENT || "";
             let body = output;
             let suffix = "";
             let reviewEvent;
@@ -1036,8 +1077,13 @@ jobs:
                     .join("\n")
                 : "No actionable findings.";
               if (formal) {
+                const marker =
+                  triggerEvent === "issue_comment" ||
+                  triggerEvent === "pull_request_review_comment"
+                    ? "<!-- codex-comment-review -->"
+                    : "<!-- codex-automatic-review -->";
                 body = [
-                  "<!-- codex-automatic-review -->",
+                  marker,
                   "## Codex review",
                   "### Findings",
                   findings,
@@ -1148,13 +1194,13 @@ jobs:
             });
 
   # Verdict attestation for the automerge gate: this job-created check
-  # succeeds iff the automatic review verdict is approval. The gate
+  # succeeds iff the formal review verdict is approval. The gate
   # resolves the check's suite to this genuine run (API-forged checks
   # mint suites no genuine run carries) and requires the log line below
   # to name the exact review ID, which binds the approval to real review
   # provenance instead of the shared bot identity. Skipped (no check)
-  # when no review was posted: comment-triggered runs, advisory fork-PR
-  # runs, failures, and cancellations.
+  # when no review was posted: advisory comment runs (fork PRs),
+  # advisory fork-PR runs, failures, and cancellations.
   codex-verdict:
     name: codex-verdict
     needs: [codex]
