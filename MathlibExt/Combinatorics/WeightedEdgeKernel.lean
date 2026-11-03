@@ -21,6 +21,13 @@ import Mathlib.Tactic.Ring
 Nonnegative symmetric matrix weights with row sums at most `P` give incident weight at most
 `4 * P`. A kernel supported on incident pairs, bounded above by `m ≥ 0`, then gives a quadratic
 bound `4 * P * totalWeight * m`. Kernel values may be negative and nonsymmetric.
+
+The Nat/Int specialization strengthens `Variance.StHence` from
+[`anthropics/formal-math`](https://github.com/anthropics/formal-math/tree/16a5ce41304fcdaea4e0be7c132e1c361dc26da5),
+commit `16a5ce41304fcdaea4e0be7c132e1c361dc26da5`:
+`eth/proof/networks/Variance/Defs.lean` (`StHence`) and
+`eth/proof/networks/Variance/Var.lean` (`stHence`). It requires the kernel bound
+only on the distinct-pair domain of the sum, rather than on every entry.
 -/
 
 @[expose] public section
@@ -166,8 +173,9 @@ private lemma sum_orderedKernel {g : ℕ} (c : Matrix (Fin g) (Fin g) ℕ)
     refine sum_eq_zero fun q _ => ?_
     rw [orderedKernel, ite_eq_right (fun h => hp h.1), mul_zero]
 
-/-- The exact `Variance.StHence` estimate: natural weights on `Fin g`, integer kernel,
-row sums over erased diagonals, and all directed distinct pairs. Diagonal weights are arbitrary.
+/-- The `Variance.StHence` bound with the kernel hypothesis restricted to distinct pairs:
+natural weights on `Fin g`, integer kernel, and row sums over erased diagonals.
+Diagonal weights and kernel entries outside the distinct-pair domain are arbitrary.
 The four inequalities in `h0` are precisely the negation of the source `Meets` disjunction.
 The proof zeroes diagonal weights and masks the kernel outside the distinct-pair domain;
 it does not extend a signed sum by adding unmasked terms. -/
@@ -177,7 +185,8 @@ theorem sum_ordered_nat_int_kernel_le (g P : ℕ) (c : Matrix (Fin g) (Fin g) �
     (h0 : ∀ p ∈ (univ.filter fun p : Fin g × Fin g => p.1 ≠ p.2),
       ∀ q ∈ (univ.filter fun q : Fin g × Fin g => q.1 ≠ q.2),
         q.1 ≠ p.1 → q.1 ≠ p.2 → q.2 ≠ p.1 → q.2 ≠ p.2 → κ p q = 0)
-    (h1 : ∀ p q, κ p q ≤ m) :
+    (h1 : ∀ p ∈ (univ.filter fun p : Fin g × Fin g => p.1 ≠ p.2),
+      ∀ q ∈ (univ.filter fun q : Fin g × Fin g => q.1 ≠ q.2), κ p q ≤ m) :
     (∑ p ∈ (univ.filter fun p : Fin g × Fin g => p.1 ≠ p.2),
       ∑ q ∈ (univ.filter fun q : Fin g × Fin g => q.1 ≠ q.2),
         (c p.1 p.2 : ℤ) * (c q.1 q.2 : ℤ) * κ p q) ≤
@@ -196,8 +205,9 @@ theorem sum_ordered_nat_int_kernel_le (g P : ℕ) (c : Matrix (Fin g) (Fin g) �
   have hk1 : ∀ p q, orderedKernel κ p q ≤ m := by
     intro p q
     unfold orderedKernel
-    split_ifs
-    · exact h1 p q
+    split_ifs with h
+    · exact h1 p (mem_filter.mpr ⟨mem_univ _, h.1⟩)
+        q (mem_filter.mpr ⟨mem_univ _, h.2⟩)
     · exact hm
   have hk0 : ∀ p q, q.1 ≠ p.1 → q.1 ≠ p.2 → q.2 ≠ p.1 → q.2 ≠ p.2 →
       orderedKernel κ p q = 0 := by

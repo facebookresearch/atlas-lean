@@ -202,12 +202,12 @@ example : sourceQuadratic sourceWeight sourceKernel ≤
     have hq' := (mem_filter.mp hq).2
     rw [sourceKernel, ite_eq_left ⟨hp', hq'⟩]
     simp [overlap, h₁, h₂, h₃, h₄]
-  · intro p q
+  · intro p _ q _
     unfold sourceKernel
     split_ifs <;> decide
 
-/-- Even an arbitrarily large positive diagonal contributes zero to the source domain. -/
-example (d : ℕ) : sourceQuadratic (fun _ _ : Fin 1 => d + 1) (fun _ _ => (-3 : ℤ)) ≤
+/-- Positive inactive kernel entries need not satisfy the zero bound. -/
+example (d : ℕ) : sourceQuadratic (fun _ _ : Fin 1 => d + 1) (fun _ _ => (3 : ℤ)) ≤
     ((4 * 0 * (∑ a : Fin 1, ∑ _b ∈ univ.erase a, d + 1) : ℕ) : ℤ) * 0 := by
   apply Matrix.sum_ordered_nat_int_kernel_le 1 0 (fun _ _ : Fin 1 => d + 1)
     (fun _ _ => rfl) (by
@@ -220,13 +220,15 @@ example (d : ℕ) : sourceQuadratic (fun _ _ : Fin 1 => d + 1) (fun _ _ => (-3 :
         · intro _
           exact mem_univ _
       rw [hu]
-      simp) (fun _ _ => (-3 : ℤ)) 0 (le_refl _)
+      simp) (fun _ _ => (3 : ℤ)) 0 (le_refl _)
   · intro p hp
     exact False.elim ((mem_filter.mp hp).2 (Subsingleton.elim _ _))
-  · intro p q
-    decide
+  · intro p hp
+    exact False.elim ((mem_filter.mp hp).2 (Subsingleton.elim _ _))
 
-example (d : ℕ) : sourceQuadratic (fun _ _ : Fin 1 => d + 1) (fun _ _ => (-3 : ℤ)) = 0 := by
+example : ¬ (∀ _p _q : Fin 1 × Fin 1, (3 : ℤ) ≤ 0) := by decide
+
+example (d : ℕ) : sourceQuadratic (fun _ _ : Fin 1 => d + 1) (fun _ _ => (3 : ℤ)) = 0 := by
   unfold sourceQuadratic
   have he : (univ.filter fun p : Fin 1 × Fin 1 => p.1 ≠ p.2) = ∅ := by
     ext p
@@ -246,9 +248,29 @@ example : sourceQuadratic pathNat signedKernel ≤
     (by intro a b; simp [pathNat]; split_ifs <;> omega) (by decide) signedKernel 1 (by decide)
   · intro p _ q _ h₁ h₂ h₃ h₄
     simp [signedKernel, overlap, h₁, h₂, h₃, h₄]
-  · intro p q
+  · intro p _ q _
     unfold signedKernel
     split_ifs <;> decide
+
+/-- A populated domain permits large positive entries outside that domain. -/
+def positiveInactiveKernel : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℤ := fun p q =>
+  if p.1 ≠ p.2 ∧ q.1 ≠ q.2 then 1 else 100
+
+example : sourceQuadratic (fun _ _ : Fin 2 => 1) positiveInactiveKernel = 4 := by decide
+example : ¬ (∀ p q, positiveInactiveKernel p q ≤ 1) := by
+  intro h
+  have hbad := h (0, 0) (0, 0)
+  norm_num [positiveInactiveKernel] at hbad
+
+example : sourceQuadratic (fun _ _ : Fin 2 => 1) positiveInactiveKernel ≤
+    ((4 * 1 * (∑ a : Fin 2, ∑ _b ∈ univ.erase a, 1) : ℕ) : ℤ) * 1 := by
+  apply Matrix.sum_ordered_nat_int_kernel_le 2 1 (fun _ _ => 1)
+    (fun _ _ => rfl) (by decide) positiveInactiveKernel 1 (by decide)
+  · rintro ⟨a, b⟩ hp ⟨c, d⟩ hq h₁ h₂ h₃ h₄
+    have hab := (mem_filter.mp hp).2
+    omega
+  · intro p hp q hq
+    simp [positiveInactiveKernel, (mem_filter.mp hp).2, (mem_filter.mp hq).2]
 
 #print axioms Matrix.sum_ordered_nat_int_kernel_le
 
