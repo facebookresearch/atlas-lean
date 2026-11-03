@@ -15,12 +15,16 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 # Rounded summation error bound
 
 The list is accumulated from right to left, starting at zero, with
-`fl p` after each addition. This is binary round-to-nearest, ties-to-even
-with an unbounded exponent, not hardware binary32/64 arithmetic.
+`fl p` after each addition. For `1 ≤ p`, this is binary round-to-nearest,
+ties-to-even with an unbounded exponent, not hardware binary32/64 arithmetic.
 The real-valued error is at most `((1 + u)^n - 1) * ∑ |xᵢ|`, where
 `u = 2^(-p)`. The proof uses the existing bound `abs_fl_sub_le` at each
 step. It applies to each input ordering, not to equality of rounded
 results across different orderings.
+
+The inequalities also hold at `p = 0`, but that case is only a formal
+extension of `fl`: it need not produce an `IsFloat 0` value and is not a
+zero-bit floating-point format.
 
 `rsum` also runs over rationals, allowing exact executable examples.
 The theorem below specializes it to the real numbers. Error and magnitude
@@ -35,7 +39,7 @@ namespace CSLibExt.Algorithms.Lean.Numerical.Summation
 
 open Cslib.Algorithms.Lean.FloatingPoint
 
-/-- The unit roundoff of a `p`-bit significand. -/
+/-- Error parameter `2^(-p)`, the unit roundoff when `1 ≤ p`. -/
 noncomputable def unitRoundoff (p : ℕ) : ℝ := 2 ^ (-(p : ℤ))
 
 /-- Sequential rounded summation: `fl p` on each partial sum. -/
