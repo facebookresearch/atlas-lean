@@ -182,7 +182,7 @@ theorem sequential_central_general_step :
   have hs : ∃ q, PiCalculus.Step network q := by
     rcases network_typed.progress_balanced hb network_available with hi | hs
     · exact False.elim (hi.no_unguarded_output
-        (show HasUnguardedOutput network from Or.inl trivial))
+        (show PiCalculus.HasUnguardedOutput network from Or.inl trivial))
     · exact hs
   refine ⟨actor_typed, ?_, Finmap.lookup_insert _, (by intro h; cases h),
     (by intro h; cases h), network_typed, hb, network_available, hs⟩

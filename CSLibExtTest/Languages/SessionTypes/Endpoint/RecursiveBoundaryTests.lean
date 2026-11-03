@@ -143,7 +143,8 @@ theorem closed_missing_no_step (q : Proc) : ¬ PiCalculus.Step (.nu missingServi
 /-- Stuck pending requests are not the finite completion branch either. -/
 theorem closed_missing_not_nil : ¬ Cong (.nu missingServices) .nil := by
   intro h
-  have ho := (output_cong h).mp (show HasUnguardedOutput (.nu missingServices) from Or.inl trivial)
+  have ho := h.hasUnguardedOutput_iff.mp
+    (show PiCalculus.HasUnguardedOutput (.nu missingServices) from Or.inl trivial)
   exact ho
 
 /-- Actual offered but waiting daemons, with no pending requests. -/

@@ -72,7 +72,7 @@ theorem missing_falsifies_qualification (r : Role) :
   · intro ha
     exact (ha 710 (senderSignature r) (sender_declared r)).elim id id
   · intro hi
-    exact hi.no_unguarded_output (show HasUnguardedOutput missing from Or.inl trivial)
+    exact hi.no_unguarded_output (show PiCalculus.HasUnguardedOutput missing from Or.inl trivial)
   · intro q hs
     have hinput := Endpoint.Step.source_hasUnguardedInput hs
     simp [missing, HasUnguardedInput, senderRequest, receiverRequest] at hinput

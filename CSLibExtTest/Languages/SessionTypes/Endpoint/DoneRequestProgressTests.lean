@@ -94,7 +94,7 @@ theorem done_payload_general_step :
   have hs : ∃ q, PiCalculus.Step network q := by
     rcases network_typed.progress_balanced hb network_available with hi | hs
     · exact False.elim
-        (hi.no_unguarded_output (show HasUnguardedOutput network from Or.inl trivial))
+        (hi.no_unguarded_output (show PiCalculus.HasUnguardedOutput network from Or.inl trivial))
     · exact hs
   exact ⟨network_typed, hb, network_available, ownership_done, by decide, hs⟩
 

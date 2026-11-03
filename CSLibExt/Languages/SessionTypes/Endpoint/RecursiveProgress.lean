@@ -24,11 +24,11 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-private theorem phase_output (b : Name) (i : Nat) : HasUnguardedOutput (phase b i) := by
+private theorem phase_output (b : Name) (i : Nat) : PiCalculus.HasUnguardedOutput (phase b i) := by
   have hm : i % 3 < 3 := Nat.mod_lt i (by decide)
   have hh : i % 3 = 0 ∨ i % 3 = 1 ∨ i % 3 = 2 := by omega
   rcases hh with h | h | h <;>
-    simp [phase, h, HasUnguardedOutput, pending, sentInvoked, bothInvoked,
+    simp [phase, h, PiCalculus.HasUnguardedOutput, pending, sentInvoked, bothInvoked,
       senderRequest, receiverRequest, senderWorker, receiverWorker]
 
 /-- GENERAL qualified progress produces an ACTUAL Step at every recursive phase,

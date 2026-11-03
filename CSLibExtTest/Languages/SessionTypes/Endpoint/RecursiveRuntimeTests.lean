@@ -16,7 +16,7 @@ import CSLibExt.Languages.SessionTypes.Endpoint.RuntimeCong
 
 These actual runtime consumers include general structural congruence.
 General runtime Step preservation is supplied by RuntimeReduction;
-qualified global runtime progress remains open.
+qualified global runtime progress is supplied by RuntimeGlobalProgress.
 -/
 
 namespace Cslib.SessionTypes.Endpoint.RuntimeTests

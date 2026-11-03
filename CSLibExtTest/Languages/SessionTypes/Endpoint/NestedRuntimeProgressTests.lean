@@ -50,11 +50,11 @@ private theorem network_available (r : Role) (i : Nat) : Available (services r) 
   intro s sig hs
   exact Or.inl (phase_available_by_reduction (.var 0) r i s sig hs)
 
-private theorem phase_output (i : Nat) : HasUnguardedOutput (network i) := by
+private theorem phase_output (i : Nat) : PiCalculus.HasUnguardedOutput (network i) := by
   have hm : i % 3 < 3 := Nat.mod_lt i (by decide)
   have hh : i % 3 = 0 ∨ i % 3 = 1 ∨ i % 3 = 2 := by omega
   rcases hh with h | h | h <;>
-    simp [network, phase, h, HasUnguardedOutput, pending, sentInvoked, bothInvoked,
+    simp [network, phase, h, PiCalculus.HasUnguardedOutput, pending, sentInvoked, bothInvoked,
       senderRequest, receiverRequest, senderWorker, receiverWorker]
 
 /-- BOTH actual service invocations occur with these additional wrapped/nested

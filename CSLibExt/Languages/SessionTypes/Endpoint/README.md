@@ -298,7 +298,8 @@ actual persistent offers in current syntax. Its finite-reduction invariance is
 proved, not stored as a step-closure or future-trace field. Consumed once-only
 accepts are not persistent offers; newly exposed continuation offers may appear.
 Actual offered waiting services have no Step and are NOT Cong nil.
-`RecursiveQuiescence` proves this with canonical input/output presence invariants.
+`RecursiveQuiescence` uses the canonical π output observation and public Step
+invariant; the endpoint input-presence invariant is separate.
 Conversely, declared but missing services admit typed stuck requests, even in an
 empty-interface private network. Availability must qualify runtime progress;
 finite completed-or-Step cannot be lifted blindly to the replica judgement.
