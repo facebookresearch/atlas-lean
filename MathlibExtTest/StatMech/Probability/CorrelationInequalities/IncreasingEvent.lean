@@ -10,6 +10,9 @@ module
 
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.NormNum
+
 /-!
 # Tests for `MathlibExt.Probability.CorrelationInequalities.IncreasingEvent`
 

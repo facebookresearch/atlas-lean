@@ -8,6 +8,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.DartNext
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Positivity
 
 /-!
 # The boundary successor map is a permutation

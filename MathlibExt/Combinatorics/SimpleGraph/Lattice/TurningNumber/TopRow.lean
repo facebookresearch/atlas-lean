@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.ExtremeCorners
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCrossing
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # The top row of a closed lattice walk

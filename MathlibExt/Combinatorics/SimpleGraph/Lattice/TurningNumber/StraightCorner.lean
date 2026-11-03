@@ -7,10 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.EdgeUnique
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCellBridge
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.Orientation
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Straight steps carry no corner weight

@@ -10,6 +10,11 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice`
 

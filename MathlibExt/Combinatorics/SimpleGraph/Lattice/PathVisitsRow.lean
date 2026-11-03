@@ -9,6 +9,9 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+
 /-!
 # Lattice paths visit every intermediate row and column
 

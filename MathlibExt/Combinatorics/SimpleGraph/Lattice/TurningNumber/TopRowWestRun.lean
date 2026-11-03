@@ -7,9 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.TopRow
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.JordanParity
+import Mathlib.Algebra.BigOperators.Pi
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Linarith
 
 /-!
 # West runs along the top row

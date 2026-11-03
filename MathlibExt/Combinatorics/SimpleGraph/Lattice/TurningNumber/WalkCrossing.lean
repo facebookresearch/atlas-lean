@@ -7,7 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Tactic.Ring.RingNF
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.DirectionWalk
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkVertices
 

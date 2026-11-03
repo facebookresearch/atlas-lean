@@ -10,6 +10,9 @@ module
 
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
+
 /-!
 # Tests for `MathlibExt.Probability.CorrelationInequalities.Pivotal`
 
