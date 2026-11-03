@@ -9,6 +9,8 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.KKL.BourgainPerCoord
 
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+
 /-!
 # The KKL inequality on the uniform cube with constant 2
 
