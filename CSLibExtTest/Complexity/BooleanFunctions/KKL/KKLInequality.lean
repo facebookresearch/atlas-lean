@@ -10,6 +10,8 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLInequality
 public import CSLibExtTest.Complexity.BooleanFunctions.Poincare
 
+import Mathlib.Analysis.Complex.ExponentialBounds
+
 /-!
 # Tests for the KKL inequality interface
 

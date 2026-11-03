@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Menger.MengerSplice
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Tactic
 
 /-!
