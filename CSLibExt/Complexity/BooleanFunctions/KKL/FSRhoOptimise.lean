@@ -8,9 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLUniform
-public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.ConvexGapHC
-public import CSLibExt.Complexity.BooleanFunctions.KKL.DegreeTruncation
-public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLpBiased
+public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
 
 /-!
 # The KKL inequality at p = 1/2, and the p-biased basis at p = 1/2
