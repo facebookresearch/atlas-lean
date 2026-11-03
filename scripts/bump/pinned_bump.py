@@ -176,6 +176,12 @@ def _is_safe_relative_path(value: object) -> bool:
         return False
     if any(c in value for c in "?#&\\%"):
         return False
+    # Shell-sensitive characters: config_paths emits space-delimited
+    # paths consumed by shell word splitting. A path with a space or
+    # glob character would split/expand into the wrong downloads, so
+    # such paths are rejected here rather than transported losslessly.
+    if any(c in value for c in " \t*?[]$`\"'!;|<> (){}~"):
+        return False
     parts = PurePosixPath(value).parts
     return not value.startswith("/") and ".." not in parts
 
@@ -1159,6 +1165,103 @@ _LITERAL_VERSION_RE = re.compile(r"v\d+\.\d+(?:\.\d+)?")
 _LITERAL_SHA_RE = re.compile(r"[0-9a-f]{40}")
 
 
+_PATTERN_LITERAL_VERSION_RE = re.compile(r"v\d+\.\d+(?:\.\d+)?|\d+\.\d+\.\d+")
+_PATTERN_LITERAL_SHA_RE = re.compile(r"[0-9a-f]{40}")
+
+
+def _pattern_literal_stream(pattern: str) -> str:
+    """Literal characters of a regex pattern, for structural checks.
+
+    Walks the pattern emitting only characters that match literally:
+    regex operators, quantifiers, and character-class contents are
+    skipped, escaped punctuation is emitted as the punctuation, and a
+    single-character class such as [.] emits its char (so [.] cannot
+    be used to hide a literal dot). Class escapes (\\d) and
+    backreferences (\\1) are not literal. An alternation of literal
+    versions therefore still yields the literal versions in the stream,
+    while a version class yields only 'v..'.
+    """
+    out: list[str] = []
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            nxt = pattern[i + 1]
+            if nxt.isdigit() or nxt in "dDsSwWbB0AZzG":
+                i += 2
+                continue
+            out.append(nxt)
+            i += 2
+            continue
+        if c == "[":
+            j = i + 1
+            if j < n and pattern[j] == "^":
+                j += 1
+            k = j
+            if k < n and pattern[k] == "]":
+                k += 1
+            while k < n and pattern[k] != "]":
+                if pattern[k] == "\\":
+                    k += 1
+                k += 1
+            content = pattern[j:k] if k < n else ""
+            if len(content) == 1:
+                out.append(content)
+            elif len(content) == 2 and content[0] == "\\":
+                out.append(content[1])
+            elif len(content) == 3 and content[1] == "-" and content[0] == content[2]:
+                out.append(content[0])
+            i = (k + 1) if k < n else n
+            continue
+        if c == "{":
+            # Skip a quantifier {m,n}; a non-quantifier brace is literal.
+            j = pattern.find("}", i + 1)
+            inside = pattern[i + 1 : j] if j >= 0 else ""
+            if j >= 0 and all(ch.isdigit() or ch == "," for ch in inside) and inside:
+                i = j + 1
+                continue
+            out.append(c)
+            i += 1
+            continue
+        if c in "()|*+?^$.":
+            i += 1
+            continue
+        if c == "#" and i >= 2 and pattern[i - 2 : i] == "(?":
+            # (?#...) comment: skip to the closing paren.
+            j = pattern.find(")", i + 1)
+            i = (j + 1) if j >= 0 else n
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def _validate_pattern_literals(entry: dict) -> list[str]:
+    """A pattern must not hardcode a literal version or SHA.
+
+    Chained simulation uses a fixed finite tag sequence, so an
+    alternation enumerating exactly the simulated tags
+    ((?:v4\\.35\\.0|v5\\.36\\.1|v6\\.37\\.2)) passes it but blocks the
+    first real bump to an unlisted tag. Version/SHA patterns must use
+    classes (v[0-9]+..., [0-9a-f]{40}), never literals.
+    """
+    stream = _pattern_literal_stream(entry["pattern"])
+    problems: list[str] = []
+    m = _PATTERN_LITERAL_VERSION_RE.search(stream)
+    if m:
+        problems.append(
+            f"pattern {entry['pattern']!r} contains literal version {m.group(0)!r}; "
+            "use a version class instead"
+        )
+    m = _PATTERN_LITERAL_SHA_RE.search(stream)
+    if m:
+        problems.append(
+            f"pattern {entry['pattern']!r} contains a literal SHA; "
+            "use [0-9a-f]{40} instead"
+        )
+    return problems
+
+
 def _validate_replacement_literals(entry: dict) -> list[str]:
     """A replacement must not hardcode a version or SHA as literal text.
 
@@ -1288,6 +1391,7 @@ def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
         problems.append(f"replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
         return problems
     problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
+    problems.extend(_validate_pattern_literals(entry))
     return problems
 
 

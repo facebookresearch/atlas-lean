@@ -375,6 +375,7 @@ class GuardTests(unittest.TestCase):
                    scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
                    config_add_literal_tag_rule=False, config_literal_revert=False,
                    config_add_oneuse_version=False, config_add_oneuse_sha=False,
+                   config_add_tailored_alternation=False,
                    config_scramble_rule=False, config_noncanonical_group=False,
                    delete_assertion_and_rule=False,
                    config_malformed_doc=None, config_malformed_pin=False,
@@ -432,6 +433,11 @@ class GuardTests(unittest.TestCase):
             if config_add_nonmatching_doc:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_add_tailored_alternation:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md",
+                     "pattern": "(?:v4\\.35\\.0|v5\\.36\\.1|v6\\.37\\.2)",
+                     "replacement": "{target}"})
             if config_add_oneuse_version:
                 pr_config["doc_replacements"].append(
                     {"path": "FRESH.md", "pattern": "v4\\.35\\.0",
@@ -469,6 +475,9 @@ class GuardTests(unittest.TestCase):
             elif config_malformed_doc == "traversal":
                 pr_config["doc_replacements"].append(
                     {"path": "../outside.md", "pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "space":
+                pr_config["doc_replacements"].append(
+                    {"path": "docs/Release Notes.md", "pattern": "x", "replacement": "y"})
             elif config_malformed_doc == "query":
                 pr_config["doc_replacements"].append(
                     {"path": "README.md?ref=evil", "pattern": "x", "replacement": "y"})
@@ -571,7 +580,8 @@ class GuardTests(unittest.TestCase):
                     lakefile.read_text()
                     + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
-            if config_add_oneuse_version or config_add_oneuse_sha:
+            if config_add_oneuse_version or config_add_oneuse_sha \
+                    or config_add_tailored_alternation:
                 (pr / "FRESH.md").write_text(
                     "Release v4.35.0\nSHA " + "3" * 40 + "\n")
             if malformed_require:
@@ -723,6 +733,7 @@ class GuardTests(unittest.TestCase):
                         or config_missing_doc_file or config_bad_pin_regex \
                         or config_add_literal_tag_rule or config_literal_revert \
                         or config_add_oneuse_version or config_add_oneuse_sha \
+                        or config_add_tailored_alternation \
                         or config_scramble_rule or config_noncanonical_group \
                         or delete_assertion_and_rule:
                     changed_lines.append("scripts/bump/pinned_deps.json")
@@ -929,6 +940,38 @@ class GuardTests(unittest.TestCase):
         # org must fail, even with names, revs, config, manifest unchanged.
         self.assertEqual(
             self._run_guard(same_pin=True, scope_repoint=True), 1)
+
+    def test_pattern_literal_detection(self):
+        # Structural check: literals flagged, classes not.
+        cases = [
+            ("v[0-9]+\\.[0-9]+\\.[0-9]+", False),
+            ("(?:v4\\.35\\.0|v5\\.36\\.1)", True),
+            ("v4[.]35[.]0", True),
+            ("[0-9a-f]{40}", False),
+            ("56a005855ea17e0b0958f73ec801ae140b0a1679", True),
+            ("v4\\.35", True),
+            ("1\\.2", False),
+            ("1\\.2\\.3", True),
+            ('(mathlib\\.get\\("rev"\\) != \\(\\s*")[0-9a-f]{40}(")', False),
+        ]
+        for pattern, should_flag in cases:
+            problems = pinned_bump._validate_pattern_literals({"pattern": pattern})
+            self.assertEqual(bool(problems), should_flag, pattern)
+
+    def test_guard_fails_config_only_tailored_alternation(self):
+        # Codex P2: an alternation enumerating exactly the simulated
+        # tags passes chained simulation but blocks the first real
+        # bump to an unlisted tag; the structural check rejects it.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_tailored_alternation=True), 1)
+
+    def test_guard_fails_config_only_space_path(self):
+        # Codex P3: a space in a configured path breaks shell word
+        # splitting on config-paths output, so the schema rejects it.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="space"), 1)
 
     def test_guard_fails_config_only_oneuse_version(self):
         # Codex P1: a one-use literal-version rule on a fresh file
