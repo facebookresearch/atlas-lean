@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Convex.Deriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Uniqueness
 /-!
 # One-sided derivatives of a convex pressure and uniqueness off a countable set

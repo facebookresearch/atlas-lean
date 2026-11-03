@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.FreeEnergy
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.RiemannPeriodic2D
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.SymbolDet

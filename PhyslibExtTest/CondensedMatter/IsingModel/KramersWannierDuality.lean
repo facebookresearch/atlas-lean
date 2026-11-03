@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.SpecialFunctions.Artanh
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannierDuality
 
 /-!

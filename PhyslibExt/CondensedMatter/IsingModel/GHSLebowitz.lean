@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import PhyslibExt.CondensedMatter.IsingModel.GHSDuplicateVariable
 public import PhyslibExt.CondensedMatter.IsingModel.GHSVertexPartition
 public import MathlibExt.Probability.CorrelationInequalities.FKG

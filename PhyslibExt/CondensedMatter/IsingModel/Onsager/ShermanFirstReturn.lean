@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLoop
 
 /-!

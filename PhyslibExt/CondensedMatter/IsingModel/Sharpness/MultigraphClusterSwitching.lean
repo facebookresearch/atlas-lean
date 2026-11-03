@@ -46,7 +46,7 @@ points this rewrites the family with sources `{o, g} ∆ {x, y}` and `{y, g}` as
 
 @[expose] public section
 
-open SimpleGraph Finset
+open Finset
 open scoped BigOperators symmDiff
 
 

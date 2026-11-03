@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Topology.Algebra.Module.Cardinality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OrderTransition
 public import MathlibExt.Probability.Percolation.SharpnessFromInputs

@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Algebra.MvPolynomial.Funext
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationMiddleAffine
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationFormalEval
 public import Mathlib.Analysis.Analytic.Uniqueness

@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.RingTheory.RootsOfUnity.Complex
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.IntegrandLimit
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWFourier
 

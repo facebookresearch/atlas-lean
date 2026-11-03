@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Data.ZMod.Basic
+import Mathlib.Tactic.Linarith
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLoop
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.TurnReversal
 

@@ -7,7 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Pow
+public import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Integration of the mean-field differential inequality
@@ -40,7 +45,7 @@ mean-field differential inequality of Duminil-Copin and Tassion.
 
 @[expose] public section
 
-open MeasureTheory Real Set
+open Real Set
 
 namespace StatMech
 

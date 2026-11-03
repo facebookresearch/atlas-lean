@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Topology.Algebra.Module.Cardinality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunction
 
 /-!

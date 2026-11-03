@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKG
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Comparison
