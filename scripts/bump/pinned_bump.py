@@ -1297,6 +1297,22 @@ def _written_regions(original: str, current: str) -> list[tuple[int, int]]:
     ]
 
 
+_NORMALIZE_VERSION_RE = re.compile(r"(?<![A-Za-z0-9_])v?\d+\.\d+(?:\.\d+)?")
+_NORMALIZE_SHA_RE = re.compile(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])")
+
+
+def _normalize_versions_shas(text: str) -> str:
+    """Text with every version and SHA replaced by a placeholder.
+
+    Two texts that differ only in version/SHA values normalize equal.
+    A rule that rewrites anything else (e.g. executable code) shows
+    up as a normalize difference.
+    """
+    text = _NORMALIZE_VERSION_RE.sub("V", text)
+    text = _NORMALIZE_SHA_RE.sub("S", text)
+    return text
+
+
 def _rule_interferes(pattern: str, text: str, written: list[tuple[int, int]]) -> bool:
     """True if the pattern matches text an earlier rule already wrote.
 
@@ -1309,11 +1325,18 @@ def _rule_interferes(pattern: str, text: str, written: list[tuple[int, int]]) ->
         rx = re.compile(pattern)
     except re.error:
         return False  # compile errors are reported elsewhere
-    return any(
-        m.start() < end and start < m.end()
-        for m in rx.finditer(text)
-        for (start, end) in written
-    )
+    for m in rx.finditer(text):
+        if m.start() == m.end():
+            # Zero-width match: the insertion point itself counts.
+            # A lookbehind anchored inside a written span (e.g. inserting
+            # "0" after the first digit of a badge) must count even
+            # though the match has no width; points at either edge of a
+            # written span are treated as inside it.
+            if any(start <= m.start() <= end for (start, end) in written):
+                return True
+        elif any(m.start() < end and start < m.end() for (start, end) in written):
+            return True
+    return False
 
 
 def _transition_shas(deps: list[dict], label: str) -> dict[str, str]:
@@ -1356,16 +1379,15 @@ def _failing_rule_patterns(
             failed.add(entry["pattern"])
     current = text
     for target, shas in transitions:
-        try:
-            current = apply_replacements_to_text(current, entries, target, shas)
-        except ValueError as exc:
-            msg = str(exc)
-            for entry in entries:
-                if repr(entry["pattern"]) in msg or repr(entry["replacement"]) in msg:
-                    failed.add(entry["pattern"])
-            break
-        except re.error:
-            break  # attributed via the per-entry compile above
+        for entry in entries:
+            before = current
+            try:
+                current = apply_replacements_to_text(current, [entry], target, shas)
+            except (ValueError, re.error):
+                failed.add(entry["pattern"])
+                break
+            if _normalize_versions_shas(before) != _normalize_versions_shas(current):
+                failed.add(entry["pattern"])
     return failed
 
 
@@ -1427,11 +1449,21 @@ def _simulate_file_rules(
                     f"rule already wrote at tag {target}; added rules must match "
                     "original text, not earlier rules' outputs"
                 )
+            before = text
             try:
                 text = apply_replacements_to_text(text, [entry], target, shas)
             except (ValueError, re.error) as exc:
                 problems.append(f"{label} rule {entry['pattern']!r} does not apply: {exc}")
                 break
+            # Postcondition: a replacement rule may change only version
+            # and SHA literals, never other text (in particular never
+            # executable code in the pin-policy file).
+            if _normalize_versions_shas(before) != _normalize_versions_shas(text):
+                problems.append(
+                    f"{label} rule {entry['pattern']!r} changes text other than "
+                    "version/SHA literals; replacement rules may only update "
+                    "version/SHA values, content edits belong in the file itself"
+                )
     return problems
 
 

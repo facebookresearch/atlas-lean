@@ -375,7 +375,8 @@ class GuardTests(unittest.TestCase):
                    scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
                    config_add_literal_tag_rule=False, config_literal_revert=False,
                    config_add_oneuse_version=False, config_add_oneuse_sha=False,
-                   config_add_tailored_alternation=False,
+                   config_add_tailored_alternation=False, config_add_code_rewrite=False,
+                   config_add_zero_width=False,
                    config_scramble_rule=False, config_noncanonical_group=False,
                    delete_assertion_and_rule=False,
                    config_malformed_doc=None, config_malformed_pin=False,
@@ -433,6 +434,14 @@ class GuardTests(unittest.TestCase):
             if config_add_nonmatching_doc:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_add_code_rewrite:
+                pr_config["pin_policy"]["replacements"].append(
+                    {"pattern": "(?m)^(?:    main\\(\\)|    pass)$",
+                     "replacement": "    pass"})
+            if config_add_zero_width:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "(?<=Lean-v[0-9])",
+                     "replacement": "0"})
             if config_add_tailored_alternation:
                 pr_config["doc_replacements"].append(
                     {"path": "FRESH.md",
@@ -733,7 +742,8 @@ class GuardTests(unittest.TestCase):
                         or config_missing_doc_file or config_bad_pin_regex \
                         or config_add_literal_tag_rule or config_literal_revert \
                         or config_add_oneuse_version or config_add_oneuse_sha \
-                        or config_add_tailored_alternation \
+                        or config_add_tailored_alternation or config_add_code_rewrite \
+                        or config_add_zero_width \
                         or config_scramble_rule or config_noncanonical_group \
                         or delete_assertion_and_rule:
                     changed_lines.append("scripts/bump/pinned_deps.json")
@@ -957,6 +967,20 @@ class GuardTests(unittest.TestCase):
         for pattern, should_flag in cases:
             problems = pinned_bump._validate_pattern_literals({"pattern": pattern})
             self.assertEqual(bool(problems), should_flag, pattern)
+
+    def test_guard_fails_config_only_code_rewrite(self):
+        # Codex P1: an added pin-policy rule rewriting main() to pass
+        # must fail: rules may change only version/SHA literals.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_code_rewrite=True), 1)
+
+    def test_guard_fails_config_only_zero_width(self):
+        # Codex P2: a zero-width lookbehind insertion inside a written
+        # span must count as interference.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_zero_width=True), 1)
 
     def test_guard_fails_config_only_tailored_alternation(self):
         # Codex P2: an alternation enumerating exactly the simulated
