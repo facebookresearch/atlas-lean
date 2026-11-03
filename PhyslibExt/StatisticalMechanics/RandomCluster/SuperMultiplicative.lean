@@ -26,7 +26,7 @@ images of the edges of `G` and `H` (`fsm_edgeFinset_sum`). Gluing edge configura
 (`fsm_combine`) multiplies the Bernoulli products and adds the cluster counts, so
 `fkWeight (G ⊕g H) (σ ⊔ τ) = fkWeight G σ · fkWeight H τ` (`fsm_fkWeight_combine`). Glued
 configurations form a subset of all configurations on `Sym2 (V ⊕ W)` (the rest are configurations
-that differ on non-edges), so `Z_G Z_H ≤ Z_{G ⊕g H}` (`fsm_fkZ_sum_ge`). The partition function is
+that differ on non-edges), so `Z_G Z_H ≤ Z_{G ⊕g H}` (`fsm_fkZ_sum_ge`). The ambient normalizer is
 invariant under graph isomorphism (`fsm_fkZ_iso`). Hence `-log Z` is subadditive along a
 juxtaposition sequence (`fsm_subadditive_neglog_fkZ`).
 
@@ -44,7 +44,7 @@ positive edge counts or the lower bound in Fekete's lemma.
 - `StatMech.FK.fsm_ccSumEquiv` : connected components of a disjoint union.
 - `StatMech.FK.fsm_fkWeight_combine` : the weight of a glued configuration.
 - `StatMech.FK.fsm_fkZ_sum_ge` : `Z_G Z_H ≤ Z_{G ⊕g H}`.
-- `StatMech.FK.fsm_fkZ_iso` : isomorphism invariance of the partition function.
+- `StatMech.FK.fsm_fkZ_iso` : isomorphism invariance of the ambient normalizer.
 - `StatMech.FK.fsm_subadditive_neglog_fkZ` : subadditivity along a juxtaposition sequence.
 
 ## iii. Table of contents
@@ -53,7 +53,7 @@ positive edge counts or the lower bound in Fekete's lemma.
   - A.1. Reachability and connected components
   - A.2. Edges
 - B. Gluing edge configurations
-- C. Weights and partition functions of disjoint unions
+- C. Weights and ambient normalizers of disjoint unions
 - D. Isomorphism invariance
 - E. Subadditivity along a juxtaposition sequence
 
@@ -332,7 +332,7 @@ variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 
 /-!
 
-## C. Weights and partition functions of disjoint unions
+## C. Weights and ambient normalizers of disjoint unions
 
 -/
 
