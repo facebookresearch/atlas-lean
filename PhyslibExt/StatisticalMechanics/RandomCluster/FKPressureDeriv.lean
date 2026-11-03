@@ -69,19 +69,11 @@ variable {d : ℕ}
 
 /-! ## A. Convexity of the limiting free energy -/
 
-lemma fpd_exists_convex_ivPressure
-    {W : Type*} [Fintype W] [DecidableEq W]
-    (Gn : ℕ → SimpleGraph W) [∀ i, DecidableRel (Gn i).Adj]
-    (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
-    (hjux : ∀ m n, Gn (m + n) ≃g Gn m ⊕g Gn n)
-    (hbdd : ∀ t, BddBelow (Set.range fun n =>
-      (-Real.log (fkZ (Gn n) (fsc_logistic t) 2)) / n))
-    (c : ℝ → ℝ) (hc : ∀ t, c t ≠ 0)
-    (he : ∀ t, Tendsto (fun n => ((Gn n).edgeFinset.card : ℝ) / n) atTop (𝓝 (c t))) :
-    ∃ g : ℝ → ℝ,
-      (∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
-        ∧ ConvexOn ℝ univ g :=
-  fsm_fekete_limit Gn 2 (by norm_num) hE hjux hbdd c hc he
+/-!
+The fixed-carrier juxtaposition existence wrapper is not used here: a finite equivalence
+`W ≃ W ⊕ W` forces `W` to be empty. The results below take convergence as a hypothesis;
+constant sequences on a nonempty finite graph are legitimate inputs.
+-/
 
 lemma fpd_ivPressure_convexDeriv_facts
     {W : Type*} [Fintype W] [DecidableEq W]

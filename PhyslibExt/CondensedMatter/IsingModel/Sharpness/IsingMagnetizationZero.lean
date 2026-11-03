@@ -281,4 +281,3 @@ lemma bc_eq_ising_of_sqrt_and_susceptibility
 
 end Sharpness
 end StatMech
-

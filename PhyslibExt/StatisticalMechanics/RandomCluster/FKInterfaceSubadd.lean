@@ -23,24 +23,30 @@ p))`.
 
 Configurations of `K` that are closed on the interface are pairs of configurations of `G` and `H`;
 their FK weight factorizes with an extra `(1 - p)` per interface edge, and the cluster count adds.
-Bounding `Z_K` below by these configurations gives the interface inequality. A uniform bound on the
-interface cost makes `n ↦ -log Z_{Λ_n} + C` subadditive (`fis_subadditive_of_bounded`), which feeds
-Fekete's lemma (`BoxFeketeData`). The predicate `fis_UniformBoxSplit` also requires `|E(Λ_n)| / n →
-κ ≠ 0`, which fails for `d ≥ 2`, so it can hold only for `d = 1`. The `..._satisfiable` lemmas
-exhibit witnesses of the abstract hypotheses.
+Bounding `Z_K` below by these configurations gives the finite-interface inequality. A uniform
+bound on an additive defect gives scalar subadditivity (`fis_subadditive_of_bounded`).
+
+These facts do not identify `Λ_{m+n}` with a graph on `Λ_m ⊕ Λ_n`: the first vertex count
+is odd and the second even. Nor do they supply the lower bound needed for a raw box free-energy
+limit. For `q = 2` in positive dimension, unused binary coordinates prevent an eventual finite
+lower bound on `-log Z_n / n`, even with a sublinear correction. Dimension zero has no edges.
+The existing edge-restricted graph-limit route is in `EdgePartitionFunction`.
+
+The `..._satisfiable` lemmas witness abstract scalar hypotheses and finite interfaces, not
+raw box free-energy hypotheses.
 
 ## ii. Key results
 
 - `fis_numClusters_combine` : clusters add across a closed interface.
 - `fis_fkZ_interface_ge` : `(1 - p)^{|interface|} Z_G Z_H ≤ Z_K`.
 - `fis_neglog_interface_le` : the corresponding bound on `-log Z`.
-- `fis_boxInterfaceData_of_split` : `fis_UniformBoxSplit` implies `bfd_FKInterfaceData`.
+- `fis_subadditive_of_bounded` : bounded additive defect gives scalar subadditivity.
 
 ## iii. Table of contents
 
 - A. Graphs glued along an interface
 - B. Subadditivity from bounded gluing cost
-- C. Boxes
+- C. Consistency of the scalar and finite-interface hypotheses
 
 ## iv. References
 
@@ -230,67 +236,7 @@ lemma fis_subadditive_of_bounded {u : ℕ → ℝ} {C : ℝ} (_hC : 0 ≤ C)
   have := hu m n
   linarith
 
-lemma fis_interfaceData_of_bounded {V : ℕ → Type*} [∀ n, Fintype (V n)]
-    [∀ n, DecidableEq (V n)] (Gn : ∀ n, SimpleGraph (V n)) [∀ n, DecidableRel (Gn n).Adj]
-    (q : ℝ) (t : ℝ) (C : ℝ) (hC : 0 ≤ C)
-    (hglue : ∀ m n, -Real.log (fkZ (Gn (m + n)) (fsc_logistic t) q)
-        ≤ -Real.log (fkZ (Gn m) (fsc_logistic t) q)
-          + -Real.log (fkZ (Gn n) (fsc_logistic t) q) + C)
-    (hbdd : BddBelow (Set.range fun n =>
-        (-Real.log (fkZ (Gn n) (fsc_logistic t) q) + C) / n))
-    (κ : ℝ) (hκ : κ ≠ 0)
-    (he : Tendsto (fun n => ((Gn n).edgeFinset.card : ℝ) / n) atTop (𝓝 κ)) :
-    ∃ (c : ℕ → ℝ) (κ' : ℝ),
-      Subadditive (fun n => - Real.log (fkZ (Gn n) (fsc_logistic t) q) + c n)
-      ∧ BddBelow (Set.range fun n =>
-          (- Real.log (fkZ (Gn n) (fsc_logistic t) q) + c n) / n)
-      ∧ Tendsto (fun n => c n / n) atTop (𝓝 0)
-      ∧ κ' ≠ 0
-      ∧ Tendsto (fun n => ((Gn n).edgeFinset.card : ℝ) / n) atTop (𝓝 κ') := by
-  refine ⟨fun _ => C, κ, fis_subadditive_of_bounded hC hglue, hbdd, ?_, hκ, he⟩
-  simpa using (tendsto_const_nhds (x := C)).div_atTop tendsto_natCast_atTop_atTop
-
-variable {d : ℕ}
-
-/-! ## C. Boxes -/
-
-/-- `n ↦ -log Z_{Λ_n}(logistic(t), 2)` is subadditive up to a constant `C`, bounded below after
-dividing
-by `n`, and `|E(Λ_n)| / n → κ ≠ 0`. The last condition fails for `d ≥ 2`.
--/
-def fis_UniformBoxSplit (d : ℕ) (t : ℝ) : Prop :=
-  ∃ (C : ℝ) (κ : ℝ), 0 ≤ C ∧ κ ≠ 0 ∧
-    (∀ m n, - Real.log (fkZ (boxGraph d (m + n)) (fsc_logistic t) 2)
-        ≤ - Real.log (fkZ (boxGraph d m) (fsc_logistic t) 2)
-          + - Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2) + C)
-    ∧ BddBelow (Set.range fun n =>
-        (- Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2) + C) / n)
-    ∧ Tendsto (fun n => ((boxGraph d n).edgeFinset.card : ℝ) / n) atTop (𝓝 κ)
-
-lemma fis_boxInterfaceData_of_split (t : ℝ) (hsplit : fis_UniformBoxSplit d t) :
-    bfd_FKInterfaceData d t := by
-  obtain ⟨C, κ, hC, hκ, hglue, hbdd, he⟩ := hsplit
-  exact fis_interfaceData_of_bounded (boxGraph d ·) 2 t C hC hglue hbdd κ hκ he
-
-lemma fis_gluingBound_of_crossSplit (t : ℝ) (m n : ℕ)
-    (K : SimpleGraph (boxVerts d m ⊕ boxVerts d n)) [DecidableRel K.Adj]
-    (hci : fis_CrossInterface (boxGraph d m) (boxGraph d n) K)
-    (φ : boxGraph d (m + n) ≃g K) :
-    - Real.log (fkZ (boxGraph d (m + n)) (fsc_logistic t) 2)
-      ≤ - Real.log (fkZ (boxGraph d m) (fsc_logistic t) 2)
-        + - Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2)
-        + (fis_interface (boxGraph d m) (boxGraph d n) K).card
-            * (- Real.log (1 - fsc_logistic t)) := by
-  set p := fsc_logistic t with hp
-  have hp0 : (0 : ℝ) < p := fsc_logistic_pos t
-  have hp1 : p < 1 := fsc_logistic_lt_one t
-  have hiso : fkZ (boxGraph d (m + n)) p 2 = fkZ K p 2 := fsm_fkZ_iso _ K φ p 2
-  have hint := fis_neglog_interface_le hci hp0 hp1 (by norm_num : (0 : ℝ) < 2)
-  rw [hiso]
-  have hrw : (fis_interface (boxGraph d m) (boxGraph d n) K).card * (- Real.log (1 - p))
-      = - ((fis_interface (boxGraph d m) (boxGraph d n) K).card * Real.log (1 - p)) := by ring
-  rw [hrw]
-  linarith [hint]
+/-! ## C. Consistency of the scalar and finite-interface hypotheses -/
 
 lemma fis_boundedGluing_satisfiable :
     ∃ (u : ℕ → ℝ) (e : ℕ → ℝ) (C κ : ℝ), 0 ≤ C ∧ κ ≠ 0 ∧

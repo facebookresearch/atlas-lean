@@ -400,4 +400,3 @@ lemma psdlr_plusState_isDLR (β h : ℝ) (hcons : FVConsistency d β h) :
 end Ising
 
 end StatMech
-
