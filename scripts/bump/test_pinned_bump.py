@@ -373,7 +373,10 @@ class GuardTests(unittest.TestCase):
                    duplicate_shadow=False, config_add_ledger=False,
                    malformed_require=False, nonstring_rev=False,
                    scope_repoint=False, add_dep_wrong_source=False,
-                   config_malformed_doc=None, config_malformed_pin=False):
+                   config_malformed_doc=None, config_malformed_pin=False,
+                   config_add_nonmatching_doc=False, config_bad_doc_regex=False,
+                   config_unresolved_sha=False, config_bad_group_ref=False,
+                   config_missing_doc_file=False, config_bad_pin_regex=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -415,12 +418,16 @@ class GuardTests(unittest.TestCase):
                     "pattern": "(physlib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
                     "replacement": "{g1}{sha:Physlib}{g2}",
                 })
+
             if config_add_doc:
                 pr_config["doc_replacements"].append(
-                    {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+                    {"path": "README.md", "pattern": "badge", "replacement": "badge"})
             if config_add_dep_only:
                 pr_config["deps"].append(
                     {"name": "Physlib", "repo": "leanprover-community/physlib"})
+            if config_add_nonmatching_doc:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
             if config_malformed_doc == "int":
                 pr_config["doc_replacements"].append(42)
             elif config_malformed_doc == "missing_path":
@@ -435,6 +442,23 @@ class GuardTests(unittest.TestCase):
                      "note": "hi"})
             if config_malformed_pin:
                 pr_config["pin_policy"]["replacements"].append({"pattern": "x"})
+            if config_bad_doc_regex:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "[", "replacement": "x"})
+            if config_unresolved_sha:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "badge",
+                     "replacement": "{sha:Nope}"})
+            if config_bad_group_ref:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "(badge)",
+                     "replacement": "{g5}"})
+            if config_missing_doc_file:
+                pr_config["doc_replacements"].append(
+                    {"path": "MISSING.md", "pattern": "x", "replacement": "y"})
+            if config_bad_pin_regex:
+                pr_config["pin_policy"]["replacements"].append(
+                    {"pattern": "[", "replacement": "x"})
             if config_add_ledger:
                 pr_config["migration_ledgers"] = (
                     pr_config.get("migration_ledgers", [])
@@ -581,6 +605,13 @@ class GuardTests(unittest.TestCase):
                 (pr / "scripts").mkdir(exist_ok=True)
                 (pr / pin_policy["path"]).write_text(
                     real_policy + "\n# same-pin restructuring note\n")
+                if add_dep:
+                    # The new Physlib pin replacement must match the PR
+                    # policy file, so the PR adds its assertion line.
+                    policy_path = pr / pin_policy["path"]
+                    policy_path.write_text(
+                        policy_path.read_text()
+                        + 'physlib.get("rev") != ("' + "7" * 40 + '")\n')
             else:
                 pr_policy = pinned_bump.apply_replacements_to_text(
                     real_policy, pin_policy["replacements"], "v4.36.0", shas)
@@ -637,7 +668,10 @@ class GuardTests(unittest.TestCase):
                 changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
                 if add_dep or config_tamper is not None or config_add_doc \
                         or config_add_dep_only or remove_dep or config_add_ledger \
-                        or config_malformed_doc is not None or config_malformed_pin:
+                        or config_malformed_doc is not None or config_malformed_pin \
+                        or config_add_nonmatching_doc or config_bad_doc_regex \
+                        or config_unresolved_sha or config_bad_group_ref \
+                        or config_missing_doc_file or config_bad_pin_regex:
                     changed_lines.append("scripts/bump/pinned_deps.json")
                 if changed_guard_test:
                     changed_lines.append("scripts/bump/test_pinned_bump.py")
@@ -753,6 +787,21 @@ class GuardTests(unittest.TestCase):
         # their own guard run.
         self.assertEqual(self._run_guard(changed_guard_only=True), 0)
 
+    def test_config_paths_union_and_defensive(self):
+        # Union of base + PR paths; malformed entries skipped, never raised.
+        base = {"doc_replacements": [{"path": "README.md", "pattern": "x", "replacement": "y"}],
+                "pin_policy": {"path": "scripts/check.py", "replacements": []},
+                "migration_ledgers": ["a.json", 42]}
+        pr = {"doc_replacements": [{"path": "NEW.md", "pattern": "x", "replacement": "y"}, 42],
+              "pin_policy": {"path": "scripts/new_check.py", "replacements": []}}
+        self.assertEqual(
+            pinned_bump.config_paths_for("doc", base, pr), ["README.md", "NEW.md"])
+        self.assertEqual(
+            pinned_bump.config_paths_for("policy", base, pr),
+            ["scripts/check.py", "scripts/new_check.py"])
+        self.assertEqual(
+            pinned_bump.config_paths_for("ledger", base, pr), ["a.json"])
+
     def test_guard_fails_config_only_malformed_doc_int(self):
         # Codex P1: a bare 42 in doc_replacements must fail schema
         # validation, not merge and brick the workflow's e["path"] read.
@@ -774,6 +823,38 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(
             self._run_guard(changed_only_config=True,
                             config_malformed_doc="unknown_key"), 1)
+
+    def test_guard_fails_config_only_nonmatching_rule(self):
+        # Codex P1: a valid but nonmatching rule (the old passing Foo
+        # fixture) must fail: it would brick the next bump.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_nonmatching_doc=True), 1)
+
+    def test_guard_fails_config_only_bad_doc_regex(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_bad_doc_regex=True), 1)
+
+    def test_guard_fails_config_only_unresolved_sha(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_unresolved_sha=True), 1)
+
+    def test_guard_fails_config_only_bad_group_ref(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_bad_group_ref=True), 1)
+
+    def test_guard_fails_config_only_missing_doc_file(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_missing_doc_file=True), 1)
+
+    def test_guard_fails_config_only_bad_pin_regex(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_bad_pin_regex=True), 1)
 
     def test_guard_fails_config_only_malformed_pin_replacement(self):
         self.assertEqual(

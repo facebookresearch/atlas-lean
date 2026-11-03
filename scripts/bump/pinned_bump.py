@@ -1065,6 +1065,187 @@ def check_lakefile_sources(
     return problems
 
 
+_PLACEHOLDER_RE = re.compile(r"\{([^{}]*)\}")
+
+
+def _validate_replacement_placeholders(entry: dict, dep_names: set[str], groups: int) -> list[str]:
+    """Every {…} in a replacement must resolve at bump time.
+
+    {target} and {sha:NAME} (NAME a configured dep) are resolved by
+    apply_replacements_to_text; {gN} is resolved only for N up to the
+    pattern's group count (a larger N stays literal in the output, a
+    silent misfire). Anything else passes through literally, so it is
+    rejected: a replacement rule must mean exactly what it says.
+    """
+    problems: list[str] = []
+    for placeholder in _PLACEHOLDER_RE.findall(entry["replacement"]):
+        if placeholder == "target":
+            continue
+        if placeholder.startswith("sha:"):
+            if placeholder[4:] not in dep_names:
+                problems.append(
+                    f"replacement {entry['replacement']!r} references unknown dep "
+                    f"{placeholder[4:]!r} in {{sha:…}}"
+                )
+            continue
+        if placeholder.startswith("g") and placeholder[1:].isdigit():
+            if int(placeholder[1:]) > groups:
+                problems.append(
+                    f"replacement {entry['replacement']!r} references {{{placeholder}}} "
+                    f"but its pattern has only {groups} groups"
+                )
+            continue
+        problems.append(
+            f"replacement {entry['replacement']!r} has unknown placeholder "
+            f"{{{placeholder}}}"
+        )
+    return problems
+
+
+def validate_replacement_rules(
+    base_config: dict, pr_config: dict, pr: Path, tag: str, client: GitHub,
+) -> list[str]:
+    """Validate replacement rules against the PR tree at the current tag.
+
+    A rule that passes the monotonic-extension check but cannot apply
+    bricks the next bump (apply_replacements_to_text raises on an
+    invalid regex, a zero match, or an unresolved {sha:…}), and the
+    monotonic policy then blocks removing or changing it. So added
+    rules must compile, have resolvable placeholders, and match: each
+    affected file in the PR tree is simulated with the FULL rule list
+    (sequential application, so ordering interactions are caught), with
+    SHAs resolved at the current tag.
+    """
+    problems: list[str] = []
+    dep_names = {d["name"] for d in pr_config["deps"]}
+    for entry in pr_config.get("doc_replacements", []):
+        if entry in base_config.get("doc_replacements", []):
+            continue
+        try:
+            groups = re.compile(entry["pattern"]).groups
+        except re.error as exc:
+            problems.append(f"added doc replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
+            continue
+        problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
+    base_pp = base_config.get("pin_policy") or {}
+    pr_pp = pr_config.get("pin_policy") or {}
+    for entry in pr_pp.get("replacements", []):
+        if entry in base_pp.get("replacements", []):
+            continue
+        try:
+            groups = re.compile(entry["pattern"]).groups
+        except re.error as exc:
+            problems.append(f"added pin-policy replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
+            continue
+        problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
+    shas: dict[str, str] = {}
+    for dep in pr_config["deps"]:
+        sha = client.tag_sha(dep["repo"], tag)
+        if sha is None:
+            problems.append(f"could not resolve tag SHA for {dep['name']} {tag}")
+        else:
+            shas[dep["name"]] = sha
+    if problems:
+        return problems
+    # Per file, with only that file's entries: entries for other files
+    # must not be expected to match this one.
+    by_path: dict[str, list[dict]] = {}
+    for entry in pr_config.get("doc_replacements", []):
+        by_path.setdefault(entry["path"], []).append(entry)
+    for path in sorted(by_path):
+        file = pr / path
+        if not file.is_file():
+            problems.append(
+                f"doc replacements target {path!r}, which is not in the PR tree"
+            )
+            continue
+        try:
+            apply_replacements_to_text(
+                file.read_text(encoding="utf-8"), by_path[path], tag, shas,
+            )
+        except (ValueError, re.error) as exc:
+            problems.append(f"doc replacements for {path} do not apply to the PR tree: {exc}")
+    if pr_pp:
+        file = pr / pr_pp["path"]
+        if not file.is_file():
+            problems.append(
+                f"pin-policy file {pr_pp['path']!r} is not in the PR tree"
+            )
+        else:
+            try:
+                apply_replacements_to_text(
+                    file.read_text(encoding="utf-8"),
+                    pr_pp.get("replacements", []), tag, shas,
+                )
+            except (ValueError, re.error) as exc:
+                problems.append(
+                    f"pin-policy replacements do not apply to the PR tree: {exc}"
+                )
+    return problems
+
+
+def config_paths_for(kind: str, base_config: dict, pr_config: dict) -> list[str]:
+    """Config-derived download paths for the guard workflow.
+
+    The workflow needs the union of base + PR doc / pin-policy paths
+    (a same-pin PR may configure new ones), ledgers base-only (the
+    guard requires them unchanged). Reads are defensive: a malformed
+    entry is skipped, never raised -- the guard itself validates the
+    schema and fails loudly, and the workflow must reach it.
+    """
+    def policy_paths(config: dict) -> list[str]:
+        pp = config.get("pin_policy") if isinstance(config.get("pin_policy"), dict) else {}
+        p = pp.get("path")
+        return [p] if isinstance(p, str) else []
+
+    def doc_paths(config: dict) -> list[str]:
+        reps = config.get("doc_replacements")
+        reps = reps if isinstance(reps, list) else []
+        seen: list[str] = []
+        for e in reps:
+            if isinstance(e, dict) and isinstance(e.get("path"), str) and e.get("path") not in seen:
+                seen.append(e.get("path"))
+        return seen
+
+    def ledger_paths(config: dict) -> list[str]:
+        led = config.get("migration_ledgers")
+        return [x for x in led if isinstance(x, str)] if isinstance(led, list) else []
+
+    if kind == "policy":
+        out = []
+        for p in policy_paths(base_config) + policy_paths(pr_config):
+            if p not in out:
+                out.append(p)
+        return out
+    if kind == "doc":
+        out = []
+        for p in doc_paths(base_config) + doc_paths(pr_config):
+            if p not in out:
+                out.append(p)
+        return out
+    if kind == "ledger":
+        return ledger_paths(base_config)
+    raise ValueError(f"unknown config-paths kind: {kind!r}")
+
+
+def cmd_config_paths(args: argparse.Namespace) -> int:
+    try:
+        base_config = load_config(Path("."))
+    except (OSError, ValueError, json.JSONDecodeError):
+        base_config = {}
+    pr_config: dict = {}
+    if args.pr_config:
+        try:
+            with open(args.pr_config, encoding="utf-8") as f:
+                pr_config = json.load(f)
+            if not isinstance(pr_config, dict):
+                pr_config = {}
+        except (OSError, ValueError, json.JSONDecodeError):
+            pr_config = {}
+    print(" ".join(config_paths_for(args.kind, base_config, pr_config)))
+    return 0
+
+
 def current_tag(root: Path, config: dict) -> str:
     """The single tag all pinned pins must agree on, or an error."""
     toolchain = toolchain_tag(root)
@@ -2104,6 +2285,14 @@ def cmd_guard(args: argparse.Namespace) -> int:
             problems.extend(
                 check_lakefile_sources(base, pr, base_config, pr_config, base_tag_only)
             )
+            # Added replacement rules must already work against the PR
+            # tree; a broken rule bricks the next bump and the monotonic
+            # policy then blocks repairing it.
+            problems.extend(
+                validate_replacement_rules(
+                    base_config, pr_config, pr, base_tag_only, client
+                )
+            )
         if problems:
             print("guard: FAIL")
             for problem in problems:
@@ -2171,6 +2360,13 @@ def cmd_guard(args: argparse.Namespace) -> int:
         # fork pass.
         problems.extend(
             check_lakefile_sources(base, pr, base_config, pr_config, base_tag)
+        )
+        # Added replacement rules must already work against the PR tree;
+        # a broken rule bricks the next bump and the monotonic policy
+        # then blocks repairing it. Also catches doc edits in this PR
+        # that break an existing rule's match.
+        problems.extend(
+            validate_replacement_rules(base_config, pr_config, pr, base_tag, client)
         )
         try:
             problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
@@ -2392,6 +2588,11 @@ def main(argv: list[str] | None = None) -> int:
         help="print the PR number for a merge-group head ref")
     p_mg.add_argument("head_ref")
     p_mg.set_defaults(func=cmd_merge_group_pr)
+    p_paths = sub.add_parser(
+        "config-paths", help="print union config-derived download paths for the guard workflow")
+    p_paths.add_argument("--kind", choices=["policy", "doc", "ledger"], required=True)
+    p_paths.add_argument("--pr-config", default="")
+    p_paths.set_defaults(func=cmd_config_paths)
     p_guard = sub.add_parser("guard", help="validate a pin-change PR")
     p_guard.add_argument("--base", required=True)
     p_guard.add_argument("--merge-base", required=True)

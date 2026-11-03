@@ -75,26 +75,31 @@ jobs:
           # executed; only the base checkout's guard code runs.
           # The guard reads the configured pin-policy file from both trees,
           # so download it too (from the base checkout's config).
-          # These three reads must never crash on a malformed base config:
-          # a malformed entry once made `e["path"]` raise here, before the
-          # guard ran, blocking every PR including a repair PR. Each read
-          # skips malformed entries defensively; the guard itself validates
-          # the base config schema and fails loudly if it is malformed.
-          # (Repairing a malformed base config needs a branch-protection
-          # bypass: every guard run fails until the base is fixed.)
-          PIN_POLICY_PATH="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); pp = c.get("pin_policy") if isinstance(c.get("pin_policy"), dict) else {}; p = pp.get("path"); print(p if isinstance(p, str) else "")')"
-          # The guard validates the pin-coupled migration ledgers, so
-          # download them too for every tree; a tree that predates them
-          # (contents API 404) legitimately has no ledger files.
-          LEDGER_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); led = c.get("migration_ledgers"); print(" ".join(x for x in led if isinstance(x, str)) if isinstance(led, list) else "")')"
-          # Doc files carrying configured pin replacements (README.md):
-          # the guard validates them against the base tree with the new
-          # tag applied, so they must be downloaded for every tree too.
-          # Unique paths, in config order. Downloaded as optional
-          # (404-tolerated) like the ledgers: the guard itself fails
-          # closed when a doc file is missing from the PR tree or
-          # present there but absent from the base tree.
-          DOC_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); reps = c.get("doc_replacements"); reps = reps if isinstance(reps, list) else []; seen = []; [seen.append(e.get("path")) for e in reps if isinstance(e, dict) and isinstance(e.get("path"), str) and e.get("path") not in seen]; print(" ".join(seen))')"
+          # Config-derived download paths come from the UNION of the base
+          # checkout's config and the downloaded PR config: a same-pin PR
+          # may add a doc replacement for a new file or add a pin-policy
+          # file, and the guard validates added rules against the PR tree,
+          # so those files must be downloaded for every tree. Ledgers stay
+          # base-only (the guard requires them unchanged).
+          # These reads must never crash on a malformed config: a malformed
+          # entry once made `e["path"]` raise here, before the guard ran,
+          # blocking every PR including a repair PR. Each read skips
+          # malformed entries defensively; the guard itself validates the
+          # config schema and fails loudly if it is malformed. (Repairing a
+          # malformed base config needs a branch-protection bypass: every
+          # guard run fails until the base is fixed.)
+          # Config-derived download paths come from the UNION of the base
+          # checkout's config and the downloaded PR config: a same-pin PR
+          # may add a doc replacement for a new file or add a pin-policy
+          # file, and the guard validates added rules against the PR tree,
+          # so those files must be downloaded for every tree. Ledgers stay
+          # base-only (the guard requires them unchanged). The subcommand
+          # reads defensively (malformed entries skipped); the guard
+          # itself validates the schema and fails loudly if it is malformed.
+          config_paths() {
+            python3 scripts/bump/pinned_bump.py config-paths --kind "$1" \
+              --pr-config /tmp/guard/pr/scripts/bump/pinned_deps.json
+          }
           if [ "$EVENT_NAME" = "merge_group" ]; then
             BASE_REF="$MERGE_GROUP_BASE_SHA"
             HEAD_SHA="$MERGE_GROUP_HEAD_SHA"
@@ -122,15 +127,14 @@ jobs:
             rm -f "$_err"
             return 1
           }
+          # Pass 1: pin files + configs for every tree.
           for dir in base merge-base pr; do
             case "$dir" in
               base) REF="$BASE_REF" ;;
               merge-base) REF="$MERGE_BASE_SHA" ;;
               pr) REF="$HEAD_SHA" ;;
             esac
-            FILES="lean-toolchain lakefile.toml lake-manifest.json"
-            if [ -n "$PIN_POLICY_PATH" ]; then FILES="$FILES $PIN_POLICY_PATH"; fi
-            for file in $FILES; do
+            for file in lean-toolchain lakefile.toml lake-manifest.json; do
               download_one "$dir" "$REF" "$file" true
             done
             # pinned_deps.json: required from base, 404-tolerated from
@@ -143,6 +147,23 @@ jobs:
             else
               download_one "$dir" "$REF" "scripts/bump/pinned_deps.json" false
             fi
+          done
+          # Pass 2: config-derived files (union of base + PR configs, so
+          # newly configured paths are downloaded too), optional for
+          # every tree: the guard fails closed when a needed file is
+          # missing from the PR tree or present there but absent from base.
+          PIN_POLICY_PATHS="$(config_paths policy)"
+          DOC_PATHS="$(config_paths doc)"
+          LEDGER_PATHS="$(config_paths ledger)"
+          for dir in base merge-base pr; do
+            case "$dir" in
+              base) REF="$BASE_REF" ;;
+              merge-base) REF="$MERGE_BASE_SHA" ;;
+              pr) REF="$HEAD_SHA" ;;
+            esac
+            for file in $PIN_POLICY_PATHS; do
+              download_one "$dir" "$REF" "$file" false
+            done
             for file in $LEDGER_PATHS; do
               download_one "$dir" "$REF" "$file" false
             done
