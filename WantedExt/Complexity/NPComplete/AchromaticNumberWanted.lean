@@ -43,14 +43,23 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
+/-- **Instances of ACHROMATIC NUMBER.** An instance of ACHROMATIC NUMBER is a triple $(n, E, K)$
+of a natural number $n$ (the number of vertices), a finite list $E$ of ordered pairs of natural
+numbers (the edges) and a natural number $K$ (the bound). -/
 abbrev AchromaticNumberInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed ACHROMATIC NUMBER instances.** An instance $(n, E, K)$ of ACHROMATIC NUMBER is
+well-formed when the list $E$ has no repeated entries and every pair $(u, v)$ in $E$ satisfies
+$u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$. -/
 def WellFormed (i : AchromaticNumberInstance) : Prop :=
   i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
 
-/-- A complete coloring with at least `K` used colors. -/
+/-- **Feasible ACHROMATIC NUMBER instances.** An instance $(n, E, K)$ of ACHROMATIC NUMBER is
+feasible when there are a natural number $q \ge K$ and a list $c = (c_0, \dots, c_{n-1})$ of $n$
+natural numbers, with $c_u$ read as $0$ for $u \ge n$, such that $c_v < q$ for every $v < n$, every
+$a < q$ equals $c_v$ for some $v < n$, $c_u \ne c_v$ for every pair $(u, v)$ in $E$, and for all
+distinct $a, b < q$ some pair $(u, v)$ in $E$ has $(c_u, c_v) = (a, b)$ or
+$(c_u, c_v) = (b, a)$. -/
 def AchromaticNumberFeasible
     (i : AchromaticNumberInstance) : Prop :=
   ∃ q : ℕ, i.2.2 ≤ q ∧
@@ -62,7 +71,10 @@ def AchromaticNumberFeasible
       (coloring.getD e.1 0 = b ∧ coloring.getD e.2 0 = a)
 
 open Classical in
-/-- ACHROMATIC NUMBER as a decision problem over bitstrings. -/
+/-- **ACHROMATIC NUMBER as a decision problem.** The ACHROMATIC NUMBER decision problem accepts a
+bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of instances
+$(n, E, K)$, to an instance of ACHROMATIC NUMBER that is well-formed and feasible; it rejects
+every bitstring that does not decode to an instance. -/
 noncomputable def achromaticNumberDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -70,7 +82,10 @@ noncomputable def achromaticNumberDec :
   | some i => decide (WellFormed i ∧ AchromaticNumberFeasible i)
   | none => false
 
-/-- **ACHROMATIC NUMBER is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers
+/-- **ACHROMATIC NUMBER is NP-complete.** The ACHROMATIC NUMBER decision problem belongs to NP, and
+every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson, *Computers
 and Intractability* (1979), ACHROMATIC NUMBER; M. Farber et al., "The achromatic number of
 graphs" (1986). -/
 public theorem_wanted achromaticNumber_npComplete :

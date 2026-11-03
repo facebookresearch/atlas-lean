@@ -41,21 +41,32 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An X3C instance: q (universe size 3q), list of three-element sets. -/
+/-- **Instances of EXACT COVER BY 3-SETS.** An instance of EXACT COVER BY 3-SETS is a pair
+$(q, C)$ of a natural number $q$ and a finite list $C$ of finite lists of natural numbers. The
+intended universe is $\{0, \dots, 3q - 1\}$ and the entries of $C$ are the candidate
+three-element subsets; that each entry lists three distinct elements of the universe is
+required by well-formedness, not by the type of instances. -/
 abbrev ExactCoverBy3SetsInstance := ℕ × List (List ℕ)
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed EXACT COVER BY 3-SETS instances.** An instance $(q, C)$ of EXACT COVER BY
+3-SETS is well formed when every entry of $C$ is a list of exactly three pairwise distinct
+natural numbers, each less than $3q$. -/
 def WellFormed (i : ExactCoverBy3SetsInstance) : Prop :=
   ∀ s ∈ i.2, s.length = 3 ∧ s.Nodup ∧ ∀ x ∈ s, x < 3 * i.1
 
-/-- A subcollection covering every element exactly once. -/
+/-- **Feasible EXACT COVER BY 3-SETS instances.** An instance $(q, C)$ of EXACT COVER BY 3-SETS
+is feasible when $C$ has a sublist $S$, obtained by deleting some entries of $C$, such that for
+every natural number $x < 3q$ there is exactly one list that occurs in $S$ and contains $x$. -/
 def ExactCoverBy3SetsFeasible
     (i : ExactCoverBy3SetsInstance) : Prop :=
   ∃ sub : List (List ℕ), sub.Sublist i.2 ∧
     ∀ x < 3 * i.1, ∃! s ∈ sub, x ∈ s
 
 open Classical in
-/-- EXACT COVER BY 3-SETS as a decision problem over bitstrings. -/
+/-- **EXACT COVER BY 3-SETS as a decision problem.** The decision problem EXACT COVER BY 3-SETS
+accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs
+of a natural number and a list of lists of natural numbers, to an instance of EXACT COVER BY
+3-SETS that is well formed and feasible; bitstrings that do not decode are rejected. -/
 noncomputable def exactCoverBy3SetsDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -63,7 +74,10 @@ noncomputable def exactCoverBy3SetsDec :
   | some i => decide (WellFormed i ∧ ExactCoverBy3SetsFeasible i)
   | none => false
 
-/-- **EXACT COVER BY 3-SETS is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **EXACT COVER BY 3-SETS is NP-complete.** The decision problem EXACT COVER BY 3-SETS is in
+NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), EXACT COVER BY 3-SETS. -/
 public theorem_wanted exactCoverBy3Sets_npComplete :
     exactCoverBy3SetsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

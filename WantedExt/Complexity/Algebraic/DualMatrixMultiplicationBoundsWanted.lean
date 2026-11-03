@@ -34,42 +34,79 @@ open Cslib.Complexity.Algebraic
 
 universe u v
 
-/-- Source: C15b, CLLZ2025 Figure 2, the general upper bound, not a method-specific barrier. -/
+/-- **Dual exponent at most one.** For every field $F$, the dual matrix multiplication
+exponent $\alpha(F)$ of the arithmetic-circuit model satisfies $\alpha(F) \le 1$.
+
+Source: C15b, CLLZ2025 Figure 2, the general upper bound, not a method-specific barrier. -/
 theorem_wanted upperBoundOne :
     ∀ (F : Type u) [Field F], dualCircuitExponent F ≤ 1
 
-/-- Source: C15b/LGU2018 Section 1.1, Coppersmith's 1982 exponent equality. -/
+/-- **Coppersmith's rectangular exponent.** For every field $F$, the rectangular matrix
+multiplication exponent of the arithmetic-circuit model at aspect $0.172$ equals $2$: an
+$n \times \lceil n^{0.172} \rceil$ matrix times an $\lceil n^{0.172} \rceil \times n$ matrix costs
+$n^{2 + o(1)}$ arithmetic operations.
+
+Source: C15b/LGU2018 Section 1.1, Coppersmith's 1982 exponent equality. -/
 theorem_wanted coppersmith1982Exponent :
     ∀ (F : Type u) [Field F], rectangularCircuitExponent F ((172 : ℝ) / 1000) = 2
 
-/-- Source: C15b/LG2012 abstract, the previous Coppersmith 1997 record is strict. -/
+/-- **Coppersmith's 1997 bound on the dual exponent.** For every field $F$, the dual matrix
+multiplication exponent $\alpha(F)$ of the arithmetic-circuit model satisfies
+$\alpha(F) > 0.29462$.
+
+Source: C15b/LG2012 abstract, the previous Coppersmith 1997 record is strict. -/
 theorem_wanted coppersmith1997StrictLower :
     ∀ (F : Type u) [Field F], ENNReal.ofReal ((29462 : ℝ) / 100000) < dualCircuitExponent F
 
-/-- Source: C15b/LG2012 abstract, Le Gall's 2012 improvement is strict. -/
+/-- **Le Gall's 2012 bound on the dual exponent.** For every field $F$, the dual matrix
+multiplication exponent $\alpha(F)$ of the arithmetic-circuit model satisfies
+$\alpha(F) > 0.30298$.
+
+Source: C15b/LG2012 abstract, Le Gall's 2012 improvement is strict. -/
 theorem_wanted leGall2012StrictLower :
     ∀ (F : Type u) [Field F], ENNReal.ofReal ((30298 : ℝ) / 100000) < dualCircuitExponent F
 
-/-- Source: C15b/LGU2018 Section 1.2, the fourth-power lower bound is weak. -/
+/-- **Le Gall–Urrutia bound on the dual exponent.** For every field $F$, the dual matrix
+multiplication exponent $\alpha(F)$ of the arithmetic-circuit model satisfies
+$\alpha(F) \ge 0.31389$.
+
+Source: C15b/LGU2018 Section 1.2, the fourth-power lower bound is weak. -/
 theorem_wanted leGallUrrutia2018Lower :
     ∀ (F : Type u) [Field F], ENNReal.ofReal ((31389 : ℝ) / 100000) ≤ dualCircuitExponent F
 
-/-- Source: C15b/WXXZ2024 introduction, the best displayed lower bound is strict. -/
+/-- **Williams–Xu–Xu–Zhou bound on the dual exponent.** For every field $F$, the dual matrix
+multiplication exponent $\alpha(F)$ of the arithmetic-circuit model satisfies
+$\alpha(F) > 0.321334$.
+
+Source: C15b/WXXZ2024 introduction, the best displayed lower bound is strict. -/
 theorem_wanted williamsXuXuZhou2024StrictLower :
     ∀ (F : Type u) [Field F], ENNReal.ofReal ((321334 : ℝ) / 1000000) < dualCircuitExponent F
 
-/-- Source: CLLZ rectangular naive upper bound; a general finite circuit construction is missing. -/
+/-- **Naive bound for rectangular matrix multiplication.** For every field $F$ and every real
+$k \ge 0$, the rectangular matrix multiplication exponent of the arithmetic-circuit model at
+aspect $k$ is at most $2 + k$.
+
+Source: CLLZ rectangular naive upper bound; a general finite circuit construction is missing. -/
 theorem_wanted rectangularNaiveUpper :
     ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
       rectangularCircuitExponent F k ≤ ENNReal.ofReal (2 + k)
 
-/-- Source: LG2012 exact bilinear-rank characterization; the operation/rank transfer is missing. -/
+/-- **Circuit size and tensor rank give the same rectangular exponent.** For every field $F$
+and every real $k \ge 0$, the rectangular matrix multiplication exponent at aspect $k$ defined
+by arithmetic-circuit size equals the one defined by tensor rank.
+
+Source: LG2012 exact bilinear-rank characterization; the operation/rank transfer is missing. -/
 theorem_wanted rectangularOperationRankBridge :
     ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
       rectangularCircuitExponent F k =
         MatrixMultiplicationExponent.rectangularMatrixMultiplicationExponent F k
 
-/-- Source: LG2012 Section 1, characteristic dependence; this circuit-model transfer is missing. -/
+/-- **The rectangular exponent depends only on the characteristic.** If two fields $F$ and $K$
+have the same characteristic, then for every real $k \ge 0$ the rectangular matrix
+multiplication exponents of $F$ and $K$ in the arithmetic-circuit model at aspect $k$ are
+equal.
+
+Source: LG2012 Section 1, characteristic dependence; this circuit-model transfer is missing. -/
 theorem_wanted characteristicInvariance :
     ∀ (F : Type u) (K : Type v) [Field F] [Field K], ringChar F = ringChar K →
       ∀ k : ℝ, 0 ≤ k → rectangularCircuitExponent F k = rectangularCircuitExponent K k

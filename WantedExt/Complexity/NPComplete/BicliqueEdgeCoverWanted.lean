@@ -42,14 +42,24 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A biclique-edge-cover instance: left count, right count, edges, bound. -/
+/-- **Biclique edge cover instances.** An instance of BICLIQUE EDGE COVER is a tuple
+$(L, R, E, K)$ of natural numbers $L$, $R$ and $K$ and a finite list $E$ of pairs of natural
+numbers. Here $L$ counts the left vertices, $R$ counts the right vertices, each pair $(a, b)$ in
+$E$ is an edge from left vertex $a$ to right vertex $b$, and $K$ is the bound on the number of
+bicliques. -/
 abbrev BicliqueEdgeCoverInstance := ℕ × ℕ × List (ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed biclique edge cover instances.** An instance $(L, R, E, K)$ of BICLIQUE EDGE
+COVER is well formed when the list $E$ has no repeated entries and every pair $(a, b)$ in $E$
+satisfies $a < L$ and $b < R$. -/
 def WellFormed (i : BicliqueEdgeCoverInstance) : Prop :=
   i.2.2.1.Nodup ∧ ∀ e ∈ i.2.2.1, e.1 < i.1 ∧ e.2 < i.2.1
 
-/-- At most `K` bicliques covering all edges. -/
+/-- **Feasible biclique edge cover instances.** An instance $(L, R, E, K)$ of BICLIQUE EDGE
+COVER is feasible when there is a list of at most $K$ pairs $(A, B)$ of finite lists of natural
+numbers, with every element of $A$ less than $L$ and every element of $B$ less than $R$, such
+that for every pair $(u, v)$ in $E$ some listed pair $(A, B)$ has $u \in A$, $v \in B$ and
+$(a, b)$ in $E$ for all $a \in A$ and $b \in B$. -/
 def BicliqueEdgeCoverFeasible
     (i : BicliqueEdgeCoverInstance) : Prop :=
   ∃ bicliques : List (List ℕ × List ℕ), bicliques.length ≤ i.2.2.2 ∧
@@ -58,7 +68,10 @@ def BicliqueEdgeCoverFeasible
       ∀ a ∈ p.1, ∀ b ∈ p.2, (a, b) ∈ i.2.2.1
 
 open Classical in
-/-- BICLIQUE EDGE COVER as a decision problem over bitstrings. -/
+/-- **The biclique edge cover decision problem.** BICLIQUE EDGE COVER is the decision problem
+that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding
+of biclique edge cover instances, to an instance that is well formed and feasible; it rejects
+every bitstring that fails to decode. -/
 noncomputable def bicliqueEdgeCoverDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -66,7 +79,10 @@ noncomputable def bicliqueEdgeCoverDec :
   | some i => decide (WellFormed i ∧ BicliqueEdgeCoverFeasible i)
   | none => false
 
-/-- **BICLIQUE EDGE COVER is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers
+/-- **BICLIQUE EDGE COVER is NP-complete.** The biclique edge cover decision problem belongs to
+NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson, *Computers
 and Intractability* (1979), BICLIQUE COVER. -/
 public theorem_wanted bicliqueEdgeCover_npComplete :
     bicliqueEdgeCoverDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

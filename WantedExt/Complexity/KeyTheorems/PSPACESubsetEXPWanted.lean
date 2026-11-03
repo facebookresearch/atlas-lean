@@ -37,7 +37,10 @@ machine has only exponentially many configurations, so exhaustive configuration-
 decides the language in exponential time.
 -/
 
-/-- **PSPACE is contained in EXP.** Source: S. Arora and B. Barak, Computational Complexity: A
+/-- **PSPACE is contained in EXP.** Every decision problem in PSPACE belongs to EXP, the class of
+decision problems decidable in deterministic exponential time.
+
+Source: S. Arora and B. Barak, Computational Complexity: A
 Modern Approach, Cambridge University Press, 2009, Theorem 4.14 (PSPACE ⊆ EXP). -/
 public theorem_wanted pspace_subset_exp :
     PSPACE ⊆ EXP

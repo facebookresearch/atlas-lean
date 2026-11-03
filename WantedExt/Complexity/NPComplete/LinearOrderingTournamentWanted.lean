@@ -42,16 +42,26 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A tournament linear-ordering instance: vertex count, tournament edges, bound. -/
+/-- **Tournament linear ordering instances.** An instance of LINEAR ORDERING (TOURNAMENTS) is a
+triple $(n, E, K)$ of a natural number $n$, the number of vertices, a list $E$ of ordered pairs
+of natural numbers, the arcs, and a natural number $K$, the bound. -/
 abbrev LinearOrderingTournamentInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed tournament linear ordering instances.** An instance $(n, E, K)$ of LINEAR
+ORDERING (TOURNAMENTS) is well formed when $n > 0$, $E$ has no repeated entries, every pair
+$(a, b)$ in $E$ satisfies $a < n$, $b < n$, $a \ne b$ and $(b, a) \notin E$, and for all distinct
+$a, b < n$ at least one of $(a, b)$ and $(b, a)$ lies in $E$. That is, $E$ is a tournament on the
+vertices $0, \dots, n - 1$. -/
 def WellFormed (i : LinearOrderingTournamentInstance) : Prop :=
   0 < i.1 ∧ i.2.1.Nodup ∧
     (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
     ∀ a < i.1, ∀ b < i.1, a ≠ b → (a, b) ∈ i.2.1 ∨ (b, a) ∈ i.2.1
 
-/-- An ordering with at least `K` forward arcs. -/
+/-- **Orderings with many forward arcs.** An instance $(n, E, K)$ of LINEAR ORDERING
+(TOURNAMENTS) is feasible when there are an ordering of the vertices $0, \dots, n - 1$ and a
+subsequence $F$ of the list $E$ with at least $K$ entries such that for every pair $(a, b)$ in
+$F$, the position of $a$ in the ordering is less than the position of $b$, where positions are
+counted from $0$ and a number that does not occur in the ordering is given position $n$. -/
 def LinearOrderingTournamentFeasible
     (i : LinearOrderingTournamentInstance) : Prop :=
   ∃ ord : List ℕ, ord.Perm (List.range i.1) ∧
@@ -59,7 +69,13 @@ def LinearOrderingTournamentFeasible
       ∀ e ∈ forward, ord.idxOf e.1 < ord.idxOf e.2
 
 open Classical in
-/-- LINEAR ORDERING (TOURNAMENTS) as a decision problem over bitstrings. -/
+/-- **LINEAR ORDERING (TOURNAMENTS) as a decision problem.** The decision problem LINEAR
+ORDERING (TOURNAMENTS) accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
+bitstring encoding of triples of a natural number, a list of pairs of natural numbers and a
+natural number, to an instance $(n, E, K)$ that is well formed ($n > 0$ and $E$ is a tournament
+on the vertices $0, \dots, n - 1$ without repeated arcs) and feasible (some ordering of the
+vertices has at least $K$ arcs of $E$ going forward). Bitstrings that do not decode, or that
+decode to a malformed instance, are rejected. -/
 noncomputable def linearOrderingTournamentDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -67,7 +83,11 @@ noncomputable def linearOrderingTournamentDec :
   | some i => decide (WellFormed i ∧ LinearOrderingTournamentFeasible i)
   | none => false
 
-/-- **LINEAR ORDERING (TOURNAMENTS) is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **LINEAR ORDERING (TOURNAMENTS) is NP-complete.** The decision problem LINEAR ORDERING
+(TOURNAMENTS) on bitstrings lies in NP, and every decision problem in NP reduces to it by a
+polynomial-time many-one reduction.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), LINEAR ORDERING; N. Alon, "Ranking tournaments"
 (2006) and the feedback arc set literature. -/
 public theorem_wanted linearOrderingTournament_npComplete :

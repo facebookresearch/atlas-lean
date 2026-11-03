@@ -42,21 +42,37 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
+/-- **Minimum linear arrangement instance.** An instance of MINIMUM LINEAR ARRANGEMENT is a triple
+$(n, E, K)$ of a natural number $n$ (the number of vertices), a finite list $E$ of ordered pairs
+of natural numbers (the edges) and a natural number $K$ (the bound). -/
 abbrev MinimumLinearArrangementInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed minimum linear arrangement instance.** An instance $(n, E, K)$ of MINIMUM LINEAR
+ARRANGEMENT is well formed when the list $E$ has no repeated entries and every pair $(u, v)$ in
+$E$ satisfies $u < n$, $v < n$ and $u \ne v$, while the reversed pair $(v, u)$ does not occur in
+$E$. Thus $E$ lists the edges of a simple graph on the vertices $0, \dots, n-1$, each edge once and
+in one orientation. -/
 def WellFormed (i : MinimumLinearArrangementInstance) : Prop :=
   i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
 
-/-- A labeling of total edge length at most `K`. -/
+/-- **Feasible minimum linear arrangement instance.** An instance $(n, E, K)$ of MINIMUM LINEAR
+ARRANGEMENT is feasible when there is an ordering $\pi$ of $0, 1, \dots, n-1$ (a list containing
+each of these numbers exactly once) such that $\sum_{(u, v) \in E} |\pi(u) - \pi(v)| \le K$. Here
+$\pi(v)$ is the position of $v$ in $\pi$, counted from $0$, and is $n$ when $v \ge n$; the sum
+runs over the list $E$, so a repeated pair is counted once for each occurrence. -/
 def MinimumLinearArrangementFeasible
     (i : MinimumLinearArrangementInstance) : Prop :=
   ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
     (i.2.1.map (fun e => Nat.dist (perm.idxOf e.1) (perm.idxOf e.2))).sum ≤ i.2.2
 
 open Classical in
-/-- MINIMUM LINEAR ARRANGEMENT as a decision problem over bitstrings. -/
+/-- **The MINIMUM LINEAR ARRANGEMENT decision problem.** It accepts a bitstring $x$ exactly when
+$x$ decodes, under the canonical bitstring encoding, to a triple $(n, E, K)$ of a natural number
+$n$, a list $E$ of pairs of natural numbers and a natural number $K$ with the following
+properties: every entry of $E$ is a pair $(u, v)$ of distinct numbers below $n$, the list $E$ has
+no repeated entries and never contains both $(u, v)$ and $(v, u)$, and there is an ordering of
+$0, 1, \dots, n-1$ in which, writing $p(v)$ for the position of $v$, the sum of $|p(u) - p(v)|$
+over all pairs $(u, v)$ in $E$ is at most $K$. Bitstrings that do not decode are rejected. -/
 noncomputable def minimumLinearArrangementDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -64,7 +80,10 @@ noncomputable def minimumLinearArrangementDec :
   | some i => decide (WellFormed i ∧ MinimumLinearArrangementFeasible i)
   | none => false
 
-/-- **MINIMUM LINEAR ARRANGEMENT is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **MINIMUM LINEAR ARRANGEMENT is NP-complete.** The MINIMUM LINEAR ARRANGEMENT decision problem
+lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), MINIMUM LINEAR ARRANGEMENT. -/
 public theorem_wanted minimumLinearArrangement_npComplete :
     minimumLinearArrangementDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

@@ -36,7 +36,10 @@ Every probabilistic polynomial-time language with unbounded error is in polynomi
 enumerating random strings in polynomial space.
 -/
 
-/-- **PP is contained in PSPACE.** Source: J. Gill, "Computational complexity of probabilistic
+/-- **PP is contained in PSPACE.** Every decision problem in PP, the class of decision problems
+decided with unbounded error in probabilistic polynomial time, belongs to PSPACE.
+
+Source: J. Gill, "Computational complexity of probabilistic
 Turing machines" (1977); S. Arora and B. Barak, Computational Complexity: A Modern
 Approach, 2009 (PP ⊆ PSPACE). -/
 public theorem_wanted pp_subset_pspace :

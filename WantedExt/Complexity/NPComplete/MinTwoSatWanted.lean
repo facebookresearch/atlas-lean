@@ -43,14 +43,23 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A MIN-2SAT instance: number of variables, 2-CNF formula, bound. -/
+/-- **MINIMUM 2-SATISFIABILITY instances.** An instance of MINIMUM 2-SATISFIABILITY is a triple
+$(n, \varphi, K)$ of a natural number $n$ (the number of variables), a CNF formula $\varphi$ and a
+natural number $K$ (the bound). No condition is placed on $\varphi$ here; clauses of at most two
+literals are required separately, by well-formedness. -/
 abbrev MinTwoSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed MINIMUM 2-SATISFIABILITY instances.** A triple $(n, \varphi, K)$ of a natural
+number $n$, a CNF formula $\varphi$ and a natural number $K$ is well formed when every clause of
+$\varphi$ has at most two literals and every literal of every clause has variable index less than
+$n$. -/
 def WellFormed (i : MinTwoSatInstance) : Prop :=
   (∀ clause ∈ i.2.1, clause.length ≤ 2 ∧ ∀ l ∈ clause, l.1 < i.1)
 
-/-- An assignment satisfying at most `K` clauses. -/
+/-- **Feasible MINIMUM 2-SATISFIABILITY instances.** A triple $(n, \varphi, K)$ of a natural number
+$n$, a CNF formula $\varphi$ with clauses $C_0, \dots, C_{m-1}$ and a natural number $K$ is
+feasible when there is an assignment of truth values to the variables $0, \dots, n-1$ that, with
+every variable $x \ge n$ set to false, satisfies $C_j$ for at most $K$ indices $j < m$. -/
 def MinTwoSatFeasible
     (i : MinTwoSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
@@ -60,7 +69,13 @@ def MinTwoSatFeasible
           (i.2.1.getD j []) ↔ j ∈ S
 
 open Classical in
-/-- MINIMUM 2-SATISFIABILITY as a decision problem over bitstrings. -/
+/-- **The MINIMUM 2-SATISFIABILITY decision problem.** MINIMUM 2-SATISFIABILITY is the decision
+problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring
+encoding, to a triple $(n, \varphi, K)$ of a natural number $n$, a CNF formula $\varphi$ with
+clauses $C_0, \dots, C_{m-1}$ and a natural number $K$ such that every clause has at most two
+literals, all with variables less than $n$, and some assignment of truth values to the variables
+$0, \dots, n-1$ satisfies $C_j$ for at most $K$ indices $j < m$. Every other bitstring is
+rejected. -/
 noncomputable def minTwoSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -68,7 +83,17 @@ noncomputable def minTwoSatDec :
   | some i => decide (WellFormed i ∧ MinTwoSatFeasible i)
   | none => false
 
-/-- **MINIMUM 2-SATISFIABILITY is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+/-- **MINIMUM 2-SATISFIABILITY is NP-complete.** Let MINIMUM 2-SATISFIABILITY be the decision
+problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring
+encoding, to a triple $(n, \varphi, K)$ of a natural number $n$, a CNF formula $\varphi$ with
+clauses $C_0, \dots, C_{m-1}$ and a natural number $K$ such that every clause has at most two
+literals, all with variables less than $n$, and some assignment of truth values to the variables
+$0, \dots, n-1$ satisfies $C_j$ for at most $K$ indices $j < m$. Then MINIMUM 2-SATISFIABILITY
+belongs to NP, and every decision problem $L$ in NP reduces to it by a polynomial-time many-one
+reduction: there is a polynomial-time computable map $f$ on bitstrings such that, for every
+bitstring $x$, $L$ accepts $x$ exactly when MINIMUM 2-SATISFIABILITY accepts $f(x)$.
+
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability: A Guide to the Theory of NP-Completeness* (1979), MINIMUM
 2-SATISFIABILITY; R. Kohli, R. Krishnamurti, and P. Mirchandani, "The minimum
 satisfiability problem" (1994). -/

@@ -42,7 +42,12 @@ variables are below `n`; malformed inputs are satisfiable (not in UNSAT).
 -/
 
 open Classical in
-/-- UNSAT as a decision problem over bitstrings, decoding to `(n, φ)`. -/
+/-- **UNSAT as a decision problem.** The UNSAT decision problem accepts a bitstring $x$ exactly
+when $x$ decodes, under the canonical bitstring encoding, to a pair $(n, \varphi)$ of a natural
+number $n$ and a CNF formula $\varphi$ such that every variable occurring in $\varphi$ is less
+than $n$ and, for every assignment $a$ of booleans to the variables $0, \dots, n - 1$, the
+assignment that agrees with $a$ below $n$ and sends every variable $v \ge n$ to false does not
+satisfy $\varphi$. -/
 noncomputable def unsatDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := ℕ × Cslib.Logic.PL.CNF) x with
@@ -52,7 +57,10 @@ noncomputable def unsatDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := 
           (fun v => if h : v < i.1 then assign ⟨v, h⟩ else false) i.2)
   | none => false
 
-/-- **UNSAT is coNP-complete.** Source: S. A. Cook, "The complexity of theorem-proving
+/-- **UNSAT is coNP-complete.** The UNSAT decision problem lies in coNP, and every decision
+problem in coNP has a polynomial-time many-one reduction to it.
+
+Source: S. A. Cook, "The complexity of theorem-proving
 procedures", Proceedings of the Third Annual ACM Symposium on Theory of Computing (STOC
 1971), 151-158; L. A. Levin, "Universal search problems", Problems of Information
 Transmission 9 (1973), 265-266. -/

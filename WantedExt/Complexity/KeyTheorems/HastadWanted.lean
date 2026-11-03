@@ -50,16 +50,25 @@ is given in unary (a bitstring of length `n`), so an assignment of length
 `|x|` has at least `n` bits.
 -/
 
-/-- A clause is nondegenerate if it has exactly three literals, its variable
-indices are pairwise distinct, and it contains no complementary pair. -/
+/-- **Nondegenerate 3-clauses.** A clause, given as a list of literals $(v, s)$ with variable
+index $v \in \mathbb{N}$ and polarity $s$, is nondegenerate if it has exactly three literals,
+its variable indices are pairwise distinct, and it contains no complementary pair, that is, no
+two literals $(v, s)$ and $(v, \lnot s)$. -/
 def hastadNondegenerate (clause : List (ℕ × Bool)) : Bool :=
   decide (clause.length = 3 ∧ (clause.map Prod.fst).Nodup) &&
     !clause.any (fun l => (l.1, !l.2) ∈ clause)
 
-/-- The value of MAX-3SAT on instance `x` under assignment `a`: the number of satisfied
-clauses (`0` on malformed inputs). Valid instances have exactly three
-nondegenerate literals per clause; other formulas get value `0`, so the
-`7 / 8` random-assignment bound holds on every instance with nonzero value. -/
+/-- **Value of a MAX-3SAT assignment.** For bitstrings $x$ and $a$, read $a$ as the assignment
+giving variable $v$ the value $a_v$ if $v < |a|$ and false otherwise. If $x$ decodes, under the
+canonical bitstring decoding, to a pair $(u, \varphi)$ of a bitstring $u$ and a CNF formula
+$\varphi$ in which every variable index is less than $|u|$ and every clause is nondegenerate,
+then the MAX-3SAT value of $a$ on $x$ is the number of clauses of $\varphi$, counted with
+multiplicity, that contain a literal $(v, s)$ whose variable gets the value $s$. Otherwise the
+value is $0$.
+
+The bitstring $u$ gives the number of variables in unary. Since degenerate and malformed
+instances get value $0$, the $7/8$ random-assignment bound holds on every instance with nonzero
+value. -/
 def hastadVal (x : List Bool) (a : List Bool) : ℚ :=
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := List Bool × Cslib.Logic.PL.CNF) x with
   | some (u, φ) =>
@@ -70,12 +79,19 @@ def hastadVal (x : List Bool) (a : List Bool) : ℚ :=
     else 0
   | none => 0
 
-/-- The MAX-3SAT optimum on instance `x`, over assignments of length `|x|`. -/
+/-- **Optimum of a MAX-3SAT instance.** The MAX-3SAT optimum of a bitstring $x$ is the maximum,
+over all bitstrings $a$ of length $|x|$, of the MAX-3SAT value of $a$ on $x$. -/
 noncomputable def hastadOpt (x : List Bool) : ℚ :=
   Finset.max' (Finset.univ.image (fun a : Fin x.length → Bool => hastadVal x (List.ofFn a)))
     (Finset.image_nonempty.mpr Finset.univ_nonempty)
 
-/-- **Hastad: optimal inapproximability of MAX-3SAT.** Source: J. Håstad, "Some optimal
+/-- **Hastad: optimal inapproximability of MAX-3SAT.** If $\mathsf{P} \ne \mathsf{NP}$, then for
+every rational $\varepsilon > 0$ there is no polynomial-time function $A$ from bitstrings to
+bitstrings such that, for every bitstring $x$, the bitstring $A(x)$ has the same length as $x$
+and the MAX-3SAT value of the assignment $A(x)$ on $x$ is at least $(7/8 + \varepsilon)$ times
+the MAX-3SAT optimum of $x$.
+
+Source: J. Håstad, "Some optimal
 inapproximability results", Journal of the ACM 48 (2001), 798-859 (STOC 1997). -/
 public theorem_wanted hastad_max3sat_inapproximability :
     MetaMathlibExt.ComplexityTheory.P ≠ MetaMathlibExt.ComplexityTheory.NP →

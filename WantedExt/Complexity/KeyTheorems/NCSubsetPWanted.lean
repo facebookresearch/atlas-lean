@@ -42,7 +42,9 @@ witness for the `P` class, is a Turing-machine simulation, not a logical
 consequence of the definitions.
 -/
 
-/-- **NC is contained in P.** Source: S. Arora and B. Barak, Computational Complexity:
+/-- **NC is contained in P.** Every decision problem in $\mathsf{NC}$ belongs to $\mathsf{P}$.
+
+Source: S. Arora and B. Barak, Computational Complexity:
 A Modern Approach, 2009, Theorem 6.22 (NC ⊆ P); M. Sipser, Introduction to the
 Theory of Computation, 3rd ed., 2013, Theorem 9.21. -/
 public theorem_wanted nc_subset_p :

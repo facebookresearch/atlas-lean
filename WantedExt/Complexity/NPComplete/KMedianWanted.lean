@@ -48,14 +48,23 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A k-median instance: distance matrix, number of locations K, budget. -/
+/-- **k-median instances.** A k-median instance is a triple $(d, K, B)$ of a cost matrix $d$, given
+as a list of rows of natural numbers (one row per client, one entry per location; the rows need
+not have equal length), a natural number $K$ bounding the number of open locations, and a
+natural-number budget $B$. -/
 abbrev KMedianInstance := List (List ℕ) × ℕ × ℕ
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed k-median instances.** A k-median instance $(d, K, B)$ is well formed when all
+rows of its cost matrix $d$ have the same length. -/
 def WellFormed (i : KMedianInstance) : Prop :=
   ∀ row ∈ i.1, ∀ row' ∈ i.1, row.length = row'.length
 
-/-- At most `K` locations with total distance at most `B`. -/
+/-- **Feasible k-median instances.** Let $(d, K, B)$ be a k-median instance whose cost matrix $d$
+has rows $d_0, \dots, d_{n-1}$, one per client, and let $m$ be the length of $d_0$, or $m = 0$
+when $n = 0$. The instance is feasible when there are a set $S \subseteq \{0, \dots, m-1\}$ of at
+most $K$ locations and a choice of $a(c) \in S$ for each client $c < n$ such that
+$\sum_{c < n} d_c(a(c)) \le B$, where $d_c(j)$ is the entry of $d_c$ at index $j$ (counting from
+$0$), read as $0$ when $d_c$ has fewer than $j + 1$ entries. -/
 def KMedianFeasible
     (i : KMedianInstance) : Prop :=
   ∃ facilities : List ℕ, facilities.Nodup ∧ facilities.length ≤ i.2.1 ∧
@@ -66,7 +75,13 @@ def KMedianFeasible
         (fun c => (i.1.getD c []).getD (assign.getD c 0) 0) ≤ i.2.2
 
 open Classical in
-/-- k-MEDIAN (GENERALIZED, NONMETRIC) as a decision problem over bitstrings. -/
+/-- **The k-MEDIAN decision problem.** k-MEDIAN (generalized, nonmetric) is the decision problem
+that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to
+a k-median instance $(d, K, B)$ that is well formed and feasible. That is, $d$ has rows
+$d_0, \dots, d_{n-1}$ (the clients) of a common length $m$ (the locations), and there are a set
+$S \subseteq \{0, \dots, m-1\}$ of at most $K$ locations and a choice of $a(c) \in S$ for each
+client $c < n$ with $\sum_{c < n} d_{c, a(c)} \le B$. Bitstrings that do not decode are
+rejected. -/
 noncomputable def kMedianDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -74,7 +89,10 @@ noncomputable def kMedianDec :
   | some i => decide (WellFormed i ∧ KMedianFeasible i)
   | none => false
 
-/-- **k-MEDIAN (GENERALIZED, NONMETRIC) is NP-complete.** Source: O. Kariv and S. L. Hakimi,
+/-- **k-MEDIAN (GENERALIZED, NONMETRIC) is NP-complete.** The k-MEDIAN decision problem is in NP,
+and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Source: O. Kariv and S. L. Hakimi,
 "An algorithmic approach to network location problems. II: The p-medians", SIAM Journal on
 Applied Mathematics 37 (1979), 539-560. -/
 public theorem_wanted kMedian_npComplete :
