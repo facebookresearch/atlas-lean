@@ -12,6 +12,9 @@ public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Data.List.Basic
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Data.Finset.Max
+import Mathlib.Data.Finset.Prod
+import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -49,6 +52,11 @@ abstract best-first traces.
   represented or no shorter than the outputs. Under unique tree walks,
   each output decodes to a unique walk. These are correctness cores
   only: no trace-producing function is given (see the scope note).
+* **Finiteness (§2.1).** The paper assumes `n` vertices and `m` edges.
+  Under `[Finite V]`, every abstract trace extends by a frontier
+  minimum or is exhaustive, so abstract traces of every length exist up
+  to exhaustion (`trace_extend_or_exhaustive`,
+  `exists_trace_length_or_exhaustive`).
 
 Ported from the `kth-shortest-path-epp` T-Bench Lean verification task
 (authored by Leo Osvald). Complexity bounds (`O(m + n log n + k log k)`
@@ -756,6 +764,109 @@ theorem complete_of_minimal (T : Digraph V) (len : V → V → ℝ)
     rw [hp_len, hy_len]
     linarith [hMin_xq]
 
+/-- Trace extension under the paper's finiteness assumption (§2.1: the
+graph has `n` vertices and `m` edges). When `V` is finite, an abstract
+best-first trace either extends by one step — appending a frontier
+child of minimum weight, so the extension is again a trace — or it
+already lists every `PPath` from `s`. The minimum is attained because
+the frontier (pairs of a listed `PPath` and a vertex) is a finite set.
+This is the existence half that Theorem 1's conditional-correctness
+statement does not provide: an abstract best-first trace can always be
+extended until nothing remains. -/
+theorem trace_extend_or_exhaustive (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s : V} [Finite V]
+    (L : List (Σ c, PPath G T s c)) (hL : IsBFSTrace G T s len dist L) :
+    (∃ L', IsBFSTrace G T s len dist L' ∧ L'.length = L.length + 1) ∨
+    (∀ q : Σ c, PPath G T s c, q ∈ L) := by
+  classical
+  have : Fintype V := Fintype.ofFinite V
+  set S : Finset ((Σ c, PPath G T s c) × (V × V)) :=
+    (L.toFinset ×ˢ Finset.univ).filter (fun pe =>
+      ∃ tw : DiWalk T pe.1.1 pe.2.1, ∃ hadj : G.Adj pe.2.1 pe.2.2,
+        ∃ hside : ¬ T.Adj pe.2.1 pe.2.2,
+          (⟨pe.2.2, PPath.sidestep pe.2 pe.1.2 tw hadj hside⟩ :
+            Σ c, PPath G T s c) ∉ L) with hS
+  rcases Finset.eq_empty_or_nonempty S with hEmpty | hNonempty
+  · right
+    have hexh : ∀ {c : V} (q : PPath G T s c),
+        (⟨c, q⟩ : Σ c, PPath G T s c) ∈ L := by
+      intro c q
+      induction q with
+      | root => exact trace_root_mem len dist hL
+      | sidestep e prev tw hadj hside ih =>
+        by_cases hmem : (⟨e.2, PPath.sidestep e prev tw hadj hside⟩ :
+            Σ c, PPath G T s c) ∈ L
+        · exact hmem
+        · exfalso
+          have hpair_mem : ((⟨_, prev⟩ : Σ c, PPath G T s c), e) ∈ S := by
+            rw [hS, Finset.mem_filter]
+            refine ⟨Finset.mem_product.mpr ⟨List.mem_toFinset.mpr ih,
+              Finset.mem_univ e⟩, tw, hadj, hside, hmem⟩
+          rw [hEmpty] at hpair_mem
+          simp at hpair_mem
+    intro q
+    obtain ⟨c, qq⟩ := q
+    exact hexh qq
+  · obtain ⟨pe0, hpe0, hmin⟩ := Finset.exists_min_image S
+      (fun pe => pe.1.2.weight len dist + eppDelta len dist pe.2.1 pe.2.2)
+      hNonempty
+    rw [hS, Finset.mem_filter] at hpe0
+    obtain ⟨hprod, tw0, hadj0, hside0, hnotmem0⟩ := hpe0
+    obtain ⟨hpar0_mem, -⟩ := Finset.mem_product.mp hprod
+    have hpar0 : pe0.1 ∈ L := List.mem_toFinset.mp hpar0_mem
+    refine Or.inl ⟨L ++ [⟨pe0.2.2,
+      PPath.sidestep pe0.2 pe0.1.2 tw0 hadj0 hside0⟩], ?_, ?_⟩
+    · refine IsBFSTrace.step L _ hL ?_ hnotmem0 ?_
+      · exact ⟨pe0.1, hpar0, pe0.2, tw0, hadj0, hside0, rfl⟩
+      · intro y hchild hy
+        obtain ⟨par, hpar_mem, hchild⟩ := hchild
+        obtain ⟨e, tw, hadj, hside, hy_eq⟩ := hchild
+        have hpair_mem : (par, e) ∈ S := by
+          rw [hS, Finset.mem_filter]
+          refine ⟨Finset.mem_product.mpr ⟨List.mem_toFinset.mpr hpar_mem,
+            Finset.mem_univ e⟩, tw, hadj, hside, ?_⟩
+          rw [hy_eq] at hy
+          exact hy
+        have hle := hmin (par, e) hpair_mem
+        have hnext : (⟨pe0.2.2,
+            PPath.sidestep pe0.2 pe0.1.2 tw0 hadj0 hside0⟩ :
+            Σ c, PPath G T s c).2.weight len dist
+            = pe0.1.2.weight len dist + eppDelta len dist pe0.2.1 pe0.2.2 := rfl
+        have hyw : y.2.weight len dist
+            = par.2.weight len dist + eppDelta len dist e.1 e.2 := by
+          rw [hy_eq]
+          rfl
+        rw [hnext, hyw]
+        exact hle
+    · simp [List.length_append]
+
+/-- Existence of abstract traces of every length, up to exhaustion,
+under the paper's finiteness assumption (§2.1). For every `n` there is
+an abstract best-first trace with `n + 1` entries — the root plus `n`
+extensions — unless some shorter trace already lists every `PPath`
+from `s`, in which case enumeration is complete. Together with
+Theorem 1's conditional core, this gives existence for abstract
+traces: traces of any requested length exist (or enumeration is
+exhaustive), and every such trace is correct. It does not formalize
+an algorithm producing them. -/
+theorem exists_trace_length_or_exhaustive (T : Digraph V)
+    (len : V → V → ℝ) (dist : V → ℝ) {G : Digraph V} {s : V} [Finite V] :
+    ∀ n : ℕ, ∃ L : List (Σ c, PPath G T s c),
+      IsBFSTrace G T s len dist L ∧
+      (L.length = n + 1 ∨ ∀ q : Σ c, PPath G T s c, q ∈ L) := by
+  intro n
+  induction n with
+  | zero =>
+    exact ⟨[⟨s, PPath.root⟩], IsBFSTrace.root, Or.inl rfl⟩
+  | succ n ih =>
+    obtain ⟨L, hL, h⟩ := ih
+    rcases h with hlen | hexh
+    · rcases trace_extend_or_exhaustive T len dist L hL with
+        ⟨L', hL', hlen'⟩ | hexh'
+      · exact ⟨L', hL', Or.inl (by rw [hlen', hlen])⟩
+      · exact ⟨L, hL, Or.inr hexh'⟩
+    · exact ⟨L, hL, Or.inr hexh⟩
+
 /-- Theorem 1, conditional-correctness core (basic algorithm): for every
 abstract best-first trace `L` satisfying `IsBFSTrace`, `L` lists
 shortest paths first — `L` is duplicate-free, weight-sorted, and every
@@ -769,12 +880,13 @@ produces such a list, runs a priority queue, or constructs `P(G)`/
 core this is; its `O(log i)`-per-path claim and complexity bounds are
 not formalized (no cost model).  Neither `δ`-fact is assumed.  No
 finiteness hypothesis: correctness is conditional on the supplied
-trace; only the existence of length-`k` traces would need a finite
-graph, and no such existence is claimed by this theorem.  No uniqueness
-is claimed here: the Lemma 5 correspondence is existence in both
-directions (every `PPath` decodes, every walk encodes), and tree walks
-are not assumed unique.  For the one-to-one form under unique tree
-walks, see `thm1_bfs_enumeration_unique`. -/
+trace.  Existence of length-`k` abstract traces under the paper's
+finite-graph assumption (§2.1) is the separate
+`exists_trace_length_or_exhaustive`.  No uniqueness is claimed here:
+the Lemma 5 correspondence is existence in both directions (every
+`PPath` decodes, every walk encodes), and tree walks are not assumed
+unique.  For the one-to-one form under unique tree walks, see
+`thm1_bfs_enumeration_unique`. -/
 theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
     (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)

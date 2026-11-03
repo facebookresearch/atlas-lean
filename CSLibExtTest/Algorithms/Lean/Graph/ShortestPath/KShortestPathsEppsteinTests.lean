@@ -43,6 +43,8 @@ open Cslib.Algorithms.Lean.KShortestPathsEppstein
 #check PPath_eq_of_sidetrackList_eq
 #check lemma6_weight_mono
 #check lemma7_parent_weight
+#check trace_extend_or_exhaustive
+#check exists_trace_length_or_exhaustive
 #check thm1_bfs_enumeration
 #check thm1_bfs_enumeration_unique
 #check thm2_all_dests
@@ -369,5 +371,19 @@ example : cycleQA ≠ cycleQB := by
   intro h
   have h2 := congrArg ppathTwSteps h
   simp [cycleQA, cycleQB, ppathTwSteps, walkSteps] at h2
+-- Over a finite vertex type, a trace extends by one step or is exhaustive.
+example (T : Digraph (Fin 2)) (len : Fin 2 → Fin 2 → ℝ) (dist : Fin 2 → ℝ)
+    {G : Digraph (Fin 2)} {s : Fin 2}
+    (L : List (Σ c, PPath G T s c)) (hL : IsBFSTrace G T s len dist L) :
+    (∃ L', IsBFSTrace G T s len dist L' ∧ L'.length = L.length + 1) ∨
+    (∀ q : Σ c, PPath G T s c, q ∈ L) :=
+  trace_extend_or_exhaustive T len dist L hL
+
+-- Traces of length two exist over a finite vertex type, up to exhaustion.
+example (T : Digraph (Fin 2)) (len : Fin 2 → Fin 2 → ℝ) (dist : Fin 2 → ℝ)
+    {G : Digraph (Fin 2)} {s : Fin 2} :
+    ∃ L : List (Σ c, PPath G T s c), IsBFSTrace G T s len dist L ∧
+      (L.length = 1 + 1 ∨ ∀ q : Σ c, PPath G T s c, q ∈ L) :=
+  exists_trace_length_or_exhaustive T len dist 1
 
 end Cslib.Algorithms.Lean.KShortestPathsEppsteinTests
