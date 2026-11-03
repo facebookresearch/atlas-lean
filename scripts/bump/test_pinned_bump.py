@@ -371,7 +371,8 @@ class GuardTests(unittest.TestCase):
                    config_add_dep_only=False, changed_guard_only=False,
                    manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False,
                    duplicate_shadow=False, config_add_ledger=False,
-                   malformed_require=False, nonstring_rev=False):
+                   malformed_require=False, nonstring_rev=False,
+                   scope_repoint=False, add_dep_wrong_source=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -445,12 +446,29 @@ class GuardTests(unittest.TestCase):
             write_tree(pr, "v4.35.0" if same_pin else "v4.36.0",
                        tamper_toolchain=tamper_toolchain,
                        tamper_transitive=tamper_transitive)
+            if scope_repoint:
+                # Mirror the real lakefile shape (fixture requires carry
+                # no scope), then repoint mathlib's scope in the PR tree.
+                for tree in (base, pr):
+                    lakefile = tree / "lakefile.toml"
+                    text = lakefile.read_text()
+                    text = text.replace(
+                        'name = "mathlib"\nrev = "v4.35.0"',
+                        'name = "mathlib"\nscope = "leanprover-community"\nrev = "v4.35.0"')
+                    text = text.replace(
+                        'name = "cslib"\nrev = "v4.35.0"',
+                        'name = "cslib"\nscope = "leanprover"\nrev = "v4.35.0"')
+                    lakefile.write_text(text)
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(lakefile.read_text().replace(
+                    'scope = "leanprover-community"', 'scope = "attacker"', 1))
             if add_dep or add_dep_no_config:
                 lakefile = pr / "lakefile.toml"
+                scope = "attacker" if add_dep_wrong_source else "leanprover-community"
                 lakefile.write_text(
                     lakefile.read_text()
                     + '\n[[require]]\nname = "Physlib"\n'
-                    'scope = "leanprover-community"\nrev = "v4.35.0"\n'
+                    f'scope = "{scope}"\nrev = "v4.35.0"\n'
                     '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
                 manifest_path = pr / "lake-manifest.json"
@@ -718,6 +736,18 @@ class GuardTests(unittest.TestCase):
         # Guard-code-only PRs get normal review; they must not fail
         # their own guard run.
         self.assertEqual(self._run_guard(changed_guard_only=True), 0)
+
+    def test_guard_fails_same_pin_scope_repoint(self):
+        # Codex P1: changing an existing require's scope to an attacker's
+        # org must fail, even with names, revs, config, manifest unchanged.
+        self.assertEqual(
+            self._run_guard(same_pin=True, scope_repoint=True), 1)
+
+    def test_guard_fails_new_dep_wrong_source(self):
+        # Codex P1: a new require sourcing from the wrong org must fail.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True,
+                            add_dep_wrong_source=True), 1)
 
     def test_guard_fails_malformed_require_entry(self):
         # Audit: a non-table [[require]] entry must fail cleanly, not crash.

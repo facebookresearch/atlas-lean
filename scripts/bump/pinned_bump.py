@@ -927,6 +927,69 @@ def lakefile_requires(root: Path) -> list[dict]:
     return requires
 
 
+def check_lakefile_sources(
+    base: Path, pr: Path, base_config: dict, pr_config: dict, tag: str,
+) -> list[str]:
+    """Same-pin lakefile check: names and revs are not enough.
+
+    Existing requires must be unchanged except rev: scope/git/path (or
+    any other field) repointing would fetch different code on the next
+    `lake update` while names and revs still match. New requires must
+    source from their configured repo: a `git` URL must equal the config
+    repo, a `scope` must equal the config repo's org, and `path` (local,
+    unpinned) or a sourceless require is rejected. The bump path does not
+    need this: normalized_lakefile compares the whole document there.
+    """
+    problems: list[str] = []
+    try:
+        base_reqs = {e["name"]: e for e in lakefile_requires(base)}
+        pr_reqs = {e["name"]: e for e in lakefile_requires(pr)}
+    except ValueError as exc:
+        return [str(exc)]
+    pr_deps = {d["name"]: d for d in pr_config["deps"]}
+    for name, entry in base_reqs.items():
+        pr_entry = pr_reqs.get(name)
+        if pr_entry is None:
+            continue  # removal is caught by the require-names check
+        if dict(entry, rev=tag) != dict(pr_entry, rev=tag):
+            problems.append(
+                f"lakefile.toml require {name} changed fields other than rev "
+                f"(base {dict(entry, rev=tag)} vs PR {dict(pr_entry, rev=tag)}); "
+                "a source change needs a guard-code change with its own review"
+            )
+    for name, entry in pr_reqs.items():
+        if name in base_reqs:
+            continue
+        dep = pr_deps.get(name)
+        if dep is None:
+            continue  # caught by the require-names check
+        if "path" in entry:
+            problems.append(
+                f"lakefile.toml require {name} uses a local path; "
+                "path dependencies are unpinned and not allowed"
+            )
+        elif "git" in entry:
+            url = str(entry["git"]).rstrip("/").removesuffix(".git")
+            if url != f"https://github.com/{dep['repo']}":
+                problems.append(
+                    f"lakefile.toml require {name} git {entry['git']!r} != "
+                    f"configured repo {dep['repo']!r}"
+                )
+        elif "scope" in entry:
+            org = dep["repo"].split("/")[0]
+            if entry["scope"] != org:
+                problems.append(
+                    f"lakefile.toml require {name} scope {entry['scope']!r} != "
+                    f"configured repo org {org!r}"
+                )
+        else:
+            problems.append(
+                f"lakefile.toml require {name} has no git/scope source; "
+                "its origin cannot be verified against the configured repo"
+            )
+    return problems
+
+
 def current_tag(root: Path, config: dict) -> str:
     """The single tag all pinned pins must agree on, or an error."""
     toolchain = toolchain_tag(root)
@@ -1947,6 +2010,17 @@ def cmd_guard(args: argparse.Namespace) -> int:
                 "PR lakefile requires do not match PR pinned_deps.json; "
                 "extend the config in the same PR when adding a dependency"
             )
+        # Defense in depth: the lakefile is not in the changed list here,
+        # so base and PR lakefiles should agree; a source repoint hiding
+        # behind a wrong changed list must still fail.
+        try:
+            base_tag_only = current_tag(base, base_config)
+        except ValueError as exc:
+            problems.append(str(exc))
+        else:
+            problems.extend(
+                check_lakefile_sources(base, pr, base_config, pr_config, base_tag_only)
+            )
         if problems:
             print("guard: FAIL")
             for problem in problems:
@@ -2009,6 +2083,12 @@ def cmd_guard(args: argparse.Namespace) -> int:
             base / "lean-toolchain"
         ).read_text(encoding="utf-8").strip():
             problems.append("same-pin change must not change lean-toolchain")
+        # Existing requires must keep their source fields (scope/git/path):
+        # names and revs alone would let a scope repoint to an attacker's
+        # fork pass.
+        problems.extend(
+            check_lakefile_sources(base, pr, base_config, pr_config, base_tag)
+        )
         try:
             problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
         except (OSError, ValueError) as exc:
