@@ -29,26 +29,20 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Algebra.Algebra.Basic
-public import Mathlib.Algebra.Algebra.Equiv
-public import Mathlib.Algebra.Algebra.Hom
-public import Mathlib.Algebra.Algebra.Tower
-public import Mathlib.LinearAlgebra.TensorProduct.Defs
 public import Mathlib.RingTheory.IsTensorProduct
-public import Mathlib.RingTheory.TensorProduct.Basic
-public import Mathlib.RingTheory.TensorProduct.Maps
 
 @[expose] public section
 
 open scoped TensorProduct
 
-universe u
+universe u v w x
 
 namespace IsPushoutOfUnivAux
 
 attribute [local instance] Algebra.TensorProduct.rightAlgebra
 
-variable {R S R' S' : Type u} [CommRing R] [CommRing S] [CommRing R'] [CommRing S']
+variable {R : Type u} {S : Type v} {R' : Type w} {S' : Type x}
+    [CommRing R] [CommRing S] [CommRing R'] [CommRing S']
     [Algebra R S] [Algebra R R'] [Algebra S S'] [Algebra R' S'] [Algebra R S']
     [IsScalarTower R S S'] [IsScalarTower R R' S']
 
@@ -99,25 +93,43 @@ private lemma includeLeft_compat :
     TensorProduct.smul_tmul]
 
 private theorem main
-    (h : ∀ (T : Type u) [CommRing T] [Algebra R' T] (g : S →+* T),
+    (h : ∀ (T : Type max v w x) [CommRing T] [Algebra R' T] (g : S →+* T),
       g.comp (algebraMap R S) = (algebraMap R' T).comp (algebraMap R R') →
         ∃! k : S' →ₐ[R'] T, k.toRingHom.comp (algebraMap S S') = g) :
     Algebra.IsPushout R S R' S' := by
   classical
-  obtain ⟨β, hβ, -⟩ :=
-    h (S ⊗[R] R') Algebra.TensorProduct.includeLeftRingHom includeLeft_compat
-  have hcompat : (algebraMap S S').comp (algebraMap R S) =
-      (algebraMap R' S').comp (algebraMap R R') := by
-    rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
+  obtain ⟨β', hβ', -⟩ :=
+    h (ULift.{x} (S ⊗[R] R'))
+      ((ULift.algEquiv (R := R')).symm.toRingHom.comp
+        Algebra.TensorProduct.includeLeftRingHom)
+      (by
+        ext r
+        exact RingHom.congr_fun
+          (includeLeft_compat (R := R) (S := S) (R' := R')) r)
+  let β : S' →ₐ[R'] S ⊗[R] R' := ULift.algEquiv.toAlgHom.comp β'
+  have hβ : β.toRingHom.comp (algebraMap S S') =
+      Algebra.TensorProduct.includeLeftRingHom := by
+    ext s
+    exact congrArg ULift.down (RingHom.congr_fun hβ' s)
+  let e' : ULift.{max v w} S' ≃ₐ[R'] S' := ULift.algEquiv
+  have hcompat : (e'.symm.toRingHom.comp (algebraMap S S')).comp
+      (algebraMap R S) =
+      (algebraMap R' (ULift.{max v w} S')).comp (algebraMap R R') := by
+    ext r
+    change algebraMap S S' (algebraMap R S r) =
+      algebraMap R' S' (algebraMap R R' r)
+    rw [← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply]
   have hαβ : (alpha : S ⊗[R] R' →ₐ[R'] S').comp β = AlgHom.id R' S' := by
-    refine (h S' (algebraMap S S') hcompat).unique ?_ ?_
-    · change ((alpha : S ⊗[R] R' →ₐ[R'] S').toRingHom.comp β.toRingHom).comp
-          (algebraMap S S') = _
-      rw [RingHom.comp_assoc, hβ]
+    have he : e'.symm.toAlgHom.comp ((alpha : S ⊗[R] R' →ₐ[R'] S').comp β) =
+        e'.symm.toAlgHom := by
+      refine (h _ (e'.symm.toRingHom.comp (algebraMap S S')) hcompat).unique ?_ rfl
       ext s
-      change (alpha : S ⊗[R] R' →ₐ[R'] S') (s ⊗ₜ 1) = _
+      change (alpha : S ⊗[R] R' →ₐ[R'] S') (β (algebraMap S S' s)) =
+        algebraMap S S' s
+      rw [show β (algebraMap S S' s) = s ⊗ₜ 1 from RingHom.congr_fun hβ s]
       rw [alpha_tmul, map_one, mul_one]
-    · rfl
+    ext s
+    exact congrArg ULift.down (AlgHom.congr_fun he s)
   have hβα : ∀ x : S ⊗[R] R', β ((alpha : S ⊗[R] R' →ₐ[R'] S') x) = x := by
     intro x
     induction x using TensorProduct.inductionOn with
@@ -143,17 +155,20 @@ namespace Algebra
 /-- A square of algebras is a pushout when it satisfies the universal
 property for algebra homomorphisms: for every `R'`-algebra `T` and every
 `g : S →+* T` compatible with the maps from `R`, there is a unique
-`R'`-algebra map `S' →ₐ[R'] T` extending `g`.
+`R'`-algebra map `S' →ₐ[R'] T` extending `g`. The rings may lie in
+independent universes; it suffices to quantify `T` in the maximum of the
+universes of `S`, `R'`, and `S'`.
 
 This is the hands-on criterion for recognizing pushouts (tensor products)
 without computing the tensor product: it is used to identify fiber
 products of schemes, base changes, and tensor-product decompositions from
 their mapping properties. -/
 theorem isPushout_of_forall_existsUnique_algHom_comp_eq
-    {R S R' S' : Type u} [CommRing R] [CommRing S] [CommRing R'] [CommRing S']
+    {R : Type u} {S : Type v} {R' : Type w} {S' : Type x}
+    [CommRing R] [CommRing S] [CommRing R'] [CommRing S']
     [Algebra R S] [Algebra R R'] [Algebra S S'] [Algebra R' S'] [Algebra R S']
     [IsScalarTower R S S'] [IsScalarTower R R' S']
-    (h : ∀ (T : Type u) [CommRing T] [Algebra R' T] (g : S →+* T),
+    (h : ∀ (T : Type max v w x) [CommRing T] [Algebra R' T] (g : S →+* T),
       g.comp (algebraMap R S) = (algebraMap R' T).comp (algebraMap R R') →
         ∃! k : S' →ₐ[R'] T, k.toRingHom.comp (algebraMap S S') = g) :
     Algebra.IsPushout R S R' S' :=
