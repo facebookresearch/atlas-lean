@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Ideal.Norm.RelNorm
 public import Mathlib.FieldTheory.SplittingField.Construction
 public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 
+import Mathlib.Algebra.GroupWithZero.Torsion
+
 attribute [local instance] FractionRing.liftAlgebra
 
 /-!
@@ -44,6 +46,7 @@ namespace Ideal
 
 set_option linter.overlappingInstances false in
 set_option maxHeartbeats 400000 in
+set_option synthInstance.maxHeartbeats 100000 in
 /-- Theorem 6.10 of ATLAS `NumberTheoryI`, in the separable (rather than Galois
 or perfect-field) form: the relative norm of a maximal ideal lying over a maximal
 ideal is the base prime raised to the inertia degree. -/
