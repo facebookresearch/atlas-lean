@@ -35,7 +35,9 @@ correspondence, and ordered enumeration of shortest paths.
   bounds) is intentionally not formalized: heap-edge segments are left
   implicit in `PPath`, and there is no cost model in scope.
 * **Lemma 5.** `s–t` walks are in length-preserving correspondence
-  with `PPath`s (decode/encode), via Lemma 2.
+  with `PPath`s (decode/encode), via Lemma 2. Under unique tree walks
+  the correspondence is one-to-one: sidetrack lists identify walks
+  and `PPath`s, and Theorem 1 has a unique-decoding variant.
 * **Lemma 6.** Extending a `PPath` by a sidetrack of nonnegative `δ`
   cannot decrease its weight.
 * **Lemma 7.** The tree of `PPath`s (parent = `prefpath`) is heap-ordered
@@ -43,6 +45,7 @@ correspondence, and ordered enumeration of shortest paths.
 * **Theorems 1–2.** Correctness of best-first-search enumeration:
   every `IsBFSTrace` is weight-sorted and minimal, decodes to `s–t`
   walks, and every walk is represented or no shorter than the outputs.
+  Under unique tree walks, each output decodes to a unique walk.
 
 Ported from the `kth-shortest-path-epp` T-Bench Lean verification task
 (authored by Leo Osvald). Complexity bounds (`O(m + n log n + k log k)`
@@ -60,6 +63,10 @@ there is no cost model in scope.
   scope; they are exactly what the paper's proofs consume.
 * Walks carry their endpoints in their type (`DiWalk G s t`), which makes
   the telescoping argument of Lemma 2 a direct induction.
+* Tree uniqueness is not assumed globally: only the uniqueness lemmas
+  and their Theorem 1–2 variants assume that all tree walks between
+  two vertices coincide (`htree`), the abstract form of the paper's
+  `nextT` tree. The other lemmas hold for arbitrary `T`.
 -/
 
 @[expose] public section
@@ -107,8 +114,10 @@ noncomputable def DiWalk.sidetrackSum (T : Digraph V) (len : V → V → ℝ)
       (if T.Adj u v then 0 else eppDelta len dist u v) + tl.sidetrackSum T len dist
 
 /-- The sidetrack subsequence `sidetracks(p)`: the edges of the walk
-that lie in `G − T`.  A path is uniquely determined by this subsequence
-(Eppstein §2.2), since tree edges between consecutive sidetracks are forced. -/
+that lie in `G − T`.  In the paper, a path is uniquely determined by this
+subsequence (Eppstein §2.2), since `T` is a tree and the tree edges between
+consecutive sidetracks are forced.  Here uniqueness is proved only under
+the unique-tree-walks hypothesis: see `DiWalk_eq_of_sidetracks_eq`. -/
 noncomputable def DiWalk.sidetracks (T : Digraph V) {G : Digraph V}
     {s t : V} : DiWalk G s t → List (V × V)
   | .nil _ => []
@@ -252,7 +261,8 @@ implicit).  Its `weight` is the sum of `δ` over the sidetracks, i.e. the
 length of the corresponding `P(G)` path (edge weights telescope).
 
 * **Lemma 5.** `s–t` walks in `G` are in length-preserving correspondence
-  with `PPath`s (decode/encode), via Lemma 2.
+  with `PPath`s (decode/encode), via Lemma 2; one-to-one under unique
+  tree walks (see `DiWalk_eq_of_sidetracks_eq`).
 * **Lemma 6.** Extending a `PPath` by a sidetrack of nonnegative `δ`
   cannot decrease its weight (heap-edge weights are nonnegative).
 * **Lemma 7.** The tree of `PPath`s (parent = `prefpath`) is heap-ordered
@@ -282,6 +292,21 @@ def DiWalk.liftT {G T : Digraph V}
     DiWalk T a b → DiWalk G a b
   | .nil u => .nil u
   | .cons u v w h tl => .cons u v w (Tle u v h) (tl.liftT Tle)
+
+theorem DiWalk_append_assoc {G : Digraph V} {a b c d : V}
+    (p : DiWalk G a b) (q : DiWalk G b c) (r : DiWalk G c d) :
+    (p.append q).append r = p.append (q.append r) := by
+  induction p with
+  | nil _ => rfl
+  | cons u v w _ tl ih => simp only [DiWalk.append, ih]
+
+theorem DiWalk_liftT_append {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b c : V}
+    (p : DiWalk T a b) (q : DiWalk T b c) :
+    (p.append q).liftT Tle = (p.liftT Tle).append (q.liftT Tle) := by
+  induction p with
+  | nil _ => rfl
+  | cons u v w _ tl ih => simp only [DiWalk.append, DiWalk.liftT, ih]
 
 /-- A path of the path graph `P(G)` starting from the root: the sidetrack
 sequence of an `s`-rooted walk, with consecutive sidetracks joined by an
@@ -390,6 +415,87 @@ theorem DiWalk_single_sidetracks {G : Digraph V} (T : Digraph V)
     (DiWalk.single h).sidetracks T = [(a, b)] := by
   simp only [DiWalk.single, DiWalk.sidetracks, hside, ite_false]
 
+theorem DiWalk_exists_liftT_of_sidetracks_nil {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b : V} (p : DiWalk G a b) :
+    p.sidetracks T = [] → ∃ r : DiWalk T a b, p = r.liftT Tle := by
+  induction p with
+  | nil u => intro _; exact ⟨DiWalk.nil u, rfl⟩
+  | cons u v w hadj tl ih =>
+    intro h
+    simp only [DiWalk.sidetracks] at h
+    by_cases hT : T.Adj u v
+    · have htl : tl.sidetracks T = [] := by simpa [hT] using h
+      obtain ⟨r, hr⟩ := ih htl
+      exact ⟨DiWalk.cons u v w hT r, by simp only [DiWalk.liftT, hr]⟩
+    · simp only [hT, ite_false] at h
+      simp at h
+
+/-- Every walk is either tree-only or a tree segment followed by a first
+sidetrack and a rest.  This is the decomposition behind the uniqueness of
+the sidetrack representation. -/
+theorem DiWalk_split_first_sidetrack {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b : V} (p : DiWalk G a b) :
+    (∃ r : DiWalk T a b, p = r.liftT Tle ∧ p.sidetracks T = []) ∨
+    ∃ (e : V × V) (r : DiWalk T a e.1) (rest : DiWalk G e.2 b)
+      (hadj : G.Adj e.1 e.2) (_hside : ¬ T.Adj e.1 e.2),
+      p = (r.liftT Tle).append ((DiWalk.single hadj).append rest) ∧
+      p.sidetracks T = e :: rest.sidetracks T := by
+  induction p with
+  | nil u =>
+    left
+    exact ⟨DiWalk.nil u, rfl, rfl⟩
+  | cons u v w hadj tl ih =>
+    by_cases hT : T.Adj u v
+    · rcases ih with ⟨r, hr, hs⟩ | ⟨e, r, rest, hadj2, _hside2, heq, hlist⟩
+      · left
+        refine ⟨(DiWalk.single hT).append r, ?_, ?_⟩
+        · rw [DiWalk_liftT_append, ← hr]
+          rfl
+        · simp only [DiWalk.sidetracks, hT, ite_true, hs]
+      · right
+        refine ⟨e, (DiWalk.single hT).append r, rest, hadj2, _hside2, ?_, ?_⟩
+        · rw [DiWalk_liftT_append, DiWalk_append_assoc, ← heq]
+          rfl
+        · simp only [DiWalk.sidetracks, hT, ite_true, hlist]
+    · right
+      refine ⟨(u, v), DiWalk.nil u, tl, hadj, hT, ?_, ?_⟩
+      · rfl
+      · simp only [DiWalk.sidetracks, hT, ite_false]
+
+/-- A walk is determined by its sidetrack list when tree walks are unique
+(the paper's §2.2 claim for a shortest-path tree `T`): the tree segments
+between consecutive sidetracks are then forced.  This needs only the
+unique-tree-walks hypothesis `htree` and `T ⊆ G`; no lengths, potentials,
+finiteness, or tree walk to `t` is assumed. -/
+theorem DiWalk_eq_of_sidetracks_eq {G T : Digraph V}
+    (htree : ∀ a b (p q : DiWalk T a b), p = q)
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) :
+    ∀ (L : List (V × V)) {a b : V} (p q : DiWalk G a b),
+      p.sidetracks T = L → q.sidetracks T = L → p = q := by
+  intro L
+  induction L with
+  | nil =>
+    intro a b p q hp hq
+    obtain ⟨r1, hr1⟩ := DiWalk_exists_liftT_of_sidetracks_nil Tle p hp
+    obtain ⟨r2, hr2⟩ := DiWalk_exists_liftT_of_sidetracks_nil Tle q hq
+    rw [hr1, hr2, htree a b r1 r2]
+  | cons e L ih =>
+    intro a b p q hp hq
+    obtain (⟨r, hr, hs⟩ | ⟨e1, r1, rest1, hadj1, _hside1, heq1, hlist1⟩) :=
+      DiWalk_split_first_sidetrack Tle p
+    · simp [hs] at hp
+    obtain (⟨r, hr, hs⟩ | ⟨e2, r2, rest2, hadj2, _hside2, heq2, hlist2⟩) :=
+      DiWalk_split_first_sidetrack Tle q
+    · simp [hs] at hq
+    rw [hlist1] at hp
+    rw [hlist2] at hq
+    simp only [List.cons.injEq] at hp hq
+    obtain ⟨rfl, hL1⟩ := hp
+    obtain ⟨rfl, hL2⟩ := hq
+    have hr_eq : r1 = r2 := htree _ _ r1 r2
+    have hrest_eq : rest1 = rest2 := ih rest1 rest2 hL1 hL2
+    rw [heq1, heq2, hr_eq, hrest_eq]
+
 theorem decode_aux (T : Digraph V)
     {G : Digraph V} {s : V}
     (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
@@ -482,6 +588,49 @@ theorem lemma5_encode (T : Digraph V)
   obtain ⟨c, q, hq⟩ := encode_aux p PPath.root (DiWalk.nil s)
   refine ⟨c, q, ?_⟩
   simpa [PPath.sidetrackList] using hq
+
+theorem list_append_singleton_inj {α : Type*} {l1 l2 : List α} {a b : α}
+    (h : l1 ++ [a] = l2 ++ [b]) : l1 = l2 ∧ a = b := by
+  have hlen : l1.length = l2.length := by
+    have hL := congrArg List.length h
+    simpa using hL
+  obtain ⟨h1, h2⟩ := List.append_inj h hlen
+  injection h2 with hab _
+  exact ⟨h1, hab⟩
+
+/-- A `PPath` is determined by its sidetrack list when tree walks are
+unique (the `PPath` half of the paper's §2.2/§2.3 one-to-one
+correspondence): the joining tree walks are then forced, so two
+`PPath`s with the same list coincide as nodes of the path tree. -/
+theorem PPath_eq_of_sidetrackList_eq {G T : Digraph V}
+    (htree : ∀ a b (p q : DiWalk T a b), p = q) {s : V} :
+    ∀ {c1 : V} (q1 : PPath G T s c1) {c2 : V} (q2 : PPath G T s c2),
+      q1.sidetrackList = q2.sidetrackList →
+      (⟨c1, q1⟩ : Σ c, PPath G T s c) = ⟨c2, q2⟩ := by
+  intro c1 q1
+  induction q1 with
+  | root =>
+    intro c2 q2 h
+    cases q2 with
+    | root => rfl
+    | sidestep e2 prev2 tw2 hadj2 hside2 =>
+      simp only [PPath.sidetrackList] at h
+      exact absurd h (by simp)
+  | sidestep e prev tw hadj hside ih =>
+    intro c2 q2 h
+    cases q2 with
+    | root =>
+      simp only [PPath.sidetrackList] at h
+      exact absurd h.symm (by simp)
+    | sidestep e2 prev2 tw2 hadj2 hside2 =>
+      simp only [PPath.sidetrackList] at h
+      obtain ⟨hprev, he⟩ := list_append_singleton_inj h
+      obtain rfl : e2 = e := he.symm
+      have hSigma := ih prev2 hprev
+      cases hSigma
+      have htw : tw = tw2 := htree _ _ tw tw2
+      subst htw
+      rfl
 
 /-- Lemma 6 (nonnegative extension): appending a sidetrack of nonnegative
 `δ` (Lemma 1) cannot decrease a `PPath`'s weight.  This is the content of
@@ -619,9 +768,11 @@ Unlike a bare `∃ L` existence claim (which an oracle could provide), this
 states correctness of the lists the algorithm produces (`IsBFSTrace`:
 successive frontier minima).  Neither `δ`-fact is assumed.  No finiteness
 hypothesis: correctness is universal over traces; only the existence of
-length-`k` traces would need a finite graph.  No uniqueness is claimed:
-the Lemma 5 correspondence is existence in both directions (every `PPath`
-decodes, every walk encodes), and tree walks are not assumed unique. -/
+length-`k` traces would need a finite graph.  No uniqueness is claimed
+here: the Lemma 5 correspondence is existence in both directions (every
+`PPath` decodes, every walk encodes), and tree walks are not assumed
+unique.  For the one-to-one form under unique tree walks, see
+`thm1_bfs_enumeration_unique`. -/
 theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
     (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
@@ -775,12 +926,73 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
       htight_delta (L ++ [next]) hMin'
     exact ⟨hNodup', hPair', hMin', hDec', hComp'⟩
 
+/-- Theorem 1 with unique decoding: under unique tree walks (`htree`,
+the abstract form of the paper's tree `T`), every output of a
+best-first-search trace decodes to exactly one `s–t` walk, and every
+`s–t` walk is represented by an output with the same sidetrack list
+and length `d(s,t) + weight`, or is no shorter than every output.
+This is the paper's one-to-one form of the Lemma 5 correspondence.
+The plain Theorem 1 above needs no uniqueness hypothesis; only this
+variant assumes `htree`.  As there, no existence of traces of any
+given length is claimed: correctness is conditional on the supplied
+trace. -/
+theorem thm1_bfs_enumeration_unique (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V}
+    (htree : ∀ a b (p q : DiWalk T a b), p = q)
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
+    (treeWalk : ∀ a : V, DiWalk T a t)
+    (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → len a b + dist b = dist a)
+    (htri : ∀ a b : V, G.Adj a b → dist a ≤ len a b + dist b) :
+    ∀ L : List (Σ c, PPath G T s c), IsBFSTrace G T s len dist L →
+      L.Nodup ∧
+      L.Pairwise (fun x y => x.2.weight len dist ≤ y.2.weight len dist) ∧
+      (∀ x ∈ L, ∀ y : Σ c, PPath G T s c, y ∉ L →
+        x.2.weight len dist ≤ y.2.weight len dist) ∧
+      (∀ x ∈ L, ∃! p : DiWalk G s t,
+        p.sidetracks T = x.2.sidetrackList ∧
+        p.length len = dist s + x.2.weight len dist) ∧
+      (∀ y : DiWalk G s t,
+        (∃ q : Σ c, PPath G T s c,
+          q ∈ L ∧ q.2.sidetrackList = y.sidetracks T ∧
+          y.length len = dist s + q.2.weight len dist) ∨
+        (∀ x ∈ L, ∀ p : DiWalk G s t,
+          p.sidetracks T = x.2.sidetrackList →
+          p.length len = dist s + x.2.weight len dist →
+          p.length len ≤ y.length len)) := by
+  have htight_delta : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0 :=
+    fun a b h => lemma1_delta_tree len dist (htight a b h)
+  intro L hTrace
+  obtain ⟨hNodup, hPair, hMin, hDec, hComp⟩ :=
+    thm1_bfs_enumeration T len dist Tle treeWalk hdist_t htight htri L hTrace
+  refine ⟨hNodup, hPair, hMin, ?_, ?_⟩
+  · intro x hx
+    obtain ⟨p, hp_side, hp_len⟩ := hDec x hx
+    refine ⟨p, ⟨hp_side, hp_len⟩, ?_⟩
+    intro p' hp'
+    exact DiWalk_eq_of_sidetracks_eq htree Tle _ p' p hp'.1 hp_side
+  · intro y
+    rcases hComp y with ⟨q, hq_mem, hq_list⟩ | hlong
+    · left
+      have hy_len : y.length len = dist s + q.2.weight len dist := by
+        have h1 := lemma2_path_length T len dist hdist_t htight_delta y
+        have h2 := sidetrackSum_eq_listSum T len dist y
+        have h3 := PPath_weight_eq_listSum len dist q.2
+        rw [h2] at h1
+        rw [← hq_list] at h1
+        rw [← h3] at h1
+        exact h1
+      exact ⟨q, hq_mem, hq_list, hy_len⟩
+    · exact Or.inr hlong
+
 /-- Theorem 2 (one source, all destinations, correctness): for every target
 `t`, every best-first-search trace over the path tree of `T t` is correct
 as in Theorem 1 (duplicate-free, weight-sorted, minimal, decoding to
 `s–t` walks with `length = dist t s + weight`, represented-or-longer
-completeness).  As in Theorem 1, no uniqueness is claimed (existence in
-both directions only).  (The paper applies the
+completeness).  As in Theorem 1, no uniqueness is claimed here
+(existence in both directions only); see
+`thm2_bfs_enumeration_unique` for the one-to-one form under unique
+tree walks.  (The paper applies the
 construction to the reversed graph `Gᴿ` with destination `s`; here the
 per-target trees are taken as parameters.)  Complexity
 `O(m + n log n + kn log k)` not formalized. -/
@@ -811,5 +1023,39 @@ theorem thm2_all_dests (len : V → V → ℝ) (dist : V → V → ℝ)
   intro t L hL
   exact thm1_bfs_enumeration (T t) len (dist t) (Tle t) (treeWalk t)
     (hdist t) (htight t) (htri t) L hL
+
+/-- Theorem 2 with unique decoding: the per-target form of
+`thm1_bfs_enumeration_unique`, under per-target unique tree walks.
+As with Theorem 2, this is a pointwise instantiation per target,
+not the paper's single reversed-graph construction. -/
+theorem thm2_bfs_enumeration_unique (len : V → V → ℝ) (dist : V → V → ℝ)
+    {G : Digraph V} {s : V}
+    (T : V → Digraph V)
+    (htree : ∀ t a b (p q : DiWalk (T t) a b), p = q)
+    (Tle : ∀ t a b : V, (T t).Adj a b → G.Adj a b)
+    (treeWalk : ∀ t a : V, DiWalk (T t) a t)
+    (hdist : ∀ t : V, dist t t = 0)
+    (htight : ∀ t a b : V, (T t).Adj a b → len a b + dist t b = dist t a)
+    (htri : ∀ t a b : V, G.Adj a b → dist t a ≤ len a b + dist t b) :
+    ∀ t : V, ∀ L : List (Σ c, PPath G (T t) s c),
+      IsBFSTrace G (T t) s len (dist t) L →
+      L.Nodup ∧
+      L.Pairwise (fun x y => x.2.weight len (dist t) ≤ y.2.weight len (dist t)) ∧
+      (∀ x ∈ L, ∀ y : Σ c, PPath G (T t) s c, y ∉ L →
+        x.2.weight len (dist t) ≤ y.2.weight len (dist t)) ∧
+      (∀ x ∈ L, ∃! p : DiWalk G s t,
+        p.sidetracks (T t) = x.2.sidetrackList ∧
+        p.length len = dist t s + x.2.weight len (dist t)) ∧
+      (∀ y : DiWalk G s t,
+        (∃ q : Σ c, PPath G (T t) s c,
+          q ∈ L ∧ q.2.sidetrackList = y.sidetracks (T t) ∧
+          y.length len = dist t s + q.2.weight len (dist t)) ∨
+        (∀ x ∈ L, ∀ p : DiWalk G s t,
+          p.sidetracks (T t) = x.2.sidetrackList →
+          p.length len = dist t s + x.2.weight len (dist t) →
+          p.length len ≤ y.length len)) := by
+  intro t L hL
+  exact thm1_bfs_enumeration_unique (T t) len (dist t) (htree t) (Tle t)
+    (treeWalk t) (hdist t) (htight t) (htri t) L hL
 
 end Cslib.Algorithms.Lean.KShortestPathsEppstein
