@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.PopulationGenetics.Diffusion.ChainLimit
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.BlockCounting
 public import MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisher
 public import Mathlib.Algebra.Polynomial.Basis
@@ -15,7 +16,6 @@ public import Mathlib.Analysis.SpecialFunctions.Bernstein
 public import Mathlib.Topology.ContinuousMap.Polynomial
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Calculus.Deriv.Slope
-import Mathlib.Topology.ContinuousMap.Weierstrass
 
 /-!
 # The Wright–Fisher diffusion semigroup via moment duality
@@ -92,6 +92,7 @@ open scoped unitInterval
 namespace MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisherSemigroup
 
 open MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
+open MathlibExt.Biology.PopulationGenetics.Diffusion.ChainLimit
 
 /-! ### The Wright–Fisher chain as an operator on continuous functions -/
 
@@ -126,6 +127,18 @@ theorem wfStep_apply (M : ℕ) (f : C(I, ℝ)) : wfStep M f = bernsteinApproxima
 /-- One Wright–Fisher generation is a contraction for the sup norm. -/
 theorem norm_wfStep_le (M : ℕ) : ‖wfStep M‖ ≤ 1 :=
   LinearMap.mkContinuous_norm_le _ zero_le_one _
+
+/-- One Wright–Fisher generation fixes the constant function `1`. -/
+theorem wfStep_apply_one (M : ℕ) : wfStep M 1 = 1 := by
+  ext x
+  simp [wfStep_apply, bernsteinApproximation.apply, bernstein.probability]
+
+/-- One Wright–Fisher generation maps nonnegative functions to nonnegative functions. -/
+theorem wfStep_nonneg (M : ℕ) {f : C(I, ℝ)} (hf : 0 ≤ f) : 0 ≤ wfStep M f := by
+  refine ContinuousMap.le_def.2 fun x => ?_
+  simp only [ContinuousMap.zero_apply, wfStep_apply, bernsteinApproximation.apply]
+  exact Finset.sum_nonneg fun k _ =>
+    smul_nonneg bernstein_nonneg (ContinuousMap.le_def.1 hf _)
 
 /-- Any number of Wright–Fisher generations is a contraction for the sup norm. -/
 theorem norm_wfStep_pow_le (M m : ℕ) : ‖wfStep M ^ m‖ ≤ 1 := by
@@ -266,16 +279,8 @@ theorem integral_binomial_div_pow (M n : ℕ) (hM : M ≠ 0) (x : I) :
     ← sum_binomial_mul_div_pow M n hM]
   simp only [smul_eq_mul]
 
-/-- A real linear combination of monomials, as a continuous function on `[0, 1]`. -/
-private theorem toContinuousMapOn_sum_C_mul {ι : Type*} (s : Finset ι) (a : ι → ℝ)
-    (e : ι → ℕ) :
-    (∑ k ∈ s, C (a k) * X ^ e k).toContinuousMapOn I =
-      ∑ k ∈ s, a k • (X ^ e k : ℝ[X]).toContinuousMapOn I := by
-  ext x
-  simp [eval_finsetSum]
-
 /-- One generation maps `x ^ n` to `∑_k wfLineageProb M n k x ^ k`. -/
-private theorem wfStep_X_pow (M n : ℕ) (hM : M ≠ 0) :
+theorem wfStep_X_pow (M n : ℕ) (hM : M ≠ 0) :
     wfStep M ((X ^ n : ℝ[X]).toContinuousMapOn I) =
       (∑ k ∈ Finset.range (n + 1), C (wfLineageProb M n k) * X ^ k).toContinuousMapOn I := by
   ext x
@@ -314,9 +319,19 @@ theorem wfStep_pow_X_pow (M m N : ℕ) (hM : M ≠ 0) (n : Fin (N + 1)) :
       simp [Matrix.one_apply_ne' hk]
     · simp
   | succ m ih =>
-    rw [pow_succ, mul_apply_eq_comp, wfStep_X_pow_fin M N hM n,
-      toContinuousMapOn_sum_C_mul, toContinuousMapOn_sum_C_mul, map_sum]
-    simp only [map_smul, ih, toContinuousMapOn_sum_C_mul, Finset.smul_sum, smul_smul, pow_succ',
+    have h_embed (c : Fin (N + 1) → ℝ) :
+        (∑ k : Fin (N + 1), C (c k) * X ^ (k : ℕ)).toContinuousMapOn I =
+          ∑ k : Fin (N + 1), c k • (X ^ (k : ℕ) : ℝ[X]).toContinuousMapOn I := by
+      change Polynomial.toContinuousMapOnAlgHom I
+          (∑ k : Fin (N + 1), C (c k) * X ^ (k : ℕ)) = _
+      rw [map_sum]
+      apply Finset.sum_congr rfl
+      intro k hk
+      rw [← Polynomial.smul_eq_C_mul, map_smul]
+      rfl
+    rw [pow_succ, mul_apply_eq_comp, wfStep_X_pow_fin M N hM n]
+    rw [h_embed, h_embed, map_sum]
+    simp only [map_smul, ih, h_embed, Finset.smul_sum, smul_smul, pow_succ',
       Matrix.mul_apply, Finset.sum_smul]
     exact Finset.sum_comm
 
@@ -405,22 +420,20 @@ theorem polySemigroup_one (t : ℝ) : polySemigroup t 1 = 1 := by
   rw [← pow_zero (X : ℝ[X]), polySemigroup_X_pow, dualMomentPoly]
   simp [hG]
 
-private theorem toContinuousMapOn_add' (p q : ℝ[X]) :
-    (p + q).toContinuousMapOn I = p.toContinuousMapOn I + q.toContinuousMapOn I := by
-  ext
-  simp
-
-private theorem toContinuousMapOn_smul' (a : ℝ) (p : ℝ[X]) :
-    (a • p).toContinuousMapOn I = a • p.toContinuousMapOn I := by
-  ext
-  simp
-
 /-- `polySemigroup t (X ^ n)` as a continuous function. -/
 private theorem toContinuousMapOn_polySemigroup_X_pow (t : ℝ) (n : ℕ) :
     (polySemigroup t (X ^ n)).toContinuousMapOn I = ∑ k : Fin (n + 1),
       NormedSpace.exp (t • blockCountingGenerator n) (Fin.last n) k •
         (X ^ (k : ℕ) : ℝ[X]).toContinuousMapOn I := by
-  rw [polySemigroup_X_pow, dualMomentPoly, toContinuousMapOn_sum_C_mul]
+  rw [polySemigroup_X_pow, dualMomentPoly]
+  change Polynomial.toContinuousMapOnAlgHom I
+      (∑ k : Fin (n + 1),
+        C (NormedSpace.exp (t • blockCountingGenerator n) (Fin.last n) k) * X ^ (k : ℕ)) = _
+  rw [map_sum]
+  apply Finset.sum_congr rfl
+  intro k hk
+  rw [← Polynomial.smul_eq_C_mul, map_smul]
+  rfl
 
 /-- **Convergence on polynomials.** For `t ≥ 0` and every polynomial `p`, `⌊tM⌋` generations
 of the Wright–Fisher chain with `M` gene copies applied to `p` converge uniformly on `[0, 1]` to
@@ -429,10 +442,18 @@ theorem tendsto_wfStep_pow_floor_toContinuousMapOn (p : ℝ[X]) {t : ℝ} (ht : 
     Tendsto (fun M : ℕ => (wfStep M ^ ⌊t * M⌋₊) (p.toContinuousMapOn I)) atTop
       (𝓝 ((polySemigroup t p).toContinuousMapOn I)) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simpa only [toContinuousMapOn_add', map_add] using hp.add hq
+  | add p q hp hq =>
+    have hadd (r s : ℝ[X]) : (r + s).toContinuousMapOn I =
+        r.toContinuousMapOn I + s.toContinuousMapOn I := by
+      simpa only [Polynomial.toContinuousMapOnAlgHom_apply] using
+        map_add (Polynomial.toContinuousMapOnAlgHom I) r s
+    simpa only [hadd, map_add] using hp.add hq
   | monomial n a =>
+    have hsmul (q : ℝ[X]) : (a • q).toContinuousMapOn I = a • q.toContinuousMapOn I := by
+      simpa only [Polynomial.toContinuousMapOnAlgHom_apply] using
+        map_smul (Polynomial.toContinuousMapOnAlgHom I) a q
     rw [← C_mul_X_pow_eq_monomial, C_mul', map_smul]
-    simp only [toContinuousMapOn_smul']
+    simp only [hsmul]
     rw [toContinuousMapOn_polySemigroup_X_pow]
     have hP := tendsto_wfLineageMatrix_pow_floor n ht
     have h : ∀ᶠ M : ℕ in atTop, a • ∑ k : Fin (n + 1),
@@ -442,62 +463,25 @@ theorem tendsto_wfStep_pow_floor_toContinuousMapOn (p : ℝ[X]) {t : ℝ} (ht : 
       filter_upwards [eventually_ne_atTop 0] with M hM
       have := wfStep_pow_X_pow M ⌊t * M⌋₊ n hM (Fin.last n)
       rw [Fin.val_last] at this
-      rw [map_smul, this, toContinuousMapOn_sum_C_mul]
+      have h_embed :
+          (∑ k : Fin (n + 1), C ((wfLineageMatrix n M ^ ⌊t * M⌋₊) (Fin.last n) k) *
+            X ^ (k : ℕ)).toContinuousMapOn I =
+            ∑ k : Fin (n + 1), (wfLineageMatrix n M ^ ⌊t * M⌋₊) (Fin.last n) k •
+              (X ^ (k : ℕ) : ℝ[X]).toContinuousMapOn I := by
+        change Polynomial.toContinuousMapOnAlgHom I
+            (∑ k : Fin (n + 1), C ((wfLineageMatrix n M ^ ⌊t * M⌋₊) (Fin.last n) k) *
+              X ^ (k : ℕ)) = _
+        rw [map_sum]
+        apply Finset.sum_congr rfl
+        intro k hk
+        rw [← Polynomial.smul_eq_C_mul, map_smul]
+        rfl
+      rw [map_smul, this, h_embed]
     refine Tendsto.congr' h ?_
     exact (tendsto_finsetSum _ fun k _ =>
       (tendsto_pi_nhds.1 (tendsto_pi_nhds.1 hP (Fin.last n)) k).smul_const _).const_smul a
 
 /-! ### The semigroup on continuous functions -/
-
-private theorem cauchySeq_apply_of_dense {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {L : ℕ → E →L[ℝ] E} (hL : ∀ M, ‖L M‖ ≤ 1) {D : Set E}
-    (hD : Dense D) (h : ∀ d ∈ D, CauchySeq fun M => L M d) (f : E) :
-    CauchySeq fun M => L M f := by
-  apply Metric.cauchySeq_iff.mpr
-  intro ε hε
-  have hε3 : 0 < ε / 3 := by linarith
-  obtain ⟨d, hd, hfd⟩ := hD.exists_dist_lt f hε3
-  obtain ⟨N, hN⟩ := Metric.cauchySeq_iff.mp (h d hd) (ε / 3) hε3
-  have hdist (M : ℕ) : dist (L M f) (L M d) ≤ dist f d := by
-    simpa only [dist_eq_norm, ← map_sub, one_mul] using
-      (L M).le_of_opNorm_le (hL M) (f - d)
-  refine ⟨N, ?_⟩
-  intro M hM P hP
-  have hmid := hN M hM P hP
-  have hlast : dist (L P d) (L P f) ≤ dist f d := by
-    rw [dist_comm]
-    exact hdist P
-  have htri := dist_triangle4 (L M f) (L M d) (L P d) (L P f)
-  linarith [hdist M]
-
-private theorem tendsto_apply_of_dense {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {ι : Type*} {l : Filter ι} {T : ι → E →L[ℝ] E}
-    (hT : ∀ i, ‖T i‖ ≤ 1) {S : E →L[ℝ] E} (hS : ‖S‖ ≤ 1) {D : Set E} (hD : Dense D)
-    (h : ∀ d ∈ D, Tendsto (fun i => T i d) l (𝓝 (S d))) (f : E) :
-    Tendsto (fun i => T i f) l (𝓝 (S f)) := by
-  apply Metric.tendsto_nhds.mpr
-  intro ε hε
-  have hε3 : 0 < ε / 3 := by linarith
-  obtain ⟨d, hd, hfd⟩ := hD.exists_dist_lt f hε3
-  have hdist (i : ι) : dist (T i f) (T i d) ≤ dist f d := by
-    simpa only [dist_eq_norm, ← map_sub, one_mul] using
-      (T i).le_of_opNorm_le (hT i) (f - d)
-  have hlast : dist (S d) (S f) ≤ dist f d := by
-    simpa only [dist_eq_norm, ← map_sub, one_mul, norm_sub_rev] using
-      S.le_of_opNorm_le hS (d - f)
-  apply (Metric.tendsto_nhds.mp (h d hd) (ε / 3) hε3).mono
-  intro i hi
-  have htri := dist_triangle4 (T i f) (T i d) (S d) (S f)
-  linarith [hdist i]
-
-/-- Weierstrass: polynomial functions are dense in `C([0, 1], ℝ)`. -/
-private theorem dense_polynomialFunctions : Dense (polynomialFunctions I : Set C(I, ℝ)) := by
-  rw [dense_iff_closure_eq, ← Subalgebra.topologicalClosure_coe,
-    polynomialFunctions_closure_eq_top']
-  rfl
-
-private theorem floor_mul_eq_zero {t : ℝ} (ht : t ≤ 0) (M : ℕ) : ⌊t * M⌋₊ = 0 :=
-  Nat.floor_of_nonpos (mul_nonpos_of_nonpos_of_nonneg ht (Nat.cast_nonneg M))
 
 /-- For every continuous `f`, the sequence `(wfStep M)^⌊tM⌋ f` is Cauchy in `C([0, 1], ℝ)`: it
 converges on the dense set of polynomials and the operators are contractions. -/
@@ -586,13 +570,7 @@ theorem wfSemigroup_add {s t : ℝ} (hs : 0 ≤ s) (ht : 0 ≤ t) :
     wfSemigroup_toContinuousMapOn hs, polySemigroup_add, LinearMap.comp_apply]
 
 private theorem wfStep_pow_one (M m : ℕ) : (wfStep M ^ m) 1 = 1 := by
-  induction m with
-  | zero => simp
-  | succ m ih =>
-    have h1 : wfStep M 1 = 1 := by
-      ext x
-      simp [wfStep_apply, bernsteinApproximation.apply, bernstein.probability]
-    rw [pow_succ, mul_apply_eq_comp, h1, ih]
+  exact ContinuousLinearMap.pow_apply_one (wfStep M) (wfStep_apply_one M) m
 
 /-- The diffusion semigroup fixes constants (it is Markov: total mass `1`). -/
 theorem wfSemigroup_apply_one (t : ℝ) : wfSemigroup t 1 = 1 := by
@@ -602,13 +580,7 @@ theorem wfSemigroup_apply_one (t : ℝ) : wfSemigroup t 1 = 1 := by
 
 private theorem wfStep_pow_nonneg (M m : ℕ) {f : C(I, ℝ)} (hf : 0 ≤ f) :
     0 ≤ (wfStep M ^ m) f := by
-  induction m with
-  | zero => simpa using hf
-  | succ m ih =>
-    rw [pow_succ', mul_apply_eq_comp]
-    refine ContinuousMap.le_def.2 fun x => ?_
-    simp only [ContinuousMap.zero_apply, wfStep_apply, bernsteinApproximation.apply]
-    exact Finset.sum_nonneg fun k _ => smul_nonneg bernstein_nonneg (ContinuousMap.le_def.1 ih _)
+  exact ContinuousLinearMap.pow_nonneg (wfStep M) (fun h => wfStep_nonneg M h) m hf
 
 /-- **Positivity.** The diffusion semigroup maps nonnegative functions to nonnegative functions. -/
 theorem wfSemigroup_nonneg (t : ℝ) {f : C(I, ℝ)} (hf : 0 ≤ f) : 0 ≤ wfSemigroup t f :=
@@ -651,10 +623,17 @@ private theorem continuous_toContinuousMapOn_polySemigroup (p : ℝ[X]) :
     Continuous fun t => (polySemigroup t p).toContinuousMapOn I := by
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
-    simp only [map_add, toContinuousMapOn_add']
+    have hadd (r s : ℝ[X]) : (r + s).toContinuousMapOn I =
+        r.toContinuousMapOn I + s.toContinuousMapOn I := by
+      simpa only [Polynomial.toContinuousMapOnAlgHom_apply] using
+        map_add (Polynomial.toContinuousMapOnAlgHom I) r s
+    simp only [map_add, hadd]
     exact hp.add hq
   | monomial n a =>
-    simp only [← C_mul_X_pow_eq_monomial, C_mul', map_smul, toContinuousMapOn_smul',
+    have hsmul (q : ℝ[X]) : (a • q).toContinuousMapOn I = a • q.toContinuousMapOn I := by
+      simpa only [Polynomial.toContinuousMapOnAlgHom_apply] using
+        map_smul (Polynomial.toContinuousMapOnAlgHom I) a q
+    simp only [← C_mul_X_pow_eq_monomial, C_mul', map_smul, hsmul,
       toContinuousMapOn_polySemigroup_X_pow]
     refine Continuous.const_smul ?_ a
     exact (continuous_finsetSum _ fun k _ =>
@@ -730,13 +709,20 @@ private theorem tendsto_polySemigroup_sub_div (p : ℝ[X]) :
       (𝓝[>] 0) (𝓝 ((polyGenerator p).toContinuousMapOn I)) := by
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
+    have hadd (r s : ℝ[X]) : (r + s).toContinuousMapOn I =
+        r.toContinuousMapOn I + s.toContinuousMapOn I := by
+      simpa only [Polynomial.toContinuousMapOnAlgHom_apply] using
+        map_add (Polynomial.toContinuousMapOnAlgHom I) r s
     rw [polyGenerator_add]
-    simp only [map_add, toContinuousMapOn_add']
+    simp only [map_add, hadd]
     refine (hp.add hq).congr fun t => ?_
     rw [← smul_add]
     congr 1
     abel
   | monomial n a =>
+    have hsmul (q : ℝ[X]) : (a • q).toContinuousMapOn I = a • q.toContinuousMapOn I := by
+      simpa only [Polynomial.toContinuousMapOnAlgHom_apply] using
+        map_smul (Polynomial.toContinuousMapOnAlgHom I) a q
     have hslope : ∀ k : Fin (n + 1), Tendsto (fun t : ℝ => t⁻¹ *
         (NormedSpace.exp (t • blockCountingGenerator n) (Fin.last n) k -
           (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ) (Fin.last n) k))
@@ -749,7 +735,7 @@ private theorem tendsto_polySemigroup_sub_div (p : ℝ[X]) :
       rw [polySemigroup_zero, LinearMap.id_apply, zero_smul, NormedSpace.exp_zero] at h
       exact h
     rw [← C_mul_X_pow_eq_monomial, C_mul', polyGenerator_smul]
-    simp only [map_smul, toContinuousMapOn_smul']
+    simp only [map_smul, hsmul]
     rw [toContinuousMapOn_polyGenerator_X_pow]
     refine Tendsto.congr (fun t => ?_) ((tendsto_finsetSum _ fun k _ =>
       (hslope k).smul_const ((X ^ (k : ℕ) : ℝ[X]).toContinuousMapOn I)).const_smul a)

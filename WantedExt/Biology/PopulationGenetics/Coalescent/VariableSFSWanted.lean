@@ -16,17 +16,17 @@ Song (2014) show that the expected site frequency spectrum of a sample of size `
 `(c_2, …, c_n)` determine each other, so statements about `(c_m)` are statements about the
 expected SFS; that reduction is not formalized.
 
-Proved in `MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS`
-(`PiecewiseHistory.sizeFn_eq_of_firstCoalMean_eq`): a piecewise-constant history with `K`
-pieces is determined by `c_2, …, c_n` when `n ≥ 2K`. Recorded here:
-
-* the tightness of `n ≥ 2K` for every `K` (Bhaskar & Song 2014, Corollary 7): with only
-  `c_2, …, c_{2K-1}`, two different `K`-piece histories can agree. The case `K = 2` is proved
-  by an explicit pair (`PiecewiseHistory.exists_ne_firstCoalMean_eq_two`);
-* the non-identifiability of general histories (Myers, Fefferman & Patterson 2008): there are
-  two population-size functions, bounded above and below by positive constants and different
-  on a set of positive measure, with the same `c_m` for every `m ≥ 2`, hence the same expected
-  SFS for every sample size.
+Proved in `MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS`: a piecewise-constant
+history with `K` pieces is determined by `c_2, …, c_n` when `n ≥ 2K`
+(`PiecewiseHistory.sizeFn_eq_of_firstCoalMean_eq`), the bound is tight for every `K ≥ 2`
+(`PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt`), and for every fixed `n` two bounded
+histories that differ on a set of positive measure share `c_2, …, c_n`
+(`exists_ne_ae_firstCoalMean_eq_Icc`). Recorded here: the non-identifiability of general
+histories (Myers, Fefferman & Patterson 2008), where one pair of population-size functions,
+bounded above and below by positive constants and different on a set of positive measure,
+has the same `c_m` for every `m ≥ 2`, hence the same expected SFS for every sample size. It
+needs a function on `[0, ∞)` whose Laplace transform vanishes at every `C(m, 2)`, a Müntz-type
+construction that is not formalized.
 
 Sources: A. Bhaskar and Y. S. Song, "Descartes' rule of signs and the identifiability of
 population demographic models from genomic variation data", Ann. Statist. 42 (2014)
@@ -42,19 +42,8 @@ public import MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFSWanted
 
-open MeasureTheory Finset
+open MeasureTheory
 open MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
-
-/-- **Tightness of `n ≥ 2K`** (Bhaskar & Song 2014, Corollary 7): for every `K ≥ 2` there are
-two piecewise-constant histories with `K` pieces whose sizes differ at some time `s ≥ 0` but
-whose first-coalescence times `c_m` agree for `2 ≤ m ≤ 2K - 1`. (For `K = 1` the range is
-empty and the statement is trivial; `K = 2` is
-`PiecewiseHistory.exists_ne_firstCoalMean_eq_two`.)
-
-Source: Bhaskar & Song (2014), Corollary 7. -/
-theorem_wanted exists_ne_firstCoalMean_eq_of_lt (K : ℕ) (hK : 2 ≤ K) :
-    ∃ h h' : PiecewiseHistory K, (∃ s, 0 ≤ s ∧ h.sizeFn s ≠ h'.sizeFn s) ∧
-      ∀ m ∈ Icc 2 (2 * K - 1), firstCoalMean h.sizeFn m = firstCoalMean h'.sizeFn m
 
 /-- **Non-identifiability of general histories** (Myers, Fefferman & Patterson 2008): there
 are two measurable population-size functions, bounded between positive constants, that differ

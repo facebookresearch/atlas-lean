@@ -22,7 +22,7 @@ public meta import CSLibExt.Bioinformatics.Phylogenetics.FelsensteinZone
   (`P = 2/5`, `Q = 1/10`); the boundary `Q = 1/2` and the diagonal `P = Q`, where the
   differences vanish; Fitch scores of an informative pattern on the three quartets.
 * Jukes–Cantor: the path matrix of `[1, 2]` is the matrix of length `3`; corrected distances of a
-  taxon to itself are `0`.
+  taxon to itself are `0`; Atteson's radius `μ m / 2` at the rate `μ = 2`.
 -/
 
 @[expose] public section
@@ -184,5 +184,18 @@ example (μ : ℝ) : jcDistance (∑ j ∈ Finset.univ.erase 0, jcPath μ [1, 2]
 /-- The corrected empirical distance of a taxon to itself is `0`. -/
 example (seq : ℕ → Fin 3 → Fin 4) (n : ℕ) (x : Fin 3) : jcHat seq n x x = 0 := by
   simp [jcHat, pHat, jcDistance]
+
+
+/-- Atteson's radius: on a binary phylogenetic tree with positive edge lengths whose internal
+edges have length at least `m`, neighbor joining recovers the tree within `μ m / 2` of the
+scaled metric `μ d`, for every rate `μ > 0`. -/
+example {X V : Type} [DecidableEq X] [Fintype X] [Fintype V] {G : SimpleGraph V}
+    [DecidableRel G.Adj] {ι : X → V} (hT : NeighborJoining.IsBinaryPhylogeneticTree G ι)
+    {w : Sym2 V → ℝ} (hw : ∀ e ∈ G.edgeSet, 0 < w e) {d : X → X → ℝ}
+    (hd : ∀ x y (p : G.Walk (ι x) (ι y)), p.IsPath → d x y = (p.edges.map w).sum)
+    {m : ℝ} (hm : ∀ a b, G.Adj a b → a ∉ Set.range ι → b ∉ Set.range ι → m ≤ w s(a, b)) :
+    NJRecoversWithin G ι (fun x y => 2 * d x y) m := by
+  have h := njRecoversWithin_of_le hT hw hd (μ := 2) (by norm_num) hm
+  rwa [mul_div_cancel_left₀ m (two_ne_zero : (2 : ℝ) ≠ 0)] at h
 
 end CSLibExtTest.Bioinformatics.Phylogenetics.FelsensteinZone
