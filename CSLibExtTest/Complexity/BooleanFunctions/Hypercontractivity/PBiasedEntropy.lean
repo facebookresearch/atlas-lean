@@ -9,6 +9,7 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedEntropy
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CoupledTensorizeRefutations
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Tests for damped Fourier mass and the damping-witness route

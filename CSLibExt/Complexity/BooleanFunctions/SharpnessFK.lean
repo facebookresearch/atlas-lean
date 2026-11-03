@@ -9,6 +9,8 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.CovLowerBound
 public import CSLibExt.Complexity.BooleanFunctions.Revealment
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 @[expose] public section
 

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 @[expose] public section
 
