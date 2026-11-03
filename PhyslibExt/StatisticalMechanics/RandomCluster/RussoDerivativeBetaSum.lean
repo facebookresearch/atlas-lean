@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Inv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivativeBeta
 /-!
 # Inverse-temperature derivative of the random-cluster measure

@@ -73,7 +73,7 @@ lemma freeEdgeDensity_q2_le_wiredEdgeDensity (d N : ℕ) (eb : Sym2 (boxVerts d 
       ≤ (wiredFiniteMeasure d m hp hp1 (by norm_num : (0 : ℝ) < 2)
           : Measure (ConfigSpace (Sym2 (Site d)))).real
             (boxRestrict d N ⁻¹' (boxEdgeOpenEvent d N eb)) := fun m =>
-    freeFiniteMeasure_dominated d m hp hp1 (by norm_num)
+    (freeFiniteMeasure_dominated d m hp hp1 (by norm_num)).real
       (boxRestrict d N ⁻¹' (boxEdgeOpenEvent d N eb))
       (measurableSet_boxRestrict_preimage N (boxEdgeOpenEvent d N eb))
       (isIncreasing_boxRestrict_boxEdgeOpenEvent d N eb)

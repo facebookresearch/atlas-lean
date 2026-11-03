@@ -55,7 +55,7 @@ def check_manifest() -> None:
         ),
         "Physlib": (
             "https://github.com/leanprover-community/physlib",
-            "leanprover-community",
+            "",
         ),
         "plausible": (
             "https://github.com/leanprover-community/plausible",
@@ -208,7 +208,7 @@ def main() -> None:
         },
         {
             "name": "Physlib",
-            "scope": "leanprover-community",
+            "git": "https://github.com/leanprover-community/physlib",
             "rev": "v4.35.0",
         },
     ]

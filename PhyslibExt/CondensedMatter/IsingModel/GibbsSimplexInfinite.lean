@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import PhyslibExt.CondensedMatter.IsingModel.GibbsSimplex
 public import PhyslibExt.CondensedMatter.IsingModel.GibbsExtreme
 public import PhyslibExt.CondensedMatter.IsingModel.GibbsChoquet
@@ -112,7 +111,7 @@ lemma gsi_dlr_real_le_plusMeasure (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h)
   rw [gsi_dlr_real_eq_integral β h μ hμ n hA]
   have hpt : ∀ ω, (fvMeasure ω n (bondFinsetTouch d n) β h).real A
       ≤ (fvMeasure (plusField d) n (bondFinsetTouch d n) β h).real A :=
-    fun ω => fvMeasure_le_plusField n (bondFinsetTouch d n) β h hβ hh ω A hA hAinc
+    fun ω => (fvMeasure_le_plusField n (bondFinsetTouch d n) β h hβ hh ω).real A hA hAinc
   calc ∫ ω, (fvMeasure ω n (bondFinsetTouch d n) β h).real A ∂μ
       ≤ ∫ _ω, (fvMeasure (plusField d) n (bondFinsetTouch d n) β h).real A ∂μ := by
         refine integral_mono_of_nonneg (Eventually.of_forall (fun _ => measureReal_nonneg))
@@ -128,7 +127,7 @@ lemma gsi_minusMeasure_le_dlr_real (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h)
   rw [gsi_dlr_real_eq_integral β h μ hμ n hA]
   have hpt : ∀ ω, (fvMeasure (minusField d) n (bondFinsetTouch d n) β h).real A
       ≤ (fvMeasure ω n (bondFinsetTouch d n) β h).real A :=
-    fun ω => fvMeasure_minusField_le n (bondFinsetTouch d n) β h hβ hh ω A hA hAinc
+    fun ω => (fvMeasure_minusField_le n (bondFinsetTouch d n) β h hβ hh ω).real A hA hAinc
   calc (minusMeasure d n β h : Measure (ConfigSpace (Site d))).real A
       = ∫ _ω, (fvMeasure (minusField d) n (bondFinsetTouch d n) β h).real A ∂μ := by
         rw [integral_const, probReal_univ, smul_eq_mul, one_mul]; rfl
@@ -204,9 +203,11 @@ lemma StochasticallyDominatedClopen.trans {E : Type*} {μ ν ρ : Measure (Confi
     (h₁ : μ ≼c ν) (h₂ : ν ≼c ρ) : μ ≼c ρ :=
   fun A hA hAu => (h₁ A hA hAu).trans (h₂ A hA hAu)
 
+/-- ENNReal stochastic domination gives real-mass clopen domination when the upper measure is
+finite. -/
 lemma StochasticallyDominated.toClopen {E : Type*} [Countable E]
-    {μ ν : Measure (ConfigSpace E)} (h : μ ≼ ν) : μ ≼c ν :=
-  fun A hA hAu => h A hA.2.measurableSet hAu
+    {μ ν : Measure (ConfigSpace E)} [IsFiniteMeasure ν] (h : μ ≼ ν) : μ ≼c ν :=
+  fun A hA hAu => h.real A hA.2.measurableSet hAu
 
 lemma gsi_infinite_volume_sandwich (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h)
     (μ : Measure (ConfigSpace (Site d))) [IsProbabilityMeasure μ]

@@ -113,7 +113,7 @@ lemma ivTwoPointInf_isLimit (μ : ℕ → ProbabilityMeasure (ConfigSpace E))
     apply antitone_nat_of_succ_le
     intro n
     have hreal : (μ (n + 1) : Measure (ConfigSpace E)).real A
-        ≤ (μ n : Measure (ConfigSpace E)).real A := hchain n A hAmeas hAinc
+        ≤ (μ n : Measure (ConfigSpace E)).real A := (hchain n).real A hAmeas hAinc
     rw [MeasureTheory.ProbabilityMeasure.measureReal_eq_coe_coeFn,
       MeasureTheory.ProbabilityMeasure.measureReal_eq_coe_coeFn] at hreal
     exact_mod_cast hreal

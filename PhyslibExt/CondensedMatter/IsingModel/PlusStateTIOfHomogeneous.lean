@@ -90,8 +90,8 @@ lemma iti_crossbox_dom (n m : ℕ) (hnm : n ≤ m) {β : ℝ} (hβ : 0 ≤ β) {
       (fvMeasure_real_eq (glue (plusField d) σ) n (bondFinsetTouch d n) β h hAmeas).symm
     have hdom : (fvMeasure (glue (plusField d) σ) n (bondFinsetTouch d n) β h).real A
         ≤ (fvMeasure (plusField d) n (bondFinsetTouch d n) β h).real A :=
-      fvMeasure_dominated n (bondFinsetTouch d n) β h hβ hh
-        (glue (plusField d) σ) (plusField d) (iti_glue_plusField_le σ) A hAmeas hAinc
+      (fvMeasure_dominated n (bondFinsetTouch d n) β h hβ hh
+        (glue (plusField d) σ) (plusField d) (iti_glue_plusField_le σ)).real A hAmeas hAinc
     rw [hd1, plusMeasure_coe]; exact hdom
   calc ∑ σ : {x // x ∈ box d m} → Bool,
           fvProb (plusField d) m (bondFinsetTouch d m) β h σ
