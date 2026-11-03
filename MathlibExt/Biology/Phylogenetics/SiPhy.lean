@@ -71,7 +71,7 @@ noncomputable def siphyRate (ω : ℝ) (R : Matrix ι ι ℝ) (π : ι → ℝ) 
 /-- With `ω ≥ 0`, nonnegative `R` and nonnegative `π`, the SiPhy matrix is a rate matrix. -/
 theorem isRateMatrix_siphyRate {ω : ℝ} {R : Matrix ι ι ℝ} {π : ι → ℝ} (hω : 0 ≤ ω)
     (hR : ∀ a b, 0 ≤ R a b) (hπ : ∀ b, 0 ≤ π b) : IsRateMatrix (siphyRate ω R π) := by
-  have h := isRateMatrix_gtrRate hπ hR
+  have h := isRateMatrix_gtrRate hπ (fun a b _ => hR a b)
   refine ⟨fun a b hab => ?_, fun a => ?_⟩
   · simpa [siphyRate] using mul_nonneg hω (h.nonneg_of_ne hab)
   · simp [siphyRate, ← mul_sum, h.sum_row a]
