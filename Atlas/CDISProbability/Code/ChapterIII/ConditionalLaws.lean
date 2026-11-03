@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 import Mathlib.Probability.Kernel.CondDistrib
 import Mathlib.Probability.Independence.Basic
+import Mathlib.MeasureTheory.Function.ConditionalLExpectation
 
 /-!
 # CDIS Probabilités III: conditional laws and conditional expectation
@@ -19,10 +20,12 @@ The course's conditional law `P_{Y | X = x}` is Mathlib's kernel `condDistrib Y 
 * id 55: `X` and `Y` are independent iff `P_{Y|X=x}` does not depend on `x` (a.e.), and then
   it equals `P_Y`.
 * id 56, 57: `E(Y | X = x) = ∫ y P_{Y|X=x}(dy)` and `E(g(X,Y) | X = x) = ∫ g(x,y) P_{Y|X=x}(dy)`;
-  `E(Y | X) = ψ(X)` agrees almost surely with Mathlib's conditional expectation.
+  `E(Y | X) = ψ(X)` agrees almost surely with Mathlib's conditional expectation. For id 57, `g`
+  is integrable (Bochner integral, `condExp`) or nonnegative (Lebesgue integral in `[0, ∞]`,
+  `condLExp`), so an infinite conditional expectation is `∞`.
 * id 59: conditional transfer: given `X = x`, `g(X, Y)` has the law of `g(x, Y)` under
   `P_{Y|X=x}`, so `E(g(X,Y) | X = x) = ∫ g(x,y) P_{Y|X=x}(dy)`; with independence the kernel
-  is `P_Y`.
+  is `P_Y`. Both cases are stated, as for id 57.
 -/
 
 open MeasureTheory ProbabilityTheory Set
@@ -122,27 +125,55 @@ theorem condExp_ae_eq_condExpGivenFun (hX : Measurable X) (hY : Measurable Y)
       fun ω ↦ condExpGivenFun g Y X P (X ω) :=
   condExp_prod_ae_eq_integral_condDistrib hX hY.aemeasurable hg.stronglyMeasurable hint
 
+/-- CDIS P.III, id 57, for nonnegative `g`: `E(g(X,Y) | X = x) = ∫ g(x, y) P_{Y|X=x}(dy)` in
+`[0, ∞]`. -/
+noncomputable def condLExpGivenFun (g : ℝ × ℝ → ℝ≥0∞) (Y X : Ω → ℝ) (P : Measure Ω)
+    [IsFiniteMeasure P] (x : ℝ) : ℝ≥0∞ :=
+  ∫⁻ y, g (x, y) ∂(condDistrib Y X P x)
+
+/-- CDIS P.III, id 57, for nonnegative `g`: `E(g(X,Y) | X) = ψ(X)` with
+`ψ(x) = E(g(X,Y) | X = x)`, almost surely, where the left side is Mathlib's conditional Lebesgue
+expectation `condLExp`. No integrability is assumed. -/
+theorem condLExp_ae_eq_condLExpGivenFun (hX : Measurable X) (hY : Measurable Y)
+    {g : ℝ × ℝ → ℝ≥0∞} (hg : Measurable g) :
+    P⁻[fun ω ↦ g (X ω, Y ω) | MeasurableSpace.comap X inferInstance] =ᵐ[P]
+      fun ω ↦ condLExpGivenFun g Y X P (X ω) := by
+  have hm : MeasurableSpace.comap X inferInstance ≤ ‹MeasurableSpace Ω› := hX.comap_le
+  have hψ : Measurable fun x ↦ condLExpGivenFun g Y X P x := hg.lintegral_kernel_prod_right'
+  refine (ae_eq_condLExp hm P _ (hψ.comp (comap_measurable X)) ?_).symm
+  -- on `{X ∈ A}`, both sides integrate to `∫_A ∫ g(x, y) P_{Y|X=x}(dy) P_X(dx)`
+  rintro s ⟨A, hA, rfl⟩
+  rw [show (fun x ↦ condLExpGivenFun g Y X P x) ∘ X =
+      fun ω ↦ condLExpGivenFun g Y X P (X ω) from rfl, ← setLIntegral_map hA hψ hX]
+  have hset : X ⁻¹' A = (fun ω ↦ (X ω, Y ω)) ⁻¹' (A ×ˢ univ) := by ext; simp
+  rw [hset, ← setLIntegral_map (hA.prod MeasurableSet.univ) hg (hX.prodMk hY),
+    ← compProd_map_condDistrib hX.aemeasurable hY.aemeasurable,
+    Measure.setLIntegral_compProd hg hA MeasurableSet.univ]
+  simp [condLExpGivenFun]
+
 end ConditionalExpectation
 
 section Transfer
 
+variable {β : Type*} [MeasurableSpace β]
+
 /-- The law of `g(x, Y')` when `Y'` has law `κ x`: `x ↦ (κ x).map (g (x, ·))`, as a kernel. -/
-noncomputable def transferKernel (κ : Kernel ℝ ℝ) (g : ℝ × ℝ → ℝ) : Kernel ℝ ℝ :=
+noncomputable def transferKernel (κ : Kernel ℝ ℝ) (g : ℝ × ℝ → β) : Kernel ℝ β :=
   (Kernel.deterministic id measurable_id ×ₖ κ).map g
 
-lemma transferKernel_apply (κ : Kernel ℝ ℝ) [IsSFiniteKernel κ] {g : ℝ × ℝ → ℝ}
+lemma transferKernel_apply (κ : Kernel ℝ ℝ) [IsSFiniteKernel κ] {g : ℝ × ℝ → β}
     (hg : Measurable g) (x : ℝ) : transferKernel κ g x = (κ x).map fun y ↦ g (x, y) := by
   rw [transferKernel, Kernel.map_apply _ hg, Kernel.prod_apply, Kernel.deterministic_apply,
     Measure.dirac_prod, Measure.map_map hg measurable_prodMk_left]
   rfl
 
-lemma isMarkovKernel_transferKernel (κ : Kernel ℝ ℝ) [IsMarkovKernel κ] {g : ℝ × ℝ → ℝ}
+lemma isMarkovKernel_transferKernel (κ : Kernel ℝ ℝ) [IsMarkovKernel κ] {g : ℝ × ℝ → β}
     (hg : Measurable g) : IsMarkovKernel (transferKernel κ g) :=
   Kernel.IsMarkovKernel.map _ hg
 
 /-- `(μ ⊗ κ).map (x, g(x, y)) = μ ⊗ (transferKernel κ g)`. -/
 lemma map_compProd_eq_compProd_transferKernel (μ : Measure ℝ) [IsFiniteMeasure μ]
-    (κ : Kernel ℝ ℝ) [IsMarkovKernel κ] {g : ℝ × ℝ → ℝ} (hg : Measurable g) :
+    (κ : Kernel ℝ ℝ) [IsMarkovKernel κ] {g : ℝ × ℝ → β} (hg : Measurable g) :
     (μ ⊗ₘ κ).map (fun p ↦ (p.1, g p)) = μ ⊗ₘ transferKernel κ g := by
   have := isMarkovKernel_transferKernel κ hg
   have hm : Measurable fun p : ℝ × ℝ ↦ (p.1, g p) := measurable_fst.prodMk hg
@@ -154,8 +185,8 @@ lemma map_compProd_eq_compProd_transferKernel (μ : Measure ℝ) [IsFiniteMeasur
 
 /-- CDIS P.III, id 59 (conditional transfer), kernel form: the conditional law of `g(X, Y)`
 given `X = x` is the law of `g(x, Y')` with `Y' ~ P_{Y|X=x}`, for `P_X`-almost every `x`. -/
-theorem condDistrib_comp_prod_ae_eq (hX : Measurable X) (hY : Measurable Y) {g : ℝ × ℝ → ℝ}
-    (hg : Measurable g) :
+theorem condDistrib_comp_prod_ae_eq [StandardBorelSpace β] [Nonempty β] (hX : Measurable X)
+    (hY : Measurable Y) {g : ℝ × ℝ → β} (hg : Measurable g) :
     condDistrib (fun ω ↦ g (X ω, Y ω)) X P =ᵐ[P.map X] transferKernel (condDistrib Y X P) g := by
   have := isMarkovKernel_transferKernel (condDistrib Y X P) hg
   refine condDistrib_ae_eq_of_measure_eq_compProd hX.aemeasurable
@@ -184,6 +215,32 @@ theorem condExpGiven_comp_prod_ae_eq_of_indepFun (hX : Measurable X) (hY : Measu
   filter_upwards [condExpGiven_comp_prod_ae_eq (P := P) hX hY hg,
     (indepFun_iff_condDistrib_ae_eq_const hX hY).1 hXY] with x hx hconst
   rw [hx, condExpGivenFun, hconst, Kernel.const_apply]
+
+/-- CDIS P.III, id 59, for nonnegative `g`: `E(Z | X = x) = ∫ z P_{Z|X=x}(dz)` in `[0, ∞]`,
+computed from the conditional law of the nonnegative random variable `Z` itself. -/
+noncomputable def condLExpGiven (Z : Ω → ℝ≥0∞) (X : Ω → ℝ) (P : Measure Ω) [IsFiniteMeasure P]
+    (x : ℝ) : ℝ≥0∞ :=
+  ∫⁻ z, z ∂(condDistrib Z X P x)
+
+/-- CDIS P.III, id 59 (conditional transfer), for nonnegative `g`: for `P_X`-almost every `x`,
+`E(g(X,Y) | X = x) = ∫ g(x, y) P_{Y|X=x}(dy)` in `[0, ∞]`. No integrability is assumed. -/
+theorem condLExpGiven_comp_prod_ae_eq (hX : Measurable X) (hY : Measurable Y)
+    {g : ℝ × ℝ → ℝ≥0∞} (hg : Measurable g) :
+    ∀ᵐ x ∂(P.map X), condLExpGiven (fun ω ↦ g (X ω, Y ω)) X P x = condLExpGivenFun g Y X P x := by
+  filter_upwards [condDistrib_comp_prod_ae_eq (P := P) hX hY hg] with x hx
+  rw [condLExpGiven, hx, transferKernel_apply _ hg,
+    lintegral_map (f := fun z ↦ z) measurable_id
+      (show Measurable fun y ↦ g (x, y) from hg.comp measurable_prodMk_left)]
+  rfl
+
+/-- CDIS P.III, id 59, independent case, for nonnegative `g`:
+`E(g(X,Y) | X = x) = ∫ g(x, y) P_Y(dy)` in `[0, ∞]`. -/
+theorem condLExpGiven_comp_prod_ae_eq_of_indepFun (hX : Measurable X) (hY : Measurable Y)
+    {g : ℝ × ℝ → ℝ≥0∞} (hg : Measurable g) (hXY : IndepFun X Y P) :
+    ∀ᵐ x ∂(P.map X), condLExpGiven (fun ω ↦ g (X ω, Y ω)) X P x = ∫⁻ y, g (x, y) ∂(P.map Y) := by
+  filter_upwards [condLExpGiven_comp_prod_ae_eq (P := P) hX hY hg,
+    (indepFun_iff_condDistrib_ae_eq_const hX hY).1 hXY] with x hx hconst
+  rw [hx, condLExpGivenFun, hconst, Kernel.const_apply]
 
 end Transfer
 
