@@ -19,10 +19,13 @@ is strictly positive.
 
 ## i. Overview
 
-For `q ≥ 1` the wired random-cluster measure on a finite graph is stochastically dominated by
-Bernoulli bond percolation with the same `p`: its weight `p^{o(ω)} (1 - p)^{c(ω)} q^{k¹(ω)}`
-satisfies the Holley lattice condition against the product measure, because the wired cluster
-count `k¹` is antitone in `ω`. An infinite open path from the origin contains, for every `m`, a
+For `q ≥ 1`, the edge marginal of the wired random-cluster measure on a finite graph is
+stochastically dominated by Bernoulli bond percolation with the same `p`. The formal
+comparison is with `fkProb G p 1`: its graph-edge marginal is Bernoulli-`p`, while both
+ambient laws have independent uniform loop and nonedge coordinates. The weight
+`p^{o(ω)} (1 - p)^{c(ω)} q^{k¹(ω)}` satisfies the Holley lattice condition against
+this ambient product law, because the wired cluster count `k¹` is antitone in `ω`.
+An infinite open path from the origin contains, for every `m`, a
 self-avoiding open path with `m` edges. There are at most `(2d)^m` such paths and each is open
 with Bernoulli probability `p^m`, so the wired infinite-volume percolation probability satisfies
 `θ¹(p, q) ≤ (2dp)^m` for all `m`. Hence `θ¹(p, q) = 0` for `p < 1 / (2d)`, and
@@ -30,8 +33,8 @@ with Bernoulli probability `p^m`, so the wired infinite-volume percolation proba
 
 ## ii. Key results
 
-- `wiredFkProb_le_fkProbOne_increasing` : the wired random-cluster measure on a finite graph is
-  dominated by Bernoulli percolation (`q = 1`) on increasing events, for `q ≥ 1`.
+- `wiredFkProb_le_fkProbOne_increasing` : the ambient wired law is dominated by the ambient
+  `q = 1` law on increasing events, for `q ≥ 1`; their edge marginals give the Bernoulli bound.
 - `fkProbOne_cylinder` : the Bernoulli probability that a set `F` of edges is open is `p^|F|`.
 - `fkTheta_le_pow` : `θ¹(p, q) ≤ (2dp)^m` for every `m`.
 - `fkTheta_eq_zero_of_lt` : `θ¹(p, q) = 0` when `2dp < 1`.
@@ -123,8 +126,8 @@ lemma wiredFkWeight_edgeProduct_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
           ring
 
 omit [DecidablePred bdry] in
-/-- Holley cross inequality between the wired random-cluster probability and Bernoulli percolation,
-for `q ≥ 1`. -/
+/-- Holley cross inequality between the ambient wired probability and the ambient `q = 1`
+law, for `q ≥ 1`. The latter is Bernoulli-`p` only on the graph-edge marginal. -/
 lemma wiredFkProb_fkProbOne_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (a b : ConfigSpace (Sym2 V)) :
     wiredFkProb G bdry p q a * fkProb G p 1 b
@@ -139,8 +142,9 @@ lemma wiredFkProb_fkProbOne_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1
   exact wiredFkWeight_edgeProduct_cross G bdry hp hp1 hq a b
 
 omit [DecidablePred bdry] in
-/-- For `q ≥ 1`, the wired random-cluster measure gives every increasing event at most its Bernoulli
-percolation probability. -/
+/-- For `q ≥ 1`, the ambient wired law is dominated by `fkProb G p 1` on increasing events.
+The latter is Bernoulli-`p` on graph edges and uniform on loops and nonedges; the comparison
+with ordinary Bernoulli percolation therefore applies to graph-edge events. -/
 lemma wiredFkProb_le_fkProbOne_increasing {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 V))} (hA : IsIncreasing A) :
     (∑ ω, A.indicator (fun _ => (1 : ℝ)) ω * wiredFkProb G bdry p q ω)

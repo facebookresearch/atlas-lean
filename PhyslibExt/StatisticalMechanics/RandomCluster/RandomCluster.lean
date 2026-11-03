@@ -12,34 +12,39 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.Tactic.Linarith
 public import MathlibExt.Probability.Configuration.ConfigSpace
 /-!
-# The random-cluster measure on a finite graph
+# An ambient extension of the finite-graph random-cluster measure
 
-The Fortuin–Kasteleyn random-cluster measure `φ_{G,p,q}` on edge configurations of a finite
-graph `G`.
+The Fortuin–Kasteleyn edge law, extended uniformly to the unused coordinates in `Sym2 V`.
 
 ## i. Overview
 
-An edge configuration `ω : ConfigSpace (Sym2 V)` declares each edge of `G` open (`true`) or
-closed (`false`). Its open subgraph `openSub G ω` keeps exactly the open edges of `G`, and
-`numClusters G ω` counts its connected components, isolated vertices included. For
-`p ∈ (0, 1)` and `q > 0` the random-cluster weight of `ω` is
-`p ^ o(ω) (1 - p) ^ c(ω) q ^ k(ω)`, where `o(ω)` and `c(ω)` count the open and closed edges of
-`G` and `k(ω)` the clusters. Normalizing by the partition function `fkZ G p q` gives the
-random-cluster probability `fkProb G p q`, packaged as a `PMF` by `fkPMF`. At `q = 1` the
-measure is Bernoulli bond percolation with parameter `p`.
+A configuration `ω : ConfigSpace (Sym2 V)` assigns bits to every unordered vertex pair,
+including loops and nonedges. Its open subgraph `openSub G ω` keeps exactly the open edges
+of `G`, and `numClusters G ω` counts its connected components, isolated vertices included.
+For `p ∈ (0, 1)` and `q > 0`, the weight is `p ^ o(ω) (1 - p) ^ c(ω) q ^ k(ω)`, where
+`o(ω)` and `c(ω)` count only edges of `G`. Normalizing the sum over all ambient
+configurations gives `fkProb G p q`, packaged as a `PMF` by `fkPMF`.
 
-Coordinates of `ω` on non-edges of `G` do not enter the weight; the measure is uniform in them.
+The raw normalizer `fkZ` is not the standard edge partition function: every unused
+coordinate contributes a factor of two. The theorem `StatMech.FK.ecz_factorization`
+in `EdgePartitionFunction` relates it to `ecz_fkZEdge`, which sums
+only over configurations closed off the graph edges. Use `ecz_fkZEdge` for the
+edge partition function and the normalized graph-limit developments.
+
+The edge marginal of `fkProb` is the usual random-cluster law. At `q = 1` that
+marginal is Bernoulli bond percolation with parameter `p`; loops and nonedges remain
+independent uniform bits, not Bernoulli-`p` coordinates.
 
 ## ii. Key results
 
 - `StatMech.FK.openSub` : the subgraph of open edges, with `openSub_eq_inf_fromEdgeSet`
   relating it to Mathlib's `SimpleGraph.fromEdgeSet`.
 - `StatMech.FK.numClusters` : the number of open clusters.
-- `StatMech.FK.fkWeight`, `StatMech.FK.fkZ`, `StatMech.FK.fkProb` : weight, partition
-  function and probability, with positivity and `fkProb_sum_eq_one`.
-- `StatMech.FK.fkPMF` : the random-cluster measure as a `PMF`.
+- `StatMech.FK.fkWeight`, `StatMech.FK.fkZ`, `StatMech.FK.fkProb` : ambient weight,
+  normalizer and probability, with positivity and `fkProb_sum_eq_one`.
+- `StatMech.FK.fkPMF` : the ambient extension as a `PMF`.
 - `StatMech.FK.fkWeight_one`, `StatMech.FK.fkZ_one` : at `q = 1` the weight is the
-  Bernoulli product measure.
+  product of Bernoulli factors over graph edges only.
 
 ## iii. Table of contents
 
@@ -143,7 +148,9 @@ lemma fkWeight_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 V)) : 0 ≤ fkWeight G p q ω :=
   (fkWeight_pos G hp hp1 hq ω).le
 
-/-- The random-cluster partition function `Z_{G,p,q} = ∑_ω p ^ o(ω) (1 - p) ^ c(ω) q ^ k(ω)`. -/
+/-- The ambient FK normalizer, summing over every bit assignment on `Sym2 V`.
+Each loop or nonedge contributes a factor of two relative to the edge partition function
+`ecz_fkZEdge` defined in `EdgePartitionFunction`. -/
 def fkZ (p q : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), fkWeight G p q ω
 
@@ -159,7 +166,9 @@ lemma fkZ_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : fkZ G p 
 
 -/
 
-/-- The random-cluster probability `φ_{G,p,q}(ω) = fkWeight G p q ω / fkZ G p q`. -/
+/-- The probability of an ambient configuration: `fkWeight G p q ω / fkZ G p q`.
+For `0 < p < 1` and `q > 0`, its graph-edge marginal is the random-cluster law and
+unused coordinates are uniform. -/
 noncomputable def fkProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   fkWeight G p q ω / fkZ G p q
 
@@ -177,8 +186,8 @@ lemma fkProb_sum_eq_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
   rw [← Finset.sum_div]
   exact div_self (fkZ_ne_zero G hp hp1 hq)
 
-/-- The random-cluster measure `φ_{G,p,q}` as a probability mass function on edge
-configurations. -/
+/-- The ambient extension of the random-cluster edge law as a `PMF` on all `Sym2 V`
+configurations, with independent uniform bits on loops and nonedges. -/
 noncomputable def fkPMF {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     PMF (ConfigSpace (Sym2 V)) :=
   PMF.ofFintype (fun ω => ENNReal.ofReal (fkProb G p q ω)) <| by

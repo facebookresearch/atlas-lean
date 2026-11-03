@@ -10,11 +10,13 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IVPressureConvex
 public import Mathlib.Analysis.Subadditive
 /-!
-# Supermultiplicativity of the random-cluster partition function
+# Supermultiplicativity of the ambient random-cluster normalizer
 
-The random-cluster partition function of a disjoint union is at least the product of the
-partition functions. Thus `-log Z` is subadditive along a juxtaposition sequence. This does
-not by itself imply a finite free-energy limit.
+The ambient normalizer `fkZ` of a disjoint union is at least the product of the
+ambient normalizers. Thus `-log Z` is subadditive along a juxtaposition sequence.
+Here `Z` includes the multiplicity of unused loop and nonedge coordinates; it is
+not the standard edge partition function. This does not by itself imply a finite
+free-energy limit.
 
 ## i. Overview
 
@@ -375,8 +377,8 @@ section Super
 variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
   (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
 
-/-- The random-cluster partition function is supermultiplicative under disjoint union:
-`Z_G Z_H ≤ Z_{G ⊕g H}`. -/
+/-- The ambient FK normalizer is supermultiplicative under disjoint union:
+`Z_G Z_H ≤ Z_{G ⊕g H}`. Each `Z` sums over all `Sym2` configurations. -/
 lemma fsm_fkZ_sum_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     fkZ G p q * fkZ H p q ≤ fkZ (G ⊕g H) p q := by
   classical
@@ -477,7 +479,7 @@ lemma fsm_edgeProduct_iso (φ : G ≃g H) (p : ℝ) (ω : Sym2 W → Bool) :
           (fun x _ y _ h => Sym2.map.injective φ.toEquiv.injective h)]
     _ = ∏ e ∈ H.edgeFinset, (if ω e then p else 1 - p) := by rw [himg]
 
-/-- The random-cluster partition function is invariant under graph isomorphism. -/
+/-- The ambient FK normalizer is invariant under graph isomorphism. -/
 lemma fsm_fkZ_iso (φ : G ≃g H) (p q : ℝ) :
     fkZ G p q = fkZ H p q := by
   classical
