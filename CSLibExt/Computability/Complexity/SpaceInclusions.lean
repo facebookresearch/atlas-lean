@@ -102,7 +102,10 @@ namespace MetaMathlibExt.Complexity.KeyTheorems.PSPACESubsetEXP
 open Cslib.Complexity.Classes Cslib.Turing.MultiTapeTM
 
 /-- Every canonical polynomial-space language is in exponential time,
-using its original finite multi-tape decider. -/
+using its original finite multi-tape decider.
+
+Source: S. Arora and B. Barak, Computational Complexity: A Modern Approach,
+Cambridge University Press, 2009, Theorem 4.14 (PSPACE ⊆ EXP). -/
 theorem pspace_subset_exp : PSPACE ⊆ EXP := by
   intro L hL
   obtain ⟨d, hd⟩ := Set.mem_iUnion.mp hL
