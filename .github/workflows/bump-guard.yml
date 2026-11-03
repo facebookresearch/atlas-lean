@@ -121,11 +121,21 @@ jobs:
               merge-base) REF="$MERGE_BASE_SHA" ;;
               pr) REF="$HEAD_SHA" ;;
             esac
-            FILES="lean-toolchain lakefile.toml lake-manifest.json scripts/bump/pinned_deps.json"
+            FILES="lean-toolchain lakefile.toml lake-manifest.json"
             if [ -n "$PIN_POLICY_PATH" ]; then FILES="$FILES $PIN_POLICY_PATH"; fi
             for file in $FILES; do
               download_one "$dir" "$REF" "$file" true
             done
+            # pinned_deps.json: required from base, 404-tolerated from
+            # merge-base/PR. A head or merge base created before the file
+            # was introduced must not fail the download: cmd_guard treats
+            # a missing unchanged config as the base config, and rejects
+            # an actual deletion (config in the changed list, file absent).
+            if [ "$dir" = "base" ]; then
+              download_one "$dir" "$REF" "scripts/bump/pinned_deps.json" true
+            else
+              download_one "$dir" "$REF" "scripts/bump/pinned_deps.json" false
+            fi
             for file in $LEDGER_PATHS; do
               download_one "$dir" "$REF" "$file" false
             done

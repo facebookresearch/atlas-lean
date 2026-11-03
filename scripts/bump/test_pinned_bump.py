@@ -369,7 +369,9 @@ class GuardTests(unittest.TestCase):
                    same_pin=False, add_dep=False, add_dep_no_config=False, config_tamper=None,
                    changed_only_config=False, config_add_doc=False,
                    config_add_dep_only=False, changed_guard_only=False,
-                   manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False):
+                   manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False,
+                   duplicate_shadow=False, config_add_ledger=False,
+                   malformed_require=False, nonstring_rev=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -417,6 +419,10 @@ class GuardTests(unittest.TestCase):
             if config_add_dep_only:
                 pr_config["deps"].append(
                     {"name": "Physlib", "repo": "leanprover-community/physlib"})
+            if config_add_ledger:
+                pr_config["migration_ledgers"] = (
+                    pr_config.get("migration_ledgers", [])
+                    + ["blueprint/migrations/Third.json"])
             if config_tamper == "remove_dep" or remove_dep:
                 pr_config["deps"] = [
                     d for d in pr_config["deps"] if d["name"] != "cslib"]
@@ -467,6 +473,18 @@ class GuardTests(unittest.TestCase):
                     lakefile.read_text()
                     + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
+            if malformed_require:
+                (pr / "lakefile.toml").write_text(
+                    'name = "fixture"\n\nrequire = ["bogus"]\n')
+            if nonstring_rev:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(lakefile.read_text().replace(
+                    'rev = "v4.35.0"', "rev = 123", 1))
+            if duplicate_shadow:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    '[[require]]\nname = "mathlib"\nrev = "v9.99.99"\n\n'
+                    + lakefile.read_text())
             if remove_dep:
                 lakefile = pr / "lakefile.toml"
                 lakefile.write_text(lakefile.read_text().replace(
@@ -585,7 +603,7 @@ class GuardTests(unittest.TestCase):
             else:
                 changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
                 if add_dep or config_tamper is not None or config_add_doc \
-                        or config_add_dep_only or remove_dep:
+                        or config_add_dep_only or remove_dep or config_add_ledger:
                     changed_lines.append("scripts/bump/pinned_deps.json")
                 if changed_guard_test:
                     changed_lines.append("scripts/bump/test_pinned_bump.py")
@@ -700,6 +718,30 @@ class GuardTests(unittest.TestCase):
         # Guard-code-only PRs get normal review; they must not fail
         # their own guard run.
         self.assertEqual(self._run_guard(changed_guard_only=True), 0)
+
+    def test_guard_fails_malformed_require_entry(self):
+        # Audit: a non-table [[require]] entry must fail cleanly, not crash.
+        self.assertEqual(
+            self._run_guard(same_pin=True, malformed_require=True), 1)
+
+    def test_guard_fails_nonstring_rev(self):
+        # Audit: a non-string rev must fail cleanly, not crash in tag math.
+        self.assertEqual(
+            self._run_guard(same_pin=True, nonstring_rev=True), 1)
+
+    def test_guard_fails_same_pin_duplicate_require(self):
+        # Codex P1: a shadowed mathlib entry (v9.99.99 before the real
+        # v4.35.0 entry) must fail; set/dict collapse must not hide it.
+        self.assertEqual(
+            self._run_guard(same_pin=True, duplicate_shadow=True), 1)
+
+    def test_guard_fails_third_migration_ledger(self):
+        # Codex P2: migration_ledgers must stay unchanged; a third entry
+        # would disable all subsequent automated bumps. Same-pin mode
+        # isolates the ledger check (bump mode would fail earlier on the
+        # config change itself).
+        self.assertEqual(
+            self._run_guard(same_pin=True, config_add_ledger=True), 1)
 
     def test_guard_fails_dependency_removal(self):
         # Codex P1: removing a dep from config, lakefile, manifest, and

@@ -172,7 +172,13 @@ def load_config_file(path: Path) -> dict:
     if not isinstance(config, dict) or not isinstance(config.get("deps"), list):
         raise ValueError(f"bad config in {path}: expected an object with deps")
     for dep in config["deps"]:
-        if not isinstance(dep, dict) or not dep.get("name") or not dep.get("repo"):
+        if (
+            not isinstance(dep, dict)
+            or not isinstance(dep.get("name"), str)
+            or not dep.get("name")
+            or not isinstance(dep.get("repo"), str)
+            or not dep.get("repo")
+        ):
             raise ValueError(f"bad dep entry in {path}: {dep!r}")
     return config
 
@@ -240,12 +246,15 @@ def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
                             "pinned_deps.json: pin_policy replacement removed or changed; "
                             "only additions (or entries mentioning a removed dep) are allowed"
                         )
-    for ledger in base_config.get("migration_ledgers", []):
-        if ledger not in pr_config.get("migration_ledgers", []):
-            problems.append(
-                f"pinned_deps.json: migration ledger {ledger} removed; "
-                "only additions are allowed"
-            )
+    # migration_ledgers must be unchanged, not merely append-only:
+    # apply_pin_edits requires exactly two entries, so a third ledger
+    # passing the guard would disable all subsequent automated bumps.
+    # Adding a ledger needs the ledger consumers generalized first.
+    if pr_config.get("migration_ledgers", []) != base_config.get("migration_ledgers", []):
+        problems.append(
+            "pinned_deps.json: migration_ledgers changed; the field must stay "
+            "unchanged (apply_pin_edits supports exactly two entries)"
+        )
     return problems
 
 
@@ -898,6 +907,23 @@ def lakefile_requires(root: Path) -> list[dict]:
     requires = load_lakefile(root).get("require", [])
     if not isinstance(requires, list):
         raise ValueError("lakefile.toml [[require]] is not a list")
+    # Duplicate names must fail here, not in one caller: current_tag
+    # stores revs in a dict where the last duplicate wins, and the
+    # same-pin/config-only paths never call normalized_lakefile (the
+    # only other duplicate check). A shadowed entry (e.g. mathlib at
+    # v9.99.99 before the real v4.35.0 entry) otherwise passes the guard.
+    # Malformed entries must fail cleanly (ValueError, caught by the
+    # guard) rather than crashing later on .get (AttributeError):
+    # every [[require]] is a table with a string name.
+    for entry in requires:
+        if not isinstance(entry, dict) or not isinstance(entry.get("name"), str):
+            raise ValueError(
+                "lakefile.toml [[require]] entries must be tables with a string name"
+            )
+    names = [entry.get("name") for entry in requires if isinstance(entry, dict)]
+    dups = sorted({n for n in names if names.count(n) > 1})
+    if dups:
+        raise ValueError(f"lakefile.toml has duplicate [[require]] names: {dups}")
     return requires
 
 
@@ -908,7 +934,12 @@ def current_tag(root: Path, config: dict) -> str:
     wanted = {dep["name"] for dep in config["deps"]}
     for entry in lakefile_requires(root):
         if entry.get("name") in wanted:
-            revs[entry["name"]] = entry.get("rev")
+            rev = entry.get("rev")
+            if not isinstance(rev, str):
+                raise ValueError(
+                    f"lakefile.toml require {entry.get('name')!r} has a non-string rev: {rev!r}"
+                )
+            revs[entry["name"]] = rev
     missing = wanted - set(revs)
     if missing:
         raise ValueError(f"lakefile.toml is missing pinned deps: {sorted(missing)}")
@@ -1151,16 +1182,28 @@ def load_manifest(root: Path) -> dict:
         return json.load(f)
 
 
+def _manifest_packages(manifest: dict) -> list:
+    packages = manifest.get("packages", [])
+    if not isinstance(packages, list):
+        raise ValueError("lake-manifest.json packages must be a list")
+    for pkg in packages:
+        if not isinstance(pkg, dict) or not isinstance(pkg.get("name"), str):
+            raise ValueError(
+                "lake-manifest.json packages must be tables with a string name"
+            )
+    return packages
+
+
 def direct_entries(manifest: dict) -> dict[str, dict]:
     return {
         pkg["name"]: pkg
-        for pkg in manifest.get("packages", [])
+        for pkg in _manifest_packages(manifest)
         if not pkg.get("inherited", False)
     }
 
 
 def check_no_duplicate_packages(manifest: dict, label: str) -> list[str]:
-    names = [pkg.get("name") for pkg in manifest.get("packages", [])]
+    names = [pkg.get("name") for pkg in _manifest_packages(manifest)]
     dups = sorted({n for n in names if names.count(n) > 1})
     if dups:
         return [f"{label} has duplicate package names: {dups}"]
@@ -1966,7 +2009,10 @@ def cmd_guard(args: argparse.Namespace) -> int:
             base / "lean-toolchain"
         ).read_text(encoding="utf-8").strip():
             problems.append("same-pin change must not change lean-toolchain")
-        problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
+        try:
+            problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
+        except (OSError, ValueError) as exc:
+            problems.append(f"PR manifest is unreadable or malformed: {exc}")
         if client.tag_sha(base_config["toolchain_repo"], base_tag) is None:
             problems.append(
                 f"Lean tag {base_tag} does not exist in {base_config['toolchain_repo']}"
@@ -2124,7 +2170,10 @@ def cmd_guard(args: argparse.Namespace) -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(f"guard: FAIL - cannot read base manifest: {exc}")
         return 1
-    problems.extend(verify_manifest(client, pr, config, pr_tag, base_manifest))
+    try:
+        problems.extend(verify_manifest(client, pr, config, pr_tag, base_manifest))
+    except (OSError, ValueError) as exc:
+        problems.append(f"PR manifest is unreadable or malformed: {exc}")
     if client.tag_sha(config["toolchain_repo"], pr_tag) is None:
         problems.append(
             f"Lean tag {pr_tag} does not exist in {config['toolchain_repo']}"
