@@ -155,9 +155,11 @@ theorem box_crossing_lower_bound
     have h1 : (0 : ℝ) ≤ μ.real (rectLeftHalfEvent n hn hz0 hzc hzd) := measureReal_nonneg
     nlinarith [hrouteLeft, hrouteRight, h1]
   have hmb : (n : ℤ) ≤ 2 * n := by linarith
-  exact le_trans hprod
-    (measureReal_horizontalCrossing_ge_halves (a := 0) (m := n) (b := 2 * n) (c := 0) (d := n)
-      hn hmb hz0 hzc hzd μ hpa)
+  exact le_trans hprod (by
+    simpa only [rectLeftHalfEvent, rectRightHalfEvent, rectangleCrossingEvent,
+      probReal_univ, mul_one] using
+      (measureReal_horizontalCrossing_ge_halves (a := 0) (m := n) (b := 2 * n) (c := 0) (d := n)
+        hn hmb hz0 hzc hzd μ hpa))
 
 /-- Existential form of `box_crossing_lower_bound`. -/
 theorem box_crossing_lower_bound_pos

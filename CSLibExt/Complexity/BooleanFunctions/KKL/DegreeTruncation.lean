@@ -16,7 +16,7 @@ The capped per-coordinate estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u
 the Bernoulli(`p`) measure is split by Fourier degree: the part with `|S| > k` is at most
 `4p(1-p)(1-u)^k ∑ₑ Infₑ` (`dtr_high_part_le`), so the estimate follows from a bound on the
 low-degree part (`dtr_trunc_split`). The predicate `dtr_lowDegreeResidue q` is that low-degree
-bound for `p ∈ (1/2, q)` in the regime not covered by `TwoPointHCqGt2`; it implies the earlier
+bound for `p ∈ (1/2, q)` in the regime not covered by `CappedExponentGap`; it implies the earlier
 reduction predicates (`dtr_lowDegree_of_residue`, `dtr_smallDelta_of_residue`,
 `dtr_martingaleHC_of_residue`) and is not proved in this library for any `q > 1/2`.
 
@@ -157,7 +157,7 @@ theorem dtr_trunc_split {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace 
 noncomputable def dtr_qstar (p u : ℝ) : ℝ := 1 + (1 - u) / (4 * p * (1 - p))
 
 /-- The low-degree form of the capped estimate for every `p ∈ (1/2, q)` with `p < 1`, small maximal
-  influence `δ < e^{-1}`, and parameters `u` outside the range handled by `TwoPointHCqGt2`. Not
+  influence `δ < e^{-1}`, and parameters `u` outside the range handled by `CappedExponentGap`. Not
   proved in this library for any `q > 1/2`. -/
 def dtr_lowDegreeResidue (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]

@@ -14,7 +14,7 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLUniform
 # A damped KKL inequality under p-biased measures
 
 Under the Bernoulli(`p`) product measure, integrating the capped per-coordinate
-hypercontractive estimate over the noise parameter (as in `KKL.RhoOptimiseClose2` for
+hypercontractive estimate over the noise parameter (as in `KKLUniform` for
 `p = 1/2`) gives, with `A = 4p(1-p)` and `δ = maxₑ Infₑ(1_A)`,
 `2 · (∑_{S ≠ ∅} (A^{|S|-1} / A) f̂(S)²) · log (1 / δ) ≤ ∑ₑ Infₑ(1_A)`
 for every `p ∈ (0, 1)` (`fpe_dampedVarLogGain`). The left side is a damped variance: the weight

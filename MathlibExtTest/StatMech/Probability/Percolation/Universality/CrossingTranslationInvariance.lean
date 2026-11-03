@@ -33,6 +33,6 @@ example : halfMeasure.real (horizontalCrossingEvent (0 + (![3, -1] : Site 2) 0)
       (2 + (![3, -1] : Site 2) 0) (0 + (![3, -1] : Site 2) 1) (1 + (![3, -1] : Site 2) 1))
     = halfMeasure.real (horizontalCrossingEvent 0 2 0 1) :=
   cti_horizontalCrossing_translation_invariant 0 2 0 1 _
-    (measurableSet_horizontalCrossingEvent 0 2 0 1)
+    (RSW.Box.measurableSet_horizontalCrossingEvent 0 2 0 1)
 
 end MathlibExtTest.StatMech.Probability.Percolation.Universality.CrossingTranslationInvariance

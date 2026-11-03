@@ -17,7 +17,7 @@ The map `ω ↦ ¬ω` sends the Bernoulli(`p`) product measure to the Bernoulli(
 preserves variance, influences, and maximal influence, so the KKL inequality at `p` is
 equivalent to the KKL inequality at `1 - p` (`kpb_kkl_reflect`). The predicate
 `kpb_PBiasedHC q` asserts the KKL inequality with constant `2` for all `p ∈ (1/2, q)`; under it,
-the sharp-threshold bounds of `KKL.KKLWire` hold. The predicate is not proved in this library
+the sharp-threshold bounds of `KKLEvents` hold. The predicate is not proved in this library
 for any `q > 1/2`.
 
 ## Main definitions

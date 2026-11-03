@@ -11,6 +11,7 @@ public import MathlibExt.Probability.Percolation.SharpnessTheorem
 public import MathlibExt.Probability.Percolation.TwoDimensional.SharpThreshold
 public import MathlibExt.Probability.Percolation.RSW.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 /-!
 # Below `p_c(ℤ²)`, left–right crossings of squares become unlikely

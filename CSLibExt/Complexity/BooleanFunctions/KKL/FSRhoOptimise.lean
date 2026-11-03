@@ -17,7 +17,7 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLpBiased
 
 At `p = 1/2` the `p`-biased characters are the Walsh characters up to the sign `(-1)^{|S|}`, so
 the `p`-biased Fourier weights agree with the uniform ones. The KKL inequality for the uniform
-measure with constant `2`, proved in `KKL.RhoOptimiseClose2`, is recorded here as
+measure with constant `2`, proved in `KKLUniform`, is recorded here as
 `fsr_pbiased_endpoint`: the `p = 1/2` case of the `p`-biased KKL inequality, which this
 library does not prove for other `p`.
 
