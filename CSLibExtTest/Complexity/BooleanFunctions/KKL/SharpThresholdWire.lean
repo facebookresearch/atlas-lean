@@ -9,6 +9,7 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.KKL.SharpThresholdWire
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.DecoupledTwoPointRefutation
+import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 public import CSLibExtTest.Complexity.BooleanFunctions.KKL.KKLEvents
 
 /-!
@@ -19,7 +20,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.SharpThresholdWire`:
 * the exponent and coefficient computations `stw_master_q_value`, `stw_ranges_meet_only_at_two`,
   `stw_variance_coeff_gap` (at `p = 1/4`), `stw_coeff_gap_eq_iff_half` (true at `1/2`, false at
   `3/4`) and `stw_verdict` at `u = 1/2`, `p = 3/4`;
-* `stw_kkl_logGain_half` at the `AND` function on `{0, 1}^Bool`: `2 · 3/16 · log 2 ≤ 1`;
+* `vgp2_kkl_logGain_half` at the `AND` function on `{0, 1}^Bool`: `2 · 3/16 · log 2 ≤ 1`;
 * the remaining goal `stw_RemainingGoal q` (definitionally `∀ p ∈ (1/2, q), PBiasedHCLib p`)
   holds for `q ≤ 1/2` (`stw_RemainingGoal_empty_window`) and fails for every `q > 9/10`
   (`dtpc_remainingGoal_false`); it holds on no nonempty window, since `PBiasedHCLib p`
@@ -55,9 +56,9 @@ example : (1 < 2 - (1 / 2 : ℝ) ∧ 2 - (1 / 2 : ℝ) ≤ 2) ∧
     4 * (3 / 4 : ℝ) ^ 2 * (1 - 3 / 4) ^ 2 < 3 / 4 * (1 - 3 / 4) :=
   stw_verdict (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
-/-- `stw_kkl_logGain_half` at `AND`: `2 · 3/16 · log 2 ≤ 1`. -/
+/-- `vgp2_kkl_logGain_half` at `AND`: `2 · 3/16 · log 2 ≤ 1`. -/
 example : 2 * (3 / 16 : ℝ) * Real.log 2 ≤ 1 := by
-  have h := stw_kkl_logGain_half andFun
+  have h := vgp2_kkl_logGain_half andFun
   rw [← kkl_var_indicator_eq, var_andFun, maxInfl_andInd, totalInfl_andInd] at h
   norm_num at h ⊢
   linarith

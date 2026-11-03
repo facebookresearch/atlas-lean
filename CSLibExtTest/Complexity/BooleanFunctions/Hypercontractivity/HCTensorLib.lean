@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.HCTensorLib
+import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 
 /-!
 # Tests for the tensorization of the two-point hypercontractive inequality
@@ -20,7 +21,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.HCTensorLib`:
   `htl_lowDegreeWeight`, `htl_perCoord_hc`, `htl_summed_hc`, `htl_capped_hc`, `htl_master_open`)
   instantiated at `p = 1/2` with `H := htl_lib_half`, `ρ = 1/2` or `ρ = 1`, on `Fin 2`, `Bool`
   and the dictator `ω ↦ ω 0` on `{0, 1}^{Fin 1}`;
-* `htl_kkl_logGain_half` at the dictator;
+* `vgp2_kkl_logGain_half` at the dictator;
 * `htl_lib_rho_zero` at `p = 3/4`.
 
 The window-conditional route was removed from `HCTensorLib`: `∀ p ∈ (1/2, q), PBiasedHCLib p`
@@ -109,7 +110,7 @@ example :
         * Real.log (1 / maxInfl (bernoulliWeight (1 / 2 : ℝ))
             (fun ω => if dict1 ω then (1 : ℝ) else 0))
       ≤ totalInfl (bernoulliWeight (1 / 2 : ℝ)) (fun ω => if dict1 ω then (1 : ℝ) else 0) :=
-  htl_kkl_logGain_half dict1
+  vgp2_kkl_logGain_half dict1
 
 example (u v : ℝ) :
     ((1 - (3 / 4 : ℝ)) * u + (3 / 4) * v) ^ 2

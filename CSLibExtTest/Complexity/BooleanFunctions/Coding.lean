@@ -24,7 +24,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Coding` on `{0, 1}^Bool` with th
   the all-true configuration, of mass `1/4`;
 * `codeMap_eq_iff` for the uniform weight, where every threshold is `1/2`: the code of the point
   `u = (3/4, 3/4)` is the all-true configuration and the code of `(1/4, 3/4)` is not;
-* `stoppingTime` and `eval_determined_by_queried` for `andTree`.
+* `stoppingTime` and `eval_eq_of_agree_on_queried` for `andTree`.
 -/
 
 @[expose] public section
@@ -138,6 +138,6 @@ example : repeatTree.queried (fun _ => true) = {true} := by decide
 /-- On a configuration with `ω true = false`, `andTree` reads only `true`, so changing the value
 at `false` does not change its output. -/
 example : andTree.eval (fun _ => false) = andTree.eval (fun x => !x) :=
-  eval_determined_by_queried andTree (fun x => !x) (fun _ => false) (by decide)
+  eval_eq_of_agree_on_queried andTree (fun x => !x) (fun _ => false) (by decide)
 
 end StatMechTest.BooleanFunctions

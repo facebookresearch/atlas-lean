@@ -91,16 +91,6 @@ theorem stw_pbiasedHCLib_implies_proved_lhs {p ρ u v : ℝ} (hp0 : 0 ≤ p) (hp
     mul_nonneg (sq_nonneg ρ) (sq_nonneg (u - v)),
     mul_nonneg (mul_nonneg (sq_nonneg ρ) (by linarith [hgap] : (0:ℝ) ≤ p * (1 - p) - 4 * p ^ 2 * (1 - p) ^ 2)) (sq_nonneg (u - v))]
 
-theorem stw_kkl_logGain_half {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty ι]
-    (φ : ConfigSpace ι → Bool) :
-    2 * (OSSS.expect (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0)
-          * (1 - OSSS.expect (OSSS.bernoulliWeight (1 / 2 : ℝ))
-              (fun ω => if φ ω then (1 : ℝ) else 0)))
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ))
-            (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  htl_kkl_logGain_half φ
-
 /-- The remaining goal over a window `(1/2, q)`: definitionally
 `∀ p ∈ Ioo (1/2) q, PBiasedHCLib p`. False for `q > 9/10`
 (`dtpc_remainingGoal_false`); holds for the empty window `q ≤ 1/2`. -/

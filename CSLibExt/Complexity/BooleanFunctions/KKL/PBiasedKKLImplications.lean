@@ -24,9 +24,9 @@ library.
 
 ## Main results
 
-* `pkc_kkl_logGain_largeInfl`, `pkc_kkl_logGain_largeInfl'`: log-gain at large influence.
+* `pkc_kkl_logGain_largeInfl`: log-gain at large influence.
 * `pkc_threshold_le_exp_neg_two`, `pkc_threshold_antitone_to_one`: threshold bounds.
-* `pkc_dampingWitness_of_hard`, `pkc_rhoOptimise_of_hard`, `pkc_PBiasedHC_of_hard`,
+* `esa_dampingWitness_of_hard`, `pkc_rhoOptimise_of_hard`, `pkc_PBiasedHC_of_hard`,
   `pkc_kklHC_of_hard`, `pkc_sharpThreshold_of_hard`: the conditional chain.
 -/
 
@@ -89,15 +89,6 @@ theorem pkc_kkl_logGain_largeInfl {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
       hVpos hDpos hTnn hδnn (by nlinarith [hp0, hp1] : (0:ℝ) ≤ p * (1 - p)) hMeq
       hextVDM hDampV hLog
 
-theorem pkc_kkl_logGain_largeInfl' {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool)
-    (hδlo : Real.exp (-(1 / (2 * (p * (1 - p)))))
-      ≤ maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :
-    2 * OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  pkc_kkl_logGain_largeInfl hp0 hp1 φ hδlo
-
 /-- The threshold location is at most `exp(-2)` away from `1/2` in the
 log-max-influence scale. -/
 theorem pkc_threshold_le_exp_neg_two {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
@@ -125,9 +116,6 @@ theorem pkc_threshold_antitone_to_one {p p' : ℝ} (hp : 1 / 2 ≤ p) (hpp' : p 
     apply one_div_le_one_div_of_le h2p'
     linarith [hprod]
   linarith
-
-theorem pkc_dampingWitness_of_hard {q : ℝ} (H : esa_DampingHard q) : pen_DampingWitness q :=
-  esa_dampingWitness_of_hard H
 
 theorem pkc_rhoOptimise_of_hard {q : ℝ} (H : esa_DampingHard q) : ptn_RhoOptimise q :=
   pen_rhoOptimise_of_damping (esa_dampingWitness_of_hard H)

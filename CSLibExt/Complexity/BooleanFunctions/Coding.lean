@@ -36,7 +36,7 @@ determined by the queried coordinates.
 * `volume_codeFibre`: the volume of a code fibre equals the mass of its configuration.
 * `codeMap_eq_iff`: characterizes the fibre of the code map (inverse-transform
   decoder); it does not say the code map is injective.
-* `eval_determined_by_queried`: a decision tree's output depends only on queried coordinates.
+* `eval_eq_of_agree_on_queried`: a decision tree's output depends only on queried coordinates.
 -/
 
 
@@ -530,11 +530,6 @@ noncomputable def stoppingTime (T : DecisionTree E) (ω : ConfigSpace E) : ℕ :
 omit [Fintype E] in
 lemma stoppingTime_eq_card (T : DecisionTree E) (ω : ConfigSpace E) :
     stoppingTime T ω = (T.queried ω).card := rfl
-
-omit [Fintype E] in
-lemma eval_determined_by_queried (T : DecisionTree E) (ω ω' : ConfigSpace E)
-    (h : ∀ e ∈ T.queried ω, ω' e = ω e) : T.eval ω' = T.eval ω :=
-  eval_eq_of_agree_on_queried T ω ω' h
 
 end OSSS.Coding
 end StatMech

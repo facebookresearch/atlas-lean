@@ -36,16 +36,6 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-theorem bkt2c_truncDamped_capped [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    (φ : ConfigSpace ι → Bool) {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (k : ℕ) :
-    4 * ∑ S ∈ univ.filter (fun S : Finset ι => 2 ≤ S.card ∧ S.card ≤ k),
-        (S.card : ℝ) * (((1 - u) * (4 * p * (1 - p))) ^ (S.card - 1)
-          * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ 4 * p * (1 - p)
-        * ((maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
-          * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :=
-  bkt2_truncDamped_le hp0 hp1 φ hu0 hu1 k
-
 theorem bkt2c_weightGap_eq_target_sub_damped {p u : ℝ} (φ : ConfigSpace ι → Bool) (k : ℕ) :
     4 * ∑ S ∈ univ.filter (fun S : Finset ι => 2 ≤ S.card ∧ S.card ≤ k),
         (S.card : ℝ) * ((1 - u) ^ (S.card - 1)

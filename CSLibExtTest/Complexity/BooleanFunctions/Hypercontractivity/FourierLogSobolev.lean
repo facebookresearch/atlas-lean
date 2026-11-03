@@ -21,7 +21,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.FourierLogSob
   `-p² log p² ≤ 2p`; `fsc2_lsi_spectral` at the dictator;
 * `fsc2_coeff_noiseOp` at `ρ = 0` (only the empty coefficient survives) and `ρ = 1`;
 * the named predicate `fsc2_EntMassFamily` is proved for `AND` and for the five-bit `AND` at
-  every `p ∈ (0, 1)` (`fsc2_entMassFamily_holds`, `fsc2_residue_nonvac`);
+  every `p ∈ (0, 1)` (`fsc2_entMassFamily_holds`);
 * the damping estimate (damped mass at the threshold `exp (-1/(2p(1-p)))` at most
   `maxInfl · Var`) at the five-bit `AND` and `p = 11/20 ∈ (1/2, 1)`: all antecedents
   hold (including `fsc2_EntMassFamily`), and so does the conclusion, since the threshold
@@ -126,7 +126,8 @@ example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     fsc2_EntMassFamily p (fun ω : ConfigSpace Bool => ω true && ω false) :=
   fsc2_entMassFamily_holds hp0 hp1 _
 
-example : fsc2_EntMassFamily (11 / 20) and5 := fsc2_residue_nonvac (by norm_num) (by norm_num) and5
+example : fsc2_EntMassFamily (11 / 20) and5 :=
+  fsc2_entMassFamily_holds (by norm_num) (by norm_num) and5
 
 /-- At `p = 11/20 ∈ (1/2, 1)`, the five-bit `AND` meets all antecedents of
 the damping estimate. -/

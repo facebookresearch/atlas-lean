@@ -18,7 +18,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2Equivalences`:
 * `ctc_remainingGoal_false_of_half_lt`: `bkt2_RemainingGoal q` fails for every `q > 1/2`;
 * `bkt2c_weightGap_eq_target_sub_damped` on the one-variable dictator (both sides are empty
   sums) and on a general two-variable function, `bkt2c_gap_vanishes_at_p_half`,
-  `bkt2_weightGap_nonneg` and `bkt2c_truncDamped_capped` at concrete parameters.
+  `bkt2_weightGap_nonneg` and `bkt2_truncDamped_le` at concrete parameters.
 -/
 
 @[expose] public section
@@ -74,6 +74,6 @@ example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace (Fin 2) → Bool
         * ((maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
             ^ ((1 / 2 : ℝ) / (2 - 1 / 2))
           * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :=
-  bkt2c_truncDamped_capped hp0 hp1 φ (by norm_num) (by norm_num) 2
+  bkt2_truncDamped_le hp0 hp1 φ (by norm_num) (by norm_num) 2
 
 end StatMechTest.BooleanFunctions.BKKKLLevel2Equivalences

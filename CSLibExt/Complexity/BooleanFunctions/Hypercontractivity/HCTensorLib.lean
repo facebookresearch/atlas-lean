@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
-public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 
 @[expose] public section
 
@@ -41,10 +40,12 @@ informal cubic-term argument.
 * `htl_hypercontractivity_fin`: hypercontractivity from the two-point inequality.
 * `htl_lowDegreeWeight_fin`, `htl_perCoord_hc`, `htl_summed_hc`, `htl_capped_hc`:
   low-degree, per-coordinate, summed and capped forms.
-* `htl_kkl_logGain_half`: the KKL log-gain at `p = 1/2`, where the inequality holds.
-  The window-conditional KKL, rho-optimise and sharp-threshold consequences were
-  removed: their window hypothesis holds on no nonempty window (by the informal
-  cubic-term argument above; formally refuted only at `p = 9/10`).
+
+The unbiased KKL log-gain is `vgp2_kkl_logGain_half` in
+`CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf`. The window-conditional KKL,
+rho-optimise and sharp-threshold consequences were removed: their window hypothesis
+holds on no nonempty window (by the informal cubic-term argument above; formally
+refuted only at `p = 9/10`).
 -/
 
 open scoped BigOperators
@@ -74,10 +75,9 @@ theorem htl_cons_quadform_eq {p ρ u v : ℝ} :
       = ((1 - p) * u + p * v) ^ 2 + ρ ^ 2 * (p * (1 - p)) * (u - v) ^ 2 := by
   rw [ptn_kbit_ff, ptn_kbit_ft, ptn_kbit_tf, ptn_kbit_tt]; ring
 
-theorem htl_pbiasedHCLib_half {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (u v : ℝ) :
-    ((1 - (1 / 2 : ℝ)) * u + (1 / 2) * v) ^ 2
-        + ρ ^ 2 * ((1 / 2 : ℝ) * (1 - 1 / 2)) * (u - v) ^ 2
-      ≤ ((1 - (1 / 2 : ℝ)) * |u| ^ (1 + ρ ^ 2) + (1 / 2) * |v| ^ (1 + ρ ^ 2)) ^ (2 / (1 + ρ ^ 2)) := by
+/-- The two-point hypercontractive inequality at the unbiased parameter. -/
+theorem htl_lib_half : PBiasedHCLib (1 / 2) := by
+  intro ρ h0 h1 u v
   have hbts := bts_twoPointScalar h0 h1 ((u + v) / 2) ((u - v) / 2)
   have ha : (u + v) / 2 + (u - v) / 2 = u := by ring
   have hb : (u + v) / 2 - (u - v) / 2 = v := by ring
@@ -91,9 +91,6 @@ theorem htl_pbiasedHCLib_half {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (u v : 
   rw [hLHS]
   rw [hRHS] at hbts
   exact hbts
-
-theorem htl_lib_half : PBiasedHCLib (1 / 2) :=
-  fun _ρ h0 h1 u v => htl_pbiasedHCLib_half h0 h1 u v
 
 theorem htl_tensorStep {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (hqeq : q = 1 + ρ ^ 2) (H : PBiasedHCLib p) (n : ℕ)
@@ -371,16 +368,6 @@ theorem htl_master_open [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (H :
         mul_le_mul_of_nonneg_left hcap h4σnn
     _ ≤ 1 * (δ ^ (2 / q - 1) * T) := mul_le_mul_of_nonneg_right h4σ hRHSnn
     _ = δ ^ (u / (2 - u)) * T := by rw [one_mul, hexp]
-
-theorem htl_kkl_logGain_half {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty ι]
-    (φ : ConfigSpace ι → Bool) :
-    2 * (OSSS.expect (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0)
-          * (1 - OSSS.expect (OSSS.bernoulliWeight (1 / 2 : ℝ))
-              (fun ω => if φ ω then (1 : ℝ) else 0)))
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ))
-            (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  vgp2_kkl_logGain_half φ
 
 theorem htl_lib_rho_zero {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u v : ℝ) :
     ((1 - p) * u + p * v) ^ 2 + (0 : ℝ) ^ 2 * (p * (1 - p)) * (u - v) ^ 2

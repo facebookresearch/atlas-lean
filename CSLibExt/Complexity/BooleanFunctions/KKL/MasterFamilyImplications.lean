@@ -144,15 +144,6 @@ theorem frh_kesten_of_openResidue {q : ℝ} (H : frh_openResidue q)
     KKLHypercontractive p 2 :=
   ptn_kklHC_of_rhoOptimise (mxd_rhoOptimise_of_martingaleHC (frh_martingaleHC_of_openResidue H)) hp hp1
 
-theorem mfp_masterFamily_half [Nonempty ι] (φ : ConfigSpace ι → Bool) {u : ℝ}
-    (hu0 : 0 < u) (hu1 : u < 1) :
-    (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-        * (ptn_coeff (1 / 2 : ℝ) (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ (maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0))
-          ^ (u / (2 - u))
-        * totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  hcq_smallDelta_p_half φ hu0 hu1
-
 /-- The right-hand side `δ^{u/(2-u)} · totalInfl` of the master-family estimate is nonnegative. -/
 theorem mfp_masterFamily_rhs_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool) (u : ℝ) :

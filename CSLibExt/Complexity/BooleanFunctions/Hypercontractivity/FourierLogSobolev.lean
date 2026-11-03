@@ -17,13 +17,13 @@ public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.GlobalLSI
 
 The per-coordinate log-Sobolev inequality, Dirichlet-form Fourier identities, reindexing of
 the derivative, entropy and Dirichlet forms, the global log-Sobolev inequality and its
-spectral form, and the noise-operator version. `fsc2_EntMassFamily` holds for every `p`.
+spectral form, and the noise-operator version. `fsc2_EntMassFamily` holds for `0 < p < 1`.
 There is no residue chain here: the damping estimate that a residue would have packaged
 is not proved, so no API derives damping, rho-optimise or hypercontractivity from it.
 
 ## Main definitions
 
-* `fsc2_EntMassFamily`: the entropy-mass family predicate (holds for all `p`).
+* `fsc2_EntMassFamily`: the entropy-mass family predicate (for `0 < p < 1`).
 
 ## Main results
 
@@ -215,7 +215,7 @@ theorem fsc2_lsi_spectral_noiseOp {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (ρ : �
   ring
 
 /-- The entropy-mass family predicate: the entropy of a function is controlled by
-its degree-weighted Fourier mass. Holds for every `p` (`fsc2_entMassFamily_holds`). -/
+its degree-weighted Fourier mass. Holds for `0 < p < 1` (`fsc2_entMassFamily_holds`). -/
 def fsc2_EntMassFamily {E : Type} [Fintype E] [DecidableEq E] (p : ℝ) (φ : ConfigSpace E → Bool) : Prop :=
   ∀ ρ : ℝ, 0 ≤ ρ → ρ ≤ 1 →
     esd_ent (OSSS.bernoulliWeight p)
@@ -227,10 +227,5 @@ theorem fsc2_entMassFamily_holds {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     {E : Type} [Fintype E] [DecidableEq E] (φ : ConfigSpace E → Bool) :
     fsc2_EntMassFamily p φ :=
   fun ρ _ _ => fsc2_lsi_spectral_noiseOp hp0 hp1 ρ (fun ω => if φ ω then (1 : ℝ) else 0)
-
-theorem fsc2_residue_nonvac {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    {E : Type} [Fintype E] [DecidableEq E] (φ : ConfigSpace E → Bool) :
-    fsc2_EntMassFamily p φ :=
-  fsc2_entMassFamily_holds hp0 hp1 φ
 
 end StatMech.Probability
