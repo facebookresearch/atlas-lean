@@ -91,13 +91,17 @@ PIN_FILES = ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
 # is deliberately NOT in this list: it is data, and a same-pin PR may
 # extend it monotonically (add a dependency at the current pin) so the
 # config stays in sync with the lakefile. Monotonic extension is checked
-# separately by check_config_extension: it can never remove or change an
-# existing entry except to drop entries that mention a removed dependency.
+# separately by check_config_extension: dependencies may only be added,
+# never removed or repointed.
+# The test module is deliberately NOT in this list either: adding a
+# dependency requires updating its hardcoded fixtures in the same PR.
+# Tests are not enforcement: the guard run executes base code, and a PR
+# that weakens its own tests still faces the guard's independent pin
+# validation plus normal review.
 GUARD_FILES = (
     ".github/workflows/bump-guard.yml",
     ".github/workflows/bump-pinned-release.yml",
     "scripts/bump/pinned_bump.py",
-    "scripts/bump/test_pinned_bump.py",
 )
 CONFIG_FILE = "scripts/bump/pinned_deps.json"
 
@@ -182,11 +186,14 @@ def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
     """Validate that a PR's config only extends the base config.
 
     Allowed: adding a dependency at the current pin (name + repo), adding
-    doc/pin-policy replacements, adding migration ledgers, and dropping
-    entries that mention a removed dependency. Never allowed: changing
-    the toolchain repo, repointing an existing dependency at another
-    repo, or removing/changing an entry that does not mention a removed
-    dependency (that could silently weaken future bump validation).
+    doc/pin-policy replacements, adding migration ledgers. Never allowed:
+    changing the toolchain repo, repointing an existing dependency at
+    another repo, removing a dependency, or removing/changing an entry
+    (that could silently weaken future bump validation). Dependency
+    removal has no guarded path here: it needs a guard-code change with
+    its own review first, so a same-pin PR can never silently drop a
+    pinned dependency. The removed-dep carve-outs below only keep the
+    failure message focused on the removal itself.
     A config change in a bump PR is rejected separately by cmd_guard:
     extension must land in a same-pin PR first.
     """
@@ -200,6 +207,11 @@ def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
     if len(pr_deps) != len(pr_config.get("deps", [])):
         problems.append("pinned_deps.json: duplicate dependency names")
     removed_deps = set(base_deps) - set(pr_deps)
+    if removed_deps:
+        problems.append(
+            "pinned_deps.json: dependencies removed "
+            f"({sorted(removed_deps)}); the config may only gain deps, never drop one"
+        )
     for name, dep in base_deps.items():
         if name in pr_deps and pr_deps[name] != dep:
             problems.append(

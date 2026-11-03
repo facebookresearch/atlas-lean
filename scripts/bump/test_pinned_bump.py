@@ -369,7 +369,7 @@ class GuardTests(unittest.TestCase):
                    same_pin=False, add_dep=False, add_dep_no_config=False, config_tamper=None,
                    changed_only_config=False, config_add_doc=False,
                    config_add_dep_only=False, changed_guard_only=False,
-                   manifest_rev_tamper=False):
+                   manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -417,9 +417,12 @@ class GuardTests(unittest.TestCase):
             if config_add_dep_only:
                 pr_config["deps"].append(
                     {"name": "Physlib", "repo": "leanprover-community/physlib"})
-            if config_tamper == "remove_dep":
+            if config_tamper == "remove_dep" or remove_dep:
                 pr_config["deps"] = [
                     d for d in pr_config["deps"] if d["name"] != "cslib"]
+                pr_config["pin_policy"]["replacements"] = [
+                    r for r in pr_config["pin_policy"]["replacements"]
+                    if "cslib" not in json.dumps(r)]
             elif config_tamper == "repoint_dep":
                 for d in pr_config["deps"]:
                     if d["name"] == "mathlib":
@@ -464,6 +467,15 @@ class GuardTests(unittest.TestCase):
                     lakefile.read_text()
                     + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
+            if remove_dep:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(lakefile.read_text().replace(
+                    '\n[[require]]\nname = "cslib"\nrev = "v4.35.0"', ""))
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                manifest["packages"] = [
+                    pkg for pkg in manifest["packages"] if pkg["name"] != "cslib"]
+                manifest_path.write_text(json.dumps(manifest, indent=1))
             if manifest_rev_tamper:
                 manifest_path = pr / "lake-manifest.json"
                 manifest = json.loads(manifest_path.read_text())
@@ -566,13 +578,17 @@ class GuardTests(unittest.TestCase):
             changed = Path(tmp) / "changed.txt"
             if changed_guard_only:
                 changed_lines = ["scripts/bump/pinned_bump.py"]
+                if changed_guard_test:
+                    changed_lines.append("scripts/bump/test_pinned_bump.py")
             elif changed_only_config:
                 changed_lines = ["scripts/bump/pinned_deps.json"]
             else:
                 changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
                 if add_dep or config_tamper is not None or config_add_doc \
-                        or config_add_dep_only:
+                        or config_add_dep_only or remove_dep:
                     changed_lines.append("scripts/bump/pinned_deps.json")
+                if changed_guard_test:
+                    changed_lines.append("scripts/bump/test_pinned_bump.py")
             changed.write_text("\n".join(changed_lines) + "\n")
             import pinned_bump as module
             real_github = module.GitHub
@@ -684,6 +700,18 @@ class GuardTests(unittest.TestCase):
         # Guard-code-only PRs get normal review; they must not fail
         # their own guard run.
         self.assertEqual(self._run_guard(changed_guard_only=True), 0)
+
+    def test_guard_fails_dependency_removal(self):
+        # Codex P1: removing a dep from config, lakefile, manifest, and
+        # pin-policy replacements must fail the monotone-additions policy.
+        self.assertEqual(self._run_guard(same_pin=True, remove_dep=True), 1)
+
+    def test_guard_passes_same_pin_addition_with_test_update(self):
+        # Codex P1: a dep addition that also updates the test fixtures
+        # must pass; the test module is not guard code.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True,
+                            changed_guard_test=True), 0)
 
     def test_guard_fails_config_only_dep_without_lakefile(self):
         # A config-only dependency addition without the lakefile half
