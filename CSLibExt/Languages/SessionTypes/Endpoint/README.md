@@ -54,12 +54,16 @@ port of their full calculi.
   cursors. Every graph edge follows a communication node; no silent recursive
   edge exists. Unfolding is total and duality reverses the subject and its
   continuation while retaining the payload capability's orientation.
-* **Current typing, balance and payload checks use syntactic protocol equality.**
-  Guarded unfolding/duality has been proved, but syntactic graph/cursor identity
-  is not full equi-recursive regular-tree equivalence. A protocol equal to the
-  advertised payload only up to unfolding is not yet accepted by the current
-  judgement. Semantic regular-tree type equivalence and its use in typing,
-  delegated payload checks and balance remain unproved here.
+* **The original typing, balance and payload checks still use syntactic protocol equality.**
+  `Protocol.TreeEquiv` gives actual guarded regular-tree equivalence through
+  canonical CSLib strong bisimilarity over a type-observation LTS. Its labels
+  distinguish input/output, endpoint role/rank and payload/continuation branches.
+  It equates different graph presentations and finite/graph presentations of
+  the same tree, with exact head characterization and duality laws. This LTS
+  observes type codes only; it is not another process execution calculus.
+  Conversion-enabled typing, balance and payload checks are a separate layer;
+  the original syntactic checks have not silently become semantic checks.
+  Actual recursive process preservation/progress is not claimed.
 * `GuardMin` orders every other active owned key after a guard using natural
   numbers. Repeated use of the **same endpoint key** is exempt; its **opposite
   role** is not exempt even when the physical name is identical. An active
@@ -72,6 +76,134 @@ port of their full calculi.
   implement recursive processes. Recursive services must separately justify
   actual `repl_unfold`, no captured linear capabilities and a syntactic offered
   trigger invariant.
+
+## Semantic regular-tree equality boundary
+
+Honda, Vasconcelos and Kubo's Definition 5.1 regards recursive types as regular
+trees and defines equality through that representation, rather than recursive
+syntax identity. `Protocol.TreeEquiv` implements this convention for our
+existing guarded finite graph codes. The canonical substrate is CSLib's
+`LTS.HomBisimilarity`, with checked head/branch correspondence as the proof
+interface. No new axiom or graph-pointer equality defines the relation.
+
+The annotation extension is project-specific: endpoint payload role and
+natural rank must match literally, while payload protocol and continuation
+protocol are compared as separate trees. Subject duality flips direction and
+only dualizes the continuation; the payload's independent orientation and
+role/rank metadata are preserved. These unary payloads, annotations and
+finite graph cursor representation are not a claimed literal port of the
+source's richer sort, choice and recursive syntax. Semantic equivalence is
+proved independently of the unchanged syntactic typing judgements. The
+`Conversion.HasType` layer below adds semantic payload comparison and
+full canonical congruence invariance and reduction preservation at initially
+semantically compatible interfaces. Ranked conversion progress
+is also proved; actual recursive process runtime remains unfinished.
+
+## Conversion typing and safety
+
+`Conversion.HasType` has seven syntax-directed rules over the existing raw
+`Context`, `Capability` and canonical π syntax. It reads actual unfolded heads,
+retains disjoint parallel ownership and exact dual-pair restriction binding,
+and requires actual completion at nil. Endpoint output permits regular-tree
+equivalence between the advertised payload and the actual owned slot, but
+keeps the slot's role and capability rank literal. Input installs the code
+advertised by its head. `Capability.Equivalent` separately requires equal
+capability ranks; protocol equivalence does not imply that equality.
+`Conversion.Compatible` compares actual peer ranks and dual protocol trees.
+
+`Conversion.HasType.of_raw` is a proved seven-rule embedding, not inheritance
+of the old substitution or progress theorems. `Conversion.one_action_tail`
+proves local conversion for a one-send/completed-tail receiver. Tests transfer
+an owned graph code equivalent but unequal to the advertised finite code,
+retain its raw value and rank, and use the received name as a subject in an
+actual second canonical Step with a third thread. Both payload orientations,
+raw rejection at the same interface, and wrong role/rank/tree/peer cases are
+checked. The general preservation theorems also consume congruence-framed
+transfer and received-subject Steps, including actual nested restrictions.
+
+`Conversion.HasType.retype` transports arbitrary seven-rule derivations
+across `ContextEquivalent` at the same process and ambient depth, in both
+directions. Matching lookups retain the exact domain and capability ranks,
+while protocol codes may change by tree equivalence. The target parallel split
+is derived by filtering actual target bindings to the source child domains;
+it is not a caller premise. Lift, bind, completion, scope and semantic peer
+compatibility are preserved.
+
+`Conversion.HasType.rename`, `lift` and `swap` have separate seven-rule
+transport proofs, using canonical key/name equations rather than applying raw
+typing theorems to the new judgement. General endpoint substitution retypes
+only the expected received capability and then transports its physical name;
+it inserts the actual owned payload code and rank. Split ownership derives
+freshness for the exact key and permits its opposite-role physical alias.
+Passive substitution adds no capability.
+
+For an initially semantically compatible disjoint typed interface, literal
+passive/endpoint head preservation returns typed residuals at exactly two
+subject insertions. The receiver's actual continuation code is
+retained, with semantic dual-tail equivalence rather than syntactic equality.
+Both payload branches, roles and ranks are exposed. Tests use unequal sender
+and receiver codes and refute the old literal peer-lookup premise at that
+semantic source, so the raw `DualAdvance` relation is not silently reused.
+
+`Conversion.HasType.cong_iff` preserves the exact context and depth across
+all sixteen canonical Cong constructors. Completed-resource weakening and
+absence-based erasure support both scope directions; completion is actual
+unfolded done, not literal code equality. The unchanged seven-rule judgement
+still excludes choice and replication by derived finite syntax.
+
+`Conversion.SemanticAdvance` records actual old sender/peer lookups, literal
+capability-rank agreement, semantic duality and actual matching send/receive
+heads. Payload branches are independently equivalent. The target is exactly
+two insertions with the actual sender and receiver continuation codes. It
+preserves domain, ranks, scope and frames. An initially semantically compatible
+interface retains compatibility; an initially semantically balanced interface
+retains balance.
+It has no process, Step, typing or progress fields and does not require an
+externally owned payload slot: the payload may be private behind a binder.
+
+`Conversion.HasType.subject_reduction` takes typing and initial semantic
+compatibility and covers all five canonical Step constructors. Its residual
+is typed and compatible at the unchanged map or one exact semantic advance.
+The balanced corollary supplies compatibility from `Conversion.Balanced`.
+Private projection distinguishes an internal chosen pair from an external
+advance with unchanged private pair. Original literal duality of the chosen
+private pair forces literal continuation duality; semantic source duality
+alone cannot justify the raw `DualAdvance` peer premise. Empty-interface and
+finite-reachability safety corollaries retain exact empty ownership, not a
+progress, termination or fair-liveness claim.
+
+`Conversion.RankedType` mirrors all seven conversion rules, adding the same
+static `GuardMin` check to each input/output. The actual active payload is
+checked before transfer; same-name opposite roles count as other keys, and
+only an actual unfolded terminal is ignored. Erasure to conversion typing
+and the raw-ranked bridge are explicit seven-case proofs, not inherited
+preservation theorems. General equivalent-context retyping derives domain,
+cap-rank and active/terminal invariance and retains every guard.
+
+New ranked proofs cover name transport, actual-value substitution, completed
+resources, bidirectional scope, all sixteen Cong cases and all five Step
+cases. Ranked reduction requires initial semantic compatibility and returns
+the same faithful actual-code `SemanticAdvance`, including exact private
+projection, frames and semantic balance.
+
+`Conversion.RankedType.progress_balanced` proves genuine global progress at
+arbitrary passive-name depth and semantic-balanced interfaces, including
+disconnected networks. It derives normalization internally, selects among
+all active owned keys, proves the equal-rank semantic peer belongs to a
+different guard leaf, and derives an actual canonical Step or process
+congruence to nil. It assumes no caller frontier, ready pair, normal form,
+Step or consistent raw representative. Empty-interface and finite-reachable
+progress use the new full ranked preservation theorem.
+
+Consumers have different advertised/owned/peer codes with carrier5/payload11,
+explicit guard proofs, actual delegation and received-subject steps, nested
+private scope/swap, disconnected completed frames, and a genuinely sequential
+central actor on rank2 then rank4. Cyclic waits and same-physical opposite-role
+self-waits are rejected by the unchanged static rank discipline.
+
+Actual recursive processes/shared services, recursive preservation and
+qualified recursive progress remain open. Regular type graphs do not make
+these finite π processes recursive, and no termination or fairness is claimed.
 
 ## Proof lineage and integration
 
@@ -112,7 +244,7 @@ canonical synchronous one-name π binders with role keys, static natural ranks,
 the same-key reuse exemption, passive-name actions and the existing finite
 protocol/ownership representation. In particular, the source's action-level
 priority discipline and two-endpoint restriction syntax are not identified
-with this refinement. `RankedType.cong_iff` now preserves the refinement under
+with this refinement. `RankedType.cong_iff` preserves the refinement under
 all canonical congruences, including completed-role scope reallocation and
 all four roles in nested restriction swapping. For an initially compatible
 interface (`Compatible Δ`), `RankedType.subject_reduction` preserves this
@@ -129,7 +261,7 @@ disconnected networks. A derived normalization
 (`RankedType.frontier_normal`) exposes every unguarded restriction in an outer
 binder tower around a parallel input/output frontier, retaining ranked typing
 and exact ownership. Its frontier predicates contain syntax only, not an
-enabled-pair or progress witness. `GuardFrontier.progress` now proves that ANY
+enabled-pair or progress witness. `GuardFrontier.progress` proves that ANY
 balanced ranked guard frontier is congruent to nil or has an actual canonical
 Step. Its minimum ranges over all active owned roles; opposite same-rank keys
 are derived to be distinct guard leaves. It admits disconnected frontiers too.
@@ -163,7 +295,8 @@ The current seven-rule `HasType` has full canonical `Cong` typing invariance
 swap. Choice and replication are excluded by a property derived from this
 judgement; congruence for a future recursive-service judgement remains open.
 Faithful head results record the actual send head, payload kind and continuation;
-dual subject advancement preserves compatibility, balance and the key domain.
+dual subject advancement preserves the key domain, initial compatibility and
+initial balance.
 `HasType.subject_reduction` requires a typed source and an initially compatible
 interface (`Compatible Δ`). For every canonical `Step`, it returns a typed
 residual with a compatible interface, unchanged or advanced by one actual
@@ -185,10 +318,9 @@ The following are **not established by those prerequisites**:
    of the current finite-process judgement.
 2. Finite termination or fair eventual completion. The proved completion branch
    is `Cong p nil`, with an actual Step otherwise; it is not a scheduler theorem.
-3. Full equi-recursive regular-tree type conversion and its use in delegated
-   payload/balance checks.
-4. Guarded recursive process representation in existing π replication/trigger
-   code, recursive subject reduction and qualified one-step progress.
+3. Guarded recursive process/shared-service representation in existing π
+   replication/trigger code, no captured linear resources, recursive subject
+   reduction and qualified recursive progress.
 
 No progress premise contains an enabled-edge witness or a preproved progress
 field. No fair eventual liveness or recursive termination is claimed. Logical
