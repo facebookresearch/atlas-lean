@@ -8,24 +8,35 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Cslib.Algorithms.Lean.TimeM
+
 @[expose] public section
 
 namespace CSLibExt.Cost
 
 /-!
-# Cost monad (Week 2 skeleton, 90-day plan #1 COST)
+# Resource annotations via CSLib's `TimeM`
 
-The single cost-accounting monad all verified algorithms will use:
-time steps, space cells, peak memory. Adequacy to word-RAM is a
-Weeks 3–4 deliverable (statement lives in `Cost/Adequacy.lean`, L0 until
-proved). This is NOT a complexity class, a TM model, or a replacement for
-`TimeM` (whose `time` field is unverified).
+Time and cumulative space annotations add under sequential composition.
+Supplied peak-memory annotations combine by maximum, not by addition.
+These annotations are trusted: no theorem here relates them to hardware
+execution time, retained allocations, or a word-RAM operational semantics.
 
-Assurance: definitions + examples below are kernel-checked standalone
-under Lean v4.35.0. No `sorry`, no axioms beyond Lean core.
+## CSLib reuse and portability
+
+The pinned `Cslib.Algorithms.Lean.TimeM` already supplies a polymorphic
+carrier and the standard monad API. `CostM` specializes it to `Cost`, whose
+addition has the laws needed by the inherited `LawfulMonad` instance.
+The legacy `value`, `cost`, `mk`, `pure`, and `bind` names are compatibility
+entry points; new clients can use `ret`, `time`, and standard do notation.
+Record literals and updates use the upstream field names `ret` and `time`.
+No separate computation carrier or conversion is needed to use CSLib APIs.
 -/
 
-/-- Cost accounting: time steps, space cells, peak memory. All `Nat`. -/
+-- Preserve the existing public `CSLibExt.Cost.Cost` namespace.
+set_option linter.dupNamespace false
+
+/-- Trusted time, cumulative space, and peak-memory annotations. -/
 structure Cost where
   time : Nat
   space : Nat
@@ -35,33 +46,69 @@ structure Cost where
 /-- Zero cost. -/
 def Cost.zero : Cost := ⟨0, 0, 0⟩
 
-/-- Sequential composition: costs add componentwise. -/
+/-- Add time and cumulative space; take the maximum supplied memory. -/
 def Cost.add (c₁ c₂ : Cost) : Cost :=
   ⟨c₁.time + c₂.time, c₁.space + c₂.space, max c₁.memory c₂.memory⟩
 
-/-- The cost monad: a value plus the cost of producing it. -/
-structure CostM (α : Type) where
-  value : α
-  cost : Cost
+/-- `Cost.add` is associative. -/
+theorem Cost.add_assoc (a b c : Cost) :
+    (a.add b).add c = a.add (b.add c) := by
+  cases a; cases b; cases c
+  simp only [Cost.add, Nat.add_assoc, Nat.max_assoc]
 
-/-- Pure: no cost. -/
-def CostM.pure {α : Type} (a : α) : CostM α := ⟨a, Cost.zero⟩
+/-- `Cost.add` is commutative. -/
+theorem Cost.add_comm (a b : Cost) : a.add b = b.add a := by
+  cases a; cases b
+  simp only [Cost.add, Nat.add_comm, Nat.max_comm]
 
-/-- Sequential composition: run `x`, then `f` on its value, adding costs. -/
-def CostM.bind {α β : Type} (x : CostM α) (f : α → CostM β) : CostM β :=
-  let y := f x.value
-  ⟨y.value, x.cost.add y.cost⟩
+/-- `Cost.zero` is a left identity for `Cost.add`. -/
+theorem Cost.zero_add (c : Cost) : Cost.zero.add c = c := by
+  cases c
+  simp [Cost.zero, Cost.add]
 
-/-- Charge `c` to a computation. -/
-def CostM.charge {α : Type} (c : Cost) (x : CostM α) : CostM α :=
-  ⟨x.value, c.add x.cost⟩
+/-- `Cost.zero` is a right identity for `Cost.add`. -/
+theorem Cost.add_zero (c : Cost) : c.add Cost.zero = c := by
+  cases c
+  simp [Cost.zero, Cost.add]
 
-/-- Worked example: charging 3 time steps, then 2 more, costs 5. -/
-example :
-    (CostM.charge ⟨3, 0, 0⟩
-      (CostM.charge ⟨2, 0, 0⟩ (CostM.pure 1))).cost.time = 5 := rfl
+instance : AddZero Cost where
+  zero := Cost.zero
+  add := Cost.add
 
-/-- Worked example: `Cost.add` is commutative on time. -/
-example (c₁ c₂ : Cost) : (c₁.add c₂).time = (c₂.add c₁).time := Nat.add_comm _ _
+/-- Resource annotations form a commutative additive monoid. -/
+instance : AddCommMonoid Cost where
+  add_assoc := Cost.add_assoc
+  zero_add := Cost.zero_add
+  add_zero := Cost.add_zero
+  add_comm := Cost.add_comm
+  nsmul := nsmulRec
+
+open Cslib.Algorithms.Lean (TimeM)
+
+universe u v
+
+/-- CSLib's polymorphic computation carrier with resource annotations. -/
+abbrev CostM (α : Type u) := TimeM Cost α
+
+/-- Legacy constructor; record literals use upstream `ret` and `time`. -/
+abbrev CostM.mk {α : Type u} (value : α) (cost : Cost) : CostM α :=
+  ⟨value, cost⟩
+
+/-- Legacy observation of the return value (`TimeM.ret`). -/
+abbrev CostM.value {α : Type u} (x : CostM α) : α := x.ret
+
+/-- Legacy observation of the resource annotation (`TimeM.time`). -/
+abbrev CostM.cost {α : Type u} (x : CostM α) : Cost := x.time
+
+/-- Legacy zero-cost entry point; prefer standard `pure` in new clients. -/
+abbrev CostM.pure {α : Type u} (a : α) : CostM α := TimeM.pure a
+
+/-- Legacy sequential composition; prefer `>>=` in new clients. -/
+abbrev CostM.bind {α : Type u} {β : Type v}
+    (x : CostM α) (f : α → CostM β) : CostM β := TimeM.bind x f
+
+/-- Charge `c` before a computation, using CSLib's tick and bind. -/
+def CostM.charge {α : Type u} (c : Cost) (x : CostM α) : CostM α :=
+  TimeM.tick c >>= fun _ => x
 
 end CSLibExt.Cost
