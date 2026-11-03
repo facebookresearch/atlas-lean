@@ -42,7 +42,7 @@ namespace QuadraticFormNormFormAux
 
 variable {K : Type} [Field K] (a b : K)
 
-private theorem quat_of_tern (_ha : a ≠ 0) (_hb : b ≠ 0)
+private theorem quat_of_tern
     (h : ∀ z x y : K, z ^ 2 - a * x ^ 2 - b * y ^ 2 = 0 → z = 0 ∧ x = 0 ∧ y = 0)
     (x₀ x₁ x₂ x₃ : K) (hq : x₀ ^ 2 - a * x₁ ^ 2 - b * x₂ ^ 2 + a * b * x₃ ^ 2 = 0) :
     x₀ = 0 ∧ x₁ = 0 ∧ x₂ = 0 ∧ x₃ = 0 := by
@@ -84,19 +84,20 @@ namespace QuadraticForm
 
 /-- The quaternary norm form `x₀² - a·x₁² - b·x₂² + a·b·x₃²` of the
 quaternion algebra `ℍ[K, a, b]` is anisotropic if and only if the ternary
-form `z² - a·x² - b·y²` is.
+form `z² - a·x² - b·y²` is. This equivalence also holds when either parameter
+is zero; both forms are then isotropic.
 
 This is the standard reduction of quaternion-algebra isotropy to a ternary
 quadratic form. It is used to test whether a quaternion algebra is a
 division algebra, in quadratic-form theory (anisotropy of Pfister forms),
 and in local-global arguments for quaternion algebras. -/
 theorem forall_quaternary_normForm_eq_zero_iff_forall_ternary_eq_zero (K : Type)
-    [Field K] (a b : K) (ha : a ≠ 0) (hb : b ≠ 0) :
+    [Field K] (a b : K) :
     (∀ x₀ x₁ x₂ x₃ : K, x₀ ^ 2 - a * x₁ ^ 2 - b * x₂ ^ 2 + a * b * x₃ ^ 2 = 0 →
         x₀ = 0 ∧ x₁ = 0 ∧ x₂ = 0 ∧ x₃ = 0) ↔
       ∀ z x y : K, z ^ 2 - a * x ^ 2 - b * y ^ 2 = 0 → z = 0 ∧ x = 0 ∧ y = 0 :=
   ⟨fun h z x y ht => QuadraticFormNormFormAux.tern_of_quat a b h z x y ht,
    fun h x₀ x₁ x₂ x₃ hq =>
-    QuadraticFormNormFormAux.quat_of_tern a b ha hb h x₀ x₁ x₂ x₃ hq⟩
+    QuadraticFormNormFormAux.quat_of_tern a b h x₀ x₁ x₂ x₃ hq⟩
 
 end QuadraticForm
