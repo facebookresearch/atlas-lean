@@ -72,6 +72,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import copy
 import difflib
 import hashlib
@@ -79,6 +80,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tomllib
@@ -1430,9 +1432,53 @@ def _validate_pattern_syntax(pattern: str) -> list[str]:
     return problems
 
 
+class _RegexTimeout(TimeoutError):
+    """Regex simulation exceeded its time budget (possible ReDoS)."""
+
+
+@contextlib.contextmanager
+def _regex_timeout(seconds: float):
+    """Bound PR-controlled regex execution with SIGALRM.
+
+    Python's backtracking engine has no per-match timeout, so a
+    catastrophic pattern (e.g. (a+)+$) would otherwise occupy the
+    trusted pull_request_target runner until the workflow timeout.
+    The alarm is set only around pure regex simulation (SHAs are
+    resolved beforehand, so no network call is interrupted). On
+    platforms without setitimer, or outside the main thread, the
+    context manager is a no-op (caps still apply).
+    """
+    if seconds <= 0 or not hasattr(signal, "setitimer"):
+        yield
+        return
+
+    def handler(signum: int, frame) -> None:
+        raise _RegexTimeout(f"regex simulation exceeded {seconds}s budget")
+
+    try:
+        old_handler = signal.signal(signal.SIGALRM, handler)
+    except (ValueError, RuntimeError, OSError):
+        yield
+        return
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        try:
+            signal.signal(signal.SIGALRM, old_handler)
+        except (ValueError, RuntimeError, OSError):
+            pass
+
+
 def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
     """Per-entry static checks: supported syntax, placeholders, and literals."""
     problems: list[str] = []
+    if len(entry["pattern"]) > 1000:
+        problems.append(
+            f"replacement pattern is {len(entry['pattern'])} chars, over the 1000-char cap"
+        )
+        return problems
     problems.extend(_validate_replacement_literals(entry))
     try:
         groups = re.compile(entry["pattern"]).groups
@@ -1464,6 +1510,12 @@ def _simulate_file_rules(
     for entry in entries:
         for problem in _static_rule_problems(entry, dep_names):
             problems.append(f"{label}: {problem}")
+    if len(original) > 1_000_000:
+        problems.append(
+            f"{label}: file is {len(original)} chars, over the 1,000,000-char "
+            "rule-simulation cap; split the file or shorten the rules"
+        )
+        return problems
     text = original
     for target, shas in transitions:
         bump_input = text
@@ -1497,6 +1549,7 @@ def _simulate_file_rules(
 
 def validate_replacement_rules(
     base_config: dict, pr_config: dict, pr: Path, tag: str, client: GitHub,
+    timeout_s: float = 10.0,
 ) -> list[str]:
     """Validate replacement rules against the PR tree, now and forward.
 
@@ -1516,6 +1569,14 @@ def validate_replacement_rules(
     """
     problems: list[str] = []
     dep_names = {d["name"] for d in pr_config["deps"]}
+    rule_count = len(pr_config.get("doc_replacements", [])) + len(
+        (pr_config.get("pin_policy") or {}).get("replacements", [])
+    )
+    if rule_count > 64:
+        problems.append(
+            f"replacement rules total {rule_count}, over the 64-rule cap"
+        )
+        return problems
     shas, problems = _resolve_shas(client, pr_config["deps"], tag)
     if problems:
         return problems
@@ -1536,37 +1597,48 @@ def validate_replacement_rules(
     by_path: dict[str, list[dict]] = {}
     for entry in pr_config.get("doc_replacements", []):
         by_path.setdefault(entry["path"], []).append(entry)
-    for path in sorted(by_path):
-        file = pr / path
-        if not file.is_file():
-            problems.append(
-                f"doc replacements target {path!r}, which is not in the PR tree"
-            )
-            continue
-        problems.extend(_simulate_file_rules(
-            by_path[path], base_by_path.get(path, []),
-            file.read_text(encoding="utf-8"), transitions, dep_names,
-            f"doc replacements for {path}",
-        ))
-    base_pp = base_config.get("pin_policy") or {}
-    pr_pp = pr_config.get("pin_policy") or {}
-    if pr_pp:
-        file = pr / pr_pp["path"]
-        if not file.is_file():
-            problems.append(
-                f"pin-policy file {pr_pp['path']!r} is not in the PR tree"
-            )
-        else:
-            problems.extend(_simulate_file_rules(
-                pr_pp.get("replacements", []), base_pp.get("replacements", []),
-                file.read_text(encoding="utf-8"), transitions, dep_names,
-                "pin-policy replacements",
-            ))
+    # SHAs are resolved above, so the alarm below covers pure regex
+    # simulation only; a catastrophic PR pattern raises _RegexTimeout
+    # instead of occupying the runner until the workflow timeout.
+    # _simulate_file_rules lets it propagate: the context manager
+    # clears the timer, and the catch here turns it into a problem.
+    try:
+        with _regex_timeout(timeout_s):
+            for path in sorted(by_path):
+                file = pr / path
+                if not file.is_file():
+                    problems.append(
+                        f"doc replacements target {path!r}, which is not in the PR tree"
+                    )
+                    continue
+                problems.extend(_simulate_file_rules(
+                    by_path[path], base_by_path.get(path, []),
+                    file.read_text(encoding="utf-8"), transitions, dep_names,
+                    f"doc replacements for {path}",
+                ))
+            base_pp = base_config.get("pin_policy") or {}
+            pr_pp = pr_config.get("pin_policy") or {}
+            if pr_pp:
+                file = pr / pr_pp["path"]
+                if not file.is_file():
+                    problems.append(
+                        f"pin-policy file {pr_pp['path']!r} is not in the PR tree"
+                    )
+                else:
+                    problems.extend(_simulate_file_rules(
+                        pr_pp.get("replacements", []), base_pp.get("replacements", []),
+                        file.read_text(encoding="utf-8"), transitions, dep_names,
+                        "pin-policy replacements",
+                    ))
+    except _RegexTimeout as exc:
+        problems.append(f"replacement-rule simulation timed out: {exc}; "
+                        "a replacement pattern may be catastrophically slow")
     return problems
 
 
 def repairable_rule_patterns(
     base_config: dict, base: Path, tag: str, client: GitHub,
+    timeout_s: float = 10.0,
 ) -> set[str]:
     """Patterns of base rules demonstrably broken at the next bump.
 
@@ -1597,21 +1669,31 @@ def repairable_rule_patterns(
     by_path: dict[str, list[dict]] = {}
     for entry in base_config.get("doc_replacements", []):
         by_path.setdefault(entry["path"], []).append(entry)
-    for path, entries in by_path.items():
-        file = base / path
-        if not file.is_file():
-            continue
-        repairable |= _failing_rule_patterns(
-            entries, file.read_text(encoding="utf-8"), transitions, dep_names
-        )
-    base_pp = base_config.get("pin_policy") or {}
-    if base_pp:
-        file = base / base_pp["path"]
-        if file.is_file():
+    # A catastrophic base pattern raises _RegexTimeout to the guard,
+    # which fails closed; no removal is allowed without attribution.
+    # Oversize files are skipped here (validation fails the PR for
+    # them via the simulation cap).
+    with _regex_timeout(timeout_s):
+        for path, entries in by_path.items():
+            file = base / path
+            if not file.is_file():
+                continue
+            text = file.read_text(encoding="utf-8")
+            if len(text) > 1_000_000:
+                continue
             repairable |= _failing_rule_patterns(
-                base_pp.get("replacements", []),
-                file.read_text(encoding="utf-8"), transitions, dep_names,
+                entries, text, transitions, dep_names
             )
+        base_pp = base_config.get("pin_policy") or {}
+        if base_pp:
+            file = base / base_pp["path"]
+            if file.is_file():
+                text = file.read_text(encoding="utf-8")
+                if len(text) <= 1_000_000:
+                    repairable |= _failing_rule_patterns(
+                        base_pp.get("replacements", []),
+                        text, transitions, dep_names,
+                    )
     return repairable
 
 
@@ -2688,9 +2770,13 @@ def cmd_guard(args: argparse.Namespace) -> int:
         except ValueError:
             early_tag = None  # tag errors surface again below
         if early_tag is not None:
-            repairable = frozenset(
-                repairable_rule_patterns(base_config, base, early_tag, client)
-            )
+            try:
+                repairable = frozenset(
+                    repairable_rule_patterns(base_config, base, early_tag, client)
+                )
+            except _RegexTimeout as exc:
+                print(f"guard: FAIL - base replacement-rule simulation timed out: {exc}")
+                return 1
         problems.extend(
             check_config_extension(base_config, pr_config, repairable)
         )

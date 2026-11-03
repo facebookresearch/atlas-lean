@@ -983,6 +983,51 @@ class GuardTests(unittest.TestCase):
                 entry = {"pattern": pattern, "replacement": "{g0}"}
                 self.assertEqual(pinned_bump._static_rule_problems(entry, set()), [])
 
+    def test_catastrophic_pattern_times_out(self):
+        # Codex ReDoS P1: (a+)+$ on 30 a's + X exceeds 3s unguarded;
+        # the 1s simulation budget must fail it in ~1s, not hang.
+        import time
+        pr_config = json.loads(json.dumps(CONFIG))
+        pr_config["doc_replacements"].append(
+            {"path": "FRESH.md", "pattern": r"(a+)+$", "replacement": "{g0}"})
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "FRESH.md").write_text("a" * 30 + "X\n")
+            start = time.monotonic()
+            problems = pinned_bump.validate_replacement_rules(
+                CONFIG, pr_config, tree, "v4.35.0",
+                FakeGitHub(tags={"v4.35.0": SHAS}), timeout_s=1.0)
+            self.assertLess(time.monotonic() - start, 5.0)
+        self.assertTrue(any("timed out" in p for p in problems), problems)
+
+    def test_repairable_catastrophic_pattern_raises(self):
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"].append(
+            {"path": "FRESH.md", "pattern": r"(a+)+$", "replacement": "{g0}"})
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "FRESH.md").write_text("a" * 30 + "X\n")
+            with self.assertRaises(pinned_bump._RegexTimeout):
+                pinned_bump.repairable_rule_patterns(
+                    base, tree, "v4.35.0",
+                    FakeGitHub(tags={"v4.35.0": SHAS}), timeout_s=1.0)
+
+    def test_regex_caps(self):
+        self.assertTrue(any(
+            "1000-char cap" in p for p in pinned_bump._static_rule_problems(
+                {"pattern": "a" * 1001, "replacement": "{g0}"}, set())))
+        pr_config = json.loads(json.dumps(CONFIG))
+        pr_config["doc_replacements"].extend(
+            {"path": "FRESH.md", "pattern": "x", "replacement": "x"}
+            for _ in range(65))
+        problems = pinned_bump.validate_replacement_rules(
+            CONFIG, pr_config, Path("/nonexistent"), "v4.35.0",
+            FakeGitHub(tags={"v4.35.0": SHAS}))
+        self.assertTrue(any("64-rule cap" in p for p in problems), problems)
+        problems = pinned_bump._simulate_file_rules(
+            [], [], "x" * 1_000_001, [], set(), "oversize")
+        self.assertTrue(any("1,000,000-char" in p for p in problems), problems)
+
     def test_tailored_lookahead_is_rejected_and_removable(self):
         tags = ["v4.35.0", "v5.36.1", "v6.37.2"]
         encoded = ["".join(r"\x" + format(ord(c), "02x") for c in tag) for tag in tags]
