@@ -40,15 +40,27 @@ open Filter Topology
 -- tuples with all reads at one position have no successors.
 #guard (∑ j : Fin 2, (Finset.univ.filter fun s : Fin 2 → Fin 3 => NoSuccessor 5 s j).card) = 6
 
+/-- Normalization boundary cases: an empty sample space has mass zero, not one. -/
+example : normalizedCount (Finset.univ : Finset (Fin 1 → Fin 0)) = 0 := by
+  simp [normalizedCount]
+
+/-- With no reads, the empty tuple is the unique outcome even on an empty genome. -/
+example : normalizedCount (Finset.univ : Finset (Fin 0 → Fin 0)) = 1 := by
+  simp [normalizedCount]
+
+/-- A nonempty genome gives the whole sample space probability one. -/
+example : normalizedCount (Finset.univ : Finset (Fin 3 → Fin 5)) = 1 := by
+  norm_num [normalizedCount, Fintype.card_pi]
+
 /-- The exact laws, instantiated. -/
-example : uniformProb (Finset.univ.filter fun s : Fin 3 → Fin 5 =>
+example : normalizedCount (Finset.univ.filter fun s : Fin 3 → Fin 5 =>
     ∀ j, ¬ Covers 5 2 (s j) 0) = (1 - (2 : ℝ) / 5) ^ 3 :=
-  uniformProb_uncovered (by norm_num) 0
+  normalizedCount_uncovered (by norm_num) 0
 
 /-- Non-vacuity of the limit hypotheses: `G N = 2 (N + 1) ≥ 2` and `N * 2 / G N → 1`. -/
-example : Tendsto (fun N => uniformProb (Finset.univ.filter fun s : Fin N → Fin (2 * (N + 1)) =>
+example : Tendsto (fun N => normalizedCount (Finset.univ.filter fun s : Fin N → Fin (2 * (N + 1)) =>
     ∀ j, ¬ Covers (2 * (N + 1)) 2 (s j) ⟨0, by omega⟩)) atTop (𝓝 (Real.exp (-1))) := by
-  refine tendsto_uniformProb_uncovered 2 (fun N => 2 * (N + 1)) (fun N => by omega) 1 ?_ _
+  refine tendsto_normalizedCount_uncovered 2 (fun N => 2 * (N + 1)) (fun N => by omega) 1 ?_ _
   have h := tendsto_natCast_div_add_atTop (1 : ℝ)
   refine h.congr fun N => ?_
   push_cast

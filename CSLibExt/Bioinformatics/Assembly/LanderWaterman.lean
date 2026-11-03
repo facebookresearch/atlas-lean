@@ -25,20 +25,21 @@ length `L` whose start positions are independent and uniform on a genome of leng
 redundancy (coverage) `c = N L / G`, a fixed base is left uncovered with probability tending to
 `e^{-c}`, and the number of reads covering it tends to a Poisson law with mean `c`.
 
-This file states the model exactly on a circular genome `Fin G` (positions mod `G`, so every base
-plays the same role and there are no edge effects): a tuple of start positions
-`starts : Fin N → Fin G`, drawn uniformly from the `G ^ N` tuples (`uniformProb`), and a read
+This file states the model exactly on a nonempty circular genome `Fin G` (positions mod `G`,
+so every base plays the same role and there are no edge effects): a tuple of start positions
+`starts : Fin N → Fin G`, drawn uniformly from the `G ^ N` tuples (`normalizedCount`), and a read
 starting at `s` covers the `L` bases `s, s + 1, …, s + L - 1 (mod G)` (`Covers`), for `L ≤ G`.
 
 ## Main results
 
-* `card_uncovered`, `uniformProb_uncovered`: **exact finite coverage**: a fixed base is uncovered
-  by all `N` reads for exactly `(G - L) ^ N` of the start tuples, probability `(1 - L / G) ^ N`.
-* `card_depth_eq`, `uniformProb_depth_eq`: **exact depth law**: the number of reads covering a
+* `card_uncovered`, `normalizedCount_uncovered`: **exact finite coverage**: a fixed base is
+  uncovered by all `N` reads for exactly `(G - L) ^ N` of the start tuples, probability
+  `(1 - L / G) ^ N`.
+* `card_depth_eq`, `normalizedCount_depth_eq`: **exact depth law**: the number of reads covering a
   fixed base is binomial, `N.choose k * (L / G) ^ k * (1 - L / G) ^ (N - k)`.
-* `tendsto_uniformProb_uncovered`: **Lander–Waterman limit**: if `N L / G_N → c` as `N → ∞`
+* `tendsto_normalizedCount_uncovered`: **Lander–Waterman limit**: if `N L / G_N → c` as `N → ∞`
   (with `L` fixed and genome lengths `G_N ≥ L`), the uncovered probability tends to `e^{-c}`.
-* `tendsto_uniformProb_depth`: **the depth tends to Poisson(`c`)**: probability of depth `k`
+* `tendsto_normalizedCount_depth`: **the depth tends to Poisson(`c`)**: probability of depth `k`
   tends to `e^{-c} c^k / k.factorial`.
 * `sum_card_noSuccessor`: **count of no-successor reads** (exact, `L ≤ G`): the
   number of pairs `(j, starts)` with read `j` having no successor is
@@ -46,8 +47,9 @@ starting at `s` covers the `L` bases `s, s + 1, …, s + L - 1 (mod G)` (`Covers
 * `expected_noSuccessor`: the normalized form, for `0 < G`: the expected number of
   no-successor reads is `N (1 - (L - 1) / G) ^ (N - 1)`.
 
-`uniformProb_eq_uniformOfFinset` identifies the normalized count with the probability under
-Mathlib's uniform law `Measure.uniformOfFinset` on start tuples.
+`normalizedCount_eq_uniformOfFinset` identifies the normalized count with Mathlib's totalized
+uniform measure `Measure.uniformOfFinset` on start tuples. It is a probability measure when the
+sample space is nonempty (`0 < G` or `N = 0`), and the zero measure otherwise.
 
 ## Not covered
 
@@ -83,9 +85,11 @@ instance (G L : ℕ) (s x : Fin G) : Decidable (Covers G L s x) :=
 def depth {G N : ℕ} (L : ℕ) (starts : Fin N → Fin G) (x : Fin G) : ℕ :=
   (Finset.univ.filter fun j => Covers G L (starts j) x).card
 
-/-- The probability of an event `E` (a set of start tuples) when the `N` start positions are
-independent and uniform on `Fin G`: `|E| / G ^ N`. -/
-noncomputable def uniformProb {G N : ℕ} (E : Finset (Fin N → Fin G)) : ℝ :=
+/-- The totalized normalized count `|E| / G ^ N` of a set of start tuples.
+For `0 < G`, this is the probability when the `N` start positions are independent and uniform
+on `Fin G`. If `G = 0` and `N > 0`, the sample space is empty and this value is zero, so it is
+not a probability law. For `N = 0`, there is one empty start tuple, even when `G = 0`. -/
+noncomputable def normalizedCount {G N : ℕ} (E : Finset (Fin N → Fin G)) : ℝ :=
   (E.card : ℝ) / (G : ℝ) ^ N
 
 private lemma offset_eq {G : ℕ} (a b : Fin G) :
@@ -160,14 +164,15 @@ private lemma card_support {G L N : ℕ} (hL : L ≤ G) (x : Fin G) (S : Finset 
     simp
   simp [hf, Finset.card_sdiff]
 
-/-- `uniformProb` is the probability under Mathlib's uniform law `Measure.uniformOfFinset` on all
-start tuples. -/
-theorem uniformProb_eq_uniformOfFinset {G N : ℕ} (E : Finset (Fin N → Fin G)) :
-    uniformProb E = (MeasureTheory.Measure.uniformOfFinset (Finset.univ : Finset (Fin N → Fin G))
-      (E : Set (Fin N → Fin G))).toReal := by
+/-- `normalizedCount` agrees with Mathlib's totalized uniform measure on all start tuples.
+This measure is a probability law only when the sample space is nonempty. -/
+theorem normalizedCount_eq_uniformOfFinset {G N : ℕ} (E : Finset (Fin N → Fin G)) :
+    normalizedCount E =
+      (MeasureTheory.Measure.uniformOfFinset (Finset.univ : Finset (Fin N → Fin G))
+        (E : Set (Fin N → Fin G))).toReal := by
   classical
   rw [MeasureTheory.Measure.uniformOfFinset_apply, ENNReal.toReal_div]
-  simp [uniformProb, ENNReal.toReal_natCast, Fintype.card_pi]
+  simp [normalizedCount, ENNReal.toReal_natCast, Fintype.card_pi]
 
 /-- **Exact coverage count**: for `L ≤ G`, base `x` is uncovered by all `N` reads for exactly
 `(G - L) ^ N` of the `G ^ N` start tuples. -/
@@ -205,23 +210,23 @@ theorem card_depth_eq {G L N : ℕ} (hL : L ≤ G) (x : Fin G) (k : ℕ) :
 
 /-- **Exact uncovered probability** (Clarke–Carbon, Lander–Waterman, circular genome):
 `(1 - L / G) ^ N` for `L ≤ G`. -/
-theorem uniformProb_uncovered {G L N : ℕ} (hL : L ≤ G) (x : Fin G) :
-    uniformProb (Finset.univ.filter fun starts : Fin N → Fin G =>
+theorem normalizedCount_uncovered {G L N : ℕ} (hL : L ≤ G) (x : Fin G) :
+    normalizedCount (Finset.univ.filter fun starts : Fin N → Fin G =>
         ∀ j, ¬ Covers G L (starts j) x) = (1 - (L : ℝ) / G) ^ N := by
   have hG : (G : ℝ) ≠ 0 := by
     exact_mod_cast (show G ≠ 0 by have := x.isLt; omega)
-  rw [uniformProb, card_uncovered hL x, Nat.cast_pow, Nat.cast_sub hL, ← div_pow]
+  rw [normalizedCount, card_uncovered hL x, Nat.cast_pow, Nat.cast_sub hL, ← div_pow]
   congr 1
   field_simp
 
 /-- **Exact depth law**: the depth at a fixed base is binomial with `N` trials and success
 probability `L / G`, for `L ≤ G`. -/
-theorem uniformProb_depth_eq {G L N : ℕ} (hL : L ≤ G) (x : Fin G) (k : ℕ) :
-    uniformProb (Finset.univ.filter fun starts : Fin N → Fin G => depth L starts x = k) =
+theorem normalizedCount_depth_eq {G L N : ℕ} (hL : L ≤ G) (x : Fin G) (k : ℕ) :
+    normalizedCount (Finset.univ.filter fun starts : Fin N → Fin G => depth L starts x = k) =
       (N.choose k : ℝ) * ((L : ℝ) / G) ^ k * (1 - (L : ℝ) / G) ^ (N - k) := by
   have hG : (G : ℝ) ≠ 0 := by
     exact_mod_cast (show G ≠ 0 by have := x.isLt; omega)
-  rw [uniformProb, card_depth_eq hL x]
+  rw [normalizedCount, card_depth_eq hL x]
   by_cases hk : k ≤ N
   · have hpow : (G : ℝ) ^ N = (G : ℝ) ^ k * (G : ℝ) ^ (N - k) := by
       rw [← pow_add, Nat.add_sub_of_le hk]
@@ -235,26 +240,26 @@ theorem uniformProb_depth_eq {G L N : ℕ} (hL : L ≤ G) (x : Fin G) (k : ℕ) 
 /-- **Lander–Waterman limit for the uncovered fraction**: with read length `L` fixed, genome
 lengths `G N ≥ L`, and coverage `N L / G_N → c` as the number of reads `N → ∞`, the probability
 that a given base is uncovered tends to `e^{-c}`. -/
-theorem tendsto_uniformProb_uncovered (L : ℕ) (G : ℕ → ℕ) (hL : ∀ N, L ≤ G N) (c : ℝ)
+theorem tendsto_normalizedCount_uncovered (L : ℕ) (G : ℕ → ℕ) (hL : ∀ N, L ≤ G N) (c : ℝ)
     (hc : Tendsto (fun N : ℕ => (N : ℝ) * L / G N) atTop (𝓝 c)) (x : ∀ N, Fin (G N)) :
-    Tendsto (fun N => uniformProb (Finset.univ.filter fun starts : Fin N → Fin (G N) =>
+    Tendsto (fun N => normalizedCount (Finset.univ.filter fun starts : Fin N → Fin (G N) =>
         ∀ j, ¬ Covers (G N) L (starts j) (x N))) atTop (𝓝 (Real.exp (-c))) := by
   have hg : Tendsto (fun N : ℕ => (N : ℝ) * -((L : ℝ) / G N)) atTop (𝓝 (-c)) := by
     simpa only [mul_neg, mul_div_assoc] using hc.neg
   have ht := Real.tendsto_one_add_pow_exp_of_tendsto hg
-  simpa only [uniformProb_uncovered (hL _) (x _), sub_eq_add_neg] using ht
+  simpa only [normalizedCount_uncovered (hL _) (x _), sub_eq_add_neg] using ht
 
 /-- **The coverage depth tends to Poisson(`c`)**: under the hypotheses of
-`tendsto_uniformProb_uncovered`, the probability that a given base is covered by exactly `k`
+`tendsto_normalizedCount_uncovered`, the probability that a given base is covered by exactly `k`
 reads tends to `e^{-c} c^k / k.factorial`. -/
-theorem tendsto_uniformProb_depth (L : ℕ) (G : ℕ → ℕ) (hL : ∀ N, L ≤ G N) (c : ℝ)
+theorem tendsto_normalizedCount_depth (L : ℕ) (G : ℕ → ℕ) (hL : ∀ N, L ≤ G N) (c : ℝ)
     (hc : Tendsto (fun N : ℕ => (N : ℝ) * L / G N) atTop (𝓝 c)) (x : ∀ N, Fin (G N)) (k : ℕ) :
-    Tendsto (fun N => uniformProb (Finset.univ.filter fun starts : Fin N → Fin (G N) =>
+    Tendsto (fun N => normalizedCount (Finset.univ.filter fun starts : Fin N → Fin (G N) =>
         depth L starts (x N) = k)) atTop
       (𝓝 (Real.exp (-c) * c ^ k / k.factorial)) := by
   have hp : Tendsto (fun N : ℕ => (N : ℝ) * ((L : ℝ) / G N)) atTop (𝓝 c) := by
     simpa only [mul_div_assoc] using hc
-  simpa only [uniformProb_depth_eq (hL _) (x _)] using
+  simpa only [normalizedCount_depth_eq (hL _) (x _)] using
     ProbabilityTheory.tendsto_choose_mul_pow_of_tendsto_mul_atTop k hp
 
 /-- Read `j` has no successor when no other read starts in the `L - 1` positions after it,
@@ -365,15 +370,15 @@ theorem sum_card_noSuccessor {G L N : ℕ} (hL : L ≤ G) :
 
 /-- **Expected number of no-successor reads (exact)**: for `0 < G` and `L ≤ G`, the
 expected number of reads with no successor is `N (1 - (L - 1) / G) ^ (N - 1)`.
-The `0 < G` hypothesis is essential: at `G = 0` the normalized expression would be
-`N` while the actual expectation is `0`. -/
+The `0 < G` hypothesis is essential: at `G = 0` and `N > 0`, the right-hand expression is
+`N` while the sum of totalized normalized counts is zero. -/
 theorem expected_noSuccessor {G L N : ℕ} (hG : 0 < G) (hL : L ≤ G) :
-    ∑ j : Fin N, uniformProb (Finset.univ.filter fun starts : Fin N → Fin G =>
+    ∑ j : Fin N, normalizedCount (Finset.univ.filter fun starts : Fin N → Fin G =>
         NoSuccessor L starts j) =
       (N : ℝ) * (1 - ((L - 1 : ℕ) : ℝ) / G) ^ (N - 1) := by
   have hG' : (G : ℝ) ≠ 0 := by exact_mod_cast hG.ne'
   have hL1 : L - 1 ≤ G := (Nat.sub_le L 1).trans hL
-  simp only [uniformProb, ← Finset.sum_div]
+  simp only [normalizedCount, ← Finset.sum_div]
   rw [← Nat.cast_sum, sum_card_noSuccessor hL]
   rcases Nat.eq_zero_or_pos N with hN | hN
   · subst hN
