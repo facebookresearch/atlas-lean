@@ -10,6 +10,3 @@ rev = "8a178386ffc0f5fef0b77738bb5449d50efeea95"
 [[lean_lib]]
 name = "Atlas"
 globs = ["Atlas.+"]
-
-[[lean_lib]]
-name = "Unproved"

@@ -34,7 +34,7 @@ list, no line was added or changed relative to ATLAS v1.
 | | ATLAS v1 | `merely-true` |
 |---|---:|---:|
 | Books | 26 | 26 |
-| Lean files | 2,654 | 2,240 |
+| Lean files | 2,654 | 2,239 |
 | Lines of Lean (excluding comments and blank lines) | 483,943 | 336,842 (70%) |
 | `sorry` / `axiom` / `opaque` / `native_decide` | present | **none** |
 
@@ -43,18 +43,24 @@ Per-book statement lists (`targets.yaml`) and evaluation reports
 describe ATLAS v1, so some statements they mark as passing are absent from
 this variant.
 
-## Building
+## Building and checking
 
 ```bash
 cd v1/merely-true
 lake exe cache get
-lake build
+lake build                    # builds every module under Atlas/
+scripts/check_axioms.sh       # gap-free audit, book by book
 ```
 
+`lake build` alone does not establish the guarantee above, since Lean accepts
+`axiom` declarations. `scripts/check_axioms.sh` loads each book, rejects
+`unsafe` declarations and `implemented_by`, and fails if any declaration
+reaches an axiom other than `propext`, `Quot.sound`, and `Classical.choice`.
+
 The toolchain and Mathlib revision are pinned in `lean-toolchain` and
-`lake-manifest.json` (identical to ATLAS v1). As in ATLAS v1, each book is an
-independent development: import the modules of one book at a time, since a few
-top-level names are defined in more than one book.
+`lake-manifest.json` (identical to ATLAS v1). Each book is an independent
+development with its own entry point `Atlas/<Book>/<Book>.lean`: import one
+book at a time, since a few top-level names are defined in more than one book.
 
 ## License
 
