@@ -9,10 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.MiniImp.VC
-public import CSLibExt.Languages.MiniImp.Exec
+public import CSLibExt.Languages.MiniImp.ReadCost
 public import CSLibExt.Algorithms.Lean.Search.LowerBound
-
-import Lean.Elab.Tactic.Omega
 
 /-!
 # Executable MiniImp lower-bound search
@@ -267,5 +265,119 @@ theorem body_preserves {xs : Array Nat} {key : Nat} {s t : State}
     (hI : invariant xs key s) (hb : beval guard s)
     (h : BigStep (body xs key) s t) : invariant xs key t :=
   wp_sound (body_vc xs key s hI hb) h
+
+private theorem body_reads (xs : Array Nat) (key : Nat) (s : State)
+    (h : mid s < xs.size) (extra : Nat) :
+    execReads (extra + 4) (body xs key) s =
+      ⟨some (stepState xs key s h), 1⟩ := by
+  apply Cslib.Algorithms.Lean.TimeM.ext
+  · exact (execReads_ret _ _ _).trans (body_exec xs key s h extra)
+  · have hm : s "lo" + (s "hi" - s "lo") / 2 < xs.size := h
+    by_cases hc : xs[s "lo" + (s "hi" - s "lo") / 2] < key
+    · simp [body, execReads, evalA, beval, State.update, hm, hc]
+    · simp [body, execReads, evalA, beval, State.update, hm, hc]
+
+-- One actual body read corresponds to the canonical loop's one comparison.
+private theorem step_time (xs : Array Nat) (key : Nat) (s : State)
+    (hlohi : s "lo" ≤ s "hi") (hhi : s "hi" ≤ xs.size) (hb : beval guard s)
+    (h : mid s < xs.size) :
+    let t := stepState xs key s h
+    1 + (lowerBound.loop xs key (t "lo") (t "hi")
+      (step_bounds xs key s hhi hb h).1
+      (step_bounds xs key s hhi hb h).2.1).time =
+        (lowerBound.loop xs key (s "lo") (s "hi") hlohi hhi).time := by
+  have hlt : s "lo" < s "hi" := by simpa [guard, beval, evalA] using hb
+  dsimp only
+  conv_rhs => rw [lowerBound.loop.eq_def]
+  simp only [hlt, dite_true, time_bind, time_tick]
+  split
+  next hc =>
+    have hc' : xs[mid s] < key := hc
+    simp only [stepState, ite_eq_left hc']
+    simp [State.update, mid]
+  next hc =>
+    have hc' : ¬ xs[mid s] < key := hc
+    simp only [stepState, ite_eq_right hc']
+    simp [State.update, mid]
+
+/-- At every sufficient fuel, actual loop reads equal the canonical loop's
+comparison count. No sorting or assumed total-cost invariant is needed. -/
+theorem loop_reads_eq_time (xs : Array Nat) (key fuel : Nat) (s : State)
+    (hlohi : s "lo" ≤ s "hi") (hhi : s "hi" ≤ xs.size)
+    (hbudget : s "hi" - s "lo" + 5 ≤ fuel) :
+    (execReads fuel (loop xs key) s).time =
+      (lowerBound.loop xs key (s "lo") (s "hi") hlohi hhi).time := by
+  induction fuel generalizing s with
+  | zero => exact False.elim (by omega)
+  | succ fuel ih =>
+      by_cases hb : beval guard s
+      · have hm : mid s < xs.size := midpoint_safe xs s hhi hb
+        obtain ⟨hl, hh, hd⟩ := step_bounds xs key s hhi hb hm
+        have hf : fuel = (fuel - 4) + 4 := by
+          have hlt : s "lo" < s "hi" := by
+            simpa [guard, beval, evalA] using hb
+          omega
+        have hbody : execReads fuel (body xs key) s =
+            ⟨some (stepState xs key s hm), 1⟩ := by
+          rw [hf]
+          exact body_reads xs key s hm (fuel - 4)
+        simp only [loop, execReads, ite_eq_left hb, time_bind, hbody]
+        change 1 + (execReads fuel (loop xs key) (stepState xs key s hm)).time
+          = _
+        rw [ih (stepState xs key s hm) hl hh (by omega)]
+        exact step_time xs key s hlohi hhi hb hm
+      · have hn : ¬ s "lo" < s "hi" := by
+          simpa [guard, beval, evalA] using hb
+        rw [lowerBound.loop.eq_def]
+        simp only [loop, execReads, ite_eq_right hb, hn, dite_false, time_pure]
+
+/-- Initialization is free; the program's successful reads equal canonical
+lower-bound time for every fuel at least `size + 7`, on every array. -/
+theorem program_reads_eq_time (xs : Array Nat) (key fuel : Nat) (s : State)
+    (hbudget : xs.size + 7 ≤ fuel) :
+    (execReads fuel (program xs key) s).time = (lowerBound xs key).time := by
+  have hf : fuel = (fuel - 3) + 3 := by omega
+  rw [hf]
+  let u := (s.update "lo" 0).update "hi" xs.size
+  change 0 + (0 + (execReads (fuel - 3 + 1) (loop xs key) u).time) = _
+  simp only [Nat.zero_add]
+  have h := loop_reads_eq_time xs key (fuel - 3 + 1) u
+    (by simp [u, State.update]) (by simp [u, State.update])
+    (by simpa [u, State.update] using
+      show xs.size + 5 ≤ fuel - 3 + 1 by omega)
+  simpa [u, State.update, lowerBound] using h
+
+/-- The actual read count is logarithmic, by the canonical cost theorem.
+This bound does not require sorted input. -/
+theorem program_reads_le (xs : Array Nat) (key fuel : Nat) (s : State)
+    (hbudget : xs.size + 7 ≤ fuel) :
+    (execReads fuel (program xs key) s).time ≤ Nat.clog 2 (xs.size + 1) := by
+  rw [program_reads_eq_time xs key fuel s hbudget]
+  exact lowerBound_time_le xs key
+
+/-- A replayable composition of execution, operational read adequacy, exact
+canonical cost, logarithmic bound, generated VC, Hoare triple and sorted
+result specification. `ReadSteps.erase` also supplies the original BigStep
+with bounds-certified reads. Fuel depends only on the input size. -/
+theorem verified_read_cost (xs : Array Nat) (key : Nat) (s : State)
+    (hs : xs.Pairwise (fun a b => a ≤ b)) :
+    let r := execReads (xs.size + 7) (program xs key) s
+    ∃ t, r.ret = some t ∧ exec (xs.size + 7) (program xs key) s = some t ∧
+      ReadSteps (program xs key) s t r.time ∧
+      r.time = (lowerBound xs key).time ∧
+      r.time ≤ Nat.clog 2 (xs.size + 1) ∧
+      wp (program xs key) (fun u => u "lo" = (lowerBound xs key).ret) s ∧
+      Hoare (fun _ => True) (program xs key)
+        (fun u => u "lo" = (lowerBound xs key).ret) ∧
+      t "lo" ≤ xs.size ∧
+      (∀ j (_hj : j < t "lo") (_hjs : j < xs.size), xs[j] < key) ∧
+      (∀ j (_hj : t "lo" ≤ j) (_hjs : j < xs.size), key ≤ xs[j]) := by
+  obtain ⟨t, ht⟩ := program_exec_success xs key s
+  have hr := (execReads_ret (xs.size + 7) (program xs key) s).trans ht
+  exact ⟨t, hr, ht, execReads_sound hr,
+    program_reads_eq_time xs key _ s (Nat.le_refl _),
+    program_reads_le xs key _ s (Nat.le_refl _), program_vc xs key s,
+    (fun i _ _ h => wp_sound (program_vc xs key i) h),
+    bigStep_spec hs (exec_sound ht)⟩
 
 end CSLibExt.Languages.MiniImp.BinarySearch
