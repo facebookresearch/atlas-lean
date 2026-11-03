@@ -197,6 +197,11 @@ lemma sct_fvMeasure_free_le_plus
     (fvMeasure (minusField d) n (bondFinsetInternal d n) beta h) ≼
       fvMeasure (plusField d) n (bondFinsetTouch d n) beta h := by
   intro A hA hAinc
+  apply (ENNReal.toReal_le_toReal
+    (measure_ne_top (fvMeasure (minusField d) n (bondFinsetInternal d n) beta h) A)
+    (measure_ne_top (fvMeasure (plusField d) n (bondFinsetTouch d n) beta h) A)).mp
+  change (fvMeasure (minusField d) n (bondFinsetInternal d n) beta h).real A ≤
+    (fvMeasure (plusField d) n (bondFinsetTouch d n) beta h).real A
   rw [fvMeasure_real_eq (minusField d) n (bondFinsetInternal d n) beta h hA,
     fvMeasure_real_eq (plusField d) n (bondFinsetTouch d n) beta h hA]
   set A1 : Set (ConfigSpace {x // x ∈ box d n}) :=
@@ -286,7 +291,7 @@ lemma sct_freeMeasure_real_le_plusMeasure
       (plusMeasure d n beta h : Measure (ConfigSpace (Site d))).real A := by
   change (fvMeasure (minusField d) n (bondFinsetInternal d n) beta h).real A ≤
     (fvMeasure (plusField d) n (bondFinsetTouch d n) beta h).real A
-  exact sct_fvMeasure_free_le_plus hbeta h A hAmeas hAinc
+  exact (sct_fvMeasure_free_le_plus hbeta h).real A hAmeas hAinc
 
 /-! ## B. Continuity in the field -/
 

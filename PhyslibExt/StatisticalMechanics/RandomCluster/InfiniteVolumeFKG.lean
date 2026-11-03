@@ -285,7 +285,7 @@ lemma ivp_iv_monotone (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
           ≤ (wiredFiniteMeasure d m hp hp1 (by norm_num : (0 : ℝ) < 2)
               : Measure (ConfigSpace (Sym2 (Site d)))).real (boxRestrict d N ⁻¹' S) := by
     filter_upwards with m
-    have hdom := freeFiniteMeasure_dominated d m hp hp1 (by norm_num : (1 : ℝ) ≤ 2)
+    have hdom := (freeFiniteMeasure_dominated d m hp hp1 (by norm_num : (1 : ℝ) ≤ 2)).real
       (boxRestrict d N ⁻¹' S) hAmeas hAinc
     exact hdom
   exact le_of_tendsto_of_tendsto hfree hwired heventually

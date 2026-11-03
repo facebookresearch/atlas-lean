@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import PhyslibExt.CondensedMatter.IsingModel.Gibbs
 
 /-!

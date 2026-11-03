@@ -567,13 +567,18 @@ lemma fkgq_freeIV_le_wiredIV (d N : ℕ) {p q : ℝ}
   have hf := fkgq_free_infinite_measure N hp hp1 hq hA
   have hw := fkgq_wired_infinite_measure N hp hp1 hq hA
   refine le_of_tendsto_of_tendsto hf hw (Filter.Eventually.of_forall (fun m => ?_))
-  exact freeFiniteMeasure_dominated d m hp hp1 hq _
+  exact (freeFiniteMeasure_dominated d m hp hp1 hq).real _
     ((continuous_boxRestrict d N).measurable MeasurableSet.of_discrete)
     (fun a b hab ha => hA (monotone_boxRestrict d N hab) ha)
 
 lemma fkgq_dominated (d N : ℕ) (q : ℝ) (hq : 1 ≤ q) (s : ℝ) :
     measOfMass (fkgq_freeMass d N q hq s) ≼ measOfMass (fkgq_wiredMass d N q hq s) := by
   intro A _ hA
+  apply (ENNReal.toReal_le_toReal
+    (measure_ne_top (measOfMass (fkgq_freeMass d N q hq s)) A)
+    (measure_ne_top (measOfMass (fkgq_wiredMass d N q hq s)) A)).mp
+  change (measOfMass (fkgq_freeMass d N q hq s)).real A ≤
+    (measOfMass (fkgq_wiredMass d N q hq s)).real A
   rw [measOfMass_real_eq_indicator_sum _ (fkgq_freeMass_nonneg d N q hq s) A,
     measOfMass_real_eq_indicator_sum _ (fkgq_wiredMass_nonneg d N q hq s) A]
   change eventMassProb (fkgq_freeMass d N q hq s) A

@@ -24,7 +24,7 @@ rev = "v4.35.0"
 
 [[require]]
 name = "Physlib"
-scope = "leanprover-community"
+git = "https://github.com/leanprover-community/physlib"
 rev = "v4.35.0"
 
 # Reusable, proved mathematics that extends Mathlib.

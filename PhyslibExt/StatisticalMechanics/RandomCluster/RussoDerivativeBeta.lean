@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Inv
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 /-!
 # Edge-parameter derivatives of the inhomogeneous random-cluster measure
