@@ -374,6 +374,7 @@ class GuardTests(unittest.TestCase):
                    malformed_require=False, nonstring_rev=False,
                    scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
                    config_add_literal_tag_rule=False, config_literal_revert=False,
+                   config_add_oneuse_version=False, config_add_oneuse_sha=False,
                    config_scramble_rule=False, config_noncanonical_group=False,
                    delete_assertion_and_rule=False,
                    config_malformed_doc=None, config_malformed_pin=False,
@@ -431,6 +432,14 @@ class GuardTests(unittest.TestCase):
             if config_add_nonmatching_doc:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_add_oneuse_version:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md", "pattern": "v4\\.35\\.0",
+                     "replacement": "{target}"})
+            if config_add_oneuse_sha:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md", "pattern": "3" * 40,
+                     "replacement": "{sha:mathlib}"})
             if config_literal_revert:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "Lean-v[0-9]+\\.[0-9]+\\.[0-9]+",
@@ -562,6 +571,9 @@ class GuardTests(unittest.TestCase):
                     lakefile.read_text()
                     + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
+            if config_add_oneuse_version or config_add_oneuse_sha:
+                (pr / "FRESH.md").write_text(
+                    "Release v4.35.0\nSHA " + "3" * 40 + "\n")
             if malformed_require:
                 (pr / "lakefile.toml").write_text(
                     'name = "fixture"\n\nrequire = ["bogus"]\n')
@@ -710,6 +722,7 @@ class GuardTests(unittest.TestCase):
                         or config_unresolved_sha or config_bad_group_ref \
                         or config_missing_doc_file or config_bad_pin_regex \
                         or config_add_literal_tag_rule or config_literal_revert \
+                        or config_add_oneuse_version or config_add_oneuse_sha \
                         or config_scramble_rule or config_noncanonical_group \
                         or delete_assertion_and_rule:
                     changed_lines.append("scripts/bump/pinned_deps.json")
@@ -916,6 +929,21 @@ class GuardTests(unittest.TestCase):
         # org must fail, even with names, revs, config, manifest unchanged.
         self.assertEqual(
             self._run_guard(same_pin=True, scope_repoint=True), 1)
+
+    def test_guard_fails_config_only_oneuse_version(self):
+        # Codex P1: a one-use literal-version rule on a fresh file
+        # (no generic rule before it) passes single-target simulation
+        # but fails the second chained transition.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_oneuse_version=True), 1)
+
+    def test_guard_fails_config_only_oneuse_sha(self):
+        # Codex P1: same for a literal-SHA pattern, via distinct fake
+        # SHAs per transition.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_oneuse_sha=True), 1)
 
     def test_guard_fails_config_only_literal_revert(self):
         # Codex P1: an added rule rewriting the generic output back to

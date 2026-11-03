@@ -1213,31 +1213,56 @@ def _rule_interferes(pattern: str, text: str, written: list[tuple[int, int]]) ->
     )
 
 
-def _failing_rule_patterns(
-    entries: list[dict], text: str, target: str, shas: dict[str, str],
-    dep_names: set[str],
-) -> set[str]:
-    """Patterns of entries that cannot apply, in list order.
+def _transition_shas(deps: list[dict], label: str) -> dict[str, str]:
+    """Deterministic fake SHAs for a forward simulation transition.
 
-    Covers per-entry failures (invalid regex, bad placeholders) plus the
-    first sequential-simulation failure, attributed to its entry via
-    the error message (which names the failing pattern / replacement).
-    Later entries are untested after a failure: a repair PR removes one
-    broken rule at a time, and sequential repairs converge.
+    Each transition needs SHAs distinct from the current tag's (and
+    from other transitions'): a literal-SHA pattern matching the
+    current SHA must fail on the next transition, while class patterns
+    ([0-9a-f]{40}) still match.
+    """
+    return {
+        # 40 hex chars, like a real commit SHA: patterns match exactly
+        # 40 hex followed by a delimiter, so a 64-char digest would
+        # break every SHA rule (the 41st char is hex, not the delimiter).
+        dep["name"]: hashlib.sha256(
+            f"guard-forward-{label}-{dep['name']}".encode()
+        ).hexdigest()[:40]
+        for dep in deps
+    }
+
+
+def _failing_rule_patterns(
+    entries: list[dict], text: str,
+    transitions: list[tuple[str, dict[str, str]]], dep_names: set[str],
+) -> set[str]:
+    """Patterns of entries that cannot apply, across chained transitions.
+
+    Covers per-entry failures (invalid regex, bad placeholders, hardcoded
+    literals) plus the first sequential-simulation failure, attributed
+    to its entry via the error message (which names the failing pattern /
+    replacement). Later entries are untested after a failure: a repair
+    PR removes one broken rule at a time, and sequential repairs converge.
+    Transitions chain: each bump applies the list to the previous bump's
+    output, so one-use patterns (literal version/SHA, consumed by their
+    own replacement) fail on the second transition.
     """
     failed: set[str] = set()
     for entry in entries:
         if _static_rule_problems(entry, dep_names):
             failed.add(entry["pattern"])
-    try:
-        apply_replacements_to_text(text, entries, target, shas)
-    except ValueError as exc:
-        msg = str(exc)
-        for entry in entries:
-            if repr(entry["pattern"]) in msg or repr(entry["replacement"]) in msg:
-                failed.add(entry["pattern"])
-    except re.error:
-        pass  # attributed via the per-entry compile above
+    current = text
+    for target, shas in transitions:
+        try:
+            current = apply_replacements_to_text(current, entries, target, shas)
+        except ValueError as exc:
+            msg = str(exc)
+            for entry in entries:
+                if repr(entry["pattern"]) in msg or repr(entry["replacement"]) in msg:
+                    failed.add(entry["pattern"])
+            break
+        except re.error:
+            break  # attributed via the per-entry compile above
     return failed
 
 
@@ -1268,27 +1293,30 @@ def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
 
 def _simulate_file_rules(
     entries: list[dict], base_entries: list[dict], original: str,
-    targets: list[str], shas: dict[str, str], dep_names: set[str],
+    transitions: list[tuple[str, dict[str, str]]], dep_names: set[str],
     label: str,
 ) -> list[str]:
-    """Validate one file's rule list at every target tag.
+    """Validate one file's rule list across chained transitions.
 
-    Static checks run for every entry. Rules then apply one at a time,
-    in order (exactly apply_replacements_to_text's semantics): before
-    applying an ADDED rule, its pattern must not match text an earlier
-    rule already wrote -- an added rule operating on earlier output can
-    undo it while every regex still matches.
+    Static checks run for every entry. Transitions chain: each bump
+    applies the rules to the previous bump's output, so one-use rules
+    fail on the second transition. Within a bump, rules apply one at a
+    time, in order (exactly apply_replacements_to_text's semantics):
+    before applying an ADDED rule, its pattern must not match text an
+    earlier rule already wrote -- an added rule operating on earlier
+    output can undo it while every regex still matches.
     """
     problems: list[str] = []
     for entry in entries:
         for problem in _static_rule_problems(entry, dep_names):
             problems.append(f"{label}: {problem}")
-    for target in targets:
-        text = original
+    text = original
+    for target, shas in transitions:
+        bump_input = text
         for entry in entries:
             is_added = entry not in base_entries
             if is_added and _rule_interferes(
-                entry["pattern"], text, _written_regions(original, text)
+                entry["pattern"], text, _written_regions(bump_input, text)
             ):
                 problems.append(
                     f"{label} rule {entry['pattern']!r} matches text an earlier "
@@ -1327,10 +1355,15 @@ def validate_replacement_rules(
     shas, problems = _resolve_shas(client, pr_config["deps"], tag)
     if problems:
         return problems
-    targets = [tag]
+    # Chained transitions: current tag, then two synthetic forward tags
+    # with distinct fake SHAs per transition.
+    transitions: list[tuple[str, dict[str, str]]] = [(tag, shas)]
     forward = _forward_tag(tag)
     if forward is not None:
-        targets.append(forward)
+        transitions.append((forward, _transition_shas(pr_config["deps"], "1")))
+        forward2 = _forward_tag(forward)
+        if forward2 is not None:
+            transitions.append((forward2, _transition_shas(pr_config["deps"], "2")))
     # Per file, with only that file's entries: entries for other files
     # must not be expected to match this one.
     base_by_path: dict[str, list[dict]] = {}
@@ -1348,7 +1381,7 @@ def validate_replacement_rules(
             continue
         problems.extend(_simulate_file_rules(
             by_path[path], base_by_path.get(path, []),
-            file.read_text(encoding="utf-8"), targets, shas, dep_names,
+            file.read_text(encoding="utf-8"), transitions, dep_names,
             f"doc replacements for {path}",
         ))
     base_pp = base_config.get("pin_policy") or {}
@@ -1362,7 +1395,7 @@ def validate_replacement_rules(
         else:
             problems.extend(_simulate_file_rules(
                 pr_pp.get("replacements", []), base_pp.get("replacements", []),
-                file.read_text(encoding="utf-8"), targets, shas, dep_names,
+                file.read_text(encoding="utf-8"), transitions, dep_names,
                 "pin-policy replacements",
             ))
     return problems
@@ -1387,9 +1420,14 @@ def repairable_rule_patterns(
     forward = _forward_tag(tag)
     if forward is None:
         return set()
-    shas, problems = _resolve_shas(client, base_config["deps"], tag)
-    if problems:
-        return set()
+    # Chained forward transitions with distinct fake SHAs, as in
+    # validation: a one-use rule fails on the second transition.
+    transitions: list[tuple[str, dict[str, str]]] = [
+        (forward, _transition_shas(base_config["deps"], "1"))
+    ]
+    forward2 = _forward_tag(forward)
+    if forward2 is not None:
+        transitions.append((forward2, _transition_shas(base_config["deps"], "2")))
     dep_names = {d["name"] for d in base_config["deps"]}
     repairable: set[str] = set()
     by_path: dict[str, list[dict]] = {}
@@ -1400,7 +1438,7 @@ def repairable_rule_patterns(
         if not file.is_file():
             continue
         repairable |= _failing_rule_patterns(
-            entries, file.read_text(encoding="utf-8"), forward, shas, dep_names
+            entries, file.read_text(encoding="utf-8"), transitions, dep_names
         )
     base_pp = base_config.get("pin_policy") or {}
     if base_pp:
@@ -1408,7 +1446,7 @@ def repairable_rule_patterns(
         if file.is_file():
             repairable |= _failing_rule_patterns(
                 base_pp.get("replacements", []),
-                file.read_text(encoding="utf-8"), forward, shas, dep_names,
+                file.read_text(encoding="utf-8"), transitions, dep_names,
             )
     return repairable
 
