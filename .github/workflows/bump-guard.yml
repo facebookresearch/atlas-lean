@@ -4,8 +4,10 @@ name: Bump guard
 # pull_request_target so the guard script is always the trusted base
 # version, never PR-modified code; it reads the PR's pin files as data
 # via the API and runs no PR code. Fails the PR when the pin change is
-# not a forward move to a single final release tag shared by every
-# pinned dependency, with a manifest exactly derived from those tags.
+# neither a forward move to a single final release tag shared by every
+# pinned dependency (with a manifest exactly derived from those tags)
+# nor a same-pin change (new dependency/library at the current pin, with
+# the config extended monotonically in the same PR).
 # Runs for every PR (no paths filter: path filtering only considers a
 # bounded file list) and on `edited` (a base retarget emits `edited`,
 # not `synchronize`, and must revalidate against the new base).
