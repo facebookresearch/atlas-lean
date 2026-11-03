@@ -107,7 +107,7 @@ theorem bern_dominated : measOfMass (bern (1 / 4)) ≼ measOfMass (bern (3 / 4))
 
 -- Applied to "coordinate `0` open", the domination is the inequality `1/4 ≤ 3/4`.
 example : (measOfMass (bern (1 / 4))).real open0 ≤ (measOfMass (bern (3 / 4))).real open0 :=
-  bern_dominated open0 (DiscreteMeasurableSpace.forall_measurableSet _) isIncreasing_open0
+  bern_dominated.real open0 (DiscreteMeasurableSpace.forall_measurableSet _) isIncreasing_open0
 
 -- Holley's coupling theorem: there is a monotone coupling of `bern (1/4)` and `bern (3/4)`;
 -- its marginals are the two measures and it gives no mass to unordered pairs.
@@ -117,11 +117,11 @@ example : ∃ κ : Measure (ConfigSpace (Fin 2) × ConfigSpace (Fin 2)),
   obtain ⟨κ, hfin, hκ⟩ := holley_exists_monotoneCoupling (μ₁ := bern (1 / 4))
     (μ₂ := bern (3 / 4))
     (lt_of_le_of_ne (bern_nonneg (by norm_num) (by norm_num))
-      (fun h => (bern_pos_apply (a := 1 / 4) (by norm_num) (by norm_num) 0).ne
-        (congrFun h 0)))
+      (fun h => (bern_pos_apply (a := 1 / 4) (by norm_num) (by norm_num) (fun _ => false)).ne
+        (congrFun h (fun _ => false))))
     (lt_of_le_of_ne (bern_nonneg (by norm_num) (by norm_num))
-      (fun h => (bern_pos_apply (a := 3 / 4) (by norm_num) (by norm_num) 0).ne
-        (congrFun h 0)))
+      (fun h => (bern_pos_apply (a := 3 / 4) (by norm_num) (by norm_num) (fun _ => false)).ne
+        (congrFun h (fun _ => false))))
     (bern_sum _) (bern_sum _) bern_holley
   exact ⟨κ, hfin, hκ.fst_eq, hκ.snd_eq, hκ.supported⟩
 

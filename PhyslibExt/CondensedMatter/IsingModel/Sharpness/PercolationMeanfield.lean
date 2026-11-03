@@ -7,6 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Add
+public import Mathlib.Analysis.Calculus.Deriv.Inv
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import MathlibExt.Probability.Percolation.SubcriticalDecay
 public import MathlibExt.Probability.Percolation.ConnectionsInsideSet
 public import MathlibExt.Probability.Percolation.Theta

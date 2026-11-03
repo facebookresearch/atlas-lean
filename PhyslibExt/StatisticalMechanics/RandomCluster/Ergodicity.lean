@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.MeasureTheory.Measure.MeasuredSets
+public import Mathlib.Probability.Independence.InfinitePi
 public import MathlibExt.Probability.Configuration.ProductMeasure
 public import MathlibExt.Probability.Configuration.Ergodicity
 public import MathlibExt.Probability.Percolation.TranslationInvariance

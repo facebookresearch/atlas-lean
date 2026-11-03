@@ -13,7 +13,7 @@ public import CSLibExtTest.Complexity.BooleanFunctions.KKL.BourgainPerCoord
 /-!
 # Tests for the KKL inequality on the uniform cube with constant 2
 
-Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.RhoOptimiseClose2`:
+Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.KKLUniform`:
 
 * `cro2_rhoOptimise : bph_RhoOptimise 2` at the `AND` function on `{0, 1}^Bool`: its hypothesis
   is supplied by `bph_capped_hc`, and the conclusion is the Fourier-side inequality
