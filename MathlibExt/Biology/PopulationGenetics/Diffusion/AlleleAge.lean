@@ -204,7 +204,6 @@ theorem greenFunction_eq_selectionGreen (σ : ℝ) {p : ℝ} (hp : p ∈ Icc (0 
   have hexp : exp (-2 * σ * x) ≠ 0 := Real.exp_ne_zero _
   simp only [greenFunction, selectionGreen, hS_eq _ hmin, hS_eq _ hmax, hS1, hψx]
   field_simp
-  ring
 
 /-- `d/dx e^{c x} = c e^{c x}`. -/
 private theorem hasDerivAt_exp_mul' (c x : ℝ) :
