@@ -112,4 +112,74 @@ example (f : (Fin 1 → Bool) → ℝ) :
     var (bernoulliWeight (1 / 2)) f = BooleanCube.boolVariance f :=
   khc_var_half_eq_boolVariance f
 
+/-! ## Transport regression tests: weak binders, empty cubes, signs, and normalization -/
+
+example {α : Type*} (x : α → Bool) : khc_walshChar ∅ x = 1 :=
+  khc_walshChar_empty x
+
+example {α : Type*} (S : Finset α) (x : α → Bool) : (khc_walshChar S x) ^ 2 = 1 :=
+  khc_walshChar_sq S x
+
+example {α : Type*} [DecidableEq α] (S T : Finset α) (x : α → Bool) :
+    khc_walshChar S x * khc_walshChar T x = khc_walshChar (symmDiff S T) x :=
+  khc_walshChar_mul S T x
+
+example (f : (Empty → Bool) → ℝ) : var (bernoulliWeight (1 / 2)) f = 0 := by
+  rw [khc_var_eq_fourierWeight]
+  simp [Subsingleton.elim (default : Finset Empty) ∅]
+
+example (f : (Fin 0 → Bool) → ℝ) (ρ : ℝ) (x : Fin 0 → Bool) :
+    bnt_noiseOp ρ f x = f x := by
+  rw [khc_noiseOp_fourier]
+  simpa [Subsingleton.elim (default : Finset (Fin 0)) ∅] using khc_fourier_expansion f x
+
+example (f : (Empty → Bool) → ℝ) (x : Empty → Bool) :
+    khc_fourierCoeff f ∅ = f x := by
+  simpa [Subsingleton.elim (default : Finset Empty) ∅] using khc_fourier_expansion f x
+
+example (x : Fin 1 → Bool) :
+    bnt_noiseOp (-1) (khc_walshChar {0}) x = -khc_walshChar {0} x := by
+  rw [khc_noiseOp_walshChar_apply]
+  simp
+
+example (x : Fin 1 → Bool) : bnt_noiseOp 0 (khc_walshChar {0}) x = 0 := by
+  rw [khc_noiseOp_walshChar_apply]
+  simp
+
+example (x : Fin 1 → Bool) : bnt_noiseOp 1 (khc_walshChar {0}) x = khc_walshChar {0} x := by
+  rw [khc_noiseOp_walshChar_apply]
+  simp
+
+example (x : Fin 1 → Bool) : bnt_noiseOp 2 (khc_walshChar {0}) x = 2 * khc_walshChar {0} x := by
+  rw [khc_noiseOp_walshChar_apply]
+  simp
+
+example (x : Fin 3 → Bool) :
+    khc_walshChar {0, 1, 2} x = -BooleanCube.cubeChi 3 {0, 1, 2} x := by
+  rw [khc_walshChar_eq_cubeChi]
+  norm_num
+
+example (f : (Fin 3 → Bool) → ℝ) :
+    khc_fourierCoeff f {0, 1, 2} = -BooleanCube.boolFourierCoeff 3 f {0, 1, 2} := by
+  rw [khc_fourierCoeff_eq_boolFourierCoeff]
+  norm_num
+
+example (x : Fin 3 → Bool) :
+    bnt_noiseOp (1 / 2) (khc_walshChar {0, 1, 2}) x = (1 / 8) * khc_walshChar {0, 1, 2} x := by
+  rw [khc_noiseOp_walshChar_apply]
+  norm_num
+
+example :
+    khc_fourierCoeff (khc_reindex (Fintype.equivFin Bool).symm andInd)
+      ((Fintype.equivFin Bool).finsetCongr {true}) = -1 / 4 := by
+  rw [khc_fourierCoeff_reindex, fourier_andInd_true]
+
+/-- AND has event influence `1/2`, but canonical influence `1/8`, not `1/2`. -/
+example (i : Bool) :
+    BooleanCube.boolInfluence (khc_reindex (Fintype.equivFin Bool).symm andInd)
+      (Fintype.equivFin Bool i) = 1 / 8 := by
+  have h := khc_infl_eq_four_boolInfluence (Fintype.equivFin Bool) andFun i
+  rw [infl_andFun] at h
+  linarith
+
 end StatMechTest.BooleanFunctions
