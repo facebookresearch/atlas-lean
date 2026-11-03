@@ -17,9 +17,16 @@ WORK="$(mktemp -d "${TMPDIR:-/tmp}/merely-true-axioms.XXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
 
 check_book() {
+  # Called inside `||`, so `set -e` does not apply here: check every step explicitly.
   local book="$1" file="$WORK/Check_$1.lean"
+  if [ ! -d "Atlas/$book" ]; then
+    echo "FAIL  $book: no directory Atlas/$book"; return 1
+  fi
   find "Atlas/$book" -type f -name '*.lean' -print | LC_ALL=C sort |
-    sed 's|\.lean$||; s|/|.|g; s|^|import |' >"$file"
+    sed 's|\.lean$||; s|/|.|g; s|^|import |' >"$file" || return 1
+  if [ ! -s "$file" ]; then
+    echo "FAIL  $book: no Lean modules found"; return 1
+  fi
   cat >>"$file" <<'LEAN'
 import Lean.Compiler.ImplementedByAttr
 import Lean.Util.CollectAxioms
@@ -39,6 +46,8 @@ run_cmd do
         Lean.logError m!"{name} is an unsafe declaration"
       if (Lean.Compiler.getImplementedBy? env name).isSome then
         Lean.logError m!"{name} uses implemented_by"
+  if names.isEmpty then
+    Lean.logError "no Atlas declarations found"
   -- One shared traversal gives the union of all axioms reachable from the book.
   let mut st : Lean.CollectAxioms.State := {}
   for name in names do
