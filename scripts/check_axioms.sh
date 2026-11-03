@@ -5,8 +5,9 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-CHECK_FILE="$(mktemp "${TMPDIR:-/tmp}/atlas-axioms.XXXXXX.lean")"
-trap 'rm -f "$CHECK_FILE"' EXIT
+CHECK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/atlas-axioms.XXXXXX")"
+CHECK_FILE="$CHECK_DIR/Check.lean"
+trap 'rm -rf "$CHECK_DIR"' EXIT
 
 for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt; do
   while IFS= read -r path; do
@@ -16,6 +17,8 @@ for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt; do
   done < <(find "$library" -type f -name '*.lean' -print | LC_ALL=C sort)
 done
 
+python3 scripts/publications.py imports >>"$CHECK_FILE"
+
 cat >>"$CHECK_FILE" <<'LEAN'
 import Batteries.Util.ProofWanted
 import Lean.Compiler.ImplementedByAttr
@@ -23,6 +26,11 @@ import Lean.Elab.Command
 import Lean.Util.CollectAxioms
 
 open Lean.Elab.Command
+LEAN
+
+python3 scripts/publications.py policy >>"$CHECK_FILE"
+
+cat >>"$CHECK_FILE" <<'LEAN'
 
 private def trustedAxioms : Array Lean.Name :=
   #[``propext, ``Quot.sound, ``Classical.choice]
@@ -31,12 +39,14 @@ private def libraryRoots : Array Lean.Name :=
   #[`CSLibExt, `CSLibExtTest, `MathlibExt, `MathlibExtTest, `WantedExt]
 
 private def libraryOf? (name : Lean.Name) : Option Lean.Name :=
-  libraryRoots.find? (·.isPrefixOf name)
+  if publicationModules.contains name then some `FormalizedPublications
+  else libraryRoots.find? (·.isPrefixOf name)
 
 private def mayImport (source target : Lean.Name) : Bool :=
   (source == `CSLibExt && target == `MathlibExt) ||
     (source == `CSLibExtTest && (target == `CSLibExt || target == `MathlibExt)) ||
     (source == `MathlibExtTest && target == `MathlibExt) ||
+    (source == `FormalizedPublications && (target == `CSLibExt || target == `MathlibExt)) ||
     (source == `WantedExt && (target == `CSLibExt || target == `MathlibExt))
 
 private def containsWantedWrapper (type : Lean.Expr) : Bool :=
@@ -92,5 +102,5 @@ run_cmd do
       "audited libraries violate the axiom, safety, wanted-declaration, or import policy"
 LEAN
 
-lake env lean "$CHECK_FILE"
+python3 scripts/publications.py env lean "$CHECK_FILE"
 echo "ok [environment]: compiled libraries satisfy trust and dependency policies."

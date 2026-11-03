@@ -5,10 +5,10 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-LOG="$(mktemp "${TMPDIR:-/tmp}/atlas-build.XXXXXX.log")"
+LOG="$(mktemp "${TMPDIR:-/tmp}/atlas-build.XXXXXX")"
 trap 'rm -f "$LOG"' EXIT
 
-if ! lake build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest 2>&1 | tee "$LOG"; then
+if ! python3 scripts/publications.py build 2>&1 | tee "$LOG"; then
   echo "FAIL [build]: audited libraries do not build." >&2
   exit 1
 fi

@@ -252,6 +252,8 @@ namespace ReesAssembly
 open CategoryTheory KoszulComplex SelfDuality HomologyTransport
 open scoped Pointwise
 
+universe u
+
 /-! ## §5. Shrink adapter: unshrunk residue field to `residueCat`
 
 `QuasiIsomorphismBridge` resolves the unshrunk residue field

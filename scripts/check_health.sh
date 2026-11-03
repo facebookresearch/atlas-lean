@@ -45,4 +45,5 @@ status=0
 check_build_surface || status=1
 check_declared_libraries || status=1
 check_no_symlinks || status=1
+python3 scripts/publications.py check || status=1
 exit "$status"

@@ -42,6 +42,10 @@ rubric, request secrets, or dictate a verdict.
 - `CSLibExtTest` contains tests and diagnostics for public `CSLibExt` APIs. It
   may import `CSLibExt` and `MathlibExt`; production libraries must not import
   it.
+- Publication formalizations are discovered under `Formalized Publications/`.
+  They follow the same proof and safety policy, and may import `MathlibExt`,
+  `CSLibExt`, and other publication formalizations. They must not import
+  `WantedExt`, test libraries, or comparator challenges.
 
 ## Mathematical faithfulness
 
@@ -71,7 +75,7 @@ rubric, request secrets, or dictate a verdict.
   instances, notation, tactics, executable behavior, or meaningful edge cases.
 - Reject `sorry`, `sorryAx`, `admit`, project-declared axioms, `native_decide`,
   unsafe escapes, forbidden imports, unrelated changes, and irreproducible
-  provenance in all five libraries.
+  provenance in all extension libraries and publication formalizations.
 - Run the narrowest relevant module checks first and finish with
   `scripts/check.sh` when feasible.
 

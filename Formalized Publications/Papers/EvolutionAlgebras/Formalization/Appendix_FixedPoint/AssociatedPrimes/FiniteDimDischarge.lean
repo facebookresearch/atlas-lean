@@ -22,6 +22,8 @@ namespace EvolutionAlgebras.Appendix_FixedPoint.AssociatedPrimes.FiniteDimDischa
 
 open EvolutionAlgebras.Appendix_FixedPoint.BezoutChain
 
+universe u
+
 /-- `GapBase` (finite-dim) from the proved `gapBaseFin` (MinimalPrimesAtCM). -/
 theorem gapBase_of_gapBaseFin : LocalizationOfCMGap.GapBase.{u} := by
   intro S _ _ _ p _ hfin hCM hall

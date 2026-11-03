@@ -545,8 +545,8 @@ theorem exists_coord_ge_of_degree_ge {α : Type*} [Fintype α] (e : α → ℕ) 
 * `Mathlib/Data/Finsupp/Order.lean`, `Finsupp.tsub_apply`.
 * `Mathlib/Data/Finsupp/Single.lean`, `Finsupp.single_eq_same`,
   `Finsupp.single_eq_of_ne`. -/
-theorem finsupp_sub_single_add_cancel (v : Fin (m + 1) →₀ ℕ) (j : Fin (m + 1))
-    (t : ℕ) (h : t ≤ v j) :
+theorem finsupp_sub_single_add_cancel {m : ℕ} (v : Fin (m + 1) →₀ ℕ)
+    (j : Fin (m + 1)) (t : ℕ) (h : t ≤ v j) :
     (v - Finsupp.single j t) + Finsupp.single j t = v := by
   ext i
   rw [Finsupp.add_apply, Finsupp.tsub_apply]

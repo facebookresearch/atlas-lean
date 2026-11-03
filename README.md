@@ -28,7 +28,7 @@
 
 ## Formalized mathematics libraries
 
-The root Lake package is limited to five libraries:
+The root Lake package contains the following libraries:
 
 | Directory | Purpose |
 | --- | --- |
@@ -37,6 +37,7 @@ The root Lake package is limited to five libraries:
 | [`CSLibExt/`](CSLibExt/README.md) | Reusable, fully proved computer-science developments built on `MathlibExt` |
 | [`CSLibExtTest/`](CSLibExtTest/README.md) | Tests and diagnostics for `CSLibExt` |
 | [`WantedExt/`](WantedExt/README.md) | Established results whose Lean implementation or proof is deferred |
+| [`Formalized Publications/`](<Formalized Publications/Readme.md>) | Fully proved formalizations of research publications |
 
 Repository checks live in [`scripts/`](scripts/README.md). Run the complete
 root validation with:
