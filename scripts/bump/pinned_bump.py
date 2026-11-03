@@ -1091,6 +1091,12 @@ def check_lakefile_sources(
         dep = pr_deps.get(name)
         if dep is None:
             continue  # caught by the require-names check
+        extra_fields = sorted(set(entry) - {"name", "git", "rev"})
+        if extra_fields:
+            problems.append(
+                f"lakefile.toml require {name} has unsupported fields {extra_fields}; "
+                "new dependencies may specify only name, git, and rev"
+            )
         if "path" in entry:
             problems.append(
                 f"lakefile.toml require {name} uses a local path; "
@@ -1160,20 +1166,17 @@ def _validate_replacement_placeholders(entry: dict, dep_names: set[str], groups:
 
 
 def _forward_tag(tag: str) -> str | None:
-    """A synthetic next-tag for forward validation: every component bumped.
+    """A synthetic next tag with every component changed and widened.
 
-    Current-tag simulation passes over-specific rules: with target == the
-    current tag, the generic rules are identity transforms, so a literal
-    `v4\\.35\\.0` rule still matches. At the real next bump the generic
-    rules rewrite the text first and the literal rule finds nothing.
-    Simulating with every component bumped (v4.35.0 -> v5.36.1) catches
-    any rule that hardcodes a current-tag component, while tag-agnostic
-    rules (version/SHA classes) still match.
+    Chained simulations must exercise digit-width boundaries as well as
+    changed values: incrementing v4.35.0 to v5.36.1 leaves fixed-width
+    patterns untested. Multiplying each incremented component by ten
+    grows every width, including zero-valued components.
     """
     m = FINAL_RE.match(tag)
     if not m:
         return None
-    return f"v{int(m.group(1)) + 1}.{int(m.group(2)) + 1}.{int(m.group(3)) + 1}"
+    return "v" + ".".join(str((int(part) + 1) * 10) for part in m.groups())
 
 
 _LITERAL_VERSION_RE = re.compile(r"v\d+\.\d+(?:\.\d+)?")

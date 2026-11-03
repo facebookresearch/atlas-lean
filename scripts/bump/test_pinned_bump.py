@@ -386,6 +386,7 @@ class GuardTests(unittest.TestCase):
                    duplicate_shadow=False, config_add_ledger=False,
                    malformed_require=False, nonstring_rev=False,
                    scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
+                   add_dep_extra_fields="", config_version_pattern=None,
                    config_add_literal_tag_rule=False, config_literal_revert=False,
                    config_add_oneuse_version=False, config_add_oneuse_sha=False,
                    config_add_tailored_alternation=False, config_add_code_rewrite=False,
@@ -472,6 +473,11 @@ class GuardTests(unittest.TestCase):
                     {"path": "FRESH.md",
                      "pattern": "(?:v4\\.35\\.0|v5\\.36\\.1|v6\\.37\\.2)",
                      "replacement": "{target}"})
+            if config_version_pattern is not None:
+                pr_config["doc_replacements"].append({
+                    "path": "FRESH.md", "pattern": config_version_pattern,
+                    "replacement": "{target}",
+                })
             if config_add_oneuse_version:
                 pr_config["doc_replacements"].append(
                     {"path": "FRESH.md", "pattern": "v4\\.35\\.0",
@@ -591,7 +597,7 @@ class GuardTests(unittest.TestCase):
                 lakefile.write_text(
                     lakefile.read_text()
                     + '\n[[require]]\nname = "Physlib"\n'
-                    + source + 'rev = "v4.35.0"\n'
+                    + source + add_dep_extra_fields + 'rev = "v4.35.0"\n'
                     '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
                 manifest_path = pr / "lake-manifest.json"
@@ -617,7 +623,7 @@ class GuardTests(unittest.TestCase):
                     'globs = ["PhyslibExt.+"]\n')
             if config_add_oneuse_version or config_add_oneuse_sha \
                     or config_add_tailored_alternation or config_add_permutation \
-                    or config_add_class_encoded:
+                    or config_add_class_encoded or config_version_pattern is not None:
                 (pr / "FRESH.md").write_text(
                     "Release v4.35.0\nSHA " + "3" * 40 + "\n")
             if malformed_require:
@@ -1116,6 +1122,45 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(
             self._run_guard(changed_only_config=True,
                             config_add_class_encoded=True), 1)
+
+    def test_guard_rejects_new_dependency_extra_fields(self):
+        for fields in (
+            'subDir = "alternate"\n',
+            'subDir = ""\n',
+            'configFile = "alternate.lean"\n',
+            'manifestFile = "alternate.json"\n',
+            'source = { type = "path", dir = "alternate" }\n',
+            'options = { custom = "alternate" }\n',
+        ):
+            with self.subTest(fields=fields):
+                self.assertEqual(self._run_guard(
+                    same_pin=True, add_dep=True,
+                    add_dep_extra_fields=fields,
+                ), 1)
+
+    def test_guard_rejects_fixed_width_version_patterns(self):
+        for pattern in (
+            r"v[0-9]{1}\.[0-9]{2}\.[0-9]{1}",
+            r"v[0-9]{1}\.[0-9]+\.[0-9]+",
+            r"v[0-9]+\.[0-9]{2}\.[0-9]+",
+            r"v[0-9]+\.[0-9]+\.[0-9]{1}",
+            r"v\d{1,1}\.\d{1,2}\.\d{1,1}",
+            r"v(?:[0-9]){1}\.(?:[0-9]){2}\.(?:[0-9]){1}",
+        ):
+            with self.subTest(pattern=pattern):
+                self.assertEqual(self._run_guard(
+                    changed_only_config=True, config_version_pattern=pattern,
+                ), 1)
+
+    def test_guard_allows_variable_width_version_patterns(self):
+        for pattern in (
+            r"v[0-9]+\.[0-9]+\.[0-9]+",
+            r"v\d{1,}\.\d{1,}\.\d{1,}",
+        ):
+            with self.subTest(pattern=pattern):
+                self.assertEqual(self._run_guard(
+                    changed_only_config=True, config_version_pattern=pattern,
+                ), 0)
 
     def test_class_pinning(self):
         flagged = [
