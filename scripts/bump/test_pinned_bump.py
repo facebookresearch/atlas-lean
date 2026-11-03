@@ -372,7 +372,8 @@ class GuardTests(unittest.TestCase):
                    manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False,
                    duplicate_shadow=False, config_add_ledger=False,
                    malformed_require=False, nonstring_rev=False,
-                   scope_repoint=False, add_dep_wrong_source=False,
+                   scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
+                   config_add_literal_tag_rule=False,
                    config_malformed_doc=None, config_malformed_pin=False,
                    config_add_nonmatching_doc=False, config_bad_doc_regex=False,
                    config_unresolved_sha=False, config_bad_group_ref=False,
@@ -428,6 +429,10 @@ class GuardTests(unittest.TestCase):
             if config_add_nonmatching_doc:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_add_literal_tag_rule:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "v4\\.35\\.0",
+                     "replacement": "{target}"})
             if config_malformed_doc == "int":
                 pr_config["doc_replacements"].append(42)
             elif config_malformed_doc == "missing_path":
@@ -506,11 +511,16 @@ class GuardTests(unittest.TestCase):
                     'scope = "leanprover-community"', 'scope = "attacker"', 1))
             if add_dep or add_dep_no_config:
                 lakefile = pr / "lakefile.toml"
-                scope = "attacker" if add_dep_wrong_source else "leanprover-community"
+                if add_dep_scoped:
+                    source = 'scope = "leanprover-community"\n'
+                elif add_dep_wrong_source:
+                    source = 'git = "https://github.com/attacker/physlib"\n'
+                else:
+                    source = 'git = "https://github.com/leanprover-community/physlib"\n'
                 lakefile.write_text(
                     lakefile.read_text()
                     + '\n[[require]]\nname = "Physlib"\n'
-                    f'scope = "{scope}"\nrev = "v4.35.0"\n'
+                    + source + 'rev = "v4.35.0"\n'
                     '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
                 manifest_path = pr / "lake-manifest.json"
@@ -674,7 +684,8 @@ class GuardTests(unittest.TestCase):
                         or config_malformed_doc is not None or config_malformed_pin \
                         or config_add_nonmatching_doc or config_bad_doc_regex \
                         or config_unresolved_sha or config_bad_group_ref \
-                        or config_missing_doc_file or config_bad_pin_regex:
+                        or config_missing_doc_file or config_bad_pin_regex \
+                        or config_add_literal_tag_rule:
                     changed_lines.append("scripts/bump/pinned_deps.json")
                 if changed_guard_test:
                     changed_lines.append("scripts/bump/test_pinned_bump.py")
@@ -879,6 +890,50 @@ class GuardTests(unittest.TestCase):
         # org must fail, even with names, revs, config, manifest unchanged.
         self.assertEqual(
             self._run_guard(same_pin=True, scope_repoint=True), 1)
+
+    def test_guard_fails_new_dep_scoped(self):
+        # Codex P2: a new dependency with scope alone (even the correct
+        # org) must fail; scope does not prove the exact repository.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True, add_dep_scoped=True), 1)
+
+    def test_guard_fails_config_only_literal_tag_rule(self):
+        # Codex P1: a rule with a literal current-tag pattern passes
+        # current-tag simulation but breaks the next forward bump, when
+        # the generic rules rewrite the text first.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_literal_tag_rule=True), 1)
+
+    def test_config_extension_allows_removing_forward_broken_rule(self):
+        # Repair path: a rule the forward simulation shows cannot apply
+        # may be removed.
+        import tempfile as _tempfile
+        broken = {"path": "README.md", "pattern": "v4\\.35\\.0",
+                  "replacement": "{target}"}
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"] = base.get("doc_replacements", []) + [broken]
+        pr = json.loads(json.dumps(base))
+        pr["doc_replacements"] = [e for e in pr["doc_replacements"] if e != broken]
+        with _tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "README.md").write_text(
+                'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
+            client = FakeGitHub(tags={}, upstream={})
+            repairable = pinned_bump.repairable_rule_patterns(
+                base, tree, "v4.35.0", client)
+            self.assertIn(broken["pattern"], repairable)
+            problems = pinned_bump.check_config_extension(base, pr, repairable)
+            self.assertNotIn("doc_replacements", " ".join(problems))
+
+    def test_config_extension_rejects_removing_healthy_rule(self):
+        healthy = {"path": "README.md", "pattern": "badge", "replacement": "badge"}
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"] = base.get("doc_replacements", []) + [healthy]
+        pr = json.loads(json.dumps(base))
+        pr["doc_replacements"] = [e for e in pr["doc_replacements"] if e != healthy]
+        problems = pinned_bump.check_config_extension(base, pr, frozenset())
+        self.assertTrue(any("doc_replacements" in p for p in problems))
 
     def test_guard_fails_new_dep_wrong_source(self):
         # Codex P1: a new require sourcing from the wrong org must fail.

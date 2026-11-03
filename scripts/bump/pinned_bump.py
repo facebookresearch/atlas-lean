@@ -276,18 +276,24 @@ def _mentions_dep(entry: dict, dep_name: str) -> bool:
     return dep_name in text
 
 
-def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
+def check_config_extension(
+    base_config: dict, pr_config: dict,
+    allow_removed_patterns: frozenset[str] | None = None,
+) -> list[str]:
     """Validate that a PR's config only extends the base config.
 
     Allowed: adding a dependency at the current pin (name + repo), adding
-    doc/pin-policy replacements, adding migration ledgers. Never allowed:
-    changing the toolchain repo, repointing an existing dependency at
-    another repo, removing a dependency, or removing/changing an entry
-    (that could silently weaken future bump validation). Dependency
-    removal has no guarded path here: it needs a guard-code change with
-    its own review first, so a same-pin PR can never silently drop a
-    pinned dependency. The removed-dep carve-outs below only keep the
-    failure message focused on the removal itself.
+    doc/pin-policy replacements, adding migration ledgers, and removing a
+    replacement rule whose pattern is in allow_removed_patterns (a rule
+    the forward simulation shows cannot apply at the next bump: keeping
+    it bricks the bump, so removing it is a repair, not a weakening).
+    Never allowed: changing the toolchain repo, repointing an existing
+    dependency at another repo, removing a dependency, or removing/
+    changing any other entry (that could silently weaken future bump
+    validation). Dependency removal has no guarded path here: it needs
+    a guard-code change with its own review first, so a same-pin PR can
+    never silently drop a pinned dependency. The removed-dep carve-outs
+    below only keep the failure message focused on the removal itself.
     A config change in a bump PR is rejected separately by cmd_guard:
     extension must land in a same-pin PR first.
     """
@@ -314,6 +320,8 @@ def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
             )
     for entry in base_config.get("doc_replacements", []):
         if entry not in pr_config.get("doc_replacements", []):
+            if allow_removed_patterns and entry.get("pattern") in allow_removed_patterns:
+                continue  # repair: the rule cannot apply at the next bump
             if not any(_mentions_dep(entry, d) for d in removed_deps):
                 problems.append(
                     "pinned_deps.json: doc_replacements entry removed or changed; "
@@ -329,6 +337,8 @@ def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
         else:
             for replacement in base_pp.get("replacements", []):
                 if replacement not in pr_pp.get("replacements", []):
+                    if allow_removed_patterns and replacement.get("pattern") in allow_removed_patterns:
+                        continue  # repair: the rule cannot apply at the next bump
                     if not any(_mentions_dep(replacement, d) for d in removed_deps):
                         problems.append(
                             "pinned_deps.json: pin_policy replacement removed or changed; "
@@ -1023,10 +1033,18 @@ def check_lakefile_sources(
     Existing requires must be unchanged except rev: scope/git/path (or
     any other field) repointing would fetch different code on the next
     `lake update` while names and revs still match. New requires must
-    source from their configured repo: a `git` URL must equal the config
-    repo, a `scope` must equal the config repo's org, and `path` (local,
-    unpinned) or a sourceless require is rejected. The bump path does not
-    need this: normalized_lakefile compares the whole document there.
+    use an explicit `git` URL equal to the configured repo. A `scope`
+    is NOT accepted for a new dependency: scope alone proves only the
+    organization, not the exact repository -- a scoped Physlib with
+    scope leanprover-community could resolve (via the package registry)
+    to a different repo than the configured one, while the
+    author-controlled manifest is made consistent with the configured
+    repo. The guard cannot resolve scoped packages exactly, so new
+    dependencies must state their repository explicitly; existing
+    scoped requires are grandfathered by the unchanged-entry check.
+    `path` (local, unpinned) or a sourceless require is rejected. The
+    bump path does not need this: normalized_lakefile compares the
+    whole document there.
     """
     problems: list[str] = []
     try:
@@ -1056,6 +1074,13 @@ def check_lakefile_sources(
                 f"lakefile.toml require {name} uses a local path; "
                 "path dependencies are unpinned and not allowed"
             )
+        elif "scope" in entry:
+            problems.append(
+                f"lakefile.toml require {name} uses scope {entry['scope']!r}; "
+                "new dependencies must use an explicit git URL matching the "
+                f"configured repo {dep['repo']!r} (scope proves only the org, "
+                "not the exact repository)"
+            )
         elif "git" in entry:
             url = str(entry["git"]).rstrip("/").removesuffix(".git")
             if url != f"https://github.com/{dep['repo']}":
@@ -1063,16 +1088,9 @@ def check_lakefile_sources(
                     f"lakefile.toml require {name} git {entry['git']!r} != "
                     f"configured repo {dep['repo']!r}"
                 )
-        elif "scope" in entry:
-            org = dep["repo"].split("/")[0]
-            if entry["scope"] != org:
-                problems.append(
-                    f"lakefile.toml require {name} scope {entry['scope']!r} != "
-                    f"configured repo org {org!r}"
-                )
         else:
             problems.append(
-                f"lakefile.toml require {name} has no git/scope source; "
+                f"lakefile.toml require {name} has no git source; "
                 "its origin cannot be verified against the configured repo"
             )
     return problems
@@ -1115,51 +1133,94 @@ def _validate_replacement_placeholders(entry: dict, dep_names: set[str], groups:
     return problems
 
 
-def validate_replacement_rules(
-    base_config: dict, pr_config: dict, pr: Path, tag: str, client: GitHub,
-) -> list[str]:
-    """Validate replacement rules against the PR tree at the current tag.
+def _forward_tag(tag: str) -> str | None:
+    """A synthetic next-tag for forward validation: every component bumped.
 
-    A rule that passes the monotonic-extension check but cannot apply
-    bricks the next bump (apply_replacements_to_text raises on an
-    invalid regex, a zero match, or an unresolved {sha:…}), and the
-    monotonic policy then blocks removing or changing it. So added
-    rules must compile, have resolvable placeholders, and match: each
-    affected file in the PR tree is simulated with the FULL rule list
-    (sequential application, so ordering interactions are caught), with
-    SHAs resolved at the current tag.
+    Current-tag simulation passes over-specific rules: with target == the
+    current tag, the generic rules are identity transforms, so a literal
+    `v4\\.35\\.0` rule still matches. At the real next bump the generic
+    rules rewrite the text first and the literal rule finds nothing.
+    Simulating with every component bumped (v4.35.0 -> v5.36.1) catches
+    any rule that hardcodes a current-tag component, while tag-agnostic
+    rules (version/SHA classes) still match.
     """
-    problems: list[str] = []
-    dep_names = {d["name"] for d in pr_config["deps"]}
-    for entry in pr_config.get("doc_replacements", []):
-        if entry in base_config.get("doc_replacements", []):
-            continue
+    m = FINAL_RE.match(tag)
+    if not m:
+        return None
+    return f"v{int(m.group(1)) + 1}.{int(m.group(2)) + 1}.{int(m.group(3)) + 1}"
+
+
+def _failing_rule_patterns(
+    entries: list[dict], text: str, target: str, shas: dict[str, str],
+    dep_names: set[str],
+) -> set[str]:
+    """Patterns of entries that cannot apply, in list order.
+
+    Covers per-entry failures (invalid regex, bad placeholders) plus the
+    first sequential-simulation failure, attributed to its entry via
+    the error message (which names the failing pattern / replacement).
+    Later entries are untested after a failure: a repair PR removes one
+    broken rule at a time, and sequential repairs converge.
+    """
+    failed: set[str] = set()
+    for entry in entries:
         try:
             groups = re.compile(entry["pattern"]).groups
-        except re.error as exc:
-            problems.append(f"added doc replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
+        except re.error:
+            failed.add(entry["pattern"])
             continue
-        problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
-    base_pp = base_config.get("pin_policy") or {}
-    pr_pp = pr_config.get("pin_policy") or {}
-    for entry in pr_pp.get("replacements", []):
-        if entry in base_pp.get("replacements", []):
-            continue
-        try:
-            groups = re.compile(entry["pattern"]).groups
-        except re.error as exc:
-            problems.append(f"added pin-policy replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
-            continue
-        problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
+        if _validate_replacement_placeholders(entry, dep_names, groups):
+            failed.add(entry["pattern"])
+    try:
+        apply_replacements_to_text(text, entries, target, shas)
+    except ValueError as exc:
+        msg = str(exc)
+        for entry in entries:
+            if repr(entry["pattern"]) in msg or repr(entry["replacement"]) in msg:
+                failed.add(entry["pattern"])
+    except re.error:
+        pass  # attributed via the per-entry compile above
+    return failed
+
+
+def _resolve_shas(client: GitHub, deps: list[dict], tag: str) -> tuple[dict[str, str], list[str]]:
     shas: dict[str, str] = {}
-    for dep in pr_config["deps"]:
+    problems: list[str] = []
+    for dep in deps:
         sha = client.tag_sha(dep["repo"], tag)
         if sha is None:
             problems.append(f"could not resolve tag SHA for {dep['name']} {tag}")
         else:
             shas[dep["name"]] = sha
+    return shas, problems
+
+
+def validate_replacement_rules(
+    pr_config: dict, pr: Path, tag: str, client: GitHub,
+) -> list[str]:
+    """Validate replacement rules against the PR tree, now and forward.
+
+    A rule that cannot apply bricks the next bump
+    (apply_replacements_to_text raises on an invalid regex, a zero
+    match, or an unresolved {sha:…}), and the monotonic policy then
+    blocks removing or changing it. Each affected file is simulated
+    with its full per-file rule list, in order, at the current tag AND
+    at a synthetic forward tag: current-tag-only simulation passes
+    over-specific rules (with target == the current tag, the generic
+    rules are identity transforms, so a literal `v4\\.35\\.0` rule
+    still matches; at the real next bump the generic rules rewrite
+    the text first and it finds nothing). SHAs are resolved at the
+    current tag for both simulations (SHA patterns are tag-agnostic).
+    """
+    problems: list[str] = []
+    dep_names = {d["name"] for d in pr_config["deps"]}
+    shas, problems = _resolve_shas(client, pr_config["deps"], tag)
     if problems:
         return problems
+    targets = [tag]
+    forward = _forward_tag(tag)
+    if forward is not None:
+        targets.append(forward)
     # Per file, with only that file's entries: entries for other files
     # must not be expected to match this one.
     by_path: dict[str, list[dict]] = {}
@@ -1172,12 +1233,15 @@ def validate_replacement_rules(
                 f"doc replacements target {path!r}, which is not in the PR tree"
             )
             continue
-        try:
-            apply_replacements_to_text(
-                file.read_text(encoding="utf-8"), by_path[path], tag, shas,
-            )
-        except (ValueError, re.error) as exc:
-            problems.append(f"doc replacements for {path} do not apply to the PR tree: {exc}")
+        text = file.read_text(encoding="utf-8")
+        for target in targets:
+            failed = _failing_rule_patterns(by_path[path], text, target, shas, dep_names)
+            if failed:
+                problems.append(
+                    f"doc replacements for {path} do not apply to the PR tree "
+                    f"at tag {target}: patterns {sorted(failed)}"
+                )
+    pr_pp = pr_config.get("pin_policy") or {}
     if pr_pp:
         file = pr / pr_pp["path"]
         if not file.is_file():
@@ -1185,16 +1249,57 @@ def validate_replacement_rules(
                 f"pin-policy file {pr_pp['path']!r} is not in the PR tree"
             )
         else:
-            try:
-                apply_replacements_to_text(
-                    file.read_text(encoding="utf-8"),
-                    pr_pp.get("replacements", []), tag, shas,
+            text = file.read_text(encoding="utf-8")
+            for target in targets:
+                failed = _failing_rule_patterns(
+                    pr_pp.get("replacements", []), text, target, shas, dep_names
                 )
-            except (ValueError, re.error) as exc:
-                problems.append(
-                    f"pin-policy replacements do not apply to the PR tree: {exc}"
-                )
+                if failed:
+                    problems.append(
+                        "pin-policy replacements do not apply to the PR tree "
+                        f"at tag {target}: patterns {sorted(failed)}"
+                    )
     return problems
+
+
+def repairable_rule_patterns(
+    base_config: dict, pr: Path, tag: str, client: GitHub,
+) -> set[str]:
+    """Patterns of base rules demonstrably broken at the next bump.
+
+    A rule the forward simulation shows cannot apply may be removed:
+    keeping it bricks the next bump, and removing it is a repair, not a
+    weakening. Only the first failing rule per file is attributed (see
+    _failing_rule_patterns); removing a rule whose pattern is not in
+    this set stays rejected.
+    """
+    forward = _forward_tag(tag)
+    if forward is None:
+        return set()
+    shas, problems = _resolve_shas(client, base_config["deps"], tag)
+    if problems:
+        return set()
+    dep_names = {d["name"] for d in base_config["deps"]}
+    repairable: set[str] = set()
+    by_path: dict[str, list[dict]] = {}
+    for entry in base_config.get("doc_replacements", []):
+        by_path.setdefault(entry["path"], []).append(entry)
+    for path, entries in by_path.items():
+        file = pr / path
+        if not file.is_file():
+            continue
+        repairable |= _failing_rule_patterns(
+            entries, file.read_text(encoding="utf-8"), forward, shas, dep_names
+        )
+    base_pp = base_config.get("pin_policy") or {}
+    if base_pp:
+        file = pr / base_pp["path"]
+        if file.is_file():
+            repairable |= _failing_rule_patterns(
+                base_pp.get("replacements", []),
+                file.read_text(encoding="utf-8"), forward, shas, dep_names,
+            )
+    return repairable
 
 
 def config_paths_for(kind: str, base_config: dict, pr_config: dict) -> list[str]:
@@ -2261,7 +2366,21 @@ def cmd_guard(args: argparse.Namespace) -> int:
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
             return 1
-        problems.extend(check_config_extension(base_config, pr_config))
+        # Repair allowance: a base rule the forward simulation shows
+        # cannot apply at the next bump may be removed. Computed from
+        # the base tree's tag (the PR's tag is not trusted yet).
+        repairable: frozenset[str] = frozenset()
+        try:
+            early_tag = current_tag(base, base_config)
+        except ValueError:
+            early_tag = None  # tag errors surface again below
+        if early_tag is not None:
+            repairable = frozenset(
+                repairable_rule_patterns(base_config, pr, early_tag, client)
+            )
+        problems.extend(
+            check_config_extension(base_config, pr_config, repairable)
+        )
     elif pr_config_path.is_file():
         try:
             pr_config = load_config_file(pr_config_path)
@@ -2307,9 +2426,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
             # tree; a broken rule bricks the next bump and the monotonic
             # policy then blocks repairing it.
             problems.extend(
-                validate_replacement_rules(
-                    base_config, pr_config, pr, base_tag_only, client
-                )
+                validate_replacement_rules(pr_config, pr, base_tag_only, client)
             )
         if problems:
             print("guard: FAIL")
@@ -2384,7 +2501,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
         # then blocks repairing it. Also catches doc edits in this PR
         # that break an existing rule's match.
         problems.extend(
-            validate_replacement_rules(base_config, pr_config, pr, base_tag, client)
+            validate_replacement_rules(pr_config, pr, base_tag, client)
         )
         try:
             problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
