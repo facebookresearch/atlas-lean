@@ -22,6 +22,7 @@ reset_fixture() {
     "$REPO_ROOT/scripts/check_axioms.sh" \
     "$REPO_ROOT/scripts/check_health.sh" \
     "$REPO_ROOT/scripts/check_lake_surface.py" \
+    "$REPO_ROOT/scripts/publications.py" \
     "$TMP_ROOT/repo/scripts/"
   printf '%s\n' 'def archived : Nat := 1' >"$TMP_ROOT/repo/v1/Archived.lean"
 }
@@ -182,6 +183,7 @@ FAKE_LAKE_LOG="$TMP_ROOT/lake.log"
 mkdir -p "$FAKE_BIN"
 cat >"$FAKE_BIN/lake" <<'SH'
 #!/usr/bin/env bash
+while [[ "${1:-}" == -d || "${1:-}" == -f ]]; do shift 2; done
 printf '%s\n' "$*" >>"$FAKE_LAKE_LOG"
 if [[ "${1:-}" == "env" && "${2:-}" == "lean" ]]; then
   cp "$3" "$FAKE_LEAN_INPUT"
@@ -198,7 +200,7 @@ if ! PATH="$FAKE_BIN:$PATH" "$REPO_ROOT/scripts/check_diagnostics.sh" \
   cat "$TMP_ROOT/output.log" >&2
   fail "clean compiler diagnostics failed"
 fi
-grep -qx 'build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest' "$FAKE_LAKE_LOG" ||
+grep -Eq '^build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest( |$)' "$FAKE_LAKE_LOG" ||
   fail "compiler diagnostics built the wrong targets"
 [[ "$(wc -l <"$FAKE_LAKE_LOG")" -eq 1 ]] ||
   fail "compiler diagnostics invoked Lake more than once"
@@ -292,6 +294,7 @@ check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected 
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_publications.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
 

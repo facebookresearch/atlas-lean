@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On Solvable Evolution Algebras and a Conjecture by Garc&iacute;a-Mart&iacute;nez and P&eacute;rez-Rodr&iacute;guez</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #222222; --muted: #6b6b6b;
+    --border: #e2e2e2; --accent: #1a5fb4;
+    --code-bg: #f7f7f5;
+    --conj-border: #b7791f; --conj-bg: #fdf8ec;
+    --res-border: #1a7f37; --res-bg: #f2f9f3;
+    --exm-border: #6e6e6e; --exm-bg: #f6f6f6;
+    --def-border: #1a5fb4; --def-bg: #f1f6fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111; --fg: #e4e4e4; --muted: #a0a0a0;
+      --border: #333333; --accent: #7aa2f7;
+      --code-bg: #1b1b1b;
+      --conj-border: #d4a72c; --conj-bg: #211a05;
+      --res-border: #3fb950; --res-bg: #0e2114;
+      --exm-border: #8b8b8b; --exm-bg: #1a1a1a;
+      --def-border: #7aa2f7; --def-bg: #101c30;
+    }
+  }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: Georgia, 'STIX Two Text', 'Times New Roman', serif;
+    font-size: 1.06rem; line-height: 1.7; margin: 0;
+  }
+  .page { display: flex; gap: 2.5rem; max-width: 1080px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  aside.toc {
+    flex: 0 0 210px; align-self: flex-start; position: sticky; top: 1.5rem;
+    font-size: .92rem; font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    border-left: 2px solid var(--border); padding-left: 1rem;
+  }
+  aside.toc strong { display: block; margin-bottom: .4rem; }
+  aside.toc a { color: var(--muted); text-decoration: none; display: block; padding: .12rem 0; }
+  aside.toc a:hover { color: var(--accent); }
+  main { max-width: 700px; min-width: 0; }
+  @media (max-width: 900px) {
+    .page { display: block; }
+    aside.toc { position: static; border-left: none; border-bottom: 1px solid var(--border);
+      padding: 0 0 .8rem; margin-bottom: 1.5rem; }
+  }
+  h1 { font-size: 1.55rem; line-height: 1.35; margin-bottom: .4rem; text-align: center; }
+  h2 { font-size: 1.25rem; margin-top: 2.2rem; }
+  h3 { font-size: 1rem; margin-top: 1.8rem; margin-bottom: .5rem; }
+  .authors { font-variant: small-caps; text-align: center; }
+  .reviewer { font-size: .93rem; }
+  .affil { color: var(--muted); font-size: .95rem; }
+  .center { text-align: center; }
+  .abstract { margin: 1.2rem 0; }
+  .abstract .env-label { font-style: italic; }
+  .abstract .env-label .sc { font-variant: small-caps; }
+  /* Human/AI margin bars: one full-height left rule per marked region, with
+     a small rotated label at its top. Exact paper-PDF values: bars and margin
+     labels Human #22AA22 / AI #038DFC; inline legend markers #64C364 / #4FAFFD. */
+  .region { position: relative; }
+  .region::before {
+    content: ""; position: absolute; left: -1.15rem; top: 0; bottom: 0; width: 3px;
+    border-radius: 2px;
+  }
+  .region.hum::before { background: #22AA22; }
+  .region.ai::before { background: #038DFC; }
+  .region::after {
+    position: absolute; left: -2.0rem; top: -.1rem;
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: .55rem; font-weight: 700; letter-spacing: .06em;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+  }
+  .region.hum::after { content: "Human"; color: #22AA22; }
+  .region.ai::after { content: "AI"; color: #038DFC; }
+  @media (max-width: 900px) {
+    .region::before { left: -0.8rem; }
+    .region::after { display: none; }
+  }
+  .mref.hum { color: #64C364; font-weight: bold; font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+  .mref.ai { color: #4FAFFD; font-weight: bold; font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+  a { color: var(--accent); }
+  /* Numbered paper environments: plain text, bold labels (only Lean boxes are boxed) */
+  .env { margin: 1.1rem 0; }
+  .env .env-label { font-weight: bold; }
+  .env ol.equiv { margin: .4rem 0 .2rem; padding-left: 1.6rem; }
+  .env ol.equiv li { margin: .15rem 0; }
+  /* Proof dropdowns */
+  details.proof { margin: .4rem 0 1.1rem; }
+  details.proof > summary { cursor: pointer; font-style: italic; display: inline; color: var(--accent); }
+  details.proof > summary::before { content: "▸ "; }
+  details.proof[open] > summary::before { content: "▾ "; }
+  details.proof p { margin: .5rem 0; }
+  details.proof .qed { text-align: right; font-size: 1.3em; margin: 0; }
+  /* Lean boxes */
+  details.leanbox {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: .9rem; border: 1px solid var(--border); border-left-width: 4px;
+    border-radius: 5px; margin: 1rem 0;
+  }
+  details.leanbox.def { border-left-color: var(--def-border); background: var(--def-bg); }
+  details.leanbox.res { border-left-color: var(--res-border); background: var(--res-bg); }
+  details.leanbox.conj { border-left-color: var(--conj-border); background: var(--conj-bg); }
+  details.leanbox.exm { border-left-color: var(--exm-border); background: var(--exm-bg); }
+  details.leanbox > summary {
+    cursor: pointer; padding: .55rem .8rem; list-style: none;
+    display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+  }
+  details.leanbox > summary::-webkit-details-marker { display: none; }
+  details.leanbox > summary::before { content: "▸"; color: var(--muted); }
+  details.leanbox[open] > summary::before { content: "▾"; }
+  details.leanbox .lean-kind {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted);
+  }
+  details.leanbox .lean-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem;
+  }
+  .srcline { text-align: right; margin: -.35rem .8rem .8rem; }
+  .srcline a {
+    color: #fff; background: var(--accent); text-decoration: none;
+    font-size: .78rem; padding: .12rem .55rem; border-radius: 4px;
+  }
+  details.leanbox pre {
+    margin: 0 .8rem .8rem; padding: .6rem .8rem; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 4px; overflow-x: auto;
+    font-size: .8rem; line-height: 1.5;
+  }
+  details.leanbox pre code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  details.leanbox pre.vars code { color: var(--muted); font-style: italic; }
+  .lean-note { margin: 0 .8rem .8rem; color: var(--muted); font-size: .82rem; }
+  footer { margin-top: 3rem; font-size: .85rem; color: var(--muted);
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    border-top: 1px solid var(--border); padding-top: .8rem; }
+  ul.refs { list-style: none; padding-left: 0; font-size: .92rem; }
+  ul.refs li { margin: .45rem 0; padding-left: 4.6em; text-indent: -4.6em; }
+  .reflabel { font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<aside class="toc" aria-label="Contents">
+  <strong>Contents</strong>
+  <a href="#title">Title &amp; abstract</a>
+  <a href="#intro">1. Introduction</a>
+  <a href="#aiuse">Statement of AI Use</a>
+  <a href="#concurrent">Concurrent work</a>
+  <a href="#prelim">2. Preliminaries</a>
+  <a href="#counterex">A counterexample</a>
+  <a href="#sec3">3. Solvable algebras and idempotents</a>
+  <a href="#remark36">Remark 3.6</a>
+  <a href="#acks">Acknowledgments</a>
+  <a href="#refs">References</a>
+</aside>
+
+<main>
+
+<h1 id="title">On Solvable Evolution Algebras and a Conjecture by Garc&iacute;a-Mart&iacute;nez and P&eacute;rez-Rodr&iacute;guez</h1>
+<p class="authors">Andres Barei</p>
+<p class="affil center">with Muse Spark via <a target="_blank" rel="noopener" href="https://meta.ai">meta.ai</a></p>
+<p class="authors reviewer">Reviewed by Nicol&aacute;s Jaramillo Torres</p>
+<p class="affil">PDF: <a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Papers/evolution_algebras.pdf">evolution_algebras.pdf</a>.</p>
+<p class="affil">Lean library: <a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean">abarei96/atlas-lean</a>.</p>
+
+<div class="abstract">
+  <span class="env-label">A<span class="sc">bstract</span>.</span>
+  We study finite-dimensional solvable evolution algebras, that is, evolution algebras for which
+  their derived series terminates at zero. We disprove a conjecture by Garc&iacute;a-Mart&iacute;nez
+  and P&eacute;rez-Rodr&iacute;guez. Then, in terms of idempotent subspaces, we propose a novel
+  characterization of solvable evolution algebras as well as of evolution algebras without nonzero
+  idempotent elements. We remark on the use of AI in this research, see Statement of AI Use.
+</div>
+
+<h2 id="intro">1. Introduction</h2>
+<div class="region hum">
+<p>
+  Introduced by Tian in their doctoral thesis <a href="#ref-thesis">[Tia04]</a>, and subsequently in
+  their monograph <a href="#ref-tia08">[Tia08]</a>, evolution algebras provide an algebraic framework for
+  studying non-Mendelian genetics. The study of these algebras is an active area of research providing
+  tools for various disciplines, including biology, physics, economics and logistics. Mathematically,
+  evolution algebras are linked to graph theory, group theory, stochastic processes and dynamical
+  systems. For a thorough historical survey, we refer to <a href="#ref-cfnt">[CFNT22]</a>.
+</p>
+<p>
+  Formally, an <strong>evolution algebra</strong> over a field \(K\) is a (non-associative)
+  \(K\)-algebra, along with a distinguished basis \(B\), called a <strong>natural basis</strong>,
+  such that \(xy = 0\) for distinct \(x,y\in B\). We focus on solvable algebras, that is, algebras
+  for which their derived series terminates at zero. These algebras have already been studied for
+  their amenable properties in <a href="#ref-fgn">[FGN22]</a> and <a href="#ref-lpp">[LPP25]</a>.
+  Recently, Garc&iacute;a-Mart&iacute;nez and P&eacute;rez-Rodr&iacute;guez
+  (<a href="#ref-gp">[GP26]</a>) proposed the following conjecture.
+</p>
+
+<details class="leanbox def">
+  <summary>
+    <span class="lean-kind">Definition</span>
+    <span class="lean-name">EvolutionAlgebra</span>
+  </summary>
+  <pre class="vars"><code>universe u v</code></pre>
+  <pre><code>class EvolutionAlgebra (K : Type u) (E : Type v) [Field K] [NonUnitalNonAssocSemiring E]
+    [NonUnitalNonAssocAlgebra K E] : Prop where
+  exists_natural_basis : ∃ (n : ℕ) (b : Module.Basis (Fin n) K E),
+    ∀ i j : Fin n, i ≠ j → b i * b j = 0</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_1_Introduction/A_EvolutionAlgebra.lean#L64-L67" title="Lines 64–67">source</a></div>
+</details>
+
+<div class="env conjecture" id="conj11">
+  <span class="env-label">Conjecture 1.1.</span>
+  Let \(\mathcal{E}\) be a complex evolution algebra. Then, \(\mathcal{E}\) is solvable if and only
+  if \(\mathcal{E}\) admits no nonzero idempotent elements.
+</div>
+
+<details class="leanbox conj">
+  <summary>
+    <span class="lean-kind">Conjecture</span>
+    <span class="lean-name">EvolutionAlgebras.Conjecture</span>
+  </summary>
+  <pre><code>def Conjecture : Prop :=
+  ∀ (E : Type 0) [NonUnitalNonAssocSemiring E]
+    [NonUnitalNonAssocAlgebra ℂ E] [EvolutionAlgebra ℂ E],
+    IsSolvable ℂ E ↔ ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_1_Introduction/B_Conjecture_1_1_SolvableIffIdempotentFree.lean#L27-L30" title="Lines 27–30">source</a></div>
+</details>
+
+<p>
+  In this paper, we show that this conjecture is false, and in turn, provide an appropriate
+  characterization of solvable evolution algebras in terms of idempotent subspaces. We also study
+  evolution algebras which admit no nonzero idempotents.
+</p>
+</div>
+
+<p class="affil">2020 Mathematics Subject Classification. 17D92, 17A60.</p>
+<h2 id="aiuse">Statement of AI Use</h2>
+<div class="region hum">
+<p>
+  This paper was developed through collaboration between researchers and Muse Spark (AI model) via the
+  <a target="_blank" rel="noopener" href="https://meta.ai">meta.ai</a> chat interface. The model helped
+  explore ideas, develop candidate arguments, and draft material. Researchers guided the work, checked
+  and corrected the mathematics, and take ownership for the final manuscript. Following
+  <a href="#ref-sch">[Sch25]</a>, margin markers identify human-drafted
+  <span class="mref hum">(Human)</span> and AI-assisted material
+  <span class="mref ai">(AI)</span> separately.
+</p>
+</div>
+
+<h2 id="concurrent">Concurrent work</h2>
+<div class="region hum">
+<p>
+  While completing this article, we became aware of the concurrent work of Hu and Wen
+  (<a href="#ref-hw">[HW26]</a>), submitted on August 12, 2026. Both works introduce counterexamples
+  refuting Conjecture 1.1. This article also presents additional theoretical results of independent interest.
+</p>
+<p>
+  Furthermore, Hu and Wen (<a href="#ref-hw">[HW26]</a>, Proposition 2.8), as well as this work
+  (Corollary 3.4), introduce conditions under which the original conjecture by
+  Garc&iacute;a-Mart&iacute;nez and P&eacute;rez-Rodr&iacute;guez holds. It is easy to see that our condition
+  is weaker, and hence our result implies
+  the one appearing in <a href="#ref-hw">[HW26]</a> (see Remark 3.6).
+</p>
+</div>
+
+<h2 id="prelim">2. Preliminaries</h2>
+<div class="region hum">
+<p>
+  Throughout, we will consider an algebraically closed field \(K\), and by algebra we always mean
+  (non-associative) \(K\)-algebra. Whenever we refer to a finite-dimensional evolution algebra
+  \(\mathcal{E}\), we assume that it comes equipped with a natural basis
+  \(B = \{e_1,\ldots, e_n\}\) and a structure matrix \(M_B(\mathcal{E})\).
+</p>
+<p>
+  Let \(V\) be a subspace of the evolution algebra \(\mathcal{E}\). We denote
+  \(V^2 = \operatorname{Span}\{xy\mid x,y\in V\}\). Recursively, we define
+  \(\mathcal{E}^{(1)} = \mathcal{E}\) and \(\mathcal{E}^{(i+1)}=(\mathcal{E}^{(i)})^2\) for
+  \(i\geq 1\). Then, \(\mathcal{E}\) is called <strong>solvable</strong> if there exists
+  \(m\in \mathbb{N}^+\) such that \(\mathcal{E}^{(m)} = 0\). It is easy to see that for
+  \(i\geq 1\), \(\mathcal{E}^{(i+1)}\subseteq \mathcal{E}^{(i)}\). Hence, if \(\mathcal{E}\) is
+  finite-dimensional, then the chain
+  \(\mathcal{E}^{(1)}\supseteq \mathcal{E}^{(2)}\supseteq\ldots\) stabilizes at some
+  \(l\in \mathbb{N}^+\). We define \(\mathcal{E}^{(\infty)} = \mathcal{E}^{(l)}\).
+</p>
+
+<details class="leanbox def">
+  <summary>
+    <span class="lean-kind">Definitions</span>
+    <span class="lean-name">square · derivedSeries · IsSolvable</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [CommSemiring K] [NonUnitalNonAssocSemiring E] [Module K E]</code></pre>
+  <pre><code>def square (V : Submodule K E) : Submodule K E :=
+  Submodule.span K {z | ∃ x ∈ V, ∃ y ∈ V, x * y = z}</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L46-L47" title="Lines 46–47">source</a></div>
+  <p class="lean-note"> The derived series of the algebra 𝓔 is ℰ⁽¹⁾ ⊇ ℰ⁽²⁾ ⊇ ... <br> Note there is an index shift in the Lean definition.</p>
+  <pre><code>abbrev derivedSeries (k : ℕ) : Submodule K E :=
+  derivedSeriesOfSubmodule K E k ⊤</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L88-L89" title="Lines 88–89">source</a></div>
+  <pre><code>class IsSolvable : Prop where
+  mk_int ::
+  solvable_int : ∃ k, derivedSeries K E k = ⊥</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L140-L142" title="Lines 140–142">source</a></div>
+</details>
+
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Results</span>
+    <span class="lean-name">derivedSeries_succ_le · derivedSeries_stabilizes</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [CommSemiring K] [NonUnitalNonAssocSemiring E] [Module K E]</code></pre>
+  <pre><code>theorem derivedSeries_succ_le (k : ℕ) :
+    derivedSeries K E (k + 1) ≤ derivedSeries K E k</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L105-L106" title="Lines 105–106">source</a></div>
+  <pre class="vars"><code>variable (K E : Type*) [Field K] [NonUnitalNonAssocRing E] [Module K E]</code></pre>
+  <pre><code>theorem derivedSeries_stabilizes [FiniteDimensional K E] :
+    ∃ l, derivedSeries K E (l + 1) = derivedSeries K E l</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L70-L71" title="Lines 70–71">source</a></div>
+</details>
+
+<p>
+  Take \(x\in \mathcal{E}\). We say that \(x\) is <strong>idempotent</strong> if \(x^2=x\), and we
+  say that \(x\) is <strong>absolutely nilpotent</strong> if \(x^2 = 0\). Given a subspace
+  \(V\subseteq \mathcal{E}\), we are interested in the set
+  $$N(V) = \{y\in V\mid y^2 = 0\}. $$
+</p>
+
+<details class="leanbox def">
+  <summary>
+    <span class="lean-kind">Definitions</span>
+    <span class="lean-name">IsAbsNilpotent · absNilpotent</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [CommSemiring K] [NonUnitalNonAssocSemiring E] [Module K E]</code></pre>
+  <pre><code>def IsAbsNilpotent (x : E) : Prop :=
+  x * x = 0</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L155-L156" title="Lines 155–156">source</a></div>
+  <pre><code>def absNilpotent (V : Submodule K E) : Set E :=
+  {x | x ∈ V ∧ IsAbsNilpotent E x}</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L161-L162" title="Lines 161–162">source</a></div>
+</details>
+
+</div>
+
+<div class="region ai">
+<h3 id="counterex">A counterexample to the original conjecture.</h3>
+<p>
+  As originally stated in <a href="#ref-gp">[GP26]</a>, Conjecture 1.1 holds in dimension two.
+  However, starting at dimension three, the conjecture fails. The following example shows a
+  three-dimensional complex evolution algebra which is not solvable and does not admit nonzero
+  idempotent elements. This example is certainly not unique and can easily be extended to any dimension.
+</p>
+
+<div class="env example" id="exm21">
+  <span class="env-label">Example 2.1.</span>
+  Let \(\mathcal{E}_0\) be the complex evolution algebra whose structure matrix with respect to the
+  natural basis \(\{e_1,e_2,e_3\}\) is
+  \[
+  A = \begin{pmatrix}
+      - 2 &amp; 0 &amp; 2 \\
+        0 &amp; 1 &amp; -1 \\
+        0 &amp; -1 &amp; 1
+  \end{pmatrix}.
+  \]
+  This defines the relations \(r_1 = e_1 \cdot e_1 = -2 e_1 + 2 e_3\),
+  \(r_2 = e_2\cdot e_2 =e_2 - e_3\), and \(r_3 = e_3\cdot e_3 = -e_2 + e_3\).
+  Directly from the definition,
+  \(\mathcal{E}_0^{(2)} = \operatorname{Span}\{r_1, r_2, r_3\} = \operatorname{Span}\{r_1, r_2\}\).
+  Moreover, note that
+  \[
+  r_1 \cdot r_1 = -8e_1 -4 e_2 +12e_3 = 4 ( r_1 - r_2),
+  \]
+  \[
+  r_1 \cdot r_2 = 2e_2 - 2 e_3 = 2r_2,
+  \quad \text{and} \quad
+  r_2\cdot r_2 = 0.
+  \]
+  It follows that \(\mathcal{E}_0^{(k)} = \mathcal{E}_0^{(2)}\neq 0\) for \(k\geq 2\), showing that
+  \(\mathcal{E}_0\) is not solvable.
+  On the other hand, any idempotent element \(x e_1 + y e_2 + ze_3 \in \mathcal{E}_0\) must satisfy
+  the system of equations
+  \[
+  A^T
+  \begin{pmatrix}
+  x^2 \\ y^2 \\ z^2
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+          x \\ y \\ z
+       \end{pmatrix}.
+  \]
+  The only solution to this system of equations is \((x,y,z) = (0,0,0)\), so \(\mathcal{E}_0\)
+  admits no nonzero idempotent elements.
+</div>
+
+<details class="leanbox exm">
+  <summary>
+    <span class="lean-kind">Example</span>
+    <span class="lean-name">Counterexample · structMat · natural basis instance</span>
+  </summary>
+  <pre><code>structure Counterexample where
+  toFun : Fin 3 → ℂ</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L48-L49" title="Lines 48–49">source</a></div>
+  <pre><code>def structMat : Matrix (Fin 3) (Fin 3) ℂ :=
+  !![-2, 0, 2; 0, 1, -1; 0, -1, 1]</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L57-L58" title="Lines 57–58">source</a></div>
+  <pre><code>instance : EvolutionAlgebra ℂ Counterexample</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L402" title="Line 402">source</a></div>
+</details>
+
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Results</span>
+    <span class="lean-name">not_solvable · no_nonzero_idempotent · conjecture_false</span>
+  </summary>
+  <pre><code>theorem not_solvable : ¬ IsSolvable ℂ Counterexample</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L581" title="Line 581">source</a></div>
+  <pre><code>theorem no_nonzero_idempotent :
+    ¬ ∃ x : Counterexample, IsIdempotentElem x ∧ x ≠ 0</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L603-L604" title="Lines 603–604">source</a></div>
+  <pre><code>theorem conjecture_false : ¬ Conjecture</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Counterexample/A_Example_2_1_NonSolvableIdempotentFree.lean#L666" title="Line 666">source</a></div>
+</details>
+
+</div>
+
+<h2 id="sec3">3. Solvable Evolution Algebras and Idempotent Elements</h2>
+<div class="region ai">
+<p>
+  It turns out that solvable evolution algebras are characterized by the lack, not of nonzero
+  idempotent elements, but of nontrivial idempotent subspaces. We say that a subspace \(V\) of an
+  evolution algebra \(\mathcal{E}\) is <strong>idempotent</strong> if \(V^2=V\). Our characterization
+  follows from the following simple lemma.
+</p>
+
+<details class="leanbox def">
+  <summary>
+    <span class="lean-kind">Definition</span>
+    <span class="lean-name">IsIdempotentSubmodule</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [CommSemiring K] [NonUnitalNonAssocSemiring E] [Module K E]</code></pre>
+  <pre><code>def IsIdempotentSubmodule (V : Submodule K E) : Prop :=
+  square K E V = V</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_2_Preliminaries/A_Preliminaries.lean#L63-L64" title="Lines 63–64">source</a></div>
+</details>
+
+<div class="env lemma" id="lem31">
+  <span class="env-label">Lemma 3.1.</span>
+  Let \(\mathcal{E}\) be a finite-dimensional evolution algebra. Then, \(\mathcal{E}^{(\infty)}\)
+  is the greatest idempotent subspace of \(\mathcal{E}\). That is,
+  \(\left(\mathcal{E}^{(\infty)}\right)^2 = \mathcal{E}^{(\infty)}\), and if a subspace
+  \(V\subseteq \mathcal{E}\) satisfies \(V^2 = V\), then
+  \(V\subseteq \mathcal{E}^{(\infty)}\).
+</div>
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Lemma</span>
+    <span class="lean-name">einfty_is_idempotent</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [Field K] [NonUnitalNonAssocRing E]</code></pre>
+  <pre><code>theorem einfty_is_idempotent [NonUnitalNonAssocAlgebra K E]
+    [EvolutionAlgebra K E] [FiniteDimensional K E] :
+    square K E (derivedSeriesInf K E) = derivedSeriesInf K E ∧
+      ∀ V : Submodule K E, square K E V = V → V ≤ derivedSeriesInf K E</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L129-L132" title="Lines 129–132">source</a></div>
+</details>
+
+<details class="proof">
+  <summary><em>Proof.</em></summary>
+  <p>
+    The identity \(\left(\mathcal{E}^{(\infty)}\right)^2 = \mathcal{E}^{(\infty)}\) follows directly
+    from the definition of \(\mathcal{E}^{(\infty)}\). Suppose that the subspace
+    \(V\subseteq \mathcal{E}\) is idempotent. Since \(V\subseteq \mathcal{E}\),
+    \(V = V^2 \subseteq \mathcal{E}^{(2)}\). Inductively, \(V\subseteq \mathcal{E}^{(k)}\) for any
+    positive integer \(k\); in particular, \(V\subseteq \mathcal{E}^{(\infty)}\).
+  </p>
+  <p class="qed">□</p>
+</details>
+
+<div class="env theorem" id="thm32">
+  <span class="env-label">Theorem 3.2.</span>
+  Let \(\mathcal{E}\) be a finite-dimensional evolution algebra. The following are equivalent:
+  <ol class="equiv">
+    <li>\(\mathcal{E}\) is solvable,</li>
+    <li>\(\mathcal{E}^{(\infty)} = 0\),</li>
+    <li>\(\mathcal{E}\) does not admit a nontrivial idempotent subspace.</li>
+  </ol>
+</div>
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Theorem</span>
+    <span class="lean-name">solvable_iff_no_idempotent_subspace</span>
+  </summary>
+  <p class="lean-note"> The equivalence 1 ↔ 3:</p>
+  <pre class="vars"><code>variable (K E : Type*) [Field K] [NonUnitalNonAssocRing E]</code></pre>
+  <pre><code>theorem solvable_iff_no_idempotent_subspace [NonUnitalNonAssocAlgebra K E]
+    [EvolutionAlgebra K E] [FiniteDimensional K E] :
+    IsSolvable K E ↔
+      ∀ V : Submodule K E, IsIdempotentSubmodule K E V → V = ⊥</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L158-L161" title="Lines 158–161">source</a></div>
+  <p class="lean-note"> The equivalence 1 ↔ 2:</p>
+  <pre><code>theorem solvable_iff_derivedSeriesInf_eq_bot [NonUnitalNonAssocAlgebra K E]
+    [EvolutionAlgebra K E] [FiniteDimensional K E] :
+    IsSolvable K E ↔ derivedSeriesInf K E = ⊥</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/A_Lemma_3_1_Theorem_3_2_SolvableIff.lean#L189-L191" title="Lines 189–191">source</a></div>
+</details>
+
+<details class="proof">
+  <summary><em>Proof.</em></summary>
+  <p>
+    By the definition of \(\mathcal{E}^{(\infty)}\), it is clear that (1) and (2) are equivalent.
+    Moreover, the equivalence of (2) and (3) follows directly from Lemma 3.1.
+  </p>
+  <p class="qed">□</p>
+</details>
+
+<p>
+  In turn, the existence (or lack thereof) of nonzero idempotent elements in an evolution algebra
+  also admits a simple characterization. For the next result, we will need some elementary facts
+  from algebraic geometry, for which we refer to <a href="#ref-harris">[Har92]</a>.
+</p>
+
+<div class="env theorem" id="thm33">
+  <span class="env-label">Theorem 3.3.</span>
+  Let \(\mathcal{E}\) be a finite-dimensional evolution algebra. Then, \(\mathcal{E}\) admits a
+  nonzero idempotent element if and only if \(\mathcal{E}\) admits a nontrivial idempotent subspace
+  \(V\) such that \(N(V) = 0\).
+</div>
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Theorem</span>
+    <span class="lean-name">IdempotentIff.idempotent_iff</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [Field K] [NonUnitalNonAssocRing E]
+  [NonUnitalNonAssocAlgebra K E]</code></pre>
+  <pre><code>theorem idempotent_iff [IsAlgClosed K] [EvolutionAlgebra K E]
+    [FiniteDimensional K E] :
+    (∃ x : E, IsIdempotentElem x ∧ x ≠ 0) ↔
+      ∃ V : Submodule K E, V ≠ ⊥ ∧ IsIdempotentSubmodule K E V ∧
+        absNilpotent K E V = {0}</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/B_Theorem_3_3_IdempotentElementsAndSubspaces.lean#L146-L150" title="Lines 146–150">source</a></div>
+</details>
+
+<details class="proof">
+  <summary><em>Proof.</em></summary>
+  <p>
+    Suppose \(x\in \mathcal{E}\) satisfies \(x^2 = x\). Then, \(V=\operatorname{Span}\{x\}\) is an
+    idempotent subspace and \(N(V) = 0\).
+  </p>
+  <p>
+    Conversely, suppose that \(V\subseteq \mathcal{E}\) is an idempotent subspace such that \(N(V)=0\).
+    Since \(V^2 = V\), the map \(\varphi:V\to V\) given by \(\varphi(x) = x^2\) is a well-defined
+    homogeneous map of degree two. We denote the projectivization of \(V\) by
+    \(\mathbb{P}(V)\). Thus, \(N(V) = 0\) implies that \(\varphi\) induces the map
+    \(\overline{\varphi}:\mathbb P(V)\to \mathbb P(V)\) given by
+    \(\overline{\varphi}([x]) = [x^2]\).
+  </p>
+  <p>
+    Since the base field is algebraically closed, \(\overline{\varphi}\) has a fixed point, say
+    \([x_0]\). Hence, \(x_0^2 =\lambda x_0\) for some \(\lambda \neq 0\). Therefore,
+    \(\frac{1}{\lambda} x_0\) is an idempotent in \(\mathcal{E}\).
+  </p>
+  <details class="leanbox res">
+    <summary>
+      <span class="lean-kind">Lemma</span>
+      <span class="lean-name">fixedPoint_of_idempotent</span>
+    </summary>
+    <p class="lean-note"> This result is what Appendix_FixedPoint is dedicated to. This simplified result shows only that
+      that the specified map \(\varphi([x]) = [x^2]\) has a fixed point. </p>
+    <pre class="vars"><code>variable (K E : Type*) [Field K] [NonUnitalNonAssocSemiring E] [Module K E]</code></pre>
+    <pre><code>theorem fixedPoint_of_idempotent (V : Submodule K E) [IsAlgClosed K]
+    [IsScalarTower K E E] [SMulCommClass K E E]
+    (hfin : Module.Finite K E) (hV : IsIdempotentSubmodule K E V)
+    (hN : absNilpotent K E V = {0}) (hneV : V ≠ ⊥) :
+    ∃ x : E, x ∈ V ∧ x ≠ 0 ∧ ∃ lam : K, lam ≠ 0 ∧ x * x = lam • x</code></pre>
+    <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Appendix_FixedPoint/A_FixedPoint.lean#L52-L56" title="Lines 52–56">source</a></div>
+  </details>
+  <p class="qed">□</p>
+</details>
+
+<p>
+  As an application, the previous theorems give rise to a simple condition under which the original
+  conjecture from <a href="#ref-gp">[GP26]</a> actually holds.
+</p>
+
+<div class="env corollary" id="cor34">
+  <span class="env-label">Corollary 3.4.</span>
+  Let \(\mathcal{E}\) be a finite-dimensional evolution algebra satisfying
+  \(N(\mathcal E^{(\infty)}) = 0\).
+  The following are equivalent:
+  <ol class="equiv">
+    <li>\(\mathcal{E}\) is solvable,</li>
+    <li>\(\mathcal{E}\) does not admit nonzero idempotent elements.</li>
+  </ol>
+</div>
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Corollary</span>
+    <span class="lean-name">SolvableCorollary.isSolvable_iff_no_nonzero_idempotent</span>
+  </summary>
+  <pre><code>theorem isSolvable_iff_no_nonzero_idempotent (K E : Type*) [Field K]
+    [NonUnitalNonAssocRing E] [NonUnitalNonAssocAlgebra K E] [EvolutionAlgebra K E]
+    [IsAlgClosed K] [FiniteDimensional K E]
+    (hN : absNilpotent K E (derivedSeriesInf K E) = {0}) :
+    IsSolvable K E ↔ ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean#L129-L133" title="Lines 129–133">source</a></div>
+  <p class="lean-note"> Forward half — a solvable algebra has no nonzero idempotent elements:</p>
+  <pre><code>theorem no_nonzero_idempotent_of_isSolvable (K E : Type*) [Field K]
+    [NonUnitalNonAssocSemiring E]
+    [NonUnitalNonAssocAlgebra K E] [EvolutionAlgebra K E]
+    (hsol : IsSolvable K E) :
+    ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean#L54-L58" title="Lines 54–58">source</a></div>
+  <p class="lean-note"> Converse half — with <code>N(𝓔^(∞)) = 0</code>, no nonzero idempotent elements implies solvable:</p>
+  <pre><code>theorem isSolvable_of_no_nonzero_idempotent (K E : Type*) [Field K]
+    [NonUnitalNonAssocRing E] [NonUnitalNonAssocAlgebra K E] [EvolutionAlgebra K E]
+    [IsAlgClosed K] [FiniteDimensional K E]
+    (hN : absNilpotent K E (derivedSeriesInf K E) = {0})
+    (hno : ¬ ∃ x : E, IsIdempotentElem x ∧ x ≠ 0) : IsSolvable K E</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/C_Corollary_3_4_SolvabilityViaIdempotentElements.lean#L89-L93" title="Lines 89–93">source</a></div>
+</details>
+
+<details class="proof">
+  <summary><em>Proof.</em></summary>
+  <p>
+    Trivially, it is always true that if \(\mathcal{E}\) is solvable, then \(\mathcal{E}\) does not
+    admit nonzero idempotent elements. Conversely, suppose that \(\mathcal{E}\) is not solvable. By
+    Theorem 3.2, \(\mathcal{E}\) contains a nontrivial idempotent subspace \(V\). Then,
+    \(V\subseteq \mathcal{E}^{(\infty)}\) implying
+    \(N(V) \subseteq N(\mathcal E^{(\infty)}) = 0\). Therefore, by Theorem 3.3, \(\mathcal{E}\)
+    admits a nonzero idempotent element.
+  </p>
+  <p class="qed">□</p>
+</details>
+
+</div>
+
+<div class="region hum">
+<div class="env example">
+  <span class="env-label">Remark 3.5.</span>
+  Given a finite-dimensional evolution algebra \(\mathcal{E}\), we are yet to find idempotent
+  subspaces of dimension greater than two which do not properly contain a nontrivial idempotent
+  subspace.
+</div>
+
+<p>
+  As we indicated earlier, Corollary 3.4 implies Proposition 2.8 from
+  <a href="#ref-hw">[HW26]</a>. This follows directly from the following remark.
+</p>
+
+<div class="env example" id="remark36">
+  <span class="env-label">Remark 3.6.</span>
+  Let \(\mathcal{E}\) be a finite-dimensional evolution algebra such that
+  \(\mathcal{E}^{(\infty)}\) is also an evolution algebra with natural basis
+  \(\{e_1,\ldots,e_n\}\). Then \(N(\mathcal{E}^{(\infty)}) = 0\).
+</div>
+
+<details class="leanbox res">
+  <summary>
+    <span class="lean-kind">Remark</span>
+    <span class="lean-name">EvolutionAlgebras.einfty_absNilpotent_eq_zero</span>
+  </summary>
+  <pre class="vars"><code>variable (K E : Type*) [Field K] [NonUnitalNonAssocRing E]
+  [NonUnitalNonAssocAlgebra K E] [EvolutionAlgebra K E] [FiniteDimensional K E]</code></pre>
+  <pre><code>theorem einfty_absNilpotent_eq_zero
+    [EvolutionAlgebra K ↥(derivedSeriesInf K E)] :
+    absNilpotent K E (derivedSeriesInf K E) = {0}</code></pre>
+  <div class="srcline"><a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean/blob/main/Formalized%20Papers/Evolution%20Algebras/Formalization/Section_3_SolvableAlgebras/D_Remark_3_6_SufficientConditionsForCorollary3_4.lean#L127-L129" title="Lines 127–129">source</a></div>
+</details>
+
+<details class="proof">
+  <summary><em>Proof.</em></summary>
+  <p>
+    Indeed, by Lemma 3.1, \((\mathcal{E}^{(\infty)})^2 = \mathcal{E}^{(\infty)}\).
+    This implies that \(\{e_1^2,\ldots,e_n^2\}\) is a basis for
+    \(\mathcal{E}^{(\infty)}\). Then, for \(x=(x_1e_1+\cdots+x_ne_n)\in
+    \mathcal{E}^{(\infty)}\), \(0=x^2=x_1^2e_1^2+\cdots+x_n^2e_n^2\) implies
+    \(x_i^2=0\) for \(i\in\{1,\ldots,n\}\). In particular, \(x=0\).
+  </p>
+  <p class="qed">□</p>
+</details>
+
+</div>
+
+<h2 id="acks">Acknowledgments</h2>
+<p>
+  The authors would like to thank Ricky Simanjuntak for discussions at various stages of the
+  project, as well as his feedback on the final draft.
+</p>
+
+<h2 id="refs">References</h2>
+<ul class="refs">
+  <li id="ref-cfnt"><span class="reflabel">[CFNT22]</span> M. Ceballos, R. M. Falc&oacute;n,
+    J. N&uacute;&ntilde;ez-Vald&eacute;s, and A. F. Tenorio,
+    A Historical Perspective of Tian's Evolution Algebras,
+    <em>Expositiones Mathematicae</em> 40(3):819–843, 2022.</li>
+  <li id="ref-fgn"><span class="reflabel">[FGN22]</span> D. Fern&aacute;ndez-Ternero,
+    V. M. G&oacute;mez-Sousa, and J. N&uacute;&ntilde;ez-Vald&eacute;s,
+    Dealing with the Resolubility of Evolution Algebras,
+    <em>Math. Comput. Sci.</em> 16:4, 2022.</li>
+  <li id="ref-gp"><span class="reflabel">[GP26]</span> X. Garc&iacute;a-Mart&iacute;nez and
+    A. P&eacute;rez-Rodr&iacute;guez,
+    A Note on Complete Evolution Algebras,
+    <em>Arch. Math.</em> 126:597–604, 2026.</li>
+  <li id="ref-harris"><span class="reflabel">[Har92]</span> J. Harris,
+    <em>Algebraic Geometry, A First Course</em>,
+    volume 133 of Graduate Texts in Mathematics, Springer New York, NY, 1992.</li>
+  <li id="ref-hw"><span class="reflabel">[HW26]</span> X. Hu and R. Wen,
+    Idempotent-free non-solvable evolution algebras over ℂ,
+    <em>arXiv:2609.25023</em>, 2026.</li>
+  <li id="ref-lpp"><span class="reflabel">[LPP25]</span> M. Ladra, P. P&aacute;ez-Guill&aacute;n, and
+    A. P&eacute;rez-Rodr&iacute;guez,
+    On the Subalgebra Lattice of Solvable Evolution Algebras,
+    <em>Rev. Real Acad. Cienc. Exactas Fis. Nat. Ser. A-Mat.</em> 119:83, 2025.</li>
+  <li id="ref-sch"><span class="reflabel">[Sch25]</span> Johannes Schmitt,
+    Extremal descendant integrals on moduli spaces of curves: An inequality discovered and
+    proved in collaboration with AI,
+    <em>arXiv preprint arXiv:2512.14575</em>, 2025.</li>
+  <li id="ref-thesis"><span class="reflabel">[Tia04]</span> J. P. Tian,
+    <em>Evolution Algebra Theory</em>,
+    PhD thesis, University of California, Riverside, 2004.</li>
+  <li id="ref-tia08"><span class="reflabel">[Tia08]</span> J. P. Tian,
+    <em>Evolution Algebras and their Applications</em>,
+    volume 1921 of Lecture Notes in Mathematics, Springer Berlin, Heidelberg, 2008.</li>
+</ul>
+
+<footer>
+  Web rendering of the paper with its Lean formalization.
+  Repository: <a target="_blank" rel="noopener" href="https://github.com/abarei96/atlas-lean">abarei96/atlas-lean</a>.
+</footer>
+
+</main>
+</div>
+</body>
+</html>

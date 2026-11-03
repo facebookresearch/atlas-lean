@@ -1,0 +1,1638 @@
+%% ---------------------------------------------------------------
+%% flexart.sty -- fully customizable article front matter
+%% ---------------------------------------------------------------
+%% Every vertical space, measure, leading, font and label in the
+%% front matter is exposed as a key.  Set keys as package options
+%% or, preferably, with \flexset{key=value,...}.
+%% ---------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{flexart}[2026/09/16 v2.3 Appendix levels, part subtitles, parskip-relative display maths, contents control]
+
+\RequirePackage{xkeyval}
+\RequirePackage{etoolbox}
+%% enumitem is a hard dependency as of this release: the enum*/itemize* keys are
+%% driven through \setlist, so the package is loaded here rather than left to the
+%% document.  Loaded WITHOUT options, so a later \usepackage[<opts>]{enumitem}
+%% raises an option clash -- pass enumitem options before flexart, or not at all.
+\RequirePackage{enumitem}
+
+%% Alignment macros.  ragged2e is NOT required (older versions of it pull in
+%% everysel.sty, which is absent from some distributions).  If you load
+%% ragged2e yourself before flexart, its richer versions win, because these
+%% are only \providecommand'd.
+\providecommand{\justifying}{%
+  \leftskip\z@ \rightskip\z@ \parfillskip\z@ \@plus1fil\relax}
+\providecommand{\RaggedRight}{%
+  \leftskip\z@ \rightskip\z@ \@plus2em \parfillskip\z@ \@plus1fil\relax}
+\providecommand{\RaggedLeft}{%
+  \leftskip\z@ \@plus2em \rightskip\z@ \parfillskip\z@\relax}
+\providecommand{\Centering}{%
+  \leftskip\z@ \@plus1fil \rightskip\leftskip \parfillskip\z@\relax}
+
+%% ===============================================================
+%% 1. LENGTHS
+%% ===============================================================
+%% --- vertical space above/below every block ---
+\newlength{\fa@abovetitle}     \setlength{\fa@abovetitle}{2.25em}
+\newlength{\fa@belowtitle}     \setlength{\fa@belowtitle}{1.7em}
+\newlength{\fa@abovesubtitle}  \setlength{\fa@abovesubtitle}{-1.2em}
+\newlength{\fa@belowsubtitle}  \setlength{\fa@belowsubtitle}{1em}
+\newlength{\fa@aboveprimary}   \setlength{\fa@aboveprimary}{0em}
+\newlength{\fa@belowprimary}   \setlength{\fa@belowprimary}{0em}
+\newlength{\fa@abovesecondary} \setlength{\fa@abovesecondary}{0em}
+\newlength{\fa@belowsecondary} \setlength{\fa@belowsecondary}{0em}
+\newlength{\fa@aboveaffil}     \setlength{\fa@aboveaffil}{0em}
+\newlength{\fa@belowaffil}     \setlength{\fa@belowaffil}{0em}
+\newlength{\fa@abovedate}      \setlength{\fa@abovedate}{0em}
+\newlength{\fa@belowdate}      \setlength{\fa@belowdate}{1em}
+\newlength{\fa@aboveabstract}  \setlength{\fa@aboveabstract}{2.35em}
+\newlength{\fa@belowabstract}  \setlength{\fa@belowabstract}{0em}
+\newlength{\fa@abovekeywords}  \setlength{\fa@abovekeywords}{0.8em}
+\newlength{\fa@belowkeywords}  \setlength{\fa@belowkeywords}{0pt}
+\newlength{\fa@abovesecondarylabel}\setlength{\fa@abovesecondarylabel}{1.5em}
+\newlength{\fa@belowsecondarylabel}\setlength{\fa@belowsecondarylabel}{0em}
+\newlength{\fa@abovethanks}    \setlength{\fa@abovethanks}{1em}
+\newlength{\fa@belowthanks}    \setlength{\fa@belowthanks}{0pt}
+\newlength{\fa@aboverule}      \setlength{\fa@aboverule}{-1.5em}
+\newlength{\fa@belowrule}      \setlength{\fa@belowrule}{0.5em}
+\newlength{\fa@belowmaketitle} \setlength{\fa@belowmaketitle}{0.9em}
+
+%% Fractions of \textwidth used by the width defaults, in one place only;
+%% \fa@relativedefaults re-reads them at \begin{document}.
+\newcommand{\fa@f@titlewidth}{1}
+\newcommand{\fa@f@authorwidth}{1}
+\newcommand{\fa@f@rulelength}{0.4}
+%% --- widths, indents, horizontal gaps ---
+\newlength{\fa@titlewidth}       \setlength{\fa@titlewidth}{\fa@f@titlewidth\textwidth}
+\newlength{\fa@authorwidth}      \setlength{\fa@authorwidth}{\fa@f@authorwidth\textwidth}
+\newlength{\fa@abstractwidth}    \setlength{\fa@abstractwidth}{\dimexpr\textwidth-7.2em\relax}
+\newlength{\fa@abstractindent}   \setlength{\fa@abstractindent}{3.6em}
+\newlength{\fa@abstractparindent}\setlength{\fa@abstractparindent}{1.2em}
+\newlength{\fa@authorsep}        \setlength{\fa@authorsep}{0.33em}
+\newlength{\fa@rulewidth}        \setlength{\fa@rulewidth}{0.5pt}
+\newlength{\fa@rulelength}       \setlength{\fa@rulelength}{\fa@f@rulelength\textwidth}
+
+%% --- leading (absolute).  0pt = leave the font default alone. ---
+\newlength{\fa@titleleading}    \setlength{\fa@titleleading}{1.4em}
+\newlength{\fa@subtitleleading} \setlength{\fa@subtitleleading}{12pt}
+\newlength{\fa@authorleading}   \setlength{\fa@authorleading}{15pt}
+\newlength{\fa@abstractleading} \setlength{\fa@abstractleading}{1.1em}
+
+%% ===============================================================
+%% 2. FORMAT HOOKS
+%% ===============================================================
+\newcommand{\fa@titlefont}{\normalfont\bfseries\spaceskip1.3\fontdimen2\font plus1.3\fontdimen3\font\relax}
+\newcommand{\fa@subtitlefont}{\normalfont\footnotesize\itshape}
+\newcommand{\fa@primaryfont}{\normalfont\normalsize}
+\newcommand{\fa@secondaryfont}{\normalfont\footnotesize}
+\newcommand{\fa@affilfont}{\normalfont\small}
+\newcommand{\fa@datefont}{\normalfont\small}
+\newcommand{\fa@abstractnamefont}{\normalfont\footnotesize\scshape}
+\newcommand{\fa@abstractfont}{\normalfont\footnotesize}
+\newcommand{\fa@keywordsnamefont}{\normalfont\small}
+\newcommand{\fa@keywordsfont}{\normalfont\small\itshape}
+\newcommand{\fa@thanksfont}{\normalfont\footnotesize}
+\newcommand{\fa@secondarylabel}{Reviewed by}
+\newcommand{\fa@secondarylabelfont}{\normalfont\footnotesize\itshape}
+
+\newcommand{\fa@titlealign}{\centering}
+%% Defaults to whatever titlealign is, so setting titlealign alone still moves the
+%% subtitle with the title; set subtitlealign to break that link.
+\newcommand{\fa@subtitlealign}{\centering}
+\newcommand{\fa@authoralign}{\centering}
+\newcommand{\fa@abstractalign}{\justifying}
+\newcommand{\fa@rulealign}{\centering}
+
+\newcommand{\fa@abstractname}{Abstract}
+\newcommand{\fa@keywordsname}{Keywords}
+\newcommand{\fa@abstractnamesep}{.\enspace}
+\newcommand{\fa@keywordssep}{: }
+\newcommand{\fa@authorsepmark}{,}
+\newcommand{\fa@lastauthorsep}{\space and~}
+
+%% ===============================================================
+%% 3. KEY-VALUE INTERFACE
+%% ===============================================================
+%% Setting a length key also records that the user set it, so the defaults that
+%% are relative to \textwidth can be re-derived at \begin{document} (after any
+%% margin change) without overwriting an explicit value.
+\def\fa@deflen#1#2{\define@key{flexart}{#1}{\setlength{#2}{##1}\csgdef{fa@userset@#1}{1}}}
+\fa@deflen{abovetitle}{\fa@abovetitle}
+\fa@deflen{belowtitle}{\fa@belowtitle}
+\fa@deflen{abovesubtitle}{\fa@abovesubtitle}
+\fa@deflen{belowsubtitle}{\fa@belowsubtitle}
+\fa@deflen{aboveprimary}{\fa@aboveprimary}
+\fa@deflen{belowprimary}{\fa@belowprimary}
+\fa@deflen{abovesecondary}{\fa@abovesecondary}
+\fa@deflen{belowsecondary}{\fa@belowsecondary}
+\fa@deflen{aboveaffiliation}{\fa@aboveaffil}
+\fa@deflen{belowaffiliation}{\fa@belowaffil}
+\fa@deflen{abovedate}{\fa@abovedate}
+\fa@deflen{belowdate}{\fa@belowdate}
+\fa@deflen{aboveabstract}{\fa@aboveabstract}
+\fa@deflen{belowabstract}{\fa@belowabstract}
+\fa@deflen{abovekeywords}{\fa@abovekeywords}
+\fa@deflen{belowkeywords}{\fa@belowkeywords}
+\fa@deflen{abovesecondarylabel}{\fa@abovesecondarylabel}
+\fa@deflen{belowsecondarylabel}{\fa@belowsecondarylabel}
+\fa@deflen{abovethanks}{\fa@abovethanks}
+\fa@deflen{abovenotes}{\fa@abovethanks}
+\fa@deflen{belownotes}{\fa@belowthanks}
+\fa@deflen{belowthanks}{\fa@belowthanks}
+\fa@deflen{aboverule}{\fa@aboverule}
+\fa@deflen{belowrule}{\fa@belowrule}
+\fa@deflen{belowmaketitle}{\fa@belowmaketitle}
+\fa@deflen{titlewidth}{\fa@titlewidth}
+\fa@deflen{authorwidth}{\fa@authorwidth}
+\fa@deflen{abstractwidth}{\fa@abstractwidth}
+\fa@deflen{abstractindent}{\fa@abstractindent}
+\fa@deflen{abstractparindent}{\fa@abstractparindent}
+\fa@deflen{authorsep}{\fa@authorsep}
+\fa@deflen{rulewidth}{\fa@rulewidth}
+\fa@deflen{rulelength}{\fa@rulelength}
+\fa@deflen{titleleading}{\fa@titleleading}
+\fa@deflen{subtitleleading}{\fa@subtitleleading}
+\fa@deflen{authorleading}{\fa@authorleading}
+\fa@deflen{abstractleading}{\fa@abstractleading}
+
+\def\fa@defcmd#1#2{\define@key{flexart}{#1}{\renewcommand{#2}{##1}\csgdef{fa@userset@#1}{1}}}
+\fa@defcmd{titlefont}{\fa@titlefont}
+\fa@defcmd{subtitlefont}{\fa@subtitlefont}
+\fa@defcmd{primaryfont}{\fa@primaryfont}
+\fa@defcmd{secondaryfont}{\fa@secondaryfont}
+\fa@defcmd{affiliationfont}{\fa@affilfont}
+\fa@defcmd{datefont}{\fa@datefont}
+\fa@defcmd{abstractnamefont}{\fa@abstractnamefont}
+\fa@defcmd{abstractfont}{\fa@abstractfont}
+\fa@defcmd{keywordsnamefont}{\fa@keywordsnamefont}
+\fa@defcmd{keywordsfont}{\fa@keywordsfont}
+\fa@defcmd{thanksfont}{\fa@thanksfont}
+\fa@defcmd{notesfont}{\fa@thanksfont}
+\fa@defcmd{secondarylabel}{\fa@secondarylabel}
+\fa@defcmd{secondarylabelfont}{\fa@secondarylabelfont}
+\fa@defcmd{titlealign}{\fa@titlealign}
+\fa@defcmd{subtitlealign}{\fa@subtitlealign}
+\fa@defcmd{authoralign}{\fa@authoralign}
+\fa@defcmd{abstractalign}{\fa@abstractalign}
+\fa@defcmd{rulealign}{\fa@rulealign}
+\fa@defcmd{abstractname}{\fa@abstractname}
+\fa@defcmd{keywordsname}{\fa@keywordsname}
+\fa@defcmd{abstractnamesep}{\fa@abstractnamesep}
+\fa@defcmd{keywordssep}{\fa@keywordssep}
+\fa@defcmd{authorsepmark}{\fa@authorsepmark}
+\fa@defcmd{lastauthorsep}{\fa@lastauthorsep}
+
+%% --- switches ---
+\newif\iffa@rule        \fa@rulefalse
+\newif\iffa@titlecase   \fa@titlecasetrue
+\newif\iffa@indentfirst \fa@indentfirstfalse
+\newif\iffa@showdate      \fa@showdatefalse
+\newif\iffa@showseclabel  \fa@showseclabeltrue
+\define@key{flexart}{rule}[true]{\csname fa@rule#1\endcsname}
+\define@key{flexart}{titleuppercase}[true]{\csname fa@titlecase#1\endcsname}
+\define@key{flexart}{indentfirstpar}[true]{\csname fa@indentfirst#1\endcsname}
+\define@key{flexart}{showdate}[true]{\csname fa@showdate#1\endcsname}
+\define@key{flexart}{showsecondarylabel}[true]{\csname fa@showseclabel#1\endcsname}
+
+\newcommand{\flexset}[1]{\setkeys{flexart}{#1}}
+\DeclareOptionX*{\setkeys{flexart}{\CurrentOption}}
+\ProcessOptionsX\relax
+
+%% ===============================================================
+%% 4. FRONT-MATTER DATA
+%% ===============================================================
+%% \title[Short Title]{Long Title} -- the optional short form is stored in
+%% \theshorttitle for use in running heads (article's \title takes no option).
+\newcommand{\fa@shorttitle}{}
+\renewcommand{\title}[2][]{%
+  \gdef\@title{#2}%
+  \ifblank{#1}{\gdef\fa@shorttitle{#2}}{\gdef\fa@shorttitle{#1}}}
+\newcommand{\theshorttitle}{\fa@shorttitle}
+
+\newcommand{\fa@subtitle}{}
+\providecommand{\subtitle}{}
+\renewcommand{\subtitle}[1]{\renewcommand{\fa@subtitle}{#1}}
+
+\newcommand{\fa@primaryauthors}{}
+\newcommand{\primaryauthors}[1]{\renewcommand{\fa@primaryauthors}{#1}}
+\newcommand{\fa@secondaryauthors}{}
+\newcommand{\secondaryauthors}[1]{\renewcommand{\fa@secondaryauthors}{#1}}
+
+\newcommand{\fa@affiliation}{}
+\providecommand{\affiliation}{}
+\renewcommand{\affiliation}[1]{\renewcommand{\fa@affiliation}{#1}}
+
+\newcommand{\fa@keywords}{}
+\providecommand{\keywords}{}
+\renewcommand{\keywords}[1]{\renewcommand{\fa@keywords}{#1}}
+
+\newcommand{\fa@abstracttext}{}
+\newcommand{\flexabstract}[1]{\renewcommand{\fa@abstracttext}{#1}}
+
+%% --- title-block footnotes (\thanks does not work inside a minipage) ---
+%% ---------------------------------------------------------------
+%% Author notes.  A note is declared ONCE and can be marked any number
+%% of times, so several authors can share one symbol and one footnote:
+%%   \newfanote{<label>}{<text>}   declare only, no mark
+%%   \fanote[<label>]{<text>}      declare and mark
+%%   \fanote{<label>}              mark an already-declared note
+%%   \fathanks{<text>}             anonymous declare-and-mark (older API)
+%% All four share one counter, so marks never collide.  Notes belong to
+%% the title block they were declared for: \maketitle prints each once,
+%% then clears them, so a second \maketitle starts from the first symbol.
+%% ---------------------------------------------------------------
+\newcounter{fa@note}
+\newcounter{fa@notei}
+\newcommand{\fa@notelabels}{}
+\newif\iffa@thanksfn \fa@thanksfntrue
+\define@key{flexart}{thanksasfootnotes}[true]{\csname fa@thanksfn#1\endcsname}
+\define@key{flexart}{notesasfootnotes}[true]{\csname fa@thanksfn#1\endcsname}
+
+%% mark style: symbols (default) | arabic | alph | roman
+\newcommand{\fa@notemark}[1]{\@fnsymbol{#1}}
+\define@key{flexart}{notemarks}[symbols]{%
+  \ifstrequal{#1}{symbols}{\renewcommand{\fa@notemark}[1]{\@fnsymbol{##1}}}{}%
+  \ifstrequal{#1}{arabic} {\renewcommand{\fa@notemark}[1]{\number##1}}{}%
+  \ifstrequal{#1}{alph}   {\renewcommand{\fa@notemark}[1]{\@alph{##1}}}{}%
+  \ifstrequal{#1}{roman}  {\renewcommand{\fa@notemark}[1]{\@roman{##1}}}{}%
+}
+
+\newcommand{\fa@declarenote}[2]{%
+  \stepcounter{fa@note}%
+  \csgdef{fa@notetext@\the\value{fa@note}}{#2}%
+  \ifblank{#1}{}{%
+    %% \csxdef, not \csgdef: the index must be frozen at DECLARATION time.
+    %% With \csgdef the body stays unexpanded and \the\value{fa@note} is read
+    %% when the note is MARKED, giving every label the counter's later value.
+    \csxdef{fa@noteidx@#1}{\the\value{fa@note}}%
+    \listgadd{\fa@notelabels}{#1}}%
+}
+\newcommand{\fa@marknote}[1]{%
+  \iffa@thanksfn
+    \begingroup\renewcommand{\thefootnote}{\fa@notemark{\value{footnote}}}%
+      \footnotemark[#1]%
+    \endgroup
+  \else
+    \textsuperscript{\fa@notemark{#1}}%
+  \fi}
+
+\newcommand{\fathanks}[1]{\fa@declarenote{}{#1}\fa@marknote{\value{fa@note}}}
+\newcommand{\newfanote}[2]{\fa@declarenote{#1}{#2}}
+\newcommand{\fanote}{\@ifnextchar[\fa@notedecl\fa@noteref}
+\def\fa@notedecl[#1]#2{\fa@declarenote{#1}{#2}\fa@marknote{\value{fa@note}}}
+\newcommand{\fa@noteref}[1]{%
+  \ifcsdef{fa@noteidx@#1}%
+    {\fa@marknote{\csuse{fa@noteidx@#1}}}%
+    {\PackageError{flexart}{Author note `#1' is not declared}%
+      {Declare it with \protect\newfanote{#1}{text} or \protect\fanote[#1]{text}
+       before marking other authors with \protect\fanote{#1}.}}}
+
+\newcommand{\fa@clearnotes}{%
+  \setcounter{fa@notei}{0}%
+  \loop\ifnum\value{fa@notei}<\value{fa@note}
+    \stepcounter{fa@notei}%
+    \csundef{fa@notetext@\the\value{fa@notei}}%
+  \repeat
+  \def\do##1{\csundef{fa@noteidx@##1}}%
+  \dolistloop{\fa@notelabels}%
+  \gdef\fa@notelabels{}%
+  \setcounter{fa@note}{0}}
+
+\newcommand{\fa@flushthanks}{%
+  \ifnum\value{fa@note}>0
+    \iffa@thanksfn
+      \begingroup\renewcommand{\thefootnote}{\fa@notemark{\value{footnote}}}%
+        \setcounter{fa@notei}{0}%
+        \loop\ifnum\value{fa@notei}<\value{fa@note}
+          \stepcounter{fa@notei}%
+          \footnotetext[\value{fa@notei}]{\csuse{fa@notetext@\the\value{fa@notei}}}%
+        \repeat
+      \endgroup
+    \else
+      \vspace{\fa@abovethanks}%
+      {\fa@thanksfont\setlength{\parindent}{0pt}%
+       \setcounter{fa@notei}{0}%
+       \loop\ifnum\value{fa@notei}<\value{fa@note}
+         \stepcounter{fa@notei}%
+         \textsuperscript{\fa@notemark{\value{fa@notei}}}\,%
+         \csuse{fa@notetext@\the\value{fa@notei}}\par
+       \repeat}%
+      \vspace{\fa@belowthanks}%
+    \fi
+    \fa@clearnotes
+  \fi}
+
+%% ===============================================================
+%% 5. AUTHOR-LIST BUILDER  (names separated by \and)
+%% ===============================================================
+\newcounter{fa@nauthors}
+\newcounter{fa@authidx}
+\newcommand{\fa@authlist}{}
+\def\fa@endmarkmacro{\fa@endmark}
+
+\def\fa@scan#1\and{%
+  \def\fa@tmp{#1}%
+  \ifx\fa@tmp\fa@endmarkmacro
+    \let\fa@scannext\relax
+  \else
+    \listeadd{\fa@authlist}{\expandonce\fa@tmp}%
+    \let\fa@scannext\fa@scan
+  \fi
+  \fa@scannext}
+
+\newcommand{\fa@parseauthors}[1]{%
+  \renewcommand{\fa@authlist}{}%
+  \fa@scan#1\and\fa@endmark\and}
+
+\newcommand{\fa@countone}[1]{\stepcounter{fa@nauthors}}
+%% NOTE: every line below MUST end in % -- a bare line end inside this macro
+%% emits a space token and shows up as a gap around the separator.
+\newcommand{\fa@sepnormal}{\fa@authorsepmark\hspace{\fa@authorsep}}%
+\newcommand{\fa@seplast}{%
+  \ifdefempty{\fa@lastauthorsep}%
+    {\fa@sepnormal}%
+    {\ifnum\value{fa@nauthors}>2\relax\fa@authorsepmark\fi\fa@lastauthorsep}%
+}%
+\newcommand{\fa@typeone}[1]{%
+  \stepcounter{fa@authidx}%
+  \ifnum\value{fa@authidx}>1\relax
+    \unskip
+    \ifnum\value{fa@authidx}=\value{fa@nauthors}\relax
+      \expandafter\fa@seplast
+    \else
+      \expandafter\fa@sepnormal
+    \fi
+  \fi
+  \ignorespaces#1\unskip}
+
+\newcommand{\authorlist}[1]{%
+  \begingroup
+  \setcounter{fa@nauthors}{0}\setcounter{fa@authidx}{0}%
+  \fa@parseauthors{#1}%
+  \forlistloop{\fa@countone}{\fa@authlist}%
+  \forlistloop{\fa@typeone}{\fa@authlist}%
+  \endgroup}
+
+%% \authorlist takes literal tokens; \fa@dolist takes a MACRO holding them and
+%% expands it one level first, so the \and separators become visible to the
+%% delimited scan above.  (Without this the stored macro is treated as a single
+%% name and LaTeX's own tabular-based \and fires -> "Misplaced \crcr".)
+\newcommand{\fa@dolist}[1]{\expandafter\authorlist\expandafter{#1}}
+
+%% --- optional decorative rule ---
+\newcommand{\flexrule}{%
+  \iffa@rule
+    \vspace{\fa@aboverule}%
+    {\fa@rulealign\rule{\fa@rulelength}{\fa@rulewidth}\par}%
+    \vspace{\fa@belowrule}%
+  \fi}
+
+%% ===============================================================
+%% 6. \maketitle
+%% ===============================================================
+%% #1 alignment  #2 width  #3 font+leading  #4 body
+\newcommand{\fa@block}[4]{%
+  {#1\begin{minipage}{#2}#1#3#4\par\end{minipage}\par}}
+
+\renewcommand{\maketitle}{%
+  \par                      % close any open paragraph (safe for a 2nd \maketitle)
+  \iffa@header\iffa@firstheader\else\thispagestyle{plain}\fi\fi % title page: folio only
+  \begingroup
+  \fa@mpinheritfalse        % the front-matter minipages keep their own tight shape
+  \setlength{\parindent}{0pt}\setlength{\parskip}{0pt}%
+  %% ---- title ----
+  \vspace*{\fa@abovetitle}%
+  \fa@block{\fa@titlealign}{\fa@titlewidth}
+    {\fa@titlefont\ifdim\fa@titleleading>0pt\setlength{\baselineskip}{\fa@titleleading}\fi}
+    {\iffa@titlecase\expandafter\MakeUppercase\expandafter{\@title}\else\@title\fi}%
+  \vspace{\fa@belowtitle}%
+  %% ---- subtitle ----
+  \ifdefempty{\fa@subtitle}{}{%
+    \vspace{\fa@abovesubtitle}%
+    \fa@block{\fa@subtitlealign}{\fa@titlewidth}
+      {\fa@subtitlefont\ifdim\fa@subtitleleading>0pt\setlength{\baselineskip}{\fa@subtitleleading}\fi}
+      {\fa@subtitle}%
+    \vspace{\fa@belowsubtitle}}%
+  %% ---- primary authors (first line) ----
+  \ifdefempty{\fa@primaryauthors}{}{%
+    \vspace{\fa@aboveprimary}%
+    \fa@block{\fa@authoralign}{\fa@authorwidth}
+      {\fa@primaryfont\ifdim\fa@authorleading>0pt\setlength{\baselineskip}{\fa@authorleading}\fi}
+      {\fa@dolist\fa@primaryauthors}%
+    \vspace{\fa@belowprimary}}%
+  %% ---- secondary authors (line below) ----
+  \ifdefempty{\fa@secondaryauthors}{}{%
+    \iffa@showseclabel\ifdefempty{\fa@secondarylabel}{}{%
+      \vspace{\fa@abovesecondarylabel}%
+      \fa@block{\fa@authoralign}{\fa@authorwidth}{\fa@secondarylabelfont}{\fa@secondarylabel}%
+      \vspace{\fa@belowsecondarylabel}}\fi
+    \vspace{\fa@abovesecondary}%
+    \fa@block{\fa@authoralign}{\fa@authorwidth}
+      {\fa@secondaryfont\ifdim\fa@authorleading>0pt\setlength{\baselineskip}{\fa@authorleading}\fi}
+      {\fa@dolist\fa@secondaryauthors}%
+    \vspace{\fa@belowsecondary}}%
+  %% ---- affiliation ----
+  \ifdefempty{\fa@affiliation}{}{%
+    \vspace{\fa@aboveaffil}%
+    \fa@block{\fa@authoralign}{\fa@authorwidth}{\fa@affilfont}{\fa@affiliation}%
+    \vspace{\fa@belowaffil}}%
+  %% ---- date ----  (skipped by showdate=false as well as by \date{})
+  \iffa@showdate\ifdefempty{\@date}{}{%
+    \vspace{\fa@abovedate}%
+    {\fa@authoralign\fa@datefont\@date\par}%
+    \vspace{\fa@belowdate}}\fi
+  \flexrule
+  %% ---- abstract (+ keywords) ----
+  \ifdefempty{\fa@abstracttext}{}{%
+    \vspace{\fa@aboveabstract}%
+    \noindent\hspace*{\fa@abstractindent}%
+    \begin{minipage}{\fa@abstractwidth}%
+      \setlength{\parindent}{\fa@abstractparindent}%
+      \noindent{\fa@abstractnamefont\fa@abstractname}\fa@abstractnamesep\noindent
+      {\fa@abstractfont
+       \ifdim\fa@abstractleading>0pt\setlength{\baselineskip}{\fa@abstractleading}\fi
+       \fa@abstractalign\fa@abstracttext\par}%
+      \ifdefempty{\fa@keywords}{}{%
+        \vspace{\fa@abovekeywords}%
+        \noindent{\fa@keywordsnamefont\fa@keywordsname}\fa@keywordssep
+        {\fa@keywordsfont\fa@keywords\par}%
+        \vspace{\fa@belowkeywords}}%
+    \end{minipage}\par
+    \vspace{\fa@belowabstract}}%
+  \fa@flushsubjclass   % unmarked MSC note first, then the marked author notes
+  \fa@flushthanks
+  \endgroup
+  \vspace{\fa@belowmaketitle}%
+  \iffa@indentfirst\else\@afterindentfalse\@afterheading\fi}
+
+%% ===============================================================
+%% 7. SECTIONING  (section / subsection / subsubsection / paragraph)
+%% ===============================================================
+%% Per level L, these keys exist:
+%%   Labove Lbelow Lindent Lfont Lalign Lnumberfont Lnumbersep
+%%   Lrunin[=true] Lindentafter[=true] Luppercase[=true]
+%% Plus the global keys numberdepth / tocdepth.
+%% Labove and Lbelow are always given as POSITIVE amounts; the sign
+%% conventions of \@startsection are derived from Lrunin/Lindentafter,
+%% so rubber components keep the right sign (a hand-written negative
+%% beforeskip silently flips its own plus/minus parts).
+%%
+%% #1 name  #2 default above  #3 default below  #4 default font
+%% #5 runin default (0/1)  #6 indent-after default (0/1)
+\newcommand{\fa@newlevel}[6]{%
+  \expandafter\newlength\csname fa@#1@above\endcsname
+  \expandafter\newlength\csname fa@#1@below\endcsname
+  \expandafter\newlength\csname fa@#1@indent\endcsname
+  \expandafter\newlength\csname fa@#1@eabove\endcsname
+  \expandafter\newlength\csname fa@#1@ebelow\endcsname
+  \expandafter\setlength\csname fa@#1@above\endcsname{#2}%
+  \expandafter\setlength\csname fa@#1@below\endcsname{#3}%
+  \csdef{fa@#1@font}{#4}%
+  \csdef{fa@#1@align}{}%
+  \csdef{fa@#1@numberfont}{}%
+  \csdef{fa@#1@numbersep}{\quad}%
+  \csdef{fa@#1@runin}{#5}%
+  \csdef{fa@#1@indentafter}{#6}%
+  \csdef{fa@#1@upper}{0}%
+  \csdef{fa@#1@runinpunct}{}%
+  \define@key{flexart}{#1runinpunct}{\csdef{fa@#1@runinpunct}{##1}}%
+  \define@key{flexart}{#1above}{\expandafter\setlength\csname fa@#1@above\endcsname{##1}}%
+  \define@key{flexart}{#1below}{\expandafter\setlength\csname fa@#1@below\endcsname{##1}}%
+  \define@key{flexart}{#1indent}{\expandafter\setlength\csname fa@#1@indent\endcsname{##1}}%
+  \define@key{flexart}{#1font}{\csdef{fa@#1@font}{##1}}%
+  \define@key{flexart}{#1align}{\csdef{fa@#1@align}{##1}}%
+  \define@key{flexart}{#1numberfont}{\csdef{fa@#1@numberfont}{##1}}%
+  \define@key{flexart}{#1numbersep}{\csdef{fa@#1@numbersep}{##1}}%
+  \define@key{flexart}{#1runin}[true]%
+    {\ifstrequal{##1}{true}{\csdef{fa@#1@runin}{1}}{\csdef{fa@#1@runin}{0}}}%
+  \define@key{flexart}{#1indentafter}[true]%
+    {\ifstrequal{##1}{true}{\csdef{fa@#1@indentafter}{1}}{\csdef{fa@#1@indentafter}{0}}}%
+  \define@key{flexart}{#1uppercase}[true]%
+    {\ifstrequal{##1}{true}{\csdef{fa@#1@upper}{1}}{\csdef{fa@#1@upper}{0}}}%
+}
+%% Defaults: level 1 centred small caps with uppercased text, "1." + \enspace;
+%% level 2 bold run-in with a terminating period; level 3 italic run-in; level 4
+%% run-in.  (Standard article's own values are in the option reference.)
+\fa@newlevel{section}{0.7\baselineskip \@plus \baselineskip}{0.5\baselineskip}%
+  {\normalfont\large\scshape}{0}{1}
+\fa@newlevel{subsection}{0.5\baselineskip \@plus 0.7\baselineskip}{0.5em}%
+  {\normalfont\bfseries}{1}{1}
+\fa@newlevel{subsubsection}{0.5\baselineskip \@plus 0.7\baselineskip}{0.5em}%
+  {\normalfont\itshape}{1}{1}
+\fa@newlevel{paragraph}{0pt}{0.33em}%
+  {\normalfont\bfseries}{1}{1}
+\csdef{fa@section@align}{\centering}
+\csdef{fa@section@numberfont}{\mdseries}
+\csdef{fa@section@upper}{0}
+\csdef{fa@section@numbersep}{.\enspace}
+\csdef{fa@subsection@numbersep}{.\enspace}
+\csdef{fa@subsection@runinpunct}{.}
+\csdef{fa@subsubsection@numbersep}{.\enspace}
+\csdef{fa@subsubsection@runinpunct}{.}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+
+\define@key{flexart}{numberdepth}{\setcounter{secnumdepth}{#1}}
+\define@key{flexart}{tocdepth}{\setcounter{tocdepth}{#1}}
+
+%% derive the signed skips actually handed to \@startsection
+%% EXPERIMENTAL (v1.8-exp2): a run-in heading must not change the paragraph rhythm.
+%% \@startsection issues \addvspace<above> at the end of the previous paragraph, where
+%% \lastskip is zero, so the full <above> is inserted AND the next paragraph then adds
+%% its own \parskip: the two ADD.  Measured with the house defaults in an 11pt document,
+%% a paragraph carrying a run-in heading sat 29.1pt below its predecessor against a
+%% 22.4pt rhythm elsewhere.  For run-in levels the house \parskip is therefore taken out
+%% of <above> (clamped at zero), which makes the total max(\parskip, <above>): the
+%% rhythm is untouched for the default skips, and a deliberately large <above> still
+%% shows.  Set runinabsorbparskip=false for the old additive behaviour.
+\newif\iffa@runinabsorb \fa@runinabsorbtrue
+\define@key{flexart}{runinabsorbparskip}[true]{\csname fa@runinabsorb#1\endcsname}
+\newcommand{\fa@fixlevel}[1]{%
+  \csname fa@#1@eabove\endcsname=\csname fa@#1@above\endcsname\relax
+  \csname fa@#1@ebelow\endcsname=\csname fa@#1@below\endcsname\relax
+  \ifnum\csuse{fa@#1@runin}=1\relax
+    \iffa@runinabsorb
+      \ifdim\csname fa@#1@eabove\endcsname>\fa@parskip
+        \advance\csname fa@#1@eabove\endcsname-\fa@parskip
+      \else
+        \csname fa@#1@eabove\endcsname=\z@
+      \fi
+    \fi
+  \fi
+  \ifnum\csuse{fa@#1@indentafter}=0\relax
+    \csname fa@#1@eabove\endcsname=-\csname fa@#1@eabove\endcsname\relax
+  \fi
+  \ifnum\csuse{fa@#1@runin}=1\relax
+    \csname fa@#1@ebelow\endcsname=-\csname fa@#1@ebelow\endcsname\relax
+  \fi}
+
+%% Heading-text transformer: applies <lvl>uppercase and <lvl>runinpunct.
+%% Survives all four call shapes: \sec{t} \sec[s]{t} \sec*{t} \sec*[s]{t}.
+%% \texorpdfstring keeps PDF bookmarks clean (provided for the no-hyperref case).
+\providecommand{\texorpdfstring}[2]{#1}
+\DeclareRobustCommand{\fa@headtext}[2]{%
+  \texorpdfstring
+    {\ifnum\csuse{fa@#1@upper}=1\relax\MakeUppercase{#2}\else#2\fi
+     \csuse{fa@#1@runinpunct}}%
+    {#2}}
+\newcommand{\fa@headwrap}[2]{%
+  \@ifstar{\fa@headwrapS{\csname #1\endcsname}{#2}}%
+          {\fa@headwrapA{\csname #1\endcsname}{#2}}}
+%% Starred form: \@ssect takes NO optional argument, so pass the title only.
+\newcommand{\fa@headwrapS}[3]{#1*{\fa@headtext{#2}{#3}}}
+\newcommand{\fa@headwrapA}[2]{%
+  \@ifnextchar[{\fa@headwrapB{#1}{#2}}{\fa@headwrapC{#1}{#2}}}
+%% Explicit [short]: the user's short form goes to the ToC untouched.
+\def\fa@headwrapB#1#2[#3]#4{#1[#3]{\fa@headtext{#2}{#4}}}
+%% No [short]: hand the ORIGINAL title to \@sect as the ToC / running-head entry
+%% and the transformed one as the typeset heading, so <lvl>uppercase and
+%% <lvl>runinpunct never leak into the ToC or the marks.
+\newcommand{\fa@headwrapC}[3]{#1[#3]{\fa@headtext{#2}{#3}}}
+
+%% EXPERIMENTAL (v1.8-exp3): clear a stale \if@minipage.
+%% \@setminipage marks the top of a minipage with \if@minipage true and installs
+%% \everypar{\@minipagefalse\everypar{}} to clear it at the first paragraph.  A heading
+%% overwrites \everypar -- \@xsect does for a run-in heading, \@afterheading for a display
+%% one -- so when a heading is the FIRST thing in a minipage the flag is never cleared.
+%% \addvspace does nothing while it is true, so the spacing of whatever follows (a theorem,
+%% a list) comes out wrong: measured 22.3pt above the first theorem against 16.9pt for the
+%% identical structure in the body.
+%% The flag is cleared from the heading's own style hook through \aftergroup, so it lands
+%% just outside the group \@startsection wraps that hook in -- still inside the minipage,
+%% and after \@startsection has already used the flag to suppress the space above the
+%% heading itself, which is what it is there for.
+\newcommand{\fa@mpclear}{\if@minipage\aftergroup\@minipagefalse\fi}
+
+%% \@sect issues \csname <level>mark\endcsname{<title>} for every level.  LaTeX only
+%% provides \sectionmark, \subsectionmark, \subsubsectionmark and \paragraphmark, so for a
+%% level of our own the \csname yielded \relax and the title argument fell through into the
+%% body, printing the heading text again as a paragraph.  Give every level a mark macro.
+%% flexart's running head is driven by \theshorttitle rather than by marks, so a no-op is
+%% the right default; a document may redefine it.
+\newcommand{\fa@defmark}[1]{%
+  \@ifundefined{#1mark}%
+    {\expandafter\newcommand\csname #1mark\endcsname[1]{}}{}}
+\newcommand{\fa@deflevel}[2]{%
+  \fa@defmark{#1}%
+  \fa@fixlevel{#1}%
+  \csdef{fa@raw@#1}{\@startsection{#1}{#2}%
+    {\csuse{fa@#1@indent}}%
+    {\csuse{fa@#1@eabove}}%
+    {\csuse{fa@#1@ebelow}}%
+    {\fa@mpclear\csuse{fa@#1@align}\csuse{fa@#1@font}}}%
+  %% only wrap when a transformation is actually requested
+  \ifboolexpr{ test {\ifnumequal{\csuse{fa@#1@upper}}{1}}
+               or not test {\ifcsempty{fa@#1@runinpunct}} }%
+    {\csdef{#1}{\fa@headwrap{fa@raw@#1}{#1}}}%
+    {\csletcs{#1}{fa@raw@#1}}}
+
+%% --- appendices ----------------------------------------------------------
+%% `appendix` is a real flexart level with its own eleven keys, so \appendix simply
+%% points \section at it.  Its defaults COPY the section family, so appendices look
+%% exactly like sections until a key says otherwise.  The counter is aliased to
+%% section's, which keeps \ref working and lets article's own numbering reset apply.
+\fa@newlevel{appendix}{0.7\baselineskip \@plus \baselineskip}{0.5\baselineskip}%
+  {\normalfont\large\scshape}{0}{1}
+\csdef{fa@appendix@align}{\centering}
+\csdef{fa@appendix@numberfont}{\mdseries}
+\csdef{fa@appendix@upper}{0}
+\csdef{fa@appendix@numbersep}{.\enspace}
+\let\c@appendix\c@section
+\let\p@appendix\@empty
+\def\theappendix{\@Alph\c@section}
+\newcommand{\fa@appendixname}{Appendix}
+\newcommand{\fa@appendixnamesep}{\space}
+\fa@defcmd{appendixname}{\fa@appendixname}
+\fa@defcmd{appendixnamesep}{\fa@appendixnamesep}
+\newif\iffa@appendixprefix    \fa@appendixprefixtrue
+\newif\iffa@appendixpagebreak \fa@appendixpagebreakfalse
+\define@key{flexart}{appendixprefix}[true]{\csname fa@appendixprefix#1\endcsname}
+\define@key{flexart}{appendixpagebreak}[true]{\csname fa@appendixpagebreak#1\endcsname}
+%% emitted by \@seccntformat just before the number, so "Appendix A." falls out of
+%% the ordinary number machinery instead of needing a bespoke heading macro
+\csdef{fa@appendix@numberprefix}{\iffa@appendixprefix\fa@appendixname\fa@appendixnamesep\fi}
+%% --- the "Appendices" line that opens the appendix block in the contents -------
+\newcommand{\fa@appendixgroupname}{Appendices}
+\fa@defcmd{appendixgroupname}{\fa@appendixgroupname}
+\newif\iffa@appendixgrouptoc \fa@appendixgrouptoctrue
+\define@key{flexart}{appendixgrouptoc}[true]{\csname fa@appendixgrouptoc#1\endcsname}
+\newcommand{\fa@tocappendixgroupfont}{\normalfont\scshape}
+\fa@defcmd{tocappendixgroupfont}{\fa@tocappendixgroupfont}
+\newlength{\fa@tocappendixgroupindent} \setlength{\fa@tocappendixgroupindent}{6.1em}%  level with the part labels
+\newlength{\fa@tocappendixgroupabove}  \setlength{\fa@tocappendixgroupabove}{0.2em}
+\newlength{\fa@tocappendixgrouprulewidth}  \setlength{\fa@tocappendixgrouprulewidth}{0.4pt}
+\newlength{\fa@tocappendixgrouprulelength} \setlength{\fa@tocappendixgrouprulelength}{\linewidth}
+\newlength{\fa@tocappendixgrouprulesep}    \setlength{\fa@tocappendixgrouprulesep}{0.4em}
+\newlength{\fa@tocappendixgroupruleindent} \setlength{\fa@tocappendixgroupruleindent}{3.8em}
+\fa@deflen{tocappendixgroupruleindent}{\fa@tocappendixgroupruleindent}
+\fa@deflen{tocappendixgroupindent}{\fa@tocappendixgroupindent}
+\fa@deflen{tocappendixgroupabove}{\fa@tocappendixgroupabove}
+\fa@deflen{tocappendixgrouprulewidth}{\fa@tocappendixgrouprulewidth}
+\fa@deflen{tocappendixgrouprulelength}{\fa@tocappendixgrouprulelength}
+\fa@deflen{tocappendixgrouprulesep}{\fa@tocappendixgrouprulesep}
+\newif\iffa@tocappendixgrouprule \fa@tocappendixgroupruletrue
+\newif\iffa@tocappendixgrouppagenumber \fa@tocappendixgrouppagenumberfalse
+%% the page number may instead be set BEFORE the label
+\newif\iffa@tocappendixgrouppnumfront \fa@tocappendixgrouppnumfrontfalse
+\define@key{flexart}{tocappendixgrouppagenumberfront}[true]%
+  {\csname fa@tocappendixgrouppnumfront#1\endcsname}
+\newlength{\fa@tocappendixgrouppnumsep} \setlength{\fa@tocappendixgrouppnumsep}{0.5em}
+\fa@deflen{tocappendixgrouppnumsep}{\fa@tocappendixgrouppnumsep}
+\define@key{flexart}{tocappendixgrouprule}[true]{\csname fa@tocappendixgrouprule#1\endcsname}
+\define@key{flexart}{tocappendixgrouppagenumber}[true]{\csname fa@tocappendixgrouppagenumber#1\endcsname}
+%% styled like a part line, but its own keys
+\newcommand{\fa@lappendixgroup}[2]{%
+  \ifnum \c@tocdepth >-2\relax
+    \addpenalty{-\@highpenalty}%
+    \addvspace{\dimexpr\fa@tocappendixgroupabove+\fa@tocitemsep\relax}%
+    \begingroup
+      \setlength{\parindent}{0pt}%
+      %% \parfillskip=-\@pnumwidth only balances when a page number box follows; with
+      %% the number suppressed the line cannot fill and TeX reports an underfull box
+      \ifboolexpr{ bool {fa@tocappendixgrouppagenumber}
+                   and not bool {fa@tocappendixgrouppnumfront} }%
+        {\setlength{\rightskip}{\@pnumwidth}\setlength{\parfillskip}{-\@pnumwidth}}%
+        {\setlength{\rightskip}{0pt}\setlength{\parfillskip}{0pt plus 1fil}}%
+      \iffalse
+        \setlength{\rightskip}{\@pnumwidth}\setlength{\parfillskip}{-\@pnumwidth}%
+      \else
+        \setlength{\rightskip}{0pt}\setlength{\parfillskip}{0pt plus 1fil}%
+      \fi
+      \leavevmode
+      \advance\leftskip\fa@tocappendixgroupindent
+      \iffa@tocappendixgrouppnumfront
+        {\fa@pnumfont #2}\hskip\fa@tocappendixgrouppnumsep
+      \fi
+      {\fa@tocappendixgroupfont #1}\nobreak\hfil
+      %% a leading number REPLACES the one at the right margin rather than doubling it
+      \iffa@tocappendixgrouppnumfront\else
+        \iffa@tocappendixgrouppagenumber
+          \nobreak\hb@xt@\@pnumwidth{\hss\fa@pnumfont #2}%
+        \fi
+      \fi
+      \par
+      \iffa@tocappendixgrouprule
+        \nointerlineskip\vskip\fa@tocappendixgrouprulesep
+        \setlength{\leftskip}{0pt}\setlength{\rightskip}{0pt}%
+        \setlength{\parfillskip}{0pt plus 1fil}%
+        %% starts where section titles start, like the part rule, and runs to the margin
+        \noindent\hspace*{\fa@tocappendixgroupruleindent}%
+        \rule{\dimexpr\fa@tocappendixgrouprulelength-\fa@tocappendixgroupruleindent\relax}%
+              {\fa@tocappendixgrouprulewidth}\par
+      \fi
+    \endgroup
+  \fi}
+
+\newcommand{\flexappendix}{%
+  \par
+  \iffa@appendixpagebreak\clearpage\fi
+  \iffa@appendixgrouptoc
+    \phantomsection
+    \addcontentsline{toc}{appendixgroup}{\fa@appendixgroupname}%
+  \fi
+  \setcounter{section}{0}\setcounter{subsection}{0}\setcounter{subsubsection}{0}%
+  %% dependent counters read \thesection, so it must become the letter too or an
+  %% appendix subsection numbers as "1.1" instead of "A.1"
+  \gdef\thesection{\@Alph\c@section}%
+  %% hyperref builds anchor names from \theH<counter>.  The appendix counter is shared
+  %% with section, so an appendix subsection would claim the same identifier as a
+  %% subsection in the body ("destination with the same identifier ... duplicate
+  %% ignored", and the earlier link wins).  Prefix the appendix branch.
+  \@ifundefined{theHsection}{}{\gdef\theHsection{app.\@Alph\c@section}}%
+  \let\section\fa@appendixhead}
+
+%% Applied automatically at \begin{document}.  Call it again by hand after a
+%% mid-document \flexset that changes any of the *above/below/runin* keys.
+\newcommand{\flexsections}{%
+  \fa@deflevel{section}{1}%
+  \fa@deflevel{subsection}{2}%
+  \fa@deflevel{subsubsection}{3}%
+  \fa@deflevel{paragraph}{4}%
+  %% the appendix level would take over the name \appendix, which must stay the
+  %% switch, so capture the heading command and put the switch back
+  \fa@deflevel{appendix}{1}%
+  \csletcs{fa@appendixhead}{appendix}%
+  \let\appendix\flexappendix
+  \def\@seccntformat##1{%
+    \ifcsdef{fa@##1@numbersep}%
+      {\csuse{fa@##1@numberprefix}\csuse{fa@##1@numberfont}%
+       \csname the##1\endcsname\csuse{fa@##1@numbersep}}%
+      {\csname the##1\endcsname\quad}}%
+}
+\AtBeginDocument{\flexsections}
+
+%% ===============================================================
+%% 8. PAGE LAYOUT, PARAGRAPH SHAPE, DISPLAY MATH
+%% ===============================================================
+%% --- margins ---------------------------------------------------
+%% Nothing is applied unless at least one margin key is set, so loading flexart
+%% never moves the text block on its own.  If geometry is loaded (before or after
+%% flexart) the values are handed to \geometry; otherwise the same layout is
+%% computed directly from \paperwidth/\paperheight.
+\newlength{\fa@marginleft}   \setlength{\fa@marginleft}{1in}
+\newlength{\fa@marginright}  \setlength{\fa@marginright}{1in}
+\newlength{\fa@margintop}    \setlength{\fa@margintop}{1in}
+\newlength{\fa@marginbottom} \setlength{\fa@marginbottom}{1in}
+\newif\iffa@marginset \fa@marginsettrue
+
+\newcommand{\fa@applymargins}{%
+  \iffa@marginset
+    \@ifpackageloaded{geometry}%
+      {\geometry{left=\the\fa@marginleft,right=\the\fa@marginright,
+                 top=\the\fa@margintop,bottom=\the\fa@marginbottom}}%
+      {\setlength{\textwidth}{\dimexpr\paperwidth-\fa@marginleft-\fa@marginright\relax}%
+       \setlength{\oddsidemargin}{\dimexpr\fa@marginleft-1in\relax}%
+       \setlength{\evensidemargin}{\oddsidemargin}%
+       \setlength{\textheight}{\dimexpr\paperheight-\fa@margintop-\fa@marginbottom\relax}%
+       \setlength{\topmargin}{\dimexpr\fa@margintop-1in-\headheight-\headsep\relax}%
+       \setlength{\linewidth}{\textwidth}}%
+  \fi}
+\define@key{flexart}{margin}{%
+  \setlength{\fa@marginleft}{#1}\setlength{\fa@marginright}{#1}%
+  \setlength{\fa@margintop}{#1}\setlength{\fa@marginbottom}{#1}%
+  \fa@marginsettrue\fa@applymargins}
+\define@key{flexart}{marginleft}{\setlength{\fa@marginleft}{#1}\fa@marginsettrue\fa@applymargins}
+\define@key{flexart}{marginright}{\setlength{\fa@marginright}{#1}\fa@marginsettrue\fa@applymargins}
+\define@key{flexart}{margintop}{\setlength{\fa@margintop}{#1}\fa@marginsettrue\fa@applymargins}
+\define@key{flexart}{marginbottom}{\setlength{\fa@marginbottom}{#1}\fa@marginsettrue\fa@applymargins}
+%% The 1in default is applied at load, but ONLY if geometry is not already in
+%% charge: a user who loaded geometry before flexart keeps their own layout, and a
+%% geometry loaded afterwards wins because it runs later.
+\@ifpackageloaded{geometry}{}{\fa@applymargins}
+
+%% --- paragraph shape -------------------------------------------
+%% The house paragraph shape is kept in its own registers as well as applied live,
+%% so it can be restored where LaTeX wipes it (see \@minipagerestore below).
+\newlength{\fa@parindent}
+\newlength{\fa@parskip}
+\define@key{flexart}{parindent}{\setlength{\fa@parindent}{#1}\setlength{\parindent}{#1}}
+\define@key{flexart}{parskip}{\setlength{\fa@parskip}{#1}\setlength{\parskip}{#1}}
+%% house-style defaults, applied at load like a \flexset in the preamble would
+\setlength{\fa@parindent}{1.5em}
+\setlength{\fa@parskip}{0.8em \@plus 0.1em}
+\setlength{\parindent}{\fa@parindent}
+\setlength{\parskip}{\fa@parskip}
+
+%% ---------------------------------------------------------------
+%% EXPERIMENTAL (v1.8-exp1): paragraph shape inside a minipage.
+%% A minipage runs \@parboxrestore, which sets \parindent and \parskip to ZERO.
+%% Measured in an 11pt document with the house defaults: outside a minipage the
+%% paragraph rhythm is 22.4pt with a 16.4pt indent, inside it is 13.7pt with no
+%% indent -- so a run-in heading's own skip is the only vertical space in there and
+%% a new subsection/subsubsection/paragraph appears to change the spacing.
+%% The fix restores the house values through \@minipagerestore, the hook LaTeX
+%% provides for exactly this and which only minipage uses -- footnotes, \parbox and
+%% tabular cells are left alone.  Set minipageinherit=false to opt out.
+%% flexart's own front-matter blocks switch it off, so \maketitle is unaffected.
+\newif\iffa@mpinherit \fa@mpinherittrue
+\define@key{flexart}{minipageinherit}[true]{\csname fa@mpinherit#1\endcsname}
+\@ifundefined{@minipagerestore}{\let\@minipagerestore\relax}{}
+\let\fa@orig@minipagerestore\@minipagerestore
+\def\@minipagerestore{%
+  \fa@orig@minipagerestore
+  \iffa@mpinherit
+    \setlength{\parindent}{\fa@parindent}%
+    \setlength{\parskip}{\fa@parskip}%
+  \fi}
+
+%% --- display math skips ----------------------------------------
+%% LaTeX resets these at every size change, so they are re-applied from
+%% \normalsize rather than assigned once.
+%%   abovedisplay       space above a display when the preceding line is long
+%%                      (the ordinary case, including a display that starts a
+%%                      paragraph): TeX's \abovedisplayskip
+%%   abovedisplayshort  space above when the preceding line is SHORT, i.e. ends
+%%                      before the display begins: \abovedisplayshortskip
+%%   belowdisplay       space between the display and the continuation of its
+%%                      paragraph: \belowdisplayskip
+%%   belowdisplayshort  the same when the display's last line is short:
+%%                      \belowdisplayshortskip
+%%   betweenequations   space between the rows of one multi-line display
+%%                      (align, gather, split, ...): \jot.  Two SEPARATE displays
+%%                      in one paragraph are separated by belowdisplay +
+%%                      abovedisplay instead.
+\newlength{\fa@abovedisplay}      \setlength{\fa@abovedisplay}{8pt}
+\newlength{\fa@belowdisplay}      \setlength{\fa@belowdisplay}{8pt}
+\newlength{\fa@abovedisplayshort} \setlength{\fa@abovedisplayshort}{2pt}
+\newlength{\fa@belowdisplayshort} \setlength{\fa@belowdisplayshort}{4pt}
+\newlength{\fa@jot}               \setlength{\fa@jot}{6pt}
+\fa@deflen{abovedisplay}{\fa@abovedisplay}
+\fa@deflen{belowdisplay}{\fa@belowdisplay}
+\fa@deflen{abovedisplayshort}{\fa@abovedisplayshort}
+\fa@deflen{belowdisplayshort}{\fa@belowdisplayshort}
+\fa@deflen{betweenequations}{\fa@jot}
+%% --- display skips relative to \parskip, absorption, experimental centring ----
+%% The DEFAULTS are multiples of \parskip so display spacing tracks the paragraph
+%% rhythm; an explicit length still wins.  The multiples cannot be resolved at load
+%% time (\parskip is itself set by a flexart key and may change later in the
+%% preamble), so they are resolved at \begin{document} and again on demand.
+\newcommand{\fa@f@abovedisplay}{1}
+\newcommand{\fa@f@belowdisplay}{1}
+\newcommand{\fa@f@abovedisplayshort}{0.75}
+\newcommand{\fa@f@belowdisplayshort}{0.75}
+\newcommand{\fa@f@jot}{0.75}
+\newcommand{\fa@reldisplay}[2]{%
+  \ifcsdef{fa@userset@#1}{}{\setlength{\csname fa@#2\endcsname}{\csuse{fa@f@#2}\parskip}}}
+\newcommand{\fa@displaydefaults}{%
+  \fa@reldisplay{abovedisplay}{abovedisplay}%
+  \fa@reldisplay{belowdisplay}{belowdisplay}%
+  \fa@reldisplay{abovedisplayshort}{abovedisplayshort}%
+  \fa@reldisplay{belowdisplayshort}{belowdisplayshort}%
+  \fa@reldisplay{betweenequations}{jot}}
+%% Absorption: where a display meets a paragraph break, take a FRACTION of \parskip
+%% off that skip.  Multiplying the glue scales natural, stretch and shrink together,
+%% so a short \parskip is absorbed less and a long one more -- which is the point.
+\newif\iffa@absabove \fa@absabovetrue
+\newif\iffa@absbelow \fa@absbelowtrue
+\newcommand{\fa@absabovefrac}{0.5}
+\newcommand{\fa@absbelowfrac}{0.5}
+\define@key{flexart}{absorbabovedisplay}[true]{\csname fa@absabove#1\endcsname}
+\define@key{flexart}{absorbbelowdisplay}[true]{\csname fa@absbelow#1\endcsname}
+\define@key{flexart}{absorbabovedisplayfrac}{\renewcommand{\fa@absabovefrac}{#1}}
+\define@key{flexart}{absorbbelowdisplayfrac}{\renewcommand{\fa@absbelowfrac}{#1}}
+%% Experimental centring: OFF by default, and when on it OVERRIDES the relative
+%% defaults and the absorption rather than composing with them.
+\newif\iffa@dispcentre \fa@dispcentrefalse
+\newcommand{\fa@f@displaygap}{0.9}
+\define@key{flexart}{displaycentre}[true]{\csname fa@dispcentre#1\endcsname}
+\define@key{flexart}{displaygap}{\renewcommand{\fa@f@displaygap}{#1}}
+\newskip\fa@tmpskip
+\newcommand{\fa@absorb}[2]{% #1 target skip register  #2 fraction
+  \fa@tmpskip=#2\parskip
+  \advance#1 -\fa@tmpskip
+  \ifdim#1<\z@ #1=\z@ \fi}
+\newcommand{\fa@applymathskips}{%
+  \iffa@dispcentre
+    %% one symmetric gap, a multiple of \parskip, in all four slots: TeX picks the
+    %% short variants when the neighbouring line is short, and that asymmetry is
+    %% exactly what stops a display from sitting centred
+    \fa@tmpskip=\fa@f@displaygap\parskip
+    \abovedisplayskip\fa@tmpskip \belowdisplayskip\fa@tmpskip
+    \abovedisplayshortskip\fa@tmpskip \belowdisplayshortskip\fa@tmpskip
+    %% No optical variant: compensating for the preceding line's depth needs
+    %% \prevdepth, which is only readable in vertical mode, while these skips are set
+    %% from \everydisplay in MATH mode ("Improper \prevdepth").  Equal skips centre the
+    %% display geometrically; about 3.5pt of ink asymmetry remains from font metrics.
+  \else
+    \setlength{\abovedisplayskip}{\fa@abovedisplay}%
+    \setlength{\belowdisplayskip}{\fa@belowdisplay}%
+    \setlength{\abovedisplayshortskip}{\fa@abovedisplayshort}%
+    \setlength{\belowdisplayshortskip}{\fa@belowdisplayshort}%
+    \iffa@absabove
+      \fa@absorb{\abovedisplayskip}{\fa@absabovefrac}%
+      \fa@absorb{\abovedisplayshortskip}{\fa@absabovefrac}%
+    \fi
+    \iffa@absbelow
+      \fa@absorb{\belowdisplayskip}{\fa@absbelowfrac}%
+      \fa@absorb{\belowdisplayshortskip}{\fa@absbelowfrac}%
+    \fi
+  \fi
+  \setlength{\jot}{\fa@jot}}
+\appto\normalsize{\fa@applymathskips}
+\AtBeginDocument{\fa@displaydefaults\fa@applymathskips}
+\everydisplay\expandafter{\the\everydisplay\fa@applymathskips}
+
+%% --- \textwidth-relative defaults, re-derived after any margin change --------
+%% The fractions live HERE ONLY, and both the load-time \setlength above and the
+%% re-derivation below read them, so the two can never drift apart.  (They did once:
+%% the re-derivation kept 0.86/0.07 after the defaults moved to 0.8/0.1, and only a
+%% page-image comparison against an explicit \flexset caught it.)
+\newcommand{\fa@relative}[2]{%
+  \ifcsdef{fa@userset@#1}{}%
+    {\setlength{#2}{\csuse{fa@f@#1}\textwidth}}}
+\newcommand{\fa@relativedefaults}{%
+  \fa@relative{titlewidth}{\fa@titlewidth}%
+  \fa@relative{authorwidth}{\fa@authorwidth}%
+  %% abstractindent is absolute in v2.2 (a 3.6em inset), but abstractwidth still
+  %% depends on \textwidth, so it must be re-derived here: at package-load time the
+  %% margins have not been applied yet and \textwidth is still the class default.
+  \ifcsdef{fa@userset@abstractwidth}{}%
+    {\setlength{\fa@abstractwidth}{\dimexpr\textwidth-7.2em\relax}}%
+  \fa@relative{rulelength}{\fa@rulelength}%
+  %% Rule lengths written as \linewidth (or a fraction of it) CANNOT be resolved at
+  %% package-load time: \linewidth only takes the text measure at \begin{document}.
+  %% Left at load-time values the contents rules came out 110pt short.  Each is
+  %% re-derived here unless the document set it explicitly.
+  \@for\fa@r:=tocpart,tocsection,tocsubsection,tocsubsubsection,tocappendix,%
+              tocappendixgroup\do{%
+    \ifcsname fa@\fa@r rulelength\endcsname
+      \ifcsdef{fa@userset@\fa@r rulelength}{}%
+        {\expandafter\setlength\csname fa@\fa@r rulelength\endcsname{\linewidth}}%
+    \fi}%
+  \ifcsdef{fa@userset@partrulelength}{}%
+    {\renewcommand{\fa@partrulelength}{0.32\linewidth}}}
+\AtBeginDocument{\fa@relativedefaults}
+
+%% ===============================================================
+%% 9. amsthm THEOREM STYLES
+%% ===============================================================
+%% Redefines amsthm's own `plain', `definition' and `remark' styles, so an
+%% ordinary \theoremstyle{plain}\newtheorem{thm}{Theorem} picks these up with no
+%% change to the document.  amsthm resolves \th@<style> when the theorem is USED,
+%% so installing the styles at \begin{document} is early enough whatever order
+%% the preamble is in.  Nothing happens unless amsthm is loaded; flexart does not
+%% load it for you.  Call \flexthmstyles by hand to re-install mid-preamble.
+%%   #1 style  #2 above  #3 below  #4 bodyfont  #5 indent
+%%   #6 headfont  #7 headpunct  #8 headspace
+\newcommand{\fa@newthmstyle}[8]{%
+  \expandafter\newlength\csname fa@#1@above\endcsname
+  \expandafter\newlength\csname fa@#1@below\endcsname
+  \expandafter\setlength\csname fa@#1@above\endcsname{#2}%
+  \expandafter\setlength\csname fa@#1@below\endcsname{#3}%
+  \csdef{fa@#1@bodyfont}{#4}%
+  \csdef{fa@#1@indent}{#5}%
+  \csdef{fa@#1@headfont}{#6}%
+  \csdef{fa@#1@headpunct}{#7}%
+  \csdef{fa@#1@headspace}{#8}%
+  \define@key{flexart}{#1above}{\expandafter\setlength\csname fa@#1@above\endcsname{##1}}%
+  \define@key{flexart}{#1below}{\expandafter\setlength\csname fa@#1@below\endcsname{##1}}%
+  \define@key{flexart}{#1bodyfont}{\csdef{fa@#1@bodyfont}{##1}}%
+  \define@key{flexart}{#1indent}{\csdef{fa@#1@indent}{##1}}%
+  \define@key{flexart}{#1headfont}{\csdef{fa@#1@headfont}{##1}}%
+  \define@key{flexart}{#1headpunct}{\csdef{fa@#1@headpunct}{##1}}%
+  \define@key{flexart}{#1headspace}{\csdef{fa@#1@headspace}{##1}}%
+  %% v2.0: paragraph shape INSIDE the theorem body.  amsthm's \newtheoremstyle has no
+  %% key for it, so these are appended to the body-font argument, which is executed
+  %% inside the environment once the list has started.  Both \parsep and \parskip are
+  %% set: the list copies \parsep into \parskip when it opens, so assigning only one of
+  %% them can be too late to matter.
+  \expandafter\newlength\csname fa@#1@parsep\endcsname
+  \expandafter\newlength\csname fa@#1@parindent\endcsname
+  \expandafter\setlength\csname fa@#1@parsep\endcsname{0.25em}%
+  \expandafter\setlength\csname fa@#1@parindent\endcsname{\fa@parindent}%
+  \define@key{flexart}{#1parsep}{\expandafter\setlength\csname fa@#1@parsep\endcsname{##1}}%
+  \define@key{flexart}{#1parindent}{\expandafter\setlength\csname fa@#1@parindent\endcsname{##1}}%
+}
+%% defaults reproduce amsthm's built-in styles
+\fa@newthmstyle{thmplain}{0.3em}{0.5em}{\itshape}{}{\bfseries}{.}{5pt}
+\fa@newthmstyle{thmdefinition}{0.3em}{0.5em}{\normalfont}{}{\bfseries\scshape}{.}%
+  {5pt \@plus 1pt \@minus 1pt}
+\fa@newthmstyle{thmremark}{0.3em}{0.5em}{\normalfont}{10pt}{\itshape}{:}%
+  {5pt \@plus 1pt \@minus 1pt}
+
+%% The arguments must reach \newtheoremstyle as LITERAL values, not as
+%% \csuse{...}: amsthm tests argument 5 with \@ifempty (so an empty indent has to
+%% arrive as {}, otherwise it reads a missing number) and compares argument 8
+%% against \space and \newline. So build the call with \edef, expanding the stored
+%% values one level while leaving font declarations untouched.
+\newcommand{\fa@installthmstyle}[2]{% #1 flexart prefix  #2 amsthm style name
+  \edef\fa@thm@do{%
+    \noexpand\newtheoremstyle{#2}%
+      {\the\csname fa@#1@above\endcsname}%
+      {\the\csname fa@#1@below\endcsname}%
+      {\csexpandonce{fa@#1@bodyfont}%
+       \noexpand\setlength\noexpand\parsep{\the\csname fa@#1@parsep\endcsname}%
+       \noexpand\setlength\noexpand\parskip{\the\csname fa@#1@parsep\endcsname}%
+       \noexpand\setlength\noexpand\parindent{\the\csname fa@#1@parindent\endcsname}}%
+      {\csexpandonce{fa@#1@indent}}%
+      {\csexpandonce{fa@#1@headfont}}%
+      {\csexpandonce{fa@#1@headpunct}}%
+      {\csexpandonce{fa@#1@headspace}}%
+      {}}%
+  \fa@thm@do}
+\newcommand{\flexthmstyles}{%
+  \@ifpackageloaded{amsthm}%
+    {\fa@installthmstyle{thmplain}{plain}%
+     \fa@installthmstyle{thmdefinition}{definition}%
+     \fa@installthmstyle{thmremark}{remark}}%
+    {\PackageWarning{flexart}{Theorem-style keys ignored: amsthm is not loaded}}}
+\AtBeginDocument{\@ifpackageloaded{amsthm}{\flexthmstyles}{}}
+
+%% ===============================================================
+%% 10. PROOF ENVIRONMENT (amsthm) AND ENUMERATE (enumitem)
+%% ===============================================================
+%% Both subsystems stay out of the way unless one of their keys was actually set,
+%% so loading flexart neither redefines proof nor touches list spacing on its own.
+\newcommand{\fa@ifanyset}[2]{%
+  \def\fa@found{0}%
+  \@for\fa@k:=#1\do{\ifcsdef{fa@userset@\fa@k}{\def\fa@found{1}}{}}%
+  \ifnum\fa@found=1 #2\fi}
+%% --- proof -----------------------------------------------------
+%% amsthm's proof sets \topsep itself (6pt plus 6pt) inside the environment, so
+%% prepending an assignment to \proof would be overwritten.  The environment is
+%% therefore redefined here, identically except that the space above comes from
+%% proofabove and the space BELOW from proofbelow.  A trivlist takes its closing
+%% space from \@topsepadd, fixed when the list opens, so the below value is
+%% assigned just before \endtrivlist rather than by changing \topsep again.
+\newlength{\fa@proofabove} \setlength{\fa@proofabove}{-0.5em}
+\newlength{\fa@proofbelow} \setlength{\fa@proofbelow}{0em}
+\newcommand{\fa@proofheadfont}{\itshape}
+%% v2.0: paragraph shape inside the proof body, same idea as the theorem styles.
+\newlength{\fa@proofparsep}    \setlength{\fa@proofparsep}{0.25em}
+\newlength{\fa@proofparindent} \setlength{\fa@proofparindent}{\fa@parindent}
+\fa@deflen{proofparsep}{\fa@proofparsep}
+\fa@deflen{proofparindent}{\fa@proofparindent}
+\fa@deflen{proofabove}{\fa@proofabove}
+\fa@deflen{proofbelow}{\fa@proofbelow}
+\fa@defcmd{proofheadfont}{\fa@proofheadfont}
+\newcommand{\flexproof}{%
+  \@ifpackageloaded{amsthm}%
+    {\renewenvironment{proof}[1][\proofname]{\par
+       \pushQED{\qed}%
+       \normalfont \setlength{\topsep}{\fa@proofabove}%
+       \setlength{\parsep}{\fa@proofparsep}\setlength{\parskip}{\fa@proofparsep}%
+       \trivlist
+       \item[\hskip\labelsep\fa@proofheadfont ##1\@addpunct{.}]%
+       \setlength{\parindent}{\fa@proofparindent}\ignorespaces
+     }{%
+       \setlength{\@topsepadd}{\fa@proofbelow}%
+       \popQED\endtrivlist\@endpefalse
+     }}%
+    {\PackageWarning{flexart}{proof keys ignored: amsthm is not loaded}}}
+\AtBeginDocument{%
+  \@ifpackageloaded{amsthm}{\flexproof}%
+    {\fa@ifanyset{proofabove,proofbelow,proofheadfont}%
+      {\PackageWarning{flexart}{proof keys ignored: amsthm is not loaded}}}}
+
+%% --- lists: enumerate and itemize -------------------------------
+%% The spacing keys are handed to enumitem's \setlist[<env>], except the space
+%% BELOW the list: enumitem has no key for it (a list's closing space is \topsep,
+%% fixed when the list opens), so \end<env> is patched to set \@topsepadd, the same
+%% mechanism used for proof above.  That patch is independent of enumitem.
+%% One generator serves both list types, so the two can never drift apart.
+%%   #1 key prefix   #2 environment name
+%%   #3..#9 defaults: above below partopsep itemsep parsep leftmargin labelsep
+\newcommand{\fa@newlisttype}[9]{%
+  \expandafter\newlength\csname fa@#1@above\endcsname
+  \expandafter\newlength\csname fa@#1@below\endcsname
+  \expandafter\newlength\csname fa@#1@partopsep\endcsname
+  \expandafter\newlength\csname fa@#1@itemsep\endcsname
+  \expandafter\newlength\csname fa@#1@parsep\endcsname
+  \expandafter\newlength\csname fa@#1@leftmargin\endcsname
+  \expandafter\newlength\csname fa@#1@labelsep\endcsname
+  \expandafter\setlength\csname fa@#1@above\endcsname{#3}%
+  \expandafter\setlength\csname fa@#1@below\endcsname{#4}%
+  \expandafter\setlength\csname fa@#1@partopsep\endcsname{#5}%
+  \expandafter\setlength\csname fa@#1@itemsep\endcsname{#6}%
+  \expandafter\setlength\csname fa@#1@parsep\endcsname{#7}%
+  \expandafter\setlength\csname fa@#1@leftmargin\endcsname{#8}%
+  \expandafter\setlength\csname fa@#1@labelsep\endcsname{#9}%
+  \csdef{fa@#1@env}{#2}%
+  \define@key{flexart}{#1above}{\expandafter\setlength\csname fa@#1@above\endcsname{##1}%
+    \csgdef{fa@userset@#1above}{1}}%
+  \define@key{flexart}{#1below}{\expandafter\setlength\csname fa@#1@below\endcsname{##1}%
+    \csgdef{fa@userset@#1below}{1}}%
+  \define@key{flexart}{#1partopsep}{\expandafter\setlength\csname fa@#1@partopsep\endcsname{##1}%
+    \csgdef{fa@userset@#1partopsep}{1}}%
+  \define@key{flexart}{#1itemsep}{\expandafter\setlength\csname fa@#1@itemsep\endcsname{##1}%
+    \csgdef{fa@userset@#1itemsep}{1}}%
+  \define@key{flexart}{#1parsep}{\expandafter\setlength\csname fa@#1@parsep\endcsname{##1}%
+    \csgdef{fa@userset@#1parsep}{1}}%
+  \define@key{flexart}{#1leftmargin}{\expandafter\setlength\csname fa@#1@leftmargin\endcsname{##1}%
+    \csgdef{fa@userset@#1leftmargin}{1}}%
+  \define@key{flexart}{#1labelsep}{\expandafter\setlength\csname fa@#1@labelsep\endcsname{##1}%
+    \csgdef{fa@userset@#1labelsep}{1}}%
+}
+\fa@newlisttype{enum}{enumerate}{0em}{0.3em}{0pt}{0.2em}{0.1em}{2em}{0.4em}
+\fa@newlisttype{itemize}{itemize}{0em}{0.3em}{0pt}{0.2em}{0.1em}{2em}{0.4em}
+
+\newcommand{\fa@applylist}[1]{% #1 = key prefix
+  \@ifpackageloaded{enumitem}%
+    {\edef\fa@list@do{%
+       \noexpand\setlist[\csuse{fa@#1@env}]{%
+         topsep=\the\csname fa@#1@above\endcsname,%
+         partopsep=\the\csname fa@#1@partopsep\endcsname,%
+         itemsep=\the\csname fa@#1@itemsep\endcsname,%
+         parsep=\the\csname fa@#1@parsep\endcsname,%
+         leftmargin=\the\csname fa@#1@leftmargin\endcsname,%
+         labelsep=\the\csname fa@#1@labelsep\endcsname}}%
+     \fa@list@do}%
+    {\fa@ifanyset{#1above,#1below,#1partopsep,#1itemsep,#1parsep,#1leftmargin,#1labelsep}%
+      {\PackageWarning{flexart}{\csuse{fa@#1@env} spacing keys ignored: enumitem is not loaded}}}%
+  %% independent space below the list, with or without enumitem
+  \expandafter\pretocmd\csname end\csuse{fa@#1@env}\endcsname
+    {\setlength{\@topsepadd}{\csuse{fa@#1@below}}}{}%
+    {\PackageWarning{flexart}{could not patch \string\end\csuse{fa@#1@env};
+       \csuse{fa@#1@env} below-space ignored}}}
+\newcommand{\flexenumerate}{\fa@applylist{enum}}
+\newcommand{\flexitemize}{\fa@applylist{itemize}}
+\newcommand{\flexlists}{\flexenumerate\flexitemize}
+\AtBeginDocument{\flexlists}
+%% ===============================================================
+%% 11. RUNNING HEAD AND FOOTER (v2.0)
+%% ===============================================================
+%% A header carrying the short title on every page but the first.  \maketitle marks its own
+%% page with the plain style, so the title page keeps only the folio; set
+%% firstpageheader=true to put the header there too.  Head and foot each have three slots
+%% (left, centre, right) so anything can go anywhere; the default centre slot prints
+%% \headercontent, which is \theshorttitle -- the optional argument of
+%% \title[short]{long}, falling back to the full title.
+\newif\iffa@header      \fa@headertrue
+\newif\iffa@firstheader \fa@firstheaderfalse
+\newif\iffa@headeruc    \fa@headeructrue
+\define@key{flexart}{header}[true]{\csname fa@header#1\endcsname}
+\define@key{flexart}{firstpageheader}[true]{\csname fa@firstheader#1\endcsname}
+\define@key{flexart}{headeruppercase}[true]{\csname fa@headeruc#1\endcsname}
+\newcommand{\fa@headerfont}{\normalfont\scshape\small}
+\newcommand{\fa@footerfont}{\normalfont\small}
+\newcommand{\fa@headercontent}{\theshorttitle}
+\newcommand{\fa@headerleft}{}
+\newcommand{\fa@headercenter}{\fa@headertext}
+\newcommand{\fa@headerright}{}
+\newcommand{\fa@footerleft}{}
+\newcommand{\fa@footercenter}{\thepage}
+\newcommand{\fa@footerright}{}
+\fa@defcmd{headerfont}{\fa@headerfont}
+\fa@defcmd{footerfont}{\fa@footerfont}
+\fa@defcmd{headercontent}{\fa@headercontent}
+\fa@defcmd{headerleft}{\fa@headerleft}
+\fa@defcmd{headercenter}{\fa@headercenter}
+\fa@defcmd{headerright}{\fa@headerright}
+\fa@defcmd{footerleft}{\fa@footerleft}
+\fa@defcmd{footercenter}{\fa@footercenter}
+\fa@defcmd{footerright}{\fa@footerright}
+\newlength{\fa@headerrule}    \setlength{\fa@headerrule}{0pt}
+\newlength{\fa@headerrulesep} \setlength{\fa@headerrulesep}{2pt}
+\fa@deflen{headerrule}{\fa@headerrule}
+\fa@deflen{headerrulesep}{\fa@headerrulesep}
+%% headersep and headerheight feed the page layout, so re-derive it when they change
+\define@key{flexart}{headersep}{\setlength{\headsep}{#1}\fa@applymargins}
+\define@key{flexart}{headerheight}{\setlength{\headheight}{#1}\fa@applymargins}
+\newcommand{\fa@headertext}{%
+  \iffa@headeruc\expandafter\MakeUppercase\expandafter{\fa@headercontent}%
+  \else\fa@headercontent\fi}
+%% public name for the default centre slot, so the copy-paste block can name it
+\newcommand{\flexheadertext}{\fa@headertext}
+\newcommand{\ps@flexart}{%
+  \renewcommand{\@oddhead}{%
+    \vbox to\z@{\vss
+      \hb@xt@\textwidth{\fa@headerfont
+        \fa@headerleft\hfil\fa@headercenter\hfil\fa@headerright}%
+      \ifdim\fa@headerrule>\z@
+        \vskip\fa@headerrulesep \hrule height\fa@headerrule width\textwidth
+      \fi}}%
+  \renewcommand{\@oddfoot}{%
+    \hb@xt@\textwidth{\fa@footerfont
+      \fa@footerleft\hfil\fa@footercenter\hfil\fa@footerright}}%
+  \let\@evenhead\@oddhead \let\@evenfoot\@oddfoot}
+\AtBeginDocument{\iffa@header\pagestyle{flexart}\fi}
+
+%% ===============================================================
+%% 13. MATHEMATICS SUBJECT CLASSIFICATION (v2.1)
+%% ===============================================================
+%% \subjclass[2020]{17D92, 17A60} sets a footnote on the title page reading
+%%   2020 Mathematics Subject Classification. 17D92, 17A60.
+%% It carries NO mark: the note is emitted through \@footnotetext with \@thefnmark
+%% made empty, which is how amsart sets its own administrative notes.  It is placed
+%% before the marked author notes, so it sits at the top of the block.
+\newif\iffa@showsubjclass \fa@showsubjclasstrue
+\define@key{flexart}{showsubjclass}[true]{\csname fa@showsubjclass#1\endcsname}
+\newcommand{\fa@subjclass}{}
+\newcommand{\fa@subjclassyear}{2020}
+\newcommand{\fa@subjclassname}{\textit{Mathematics Subject Classification}}
+\newcommand{\fa@subjclassfont}{\normalfont\footnotesize}
+\newcommand{\fa@subjclasssep}{.\space}
+\fa@defcmd{subjclassname}{\fa@subjclassname}
+\fa@defcmd{subjclassfont}{\fa@subjclassfont}
+\fa@defcmd{subjclasssep}{\fa@subjclasssep}
+\fa@defcmd{subjclassyear}{\fa@subjclassyear}
+\newcommand{\subjclass}[2][2020]{%
+  \renewcommand{\fa@subjclassyear}{#1}\renewcommand{\fa@subjclass}{#2}}
+\newcommand{\fa@flushsubjclass}{%
+  \iffa@showsubjclass
+    \ifdefempty{\fa@subjclass}{}{%
+      \begingroup
+        %% hyperref builds a link target named after the footnote mark.  This note is
+        %% deliberately unmarked, so that name is empty and hyperref reports "Ignoring
+        %% empty anchor" (twice: once for the mark, once for the text).  Its footnote
+        %% hooks are switched off for this one note only, leaving footnote links
+        %% working everywhere else; the assignment is local to this group.
+        \@ifundefined{Hy@hyperfootnotesfalse}{}{\Hy@hyperfootnotesfalse}%
+        \@ifundefined{Hy@raisedlink}{}{\let\Hy@raisedlink\@gobble}%
+        \let\@makefnmark\relax
+        \let\@thefnmark\@empty
+        \@footnotetext{\fa@subjclassfont
+          \fa@subjclassyear\space\fa@subjclassname\fa@subjclasssep
+          \fa@subjclass\fa@subjclassdot}%
+      \endgroup}%
+  \fi}
+%% Final punctuation, appended after the code list.  Set subjclassdot={} if your
+%% list already ends in a full stop.
+\newcommand{\fa@subjclassdot}{.}
+\fa@defcmd{subjclassdot}{\fa@subjclassdot}
+
+
+%% ===============================================================
+%% 12. \part SECTIONING AND TABLE-OF-CONTENTS FORMATTING  (v2.2)
+%% ===============================================================
+%% The eleven ordinary level keys are registered for "part" too, so partabove,
+%% partfont, partalign, partuppercase and friends behave exactly as at the other
+%% levels.  \part itself is NOT built from \@startsection, because the rule under
+%% the title has to come AFTER the heading text and \@startsection's style hook only
+%% runs BEFORE it; it is assembled below from the same key values instead.
+%% In article \part neither resets nor feeds the section counter, so section
+%% numbering runs straight through a part.  Parts are unnumbered by default and the
+%% contents line is added by hand.
+\fa@newlevel{part}{3.4ex \@plus 1ex \@minus .2ex}{2.6ex \@plus .2ex}%
+  {\normalfont\large\scshape}{0}{0}
+\csdef{fa@part@align}{\centering}
+\csdef{fa@part@numbersep}{.\space}
+\csdef{fa@part@upper}{1}
+
+%% --- part extras -----------------------------------------------
+\newlength{\fa@partrulewidth} \setlength{\fa@partrulewidth}{0.4pt}
+\newlength{\fa@partrulesep}   \setlength{\fa@partrulesep}{0.4em}
+\newcommand{\fa@partrulelength}{0.32\linewidth}
+\newcommand{\fa@partname}{Part}
+\newcommand{\fa@partnamesep}{\space}
+\fa@deflen{partrulewidth}{\fa@partrulewidth}
+\fa@deflen{partrulesep}{\fa@partrulesep}
+\fa@defcmd{partrulelength}{\fa@partrulelength}
+\fa@defcmd{partname}{\fa@partname}
+\fa@defcmd{partnamesep}{\fa@partnamesep}
+\newif\iffa@partrule      \fa@partruletrue
+\newif\iffa@partnumbered  \fa@partnumberedtrue
+\newif\iffa@parttoc       \fa@parttoctrue
+\newif\iffa@partmark      \fa@partmarktrue
+\newif\iffa@partpagebreak \fa@partpagebreaktrue
+\define@key{flexart}{partrule}[true]{\csname fa@partrule#1\endcsname}
+\define@key{flexart}{partnumbered}[true]{\csname fa@partnumbered#1\endcsname}
+\define@key{flexart}{parttoc}[true]{\csname fa@parttoc#1\endcsname}
+\define@key{flexart}{partmark}[true]{\csname fa@partmark#1\endcsname}
+\define@key{flexart}{partpagebreak}[true]{\csname fa@partpagebreak#1\endcsname}
+
+%% \part, \part[toc]{title} and the starred forms; the star only suppresses the
+%% number and the contents line, as elsewhere in LaTeX.
+\newcommand{\flexpart}{%
+  \renewcommand{\part}{\@ifstar{\fa@part@a{0}}{\fa@part@a{1}}}}
+\newcommand{\fa@part@a}[1]{\@ifnextchar[{\fa@part@b{#1}}{\fa@part@c{#1}}}
+\def\fa@part@b#1[#2]#3{\fa@part@out{#1}{#2}{#3}}
+\newcommand{\fa@part@c}[2]{\fa@part@out{#1}{#2}{#2}}
+%% --- part subtitle -------------------------------------------------------
+\newcommand{\fa@partsubtitle}{}
+\newcommand{\partsubtitle}[1]{\gdef\fa@partsubtitle{#1}}
+\newlength{\fa@abovepartsubtitle}   \setlength{\fa@abovepartsubtitle}{0.3em}
+\newlength{\fa@belowpartsubtitle}   \setlength{\fa@belowpartsubtitle}{0pt}
+\newlength{\fa@partsubtitlewidth}   \setlength{\fa@partsubtitlewidth}{\textwidth}
+\newlength{\fa@partsubtitleleading} \setlength{\fa@partsubtitleleading}{0pt}
+\newcommand{\fa@partsubtitlefont}{\normalfont\normalsize\itshape}
+\newcommand{\fa@partsubtitlealign}{\centering}
+\newcommand{\fa@partsubtitletocsep}{ --- }
+\newif\iffa@partsubtitleupper      \fa@partsubtitleupperfalse
+\newif\iffa@partsubtitletoc        \fa@partsubtitletocfalse
+\newif\iffa@partsubtitlebeforerule \fa@partsubtitlebeforeruletrue
+\fa@deflen{abovepartsubtitle}{\fa@abovepartsubtitle}
+\fa@deflen{belowpartsubtitle}{\fa@belowpartsubtitle}
+\fa@deflen{partsubtitlewidth}{\fa@partsubtitlewidth}
+\fa@deflen{partsubtitleleading}{\fa@partsubtitleleading}
+\fa@defcmd{partsubtitlefont}{\fa@partsubtitlefont}
+\fa@defcmd{partsubtitlealign}{\fa@partsubtitlealign}
+\fa@defcmd{partsubtitletocsep}{\fa@partsubtitletocsep}
+\define@key{flexart}{partsubtitleuppercase}[true]{\csname fa@partsubtitleupper#1\endcsname}
+\define@key{flexart}{partsubtitletoc}[true]{\csname fa@partsubtitletoc#1\endcsname}
+\define@key{flexart}{partsubtitlebeforerule}[true]{\csname fa@partsubtitlebeforerule#1\endcsname}
+\newcommand{\fa@partsubtitletocout}{\fa@partsubtitletocsep\fa@partsubtitle}
+\newcommand{\fa@part@subtitleout}{%
+  \vskip\fa@abovepartsubtitle
+  \begingroup
+    \fa@mpinheritfalse
+    {\fa@partsubtitlealign
+     \begin{minipage}{\fa@partsubtitlewidth}%
+       \fa@partsubtitlealign\fa@partsubtitlefont
+       \ifdim\fa@partsubtitleleading>\z@ \setlength{\baselineskip}{\fa@partsubtitleleading}\fi
+       \iffa@partsubtitleupper
+         \expandafter\MakeUppercase\expandafter{\fa@partsubtitle}%
+       \else \fa@partsubtitle\fi
+       \par
+     \end{minipage}\par}%
+  \endgroup
+  \vskip\fa@belowpartsubtitle}
+%% written into the .toc, so it must be robust; the numeral is passed in because it
+%% has to be expanded when the line is WRITTEN, not when the contents is typeset
+\newcommand{\fa@parttocnumsep}{.\space}
+\fa@defcmd{tocpartnumbersep}{\fa@parttocnumsep}
+\DeclareRobustCommand{\fa@parttoclabel}[1]{\fa@partname\fa@partnamesep#1\fa@parttocnumsep}
+
+%% hyperref needs an anchor to link to.  \part is assembled here rather than by
+%% \@startsection, so nothing creates one: without this the contents line for a part
+%% points nowhere.  \phantomsection is hyperref's own hook and is a no-op without it.
+\providecommand{\phantomsection}{}
+\newcommand{\fa@part@out}[3]{% #1 numbered-eligible  #2 toc text  #3 title
+  \iffa@partpagebreak\clearpage\fi
+  \par
+  \phantomsection
+  \addvspace{\csuse{fa@part@above}}%
+  \begingroup
+    \fa@mpclear
+    \setlength{\parindent}{0pt}\setlength{\parskip}{0pt}%
+    \csuse{fa@part@align}\csuse{fa@part@font}%
+    \ifnum#1=1 \iffa@partnumbered
+      \refstepcounter{part}%
+      %% the label is uppercased with the title, not left as typed
+      \ifnum\csuse{fa@part@upper}=1
+        {\csuse{fa@part@numberfont}\MakeUppercase{\fa@partname\fa@partnamesep\thepart}}%
+      \else
+        {\csuse{fa@part@numberfont}\fa@partname\fa@partnamesep\thepart}%
+      \fi
+      \csuse{fa@part@numbersep}%
+    \fi\fi
+    \ifnum\csuse{fa@part@upper}=1 \MakeUppercase{#3}\else #3\fi
+    \par
+    \ifdefempty{\fa@partsubtitle}{}{\iffa@partsubtitlebeforerule\fa@part@subtitleout\fi}%
+    \iffa@partrule
+      \nointerlineskip\vskip\fa@partrulesep
+      {\csuse{fa@part@align}%
+       \rule{\fa@partrulelength}{\fa@partrulewidth}\par}%
+    \fi
+    \ifdefempty{\fa@partsubtitle}{}{\iffa@partsubtitlebeforerule\else\fa@part@subtitleout\fi}%
+  \endgroup
+  \nobreak
+  \vskip\csuse{fa@part@below}%
+  \@afterheading
+  \iffa@parttoc
+    \ifnum#1=1
+      \addcontentsline{toc}{part}{%
+        \iffa@partnumbered\protect\fa@parttoclabel{\thepart}\fi #2%
+        \iffa@partsubtitletoc\fa@partsubtitletocout\fi}%
+    \else
+      \addcontentsline{toc}{part}{#2}%
+    \fi
+  \fi
+  \iffa@partmark\markboth{}{}\fi
+  %% a subtitle belongs to the part it was declared for
+  \gdef\fa@partsubtitle{}}
+
+%% --- table of contents -----------------------------------------
+%% Title.
+\newcommand{\fa@toctitle}{\contentsname}
+\newcommand{\fa@toctitlefont}{\normalfont\large\scshape}
+\newcommand{\fa@toctitlealign}{\centering}
+\newlength{\fa@abovetoctitle} \setlength{\fa@abovetoctitle}{0pt}
+\newlength{\fa@belowtoctitle} \setlength{\fa@belowtoctitle}{1em}
+\fa@defcmd{toctitle}{\fa@toctitle}
+\fa@defcmd{toctitlefont}{\fa@toctitlefont}
+\fa@defcmd{toctitlealign}{\fa@toctitlealign}
+\fa@deflen{abovetoctitle}{\fa@abovetoctitle}
+\fa@deflen{belowtoctitle}{\fa@belowtoctitle}
+\newif\iffa@toctitleuppercase \fa@toctitleuppercasefalse
+\define@key{flexart}{toctitleuppercase}[true]{\csname fa@toctitleuppercase#1\endcsname}
+\newcommand{\fa@pnumfont}{\normalfont}
+\fa@defcmd{tocpagenumberfont}{\fa@pnumfont}
+
+%% Part line in the contents.
+\newlength{\fa@tocpartindent}   \setlength{\fa@tocpartindent}{6.1em}%  one tab to the RIGHT of section titles:
+                                       %  1.5em (tocsectionindent) + 2.3em (numwidth)
+                                       %  puts a label level with section titles; a
+                                       %  further 2.3em steps it one tab further in
+\newlength{\fa@tocpartabove}    \setlength{\fa@tocpartabove}{0.2em}
+\newlength{\fa@tocpartrulewidth}\setlength{\fa@tocpartrulewidth}{0.4pt}
+\newlength{\fa@tocpartrulelength} \setlength{\fa@tocpartrulelength}{\linewidth}
+\fa@deflen{tocpartrulelength}{\fa@tocpartrulelength}
+%% Where the rule begins.  The default lines it up with where a section TITLE starts
+%% (tocsectionindent 1.5em + tocsectionnumwidth 2.3em), not with the section number and
+%% not with the margin, so the rule reads as underlining the block of entries below it.
+\newlength{\fa@tocpartruleindent} \setlength{\fa@tocpartruleindent}{3.8em}
+\fa@deflen{tocpartruleindent}{\fa@tocpartruleindent}
+\newlength{\fa@tocpartrulesep}  \setlength{\fa@tocpartrulesep}{0.4em}
+\newlength{\fa@tocpartnumwidth}\setlength{\fa@tocpartnumwidth}{2.5em}
+\newcommand{\fa@tocpartfont}{\normalfont\scshape}
+\fa@deflen{tocpartindent}{\fa@tocpartindent}
+\fa@deflen{tocpartabove}{\fa@tocpartabove}
+\fa@deflen{tocpartrulewidth}{\fa@tocpartrulewidth}
+\fa@deflen{tocpartrulesep}{\fa@tocpartrulesep}
+\fa@deflen{tocpartnumwidth}{\fa@tocpartnumwidth}
+\fa@defcmd{tocpartfont}{\fa@tocpartfont}
+\newif\iffa@tocpartrule       \fa@tocpartruletrue
+\newif\iffa@tocpartpagenumber \fa@tocpartpagenumberfalse
+\define@key{flexart}{tocpartrule}[true]{\csname fa@tocpartrule#1\endcsname}
+\define@key{flexart}{tocpartpagenumber}[true]{\csname fa@tocpartpagenumber#1\endcsname}
+
+%% Entry lines: four keys for each of section, subsection, subsubsection.
+\newcommand{\fa@newtoclevel}[4]{% #1 level  #2 default indent  #3 numwidth  #4 font
+  \expandafter\newlength\csname fa@toc#1@indent\endcsname
+  \expandafter\newlength\csname fa@toc#1@numwidth\endcsname
+  \expandafter\setlength\csname fa@toc#1@indent\endcsname{#2}%
+  \expandafter\setlength\csname fa@toc#1@numwidth\endcsname{#3}%
+  \csdef{fa@toc#1@font}{#4}%
+  \csdef{fa@toc#1@dots}{1}%
+  \define@key{flexart}{toc#1indent}{\expandafter\setlength\csname fa@toc#1@indent\endcsname{##1}%
+    \csgdef{fa@userset@toc#1indent}{1}}%
+  \define@key{flexart}{toc#1numwidth}{\expandafter\setlength\csname fa@toc#1@numwidth\endcsname{##1}%
+    \csgdef{fa@userset@toc#1numwidth}{1}}%
+  \define@key{flexart}{toc#1font}{\csdef{fa@toc#1@font}{##1}\csgdef{fa@userset@toc#1font}{1}}%
+  \define@key{flexart}{toc#1leaders}[true]{%
+    \ifstrequal{##1}{true}{\csdef{fa@toc#1@dots}{1}}{\csdef{fa@toc#1@dots}{0}}%
+    \csgdef{fa@userset@toc#1leaders}{1}}%
+  %% space around a line of this type, and an optional rule under it.  Defaults are
+  %% TIGHT: no extra lead at all, so entries sit on consecutive baselines.
+  \expandafter\newlength\csname fa@toc#1@above\endcsname
+  \expandafter\newlength\csname fa@toc#1@itemsep\endcsname
+  \expandafter\newlength\csname fa@toc#1@rulewidth\endcsname
+  \expandafter\newlength\csname fa@toc#1@rulelength\endcsname
+  \expandafter\newlength\csname fa@toc#1@rulesep\endcsname
+  \expandafter\setlength\csname fa@toc#1@above\endcsname{0pt}%
+  \expandafter\setlength\csname fa@toc#1@itemsep\endcsname{0pt}%
+  \expandafter\setlength\csname fa@toc#1@rulewidth\endcsname{0.4pt}%
+  \expandafter\setlength\csname fa@toc#1@rulelength\endcsname{\linewidth}%
+  \expandafter\setlength\csname fa@toc#1@rulesep\endcsname{0.45ex}%
+  \csdef{fa@toc#1@rule}{0}%
+  \define@key{flexart}{toc#1above}{\expandafter\setlength\csname fa@toc#1@above\endcsname{##1}%
+    \csgdef{fa@userset@toc#1above}{1}}%
+  \define@key{flexart}{toc#1itemsep}{\expandafter\setlength\csname fa@toc#1@itemsep\endcsname{##1}%
+    \csgdef{fa@userset@toc#1itemsep}{1}}%
+  \define@key{flexart}{toc#1rulewidth}{\expandafter\setlength\csname fa@toc#1@rulewidth\endcsname{##1}%
+    \csgdef{fa@userset@toc#1rulewidth}{1}}%
+  \define@key{flexart}{toc#1rulelength}{\expandafter\setlength\csname fa@toc#1@rulelength\endcsname{##1}%
+    \csgdef{fa@userset@toc#1rulelength}{1}}%
+  \define@key{flexart}{toc#1rulesep}{\expandafter\setlength\csname fa@toc#1@rulesep\endcsname{##1}%
+    \csgdef{fa@userset@toc#1rulesep}{1}}%
+  \define@key{flexart}{toc#1rule}[true]{%
+    \ifstrequal{##1}{true}{\csdef{fa@toc#1@rule}{1}}{\csdef{fa@toc#1@rule}{0}}%
+    \csgdef{fa@userset@toc#1rule}{1}}}
+\fa@newtoclevel{section}{1.5em}{2.3em}{\normalfont}
+\fa@newtoclevel{subsection}{3.8em}{3.2em}{\normalfont}
+\fa@newtoclevel{subsubsection}{7.0em}{4.1em}{\normalfont}
+%% appendix entries default to the section entry style
+\fa@newtoclevel{appendix}{1.5em}{2.3em}{\normalfont}
+%% one key that opens up or tightens every type at once
+\newlength{\fa@tocitemsep} \setlength{\fa@tocitemsep}{0pt}
+\fa@deflen{tocitemsep}{\fa@tocitemsep}
+%% \parskip would otherwise pad every contents line; the contents is set tight and
+%% the per-type keys are the only source of extra space.
+\newif\iffa@toctight \fa@toctighttrue
+\define@key{flexart}{toctight}[true]{\csname fa@toctight#1\endcsname}
+
+%% One contents line, honouring font, indent, number width and leaders.
+\newcommand{\fa@tocentry}[8]{% type lvl indent numwidth font dots text page
+  \ifnum #2>\c@tocdepth \else
+    \vskip \z@ \@plus.2\p@
+    \addvspace{\dimexpr\csuse{fa@toc#1@above}+\fa@tocitemsep\relax}%
+    {\leftskip #3\relax \rightskip \@tocrmarg \parfillskip -\rightskip
+     \parindent #3\relax\@afterindenttrue
+     \interlinepenalty\@M \leavevmode
+     \@tempdima #4\relax
+     \advance\leftskip \@tempdima \null\nobreak\hskip -\leftskip
+     #5{#7}\nobreak
+     \ifnum #6=1
+       \leaders\hbox{$\m@th\mkern \@dotsep mu\hbox{.}\mkern \@dotsep mu$}\hfill
+     \else \hfil \fi
+     \nobreak\hb@xt@\@pnumwidth{\hfil\fa@pnumfont\normalcolor #8}\par}%
+    \ifnum\csuse{fa@toc#1@rule}=1
+      \vskip\csuse{fa@toc#1@rulesep}%
+      {\parindent\z@\leftskip\z@\rightskip\z@\parfillskip\z@\@plus1fil
+       \noindent\hspace*{\csuse{fa@toc#1@indent}}%
+       \rule{\dimexpr\csuse{fa@toc#1@rulelength}-\csuse{fa@toc#1@indent}\relax}%
+             {\csuse{fa@toc#1@rulewidth}}\par}%
+    \fi
+    \vskip\csuse{fa@toc#1@itemsep}%
+  \fi}
+
+%% The part line, and the contents title.
+\newcommand{\fa@lpart}[2]{%
+  \ifnum \c@tocdepth >-2\relax
+    \addpenalty{-\@highpenalty}%
+    \addvspace{\dimexpr\fa@tocpartabove+\fa@tocitemsep\relax}%
+    \begingroup
+      \setlength{\parindent}{0pt}%
+      \iffa@tocpartpagenumber
+        \setlength{\rightskip}{\@pnumwidth}\setlength{\parfillskip}{-\@pnumwidth}%
+      \else
+        \setlength{\rightskip}{0pt}\setlength{\parfillskip}{0pt plus 1fil}%
+      \fi
+      %% \numberline lays its box out in \@tempdima; unset, a numbered part line
+      %% overfills by a couple of hundred points
+      \setlength{\@tempdima}{\fa@tocpartnumwidth}%
+      \leavevmode
+      %% no \hskip -\leftskip here: that idiom exists to hang a \numberline box to the
+      %% left of the text, and it would cancel the indent we just set
+      \advance\leftskip\fa@tocpartindent
+      {\fa@tocpartfont #1}\nobreak\hfil
+      \iffa@tocpartpagenumber
+        \nobreak\hb@xt@\@pnumwidth{\hss\fa@pnumfont #2}%
+      \fi
+      \par
+      \iffa@tocpartrule
+        \nointerlineskip\vskip\fa@tocpartrulesep
+        %% the entry line advanced \leftskip; the rule must start from zero or the
+        %% indent is counted twice and the line overfills by exactly that indent
+        \setlength{\leftskip}{0pt}\setlength{\rightskip}{0pt}%
+        \setlength{\parfillskip}{0pt plus 1fil}%
+        %% the rule starts where section titles start and runs to the right margin
+        \noindent\hspace*{\fa@tocpartruleindent}%
+        \rule{\dimexpr\fa@tocpartrulelength-\fa@tocpartruleindent\relax}%
+              {\fa@tocpartrulewidth}\par
+      \fi
+      \penalty\@highpenalty
+    \endgroup
+  \fi}
+
+\newcommand{\flextoc}{%
+  \renewcommand{\l@part}{\fa@lpart}%
+  \renewcommand{\l@section}{\fa@tocentry{section}{1}{\fa@tocsection@indent}%
+    {\fa@tocsection@numwidth}{\csuse{fa@tocsection@font}}{\csuse{fa@tocsection@dots}}}%
+  \renewcommand{\l@subsection}{\fa@tocentry{subsection}{2}{\fa@tocsubsection@indent}%
+    {\fa@tocsubsection@numwidth}{\csuse{fa@tocsubsection@font}}{\csuse{fa@tocsubsection@dots}}}%
+  \renewcommand{\l@subsubsection}{\fa@tocentry{subsubsection}{3}{\fa@tocsubsubsection@indent}%
+    {\fa@tocsubsubsection@numwidth}{\csuse{fa@tocsubsubsection@font}}{\csuse{fa@tocsubsubsection@dots}}}%
+  \csdef{l@appendixgroup}{\fa@lappendixgroup}%
+  \csdef{l@appendix}{\fa@tocentry{appendix}{1}{\fa@tocappendix@indent}%
+    {\fa@tocappendix@numwidth}{\csuse{fa@tocappendix@font}}{\csuse{fa@tocappendix@dots}}}%
+  %% contents title, from the same keys as everything else
+  \renewcommand{\tableofcontents}{%
+    \par
+    \begingroup
+    %% \parskip is zeroed for the CONTENTS ONLY.  Ungrouped, this assignment leaked
+    %% into the rest of the document: every paragraph after the contents lost its
+    %% separation, and the display-skip absorption silently became a no-op because
+    %% it takes a fraction of a \parskip that was now zero.
+    \iffa@toctight\parskip\z@\fi
+    \addvspace{\fa@abovetoctitle}%
+    {\fa@toctitlealign\fa@toctitlefont
+     \iffa@toctitleuppercase\expandafter\MakeUppercase\expandafter{\fa@toctitle}%
+     \else\fa@toctitle\fi\par}%
+    \vskip\fa@belowtoctitle
+    \@starttoc{toc}%
+    \endgroup
+    \fa@mpclear}}
+
+%% --- hyperref: teach it about the levels flexart invents -----------------------
+%% `appendix` and `appendixgroup` are flexart's own \@startsection level and contents
+%% type, so hyperref knows neither their bookmark depth nor how to name their targets.
+%% Without \toclevel@<type> it warns "bookmark level for unknown <type> defaults to 0"
+%% (and then "Difference (2) between bookmark levels is greater than one"); without
+%% \theH<counter> it warns "Counter 'appendix' or the representation '\theHappendix'
+%% don't exist. No target created."  appendix sits at section depth; the appendix group
+%% line sits where \part does in article.
+\AtBeginDocument{%
+  \providecommand{\toclevel@appendix}{1}%
+  \providecommand{\toclevel@appendixgroup}{0}%
+  \providecommand{\theHappendix}{appendix.\arabic{section}}%
+  \providecommand{\theHappendixgroup}{appendixgroup.\arabic{section}}%
+}
+\AtBeginDocument{\flexpart\flextoc}
+
+
+%% --- a display that OPENS a paragraph -------------------------------------------
+%% A blank line before \[ or \begin{align} ends the paragraph, so TeX inserts
+%% \parskip, starts a fresh paragraph, and sets the \parindent box as a line of its
+%% own before the display.  Measured at 11pt with the house \parskip: that costs
+%% about 19pt on top of the display's own skip (36.0pt of gap against 17.0pt when
+%% the display sits inside the paragraph).  With displayabsorbparbreak the package
+%% removes exactly that overhead: the \parskip glue (only when \lastskip really is
+%% \parskip, so an \addvspace from a heading or a list is never eaten), the empty
+%% line's interline glue, and the indent box.
+\newif\iffa@dispparbreak \fa@dispparbreaktrue
+\define@key{flexart}{displayabsorbparbreak}[true]{\csname fa@dispparbreak#1\endcsname}
+%% What is left in place of the removed overhead.  A display that opens its own
+%% paragraph is meant to read as a little more separated than one sitting inside a
+%% paragraph, so the key does not flatten the two cases: it replaces the ~19pt of
+%% paragraph-break overhead with this deliberate amount.
+\newlength{\fa@dispparbreakextra} \setlength{\fa@dispparbreakextra}{3.9pt}
+\fa@deflen{displayparbreakextra}{\fa@dispparbreakextra}
+\newcommand{\fa@displaypre}{%
+  \iffa@dispparbreak
+    \ifvmode
+      \ifdim\lastskip=\parskip \removelastskip \fi
+      \vskip\fa@dispparbreakextra
+      \nointerlineskip
+      \noindent
+    \fi
+  \fi}
+\AtBeginDocument{%
+  \pretocmd{\[}{\fa@displaypre}{}{\PackageWarning{flexart}{could not patch \string\[}}%
+  \@for\fa@e:=equation,equation*,align,align*,gather,gather*,multline,multline*,%
+                flalign,flalign*,alignat,alignat*,displaymath\do{%
+    \ifcsname\fa@e\endcsname
+      \expandafter\pretocmd\csname\fa@e\endcsname{\fa@displaypre}{}{}%
+    \fi}}
+\endinput

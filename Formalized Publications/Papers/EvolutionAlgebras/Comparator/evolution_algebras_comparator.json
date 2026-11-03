@@ -1,0 +1,31 @@
+{
+  "challenge_module": "evolution_algebras_comparator",
+  "solution_module": "EvolutionAlgebras",
+  "theorem_names": [
+    "EvolutionAlgebras.conjecture_false",
+    "EvolutionAlgebras.einfty_is_idempotent",
+    "EvolutionAlgebras.solvable_iff_no_idempotent_subspace",
+    "EvolutionAlgebras.solvable_iff_derivedSeriesInf_eq_bot",
+    "EvolutionAlgebras.IdempotentIff.idempotent_iff",
+    "EvolutionAlgebras.SolvableCorollary.isSolvable_iff_no_nonzero_idempotent",
+    "EvolutionAlgebras.einfty_absNilpotent_eq_zero",
+    "EvolutionAlgebras.fixedPoint_of_idempotent"
+  ],
+  "definition_names": [
+    "EvolutionAlgebra.natural_basis",
+    "EvolutionAlgebra.struct_matrix",
+    "EvolutionAlgebras.square",
+    "EvolutionAlgebras.IsIdempotentSubmodule",
+    "EvolutionAlgebras.derivedSeriesOfSubmodule",
+    "EvolutionAlgebras.derivedSeries",
+    "EvolutionAlgebras.derivedSeriesInf",
+    "EvolutionAlgebras.IsAbsNilpotent",
+    "EvolutionAlgebras.absNilpotent",
+    "EvolutionAlgebras.Conjecture"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

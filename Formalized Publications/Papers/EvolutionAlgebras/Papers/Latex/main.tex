@@ -1,0 +1,287 @@
+\documentclass[11pt]{article}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{mathtools}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{lipsum}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{verbatim}
+
+
+
+%% Custom Packages
+\usepackage{flexart}
+\input{stylelibrary}
+\newcommand{\Muse}{\footnotesize with {Muse Spark} via {\ttfamily \href{http://meta.ai}{meta.ai}}}
+\newcommand{\HumanLabel}{
+({\bfseries\sffamily\color{humancolor!70}Human})
+}
+\newcommand{\AILabel}{
+({\bfseries\sffamily\color{aicolor!70}AI})
+}
+
+
+%% Commands
+%%%_____________________________________
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{con}[thm]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{qst}[thm]{Question}
+\newtheorem{assumption}[thm]{Assumption}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{exm}[thm]{Example}
+
+\numberwithin{equation}{section}
+
+
+\input{macros.tex}
+
+
+
+\title[On Solvable Evolution Algebras]{On Solvable Evolution Algebras and a Conjecture by Garc\'ia-Mart\'inez and P\'erez-Rodr\'iguez}
+
+
+\primaryauthors{
+{\scshape Andres Barei}
+\\
+\Muse
+}
+
+\newcommand{\secondaryAuthorsLabel}{Reviewed by}
+
+
+\secondaryauthors{
+{\scshape Nicol\'as Jaramillo Torres}
+}
+\subjclass[2020]{17D92, 17A60}
+
+\flexabstract{%
+We study finite-dimensional solvable evolution algebras, that is, evolution algebras for which their derived series terminates at zero. We disprove a conjecture by Garc\'ia-Mart\'inez and P\'erez-Rodr\'iguez. Then, in terms of idempotent subspaces, we propose a novel characterization of solvable evolution algebras as well as of evolution algebras without nonzero idempotent elements. We remark on the use of AI in this research, see Statement of AI Use.
+}
+
+
+\flexset{
+titlefont = \large
+\bfseries
+\spaceskip1.3
+\fontdimen2\font
+plus1.3
+\fontdimen3\font
+\relax,
+secondarylabel = {\secondaryAuthorsLabel},
+thmplainabove = 0.6em,
+thmdefinitionabove = 0.6em,
+thmplainbelow = 0em,
+thmdefinitionbelow = 0em,
+proofabove = 0em,
+}
+
+\begin{document}
+
+\maketitle
+
+
+
+\section{Introduction}
+
+\begin{humanblock}
+
+Introduced by Tian in their doctoral thesis \cite{thesisTian}, and subsequently in their monograph \cite{T08}, evolution algebras provide an algebraic framework for studying non-Mendelian genetics. The study of these algebras is an active area of research providing tools for various disciplines, including biology, physics, economics and logistics. Mathematically, evolution algebras are linked to graph theory, group theory, stochastic processes and dynamical systems. For a thorough historical survey, we refer to \cite{CFNT22}.
+
+Formally, an \textbf{evolution algebra} over a field $K$ is a (non-associative) $K$-algebra, along with a distinguished basis $B$, called a \textbf{natural basis}, such that $xy = 0$ for distinct $x,y\in B$. We focus on solvable algebras, that is, algebras for which their derived series terminates at zero. These algebras have already been studied for their amenable properties in \cite{FGN22} and \cite{LPP25}. Recently, Garc\'ia-Mart\'inez and P\'erez-Rodr\'iguez (\cite{GP26}) proposed the following conjecture.
+
+
+
+
+\begin{con}\label{theconjecture} Let $\mathcal E$ be a complex evolution algebra. Then, $\mathcal E$ is solvable if and only if $\mathcal E$ admits no nonzero idempotent elements.
+\end{con}
+
+In this paper, we show that this conjecture is false, and in turn, provide an appropriate characterization of solvable evolution algebras in terms of idempotent subspaces. We also study evolution algebras which admit no nonzero idempotents.
+\end{humanblock}
+
+\section*{Statement of AI Use}
+
+\begin{humanblock}
+This paper was developed through collaboration between researchers and Muse Spark (AI model) via the \href{http://meta.ai}{meta.ai} chat interface. The model helped explore ideas, develop candidate arguments, and draft material. Researchers guided the work, checked and corrected the mathematics, and take ownership for the final manuscript. Following \cite{schmitt2025extremal}, margin markers identify human-drafted \!\!\HumanLabel and AI-assisted material \!\!\AILabel separately.
+\end{humanblock}
+
+\section*{Concurrent work}
+\begin{humanblock}
+While completing this article, we became aware of the concurrent work of Hu and Wen (\cite{HW}), submitted on August 12, 2026. Both works introduce counterexamples refuting Conjecture \ref{theconjecture}. This article also presents additional theoretical results of independent interest.
+
+Furthermore, Hu and Wen (\cite{HW}, Proposition 2.8), as well as this work (Corollary \ref{thecorollary}), introduce conditions under which the original conjecture by Garc\'ia-Mart\'inez and P\'erez-Rodr\'iguez holds. It is easy to see that our condition is weaker, and hence our result implies the one appearing in \cite{HW} (see Remark \ref{implicationremark}).
+\end{humanblock}
+
+
+
+\section{Preliminaries}
+\begin{humanblock}
+Throughout, we will consider an algebraically closed field $K$, and by algebra we always mean (non-associative) $K$-algebra. Whenever we refer to a finite-dimensional evolution algebra $\mathcal E$, we assume that it comes equipped with a natural basis $B = \{e_1,\ldots, e_n\}$ and a structure matrix $M_B(\mathcal E)$.
+
+
+Let $V$ be a subspace of the evolution algebra $\mathcal E$. We denote $V^2 = \Span\{xy\mid x,y\in V\}$. Recursively, we define $\mathcal E^{(1)} = \mathcal E$ and $\mathcal E^{(i+1)}=(\mathcal E^{(i)})^2$ for $i\geq 1$. Then, $\mathcal E$ is called \textbf{solvable} if there exists $m\in \mathbb N^+$ such that $\mathcal E^{(m)} = 0$.  It is easy to see that for $i\geq 1$, $\mathcal E^{(i+1)}\subseteq \mathcal E^{(i)}$. Hence, if $\mathcal E$ is finite-dimensional, then the chain $\mathcal E^{(1)}\supseteq \mathcal E^{(2)}\supseteq\ldots$ stabilizes at some $l\in \mathbb N^+$. We define $\mathcal E^{(\infty)} = \mathcal E^{(l)}$.
+
+Take $x\in \mathcal E$. We say that $x$ is \textbf{idempotent} if $x^2=x$, and we say that $x$ is \textbf{absolutely nilpotent} if $x^2 = 0$. Given a subspace $V\subseteq \mathcal E$, we are interested in the set \[N(V) = \{y\in V\mid y^2 = 0\}. \]
+
+
+\end{humanblock}
+\begin{aiblock}
+
+\subsection*{A counterexample to the original conjecture}
+
+As originally stated in \cite{GP26}, Conjecture \ref{theconjecture} holds in dimension two. However, starting at dimension three, the conjecture fails. The following example shows a three-dimensional complex evolution algebra which is not solvable and does not admit nonzero idempotent elements. This example is certainly not unique and can easily be extended to any dimension.
+
+% \medskip
+
+\begin{exm}Let $\mathcal E_0$ be the complex evolution algebra whose structure matrix with respect to the natural basis $\{e_1,e_2,e_3\}$ is
+\[
+A = \begin{pmatrix}
+    - 2 & 0 & 2 \\
+      0 & 1 & -1 \\
+      0 & -1 & 1
+\end{pmatrix}.
+\]
+
+ \noindent This defines the relations $r_1 = e_1 \cdot e_1 = -2 e_1 + 2 e_3$, $r_2 = e_2\cdot e_2 =e_2 - e_3$, and $r_3 =  e_3\cdot e_3 = -e_2 + e_3$.
+
+ Directly from the definition,
+ $\mathcal E_0^{(2)} = \Span\{r_1, r_2, r_3\} = \Span\{r_1, r_2\}$.
+ Moreover, note that
+ \[
+ r_1 \cdot r_1 = -8e_1 -4 e_2 +12e_3 = 4  ( r_1 - r_2),
+ \]
+ \[
+ r_1 \cdot r_2 = 2e_2 - 2 e_3 = 2r_2,
+ \quad \text{and} \quad
+ r_2\cdot r_2 = 0.
+ \]
+ It follows that $\mathcal E_0^{(k)} = \mathcal E_0^{(2)}\neq 0$ for $k\geq 2$, showing that $\mathcal E_0$ is not solvable.
+
+ On the other hand, any idempotent element $x e_1 + y e_2 + ze_3 \in \mathcal E_0$ must satisfy the system of equations
+ \[
+ A^T
+ \begin{pmatrix}
+ x^2 \\ y^2 \\ z^2
+ \end{pmatrix}
+ =
+ \begin{pmatrix}
+         x \\ y \\ z
+      \end{pmatrix}.
+\]
+The only solution to this system of equations is $(x,y,z) = (0,0,0)$, so $\mathcal E_0$ admits no nonzero idempotent elements.
+\end{exm}
+
+\end{aiblock}
+
+
+
+
+\section{Solvable Evolution Algebras and Idempotent Elements}
+
+%\begin{lem}\label{derivedseriesischain}
+%   Let $\mathcal E$ be a finite-dimensional complex evolution algebra. Then, for any positive integer $m$, $\mathcal E^{(k+1)}\subseteq \mathcal E^{(k)}$.
+%\end{lem}
+
+\begin{aiblock}
+
+
+It turns out that solvable evolution algebras are characterized by the lack, not of nonzero idempotent elements, but of nontrivial idempotent subspaces. We say that a subspace $V$ of an evolution algebra $\mathcal E$ is \textbf{idempotent} if $V^2=V$. Our characterization follows from the following simple lemma.
+
+
+\begin{lem}\label{einftyisidempotent}
+Let $\mathcal E$ be a finite-dimensional evolution algebra. Then, $\mathcal E^{(\infty)}$ is the greatest idempotent subspace of $\mathcal E$. That is, $\left(\mathcal E^{(\infty)}\right)^2 = \mathcal E^{(\infty)}$, and if a subspace $V\subseteq \mathcal E$ satisfies $V^2 = V$, then $V\subseteq \mathcal E^{(\infty)}$.
+
+\end{lem}
+\begin{proof}
+    The identity $\left(\mathcal E^{(\infty)}\right)^2 = \mathcal E^{(\infty)}$ follows directly from the definition of $\mathcal E^{(\infty)}$. Suppose that the subspace $V\subseteq \mathcal E$ is idempotent. Since $V\subseteq \mathcal E$, $V = V^2 \subseteq \mathcal E^{(2)}$. Inductively, $V\subseteq \mathcal E^{(k)}$ for any positive integer $k$; in particular, $V\subseteq \mathcal E^{(\infty)}$.
+\end{proof}
+
+\begin{thm}\label{solvableiff}
+Let $\mathcal E$ be a finite-dimensional evolution algebra. The following are equivalent:
+
+\begin{enumerate}
+        \item $\mathcal E$ is solvable,
+        \item $\mathcal E^{(\infty)} = 0$,
+        \item $\mathcal E$ does not admit a nontrivial idempotent subspace.
+\end{enumerate}
+\end{thm}
+\begin{proof}
+    By the definition of $\mathcal E^{(\infty)}$, it is clear that \textit{(1)} and \textit{(2)} are equivalent. Moreover, the equivalence of \textit{(2)} and \textit{(3)} follows directly from Lemma \ref{einftyisidempotent}.
+\end{proof}
+
+
+In turn, the existence (or lack thereof) of nonzero idempotent elements in an evolution algebra also admits a simple characterization. For the next result, we will need some elementary facts from algebraic geometry, for which we refer to \cite{Harris}.
+
+
+\begin{thm}\label{idempotentiff}
+    Let $\mathcal E$ be a finite-dimensional evolution algebra. Then, $\mathcal E$ admits a nonzero idempotent element if and only if $\mathcal E$ admits a nontrivial idempotent subspace $V$ such that $N(V) = 0$.
+\end{thm}
+\begin{proof}
+    Suppose $x\in \mathcal E$ satisfies $x^2 = x$. Then, $V=\Span\{x\}$ is an idempotent subspace and $N(V) = 0$.
+
+    Conversely, suppose that $V\subseteq \mathcal E$ is an idempotent subspace such that $N(V)=0$.  Since $V^2 = V$, the map $\varphi:V\to V$ given by $\varphi(x) = x^2$ is a well-defined homogeneous map of degree two. We denote the projectivization of $V$ by $\mathbb{P}(V)$. Thus, $N(V) = 0$ implies that $\varphi$ induces the map $\overline{\varphi}:\mathbb P(V)\to \mathbb P(V)$ given by $\overline{\varphi}([x]) = [x^2]$.
+
+    Since the base field is algebraically closed, $\overline{\varphi}$ has a fixed point, say $[x_0]$. Hence, $x_0^2 =\lambda x_0$ for some $\lambda \neq 0$. Therefore, $\frac{1}{\lambda} x_0$ is an idempotent in $\mathcal E$.
+\end{proof}
+
+
+As an application, the previous theorems give rise to a simple condition under which the original conjecture from \cite{GP26} actually holds.
+
+
+\begin{cor}\label{thecorollary}
+ Let $\mathcal E$ be a finite-dimensional evolution algebra satisfying $N(\mathcal E^{(\infty)}) = 0$.
+ The following are equivalent:
+
+ \begin{enumerate}
+     \item $\mathcal E$ is solvable,
+     \item $\mathcal E$ does not admit nonzero idempotent elements.
+ \end{enumerate}
+
+
+\end{cor}
+\begin{proof}
+    Trivially, it is always true that if $\mathcal E$ is solvable, then $\mathcal E$ does not admit nonzero idempotent elements. Conversely, suppose that $\mathcal E$ is not solvable. By Theorem \ref{solvableiff}, $\mathcal E$ contains a nontrivial idempotent subspace $V$. Then, $V\subseteq \mathcal E^{(\infty)}$ implying $N(V) \subseteq N(\mathcal E^{(\infty)}) = 0$. Therefore, by Theorem \ref{idempotentiff},  $\mathcal E$ admits a nonzero idempotent element.
+\end{proof}
+
+\end{aiblock}
+\begin{humanblock}
+
+
+\begin{rem} Given a finite-dimensional evolution algebra $\mathcal E$, we are yet to find idempotent subspaces of dimension greater than two which do not properly contain a nontrivial idempotent subspace.
+\end{rem}
+
+As we indicated earlier, Corollary \ref{thecorollary} implies Proposition 2.8 from \cite{HW}. This follows directly from the following remark.
+
+\begin{rem}\label{implicationremark}
+    Let $\mathcal E$ be a finite-dimensional evolution algebra such that $\mathcal E^{(\infty)}$ is also an evolution algebra with natural basis $\{e_1,\ldots, e_n\}$. Then $N (\mathcal E^{(\infty)}) = 0$.
+
+    Indeed, by Lemma \ref{einftyisidempotent}, $\left(\mathcal E^{(\infty)}\right)^2 = \mathcal E^{(\infty)}$. This implies that $\{e_1^2,\ldots, e_n^2\}$ is a basis for $\mathcal E^{(\infty)}$. Then, for $x = (x_1e_1 + \ldots+x_n e_n) \in \mathcal E^{(\infty)}$, $0 = x^2 = x_1^2e_1^2 + \ldots +x_n^2 e_n^2$ implies $x_i^2 = 0$ for $i\in \{1,\ldots,n\}$. In particular, $x=0$.
+\end{rem}
+
+
+\end{humanblock}
+
+
+
+
+
+\section*{Acknowledgments}
+
+The authors would like to thank Ricky Simanjuntak for discussions at various stages of the project, as well as his feedback on the final draft.
+
+
+%==================== Bibliography ====================
+
+% \printbibliography
+
+\bibliographystyle{alpha}
+\bibliography{bib.bib}
+% \input{bib.bbl}
+
+\end{document}
