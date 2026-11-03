@@ -49,7 +49,7 @@ independent uniform bits, not Bernoulli-`p` coordinates.
 ## iii. Table of contents
 
 - A. Open subgraph and clusters
-- B. The random-cluster weight and partition function
+- B. The random-cluster weight and ambient normalizer
 - C. The random-cluster probability
 - D. The case `q = 1`
 
@@ -118,7 +118,7 @@ def numClusters (ω : ConfigSpace (Sym2 V)) : ℕ :=
 
 /-!
 
-## B. The random-cluster weight and partition function
+## B. The random-cluster weight and ambient normalizer
 
 -/
 
