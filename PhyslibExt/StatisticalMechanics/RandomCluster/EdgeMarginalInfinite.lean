@@ -204,8 +204,11 @@ theorem infiniteMeasure_eq_of_edgeMarg_eq
       exact (fuc_real_preimage_eq_indicator_sum ν r hr B).symm
     have hdomF : measOfMass μF ≼ measOfMass νF := by
       intro B _hB hBinc
+      apply (ENNReal.toReal_le_toReal (measure_ne_top (measOfMass μF) B)
+        (measure_ne_top (measOfMass νF) B)).mp
+      change (measOfMass μF).real B ≤ (measOfMass νF).real B
       rw [hrealμ B, hrealν B]
-      apply hdom (r ⁻¹' B) (hr MeasurableSet.of_discrete)
+      apply hdom.real (r ⁻¹' B) (hr MeasurableSet.of_discrete)
       intro ω ω' hle hω
       exact hBinc (fun i => hle i.1) hω
     obtain ⟨P, hP⟩ := fuc_isMonotoneCouplingFun_of_dominated

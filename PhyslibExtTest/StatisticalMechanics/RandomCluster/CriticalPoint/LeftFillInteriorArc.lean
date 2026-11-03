@@ -29,8 +29,9 @@ open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.RSW.Box _root_.Stat
 
 -- The square-crossing bound at `p = 1/2`, unconditionally.
 example : (1 : ℝ) / 2 ≤ halfMeasure.real (horizontalCrossingEvent 0 2 0 2) :=
-  crr_square_half 2 (by norm_num) (measurableSet_horizontalCrossingEvent _ _ _ _)
-    (measurableSet_verticalCrossingEvent _ _ _ _) (measurableSet_horizontalCrossingEvent _ _ _ _)
+  crr_square_half 2 (by norm_num) (RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
+    (RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _)
+    (RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
 
 /-- The all-closed configuration does not cross `[0, 1]²` horizontally. -/
 theorem closed_noH : ¬ HorizontalCrossing (fun _ => false) 0 1 0 1 := by

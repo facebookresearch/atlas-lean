@@ -13,6 +13,8 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.Linarith.Frontend
 public import Mathlib.Tactic.Ring.RingNF
 public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice

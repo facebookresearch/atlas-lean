@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib
+-- Co-import regression: the two file-local adjacency instances must not collide.
+public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorObstruction
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching
 
 /-!

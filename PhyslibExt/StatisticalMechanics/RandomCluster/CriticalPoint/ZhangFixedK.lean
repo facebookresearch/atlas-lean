@@ -912,7 +912,8 @@ lemma zfk_armPair_fkg
         halfMeasure.real (zfk_RightArmEvent k N) ≤
       halfMeasure.real (zfk_ArmPairEvent k N) := by
   rw [zfk_armPair_eq_inter]
-  exact hpa _ _ (zfk_LeftArmEvent_isIncreasing k N)
+  exact hpa.probability _ _ (zfk_LeftArmEvent_measurableSet k N)
+    (zfk_RightArmEvent_measurableSet k N) (zfk_LeftArmEvent_isIncreasing k N)
     (zfk_RightArmEvent_isIncreasing k N)
 
 lemma zfk_fixedK_contradiction

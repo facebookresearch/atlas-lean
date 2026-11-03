@@ -34,9 +34,9 @@ open scoped NNReal
 example (hpa : PositivelyAssociated halfMeasure) (hexcl : ∀ N : ℕ, zfk_FaithfulMatchedExclusive N) :
     criticalProbability 2 = (1 : ℝ) / 2 :=
   zfk_criticalProbability_eq_half_of_faithful_exclusive hpa hexcl
-    (fun _ _ _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_verticalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
 
 -- Exclusivity gives the matched bound at `N = 2`.
 example (hexcl : zfk_FaithfulMatchedExclusive 2) :

@@ -32,9 +32,9 @@ open scoped NNReal
 -- Kesten's upper bound `p_c ≤ 1/2`, with no remaining hypotheses.
 example : criticalProbability 2 ≤ 1 / 2 :=
   kbw_criticalProbability_le_half_square_faithful
-    (fun _ _ _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_verticalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
 
 -- `p_c = 1/2` from the three genuine inputs.
 example (hpa : PositivelyAssociated halfMeasure)
@@ -44,10 +44,10 @@ example (hpa : PositivelyAssociated halfMeasure)
       percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0) :
     criticalProbability 2 = 1 / 2 :=
   kbw_kesten_square_faithful hpa
-    (fun _ _ _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
-    (fun _ _ _ _ => measurableSet_verticalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_verticalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_horizontalCrossingEvent _ _ _ _) h2box hCor
+    (fun _ _ _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ _ _ => RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _) h2box hCor
 
 -- Reflexivity.
 example : halfMeasure = halfMeasure := rfl

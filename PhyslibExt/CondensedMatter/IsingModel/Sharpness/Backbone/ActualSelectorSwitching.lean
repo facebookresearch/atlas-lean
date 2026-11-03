@@ -57,8 +57,11 @@ noncomputable section
 variable {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
 
 /-- Classical decidability of adjacency, used throughout this file. -/
-local instance (H : SimpleGraph V) : DecidableRel H.Adj :=
+private local instance (H : SimpleGraph V) : DecidableRel H.Adj :=
   Classical.decRel _
+
+-- Public declaration types cannot use private instances in the module system.
+attribute [local instance 100] Classical.decRel
 
 /-! ## A. Active segment fibers -/
 

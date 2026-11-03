@@ -33,9 +33,9 @@ open scoped NNReal
 -- `p_c = 1/2` from exclusivity alone.
 example (hexcl : ∀ N : ℕ, zfk_FaithfulMatchedExclusive N) : criticalProbability 2 = (1 : ℝ) / 2 :=
   zih_criticalProbability_eq_half_of_faithful_exclusive hexcl
-    (fun _ _ _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_verticalCrossingEvent _ _ _ _)
-    (fun _ _ => measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _)
+    (fun _ _ => RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _)
 
 -- `θ(1/2) = 0` from the matched half bound.
 example (hhalf : ∀ N : ℕ, halfMeasure.real (horizontalCrossingEvent

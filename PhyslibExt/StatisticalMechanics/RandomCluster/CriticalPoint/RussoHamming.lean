@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Add
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import MathlibExt.Probability.Percolation.RussoInfluence
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Hamming
 public import MathlibExt.Probability.CorrelationInequalities.FKG

@@ -7,6 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Add
+public import Mathlib.Analysis.Calculus.Deriv.Inv
+public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 

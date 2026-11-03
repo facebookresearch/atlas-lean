@@ -179,7 +179,8 @@ lemma torusAmbientMeasure_positivelyAssociated
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq0 : 0 < q) (hq : 1 ≤ q) :
     PositivelyAssociated (torusAmbientMeasure L hp hp1 hq0) := by
-  intro A B hA hB
+  apply (positivelyAssociated_iff_of_isProbabilityMeasure _).2
+  intro A B _ _ hA hB
   rw [torusAmbientMeasure_real_eq_indicator_sum,
     torusAmbientMeasure_real_eq_indicator_sum,
     torusAmbientMeasure_real_eq_indicator_sum]
@@ -291,12 +292,15 @@ lemma torusPlanarPushforward_positivelyAssociated
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hpa : PositivelyAssociated (torusAmbientMeasure L hp hp1 hq)) :
     PositivelyAssociated (torusPlanarPushforward L hp hp1 hq) := by
-  intro A B hA hB
+  apply (positivelyAssociated_iff_of_isProbabilityMeasure _).2
+  intro A B hAm hBm hA hB
   rw [torusPlanarPushforward_real_apply,
     torusPlanarPushforward_real_apply,
     torusPlanarPushforward_real_apply]
   rw [preimage_inter]
-  exact hpa _ _
+  exact hpa.probability _ _
+    (hAm.preimage (measurable_torusPlanarPullback L))
+    (hBm.preimage (measurable_torusPlanarPullback L))
     (torusPlanarPullback_preimage_isIncreasing L hA)
     (torusPlanarPullback_preimage_isIncreasing L hB)
 

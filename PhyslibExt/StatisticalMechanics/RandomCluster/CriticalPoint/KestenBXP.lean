@@ -85,7 +85,7 @@ lemma kbw_kesten_bxp_supplied
     (hSharpThreshold : ∀ (p : ℝ≥0) (hp : p ≤ 1), (p : ℝ) < criticalProbability 2 →
         Tendsto (fun n => (bernoulliProductMeasure p hp).real (boxFam n)) atTop (𝓝 0)) :
     criticalProbability 2 = 1 / 2 :=
-  kesten_pc_eq_half_of_bxp (ρ := 2) (R := R) (boxFam := boxFam)
+  criticalProbability_eq_half_of_selfDualAssembly (ρ := 2) (R := R) (boxFam := boxFam)
     (StatMech.Universality.bxa_boxCrossingProperty_all hpa hβ hγ hmeas2box hmeasband hmeasGenH
       hmeasGenV
       hseed h2box hband hrefl 2 (by norm_num))
@@ -179,7 +179,7 @@ lemma kbw_kesten_no_percolation_supplied
     StatMech.Universality.bxa_boxCrossingProperty_all hpa hβ hγ hmeas2box hmeasband hmeasGenH
       hmeasGenV
       hseed h2box hband hrefl 2 (by norm_num)
-  exact kesten_no_percolation_at_pc (ρ := 2) (R := R) (boxFam := boxFam)
+  exact no_percolation_at_pc_of_selfDualAssembly (ρ := 2) (R := R) (boxFam := boxFam)
     hbxp hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold
 
 end Universality

@@ -2362,7 +2362,7 @@ lemma no_open_dual_escape_of_doublyAttached_subpaths
 
 /-! ## J. (Removed) Conditional exclusion of the complementary dual cluster -/
 
-/-- The three `…_of_*Band_exclusion` results were removed: they rested on `hgeom`, which
+/-! The three `…_of_*Band_exclusion` results were removed: they rested on `hgeom`, which
 appears false in general (see the module documentation). -/
 
 end PeriodicPlanarDualPair

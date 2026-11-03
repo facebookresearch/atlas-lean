@@ -161,7 +161,7 @@ lemma triHexSubcriticalDecayTransfer_of_probabilityComparison
   triHexSubcriticalDecayTransfer_of_globalComparison
     (triHexGlobalTwoPointComparison_of_probabilityComparison hprob)
 
-/-- No critical-conclusion wrappers are kept here: the hexagonal critical cubic is already
+/-! No critical-conclusion wrappers are kept here: the hexagonal critical cubic is already
 `triHexCriticalConclusion_of_exactDualThreshold` in `CriticalReduction`, which needs neither a
 two-point comparison nor a decay hypothesis. Packaging the decay hypothesis as a conclusion
 of a critical-point theorem was circular, and is removed rather than narrowed. -/

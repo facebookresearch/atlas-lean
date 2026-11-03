@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.PartialP2Reindex
 
 /-!

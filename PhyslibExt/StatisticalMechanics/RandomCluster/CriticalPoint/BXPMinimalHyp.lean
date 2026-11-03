@@ -14,19 +14,18 @@ public import MathlibExt.Probability.Percolation.Universality.CrossingReflection
 public import MathlibExt.Probability.Percolation.Universality.RSWBandBound
 
 /-!
-# Box-crossing property at p = 1/2 from a minimal hypothesis
+# Box-crossing property at p = 1/2 from a rectangle-crossing bound
 
-The box-crossing property for critical bond percolation on `ℤ²` from the square-crossing
-self-duality and one lower bound on long-rectangle crossings.
+The faithful square-crossing bound and an RSW rectangle bound give the box-crossing property
+for critical bond percolation on `ℤ²`.
 
 ## i. Overview
 
-Self-duality of `halfMeasure` gives probability `1/2` for crossing a square
-(`bmh_square_seed_half`), and the face-dual construction of `LeftFillInteriorArc` gives the same
-without a separation hypothesis (`*_faithful`). The headlines `bmh_boxCrossingProperty_selfDual` and
-`bmh_boxCrossingProperty_selfDual_faithful` are conditional: they assume positive association `hpa`,
-measurability of the crossing events, and the RSW input `h2box : 1/8 ≤ P(horizontal crossing of a 2n
-× n box)`. The `_faithful` version drops the square-separation hypothesis of the first.
+The face-dual construction in `LeftFillInteriorArc` gives a lower bound of `1/2` for the
+square-crossing probability (`bmh_square_seed_half_faithful`), with measurability hypotheses only.
+The headline `bmh_boxCrossingProperty_selfDual_faithful` is conditional: it assumes positive
+association `hpa`, measurability of the crossing events, and the RSW input
+`h2box : 1/8 ≤ P(horizontal crossing of a 2n × n box)`.
 
 ## ii. Key results
 
@@ -69,23 +68,6 @@ lemma bmh_square_reflection (n : ℤ)
       = halfMeasure.real (horizontalCrossingEvent 0 n 0 n) :=
   crf_verticalCrossing_eq_horizontal_swap 0 n 0 n hmeasH
 
-lemma bmh_square_seed_half (n : ℤ) (_hn : 0 < n)
-    (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
-    (hmeasV : MeasurableSet (verticalCrossingEvent 0 n 0 n))
-    (hsep : (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ dualVerticalCrossingEvent 0 n 0 n) :
-    (1 : ℝ) / 2 ≤ rai_cross halfMeasure n 1 := by
-  rw [rai_cross_def]
-  have h1n : ((1 : ℕ) : ℤ) * n = n := by push_cast; ring
-  rw [h1n]
-  exact rba_self_dual_square_half n hmeasH hmeasV hsep (bmh_square_reflection n hmeasH)
-
-lemma bmh_band_seed_half (n : ℤ) (_hn : 0 < n)
-    (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
-    (hmeasV : MeasurableSet (verticalCrossingEvent 0 n 0 n))
-    (hsep : (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ dualVerticalCrossingEvent 0 n 0 n) :
-    (1 : ℝ) / 2 ≤ halfMeasure.real (verticalCrossingEvent 0 n 0 n) :=
-  rbb_band_crossing_lb 0 n 0 n hmeasH hmeasV hsep (bmh_square_reflection n hmeasH)
-
 lemma bmh_square_seed_half_faithful (n : ℤ) (hn : 0 < n)
     (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
     (hmeasFace : MeasurableSet (crr_FaceRectVerticalEvent n))
@@ -105,37 +87,6 @@ lemma bmh_band_seed_half_faithful (n : ℤ) (hn : 0 < n)
   exact crr_square_half n hn hmeasH hmeasFace hmeasThin
 
 /-! ## B. Box-crossing property -/
-
-/-- The box-crossing property at `p = 1/2` for every aspect ratio `ρ > 1`, conditional on `hpa`,
-  measurability and `h2box`. -/
-theorem bmh_boxCrossingProperty_selfDual
-    (hpa : PositivelyAssociated halfMeasure)
-    (hmeasGenH : ∀ a b : ℤ, 0 < a → 0 < b →
-      MeasurableSet (horizontalCrossingEvent 0 a 0 b))
-    (hmeasGenV : ∀ a b : ℤ, 0 < a → 0 < b →
-      MeasurableSet (verticalCrossingEvent 0 a 0 b))
-    (hsepSquare : ∀ n : ℤ, 0 < n →
-      (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ dualVerticalCrossingEvent 0 n 0 n)
-    (h2box : ∀ n : ℤ, 0 < n →
-      (1 : ℝ) / 8 ≤ halfMeasure.real (horizontalCrossingEvent 0 (2 * n) 0 n)) :
-    ∀ ρ : ℝ, 1 < ρ → BoxCrossingProperty halfMeasure ρ := by
-  apply bxa_boxCrossingProperty_all hpa (β := 1 / 2) (γ := 1 / 8)
-    (by norm_num) (by norm_num)
-  · intro n hn
-    exact hmeasGenH (2 * n) n (by omega) hn
-  · intro n hn
-    exact hmeasGenV n n hn hn
-  · exact hmeasGenH
-  · exact hmeasGenV
-  · intro n hn
-    exact bmh_square_seed_half n hn (hmeasGenH n n hn hn) (hmeasGenV n n hn hn)
-      (hsepSquare n hn)
-  · exact h2box
-  · intro n hn
-    exact bmh_band_seed_half n hn (hmeasGenH n n hn hn) (hmeasGenV n n hn hn)
-      (hsepSquare n hn)
-  · exact crf_hrefl (fun k0 hk0 n hn =>
-      hmeasGenH ((k0 : ℤ) * n) n (by positivity) hn)
 
 /-- BXP for every aspect ratio, conditional on `hpa`, measurability and `h2box`. -/
 theorem bmh_boxCrossingProperty_selfDual_faithful
