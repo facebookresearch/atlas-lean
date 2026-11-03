@@ -105,7 +105,7 @@ open Cslib.Complexity.Classes Cslib.Turing.MultiTapeTM
 using its original finite multi-tape decider.
 
 Source: S. Arora and B. Barak, Computational Complexity: A Modern Approach,
-Cambridge University Press, 2009, Theorem 4.14 (PSPACE ⊆ EXP). -/
+Cambridge University Press, 2009, Chapter 4 (Space complexity). -/
 theorem pspace_subset_exp : PSPACE ⊆ EXP := by
   intro L hL
   obtain ⟨d, hd⟩ := Set.mem_iUnion.mp hL
