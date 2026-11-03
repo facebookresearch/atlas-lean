@@ -13,7 +13,7 @@ public import CSLibExtTest.Complexity.BooleanFunctions.KKL.KKLInequality
 /-!
 # Tests for the KKL inequality for events
 
-Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.KKLWire`:
+Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.KKLEvents`:
 
 * `StatMech.prob`, `StatMech.BeffaraDC.influence` and `kklw_logMaxInfl` of the event
   `{ω | ω true ∧ ω false}` at `p = 1/2` are `1/4`, `1/2` and `log 2`;

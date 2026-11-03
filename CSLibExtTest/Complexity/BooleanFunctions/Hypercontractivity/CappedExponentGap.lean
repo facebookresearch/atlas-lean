@@ -13,7 +13,7 @@ public import CSLibExtTest.Complexity.BooleanFunctions.Hypercontractivity.Convex
 /-!
 # Tests for the capped estimate under the exponent-gap condition
 
-Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.TwoPointHCqGt2`:
+Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CappedExponentGap`:
 
 * `hcq_exponent_le` at `p = 3/4`, `q' = 2`, `u = 1/4`;
 * `hcq_residue_proper` and `hcq_antecedent_not_tautology` at `p = 3/4`, `δ = 1/2`;

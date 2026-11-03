@@ -10,6 +10,8 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.ConvexGapHC
 public import CSLibExtTest.Complexity.BooleanFunctions.KKL.FSPerEdge
 
+import Mathlib.Analysis.Complex.ExponentialBounds
+
 /-!
 # Tests for the convexity argument for the capped estimate
 
