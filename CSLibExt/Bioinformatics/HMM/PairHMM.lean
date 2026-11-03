@@ -46,16 +46,18 @@ weight, multiplying by the recursively chosen suffix maximum can reverse the ord
 * `sumDP_cons_cons`, `maxDP_cons_cons` (and the boundary cases): the recursions in
   first-column form.
 * `PairHMM.likelihood_eq_sum`, `PairHMM.alignProb_le_viterbi`,
-  `PairHMM.exists_alignProb_eq_viterbi`: for a pair HMM, the full probability `P(xs, ys)` and
+  `PairHMM.exists_alignProb_eq_viterbi`: for a pair HMM, the total weight `P(xs, ys)` and
   the Viterbi value (Durbin et al., chapter 4). The recursion peels the first column, so it
   runs from the ends of the sequences towards the beginning: it is the backward recursion,
-  whose value at the begin state is the full probability that the forward algorithm computes.
+  whose value at the begin state is the total weight that the forward algorithm computes.
 * `PairHMM.log_viterbi_div_background`: **log-odds Viterbi is Needleman–Wunsch**. For a pair
   HMM whose transition weights do not depend on the current state (`IsMemoryless`), against
   the independence model `R` with geometric lengths (Durbin et al., chapter 4), the
   log-odds Viterbi score `log (viterbi / P(xs, ys | R))` is the linear-gap Needleman–Wunsch
   score `nwScore σ gap xs ys` plus `log (τ / η²)`, when the per-column log-odds scores are the
-  integers `σ a b` and `gap`.
+  integers `σ a b` and `gap`. `LinearGapLogOdds` requires a finite alphabet and normalized
+  transition rows, emission tables, and background frequencies. The general semiring
+  recursions above compute weights without assuming probability normalization.
 
 ## Gap model
 
@@ -582,11 +584,11 @@ def toAutomaton : AlignmentAutomaton (Option PairState) α α R where
 path, from the begin state to the end state. -/
 def alignProb (A : Alignment α) : R := h.toAutomaton.alignWeight none A
 
-/-- The full probability `P(xs, ys)` of a pair HMM: the total weight of all state paths that emit
+/-- The total weight `P(xs, ys)` of a pair HMM: the total weight of all state paths that emit
 `xs` and `ys` (`likelihood_eq_sum`), by the first-column recursion. -/
 def likelihood (xs ys : List α) : R := h.toAutomaton.sumDP none xs ys
 
-/-- **The pair-HMM recursion computes the full probability**: the sum over all alignments of
+/-- **The pair-HMM recursion computes the total weight**: the sum over all alignments of
 `xs` and `ys` of the joint weight of the sequences and the alignment. -/
 theorem likelihood_eq_sum (xs ys : List α) :
     h.likelihood xs ys = ((alignments xs ys).map h.alignProb).sum := by
@@ -662,20 +664,32 @@ structure IsMemoryless (h : PairHMM α ℝ) (π : PairState → ℝ) (τ : ℝ) 
   /-- The begin-to-end transition. -/
   startStop : h.startStop = τ
 
-/-- The probability of `xs` and `ys` under the independence (random) model of Durbin et al.,
-chapter 4: each sequence has a geometric length with stopping probability `η` and independent
-letters with background frequencies `q`, so
-`P(xs, ys | R) = η² (1 - η)^(|xs| + |ys|) ∏ q xs ∏ q ys`. -/
+/-- The independence-model weight for `xs` and `ys` (Durbin et al., chapter 4):
+`η² (1 - η)^(|xs| + |ys|) ∏ q xs ∏ q ys`. This is a probability when `q` is a
+normalized nonnegative distribution and `0 < η < 1`, as required by `LinearGapLogOdds`. -/
 noncomputable def background (q : α → ℝ) (η : ℝ) (xs ys : List α) : ℝ :=
   η ^ 2 * (1 - η) ^ (xs.length + ys.length) * (xs.map q).prod * (ys.map q).prod
 
-/-- The hypotheses of the log-odds correspondence: a memoryless pair HMM with positive weights,
-positive background frequencies and `0 < η < 1`, whose per-column log-odds scores against the
-independence model are the integer scores `σ a b` (aligned pair) and `gap` (gap column). -/
+variable [Fintype α]
+
+/-- The hypotheses of the log-odds correspondence: a memoryless pair HMM with normalized
+positive transition and emission probabilities, normalized positive background frequencies
+and `0 < η < 1`, whose per-column log-odds scores against the independence model are the
+integer scores `σ a b` (aligned pair) and `gap` (gap column). -/
 structure LinearGapLogOdds (h : PairHMM α ℝ) (π : PairState → ℝ) (τ : ℝ) (q : α → ℝ) (η : ℝ)
     (σ : α → α → ℤ) (gap : ℤ) : Prop where
   /-- The transition weights do not depend on the current state. -/
   memoryless : h.IsMemoryless π τ
+  /-- The begin row and every emitting-state transition row sum to one. -/
+  transition_sum : π .M + π .X + π .Y + τ = 1
+  /-- The background frequencies sum to one over the finite alphabet. -/
+  q_sum : ∑ a, q a = 1
+  /-- The match emission probabilities sum to one. -/
+  emitM_sum : ∑ a, ∑ b, h.emitM a b = 1
+  /-- The `X` emission probabilities sum to one. -/
+  emitX_sum : ∑ a, h.emitX a = 1
+  /-- The `Y` emission probabilities sum to one. -/
+  emitY_sum : ∑ b, h.emitY b = 1
   /-- Positive transition weights. -/
   π_pos : ∀ s, 0 < π s
   /-- A positive end transition. -/
@@ -797,6 +811,7 @@ private theorem log_alignWeight_div_denom {h : PairHMM α ℝ} {π : PairState �
       push_cast; ring
 
 
+omit [Fintype α] in
 private theorem background_eq {q : α → ℝ} {η : ℝ} {xs ys : List α} {A : Alignment α}
     (hA : IsAlignment A xs ys) : background q η xs ys = η ^ 2 * denom q η A := by
   obtain ⟨-, rfl, rfl⟩ := hA

@@ -158,10 +158,12 @@ theorem wτ_pos : 0 < wτ := by
   nlinarith
 
 /-- The witness is probabilistic: each transition row sums to one. -/
-example : wπ .M + wπ .X + wπ .Y + wτ = 1 := by simp only [wπ, wτ]; ring
+private theorem witness_transition_sum : wπ .M + wπ .X + wπ .Y + wτ = 1 := by
+  simp only [wπ, wτ]
+  ring
 
 /-- The witness's match emissions sum to one. -/
-example : ∑ a : Bool, ∑ b : Bool, witness.emitM a b = 1 := by
+private theorem witness_emitM_sum : ∑ a : Bool, ∑ b : Bool, witness.emitM a b = 1 := by
   simp only [witness, wσ, Fintype.sum_bool, ite_true, Bool.true_eq_false, Bool.false_eq_true,
     ite_false]
   have := πM_pos
@@ -175,6 +177,11 @@ uniform background frequencies and `η = 1/2`. -/
 theorem witness_linearGapLogOdds :
     witness.LinearGapLogOdds wπ wτ (fun _ => 1 / 2) (1 / 2) wσ (-1) where
   memoryless := ⟨fun _ => rfl, fun _ _ => rfl, fun _ => rfl, rfl⟩
+  transition_sum := witness_transition_sum
+  q_sum := by norm_num [Fintype.sum_bool]
+  emitM_sum := witness_emitM_sum
+  emitX_sum := by norm_num [witness, Fintype.sum_bool]
+  emitY_sum := by norm_num [witness, Fintype.sum_bool]
   π_pos s := by
     cases s
     · exact πM_pos
@@ -198,6 +205,23 @@ theorem witness_linearGapLogOdds :
     rw [show wπ .Y * witness.emitY b / ((1 - 1 / 2) * (1 / 2)) = Real.exp (-1) by
       simp only [wπ, witness]; ring, Real.log_exp]
     norm_num
+
+/-- A positive but unnormalized background cannot satisfy the log-odds hypotheses,
+regardless of the model or chosen integer scores. -/
+example (h : PairHMM Bool ℝ) (π : PairState → ℝ) (τ η : ℝ)
+    (σ : Bool → Bool → ℤ) (gap : ℤ) :
+    ¬ h.LinearGapLogOdds π τ (fun _ => 1) η σ gap := by
+  intro H
+  have hq := H.q_sum
+  norm_num [Fintype.sum_bool] at hq
+
+/-- Positive transition weights are not enough: the transition row must sum to one. -/
+example (h : PairHMM Bool ℝ) (q : Bool → ℝ) (η : ℝ)
+    (σ : Bool → Bool → ℤ) (gap : ℤ) :
+    ¬ h.LinearGapLogOdds (fun _ => 1) 1 q η σ gap := by
+  intro H
+  have ht := H.transition_sum
+  norm_num at ht
 
 /-- The log-odds Viterbi score of the witness on `[true]`, `[true]` is the Needleman–Wunsch
 score `1` (one match) plus `log (τ / η²)`. -/
