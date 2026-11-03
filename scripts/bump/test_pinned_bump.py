@@ -67,7 +67,8 @@ def upstream_manifest(names):
 
 
 class FakeGitHub(GitHub):
-    def __init__(self, *, tags, run_id=123, upstream=None, module_sources=None):
+    def __init__(self, *, tags, run_id=123, upstream=None, module_sources=None,
+                 lakefiles=None):
         super().__init__(repo="example/repo")
         self._tags = tags
         self._run_id = run_id
@@ -76,6 +77,12 @@ class FakeGitHub(GitHub):
         # by the API-existence check (ref is ignored: the fixture APIs
         # are the same names at both SHAs).
         self._module_sources = module_sources or {}
+        # (slug, lakefile) pairs present upstream; default is that every
+        # upstream slug has lakefile.toml (matching the fixture
+        # manifests, whose direct entries all use lakefile.toml).
+        self._lakefiles = lakefiles if lakefiles is not None else {
+            (slug, "lakefile.toml") for (slug, _ref) in self._upstream
+        }
 
     def tags(self, slug):
         return [{"name": t, "commit": {"sha": SHAS[(slug, t)]}} for t in self._tags.get(slug, [])]
@@ -89,6 +96,11 @@ class FakeGitHub(GitHub):
     def contents(self, slug, path, ref):
         if (slug, path) in self._module_sources:
             return self._module_sources[(slug, path)]
+        if path in ("lakefile.toml", "lakefile.lean"):
+            if (slug, path) in self._lakefiles:
+                return b"# fixture lakefile\n"
+            raise RuntimeError(
+                f"gh api repos/{slug}/contents/{path} failed: Not Found (HTTP 404)")
         return json.dumps(self._upstream[(slug, ref)]).encode()
 
     def open_prs(self):
@@ -124,6 +136,7 @@ def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitiv
             "url": f"https://github.com/{dep['repo']}",
             "rev": SHAS[(dep["repo"], tag)], "inputRev": tag, "inherited": False,
             "configFile": "lakefile.toml", "manifestFile": "lake-manifest.json",
+            "scope": "", "subDir": None,
         })
     transitive = [dict(BATTERIES, inherited=True), dict(QQ, inherited=True)]
     if tamper_transitive:
@@ -590,6 +603,7 @@ class GuardTests(unittest.TestCase):
                     "inputRev": "v4.35.0", "inherited": False,
                     "configFile": "lakefile.toml",
                     "manifestFile": "lake-manifest.json",
+                    "scope": "", "subDir": None,
                 })
                 manifest_path.write_text(json.dumps(manifest, indent=1))
             elif same_pin:
@@ -1315,6 +1329,122 @@ class GuardTests(unittest.TestCase):
         self.assertTrue(any(
             "pin_policy" in p
             for p in pinned_bump.check_config_extension(base, cross_kind, repairable)))
+
+    def test_verify_manifest_new_dep_schema(self):
+        # Codex P2: a new direct entry has no base entry to compare
+        # against, so every field must be derived from trusted sources.
+        import copy
+        config = json.loads(json.dumps(CONFIG))
+        config["deps"].append(
+            {"name": "Physlib", "repo": "leanprover-community/physlib"})
+        upstream = {}
+        for dep in config["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.35.0")])] = \
+                upstream_manifest(["batteries", "Qq"])
+        client = FakeGitHub(tags={}, upstream=upstream)
+        physlib_sha = SHAS[("leanprover-community/physlib", "v4.35.0")]
+
+        def build(entry, *, require=""):
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                write_tree(root, "v4.35.0")
+                base_manifest = json.loads(
+                    (root / "lake-manifest.json").read_text())
+                lakefile = root / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[require]]\nname = "Physlib"\n' + require
+                    + 'git = "https://github.com/leanprover-community/physlib"\n'
+                    + 'rev = "v4.35.0"\n')
+                manifest = json.loads(
+                    (root / "lake-manifest.json").read_text())
+                manifest["packages"].append(entry)
+                (root / "lake-manifest.json").write_text(
+                    json.dumps(manifest, indent=1))
+                return pinned_bump.verify_manifest(
+                    client, root, config, "v4.35.0", base_manifest)
+
+        def physlib_entry(**overrides):
+            entry = {
+                "name": "Physlib", "type": "git",
+                "url": "https://github.com/leanprover-community/physlib",
+                "rev": physlib_sha, "inputRev": "v4.35.0",
+                "inherited": False, "configFile": "lakefile.toml",
+                "manifestFile": "lake-manifest.json",
+                "scope": "", "subDir": None,
+            }
+            entry.update(overrides)
+            return entry
+
+        # The Codex repro: attacker scope, omitted inherited, altered
+        # configFile, extra field -- all must be reported.
+        repro = physlib_entry()
+        del repro["inherited"]
+        repro["scope"] = "attacker"
+        repro["configFile"] = "lakefile.lean"
+        repro["bogus"] = 1
+        problems = build(repro)
+        self.assertTrue(any("scope" in p for p in problems), problems)
+        self.assertTrue(any("inherited" in p for p in problems), problems)
+        self.assertTrue(any("configFile" in p for p in problems), problems)
+        self.assertTrue(any("keys" in p for p in problems), problems)
+        # Fixed: no problems.
+        self.assertEqual(build(physlib_entry()), [])
+        # Explicit lakefile scope is carried into the manifest.
+        scoped = physlib_entry(scope="leanprover-community")
+        self.assertEqual(
+            build(scoped, require='scope = "leanprover-community"\n'), [])
+        self.assertTrue(any(
+            "scope" in p
+            for p in build(physlib_entry(),
+                           require='scope = "leanprover-community"\n')))
+
+    def test_verify_manifest_configfile_pinned_upstream(self):
+        # configFile is the dep's own upstream lakefile, not a free choice.
+        config = json.loads(json.dumps(CONFIG))
+        config["deps"].append(
+            {"name": "Physlib", "repo": "leanprover-community/physlib"})
+        upstream = {}
+        for dep in config["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.35.0")])] = \
+                upstream_manifest(["batteries", "Qq"])
+        lakefiles = {
+            (dep["repo"], "lakefile.toml")
+            for dep in config["deps"] if dep["name"] != "Physlib"
+        } | {("leanprover-community/physlib", "lakefile.lean")}
+        client = FakeGitHub(tags={}, upstream=upstream, lakefiles=lakefiles)
+        physlib_sha = SHAS[("leanprover-community/physlib", "v4.35.0")]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_tree(root, "v4.35.0")
+            base_manifest = json.loads(
+                (root / "lake-manifest.json").read_text())
+            lakefile = root / "lakefile.toml"
+            lakefile.write_text(
+                lakefile.read_text()
+                + '\n[[require]]\nname = "Physlib"\n'
+                + 'git = "https://github.com/leanprover-community/physlib"\n'
+                + 'rev = "v4.35.0"\n')
+            for config_file, should_pass in (("lakefile.toml", False),
+                                              ("lakefile.lean", True)):
+                manifest = json.loads(json.dumps(base_manifest))
+                manifest["packages"].append({
+                    "name": "Physlib", "type": "git",
+                    "url": "https://github.com/leanprover-community/physlib",
+                    "rev": physlib_sha, "inputRev": "v4.35.0",
+                    "inherited": False, "configFile": config_file,
+                    "manifestFile": "lake-manifest.json",
+                    "scope": "", "subDir": None,
+                })
+                (root / "lake-manifest.json").write_text(
+                    json.dumps(manifest, indent=1))
+                problems = pinned_bump.verify_manifest(
+                    client, root, config, "v4.35.0", base_manifest)
+                if should_pass:
+                    self.assertEqual(problems, [], config_file)
+                else:
+                    self.assertTrue(any(
+                        "configFile" in p for p in problems), problems)
 
     def test_config_extension_rejects_removing_healthy_rule(self):
         healthy = {"path": "README.md", "pattern": "badge", "replacement": "badge"}

@@ -2379,6 +2379,33 @@ def check_no_duplicate_packages(manifest: dict, label: str) -> list[str]:
     return []
 
 
+_MANIFEST_ENTRY_KEYS = {
+    "configFile", "inherited", "inputRev", "manifestFile", "name",
+    "rev", "scope", "subDir", "type", "url",
+}
+
+
+def _upstream_config_files(client: GitHub, slug: str, sha: str) -> set[str] | None:
+    """Lakefiles present in the upstream repo at sha, or None if unknown.
+
+    The manifest's configFile is the dependency's own lakefile, so it
+    must be derived from the pinned upstream tree, not chosen from
+    {lakefile.lean, lakefile.toml} by the PR author. A 404 means the
+    file is absent; any other API failure is indeterminate (None),
+    and the caller fails closed.
+    """
+    found: set[str] = set()
+    for name in ("lakefile.toml", "lakefile.lean"):
+        try:
+            client.contents(slug, name, sha)
+            found.add(name)
+        except RuntimeError as exc:
+            if "404" in str(exc) or "Not Found" in str(exc):
+                continue
+            return None
+    return found
+
+
 def verify_manifest(
     client: GitHub, root: Path, config: dict, target: str,
     base_manifest: dict | None = None,
@@ -2402,6 +2429,11 @@ def verify_manifest(
         problems.append(
             f"direct manifest entries {sorted(direct)} != pinned deps {sorted(wanted)}"
         )
+    try:
+        reqs = {e["name"]: e for e in lakefile_requires(root)}
+    except (OSError, ValueError) as exc:
+        problems.append(f"lakefile.toml unreadable for manifest validation: {exc}")
+        return problems
     shas: dict[str, str] = {}
     for name, dep in wanted.items():
         sha = client.tag_sha(dep["repo"], target)
@@ -2429,8 +2461,42 @@ def verify_manifest(
             problems.append(f"{name}: subDir must be null")
         if entry.get("manifestFile") != "lake-manifest.json":
             problems.append(f"{name}: manifestFile must be lake-manifest.json")
-        if entry.get("configFile") not in {"lakefile.lean", "lakefile.toml"}:
-            problems.append(f"{name}: configFile must be lakefile.lean or lakefile.toml")
+        # Complete entry schema: a new direct entry has no base entry
+        # to compare against, so missing/extra fields, a non-boolean
+        # inherited, a wrong name, or a scope the lakefile require does
+        # not carry would otherwise pass. Scope is the lakefile
+        # require's scope, or "" for a scope-less require (what Lake
+        # writes for a git-only require); a scope of "attacker" fails
+        # because no require carries it.
+        if set(entry) != _MANIFEST_ENTRY_KEYS:
+            problems.append(
+                f"{name}: manifest entry keys {sorted(entry)} != "
+                f"{sorted(_MANIFEST_ENTRY_KEYS)}"
+            )
+        if entry.get("inherited") is not False:
+            problems.append(f"{name}: inherited must be false")
+        if entry.get("name") != name:
+            problems.append(f"{name}: name field {entry.get('name')!r} != {name!r}")
+        req = reqs.get(name)
+        if req is None:
+            problems.append(f"{name}: no lakefile require")
+        elif entry.get("scope") != (req.get("scope") or ""):
+            problems.append(
+                f"{name}: scope {entry.get('scope')!r} != lakefile require scope "
+                f"{(req.get('scope') or '')!r} (a scope-less require means empty scope)"
+            )
+        # configFile is the dependency's own lakefile at the pinned SHA,
+        # derived from the upstream tree.
+        config_files = _upstream_config_files(client, dep["repo"], sha)
+        if config_files is None:
+            problems.append(f"{name}: could not determine upstream lakefile")
+        elif not config_files:
+            problems.append(f"{name}: no lakefile in upstream repo at {target}")
+        elif entry.get("configFile") not in config_files:
+            problems.append(
+                f"{name}: configFile {entry.get('configFile')!r} not in upstream "
+                f"lakefiles {sorted(config_files)}"
+            )
         if base_manifest is not None:
             base_entry = direct_entries(base_manifest).get(name)
             if base_entry is not None:
