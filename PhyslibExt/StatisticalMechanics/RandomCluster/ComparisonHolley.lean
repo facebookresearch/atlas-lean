@@ -13,8 +13,12 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.HolleyCoupling
 /-!
 # Comparison of the random-cluster measure with Bernoulli percolation
 
-For `q ≥ 1`, the random-cluster measure is sandwiched between Bernoulli percolation measures:
-`P_{p'} ≼ φ_{p,q} ≼ P_p` with `p' = p / (p + q(1 - p))`.
+For `q ≥ 1`, the edge marginal of the random-cluster measure is sandwiched between
+Bernoulli percolation measures: `P_{p'} ≼ φ_{p,q} ≼ P_p` with
+`p' = p / (p + q(1 - p))`. The formal comparisons use ambient configurations:
+`P_p` denotes `fkProb G p 1`, whose graph-edge marginal is Bernoulli-`p` and whose
+unused loop and nonedge coordinates are independent uniform bits. All three laws
+use this same uniform extension off the graph edges.
 
 ## i. Overview
 
@@ -421,7 +425,8 @@ lemma bernoulli_reduced_le_fk {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤
   rw [fkProb_sum_eq_one G hp'pos hp'lt one_pos, fkProb_sum_eq_one G hp hp1 hq0]
 
 /-- **Comparison inequalities.** For `q ≥ 1`,
-`P_{p/(p + q(1 - p))} ≼ φ_{p,q} ≼ P_p`
+`P_{p/(p + q(1 - p))} ≼ φ_{p,q} ≼ P_p`, with every law extended uniformly to loops
+and nonedges. Their graph-edge marginals are the usual FK/Bernoulli comparison
 (Fortuin 1972; Grimmett, *The Random-Cluster Model*, 2006, Theorem 3.21).
 -/
 theorem fk_bernoulli_sandwich {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
