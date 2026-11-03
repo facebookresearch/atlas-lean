@@ -386,7 +386,7 @@ theorem isMMESolution_iff {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) 
   have hgls : MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix X M.V *ᵥ y =
       M.gls X y := by
     simp [MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix, gls,
-      Matrix.mulVec_mulVec]
+      Matrix.mulVec_mulVec, Matrix.mul_assoc]
   have hblup : ((M.σg2 • M.K) * (1 : Matrix (Fin n) (Fin n) ℝ)ᵀ * M.V⁻¹) *ᵥ
       (y - X *ᵥ M.gls X y) = M.blup X y := by
     simp [blup, Matrix.mulVec_mulVec, Matrix.transpose_one]
