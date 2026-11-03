@@ -80,7 +80,8 @@ example : Tendsto (fun _ : ℕ => (Measure.dirac ωT).real (Set.univ : Set _)) a
 example : Tendsto (fun _ : ℕ => (Measure.dirac ωT).real (Set.univ ∩ Set.univ : Set _))
     atTop (𝓝 1) :=
   zhg_inter_tendsto_one _ (dirac_positivelyAssociated ωT) (fun _ => isUpperSet_univ)
-    (fun _ => isUpperSet_univ) (by simp) (by simp)
+    (fun _ => isUpperSet_univ) (fun _ => MeasurableSet.univ)
+    (fun _ => MeasurableSet.univ) (by simp) (by simp)
 
 example : Tendsto (fun n : ℕ => (Measure.dirac ωT).real
     ((fun _ : ℕ => (Set.univ : Set (ConfigSpace (Sym2 (Site 2))))) n ∪ Set.univ)) atTop (𝓝 1) :=

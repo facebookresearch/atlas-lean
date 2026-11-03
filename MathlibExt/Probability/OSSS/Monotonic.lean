@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.FKG
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # FKG lattice condition implies monotonicity of conditional edge probabilities

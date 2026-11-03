@@ -29,7 +29,8 @@ namespace MathlibExtTest.StatMech.Probability.Percolation.Universality.CrossingR
 
 example : halfMeasure.real (verticalCrossingEvent 0 1 0 3)
     = halfMeasure.real (horizontalCrossingEvent 0 3 0 1) :=
-  crf_verticalCrossing_eq_horizontal_swap 0 1 0 3 (measurableSet_horizontalCrossingEvent 0 3 0 1)
+  crf_verticalCrossing_eq_horizontal_swap 0 1 0 3
+    (RSW.Box.measurableSet_horizontalCrossingEvent 0 3 0 1)
 
 example : crf_swap ![1, 2] = ![2, 1] := by
   funext i; fin_cases i <;> simp
