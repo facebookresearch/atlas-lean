@@ -7,37 +7,23 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Analysis.Complex.Loewner.LoewnerExistence
+public import MathlibExt.Analysis.Complex.Loewner.Defs
 
 /-!
-# Loewner chains from SLE realizations
+# Continuity of SLE driving functions
 
-Builds the `LoewnerChain` of an SLE`_κ` sample path from a solution `g` of the Loewner
-equation driven by `√κ B_t(ω)`.
+For a continuous sample path `t ↦ B_t(ω)`, the driving function `√κ B_t(ω)` is continuous.
+This is a pathwise fact: it does not use a Brownian-motion law or assert existence of a global
+Loewner flow.
 
-Removed: an earlier version of this file packaged a capacity-parametrized chain
-(`IsCapacityParametrized`, `CapacityParametrizedChain`) and derived `hcap(g_t) = 2t`
-(`chordalSLE_capacity_parametrized`, `chordalSLE_hcap_eq`,
-`chordalSLE_realization_capacity_parametrized`) from it. That package stored the capacity
-coefficient together with the assumption that its derivative is already `2`, so the
-`hcap(g_t) = 2t` conclusions followed only by solving the assumed ODE; the Loewner equation
-contributed no capacity argument. Deriving the capacity expansion and the rate `2` from
-`SatisfiesLoewnerEquation` is not proved in the library, so the conditional capstone was
-removed rather than presented as an SLE result. The unconditional conditional-capacity
-computation (given a capacity expansion and a rate, the coefficient is `2t`) lives in
-`LoewnerCapacity` (`loewner_capacity_eq_of_loewnerChain`, `coeff_ode_solution`).
-
-Caveats on fidelity:
-* Nothing here uses the law of `B`: the SLE results hold pathwise for any continuous driving
-  function of the form `√κ B_t(ω)`.
-
-## Main definitions
-
-* `loewnerChain_of_sle_realization`.
+The maximal-domain evolution is developed in `LoewnerMaximal`. In `LoewnerCapacity`,
+`coeff_ode_solution` solves the coefficient equation from a zero initial value and derivative `2`;
+`loewner_halfplane_capacity_eq` additionally assumes a capacity expansion.
+Deriving the expansion and its rate from the Loewner equation is not proved here.
 
 ## Main results
 
-* `loewnerChain_of_sle_realization_maps`, `loewnerChain_of_sle_realization_driving`.
+* `continuous_sleDriving`: continuity of the driving function from continuity of the sample path.
 
 ## References
 
@@ -57,28 +43,5 @@ lemma continuous_sleDriving {Ω : Type*} (κ : ℝ) (B : ℝ → Ω → ℝ) (ω
     (hcont : Continuous fun t => B t ω) : Continuous (sleDriving κ B ω) := by
   unfold sleDriving
   exact continuous_const.mul hcont
-
-/-- The Loewner chain of an SLE`_κ` sample path `ω`, from a solution `g` of the Loewner equation
-driven by `√κ B_t(ω)`. -/
-noncomputable def loewnerChain_of_sle_realization {Ω : Type*} (κ : ℝ)
-    (B : ℝ → Ω → ℝ) (ω : Ω) (g : ℝ → ℂ → ℂ)
-    (hcont : Continuous fun t => B t ω)
-    (hloe : SatisfiesLoewnerEquation (sleDriving κ B ω) g) : LoewnerChain where
-  driving := sleDriving κ B ω
-  driving_continuous := continuous_sleDriving κ B ω hcont
-  maps := g
-  loewner := hloe
-
-@[simp] lemma loewnerChain_of_sle_realization_maps {Ω : Type*} (κ : ℝ)
-    (B : ℝ → Ω → ℝ) (ω : Ω) (g : ℝ → ℂ → ℂ)
-    (hcont : Continuous fun t => B t ω)
-    (hloe : SatisfiesLoewnerEquation (sleDriving κ B ω) g) :
-    (loewnerChain_of_sle_realization κ B ω g hcont hloe).maps = g := rfl
-
-@[simp] lemma loewnerChain_of_sle_realization_driving {Ω : Type*} (κ : ℝ)
-    (B : ℝ → Ω → ℝ) (ω : Ω) (g : ℝ → ℂ → ℂ)
-    (hcont : Continuous fun t => B t ω)
-    (hloe : SatisfiesLoewnerEquation (sleDriving κ B ω) g) :
-    (loewnerChain_of_sle_realization κ B ω g hcont hloe).driving = sleDriving κ B ω := rfl
 
 end StatMech.SLE

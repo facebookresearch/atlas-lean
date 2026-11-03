@@ -10,6 +10,8 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.KKL.RhoOptimiseEngineApply
 public import CSLibExtTest.Complexity.BooleanFunctions.KKL.KKLInequality
 
+import Mathlib.Analysis.Complex.ExponentialBounds
+
 /-!
 # Tests for the rho-optimisation engine at exponent `2`
 

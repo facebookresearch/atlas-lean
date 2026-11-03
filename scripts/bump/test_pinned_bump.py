@@ -107,18 +107,19 @@ MODULE_SOURCES = {
 }
 
 
-def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitive=False):
+def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitive=False,
+               config=CONFIG):
     (root / "lean-toolchain").write_text(
         f"leanprover/lean4:{'v4.35.0' if tamper_toolchain else tag}\n")
     requires = "\n".join(
-        '[[require]]\nname = "%s"\nrev = "%s"' % (d["name"], tag) for d in CONFIG["deps"]
+        '[[require]]\nname = "%s"\nrev = "%s"' % (d["name"], tag) for d in config["deps"]
     )
     (root / "lakefile.toml").write_text('name = "fixture"\n\n' + requires + "\n")
     (root / "README.md").write_text(
         'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
     (root / "BACKPORTS.md").write_text("The repository now pins Mathlib and Lean `v4.35.0`.\n")
     direct = []
-    for dep in CONFIG["deps"]:
+    for dep in config["deps"]:
         direct.append({
             "name": dep["name"], "type": "git",
             "url": f"https://github.com/{dep['repo']}",
@@ -332,7 +333,7 @@ class EditTests(unittest.TestCase):
         shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in real_config["deps"]}
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            write_tree(root, "v4.35.0")
+            write_tree(root, "v4.35.0", config=real_config)
             write_migration_ledgers(
                 root,
                 mathlib_sha=SHAS[("leanprover-community/mathlib4", "v4.35.0")],
@@ -354,8 +355,8 @@ class EditTests(unittest.TestCase):
             self.assertNotIn('alt="Lean v4.35.0"', readme)
             policy = (root / real_config["pin_policy"]["path"]).read_text()
             self.assertIn('"v4.36.0"', policy)
-            self.assertIn(shas["mathlib"], policy)
-            self.assertIn(shas["cslib"], policy)
+            for dep in real_config["deps"]:
+                self.assertIn(shas[dep["name"]], policy)
             self.assertNotIn("v4.35.0", policy)
 
 
@@ -366,8 +367,10 @@ class GuardTests(unittest.TestCase):
                    missing_toolchain_tag=False, tamper_pin_policy=False,
                    stale_pin_policy=False, migration="absent",
                    tamper_doc=False, stale_doc=False, missing_doc=False):
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        real_config = load_config(repo_root)
         upstream = {}
-        for dep in CONFIG["deps"]:
+        for dep in real_config["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
             if conflict and dep["name"] == "cslib":
                 manifest = upstream_manifest(["batteries", "Qq"])
@@ -386,9 +389,9 @@ class GuardTests(unittest.TestCase):
             pr = Path(tmp) / "pr"
             base.mkdir()
             pr.mkdir()
-            write_tree(base, "v4.35.0")
+            write_tree(base, "v4.35.0", config=real_config)
             write_tree(pr, "v4.36.0", tamper_toolchain=tamper_toolchain,
-                       tamper_transitive=tamper_transitive)
+                       tamper_transitive=tamper_transitive, config=real_config)
             # write_tree's README carries only the first two doc
             # patterns; the real config has a third (releases/tag),
             # which the real README carries. Give both trees that
@@ -423,13 +426,11 @@ class GuardTests(unittest.TestCase):
             # pin_policy for check_lake_surface.py: give base/pr the real
             # file at the old pins, and the PR the file with the new
             # tag/SHAs applied (or a tampered / stale variant).
-            repo_root = Path(__file__).resolve().parent.parent.parent
-            real_config = load_config(repo_root)
             pin_policy = real_config["pin_policy"]
             real_policy = (repo_root / pin_policy["path"]).read_text()
             (base / "scripts").mkdir()
             (base / pin_policy["path"]).write_text(real_policy)
-            shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in CONFIG["deps"]}
+            shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in real_config["deps"]}
             pr_policy = pinned_bump.apply_replacements_to_text(
                 real_policy, pin_policy["replacements"], "v4.36.0", shas)
             if tamper_pin_policy:
@@ -643,7 +644,7 @@ class ValidatePreparedTests(unittest.TestCase):
         base = Path(tmp) / "base"
         prepared = Path(tmp) / "prepared"
         base.mkdir()
-        write_tree(base, "v4.35.0")
+        write_tree(base, "v4.35.0", config=real_config)
         write_migration_ledgers(
             base, mathlib_sha=self.OLD, lean_tag="leanprover/lean4:v4.35.0")
         with open(base / "README.md", "a", encoding="utf-8") as f:
@@ -675,13 +676,13 @@ class ValidatePreparedTests(unittest.TestCase):
                         real_config["pin_policy"]["path"]]
         }
         upstream = {}
-        for dep in CONFIG["deps"]:
+        for dep in real_config["deps"]:
             upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = (
                 upstream_manifest(["batteries", "Qq"]))
         client = FakeGitHub(
             tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
-                "leanprover/lean4", "leanprover-community/mathlib4",
-                "leanprover/cslib"]},
+                real_config["toolchain_repo"],
+                *(dep["repo"] for dep in real_config["deps"])]},
             upstream=upstream, module_sources=MODULE_SOURCES)
         return prepared, real_config, base_files, client
 
@@ -788,7 +789,7 @@ class ValidatePreparedGitTests(unittest.TestCase):
         subprocess.run(["git", "init", "-q"], cwd=root, check=True)
         subprocess.run(["git", "config", "user.name", "t"], cwd=root, check=True)
         subprocess.run(["git", "config", "user.email", "t@t"], cwd=root, check=True)
-        write_tree(root, "v4.35.0")
+        write_tree(root, "v4.35.0", config=real_config)
         write_migration_ledgers(
             root, mathlib_sha=SHAS[("leanprover-community/mathlib4", "v4.35.0")],
             lean_tag="leanprover/lean4:v4.35.0")
@@ -814,13 +815,13 @@ class ValidatePreparedGitTests(unittest.TestCase):
             path.write_text(
                 path.read_text().replace(shas["mathlib"], "0" * 40))
         upstream = {}
-        for dep in CONFIG["deps"]:
+        for dep in real_config["deps"]:
             upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = (
                 upstream_manifest(["batteries", "Qq"]))
         client = FakeGitHub(
             tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
-                "leanprover/lean4", "leanprover-community/mathlib4",
-                "leanprover/cslib"]},
+                real_config["toolchain_repo"],
+                *(dep["repo"] for dep in real_config["deps"])]},
             upstream=upstream, module_sources=MODULE_SOURCES)
         return root, client
 
@@ -1238,7 +1239,7 @@ class ConfigTests(unittest.TestCase):
         config = load_config(Path(__file__).resolve().parent.parent.parent)
         self.assertEqual(
             [d["name"] for d in config["deps"]],
-            ["mathlib", "cslib"],
+            ["mathlib", "cslib", "Physlib"],
         )
         repo_root = Path(__file__).resolve().parent.parent.parent
         # The pinned set is stable; the tag itself moves with each bump,

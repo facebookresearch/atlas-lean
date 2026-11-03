@@ -11,6 +11,8 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.NearHalfKKLWire
 public import CSLibExtTest.Complexity.BooleanFunctions.KKL.KKLEvents
 public import CSLibExtTest.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
 
+import Mathlib.Analysis.Complex.ExponentialBounds
+
 /-!
 # Tests for the near-half KKL inequality for events and its sharp-threshold wire
 

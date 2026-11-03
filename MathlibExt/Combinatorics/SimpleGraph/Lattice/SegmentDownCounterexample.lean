@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.RowLinkedDescent
+public import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # Failures of the segment-down condition

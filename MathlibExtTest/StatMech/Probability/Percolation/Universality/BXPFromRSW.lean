@@ -30,7 +30,8 @@ namespace MathlibExtTest.StatMech.Probability.Percolation.Universality.BXPFromRS
 
 example : halfMeasure.real (translatedHorizontalCrossingEvent ![5, 7] 4 2)
     = halfMeasure.real (horizontalCrossingEvent 0 4 0 2) :=
-  bxr_translatedHorizontalCrossing_invariant _ 4 2 (measurableSet_horizontalCrossingEvent 0 4 0 2)
+  bxr_translatedHorizontalCrossing_invariant _ 4 2
+    (RSW.Box.measurableSet_horizontalCrossingEvent 0 4 0 2)
 
 example : ⌊((3 : ℕ) : ℝ) * ((4 : ℕ) : ℝ)⌋ = 12 := by
   rw [bxr_floor_natMul]; norm_num

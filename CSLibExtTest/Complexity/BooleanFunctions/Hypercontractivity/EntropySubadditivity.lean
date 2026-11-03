@@ -9,6 +9,7 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.EntropySubadditivity
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CoupledTensorizeRefutations
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Tests for entropy subadditivity and the damping-hard route

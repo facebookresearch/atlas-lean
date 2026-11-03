@@ -56,16 +56,16 @@ theorem real_univ_eq (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbability
   rw [h, probReal_univ]
 
 example : MeasurableSet (horizontalCrossingEvent 0 3 0 2) :=
-  measurableSet_horizontalCrossingEvent 0 3 0 2
+  RSW.Box.measurableSet_horizontalCrossingEvent 0 3 0 2
 
 example : halfMeasure.real (dualVerticalCrossingEvent 0 2 0 2)
     = halfMeasure.real (verticalCrossingEvent 0 2 0 2) :=
-  rba_dualVerticalCrossing_eq 0 2 0 2 (measurableSet_verticalCrossingEvent 0 2 0 2)
+  rba_dualVerticalCrossing_eq 0 2 0 2 (RSW.Box.measurableSet_verticalCrossingEvent 0 2 0 2)
 
 example (ω₀ : ConfigSpace (Sym2 (Site 2))) :
     1 - Real.sqrt (1 - 1) ≤ (Measure.dirac ω₀).real (horizontalCrossingEvent 0 0 0 0) :=
-  rba_sqrt_square_seed _ (pa_dirac ω₀) (measurableSet_horizontalCrossingEvent 0 0 0 0)
-    (measurableSet_verticalCrossingEvent 0 0 0 0)
+  rba_sqrt_square_seed _ (pa_dirac ω₀) (RSW.Box.measurableSet_horizontalCrossingEvent 0 0 0 0)
+    (RSW.Box.measurableSet_verticalCrossingEvent 0 0 0 0)
     (by rw [real_univ_eq _ (vCross_flat 0 0 0 le_rfl), real_univ_eq _ (hCross_thin 0 0 0 le_rfl)])
     (by rw [real_univ_eq _ (by rw [hCross_thin 0 0 0 le_rfl, Set.univ_union])])
 

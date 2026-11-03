@@ -154,16 +154,18 @@ theorem zhg_side_tendsto_one {E : Type*} (μ : Measure (ConfigSpace E))
       atTop (𝓝 1) := zhg_oneSubRpow_tendsto_one hunion
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le hlbtends tendsto_const_nhds hlb hub
 
-/-- For increasing events, `μ(L n) → 1` and `μ(R n) → 1` give `μ(L n ∩ R n) → 1` (FKG). -/
+/-- For measurable increasing events, `μ(L n) → 1` and `μ(R n) → 1` give
+`μ(L n ∩ R n) → 1` (FKG). -/
 theorem zhg_inter_tendsto_one {E : Type*} (μ : Measure (ConfigSpace E))
     [IsProbabilityMeasure μ] (hpa : PositivelyAssociated μ)
     {L R : ℕ → Set (ConfigSpace E)}
     (hLinc : ∀ n, IsIncreasing (L n)) (hRinc : ∀ n, IsIncreasing (R n))
+    (hLm : ∀ n, MeasurableSet (L n)) (hRm : ∀ n, MeasurableSet (R n))
     (hL : Tendsto (fun n => μ.real (L n)) atTop (𝓝 1))
     (hR : Tendsto (fun n => μ.real (R n)) atTop (𝓝 1)) :
     Tendsto (fun n => μ.real (L n ∩ R n)) atTop (𝓝 1) := by
   have lb : ∀ n, μ.real (L n) * μ.real (R n) ≤ μ.real (L n ∩ R n) :=
-    fun n => hpa (L n) (R n) (hLinc n) (hRinc n)
+    fun n => hpa.probability (L n) (R n) (hLm n) (hRm n) (hLinc n) (hRinc n)
   have ub : ∀ n, μ.real (L n ∩ R n) ≤ 1 := fun _ => measureReal_le_one
   have hprod : Tendsto (fun n => μ.real (L n) * μ.real (R n)) atTop (𝓝 1) := by
     have := hL.mul hR; simpa using this
@@ -239,7 +241,8 @@ theorem zhg_union_of_geometricData {E : Type*} (μ : Measure (ConfigSpace E))
       funext fun n => (hgeo.Ssym 1 n)
     rw [hrw]; exact hsideL
   have hinter : Tendsto (fun n => μ.real (S₀ n ∩ S₁ n)) atTop (𝓝 1) :=
-    zhg_inter_tendsto_one μ hpa (hgeo.Sinc 0) (hgeo.Sinc 1) hsideL hsideR
+    zhg_inter_tendsto_one μ hpa (hgeo.Sinc 0) (hgeo.Sinc 1)
+      (hgeo.Sm 0) (hgeo.Sm 1) hsideL hsideR
   exact zhg_union_tendsto_one_of_merge μ (A := A) (B := B) (Err := hgeo.Err)
     (Cap := fun n => S₀ n ∩ S₁ n) hgeo.merge hinter hgeo.errTendsto
 

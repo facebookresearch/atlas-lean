@@ -10,6 +10,7 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 public import MathlibExt.Probability.Hypercontractivity.PBiasedTwoPoint
 public import MathlibExt.Probability.Hypercontractivity.PBiasedConvexity
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 @[expose] public section
 
