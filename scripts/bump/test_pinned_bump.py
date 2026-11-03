@@ -377,7 +377,7 @@ class GuardTests(unittest.TestCase):
                    config_add_oneuse_version=False, config_add_oneuse_sha=False,
                    config_add_tailored_alternation=False, config_add_code_rewrite=False,
                    config_add_permutation=False, config_add_class_encoded=False,
-                   config_add_zero_width=False,
+                   config_add_zero_width=False, add_dep_misbound_sha=False,
                    config_scramble_rule=False, config_noncanonical_group=False,
                    delete_assertion_and_rule=False,
                    config_malformed_doc=None, config_malformed_pin=False,
@@ -423,7 +423,8 @@ class GuardTests(unittest.TestCase):
                     {"name": "Physlib", "repo": "leanprover-community/physlib"})
                 pr_config["pin_policy"]["replacements"].append({
                     "pattern": "(physlib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
-                    "replacement": "{g1}{sha:Physlib}{g2}",
+                    "replacement": ("{g1}{sha:mathlib}{g2}" if add_dep_misbound_sha
+                                    else "{g1}{sha:Physlib}{g2}"),
                 })
 
             if config_add_doc:
@@ -1020,7 +1021,7 @@ class GuardTests(unittest.TestCase):
             tree = Path(tmp)
             (tree / "FRESH.md").write_text("a" * 30 + "X\n")
             with self.assertRaises(pinned_bump._RegexTimeout):
-                pinned_bump.repairable_rule_patterns(
+                pinned_bump.repairable_rules(
                     base, tree, "v4.35.0",
                     FakeGitHub(tags={"v4.35.0": SHAS}), timeout_s=1.0)
 
@@ -1065,9 +1066,11 @@ class GuardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             tree = Path(tmp)
             (tree / "README.md").write_text(text)
-            repairable = pinned_bump.repairable_rule_patterns(
+            repairable = pinned_bump.repairable_rules(
                 base, tree, "v4.35.0", FakeGitHub(tags={}, upstream={}))
-            self.assertIn(broken["pattern"], repairable)
+            self.assertIn(
+                pinned_bump._rule_identity("doc_replacements", "README.md", broken),
+                repairable)
             problems = pinned_bump.check_config_extension(base, CONFIG, repairable)
             self.assertNotIn("doc_replacements", " ".join(problems))
 
@@ -1109,6 +1112,14 @@ class GuardTests(unittest.TestCase):
             r"[0-9]{40}",
             r"[a-f]{40}",
             r"[0-9a]{40}",
+            # Codex P2: split widths fix SHA prefixes without a literal {40}.
+            r"newdep=[8ac][0-9a-f]{39}",
+            r"newdep=[0-9a-f]{39}[8ac]",
+            r"newdep=[8ac][0-9a-f]+",
+            r"newdep=8[0-9a-f]{39}",
+            r"newdep=\d[0-9a-f]{39}",
+            r"newdep=(?:[8ac])(?:[0-9a-f]{39})",
+            r"newdep=[0-9]{20}[0-9]{20}",
         ]
         for pattern in flagged:
             with self.subTest(pattern=pattern):
@@ -1120,10 +1131,31 @@ class GuardTests(unittest.TestCase):
             r"[^0-9]+\.[0-9]+\.[0-9]+",
             r"[04]",
             r"[a-z]+\.[0-9]+\.[0-9]+",
+            r'(rev = ")[0-9a-f]{40}(")',
+            r"commit/[0-9a-f]{40}",
+            r"\w+",
         ]
         for pattern in allowed:
             with self.subTest(pattern=pattern):
                 self.assertEqual(pinned_bump._validate_class_pinning(pattern), [])
+
+    def test_sha_pattern_wildcards_cannot_hide_partial_classes(self):
+        deps = [{"name": "newdep"}]
+        shas = [{"newdep": "8" * 40}]
+        shas += [pinned_bump._transition_shas(deps, label) for label in ("1", "2")]
+        prefixes = "0123456789" + "".join(sorted(
+            {sha["newdep"][0] for sha in shas} - set("0123456789")))
+        transitions = list(zip(["v4.35.0", "v5.36.1", "v6.37.2"], shas))
+        for suffix in (r".{39}", r'[^\"]{39}', r"[\s\S]{39}"):
+            with self.subTest(suffix=suffix):
+                entry = {
+                    "pattern": "(newdep=)[" + prefixes + "]" + suffix,
+                    "replacement": "{g1}{sha:newdep}",
+                }
+                self.assertTrue(pinned_bump._static_rule_problems(entry, {"newdep"}))
+                self.assertTrue(pinned_bump._simulate_file_rules(
+                    [entry], [], "newdep=" + shas[0]["newdep"],
+                    transitions, {"newdep"}, "new dependency"))
 
     def test_guard_fails_config_only_tailored_alternation(self):
         # Codex P2: an alternation enumerating exactly the simulated
@@ -1211,11 +1243,78 @@ class GuardTests(unittest.TestCase):
             (tree / "README.md").write_text(
                 'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
             client = FakeGitHub(tags={}, upstream={})
-            repairable = pinned_bump.repairable_rule_patterns(
+            repairable = pinned_bump.repairable_rules(
                 base, tree, "v4.35.0", client)
-            self.assertIn(broken["pattern"], repairable)
+            self.assertIn(
+                pinned_bump._rule_identity("doc_replacements", "README.md", broken),
+                repairable)
             problems = pinned_bump.check_config_extension(base, pr, repairable)
             self.assertNotIn("doc_replacements", " ".join(problems))
+
+    def test_guard_fails_sha_rule_bound_to_other_dep(self):
+        # Codex P1: a Physlib assertion rule writing {sha:mathlib}
+        # rewrites one dependency's SHA with another's; any configured
+        # SHA used to be accepted, so the rule passed validation.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True,
+                            add_dep_misbound_sha=True), 1)
+
+    def test_changed_sha_is_bound_to_one_dependency(self):
+        mathlib, cslib = "3" * 40, "5" * 40
+        shas = {"mathlib": mathlib, "cslib": cslib}
+        before = 'rev "' + "e" * 40 + '"'
+        after = 'rev "' + mathlib + '"'
+
+        def valid(replacement, prev=None, text_before=before, text_after=after):
+            return pinned_bump._changed_tokens_valid(
+                text_before, text_after, "v4.35.0", shas,
+                {"pattern": "x", "replacement": replacement}, prev)
+
+        self.assertTrue(valid('"{sha:mathlib}"'))
+        # Wrong dependency, none, or more than one placeholder.
+        self.assertFalse(valid('"{sha:cslib}"'))
+        self.assertFalse(valid('"{g1}"'))
+        self.assertFalse(valid('"{sha:mathlib}{sha:cslib}"'))
+        # The old token is a known SHA of another dependency.
+        self.assertFalse(valid('"{sha:mathlib}"', prev=shas,
+                               text_before='rev "' + cslib + '"'))
+        # Unchanged SHAs need no binding.
+        self.assertTrue(valid('"{g1}"', text_before=after))
+
+    def test_config_extension_repair_keyed_by_exact_rule(self):
+        # Codex P2: a broken rule must not let a healthy rule sharing its
+        # regex (same file, or the other rule kind) be removed with it.
+        healthy = {"path": "README.md", "pattern": "badge", "replacement": "badge"}
+        broken = {"path": "README.md", "pattern": "badge",
+                  "replacement": "{sha:Nope}"}
+        healthy_pin = {"pattern": "badge", "replacement": "badge"}
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"] += [healthy, broken]
+        base["pin_policy"] = {"path": "policy.py", "replacements": [healthy_pin]}
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "README.md").write_text(
+                'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
+            (tree / "policy.py").write_text("# badge\n")
+            repairable = pinned_bump.repairable_rules(
+                base, tree, "v4.35.0", FakeGitHub(tags={}, upstream={}))
+        self.assertEqual(
+            repairable,
+            {pinned_bump._rule_identity("doc_replacements", "README.md", broken)})
+        repaired = json.loads(json.dumps(base))
+        repaired["doc_replacements"].remove(broken)
+        self.assertEqual(
+            pinned_bump.check_config_extension(base, repaired, repairable), [])
+        same_file = json.loads(json.dumps(repaired))
+        same_file["doc_replacements"].remove(healthy)
+        self.assertTrue(any(
+            "doc_replacements" in p
+            for p in pinned_bump.check_config_extension(base, same_file, repairable)))
+        cross_kind = json.loads(json.dumps(repaired))
+        cross_kind["pin_policy"]["replacements"] = []
+        self.assertTrue(any(
+            "pin_policy" in p
+            for p in pinned_bump.check_config_extension(base, cross_kind, repairable)))
 
     def test_config_extension_rejects_removing_healthy_rule(self):
         healthy = {"path": "README.md", "pattern": "badge", "replacement": "badge"}

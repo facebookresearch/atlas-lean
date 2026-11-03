@@ -285,17 +285,29 @@ def _mentions_dep(entry: dict, dep_name: str) -> bool:
     return dep_name in text
 
 
+def _rule_identity(kind: str, path: str, entry: dict) -> tuple[str, str, str, str]:
+    """Exact identity of a replacement rule, for the repair allowance.
+
+    A removal is a repair only for the very rule the simulation showed
+    broken. Keying by regex alone would let a healthy rule that shares
+    the broken rule's pattern (same file, another file, or the other
+    rule kind) be removed with it.
+    """
+    return (kind, path, entry["pattern"], entry["replacement"])
+
+
 def check_config_extension(
     base_config: dict, pr_config: dict,
-    allow_removed_patterns: frozenset[str] | None = None,
+    allow_removed_rules: frozenset[tuple[str, str, str, str]] | None = None,
 ) -> list[str]:
     """Validate that a PR's config only extends the base config.
 
     Allowed: adding a dependency at the current pin (name + repo), adding
     doc/pin-policy replacements, adding migration ledgers, and removing a
-    replacement rule whose pattern is in allow_removed_patterns (a rule
-    the forward simulation shows cannot apply at the next bump: keeping
-    it bricks the bump, so removing it is a repair, not a weakening).
+    replacement rule whose exact identity (_rule_identity) is in
+    allow_removed_rules (a rule the forward simulation shows cannot
+    apply at the next bump: keeping it bricks the bump, so removing it
+    is a repair, not a weakening).
     Never allowed: changing the toolchain repo, repointing an existing
     dependency at another repo, removing a dependency, or removing/
     changing any other entry (that could silently weaken future bump
@@ -307,6 +319,7 @@ def check_config_extension(
     extension must land in a same-pin PR first.
     """
     problems: list[str] = []
+    allowed = allow_removed_rules or frozenset()
     if pr_config.get("toolchain_repo") != base_config.get("toolchain_repo"):
         problems.append(
             "pinned_deps.json: toolchain_repo changed; the config may only gain entries"
@@ -329,7 +342,7 @@ def check_config_extension(
             )
     for entry in base_config.get("doc_replacements", []):
         if entry not in pr_config.get("doc_replacements", []):
-            if allow_removed_patterns and entry.get("pattern") in allow_removed_patterns:
+            if _rule_identity("doc_replacements", entry["path"], entry) in allowed:
                 continue  # repair: the rule cannot apply at the next bump
             if not any(_mentions_dep(entry, d) for d in removed_deps):
                 problems.append(
@@ -346,7 +359,7 @@ def check_config_extension(
         else:
             for replacement in base_pp.get("replacements", []):
                 if replacement not in pr_pp.get("replacements", []):
-                    if allow_removed_patterns and replacement.get("pattern") in allow_removed_patterns:
+                    if _rule_identity("pin_policy", base_pp["path"], replacement) in allowed:
                         continue  # repair: the rule cannot apply at the next bump
                     if not any(_mentions_dep(replacement, d) for d in removed_deps):
                         problems.append(
@@ -1355,15 +1368,99 @@ def _parse_class(pattern: str, i: int):
     return digits, hexes, dot, j + 1, True
 
 
-def _validate_class_pinning(pattern: str) -> list[str]:
+def _hex_run_pins(pattern: str) -> bool:
+    """True if a SHA-shaped run of hex atoms fixes some of its characters.
+
+    A run is a sequence of adjacent atoms that match only hex-capable,
+    non-punctuation characters (groups and anchors are transparent;
+    alternation and any other atom end it). A run is SHA-shaped if it
+    contains a generic hex atom ([0-9a-f], \\w) or is at least 40
+    characters wide. In such a run, a partial hex class ([8ac], \\d) or
+    a literal hex character pins those SHA characters: the literal
+    {40} check misses split widths such as [8ac][0-9a-f]{39}, which
+    match the simulated SHAs but fail future SHAs with other prefixes.
+    """
+    flagged = False
+    run_full = run_partial = False
+    run_min = 0
+
+    def close() -> None:
+        nonlocal flagged, run_full, run_partial, run_min
+        if run_partial and (run_full or run_min >= 40):
+            flagged = True
+        run_full = run_partial = False
+        run_min = 0
+
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            esc = pattern[i + 1]
+            i += 2
+            if esc in "bBAZ":
+                continue  # zero-width
+            if esc in _CLASS_ESCAPE_SETS:
+                _d, hexes, wide = _CLASS_ESCAPE_SETS[esc]
+            else:
+                hexes, wide = set(), False  # escaped punctuation, \\n, \\t, ...
+        elif c == "[":
+            _d, hexes, wide, end, ok = _parse_class(pattern, i)
+            i = end
+            if not ok:
+                close()
+                continue
+        elif c == "(":
+            i += 3 if pattern.startswith("(?:", i) else 1
+            continue
+        elif c in ")^$*+?":
+            i += 1  # group ends, anchors, and group quantifiers
+            continue
+        elif c == "|":
+            close()
+            i += 1
+            continue
+        elif c == "{" and re.match(r"\{\d+(?:,\d*)?\}", pattern[i:]):
+            i = pattern.index("}", i) + 1  # quantifier on a group
+            continue
+        elif c == ".":
+            hexes, wide = set(_CLASS_HEX), True
+            i += 1
+        else:
+            hexes, wide = {c} & _CLASS_HEX, False
+            i += 1
+        low = 1
+        quant = re.match(r"\{(\d+)(?:,\d*)?\}|[*+?]", pattern[i:])
+        if quant:
+            if quant.group(1) is not None:
+                low = int(quant.group(1))
+            elif quant.group(0) in "*?":
+                low = 0
+            i += len(quant.group(0))
+            if i < n and pattern[i] == "?":
+                i += 1  # lazy
+        if not hexes or wide:
+            close()
+            continue
+        if frozenset(hexes) in _CLASS_HEX_APPROVED:
+            run_full = True
+        else:
+            run_partial = True
+        run_min += low
+    close()
+    return flagged
+
+
+def _validate_class_pinning(pattern: str, *, sha_rule: bool = False) -> list[str]:
     """Character classes must be generic, not finite tag encodings.
 
     The literal-stream check discards class contents, so a class-encoded
     tag list such as v[04]\\.[03][05]\\.[09] evades it while matching
     exactly the simulated tags. A class that matches some but not all
-    digits pins the digit (and likewise for hex in a {40} SHA pattern);
-    generic rules use [0-9] / [0-9a-f]. Negated and escape classes
-    that match all digits/hex pass.
+    digits pins the digit (and likewise for hex in a SHA rule or {40} pattern).
+    SHA rules reject partial hex classes even next to wildcard atoms, since
+    those can hide a tailored prefix from the hex-run check. Generic rules
+    use [0-9] / [0-9a-f]. Negated and escape classes that match all
+    digits/hex pass.
     """
     classes: list[tuple[set[str], set[str], bool]] = []
     dot_atom = False
@@ -1403,11 +1500,16 @@ def _validate_class_pinning(pattern: str) -> list[str]:
                 f"pattern {pattern!r} has a character class matching only "
                 f"digits {''.join(sorted(digits))!r}; use [0-9] for a generic digit"
             )
-        if has_40 and hexes and frozenset(hexes) not in _CLASS_HEX_APPROVED:
+        if (sha_rule or has_40) and hexes and frozenset(hexes) not in _CLASS_HEX_APPROVED:
             problems.append(
                 f"pattern {pattern!r} has a character class matching only "
-                "some hex characters in a {40} SHA pattern; use [0-9a-f]"
+                "some hex characters in a SHA pattern; use [0-9a-f]"
             )
+    if _hex_run_pins(pattern):
+        problems.append(
+            f"pattern {pattern!r} fixes some characters of a SHA-shaped hex run "
+            "with a partial hex class or literal hex; use [0-9a-f]{40}"
+        )
     return problems
 
 
@@ -1464,6 +1566,7 @@ def _normalize_versions_shas(text: str) -> str:
 
 def _changed_tokens_valid(
     before: str, after: str, target: str, shas: dict[str, str],
+    entry: dict, prev_shas: dict[str, str] | None,
 ) -> bool:
     """Changed version/SHA tokens must equal the transition target / SHAs.
 
@@ -1474,6 +1577,16 @@ def _changed_tokens_valid(
     the incorrect result. A rule may only rewrite a token to the
     transition target (versions) or a resolved SHA for that transition
     (SHAs); token insertions/deletions also fail.
+
+    A changed SHA is bound to the rule's dependency: the replacement
+    must name exactly one {sha:NAME}, and the new token must be NAME's
+    SHA. Otherwise a rule rewriting the Physlib assertion with
+    {sha:mathlib} would pass, since Mathlib's SHA is a valid value.
+    prev_shas are the SHAs the tree carries before this transition
+    (None if unknown): an old token equal to one of them must be
+    NAME's, so a rule cannot rewrite another dependency's SHA. At the
+    current tag prev_shas is the transition's own SHAs, so a token
+    already at a current SHA must stay unchanged.
     """
     before_versions = [m.group(0) for m in _NORMALIZE_VERSION_RE.finditer(before)]
     after_versions = [m.group(0) for m in _NORMALIZE_VERSION_RE.finditer(after)]
@@ -1486,9 +1599,22 @@ def _changed_tokens_valid(
     after_shas = [m.group(0) for m in _NORMALIZE_SHA_RE.finditer(after)]
     if len(before_shas) != len(after_shas):
         return False
-    allowed = set(shas.values())
-    for old, new in zip(before_shas, after_shas):
-        if old != new and new not in allowed:
+    changed = [(old, new) for old, new in zip(before_shas, after_shas) if old != new]
+    if not changed:
+        return True
+    names = {
+        placeholder[4:]
+        for placeholder in _PLACEHOLDER_RE.findall(entry["replacement"])
+        if placeholder.startswith("sha:")
+    }
+    if len(names) != 1:
+        return False
+    (name,) = names
+    for old, new in changed:
+        if name not in shas or new != shas[name]:
+            return False
+        if prev_shas is not None and old in prev_shas.values() \
+                and old != prev_shas.get(name):
             return False
     return True
 
@@ -1538,11 +1664,13 @@ def _transition_shas(deps: list[dict], label: str) -> dict[str, str]:
     }
 
 
-def _failing_rule_patterns(
+def _failing_rules(
     entries: list[dict], text: str,
     transitions: list[tuple[str, dict[str, str]]], dep_names: set[str],
-) -> set[str]:
-    """Patterns of entries that cannot apply, across chained transitions.
+    kind: str, path: str,
+) -> set[tuple[str, str, str, str]]:
+    """Identities (_rule_identity) of entries that cannot apply, across
+    chained transitions.
 
     Covers per-entry failures (invalid regex, bad placeholders, hardcoded
     literals) plus the first sequential-simulation failure, attributed
@@ -1553,22 +1681,28 @@ def _failing_rule_patterns(
     output, so one-use patterns (literal version/SHA, consumed by their
     own replacement) fail on the second transition.
     """
-    failed: set[str] = set()
+    failed: set[tuple[str, str, str, str]] = set()
     for entry in entries:
         if _static_rule_problems(entry, dep_names):
-            failed.add(entry["pattern"])
+            failed.add(_rule_identity(kind, path, entry))
     current = text
+    # The first transition starts from the base tree's current SHAs,
+    # which are not resolved here; later ones start from the previous
+    # transition's SHAs.
+    prev_shas: dict[str, str] | None = None
     for target, shas in transitions:
         for entry in entries:
             before = current
             try:
                 current = apply_replacements_to_text(current, [entry], target, shas)
             except (ValueError, re.error):
-                failed.add(entry["pattern"])
+                failed.add(_rule_identity(kind, path, entry))
                 break
             if _normalize_versions_shas(before) != _normalize_versions_shas(current) \
-                    or not _changed_tokens_valid(before, current, target, shas):
-                failed.add(entry["pattern"])
+                    or not _changed_tokens_valid(
+                        before, current, target, shas, entry, prev_shas):
+                failed.add(_rule_identity(kind, path, entry))
+        prev_shas = shas
     return failed
 
 
@@ -1667,7 +1801,11 @@ def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
     problems.extend(_validate_pattern_syntax(entry["pattern"]))
     problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
     problems.extend(_validate_pattern_literals(entry))
-    problems.extend(_validate_class_pinning(entry["pattern"]))
+    problems.extend(_validate_class_pinning(
+        entry["pattern"], sha_rule=any(
+            placeholder.startswith("sha:")
+            for placeholder in _PLACEHOLDER_RE.findall(entry["replacement"])),
+    ))
     return problems
 
 
@@ -1697,6 +1835,10 @@ def _simulate_file_rules(
         )
         return problems
     text = original
+    # The first transition is the current tag: the tree already carries
+    # its SHAs, so it is its own "previous" state (see
+    # _changed_tokens_valid).
+    prev_shas = transitions[0][1] if transitions else None
     for target, shas in transitions:
         bump_input = text
         for entry in entries:
@@ -1724,12 +1866,14 @@ def _simulate_file_rules(
                     "version/SHA literals; replacement rules may only update "
                     "version/SHA values, content edits belong in the file itself"
                 )
-            elif not _changed_tokens_valid(before, text, target, shas):
+            elif not _changed_tokens_valid(before, text, target, shas, entry, prev_shas):
                 problems.append(
                     f"{label} rule {entry['pattern']!r} changed a version/SHA "
-                    f"token to a value other than the transition target {target}; "
-                    "rules must rewrite tokens to the target, not rearrange them"
+                    f"token to a value other than the transition target {target} "
+                    "or its own dependency's SHA; rules must rewrite tokens to "
+                    "the target and name exactly one {sha:NAME}, not rearrange them"
                 )
+        prev_shas = shas
     return problems
 
 
@@ -1822,16 +1966,17 @@ def validate_replacement_rules(
     return problems
 
 
-def repairable_rule_patterns(
+def repairable_rules(
     base_config: dict, base: Path, tag: str, client: GitHub,
     timeout_s: float = 10.0,
-) -> set[str]:
-    """Patterns of base rules demonstrably broken at the next bump.
+) -> set[tuple[str, str, str, str]]:
+    """Identities (_rule_identity) of base rules demonstrably broken at
+    the next bump.
 
     A rule the forward simulation shows cannot apply may be removed:
     keeping it bricks the next bump, and removing it is a repair, not a
     weakening. Only the first failing rule per file is attributed (see
-    _failing_rule_patterns); removing a rule whose pattern is not in
+    _failing_rules); removing a rule whose exact identity is not in
     this set stays rejected.
 
     Eligibility is computed against the TRUSTED BASE tree, never the PR
@@ -1851,7 +1996,7 @@ def repairable_rule_patterns(
     if forward2 is not None:
         transitions.append((forward2, _transition_shas(base_config["deps"], "2")))
     dep_names = {d["name"] for d in base_config["deps"]}
-    repairable: set[str] = set()
+    repairable: set[tuple[str, str, str, str]] = set()
     by_path: dict[str, list[dict]] = {}
     for entry in base_config.get("doc_replacements", []):
         by_path.setdefault(entry["path"], []).append(entry)
@@ -1867,8 +2012,8 @@ def repairable_rule_patterns(
             text = file.read_text(encoding="utf-8")
             if len(text) > 1_000_000:
                 continue
-            repairable |= _failing_rule_patterns(
-                entries, text, transitions, dep_names
+            repairable |= _failing_rules(
+                entries, text, transitions, dep_names, "doc_replacements", path
             )
         base_pp = base_config.get("pin_policy") or {}
         if base_pp:
@@ -1876,9 +2021,10 @@ def repairable_rule_patterns(
             if file.is_file():
                 text = file.read_text(encoding="utf-8")
                 if len(text) <= 1_000_000:
-                    repairable |= _failing_rule_patterns(
+                    repairable |= _failing_rules(
                         base_pp.get("replacements", []),
                         text, transitions, dep_names,
+                        "pin_policy", base_pp["path"],
                     )
     return repairable
 
@@ -2950,7 +3096,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
         # Repair allowance: a base rule the forward simulation shows
         # cannot apply at the next bump may be removed. Computed from
         # the base tree's tag (the PR's tag is not trusted yet).
-        repairable: frozenset[str] = frozenset()
+        repairable: frozenset[tuple[str, str, str, str]] = frozenset()
         try:
             early_tag = current_tag(base, base_config)
         except ValueError:
@@ -2958,7 +3104,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
         if early_tag is not None:
             try:
                 repairable = frozenset(
-                    repairable_rule_patterns(base_config, base, early_tag, client)
+                    repairable_rules(base_config, base, early_tag, client)
                 )
             except _RegexTimeout as exc:
                 print(f"guard: FAIL - base replacement-rule simulation timed out: {exc}")
