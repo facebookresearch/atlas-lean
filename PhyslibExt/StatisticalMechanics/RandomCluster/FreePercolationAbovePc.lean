@@ -103,7 +103,7 @@ lemma frp_free_percolation_above_pc (d : ℕ) {p p' q : ℝ}
     frp_fkTheta_pos_of_gt_fkPc d hp' hp1' hq hpc'
   have hfree' : 0 < fkThetaFree d hp' hp1' hq (q := q) := huniq ▸ hwired
   have hmono' : fkThetaFree d hp' hp1' hq (q := q) ≤ fkThetaFree d hp hp1 hq (q := q) :=
-    hmono (Percolation.percolationEvent d) (frp_measurableSet_percolationEvent d)
+    hmono.real (Percolation.percolationEvent d) (frp_measurableSet_percolationEvent d)
       (frp_isIncreasing_percolationEvent d)
   exact lt_of_lt_of_le hfree' hmono'
 

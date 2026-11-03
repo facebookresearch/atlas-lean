@@ -89,7 +89,7 @@ example : (measOfMass (fkProb (⊤ : SimpleGraph (Fin 2)) (1 / 3) 1)).real edgeO
   have hr : reducedDensity (1 / 2) 2 = 1 / 3 := by norm_num [reducedDensity]
   rw [hr] at h1
   have hm : MeasurableSet edgeOpen := (Set.toFinite _).measurableSet
-  exact ⟨h1 _ hm edgeOpen_isIncreasing, h2 _ hm edgeOpen_isIncreasing⟩
+  exact ⟨h1.real _ hm edgeOpen_isIncreasing, h2.real _ hm edgeOpen_isIncreasing⟩
 
 -- Monotonicity in `p` at `q = 2`.
 example : measOfMass (fkProb (⊤ : SimpleGraph (Fin 2)) (1 / 4) 2)

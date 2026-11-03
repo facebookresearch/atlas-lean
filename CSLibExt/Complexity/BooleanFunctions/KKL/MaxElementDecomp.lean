@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
+public import CSLibExt.Complexity.BooleanFunctions.KKL.FSMartingale
 public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLUniform
 import MathlibExt.InformationTheory.LogSum
 

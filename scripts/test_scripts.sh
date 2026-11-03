@@ -62,6 +62,61 @@ PY
 reset_fixture
 expect_pass "empty scaffold"
 
+PHYSLIB_SOURCE='git = "https://github.com/leanprover-community/physlib"'
+PHYSLIB_REV="$(python3 - "$REPO_ROOT/lakefile.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as source:
+    config = tomllib.load(source)
+print(next(dep["rev"] for dep in config["require"] if dep["name"] == "Physlib"))
+PY
+)"
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" 'git = "https://github.com/example/physlib"'
+expect_failure "Physlib requirement with wrong repository" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" 'scope = "leanprover-community"'
+expect_failure "scoped Physlib requirement" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" "$PHYSLIB_SOURCE"$'\nscope = "leanprover-community"'
+expect_failure "Physlib requirement with both git and scope" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE"$'\n'"rev = \"$PHYSLIB_REV\"" "$PHYSLIB_SOURCE"$'\nrev = "main"'
+expect_failure "unpinned Physlib requirement" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" 'path = "v1"'
+expect_failure "redirected Physlib requirement" 'build surface'
+
+for field in url scope rev subDir; do
+  reset_fixture
+  python3 - "$TMP_ROOT/repo/lake-manifest.json" "$field" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+field = sys.argv[2]
+manifest = json.loads(path.read_text())
+physlib = next(package for package in manifest["packages"] if package["name"] == "Physlib")
+value = {
+    "url": "https://github.com/example/physlib",
+    "scope": "leanprover-community",
+    "rev": "main",
+    "subDir": "v1",
+}[field]
+assert physlib[field] != value
+physlib[field] = value
+path.write_text(json.dumps(manifest))
+PY
+  expect_failure "Physlib manifest with altered $field" 'build surface'
+done
+
 reset_fixture
 printf '%s\n' '@[default_target] lean_exe Archive where' '  root := `v1.Archived' \
   >"$TMP_ROOT/repo/lakefile.lean"

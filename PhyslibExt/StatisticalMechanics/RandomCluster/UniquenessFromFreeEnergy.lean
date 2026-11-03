@@ -245,7 +245,7 @@ lemma fuc_freeIV_le_wiredIV (d N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   have htf := fk_free_infinite_measure N hp hp1 hS
   have htw := fk_wired_infinite_measure N hp hp1 hS
   refine le_of_tendsto_of_tendsto htf htw (Filter.Eventually.of_forall (fun m => ?_))
-  exact freeFiniteMeasure_dominated d m hp hp1 (by norm_num)
+  exact (freeFiniteMeasure_dominated d m hp hp1 (by norm_num)).real
     (boxRestrict d N ⁻¹' S)
     ((continuous_boxRestrict d N).measurable (MeasurableSet.of_discrete))
     (fun a b hab ha => hS (monotone_boxRestrict d N hab) ha)
@@ -259,6 +259,10 @@ lemma fuc_dominated (d N : ℕ) (t : ℝ) :
   have hwired : (measOfMass (fuc_wiredMass d N t)).real A
       = eventMassProb (fuc_wiredMass d N t) A := by
     rw [measOfMass_real_eq_indicator_sum _ (fuc_wiredMass_nonneg d N t) A]; rfl
+  apply (ENNReal.toReal_le_toReal (measure_ne_top (measOfMass (fuc_freeMass d N t)) A)
+    (measure_ne_top (measOfMass (fuc_wiredMass d N t)) A)).mp
+  change (measOfMass (fuc_freeMass d N t)).real A ≤
+    (measOfMass (fuc_wiredMass d N t)).real A
   rw [hfree, hwired, fuc_eventMassProb_free, fuc_eventMassProb_wired]
   exact fuc_freeIV_le_wiredIV d N (fsc_logistic_pos t) (fsc_logistic_lt_one t) hAinc
 

@@ -120,8 +120,8 @@ lemma StochasticallyDominated.antisymm {μ ν : Measure (ConfigSpace E)}
   refine ext_of_generate_finite (upMeasSystem E)
     generateFrom_upMeas.symm isPiSystem_upMeas ?_ ?_
   · rintro A ⟨hAm, hAu⟩
-    have hle : μ.real A ≤ ν.real A := h₁ A hAm hAu
-    have hge : ν.real A ≤ μ.real A := h₂ A hAm hAu
+    have hle : μ.real A ≤ ν.real A := h₁.real A hAm hAu
+    have hge : ν.real A ≤ μ.real A := h₂.real A hAm hAu
     have hre : μ.real A = ν.real A := le_antisymm hle hge
     unfold Measure.real at hre
     exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top μ A) (measure_ne_top ν A)).mp hre

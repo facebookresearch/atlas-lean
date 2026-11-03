@@ -256,6 +256,11 @@ lemma freeFiniteMeasure_dominated (d n : ℕ) {p q : ℝ}
     unfold wiredFiniteMeasure Measure.real
     simp only [ProbabilityMeasure.coe_mk]
     rw [Measure.map_apply (measurable_extendEdge d n) hA]
+  apply (ENNReal.toReal_le_toReal
+    (measure_ne_top (freeFiniteMeasure d n hp hp1 hq0 : Measure _) A)
+    (measure_ne_top (wiredFiniteMeasure d n hp hp1 hq0 : Measure _) A)).mp
+  change (freeFiniteMeasure d n hp hp1 hq0 : Measure _).real A ≤
+    (wiredFiniteMeasure d n hp hp1 hq0 : Measure _).real A
   rw [hfree, hwired, fkPMF_toMeasure_toReal, wiredFkPMF_toMeasure_toReal]
   exact fkProb_le_wiredFkProb_increasing (boxGraph d n) (boxBoundary d n) hp hp1 hq
     (isIncreasing_preimage_extendEdge d n hAinc)

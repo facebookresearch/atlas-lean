@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessBeta
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercolationMeanfield
 public import MathlibExt.Probability.Percolation.SurfaceReassembly
