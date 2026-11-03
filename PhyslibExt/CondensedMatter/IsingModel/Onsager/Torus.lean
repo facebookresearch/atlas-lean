@@ -8,11 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Circulant
-public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
-public import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring.RingNF
+import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
 /-!
 

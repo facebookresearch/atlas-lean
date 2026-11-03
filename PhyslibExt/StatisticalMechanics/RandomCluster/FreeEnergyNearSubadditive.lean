@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.Subadditive
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IVPressureConvex
+public import Mathlib.Analysis.Subadditive
 
 /-!
 # Fekete limits with a sublinear correction

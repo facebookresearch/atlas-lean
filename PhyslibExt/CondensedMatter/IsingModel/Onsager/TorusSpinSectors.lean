@@ -7,9 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import Mathlib.Tactic.Positivity.Finset
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.EvenSubgraphCycles
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 

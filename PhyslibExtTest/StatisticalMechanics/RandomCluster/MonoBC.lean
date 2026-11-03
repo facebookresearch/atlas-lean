@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import PhyslibExt.StatisticalMechanics.RandomCluster.MonoBC
+import Mathlib.Combinatorics.SimpleGraph.Hasse
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.MonoBC`

@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Algebra.Order.Star.Int
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.SuperMultiplicative
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKInterfaceSubadd

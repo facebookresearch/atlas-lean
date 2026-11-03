@@ -7,9 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Dynamics.Ergodic.RadonNikodym
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ExtremeIsErgodic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredErgodicity
+import Mathlib.Dynamics.Ergodic.RadonNikodym
 
 /-!
 # Ergodic measures are extreme among invariant measures

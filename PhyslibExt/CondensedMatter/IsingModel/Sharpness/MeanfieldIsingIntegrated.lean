@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.MeanfieldIsingState
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
 # Integrated mean-field inequality and the zero-field limit

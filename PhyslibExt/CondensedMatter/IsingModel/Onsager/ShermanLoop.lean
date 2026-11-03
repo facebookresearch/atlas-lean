@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Group.Fin.Basic
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.TracePowWalk
+import Mathlib.Algebra.Group.Fin.Basic
 
 /-!
 

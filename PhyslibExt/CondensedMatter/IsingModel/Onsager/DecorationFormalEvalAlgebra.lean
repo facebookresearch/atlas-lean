@@ -7,9 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Algebra.Field
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationFormalSeries
 public import Mathlib.Analysis.Normed.Ring.InfiniteSum
+import Mathlib.Algebra.Algebra.Field
 
 /-!
 

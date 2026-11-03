@@ -7,10 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.CriticalPoint
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Pressure
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 /-!
 

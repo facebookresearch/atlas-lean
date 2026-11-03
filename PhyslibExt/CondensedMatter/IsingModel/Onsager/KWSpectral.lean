@@ -7,10 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.Matrix.Normed
-public import Mathlib.LinearAlgebra.Eigenspace.Charpoly
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DetWalkExp
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWSpinFourier
+public import Mathlib.Analysis.Matrix.Normed
+import Mathlib.LinearAlgebra.Eigenspace.Charpoly
 
 /-!
 

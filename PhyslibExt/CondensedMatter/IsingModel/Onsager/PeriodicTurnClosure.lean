@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.LatticeUmlaufsatz
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.TorusPeriodicLift
+import Mathlib.Data.List.ChainOfFn
 
 /-!
 

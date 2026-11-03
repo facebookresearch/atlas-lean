@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.MeanfieldIsing
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Abstract sharpness skeleton

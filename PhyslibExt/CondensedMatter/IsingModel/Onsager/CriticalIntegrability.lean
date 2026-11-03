@@ -7,10 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Integrability.Log
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.FreeEnergy
+import Mathlib.Analysis.SpecialFunctions.Integrability.Log
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 

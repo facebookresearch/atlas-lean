@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWWeightedDeletion
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWSpectral
+import Mathlib.LinearAlgebra.Eigenspace.Charpoly
 
 /-!
 

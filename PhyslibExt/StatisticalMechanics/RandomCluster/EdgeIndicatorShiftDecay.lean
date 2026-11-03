@@ -7,10 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Topology.ContinuousMap.StoneWeierstrass
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IntegralShiftDecay
 public import PhyslibExt.StatisticalMechanics.RandomCluster.DensityFiniteToInfinite
 public import PhyslibExt.StatisticalMechanics.RandomCluster.EdgeDensityQ2
+import Mathlib.Topology.ContinuousMap.StoneWeierstrass
 /-!
 # Cylinder functions and integral shift decay for FK measures
 

@@ -7,16 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Lemmas
-public import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.BigOperators.Group.Finset.Lemmas
+import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Data.Finset.Sym
 public import Mathlib.Data.Pi.Interval
-public import Mathlib.Data.Sym.Sym2
-public import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Tactic.Push
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Tauto
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Currents on edge sets and the switching lemma

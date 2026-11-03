@@ -7,9 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import Mathlib.Tactic.LinearCombination
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLemma5
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.TurnReversal
+import Mathlib.Tactic.LinearCombination
 
 /-!
 

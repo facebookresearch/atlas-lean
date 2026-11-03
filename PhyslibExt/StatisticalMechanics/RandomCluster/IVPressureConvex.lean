@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.LogitFreeEnergyComparison
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 /-!
 # Convexity of the random-cluster free energy in the logit parameter
 

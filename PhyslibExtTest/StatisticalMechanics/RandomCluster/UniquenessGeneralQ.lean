@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Topology.Algebra.Module.Cardinality
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessGeneralQ
+import Mathlib.Topology.Algebra.Module.Cardinality
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQConsumer`
