@@ -24,7 +24,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.MasterFamilyImplications`:
   (`mfp_singleBit_q_in_12_value`, evaluated at
   `u = 1/2`, `u₀ = 1`, `v₀ = 0`) and fails at `p = 9/10` (`mfp2_singleBit_q_in_12_false`), so it is
   neither vacuous nor a tautology;
-* `mfp_masterFamily_half` at `AND`;
+* `hcq_smallDelta_p_half` at `AND`;
 * `frh_openResidue q` is proved here for no `q > 1/2`; it
   holds for `q ≤ 1/2` because `(1/2, q)` is empty. `frh_martingaleHC_of_openResidue` is
   instantiated at `q = 1/2`. `vgp2_kkl_logGain_of_master` and `frh_kesten_of_openResidue` quantify over `p ∈ (1/2, q)` and so have no instance here.
@@ -60,11 +60,11 @@ example : (3 / 8 : ℝ) ≤ (1 / 2 : ℝ) ^ ((2 : ℝ) / (2 - 1 / 2)) := by
 example : mfp_SingleBitQIn12 (1 / 2) ∧ ¬ mfp_SingleBitQIn12 (9 / 10) :=
   ⟨mfp_singleBit_q_in_12_value, mfp2_singleBit_q_in_12_false⟩
 
-/-- `mfp_masterFamily_half` at `AND`. -/
+/-- `hcq_smallDelta_p_half` at `AND`. -/
 example {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :
     8 * (1 / 2 : ℝ) ^ 3 * (1 - 1 / 2) + 8 * (1 - u) * (1 / 2) ^ 2 * (1 - 1 / 2) ^ 2
       ≤ (1 / 2 : ℝ) ^ (u / (2 - u)) * 1 := by
-  have h := mfp_masterFamily_half andFun hu0 hu1
+  have h := hcq_smallDelta_p_half andFun hu0 hu1
   rwa [cappedSum_andInd (by norm_num) (by norm_num), maxInfl_andInd, totalInfl_andInd] at h
 
 example : frh_openResidue (1 / 2) := frh_openResidue_of_le_half le_rfl

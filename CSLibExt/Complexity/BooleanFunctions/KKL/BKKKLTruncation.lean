@@ -20,7 +20,7 @@ the degree-one case of the master estimate, and endpoint evaluations at `p = 0, 
 `bkt_lowDegreeMasterResidue` is a uniform low-degree master estimate over `(1/2, q)`
 implying the master estimate. Status: the residue is refuted for `q > 9/10`
 (`sbk_lowDegreeMasterResidue_false`); the degree-one witness shows the master estimate
-itself holds for degree-one functions (`bkt_master_holds_degree1`).
+itself holds for degree-one functions (`bkt_master_degree1`).
 
 ## Main definitions
 
@@ -29,9 +29,9 @@ itself holds for degree-one functions (`bkt_master_holds_degree1`).
 
 ## Main results
 
-* `bkt_high_part_decay`, `bkt_trunc_split`: high-degree decay and the truncated split.
+* `dtr_high_part_le`, `dtr_trunc_split`: high-degree decay and the truncated split.
 * `bkt_master_of_residue`: the master estimate from the residue.
-* `bkt_master_holds_degree1`, `bkt_degree1_witness`: the degree-one case.
+* `bkt_master_degree1`, `bkt_degree1_witness`: the degree-one case.
 -/
 
 open scoped BigOperators
@@ -45,26 +45,6 @@ namespace StatMech.Probability
 open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-theorem bkt_high_part_decay {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool)
-    {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (k : ℕ) :
-    4 * ∑ S ∈ univ.filter (fun S : Finset ι => k < S.card),
-        (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-          * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
-      ≤ (1 - u) ^ k * (4 * p * (1 - p)
-          * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :=
-  dtr_high_part_le hp0 hp1 φ hu0 hu1 k
-
-theorem bkt_trunc_split {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool)
-    {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (k : ℕ) :
-    (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-        * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ (4 * ∑ S ∈ univ.filter (fun S : Finset ι => 1 ≤ S.card ∧ S.card ≤ k),
-            (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-              * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-        + (1 - u) ^ k * (4 * p * (1 - p)
-            * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :=
-  dtr_trunc_split hp0 hp1 φ hu0 hu1 k
 
 theorem bkt_lhs_eq_level1_of_degree1 {p : ℝ} (φ : ConfigSpace ι → Bool) (u : ℝ)
     (hdeg : ∀ S : Finset ι, 2 ≤ S.card → ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S = 0) :
@@ -312,7 +292,7 @@ theorem bkt_master_of_residue {q : ℝ} (H : bkt_lowDegreeMasterResidue q) :
     · rw [hu1']
       exact bkt_master_endpoint_one hp0 hp1 φ
     · obtain ⟨k, hk⟩ := H p hp hp1 φ u hu0' hu1'
-      have hsplit := bkt_trunc_split hp0 hp1 φ hu0' hu1' k
+      have hsplit := dtr_trunc_split hp0 hp1 φ hu0' hu1' k
       have hAeq : (4 * p * (1 - p) : ℝ) = A := by rw [hA, ptn_sigma_sq hp0 hp1]; ring
       calc (∑ S : Finset E, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
               * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
@@ -333,17 +313,6 @@ theorem bkt_budget_nonneg {u : ℝ} {δ : ℝ} (hu0 : 0 < u) (_hu1 : u < 1)
   have h1u : (1 : ℝ) - u < 1 := by linarith
   obtain ⟨k, hk⟩ := exists_pow_lt_of_lt_one (x := δ ^ (u / (2 - u))) hδ0 h1u
   exact ⟨k, by linarith [hk]⟩
-
-theorem bkt_master_holds_degree1 [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    (φ : ConfigSpace ι → Bool)
-    (hdeg : ∀ S : Finset ι, 2 ≤ S.card → ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S = 0)
-    {u : ℝ} (hu0 : 0 ≤ u) (hu1 : u ≤ 1) :
-    (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-        * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ (maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
-        * (4 * (ptn_sigma p) ^ 2
-            * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :=
-  bkt_master_degree1 hp0 hp1 φ hdeg hu0 hu1
 
 theorem bkt_degree1_witness (p : ℝ) :
     ∀ S : Finset ι, 2 ≤ S.card →

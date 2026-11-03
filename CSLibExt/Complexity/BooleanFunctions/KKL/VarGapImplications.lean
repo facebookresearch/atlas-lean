@@ -94,16 +94,4 @@ def vgc_VarPowerCore (q : ℝ) : Prop :=
                     ^ (u / (2 - u))
                   * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)))
 
-theorem vgc_poincare_is_delta0_instance {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
-    (φ : ConfigSpace ι → Bool) :
-    OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-      * (1 - OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ (ptn_sigma p) ^ 2
-        * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  mil_poincare hp0 hp1 φ
-
-theorem vgc_gap_vanishes_at_p_half {u : ℝ} (d : ℕ) :
-    (1 - u) ^ (d - 1) - (((1 - u) * (4 * (1/2 : ℝ) * (1 - 1/2))) ^ (d - 1)) = 0 :=
-  bkt2c_gap_vanishes_at_p_half d
-
 end StatMech.Probability

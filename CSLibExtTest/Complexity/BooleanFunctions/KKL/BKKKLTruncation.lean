@@ -16,10 +16,10 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapDictator
 Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLTruncation`:
 
 * the degree-one hypothesis `hdeg` of `bkt_lhs_eq_level1_of_degree1` and
-  `bkt_master_holds_degree1` is proved for the one-variable dictator `ω ↦ ω 0` at every
+  `bkt_master_degree1` is proved for the one-variable dictator `ω ↦ ω 0` at every
   `p ∈ (0, 1)`; on it the master estimate becomes `4σ_p² ≤ 4σ_p²` (tight);
-* `bkt_degree1_witness` (the constant-false function), `bkt_high_part_decay`,
-  `bkt_trunc_split`, `bkt_master_endpoint_zero`, `bkt_master_endpoint_one` and
+* `bkt_degree1_witness` (the constant-false function), `dtr_high_part_le`,
+  `dtr_trunc_split`, `bkt_master_endpoint_zero`, `bkt_master_endpoint_one` and
   `bkt_budget_nonneg` at concrete parameters.
 
 Window predicate: `bkt_lowDegreeMasterResidue q` is refuted for `q > 9/10`
@@ -63,7 +63,7 @@ example {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] {p u : ℝ} (hu0 : 0
 
 example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     4 * (ptn_sigma p) ^ 2 ≤ 1 ^ ((1 / 2 : ℝ) / (2 - 1 / 2)) * (4 * (ptn_sigma p) ^ 2 * 1) := by
-  have h := bkt_master_holds_degree1 hp0 hp1 (fun ω : ConfigSpace (Fin 1) => ω 0)
+  have h := bkt_master_degree1 hp0 hp1 (fun ω : ConfigSpace (Fin 1) => ω 0)
     (dict_hdeg p) (u := 1 / 2) (by norm_num) (by norm_num)
   rw [bkt_lhs_eq_level1_of_degree1 _ _ (dict_hdeg p), vgp_dictator_level1 hp0 hp1,
     vgp_dictator_maxInfl hp0 hp1, vgp_dictator_totalInfl hp0 hp1, ← ptn_sigma_sq hp0 hp1] at h
@@ -74,14 +74,14 @@ example (p : ℝ) : ∀ S : Finset (Fin 3), 2 ≤ S.card →
       S = 0 :=
   bkt_degree1_witness p
 
-/-- `bkt_high_part_decay` on the dictator with cutoff `k = 1`. -/
+/-- `dtr_high_part_le` on the dictator with cutoff `k = 1`. -/
 example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     4 * ∑ S ∈ univ.filter (fun S : Finset (Fin 1) => 1 < S.card),
         (S.card : ℝ) * (1 - 1 / 2) ^ (S.card - 1)
           * (ptn_coeff p (fun ω => if (fun ω : ConfigSpace (Fin 1) => ω 0) ω then (1 : ℝ) else 0)
             S) ^ 2
       ≤ (1 / 2) * (4 * p * (1 - p)) := by
-  have h := bkt_high_part_decay hp0 hp1 (fun ω : ConfigSpace (Fin 1) => ω 0)
+  have h := dtr_high_part_le hp0 hp1 (fun ω : ConfigSpace (Fin 1) => ω 0)
     (u := 1 / 2) (by norm_num) (by norm_num) 1
   rw [vgp_dictator_totalInfl hp0 hp1] at h
   norm_num at h ⊢
@@ -95,7 +95,7 @@ example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace (Fin 2) → Bool
               * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
         + (1 - 1 / 2) ^ 2 * (4 * p * (1 - p)
             * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) :=
-  bkt_trunc_split hp0 hp1 φ (by norm_num) (by norm_num) 2
+  dtr_trunc_split hp0 hp1 φ (by norm_num) (by norm_num) 2
 
 /-- `bkt_master_endpoint_one` on the dictator: `4σ_p² ≤ 4σ_p²`. -/
 example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
