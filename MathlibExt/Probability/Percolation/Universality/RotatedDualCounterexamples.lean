@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.Universality.PlanarDualCutConnected
+import Mathlib.Tactic.FinCases
 
 /-!
 # Counterexamples to same-box crossing dichotomies with the rotated dual
