@@ -23,12 +23,14 @@ import Mathlib.Probability.IdentDistribIndep
 import Mathlib.Probability.Independence.CharacteristicFunction
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+import MathlibExt.Probability.ContinuousPathConvergence
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
+open MathlibExt.Probability.ContinuousPathConvergence
 open scoped ENNReal NNReal ProbabilityTheory Real
 
 namespace MathlibExt.Probability.DonskerWanted
@@ -238,34 +240,6 @@ private lemma donskerBrownianPath_ae_eq {Ω' : Type*} [MeasurableSpace Ω']
   filter_upwards [hB.cont] with ω hω
   exact fun t => donskerBrownianPath_apply_of_continuous B ω hω t
 
-private lemma donsker_continuousMap_measurableSpace_eq_comap :
-    (inferInstance : MeasurableSpace C(Set.Icc (0 : ℝ) 1, ℝ)) =
-      MeasurableSpace.comap
-        (fun f : C(Set.Icc (0 : ℝ) 1, ℝ) => (f : Set.Icc (0 : ℝ) 1 → ℝ))
-        (inferInstance : MeasurableSpace (Set.Icc (0 : ℝ) 1 → ℝ)) := by
-  rw [ContinuousMap.measurableSpace_eq_iSup_comap_eval]
-  exact (MeasurableSpace.comap_process_pi
-    (fun t (f : C(Set.Icc (0 : ℝ) 1, ℝ)) => f t)).symm
-
-private lemma donsker_measure_eq_of_map_coe_eq
-    {μ ν : Measure C(Set.Icc (0 : ℝ) 1, ℝ)}
-    (hmap : μ.map (fun f : C(Set.Icc (0 : ℝ) 1, ℝ) =>
-      (f : Set.Icc (0 : ℝ) 1 → ℝ)) =
-      ν.map (fun f : C(Set.Icc (0 : ℝ) 1, ℝ) =>
-        (f : Set.Icc (0 : ℝ) 1 → ℝ))) : μ = ν := by
-  apply Measure.ext
-  intro s hs
-  have hs' : @MeasurableSet C(Set.Icc (0 : ℝ) 1, ℝ)
-      (MeasurableSpace.comap
-        (fun f : C(Set.Icc (0 : ℝ) 1, ℝ) => (f : Set.Icc (0 : ℝ) 1 → ℝ))
-        (inferInstance : MeasurableSpace (Set.Icc (0 : ℝ) 1 → ℝ))) s := by
-    rwa [← donsker_continuousMap_measurableSpace_eq_comap]
-  obtain ⟨t, ht, hst⟩ := (MeasurableSpace.measurableSet_comap).mp hs'
-  have hcoe : Measurable
-      (fun f : C(Set.Icc (0 : ℝ) 1, ℝ) => (f : Set.Icc (0 : ℝ) 1 → ℝ)) := by
-    exact Measurable.of_eval fun t => ContinuousMap.measurable_eval t
-  rw [← hst, ← Measure.map_apply hcoe ht, ← Measure.map_apply hcoe ht, hmap]
-
 /-- Local Borel structures for `C(Icc 0 1, ℝ)`, scoped to avoid orphan leakage. -/
 scoped instance instMeasurableSpaceContinuousMap : MeasurableSpace C(Set.Icc (0 : ℝ) 1, ℝ) :=
   borel _
@@ -274,35 +248,25 @@ scoped instance instBorelSpaceContinuousMap : BorelSpace C(Set.Icc (0 : ℝ) 1, 
   ⟨rfl⟩
 
 /-- Probability measures on `C([0,1], ℝ)` are determined by their finite-dimensional
-distributions. -/
+distributions. Compatibility wrapper around
+`MathlibExt.Probability.ContinuousPathConvergence.continuousPath_measure_ext_of_finset_eval`
+at `T = 1`; the projective-limit argument lives there, not here. -/
 public theorem continuousMap_measure_ext_of_finset_eval
     (μ ν : Measure C(Set.Icc (0 : ℝ) 1, ℝ))
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     (h : ∀ I : Finset (Set.Icc (0 : ℝ) 1),
       μ.map (fun f => I.restrict (fun t => f t)) =
         ν.map (fun f => I.restrict (fun t => f t))) : μ = ν := by
-  let coeFn := fun f : C(Set.Icc (0 : ℝ) 1, ℝ) =>
-    (f : Set.Icc (0 : ℝ) 1 → ℝ)
-  have hcoe : Measurable coeFn :=
-    Measurable.of_eval fun t => ContinuousMap.measurable_eval t
-  let P := fun I : Finset (Set.Icc (0 : ℝ) 1) =>
-    μ.map (fun f => I.restrict (fun t => f t))
-  let μc := μ.map coeFn
-  let νc := ν.map coeFn
-  let _ (I : Finset (Set.Icc (0 : ℝ) 1)) : IsProbabilityMeasure (P I) := by
-    dsimp [P]
-    infer_instance
-  have hμ : IsProjectiveLimit μc P := by
+  let μ' : ProbabilityMeasure C(Set.Icc (0 : ℝ) 1, ℝ) := ⟨μ, inferInstance⟩
+  let ν' : ProbabilityMeasure C(Set.Icc (0 : ℝ) 1, ℝ) := ⟨ν, inferInstance⟩
+  have h' : ∀ I : Finset (Set.Icc (0 : ℝ) 1),
+      μ'.map (fun f => I.restrict (fun t => f t)) =
+        ν'.map (fun f => I.restrict (fun t => f t)) := by
     intro I
-    dsimp [μc, P]
-    rw [Measure.map_map (Finset.measurable_restrict I) hcoe]
-    rfl
-  have hν : IsProjectiveLimit νc P := by
-    intro I
-    dsimp [νc, P]
-    rw [Measure.map_map (Finset.measurable_restrict I) hcoe]
-    exact (h I).symm
-  exact donsker_measure_eq_of_map_coe_eq (hμ.unique hν)
+    apply ProbabilityMeasure.toMeasure_injective
+    exact h I
+  exact congrArg ProbabilityMeasure.toMeasure
+    (continuousPath_measure_ext_of_finset_eval 1 μ' ν' h')
 
 private lemma second_moment
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
@@ -2575,49 +2539,6 @@ private lemma donskerBrownianPath_finsetEval_map
   ext t
   exact hω t
 
-private lemma donsker_law_cluster_eq
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
-    (X : ℕ → Ω → ℝ) (hMeas : ∀ i, Measurable (X i))
-    (hIndep : iIndepFun X P) (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P)
-    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0) (hVar : Var[X 0; P] = 1)
-    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P')
-    (m : ℕ → ℕ) (hm : Tendsto m atTop atTop)
-    (μ : ProbabilityMeasure C(Set.Icc (0 : ℝ) 1, ℝ))
-    (hcluster : TendstoInDistribution
-      (fun n ω => donskerProcess (m n) X ω) atTop
-      (id : C(Set.Icc (0 : ℝ) 1, ℝ) → C(Set.Icc (0 : ℝ) 1, ℝ))
-      (fun _ => P) (μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ))) :
-    (μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ)) =
-      P'.map (donskerBrownianPath B) := by
-  let W : ℕ → Ω → C(Set.Icc (0 : ℝ) 1, ℝ) :=
-    fun n ω => donskerProcess (m n) X ω
-  have hcluster' : TendstoInDistribution W atTop
-      (id : C(Set.Icc (0 : ℝ) 1, ℝ) → C(Set.Icc (0 : ℝ) 1, ℝ))
-      (fun _ => P) (μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ)) := by
-    simpa only [W] using hcluster
-  apply continuousMap_measure_ext_of_finset_eval
-  intro I
-  let e := fun f : C(Set.Icc (0 : ℝ) 1, ℝ) => I.restrict (fun t => f t)
-  have hclusterEval := hcluster'.continuous_comp (g := e)
-    (donsker_continuous_finsetEval I)
-  have hbrownEval := tid_reindex
-    (finsetEval_tendstoInDistribution X hMeas hIndep hIdent hMemLp hMean hVar
-      B hB.toIsPreBrownianReal I) m hm
-  have hbrownEval' : TendstoInDistribution (fun n => e ∘ W n) atTop
-      (fun ω => I.restrict (fun t => B (iccToNNReal t) ω)) (fun _ => P) P' := by
-    refine hbrownEval.congr (fun n => .of_forall fun ω => ?_) (.of_forall fun ω => rfl)
-    rfl
-  have hmap := tendstoInDistribution_unique (fun n => e ∘ W n) hclusterEval hbrownEval'
-  change (μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ)).map e =
-    (P'.map (donskerBrownianPath B)).map e
-  calc
-    (μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ)).map e =
-        P'.map (fun ω => I.restrict (fun t => B (iccToNNReal t) ω)) := by
-      simpa only [Function.comp_id] using hmap
-    _ = (P'.map (donskerBrownianPath B)).map e := by
-      simpa only [e] using (donskerBrownianPath_finsetEval_map B hB I).symm
-
 private lemma donsker_process_tendstoInDistribution
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
@@ -2650,39 +2571,34 @@ private lemma donsker_process_tendstoInDistribution
           exact ⟨laws n, ⟨n, rfl⟩, rfl⟩
       rw [hset]
       exact donsker_laws_isTightMeasureSet X hMeas hIndep hIdent hMemLp hMean hVar
-    have hcompact : IsCompact (closure (Set.range laws)) :=
-      isCompact_closure_of_isTightMeasureSet htight
-    apply tendsto_of_subseq_tendsto
-    intro ns hns
-    have hmem : ∀ n, laws (ns n) ∈ closure (Set.range laws) := fun n =>
-      subset_closure (Set.mem_range_self (ns n))
-    obtain ⟨μ, -, φ, hφ, hconv⟩ := hcompact.tendsto_subseq hmem
-    refine ⟨φ, ?_⟩
-    let m : ℕ → ℕ := fun n => ns (φ n)
-    have hm : Tendsto m atTop atTop := hns.comp hφ.tendsto_atTop
-    have hcluster : TendstoInDistribution
-        (fun n ω => donskerProcess (m n) X ω) atTop
-        (id : C(Set.Icc (0 : ℝ) 1, ℝ) → C(Set.Icc (0 : ℝ) 1, ℝ))
-        (fun _ => P) (μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ)) := {
-      forall_aemeasurable n := (donskerProcess_measurable X hMeas (m n)).aemeasurable
-      aemeasurable_limit := measurable_id.aemeasurable
-      tendsto := by
-        have htarget :
-            (⟨(μ : Measure C(Set.Icc (0 : ℝ) 1, ℝ)).map id, inferInstance⟩ :
-              ProbabilityMeasure C(Set.Icc (0 : ℝ) 1, ℝ)) = μ := by
-          apply ProbabilityMeasure.toMeasure_injective
-          exact Measure.map_id
-        rw [htarget]
-        refine hconv.congr' (.of_forall fun n => ?_)
-        rfl
-    }
-    have hμ := donsker_law_cluster_eq X hMeas hIndep hIdent hMemLp hMean hVar
-      B hB m hm μ hcluster
-    have hμ' : μ = limitLaw := by
+    apply tendsto_continuousPath_of_tight_of_finset_eval 1 (by norm_num)
+      laws limitLaw htight
+    intro I
+    let e := fun f : C(Set.Icc (0 : ℝ) 1, ℝ) =>
+      I.restrict (fun t => f t)
+    change Tendsto (fun n => (laws n).map e) atTop (𝓝 (limitLaw.map e))
+    have hfd := finsetEval_tendstoInDistribution X hMeas hIndep hIdent hMemLp
+      hMean hVar B hB.toIsPreBrownianReal I
+    have hmap : ∀ n, (laws n).map e =
+        (⟨P.map (fun ω => I.restrict (fun t => donskerProcess n X ω t)),
+          inferInstance⟩ :
+          ProbabilityMeasure (I → ℝ)) := by
+      intro n
       apply ProbabilityMeasure.toMeasure_injective
-      simpa only [limitLaw, ProbabilityMeasure.coe_mk] using hμ
-    rw [← hμ']
-    simpa only [m, Function.comp_def] using hconv
+      change (P.map (fun ω => donskerProcess n X ω)).map e =
+        P.map (fun ω => I.restrict (fun t => donskerProcess n X ω t))
+      rw [Measure.map_map (donsker_continuous_finsetEval I).measurable
+        (donskerProcess_measurable X hMeas n)]
+      rfl
+    have hlim : limitLaw.map e =
+        (⟨P'.map (fun ω => I.restrict (fun t => B (iccToNNReal t) ω)),
+          inferInstance⟩ :
+          ProbabilityMeasure (I → ℝ)) := by
+      apply ProbabilityMeasure.toMeasure_injective
+      change (P'.map (donskerBrownianPath B)).map e =
+        P'.map (fun ω => I.restrict (fun t => B (iccToNNReal t) ω))
+      exact donskerBrownianPath_finsetEval_map B hB I
+    simpa only [hmap, hlim] using hfd.tendsto
 
 /--
 If `X : ℕ → Ω → ℝ` is i.i.d. with mean `0`, variance `1` and `MemLp` `2`, then for any Brownian

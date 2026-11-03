@@ -12,6 +12,12 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EdgeFlipClosedContour
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EvenContourColoring
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEvenBiconditional
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # The discrete Jordan–Euler theorem for finite subgraphs of `ℤ²`
 

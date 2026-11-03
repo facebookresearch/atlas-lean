@@ -31,6 +31,8 @@ and the union bound applies.
 ## Main results
 
 * `card_holmRejections`: Holm rejects exactly `holmIndex α p` hypotheses.
+* `exists_le_div_card_of_holmRejections`: a Holm rejection in `J` forces some
+  `p j ≤ α / |J|` for `j ∈ J`.
 * `measure_holm_familywiseError_le`: `μ (Holm rejects a true null) ≤ α`.
 
 ## References
@@ -130,26 +132,28 @@ theorem card_holmRejections {α : ℝ} (hα : 0 ≤ α) (p : Fin m → ℝ) :
     · omega
     · exact hspec r (Finset.mem_Icc.mpr ⟨by omega, le_rfl⟩)
 
-/-- If Holm rejects a true null, then some true null has p-value at most `α / |H0|`: the first
-true null in sorted order sits at a position `k ≤ m - |H0| + 1`. -/
-private theorem exists_null_le_of_rejection {α : ℝ} (hα : 0 ≤ α)
-    (p : Fin m → ℝ) (H0 : Finset (Fin m))
-    (h : (holmRejections α p ∩ H0).Nonempty) :
-    ∃ j ∈ H0, p j ≤ α / H0.card := by
+/-- If Holm rejects a hypothesis in `J`, then some `j ∈ J` has p-value at most `α / |J|`:
+the first hypothesis of `J` in sorted order sits at a position `k ≤ m - |J| + 1`. This
+is the shared Holm rejection bound, used both for Holm's FWER control below and for
+identifying Holm's procedure with the closure of the Bonferroni local tests. -/
+theorem exists_le_div_card_of_holmRejections {α : ℝ} (hα : 0 ≤ α)
+    (p : Fin m → ℝ) (J : Finset (Fin m))
+    (h : (holmRejections α p ∩ J).Nonempty) :
+    ∃ j ∈ J, p j ≤ α / J.card := by
   classical
   obtain ⟨i, hi⟩ := h
   obtain ⟨hiR, hiH⟩ := Finset.mem_inter.mp hi
-  obtain ⟨j, hjH, hmin⟩ := Finset.exists_min_image H0 p ⟨i, hiH⟩
+  obtain ⟨j, hjH, hmin⟩ := Finset.exists_min_image J p ⟨i, hiH⟩
   have hjR : j ∈ holmRejections α p :=
     mem_holmRejections_of_le (hmin i hiH) hiR
   let S := Finset.univ.filter fun l => p l < p j
   let k := S.card + 1
   have hjS : j ∉ S := by simp [S]
-  have hdisj : Disjoint S H0 := by
+  have hdisj : Disjoint S J := by
     apply Finset.disjoint_left.mpr
     intro l hl hlH
     exact (not_lt_of_ge (hmin l hlH)) (Finset.mem_filter.mp hl).2
-  have hsum : S.card + H0.card ≤ m := by
+  have hsum : S.card + J.card ≤ m := by
     rw [← Finset.card_union_of_disjoint hdisj]
     exact (Finset.card_le_card (Finset.subset_univ _)).trans_eq (Finset.card_fin m)
   have hsubset : insert j S ⊆ holmRejections α p := by
@@ -173,10 +177,10 @@ private theorem exists_null_le_of_rejection {α : ℝ} (hα : 0 ≤ α)
         ⟨Finset.mem_univ _, (Finset.mem_filter.mp hl).2.trans_lt hn'⟩
     dsimp [k] at hkcount hc
     omega
-  have hm0 : 0 < (H0.card : ℝ) := by
+  have hm0 : 0 < (J.card : ℝ) := by
     exact_mod_cast Finset.card_pos.mpr ⟨j, hjH⟩
-  have hden : (H0.card : ℝ) ≤ (m : ℝ) - k + 1 := by
-    have hs : (S.card : ℝ) + H0.card ≤ m := by exact_mod_cast hsum
+  have hden : (J.card : ℝ) ≤ (m : ℝ) - k + 1 := by
+    have hs : (S.card : ℝ) + J.card ≤ m := by exact_mod_cast hsum
     dsimp [k]
     push_cast
     linarith
@@ -208,7 +212,7 @@ theorem measure_holm_familywiseError_le (μ : Measure Ω) (p : Fin m → Ω → 
           ≤ μ {ω | ∃ i ∈ H0, p i ω ≤ α / H0.card} := by
             apply measure_mono
             intro ω hω
-            exact exists_null_le_of_rejection hα₀ (fun i => p i ω) H0 hω
+            exact exists_le_div_card_of_holmRejections hα₀ (fun i => p i ω) H0 hω
       _ ≤ ENNReal.ofReal (H0.card * (α / H0.card)) :=
         measure_exists_mem_le_le μ p H0 hnull hc
       _ = ENNReal.ofReal α := by rw [mul_div_cancel₀ α (ne_of_gt hm0)]

@@ -10,6 +10,9 @@ module
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellLocalChange
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.CellPinch
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # The cell Gauss–Bonnet formula
 

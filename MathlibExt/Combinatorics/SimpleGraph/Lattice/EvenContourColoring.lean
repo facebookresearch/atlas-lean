@@ -9,6 +9,11 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingColoring
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring.RingNF
+
 /-!
 # Even-degree edge sets bound a parity coloring of the faces
 

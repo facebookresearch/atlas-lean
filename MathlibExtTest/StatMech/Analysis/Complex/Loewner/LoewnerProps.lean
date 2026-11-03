@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+
 public import MathlibExt.Analysis.Complex.Loewner.LoewnerProps
 
 /-!
