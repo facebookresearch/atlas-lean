@@ -7,17 +7,39 @@
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$REPO_ROOT"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 scope="${1:-all}"
-if [[ $# -gt 1 ]]; then
-  echo "usage: scripts/check.sh [preflight|build]" >&2
+[[ $# -gt 0 ]] && shift
+build_args=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --root)
+      [[ $# -ge 2 ]] || exit 2
+      REPO_ROOT="$(cd "$2" && pwd)" || exit 2
+      build_args+=(--root "$REPO_ROOT"); shift 2 ;;
+    --modules)
+      [[ $# -ge 2 ]] || exit 2
+      if [[ "$2" == /* ]]; then
+        build_args+=(--modules "$2")
+      else
+        build_args+=(--modules "$PWD/$2")
+      fi
+      shift 2 ;;
+    *)
+      echo "usage: scripts/check.sh [preflight|build] [--root DIR] [--modules FILE]" >&2
+      exit 2 ;;
+  esac
+done
+if [[ "$scope" != build && ${#build_args[@]} -gt 0 ]]; then
+  echo "--root and --modules are supported only for build checks" >&2
   exit 2
 fi
+cd "$REPO_ROOT" || exit 2
 case "$scope" in
   all|preflight|build) ;;
   -h|--help)
-    sed -n '2,6p' "${BASH_SOURCE[0]}"
+    sed -n '2,6p' "$SCRIPT_DIR/check.sh"
     exit 0
     ;;
   *)
@@ -65,8 +87,8 @@ if [[ "$scope" == all || "$scope" == preflight ]]; then
 fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then
-  run_check "compiler diagnostics" scripts/check_diagnostics.sh
-  run_check "compiled environment policy" scripts/check_axioms.sh
+  run_check "compiler diagnostics" bash "$SCRIPT_DIR/check_diagnostics.sh" ${build_args[@]+"${build_args[@]}"}
+  run_check "compiled environment policy" bash "$SCRIPT_DIR/check_axioms.sh" ${build_args[@]+"${build_args[@]}"}
 fi
 
 exit "$status"

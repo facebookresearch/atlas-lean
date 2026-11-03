@@ -45,6 +45,10 @@ root validation with:
 scripts/check.sh
 ```
 
+To create a pinned distribution of every root Lean library, including tests,
+and use it as a downstream Lake dependency, see the
+[packaging guide](scripts/PACKAGING.md).
+
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
 

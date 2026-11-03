@@ -3,18 +3,40 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MODULES=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --root) [[ $# -ge 2 ]] || exit 2; REPO_ROOT="$2"; shift 2 ;;
+    --modules) [[ $# -ge 2 ]] || exit 2; MODULES="$2"; shift 2 ;;
+    *) echo "usage: check_axioms.sh [--root DIR] [--modules FILE]" >&2; exit 2 ;;
+  esac
+done
+if [[ -n "$MODULES" && "$MODULES" != /* ]]; then
+  MODULES="$PWD/$MODULES"
+fi
 cd "$REPO_ROOT"
 
 CHECK_FILE="$(mktemp "${TMPDIR:-/tmp}/atlas-axioms.XXXXXX.lean")"
 trap 'rm -f "$CHECK_FILE"' EXIT
 
-for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt; do
-  while IFS= read -r path; do
-    module="${path%.lean}"
-    module="${module//\//.}"
-    printf 'import %s\n' "$module" >>"$CHECK_FILE"
-  done < <(find "$library" -type f -name '*.lean' -print | LC_ALL=C sort)
-done
+python3 - "$MODULES" >>"$CHECK_FILE" <<'PY'
+from pathlib import Path
+import sys, tomllib
+config = tomllib.loads(Path("lakefile.toml").read_text())
+if sys.argv[1]:
+    modules = [m for m in Path(sys.argv[1]).read_text().splitlines() if m]
+else:
+    modules = []
+    for library in config["lean_lib"]:
+        root = library["name"]
+        paths = list(Path(root).rglob("*.lean"))
+        if Path(root + ".lean").is_file():
+            paths.append(Path(root + ".lean"))
+        for path in sorted(paths):
+            modules.append(".".join("«" + p + "»" for p in path.with_suffix("").parts))
+for module in modules:
+    print("import " + module)
+PY
 
 cat >>"$CHECK_FILE" <<'LEAN'
 import Batteries.Util.ProofWanted
@@ -91,6 +113,19 @@ run_cmd do
     throwError
       "audited libraries violate the axiom, safety, wanted-declaration, or import policy"
 LEAN
+
+# Configuration is input data. The actual trust/layering policy is defined
+# once above; refuse to silently omit a newly declared, unregistered root.
+python3 >>"$CHECK_FILE" <<'PY'
+from pathlib import Path
+import tomllib
+roots = [x["name"] for x in tomllib.loads(Path("lakefile.toml").read_text())["lean_lib"]]
+names = ", ".join(chr(96) + "«" + x + "»" for x in roots)
+print("run_cmd do")
+print("  let configured : Array Lean.Name := #[" + names + "]")
+print("  unless configured.all libraryRoots.contains do")
+print('    throwError "declared library is not covered by the canonical trust policy"')
+PY
 
 lake env lean "$CHECK_FILE"
 echo "ok [environment]: compiled libraries satisfy trust and dependency policies."
