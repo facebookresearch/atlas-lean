@@ -1,0 +1,34 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import Atlas.AlgebraNotes.AlgebraNotes
+import Atlas.AlgebraicCombinatorics.AlgebraicCombinatorics
+import Atlas.AlgebraicGeometryI.AlgebraicGeometryI
+import Atlas.AlgebraicTopologyI.AlgebraicTopologyI
+import Atlas.AnAlgorithmistsToolkit.AnAlgorithmistsToolkit
+import Atlas.ArithmeticGeometry.ArithmeticGeometry
+import Atlas.BooleanFunctions.BooleanFunctions
+import Atlas.Buildings.Buildings
+import Atlas.CombinatorialOptimization.CombinatorialOptimization
+import Atlas.ComplexVariables.ComplexVariables
+import Atlas.DifferentialAnalysis.DifferentialAnalysis
+import Atlas.DifferentialGeometry.DifferentialGeometry
+import Atlas.EllipticCurves.EllipticCurves
+import Atlas.FourierAnalysis.FourierAnalysis
+import Atlas.GeometryOfManifolds.GeometryOfManifolds
+import Atlas.HighDimensionalStatistics.HighDimensionalStatistics
+import Atlas.IntroductionToFunctionalAnalysis.IntroductionToFunctionalAnalysis
+import Atlas.IntroductionToPartialDifferentialEquations.IntroductionToPartialDifferentialEquations
+import Atlas.LieGroups.LieGroups
+import Atlas.NumberTheoryI.NumberTheoryI
+import Atlas.ProbabilisticMethodsInCombinatorics.ProbabilisticMethodsInCombinatorics
+import Atlas.ProjectionTheory.ProjectionTheory
+import Atlas.RealAnalysis.RealAnalysis
+import Atlas.TheoryOfComputation.TheoryOfComputation
+import Atlas.TheoryOfProbability.TheoryOfProbability
+import Atlas.TensorCategories.TensorCategories

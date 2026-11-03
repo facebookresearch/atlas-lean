@@ -1,0 +1,15 @@
+name = "Atlas"
+version = "0.1.0"
+defaultTargets = ["Atlas"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "8a178386ffc0f5fef0b77738bb5449d50efeea95"
+
+[[lean_lib]]
+name = "Atlas"
+globs = ["Atlas.+"]
+
+[[lean_lib]]
+name = "Unproved"
