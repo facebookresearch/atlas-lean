@@ -7,7 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Data.Sym.Sym2
+import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Euler characteristic of unions of unit squares

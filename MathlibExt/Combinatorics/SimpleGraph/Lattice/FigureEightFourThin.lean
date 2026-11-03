@@ -16,9 +16,8 @@ The figure-eight walk `wpc_fig8` goes around the boundary of the square `[0, 2]�
 the boundary of `[2, 4]²`, passing twice through the pinch site `(2, 2)`. Every pair of adjacent
 sites of the walk is joined by a walk edge, so the walk is four-thin. The sites `(1, 1)` and
 `(3, 3)` are interior, and `{(1, 1)}` is king-saturated, so the interior has a king separation.
-Hence four-thinness of a closed walk does not imply that its interior is king-connected, and the
-residual predicate `cat_CrossArcThick` is false for this walk. The walk is not a cycle
-(`pcy_fig8_not_cycle`).
+Hence four-thinness of a closed walk does not imply that its interior is king-connected.
+The walk is not a cycle (`pcy_fig8_not_cycle`).
 
 ## Main definitions
 
@@ -28,7 +27,6 @@ residual predicate `cat_CrossArcThick` is false for this walk. The walk is not a
 
 * `StatMech.Lattice.wpc_fig8_fourThin`: the figure-eight walk is four-thin.
 * `StatMech.Lattice.wpc_not_noKingSeparation`: its interior has a king separation from `(1, 1)`.
-* `StatMech.Lattice.wpc_cat_crossArcThick_false`: `cat_CrossArcThick` fails for it.
 * `StatMech.Lattice.wpc_fig8_refutation_package`: the combined statement.
 -/
 
@@ -264,22 +262,15 @@ theorem wpc_not_noKingSeparation : ¬ ksc_NoKingSeparation wpc_fig8 (![1, 1] : S
     have := congrFun h33 0; simp only [Matrix.cons_val_zero] at this; exact this
   omega
 
-/-- `cat_CrossArcThick` fails for the four-thin figure-eight walk. -/
-theorem wpc_cat_crossArcThick_false : ¬ cat_CrossArcThick wpc_fig8 (![1, 1] : Site 2) := by
-  intro hres
-  exact wpc_not_noKingSeparation
-    (cat_noKingSeparation_of_fourThin wpc_fig8 wpc_fig8_mem_interior_11 wpc_fig8_fourThin hres)
-
-/-- The figure-eight walk is four-thin, has the interior sites `(1, 1)` and `(3, 3)`, has a king
-separation, and violates `cat_CrossArcThick`. -/
+/-- The figure-eight walk is four-thin, has the interior sites `(1, 1)` and `(3, 3)`, and has a king
+separation. -/
 theorem wpc_fig8_refutation_package :
     mci_FourThin wpc_fig8 ∧
     (![1, 1] : Site 2) ∈ jil_offSupportInterior wpc_fig8 ∧
     (![3, 3] : Site 2) ∈ jil_offSupportInterior wpc_fig8 ∧
-    ¬ ksc_NoKingSeparation wpc_fig8 (![1, 1] : Site 2) ∧
-    ¬ cat_CrossArcThick wpc_fig8 (![1, 1] : Site 2) :=
+    ¬ ksc_NoKingSeparation wpc_fig8 (![1, 1] : Site 2) :=
   ⟨wpc_fig8_fourThin, wpc_fig8_mem_interior_11, wpc_fig8_mem_interior_33,
-   wpc_not_noKingSeparation, wpc_cat_crossArcThick_false⟩
+   wpc_not_noKingSeparation⟩
 
 end Lattice
 

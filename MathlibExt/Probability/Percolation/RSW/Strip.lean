@@ -26,9 +26,10 @@ lower bounds used in RSW arguments.
 * `StatMech.RSW.Strip.horizontalCrossing_glue`, `StatMech.RSW.Strip.verticalCrossing_glue` and their
   `_of_meet` variants.
 * `StatMech.RSW.Strip.measureReal_horizontalCrossing_ge_halves`: for a positively associated `μ`,
-  `μ(left half-crossing to z) · μ(right half-crossing from z) ≤ μ(crossing of the union)`.
-* `StatMech.RSW.Strip.measureReal_chain_ge_prod`: `∏ μ(A_i) ≤ μ(C)` whenever `⋂ A_i ⊆ C` and the
-  `A_i` are increasing.
+  `μ(left half-crossing to z) · μ(right half-crossing from z) ≤
+  μ(crossing of the union) · μ(univ)`.
+* `StatMech.RSW.Strip.measureReal_chain_ge_prod`: for probability measures,
+  `∏ μ(A_i) ≤ μ(C)` whenever `⋂ A_i ⊆ C` and the `A_i` are increasing.
 
 ## References
 
@@ -210,16 +211,19 @@ theorem verticalCrossingEvent_isIncreasing (a b c d : ℤ) :
 
 theorem measureReal_glue_ge_mul {E : Type*} (μ : Measure (ConfigSpace E))
     [IsFiniteMeasure μ] (hpa : PositivelyAssociated μ)
-    {A B C : Set (ConfigSpace E)} (hA : IsIncreasing A) (hB : IsIncreasing B)
+    {A B C : Set (ConfigSpace E)} (hAm : MeasurableSet A) (hBm : MeasurableSet B)
+    (hA : IsIncreasing A) (hB : IsIncreasing B)
     (hsub : A ∩ B ⊆ C) :
-    μ.real A * μ.real B ≤ μ.real C :=
-  (hpa A B hA hB).trans (measureReal_mono hsub)
+    μ.real A * μ.real B ≤ μ.real C * μ.real Set.univ :=
+  (hpa A B hAm hBm hA hB).trans
+    (mul_le_mul_of_nonneg_right (measureReal_mono hsub) measureReal_nonneg)
 
 theorem measureReal_crossing_product_le {E : Type*} (μ : Measure (ConfigSpace E))
     [IsFiniteMeasure μ] (hpa : PositivelyAssociated μ)
-    {A C : Set (ConfigSpace E)} (hA : IsIncreasing A) (hsub : A ∩ A ⊆ C) :
-    μ.real A * μ.real A ≤ μ.real C :=
-  measureReal_glue_ge_mul μ hpa hA hA hsub
+    {A C : Set (ConfigSpace E)} (hAm : MeasurableSet A) (hA : IsIncreasing A)
+    (hsub : A ∩ A ⊆ C) :
+    μ.real A * μ.real A ≤ μ.real C * μ.real Set.univ :=
+  measureReal_glue_ge_mul μ hpa hAm hAm hA hA hsub
 
 /-- An open path inside `rect a m c d` from its left side to the point `z` (on its right side). -/
 def LeftHalfCrossing (ω : ConfigSpace (Sym2 (Site 2))) (a m c d : ℤ) (z : Site 2)
@@ -257,6 +261,34 @@ theorem rightHalfCrossingEvent_isIncreasing (m b c d : ℤ) (z : Site 2)
   obtain ⟨yR, hc⟩ := hω
   exact ⟨yR, StatMech.TwoDim.connectedWithin_mono hωω' hc⟩
 
+/-- A left half-crossing event is measurable. -/
+theorem measurableSet_leftHalfCrossingEvent (a m c d : ℤ) (z : Site 2)
+    (hz : z ∈ rect a m c d) :
+    MeasurableSet (leftHalfCrossingEvent a m c d z hz) := by
+  have heq : leftHalfCrossingEvent a m c d z hz =
+      ⋃ x : leftSide a m c d,
+        {ω | ConnectedWithin 2 ω (rect a m c d)
+          ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨z, hz⟩} := by
+    ext ω
+    simp only [leftHalfCrossingEvent, LeftHalfCrossing, Set.mem_ofPred_eq, Set.mem_iUnion]
+  rw [heq]
+  exact MeasurableSet.iUnion fun x =>
+    measurableSet_connectedWithin _ ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨z, hz⟩
+
+/-- A right half-crossing event is measurable. -/
+theorem measurableSet_rightHalfCrossingEvent (m b c d : ℤ) (z : Site 2)
+    (hz : z ∈ rect m b c d) :
+    MeasurableSet (rightHalfCrossingEvent m b c d z hz) := by
+  have heq : rightHalfCrossingEvent m b c d z hz =
+      ⋃ y : rightSide m b c d,
+        {ω | ConnectedWithin 2 ω (rect m b c d)
+          ⟨z, hz⟩ ⟨(y : Site 2), rightSide_subset y.2⟩} := by
+    ext ω
+    simp only [rightHalfCrossingEvent, RightHalfCrossing, Set.mem_ofPred_eq, Set.mem_iUnion]
+  rw [heq]
+  exact MeasurableSet.iUnion fun y =>
+    measurableSet_connectedWithin _ ⟨z, hz⟩ ⟨(y : Site 2), rightSide_subset y.2⟩
+
 theorem halfCrossing_glue_subset {a m b c d : ℤ} (ham : a ≤ m) (hmb : m ≤ b)
     {z : Site 2} (hz0 : z 0 = m) (hzc : c ≤ z 1) (hzd : z 1 ≤ d) :
     leftHalfCrossingEvent a m c d z
@@ -276,8 +308,10 @@ theorem measureReal_horizontalCrossing_ge_halves {a m b c d : ℤ}
           (rightSide_subset (mem_shared_column ham hmb hz0 hzc hzd).1))
         * μ.real (rightHalfCrossingEvent m b c d z
           (leftSide_subset (mem_shared_column ham hmb hz0 hzc hzd).2))
-      ≤ μ.real (horizontalCrossingEvent a b c d) :=
+      ≤ μ.real (horizontalCrossingEvent a b c d) * μ.real Set.univ :=
   measureReal_glue_ge_mul μ hpa
+    (measurableSet_leftHalfCrossingEvent a m c d z _)
+    (measurableSet_rightHalfCrossingEvent m b c d z _)
     (leftHalfCrossingEvent_isIncreasing a m c d z _)
     (rightHalfCrossingEvent_isIncreasing m b c d z _)
     (halfCrossing_glue_subset ham hmb hz0 hzc hzd)
@@ -285,7 +319,8 @@ theorem measureReal_horizontalCrossing_ge_halves {a m b c d : ℤ}
 theorem measureReal_chain_ge_prod {ι : Type*} {E : Type*}
     (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ]
     (hpa : PositivelyAssociated μ) (s : Finset ι)
-    {A : ι → Set (ConfigSpace E)} (hA : ∀ i, IsIncreasing (A i))
+    {A : ι → Set (ConfigSpace E)} (hAm : ∀ i, MeasurableSet (A i))
+    (hA : ∀ i, IsIncreasing (A i))
     {C : Set (ConfigSpace E)} (hsub : (⋂ i ∈ s, A i) ⊆ C) :
     (∏ i ∈ s, μ.real (A i)) ≤ μ.real C := by
   classical
@@ -305,6 +340,8 @@ theorem measureReal_chain_ge_prod {ι : Type*} {E : Type*}
         apply isIncreasing_iInter
         intro _
         exact hA j
+      have hInterMeas : MeasurableSet (⋂ j ∈ s, A j) := by
+        exact MeasurableSet.biInter (Finset.countable_toSet s) fun j _ => hAm j
       have hstep := ih (C := ⋂ j ∈ s, A j) (le_refl _)
       have hincl : A i ∩ (⋂ j ∈ s, A j) ⊆ C := by
         refine subset_trans ?_ hsub
@@ -317,7 +354,8 @@ theorem measureReal_chain_ge_prod {ι : Type*} {E : Type*}
       calc μ.real (A i) * (∏ j ∈ s, μ.real (A j))
           ≤ μ.real (A i) * μ.real (⋂ j ∈ s, A j) := by
             apply mul_le_mul_of_nonneg_left hstep (measureReal_nonneg)
-        _ ≤ μ.real (A i ∩ (⋂ j ∈ s, A j)) := hpa _ _ (hA i) hInterInc
+        _ ≤ μ.real (A i ∩ (⋂ j ∈ s, A j)) :=
+          hpa.probability _ _ (hAm i) hInterMeas (hA i) hInterInc
         _ ≤ μ.real C := measureReal_mono hincl
 
 end Strip

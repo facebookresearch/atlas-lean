@@ -10,6 +10,8 @@ module
 public import MathlibExt.Probability.CorrelationInequalities.InfiniteHarris
 public import MathlibExt.Probability.CorrelationInequalities.BK
 
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+
 @[expose] public section
 
 /-!

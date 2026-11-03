@@ -123,6 +123,12 @@ theorem not_isComplexBalanced_birthDeath {c : Fin 1 → ℝ} (hc : 0 < c 0) :
   simp [Fin.sum_univ_two, birthDeath, rate] at h2
   exact hc.ne h2
 
+/-- Complex balance regroups rate-weighted sums: for the dimer network at `c* = (2, 1)` the
+rate-weighted number of `A` molecules is the same over products and over sources. -/
+example : ∑ r, dimer.rate kDimer cDimer r * (dimer.prod r 0 : ℝ) =
+    ∑ r, dimer.rate kDimer cDimer r * (dimer.src r 0 : ℝ) :=
+  dimer.sum_rate_mul_prod_eq isComplexBalanced_dimer (fun z => (z 0 : ℝ))
+
 #print axioms isComplexBalanced_dimer
 #print axioms ReactionNetwork.existsUnique_equilibrium_of_isComplexBalanced
 #print axioms ReactionNetwork.antitoneOn_pseudoHelmholtz

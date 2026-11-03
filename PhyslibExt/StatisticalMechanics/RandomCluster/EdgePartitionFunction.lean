@@ -18,11 +18,14 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FKDensityDeriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OneSidedContinuity
 
 /-!
-# Uniqueness of the `q = 2` infinite-volume measure via the edge partition function
+# Per-box countable-exception uniqueness for `q = 2` via the edge partition function
 
-For `d ≥ 1`, the free and wired `q = 2` infinite-volume random-cluster measures on `ℤ^d` agree on
-every increasing event of a box for all but countably many `p ∈ (0, 1)`, proved through the
-partition function restricted to configurations closed off the edges of the graph.
+For `d ≥ 1`, a fixed box `Λ_N`, and an edge witness `eb ∈ (boxGraph d N).edgeFinset`, the free
+and wired `q = 2` random-cluster measures agree on every increasing event of `Λ_N` for all
+`t = logit p` outside a countable set (depending on `d` and `N`), proved through the partition
+function restricted to configurations closed off the edges of the graph. This is a per-box
+statement in the logit parameter `t`; it does not claim a transfer to a countable exceptional
+set in `p`, a global infinite-volume statement, or anything about edge-free boxes.
 
 ## i. Overview
 
@@ -38,9 +41,9 @@ interfaces, which gives, for `u_n = -log ecz_fkZEdge(Λ_n)`:
 
 Together these show that `u_n / |E(Λ_n)|` converges (`ecz_perEdgeDensityConverges`), so the
 centered free energies converge to a convex limit. The bulk-collapse and one-sided-derivative
-arguments of `CenteredFreeEnergy` then give countable-exception uniqueness without further
-hypotheses. The general-`q` statement is `fkgq_countable_free_wired_disagreement`
-(`FKGeneralQConsumer`).
+arguments of `CenteredFreeEnergy` then give the per-box countable-exception uniqueness in `t`
+stated above, for a box with an edge witness. The general-`q` statement is
+`fkgq_countable_free_wired_disagreement` (`FKGeneralQConsumer`).
 
 ## ii. Key results
 
@@ -49,7 +52,8 @@ hypotheses. The general-`q` statement is `fkgq_countable_free_wired_disagreement
 - `ecz_additiveDoublingBound` : the doubling bound along `K_j`.
 - `ecz_box_vanHove_subadd` : the van Hove tiling bound.
 - `ecz_perEdgeDensityConverges` : convergence of the per-edge free energy of boxes.
-- `ecz_fk_uniqueness` : countable-exception uniqueness for `q = 2`.
+- `ecz_fk_uniqueness` : per-box countable-exception uniqueness in `t` for `q = 2`, for a box
+  with an edge witness.
 
 ## iii. Table of contents
 
@@ -2101,10 +2105,9 @@ lemma ecz_fk_uniqueness_of_perEdgeDensity (hd : 1 ≤ d) (N : ℕ) (eb : Sym2 (b
   ecz_fk_uniqueness_of_blockOscillation hd N eb heb hEbox
     (fun s => ecz_blockOscillation_of_perEdgeDensity s (hρ s))
 
-/-- For `d ≥ 1`, the free and wired `q = 2` infinite-volume measures agree on every increasing
-event of
-`Λ_N` for all `t = logit(p)` outside a countable set. This is the `q = 2` case of
-`fkgq_countable_free_wired_disagreement`.
+/-- For `d ≥ 1`, a fixed box `Λ_N` with an edge witness, the free and wired `q = 2` measures
+agree on every increasing event of `Λ_N` for all `t = logit(p)` outside a countable set in `t`.
+This is the per-box `q = 2` case of `fkgq_countable_free_wired_disagreement`.
 -/
 lemma ecz_fk_uniqueness (hd : 1 ≤ d) (N : ℕ) (eb : Sym2 (boxVerts d N))
     (heb : eb ∈ (boxGraph d N).edgeFinset) :

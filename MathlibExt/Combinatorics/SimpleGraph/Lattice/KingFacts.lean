@@ -23,9 +23,10 @@ of `K`, the head of the successor of a dart is either the same site or a king ne
 * `StatMech.Lattice.kf_boundaryKingConnected`: `BoundaryKingConnected K` holds for every `K`.
 * `StatMech.Lattice.kf_dartNext_head_kingAdj_or_eq`: the head of `dartNext K e` equals `e.head` or
   is a king neighbour of it.
-* `StatMech.Lattice.kf_interfaceConnected_of_orbitResidues`: `OrbitKingTransport K` and
-  `OrbitVertexSaturate K` imply `InterfaceConnected K`. The first hypothesis fails for every finite
-  nonempty `K` (see the docstring).
+
+The reduction `kf_interfaceConnected_of_orbitResidues` was removed: its first hypothesis
+`OrbitKingTransport K` fails for every finite nonempty `K`, so for the intended finite
+applications it covered only `K = ∅`.
 -/
 
 @[expose] public section
@@ -114,18 +115,6 @@ theorem kf_orbitKingTransport_step (K : Set (Site 2)) (e : Dart)
     · left; rw [hfix, hdh]
     · right; rw [← hdh]; exact hking
   · exact ⟨dartNext K d, dartNext_isBoundaryDart K d hd, rfl, kf_sameOrbit_step K hsame⟩
-
-/-- `OrbitKingTransport K` and `OrbitVertexSaturate K` imply `InterfaceConnected K`; the third
-condition of `interfaceConnected_of_kingResidues` holds by `kf_boundaryKingConnected`. Vacuity
-warning: `OrbitKingTransport K` fails for every finite nonempty `K`
-(`ifg_not_orbitKingTransport_of_finite`): if `c ∈ K` has the largest first coordinate, the dart
-from `c` to `c + (1,0)` is a boundary dart, and the neighbour `c + (2,0)` of its head has no lattice
-neighbour in `K`, so no boundary dart has it as head. So for finite `K` this lemma only covers
-`K = ∅`. -/
-theorem kf_interfaceConnected_of_orbitResidues (K : Set (Site 2))
-    (htr : OrbitKingTransport K) (hsat : OrbitVertexSaturate K) :
-    InterfaceConnected K :=
-  interfaceConnected_of_kingResidues K htr (kf_boundaryKingConnected K) hsat
 
 end Lattice
 

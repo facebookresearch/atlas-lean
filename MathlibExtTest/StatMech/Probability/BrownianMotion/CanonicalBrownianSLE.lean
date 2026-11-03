@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.BrownianMotion.CanonicalBrownianSLE
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.BrownianMotion.CanonicalBrownianSLE`
@@ -43,7 +43,9 @@ example (ω : ℝ → ℝ) : canonicalBrownianLoewnerDomain 4 ω 1 =
   canonicalBrownianLoewnerDomain_eq_complement 4 ω 1
 
 example : ∀ᵐ ω ∂brownianProductLaw,
-    Nonempty (canonicalBrownianLoewnerDomain 4 ω 1 ≃ₜ UpperHalfPlane.upperHalfPlaneSet) := by
+    ∃ e : canonicalBrownianLoewnerDomain 4 ω 1 ≃ₜ UpperHalfPlane.upperHalfPlaneSet,
+      ∀ z : canonicalBrownianLoewnerDomain 4 ω 1,
+        (e z : ℂ) = canonicalBrownianLoewnerMaps 4 ω 1 z := by
   filter_upwards [canonicalBrownianLoewnerMaps_homeomorph 4] with ω h
   exact h 1 zero_le_one
 

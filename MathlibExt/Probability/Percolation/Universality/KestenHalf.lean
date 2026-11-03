@@ -11,22 +11,26 @@ public import MathlibExt.Probability.Percolation.Universality.Defs
 public import MathlibExt.Probability.Percolation.Universality.DualConfigLaw
 
 /-!
-# Kesten's theorem `p_c = 1/2`, conditional on its analytic inputs
+# Self-dual assembly for the critical probability
 
 Bond percolation on `ℤ²` at density `1/2` is self-dual: the rotated complement configuration
 `dualConfig` has the same law (`dualConfig_preserves_half`). Consequently an event whose complement
 is its own preimage under a `ℙ_{1/2}`-preserving map `R ∘ dualConfig` has probability exactly `1/2`
 (`half_crossingProb_of_selfDual_dichotomy`). This file combines that computation with two assumed
-inputs to obtain `p_c(ℤ²) = 1/2`:
+inputs in an abstract assembly lemma:
 
 * `θ(1/2) = 0` (Harris), assumed in the form `hCorLowerBound : BoxCrossingProperty ℙ_{1/2} ρ →
   θ(1/2) = 0` together with `hbxp`; it gives `1/2 ≤ p_c`.
 * crossing probabilities of the self-dual family tend to `0` for every `p < p_c`
   (`hSharpThreshold`); with the self-duality computation it gives `p_c ≤ 1/2`.
 
-So `kesten_pc_eq_half_of_bxp` is a conditional form of Kesten's theorem: the self-duality step and
-the order-theoretic assembly are proved; Harris's theorem, the subcritical decay of crossings, and
-the existence of an exactly self-dual crossing family are hypotheses.
+`criticalProbability_eq_half_of_selfDualAssembly` is **not** Kesten's theorem: it is an
+abstract assembly lemma whose hypotheses are the substantive inputs of Kesten's theorem
+(Harris's theorem, the subcritical decay of crossings, and the existence of an exactly
+self-dual crossing family). No concrete self-dual crossing family satisfying these inputs is
+constructed, so this file does not prove `p_c(ℤ²) = 1/2`. A proof of Kesten's theorem would
+require discharging those inputs for an actual rectangle-crossing family; that work belongs
+in `WantedExt`, not here.
 
 ## Main definitions
 
@@ -41,9 +45,9 @@ the existence of an exactly self-dual crossing family are hypotheses.
   `StatMech.Percolation.theta`.
 * `StatMech.Universality.half_le_criticalProbability_of_subcritical`: `θ(1/2) = 0 → 1/2 ≤ p_c`.
 * `StatMech.Universality.criticalProbability_le_half_of_sharpThreshold`.
-* `StatMech.Universality.kesten_pc_eq_half_of_bxp`,
-  `StatMech.Universality.kesten_no_percolation_at_pc`:
-  conditional Kesten theorem.
+* `StatMech.Universality.criticalProbability_eq_half_of_selfDualAssembly`,
+  `StatMech.Universality.no_percolation_at_pc_of_selfDualAssembly`:
+  abstract self-dual assembly lemma (not Kesten's theorem).
 
 ## References
 
@@ -175,8 +179,10 @@ theorem criticalProbability_le_half_of_sharpThreshold
   have hcontra := tendsto_nhds_unique hT tendsto_const_nhds
   norm_num at hcontra
 
-/-- **Kesten theorem** `p_c(ℤ²) = 1/2` for bond percolation (Kesten, "The critical probability of
-bond percolation on the square lattice equals 1/2", 1980), in a conditional form.
+/-- Abstract assembly lemma: `p_c(ℤ²) = 1/2` for bond percolation follows from the
+self-duality computation together with the assumed substantive inputs of Kesten's theorem
+(Kesten, "The critical probability of bond percolation on the square lattice equals 1/2",
+1980). This is **not** Kesten's theorem: the hypotheses below are assumed, not proved.
 
 The hypotheses that carry the mathematical content of Kesten's theorem are assumed:
 * `hCorLowerBound` (with `hbxp`): `θ(1/2) = 0`. This is Harris's theorem; in the literature it
@@ -192,9 +198,9 @@ What is proved is the self-duality computation `ℙ_{1/2}(boxFam n) = 1/2` and t
 
 `hbxp` enters only through `hCorLowerBound`.
 
-See also `StatMech.TwoDim.kesten_pc_eq_half`, a conditional form stated with an abstract crossing
-function. -/
-theorem kesten_pc_eq_half_of_bxp
+See also `StatMech.TwoDim.kesten_pc_le_half`, a conditional upper-half form stated with an
+abstract crossing function. -/
+theorem criticalProbability_eq_half_of_selfDualAssembly
     {ρ : ℝ} {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (hbxp : BoxCrossingProperty halfMeasure ρ)
@@ -214,10 +220,10 @@ theorem kesten_pc_eq_half_of_bxp
     criticalProbability_le_half_of_sharpThreshold hSharpThreshold hbalance
   linarith
 
-/-- Conditional Kesten theorem together with `θ(p_c) = 0`: under the hypotheses of
-`kesten_pc_eq_half_of_bxp`, `p_c = 1/2` and `θ(1/2) = 0`. The second conjunct is
+/-- Abstract assembly lemma together with `θ(p_c) = 0`: under the hypotheses of
+`criticalProbability_eq_half_of_selfDualAssembly`, `p_c = 1/2` and `θ(1/2) = 0`. The second conjunct is
 `hCorLowerBound hbxp`, i.e. it is assumed (Harris 1960), not derived. -/
-theorem kesten_no_percolation_at_pc
+theorem no_percolation_at_pc_of_selfDualAssembly
     {ρ : ℝ} {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (hbxp : BoxCrossingProperty halfMeasure ρ)
@@ -230,7 +236,7 @@ theorem kesten_no_percolation_at_pc
         Tendsto (fun n => (bernoulliProductMeasure p hp).real (boxFam n)) atTop (𝓝 0)) :
     criticalProbability 2 = 1 / 2 ∧
       percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0 :=
-  ⟨kesten_pc_eq_half_of_bxp hbxp hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold,
+  ⟨criticalProbability_eq_half_of_selfDualAssembly hbxp hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold,
     hCorLowerBound hbxp⟩
 
 end Universality

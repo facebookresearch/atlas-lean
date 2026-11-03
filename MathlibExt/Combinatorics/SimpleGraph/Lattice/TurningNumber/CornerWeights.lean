@@ -15,6 +15,10 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.LeftCor
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.StraightCorner
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.TurningNumber.WalkCornerSum
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.NormNum
+
 /-!
 # Corner weights along a simple closed walk without right turns
 

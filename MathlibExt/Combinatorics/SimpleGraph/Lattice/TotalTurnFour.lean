@@ -21,8 +21,6 @@ most `4`, and nonzero), using that the total turn is a multiple of `4`, and rela
 Euler-characteristic form `EulerCharOne`.
 
 The statement itself is not proved unconditionally here.
-`ttf_totalTurn_eq_four_of_balancePreservingContraction` assumes `BalancePreservingContraction`,
-which is false (`not_balancePreservingContraction`), so it is vacuous.
 The general `turningIsFullRevolution_of_eulerCharOne` assumes `EulerCharOne`, which for orbits
 of period at least three is equivalent to the conclusion (`ttf_eulerCharOne_iff_winds`). The face
 loops of these orbits are cycles (`ndt_orbit_isCycle`), so the Umlaufsatz for simple closed lattice
@@ -40,8 +38,6 @@ transfer is not done here.
   `±4` iff both winding bounds hold.
 * `StatMech.Lattice.ttf_eulerCharOne_iff_winds`: for period at least three, `EulerCharOne` iff
   both winding bounds hold.
-* `StatMech.Lattice.ttf_totalTurn_eq_four_of_balancePreservingContraction`: total turn `±4`
-  under `BalancePreservingContraction` (vacuous).
 -/
 
 @[expose] public section
@@ -115,16 +111,6 @@ theorem ttf_eulerCharOne_iff_winds (K : Set (Site 2))
   rw [eulerCharOne_iff_turningIsFullRevolution (ndt_StarHull K) a hp]
   unfold TurningIsFullRevolution
   rw [ttf_winds_iff]
-
-/-- Total turn `±4` for every boundary orbit of a finite nonempty star hull, assuming
-`BalancePreservingContraction`. Vacuous: `BalancePreservingContraction` is refuted by
-`not_balancePreservingContraction`. -/
-theorem ttf_totalTurn_eq_four_of_balancePreservingContraction (K : Set (Site 2))
-    (hSK : (ndt_StarHull K).Finite) (hne : (ndt_StarHull K).Nonempty)
-    (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e})
-    (hcontr : BalancePreservingContraction) :
-    TurningIsFullRevolution (ndt_StarHull K) a :=
-  turningIsFullRevolution_of_contraction hcontr (ndt_StarHull K) hSK hne a
 
 /-- The unit-cell orbit winds exactly once. -/
 theorem ttf_unitCell_winds :

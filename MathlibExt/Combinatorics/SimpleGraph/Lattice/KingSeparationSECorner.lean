@@ -25,13 +25,14 @@ cat_CrossArcThick`.
 The residual predicates in this chain are reductions, not theorems: for a four-thin walk and an
 interior seed, each of them is equivalent to `ksc_NoKingSeparation Vc seed` itself, because the
 conclusion of each predicate is a thick point (impossible for a four-thin walk) and
-`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The four-thin results below
-therefore restate the target conclusion rather than prove it. The fjord and staircase examples
-show the predicates are satisfiable; they do not show they hold for any four-thin walk with a
-king separation (they cannot).
+`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The conditional four-thin
+theorems that restated the target conclusion from these predicates were therefore removed;
+what remains here is the geometric corner analysis, the weakening from the previous
+predicate, and the fjord / staircase examples, which show the predicates are satisfiable
+without showing they hold for any four-thin walk with a king separation (they cannot).
 
-`cat_CrossArcThick` fails for the four-thin figure-eight walk (`wpc_cat_crossArcThick_false`), so
-four-thinness alone is not enough for king connectivity of the interior.
+The four-thin figure-eight walk has a king separation, so four-thinness alone is not enough
+for king connectivity of the interior.
 
 ## Main definitions
 
@@ -42,12 +43,7 @@ four-thinness alone is not enough for king connectivity of the interior.
 * `StatMech.Lattice.cat_thickPoint_of_seCorner`, `StatMech.Lattice.cat_seCorner_dichotomy`,
   `StatMech.Lattice.cat_runEnd_corner_data`: the south-east corner analysis.
 * `StatMech.Lattice.cat_escape_structure_eastbox`: the least escape site with box bounds.
-* `StatMech.Lattice.cat_noKingSeparation_of_fourThin`,
-  `StatMech.Lattice.cat_kingRowLinked_of_fourThin`,
-  `StatMech.Lattice.cat_kingInteriorConnected_of_fourThin`: conditional on `cat_CrossArcThick`.
 * `StatMech.Lattice.cat_crossArcThick_of_runEndReconnect`: the new predicate is weaker.
-* `StatMech.Lattice.cat_residuals_iff_noKingSeparation_of_fourThin`: for four-thin walks every
-  residual predicate of the chain is equivalent to the conclusion.
 * `StatMech.Lattice.cat_fjord_nonvacuous`.
 -/
 
@@ -142,7 +138,7 @@ and that the south-east corner `(e, q 1 - 1)` is either off the walk and outside
 the walk with both corner edges traversed.
 
 The weakest predicate of the chain. For a four-thin walk and an interior seed it is equivalent to
-`ksc_NoKingSeparation Vc seed`; it fails for the figure-eight walk (`wpc_cat_crossArcThick_false`).
+`ksc_NoKingSeparation Vc seed`, so it is not used as a hypothesis for proving king connectivity.
 -/
 def cat_CrossArcThick {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) (seed : Site 2) : Prop :=
   ∀ (T : Set (Site 2)), seed ∈ T → T ⊆ jil_offSupportInterior Vc → ksc_KingSaturated Vc T →
@@ -203,98 +199,6 @@ theorem cat_escape_structure_eastbox {a : Site 2} (Vc : (hypercubicLattice 2).Wa
     kns_escape_axials_onSupport Vc hsat hTsub hqI hqnT (M₀ + 1) hmin hqbox hWbox hSbox
   exact ⟨T, hseedT, hTsub, hsat, M₀, q, hqI, hqnT, hmin, hW, hSsup, hqbox, hq1box, hq0box, hM₀⟩
 
-/-- A four-thin closed walk satisfying `cat_CrossArcThick` has no king separation from an interior
-seed.
-
-Conditional: for four-thin walks the hypothesis is equivalent to the conclusion. It is false for the
-four-thin figure-eight walk, so no proof of `cat_CrossArcThick` from four-thinness alone exists. -/
-theorem cat_noKingSeparation_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : cat_CrossArcThick Vc seed) :
-    ksc_NoKingSeparation Vc seed := by
-  by_contra hns
-  classical
-  have hsep := (kns_kingSeparation_iff_not_noKingSeparation Vc hseedI).mpr hns
-  obtain ⟨T, hseedT, hTsub, hsat, M₀, q, hqI, hqnT, hmin, hW, hS, hqbox, hq1box, hq0box, hM₀⟩ :=
-    cat_escape_structure_eastbox Vc hsep
-  set M : ℤ := M₀ + 1 with hM
-  have hnotThin : kns_ThickPoint Vc → False :=
-    fun htp => (kns_thickPoint_iff_not_fourThin Vc).mp htp hthin
-  have hbottom : ∀ wx : ℤ, (-M < wx ∧ wx ≤ M) →
-      (![wx, q 1] : Site 2) ∈ jil_offSupportInterior Vc →
-      (![wx, q 1] : Site 2) ∉ T →
-      (![wx, q 1 - 1] : Site 2) ∈ Vc.support := by
-    intro wx hwxbox hwI hwnT
-    exact ewt_escapeRow_down_onSupport Vc hsat M hmin hqbox hwI hwnT ⟨hwxbox, hq1box⟩
-  have hSWclause :
-      ((![q 0 - 1, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc ∧
-        (![q 0 - 1, q 1 - 1] : Site 2) ∉ Vc.support) ∨
-      ((![q 0 - 1, q 1 - 1] : Site 2) ∈ Vc.support ∧
-        s((![q 0 - 1, q 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges ∧
-        s((![q 0, q 1 - 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges) := by
-    by_cases hCsup : (![q 0 - 1, q 1 - 1] : Site 2) ∈ Vc.support
-    · by_cases hWC : s((![q 0 - 1, q 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges
-      · by_cases hSC : s((![q 0, q 1 - 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges
-        · exact Or.inr ⟨hCsup, hWC, hSC⟩
-        · exact absurd (etp_thickPoint_of_swCorner Vc hW hS hCsup (Or.inr hSC)) hnotThin
-      · exact absurd (etp_thickPoint_of_swCorner Vc hW hS hCsup (Or.inl hWC)) hnotThin
-    · have hCbox : (-M < q 0 - 1 ∧ q 0 - 1 ≤ M) ∧ (-M < q 1 - 1 ∧ q 1 - 1 ≤ M) :=
-        ⟨hq0box, hq1box⟩
-      have hcorner := kns_lexBelow_diag_corner Vc hsat hTsub hqI hqnT M hmin hqbox hCbox
-      have hCext : (![q 0 - 1, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc := by
-        rcases hcorner with h | h
-        · exact absurd h hCsup
-        · exact h
-      exact Or.inl ⟨hCext, hCsup⟩
-  obtain ⟨e, he₁, he₂, he₃⟩ := gtp_eastBoundary_onSupport Vc hqI
-  have hlastL : (![e - 1, q 1] : Site 2) ∈ jec_leftRegion Vc :=
-    (jil_mem_offSupportInterior Vc _ |>.mp (he₃ (e - 1) (by omega) (by omega))).2
-  obtain ⟨⟨he1a, he1b⟩, _⟩ := hM₀ _ hlastL
-  simp only [Matrix.cons_val_zero] at he1a he1b
-  have heM : -M < e - 1 ∧ e - 1 ≤ M := ⟨by rw [hM]; omega, by rw [hM]; omega⟩
-  obtain ⟨hlastI, hlastnT, hbotCorner⟩ :=
-    cat_runEnd_corner_data Vc hsat hTsub M hqnT hmin hqbox hq1box he₁ heM he₃
-  have hSEclause :
-      ((![e, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc ∧
-        (![e, q 1 - 1] : Site 2) ∉ Vc.support) ∨
-      ((![e, q 1 - 1] : Site 2) ∈ Vc.support ∧
-        s((![e, q 1] : Site 2), (![e, q 1 - 1] : Site 2)) ∈ Vc.edges ∧
-        s((![e - 1, q 1 - 1] : Site 2), (![e, q 1 - 1] : Site 2)) ∈ Vc.edges) := by
-    by_cases hCsup : (![e, q 1 - 1] : Site 2) ∈ Vc.support
-    · by_cases hEC : s((![e, q 1] : Site 2), (![e, q 1 - 1] : Site 2)) ∈ Vc.edges
-      · by_cases hBC : s((![e - 1, q 1 - 1] : Site 2), (![e, q 1 - 1] : Site 2)) ∈ Vc.edges
-        · exact Or.inr ⟨hCsup, hEC, hBC⟩
-        · exact absurd (cat_thickPoint_of_seCorner Vc he₂ hbotCorner hCsup (Or.inr hBC)) hnotThin
-      · exact absurd (cat_thickPoint_of_seCorner Vc he₂ hbotCorner hCsup (Or.inl hEC)) hnotThin
-    · have hCEbox : (-M < e ∧ e ≤ M) ∧ (-M < q 1 - 1 ∧ q 1 - 1 ≤ M) :=
-        ⟨⟨by rw [hM]; omega, by rw [hM]; omega⟩, hq1box⟩
-      have hdich := cat_seCorner_dichotomy Vc hsat M e hmin hqbox hCEbox hlastI hlastnT
-      have hCext : (![e, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc := by
-        rcases hdich with h | h
-        · exact absurd h hCsup
-        · exact h
-      exact Or.inl ⟨hCext, hCsup⟩
-  exact hnotThin
-    (hres T hseedT hTsub hsat M q hqI hqnT hmin hqbox hq1box hW hS hSWclause hbottom
-      e he₁ he₂ he₃ hbotCorner hSEclause)
-
-/-- A four-thin walk satisfying `cat_CrossArcThick` is king row-linked to an interior seed.
-Conditional, as `cat_noKingSeparation_of_fourThin`. -/
-theorem cat_kingRowLinked_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : cat_CrossArcThick Vc seed) :
-    mci_KingRowLinked Vc seed :=
-  ksc_kingRowLinked_of_noKingSeparation Vc hseedI
-    (cat_noKingSeparation_of_fourThin Vc hseedI hthin hres)
-
-/-- A four-thin walk with nonempty interior satisfying `cat_CrossArcThick` for every interior seed
-has a king-connected interior. Conditional, as `cat_noKingSeparation_of_fourThin`. -/
-theorem cat_kingInteriorConnected_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {z₀ : Site 2} (hz₀ : z₀ ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : ∀ seed ∈ jil_offSupportInterior Vc, cat_CrossArcThick Vc seed) :
-    mci_KingInteriorConnected Vc :=
-  ⟨z₀, hz₀, cat_kingRowLinked_of_fourThin Vc hz₀ hthin (hres z₀ hz₀)⟩
-
 /-- `gtp_RunEndReconnect` implies `cat_CrossArcThick`. -/
 theorem cat_crossArcThick_of_runEndReconnect {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {seed : Site 2} (hgtp : gtp_RunEndReconnect Vc seed) :
@@ -334,30 +238,6 @@ theorem cat_kda_crossArcThick : cat_CrossArcThick kda_stairDR (![3, 1] : Site 2)
   intro T hseedT hTsub hsat M q hqI hqnT _hmin _hqbox _hq1box _hW _hS _hcorner _hbottom
     _e _he₁ _he₂ _he₃ _hbotCorner _hSEclause
   exact absurd (ksc_kda_noKingSeparation T hseedT hTsub hsat hqI) hqnT
-
-/-- For a four-thin closed walk and an interior seed, each residual predicate of the
-thick-point chain (`kns_EscapeThickPoint`, `etp_EscapeWallThick`, `ewt_BottomWallThick`,
-`gtp_RunEndReconnect`, `cat_CrossArcThick`) is equivalent to the conclusion
-`ksc_NoKingSeparation Vc seed`. So the `*_noKingSeparation_of_fourThin` theorems restate their
-target rather than reduce it to a weaker input. -/
-theorem cat_residuals_iff_noKingSeparation_of_fourThin {a : Site 2}
-    (Vc : (hypercubicLattice 2).Walk a a) {seed : Site 2}
-    (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc) :
-    (cat_CrossArcThick Vc seed ↔ ksc_NoKingSeparation Vc seed) ∧
-    (gtp_RunEndReconnect Vc seed ↔ ksc_NoKingSeparation Vc seed) ∧
-    (ewt_BottomWallThick Vc seed ↔ ksc_NoKingSeparation Vc seed) ∧
-    (etp_EscapeWallThick Vc seed ↔ ksc_NoKingSeparation Vc seed) ∧
-    (kns_EscapeThickPoint Vc seed ↔ ksc_NoKingSeparation Vc seed) := by
-  have k := fun h => kns_escapeThickPoint_of_noKingSeparation Vc (seed := seed) h
-  have e := fun h => etp_escapeWallThick_of_escapeThickPoint Vc (k h)
-  have b := fun h => ewt_bottomWallThick_of_escapeWallThick Vc (e h)
-  have g := fun h => gtp_runEndReconnect_of_bottomWallThick Vc (b h)
-  have c := fun h => cat_crossArcThick_of_runEndReconnect Vc (g h)
-  exact ⟨⟨cat_noKingSeparation_of_fourThin Vc hseedI hthin, c⟩,
-    ⟨gtp_noKingSeparation_of_fourThin Vc hseedI hthin, g⟩,
-    ⟨ewt_noKingSeparation_of_fourThin Vc hseedI hthin, b⟩,
-    ⟨etp_noKingSeparation_of_fourThin Vc hseedI hthin, e⟩,
-    ⟨kns_noKingSeparation_of_fourThin Vc hseedI hthin, k⟩⟩
 
 end Lattice
 

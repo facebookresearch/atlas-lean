@@ -9,6 +9,11 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanWindingConstruct
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Push
+
 /-!
 # The keep–reconnect residue fails for infinite graphs
 

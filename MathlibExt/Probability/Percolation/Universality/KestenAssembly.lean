@@ -11,9 +11,9 @@ public import MathlibExt.Probability.Percolation.Universality.BXPFromRSW
 public import MathlibExt.Probability.Percolation.Universality.BXPTransfer
 
 /-!
-# Kesten's theorem from an RSW seed at `p = 1/2`
+# Self-dual assembly from an RSW seed at `p = 1/2`
 
-This file replaces the box-crossing hypothesis of `kesten_pc_eq_half_of_bxp` by more elementary
+This file replaces the box-crossing hypothesis of `criticalProbability_eq_half_of_selfDualAssembly` by more elementary
 crossing inputs at `p = 1/2`:
 
 * `KaSelfDualBoxSeed ℙ_{1/2}`: a uniform positive lower bound on `ℙ_{1/2}` of the long-way crossings
@@ -23,8 +23,8 @@ crossing inputs at `p = 1/2`:
   This one is proved (`kaCrossingTranslationInvariant_halfMeasure`).
 
 From these, `ka_bxp_half_of_rsw` gives the box-crossing property of `ℙ_{1/2}` with aspect ratio `2`,
-and `ka_kesten_pc_eq_half` / `ka_kesten_pc_eq_half_of_seed` give `p_c = 1/2` under the remaining
-hypotheses of `kesten_pc_eq_half_of_bxp` (Harris's theorem as `hCorLowerBound`, subcritical decay
+and `ka_criticalProbability_eq_half_of_selfDualAssembly` / `ka_criticalProbability_eq_half_of_selfDualAssembly_of_seed` give `p_c = 1/2` under the remaining
+hypotheses of `criticalProbability_eq_half_of_selfDualAssembly` (Harris's theorem as `hCorLowerBound`, subcritical decay
 of a self-dual crossing family as `hSharpThreshold`, and the self-duality identity `hdich`).
 
 ## Main definitions
@@ -38,7 +38,7 @@ of a self-dual crossing family as `hSharpThreshold`, and the self-duality identi
 * `StatMech.Universality.ka_rsw_strip_glue_extend`: gluing two horizontal crossings with a vertical
   one (positive association).
 * `StatMech.Universality.ka_bxp_half_of_rsw`: the RSW seed implies the box-crossing property.
-* `StatMech.Universality.ka_kesten_pc_eq_half_of_seed`: conditional Kesten theorem.
+* `StatMech.Universality.ka_criticalProbability_eq_half_of_selfDualAssembly_of_seed`: abstract self-dual assembly lemma (not Kesten's theorem).
 
 ## References
 
@@ -167,12 +167,12 @@ theorem ka_bxp_half_of_rsw
       bxr_twoDim_verticalCrossingEvent_eq (n : ℤ) (2 * (n : ℤ))]
     exact hseed.tall n
 
-/-- Conditional **Kesten theorem** `p_c(ℤ²) = 1/2` (Kesten 1980), with the box-crossing hypothesis
-of `kesten_pc_eq_half_of_bxp` replaced by the RSW seed `hseed` (assumed) and translation
-invariance `htinv` (provable, see `ka_kesten_pc_eq_half_of_seed`). The other inputs are as in
-`kesten_pc_eq_half_of_bxp`: Harris's theorem as `hCorLowerBound`, subcritical decay of the
+/-- Abstract self-dual assembly lemma: `p_c(ℤ²) = 1/2` (the conclusion of Kesten's theorem, Kesten 1980), with the box-crossing hypothesis
+of `criticalProbability_eq_half_of_selfDualAssembly` replaced by the RSW seed `hseed` (assumed) and translation
+invariance `htinv` (provable, see `ka_criticalProbability_eq_half_of_selfDualAssembly_of_seed`). The other inputs are as in
+`criticalProbability_eq_half_of_selfDualAssembly`: Harris's theorem as `hCorLowerBound`, subcritical decay of the
 self-dual family `boxFam` as `hSharpThreshold`, and the self-duality identity `hdich`. -/
-theorem ka_kesten_pc_eq_half
+theorem ka_criticalProbability_eq_half_of_selfDualAssembly
     {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (hseed : KaSelfDualBoxSeed halfMeasure)
@@ -185,12 +185,12 @@ theorem ka_kesten_pc_eq_half
     (hSharpThreshold : ∀ (p : ℝ≥0) (hp : p ≤ 1), (p : ℝ) < criticalProbability 2 →
         Tendsto (fun n => (bernoulliProductMeasure p hp).real (boxFam n)) atTop (𝓝 0)) :
     criticalProbability 2 = 1 / 2 :=
-  kesten_pc_eq_half_of_bxp (ρ := 2) (R := R) (boxFam := boxFam)
+  criticalProbability_eq_half_of_selfDualAssembly (ρ := 2) (R := R) (boxFam := boxFam)
     (ka_bxp_half_of_rsw hseed htinv) hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold
 
-/-- Conditional Kesten theorem with `θ(1/2) = 0`; the second conjunct comes from `hCorLowerBound`.
+/-- Abstract self-dual assembly lemma with `θ(1/2) = 0`; the second conjunct comes from `hCorLowerBound`.
 -/
-theorem ka_kesten_no_percolation_at_pc
+theorem ka_no_percolation_at_pc_of_selfDualAssembly
     {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (hseed : KaSelfDualBoxSeed halfMeasure)
@@ -204,14 +204,14 @@ theorem ka_kesten_no_percolation_at_pc
         Tendsto (fun n => (bernoulliProductMeasure p hp).real (boxFam n)) atTop (𝓝 0)) :
     criticalProbability 2 = 1 / 2 ∧
       percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0 :=
-  ⟨ka_kesten_pc_eq_half hseed htinv hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold,
+  ⟨ka_criticalProbability_eq_half_of_selfDualAssembly hseed htinv hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold,
     hCorLowerBound (ka_bxp_half_of_rsw hseed htinv)⟩
 
-/-- Conditional **Kesten theorem** `p_c(ℤ²) = 1/2` (Kesten 1980) with translation invariance
+/-- Abstract self-dual assembly lemma: `p_c(ℤ²) = 1/2` (the conclusion of Kesten's theorem, Kesten 1980) with translation invariance
 discharged. Remaining hypotheses: the RSW seed `hseed` at `p = 1/2`, Harris's theorem
 `hCorLowerBound`, subcritical decay `hSharpThreshold` of a self-dual family `boxFam`, and the
 self-duality identity `hdich` for that family. -/
-theorem ka_kesten_pc_eq_half_of_seed
+theorem ka_criticalProbability_eq_half_of_selfDualAssembly_of_seed
     {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (hseed : KaSelfDualBoxSeed halfMeasure)
@@ -223,7 +223,7 @@ theorem ka_kesten_pc_eq_half_of_seed
     (hSharpThreshold : ∀ (p : ℝ≥0) (hp : p ≤ 1), (p : ℝ) < criticalProbability 2 →
         Tendsto (fun n => (bernoulliProductMeasure p hp).real (boxFam n)) atTop (𝓝 0)) :
     criticalProbability 2 = 1 / 2 :=
-  ka_kesten_pc_eq_half hseed kaCrossingTranslationInvariant_halfMeasure hCorLowerBound hHm
+  ka_criticalProbability_eq_half_of_selfDualAssembly hseed kaCrossingTranslationInvariant_halfMeasure hCorLowerBound hHm
     hRmeas hRpres hdich hSharpThreshold
 
 end Universality

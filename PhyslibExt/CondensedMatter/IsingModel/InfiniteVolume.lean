@@ -29,8 +29,9 @@ only bonds inside `Λ_n`.
 Since the configuration space is compact, every sequence of probability measures has a weakly
 convergent subsequence (Prokhorov). An *infinite-volume state* of a sequence is such a subsequential
 weak limit, and `plusState`, `minusState`, `freeState` are subsequential limits selected by choice.
-That the plus state is in fact the full weak limit, translation invariant, and a DLR state is proved
-in other files of this directory.
+That the plus state is translation invariant and a DLR state is proved
+in other files of this directory. Full-sequence weak convergence is not claimed:
+`plusState` is only a chosen subsequential limit.
 
 ## ii. Key results
 
@@ -266,8 +267,9 @@ lemma limitState_isInfiniteVolumeState
     InfiniteVolumeState ρ (limitState ρ) :=
   (exists_infiniteVolumeState ρ).choose_spec
 
-/-- The plus state: a weak subsequential limit of the plus-boundary box measures. Its convergence
-along the full sequence is proved separately. -/
+/-- The plus state: a weak subsequential limit of the plus-boundary box measures.
+Full-sequence convergence is not claimed here: the library only provides this state as a
+chosen subsequential limit (see `plusState_isInfiniteVolumeState`). -/
 noncomputable def plusState (d : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   limitState (fun n => plusMeasure d n β h)

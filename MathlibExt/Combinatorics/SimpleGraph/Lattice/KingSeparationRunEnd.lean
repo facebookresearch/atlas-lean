@@ -20,10 +20,11 @@ also records that two adjacent walk sites are joined by a walk edge or form a th
 The residual predicates in this chain are reductions, not theorems: for a four-thin walk and an
 interior seed, each of them is equivalent to `ksc_NoKingSeparation Vc seed` itself, because the
 conclusion of each predicate is a thick point (impossible for a four-thin walk) and
-`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The four-thin results below
-therefore restate the target conclusion rather than prove it. The fjord and staircase examples
-show the predicates are satisfiable; they do not show they hold for any four-thin walk with a
-king separation (they cannot).
+`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The conditional four-thin
+theorems that restated the target conclusion from these predicates were therefore removed;
+what remains here is the geometric corner analysis, the weakening from the previous
+predicate, and the fjord / staircase examples, which show the predicates are satisfiable
+without showing they hold for any four-thin walk with a king separation (they cannot).
 
 ## Main definitions
 
@@ -33,8 +34,6 @@ king separation (they cannot).
 
 * `StatMech.Lattice.gtp_edge_or_thick_horiz`, `StatMech.Lattice.gtp_edge_or_thick_vert`.
 * `StatMech.Lattice.gtp_eastBoundary_onSupport`: the east end of the run through an interior site.
-* `StatMech.Lattice.gtp_noKingSeparation_of_fourThin`,
-  `StatMech.Lattice.gtp_kingRowLinked_of_fourThin`: conditional on `gtp_RunEndReconnect`.
 * `StatMech.Lattice.gtp_runEndReconnect_of_bottomWallThick`: the new predicate is weaker.
 * `StatMech.Lattice.gtp_fjord_nonvacuous`.
 -/
@@ -162,62 +161,6 @@ def gtp_RunEndReconnect {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) (seed
       (∀ (e : ℤ), q 0 < e → (![e, q 1] : Site 2) ∈ Vc.support →
         (∀ x : ℤ, q 0 ≤ x → x < e → (![x, q 1] : Site 2) ∈ jil_offSupportInterior Vc) →
         kns_ThickPoint Vc)
-
-/-- A four-thin closed walk satisfying `gtp_RunEndReconnect` has no king separation from an interior
-seed.
-
-Conditional: for four-thin walks the hypothesis is equivalent to the conclusion. -/
-theorem gtp_noKingSeparation_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : gtp_RunEndReconnect Vc seed) :
-    ksc_NoKingSeparation Vc seed := by
-  by_contra hns
-  classical
-  have hsep := (kns_kingSeparation_iff_not_noKingSeparation Vc hseedI).mpr hns
-  obtain ⟨T, hseedT, hTsub, hsat, M, q, hqI, hqnT, hmin, hW, hS, hqbox, hq1box, hq0box⟩ :=
-    ewt_escape_structure_rowbox Vc hsep
-  have hbottom : ∀ wx : ℤ, (-M < wx ∧ wx ≤ M) →
-      (![wx, q 1] : Site 2) ∈ jil_offSupportInterior Vc →
-      (![wx, q 1] : Site 2) ∉ T →
-      (![wx, q 1 - 1] : Site 2) ∈ Vc.support := by
-    intro wx hwxbox hwI hwnT
-    exact ewt_escapeRow_down_onSupport Vc hsat M hmin hqbox hwI hwnT ⟨hwxbox, hq1box⟩
-  have hcornerClause :
-      ((![q 0 - 1, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc ∧
-        (![q 0 - 1, q 1 - 1] : Site 2) ∉ Vc.support) ∨
-      ((![q 0 - 1, q 1 - 1] : Site 2) ∈ Vc.support ∧
-        s((![q 0 - 1, q 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges ∧
-        s((![q 0, q 1 - 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges) := by
-    by_cases hCsup : (![q 0 - 1, q 1 - 1] : Site 2) ∈ Vc.support
-    · by_cases hWC : s((![q 0 - 1, q 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges
-      · by_cases hSC : s((![q 0, q 1 - 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges
-        · exact Or.inr ⟨hCsup, hWC, hSC⟩
-        · exact absurd (etp_thickPoint_of_swCorner Vc hW hS hCsup (Or.inr hSC))
-            (fun htp => (kns_thickPoint_iff_not_fourThin Vc).mp htp hthin)
-      · exact absurd (etp_thickPoint_of_swCorner Vc hW hS hCsup (Or.inl hWC))
-          (fun htp => (kns_thickPoint_iff_not_fourThin Vc).mp htp hthin)
-    · have hCbox : (-M < q 0 - 1 ∧ q 0 - 1 ≤ M) ∧ (-M < q 1 - 1 ∧ q 1 - 1 ≤ M) :=
-        ⟨hq0box, hq1box⟩
-      have hcorner := kns_lexBelow_diag_corner Vc hsat hTsub hqI hqnT M hmin hqbox hCbox
-      have hCext : (![q 0 - 1, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc := by
-        rcases hcorner with h | h
-        · exact absurd h hCsup
-        · exact h
-      exact Or.inl ⟨hCext, hCsup⟩
-  obtain ⟨e, he₁, he₂, he₃⟩ := gtp_eastBoundary_onSupport Vc hqI
-  have htp : kns_ThickPoint Vc :=
-    hres T hseedT hTsub hsat M q hqI hqnT hmin hqbox hq1box hW hS hcornerClause hbottom
-      e he₁ he₂ he₃
-  exact (kns_thickPoint_iff_not_fourThin Vc).mp htp hthin
-
-/-- A four-thin walk satisfying `gtp_RunEndReconnect` is king row-linked to an interior seed.
-Conditional, as `gtp_noKingSeparation_of_fourThin`. -/
-theorem gtp_kingRowLinked_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : gtp_RunEndReconnect Vc seed) :
-    mci_KingRowLinked Vc seed :=
-  ksc_kingRowLinked_of_noKingSeparation Vc hseedI
-    (gtp_noKingSeparation_of_fourThin Vc hseedI hthin hres)
 
 /-- `etp_EscapeWallThick` implies `gtp_RunEndReconnect`. -/
 theorem gtp_runEndReconnect_of_escapeWallThick {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)

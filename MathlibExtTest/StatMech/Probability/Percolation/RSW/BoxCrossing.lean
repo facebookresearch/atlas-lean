@@ -9,17 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.RSW.BoxCrossing
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.Percolation.RSW.BoxCrossing`
 
 * `sqrt_trick_real` at `m = 1/2`, `s = 3/4`.
 * `sqrt_trick` and `complFKG_union_bound` for a Dirac measure (complement FKG holds there).
-* `square_crossing_ge_half` and `box_crossing_lower_bound` at `n = 0`, where every crossing of the
+* `box_crossing_lower_bound` at `n = 0`, where every crossing of the
   one-site box is trivial; all hypotheses are discharged, including positive association of a
-  Dirac measure. (For `n ≥ 2` the hypothesis `hdualExists` of `square_crossing_ge_half` is false,
-  see its docstring, so `n = 0` is the meaningful witness.)
+  Dirac measure. No self-duality square-crossing bound is tested: the rotated dual event
+  is not the geometric dual separator (see the `BoxCrossing` module header).
 -/
 
 @[expose] public section
@@ -58,28 +58,6 @@ example (ω₀ : ConfigSpace (Sym2 (Site 2))) (A : Set (ConfigSpace (Sym2 (Site 
 
 /-- The origin of `ℤ²`. -/
 def z0 : Site 2 := fun _ => 0
-
-/-- Every configuration crosses the one-site box `[0, 0]²` horizontally. -/
-theorem horizontalCrossing_zero (ω : ConfigSpace (Sym2 (Site 2))) :
-    ω ∈ squareCrossingEvent 0 :=
-  ⟨⟨z0, by simp [z0, mem_rect]⟩, ⟨z0, by simp [z0, mem_rect]⟩, connectedWithin_refl _ _ _⟩
-
-/-- Every configuration has a dual vertical crossing of the one-site box `[0, 0]²`. -/
-theorem dualCrossing_zero (ω : ConfigSpace (Sym2 (Site 2))) :
-    ω ∈ squareDualCrossingEvent 0 :=
-  ⟨⟨z0, by simp [z0, mem_rect]⟩, ⟨z0, by simp [z0, mem_rect]⟩, connectedWithin_refl _ _ _⟩
-
-theorem squareCrossingEvent_zero : squareCrossingEvent 0 = Set.univ :=
-  Set.eq_univ_of_forall horizontalCrossing_zero
-
-theorem squareDualCrossingEvent_zero : squareDualCrossingEvent 0 = Set.univ :=
-  Set.eq_univ_of_forall dualCrossing_zero
-
-example (ω₀ : ConfigSpace (Sym2 (Site 2))) :
-    (1 : ℝ) / 2 ≤ (Measure.dirac ω₀).real (squareCrossingEvent 0) :=
-  square_crossing_ge_half _ 0 (by simp [squareCrossingEvent_zero])
-    (by rw [squareCrossingEvent_zero, squareDualCrossingEvent_zero])
-    (by rw [squareCrossingEvent_zero]; exact MeasurableSet.univ)
 
 theorem hz0 : z0 0 = (0 : ℤ) := rfl
 theorem hzc : (0 : ℤ) ≤ z0 1 := le_rfl

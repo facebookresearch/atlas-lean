@@ -9,6 +9,14 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanZ2
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarTopology
+import Mathlib.Algebra.BigOperators.Group.Finset.Lemmas
+import Mathlib.Combinatorics.SimpleGraph.DegreeSum
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Data.Fintype.Sets
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Dual circuits around finite sets of `ℤ²`

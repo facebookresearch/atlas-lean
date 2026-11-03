@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.ExitDartsOrbit
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.InterfaceConnectedSingleton
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExitDartsOrbit`

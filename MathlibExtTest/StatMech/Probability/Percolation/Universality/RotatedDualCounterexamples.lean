@@ -9,14 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.Universality.RotatedDualCounterexamples
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.Percolation.Universality.RotatedDualCounterexamples`
 
 * The refutations: the same-box dichotomy with the rotated dual is false
   (`bcc_dichotomy_false`, witness `bcc_wallCfg`: `bcc_wall_noH_noV`), and the hypothesis of
-  `dcw_square_dichotomy` is false for `n = 2` and `n = 5` (`bcc_square_dichotomy_hyp_false`).
+  the former `dcw_square_dichotomy` is false for `n = 2` and `n = 5`
+  (`bcc_square_dichotomy_hyp_false`).
 * `bcc_wallCfg` evaluated on a wall edge and a non-wall edge; `bcc_dualVert_botCfg`;
   `bcc_dualReach_separates` for the wall configuration.
 -/

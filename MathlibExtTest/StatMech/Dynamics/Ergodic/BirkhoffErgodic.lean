@@ -13,7 +13,8 @@ public import MathlibExt.Dynamics.Ergodic.BirkhoffErgodic
 /-!
 # Tests for `MathlibExt.Dynamics.Ergodic.BirkhoffErgodic`
 
-* `tendsto_birkhoffSum_div_integral_ae` and `birkhoffLimit_ae_eq_const` for the identity on the
+* `tendsto_birkhoffSum_div_integral_ae` and the `Function.const` form of
+  `birkhoffLimit_ae_eq_integral_of_ergodic` for the identity on the
   one-point space with the Dirac measure and `f = 1`.
 -/
 
@@ -33,7 +34,9 @@ example : ∀ᵐ x ∂(Measure.dirac ()), Tendsto
   Ergodic.tendsto_birkhoffSum_div_integral_ae ergodic_id_unit (integrable_const _)
 
 example : birkhoffLimit (id : Unit → Unit) (fun _ => (1 : ℝ)) =ᵐ[Measure.dirac ()]
-    Function.const Unit (∫ _, (1 : ℝ) ∂(Measure.dirac ())) :=
-  Ergodic.birkhoffLimit_ae_eq_const ergodic_id_unit (integrable_const _)
+    Function.const Unit (∫ _, (1 : ℝ) ∂(Measure.dirac ())) := by
+  filter_upwards [birkhoffLimit_ae_eq_integral_of_ergodic ergodic_id_unit
+    (integrable_const _)] with x hx
+  simpa [Function.const] using hx
 
 end MathlibExtTest.StatMech.Dynamics.Ergodic.BirkhoffErgodic

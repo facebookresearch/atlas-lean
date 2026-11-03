@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CycleRank
+public import Mathlib.Combinatorics.SimpleGraph.Matching
+
+import Lean.Elab.Tactic.Omega
 
 /-!
 # Veblen's theorem step: removing a cycle from a union of cycles

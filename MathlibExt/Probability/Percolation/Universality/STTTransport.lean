@@ -298,20 +298,6 @@ theorem starTriangle_reach_iff (A B C O : V) (ωt ωs : LocalConfig)
   ⟨reach_tri_to_star E A B C O ωt ωs hAB hAC hBC hOA hOB hOC hm,
    reach_star_to_tri E A B C O ωt ωs hAB hAC hBC hOA hOB hOC hm hEO hu hv⟩
 
-/-- `starTriangle_reach_iff` stated for the endpoints `u`, `v` given as existentials. -/
-theorem starTriangle_crossing_transport (A B C O : V) (ωt ωs : LocalConfig)
-    (hAB : A ≠ B) (hAC : A ≠ C) (hBC : B ≠ C) (hOA : O ≠ A) (hOB : O ≠ B) (hOC : O ≠ C)
-    (hm : MatchesPattern ωt ωs) (hEO : ∀ x, ¬ E.Adj x O) {u v : V} (hu : u ≠ O) (hv : v ≠ O) :
-    (∃ p q : V, p = u ∧ q = v ∧ (E ⊔ triCell A B C ωt).Reachable p q) ↔
-    (∃ p q : V, p = u ∧ q = v ∧ (E ⊔ starCell A B C O ωs).Reachable p q) := by
-  constructor
-  · rintro ⟨p, q, rfl, rfl, hpq⟩
-    exact ⟨p, q, rfl, rfl,
-      (starTriangle_reach_iff E A B C O ωt ωs hAB hAC hBC hOA hOB hOC hm hEO hu hv).1 hpq⟩
-  · rintro ⟨p, q, rfl, rfl, hpq⟩
-    exact ⟨p, q, rfl, rfl,
-      (starTriangle_reach_iff E A B C O ωt ωs hAB hAC hBC hOA hOB hOC hm hEO hu hv).2 hpq⟩
-
 end Universality
 
 end StatMech
