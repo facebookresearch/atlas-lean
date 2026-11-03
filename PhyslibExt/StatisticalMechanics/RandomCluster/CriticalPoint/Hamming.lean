@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Nat.Lattice
+public import Mathlib.InformationTheory.Hamming
 public import MathlibExt.Probability.Configuration.ConfigSpace
 public import MathlibExt.Probability.CorrelationInequalities.IncreasingEvent
 

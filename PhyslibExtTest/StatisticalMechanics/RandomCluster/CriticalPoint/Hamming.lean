@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Hamming
 
 /-!

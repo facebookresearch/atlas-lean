@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Algebra.Operations
 public import Mathlib.Algebra.Algebra.Pi
+public import Mathlib.Algebra.GroupWithZero.Indicator
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Order.UpperLower.Basic
