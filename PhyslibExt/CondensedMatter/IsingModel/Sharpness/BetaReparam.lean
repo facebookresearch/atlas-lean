@@ -163,4 +163,3 @@ lemma shr_item3_beta (J β : ℝ) (S : Finset (Site d))
 end Sharpness
 
 end StatMech
-

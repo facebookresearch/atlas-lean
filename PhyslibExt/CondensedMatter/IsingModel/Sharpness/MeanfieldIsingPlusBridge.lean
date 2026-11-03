@@ -465,4 +465,3 @@ lemma sct_magnetization_meanfield_lower_bound_integrated
 
 end Sharpness
 end StatMech
-
