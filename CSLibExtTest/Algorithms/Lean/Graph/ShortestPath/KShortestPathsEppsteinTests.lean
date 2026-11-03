@@ -67,4 +67,10 @@ example (len : Fin 2 → Fin 2 → ℝ) (dist : Fin 2 → ℝ)
     q.weight len dist ≤ (PPath.sidestep e q tw hadj hside).weight len dist :=
   lemma6_weight_mono len dist q e tw hadj hside hδ
 
+-- `lemma5_encode` is purely combinatorial: it needs no lengths,
+-- potentials, or spanning-tree witness, only the walk and `T`.
+example {G T : Digraph (Fin 2)} {s t : Fin 2} (p : DiWalk G s t) :
+    ∃ (c : Fin 2) (q : PPath G T s c), q.sidetrackList = p.sidetracks T :=
+  lemma5_encode T p
+
 end Cslib.Algorithms.Lean.KShortestPathsEppsteinTests

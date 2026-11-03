@@ -473,12 +473,11 @@ theorem lemma5_decode (T : Digraph V) (len : V → V → ℝ)
   exact ⟨_, hp_side, hp_len⟩
 
 /-- Lemma 5 (encode): every `s–t` walk arises from a `PPath` with the same
-sidetrack sequence (its tree segments become the joining tree walks). -/
-theorem lemma5_encode (T : Digraph V) (len : V → V → ℝ)
-    (dist : V → ℝ) {G : Digraph V} {s t : V}
-    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
-    (treeWalk : ∀ a : V, DiWalk T a t)
-    (p : DiWalk G s t) :
+sidetrack sequence (its tree segments become the joining tree walks).
+This is purely combinatorial: it needs no lengths, potentials, or
+spanning-tree witness. -/
+theorem lemma5_encode (T : Digraph V)
+    {G : Digraph V} {s t : V} (p : DiWalk G s t) :
     ∃ (c : V) (q : PPath G T s c), q.sidetrackList = p.sidetracks T := by
   obtain ⟨c, q, hq⟩ := encode_aux p PPath.root (DiWalk.nil s)
   refine ⟨c, q, ?_⟩
@@ -575,8 +574,6 @@ theorem pairwise_append {α : Type*} {R : α → α → Prop}
 
 theorem complete_of_minimal (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
-    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
-    (treeWalk : ∀ a : V, DiWalk T a t)
     (hdist_t : dist t = 0)
     (htight : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0)
     (L : List (Σ c, PPath G T s c))
@@ -590,7 +587,7 @@ theorem complete_of_minimal (T : Digraph V) (len : V → V → ℝ)
         p.length len = dist s + x.2.weight len dist →
         p.length len ≤ y.length len)) := by
   intro y
-  obtain ⟨c, q, hq_list⟩ := lemma5_encode T len dist Tle treeWalk y
+  obtain ⟨c, q, hq_list⟩ := lemma5_encode T y
   let qSig : Σ c, PPath G T s c := ⟨c, q⟩
   by_cases hmem : qSig ∈ L
   · left
@@ -674,7 +671,7 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
         p.length len = dist s + x.2.weight len dist := by
       intro x hx
       exact lemma5_decode T len dist Tle treeWalk hdist_t htight_delta x.2
-    have hComp := complete_of_minimal T len dist Tle treeWalk hdist_t
+    have hComp := complete_of_minimal T len dist hdist_t
       htight_delta [(⟨s, PPath.root⟩ : Σ c, PPath G T s c)] hMin
     exact ⟨hNodup, hPair, hMin, hDec, hComp⟩
   | step L next hTrace hChild hNotMem hMinChoice ih =>
@@ -774,7 +771,7 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
         p.length len = dist s + x.2.weight len dist := by
       intro x hx
       exact lemma5_decode T len dist Tle treeWalk hdist_t htight_delta x.2
-    have hComp' := complete_of_minimal T len dist Tle treeWalk hdist_t
+    have hComp' := complete_of_minimal T len dist hdist_t
       htight_delta (L ++ [next]) hMin'
     exact ⟨hNodup', hPair', hMin', hDec', hComp'⟩
 
