@@ -1403,8 +1403,35 @@ def _resolve_shas(client: GitHub, deps: list[dict], tag: str) -> tuple[dict[str,
     return shas, problems
 
 
+def _validate_pattern_syntax(pattern: str) -> list[str]:
+    """Restrict rules to syntax the literal and match-span checks can inspect.
+
+    Encoded characters and backreferences can hide version literals.
+    Lookarounds read outside the match span, so overlap checks cannot
+    establish their independence from earlier replacements. Only ordinary
+    captures and noncapturing groups are supported; extended group syntax
+    (including inline flags) is rejected.
+    """
+    problems: list[str] = []
+    for token in re.finditer(r"\\[\s\S]|\(\?", pattern):
+        text = token.group()
+        if text.startswith("\\"):
+            escape = text[1]
+            if escape.isalnum() and escape not in "dDsSwWbBAZfnrtv":
+                problems.append(
+                    f"pattern {pattern!r} uses unsupported escape {text!r}; "
+                    "use literal characters or character classes"
+                )
+        elif not pattern.startswith("(?:", token.start()):
+            problems.append(
+                f"pattern {pattern!r} uses unsupported group syntax; "
+                "only captures and (?:...) groups are allowed, not lookarounds"
+            )
+    return problems
+
+
 def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
-    """Per-entry static checks: compiles, placeholders, no hardcoded literals."""
+    """Per-entry static checks: supported syntax, placeholders, and literals."""
     problems: list[str] = []
     problems.extend(_validate_replacement_literals(entry))
     try:
@@ -1412,6 +1439,7 @@ def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
     except re.error as exc:
         problems.append(f"replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
         return problems
+    problems.extend(_validate_pattern_syntax(entry["pattern"]))
     problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
     problems.extend(_validate_pattern_literals(entry))
     return problems

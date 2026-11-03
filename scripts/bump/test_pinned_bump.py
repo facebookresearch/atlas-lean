@@ -968,6 +968,52 @@ class GuardTests(unittest.TestCase):
             problems = pinned_bump._validate_pattern_literals({"pattern": pattern})
             self.assertEqual(bool(problems), should_flag, pattern)
 
+    def test_replacement_pattern_syntax(self):
+        rejected = [
+            r"\x76", r"[\x76]", r"\u0076", r"\U00000076",
+            r"\N{LATIN SMALL LETTER V}", r"\166", r"(v)\1",
+            r"(?=v)", r"(?!v)", r"(?<=v)", r"(?<!v)",
+        ]
+        for pattern in rejected:
+            with self.subTest(pattern=pattern):
+                entry = {"pattern": pattern, "replacement": "{g0}"}
+                self.assertTrue(pinned_bump._static_rule_problems(entry, set()))
+        for pattern in [r"(?:v[0-9]+\.)", r"\(\?", r"\\x76", r"\A\w+\Z"]:
+            with self.subTest(pattern=pattern):
+                entry = {"pattern": pattern, "replacement": "{g0}"}
+                self.assertEqual(pinned_bump._static_rule_problems(entry, set()), [])
+
+    def test_tailored_lookahead_is_rejected_and_removable(self):
+        tags = ["v4.35.0", "v5.36.1", "v6.37.2"]
+        encoded = ["".join(r"\x" + format(ord(c), "02x") for c in tag) for tag in tags]
+        broken = {
+            "path": "README.md",
+            "pattern": r"\A(?=[\s\S]*(?:" + "|".join(encoded) + "))",
+            "replacement": "{g0}",
+        }
+        text = 'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n'
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"].append(broken)
+        entries = base["doc_replacements"]
+        transitions = [(tag, {}) for tag in tags]
+        dep_names = {dep["name"] for dep in base["deps"]}
+        for tag in tags:
+            text_at_tag = pinned_bump.apply_replacements_to_text(text, entries, tag, {})
+            self.assertIn(tag, text_at_tag)
+        with self.assertRaisesRegex(ValueError, "did not match"):
+            pinned_bump.apply_replacements_to_text(text, entries, "v4.36.0", {})
+        self.assertTrue(pinned_bump._static_rule_problems(broken, dep_names))
+        self.assertTrue(pinned_bump._simulate_file_rules(
+            entries, CONFIG["doc_replacements"], text, transitions, dep_names, "README.md"))
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "README.md").write_text(text)
+            repairable = pinned_bump.repairable_rule_patterns(
+                base, tree, "v4.35.0", FakeGitHub(tags={}, upstream={}))
+            self.assertIn(broken["pattern"], repairable)
+            problems = pinned_bump.check_config_extension(base, CONFIG, repairable)
+            self.assertNotIn("doc_replacements", " ".join(problems))
+
     def test_guard_fails_config_only_code_rewrite(self):
         # Codex P1: an added pin-policy rule rewriting main() to pass
         # must fail: rules may change only version/SHA literals.
