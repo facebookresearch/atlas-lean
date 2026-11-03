@@ -148,7 +148,11 @@ namespace RectilinearRectangle
 /-- **The residue theorem on a rectangle, for simple and double poles.** If
 `f = g + ∑_{p ∈ S} (r p / (s - p) + d p / (s - p)²)` on the closed rectangle off `S`, with `g`
 holomorphic on the closed rectangle and `S` contained in the open rectangle, then the positively
-oriented boundary integral of `f` is `2πi ∑_{p ∈ S} r p`: the double poles contribute nothing. -/
+oriented boundary integral of `f` is `2πi ∑_{p ∈ S} r p`: the double poles contribute nothing.
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §6.1. Special case: a rectangle and finitely many simple and double poles.
+-/
 theorem boundaryIntegral_eq_two_pi_mul_I_mul_sum_of_double (r : RectilinearRectangle)
     (S : Finset ℂ) (res d f g : ℂ → ℂ)
     (hin : ∀ p ∈ S, r.first.re < p.re ∧ p.re < r.second.re ∧ r.first.im < p.im ∧

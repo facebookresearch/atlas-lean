@@ -348,7 +348,14 @@ namespace ArithmeticFunction
 
 /-- **The weighted second moment of the divisor function.** There is a real polynomial `P` of
 degree `3` with
-`∑_{n ≤ x} d (n) ^ 2 * log (x / n) ^ 3 = x * P (log x) + O (x ^ (1 / 2))`. -/
+`∑_{n ≤ x} d (n) ^ 2 * log (x / n) ^ 3 = x * P (log x) + O (x ^ (1 / 2))`.
+
+Source: S. Ramanujan, *Some formulae in the analytic theory of numbers*, Messenger of Math. 45
+(1916), 81–84, JFM 45.1250.01; B. M. Wilson, *Proofs of some formulae enunciated by Ramanujan*,
+Proc. London Math. Soc. (2) 21 (1923), 235–255, DOI 10.1112/plms/s2-21.1.235. This is a weighted
+variant: the sources treat the unweighted sum `∑_{n ≤ x} d(n)²`; the weight `log³(x / n)` gives the
+error `O(√x)`.
+-/
 theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
     ∃ P : Polynomial ℝ, P.degree = 3 ∧
       (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊,

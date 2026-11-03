@@ -94,7 +94,13 @@ theorem intervalIntegrable_sawtooth_div_ofReal_add {z : ℂ}
 /-- **The Weierstrass product of `1 / Γ`.**
 `1 / Γ(z) = e^{γ z} z ∏_{n ≥ 1} (1 + z / n) e^{-z / n}`, with `γ` the Euler–Mascheroni constant,
 for every `z`; at the poles `z = -m` of `Γ` both sides vanish (Mathlib's `Γ(-m)` is `0`, so the left
-side is `0⁻¹ = 0`). -/
+side is `0⁻¹ = 0`).
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §12.1.
+
+Source: *NIST Digital Library of Mathematical Functions*, https://dlmf.nist.gov/5.8,
+eq. (5.8.2). -/
 theorem inv_Gamma_eq_exp_mul_tprod (z : ℂ) :
     (Complex.Gamma z)⁻¹ =
       Complex.exp (Real.eulerMascheroniConstant * z) * z *
@@ -207,7 +213,11 @@ theorem inv_Gamma_eq_exp_mul_tprod (z : ℂ) :
 The integral converges only conditionally, so it is the limit `I` of `∫₀^N` as `N → ∞`, whose
 existence is part of the statement. `log Γ` is the branch on the slit plane that is real on the
 positive reals, so the identity is stated after exponentiating. `log z` is the principal
-`Complex.log`. -/
+`Complex.log`.
+
+Source: T.-J. Stieltjes, "Sur le développement de log Γ(a)," J. Math. Pures Appl. (4) 5
+(1889), 425–444, JFM 21.0448.01. The sawtooth remainder is Stieltjes' form; Binet's own
+integrals have different integrands, so the name is used loosely. -/
 theorem Gamma_eq_exp_binet (z : ℂ) (hz : z ∈ Complex.slitPlane) :
     ∃ I : ℂ,
       Filter.Tendsto
@@ -480,7 +490,10 @@ for all `z ≠ 0` with `-π + δ ≤ arg z ≤ π - δ`,
 `Γ(z) = exp ((z - 1/2) log z - z + ½ log 2π + E(z))` with `‖E(z)‖ ≤ C / ‖z‖`.
 
 Once `C / ‖z‖ < π`, this `E` is the unique logarithm in that disc, so it is the remainder of the
-true `log Γ`. -/
+true `log Γ`.
+
+Source: *NIST Digital Library of Mathematical Functions*, https://dlmf.nist.gov/5.11,
+eq. (5.11.1). This is a weaker form: only the first-order term, with an `O(1 / ‖z‖)` error. -/
 theorem Gamma_eq_exp_stirling_sector (δ : ℝ) (hδ : 0 < δ) :
     ∃ C : ℝ, ∀ z : ℂ, z ≠ 0 → -Real.pi + δ ≤ Complex.arg z → Complex.arg z ≤ Real.pi - δ →
       ∃ E : ℂ, ‖E‖ ≤ C / ‖z‖ ∧

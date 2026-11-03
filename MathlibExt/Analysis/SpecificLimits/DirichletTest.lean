@@ -46,7 +46,11 @@ section Seminormed
 variable [SeminormedAddCommGroup E] [NormedSpace ℝ E] {f : ℕ → ℝ} {z : ℕ → E} {m : ℕ} {b : ℝ}
 
 /-- **Abel's inequality.** If `f` is nonincreasing and nonnegative on `[m, ∞)`, and all the
-sums `∑_{m ≤ i < k} z i` have norm at most `b`, then `‖∑_{m ≤ i < n} f i • z i‖ ≤ b * f m`. -/
+sums `∑_{m ≤ i < k} z i` have norm at most `b`, then `‖∑_{m ≤ i < n} f i • z i‖ ≤ b * f m`.
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §2.301. Generalised to normed-space-valued
+terms and to `f` nonincreasing only from `m` on. -/
 theorem norm_sum_Ico_smul_le_of_antitoneOn (hf : AntitoneOn f (Set.Ici m))
     (hf0 : ∀ k, m ≤ k → 0 ≤ f k) (hz : ∀ k, ‖∑ i ∈ Ico m k, z i‖ ≤ b) (n : ℕ) :
     ‖∑ i ∈ Ico m n, f i • z i‖ ≤ b * f m := by
@@ -111,7 +115,11 @@ theorem AntitoneOn.nonneg_of_tendsto_zero {f : ℕ → ℝ} {m : ℕ} (hf : Anti
   exact hf (Set.mem_Ici.2 hk) (Set.mem_Ici.2 (hk.trans hj)) hj
 
 /-- **Dirichlet's test** for a sequence that is nonincreasing from `m` on: if `f` tends to `0`
-and the sums `∑_{m ≤ i < k} z i` are bounded, then `∑ f i • z i` is a Cauchy series. -/
+and the sums `∑_{m ≤ i < k} z i` are bounded, then `∑ f i • z i` is a Cauchy series.
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §2.31. Generalised to normed-space-valued
+terms. -/
 theorem cauchySeq_sum_range_smul_of_antitoneOn (hf : AntitoneOn f (Set.Ici m))
     (hf0 : Tendsto f atTop (𝓝 0)) (hz : ∀ k, ‖∑ i ∈ Ico m k, z i‖ ≤ b) :
     CauchySeq fun n ↦ ∑ i ∈ range n, f i • z i := by

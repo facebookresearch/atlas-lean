@@ -177,7 +177,10 @@ private lemma tendsto_stirling_vertical_error (σ : ℝ) :
 
 /-- **Stirling's formula on vertical lines.** For fixed real `σ`, as `|t| → ∞`,
 `|Γ(σ + it)| ∼ e^{-π|t|/2} |t|^{σ - 1/2} √(2π)`. The filter is
-`comap (fun t => |t|) atTop`, i.e. `|t| → ∞` with `t` of either sign. -/
+`comap (fun t => |t|) atTop`, i.e. `|t| → ∞` with `t` of either sign.
+
+Source: *NIST Digital Library of Mathematical Functions*, (5.11.9), https://dlmf.nist.gov/5.11.E9.
+-/
 theorem norm_Gamma_vertical_isEquivalent (σ : ℝ) :
     IsEquivalent (comap (fun t : ℝ => |t|) atTop)
       (fun t : ℝ => ‖Gamma (σ + t * I)‖)

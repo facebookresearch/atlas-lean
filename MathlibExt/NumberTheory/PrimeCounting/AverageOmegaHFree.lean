@@ -36,6 +36,13 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.PrimeCounting.Mertens
 
+/-!
+# Average of `Ω` over `h`-free numbers
+
+Counting `h`-free numbers, and the average of `Ω` over them. The source of the main
+theorem is recorded in its docstring.
+-/
+
 @[expose] public section
 
 open Finset ArithmeticFunction
@@ -698,7 +705,11 @@ private theorem sum_inv_sqrt_le_two_sqrt (N : ℕ) :
     linarith [ih, hkey]
 
 /-- **Counting `h`-free numbers.** For `h ≥ 2` and `y ≥ 0`, the number of `n ≤ y` all of whose
-prime exponents are `< h` differs from `y / ζ(h)` by at most `4 √y`. -/
+prime exponents are `< h` differs from `y / ζ(h)` by at most `4 √y`.
+
+Source: L. Gegenbauer, "Asymptotische Gesetze der Zahlentheorie", Denkschr. Akad. Wiss. Wien 49
+(1885), 37–80, JFM 17.0144.02. Gegenbauer's error term is `O(y^{1/h})`; the bound here is the
+weaker uniform `4 √y`, which agrees with it only for `h = 2`. -/
 theorem abs_card_hfree_sub_le (h : ℕ) (hh : 2 ≤ h) (y : ℝ) (hy : 0 ≤ y) :
     |((((Finset.Icc 1 ⌊y⌋₊).filter
         (fun n => ∀ p ∈ n.primeFactors, n.factorization p < h)).card : ℕ) : ℝ)

@@ -962,7 +962,13 @@ theorem errSum_lambdaSquared_levelWeights_le (s : BoundingSieve) (R : ℕ) (hR :
 
 /-- **Selberg's upper bound sieve.** For every level `R ≥ 1`,
 `S(𝒜, P) ≤ X / G(R) + ∑_{d₁, d₂ ∣ P, d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`, where
-`G(R) = ∑_{l ∣ P, l ≤ R} g(l)` is the Selberg level sum. -/
+`G(R) = ∑_{l ∣ P, l ≤ R} g(l)` is the Selberg level sum.
+
+Source: A. Selberg, "On an elementary method in the theory of primes", Norske Vid. Selsk. Forh.
+(Trondheim) 19 (1947), no. 18, 64–67, Zbl 0041.01903; H. L. Montgomery and R. C. Vaughan,
+*Multiplicative Number Theory I: Classical Theory*, Cambridge Studies in Advanced Mathematics 97,
+Cambridge University Press, 2007, Chapter 3 (*Principles and first examples of sieve methods*),
+DOI 10.1017/CBO9780511618314.005. Stated for a general `BoundingSieve`. -/
 theorem siftedSum_le_totalMass_div_levelSum_add (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
     s.siftedSum ≤ s.totalMass / levelSum s R +
       ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| := by

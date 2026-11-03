@@ -2865,7 +2865,12 @@ private lemma zero_sum_bound_small (F : ℂ → ℂ) (Λ : ℕ → ℂ)
 /-- **Landau's formula for the Selberg class.** Let `a ∈ 𝒮` with continuation `F`, and let
 `-F'/F = ∑ Λ n n^{-s}` on `Re s > 1`. Then, uniformly in `n > 1` and `T ≥ 2`,
 `∑_{|γ| ≤ T} m_ρ n^ρ = -(T/π) Λ(n) + O(n^{3/2} log² T)`, the sum running over the zeros
-`ρ = β + iγ` of `F` with `β ≥ 0`, counted with multiplicity `m_ρ`. -/
+`ρ = β + iγ` of `F` with `β ≥ 0`, counted with multiplicity `m_ρ`.
+
+Source: E. Landau, "Über die Nullstellen der Zetafunktion," Math. Ann. 71 (1912), 548–564,
+DOI 10.1007/BF01456808. Generalised from `ζ` to `𝒮`, and a weaker form: for fixed `n` Landau's error
+is `O(log T)`, ours is `O(n^{3/2} log² T)` uniformly in `n`. Summing over `|γ| ≤ T` gives `-(T/π)
+Λ(n)` in place of `-(T/2π) Λ(n)`. -/
 theorem exists_norm_finsum_zeros_cpow_add_le (a : ArithmeticFunction ℂ) (ha : a ∈ selbergClass) (F
     : ℂ → ℂ)
     (hF : IsLSeriesContinuation a F) (Λ : ℕ → ℂ)

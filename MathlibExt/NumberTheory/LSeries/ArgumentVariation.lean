@@ -431,7 +431,13 @@ private lemma stirling_main_im_bound {w : ℂ} {T : ℝ} (hT : 2 ≤ T) (hre : w
   constructor <;> nlinarith
 
 /-- The variation of the argument of `Γ(s/2 + 1)` along `2 → 2 + iT → 1/2 + iT` is
-`(T/2) log (T/2) - T/2 + 3π/8 + O(1/T)` as `T → ∞`. -/
+`(T/2) log (T/2) - T/2 + 3π/8 + O(1/T)` as `T → ∞`.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 2nd ed., revised by H. L. Montgomery, Graduate
+Texts in Mathematics 74, Springer, 1980, Chapter 15 (The number N(T)),
+DOI 10.1007/978-1-4757-5927-3_15. This is one step only: the contribution of `Γ(s/2 + 1)` to the
+Riemann–von Mangoldt formula, not the formula itself.
+-/
 theorem argVariationToCriticalLine_Gamma_sub_isBigO :
     (fun T : ℝ => argVariationToCriticalLine (fun s : ℂ => Gamma (s / 2 + 1)) T -
         (T / 2 * Real.log (T / 2) - T / 2 + 3 / 8 * Real.pi))

@@ -74,7 +74,10 @@ private theorem tendsto_const_div_div_pi (K : ℝ) :
   simpa using (tendsto_const_nhds.div_atTop tendsto_id).div_const π
 
 /-- **The discontinuous integral for `x > 1`.** For `x > 1` and `c > 0`,
-`(1 / 2πi) ∫_(c) x ^ s / s ds = 1` as a principal value. -/
+`(1 / 2πi) ∫_(c) x ^ s / s ds = 1` as a principal value.
+
+Source: O. Perron, "Zur Theorie der Dirichletschen Reihen," J. Reine Angew. Math. 134 (1908),
+95–143, DOI 10.1515/crll.1908.134.95. -/
 theorem hasVerticalIntegral_cpow_div_self_of_one_lt {x c : ℝ} (hx : 1 < x) (hc : 0 < c) :
     HasVerticalIntegral c (fun s : ℂ => (x : ℂ) ^ s / s) 1 := by
   refine hasVerticalIntegral_of_continuous (continuous_cpow_div_self_line (by linarith) hc.ne') ?_
@@ -86,7 +89,10 @@ theorem hasVerticalIntegral_cpow_div_self_of_one_lt {x c : ℝ} (hx : 1 < x) (hc
   exact PerronKernel.perron_bound_gt_one (by linarith) hx hc hR
 
 /-- **The discontinuous integral for `0 < x < 1`.** For `0 < x < 1` and `c > 0`,
-`(1 / 2πi) ∫_(c) x ^ s / s ds = 0` as a principal value. -/
+`(1 / 2πi) ∫_(c) x ^ s / s ds = 0` as a principal value.
+
+Source: O. Perron, "Zur Theorie der Dirichletschen Reihen," J. Reine Angew. Math. 134 (1908),
+95–143, DOI 10.1515/crll.1908.134.95. -/
 theorem hasVerticalIntegral_cpow_div_self_of_lt_one {x c : ℝ} (hx0 : 0 < x) (hx1 : x < 1)
     (hc : 0 < c) : HasVerticalIntegral c (fun s : ℂ => (x : ℂ) ^ s / s) 0 := by
   refine hasVerticalIntegral_of_continuous (continuous_cpow_div_self_line hx0 hc.ne') ?_
@@ -98,7 +104,10 @@ theorem hasVerticalIntegral_cpow_div_self_of_lt_one {x c : ℝ} (hx0 : 0 < x) (h
   exact PerronKernel.perron_bound_lt_one hx0 hx1 hc hR
 
 /-- **The discontinuous integral at `x = 1`.** For `c > 0`, `(1 / 2πi) ∫_(c) ds / s = 1 / 2`
-as a principal value. -/
+as a principal value.
+
+Source: O. Perron, "Zur Theorie der Dirichletschen Reihen," J. Reine Angew. Math. 134 (1908),
+95–143, DOI 10.1515/crll.1908.134.95. -/
 theorem hasVerticalIntegral_one_div {c : ℝ} (hc : 0 < c) :
     HasVerticalIntegral c (fun s : ℂ => 1 / s) (1 / 2) := by
   refine hasVerticalIntegral_of_continuous

@@ -46,7 +46,13 @@ commutative ring and reals `x` and `y > 0`,
 
 `∑_{n ≤ x} (f * g) n = ∑_{d ≤ y} f d G(x / d) + ∑_{e ≤ x / y} F(x / e) g e - F(y) G(x / y)`,
 
-where `F(t) = ∑_{d ≤ t} f d` and `G(t) = ∑_{e ≤ t} g e`. -/
+where `F(t) = ∑_{d ≤ t} f d` and `G(t) = ∑_{e ≤ t} g e`.
+
+Source: P. G. L. Dirichlet, "Über die Bestimmung der mittleren Werthe in der Zahlentheorie",
+reprinted in *G. Lejeune Dirichlet's Werke*, Bd. II, 49–66, DOI 10.1017/CBO9781139237345.007; T. M.
+Apostol, *Introduction to Analytic Number Theory*, Undergraduate Texts in Mathematics, Springer,
+1976, Chapter 3 (*Averages of Arithmetical Functions*), DOI 10.1007/978-1-4757-5579-4_4. Generalised
+from `d = ζ * ζ`, the case Dirichlet treats, to any convolution `f * g`. -/
 theorem sum_Ioc_mul_eq_hyperbola (f g : ArithmeticFunction R) (x : ℝ) {y : ℝ} (hy : 0 < y) :
     ∑ n ∈ Ioc 0 ⌊x⌋₊, (f * g) n =
       ∑ d ∈ Ioc 0 ⌊y⌋₊, f d * ∑ e ∈ Ioc 0 ⌊x / d⌋₊, g e

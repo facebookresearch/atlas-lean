@@ -837,7 +837,12 @@ theorem tsum_perron_error_le :
 and let `ε > 0` and `c > 1`. There is `C > 0` such that for every `x` that is not an integer
 and every `R` with `1 ≤ R ≤ x`,
 `‖∑_{n ≤ x} a n - (1 / 2π) ∫_{-R}^{R} L(a, c + it) x ^ (c + it) / (c + it) dt‖
-  ≤ C (x ^ (c + ε) / R + x ^ ε log x / R)`. -/
+  ≤ C (x ^ (c + ε) / R + x ^ ε log x / R)`.
+
+Source: O. Perron, *Zur Theorie der Dirichletschen Reihen*, J. Reine Angew. Math. 134 (1908),
+95–143, DOI 10.1515/crll.1908.134.95. Here in truncated form, with an explicit error term and our
+own constants.
+-/
 theorem norm_sum_sub_truncated_perron_le
     {a : ℕ → ℂ} {ε : ℝ} (hε : 0 < ε)
     (ha : ∀ δ : ℝ, 0 < δ → ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, 1 ≤ n → ‖a n‖ ≤ A * (n : ℝ) ^ δ) :

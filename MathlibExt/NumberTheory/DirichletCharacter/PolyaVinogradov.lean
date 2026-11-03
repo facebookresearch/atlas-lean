@@ -429,7 +429,14 @@ theorem norm_sum_Ico_le_sqrt_mul_one_add_log {χ : DirichletCharacter ℂ q} (h�
     linarith [hIco a, hIco b]
 
 /-- **The Pólya–Vinogradov inequality**, classical form. For every nontrivial Dirichlet
-character `χ` modulo `q`, `‖∑_{a ≤ n < b} χ n‖ ≤ 10 √q log q`. -/
+character `χ` modulo `q`, `‖∑_{a ≤ n < b} χ n‖ ≤ 10 √q log q`.
+
+Source: G. Pólya, *Über die Verteilung der quadratischen Reste und Nichtreste*, Nachr. Ges. Wiss.
+Göttingen, Math.-Phys. Kl. 1918, 21–29, JFM 46.0265.02; H. Davenport, *Multiplicative Number
+Theory*, 2nd ed., revised by H. L. Montgomery, Graduate Texts in Mathematics 74, Springer, 1980,
+Chapter 23 (The Pólya–Vinogradov inequality), DOI 10.1007/978-1-4757-5927-3_23. Here with the
+explicit constant `10`.
+-/
 theorem norm_sum_Ico_le_sqrt_mul_log {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (a b : ℕ) :
     ‖∑ n ∈ Ico a b, χ n‖ ≤ 10 * Real.sqrt q * Real.log q := by
   have hq : 1 < q := by

@@ -1939,7 +1939,13 @@ theorem tendsto_prod_primesLE_inv_one_sub_inv_div_log :
       Filter.atTop (nhds (Real.exp Real.eulerMascheroniConstant)) :=
   tendsto_mertensP_div_log
 
-/-- **Mertens' third theorem**: `(∏_{p ≤ x} (1 - 1/p)) · log x → e^{-γ}` as `x → ∞`. -/
+/-- **Mertens' third theorem**: `(∏_{p ≤ x} (1 - 1/p)) · log x → e^{-γ}` as `x → ∞`.
+
+Source: F. Mertens, "Ein Beitrag zur analytischen Zahlentheorie", J. reine angew. Math. 78 (1874),
+46–62, DOI 10.1515/crll.1874.78.46; G. H. Hardy and E. M. Wright, *An Introduction to the Theory of
+Numbers*, 6th ed., Oxford University Press, 2008, Chapter XXII (*The Series of Primes (3)*), DOI
+10.1093/oso/9780199219858.003.0022. The constant is identified via `ζ(σ)` as `σ → 1⁺`, not by
+Mertens' original argument. -/
 theorem tendsto_prod_primesLE_one_sub_inv_mul_log :
     Filter.Tendsto (fun x : ℝ => (∏ p ∈ primesLE ⌊x⌋₊, (1 - (p : ℝ)⁻¹)) * Real.log x)
       Filter.atTop (nhds (Real.exp (-Real.eulerMascheroniConstant))) := by

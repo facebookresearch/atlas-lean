@@ -62,7 +62,12 @@ theorem sum_divisors_sum_primitiveRoots {ζ : R} {n : ℕ} (hζ : IsPrimitiveRoo
   exact hζ.sum_nthRootsFinset_one (by omega)
 
 /-- The primitive `n`-th roots of unity in a domain containing one sum to the Möbius function
-`μ n`. -/
+`μ n`.
+
+Source: G. H. Hardy and E. M. Wright, *An Introduction to the Theory of Numbers*, 6th ed., Oxford
+University Press, 2008, Chapter XVI (*The Arithmetical Functions φ(n), μ(n), d(n), σ(n), r(n)*),
+DOI 10.1093/oso/9780199219858.003.0016. Generalised from `ℂ` to any domain containing a primitive
+`n`-th root of unity. -/
 theorem sum_primitiveRoots {ζ : R} {n : ℕ} (hζ : IsPrimitiveRoot ζ n) (hn : 0 < n) :
     ∑ x ∈ primitiveRoots n R, x = μ n := by
   have key := (sum_eq_iff_sum_mul_moebius_eq_on (R := R)

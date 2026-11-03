@@ -268,7 +268,16 @@ there are constants `A, B` with
 The index type is arbitrary (`ι = ℕ` is the classical indexing, and a finite `ι` covers functions
 with finitely many zeros). The product is an unconditional `tprod`, which converges because
 `∑ ‖zₙ‖⁻² < ∞`, so the zeros need not be ordered. Evaluating at `0` gives `exp A = f 0`, which is
-why `f 0 ≠ 0` is assumed; it also makes every `zₙ` nonzero. -/
+why `f 0 ≠ 0` is assumed; it also makes every `zₙ` nonzero.
+
+Source: J. Hadamard, "Étude sur les propriétés des fonctions entières et en particulier d'une
+fonction considérée par Riemann," J. Math. Pures Appl. (4) 9 (1893), 171–215,
+JFM 25.0698.03. This is the special case of order at most `1`; Hadamard's theorem covers
+every finite order.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
+Springer, 2000, Chapter 11 (*Integral functions of order 1*),
+DOI 10.1007/978-1-4757-5927-3_11. -/
 theorem exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one {ι : Type*} {f : ℂ → ℂ} {z : ι → ℂ}
     (hf : Differentiable ℂ f) (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) :

@@ -189,7 +189,12 @@ theorem existsUnique_continuous_moritaGammaNat (p : ℕ) [Fact p.Prime] :
   exact zpow_le_zpow_right₀ (by exact_mod_cast (Fact.out : p.Prime).one_le) (by omega)
 
 /-- **Morita's `p`-adic gamma function** `Γ_p : ℤ_[p] → ℤ_[p]`: the unique continuous function
-with `Γ_p(n) = (-1) ^ n ∏_{k < n, p ∤ k} k` for every natural number `n`. -/
+with `Γ_p(n) = (-1) ^ n ∏_{k < n, p ∤ k} k` for every natural number `n`.
+
+Source: Y. Morita, "A p-adic analogue of the Γ-function," J. Fac. Sci. Univ. Tokyo Sect. IA
+Math. 22 (1975), 255–266, Zbl 0308.12003. See also A. M. Robert, *A Course in p-adic Analysis*,
+Graduate Texts in Mathematics 198, Springer, 2000, Chapter 7, "Special Functions, Congruences,"
+DOI 10.1007/978-1-4757-3254-2_7. Here every prime `p` is allowed, including `p = 2`. -/
 noncomputable def moritaGamma (p : ℕ) [Fact p.Prime] : C(ℤ_[p], ℤ_[p]) :=
   (existsUnique_continuous_moritaGammaNat p).exists.choose
 

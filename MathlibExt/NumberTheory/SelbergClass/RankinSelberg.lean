@@ -124,7 +124,14 @@ def tensorLog (b c : ℕ → ℂ) : ℕ → ℂ := fun n =>
   if IsPrimePow n then (n.factorization n.minFac : ℂ) * b n * c n else 0
 
 /-- The **Rankin–Selberg product** `(F ⊗ G)(s) = exp (∑ tensorLog b c n · n^{-s})`, for Euler
-logarithms `b` of `F` and `c` of `G`. -/
+logarithms `b` of `F` and `c` of `G`.
+
+Source: R. A. Rankin, "Contributions to the theory of Ramanujan's function τ(n) and similar
+arithmetical functions, I and II," Proc. Cambridge Philos. Soc. 35 (1939), 351–356 and 357–372,
+DOI 10.1017/S0305004100021095, DOI 10.1017/S0305004100021101; A. Selberg, "Bemerkungen über eine
+Dirichletsche Reihe, die mit der Theorie der Modulformen nahe verbunden ist," Arch. Math. Naturvid.
+43 (1940), no. 4, 1–4, Zbl 0023.22201. Generalised from cusp forms: here defined formally through
+Euler logarithms, which gives the usual local factors `∏ (1 - α_i β_j p^{-s})^{-1}`. -/
 noncomputable def tensor (b c : ℕ → ℂ) (s : ℂ) : ℂ :=
   exp (LSeries (tensorLog b c) s)
 

@@ -19,8 +19,9 @@ import MathlibExt.Analysis.Complex.RectangleResidue
 /-!
 # No functions of degree between `0` and `1` in the Selberg class
 
-A theorem of Selberg (with the proof of Conrey and Ghosh): a member of the Selberg class whose
-functional equation has positive degree has degree at least `1`.
+A theorem of Richert, proved for the Selberg class by Conrey and Ghosh, whose approach we
+follow: a member of the Selberg class whose functional equation has positive degree has degree
+at least `1`.
 
 Write `F` for the continuation of `L(a, s)`. The Mellin–Barnes integral
 `∑ a n e^{-n x} = (1/2π) ∫ F(2 + it) Γ(2 + it) x^{-2-it} dt` is shifted to the left across the
@@ -2322,9 +2323,15 @@ private lemma degree_bound_of_coeff_decay (a : ArithmeticFunction ℂ) (ha1 : a 
   nlinarith
 
 open Complex Filter Topology MeasureTheory in
-/-- **Selberg's degree bound.** If `a ∈ 𝒮` has continuation `F` and `F` has a functional
-equation `D` of positive degree, then `deg D ≥ 1`: there are no members of `𝒮` with degree in
-`(0, 1)`. -/
+/-- **The degree bound (Richert; Conrey–Ghosh).** If `a ∈ 𝒮` has continuation `F` and `F` has a
+functional equation `D` of positive degree, then `deg D ≥ 1`: there are no members of `𝒮` with
+degree in `(0, 1)`.
+
+Source: H.-E. Richert, "Über Dirichletreihen mit Funktionalgleichung," Publ. Inst. Math. Acad. Serbe
+Sci. 11 (1957), 73–124, Zbl 0082.05802; S. Bochner, "On Riemann's functional equation with multiple
+gamma factors," Ann. of Math. (2) 67 (1958), 29–41, DOI 10.2307/1969923; J. B. Conrey and A. Ghosh,
+"On the Selberg class of Dirichlet series: small degrees," Duke Math. J. 72 (1993), 673–693,
+DOI 10.1215/S0012-7094-93-07225-0. -/
 theorem one_le_degree_of_pos (a : ArithmeticFunction ℂ) (ha : a ∈ selbergClass) (F : ℂ → ℂ)
     (hF : IsLSeriesContinuation a F) (D : FunctionalEquation F) (hpos : 0 < D.degree) :
     1 ≤ D.degree := by

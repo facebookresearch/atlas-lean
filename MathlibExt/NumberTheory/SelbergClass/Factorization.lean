@@ -16,10 +16,10 @@ import MathlibExt.NumberTheory.SelbergClass.DegreeZero
 /-!
 # Factorization into primitive functions in the Selberg class
 
-The degree of a functional equation is additive on products, is `0` only for the trivial
-function `1` (Conrey–Ghosh), and is otherwise at least `1` (Selberg). Hence a nontrivial member
-of `𝒮` cannot be split into nontrivial factors indefinitely, and induction on the degree shows
-that it is a finite product of primitive functions.
+The degree of a functional equation is additive on products, is `0` only for the trivial function
+`1` (Conrey–Ghosh), and is otherwise at least `1` (Richert; Conrey–Ghosh). Hence a nontrivial member
+of `𝒮` cannot be split into nontrivial factors indefinitely, and induction on the degree shows that
+it is a finite product of primitive functions.
 
 ## Main statements
 
@@ -52,7 +52,11 @@ theorem one_le_degree_of_ne_one {b : ArithmeticFunction ℂ} (hb : b ∈ selberg
   · exact absurd (eq_one_of_degree_eq_zero hb hF D h.symm) hb1
 
 /-- **Factorization into primitives.** Every `a ∈ 𝒮` with `a ≠ 1` is a finite product (for
-Dirichlet convolution, i.e. the product of `L`-functions) of primitive members of `𝒮`. -/
+Dirichlet convolution, i.e. the product of `L`-functions) of primitive members of `𝒮`.
+
+Source: J. B. Conrey and A. Ghosh, "On the Selberg class of Dirichlet series: small degrees," Duke
+Math. J. 72 (1993), 673–693, DOI 10.1215/S0012-7094-93-07225-0. Existence only; uniqueness is not
+claimed. -/
 theorem exists_multiset_prod_eq {a : ArithmeticFunction ℂ} (ha : a ∈ selbergClass)
     (ha1 : a ≠ 1) :
     ∃ l : Multiset (ArithmeticFunction ℂ), (∀ g ∈ l, IsSelbergPrimitive g) ∧ l.prod = a := by

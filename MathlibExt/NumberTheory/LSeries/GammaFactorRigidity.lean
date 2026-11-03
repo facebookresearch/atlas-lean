@@ -56,7 +56,12 @@ private lemma apply_eq_of_eventually_codiscrete {F G : ℂ → ℂ} {x : ℂ} (h
     (hG.tendsto.mono_left nhdsWithin_le_nhds) h1
 
 /-- **Nonvanishing entire functions of finite order.** An entire function without zeros and of
-finite order is `exp` of a polynomial. -/
+finite order is `exp` of a polynomial.
+
+Source: J. Hadamard, "Étude sur les propriétés des fonctions entières et en particulier d'une
+fonction considérée par Riemann," J. Math. Pures Appl. (4) 9 (1893), 171–215,
+numdam JMPA_1893_4_9__171_0. Special case: the zero-free case of Hadamard's factorization theorem.
+-/
 theorem Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE {E : ℂ → ℂ} {ρ : ℝ}
     (hf : Differentiable ℂ E) (hρ : Complex.HasGrowthOrderLE E ρ) (hf0 : ∀ z, E z ≠ 0) :
     ∃ g : Polynomial ℂ, ∀ z, E z = Complex.exp (g.eval z) := by
@@ -698,4 +703,3 @@ theorem LSeries.exists_eq_const_of_gamma_functional_equation (f : ℂ → ℂ)
   filter_upwards [(isOpen_lt continuous_const Complex.continuous_re).mem_nhds
     (show σ₀ < ((σ : ℂ)).re by rw [Complex.ofReal_re]; exact hσ₀σ)] with z hz
   rw [(hc z hz).2, hLconst z hz]
-

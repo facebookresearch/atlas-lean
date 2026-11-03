@@ -94,7 +94,13 @@ theorem log_factorial_eq_sum_vonMangoldt_mul_div (N : ℕ) :
   simp [Finset.sum_const, nsmul_eq_mul, hcard, mul_comm]
 
 /-- **Mertens' first theorem**, with an explicit constant:
-`|∑_{n ≤ x} Λ(n) / n - log x| ≤ log 4 + 6` for every `x ≥ 1`. -/
+`|∑_{n ≤ x} Λ(n) / n - log x| ≤ log 4 + 6` for every `x ≥ 1`.
+
+Source: F. Mertens, "Ein Beitrag zur analytischen Zahlentheorie", J. reine angew. Math. 78 (1874),
+46–62, DOI 10.1515/crll.1874.78.46; T. M. Apostol, *Introduction to Analytic Number Theory*,
+Undergraduate Texts in Mathematics, Springer, 1976, Chapter 4 (*Some Elementary Theorems on the
+Distribution of Prime Numbers*), DOI 10.1007/978-1-4757-5579-4_5. Stated in the `Λ` form, with the
+explicit constant `log 4 + 6`. -/
 theorem abs_sum_vonMangoldt_div_sub_log_le (x : ℝ) (hx : 1 ≤ x) :
     |∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, vonMangoldt n / (n : ℝ) - Real.log x|
       ≤ Real.log 4 + 6 := by
@@ -917,7 +923,13 @@ private theorem abs_sum_filter_prime_inv_sub_loglog_le :
         linarith [h4, habs]
 
 /-- **Mertens' second theorem**: `∑_{p ≤ x} 1/p = log log x + O(1)`. There is `C` with
-`|∑_{p ≤ x} 1/p - log log x| ≤ C` for every real `x ≥ 2`. -/
+`|∑_{p ≤ x} 1/p - log log x| ≤ C` for every real `x ≥ 2`.
+
+Source: F. Mertens, "Ein Beitrag zur analytischen Zahlentheorie", J. reine angew. Math. 78 (1874),
+46–62, DOI 10.1515/crll.1874.78.46; T. M. Apostol, *Introduction to Analytic Number Theory*,
+Undergraduate Texts in Mathematics, Springer, 1976, Chapter 4 (*Some Elementary Theorems on the
+Distribution of Prime Numbers*), DOI 10.1007/978-1-4757-5579-4_5. This is a weaker form: the
+classical statement is `∑_{p ≤ x} 1/p = log log x + B + O(1 / log x)`. -/
 theorem abs_sum_primesLE_inv_sub_log_log_le :
     ∃ C : ℝ, ∀ x : ℝ, 2 ≤ x →
       |∑ p ∈ Nat.primesLE ⌊x⌋₊, (p : ℝ)⁻¹ - Real.log (Real.log x)| ≤ C := by

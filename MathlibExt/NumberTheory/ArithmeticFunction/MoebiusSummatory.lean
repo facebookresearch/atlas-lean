@@ -78,7 +78,10 @@ namespace ArithmeticFunction
 open scoped Moebius
 
 /-- **The Mertens function** `M(x) = ∑_{n ≤ x} μ(n)`, the summatory function of the Möbius
-function, as a function of a real variable. It vanishes for `x < 1`. -/
+function, as a function of a real variable. It vanishes for `x < 1`.
+
+Source: F. Mertens, "Über eine zahlentheoretische Function", Sitzungsber. Akad. Wiss. Wien,
+Math.-Naturwiss. Kl. 106 (1897), 761–830, JFM 28.0177.01. -/
 noncomputable def mertens (x : ℝ) : ℤ :=
   ∑ n ∈ Icc 1 ⌊x⌋₊, μ n
 
@@ -103,7 +106,11 @@ theorem abs_mertens_le (x : ℝ) : |mertens x| ≤ ⌊x⌋₊ := by
 `G(x) = ∑_{n ≤ x} F(x / n)` for all `x ≥ 1` if and only if
 `F(x) = ∑_{n ≤ x} μ(n) G(x / n)` for all `x ≥ 1`.
 
-The restriction to `x ≥ 1` cannot be dropped: on `(0, 1)` both sums are empty. -/
+The restriction to `x ≥ 1` cannot be dropped: on `(0, 1)` both sums are empty.
+
+Source: T. M. Apostol, *Introduction to Analytic Number Theory*, Undergraduate Texts in Mathematics,
+Springer, 1976, Chapter 2 (*Arithmetical Functions and Dirichlet Multiplication*),
+DOI 10.1007/978-1-4757-5579-4_3. Generalised to values in an additive group, in iff form. -/
 theorem sum_floor_div_eq_iff_sum_moebius_smul_floor_div_eq {A : Type*} [AddCommGroup A]
     (F G : ℝ → A) :
     (∀ x : ℝ, 1 ≤ x → G x = ∑ n ∈ Icc 1 ⌊x⌋₊, F (x / n)) ↔

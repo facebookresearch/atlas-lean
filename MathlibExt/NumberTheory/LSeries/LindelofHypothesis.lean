@@ -26,7 +26,11 @@ take `LindelofHypothesis` as an explicit argument, so they are visibly condition
 @[expose] public section
 
 /-- The **Lindelöf hypothesis** (an open conjecture): for every `δ > 0` there is `A > 0` with
-`‖ζ s‖ ≤ A * |im s| ^ δ` whenever `re s ≥ 1 / 2` and `|im s| ≥ 1`. -/
+`‖ζ s‖ ≤ A * |im s| ^ δ` whenever `re s ≥ 1 / 2` and `|im s| ≥ 1`.
+
+Source: E. Lindelöf, *Quelques remarques sur la croissance de la fonction ζ(s)*, Bull. Sci. Math.
+(2) 32 (1908), 341–356, JFM 39.0488.01. Stated here in the half-plane form `re s ≥ 1 / 2`.
+-/
 def LindelofHypothesis : Prop :=
   ∀ δ : ℝ, 0 < δ → ∃ A : ℝ, 0 < A ∧ ∀ s : ℂ,
     1 / 2 ≤ s.re → 1 ≤ |s.im| → ‖riemannZeta s‖ ≤ A * |s.im| ^ δ

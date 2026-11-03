@@ -1756,7 +1756,12 @@ multiplicity (the nontrivial zeros `ρ = β + iγ` of `L(s, χ)`), and real `x >
 `∑_ρ x^ρ/ρ = -ψ(x, χ) - (1 - a)(log x + b(χ)) - a L'(0, χ)/L(0, χ) + ∑_{m ≥ 1} x^{a-2m}/(2m - a)`,
 where `b(χ) = DirichletCharacter.logDerivConstAtZero χ`. The sum over the zeros converges only
 conditionally: it is the limit as `R → ∞` of its truncations to `|γ| < R`, each with finite
-support. -/
+support.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 2nd ed., revised by H. L. Montgomery, Graduate
+Texts in Mathematics 74, Springer, 1980, Chapter 19 (The explicit formula for ψ(x, χ)),
+DOI 10.1007/978-1-4757-5927-3_19.
+-/
 theorem tendsto_tsum_cpow_div_zeros_explicit_formula {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {ι : Type u} (z : ι → ℂ)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w) {x : ℝ} (hx : 1 < x)

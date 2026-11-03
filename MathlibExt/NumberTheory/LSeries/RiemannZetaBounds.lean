@@ -1218,7 +1218,11 @@ theorem exists_pos_norm_deriv_riemannZeta_le_mul_log_sq_of_mem_frontier :
 /-! ### A zero-free region -/
 
 /-- **The `3-4-1` inequality for `ζ`.** For `σ > 1` and real `t`,
-`‖ζ (σ) ^ 3 * ζ (σ + i t) ^ 4 * ζ (σ + 2 i t)‖ ≥ 1`. -/
+`‖ζ (σ) ^ 3 * ζ (σ + i t) ^ 4 * ζ (σ + 2 i t)‖ ≥ 1`.
+
+Source: F. Mertens, *Über eine Eigenschaft der Riemannschen ζ-Function*, Sitzungsber. Akad. Wiss.
+Wien, Math.-Naturwiss. Kl. 107 (1898), 1429–1434, JFM 30.0192.02.
+-/
 theorem one_le_norm_riemannZeta_pow_three_mul {σ t : ℝ} (hσ : 1 < σ) :
     1 ≤ ‖riemannZeta (σ : ℂ) ^ 3 * riemannZeta ((σ : ℂ) + t * I) ^ 4 *
         riemannZeta ((σ : ℂ) + 2 * t * I)‖ := by
@@ -1232,7 +1236,13 @@ theorem one_le_norm_riemannZeta_pow_three_mul {σ t : ℝ} (hσ : 1 < σ) :
 `c₂ > 0` such that for every `T ≥ Real.exp 2` and every `s = σ + i t` with `1 ≤ |t| ≤ T` and
 `1 - c₁ / log ^ 9 T ≤ σ ≤ 2`,
 
-`‖ζ (s)‖ > c₂ / log T ^ 7`. -/
+`‖ζ (s)‖ > c₂ / log T ^ 7`.
+
+Source: C.-J. de la Vallée Poussin, *Sur la fonction ζ(s) de Riemann et le nombre des nombres
+premiers inférieurs à une limite donnée*, Mém. Couronnés Acad. Roy. Belgique 59 (1899), 1–74,
+DOI 10.3406/marb.1899.2449. This is a weaker form: the source has the region `σ > 1 - c / log t`;
+here `σ ≥ 1 - c₁ / log⁹ T`.
+-/
 theorem exists_pos_div_log_pow_seven_lt_norm_riemannZeta :
     ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ 0 < c₂ ∧ ∀ T : ℝ, Real.exp 2 ≤ T → ∀ s : ℂ, 1 ≤ |s.im| → |s.im| ≤ T →
       1 - c₁ / Real.log T ^ 9 ≤ s.re → s.re ≤ 2 →

@@ -127,7 +127,12 @@ private theorem mul_mod_mem_Icc_one_sub_one {p : ℕ} [Fact p.Prime] {a j : ℕ}
     omega
 
 /-- **Lerch's formula**: for a prime `p` and a natural number `a` prime to `p`,
-`a q_p(a) = (a ^ p - a) / p ≡ ∑_{j=1}^{p-1} j⁻¹ ⌊a j / p⌋ (mod p)`. -/
+`a q_p(a) = (a ^ p - a) / p ≡ ∑_{j=1}^{p-1} j⁻¹ ⌊a j / p⌋ (mod p)`.
+
+Source: M. Lerch, "Zur Theorie des Fermatschen Quotienten `(a ^ (p - 1) - 1) / p = q(a)`,"
+Math. Ann. 60 (1905), 471–490, DOI 10.1007/BF01561092. Lerch's congruence
+`q_p(a) ≡ ∑_{j=1}^{p-1} (a j)⁻¹ ⌊a j / p⌋ (mod p)` is stated here multiplied by `a`, for natural
+numbers `a`. -/
 theorem natCast_mul_fermatQuotient_eq_sum (p : ℕ) [hp : Fact p.Prime] {a : ℕ}
     (ha : IsCoprime (a : ℤ) (p : ℤ)) :
     (a : ZMod p) * (fermatQuotient p hp.out a ha : ZMod p) =
@@ -218,7 +223,11 @@ theorem natCast_mul_fermatQuotient_eq_sum (p : ℕ) [hp : Fact p.Prime] {a : ℕ
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [mul_inv, ← mul_assoc, ← mul_assoc, mul_inv_cancel₀ haZ, one_mul]
 
-/-- For an odd prime `p`, `q_p(2) ≡ ∑_{j=1}^{p-1} (-1) ^ (j + 1) / (2 j) (mod p)`. -/
+/-- For an odd prime `p`, `q_p(2) ≡ ∑_{j=1}^{p-1} (-1) ^ (j + 1) / (2 j) (mod p)`.
+
+Source: J. W. L. Glaisher, "On the residues of `r ^ (p - 1)` to modulus `p ^ 2`, `p ^ 3`, etc.,"
+Quart. J. Pure Appl. Math. 32 (1900–1901), 1–27, JFM 31.0186.01. Special case `r = 2` of
+Glaisher's formula, rewritten using `∑_{j=1}^{p-1} 1/j ≡ 0 (mod p)`. -/
 theorem fermatQuotient_two_eq_sum (p : ℕ) [hp : Fact p.Prime] (h2 : IsCoprime (2 : ℤ) (p : ℤ)) :
     (fermatQuotient p hp.out 2 h2 : ZMod p) =
       ∑ j ∈ Finset.Icc 1 (p - 1), (-1 : ZMod p) ^ (j + 1) / (2 * (j : ZMod p)) := by

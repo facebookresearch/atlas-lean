@@ -1085,7 +1085,11 @@ private theorem apply_eq_tsum_of_gammaFree_functionalEquation (a : ArithmeticFun
 
 
 /-- **Conrey–Ghosh.** If `a ∈ 𝒮` has continuation `F` with a functional equation of degree `0`,
-then `a = 1`. -/
+then `a = 1`.
+
+Source: J. B. Conrey and A. Ghosh, "On the Selberg class of Dirichlet series: small degrees," Duke
+Math. J. 72 (1993), 673–693, DOI 10.1215/S0012-7094-93-07225-0. Special case `d = 0` of their result
+that `1` is the only member of `𝒮` of degree less than `1`. -/
 theorem eq_one_of_degree_eq_zero {a : ArithmeticFunction ℂ} {F : ℂ → ℂ}
     (ha : a ∈ selbergClass) (hF : IsLSeriesContinuation a F) (D : FunctionalEquation F) (hD :
         D.degree = 0) :

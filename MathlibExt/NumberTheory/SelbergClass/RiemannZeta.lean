@@ -166,7 +166,11 @@ private theorem completed_eq (s : ℂ) (hs : 0 < s.re) :
 
 /-- **The functional equation of `ζ`** in Selberg form: `Q = π^{-1/2}`, one Gamma factor with
 `α = 1/2` and `r = 0`, and `w = 1`, so that `Φ(s) = Γℝ(s) ζ(s)` is the completed zeta
-function. -/
+function.
+
+Source: B. Riemann, "Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse" (1859), in
+*Gesammelte mathematische Werke*, Cambridge University Press, 2013, 136–144,
+DOI 10.1017/CBO9781139568050.008. -/
 noncomputable def FunctionalEquation.riemannZeta : FunctionalEquation _root_.riemannZeta where
   d := 1
   Q := Real.pi ^ (-(1 / 2 : ℝ))
@@ -260,7 +264,11 @@ theorem zeta_mem_selbergClass : (ζ : ArithmeticFunction ℂ) ∈ selbergClass :
   · simpa [hn.ne'] using Real.one_le_rpow (by exact_mod_cast hn : (1 : ℝ) ≤ n) hε.le
 
 /-- **`ζ` is primitive.** A factorisation `ζ = b c` with `b, c ≠ 1` would give
-`1 = deg ζ = deg b + deg c ≥ 2`. -/
+`1 = deg ζ = deg b + deg c ≥ 2`.
+
+Source: J. B. Conrey and A. Ghosh, "On the Selberg class of Dirichlet series: small degrees," Duke
+Math. J. 72 (1993), 673–693, DOI 10.1215/S0012-7094-93-07225-0. Special case `d = 1` of their result
+that members of `𝒮` of degree less than `2` are primitive. -/
 theorem isSelbergPrimitive_zeta : IsSelbergPrimitive (ζ : ArithmeticFunction ℂ) := by
   refine ⟨zeta_mem_selbergClass, natCoe_zeta_ne_one, fun b hb c hc h => ?_⟩
   by_contra hbc

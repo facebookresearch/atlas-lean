@@ -82,7 +82,12 @@ theorem one_div_one_add_sq_sub_im_le_re {ρ : ℂ} (hb0 : 0 ≤ ρ.re) (hb1 : ρ
 /-- **The zeros near height `T`.** There is a constant `C` such that for `T ≥ 2`, the sum
 `∑_ρ 1 / (1 + (T - γ)²)` over the nontrivial zeros `ρ = β + iγ` of `ζ`, counted with
 multiplicity (any family `z` listing the zeros of `ξ` with multiplicity), converges and is at
-most `C log T`. -/
+most `C log T`.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 2nd ed., revised by H. L. Montgomery, Graduate
+Texts in Mathematics 74, Springer, 1980, Chapter 15 (The number N(T)),
+DOI 10.1007/978-1-4757-5927-3_15.
+-/
 theorem exists_tsum_one_div_one_add_sq_sub_im_le_log :
     ∃ C : ℝ, ∀ {ι : Type u} (z : ι → ℂ),
       (∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w) →

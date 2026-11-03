@@ -659,7 +659,12 @@ theorem sum_moebius_isBigO_mul_exp_neg_mul_log_rpow :
   nlinarith only [hM, hW1, hK0]
 
 /-- **A bound for the Mertens function.** There is `c > 0` such that the Mertens function
-`M(x) = ∑_{n ≤ x} μ(n)` satisfies `M(x) = O(x exp(-c (log x) ^ (1 / 10)))`. -/
+`M(x) = ∑_{n ≤ x} μ(n)` satisfies `M(x) = O(x exp(-c (log x) ^ (1 / 10)))`.
+
+Source: H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I: Classical Theory*,
+Cambridge Studies in Advanced Mathematics 97, Cambridge University Press, 2007, Chapter 6 (*The
+Prime Number Theorem*), DOI 10.1017/CBO9780511618314.008. This is a weaker form: the classical bound
+is `M(x) = O(x exp(-c √(log x)))`. -/
 theorem mertens_isBigO_mul_exp_neg_mul_log_rpow :
     ∃ c : ℝ, 0 < c ∧ (fun x : ℝ => (mertens x : ℝ))
       =O[atTop] fun x : ℝ => x * Real.exp (-c * Real.log x ^ (1 / 10 : ℝ)) := by

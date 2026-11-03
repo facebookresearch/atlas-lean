@@ -213,7 +213,10 @@ open scoped Moebius
 
 /-- **Axer's theorem.** Let `0 ≤ β < 1` and let `G` have bounded variation on every interval
 `[1, T]` with `G(x) = O(x ^ β)`. If the Mertens function satisfies `M(x) = o(x)`, then
-`∑_{n ≤ x} μ(n) G(x / n) = o(x)`. -/
+`∑_{n ≤ x} μ(n) G(x / n) = o(x)`.
+
+Source: A. Axer, "Beitrag zur Kenntnis der zahlentheoretischen Funktionen μ(n) und λ(n)",
+Prace Mat.-Fiz. 21 (1910), 65–95, JFM 41.0240.02. -/
 theorem isLittleO_sum_moebius_mul_comp_div {G : ℝ → ℝ} {β : ℝ} (hβ₀ : 0 ≤ β) (hβ₁ : β < 1)
     (hG : G =O[atTop] fun x : ℝ => x ^ β)
     (hG_bv : ∀ T : ℝ, BoundedVariationOn G (Set.Icc 1 T))

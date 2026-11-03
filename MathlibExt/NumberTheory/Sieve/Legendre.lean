@@ -114,7 +114,11 @@ theorem roughCount_eq_ncard (N k : ℕ) : roughCount N k = {n | n ≤ N ∧ n.Is
   simp only [coe_filter, mem_Icc, Set.mem_ofPred_eq, isRough_iff_coprime_primorial]
   omega
 
-/-- **Legendre's identity**: `Φ(N, k) = ∑_{d ∣ k#} μ(d) ⌊N / d⌋`. -/
+/-- **Legendre's identity**: `Φ(N, k) = ∑_{d ∣ k#} μ(d) ⌊N / d⌋`.
+
+Source: H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I: Classical Theory*,
+Cambridge Studies in Advanced Mathematics 97, Cambridge University Press, 2007, Chapter 3
+(*Principles and first examples of sieve methods*), DOI 10.1017/CBO9780511618314.005. -/
 theorem roughCount_eq_sum_moebius_mul_div (N k : ℕ) :
     (roughCount N k : ℤ) = ∑ d ∈ (primorial k).divisors, μ d * ((N / d : ℕ) : ℤ) :=
   card_filter_coprime_eq_sum_moebius_mul_div (primorial_pos k).ne' N

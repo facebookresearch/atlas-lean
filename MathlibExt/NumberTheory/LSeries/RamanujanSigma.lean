@@ -533,7 +533,11 @@ namespace ArithmeticFunction
 
 /-- **Ramanujan's formula.** For complex `a, b`, the Dirichlet series of `σ_a σ_b` is
 `ζ(s) ζ(s - a) ζ(s - b) ζ(s - a - b) / ζ(2s - a - b)` on the half-plane
-`re s > 1 + max (0, re a) + max (0, re b)` of absolute convergence. -/
+`re s > 1 + max (0, re a) + max (0, re b)` of absolute convergence.
+
+Source: S. Ramanujan, *Some formulae in the analytic theory of numbers*, Messenger of Math. 45
+(1916), 81–84, JFM 45.1250.01.
+-/
 theorem LSeries_sigmaR_mul_sigmaR {a b s : ℂ} (hs : 1 < s.re) (hsa : 1 < (s - a).re)
     (hsb : 1 < (s - b).re) (hsab : 1 < (s - a - b).re) :
     LSeries (fun n ↦ sigmaR a n * sigmaR b n) s =

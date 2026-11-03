@@ -38,7 +38,12 @@ namespace PhragmenLindelof
 /-- **Phragmén–Lindelöf on a vertical strip.** Let `f` be holomorphic on the open strip
 `a < Re s < b` and continuous on its closure, with `‖f s‖ ≤ C exp (|Im s| ^ α)` for large
 `|Im s|`. If `f` is bounded on the two edges `Re s = a` and `Re s = b`, then it is bounded on the
-closed strip. -/
+closed strip.
+
+Source: E. Phragmén and E. Lindelöf, "Sur une extension d'un principe classique de l'analyse et sur
+quelques propriétés des fonctions monogènes dans le voisinage d'un point singulier," Acta Math. 31
+(1908), 381–406, DOI 10.1007/BF02415450. Special case: the growth `exp (|Im s| ^ α)` is far inside
+the admissible one. -/
 theorem vertical_strip_of_le_exp_rpow {f : ℂ → ℂ} {a b α : ℝ}
     (hf : DiffContOnCl ℂ f (re ⁻¹' Ioo a b))
     (hgrowth : ∃ C T₀ : ℝ, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → T₀ ≤ |s.im| →
@@ -84,7 +89,12 @@ theorem vertical_strip_of_le_exp_rpow {f : ℂ → ℂ} {a b α : ℝ}
 /-- **Polynomial growth on the edges gives polynomial growth in the strip.** Let `f` be
 holomorphic on the open strip `a < Re s < b`, continuous on its closure, with
 `‖f s‖ ≤ C exp (|Im s| ^ α)` for large `|Im s|`. If `‖f s‖ ≤ C' |Im s| ^ A` on the two edges
-for `|Im s| ≥ 1`, then `‖f s‖ ≤ C'' |Im s| ^ A` on the closed strip for `|Im s| ≥ 1`. -/
+for `|Im s| ≥ 1`, then `‖f s‖ ≤ C'' |Im s| ^ A` on the closed strip for `|Im s| ≥ 1`.
+
+Source: E. Phragmén and E. Lindelöf, "Sur une extension d'un principe classique de l'analyse et sur
+quelques propriétés des fonctions monogènes dans le voisinage d'un point singulier," Acta Math. 31
+(1908), 381–406, DOI 10.1007/BF02415450. Special case: the growth `exp (|Im s| ^ α)` is far inside
+the admissible one. -/
 theorem vertical_strip_le_mul_rpow {f : ℂ → ℂ} {a b α A : ℝ}
     (hf : DiffContOnCl ℂ f (re ⁻¹' Ioo a b))
     (hgrowth : ∃ C T₀, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → T₀ ≤ |s.im| →

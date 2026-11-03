@@ -198,7 +198,11 @@ theorem hasGrowthOrder_riemannXi : Complex.HasGrowthOrder riemannXi 1 := by
 
 /-- **The Hadamard product of `ξ`.** For any family `z` listing the zeros of `ξ` with
 multiplicity (that is, the nontrivial zeros of `ζ`), there are constants `A`, `B` with
-`ξ(s) = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`. -/
+`ξ(s) = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`.
+
+Source: J. Hadamard, *Étude sur les propriétés des fonctions entières et en particulier d'une
+fonction considérée par Riemann*, J. Math. Pures Appl. (4) 9 (1893), 171–215, JFM 25.0698.03.
+-/
 theorem exists_riemannXi_eq_exp_mul_tprod {ι : Type*} {z : ι → ℂ}
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w) :
     ∃ A B : ℂ, ∀ s, riemannXi s =

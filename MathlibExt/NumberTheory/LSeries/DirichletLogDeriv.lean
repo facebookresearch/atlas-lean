@@ -66,7 +66,12 @@ theorem neg_logDeriv_LFunction_eq_LSeries_vonMangoldt (χ : DirichletCharacter �
   rw [LSeries_twist_vonMangoldt_eq χ hs, logDeriv_apply, hev.deriv_eq, hev.eq_of_nhds, neg_div]
 
 /-- **The `3`-`4`-`1` inequality** for `σ > 1`:
-`0 ≤ 3 Re(-ζ'/ζ(σ)) + 4 Re(-L'/L(σ + iγ, χ)) + Re(-L'/L(σ + 2iγ, χ²))`. -/
+`0 ≤ 3 Re(-ζ'/ζ(σ)) + 4 Re(-L'/L(σ + iγ, χ)) + Re(-L'/L(σ + 2iγ, χ²))`.
+
+Source: F. Mertens, *Über eine Eigenschaft der Riemannschen ζ-Function*, Sitzungsber. Akad. Wiss.
+Wien, Math.-Naturwiss. Kl. 107 (1898), 1429–1434, JFM 30.0192.02. Generalised from `ζ` alone to the
+combination of `ζ`, `L(s, χ)` and `L(s, χ²)`.
+-/
 theorem re_neg_logDeriv_three_four_one_nonneg (χ : DirichletCharacter ℂ N) {σ : ℝ} (γ : ℝ)
     (hσ : 1 < σ) :
     0 ≤ 3 * (-(deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ))).re

@@ -489,7 +489,12 @@ theorem exists_neg_re_logDeriv_LFunction_add_sum_lt_log :
 /-- **The zeros near a height.** There is an absolute constant `C` such that for every primitive
 Dirichlet character `χ` mod `q`, every family `z` listing the zeros of `ξ(s, χ)` with multiplicity
 (the nontrivial zeros `ρ = β + iγ` of `L(s, χ)`), and every real `t`, the sum
-`∑_ρ 1 / (1 + (t - γ)²)` converges and is at most `C log (q (|t| + 2))`. -/
+`∑_ρ 1 / (1 + (t - γ)²)` converges and is at most `C log (q (|t| + 2))`.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 2nd ed., revised by H. L. Montgomery, Graduate
+Texts in Mathematics 74, Springer, 1980, Chapter 16 (The number N(T, χ)),
+DOI 10.1007/978-1-4757-5927-3_16.
+-/
 theorem exists_tsum_one_div_one_add_sq_sub_im_le_log :
     ∃ C : ℝ, ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive →
       ∀ {ι : Type u} (z : ι → ℂ),

@@ -70,7 +70,11 @@ def IsBoundedPadicDistribution (p : ℕ) [Fact p.Prime] (μ : ℕ → ℕ → �
 /-- The `k`-th Bernoulli distribution `μ_k` on `ℤ_[p]`, given by its values on balls:
 `bernoulliDist p k N a = μ_k(a + p ^ N ℤ_[p]) = p ^ (N (k - 1)) B_k(a / p ^ N)`, where `B_k` is
 the `k`-th Bernoulli polynomial (`Polynomial.bernoulli k`, with `B_1(x) = x - 1/2`). The value is
-computed in `ℚ` and cast to `ℚ_[p]`. -/
+computed in `ℚ` and cast to `ℚ_[p]`.
+
+Source: L. C. Washington, *Introduction to Cyclotomic Fields*, 2nd ed., Graduate Texts in
+Mathematics 83, Springer, 1997, Chapter 12, "Measures and Distributions,"
+DOI 10.1007/978-1-4612-1934-7_12. Here a distribution is encoded by its values on balls. -/
 noncomputable def bernoulliDist (p : ℕ) [Fact p.Prime] (k N a : ℕ) : ℚ_[p] :=
   (((p : ℚ) ^ ((N : ℤ) * ((k : ℤ) - 1)) *
       (Polynomial.bernoulli k).eval ((a : ℚ) / (p : ℚ) ^ N) : ℚ) : ℚ_[p])

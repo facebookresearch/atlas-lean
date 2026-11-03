@@ -189,7 +189,11 @@ theorem ramanujanSum_eq_sum_divisors_moebius (n : ℕ) [NeZero n] (t : ℤ) :
         split_ifs <;> simp
 
 /-- **Divisor-sum evaluation of the Ramanujan sum**:
-`c_n(t) = ∑_{d ∣ gcd(t, n)} d μ(n / d)`. -/
+`c_n(t) = ∑_{d ∣ gcd(t, n)} d μ(n / d)`.
+
+Source: T. M. Apostol, *Introduction to Analytic Number Theory*, Undergraduate Texts in Mathematics,
+Springer, 1976, Chapter 8 (*Periodic Arithmetical Functions and Gauss Sums*),
+DOI 10.1007/978-1-4757-5579-4_9. -/
 theorem ramanujanSum_eq_sum_divisors_gcd (n : ℕ) [NeZero n] (t : ℤ) :
     ramanujanSum n t = ∑ d ∈ (Int.gcd t n).divisors, (d : ℂ) * μ (n / d) := by
   have hn : n ≠ 0 := NeZero.ne n
@@ -218,4 +222,3 @@ theorem ramanujanSum_one (n : ℕ) [NeZero n] : ramanujanSum n 1 = μ n := by
     exact absurd (mem_filter.mpr ⟨Nat.one_mem_divisors.mpr (NeZero.ne n), by simp⟩) h1
 
 end MetaMathlibExt
-

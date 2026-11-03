@@ -118,7 +118,11 @@ theorem card_smoothNumbersUpTo_le_rpow_mul_prod (N k : ℕ) {δ : ℝ} (hδ : 0 
   exact h2.trans (mul_le_mul_of_nonneg_left h1 (Real.rpow_nonneg (Nat.cast_nonneg _) _))
 
 /-- The number `Ψ(x, z)` of `n ≤ x` all of whose prime factors are `≤ z` satisfies
-`Ψ(x, z) ≪ x (log z) exp(-log x / log z)`, uniformly in `x ≥ 1` and `z ≥ 3`. -/
+`Ψ(x, z) ≪ x (log z) exp(-log x / log z)`, uniformly in `x ≥ 1` and `z ≥ 3`.
+
+Source: R. A. Rankin, "The difference between consecutive prime numbers", J. London Math. Soc. 13
+(1938), 242–247, DOI 10.1112/jlms/s1-13.4.242. A bound by Rankin's method; the constants are our
+own. -/
 theorem card_smoothNumbersUpTo_le_mul_log_mul_exp :
     ∃ C : ℝ, ∀ x : ℝ, 1 ≤ x → ∀ z : ℝ, 3 ≤ z →
       ((⌊x⌋₊.smoothNumbersUpTo (⌊z⌋₊ + 1)).card : ℝ) ≤

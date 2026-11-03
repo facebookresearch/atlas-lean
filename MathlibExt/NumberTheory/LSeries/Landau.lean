@@ -425,7 +425,12 @@ namespace LSeries
 /-- **Landau's theorem for Dirichlet series.** If `a n ≥ 0` for all `n` and the abscissa of
 absolute convergence of `∑ a n n ^ (-s)` is the real number `σ₀`, then `LSeries a` has a
 singularity at `σ₀`: no holomorphic function on a disc around `σ₀` agrees with `LSeries a` on the
-part of the disc where `σ₀ < re s`. -/
+part of the disc where `σ₀ < re s`.
+
+Source: E. Landau, *Über einen Satz von Tschebyschef*, Math. Ann. 61 (1906), 527–550,
+DOI 10.1007/BF01449495. Stated here as the nonexistence of a holomorphic extension to a disc around
+`σ₀`.
+-/
 theorem not_exists_holomorphic_extension_of_nonneg (a : ℕ → ℝ) (ha : ∀ n, 0 ≤ a n) {σ₀ : ℝ}
     (hσ₀ : abscissaOfAbsConv (fun n : ℕ => (a n : ℂ)) = σ₀) :
     ¬ ∃ (r : ℝ) (g : ℂ → ℂ), 0 < r ∧ DifferentiableOn ℂ g (Metric.ball (σ₀ : ℂ) r) ∧

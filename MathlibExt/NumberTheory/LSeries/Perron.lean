@@ -48,7 +48,12 @@ variable {a : ℕ → ℂ} {c : ℝ}
 /-- **Perron's formula for an integrable kernel.** Let `∑ aₙ n^{-s}` converge absolutely at
 `c`, let `K` be integrable on the line `re s = c`, and suppose that for every `y > 0` the
 principal value `(1 / 2πi) ∫_(c) y ^ s K(s) ds` is `φ y`, with `φ y = 0` for `0 < y < 1`. Then
-for `x > 0`, `(1 / 2πi) ∫_(c) LSeries a s * x ^ s * K s ds = ∑_{1 ≤ n ≤ x} aₙ φ (x / n)`. -/
+for `x > 0`, `(1 / 2πi) ∫_(c) LSeries a s * x ^ s * K s ds = ∑_{1 ≤ n ≤ x} aₙ φ (x / n)`.
+
+Source: O. Perron, *Zur Theorie der Dirichletschen Reihen*, J. Reine Angew. Math. 134 (1908),
+95–143, DOI 10.1515/crll.1908.134.95. This is a smoothed variant: the kernel `K` is integrable on
+the line, so no truncation error appears.
+-/
 theorem hasVerticalIntegral_LSeries_mul_cpow_mul (hsum : LSeriesSummable a c) {x : ℝ}
     (hx : 0 < x) {K : ℂ → ℂ} {φ : ℝ → ℂ} (hK : VerticalIntegrable K c)
     (hφ : ∀ y : ℝ, 0 < y → HasVerticalIntegral c (fun s => (y : ℂ) ^ s * K s) (φ y))

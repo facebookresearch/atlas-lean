@@ -160,7 +160,12 @@ namespace RiemannXi
 
 /-- **The zeros of `ξ` are the nontrivial zeros of `ζ`.** The factor `s (s - 1) / 2` cancels the
 pole of `ζ` at `1`, the poles of `Γ(s/2)` cancel the trivial zeros at `-2n`, and `ζ` does not
-vanish on `Re s ≥ 1`. -/
+vanish on `Re s ≥ 1`.
+
+Source: B. Riemann, *Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse* (1859), in
+*Gesammelte mathematische Werke*, Cambridge University Press, 2013, 136–144,
+DOI 10.1017/CBO9781139568050.008.
+-/
 theorem riemannXi_eq_zero_iff (s : ℂ) : riemannXi s = 0 ↔ s ∈ riemannZetaNontrivialZeros := by
   -- `Γℝ` vanishes only at `-2n`, so not for `Re s ≥ 0`, `s ≠ 0`
   have hG : ∀ z : ℂ, z ≠ 0 → 0 ≤ z.re → z.Gammaℝ ≠ 0 := by

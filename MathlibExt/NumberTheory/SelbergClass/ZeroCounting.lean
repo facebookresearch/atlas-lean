@@ -1802,7 +1802,13 @@ private lemma zeroCount_mono (F : ℂ → ℂ)
 /-- **Selberg's zero-counting theorem.** For `a` in the Selberg class with continuation `F` and
 any functional equation `D` of `F`, the number `N(T)` of zeros `ρ` of `F` with `0 ≤ Re ρ` and
 `0 ≤ Im ρ ≤ T`, counted with multiplicity, satisfies `N(T) ∼ (deg D) T log T / 2π` as
-`T → ∞`. -/
+`T → ∞`.
+
+Source: H. von Mangoldt, "Zu Riemanns Abhandlung 'Ueber die Anzahl der Primzahlen unter einer
+gegebenen Grösse'," J. Reine Angew. Math. 114 (1895), 255–305, DOI 10.1515/crll.1895.114.255;
+H. Davenport, *Multiplicative Number Theory*, 3rd ed., Springer, 2000, Chapter 15 ("The Number
+N(T)"), DOI 10.1007/978-1-4757-5927-3_15. Generalised from `ζ` to `𝒮`, and a weaker form: the
+leading term only. -/
 theorem isEquivalent_zeroCount (a : ArithmeticFunction ℂ) (ha : a ∈ selbergClass) (F : ℂ → ℂ)
     (hF : IsLSeriesContinuation a F) (D : FunctionalEquation F) :
     Asymptotics.IsEquivalent Filter.atTop

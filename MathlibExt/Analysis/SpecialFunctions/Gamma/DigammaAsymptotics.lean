@@ -76,7 +76,13 @@ theorem tendsto_one_div_natCast_add_atTop (z : ℂ) :
   simp [one_div]
 
 /-- **The digamma series.** For `z` not a pole of `Γ`,
-`ψ(z) = ∑ₙ (1 / (n + 1) - 1 / (n + z)) - γ`. -/
+`ψ(z) = ∑ₙ (1 / (n + 1) - 1 / (n + z)) - γ`.
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §12.16.
+
+Source: *NIST Digital Library of Mathematical Functions*, https://dlmf.nist.gov/5.7,
+eq. (5.7.6). -/
 theorem digamma_eq_tsum_sub_eulerMascheroniConstant {z : ℂ} (hz : ∀ n : ℕ, z ≠ -(n : ℂ)) :
     digamma z = (∑' n : ℕ, (1 / ((n : ℂ) + 1) - 1 / ((n : ℂ) + z))) -
       Real.eulerMascheroniConstant := by

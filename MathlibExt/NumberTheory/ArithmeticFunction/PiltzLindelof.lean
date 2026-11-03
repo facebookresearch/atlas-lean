@@ -176,7 +176,10 @@ theorem piltzMainPoly_leadingCoeff {k : ℕ} (hk : 1 ≤ k) :
 Lindelöf hypothesis (`LindelofHypothesis`, an open conjecture). Let `k ≥ 1` and `ε > 0`. Then
 `∑_{n ≤ x} d_k(n) = x * P_{k-1}(log x) + O(x ^ (1 / 2 + ε))`, where
 `P_{k-1} = piltzMainPoly k` is the explicit polynomial of degree `k - 1` and leading coefficient
-`1 / (k - 1)!` for which `x P_{k-1}(log x)` is the residue of `ζ(s) ^ k x ^ s / s` at `s = 1`. -/
+`1 / (k - 1)!` for which `x P_{k-1}(log x)` is the residue of `ζ(s) ^ k x ^ s / s` at `s = 1`.
+
+Source: E. C. Titchmarsh, *The Theory of the Riemann Zeta-Function*, 2nd ed., revised by D. R.
+Heath-Brown, Oxford University Press, 1986, Zbl 0601.10026. -/
 theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     (hLindelof : LindelofHypothesis) {k : ℕ} (hk : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) :
     (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))

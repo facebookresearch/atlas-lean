@@ -58,7 +58,10 @@ theorem sq_norm_cos (z : ℂ) : ‖cos z‖ ^ 2 = Real.cos z.re ^ 2 + Real.sinh 
 
 end Complex
 
-/-- **Jordan's inequality** in the form `|d| ≤ |sin (πd/2)|` for `|d| ≤ 1`. -/
+/-- **Jordan's inequality** in the form `|d| ≤ |sin (πd/2)|` for `|d| ≤ 1`.
+
+Source: *NIST Digital Library of Mathematical Functions*, https://dlmf.nist.gov/4.18,
+eq. (4.18.1). Here with `x = π |d| / 2`. -/
 theorem Real.abs_le_abs_sin_pi_mul_div_two {d : ℝ} (hd : |d| ≤ 1) :
     |d| ≤ |Real.sin (Real.pi * d / 2)| := by
   have hpi := Real.pi_pos

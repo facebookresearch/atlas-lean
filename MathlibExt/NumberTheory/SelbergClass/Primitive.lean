@@ -17,9 +17,15 @@ The Selberg class `𝒮` is closed under products (Dirichlet convolution of coef
 function `F ∈ 𝒮` is *primitive* if `F ≠ 1` and `F` cannot be written as a product of two
 functions of `𝒮` neither of which is `1`.
 
-*Selberg's conjectures* describe the prime coefficients of primitive functions:
+*Selberg's orthogonality conjecture* describes the prime coefficients of primitive functions.
+We split it into two statements, labelled (a) and (b) here:
 (a) `∑_{p ≤ x} |a_F(p)|² / p = log log x + O(1)` for primitive `F`, and
 (b) `∑_{p ≤ x} a_F(p) conj (a_G(p)) / p = O(1)` for distinct primitive `F`, `G`.
+Statement (a) is the primitive case of Selberg's first conjecture, which asserts
+`∑_{p ≤ x} |a_F(p)|² / p = n_F log log x + O(1)` with an integer `n_F` for every `F ∈ 𝒮` and
+`n_F = 1` for primitive `F`; statement (b) is his second conjecture. The labels (a), (b) and the
+names `ConjectureA`, `ConjectureB` are ours and need not match the lettering in Selberg's
+paper.
 
 ## Main definitions
 
@@ -61,14 +67,23 @@ namespace SelbergClass
 open ArithmeticFunction
 
 /-- **Selberg's conjecture (a)**: for every primitive `a`,
-`∑_{p ≤ x} |a(p)|² / p = log log x + O(1)` as `x → ∞`. -/
+`∑_{p ≤ x} |a(p)|² / p = log log x + O(1)` as `x → ∞`.
+
+Source: A. Selberg, "Old and new conjectures and results about a class of Dirichlet series," in
+Proceedings of the Amalfi Conference on Analytic Number Theory (Maiori, 1989), Università di
+Salerno, 1992, 367–385, Zbl 0787.11037. Special case: primitive `F`, for which the conjectured `n_F`
+is `1`. -/
 def ConjectureA : Prop :=
   ∀ a : ArithmeticFunction ℂ, IsSelbergPrimitive a →
     (fun x : ℝ => (∑ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊x⌋₊), ‖a p‖ ^ 2 / (p : ℝ))
         - Real.log (Real.log x)) =O[atTop] (fun _ => (1 : ℝ))
 
 /-- **Selberg's conjecture (b)**: for distinct primitive `a`, `b`,
-`∑_{p ≤ x} a(p) conj (b(p)) / p = O(1)` as `x → ∞`. -/
+`∑_{p ≤ x} a(p) conj (b(p)) / p = O(1)` as `x → ∞`.
+
+Source: A. Selberg, "Old and new conjectures and results about a class of Dirichlet series," in
+Proceedings of the Amalfi Conference on Analytic Number Theory (Maiori, 1989), Università di
+Salerno, 1992, 367–385, Zbl 0787.11037. -/
 def ConjectureB : Prop :=
   ∀ a b : ArithmeticFunction ℂ, IsSelbergPrimitive a → IsSelbergPrimitive b → a ≠ b →
     (fun x : ℝ => ∑ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊x⌋₊),

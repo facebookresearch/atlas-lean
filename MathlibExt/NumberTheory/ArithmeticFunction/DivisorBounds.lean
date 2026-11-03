@@ -121,7 +121,11 @@ theorem exists_sigma_zero_le_mul_rpow {ε : ℝ} (hε : 0 < ε) :
   rw [hsplit]
   nlinarith [mul_nonneg (Real.log_nonneg one_le_two) (mul_nonneg hε.le hα)]
 
-/-- The divisor bound in asymptotic form: `σ 0 n = O(n ^ ε)` for every `ε > 0`. -/
+/-- The divisor bound in asymptotic form: `σ 0 n = O(n ^ ε)` for every `ε > 0`.
+
+Source: G. H. Hardy and E. M. Wright, *An Introduction to the Theory of Numbers*, 6th ed., Oxford
+University Press, 2008, Chapter XVIII (*The Order of Magnitude of Arithmetical Functions*),
+DOI 10.1093/oso/9780199219858.003.0018. -/
 theorem sigma_zero_isBigO_rpow {ε : ℝ} (hε : 0 < ε) :
     (fun n : ℕ => (σ 0 n : ℝ)) =O[atTop] fun n : ℕ => (n : ℝ) ^ ε := by
   obtain ⟨C, -, hC⟩ := exists_sigma_zero_le_mul_rpow hε
@@ -142,7 +146,11 @@ theorem sigma_zero_isLittleO_rpow {ε : ℝ} (hε : 0 < ε) :
   rw [← Real.rpow_add' (Nat.cast_nonneg n) (by linarith), add_halves]
 
 /-- **Wigert's divisor bound**: for every `η > 0`, the number of divisors satisfies
-`σ 0 n < 2 ^ ((1 + η) * log n / log (log n))` for all sufficiently large `n`. -/
+`σ 0 n < 2 ^ ((1 + η) * log n / log (log n))` for all sufficiently large `n`.
+
+Source: S. Wigert, "Sur l'ordre de grandeur du nombre des diviseurs d'un entier", Ark. Mat.
+Astron. Fys. 3 (1907), No. 18, JFM 38.0249.01. This is the upper half of Wigert's theorem, which
+also shows that the exponent `log 2 · log n / log log n` is attained along a subsequence. -/
 theorem eventually_sigma_zero_lt_two_rpow {η : ℝ} (hη : 0 < η) :
     ∀ᶠ n : ℕ in atTop,
       (σ 0 n : ℝ) < (2 : ℝ) ^ ((1 + η) * Real.log n / Real.log (Real.log n)) := by

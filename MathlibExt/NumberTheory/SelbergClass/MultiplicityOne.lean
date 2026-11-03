@@ -331,7 +331,11 @@ private lemma eq_zero_of_isLittleO (δ K E : ℝ) (n : ℕ) (hn : 2 ≤ n) (D : 
 
 /-- **Strong multiplicity one in the Selberg class.** Let `a, b ∈ 𝒮` with continuations `F`
 and `G`. If the zeros `ρ` with `Re ρ > 0` and `|Im ρ| ≤ T`, counted with multiplicity, differ by
-`o(T)`, i.e. `∑_ρ |m_F(ρ) - m_G(ρ)| = o(T)` as `T → ∞`, then `a = b`. -/
+`o(T)`, i.e. `∑_ρ |m_F(ρ) - m_G(ρ)| = o(T)` as `T → ∞`, then `a = b`.
+
+Source: M. R. Murty and V. K. Murty, "Strong multiplicity one for Selberg's class," C. R. Acad. Sci.
+Paris Sér. I Math. 319 (1994), 315–320, Zbl 0823.11049. The source counts zeros with `Re ρ ≥ 1/2`;
+here `0 < Re ρ`, equivalent by the functional equation. -/
 theorem eq_of_isLittleO_sum_abs_sub_analyticOrderNatAt (a b : ArithmeticFunction ℂ) (ha : a ∈
     selbergClass)
     (hb : b ∈ selbergClass) (F G : ℂ → ℂ) (hF : IsLSeriesContinuation a F) (hG :

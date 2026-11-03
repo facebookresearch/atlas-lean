@@ -94,7 +94,10 @@ theorem intervalIntegrable_ofReal_one_sub_cpow_sub_one_div {z : ℂ} (hz : 0 < z
 
 /-- **An integral representation of the digamma function.** For `Re z > 0`,
 `ψ(z) = ∫₀¹ (1 - (1 - t) ^ (z - 1)) / t dt - γ`, where `ψ = Γ' / Γ` and `γ` is the
-Euler–Mascheroni constant. -/
+Euler–Mascheroni constant.
+
+Source: *NIST Digital Library of Mathematical Functions*, https://dlmf.nist.gov/5.9,
+eq. (5.9.16). After the substitution `t ↦ 1 - t`. -/
 theorem digamma_eq_integral_sub_eulerMascheroniConstant {z : ℂ} (hz : 0 < z.re) :
     digamma z =
       (∫ t in (0 : ℝ)..1, (1 - ((1 - t : ℝ) : ℂ) ^ (z - 1)) / (t : ℂ)) -

@@ -38,7 +38,15 @@ namespace DirichletCharacter
 variable {q : ℕ} [NeZero q]
 
 /-- **The absolute value of a primitive Gauss sum.** For a primitive Dirichlet character `χ`
-modulo `q` and a primitive additive character `e` of `ZMod q`, `‖gaussSum χ e‖ = √q`. -/
+modulo `q` and a primitive additive character `e` of `ZMod q`, `‖gaussSum χ e‖ = √q`.
+
+Source: H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I: Classical Theory*,
+Cambridge University Press, 2007, Chapter 9 (Primitive characters and Gauss sums),
+DOI 10.1017/CBO9780511618314.011; T. M. Apostol, *Introduction to Analytic Number Theory*, Springer,
+1976, Chapter 8 (Periodic arithmetical functions and Gauss sums), DOI 10.1007/978-1-4757-5579-4_9.
+Generalised from the character `a ↦ e(a/q)` of the sources to any primitive additive character of
+`ZMod q`.
+-/
 theorem norm_gaussSum_of_isPrimitive {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive)
     {e : AddChar (ZMod q) ℂ} (he : e.IsPrimitive) :
     ‖gaussSum χ e‖ = Real.sqrt q := by

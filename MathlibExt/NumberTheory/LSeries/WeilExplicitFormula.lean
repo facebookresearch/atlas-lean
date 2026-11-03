@@ -1311,7 +1311,12 @@ imaginary axis. Then, with `ĥ₀ = 𝓕 h₀` the Fourier transform,
 `∑_{Im ρ > 0} h(ρ - 1/2) + ∑_n Λ(n)/√n ĥ₀(log n)
   = h(1/2) - (1/2) (log π) ĥ₀(0) + (1/2) ∫ ψ(1/4 + iπt) h₀(t) dt`,
 where `ψ = Γ'/Γ`, the first sum runs over the nontrivial zeros `ρ` of `ζ` with multiplicity (any
-family `z` listing the zeros of `ξ` with multiplicity), and both series converge. -/
+family `z` listing the zeros of `ξ` with multiplicity), and both series converge.
+
+Source: A. Weil, *Sur les « formules explicites » de la théorie des nombres premiers*, Meddel. Lunds
+Univ. Mat. Sem., Suppl.-band M. Riesz (1952), 252–265, Zbl 0049.03205. This is a special case: `ζ`
+alone, with even test functions holomorphic on a strip, in a normalisation that differs from Weil's.
+-/
 theorem weil_explicit_formula {ε : ℝ} (hε : 0 < ε) {h : ℂ → ℂ}
     (hh : DifferentiableOn ℂ h {s | |s.re| ≤ 1 / 2 + ε}) (hsymm : ∀ s, h (-s) = h s)
     (hdecay : ∃ C : ℝ, ∀ s : ℂ, |s.re| ≤ 1 / 2 + ε → 1 ≤ ‖s‖ → ‖h s‖ ≤ C * ‖s‖ ^ (-1 - ε))

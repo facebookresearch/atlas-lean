@@ -192,7 +192,15 @@ order at most `ρ ≥ 0`, then for every `ε > 0` the number of zeros of `f` in 
 `‖z‖ ≤ r`, counted with multiplicity, is `O(r ^ (ρ + ε))` as `r → ∞`.
 
 The count is the finite sum of the divisor of `f` on the disc. If `f ≡ 0` the divisor is `0`, and
-the statement is trivially true. A zero at the origin is allowed. -/
+the statement is trivially true. A zero at the origin is allowed.
+
+Source: J. Hadamard, "Étude sur les propriétés des fonctions entières et en particulier d'une
+fonction considérée par Riemann," J. Math. Pures Appl. (4) 9 (1893), 171–215,
+JFM 25.0698.03. Here the estimate is derived from Jensen's formula.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
+Springer, 2000, Chapter 11 (*Integral functions of order 1*),
+DOI 10.1007/978-1-4757-5927-3_11. Generalised from order `1` to any order `ρ ≥ 0`. -/
 theorem HasGrowthOrderLE.isBigO_sum_divisor_closedBall (hf : Differentiable ℂ f)
     (h : HasGrowthOrderLE f ρ) (hρ : 0 ≤ ρ) {ε : ℝ} (hε : 0 < ε) :
     (fun r : ℝ => ((∑ᶠ u, MeromorphicOn.divisor f (closedBall 0 r) u : ℤ) : ℝ))
@@ -303,7 +311,15 @@ fibre of `z` over each `w` has `analyticOrderAt f w` elements. Then `∑ ‖z n�
 for every `ε > 0`.
 
 The index type is arbitrary, which covers functions with finitely many zeros, and no ordering of
-the zeros is needed. `f 0 ≠ 0` makes every `z n` nonzero. -/
+the zeros is needed. `f 0 ≠ 0` makes every `z n` nonzero.
+
+Source: J. Hadamard, "Étude sur les propriétés des fonctions entières et en particulier d'une
+fonction considérée par Riemann," J. Math. Pures Appl. (4) 9 (1893), 171–215,
+JFM 25.0698.03.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
+Springer, 2000, Chapter 11 (*Integral functions of order 1*),
+DOI 10.1007/978-1-4757-5927-3_11. Generalised from order `1` to any order `ρ ≥ 0`. -/
 theorem HasGrowthOrderLE.summable_norm_rpow_neg {ι : Type*} {z : ι → ℂ} {ε : ℝ}
     (hf : Differentiable ℂ f) (h : HasGrowthOrderLE f ρ) (hρ : 0 ≤ ρ) (hf0 : f 0 ≠ 0)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) (hε : 0 < ε) :

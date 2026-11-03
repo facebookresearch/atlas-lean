@@ -1076,7 +1076,13 @@ end Landau
 /-- **Landau's formula.** For every integer `n > 1`,
 `(1/T) ∑_{|γ| ≤ T} n^ρ → -Λ(n)/π` as `T → ∞`, the sum running over the nontrivial zeros
 `ρ = β + iγ` of `ζ` counted with multiplicity (any family `z` listing the zeros of `ξ` with
-multiplicity). Each truncated sum has finite support. -/
+multiplicity). Each truncated sum has finite support.
+
+Source: E. Landau, *Über die Nullstellen der Zetafunktion*, Math. Ann. 71 (1912), 548–564,
+DOI 10.1007/BF01456808. This is a weaker form: the source gives
+`∑_{0 < γ ≤ T} x^ρ = -T Λ(x) / (2π) + O(log T)` for real `x > 1`; here only the limit, for integers
+`n > 1`, summed over `|γ| ≤ T`.
+-/
 theorem tendsto_one_div_mul_tsum_natCast_cpow_zeros {ι : Type u} (z : ι → ℂ)
     (hz : ∀ w, ENat.card {k // z k = w} = analyticOrderAt riemannXi w) {n : ℕ} (hn : 1 < n) :
     Tendsto (fun T : ℝ => (1 / (T : ℂ)) *

@@ -69,7 +69,14 @@ theorem summable_moebius_div_pow (h : ℕ) (hh : 2 ≤ h) :
   gcongr
   exact_mod_cast abs_moebius_le_one
 
-/-- `∑ μ(d) / d ^ h = 1 / ζ(h)` for every integer `h ≥ 2`. -/
+/-- `∑ μ(d) / d ^ h = 1 / ζ(h)` for every integer `h ≥ 2`.
+
+Source: G. H. Hardy and E. M. Wright, *An Introduction to the Theory of Numbers*, 6th ed., Oxford
+University Press, 2008, Chapter XVII (*Generating Functions of Arithmetical Functions*),
+DOI 10.1093/oso/9780199219858.003.0017; T. M. Apostol, *Introduction to Analytic Number Theory*,
+Undergraduate Texts in Mathematics, Springer, 1976, Chapter 11 (*Dirichlet Series and Euler
+Products*), DOI 10.1007/978-1-4757-5579-4_12. This is the special case `s = h ∈ ℕ`, `h ≥ 2`, of
+`∑ μ(n) n ^ (-s) = 1 / ζ(s)` for `re s > 1`. -/
 theorem tsum_moebius_div_pow (h : ℕ) (hh : 2 ≤ h) :
     ∑' d : ℕ, (μ d : ℝ) / (d : ℝ) ^ h = 1 / (riemannZeta (h : ℂ)).re := by
   have hs : 1 < ((h : ℂ)).re := by

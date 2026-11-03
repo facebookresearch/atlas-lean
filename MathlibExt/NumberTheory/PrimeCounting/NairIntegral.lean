@@ -32,7 +32,10 @@ open scoped Chebyshev
 
 namespace Nat
 
-/-- `lcm(1, …, 2n+1) ∫₀¹ xⁿ(1 - x)ⁿ dx` is a positive integer. -/
+/-- `lcm(1, …, 2n+1) ∫₀¹ xⁿ(1 - x)ⁿ dx` is a positive integer.
+
+Source: M. Nair, "On Chebyshev-type inequalities for primes", Amer. Math. Monthly 89 (1982),
+126–129, DOI 10.1080/00029890.1982.11995398. This is the integrality step of Nair's argument. -/
 theorem exists_pos_eq_lcmUpto_mul_integral (n : ℕ) :
     ∃ m : ℕ, 0 < m ∧
       (lcmUpto (2 * n + 1) : ℝ) * ∫ x in (0 : ℝ)..1, x ^ n * (1 - x) ^ n = m := by

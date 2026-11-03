@@ -57,7 +57,11 @@ theorem finite_setOf_monic_irreducible_natDegree_eq (d : ℕ) :
   exact Set.Finite.of_finite_image (Set.toFinite _) hinj
 
 /-- **Gauss's formula** for the number of monic irreducible polynomials over a finite field `K`
-with `q` elements: `∑_{d ∣ n} d N_d = q ^ n` for `n ≠ 0`. -/
+with `q` elements: `∑_{d ∣ n} d N_d = q ^ n` for `n ≠ 0`.
+
+Source: R. Lidl and H. Niederreiter, *Finite Fields*, 2nd ed., Encyclopedia of Mathematics and its
+Applications 20, Cambridge University Press, 1997, Chapter 3 (*Polynomials over Finite Fields*),
+DOI 10.1017/CBO9780511525926.005. -/
 theorem sum_divisors_mul_monicIrreducibleCount {n : ℕ} (hn : n ≠ 0) :
     ∑ d ∈ n.divisors, d * monicIrreducibleCount K d = Nat.card K ^ n := by
   classical

@@ -150,7 +150,12 @@ open SelbergClass
 /-- **The Selberg class** `𝒮`, as a set of coefficient sequences: `a 1 = 1`; the Dirichlet
 series of `a` has a continuation `F` such that `(s - 1)^m F(s)` extends to an entire function of
 finite order and `F` satisfies a functional equation; `a` has an Euler logarithm `b` with
-`b n = O(n^θ)` for some `θ < 1/2`; and `a n = O(n^ε)` for every `ε > 0`. -/
+`b n = O(n^θ)` for some `θ < 1/2`; and `a n = O(n^ε)` for every `ε > 0`.
+
+Source: A. Selberg, "Old and new conjectures and results about a class of Dirichlet series," in
+Proceedings of the Amalfi Conference on Analytic Number Theory (Maiori, 1989), Università di
+Salerno, 1992, 367–385, Zbl 0787.11037. Here a member is recorded by its coefficient sequence, with
+its continuation as a separate function. -/
 def selbergClass : Set (ArithmeticFunction ℂ) :=
   {a | a 1 = 1 ∧
     (∃ F : ℂ → ℂ, IsLSeriesContinuation a F ∧

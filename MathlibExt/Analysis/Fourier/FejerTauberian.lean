@@ -466,7 +466,17 @@ and suppose `u ↦ eᵘ g(u)` is nondecreasing. If for every `λ > 0`
 
 No measurability or integrability hypothesis on `g` is needed: `g ≥ 0` follows from the
 hypotheses, and the integrands are eventually integrable because the integrals tend to
-`π ≠ 0`. -/
+`π ≠ 0`.
+
+Source: S. Ikehara, "An extension of Landau's theorem in the analytical theory of numbers,"
+J. Math. Phys. 10 (1931), 1–12, DOI 10.1002/sapm19311011.
+
+Source: N. Wiener, "Tauberian theorems," Ann. of Math. (2) 33 (1932), 1–100,
+DOI 10.2307/1968102.
+
+Source: J. Korevaar, "A century of complex Tauberian theory," Bull. Amer. Math. Soc. 39 (2002),
+475–531, DOI 10.1090/S0273-0979-02-00951-5. The kernel here is normalised to have integral `π`
+rather than `1`. -/
 theorem tendsto_one_of_tendsto_integral_mul_fejer (hg0 : ∀ u < 0, g u = 0)
     (hmono : Monotone (fun u => Real.exp u * g u))
     (hF : ∀ lam > 0, Tendsto (fun v => ∫ u : ℝ, g u *

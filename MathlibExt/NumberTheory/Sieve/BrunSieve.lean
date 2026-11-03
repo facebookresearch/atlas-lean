@@ -212,7 +212,15 @@ private theorem factorial_mul_sum_powerset_choose_le (a : ℕ → ℝ) (S : Fins
 and suppose `∑_{p ≤ z, P p} ω(p)/p ≤ c₁ log log z + c₂` for `z ≥ 3`. Then there are constants
 `c₄, K` with
 `|∑_{δ ∣ P(z), δ > 1} ψ_r(δ) ω(δ) / Ω(δ)| ≤ K (c₁ log log z + c₄)^r / r! · (log z)^{c₁}`
-for every `z ≥ 3` and `r`, where `ω(δ) = ∏_{p ∣ δ} ω(p)` and `Ω(δ) = ∏_{p ∣ δ} (p - ω(p))`. -/
+for every `z ≥ 3` and `r`, where `ω(δ) = ∏_{p ∣ δ} ω(p)` and `Ω(δ) = ∏_{p ∣ δ} (p - ω(p))`.
+
+Source: H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I: Classical Theory*,
+Cambridge Studies in Advanced Mathematics 97, Cambridge University Press, 2007, Chapter 3
+(*Principles and first examples of sieve methods*), DOI 10.1017/CBO9780511618314.005; H. Halberstam
+and H.-E. Richert, *Sieve Methods*, London Mathematical Society Monographs 4, Academic Press, 1974,
+Zbl 0298.10026. Brun's pure sieve in the modern form of these accounts, for a general sieve density.
+The method originates in V. Brun, "Le crible d'Eratosthène et le théorème de Goldbach",
+Skr. Vidensk.-Selsk. Christiania 1920, No. 3, JFM 47.0162.02. -/
 theorem abs_sum_brunPsi_mul_div_le (P : ℕ → Prop) [DecidablePred P] (ω' : ℕ → ℝ) (c c₁ c₂ : ℝ)
     (hω0 : ∀ p, 0 ≤ ω' p) (hωp : ∀ p, P p → p.Prime → ω' p < p) (hωc : ∀ p, ω' p ≤ c)
     (hsum : ∀ z : ℝ, 3 ≤ z →

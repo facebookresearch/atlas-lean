@@ -57,7 +57,11 @@ open Nat in
 /-- **Taylor expansion with a holomorphic remainder**, with explicit coefficients. If `f` is complex
 differentiable on a neighbourhood `U` of `a`, then for every `n` there is a function `g` complex
 differentiable on `U` with `f s = ∑_{j < n} f^{(j)}(a) / j! * (s - a) ^ j + (s - a) ^ n * g s` for
-all `s`. -/
+all `s`.
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §5.4. This is a variant: the remainder is `(s - a) ^ n g s` with `g`
+holomorphic rather than a contour integral, and `U` need not be open. -/
 theorem DifferentiableOn.eq_sum_iteratedDeriv_add_pow_mul {U : Set ℂ} {a : ℂ} {f : ℂ → ℂ}
     (hf : DifferentiableOn ℂ f U) (hU : U ∈ nhds a) (n : ℕ) :
     ∃ g : ℂ → ℂ, DifferentiableOn ℂ g U ∧ ∀ s : ℂ,

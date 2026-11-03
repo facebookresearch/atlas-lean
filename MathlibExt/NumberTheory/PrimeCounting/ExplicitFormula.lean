@@ -1127,7 +1127,12 @@ private lemma norm_sum_zeros_sub_sum_zeros_le {ι : Type u} (z : ι → ℂ)
 `ψ(x) = x - ∑_ρ x^ρ/ρ - ζ'(0)/ζ(0) - ½ log (1 - x⁻²)`. The sum over the nontrivial zeros
 `ρ = β + iγ` of `ζ`, counted with multiplicity (any family `z` listing the zeros of `ξ` with
 multiplicity), converges conditionally: it is the limit as `R → ∞` of the sums over `|γ| < R`,
-each of which has finite support. -/
+each of which has finite support.
+
+Source: H. von Mangoldt, *Zu Riemanns Abhandlung „Ueber die Anzahl der Primzahlen unter einer
+gegebenen Grösse“*, J. Reine Angew. Math. 114 (1895), 255–305, DOI 10.1515/crll.1895.114.255. The
+source states it for `ψ₀(x)` at every `x > 1`; here `x` is not a prime power, where `ψ₀(x) = ψ(x)`.
+-/
 theorem tendsto_sum_cpow_div_zeros_explicit_formula {ι : Type u} (z : ι → ℂ)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w)
     {x : ℝ} (hx : 1 < x) (hpp : ∀ n : ℕ, (n : ℝ) = x → ¬ IsPrimePow n) :
@@ -1433,7 +1438,11 @@ theorem chebyshevPsi_sub_self_isBigO_of_riemannHypothesis (hRH : RiemannHypothes
     (norm_nonneg _) hψy
 
 /-- **Von Koch's criterion.** The Riemann hypothesis holds if and only if
-`ψ(x) = x + O(√x log² x)` as `x → ∞`. -/
+`ψ(x) = x + O(√x log² x)` as `x → ∞`.
+
+Source: H. von Koch, *Sur la distribution des nombres premiers*, Acta Math. 24 (1901), 159–182,
+DOI 10.1007/BF02403071. Stated here in the `ψ` form.
+-/
 theorem riemannHypothesis_iff_chebyshevPsi_sub_self_isBigO :
     RiemannHypothesis ↔ (fun x : ℝ => Chebyshev.psi x - x) =O[atTop]
       (fun x : ℝ => Real.sqrt x * Real.log x ^ 2) := by

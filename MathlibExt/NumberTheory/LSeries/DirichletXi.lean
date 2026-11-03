@@ -446,7 +446,13 @@ theorem nontrivialZeros_infinite (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) :
 
 /-- **The Hadamard product of `ξ(s, χ)`.** For primitive `χ ≠ 1` and any family `z` listing the
 zeros of `ξ(s, χ)` with multiplicity (that is, the nontrivial zeros of `L(s, χ)`), there are
-constants `A`, `B` with `ξ(s, χ) = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`. -/
+constants `A`, `B` with `ξ(s, χ) = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`.
+
+Source: J. Hadamard, *Étude sur les propriétés des fonctions entières et en particulier d'une
+fonction considérée par Riemann*, J. Math. Pures Appl. (4) 9 (1893), 171–215, JFM 25.0698.03. The
+source proves the factorisation theorem and applies it to Riemann's `ξ`; here it is applied to
+`ξ(s, χ)`.
+-/
 theorem exists_xi_eq_exp_mul_tprod (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {ι : Type*} {z : ι → ℂ}
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w) :
     ∃ A B : ℂ, ∀ s, xi χ s =

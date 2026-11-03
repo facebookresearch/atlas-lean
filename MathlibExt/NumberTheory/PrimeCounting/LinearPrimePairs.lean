@@ -509,7 +509,13 @@ private theorem rootCount_div_le_prod (k : ℕ) {δ : ℕ} (hδ : δ ≠ 0) :
 
 /-- **Primes `p` with `kp + 1` prime.** There is an absolute constant `C` such that for every
 even `k ≥ 2` and every real `x ≥ 2`, the number of primes `p ≤ x` with `kp + 1` also prime is at
-most `C x / (log x)² ∏_{p ∣ k} (1 + 1/p)`. -/
+most `C x / (log x)² ∏_{p ∣ k} (1 + 1/p)`.
+
+Source: H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I: Classical Theory*,
+Cambridge Studies in Advanced Mathematics 97, Cambridge University Press, 2007, Chapter 3
+(*Principles and first examples of sieve methods*), DOI 10.1017/CBO9780511618314.005; H. Halberstam
+and H.-E. Richert, *Sieve Methods*, London Mathematical Society Monographs 4, Academic Press, 1974,
+Zbl 0298.10026. -/
 theorem card_filter_prime_mul_add_one_prime_le :
     ∃ C : ℝ, ∀ k : ℕ, Even k → 2 ≤ k → ∀ x : ℝ, 2 ≤ x →
       (((primesLE ⌊x⌋₊).filter (fun p : ℕ => (k * p + 1).Prime)).card : ℝ) ≤

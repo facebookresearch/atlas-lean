@@ -221,7 +221,12 @@ private lemma norm_one_sub_mul_exp_sub_one_le {w : ℂ} (hw : ‖w‖ ≤ 1) :
 /-- **The logarithmic derivative of a Hadamard product.** If
 `f s = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)` with `zₙ ≠ 0`, `∑ ‖zₙ‖⁻² < ∞` and every `zₙ`
 a zero of `f`, then at every `s` with `f s ≠ 0`,
-`f'(s) / f(s) = B + ∑ₙ (1 / (s - zₙ) + 1 / zₙ)`. -/
+`f'(s) / f(s) = B + ∑ₙ (1 / (s - zₙ) + 1 / zₙ)`.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
+Springer, 2000, Chapter 12 (*The infinite products for ξ(s) and ξ(s, χ)*),
+DOI 10.1007/978-1-4757-5927-3_12. Generalised from `ξ` to any Hadamard product of genus at
+most `1`. -/
 theorem logDeriv_eq_add_tsum_of_eq_exp_mul_tprod (hz0 : ∀ n, z n ≠ 0)
     (hsum : Summable fun n => ‖z n‖ ^ (-2 : ℝ))
     (hAB : ∀ s, f s = exp (A + B * s) * ∏' n, (1 - s / z n) * exp (s / z n))
@@ -380,7 +385,12 @@ open ComplexConjugate in
 /-- **The real parts of the reciprocal zeros of a symmetric Hadamard product.** Let `f` be entire
 of order at most `1` with `f 0 ≠ 0`, with zeros `zₙ` (listed with multiplicity) in the strip
 `0 ≤ Re s ≤ 1`, satisfying `f s = ε conj (f (1 - conj s))` for some constant `ε`. If
-`f s = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`, then `∑ₙ Re (1 / zₙ) = -Re B`. -/
+`f s = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`, then `∑ₙ Re (1 / zₙ) = -Re B`.
+
+Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
+Springer, 2000, Chapter 12 (*The infinite products for ξ(s) and ξ(s, χ)*),
+DOI 10.1007/978-1-4757-5927-3_12. Generalised from `ξ` to any entire function of order at
+most `1` with this reflection symmetry and zeros in the strip. -/
 theorem hasSum_re_one_div_of_eq_exp_mul_tprod (hd : Differentiable ℂ f)
     (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) {ε : ℂ}

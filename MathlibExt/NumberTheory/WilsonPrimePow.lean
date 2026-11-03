@@ -191,7 +191,11 @@ theorem units_eq_one_or_eq_neg_one_of_sq_eq_one (p s : ℕ) [Fact p.Prime] (hp2 
     exact Or.inr (hxm.trans hnm.symm)
 
 /-- **Gauss's generalisation of Wilson's theorem** for odd prime powers: the product of all units
-of `ZMod (p ^ (s + 1))` is `-1`. -/
+of `ZMod (p ^ (s + 1))` is `-1`.
+
+Source: C. F. Gauss, *Disquisitiones Arithmeticae* (1801); English translation by A. A. Clarke,
+Springer, 1986, DOI 10.1007/978-1-4939-7560-0. Special case `m = p ^ (s + 1)`, `p` odd, of
+Gauss's generalisation. -/
 theorem prod_units_prime_pow_eq_neg_one (p s : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) :
     ∏ u : (ZMod (p ^ (s + 1)))ˣ, (u : ZMod (p ^ (s + 1))) = -1 := by
   classical
@@ -292,7 +296,11 @@ private lemma units_two_pow_sq_eq_one_iff (t : ℕ) (u : (ZMod (2 ^ (t + 3)))ˣ)
     e1 _ (2 ^ (t + 2) + 1) (by simp)]
 
 /-- **Gauss's generalisation of Wilson's theorem** for `2 ^ s` with `s ≥ 3`: the product of all
-units of `ZMod (2 ^ (t + 3))` is `1`. -/
+units of `ZMod (2 ^ (t + 3))` is `1`.
+
+Source: C. F. Gauss, *Disquisitiones Arithmeticae* (1801); English translation by A. A. Clarke,
+Springer, 1986, DOI 10.1007/978-1-4939-7560-0. Special case `m = 2 ^ s`, `s ≥ 3`, of Gauss's
+generalisation. -/
 theorem prod_units_two_pow_eq_one (t : ℕ) :
     ∏ u : (ZMod (2 ^ (t + 3)))ˣ, u = 1 := by
   classical

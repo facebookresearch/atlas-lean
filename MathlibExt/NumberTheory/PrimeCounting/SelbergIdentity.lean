@@ -555,7 +555,13 @@ theorem selbergSum_sub_two_mul_mul_log_isBigO :
   · exact Eventually.of_forall fun x => by simp
 
 /-- **Selberg's identity** (Selberg's symmetry formula):
-`ψ(x) log x + ∑_{n ≤ x} Λ(n) ψ(x / n) = 2 x log x + O(x)` as `x → ∞`. -/
+`ψ(x) log x + ∑_{n ≤ x} Λ(n) ψ(x / n) = 2 x log x + O(x)` as `x → ∞`.
+
+Source: A. Selberg, "An elementary proof of the prime-number theorem", Ann. of Math. (2) 50 (1949),
+305–313, DOI 10.2307/1969455; T. M. Apostol, *Introduction to Analytic Number Theory*, Undergraduate
+Texts in Mathematics, Springer, 1976, Chapter 4 (*Some Elementary Theorems on the Distribution of
+Prime Numbers*), DOI 10.1007/978-1-4757-5579-4_5. Selberg states the equivalent `θ` form
+`θ(x) log x + ∑_{p ≤ x} log p · θ(x / p) = 2 x log x + O(x)`. -/
 theorem psi_mul_log_add_sum_vonMangoldt_mul_psi_sub_isBigO :
     (fun x : ℝ => ψ x * Real.log x + ∑ n ∈ Ioc 0 ⌊x⌋₊, Λ n * ψ (x / n) - 2 * x * Real.log x)
       =O[atTop] fun x : ℝ => x :=

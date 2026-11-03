@@ -329,7 +329,10 @@ theorem pdiv_coe_moebius_coe_id_mul_coe_zeta_apply (n : ℕ) :
 
 /-! ### Average orders -/
 
-/-- `∑_{n ≤ x} φ(n) = (3 / π²) x² + O(x log x)`. -/
+/-- `∑_{n ≤ x} φ(n) = (3 / π²) x² + O(x log x)`.
+
+Source: F. Mertens, "Ueber einige asymptotische Gesetze der Zahlentheorie", J. Reine Angew. Math. 77
+(1874), 289–339, JFM 06.0114.02. -/
 theorem _root_.Nat.sum_totient_sub_isBigO :
     (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, (n.totient : ℝ) - 3 / π ^ 2 * x ^ 2)
       =O[atTop] fun x => x * log x := by
@@ -348,7 +351,13 @@ theorem _root_.Nat.sum_totient_isEquivalent :
     (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, (n.totient : ℝ)) ~[atTop] fun x => 3 / π ^ 2 * x ^ 2 :=
   isEquivalent_of_sub_isBigO_mul_log (by positivity) Nat.sum_totient_sub_isBigO
 
-/-- `∑_{n ≤ x} σ(n) = (π² / 12) x² + O(x log x)`. -/
+/-- `∑_{n ≤ x} σ(n) = (π² / 12) x² + O(x log x)`.
+
+Source: T. M. Apostol, *Introduction to Analytic Number Theory*, Undergraduate Texts in Mathematics,
+Springer, 1976, Chapter 3 (*Averages of Arithmetical Functions*), DOI 10.1007/978-1-4757-5579-4_4;
+G. H. Hardy and E. M. Wright, *An Introduction to the Theory of Numbers*, 6th ed., Oxford University
+Press, 2008, Chapter XVIII (*The Order of Magnitude of Arithmetical Functions*),
+DOI 10.1093/oso/9780199219858.003.0018. -/
 theorem sum_sigma_one_sub_isBigO :
     (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, (σ 1 n : ℝ) - π ^ 2 / 12 * x ^ 2)
       =O[atTop] fun x => x * log x := by
@@ -441,7 +450,11 @@ theorem abs_sum_sigma_zero_sub_mul_log_le {x : ℝ} (hx : 1 ≤ x) :
   rw [hS, abs_le]
   constructor <;> nlinarith
 
-/-- **Dirichlet.** `∑_{n ≤ x} d(n) = x log x + O(x)`. -/
+/-- **Dirichlet.** `∑_{n ≤ x} d(n) = x log x + O(x)`.
+
+Source: P. G. L. Dirichlet, "Über die Bestimmung der mittleren Werthe in der Zahlentheorie",
+reprinted in *G. Lejeune Dirichlet's Werke*, Bd. II, 49–66, DOI 10.1017/CBO9781139237345.007. This
+is a weaker form: Dirichlet proves `x log x + (2γ - 1) x + O(√x)`. -/
 theorem sum_sigma_zero_sub_mul_log_isBigO :
     (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, (σ 0 n : ℝ) - x * log x) =O[atTop] fun x => x := by
   refine isBigO_iff.2 ⟨1, ?_⟩
@@ -798,7 +811,11 @@ theorem sum_div_totient_isBigO_id :
     _ ≤ x * Real.exp (2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2) := by gcongr
     _ = Real.exp (2 * ∑' n : ℕ, (1 : ℝ) / (n : ℝ) ^ 2) * x := mul_comm _ _
 
-/-- `∑_{n ≤ x} 1 / φ(n) = O(log x)`. -/
+/-- `∑_{n ≤ x} 1 / φ(n) = O(log x)`.
+
+Source: E. Landau, "Über die zahlentheoretische Function φ(n) und ihre Beziehung zum
+Goldbachschen Satz", Nachr. Ges. Wiss. Göttingen 1900, 177–186, JFM 31.0179.01. This is a weaker
+form: Landau proves the asymptotic `∑_{n ≤ x} 1 / φ(n) = A log x + B + o(1)`. -/
 theorem sum_one_div_totient_isBigO_log :
     (fun x : ℝ => ∑ n ∈ Ioc 0 ⌊x⌋₊, 1 / (n.totient : ℝ)) =O[atTop] fun x : ℝ => Real.log x := by
   classical

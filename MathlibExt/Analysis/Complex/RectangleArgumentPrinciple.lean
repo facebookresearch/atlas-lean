@@ -42,7 +42,10 @@ namespace RectilinearRectangle
 /-- **The argument principle on a rectangle, for an entire function.** If `E` is entire with
 finite order of vanishing everywhere, `Z` lies in the open rectangle and contains every zero of
 `E` in the closed rectangle, then the boundary integral of `E'/E` is
-`2πi ∑_{p ∈ Z} ord_p E`. -/
+`2πi ∑_{p ∈ Z} ord_p E`.
+
+Source: E. T. Whittaker and G. N. Watson, *A Course of Modern Analysis*, 3rd ed., Cambridge
+University Press, 1920, §6.31. Special case: an entire function and a rectangular contour. -/
 theorem boundaryIntegral_logDeriv_eq (r : RectilinearRectangle) {E : ℂ → ℂ}
     (hE : Differentiable ℂ E) (Z : Finset ℂ)
     (hin : ∀ p ∈ Z, r.first.re < p.re ∧ p.re < r.second.re ∧ r.first.im < p.im ∧

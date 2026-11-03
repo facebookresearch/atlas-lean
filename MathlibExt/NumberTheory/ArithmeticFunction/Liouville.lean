@@ -60,7 +60,11 @@ private theorem liouville_mul_zeta_apply_prime_pow {p : ℕ} (hp : p.Prime) (k :
   by_cases hk : Even k <;> simp [hk, Nat.even_add_one]
 
 /-- The divisor sum of the Liouville function is the indicator function of the squares:
-`∑_{d ∣ n} λ(d) = 1` if `n` is a square and `0` otherwise, for `n ≠ 0`. -/
+`∑_{d ∣ n} λ(d) = 1` if `n` is a square and `0` otherwise, for `n ≠ 0`.
+
+Source: T. M. Apostol, *Introduction to Analytic Number Theory*, Undergraduate Texts in Mathematics,
+Springer, 1976, Chapter 2 (*Arithmetical Functions and Dirichlet Multiplication*),
+DOI 10.1007/978-1-4757-5579-4_3. -/
 theorem sum_divisors_liouville {n : ℕ} (hn : n ≠ 0) :
     ∑ d ∈ n.divisors, liouville d = if IsSquare n then 1 else 0 := by
   classical
@@ -120,7 +124,11 @@ theorem riemannZeta_mul_LSeries_liouville {s : ℂ} (hs : 1 < s.re) :
     LSeries_convolution' (LSeriesSummable_liouville hs) (LSeriesSummable_one_iff.mpr hs),
     LSeries_one_eq_riemannZeta hs, mul_comm]
 
-/-- The Dirichlet series of the Liouville function is `ζ(2s) / ζ(s)` for `1 < re s`. -/
+/-- The Dirichlet series of the Liouville function is `ζ(2s) / ζ(s)` for `1 < re s`.
+
+Source: G. H. Hardy and E. M. Wright, *An Introduction to the Theory of Numbers*, 6th ed., Oxford
+University Press, 2008, Chapter XVII (*Generating Functions of Arithmetical Functions*),
+DOI 10.1093/oso/9780199219858.003.0017. -/
 theorem LSeries_liouville_eq_riemannZeta_two_mul_div {s : ℂ} (hs : 1 < s.re) :
     LSeries (fun n ↦ (liouville n : ℂ)) s = riemannZeta (2 * s) / riemannZeta s := by
   rw [eq_div_iff (riemannZeta_ne_zero_of_one_lt_re hs), mul_comm,

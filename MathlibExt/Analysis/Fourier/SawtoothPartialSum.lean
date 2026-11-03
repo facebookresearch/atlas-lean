@@ -210,7 +210,12 @@ private lemma sum_Icc_neg_sdiff_zero_eq_sum_range {E : Type*} [AddCommMonoid E] 
 derivative `f'` on `(0, 1)` satisfying `‖f'‖ ≤ K`. Then the symmetric partial sums of the
 Fourier series of `f` on `[0, 1]`, evaluated at `0`, approach the average of the endpoint
 values: for `M ≥ 2`,
-`‖∑_{|m| ≤ M} f̂(m) - (f(0) + f(1)) / 2‖ ≤ 20 K log M / M`. -/
+`‖∑_{|m| ≤ M} f̂(m) - (f(0) + f(1)) / 2‖ ≤ 20 K log M / M`.
+
+Source: P. G. Lejeune Dirichlet, "Sur la convergence des séries trigonométriques qui servent à
+représenter une fonction arbitraire entre des limites données," J. Reine Angew. Math. 4 (1829),
+157–169, DOI 10.1515/crll.1829.4.157. This is a quantitative form, for functions with bounded
+derivative, of Dirichlet's convergence to the average at a jump; the constant is our own. -/
 theorem norm_sum_fourierCoeffOn_sub_average_le {f f' : ℝ → ℂ} {K : ℝ} {M : ℕ}
     (hfc : ContinuousOn f (Set.Icc 0 1)) (hf : ∀ x ∈ Set.Ioo (0 : ℝ) 1, HasDerivAt f (f' x) x)
     (hK : ∀ x ∈ Set.Ioo (0 : ℝ) 1, ‖f' x‖ ≤ K) (hM : 2 ≤ M) :

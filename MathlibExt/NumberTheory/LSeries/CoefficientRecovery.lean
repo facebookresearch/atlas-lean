@@ -116,7 +116,10 @@ open Classical in
 /-- **Coefficient recovery by vertical mean values.** For `σ` beyond the abscissa of absolute
 convergence of `L(a, s) = ∑ a n n^{-s}` and real `y > 0`, the mean value
 `(1/2T) ∫_{-T}^{T} L(a, σ + it) y^{σ + it} dt` tends to `a y` if `y` is a positive integer and
-to `0` otherwise. -/
+to `0` otherwise.
+
+Source: T. M. Apostol, *Introduction to Analytic Number Theory*, Springer, 1976, Chapter 11,
+DOI 10.1007/978-1-4757-5579-4_12. Here stated for every real `y > 0`. -/
 theorem tendsto_mean_vertical_mul_cpow (a : ℕ → ℂ) {σ : ℝ} (hσ : abscissaOfAbsConv a < σ)
     {y : ℝ} (hy : 0 < y) :
     Tendsto
