@@ -379,13 +379,15 @@ theorem expected_noSuccessor {G L N : ℕ} (hG : 0 < G) (hL : L ≤ G) :
   · subst hN
     simp
   · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hN
+    -- `exists_eq_add_of_le` gives `N = 1 + m`, but the rest of the proof
+    -- expects succ form `m + 1` (`Nat.add_sub_cancel`, `pow_succ`).
+    rw [Nat.add_comm 1 m]
     simp only [Nat.add_sub_cancel]
     have hcast : ((G - (L - 1) : ℕ) : ℝ) = (G : ℝ) - ((L - 1 : ℕ) : ℝ) :=
       Nat.cast_sub hL1
     have h1 : (1 : ℝ) - ((L - 1 : ℕ) : ℝ) / G =
         ((G : ℝ) - ((L - 1 : ℕ) : ℝ)) / G := by field_simp
-    rw [Nat.cast_pow, Nat.cast_mul, Nat.cast_mul, hcast, h1, div_pow, pow_succ]
+    rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_pow, hcast, h1, div_pow, pow_succ]
     field_simp
-    ring
 
 end Cslib.Bioinformatics.Assembly.LanderWaterman
