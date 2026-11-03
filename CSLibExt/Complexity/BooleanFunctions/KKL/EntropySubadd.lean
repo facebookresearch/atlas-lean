@@ -9,6 +9,7 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
 public import MathlibExt.InformationTheory.LogSum
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
 # Sub-additivity of entropy for Bernoulli product measures
