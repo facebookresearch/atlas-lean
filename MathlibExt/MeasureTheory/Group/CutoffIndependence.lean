@@ -25,7 +25,7 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.MeasureTheory.Group.Integral
-import Mathlib.MeasureTheory.Integral.Prod
+import MathlibExt.MeasureTheory.Group.ActionCutoff
 
 /-!
 # Independence of normalized subgroup cutoffs
@@ -39,7 +39,8 @@ is required.
 
 The weights need not be continuous or bounded. Compact support and
 measurability alone do not imply integrability: a positive Tonelli estimate
-using subgroup normalization proves integrability before applying Fubini.
+using subgroup normalization proves it here. Independence follows from the
+general measure-preserving action theorem in `ActionCutoff`.
 This provides cutoff-independent integrals and pairings of invariant functions.
 -/
 
@@ -228,72 +229,16 @@ theorem integrable_mul_of_integral_subgroup_translate_eq_one
   simpa only [enorm_mul, enorm_ofReal_of_nonneg (hw0 _)] using
     lintegral_enorm_mul_lt_top T μ τ hT F hFm hC hFT w hw0 hwm hwc hw1
 
-private theorem integrable_integrand (F : G → ℂ) (hFm : Measurable F)
-    {C : ℝ} (hFb : ∀ x, ‖F x‖ ≤ C)
-    (hFT : ∀ (t : T) (x : G), F ((t : G) * x) = F x)
-    (w₁ w₂ : G → ℝ) (hw₁0 : ∀ x, 0 ≤ w₁ x) (hw₁m : Measurable w₁)
-    (hw₁c : HasCompactSupport w₁)
-    (hw₁1 : ∀ x, F x ≠ 0 → ∫ t : T, w₁ ((t : G) * x) ∂τ = 1)
-    (hw₂0 : ∀ x, 0 ≤ w₂ x) (hw₂m : Measurable w₂)
-    (hw₂1 : ∀ x, F x ≠ 0 → ∫ t : T, w₂ ((t : G) * x) ∂τ = 1) :
-    Integrable (Function.uncurry fun (x : G) (t : T) =>
-      F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ)) (μ.prod τ) := by
-  have := sFinite_subgroup_haar T τ hT
-  have hmeas : Measurable (Function.uncurry fun (x : G) (t : T) =>
-      F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ)) :=
-    ((hFm.comp measurable_fst).mul
-      (Complex.measurable_ofReal.comp (hw₁m.comp measurable_fst))).mul
-      (Complex.measurable_ofReal.comp (hw₂m.comp (measurable_subgroup_mul T)))
-  refine ⟨hmeas.aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm, lintegral_prod _ hmeas.enorm.aemeasurable]
-  calc ∫⁻ x, ∫⁻ t : T, ‖F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ)‖ₑ ∂τ ∂μ
-      = ∫⁻ x, ‖F x‖ₑ * ENNReal.ofReal (w₁ x) *
-          ∫⁻ t : T, ENNReal.ofReal (w₂ ((t : G) * x)) ∂τ ∂μ := by
-        refine lintegral_congr fun x => ?_
-        rw [← lintegral_const_mul' _ _ (ENNReal.mul_ne_top enorm_ne_top ENNReal.ofReal_ne_top)]
-        refine lintegral_congr fun t => ?_
-        rw [enorm_mul, enorm_mul, enorm_ofReal_of_nonneg (hw₁0 x),
-          enorm_ofReal_of_nonneg (hw₂0 _)]
-    _ = ∫⁻ x, ‖F x‖ₑ * ENNReal.ofReal (w₁ x) ∂μ := by
-        refine lintegral_congr fun x => ?_
-        by_cases hF : F x = 0
-        · simp [hF]
-        · rw [lintegral_fibre_eq_one T τ hw₂0 hw₂m (hw₂1 x hF), mul_one]
-    _ < ∞ := lintegral_enorm_mul_lt_top T μ τ hT F hFm hFb hFT w₁ hw₁0 hw₁m hw₁c hw₁1
-
-private theorem integral_eq_integral_integral (F : G → ℂ) (hFm : Measurable F)
-    {C : ℝ} (hFb : ∀ x, ‖F x‖ ≤ C)
-    (hFT : ∀ (t : T) (x : G), F ((t : G) * x) = F x)
-    (w₁ w₂ : G → ℝ) (hw₁0 : ∀ x, 0 ≤ w₁ x) (hw₁m : Measurable w₁)
-    (hw₁c : HasCompactSupport w₁)
-    (hw₁1 : ∀ x, F x ≠ 0 → ∫ t : T, w₁ ((t : G) * x) ∂τ = 1)
-    (hw₂0 : ∀ x, 0 ≤ w₂ x) (hw₂m : Measurable w₂)
-    (hw₂1 : ∀ x, F x ≠ 0 → ∫ t : T, w₂ ((t : G) * x) ∂τ = 1) :
-    ∫ x, F x * (w₁ x : ℂ) ∂μ =
-      ∫ t : T, ∫ x, F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ) ∂μ ∂τ := by
-  have := sFinite_subgroup_haar T τ hT
-  calc ∫ x, F x * (w₁ x : ℂ) ∂μ
-      = ∫ x, F x * (w₁ x : ℂ) *
-          ((∫ t : T, w₂ ((t : G) * x) ∂τ : ℝ) : ℂ) ∂μ := by
-        refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-        by_cases hF : F x = 0
-        · simp [hF]
-        · simp [hw₂1 x hF]
-    _ = ∫ x, ∫ t : T, F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ) ∂τ ∂μ := by
-        refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-        dsimp only
-        rw [integral_const_mul, integral_complex_ofReal]
-    _ = ∫ t : T, ∫ x, F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ) ∂μ ∂τ :=
-        integral_integral_swap
-          (integrable_integrand T μ τ hT F hFm hFb hFT w₁ w₂
-            hw₁0 hw₁m hw₁c hw₁1 hw₂0 hw₂m hw₂1)
-
 end
 
 /-- The integral of a bounded measurable `T`-invariant complex function
 against a nonnegative measurable compactly supported cutoff does not depend
 on the cutoff, when each cutoff has subgroup integral one on the support of
-that function. Normalization is not required outside its support. -/
+that function. Normalization is not required outside its support.
+
+The more general `integral_mul_eq_of_normalized_subgroup` does not require
+boundedness or compact support; the hypotheses here also guarantee
+integrability by `integrable_mul_of_integral_subgroup_translate_eq_one`. -/
 theorem integral_mul_eq_integral_mul_of_integral_subgroup_translate_eq_one
     {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
     [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
@@ -307,31 +252,9 @@ theorem integral_mul_eq_integral_mul_of_integral_subgroup_translate_eq_one
     (hw₂ : (∀ x, 0 ≤ w₂ x) ∧ Measurable w₂ ∧ HasCompactSupport w₂ ∧
       ∀ x, F x ≠ 0 → ∫ t : T, w₂ ((t : G) * x) ∂τ = 1) :
     ∫ x, F x * (w₁ x : ℂ) ∂μ = ∫ x, F x * (w₂ x : ℂ) ∂μ := by
-  obtain ⟨C, hC⟩ := hFb
-  rcases hw₁ with ⟨hw₁0, hw₁m, hw₁c, hw₁1⟩
-  rcases hw₂ with ⟨hw₂0, hw₂m, hw₂c, hw₂1⟩
-  rw [integral_eq_integral_integral T μ τ hT F hFm hC hFT w₁ w₂
-      hw₁0 hw₁m hw₁c hw₁1 hw₂0 hw₂m hw₂1,
-    integral_eq_integral_integral T μ τ hT F hFm hC hFT w₂ w₁
-      hw₂0 hw₂m hw₂c hw₂1 hw₁0 hw₁m hw₁1]
-  calc ∫ t : T, ∫ x, F x * (w₁ x : ℂ) * (w₂ ((t : G) * x) : ℂ) ∂μ ∂τ
-      = ∫ t : T, ∫ x, F x * (w₁ ((t : G)⁻¹ * x) : ℂ) * (w₂ x : ℂ) ∂μ ∂τ := by
-        refine integral_congr_ae (Eventually.of_forall fun t => ?_)
-        have h := integral_mul_left_eq_self (μ := μ)
-          (fun x => F ((t : G)⁻¹ * x) * (w₁ ((t : G)⁻¹ * x) : ℂ) * (w₂ x : ℂ)) (t : G)
-        simp only [inv_mul_cancel_left] at h
-        dsimp only
-        rw [h]
-        refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-        have hF : F ((t : G)⁻¹ * x) = F x := by simpa using hFT t⁻¹ x
-        simp only [hF]
-    _ = ∫ t : T, ∫ x, F x * (w₁ ((t : G) * x) : ℂ) * (w₂ x : ℂ) ∂μ ∂τ := by
-        have h := integral_inv_eq_self
-          (fun t : T => ∫ x, F x * (w₁ ((t : G) * x) : ℂ) * (w₂ x : ℂ) ∂μ) τ
-        simpa only [Subgroup.coe_inv] using h
-    _ = ∫ t : T, ∫ x, F x * (w₂ x : ℂ) * (w₁ ((t : G) * x) : ℂ) ∂μ ∂τ := by
-        refine integral_congr_ae (Eventually.of_forall fun t => ?_)
-        refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-        ring
+  rcases hFb with ⟨_, _⟩
+  have := sFinite_subgroup_haar T τ hT
+  exact integral_mul_eq_of_normalized_subgroup μ T continuous_subtype_val.measurable
+    τ F hFm hFT w₁ w₂ hw₁.1 hw₂.1 hw₁.2.1 hw₂.2.1 hw₁.2.2.2 hw₂.2.2.2
 
 end MeasureTheory
