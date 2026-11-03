@@ -255,7 +255,7 @@ theorem wwc2_originReachesEnclosed_unitCell_false :
       rw [huc, mpl_dartFace_ucDart0]
       funext i
       fin_cases i <;> rfl
-    rwa [hface] at hstart
+    exact (congrArg (fun z => z ∈ (mpl_orbitLoop unitCell ucBase).support) hface).mp hstart
   exact hp (origin 2) hO hloop
 
 /-- If the origin is off the exit loop, the empty walk joins it to itself off the loop. -/

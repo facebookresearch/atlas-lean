@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.StrassenCoupling
+public import Mathlib.Basic.NNReal.Basic
 
 /-!
 # Strassen's theorem on a finite poset, with `ℝ≥0`-valued couplings
@@ -138,7 +139,8 @@ theorem exists_isMonotoneCoupling_of_stochasticDom {μ ν : P → ℝ≥0}
     obtain ⟨π, hpos, hrow, hcol, hsupp⟩ :=
       (MathlibExt.Probability.StrassenCouplingWanted.forall_isUpperSet_sum_le_iff_exists_coupling
         (fun x => (μ x : ℝ)) (fun x => (ν x : ℝ))
-        (fun x => (μ x).coe_nonneg) (fun x => (ν x).coe_nonneg) hsum).mp hUpper
+        (fun x => (μ x).coe_nonneg) (fun x => (ν x).coe_nonneg) hsum).mp
+        (fun U hU => hUpper U (fun _ _ hxy hx => hU hx hxy))
     refine ⟨fun p => (π p.1 p.2).toNNReal, ⟨⟨fun x => ?_, fun y => ?_⟩, fun x y h => ?_⟩⟩
     · have hcoe : ((∑ y, (π x y).toNNReal : ℝ≥0) : ℝ) = (μ x : ℝ) := by
         push_cast
@@ -163,6 +165,7 @@ stochastically dominated by `ν` iff a monotone coupling exists. See also
 given marginals*, 1965. -/
 theorem strassen_finite {μ ν : P → ℝ≥0} (hTOT : ∑ x, μ x = ∑ x, ν x) :
     StochasticDom μ ν ↔ ∃ π : P × P → ℝ≥0, IsMonotoneCoupling μ ν π := by
+  classical
   constructor
   · intro hSD; exact exists_isMonotoneCoupling_of_stochasticDom hTOT hSD
   · rintro ⟨π, hπ⟩; exact StochasticDom.of_isMonotoneCoupling hπ
