@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Convex.Cone.Dual
-public import Mathlib.Analysis.InnerProductSpace.Dual
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Weak linear programming duality
@@ -19,11 +19,10 @@ For primal-feasible `x` (`x ≥ 0`, `A *ᵥ x ≤ b`) and dual-feasible `y`
 objective: `c ⬝ᵥ x ≤ b ⬝ᵥ y`. In particular a primal-dual pair with
 equal objectives is optimal for both.
 
-This is the lemma every LP consumer uses (certificate checking,
-Farkas, zero-sum games). Strong duality
-(`MathlibExt.Analysis.Convex.LPDuality.strong_linear_programming_duality`)
-proves the same calculation as an internal `have`; this file exposes
-it as a named theorem, with no change of proof.
+The strong duality proof in
+`MathlibExt.Analysis.Convex.LPDuality.strong_linear_programming_duality`
+uses this theorem to bound the optimal primal value by each feasible dual
+value.
 -/
 
 @[expose] public section
