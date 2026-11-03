@@ -46,10 +46,14 @@ solutions of `A x = b`, one of controlled norm. This file proves:
 This is a companion to the Hilbert-space material of
 `v1/Atlas/IntroductionToFunctionalAnalysis/code/HilbertSpace.lean`
 (projection and adjoint material). It is not one of the 72 v1 targets.
-It is distinct from batch 124's representer theorem, which concerns a
-minimizer of a general functional of finitely many linear measurements
-and gives no normal operator, no inverse formula, and no `Λ → ∞`
-behaviour; and from Mathlib's Lax–Milgram theorem, which is stated for
+It is distinct from the representer theorems in
+`MathlibExt.Analysis.FunctionalAnalysis.RepresenterTheorem` (reproducing
+kernel Hilbert spaces, after Schölkopf, Herbrich and Smola) and
+`MathlibExt.Analysis.InnerProductSpace.RepresenterTheorem` (ridge
+regularization of finitely many continuous linear functionals), which
+locate minimizers of a loss of finitely many linear measurements in the
+span of their representers and give no normal operator, no inverse
+formula, and no `Λ → ∞` behavior; and from Mathlib's Lax–Milgram theorem, which is stated for
 real bilinear forms, while the argument here works over any `RCLike`
 field (in particular `ℂ`) via adjoints.
 

@@ -30,8 +30,8 @@ p-value is the fraction of the orbit at least as extreme as the observed statist
   Hemerik and Goeman 2018).
 
 The version with `B` random group elements, `p = (1 + #{b | T(g_b • ω) ≥ T(ω)}) / (B + 1)`
-(Phipson and Smyth 2010), is stated in
-`WantedExt/Probability/Statistics/TwoGroupsTestingWanted.lean`.
+(Phipson and Smyth 2010), is `isValidPValue_monteCarloPermutationPValue` in
+`MathlibExt/Probability/Statistics/MultipleTesting/MonteCarloPermutationPValue.lean`.
 
 ## References
 

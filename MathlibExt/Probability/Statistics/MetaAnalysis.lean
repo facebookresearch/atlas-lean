@@ -33,8 +33,10 @@ Combination rules for `k` independent studies of the same hypothesis or paramete
 
 ## Main results
 
-* `hasLaw_neg_two_mul_log_uniform`: `-2 log U ~ χ²₂` for `U` uniform on `[0, 1]`, and
-  `eq_gammaMeasure_of_mgf_eq` (MGF uniqueness for gamma laws).
+* `hasLaw_neg_two_mul_log_uniform`: `-2 log U ~ χ²₂` for `U` uniform on `[0, 1]`.
+  (MGF uniqueness for gamma laws, `ProbabilityTheory.eq_gammaMeasure_of_mgf_eq`, and the
+  gamma exponential-moment set, `ProbabilityTheory.integrableExpSet_gammaMeasure`, live in
+  `Distributions.Gamma`.)
 * `hasLaw_fisherStatistic`: for `k ≥ 1` independent p-values uniform on `[0, 1]`,
   `-2 ∑ log pᵢ ~ χ²_{2k}` (Fisher 1932, §21.1).
 * `hasLaw_stoufferStatistic`: for independent standard normal z-scores and weights `w ≠ 0`,
@@ -45,8 +47,8 @@ Combination rules for `k` independent studies of the same hypothesis or paramete
   positive variances, the inverse-variance-weighted average has the smallest variance among all
   weighted averages with weights summing to one (Cochran 1954).
 
-Cochran's `Q ~ χ²_{k-1}` is stated in
-`WantedExt/Probability/Statistics/TwoGroupsTestingWanted.lean`.
+Cochran's `Q ~ χ²_{k-1}` is `hasLaw_cochranQ` in
+`MathlibExt/Probability/Statistics/CochranQ.lean`.
 
 ## References
 
@@ -72,56 +74,6 @@ variable {Ω : Type*} [MeasurableSpace Ω] {k : ℕ}
 
 /-- Fisher's combined statistic `-2 ∑ log pᵢ` of `k` p-values. -/
 noncomputable def fisherStatistic (p : Fin k → ℝ) : ℝ := -2 * ∑ i, Real.log (p i)
-
-private theorem not_integrable_exp_mul_gammaMeasure {a r t : ℝ} (ha : 0 < a) (hr : 0 < r)
-    (ht : r ≤ t) : ¬ Integrable (fun x : ℝ => Real.exp (t * x)) (gammaMeasure a r) := by
-  intro h
-  rw [integrable_gammaMeasure_iff] at h
-  have hon : IntegrableOn (fun x : ℝ => x ^ (a - 1)) (Ioi 1) := by
-    refine Integrable.mono' ((h.integrableOn (s := Ioi 1)).const_mul (r ^ a / Real.Gamma a)⁻¹)
-      (by fun_prop) ?_
-    refine (ae_restrict_iff' measurableSet_Ioi).2 (Filter.Eventually.of_forall fun x hx => ?_)
-    have hx0 : 0 < x := lt_trans one_pos hx
-    rw [toReal_gammaPDF ha hr, gammaPDFReal, ite_eq_left hx0.le, smul_eq_mul,
-      Real.norm_of_nonneg (Real.rpow_nonneg hx0.le _)]
-    have he : 1 ≤ Real.exp (-(r * x)) * Real.exp (t * x) := by
-      rw [← Real.exp_add]
-      exact Real.one_le_exp (by nlinarith)
-    have hxa : 0 ≤ x ^ (a - 1) := Real.rpow_nonneg hx0.le _
-    calc x ^ (a - 1) ≤ x ^ (a - 1) * (Real.exp (-(r * x)) * Real.exp (t * x)) :=
-          le_mul_of_one_le_right hxa he
-      _ = (r ^ a / Real.Gamma a)⁻¹ *
-          (r ^ a / Real.Gamma a * x ^ (a - 1) * Real.exp (-(r * x)) * Real.exp (t * x)) := by
-          field_simp
-  have := (integrableOn_Ioi_rpow_iff one_pos).1 hon
-  linarith
-
-private theorem integrableExpSet_gammaMeasure {a r : ℝ} (ha : 0 < a) (hr : 0 < r) :
-    integrableExpSet id (gammaMeasure a r) = Iio r := by
-  ext t
-  refine ⟨fun h => ?_, fun h => Iio_subset_integrableExpSet_gammaMeasure ha hr h⟩
-  by_contra h'
-  exact not_integrable_exp_mul_gammaMeasure ha hr (not_lt.1 h') h
-
-/-- MGF uniqueness for gamma laws: a real probability law whose MGF equals the gamma `(a, r)`
-MGF as a function on all of `ℝ` (both vanish where the exponential moment is infinite) is that
-gamma law. -/
-theorem eq_gammaMeasure_of_mgf_eq {a r : ℝ} (ha : 0 < a) (hr : 0 < r) {ν : Measure ℝ}
-    [IsProbabilityMeasure ν] (h : mgf id ν = mgf id (gammaMeasure a r)) :
-    ν = gammaMeasure a r := by
-  have := isProbabilityMeasure_gammaMeasure ha hr
-  have hS : integrableExpSet id ν = Iio r := by
-    rw [integrableExpSet_eq_of_mgf h, integrableExpSet_gammaMeasure ha hr]
-  apply Measure.ext_of_complexMGF_id_eq
-  funext z
-  by_cases hz : z.re < r
-  · exact eqOn_complexMGF_of_mgf h (by rw [hS, interior_Iio]; exact hz)
-  · rw [complexMGF_undef aemeasurable_id, complexMGF_undef aemeasurable_id]
-    · exact not_integrable_exp_mul_gammaMeasure ha hr (not_lt.1 hz)
-    · intro hi
-      have : z.re ∈ integrableExpSet id ν := hi
-      rw [hS] at this
-      exact hz this
 
 /-- `-2 log U` has the exponential law of rate `1/2`, i.e. chi-square with two degrees of
 freedom, when `U` is uniform on `[0, 1]`. -/
@@ -195,7 +147,7 @@ theorem hasLaw_fisherStatistic (hk : 0 < k) {μ : Measure Ω} [IsProbabilityMeas
   rw [hstat, hchi]
   have hsm : AEMeasurable (∑ i, Y i) μ := Finset.aemeasurable_sum _ fun i _ => hYmeas i
   have := isProbabilityMeasure_gammaMeasure (a := 1) (r := 1 / 2) one_pos (by norm_num)
-  refine ⟨hsm, eq_gammaMeasure_of_mgf_eq (by exact_mod_cast hk) (by norm_num) ?_⟩
+  refine ⟨hsm, ProbabilityTheory.eq_gammaMeasure_of_mgf_eq (by exact_mod_cast hk) (by norm_num) ?_⟩
   funext t
   rw [mgf_id_map hsm, hYind.mgf_sum₀ hYmeas]
   have h1 : ∀ i, mgf (Y i) μ t = mgf id (gammaMeasure 1 (1 / 2)) t := by
@@ -208,7 +160,7 @@ theorem hasLaw_fisherStatistic (hk : 0 < k) {μ : Measure Ω} [IsProbabilityMeas
       Real.rpow_natCast]
   · have h0 : ∀ a : ℝ, 0 < a → mgf id (gammaMeasure a (1 / 2)) t = 0 := by
       intro a ha
-      exact integral_undef (not_integrable_exp_mul_gammaMeasure ha (by norm_num)
+      exact integral_undef (ProbabilityTheory.not_integrable_exp_mul_gammaMeasure ha (by norm_num)
         (not_lt.1 ht))
     rw [h0 1 one_pos, h0 k (by exact_mod_cast hk), zero_pow hk.ne']
 

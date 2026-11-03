@@ -10,11 +10,10 @@ module
 
 import MathlibExt.Biology.PopulationGenetics.Diffusion.Mutation
 
-/-! Tests for the Wright–Fisher diffusion with mutation: the neutral special case, concrete
-stationary moments (uniform and symmetric Beta laws), weak stationarity for a polynomial test
-function, the zero-flux identity at a point, one generation of the chain (drift and scaled second
-moment), and a junk value
-outside the parameter domain `θ₁, θ₂ > 0`. -/
+/-! Tests for the Wright–Fisher diffusion with mutation: the neutral special case, weak
+stationarity for a polynomial test function, the zero-flux identity at a point, and one
+generation of the chain (drift and scaled second moment). The stationary Beta moments are
+tested with `MathlibExt.Probability.Distributions.BetaMoments`. -/
 
 open Real Set MeasureTheory ProbabilityTheory
 
@@ -35,28 +34,6 @@ example (θ₁ θ₂ c x : ℝ) : mutationGenerator θ₁ θ₂ (fun _ => c) x =
 /-- The mutation drift vanishes at the deterministic equilibrium `x = θ₁ / (θ₁ + θ₂)`. -/
 example : mutationGenerator 1 3 id (1 / 4) = 0 := by
   rw [mutationGenerator_id]
-  norm_num
-
-/-- `θ₁ = θ₂ = 1`: Wright's law is uniform, with mean `1/2`. -/
-example : ∫ x, x ∂(betaMeasure 1 1) = 1 / 2 := by
-  rw [integral_id_betaMeasure one_pos one_pos]
-  norm_num
-
-/-- `θ₁ = θ₂ = 1`: the uniform law has expected heterozygosity `2 (1/2 - 1/3) = 1/3`. -/
-example : ∫ x, 2 * x * (1 - x) ∂(betaMeasure 1 1) = 1 / 3 := by
-  rw [integral_heterozygosity_betaMeasure one_pos one_pos]
-  norm_num
-
-/-- Asymmetric rates `θ₁ = 1`, `θ₂ = 3`: mean `1/4`, heterozygosity `2 · 3 / (4 · 5) = 3/10`. -/
-example : ∫ x, x ∂(betaMeasure 1 3) = 1 / 4 ∧
-    ∫ x, 2 * x * (1 - x) ∂(betaMeasure 1 3) = 3 / 10 := by
-  rw [integral_id_betaMeasure one_pos (by norm_num),
-    integral_heterozygosity_betaMeasure one_pos (by norm_num)]
-  norm_num
-
-/-- Small mutation rates (`θ₁ = θ₂ = 1/10`) give little heterozygosity: `1/12`. -/
-example : ∫ x, 2 * x * (1 - x) ∂(betaMeasure (1 / 10) (1 / 10)) = 1 / 12 := by
-  rw [integral_heterozygosity_betaMeasure (by norm_num) (by norm_num)]
   norm_num
 
 /-- Weak stationarity for the test function `x ↦ x ^ 3` (a smooth function on `ℝ`). -/
@@ -101,16 +78,6 @@ example {u : unitInterval} (hu : (u : ℝ) = 1 / (2 * (10 : ℕ))) (x : unitInte
   rw [integral_binomial_mutatedFreq_drift (θ₁ := 1) (θ₂ := 1) (by norm_num) hu hu x, hx]
   norm_num
 
-/-- Junk value outside the domain: for `θ₂ = 0` the normalizing constant `B(1, 0)` is `0`
-(`Γ(0) = 0` in Mathlib), so `betaMeasure 1 0` is the zero measure and its "mean" is `0`, not the
-formula's `θ₁ / (θ₁ + θ₂) = 1`. This is why the moment theorems assume `θ₁, θ₂ > 0`. -/
-example : ∫ x, x ∂(betaMeasure 1 0) = 0 := by
-  have hB : beta 1 0 = 0 := by simp [beta]
-  have hpdf : betaPDF 1 0 = 0 := by
-    funext x
-    simp [betaPDF, betaPDFReal, hB]
-  simp [betaMeasure, hpdf]
-
 /-- One generation with `M = 2` copies, `θ₁ = 1`, `θ₂ = 1/2` (so `u₁ = 1/4`, `u₂ = 1/8`) and
 `x = 1/2`: mutation moves the frequency to `p' = 9/16`, and the scaled second moment is
 `p' (1 - p') + (θ₁ (1 - x) - θ₂ x) ^ 2 / (4M) = 63/256 + 1/128 = 65/256`. -/
@@ -133,7 +100,6 @@ example {u₁ u₂ x : unitInterval} (hu₁ : (u₁ : ℝ) = 1 / 4) (hu₂ : (u�
   norm_num
 
 #print axioms integral_mutationGenerator_betaMeasure
-#print axioms integral_heterozygosity_betaMeasure
 #print axioms integral_binomial_mutatedFreq_sq
 
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.Mutation
