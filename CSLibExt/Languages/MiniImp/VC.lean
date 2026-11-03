@@ -15,23 +15,26 @@ public import CSLibExt.Languages.MiniImp.Hoare
 namespace CSLibExt.Languages.MiniImp
 
 /-!
-# Weakest preconditions for MiniImp (Weeks 5-8, 90-day plan #3 LOGICS)
+# Sufficient verification preconditions for MiniImp
 
-VC generation as weakest-precondition computation: `wp c Q s` is the
-condition on the entry state `s` that guarantees `Q` on every
-terminating run of `c`. `wp_sound` says `wp` is sound for partial
-correctness: `wp c Q s` and `BigStep c s s'` give `Q s'`.
+`wp c Q s` is a sufficient condition for `Q` on every terminating run from `s`.
+It is not claimed mathematically weakest: loop annotations are arbitrary ghost
+predicates, and a read's precondition additionally requires in-bounds access
+rather than admitting vacuous correctness of a stuck command. `wp_sound` proves
+partial correctness only; `BinarySearch.lean` separately proves executable
+termination for its concrete program.
 
-While uses the loop's annotated invariant `I` (`Stmt.while b I c`):
-`wp` requires `I` at entry, `I ∧ ¬ b → Q` at exit, and
-`I ∧ b → wp c I` for the body. Binary search is the demo.
+While uses the annotated invariant `I`: `wp` requires `I` at entry,
+`I ∧ ¬ b → Q` at exit, and `I ∧ b → wp c I` for the body.
 -/
 
-/-- Weakest precondition: `wp c Q s` guarantees `Q` on every
-terminating run of `c` from `s`. -/
+/-- Sufficient verification precondition, including read bounds and annotated
+loop obligations. -/
 def wp : Stmt → (State → Prop) → (State → Prop)
   | .skip, Q => Q
   | .assign x e, Q => fun s => Q (State.update s x (evalA e s))
+  | .read x xs e, Q => fun s => ∃ h : evalA e s < xs.size,
+      Q (State.update s x xs[evalA e s])
   | .seq c₁ c₂, Q => wp c₁ (wp c₂ Q)
   | .if_ b c₁ c₂, Q =>
       fun s => (beval b s → wp c₁ Q s) ∧ (¬ beval b s → wp c₂ Q s)
@@ -45,6 +48,7 @@ theorem wp_sound {c : Stmt} {s s' : State} {Q : State → Prop}
   induction h generalizing Q with
   | skip => exact hwp
   | assign => exact hwp
+  | read _ => exact hwp.2
   | seq _ _ ih₁ ih₂ => exact ih₂ (ih₁ hwp)
   | ifTrue hb _ ih => exact ih (hwp.1 hb)
   | ifFalse hb _ ih => exact ih (hwp.2 hb)

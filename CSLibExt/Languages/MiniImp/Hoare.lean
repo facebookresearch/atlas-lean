@@ -15,14 +15,14 @@ public import CSLibExt.Languages.MiniImp.Semantics
 namespace CSLibExt.Languages.MiniImp
 
 /-!
-# Hoare rules for MiniImp (Weeks 3-4 core, 90-day plan #3 LOGICS)
+# Hoare rules for MiniImp
 
-Partial-correctness Hoare triples, proved for skip / assignment /
-sequencing / if / while. The while rule is induction on the `BigStep`
-derivation with the loop invariant generalized.
+Partial-correctness Hoare triples, proved for skip, assignment, immutable read,
+sequencing, if and while. The while rule uses induction on the `BigStep`
+derivation.
 
-VC generation (weakest preconditions) is in `VC.lean`; binary search
-is its demo.
+Sufficient verification preconditions are in `VC.lean`; `BinarySearch.lean` is
+the demo.
 -/
 
 /-- Partial-correctness Hoare triple: every terminating run from `P`
@@ -43,6 +43,14 @@ theorem hoare_assign {x : String} {e : AExp} {Q : State → Prop} :
   intro s s' hP h
   cases h with
   | assign => exact hP
+
+/-- Read rule with an explicit safety precondition for the immutable array. -/
+theorem hoare_read {x : String} {xs : Array Nat} {e : AExp} {Q : State → Prop} :
+    Hoare (fun s => ∃ h : evalA e s < xs.size,
+      Q (State.update s x xs[evalA e s])) (.read x xs e) Q := by
+  intro s s' hP h
+  cases h with
+  | read h => exact hP.2
 
 /-- Sequencing rule. -/
 theorem hoare_seq {P R Q : State → Prop} {c₁ c₂ : Stmt} :
@@ -77,6 +85,7 @@ theorem hoare_while {I : State → Prop} {b : BExp} {c : Stmt} :
     induction h with
     | skip => intro _ _ _ heq _ _; cases heq
     | assign => intro _ _ _ heq _ _; cases heq
+    | read _ => intro _ _ _ heq _ _; cases heq
     | seq _ _ _ _ => intro _ _ _ heq _ _; cases heq
     | ifTrue _ _ _ => intro _ _ _ heq _ _; cases heq
     | ifFalse _ _ _ => intro _ _ _ heq _ _; cases heq

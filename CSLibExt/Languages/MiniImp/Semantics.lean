@@ -15,11 +15,13 @@ public import CSLibExt.Languages.MiniImp.Syntax
 namespace CSLibExt.Languages.MiniImp
 
 /-!
-# MiniImp big-step semantics (Weeks 3-4 core, 90-day plan #3 LOGICS)
+# MiniImp big-step semantics
 
 Expression evaluation plus a big-step (natural) semantics for statements.
-Partial correctness: a looping program has no `BigStep` derivation, so
-Hoare triples in `Hoare.lean` say nothing about divergence.
+Every successful read carries a proof that its index is in bounds. Invalid
+reads and divergent programs have no `BigStep` derivation; Hoare triples alone
+prove neither progress nor termination. Loop annotations are ignored by these
+semantics.
 
 `beval` returns a `Prop`, not `Bool`, so branch conditions stay in the
 logic and the Hoare rules need no boolean coercion. `State.update` is
@@ -31,6 +33,9 @@ def evalA : AExp → State → Nat
   | .lit n, _ => n
   | .var x, s => s x
   | .add e₁ e₂, s => evalA e₁ s + evalA e₂ s
+  | .sub e₁ e₂, s => evalA e₁ s - evalA e₂ s
+  | .mul e₁ e₂, s => evalA e₁ s * evalA e₂ s
+  | .div e₁ e₂, s => evalA e₁ s / evalA e₂ s
 
 /-- Truth of a boolean expression in a state, as a `Prop`. -/
 def beval : BExp → State → Prop
@@ -48,6 +53,9 @@ inductive BigStep : Stmt → State → State → Prop where
   | skip {s : State} : BigStep .skip s s
   | assign {x : String} {e : AExp} {s : State} :
       BigStep (.assign x e) s (State.update s x (evalA e s))
+  | read {x : String} {xs : Array Nat} {e : AExp} {s : State}
+      (h : evalA e s < xs.size) :
+      BigStep (.read x xs e) s (State.update s x xs[evalA e s])
   | seq {c₁ c₂ : Stmt} {s s' s'' : State} :
       BigStep c₁ s s' → BigStep c₂ s' s'' → BigStep (.seq c₁ c₂) s s''
   | ifTrue {b : BExp} {c₁ c₂ : Stmt} {s s' : State} :

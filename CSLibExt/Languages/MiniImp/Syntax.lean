@@ -13,25 +13,29 @@ module
 namespace CSLibExt.Languages.MiniImp
 
 /-!
-# MiniImp syntax (Week 2 skeleton, 90-day plan #3 LOGICS)
+# MiniImp syntax
 
-The mini-language for the first VC target (IMP-like). Assignment,
-sequencing, if, while. States are `String → Nat` functions.
+States map scalar variable names to naturals. Arrays are immutable statement
+parameters, not a heap. Arithmetic is total natural arithmetic, not bounded
+machine arithmetic.
 
-Loops carry their invariant (`while b I c`): VC generation needs an
-invariant annotation, and the invariant is part of the program, not
-an afterthought. `BigStep` and `Hoare` read it from the statement.
+Loop annotations are ghost invariants used by VC generation. Neither the
+big-step semantics nor the executable interpreter checks or evaluates them.
 
-This is NOT a real language (no Hack/Python/Rust), no heap yet (heap
-comes via the iris-lean GenHeap interface, Weeks 3+), no Boole import
-(Boole has no Lean API on CSLib main — see Day-1 verification).
+`IMPBridge.lean` embeds Atlas's canonical `Cslib.IMP` in this extension.
+Canonical IMP lacks division and immutable reads, so this does not translate
+the binary-search demonstration back into canonical IMP.
 -/
 
-/-- Arithmetic expressions: literals, variables, addition. -/
+/-- Total natural arithmetic: subtraction truncates at zero; division by zero
+is zero. -/
 inductive AExp where
   | lit : Nat → AExp
   | var : String → AExp
   | add : AExp → AExp → AExp
+  | sub : AExp → AExp → AExp
+  | mul : AExp → AExp → AExp
+  | div : AExp → AExp → AExp
   deriving DecidableEq, Repr
 
 /-- Boolean expressions: true, comparison, and, not. -/
@@ -50,6 +54,9 @@ invariant `I`). -/
 inductive Stmt where
   | skip : Stmt
   | assign : String → AExp → Stmt
+  /-- Read an immutable array. Execution requires the evaluated index to be
+  in bounds. -/
+  | read : String → Array Nat → AExp → Stmt
   | seq : Stmt → Stmt → Stmt
   | if_ : BExp → Stmt → Stmt → Stmt
   | while : BExp → (State → Prop) → Stmt → Stmt
