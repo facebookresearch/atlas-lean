@@ -779,7 +779,6 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Lattice/WindingEarInduction.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingEarInduction` |
 | `Atlas/StatisticalMechanics/Code/Lattice/WindingPinchClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.FigureEightFourThin` |
 | `Atlas/StatisticalMechanics/Code/Lattice/WindingWitness.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingWitness` |
-| `Atlas/StatisticalMechanics/Code/Lattice/WindingWitnessClose.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingWitnessOfExterior` |
 | `Atlas/StatisticalMechanics/Code/Lattice/WindingWitnessClose2.lean` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExitOrbitWinds` |
 | `Atlas/StatisticalMechanics/Code/OSSS/BetaCMatch.lean` | `MathlibExt.Probability.OSSS.BetaCMatch` |
 | `Atlas/StatisticalMechanics/Code/OSSS/BetaThresholdBound.lean` | `MathlibExt.Probability.OSSS.BetaThresholdBound` |
