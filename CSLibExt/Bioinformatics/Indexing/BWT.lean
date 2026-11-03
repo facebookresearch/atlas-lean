@@ -46,6 +46,9 @@ longer suffixes of `P`, starting from all rows `[0, |t| + 1)` for the empty suff
 * `backwardSearch_bounds`: `sp ≤ ep ≤ |L|` for every list `L` and pattern.
 * `backwardSearch_count`: `ep - sp` **is the number of occurrences of `P` in `t`** (positions
   `i ≤ |t|` with `P` a prefix of `t.drop i`; the empty pattern occurs at all `|t| + 1` positions).
+* `length_bwt`, `pairwise_sortedRotations`, `map_coe_prefix_append_bot_cons_iff`: the length of
+  the transform, sortedness of the matrix rows, and the sentinel stopping a prefix match (basic
+  facts reused by the suffix-array view of the transform).
 
 ## Cost model
 
@@ -115,7 +118,8 @@ private theorem sortedRotations_length {α : Type*} [LinearOrder α] (t : List �
     (sortedRotations t).length = t.length + 1 := by
   simpa using (sortedRotations_perm t).length_eq
 
-private theorem bwt_length {α : Type*} [LinearOrder α] (t : List α) :
+/-- The Burrows–Wheeler transform of `t` has length `|t| + 1` (the sentinel adds one letter). -/
+theorem length_bwt {α : Type*} [LinearOrder α] (t : List α) :
     (bwt t).length = t.length + 1 := by
   simp [bwt, sortedRotations_length]
 
@@ -156,7 +160,9 @@ private theorem lf_bound {α : Type*} [LinearOrder α] (L : List (WithBot α))
   unfold lf rank
   omega
 
-private theorem prefix_before_sentinel {α : Type*} (P u : List α)
+/-- A sentinel-free word `P` is a prefix of `u ++ ⊥ :: v` (letters lifted to `WithBot α`) exactly
+when it is a prefix of `u`: the sentinel `⊥` stops every match. -/
+theorem map_coe_prefix_append_bot_cons_iff {α : Type*} (P u : List α)
     (v : List (WithBot α)) :
     P.map (↑) <+: u.map (↑) ++ ⊥ :: v ↔ P <+: u := by
   induction u generalizing P with
@@ -175,7 +181,7 @@ private theorem prefix_rotation {α : Type*} (t P : List α) (i : ℕ)
   have hm : i ≤ (t.map (WithBot.some)).length := by simpa using hi
   rw [List.drop_append_of_le_length hm, List.take_append_of_le_length hm]
   simp only [← List.map_drop, List.append_assoc, List.singleton_append]
-  exact prefix_before_sentinel P (t.drop i) ((t.map (↑)).take i)
+  exact map_coe_prefix_append_bot_cons_iff P (t.drop i) ((t.map (↑)).take i)
 
 private theorem rotation_normal {α : Type*} (t : List α) (i : ℕ) (hi : i ≤ t.length) :
     (withSentinel t).rotate i = (t.drop i).map (↑) ++ ⊥ :: (t.take i).map (↑) := by
@@ -199,7 +205,9 @@ private theorem sentinel_rotation_lt {α : Type*} [LinearOrder α] (t : List α)
   rw [he]
   exact List.Lex.rel (WithBot.bot_lt_coe a)
 
-private theorem sortedRotations_pairwise {α : Type*} [LinearOrder α] (t : List α) :
+/-- The rows of the Burrows–Wheeler matrix are sorted: the rotations listed by
+`sortedRotations t` are in lexicographically nondecreasing order. -/
+theorem pairwise_sortedRotations {α : Type*} [LinearOrder α] (t : List α) :
     (sortedRotations t).Pairwise
       (fun i j => (withSentinel t).rotate i ≤ (withSentinel t).rotate j) := by
   unfold sortedRotations
@@ -216,7 +224,7 @@ private theorem sortedRotations_pairwise {α : Type*} [LinearOrder α] (t : List
 
 private theorem sortedRotations_zero {α : Type*} [LinearOrder α] (t : List α) :
     (sortedRotations t).getD 0 0 = t.length := by
-  have hp := sortedRotations_pairwise t
+  have hp := pairwise_sortedRotations t
   have hm : t.length ∈ sortedRotations t :=
     (sortedRotations_perm t).mem_iff.mpr (by simp)
   have hb : ∀ i ∈ sortedRotations t, i < t.length + 1 := by
@@ -320,7 +328,7 @@ private theorem predecessor_lt {α : Type*} [LinearOrder α] (t : List α) (i j 
 private theorem sortedRotations_strict {α : Type*} [LinearOrder α] (t : List α) :
     (sortedRotations t).Pairwise
       (fun i j => (withSentinel t).rotate i < (withSentinel t).rotate j) := by
-  have hp := sortedRotations_pairwise t
+  have hp := pairwise_sortedRotations t
   have hn := (sortedRotations_perm t).nodup_iff.mpr List.nodup_range
   apply List.pairwise_iff_getElem.mpr
   intro i j hi hj hij
@@ -496,7 +504,7 @@ theorem sortedRotations_getD_lf {α : Type*} [LinearOrder α] (t : List α) (r :
       (sortedRotations t).getD (lf (bwt t) r) 0 =
         ((sortedRotations t).getD r 0 + t.length) % (t.length + 1) := by
   constructor
-  · simpa [bwt_length] using lf_bound (bwt t) r (by simpa [bwt_length] using hr)
+  · simpa [length_bwt] using lf_bound (bwt t) r (by simpa [length_bwt] using hr)
   · let j := ((sortedRotations t).getD r 0 + t.length) % (t.length + 1)
     have hj : j < t.length + 1 := Nat.mod_lt _ (by omega)
     have hm : j ∈ sortedRotations t :=
@@ -534,7 +542,7 @@ private theorem invertAux_row {α : Type*} [LinearOrder α] (t : List α) (i : �
 /-- **Inversion**: the Burrows–Wheeler transform is inverted by the LF-mapping walk. -/
 theorem invert_bwt {α : Type*} [LinearOrder α] (t : List α) : invert (bwt t) = t.map (↑) := by
   unfold invert
-  rw [bwt_length, Nat.add_sub_cancel, invertAux_row t t.length (by omega) 0
+  rw [length_bwt, Nat.add_sub_cancel, invertAux_row t t.length (by omega) 0
     (by omega) (sortedRotations_zero t)]
   simp
 
@@ -698,7 +706,7 @@ theorem backwardSearch_spec {α : Type*} [LinearOrder α] (t P : List α) (r : �
     (backwardSearch (bwt t) P).1 ≤ r ∧ r < (backwardSearch (bwt t) P).2 ↔
       P.map (↑) <+: (withSentinel t).rotate ((sortedRotations t).getD r 0) := by
   induction P generalizing r with
-  | nil => simp [backwardSearch, bwt_length, hr]
+  | nil => simp [backwardSearch, length_bwt, hr]
   | cons c P ih =>
     obtain ⟨q, hq, hlf⟩ := lf_surjective t r hr
     have hl := sortedRotations_getD_lf t q hq
@@ -711,7 +719,7 @@ theorem backwardSearch_spec {α : Type*} [LinearOrder α] (t P : List α) (r : �
       rw [hs, predecessor_rotation, bwt_getD t q hq]
     simp only [backwardSearch, List.map_cons]
     rw [he, List.cons_prefix_cons, ← hlf,
-      lf_interval (bwt t) q (by simpa [bwt_length] using hq)]
+      lf_interval (bwt t) q (by simpa [length_bwt] using hq)]
     rw [prefix_dropLast_rotation, ← ih q hq]
     simp only [eq_comm]
 
@@ -724,7 +732,7 @@ theorem backwardSearch_count {α : Type*} [LinearOrder α] (t P : List α) :
   let sp := (backwardSearch (bwt t) P).1
   let ep := (backwardSearch (bwt t) P).2
   have hb := backwardSearch_bounds (bwt t) P
-  have hi := count_interval (t.length + 1) sp ep hb.1 (by simpa [bwt_length] using hb.2)
+  have hi := count_interval (t.length + 1) sp ep hb.1 (by simpa [length_bwt] using hb.2)
   have hc : (List.range (t.length + 1)).countP (fun r => sp ≤ r ∧ r < ep) =
       (List.range (t.length + 1)).countP
         (fun r => P <+: t.drop ((sortedRotations t).getD r 0)) := by

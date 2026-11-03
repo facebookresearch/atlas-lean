@@ -39,7 +39,8 @@ of the site-frequency spectrum is a Poisson count.
   `1 ≤ i < n`, averaging the spectra equals sampling from the averaged density,
   `∫ E ξ_i(σ) dμ(σ) = ∫₀¹ C(n, i) x ^ i (1 - x) ^ (n - i) (∫ φ_σ(x) dμ(σ)) dx`.
   The interchange rests on `abs_expectedSFS_le`, a bound uniform in `σ`, which in turn uses
-  `kimuraFixation_nonneg` and `kimuraFixation_le_one`.
+  the bounds `kimuraFixation_nonneg` and `kimuraFixation_le_one` of the Wright–Fisher
+  diffusion file.
 * `dfeSFS_dirac`, `dfeSFS_add_measure`, `dfeSFS_smul_measure`: a point-mass DFE recovers the
   single-`σ` spectrum, and the spectrum is additive and homogeneous in the DFE, so mixtures of
   DFEs (for example a neutral point mass plus a gamma law) give mixtures of spectra.
@@ -80,45 +81,7 @@ open scoped Topology NNReal ENNReal
 
 namespace MathlibExt.Biology.PopulationGenetics.DistributionOfFitnessEffects
 
-/-! ### Bounds on the fixation probability and the expected spectrum -/
-
-/-- Kimura's fixation probability is nonnegative at nonnegative frequencies, for every
-selection coefficient `σ`. -/
-theorem kimuraFixation_nonneg (σ : ℝ) {y : ℝ} (hy : 0 ≤ y) : 0 ≤ kimuraFixation σ y := by
-  unfold kimuraFixation
-  split_ifs with hσ
-  · exact hy
-  rcases lt_or_gt_of_ne hσ with hσ | hσ
-  · apply div_nonneg_of_nonpos
-    · have h := Real.one_le_exp (show 0 ≤ -2 * σ * y by nlinarith)
-      linarith
-    · have h := Real.one_le_exp (show 0 ≤ -2 * σ by linarith)
-      linarith
-  · apply div_nonneg
-    · have h := Real.exp_le_one_iff.mpr (show -2 * σ * y ≤ 0 by nlinarith)
-      linarith
-    · have h := Real.exp_le_one_iff.mpr (show -2 * σ ≤ 0 by linarith)
-      linarith
-
-/-- Kimura's fixation probability is at most `1` at frequencies `y ≤ 1`, for every selection
-coefficient `σ`. -/
-theorem kimuraFixation_le_one (σ : ℝ) {y : ℝ} (hy : y ≤ 1) : kimuraFixation σ y ≤ 1 := by
-  unfold kimuraFixation
-  split_ifs with hσ
-  · exact hy
-  rcases lt_or_gt_of_ne hσ with hσ | hσ
-  · have hd : 1 - exp (-2 * σ) < 0 := by
-      have h := Real.one_lt_exp_iff.mpr (show 0 < -2 * σ by linarith)
-      linarith
-    apply (div_le_iff_of_neg hd).mpr
-    have h := Real.exp_le_exp.mpr (show -2 * σ * y ≤ -2 * σ by nlinarith)
-    linarith
-  · have hd : 0 < 1 - exp (-2 * σ) := by
-      have h := Real.exp_lt_one_iff.mpr (show -2 * σ < 0 by linarith)
-      linarith
-    apply (div_le_iff₀ hd).mpr
-    have h := Real.exp_le_exp.mpr (show -2 * σ ≤ -2 * σ * y by nlinarith)
-    linarith
+/-! ### A bound on the expected spectrum -/
 
 private theorem sampling_bound (θ σ : ℝ) {n i : ℕ} (hi : 0 < i) (hin : i < n)
     {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
