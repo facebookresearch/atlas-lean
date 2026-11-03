@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationTransitionWalk
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationCycleWeight
+import Mathlib.Data.List.ChainOfFn
 
 /-!
 

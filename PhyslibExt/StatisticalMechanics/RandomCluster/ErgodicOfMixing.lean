@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance
+import Mathlib.MeasureTheory.Measure.MeasuredSets
 
 /-!
 # Ergodicity from mixing on cylinder events

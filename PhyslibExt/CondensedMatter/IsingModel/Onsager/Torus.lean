@@ -7,7 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Circulant
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Ring.RingNF
+import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
 /-!
 

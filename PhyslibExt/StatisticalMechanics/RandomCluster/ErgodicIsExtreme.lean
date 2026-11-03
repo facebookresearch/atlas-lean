@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.ExtremeIsErgodic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredErgodicity
+import Mathlib.Dynamics.Ergodic.RadonNikodym
 
 /-!
 # Ergodic measures are extreme among invariant measures

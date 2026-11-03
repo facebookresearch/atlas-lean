@@ -10,6 +10,7 @@ module
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.FreeEnergy
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.RiemannPeriodic2D
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.SymbolDet
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 
 /-!
 

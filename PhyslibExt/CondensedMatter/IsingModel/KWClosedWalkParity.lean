@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannierEvenToCut
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingParity
 public import PhyslibExt.CondensedMatter.IsingModel.Peierls.ComponentEulerCircuit

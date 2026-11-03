@@ -11,6 +11,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationMiddleAffi
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationFormalEval
 public import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Analysis.Analytic.OfScalars
+import Mathlib.Algebra.MvPolynomial.Funext
 
 /-!
 

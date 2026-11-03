@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLoopSplit
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLoopReversal
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DetWalkExp

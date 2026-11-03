@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Data.Pi.Interval
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.RandomCurrent
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.CurrentRep
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.CurrentSplitting

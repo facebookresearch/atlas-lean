@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.EvenSubgraphCycles
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 

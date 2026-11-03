@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DetWalkExp
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWSpinFourier
+public import Mathlib.Analysis.Matrix.Normed
+import Mathlib.LinearAlgebra.Eigenspace.Charpoly
 
 /-!
 

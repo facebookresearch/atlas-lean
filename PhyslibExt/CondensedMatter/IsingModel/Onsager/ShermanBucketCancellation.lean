@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanGenericCancellation
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanFirstReturnFactor
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanReroot

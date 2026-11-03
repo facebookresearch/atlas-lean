@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLoop
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.TurnReversal
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Tactic.Linarith.Frontend
 
 /-!
 

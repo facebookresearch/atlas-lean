@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.IntegrandLimit
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWFourier
+import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!
 

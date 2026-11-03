@@ -12,6 +12,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BoxMagnetizationRa
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BoundaryErrorLattice
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildeBc
 public import MathlibExt.Probability.Percolation.DifferentialInequality
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
 # The finite-volume mean-field inequality for the Ising model

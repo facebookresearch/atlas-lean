@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanOrbitSum
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanSplit
+import Mathlib.Algebra.Group.Fin.Basic
+import Mathlib.Tactic.FieldSimp
 
 /-!
 

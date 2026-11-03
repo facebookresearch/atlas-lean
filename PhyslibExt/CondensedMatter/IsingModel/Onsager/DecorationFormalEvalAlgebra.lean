@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationFormalSeries
 public import Mathlib.Analysis.Normed.Ring.InfiniteSum
+import Mathlib.Algebra.Algebra.Field
 
 /-!
 

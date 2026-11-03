@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.ShermanLemma5
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.TurnReversal
+import Mathlib.Tactic.LinearCombination
 
 /-!
 

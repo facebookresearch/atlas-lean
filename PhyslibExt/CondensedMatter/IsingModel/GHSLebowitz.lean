@@ -7,7 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.Ring.IsFormallyReal
 public import PhyslibExt.CondensedMatter.IsingModel.GHSDuplicateVariable
 public import PhyslibExt.CondensedMatter.IsingModel.GHSVertexPartition
 public import MathlibExt.Probability.CorrelationInequalities.FKG

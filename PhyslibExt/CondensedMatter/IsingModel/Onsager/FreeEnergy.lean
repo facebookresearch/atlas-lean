@@ -10,6 +10,7 @@ module
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.CriticalPoint
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Pressure
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 /-!
 

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.KWLoopWeight
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Tactic.Abel
 
 /-!
 

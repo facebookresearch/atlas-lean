@@ -7,7 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+import Mathlib.Algebra.BigOperators.Group.Finset.Lemmas
+import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Sym.Sym2
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # The switching lemma for multigraph currents

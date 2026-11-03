@@ -13,6 +13,7 @@ public import MathlibExt.Probability.Percolation.SharpnessFromInputs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
 public import MathlibExt.Probability.StochasticOrder.StochasticDomination
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PcNontrivial
+import Mathlib.Topology.Algebra.Module.Cardinality
 /-!
 # Free percolation above the random-cluster critical point
 

@@ -67,7 +67,8 @@ def upstream_manifest(names):
 
 
 class FakeGitHub(GitHub):
-    def __init__(self, *, tags, run_id=123, upstream=None, module_sources=None):
+    def __init__(self, *, tags, run_id=123, upstream=None, module_sources=None,
+                 lakefiles=None):
         super().__init__(repo="example/repo")
         self._tags = tags
         self._run_id = run_id
@@ -76,6 +77,12 @@ class FakeGitHub(GitHub):
         # by the API-existence check (ref is ignored: the fixture APIs
         # are the same names at both SHAs).
         self._module_sources = module_sources or {}
+        # (slug, lakefile) pairs present upstream; default is that every
+        # upstream slug has lakefile.toml (matching the fixture
+        # manifests, whose direct entries all use lakefile.toml).
+        self._lakefiles = lakefiles if lakefiles is not None else {
+            (slug, "lakefile.toml") for (slug, _ref) in self._upstream
+        }
 
     def tags(self, slug):
         return [{"name": t, "commit": {"sha": SHAS[(slug, t)]}} for t in self._tags.get(slug, [])]
@@ -89,6 +96,11 @@ class FakeGitHub(GitHub):
     def contents(self, slug, path, ref):
         if (slug, path) in self._module_sources:
             return self._module_sources[(slug, path)]
+        if path in ("lakefile.toml", "lakefile.lean"):
+            if (slug, path) in self._lakefiles:
+                return b"# fixture lakefile\n"
+            raise RuntimeError(
+                f"gh api repos/{slug}/contents/{path} failed: Not Found (HTTP 404)")
         return json.dumps(self._upstream[(slug, ref)]).encode()
 
     def open_prs(self):
@@ -125,6 +137,7 @@ def write_tree(root: Path, tag: str, *, tamper_toolchain=False, tamper_transitiv
             "url": f"https://github.com/{dep['repo']}",
             "rev": SHAS[(dep["repo"], tag)], "inputRev": tag, "inherited": False,
             "configFile": "lakefile.toml", "manifestFile": "lake-manifest.json",
+            "scope": "", "subDir": None,
         })
     transitive = [dict(BATTERIES, inherited=True), dict(QQ, inherited=True)]
     if tamper_transitive:
@@ -366,9 +379,32 @@ class GuardTests(unittest.TestCase):
                    tamper_direct=False, conflict=False, duplicate_package=False,
                    missing_toolchain_tag=False, tamper_pin_policy=False,
                    stale_pin_policy=False, migration="absent",
-                   tamper_doc=False, stale_doc=False, missing_doc=False):
+                   tamper_doc=False, stale_doc=False, missing_doc=False,
+                   same_pin=False, add_dep=False, add_dep_no_config=False, config_tamper=None,
+                   changed_only_config=False, config_add_doc=False,
+                   config_add_dep_only=False, changed_guard_only=False,
+                   manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False,
+                   duplicate_shadow=False, config_add_ledger=False,
+                   malformed_require=False, nonstring_rev=False,
+                   scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
+                   add_dep_extra_fields="", config_version_pattern=None,
+                   config_add_literal_tag_rule=False, config_literal_revert=False,
+                   config_add_oneuse_version=False, config_add_oneuse_sha=False,
+                   config_add_tailored_alternation=False, config_add_code_rewrite=False,
+                   config_add_permutation=False, config_add_class_encoded=False,
+                   config_add_zero_width=False, add_dep_misbound_sha=False,
+                   config_scramble_rule=False, config_noncanonical_group=False,
+                   delete_assertion_and_rule=False,
+                   config_malformed_doc=None, config_malformed_pin=False,
+                   config_add_nonmatching_doc=False, config_bad_doc_regex=False,
+                   config_unresolved_sha=False, config_bad_group_ref=False,
+                   config_missing_doc_file=False, config_bad_pin_regex=False):
         repo_root = Path(__file__).resolve().parent.parent.parent
         real_config = load_config(repo_root)
+        # Physlib is already pinned here; REPL must really be new in these fixtures.
+        self.assertNotIn("repl", [dep["name"] for dep in real_config["deps"]])
+        # A bump must reach the config-change check, not fail on mixed pins.
+        new_dep_tag = "v4.35.0" if same_pin else "v4.36.0"
         upstream = {}
         for dep in real_config["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -377,6 +413,16 @@ class GuardTests(unittest.TestCase):
                 manifest["packages"][0] = dict(
                     manifest["packages"][0], rev="d" * 40)
             upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = manifest
+        if add_dep or add_dep_no_config:
+            upstream[("leanprover-community/repl",
+                      SHAS[("leanprover-community/repl", new_dep_tag)])] = \
+                upstream_manifest(["batteries"])
+        # Same-pin verification resolves upstream manifests at the base
+        # tag, so those entries must exist too (clean: the conflict
+        # fixture stays confined to the v4.36.0 entries above).
+        for dep in real_config["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.35.0")])] = \
+                upstream_manifest(["batteries", "Qq"])
         client = FakeGitHub(
             tags={}, upstream=upstream, module_sources=MODULE_SOURCES)
         if missing_toolchain_tag:
@@ -389,9 +435,230 @@ class GuardTests(unittest.TestCase):
             pr = Path(tmp) / "pr"
             base.mkdir()
             pr.mkdir()
+            base_config_text = json.dumps(real_config, indent=2, sort_keys=True)
+            pr_config = json.loads(base_config_text)
+            if add_dep and not add_dep_no_config:
+                pr_config["deps"].append(
+                    {"name": "repl", "repo": "leanprover-community/repl"})
+                pr_config["pin_policy"]["replacements"].append({
+                    "pattern": "(repl\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
+                    "replacement": ("{g1}{sha:mathlib}{g2}" if add_dep_misbound_sha
+                                    else "{g1}{sha:repl}{g2}"),
+                })
+
+            if config_add_doc:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "badge", "replacement": "badge"})
+            if config_add_dep_only:
+                pr_config["deps"].append(
+                    {"name": "repl", "repo": "leanprover-community/repl"})
+            if config_add_nonmatching_doc:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_add_code_rewrite:
+                pr_config["pin_policy"]["replacements"].append(
+                    {"pattern": "(?m)^(?:    main\\(\\)|    pass)$",
+                     "replacement": "    pass"})
+            if config_add_zero_width:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "(?<=Lean-v[0-9])",
+                     "replacement": "0"})
+            if config_add_permutation:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md",
+                     "pattern": "v([0-9]+)\\.([0-9]+)\\.([0-9]+)",
+                     "replacement": "v{g3}.{g2}.{g1}"})
+            if config_add_class_encoded:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md",
+                     "pattern": "(?:v[04]\\.[03][05]\\.[09]|v[05]\\.[03][06]\\.[01]|v[06]\\.[03][07]\\.[02])",
+                     "replacement": "{target}"})
+            if config_add_tailored_alternation:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md",
+                     "pattern": "(?:v4\\.35\\.0|v5\\.36\\.1|v6\\.37\\.2)",
+                     "replacement": "{target}"})
+            if config_version_pattern is not None:
+                pr_config["doc_replacements"].append({
+                    "path": "FRESH.md", "pattern": config_version_pattern,
+                    "replacement": "{target}",
+                })
+            if config_add_oneuse_version:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md", "pattern": "v4\\.35\\.0",
+                     "replacement": "{target}"})
+            if config_add_oneuse_sha:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md", "pattern": "3" * 40,
+                     "replacement": "{sha:mathlib}"})
+            if config_literal_revert:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "Lean-v[0-9]+\\.[0-9]+\\.[0-9]+",
+                     "replacement": "Lean-v4.35.0"})
+            if config_scramble_rule:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md",
+                     "pattern": "Lean-v([0-9]+)\\.([0-9]+)\\.([0-9]+)",
+                     "replacement": "Lean-v{g3}.{g2}.{g1}"})
+            if config_noncanonical_group:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "(badge)",
+                     "replacement": "{g01}"})
+            if delete_assertion_and_rule:
+                pr_config["pin_policy"]["replacements"] = [
+                    r for r in pr_config["pin_policy"]["replacements"]
+                    if "mathlib" not in json.dumps(r)]
+            if config_add_literal_tag_rule:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "v4\\.35\\.0",
+                     "replacement": "{target}"})
+            if config_malformed_doc == "int":
+                pr_config["doc_replacements"].append(42)
+            elif config_malformed_doc == "missing_path":
+                pr_config["doc_replacements"].append(
+                    {"pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "traversal":
+                pr_config["doc_replacements"].append(
+                    {"path": "../outside.md", "pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "space":
+                pr_config["doc_replacements"].append(
+                    {"path": "docs/Release Notes.md", "pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "query":
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md?ref=evil", "pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "unknown_key":
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "x", "replacement": "y",
+                     "note": "hi"})
+            if config_malformed_pin:
+                pr_config["pin_policy"]["replacements"].append({"pattern": "x"})
+            if config_bad_doc_regex:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "[", "replacement": "x"})
+            if config_unresolved_sha:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "badge",
+                     "replacement": "{sha:Nope}"})
+            if config_bad_group_ref:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "(badge)",
+                     "replacement": "{g5}"})
+            if config_missing_doc_file:
+                pr_config["doc_replacements"].append(
+                    {"path": "MISSING.md", "pattern": "x", "replacement": "y"})
+            if config_bad_pin_regex:
+                pr_config["pin_policy"]["replacements"].append(
+                    {"pattern": "[", "replacement": "x"})
+            if config_add_ledger:
+                pr_config["migration_ledgers"] = (
+                    pr_config.get("migration_ledgers", [])
+                    + ["blueprint/migrations/Third.json"])
+            if config_tamper == "remove_dep" or remove_dep:
+                pr_config["deps"] = [
+                    d for d in pr_config["deps"] if d["name"] != "cslib"]
+                pr_config["pin_policy"]["replacements"] = [
+                    r for r in pr_config["pin_policy"]["replacements"]
+                    if "cslib" not in json.dumps(r)]
+            elif config_tamper == "repoint_dep":
+                for d in pr_config["deps"]:
+                    if d["name"] == "mathlib":
+                        d["repo"] = "example/mathlib-fork"
+            elif config_tamper == "remove_replacement":
+                pr_config["pin_policy"]["replacements"] = \
+                    pr_config["pin_policy"]["replacements"][1:]
+            (base / "scripts" / "bump").mkdir(parents=True)
+            (base / "scripts" / "bump" / "pinned_deps.json").write_text(base_config_text)
+            (pr / "scripts" / "bump").mkdir(parents=True)
+            (pr / "scripts" / "bump" / "pinned_deps.json").write_text(
+                json.dumps(pr_config, indent=2, sort_keys=True))
             write_tree(base, "v4.35.0", config=real_config)
-            write_tree(pr, "v4.36.0", tamper_toolchain=tamper_toolchain,
+            write_tree(pr, "v4.35.0" if same_pin else "v4.36.0",
+                       tamper_toolchain=tamper_toolchain,
                        tamper_transitive=tamper_transitive, config=real_config)
+            if scope_repoint:
+                # Mirror the real lakefile shape (fixture requires carry
+                # no scope), then repoint mathlib's scope in the PR tree.
+                for tree in (base, pr):
+                    lakefile = tree / "lakefile.toml"
+                    text = lakefile.read_text()
+                    text = text.replace(
+                        'name = "mathlib"\nrev = "v4.35.0"',
+                        'name = "mathlib"\nscope = "leanprover-community"\nrev = "v4.35.0"')
+                    text = text.replace(
+                        'name = "cslib"\nrev = "v4.35.0"',
+                        'name = "cslib"\nscope = "leanprover"\nrev = "v4.35.0"')
+                    lakefile.write_text(text)
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(lakefile.read_text().replace(
+                    'scope = "leanprover-community"', 'scope = "attacker"', 1))
+            if add_dep or add_dep_no_config:
+                lakefile = pr / "lakefile.toml"
+                if add_dep_scoped:
+                    source = 'scope = "leanprover-community"\n'
+                elif add_dep_wrong_source:
+                    source = 'git = "https://github.com/attacker/repl"\n'
+                else:
+                    source = 'git = "https://github.com/leanprover-community/repl"\n'
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[require]]\nname = "repl"\n'
+                    + source + add_dep_extra_fields + f'rev = "{new_dep_tag}"\n'
+                    '\n[[lean_lib]]\nname = "PhyslibExt"\n'
+                    'globs = ["PhyslibExt.+"]\n')
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                manifest["packages"].append({
+                    "name": "repl", "type": "git",
+                    "url": "https://github.com/leanprover-community/repl",
+                    "rev": SHAS[("leanprover-community/repl", new_dep_tag)],
+                    "inputRev": new_dep_tag, "inherited": False,
+                    "configFile": "lakefile.toml",
+                    "manifestFile": "lake-manifest.json",
+                    "scope": "", "subDir": None,
+                })
+                manifest_path.write_text(json.dumps(manifest, indent=1))
+            elif same_pin:
+                # Same-pin library addition without a new dependency, plus
+                # unrelated doc / pin-policy restructuring the guard must
+                # allow (bump-only exact checks are skipped at the same pin).
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
+                    'globs = ["PhyslibExt.+"]\n')
+            if config_add_oneuse_version or config_add_oneuse_sha \
+                    or config_add_tailored_alternation or config_add_permutation \
+                    or config_add_class_encoded or config_version_pattern is not None:
+                (pr / "FRESH.md").write_text(
+                    "Release v4.35.0\nSHA " + "3" * 40 + "\n")
+            if malformed_require:
+                (pr / "lakefile.toml").write_text(
+                    'name = "fixture"\n\nrequire = ["bogus"]\n')
+            if nonstring_rev:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(lakefile.read_text().replace(
+                    'rev = "v4.35.0"', "rev = 123", 1))
+            if duplicate_shadow:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    '[[require]]\nname = "mathlib"\nrev = "v9.99.99"\n\n'
+                    + lakefile.read_text())
+            if remove_dep:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(lakefile.read_text().replace(
+                    '\n[[require]]\nname = "cslib"\nrev = "v4.35.0"', ""))
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                manifest["packages"] = [
+                    pkg for pkg in manifest["packages"] if pkg["name"] != "cslib"]
+                manifest_path.write_text(json.dumps(manifest, indent=1))
+            if manifest_rev_tamper:
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                for pkg in manifest["packages"]:
+                    if pkg["name"] == "mathlib":
+                        pkg["rev"] = "0" * 40
+                manifest_path.write_text(json.dumps(manifest, indent=1))
             # write_tree's README carries only the first two doc
             # patterns; the real config has a third (releases/tag),
             # which the real README carries. Give both trees that
@@ -428,17 +695,39 @@ class GuardTests(unittest.TestCase):
             # tag/SHAs applied (or a tampered / stale variant).
             pin_policy = real_config["pin_policy"]
             real_policy = (repo_root / pin_policy["path"]).read_text()
-            (base / "scripts").mkdir()
+            (base / "scripts").mkdir(exist_ok=True)
             (base / pin_policy["path"]).write_text(real_policy)
             shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in real_config["deps"]}
-            pr_policy = pinned_bump.apply_replacements_to_text(
-                real_policy, pin_policy["replacements"], "v4.36.0", shas)
-            if tamper_pin_policy:
-                pr_policy = pr_policy.replace(shas["mathlib"], "0" * 40)
-            if stale_pin_policy:
-                pr_policy = real_policy
-            (pr / "scripts").mkdir()
-            (pr / pin_policy["path"]).write_text(pr_policy)
+            if same_pin:
+                # Same-pin: the pin-policy file may be restructured
+                # (e.g. a new dep's constants); the guard skips the
+                # bump-only exact check, so an added comment must pass.
+                (pr / "scripts").mkdir(exist_ok=True)
+                (pr / pin_policy["path"]).write_text(
+                    real_policy + "\n# same-pin restructuring note\n")
+                if delete_assertion_and_rule:
+                    policy_path = pr / pin_policy["path"]
+                    policy_path.write_text("\n".join(
+                        line for line in policy_path.read_text().splitlines()
+                        if 'mathlib.get("rev")' not in line) + "\n")
+                if add_dep:
+                    # The new REPL pin replacement must match the PR
+                    # policy file, so the PR adds its assertion line.
+                    policy_path = pr / pin_policy["path"]
+                    policy_path.write_text(
+                        policy_path.read_text()
+                        + 'repl.get("rev") != ("'
+                        + SHAS[("leanprover-community/repl", new_dep_tag)]
+                        + '")\n')
+            else:
+                pr_policy = pinned_bump.apply_replacements_to_text(
+                    real_policy, pin_policy["replacements"], "v4.36.0", shas)
+                if tamper_pin_policy:
+                    pr_policy = pr_policy.replace(shas["mathlib"], "0" * 40)
+                if stale_pin_policy:
+                    pr_policy = real_policy
+                (pr / "scripts").mkdir(exist_ok=True)
+                (pr / pin_policy["path"]).write_text(pr_policy)
             if tamper_lakefile_name:
                 lakefile = pr / "lakefile.toml"
                 lakefile.write_text(
@@ -461,8 +750,12 @@ class GuardTests(unittest.TestCase):
             # The valid PR README is the base README with the real
             # config's doc replacements applied for the new tag; a
             # stale README (left at the old pin) or a tampered one
-            # (expected text plus an unrelated edit) must fail.
-            if missing_doc:
+            # (expected text plus an unrelated edit) must fail. At the
+            # same pin, doc edits are unrestricted: an added line passes.
+            if same_pin:
+                with open(pr / "README.md", "a", encoding="utf-8") as f:
+                    f.write("\nPhyslibExt documentation.\n")
+            elif missing_doc:
                 (pr / "README.md").unlink()
             elif not stale_doc:
                 readme = pinned_bump.apply_replacements_to_text(
@@ -472,7 +765,30 @@ class GuardTests(unittest.TestCase):
                     readme += "\nUnrelated doc edit.\n"
                 (pr / "README.md").write_text(readme)
             changed = Path(tmp) / "changed.txt"
-            changed.write_text("lean-toolchain\nlakefile.toml\nlake-manifest.json\n")
+            if changed_guard_only:
+                changed_lines = ["scripts/bump/pinned_bump.py"]
+                if changed_guard_test:
+                    changed_lines.append("scripts/bump/test_pinned_bump.py")
+            elif changed_only_config:
+                changed_lines = ["scripts/bump/pinned_deps.json"]
+            else:
+                changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
+                if add_dep or config_tamper is not None or config_add_doc \
+                        or config_add_dep_only or remove_dep or config_add_ledger \
+                        or config_malformed_doc is not None or config_malformed_pin \
+                        or config_add_nonmatching_doc or config_bad_doc_regex \
+                        or config_unresolved_sha or config_bad_group_ref \
+                        or config_missing_doc_file or config_bad_pin_regex \
+                        or config_add_literal_tag_rule or config_literal_revert \
+                        or config_add_oneuse_version or config_add_oneuse_sha \
+                        or config_add_tailored_alternation or config_add_code_rewrite \
+                        or config_add_zero_width \
+                        or config_scramble_rule or config_noncanonical_group \
+                        or delete_assertion_and_rule:
+                    changed_lines.append("scripts/bump/pinned_deps.json")
+                if changed_guard_test:
+                    changed_lines.append("scripts/bump/test_pinned_bump.py")
+            changed.write_text("\n".join(changed_lines) + "\n")
             import pinned_bump as module
             real_github = module.GitHub
             module.GitHub = lambda: client
@@ -535,6 +851,709 @@ class GuardTests(unittest.TestCase):
 
     def test_guard_fails_missing_doc(self):
         self.assertEqual(self._run_guard(missing_doc=True), 1)
+
+    def test_guard_passes_same_pin_library_addition(self):
+        # A new [[lean_lib]] at the current pin, plus unrelated doc and
+        # pin-policy restructuring, is not a bump and must pass.
+        self.assertEqual(self._run_guard(same_pin=True), 0)
+
+    def test_guard_passes_same_pin_dependency_addition(self):
+        # A new dependency (REPL) at the current pin, with
+        # the config extended in the same PR, must pass.
+        self.assertEqual(self._run_guard(same_pin=True, add_dep=True), 0)
+
+    def test_guard_fails_same_pin_addition_without_config(self):
+        # Same lakefile addition, but pinned_deps.json not extended: the
+        # config would drift from the lakefile, so the guard must fail
+        # and tell the author to extend the config in the same PR.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep_no_config=True), 1)
+
+    def test_guard_fails_same_pin_manifest_rev_tamper(self):
+        self.assertEqual(self._run_guard(same_pin=True, manifest_rev_tamper=True), 1)
+
+    def test_guard_fails_config_repoint(self):
+        self.assertEqual(self._run_guard(config_tamper="repoint_dep"), 1)
+
+    def test_guard_fails_config_replacement_removal(self):
+        self.assertEqual(self._run_guard(config_tamper="remove_replacement"), 1)
+
+    def test_guard_fails_config_change_in_bump(self):
+        # Config extension must land in a same-pin PR first, not in a bump.
+        self.assertEqual(self._run_guard(add_dep=True), 1)
+
+    def test_guard_fails_config_only_repoint(self):
+        # Codex P1: a PR touching only pinned_deps.json must not sail
+        # through the old pin-files-only early return.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_tamper="repoint_dep"), 1)
+
+    def test_guard_passes_config_only_doc_addition(self):
+        # A config-only PR that only adds a doc replacement is a valid
+        # extension and must pass.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True, config_add_doc=True), 0)
+
+    def test_guard_passes_guard_code_only(self):
+        # Guard-code-only PRs get normal review; they must not fail
+        # their own guard run.
+        self.assertEqual(self._run_guard(changed_guard_only=True), 0)
+
+    def test_config_paths_union_and_defensive(self):
+        # Union of base + PR paths; malformed entries skipped, never raised.
+        # Traversal (../../evil.py) and URL-delimiter (x?ref=evil) paths
+        # are excluded: they must never reach the workflow's downloads.
+        base = {"doc_replacements": [{"path": "README.md", "pattern": "x", "replacement": "y"}],
+                "pin_policy": {"path": "scripts/check.py", "replacements": []},
+                "migration_ledgers": ["a.json", 42]}
+        pr = {"doc_replacements": [{"path": "NEW.md", "pattern": "x", "replacement": "y"}, 42,
+                                     {"path": "../../evil.py", "pattern": "x", "replacement": "y"},
+                                     {"path": "x?ref=evil", "pattern": "x", "replacement": "y"}],
+              "pin_policy": {"path": "scripts/new_check.py", "replacements": []}}
+        self.assertEqual(
+            pinned_bump.config_paths_for("doc", base, pr), ["README.md", "NEW.md"])
+        self.assertEqual(
+            pinned_bump.config_paths_for("policy", base, pr),
+            ["scripts/check.py", "scripts/new_check.py"])
+        self.assertEqual(
+            pinned_bump.config_paths_for("ledger", base, pr), ["a.json"])
+
+    def test_guard_fails_config_only_malformed_doc_int(self):
+        # Codex P1: a bare 42 in doc_replacements must fail schema
+        # validation, not merge and brick the workflow's e["path"] read.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="int"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_missing_path(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="missing_path"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_query(self):
+        # Codex P1: a ? in a configured path would alter the download URL.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="query"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_traversal(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="traversal"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_unknown_key(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="unknown_key"), 1)
+
+    def test_guard_fails_config_only_nonmatching_rule(self):
+        # Codex P1: a valid but nonmatching rule (the old passing Foo
+        # fixture) must fail: it would brick the next bump.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_nonmatching_doc=True), 1)
+
+    def test_guard_fails_config_only_bad_doc_regex(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_bad_doc_regex=True), 1)
+
+    def test_guard_fails_config_only_unresolved_sha(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_unresolved_sha=True), 1)
+
+    def test_guard_fails_config_only_bad_group_ref(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_bad_group_ref=True), 1)
+
+    def test_guard_fails_config_only_missing_doc_file(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_missing_doc_file=True), 1)
+
+    def test_guard_fails_config_only_bad_pin_regex(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_bad_pin_regex=True), 1)
+
+    def test_guard_fails_config_only_malformed_pin_replacement(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_pin=True), 1)
+
+    def test_guard_fails_same_pin_scope_repoint(self):
+        # Codex P1: changing an existing require's scope to an attacker's
+        # org must fail, even with names, revs, config, manifest unchanged.
+        self.assertEqual(
+            self._run_guard(same_pin=True, scope_repoint=True), 1)
+
+    def test_pattern_literal_detection(self):
+        # Structural check: literals flagged, classes not.
+        cases = [
+            ("v[0-9]+\\.[0-9]+\\.[0-9]+", False),
+            ("(?:v4\\.35\\.0|v5\\.36\\.1)", True),
+            ("v4[.]35[.]0", True),
+            ("[0-9a-f]{40}", False),
+            ("56a005855ea17e0b0958f73ec801ae140b0a1679", True),
+            ("v4\\.35", True),
+            ("1\\.2", False),
+            ("1\\.2\\.3", True),
+            ('(mathlib\\.get\\("rev"\\) != \\(\\s*")[0-9a-f]{40}(")', False),
+        ]
+        for pattern, should_flag in cases:
+            problems = pinned_bump._validate_pattern_literals({"pattern": pattern})
+            self.assertEqual(bool(problems), should_flag, pattern)
+
+    def test_replacement_pattern_syntax(self):
+        rejected = [
+            r"\x76", r"[\x76]", r"\u0076", r"\U00000076",
+            r"\N{LATIN SMALL LETTER V}", r"\166", r"(v)\1",
+            r"(?=v)", r"(?!v)", r"(?<=v)", r"(?<!v)",
+        ]
+        for pattern in rejected:
+            with self.subTest(pattern=pattern):
+                entry = {"pattern": pattern, "replacement": "{g0}"}
+                self.assertTrue(pinned_bump._static_rule_problems(entry, set()))
+        for pattern in [r"(?:v[0-9]+\.)", r"\(\?", r"\\x76", r"\A\w+\Z"]:
+            with self.subTest(pattern=pattern):
+                entry = {"pattern": pattern, "replacement": "{g0}"}
+                self.assertEqual(pinned_bump._static_rule_problems(entry, set()), [])
+
+    def test_catastrophic_pattern_times_out(self):
+        # Codex ReDoS P1: (a+)+$ on 30 a's + X exceeds 3s unguarded;
+        # the 1s simulation budget must fail it in ~1s, not hang.
+        import time
+        pr_config = json.loads(json.dumps(CONFIG))
+        pr_config["doc_replacements"].append(
+            {"path": "FRESH.md", "pattern": r"(a+)+$", "replacement": "{g0}"})
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "FRESH.md").write_text("a" * 30 + "X\n")
+            start = time.monotonic()
+            problems = pinned_bump.validate_replacement_rules(
+                CONFIG, pr_config, tree, "v4.35.0",
+                FakeGitHub(tags={"v4.35.0": SHAS}), timeout_s=1.0)
+            self.assertLess(time.monotonic() - start, 5.0)
+        self.assertTrue(any("timed out" in p for p in problems), problems)
+
+    def test_repairable_catastrophic_pattern_raises(self):
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"].append(
+            {"path": "FRESH.md", "pattern": r"(a+)+$", "replacement": "{g0}"})
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "FRESH.md").write_text("a" * 30 + "X\n")
+            with self.assertRaises(pinned_bump._RegexTimeout):
+                pinned_bump.repairable_rules(
+                    base, tree, "v4.35.0",
+                    FakeGitHub(tags={"v4.35.0": SHAS}), timeout_s=1.0)
+
+    def test_regex_caps(self):
+        self.assertTrue(any(
+            "1000-char cap" in p for p in pinned_bump._static_rule_problems(
+                {"pattern": "a" * 1001, "replacement": "{g0}"}, set())))
+        pr_config = json.loads(json.dumps(CONFIG))
+        pr_config["doc_replacements"].extend(
+            {"path": "FRESH.md", "pattern": "x", "replacement": "x"}
+            for _ in range(65))
+        problems = pinned_bump.validate_replacement_rules(
+            CONFIG, pr_config, Path("/nonexistent"), "v4.35.0",
+            FakeGitHub(tags={"v4.35.0": SHAS}))
+        self.assertTrue(any("64-rule cap" in p for p in problems), problems)
+        problems = pinned_bump._simulate_file_rules(
+            [], [], "x" * 1_000_001, [], set(), "oversize")
+        self.assertTrue(any("1,000,000-char" in p for p in problems), problems)
+
+    def test_tailored_lookahead_is_rejected_and_removable(self):
+        tags = ["v4.35.0", "v5.36.1", "v6.37.2"]
+        encoded = ["".join(r"\x" + format(ord(c), "02x") for c in tag) for tag in tags]
+        broken = {
+            "path": "README.md",
+            "pattern": r"\A(?=[\s\S]*(?:" + "|".join(encoded) + "))",
+            "replacement": "{g0}",
+        }
+        text = 'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n'
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"].append(broken)
+        entries = base["doc_replacements"]
+        transitions = [(tag, {}) for tag in tags]
+        dep_names = {dep["name"] for dep in base["deps"]}
+        for tag in tags:
+            text_at_tag = pinned_bump.apply_replacements_to_text(text, entries, tag, {})
+            self.assertIn(tag, text_at_tag)
+        with self.assertRaisesRegex(ValueError, "did not match"):
+            pinned_bump.apply_replacements_to_text(text, entries, "v4.36.0", {})
+        self.assertTrue(pinned_bump._static_rule_problems(broken, dep_names))
+        self.assertTrue(pinned_bump._simulate_file_rules(
+            entries, CONFIG["doc_replacements"], text, transitions, dep_names, "README.md"))
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "README.md").write_text(text)
+            repairable = pinned_bump.repairable_rules(
+                base, tree, "v4.35.0", FakeGitHub(tags={}, upstream={}))
+            self.assertIn(
+                pinned_bump._rule_identity("doc_replacements", "README.md", broken),
+                repairable)
+            problems = pinned_bump.check_config_extension(base, CONFIG, repairable)
+            self.assertNotIn("doc_replacements", " ".join(problems))
+
+    def test_guard_fails_config_only_code_rewrite(self):
+        # Codex P1: an added pin-policy rule rewriting main() to pass
+        # must fail: rules may change only version/SHA literals.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_code_rewrite=True), 1)
+
+    def test_guard_fails_config_only_zero_width(self):
+        # Codex P2: a zero-width lookbehind insertion inside a written
+        # span must count as interference.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_zero_width=True), 1)
+
+    def test_guard_fails_config_only_permutation(self):
+        # Codex P1: a new-file permutation rule writes the wrong version
+        # (v0.35.4), not the transition target. The old normalize check
+        # passed it; the token check must fail it.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_permutation=True), 1)
+
+    def test_guard_fails_config_only_class_encoded(self):
+        # Codex P1: class-encoded tag list matching exactly the simulated
+        # tags must fail at acceptance, not at the first real bump.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_class_encoded=True), 1)
+
+    def test_guard_rejects_new_dependency_extra_fields(self):
+        for fields in (
+            'subDir = "alternate"\n',
+            'subDir = ""\n',
+            'configFile = "alternate.lean"\n',
+            'manifestFile = "alternate.json"\n',
+            'source = { type = "path", dir = "alternate" }\n',
+            'options = { custom = "alternate" }\n',
+        ):
+            with self.subTest(fields=fields):
+                self.assertEqual(self._run_guard(
+                    same_pin=True, add_dep=True,
+                    add_dep_extra_fields=fields,
+                ), 1)
+
+    def test_guard_rejects_fixed_width_version_patterns(self):
+        for pattern in (
+            r"v[0-9]{1}\.[0-9]{2}\.[0-9]{1}",
+            r"v[0-9]{1}\.[0-9]+\.[0-9]+",
+            r"v[0-9]+\.[0-9]{2}\.[0-9]+",
+            r"v[0-9]+\.[0-9]+\.[0-9]{1}",
+            r"v\d{1,1}\.\d{1,2}\.\d{1,1}",
+            r"v(?:[0-9]){1}\.(?:[0-9]){2}\.(?:[0-9]){1}",
+        ):
+            with self.subTest(pattern=pattern):
+                self.assertEqual(self._run_guard(
+                    changed_only_config=True, config_version_pattern=pattern,
+                ), 1)
+
+    def test_guard_allows_variable_width_version_patterns(self):
+        for pattern in (
+            r"v[0-9]+\.[0-9]+\.[0-9]+",
+            r"v\d{1,}\.\d{1,}\.\d{1,}",
+        ):
+            with self.subTest(pattern=pattern):
+                self.assertEqual(self._run_guard(
+                    changed_only_config=True, config_version_pattern=pattern,
+                ), 0)
+
+    def test_class_pinning(self):
+        flagged = [
+            r"(?:v[04]\.[03][05]\.[09]|v[05]\.[03][06]\.[01]|v[06]\.[03][07]\.[02])",
+            r"v[04]\.[03][05]\.[09]",
+            r"v[04][\s\S][03][05][\s\S][09]",
+            r"[^0-5]\.[0-9]+\.[0-9]+",
+            r"[0-9]{40}",
+            r"[a-f]{40}",
+            r"[0-9a]{40}",
+            # Codex P2: split widths fix SHA prefixes without a literal {40}.
+            r"newdep=[8ac][0-9a-f]{39}",
+            r"newdep=[0-9a-f]{39}[8ac]",
+            r"newdep=[8ac][0-9a-f]+",
+            r"newdep=8[0-9a-f]{39}",
+            r"newdep=\d[0-9a-f]{39}",
+            r"newdep=(?:[8ac])(?:[0-9a-f]{39})",
+            r"newdep=[0-9]{20}[0-9]{20}",
+        ]
+        for pattern in flagged:
+            with self.subTest(pattern=pattern):
+                self.assertTrue(pinned_bump._validate_class_pinning(pattern))
+        allowed = [
+            r"v[0-9]+\.[0-9]+\.[0-9]+",
+            r"[0-9a-f]{40}",
+            r"[\d]\.[0-9]+\.[0-9]+",
+            r"[^0-9]+\.[0-9]+\.[0-9]+",
+            r"[04]",
+            r"[a-z]+\.[0-9]+\.[0-9]+",
+            r'(rev = ")[0-9a-f]{40}(")',
+            r"commit/[0-9a-f]{40}",
+            r"\w+",
+        ]
+        for pattern in allowed:
+            with self.subTest(pattern=pattern):
+                self.assertEqual(pinned_bump._validate_class_pinning(pattern), [])
+
+    def test_sha_pattern_wildcards_cannot_hide_partial_classes(self):
+        deps = [{"name": "newdep"}]
+        shas = [{"newdep": "8" * 40}]
+        shas += [pinned_bump._transition_shas(deps, label) for label in ("1", "2")]
+        prefixes = "0123456789" + "".join(sorted(
+            {sha["newdep"][0] for sha in shas} - set("0123456789")))
+        transitions = list(zip(["v4.35.0", "v5.36.1", "v6.37.2"], shas))
+        for suffix in (r".{39}", r'[^\"]{39}', r"[\s\S]{39}"):
+            with self.subTest(suffix=suffix):
+                entry = {
+                    "pattern": "(newdep=)[" + prefixes + "]" + suffix,
+                    "replacement": "{g1}{sha:newdep}",
+                }
+                self.assertTrue(pinned_bump._static_rule_problems(entry, {"newdep"}))
+                self.assertTrue(pinned_bump._simulate_file_rules(
+                    [entry], [], "newdep=" + shas[0]["newdep"],
+                    transitions, {"newdep"}, "new dependency"))
+
+    def test_guard_fails_config_only_tailored_alternation(self):
+        # Codex P2: an alternation enumerating exactly the simulated
+        # tags passes chained simulation but blocks the first real
+        # bump to an unlisted tag; the structural check rejects it.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_tailored_alternation=True), 1)
+
+    def test_guard_fails_config_only_space_path(self):
+        # Codex P3: a space in a configured path breaks shell word
+        # splitting on config-paths output, so the schema rejects it.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="space"), 1)
+
+    def test_guard_fails_config_only_oneuse_version(self):
+        # Codex P1: a one-use literal-version rule on a fresh file
+        # (no generic rule before it) passes single-target simulation
+        # but fails the second chained transition.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_oneuse_version=True), 1)
+
+    def test_guard_fails_config_only_oneuse_sha(self):
+        # Codex P1: same for a literal-SHA pattern, via distinct fake
+        # SHAs per transition.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_oneuse_sha=True), 1)
+
+    def test_guard_fails_config_only_literal_revert(self):
+        # Codex P1: an added rule rewriting the generic output back to
+        # the literal old tag must fail (hardcoded literal in replacement).
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_literal_revert=True), 1)
+
+    def test_guard_fails_config_only_scramble_rule(self):
+        # Codex P1: an added rule matching an earlier rule's output and
+        # scrambling it (no literal, every regex still matches) must fail.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_scramble_rule=True), 1)
+
+    def test_guard_fails_config_only_noncanonical_group(self):
+        # Codex P2: {g01} passes numeric validation but stays literal.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_noncanonical_group=True), 1)
+
+    def test_guard_fails_delete_assertion_and_rule(self):
+        # Codex P1: deleting the Mathlib assertion from the PR policy
+        # file and removing its rule must NOT make the rule repairable;
+        # eligibility comes from the trusted base tree, not PR text.
+        self.assertEqual(
+            self._run_guard(same_pin=True, delete_assertion_and_rule=True), 1)
+
+    def test_guard_fails_new_dep_scoped(self):
+        # Codex P2: a new dependency with scope alone (even the correct
+        # org) must fail; scope does not prove the exact repository.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True, add_dep_scoped=True), 1)
+
+    def test_guard_fails_config_only_literal_tag_rule(self):
+        # Codex P1: a rule with a literal current-tag pattern passes
+        # current-tag simulation but breaks the next forward bump, when
+        # the generic rules rewrite the text first.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_literal_tag_rule=True), 1)
+
+    def test_config_extension_allows_removing_forward_broken_rule(self):
+        # Repair path: a rule the forward simulation shows cannot apply
+        # may be removed.
+        import tempfile as _tempfile
+        broken = {"path": "README.md", "pattern": "v4\\.35\\.0",
+                  "replacement": "{target}"}
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"] = base.get("doc_replacements", []) + [broken]
+        pr = json.loads(json.dumps(base))
+        pr["doc_replacements"] = [e for e in pr["doc_replacements"] if e != broken]
+        with _tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "README.md").write_text(
+                'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
+            client = FakeGitHub(tags={}, upstream={})
+            repairable = pinned_bump.repairable_rules(
+                base, tree, "v4.35.0", client)
+            self.assertIn(
+                pinned_bump._rule_identity("doc_replacements", "README.md", broken),
+                repairable)
+            problems = pinned_bump.check_config_extension(base, pr, repairable)
+            self.assertNotIn("doc_replacements", " ".join(problems))
+
+    def test_guard_fails_sha_rule_bound_to_other_dep(self):
+        # Codex P1: a Physlib assertion rule writing {sha:mathlib}
+        # rewrites one dependency's SHA with another's; any configured
+        # SHA used to be accepted, so the rule passed validation.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True,
+                            add_dep_misbound_sha=True), 1)
+
+    def test_changed_sha_is_bound_to_one_dependency(self):
+        mathlib, cslib = "3" * 40, "5" * 40
+        shas = {"mathlib": mathlib, "cslib": cslib}
+        before = 'rev "' + "e" * 40 + '"'
+        after = 'rev "' + mathlib + '"'
+
+        def valid(replacement, prev=None, text_before=before, text_after=after):
+            return pinned_bump._changed_tokens_valid(
+                text_before, text_after, "v4.35.0", shas,
+                {"pattern": "x", "replacement": replacement}, prev)
+
+        self.assertTrue(valid('"{sha:mathlib}"'))
+        # Wrong dependency, none, or more than one placeholder.
+        self.assertFalse(valid('"{sha:cslib}"'))
+        self.assertFalse(valid('"{g1}"'))
+        self.assertFalse(valid('"{sha:mathlib}{sha:cslib}"'))
+        # The old token is a known SHA of another dependency.
+        self.assertFalse(valid('"{sha:mathlib}"', prev=shas,
+                               text_before='rev "' + cslib + '"'))
+        # Unchanged SHAs need no binding.
+        self.assertTrue(valid('"{g1}"', text_before=after))
+
+    def test_config_extension_repair_keyed_by_exact_rule(self):
+        # Codex P2: a broken rule must not let a healthy rule sharing its
+        # regex (same file, or the other rule kind) be removed with it.
+        healthy = {"path": "README.md", "pattern": "badge", "replacement": "badge"}
+        broken = {"path": "README.md", "pattern": "badge",
+                  "replacement": "{sha:Nope}"}
+        healthy_pin = {"pattern": "badge", "replacement": "badge"}
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"] += [healthy, broken]
+        base["pin_policy"] = {"path": "policy.py", "replacements": [healthy_pin]}
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Path(tmp)
+            (tree / "README.md").write_text(
+                'badge Lean-v4.35.0 <img alt="Lean v4.35.0" /> end\n')
+            (tree / "policy.py").write_text("# badge\n")
+            repairable = pinned_bump.repairable_rules(
+                base, tree, "v4.35.0", FakeGitHub(tags={}, upstream={}))
+        self.assertEqual(
+            repairable,
+            {pinned_bump._rule_identity("doc_replacements", "README.md", broken)})
+        repaired = json.loads(json.dumps(base))
+        repaired["doc_replacements"].remove(broken)
+        self.assertEqual(
+            pinned_bump.check_config_extension(base, repaired, repairable), [])
+        same_file = json.loads(json.dumps(repaired))
+        same_file["doc_replacements"].remove(healthy)
+        self.assertTrue(any(
+            "doc_replacements" in p
+            for p in pinned_bump.check_config_extension(base, same_file, repairable)))
+        cross_kind = json.loads(json.dumps(repaired))
+        cross_kind["pin_policy"]["replacements"] = []
+        self.assertTrue(any(
+            "pin_policy" in p
+            for p in pinned_bump.check_config_extension(base, cross_kind, repairable)))
+
+    def test_verify_manifest_new_dep_schema(self):
+        # Codex P2: a new direct entry has no base entry to compare
+        # against, so every field must be derived from trusted sources.
+        import copy
+        config = json.loads(json.dumps(CONFIG))
+        config["deps"].append(
+            {"name": "Physlib", "repo": "leanprover-community/physlib"})
+        upstream = {}
+        for dep in config["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.35.0")])] = \
+                upstream_manifest(["batteries", "Qq"])
+        client = FakeGitHub(tags={}, upstream=upstream)
+        physlib_sha = SHAS[("leanprover-community/physlib", "v4.35.0")]
+
+        def build(entry, *, require=""):
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                write_tree(root, "v4.35.0")
+                base_manifest = json.loads(
+                    (root / "lake-manifest.json").read_text())
+                lakefile = root / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[require]]\nname = "Physlib"\n' + require
+                    + 'git = "https://github.com/leanprover-community/physlib"\n'
+                    + 'rev = "v4.35.0"\n')
+                manifest = json.loads(
+                    (root / "lake-manifest.json").read_text())
+                manifest["packages"].append(entry)
+                (root / "lake-manifest.json").write_text(
+                    json.dumps(manifest, indent=1))
+                return pinned_bump.verify_manifest(
+                    client, root, config, "v4.35.0", base_manifest)
+
+        def physlib_entry(**overrides):
+            entry = {
+                "name": "Physlib", "type": "git",
+                "url": "https://github.com/leanprover-community/physlib",
+                "rev": physlib_sha, "inputRev": "v4.35.0",
+                "inherited": False, "configFile": "lakefile.toml",
+                "manifestFile": "lake-manifest.json",
+                "scope": "", "subDir": None,
+            }
+            entry.update(overrides)
+            return entry
+
+        # The Codex repro: attacker scope, omitted inherited, altered
+        # configFile, extra field -- all must be reported.
+        repro = physlib_entry()
+        del repro["inherited"]
+        repro["scope"] = "attacker"
+        repro["configFile"] = "lakefile.lean"
+        repro["bogus"] = 1
+        problems = build(repro)
+        self.assertTrue(any("scope" in p for p in problems), problems)
+        self.assertTrue(any("inherited" in p for p in problems), problems)
+        self.assertTrue(any("configFile" in p for p in problems), problems)
+        self.assertTrue(any("keys" in p for p in problems), problems)
+        # Fixed: no problems.
+        self.assertEqual(build(physlib_entry()), [])
+        # Explicit lakefile scope is carried into the manifest.
+        scoped = physlib_entry(scope="leanprover-community")
+        self.assertEqual(
+            build(scoped, require='scope = "leanprover-community"\n'), [])
+        self.assertTrue(any(
+            "scope" in p
+            for p in build(physlib_entry(),
+                           require='scope = "leanprover-community"\n')))
+
+    def test_verify_manifest_configfile_pinned_upstream(self):
+        # configFile is the dep's own upstream lakefile, not a free choice.
+        config = json.loads(json.dumps(CONFIG))
+        config["deps"].append(
+            {"name": "Physlib", "repo": "leanprover-community/physlib"})
+        upstream = {}
+        for dep in config["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.35.0")])] = \
+                upstream_manifest(["batteries", "Qq"])
+        lakefiles = {
+            (dep["repo"], "lakefile.toml")
+            for dep in config["deps"] if dep["name"] != "Physlib"
+        } | {("leanprover-community/physlib", "lakefile.lean")}
+        client = FakeGitHub(tags={}, upstream=upstream, lakefiles=lakefiles)
+        physlib_sha = SHAS[("leanprover-community/physlib", "v4.35.0")]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_tree(root, "v4.35.0")
+            base_manifest = json.loads(
+                (root / "lake-manifest.json").read_text())
+            lakefile = root / "lakefile.toml"
+            lakefile.write_text(
+                lakefile.read_text()
+                + '\n[[require]]\nname = "Physlib"\n'
+                + 'git = "https://github.com/leanprover-community/physlib"\n'
+                + 'rev = "v4.35.0"\n')
+            for config_file, should_pass in (("lakefile.toml", False),
+                                              ("lakefile.lean", True)):
+                manifest = json.loads(json.dumps(base_manifest))
+                manifest["packages"].append({
+                    "name": "Physlib", "type": "git",
+                    "url": "https://github.com/leanprover-community/physlib",
+                    "rev": physlib_sha, "inputRev": "v4.35.0",
+                    "inherited": False, "configFile": config_file,
+                    "manifestFile": "lake-manifest.json",
+                    "scope": "", "subDir": None,
+                })
+                (root / "lake-manifest.json").write_text(
+                    json.dumps(manifest, indent=1))
+                problems = pinned_bump.verify_manifest(
+                    client, root, config, "v4.35.0", base_manifest)
+                if should_pass:
+                    self.assertEqual(problems, [], config_file)
+                else:
+                    self.assertTrue(any(
+                        "configFile" in p for p in problems), problems)
+
+    def test_config_extension_rejects_removing_healthy_rule(self):
+        healthy = {"path": "README.md", "pattern": "badge", "replacement": "badge"}
+        base = json.loads(json.dumps(CONFIG))
+        base["doc_replacements"] = base.get("doc_replacements", []) + [healthy]
+        pr = json.loads(json.dumps(base))
+        pr["doc_replacements"] = [e for e in pr["doc_replacements"] if e != healthy]
+        problems = pinned_bump.check_config_extension(base, pr, frozenset())
+        self.assertTrue(any("doc_replacements" in p for p in problems))
+
+    def test_guard_fails_new_dep_wrong_source(self):
+        # Codex P1: a new require sourcing from the wrong org must fail.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True,
+                            add_dep_wrong_source=True), 1)
+
+    def test_guard_fails_malformed_require_entry(self):
+        # Audit: a non-table [[require]] entry must fail cleanly, not crash.
+        self.assertEqual(
+            self._run_guard(same_pin=True, malformed_require=True), 1)
+
+    def test_guard_fails_nonstring_rev(self):
+        # Audit: a non-string rev must fail cleanly, not crash in tag math.
+        self.assertEqual(
+            self._run_guard(same_pin=True, nonstring_rev=True), 1)
+
+    def test_guard_fails_same_pin_duplicate_require(self):
+        # Codex P1: a shadowed mathlib entry (v9.99.99 before the real
+        # v4.35.0 entry) must fail; set/dict collapse must not hide it.
+        self.assertEqual(
+            self._run_guard(same_pin=True, duplicate_shadow=True), 1)
+
+    def test_guard_fails_third_migration_ledger(self):
+        # Codex P2: migration_ledgers must stay unchanged; a third entry
+        # would disable all subsequent automated bumps. Same-pin mode
+        # isolates the ledger check (bump mode would fail earlier on the
+        # config change itself).
+        self.assertEqual(
+            self._run_guard(same_pin=True, config_add_ledger=True), 1)
+
+    def test_guard_fails_dependency_removal(self):
+        # Codex P1: removing a dep from config, lakefile, manifest, and
+        # pin-policy replacements must fail the monotone-additions policy.
+        self.assertEqual(self._run_guard(same_pin=True, remove_dep=True), 1)
+
+    def test_guard_passes_same_pin_addition_with_test_update(self):
+        # Codex P1: a dep addition that also updates the test fixtures
+        # must pass; the test module is not guard code.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep=True,
+                            changed_guard_test=True), 0)
+
+    def test_guard_fails_config_only_dep_without_lakefile(self):
+        # A config-only dependency addition without the lakefile half
+        # would drift the config from the lakefile, so it must fail.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_dep_only=True), 1)
 
     def test_replacement_sha_placeholder(self):
         out = pinned_bump.apply_replacements_to_text(

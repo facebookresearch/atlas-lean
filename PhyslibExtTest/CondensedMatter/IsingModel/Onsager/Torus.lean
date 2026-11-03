@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+import Mathlib.Tactic.NormNum.Core
 
 /-!
 # Tests for `PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus`

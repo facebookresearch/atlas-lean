@@ -10,6 +10,7 @@ module
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.HighTempPlusBox
 public import PhyslibExt.CondensedMatter.IsingModel.PlusStateErgodic
 public import PhyslibExt.CondensedMatter.IsingModel.FKRepresentation.CorrelationMonotone
+import Mathlib.Analysis.SpecialFunctions.Artanh
 
 /-!
 # Finite susceptibility of the plus state below β̃_c

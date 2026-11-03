@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessFromSecant
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 /-!
 # Edge-density comparison from a convex free energy in the logit parameter
 
