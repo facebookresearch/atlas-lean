@@ -22,9 +22,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2VarGap`:
 * `bkt2c_gap_vanishes_at_p_half` (the weight gap at `p = 1/2`).
 
 Window predicate: `bkt2p_VarGapCore q` is refuted for every `q > 1/2`
-(`vgp_varGapCore_refutable`, tested at `q = 1`). The chain `bkt2p_levelGe2_of_varGap`,
-`bkt2p_remaining_of_varGap`, `bkt2p_master_of_varGap`, `bkt2p_rhoOptimise_of_varGap` is run
-on the empty window `q = 1/2` only.
+(`vgp_varGapCore_refutable`, tested at `q = 1`). No chain is run from it.
 -/
 
 @[expose] public section
@@ -73,15 +71,5 @@ example : (1 - (1 / 5 : ℝ)) ^ (2 - 1) - ((1 - 1 / 5) * (4 * (1 / 2 : ℝ) * (1
   bkt2c_gap_vanishes_at_p_half 2
 
 example : ¬ bkt2p_VarGapCore 1 := vgp_varGapCore_refutable (by norm_num)
-
-/-- `bkt2p_VarGapCore q` holds vacuously for `q ≤ 1/2`. -/
-lemma varGapCore_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : bkt2p_VarGapCore q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : bkt2_levelGe2MasterResidue (1 / 2) :=
-  bkt2p_levelGe2_of_varGap (varGapCore_of_le_half le_rfl)
-example : bkt2_RemainingGoal (1 / 2) := bkt2p_remaining_of_varGap (varGapCore_of_le_half le_rfl)
-example : pro_PBiasedMaster (1 / 2) := bkt2p_master_of_varGap (varGapCore_of_le_half le_rfl)
-example : ptn_RhoOptimise (1 / 2) := bkt2p_rhoOptimise_of_varGap (varGapCore_of_le_half le_rfl)
 
 end StatMechTest.BooleanFunctions.BKKKLLevel2VarGap

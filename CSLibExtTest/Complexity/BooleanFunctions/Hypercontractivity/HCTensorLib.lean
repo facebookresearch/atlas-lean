@@ -23,13 +23,12 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.HCTensorLib`:
 * `htl_kkl_logGain_half` at the dictator;
 * `htl_lib_rho_zero` at `p = 3/4`.
 
-Not tested non-degenerately: the window-conditional theorems `htl_kkl_logGain`,
-`htl_rhoOptimise_of_lib`, `htl_kklHC_of_lib`, `htl_PBiasedHC_of_lib`, `htl_sharpThreshold` and
-`htl_openResidue_of_lib` assume `∀ p ∈ (1/2, q), PBiasedHCLib p`. This fails for every
-`q > 9/10` (`dtpc_pbiasedHCLib_nine_tenths_false`, tested in `DecoupledTwoPointRefutation`) and is
-open for `q ∈ (1/2, 9/10]`. The tests record the degenerate window `q = 1/2`, where the
-hypothesis holds because `(1/2, 1/2)` is empty; `htl_kkl_logGain` cannot be applied there since
-it also needs a point `p ∈ (1/2, q)`.
+The window-conditional route was removed from `HCTensorLib`: `∀ p ∈ (1/2, q), PBiasedHCLib p`
+holds on no nonempty window, since `PBiasedHCLib p` fails for every `p` with
+`1/2 < p < 1` (informal cubic-term argument in the `HCTensorLib` module
+documentation; formally refuted at `p = 9/10` in
+`dtpc_pbiasedHCLib_nine_tenths_false`, tested in
+`DecoupledTwoPointRefutation`).
 -/
 
 @[expose] public section
@@ -118,44 +117,5 @@ example (u v : ℝ) :
       ≤ ((1 - (3 / 4 : ℝ)) * |u| ^ (1 + (0 : ℝ) ^ 2) + (3 / 4) * |v| ^ (1 + (0 : ℝ) ^ 2))
           ^ (2 / (1 + (0 : ℝ) ^ 2)) :=
   htl_lib_rho_zero (by norm_num) (by norm_num) u v
-
-/-! ## The degenerate window `q = 1/2` -/
-
-/-- The window hypothesis for `q ≤ 1/2` holds because `(1/2, q)` is empty. -/
-lemma lib_window_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) :
-    ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : ptn_RhoOptimise (1 / 2) := htl_rhoOptimise_of_lib (lib_window_of_le_half le_rfl)
-
-example : kpb_PBiasedHC (1 / 2) :=
-  htl_PBiasedHC_of_lib (by norm_num) (lib_window_of_le_half le_rfl)
-
-/-- The dictator event `{ω | ω 0}` on `{0, 1}^{Fin 1}`. -/
-def dictEvent1 : Set (ConfigSpace (Fin 1)) := {ω | ω 0 = true}
-
-/-- Membership in `dictEvent1` is decidable. -/
-instance : DecidablePred (· ∈ dictEvent1) := fun ω => inferInstanceAs (Decidable (ω 0 = true))
-
-lemma dictEvent1_isIncreasing : IsIncreasing dictEvent1 := by
-  intro ω ω' hle hω
-  simp only [dictEvent1, Set.mem_ofPred_eq] at hω ⊢
-  have := hle 0
-  rw [hω] at this
-  revert this; cases ω' 0 <;> simp
-
-/-- A sum over the configurations of `{0, 1}^{Fin 1}`. -/
-lemma sum_fin_one (f : ConfigSpace (Fin 1) → ℝ) :
-    ∑ ω, f ω = f (fun _ => true) + f (fun _ => false) := by
-  rw [← (Equiv.funUnique (Fin 1) Bool).symm.sum_comp, Fintype.sum_bool]
-  rfl
-
-lemma prob_dictEvent1 : StatMech.prob (1 / 2) dictEvent1 = 1 / 2 := by
-  rw [StatMech.TwoDim.kklw_prob_eq_expect]
-  simp [expect, weight, sum_fin_one, dictEvent1, bernoulliWeight, Set.indicator_apply]
-
-example : 1 / 2 + (2 * 1 * 1) * ((1 / 2 : ℝ) - 1 / 2) ≤ StatMech.prob (1 / 2) dictEvent1 :=
-  htl_sharpThreshold (by norm_num) (lib_window_of_le_half le_rfl) dictEvent1
-    dictEvent1_isIncreasing le_rfl zero_le_one zero_le_one prob_dictEvent1 (by simp) (by simp)
 
 end StatMechTest.BooleanFunctions.HCTensorLib

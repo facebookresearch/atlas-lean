@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.Universality.Defs
-public import MathlibExt.Probability.Percolation.Universality.STT
 
 /-!
 # Transferring the box-crossing property by domination of crossing probabilities
@@ -20,8 +19,8 @@ crossing probability of `μtgt` and `μtgt` has the box-crossing property, so do
 `CrossingTransportData` packages two-way domination between two measures. Both measures live on
 bond configurations of `ℤ²`; the names "square" and "triangular" only record the intended
 application (a star–triangle coupling, which would supply the domination). No such coupling is
-constructed here, so `bxp_square_iff_triangular` is the formal consequence of the assumed
-domination; its criticality hypothesis is not used in the proof.
+constructed here, and no criticality hypothesis is stated: `bxp_square_iff_triangular_of_domination`
+is the abstract domination result, not a critical star–triangle transfer.
 
 ## Main definitions
 
@@ -31,8 +30,8 @@ domination; its criticality hypothesis is not used in the proof.
 
 * `StatMech.Universality.boxCrossingInf_mono`: the infimum is monotone in `n₀`.
 * `StatMech.Universality.bxp_transfer_core`: domination transfers the box-crossing property.
-* `StatMech.Universality.bxp_square_iff_triangular`: under `CrossingTransportData`, the two
-  measures have the box-crossing property together.
+* `StatMech.Universality.bxp_square_iff_triangular_of_domination`: under
+  `CrossingTransportData`, the two measures have the box-crossing property together.
 -/
 
 @[expose] public section
@@ -135,16 +134,14 @@ theorem bxp_triangular_of_square
     (hdata.triDominatedBySq n0)
 
 /-- Under `CrossingTransportData`, `μsq` and `μtri` have the box-crossing property together.
-
-The hypothesis `IsCriticalTri p₀ p₁ p₂` is not used: the equivalence follows from the domination
-in `hdata` alone, and nothing links `p` to the two measures. -/
-theorem bxp_square_iff_triangular
+This is an abstract mutual-domination result: it states no criticality hypothesis and
+uses no star–triangle connectivity, because nothing in the data links any critical
+parameters to the two measures. -/
+theorem bxp_square_iff_triangular_of_domination
     {μsq μtri : Measure (ConfigSpace (Sym2 (Site 2)))} {ρsq ρtri : ℝ}
-    {p0 p1 p2 : ℝ} (hcrit : IsCriticalTri p0 p1 p2)
     (hdata : CrossingTransportData μsq μtri ρsq ρtri) :
-    BoxCrossingProperty μsq ρsq ↔ BoxCrossingProperty μtri ρtri := by
-  have _hconn := starTriangle_connectivity p0 p1 p2 hcrit
-  exact ⟨bxp_triangular_of_square hdata, bxp_square_of_triangular hdata⟩
+    BoxCrossingProperty μsq ρsq ↔ BoxCrossingProperty μtri ρtri :=
+  ⟨bxp_triangular_of_square hdata, bxp_square_of_triangular hdata⟩
 
 end Universality
 

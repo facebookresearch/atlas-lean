@@ -15,9 +15,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationThickPo
 
 * `kns_fjord_nonvacuous`: the fjord has a king separation and a thick point.
 * `kns_thickPoint_iff_not_fourThin` on the fjord.
-* `kns_noKingSeparation_of_fourThin` instantiated with the 4-thin staircase `ksd_stair`, whose
-  residual predicate `kns_EscapeThickPoint` holds (`kns_ksd_escapeThickPoint`). Stage B notes that
-  this residual is equivalent to the conclusion for 4-thin walks.
+* `ksc_ksd_noKingSeparation`: the staircase `ksd_stair` has no king separation from `(1, 1)`
+  (proved from king row-linkedness in `KingSeparation`, not from the residual predicate).
 -/
 
 @[expose] public section
@@ -33,8 +32,6 @@ example : kns_KingSeparation sdc_fjord (![5, 1] : Site 2) ∧ kns_ThickPoint sdc
 example : kns_ThickPoint sdc_fjord :=
   (kns_thickPoint_iff_not_fourThin sdc_fjord).mpr mci_fjord_not_fourThin
 
-example : ksc_NoKingSeparation ksd_stair (![1, 1] : Site 2) :=
-  kns_noKingSeparation_of_fourThin ksd_stair ksd_mem_interior_11 ksd_stair_fourThin
-    kns_ksd_escapeThickPoint
+example : ksc_NoKingSeparation ksd_stair (![1, 1] : Site 2) := ksc_ksd_noKingSeparation
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.KingSeparationThickPoint

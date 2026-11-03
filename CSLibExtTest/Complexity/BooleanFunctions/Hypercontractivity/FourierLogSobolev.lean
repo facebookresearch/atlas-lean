@@ -22,16 +22,15 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.FourierLogSob
 * `fsc2_coeff_noiseOp` at `ρ = 0` (only the empty coefficient survives) and `ρ = 1`;
 * the named predicate `fsc2_EntMassFamily` is proved for `AND` and for the five-bit `AND` at
   every `p ∈ (0, 1)` (`fsc2_entMassFamily_holds`, `fsc2_residue_nonvac`);
-* `fsc2_DampingHardResidue` at the five-bit `AND` and `p = 11/20 ∈ (1/2, 1)`: all antecedents
+* the damping estimate (damped mass at the threshold `exp (-1/(2p(1-p)))` at most
+  `maxInfl · Var`) at the five-bit `AND` and `p = 11/20 ∈ (1/2, 1)`: all antecedents
   hold (including `fsc2_EntMassFamily`), and so does the conclusion, since the threshold
-  `exp (-1/(2p(1-p)))` is at most `1/7` (computations from the `EntropySubadditivity` test). So the
-  residue's body is neither vacuous nor false on this function.
+  is at most `1/7` (computations from the `EntropySubadditivity` test). So the estimate
+  is neither vacuous nor false on this function.
 
-Not tested non-degenerately: `fsc2_DampingHardResidue q` quantifies over all Boolean functions and
-all `p ∈ (1/2, q)`; it is neither proved nor refuted for any `q > 1/2`. The conditional chain
-(`fsc2_dampingHard_of_residue`, `fsc2_dampingWitness_of_residue`, `fsc2_rhoOptimise_of_residue`,
-`fsc2_PBiasedHC_of_residue`) is recorded at the degenerate window `q = 1/2`, where the residue
-holds because `(1/2, 1/2)` is empty.
+Not proved here: the damping estimate uniformly over all Boolean functions and all
+`p ∈ (1/2, q)` for any `q > 1/2`. No residue chain derives damping, rho-optimise or
+hypercontractivity from it.
 -/
 
 @[expose] public section
@@ -130,7 +129,7 @@ example {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
 example : fsc2_EntMassFamily (11 / 20) and5 := fsc2_residue_nonvac (by norm_num) (by norm_num) and5
 
 /-- At `p = 11/20 ∈ (1/2, 1)`, the five-bit `AND` meets all antecedents of
-`fsc2_DampingHardResidue`. -/
+the damping estimate. -/
 example :
     (11 / 20 : ℝ) ∈ Set.Ioo (1 / 2 : ℝ) 1
       ∧ 0 < var (bernoulliWeight (11 / 20)) (fun ω => if and5 ω then (1 : ℝ) else 0)
@@ -144,7 +143,7 @@ example :
   · rw [maxInfl_and5]; norm_num
   · rw [maxInfl_and5]; exact and5_below_threshold
 
-/-- The conclusion of `fsc2_DampingHardResidue` holds for the five-bit `AND` at `p = 11/20`:
+/-- The damping estimate holds for the five-bit `AND` at `p = 11/20`:
 the damped mass at the threshold `exp (-1/(2p(1-p))) ≤ 1/7` is at most `maxInfl · Var`. -/
 example :
     pen_dampedMass (11 / 20) (Real.exp (-(1 / (2 * ((11 / 20 : ℝ) * (1 - 11 / 20))))))
@@ -161,19 +160,5 @@ example :
   calc (11 / 20 : ℝ) ^ 10 * ((1 + (1 - 11 / 20) / (11 / 20) * r0) ^ 5 - 1)
       ≤ (11 / 20 : ℝ) ^ 10 * ((1 + (1 - 11 / 20) / (11 / 20) * (1 / 7)) ^ 5 - 1) := by gcongr
     _ ≤ (11 / 20) ^ 4 * ((11 / 20) ^ 5 * (1 - (11 / 20) ^ 5)) := by norm_num
-
-/-- `fsc2_DampingHardResidue q` for `q ≤ 1/2` holds because `(1/2, q)` is empty. -/
-lemma fsc2_residue_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : fsc2_DampingHardResidue q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : esa_DampingHard (1 / 2) := fsc2_dampingHard_of_residue (fsc2_residue_of_le_half le_rfl)
-
-example : pen_DampingWitness (1 / 2) :=
-  fsc2_dampingWitness_of_residue (fsc2_residue_of_le_half le_rfl)
-
-example : ptn_RhoOptimise (1 / 2) := fsc2_rhoOptimise_of_residue (fsc2_residue_of_le_half le_rfl)
-
-example : kpb_PBiasedHC (1 / 2) :=
-  fsc2_PBiasedHC_of_residue (by norm_num) (fsc2_residue_of_le_half le_rfl)
 
 end StatMechTest.BooleanFunctions.FourierLogSobolev

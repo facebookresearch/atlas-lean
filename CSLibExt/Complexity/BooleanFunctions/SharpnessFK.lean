@@ -13,20 +13,21 @@ public import CSLibExt.Complexity.BooleanFunctions.Revealment
 @[expose] public section
 
 /-!
-# Subcritical decay from a differential inequality, and the FK-to-Potts transfer
+# Subcritical decay from a differential inequality, and a scaled-decay algebra lemma
 
 A Grönwall-type bootstrap: a differential inequality `rate * θ ≤ θ'` on `[a, b]` forces
 exponential decay of `θ` (`gronwall_lower`, `differential_inequality`,
-`subcritical_decay`, `subcritical_decay_box`). The Edwards–Sokal transfer: FK crossing
-decay implies Potts correlation decay, with the factor `(q-1)/q`
-(`potts_decay_of_fk`). The file is the analytic input to sharpness arguments; it does
-not prove a sharpness theorem by itself.
+`subcritical_decay`, `subcritical_decay_box`). A generic algebra lemma: a scalar identity
+`y = (q-1)/q * x` plus decay of `x` gives decay of `y` with the scalar factor retained
+(`scaled_decay_of_scalar_identity`). The file is the analytic input to sharpness
+arguments; it does not prove a sharpness theorem by itself, and the algebra lemma is
+not an Edwards–Sokal transfer.
 
 ## Main results
 
 * `gronwall_lower`, `differential_inequality`: the Grönwall bootstrap.
 * `subcritical_decay`, `subcritical_decay_box`: exponential decay.
-* `potts_decay_of_fk`: FK decay implies Potts correlation decay.
+* `scaled_decay_of_scalar_identity`: scaled decay from an assumed scalar identity.
 
 ## References
 
@@ -178,24 +179,20 @@ theorem subcritical_decay_box (a b c : ℝ) (n : ℕ) (hab : a < b)
     exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one hn
   exact (subcritical_decay a b (c * n) hab hrate θn θn' hd hineq hθa hθb).2.1
 
-/-- Edwards–Sokal transfer: FK crossing decay implies Potts correlation decay with
-the factor `(q - 1) / q`. -/
-theorem potts_decay_of_fk (q : ℝ) (hq : 2 ≤ q) (c pottsCorr fkCross : ℝ)
-    (hES : pottsCorr = (q - 1) / q * fkCross)
-    (hfk_nonneg : 0 ≤ fkCross) (hfk_decay : fkCross ≤ Real.exp (-c)) :
-    0 ≤ pottsCorr ∧ pottsCorr ≤ Real.exp (-c) := by
+/-- Generic algebra lemma: if `y` equals the scalar `(q - 1) / q` times `x`, and `x`
+is nonnegative and decays as `x ≤ exp (-c)`, then `y` is nonnegative and decays with
+the scalar factor retained: `y ≤ (q - 1) / q * exp (-c)`. This is not an Edwards–Sokal
+transfer: the scalar identity is assumed, not derived from Potts/FK objects. -/
+theorem scaled_decay_of_scalar_identity (q : ℝ) (hq : 2 ≤ q) (c x y : ℝ)
+    (h : y = (q - 1) / q * x)
+    (hx_nonneg : 0 ≤ x) (hx_decay : x ≤ Real.exp (-c)) :
+    0 ≤ y ∧ y ≤ (q - 1) / q * Real.exp (-c) := by
   have hqpos : 0 < q := by linarith
   have hcoef_nonneg : 0 ≤ (q - 1) / q := by
     apply div_nonneg (by linarith) hqpos.le
-  have hcoef_le_one : (q - 1) / q ≤ 1 := by
-    rw [div_le_one hqpos]; linarith
   constructor
-  · rw [hES]; exact mul_nonneg hcoef_nonneg hfk_nonneg
-  · rw [hES]
-    calc (q - 1) / q * fkCross
-        ≤ 1 * fkCross := mul_le_mul_of_nonneg_right hcoef_le_one hfk_nonneg
-      _ = fkCross := one_mul _
-      _ ≤ Real.exp (-c) := hfk_decay
+  · rw [h]; exact mul_nonneg hcoef_nonneg hx_nonneg
+  · rw [h]; exact mul_le_mul_of_nonneg_left hx_decay hcoef_nonneg
 
 end OSSS.SharpnessFK
 end StatMech

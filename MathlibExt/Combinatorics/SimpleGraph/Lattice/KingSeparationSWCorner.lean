@@ -24,10 +24,11 @@ pass the gaps above and below a site of a horizontal wall.
 The residual predicates in this chain are reductions, not theorems: for a four-thin walk and an
 interior seed, each of them is equivalent to `ksc_NoKingSeparation Vc seed` itself, because the
 conclusion of each predicate is a thick point (impossible for a four-thin walk) and
-`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The four-thin results below
-therefore restate the target conclusion rather than prove it. The fjord and staircase examples
-show the predicates are satisfiable; they do not show they hold for any four-thin walk with a
-king separation (they cannot).
+`kns_escapeThickPoint_of_noKingSeparation` gives the converse. The conditional four-thin
+theorems that restated the target conclusion from these predicates were therefore removed;
+what remains here is the geometric corner analysis, the weakening from the previous
+predicate, and the fjord / staircase examples, which show the predicates are satisfiable
+without showing they hold for any four-thin walk with a king separation (they cannot).
 
 ## Main definitions
 
@@ -39,9 +40,6 @@ king separation (they cannot).
   horizontal run is on the walk and the sites above and below it are not interior.
 * `StatMech.Lattice.etp_thickPoint_of_swCorner`: a missing corner edge is a thick point.
 * `StatMech.Lattice.etp_escape_structure_box`: the least escape site with box bounds.
-* `StatMech.Lattice.etp_noKingSeparation_of_fourThin`,
-  `StatMech.Lattice.etp_kingRowLinked_of_fourThin`,
-  `StatMech.Lattice.etp_kingInteriorConnected_of_fourThin`: conditional on `etp_EscapeWallThick`.
 * `StatMech.Lattice.etp_escapeWallThick_of_escapeThickPoint`: the new predicate is weaker.
 * `StatMech.Lattice.etp_fjord_nonvacuous`.
 -/
@@ -180,51 +178,6 @@ theorem etp_escape_structure_box {a : Site 2} (Vc : (hypercubicLattice 2).Walk a
   obtain ⟨hW, hSsup⟩ :=
     kns_escape_axials_onSupport Vc hsat hTsub hqI hqnT M hmin hqbox hWbox hSbox
   exact ⟨T, hseedT, hTsub, hsat, M, q, hqI, hqnT, hmin, hW, hSsup, hqbox, hCbox⟩
-
-/-- A four-thin closed walk satisfying `etp_EscapeWallThick` has no king separation from an interior
-seed.
-
-Conditional: for four-thin walks the hypothesis is equivalent to the conclusion. -/
-theorem etp_noKingSeparation_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : etp_EscapeWallThick Vc seed) :
-    ksc_NoKingSeparation Vc seed := by
-  by_contra hns
-  classical
-  have hsep := (kns_kingSeparation_iff_not_noKingSeparation Vc hseedI).mpr hns
-  obtain ⟨T, hseedT, hTsub, hsat, M, q, hqI, hqnT, hmin, hW, hS, hqbox, hCbox⟩ :=
-    etp_escape_structure_box Vc hsep
-  have hcorner := kns_lexBelow_diag_corner Vc hsat hTsub hqI hqnT M hmin hqbox hCbox
-  have htp : kns_ThickPoint Vc := by
-    by_cases hCsup : (![q 0 - 1, q 1 - 1] : Site 2) ∈ Vc.support
-    · by_cases hWC : s((![q 0 - 1, q 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges
-      · by_cases hSC : s((![q 0, q 1 - 1] : Site 2), (![q 0 - 1, q 1 - 1] : Site 2)) ∈ Vc.edges
-        · exact hres T hseedT hTsub hsat M q hqI hqnT hmin hW hS (Or.inr ⟨hCsup, hWC, hSC⟩)
-        · exact etp_thickPoint_of_swCorner Vc hW hS hCsup (Or.inr hSC)
-      · exact etp_thickPoint_of_swCorner Vc hW hS hCsup (Or.inl hWC)
-    · have hCext : (![q 0 - 1, q 1 - 1] : Site 2) ∉ jil_offSupportInterior Vc := by
-        rcases hcorner with h | h
-        · exact absurd h hCsup
-        · exact h
-      exact hres T hseedT hTsub hsat M q hqI hqnT hmin hW hS (Or.inl ⟨hCext, hCsup⟩)
-  exact (kns_thickPoint_iff_not_fourThin Vc).mp htp hthin
-
-/-- A four-thin walk satisfying `etp_EscapeWallThick` is king row-linked to an interior seed.
-Conditional, as `etp_noKingSeparation_of_fourThin`. -/
-theorem etp_kingRowLinked_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {seed : Site 2} (hseedI : seed ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : etp_EscapeWallThick Vc seed) :
-    mci_KingRowLinked Vc seed :=
-  ksc_kingRowLinked_of_noKingSeparation Vc hseedI
-    (etp_noKingSeparation_of_fourThin Vc hseedI hthin hres)
-
-/-- A four-thin walk with nonempty interior satisfying `etp_EscapeWallThick` for every interior seed
-has a king-connected interior. Conditional, as `etp_noKingSeparation_of_fourThin`. -/
-theorem etp_kingInteriorConnected_of_fourThin {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
-    {z₀ : Site 2} (hz₀ : z₀ ∈ jil_offSupportInterior Vc) (hthin : mci_FourThin Vc)
-    (hres : ∀ seed ∈ jil_offSupportInterior Vc, etp_EscapeWallThick Vc seed) :
-    mci_KingInteriorConnected Vc :=
-  ⟨z₀, hz₀, etp_kingRowLinked_of_fourThin Vc hz₀ hthin (hres z₀ hz₀)⟩
 
 /-- `kns_EscapeThickPoint` implies `etp_EscapeWallThick`. -/
 theorem etp_escapeWallThick_of_escapeThickPoint {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)

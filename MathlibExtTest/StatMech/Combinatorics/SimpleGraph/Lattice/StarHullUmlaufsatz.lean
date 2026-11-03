@@ -18,8 +18,10 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.StarHullUmlaufsatz
 * `shu_windingWitness_of_minVertStepLeft` instantiated with a finite set (its residual hypothesis is
   the named predicate `shw_MinVertStepLeft`, satisfiable by the unit cell; see the StarHullWinding
   tests).
-* Not tested: `shu_turningIsFullRevolution_of_saturating` (vacuous, its hypothesis is refuted) and
-  `shu_turningIsFullRevolution_of_eulerCharOne` (circular, see the Stage B report).
+* Removed: `shu_turningIsFullRevolution_of_eulerCharOne` (its `EulerCharOne` hypothesis was
+  equivalent to its conclusion, so it was a restatement rather than a result).
+  The conditional `shu_turningIsFullRevolution_of_saturating` was removed: its hypothesis is
+  refuted (`not_bpc_BalanceSaturatingContraction`).
 -/
 
 @[expose] public section

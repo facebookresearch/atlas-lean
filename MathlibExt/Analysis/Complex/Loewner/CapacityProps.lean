@@ -177,16 +177,4 @@ theorem halfDisk_scale_eq_formula {r : ℝ} (hr : r ≠ 0) {z : ℂ} (hz : z ≠
   push_cast
   field_simp
 
-/-- Composition with the identity on the right adds `0`. See also
-`StatMech.SLE.hasHalfPlaneCapacity_comp_id_right` (conclusion `a` instead of `0 + a`). -/
-theorem HasHalfPlaneCapacity.comp_id {g : ℂ → ℂ} {a : ℝ} (hg : HasHalfPlaneCapacity g a) :
-    HasHalfPlaneCapacity (g ∘ id) (0 + a) :=
-  hasHalfPlaneCapacity_comp hasHalfPlaneCapacity_id hg
-
-/-- Composition with the identity on the left adds `0`. See also
-`StatMech.SLE.hasHalfPlaneCapacity_comp_id_left` (conclusion `a` instead of `a + 0`). -/
-theorem HasHalfPlaneCapacity.id_comp {g : ℂ → ℂ} {a : ℝ} (hg : HasHalfPlaneCapacity g a) :
-    HasHalfPlaneCapacity (id ∘ g) (a + 0) :=
-  hasHalfPlaneCapacity_comp hg hasHalfPlaneCapacity_id
-
 end StatMech.SLE

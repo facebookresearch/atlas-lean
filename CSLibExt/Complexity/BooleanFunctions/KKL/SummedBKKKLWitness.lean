@@ -220,7 +220,7 @@ theorem sbk_openResidue_of_lowDegree {q : ℝ} (H : bkt_lowDegreeMasterResidue q
 theorem sbk_kesten_of_lowDegree {q : ℝ} (H : bkt_lowDegreeMasterResidue q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :
     KKLHypercontractive p 2 :=
-  mfp_kesten_of_masterFamily (sbk_openResidue_of_lowDegree H) hp hp1
+  frh_kesten_of_openResidue (sbk_openResidue_of_lowDegree H) hp hp1
 
 theorem sbk_summed_half [Nonempty ι] (φ : ConfigSpace ι → Bool)
     {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :

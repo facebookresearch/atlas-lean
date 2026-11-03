@@ -18,8 +18,8 @@ lattice walk between them crosses the boundary an odd number of times, and its f
 contains a cycle. Boundary edges with both endpoints in the square are closed.
 
 These facts do not give the exhaustive half of the box-crossing dichotomy ("no horizontal
-crossing implies a dual vertical crossing"): `jex_exhaustivity_of_barrier` assumes the dual
-vertical crossing it concludes. The worked example
+crossing implies a dual vertical crossing"): no theorem here derives a dual vertical
+crossing from the absence of a horizontal crossing. The worked example
 `bcc_wallCfg` on `rect 0 2 0 2` has no horizontal crossing, a separating left-reach set and a
 face-boundary cycle, but no vertical crossing in the rotated dual `dualConfig` (`bcc_noV_wall`).
 
@@ -127,14 +127,6 @@ theorem jex_dualCircuit_edge_dual_open (ω : ConfigSpace (Sym2 (Site 2))) (n : �
     faceBoundaryGraph_sharedPrimalEdge_bdEdge _ hadj
   rw [hpq] at hbd
   exact jex_barrier_dual_open ω n hpadj hbd hpbox hqbox
-
-/-- Trivial: given a dual vertical crossing, the disjunction holds by its right disjunct. This is
-not the exhaustive half of the box-crossing dichotomy, whose content is producing the crossing
-from `¬ HorizontalCrossing`. -/
-theorem jex_exhaustivity_of_barrier (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
-    (_hnoH : ¬ HorizontalCrossing ω 0 n 0 n) (h : DualVerticalCrossing ω 0 n 0 n) :
-    HorizontalCrossing ω 0 n 0 n ∨ DualVerticalCrossing ω 0 n 0 n :=
-  Or.inr h
 
 /-- For the wall configuration on `rect 0 2 0 2`, the left-reach set separates the left side from
 the right side. -/

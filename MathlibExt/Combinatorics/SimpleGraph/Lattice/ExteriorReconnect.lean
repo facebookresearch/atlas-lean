@@ -9,6 +9,10 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.KeepReconnectCounterexample
 
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+
 /-!
 # Reconnection through the exterior
 

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Configuration.ConfigSpace
+public import Mathlib.Probability.Kernel.Condexp
 
 /-!
 # Conditional distributions given the outside of a region

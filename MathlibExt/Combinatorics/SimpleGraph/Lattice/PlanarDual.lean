@@ -9,6 +9,10 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Probability.Configuration.ConfigSpace
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Self-duality of the square lattice

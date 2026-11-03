@@ -30,15 +30,13 @@ magnetization and the box one-point function is a hypothesis here; `HisingBoxClo
 ## ii. Key results
 
 - `boxBoundaryConnProfile` : `φ^w_n(0 ↔ ∂Λ_n)` on the box graph.
-- `magPercoIdBox_of_hisingBox` : `m*(β) = θ(pOfBeta β)` for all `β > 0`.
-- `ising_transition_box` : the magnetization is positive exactly for `β > pToBeta 2 p_c`.
-- `isingBetaC_eq_box` : `β_c = pToBeta 2 p_c`.
+- `magPercoIdBox_of_fvES_of_fkLim` : `m*(β) = θ(p)` from the box Edwards–Sokal identity
+  and convergence of the box connection profiles.
 
 ## iii. Table of contents
 
 - A. Box graphs and the boundary connection profile
 - B. Magnetization equals percolation probability
-- C. The phase transition
 
 ## iv. References
 
@@ -130,68 +128,6 @@ lemma magPercoIdBox_of_fvES_of_fkLim (d : ℕ) (β : ℝ)
     filter_upwards [eventually_ge_atTop 1] with n hn
     simp only [hb, ite_eq_left hn]
   exact magPercoId_of_fvES_of_fkLim d β hp hp1 hq b hES hlim
-
-/-- The magnetization equals the wired FK percolation probability at `p = pOfBeta β`, assuming
-the box identity `hisingBox` and convergence of the box connection profiles. The hypothesis
-`hisingBox` uses the box `Λ_n` on both sides, whereas the identity proved in `BoxMagnetization`
-(`hbx_hisingBox`) has the wired measure on `Λ_{n+1}` on the right. Together they force the box
-magnetizations to be constant in `n ≥ 1`, which is expected to fail, so this statement is probably
-vacuous (not proved). The unconditional results are in `PcUpperAllDimensions`. -/
-lemma magPercoIdBox_of_hisingBox (d : ℕ) (hd : 1 ≤ d)
-    (hisingBox : ∀ β, 0 < β → ∀ n, 1 ≤ n → fvMagnetization d β n
-        = esWiredOnePoint (boxGraph d n) (boxBoundary d n) (0 : Fin 2) (pOfBeta β)
-            (boxOrigin d n))
-    (hfkLimBox : ∀ β, 0 < β → ∀ (hp : 0 < pOfBeta β) (hp1 : pOfBeta β < 1),
-        Tendsto (fun n => boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) n)
-          atTop (𝓝 (FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2)))) :
-    ∀ β, 0 < β → ∀ (hp : 0 < pOfBeta β) (hp1 : pOfBeta β < 1),
-      magnetization d β = FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2) := by
-  intro β hβ hp hp1
-  exact magPercoIdBox_of_fvES_of_fkLim d β hp hp1 (by norm_num) hd
-    (hisingBox β hβ) (hfkLimBox β hβ hp hp1)
-
-/-! ## C. The phase transition -/
-
-/-- Existence of the Ising phase transition from the box identity `hisingBox`, the FK limit,
-non-percolation at `p_c` and `p_c < 1`. The hypothesis `hisingBox` uses the box `Λ_n` on both sides,
-whereas the identity proved in `BoxMagnetization` (`hbx_hisingBox`) has the wired measure on
-`Λ_{n+1}` on the right. Together they force the box magnetizations to be constant in `n ≥ 1`, which
-is expected to fail, so this statement is probably vacuous (not proved). The unconditional results
-are in `PcUpperAllDimensions`. -/
-lemma ising_transition_box (d : ℕ) (hd : 2 ≤ d)
-    (hisingBox : ∀ β, 0 < β → ∀ n, 1 ≤ n → fvMagnetization d β n
-        = esWiredOnePoint (boxGraph d n) (boxBoundary d n) (0 : Fin 2) (pOfBeta β)
-            (boxOrigin d n))
-    (hfkLimBox : ∀ β, 0 < β → ∀ (hp : 0 < pOfBeta β) (hp1 : pOfBeta β < 1),
-        Tendsto (fun n => boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) n)
-          atTop (𝓝 (FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2))))
-    (hFKsub : ∀ (p : ℝ) (hp : 0 < p) (hp1 : p < 1), p ≤ FK.fkPc d 2 →
-      FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2) = 0)
-    (hpc1 : FK.fkPc d 2 < 1) :
-    ∃ βc : ℝ, 0 < βc ∧
-      (∀ β, 0 < β → β < βc → magnetization d β = 0) ∧
-      (∀ β, βc < β → 0 < magnetization d β) :=
-  Ising.ising_transition_of_fkPc_lt_one d hd
-    (magPercoIdBox_of_hisingBox d (le_trans (by norm_num) hd) hisingBox hfkLimBox) hFKsub hpc1
-
-/-- `β_c = -½ log(1 - p_c)` from the same hypotheses as `ising_transition_box`. The hypothesis
-`hisingBox` uses the box `Λ_n` on both sides, whereas the identity proved in `BoxMagnetization`
-(`hbx_hisingBox`) has the wired measure on `Λ_{n+1}` on the right. Together they force the box
-magnetizations to be constant in `n ≥ 1`, which is expected to fail, so this statement is probably
-vacuous (not proved). The unconditional results are in `PcUpperAllDimensions`. -/
-lemma isingBetaC_eq_box (d : ℕ) (hd : 2 ≤ d)
-    (hisingBox : ∀ β, 0 < β → ∀ n, 1 ≤ n → fvMagnetization d β n
-        = esWiredOnePoint (boxGraph d n) (boxBoundary d n) (0 : Fin 2) (pOfBeta β)
-            (boxOrigin d n))
-    (hfkLimBox : ∀ β, 0 < β → ∀ (hp : 0 < pOfBeta β) (hp1 : pOfBeta β < 1),
-        Tendsto (fun n => boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) n)
-          atTop (𝓝 (FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2))))
-    (hFKsub : ∀ (p : ℝ) (hp : 0 < p) (hp1 : p < 1), p ≤ FK.fkPc d 2 →
-      FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2) = 0)
-    (hpc1 : FK.fkPc d 2 < 1) :
-    IsingFK.betaC (magnetization d) = -(1 / 2) * Real.log (1 - FK.fkPc d 2) :=
-  Ising.isingBetaC_eq_of_fkPc_lt_one d hd
-    (magPercoIdBox_of_hisingBox d (le_trans (by norm_num) hd) hisingBox hfkLimBox) hFKsub hpc1
 
 end IsingFK
 

@@ -19,11 +19,11 @@ points `(± (R + 1), 0)`, so under `InterfaceConnected C` the two far exit darts
 orbit of `C`. If moreover the (nearest) exit darts re-anchor to the far ones along the boundary
 orbit (`StatMech.Percolation.fdc_FarReanchors`), the two exit darts lie on one orbit.
 
-`StatMech.Percolation.fdc_pc_lt_one` derives `p_c(ℤ²) < 1` from these geometric conditions
-assumed for **every** configuration with a finite origin cluster. They are hypotheses, not proved
-here, and the universal form is doubtful: for a cluster surrounding a hole that contains `(1, 0)`
-the nearest exit dart lies on the inner boundary and the far one on the outer boundary, so
-`fdc_FarReanchors` fails by hand (this is not proved in Lean).
+This file does **not** derive `p_c(ℤ²) < 1`: a capstone that assumed the geometric conditions
+for **every** configuration with a finite origin cluster was removed, since the universal
+reanchoring hypothesis fails for a cluster surrounding a hole that contains `(1, 0)` (the
+nearest exit dart lies on the inner boundary and the far one on the outer boundary, so
+`fdc_FarReanchors` fails by hand; this is not proved in Lean).
 
 ## Main definitions
 
@@ -39,7 +39,6 @@ the nearest exit dart lies on the inner boundary and the far one on the outer bo
 * `StatMech.Percolation.fdc_farExitDartsSameOrbit`: under interface connectivity the far exit
   darts lie on one boundary orbit.
 * `StatMech.Percolation.fdc_exitDartsSameOrbit`: with `fdc_FarReanchors`, so do the exit darts.
-* `StatMech.Percolation.fdc_pc_lt_one`: conditional `p_c(ℤ²) < 1`.
 -/
 
 @[expose] public section
@@ -415,21 +414,6 @@ theorem fdc_exitDartsSameOrbit (hfin : (cluster 2 ω (origin 2)).Finite)
   exact fdc_sameOrbit_trans (cluster 2 ω (origin 2))
     (exitDart (ω := ω) hfin) (fdc_farLeftExitDart (ω := ω) hfin R)
     (leftExitDart (ω := ω) hfin) hd hb
-
-/-- Conditional `p_c(ℤ²) < 1`: if every configuration with a finite origin cluster satisfies
-`OrbitFaceSimple`, `InterfaceConnected` and `fdc_FarReanchors` for some box radius, then
-`p_c(ℤ²) < 1`. The hypothesis carries the planar topology of the Peierls argument and is not
-proved; by hand, `fdc_FarReanchors` fails for clusters surrounding a hole that contains `(1, 0)`,
-so the hypothesis is probably unsatisfiable (not proved in Lean). -/
-theorem fdc_pc_lt_one
-    (h : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (hfin : (cluster 2 ω (origin 2)).Finite),
-        OrbitFaceSimple ω hfin ∧ InterfaceConnected (cluster 2 ω (origin 2)) ∧
-          ∃ R : ℕ, cluster 2 ω (origin 2) ⊆ box 2 R ∧ fdc_FarReanchors ω hfin R) :
-    (StatMech.Percolation.pc 2 : ℝ) < 1 := by
-  apply pc_lt_one_of_orbitFaceSimple
-  intro ω hfin
-  obtain ⟨hsimple, hInt, R, hR, hre⟩ := h ω hfin
-  exact ⟨hsimple, fdc_exitDartsSameOrbit (ω := ω) hfin hInt R hR hre⟩
 
 end Percolation
 

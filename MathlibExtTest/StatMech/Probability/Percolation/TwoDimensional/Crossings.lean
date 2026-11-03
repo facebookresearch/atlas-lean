@@ -10,6 +10,9 @@ module
 
 public import MathlibExt.Probability.Percolation.TwoDimensional.Crossings
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.VecNotation
+
 /-!
 # Tests for `MathlibExt.Probability.Percolation.TwoDimensional.Crossings`
 

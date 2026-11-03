@@ -817,7 +817,6 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Probability/StrassenFinite.lean` | `MathlibExt.Probability.StochasticOrder.StrassenFiniteCoupling` |
 | `Atlas/StatisticalMechanics/Code/Probability/TwoPointLSI.lean` | `MathlibExt.Probability.Hypercontractivity.TwoPointLSI` |
 | `Atlas/StatisticalMechanics/Code/RSW/BoxCrossing.lean` | `MathlibExt.Probability.Percolation.RSW.BoxCrossing` |
-| `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` | `MathlibExt.Probability.Percolation.RSW.BoxCrossingCapstone` |
 | `Atlas/StatisticalMechanics/Code/RSW/Continuity.lean` | `MathlibExt.Probability.Percolation.RSW.Continuity` |
 | `Atlas/StatisticalMechanics/Code/RSW/ExpDecayUpgrade.lean` | `MathlibExt.Probability.Percolation.RSW.ExpDecayUpgrade` |
 | `Atlas/StatisticalMechanics/Code/RSW/OneArm.lean` | `MathlibExt.Probability.Percolation.RSW.OneArm` |
@@ -847,9 +846,8 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/SLE/LoewnerCapacity.lean` | `MathlibExt.Analysis.Complex.Loewner.LoewnerCapacity` |
 | `Atlas/StatisticalMechanics/Code/SLE/LoewnerHolomorphicDependence.lean` | `MathlibExt.Analysis.Complex.Loewner.LoewnerHolomorphicDependence` |
 | `Atlas/StatisticalMechanics/Code/SLE/StandardBrownianLaw.lean` | `MathlibExt.Probability.BrownianMotion.StandardBrownianLaw` |
-| `Atlas/StatisticalMechanics/Code/TwoDim/Kesten.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.Kesten` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/KestenCrossingDecay.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenCrossingDecay` |
-| `Atlas/StatisticalMechanics/Code/TwoDim/KestenUncond.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcEqHalf` |
+| `Atlas/StatisticalMechanics/Code/TwoDim/KestenUncond.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcLeHalf` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/SelfDualDichotomy.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.SelfDualDichotomy` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/SharpThreshold.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.SharpThreshold` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/ZhangClose.lean` | `MathlibExt.Probability.Percolation.TwoDimensional.ZhangFourSides` |
@@ -1576,11 +1574,12 @@ results or record refutations; their module docs say exactly what is proved.
 ## Not ported
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
-modules (`.lean` files) and lines (`wc -l`) at the time of the third round. Each module is counted
-once, under the first category that applies in the order below. All 6,970 source modules are
-covered: 655 first-round rows, 238 second-round rows (one source,
-`Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
-definition ported in the second), 635 third-round rows, 1 deleted module, and the categories below.
+modules (`.lean` files) and lines (`wc -l`) after the third round. Each source is counted
+once, under the first category that applies below. All 6,970 source modules are accounted for:
+655 first-round rows, 236 second-round rows (200 MathlibExt and 36 CSLibExt), 635 third-round
+rows, 3 ported-then-deleted modules, and 5,442 remaining modules. One source,
+`Code/Percolation/ClusterDualContour.lean`, occurs in both the first- and second-round tables:
+655 + 236 + 635 - 1 + 3 + 5,442 = 6,970.
 
 ### Excluded from the physics port (1 module, 293 lines)
 
@@ -1641,6 +1640,17 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   users, so the declarations were deleted and the empty module was removed. Use Mathlib's
   `Measure.infinitePi` instead.
 - Third round: no ported module was deleted or merged; each of the 635 sources has its own module.
+- `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` (second round). The ported
+  capstone's hypothesis unfolded to its advertised box-crossing conclusion, so it proved nothing
+  beyond assuming the result; the module was removed during cleanup. The underlying RSW
+  comparison material remains in `MathlibExt.Probability.Percolation.RSW.BoxCrossing` and
+  `MathlibExt.Probability.Percolation.RSW.P5Equivalences`.
+- `Atlas/StatisticalMechanics/Code/TwoDim/Kesten.lean` (second round). The ported module's
+  `pc_le_half` was strictly subsumed by `kesten_pc_le_half` in
+  `MathlibExt.Probability.Percolation.TwoDimensional.KestenPcLeHalf`: identical conclusion and
+  the same `cross`, `hmono`, `hdualHalf`, and `hdecayToZero` inputs, with sharpness taken from
+  the proved `sharp_phase_transition` instead of as hypotheses. The duplicate proof, its smoke
+  test, and the ledger row were removed; use `kesten_pc_le_half`.
 - First round: no ported module was deleted as a whole. Two pairs of source files were merged into
   one module each, and both sources of each pair appear in the first-round table:
   - `Code/FK/EdgeConfigZ.lean` and `Code/Walls/fkc_rqbulkfraction.lean` →

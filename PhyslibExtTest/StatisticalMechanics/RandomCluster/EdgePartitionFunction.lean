@@ -14,8 +14,11 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunctio
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.EdgeConfigZ`
 
 * `ecz_box_edge_pos`: the box `Λ_1` of `ℤ²` has an edge;
-* `ecz_fk_uniqueness` (uniqueness of the `q = 2` infinite-volume measure off a countable set) on
-  `ℤ²`, box `Λ_1`, with the edge from `ecz_box_edge_pos`, and its consequence: some
+* `ecz_fk_uniqueness` on `ℤ²`, box `Λ_1`, with the edge from `ecz_box_edge_pos`: for this one
+  fixed box, the free and wired `q = 2` restrictions agree on every increasing event of `Λ_1`
+  for all `t` outside a countable exceptional set, which may depend on the box. This is a
+  per-box result only: it does not establish equality of the infinite-volume measures, which
+  would need agreement across all boxes with a common exceptional set. Its consequence: some
   `t ∈ (0, 1)` gives agreement of the free and wired measures on every increasing event of `Λ_1`.
   (This replaces the smoke check removed from the source file in stage 3.)
 -/

@@ -24,8 +24,9 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.CoupledTensor
 The refuted predicates (`vgc_VarPowerCore`, `bkt2p_VarGapCore`, `mil_VarScalarCore`,
 `bkt2_levelGe2MasterResidue`, `bkt2_RemainingGoal`) are window statements over `p ∈ (1/2, q)`:
 they hold for `q ≤ 1/2` only because the window is empty (recorded below for
-`vgc_VarPowerCore`), are false for `q > 3/4`, and are neither proved nor refuted for
-`q ∈ (1/2, 3/4]`.
+`vgc_VarPowerCore`), and are false for every `q > 1/2` (`vgp_varPowerCore_refutable`,
+`vgp_varGapCore_refutable`, `ctc_levelGe2_false_of_half_lt`, `ctc_remainingGoal_false_of_half_lt`,
+and `ctc_varScalarCore_false_of_half_lt`).
 -/
 
 @[expose] public section

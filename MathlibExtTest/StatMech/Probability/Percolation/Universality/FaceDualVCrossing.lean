@@ -17,7 +17,7 @@ public import MathlibExt.Probability.Percolation.Universality.FaceDualVCrossing
   hypothesis `pmd_BarrierConnectsRows` holds (`pmd_wall_barrierConnectsRows`).
 * `pmd_wall_only_face_frame_works`: the face-dual crossing holds while both vertex-frame events
   fail.
-* `pmd_boxFaceBarrier_le_faceOpenDual` and `pmd_exhaustivity_of_residue` on the wall configuration.
+* `pmd_boxFaceBarrier_le_faceOpenDual` on the wall configuration.
 -/
 
 @[expose] public section
@@ -28,9 +28,6 @@ namespace MathlibExtTest.StatMech.Probability.Percolation.Universality.FaceDualV
 
 example : pmd_FaceDualVCrossing bcc_wallCfg 2 :=
   pmd_faceDualVCrossing_of_residue bcc_wallCfg 2 pmd_wall_barrierConnectsRows
-
-example : HorizontalCrossing bcc_wallCfg 0 2 0 2 ∨ pmd_FaceDualVCrossing bcc_wallCfg 2 :=
-  pmd_exhaustivity_of_residue bcc_wallCfg 2 bcc_noH_wall pmd_wall_barrierConnectsRows
 
 example : ¬ HorizontalCrossing bcc_wallCfg 0 2 0 2 ∧ ¬ DualVerticalCrossing bcc_wallCfg 0 2 0 2 ∧
     ¬ dcp_DualCutConnectsRot bcc_wallCfg 2 ∧ pmd_FaceDualVCrossing bcc_wallCfg 2 :=

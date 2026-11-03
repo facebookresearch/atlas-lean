@@ -26,9 +26,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLMeanInfl`:
 Window predicate: the library refutes `mil_VarScalarCore q` for `q > 3/4`
 (`ctc_varScalarCore_false`, tested at `q = 1`) and for every `q > 1/2`
 (`ctc_varScalarCore_false_of_half_lt`, tested at `q = 3/5`): at the one-variable dictator it asks
-for `4(k+1)σ_p² ≤ 4σ_p²(1 - (1-u)^k)`.
-The chain `mil_levelGe2_of_var`, `mil_master_of_varScalar`, `mil_rhoOptimise_of_varScalar`
-is run on the empty window `q = 1/2` only.
+for `4(k+1)σ_p² ≤ 4σ_p²(1 - (1-u)^k)`. No chain is run from it.
 -/
 
 @[expose] public section
@@ -102,14 +100,5 @@ example : ¬ bkt2f_meanInflResidue (3 / 5) := bkt2f_meanInflResidue_refutable (b
 
 example : ¬ mil_VarScalarCore 1 := ctc_varScalarCore_false (by norm_num)
 example : ¬ mil_VarScalarCore (3 / 5) := ctc_varScalarCore_false_of_half_lt (by norm_num)
-
-/-- `mil_VarScalarCore q` holds vacuously for `q ≤ 1/2`. -/
-lemma varScalarCore_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : mil_VarScalarCore q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : bkt2_levelGe2MasterResidue (1 / 2) :=
-  mil_levelGe2_of_var (varScalarCore_of_le_half le_rfl)
-example : pro_PBiasedMaster (1 / 2) := mil_master_of_varScalar (varScalarCore_of_le_half le_rfl)
-example : ptn_RhoOptimise (1 / 2) := mil_rhoOptimise_of_varScalar (varScalarCore_of_le_half le_rfl)
 
 end StatMechTest.BooleanFunctions.BKKKLMeanInfl

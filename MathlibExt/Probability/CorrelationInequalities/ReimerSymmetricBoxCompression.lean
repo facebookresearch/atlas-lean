@@ -26,9 +26,10 @@ down-compression never decreases the weight of the disjoint occurrence `A □ B`
 hypothesis `rit_BoxDownCompMono α`.
 
 `rit_BoxDownCompMono α` holds trivially for `α = Fin 0` but is **false** for `α = Fin 2`
-(`bdc2_boxDownCompMono_fin2_false` in `BoxDownCompressionCounterexample`). The conditional
-results below are only known to be non-vacuous for `α = Fin 0` (`rit_boxDownCompMono_fin0`);
-whether the hypothesis holds for any `α` with two or more elements is not settled here. The file
+(`bdc2_boxDownCompMono_fin2_false` in `BoxDownCompressionCounterexample`). Because the
+hypothesis is false in the first nontrivial case, the conditional Reimer capstones that assumed
+it (`rit_reimer_wprob_symm_of_boxMono` and `rit_reimer_inequality_half_of_boxMono`) have been
+removed rather than kept as vacuous APIs. The file
 also shows that the disjoint-pair weight `wdpairs` does not dominate `P(A □ B)`
 (`rit_collapseDomination_false`).
 
@@ -42,9 +43,6 @@ also shows that the disjoint-pair weight `wdpairs` does not dominate `P(A □ B)
 
 * `rit_exists_common_iterDownComp_isLowerSet`: a common compression sequence making two families
   lower sets.
-* `rit_reimer_wprob_symm_of_boxMono`, `rit_reimer_inequality_half_of_boxMono`: Reimer's inequality
-  for symmetric weights, respectively for `bernoulliProductMeasure (1/2)`, **assuming**
-  `rit_BoxDownCompMono α`.
 * `rit_collapseDomination_false`: `wdpairs w 𝒜 ℬ < P(familyEvent 𝒜 □ familyEvent ℬ)` can happen.
 -/
 
@@ -222,52 +220,5 @@ theorem rit_box_iterDownComp_mono (hmono : rit_BoxDownCompMono α) {w : α → B
   | cons i cs ih =>
       rw [iterDownComp_cons, iterDownComp_cons]
       exact le_trans ih (hmono w hw0 hsym i (iterDownComp cs 𝒜) (iterDownComp cs ℬ))
-
-/-- Reimer's inequality for symmetric probability weights, **assuming** `rit_BoxDownCompMono α`
-(false when `α = Fin 2`). -/
-theorem rit_reimer_wprob_symm_of_boxMono (hmono : rit_BoxDownCompMono α) (w : α → Bool → ℝ)
-    (hw0 : ∀ x b, 0 ≤ w x b) (hw1 : ∀ x, w x false + w x true = 1)
-    (hsym : ∀ x, w x false = w x true) (A B : Set (ConfigSpace α)) :
-    wprob w (disjointOccurrence A B) ≤ wprob w A * wprob w B := by
-  set 𝒜 := eventFamily A with h𝒜def
-  set ℬ := eventFamily B with hℬdef
-  have hA : A = familyEvent 𝒜 := (rit_familyEvent_eventFamily A).symm
-  have hB : B = familyEvent ℬ := (rit_familyEvent_eventFamily B).symm
-  obtain ⟨cs, hlA, hlB⟩ := rit_exists_common_iterDownComp_isLowerSet 𝒜 ℬ
-  rw [hA, hB]
-  calc wprob w (disjointOccurrence (familyEvent 𝒜) (familyEvent ℬ))
-      ≤ wprob w (disjointOccurrence (familyEvent (iterDownComp cs 𝒜))
-          (familyEvent (iterDownComp cs ℬ))) := rit_box_iterDownComp_mono hmono hw0 hsym cs 𝒜 ℬ
-    _ ≤ fmarg w (iterDownComp cs 𝒜) * fmarg w (iterDownComp cs ℬ) :=
-        reimer_fmarg_of_isLowerSet w hw0 hw1 hlA hlB
-    _ = fmarg w 𝒜 * fmarg w ℬ := by
-        rw [rit_fmarg_symm_iterDownComp hsym, rit_fmarg_symm_iterDownComp hsym]
-    _ = wprob w (familyEvent 𝒜) * wprob w (familyEvent ℬ) := by
-        rw [fmarg_eq_wprob_familyEvent, fmarg_eq_wprob_familyEvent]
-
-set_option linter.unusedFintypeInType false in
-set_option linter.unusedDecidableInType false in
-/-- Reimer's inequality for `bernoulliProductMeasure (1/2)`, **assuming** `rit_BoxDownCompMono α`
-(false when `α = Fin 2`). -/
-theorem rit_reimer_inequality_half_of_boxMono (hmono : rit_BoxDownCompMono α)
-    (A B : Set (ConfigSpace α)) :
-    (bernoulliProductMeasure (E := α) (1/2) (by norm_num)).real (disjointOccurrence A B)
-      ≤ (bernoulliProductMeasure (E := α) (1/2) (by norm_num)).real A
-        * (bernoulliProductMeasure (E := α) (1/2) (by norm_num)).real B := by
-  set φ : α → Bool → ℝ :=
-    fun (_ : α) (b : Bool) => (bernoulliMeasure (1/2) (by norm_num)).real {b} with hφ
-  have hφ0 : ∀ x b, 0 ≤ φ x b := fun _ _ => measureReal_nonneg
-  have hf : (bernoulliMeasure (1/2 : ℝ≥0) (by norm_num)).real {false} = (1/2 : ℝ) := by
-    rw [Measure.real, bernoulliMeasure_apply_false, ENNReal.coe_toReal,
-      NNReal.coe_sub (by norm_num), NNReal.coe_one]; norm_num
-  have ht : (bernoulliMeasure (1/2 : ℝ≥0) (by norm_num)).real {true} = (1/2 : ℝ) := by
-    rw [Measure.real, bernoulliMeasure_apply_true, ENNReal.coe_toReal]; norm_num
-  have hφ1 : ∀ x, φ x false + φ x true = 1 := by
-    intro x; simp only [hφ]; rw [hf, ht]; norm_num
-  have hsym : ∀ x, φ x false = φ x true := by
-    intro x; simp only [hφ]; rw [hf, ht]
-  rw [bernoulli_real_eq_wprob (by norm_num) (disjointOccurrence A B),
-    bernoulli_real_eq_wprob (by norm_num) A, bernoulli_real_eq_wprob (by norm_num) B]
-  exact rit_reimer_wprob_symm_of_boxMono hmono φ hφ0 hφ1 hsym A B
 
 end StatMech

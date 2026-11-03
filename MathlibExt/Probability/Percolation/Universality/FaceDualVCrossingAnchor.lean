@@ -157,14 +157,6 @@ theorem ccc_faceDualVCrossing_of_reachesBottom (ω : ConfigSpace (Sym2 (Site 2))
   mbc_faceDualVCrossing_of_residue ω n hn hnoH
     (ccc_frontierRungsConnect_of_reachesBottom ω n hatom)
 
-/-- Dichotomy form of `ccc_faceDualVCrossing_of_reachesBottom` (the right disjunct always holds
-under the hypotheses). -/
-theorem ccc_exhaustivity_of_reachesBottom (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
-    (hn : 0 ≤ n) (hnoH : ¬ HorizontalCrossing ω 0 n 0 n)
-    (hatom : ccc_FrontierReachesBottom ω n) :
-    HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
-  Or.inr (ccc_faceDualVCrossing_of_reachesBottom ω n hn hnoH hatom)
-
 /-- In the wall configuration the face `![0, 0]` is barrier-adjacent to the face `![0, -1]`. -/
 theorem ccc_wall_bottom_rung :
     (pmd_boxFaceBarrier bcc_wallCfg 2).Adj ![0, (0 : ℤ)] ![0, (0 : ℤ) - 1] :=

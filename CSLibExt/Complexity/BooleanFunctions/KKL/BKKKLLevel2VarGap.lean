@@ -16,8 +16,9 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLMeanInfl
 
 The undegree and level-≥2 masses are at most the variance (`bkt2p_undegree_le_var`,
 `bkt2p_levelGe2_le_var`). `bkt2p_VarGapCore` is a uniform var-gap estimate over
-`(1/2, q)` implying the level-≥2, remaining-goal, master and rho-optimise estimates.
-Status: the core is refuted for every `q > 1/2` (`vgp_varGapCore_refutable`). The file
+`(1/2, q)`. Status: the core is refuted for every `q > 1/2` (`vgp_varGapCore_refutable`),
+and it is kept only as the statement of that refutation; no chain derives the level-≥2,
+remaining-goal, master or rho-optimise estimates from it. The file
 also records the Poincaré inequality (`mil_poincare`) and the gap vanishing at `p = 1/2`.
 
 ## Main definitions
@@ -29,8 +30,6 @@ also records the Poincaré inequality (`mil_poincare`) and the gap vanishing at 
 
 * `bkt2p_levelGe2_le_var`, `bkt2p_levelGe2_le_var_and_mil`: level-≥2 mass versus
   variance and mean influence.
-* `bkt2p_levelGe2_of_varGap`, `bkt2p_remaining_of_varGap`, `bkt2p_master_of_varGap`,
-  `bkt2p_rhoOptimise_of_varGap`: the conditional chain from the var-gap core.
 -/
 
 open scoped BigOperators
@@ -121,27 +120,6 @@ def bkt2p_VarGapCore (q : ℝ) : Prop :=
                 * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
               - 4 * ∑ S ∈ univ.filter (fun S : Finset E => S.card = 1),
                   (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
-
-theorem bkt2p_levelGe2_of_varGap {q : ℝ} (H : bkt2p_VarGapCore q) :
-    bkt2_levelGe2MasterResidue q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  have hp0 : 0 < p := by have := hp.1; linarith
-  obtain ⟨u', hu'0, hlt, k, hk1, hbudget⟩ := H p hp hp1 φ u hu0 hu1
-  refine ⟨k, hk1, ?_⟩
-  have hsharp := bkt2p_levelGe2_le_var hp0 hp1 φ hu1 hu'0.le hlt k
-  exact le_trans hsharp hbudget
-
-theorem bkt2p_remaining_of_varGap {q : ℝ} (H : bkt2p_VarGapCore q) :
-    bkt2_RemainingGoal q :=
-  bkt2c_remaining_of_levelGe2 (bkt2p_levelGe2_of_varGap H)
-
-theorem bkt2p_master_of_varGap {q : ℝ} (H : bkt2p_VarGapCore q) :
-    pro_PBiasedMaster q :=
-  bkt2_master_of_levelGe2 (bkt2p_levelGe2_of_varGap H)
-
-theorem bkt2p_rhoOptimise_of_varGap {q : ℝ} (H : bkt2p_VarGapCore q) :
-    ptn_RhoOptimise q :=
-  bkt2_rhoOptimise_of_remaining (bkt2p_remaining_of_varGap H)
 
 theorem bkt2p_levelGe2_le_var_and_mil {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool)
     {u u' : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (hu'0 : 0 ≤ u') (hlt : u' < u) (k : ℕ) :

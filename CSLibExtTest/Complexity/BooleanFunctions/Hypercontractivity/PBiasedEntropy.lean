@@ -22,8 +22,7 @@ dictator `ω ↦ ω 0` on `{0, 1}^{Fin 1}` (one-coordinate computations from `Co
 * `pen_logGain_assembly` at concrete numbers with `δ = 1/2`, giving `2 log 2 ≤ 4`;
 * `pen_degreeWeight_eq` at the dictator, consistent with `Inf(dictator) = 1`;
 * the body of `pen_DampingWitness` holds for the dictator at every `p ∈ (0, 1)` (witness
-  `r = 1/2`), so the predicate is not vacuous on this function;
-* `pen_dampingWitness_c0`.
+  `r = 1/2`), so the predicate is not vacuous on this function.
 
 Not tested non-degenerately: `pen_DampingWitness q` quantifies over all Boolean functions and all
 `p ∈ (1/2, q)`; it is neither proved nor refuted for any `q > 1/2`. The conditional chain
@@ -135,11 +134,5 @@ example : ptn_RhoOptimise (1 / 2) :=
 
 example : kpb_PBiasedHC (1 / 2) :=
   pen_PBiasedHC_of_damping (by norm_num) (pen_dampingWitness_of_le_half le_rfl)
-
-example :
-    (0 : ℝ) * var (bernoulliWeight (3 / 4)) (fun ω => if dict1 ω then (1 : ℝ) else 0)
-        * Real.log (1 / maxInfl (bernoulliWeight (3 / 4)) (fun ω => if dict1 ω then (1 : ℝ) else 0))
-      ≤ totalInfl (bernoulliWeight (3 / 4)) (fun ω => if dict1 ω then (1 : ℝ) else 0) :=
-  pen_dampingWitness_c0 (by norm_num) (by norm_num) dict1
 
 end StatMechTest.BooleanFunctions.PBiasedEntropy

@@ -10,6 +10,10 @@ module
 
 public import MathlibExt.Probability.Percolation.RSW.Defs
 
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Push
+
 /-!
 # Tests for `MathlibExt.Probability.Percolation.RSW.Defs`
 
@@ -21,7 +25,7 @@ constant set functions (`1` and `1/2`) and related by `P5c.p5`.
 
 @[expose] public section
 
-open StatMech StatMech.RSW StatMech.RSW.Box StatMech.Lattice
+open MeasureTheory StatMech StatMech.RSW StatMech.RSW.Box StatMech.Lattice
 
 namespace MathlibExtTest.StatMech.Probability.Percolation.RSW.Defs
 
@@ -43,6 +47,13 @@ theorem allOpen_mem_horizontalCrossingEvent :
 example (ω : ConfigSpace (Sym2 (Site 2))) (h : ω ∈ horizontalCrossingEvent 0 1 0 0) :
     (fun _ => true : ConfigSpace (Sym2 (Site 2))) ∈ horizontalCrossingEvent 0 1 0 0 :=
   Box.horizontalCrossingEvent_increasing (fun _ => Bool.le_true _) h
+
+-- Rectangle crossing events are genuine measurable events on the infinite bond cube.
+example : MeasurableSet (horizontalCrossingEvent 0 1 0 0) :=
+  measurableSet_horizontalCrossingEvent 0 1 0 0
+
+example : MeasurableSet (verticalCrossingEvent 0 1 0 0) :=
+  measurableSet_verticalCrossingEvent 0 1 0 0
 
 -- `(2, 0)` lies in the annulus `Λ_2 \ Λ_1` around the origin.
 example : (![2, 0] : Site 2) ∈ annulus 0 1 := by
