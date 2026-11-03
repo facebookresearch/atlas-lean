@@ -58,7 +58,9 @@ the stationary forward / Fokker–Planck equation):
 * `generator_kimuraFixation`: `L_σ u = 0` for Kimura's formula.
 * `eq_kimuraFixation_of_generator_eq_zero`, `eq_kimuraFixation_of_contDiffOn`: uniqueness of
   the solution of the fixation boundary-value problem.
-* `kimuraFixation_mem_Icc`, `lt_kimuraFixation`: `0 ≤ u ≤ 1`, and `x < u(x)` when `σ > 0`.
+* `kimuraFixation_nonneg`, `kimuraFixation_le_one`, `kimuraFixation_mem_Icc`,
+  `lt_kimuraFixation`: `0 ≤ u(y)` for `y ≥ 0`, `u(y) ≤ 1` for `y ≤ 1` (every `σ`), and
+  `x < u(x)` when `σ > 0`.
 * `generator_meanAbsorptionTime`, `meanAbsorptionTime_zero`, `meanAbsorptionTime_one`.
 * `generator_heterozygosity`, `generator_pow`.
 * `deriv_flux_wrightDensity`, `integral_wrightDensity`: zero-flux stationarity of Wright's
@@ -275,32 +277,48 @@ theorem eq_kimuraFixation_of_contDiffOn {σ : ℝ} {u : ℝ → ℝ}
   exact eq_kimuraFixation_of_generator_eq_zero hcont h.1 (h.2.2.differentiableOn one_ne_zero)
     hgen h0 h1
 
+/-- Kimura's fixation probability is nonnegative at nonnegative frequencies, for every
+selection coefficient `σ`. -/
+theorem kimuraFixation_nonneg (σ : ℝ) {y : ℝ} (hy : 0 ≤ y) : 0 ≤ kimuraFixation σ y := by
+  unfold kimuraFixation
+  split_ifs with hσ
+  · exact hy
+  rcases lt_or_gt_of_ne hσ with hσ | hσ
+  · apply div_nonneg_of_nonpos
+    · have h := Real.one_le_exp (show 0 ≤ -2 * σ * y by nlinarith)
+      linarith
+    · have h := Real.one_le_exp (show 0 ≤ -2 * σ by linarith)
+      linarith
+  · apply div_nonneg
+    · have h := Real.exp_le_one_iff.mpr (show -2 * σ * y ≤ 0 by nlinarith)
+      linarith
+    · have h := Real.exp_le_one_iff.mpr (show -2 * σ ≤ 0 by linarith)
+      linarith
+
+/-- Kimura's fixation probability is at most `1` at frequencies `y ≤ 1`, for every selection
+coefficient `σ`. -/
+theorem kimuraFixation_le_one (σ : ℝ) {y : ℝ} (hy : y ≤ 1) : kimuraFixation σ y ≤ 1 := by
+  unfold kimuraFixation
+  split_ifs with hσ
+  · exact hy
+  rcases lt_or_gt_of_ne hσ with hσ | hσ
+  · have hd : 1 - exp (-2 * σ) < 0 := by
+      have h := Real.one_lt_exp_iff.mpr (show 0 < -2 * σ by linarith)
+      linarith
+    apply (div_le_iff_of_neg hd).mpr
+    have h := Real.exp_le_exp.mpr (show -2 * σ * y ≤ -2 * σ by nlinarith)
+    linarith
+  · have hd : 0 < 1 - exp (-2 * σ) := by
+      have h := Real.exp_lt_one_iff.mpr (show -2 * σ < 0 by linarith)
+      linarith
+    apply (div_le_iff₀ hd).mpr
+    have h := Real.exp_le_exp.mpr (show -2 * σ ≤ -2 * σ * y by nlinarith)
+    linarith
+
 /-- Kimura's fixation probability is a probability on `[0, 1]`. -/
 theorem kimuraFixation_mem_Icc (σ : ℝ) {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
-    kimuraFixation σ x ∈ Icc (0 : ℝ) 1 := by
-  unfold kimuraFixation
-  split_ifs with h
-  · exact hx
-  rcases lt_or_gt_of_ne h with hσ | hσ
-  · -- `σ < 0`: numerator and denominator are both nonpositive.
-    have hden : 1 - exp (-2 * σ) < 0 := by
-      have : 1 < exp (-2 * σ) := one_lt_exp_iff.2 (by linarith)
-      linarith
-    have hnum : 1 - exp (-2 * σ * x) ≤ 0 := by
-      have : 1 ≤ exp (-2 * σ * x) := one_le_exp (by nlinarith [hx.1])
-      linarith
-    have hle : exp (-2 * σ * x) ≤ exp (-2 * σ) := exp_le_exp.2 (by nlinarith [hx.2])
-    rw [← neg_div_neg_eq]
-    exact ⟨div_nonneg (by linarith) (by linarith), (div_le_one (by linarith)).2 (by linarith)⟩
-  · -- `σ > 0`: numerator and denominator are both nonnegative.
-    have hden : 0 < 1 - exp (-2 * σ) := by
-      have : exp (-2 * σ) < 1 := exp_lt_one_iff.2 (by linarith)
-      linarith
-    have hnum : 0 ≤ 1 - exp (-2 * σ * x) := by
-      have : exp (-2 * σ * x) ≤ 1 := exp_le_one_iff.2 (by nlinarith [hx.1])
-      linarith
-    have hle : exp (-2 * σ) ≤ exp (-2 * σ * x) := exp_le_exp.2 (by nlinarith [hx.2])
-    exact ⟨div_nonneg hnum hden.le, (div_le_one hden).2 (by linarith)⟩
+    kimuraFixation σ x ∈ Icc (0 : ℝ) 1 :=
+  ⟨kimuraFixation_nonneg σ hx.1, kimuraFixation_le_one σ hx.2⟩
 
 /-- Advantageous alleles (`σ > 0`) are fixed with probability strictly larger than their
 initial frequency `x ∈ (0, 1)`. -/

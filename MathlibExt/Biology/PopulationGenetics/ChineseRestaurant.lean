@@ -439,7 +439,7 @@ private lemma insert_last_notMem {n : ℕ} (π : Finpartition (univ : Finset (Fi
   exact last_notMem_map C (hC ▸ mem_insert_self _ _)
 
 /-- One seating multiplies the closed-form law by the seating probability. -/
-private lemma crpProb_seat {θ : ℝ} (hθ : 0 < θ) {n : ℕ}
+lemma crpProb_seat {θ : ℝ} (hθ : 0 < θ) {n : ℕ}
     (π : Finpartition (univ : Finset (Fin n))) (c : Option π.parts) :
     crpProb θ (seat π c) = crpProb θ π * seatWeight θ π c := by
   have hp := (ascPochhammer_pos n θ hθ).ne'
