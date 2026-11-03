@@ -90,7 +90,7 @@ private lemma sum_mul_betaBinomialPMF_eq (n : ℕ) (α β : ℝ) (f : ℕ → �
         (ascPochhammer ℝ (n - k)).eval β)) / (ascPochhammer ℝ n).eval (α + β) := by
   rw [sum_div]
   refine sum_congr rfl fun k _ => ?_
-  rw [betaBinomialPMF, mul_div_assoc]
+  simp only [betaBinomialPMF, mul_div_assoc]
 
 /-- **Mean.** For `α, β > 0`, `E M = n α / (α + β) = n π`. -/
 theorem sum_mul_betaBinomialPMF {n : ℕ} {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :

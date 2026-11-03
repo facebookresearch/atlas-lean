@@ -249,17 +249,17 @@ theorem Ioo_subset_interior_integrableExpSet_gammaMeasure {a r ε : ℝ}
   linarith
 
 
-/-- Generic Gamma moments and integrals (moved here from the negative
+/- Generic Gamma moments and integrals (moved here from the negative
 binomial development, which uses them for the Gamma–Poisson mixture). -/
 
 /-- `Γ(a + k) = a⁽ᵏ⁾ Γ(a)` for `a > 0`. -/
 lemma Gamma_add_nat_eq {a : ℝ} (ha : 0 < a) (k : ℕ) :
-    Real.Gamma (a + k) = (Polynomial.ascPochhammer ℝ k).eval a * Real.Gamma a := by
+    Real.Gamma (a + k) = (ascPochhammer ℝ k).eval a * Real.Gamma a := by
   induction k with
   | zero => simp
   | succ k ih =>
     rw [Nat.cast_succ, ← add_assoc, Real.Gamma_add_one (by positivity), ih,
-      Polynomial.ascPochhammer_succ_eval]
+      ascPochhammer_succ_eval]
     ring
 
 /-- `rᵏ r^(a - 1) = r^(a + k - 1)` for `r ≥ 0` and `a > 0`. -/
@@ -314,7 +314,7 @@ theorem integrable_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (
 theorem integral_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hc : 0 ≤ c) (k : ℕ) :
     ∫ x, x ^ k * Real.exp (-(c * x)) ∂gammaMeasure a b =
-      (Polynomial.ascPochhammer ℝ k).eval a * b ^ a / (b + c) ^ (a + k) := by
+      (ascPochhammer ℝ k).eval a * b ^ a / (b + c) ^ (a + k) := by
   have hbc : 0 < b + c := by linarith
   rw [integral_gammaMeasure_eq_integral_smul, funext (gammaPDF_smul_eq_indicator ha hb k),
     integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi,

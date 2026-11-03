@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import MathlibExt.Probability.Distributions.Gamma
 public import MathlibExt.Probability.Distributions.NegativeBinomial
 
 @[expose] public section
