@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.ExtremeCell
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.IntervalCases
 
 /-!
 # Corner balance, translations, and the ear-contraction hypothesis

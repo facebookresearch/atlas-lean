@@ -21,7 +21,7 @@ public import Mathlib.Tactic
 
 @[expose] public section
 
-open StatMech StatMech.Lattice StatMech.RSW StatMech.RSW.Box
+open StatMech.RSW
 
 namespace MathlibExtTest.StatMech.Probability.Percolation.RSW.P4ImpliesP5
 
