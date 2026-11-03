@@ -373,7 +373,9 @@ class GuardTests(unittest.TestCase):
                    duplicate_shadow=False, config_add_ledger=False,
                    malformed_require=False, nonstring_rev=False,
                    scope_repoint=False, add_dep_wrong_source=False, add_dep_scoped=False,
-                   config_add_literal_tag_rule=False,
+                   config_add_literal_tag_rule=False, config_literal_revert=False,
+                   config_scramble_rule=False, config_noncanonical_group=False,
+                   delete_assertion_and_rule=False,
                    config_malformed_doc=None, config_malformed_pin=False,
                    config_add_nonmatching_doc=False, config_bad_doc_regex=False,
                    config_unresolved_sha=False, config_bad_group_ref=False,
@@ -429,6 +431,23 @@ class GuardTests(unittest.TestCase):
             if config_add_nonmatching_doc:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_literal_revert:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "Lean-v[0-9]+\\.[0-9]+\\.[0-9]+",
+                     "replacement": "Lean-v4.35.0"})
+            if config_scramble_rule:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md",
+                     "pattern": "Lean-v([0-9]+)\\.([0-9]+)\\.([0-9]+)",
+                     "replacement": "Lean-v{g3}.{g2}.{g1}"})
+            if config_noncanonical_group:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "(badge)",
+                     "replacement": "{g01}"})
+            if delete_assertion_and_rule:
+                pr_config["pin_policy"]["replacements"] = [
+                    r for r in pr_config["pin_policy"]["replacements"]
+                    if "mathlib" not in json.dumps(r)]
             if config_add_literal_tag_rule:
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "v4\\.35\\.0",
@@ -618,6 +637,11 @@ class GuardTests(unittest.TestCase):
                 (pr / "scripts").mkdir(exist_ok=True)
                 (pr / pin_policy["path"]).write_text(
                     real_policy + "\n# same-pin restructuring note\n")
+                if delete_assertion_and_rule:
+                    policy_path = pr / pin_policy["path"]
+                    policy_path.write_text("\n".join(
+                        line for line in policy_path.read_text().splitlines()
+                        if 'mathlib.get("rev")' not in line) + "\n")
                 if add_dep:
                     # The new Physlib pin replacement must match the PR
                     # policy file, so the PR adds its assertion line.
@@ -685,7 +709,9 @@ class GuardTests(unittest.TestCase):
                         or config_add_nonmatching_doc or config_bad_doc_regex \
                         or config_unresolved_sha or config_bad_group_ref \
                         or config_missing_doc_file or config_bad_pin_regex \
-                        or config_add_literal_tag_rule:
+                        or config_add_literal_tag_rule or config_literal_revert \
+                        or config_scramble_rule or config_noncanonical_group \
+                        or delete_assertion_and_rule:
                     changed_lines.append("scripts/bump/pinned_deps.json")
                 if changed_guard_test:
                     changed_lines.append("scripts/bump/test_pinned_bump.py")
@@ -890,6 +916,33 @@ class GuardTests(unittest.TestCase):
         # org must fail, even with names, revs, config, manifest unchanged.
         self.assertEqual(
             self._run_guard(same_pin=True, scope_repoint=True), 1)
+
+    def test_guard_fails_config_only_literal_revert(self):
+        # Codex P1: an added rule rewriting the generic output back to
+        # the literal old tag must fail (hardcoded literal in replacement).
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_literal_revert=True), 1)
+
+    def test_guard_fails_config_only_scramble_rule(self):
+        # Codex P1: an added rule matching an earlier rule's output and
+        # scrambling it (no literal, every regex still matches) must fail.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_scramble_rule=True), 1)
+
+    def test_guard_fails_config_only_noncanonical_group(self):
+        # Codex P2: {g01} passes numeric validation but stays literal.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_noncanonical_group=True), 1)
+
+    def test_guard_fails_delete_assertion_and_rule(self):
+        # Codex P1: deleting the Mathlib assertion from the PR policy
+        # file and removing its rule must NOT make the rule repairable;
+        # eligibility comes from the trusted base tree, not PR text.
+        self.assertEqual(
+            self._run_guard(same_pin=True, delete_assertion_and_rule=True), 1)
 
     def test_guard_fails_new_dep_scoped(self):
         # Codex P2: a new dependency with scope alone (even the correct

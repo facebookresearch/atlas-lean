@@ -73,6 +73,7 @@ from __future__ import annotations
 import argparse
 import base64
 import copy
+import difflib
 import hashlib
 import json
 import os
@@ -1120,10 +1121,14 @@ def _validate_replacement_placeholders(entry: dict, dep_names: set[str], groups:
                 )
             continue
         if placeholder.startswith("g") and placeholder[1:].isdigit():
-            if int(placeholder[1:]) > groups:
+            # Canonical form only: {g01} passes the numeric check but
+            # apply_replacements_to_text substitutes exactly {g1}, so
+            # {g01} would stay literal in the output.
+            if placeholder[1:] != str(int(placeholder[1:])) or int(placeholder[1:]) > groups:
                 problems.append(
-                    f"replacement {entry['replacement']!r} references {{{placeholder}}} "
-                    f"but its pattern has only {groups} groups"
+                    f"replacement {entry['replacement']!r} references {{{placeholder}}}; "
+                    "group placeholders must be canonical ({g1}, not {g01}) "
+                    f"and within the pattern's {groups} groups"
                 )
             continue
         problems.append(
@@ -1150,6 +1155,64 @@ def _forward_tag(tag: str) -> str | None:
     return f"v{int(m.group(1)) + 1}.{int(m.group(2)) + 1}.{int(m.group(3)) + 1}"
 
 
+_LITERAL_VERSION_RE = re.compile(r"v\d+\.\d+(?:\.\d+)?")
+_LITERAL_SHA_RE = re.compile(r"[0-9a-f]{40}")
+
+
+def _validate_replacement_literals(entry: dict) -> list[str]:
+    """A replacement must not hardcode a version or SHA as literal text.
+
+    {target} / {sha:NAME} / {gN} placeholders are the only way to emit
+    versions and SHAs. A literal v4.35.0 or 40-hex SHA in a replacement
+    goes stale at the next bump (and, listed after the generic rules,
+    actively reverts their output to the old tag).
+    """
+    stripped = _PLACEHOLDER_RE.sub("", entry["replacement"])
+    problems: list[str] = []
+    m = _LITERAL_VERSION_RE.search(stripped)
+    if m:
+        problems.append(
+            f"replacement {entry['replacement']!r} hardcodes version {m.group(0)!r}; "
+            "use {target} instead"
+        )
+    m = _LITERAL_SHA_RE.search(stripped)
+    if m:
+        problems.append(
+            f"replacement {entry['replacement']!r} hardcodes SHA {m.group(0)!r}; "
+            "use {sha:NAME} instead"
+        )
+    return problems
+
+
+def _written_regions(original: str, current: str) -> list[tuple[int, int]]:
+    """(start, end) spans of `current` that differ from `original`."""
+    matcher = difflib.SequenceMatcher(a=original, b=current, autojunk=False)
+    return [
+        (b_start, b_end)
+        for tag, _, _, b_start, b_end in matcher.get_opcodes()
+        if tag != "equal"
+    ]
+
+
+def _rule_interferes(pattern: str, text: str, written: list[tuple[int, int]]) -> bool:
+    """True if the pattern matches text an earlier rule already wrote.
+
+    An added rule operating on an earlier rule's output can undo it
+    while every regex still matches (e.g. rewriting the generic rule's
+    forward tag back to the old tag, or scrambling version components).
+    Added rules must match original text, not earlier rules' outputs.
+    """
+    try:
+        rx = re.compile(pattern)
+    except re.error:
+        return False  # compile errors are reported elsewhere
+    return any(
+        m.start() < end and start < m.end()
+        for m in rx.finditer(text)
+        for (start, end) in written
+    )
+
+
 def _failing_rule_patterns(
     entries: list[dict], text: str, target: str, shas: dict[str, str],
     dep_names: set[str],
@@ -1164,12 +1227,7 @@ def _failing_rule_patterns(
     """
     failed: set[str] = set()
     for entry in entries:
-        try:
-            groups = re.compile(entry["pattern"]).groups
-        except re.error:
-            failed.add(entry["pattern"])
-            continue
-        if _validate_replacement_placeholders(entry, dep_names, groups):
+        if _static_rule_problems(entry, dep_names):
             failed.add(entry["pattern"])
     try:
         apply_replacements_to_text(text, entries, target, shas)
@@ -1195,8 +1253,58 @@ def _resolve_shas(client: GitHub, deps: list[dict], tag: str) -> tuple[dict[str,
     return shas, problems
 
 
+def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
+    """Per-entry static checks: compiles, placeholders, no hardcoded literals."""
+    problems: list[str] = []
+    problems.extend(_validate_replacement_literals(entry))
+    try:
+        groups = re.compile(entry["pattern"]).groups
+    except re.error as exc:
+        problems.append(f"replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
+        return problems
+    problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
+    return problems
+
+
+def _simulate_file_rules(
+    entries: list[dict], base_entries: list[dict], original: str,
+    targets: list[str], shas: dict[str, str], dep_names: set[str],
+    label: str,
+) -> list[str]:
+    """Validate one file's rule list at every target tag.
+
+    Static checks run for every entry. Rules then apply one at a time,
+    in order (exactly apply_replacements_to_text's semantics): before
+    applying an ADDED rule, its pattern must not match text an earlier
+    rule already wrote -- an added rule operating on earlier output can
+    undo it while every regex still matches.
+    """
+    problems: list[str] = []
+    for entry in entries:
+        for problem in _static_rule_problems(entry, dep_names):
+            problems.append(f"{label}: {problem}")
+    for target in targets:
+        text = original
+        for entry in entries:
+            is_added = entry not in base_entries
+            if is_added and _rule_interferes(
+                entry["pattern"], text, _written_regions(original, text)
+            ):
+                problems.append(
+                    f"{label} rule {entry['pattern']!r} matches text an earlier "
+                    f"rule already wrote at tag {target}; added rules must match "
+                    "original text, not earlier rules' outputs"
+                )
+            try:
+                text = apply_replacements_to_text(text, [entry], target, shas)
+            except (ValueError, re.error) as exc:
+                problems.append(f"{label} rule {entry['pattern']!r} does not apply: {exc}")
+                break
+    return problems
+
+
 def validate_replacement_rules(
-    pr_config: dict, pr: Path, tag: str, client: GitHub,
+    base_config: dict, pr_config: dict, pr: Path, tag: str, client: GitHub,
 ) -> list[str]:
     """Validate replacement rules against the PR tree, now and forward.
 
@@ -1211,6 +1319,8 @@ def validate_replacement_rules(
     still matches; at the real next bump the generic rules rewrite
     the text first and it finds nothing). SHAs are resolved at the
     current tag for both simulations (SHA patterns are tag-agnostic).
+    Static failures (bad placeholders, hardcoded literals, invalid
+    regexes) are reported for every entry, added or kept.
     """
     problems: list[str] = []
     dep_names = {d["name"] for d in pr_config["deps"]}
@@ -1223,6 +1333,9 @@ def validate_replacement_rules(
         targets.append(forward)
     # Per file, with only that file's entries: entries for other files
     # must not be expected to match this one.
+    base_by_path: dict[str, list[dict]] = {}
+    for entry in base_config.get("doc_replacements", []):
+        base_by_path.setdefault(entry["path"], []).append(entry)
     by_path: dict[str, list[dict]] = {}
     for entry in pr_config.get("doc_replacements", []):
         by_path.setdefault(entry["path"], []).append(entry)
@@ -1233,14 +1346,12 @@ def validate_replacement_rules(
                 f"doc replacements target {path!r}, which is not in the PR tree"
             )
             continue
-        text = file.read_text(encoding="utf-8")
-        for target in targets:
-            failed = _failing_rule_patterns(by_path[path], text, target, shas, dep_names)
-            if failed:
-                problems.append(
-                    f"doc replacements for {path} do not apply to the PR tree "
-                    f"at tag {target}: patterns {sorted(failed)}"
-                )
+        problems.extend(_simulate_file_rules(
+            by_path[path], base_by_path.get(path, []),
+            file.read_text(encoding="utf-8"), targets, shas, dep_names,
+            f"doc replacements for {path}",
+        ))
+    base_pp = base_config.get("pin_policy") or {}
     pr_pp = pr_config.get("pin_policy") or {}
     if pr_pp:
         file = pr / pr_pp["path"]
@@ -1249,21 +1360,16 @@ def validate_replacement_rules(
                 f"pin-policy file {pr_pp['path']!r} is not in the PR tree"
             )
         else:
-            text = file.read_text(encoding="utf-8")
-            for target in targets:
-                failed = _failing_rule_patterns(
-                    pr_pp.get("replacements", []), text, target, shas, dep_names
-                )
-                if failed:
-                    problems.append(
-                        "pin-policy replacements do not apply to the PR tree "
-                        f"at tag {target}: patterns {sorted(failed)}"
-                    )
+            problems.extend(_simulate_file_rules(
+                pr_pp.get("replacements", []), base_pp.get("replacements", []),
+                file.read_text(encoding="utf-8"), targets, shas, dep_names,
+                "pin-policy replacements",
+            ))
     return problems
 
 
 def repairable_rule_patterns(
-    base_config: dict, pr: Path, tag: str, client: GitHub,
+    base_config: dict, base: Path, tag: str, client: GitHub,
 ) -> set[str]:
     """Patterns of base rules demonstrably broken at the next bump.
 
@@ -1272,6 +1378,11 @@ def repairable_rule_patterns(
     weakening. Only the first failing rule per file is attributed (see
     _failing_rule_patterns); removing a rule whose pattern is not in
     this set stays rejected.
+
+    Eligibility is computed against the TRUSTED BASE tree, never the PR
+    tree: deriving it from PR-controlled contents would let a PR delete
+    an assertion and its rule together, then claim the rule is broken
+    against its own edited file.
     """
     forward = _forward_tag(tag)
     if forward is None:
@@ -1285,7 +1396,7 @@ def repairable_rule_patterns(
     for entry in base_config.get("doc_replacements", []):
         by_path.setdefault(entry["path"], []).append(entry)
     for path, entries in by_path.items():
-        file = pr / path
+        file = base / path
         if not file.is_file():
             continue
         repairable |= _failing_rule_patterns(
@@ -1293,7 +1404,7 @@ def repairable_rule_patterns(
         )
     base_pp = base_config.get("pin_policy") or {}
     if base_pp:
-        file = pr / base_pp["path"]
+        file = base / base_pp["path"]
         if file.is_file():
             repairable |= _failing_rule_patterns(
                 base_pp.get("replacements", []),
@@ -2376,7 +2487,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
             early_tag = None  # tag errors surface again below
         if early_tag is not None:
             repairable = frozenset(
-                repairable_rule_patterns(base_config, pr, early_tag, client)
+                repairable_rule_patterns(base_config, base, early_tag, client)
             )
         problems.extend(
             check_config_extension(base_config, pr_config, repairable)
@@ -2426,7 +2537,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
             # tree; a broken rule bricks the next bump and the monotonic
             # policy then blocks repairing it.
             problems.extend(
-                validate_replacement_rules(pr_config, pr, base_tag_only, client)
+                validate_replacement_rules(base_config, pr_config, pr, base_tag_only, client)
             )
         if problems:
             print("guard: FAIL")
@@ -2501,7 +2612,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
         # then blocks repairing it. Also catches doc edits in this PR
         # that break an existing rule's match.
         problems.extend(
-            validate_replacement_rules(pr_config, pr, base_tag, client)
+            validate_replacement_rules(base_config, pr_config, pr, base_tag, client)
         )
         try:
             problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
