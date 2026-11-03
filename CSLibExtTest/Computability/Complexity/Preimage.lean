@@ -10,6 +10,8 @@ module
 import CSLibExt.Computability.Complexity.Preimage
 import CSLibExt.Computability.Complexity.Karp.ThreeSatComplete
 
+/-! # Consumers of canonical polynomial preimage closure -/
+
 open MetaMathlibExt.ComplexityTheory Cslib.CookLevin
 open Cslib.Complexity Cslib.Complexity.Karp
 
