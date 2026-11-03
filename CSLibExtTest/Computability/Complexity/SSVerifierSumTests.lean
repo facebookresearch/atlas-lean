@@ -10,6 +10,12 @@ module
 
 import CSLibExt.Computability.Complexity.SSVerifierSum
 
+/-!
+# Binary sum-driver consumers
+
+These checks cover canonical inputs, occurrence masks, and mapped labels.
+-/
+
 open Cslib.Complexity.Karp Cslib.Complexity.SSVerifierSum
 open Cslib.Complexity.SatVerifier MetaMathlibExt.TM2Program Turing
 
@@ -39,3 +45,36 @@ example : Computability.encodeNat (SSVerify.pick [0, 0] [true, true]).sum =
     [] := by decide
 example : Computability.decodeNat [false] = 2 := by decide
 example : Computability.decodeNat [true, false] = 5 := by decide
+
+open MetaMathlibExt.TM2Embedding
+
+private def aliasEmb : SEmb (fun _ : SSVerify.K => Sym)
+    (fun _ : SSVerify.K => Sym) where
+  e := id
+  inj := fun _ _ h => h
+  ι _ := Equiv.refl _
+
+private def aliasLabel : SSVerify.Lab → SSVerify.Lab
+  | .yes | .no => .next
+  | l => l
+
+private def aliasProg (l : SSVerify.Lab) :
+    TM2.Stmt (fun _ : SSVerify.K => Sym) SSVerify.Lab Bool :=
+  mapS aliasEmb aliasLabel (SSVerify.prog l)
+
+private theorem alias_embeds :
+    Embeds aliasEmb aliasLabel SSVerify.prog aliasProg := by
+  intro l
+  cases l <;> first | exact Or.inl rfl | exact Or.inr rfl
+
+-- Merged source halts can alias a live host label: this run returns to
+-- .next, whose statement is not a halt. Reachability is not separation.
+example : aliasLabel .yes = aliasLabel .next ∧
+    ∃ v S, RunLe aliasProg 3
+      ⟨some .next, false, SSVerify.st [] [] [] [] []⟩
+      ⟨some .next, v, S⟩ ∧ aliasProg .next ≠ .halt := by
+  refine ⟨rfl, ?_⟩
+  obtain ⟨v, _, S, hr, _, _⟩ := sum_embed aliasEmb aliasLabel
+    aliasProg alias_embeds rfl [] [] false (SSVerify.st [] [] [] [] [])
+      (by intro k; simp [aliasEmb])
+  exact ⟨v, S, hr, by intro h; cases h⟩

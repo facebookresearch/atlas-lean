@@ -16,8 +16,10 @@ public import MathlibExt.Computability.TuringMachine.StackEmbedding
 
 The existing verifier computes a mask-selected sum. Comparing it with an
 empty target leaves the sum untouched: a nonempty sum mismatches at once.
-Both terminal labels can then resume a host through `StackEmbedding`,
-without copying addition or overriding a live label of the component.
+The mapped terminal labels can be equal without being fresh or separate
+from mapped live labels. `sum_embed` only reaches that common label;
+callers establish its role in their host. Live source statements still
+run through the unchanged `StackEmbedding` translation.
 
 The explicit quadratic step bound is in framed input length. This helper
 serves the PARTITION and KNAPSACK numeric reductions and verifiers.
@@ -100,11 +102,12 @@ theorem pick_all (as : List ℕ) (n : ℕ) (h : as.length ≤ n) :
       rw [ih n (by simpa using Nat.le_of_succ_le_succ h)]
 
 open MetaMathlibExt.TM2Embedding in
-/-- Continue after summing canonical delimited `encodeNat` blocks;
-unembedded stacks remain intact. The input agreement requires prior
-normalization. Merging a raw parse-failure exit would expose a partial
-sum, so this theorem does not license continuation on unnormalized input.
-Only the two halting labels are identified, not a live program label.
+/-- Reach the common mapped label after summing canonical `encodeNat`
+blocks; unembedded stacks remain intact. The input agreement requires
+prior normalization. A raw parse-failure exit can expose a partial sum.
+This is only a reachability guarantee: `hφ` does not make the endpoint
+fresh, distinct from mapped live labels, or a halt of the host. Callers
+must establish their intended label separation and the code run next.
 The embedded mask is consumed; each later sum needs its own saved copy. -/
 theorem sum_embed {K Λ : Type} [DecidableEq K] {Γ : K → Type}
     (E : SEmb (fun _ : SSVerify.K => Sym) Γ)
