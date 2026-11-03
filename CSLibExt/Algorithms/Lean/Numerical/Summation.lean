@@ -9,25 +9,22 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Numerical.FloatingPoint
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Ring
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 
 /-!
 # Rounded summation error bound
 
-Sequential rounded summation over `ℝ`: each partial sum is rounded
-with `fl p` (round to nearest, ties to even, `p`-bit significand).
-The computed sum's error against the exact sum is at most
-`((1 + u)^n - 1) * ∑ |xᵢ|`, with unit roundoff `u = 2^(-p)`
-(Higham, *Accuracy and Stability*, Chapter 4: the same bound holds
-for any order, since the proof only uses the per-step relative
-error bound `abs_fl_sub_le`).
+The list is accumulated from right to left, starting at zero, with
+`fl p` after each addition. This is binary round-to-nearest, ties-to-even
+with an unbounded exponent, not hardware binary32/64 arithmetic.
+The real-valued error is at most `((1 + u)^n - 1) * ∑ |xᵢ|`, where
+`u = 2^(-p)`. The proof uses the existing bound `abs_fl_sub_le` at each
+step. It applies to each input ordering, not to equality of rounded
+results across different orderings.
 
-The two parts are proved together by induction: the error bound
-and the magnitude bound `|rsum| ≤ (1 + u)^n * ∑ |xᵢ|`, which the
-error step needs to bound the next rounding error.
+`rsum` also runs over rationals, allowing exact executable examples.
+The theorem below specializes it to the real numbers. Error and magnitude
+bounds are proved together by induction; there is no restriction on `n*u`.
 -/
 
 @[expose] public section
@@ -42,7 +39,8 @@ open Cslib.Algorithms.Lean.FloatingPoint
 noncomputable def unitRoundoff (p : ℕ) : ℝ := 2 ^ (-(p : ℤ))
 
 /-- Sequential rounded summation: `fl p` on each partial sum. -/
-def rsum (p : ℕ) : List ℝ → ℝ
+def rsum {K : Type*} [Field K] [LinearOrder K]
+    [IsStrictOrderedRing K] [FloorRing K] (p : ℕ) : List K → K
   | [] => 0
   | x :: xs => fl p (x + rsum p xs)
 
@@ -70,17 +68,17 @@ theorem rsum_bound (p : ℕ) (xs : List ℝ) :
         linarith
       have hfl : |fl p (x + rsum p xs) - (x + rsum p xs)| ≤
           u * |x + rsum p xs| := abs_fl_sub_le _
-      have htri : |x + rsum p xs| ≤ |x| + |rsum p xs| := abs_add _ _
+      have htri : |x + rsum p xs| ≤ |x| + |rsum p xs| := abs_add_le _ _
       have htri2 : |x + rsum p xs| ≤
           |x| + (1 + u) ^ xs.length * ((xs.map fun a => |a|).sum) :=
-        le_trans htri (add_le_add_left ih_mag _)
+        le_trans htri (add_le_add le_rfl ih_mag)
       have hsplit : |fl p (x + rsum p xs) - (x + xs.sum)| ≤
           u * |x + rsum p xs| + |rsum p xs - xs.sum| := by
         have heq : fl p (x + rsum p xs) - (x + xs.sum) =
             (fl p (x + rsum p xs) - (x + rsum p xs)) +
               (rsum p xs - xs.sum) := by ring
         rw [heq]
-        exact (abs_add _ _).trans (add_le_add hfl le_rfl)
+        exact (abs_add_le _ _).trans (add_le_add hfl le_rfl)
       have hkey : u * |x + rsum p xs| + |rsum p xs - xs.sum| ≤
           u * |x| + ((1 + u) ^ (xs.length + 1) - 1) *
             ((xs.map fun a => |a|).sum) := by
@@ -110,14 +108,14 @@ theorem rsum_bound (p : ℕ) (xs : List ℝ) :
             |x + rsum p xs| + u * |x + rsum p xs| := by
           have h2 : |fl p (x + rsum p xs)| ≤
               |x + rsum p xs| + |fl p (x + rsum p xs) - (x + rsum p xs)| := by
-            have htri := abs_add (x + rsum p xs)
+            have htri := abs_add_le (x + rsum p xs)
               (fl p (x + rsum p xs) - (x + rsum p xs))
             have heq : (x + rsum p xs) +
                 (fl p (x + rsum p xs) - (x + rsum p xs)) =
                 fl p (x + rsum p xs) := by ring
             rw [heq] at htri
             exact htri
-          exact h2.trans (add_le_add_left hfl _)
+          exact h2.trans (add_le_add le_rfl hfl)
         have h2 : |x + rsum p xs| + u * |x + rsum p xs| =
             (1 + u) * |x + rsum p xs| := by ring
         have h3 : (1 + u) * |x + rsum p xs| ≤
