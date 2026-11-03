@@ -22,7 +22,8 @@ Formalization of Eppstein's `k` shortest paths algorithm
 (D. Eppstein, "Finding the k Shortest Paths",
 SIAM J. Comput. 28(2):652–673, 1998), Sections 2.2–2.4:
 the sidetrack/`δ` representation of `s–t` walks, the path-graph
-correspondence, and ordered enumeration of shortest paths.
+correspondence (as an abstraction), and conditional correctness of
+abstract best-first traces.
 
 * **Lemma 1.** For every edge `e`, `δ(e) ≥ 0`; for edges of the
   shortest-path tree `T`, `δ(e) = 0`.
@@ -42,15 +43,29 @@ correspondence, and ordered enumeration of shortest paths.
   cannot decrease its weight.
 * **Lemma 7.** The tree of `PPath`s (parent = `prefpath`) is heap-ordered
   by weight, via Lemma 3.
-* **Theorems 1–2.** Correctness of best-first-search enumeration:
-  every `IsBFSTrace` is weight-sorted and minimal, decodes to `s–t`
-  walks, and every walk is represented or no shorter than the outputs.
-  Under unique tree walks, each output decodes to a unique walk.
+* **Theorems 1–2 (conditional cores).** For every list satisfying the
+  abstract best-first-trace specification `IsBFSTrace`, the list is
+  weight-sorted and minimal, decodes to `s–t` walks, and every walk is
+  represented or no shorter than the outputs. Under unique tree walks,
+  each output decodes to a unique walk. These are correctness cores
+  only: no trace-producing function is given (see the scope note).
 
 Ported from the `kth-shortest-path-epp` T-Bench Lean verification task
 (authored by Leo Osvald). Complexity bounds (`O(m + n log n + k log k)`
 and variants) are documented in the source but not formalized:
 there is no cost model in scope.
+
+## Scope note: what is not formalized
+
+No `P(G)`/`H(G)` graph, priority-queue algorithm, reversed-graph
+construction, or trace-producing function is formalized here.
+`PPath` abstracts a path-graph path (see §2.3 below), and
+`IsBFSTrace.step` takes frontier minimality as a premise rather than
+producing a minimum. Theorems 1–2 are therefore conditional: they say
+what holds of any list satisfying the abstract trace specification,
+not that Eppstein's algorithm produces such a list. Whether any
+nontrivial trace satisfies the specification is a separate question
+from the specification itself.
 
 ## Modeling choices
 
@@ -63,6 +78,11 @@ there is no cost model in scope.
   scope; they are exactly what the paper's proofs consume.
 * Walks carry their endpoints in their type (`DiWalk G s t`), which makes
   the telescoping argument of Lemma 2 a direct induction.
+* `PPath`/`IsBFSTrace` abstract the paper's `P(G)`/`H(G)` and
+  priority-queue search: a `PPath` joins sidetracks by an arbitrary
+  tree walk, contracting the heap/cross-edge steps of `P(G)`, and
+  `IsBFSTrace.step` takes frontier minimality as a hypothesis. No
+  function in this file constructs a trace from `G`/`T`.
 * Tree uniqueness is not assumed globally: only the uniqueness lemmas
   and their Theorem 1–2 variants assume that all tree walks between
   two vertices coincide (`htree`), the abstract form of the paper's
@@ -249,30 +269,37 @@ theorem lemma3_prefpath_le (T : Digraph V) (len : V → V → ℝ)
   linarith [hle]
 
 /-!
-# The path graph (§2.3) and the basic algorithm (§2.4, Theorems 1–2).
+# The path graph, abstracted (§2.3), and conditional trace correctness
+(§2.4, Theorems 1–2 cores).
 
 A node of the paper's path graph `P(G)` is a sidetrack edge; heap edges
 walk between sidetracks that share a tree path, and cross edges jump from
-a sidetrack to the heap of the tree below its head.  We model a path of
-`P(G)` starting from the root directly: a `PPath` is the sidetrack
+a sidetrack to the heap of the tree below its head.  Neither `P(G)` nor
+its heap `H(G)` is constructed here.  Instead, a `PPath` abstracts a
+path of `P(G)` starting from the root directly: it is the sidetrack
 sequence of an `s–t` walk, where consecutive sidetracks are joined by an
-explicit tree walk (the heap-edge segments of `P(G)` are thereby left
-implicit).  Its `weight` is the sum of `δ` over the sidetracks, i.e. the
-length of the corresponding `P(G)` path (edge weights telescope).
+arbitrary explicit tree walk.  A single sidestep thereby contracts the
+heap-edge segments of `P(G)` (and any number of its heap/cross edges),
+which are left implicit.  Its `weight` is the sum of `δ` over the
+sidetracks, telescoping as in Lemma 2.
 
 * **Lemma 5.** `s–t` walks in `G` are in length-preserving correspondence
-  with `PPath`s (decode/encode), via Lemma 2; one-to-one under unique
-  tree walks (see `DiWalk_eq_of_sidetracks_eq`).
+  with `PPath` abstractions (decode/encode), via Lemma 2; one-to-one
+  under unique tree walks (see `DiWalk_eq_of_sidetracks_eq`).  This is
+  a correspondence with the abstraction, not with literal `P(G)` paths.
 * **Lemma 6.** Extending a `PPath` by a sidetrack of nonnegative `δ`
-  cannot decrease its weight (heap-edge weights are nonnegative).
+  cannot decrease its weight (the nonnegativity the paper gets from
+  heap ordering in `P(G)`).
 * **Lemma 7.** The tree of `PPath`s (parent = `prefpath`) is heap-ordered
   by weight, via Lemma 3.
-* **Theorems 1–2.** Correctness of best-first-search enumeration: every
-  `IsBFSTrace` over the path tree is weight-sorted and minimal (from `s`
-  to `t`, resp. to every vertex), decodes to `s–t` walks, and every walk
-  is represented in the outputs or no shorter than them.  Complexity
-  bounds (`O(m + n log n + k log k)` for the basic algorithm) are
-  documented here but not formalized: there is no cost model in scope.
+* **Theorems 1–2 (conditional cores).** If a list satisfies the abstract
+  trace specification `IsBFSTrace`, then it is weight-sorted and minimal
+  (from `s` to `t`, resp. to every vertex), decodes to `s–t` walks, and
+  every walk is represented in the outputs or no shorter than them.
+  No priority-queue algorithm, reversed-graph construction, or
+  complexity bound (`O(m + n log n + k log k)` for the basic algorithm)
+  is formalized: there is no cost model in scope, and `IsBFSTrace.step`
+  assumes a frontier minimum rather than producing one.
 -/
 
 /-- Concatenation of two compatible walks. -/
@@ -308,10 +335,12 @@ theorem DiWalk_liftT_append {G T : Digraph V}
   | nil _ => rfl
   | cons u v w _ tl ih => simp only [DiWalk.append, DiWalk.liftT, ih]
 
-/-- A path of the path graph `P(G)` starting from the root: the sidetrack
-sequence of an `s`-rooted walk, with consecutive sidetracks joined by an
-explicit tree walk in `T`.  The endpoint index is the head of the last
-sidetrack (or `s` for the empty sequence). -/
+/-- An abstraction of a path of the path graph `P(G)` starting from the
+root: the sidetrack sequence of an `s`-rooted walk, with consecutive
+sidetracks joined by an arbitrary explicit tree walk in `T` (a single
+sidestep may contract several heap/cross edges of `P(G)`).  The
+endpoint index is the head of the last sidetrack (or `s` for the empty
+sequence). -/
 inductive PPath (G T : Digraph V) (s : V) : V → Type u where
   | root : PPath G T s s
   | sidestep {a : V} (e : V × V) : PPath G T s a → DiWalk T a e.1 →
@@ -323,9 +352,8 @@ def PPath.sidetrackList {G T : Digraph V} {s c : V} :
   | .root => []
   | .sidestep e prev _ _ _ => prev.sidetrackList ++ [e]
 
-/-- Weight of a `PPath`: the sum of `δ` over its sidetracks.  This is the
-length of the corresponding path in `P(G)` (heap-edge weights telescope),
-so an `s–t` walk has length `d(s,t) + weight` by Lemma 2. -/
+/-- Weight of a `PPath`: the sum of `δ` over its sidetracks, telescoping
+as in Lemma 2, so an `s–t` walk has length `d(s,t) + weight`. -/
 noncomputable def PPath.weight (len : V → V → ℝ) (dist : V → ℝ)
     {G T : Digraph V} {s c : V} : PPath G T s c → ℝ
   | .root => 0
@@ -338,20 +366,26 @@ def PPath.parent {G T : Digraph V} {s c : V} :
   | .root => none
   | .sidestep _ prev _ _ _ => some ⟨_, prev⟩
 
-/-- Child relation in the path tree `H(G)`: `child` extends `par` by a single
-sidestep (the converse of `PPath.parent`). -/
+/-- Child relation in the abstract path tree: `child` extends `par` by a
+single sidestep (the converse of `PPath.parent`).  No `H(G)` is
+constructed: the joining tree walk is arbitrary, so one sidestep may
+contract several heap/cross edges of the paper's `P(G)`. -/
 def PPath.IsChild {G T : Digraph V} {s : V}
     (child par : Σ c, PPath G T s c) : Prop :=
   ∃ (e : V × V) (tw : DiWalk T par.1 e.1) (hadj : G.Adj e.1 e.2)
     (hside : ¬ T.Adj e.1 e.2),
     child = ⟨e.2, PPath.sidestep e par.2 tw hadj hside⟩
 
-/-- Best-first-search traces over the heap-ordered path tree: the list starts
-at `root`, and each new output is a minimum-weight frontier node — a child of
-an already-output node that has not been output yet.  These are exactly the
-lists the paper's §2.4 algorithm produces (breadth-first search with a
-priority queue); tie-breaking between equal-weight frontier nodes is left
-arbitrary. -/
+/-- Abstract best-first traces over the heap-ordered path tree: a
+specification only.  The list starts at `root`, and each new output is
+assumed to be a minimum-weight frontier node — a child of an
+already-output node that has not been output yet.  `step` takes that
+minimality as a premise; nothing here constructs such a list, runs a
+priority queue, or builds `P(G)`/`H(G)`, so this is not a claim that
+the paper's §2.4 algorithm produces exactly these lists.  Tie-breaking
+between equal-weight frontier nodes is left arbitrary.  Whether any
+nontrivial list satisfies this specification is a separate question
+from the specification itself. -/
 inductive IsBFSTrace (G T : Digraph V) (s : V) (len : V → V → ℝ)
     (dist : V → ℝ) : List (Σ c, PPath G T s c) → Prop where
   | root : IsBFSTrace G T s len dist [⟨s, PPath.root⟩]
@@ -589,15 +623,6 @@ theorem lemma5_encode (T : Digraph V)
   refine ⟨c, q, ?_⟩
   simpa [PPath.sidetrackList] using hq
 
-theorem list_append_singleton_inj {α : Type*} {l1 l2 : List α} {a b : α}
-    (h : l1 ++ [a] = l2 ++ [b]) : l1 = l2 ∧ a = b := by
-  have hlen : l1.length = l2.length := by
-    have hL := congrArg List.length h
-    simpa using hL
-  obtain ⟨h1, h2⟩ := List.append_inj h hlen
-  injection h2 with hab _
-  exact ⟨h1, hab⟩
-
 /-- A `PPath` is determined by its sidetrack list when tree walks are
 unique (the `PPath` half of the paper's §2.2/§2.3 one-to-one
 correspondence): the joining tree walks are then forced, so two
@@ -624,7 +649,7 @@ theorem PPath_eq_of_sidetrackList_eq {G T : Digraph V}
       exact absurd h.symm (by simp)
     | sidestep e2 prev2 tw2 hadj2 hside2 =>
       simp only [PPath.sidetrackList] at h
-      obtain ⟨hprev, he⟩ := list_append_singleton_inj h
+      obtain ⟨hprev, he⟩ := List.append_singleton_inj.mp h
       obtain rfl : e2 = e := he.symm
       have hSigma := ih prev2 hprev
       cases hSigma
@@ -633,9 +658,9 @@ theorem PPath_eq_of_sidetrackList_eq {G T : Digraph V}
       rfl
 
 /-- Lemma 6 (nonnegative extension): appending a sidetrack of nonnegative
-`δ` (Lemma 1) cannot decrease a `PPath`'s weight.  This is the content of
-the paper's Lemma 6 that heap/cross edges of `P(G)` have nonnegative
-weight. -/
+`δ` (Lemma 1) cannot decrease a `PPath`'s weight.  This is the
+nonnegativity core of the paper's Lemma 6 (which also constructs
+`P(G)`); heap/cross edges themselves are not formalized here. -/
 theorem lemma6_weight_mono (len : V → V → ℝ) (dist : V → ℝ)
     {G T : Digraph V} {s a : V} (q : PPath G T s a) (e : V × V)
     (tw : DiWalk T a e.1) (hadj : G.Adj e.1 e.2) (hside : ¬ T.Adj e.1 e.2)
@@ -646,7 +671,7 @@ theorem lemma6_weight_mono (len : V → V → ℝ) (dist : V → ℝ)
 
 /-- Lemma 7 (heap-ordered path tree): a `PPath` weighs no less than its
 parent (`prefpath`), provided every sidetrack has nonnegative `δ`.
-This is Lemma 3 lifted to the path tree `H(G)`. -/
+This is Lemma 3 lifted to the abstract path tree. -/
 theorem lemma7_parent_weight (len : V → V → ℝ) (dist : V → ℝ)
     {G T : Digraph V} {s c : V} (q : PPath G T s c)
     {c' : V} {q' : PPath G T s c'} (hpar : q.parent = some ⟨c', q'⟩)
@@ -696,31 +721,6 @@ theorem trace_root_mem {G T : Digraph V} {s : V}
   | step L next hTrace hChild hNotMem hMin ih =>
     exact List.mem_append_left _ ih
 
-theorem pairwise_append {α : Type*} {R : α → α → Prop}
-    {l₁ l₂ : List α}
-    (h₁ : l₁.Pairwise R) (h₂ : l₂.Pairwise R)
-    (hcross : ∀ x ∈ l₁, ∀ y ∈ l₂, R x y) :
-    (l₁ ++ l₂).Pairwise R := by
-  induction l₁ with
-  | nil =>
-    simpa using h₂
-  | cons a t ih =>
-    cases h₁ with
-    | cons h_head h_tail =>
-      have hcross_t : ∀ x ∈ t, ∀ y ∈ l₂, R x y := by
-        intro x hx y hy
-        exact hcross x (List.mem_cons.mpr (Or.inr hx)) y hy
-      have ih' := ih h_tail hcross_t
-      apply List.Pairwise.cons
-      · intro y hy
-        have hOr := List.mem_append.mp hy
-        cases hOr with
-        | inl hyt =>
-          exact h_head y hyt
-        | inr hyl2 =>
-          exact hcross a (List.mem_cons.mpr (Or.inl rfl)) y hyl2
-      · exact ih'
-
 theorem complete_of_minimal (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
     (hdist_t : dist t = 0)
@@ -756,23 +756,25 @@ theorem complete_of_minimal (T : Digraph V) (len : V → V → ℝ)
     rw [hp_len, hy_len]
     linarith [hMin_xq]
 
-/-- Theorem 1 (basic algorithm, correctness): every best-first-search trace
-over the path tree lists shortest paths first — `L` is duplicate-free,
-weight-sorted, and every path outside `L` weighs at least as much as every
-path inside it.  Each output decodes to an `s–t` walk of length
-`d(s,t) + weight` (Lemma 5, decode direction), and every `s–t` walk is
-either represented in `L` or no shorter than every output.  This is the
-paper's §2.4 claim ("output the shortest paths in order", `O(log i)` per
-path); complexity bounds are not formalized (no cost model).
-Unlike a bare `∃ L` existence claim (which an oracle could provide), this
-states correctness of the lists the algorithm produces (`IsBFSTrace`:
-successive frontier minima).  Neither `δ`-fact is assumed.  No finiteness
-hypothesis: correctness is universal over traces; only the existence of
-length-`k` traces would need a finite graph.  No uniqueness is claimed
-here: the Lemma 5 correspondence is existence in both directions (every
-`PPath` decodes, every walk encodes), and tree walks are not assumed
-unique.  For the one-to-one form under unique tree walks, see
-`thm1_bfs_enumeration_unique`. -/
+/-- Theorem 1, conditional-correctness core (basic algorithm): for every
+abstract best-first trace `L` satisfying `IsBFSTrace`, `L` lists
+shortest paths first — `L` is duplicate-free, weight-sorted, and every
+path outside `L` weighs at least as much as every path inside it.  Each
+output decodes to an `s–t` walk of length `d(s,t) + weight` (Lemma 5,
+decode direction), and every `s–t` walk is either represented in `L` or
+no shorter than every output.  This is conditional: `IsBFSTrace.step`
+assumes each output is a frontier minimum, and no function here
+produces such a list, runs a priority queue, or constructs `P(G)`/
+`H(G)`.  The name refers to the paper's Theorem 1, whose correctness
+core this is; its `O(log i)`-per-path claim and complexity bounds are
+not formalized (no cost model).  Neither `δ`-fact is assumed.  No
+finiteness hypothesis: correctness is conditional on the supplied
+trace; only the existence of length-`k` traces would need a finite
+graph, and no such existence is claimed by this theorem.  No uniqueness
+is claimed here: the Lemma 5 correspondence is existence in both
+directions (every `PPath` decodes, every walk encodes), and tree walks
+are not assumed unique.  For the one-to-one form under unique tree
+walks, see `thm1_bfs_enumeration_unique`. -/
 theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
     (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
@@ -837,7 +839,7 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
         intro hEq
         rw [hEq] at hx
         exact hNotMem hx
-      exact pairwise_append hNodupL hSingle hcross
+      exact List.pairwise_append.mpr ⟨hNodupL, hSingle, hcross⟩
     have hPair' : (L ++ [next]).Pairwise
         (fun x y => x.2.weight len dist ≤ y.2.weight len dist) := by
       have hSingle : ([next].Pairwise
@@ -849,7 +851,7 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
         have hy_eq := List.mem_singleton.mp hy
         rw [hy_eq]
         exact hMinL x hx next hNotMem
-      exact pairwise_append hPairL hSingle hcross
+      exact List.pairwise_append.mpr ⟨hPairL, hSingle, hcross⟩
     have hNextMin : ∀ y : Σ c, PPath G T s c, y ∉ L ++ [next] →
         next.2.weight len dist ≤ y.2.weight len dist := by
       have hAux : ∀ {c : V} (q : PPath G T s c),
@@ -927,15 +929,15 @@ theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
     exact ⟨hNodup', hPair', hMin', hDec', hComp'⟩
 
 /-- Theorem 1 with unique decoding: under unique tree walks (`htree`,
-the abstract form of the paper's tree `T`), every output of a
-best-first-search trace decodes to exactly one `s–t` walk, and every
-`s–t` walk is represented by an output with the same sidetrack list
-and length `d(s,t) + weight`, or is no shorter than every output.
-This is the paper's one-to-one form of the Lemma 5 correspondence.
-The plain Theorem 1 above needs no uniqueness hypothesis; only this
-variant assumes `htree`.  As there, no existence of traces of any
-given length is claimed: correctness is conditional on the supplied
-trace. -/
+the abstract form of the paper's tree `T`), every output of an abstract
+best-first trace decodes to exactly one `s–t` walk, and every `s–t`
+walk is represented by an output with the same sidetrack list and
+length `d(s,t) + weight`, or is no shorter than every output.  This is
+the paper's one-to-one form of the Lemma 5 correspondence, as a
+conditional-correctness core like the plain Theorem 1 above: no
+algorithm is formalized, and no existence of traces of any given
+length is claimed.  The plain Theorem 1 above needs no uniqueness
+hypothesis; only this variant assumes `htree`. -/
 theorem thm1_bfs_enumeration_unique (T : Digraph V) (len : V → V → ℝ)
     (dist : V → ℝ) {G : Digraph V} {s t : V}
     (htree : ∀ a b (p q : DiWalk T a b), p = q)
@@ -985,17 +987,18 @@ theorem thm1_bfs_enumeration_unique (T : Digraph V) (len : V → V → ℝ)
       exact ⟨q, hq_mem, hq_list, hy_len⟩
     · exact Or.inr hlong
 
-/-- Theorem 2 (one source, all destinations, correctness): for every target
-`t`, every best-first-search trace over the path tree of `T t` is correct
-as in Theorem 1 (duplicate-free, weight-sorted, minimal, decoding to
-`s–t` walks with `length = dist t s + weight`, represented-or-longer
-completeness).  As in Theorem 1, no uniqueness is claimed here
-(existence in both directions only); see
+/-- Theorem 2, conditional-correctness core (one source, all
+destinations): for every target `t`, every abstract best-first trace
+over the path tree of `T t` is correct as in Theorem 1
+(duplicate-free, weight-sorted, minimal, decoding to `s–t` walks with
+`length = dist t s + weight`, represented-or-longer completeness).
+This is a pointwise instantiation of Theorem 1's core, with the
+per-target trees supplied as parameters: it does not construct the
+paper's single reversed graph `Gᴿ` (no reversed graph is defined here),
+and, as in Theorem 1, it formalizes no algorithm.  As in Theorem 1, no
+uniqueness is claimed here (existence in both directions only); see
 `thm2_bfs_enumeration_unique` for the one-to-one form under unique
-tree walks.  (The paper applies the
-construction to the reversed graph `Gᴿ` with destination `s`; here the
-per-target trees are taken as parameters.)  Complexity
-`O(m + n log n + kn log k)` not formalized. -/
+tree walks.  Complexity `O(m + n log n + kn log k)` not formalized. -/
 theorem thm2_all_dests (len : V → V → ℝ) (dist : V → V → ℝ)
     {G : Digraph V} {s : V}
     (T : V → Digraph V)
@@ -1026,8 +1029,9 @@ theorem thm2_all_dests (len : V → V → ℝ) (dist : V → V → ℝ)
 
 /-- Theorem 2 with unique decoding: the per-target form of
 `thm1_bfs_enumeration_unique`, under per-target unique tree walks.
-As with Theorem 2, this is a pointwise instantiation per target,
-not the paper's single reversed-graph construction. -/
+As with Theorem 2, this is a pointwise instantiation per target of a
+conditional-correctness core, not the paper's single reversed-graph
+construction, and no algorithm is formalized. -/
 theorem thm2_bfs_enumeration_unique (len : V → V → ℝ) (dist : V → V → ℝ)
     {G : Digraph V} {s : V}
     (T : V → Digraph V)
