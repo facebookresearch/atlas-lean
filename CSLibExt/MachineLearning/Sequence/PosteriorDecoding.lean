@@ -101,8 +101,10 @@ theorem expectedCorrect_eq_sum_smoothed (T : ℕ) (z : Fin (T + 1) → Fin n) :
   refine Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun w _ => ?_
   split_ifs <;> ring
 
-/-- **Posterior decoding maximizes the expected number of correctly decoded states.** -/
-theorem expectedCorrect_le_posteriorPath [NeZero n] (T : ℕ) (z : Fin (T + 1) → Fin n) :
+/-- **Posterior decoding maximizes the expected number of correctly decoded states**
+when addition preserves the order. -/
+theorem expectedCorrect_le_posteriorPath [AddLeftMono K] [NeZero n]
+    (T : ℕ) (z : Fin (T + 1) → Fin n) :
     expectedCorrect x g T z ≤ expectedCorrect x g T (posteriorPath x g T) := by
   rw [expectedCorrect_eq_sum_smoothed, expectedCorrect_eq_sum_smoothed]
   exact Finset.sum_le_sum fun t _ => smoothed_le_posteriorPath x g T t (z t)

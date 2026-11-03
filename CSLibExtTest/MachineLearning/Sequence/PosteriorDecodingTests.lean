@@ -12,6 +12,7 @@ public import CSLibExt.MachineLearning.Sequence.PosteriorDecoding
 public meta import CSLibExt.MachineLearning.Sequence.PosteriorDecoding
 public import Mathlib.Algebra.Order.Field.Rat
 public meta import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Data.NNReal.Basic
 
 /-!
 # Posterior decoding tests
