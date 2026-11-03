@@ -436,6 +436,9 @@ class GuardTests(unittest.TestCase):
             elif config_malformed_doc == "traversal":
                 pr_config["doc_replacements"].append(
                     {"path": "../outside.md", "pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "query":
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md?ref=evil", "pattern": "x", "replacement": "y"})
             elif config_malformed_doc == "unknown_key":
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "x", "replacement": "y",
@@ -789,10 +792,14 @@ class GuardTests(unittest.TestCase):
 
     def test_config_paths_union_and_defensive(self):
         # Union of base + PR paths; malformed entries skipped, never raised.
+        # Traversal (../../evil.py) and URL-delimiter (x?ref=evil) paths
+        # are excluded: they must never reach the workflow's downloads.
         base = {"doc_replacements": [{"path": "README.md", "pattern": "x", "replacement": "y"}],
                 "pin_policy": {"path": "scripts/check.py", "replacements": []},
                 "migration_ledgers": ["a.json", 42]}
-        pr = {"doc_replacements": [{"path": "NEW.md", "pattern": "x", "replacement": "y"}, 42],
+        pr = {"doc_replacements": [{"path": "NEW.md", "pattern": "x", "replacement": "y"}, 42,
+                                     {"path": "../../evil.py", "pattern": "x", "replacement": "y"},
+                                     {"path": "x?ref=evil", "pattern": "x", "replacement": "y"}],
               "pin_policy": {"path": "scripts/new_check.py", "replacements": []}}
         self.assertEqual(
             pinned_bump.config_paths_for("doc", base, pr), ["README.md", "NEW.md"])
@@ -813,6 +820,12 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(
             self._run_guard(changed_only_config=True,
                             config_malformed_doc="missing_path"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_query(self):
+        # Codex P1: a ? in a configured path would alter the download URL.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="query"), 1)
 
     def test_guard_fails_config_only_malformed_doc_traversal(self):
         self.assertEqual(

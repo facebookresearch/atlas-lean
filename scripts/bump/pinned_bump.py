@@ -159,11 +159,24 @@ _PIN_REPLACEMENT_KEYS = {"pattern", "replacement"}
 
 
 def _is_safe_relative_path(value: object) -> bool:
-    """A config path must stay inside the repo: relative, no .., non-empty."""
+    """A config path must stay inside the repo and be safely downloadable.
+
+    Relative, no .., non-empty, and none of ? # & \\ % or control
+    characters: those would let a PR-controlled path alter the download
+    URL's query string (selecting a different file) or smuggle encoded
+    delimiters past the destination check. A path failing this can never
+    be downloaded by the guard workflow, so the schema rejects it rather
+    than letting it merge into an entry the monotonic policy then
+    blocks removing (a permanent brick).
+    """
     if not isinstance(value, str) or not value:
         return False
+    if any(ord(c) < 32 or ord(c) == 127 for c in value):
+        return False
+    if any(c in value for c in "?#&\\%"):
+        return False
     parts = PurePosixPath(value).parts
-    return not value.startswith("/") and ".." not in parts and "\x00" not in value
+    return not value.startswith("/") and ".." not in parts
 
 
 def validate_config_schema(config: dict, path: Path) -> None:
@@ -1193,23 +1206,28 @@ def config_paths_for(kind: str, base_config: dict, pr_config: dict) -> list[str]
     entry is skipped, never raised -- the guard itself validates the
     schema and fails loudly, and the workflow must reach it.
     """
+    # Paths are filtered to download-safe ones here: this reader is
+    # deliberately defensive (no schema validation), and its output
+    # feeds the workflow's downloads. An unsafe PR path is dropped, and
+    # the guard then fails closed on the missing file.
     def policy_paths(config: dict) -> list[str]:
         pp = config.get("pin_policy") if isinstance(config.get("pin_policy"), dict) else {}
         p = pp.get("path")
-        return [p] if isinstance(p, str) else []
+        return [p] if _is_safe_relative_path(p) else []
 
     def doc_paths(config: dict) -> list[str]:
         reps = config.get("doc_replacements")
         reps = reps if isinstance(reps, list) else []
         seen: list[str] = []
         for e in reps:
-            if isinstance(e, dict) and isinstance(e.get("path"), str) and e.get("path") not in seen:
+            if _is_safe_relative_path(e.get("path") if isinstance(e, dict) else None) \
+                    and e.get("path") not in seen:
                 seen.append(e.get("path"))
         return seen
 
     def ledger_paths(config: dict) -> list[str]:
         led = config.get("migration_ledgers")
-        return [x for x in led if isinstance(x, str)] if isinstance(led, list) else []
+        return [x for x in led if _is_safe_relative_path(x)] if isinstance(led, list) else []
 
     if kind == "policy":
         out = []

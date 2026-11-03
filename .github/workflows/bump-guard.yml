@@ -113,14 +113,28 @@ jobs:
           # (the tree predates the ledgers) and fail on any other error.
           download_one() {
             _dir="$1"; _ref="$2"; _file="$3"; _required="$4"
-            mkdir -p "/tmp/guard/${_dir}/$(dirname "$_file")"
+            # Containment: the resolved destination must stay beneath
+            # its guard-tree root. A PR-controlled path with .. segments
+            # must never redirect a download outside the tree -- in
+            # particular over the trusted checkout's guard script, which
+            # this workflow executes below under pull_request_target.
+            # Checked BEFORE mkdir, so traversal cannot create dirs either.
+            _dest="$(realpath -m "/tmp/guard/${_dir}/${_file}")"
+            case "$_dest" in
+              "/tmp/guard/${_dir}"/*) ;;
+              *)
+                echo "::error::refusing to download ${_file}: destination ${_dest} escapes /tmp/guard/${_dir}" >&2
+                return 1
+                ;;
+            esac
+            mkdir -p "$(dirname "$_dest")"
             _err="$(mktemp)"
-            if gh api "repos/${GITHUB_REPOSITORY}/contents/${_file}?ref=${_ref}" --jq '.content' 2>"$_err" | base64 -d > "/tmp/guard/${_dir}/${_file}"; then
+            if gh api "repos/${GITHUB_REPOSITORY}/contents/${_file}?ref=${_ref}" --jq '.content' 2>"$_err" | base64 -d > "$_dest"; then
               rm -f "$_err"
               return 0
             fi
             if [ "$_required" = "false" ] && grep -qi "404\|not found" "$_err"; then
-              rm -f "$_err" "/tmp/guard/${_dir}/${_file}"
+              rm -f "$_err" "$_dest"
               return 0
             fi
             cat "$_err" >&2
