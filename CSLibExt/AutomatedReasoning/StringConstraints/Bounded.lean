@@ -155,7 +155,8 @@ theorem wordsOfLength_length (n : ℕ) :
         (fun w => ((Finset.univ : Finset α).toList.map
           (fun a => w ++ [a])).length)).sum
         = (Fintype.card α) ^ n * Fintype.card α := by
-      rw [hmap, sum_map_const, ih]
+      rw [hmap]
+      simpa using congrArg (fun k => k * Fintype.card α) ih
     rw [wordsOfLength, List.length_flatMap, hsum, pow_succ]
 
 /-- The number of words of length at most `B`: `∑_{n ≤ B} |Σ| ^ n`. -/
@@ -362,7 +363,8 @@ theorem assignLists_eq_map_getVal {vs : List V} {l : List (V × List α)} {B : �
     | cons p l' =>
       obtain ⟨j, w⟩ := p
       simp only [List.map_cons, List.cons.injEq] at hkeys
-      obtain ⟨rfl, hkeys'⟩ := hkeys
+      obtain ⟨hji, hkeys'⟩ := hkeys
+      subst j
       have hl' : l' ∈ assignLists vs B :=
         mem_assignLists.mpr ⟨hkeys',
           fun w' hw' => hvals w' (List.mem_cons_of_mem w hw')⟩
@@ -374,17 +376,16 @@ theorem assignLists_eq_map_getVal {vs : List V} {l : List (V × List α)} {B : �
           subst h
           exact hni hk
         change (if k = i then w else getVal l' k) = getVal l' k
-        rw [if_neg hki]
+        simp only [ite_eq_right hki]
       have hhead : getVal ((i, w) :: l') i = w := by
         change (if i = i then w else getVal l' i) = w
-        rw [if_pos rfl]
+        simp
       have hmap : vs.map (fun k => (k, getVal l' k))
           = vs.map (fun k => (k, getVal ((i, w) :: l') k)) :=
         List.map_congr_left (fun k hk => by rw [hget k hk])
       calc (i, w) :: l'
-          = (i, w) :: vs.map (fun k => (k, getVal l' k)) := by
-            congr 1
-            exact ih'
+          = (i, w) :: vs.map (fun k => (k, getVal l' k)) :=
+            congrArg (List.cons (i, w)) ih'
         _ = (i :: vs).map (fun k => (k, getVal ((i, w) :: l') k)) := by
           simp only [List.map_cons]
           rw [hhead, hmap]
