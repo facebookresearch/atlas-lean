@@ -3,12 +3,44 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MODULES=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --root) [[ $# -ge 2 ]] || exit 2; REPO_ROOT="$2"; shift 2 ;;
+    --modules) [[ $# -ge 2 ]] || exit 2; MODULES="$2"; shift 2 ;;
+    *) echo "usage: check_diagnostics.sh [--root DIR] [--modules FILE]" >&2; exit 2 ;;
+  esac
+done
+if [[ -n "$MODULES" && "$MODULES" != /* ]]; then
+  MODULES="$PWD/$MODULES"
+fi
 cd "$REPO_ROOT"
 
 LOG="$(mktemp "${TMPDIR:-/tmp}/atlas-build.XXXXXX.log")"
 trap 'rm -f "$LOG"' EXIT
 
-if ! lake build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest 2>&1 | tee "$LOG"; then
+targets=()
+if [[ -n "$MODULES" ]]; then
+  while IFS= read -r module || [[ -n "$module" ]]; do
+    [[ -n "$module" ]] && targets+=("+$module")
+  done <"$MODULES"
+else
+  while IFS= read -r library; do targets+=("$library"); done < <(
+    python3 - <<'PY'
+import tomllib
+from pathlib import Path
+config = tomllib.loads(Path("lakefile.toml").read_text())
+for library in config["lean_lib"]:
+    print(library["name"])
+PY
+  )
+fi
+if [[ ${#targets[@]} -eq 0 ]]; then
+  echo "FAIL [build]: no library/module targets selected." >&2
+  exit 2
+fi
+
+if ! lake build "${targets[@]}" 2>&1 | tee "$LOG"; then
   echo "FAIL [build]: audited libraries do not build." >&2
   exit 1
 fi

@@ -1,5 +1,15 @@
 # Repository scripts
 
+For pinned standalone distributions of all root Lean libraries and generic
+downstream installation steps, see [PACKAGING.md](PACKAGING.md).
+The entry point is `python3 scripts/package_atlas.py`.
+The default build uses 32 runtime workers and emits one native Lake archive.
+`--offline-bundle` adds the offline source/artifact format from the same build.
+Packaging and scoped checks both reuse `scripts/check.sh build`. That command
+accepts `--root DIR` for a standalone checkout and `--modules FILE` for a
+selected module cohort. Compiler-diagnostic policy is defined in
+`check_diagnostics.sh`; compiled trust policy is defined in `check_axioms.sh`.
+
 Run `scripts/check.sh` from the repository root. With no argument it performs
 the deterministic preflight checks, enforces the library trust and dependency
 policies, and builds `MathlibExt`, `CSLibExt`, `WantedExt`, `MathlibExtTest`,

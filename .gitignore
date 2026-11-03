@@ -1,5 +1,6 @@
 .lake/
 build/
+dist/
 *.olean
 *.ilean
 *.trace

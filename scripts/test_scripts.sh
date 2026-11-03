@@ -242,12 +242,25 @@ fi
 for module in \
   CSLibExt.Sentinel CSLibExtTest.Sentinel \
   MathlibExt.Sentinel MathlibExtTest.Sentinel WantedExt.Sentinel; do
-  grep -qx "import $module" "$FAKE_LEAN_INPUT" ||
+  grep -Fqx "import «${module//./».«}»" "$FAKE_LEAN_INPUT" ||
     fail "axiom input omitted $module"
 done
 if grep -q '^import v1\.' "$FAKE_LEAN_INPUT"; then
   fail "axiom input included archived v1 source"
 fi
+
+: >"$FAKE_LAKE_LOG"
+printf '%s\n' 'MathlibExt.Sentinel' >"$TMP_ROOT/selection.txt"
+if ! (cd "$TMP_ROOT" && PATH="$FAKE_BIN:$PATH" \
+  bash "$REPO_ROOT/scripts/check.sh" build --root repo --modules selection.txt) \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "relative standalone root/module paths failed"
+fi
+grep -qx 'build +MathlibExt.Sentinel' "$FAKE_LAKE_LOG" ||
+  fail "standalone scoped diagnostics built the wrong targets"
+grep -Fqx 'import MathlibExt.Sentinel' "$FAKE_LEAN_INPUT" ||
+  fail "standalone scoped axiom input omitted the selected module"
 
 if grep -q 'github\.event\.pull_request\.draft' \
   "$REPO_ROOT/.github/workflows/ci.yml"; then
@@ -294,5 +307,7 @@ grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
 
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
+
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_package_atlas.py -v
 
 echo "ok [scripts]: repository policy regression tests passed."
