@@ -1,41 +1,53 @@
 #!/usr/bin/env python3
-"""Week 2 CI: hypothesis-debt detector v0 (90-day plan #1-#7).
+"""Report line-leading theorem_wanted and def_wanted declarations.
 
-Scans Lean files for L1 markers: theorem_wanted / def_wanted /
-proof_wanted, and explicit 'hypothesis debt' / 'L1' annotations.
-Report only; CI gates on the report being reviewed, not on zero.
-Debt only decreases by proving the hypothesis, never by renaming.
-Usage: python3 scripts/check_hypothesis_debt.py <dir> [...]
+Comments, ordinary strings, and prose annotations are not debt. proof_wanted
+is not a supported declaration keyword. This inventories explicit deferred
+work only; it cannot detect removable hypotheses or prove debt has decreased.
+See source_diagnostics.py for lexical and command-recognition limits.
+
+Exit 1 for findings, 0 for none; --report-only reports findings with exit 0.
+Invalid/empty roots and scan errors always exit 2. No Lean is invoked.
 """
-import re, sys, os
 
-WANTED = re.compile(r'\b(theorem_wanted|def_wanted|proof_wanted)\b[ \t]+([A-Za-z0-9_.]+)')
-DEBT = re.compile(r'(?i)(hypothesis debt|L1 capstone|assumes?:?\s+[A-Z][A-Za-z ]{3,60})')
+import argparse
+import sys
+from pathlib import Path
+
+from source_diagnostics import WANTED_KINDS, ScanError, scan
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("usage: check_hypothesis_debt.py <dir>...")
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--report-only",
+        action="store_true",
+        help="report wanted declarations without failing; scan errors remain fatal",
+    )
+    parser.add_argument(
+        "--require-declarations",
+        action="store_true",
+        help="fail if no wanted declarations were recognized (CI)",
+    )
+    parser.add_argument("roots", nargs="+", type=Path)
+    args = parser.parse_args()
+    try:
+        file_count, declarations = scan(args.roots)
+    except (OSError, UnicodeError, ScanError) as exc:
+        print(f"SCAN ERROR: {exc}", file=sys.stderr)
         return 2
-    total = 0
-    for root in sys.argv[1:]:
-        for dp, _, fn in os.walk(root):
-            for f in fn:
-                if not f.endswith(".lean"):
-                    continue
-                p = os.path.join(dp, f)
-                try:
-                    txt = open(p, encoding="utf-8", errors="replace").read()
-                except Exception:
-                    continue
-                for m in WANTED.finditer(txt):
-                    print(f"DEBT {p}: {m.group(1)} {m.group(2)}")
-                    total += 1
-                for m in DEBT.finditer(txt):
-                    print(f"DEBT-MARKER {p}: {m.group(0).strip()[:100]}")
-                    total += 1
-    print(f"\nTotal debt items: {total}")
-    return 0
+    wanted = [decl for decl in declarations if decl.kind in WANTED_KINDS]
+    if args.require_declarations and not wanted:
+        print("SCAN ERROR: no recognized declarations of wanted work", file=sys.stderr)
+        return 2
+    print(
+        f"Scanned files: {file_count}; recognized declarations: {len(declarations)}; "
+        f"wanted declarations: {len(wanted)}"
+    )
+    for decl in wanted:
+        print(f"DEBT {decl.path}:{decl.line}: {decl.kind} {decl.name}")
+    print(f"Total debt items: {len(wanted)}")
+    return 1 if wanted and not args.report_only else 0
 
 
 if __name__ == "__main__":

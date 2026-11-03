@@ -1,122 +1,70 @@
 #!/usr/bin/env python3
-"""Week 2 CI: duplicate-definition check (90-day plan #1-#7).
+"""Report same-short-name definition candidates across all supplied roots.
 
-Rules: same short name + same normalized type in >=2 homes -> BLOCK
-(must alias). Same short name + DIFFERENT normalized type -> BLOCK with
-semantic-conflict label (must qualify/bridge, never silent-alias).
-Alias shims (abbrev X := Canonical) are not homes.
+Definitions in two or more distinct files are candidates even when their source
+signatures differ. Namespaces, binder renaming, inference, and bodies are not
+compared semantically. This neither proves duplication nor certifies uniqueness.
+Only syntactically bare `abbrev X := A.Name` aliases are excluded; unqualified,
+typed/applied or ambiguous aliases remain. See source_diagnostics.py for limits.
 
-LIMITATION (v0): groups by SHORT name, ignoring namespace, so it over-flags
-namespaced defs already distinct when fully qualified (e.g.
-BernoulliMixture.Params vs GaussianMixture.Params). Flags are CANDIDATES
-for human review, not proof of duplication.
-Usage: python3 scripts/check_duplicate_defs.py <dir> [...]
-Exit 1 if any block, else 0.
+Exit 1 for candidates, 0 for none; --report-only returns 0 for findings too.
+Input/scan errors always exit 2, including empty roots. No Lean is invoked.
 """
-import re, sys, os
+
+import argparse
+import sys
 from collections import defaultdict
+from pathlib import Path
 
-DECL = re.compile(
-    r'^[ \t]*(?:@\[[^\]\n]*\][ \t]*\n?[ \t]*)*'
-    r'(?:(?:private|protected|noncomputable|nonrec|partial|unsafe|public|meta)[ \t]+)*'
-    r'(def|abbrev|structure|class|inductive)[ \t]+([^\s:({\[]+)',
-    re.M)
-ALIAS = re.compile(r'^\s*abbrev\s+(\S+)\s*:?=[ \t]*([A-Za-z0-9_.]+)\s*$', re.M)
+from source_diagnostics import DEFINITION_KINDS, Declaration, ScanError, scan
 
 
-def strip_comments(s):
-    out, i, n, depth, in_str = [], 0, len(s), 0, False
-    while i < n:
-        c = s[i]
-        if depth:
-            if s.startswith("/-", i):
-                depth += 1
-                i += 2
-                continue
-            if s.startswith("-/", i):
-                depth -= 1
-                i += 2
-                continue
-            if c == "\n":
-                out.append("\n")
-            i += 1
-            continue
-        if in_str:
-            if c == "\\":
-                i += 2
-                continue
-            if c == '"':
-                in_str = False
-            i += 1
-            continue
-        if s.startswith("/-", i):
-            depth = 1
-            i += 2
-            continue
-        if s.startswith("--", i):
-            j = s.find("\n", i)
-            if j < 0:
-                break
-            i = j
-            continue
-        if c == '"':
-            in_str = True
-            i += 1
-            continue
-        out.append(c)
-        i += 1
-    return "".join(out)
-
-
-def norm_sig(code, m):
-    tail = code[m.end():m.end() + 400].split(":=")[0].split("where")[0]
-    return re.sub(r'\s+', ' ', tail).strip()[:200]
-
-
-def scan(root):
-    by_name = defaultdict(list)
-    for dp, _, fn in os.walk(root):
-        for f in fn:
-            if not f.endswith(".lean"):
-                continue
-            p = os.path.join(dp, f)
-            try:
-                raw = open(p, encoding="utf-8", errors="replace").read()
-            except Exception:
-                continue
-            code = strip_comments(raw)
-            for m in DECL.finditer(code):
-                kind, name = m.group(1), m.group(2).split(".")[-1]
-                if kind == "abbrev" and ALIAS.search(code[m.start():m.start() + 300]):
-                    continue
-                by_name[name].append((p, kind, norm_sig(code, m)))
-    return by_name
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("usage: check_duplicate_defs.py <dir>...")
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--report-only",
+        action="store_true",
+        help="report candidates without failing; scan errors remain fatal",
+    )
+    parser.add_argument(
+        "--require-declarations",
+        action="store_true",
+        help="fail if no definition declarations were recognized (CI)",
+    )
+    parser.add_argument("roots", nargs="+", type=Path)
+    args = parser.parse_args()
+    try:
+        file_count, declarations = scan(args.roots)
+    except (OSError, UnicodeError, ScanError) as exc:
+        print(f"SCAN ERROR: {exc}", file=sys.stderr)
         return 2
-    blocks = 0
-    for root in sys.argv[1:]:
-        for name, occ in sorted(scan(root).items()):
-            files = {p for p, _, _ in occ}
-            if len(files) < 2:
-                continue
-            sigs = {sig for _, _, sig in occ if sig}
-            if len(sigs) <= 1:
-                print(f"BLOCK duplicate: {name} — same signature "
-                      f"in {len(files)} files:")
-                blocks += 1
-            else:
-                print(f"BLOCK semantic-conflict: {name} — DIFFERENT "
-                      f"signatures in {len(files)} files "
-                      f"(qualify/bridge, never silent-alias):")
-                blocks += 1
-            for p, kind, sig in sorted(occ):
-                print(f"    {p} [{kind}] sig={sig!r}")
-    print(f"\n{'FAIL: %d block(s)' % blocks if blocks else 'PASS: no duplicate blocks'}")
-    return 1 if blocks else 0
+    definitions = [decl for decl in declarations if decl.kind in DEFINITION_KINDS]
+    if args.require_declarations and not definitions:
+        print("SCAN ERROR: no recognized declarations of definitions", file=sys.stderr)
+        return 2
+    by_name: dict[str, list[Declaration]] = defaultdict(list)
+    for decl in definitions:
+        if not decl.direct_alias:
+            by_name[decl.short_name].append(decl)
+    print(
+        f"Scanned files: {file_count}; definition declarations: {len(definitions)}; "
+        f"direct aliases excluded: {sum(decl.direct_alias for decl in definitions)}"
+    )
+    groups = 0
+    for name, occurrences in sorted(by_name.items()):
+        files = {decl.path for decl in occurrences}
+        if len(files) < 2:
+            continue
+        groups += 1
+        print(f"CANDIDATE {name}: same short name in {len(files)} files")
+        for decl in occurrences:
+            print(
+                f"  {decl.path}:{decl.line} [{decl.kind}] {decl.name} source signature={decl.signature!r}"
+            )
+    print(
+        f"Candidate groups: {groups} (source diagnostics only; no semantic comparison)"
+    )
+    return 1 if groups and not args.report_only else 0
 
 
 if __name__ == "__main__":
