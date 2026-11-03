@@ -45,10 +45,11 @@ jobs:
     # approval, empty when no review was posted. `review_id` carries the
     # created review's ID so the verdict job can attest the exact review
     # (empty when no review was posted). Only same-repo automatic runs
-    # are formal (`formal == 'true'`) and mint a verdict; fork-PR
-    # automatic runs and comment-triggered runs are advisory, posting a
-    # freeform comment with no verdict, so fork content can never mint
-    # an approval for the gate.
+    # are formal (`formal == 'true'`) and mint a verdict. Fork-PR
+    # automatic runs run the same structured review, but Submit posts
+    # them as an advisory comment with the verdict discarded; comment
+    # runs stay freeform. Fork content can never mint an approval for
+    # the gate.
     outputs:
       authorized: ${{ steps.check_auth.outputs.authorized }}
       formal: ${{ steps.check_auth.outputs.formal }}
@@ -752,9 +753,14 @@ jobs:
         timeout-minutes: 25
         env:
           CODEX_IMAGE: node:24-bookworm@sha256:64af3819f9275802414d7cdc38c27e9d82bd564dec4d4da87d008255d36c63b4
-          # Formal (structured verdict) only for same-repo automatic runs;
-          # fork-PR automatic runs and comment-triggered runs are advisory.
-          FORMAL_REVIEW: ${{ steps.check_auth.outputs.formal }}
+          # Structured review (schema + prompt) for every automatic run:
+          # same-repo via pull_request, fork via pull_request_target.
+          # Formality is separate and decided in Submit: only same-repo
+          # automatic runs mint a verdict. A freeform prompt here would
+          # leave an advisory fork run with no explicit review request
+          # (pull_request_target carries no comment body) and its
+          # REVIEWING.md verdict could leak into the posted comment.
+          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
           BASE_SHA: ${{ steps.target.outputs.base }}
           CONTEXT_FILE: ${{ steps.target.outputs.context }}
         run: |
@@ -812,7 +818,7 @@ jobs:
             --ephemeral
             -o /codex-io/codex-output.md
           )
-          if [[ "$FORMAL_REVIEW" == "true" ]]; then
+          if [[ "$AUTOMATIC_REVIEW" == "true" ]]; then
             cat > "$io/codex-review-schema.json" <<'EOF'
           {
             "type": "object",
@@ -862,7 +868,7 @@ jobs:
           output="$io/codex-output.md"
           : > "$output"
           io_mounts=(--mount "type=bind,source=$output,target=/codex-io/codex-output.md")
-          if [[ "$FORMAL_REVIEW" == "true" ]]; then
+          if [[ "$AUTOMATIC_REVIEW" == "true" ]]; then
             io_mounts+=(--mount "type=bind,source=$io/codex-review-schema.json,target=/codex-io/codex-review-schema.json,readonly")
           fi
 
@@ -980,6 +986,7 @@ jobs:
           CODEX_OUTPUT: ${{ runner.temp }}/codex-io/codex-output.md
           REVIEW_COMMIT: ${{ steps.target.outputs.ref }}
           FORMAL_REVIEW: ${{ steps.check_auth.outputs.formal }}
+          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         with:
           script: |
             const fs = require("fs");
@@ -989,26 +996,30 @@ jobs:
             if (!output) {
               throw new Error("Codex produced no response");
             }
-            const marker = "<!-- codex-automatic-review -->";
-            // Formal only for same-repo automatic runs (check_auth).
-            // Fork-PR automatic runs post as a freeform comment, exactly
-            // like comment-triggered runs, with no verdict.
-            const automatic = process.env.FORMAL_REVIEW === "true";
+            // Automatic mode and formality are separate. Every automatic
+            // run (same-repo and fork) produced structured JSON, so both
+            // are parsed the same way. Only formal (same-repo) runs post
+            // a review carrying the verdict; advisory fork runs post the
+            // same findings as an issue comment with the verdict
+            // discarded, so no verdict leaks into the posted text.
+            const formal = process.env.FORMAL_REVIEW === "true";
+            const automatic = process.env.AUTOMATIC_REVIEW === "true";
             let body = output;
             let suffix = "";
             let reviewEvent;
             let verdict = "";
             if (automatic) {
               const review = JSON.parse(output);
-              const reviewEvents = {
-                approved: "APPROVE",
-                "change requested": "REQUEST_CHANGES",
-              };
-              reviewEvent = reviewEvents[review.verdict];
-              if (!reviewEvent) {
+              if (!["approved", "change requested"].includes(review.verdict)) {
                 throw new Error(`Unsupported Codex verdict: ${review.verdict}`);
               }
-              verdict = review.verdict;
+              if (formal) {
+                reviewEvent =
+                  review.verdict === "approved"
+                    ? "APPROVE"
+                    : "REQUEST_CHANGES";
+                verdict = review.verdict;
+              }
               const severityOrder = { P0: 0, P1: 1, P2: 2, P3: 3 };
               const findings = review.findings.length
                 ? [...review.findings]
@@ -1024,17 +1035,32 @@ jobs:
                     )
                     .join("\n")
                 : "No actionable findings.";
-              body = [
-                marker,
-                "## Codex review",
-                "### Findings",
-                findings,
-                "### Summary",
-                review.summary,
-                "### Tests",
-                review.tests || "Not reported.",
-              ].join("\n\n");
-              suffix = `\n\nVerdict: ${review.verdict}`;
+              if (formal) {
+                body = [
+                  "<!-- codex-automatic-review -->",
+                  "## Codex review",
+                  "### Findings",
+                  findings,
+                  "### Summary",
+                  review.summary,
+                  "### Tests",
+                  review.tests || "Not reported.",
+                ].join("\n\n");
+                suffix = `\n\nVerdict: ${review.verdict}`;
+              } else {
+                body = [
+                  "<!-- codex-advisory-review -->",
+                  "## Codex review (advisory)",
+                  "This is an advisory review of a fork pull request. " +
+                    "It is not a formal approval, and it carries no verdict.",
+                  "### Findings",
+                  findings,
+                  "### Summary",
+                  review.summary,
+                  "### Tests",
+                  review.tests || "Not reported.",
+                ].join("\n\n");
+              }
             } else {
               body = `<!-- codex-response -->\n\n## Codex response\n\n${output}`;
             }
@@ -1052,7 +1078,7 @@ jobs:
             const issueNumber =
               context.payload.issue?.number ??
               context.payload.pull_request.number;
-            if (automatic) {
+            if (formal) {
               if (!process.env.REVIEW_COMMIT) {
                 throw new Error("Unable to determine reviewed commit");
               }
