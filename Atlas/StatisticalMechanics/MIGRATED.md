@@ -929,21 +929,13 @@ say exactly what is proved.
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
 modules (`.lean` files) and lines (`wc -l`) at the time of the second round. Each module is
-counted once, under the first category that applies in the order below. The tables below
-account for 655 first-round rows and 200 second-round rows (one source,
-`Code/Percolation/ClusterDualContour.lean`, is in both tables: removed in the first round, its
-definition ported in the second), 3 deleted modules, and the categories below: 655 + 200 - 1
-(duplicate) + 3 (deleted) + 6,113 (categories) = 6,970 distinct source modules accounted for,
-which is every source `.lean` file. The earlier draft claimed 238 second-round rows
-and 6,970 source modules in total; that did not reconcile with the tables. The 36-module gap
-is now reconciled by a per-directory residual audit (total files per directory minus `Check*`
-files, ported rows, and the category counts): the gap was 27 modules in `Probability`, 1 in
-`TwoDim`, and 8 in `OSSS`. The `Probability` physics row is the single file
-`MeasurableFKGClosure.lean` (362 lines), so the other 27 `Probability` files are unused; the
-`TwoDim` physics row is the four Zhang files (3,138 lines), so `NearHalfKKLWire.lean` is
-unused. The 8 `OSSS` modules are listed separately below as an unclassified remainder: their
-aggregate lines are determined (3,752), but the ledger's counts do not determine their
-physics/unused split, so no per-file assignment is guessed here.
+counted once, under the first category that applies in the order below. All 6,970 `.lean` files
+under `Code/` are accounted for: 655 first-round rows (654 map to a module; the
+`Code/Percolation/ClusterDualContour.lean` row records its removal), 235 second-round rows (199
+MathlibExt and 36 CSLibExt), 4 ported-then-deleted modules, and 6,077 modules in the categories
+below. `Code/Percolation/ClusterDualContour.lean` occurs in both tables (removed in the first
+round, its definition ported in the second): 655 + 235 - 1 + 4 + 6,077 = 6,970. The root import
+file `Atlas/StatisticalMechanics/Code.lean` is not a counted source.
 
 ### Physics remainder (636 modules, 299,048 lines)
 
@@ -977,7 +969,7 @@ elaborates. They hold no reusable mathematics, and no ported module imports them
 
 These are exploratory attempts on open or out-of-scope problems. No ported module and no module of
 the physics remainder imports them. The counts exclude `Check*` files and the 3 `FrontierA` modules
-that belong to the physics remainder.
+that belong to the physics remainder. The `Exact3D` row includes the root file `Code/Exact3D.lean`.
 
 | Directory | Modules | Lines |
 | --- | ---: | ---: |
@@ -997,7 +989,7 @@ physics remainder imports.
 | `Universality` | 425 | 303,540 |
 | `Walls` | 609 | 203,612 |
 
-### Unused modules in the physics areas (367 modules, 139,022 lines)
+### Unused modules in the physics areas (339 modules, 129,039 lines)
 
 These modules sit in physics directories but are imported by no ported module and no module of the
 physics remainder. They are used only by `Check*` files, frontier files or each other, or by nothing
@@ -1015,19 +1007,6 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
 | `RSW` | 3 | 973 |
 | `SLE` | 5 | 1,115 |
 | `Sharpness` | 4 | 1,301 |
-| `Probability` | 27 | 9,756 |
-| `TwoDim` | 1 | 227 |
-
-### Unclassified `OSSS` remainder (8 modules, 3,752 lines)
-
-`OSSS/` has 98 non-ported, non-`Check*` modules, while the physics remainder counts 81
-(40,089 lines) and the unused table above counts 9 (4,948 lines): 98 − 81 − 9 = 8 modules,
-with 48,789 − 40,089 − 4,948 = 3,752 lines, are in neither category. These 8 are accounted
-for in the totals above but their physics/unused split is not determined by the ledger's
-counts (several partitions of the `OSSS` candidates satisfy the module counts, the line
-totals, and import-closure), so this ledger does not guess a per-file assignment. Classify
-them by content (whether the `PhyslibExt` physics development needs them) in a follow-up;
-until then they are counted here, not in the physics remainder and not in the unused table.
 
 ### Ported, then deleted
 
@@ -1046,6 +1025,16 @@ until then they are counted here, not in the physics remainder and not in the un
   the same `cross`, `hmono`, `hdualHalf`, and `hdecayToZero` inputs, with sharpness taken from
   the proved `sharp_phase_transition` instead of as hypotheses. The duplicate proof, its smoke
   test, and the ledger row were removed; use `kesten_pc_le_half`.
+- `Atlas/StatisticalMechanics/Code/Lattice/WindingWitnessClose.lean` (second round). Its ported
+  module, `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingWitnessOfExterior`, stated
+  winding-witness results under an exterior-connectivity hypothesis with no validated instance:
+  the hypothesis fails for the unit cell (`exc_oldExteriorConnected_false`), and no test exercised
+  the conditional declarations. The module and its test were removed. Use
+  `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExteriorWindingWitness`, which states the
+  inclusion and winding-witness results under the corrected hypotheses
+  `exc_OffSupportReachesExterior` and `exc_SupportOddInK`; the unconditional unit-cell witness is
+  `wei_unitCell_windingWitness` in
+  `MathlibExt.Combinatorics.SimpleGraph.Lattice.WindingEarInduction`.
 - First round: no ported module was deleted as a whole. Two pairs of source files were merged into
   one module each, and both sources of each pair appear in the first-round table:
   - `Code/FK/EdgeConfigZ.lean` and `Code/Walls/fkc_rqbulkfraction.lean` →
