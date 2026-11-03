@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.Universality.RotatedDualCounterexamples
+import Mathlib.Tactic.FinCases
 
 /-!
 # Discrete Jordan separation for the left-reach set
