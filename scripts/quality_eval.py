@@ -26,8 +26,12 @@ import copy
 import fcntl
 import hashlib
 import importlib
+import importlib.abc
+import importlib.machinery
+import importlib.util
 import json
 import math
+import os
 from pathlib import Path, PurePosixPath
 import random
 import re
@@ -67,21 +71,70 @@ class Upstream:
 
 _UPSTREAM_CACHE: dict[str, Upstream] = {}
 _DECLARATION_INDEX_CACHE: dict[str, dict[str, str]] = {}
+UPSTREAM_MODULES = ("leanscan", "sample", "judge", "file_audits", "source_tools")
+INDEX_GENERATOR = "prepare: lake env lean scripts/quality_symbols.lean"
+
+
+def parse_declaration_index(data: bytes) -> dict[str, str]:
+    pairs = json.loads(data)
+    if not isinstance(pairs, list) or any(not isinstance(pair, list) or len(pair) != 2 or
+            not all(isinstance(value, str) and value for value in pair) for pair in pairs):
+        raise ValueError("Compiled declaration index must contain [name, module] string pairs")
+    index = dict(pairs)
+    if len(index) != len(pairs):
+        raise ValueError("Compiled declaration index contains duplicate names")
+    return index
 
 
 def declaration_index(run: Path) -> dict[str, str]:
-    key = str(run)
+    """Compiler provenance that preparation itself exported; any other index file is ignored."""
+    manifest = run / "manifest.json"
+    info = read_json(manifest).get("compiled_declaration_index") if manifest.is_file() else None
+    if not isinstance(info, dict) or info.get("generated_by") != INDEX_GENERATOR:
+        return {}
+    data = (run / "compiled-declarations.json").read_bytes()
+    if digest(data) != info.get("sha256"):
+        raise ValueError("Compiled declaration index changed")
+    key = f"{run}:{info['sha256']}"
     if key not in _DECLARATION_INDEX_CACHE:
-        path = run / "compiled-declarations.json"
-        pairs = json.loads(path.read_text()) if path.exists() else []
-        if not isinstance(pairs, list) or any(not isinstance(pair, list) or len(pair) != 2 or
-                not all(isinstance(value, str) and value for value in pair) for pair in pairs):
-            raise ValueError("Compiled declaration index must contain [name, module] string pairs")
-        index = dict(pairs)
-        if len(index) != len(pairs):
-            raise ValueError("Compiled declaration index contains duplicate names")
-        _DECLARATION_INDEX_CACHE[key] = index
+        _DECLARATION_INDEX_CACHE[key] = parse_declaration_index(data)
     return _DECLARATION_INDEX_CACHE[key]
+
+
+def run_lake(arguments: list[str], repo: Path, env: dict[str, str] | None = None) -> str:
+    completed = subprocess.run(["lake", *arguments], cwd=repo, env=env, capture_output=True, text=True)
+    if completed.returncode != 0:
+        raise ValueError(f"lake {' '.join(arguments)} failed: {completed.stderr.strip()[-2000:]}")
+    return completed.stdout
+
+
+def export_declaration_index(repo: Path, output: Path) -> Row:
+    """Export declaration/module pairs from the manifest-pinned, already built Mathlib.
+
+    The index is produced here, never accepted from the caller, so it cannot vouch
+    for declarations the pinned environment does not contain.
+    """
+    exporter = Path(__file__).with_name("quality_symbols.lean")
+    exporter_bytes = exporter.read_bytes()
+    toolchain = (repo / "lean-toolchain").read_text().strip()
+    version = toolchain.split(":")[-1].removeprefix("v")
+    try:
+        run_lake(["build", "--no-build", "Mathlib"], repo)
+    except ValueError as error:
+        raise ValueError(f"Pinned Mathlib build is missing or stale; build it first ({error})") from None
+    reported = run_lake(["env", "lean", "--version"], repo).strip()
+    if f"version {version}," not in reported:
+        raise ValueError(f"Lean {reported!r} does not match the pinned toolchain {toolchain}")
+    if output.exists():
+        raise ValueError("Compiled declaration index already exists")
+    run_lake(["env", "lean", str(exporter)], repo, env={**os.environ, "QUALITY_SYMBOLS_OUTPUT": str(output)})
+    if digest(exporter.read_bytes()) != digest(exporter_bytes):
+        raise ValueError("Declaration exporter changed while it ran")
+    data = output.read_bytes()
+    return {"generated_by": INDEX_GENERATOR, "sha256": digest(data), "entries": len(parse_declaration_index(data)),
+            "lean_toolchain": toolchain, "lean_version": reported, "exporter_sha256": digest(exporter_bytes),
+            "build_check": "lake build --no-build Mathlib",
+            "scope": "Compiler-exported declaration/module provenance at the pinned dependencies"}
 
 
 def digest(data: bytes) -> str:
@@ -106,6 +159,50 @@ def read_json(path: Path) -> Row:
     return value
 
 
+class PinnedSourceFinder(importlib.abc.MetaPathFinder, importlib.abc.Loader):
+    """Serve the suite's top-level modules from the pinned commit's Git blobs.
+
+    Nothing is imported from the checkout's directory, so untracked or ignored
+    modules, packages and bytecode (``__pycache__``) there can never execute.
+    """
+
+    def __init__(self, root: Path, sources: dict[str, bytes]) -> None:
+        self.root = root
+        self.sources = sources
+
+    def find_spec(self, name: str, path: Any = None, target: Any = None) -> importlib.machinery.ModuleSpec | None:
+        if path is not None or name not in self.sources:
+            return None
+        spec = importlib.util.spec_from_loader(name, self, origin=str(self.root / "scripts" / f"{name}.py"))
+        assert spec is not None
+        spec.has_location = True
+        return spec
+
+    def create_module(self, spec: importlib.machinery.ModuleSpec) -> None:
+        return None
+
+    def exec_module(self, module: ModuleType) -> None:
+        name = module.__spec__.name
+        exec(compile(self.sources[name], str(self.root / "scripts" / f"{name}.py"), "exec", dont_inherit=True),
+             module.__dict__)
+
+
+def pinned_sources(path: Path) -> dict[str, bytes]:
+    """Top-level Python modules under scripts/ at the pinned commit, read from Git objects."""
+    def command(*arguments: str) -> bytes:
+        return subprocess.check_output(["git", "--no-replace-objects", "-C", str(path), *arguments])
+    sources: dict[str, bytes] = {}
+    for entry in command("ls-tree", "-z", UPSTREAM_COMMIT, "scripts/").split(b"\0"):
+        if not entry:
+            continue
+        metadata, name = entry.decode().split("\t", 1)
+        mode, kind, objectid = metadata.split()
+        module = PurePosixPath(name).name.removesuffix(".py")
+        if kind == "blob" and mode in {"100644", "100755"} and name.endswith(".py") and module.isidentifier():
+            sources[module] = command("cat-file", "blob", objectid)
+    return sources
+
+
 def load_upstream(path: Path) -> Upstream:
     path = path.resolve()
     if git(path, "rev-parse", "HEAD") != UPSTREAM_COMMIT:
@@ -115,12 +212,20 @@ def load_upstream(path: Path) -> Upstream:
     key = str(path)
     if key in _UPSTREAM_CACHE:
         return _UPSTREAM_CACHE[key]
-    sys.path.insert(0, str(path / "scripts"))
-    names = ("leanscan", "sample", "judge", "file_audits", "source_tools")
-    modules = [importlib.import_module(name) for name in names]
-    for module in modules:
-        if Path(module.__file__).resolve().parent != path / "scripts":
-            raise ValueError("An unrelated Python module shadows the official suite")
+    sources = pinned_sources(path)
+    if any(name not in sources for name in UPSTREAM_MODULES):
+        raise ValueError("The pinned official suite lacks an expected module")
+    def pinned_here(module: ModuleType | None) -> bool:
+        loader = getattr(getattr(module, "__spec__", None), "loader", None)
+        return isinstance(loader, PinnedSourceFinder) and loader.root == path
+    if any(name in sys.modules and not pinned_here(sys.modules[name]) for name in sources):
+        raise ValueError("An unrelated Python module shadows the official suite")
+    sys.meta_path[:] = [finder for finder in sys.meta_path
+                        if not (isinstance(finder, PinnedSourceFinder) and finder.root == path)]
+    sys.meta_path.insert(0, PinnedSourceFinder(path, sources))
+    modules = [importlib.import_module(name) for name in UPSTREAM_MODULES]
+    if not all(pinned_here(module) for module in modules):
+        raise ValueError("An unrelated Python module shadows the official suite")
     result = Upstream(*modules, theorem_validator=modules[2].validate_verdict)
     _UPSTREAM_CACHE[key] = result
     return result
@@ -404,17 +509,9 @@ def prepare(args: argparse.Namespace) -> None:
         for name, data in artifacts.items():
             (destination / name).write_bytes(data)
     compiled_index_info = None
-    if getattr(args, "declaration_index", None) is not None:
-        data = args.declaration_index.read_bytes()
-        (run / "compiled-declarations.json").write_bytes(data)
-        index = declaration_index(run)
-        compiled_index_info = {"sha256": digest(data), "entries": len(index),
-                               "mathlib_commit": sources["mathlib"]["commit"],
-                               "lean_toolchain": (repo / "lean-toolchain").read_text().strip(),
-                               "scope": "Compiler-exported declaration/module provenance at the pinned dependencies"}
-        exporter = Path(__file__).with_name("quality_symbols.lean")
-        if exporter.is_file():
-            compiled_index_info["exporter_sha256"] = digest(exporter.read_bytes())
+    if getattr(args, "compile_declaration_index", False):
+        compiled_index_info = export_declaration_index(repo, run / "compiled-declarations.json")
+        compiled_index_info["mathlib_commit"] = sources["mathlib"]["commit"]
     views = build_views(run, sources)
     ensure_runner_unchanged()
     (run / "runner").mkdir()
@@ -636,6 +733,11 @@ def validate_saved(run: Path, indicator: str, label: str, row: Row, upstream: Up
     transcript = result_path(run, indicator, label, row).with_suffix(".transcript.jsonl")
     if result.get("trace_sha256") != digest(transcript.read_bytes()):
         raise ValueError(f"Result trace hash mismatch: {row['id']}")
+    for item in result.get("scope_rejected_attempts", []):
+        for name, expected in item["files"].items():
+            archived = transcript.with_name(name)
+            if PurePosixPath(name).name != name or not archived.is_file() or digest(archived.read_bytes()) != expected:
+                raise ValueError(f"Scope-rejected attempt evidence changed: {row['id']}")
     origin = Path(result["source_run_dir"])
     if not origin.is_absolute():
         raise ValueError("Result source-root provenance must be absolute")
@@ -741,36 +843,94 @@ def review_task(run: Path, label: str, task: tuple[str, Row], upstream: Upstream
 
 
 def attempt_diagnostics(destination: Path, result: Row) -> Row:
+    """Diagnose every attempt, including outer attempts discarded for denied source access."""
     positive = {"unnecessary_hypothesis_found", "duplicate", "special_case", "findings_found"}
+    rejected_outer = result.get("scope_rejected_attempts", [])
     diagnostics: Row = {"validation_rejections": 0, "rejected_positives": 0, "scope_rejections": 0,
                         "missing_attempt_transcripts": 0, "failed_cli_attempts": 0,
+                        "outer_scope_retries": len(rejected_outer), "total_attempts": 0,
                         "first_raw_verdict": None}
-    for attempt in range(1, result.get("attempts", 1) + 1):
-        path = destination.with_name(f"{destination.stem}.attempt-{attempt}.transcript.jsonl")
-        if not path.exists():
-            diagnostics["missing_attempt_transcripts"] += 1
-            continue
-        events = [json.loads(line) for line in path.read_text().splitlines() if line.strip().startswith("{")]
-        raw = next((event for event in reversed(events) if event.get("type") == "result"), {})
-        if attempt == 1:
-            structured = raw.get("structured_output")
-            diagnostics["first_raw_verdict"] = structured.get("verdict") if isinstance(structured, dict) else None
-        diagnostics["scope_rejections"] += bool(raw.get("permission_denials"))
-        diagnostics["failed_cli_attempts"] += bool(raw.get("is_error")) or not bool(raw)
+    groups = [(f"{destination.stem}.scope-rejected-{item['outer_attempt']}", item.get("attempts", 1), True)
+              for item in rejected_outer] + [(destination.stem, result.get("attempts", 1), False)]
+    for prefix, count, scope_rejected in groups:
+        group_scope = 0
+        for attempt in range(1, count + 1):
+            first = diagnostics["total_attempts"] == 0
+            diagnostics["total_attempts"] += 1
+            path = destination.with_name(f"{prefix}.attempt-{attempt}.transcript.jsonl")
+            if not path.exists():
+                diagnostics["missing_attempt_transcripts"] += 1
+                continue
+            events = [json.loads(line) for line in path.read_text().splitlines() if line.strip().startswith("{")]
+            raw = next((event for event in reversed(events) if event.get("type") == "result"), {})
+            if first:
+                structured = raw.get("structured_output")
+                diagnostics["first_raw_verdict"] = structured.get("verdict") if isinstance(structured, dict) else None
+            group_scope += bool(raw.get("permission_denials"))
+            diagnostics["failed_cli_attempts"] += bool(raw.get("is_error")) or not bool(raw)
+        # The archived raw response proves each discarded outer attempt was denied.
+        diagnostics["scope_rejections"] += max(group_scope, 1) if scope_rejected else group_scope
     rejections = destination.with_suffix(".validation-rejections.jsonl")
     if rejections.exists():
         rejected = [json.loads(line) for line in rejections.read_text().splitlines() if line.strip()]
         diagnostics["validation_rejections"] = len(rejected)
         diagnostics["rejected_positives"] = sum(item["verdict"].get("verdict") in positive for item in rejected)
     diagnostics["rejected_positive_then_negative"] = diagnostics["rejected_positives"] > 0 and result["verdict"] not in positive
-    diagnostics["accepted_on_first_attempt"] = result.get("attempts", 1) == 1 and not any(
+    diagnostics["accepted_on_first_attempt"] = diagnostics["total_attempts"] == 1 and not any(
         diagnostics[key] for key in ("validation_rejections", "scope_rejections", "failed_cli_attempts"))
     return diagnostics
+
+
+def merge_usage(first: Any, second: Any) -> Any:
+    """Sum numeric usage counters; per-model limits are not additive and keep one value."""
+    if isinstance(first, dict) and isinstance(second, dict):
+        merged = dict(first)
+        for key, value in second.items():
+            merged[key] = (value if key in {"contextWindow", "maxOutputTokens"} or key not in merged
+                           else merge_usage(merged[key], value))
+        return merged
+    if isinstance(first, (int, float)) and isinstance(second, (int, float)) and not isinstance(first, bool):
+        return first + second
+    return second
+
+
+def result_cost(result: Row) -> float:
+    """API-equivalent cost of the accepted attempt plus every discarded outer attempt."""
+    return (result.get("cost_usd") or 0.0) + (result.get("scope_rejected_cost_usd") or 0.0)
+
+
+def archive_scope_rejected(destination: Path, result: Row, raw: Row) -> Row:
+    """Move a denied outer attempt's evidence to unique names before the next fresh attempt."""
+    stem = destination.stem
+    outer = 0  # Unique across resumed runs too, so earlier evidence is never overwritten.
+    while destination.with_name(f"{stem}.scope-rejected-{outer}.raw.json").exists():
+        outer += 1
+    prefix = f"{stem}.scope-rejected-{outer}"
+    raw_path = destination.with_name(f"{prefix}.raw.json")
+    write_json(raw_path, raw)
+    moves = [(destination.with_suffix(".transcript.jsonl"), f"{prefix}.transcript.jsonl")]
+    moves += [(path, f"{prefix}.{path.name[len(stem) + 1:]}")
+              for path in sorted(destination.parent.glob(f"{stem}.attempt-*.transcript.jsonl"))]
+    files = {raw_path.name: digest(raw_path.read_bytes())}
+    for source, name in moves:
+        if source.exists():
+            source.replace(destination.with_name(name))
+            files[name] = digest(destination.with_name(name).read_bytes())
+    cost = result.get("cost_usd")
+    return {"outer_attempt": outer, "attempts": result.get("attempts", 1),
+            "verdict": result.get("verdict"), "permission_denials": len(raw["permission_denials"]),
+            "cost_usd": cost if cost is not None else raw.get("total_cost_usd"),
+            "usage": result.get("usage"), "resolved_model_usage": raw.get("modelUsage", {}), "files": files}
 
 
 def review_in_context(run: Path, label: str, task: tuple[str, Row], upstream: Upstream, args: SimpleNamespace) -> Row:
     indicator, row = task
     destination = result_path(run, indicator, label, row)
+    failures = destination.with_name(f"{row['id']}.scope-rejected-failures.jsonl")
+    # Denied attempts from earlier, failed runs of this label still count when resumed.
+    rejected: list[Row] = [item for line in (failures.read_text().splitlines() if failures.exists() else [])
+                           if line.strip() for item in json.loads(line)["scope_rejected_attempts"]]
+    earlier = len(rejected)
     for attempt in range(args.retries + 1):
         if indicator == "repeated-proof-machinery":
             result = upstream.files.review(row, indicator, run, label, args)
@@ -779,9 +939,11 @@ def review_in_context(run: Path, label: str, task: tuple[str, Row], upstream: Up
                                             destination.parent, args)
         raw = read_json(destination.with_suffix(".raw.json"))
         if raw.get("permission_denials"):
-            write_json(destination.with_name(f"{row['id']}.scope-rejected-{attempt}.raw.json"), raw)
+            rejected.append(archive_scope_rejected(destination, result, raw))
             destination.unlink()
             if attempt == args.retries:
+                with failures.open("a") as log:
+                    log.write(json.dumps({"scope_rejected_attempts": rejected[earlier:]}) + "\n")
                 raise ValueError("Judge source access was denied; discard the verdict")
             continue
         cwd, extras = upstream.judge.judge_dirs(row)
@@ -793,6 +955,12 @@ def review_in_context(run: Path, label: str, task: tuple[str, Row], upstream: Up
         result["source_sha256"] = row["source_sha256"]
         result["source_run_dir"] = str(run)
         result["resolved_model_usage"] = raw.get("modelUsage", {})
+        result["scope_rejected_attempts"] = rejected
+        result["scope_rejected_cost_usd"] = sum(item["cost_usd"] or 0.0 for item in rejected)
+        total_usage = result["resolved_model_usage"]
+        for item in rejected:
+            total_usage = merge_usage(total_usage, item["resolved_model_usage"])
+        result["all_attempts_model_usage"] = total_usage
         result["judge_protocol_sha256"] = args.protocol_sha256
         result["attempt_diagnostics"] = attempt_diagnostics(destination, result)
         write_json(destination, result)
@@ -901,7 +1069,8 @@ def summarize(expected: list[Row], results: dict[str, Row], indicator: str) -> R
     diagnostics = [result.get("attempt_diagnostics", {}) for result in reviewed]
     attempts = {key: sum(item.get(key, 0) for item in diagnostics) for key in (
         "accepted_on_first_attempt", "validation_rejections", "rejected_positives",
-        "rejected_positive_then_negative", "scope_rejections", "failed_cli_attempts", "missing_attempt_transcripts")}
+        "rejected_positive_then_negative", "scope_rejections", "failed_cli_attempts", "missing_attempt_transcripts",
+        "outer_scope_retries", "total_attempts")}
     attempts["first_raw_flags"] = sum(item.get("first_raw_verdict") in positive for item in diagnostics)
     cell: Row = {"sampled": len(expected), "judged": len(reviewed), "flagged": flagged,
                  "missing": missing, "partial": partial, "full_coverage": not partial,
@@ -964,7 +1133,7 @@ def report(args: argparse.Namespace) -> None:
                 if path.exists():
                     result = validate_saved(run, indicator, args.label, row, upstream)
                     results[row["id"]] = result
-                    cost += result.get("cost_usd") or 0.0
+                    cost += result_cost(result)
                     if result["verdict"] not in {"none_found", "not_applicable"}:
                         findings.append({"indicator": indicator, "target": row, "result": result})
             key = f"{indicator}/{root}/{visibility}"
@@ -1022,7 +1191,8 @@ def report(args: argparse.Namespace) -> None:
         row, result = finding["target"], finding["result"]
         lines += [f"### {finding['indicator']}: [{row['name']}]({row['url']})", "", "```json",
                   json.dumps({key: value for key, value in result.items() if key not in {
-                      "usage", "resolved_model_usage", "cost_usd", "duration_ms"}}, ensure_ascii=False, indent=2), "```", ""]
+                      "usage", "resolved_model_usage", "cost_usd", "duration_ms", "scope_rejected_attempts",
+                      "scope_rejected_cost_usd", "all_attempts_model_usage"}}, ensure_ascii=False, indent=2), "```", ""]
     (output / "report.md").write_text("\n".join(lines), encoding="utf-8")
     print(json.dumps({"report": str(output / "report.md"), "complete": summary["complete"], "cells": summary["cells"]}, indent=2))
     if args.require_complete and not summary["complete"]:
@@ -1036,7 +1206,8 @@ def main() -> None:
     prepare_parser.add_argument("--repo", type=Path, default=Path.cwd())
     prepare_parser.add_argument("--upstream", type=Path, required=True)
     prepare_parser.add_argument("--lean-core-repo", type=Path)
-    prepare_parser.add_argument("--declaration-index", type=Path)
+    prepare_parser.add_argument("--compile-declaration-index", action="store_true",
+                                help="Export compiler provenance from the built, pinned Mathlib")
     prepare_parser.add_argument("--private-theorems", type=int, default=0)
     prepare_parser.add_argument("--theorems", type=int, default=300)
     prepare_parser.add_argument("--files", type=int, default=100)

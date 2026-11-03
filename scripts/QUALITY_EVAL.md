@@ -10,6 +10,7 @@
 The official scanner, sampling algorithms, prompts, schemas, file-evidence validator and read-only Claude runner are imported from an **external pinned checkout** of
 [lean-quality-indicators](https://github.com/RemyDegenne/lean-quality-indicators), at
 `0f3f1778e65c3118ffb9bf4644e55b2b406abede`. The upstream implementation is not vendored into Atlas.
+Its Python modules are compiled from that commit's Git objects, never imported from the checkout directory, so local bytecode and untracked modules there cannot run.
 
 ## Scope and interpretation
 
@@ -47,14 +48,11 @@ git clone https://github.com/RemyDegenne/lean-quality-indicators ../lean-quality
 git -C ../lean-quality-indicators checkout 0f3f1778e65c3118ffb9bf4644e55b2b406abede
 git clone --depth 1 --branch v4.35.0 https://github.com/leanprover/lean4 ../lean-core
 
-# Optional compiler provenance for generated upstream names. Use only a built
-# or verified cached Mathlib at the manifest pins. It does not judge theorems.
-QUALITY_SYMBOLS_OUTPUT=/absolute/path/symbols.json \
-  lake env lean scripts/quality_symbols.lean
-
+# --compile-declaration-index needs Mathlib built at the manifest pins
+# (for example `lake exe cache get`); it does not judge theorems.
 python3 scripts/quality_eval.py prepare \
   --upstream ../lean-quality-indicators --lean-core-repo ../lean-core \
-  --declaration-index /absolute/path/symbols.json \
+  --compile-declaration-index \
   --run-dir ../atlas-quality-run --theorems 300 --files 100 \
   --private-theorems 100 --seed 0
 
@@ -75,6 +73,7 @@ python3 scripts/quality_eval.py report \
 ```
 
 The compiler index is optional. Without it, citations must match a declaration found by the source scanner; the index additionally recognizes generated names by their originating module.
+Preparation exports the index itself with `scripts/quality_symbols.lean`, after `lake build --no-build Mathlib` confirms the pinned build is current and `lake env lean --version` matches `lean-toolchain`. A caller-supplied or later-added index file is ignored.
 Supply Lean core sources for a complete reference view. If omitted, their absence is explicit in the report.
 
 Keep runs outside the checkout. A new preparation requires a new directory.
@@ -87,6 +86,7 @@ Recorded trace and evidence paths are rebased without changing stored verdicts.
 Defaults: ten minutes and two API-equivalent dollars per attempt, with one retry.
 A failed or invalid judgment stops new admissions and exits nonzero. There is no model fallback.
 Rejected source-access attempts never count as successful judgments; bounded fresh retries use the same permitted roots, not wider access.
+Each rejected attempt keeps its raw response and transcripts under `<id>.scope-rejected-<n>.*`; it counts in the retry diagnostics, and its cost counts in the report total.
 
 ## Evidence and isolation
 
@@ -100,7 +100,7 @@ The Mathlib control cannot read Atlas. Preparation and verification check that e
 Traces check actual tools, source paths, selection patterns (including absolute or `..` brace alternatives), model and CLI version.
 
 File findings must quote source text within their line ranges. Hypothesis findings must quote a binder from the claimed declaration/variable context.
-Duplicate findings must cite a real source declaration, or a compiler-indexed declaration whose module file exists in the permitted Mathlib, Batteries or Lean-core sources. Annotations after the name are ignored and Lean-core paths may omit `src/` (counted as `citation_normalized`); a real, nondeprecated declaration cited in the wrong module is accepted but counted as `citation_module_corrected`. Absolute citations outside the permitted sources are rejected and retried. Derivations must be at most two lines. These checks establish source binding, **not** that the proposed argument or replacement is mathematically valid.
+Duplicate findings must cite a real source declaration, or a declaration in the preparation-exported compiler index whose module file exists in the permitted Mathlib, Batteries or Lean-core sources. Annotations after the name are ignored and Lean-core paths may omit `src/` (counted as `citation_normalized`); a real, nondeprecated declaration cited in the wrong module is accepted but counted as `citation_module_corrected`. Absolute citations outside the permitted sources are rejected and retried. Derivations must be at most two lines. These checks establish source binding, **not** that the proposed argument or replacement is mathematically valid.
 Compilation and independent semantic review remain separate requirements before acting on an individual flag.
 
 Declared adaptations: pinned rather than newer-master Mathlib for hypotheses; instruction-isolation/exact-directory guidance on prompts; one combined per-library source root; at most two-line duplicate derivations; wrong-module citation correction; wanted-command boundaries; module-aware visibility; positive source-binding validation; optional private strata.

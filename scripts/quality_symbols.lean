@@ -10,8 +10,8 @@ import Lean
 
 /-! Declaration/module provenance for generated Mathlib declarations.
 
-Run after fetching/building the manifest-pinned dependencies:
-`QUALITY_SYMBOLS_OUTPUT=/absolute/path/symbols.json lake env lean scripts/quality_symbols.lean`.
+`scripts/quality_eval.py prepare --compile-declaration-index` runs this against the
+built, manifest-pinned dependencies with `QUALITY_SYMBOLS_OUTPUT` set to a new file.
 The output is an array of [declaration name, originating module] pairs.
 -/
 

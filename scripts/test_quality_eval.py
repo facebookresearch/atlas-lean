@@ -15,12 +15,18 @@
 from __future__ import annotations
 
 import argparse
+import importlib._bootstrap_external
+import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
+import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 import quality_eval as evaluation
 
@@ -204,6 +210,267 @@ class ArchiveTests(unittest.TestCase):
             evaluation.snapshot(self.repo, self.root / "snapshot")
 
 
+def git_fixture(path: Path, sources: dict[str, str]) -> str:
+    path.mkdir(parents=True, exist_ok=True)
+    for name, data in sources.items():
+        target = path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(data)
+    for arguments in (("init", "-q"), ("config", "user.email", "test@example.invalid"),
+                      ("config", "user.name", "Quality evaluation test"), ("add", "."),
+                      ("commit", "-qm", "fixture")):
+        subprocess.run(["git", "-C", str(path), *arguments], check=True, capture_output=True)
+    return evaluation.git(path, "rev-parse", "HEAD")
+
+
+class PinnedUpstreamLoadingTests(unittest.TestCase):
+    """Only the pinned commit's Git objects may execute, never local bytecode or untracked modules."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.upstream = self.root / "upstream"
+        self.marker = self.root / "executed"
+        sources = {f"scripts/{name}.py": f"ORIGIN = 'pinned'\n" for name in evaluation.UPSTREAM_MODULES}
+        sources["scripts/judge.py"] = ("import source_tools\nORIGIN = source_tools.ORIGIN\n"
+                                       "def validate_verdict(verdict, protocol):\n    return None\n")
+        sources["scripts/file_audits.py"] = "import judge\nORIGIN = judge.ORIGIN\n"
+        commit = git_fixture(self.upstream, sources)
+        names = set(evaluation.UPSTREAM_MODULES)
+        self.saved_modules = {name: module for name, module in sys.modules.items() if name in names}
+        for name in names:
+            sys.modules.pop(name, None)
+        self.saved_meta_path, self.saved_path = list(sys.meta_path), list(sys.path)
+        self.saved_cache = dict(evaluation._UPSTREAM_CACHE)
+        evaluation._UPSTREAM_CACHE.clear()
+        self.pin = mock.patch.object(evaluation, "UPSTREAM_COMMIT", commit)
+        self.pin.start()
+
+    def tearDown(self) -> None:
+        self.pin.stop()
+        for name in evaluation.UPSTREAM_MODULES:
+            sys.modules.pop(name, None)
+        sys.modules.update(self.saved_modules)
+        sys.meta_path[:], sys.path[:] = self.saved_meta_path, self.saved_path
+        evaluation._UPSTREAM_CACHE.clear()
+        evaluation._UPSTREAM_CACHE.update(self.saved_cache)
+        self.temporary.cleanup()
+
+    def malicious(self, name: str) -> str:
+        return (f"open({str(self.marker)!r}, 'w').write('executed')\nORIGIN = 'attacker'\n"
+                "def validate_verdict(verdict, protocol):\n    return None\n")
+
+    def test_timestamp_valid_untracked_bytecode_never_executes(self) -> None:
+        source = self.upstream / "scripts" / "judge.py"
+        stat = source.stat()
+        code = compile(self.malicious("judge"), str(source), "exec")
+        cached = Path(importlib.util.cache_from_source(str(source)))
+        cached.parent.mkdir()
+        cached.write_bytes(importlib._bootstrap_external._code_to_timestamp_pyc(code, stat.st_mtime, stat.st_size))
+        upstream = evaluation.load_upstream(self.upstream)
+        self.assertFalse(self.marker.exists())
+        self.assertEqual((upstream.judge.ORIGIN, upstream.files.ORIGIN), ("pinned", "pinned"))
+        self.assertEqual(Path(upstream.judge.__file__), source.resolve())
+
+    def test_untracked_shadowing_package_never_executes(self) -> None:
+        package = self.upstream / "scripts" / "sample" / "__init__.py"
+        package.parent.mkdir()
+        package.write_text(self.malicious("sample"))
+        try:
+            upstream = evaluation.load_upstream(self.upstream)
+        finally:  # A later rejection is too late once the package has run.
+            self.assertFalse(self.marker.exists())
+        self.assertEqual(upstream.sample.ORIGIN, "pinned")
+        self.assertNotIn(str(self.upstream / "scripts"), sys.path)
+
+    def test_hidden_working_tree_edit_never_executes(self) -> None:
+        source = self.upstream / "scripts" / "leanscan.py"
+        evaluation.git(self.upstream, "update-index", "--skip-worktree", "scripts/leanscan.py")
+        source.write_text(self.malicious("leanscan"))
+        upstream = evaluation.load_upstream(self.upstream)
+        self.assertFalse(self.marker.exists())
+        self.assertEqual(upstream.scan.ORIGIN, "pinned")
+
+    def test_preloaded_unrelated_module_is_rejected(self) -> None:
+        sys.modules["judge"] = SimpleNamespace(__spec__=None)
+        with self.assertRaisesRegex(ValueError, "shadows"):
+            evaluation.load_upstream(self.upstream)
+
+
+def fake_scanner() -> SimpleNamespace:
+    def scan(text: str, kinds: object = None, extra_other: object = None) -> tuple[list[object], list[object]]:
+        names = re.findall(r"(?m)^theorem (\S+)", text)
+        return [SimpleNamespace(full_name=name, deprecated=False) for name in names], []
+    return SimpleNamespace(scan=scan, DECL_KW=("theorem",))
+
+
+class DeclarationIndexTests(unittest.TestCase):
+    """Only an index preparation exported from the pinned build may vouch for generated names."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.run_dir = Path(self.temporary.name) / "run"
+        module = self.run_dir / "views/atlas/mathlib/Mathlib/Fixture.lean"
+        module.parent.mkdir(parents=True)
+        module.write_text("theorem mathlib_a : True := trivial\n")
+        (self.run_dir / "protocols/duplicates-mathlib-inclusive").mkdir(parents=True)
+        self.upstream = SimpleNamespace(theorem_validator=lambda verdict, protocol: None, scan=fake_scanner())
+        self.row = {"lib": "atlas", "name": "atlas_a"}
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def install(self, pairs: list[list[str]], info: dict[str, object] | None) -> None:
+        data = json.dumps(pairs).encode()
+        (self.run_dir / "compiled-declarations.json").write_bytes(data)
+        if info is not None:
+            info = {"sha256": evaluation.digest(data), "entries": len(pairs), **info}
+        evaluation.write_json(self.run_dir / "manifest.json", {"compiled_declaration_index": info})
+
+    def cite(self, name: str) -> evaluation.Row:
+        verdict = {"verdict": "duplicate", "mathlib_declaration": name, "file": "Mathlib/Fixture.lean",
+                   "derivation": f"by exact {name}", "proof_uses_it": False, "explanation": "Fixture."}
+        return evaluation.validate_theorem(verdict, "duplicates-mathlib-inclusive", self.upstream,
+                                           self.run_dir / "protocols/duplicates-mathlib-inclusive", self.row)
+
+    def test_supplied_index_cannot_fabricate_membership(self) -> None:
+        fabricated = [["fabricated_duplicate", "Mathlib.Fixture"]]
+        for info in (None, {"mathlib_commit": "pinned", "lean_toolchain": "leanprover/lean4:v4.35.0"}):
+            self.install(fabricated, info)
+            self.assertEqual(evaluation.declaration_index(self.run_dir), {})
+            with self.assertRaisesRegex(ValueError, "not a declaration"):
+                self.cite("fabricated_duplicate")
+
+    def test_prepared_index_validates_generated_name_and_detects_tampering(self) -> None:
+        self.install([["generated_name", "Mathlib.Fixture"]], {"generated_by": evaluation.INDEX_GENERATOR})
+        self.assertEqual(self.cite("generated_name"), {})
+        self.assertEqual(self.cite("mathlib_a"), {})
+        (self.run_dir / "compiled-declarations.json").write_text('[["other", "Mathlib.Fixture"]]')
+        with self.assertRaisesRegex(ValueError, "index changed"):
+            self.cite("generated_name")
+
+    def fake_lake(self, version: str = "4.35.0", stale: bool = False) -> object:
+        calls: list[list[str]] = []
+        def run(arguments: list[str], repo: Path, env: dict[str, str] | None = None) -> str:
+            calls.append(arguments)
+            if arguments[:2] == ["build", "--no-build"] and stale:
+                raise ValueError("lake build --no-build Mathlib failed: target is not up-to-date")
+            if arguments == ["env", "lean", "--version"]:
+                return f"Lean (version {version}, x86_64-unknown-linux-gnu, Release)\n"
+            if arguments[:2] == ["env", "lean"]:
+                assert env is not None
+                Path(env["QUALITY_SYMBOLS_OUTPUT"]).write_text('[["generated_name", "Mathlib.Fixture"]]')
+            return ""
+        run.calls = calls  # type: ignore[attr-defined]
+        return run
+
+    def test_preparation_exports_index_from_the_verified_build(self) -> None:
+        repo = Path(self.temporary.name) / "atlas"
+        repo.mkdir()
+        (repo / "lean-toolchain").write_text("leanprover/lean4:v4.35.0\n")
+        output = self.run_dir / "compiled-declarations.json"
+        fake = self.fake_lake()
+        with mock.patch.object(evaluation, "run_lake", fake):
+            info = evaluation.export_declaration_index(repo, output)
+        self.assertEqual(fake.calls[0], ["build", "--no-build", "Mathlib"])  # type: ignore[attr-defined]
+        self.assertEqual((info["generated_by"], info["entries"]), (evaluation.INDEX_GENERATOR, 1))
+        self.assertEqual(info["sha256"], evaluation.digest(output.read_bytes()))
+        output.unlink()
+        for fake, message in ((self.fake_lake(stale=True), "missing or stale"),
+                              (self.fake_lake(version="4.34.0"), "does not match")):
+            with mock.patch.object(evaluation, "run_lake", fake), self.assertRaisesRegex(ValueError, message):
+                evaluation.export_declaration_index(repo, output)
+            self.assertFalse(output.exists())
+
+    def test_cli_no_longer_accepts_a_supplied_index(self) -> None:
+        script = Path(evaluation.__file__)
+        completed = subprocess.run([sys.executable, str(script), "prepare", "--upstream", "x", "--run-dir",
+                                    str(self.run_dir / "new"), "--declaration-index", "symbols.json"],
+                                   capture_output=True, text=True)
+        self.assertEqual(completed.returncode, 2)
+        self.assertIn("--declaration-index", completed.stderr)
+
+
+class ScopeRetryTests(unittest.TestCase):
+    """Outer attempts discarded for denied source access stay in diagnostics, evidence and cost."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.run_dir = Path(self.temporary.name) / "run"
+        self.view = self.run_dir / "views/atlas"
+        self.cwd = self.view / "atlas"
+        self.cwd.mkdir(parents=True)
+        self.row = {"id": "atlas-theorem-0000", "lib": "atlas", "input_sha256": "input", "source_sha256": "source"}
+        self.indicator = "duplicates-mathlib-inclusive"
+        self.destination = evaluation.result_path(self.run_dir, self.indicator, "label", self.row)
+        self.destination.parent.mkdir(parents=True)
+        self.args = SimpleNamespace(retries=1, model="test", cli_version="1.0.0 (Claude Code)", protocol_sha256="p")
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def upstream(self, denied_calls: set[int]) -> SimpleNamespace:
+        calls: list[int] = []
+        def judge_one(row: evaluation.Row, run: Path, protocol: Path, results: Path, args: object) -> evaluation.Row:
+            call = len(calls)
+            calls.append(call)
+            denied = call in denied_calls
+            destination = results / f"{row['id']}.json"
+            raw = {"type": "result", "structured_output": {"verdict": "duplicate" if denied else "none_found"},
+                   "permission_denials": [{"tool_name": "Read"}] if denied else [], "call": call,
+                   "total_cost_usd": 0.25, "modelUsage": {"test": {"inputTokens": 10, "contextWindow": 200000}}}
+            initial = {"type": "system", "subtype": "init", "model": "test", "cwd": str(self.cwd),
+                       "claude_code_version": "1.0.0", "tools": ["Read", "Grep", "Glob", "StructuredOutput"],
+                       "additional_directories": [str(self.view)]}
+            trace = json.dumps(initial) + "\n" + json.dumps(raw) + "\n"
+            destination.with_name(f"{row['id']}.attempt-1.transcript.jsonl").write_text(trace)
+            destination.with_suffix(".transcript.jsonl").write_text(trace)
+            evaluation.write_json(destination.with_suffix(".raw.json"), raw)
+            result = {"id": row["id"], "lib": row["lib"], "verdict": raw["structured_output"]["verdict"],
+                      "attempts": 1, "cost_usd": 0.25, "usage": {"input_tokens": 10}}
+            evaluation.write_json(destination, result)
+            return result
+        directories = lambda row: (self.cwd, {"combined": self.view})
+        return SimpleNamespace(judge=SimpleNamespace(judge_one=judge_one, judge_dirs=directories))
+
+    def review(self, upstream: SimpleNamespace) -> evaluation.Row:
+        saved = lambda run, indicator, label, row, upstream: evaluation.read_json(self.destination)
+        with mock.patch.object(evaluation, "validate_saved", saved):
+            return evaluation.review_in_context(self.run_dir, "label", (self.indicator, self.row), upstream, self.args)
+
+    def test_rejected_outer_attempt_is_counted_archived_and_costed(self) -> None:
+        result = self.review(self.upstream({0}))
+        diagnostics = result["attempt_diagnostics"]
+        self.assertEqual((diagnostics["scope_rejections"], diagnostics["outer_scope_retries"],
+                          diagnostics["total_attempts"]), (1, 1, 2))
+        self.assertFalse(diagnostics["accepted_on_first_attempt"])
+        self.assertEqual(diagnostics["first_raw_verdict"], "duplicate")
+        stem = self.row["id"]
+        for name in (f"{stem}.scope-rejected-0.transcript.jsonl", f"{stem}.scope-rejected-0.attempt-1.transcript.jsonl"):
+            self.assertEqual(json.loads((self.destination.parent / name).read_text().splitlines()[1])["call"], 0)
+        accepted = self.destination.with_suffix(".transcript.jsonl").read_text().splitlines()[1]
+        self.assertEqual(json.loads(accepted)["call"], 1)
+        self.assertEqual(evaluation.result_cost(result), 0.5)
+        self.assertEqual(result["all_attempts_model_usage"]["test"], {"inputTokens": 20, "contextWindow": 200000})
+        cell = evaluation.summarize([self.row], {stem: result}, self.indicator)
+        self.assertEqual((cell["attempts"]["scope_rejections"], cell["attempts"]["accepted_on_first_attempt"]), (1, 0))
+
+    def test_exhausted_retries_keep_every_attempt(self) -> None:
+        with self.assertRaisesRegex(ValueError, "access was denied"):
+            self.review(self.upstream({0, 1}))
+        stem = self.row["id"]
+        calls = [json.loads((self.destination.parent / f"{stem}.scope-rejected-{index}.transcript.jsonl")
+                            .read_text().splitlines()[1])["call"] for index in (0, 1)]
+        self.assertEqual(calls, [0, 1])
+        failure = json.loads((self.destination.parent / f"{stem}.scope-rejected-failures.jsonl").read_text())
+        self.assertEqual([item["cost_usd"] for item in failure["scope_rejected_attempts"]], [0.25, 0.25])
+        self.assertFalse(self.destination.exists())
+        result = self.review(self.upstream({0}))  # A resumed run keeps and counts earlier evidence.
+        self.assertEqual([item["outer_attempt"] for item in result["scope_rejected_attempts"]], [0, 1, 2])
+        self.assertEqual(result["attempt_diagnostics"]["scope_rejections"], 3)
+        self.assertEqual(evaluation.result_cost(result), 1.0)
+
+
 @unittest.skipUnless(os.environ.get("QUALITY_INDICATORS_DIR"), "set QUALITY_INDICATORS_DIR for pinned-suite integration")
 class OfficialSuiteTests(unittest.TestCase):
     @classmethod
@@ -271,7 +538,7 @@ class OfficialSuiteTests(unittest.TestCase):
             subprocess.run(["git", "-C", str(path), *arguments], check=True, capture_output=True)
         return evaluation.git(path, "rev-parse", "HEAD")
 
-    def prepare_fixture(self) -> Path:
+    def prepare_fixture(self, index: list[list[str]] | None = None) -> Path:
         repo = self.root / "atlas"
         repo.mkdir()
         dependency = repo / ".lake" / "packages" / "mathlib"
@@ -294,8 +561,16 @@ class OfficialSuiteTests(unittest.TestCase):
                           ("commit", "-qm", "fixture")):
             subprocess.run(["git", "-C", str(repo), *arguments], check=True, capture_output=True)
         run = self.root / "evaluation"
-        evaluation.prepare(argparse.Namespace(repo=repo, run_dir=run, upstream=self.upstream_path,
-                                             lean_core_repo=None, theorems=2, files=1, seed=0))
+        def lake(arguments: list[str], repo: Path, env: dict[str, str] | None = None) -> str:
+            if arguments == ["env", "lean", "--version"]:
+                return "Lean (version 4.35.0, x86_64-unknown-linux-gnu, Release)\n"
+            if env is not None:
+                Path(env["QUALITY_SYMBOLS_OUTPUT"]).write_text(json.dumps(index))
+            return ""
+        with mock.patch.object(evaluation, "run_lake", lake):
+            evaluation.prepare(argparse.Namespace(repo=repo, run_dir=run, upstream=self.upstream_path,
+                                                 lean_core_repo=None, theorems=2, files=1, seed=0,
+                                                 compile_declaration_index=index is not None))
         return run
 
     def write_negative_results(self, run: Path, label: str) -> None:
@@ -403,14 +678,25 @@ class OfficialSuiteTests(unittest.TestCase):
         del self.upstream.files.context.sources
 
     def test_symbol_index_can_validate_a_generated_name(self) -> None:
-        run = self.prepare_fixture()
+        run = self.prepare_fixture([["generated_fixture", "Mathlib.Fixture"]])
+        evaluation.verify_run(run)
         row = next(row for row in evaluation.read_json(run / "theorems.json")["rows"] if row["lib"] == "atlas")
-        evaluation.write_json(run / "compiled-declarations.json", [["generated_fixture", "Mathlib.Fixture"]])
         verdict = {"verdict": "duplicate", "mathlib_declaration": "generated_fixture",
                    "file": "Mathlib/Fixture.lean", "derivation": "by exact generated_fixture",
                    "proof_uses_it": False, "explanation": "Generated declaration fixture."}
         evaluation.validate_theorem(verdict, "duplicates-mathlib-inclusive", self.upstream,
                                     run / "protocols/duplicates-mathlib-inclusive", row)
+
+    def test_hand_written_index_is_ignored(self) -> None:
+        run = self.prepare_fixture()
+        row = next(row for row in evaluation.read_json(run / "theorems.json")["rows"] if row["lib"] == "atlas")
+        evaluation.write_json(run / "compiled-declarations.json", [["generated_fixture", "Mathlib.Fixture"]])
+        verdict = {"verdict": "duplicate", "mathlib_declaration": "generated_fixture",
+                   "file": "Mathlib/Fixture.lean", "derivation": "by exact generated_fixture",
+                   "proof_uses_it": False, "explanation": "Fabricated index fixture."}
+        with self.assertRaisesRegex(ValueError, "not a declaration"):
+            evaluation.validate_theorem(verdict, "duplicates-mathlib-inclusive", self.upstream,
+                                        run / "protocols/duplicates-mathlib-inclusive", row)
 
     def test_fabricated_duplicate_is_rejected(self) -> None:
         run = self.prepare_fixture()
@@ -530,7 +816,7 @@ class OfficialSuiteTests(unittest.TestCase):
             evaluation.verify_run(run)
 
     def test_citation_normalization_is_recorded(self) -> None:
-        run = self.prepare_fixture()
+        run = self.prepare_fixture([["mathlib_a", "Mathlib.Fixture"], ["mathlib_old", "Mathlib.Fixture"]])
         row = next(row for row in evaluation.read_json(run / "theorems.json")["rows"] if row["lib"] == "atlas")
         protocol = run / "protocols/duplicates-mathlib-inclusive"
         verdict = {"verdict": "duplicate", "mathlib_declaration": "`mathlib_a` (theorem)",
@@ -541,8 +827,6 @@ class OfficialSuiteTests(unittest.TestCase):
                                                self.upstream, protocol, row)
         self.assertEqual(check(), {"citation_normalized": True})
         self.assertEqual(check(mathlib_declaration="mathlib_a"), {})
-        evaluation.write_json(run / "compiled-declarations.json", [
-            ["mathlib_a", "Mathlib.Fixture"], ["mathlib_old", "Mathlib.Fixture"]])
         self.assertEqual(check(mathlib_declaration="mathlib_a", file="Mathlib/Elsewhere.lean"),
                          {"citation_module_corrected": "Mathlib.Fixture"})
         with self.assertRaisesRegex(ValueError, "deprecated"):
