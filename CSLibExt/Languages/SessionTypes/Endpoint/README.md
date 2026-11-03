@@ -44,7 +44,9 @@ port of their full calculi.
   from a runtime calculus allocating two separately named endpoints `νab`.
 * Ownership is Mathlib `Finmap`, with unique polarized keys and disjoint
   parallel splitting. Unrestricted passive-name scope is the ambient binder
-  depth. Unrestricted shared-service typing is a separate unfinished extension.
+  depth. Shared services are restricted to declared constant names, with
+  separate guarded-replica Cong/Step preservation and qualified global runtime
+  progress from actual persistent service availability below.
 * Messages are unary existing π names. Protocol constructors distinguish
   passive-name data from a linear endpoint payload, whose role, rank and
   protocol accompany the capability in typing, not runtime syntax. Sending
@@ -63,7 +65,8 @@ port of their full calculi.
   observes type codes only; it is not another process execution calculus.
   Conversion-enabled typing, balance and payload checks are a separate layer;
   the original syntactic checks have not silently become semantic checks.
-  Actual recursive process preservation/progress is not claimed.
+  General guarded-runtime preservation and qualified global runtime progress
+  are proved separately below; the original syntactic judgements stay unchanged.
 * `GuardMin` orders every other active owned key after a guard using natural
   numbers. Repeated use of the **same endpoint key** is exempt; its **opposite
   role** is not exempt even when the physical name is identical. An active
@@ -73,9 +76,9 @@ port of their full calculi.
   for balanced interfaces are proved below.
 * The initial typing fragment excludes `sum` and `repl` by a proved invariant
   under every existing `Cong`/`Step` constructor. This exclusion does not
-  implement recursive processes. Recursive services must separately justify
-  actual `repl_unfold`, no captured linear capabilities and a syntactic offered
-  trigger invariant.
+  implement recursive processes. The separate runtime judgement justifies
+  actual guarded `repl_unfold`, no captured linear BODY capabilities,
+  Cong/Step preservation and a persistent syntactic offered-trigger invariant.
 
 ## Semantic regular-tree equality boundary
 
@@ -97,7 +100,7 @@ proved independently of the unchanged syntactic typing judgements. The
 `Conversion.HasType` layer below adds semantic payload comparison and
 full canonical congruence invariance and reduction preservation at initially
 semantically compatible interfaces. Ranked conversion progress
-is also proved; actual recursive process runtime remains unfinished.
+is also proved. The guarded runtime has its own qualified global theorem below.
 
 ## Conversion typing and safety
 
@@ -201,9 +204,176 @@ private scope/swap, disconnected completed frames, and a genuinely sequential
 central actor on rank2 then rank4. Cyclic waits and same-physical opposite-role
 self-waits are rejected by the unchanged static rank discipline.
 
-Actual recursive processes/shared services, recursive preservation and
-qualified recursive progress remain open. Regular type graphs do not make
-these finite π processes recursive, and no termination or fairness is claimed.
+The finite conversion judgements above do not themselves implement recursive
+processes. The guarded runtime below supplies actual replicas, its own general
+preservation and qualified global progress.
+
+## Actual recursive runtime and preservation
+
+Honda, Vasconcelos and Kubo Section 2.2 permits replication instead of explicit
+recursive definitions; Section 4.2 requires repeated actions within the SAME
+session. Section 5.2 separates shared names from linear channel ownership.
+The `Runtime` extension uses existing canonical Pi `repl`, `Cong.repl_unfold`
+and `Step`, not a new process AST or execution relation. Restricting shared
+triggers to declared constants is an explicit project restriction, not a port of
+all source request/accept, choice or recursive-definition forms. The same applies
+to unary physical-name messages and the fixed static `GuardMin` model.
+
+`SharedEnvironment` separates classical shared signatures from linear ownership.
+`SharedServices` has ten self-contained runtime rules: nil, four linear name/endpoint
+actions, shared invocation, accept, guarded replication, disjoint parallel and literal
+pair restriction. `HasType.of_finite` is an explicit seven-rule embedding of the
+unchanged `Conversion.RankedType`, not a constructor restricting continuations.
+Linear delegation can continue into runtime invocation.
+
+Accept and replication admit completed, scoped, separated AMBIENT annotations.
+Accept BODY ownership is exactly one fresh formal endpoint; replica BODY ownership
+is EXACTLY EMPTY. Completed ambient annotations do not become captured capabilities.
+This once-only `accept` is deliberately stricter than HVK's rule carrying linear
+Δ into the acceptor BODY: a thread holding active sessions cannot wait on accept.
+The restriction is unchanged; relaxing it would need a separate priority/progress
+argument rather than treating replication's empty BODY as sufficient.
+`ServiceTemplate` is syntax only: nil, declared shared-constant input (stopping at
+its guard), parallel, restriction and nested replication. Output, sum and variable
+input are not templates. Its all-sixteen-Cong equivalence is proved structurally,
+not by adding a closure/result constructor. Invocation erases the actual payload
+key, checks literal role/rank and semantic protocol, and compares shared priority
+against every active owned key without a same-payload exemption. `GuardMin` and
+static capability ranks are unchanged; no admission predicate stores execution.
+
+`RecursiveTrigger` implements two finite daemons: a sender receives one endpoint,
+sends passive data on it, then transfers it back to its trigger; the opposite-role
+receiver receives data and transfers its same endpoint back. The reachable
+one-node regular protocol is a send returning to itself; its dual receives and
+returns to itself. The session cap rank stays 7 and trigger priority is 0.
+Canonical binder substitution retains the endpoint through the receiver's inner
+passive input. Three ACTUAL Steps invoke both daemons, communicate on the session
+endpoint, and restore the identical pending process with both persistent daemons.
+No fresh finite session is allocated and no pre-generated process unrolling is used.
+
+`RecursiveOwnership` proves the workers, empty-BODY daemons and all three concrete
+phases typed at the same exact opposite-role interface. `RecursiveRepeatability`
+constructs a nonzero trace of exactly `3 * (m + 1)` canonical Steps for EVERY `m`.
+The SAME existential trace contains all per-round marked session-action endpoints,
+typing at every state and actual offers in every phase. Each third edge acts on
+the SAME endpoint; reachability is also proved by induction on Step count.
+
+General runtime proofs cover equivalent-context retyping with literal ranks,
+Γ-preserving owned-injective physical-name transport, canonical lift/swap and
+actual-value endpoint/passive substitution. Name maps fix declared constants and
+separately avoid mapping owned names to shared constants. Fresh Γ-extension retains
+exact old signatures and requires target separation of ALL owned names, including
+done entries; constructor induction establishes received/private/BODY freshness.
+Harmless passive data uses of new shared constants are admitted.
+
+Completed weakening retains ambient annotations without expanding BODY ownership.
+All-position physical-name absence derives completion and permits exact erasure.
+Typed templates derive ambient completion and may clear those annotations to the
+exact empty replica BODY. Bidirectional scope and all sixteen `HasType.cong_iff`
+cases preserve SAME Γ, n and Δ, including ordinary wrappers inside replication
+and both directions of `repl_unfold`. The general shared-head theorem substitutes
+the ACTUAL payload, reattaches completed receiver annotations and retains the
+UNCHANGED combined linear interface. That theorem concerns one communicating head.
+
+`RuntimeCommunication` separately reconstructs linear passive/endpoint heads and
+shared invoke/accept from the ten runtime rules. Actual separation excludes mixed
+shared/linear heads. It retains the actual transferred value and the receiver's
+independently advertised code rather than replacing either by a raw dual code.
+`RuntimeReduction.subject_reduction` takes runtime typing and **initial
+`Conversion.Compatible Δ`**, and covers ALL five canonical Step cases at the same
+Γ and ambient depth. The residual is runtime-typed and compatible at the exact
+unchanged interface or one existing faithful `Conversion.SemanticAdvance`.
+Private projection uses the actual chosen literal-dual pair; it adds no external
+lookup requirement for a private payload. The balanced corollary takes initial
+`Conversion.Balanced Δ` to derive compatibility. Empty-interface preservation
+and finite reachable safety retain exact ownership and a real semantic-advance
+trace; they are not progress or termination theorems.
+
+`Offered` reads exact signature lookup and actual persistent guarded-input leaves
+through parallel, restriction and nested replication; `Idle` is `ServiceTemplate`.
+Both have general Cong equivalence. `PersistentOffers.offered_step` proves that
+EVERY source persistent offer survives ANY canonical Step, for arbitrary π syntax
+without a typing premise. `Available` says only that all declared signatures have
+actual persistent offers in current syntax. Its finite-reduction invariance is
+proved, not stored as a step-closure or future-trace field. Consumed once-only
+accepts are not persistent offers; newly exposed continuation offers may appear.
+Actual offered waiting services have no Step and are NOT Cong nil.
+`RecursiveQuiescence` proves this with canonical input/output presence invariants.
+Conversely, declared but missing services admit typed stuck requests, even in an
+empty-interface private network. Availability must qualify runtime progress;
+finite completed-or-Step cannot be lifted blindly to the replica judgement.
+
+Consumers cover completed external/private annotations, guarded nil/private/nested
+replica wrappers, exact empty BODY inversion, scope/swap/unfold, and fresh shared
+extension positives with owned-alias negatives. BOTH roles perform actual linear
+delegation followed by recursive service invocation with unequal but equivalent
+payload codes, exact shared-head metadata and typed nested capture-safe substitution.
+Actual active capture/free captured subjects, unguarded output replicas and wrong
+payload role/rank/direction or equal service priority are rejected.
+
+`RecursiveReduction` derives all recursive phases from the initial pending typing
+using GENERAL runtime reachable preservation. Its counted trace retains ALL round
+markers in the SAME witness, with types and actual availability at every state.
+Consumers also use GENERAL preservation for both private orientations, completed
+frames, scope/swap/unfold, actual A/B-code delegation followed by shared invocation,
+and multiple nested persistent services taking real calls. Linear carrier advance
+and shared exact identity are distinguished by actual interface/code checks.
+
+## Qualified global runtime progress
+
+`Runtime.HasType.progress_balanced` takes exactly actual runtime typing at
+arbitrary ambient n/Γ/Δ/p, initial `Conversion.Balanced Δ`, and the existing
+`Available Γ p`. It concludes `Idle Γ p ∨ ∃ q, PiCalculus.Step p q`.
+`Idle` is actual `ServiceTemplate`, including nil, waiting offered services AND
+inert guarded templates such as `!nil` and `!(νnil)`; it is not `Cong p nil` or
+merely completion of the linear interface. The inert replicas are typed and have
+no Step, but canonical Cong does not identify them with nil.
+
+The qualification is deliberately strong: EVERY signature declared in Γ must
+have an actual persistent offer in current syntax, even if no current request
+uses it. Missing or merely once-only acceptors falsify this qualifier. It contains
+no typing, ready pair, Step, normal form or future-execution assumption. The
+finite-reduction invariant proves it continues to hold, rather than encoding that
+property into the predicate. This is a conservative service restriction, not a
+claim about all HVK processes or all otherwise deadlock-free programs.
+
+`RuntimeNormalization` derives the guarded frontier and outer restriction tower
+internally by induction on all ten runtime rules, retaining exact typing through
+all canonical Cong laws. Idle templates contain only completed ambient ownership.
+Actual requests are handled BEFORE active-key selection: a DONE payload and
+zero active keys still communicate with the actual persistent input exposed through
+nested templates. With no exposed request, minimum selection over ALL active owned
+keys exposes the semantic equal-rank opposite peer in a different guard leaf;
+actual direction matching constructs canonical communication. With neither requests
+nor active keys, typing derives a real idle template. Literal private pairs and
+constant-service availability are tracked through the internally derived ν tower.
+
+The empty-interface and reachable corollaries use general runtime preservation,
+semantic balance and the independently proved availability invariant. No recursive
+process is erased to finite typing. `RecursiveProgress.repeatable_trace_global`
+retains one SAME existential Fin trace, EVERY m and ALL round markers, with GENERAL
+progress at every state including the final state. BOTH roles and private sessions
+have the actual Step branch, excluding Idle by exposed-output syntax rather than
+by supplying a previously selected execution.
+
+Consumers also obtain the genuine offered Idle/not-nil/no-Step branch, typed
+balanced stuck requests outside Available, and a real DONE-payload request with
+priority999/rank7 and ZERO active keys. A single sequential actor owns two active
+channels, communicates at rank1 then rank3, and has a service-invocation continuation.
+Additional wrapped/nested/multiple services retain typing and availability through
+two actual calls; GENERAL progress covers all phases, completed private frames,
+actual scope extrusion and canonical private-pair swapping. Direct `Runtime.HasType`
+consumers reject the literal cyclic wait at arbitrary balanced interfaces, the
+actual closed cycle and private opposite-role self-wait. Separate runtime output
+inversion proves that transfer erases the only payload role, rejecting sender
+subject reuse and repeated transfer on a second live carrier in both payload
+orientations. These results do not infer runtime rejection from finite rejection.
+The duplicate-transfer fixture has an admitted rank0 guard before rank1/rank2
+resources; equal-rank rejection is not its proof. Role/rank/capture boundaries
+remain directly checked in the runtime admission consumers.
+
+Actual finite repeatability, preservation and one-step progress do not imply
+fair eventual responsiveness, scheduler independence or termination.
 
 ## Proof lineage and integration
 
@@ -293,7 +463,8 @@ same-name opposite-role self-wait.
 The current seven-rule `HasType` has full canonical `Cong` typing invariance
 (`HasType.cong_iff`), including exact bidirectional scope and nested restriction
 swap. Choice and replication are excluded by a property derived from this
-judgement; congruence for a future recursive-service judgement remains open.
+judgement. Runtime congruence is a separate ten-rule theorem, not an inherited
+finite-fragment result.
 Faithful head results record the actual send head, payload kind and continuation;
 dual subject advancement preserves the key domain, initial compatibility and
 initial balance.
@@ -303,8 +474,9 @@ residual with a compatible interface, unchanged or advanced by one actual
 `DualAdvance`, never an arbitrary map or a sequence of unobserved updates.
 The balanced corollary obtains compatibility from `Balanced Δ`; the
 empty-interface corollary uses `balanced_empty.compatible`. Internal communication may advance a
-ν-bound pair without changing the external interface. This is not subject
-reduction for a future recursive-service judgement.
+ν-bound pair without changing the external interface. The separate runtime
+preservation theorem reconstructs communicating heads from the ten-rule judgement;
+it does not erase recursive processes to this finite judgement.
 
 Compatibility is an additional interface hypothesis, not a consequence of
 plain or ranked typing. For example, singleton threads on opposite roles of
@@ -312,15 +484,11 @@ one free physical name can have matching send/receive heads at ranks one and
 two. They are plain- and ranked-typable and can communicate, but their combined
 interface is incompatible because dual capabilities must have equal ranks.
 
-The following are **not established by those prerequisites**:
-
-1. Subject reduction and congruence for an actual recursive-service extension
-   of the current finite-process judgement.
-2. Finite termination or fair eventual completion. The proved completion branch
-   is `Cong p nil`, with an actual Step otherwise; it is not a scheduler theorem.
-3. Guarded recursive process/shared-service representation in existing π
-   replication/trigger code, no captured linear resources, recursive subject
-   reduction and qualified recursive progress.
+The following extensions remain **unproved and outside the qualified model**:
+finite termination, fair eventual completion and a general per-action-priority or
+full HVK calculus. Recursive repeatability/preservation/progress are not scheduler
+theorems. Constants-only shared triggers, completed one-shot accept ambient
+ownership and fixed ranks are deliberate restrictions, not omitted hypotheses.
 
 No progress premise contains an enabled-edge witness or a preproved progress
 field. No fair eventual liveness or recursive termination is claimed. Logical
