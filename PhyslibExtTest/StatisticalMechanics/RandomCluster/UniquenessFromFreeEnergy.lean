@@ -41,6 +41,6 @@ example : measOfMass (fuc_freeMass 2 1 0) ≼ measOfMass (fuc_wiredMass 2 1 0) :
 -- Consequence for an increasing event.
 example : (measOfMass (fuc_freeMass 2 1 0)).real Set.univ
     ≤ (measOfMass (fuc_wiredMass 2 1 0)).real Set.univ :=
-  fuc_dominated 2 1 0 _ MeasurableSet.univ fun _ _ _ _ => trivial
+  (fuc_dominated 2 1 0).real _ MeasurableSet.univ fun _ _ _ _ => trivial
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.FKUniquenessSkeleton

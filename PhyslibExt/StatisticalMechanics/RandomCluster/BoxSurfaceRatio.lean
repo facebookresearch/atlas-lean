@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import PhyslibExt.CondensedMatter.IsingModel.InfiniteVolume
 public import PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteVolume

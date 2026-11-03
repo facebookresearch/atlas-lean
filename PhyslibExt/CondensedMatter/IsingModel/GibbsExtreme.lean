@@ -212,6 +212,9 @@ lemma fvMeasure_dominated (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
     (hβ : 0 ≤ β) (hh : 0 ≤ h) (η η' : ConfigSpace (Site d)) (hle : η ≤ η') :
     (fvMeasure η n B β h) ≼ (fvMeasure η' n B β h) := by
   intro A hA hAinc
+  apply (ENNReal.toReal_le_toReal (measure_ne_top (fvMeasure η n B β h) A)
+    (measure_ne_top (fvMeasure η' n B β h) A)).mp
+  change (fvMeasure η n B β h).real A ≤ (fvMeasure η' n B β h).real A
   rw [fvMeasure_real_eq η n B β h hA, fvMeasure_real_eq η' n B β h hA]
   set A₁ : Set (ConfigSpace {x // x ∈ box d n}) := (fun τ => glue η τ) ⁻¹' A with hA1
   set A₂ : Set (ConfigSpace {x // x ∈ box d n}) := (fun τ => glue η' τ) ⁻¹' A with hA2

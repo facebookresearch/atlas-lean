@@ -4,7 +4,7 @@
  [{"url": "https://github.com/leanprover-community/physlib",
    "type": "git",
    "subDir": null,
-   "scope": "leanprover-community",
+   "scope": "",
    "rev": "af04d60bcd7618af849ff511e0a19d77f709937e",
    "name": "Physlib",
    "manifestFile": "lake-manifest.json",

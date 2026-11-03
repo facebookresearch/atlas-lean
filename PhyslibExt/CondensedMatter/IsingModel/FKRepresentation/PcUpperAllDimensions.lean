@@ -94,7 +94,7 @@ lemma bernoulliReduced_boxBdryConnEvent_le_wiredFinite
       (IsingFK.boxOrigin d n)
   have hlow := bernoulli_reduced_le_fk (boxGraph d n) hp hp1
     (by norm_num : (1 : ℝ) ≤ 2)
-  have hlowA := hlow A MeasurableSet.of_discrete hAinc
+  have hlowA := hlow.real A MeasurableSet.of_discrete hAinc
   have hfreeWired := fkProb_le_wiredFkProb_increasing
     (boxGraph d n) (boxBoundary d n) hp hp1
       (by norm_num : (1 : ℝ) ≤ 2) hAinc
@@ -153,7 +153,7 @@ lemma bernoulliReduced_boxBdryConnEvent_le_wiredFinite_general
     connToBdryEvent_dependsOn (boxGraph d n) (boxBoundary d n)
       (IsingFK.boxOrigin d n)
   have hlow := bernoulli_reduced_le_fk (boxGraph d n) hp hp1 hq
-  have hlowA := hlow A MeasurableSet.of_discrete hAinc
+  have hlowA := hlow.real A MeasurableSet.of_discrete hAinc
   have hfreeWired := fkProb_le_wiredFkProb_increasing
     (boxGraph d n) (boxBoundary d n) hp hp1 hq hAinc
   have hbern :
