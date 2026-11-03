@@ -7,6 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import MathlibExt.Probability.Configuration.ConfigSpace
 
 /-!
