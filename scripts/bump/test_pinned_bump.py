@@ -367,6 +367,8 @@ class GuardTests(unittest.TestCase):
                    stale_pin_policy=False, migration="absent",
                    tamper_doc=False, stale_doc=False, missing_doc=False,
                    same_pin=False, add_dep=False, add_dep_no_config=False, config_tamper=None,
+                   changed_only_config=False, config_add_doc=False,
+                   config_add_dep_only=False, changed_guard_only=False,
                    manifest_rev_tamper=False):
         upstream = {}
         for dep in CONFIG["deps"]:
@@ -409,6 +411,12 @@ class GuardTests(unittest.TestCase):
                     "pattern": "(physlib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
                     "replacement": "{g1}{sha:Physlib}{g2}",
                 })
+            if config_add_doc:
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "Foo", "replacement": "Bar"})
+            if config_add_dep_only:
+                pr_config["deps"].append(
+                    {"name": "Physlib", "repo": "leanprover-community/physlib"})
             if config_tamper == "remove_dep":
                 pr_config["deps"] = [
                     d for d in pr_config["deps"] if d["name"] != "cslib"]
@@ -556,9 +564,15 @@ class GuardTests(unittest.TestCase):
                     readme += "\nUnrelated doc edit.\n"
                 (pr / "README.md").write_text(readme)
             changed = Path(tmp) / "changed.txt"
-            changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
-            if add_dep or config_tamper is not None:
-                changed_lines.append("scripts/bump/pinned_deps.json")
+            if changed_guard_only:
+                changed_lines = ["scripts/bump/pinned_bump.py"]
+            elif changed_only_config:
+                changed_lines = ["scripts/bump/pinned_deps.json"]
+            else:
+                changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
+                if add_dep or config_tamper is not None or config_add_doc \
+                        or config_add_dep_only:
+                    changed_lines.append("scripts/bump/pinned_deps.json")
             changed.write_text("\n".join(changed_lines) + "\n")
             import pinned_bump as module
             real_github = module.GitHub
@@ -652,6 +666,31 @@ class GuardTests(unittest.TestCase):
     def test_guard_fails_config_change_in_bump(self):
         # Config extension must land in a same-pin PR first, not in a bump.
         self.assertEqual(self._run_guard(add_dep=True), 1)
+
+    def test_guard_fails_config_only_repoint(self):
+        # Codex P1: a PR touching only pinned_deps.json must not sail
+        # through the old pin-files-only early return.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_tamper="repoint_dep"), 1)
+
+    def test_guard_passes_config_only_doc_addition(self):
+        # A config-only PR that only adds a doc replacement is a valid
+        # extension and must pass.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True, config_add_doc=True), 0)
+
+    def test_guard_passes_guard_code_only(self):
+        # Guard-code-only PRs get normal review; they must not fail
+        # their own guard run.
+        self.assertEqual(self._run_guard(changed_guard_only=True), 0)
+
+    def test_guard_fails_config_only_dep_without_lakefile(self):
+        # A config-only dependency addition without the lakefile half
+        # would drift the config from the lakefile, so it must fail.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_dep_only=True), 1)
 
     def test_replacement_sha_placeholder(self):
         out = pinned_bump.apply_replacements_to_text(

@@ -1838,25 +1838,68 @@ def cmd_guard(args: argparse.Namespace) -> int:
         line.strip() for line in Path(args.changed_files).read_text(encoding="utf-8").splitlines()
         if line.strip()
     }
-    if not (changed & set(PIN_FILES)):
-        print("guard: PASS - no pin files changed")
-        return 0
-    if changed & set(GUARD_FILES):
-        print("guard: FAIL - a pin-change PR must not touch the guard code or the bump workflow")
+    # Guard-code changes are fine on their own (the running script is base
+    # code, and the change itself gets normal review), but a PR that also
+    # changes pins or config must not touch guard code: the weakened code
+    # would become the base for the next validation.
+    if changed & set(GUARD_FILES) and (changed & (set(PIN_FILES) | {CONFIG_FILE})):
+        print("guard: FAIL - a pin/config-change PR must not touch the guard code or the bump workflow")
         return 1
-    try:
-        pr_config = load_config_file(pr / CONFIG_FILE)
-    except (OSError, ValueError, json.JSONDecodeError) as exc:
-        print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
-        return 1
+    # The config is validated even when no pin file changed: otherwise a
+    # PR touching only pinned_deps.json would sail through the old
+    # pin-files-only early return and could repoint/remove a dependency
+    # or weaken a replacement unexamined. A PR tree that predates the
+    # config file (and does not touch it) is treated as base-config.
     problems: list[str] = []
+    pr_config_path = pr / CONFIG_FILE
     if CONFIG_FILE in changed:
+        if not pr_config_path.is_file():
+            print(f"guard: FAIL - {CONFIG_FILE} was deleted")
+            return 1
+        try:
+            pr_config = load_config_file(pr_config_path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
+            return 1
         problems.extend(check_config_extension(base_config, pr_config))
-    elif pr_config != base_config:
-        problems.append(
-            f"{CONFIG_FILE} differs from base but is not in the changed-file list; "
-            "failing closed (enumeration inconsistency)"
-        )
+    elif pr_config_path.is_file():
+        try:
+            pr_config = load_config_file(pr_config_path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
+            return 1
+        if pr_config != base_config:
+            problems.append(
+                f"{CONFIG_FILE} differs from base but is not in the changed-file list; "
+                "failing closed (enumeration inconsistency)"
+            )
+    else:
+        pr_config = base_config
+    if not (changed & set(PIN_FILES)):
+        # Config-only (or unrelated) PR: still check the require-names
+        # invariant, so a config-only dependency addition without the
+        # lakefile half fails instead of silently drifting the config.
+        try:
+            base_req_names = {e.get("name") for e in lakefile_requires(base)}
+            pr_req_names = {e.get("name") for e in lakefile_requires(pr)}
+        except ValueError as exc:
+            print(f"guard: FAIL - {exc}")
+            return 1
+        if base_req_names != {d["name"] for d in base_config["deps"]}:
+            problems.append("base lakefile requires do not match base pinned_deps.json")
+        if pr_req_names != {d["name"] for d in pr_config["deps"]}:
+            problems.append(
+                "PR lakefile requires do not match PR pinned_deps.json; "
+                "extend the config in the same PR when adding a dependency"
+            )
+        if problems:
+            print("guard: FAIL")
+            for problem in problems:
+                print(f"  - {problem}")
+            return 1
+        print("guard: PASS - no pin files changed"
+              + ("; config extension validated" if CONFIG_FILE in changed else ""))
+        return 0
     # The lakefile's requires must match the config's deps at both ends.
     # This is what makes a same-pin dependency addition well-defined: the
     # PR must extend pinned_deps.json in the same PR that adds the require,
