@@ -376,6 +376,7 @@ class GuardTests(unittest.TestCase):
                    config_add_literal_tag_rule=False, config_literal_revert=False,
                    config_add_oneuse_version=False, config_add_oneuse_sha=False,
                    config_add_tailored_alternation=False, config_add_code_rewrite=False,
+                   config_add_permutation=False, config_add_class_encoded=False,
                    config_add_zero_width=False,
                    config_scramble_rule=False, config_noncanonical_group=False,
                    delete_assertion_and_rule=False,
@@ -442,6 +443,16 @@ class GuardTests(unittest.TestCase):
                 pr_config["doc_replacements"].append(
                     {"path": "README.md", "pattern": "(?<=Lean-v[0-9])",
                      "replacement": "0"})
+            if config_add_permutation:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md",
+                     "pattern": "v([0-9]+)\\.([0-9]+)\\.([0-9]+)",
+                     "replacement": "v{g3}.{g2}.{g1}"})
+            if config_add_class_encoded:
+                pr_config["doc_replacements"].append(
+                    {"path": "FRESH.md",
+                     "pattern": "(?:v[04]\\.[03][05]\\.[09]|v[05]\\.[03][06]\\.[01]|v[06]\\.[03][07]\\.[02])",
+                     "replacement": "{target}"})
             if config_add_tailored_alternation:
                 pr_config["doc_replacements"].append(
                     {"path": "FRESH.md",
@@ -590,7 +601,8 @@ class GuardTests(unittest.TestCase):
                     + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
                     'globs = ["PhyslibExt.+"]\n')
             if config_add_oneuse_version or config_add_oneuse_sha \
-                    or config_add_tailored_alternation:
+                    or config_add_tailored_alternation or config_add_permutation \
+                    or config_add_class_encoded:
                 (pr / "FRESH.md").write_text(
                     "Release v4.35.0\nSHA " + "3" * 40 + "\n")
             if malformed_require:
@@ -1072,6 +1084,46 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(
             self._run_guard(changed_only_config=True,
                             config_add_zero_width=True), 1)
+
+    def test_guard_fails_config_only_permutation(self):
+        # Codex P1: a new-file permutation rule writes the wrong version
+        # (v0.35.4), not the transition target. The old normalize check
+        # passed it; the token check must fail it.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_permutation=True), 1)
+
+    def test_guard_fails_config_only_class_encoded(self):
+        # Codex P1: class-encoded tag list matching exactly the simulated
+        # tags must fail at acceptance, not at the first real bump.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_add_class_encoded=True), 1)
+
+    def test_class_pinning(self):
+        flagged = [
+            r"(?:v[04]\.[03][05]\.[09]|v[05]\.[03][06]\.[01]|v[06]\.[03][07]\.[02])",
+            r"v[04]\.[03][05]\.[09]",
+            r"v[04][\s\S][03][05][\s\S][09]",
+            r"[^0-5]\.[0-9]+\.[0-9]+",
+            r"[0-9]{40}",
+            r"[a-f]{40}",
+            r"[0-9a]{40}",
+        ]
+        for pattern in flagged:
+            with self.subTest(pattern=pattern):
+                self.assertTrue(pinned_bump._validate_class_pinning(pattern))
+        allowed = [
+            r"v[0-9]+\.[0-9]+\.[0-9]+",
+            r"[0-9a-f]{40}",
+            r"[\d]\.[0-9]+\.[0-9]+",
+            r"[^0-9]+\.[0-9]+\.[0-9]+",
+            r"[04]",
+            r"[a-z]+\.[0-9]+\.[0-9]+",
+        ]
+        for pattern in allowed:
+            with self.subTest(pattern=pattern):
+                self.assertEqual(pinned_bump._validate_class_pinning(pattern), [])
 
     def test_guard_fails_config_only_tailored_alternation(self):
         # Codex P2: an alternation enumerating exactly the simulated

@@ -1264,6 +1264,153 @@ def _validate_pattern_literals(entry: dict) -> list[str]:
     return problems
 
 
+_CLASS_DIGITS = set("0123456789")
+_CLASS_HEX = set("0123456789abcdefABCDEF")
+# A SHA class is generic if it covers all lowercase, all uppercase, or
+# all hex chars; anything else (e.g. [0-9], [a-f]) pins the SHA.
+_CLASS_HEX_APPROVED = frozenset([
+    frozenset("0123456789abcdef"),
+    frozenset("0123456789ABCDEF"),
+    frozenset(_CLASS_HEX),
+])
+
+# What a class escape can match: (digits, hex chars, can-match-dot).
+_CLASS_ESCAPE_SETS = {
+    "d": (_CLASS_DIGITS, _CLASS_DIGITS, False),
+    "D": (set(), set("abcdefABCDEF"), True),
+    "w": (_CLASS_DIGITS, _CLASS_HEX, False),
+    "W": (set(), set(), True),
+    "s": (set(), set(), False),
+    "S": (_CLASS_DIGITS, _CLASS_HEX, True),
+}
+
+
+def _parse_class(pattern: str, i: int):
+    """Parse a [...] class at pattern[i]; return (digits, hex, dot, end, ok).
+
+    Computes the digits, hex chars, and dot-matching ability of the
+    class. Returns ok=False for syntax this parser cannot enumerate
+    (the syntax check flags those patterns separately).
+    """
+    n = len(pattern)
+    j = i + 1
+    negated = False
+    if j < n and pattern[j] == "^":
+        negated = True
+        j += 1
+    chars: set[str] = set()
+    digits: set[str] = set()
+    hexes: set[str] = set()
+    dot = False
+
+    def read_atom(k: int):
+        """One class atom: (char-or-None, escape-or-None, next-index, ok)."""
+        if k >= n:
+            return None, None, k, False
+        if pattern[k] == "\\" and k + 1 < n:
+            esc = pattern[k + 1]
+            if esc in _CLASS_ESCAPE_SETS:
+                return None, esc, k + 2, True
+            if esc in "b":  # backspace in a class
+                return "\b", None, k + 2, True
+            if esc in "nrtfav":
+                return {"n": "\n", "r": "\r", "t": "\t", "f": "\f",
+                        "a": "\a", "v": "\v"}[esc], None, k + 2, True
+            if not esc.isalnum():
+                return esc, None, k + 2, True
+            return None, None, k, False
+        return pattern[k], None, k + 1, True
+
+    if j < n and pattern[j] == "]":  # leading ] is literal
+        chars.add("]")
+        j += 1
+    while j < n and pattern[j] != "]":
+        atom, esc, j, ok = read_atom(j)
+        if not ok:
+            return set(), set(), False, n, False
+        if esc is not None:
+            d, h, dot_esc = _CLASS_ESCAPE_SETS[esc]
+            digits |= d
+            hexes |= h
+            dot = dot or dot_esc
+            continue
+        # Possible range: <char> - <char>.
+        if j < n and pattern[j] == "-" and j + 1 < n and pattern[j + 1] != "]":
+            end_atom, end_esc, j, ok = read_atom(j + 1)
+            if not ok or end_esc is not None or end_atom is None:
+                return set(), set(), False, n, False
+            if ord(atom) > ord(end_atom) or ord(end_atom) - ord(atom) > 100000:
+                return set(), set(), False, n, False
+            for code in range(ord(atom), ord(end_atom) + 1):
+                chars.add(chr(code))
+            continue
+        chars.add(atom)
+    if j >= n:
+        return set(), set(), False, n, False
+    digits |= chars & _CLASS_DIGITS
+    hexes |= chars & _CLASS_HEX
+    dot = dot or ("." in chars)
+    if negated:
+        return _CLASS_DIGITS - digits, _CLASS_HEX - hexes, not dot, j + 1, True
+    return digits, hexes, dot, j + 1, True
+
+
+def _validate_class_pinning(pattern: str) -> list[str]:
+    """Character classes must be generic, not finite tag encodings.
+
+    The literal-stream check discards class contents, so a class-encoded
+    tag list such as v[04]\\.[03][05]\\.[09] evades it while matching
+    exactly the simulated tags. A class that matches some but not all
+    digits pins the digit (and likewise for hex in a {40} SHA pattern);
+    generic rules use [0-9] / [0-9a-f]. Negated and escape classes
+    that match all digits/hex pass.
+    """
+    classes: list[tuple[set[str], set[str], bool]] = []
+    dot_atom = False
+    has_40 = False
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            esc = pattern[i + 1]
+            if esc in "DWS" or esc == ".":
+                dot_atom = True
+            i += 2
+            continue
+        if c == "[":
+            digits, hexes, dot, end, ok = _parse_class(pattern, i)
+            if ok:
+                classes.append((digits, hexes, dot))
+                dot_atom = dot_atom or dot
+            i = end
+            continue
+        if c == ".":
+            dot_atom = True
+            i += 1
+            continue
+        if c == "{":
+            j = pattern.find("}", i + 1)
+            inside = pattern[i + 1 : j] if j >= 0 else ""
+            if j >= 0 and (inside == "40" or inside.startswith("40,")):
+                has_40 = True
+            i = (j + 1) if j >= 0 else n
+            continue
+        i += 1
+    problems: list[str] = []
+    for digits, hexes, _dot in classes:
+        if dot_atom and digits and digits != _CLASS_DIGITS:
+            problems.append(
+                f"pattern {pattern!r} has a character class matching only "
+                f"digits {''.join(sorted(digits))!r}; use [0-9] for a generic digit"
+            )
+        if has_40 and hexes and frozenset(hexes) not in _CLASS_HEX_APPROVED:
+            problems.append(
+                f"pattern {pattern!r} has a character class matching only "
+                "some hex characters in a {40} SHA pattern; use [0-9a-f]"
+            )
+    return problems
+
+
 def _validate_replacement_literals(entry: dict) -> list[str]:
     """A replacement must not hardcode a version or SHA as literal text.
 
@@ -1313,6 +1460,37 @@ def _normalize_versions_shas(text: str) -> str:
     text = _NORMALIZE_VERSION_RE.sub("V", text)
     text = _NORMALIZE_SHA_RE.sub("S", text)
     return text
+
+
+def _changed_tokens_valid(
+    before: str, after: str, target: str, shas: dict[str, str],
+) -> bool:
+    """Changed version/SHA tokens must equal the transition target / SHAs.
+
+    Normalizing values away proves only that a rule changed
+    version-shaped text. A permutation rule (v{g3}.{g2}.{g1}) passes
+    that check yet writes the wrong version at a bump, and the guard
+    derives its expected document with the same rule, so it approves
+    the incorrect result. A rule may only rewrite a token to the
+    transition target (versions) or a resolved SHA for that transition
+    (SHAs); token insertions/deletions also fail.
+    """
+    before_versions = [m.group(0) for m in _NORMALIZE_VERSION_RE.finditer(before)]
+    after_versions = [m.group(0) for m in _NORMALIZE_VERSION_RE.finditer(after)]
+    if len(before_versions) != len(after_versions):
+        return False
+    for old, new in zip(before_versions, after_versions):
+        if old != new and new != target:
+            return False
+    before_shas = [m.group(0) for m in _NORMALIZE_SHA_RE.finditer(before)]
+    after_shas = [m.group(0) for m in _NORMALIZE_SHA_RE.finditer(after)]
+    if len(before_shas) != len(after_shas):
+        return False
+    allowed = set(shas.values())
+    for old, new in zip(before_shas, after_shas):
+        if old != new and new not in allowed:
+            return False
+    return True
 
 
 def _rule_interferes(pattern: str, text: str, written: list[tuple[int, int]]) -> bool:
@@ -1388,7 +1566,8 @@ def _failing_rule_patterns(
             except (ValueError, re.error):
                 failed.add(entry["pattern"])
                 break
-            if _normalize_versions_shas(before) != _normalize_versions_shas(current):
+            if _normalize_versions_shas(before) != _normalize_versions_shas(current) \
+                    or not _changed_tokens_valid(before, current, target, shas):
                 failed.add(entry["pattern"])
     return failed
 
@@ -1488,6 +1667,7 @@ def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
     problems.extend(_validate_pattern_syntax(entry["pattern"]))
     problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
     problems.extend(_validate_pattern_literals(entry))
+    problems.extend(_validate_class_pinning(entry["pattern"]))
     return problems
 
 
@@ -1543,6 +1723,12 @@ def _simulate_file_rules(
                     f"{label} rule {entry['pattern']!r} changes text other than "
                     "version/SHA literals; replacement rules may only update "
                     "version/SHA values, content edits belong in the file itself"
+                )
+            elif not _changed_tokens_valid(before, text, target, shas):
+                problems.append(
+                    f"{label} rule {entry['pattern']!r} changed a version/SHA "
+                    f"token to a value other than the transition target {target}; "
+                    "rules must rewrite tokens to the target, not rearrange them"
                 )
     return problems
 
