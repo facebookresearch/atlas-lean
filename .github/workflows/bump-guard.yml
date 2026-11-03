@@ -66,9 +66,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/guard/base /tmp/guard/merge-base /tmp/guard/pr
+          # The guard reads pinned_deps.json from every tree: a same-pin
+          # PR may extend the config monotonically (add a dependency at
+          # the current pin), and the guard validates that extension
+          # against the base config. The config is PR data here, never
+          # executed; only the base checkout's guard code runs.
           # The guard reads the configured pin-policy file from both trees,
-          # so download it too (from the base checkout's config: a PR cannot
-          # change the config, it is a guard file).
+          # so download it too (from the base checkout's config).
           PIN_POLICY_PATH="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print((c.get("pin_policy") or {}).get("path", ""))')"
           # The guard validates the pin-coupled migration ledgers, so
           # download them too for every tree; a tree that predates them
@@ -115,7 +119,7 @@ jobs:
               merge-base) REF="$MERGE_BASE_SHA" ;;
               pr) REF="$HEAD_SHA" ;;
             esac
-            FILES="lean-toolchain lakefile.toml lake-manifest.json"
+            FILES="lean-toolchain lakefile.toml lake-manifest.json scripts/bump/pinned_deps.json"
             if [ -n "$PIN_POLICY_PATH" ]; then FILES="$FILES $PIN_POLICY_PATH"; fi
             for file in $FILES; do
               download_one "$dir" "$REF" "$file" true

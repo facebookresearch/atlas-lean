@@ -365,7 +365,9 @@ class GuardTests(unittest.TestCase):
                    tamper_direct=False, conflict=False, duplicate_package=False,
                    missing_toolchain_tag=False, tamper_pin_policy=False,
                    stale_pin_policy=False, migration="absent",
-                   tamper_doc=False, stale_doc=False, missing_doc=False):
+                   tamper_doc=False, stale_doc=False, missing_doc=False,
+                   same_pin=False, add_dep=False, add_dep_no_config=False, config_tamper=None,
+                   manifest_rev_tamper=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -374,6 +376,16 @@ class GuardTests(unittest.TestCase):
                 manifest["packages"][0] = dict(
                     manifest["packages"][0], rev="d" * 40)
             upstream[(dep["repo"], SHAS[(dep["repo"], "v4.36.0")])] = manifest
+        if add_dep or add_dep_no_config:
+            upstream[("leanprover-community/physlib",
+                      SHAS[("leanprover-community/physlib", "v4.35.0")])] = \
+                upstream_manifest(["batteries"])
+        # Same-pin verification resolves upstream manifests at the base
+        # tag, so those entries must exist too (clean: the conflict
+        # fixture stays confined to the v4.36.0 entries above).
+        for dep in CONFIG["deps"]:
+            upstream[(dep["repo"], SHAS[(dep["repo"], "v4.35.0")])] = \
+                upstream_manifest(["batteries", "Qq"])
         client = FakeGitHub(
             tags={}, upstream=upstream, module_sources=MODULE_SOURCES)
         if missing_toolchain_tag:
@@ -386,9 +398,71 @@ class GuardTests(unittest.TestCase):
             pr = Path(tmp) / "pr"
             base.mkdir()
             pr.mkdir()
+            repo_root = Path(__file__).resolve().parent.parent.parent
+            real_config = load_config(repo_root)
+            base_config_text = json.dumps(real_config, indent=2, sort_keys=True)
+            pr_config = json.loads(base_config_text)
+            if add_dep and not add_dep_no_config:
+                pr_config["deps"].append(
+                    {"name": "Physlib", "repo": "leanprover-community/physlib"})
+                pr_config["pin_policy"]["replacements"].append({
+                    "pattern": "(physlib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
+                    "replacement": "{g1}{sha:Physlib}{g2}",
+                })
+            if config_tamper == "remove_dep":
+                pr_config["deps"] = [
+                    d for d in pr_config["deps"] if d["name"] != "cslib"]
+            elif config_tamper == "repoint_dep":
+                for d in pr_config["deps"]:
+                    if d["name"] == "mathlib":
+                        d["repo"] = "example/mathlib-fork"
+            elif config_tamper == "remove_replacement":
+                pr_config["pin_policy"]["replacements"] = \
+                    pr_config["pin_policy"]["replacements"][1:]
+            (base / "scripts" / "bump").mkdir(parents=True)
+            (base / "scripts" / "bump" / "pinned_deps.json").write_text(base_config_text)
+            (pr / "scripts" / "bump").mkdir(parents=True)
+            (pr / "scripts" / "bump" / "pinned_deps.json").write_text(
+                json.dumps(pr_config, indent=2, sort_keys=True))
             write_tree(base, "v4.35.0")
-            write_tree(pr, "v4.36.0", tamper_toolchain=tamper_toolchain,
+            write_tree(pr, "v4.35.0" if same_pin else "v4.36.0",
+                       tamper_toolchain=tamper_toolchain,
                        tamper_transitive=tamper_transitive)
+            if add_dep or add_dep_no_config:
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[require]]\nname = "Physlib"\n'
+                    'scope = "leanprover-community"\nrev = "v4.35.0"\n'
+                    '\n[[lean_lib]]\nname = "PhyslibExt"\n'
+                    'globs = ["PhyslibExt.+"]\n')
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                manifest["packages"].append({
+                    "name": "Physlib", "type": "git",
+                    "url": "https://github.com/leanprover-community/physlib",
+                    "rev": SHAS[("leanprover-community/physlib", "v4.35.0")],
+                    "inputRev": "v4.35.0", "inherited": False,
+                    "configFile": "lakefile.toml",
+                    "manifestFile": "lake-manifest.json",
+                })
+                manifest_path.write_text(json.dumps(manifest, indent=1))
+            elif same_pin:
+                # Same-pin library addition without a new dependency, plus
+                # unrelated doc / pin-policy restructuring the guard must
+                # allow (bump-only exact checks are skipped at the same pin).
+                lakefile = pr / "lakefile.toml"
+                lakefile.write_text(
+                    lakefile.read_text()
+                    + '\n[[lean_lib]]\nname = "PhyslibExt"\n'
+                    'globs = ["PhyslibExt.+"]\n')
+            if manifest_rev_tamper:
+                manifest_path = pr / "lake-manifest.json"
+                manifest = json.loads(manifest_path.read_text())
+                for pkg in manifest["packages"]:
+                    if pkg["name"] == "mathlib":
+                        pkg["rev"] = "0" * 40
+                manifest_path.write_text(json.dumps(manifest, indent=1))
             # write_tree's README carries only the first two doc
             # patterns; the real config has a third (releases/tag),
             # which the real README carries. Give both trees that
@@ -423,21 +497,28 @@ class GuardTests(unittest.TestCase):
             # pin_policy for check_lake_surface.py: give base/pr the real
             # file at the old pins, and the PR the file with the new
             # tag/SHAs applied (or a tampered / stale variant).
-            repo_root = Path(__file__).resolve().parent.parent.parent
             real_config = load_config(repo_root)
             pin_policy = real_config["pin_policy"]
             real_policy = (repo_root / pin_policy["path"]).read_text()
-            (base / "scripts").mkdir()
+            (base / "scripts").mkdir(exist_ok=True)
             (base / pin_policy["path"]).write_text(real_policy)
             shas = {d["name"]: SHAS[(d["repo"], "v4.36.0")] for d in CONFIG["deps"]}
-            pr_policy = pinned_bump.apply_replacements_to_text(
-                real_policy, pin_policy["replacements"], "v4.36.0", shas)
-            if tamper_pin_policy:
-                pr_policy = pr_policy.replace(shas["mathlib"], "0" * 40)
-            if stale_pin_policy:
-                pr_policy = real_policy
-            (pr / "scripts").mkdir()
-            (pr / pin_policy["path"]).write_text(pr_policy)
+            if same_pin:
+                # Same-pin: the pin-policy file may be restructured
+                # (e.g. a new dep's constants); the guard skips the
+                # bump-only exact check, so an added comment must pass.
+                (pr / "scripts").mkdir(exist_ok=True)
+                (pr / pin_policy["path"]).write_text(
+                    real_policy + "\n# same-pin restructuring note\n")
+            else:
+                pr_policy = pinned_bump.apply_replacements_to_text(
+                    real_policy, pin_policy["replacements"], "v4.36.0", shas)
+                if tamper_pin_policy:
+                    pr_policy = pr_policy.replace(shas["mathlib"], "0" * 40)
+                if stale_pin_policy:
+                    pr_policy = real_policy
+                (pr / "scripts").mkdir(exist_ok=True)
+                (pr / pin_policy["path"]).write_text(pr_policy)
             if tamper_lakefile_name:
                 lakefile = pr / "lakefile.toml"
                 lakefile.write_text(
@@ -460,8 +541,12 @@ class GuardTests(unittest.TestCase):
             # The valid PR README is the base README with the real
             # config's doc replacements applied for the new tag; a
             # stale README (left at the old pin) or a tampered one
-            # (expected text plus an unrelated edit) must fail.
-            if missing_doc:
+            # (expected text plus an unrelated edit) must fail. At the
+            # same pin, doc edits are unrestricted: an added line passes.
+            if same_pin:
+                with open(pr / "README.md", "a", encoding="utf-8") as f:
+                    f.write("\nPhyslibExt documentation.\n")
+            elif missing_doc:
                 (pr / "README.md").unlink()
             elif not stale_doc:
                 readme = pinned_bump.apply_replacements_to_text(
@@ -471,7 +556,10 @@ class GuardTests(unittest.TestCase):
                     readme += "\nUnrelated doc edit.\n"
                 (pr / "README.md").write_text(readme)
             changed = Path(tmp) / "changed.txt"
-            changed.write_text("lean-toolchain\nlakefile.toml\nlake-manifest.json\n")
+            changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
+            if add_dep or config_tamper is not None:
+                changed_lines.append("scripts/bump/pinned_deps.json")
+            changed.write_text("\n".join(changed_lines) + "\n")
             import pinned_bump as module
             real_github = module.GitHub
             module.GitHub = lambda: client
@@ -534,6 +622,36 @@ class GuardTests(unittest.TestCase):
 
     def test_guard_fails_missing_doc(self):
         self.assertEqual(self._run_guard(missing_doc=True), 1)
+
+    def test_guard_passes_same_pin_library_addition(self):
+        # A new [[lean_lib]] at the current pin, plus unrelated doc and
+        # pin-policy restructuring, is not a bump and must pass.
+        self.assertEqual(self._run_guard(same_pin=True), 0)
+
+    def test_guard_passes_same_pin_dependency_addition(self):
+        # #727 shape: a new dependency (Physlib) at the current pin, with
+        # the config extended in the same PR, must pass.
+        self.assertEqual(self._run_guard(same_pin=True, add_dep=True), 0)
+
+    def test_guard_fails_same_pin_addition_without_config(self):
+        # Same lakefile addition, but pinned_deps.json not extended: the
+        # config would drift from the lakefile, so the guard must fail
+        # and tell the author to extend the config in the same PR.
+        self.assertEqual(
+            self._run_guard(same_pin=True, add_dep_no_config=True), 1)
+
+    def test_guard_fails_same_pin_manifest_rev_tamper(self):
+        self.assertEqual(self._run_guard(same_pin=True, manifest_rev_tamper=True), 1)
+
+    def test_guard_fails_config_repoint(self):
+        self.assertEqual(self._run_guard(config_tamper="repoint_dep"), 1)
+
+    def test_guard_fails_config_replacement_removal(self):
+        self.assertEqual(self._run_guard(config_tamper="remove_replacement"), 1)
+
+    def test_guard_fails_config_change_in_bump(self):
+        # Config extension must land in a same-pin PR first, not in a bump.
+        self.assertEqual(self._run_guard(add_dep=True), 1)
 
     def test_replacement_sha_placeholder(self):
         out = pinned_bump.apply_replacements_to_text(

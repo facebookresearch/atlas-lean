@@ -87,13 +87,19 @@ FINAL_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 RC_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)-rc(\d+)$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 PIN_FILES = ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
+# Guard code: a pin-change PR must never touch these. pinned_deps.json
+# is deliberately NOT in this list: it is data, and a same-pin PR may
+# extend it monotonically (add a dependency at the current pin) so the
+# config stays in sync with the lakefile. Monotonic extension is checked
+# separately by check_config_extension: it can never remove or change an
+# existing entry except to drop entries that mention a removed dependency.
 GUARD_FILES = (
     ".github/workflows/bump-guard.yml",
     ".github/workflows/bump-pinned-release.yml",
     "scripts/bump/pinned_bump.py",
-    "scripts/bump/pinned_deps.json",
     "scripts/bump/test_pinned_bump.py",
 )
+CONFIG_FILE = "scripts/bump/pinned_deps.json"
 
 
 def version_key(tag: str):
@@ -149,6 +155,86 @@ def load_config(root: Path) -> dict:
         if not dep.get("name") or not dep.get("repo"):
             raise ValueError(f"bad dep entry in {path}: {dep!r}")
     return config
+
+
+def load_config_file(path: Path) -> dict:
+    """Parse a pinned_deps.json at an explicit path (PR data, not code).
+
+    Used by the guard to read the PR tree's config: the PR may extend it,
+    so the base code's config alone cannot describe the PR tree.
+    """
+    with open(path, encoding="utf-8") as f:
+        config = json.load(f)
+    if not isinstance(config, dict) or not isinstance(config.get("deps"), list):
+        raise ValueError(f"bad config in {path}: expected an object with deps")
+    for dep in config["deps"]:
+        if not isinstance(dep, dict) or not dep.get("name") or not dep.get("repo"):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+    return config
+
+
+def _mentions_dep(entry: dict, dep_name: str) -> bool:
+    text = json.dumps(entry, sort_keys=True)
+    return dep_name in text
+
+
+def check_config_extension(base_config: dict, pr_config: dict) -> list[str]:
+    """Validate that a PR's config only extends the base config.
+
+    Allowed: adding a dependency at the current pin (name + repo), adding
+    doc/pin-policy replacements, adding migration ledgers, and dropping
+    entries that mention a removed dependency. Never allowed: changing
+    the toolchain repo, repointing an existing dependency at another
+    repo, or removing/changing an entry that does not mention a removed
+    dependency (that could silently weaken future bump validation).
+    A config change in a bump PR is rejected separately by cmd_guard:
+    extension must land in a same-pin PR first.
+    """
+    problems: list[str] = []
+    if pr_config.get("toolchain_repo") != base_config.get("toolchain_repo"):
+        problems.append(
+            "pinned_deps.json: toolchain_repo changed; the config may only gain entries"
+        )
+    base_deps = {d["name"]: d for d in base_config.get("deps", [])}
+    pr_deps = {d["name"]: d for d in pr_config.get("deps", [])}
+    if len(pr_deps) != len(pr_config.get("deps", [])):
+        problems.append("pinned_deps.json: duplicate dependency names")
+    removed_deps = set(base_deps) - set(pr_deps)
+    for name, dep in base_deps.items():
+        if name in pr_deps and pr_deps[name] != dep:
+            problems.append(
+                f"pinned_deps.json: pinned dep {name} changed repo; "
+                "the config may only gain new deps, never repoint one"
+            )
+    for entry in base_config.get("doc_replacements", []):
+        if entry not in pr_config.get("doc_replacements", []):
+            if not any(_mentions_dep(entry, d) for d in removed_deps):
+                problems.append(
+                    "pinned_deps.json: doc_replacements entry removed or changed; "
+                    "only additions (or entries mentioning a removed dep) are allowed"
+                )
+    base_pp = base_config.get("pin_policy")
+    pr_pp = pr_config.get("pin_policy")
+    if base_pp is not None:
+        if pr_pp is None or pr_pp.get("path") != base_pp.get("path"):
+            problems.append(
+                "pinned_deps.json: pin_policy removed or repointed; only additions allowed"
+            )
+        else:
+            for replacement in base_pp.get("replacements", []):
+                if replacement not in pr_pp.get("replacements", []):
+                    if not any(_mentions_dep(replacement, d) for d in removed_deps):
+                        problems.append(
+                            "pinned_deps.json: pin_policy replacement removed or changed; "
+                            "only additions (or entries mentioning a removed dep) are allowed"
+                        )
+    for ledger in base_config.get("migration_ledgers", []):
+        if ledger not in pr_config.get("migration_ledgers", []):
+            problems.append(
+                f"pinned_deps.json: migration ledger {ledger} removed; "
+                "only additions are allowed"
+            )
+    return problems
 
 
 def prepared_files(config: dict) -> list[str]:
@@ -1106,6 +1192,21 @@ def verify_manifest(
             problems.append(f"{name}: inputRev {entry.get('inputRev')!r} != {target!r}")
         if entry.get("rev") != sha:
             problems.append(f"{name}: rev {entry.get('rev')!r} != tag SHA {sha}")
+        # These hold for every direct entry, including one the base tree
+        # does not have (a newly added dependency has no base entry to
+        # compare against, so it must be checked on its own: a new dep
+        # pointing at a fork URL or a subdirectory must fail here).
+        expected_url = f"https://github.com/{dep['repo']}"
+        if entry.get("type") != "git":
+            problems.append(f"{name}: type {entry.get('type')!r} != 'git'")
+        if entry.get("url", "").rstrip("/").removesuffix(".git") != expected_url:
+            problems.append(f"{name}: url {entry.get('url')!r} != {expected_url!r}")
+        if entry.get("subDir") is not None:
+            problems.append(f"{name}: subDir must be null")
+        if entry.get("manifestFile") != "lake-manifest.json":
+            problems.append(f"{name}: manifestFile must be lake-manifest.json")
+        if entry.get("configFile") not in {"lakefile.lean", "lakefile.toml"}:
+            problems.append(f"{name}: configFile must be lakefile.lean or lakefile.toml")
         if base_manifest is not None:
             base_entry = direct_entries(base_manifest).get(name)
             if base_entry is not None:
@@ -1118,12 +1219,6 @@ def verify_manifest(
                         f"{name}: manifest entry differs from base in {diff} "
                         "(only rev/inputRev may change)"
                     )
-        else:
-            expected_url = f"https://github.com/{dep['repo']}"
-            if entry.get("type") != "git":
-                problems.append(f"{name}: type {entry.get('type')!r} != 'git'")
-            if entry.get("url", "").rstrip("/").removesuffix(".git") != expected_url:
-                problems.append(f"{name}: url {entry.get('url')!r} != {expected_url!r}")
     # Transitive entries must be exactly the union of the deps' manifests.
     # Conflicting records for one package from different upstream manifests
     # fail instead of letting one silently win.
@@ -1737,7 +1832,7 @@ def cmd_guard(args: argparse.Namespace) -> int:
     base = Path(args.base)
     merge_base = Path(args.merge_base)
     pr = Path(args.pr)
-    config = load_config(base)
+    base_config = load_config(base)
     client = GitHub()
     changed = {
         line.strip() for line in Path(args.changed_files).read_text(encoding="utf-8").splitlines()
@@ -1747,19 +1842,98 @@ def cmd_guard(args: argparse.Namespace) -> int:
         print("guard: PASS - no pin files changed")
         return 0
     if changed & set(GUARD_FILES):
-        print("guard: FAIL - a pin-change PR must not touch the guard, its config, or the bump workflow")
+        print("guard: FAIL - a pin-change PR must not touch the guard code or the bump workflow")
+        return 1
+    try:
+        pr_config = load_config_file(pr / CONFIG_FILE)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
         return 1
     problems: list[str] = []
+    if CONFIG_FILE in changed:
+        problems.extend(check_config_extension(base_config, pr_config))
+    elif pr_config != base_config:
+        problems.append(
+            f"{CONFIG_FILE} differs from base but is not in the changed-file list; "
+            "failing closed (enumeration inconsistency)"
+        )
+    # The lakefile's requires must match the config's deps at both ends.
+    # This is what makes a same-pin dependency addition well-defined: the
+    # PR must extend pinned_deps.json in the same PR that adds the require,
+    # so the config never drifts from the lakefile.
     try:
-        base_tag = current_tag(base, config)
-        pr_tag = current_tag(pr, config)
+        base_req_names = {e.get("name") for e in lakefile_requires(base)}
+        pr_req_names = {e.get("name") for e in lakefile_requires(pr)}
     except ValueError as exc:
         print(f"guard: FAIL - {exc}")
         return 1
+    if base_req_names != {d["name"] for d in base_config["deps"]}:
+        problems.append(
+            "base lakefile requires do not match base pinned_deps.json "
+            f"({sorted(base_req_names)} vs {sorted(d['name'] for d in base_config['deps'])})"
+        )
+    if pr_req_names != {d["name"] for d in pr_config["deps"]}:
+        problems.append(
+            "PR lakefile requires do not match PR pinned_deps.json; "
+            "extend the config in the same PR when adding a dependency "
+            f"({sorted(pr_req_names)} vs {sorted(d['name'] for d in pr_config['deps'])})"
+        )
+    try:
+        base_tag = current_tag(base, base_config)
+        pr_tag = current_tag(pr, pr_config)
+    except ValueError as exc:
+        print(f"guard: FAIL - {exc}")
+        return 1
+    if version_key(pr_tag) < version_key(base_tag):
+        problems.append(f"PR tag {pr_tag} is older than base tag {base_tag} (downgrade)")
+        print("guard: FAIL")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+    try:
+        base_manifest = load_manifest(base)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"guard: FAIL - cannot read base manifest: {exc}")
+        return 1
+    if version_key(pr_tag) == version_key(base_tag):
+        # Same-pin change (e.g. adding a dependency/library at the current
+        # pin, doc edits, a restructured pin-policy file, ledger content
+        # changes). Only the pins themselves are guarded: the toolchain
+        # must still be the base toolchain, and the manifest must be
+        # exactly derived from the effective deps at the base tag.
+        # Bump-only checks are skipped: pin-policy/doc/ledger exact
+        # re-pin checks would forbid legitimate same-pin restructuring,
+        # and the pin-policy file is self-validating in CI
+        # (check_lake_surface.py fails preflight if its constants disagree
+        # with the manifest) while the ledger validator covers ledgers.
+        _ = merge_base
+        if (pr / "lean-toolchain").read_text(encoding="utf-8").strip() != (
+            base / "lean-toolchain"
+        ).read_text(encoding="utf-8").strip():
+            problems.append("same-pin change must not change lean-toolchain")
+        problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
+        if client.tag_sha(base_config["toolchain_repo"], base_tag) is None:
+            problems.append(
+                f"Lean tag {base_tag} does not exist in {base_config['toolchain_repo']}"
+            )
+        if problems:
+            print("guard: FAIL")
+            for problem in problems:
+                print(f"  - {problem}")
+            return 1
+        print(f"guard: PASS - same-pin change at {base_tag} validated")
+        return 0
+    # Bump: pr_tag > base_tag. The config must be unchanged here: an
+    # extension belongs in a same-pin PR first, so the bump validates
+    # against exactly the config it was prepared from.
+    if pr_config != base_config:
+        problems.append(
+            "pinned_deps.json changed in a bump PR; extend the config in a "
+            "same-pin PR first, then bump"
+        )
+    config = base_config
     if not is_final(pr_tag):
         problems.append(f"PR tag {pr_tag!r} is not a final release tag")
-    if version_key(pr_tag) <= version_key(base_tag):
-        problems.append(f"PR tag {pr_tag} is not newer than base tag {base_tag}")
     if (pr / "lean-toolchain").read_text(encoding="utf-8").strip() != f"leanprover/lean4:{pr_tag}":
         problems.append("lean-toolchain does not match the PR tag")
     # The complete lakefile, not just [[require]]: normalize only the pinned
