@@ -31,18 +31,20 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Algebra.Module.LocalizedModule.Basic
-public import Mathlib.Algebra.Module.Torsion.Field
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.LinearAlgebra.TensorProduct.Basic
-public import Mathlib.RingTheory.Algebraic.Integral
-public import Mathlib.RingTheory.Artinian.Module
-public import Mathlib.RingTheory.Artinian.Ring
-public import Mathlib.RingTheory.Ideal.Quotient.Operations
-public import Mathlib.RingTheory.Jacobson.Ideal
-public import Mathlib.RingTheory.Localization.BaseChange
-public import Mathlib.RingTheory.Nilpotent.Lemmas
 public import Mathlib.RingTheory.TensorProduct.Basic
+
+import Mathlib.Algebra.Module.LocalizedModule.Basic
+import Mathlib.Algebra.Module.Torsion.Field
+import Mathlib.LinearAlgebra.TensorProduct.Basic
+import Mathlib.RingTheory.Algebraic.Integral
+import Mathlib.RingTheory.Artinian.Module
+import Mathlib.RingTheory.Artinian.Ring
+import Mathlib.RingTheory.Ideal.Quotient.Operations
+import Mathlib.RingTheory.Jacobson.Ideal
+import Mathlib.RingTheory.Localization.BaseChange
+import Mathlib.RingTheory.Nilpotent.Lemmas
+import Mathlib.Tactic.Push
 
 @[expose] public section
 
