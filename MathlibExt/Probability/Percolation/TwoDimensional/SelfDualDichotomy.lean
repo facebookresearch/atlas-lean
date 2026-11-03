@@ -29,19 +29,16 @@ the balance `ℙ(H) = 1/2` for families of such events.
 * `StatMech.TwoDim.kdi_rotConfig_measurePreserving`: the rotation preserves `halfMeasure`.
 * `StatMech.TwoDim.kdi_crossing_balance_family`: events with `Hᶜ = (R ∘ dualConfig)⁻¹' H` for a
   measure-preserving `R` have probability `1/2`.
-* `StatMech.TwoDim.kdi_crossing_balance_family_rot`: the same with `R = kdi_rotConfig`.
 
 ## Implementation notes
 
 `kdi_rotConfig ∘ dualConfig` sends `ω` to `e ↦ ¬ ω (-e)` (complement composed with the half-turn
-`x ↦ -x`). The half-turn fixes no nearest-neighbour edge, so there is a configuration `ω₀` with
-`ω₀ e = ¬ ω₀ (-e)` on every nearest-neighbour edge; for an event `H` that depends only on
-nearest-neighbour edges (any crossing event), `ω₀ ∈ H ↔ ω₀ ∈ Hᶜ` would follow from the
-hypothesis `Hᶜ = (kdi_rotConfig ∘ dualConfig)⁻¹' H`. Hence the hypothesis `hdich` of
-`kdi_selfDual_crossing_half_rot` and `kdi_crossing_balance_family_rot` fails for every crossing
-event; those two results apply only to events depending on non-adjacent pairs in
-`Sym2 (Site 2)`. This is argued by hand, not proved in Lean. The versions with a general `R` are
-not affected.
+`x ↦ -x`), not geometric crossing duality. The half-turn fixes no nearest-neighbour edge, so
+there is a configuration `ω₀` with `ω₀ e = ¬ ω₀ (-e)` on every nearest-neighbour edge. For an
+event `H` determined only by these edges, `Hᶜ = (kdi_rotConfig ∘ dualConfig)⁻¹' H` would imply
+`ω₀ ∈ H ↔ ω₀ ∈ Hᶜ`. Thus this rotation/complement dichotomy is not a crossing API. This is an
+informal obstruction, not a Lean theorem here. The test module checks a concrete single-bond
+counterexample and a valid inverse-rotation witness for the retained general-`R` result.
 -/
 
 @[expose] public section
@@ -89,25 +86,6 @@ theorem kdi_crossing_balance_family
     (hdich : ∀ n, (boxFam n)ᶜ = (R ∘ dualConfig) ⁻¹' (boxFam n)) :
     ∀ n : ℕ, halfMeasure.real (boxFam n) = 1 / 2 := fun n =>
   half_crossingProb_of_selfDual_dichotomy (hHm n) hRmeas hRpres (hdich n)
-
-/-- `half_crossingProb_of_selfDual_dichotomy` with `R = kdi_rotConfig`.
-
-Fidelity: the hypothesis `hdich` fails for every event determined by nearest-neighbour edges, in
-particular for every crossing event (see the module docstring), so this lemma does not apply to
-crossings. -/
-theorem kdi_selfDual_crossing_half_rot
-    {H : Set (ConfigSpace (Sym2 (Site 2)))} (hHm : MeasurableSet H)
-    (hdich : Hᶜ = (kdi_rotConfig ∘ dualConfig) ⁻¹' H) :
-    halfMeasure.real H = 1 / 2 :=
-  half_crossingProb_of_selfDual_dichotomy hHm kdi_measurable_rotConfig kdi_map_rotConfig hdich
-
-/-- Family version of `kdi_selfDual_crossing_half_rot`; the same fidelity caveat applies. -/
-theorem kdi_crossing_balance_family_rot
-    {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
-    (hHm : ∀ n, MeasurableSet (boxFam n))
-    (hdich : ∀ n, (boxFam n)ᶜ = (kdi_rotConfig ∘ dualConfig) ⁻¹' (boxFam n)) :
-    ∀ n : ℕ, halfMeasure.real (boxFam n) = 1 / 2 := fun n =>
-  kdi_selfDual_crossing_half_rot (hHm n) (hdich n)
 
 end TwoDim
 

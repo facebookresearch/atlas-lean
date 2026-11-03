@@ -15,11 +15,13 @@ public import Mathlib.Tactic
 # Tests for `MathlibExt.Probability.Percolation.TwoDimensional.SelfDualDichotomy`
 
 * `kdi_rotConfig_measurePreserving`.
-* `kdi_crossing_balance_family` with `R = id` and `kdi_crossing_balance_family_rot` (with the
-  quarter-turn rotation) for the event "the diagonal pair `s(0, 0)` is open", which both maps
-  exchange with its complement; its `halfMeasure`-probability is `1/2`. (For events that depend
-  only on nearest-neighbour edges the `_rot` hypothesis fails, see the source docstring; the
-  diagonal pair is fixed by the rotation, which is why this event works.)
+* `kdi_crossing_balance_family` with `R = id` and `R = kdi_rotConfig` for the event "the loop
+  `s(0, 0)` is open". Both maps exchange this event with its complement, so its
+  `halfMeasure`-probability is `1/2`. The loop is not a nearest-neighbour bond.
+* The closed-east/open-west configuration refutes the rotation/complement dichotomy for the
+  east-bond event. This is a single-bond counterexample, not a proof about every crossing event.
+* Inverse coordinate rotation cancels the coordinate permutation in `dualConfig`. This gives a
+  genuine nearest-neighbour bond witness for the general-`R` balance theorem.
 -/
 
 @[expose] public section
@@ -65,7 +67,75 @@ example : Universality.halfMeasure.real H = 1 / 2 :=
     measurable_id Measure.map_id (fun _ => H_compl_id) 0
 
 example : Universality.halfMeasure.real H = 1 / 2 :=
-  kdi_crossing_balance_family_rot (boxFam := fun _ => H) (fun _ => measurableSet_H)
+  kdi_crossing_balance_family (boxFam := fun _ => H) (R := kdi_rotConfig)
+    (fun _ => measurableSet_H) kdi_measurable_rotConfig kdi_map_rotConfig
     (fun _ => H_compl_rot) 0
 
+/-- The east-pointing nearest-neighbour bond at the origin. -/
+private def eastEdge : Sym2 (Site 2) := s(![0, 0], ![1, 0])
+
+/-- The west-pointing nearest-neighbour bond at the origin. -/
+private def westEdge : Sym2 (Site 2) := s(![0, 0], ![-1, 0])
+
+example : NearestNeighbour 2 ![0, 0] ![1, 0] := by
+  unfold NearestNeighbour
+  decide
+
+example : NearestNeighbour 2 ![0, 0] ![-1, 0] := by
+  unfold NearestNeighbour
+  decide
+
+private lemma east_west_ne : eastEdge ≠ westEdge := by decide
+
+private lemma half_turn_east : crossEdge.symm (crossEdge.symm eastEdge) = westEdge := by
+  decide
+
+/-- The event that the east bond is open. -/
+private def bondEvent : Set (ConfigSpace (Sym2 (Site 2))) := {ω | ω eastEdge = true}
+
+/-- Only the west bond is open, so the east bond is closed. -/
+private def oppositeConfig : ConfigSpace (Sym2 (Site 2)) := fun e => decide (e = westEdge)
+
+private lemma not_bond_rot_dichotomy :
+    bondEventᶜ ≠ (kdi_rotConfig ∘ dualConfig) ⁻¹' bondEvent := by
+  intro h
+  have hm : oppositeConfig ∈ bondEventᶜ := by
+    simp [bondEvent, oppositeConfig, east_west_ne]
+  rw [h] at hm
+  change kdi_rotConfig (dualConfig oppositeConfig) eastEdge = true at hm
+  have ht : kdi_rotConfig (dualConfig oppositeConfig) eastEdge = false := by
+    simp [kdi_rotConfig, Equiv.piCongrLeft_apply, dualConfig, half_turn_east, oppositeConfig]
+  rw [ht] at hm
+  cases hm
+
+/-- Inverse quarter-turn coordinate permutation, used only for this bond-event witness. -/
+private noncomputable def invRotConfig :
+    ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2)) :=
+  Equiv.piCongrLeft (fun _ => Bool) crossEdge.symm
+
+private lemma invRot_dual_apply (ω : ConfigSpace (Sym2 (Site 2))) (e : Sym2 (Site 2)) :
+    invRotConfig (dualConfig ω) e = !(ω e) := by
+  simp [invRotConfig, Equiv.piCongrLeft_apply, dualConfig]
+
+private lemma invRot_measurePreserving :
+    MeasurePreserving invRotConfig Universality.halfMeasure Universality.halfMeasure := by
+  refine ⟨(MeasurableEquiv.piCongrLeft (fun _ => Bool) crossEdge.symm).measurable, ?_⟩
+  rw [invRotConfig, Universality.halfMeasure]
+  unfold bernoulliProductMeasure
+  exact Measure.infinitePi_map_piCongrLeft
+    (fun _ : Sym2 (Site 2) => bernoulliMeasure (2⁻¹ : ℝ≥0) (by norm_num)) crossEdge.symm
+
+private lemma bond_compl_invRot : bondEventᶜ = (invRotConfig ∘ dualConfig) ⁻¹' bondEvent := by
+  ext ω
+  simp [bondEvent, invRot_dual_apply]
+
+example : Universality.halfMeasure.real bondEvent = 1 / 2 :=
+  kdi_crossing_balance_family (boxFam := fun _ => bondEvent) (R := invRotConfig)
+    (fun _ => measurableSet_eq_fun (measurable_pi_apply eastEdge) measurable_const)
+    invRot_measurePreserving.measurable invRot_measurePreserving.map_eq
+    (fun _ => bond_compl_invRot) 0
+
 end MathlibExtTest.StatMech.Probability.Percolation.TwoDimensional.SelfDualDichotomy
+
+assert_not_exists StatMech.TwoDim.kdi_selfDual_crossing_half_rot
+assert_not_exists StatMech.TwoDim.kdi_crossing_balance_family_rot
