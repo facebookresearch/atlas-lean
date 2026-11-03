@@ -76,7 +76,7 @@ lemma weakLimit_extremality_of_common_subseq (d : ℕ) {p q : ℝ}
           : Measure (ConfigSpace (Sym2 (Lattice.Site d)))).real A
         ≤ (wiredFiniteMeasure d (ψ n) hp hp1 (zero_lt_one.trans_le hq)
           : Measure (ConfigSpace (Sym2 (Lattice.Site d)))).real A :=
-    fun n => freeFiniteMeasure_dominated d (ψ n) hp hp1 hq A hAmeas hAinc
+    fun n => (freeFiniteMeasure_dominated d (ψ n) hp hp1 hq).real A hAmeas hAinc
   exact le_of_tendsto_of_tendsto ht₀ ht₁ (Filter.Eventually.of_forall hdom)
 
 /-!

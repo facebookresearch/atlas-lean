@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BdEdgeMatchFinite
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.BdEdgeMatchFinite`
@@ -42,6 +42,7 @@ example : pww_BdEdgeMatch ∅ nilLoop :=
   (bemc_bdEdgeMatch_iff_leftRegion_eq nilLoop 0 nilLoop_supp Set.finite_empty).mpr
     leftRegion_nil.symm
 
-example : (jec_leftRegion nilLoop)ᶜ.Infinite := bemc_compl_leftRegion_infinite nilLoop 0 nilLoop_supp
+example : (jec_leftRegion nilLoop)ᶜ.Infinite :=
+  bemc_compl_leftRegion_infinite nilLoop 0 nilLoop_supp
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.BdEdgeMatchFinite

@@ -156,14 +156,6 @@ theorem pmd_faceDualVCrossing_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n :
   obtain ⟨a₀, a₁, ha0, ha0', ha1, ha1', hreach⟩ := h
   exact ⟨a₀, a₁, ha0, ha0', ha1, ha1', hreach.mono (pmd_boxFaceBarrier_le_faceOpenDual ω n)⟩
 
-/-- Dichotomy form of `pmd_faceDualVCrossing_of_residue`: under `pmd_BarrierConnectsRows ω n`,
-either there is a horizontal crossing or a face-dual vertical crossing. The hypothesis
-`¬ HorizontalCrossing ω 0 n 0 n` is unused (the right disjunct always holds). -/
-theorem pmd_exhaustivity_of_residue (ω : ConfigSpace (Sym2 (Site 2))) (n : ℤ)
-    (_hnoH : ¬ HorizontalCrossing ω 0 n 0 n) (h : pmd_BarrierConnectsRows ω n) :
-    HorizontalCrossing ω 0 n 0 n ∨ pmd_FaceDualVCrossing ω n :=
-  Or.inr (pmd_faceDualVCrossing_of_residue ω n h)
-
 /-- In the wall configuration the faces of column `0` are face-dual adjacent vertically from
 row `-1` to row `2`. -/
 theorem pmd_wall_faceVAdj {b : ℤ} (hb : b = -1 ∨ b = 0 ∨ b = 1) :

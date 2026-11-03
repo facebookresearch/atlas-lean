@@ -66,7 +66,7 @@ example :
         : Measure (ConfigSpace (Sym2 (Site 2)))).real (edgeOpen s(0, e0))
       ≤ (wiredFiniteMeasure 2 1 (p := 1 / 2) (q := 2) (by norm_num) (by norm_num) (by norm_num)
         : Measure (ConfigSpace (Sym2 (Site 2)))).real (edgeOpen s(0, e0)) :=
-  freeFiniteMeasure_dominated 2 1 (by norm_num) (by norm_num) (by norm_num) _
+  (freeFiniteMeasure_dominated 2 1 (by norm_num) (by norm_num) (by norm_num)).real _
     (measurableSet_edgeOpen _) (isIncreasing_edgeOpen _)
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.Limits

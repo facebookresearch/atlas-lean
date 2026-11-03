@@ -14,9 +14,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationSECorne
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.KingSeparationSECorner`
 
 * `cat_fjord_nonvacuous`.
-* `cat_residuals_iff_noKingSeparation_of_fourThin` for `ksd_stair`: all five residual predicates
-  of the chain hold there (they are equivalent to `ksc_NoKingSeparation`).
-* `cat_noKingSeparation_of_fourThin` instantiated with `ksd_stair` at the seed `(1, 1)`.
+* `kns_ksd_escapeThickPoint`: the first residual predicate holds for `ksd_stair`.
+* `ksc_ksd_noKingSeparation`: `ksd_stair` has no king separation from `(1, 1)`.
 -/
 
 @[expose] public section
@@ -29,12 +28,8 @@ example : kns_KingSeparation sdc_fjord (![5, 1] : Site 2) ∧ kns_ThickPoint sdc
     cat_CrossArcThick sdc_fjord (![5, 1] : Site 2) ∧ ¬ mci_FourThin sdc_fjord :=
   cat_fjord_nonvacuous
 
-example : kns_EscapeThickPoint ksd_stair (![1, 1] : Site 2) :=
-  ((cat_residuals_iff_noKingSeparation_of_fourThin ksd_stair ksd_mem_interior_11
-    ksd_stair_fourThin).2.2.2.2).mpr ksc_ksd_noKingSeparation
+example : kns_EscapeThickPoint ksd_stair (![1, 1] : Site 2) := kns_ksd_escapeThickPoint
 
-example : ksc_NoKingSeparation ksd_stair (![1, 1] : Site 2) :=
-  cat_noKingSeparation_of_fourThin ksd_stair ksd_mem_interior_11 ksd_stair_fourThin
-    cat_ksd_crossArcThick
+example : ksc_NoKingSeparation ksd_stair (![1, 1] : Site 2) := ksc_ksd_noKingSeparation
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.KingSeparationSECorner

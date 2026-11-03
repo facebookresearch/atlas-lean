@@ -11,7 +11,7 @@ public import MathlibExt.Analysis.Complex.Loewner.LoewnerProps
 public import MathlibExt.Analysis.Complex.Loewner.CapacityProps
 
 /-!
-# Half-plane capacity of a Loewner chain: `hcap(g_t) = 2t` from the rate equation
+# Conditional half-plane capacity from the coefficient rate equation
 
 For the chordal Loewner flow `∂_t g_t(z) = 2 / (g_t(z) - W_t)` one expects `g_t(z) = z + 2t/z +
 o(1/z)`, i.e. `hcap(K_t) = 2t`. The heuristic is that the coefficient `a₁(t)` of `1/z` satisfies
@@ -29,7 +29,7 @@ the Loewner equation (exchanging `∂_t` with the expansion at infinity) is not 
 * `tendsto_self_div_of_tendsto_const`: if `F z - z → c` at infinity then `z / F z → 1`.
 * `tendsto_mul_loewnerField`: if `G z - z → 0` then `z · 2/(G z - W_t) → 2`.
 * `coeff_ode_solution`: `a₁(0) = 0`, `a₁' = 2` on `[0, ∞)` imply `a₁(t) = 2t`.
-* `loewner_halfplane_capacity_eq`, `loewner_capacity_eq_of_loewnerChain`: `hcap(g_t) = 2t`
+* `loewner_halfplane_capacity_eq`, `loewner_capacity_unique`: `hcap(g_t) = 2t`
   under the capacity and rate hypotheses.
 
 ## References
@@ -169,17 +169,5 @@ theorem loewner_capacity_unique {g : ℝ → ℂ → ℂ} {a₁ : ℝ → ℝ}
     {t : ℝ} (ht : t ∈ Ici (0 : ℝ)) {b : ℝ} (hb : HasHalfPlaneCapacity (g t) b) :
     b = 2 * t :=
   hb.unique (loewner_halfplane_capacity_eq hcap h0 hrate t ht)
-
-/-- For a Loewner chain, `hcap(g_t) = 2t`, **assuming** `g_t` has half-plane capacity `a₁(t)` with
-`a₁' = 2`; `a₁(0) = 0` follows from `g_0 = id`. -/
-theorem loewner_capacity_eq_of_loewnerChain (c : LoewnerChain) {a₁ : ℝ → ℝ}
-    (hcap : ∀ t ∈ Ici (0 : ℝ), HasHalfPlaneCapacity (c.maps t) (a₁ t))
-    (hrate : ∀ t ∈ Ici (0 : ℝ), HasDerivWithinAt a₁ 2 (Ici (0 : ℝ)) t) :
-    ∀ t ∈ Ici (0 : ℝ), HasHalfPlaneCapacity (c.maps t) (2 * t) := by
-  have hid : HasHalfPlaneCapacity (c.maps 0) 0 :=
-    hasHalfPlaneCapacity_zero_of_eq_id (fun z => c.maps_zero z)
-  have h0 : a₁ 0 = 0 :=
-    ((hcap 0 Set.self_mem_Ici).unique hid)
-  exact loewner_halfplane_capacity_eq hcap h0 hrate
 
 end StatMech.SLE

@@ -14,12 +14,13 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitKingConnected
 # Transport of boundary orbits along lattice paths
 
 A boundary orbit of `K` moves from one head to the next by a straight step or a turn. This file
-records these steps, the reduction of `InterfaceConnected K` to transport of the orbit along lattice
-edges of `Kᶜ` (`UnitEdgeOrbitTransport`) plus `OrbitVertexSaturate`, and a proof that
-`UnitEdgeOrbitTransport` fails for every finite nonempty set, so that reduction is empty there. It
-then applies `InterfaceConnected` to the origin cluster: when the heads of both exit darts lie
-outside a box containing the cluster, the exit darts share an orbit and the exit faces are joined
-in the face-boundary graph.
+records these steps, and a proof that `UnitEdgeOrbitTransport` fails for every finite nonempty
+set. The reduction of `InterfaceConnected K` to `UnitEdgeOrbitTransport K` plus
+`OrbitVertexSaturate K` was removed: its first hypothesis fails for every finite nonempty `K`, so
+for the intended finite applications it covered only `K = ∅`. The file then applies
+`InterfaceConnected` to the origin cluster: when the heads of both exit darts lie outside a box
+containing the cluster, the exit darts share an orbit and the exit faces are joined in the
+face-boundary graph.
 
 ## Main definitions
 
@@ -28,8 +29,6 @@ in the face-boundary graph.
 
 ## Main results
 
-* `StatMech.Lattice.icb_interfaceConnected_of_unitEdgeTransport`: `UnitEdgeOrbitTransport K` and
-  `OrbitVertexSaturate K` imply `InterfaceConnected K`.
 * `StatMech.Lattice.icb_not_unitEdgeTransport_of_finite`: `UnitEdgeOrbitTransport K` is false for
   every finite nonempty `K`.
 * `StatMech.Lattice.icb_exitFaces_reachable_of_traceSurjective`: for the origin cluster, under
@@ -91,36 +90,6 @@ def UnitEdgeOrbitTransport (K : Set (Site 2)) : Prop :=
     ∀ {u v : Site 2} (_hu : u ∉ K) (_hv : v ∉ K),
       (hypercubicLattice 2).Adj u v →
       OrbitReached K e u → OrbitReached K e v
-
-/-- Under `UnitEdgeOrbitTransport K`, the set of sites reached by an orbit is closed under lattice
-paths in `Kᶜ`. -/
-theorem icb_orbitReached_of_complReachable (K : Set (Site 2)) (htr : UnitEdgeOrbitTransport K)
-    (e : Dart) (he : IsBoundaryDart K e) {u w : Site 2} (hu : u ∉ K) (hw : w ∉ K)
-    (hreach : ((hypercubicLattice 2).induce Kᶜ).Reachable ⟨u, hu⟩ ⟨w, hw⟩)
-    (hou : OrbitReached K e u) : OrbitReached K e w := by
-  obtain ⟨p⟩ := hreach
-  suffices H : ∀ (a b : ↥(Kᶜ : Set (Site 2))), ((hypercubicLattice 2).induce Kᶜ).Walk a b →
-      OrbitReached K e (a : Site 2) → OrbitReached K e (b : Site 2) from
-    H ⟨u, hu⟩ ⟨w, hw⟩ p hou
-  intro a b q
-  induction q with
-  | nil => intro h; exact h
-  | @cons a b c hadj q' ih =>
-    intro hoa
-    have hadj' : (hypercubicLattice 2).Adj (a : Site 2) (b : Site 2) := hadj
-    exact ih (htr e he a.2 b.2 hadj' hoa)
-
-/-- `UnitEdgeOrbitTransport K` and `OrbitVertexSaturate K` imply `InterfaceConnected K`. Vacuity
-warning: the first hypothesis fails for every finite nonempty `K`
-(`icb_not_unitEdgeTransport_of_finite`), so for finite `K` this lemma only covers `K = ∅`. -/
-theorem icb_interfaceConnected_of_unitEdgeTransport (K : Set (Site 2))
-    (htr : UnitEdgeOrbitTransport K) (hsat : OrbitVertexSaturate K) :
-    InterfaceConnected K := by
-  intro e f he hf hreach
-  have hbase : OrbitReached K e e.head := orbitReached_self K e he
-  have hfhead : OrbitReached K e f.head :=
-    icb_orbitReached_of_complReachable K htr e he he.2 hf.2 hreach hbase
-  exact hsat e he hfhead f hf rfl
 
 /-- `UnitEdgeOrbitTransport` fails for the single site `0`: the orbit reaches `(1,0)` but not its
 neighbour `(2,0)`. -/

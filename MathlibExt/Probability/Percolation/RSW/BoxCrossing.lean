@@ -12,17 +12,21 @@ public import MathlibExt.Probability.Percolation.RSW.Strip
 /-!
 # Elementary box-crossing bounds on `ℤ²`
 
-Three elementary steps of Russo–Seymour–Welsh theory for a probability measure on bond
+Two elementary steps of Russo–Seymour–Welsh theory for a probability measure on bond
 configurations of `ℤ²`, each stated with its geometric or correlation input as a hypothesis:
 
 * the square-root trick for two events of equal probability, from the FKG inequality for their
   complements;
-* the bound `ℙ(square crossing) ≥ 1/2` from self-duality (every square without an open
-  left–right crossing has a dual top–bottom crossing, and the two crossings are equally likely);
-  with the library's quarter-turn labelling of the dual, the first hypothesis fails for `n ≥ 2`
-  (see `square_crossing_ge_half`);
 * the bound `ℙ(crossing of [0, 2n] × [0, n]) ≥ 1/4` for a positively associated measure, from two
   half-crossings meeting at a common point of the middle column, each of probability `≥ 1/2`.
+
+No square-crossing bound from self-duality is claimed here. The library's `dualConfig`
+labels dual edges by a quarter turn about the origin, so `dualVerticalCrossingEvent` on the
+unchanged box is not the geometric dual separator of `[0, n]²`: the complement inclusion
+fails for `n ≥ 2` (`StatMech.Universality.bcc_dichotomy_false`). A correct self-duality bound
+would need the dual crossing of the correctly shifted geometric dual rectangle (or a
+face-dual graph) and a proof of the complement inclusion; that is not formalized here, and
+no theorem in this module is stated in terms of the rotated dual event.
 
 No RSW inequality is proved here: the hypotheses `hrouteLeft`, `hrouteRight` of
 `box_crossing_lower_bound` (half-crossing probabilities at least `1/2`) carry the content of the
@@ -30,8 +34,8 @@ RSW argument.
 
 ## Main definitions
 
-* `StatMech.RSW.BoxCrossing.squareCrossingEvent`, `squareDualCrossingEvent`: the open left–right
-  crossing and the dual top–bottom crossing of `[0, n]²`.
+* `StatMech.RSW.BoxCrossing.squareCrossingEvent`: the open left–right
+  crossing of `[0, n]²`.
 * `StatMech.RSW.BoxCrossing.rectangleCrossingEvent`: the open left–right crossing of
   `[0, 2n] × [0, n]`.
 * `StatMech.RSW.BoxCrossing.rectLeftHalfEvent`, `rectRightHalfEvent`: open paths from the left
@@ -42,7 +46,6 @@ RSW argument.
 
 * `StatMech.RSW.BoxCrossing.sqrt_trick`: `μ(A) = μ(B)` and `μ(Aᶜ)μ(Bᶜ) ≤ μ(Aᶜ ∩ Bᶜ)` imply
   `1 - √(1 - μ(A ∪ B)) ≤ μ(A)`.
-* `StatMech.RSW.BoxCrossing.square_crossing_ge_half`: self-duality gives `ℙ(square crossing) ≥ 1/2`.
 * `StatMech.RSW.BoxCrossing.box_crossing_lower_bound`: half-crossings of probability `≥ 1/2` give
   `ℙ(crossing of [0, 2n] × [0, n]) ≥ 1/4`.
 
@@ -117,35 +120,6 @@ theorem sqrt_trick {E : Type*} (μ : Measure (ConfigSpace E)) [IsProbabilityMeas
 def squareCrossingEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   horizontalCrossingEvent 0 n 0 n
 
-/-- The top–bottom crossing of the square `[0, n]²` in the dual configuration. -/
-def squareDualCrossingEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
-  dualVerticalCrossingEvent 0 n 0 n
-
-/-- Self-duality bound for square crossings: if every configuration without an open left–right
-crossing of `[0, n]²` has a dual top–bottom crossing (`hdualExists`) and the two crossings have
-the same probability (`hselfDual`), then the open crossing has probability at least `1/2`.
-
-Fidelity: `dualConfig` labels dual edges by a quarter turn about the origin, so
-`squareDualCrossingEvent n` is not the geometric dual crossing of `[0, n]²`, and `hdualExists` is
-false for `n = 2` (`StatMech.Universality.bcc_dichotomy_false`); the same wall configuration
-refutes it for every `n ≥ 2` (by hand). The theorem is therefore vacuous for `n ≥ 2`.
-
-See also `StatMech.Universality.rst_selfDual_box_crossing_half`, the same argument for the
-self-dual measure with the symmetry stated through vertical crossings. -/
-theorem square_crossing_ge_half (μ : Measure (ConfigSpace (Sym2 (Site 2))))
-    [IsProbabilityMeasure μ] (n : ℤ)
-    (hdualExists : (squareCrossingEvent n)ᶜ ⊆ squareDualCrossingEvent n)
-    (hselfDual : μ.real (squareDualCrossingEvent n) = μ.real (squareCrossingEvent n))
-    (hmeas : MeasurableSet (squareCrossingEvent n)) :
-    (1 : ℝ) / 2 ≤ μ.real (squareCrossingEvent n) := by
-  have hcompl : μ.real (squareCrossingEvent n)ᶜ = 1 - μ.real (squareCrossingEvent n) := by
-    rw [measureReal_compl hmeas, probReal_univ]
-  have hmono : μ.real (squareCrossingEvent n)ᶜ ≤ μ.real (squareDualCrossingEvent n) :=
-    measureReal_mono hdualExists
-  rw [hselfDual] at hmono
-  rw [hcompl] at hmono
-  linarith
-
 /-- The open left–right crossing of the rectangle `[0, 2n] × [0, n]`. -/
 def rectangleCrossingEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   horizontalCrossingEvent 0 (2 * n) 0 n
@@ -181,9 +155,11 @@ theorem box_crossing_lower_bound
     have h1 : (0 : ℝ) ≤ μ.real (rectLeftHalfEvent n hn hz0 hzc hzd) := measureReal_nonneg
     nlinarith [hrouteLeft, hrouteRight, h1]
   have hmb : (n : ℤ) ≤ 2 * n := by linarith
-  exact le_trans hprod
-    (measureReal_horizontalCrossing_ge_halves (a := 0) (m := n) (b := 2 * n) (c := 0) (d := n)
-      hn hmb hz0 hzc hzd μ hpa)
+  exact le_trans hprod (by
+    simpa only [rectLeftHalfEvent, rectRightHalfEvent, rectangleCrossingEvent,
+      probReal_univ, mul_one] using
+      (measureReal_horizontalCrossing_ge_halves (a := 0) (m := n) (b := 2 * n) (c := 0) (d := n)
+        hn hmb hz0 hzc hzd μ hpa))
 
 /-- Existential form of `box_crossing_lower_bound`. -/
 theorem box_crossing_lower_bound_pos

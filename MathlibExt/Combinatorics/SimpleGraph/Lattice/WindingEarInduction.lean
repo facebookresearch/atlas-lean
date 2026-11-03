@@ -27,8 +27,9 @@ case, where the orbit probes every site of `K` (`wei_WindingSaturatingWitness`).
 
 That saturated statement is false: for the four neighbours of the origin the inner boundary
 orbit probes all four sites, but its face loop encloses only the origin, which is not in the set.
-This is proved here (`not_wei_WindingSaturatingWitness`), so the conditional results
-`wei_windingWitness_of_descent` and `wei_starHull_windingWitness_of_residue` are vacuous.
+This is proved here (`not_wei_WindingSaturatingWitness`). The conditional descent results
+that assumed the saturated statement (`wei_windingWitness_of_descent` and its star-hull form)
+were vacuous — usable only by ex falso — and have been removed, not restated.
 
 ## Main definitions
 
@@ -44,8 +45,6 @@ This is proved here (`not_wei_WindingSaturatingWitness`), so the conditional res
 * `StatMech.Lattice.wei_rayCount_trans`: ray counts of face loops are translation invariant.
 * `StatMech.Lattice.wei_singleton_windingWitness`: every boundary orbit of a single site has a
   winding witness.
-* `StatMech.Lattice.wei_windingWitness_of_descent`: the saturated case implies the general case
-  (vacuous).
 * `StatMech.Lattice.not_wei_WindingSaturatingWitness`: the saturated case is false.
 -/
 
@@ -263,51 +262,6 @@ def wei_WindingSaturatingWitness : Prop :=
   ∀ (K : Set (Site 2)), K.Finite → 2 ≤ K.ncard →
     ∀ (a : {e : Dart // IsBoundaryDart K e}),
       K ⊆ bpc_orbitFootprint K a → wei_WindingWitness K a
-
-/-- If every saturated orbit has a winding witness, every boundary orbit of every finite nonempty
-set does (induction on the number of sites, removing a site the orbit never probes).
-
-The hypothesis `wei_WindingSaturatingWitness` is false (`not_wei_WindingSaturatingWitness`), so
-this result is vacuous; its conclusion fails for the inner orbit of a set with a hole. -/
-theorem wei_windingWitness_of_descent (hres : wei_WindingSaturatingWitness)
-    (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty)
-    (a : {e : Dart // IsBoundaryDart K e}) : wei_WindingWitness K a := by
-  generalize hn : K.ncard = n
-  induction n using Nat.strong_induction_on generalizing K with
-  | _ n IH =>
-    subst hn
-    rcases Nat.lt_or_ge K.ncard 2 with hlt | hge
-    · have h1 : K.ncard = 1 := by
-        have hpos : 0 < K.ncard := (Set.ncard_pos hK).mpr hne
-        omega
-      obtain ⟨v, hv⟩ := Set.ncard_eq_one.mp h1
-      subst hv
-      exact wei_singleton_windingWitness v a
-    · by_cases hsat : K ⊆ bpc_orbitFootprint K a
-      · exact hres K hK hge a hsat
-      · rw [Set.not_subset] at hsat
-        obtain ⟨c, hcK, hc⟩ := hsat
-        have hne_tail : c ≠ a.1.tail := bpc_ne_tail_of_not_footprint K a c hc
-        have hbd : IsBoundaryDart (K \ {c}) a.1 :=
-          bpc_isBoundaryDart_diff_singleton K c a.1 a.2 hne_tail
-        set a' : {e : Dart // IsBoundaryDart (K \ {c}) e} := ⟨a.1, hbd⟩ with ha'
-        have hnp : ∀ i, bpc_NotProbed c ((dartNext K)^[i] a.1) :=
-          bpc_notProbed_of_not_footprint K a c hc
-        have hK' : (K \ {c}).Finite := hK.subset Set.sdiff_subset
-        have hcard_eq : (K \ {c}).ncard = K.ncard - 1 := Set.ncard_sdiff_singleton_of_mem hcK
-        have hne' : (K \ {c}).Nonempty := by
-          rw [← Set.ncard_pos hK', hcard_eq]; omega
-        have hncard_lt : (K \ {c}).ncard < K.ncard := by rw [hcard_eq]; omega
-        have hw' : wei_WindingWitness (K \ {c}) a' :=
-          IH (K \ {c}).ncard hncard_lt (K \ {c}) hK' hne' a' rfl
-        exact wei_windingWitness_transfer_diff_singleton K c a a' (by rw [ha']) hnp hw'
-
-/-- Star hull form of `wei_windingWitness_of_descent`; vacuous for the same reason. -/
-theorem wei_starHull_windingWitness_of_residue (hres : wei_WindingSaturatingWitness)
-    (K : Set (Site 2)) (hSK : (ndt_StarHull K).Finite) (hne : (ndt_StarHull K).Nonempty)
-    (a : {e : Dart // IsBoundaryDart (ndt_StarHull K) e}) :
-    wei_WindingWitness (ndt_StarHull K) a :=
-  wei_windingWitness_of_descent hres (ndt_StarHull K) hSK hne a
 
 /-- If one site `z0` of `K` is enclosed by the face loop and every site of `K` is joined to `z0` by
 a walk avoiding the loop, every site of `K` is enclosed. -/

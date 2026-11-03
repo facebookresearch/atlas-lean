@@ -15,16 +15,17 @@ public import MathlibExt.Analysis.Fourier.BooleanCubeInfluence
 /-!
 # Walsh–Fourier analysis on the uniform cube and the KKL reduction
 
-Walsh–Fourier analysis on `{0, 1}^ι` under the uniform measure, for an arbitrary finite index
-type `ι`: the characters `χ_S(x) = ∏_{i ∈ S} (-1)^{x i}`, their orthonormality, the Fourier
-expansion and Parseval's identity, and the action of the noise operator `T_ρ χ_S = ρ^{|S|} χ_S`.
-The Bonami–Beckner hypercontractive inequality `‖T_ρ f‖₂ ≤ ‖f‖_{1+ρ²}`, proved on `Fin n` in
-`MathlibExt.Probability.Hypercontractivity.BonamiTensorize`, is transported to `ι` by
-reindexing.
+Walsh–Fourier compatibility API on `{0, 1}^ι`, for an arbitrary finite index type `ι`.
+The legacy convention `false ↦ 1`, `true ↦ -1` is retained for KKL consumers. Fourier
+inversion, Parseval, variance, influence and noise identities reuse the canonical proofs in
+`BooleanCube`: reindex coordinates with `Fintype.equivFin`, then use the parity bridge
+`(-1)^{|S|}`. No finiteness or nonemptiness hypotheses are added to the basic characters.
+The Bonami–Beckner inequality is transported from `Fin n` in the same way.
 
-For Boolean functions, variance and total influence are expressed through Fourier weights,
-which reduces the KKL inequality at `p = 1/2` to a Fourier-side inequality
-(`khc_LogSobolevStep`).
+For Boolean functions, the canonical influence uses quarter squared flip differences.
+`khc_infl_eq_four_boolInfluence` accounts for the factor `4` in event influence before
+transporting the canonical Fourier weights. These weights reduce KKL at `p = 1/2` to
+`khc_LogSobolevStep`.
 
 ## Main definitions
 
@@ -78,8 +79,8 @@ theorem khc_sign_sq (b : Bool) : khc_sign b * khc_sign b = 1 := by
 
 /-- The Walsh character `χ_S(x) = ∏_{i ∈ S} (-1)^{x i}` on `{0, 1}^ι`.
 
-  See also `BooleanCube.cubeChi`, which uses the opposite sign convention
-  (`khc_walshChar_eq_cubeChi`). -/
+  This legacy sign convention is retained for KKL consumers; its proofs use
+  `BooleanCube.cubeChi` through `khc_walshChar_eq_cubeChi`. -/
 noncomputable def khc_walshChar (S : Finset ι) (x : ι → Bool) : ℝ :=
   ∏ i ∈ S, khc_sign (x i)
 
@@ -95,10 +96,6 @@ theorem khc_walshChar_sq (S : Finset ι) (x : ι → Bool) :
   rw [← Finset.prod_pow]
   exact Finset.prod_eq_one (fun i _ => by rw [sq]; exact khc_sign_sq (x i))
 
-theorem khc_walshChar_as_univ (S : Finset ι) (x : ι → Bool) :
-    khc_walshChar S x = ∏ i : ι, (if i ∈ S then khc_sign (x i) else 1) := by
-  unfold khc_walshChar; rw [Finset.prod_ite_mem, Finset.univ_inter]
-
 omit [Fintype ι] in
 theorem khc_walshChar_mul (S T : Finset ι) (x : ι → Bool) :
     khc_walshChar S x * khc_walshChar T x = khc_walshChar (symmDiff S T) x := by
@@ -112,207 +109,12 @@ theorem khc_walshChar_mul (S T : Finset ι) (x : ι → Bool) :
   by_cases hS : i ∈ S <;> by_cases hT : i ∈ T <;>
     simp [hS, hT, Finset.mem_symmDiff, khc_sign_sq]
 
-theorem khc_uexp_walshChar (S : Finset ι) :
-    bnt_uexp (khc_walshChar S) = if S = ∅ then 1 else 0 := by
-  unfold bnt_uexp khc_walshChar
-  have hchar : ∀ x : ι → Bool, (∏ i ∈ S, khc_sign (x i))
-      = ∏ i : ι, (if i ∈ S then khc_sign (x i) else 1) := by
-    intro x; rw [Finset.prod_ite_mem, Finset.univ_inter]
-  simp only [khc_sign] at hchar ⊢
-  simp_rw [hchar]
-  rw [← Fintype.prod_sum (fun (i : ι) (c : Bool) =>
-    if i ∈ S then (if c then (-1 : ℝ) else 1) else 1)]
-  have hfac : ∀ i : ι, (∑ c : Bool, if i ∈ S then (if c then (-1 : ℝ) else 1) else 1)
-      = (if i ∈ S then 0 else 2) := by
-    intro i; by_cases hi : i ∈ S <;> simp [hi]
-  simp_rw [hfac]
-  by_cases hS : S = ∅
-  · subst hS
-    simp only [Finset.notMem_empty, ite_false, ite_true]
-    rw [Finset.prod_const, Finset.card_univ, div_self (by positivity)]
-  · rw [ite_eq_right hS]
-    obtain ⟨i, hi⟩ := Finset.nonempty_iff_ne_empty.mpr hS
-    rw [Finset.prod_eq_zero (Finset.mem_univ i) (by simp [hi]), zero_div]
-
-theorem khc_orthonormal (S T : Finset ι) :
-    bnt_uexp (fun x => khc_walshChar S x * khc_walshChar T x) = if S = T then 1 else 0 := by
-  simp_rw [khc_walshChar_mul]
-  rw [khc_uexp_walshChar]
-  by_cases h : S = T
-  · subst h; simp
-  · rw [ite_eq_right h, ite_eq_right]
-    intro hsd
-    exact h (symmDiff_eq_bot.mp (by simpa using hsd))
-
-omit [DecidableEq ι] in
-theorem khc_sum_walshChar_mul (x y : ι → Bool) :
-    (∑ S : Finset ι, khc_walshChar S x * khc_walshChar S y)
-      = if x = y then (2 ^ Fintype.card ι : ℝ) else 0 := by
-  have hpt : ∀ S : Finset ι, khc_walshChar S x * khc_walshChar S y
-      = ∏ i ∈ S, (khc_sign (x i) * khc_sign (y i)) := by
-    intro S; unfold khc_walshChar; rw [← Finset.prod_mul_distrib]
-  simp_rw [hpt]
-  have hpow : (univ : Finset (Finset ι)) = (univ : Finset ι).powerset := by ext S; simp
-  rw [hpow, ← Finset.prod_one_add]
-  have hfac : ∀ i : ι, (1 + khc_sign (x i) * khc_sign (y i)) = if x i = y i then
-      (2 : ℝ) else 0 := by
-    intro i; cases hxi : x i <;> cases hyi : y i <;> simp [khc_sign] <;> norm_num
-  simp_rw [hfac]
-  by_cases hxy : x = y
-  · subst hxy; simp only [ite_true]; rw [Finset.prod_const, Finset.card_univ]
-  · rw [ite_eq_right hxy]
-    obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (by simp [hi])
-
 /-- The Fourier–Walsh coefficient `f̂(S) = 𝔼[f χ_S]` under the uniform measure.
 
-  See also `BooleanCube.boolFourierCoeff` (`khc_fourierCoeff_eq_boolFourierCoeff`). -/
+  This retains the legacy signs; `khc_fourierCoeff_eq_boolFourierCoeff` transports
+  the canonical Fourier identities used below. -/
 noncomputable def khc_fourierCoeff (f : (ι → Bool) → ℝ) (S : Finset ι) : ℝ :=
   bnt_uexp (fun x => f x * khc_walshChar S x)
-
-/-- Fourier inversion: `f = ∑_S f̂(S) χ_S`. -/
-theorem khc_fourier_expansion (f : (ι → Bool) → ℝ) (x : ι → Bool) :
-    (∑ S : Finset ι, khc_fourierCoeff f S * khc_walshChar S x) = f x := by
-  calc (∑ S : Finset ι, khc_fourierCoeff f S * khc_walshChar S x)
-      = ∑ S : Finset ι, (∑ y : ι → Bool, f y * khc_walshChar S y) / (2 ^ Fintype.card ι)
-          * khc_walshChar S x := by
-        unfold khc_fourierCoeff bnt_uexp; rfl
-    _ = (∑ S : Finset ι, ∑ y : ι → Bool, f y * khc_walshChar S y * khc_walshChar S x)
-          / (2 ^ Fintype.card ι) := by
-        rw [Finset.sum_div]; apply Finset.sum_congr rfl; intro S _
-        rw [div_mul_eq_mul_div, Finset.sum_mul]
-    _ = (∑ y : ι → Bool, f y * (∑ S : Finset ι, khc_walshChar S y * khc_walshChar S x))
-          / (2 ^ Fintype.card ι) := by
-        rw [Finset.sum_comm]; congr 1; apply Finset.sum_congr rfl; intro y _
-        rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro S _; ring
-    _ = (∑ y : ι → Bool, f y * (if y = x then (2 ^ Fintype.card ι : ℝ) else 0))
-          / (2 ^ Fintype.card ι) := by
-        congr 1; apply Finset.sum_congr rfl; intro y _; rw [khc_sum_walshChar_mul]
-    _ = f x := by
-        rw [Finset.sum_eq_single x]
-        · rw [ite_eq_left rfl, mul_div_assoc, div_self (by positivity), mul_one]
-        · intro y _ hy; rw [ite_eq_right hy, mul_zero]
-        · intro h; exact absurd (Finset.mem_univ x) h
-
-theorem khc_uexp_finset_sum {κ : Type*} (s : Finset κ) (g : κ → (ι → Bool) → ℝ) :
-    bnt_uexp (fun x => ∑ k ∈ s, g k x) = ∑ k ∈ s, bnt_uexp (g k) := by
-  unfold bnt_uexp; simp_rw [Finset.sum_div]; rw [Finset.sum_comm]
-
-theorem khc_uexp_const_mul (c : ℝ) (g : (ι → Bool) → ℝ) :
-    bnt_uexp (fun x => c * g x) = c * bnt_uexp g := by
-  unfold bnt_uexp; rw [← Finset.mul_sum, mul_div_assoc]
-
-theorem khc_uexp_fourier_mul (a b : Finset ι → ℝ) :
-    bnt_uexp (fun x => (∑ S : Finset ι, a S * khc_walshChar S x)
-        * (∑ T : Finset ι, b T * khc_walshChar T x))
-      = ∑ S : Finset ι, a S * b S := by
-  have hexp : (fun x => (∑ S : Finset ι, a S * khc_walshChar S x)
-        * (∑ T : Finset ι, b T * khc_walshChar T x))
-      = (fun x => ∑ S : Finset ι, ∑ T : Finset ι,
-          (a S * b T) * (khc_walshChar S x * khc_walshChar T x)) := by
-    funext x; rw [Finset.sum_mul_sum]; apply Finset.sum_congr rfl; intro S _
-    apply Finset.sum_congr rfl; intro T _; ring
-  rw [hexp, khc_uexp_finset_sum]
-  apply Finset.sum_congr rfl; intro S _
-  rw [khc_uexp_finset_sum]
-  have hterm : ∀ T : Finset ι,
-      bnt_uexp (fun x => a S * b T * (khc_walshChar S x * khc_walshChar T x))
-        = a S * b T * (if S = T then 1 else 0) := by
-    intro T
-    rw [khc_uexp_const_mul (a S * b T) (fun x => khc_walshChar S x * khc_walshChar T x),
-        khc_orthonormal]
-  simp_rw [hterm]
-  rw [Finset.sum_eq_single S]
-  · rw [ite_eq_left rfl, mul_one]
-  · intro T _ hT; rw [ite_eq_right (Ne.symm hT), mul_zero]
-  · intro h; exact absurd (Finset.mem_univ S) h
-
-/-- Parseval's identity: `𝔼[f g] = ∑_S f̂(S) ĝ(S)`.
-
-  See also `BooleanCube.expect_mul_eq_sum_boolFourierCoeff_mul`, the same identity on `Fin n`. -/
-theorem khc_parseval (f g : (ι → Bool) → ℝ) :
-    bnt_uexp (fun x => f x * g x)
-      = ∑ S : Finset ι, khc_fourierCoeff f S * khc_fourierCoeff g S := by
-  have hf : (fun x => f x * g x)
-      = (fun x => (∑ S : Finset ι, khc_fourierCoeff f S * khc_walshChar S x)
-          * (∑ T : Finset ι, khc_fourierCoeff g T * khc_walshChar T x)) := by
-    funext x; rw [khc_fourier_expansion, khc_fourier_expansion]
-  rw [hf, khc_uexp_fourier_mul]
-
-theorem khc_parseval_sq (f : (ι → Bool) → ℝ) :
-    bnt_uexp (fun x => (f x) ^ 2) = ∑ S : Finset ι, (khc_fourierCoeff f S) ^ 2 := by
-  have h := khc_parseval f f
-  simp_rw [← sq] at h
-  exact h
-
-theorem khc_noiseOp_walshChar_apply (ρ : ℝ) (S : Finset ι) (x : ι → Bool) :
-    bnt_noiseOp ρ (khc_walshChar S) x = ρ ^ S.card * khc_walshChar S x := by
-  unfold bnt_noiseOp bnt_noiseKernel khc_walshChar
-  have hchar : ∀ y : ι → Bool, (∏ i ∈ S, khc_sign (y i))
-      = ∏ i : ι, (if i ∈ S then khc_sign (y i) else 1) := by
-    intro y; rw [Finset.prod_ite_mem, Finset.univ_inter]
-  simp_rw [hchar]
-  have hcomb : ∀ y : ι → Bool,
-      (∏ i : ι, (if x i = y i then (1 + ρ) / 2 else (1 - ρ) / 2))
-        * (∏ i : ι, (if i ∈ S then khc_sign (y i) else 1))
-      = ∏ i : ι, ((if x i = y i then (1 + ρ) / 2 else (1 - ρ) / 2)
-                  * (if i ∈ S then khc_sign (y i) else 1)) := by
-    intro y; rw [← Finset.prod_mul_distrib]
-  simp_rw [hcomb]
-  rw [← Fintype.prod_sum (fun (i : ι) (c : Bool) =>
-        (if x i = c then (1 + ρ) / 2 else (1 - ρ) / 2) * (if i ∈ S then khc_sign c else 1))]
-  have hfac : ∀ i : ι,
-      (∑ c : Bool,
-          (if x i = c then (1 + ρ) / 2 else (1 - ρ) / 2) * (if i ∈ S then khc_sign c else 1))
-        = (if i ∈ S then ρ * khc_sign (x i) else 1) := by
-    intro i
-    by_cases hi : i ∈ S
-    · simp only [hi, ite_true]; rw [Fintype.sum_bool]; cases (x i) <;> simp [khc_sign] <;> ring
-    · simp only [hi, ite_false, mul_one]; rw [Fintype.sum_bool]; cases (x i) <;> simp <;> ring
-  simp_rw [hfac]
-  rw [Finset.prod_ite_mem, Finset.univ_inter, Finset.prod_ite_mem, Finset.univ_inter,
-      Finset.prod_mul_distrib, Finset.prod_const]
-
-theorem khc_noiseOp_walshChar (ρ : ℝ) (S : Finset ι) :
-    bnt_noiseOp ρ (khc_walshChar S) = fun x => ρ ^ S.card * khc_walshChar S x := by
-  funext x; exact khc_noiseOp_walshChar_apply ρ S x
-
-theorem khc_noiseOp_finset_sum {κ : Type*} (ρ : ℝ) (s : Finset κ) (g : κ → (ι → Bool) → ℝ) :
-    bnt_noiseOp ρ (fun x => ∑ k ∈ s, g k x) = fun x => ∑ k ∈ s, bnt_noiseOp ρ (g k) x := by
-  funext x; unfold bnt_noiseOp; simp_rw [Finset.mul_sum]; rw [Finset.sum_comm]
-
-theorem khc_noiseOp_const_mul (ρ c : ℝ) (g : (ι → Bool) → ℝ) :
-    bnt_noiseOp ρ (fun x => c * g x) = fun x => c * bnt_noiseOp ρ g x := by
-  funext x; unfold bnt_noiseOp; rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl; intro y _; ring
-
-/-- The noise operator acts diagonally on the Walsh basis: `T_ρ f = ∑_S ρ^{|S|} f̂(S) χ_S`.
-
-  See also `BooleanCube.boolNoiseOp_eq_sum`, the same identity on `Fin n`. -/
-theorem khc_noiseOp_fourier (ρ : ℝ) (f : (ι → Bool) → ℝ) :
-    bnt_noiseOp ρ f
-      = fun x => ∑ S : Finset ι, (ρ ^ S.card * khc_fourierCoeff f S) * khc_walshChar S x := by
-  have hf : f = (fun x => ∑ S : Finset ι, khc_fourierCoeff f S * khc_walshChar S x) := by
-    funext x; rw [khc_fourier_expansion]
-  conv_lhs => rw [hf]
-  rw [khc_noiseOp_finset_sum]
-  funext x
-  simp_rw [khc_noiseOp_const_mul ρ (khc_fourierCoeff f _) (khc_walshChar _)]
-  apply Finset.sum_congr rfl
-  intro S _
-  rw [khc_noiseOp_walshChar_apply]
-  ring
-
-theorem khc_noiseOp_l2sq (ρ : ℝ) (f : (ι → Bool) → ℝ) :
-    bnt_uexp (fun x => (bnt_noiseOp ρ f x) ^ 2)
-      = ∑ S : Finset ι, (ρ ^ S.card) ^ 2 * (khc_fourierCoeff f S) ^ 2 := by
-  rw [khc_noiseOp_fourier]
-  have h := khc_uexp_fourier_mul (fun S => ρ ^ S.card * khc_fourierCoeff f S)
-      (fun S => ρ ^ S.card * khc_fourierCoeff f S)
-  simp_rw [← sq] at h
-  rw [h]
-  apply Finset.sum_congr rfl
-  intro S _; ring
 
 /-- The function `f` on `{0, 1}^ι` transported to `{0, 1}^κ` along the bijection `e : κ ≃ ι`. -/
 noncomputable def khc_reindex {κ : Type*} (e : κ ≃ ι) (f : (ι → Bool) → ℝ) :
@@ -362,6 +164,219 @@ theorem khc_noiseOp_reindex {κ : Type*} [Fintype κ] [DecidableEq κ] (e : κ �
     apply Finset.prod_congr rfl
     intro i _; simp [Equiv.symm_apply_apply]
   · congr 1; funext j; simp [Equiv.apply_symm_apply]
+
+/-- On `Fin n`, the Walsh character is `BooleanCube.cubeChi` up to the sign `(-1)^{|S|}`:
+`BooleanCube.cubeVal` sends `true` to `1`, while `khc_sign` sends it to `-1`. -/
+theorem khc_walshChar_eq_cubeChi {n : ℕ} (S : Finset (Fin n)) (x : Fin n → Bool) :
+    khc_walshChar S x = (-1) ^ S.card * BooleanCube.cubeChi n S x := by
+  unfold khc_walshChar BooleanCube.cubeChi
+  rw [← Finset.prod_const, ← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl fun i _ => ?_
+  cases x i <;> simp [khc_sign, BooleanCube.cubeVal]
+
+/-- On `Fin n`, the Fourier coefficient is `BooleanCube.boolFourierCoeff` up to the sign
+`(-1)^{|S|}`. -/
+theorem khc_fourierCoeff_eq_boolFourierCoeff {n : ℕ} (f : (Fin n → Bool) → ℝ)
+    (S : Finset (Fin n)) :
+    khc_fourierCoeff f S = (-1) ^ S.card * BooleanCube.boolFourierCoeff n f S := by
+  unfold khc_fourierCoeff bnt_uexp BooleanCube.boolFourierCoeff
+  rw [BooleanCube.card_boolCube, Fintype.card_fin, mul_div_assoc', Finset.mul_sum]
+  simp only [khc_walshChar_eq_cubeChi, Nat.cast_pow, Nat.cast_ofNat]
+  congr 1
+  refine Finset.sum_congr rfl fun x _ => ?_
+  ring
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- Reindexing a Walsh character reindexes its finite set of coordinates. -/
+theorem khc_walshChar_reindex {κ : Type*} (e : ι ≃ κ) (S : Finset ι) :
+    khc_reindex e.symm (khc_walshChar S) = khc_walshChar (e.finsetCongr S) := by
+  funext x
+  simp [khc_reindex, khc_walshChar, Equiv.finsetCongr_apply]
+
+omit [Fintype ι] [DecidableEq ι] in
+/-- Reindexing back at the corresponding cube point recovers the original value. -/
+theorem khc_reindex_cubeEquiv {κ : Type*} (e : κ ≃ ι) (f : (ι → Bool) → ℝ)
+    (x : ι → Bool) : khc_reindex e f (khc_cubeEquiv e x) = f x := by
+  simp [khc_reindex, khc_cubeEquiv, Equiv.arrowCongr_apply, Function.comp_def]
+
+/-- Fourier coefficients are unchanged when both the function and its index are reindexed. -/
+theorem khc_fourierCoeff_reindex {κ : Type*} [Fintype κ] [DecidableEq κ]
+    (e : ι ≃ κ) (f : (ι → Bool) → ℝ) (S : Finset ι) :
+    khc_fourierCoeff (khc_reindex e.symm f) (e.finsetCongr S) = khc_fourierCoeff f S := by
+  unfold khc_fourierCoeff
+  rw [← khc_walshChar_reindex]
+  exact khc_uexp_reindex e.symm (fun x => f x * khc_walshChar S x)
+
+private theorem khc_phase_mul (k : ℕ) (a b : ℝ) :
+    ((-1 : ℝ) ^ k * a) * ((-1) ^ k * b) = a * b := by
+  rw [mul_mul_mul_comm, ← sq, ← pow_mul, mul_comm k 2, pow_mul]
+  norm_num
+
+private theorem khc_coeff_char_product {n : ℕ} (f : (Fin n → Bool) → ℝ)
+    (S : Finset (Fin n)) (x : Fin n → Bool) :
+    khc_fourierCoeff f S * khc_walshChar S x =
+      BooleanCube.boolFourierCoeff n f S * BooleanCube.cubeChi n S x := by
+  rw [khc_fourierCoeff_eq_boolFourierCoeff, khc_walshChar_eq_cubeChi, khc_phase_mul]
+
+private theorem khc_coeff_product {n : ℕ} (f g : (Fin n → Bool) → ℝ)
+    (S : Finset (Fin n)) :
+    khc_fourierCoeff f S * khc_fourierCoeff g S =
+      BooleanCube.boolFourierCoeff n f S * BooleanCube.boolFourierCoeff n g S := by
+  rw [khc_fourierCoeff_eq_boolFourierCoeff, khc_fourierCoeff_eq_boolFourierCoeff,
+    khc_phase_mul]
+
+theorem khc_uexp_walshChar (S : Finset ι) :
+    bnt_uexp (khc_walshChar S) = if S = ∅ then 1 else 0 := by
+  let e := Fintype.equivFin ι
+  rw [← khc_uexp_reindex e.symm, khc_walshChar_reindex]
+  unfold bnt_uexp
+  simp_rw [khc_walshChar_eq_cubeChi]
+  rw [← Finset.mul_sum, BooleanCube.sum_cubeChi_eq_ite]
+  by_cases hS : S = ∅ <;>
+    simp [Equiv.finsetCongr_apply, hS]
+
+theorem khc_orthonormal (S T : Finset ι) :
+    bnt_uexp (fun x => khc_walshChar S x * khc_walshChar T x) = if S = T then 1 else 0 := by
+  simp_rw [khc_walshChar_mul]
+  rw [khc_uexp_walshChar]
+  by_cases h : S = T
+  · subst h; simp
+  · rw [ite_eq_right h, ite_eq_right]
+    intro hsd
+    exact h (symmDiff_eq_bot.mp (by simpa using hsd))
+
+omit [DecidableEq ι] in
+theorem khc_sum_walshChar_mul (x y : ι → Bool) :
+    (∑ S : Finset ι, khc_walshChar S x * khc_walshChar S y)
+      = if x = y then (2 ^ Fintype.card ι : ℝ) else 0 := by
+  classical
+  let e := Fintype.equivFin ι
+  calc
+    _ = ∑ S : Finset (Fin (Fintype.card ι)),
+        khc_walshChar S (khc_cubeEquiv e.symm x) *
+          khc_walshChar S (khc_cubeEquiv e.symm y) := by
+      apply Fintype.sum_equiv e.finsetCongr
+      intro S
+      rw [← khc_walshChar_reindex, khc_reindex_cubeEquiv, khc_reindex_cubeEquiv]
+    _ = _ := by
+      simp_rw [khc_walshChar_eq_cubeChi, khc_phase_mul]
+      rw [BooleanCube.sum_cubeChi_apply_mul_cubeChi_apply_eq_ite]
+      simp only [Equiv.apply_eq_iff_eq]
+
+/-- Fourier inversion: `f = ∑_S f̂(S) χ_S`. -/
+theorem khc_fourier_expansion (f : (ι → Bool) → ℝ) (x : ι → Bool) :
+    (∑ S : Finset ι, khc_fourierCoeff f S * khc_walshChar S x) = f x := by
+  let e := Fintype.equivFin ι
+  calc
+    _ = ∑ S : Finset (Fin (Fintype.card ι)),
+        khc_fourierCoeff (khc_reindex e.symm f) S *
+          khc_walshChar S (khc_cubeEquiv e.symm x) := by
+      apply Fintype.sum_equiv e.finsetCongr
+      intro S
+      rw [khc_fourierCoeff_reindex e, ← khc_walshChar_reindex e,
+        khc_reindex_cubeEquiv]
+    _ = f x := by
+      simp_rw [khc_coeff_char_product]
+      rw [BooleanCube.sum_boolFourierCoeff_mul_cubeChi, khc_reindex_cubeEquiv]
+
+theorem khc_uexp_finset_sum {κ : Type*} (s : Finset κ) (g : κ → (ι → Bool) → ℝ) :
+    bnt_uexp (fun x => ∑ k ∈ s, g k x) = ∑ k ∈ s, bnt_uexp (g k) := by
+  unfold bnt_uexp; simp_rw [Finset.sum_div]; rw [Finset.sum_comm]
+
+theorem khc_uexp_const_mul (c : ℝ) (g : (ι → Bool) → ℝ) :
+    bnt_uexp (fun x => c * g x) = c * bnt_uexp g := by
+  unfold bnt_uexp; rw [← Finset.mul_sum, mul_div_assoc]
+
+/-- Parseval's identity: `𝔼[f g] = ∑_S f̂(S) ĝ(S)`.
+
+  Transported from `BooleanCube.expect_mul_eq_sum_boolFourierCoeff_mul`. -/
+theorem khc_parseval (f g : (ι → Bool) → ℝ) :
+    bnt_uexp (fun x => f x * g x)
+      = ∑ S : Finset ι, khc_fourierCoeff f S * khc_fourierCoeff g S := by
+  let e := Fintype.equivFin ι
+  rw [← khc_uexp_reindex e.symm, bnt_uexp_eq_expect]
+  change (𝔼 x, khc_reindex e.symm f x * khc_reindex e.symm g x) = _
+  rw [BooleanCube.expect_mul_eq_sum_boolFourierCoeff_mul]
+  symm
+  apply Fintype.sum_equiv e.finsetCongr
+  intro S
+  rw [← khc_coeff_product, khc_fourierCoeff_reindex e,
+    khc_fourierCoeff_reindex e]
+
+theorem khc_parseval_sq (f : (ι → Bool) → ℝ) :
+    bnt_uexp (fun x => (f x) ^ 2) = ∑ S : Finset ι, (khc_fourierCoeff f S) ^ 2 := by
+  have h := khc_parseval f f
+  simp_rw [← sq] at h
+  exact h
+
+theorem khc_noiseOp_const_mul (ρ c : ℝ) (g : (ι → Bool) → ℝ) :
+    bnt_noiseOp ρ (fun x => c * g x) = fun x => c * bnt_noiseOp ρ g x := by
+  funext x; unfold bnt_noiseOp; rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl; intro y _; ring
+
+theorem khc_noiseOp_walshChar_apply (ρ : ℝ) (S : Finset ι) (x : ι → Bool) :
+    bnt_noiseOp ρ (khc_walshChar S) x = ρ ^ S.card * khc_walshChar S x := by
+  let e := Fintype.equivFin ι
+  let T := e.finsetCongr S
+  have hchar : khc_walshChar T =
+      fun y => (-1) ^ T.card * BooleanCube.cubeChi (Fintype.card ι) T y :=
+    funext (khc_walshChar_eq_cubeChi T)
+  rw [← khc_reindex_cubeEquiv e.symm (bnt_noiseOp ρ (khc_walshChar S)) x,
+    ← khc_noiseOp_reindex, khc_walshChar_reindex]
+  change bnt_noiseOp ρ (khc_walshChar T) (khc_cubeEquiv e.symm x) = _
+  rw [hchar, khc_noiseOp_const_mul, bnt_noiseOp_eq_boolNoiseOp,
+    BooleanCube.boolNoiseOp_cubeChi]
+  calc
+    _ = ρ ^ T.card *
+        ((-1) ^ T.card * BooleanCube.cubeChi (Fintype.card ι) T
+          (khc_cubeEquiv e.symm x)) := by ring
+    _ = _ := by
+      rw [← khc_walshChar_eq_cubeChi]
+      change ρ ^ (e.finsetCongr S).card *
+        khc_walshChar (e.finsetCongr S) (khc_cubeEquiv e.symm x) = _
+      rw [← khc_walshChar_reindex, khc_reindex_cubeEquiv]
+      simp only [Equiv.finsetCongr_apply, Finset.card_map]
+
+theorem khc_noiseOp_finset_sum {κ : Type*} (ρ : ℝ) (s : Finset κ) (g : κ → (ι → Bool) → ℝ) :
+    bnt_noiseOp ρ (fun x => ∑ k ∈ s, g k x) = fun x => ∑ k ∈ s, bnt_noiseOp ρ (g k) x := by
+  funext x; unfold bnt_noiseOp; simp_rw [Finset.mul_sum]; rw [Finset.sum_comm]
+
+/-- The noise operator acts diagonally on the Walsh basis: `T_ρ f = ∑_S ρ^{|S|} f̂(S) χ_S`.
+
+  Transported from `BooleanCube.boolNoiseOp_eq_sum`, for every real `ρ`. -/
+theorem khc_noiseOp_fourier (ρ : ℝ) (f : (ι → Bool) → ℝ) :
+    bnt_noiseOp ρ f
+      = fun x => ∑ S : Finset ι, (ρ ^ S.card * khc_fourierCoeff f S) * khc_walshChar S x := by
+  let e := Fintype.equivFin ι
+  funext x
+  rw [← khc_reindex_cubeEquiv e.symm (bnt_noiseOp ρ f) x,
+    ← khc_noiseOp_reindex, bnt_noiseOp_eq_boolNoiseOp, BooleanCube.boolNoiseOp_eq_sum]
+  symm
+  apply Fintype.sum_equiv e.finsetCongr
+  intro S
+  simp only [mul_assoc]
+  rw [← khc_coeff_char_product, khc_fourierCoeff_reindex,
+    ← khc_walshChar_reindex, khc_reindex_cubeEquiv]
+  simp only [Equiv.finsetCongr_apply, Finset.card_map]
+
+theorem khc_noiseOp_l2sq (ρ : ℝ) (f : (ι → Bool) → ℝ) :
+    bnt_uexp (fun x => (bnt_noiseOp ρ f x) ^ 2)
+      = ∑ S : Finset ι, (ρ ^ S.card) ^ 2 * (khc_fourierCoeff f S) ^ 2 := by
+  let e := Fintype.equivFin ι
+  rw [← khc_uexp_reindex e.symm, bnt_uexp_eq_expect]
+  change (𝔼 x, (khc_reindex e.symm (bnt_noiseOp ρ f) x) ^ 2) = _
+  rw [← khc_noiseOp_reindex, bnt_noiseOp_eq_boolNoiseOp,
+    BooleanCube.expect_sq_eq_sum_boolFourierCoeff_sq]
+  simp_rw [BooleanCube.boolFourierCoeff_boolNoiseOp, mul_pow]
+  symm
+  apply Fintype.sum_equiv e.finsetCongr
+  intro S
+  have hc := khc_coeff_product (khc_reindex e.symm f) (khc_reindex e.symm f)
+    (e.finsetCongr S)
+  rw [khc_fourierCoeff_reindex] at hc
+  simp only [← sq] at hc
+  rw [← hc]
+  simp only [Equiv.finsetCongr_apply, Finset.card_map]
 
 /-- **Bonami–Beckner hypercontractive inequality** (A. Bonami, *Étude des coefficients de Fourier
   des fonctions de Lᵖ(G)*, Ann. Inst. Fourier 1970; W. Beckner, *Inequalities in Fourier
@@ -433,13 +448,24 @@ open StatMech.OSSS in
 theorem khc_var_eq_fourierWeight (g : ConfigSpace ι → ℝ) :
     OSSS.var (OSSS.bernoulliWeight (1 / 2 : ℝ)) g
       = ∑ S ∈ (univ.erase (∅ : Finset ι)), (khc_fourierCoeff g S) ^ 2 := by
-  unfold OSSS.var OSSS.cov
-  rw [khc_expect_half, khc_expect_half,
-      show (fun ω => g ω * g ω) = (fun ω => (g ω) ^ 2) from by funext ω; ring,
-      khc_parseval_sq, khc_uexp_eq_coeff_empty,
-      ← Finset.add_sum_erase univ (fun S => (khc_fourierCoeff g S) ^ 2)
-        (Finset.mem_univ (∅ : Finset ι))]
-  ring
+  let e := Fintype.equivFin ι
+  have hv : OSSS.var (OSSS.bernoulliWeight (1 / 2 : ℝ)) g =
+      BooleanCube.boolVariance (khc_reindex e.symm g) := by
+    rw [BooleanCube.boolVariance_eq_expect_sq_sub_sq,
+      ← bnt_uexp_eq_expect, ← bnt_uexp_eq_expect]
+    unfold OSSS.var OSSS.cov
+    rw [khc_expect_half, khc_expect_half]
+    change _ = bnt_uexp (khc_reindex e.symm (fun x => (g x) ^ 2)) -
+      (bnt_uexp (khc_reindex e.symm g)) ^ 2
+    rw [khc_uexp_reindex, khc_uexp_reindex]
+    simp only [sq]
+  rw [hv, BooleanCube.boolVariance_eq_sum_sq]
+  symm
+  apply Finset.sum_equiv e.finsetCongr
+  · intro S
+    simp [Equiv.finsetCongr_apply, Finset.nonempty_iff_ne_empty]
+  · intro S _
+    rw [sq, sq, ← khc_coeff_product, khc_fourierCoeff_reindex]
 
 omit [Fintype ι] in
 theorem khc_walshChar_setOpen_sub_setClosed (S : Finset ι) (e : ι) (ω : ConfigSpace ι) :
@@ -532,25 +558,63 @@ theorem khc_abs_diff_indicator (φ : ConfigSpace ι → Bool) (e : ι) (ω : Con
   by_cases hO : φ (StatMech.setOpen e ω) <;> by_cases hC : φ (StatMech.setClosed e ω) <;>
     simp [hO, hC]
 
+/-- Event influence is four times canonical quarter-square influence after reindexing. -/
+theorem khc_infl_eq_four_boolInfluence {n : ℕ} (e : ι ≃ Fin n)
+    (φ : ConfigSpace ι → Bool) (i : ι) :
+    OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ))
+        (fun x => if φ x then (1 : ℝ) else 0) i =
+      4 * BooleanCube.boolInfluence
+        (khc_reindex e.symm (fun x => if φ x then (1 : ℝ) else 0)) (e i) := by
+  rw [OSSS.infl, khc_expect_half, ← khc_uexp_reindex e.symm, bnt_uexp_eq_expect,
+    BooleanCube.boolInfluence, Finset.mul_expect]
+  apply Finset.expect_congr rfl
+  intro y _
+  let x : ι → Bool := fun j => y (e j)
+  have hflip : (fun j => BooleanCube.flipCoord y (e i) (e j)) =
+      Function.update x i (!x i) := by
+    simpa [BooleanCube.flipCoord, Function.comp_def, x] using
+      Function.update_comp_equiv y e (e i) (!y (e i))
+  simp only [khc_reindex, Equiv.symm_symm, hflip]
+  change |(if φ (setOpen i x) then (1 : ℝ) else 0) -
+      (if φ (setClosed i x) then (1 : ℝ) else 0)| = _
+  rw [khc_abs_diff_indicator]
+  cases hx : x i
+  · have hC : setClosed i x = x := by
+      unfold setClosed
+      rw [← hx, Function.update_eq_self]
+    simp only [Bool.not_false]
+    change ((if φ (setOpen i x) then (1 : ℝ) else 0) -
+      (if φ (setClosed i x) then (1 : ℝ) else 0)) ^ 2 =
+      4 * (((if φ x then (1 : ℝ) else 0) -
+        (if φ (setOpen i x) then (1 : ℝ) else 0)) / 2) ^ 2
+    rw [hC]
+    ring
+  · have hO : setOpen i x = x := by
+      unfold setOpen
+      rw [← hx, Function.update_eq_self]
+    simp only [Bool.not_true]
+    change ((if φ (setOpen i x) then (1 : ℝ) else 0) -
+      (if φ (setClosed i x) then (1 : ℝ) else 0)) ^ 2 =
+      4 * (((if φ x then (1 : ℝ) else 0) -
+        (if φ (setClosed i x) then (1 : ℝ) else 0)) / 2) ^ 2
+    rw [hO]
+    ring
+
 open StatMech.OSSS in
 /-- The influence of `e` on a Boolean function is `∑_{S ∋ e} 4 f̂(S)²`. -/
 theorem khc_infl_eq_fourierWeight (φ : ConfigSpace ι → Bool) (e : ι) :
     OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) e
       = ∑ S ∈ univ.filter (fun S : Finset ι => e ∈ S),
           4 * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2 := by
-  set g := fun ω => if φ ω then (1 : ℝ) else 0 with hg
-  unfold OSSS.infl
-  have habs : (fun ω => |g (StatMech.setOpen e ω) - g (StatMech.setClosed e ω)|)
-      = (fun ω => (g (StatMech.setOpen e ω) - g (StatMech.setClosed e ω)) ^ 2) := by
-    funext ω; exact khc_abs_diff_indicator φ e ω
-  rw [habs, khc_expect_half]
-  have hd : (fun ω => (g (StatMech.setOpen e ω) - g (StatMech.setClosed e ω)) ^ 2)
-      = (fun ω => (∑ S ∈ univ.filter (fun S => e ∈ S),
-          ((-2 : ℝ) * khc_fourierCoeff g S) * khc_walshChar (S.erase e) ω) ^ 2) := by
-    funext ω; rw [khc_deriv_fourier g e ω]
-  rw [hd, khc_uexp_sum_walsh_sq _ _ (fun S => S.erase e) (khc_erase_injOn e)]
-  apply Finset.sum_congr rfl
-  intro S _; ring
+  let e' := Fintype.equivFin ι
+  rw [khc_infl_eq_four_boolInfluence e', BooleanCube.boolInfluence_eq_sum_sq,
+    Finset.mul_sum]
+  symm
+  apply Finset.sum_equiv e'.finsetCongr
+  · intro S
+    simp [Equiv.finsetCongr_apply]
+  · intro S _
+    rw [sq, sq, ← khc_coeff_product, khc_fourierCoeff_reindex]
 
 open StatMech.OSSS in
 /-- The total influence of a Boolean function is `∑_S 4 |S| f̂(S)²`. -/
@@ -558,18 +622,16 @@ theorem khc_totalInfl_eq_fourierWeight (φ : ConfigSpace ι → Bool) :
     totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0)
       = ∑ S : Finset ι, 4 * (S.card : ℝ)
           * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2 := by
-  set c := fun S : Finset ι =>
-      (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2 with hc
-  unfold totalInfl
-  have hinfl : ∀ e : ι,
-      OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) e
-        = ∑ S : Finset ι, (if e ∈ S then 4 * c S else 0) := by
-    intro e; rw [khc_infl_eq_fourierWeight, Finset.sum_filter]
-  simp_rw [hinfl]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl
-  intro S _
-  rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, hc, nsmul_eq_mul]
+  let e := Fintype.equivFin ι
+  rw [totalInfl]
+  simp_rw [khc_infl_eq_four_boolInfluence e]
+  rw [← Finset.mul_sum, e.sum_comp, ← BooleanCube.boolTotalInfluence,
+    BooleanCube.boolTotalInfluence_eq_sum_card_mul_sq, Finset.mul_sum]
+  symm
+  apply Fintype.sum_equiv e.finsetCongr
+  intro S
+  rw [sq, sq, ← khc_coeff_product, khc_fourierCoeff_reindex]
+  simp only [Equiv.finsetCongr_apply, Finset.card_map]
   ring
 
 /-- The KKL inequality at `p = 1/2` in Fourier form, with the hypercontractive bound as a
@@ -613,27 +675,6 @@ theorem khc_KKL {c : ℝ} (H : khc_LogSobolevStep c) :
   exact H φ (fun ρ h0 h1 => khc_lowDegreeWeight_le h0 h1 _)
 
 /-! ### Comparison with `BooleanCube` on `Fin n` -/
-
-/-- On `Fin n`, the Walsh character is `BooleanCube.cubeChi` up to the sign `(-1)^{|S|}`:
-`BooleanCube.cubeVal` sends `true` to `1`, while `khc_sign` sends it to `-1`. -/
-theorem khc_walshChar_eq_cubeChi {n : ℕ} (S : Finset (Fin n)) (x : Fin n → Bool) :
-    khc_walshChar S x = (-1) ^ S.card * BooleanCube.cubeChi n S x := by
-  unfold khc_walshChar BooleanCube.cubeChi
-  rw [← Finset.prod_const, ← Finset.prod_mul_distrib]
-  refine Finset.prod_congr rfl fun i _ => ?_
-  cases x i <;> simp [khc_sign, BooleanCube.cubeVal]
-
-/-- On `Fin n`, the Fourier coefficient is `BooleanCube.boolFourierCoeff` up to the sign
-`(-1)^{|S|}`. -/
-theorem khc_fourierCoeff_eq_boolFourierCoeff {n : ℕ} (f : (Fin n → Bool) → ℝ)
-    (S : Finset (Fin n)) :
-    khc_fourierCoeff f S = (-1) ^ S.card * BooleanCube.boolFourierCoeff n f S := by
-  unfold khc_fourierCoeff bnt_uexp BooleanCube.boolFourierCoeff
-  rw [BooleanCube.card_boolCube, Fintype.card_fin, mul_div_assoc', Finset.mul_sum]
-  simp only [khc_walshChar_eq_cubeChi, Nat.cast_pow, Nat.cast_ofNat]
-  congr 1
-  refine Finset.sum_congr rfl fun x _ => ?_
-  ring
 
 /-- On `Fin n`, the variance under the uniform product weight is `BooleanCube.boolVariance`. -/
 theorem khc_var_half_eq_boolVariance {n : ℕ} (f : (Fin n → Bool) → ℝ) :

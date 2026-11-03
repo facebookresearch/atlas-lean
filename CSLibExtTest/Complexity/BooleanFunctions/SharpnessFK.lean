@@ -11,7 +11,7 @@ public import CSLibExt.Complexity.BooleanFunctions.SharpnessFK
 public import CSLibExtTest.Complexity.BooleanFunctions.CovLowerBound
 
 /-!
-# Tests for the Grönwall bootstrap and the FK-to-Potts transfer
+# Tests for the Grönwall bootstrap and the scaled-decay algebra lemma
 
 Tests for `CSLibExt.Complexity.BooleanFunctions.SharpnessFK`:
 
@@ -21,7 +21,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.SharpnessFK`:
   `θ x = exp (rate · (x - b))`, which satisfies the differential inequality with equality, so the
   decay bound is attained;
 * `differential_inequality` at explicit numbers;
-* `potts_decay_of_fk` for `q = 2` and `q = 3`, where the Edwards–Sokal factor is `1/2` and `2/3`.
+* `scaled_decay_of_scalar_identity` for `q = 2` and `q = 3`, where the scalar factor is `1/2` and `2/3`.
 
 The file contains no sharpness theorem (see its module doc), so there is no sharpness statement
 to test.
@@ -90,15 +90,25 @@ example : (2 : ℕ) * (1 / 4 : ℝ) * 1 / 1 * (1 / 2 * (1 - 1 / 2)) ≤ 1 / 8 :=
   differential_inequality 2 (1 / 4) 1 1 (1 / 2) (1 / 8) (1 / 8) one_pos (by norm_num)
     (by norm_num) zero_le_one
 
-/-! ## The FK-to-Potts transfer -/
+/-! ## The scaled-decay algebra lemma -/
 
-/-- `potts_decay_of_fk` for the Ising case `q = 2`, with `fkCross = exp (-c)`. -/
-example (c : ℝ) : 0 ≤ (2 - 1) / 2 * Real.exp (-c) ∧ (2 - 1) / 2 * Real.exp (-c) ≤ Real.exp (-c) :=
-  potts_decay_of_fk 2 le_rfl c _ (Real.exp (-c)) rfl (Real.exp_pos _).le le_rfl
+/-- `scaled_decay_of_scalar_identity` for `q = 2`, with `x = exp (-c)`: the scaled bound
+implies the unscaled one since the scalar factor `(2 - 1) / 2` is at most `1`. -/
+example (c : ℝ) : 0 ≤ (2 - 1) / 2 * Real.exp (-c) ∧ (2 - 1) / 2 * Real.exp (-c) ≤ Real.exp (-c) := by
+  have h := scaled_decay_of_scalar_identity 2 le_rfl c (Real.exp (-c)) _ rfl
+    (Real.exp_pos _).le le_rfl
+  refine ⟨h.1, le_trans h.2 ?_⟩
+  calc (2 - 1) / 2 * Real.exp (-c) ≤ 1 * Real.exp (-c) :=
+        mul_le_mul_of_nonneg_right (by norm_num) (Real.exp_pos _).le
+    _ = Real.exp (-c) := one_mul _
 
 example : 0 ≤ (2 / 3 : ℝ) * (1 / 2) ∧ (2 / 3 : ℝ) * (1 / 2) ≤ Real.exp (-Real.log 2) := by
-  have h := potts_decay_of_fk 3 (by norm_num) (Real.log 2) ((2 / 3) * (1 / 2)) (1 / 2)
-    (by norm_num) (by norm_num) (by rw [Real.exp_neg, Real.exp_log two_pos]; norm_num)
-  exact h
+  have h := scaled_decay_of_scalar_identity 3 (by norm_num) (Real.log 2) (1 / 2)
+    ((2 / 3) * (1 / 2)) (by norm_num) (by norm_num)
+    (by rw [Real.exp_neg, Real.exp_log two_pos]; norm_num)
+  refine ⟨h.1, le_trans h.2 ?_⟩
+  calc (3 - 1) / 3 * Real.exp (-Real.log 2) ≤ 1 * Real.exp (-Real.log 2) :=
+        mul_le_mul_of_nonneg_right (by norm_num) (Real.exp_pos _).le
+    _ = Real.exp (-Real.log 2) := one_mul _
 
 end StatMechTest.BooleanFunctions

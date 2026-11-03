@@ -18,7 +18,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.SummedBKKKLWitness`:
 * the two-bit OR data at `p = 9/10`: squared Fourier coefficients, influences
   (`sbk_OR_totalInfl`, `sbk_OR_maxInfl`), and the summed inequality
   `sbk_summed_holds_at_OR` restated numerically as `99/2500 ≤ (1/10)^(1/3) · 1/5`;
-* `sbk_summed_half` on the one-variable dictator at `u = 1/2` (`1 ≤ 1`);
+* `mfp2_master_half_via_perCoord` on the one-variable dictator at `u = 1/2` (`1 ≤ 1`);
 * the refutations `sbk_pBiasedMaster_false`, `sbk_lowDegreeMasterResidue_false` and
   `sbk_summed_survives_percoord_fails` at `q = 1`;
 * `sbk_engine_integral_eq` at `n = 1`, `s = 1/2` (value `1/4`),
@@ -52,11 +52,11 @@ example : (99 : ℝ) / 2500 ≤ ((1 : ℝ) / 10) ^ ((1 : ℝ) / 3) * (1 / 5) := 
 
 example : (Finset.univ : Finset (Finset (Fin 2))).card = 4 := by rw [sbk_univ_fin2]; decide
 
-/-- `sbk_summed_half` on the dictator at `u = 1/2`: `4σ_{1/2}² = 1 ≤ 1`. -/
+/-- `mfp2_master_half_via_perCoord` on the dictator at `u = 1/2`: `4σ_{1/2}² = 1 ≤ 1`. -/
 example : (∑ S : Finset (Fin 1), 4 * (S.card : ℝ) * (1 - 1 / 2) ^ (S.card - 1)
       * (ptn_coeff (1 / 2 : ℝ)
         (fun ω => if (fun ω : ConfigSpace (Fin 1) => ω 0) ω then (1 : ℝ) else 0) S) ^ 2) ≤ 1 := by
-  have h := sbk_summed_half (fun ω : ConfigSpace (Fin 1) => ω 0) (u := 1 / 2)
+  have h := mfp2_master_half_via_perCoord (fun ω : ConfigSpace (Fin 1) => ω 0) (u := 1 / 2)
     (by norm_num) (by norm_num)
   rwa [vgp_dictator_maxInfl (by norm_num) (by norm_num), Real.one_rpow,
     vgp_dictator_totalInfl (by norm_num) (by norm_num), one_mul] at h

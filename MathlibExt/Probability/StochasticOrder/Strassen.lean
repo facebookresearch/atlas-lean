@@ -16,7 +16,7 @@ A monotone coupling of two measures `μ` and `ν` on `ConfigSpace E` is a measur
 configurations with marginals `μ` and `ν` that is concentrated on `{(ω, ω') | ω ≤ ω'}`. If one
 exists, `μ` is stochastically dominated by `ν`; this is the easy half of Strassen's theorem. The
 converse for finite `E` is `StatMech.exists_monotoneCoupling_of_stochasticallyDominated` in
-`MathlibExt.Probability.StochasticOrder.StrassenFull`.
+`MathlibExt.Probability.StochasticOrder.StrassenFinite`.
 
 ## Main definitions
 
@@ -99,7 +99,6 @@ variable {μ ν : Measure (ConfigSpace E)}
 theorem. -/
 theorem stochasticallyDominated (h : MonotoneCoupling μ ν κ)
     [IsFiniteMeasure κ] : μ ≼ ν := by
-  have hνfin : IsFiniteMeasure ν := h.isFiniteMeasure_right
   intro A _ hAinc
   have hmA : MeasurableSet A := DiscreteMeasurableSpace.forall_measurableSet _
   have key : μ A ≤ ν A := by
@@ -113,9 +112,7 @@ theorem stochasticallyDominated (h : MonotoneCoupling μ ν κ)
         ≤ κ ((Prod.snd ⁻¹' A) ∪ (orderSet E)ᶜ) := measure_mono hsub
       _ ≤ κ (Prod.snd ⁻¹' A) + κ (orderSet E)ᶜ := measure_union_le _ _
       _ = κ (Prod.snd ⁻¹' A) := by rw [h.supported, add_zero]
-  unfold Measure.real
-  gcongr
-  exact measure_ne_top ν A
+  exact key
 
 end MonotoneCoupling
 

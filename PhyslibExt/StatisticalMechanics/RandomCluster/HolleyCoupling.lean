@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import MathlibExt.Probability.StochasticOrder.StrassenFinite
 public import MathlibExt.Probability.CorrelationInequalities.FKG
 /-!
@@ -149,6 +150,9 @@ theorem holley_stochasticallyDominated {μ₁ μ₂ : ConfigSpace E → ℝ}
     (hcond : ∀ a b, μ₁ a * μ₂ b ≤ μ₁ (a ⊓ b) * μ₂ (a ⊔ b)) :
     measOfMass μ₁ ≼ measOfMass μ₂ := by
   intro A _ hAinc
+  apply (ENNReal.toReal_le_toReal (measure_ne_top (measOfMass μ₁) A)
+    (measure_ne_top (measOfMass μ₂) A)).mp
+  change (measOfMass μ₁).real A ≤ (measOfMass μ₂).real A
   rw [measOfMass_real_eq_indicator_sum μ₁ h₁ A, measOfMass_real_eq_indicator_sum μ₂ h₂ A]
   exact holley_dominates h₁ h₂ hsum hcond hAinc
 

@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Configuration.FiniteWitnessUnionBound
-public import Mathlib
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Group.Indicator
+public import Mathlib.Algebra.Order.Group.Indicator
 
 /-!
 # Fibrewise bounds for finite event masses

@@ -7,6 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Mathlib.Tactic.Linarith
 public import MathlibExt.Probability.Configuration.ConfigSpace
 /-!
 # The random-cluster measure on a finite graph

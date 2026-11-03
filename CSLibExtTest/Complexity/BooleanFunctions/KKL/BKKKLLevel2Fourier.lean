@@ -24,9 +24,7 @@ Tests for `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLLevel2Fourier`:
   (the `q`-norm is `1`), and `bkt2f_gap_vanishes_at_p_half`.
 
 Window predicate: `bkt2f_meanInflResidue q` is refuted for every `q > 1/2`
-(`bkt2f_meanInflResidue_refutable`, tested at `q = 1`). The conditional chain
-`bkt2f_levelGe2_of_meanInfl`, `bkt2f_remaining_of_meanInfl`, `bkt2f_master_of_meanInfl`,
-`bkt2f_rhoOptimise_of_meanInfl` is run on the empty window `q = 1/2` only.
+(`bkt2f_meanInflResidue_refutable`, tested at `q = 1`). No chain is run from it.
 -/
 
 @[expose] public section
@@ -89,17 +87,5 @@ example : (1 - (1 / 4 : ℝ)) ^ (3 - 1) - ((1 - 1 / 4) * (4 * (1 / 2 : ℝ) * (1
   bkt2f_gap_vanishes_at_p_half 3
 
 example : ¬ bkt2f_meanInflResidue 1 := bkt2f_meanInflResidue_refutable (by norm_num)
-
-/-- `bkt2f_meanInflResidue q` holds vacuously for `q ≤ 1/2`. -/
-lemma meanInflResidue_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : bkt2f_meanInflResidue q :=
-  fun _ hp => absurd (hp.1.trans hp.2) (not_lt.mpr hq)
-
-example : bkt2_levelGe2MasterResidue (1 / 2) :=
-  bkt2f_levelGe2_of_meanInfl (meanInflResidue_of_le_half le_rfl)
-example : bkt2_RemainingGoal (1 / 2) :=
-  bkt2f_remaining_of_meanInfl (meanInflResidue_of_le_half le_rfl)
-example : pro_PBiasedMaster (1 / 2) := bkt2f_master_of_meanInfl (meanInflResidue_of_le_half le_rfl)
-example : ptn_RhoOptimise (1 / 2) :=
-  bkt2f_rhoOptimise_of_meanInfl (meanInflResidue_of_le_half le_rfl)
 
 end StatMechTest.BooleanFunctions.BKKKLLevel2Fourier

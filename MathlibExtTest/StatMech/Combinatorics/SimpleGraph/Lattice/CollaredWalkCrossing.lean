@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CollaredWalkCrossing
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.CollaredWalkCrossing`
@@ -18,7 +18,8 @@ public import Mathlib
   `V` from `(0, 0)` to `(0, 1)` and the horizontal crossing `H` from `(0, 0)` to `(1, 0)`: every
   hypothesis (including the four collar-meeting conditions) is discharged, so the theorem is
   nonvacuous.
-* `horizontalWallExtension_mem_support_iff`: the extension of `H` to columns `0, 1` contains `(1, 0)`.
+* `horizontalWallExtension_mem_support_iff`: the extension of `H` to columns `0, 1` contains
+  `(1, 0)`.
 -/
 
 @[expose] public section

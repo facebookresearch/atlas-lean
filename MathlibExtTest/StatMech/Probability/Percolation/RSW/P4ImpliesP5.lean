@@ -9,20 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.RSW.P4ImpliesP5
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.Percolation.RSW.P4ImpliesP5`
 
 * `rp4_P4` holds for the constant sequence `1` (it does not decay exponentially).
 * `rp4_expDecay_of_stretched` for `a n = exp (-n)`.
-* `rp4_p4_implies_p5` for `a = 1` and the constant model `ν = lam = 1/2`, with the dichotomy
-  discharged by its `P5b` branch.
+  (`rp4_p4_implies_p5` was removed with the `hchain` argument it depended on.)
 -/
 
 @[expose] public section
 
-open StatMech StatMech.Lattice StatMech.RSW StatMech.RSW.Box
+open StatMech.RSW
 
 namespace MathlibExtTest.StatMech.Probability.Percolation.RSW.P4ImpliesP5
 
@@ -46,13 +45,5 @@ example : P4ImpliesP5.rp4_ExpDecay (fun n : ℕ => Real.exp (-(n : ℝ))) :=
     (fun n => Real.exp_le_one_iff.mpr (by simp))
     (fun m n hmn => Real.exp_le_exp.mpr (by simpa using hmn))
     exp_neg_submult ⟨1, one_pos, fun n => by simp⟩
-
-/-- The constant set function `1/2`. -/
-noncomputable def half : ℕ → Set (ConfigSpace (Sym2 (Site 2))) → ℝ := fun _ _ => 1 / 2
-
-example : P5 half :=
-  P4ImpliesP5.rp4_p4_implies_p5 (fun _ => (1 : ℝ)) (ν := fun _ => half)
-    (fun _ => zero_le_one) (fun _ => le_rfl) (fun _ _ _ => le_rfl) (fun _ _ => by norm_num)
-    one_P4 (Or.inl fun _ _ => ⟨1 / 2, by norm_num, fun _ => le_rfl⟩) (fun _ _ => le_rfl)
 
 end MathlibExtTest.StatMech.Probability.Percolation.RSW.P4ImpliesP5

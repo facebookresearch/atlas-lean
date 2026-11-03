@@ -22,8 +22,9 @@ Building blocks for Russo–Seymour–Welsh arguments on `ℤ²` for a positivel
 * at `p = 1/2`, `dualConfig` crossings have the same law as primal crossings, and a uniform lower
   bound on crossings of `ρn × n` rectangles gives the box-crossing property.
 
-`rba_self_dual_square_half` derives `ℙ_{1/2}(H) ≥ 1/2` for a square from a separation hypothesis
-`hsep`; that hypothesis is false for `[0, 2]²` (see its docstring).
+The self-duality bound that derived `ℙ_{1/2}(H) ≥ 1/2` for a square from a separation hypothesis
+`hsep` was removed: `hsep` is not planar duality and is false for `[0, 2]²`, so the bound had no
+nondegenerate instance.
 
 ## Main results
 
@@ -182,33 +183,6 @@ theorem rba_dualHorizontalCrossing_eq (a b c d : ℤ)
   rw [hpre, Measure.real, ← Measure.map_apply measurable_dualConfig hmeasH,
     bernoulliProductMeasure_selfDual_half]
   rfl
-
-/-- `ℙ_{1/2}(H[0, n]²) ≥ 1/2`, given the separation hypothesis `hsep` and the symmetry
-`ℙ_{1/2}(V) = ℙ_{1/2}(H)` of the square (special case of `rst_selfDual_box_crossing_half`).
-
-The hypothesis `hsep` ("no open left–right crossing implies a `dualConfig` bottom–top crossing")
-is not planar duality: `dualConfig` is the rotated complement on the primal lattice, so
-`dualVerticalCrossingEvent a b c d` is a closed left–right crossing of the rotated rectangle
-`[c, d] × [-b, -a]`. `bcc_dichotomy_false` shows `hsep` fails for `[0, 2]²`; it is not known to
-hold for any nondegenerate rectangle. -/
-theorem rba_self_dual_square_half (n : ℤ)
-    (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
-    (hmeasV : MeasurableSet (verticalCrossingEvent 0 n 0 n))
-    (hsep : (horizontalCrossingEvent 0 n 0 n)ᶜ ⊆ dualVerticalCrossingEvent 0 n 0 n)
-    (hsqsym : halfMeasure.real (verticalCrossingEvent 0 n 0 n)
-                = halfMeasure.real (horizontalCrossingEvent 0 n 0 n)) :
-    (1 : ℝ) / 2 ≤ halfMeasure.real (horizontalCrossingEvent 0 n 0 n) := by
-  have hselfDual : halfMeasure.real (dualVerticalCrossingEvent 0 n 0 n)
-      = halfMeasure.real (horizontalCrossingEvent 0 n 0 n) := by
-    rw [rba_dualVerticalCrossing_eq 0 n 0 n hmeasV, hsqsym]
-  have hcompl : halfMeasure.real (horizontalCrossingEvent 0 n 0 n)ᶜ
-      = 1 - halfMeasure.real (horizontalCrossingEvent 0 n 0 n) := by
-    rw [measureReal_compl hmeasH, probReal_univ]
-  have hmono : halfMeasure.real (horizontalCrossingEvent 0 n 0 n)ᶜ
-      ≤ halfMeasure.real (dualVerticalCrossingEvent 0 n 0 n) :=
-    measureReal_mono hsep
-  rw [hselfDual, hcompl] at hmono
-  linarith
 
 /-- If the two overlapping horizontal crossings have probability at least `1/2` and the vertical
 crossing of the overlap at least `v₀`, the glued horizontal crossing has probability at least

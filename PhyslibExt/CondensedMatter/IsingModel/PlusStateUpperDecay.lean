@@ -86,8 +86,9 @@ lemma icb_plus_box_monotone {N m : ℕ} (hNm : N ≤ m) (β h : ℝ) (hβ : 0 �
         = (fvMeasure (glue (plusField d) σ) N (bondFinsetTouch d N) β h).real A := by
       rw [fvMeasure_real_eq (glue (plusField d) σ) N (bondFinsetTouch d N) β h hA]
     rw [hinner]
-    have hdom := fvMeasure_le_plusField N (bondFinsetTouch d N) β h hβ hh (glue (plusField d) σ)
-      A hA hAinc
+    have hdom :=
+      (fvMeasure_le_plusField N (bondFinsetTouch d N) β h hβ hh (glue (plusField d) σ)).real
+        A hA hAinc
     refine hdom.trans (le_of_eq ?_)
     rw [plusMeasure_coe]
   calc (∑ σ : {x // x ∈ box d m} → Bool,
@@ -170,8 +171,9 @@ lemma icb_box_cross_cap {N m : ℕ} (hNm : N ≤ m) (β h : ℝ) (hβ : 0 ≤ β
         = (fvMeasure (glue (plusField d) σ) N (bondFinsetTouch d N) β h).real A := by
       rw [fvMeasure_real_eq (glue (plusField d) σ) N (bondFinsetTouch d N) β h hA]
     rw [hinner]
-    have hdom := fvMeasure_le_plusField N (bondFinsetTouch d N) β h hβ hh (glue (plusField d) σ)
-      A hA hAinc
+    have hdom :=
+      (fvMeasure_le_plusField N (bondFinsetTouch d N) β h hβ hh (glue (plusField d) σ)).real
+        A hA hAinc
     refine hdom.trans (le_of_eq ?_); rw [plusMeasure_coe]
   calc (∑ σ : {x // x ∈ box d m} → Bool,
           fvProb (plusField d) m (bondFinsetTouch d m) β h σ

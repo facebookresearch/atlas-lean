@@ -13,8 +13,8 @@ public import MathlibExt.Probability.Percolation.Universality.BXPAllAspect
 /-!
 # Tests for `MathlibExt.Probability.Percolation.Universality.BXPAllAspect`
 
-* Width monotonicity of crossings: a crossing of `[0, 5] × [0, 2]` contains one of `[0, 3] × [0, 2]`,
-  hence the probability is monotone.
+* Width monotonicity of crossings: a crossing of `[0, 5] × [0, 2]` contains one of
+  `[0, 3] × [0, 2]`, hence the probability is monotone.
 * `0 < ⌊ρ n⌋` for `ρ = 3/2`, `n = 1`.
 * Not covered: `bxa_boxCrossingProperty_all` and `bxa_boxCrossingProperty_all_of_rsw` (the RSW bound
   `h2box`, the band bound `hband` and positive association of `ℙ_{1/2}` are not proved in Atlas).

@@ -34,18 +34,19 @@ This file proves the probabilistic steps for abstract increasing events: the fou
 * `StatMech.TwoDim.zhg_sqrt_trick_four`: for increasing events of equal probability under a
   positively associated measure, `1 - (1 - μ(A ∪ B ∪ C ∪ D)) ^ (1/4) ≤ μ(A)`.
 * `StatMech.TwoDim.zhg_union_of_geometricData`: `ZhangGeometricData` gives `μ(A n ∪ B n) → 1`.
-* `StatMech.TwoDim.zhg_corLowerBound_hypotheses_false`: the hypotheses of `zhg_corLowerBound`
-  are contradictory.
+* `StatMech.TwoDim.zhg_corLowerBound_hypotheses_false`: the hypotheses of a
+  `ZhangGeometricData`-based corollary are contradictory.
 
 ## Implementation notes
 
 In `ZhangGeometricData` the convergence `unionTendsto` is unconditional, whereas in Zhang's
 argument it holds only under the assumption `θ(1/2) > 0` (and indeed fails at `p = 1/2`, where
 `θ(1/2) = 0`). Consequently `ZhangGeometricData halfMeasure A B` forces `ℙ(A n ∪ B n) → 1`
-outright, which contradicts the self-dual balance `ℙ(A n) = 1/2`: the hypotheses of
-`zhg_corLowerBound` cannot all hold (`zhg_corLowerBound_hypotheses_false`), so that theorem is
-vacuous. A faithful formulation would assume `0 < θ(1/2) → ZhangGeometricData halfMeasure A B`;
-the non-vacuous form of Zhang's lower bound is `StatMech.TwoDim.kzh_corLowerBound`.
+outright, which contradicts the self-dual balance `ℙ(A n) = 1/2`: the hypotheses of a
+`ZhangGeometricData`-based corollary cannot all hold
+(`zhg_corLowerBound_hypotheses_false`), so no such corollary is stated here. A faithful
+formulation would assume `0 < θ(1/2) → ZhangGeometricData halfMeasure A B`; the non-vacuous
+form of Zhang's lower bound is `StatMech.TwoDim.kzh_corLowerBound`.
 
 ## References
 
@@ -153,16 +154,18 @@ theorem zhg_side_tendsto_one {E : Type*} (μ : Measure (ConfigSpace E))
       atTop (𝓝 1) := zhg_oneSubRpow_tendsto_one hunion
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le hlbtends tendsto_const_nhds hlb hub
 
-/-- For increasing events, `μ(L n) → 1` and `μ(R n) → 1` give `μ(L n ∩ R n) → 1` (FKG). -/
+/-- For measurable increasing events, `μ(L n) → 1` and `μ(R n) → 1` give
+`μ(L n ∩ R n) → 1` (FKG). -/
 theorem zhg_inter_tendsto_one {E : Type*} (μ : Measure (ConfigSpace E))
     [IsProbabilityMeasure μ] (hpa : PositivelyAssociated μ)
     {L R : ℕ → Set (ConfigSpace E)}
     (hLinc : ∀ n, IsIncreasing (L n)) (hRinc : ∀ n, IsIncreasing (R n))
+    (hLm : ∀ n, MeasurableSet (L n)) (hRm : ∀ n, MeasurableSet (R n))
     (hL : Tendsto (fun n => μ.real (L n)) atTop (𝓝 1))
     (hR : Tendsto (fun n => μ.real (R n)) atTop (𝓝 1)) :
     Tendsto (fun n => μ.real (L n ∩ R n)) atTop (𝓝 1) := by
   have lb : ∀ n, μ.real (L n) * μ.real (R n) ≤ μ.real (L n ∩ R n) :=
-    fun n => hpa (L n) (R n) (hLinc n) (hRinc n)
+    fun n => hpa.probability (L n) (R n) (hLm n) (hRm n) (hLinc n) (hRinc n)
   have ub : ∀ n, μ.real (L n ∩ R n) ≤ 1 := fun _ => measureReal_le_one
   have hprod : Tendsto (fun n => μ.real (L n) * μ.real (R n)) atTop (𝓝 1) := by
     have := hL.mul hR; simpa using this
@@ -238,7 +241,8 @@ theorem zhg_union_of_geometricData {E : Type*} (μ : Measure (ConfigSpace E))
       funext fun n => (hgeo.Ssym 1 n)
     rw [hrw]; exact hsideL
   have hinter : Tendsto (fun n => μ.real (S₀ n ∩ S₁ n)) atTop (𝓝 1) :=
-    zhg_inter_tendsto_one μ hpa (hgeo.Sinc 0) (hgeo.Sinc 1) hsideL hsideR
+    zhg_inter_tendsto_one μ hpa (hgeo.Sinc 0) (hgeo.Sinc 1)
+      (hgeo.Sm 0) (hgeo.Sm 1) hsideL hsideR
   exact zhg_union_tendsto_one_of_merge μ (A := A) (B := B) (Err := hgeo.Err)
     (Cap := fun n => S₀ n ∩ S₁ n) hgeo.merge hinter hgeo.errTendsto
 
@@ -253,7 +257,7 @@ theorem zhg_zhangUnion
       Tendsto (fun n => halfMeasure.real (A n ∪ B n)) atTop (𝓝 1) :=
   fun _ _ => zhg_union_of_geometricData halfMeasure hpa hgeo
 
-/-- The hypotheses of `zhg_corLowerBound` are contradictory: `ZhangGeometricData` gives
+/-- The hypotheses of a `ZhangGeometricData`-based corollary are contradictory: `ZhangGeometricData` gives
 `ℙ(A n ∪ B n) → 1`, hence `ℙ(A n) → 1` by the square-root trick, while the self-dual dichotomy
 `hdich` gives `ℙ(A n) = 1/2` for every `n`. -/
 theorem zhg_corLowerBound_hypotheses_false
@@ -276,27 +280,6 @@ theorem zhg_corLowerBound_hypotheses_false
     rw [hfun]; exact tendsto_const_nhds
   have hbad : (1 / 2 : ℝ) = 1 := tendsto_nhds_unique hconst hto1
   norm_num at hbad
-
-/-- `θ(1/2) = 0` from `ZhangGeometricData` and the self-dual dichotomy `hdich`.
-
-Fidelity: **vacuous**. The hypotheses are contradictory
-(`zhg_corLowerBound_hypotheses_false`), because `ZhangGeometricData` makes `ℙ(A n ∪ B n) → 1`
-unconditionally. The non-vacuous form is `kzh_corLowerBound`. -/
-theorem zhg_corLowerBound
-    {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
-    {A B : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
-    (hpa : PositivelyAssociated halfMeasure)
-    (hAinc : ∀ n, IsIncreasing (A n)) (hBinc : ∀ n, IsIncreasing (B n))
-    (hBm : ∀ n, MeasurableSet (B n))
-    (hHm : ∀ n, MeasurableSet (A n))
-    (hRmeas : Measurable R) (hRpres : Measure.map R halfMeasure = halfMeasure)
-    (hdich : ∀ n, (A n)ᶜ = (R ∘ dualConfig) ⁻¹' (A n))
-    (heq : ∀ n, halfMeasure.real (A n) = halfMeasure.real (B n))
-    (hgeo : ZhangGeometricData halfMeasure A B) :
-    BoxCrossingProperty halfMeasure 2 →
-      percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0 :=
-  (zhg_corLowerBound_hypotheses_false hpa hAinc hBinc hBm hHm hRmeas hRpres hdich heq
-    hgeo).elim
 
 end TwoDim
 

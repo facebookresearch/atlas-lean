@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 @[expose] public section
 
@@ -17,8 +18,7 @@ public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTen
 `pen_dampedMass` is Fourier mass damped by `r^|S|`: nonnegativity, degree extraction,
 log-gain assembly and the degree-weight identity. `pen_DampingWitness q` is the uniform
 damping estimate over `p ∈ (1/2, q)`; it implies rho-optimisation, KKL hypercontractivity
-and p-biased hypercontractivity. Status: the witness is not proved for any `q > 1/2`;
-`pen_dampingWitness_c0` is the pointwise base estimate.
+and p-biased hypercontractivity. Status: the witness is not proved for any `q > 1/2`.
 
 ## Main definitions
 
@@ -211,14 +211,6 @@ theorem pen_rhoOptimise_of_damping {q : ℝ} (H : pen_DampingWitness q) : ptn_Rh
       (L := Real.log (1 / r)) (pp := p * (1 - p)) (M := M)
       hVpos hDpos hTnn hδnn (by nlinarith [hp0, hp1] : (0:ℝ) ≤ p * (1 - p)) hMeq
       hextVDM hDampV hLog
-
-theorem pen_dampingWitness_c0 {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool) :
-    (0 : ℝ) * OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) := by
-  rw [zero_mul, zero_mul]
-  exact kkl_totalInfl_nonneg (bernoulliWeight_isProbWeight hp0 hp1) _
 
 theorem pen_kklHC_of_damping {q : ℝ} (H : pen_DampingWitness q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :

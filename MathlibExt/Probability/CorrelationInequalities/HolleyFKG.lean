@@ -140,14 +140,6 @@ theorem holley_exists_isMonotoneCoupling {μ₁ μ₂ : α → ℝ≥0}
   classical
   exact exists_isMonotoneCoupling_of_stochasticDom hsum (holley_domination hsum hcond)
 
-/-- Under Holley's condition, stochastic domination and the existence of a monotone coupling are
-equivalent (both hold). -/
-theorem holley_domination_iff_monotoneCoupling {μ₁ μ₂ : α → ℝ≥0}
-    (hsum : ∑ a, μ₁ a = ∑ a, μ₂ a) (hcond : HolleyLatticeCondition μ₁ μ₂) :
-    StochasticDom μ₁ μ₂ ↔ ∃ π : α × α → ℝ≥0, IsMonotoneCoupling μ₁ μ₂ π :=
-  ⟨fun _ => holley_exists_isMonotoneCoupling hsum hcond,
-   fun ⟨_, hπ⟩ => by classical exact StochasticDom.of_isMonotoneCoupling hπ⟩
-
 end Coupling
 
 section FKG

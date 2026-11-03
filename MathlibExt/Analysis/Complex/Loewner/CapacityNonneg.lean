@@ -121,12 +121,6 @@ theorem shrinksIm_halfDisk {c : ℝ} (hc : 0 ≤ c) :
   have hneg : -(c * z.im) / Complex.normSq z ≤ 0 := by rw [neg_div]; linarith
   linarith
 
-/-- Trivial sanity check: the conclusion `0 ≤ c` is the hypothesis; the proof routes it through
-`hcap_nonneg_of_shrinksIm`. -/
-theorem hcap_halfDisk_nonneg {c : ℝ} (hc : 0 ≤ c) :
-    (0 : ℝ) ≤ c :=
-  hcap_nonneg_of_shrinksIm (hasHalfPlaneCapacity_halfDisk c) (shrinksIm_halfDisk hc)
-
 /-- Monotonicity: if `g' = h ∘ g` and `h` does not increase imaginary parts, then
 `hcap g ≤ hcap g'`. -/
 theorem le_of_comp_of_shrinksIm {g h g' : ℂ → ℂ} {a b a' : ℝ}

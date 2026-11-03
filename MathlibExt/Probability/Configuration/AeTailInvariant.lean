@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Probability.Configuration.CondDistribution
 public import MathlibExt.Probability.Configuration.Ergodicity
+public import Mathlib.MeasureTheory.Measure.MeasuredSets
 
 /-!
 # Invariant events are tail events modulo null sets

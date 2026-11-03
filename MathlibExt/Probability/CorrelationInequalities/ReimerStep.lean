@@ -9,6 +9,9 @@ module
 
 public import MathlibExt.Probability.CorrelationInequalities.ReimerCompression
 public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Finset.Sups
+
+import Mathlib.Tactic.NormNum
 
 @[expose] public section
 

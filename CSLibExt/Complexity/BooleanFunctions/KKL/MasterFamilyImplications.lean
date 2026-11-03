@@ -10,6 +10,7 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 public import MathlibExt.Probability.Hypercontractivity.PBiasedTwoPoint
 public import MathlibExt.Probability.Hypercontractivity.PBiasedConvexity
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 @[expose] public section
 
@@ -18,20 +19,21 @@ public import MathlibExt.Probability.Hypercontractivity.PBiasedConvexity
 
 Chord bounds for convex majorants, the chord route shown dead (`mfp_chord_route_dead`,
 `mfp_chord_gap_pos`: the chord gap is positive, so no chord bound closes the estimate),
-and the single-bit test predicate `mfp_SingleBitQGt2` (true at `p = 1/2`, false at
-`9/10`). `mfp_masterFamily` is the open residue `frh_openResidue`; it implies the KKL
-log-gain, martingale hypercontractivity and the Kesten form.
+and the single-bit test predicate `mfp_SingleBitQIn12` (true at `p = 1/2`, false at
+`9/10`). There is no `mfp_masterFamily` alias: callers use the open residue
+`frh_openResidue` directly; its KKL log-gain and martingale hypercontractivity are
+`vgp2_kkl_logGain_of_master` and `frh_martingaleHC_of_openResidue`, and the Kesten
+form is the genuinely new composition `frh_kesten_of_openResidue`.
 
 ## Main definitions
 
-* `mfp_SingleBitQGt2`: the single-bit test predicate; true at `1/2`, false at `9/10`.
-* `mfp_masterFamily`: the open residue (definitionally `frh_openResidue`).
+* `mfp_SingleBitQIn12`: the single-bit test predicate; true at `1/2`, false at `9/10`.
+  Its exponent is `q = 2 - u ∈ (1, 2)` for `u ∈ (0, 1)`.
 
 ## Main results
 
 * `mfp_chord_route_dead`: the chord route cannot close.
-* `mfp_kkl_logGain_of_masterFamily`, `mfp_martingaleHC_of_masterFamily`,
-  `mfp_kesten_of_masterFamily`: the conditional chain from the master family.
+* `frh_kesten_of_openResidue`: the open residue implies the Kesten form.
 -/
 
 open scoped BigOperators
@@ -106,14 +108,15 @@ theorem mfp_chord_gap_pos {T : ℝ} (hT : 0 < T) :
   have := mfp_chord_route_dead hT
   linarith
 
-/-- The single-bit test predicate: a one-coordinate estimate with exponent `q > 2`.
-True at `p = 1/2`; false at `p = 9/10` (`mfp2_singleBit_q_gt_2_false`). -/
-def mfp_SingleBitQGt2 (p : ℝ) : Prop :=
+/-- The single-bit test predicate: a one-coordinate estimate with exponent `q ∈ (1, 2)`,
+where `q = 2 - u` for the quantified `u ∈ (0, 1)`.
+True at `p = 1/2`; false at `p = 9/10` (`mfp2_singleBit_q_in_12_false`). -/
+def mfp_SingleBitQIn12 (p : ℝ) : Prop :=
   ∀ u : ℝ, 0 < u → u < 1 → ∀ u₀ v₀ : ℝ,
     ((1 - p) * u₀ + p * v₀) ^ 2 + (1 - u) * (p * (1 - p)) * (u₀ - v₀) ^ 2
       ≤ ((1 - p) * |u₀| ^ (2 - u) + p * |v₀| ^ (2 - u)) ^ (2 / (2 - u))
 
-theorem mfp_singleBit_q_gt_2_value : mfp_SingleBitQGt2 (1 / 2) := by
+theorem mfp_singleBit_q_in_12_value : mfp_SingleBitQIn12 (1 / 2) := by
   intro u hu0 hu1 u₀ v₀
   set q : ℝ := 2 - u with hq
   have hq1 : 1 ≤ q := by rw [hq]; linarith
@@ -126,41 +129,20 @@ theorem mfp_singleBit_q_gt_2_value : mfp_SingleBitQGt2 (1 / 2) := by
   rw [hcoeff] at hval
   exact hval
 
-theorem mfp_singleBit_route_dead {p : ℝ} (H : mfp_SingleBitQGt2 p)
+theorem mfp_singleBit_route_dead {p : ℝ} (H : mfp_SingleBitQIn12 p)
     {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (u₀ v₀ : ℝ) :
     ((1 - p) * u₀ + p * v₀) ^ 2 + (1 - u) * (p * (1 - p)) * (u₀ - v₀) ^ 2
       ≤ ((1 - p) * |u₀| ^ (2 - u) + p * |v₀| ^ (2 - u)) ^ (2 / (2 - u)) :=
   H u hu0 hu1 u₀ v₀
 
-/-- The master family predicate: definitionally the open residue `frh_openResidue`. -/
-def mfp_masterFamily (q : ℝ) : Prop := frh_openResidue q
-
-theorem mfp_kkl_logGain_of_masterFamily {q : ℝ} (H : mfp_masterFamily q)
-    {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool) :
-    2 * (OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-          * (1 - OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)))
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  vgp2_kkl_logGain_of_master H hp hp1 φ
-
-theorem mfp_martingaleHC_of_masterFamily {q : ℝ} (H : mfp_masterFamily q) :
-    mxd_martingaleHC_statement q :=
-  frh_martingaleHC_of_openResidue H
-
-theorem mfp_kesten_of_masterFamily {q : ℝ} (H : mfp_masterFamily q)
+/-- The open residue implies the Kesten form: the new composition open residue
+→ martingale hypercontractivity → rho-optimisation → KKL hypercontractivity.
+The log-gain and martingale steps themselves are `vgp2_kkl_logGain_of_master` and
+`frh_martingaleHC_of_openResidue`, used directly. -/
+theorem frh_kesten_of_openResidue {q : ℝ} (H : frh_openResidue q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :
     KKLHypercontractive p 2 :=
-  ptn_kklHC_of_rhoOptimise (mxd_rhoOptimise_of_martingaleHC (mfp_martingaleHC_of_masterFamily H)) hp hp1
-
-theorem mfp_masterFamily_half [Nonempty ι] (φ : ConfigSpace ι → Bool) {u : ℝ}
-    (hu0 : 0 < u) (hu1 : u < 1) :
-    (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-        * (ptn_coeff (1 / 2 : ℝ) (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ (maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0))
-          ^ (u / (2 - u))
-        * totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  hcq_smallDelta_p_half φ hu0 hu1
+  ptn_kklHC_of_rhoOptimise (mxd_rhoOptimise_of_martingaleHC (frh_martingaleHC_of_openResidue H)) hp hp1
 
 /-- The right-hand side `δ^{u/(2-u)} · totalInfl` of the master-family estimate is nonnegative. -/
 theorem mfp_masterFamily_rhs_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)

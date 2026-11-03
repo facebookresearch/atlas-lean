@@ -18,8 +18,8 @@ public import MathlibExt.Probability.Percolation.Universality.KestenAssembly
 * The gluing lemma `ka_rsw_strip_glue_extend` for a Dirac measure (positively associated) with a
   height-zero band, so its vertical-crossing bound `cV = 1` holds.
 * `⌊2n⌋ = 2n`.
-* Not covered: `ka_kesten_pc_eq_half` and `ka_kesten_pc_eq_half_of_seed`; the RSW seed
-  `KaSelfDualBoxSeed ℙ_{1/2}` and the other Kesten inputs are not available in Atlas.
+* Not covered: `ka_criticalProbability_eq_half_of_selfDualAssembly` and `ka_criticalProbability_eq_half_of_selfDualAssembly_of_seed`; the RSW seed
+  `KaSelfDualBoxSeed ℙ_{1/2}` and the other assembly inputs (Harris, sharp threshold, self-dual family) are not available in Atlas.
 -/
 
 @[expose] public section

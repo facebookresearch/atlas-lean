@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.WhitneyBridge
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Cut colorings and the faithful discrete Jordan statement

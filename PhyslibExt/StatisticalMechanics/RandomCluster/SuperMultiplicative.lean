@@ -7,13 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import PhyslibExt.StatisticalMechanics.RandomCluster.FeketeLimit
+public import PhyslibExt.StatisticalMechanics.RandomCluster.IVPressureConvex
 /-!
 # Supermultiplicativity of the random-cluster partition function
 
-The random-cluster partition function of a disjoint union of graphs is at least the product of
-the partition functions, so along a sequence of graphs with `G_{m+n} ≅ G_m ⊔ G_n` the
-free energy converges by Fekete's lemma.
+The random-cluster partition function of a disjoint union is at least the product of the
+partition functions. Thus `-log Z` is subadditive along a juxtaposition sequence. This does
+not by itself imply a finite free-energy limit.
 
 ## i. Overview
 
@@ -25,9 +25,16 @@ images of the edges of `G` and `H` (`fsm_edgeFinset_sum`). Gluing edge configura
 configurations form a subset of all configurations on `Sym2 (V ⊕ W)` (the rest are configurations
 that differ on non-edges), so `Z_G Z_H ≤ Z_{G ⊕g H}` (`fsm_fkZ_sum_ge`). The partition function is
 invariant under graph isomorphism (`fsm_fkZ_iso`). Hence `-log Z` is subadditive along a
-juxtaposition sequence (`fsm_subadditive_neglog_fkZ`), and with `fkl_fekete_limit` the free energy
-converges to a convex limit (`fsm_fekete_limit`). The juxtaposition hypothesis holds for edgeless
-graphs on `Fin n` (`fsm_juxtaposition_satisfiable`).
+juxtaposition sequence (`fsm_subadditive_neglog_fkZ`).
+
+Juxtaposition forces the zero-index vertex type to be empty, so positive edges at every index
+are impossible. Even with positivity restricted to positive indices, the raw `fkZ` counts
+quadratically many unused binary coordinates in a nontrivial juxtaposition family. For
+`q ≥ 1`, at `p = 1/2`, the ratios `-log Z_n / n` are unbounded below. The edge-restricted
+partition function in `EdgePartitionFunction` is the existing route to graph limits.
+
+The edgeless graphs on `Fin n` witness juxtaposition (`fsm_juxtaposition_satisfiable`), not
+positive edge counts or the lower bound in Fekete's lemma.
 
 ## ii. Key results
 
@@ -35,8 +42,7 @@ graphs on `Fin n` (`fsm_juxtaposition_satisfiable`).
 - `StatMech.FK.fsm_fkWeight_combine` : the weight of a glued configuration.
 - `StatMech.FK.fsm_fkZ_sum_ge` : `Z_G Z_H ≤ Z_{G ⊕g H}`.
 - `StatMech.FK.fsm_fkZ_iso` : isomorphism invariance of the partition function.
-- `StatMech.FK.fsm_fekete_limit` : convergence of the free energy along a juxtaposition
-  sequence.
+- `StatMech.FK.fsm_subadditive_neglog_fkZ` : subadditivity along a juxtaposition sequence.
 
 ## iii. Table of contents
 
@@ -46,7 +52,7 @@ graphs on `Fin n` (`fsm_juxtaposition_satisfiable`).
 - B. Gluing edge configurations
 - C. Weights and partition functions of disjoint unions
 - D. Isomorphism invariance
-- E. The free-energy limit
+- E. Subadditivity along a juxtaposition sequence
 
 ## iv. References
 
@@ -498,7 +504,7 @@ variable {V : ℕ → Type*} [∀ n, Fintype (V n)] [∀ n, DecidableEq (V n)]
 
 /-!
 
-## E. The free-energy limit
+## E. Subadditivity along a juxtaposition sequence
 
 -/
 
@@ -510,23 +516,6 @@ lemma fsm_subadditive_neglog_fkZ {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 
   simp only
   rw [fsm_fkZ_iso (Gn (m + n)) (Gn m ⊕g Gn n) (hjux m n) p q]
   exact fsm_neglog_sum_le (Gn m) (Gn n) hp hp1 hq
-
-/-- Along a juxtaposition sequence with linearly growing edge count and `-log Z_{G_n} / n` bounded
-below, the free energies `ivp2_tiltFreeEnergy (G n) q t` converge to a convex function. -/
-lemma fsm_fekete_limit (q : ℝ) (hq : 0 < q)
-    (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
-    (hjux : ∀ m n, Gn (m + n) ≃g Gn m ⊕g Gn n)
-    (hbdd : ∀ t, BddBelow (Set.range fun n =>
-      (-Real.log (fkZ (Gn n) (fsc_logistic t) q)) / n))
-    (c : ℝ → ℝ) (hc : ∀ t, c t ≠ 0)
-    (he : ∀ t, Tendsto (fun n => ((Gn n).edgeFinset.card : ℝ) / n) atTop (𝓝 (c t))) :
-    ∃ g : ℝ → ℝ,
-      (∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) q t) atTop (𝓝 (g t)))
-        ∧ ConvexOn ℝ Set.univ g := by
-  have hsuper : ∀ t, Subadditive (fun n => -Real.log (fkZ (Gn n) (fsc_logistic t) q)) :=
-    fun t => fsm_subadditive_neglog_fkZ Gn (fsc_logistic_pos t) (fsc_logistic_lt_one t) hq
-      hjux
-  exact fkl_fekete_limit Gn q hq hE hsuper hbdd c hc he
 
 end Fekete
 

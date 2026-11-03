@@ -133,8 +133,8 @@ noncomputable def helmholtzRate [Fintype S] [Fintype ρ] (k : ρ → ℝ) (cstar
   ∑ s, (Real.log (c s) - Real.log (cstar s)) * N.massActionField k c s
 
 /-- Complex balance at `c` rewrites the rate-weighted sum of any function of the products as
-the same sum over the sources. -/
-private theorem sum_rate_mul_prod_eq [Fintype S] [Fintype ρ] {k : ρ → ℝ} {c : S → ℝ}
+the same sum over the sources (for all real `c` and `k`). -/
+theorem sum_rate_mul_prod_eq [Fintype S] [Fintype ρ] {k : ρ → ℝ} {c : S → ℝ}
     (h : N.IsComplexBalanced k c) (g : (S → ℕ) → ℝ) :
     ∑ r, N.rate k c r * g (N.prod r) = ∑ r, N.rate k c r * g (N.src r) := by
   let T : Finset (S → ℕ) := univ.image N.src ∪ univ.image N.prod

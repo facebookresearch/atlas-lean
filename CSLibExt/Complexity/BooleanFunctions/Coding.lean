@@ -17,23 +17,26 @@ public import CSLibExt.Complexity.BooleanFunctions.OSSS
 
 For a strictly positive weight `μ` on configurations and an ordering `σ` of the
 coordinates, the conditional probabilities of the bits telescope: the product of the
-successive conditional probabilities of the observed bits equals `μ x`. The code map sends
-a configuration to the left endpoint of its interval; the fibre over a code is a box whose
-volume is the mass of the configuration. The file also records the stopping time of a
-decision tree and the fact that its evaluation is determined by the queried coordinates.
+successive conditional probabilities of the observed bits equals `μ x`. The code map is
+an inverse-transform decoder/sampler: it sends a vector of reals to a configuration, and
+the fibre over a code is a box whose volume is the mass of the configuration. The file
+also records the stopping time of a decision tree and the fact that its evaluation is
+determined by the queried coordinates.
 
 ## Main definitions
 
 * `condProbBit`, `condProbClosed`: conditional probability of a bit given a partial assignment.
 * `codePrefix`, `codeMap`, `codeInterval`, `codeFibre`: the arithmetic code and its intervals.
-* `stoppingTime`: the number of queries a decision tree makes on a configuration.
+* `stoppingTime`: the number of distinct coordinates a decision tree queries on a
+  configuration (a repeated coordinate counts once, so this is not the path length).
 
 ## Main results
 
 * `codeProb_eq_mass`: the chain rule; the product of conditional bit probabilities is `μ x`.
 * `volume_codeFibre`: the volume of a code fibre equals the mass of its configuration.
-* `codeMap_eq_iff`: the code map is injective.
-* `eval_determined_by_queried`: a decision tree's output depends only on queried coordinates.
+* `codeMap_eq_iff`: characterizes the fibre of the code map (inverse-transform
+  decoder); it does not say the code map is injective.
+* `eval_eq_of_agree_on_queried`: a decision tree's output depends only on queried coordinates.
 -/
 
 
@@ -49,14 +52,14 @@ open OSSS.Monotonic
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The conditional probability that the bit at `e` equals the value it takes in `η`,
-given the configuration agrees with `η` on `F`. -/
+/-- The conditional probability that coordinate `e` equals `b`,
+conditioned on agreement with `η` over `F`. -/
 noncomputable def condProbBit (μ : ConfigSpace E → ℝ) (F : Finset E)
     (η : ConfigSpace E) (e : E) (b : Bool) : ℝ :=
   (∑ ω, if (Agree F η ω ∧ ω e = b) then μ ω else 0) / condNorm μ F η
 
-/-- The conditional probability that the configuration agrees with `η` on `F`,
-normalized over all extensions. -/
+/-- The conditional probability that coordinate `e` is closed (`false`), given
+that the configuration agrees with `η` on `F`. -/
 noncomputable def condProbClosed (μ : ConfigSpace E → ℝ) (F : Finset E)
     (η : ConfigSpace E) (e : E) : ℝ :=
   condProbBit μ F η e false
@@ -253,8 +256,9 @@ lemma condNorm_univ (μ : ConfigSpace E → ℝ) (η : ConfigSpace E) :
     exact hne (funext fun e => hag e (Finset.mem_univ e))
   · intro h; exact absurd (Finset.mem_univ η) h
 
-/-- The arithmetic code prefix after `t` bits: the left endpoint of the interval
-determined by the first `t` conditional probabilities. -/
+/-- The arithmetic code prefix after `t` bits: the partial Boolean configuration
+obtained by thresholding the first `t` conditional probabilities. It is a
+configuration in `ConfigSpace E`, not a real-valued interval endpoint. -/
 noncomputable def codePrefix (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u : Fin n → ℝ) : ℕ → ConfigSpace E
   | 0 => fun _ => false
@@ -265,7 +269,8 @@ noncomputable def codePrefix (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n 
           (decide (u ⟨k, hk⟩ ≥ condProbClosed μ (prefixSet σ k) prev (σ ⟨k, hk⟩)))
       else prev
 
-/-- The arithmetic code of a configuration: the left endpoint of its full interval. -/
+/-- The arithmetic code map, an inverse-transform decoder: given a vector of reals,
+it returns the configuration obtained by successive thresholding. -/
 noncomputable def codeMap (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E)
     (u : Fin n → ℝ) : ConfigSpace E :=
   codePrefix μ σ u n
@@ -303,7 +308,9 @@ lemma codePrefix_agree_codeMap (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin 
   unfold codeMap
   exact (codePrefix_stable μ σ hσ u m n hm e he).symm
 
-/-- The threshold (right endpoint) of the code interval. -/
+/-- The interval split point of the code interval: the left endpoint of the
+`Set.Ico (thr μ σ x t) 1` interval for a true bit, and the right endpoint of the
+`Set.Ico 0 (thr μ σ x t)` interval for a false bit. -/
 noncomputable def thr (μ : ConfigSpace E → ℝ) {n : ℕ} (σ : Fin n → E) (x : ConfigSpace E)
     (t : Fin n) : ℝ :=
   condProbClosed μ (prefixSet σ (t : ℕ)) x (σ t)
@@ -514,19 +521,15 @@ lemma eval_eq_of_agree_on_queried (T : DecisionTree E) (ω ω' : ConfigSpace E)
       simp only [hb, Bool.false_eq_true, ite_false]
       exact Finset.mem_insert_of_mem hi
 
-/-- The number of queries a decision tree makes on a configuration: the size of
-its queried set. -/
+/-- The number of distinct coordinates a decision tree queries on a configuration:
+the size of its queried set. A coordinate queried twice along one path counts once,
+so this is not the path length (number of query nodes traversed). -/
 noncomputable def stoppingTime (T : DecisionTree E) (ω : ConfigSpace E) : ℕ :=
   (T.queried ω).card
 
 omit [Fintype E] in
 lemma stoppingTime_eq_card (T : DecisionTree E) (ω : ConfigSpace E) :
     stoppingTime T ω = (T.queried ω).card := rfl
-
-omit [Fintype E] in
-lemma eval_determined_by_queried (T : DecisionTree E) (ω ω' : ConfigSpace E)
-    (h : ∀ e ∈ T.queried ω, ω' e = ω e) : T.eval ω' = T.eval ω :=
-  eval_eq_of_agree_on_queried T ω ω' h
 
 end OSSS.Coding
 end StatMech

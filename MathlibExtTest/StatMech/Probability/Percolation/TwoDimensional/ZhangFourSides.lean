@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.TwoDimensional.ZhangFourSides
-public import Mathlib
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.Percolation.TwoDimensional.ZhangFourSides`
@@ -19,8 +19,9 @@ public import Mathlib
 * `zhg_side_tendsto_one`, `zhg_inter_tendsto_one`, `zhg_union_tendsto_one_of_merge` for constant
   families.
 * `zhg_union_of_geometricData` from `zhg_geometricData_satisfiable` under a Dirac measure.
-* The refutation `zhg_corLowerBound_hypotheses_false`, restated: the hypotheses of the vacuous
-  `zhg_corLowerBound` are contradictory. `zhg_corLowerBound` itself is not instantiated.
+* The refutation `zhg_corLowerBound_hypotheses_false`, restated: the hypotheses of a
+  `ZhangGeometricData`-based corollary are contradictory. The vacuous `zhg_corLowerBound`
+  itself was removed.
 -/
 
 @[expose] public section
@@ -79,7 +80,8 @@ example : Tendsto (fun _ : ℕ => (Measure.dirac ωT).real (Set.univ : Set _)) a
 example : Tendsto (fun _ : ℕ => (Measure.dirac ωT).real (Set.univ ∩ Set.univ : Set _))
     atTop (𝓝 1) :=
   zhg_inter_tendsto_one _ (dirac_positivelyAssociated ωT) (fun _ => isUpperSet_univ)
-    (fun _ => isUpperSet_univ) (by simp) (by simp)
+    (fun _ => isUpperSet_univ) (fun _ => MeasurableSet.univ)
+    (fun _ => MeasurableSet.univ) (by simp) (by simp)
 
 example : Tendsto (fun n : ℕ => (Measure.dirac ωT).real
     ((fun _ : ℕ => (Set.univ : Set (ConfigSpace (Sym2 (Site 2))))) n ∪ Set.univ)) atTop (𝓝 1) :=

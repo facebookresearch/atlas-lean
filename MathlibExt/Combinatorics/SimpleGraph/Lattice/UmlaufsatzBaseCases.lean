@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CornerBalanceDomino
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.IntervalCases
 
 /-!
 # Turning angles and the base cases of the lattice Umlaufsatz

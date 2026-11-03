@@ -16,14 +16,14 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLTruncation
 # The summed BKKKL inequality: the OR witness, and refutations
 
 Exact two-bit OR computations at `p = 9/10` showing the summed inequality holds there
-(`sbk_summed_holds_at_OR`) and the summed form at `p = 1/2` (`sbk_summed_half`); the
+(`sbk_summed_holds_at_OR`) and the summed form at `p = 1/2` (`mfp2_master_half_via_perCoord`); the
 engine integral identities. Refutations: `pro_PBiasedMaster` and
 `bkt_lowDegreeMasterResidue` fail for `q > 9/10`. The summed inequality survives where
 the per-coordinate estimate fails (`sbk_summed_survives_percoord_fails`).
 
 ## Main results
 
-* `sbk_summed_holds_at_OR`, `sbk_summed_half`: the summed inequality at the witness
+* `sbk_summed_holds_at_OR`, `mfp2_master_half_via_perCoord`: the summed inequality at the witness
   and at `p = 1/2`.
 * `sbk_pBiasedMaster_false`, `sbk_lowDegreeMasterResidue_false`: the refutations.
 * `sbk_engine_integral_eq`, `sbk_engine_integral_damped`: engine integral identities.
@@ -220,16 +220,7 @@ theorem sbk_openResidue_of_lowDegree {q : ℝ} (H : bkt_lowDegreeMasterResidue q
 theorem sbk_kesten_of_lowDegree {q : ℝ} (H : bkt_lowDegreeMasterResidue q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :
     KKLHypercontractive p 2 :=
-  mfp_kesten_of_masterFamily (sbk_openResidue_of_lowDegree H) hp hp1
-
-theorem sbk_summed_half [Nonempty ι] (φ : ConfigSpace ι → Bool)
-    {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :
-    (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-        * (ptn_coeff (1 / 2 : ℝ) (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ (maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0))
-          ^ (u / (2 - u))
-        * totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  mfp2_master_half_via_perCoord φ hu0 hu1
+  frh_kesten_of_openResidue (sbk_openResidue_of_lowDegree H) hp hp1
 
 theorem sbk_summed_survives_percoord_fails {q : ℝ} (hq : (9 : ℝ) / 10 < q) :
     (¬ mfp2_PerCoordHighNoise q)

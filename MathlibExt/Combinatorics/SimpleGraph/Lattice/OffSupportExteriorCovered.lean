@@ -97,16 +97,6 @@ theorem orc_not_exteriorCovered (Vc : (hypercubicLattice 2).Walk a a) (beacon : 
     exact hwoff (hbw ▸ hb)
   · exact offSupportComponent_offSupport Vc hb (hcov hout) hv
 
-/-- `StatMech.Lattice.orc_ExteriorCovered` and `StatMech.Lattice.oc_OutsideReachesExterior` agree
-for `Vc` in the box: both are always false (`StatMech.Lattice.orc_not_exteriorCovered`,
-`StatMech.Lattice.oc_not_outsideReachesExterior`). -/
-theorem orc_exteriorCovered_iff_outsideReachesExterior (Vc : (hypercubicLattice 2).Walk a a)
-    (R : ℕ) (hsupp : oc_supportSet Vc ⊆ box 2 R)
-    {beacon : Site 2} (_hbExt : beacon ∈ exterior 2 R) (_hbOff : beacon ∉ Vc.support) :
-    orc_ExteriorCovered Vc beacon ↔ oc_OutsideReachesExterior Vc R :=
-  ⟨fun h => (orc_not_exteriorCovered Vc beacon h).elim,
-    fun h => (oc_not_outsideReachesExterior Vc R hsupp h).elim⟩
-
 /-- A site reaches the exterior of the box `[-R, R]²` avoiding `Vc` if one of the four straight
 segments from it (up, down, right, left) to row or column `±(R + 1)` misses `Vc`. -/
 theorem orc_reachesExterior_of_anyClear (Vc : (hypercubicLattice 2).Walk a a) (R : ℕ) {z : Site 2}

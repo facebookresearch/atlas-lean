@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.CornerBalanceDomino
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Cyclomatic
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-!
 # Discrete Gauss–Bonnet for boundary contours of lattice sets

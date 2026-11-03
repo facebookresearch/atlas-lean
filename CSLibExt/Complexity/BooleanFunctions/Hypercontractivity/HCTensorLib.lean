@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.PBiasedTensorize
-public import CSLibExt.Complexity.BooleanFunctions.Hypercontractivity.FullRangeHC
-public import CSLibExt.Complexity.BooleanFunctions.KKL.PBiasedRhoOptimise
-public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 
 @[expose] public section
 
@@ -19,12 +16,20 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf
 
 `PBiasedHCLib p` is the two-point inequality
 `((1-p)u + pv)² + ρ²p(1-p)(u-v)² ≤ ((1-p)|u|^(1+ρ²) + p|v|^(1+ρ²))^(2/(1+ρ²))` for all
-`u, v` and `ρ ∈ [0, 1]`. It holds at `p = 1/2` (`htl_lib_half`) and fails at `p = 9/10`
-(`dtpc_pbiasedHCLib_nine_tenths_false`). Assuming it at `p`, tensorization gives the
+`u, v` and `ρ ∈ [0, 1]`. It holds at `p = 1/2` (`htl_lib_half`) and fails for every
+`p` with `1/2 < p < 1`: with `u = 1 + pε`, `v = 1 - (1-p)ε` and `0 < ρ < 1`, both
+sides agree through order two in `ε`, but RHS minus LHS has cubic term
+`ρ²(ρ²-1)p(1-p)(2p-1)ε³/3 < 0`, so sufficiently small positive `ε` violates the
+inequality. This cubic-term argument is informal: it is not formalized here. The
+formal refutation in this library is at `p = 9/10`
+(`dtpc_pbiasedHCLib_nine_tenths_false`). At `p = 1` the inequality reduces to
+equality, and for `p > 1` the displayed cubic coefficient has the opposite sign, so
+this argument gives no refutation there. Assuming it at `p`, tensorization gives the
 `n`-coordinate hypercontractive inequality, low-degree weight bounds and per-coordinate
-hypercontractivity. Assuming it on a whole window `(1/2, q)` gives the KKL log-gain,
-rho-optimisation and sharp-threshold statements; no window with `q > 1/2` is discharged
-in this library.
+hypercontractivity. The window-conditional route (assuming it on a whole window
+`(1/2, q)`) is removed: no nonempty window can satisfy the hypothesis, since any
+window with `q > 1/2` contains some `p` with `1/2 < p < min q 1`, refuted by the
+informal cubic-term argument.
 
 ## Main definitions
 
@@ -35,8 +40,12 @@ in this library.
 * `htl_hypercontractivity_fin`: hypercontractivity from the two-point inequality.
 * `htl_lowDegreeWeight_fin`, `htl_perCoord_hc`, `htl_summed_hc`, `htl_capped_hc`:
   low-degree, per-coordinate, summed and capped forms.
-* `htl_kkl_logGain`, `htl_rhoOptimise_of_lib`, `htl_sharpThreshold`: the window-conditional
-  KKL, rho-optimise and sharp-threshold consequences.
+
+The unbiased KKL log-gain is `vgp2_kkl_logGain_half` in
+`CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf`. The window-conditional KKL,
+rho-optimise and sharp-threshold consequences were removed: their window hypothesis
+holds on no nonempty window (by the informal cubic-term argument above; formally
+refuted only at `p = 9/10`).
 -/
 
 open scoped BigOperators
@@ -52,8 +61,9 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The two-point hypercontractive inequality at bias `p`: for every `ρ ∈ [0, 1]` and
 `u, v : ℝ`, the `ρ`-noised second moment is at most the `q = 1 + ρ²` norm.
-Holds at `p = 1/2` (`htl_lib_half`); fails at `p = 9/10`
-(`dtpc_pbiasedHCLib_nine_tenths_false`). -/
+Holds at `p = 1/2` (`htl_lib_half`); fails for every `p` with `1/2 < p < 1` by the
+informal cubic-term argument in the module documentation (formally refuted at
+`p = 9/10` in `dtpc_pbiasedHCLib_nine_tenths_false`); at `p = 1` it is equality. -/
 def PBiasedHCLib (p : ℝ) : Prop :=
   ∀ ρ : ℝ, 0 ≤ ρ → ρ ≤ 1 → ∀ u v : ℝ,
     ((1 - p) * u + p * v) ^ 2 + ρ ^ 2 * (p * (1 - p)) * (u - v) ^ 2
@@ -65,10 +75,9 @@ theorem htl_cons_quadform_eq {p ρ u v : ℝ} :
       = ((1 - p) * u + p * v) ^ 2 + ρ ^ 2 * (p * (1 - p)) * (u - v) ^ 2 := by
   rw [ptn_kbit_ff, ptn_kbit_ft, ptn_kbit_tf, ptn_kbit_tt]; ring
 
-theorem htl_pbiasedHCLib_half {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (u v : ℝ) :
-    ((1 - (1 / 2 : ℝ)) * u + (1 / 2) * v) ^ 2
-        + ρ ^ 2 * ((1 / 2 : ℝ) * (1 - 1 / 2)) * (u - v) ^ 2
-      ≤ ((1 - (1 / 2 : ℝ)) * |u| ^ (1 + ρ ^ 2) + (1 / 2) * |v| ^ (1 + ρ ^ 2)) ^ (2 / (1 + ρ ^ 2)) := by
+/-- The two-point hypercontractive inequality at the unbiased parameter. -/
+theorem htl_lib_half : PBiasedHCLib (1 / 2) := by
+  intro ρ h0 h1 u v
   have hbts := bts_twoPointScalar h0 h1 ((u + v) / 2) ((u - v) / 2)
   have ha : (u + v) / 2 + (u - v) / 2 = u := by ring
   have hb : (u + v) / 2 - (u - v) / 2 = v := by ring
@@ -82,9 +91,6 @@ theorem htl_pbiasedHCLib_half {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (u v : 
   rw [hLHS]
   rw [hRHS] at hbts
   exact hbts
-
-theorem htl_lib_half : PBiasedHCLib (1 / 2) :=
-  fun _ρ h0 h1 u v => htl_pbiasedHCLib_half h0 h1 u v
 
 theorem htl_tensorStep {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (hqeq : q = 1 + ρ ^ 2) (H : PBiasedHCLib p) (n : ℕ)
@@ -362,63 +368,6 @@ theorem htl_master_open [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (H :
         mul_le_mul_of_nonneg_left hcap h4σnn
     _ ≤ 1 * (δ ^ (2 / q - 1) * T) := mul_le_mul_of_nonneg_right h4σ hRHSnn
     _ = δ ^ (u / (2 - u)) * T := by rw [one_mul, hexp]
-
-theorem htl_openResidue_of_lib {q : ℝ}
-    (H : ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p) :
-    frh_openResidue q := by
-  intro p hp hp1 E _ _ _ φ u hu0 hu1
-  have hp0 : 0 < p := by have := hp.1; linarith
-  exact htl_master_open hp0 hp1 (H p hp) φ hu0 hu1
-
-/-- The KKL log-gain, assuming the two-point inequality on a whole window
-`(1/2, q)`. No window with `q > 1/2` is discharged in this library. -/
-theorem htl_kkl_logGain {q : ℝ} (H : ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p)
-    {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool) :
-    2 * (OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
-          * (1 - OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)))
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  vgp2_kkl_logGain_of_master (htl_openResidue_of_lib H) hp hp1 φ
-
-theorem htl_rhoOptimise_of_lib {q : ℝ} (H : ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p) :
-    ptn_RhoOptimise q :=
-  mxd_rhoOptimise_of_martingaleHC (frh_martingaleHC_of_openResidue (htl_openResidue_of_lib H))
-
-theorem htl_kklHC_of_lib {q : ℝ} (H : ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p)
-    {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :
-    KKLHypercontractive p 2 :=
-  ptn_kklHC_of_rhoOptimise (htl_rhoOptimise_of_lib H) hp hp1
-
-theorem htl_PBiasedHC_of_lib {q : ℝ} (hq : q ≤ 1)
-    (H : ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p) :
-    kpb_PBiasedHC q :=
-  ptn_PBiasedHC_of_rhoOptimise hq (htl_rhoOptimise_of_lib H)
-
-/-- The sharp-threshold lower bound, assuming the two-point inequality on a whole
-window `(1/2, q)`. -/
-theorem htl_sharpThreshold {q : ℝ} (hq1 : q ≤ 1)
-    (H : ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, PBiasedHCLib p)
-    {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
-    (A : Set (ConfigSpace E)) [DecidablePred (· ∈ A)] (hA : IsIncreasing A)
-    {v₀ L : ℝ} (hq : (1 : ℝ) / 2 ≤ q) (hv0 : 0 ≤ v₀) (hL : 0 ≤ L)
-    (hhalf : StatMech.prob (1 / 2) A = 1 / 2)
-    (hvar : ∀ p ∈ interior (Set.Icc (1 / 2 : ℝ) q),
-      v₀ ≤ StatMech.prob p A * (1 - StatMech.prob p A))
-    (hLL' : ∀ p ∈ interior (Set.Icc (1 / 2 : ℝ) q),
-      L ≤ StatMech.TwoDim.kklw_logMaxInfl p A) :
-    1 / 2 + (2 * v₀ * L) * (q - 1 / 2) ≤ StatMech.prob q A :=
-  ptn_sharpThreshold_of_rhoOptimise hq1 (htl_rhoOptimise_of_lib H) A hA hq hv0 hL hhalf hvar hLL'
-
-theorem htl_kkl_logGain_half {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty ι]
-    (φ : ConfigSpace ι → Bool) :
-    2 * (OSSS.expect (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0)
-          * (1 - OSSS.expect (OSSS.bernoulliWeight (1 / 2 : ℝ))
-              (fun ω => if φ ω then (1 : ℝ) else 0)))
-        * Real.log (1 / maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ))
-            (fun ω => if φ ω then (1 : ℝ) else 0))
-      ≤ totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  vgp2_kkl_logGain_half φ
 
 theorem htl_lib_rho_zero {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u v : ℝ) :
     ((1 - p) * u + p * v) ^ 2 + (0 : ℝ) ^ 2 * (p * (1 - p)) * (u - v) ^ 2

@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.RSW.StripCases
-public import Mathlib
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.Tactic
 
 /-!
 # Tests for `MathlibExt.Probability.Percolation.RSW.StripCases`

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.ExtremeCell
+import Mathlib.Algebra.BigOperators.Intervals
 
 /-!
 # Partial turning sums along a boundary orbit

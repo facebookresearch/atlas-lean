@@ -694,11 +694,11 @@ theorem reveal_crossTree_le {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     reveal ν (crossTree endU endV o C l disc₀) i
       ≤ expect ν (fun ω => if ConnOpenSet endU endV ω (endU i) B then (1 : ℝ) else 0)
         + expect ν (fun ω => if ConnOpenSet endU endV ω (endV i) B then (1 : ℝ) else 0) := by
-  have h := revealment_le_of_queried_imp_or hν (crossTree endU endV o C l disc₀) i
+  have h := reveal_le_of_queried_imp_or hν (crossTree endU endV o C l disc₀) i
     (fun ω => ConnOpenSet endU endV ω (endU i) B)
     (fun ω => ConnOpenSet endU endV ω (endV i) B)
     (fun ω hq => queried_crossTree_imp endU endV o B C l disc₀ hdisc₀ ω i hq)
-  rwa [Revealment.revealment] at h
+  exact h
 
 section Lattice
 

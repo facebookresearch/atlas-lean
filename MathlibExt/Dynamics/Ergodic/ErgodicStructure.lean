@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned.BirkhoffPointwise
+public import Mathlib.Dynamics.Ergodic.Function
 
 /-!
 # Invariant σ-algebra, ergodicity and conditional expectation

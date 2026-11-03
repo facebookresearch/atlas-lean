@@ -10,22 +10,23 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IVPressureConvex
 
 /-!
-# Free-energy limits from near-subadditivity in the box index
+# Fekete limits with a sublinear correction
 
-Fekete's lemma with an `o(n)` correction: if `u n + c n` is subadditive and `c n / n → 0`, then
-`u n / n` converges; applied to `-log Z` of the boxes `Λ_n` for the `q = 2` model.
+Fekete's lemma with an `o(n)` correction: if `u n + c n` is subadditive with its normalized
+terms bounded below and `c n / n → 0`, then `u n / n` converges.
 
 ## i. Overview
 
-Mathlib's `Subadditive.tendsto_lim` gives convergence of `(u n + c n)/n`; the correction `c n / n`
-vanishes, so `u n / n` has the same limit, and dividing by an edge count `e n` with `e n / n → κ ≠
-0`
-gives the per-edge limit. `bfd_FKInterfaceData d t` packages these hypotheses for
-`u n = -log Z_{Λ_n}(logistic(t), 2)` and `e n = |E(Λ_n)|`. It requires `|E(Λ_n)| / n` to converge to
-a
-finite nonzero `κ`, which holds only for `d = 1` (for `d ≥ 2`, `|E(Λ_n)| / n → ∞`), so the
-predicate cannot hold for `d ≥ 2`. `bfd_fkInterfaceData_satisfiable` exhibits sequences
-satisfying the abstract numeric hypotheses, not the box predicate.
+Mathlib's `Subadditive.tendsto_lim` gives convergence of `(u n + c n)/n`; the correction
+`c n / n` vanishes, so `u n / n` has the same limit. Dividing by a normalization `e n` with
+`e n / n → κ ≠ 0` gives the corresponding normalized limit.
+
+The graph helper is conditional on these hypotheses; it does not supply them for boxes.
+For the raw `q = 2` box partition function, unused binary coordinates prevent an eventual
+finite lower bound on `-log Z_n / n` in every positive dimension, even with an `o(n)`
+correction. In dimension zero the edge count vanishes. The existing edge-restricted route
+is in `EdgePartitionFunction`. The witness `bfd_fkInterfaceData_satisfiable` concerns only
+abstract numeric sequences, not a box family.
 
 ## ii. Key results
 
@@ -34,7 +35,7 @@ satisfying the abstract numeric hypotheses, not the box predicate.
 ## iii. Table of contents
 
 - A. Fekete's lemma with a correction
-- B. Box free energies
+- B. A scalar consistency witness
 
 ## iv. References
 
@@ -122,24 +123,7 @@ lemma bfd_tiltFreeEnergy_tendsto_of_nearSubadditive (q : ℝ) (hq : 0 < q) (t : 
   have hneg : Tendsto (fun n => - (u n / e n)) atTop (𝓝 (- (hsub.lim / κ))) := hratio.neg
   simpa using hneg.add_const (Real.log (1 + Real.exp t))
 
-variable {d : ℕ}
-
-/-! ## B. Box free energies -/
-
-/-- Near-subadditivity of `n ↦ -log Z_{Λ_n}(logistic(t), 2)` with an `o(n)` correction, together
-with
-`|E(Λ_n)| / n → κ ≠ 0`. The last condition fails for `d ≥ 2`, so this predicate can hold only
-for
-`d = 1`.
--/
-def bfd_FKInterfaceData (d : ℕ) (t : ℝ) : Prop :=
-  ∃ (c : ℕ → ℝ) (κ : ℝ),
-    Subadditive (fun n => - Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2) + c n)
-    ∧ BddBelow (Set.range fun n =>
-        (- Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2) + c n) / n)
-    ∧ Tendsto (fun n => c n / n) atTop (𝓝 0)
-    ∧ κ ≠ 0
-    ∧ Tendsto (fun n => ((boxGraph d n).edgeFinset.card : ℝ) / n) atTop (𝓝 κ)
+/-! ## B. A scalar consistency witness -/
 
 lemma bfd_fkInterfaceData_satisfiable :
     ∃ (u c : ℕ → ℝ) (e : ℕ → ℝ) (κ : ℝ),

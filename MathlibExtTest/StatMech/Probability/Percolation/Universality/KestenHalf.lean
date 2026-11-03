@@ -18,7 +18,7 @@ public import MathlibExt.Probability.Percolation.Universality.KestenHalf
   the quarter turn, for which `R ∘ dualConfig` negates every coordinate. It gives
   `ℙ_{1/2}(H) = 1/2`, so its hypotheses are satisfiable.
 * `percolationProbability` agrees with `StatMech.Percolation.theta`.
-* Not covered: `kesten_pc_eq_half_of_bxp` and `kesten_no_percolation_at_pc`; their inputs
+* Not covered: `criticalProbability_eq_half_of_selfDualAssembly` and `no_percolation_at_pc_of_selfDualAssembly`; their inputs
   (Harris's `θ(1/2) = 0`, subcritical crossing decay, an exactly self-dual crossing family) are not
   available in Atlas.
 -/

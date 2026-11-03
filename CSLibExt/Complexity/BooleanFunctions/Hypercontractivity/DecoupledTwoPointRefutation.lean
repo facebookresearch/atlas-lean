@@ -16,8 +16,13 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.SharpThresholdWire
 
 `PBiasedHCLib (9/10)` is false (witness `u = 1, v = 0, ρ = 1/2`), so the remaining goal
 `∀ p ∈ Ioo (1/2) q, PBiasedHCLib p` fails for every `q > 9/10`. The file also checks the
-decoupled/coupled comparison at the witness. This closes the window form of the
-two-point route: no window reaching `9/10` can be discharged through `PBiasedHCLib`.
+decoupled/coupled comparison at the witness. This is the formal witness for the
+closure of the window form of the two-point route: `PBiasedHCLib p` in fact fails for
+every `p` with `1/2 < p < 1` (informal cubic-term argument in the `HCTensorLib`
+module documentation; the formal refutation here is only at `p = 9/10`), so
+no nonempty window can be discharged through `PBiasedHCLib` (any window with
+`q > 1/2` contains a `p` with `1/2 < p < min q 1`), and the window route was
+removed from `HCTensorLib`.
 
 ## Main results
 

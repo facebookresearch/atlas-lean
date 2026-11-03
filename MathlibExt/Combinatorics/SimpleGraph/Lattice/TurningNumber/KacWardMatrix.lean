@@ -7,7 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Data.ZMod.Defs
+public import Mathlib.LinearAlgebra.Matrix.Defs
+import Mathlib.Tactic.FinCases
 
 /-!
 # The Kac-Ward matrix of the square-lattice torus

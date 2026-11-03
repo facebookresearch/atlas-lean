@@ -9,6 +9,7 @@ module
 
 public import CSLibExt.Complexity.BooleanFunctions.KKL.FSMartingale
 public import CSLibExt.Complexity.BooleanFunctions.KKL.KKLUniform
+import MathlibExt.InformationTheory.LogSum
 
 /-!
 # Decomposition of the variance by maximal element

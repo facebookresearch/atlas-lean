@@ -15,7 +15,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.SegmentDownCounterexa
 # Tests for `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffSupportInterior`
 
 * `jil_floodFill_subset_leftRegion`, `jil_floodFill_eq_offSupportComponent`: instantiated with the
-  fjord walk `sdc_fjord` (from `SegmentDownCounterexample`) and its off-support interior site `(5, 1)`.
+  fjord walk `sdc_fjord` (from `SegmentDownCounterexample`) and its off-support interior site
+  `(5, 1)`.
 * `jil_hsegment_subset_leftRegion`: a one-site segment at an interior site.
 -/
 

@@ -42,8 +42,9 @@ a hypothesis that fails in the basic examples.
   origin inside give `acc_ExitDartWinds`.
 * `StatMech.Lattice.wwc2_pc_lt_one_of_turning_originInside`: `p_c(ℤ²) < 1` under these three
   assumptions for every configuration.
-* `StatMech.Lattice.wwc2_pc_lt_one_of_originReachesEnclosed`: `p_c(ℤ²) < 1` with
-  `wwc2_OriginInside` replaced by `wwc2_OriginReachesEnclosed`.
+* `StatMech.Lattice.wwc2_originReachesEnclosed_unitCell_false`: the reaches-enclosed property
+  fails for the unit-cell loop — the origin is enclosed by it and lies on it — so the universal
+  premise of the removed `wwc2_pc_lt_one_of_originReachesEnclosed` is refuted at that instance.
 
 ## References
 
@@ -233,20 +234,29 @@ theorem wwc2_anchoredCycleExists_of_originReachesEnclosed (hfin : (cluster 2 ω 
   acc_anchoredCycleExists_of_exitDartWinds (ω := ω) hfin
     (wwc2_exitDartWinds_of_originReachesEnclosed (ω := ω) hfin hturn hnp hreach)
 
-/-- `p_c(ℤ²) < 1`, assuming for every configuration with finite origin cluster a full turn of the
-exit orbit, no pinched face, and `wwc2_OriginReachesEnclosed`. The last hypothesis fails whenever a
-site inside the exit loop has its upper right face on the loop, which happens for the all-closed
-configuration (the unit cell), so this statement is expected to be vacuous; prefer
-`wwc2_pc_lt_one_of_turning_originInside`. -/
-theorem wwc2_pc_lt_one_of_originReachesEnclosed
-    (h : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (hfin : (cluster 2 ω (origin 2)).Finite),
-        TurningIsFullRevolution (cluster 2 ω (origin 2)) (exitBaseSub (ω := ω) hfin) ∧
-          OrbitFaceNoPinch (cluster 2 ω (origin 2)) (exitBaseSub (ω := ω) hfin) ∧
-          wwc2_OriginReachesEnclosed ω hfin) :
-    StatMech.Percolation.pc 2 < 1 :=
-  acc_pc_lt_one_of_exitDartWinds (fun ω hfin =>
-    wwc2_exitDartWinds_of_originReachesEnclosed (ω := ω) hfin (h ω hfin).1 (h ω hfin).2.1
-      (h ω hfin).2.2)
+/-- The reaches-enclosed property fails for the unit-cell loop: the origin is enclosed by it
+(`wwc2_unitCell_originInside`) and lies on it (it is the loop's starting face), so no walk from
+the origin to the origin can avoid the loop's support. This refutes, at the unit-cell instance,
+the universal premise that the removed `wwc2_pc_lt_one_of_originReachesEnclosed` would have
+needed: for the all-closed configuration the origin cluster is the singleton `unitCell`, and the
+exit loop is this unit-cell loop. -/
+theorem wwc2_originReachesEnclosed_unitCell_false :
+    ¬ ∀ z₀ : Site 2,
+      z₀ ∈ jec_leftRegion (mpl_orbitLoop unitCell ucBase) →
+      ∃ p : (hypercubicLattice 2).Walk (origin 2) z₀,
+        ∀ w ∈ p.support, w ∉ (mpl_orbitLoop unitCell ucBase).support := by
+  intro h
+  obtain ⟨p, hp⟩ := h (origin 2) wwc2_unitCell_originInside
+  have hO : (origin 2) ∈ p.support := p.start_mem_support
+  have hloop : (origin 2) ∈ (mpl_orbitLoop unitCell ucBase).support := by
+    have hstart := (mpl_orbitLoop unitCell ucBase).start_mem_support
+    have hface : dartFace ucBase.1 = origin 2 := by
+      have huc : ucBase.1 = ucDart0 := rfl
+      rw [huc, mpl_dartFace_ucDart0]
+      funext i
+      fin_cases i <;> rfl
+    exact (congrArg (fun z => z ∈ (mpl_orbitLoop unitCell ucBase).support) hface).mp hstart
+  exact hp (origin 2) hO hloop
 
 /-- If the origin is off the exit loop, the empty walk joins it to itself off the loop. -/
 theorem wwc2_origin_reaches_self_offSupport (hfin : (cluster 2 ω (origin 2)).Finite)

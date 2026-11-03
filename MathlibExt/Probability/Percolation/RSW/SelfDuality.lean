@@ -10,6 +10,8 @@ module
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoundaryConditions
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Self-duality on `ℤ²`: the self-dual point and primal/dual blocking

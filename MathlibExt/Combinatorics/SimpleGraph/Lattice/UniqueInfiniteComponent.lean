@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.SegmentConn
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # The complement of a finite set in `ℤ^d` has one infinite component
