@@ -81,7 +81,7 @@ import shutil
 import subprocess
 import sys
 import tomllib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 FINAL_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 RC_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)-rc(\d+)$")
@@ -151,13 +151,98 @@ def _require_explicit_rc_target(target: str, *, allow_rc: bool) -> None:
         )
 
 
+_CONFIG_KEYS = {"toolchain_repo", "deps", "doc_replacements", "pin_policy", "migration_ledgers"}
+_DEP_KEYS = {"name", "repo"}
+_DOC_REPLACEMENT_KEYS = {"path", "pattern", "replacement"}
+_PIN_POLICY_KEYS = {"path", "replacements"}
+_PIN_REPLACEMENT_KEYS = {"pattern", "replacement"}
+
+
+def _is_safe_relative_path(value: object) -> bool:
+    """A config path must stay inside the repo: relative, no .., non-empty."""
+    if not isinstance(value, str) or not value:
+        return False
+    parts = PurePosixPath(value).parts
+    return not value.startswith("/") and ".." not in parts and "\x00" not in value
+
+
+def validate_config_schema(config: dict, path: Path) -> None:
+    """Validate the complete pinned_deps.json schema.
+
+    Partial validation here bricked the workflow: a malformed
+    doc_replacements entry merged into the base config made the guard
+    workflow's own `e["path"]` read raise before the guard ran, blocking
+    every subsequent PR including a repair PR. Every field the guard,
+    the bot, or the workflow reads is validated, unknown keys are
+    rejected (config is bot-executed; every key must mean something
+    the code understands), and paths must be repo-relative.
+    """
+    if not isinstance(config, dict):
+        raise ValueError(f"bad config in {path}: expected an object")
+    unknown = sorted(set(config) - _CONFIG_KEYS)
+    if unknown:
+        raise ValueError(f"bad config in {path}: unknown top-level keys {unknown}")
+    toolchain_repo = config.get("toolchain_repo")
+    if not isinstance(toolchain_repo, str) or not toolchain_repo:
+        raise ValueError(f"bad config in {path}: toolchain_repo must be a non-empty string")
+    if not isinstance(config.get("deps"), list):
+        raise ValueError(f"bad config in {path}: deps must be a list")
+    for dep in config["deps"]:
+        if not isinstance(dep, dict) or sorted(set(dep) - _DEP_KEYS):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+        if not isinstance(dep.get("name"), str) or not dep.get("name"):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+        if not isinstance(dep.get("repo"), str) or not dep.get("repo"):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+    for entry in config.get("doc_replacements", []):
+        if not isinstance(entry, dict) or sorted(set(entry) - _DOC_REPLACEMENT_KEYS):
+            raise ValueError(f"bad doc_replacements entry in {path}: {entry!r}")
+        for key in ("path", "pattern", "replacement"):
+            if not isinstance(entry.get(key), str):
+                raise ValueError(
+                    f"bad doc_replacements entry in {path}: {key} must be a string: {entry!r}"
+                )
+        if not entry["pattern"]:
+            raise ValueError(f"bad doc_replacements entry in {path}: empty pattern: {entry!r}")
+        if not _is_safe_relative_path(entry["path"]):
+            raise ValueError(
+                f"bad doc_replacements entry in {path}: unsafe path {entry['path']!r}"
+            )
+    pin_policy = config.get("pin_policy")
+    if pin_policy is not None:
+        if not isinstance(pin_policy, dict) or sorted(set(pin_policy) - _PIN_POLICY_KEYS):
+            raise ValueError(f"bad pin_policy in {path}: {pin_policy!r}")
+        if not _is_safe_relative_path(pin_policy.get("path")):
+            raise ValueError(f"bad pin_policy in {path}: unsafe path {pin_policy.get('path')!r}")
+        if not isinstance(pin_policy.get("replacements"), list):
+            raise ValueError(f"bad pin_policy in {path}: replacements must be a list")
+        for replacement in pin_policy["replacements"]:
+            if not isinstance(replacement, dict) or sorted(
+                set(replacement) - _PIN_REPLACEMENT_KEYS
+            ):
+                raise ValueError(f"bad pin_policy replacement in {path}: {replacement!r}")
+            for key in ("pattern", "replacement"):
+                if not isinstance(replacement.get(key), str):
+                    raise ValueError(
+                        f"bad pin_policy replacement in {path}: {key} must be a string: "
+                        f"{replacement!r}"
+                    )
+            if not replacement["pattern"]:
+                raise ValueError(
+                    f"bad pin_policy replacement in {path}: empty pattern: {replacement!r}"
+                )
+    for ledger in config.get("migration_ledgers", []):
+        if not _is_safe_relative_path(ledger):
+            raise ValueError(
+                f"bad migration ledger in {path}: unsafe path {ledger!r}"
+            )
+
+
 def load_config(root: Path) -> dict:
     path = Path(__file__).resolve().parent / "pinned_deps.json"
     with open(path, encoding="utf-8") as f:
         config = json.load(f)
-    for dep in config["deps"]:
-        if not dep.get("name") or not dep.get("repo"):
-            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+    validate_config_schema(config, path)
     return config
 
 
@@ -169,17 +254,7 @@ def load_config_file(path: Path) -> dict:
     """
     with open(path, encoding="utf-8") as f:
         config = json.load(f)
-    if not isinstance(config, dict) or not isinstance(config.get("deps"), list):
-        raise ValueError(f"bad config in {path}: expected an object with deps")
-    for dep in config["deps"]:
-        if (
-            not isinstance(dep, dict)
-            or not isinstance(dep.get("name"), str)
-            or not dep.get("name")
-            or not isinstance(dep.get("repo"), str)
-            or not dep.get("repo")
-        ):
-            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+    validate_config_schema(config, path)
     return config
 
 
@@ -1950,7 +2025,15 @@ def cmd_guard(args: argparse.Namespace) -> int:
     base = Path(args.base)
     merge_base = Path(args.merge_base)
     pr = Path(args.pr)
-    base_config = load_config(base)
+    try:
+        base_config = load_config(base)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        # A malformed base config fails loudly here instead of bricking
+        # the workflow (whose config reads are defensive, so it reaches
+        # this point). Repairing it needs a branch-protection bypass:
+        # every guard run fails until the base config is fixed.
+        print(f"guard: FAIL - base {CONFIG_FILE} is malformed: {exc}")
+        return 1
     client = GitHub()
     changed = {
         line.strip() for line in Path(args.changed_files).read_text(encoding="utf-8").splitlines()

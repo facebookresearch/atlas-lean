@@ -75,11 +75,18 @@ jobs:
           # executed; only the base checkout's guard code runs.
           # The guard reads the configured pin-policy file from both trees,
           # so download it too (from the base checkout's config).
-          PIN_POLICY_PATH="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print((c.get("pin_policy") or {}).get("path", ""))')"
+          # These three reads must never crash on a malformed base config:
+          # a malformed entry once made `e["path"]` raise here, before the
+          # guard ran, blocking every PR including a repair PR. Each read
+          # skips malformed entries defensively; the guard itself validates
+          # the base config schema and fails loudly if it is malformed.
+          # (Repairing a malformed base config needs a branch-protection
+          # bypass: every guard run fails until the base is fixed.)
+          PIN_POLICY_PATH="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); pp = c.get("pin_policy") if isinstance(c.get("pin_policy"), dict) else {}; p = pp.get("path"); print(p if isinstance(p, str) else "")')"
           # The guard validates the pin-coupled migration ledgers, so
           # download them too for every tree; a tree that predates them
           # (contents API 404) legitimately has no ledger files.
-          LEDGER_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); print(" ".join(c.get("migration_ledgers") or []))')"
+          LEDGER_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); led = c.get("migration_ledgers"); print(" ".join(x for x in led if isinstance(x, str)) if isinstance(led, list) else "")')"
           # Doc files carrying configured pin replacements (README.md):
           # the guard validates them against the base tree with the new
           # tag applied, so they must be downloaded for every tree too.
@@ -87,7 +94,7 @@ jobs:
           # (404-tolerated) like the ledgers: the guard itself fails
           # closed when a doc file is missing from the PR tree or
           # present there but absent from the base tree.
-          DOC_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); seen = []; [seen.append(e["path"]) for e in c.get("doc_replacements") or [] if e["path"] not in seen]; print(" ".join(seen))')"
+          DOC_PATHS="$(python3 -c 'import json; c = json.load(open("scripts/bump/pinned_deps.json")); reps = c.get("doc_replacements"); reps = reps if isinstance(reps, list) else []; seen = []; [seen.append(e.get("path")) for e in reps if isinstance(e, dict) and isinstance(e.get("path"), str) and e.get("path") not in seen]; print(" ".join(seen))')"
           if [ "$EVENT_NAME" = "merge_group" ]; then
             BASE_REF="$MERGE_GROUP_BASE_SHA"
             HEAD_SHA="$MERGE_GROUP_HEAD_SHA"

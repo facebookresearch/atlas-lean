@@ -372,7 +372,8 @@ class GuardTests(unittest.TestCase):
                    manifest_rev_tamper=False, remove_dep=False, changed_guard_test=False,
                    duplicate_shadow=False, config_add_ledger=False,
                    malformed_require=False, nonstring_rev=False,
-                   scope_repoint=False, add_dep_wrong_source=False):
+                   scope_repoint=False, add_dep_wrong_source=False,
+                   config_malformed_doc=None, config_malformed_pin=False):
         upstream = {}
         for dep in CONFIG["deps"]:
             manifest = upstream_manifest(["batteries", "Qq"])
@@ -420,6 +421,20 @@ class GuardTests(unittest.TestCase):
             if config_add_dep_only:
                 pr_config["deps"].append(
                     {"name": "Physlib", "repo": "leanprover-community/physlib"})
+            if config_malformed_doc == "int":
+                pr_config["doc_replacements"].append(42)
+            elif config_malformed_doc == "missing_path":
+                pr_config["doc_replacements"].append(
+                    {"pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "traversal":
+                pr_config["doc_replacements"].append(
+                    {"path": "../outside.md", "pattern": "x", "replacement": "y"})
+            elif config_malformed_doc == "unknown_key":
+                pr_config["doc_replacements"].append(
+                    {"path": "README.md", "pattern": "x", "replacement": "y",
+                     "note": "hi"})
+            if config_malformed_pin:
+                pr_config["pin_policy"]["replacements"].append({"pattern": "x"})
             if config_add_ledger:
                 pr_config["migration_ledgers"] = (
                     pr_config.get("migration_ledgers", [])
@@ -621,7 +636,8 @@ class GuardTests(unittest.TestCase):
             else:
                 changed_lines = ["lean-toolchain", "lakefile.toml", "lake-manifest.json"]
                 if add_dep or config_tamper is not None or config_add_doc \
-                        or config_add_dep_only or remove_dep or config_add_ledger:
+                        or config_add_dep_only or remove_dep or config_add_ledger \
+                        or config_malformed_doc is not None or config_malformed_pin:
                     changed_lines.append("scripts/bump/pinned_deps.json")
                 if changed_guard_test:
                     changed_lines.append("scripts/bump/test_pinned_bump.py")
@@ -736,6 +752,33 @@ class GuardTests(unittest.TestCase):
         # Guard-code-only PRs get normal review; they must not fail
         # their own guard run.
         self.assertEqual(self._run_guard(changed_guard_only=True), 0)
+
+    def test_guard_fails_config_only_malformed_doc_int(self):
+        # Codex P1: a bare 42 in doc_replacements must fail schema
+        # validation, not merge and brick the workflow's e["path"] read.
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="int"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_missing_path(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="missing_path"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_traversal(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="traversal"), 1)
+
+    def test_guard_fails_config_only_malformed_doc_unknown_key(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_doc="unknown_key"), 1)
+
+    def test_guard_fails_config_only_malformed_pin_replacement(self):
+        self.assertEqual(
+            self._run_guard(changed_only_config=True,
+                            config_malformed_pin=True), 1)
 
     def test_guard_fails_same_pin_scope_repoint(self):
         # Codex P1: changing an existing require's scope to an attacker's
