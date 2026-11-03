@@ -122,6 +122,11 @@ theorem isClassicalSolution_example : IsClassicalSolution (fun _ => 1) exampleSo
   zero_right := by simp [exampleSol]
   eq x _ := by rw [deriv_deriv_exampleSol]; norm_num
 
+/-- The open-interval equation extends to both endpoints without extra hypotheses. -/
+example {f u : ℝ → ℝ} (hu : IsClassicalSolution f u) :
+    -deriv (deriv u) 0 = f 0 ∧ -deriv (deriv u) 1 = f 1 :=
+  ⟨hu.eq_Icc ⟨le_rfl, zero_le_one⟩, hu.eq_Icc ⟨zero_le_one, le_rfl⟩⟩
+
 /-- The Galerkin solution on the two-element mesh is `c = (0, 1/8, 0)` (non-vacuity of
 `IsGalerkinSolution`): it is the vector of nodal values of `u`. -/
 theorem isGalerkinSolution_example :

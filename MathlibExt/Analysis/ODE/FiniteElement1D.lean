@@ -186,15 +186,14 @@ structure IsClassicalSolution (f u : ℝ → ℝ) : Prop where
 `-u''` and `f`: the two sides agree on `(0, 1)`, hence on its closure `[0, 1]`. -/
 theorem IsClassicalSolution.eq_Icc {f u : ℝ → ℝ} (hu : IsClassicalSolution f u)
     {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1) : -deriv (deriv u) x = f x := by
-  have hcont1 : ContinuousOn (fun x => -deriv (deriv u) x) (Set.Icc (0 : ℝ) 1) :=
-    ((contDiff_deriv_of_contDiff_two hu.contDiff).continuous_deriv le_rfl).neg.continuousOn
-  have hcont2 : ContinuousOn f (Set.Icc (0 : ℝ) 1) := hu.f_cont.continuousOn
+  have hu1 : ContDiff ℝ 1 (deriv u) :=
+    (contDiff_succ_iff_deriv.mp (show ContDiff ℝ (1 + 1) u from hu.contDiff)).2.2
+  have hcont : Continuous (fun x => -deriv (deriv u) x) :=
+    (hu1.continuous_deriv le_rfl).neg
   have hEq : Set.EqOn (fun x => -deriv (deriv u) x) f (Set.Ioo (0 : ℝ) 1) :=
     fun x hx => hu.eq x hx
-  have hcl : Set.Icc (0 : ℝ) 1 = closure (Set.Ioo (0 : ℝ) 1) := by
-    rw [Set.closure_Ioo (by norm_num : (0 : ℝ) ≠ 1)]
-  rw [hcl]
-  exact ContinuousOn.eqOn_closure hcont1 hcont2 hEq hx
+  apply hEq.closure hcont hu.f_cont
+  simpa only [closure_Ioo (by norm_num : (0 : ℝ) ≠ 1)] using hx
 
 /-- The coefficient vector `c` solves the Galerkin system: zero boundary
 values and `(K c)ⱼ = Fⱼ` at every interior node `j`. The Galerkin solution is
@@ -446,7 +445,7 @@ theorem energy_eq_integral_mul_of_contDiff {f u v : ℝ → ℝ} (hu : IsClassic
     ← intervalIntegral.integral_neg]
   refine intervalIntegral.integral_congr fun x hx => ?_
   rw [Set.uIcc_of_le zero_le_one] at hx
-  rw [← hu.eq_Icc x hx]
+  rw [← hu.eq_Icc hx]
   ring
 
 /-- The weak form for P1 test functions: `∫₀¹ u' v_h' = ∫₀¹ f v_h`. -/
@@ -464,7 +463,7 @@ theorem energy_eq_integral_mul_of_mem_p1Space {f u v : ℝ → ℝ} (hu : IsClas
       (fun x => f x * p1 P d x) (Set.uIcc (P.points i.castSucc) (P.points i.succ)) := by
     intro i x hx
     dsimp only
-    rw [← hu.eq_Icc x (uIcc_subset_Icc P i hx), p1_eq_of_mem_Icc P d i (by
+    rw [← hu.eq_Icc (uIcc_subset_Icc P i hx), p1_eq_of_mem_Icc P d i (by
       rwa [Set.uIcc_of_le (hle i)] at hx)]
   have hcont : ∀ i : Fin P.n, Continuous
       (fun x => -deriv (deriv u) x *
@@ -952,7 +951,7 @@ private theorem integral_deriv_deriv_sq {f u : ℝ → ℝ} (hu : IsClassicalSol
     ∫ x in (0 : ℝ)..1, deriv (deriv u) x ^ 2 = ∫ x in (0 : ℝ)..1, f x ^ 2 := by
   refine intervalIntegral.integral_congr fun x hx => ?_
   rw [Set.uIcc_of_le zero_le_one] at hx
-  rw [← hu.eq_Icc x hx, neg_sq]
+  rw [← hu.eq_Icc hx, neg_sq]
 
 /-- **Energy error estimate**: `‖u - u_h‖_a² ≤ (h / π)² ‖f‖²_{L²(0,1)}`, so the
 energy error is `O(h)`. -/
