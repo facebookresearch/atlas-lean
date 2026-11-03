@@ -25,6 +25,24 @@ fixed-size databases disagree in at most one row, including at size zero.
 This is an analytic model of discrete distributions, not an executable sampler.
 Continuous distributions, a Laplace mechanism, and a SampCert bridge are not
 implemented here.
+
+## Informal sources and adjacency convention
+
+Dwork, McSherry, Nissim, and Smith, *Calibrating Noise to Sensitivity in
+Private Data Analysis* (TCC 2006), §2, Definition 1, use fixed-length row
+vectors and neighbors differing in one entry:
+https://people.csail.mit.edu/asmith/PS/sensitivity-tcc-final.pdf
+`ReplaceOne` takes the reflexive closure of that relation: at most one
+changed row, including equal databases and the empty database.
+
+Dwork and Roth, *The Algorithmic Foundations of Differential Privacy*
+(2014), §2.3, Definition 2.4 with δ = 0 and Proposition 2.1's deterministic
+case, supply the event inequality and inverse-image postprocessing proof:
+https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf
+Their default histogram adjacency uses ℓ₁ distance at most one. Here the
+privacy predicates accept a supplied adjacency relation; the fixed-size
+`ReplaceOne` relation is not identified with add/remove adjacency. No
+conversion between the two privacy budgets is asserted.
 -/
 
 @[expose] public section
