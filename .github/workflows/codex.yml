@@ -44,25 +44,30 @@ jobs:
     # reflects this output: 'approved' iff the formal verdict is
     # approval, empty when no review was posted. `review_id` carries the
     # created review's ID so the verdict job can attest the exact review
-    # (empty when no review was posted). Every authorized run is formal
-    # (`formal == 'true'`) and mints a verdict: automatic runs and
-    # `@codex` comment runs, on same-repo and fork PRs alike. This is
-    # a deliberate owner decision: a "review" here always means a
-    # formal review that flips the PR status. The cost is the two
-    # reasons informal reviews used to exist: (1) a fork diff is
-    # untrusted input that could steer Codex's verdict toward approval,
-    # and (2) a `@codex` question or follow-up now also produces a
-    # verdict, which can REQUEST_CHANGES and cancel the CI build.
-    # Formal reviews say so in their header ("This is a formal
-    # review."). Anything that is not formal says "advisory" in its
-    # header, so a reader can always tell which kind it is.
+    # (empty when no review was posted). Only same-repo runs are formal
+    # (`formal == 'true'`) and mint a verdict: same-repo automatic runs,
+    # and same-repo `@codex` comment runs by a writer/maintainer/admin.
+    # Fork runs stay advisory: a fork diff is untrusted input that
+    # could steer Codex's verdict toward approval, and prompt
+    # instructions are not a security boundary, so fork content must
+    # never mint a gate approval. A `@codex` question on a same-repo
+    # PR does produce a verdict, which can REQUEST_CHANGES and cancel
+    # the CI build. Formal reviews say so in their header ("This is a
+    # formal review."). Anything that is not formal says "informal" /
+    # "advisory" in its header, so a reader can always tell which
+    # kind it is.
     outputs:
       authorized: ${{ steps.check_auth.outputs.authorized }}
       formal: ${{ steps.check_auth.outputs.formal }}
       verdict: ${{ steps.submit.outputs.verdict }}
       review_id: ${{ steps.submit.outputs.review_id }}
       reviewed_sha: ${{ steps.target.outputs.ref }}
-      pr_number: ${{ github.event.pull_request.number }}
+      # issue_comment payloads carry the PR number under
+      # github.event.issue.number, not pull_request.number, which is
+      # empty for them. The issue number is the PR number when the
+      # issue is a PR, so fall back to it; cancel-rejected-build
+      # needs this output for @codex comment verdicts.
+      pr_number: ${{ github.event.issue.number || github.event.pull_request.number }}
     steps:
       - name: Check authorization
         id: check_auth
@@ -82,29 +87,34 @@ jobs:
             // traffic) have read-only repo permission, and the job `if`
             // already restricted this event to OWNER/MEMBER/COLLABORATOR
             // authors. Re-check here so a job-`if` edit alone cannot open
-            // automatic fork reviews to untrusted authors.
-            // Every authorized run is formal (see the job header):
-            // automatic runs, and `@codex` comment runs, on same-repo
-            // and fork PRs alike. Comment runs need a PR to review:
-            // `@codex` on a plain issue (no PR) stays non-formal.
+            // automatic fork reviews to untrusted authors. Fork runs are
+            // advisory only (formal == 'false'): they never mint a
+            // verdict. Same-repo automatic runs stay formal, and
+            // `@codex` comment runs on same-repo PRs are formal too,
+            // both authorized by write/maintain/admin.
             const isForkTarget =
               context.eventName === "pull_request_target";
             const isComment =
               context.eventName === "issue_comment" ||
               context.eventName === "pull_request_review_comment";
-            let commentHasPR = false;
+            // For comment runs, formality needs the PR's head repo, which
+            // the payload does not carry: fetch the PR. Non-PR issue
+            // comments and a missing head repo are not formal.
+            let commentSameRepo = false;
             if (isComment) {
               const number =
                 context.payload.issue?.number ??
                 context.payload.pull_request?.number;
               if (number) {
                 try {
-                  await github.rest.pulls.get({
+                  const { data: pr } = await github.rest.pulls.get({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     pull_number: number,
                   });
-                  commentHasPR = true;
+                  commentSameRepo =
+                    pr.head.repo?.full_name ===
+                    context.payload.repository.full_name;
                 } catch (error) {
                   if (error.status !== 404) {
                     throw error;
@@ -113,9 +123,10 @@ jobs:
               }
             }
             const isFormal =
-              context.eventName === "pull_request" ||
-              context.eventName === "pull_request_target" ||
-              (isComment && commentHasPR);
+              (context.eventName === "pull_request" &&
+                context.payload.pull_request?.head?.repo?.full_name ===
+                  context.payload.repository.full_name) ||
+              (isComment && commentSameRepo);
             let authorized;
             let permission = "none";
             if (isForkTarget) {
@@ -262,10 +273,9 @@ jobs:
               // is different again: check_auth verified the commenter
               // has write/maintain/admin, so the maintainer's explicit
               // @codex comment is the approval to review that fork.
-              // Fork runs are formal (see the job header): their
-              // verdict mints an approval. That is a deliberate owner
-              // decision, accepted despite the risk that a fork diff
-              // could steer the verdict.
+              // Fork runs are advisory only (see the job header):
+              // they carry no verdict and never mint an approval,
+              // because a fork diff could steer the verdict.
               if (!actualRepo) {
                 throw new Error(
                   "Cannot review a pull request whose head repository is unavailable."
@@ -785,11 +795,14 @@ jobs:
         timeout-minutes: 25
         env:
           CODEX_IMAGE: node:24-bookworm@sha256:64af3819f9275802414d7cdc38c27e9d82bd564dec4d4da87d008255d36c63b4
-          # Structured review (schema + prompt) for every formal run,
-          # automatic or `@codex`, same-repo or fork, so Submit can
-          # parse the verdict and post a formal review. A freeform
-          # prompt would leave a run with no verdict to post.
-          AUTOMATIC_REVIEW: ${{ steps.check_auth.outputs.formal == 'true' }}
+          # Structured review (schema + prompt) for every automatic
+          # run, and for formal `@codex` runs, so Submit can parse
+          # the verdict and post a review. A freeform prompt would
+          # leave a run with no verdict to post. Automatic and
+          # formal are separate: fork automatic runs are structured
+          # but advisory (no verdict), while `@codex` on a plain
+          # issue is freeform and non-formal.
+          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || steps.check_auth.outputs.formal == 'true' }}
           BASE_SHA: ${{ steps.target.outputs.base }}
           CONTEXT_FILE: ${{ steps.target.outputs.context }}
         run: |
@@ -1016,7 +1029,7 @@ jobs:
           REVIEW_COMMIT: ${{ steps.target.outputs.ref }}
           FORMAL_REVIEW: ${{ steps.check_auth.outputs.formal }}
           TRIGGER_EVENT: ${{ github.event_name }}
-          AUTOMATIC_REVIEW: ${{ steps.check_auth.outputs.formal == 'true' }}
+          AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || steps.check_auth.outputs.formal == 'true' }}
         with:
           script: |
             const fs = require("fs");
@@ -1026,12 +1039,13 @@ jobs:
             if (!output) {
               throw new Error("Codex produced no response");
             }
-            // Automatic mode and formality are separate in the old
-            // design; now every authorized run is formal and produced
-            // structured JSON, so all of them are parsed the same way.
-            // Formal runs post a review carrying the verdict. A
-            // non-formal run (e.g. `@codex` on a plain issue, no PR)
-            // posts its findings as an advisory comment with no verdict.
+            // Automatic mode and formality are separate: automatic
+            // runs (and formal `@codex` runs) produced structured
+            // JSON and are parsed the same way. Formal runs post a
+            // review carrying the verdict. A non-formal run (fork
+            // automatic, or `@codex` on a plain issue / fork PR)
+            // posts its findings as an advisory comment with no
+            // verdict.
             const formal = process.env.FORMAL_REVIEW === "true";
             const automatic = process.env.AUTOMATIC_REVIEW === "true";
             const triggerEvent = process.env.TRIGGER_EVENT || "";
@@ -1099,7 +1113,10 @@ jobs:
                 ].join("\n\n");
               }
             } else {
-              body = `<!-- codex-response -->\n\n## Codex response\n\n${output}`;
+              // Plain-issue `@codex` runs take this freeform path: they
+              // are not a PR review, so label them informal like every
+              // other non-formal output.
+              body = `<!-- codex-response -->\n\n## Codex response\n\nThis is an informal review. It carries no verdict and does not count toward any PR review status.\n\n${output}`;
             }
             if (Buffer.byteLength(body + suffix, "utf8") > 60000) {
               const truncation = "\n\n_Response truncated._";
