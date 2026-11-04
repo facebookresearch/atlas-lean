@@ -79,7 +79,7 @@ language predicate must not share runtime credit.
 | --- | --- | --- | --- |
 | [`CSLibExt.Specs.Sorting.SortingSpec`][sorting] | Output is a permutation of the input and pairwise nondecreasing; arbitrary `Type u` with `LE`. | [Canonical insertion bridge][insertion] and [selection bridge][selection], both with their algorithm's stronger order assumptions. Available at the pinned sorting PR head, not the pinned main snapshot. | Source-only |
 | [`Cslib.Algorithms.Lean.TimeM.lowerBound_spec`][lower-bound] | Requires `LinearOrder`. On a sorted array, the returned index is at most the size, all earlier values are below the key, and all later values are at least the key. The law concerns `.ret`; `.time` counts key comparisons and is separate cost evidence, not machine time. | [LowerBoundTests][lower-client], including empty arrays, duplicates, and a `Nat` restatement of `lowerBound_spec`. | Source-only |
-| [`MinHeap.extractMin_mem`][heap-member], [`MinHeap.extractMin_le`][heap-min], and [`MinHeap.extractMin_elements`][heap-elements] in `Cslib.Algorithms.Lean` | A successful extraction returns a **stored** minimum and erases exactly one occurrence from the multiset. Membership plus erasure establishes the one-occurrence claim. Requires `LinearOrder`; [failure iff empty][heap-empty] is another branch of the same operation. | [BinaryHeapTests][heap-client], including empty, singleton, and duplicate minima. | Source-only |
+| [`MinHeap.extractMin_cons_elements`][heap-cons] and [`MinHeap.extractMin_le`][heap-min] in `Cslib.Algorithms.Lean` | A successful extraction satisfies `x ::ₘ rest.elements = h.elements` and returns a minimum. The multiset equation captures stored membership and exactly-one removal together. Requires `LinearOrder`; [failure iff empty][heap-empty] is another branch of the same operation. | [BinaryHeapTests][heap-client] consumes the multiset equation and includes empty, singleton, and duplicate minima. | Source-only |
 | [`Cslib.Language.cykAccepts_iff`][cyk] | Boolean acceptance iff language membership under `IsChomskyNormalForm` and decidable terminal/nonterminal equality. Empty-word acceptance checks an initial epsilon production. | [ContextFreeCYKTests][cyk-client]: `anbn` and `epsAB` give both rejection and acceptance of the empty word under different valid grammars. | Source-only |
 | [`RegularExpression.rmatch_iff_matches'`][regex] | The Boolean derivative matcher agrees with the denoted language, with decidable alphabet equality. | Direct matcher witnesses are planned. [Existing encoded-regex tests][regex-client] exercise a CFG decider, not this matcher. | Source-only |
 | [`Cslib.CookLevin.decodeCNF_eq_some_iff`][cnf] | Full decoding returns `some φ` iff the entire input equals `encodeCNF φ`; malformed or trailing bits are rejected. This is stronger than the [round trip alone][cnf-roundtrip]. | [CookLevinTests][cnf-client], with empty/nonempty formulas and missing/trailing-bit cases. | Source-only |
@@ -89,11 +89,11 @@ language predicate must not share runtime credit.
 
 ## Worked entry: heap extraction
 
-- **Relation:** combine [stored membership][heap-member], the
-  [minimum law][heap-min], [erasure][heap-elements], and
-  [failure iff empty][heap-empty]. Membership plus erasure gives exactly one
-  removed occurrence. Heap order is carried by `MinHeap`; multiplicity is not
-  set membership.
+- **Relation:** use the [multiset partition law][heap-cons],
+  `x ::ₘ rest.elements = h.elements`, together with the
+  [minimum law][heap-min] and [failure iff empty][heap-empty]. The partition
+  law captures stored membership and exactly one removed occurrence. Heap
+  order is carried by `MinHeap`; multiplicity is not set membership.
 - **Implementation/client:** `MinHeap.extractMin`, projected to the returned
   value and backing array by `BinaryHeapTests.extractedData`. The existing
   [client source][heap-client] builds a heap by pushing `3, 1, 1, 2`; its
@@ -103,19 +103,21 @@ language predicate must not share runtime credit.
   propositions in the source. Their location is not a new execution receipt.
 - **Negative witnesses to add:** on that nonempty heap, `none` violates the
   failure-if-and-only-if-empty contract. Returning `some (0, unchangedHeap)`
-  satisfies the minimum and erasure conditions, since `0` is a lower bound
-  and erasing a nonmember changes nothing; the membership law rejects it.
-  Returning `1` with no `1` in the remainder instead violates the erasure law.
+  satisfies the minimum and [erasure conditions][heap-elements], since `0`
+  is a lower bound and erasing a nonmember changes nothing; the partition law
+  rejects this fabricated value. Returning `1` with no `1` in the remainder
+  also violates the partition law, this time by losing an extra occurrence.
 - **Executable/Plausible obligation:** run the public operation on these
   fixtures and bounded generated lists of naturals. Assert the result and
   multiplicities, using independently computed input counts. Preserve the
   seed and ensure nonempty and duplicate cases were actually generated.
 - **Discrimination obligation:** an always-`none` mutant and a mutant returning
   `(0, unchangedHeap)` must both reach and fail the unchanged assertions. The
-  first tests the empty-case law; the second tests membership, which the
-  minimum-plus-erasure fragment misses. Also test dropping both copies of the
-  actual minimum to discriminate the multiplicity law. A production-proof
-  compilation failure is recorded separately.
+  first tests the empty-case law; the second tests stored membership through
+  the partition law, which the minimum-plus-erasure fragment misses. Also test
+  dropping both copies of the actual minimum to discriminate the partition
+  law's multiplicity requirement. A production-proof compilation failure is
+  recorded separately.
 - **README/evidence:** the inventory row is the starting entry. Add links to
   the retained checks and their evidence before awarding executable assurance.
   This document-only change does not run those checks or promote that row.
@@ -155,11 +157,11 @@ main snapshot used here. Main sources use
 [cslib-sort]: https://github.com/leanprover/cslib/blob/5b56df99362532c46e1175381fbbdd755bd56030/Cslib/Algorithms/Lean/MergeSort/MergeSort.lean#L36-L73
 [lower-bound]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Algorithms/Lean/Search/LowerBound.lean#L130-L137
 [lower-client]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExtTest/Algorithms/Lean/Search/LowerBoundTests.lean#L24-L96
-[heap-member]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap.lean#L760-L769
+[heap-cons]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap.lean#L797-L806
 [heap-min]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap.lean#L771-L782
 [heap-elements]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap.lean#L784-L793
 [heap-empty]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap.lean#L755-L757
-[heap-client]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExtTest/Algorithms/Lean/DataStructures/BinaryHeapTests.lean#L48-L88
+[heap-client]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExtTest/Algorithms/Lean/DataStructures/BinaryHeapTests.lean#L38-L88
 [cyk]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExt/Computability/Languages/ContextFree/CYK.lean#L379-L405
 [cyk-client]: https://github.com/facebookresearch/atlas-lean/blob/d8af6fb34cfc6ef3f22e3c2157dda8abb8b47ac4/CSLibExtTest/Computability/Languages/ContextFreeCYKTests.lean#L28-L72
 [regex]: https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/Computability/RegularExpressions.lean#L299-L320
