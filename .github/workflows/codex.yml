@@ -199,6 +199,7 @@ jobs:
               issue_number: issueNumber,
               body:
                 "## Codex response\n\n" +
+                "This is not a formal review. No review was posted.\n\n" +
                 "Codex requests require write, maintain, or admin repository permission.",
             });
 
@@ -1198,6 +1199,7 @@ jobs:
               issue_number: issueNumber,
               body:
                 `## ${heading}\n\n` +
+                `No review was posted; this is not a formal review.\n\n` +
                 `Codex failed before posting a response. [View logs](${runUrl}).`,
             });
 
