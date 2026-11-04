@@ -8,7 +8,7 @@ cd "$REPO_ROOT"
 LOG="$(mktemp "${TMPDIR:-/tmp}/atlas-build.XXXXXX.log")"
 trap 'rm -f "$LOG"' EXIT
 
-if ! lake build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest 2>&1 | tee "$LOG"; then
+if ! lake build MathlibExt CSLibExt PhyslibExt WantedExt MathlibExtTest CSLibExtTest PhyslibExtTest 2>&1 | tee "$LOG"; then
   echo "FAIL [build]: audited libraries do not build." >&2
   exit 1
 fi
