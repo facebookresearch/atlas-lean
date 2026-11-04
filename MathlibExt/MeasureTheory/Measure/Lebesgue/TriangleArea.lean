@@ -321,8 +321,10 @@ private lemma volume_triangle (a b c : EuclideanSpace ℝ (Fin 2)) :
     _ = _ := by
       simp only [f, det_constr, u, v]
 
-/-- The Euclidean area of a planar triangle is half the absolute determinant of its two
-edge vectors. -/
+/-- **Determinant formula for the area of a triangle.** Write $x = (x_1, x_2)$ for the
+coordinates of a point $x$ of the Euclidean plane $\mathbb{R}^2$. For all points $a, b, c$ in
+$\mathbb{R}^2$, the Lebesgue measure (area) of the convex hull of $\{a, b, c\}$, as a real
+number, equals $\frac{1}{2}\,\lvert (b_1 - a_1)(c_2 - a_2) - (b_2 - a_2)(c_1 - a_1) \rvert$. -/
 theorem _root_.MeasureTheory.toReal_volume_convexHull_triangle
     (a b c : EuclideanSpace ℝ (Fin 2)) :
     (volume (convexHull ℝ
@@ -341,7 +343,9 @@ private lemma unitSquare_eq_parallelepiped :
   ext x
   simp
 
-/-- The Euclidean volume of the closed unit square is one. -/
+/-- **Area of the unit square.** The closed unit square
+$\{x \in \mathbb{R}^2 : 0 \le x_1 \le 1 \text{ and } 0 \le x_2 \le 1\}$ in the Euclidean plane has
+Lebesgue measure (area) $1$. -/
 theorem _root_.MeasureTheory.volume_unitSquare :
     volume {x : EuclideanSpace ℝ (Fin 2) | ∀ i, 0 ≤ x.ofLp i ∧ x.ofLp i ≤ 1} = 1 := by
   rw [unitSquare_eq_parallelepiped]

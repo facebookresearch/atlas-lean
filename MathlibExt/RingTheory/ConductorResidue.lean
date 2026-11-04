@@ -41,9 +41,13 @@ namespace Ideal
 variable {O B : Type*} [CommRing O] [CommRing B] [Algebra O B]
 variable (q : Ideal B) [q.IsMaximal] (c : Ideal B)
 
-/-- Canonical residue-ring equivalence at a maximal ideal `q` coprime to a
-denominator-clearing ideal `c`: the map induced by `algebraMap O B` is an
-isomorphism `O ⧸ q.comap (algebraMap O B) ≃+* B ⧸ q`. -/
+/-- **Residue-ring isomorphism away from a denominator-clearing ideal.** Let $B$ be an algebra
+over $O$, where $O$ and $B$ are commutative rings, with structure map $\varphi : O \to B$. Let
+$\mathfrak q$ be a maximal ideal of $B$ and let $\mathfrak c$ be an ideal of $B$ with
+$\mathfrak c \not\subseteq \mathfrak q$ such that for every $x \in \mathfrak c$ and every $b \in B$
+there is $o \in O$ with $\varphi(o) = xb$. This is the ring isomorphism
+$O / \varphi^{-1}(\mathfrak q) \to B / \mathfrak q$ induced by $\varphi$, which sends the class of
+$o \in O$ to the class of $\varphi(o)$. -/
 def quotient_coprime_residue_equiv (hc : ¬ c ≤ q)
     (hclear : ∀ x ∈ c, ∀ b : B, ∃ o : O, algebraMap O B o = x * b) :
     O ⧸ q.comap (algebraMap O B) ≃+* B ⧸ q := by
@@ -66,8 +70,13 @@ def quotient_coprime_residue_equiv (hc : ¬ c ≤ q)
   rw [hkey]
   exact q.neg_mem (q.mul_mem_left b hq₀)
 
-/-- The canonical equivalence sends residue classes to residue classes along
-`algebraMap O B`. -/
+/-- **The residue-ring isomorphism on residue classes.** Let $B$ be an algebra over $O$, where
+$O$ and $B$ are commutative rings, with structure map $\varphi : O \to B$. Let $\mathfrak q$ be a
+maximal ideal of $B$ and let $\mathfrak c$ be an ideal of $B$ with
+$\mathfrak c \not\subseteq \mathfrak q$ such that for every $x \in \mathfrak c$ and every $b \in B$
+there is $o \in O$ with $\varphi(o) = xb$. Then for every $o \in O$, the residue-ring isomorphism
+$O / \varphi^{-1}(\mathfrak q) \cong B / \mathfrak q$ sends the class of $o$ to the class of
+$\varphi(o)$. -/
 @[simp]
 theorem quotient_coprime_residue_equiv_apply_mk (hc : ¬ c ≤ q)
     (hclear : ∀ x ∈ c, ∀ b : B, ∃ o : O, algebraMap O B o = x * b) (o : O) :
@@ -75,14 +84,25 @@ theorem quotient_coprime_residue_equiv_apply_mk (hc : ¬ c ≤ q)
       Ideal.Quotient.mk _ (algebraMap O B o) :=
   rfl
 
-/-- The residue rings at `q` and its contraction have the same `Nat.card`. -/
+/-- **Equal cardinality of residue rings away from a denominator-clearing ideal.** Let $B$ be an
+algebra over $O$, where $O$ and $B$ are commutative rings, with structure map
+$\varphi : O \to B$. Let $\mathfrak q$ be a maximal ideal of $B$ and let $\mathfrak c$ be an
+ideal of $B$ with $\mathfrak c \not\subseteq \mathfrak q$ such that for every $x \in \mathfrak c$
+and every $b \in B$ there is $o \in O$ with $\varphi(o) = xb$. Then
+$O / \varphi^{-1}(\mathfrak q)$ and $B / \mathfrak q$ have the same cardinality, where the
+cardinality of an infinite set is taken to be $0$. -/
 theorem nat_card_quotient_coprime_residue_eq (hc : ¬ c ≤ q)
     (hclear : ∀ x ∈ c, ∀ b : B, ∃ o : O, algebraMap O B o = x * b) :
     Nat.card (O ⧸ q.comap (algebraMap O B)) = Nat.card (B ⧸ q) :=
   Nat.card_congr (quotient_coprime_residue_equiv q c hc hclear).toEquiv
 
-/-- The quotient of `q` and the quotient of its contraction have the same
-`Submodule.cardQuot`. -/
+/-- **Equal ideal indices away from a denominator-clearing ideal.** Let $B$ be an algebra over
+$O$, where $O$ and $B$ are commutative rings, with structure map $\varphi : O \to B$. Let
+$\mathfrak q$ be a maximal ideal of $B$ and let $\mathfrak c$ be an ideal of $B$ with
+$\mathfrak c \not\subseteq \mathfrak q$ such that for every $x \in \mathfrak c$ and every $b \in B$
+there is $o \in O$ with $\varphi(o) = xb$. Then the index of $\varphi^{-1}(\mathfrak q)$ in $O$
+equals the index of $\mathfrak q$ in $B$, where the index of an ideal is the number of elements of
+the quotient, taken to be $0$ when the quotient is infinite. -/
 theorem cardQuot_coprime_residue_eq (hc : ¬ c ≤ q)
     (hclear : ∀ x ∈ c, ∀ b : B, ∃ o : O, algebraMap O B o = x * b) :
     Submodule.cardQuot (q.comap (algebraMap O B) : Submodule O O) =

@@ -56,13 +56,16 @@ universe u
 
 open HomologicalComplex
 
-/-- Comparison data between two multigraded free resolutions of the same
-target: for every multidegree `α`, a chain-homotopy equivalence between the
-certified degree-`α` component complexes.
+/-- **Multigraded resolution comparison.** Let $K$ be a field, let $R = K[x_1, \dots, x_n]$,
+and let $M$ be a $\mathbb{Z}^n$-graded $R$-module with two multigraded free resolutions,
+each equipped with multigraded base change data, whose degree-$\alpha$ component complexes
+are $C^\alpha$ and $D^\alpha$ for $\alpha \in \mathbb{Z}^n$. A comparison between the two
+base change data is a choice, for every $\alpha \in \mathbb{Z}^n$, of a chain-homotopy
+equivalence between $C^\alpha$ and $D^\alpha$.
 
-A homotopy equivalence, rather than a bare quasi-isomorphism, is the
-comparison-theorem input: Mathlib derives the homology isomorphism from it.
-Existence and uniqueness of such a comparison are not claimed here. -/
+A homotopy equivalence, rather than a bare quasi-isomorphism, is the comparison-theorem
+input: it induces an isomorphism on homology. Existence and uniqueness of such a
+comparison are not claimed here. -/
 public structure MultigradedResolutionComparison
     {K : Type u} [Field K] {n : ℕ}
     {M : Type u} [AddCommGroup M]
@@ -78,9 +81,14 @@ public structure MultigradedResolutionComparison
   /-- Chain-homotopy equivalence between the degree-`α` component complexes. -/
   componentHomotopyEquiv : ∀ α, HomotopyEquiv (data₁.comp α) (data₂.comp α)
 
-/-- Conditional resolution invariance of multigraded Betti numbers: a
-`MultigradedResolutionComparison` forces the two `multigradedBettiNumber`
-families to agree in every multidegree `α` and homological index `i`.
+/-- **Betti numbers agree across comparable resolutions.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, and let $M$ be a $\mathbb{Z}^n$-graded $R$-module with two
+multigraded free resolutions, each equipped with multigraded base change data, whose
+degree-$\alpha$ component complexes are $C^\alpha$ and $D^\alpha$ for $\alpha \in \mathbb{Z}^n$.
+If the two are related by a multigraded resolution comparison, that is, for every $\alpha$
+a chain-homotopy equivalence between $C^\alpha$ and $D^\alpha$, then the multigraded Betti
+numbers defined by the two base change data agree in every multidegree
+$\alpha \in \mathbb{Z}^n$ and every homological index $i \in \mathbb{N}$.
 
 Source: Benjamin Braun and Brian Davis, “Antichain Simplices,”
 Journal of Integer Sequences 23 (2020),

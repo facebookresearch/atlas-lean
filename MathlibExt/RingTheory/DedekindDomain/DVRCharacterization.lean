@@ -43,9 +43,11 @@ The proof follows `v1/Atlas/NumberTheoryI/code/LocalizationDedekind.lean`
 
 @[expose] public section
 
-/-- Definition 2.10, characterization form: for a Noetherian domain `A`,
-`A` is integrally closed of Krull dimension at most one if and only if `A`
-is a Dedekind domain. -/
+/-- **Dedekind domains are the integrally closed Noetherian domains of dimension at most one.**
+Let $A$ be a Noetherian integral domain. Then $A$ is integrally closed and has Krull dimension
+at most one if and only if $A$ is a Dedekind domain.
+
+Source: ATLAS NumberTheoryI Definition 2.10, characterization form. -/
 theorem integrallyClosed_dimensionLEOne_iff_isDedekindDomain
     (A : Type*) [CommRing A] [IsDomain A] [IsNoetherianRing A] :
     (IsIntegrallyClosed A ∧ Ring.DimensionLEOne A) ↔ IsDedekindDomain A := by
@@ -57,9 +59,11 @@ theorem integrallyClosed_dimensionLEOne_iff_isDedekindDomain
   · intro h
     exact ⟨h.toIsDedekindRing.toIsIntegralClosure, h.toIsDedekindRing.toDimensionLEOne⟩
 
-/-- Proposition 2.9: for a Noetherian domain `A`, the localization at every
-nonzero prime ideal is a discrete valuation ring if and only if `A` is
-integrally closed and has Krull dimension at most one. -/
+/-- **DVR localizations in a Noetherian domain.** Let $A$ be a Noetherian integral domain. Then
+the localizations $A_P$ at all nonzero prime ideals $P$ of $A$ are discrete valuation rings if
+and only if $A$ is integrally closed and has Krull dimension at most one.
+
+Source: ATLAS NumberTheoryI Proposition 2.9. -/
 theorem isDiscreteValuationRing_localization_atPrime_iff_integrallyClosed_dimensionLEOne
     (A : Type*) [CommRing A] [IsDomain A] [IsNoetherianRing A] :
     (∀ (P : Ideal A), P ≠ ⊥ → ∀ (_h : P.IsPrime),

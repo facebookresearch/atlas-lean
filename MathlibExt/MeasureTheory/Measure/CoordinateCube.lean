@@ -22,8 +22,10 @@ open scoped ENNReal
 
 namespace MetaMathlibExt
 
-/-- The actual coordinate cube has Euclidean volume `2^n`.
-This is the cube-volume identity in optimizationproblems `constants/25a.md`, line 44. -/
+/-- **Volume of the coordinate cube.** For every $n \in \mathbb{N}$, the coordinate cube
+$[-1, 1]^n$ in the Euclidean space $\mathbb{R}^n$ has volume $2^n$.
+
+Source: optimizationproblems `constants/25a.md`, line 44 (the cube-volume identity). -/
 theorem volume_coordinateCube (n : ℕ) :
     volume (ConvexCovering.coordinateCube n) = (2 : ℝ≥0∞) ^ n := by
   rw [ConvexCovering.coordinateCube_eq_absSet]

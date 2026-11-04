@@ -35,16 +35,25 @@ variable {A : Type*} [CommRing A] [IsDedekindDomain A]
 variable {K : Type*} [Field K] [Algebra A K] [IsFractionRing A K]
 variable (𝔭 : HeightOneSpectrum A)
 
-/-- The residue-field map starting at `A`: the algebra map into the `𝔭`-adic
-completion integers followed by the quotient onto the residue field of the
-completion. -/
+/-- **Residue map to the completed residue field.** Let $A$ be a Dedekind domain with fraction
+field $K$, let $\mathfrak{p}$ be a height-one prime of $A$, and let $\mathcal{O}_\mathfrak{p}$ be
+the valuation ring of the $\mathfrak{p}$-adic completion of $K$, with maximal ideal
+$\mathfrak{m}_\mathfrak{p}$. The residue map is the ring homomorphism
+$A \to \mathcal{O}_\mathfrak{p}/\mathfrak{m}_\mathfrak{p}$ obtained by composing the canonical map
+$A \to \mathcal{O}_\mathfrak{p}$ with the quotient map
+$\mathcal{O}_\mathfrak{p} \to \mathcal{O}_\mathfrak{p}/\mathfrak{m}_\mathfrak{p}$. -/
 noncomputable def completionResidueMap :
     A →+* (𝔭.adicCompletionIntegers K ⧸
       IsLocalRing.maximalIdeal (𝔭.adicCompletionIntegers K)) :=
   (Ideal.Quotient.mk (IsLocalRing.maximalIdeal (𝔭.adicCompletionIntegers K))).comp
     (algebraMap A (𝔭.adicCompletionIntegers K))
 
-/-- The kernel of the residue-field map starting at `A` is `𝔭.asIdeal`. -/
+/-- **Kernel of the completed residue map.** Let $A$ be a Dedekind domain with fraction field $K$,
+let $\mathfrak{p}$ be a height-one prime of $A$, and let $\mathcal{O}_\mathfrak{p}$ be the
+valuation ring of the $\mathfrak{p}$-adic completion of $K$, with maximal ideal
+$\mathfrak{m}_\mathfrak{p}$. The kernel of the residue map
+$A \to \mathcal{O}_\mathfrak{p}/\mathfrak{m}_\mathfrak{p}$, the canonical map
+$A \to \mathcal{O}_\mathfrak{p}$ followed by the quotient map, is $\mathfrak{p}$. -/
 theorem ker_completionResidueMap :
     RingHom.ker (𝔭.completionResidueMap (K := K)) = 𝔭.asIdeal := by
   ext a
@@ -75,8 +84,12 @@ private lemma exists_mul_sub_mem_of_not_mem (b : A) (hb : b ∉ 𝔭.asIdeal) :
   exact ⟨e, by rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one, map_mul,
     sub_eq_zero]; exact hinv⟩
 
-/-- The residue-field map starting at `A` is onto the residue field of the
-completion. -/
+/-- **Surjectivity of the completed residue map.** Let $A$ be a Dedekind domain with fraction
+field $K$, let $\mathfrak{p}$ be a height-one prime of $A$, and let $\mathcal{O}_\mathfrak{p}$ be
+the valuation ring of the $\mathfrak{p}$-adic completion of $K$, with maximal ideal
+$\mathfrak{m}_\mathfrak{p}$. The residue map
+$A \to \mathcal{O}_\mathfrak{p}/\mathfrak{m}_\mathfrak{p}$, the canonical map
+$A \to \mathcal{O}_\mathfrak{p}$ followed by the quotient map, is surjective. -/
 theorem surjective_completionResidueMap :
     Function.Surjective (𝔭.completionResidueMap (K := K)) := by
   intro q
@@ -157,9 +170,15 @@ theorem surjective_completionResidueMap :
   rw [hsplit]
   exact lt_of_le_of_lt (Valued.v.map_add_le_max' _ _) (max_lt hterm1 hy)
 
-/-- The ring equivalence between the residue field of the `𝔭`-adic completion
-and `A ⧸ 𝔭.asIdeal`, induced by the surjective residue-field map starting
-at `A` with kernel `𝔭.asIdeal`. -/
+/-- **Residue field of the completion.** Let $A$ be a Dedekind domain with fraction field $K$, let
+$\mathfrak{p}$ be a height-one prime of $A$, and let $\mathcal{O}_\mathfrak{p}$ be the valuation
+ring of the $\mathfrak{p}$-adic completion of $K$, with maximal ideal $\mathfrak{m}_\mathfrak{p}$.
+This is the ring isomorphism
+$\mathcal{O}_\mathfrak{p}/\mathfrak{m}_\mathfrak{p} \cong A/\mathfrak{p}$ that sends the residue
+class of the image of each $a \in A$ to the class of $a$ modulo $\mathfrak{p}$. It is induced by
+the residue map $A \to \mathcal{O}_\mathfrak{p}/\mathfrak{m}_\mathfrak{p}$ (the canonical map
+$A \to \mathcal{O}_\mathfrak{p}$ followed by the quotient map), which is surjective with kernel
+$\mathfrak{p}$. -/
 noncomputable def completionResidueFieldEquiv :
     (↥(𝔭.adicCompletionIntegers K) ⧸
       IsLocalRing.maximalIdeal ↥(𝔭.adicCompletionIntegers K)) ≃+* (A ⧸ 𝔭.asIdeal) :=

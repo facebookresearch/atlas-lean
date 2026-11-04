@@ -25,7 +25,12 @@ variable (ι : Type*) [Finite ι]
 variable (I : ι → Ideal R)
 variable (h : Pairwise fun i j => IsCoprime (I i) (I j))
 
-/-- Chinese remainder as a `K`-algebra equivalence. -/
+/-- **Chinese remainder theorem as an algebra isomorphism.** Let $K$ be a commutative semiring,
+let $R$ be a commutative ring that is a $K$-algebra, and let $(I_i)_{i \in \iota}$ be a family
+of ideals of $R$ indexed by a finite type $\iota$ that are pairwise coprime, that is,
+$I_i + I_j = R$ for $i \ne j$. Then the map sending the class of $r \in R$ to
+$(r \bmod I_i)_{i \in \iota}$ is an isomorphism of $K$-algebras from $R / \bigcap_i I_i$ to
+$\prod_i R / I_i$. -/
 noncomputable def quotientInfAlgEquivPiQuotient :
     (R ⧸ ⨅ i, I i) ≃ₐ[K] (∀ i, R ⧸ I i) :=
   AlgEquiv.ofRingEquiv (f := Ideal.quotientInfRingEquivPiQuotient I h) (fun c => by
@@ -119,10 +124,17 @@ theorem tensorProductAlgEquiv_root_tmul_one {K K' : Type*} [Field K] [Field K']
     AdjoinRoot.mk (Polynomial.map (algebraMap K K') f) Polynomial.X
   rw [tensorProductAlgEquiv_mk_tmul, one_smul, Polynomial.map_X]
 
-/-- Base change of `AdjoinRoot f` along an explicit factorisation of `map f`
-into pairwise nonassociated irreducibles.
+/-- **Base change of $K[X]/(f)$ along a factorization of $f$ over $K'$.** Let $K$ and $K'$
+be fields with $K'$ a $K$-algebra, let $f \in K[X]$, and let $(g_i)_{i \in \iota}$ be a family
+of irreducible polynomials in $K'[X]$, indexed by a finite type $\iota$, that are pairwise
+non-associated and whose product $\prod_i g_i$ is associated (equal up to a unit) to the image
+of $f$ in $K'[X]$. Then there is an isomorphism of $K'$-algebras
+$$(K[X]/(f)) \otimes_K K' \cong \prod_{i \in \iota} K'[X]/(g_i),$$
+where the tensor product is a $K'$-algebra through its right factor. For $p \in K[X]$ with
+class $[p]$ in $K[X]/(f)$ and for $c \in K'$, it sends $[p] \otimes c$ to the family of the
+classes of $c\,p$ modulo the $g_i$, with $p$ read in $K'[X]$.
 
-This is the algebraic decomposition in ATLAS N86, Corollary 4.39 of
+Source: This is the algebraic decomposition in ATLAS N86, Corollary 4.39 of
 [MIT 18.785 *Number Theory I*](https://ocw.mit.edu/courses/18-785-number-theory-i-fall-2021/).
 The corresponding upstream declaration is
 [`TensorSplitting.adjoinRoot_tensor_algEquiv_prod` in

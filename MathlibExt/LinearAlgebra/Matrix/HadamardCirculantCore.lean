@@ -33,14 +33,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Hadamard matrix with circulant core (Paley and twin-prime cases).
+/-- **Hadamard matrix.** For a natural number $m$, an $m \times m$ matrix $H$ with integer
+entries is a Hadamard matrix when every entry of $H$ is $1$ or $-1$ and
+$H^{\mathsf T} H = m I$, where $I$ is the $m \times m$ identity matrix.
 
-`isHadamardMatrix m H` is the sign-matrix orthogonality predicate
-(entries `±1`, `Hᵀ * H = m • 1`); `hasCirculantCore n H` says the trailing
-`n × n` block is circulant, `H (i+1) (j+1) = v (i - j)` with `Fin`
-modular difference. The formalized theorem is the prime specialization of
-cases (1)–(2): such a matrix of order `n + 1` exists when `n` is a prime
-congruent to 3 mod 4 (Paley) or `n = p * (p + 2)` with `p` and `p + 2`
+This predicate is used for Hadamard matrices of order $n + 1$ with circulant core, which exist
+when $n$ is a prime congruent to $3$ mod $4$ (Paley) or $n = p(p + 2)$ with $p$ and $p + 2$
 both prime (Stanton–Sprott/Whiteman).
 
 Source: Richard P. Brent and Adam B. Yedidia, "Computation of Maximal
@@ -1105,7 +1103,15 @@ private lemma hcTwin (p : ℕ) [Fact p.Prime] [Fact (p + 2).Prime]
       exact absurd h00 hd
   exact ⟨hsum, haut⟩
 
-/-- Proves `Wanted` entry `exists_hadamard_matrix_with_circulant_core`. -/
+/-- **Hadamard matrices with circulant core: Paley and twin-prime cases.** Let $n$ be a natural
+number such that either $n$ is a prime with $n \equiv 3 \pmod 4$, or $n = p(p + 2)$ for some
+natural number $p$ with $p$ and $p + 2$ both prime. Then there is an $(n + 1) \times (n + 1)$
+Hadamard matrix $H$ with integer entries, rows and columns indexed by $0, 1, \dots, n$ (so every
+entry of $H$ is $1$ or $-1$ and $H^{\mathsf T} H = (n + 1) I$), that has a circulant core: there
+is a function $v \colon \{0, \dots, n - 1\} \to \mathbb{Z}$ with $H_{i+1, j+1} = v(i - j)$ for
+all $i, j \in \{0, \dots, n - 1\}$, where $i - j$ is taken modulo $n$.
+
+Proves `Wanted` entry `exists_hadamard_matrix_with_circulant_core`. -/
 public theorem exists_hadamard_matrix_with_circulant_core :
     ∀ (n : ℕ),
       ((Nat.Prime n ∧ n % 4 = 3) ∨
@@ -1183,7 +1189,12 @@ public theorem exists_hadamard_matrix_with_circulant_core :
       hval htwin.1 htwin.2
     exact hcMatrix _ htr.1 htr.2.1 htr.2.2
 
-/-- The local Hadamard predicate coincides with Mathlib's `Matrix.IsHadamard`. -/
+/-- **One-sided orthogonality characterizes Hadamard matrices.** Let $m$ be a natural number and
+let $H$ be an $m \times m$ integer matrix. Then every entry of $H$ is $1$ or $-1$ and
+$H^{\mathsf T} H = m I$ if and only if every entry of $H$ is a unitary element of $\mathbb{Z}$
+(that is, $1$ or $-1$), $H H^{\mathsf T} = m I$ and $H^{\mathsf T} H = m I$. The right-hand side
+is the general notion of a Hadamard matrix, with entries unitary and $H H^{*} = H^{*} H = m I$;
+over $\mathbb{Z}$ the conjugate transpose $H^{*}$ is the transpose. -/
 public theorem isHadamardMatrix_iff_isHadamard {m : ℕ} {H : Matrix (Fin m) (Fin m) ℤ} :
     isHadamardMatrix m H ↔ H.IsHadamard := by
   rcases Nat.eq_zero_or_pos m with rfl | hmpos
@@ -1218,7 +1229,14 @@ public theorem isHadamardMatrix_iff_isHadamard {m : ℕ} {H : Matrix (Fin m) (Fi
       rw [hHT, hcard] at hconj
       exact hconj
 
-/-- The local circulant-core predicate coincides with Mathlib's `Matrix.circulant`. -/
+/-- **A circulant core is a circulant submatrix.** Let $n$ be a natural number and let $H$ be an
+$(n + 1) \times (n + 1)$ integer matrix with rows and columns indexed by $0, 1, \dots, n$. Then
+$H$ has a circulant core, meaning that there is a function
+$v \colon \{0, \dots, n - 1\} \to \mathbb{Z}$ with $H_{i+1, j+1} = v(i - j)$ for all
+$i, j \in \{0, \dots, n - 1\}$, if and only if there is a function
+$v \colon \{0, \dots, n - 1\} \to \mathbb{Z}$ such that the submatrix
+$(H_{i+1, j+1})_{0 \le i, j \le n - 1}$ equals the circulant matrix of $v$, whose $(i, j)$
+entry is $v(i - j)$. In both conditions $i - j$ is taken modulo $n$. -/
 public theorem hasCirculantCore_iff_circulant {n : ℕ}
     {H : Matrix (Fin (n + 1)) (Fin (n + 1)) ℤ} :
     hasCirculantCore n H ↔
@@ -1233,7 +1251,14 @@ public theorem hasCirculantCore_iff_circulant {n : ℕ}
       have h := Matrix.ext_iff.mpr hv i j
       rwa [Matrix.submatrix_apply, Matrix.circulant_apply] at h⟩
 
-/-- Hadamard matrices with circulant core through Mathlib's canonical API. -/
+/-- **Circulant-core Hadamard matrices with orthogonal rows and columns.** Let $n$ be a natural
+number such that either $n$ is a prime with $n \equiv 3 \pmod 4$, or $n = p(p + 2)$ for some
+natural number $p$ with $p$ and $p + 2$ both prime. Then there is an $(n + 1) \times (n + 1)$
+integer matrix $H$, with rows and columns indexed by $0, 1, \dots, n$, such that every entry of
+$H$ is $1$ or $-1$, $H H^{\mathsf T} = (n + 1) I$ and $H^{\mathsf T} H = (n + 1) I$, and there
+is a function $v \colon \{0, \dots, n - 1\} \to \mathbb{Z}$ such that the submatrix
+$(H_{i+1, j+1})_{0 \le i, j \le n - 1}$ obtained by deleting row $0$ and column $0$ equals the
+circulant matrix of $v$, whose $(i, j)$ entry is $v(i - j)$ with $i - j$ taken modulo $n$. -/
 public theorem exists_isHadamard_with_circulant_core :
     ∀ (n : ℕ),
       ((Nat.Prime n ∧ n % 4 = 3) ∨

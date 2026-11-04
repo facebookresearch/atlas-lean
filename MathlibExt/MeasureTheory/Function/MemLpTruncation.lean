@@ -34,10 +34,12 @@ Source: `v1/Atlas/IntroductionToFunctionalAnalysis/code/LpSpaces.lean`,
 (Proposition, Characterization of `L^p` membership, April 6, 2021 section).
 -/
 
-/-- For a measurable set `S ⊆ ℝ` and a measurable function `g : ℝ → ℝ≥0∞`, the
-integral of `g` over `S` equals the supremum over `n : ℕ` of the integrals over
-the truncations `[-n, n] ∩ S`. This is monotone convergence applied to the
-indicators of the truncations. -/
+/-- **Lebesgue integrals over truncations of a set.** Let $\lambda$ be Lebesgue measure on
+$\mathbb{R}$, let $S \subseteq \mathbb{R}$ be measurable, and let $g : \mathbb{R} \to [0, \infty]$
+be measurable. Then
+$$\int_S g \, d\lambda = \sup_{n \in \mathbb{N}} \int_{[-n, n] \cap S} g \, d\lambda.$$
+
+This is monotone convergence applied to the indicators of the truncations. -/
 theorem lintegral_eq_iSup_lintegral_Icc_inter
     (S : Set ℝ) (hS : MeasurableSet S) (g : ℝ → ℝ≥0∞) (hg : Measurable g) :
     ∫⁻ x in S, g x ∂volume =
@@ -76,10 +78,13 @@ theorem lintegral_eq_iSup_lintegral_Icc_inter
     fun n => hg.indicator (measurableSet_Icc.inter hS)
   rw [← h_sup, lintegral_iSup h_meas h_mono]
 
-/-- **Characterization of `L^p` membership via truncated integrals.** For `E ⊆ ℝ`
-measurable and `0 < p < ∞` (here `p ≠ 0` and `p ≠ ⊤`), a measurable function
-`f : ℝ → F` belongs to `L^p (E)` if and only if
-`⨆ n : ℕ, ∫⁻ x in [-n, n] ∩ E, ‖f x‖ₑ ^ p.toReal < ⊤`. -/
+/-- **Characterization of $L^p$ membership via truncated integrals.** Let $\lambda$ be Lebesgue
+measure on $\mathbb{R}$, let $F$ be a second-countable normed additive commutative group with its
+Borel $\sigma$-algebra, let $0 < p < \infty$, let $S \subseteq \mathbb{R}$ be measurable, and let
+$f : \mathbb{R} \to F$ be measurable. Then $f$ belongs to $L^p$ of $\lambda$ restricted to $S$ if
+and only if
+$$\sup_{n \in \mathbb{N}} \int_{[-n, n] \cap S} \|f(x)\|^p \, d\lambda(x) < \infty,$$
+where the integrals are taken in $[0, \infty]$. -/
 theorem memLp_iff_iSup_lintegral_Icc_inter_lt_top
     {F : Type*} [NormedAddCommGroup F] [MeasurableSpace F] [BorelSpace F]
     [SecondCountableTopology F]

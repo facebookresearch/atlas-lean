@@ -46,10 +46,13 @@ namespace Submodule
 
 variable {A : Type*} [CommRing A] {V : Type*} [AddCommGroup V] [Module A V]
 
-/-- The saturation of a submodule `M` at a submonoid `S` of the scalar
-ring: the elements `v` for which some `s ∈ S` has `s • v ∈ M`. This is
-the contraction to `V` of the extension of `M` to the localization at
-`S`. -/
+/-- **Saturation of a submodule at a submonoid.** Let $A$ be a commutative ring, $V$ an
+$A$-module, $M$ a submodule of $V$ and $S$ a submonoid of $A$. The saturation of $M$ at $S$ is the
+submodule of $V$ consisting of the elements $v \in V$ such that $s v \in M$ for some $s \in S$.
+
+Writing $S^{-1}V$ for the localization of $V$ at $S$ and $S^{-1}M \subseteq S^{-1}V$ for that of
+$M$, it is the preimage of $S^{-1}M$ under the localization map $V \to S^{-1}V$, that is, the
+contraction to $V$ of the extension of $M$ to the localization at $S$. -/
 def localizedAt (M : Submodule A V) (S : Submonoid A) : Submodule A V where
   carrier := {v | ∃ s ∈ S, s • v ∈ M}
   add_mem' := by
@@ -64,14 +67,19 @@ def localizedAt (M : Submodule A V) (S : Submonoid A) : Submodule A V where
     rintro c v ⟨s, hs, h⟩
     exact ⟨s, hs, by rw [smul_comm]; exact M.smul_mem _ h⟩
 
-/-- Membership in the saturation at `S`: `v` lies in
-`M.localizedAt S` iff some `s ∈ S` has `s • v ∈ M`. -/
+/-- **Membership in the saturation.** Let $A$ be a commutative ring, $V$ an $A$-module, $M$ a
+submodule of $V$ and $S$ a submonoid of $A$. An element $v \in V$ lies in the saturation of $M$ at
+$S$ if and only if $s v \in M$ for some $s \in S$. -/
 theorem mem_localizedAt {M : Submodule A V} {S : Submonoid A} {v : V} :
     v ∈ M.localizedAt S ↔ ∃ s ∈ S, s • v ∈ M :=
   Iff.rfl
 
-/-- Proposition 2.6, element form at the maximal ideals: if `v` lies
-in the localization of `M` at every maximal ideal, then `v ∈ M`. -/
+/-- **Membership is detected at the maximal ideals.** Let $A$ be a commutative ring, $V$ an
+$A$-module, $M$ a submodule of $V$ and $v \in V$. Suppose that for every maximal ideal
+$\mathfrak m$ of $A$, $v$ lies in the saturation of $M$ at $A \setminus \mathfrak m$, that is,
+$s v \in M$ for some $s \in A \setminus \mathfrak m$. Then $v \in M$.
+
+Source: ATLAS NumberTheoryI, Section 2.3, Proposition 2.6, element form. -/
 theorem mem_of_forall_mem_localizedAt_maximal (M : Submodule A V) {v : V}
     (h : ∀ 𝔪 : MaximalSpectrum A, v ∈ M.localizedAt 𝔪.asIdeal.primeCompl) :
     v ∈ M := by
@@ -89,16 +97,26 @@ theorem mem_of_forall_mem_localizedAt_maximal (M : Submodule A V) {v : V}
   rw [Submodule.mem_comap, LinearMap.toSpanSingleton_apply, one_smul] at h1
   exact h1
 
-/-- Proposition 2.6, element form at the prime ideals: if `v` lies in
-the localization of `M` at every prime ideal, then `v ∈ M`. -/
+/-- **Membership is detected at the prime ideals.** Let $A$ be a commutative ring, $V$ an
+$A$-module, $M$ a submodule of $V$ and $v \in V$. Suppose that for every prime ideal
+$\mathfrak p$ of $A$, $v$ lies in the saturation of $M$ at $A \setminus \mathfrak p$, that is,
+$s v \in M$ for some $s \in A \setminus \mathfrak p$. Then $v \in M$.
+
+Source: ATLAS NumberTheoryI, Section 2.3, Proposition 2.6, element form. -/
 theorem mem_of_forall_mem_localizedAt_prime (M : Submodule A V) {v : V}
     (h : ∀ 𝔭 : PrimeSpectrum A, v ∈ M.localizedAt 𝔭.asIdeal.primeCompl) :
     v ∈ M :=
   mem_of_forall_mem_localizedAt_maximal M fun 𝔪 =>
     h ⟨𝔪.asIdeal, 𝔪.isMaximal.isPrime⟩
 
-/-- Proposition 2.6, maximal-ideal form: a submodule equals the
-intersection of its localizations at the maximal ideals. -/
+/-- **A submodule is the intersection of its saturations at the maximal ideals.** Let $A$ be a
+commutative ring, $V$ an $A$-module and $M$ a submodule of $V$. For a maximal ideal
+$\mathfrak m$ of $A$, let $M_{\mathfrak m}$ be the saturation of $M$ at $A \setminus \mathfrak m$,
+that is, the set of $v \in V$ with $s v \in M$ for some $s \in A \setminus \mathfrak m$. Then $M$
+is the intersection of the submodules $M_{\mathfrak m}$ over all maximal ideals $\mathfrak m$
+of $A$.
+
+Source: ATLAS NumberTheoryI, Section 2.3, Proposition 2.6, maximal-ideal form. -/
 theorem eq_iInf_localizedAt_maximal (M : Submodule A V) :
     (⨅ 𝔪 : MaximalSpectrum A, M.localizedAt 𝔪.asIdeal.primeCompl) = M := by
   ext v
@@ -109,8 +127,14 @@ theorem eq_iInf_localizedAt_maximal (M : Submodule A V) :
   · intro hv 𝔪
     exact ⟨1, 𝔪.asIdeal.primeCompl.one_mem, by simpa using hv⟩
 
-/-- Proposition 2.6, prime-ideal form: a submodule equals the
-intersection of its localizations at the prime ideals. -/
+/-- **A submodule is the intersection of its saturations at the prime ideals.** Let $A$ be a
+commutative ring, $V$ an $A$-module and $M$ a submodule of $V$. For a prime ideal
+$\mathfrak p$ of $A$, let $M_{\mathfrak p}$ be the saturation of $M$ at $A \setminus \mathfrak p$,
+that is, the set of $v \in V$ with $s v \in M$ for some $s \in A \setminus \mathfrak p$. Then $M$
+is the intersection of the submodules $M_{\mathfrak p}$ over all prime ideals $\mathfrak p$
+of $A$.
+
+Source: ATLAS NumberTheoryI, Section 2.3, Proposition 2.6, prime-ideal form. -/
 theorem eq_iInf_localizedAt_prime (M : Submodule A V) :
     (⨅ 𝔭 : PrimeSpectrum A, M.localizedAt 𝔭.asIdeal.primeCompl) = M := by
   ext v
@@ -121,8 +145,12 @@ theorem eq_iInf_localizedAt_prime (M : Submodule A V) :
   · intro hv 𝔭
     exact ⟨1, 𝔭.asIdeal.primeCompl.one_mem, by simpa using hv⟩
 
-/-- The intersections of the localizations at the maximal ideals and
-at the prime ideals agree. -/
+/-- **Intersections of saturations over maximal and over prime ideals agree.** Let $A$ be a
+commutative ring, $V$ an $A$-module and $M$ a submodule of $V$. For a prime ideal $\mathfrak p$
+of $A$, let $M_{\mathfrak p}$ be the saturation of $M$ at $A \setminus \mathfrak p$, that is,
+the set of $v \in V$ with $s v \in M$ for some $s \in A \setminus \mathfrak p$. Then the
+intersection of the $M_{\mathfrak m}$ over all maximal ideals $\mathfrak m$ of $A$ equals the
+intersection of the $M_{\mathfrak p}$ over all prime ideals $\mathfrak p$ of $A$. -/
 theorem eq_iInf_localizedAt_maximal_eq_prime (M : Submodule A V) :
     (⨅ 𝔪 : MaximalSpectrum A, M.localizedAt 𝔪.asIdeal.primeCompl) =
     (⨅ 𝔭 : PrimeSpectrum A, M.localizedAt 𝔭.asIdeal.primeCompl) := by

@@ -270,8 +270,14 @@ private theorem gaussPivot_isRowEchelon_of_submatrix_orderIso
     simpa only [Matrix.submatrix_apply, er.apply_symm_apply] using hleft (ec j₁) hj₁'
   simpa using hzero
 
-/-- Every finite matrix over a field can be put in row echelon form by first permuting its rows
-and then multiplying by one unit lower-triangular matrix. -/
+/-- **Row echelon form via a row permutation and a unit lower-triangular matrix.** Let $K$ be a
+field and let $A$ be a matrix over $K$ whose rows and columns are indexed by finite linearly
+ordered sets. Then there are a permutation $\sigma$ of the row indices and a square matrix $L$ over
+$K$ indexed by the row indices, lower triangular with every diagonal entry equal to $1$, such that
+the matrix $L A_\sigma$ is in row echelon form. Here $A_\sigma$ is the matrix with entries
+$(A_\sigma)_{ic} = A_{\sigma(i) c}$, and a matrix $B$ is in row echelon form when for all rows
+$i_1 < i_2$ and every column $c$, if $B_{i_1 c'} = 0$ for every column $c' < c$, then
+$B_{i_2 c} = 0$. -/
 theorem _root_.Matrix.exists_unitLowerTriangular_mul_submatrix_isRowEchelon
     {K m n : Type*} [Field K] [Fintype m] [LinearOrder m]
     [Finite n] [LinearOrder n] (A : Matrix m n K) :
@@ -308,19 +314,25 @@ variable {m n : Type*} [Fintype m] [DecidableEq m] [LinearOrder m]
 variable [Fintype n] [DecidableEq n] [LinearOrder n]
 
 /--
-One row-pivot step of Gaussian elimination: given any nonzero entry in column `j`, swap its row
-to the pivot row `r` and clear the entries below it by a unit lower-triangular row operation.
-This is arbitrary nonzero pivot selection, not magnitude-maximizing partial pivoting.
+**One pivot step of Gaussian elimination.** Let $K$ be a field and let $A$ be a matrix over $K$
+whose rows and columns are indexed by finite linearly ordered sets. Let $r$ and $i_0$ be row
+indices and $j$ a column index with $A_{i_0 j} \ne 0$, and let $A'$ be the matrix obtained from
+$A$ by exchanging rows $r$ and $i_0$. Then there is a square matrix $P$ over $K$ indexed by the
+row indices, lower triangular with every diagonal entry equal to $1$, such that
+$(P A')_{i j} = 0$ for every row $i > r$.
 
-Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
-inequalities / Gauss's pivot; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM (1997),
-Lectures 20-21.
+The row $i_0$ may be any row with a nonzero entry in column $j$; this is not
+magnitude-maximizing partial pivoting.
 
 Proves `Wanted` entry `gauss_pivot_elim_step`.
 
 Proof: Use an entrywise unit lower-triangular matrix whose pivot column contains the elimination
 coefficients, then evaluate the matrix product as a finite sum (row operations of type 3,
 https://en.wikipedia.org/wiki/Gaussian_elimination).
+
+Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
+inequalities / Gauss's pivot; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM (1997),
+Lectures 20-21.
 -/
 theorem gauss_pivot_elim_step (A : Matrix m n K) (r : m) (j : n)
     (i₀ : m) (h : A i₀ j ≠ 0) :
@@ -329,20 +341,28 @@ theorem gauss_pivot_elim_step (A : Matrix m n K) (r : m) (j : n)
   exact gaussPivot_elimStep A r j i₀ h
 
 /--
-Gaussian elimination with arbitrary nonzero row pivots admits an endpoint factorization into a
-row permutation and a list of unit lower-triangular row operations whose product reaches row
-echelon form. This records the factorization, not the intermediate matrices of an algorithm trace.
+**Gaussian elimination as a product of row operations.** Let $K$ be a field and let $A$ be a
+matrix over $K$ whose rows and columns are indexed by finite linearly ordered sets. Then there
+are a permutation $\sigma$ of the row indices and a finite, possibly empty, list
+$M_1, \dots, M_\ell$ of square matrices over $K$ indexed by the row indices, each lower
+triangular with every diagonal entry equal to $1$, such that the matrix
+$M_1 M_2 \cdots M_\ell A_\sigma$ is in row echelon form. Here $A_\sigma$ is the matrix with
+entries $(A_\sigma)_{ic} = A_{\sigma(i) c}$, the empty product is the identity matrix, and a
+matrix $B$ is in row echelon form when for all rows $i_1 < i_2$ and every column $c$, if
+$B_{i_1 c'} = 0$ for every column $c' < c$, then $B_{i_2 c} = 0$.
+
+This records the factorization, not the intermediate matrices of an algorithm trace.
+
+Proves `Wanted` entry `exists_gauss_elimination_opList`.
+
+Proof: Induct on the columns after identifying the ordered index sets with initial segments of
+the natural numbers; a nonzero first column uses a row pivot and recurses on the lower-right
+block. Package the resulting single unit lower-triangular matrix as a one-element list (forward
+elimination to row echelon form, https://en.wikipedia.org/wiki/Gaussian_elimination).
 
 Sources: Mathlib `docs/undergrad.yaml`, Numerical Analysis / Solving systems of linear
 inequalities / Gauss's pivot; L. N. Trefethen and D. Bau, Numerical Linear Algebra, SIAM (1997),
 Lectures 20-21.
-
-Proves `Wanted` entry `exists_gauss_elimination_opList`.
-
-Proof: Induct on the columns after transporting the index orders to `Fin`; a nonzero first column
-uses a row pivot and recurses on the lower-right block. Package the resulting single unit
-lower-triangular matrix as a singleton list (forward elimination to row echelon form,
-https://en.wikipedia.org/wiki/Gaussian_elimination).
 -/
 theorem exists_gauss_elimination_opList (A : Matrix m n K) :
     ∃ (ops : List (Matrix m m K)) (σ : Equiv.Perm m),

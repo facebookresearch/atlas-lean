@@ -36,8 +36,10 @@ namespace Matrix
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
 /--
-Polar decomposition: every square complex matrix is `U * P` for some
-`U : Matrix.unitaryGroup n ℂ` and positive semidefinite `P` with `P * P = Aᴴ * A`.
+**Polar decomposition of a complex square matrix.** Let $A$ be a square complex matrix indexed by
+a finite type, and let $A^*$ be its conjugate transpose. Then there are a unitary matrix $U$ and a
+positive semidefinite matrix $P$ such that $P^2 = A^* A$ and $A = UP$.
+
 Source: R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University Press (2013).
 Proves `Wanted` entry `polar_decomposition`, restated over `Matrix.unitaryGroup` in place of the
 entry's `IsUnitaryMatrix`.
@@ -122,8 +124,11 @@ private theorem polar_sq_eq_conjTranspose_mul_self [DecidableEq n]
     _ = Aᴴ * A := by rw [← hA]
 
 open scoped MatrixOrder in
-/-- An invertible square matrix over an `RCLike` field has a unique factorization as a bundled
-unitary matrix times a positive-definite matrix. -/
+/-- **Uniqueness of the polar decomposition of an invertible matrix.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, and let $A$ be a square matrix over $\mathbb{K}$, indexed by a finite
+type, with $\det A \neq 0$. Then there are a unitary matrix $U$ and a positive-definite matrix $P$
+with $A = UP$, and they are unique: if $U'$ is unitary, $P'$ is positive definite and
+$A = U'P'$, then $U' = U$ and $P' = P$. -/
 theorem exists_unique_unitaryGroup_posDef_of_isUnit_det [DecidableEq n]
     (A : Matrix n n 𝕜) (hA : IsUnit A.det) :
     ∃ (U : Matrix.unitaryGroup n 𝕜) (P : Matrix n n 𝕜),

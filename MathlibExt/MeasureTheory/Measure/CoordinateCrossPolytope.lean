@@ -33,8 +33,11 @@ private theorem volume_piCoordinateCrossPolytope (n : ℕ) (hn : 0 < n) :
   rw [h, ENNReal.ofReal_div_of_pos (by positivity), ENNReal.ofReal_pow (by norm_num)]
   norm_num
 
-/-- The actual coordinate cross-polytope has Euclidean volume `2^n/n!`.
-This is the polar-volume identity in optimizationproblems `constants/25a.md`, line 44. -/
+/-- **Volume of the cross-polytope.** For every integer $n \ge 1$, the cross-polytope
+$\{x \in \mathbb{R}^n : |x_1| + \dots + |x_n| \le 1\}$ in the Euclidean space $\mathbb{R}^n$ has
+volume $2^n / n!$.
+
+Source: optimizationproblems `constants/25a.md`, line 44 (the polar-volume identity). -/
 theorem volume_coordinateCrossPolytope (n : ℕ) (hn : 0 < n) :
     volume {x : EuclideanSpace ℝ (Fin n) | ∑ i, |x i| ≤ 1} =
       (2 : ℝ≥0∞) ^ n / (n.factorial : ℝ≥0∞) := by

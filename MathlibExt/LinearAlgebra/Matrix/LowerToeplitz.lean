@@ -15,10 +15,11 @@ public section
 
 namespace Matrix
 
-/-- Lower-triangular Toeplitz matrix over `ℕ × ℕ`: given a sequence `a`,
-the `(i, j)` entry is `a (i - j)` when `j ≤ i`, and `0` otherwise. In
-particular the matrix is constant on each subdiagonal and vanishes strictly
-above the main diagonal.
+/-- **Lower-triangular Toeplitz matrix.** Let $R$ be a set with a zero element $0$ and let
+$a = (a_0, a_1, a_2, \dots)$ be a sequence in $R$. The lower-triangular Toeplitz matrix of $a$
+is the matrix with rows and columns indexed by $\mathbb{N}$ whose $(i, j)$ entry is $a_{i-j}$
+when $j \le i$ and $0$ when $j > i$. In particular it is constant along each diagonal and
+vanishes strictly above the main diagonal.
 
 Source: Ming-Jian Ding and Jiang Zeng, "Some New Results on the Minuscule
 Polynomials of Type A," Journal of Integer Sequences 28 (2025), lines 640-653.
@@ -31,19 +32,25 @@ Grounded concept: `jis_grounded_6e7ca1c0ec8f4d9d675959b3`. -/
 def lowerToeplitz {R : Type*} [Zero R] (a : ℕ → R) : Matrix ℕ ℕ R :=
   fun i j => if j ≤ i then a (i - j) else 0
 
-/-- Below-diagonal (and diagonal) entries of a lower-triangular Toeplitz matrix. -/
+/-- **Entries on and below the diagonal of a lower-triangular Toeplitz matrix.** Let $R$ be a
+set with a zero element and $a = (a_0, a_1, \dots)$ a sequence in $R$. For natural numbers
+$j \le i$, the $(i, j)$ entry of the lower-triangular Toeplitz matrix of $a$ is $a_{i-j}$. -/
 @[simp]
 theorem lowerToeplitz_apply_of_le {R : Type*} [Zero R] (a : ℕ → R) {i j : ℕ}
     (h : j ≤ i) : lowerToeplitz a i j = a (i - j) := by
   simp [lowerToeplitz, h]
 
-/-- Above-diagonal entries of a lower-triangular Toeplitz matrix vanish. -/
+/-- **Entries above the diagonal of a lower-triangular Toeplitz matrix.** Let $R$ be a set with
+a zero element and $a = (a_0, a_1, \dots)$ a sequence in $R$. For natural numbers $i < j$, the
+$(i, j)$ entry of the lower-triangular Toeplitz matrix of $a$ is $0$. -/
 @[simp]
 theorem lowerToeplitz_apply_of_gt {R : Type*} [Zero R] (a : ℕ → R) {i j : ℕ}
     (h : i < j) : lowerToeplitz a i j = 0 := by
   simp [lowerToeplitz, Nat.not_le.mpr h]
 
-/-- Diagonal entries of a lower-triangular Toeplitz matrix equal `a 0`. -/
+/-- **Diagonal entries of a lower-triangular Toeplitz matrix.** Let $R$ be a set with a zero
+element and $a = (a_0, a_1, \dots)$ a sequence in $R$. For every natural number $i$, the
+$(i, i)$ entry of the lower-triangular Toeplitz matrix of $a$ is $a_0$. -/
 @[simp]
 theorem lowerToeplitz_apply_diag {R : Type*} [Zero R] (a : ℕ → R) (i : ℕ) :
     lowerToeplitz a i i = a 0 := by

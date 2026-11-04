@@ -34,7 +34,9 @@ namespace Relation
 
 variable {α : Type*} [Fintype α] (r : α → α → Prop) [DecidableRel r]
 
-/-- The `r`-successors of a finite set. -/
+/-- **Successors of a finite set.** Let $\alpha$ be a finite type and let $r$ be a decidable
+relation on $\alpha$. For a finite set $Z \subseteq \alpha$, the set of $r$-successors of $Z$ is
+the finite set $\mathrm{post}_r(Z) = \{t \in \alpha \mid r(z, t) \text{ for some } z \in Z\}$. -/
 def postFin (Z : Finset α) : Finset α :=
   Finset.univ.filter fun t => ∃ z ∈ Z, r z t
 
@@ -51,26 +53,46 @@ theorem postFin_mono : Monotone (postFin r) := by
 
 variable (r) [DecidableEq α]
 
-/-- The functional whose least fixed point is the set reachable from `A` in one or more steps. -/
+/-- **One step of the reachability iteration.** Let $\alpha$ be a finite type with decidable
+equality, let $r$ be a decidable relation on $\alpha$, and write $\mathrm{post}_r(Z)$ for the set
+of $r$-successors of elements of a finite set $Z \subseteq \alpha$. For a finite set
+$A \subseteq \alpha$, the step map sends a finite set $Z \subseteq \alpha$ to
+$\mathrm{post}_r(A) \cup \mathrm{post}_r(Z)$.
+
+Its least fixed point is the set of elements reachable from $A$ in one or more $r$-steps. -/
 def transGenStep (A Z : Finset α) : Finset α :=
   postFin r A ∪ postFin r Z
 
 theorem transGenStep_mono (A : Finset α) : Monotone (transGenStep r A) := fun _ _ h =>
   Finset.union_subset_union (Finset.Subset.refl _) (postFin_mono h)
 
-/-- The finite set of elements reachable from some element of `A` in one or more `r`-steps,
-computed by one finite least fixed point (`Fintype.card α` rounds of `postFin`). -/
+/-- **Elements reachable from a finite set of sources.** Let $\alpha$ be a finite type with
+decidable equality, let $r$ be a decidable relation on $\alpha$, and let $A \subseteq \alpha$ be a
+finite set. Write $\mathrm{post}_r(Z)$ for the set of $r$-successors of elements of a finite set
+$Z \subseteq \alpha$, and let $f$ be the step map
+$f(Z) = \mathrm{post}_r(A) \cup \mathrm{post}_r(Z)$. The finite set of elements reachable from
+$A$ is $f^{|\alpha|}(\emptyset)$, obtained by applying $f$ to the empty set $|\alpha|$ times,
+where $|\alpha|$ is the number of elements of $\alpha$.
+
+Since $f$ is monotone, this is the least fixed point of $f$; it consists of the elements
+reachable from some element of $A$ in one or more $r$-steps. -/
 def transGenFinFrom (A : Finset α) : Finset α :=
   Finset.lfpFin (transGenStep r A)
 
-/-- The finite set of elements reachable from `a` in one or more `r`-steps. -/
+/-- **Elements reachable from a point.** Let $\alpha$ be a finite type with decidable equality,
+let $r$ be a decidable relation on $\alpha$, and let $a \in \alpha$. The finite set of elements
+reachable from $a$ is the finite set of elements reachable from the source set $\{a\}$, that is,
+the elements reachable from $a$ in one or more $r$-steps. -/
 def transGenFin (a : α) : Finset α :=
   transGenFinFrom r {a}
 
 variable {r}
 
-/-- `transGenFinFrom r A` is exactly the set of `t` with `Relation.TransGen r a t` for some
-`a ∈ A`. -/
+/-- **Membership in the set reachable from finitely many sources.** Let $\alpha$ be a finite type
+with decidable equality, let $r$ be a decidable relation on $\alpha$, and let $A \subseteq \alpha$
+be a finite set. An element $t \in \alpha$ lies in the finite set of elements reachable from $A$
+in one or more $r$-steps (computed as a finite least fixed point) if and only if there is some
+$a \in A$ such that $(a, t)$ lies in the transitive closure of $r$. -/
 theorem mem_transGenFinFrom {A : Finset α} {t : α} :
     t ∈ transGenFinFrom r A ↔ ∃ a ∈ A, TransGen r a t := by
   classical
@@ -98,19 +120,31 @@ theorem mem_transGenFinFrom {A : Finset α} {t : α} :
         rw [transGenFinFrom, ← hfix]
         exact Finset.mem_union_right _ (mem_postFin.2 ⟨_, ih, hbc⟩)
 
-/-- `transGenFin r a` is exactly the set of `t` with `Relation.TransGen r a t`. -/
+/-- **Membership in the set reachable from a point.** Let $\alpha$ be a finite type with
+decidable equality, let $r$ be a decidable relation on $\alpha$, and let $a \in \alpha$. An
+element $t \in \alpha$ lies in the finite set of elements reachable from $a$ in one or more
+$r$-steps (computed as a finite least fixed point) if and only if $(a, t)$ lies in the transitive
+closure of $r$. -/
 theorem mem_transGenFin {a t : α} : t ∈ transGenFin r a ↔ TransGen r a t := by
   rw [transGenFin, mem_transGenFinFrom]
   simp
 
 variable (r)
 
-/-- `Relation.TransGen` of a decidable relation on a finite type is decidable. -/
+/-- **Decidability of the transitive closure on a finite type.** Let $\alpha$ be a finite type
+with decidable equality and let $r$ be a decidable relation on $\alpha$. Then the transitive
+closure of $r$ is decidable: for all $a, t \in \alpha$ it is decidable whether $t$ is reachable
+from $a$ in one or more $r$-steps.
+
+The decision is membership of $t$ in the finite set of elements reachable from $a$. -/
 @[instance_reducible]
 def decidableTransGen : DecidableRel (TransGen r) := fun a t =>
   decidable_of_iff (t ∈ transGenFin r a) mem_transGenFin
 
-/-- `Relation.ReflTransGen` of a decidable relation on a finite type is decidable. -/
+/-- **Decidability of the reflexive-transitive closure on a finite type.** Let $\alpha$ be a
+finite type with decidable equality and let $r$ be a decidable relation on $\alpha$. Then the
+reflexive-transitive closure of $r$ is decidable: for all $a, t \in \alpha$ it is decidable
+whether $t$ is reachable from $a$ in zero or more $r$-steps. -/
 @[instance_reducible]
 def decidableReflTransGen : DecidableRel (ReflTransGen r) := fun a t =>
   haveI := decidableTransGen r

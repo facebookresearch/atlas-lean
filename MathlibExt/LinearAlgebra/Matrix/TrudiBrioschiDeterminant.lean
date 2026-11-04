@@ -398,8 +398,16 @@ private lemma step (N : ℕ) (IH : ∀ m, m ≤ N → (tH a m).det = cS a m) :
 
 end
 
-/-- `Matrix.det_toeplitzHessenberg_eq_sum_compositions` without the hypotheses
-`0 < n` and `a 0 ≠ 0`; the formula holds for every `n` and every `a`. -/
+/-- **Trudi's formula for Toeplitz–Hessenberg determinants, general case.** Let $R$ be a
+commutative ring, let $n \ge 0$, and let $a_0, a_1, a_2, \dots$ be any elements of $R$. Let $A_n$
+be the $n \times n$ matrix whose entry in row $i$ and column $j$ ($0 \le i, j < n$) is $a_{i+1-j}$
+if $j \le i + 1$ and $0$ otherwise; for $n = 0$ it is the empty matrix, whose determinant is $1$.
+Then
+$$\det A_n = \sum_{c} (-a_0)^{n - \ell(c)} \, a_{c_1} a_{c_2} \cdots a_{c_{\ell(c)}},$$
+where $c = (c_1, \dots, c_{\ell(c)})$ runs over the compositions of $n$, that is, the finite
+sequences of positive integers with sum $n$, and $\ell(c)$ is the number of parts of $c$.
+
+No hypothesis $n \ge 1$ or $a_0 \ne 0$ is needed. -/
 theorem Matrix.det_toeplitzHessenberg_eq_sum_compositions_general {R : Type*}
     [CommRing R] (n : Nat) (a : Nat → R) :
     Matrix.det (fun i j : Fin n =>
@@ -424,22 +432,26 @@ theorem Matrix.det_toeplitzHessenberg_eq_sum_compositions_general {R : Type*}
   exact hall n n le_rfl
 
 set_option linter.unusedVariables false in
-/-- Trudi's formula for the determinant of the Hessenberg–Toeplitz matrix
-  `A_n(a_0; a_1, …, a_n)` as a signed sum over ordered compositions of `n`.
+/-- **Trudi's formula for Toeplitz–Hessenberg determinants.** Let $R$ be a commutative ring, let
+$n \ge 1$, and let $a_0, a_1, a_2, \dots$ be elements of $R$ with $a_0 \ne 0$. Let $A_n$ be the
+$n \times n$ matrix whose entry in row $i$ and column $j$ ($0 \le i, j < n$) is $a_{i+1-j}$ if
+$j \le i + 1$ and $0$ otherwise. Then
+$$\det A_n = \sum_{c} (-a_0)^{n - \ell(c)} \, a_{c_1} a_{c_2} \cdots a_{c_{\ell(c)}},$$
+where $c = (c_1, \dots, c_{\ell(c)})$ runs over the compositions of $n$, that is, the finite
+sequences of positive integers with sum $n$, and $\ell(c)$ is the number of parts of $c$.
 
-  Source: Taras Goy and Mark Shattuck, *Determinants of Some
-  Hessenberg-Toeplitz Matrices with Motzkin Number Entries*, Journal of Integer
-  Sequences 26 (2023), Article 23.3.4, matrix display `DetHess` lines 146–155,
-  Lemma `lem1` lines 157–166 with equation `Trudi` at lines 159–161 and the
-  equivalent composition sum at lines 163–165,
-  <https://cs.uwaterloo.ca/journals/JIS/VOL26/Shattuck/sh36.tex>.
-
-  The multinomial partition-indexed display over `s_1 + 2 * s_2 + … + n * s_n = n`
-  is a source-declared equivalent encoding of this composition sum and is not
-  stated separately; Brioschi's formula is the `a_0 = 1` specialization (line 167).
 Proves `Wanted` entry `Matrix.det_toeplitzHessenberg_eq_sum_compositions`.
 It follows from `Matrix.det_toeplitzHessenberg_eq_sum_compositions_general`; the hypotheses `hn`
-and `ha0` are unused and keep the source's shape.
+and `ha0` are unused and keep the source's shape. The multinomial partition-indexed display over
+`s_1 + 2 * s_2 + … + n * s_n = n` is a source-declared equivalent encoding of this composition
+sum and is not stated separately; Brioschi's formula is the `a_0 = 1` specialization (line 167).
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Some
+Hessenberg-Toeplitz Matrices with Motzkin Number Entries*, Journal of Integer
+Sequences 26 (2023), Article 23.3.4, matrix display `DetHess` lines 146–155,
+Lemma `lem1` lines 157–166 with equation `Trudi` at lines 159–161 and the
+equivalent composition sum at lines 163–165,
+<https://cs.uwaterloo.ca/journals/JIS/VOL26/Shattuck/sh36.tex>.
 -/
 theorem Matrix.det_toeplitzHessenberg_eq_sum_compositions {R : Type*}
     [CommRing R] (n : Nat) (hn : 0 < n) (a : Nat → R) (ha0 : a 0 ≠ 0) :
@@ -453,9 +465,12 @@ theorem Matrix.det_toeplitzHessenberg_eq_sum_compositions {R : Type*}
 
 /-! ### The Toeplitz–Hessenberg determinant and Trudi's partition sum -/
 
-/-- The determinant of the `n × n` Toeplitz-Hessenberg matrix `A_n(a_0; a_1, …, a_n)`, with entry
-`a (i + 1 - j)` in row `i`, column `j` for `j ≤ i + 1` (so `a 0` on the superdiagonal) and `0`
-above the superdiagonal. The `0 × 0` determinant is `1`.
+/-- **Toeplitz–Hessenberg determinant.** Let $R$ be a commutative ring, let $a_0, a_1, a_2, \dots$
+be elements of $R$ and let $n \ge 0$. The Toeplitz–Hessenberg determinant $\det A_n$ is the
+determinant of the $n \times n$ matrix $A_n = A_n(a_0; a_1, \dots, a_n)$ whose entry in row $i$
+and column $j$ ($0 \le i, j < n$) is $a_{i+1-j}$ if $j \le i + 1$ and $0$ otherwise. Thus $a_0$
+fills the superdiagonal, $a_1$ the diagonal, and every entry above the superdiagonal is $0$. For
+$n = 0$ the determinant is $1$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Section 2, display
@@ -464,7 +479,9 @@ def toeplitzHessenbergDet {R : Type*} [CommRing R] (a : ℕ → R) (n : ℕ) : R
   (Matrix.of fun i j : Fin n =>
     if (j : ℕ) ≤ (i : ℕ) + 1 then a ((i : ℕ) + 1 - (j : ℕ)) else 0).det
 
-/-- `det A_1 = a_1`.
+/-- **The $1 \times 1$ Toeplitz–Hessenberg determinant.** For every commutative ring $R$ and every
+sequence $a_0, a_1, a_2, \dots$ in $R$, the Toeplitz–Hessenberg determinant of size $1$ built
+from $a$ is $\det A_1 = a_1$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Section 2,
@@ -474,7 +491,9 @@ theorem toeplitzHessenbergDet_one {R : Type*} [CommRing R] (a : ℕ → R) :
   rw [toeplitzHessenbergDet, Matrix.det_fin_one]
   simp
 
-/-- `det A_2 = a_1² - a_0 a_2`.
+/-- **The $2 \times 2$ Toeplitz–Hessenberg determinant.** For every commutative ring $R$ and every
+sequence $a_0, a_1, a_2, \dots$ in $R$, the Toeplitz–Hessenberg determinant of size $2$ built
+from $a$ is $\det A_2 = a_1^2 - a_0 a_2$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Section 2,
@@ -485,8 +504,12 @@ theorem toeplitzHessenbergDet_two {R : Type*} [CommRing R] (a : ℕ → R) :
   simp
   ring
 
-/-- Trudi's formula in composition form: `det A_n = ∑_{c ⊨ n} (-a_0)^{n - ℓ(c)} ∏ a_{c_i}`
-(proved in `MathlibExt/LinearAlgebra/Matrix/TrudiBrioschiDeterminant.lean`).
+/-- **Trudi's formula in composition form.** Let $R$ be a commutative ring, let
+$a_0, a_1, a_2, \dots$ be elements of $R$ and let $n \ge 0$. The Toeplitz–Hessenberg determinant
+$\det A_n$ of size $n$ built from $a$ satisfies
+$$\det A_n = \sum_{c} (-a_0)^{n - \ell(c)} \, a_{c_1} a_{c_2} \cdots a_{c_{\ell(c)}},$$
+where $c = (c_1, \dots, c_{\ell(c)})$ runs over the compositions of $n$, that is, the finite
+sequences of positive integers with sum $n$, and $\ell(c)$ is the number of parts of $c$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 and
@@ -497,10 +520,17 @@ theorem toeplitzHessenbergDet_eq_sum_compositions {R : Type*} [CommRing R] (a : 
       ∑ c : Composition n, (-a 0) ^ (n - c.length) * ∏ r : Fin c.length, a (c.blocksFun r) :=
   Matrix.det_toeplitzHessenberg_eq_sum_compositions_general n a
 
-/-- The partition sum of Trudi's formula:
-`∑_{α₁ + 2α₂ + ⋯ + nαₙ = n} s^{|α|} m_n(α) a_1^{α₁} ⋯ a_n^{αₙ}` with `|α| = ∑ αᵢ` and
-`m_n(α) = |α|!/(α₁! ⋯ αₙ!)`; `α` is indexed by `Fin n` (0-based, `α i` is the multiplicity of the
-part `i + 1`).
+/-- **Trudi's partition sum.** Let $R$ be a commutative semiring, let $s \in R$, let $n$ be a
+natural number, and let $a : \mathbb{N} \to R$ (only $a_1, \dots, a_n$ enter). Trudi's
+partition sum is
+$$
+\sum_{\alpha} s^{|\alpha|} \, m_n(\alpha) \, a_1^{\alpha_1} a_2^{\alpha_2} \cdots a_n^{\alpha_n},
+$$
+where $\alpha = (\alpha_1, \dots, \alpha_n)$ runs over the tuples of natural numbers with
+$\alpha_1 + 2\alpha_2 + \cdots + n\alpha_n = n$, $|\alpha| = \alpha_1 + \cdots + \alpha_n$, and
+$m_n(\alpha) = |\alpha|! / (\alpha_1! \cdots \alpha_n!)$ is the multinomial coefficient, taken in
+$R$. Such a tuple records a partition of $n$ with $\alpha_i$ parts equal to $i$. For $n = 0$ the
+sum has the single empty term and equals $1$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 (notation
@@ -593,9 +623,18 @@ private lemma card_compContent_fiber (α : Fin n → ℕ)
         exact hw
   exact (Nat.card_eq_of_bijective f hbij).symm
 
-/-- Trudi's partition sum equals the composition sum weighted by `s` per part:
-`∑_{α̃ = n} s^{|α|} m_n(α) a_1^{α₁} ⋯ a_n^{αₙ} = ∑_{c ⊨ n} s^{ℓ(c)} ∏ a_{c_i}`. The multinomial
-coefficient `m_n(α)` counts the compositions whose part multiplicities are `α`.
+/-- **Trudi's partition sum as a sum over compositions.** Let $R$ be a commutative semiring, let
+$s \in R$, let $a_0, a_1, a_2, \dots$ be elements of $R$ and let $n \ge 0$. Trudi's partition sum
+$$\sum_\alpha s^{|\alpha|} m_n(\alpha) \, a_1^{\alpha_1} a_2^{\alpha_2} \cdots a_n^{\alpha_n},$$
+taken over the tuples $\alpha = (\alpha_1, \dots, \alpha_n)$ of nonnegative integers with
+$\alpha_1 + 2\alpha_2 + \dots + n\alpha_n = n$, where $|\alpha| = \alpha_1 + \dots + \alpha_n$ and
+$m_n(\alpha) = |\alpha|! / (\alpha_1! \cdots \alpha_n!)$, equals
+$$\sum_c s^{\ell(c)} \, a_{c_1} a_{c_2} \cdots a_{c_{\ell(c)}},$$
+where $c = (c_1, \dots, c_{\ell(c)})$ runs over the compositions of $n$, that is, the finite
+sequences of positive integers with sum $n$, and $\ell(c)$ is the number of parts of $c$.
+
+The multinomial coefficient $m_n(\alpha)$ counts the compositions of $n$ in which each part $i$
+occurs $\alpha_i$ times.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 and the
@@ -632,8 +671,14 @@ theorem trudiPartitionSum_eq_sum_compositions {R : Type*} [CommSemiring R] (s : 
   ring
 
 
-/-- Brioschi's case `a_0 = 1` of Trudi's formula: `det A_n = (-1)^n ∑_{α̃ = n} (-1)^{|α|} m_n(α)
-a_1^{α₁} ⋯ a_n^{αₙ}`.
+/-- **Brioschi's formula: the case $a_0 = 1$ of Trudi's formula.** Let $R$ be a commutative ring
+and let $a_0, a_1, a_2, \dots$ be elements of $R$ with $a_0 = 1$. For every $n \ge 0$, the
+Toeplitz–Hessenberg determinant $\det A_n$ of size $n$ built from $a$ satisfies
+$$\det A_n = (-1)^n \sum_\alpha (-1)^{|\alpha|} m_n(\alpha) a_1^{\alpha_1} \cdots a_n^{\alpha_n},$$
+where the sum, Trudi's partition sum with weight $-1$ per part, runs over the tuples
+$\alpha = (\alpha_1, \dots, \alpha_n)$ of nonnegative integers with
+$\alpha_1 + 2\alpha_2 + \dots + n\alpha_n = n$, with $|\alpha| = \alpha_1 + \dots + \alpha_n$ and
+$m_n(\alpha) = |\alpha|! / (\alpha_1! \cdots \alpha_n!)$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 with
@@ -653,7 +698,14 @@ theorem toeplitzHessenbergDet_eq_neg_one_pow_mul_trudiPartitionSum {R : Type*} [
   rw [hpow]
   linear_combination (-(-1 : R) ^ k * ∏ r : Fin c.length, a (c.blocksFun r)) * hsq
 
-/-- The case `a_0 = -1` of Trudi's formula: `det A_n = ∑_{α̃ = n} m_n(α) a_1^{α₁} ⋯ a_n^{αₙ}`.
+/-- **Trudi's formula when $a_0 = -1$.** Let $R$ be a commutative ring and let
+$a_0, a_1, a_2, \dots$ be elements of $R$ with $a_0 = -1$. For every $n \ge 0$, the
+Toeplitz–Hessenberg determinant $\det A_n$ of size $n$ built from $a$ satisfies
+$$\det A_n = \sum_\alpha m_n(\alpha) \, a_1^{\alpha_1} a_2^{\alpha_2} \cdots a_n^{\alpha_n},$$
+where the sum, Trudi's partition sum with weight $1$ per part, runs over the tuples
+$\alpha = (\alpha_1, \dots, \alpha_n)$ of nonnegative integers with
+$\alpha_1 + 2\alpha_2 + \dots + n\alpha_n = n$, with $|\alpha| = \alpha_1 + \dots + \alpha_n$ and
+$m_n(\alpha) = |\alpha|! / (\alpha_1! \cdots \alpha_n!)$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 with
@@ -664,8 +716,15 @@ theorem toeplitzHessenbergDet_eq_trudiPartitionSum_one {R : Type*} [CommRing R] 
   rw [toeplitzHessenbergDet_eq_sum_compositions, trudiPartitionSum_eq_sum_compositions, ha]
   simp
 
-/-- With all weights `1`, the partition sum for `n = 4` counts the `8` compositions of `4`; with
-`s = -1` and `a_i = i`, the sum for `n = 3` is `-1 + 4 - 3 = 0`.
+/-- **Two values of Trudi's partition sum.** For an integer $s$, integers $a_1, a_2, \dots$ and
+$n \ge 0$, write
+$T_n(s; a) = \sum_\alpha s^{|\alpha|} m_n(\alpha) \, a_1^{\alpha_1} \cdots a_n^{\alpha_n}$ for
+Trudi's partition sum, where $\alpha = (\alpha_1, \dots, \alpha_n)$ runs over the tuples of
+nonnegative integers with $\alpha_1 + 2\alpha_2 + \dots + n\alpha_n = n$, with
+$|\alpha| = \alpha_1 + \dots + \alpha_n$ and
+$m_n(\alpha) = |\alpha|! / (\alpha_1! \cdots \alpha_n!)$. Then $T_4(1; a) = 8$, the number of
+compositions of $4$, when $a_i = 1$ for all $i$; and $T_3(-1; a) = -1 + 4 - 3 = 0$ when $a_i = i$
+for all $i$.
 
 Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
 Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1. -/

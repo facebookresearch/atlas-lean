@@ -34,25 +34,31 @@ namespace MetaMathlibExt
 
 -- Logic 10: Countable chain condition in a partial order
 
-/-- A partial order (P, ≤) has the countable chain condition (c.c.c.) if every antichain is
-countable.
+/-- **Countable chain condition.** A partial order $(P, \le)$ has the countable chain condition
+(c.c.c.) if every antichain of $P$ is countable, where an antichain is a set of pairwise
+incompatible elements: no two distinct members of it have a common lower bound in $P$.
 -/
 def IsCCC (P : Type*) [PartialOrder P] : Prop :=
     ∀ A : Set P, IsAntichain (fun p q : P => ∃ r, r ≤ p ∧ r ≤ q) A → A.Countable
 
 -- Logic 13: $\sigma$-centered posets
 
-/-- A poset is σ-centred when it splits into countably many centered pieces: every
-  finite subset of a piece has a common lower bound.
+/-- **σ-centered partial orders.** A partial order $P$ is $\sigma$-centered if there is a map
+$c : P \to \mathbb{N}$ such that for every $n \in \mathbb{N}$, every finite set of elements $p$
+with $c(p) = n$ has a common lower bound in $P$. Thus $P$ splits into countably many centered
+pieces $c^{-1}(n)$; the empty set is among the finite sets, so $P$ must be nonempty.
 -/
 def IsSigmaCentered (P : Type*) [PartialOrder P] : Prop :=
   ∃ c : P → ℕ, ∀ (n : ℕ) (s : Finset P), (∀ p ∈ s, c p = n) → ∃ r : P, ∀ p ∈ s, r ≤ p
 
 -- Logic 14: Martin's Axiom for $\sigma$-centered posets
 
-/-- Martin's Axiom for σ-centred posets: any σ-centered poset (P,≤), for any sequence (D_α : α<κ')
-of dense subsets of the partial order for some κ'≤ κ, for any condition p∈ P, there is a filter G
-meeting all D_α's and p∈ G.
+/-- **Martin's axiom for σ-centered partial orders.** For a cardinal $\kappa$, this is the
+statement that for every $\sigma$-centered partial order $P$, every family $\mathcal{D}$ of at
+most $\kappa$ dense subsets of $P$ and every $p \in P$, there is a filter $G$ on $P$ with
+$p \in G$ that meets every member of $\mathcal{D}$. Here $D \subseteq P$ is dense if every
+element of $P$ has an element of $D$ below it, and a filter is a nonempty upward closed subset
+of $P$ any two of whose elements have a common lower bound in it.
 -/
 def MartinAxiomSigmaCentered (κ : Cardinal) : Prop :=
    ∀ (P : Type*) [PartialOrder P], IsSigmaCentered P →
@@ -61,9 +67,12 @@ def MartinAxiomSigmaCentered (κ : Cardinal) : Prop :=
 
 -- Logic 9: Martin's Axiom
 
-/-- MA(κ) is the statement that for any ccc poset (P,≤), for any sequence (D_α : α<κ') of dense
-subsets of the partial order for some κ'≤ κ, for any condition p∈ P, there is a filter G meeting all
-D_α's and p∈ G.
+/-- **Martin's axiom.** For a cardinal $\kappa$, $\mathrm{MA}(\kappa)$ is the statement that for
+every partial order $P$ with the countable chain condition, every family $\mathcal{D}$ of at most
+$\kappa$ dense subsets of $P$ and every $p \in P$, there is a filter $G$ on $P$ with $p \in G$
+that meets every member of $\mathcal{D}$. Here $D \subseteq P$ is dense if every element of $P$
+has an element of $D$ below it, and a filter is a nonempty upward closed subset of $P$ any two
+of whose elements have a common lower bound in it.
 -/
 def MartinAxiom (κ : Cardinal) : Prop :=
   ∀ (P : Type*) [PartialOrder P], IsCCC P →

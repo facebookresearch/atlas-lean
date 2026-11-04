@@ -27,13 +27,15 @@ Basic API for atomless measures: restriction to measurable sets and the
 Sierpinski theorem that every intermediate measure value is attained.
 -/
 
-/-- `μ` is atomless when every positive-measure measurable set contains a smaller
-positive-measure measurable subset. -/
+/-- **Atomless measure.** A measure $\mu$ on a measurable space is atomless when every
+measurable set $s$ with $\mu(s) > 0$ contains a measurable subset $t \subseteq s$ with
+$0 < \mu(t) < \mu(s)$. -/
 def IsAtomless {α : Type*} [MeasurableSpace α] (μ : Measure α) : Prop :=
   ∀ s, MeasurableSet s → 0 < μ s → ∃ t, t ⊆ s ∧ MeasurableSet t ∧ 0 < μ t ∧ μ t < μ s
 
 
-/-- Restriction of an atomless measure to a measurable set is atomless. -/
+/-- **Restriction of an atomless measure.** The restriction of an atomless measure to a
+measurable set is atomless. -/
 theorem isAtomless_restrict {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {Z : Set α} (hZ : MeasurableSet Z) (hA : IsAtomless μ) :
     IsAtomless (μ.restrict Z) := by
@@ -243,8 +245,9 @@ private theorem sierpinskiSeq_measure_add {α : Type*} [MeasurableSpace α]
     (Set.disjoint_left.mpr (fun x hx => (hspec.2.1 hx).2)).symm
   rw [sierpinskiSeq_succ ht n, measure_union hdisj hspec.1]
 
-/-- In a finite atomless measure, every measurable set contains measurable subsets of
-every smaller measure. -/
+/-- **Sierpiński's theorem on atomless measures.** Let $\mu$ be a finite atomless measure. For
+every measurable set $s$ and every $t \in [0, \infty]$ with $t \le \mu(s)$, there is a measurable
+set $u \subseteq s$ with $\mu(u) = t$. -/
 theorem isAtomless_exists_subset_measure_eq {α : Type*} [MeasurableSpace α]
     {μ : Measure α} [IsFiniteMeasure μ] (hA : IsAtomless μ)
     {s : Set α} (hs : MeasurableSet s) {t : ENNReal} (ht : t ≤ μ s) :

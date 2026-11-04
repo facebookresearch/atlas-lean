@@ -55,8 +55,11 @@ open Module.Basis
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
   [FiniteDimensional K V]
 
-/-- Trace additivity for an invariant submodule: if `e` preserves `W`, then
-`trace e = trace (restrict e) + trace (mapQ e)`. -/
+/-- **Trace is additive over an invariant subspace.** Let $V$ be a finite-dimensional vector space
+over a field $K$, let $e$ be a linear endomorphism of $V$, and let $W$ be a subspace of $V$ with
+$e(W) \subseteq W$. Then the trace of $e$ equals the trace of the restriction $e|_W$ of $e$ to $W$
+plus the trace of the endomorphism $\bar e$ of the quotient $V/W$ induced by $e$:
+$\operatorname{tr}(e) = \operatorname{tr}(e|_W) + \operatorname{tr}(\bar e)$. -/
 theorem LinearMap.trace_eq_trace_restrict_add_trace_mapQ
     (W : Submodule K V) (e : V →ₗ[K] V) (he : W ≤ W.comap e) :
     LinearMap.trace K V e =
@@ -105,8 +108,11 @@ theorem LinearMap.trace_eq_trace_restrict_add_trace_mapQ
 
 variable {W : Type*} [AddCommGroup W] [Module K W]
 
-/-- Trace of an endomorphism along a surjective intertwiner: the trace splits
-as the trace of the restriction to the kernel plus the trace on the target. -/
+/-- **Trace splits along a surjective intertwining map.** Let $V$ be a finite-dimensional vector
+space over a field $K$, let $W$ be a vector space over $K$, and let $q : V \to W$ be a surjective
+linear map. If $f$ is a linear endomorphism of $V$ and $g$ a linear endomorphism of $W$ with
+$q \circ f = g \circ q$, then $f$ maps $\ker q$ into itself, and the trace of $f$ equals the
+trace of the restriction $f|_{\ker q}$ of $f$ to $\ker q$ plus the trace of $g$. -/
 theorem LinearMap.trace_eq_trace_restrict_ker_add_of_surjective
     (q : V →ₗ[K] W) (f : V →ₗ[K] V) (g : W →ₗ[K] W)
     (hq : Function.Surjective q) (h : q.comp f = g.comp q) :

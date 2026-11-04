@@ -253,8 +253,11 @@ private noncomputable def orderIsoFin (m : Type*) [Fintype m] [DecidableEq m] [L
   exact (e1.trans e2).symm
 
 /--
-Schur decomposition: every square complex matrix is `U * T * star U` for some
-`U : Matrix.unitaryGroup n ℂ` and upper-triangular `T`.
+**Schur decomposition of a complex square matrix.** Let $A$ be a square complex matrix whose rows
+and columns are indexed by a finite linearly ordered type $n$. Then there are a unitary matrix $U$,
+with conjugate transpose $U^*$, and a matrix $T$ that is upper triangular with respect to the order
+on $n$ (that is, $T_{ij} = 0$ whenever $j < i$) such that $A = U T U^*$.
+
 Source: I. Schur, Uber charakteristische Wurzeln, Math. Ann. 66 (1909), 488-510, DOI
 10.1007/BF01450045.
 Proves `Wanted` entry `schur_decomposition`, restated over `Matrix.unitaryGroup` in place of the

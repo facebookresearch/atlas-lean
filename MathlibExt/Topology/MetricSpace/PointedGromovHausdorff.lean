@@ -56,13 +56,18 @@ universe u v
 
 variable {X : ℕ → Type u} [∀ n, PseudoMetricSpace (X n)] {Y : Type v} [PseudoMetricSpace Y]
 
-/-- Pointed Gromov–Hausdorff convergence of `(X n, p n)` to `(Y, q)`:
-for all `R > 0`, `ε > 0`, eventually there is `f : ball (p n) R → Y`
-with `f (p n) = q`, `ε`-almost isometric, covering `ball q (R - ε)`
-up to `ε`. This is an extension of the metric part of GMS def:pmGH to
-arbitrary maps on arbitrary pseudometric spaces (GMS require Borel maps
-on complete separable spaces); open balls are an implementation choice
-for GMS's unspecified `B_R` (see module docstring). -/
+/-- **Pointed Gromov–Hausdorff convergence.** Let $X_0, X_1, \dots$ and $Y$ be pseudometric
+spaces with base points $p_n \in X_n$ and $q \in Y$. The sequence $(X_n, p_n)$ converges to
+$(Y, q)$ in the pointed Gromov–Hausdorff sense if for all $R > 0$ and $\varepsilon > 0$ there is
+$N$ such that for every $n \ge N$ there is a map $f$ from the open ball $B(p_n, R)$ to $Y$ with
+$f(p_n) = q$, with $|d(f(x), f(y)) - d(x, y)| \le \varepsilon$ for all $x, y \in B(p_n, R)$, and
+such that every point of the open ball $B(q, R - \varepsilon)$ is at distance less than
+$\varepsilon$ from some point of the image of $f$.
+
+No measurability or continuity is required of $f$, and the spaces need not be complete or
+separable, so this extends the metric part of the pointed measured Gromov–Hausdorff convergence
+of Gigli–Mondino–Savaré, who use Borel maps on complete separable spaces. Open balls are an
+implementation choice for their unspecified balls $B_R$. -/
 def PointedGHConverges (p : ∀ n, X n) (q : Y) : Prop :=
   ∀ (R : ℝ) (hR : 0 < R) (ε : ℝ) (_ : 0 < ε),
     ∀ᶠ n in Filter.atTop, ∃ f : ↥(Metric.ball (p n) R) → Y,
@@ -70,8 +75,17 @@ def PointedGHConverges (p : ∀ n, X n) (q : Y) : Prop :=
         (∀ x y, |dist (f x) (f y) - dist (x : X n) (y : X n)| ≤ ε) ∧
         Metric.ball q (R - ε) ⊆ Metric.thickening ε (Set.range f)
 
-/-- Strict-distortion formulation (`dis f < ε`, arXiv:2602.04826 Def. 2.12)
-is equivalent to `PointedGHConverges`. -/
+/-- **Pointed Gromov–Hausdorff convergence with strict distortion.** Let $X_0, X_1, \dots$ and
+$Y$ be pseudometric spaces with base points $p_n \in X_n$ and $q \in Y$. Then $(X_n, p_n)$
+converges to $(Y, q)$ in the pointed Gromov–Hausdorff sense if and only if for all $R > 0$ and
+$\varepsilon > 0$ there is $N$ such that for every $n \ge N$ there are a map $f$ from the open
+ball $B(p_n, R)$ to $Y$ and a real number $\delta < \varepsilon$ with $f(p_n) = q$, with
+$|d(f(x), f(y)) - d(x, y)| \le \delta$ for all $x, y \in B(p_n, R)$, and such that every point
+of the open ball $B(q, R - \varepsilon)$ is at distance less than $\varepsilon$ from some point
+of the image of $f$.
+
+That is, the distortion of $f$ may be required to be strictly less than $\varepsilon$, as in
+arXiv:2602.04826, Def. 2.12. -/
 theorem pointedGHConverges_iff_dis_lt (p : ∀ n, X n) (q : Y) :
     PointedGHConverges p q ↔
       ∀ (R : ℝ) (hR : 0 < R) (ε : ℝ) (_ : 0 < ε),
@@ -98,7 +112,9 @@ theorem pointedGHConverges_iff_dis_lt (p : ∀ n, X n) (q : Y) :
     have hx := hdist x y
     linarith
 
-/-- Constant families converge to their value. -/
+/-- **Constant sequences converge in the pointed Gromov–Hausdorff sense.** For every
+pseudometric space $Y$ and every point $q \in Y$, the constant sequence $(X_n, p_n) = (Y, q)$
+converges to $(Y, q)$ in the pointed Gromov–Hausdorff sense. -/
 theorem pointedGHConverges_const (q : Y) :
     PointedGHConverges (X := fun _ => Y) (fun _ => q) q := by
   intro R hR ε hε
