@@ -12,18 +12,22 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.SuperMultiplicative
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessFromFreeEnergy
 
 /-!
-# Derivative of the `q = 2` random-cluster free energy in the tilt variable
+# Derivative of the `q = 2` random-cluster ambient tilted log normalizer in the tilt variable
 
-The finite-volume free energy per edge in the tilt variable `t` (with `p = logistic(t)`) is
-differentiable with derivative the average edge density; at points where the limiting free energy
-is differentiable its derivative is the limit of average densities, and identifying the one-sided
-derivatives with the infinite-volume densities yields countable-exception uniqueness.
+For a finite graph with an edge, the ambient tilted log normalizer at `q = 2` is differentiable
+in `t` (with `p = logistic(t)`), with derivative the average edge density. If a sequence of these
+functions converges, its derivative at a differentiability point is the limit of average densities.
+Identifying one-sided derivatives with the infinite-volume densities yields conditional uniqueness.
+
+The finite-graph quantity uses ambient `fkZ`, not the edge partition function. Its non-edge
+logarithmic offset is independent of `t`, so the derivative statements remain valid.
+All limit statements assume convergence; they do not construct physical box pressure.
 
 ## i. Overview
 
 For a finite graph `G`, `t ↦ |E|^{-1} log Z_G(logistic(t), 2) + log(1 + e^t)` has derivative
-`|E|^{-1} E[#open edges]` (`fpd_tiltFreeEnergy_deriv_eq_avgDensity`). For a sequence of graphs whose
-free energies converge to a convex `g`, the derivatives converge to `g'(t)` wherever `g` is
+`|E|^{-1} E[#open edges]` (`fpd_ambientTiltLogZ_deriv_eq_avgDensity`). For a sequence of graphs whose
+ambient tilted log normalizers converge to a convex `g`, the derivatives converge to `g'(t)` wherever `g` is
 differentiable (`fpd_deriv_interchange_of_differentiable`). If the average densities collapse to the
 free infinite-volume density (`fpd_AvgDensityCollapse`), the free density equals `g'(t)` at such
 points. The predicate `fpd_IVDensityIsOneSidedDeriv` (wired and free densities are the right and
@@ -32,15 +36,15 @@ a countable set.
 
 ## ii. Key results
 
-- `fpd_tiltFreeEnergy_deriv_eq_avgDensity` : the finite-volume derivative is the average density.
-- `fpd_ivPressureDeriv_eq_avgDensity_limit` : the limiting derivative is the limit of average
+- `fpd_ambientTiltLogZ_deriv_eq_avgDensity` : the finite-volume derivative is the average density.
+- `fpd_ambientLogZDeriv_eq_avgDensity_limit` : the limiting derivative is the limit of average
   densities at differentiability points.
 - `fpd_freeDensity_at_diff_of_collapse` : under density collapse, the free density is `g'(t)`.
 - `fpd_fk_uniqueness` : countable-exception uniqueness from `fpd_IVDensityIsOneSidedDeriv`.
 
 ## iii. Table of contents
 
-- A. Convexity of the limiting free energy
+- A. Convexity of the limiting ambient tilted log normalizer
 - B. Finite-volume derivatives
 - C. Interchanging limit and derivative
 - D. Densities as one-sided derivatives
@@ -67,7 +71,7 @@ open ConfigSpace StatMech.Lattice
 
 variable {d : ℕ}
 
-/-! ## A. Convexity of the limiting free energy -/
+/-! ## A. Convexity of the limiting ambient tilted log normalizer -/
 
 /-!
 The fixed-carrier juxtaposition existence wrapper is not used here: a finite equivalence
@@ -75,34 +79,34 @@ The fixed-carrier juxtaposition existence wrapper is not used here: a finite equ
 constant sequences on a nonempty finite graph are legitimate inputs.
 -/
 
-lemma fpd_ivPressure_convexDeriv_facts
+lemma fpd_ambientLogZ_convexDeriv_facts
     {W : Type*} [Fintype W] [DecidableEq W]
     (Gn : ℕ → SimpleGraph W) [∀ i, DecidableRel (Gn i).Adj]
-    (hconv : ∀ n, ConvexOn ℝ univ (ivp2_tiltFreeEnergy (Gn n) 2))
+    (hconv : ∀ n, ConvexOn ℝ univ (ivp2_ambientTiltLogZ (Gn n) 2))
     (g : ℝ → ℝ)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t))) :
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t))) :
     ConvexOn ℝ univ g
       ∧ (∀ t, HasDerivWithinAt g (pressureRightDeriv g t) (Ioi t) t)
       ∧ (∀ t, HasDerivWithinAt g (pressureLeftDeriv g t) (Iio t) t)
       ∧ (∀ t, Tendsto (slope g t) (𝓝[>] t) (𝓝 (pressureRightDeriv g t)))
       ∧ (∀ t, Tendsto (slope g t) (𝓝[<] t) (𝓝 (pressureLeftDeriv g t)))
-      ∧ (∀ a b, Tendsto (fun n => slope (ivp2_tiltFreeEnergy (Gn n) 2) a b) atTop
+      ∧ (∀ a b, Tendsto (fun n => slope (ivp2_ambientTiltLogZ (Gn n) 2) a b) atTop
           (𝓝 (slope g a b)))
       ∧ (∀ t, pressureLeftDeriv g t ≤ pressureRightDeriv g t)
       ∧ Monotone (pressureRightDeriv g)
       ∧ Monotone (pressureLeftDeriv g)
       ∧ {t : ℝ | pressureLeftDeriv g t ≠ pressureRightDeriv g t}.Countable :=
-  cdl_convexDerivLimit (fun n => ivp2_tiltFreeEnergy (Gn n) 2) g hconv hlim
+  cdl_convexDerivLimit (fun n => ivp2_ambientTiltLogZ (Gn n) 2) g hconv hlim
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## B. Finite-volume derivatives -/
 
-lemma fpd_tiltFreeEnergy_deriv_eq_avgDensity (hE : 0 < G.edgeFinset.card) (t : ℝ) :
-    HasDerivAt (ivp2_tiltFreeEnergy G 2)
+lemma fpd_ambientTiltLogZ_deriv_eq_avgDensity (hE : 0 < G.edgeFinset.card) (t : ℝ) :
+    HasDerivAt (ivp2_ambientTiltLogZ G 2)
       ((1 / (G.edgeFinset.card : ℝ)) * fkExpect G (fsc_logistic t) 2
         (fun ω => (openCount G ω : ℝ))) t := by
-  have hbase := ivp2_tiltFreeEnergy_hasDerivAt G 2 (by norm_num) hE t
+  have hbase := ivp2_ambientTiltLogZ_hasDerivAt G 2 (by norm_num) hE t
   rwa [← ivp2_cgfMean_eq_openCount_expect G 2 (by norm_num) t] at hbase
 
 /-- The average edge density `|E|^{-1} E_{φ_{G,p,2}}[#open edges]` at `p = logistic(t)`. -/
@@ -168,19 +172,19 @@ lemma fpd_deriv_interchange_of_differentiable {κ : Type*} {l : Filter κ} [l.Ne
   rw [Real.dist_eq, abs_lt]
   constructor <;> linarith
 
-lemma fpd_ivPressureDeriv_eq_avgDensity_limit
+lemma fpd_ambientLogZDeriv_eq_avgDensity_limit
     {W : Type*} [Fintype W] [DecidableEq W]
     (Gn : ℕ → SimpleGraph W) [∀ i, DecidableRel (Gn i).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (t : ℝ) (hdiff : pressureLeftDeriv g t = pressureRightDeriv g t) :
     Tendsto (fun n => fpd_avgDensity (Gn n) t) atTop (𝓝 (pressureRightDeriv g t)) :=
   fpd_deriv_interchange_of_differentiable
-    (fun n => ivp2_tiltFreeEnergy (Gn n) 2) g
+    (fun n => ivp2_ambientTiltLogZ (Gn n) 2) g
     (fun n => fpd_avgDensity (Gn n))
-    (fun n => ivp2_tiltFreeEnergy_convexOn (Gn n) 2 (by norm_num) (hE n))
-    (fun n s => fpd_tiltFreeEnergy_deriv_eq_avgDensity (Gn n) (hE n) s)
+    (fun n => ivp2_ambientTiltLogZ_convexOn (Gn n) 2 (by norm_num) (hE n))
+    (fun n s => fpd_ambientTiltLogZ_deriv_eq_avgDensity (Gn n) (hE n) s)
     hlim t hg hdiff
 
 /-! ## D. Densities as one-sided derivatives -/
@@ -198,12 +202,12 @@ lemma fpd_freeDensity_at_diff_of_collapse (d N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ)
     (hdiff : pressureLeftDeriv g t = pressureRightDeriv g t) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t := by
-  have hderiv := fpd_ivPressureDeriv_eq_avgDensity_limit Gn hE g hg hlim t hdiff
+  have hderiv := fpd_ambientLogZDeriv_eq_avgDensity_limit Gn hE g hg hlim t hdiff
   rw [hdiff]
   exact tendsto_nhds_unique (hcol e' t) hderiv
 

@@ -9,14 +9,15 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.AdditiveGluing
 /-!
-# Quadrant partition of boxes and the doubling bound for the FK free energy
+# Quadrant partitions and doubling bounds for ambient FK normalizers
 
-Splitting `Λ_{2K+1}` into `2^d` copies of `Λ_K` bounds the FK free energy along doubling boxes.
+Splitting `Λ_{2K+1}` into `2^d` copies of `Λ_K` bounds `-log fkZ` along doubling boxes.
 
 ## i. Overview
 
-Write `u(n) = -log Z_n` for the free FK partition function on the box `Λ_n = [-n, n]^d` at
-`q = 2` and `p = e^t / (1 + e^t)`. Removing the coordinate hyperplanes `{x_i = 0}` splits
+Write `u(n) = -log fkZ(Λ_n, p, 2)` for the ambient normalizer on `Λ_n = [-n, n]^d`,
+not the edge-restricted partition function. Here `p = e^t / (1 + e^t)`.
+Removing the coordinate hyperplanes `{x_i = 0}` splits
 `Λ_{2K+1}` into `2^d` open orthants, each a translate of `Λ_K`. Peeling the blocks off one at
 a time with the additive gluing inequality for `-log Z` gives
 `u(2K + 1) ≤ 2^d u(K) + I_K · (-log (1 - p))`, where `I_K` counts edges meeting the
@@ -25,6 +26,10 @@ hyperplanes, of order `K^{d-1}`. The same count bounds the edge-number gap
 
 Along the doubling sequence `K_j = 2^{j+1} - 1` the corrections divided by `|E(Λ_{K_{j+1}})|`
 are summable, which is the additive doubling bound `agl_AdditiveDoublingBound`.
+The final convergence-data wrapper additionally assumes bounded `|agl_ambientNegLogZ / agl_E|`
+and vanishing oscillation. That boundedness premise fails for the raw normalizer on growing
+positive-dimensional boxes; the doubling bound alone does not prove physical free-energy
+convergence.
 
 ## ii. Key results
 
@@ -303,8 +308,8 @@ lemma qp_fkZ_empty {V : Type*} [Fintype V] [DecidableEq V] [IsEmpty V] (G : Simp
   · intro b _ hb; exact absurd (Subsingleton.elim b _) hb
   · intro h; exact absurd (Finset.mem_univ _) h
 
-/-- The negative log partition function `-log Z(G, p, q)`. -/
-noncomputable def qp_uu {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+/-- The negative log ambient normalizer `-log (fkZ G p q)`, including unused coordinates. -/
+noncomputable def qp_ambientNegLogZ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (p q : ℝ) : ℝ := -Real.log (fkZ G p q)
 
 /-- Peeling: `-log Z` of the restriction to `S` is at most the sum over `τ ∈ S` of `-log Z` of the
@@ -312,8 +317,8 @@ blocks plus `I · (-log (1 - p))`, with `I` at most the number of edges straddli
 `S`. -/
 lemma qp_peel_le (p q : ℝ) (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∀ S : Finset T, ∃ I : ℕ,
-      qp_uu (qp_restG K₀ tag S) p q
-          ≤ (∑ τ ∈ S, qp_uu (qp_blkG K₀ tag τ) p q) + (I : ℝ) * (-Real.log (1 - p))
+      qp_ambientNegLogZ (qp_restG K₀ tag S) p q
+          ≤ (∑ τ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q) + (I : ℝ) * (-Real.log (1 - p))
         ∧ I ≤ ∑ τ ∈ S, (qp_straddleEdges K₀ (fun u => tag u = τ)).card := by
   intro S
   induction S using Finset.induction with
@@ -321,29 +326,29 @@ lemma qp_peel_le (p q : ℝ) (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     refine ⟨0, ?_, by simp⟩
     simp only [Finset.sum_empty, Nat.cast_zero, zero_mul, add_zero]
     have : IsEmpty {x : U // tag x ∈ (∅ : Finset T)} := ⟨fun x => by simpa using x.2⟩
-    rw [qp_uu, qp_fkZ_empty, Real.log_one, neg_zero]
+    rw [qp_ambientNegLogZ, qp_fkZ_empty, Real.log_one, neg_zero]
   | @insert τ S hτ ih =>
     obtain ⟨I0, hI0le, hI0bd⟩ := ih
     have hpart := agl_neglog_partition_le (qp_restG K₀ tag (insert τ S))
       (fun x => tag x.1 = τ) hp hp1 hq
     rw [show -Real.log (fkZ (agl_left (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)) p q)
-        = qp_uu (qp_blkG K₀ tag τ) p q from by rw [qp_uu, qp_left_eq K₀ tag τ S hτ]] at hpart
+        = qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q from by rw [qp_ambientNegLogZ, qp_left_eq K₀ tag τ S hτ]] at hpart
     rw [show -Real.log (fkZ (agl_right (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)) p q)
-        = qp_uu (qp_restG K₀ tag S) p q from by rw [qp_uu, qp_right_eq K₀ tag τ S hτ]] at hpart
+        = qp_ambientNegLogZ (qp_restG K₀ tag S) p q from by rw [qp_ambientNegLogZ, qp_right_eq K₀ tag τ S hτ]] at hpart
     set Istep := agl_interfaceCard (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)
       with hIstep
     refine ⟨Istep + I0, ?_, ?_⟩
     · rw [Finset.sum_insert hτ]; push_cast
-      have huu : qp_uu (qp_restG K₀ tag (insert τ S)) p q
-          ≤ qp_uu (qp_blkG K₀ tag τ) p q + qp_uu (qp_restG K₀ tag S) p q
-            - (Istep : ℝ) * Real.log (1 - p) := by rw [qp_uu]; exact hpart
-      calc qp_uu (qp_restG K₀ tag (insert τ S)) p q
-          ≤ qp_uu (qp_blkG K₀ tag τ) p q + qp_uu (qp_restG K₀ tag S) p q
+      have huu : qp_ambientNegLogZ (qp_restG K₀ tag (insert τ S)) p q
+          ≤ qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q + qp_ambientNegLogZ (qp_restG K₀ tag S) p q
+            - (Istep : ℝ) * Real.log (1 - p) := by rw [qp_ambientNegLogZ]; exact hpart
+      calc qp_ambientNegLogZ (qp_restG K₀ tag (insert τ S)) p q
+          ≤ qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q + qp_ambientNegLogZ (qp_restG K₀ tag S) p q
               - (Istep : ℝ) * Real.log (1 - p) := huu
-        _ ≤ qp_uu (qp_blkG K₀ tag τ) p q
-              + ((∑ σ ∈ S, qp_uu (qp_blkG K₀ tag σ) p q) + (I0 : ℝ) * (-Real.log (1 - p)))
+        _ ≤ qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q
+              + ((∑ σ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag σ) p q) + (I0 : ℝ) * (-Real.log (1 - p)))
               - (Istep : ℝ) * Real.log (1 - p) := by linarith [hI0le]
-        _ = (qp_uu (qp_blkG K₀ tag τ) p q + ∑ σ ∈ S, qp_uu (qp_blkG K₀ tag σ) p q)
+        _ = (qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q + ∑ σ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag σ) p q)
               + ((Istep : ℝ) + (I0 : ℝ)) * (-Real.log (1 - p)) := by ring
     · rw [Finset.sum_insert hτ]
       have hIstepbd : Istep ≤ (qp_straddleEdges K₀ (fun u => tag u = τ)).card :=
@@ -940,7 +945,7 @@ lemma qp_restG_univ_fkZ (d K : ℕ) (p q : ℝ) :
 /-- The doubling inequality `u(2K + 1) ≤ 2^d u(K) + I_K · (-log (1 - p))` for `u = -log Z` of the
 free `q = 2` FK model, with `I_K = (2^d + 2) · 2d |J|`. -/
 lemma qp_box_neglog_doubling (d K : ℕ) (t : ℝ) :
-    agl_u d t (2 * K + 1) ≤ (2 : ℝ) ^ d * agl_u d t K
+    agl_ambientNegLogZ d t (2 * K + 1) ≤ (2 : ℝ) ^ d * agl_ambientNegLogZ d t K
       + ((2 * d * (qp_Jset d K).card + (2 ^ d + 1) * (2 * d * (qp_Jset d K).card) : ℕ) : ℝ)
           * (-Real.log (1 - fsc_logistic t)) := by
   set p := fsc_logistic t with hp
@@ -950,28 +955,28 @@ lemma qp_box_neglog_doubling (d K : ℕ) (t : ℝ) :
   have hc0 : 0 ≤ c := by rw [hc, neg_nonneg]; exact Real.log_nonpos (by linarith) (by linarith)
   obtain ⟨I, hIle, hIbd⟩ :=
     qp_peel_le (boxGraph d (2 * K + 1)) (qp_boxTag d K) p 2 hp0 hp1 (by norm_num) Finset.univ
-  have hrest : qp_uu (qp_restG (boxGraph d (2 * K + 1)) (qp_boxTag d K) Finset.univ) p 2
-      = agl_u d t (2 * K + 1) := by rw [qp_uu, qp_restG_univ_fkZ]; rfl
+  have hrest : qp_ambientNegLogZ (qp_restG (boxGraph d (2 * K + 1)) (qp_boxTag d K) Finset.univ) p 2
+      = agl_ambientNegLogZ d t (2 * K + 1) := by rw [qp_ambientNegLogZ, qp_restG_univ_fkZ]; rfl
   have hblksum : (∑ τ ∈ (Finset.univ : Finset (Option (Fin d → Bool))),
-        qp_uu (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) τ) p 2)
-      = qp_uu (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none) p 2
-        + (2 : ℝ) ^ d * agl_u d t K := by
+        qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) τ) p 2)
+      = qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none) p 2
+        + (2 : ℝ) ^ d * agl_ambientNegLogZ d t K := by
     rw [show (∑ τ ∈ (Finset.univ : Finset (Option (Fin d → Bool))),
-            qp_uu (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) τ) p 2)
+            qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) τ) p 2)
           = ∑ τ : Option (Fin d → Bool),
-              qp_uu (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) τ) p 2 from rfl,
+              qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) τ) p 2 from rfl,
       Fintype.sum_option]
     congr 1
     have heach : ∀ s : Fin d → Bool,
-        qp_uu (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) (some s)) p 2 = agl_u d t K :=
-      fun s => by rw [qp_uu, qp_block_fkZ]; rfl
+        qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) (some s)) p 2 = agl_ambientNegLogZ d t K :=
+      fun s => by rw [qp_ambientNegLogZ, qp_block_fkZ]; rfl
     rw [Finset.sum_congr rfl (fun s _ => heach s), Finset.sum_const, Finset.card_univ,
       show Fintype.card (Fin d → Bool) = 2 ^ d from by simp [Fintype.card_bool],
       nsmul_eq_mul]
     push_cast; ring
-  have hnone : qp_uu (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none) p 2
+  have hnone : qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none) p 2
       ≤ ((2 * d * (qp_Jset d K).card : ℕ) : ℝ) * c := by
-    rw [qp_uu]
+    rw [qp_ambientNegLogZ]
     calc -Real.log (fkZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none) p 2)
         ≤ ((qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none).edgeFinset.card : ℝ) * c :=
           qp_neglogZ_le_edges _ hp0 hp1 (by norm_num)
@@ -1182,12 +1187,12 @@ lemma qp_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (t : ℝ) : agl_Additive
     rw [hI]; linarith [hNb, hGb]
   · intro j
     have hdbl := qp_box_neglog_doubling d (agl_K j) t
-    rw [show agl_u d t (agl_K (j + 1)) = agl_u d t (2 * agl_K j + 1) from by rw [agl_K_succ]]
+    rw [show agl_ambientNegLogZ d t (agl_K (j + 1)) = agl_ambientNegLogZ d t (2 * agl_K j + 1) from by rw [agl_K_succ]]
     have hge : N j * c ≤ I j * c := by
       rw [hI]; apply mul_le_mul_of_nonneg_right _ hc0; linarith [hGnn j]
-    calc agl_u d t (2 * agl_K j + 1)
-        ≤ (2 : ℝ) ^ d * agl_u d t (agl_K j) + N j * c := hdbl
-      _ ≤ (2 : ℝ) ^ d * agl_u d t (agl_K j) + I j * c := by linarith
+    calc agl_ambientNegLogZ d t (2 * agl_K j + 1)
+        ≤ (2 : ℝ) ^ d * agl_ambientNegLogZ d t (agl_K j) + N j * c := hdbl
+      _ ≤ (2 : ℝ) ^ d * agl_ambientNegLogZ d t (agl_K j) + I j * c := by linarith
   · intro j
     have hGval : G j = agl_E d (agl_K (j + 1)) - (2 : ℝ) ^ d * agl_E d (agl_K j) := rfl
     rw [abs_of_nonpos (by have := hGnn j; rw [hGval] at this; linarith)]
@@ -1199,10 +1204,10 @@ lemma qp_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (t : ℝ) : agl_Additive
 /-- The box Fekete data for the free `q = 2` FK model from a uniform bound on `u / |E|` along
 doubling boxes and an oscillation bound between general and doubling boxes. -/
 lemma qp_additiveBoxFeketeData (d : ℕ) (hd : 1 ≤ d) (t : ℝ)
-    (hbdd : ∃ M : ℝ, ∀ j, |agl_u d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
+    (hbdd : ∃ M : ℝ, ∀ j, |agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
     (hosc : ∃ (bj : ℕ → ℕ) (osc : ℕ → ℝ), Tendsto bj atTop atTop ∧ Tendsto osc atTop (𝓝 0)
-        ∧ (∀ n, |ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-            - ivp2_tiltFreeEnergy (boxGraph d (agl_K (bj n))) 2 t| ≤ osc (bj n))) :
+        ∧ (∀ n, |ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+            - ivp2_ambientTiltLogZ (boxGraph d (agl_K (bj n))) 2 t| ≤ osc (bj n))) :
     agl_AdditiveBoxFeketeData d t :=
   ⟨qp_additiveDoublingBound d hd t, hbdd, hosc⟩
 

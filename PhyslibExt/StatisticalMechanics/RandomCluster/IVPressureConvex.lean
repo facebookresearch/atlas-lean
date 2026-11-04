@@ -10,11 +10,17 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.LogitFreeEnergyComparison
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 /-!
-# Convexity of the random-cluster free energy in the logit parameter
+# Convexity of the random-cluster ambient tilted log normalizer in the logit parameter
 
-The finite-volume random-cluster free energy, as a function of `t = logit p`, is a cumulant
-generating function and hence convex; pointwise limits of convex functions are convex, so every
-infinite-volume limit of it is convex.
+For positive `q` and a graph with an edge, the ambient tilted log normalizer is a scaled
+log-sum-exp and hence convex. Every assumed pointwise limit of these convex functions is convex.
+
+`ivp2_ambientTiltLogZ` uses the raw ambient `fkZ`, which sums over all `Sym2 V`
+coordinates. For `q > 0` and `|E| > 0`, it differs from the edge-restricted tilted free energy
+by `(#non-edge coordinates / |E|) * log 2`. This term is independent of `t`, so derivatives
+are unchanged, but it cannot be ignored in limits of graph sequences. In particular, it
+diverges on growing positive-dimensional boxes. Convergence below is a hypothesis, not a
+construction of thermodynamic pressure.
 
 ## i. Overview
 
@@ -23,29 +29,29 @@ For finite `ι`, weights `w ≥ 0` (not all zero) and reals `a`, the function
 `(S₂ S₀ - S₁²) / S₀² ≥ 0` by Cauchy–Schwarz (`ivp2_Kcgf_convexOn`). With
 `p = fsc_logistic t`, the random-cluster weight is
 `q ^ k(ω) e^{o(ω) t} / (1 + eᵗ) ^ |E|` (`ivp2_fkWeight_logistic`), so
-`ivp2_tiltFreeEnergy G q t = |E|⁻¹ log Z_{G, p(t), q} + log (1 + eᵗ)` equals
-`|E|⁻¹ ivp2_Kcgf (q ^ k) o t` and is convex (`ivp2_tiltFreeEnergy_convexOn`). Its derivative is
-`|E|⁻¹` times the mean number of open edges (`ivp2_tiltFreeEnergy_hasDerivAt`,
+`ivp2_ambientTiltLogZ G q t = |E|⁻¹ log Z_{G, p(t), q} + log (1 + eᵗ)` equals
+`|E|⁻¹ ivp2_Kcgf (q ^ k) o t` and is convex (`ivp2_ambientTiltLogZ_convexOn`). Its derivative is
+`|E|⁻¹` times the mean number of open edges (`ivp2_ambientTiltLogZ_hasDerivAt`,
 `ivp2_cgfMean_eq_openCount_expect`). Any pointwise limit along a sequence of graphs is convex
-(`ivp2_limitFreeEnergy_convexOn`).
+(`ivp2_limitAmbientTiltLogZ_convexOn`).
 
 ## ii. Key results
 
 - `StatMech.FK.ivp2_Kcgf` : the log-sum-exp (cumulant generating) function, with
   `ivp2_Kcgf_convexOn`.
-- `StatMech.FK.ivp2_tiltFreeEnergy` : the finite-volume free energy in the logit parameter,
-  with `ivp2_tiltFreeEnergy_convexOn` and `ivp2_tiltFreeEnergy_hasDerivAt`.
+- `StatMech.FK.ivp2_ambientTiltLogZ` : the finite-volume ambient tilted log normalizer in the logit parameter,
+  with `ivp2_ambientTiltLogZ_convexOn` and `ivp2_ambientTiltLogZ_hasDerivAt`.
 - `StatMech.FK.ivp2_convexOn_of_tendsto` : a pointwise limit of convex functions is convex.
-- `StatMech.FK.ivp2_limitFreeEnergy_convexOn` : convexity of infinite-volume limits.
+- `StatMech.FK.ivp2_limitAmbientTiltLogZ_convexOn` : convexity of assumed pointwise limits.
 
 ## iii. Table of contents
 
 - A. Log-sum-exp functions
   - A.1. Derivatives
   - A.2. Convexity
-- B. The random-cluster free energy in the logit parameter
+- B. The random-cluster ambient tilted log normalizer in the logit parameter
 - C. Limits of convex functions
-- D. Derivative of the free energy
+- D. Derivative of the ambient tilted log normalizer
 
 ## iv. References
 
@@ -196,7 +202,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-!
 
-## B. The random-cluster free energy in the logit parameter
+## B. The random-cluster ambient tilted log normalizer in the logit parameter
 
 -/
 
@@ -232,19 +238,20 @@ lemma ivp2_fkZ_logistic (t q : ℝ) :
   intro ω _
   rw [ivp2_fkWeight_logistic G t q ω]
 
-/-- The finite-volume random-cluster free energy in the logit parameter:
-`|E|⁻¹ log Z_{G, p, q} + log (1 + eᵗ)` with `p = fsc_logistic t`. The added term removes the
-normalization `(1 + eᵗ) ^ (-|E|)` of the Bernoulli factors. -/
-noncomputable def ivp2_tiltFreeEnergy (q : ℝ) (t : ℝ) : ℝ :=
+/-- The ambient logit normalizer `|E|⁻¹ log (fkZ G p q) + log (1 + eᵗ)`,
+with `p = fsc_logistic t`. For `|E| > 0`, the added term removes the Bernoulli denominator,
+not the unused-coordinate factor in `fkZ`. At zero edges this definition uses totalized
+real division and equals `log (1 + eᵗ)`; no per-edge physical interpretation is intended. -/
+noncomputable def ivp2_ambientTiltLogZ (q : ℝ) (t : ℝ) : ℝ :=
   (1 / (G.edgeFinset.card : ℝ)) * Real.log (fkZ G (fsc_logistic t) q)
     + Real.log (1 + Real.exp t)
 
-lemma ivp2_tiltFreeEnergy_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
+lemma ivp2_ambientTiltLogZ_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
     (t : ℝ) :
-    ivp2_tiltFreeEnergy G q t
+    ivp2_ambientTiltLogZ G q t
       = (1 / (G.edgeFinset.card : ℝ))
           * ivp2_Kcgf (fun ω => q ^ numClusters G ω) (fun ω => (openCount G ω : ℝ)) t := by
-  unfold ivp2_tiltFreeEnergy ivp2_Kcgf
+  unfold ivp2_ambientTiltLogZ ivp2_Kcgf
   set w : ConfigSpace (Sym2 V) → ℝ := fun ω => q ^ numClusters G ω with hw
   set a : ConfigSpace (Sym2 V) → ℝ := fun ω => (openCount G ω : ℝ) with ha
   have hwnn : ∀ ω, 0 ≤ w ω := fun ω => pow_nonneg hq.le _
@@ -259,9 +266,9 @@ lemma ivp2_tiltFreeEnergy_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.
   field_simp
   ring
 
-/-- The finite-volume free energy is convex in `t`. -/
-lemma ivp2_tiltFreeEnergy_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card) :
-    ConvexOn ℝ univ (ivp2_tiltFreeEnergy G q) := by
+/-- The finite-volume ambient tilted log normalizer is convex in `t`. -/
+lemma ivp2_ambientTiltLogZ_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card) :
+    ConvexOn ℝ univ (ivp2_ambientTiltLogZ G q) := by
   set w : ConfigSpace (Sym2 V) → ℝ := fun ω => q ^ numClusters G ω with hw
   set a : ConfigSpace (Sym2 V) → ℝ := fun ω => (openCount G ω : ℝ) with ha
   have hwnn : ∀ ω, 0 ≤ w ω := fun ω => pow_nonneg hq.le _
@@ -270,9 +277,9 @@ lemma ivp2_tiltFreeEnergy_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset
   have hsmul : ConvexOn ℝ univ (fun t => (1 / (G.edgeFinset.card : ℝ)) * ivp2_Kcgf w a t) := by
     have hc : (0:ℝ) ≤ 1 / (G.edgeFinset.card : ℝ) := by positivity
     exact hconv.smul hc
-  have heq : ivp2_tiltFreeEnergy G q
+  have heq : ivp2_ambientTiltLogZ G q
       = fun t => (1 / (G.edgeFinset.card : ℝ)) * ivp2_Kcgf w a t := by
-    funext t; exact ivp2_tiltFreeEnergy_eq_Kcgf G q hq hE t
+    funext t; exact ivp2_ambientTiltLogZ_eq_Kcgf G q hq hE t
   rw [heq]; exact hsmul
 
 /-!
@@ -296,27 +303,27 @@ lemma ivp2_convexOn_of_tendsto {κ : Type*} {l : Filter κ} [l.NeBot]
     Tendsto.add ((hlim x).const_smul s) ((hlim y).const_smul t)
   exact le_of_tendsto_of_tendsto h1 h2 (Filter.Eventually.of_forall hle)
 
-/-- Every pointwise limit of finite-volume free energies along a nontrivial filter is convex. -/
-lemma ivp2_limitFreeEnergy_convexOn
+/-- Every pointwise limit of finite-volume ambient tilted log normalizers along a nontrivial filter is convex. -/
+lemma ivp2_limitAmbientTiltLogZ_convexOn
     {κ : Type*} {l : Filter κ} [l.NeBot]
     {W : Type*} [Fintype W] [DecidableEq W]
     (Gn : κ → SimpleGraph W) [∀ i, DecidableRel (Gn i).Adj]
     (q : ℝ) (hq : 0 < q) (hE : ∀ i, 0 < (Gn i).edgeFinset.card)
     (g : ℝ → ℝ)
-    (hlim : ∀ t, Tendsto (fun i => ivp2_tiltFreeEnergy (Gn i) q t) l (𝓝 (g t))) :
+    (hlim : ∀ t, Tendsto (fun i => ivp2_ambientTiltLogZ (Gn i) q t) l (𝓝 (g t))) :
     ConvexOn ℝ univ g :=
-  ivp2_convexOn_of_tendsto (fun i => ivp2_tiltFreeEnergy (Gn i) q) g
-    (fun i => ivp2_tiltFreeEnergy_convexOn (Gn i) q hq (hE i)) hlim
+  ivp2_convexOn_of_tendsto (fun i => ivp2_ambientTiltLogZ (Gn i) q) g
+    (fun i => ivp2_ambientTiltLogZ_convexOn (Gn i) q hq (hE i)) hlim
 
 /-!
 
-## D. Derivative of the free energy
+## D. Derivative of the ambient tilted log normalizer
 
 -/
 
-lemma ivp2_tiltFreeEnergy_hasDerivAt (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
+lemma ivp2_ambientTiltLogZ_hasDerivAt (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
     (t : ℝ) :
-    HasDerivAt (ivp2_tiltFreeEnergy G q)
+    HasDerivAt (ivp2_ambientTiltLogZ G q)
       ((1 / (G.edgeFinset.card : ℝ))
         * (ivp2_S1 (fun ω => q ^ numClusters G ω) (fun ω => (openCount G ω : ℝ)) t
             / ivp2_Ssum (fun ω => q ^ numClusters G ω) (fun ω => (openCount G ω : ℝ)) t)) t := by
@@ -324,9 +331,9 @@ lemma ivp2_tiltFreeEnergy_hasDerivAt (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFins
   set a : ConfigSpace (Sym2 V) → ℝ := fun ω => (openCount G ω : ℝ) with ha
   have hwnn : ∀ ω, 0 ≤ w ω := fun ω => pow_nonneg hq.le _
   have hwpos : ∃ ω, 0 < w ω := ⟨Classical.arbitrary _, pow_pos hq _⟩
-  have heq : ivp2_tiltFreeEnergy G q
+  have heq : ivp2_ambientTiltLogZ G q
       = fun t => (1 / (G.edgeFinset.card : ℝ)) * ivp2_Kcgf w a t := by
-    funext t; exact ivp2_tiltFreeEnergy_eq_Kcgf G q hq hE t
+    funext t; exact ivp2_ambientTiltLogZ_eq_Kcgf G q hq hE t
   rw [heq]
   exact (ivp2_Kcgf_hasDerivAt w a hwnn hwpos t).const_mul _
 

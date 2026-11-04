@@ -95,7 +95,7 @@ lemma bfd_tendsto_perEdge_of_nearSubadditive (u c : ℕ → ℝ)
 variable {V : ℕ → Type*} [∀ n, Fintype (V n)] [∀ n, DecidableEq (V n)]
   (Gn : ∀ n, SimpleGraph (V n)) [∀ n, DecidableRel (Gn n).Adj]
 
-lemma bfd_tiltFreeEnergy_tendsto_of_nearSubadditive (q : ℝ) (hq : 0 < q) (t : ℝ)
+lemma bfd_ambientTiltLogZ_tendsto_of_nearSubadditive (q : ℝ) (hq : 0 < q) (t : ℝ)
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (c : ℕ → ℝ)
     (hsub : Subadditive (fun n => -Real.log (fkZ (Gn n) (fsc_logistic t) q) + c n))
@@ -104,16 +104,16 @@ lemma bfd_tiltFreeEnergy_tendsto_of_nearSubadditive (q : ℝ) (hq : 0 < q) (t : 
     (hc : Tendsto (fun n => c n / n) atTop (𝓝 0))
     (κ : ℝ) (hκ : κ ≠ 0)
     (he : Tendsto (fun n => ((Gn n).edgeFinset.card : ℝ) / n) atTop (𝓝 κ)) :
-    Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) q t) atTop
+    Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) q t) atTop
       (𝓝 (- (hsub.lim / κ) + Real.log (1 + Real.exp t))) := by
   set u : ℕ → ℝ := fun n => - Real.log (fkZ (Gn n) (fsc_logistic t) q) with hu
   set e : ℕ → ℝ := fun n => ((Gn n).edgeFinset.card : ℝ) with hedef
   have hratio : Tendsto (fun n => u n / e n) atTop (𝓝 (hsub.lim / κ)) :=
     bfd_tendsto_perEdge_of_nearSubadditive u c hsub hbdd hc e κ hκ he
-  have hform : (fun n => ivp2_tiltFreeEnergy (Gn n) q t)
+  have hform : (fun n => ivp2_ambientTiltLogZ (Gn n) q t)
       = fun n => - (u n / e n) + Real.log (1 + Real.exp t) := by
     funext n
-    unfold ivp2_tiltFreeEnergy
+    unfold ivp2_ambientTiltLogZ
     have hp0 : (0 : ℝ) < fsc_logistic t := fsc_logistic_pos t
     have hp1 : fsc_logistic t < 1 := fsc_logistic_lt_one t
     have hZ : 0 < fkZ (Gn n) (fsc_logistic t) q := fkZ_pos (Gn n) hp0 hp1 hq

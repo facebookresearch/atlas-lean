@@ -11,30 +11,36 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FKInterfaceSubadd
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeEnergyDyadic
 
 /-!
-# Dyadic doubling bounds for box free energies
+# Dyadic doubling bounds for box ambient tilted log normalizers
 
 If `-log Z` of `Λ_{2^{j+1}}` is at most `2^d` times that of `Λ_{2^j}` plus an interface cost whose
-size relative to the volume is summable, the tilt free energies satisfy the dyadic near-monotonicity
+size relative to the volume is summable, the ambient tilted log normalizers satisfy the dyadic near-monotonicity
 of `BoxFeketePerVolume`.
+
+Here `Z` denotes the ambient normalizer `fkZ`, including non-edge coordinates. The convergence
+specialization requires bounded `|bxt_ambientNegLogZ / bxt_E|` and vanishing oscillation; these
+are hypotheses, not consequences of the doubling bound. In positive dimension the ambient
+non-edge contribution makes that boundedness premise fail on growing boxes. Physical
+edge-restricted box convergence is developed separately in `EdgePartitionFunction`.
 
 ## i. Overview
 
-`bxt_u d t n = -log Z_{Λ_n}(logistic(t), 2)` and `bxt_E d n = |E(Λ_n)|`. An elementary inequality
+`bxt_ambientNegLogZ d t n = -log Z_{Λ_n}(logistic(t), 2)` and `bxt_E d n = |E(Λ_n)|`. An elementary inequality
 (`bxt_perVolume_doubling_step`) turns a doubling bound `u(2^{j+1}) ≤ 2^d u(2^j) + I_j c` with
-`|2^d E(2^j) - E(2^{j+1})| ≤ I_j` into a lower bound on the per-edge free energy at the next scale
+`|2^d E(2^j) - E(2^{j+1})| ≤ I_j` into a lower bound on the per-edge ambient tilted log normalizer at the next scale
 with defect `O(I_j / E(2^{j+1}))`. With summable defects, bounded per-edge values, and vanishing
-oscillation this gives `bpv_PerVolumeFreeEnergyData`. The doubling bound follows from gluing `2^d`
+oscillation this gives `bpv_AmbientTiltLogZConvergenceData`. The doubling bound follows from gluing `2^d`
 boxes along interfaces (`bxt_doublingBound_of_crossSplit`).
 
 ## ii. Key results
 
 - `bxt_perVolume_doubling_step` : the one-step inequality.
-- `bxt_perVolumeData_of_doubling` : doubling bounds give `bpv_PerVolumeFreeEnergyData`.
+- `bxt_perVolumeData_of_doubling` : doubling bounds give `bpv_AmbientTiltLogZConvergenceData`.
 - `bxt_doublingBound_of_crossSplit` : the doubling bound from an interface decomposition.
 
 ## iii. Table of contents
 
-- A. Box free energies and edge counts
+- A. Box ambient tilted log normalizers and edge counts
 - B. Doubling bounds
 
 ## iv. References
@@ -59,19 +65,19 @@ open ConfigSpace StatMech.Lattice SimpleGraph
 
 variable {d : ℕ}
 
-/-! ## A. Box free energies and edge counts -/
+/-! ## A. Box ambient tilted log normalizers and edge counts -/
 
-/-- `-log Z_{Λ_n}(logistic(t), 2)` for the box `Λ_n` in `ℤ^d`. -/
-noncomputable def bxt_u (d : ℕ) (t : ℝ) (n : ℕ) : ℝ :=
+/-- The negative log ambient normalizer `-log (fkZ Λ_n (logistic t) 2)` of the box `Λ_n`. -/
+noncomputable def bxt_ambientNegLogZ (d : ℕ) (t : ℝ) (n : ℕ) : ℝ :=
   - Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2)
 
 /-- The number of edges of the box `Λ_n`. -/
 noncomputable def bxt_E (d n : ℕ) : ℝ := ((boxGraph d n).edgeFinset.card : ℝ)
 
-lemma bxt_g_eq (d : ℕ) (t : ℝ) (n : ℕ) :
-    ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-      = - (bxt_u d t n / bxt_E d n) + Real.log (1 + Real.exp t) := by
-  unfold ivp2_tiltFreeEnergy bxt_u bxt_E
+lemma bxt_ambientTiltLogZ_eq (d : ℕ) (t : ℝ) (n : ℕ) :
+    ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+      = - (bxt_ambientNegLogZ d t n / bxt_E d n) + Real.log (1 + Real.exp t) := by
+  unfold ivp2_ambientTiltLogZ bxt_ambientNegLogZ bxt_E
   ring
 
 lemma bxt_E_nonneg (d n : ℕ) : 0 ≤ bxt_E d n := by
@@ -107,18 +113,18 @@ def bxt_NegLogDoublingBound (d : ℕ) (t : ℝ) : Prop :=
   ∃ (I : ℕ → ℝ),
     (∀ j, 0 ≤ I j)
     ∧ Summable (fun j => I j / bxt_E d (2 ^ (j + 1)))
-    ∧ (∀ j, bxt_u d t (2 ^ (j + 1))
-        ≤ (2 : ℝ) ^ d * bxt_u d t (2 ^ j) + I j * (- Real.log (1 - fsc_logistic t)))
+    ∧ (∀ j, bxt_ambientNegLogZ d t (2 ^ (j + 1))
+        ≤ (2 : ℝ) ^ d * bxt_ambientNegLogZ d t (2 ^ j) + I j * (- Real.log (1 - fsc_logistic t)))
     ∧ (∀ j, |(2 : ℝ) ^ d * bxt_E d (2 ^ j) - bxt_E d (2 ^ (j + 1))| ≤ I j)
 
 lemma bxt_perVolumeData_of_doubling (t : ℝ)
     (hbox : ∀ j, 0 < (boxGraph d (2 ^ j)).edgeFinset.card)
     (hdoubling : bxt_NegLogDoublingBound d t)
-    (hbdd : ∃ M : ℝ, ∀ j, |bxt_u d t (2 ^ j) / bxt_E d (2 ^ j)| ≤ M)
+    (hbdd : ∃ M : ℝ, ∀ j, |bxt_ambientNegLogZ d t (2 ^ j) / bxt_E d (2 ^ j)| ≤ M)
     (osc : ℕ → ℝ) (hosc : Tendsto osc atTop (𝓝 0))
-    (hsand : ∀ n, 1 ≤ n → |ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-        - ivp2_tiltFreeEnergy (boxGraph d (2 ^ (Nat.log 2 n))) 2 t| ≤ osc (Nat.log 2 n)) :
-    bpv_PerVolumeFreeEnergyData d t := by
+    (hsand : ∀ n, 1 ≤ n → |ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+        - ivp2_ambientTiltLogZ (boxGraph d (2 ^ (Nat.log 2 n))) 2 t| ≤ osc (Nat.log 2 n)) :
+    bpv_AmbientTiltLogZConvergenceData d t := by
   classical
   obtain ⟨I, hInn, hIsum, hudbl, hEdge⟩ := hdoubling
   obtain ⟨M, hM⟩ := hbdd
@@ -139,28 +145,28 @@ lemma bxt_perVolumeData_of_doubling (t : ℝ)
   · intro j; exact mul_nonneg hMc0 (hIE0 j)
   · exact hIsum.mul_left (M + c)
   · intro j
-    rw [bxt_g_eq d t (2 ^ j), bxt_g_eq d t (2 ^ (j + 1))]
-    have hstep := bxt_perVolume_doubling_step (a := bxt_u d t (2 ^ j))
-      (A := bxt_u d t (2 ^ (j + 1))) (e := bxt_E d (2 ^ j)) (E := bxt_E d (2 ^ (j + 1)))
+    rw [bxt_ambientTiltLogZ_eq d t (2 ^ j), bxt_ambientTiltLogZ_eq d t (2 ^ (j + 1))]
+    have hstep := bxt_perVolume_doubling_step (a := bxt_ambientNegLogZ d t (2 ^ j))
+      (A := bxt_ambientNegLogZ d t (2 ^ (j + 1))) (e := bxt_E d (2 ^ j)) (E := bxt_E d (2 ^ (j + 1)))
       (K := (2 : ℝ) ^ d) (c := c) (i := I j)
       (hEpos j) (hEpos (j + 1)) hc0 (hInn j) (hudbl j) (hEdge j)
-    have hdefle : (|bxt_u d t (2 ^ j)| / bxt_E d (2 ^ j) + c) * (I j / bxt_E d (2 ^ (j + 1)))
+    have hdefle : (|bxt_ambientNegLogZ d t (2 ^ j)| / bxt_E d (2 ^ j) + c) * (I j / bxt_E d (2 ^ (j + 1)))
         ≤ δ j := by
       change _ ≤ (M + c) * (I j / bxt_E d (2 ^ (j + 1)))
       apply mul_le_mul_of_nonneg_right _ (hIE0 j)
-      have habs : |bxt_u d t (2 ^ j)| / bxt_E d (2 ^ j) = |bxt_u d t (2 ^ j) / bxt_E d (2 ^ j)|
+      have habs : |bxt_ambientNegLogZ d t (2 ^ j)| / bxt_E d (2 ^ j) = |bxt_ambientNegLogZ d t (2 ^ j) / bxt_E d (2 ^ j)|
           := by
         rw [abs_div, abs_of_pos (hEpos j)]
       rw [habs]; have := hM j; linarith
-    have hgoal : - (bxt_u d t (2 ^ j) / bxt_E d (2 ^ j)) - δ j
-        ≤ - (bxt_u d t (2 ^ (j + 1)) / bxt_E d (2 ^ (j + 1))) := by
+    have hgoal : - (bxt_ambientNegLogZ d t (2 ^ j) / bxt_E d (2 ^ j)) - δ j
+        ≤ - (bxt_ambientNegLogZ d t (2 ^ (j + 1)) / bxt_E d (2 ^ (j + 1))) := by
       have := hstep; linarith
     linarith
   · refine ⟨M + Real.log (1 + Real.exp t), ?_⟩
     rintro x ⟨j, rfl⟩
     simp only
-    rw [bxt_g_eq d t (2 ^ j)]
-    have hlb : - M ≤ bxt_u d t (2 ^ j) / bxt_E d (2 ^ j) := (abs_le.mp (hM j)).1
+    rw [bxt_ambientTiltLogZ_eq d t (2 ^ j)]
+    have hlb : - M ≤ bxt_ambientNegLogZ d t (2 ^ j) / bxt_E d (2 ^ j) := (abs_le.mp (hM j)).1
     linarith
 
 lemma bxt_doublingBound_of_crossSplit (t : ℝ) (j : ℕ)
@@ -170,8 +176,8 @@ lemma bxt_doublingBound_of_crossSplit (t : ℝ) (j : ℕ)
     (φ : boxGraph d (2 ^ (j + 1)) ≃g K)
     (hH : (fkZ (boxGraph d (2 ^ j)) (fsc_logistic t) 2) ^ (2 ^ d - 1)
         ≤ fkZ H (fsc_logistic t) 2) :
-    bxt_u d t (2 ^ (j + 1))
-      ≤ (2 : ℝ) ^ d * bxt_u d t (2 ^ j)
+    bxt_ambientNegLogZ d t (2 ^ (j + 1))
+      ≤ (2 : ℝ) ^ d * bxt_ambientNegLogZ d t (2 ^ j)
         + (fis_interface (boxGraph d (2 ^ j)) H K).card * (- Real.log (1 - fsc_logistic t)) := by
   set p := fsc_logistic t with hp
   have hp0 : (0 : ℝ) < p := fsc_logistic_pos t
@@ -186,7 +192,7 @@ lemma bxt_doublingBound_of_crossSplit (t : ℝ) (j : ℕ)
       Real.log_le_log (pow_pos hZG _) hH
     rw [Real.log_pow] at hle
     nlinarith [hle]
-  rw [bxt_u, hiso, bxt_u]
+  rw [bxt_ambientNegLogZ, hiso, bxt_ambientNegLogZ]
   have hcount : ((2 ^ d - 1 : ℕ) : ℝ) = (2 : ℝ) ^ d - 1 := by
     have : 1 ≤ 2 ^ d := Nat.one_le_two_pow
     push_cast [Nat.cast_sub this]

@@ -607,11 +607,11 @@ variable {d : ℕ}
 noncomputable def ecz_edgeFreeEnergy (d : ℕ) (t : ℝ) (n : ℕ) : ℝ :=
   -(ecz_u d t n / ((boxGraph d n).edgeFinset.card : ℝ)) + Real.log (1 + Real.exp t)
 
-lemma ecz_ivp2_eq_edgeFE (t : ℝ) (n : ℕ) (hE : 0 < (boxGraph d n).edgeFinset.card) :
-    ivp2_tiltFreeEnergy (boxGraph d n) 2 t
+lemma ecz_ambientTiltLogZ_eq_edgeFE (t : ℝ) (n : ℕ) (hE : 0 < (boxGraph d n).edgeFinset.card) :
+    ivp2_ambientTiltLogZ (boxGraph d n) 2 t
       = (ecz_NE (boxGraph d n) : ℝ) / ((boxGraph d n).edgeFinset.card : ℝ) * Real.log 2
         + ecz_edgeFreeEnergy d t n := by
-  unfold ivp2_tiltFreeEnergy ecz_edgeFreeEnergy ecz_u
+  unfold ivp2_ambientTiltLogZ ecz_edgeFreeEnergy ecz_u
   set p := fsc_logistic t
   have hp0 : (0 : ℝ) < p := fsc_logistic_pos t
   have hp1 : p < 1 := fsc_logistic_lt_one t
@@ -628,7 +628,7 @@ lemma ecz_ivp2_eq_edgeFE (t : ℝ) (n : ℕ) (hE : 0 < (boxGraph d n).edgeFinset
 lemma ecz_centered_eq_cfe (t : ℝ) (n : ℕ) (hE : 0 < (boxGraph d n).edgeFinset.card) :
     cfe_centered (boxGraph d n) 2 t = ecz_edgeFreeEnergy d t n - ecz_edgeFreeEnergy d 0 n := by
   unfold cfe_centered
-  rw [ecz_ivp2_eq_edgeFE t n hE, ecz_ivp2_eq_edgeFE 0 n hE]
+  rw [ecz_ambientTiltLogZ_eq_edgeFE t n hE, ecz_ambientTiltLogZ_eq_edgeFE 0 n hE]
   ring
 
 lemma ecz_edgeFE_eq (t : ℝ) (n : ℕ) :
@@ -1807,15 +1807,15 @@ lemma ecz_wiredCentered_tendsto_n1 (hd : 1 ≤ d)
     (hfree : Tendsto (fun n => cfe_centered (boxGraph d n) 2 t) atTop (𝓝 (G t))) :
     Tendsto (fun n => cfe_wiredCentered (boxGraph d n) (boxBoundary d n) 2 t) atTop (𝓝 (G t)) := by
   have hsv := fup_surfaceVolume_tendsto_zero d hd
-  have hdiff : ∀ s : ℝ, Tendsto (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 s
-        - wpd_wiredTiltFreeEnergy (boxGraph d n) (boxBoundary d n) 2 s) atTop (𝓝 0) := by
+  have hdiff : ∀ s : ℝ, Tendsto (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 s
+        - wpd_wiredAmbientTiltLogZ (boxGraph d n) (boxBoundary d n) 2 s) atTop (𝓝 0) := by
     intro s
-    have hbound : ∀ᶠ n in atTop, |ivp2_tiltFreeEnergy (boxGraph d n) 2 s
-          - wpd_wiredTiltFreeEnergy (boxGraph d n) (boxBoundary d n) 2 s|
+    have hbound : ∀ᶠ n in atTop, |ivp2_ambientTiltLogZ (boxGraph d n) 2 s
+          - wpd_wiredAmbientTiltLogZ (boxGraph d n) (boxBoundary d n) 2 s|
         ≤ ((Finset.univ.filter (boxBoundary d n)).card : ℝ)
             / ((boxGraph d n).edgeFinset.card : ℝ) * Real.log 2 := by
       filter_upwards [eventually_ge_atTop 1] with n hn
-      exact wpd_tiltFreeEnergy_sub_le (boxGraph d n) (boxBoundary d n) (by norm_num)
+      exact wpd_ambientTiltLogZ_sub_le (boxGraph d n) (boxBoundary d n) (by norm_num)
         (hbox1 n hn) s
     have hsvlog : Tendsto (fun n =>
         ((Finset.univ.filter (boxBoundary d n)).card : ℝ) / ((boxGraph d n).edgeFinset.card : ℝ)
@@ -1827,10 +1827,10 @@ lemma ecz_wiredCentered_tendsto_n1 (hd : 1 ≤ d)
         - cfe_wiredCentered (boxGraph d n) (boxBoundary d n) 2 t) atTop (𝓝 0) := by
     have heq : (fun n => cfe_centered (boxGraph d n) 2 t
           - cfe_wiredCentered (boxGraph d n) (boxBoundary d n) 2 t)
-        = (fun n => (ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-            - wpd_wiredTiltFreeEnergy (boxGraph d n) (boxBoundary d n) 2 t)
-          - (ivp2_tiltFreeEnergy (boxGraph d n) 2 0
-            - wpd_wiredTiltFreeEnergy (boxGraph d n) (boxBoundary d n) 2 0)) := by
+        = (fun n => (ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+            - wpd_wiredAmbientTiltLogZ (boxGraph d n) (boxBoundary d n) 2 t)
+          - (ivp2_ambientTiltLogZ (boxGraph d n) 2 0
+            - wpd_wiredAmbientTiltLogZ (boxGraph d n) (boxBoundary d n) 2 0)) := by
       funext n; unfold cfe_centered cfe_wiredCentered; ring
     rw [heq]
     have := (hdiff t).sub (hdiff 0); simpa using this
