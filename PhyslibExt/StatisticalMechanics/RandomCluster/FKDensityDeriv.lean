@@ -31,7 +31,8 @@ of `fpd_IVDensityIsOneSidedDeriv` and the uniqueness statement.
 - `fdd_freeDensity_bracket` : `g'₋ ≤ free density ≤ g'₊` under density collapse.
 - `fdd_eq_leftDeriv_of_bracket_leftContinuous`, `fdd_eq_rightDeriv_of_bracket_rightContinuous` :
   one-sided continuity selects the derivative.
-- `fdd_fk_uniqueness_of_primitives` : countable-exception uniqueness from assumed ambient-log limits,
+- `fdd_fk_uniqueness_of_primitives` : countable-exception uniqueness from assumed ambient-log
+  limits,
   density collapse, a wired upper bound, and one-sided continuity.
 
 ## iii. Table of contents

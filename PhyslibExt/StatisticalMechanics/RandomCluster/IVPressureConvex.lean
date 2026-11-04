@@ -39,7 +39,8 @@ For finite `ι`, weights `w ≥ 0` (not all zero) and reals `a`, the function
 
 - `StatMech.FK.ivp2_Kcgf` : the log-sum-exp (cumulant generating) function, with
   `ivp2_Kcgf_convexOn`.
-- `StatMech.FK.ivp2_ambientTiltLogZ` : the finite-volume ambient tilted log normalizer in the logit parameter,
+- `StatMech.FK.ivp2_ambientTiltLogZ` : the finite-volume ambient tilted log normalizer in the logit
+  parameter,
   with `ivp2_ambientTiltLogZ_convexOn` and `ivp2_ambientTiltLogZ_hasDerivAt`.
 - `StatMech.FK.ivp2_convexOn_of_tendsto` : a pointwise limit of convex functions is convex.
 - `StatMech.FK.ivp2_limitAmbientTiltLogZ_convexOn` : convexity of assumed pointwise limits.
@@ -303,7 +304,8 @@ lemma ivp2_convexOn_of_tendsto {κ : Type*} {l : Filter κ} [l.NeBot]
     Tendsto.add ((hlim x).const_smul s) ((hlim y).const_smul t)
   exact le_of_tendsto_of_tendsto h1 h2 (Filter.Eventually.of_forall hle)
 
-/-- Every pointwise limit of finite-volume ambient tilted log normalizers along a nontrivial filter is convex. -/
+/-- Every pointwise limit of finite-volume ambient tilted log normalizers along a nontrivial filter
+  is convex. -/
 lemma ivp2_limitAmbientTiltLogZ_convexOn
     {κ : Type*} {l : Filter κ} [l.NeBot]
     {W : Type*} [Fintype W] [DecidableEq W]

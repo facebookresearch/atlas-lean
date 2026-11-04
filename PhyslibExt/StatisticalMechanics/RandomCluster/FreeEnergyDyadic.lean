@@ -25,8 +25,10 @@ abstract sequence hypotheses, not this box predicate or a physical pressure limi
 
 An almost-increasing bounded sequence with summable defects converges
 (`bpv_almost_mono_converges`). Along dyadic scales `2^j` this gives a limit, and the oscillation
-bound transfers it to all `n`. `bpv_AmbientTiltLogZConvergenceData d t` states these hypotheses for the
-ambient tilted log normalizer of `Λ_n`; it yields convergence of the box ambient tilted log normalizers
+bound transfers it to all `n`. `bpv_AmbientTiltLogZConvergenceData d t` states these hypotheses for
+  the
+ambient tilted log normalizer of `Λ_n`; it yields convergence of the box ambient tilted log
+  normalizers
 (`bpv_boxAmbientTiltLogZ_tendsto`). `bpv_abstractDyadicData_satisfiable` exhibits sequences
 satisfying the abstract numeric hypotheses, not the box predicate.
 
@@ -140,9 +142,11 @@ variable {d : ℕ}
 
 /-! ## B. Box ambient tilted log normalizers -/
 
-/-- The ambient tilted log normalizer of `Λ_{2^j}` is increasing in `j` up to summable defects and bounded
+/-- The ambient tilted log normalizer of `Λ_{2^j}` is increasing in `j` up to summable defects and
+  bounded
 above, and
-the ambient tilted log normalizer of `Λ_n` differs from that of the dyadic box below it by a vanishing
+the ambient tilted log normalizer of `Λ_n` differs from that of the dyadic box below it by a
+  vanishing
 oscillation.
 -/
 def bpv_AmbientTiltLogZConvergenceData (d : ℕ) (t : ℝ) : Prop :=

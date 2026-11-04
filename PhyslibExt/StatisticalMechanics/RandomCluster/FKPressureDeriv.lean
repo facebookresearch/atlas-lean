@@ -26,8 +26,10 @@ All limit statements assume convergence; they do not construct physical box pres
 ## i. Overview
 
 For a finite graph `G`, `t ↦ |E|^{-1} log Z_G(logistic(t), 2) + log(1 + e^t)` has derivative
-`|E|^{-1} E[#open edges]` (`fpd_ambientTiltLogZ_deriv_eq_avgDensity`). For a sequence of graphs whose
-ambient tilted log normalizers converge to a convex `g`, the derivatives converge to `g'(t)` wherever `g` is
+`|E|^{-1} E[#open edges]` (`fpd_ambientTiltLogZ_deriv_eq_avgDensity`). For a sequence of graphs
+  whose
+ambient tilted log normalizers converge to a convex `g`, the derivatives converge to `g'(t)`
+  wherever `g` is
 differentiable (`fpd_deriv_interchange_of_differentiable`). If the average densities collapse to the
 free infinite-volume density (`fpd_AvgDensityCollapse`), the free density equals `g'(t)` at such
 points. The predicate `fpd_IVDensityIsOneSidedDeriv` (wired and free densities are the right and

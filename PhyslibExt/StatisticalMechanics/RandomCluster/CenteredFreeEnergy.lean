@@ -169,7 +169,8 @@ lemma cfe_wiredCentered_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.c
   have hconv : ConvexOn ℝ univ (wpd_wiredAmbientTiltLogZ G bdry q) :=
     wpd_wiredAmbientTiltLogZ_convexOn G bdry q hq hE
   have heq : cfe_wiredCentered G bdry q
-      = (fun t => wpd_wiredAmbientTiltLogZ G bdry q t + (- wpd_wiredAmbientTiltLogZ G bdry q 0)) := by
+      = (fun t => wpd_wiredAmbientTiltLogZ G bdry q t + (- wpd_wiredAmbientTiltLogZ G bdry q 0)) :=
+        by
     funext t; unfold cfe_wiredCentered; ring
   rw [heq]; exact hconv.add_const _
 
