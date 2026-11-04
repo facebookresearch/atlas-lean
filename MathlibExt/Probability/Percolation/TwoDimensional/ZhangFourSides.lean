@@ -246,17 +246,6 @@ theorem zhg_union_of_geometricData {E : Type*} (μ : Measure (ConfigSpace E))
   exact zhg_union_tendsto_one_of_merge μ (A := A) (B := B) (Err := hgeo.Err)
     (Cap := fun n => S₀ n ∩ S₁ n) hgeo.merge hinter hgeo.errTendsto
 
-/-- `ZhangGeometricData` discharges the hypothesis `hZhangUnion` of `kzh_corLowerBound` (ignoring
-its assumptions `BoxCrossingProperty` and `θ(1/2) > 0`). -/
-theorem zhg_zhangUnion
-    {A B : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
-    (hpa : PositivelyAssociated halfMeasure)
-    (hgeo : ZhangGeometricData halfMeasure A B) :
-    BoxCrossingProperty halfMeasure 2 →
-      0 < halfMeasure.real (percolationEvent 2) →
-      Tendsto (fun n => halfMeasure.real (A n ∪ B n)) atTop (𝓝 1) :=
-  fun _ _ => zhg_union_of_geometricData halfMeasure hpa hgeo
-
 /-- The hypotheses of a `ZhangGeometricData`-based corollary are contradictory: `ZhangGeometricData` gives
 `ℙ(A n ∪ B n) → 1`, hence `ℙ(A n) → 1` by the square-root trick, while the self-dual dichotomy
 `hdich` gives `ℙ(A n) = 1/2` for every `n`. -/

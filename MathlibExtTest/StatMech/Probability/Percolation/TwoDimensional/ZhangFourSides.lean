@@ -99,4 +99,9 @@ example {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     (hgeo : ZhangGeometricData halfMeasure A B) : False :=
   zhg_corLowerBound_hypotheses_false hpa hAinc hBinc hBm hHm hRmeas hRpres hdich heq hgeo
 
+-- Do not package unconditional convergence as Zhang's conditional geometric input.
+run_cmd do
+  if (← Lean.getEnv).contains `StatMech.TwoDim.zhg_zhangUnion then
+    throwError "Zhang-union adapter still discards the geometric hypotheses"
+
 end MathlibExtTest.StatMech.Probability.Percolation.TwoDimensional.ZhangFourSides
