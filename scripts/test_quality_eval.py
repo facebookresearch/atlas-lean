@@ -79,8 +79,10 @@ class StatisticsTests(unittest.TestCase):
     def test_scope_excludes_legacy_wanted_tests_and_certificates(self) -> None:
         self.assertTrue(evaluation.eligible_path("MathlibExt/Analysis/X.lean", "atlas"))
         self.assertTrue(evaluation.eligible_path("CSLibExt/Logic/X.lean", "atlas"))
+        self.assertTrue(evaluation.eligible_path("PhyslibExt/StatisticalMechanics/X.lean", "atlas"))
         for path in ("Atlas/X.lean", "v1/X.lean", "WantedExt/X.lean", "MathlibExtTest/X.lean",
-                     "CSLibExtTest/X.lean", "MathlibExt/Certificates/X.lean", "MathlibExt/README.md"):
+                     "CSLibExtTest/X.lean", "PhyslibExtTest/X.lean", "MathlibExt/Certificates/X.lean",
+                     "PhyslibExt/Certificates/X.lean", "MathlibExt/README.md", "PhyslibExt/README.md"):
             self.assertFalse(evaluation.eligible_path(path, "atlas"), path)
         self.assertFalse(evaluation.eligible_path("Mathlib/Tactic/Basic.lean", "mathlib"))
         self.assertTrue(evaluation.eligible_path("Mathlib/Analysis/Basic.lean", "mathlib"))
@@ -538,19 +540,39 @@ class OfficialSuiteTests(unittest.TestCase):
             subprocess.run(["git", "-C", str(path), *arguments], check=True, capture_output=True)
         return evaluation.git(path, "rev-parse", "HEAD")
 
-    def prepare_fixture(self, index: list[list[str]] | None = None) -> Path:
+    @staticmethod
+    def atlas_fixture_sources(physics: bool) -> dict[str, str]:
+        return {
+            "MathlibExt/Fixture.lean": ("-- no declarations\n" if physics else
+                "theorem atlas_a : True := by trivial\ntheorem atlas_b : True := by trivial\n"),
+            "CSLibExt/Empty.lean": "-- no declarations\n",
+            "PhyslibExt/Fixture.lean": ("module\npublic lemma physics_a : True := by trivial\n"
+                "public lemma physics_b : True := by trivial\n"
+                "private lemma physics_hidden : True := by trivial\n"
+                "@[deprecated physics_a (since := \"2026-01-01\")]\n"
+                "public lemma physics_old : True := by trivial\n" if physics else "-- no declarations\n"),
+            "PhyslibExtTest/Excluded.lean": "lemma physics_test : True := by trivial\n",
+        }
+
+    def prepare_fixture(self, index: list[list[str]] | None = None, *, physics: bool = False) -> Path:
         repo = self.root / "atlas"
         repo.mkdir()
         dependency = repo / ".lake" / "packages" / "mathlib"
         revision = self.make_repo(dependency, {"Mathlib/Fixture.lean":
             "theorem mathlib_a : True := by trivial\ntheorem mathlib_b : True := by trivial\n"
             "@[deprecated mathlib_a (since := \"2026-01-01\")]\ntheorem mathlib_old : True := by trivial\n"})
+        packages = [{"name": "mathlib", "rev": revision,
+                     "url": "https://github.com/leanprover-community/mathlib4"}]
+        if physics:
+            revision = self.make_repo(repo / ".lake/packages/Physlib", {
+                f"{root}/Fixture.lean": f"lemma {root}.upstream_fixture : True := by trivial\n"
+                for root in ("Physlib", "PhyslibAlpha", "QuantumInfo")})
+            packages.append({"name": "Physlib", "rev": revision,
+                             "url": "https://github.com/leanprover-community/physlib"})
         self.make_repo(repo / "production", {"placeholder.lean": "-- unused\n"})
         for name, data in {
-            "MathlibExt/Fixture.lean": "theorem atlas_a : True := by trivial\ntheorem atlas_b : True := by trivial\n",
-            "CSLibExt/Empty.lean": "-- no declarations\n",
-            "lake-manifest.json": json.dumps({"packagesDir": ".lake/packages", "packages": [
-                {"name": "mathlib", "rev": revision, "url": "https://github.com/leanprover-community/mathlib4"}]}),
+            **self.atlas_fixture_sources(physics),
+            "lake-manifest.json": json.dumps({"packagesDir": ".lake/packages", "packages": packages}),
             "lakefile.toml": 'name = "atlas"\n', "lean-toolchain": "leanprover/lean4:v4.35.0\n",
             ".gitignore": ".lake/\nproduction/\n"}.items():
             target = repo / name
@@ -618,6 +640,53 @@ class OfficialSuiteTests(unittest.TestCase):
         header = next(index for index, line in enumerate(lines) if line.startswith("| Indicator"))
         self.assertEqual(lines[header].count("|"), lines[header + 1].count("|"))
         self.assertEqual(lines[header].count("|"), lines[header + 2].count("|"))
+
+    def test_physics_preparation_and_populated_report(self) -> None:
+        run = self.prepare_fixture(physics=True)
+        manifest = evaluation.verify_run(run)
+        self.assertEqual(manifest["scope"]["atlas"], ["MathlibExt", "CSLibExt", "PhyslibExt"])
+        census = manifest["populations"]["atlas"]
+        self.assertEqual(census["roots"]["PhyslibExt"]["public_theorems"], 2)
+        self.assertEqual(census["roots"]["PhyslibExt"]["files"], 1)
+        self.assertEqual(census["skipped_private"], 1)
+        self.assertEqual(census["skipped_deprecated"], 1)
+        self.assertFalse((run / "corpus/atlas/PhyslibExtTest").exists())
+        targets = [row for row in evaluation.read_json(run / "theorems.json")["rows"] if row["lib"] == "atlas"]
+        self.assertEqual({row["name"] for row in targets}, {"physics_a", "physics_b"})
+        self.assertTrue(all(row["root"] == "PhyslibExt" for row in targets))
+        self.write_negative_results(run, "physics-fixture")
+        evaluation.report(argparse.Namespace(run_dir=run, label="physics-fixture", require_complete=True))
+        summary = evaluation.read_json(run / "reports/physics-fixture/summary.json")
+        self.assertTrue(summary["complete"])
+        for indicator in evaluation.INDICATORS:
+            visibility = "whole-file" if indicator == "repeated-proof-machinery" else "public"
+            cell = summary["cells"][f"{indicator}/PhyslibExt/{visibility}"]
+            self.assertEqual(cell["judged"], 1 if visibility == "whole-file" else 2)
+        self.assertEqual(summary["comparisons"], {})
+        text = (run / "reports/physics-fixture/report.md").read_text()
+        self.assertIn("Scope: maintained MathlibExt, CSLibExt, PhyslibExt;", text)
+        self.assertIn("Physlib (including PhyslibAlpha and QuantumInfo) redundancy is not measured", text)
+        self.assertIn("CSLibExt and PhyslibExt have no domain-matched control", text)
+
+    def test_physics_duplicate_references_preserve_official_scope(self) -> None:
+        run = self.prepare_fixture(physics=True)
+        evaluation.verify_run(run)
+        row = next(row for row in evaluation.read_json(run / "theorems.json")["rows"] if row["lib"] == "atlas")
+        protocol = run / "protocols/duplicates-mathlib-inclusive"
+        verdict = {"verdict": "duplicate", "mathlib_declaration": "mathlib_a",
+                   "file": "Mathlib/Fixture.lean", "derivation": "by exact mathlib_a",
+                   "proof_uses_it": False, "explanation": "Source-binding fixture only."}
+        self.assertEqual(evaluation.validate_theorem(verdict, protocol.name, self.upstream, protocol, row), {})
+        for root in ("Physlib", "PhyslibAlpha", "QuantumInfo"):
+            relative = f"{root}/Fixture.lean"
+            absolute = run / "views/atlas/Physlib" / relative
+            self.assertTrue(absolute.is_file())
+            for path in (relative, str(absolute)):
+                with self.subTest(root=root, path=path):
+                    with self.assertRaisesRegex(ValueError, "permitted pinned upstreams"):
+                        evaluation.validate_theorem({**verdict, "mathlib_declaration": f"{root}.upstream_fixture",
+                            "file": path, "derivation": f"by exact {root}.upstream_fixture"},
+                            protocol.name, self.upstream, protocol, row)
 
     def test_changed_sample_rejected(self) -> None:
         run = self.prepare_fixture()
