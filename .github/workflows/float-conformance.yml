@@ -41,7 +41,7 @@ jobs:
       - name: Install native dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y gcc libmpfr-dev libgmp-dev
+          sudo apt-get install --no-install-recommends -y gcc gdb binutils libmpfr-dev libgmp-dev
       - name: Install pinned Lean tooling
         run: |
           set -euo pipefail

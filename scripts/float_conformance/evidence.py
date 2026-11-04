@@ -14,9 +14,12 @@ from pathlib import Path
 
 from run import SOURCE, digest, execute, require, verify_provenance
 from test_tools import CASE_NAMES as TOOL_CASE_NAMES
+from native_paths import COMMANDS as NATIVE_COMMANDS
+from test_native_paths import CASE_NAMES as NATIVE_CASE_NAMES
 
 SOURCES = ("Model.lean", "README.md", "compare.py", "corpus.py", "fixtures.json",
-           "oracle.c", "run.py", "test_compare.py", "evidence.py", "test_tools.py")
+           "oracle.c", "run.py", "test_compare.py", "evidence.py", "test_tools.py",
+           "native_paths.py", "native_trace.gdb", "test_native_paths.py")
 DRIVER_COMMANDS = ("lean_prefix", "actual_lean_prefix", "lean_version", "leanc_version",
                    "cc_version", "build_oracle", "emit_model", "link_model",
                    "oracle_libraries", "model_libraries", "lean_libraries",
@@ -56,8 +59,11 @@ def package(root, out):
     copy(SOURCE.parents[1] / ".github/workflows/float-conformance.yml",
          "source/float-conformance.yml", required=True)
     receipts(".", ("git_head", "tool_dispatch", "driver", "controls_normal",
-                   "controls_optimized", "provenance"))
+                   "controls_optimized", "provenance", "native_controls"))
     receipts("run", DRIVER_COMMANDS)
+    receipts("run/native-paths", NATIVE_COMMANDS)
+    for name in ("trace.gdb", "result.json"):
+        copy(root / "run/native-paths" / name, "run/native-paths/" + name)
     for name in ("result.json", "runtime-hashes.json", "tool-provenance.json",
                  "Model.c", "model", "oracle", "oracle.d"):
         copy(root / "run" / name, "run/" + name)
@@ -91,6 +97,17 @@ def package(root, out):
             base = "provenance/" + mode + "-" + case
             for name in ("pins.json", "stdout", "stderr", "receipt.json"):
                 copy(root / base / name, base + "/" + name)
+    receipts("native-controls", ("build_mismatched_oracle",))
+    for name in ("summary.json", "gmp/original.h", "gmp/gmp.h", "gmp/oracle",
+                 "gmp/oracle.d", "gmp/metadata.json"):
+        copy(root / "native-controls" / name, "native-controls/" + name)
+    for case in NATIVE_CASE_NAMES:
+        base = "native-controls/" + case
+        receipts(base, ("check",))
+        receipts(base + "/paths", NATIVE_COMMANDS)
+        for name in ("paths/trace.gdb", "paths/result.json", "failed-tracer",
+                     "oracle-command.json", "oracle.stdout", "oracle.stderr", "oracle.result.json"):
+            copy(root / base / name, base + "/" + name)
     record = dict(files=len(selected), bytes=sum((out / n).stat().st_size for n in selected),
                   full_result_present="run/result.json" in selected,
                   selection="explicit filenames; no tmp/cache/environment/private data",
@@ -180,6 +197,9 @@ def main():
             execute(args.out, "provenance", [sys.executable, "-B", SOURCE / "evidence.py",
                                             "test", "--dataset", args.out / "run",
                                             "--out", args.out / "provenance"])
+            execute(args.out, "native_controls", [sys.executable, "-B", SOURCE / "test_native_paths.py",
+                                                  "--dataset", args.out / "run",
+                                                  "--out", args.out / "native-controls"])
         elif args.mode == "package":
             require(args.root is not None and args.out is not None, "package requires root/out")
             result = package(args.root, args.out)

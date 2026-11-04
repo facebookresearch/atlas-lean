@@ -92,6 +92,13 @@ int main(int argc, char **argv) {
   unsigned before = _mm_getcsr();
   if (strcmp(MPFR_VERSION_STRING, mpfr_get_version()))
     fail("MPFR header/runtime version mismatch");
+  char gmp_header[64];
+  snprintf(gmp_header, sizeof(gmp_header), "%d.%d.%d", __GNU_MP_VERSION,
+           __GNU_MP_VERSION_MINOR, __GNU_MP_VERSION_PATCHLEVEL);
+  if (strcmp(gmp_header, gmp_version)) {
+    fprintf(stderr, "GMP header=%s runtime=%s\n", gmp_header, gmp_version);
+    fail("GMP header/runtime version mismatch");
+  }
   if (mpfr_get_emin() >= -2200 || mpfr_get_emax() <= 2200)
     fail("MPFR exponent range too small");
   mpfr_t x, y, z;
@@ -126,11 +133,11 @@ int main(int argc, char **argv) {
   fprintf(stderr, "{\"pairs\":%zu,\"hardware_add_calls\":%" PRIu64
           ",\"hardware_mul_calls\":%" PRIu64 ",\"exact_ops\":%" PRIu64
           ",\"precision\":2200,\"mpfr_header\":\"%s\","
-          "\"mpfr_runtime\":\"%s\",\"gmp_runtime\":\"%s\","
+          "\"mpfr_runtime\":\"%s\",\"gmp_header\":\"%s\",\"gmp_runtime\":\"%s\","
           "\"mpfr_struct_bytes\":%zu,\"mxcsr_before\":%u,"
           "\"mxcsr_after\":%u}\n", count, add_calls, mul_calls,
           exact_calls, MPFR_VERSION_STRING, mpfr_get_version(),
-          gmp_version, sizeof(mpfr_t), before, _mm_getcsr());
+          gmp_header, gmp_version, sizeof(mpfr_t), before, _mm_getcsr());
   mpfr_clear(x); mpfr_clear(y); mpfr_clear(z); free(line);
   return 0;
 }

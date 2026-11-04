@@ -10,7 +10,8 @@ Finite test evidence is not an exhaustive correctness proof or a C2/C3 claim.
 ## Run
 
 Requirements: x86_64 Linux, Python 3.9+, a C compiler supporting the supplied
-GCC/Clang flags, `ldd`, installed Lean 4.35, and matching MPFR/GMP development
+GCC/Clang flags, `ldd`, GNU `objdump`, GDB with Python and debuginfod controls,
+installed Lean 4.35, and matching MPFR/GMP development
 headers and runtime libraries. Nothing is downloaded or installed by the driver.
 It uses no Lake build or Mathlib cache.
 
@@ -76,14 +77,33 @@ results have 2200-bit precision. Every finite binary64 value is a multiple of
 multiplication needs at most 106 significant bits. MPFR's exponent range is
 checked, every finite intermediate must report exactness, and `mpfr_get_d` makes
 the sole lossy binary64 rounding. Operand roundtrips are checked. Header/runtime
-versions must match. No hand-declared MPFR ABI is used.
+versions must match for both MPFR and GMP. The oracle reports GMP's header
+version macros and runtime version, and rejects a mismatch before arithmetic.
+Version equality is a provenance check, not proof of arbitrary ABI compatibility.
+No hand-declared MPFR ABI is used.
 
 Separate non-inlined `hw_add` and `hw_mul` functions use scalar SSE2 arithmetic.
 The process checks RNE, FTZ=0 and DAZ=0 before/after execution and counts hardware
 calls. Source and native disassembly/live traces must accompany an independence
-claim; different wrapper names or agreement alone are insufficient. MPFR can
+claim; different wrapper names or agreement alone are insufficient. Every driver
+now retains and validates disassembly plus live GDB traces of its newly built
+model and oracle on the one-pair smoke input. The trace is distinct from the
+full 8,192-pair comparison. It checks actual scalar instructions, core integer
+and rounding call paths, observed stacks, direct MPFR callers and matching raw
+smoke outputs. Missing symbols, unhit breakpoints, tracer errors and invalid
+evidence fail the driver, including under Python `-O`. GDB launches only these
+new processes, with initialization/auto-load and debuginfod disabled. MPFR can
 recursively enter `mpfr_mul`, so trace direct calls from `oracle_pair` separately.
 These paths still share the host and may share low-level GMP ancestry.
+
+The CI path also exercises normal and optimized native-evidence controls:
+missing/malformed trace records, changed instructions/callers, failed receipts,
+an actually missing breakpoint, missing/failing tracers, and matching/mismatched
+GMP versions. The GMP negative compiles a private copied header with only one
+version macro changed, then requires the intended runtime guard to fail.
+Full native traces, disassembly, inputs, compiler receipts, copied-header
+controls and their real exit codes are selected into the CI evidence package.
+Unsupported debugger/ptrace environments fail rather than skip this evidence.
 
 The regression command runs the real comparator CLI on the full positive corpus,
 a permitted NaN-payload change, three isolated arithmetic output corruptions,

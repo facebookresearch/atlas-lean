@@ -174,8 +174,11 @@ def main():
         out.mkdir(parents=True, exist_ok=False)
         build(args, out)
         smoke = run_dataset(out, 1, "smoke")
+        from native_paths import collect
+        paths = collect(out, out / "native-paths")
         full = run_dataset(out, args.pairs, "full")
         report = dict(status="pass", smoke=smoke, full=full,
+                      native_paths=paths,
                       scope="binary64 add/mul, RNE; NaN class only",
                       claim="finite conformance evidence, not proof",
                       cpu_affinity=sorted(os.sched_getaffinity(0)),
