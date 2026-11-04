@@ -428,10 +428,9 @@ lemma agl_rightBlock_recursion_satisfiable (t : ℝ) (K : ℕ) (P : boxVerts d (
     rw [← div_le_iff₀ hclog]; exact hge
   linarith
 
-/-- The doubling bound along `K_j`, a uniform bound on the per-edge values `u / E` at the scales
-`K_j`,
-and a vanishing oscillation between the free energy of `Λ_n` and that of `Λ_{K_{b(n)}}`.
--/
+/-- The doubling bound along `K_j`, a uniform bound on the ambient per-edge values
+`agl_ambientNegLogZ / agl_E` at those scales, and vanishing oscillation of `ivp2_ambientTiltLogZ`
+between `Λ_n` and `Λ_{K_{b(n)}}`. These are assumptions, not a box-convergence result. -/
 def agl_AdditiveBoxFeketeData (t : ℝ) : Prop :=
   agl_AdditiveDoublingBound d t
     ∧ (∃ M : ℝ, ∀ j, |agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
