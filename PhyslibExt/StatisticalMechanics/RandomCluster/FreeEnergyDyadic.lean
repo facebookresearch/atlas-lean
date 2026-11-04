@@ -10,19 +10,24 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.IVPressureConvex
 
 /-!
-# Free-energy limits from dyadic near-monotonicity
+# Dyadic near-monotonicity and conditional ambient-log limits
 
 A sequence that is almost increasing along dyadic scales (with summable defects), bounded above,
-and whose oscillation between `n` and the dyadic scale below `n` vanishes, converges; applied to the
-tilt free energies of the boxes `Λ_n`.
+and whose oscillation between `n` and the dyadic scale below `n` vanishes, converges. A conditional
+specialization states these hypotheses for the ambient tilted log normalizers of boxes `Λ_n`.
+
+The box specialization is conditional: the ambient non-edge factor in `fkZ` makes the raw
+per-edge quantity unbounded above on growing boxes when `d ≥ 1`. Thus those boxes do not
+satisfy `bpv_AmbientTiltLogZConvergenceData`. The scalar witness below establishes only the
+abstract sequence hypotheses, not this box predicate or a physical pressure limit.
 
 ## i. Overview
 
 An almost-increasing bounded sequence with summable defects converges
 (`bpv_almost_mono_converges`). Along dyadic scales `2^j` this gives a limit, and the oscillation
-bound transfers it to all `n`. `bpv_PerVolumeFreeEnergyData d t` states these hypotheses for the
-tilt free energy of `Λ_n`; it yields convergence of the box free energies
-(`bpv_boxTiltFreeEnergy_tendsto`). `bpv_perVolumeFreeEnergyData_satisfiable` exhibits sequences
+bound transfers it to all `n`. `bpv_AmbientTiltLogZConvergenceData d t` states these hypotheses for the
+ambient tilted log normalizer of `Λ_n`; it yields convergence of the box ambient tilted log normalizers
+(`bpv_boxAmbientTiltLogZ_tendsto`). `bpv_abstractDyadicData_satisfiable` exhibits sequences
 satisfying the abstract numeric hypotheses, not the box predicate.
 
 ## ii. Key results
@@ -33,7 +38,7 @@ satisfying the abstract numeric hypotheses, not the box predicate.
 ## iii. Table of contents
 
 - A. Almost-monotone sequences
-- B. Box free energies
+- B. Box ambient tilted log normalizers
 
 ## iv. References
 
@@ -133,31 +138,31 @@ lemma bpv_perVolume_converges (g δ osc : ℕ → ℝ)
 
 variable {d : ℕ}
 
-/-! ## B. Box free energies -/
+/-! ## B. Box ambient tilted log normalizers -/
 
-/-- The tilt free energy of `Λ_{2^j}` is increasing in `j` up to summable defects and bounded
+/-- The ambient tilted log normalizer of `Λ_{2^j}` is increasing in `j` up to summable defects and bounded
 above, and
-the free energy of `Λ_n` differs from that of the dyadic box below it by a vanishing
+the ambient tilted log normalizer of `Λ_n` differs from that of the dyadic box below it by a vanishing
 oscillation.
 -/
-def bpv_PerVolumeFreeEnergyData (d : ℕ) (t : ℝ) : Prop :=
+def bpv_AmbientTiltLogZConvergenceData (d : ℕ) (t : ℝ) : Prop :=
   ∃ (δ osc : ℕ → ℝ),
     (∀ j, 0 ≤ δ j)
     ∧ Summable δ
-    ∧ (∀ j, ivp2_tiltFreeEnergy (boxGraph d (2 ^ j)) 2 t - δ j
-        ≤ ivp2_tiltFreeEnergy (boxGraph d (2 ^ (j + 1))) 2 t)
-    ∧ BddAbove (range (fun j => ivp2_tiltFreeEnergy (boxGraph d (2 ^ j)) 2 t))
+    ∧ (∀ j, ivp2_ambientTiltLogZ (boxGraph d (2 ^ j)) 2 t - δ j
+        ≤ ivp2_ambientTiltLogZ (boxGraph d (2 ^ (j + 1))) 2 t)
+    ∧ BddAbove (range (fun j => ivp2_ambientTiltLogZ (boxGraph d (2 ^ j)) 2 t))
     ∧ Tendsto osc atTop (𝓝 0)
-    ∧ (∀ n, 1 ≤ n → |ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-        - ivp2_tiltFreeEnergy (boxGraph d (2 ^ (Nat.log 2 n))) 2 t| ≤ osc (Nat.log 2 n))
+    ∧ (∀ n, 1 ≤ n → |ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+        - ivp2_ambientTiltLogZ (boxGraph d (2 ^ (Nat.log 2 n))) 2 t| ≤ osc (Nat.log 2 n))
 
-lemma bpv_boxTiltFreeEnergy_tendsto (t : ℝ) (hdata : bpv_PerVolumeFreeEnergyData d t) :
-    ∃ L : ℝ, Tendsto (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 t) atTop (𝓝 L) := by
+lemma bpv_boxAmbientTiltLogZ_tendsto (t : ℝ) (hdata : bpv_AmbientTiltLogZConvergenceData d t) :
+    ∃ L : ℝ, Tendsto (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 t) atTop (𝓝 L) := by
   obtain ⟨δ, osc, hδ, hsum, hdymono, hbdd, hosc, hsand⟩ := hdata
-  exact bpv_perVolume_converges (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 t) δ osc
+  exact bpv_perVolume_converges (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 t) δ osc
     hδ hsum hdymono hbdd hosc hsand
 
-lemma bpv_perVolumeFreeEnergyData_satisfiable :
+lemma bpv_abstractDyadicData_satisfiable :
     ∃ (g δ osc : ℕ → ℝ),
       (∀ j, 0 ≤ δ j)
       ∧ Summable δ

@@ -21,15 +21,17 @@ their fraction tends to zero because the surface-to-volume ratio of boxes does
 
 The second part records why collapse of average densities cannot be obtained from graphs on a
 fixed box.
-Per-edge free energies of a sequence of graphs on the fixed vertex set `Λ_N` take only finitely
-many values, so a limit along such a sequence is one of those values; matching the growing-box
-free energy therefore requires growing boxes.
+Per-edge ambient tilted log normalizers of graphs on the fixed vertex set `Λ_N` take only
+finitely many values, so a limit along such a sequence is one of those values. This is a
+finite-range fact, not a construction of physical pressure. The final wrapper assumes the
+raw growing-box quantity also converges; in positive dimension that premise fails because
+of the divergent ambient non-edge contribution.
 
 ## ii. Key results
 
 - `spc_boundaryFraction_le_surfaceVolume` : the boundary fraction is bounded by the
   surface-to-volume ratio.
-- `spc_fixedBox_collapse_obstruction` : a limit of per-edge free energies of graphs on a fixed
+- `spc_fixedBox_collapse_obstruction` : a limit of per-edge ambient tilted log normalizers of graphs on a fixed
   box is attained by one of those graphs.
 
 ## iii. Table of contents
@@ -83,46 +85,46 @@ lemma spc_boundaryFraction_le_surfaceVolume (n : ℕ) (C : ℝ) (hC : 0 ≤ C)
 ## B. Graphs on a fixed box
 -/
 
-/-- The per-edge free energy does not depend on the decidability instance of the adjacency
+/-- The per-edge ambient tilted log normalizer does not depend on the decidability instance of the adjacency
 relation. -/
-lemma spc_tiltFreeEnergy_instIrrel (N : ℕ) (H : SimpleGraph (boxVerts d N))
+lemma spc_ambientTiltLogZ_instIrrel (N : ℕ) (H : SimpleGraph (boxVerts d N))
     (i1 i2 : DecidableRel H.Adj) (t : ℝ) :
-    @ivp2_tiltFreeEnergy _ _ _ H i1 2 t = @ivp2_tiltFreeEnergy _ _ _ H i2 2 t := by
+    @ivp2_ambientTiltLogZ _ _ _ H i1 2 t = @ivp2_ambientTiltLogZ _ _ _ H i2 2 t := by
   congr 1
 
-/-- The per-edge free energies of a sequence of graphs on the fixed box `Λ_N` take finitely many
+/-- The per-edge ambient tilted log normalizers of a sequence of graphs on the fixed box `Λ_N` take finitely many
 values. -/
 lemma spc_range_finite (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
     [inst : ∀ n, DecidableRel (Gn n).Adj] (t : ℝ) :
-    (Set.range (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t)).Finite := by
-  have heq : (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t)
+    (Set.range (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t)).Finite := by
+  have heq : (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t)
       = (fun H : SimpleGraph (boxVerts d N) =>
-          @ivp2_tiltFreeEnergy _ _ _ H (Classical.decRel _) 2 t) ∘ Gn := by
+          @ivp2_ambientTiltLogZ _ _ _ H (Classical.decRel _) 2 t) ∘ Gn := by
     funext n
-    exact spc_tiltFreeEnergy_instIrrel N (Gn n) (inst n) (Classical.decRel _) t
+    exact spc_ambientTiltLogZ_instIrrel N (Gn n) (inst n) (Classical.decRel _) t
   rw [heq, Set.range_comp]
   exact (Set.toFinite (Set.range Gn)).image _
 
-/-- A limit of per-edge free energies of graphs on the fixed box `Λ_N` is attained by one of the
+/-- A limit of per-edge ambient tilted log normalizers of graphs on the fixed box `Λ_N` is attained by one of the
 graphs. -/
 lemma spc_feketeLimit_mem_finiteRange (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
     [∀ n, DecidableRel (Gn n).Adj] (g : ℝ → ℝ)
-    (hfree : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hfree : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (t : ℝ) :
-    g t ∈ Set.range (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) :=
+    g t ∈ Set.range (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) :=
   (spc_range_finite N Gn t).isClosed.mem_of_tendsto (hfree t)
     (Eventually.of_forall (fun n => ⟨n, rfl⟩))
 
 /-- If graphs on the fixed box `Λ_N` and the growing boxes `Λ_n` have the same limiting per-edge
-free energy `g t`, then `g t` is the free energy of a single graph on `Λ_N`. -/
+ambient tilted log normalizer `g t`, then `g t` is the ambient tilted log normalizer of a single graph on `Λ_N`. -/
 lemma spc_fixedBox_collapse_obstruction (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
     [∀ n, DecidableRel (Gn n).Adj] (g : ℝ → ℝ)
-    (hfree : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
-    (hboxfree : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 t) atTop (𝓝 (g t)))
+    (hfree : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hboxfree : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 t) atTop (𝓝 (g t)))
     (t : ℝ) :
     (∃ H : SimpleGraph (boxVerts d N), ∃ _ : DecidableRel H.Adj,
-        g t = ivp2_tiltFreeEnergy H 2 t)
-      ∧ Tendsto (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 t) atTop (𝓝 (g t)) := by
+        g t = ivp2_ambientTiltLogZ H 2 t)
+      ∧ Tendsto (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 t) atTop (𝓝 (g t)) := by
   refine ⟨?_, hboxfree t⟩
   obtain ⟨n, hn⟩ := spc_feketeLimit_mem_finiteRange N Gn g hfree t
   exact ⟨Gn n, inferInstance, hn.symm⟩

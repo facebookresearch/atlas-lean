@@ -10,16 +10,16 @@ module
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKPressureDeriv
 
 /-!
-# Edge densities bracketed by one-sided derivatives of the free energy
+# Edge densities bracketed by derivatives of an assumed convex limit
 
-Limits of average edge densities lie between the left and right derivatives of the limiting free
-energy; with one-sided continuity this identifies the free density with the left derivative and
-the wired density with the right derivative.
+Under the stated convergence and density-collapse hypotheses, limits of average edge densities
+lie between the left and right derivatives of the limiting convex function. One-sided continuity
+then identifies the free density with the left derivative and the wired density with the right.
 
 ## i. Overview
 
 For convex differentiable `gₙ → g`, any limit point of `gₙ'(t)` lies in `[g'₋(t), g'₊(t)]`. Applied
-to the `q = 2` free energies in the tilt variable and combined with density collapse, the free
+to `ivp2_ambientTiltLogZ` at `q = 2`, assuming its convergence and density collapse, the free
 infinite-volume density is bracketed by the one-sided derivatives of `g`. A function bracketed by
 `g'₋ ≤ a ≤ g'₊` that is left-continuous equals `g'₋`, and one that is right-continuous equals
 `g'₊`. This yields the two halves `fdd_FreeDensityIsLeftDeriv` and `fdd_WiredDensityIsRightDeriv`
@@ -31,7 +31,7 @@ of `fpd_IVDensityIsOneSidedDeriv` and the uniqueness statement.
 - `fdd_freeDensity_bracket` : `g'₋ ≤ free density ≤ g'₊` under density collapse.
 - `fdd_eq_leftDeriv_of_bracket_leftContinuous`, `fdd_eq_rightDeriv_of_bracket_rightContinuous` :
   one-sided continuity selects the derivative.
-- `fdd_fk_uniqueness_of_primitives` : countable-exception uniqueness from free-energy limits,
+- `fdd_fk_uniqueness_of_primitives` : countable-exception uniqueness from assumed ambient-log limits,
   density collapse, a wired upper bound, and one-sided continuity.
 
 ## iii. Table of contents
@@ -121,13 +121,13 @@ lemma fdd_avgDensity_le_rightDeriv
     (Gn : ℕ → SimpleGraph W) [∀ i, DecidableRel (Gn i).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (t ℓ : ℝ) (hℓ : Tendsto (fun n => fpd_avgDensity (Gn n) t) atTop (𝓝 ℓ)) :
     ℓ ≤ pressureRightDeriv g t :=
   fdd_avgLimit_le_rightDeriv
-    (fun n => ivp2_tiltFreeEnergy (Gn n) 2) g (fun n => fpd_avgDensity (Gn n))
-    (fun n => ivp2_tiltFreeEnergy_convexOn (Gn n) 2 (by norm_num) (hE n))
-    (fun n s => fpd_tiltFreeEnergy_deriv_eq_avgDensity (Gn n) (hE n) s)
+    (fun n => ivp2_ambientTiltLogZ (Gn n) 2) g (fun n => fpd_avgDensity (Gn n))
+    (fun n => ivp2_ambientTiltLogZ_convexOn (Gn n) 2 (by norm_num) (hE n))
+    (fun n s => fpd_ambientTiltLogZ_deriv_eq_avgDensity (Gn n) (hE n) s)
     hlim t ℓ hg hℓ
 
 lemma fdd_leftDeriv_le_avgDensity
@@ -135,20 +135,20 @@ lemma fdd_leftDeriv_le_avgDensity
     (Gn : ℕ → SimpleGraph W) [∀ i, DecidableRel (Gn i).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (t ℓ : ℝ) (hℓ : Tendsto (fun n => fpd_avgDensity (Gn n) t) atTop (𝓝 ℓ)) :
     pressureLeftDeriv g t ≤ ℓ :=
   fdd_leftDeriv_le_avgLimit
-    (fun n => ivp2_tiltFreeEnergy (Gn n) 2) g (fun n => fpd_avgDensity (Gn n))
-    (fun n => ivp2_tiltFreeEnergy_convexOn (Gn n) 2 (by norm_num) (hE n))
-    (fun n s => fpd_tiltFreeEnergy_deriv_eq_avgDensity (Gn n) (hE n) s)
+    (fun n => ivp2_ambientTiltLogZ (Gn n) 2) g (fun n => fpd_avgDensity (Gn n))
+    (fun n => ivp2_ambientTiltLogZ_convexOn (Gn n) 2 (by norm_num) (hE n))
+    (fun n s => fpd_ambientTiltLogZ_deriv_eq_avgDensity (Gn n) (hE n) s)
     hlim t ℓ hg hℓ
 
 lemma fdd_freeDensity_le_rightDeriv (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) ≤ pressureRightDeriv g t :=
@@ -158,7 +158,7 @@ lemma fdd_leftDeriv_le_freeDensity (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ) :
     pressureLeftDeriv g t ≤ freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) :=
@@ -168,7 +168,7 @@ lemma fdd_freeDensity_bracket (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ) :
     pressureLeftDeriv g t ≤ freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)
@@ -180,7 +180,7 @@ lemma fdd_free_is_leftDeriv_at_diff (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ)
     (hdiff : pressureLeftDeriv g t = pressureRightDeriv g t) :
@@ -215,7 +215,7 @@ lemma fdd_free_is_leftDeriv_of_leftContinuous (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ)
     (hlc : ContinuousWithinAt
@@ -254,7 +254,7 @@ lemma fdd_leftDeriv_le_wiredDensity (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (e' : Sym2 (boxVerts d N)) (t : ℝ) :
     pressureLeftDeriv g t ≤ wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) :=
@@ -265,7 +265,7 @@ lemma fdd_wired_is_rightDeriv_of_upperBound_rightContinuous (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     {g : ℝ → ℝ} (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (hub : fdd_WiredDensityUpperBound (d := d) N g)
     (e' : Sym2 (boxVerts d N)) (t : ℝ)
@@ -300,7 +300,7 @@ lemma fdd_fk_uniqueness_of_primitives (N : ℕ) (eb : Sym2 (boxVerts d N))
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
     (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
     {g : ℝ → ℝ} (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_tiltFreeEnergy (Gn n) 2 t) atTop (𝓝 (g t)))
+    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (hflc : ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ), ContinuousWithinAt
       (fun s => freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic s)) (Iio t) t)

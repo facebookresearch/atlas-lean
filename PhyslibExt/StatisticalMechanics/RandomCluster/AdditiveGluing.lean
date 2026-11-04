@@ -15,11 +15,18 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.GenuineEdgeCollapse
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 
 /-!
-# Free-energy limits along the scales `2^{j+1} - 1` by additive gluing
+# Conditional ambient-log limits along the scales `2^{j+1} - 1` by additive gluing
 
 Splitting a vertex set into two parts bounds `-log Z` by the sum over the parts plus an interface
-cost; translating blocks of the box and gluing along the scales `K_j = 2^{j+1} - 1` (with
-`K_{j+1} = 2 K_j + 1`) gives the doubling bounds and the convergence of the box free energies.
+cost. Translating and gluing boxes along `K_j = 2^{j+1} - 1`, with `K_{j+1} = 2 K_j + 1`,
+gives doubling bounds. A separate conditional lemma adds boundedness and oscillation hypotheses
+to deduce convergence of the ambient tilted log normalizers.
+
+Here `Z` is the ambient normalizer `fkZ`. The convergence specialization assumes bounded
+`|agl_ambientNegLogZ / agl_E|` and vanishing oscillation. The ambient non-edge factor makes
+this boundedness premise fail on growing boxes in positive dimension; this file does not
+establish their thermodynamic limit. The generic convergence lemmas remain applicable to
+edge-restricted quantities, whose box convergence is proved in `EdgePartitionFunction`.
 
 ## i. Overview
 
@@ -28,23 +35,23 @@ along an interface (`agl_partitionCrossInterface`), so `-log Z_{K₀} ≤ -log Z
 + |interface| · (-log(1 - p))`. Translated copies of boxes have the same partition function.
 Along `K_j` the box `Λ_{K_{j+1}}` splits into a translated copy of `Λ_{K_j}` and a remainder, which
 gives `agl_AdditiveDoublingBound`. With bounded per-edge values and vanishing oscillation between
-`n` and the scale `K_{b(n)}` (`agl_AdditiveBoxFeketeData`), the tilt free energies converge. `agl_u`
+`n` and the scale `K_{b(n)}` (`agl_AdditiveBoxFeketeData`), the ambient tilted log normalizers converge. `agl_ambientNegLogZ`
 and `agl_E` coincide with
-`bxt_u` and `bxt_E` of `BoxTiling`.
+`bxt_ambientNegLogZ` and `bxt_E` of `BoxTiling`.
 
 ## ii. Key results
 
 - `agl_neglog_partition_le` : the partition bound on `-log Z`.
 - `agl_fkZ_translate` : translated blocks have the same partition function.
 - `agl_perVolume_converges` : convergence along a subsequence of scales with vanishing oscillation.
-- `agl_boxTiltFreeEnergy_tendsto` : convergence of the box free energies.
+- `agl_boxAmbientTiltLogZ_tendsto` : convergence of the box ambient tilted log normalizers.
 
 ## iii. Table of contents
 
 - A. Partitioning a graph
 - B. Translated blocks
 - C. Convergence along a subsequence of scales
-- D. Box free energies along `K_j`
+- D. Box ambient tilted log normalizers along `K_j`
 
 ## iv. References
 
@@ -293,19 +300,19 @@ lemma agl_K_tendsto_atTop : Tendsto agl_K atTop atTop := by
 
 variable (d : ℕ)
 
-/-! ## D. Box free energies along `K_j` -/
+/-! ## D. Box ambient tilted log normalizers along `K_j` -/
 
-/-- `-log Z_{Λ_n}(logistic(t), 2)`; the same as `bxt_u`. -/
-noncomputable def agl_u (t : ℝ) (n : ℕ) : ℝ :=
+/-- The negative log ambient normalizer of `Λ_n`; the same as `bxt_ambientNegLogZ`. -/
+noncomputable def agl_ambientNegLogZ (t : ℝ) (n : ℕ) : ℝ :=
   -Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2)
 
 /-- The number of edges of `Λ_n`; the same as `bxt_E`. -/
 noncomputable def agl_E (n : ℕ) : ℝ := ((boxGraph d n).edgeFinset.card : ℝ)
 
-lemma agl_g_eq (t : ℝ) (n : ℕ) :
-    ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-      = -(agl_u d t n / agl_E d n) + Real.log (1 + Real.exp t) := by
-  unfold ivp2_tiltFreeEnergy agl_u agl_E
+lemma agl_ambientTiltLogZ_eq (t : ℝ) (n : ℕ) :
+    ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+      = -(agl_ambientNegLogZ d t n / agl_E d n) + Real.log (1 + Real.exp t) := by
+  unfold ivp2_ambientTiltLogZ agl_ambientNegLogZ agl_E
   ring
 
 /-- Doubling bound along the scales `K_j`: `u(K_{j+1}) ≤ 2^d u(K_j) + I_j (-log(1 - p))` with
@@ -315,19 +322,19 @@ def agl_AdditiveDoublingBound (t : ℝ) : Prop :=
   ∃ (I : ℕ → ℝ),
     (∀ j, 0 ≤ I j)
     ∧ Summable (fun j => I j / agl_E d (agl_K (j + 1)))
-    ∧ (∀ j, agl_u d t (agl_K (j + 1))
-        ≤ (2 : ℝ) ^ d * agl_u d t (agl_K j) + I j * (-Real.log (1 - fsc_logistic t)))
+    ∧ (∀ j, agl_ambientNegLogZ d t (agl_K (j + 1))
+        ≤ (2 : ℝ) ^ d * agl_ambientNegLogZ d t (agl_K j) + I j * (-Real.log (1 - fsc_logistic t)))
     ∧ (∀ j, |(2 : ℝ) ^ d * agl_E d (agl_K j) - agl_E d (agl_K (j + 1))| ≤ I j)
 
-lemma agl_boxTiltFreeEnergy_tendsto (t : ℝ)
+lemma agl_boxAmbientTiltLogZ_tendsto (t : ℝ)
     (hbox : ∀ j, 0 < (boxGraph d (agl_K j)).edgeFinset.card)
     (hdoubling : agl_AdditiveDoublingBound d t)
-    (hbdd : ∃ M : ℝ, ∀ j, |agl_u d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
+    (hbdd : ∃ M : ℝ, ∀ j, |agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
     (bj : ℕ → ℕ) (hbj : Tendsto bj atTop atTop)
     (osc : ℕ → ℝ) (hosc : Tendsto osc atTop (𝓝 0))
-    (hsand : ∀ n, |ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-        - ivp2_tiltFreeEnergy (boxGraph d (agl_K (bj n))) 2 t| ≤ osc (bj n)) :
-    ∃ L : ℝ, Tendsto (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 t) atTop (𝓝 L) := by
+    (hsand : ∀ n, |ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+        - ivp2_ambientTiltLogZ (boxGraph d (agl_K (bj n))) 2 t| ≤ osc (bj n)) :
+    ∃ L : ℝ, Tendsto (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 t) atTop (𝓝 L) := by
   classical
   obtain ⟨I, hInn, hIsum, hudbl, hEdge⟩ := hdoubling
   obtain ⟨M, hM⟩ := hbdd
@@ -344,32 +351,32 @@ lemma agl_boxTiltFreeEnergy_tendsto (t : ℝ)
     div_nonneg (hInn j) (hEpos (j + 1)).le
   set δ : ℕ → ℝ := fun j => (M + c) * (I j / agl_E d (agl_K (j + 1))) with hδ
   apply agl_perVolume_converges
-    (fun n => ivp2_tiltFreeEnergy (boxGraph d n) 2 t) agl_K δ osc bj
+    (fun n => ivp2_ambientTiltLogZ (boxGraph d n) 2 t) agl_K δ osc bj
   · intro j; exact mul_nonneg hMc0 (hIE0 j)
   · exact hIsum.mul_left (M + c)
   · intro j
-    rw [agl_g_eq d t (agl_K j), agl_g_eq d t (agl_K (j + 1))]
+    rw [agl_ambientTiltLogZ_eq d t (agl_K j), agl_ambientTiltLogZ_eq d t (agl_K (j + 1))]
     have hKeq : agl_K (j + 1) = 2 * agl_K j + 1 := agl_K_succ j
-    have hstep := bxt_perVolume_doubling_step (a := agl_u d t (agl_K j))
-      (A := agl_u d t (agl_K (j + 1))) (e := agl_E d (agl_K j)) (E := agl_E d (agl_K (j + 1)))
+    have hstep := bxt_perVolume_doubling_step (a := agl_ambientNegLogZ d t (agl_K j))
+      (A := agl_ambientNegLogZ d t (agl_K (j + 1))) (e := agl_E d (agl_K j)) (E := agl_E d (agl_K (j + 1)))
       (K := (2 : ℝ) ^ d) (c := c) (i := I j)
       (hEpos j) (hEpos (j + 1)) hc0 (hInn j) (hudbl j) (hEdge j)
-    have hdefle : (|agl_u d t (agl_K j)| / agl_E d (agl_K j) + c)
+    have hdefle : (|agl_ambientNegLogZ d t (agl_K j)| / agl_E d (agl_K j) + c)
         * (I j / agl_E d (agl_K (j + 1))) ≤ δ j := by
       change _ ≤ (M + c) * (I j / agl_E d (agl_K (j + 1)))
       apply mul_le_mul_of_nonneg_right _ (hIE0 j)
-      have habs : |agl_u d t (agl_K j)| / agl_E d (agl_K j)
-          = |agl_u d t (agl_K j) / agl_E d (agl_K j)| := by
+      have habs : |agl_ambientNegLogZ d t (agl_K j)| / agl_E d (agl_K j)
+          = |agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)| := by
         rw [abs_div, abs_of_pos (hEpos j)]
       rw [habs]; have := hM j; linarith
-    have hgoal : -(agl_u d t (agl_K j) / agl_E d (agl_K j)) - δ j
-        ≤ -(agl_u d t (agl_K (j + 1)) / agl_E d (agl_K (j + 1))) := by linarith [hstep, hdefle]
+    have hgoal : -(agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)) - δ j
+        ≤ -(agl_ambientNegLogZ d t (agl_K (j + 1)) / agl_E d (agl_K (j + 1))) := by linarith [hstep, hdefle]
     linarith
   · refine ⟨M + Real.log (1 + Real.exp t), ?_⟩
     rintro x ⟨j, rfl⟩
     simp only
-    rw [agl_g_eq d t (agl_K j)]
-    have hlb : -M ≤ agl_u d t (agl_K j) / agl_E d (agl_K j) := (abs_le.mp (hM j)).1
+    rw [agl_ambientTiltLogZ_eq d t (agl_K j)]
+    have hlb : -M ≤ agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j) := (abs_le.mp (hM j)).1
     linarith
   · exact hbj
   · exact hosc
@@ -380,9 +387,9 @@ lemma agl_doublingStep_of_partition (t : ℝ) (K : ℕ) (P : boxVerts d (2 * K +
     (hφ : ∀ y : boxVerts d K, ((φ y : boxVerts d (2 * K + 1)) : Site d) = (y : Site d) + v)
     (IR : ℝ) (_hIR : 0 ≤ IR)
     (hRight : -Real.log (fkZ (agl_right (boxGraph d (2 * K + 1)) P) (fsc_logistic t) 2)
-        ≤ ((2 : ℝ) ^ d - 1) * agl_u d t K + IR * (-Real.log (1 - fsc_logistic t))) :
-    agl_u d t (2 * K + 1)
-      ≤ (2 : ℝ) ^ d * agl_u d t K
+        ≤ ((2 : ℝ) ^ d - 1) * agl_ambientNegLogZ d t K + IR * (-Real.log (1 - fsc_logistic t))) :
+    agl_ambientNegLogZ d t (2 * K + 1)
+      ≤ (2 : ℝ) ^ d * agl_ambientNegLogZ d t K
         + ((agl_interfaceCard (boxGraph d (2 * K + 1)) P : ℝ) + IR)
             * (-Real.log (1 - fsc_logistic t)) := by
   set p := fsc_logistic t with hp
@@ -392,23 +399,23 @@ lemma agl_doublingStep_of_partition (t : ℝ) (K : ℕ) (P : boxVerts d (2 * K +
       (by norm_num : (0 : ℝ) < 2)
   have hleft : fkZ (agl_left (boxGraph d (2 * K + 1)) P) p 2 = fkZ (boxGraph d K) p 2 :=
     agl_left_block_fkZ_eq (2 * K + 1) K P v φ hφ p 2
-  have hleftu : -Real.log (fkZ (agl_left (boxGraph d (2 * K + 1)) P) p 2) = agl_u d t K := by
+  have hleftu : -Real.log (fkZ (agl_left (boxGraph d (2 * K + 1)) P) p 2) = agl_ambientNegLogZ d t K := by
     rw [hleft]; rfl
   rw [hleftu] at hpart
-  unfold agl_u at *
+  unfold agl_ambientNegLogZ at *
   nlinarith [hpart, hRight]
 
 lemma agl_rightBlock_recursion_satisfiable (t : ℝ) (K : ℕ) (P : boxVerts d (2 * K + 1) → Prop)
     [DecidablePred P] :
     ∃ IR : ℝ, 0 ≤ IR ∧
       -Real.log (fkZ (agl_right (boxGraph d (2 * K + 1)) P) (fsc_logistic t) 2)
-        ≤ ((2 : ℝ) ^ d - 1) * agl_u d t K + IR * (-Real.log (1 - fsc_logistic t)) := by
+        ≤ ((2 : ℝ) ^ d - 1) * agl_ambientNegLogZ d t K + IR * (-Real.log (1 - fsc_logistic t)) := by
   have hp0 : (0 : ℝ) < fsc_logistic t := fsc_logistic_pos t
   have hp1 : fsc_logistic t < 1 := fsc_logistic_lt_one t
   have hclog : 0 < -Real.log (1 - fsc_logistic t) := by
     rw [neg_pos]; exact Real.log_neg (by linarith) (by linarith)
   set L := -Real.log (fkZ (agl_right (boxGraph d (2 * K + 1)) P) (fsc_logistic t) 2)
-  set R0 := ((2 : ℝ) ^ d - 1) * agl_u d t K
+  set R0 := ((2 : ℝ) ^ d - 1) * agl_ambientNegLogZ d t K
   refine ⟨max 0 ((L - R0) / (-Real.log (1 - fsc_logistic t))), le_max_left _ _, ?_⟩
   have hge : (L - R0) / (-Real.log (1 - fsc_logistic t))
       ≤ max 0 ((L - R0) / (-Real.log (1 - fsc_logistic t))) := le_max_right _ _
@@ -423,10 +430,10 @@ and a vanishing oscillation between the free energy of `Λ_n` and that of `Λ_{K
 -/
 def agl_AdditiveBoxFeketeData (t : ℝ) : Prop :=
   agl_AdditiveDoublingBound d t
-    ∧ (∃ M : ℝ, ∀ j, |agl_u d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
+    ∧ (∃ M : ℝ, ∀ j, |agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)| ≤ M)
     ∧ (∃ (bj : ℕ → ℕ) (osc : ℕ → ℝ), Tendsto bj atTop atTop ∧ Tendsto osc atTop (𝓝 0)
-        ∧ (∀ n, |ivp2_tiltFreeEnergy (boxGraph d n) 2 t
-            - ivp2_tiltFreeEnergy (boxGraph d (agl_K (bj n))) 2 t| ≤ osc (bj n)))
+        ∧ (∀ n, |ivp2_ambientTiltLogZ (boxGraph d n) 2 t
+            - ivp2_ambientTiltLogZ (boxGraph d (agl_K (bj n))) 2 t| ≤ osc (bj n)))
 
 lemma agl_additiveDoublingBound_satisfiable (d : ℕ) (hd : 1 ≤ d) (c : ℝ) (hc : 0 ≤ c) :
     ∃ (u E : ℕ → ℝ),

@@ -254,10 +254,10 @@ lemma fkgq_wired_infinite_measure (N : ℕ) {p q : ℝ}
 
 lemma fkgq_ivp_eq_edgeFE (d n : ℕ) (s q : ℝ) (hq : 0 < q)
     (hE : 0 < (boxGraph d n).edgeFinset.card) :
-    ivp2_tiltFreeEnergy (boxGraph d n) q s
+    ivp2_ambientTiltLogZ (boxGraph d n) q s
       = (ecz_NE (boxGraph d n) : ℝ) / ((boxGraph d n).edgeFinset.card : ℝ) * Real.log 2
         + StatMech.Walls.fkc_edgeFreeEnergy d s q n := by
-  unfold ivp2_tiltFreeEnergy StatMech.Walls.fkc_edgeFreeEnergy
+  unfold ivp2_ambientTiltLogZ StatMech.Walls.fkc_edgeFreeEnergy
   set p := fsc_logistic s
   have hp0 : (0 : ℝ) < p := fsc_logistic_pos s
   have hp1 : p < 1 := fsc_logistic_lt_one s
@@ -425,19 +425,19 @@ lemma fkgq_centered_hasDerivAt {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (q : ℝ) (hq : 0 < q)
     (hE : 0 < G.edgeFinset.card) (s : ℝ) :
     HasDerivAt (cfe_centered G q) (fkgq_avgDensity G q s) s := by
-  have hbase := ivp2_tiltFreeEnergy_hasDerivAt G q hq hE s
+  have hbase := ivp2_ambientTiltLogZ_hasDerivAt G q hq hE s
   have hmean := ivp2_cgfMean_eq_openCount_expect G q hq s
-  have hderiv : HasDerivAt (ivp2_tiltFreeEnergy G q) (fkgq_avgDensity G q s) s := by
+  have hderiv : HasDerivAt (ivp2_ambientTiltLogZ G q) (fkgq_avgDensity G q s) s := by
     rw [← hmean] at hbase
     simpa [fkgq_avgDensity] using hbase
-  exact hderiv.sub_const (ivp2_tiltFreeEnergy G q 0)
+  exact hderiv.sub_const (ivp2_ambientTiltLogZ G q 0)
 
 lemma fkgq_wiredCentered_hasDerivAt {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (bdry : V → Prop) [DecidablePred bdry]
     (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card) (s : ℝ) :
     HasDerivAt (cfe_wiredCentered G bdry q) (wpd_avgWiredDensity G bdry q s) s := by
-  exact (wpd_wiredTiltFreeEnergy_hasDerivAt G bdry q hq hE s).sub_const
-    (wpd_wiredTiltFreeEnergy G bdry q 0)
+  exact (wpd_wiredAmbientTiltLogZ_hasDerivAt G bdry q hq hE s).sub_const
+    (wpd_wiredAmbientTiltLogZ G bdry q 0)
 
 lemma fkgq_wiredCentered_tendsto (d : ℕ) (hd : 1 ≤ d) (q : ℝ) (hq : 1 ≤ q)
     {G : ℝ → ℝ} (s : ℝ)
@@ -447,15 +447,15 @@ lemma fkgq_wiredCentered_tendsto (d : ℕ) (hd : 1 ≤ d) (q : ℝ) (hq : 1 ≤ 
   have hedge : ∀ n, 1 ≤ n → 0 < (boxGraph d n).edgeFinset.card :=
     fun n hn => ecz_box_edge_pos d hd hn
   have hsv := fup_surfaceVolume_tendsto_zero d hd
-  have hdiff : ∀ u : ℝ, Tendsto (fun n => ivp2_tiltFreeEnergy (boxGraph d (n + 1)) q u
-        - wpd_wiredTiltFreeEnergy (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q u)
+  have hdiff : ∀ u : ℝ, Tendsto (fun n => ivp2_ambientTiltLogZ (boxGraph d (n + 1)) q u
+        - wpd_wiredAmbientTiltLogZ (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q u)
       atTop (nhds 0) := by
     intro u
-    have hbound : ∀ n, |ivp2_tiltFreeEnergy (boxGraph d (n + 1)) q u
-          - wpd_wiredTiltFreeEnergy (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q u|
+    have hbound : ∀ n, |ivp2_ambientTiltLogZ (boxGraph d (n + 1)) q u
+          - wpd_wiredAmbientTiltLogZ (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q u|
         ≤ ((Finset.univ.filter (boxBoundary d (n + 1))).card : ℝ)
             / ((boxGraph d (n + 1)).edgeFinset.card : ℝ) * Real.log q := fun n =>
-      wpd_tiltFreeEnergy_sub_le (boxGraph d (n + 1)) (boxBoundary d (n + 1)) hq
+      wpd_ambientTiltLogZ_sub_le (boxGraph d (n + 1)) (boxBoundary d (n + 1)) hq
         (hedge (n + 1) (by omega)) u
     have hsv' := (hsv.mul_const (Real.log q)).comp (tendsto_add_atTop_nat 1)
     exact (tendsto_zero_iff_abs_tendsto_zero _).mpr
@@ -466,10 +466,10 @@ lemma fkgq_wiredCentered_tendsto (d : ℕ) (hd : 1 ≤ d) (q : ℝ) (hq : 1 ≤ 
       atTop (nhds 0) := by
     have := (hdiff s).sub (hdiff 0)
     have ht : Tendsto (fun n =>
-        (ivp2_tiltFreeEnergy (boxGraph d (n + 1)) q s
-          - wpd_wiredTiltFreeEnergy (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q s)
-        - (ivp2_tiltFreeEnergy (boxGraph d (n + 1)) q 0
-          - wpd_wiredTiltFreeEnergy (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q 0))
+        (ivp2_ambientTiltLogZ (boxGraph d (n + 1)) q s
+          - wpd_wiredAmbientTiltLogZ (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q s)
+        - (ivp2_ambientTiltLogZ (boxGraph d (n + 1)) q 0
+          - wpd_wiredAmbientTiltLogZ (boxGraph d (n + 1)) (boxBoundary d (n + 1)) q 0))
         atTop (nhds 0) := by simpa using this
     refine Tendsto.congr' ?_ ht
     filter_upwards with n
