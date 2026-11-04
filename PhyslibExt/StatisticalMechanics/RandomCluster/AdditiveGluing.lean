@@ -35,7 +35,8 @@ along an interface (`agl_partitionCrossInterface`), so `-log Z_{K₀} ≤ -log Z
 + |interface| · (-log(1 - p))`. Translated copies of boxes have the same partition function.
 Along `K_j` the box `Λ_{K_{j+1}}` splits into a translated copy of `Λ_{K_j}` and a remainder, which
 gives `agl_AdditiveDoublingBound`. With bounded per-edge values and vanishing oscillation between
-`n` and the scale `K_{b(n)}` (`agl_AdditiveBoxFeketeData`), the ambient tilted log normalizers converge. `agl_ambientNegLogZ`
+`n` and the scale `K_{b(n)}` (`agl_AdditiveBoxFeketeData`), the ambient tilted log normalizers
+  converge. `agl_ambientNegLogZ`
 and `agl_E` coincide with
 `bxt_ambientNegLogZ` and `bxt_E` of `BoxTiling`.
 
@@ -358,7 +359,8 @@ lemma agl_boxAmbientTiltLogZ_tendsto (t : ℝ)
     rw [agl_ambientTiltLogZ_eq d t (agl_K j), agl_ambientTiltLogZ_eq d t (agl_K (j + 1))]
     have hKeq : agl_K (j + 1) = 2 * agl_K j + 1 := agl_K_succ j
     have hstep := bxt_perVolume_doubling_step (a := agl_ambientNegLogZ d t (agl_K j))
-      (A := agl_ambientNegLogZ d t (agl_K (j + 1))) (e := agl_E d (agl_K j)) (E := agl_E d (agl_K (j + 1)))
+      (A := agl_ambientNegLogZ d t (agl_K (j + 1))) (e := agl_E d (agl_K j)) (E := agl_E d (agl_K (j
+        + 1)))
       (K := (2 : ℝ) ^ d) (c := c) (i := I j)
       (hEpos j) (hEpos (j + 1)) hc0 (hInn j) (hudbl j) (hEdge j)
     have hdefle : (|agl_ambientNegLogZ d t (agl_K j)| / agl_E d (agl_K j) + c)
@@ -370,7 +372,8 @@ lemma agl_boxAmbientTiltLogZ_tendsto (t : ℝ)
         rw [abs_div, abs_of_pos (hEpos j)]
       rw [habs]; have := hM j; linarith
     have hgoal : -(agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)) - δ j
-        ≤ -(agl_ambientNegLogZ d t (agl_K (j + 1)) / agl_E d (agl_K (j + 1))) := by linarith [hstep, hdefle]
+        ≤ -(agl_ambientNegLogZ d t (agl_K (j + 1)) / agl_E d (agl_K (j + 1))) := by linarith [hstep,
+          hdefle]
     linarith
   · refine ⟨M + Real.log (1 + Real.exp t), ?_⟩
     rintro x ⟨j, rfl⟩
@@ -399,7 +402,8 @@ lemma agl_doublingStep_of_partition (t : ℝ) (K : ℕ) (P : boxVerts d (2 * K +
       (by norm_num : (0 : ℝ) < 2)
   have hleft : fkZ (agl_left (boxGraph d (2 * K + 1)) P) p 2 = fkZ (boxGraph d K) p 2 :=
     agl_left_block_fkZ_eq (2 * K + 1) K P v φ hφ p 2
-  have hleftu : -Real.log (fkZ (agl_left (boxGraph d (2 * K + 1)) P) p 2) = agl_ambientNegLogZ d t K := by
+  have hleftu : -Real.log (fkZ (agl_left (boxGraph d (2 * K + 1)) P) p 2) = agl_ambientNegLogZ d t K
+    := by
     rw [hleft]; rfl
   rw [hleftu] at hpart
   unfold agl_ambientNegLogZ at *

@@ -332,9 +332,11 @@ lemma qp_peel_le (p q : ℝ) (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     have hpart := agl_neglog_partition_le (qp_restG K₀ tag (insert τ S))
       (fun x => tag x.1 = τ) hp hp1 hq
     rw [show -Real.log (fkZ (agl_left (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)) p q)
-        = qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q from by rw [qp_ambientNegLogZ, qp_left_eq K₀ tag τ S hτ]] at hpart
+        = qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q from by rw [qp_ambientNegLogZ, qp_left_eq K₀ tag
+          τ S hτ]] at hpart
     rw [show -Real.log (fkZ (agl_right (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)) p q)
-        = qp_ambientNegLogZ (qp_restG K₀ tag S) p q from by rw [qp_ambientNegLogZ, qp_right_eq K₀ tag τ S hτ]] at hpart
+        = qp_ambientNegLogZ (qp_restG K₀ tag S) p q from by rw [qp_ambientNegLogZ, qp_right_eq K₀
+          tag τ S hτ]] at hpart
     set Istep := agl_interfaceCard (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)
       with hIstep
     refine ⟨Istep + I0, ?_, ?_⟩
@@ -346,9 +348,11 @@ lemma qp_peel_le (p q : ℝ) (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
           ≤ qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q + qp_ambientNegLogZ (qp_restG K₀ tag S) p q
               - (Istep : ℝ) * Real.log (1 - p) := huu
         _ ≤ qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q
-              + ((∑ σ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag σ) p q) + (I0 : ℝ) * (-Real.log (1 - p)))
+              + ((∑ σ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag σ) p q) + (I0 : ℝ) * (-Real.log (1 -
+                p)))
               - (Istep : ℝ) * Real.log (1 - p) := by linarith [hI0le]
-        _ = (qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q + ∑ σ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag σ) p q)
+        _ = (qp_ambientNegLogZ (qp_blkG K₀ tag τ) p q + ∑ σ ∈ S, qp_ambientNegLogZ (qp_blkG K₀ tag
+          σ) p q)
               + ((Istep : ℝ) + (I0 : ℝ)) * (-Real.log (1 - p)) := by ring
     · rw [Finset.sum_insert hτ]
       have hIstepbd : Istep ≤ (qp_straddleEdges K₀ (fun u => tag u = τ)).card :=
@@ -968,7 +972,8 @@ lemma qp_box_neglog_doubling (d K : ℕ) (t : ℝ) :
       Fintype.sum_option]
     congr 1
     have heach : ∀ s : Fin d → Bool,
-        qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) (some s)) p 2 = agl_ambientNegLogZ d t K :=
+        qp_ambientNegLogZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) (some s)) p 2 =
+          agl_ambientNegLogZ d t K :=
       fun s => by rw [qp_ambientNegLogZ, qp_block_fkZ]; rfl
     rw [Finset.sum_congr rfl (fun s _ => heach s), Finset.sum_const, Finset.card_univ,
       show Fintype.card (Fin d → Bool) = 2 ^ d from by simp [Fintype.card_bool],
@@ -1187,7 +1192,8 @@ lemma qp_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (t : ℝ) : agl_Additive
     rw [hI]; linarith [hNb, hGb]
   · intro j
     have hdbl := qp_box_neglog_doubling d (agl_K j) t
-    rw [show agl_ambientNegLogZ d t (agl_K (j + 1)) = agl_ambientNegLogZ d t (2 * agl_K j + 1) from by rw [agl_K_succ]]
+    rw [show agl_ambientNegLogZ d t (agl_K (j + 1)) = agl_ambientNegLogZ d t (2 * agl_K j + 1) from
+      by rw [agl_K_succ]]
     have hge : N j * c ≤ I j * c := by
       rw [hI]; apply mul_le_mul_of_nonneg_right _ hc0; linarith [hGnn j]
     calc agl_ambientNegLogZ d t (2 * agl_K j + 1)

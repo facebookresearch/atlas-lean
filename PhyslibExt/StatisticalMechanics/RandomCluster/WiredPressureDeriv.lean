@@ -25,13 +25,15 @@ convergence theorem for either raw normalizer.
 ## i. Overview
 
 For a finite graph `G` with wired boundary `∂` and `p = e^t / (1 + e^t)`, the wired per-edge
-ambient tilted log normalizer is `f^w_G(t) = |E|⁻¹ log Z^w_G(p, q) + log(1 + e^t)`. Up to the factor `|E|⁻¹` it
+ambient tilted log normalizer is `f^w_G(t) = |E|⁻¹ log Z^w_G(p, q) + log(1 + e^t)`. Up to the factor
+  `|E|⁻¹` it
 is the cumulant generating function of the number of open edges under the tilted cluster
 weight `q^{k^w(ω)}`, so it is convex and its derivative is `|E|⁻¹ E^w[|ω|]`, the average wired
 edge density.
 
 For `q ≥ 1` the wired and free weights differ by a factor in `[1, q^{|∂|}]`, so the wired and
-free ambient tilted log normalizers differ by at most `|∂| log q / |E|`; on boxes the surface-to-volume ratio
+free ambient tilted log normalizers differ by at most `|∂| log q / |E|`; on boxes the
+  surface-to-volume ratio
 tends to zero, so this difference vanishes in the limit.
 
 ## ii. Key results
@@ -79,7 +81,8 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 ### A.1. Cumulant generating function form
 -/
 
-/-- The wired per-edge ambient tilted log normalizer `|E|⁻¹ log Z^w(p, q) + log(1 + e^t)` at `p = e^t / (1 + e^t)`. -/
+/-- The wired per-edge ambient tilted log normalizer `|E|⁻¹ log Z^w(p, q) + log(1 + e^t)` at `p =
+  e^t / (1 + e^t)`. -/
 noncomputable def wpd_wiredAmbientTiltLogZ (q : ℝ) (t : ℝ) : ℝ :=
   (1 / (G.edgeFinset.card : ℝ)) * Real.log (wiredFkZ G bdry (fsc_logistic t) q)
     + Real.log (1 + Real.exp t)
@@ -98,7 +101,8 @@ lemma wpd_wiredFkZ_logistic (t q : ℝ) :
   rw [ivp2_edgeProduct_logistic G t ω]
   ring
 
-/-- The wired ambient tilted log normalizer is `|E|⁻¹` times the cumulant generating function of the number of open
+/-- The wired ambient tilted log normalizer is `|E|⁻¹` times the cumulant generating function of the
+  number of open
 edges under the weight `q^{k^w}`. -/
 lemma wpd_wiredAmbientTiltLogZ_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
     (t : ℝ) :
@@ -164,7 +168,8 @@ lemma wpd_wiredCgfMean_eq_openCount_expect (q : ℝ) (hq : 0 < q) (t : ℝ) :
   rw [eq_div_iff hSpos.ne']
   field_simp
 
-/-- The derivative in `t` of the wired ambient tilted log normalizer is `|E|⁻¹` times the expected number of open
+/-- The derivative in `t` of the wired ambient tilted log normalizer is `|E|⁻¹` times the expected
+  number of open
 edges under the wired FK measure. -/
 lemma wpd_wiredAmbientTiltLogZ_hasDerivAt (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
     (t : ℝ) :
@@ -241,7 +246,8 @@ lemma wpd_wiredFkZ_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     rw [Finset.mul_sum]
     exact Finset.sum_le_sum (fun ω _ => (wpd_wiredFkWeight_le G bdry hp hp1 hq ω).2)
 
-/-- For `q ≥ 1`, the free and wired per-edge ambient tilted log normalizers differ by at most `|∂| log q / |E|`. -/
+/-- For `q ≥ 1`, the free and wired per-edge ambient tilted log normalizers differ by at most `|∂|
+  log q / |E|`. -/
 lemma wpd_ambientTiltLogZ_sub_le {q : ℝ} (hq : 1 ≤ q) (hE : 0 < G.edgeFinset.card) (t : ℝ) :
     |ivp2_ambientTiltLogZ G q t - wpd_wiredAmbientTiltLogZ G bdry q t|
       ≤ ((Finset.univ.filter bdry).card : ℝ) / (G.edgeFinset.card : ℝ) * Real.log q := by

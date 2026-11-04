@@ -14,7 +14,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeEnergyDyadic
 # Dyadic doubling bounds for box ambient tilted log normalizers
 
 If `-log Z` of `Λ_{2^{j+1}}` is at most `2^d` times that of `Λ_{2^j}` plus an interface cost whose
-size relative to the volume is summable, the ambient tilted log normalizers satisfy the dyadic near-monotonicity
+size relative to the volume is summable, the ambient tilted log normalizers satisfy the dyadic
+  near-monotonicity
 of `BoxFeketePerVolume`.
 
 Here `Z` denotes the ambient normalizer `fkZ`, including non-edge coordinates. The convergence
@@ -25,11 +26,14 @@ edge-restricted box convergence is developed separately in `EdgePartitionFunctio
 
 ## i. Overview
 
-`bxt_ambientNegLogZ d t n = -log Z_{Λ_n}(logistic(t), 2)` and `bxt_E d n = |E(Λ_n)|`. An elementary inequality
+`bxt_ambientNegLogZ d t n = -log Z_{Λ_n}(logistic(t), 2)` and `bxt_E d n = |E(Λ_n)|`. An elementary
+  inequality
 (`bxt_perVolume_doubling_step`) turns a doubling bound `u(2^{j+1}) ≤ 2^d u(2^j) + I_j c` with
-`|2^d E(2^j) - E(2^{j+1})| ≤ I_j` into a lower bound on the per-edge ambient tilted log normalizer at the next scale
+`|2^d E(2^j) - E(2^{j+1})| ≤ I_j` into a lower bound on the per-edge ambient tilted log normalizer
+  at the next scale
 with defect `O(I_j / E(2^{j+1}))`. With summable defects, bounded per-edge values, and vanishing
-oscillation this gives `bpv_AmbientTiltLogZConvergenceData`. The doubling bound follows from gluing `2^d`
+oscillation this gives `bpv_AmbientTiltLogZConvergenceData`. The doubling bound follows from gluing
+  `2^d`
 boxes along interfaces (`bxt_doublingBound_of_crossSplit`).
 
 ## ii. Key results
@@ -147,14 +151,17 @@ lemma bxt_perVolumeData_of_doubling (t : ℝ)
   · intro j
     rw [bxt_ambientTiltLogZ_eq d t (2 ^ j), bxt_ambientTiltLogZ_eq d t (2 ^ (j + 1))]
     have hstep := bxt_perVolume_doubling_step (a := bxt_ambientNegLogZ d t (2 ^ j))
-      (A := bxt_ambientNegLogZ d t (2 ^ (j + 1))) (e := bxt_E d (2 ^ j)) (E := bxt_E d (2 ^ (j + 1)))
+      (A := bxt_ambientNegLogZ d t (2 ^ (j + 1))) (e := bxt_E d (2 ^ j)) (E := bxt_E d (2 ^ (j +
+        1)))
       (K := (2 : ℝ) ^ d) (c := c) (i := I j)
       (hEpos j) (hEpos (j + 1)) hc0 (hInn j) (hudbl j) (hEdge j)
-    have hdefle : (|bxt_ambientNegLogZ d t (2 ^ j)| / bxt_E d (2 ^ j) + c) * (I j / bxt_E d (2 ^ (j + 1)))
+    have hdefle : (|bxt_ambientNegLogZ d t (2 ^ j)| / bxt_E d (2 ^ j) + c) * (I j / bxt_E d (2 ^ (j
+      + 1)))
         ≤ δ j := by
       change _ ≤ (M + c) * (I j / bxt_E d (2 ^ (j + 1)))
       apply mul_le_mul_of_nonneg_right _ (hIE0 j)
-      have habs : |bxt_ambientNegLogZ d t (2 ^ j)| / bxt_E d (2 ^ j) = |bxt_ambientNegLogZ d t (2 ^ j) / bxt_E d (2 ^ j)|
+      have habs : |bxt_ambientNegLogZ d t (2 ^ j)| / bxt_E d (2 ^ j) = |bxt_ambientNegLogZ d t (2 ^
+        j) / bxt_E d (2 ^ j)|
           := by
         rw [abs_div, abs_of_pos (hEpos j)]
       rw [habs]; have := hM j; linarith

@@ -95,8 +95,7 @@ example (q : ℝ) (hq : 0 < q) (t : ℝ) :
 -- The raw helper remains totalized at zero edges; this is not a pressure interpretation.
 example (q t : ℝ) :
     ivp2_ambientTiltLogZ (⊥ : SimpleGraph (Fin 1)) q t = Real.log (1 + Real.exp t) := by
-  have hE : (⊥ : SimpleGraph (Fin 1)).edgeFinset.card = 0 := by decide
-  simp [ivp2_ambientTiltLogZ, hE]
+  simp [ivp2_ambientTiltLogZ]
 
 -- Genuine growing boxes, with all positive-index edge hypotheses discharged together.
 example (t : ℝ) : ecz_PerEdgeDensityConverges 1 t :=

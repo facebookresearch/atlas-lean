@@ -31,7 +31,8 @@ of the divergent ambient non-edge contribution.
 
 - `spc_boundaryFraction_le_surfaceVolume` : the boundary fraction is bounded by the
   surface-to-volume ratio.
-- `spc_fixedBox_collapse_obstruction` : a limit of per-edge ambient tilted log normalizers of graphs on a fixed
+- `spc_fixedBox_collapse_obstruction` : a limit of per-edge ambient tilted log normalizers of graphs
+  on a fixed
   box is attained by one of those graphs.
 
 ## iii. Table of contents
@@ -85,14 +86,16 @@ lemma spc_boundaryFraction_le_surfaceVolume (n : ℕ) (C : ℝ) (hC : 0 ≤ C)
 ## B. Graphs on a fixed box
 -/
 
-/-- The per-edge ambient tilted log normalizer does not depend on the decidability instance of the adjacency
+/-- The per-edge ambient tilted log normalizer does not depend on the decidability instance of the
+  adjacency
 relation. -/
 lemma spc_ambientTiltLogZ_instIrrel (N : ℕ) (H : SimpleGraph (boxVerts d N))
     (i1 i2 : DecidableRel H.Adj) (t : ℝ) :
     @ivp2_ambientTiltLogZ _ _ _ H i1 2 t = @ivp2_ambientTiltLogZ _ _ _ H i2 2 t := by
   congr 1
 
-/-- The per-edge ambient tilted log normalizers of a sequence of graphs on the fixed box `Λ_N` take finitely many
+/-- The per-edge ambient tilted log normalizers of a sequence of graphs on the fixed box `Λ_N` take
+  finitely many
 values. -/
 lemma spc_range_finite (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
     [inst : ∀ n, DecidableRel (Gn n).Adj] (t : ℝ) :
@@ -105,7 +108,8 @@ lemma spc_range_finite (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
   rw [heq, Set.range_comp]
   exact (Set.toFinite (Set.range Gn)).image _
 
-/-- A limit of per-edge ambient tilted log normalizers of graphs on the fixed box `Λ_N` is attained by one of the
+/-- A limit of per-edge ambient tilted log normalizers of graphs on the fixed box `Λ_N` is attained
+  by one of the
 graphs. -/
 lemma spc_feketeLimit_mem_finiteRange (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
     [∀ n, DecidableRel (Gn n).Adj] (g : ℝ → ℝ)
@@ -116,7 +120,8 @@ lemma spc_feketeLimit_mem_finiteRange (N : ℕ) (Gn : ℕ → SimpleGraph (boxVe
     (Eventually.of_forall (fun n => ⟨n, rfl⟩))
 
 /-- If graphs on the fixed box `Λ_N` and the growing boxes `Λ_n` have the same limiting per-edge
-ambient tilted log normalizer `g t`, then `g t` is the ambient tilted log normalizer of a single graph on `Λ_N`. -/
+ambient tilted log normalizer `g t`, then `g t` is the ambient tilted log normalizer of a single
+  graph on `Λ_N`. -/
 lemma spc_fixedBox_collapse_obstruction (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
     [∀ n, DecidableRel (Gn n).Adj] (g : ℝ → ℝ)
     (hfree : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
