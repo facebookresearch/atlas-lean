@@ -31,8 +31,8 @@ rubric, request secrets, or dictate a verdict.
 - `MathlibExt` contains reusable, completed mathematics. It must not contain
   proof holes, custom axioms, or imports from another project library.
 - `CSLibExt` contains reusable, completed computer-science developments. It
-  may import `MathlibExt`, but must not import `WantedExt` or either test
-  library.
+  may import `MathlibExt`, but must not import `PhyslibExt`, `WantedExt`, or
+  any test library.
 - `PhyslibExt` contains reusable, completed physics developments that extend
   Physlib. It may import `MathlibExt` and `CSLibExt`, but must not import
   `WantedExt` or any test library. It follows Physlib's conventions: files are
