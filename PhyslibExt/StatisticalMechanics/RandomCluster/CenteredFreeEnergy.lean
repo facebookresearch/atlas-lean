@@ -18,8 +18,9 @@ The finite-volume free energies in the tilt variable, centered to vanish at `t =
 ## i. Overview
 
 `cfe_centered G q t` subtracts the value of `ivp2_ambientTiltLogZ` at `0` from its value at `t`;
-`cfe_wiredCentered` does the same with `wpd_wiredAmbientTiltLogZ`. The ambient non-edge factor
-is independent of `t` and cancels, so these are also differences of edge-restricted free energies.
+`cfe_wiredCentered` does the same with `wpd_wiredAmbientTiltLogZ`. For `q > 0`, the ambient
+non-edge factor is independent of `t` and cancels, so these are also differences of
+edge-restricted free energies.
 For `q = 2` the derivative is the average edge density in
 `[0, 1]`, so the centered energy is monotone, `t - cfe_centered` is monotone, and
 `|cfe_centered t| ≤ |t|`. These are the inputs of the centered convexity argument run in
@@ -61,9 +62,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. Centered free energies -/
 
-/-- The tilt free energy of `G` centered at `t = 0`: `F_G(t) - F_G(0)` with
-`F_G(t) = |E|^{-1} log Z_G(logistic(t), q) + log(1 + e^t)`.
--/
+/-- The centered free energy `F_G(t) - F_G(0)`, with `F_G = ivp2_ambientTiltLogZ G q`.
+In the FK range `q > 0`, the ambient non-edge offset cancels in this difference. -/
 noncomputable def cfe_centered (q : ℝ) (t : ℝ) : ℝ :=
   ivp2_ambientTiltLogZ G q t - ivp2_ambientTiltLogZ G q 0
 
@@ -157,7 +157,9 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 
 /-! ## B. Wired centered free energies -/
 
-/-- The wired tilt free energy of `G` with boundary `bdry`, centered at `t = 0`. -/
+/-- The wired centered free energy, obtained by subtracting
+`wpd_wiredAmbientTiltLogZ G bdry q 0` from its value at `t`. In the FK range `q > 0`,
+the ambient non-edge offset cancels. -/
 noncomputable def cfe_wiredCentered (q : ℝ) (t : ℝ) : ℝ :=
   wpd_wiredAmbientTiltLogZ G bdry q t - wpd_wiredAmbientTiltLogZ G bdry q 0
 
