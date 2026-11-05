@@ -18,8 +18,8 @@ example (K : ℕ) : Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ := MetaMathlibExt.zag
 
 example := MetaMathlibExt.zagierInverseP_eq_zagierInverseQ 3
 
-example := MetaMathlibExt.zagierMatrix_mul_zagierInverseP 3 (by decide)
+example := MetaMathlibExt.zagierMatrix_mul_zagierInverseP 3
 
-example := MetaMathlibExt.zagierInverseP_mul_zagierMatrix 3 (by decide)
+example := MetaMathlibExt.zagierInverseP_mul_zagierMatrix 3
 
-example := (MetaMathlibExt.zagier_matrix_inverse 3 (by decide)).2.2
+example := (MetaMathlibExt.zagier_matrix_inverse 3).2.2

@@ -812,7 +812,7 @@ private lemma zmi_product_sum (K s t : ℕ) (hs1 : 1 ≤ s) (hsK : s < K)
       exact zmi_bernoulli_delta K s t hs1 hsK ht1 htK
 
 /-- The candidate inverse is a left inverse of Zagier's matrix. -/
-public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) (hK : 1 < K) :
+public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) :
     zagierInverseP K * zagierMatrix K = 1 := by
   have hPQ : zagierInverseP K = zagierInverseQ K := zagierInverseP_eq_zagierInverseQ K
   ext i j
@@ -851,15 +851,16 @@ public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) (hK : 1 < K) :
         simp [hij, hval]
 
 /-- The candidate inverse is a right inverse of Zagier's matrix. -/
-public lemma zagierMatrix_mul_zagierInverseP (K : ℕ) (hK : 1 < K) :
+public lemma zagierMatrix_mul_zagierInverseP (K : ℕ) :
     zagierMatrix K * zagierInverseP K = 1 :=
-  (Matrix.mul_eq_one_comm_of_card_eq _ _ _ rfl).mpr (zagierInverseP_mul_zagierMatrix K hK)
+  (Matrix.mul_eq_one_comm_of_card_eq _ _ _ rfl).mpr (zagierInverseP_mul_zagierMatrix K)
 
 /-- Zagier's matrix conjecture: the two Bernoulli-number formulas for `P`
 coincide, and `P` is the two-sided inverse of `A`. The three conjuncts are
 the equality of the two formulas for `P`, then `A * P = 1`, then `P * A = 1`.
 Source indices are 1-based; here rows and columns run over `Fin (K - 1)` with
-`i.val + 1` and `j.val + 1`.
+`i.val + 1` and `j.val + 1`. The source assumes `K ≥ 2`; it is not needed, since for
+`K ≤ 1` the matrices are indexed by `Fin 0`.
 
 Source: Yawen Ma and Lee-Peng Teo, "Another Proof of Zagier's Matrix
 Conjecture," Journal of Integer Sequences 25 (2022), Article 22.6.4,
@@ -868,7 +869,7 @@ https://cs.uwaterloo.ca/journals/JIS/VOL25/Teo/teo4.tex
 
 Proves `Wanted` entry `zagier_matrix_inverse`.
 -/
-public theorem zagier_matrix_inverse (K : ℕ) (hK : 1 < K) :
+public theorem zagier_matrix_inverse (K : ℕ) :
     (Matrix.of (fun i j : Fin (K - 1) =>
         (2 : ℚ) / (2 * (↑(i.val + 1) : ℚ) - 1) *
           ∑ n ∈ Finset.range (2 * K - 2 * (i.val + 1) + 1),
@@ -909,8 +910,8 @@ public theorem zagier_matrix_inverse (K : ℕ) (hK : 1 < K) :
       Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ)
     = 1 := by
   have hPQ := zagierInverseP_eq_zagierInverseQ K
-  have hPA := zagierInverseP_mul_zagierMatrix K hK
-  have hAP := zagierMatrix_mul_zagierInverseP K hK
+  have hPA := zagierInverseP_mul_zagierMatrix K
+  have hAP := zagierMatrix_mul_zagierInverseP K
   refine ⟨?_, ?_, ?_⟩
   · ext i j
     simpa only [Matrix.of_apply, zagierInverseP, zagierInverseQ] using congrFun (congrFun hPQ i) j
