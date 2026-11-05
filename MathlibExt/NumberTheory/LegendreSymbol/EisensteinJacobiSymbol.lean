@@ -582,9 +582,9 @@ private theorem eis_jacobi_gen (a : ℕ) : ∀ b : ℕ, Odd b → Nat.Coprime a 
                 = (a / b) * ((b ^ 2 - 1) / 8) + 0 * ((b ^ 2 - 1) / 8) := by ring
             omega
 
-/-- Eisenstein's lemma for Jacobi symbols with only the hypotheses the argument uses: for
-coprime odd `a` and `b`, `J(a | b) = (-1) ^ ∑_{i = 1}^{(b - 1) / 2} ⌊i a / b⌋`.
-`eisenstein_lemma_jacobi_symbol` is the source-shaped form. -/
+/-- **Eisenstein's lemma for Jacobi symbols (odd coprime form).** Let $a$ and $b$ be odd natural
+numbers that are coprime. Then the Jacobi symbol $\left(\frac{a}{b}\right)$ equals $(-1)^{S}$,
+where $S = \sum_{i=1}^{(b-1)/2} \lfloor ia/b \rfloor$. -/
 theorem eisenstein_lemma_jacobi_symbol_general
     (a b : ℕ) (ha_odd : Odd a) (hb_odd : Odd b) (hab : Nat.Coprime a b) :
     jacobiSym (a : ℤ) b =
@@ -609,7 +609,10 @@ theorem eisenstein_lemma_jacobi_symbol_general
 
 set_option linter.unusedVariables false in
 /--
-Eisenstein's lemma for Jacobi symbols.
+**Eisenstein's lemma for Jacobi symbols.** Let $a$ and $b$ be positive odd natural numbers that
+are coprime. Then the Jacobi symbol $\left(\frac{a}{b}\right)$ equals $(-1)^{S}$, where
+$S = \sum_{i=1}^{(b-1)/2} \lfloor ia/b \rfloor$.
+
 Source: Damanvir Singh Binner, "Generalization of a Result of Sylvester Related to
 the Frobenius Coin Problem", Journal of Integer Sequences 24 (2021), Article 21.8.4,
 Theorem `Eisenstein`, lines 272-278,

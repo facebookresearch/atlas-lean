@@ -43,8 +43,11 @@ namespace MonoidHom
 
 variable {R : Type*} [MonoidWithZero R]
 
-/-- `χ` is a Dirichlet character of modulus `q`: it is `q`-periodic and its
-nonvanishing locus is exactly the set of integers coprime to `q`. -/
+/-- **Dirichlet character of a given modulus.** Let $R$ be a monoid with zero, let
+$\chi \colon \mathbb{Z} \to R$ be a multiplicative map with $\chi(1) = 1$, and let $q$ be a
+natural number. Then $\chi$ is a Dirichlet character of modulus $q$ if $\chi(n + q) = \chi(n)$
+for every integer $n$, and, for every integer $n$, $\chi(n) \neq 0$ if and only if $q$ and $n$
+are coprime. -/
 def IsDirichletCharacterModulus (χ : ℤ →* R) (q : ℕ) : Prop :=
   Function.Periodic χ (q : ℤ) ∧ ∀ n : ℤ, χ n ≠ 0 ↔ IsCoprime (q : ℤ) n
 
@@ -182,14 +185,21 @@ private theorem coprime_imp_nonzero {χ : ℤ →* R} [Nontrivial R]
   rw [h0pow] at hχpow
   exact one_ne_zero hχpow.symm
 
-/-- ATLAS `NumberTheoryI` Lemma 18.8: `χ` with least positive period `m` is a
-Dirichlet character of modulus `m'` iff `m ∣ m'` and `m' ∣ m ^ k` for some `k`.
-Forward: minimality gives the divisibility, and a prime divisor of `m'` divides
-`m` (else `χ p` is simultaneously zero and nonzero).  Backward: periodicity
-lifts along `m ∣ m'`, and the nonvanishing locus transfers via the two lemmas
-above.  The `Nontrivial R` hypothesis is sharp: the subsingleton monoid with zero
-satisfies the remaining typeclasses while forcing every `χ n = 0`, which
-falsifies the claimed nonvanishing locus. -/
+/-- **Moduli of a character with a given least period.** Let $R$ be a nontrivial monoid with zero
+in which nonzero elements can be cancelled on both sides, and let $\chi \colon \mathbb{Z} \to R$
+be a multiplicative map with $\chi(1) = 1$. Suppose $m \ge 1$ is the least positive period of
+$\chi$: $\chi(n + m) = \chi(n)$ for every integer $n$, and every positive integer $d$ with
+$\chi(n + d) = \chi(n)$ for all $n$ satisfies $m \le d$. Then for every integer $m' \ge 1$,
+$\chi$ is a Dirichlet character of modulus $m'$ if and only if $m \mid m'$ and $m' \mid m^k$
+for some natural number $k$.
+
+The hypothesis that $R$ is nontrivial cannot be dropped: in the zero monoid every value of
+$\chi$ is $0$, so $\chi$ is a Dirichlet character of no modulus.
+
+Source: ATLAS `NumberTheoryI` Lemma 18.8. Forward: minimality gives the divisibility, and a
+prime divisor of `m'` divides `m` (else `χ p` is simultaneously zero and nonzero). Backward:
+periodicity lifts along `m ∣ m'`, and the nonvanishing locus transfers via the two lemmas
+above. -/
 theorem isDirichletCharacterModulus_iff {χ : ℤ →* R} [Nontrivial R]
     [IsCancelMulZero R] {m m' : ℕ}
     (hm : 0 < m)
@@ -229,7 +239,12 @@ theorem isDirichletCharacterModulus_iff {χ : ℤ →* R} [Nontrivial R]
         hcop.of_isCoprime_of_dvd_left (by exact_mod_cast hdvd)
       exact coprime_imp_nonzero hm hper hcopm
 
-/-- `χ` is a Dirichlet character of its own least period `m`. -/
+/-- **A character is a Dirichlet character modulo its least period.** Let $R$ be a nontrivial
+monoid with zero in which nonzero elements can be cancelled on both sides, and let
+$\chi \colon \mathbb{Z} \to R$ be a multiplicative map with $\chi(1) = 1$. If $m \ge 1$ is the
+least positive period of $\chi$ (that is, $\chi(n + m) = \chi(n)$ for every integer $n$, and every
+positive integer $d$ with $\chi(n + d) = \chi(n)$ for all $n$ satisfies $m \le d$), then $\chi$
+is a Dirichlet character of modulus $m$. -/
 theorem isDirichletCharacterModulus_self {χ : ℤ →* R} [Nontrivial R]
     [IsCancelMulZero R] {m : ℕ} (hm : 0 < m)
     (hper : Function.Periodic χ (m : ℤ))

@@ -34,14 +34,21 @@ factorial there equals one.
 
 @[expose] public section
 
-/-- Product of the scaled factorials `(a * n)!` over the entries `a` of `L`. -/
+/-- **Product of scaled factorials.** For a list $L$ of natural numbers and a natural number
+$n$, the product of scaled factorials of $L$ at $n$ is $\prod_{a \in L} (an)!$, the product of the
+factorials $(an)!$ over the entries $a$ of $L$, counted with multiplicity; for the empty list it
+is $1$. -/
 def factorialProd (L : List ℕ) (n : ℕ) : ℕ :=
   (L.map fun a => Nat.factorial (a * n)).prod
 
-/-- The integral factorial-ratio predicate from *Integral factorial ratios*:
-both tuples consist of positive naturals, their sums agree (the paper's balance
-condition `∑ aᵢ = ∑ bⱼ`), and the denominator product divides the numerator
-product at every index `n`. -/
+/-- **Integral factorial ratio.** For lists $A = (a_1, \dots, a_k)$ and
+$B = (b_1, \dots, b_l)$ of natural numbers, the pair $(A, B)$ is an integral
+factorial ratio when every $a_i$ and every $b_j$ is positive,
+$a_1 + \dots + a_k = b_1 + \dots + b_l$, and for every natural number $n$ the product
+$(b_1 n)! \cdots (b_l n)!$ divides $(a_1 n)! \cdots (a_k n)!$; equivalently, the quotient
+$\frac{(a_1 n)! \cdots (a_k n)!}{(b_1 n)! \cdots (b_l n)!}$ is a natural number.
+
+Source: K. Soundararajan, *Integral factorial ratios* (arXiv 1901.05133). -/
 def IsIntegralFactorialRatio (A B : List ℕ) : Prop :=
   (∀ a ∈ A, 0 < a) ∧ (∀ b ∈ B, 0 < b) ∧ A.sum = B.sum ∧
     ∀ n : ℕ, factorialProd B n ∣ factorialProd A n
@@ -59,7 +66,8 @@ theorem factorialProd_perm {L₁ L₂ : List ℕ} (h : List.Perm L₁ L₂) (n :
   unfold factorialProd
   exact (h.map _).prod_eq
 
-/-- Every scaled factorial at index `0` equals `1`, so the whole product is `1`. -/
+/-- **Scaled factorial product at index zero.** For every list $L$ of natural numbers,
+$\prod_{a \in L} (a \cdot 0)! = 1$, since every factor equals $0! = 1$. -/
 theorem factorialProd_zero (L : List ℕ) : factorialProd L 0 = 1 := by
   unfold factorialProd
   apply List.prod_eq_one
@@ -67,12 +75,17 @@ theorem factorialProd_zero (L : List ℕ) : factorialProd L 0 = 1 := by
   obtain ⟨a, _, rfl⟩ := List.mem_map.mp hx
   rw [Nat.mul_zero, Nat.factorial_zero]
 
-/-- The `n = 0` boundary always divides: both products are `1`. -/
+/-- **Scaled factorial products at index zero divide.** For all lists $A$ and $B$ of natural
+numbers, $\prod_{b \in B} (b \cdot 0)!$ divides $\prod_{a \in A} (a \cdot 0)!$, since both
+products equal $1$. -/
 theorem factorialProd_dvd_zero (A B : List ℕ) :
     factorialProd B 0 ∣ factorialProd A 0 := by
   rw [factorialProd_zero, factorialProd_zero]
 
-/-- Transparent characterization of the predicate. -/
+/-- **Characterization of integral factorial ratios.** For lists $A$ and $B$ of natural numbers,
+$(A, B)$ is an integral factorial ratio if and only if every entry of $A$ is positive, every
+entry of $B$ is positive, the entries of $A$ and the entries of $B$ have the same sum, and for
+every natural number $n$ the product $\prod_{b \in B} (bn)!$ divides $\prod_{a \in A} (an)!$. -/
 theorem isIntegralFactorialRatio_iff (A B : List ℕ) :
     IsIntegralFactorialRatio A B ↔
       (∀ a ∈ A, 0 < a) ∧ (∀ b ∈ B, 0 < b) ∧ A.sum = B.sum ∧
@@ -102,7 +115,9 @@ theorem IsIntegralFactorialRatio.mk {A B : List ℕ}
     IsIntegralFactorialRatio A B :=
   ⟨hA, hB, hsum, hdvd⟩
 
-/-- The predicate is invariant under permuting the numerator tuple. -/
+/-- **Permuting the numerator of an integral factorial ratio.** Let $A$, $A'$ and $B$ be lists of
+natural numbers such that $A'$ is a permutation of $A$. If $(A, B)$ is an integral factorial
+ratio, then so is $(A', B)$. -/
 theorem isIntegralFactorialRatio_perm_left {A A' B : List ℕ}
     (hperm : List.Perm A A') (h : IsIntegralFactorialRatio A B) :
     IsIntegralFactorialRatio A' B := by
@@ -116,7 +131,9 @@ theorem isIntegralFactorialRatio_perm_left {A A' B : List ℕ}
     rw [← factorialProd_perm hperm]
     exact hdvd n
 
-/-- The predicate is invariant under permuting the denominator tuple. -/
+/-- **Permuting the denominator of an integral factorial ratio.** Let $A$, $B$ and $B'$ be lists
+of natural numbers such that $B'$ is a permutation of $B$. If $(A, B)$ is an integral factorial
+ratio, then so is $(A, B')$. -/
 theorem isIntegralFactorialRatio_perm_right {A B B' : List ℕ}
     (hperm : List.Perm B B') (h : IsIntegralFactorialRatio A B) :
     IsIntegralFactorialRatio A B' := by
@@ -130,18 +147,22 @@ theorem isIntegralFactorialRatio_perm_right {A B B' : List ℕ}
     rw [← factorialProd_perm hperm]
     exact hdvd n
 
-/-- The predicate is invariant under permuting both tuples. -/
+/-- **Integral factorial ratios are invariant under permutation.** Let $A$, $A'$, $B$ and $B'$ be
+lists of natural numbers such that $A'$ is a permutation of $A$ and $B'$ is a permutation of
+$B$. If $(A, B)$ is an integral factorial ratio, then so is $(A', B')$. -/
 theorem isIntegralFactorialRatio_perm {A A' B B' : List ℕ}
     (hA : List.Perm A A') (hB : List.Perm B B') (h : IsIntegralFactorialRatio A B) :
     IsIntegralFactorialRatio A' B' :=
   isIntegralFactorialRatio_perm_right hB (isIntegralFactorialRatio_perm_left hA h)
 
-/-- Equal tuples always satisfy the predicate. -/
+/-- **Equal tuples form an integral factorial ratio.** If every entry of a list $L$ of natural
+numbers is positive, then $(L, L)$ is an integral factorial ratio. -/
 theorem isIntegralFactorialRatio_refl (L : List ℕ) (hpos : ∀ a ∈ L, 0 < a) :
     IsIntegralFactorialRatio L L :=
   ⟨hpos, hpos, rfl, fun _ => dvd_rfl⟩
 
-/-- Equal singleton tuples satisfy the predicate. -/
+/-- **Equal singletons form an integral factorial ratio.** For every positive natural number
+$c$, the one-entry tuples $(c)$ and $(c)$ form an integral factorial ratio. -/
 theorem isIntegralFactorialRatio_singleton_self (c : ℕ) (hc : 0 < c) :
     IsIntegralFactorialRatio [c] [c] := by
   refine ⟨?_, ?_, rfl, fun _ => dvd_rfl⟩
@@ -152,8 +173,9 @@ theorem isIntegralFactorialRatio_singleton_self (c : ℕ) (hc : 0 < c) :
     rw [List.mem_singleton.mp hb]
     exact hc
 
-/-- Central-binomial example: `[(2)] / [(1), (1)]` is integral, since
-`(n! * n!) ∣ (2 * n)!`. -/
+/-- **The central binomial factorial ratio is integral.** The tuples $(2)$ and $(1, 1)$ form an
+integral factorial ratio: their entries are positive, their sums agree ($2 = 1 + 1$), and for
+every natural number $n$, $n! \cdot n!$ divides $(2n)!$. -/
 theorem isIntegralFactorialRatio_centralBinom :
     IsIntegralFactorialRatio [2] [1, 1] := by
   refine ⟨?_, ?_, rfl, ?_⟩

@@ -175,21 +175,20 @@ private lemma digits_repunit_mul_aux (b B M N e : ℕ) (hb : 1 < b)
   · exact h1
 
 /--
-Chinese-remainder-compatible positive integer with trivial nonzero-digit
-product: any consistent system of congruences with `r_v = 0` whenever
-`gcd(m_v, b) ≠ 1` is satisfied by some positive `c` with `p_b(c) = 1`.
+**Chinese remainder solutions with nonzero-digit product one.** Let $b \ge 3$ and $w \ge 1$
+be integers, and for $v = 1, \dots, w$ let $m_v$ be a positive integer and $r_v$ an integer.
+Suppose the system of congruences $x \equiv r_v \pmod{m_v}$, $v = 1, \dots, w$, has an integer
+solution, and $r_v = 0$ whenever $\gcd(m_v, b) \ne 1$. Then the system has a positive integer
+solution $c$ with $p_b(c) = 1$, where $p_b(c)$ is the product of the nonzero base-$b$ digits
+of $c$.
+
+Proves `Wanted` entry `exists_positive_crt_solution_nonzero_digit_product_one`.
 
 Source: Michael Gohn, Joshua Harrington, Sophia Lebiere, Hani Samamah,
 Kyla Shappell, and Tony W. H. Wong, "Arithmetic Progressions of
 b-Prodigious Numbers," Journal of Integer Sequences 25 (2022),
 Article 22.8.7, Lemma `lem:crt`, lines 178-180,
 <https://cs.uwaterloo.ca/journals/JIS/VOL25/Wong/wong42.tex>.
-
-`p_b(c)` is the product of the nonzero base-`b` digits of `c`; the
-formalization requires `3 ≤ b` and a nonempty system, matching the
-paper's `b > 2` setting.
-
-Proves `Wanted` entry `exists_positive_crt_solution_nonzero_digit_product_one`.
 -/
 theorem exists_positive_crt_solution_nonzero_digit_product_one
     (w b : ℕ)

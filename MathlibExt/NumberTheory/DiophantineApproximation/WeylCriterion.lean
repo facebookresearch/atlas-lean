@@ -1203,11 +1203,17 @@ private lemma wc_backward (x : ℕ → ℝ)
   · linarith [hmid]
   · linarith [hup]
 
-/-- Weyl's equidistribution criterion (statement `weyl-criterion-s1`):
-a real sequence `x` is equidistributed mod 1 iff every nontrivial Fourier mean
-vanishes. Source: https://en.wikipedia.org/wiki/Equidistribution_theorem.
+/-- **Weyl's equidistribution criterion.** Let $(x_n)_{n \ge 0}$ be a sequence of real numbers and
+write $\operatorname{frac}(t) = t - \lfloor t \rfloor$ for the fractional part of a real number
+$t$. Then the following are equivalent:
+(i) for all real numbers $a < b$ with $0 \le a$ and $b \le 1$,
+$\frac{1}{N} \#\{n < N : a \le \operatorname{frac}(x_n) < b\} \to b - a$ as $N \to \infty$;
+(ii) for every nonzero integer $h$,
+$\frac{1}{N} \sum_{n=0}^{N-1} e^{2\pi i h x_n} \to 0$ as $N \to \infty$.
 
-Proves `Wanted` entry `weyl_criterion`. -/
+Proves `Wanted` entry `weyl_criterion` (statement `weyl-criterion-s1`).
+
+Source: https://en.wikipedia.org/wiki/Equidistribution_theorem. -/
 public theorem weyl_criterion (x : ℕ → ℝ) :
     (∀ a b : ℝ, 0 ≤ a → a < b → b ≤ 1 →
       Tendsto (fun N : ℕ =>

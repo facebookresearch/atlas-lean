@@ -108,9 +108,9 @@ public theorem kroneckerSym_mul (D : ℤ)
       rw [List.map_append, List.prod_append] at hperm_prod
       exact hperm_prod
 
-/-- Unconditional step reused by every branch: at an odd prime `p`,
-the Kronecker symbol is the Jacobi symbol. Depends on neither `hpos`
-nor `h1`. -/
+/-- **Kronecker and Jacobi symbols agree at odd primes.** For every integer $D$ and every prime
+$p \ne 2$, the Kronecker symbol $\left(\frac{D}{p}\right)$ equals the Jacobi symbol
+$\left(\frac{D}{p}\right)$. -/
 public theorem kroneckerSym_eq_jacobiSym_of_prime_ne_two (D : ℤ)
     (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) :
     kroneckerSym D p = jacobiSym D p := by

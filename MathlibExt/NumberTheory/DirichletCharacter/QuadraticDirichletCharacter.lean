@@ -619,7 +619,10 @@ private theorem caseB2b_final (D k : ℤ) (hDk : D = 8 * k) (hk4 : k % 4 = 3) :
     (fun n => ZMod.χ₈' ((n : ℕ) : ZMod 8)) (kroneckerSym D) hF hEper hEzero hK0
   exact existsUnique_of_kroneckerProps D.natAbs hN0 (kroneckerSym D) h1 hmul hper hzero
 
-/-- Quadratic Dirichlet character attachment from the source contract.
+/-- **Quadratic Dirichlet character of a fundamental discriminant.** Let $D$ be a fundamental
+discriminant. Then there is a unique integer-valued Dirichlet character $\chi$ modulo $|D|$ such
+that $\chi(n \bmod |D|) = \left(\frac{D}{n}\right)$ for every natural number $n$, where
+$\left(\frac{D}{n}\right)$ is the Kronecker symbol.
 
 Source: Joshua Males, Andreas Mono, Larry Rolen, and Ian Wagner,
 *Central L-values of newforms and local polynomials*,
@@ -631,8 +634,6 @@ This is the existence and uniqueness of the integer-valued Dirichlet character
 of level `Int.natAbs D` evaluating as the positive-denominator Kronecker symbol
 `kroneckerSym D` at every natural `n`, assuming `IsFundamentalDiscriminant D`.
 No primitivity or conductor claim belongs to this item.
-
-Proves `Wanted` entry `quadraticDirichletCharacter`.
 -/
 theorem quadraticDirichletCharacter (D : ℤ)
     (hD : IsFundamentalDiscriminant D) :

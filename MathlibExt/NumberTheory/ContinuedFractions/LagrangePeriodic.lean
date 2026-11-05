@@ -60,16 +60,24 @@ in `MathlibExt.NumberTheory.ContinuedFractions.EulerPeriodic`.
 namespace MetaMathlibExt
 
 section
-/-- Eventual periodicity of the continued fraction of `x`: the expansion does not
-terminate, and the tail partial denominators `partDens` (which omits the head
-coefficient `a₀`) are eventually periodic. Nontermination rules out a
-vacuous `Option.none` tail. Source: Nimbran–Levrie lines 130–134. -/
+/-- **Eventually periodic continued fractions.** Let $x$ be a real number with regular continued
+fraction $[a_0; a_1, a_2, \dots]$. The continued fraction of $x$ is eventually periodic if it does
+not terminate and its sequence of partial denominators $(a_n)_{n \ge 1}$, which omits the head
+coefficient $a_0$, is eventually periodic: there are natural numbers $p > 0$ and $n_0 \ge 1$ such
+that $a_{n+p} = a_n$ for every $n \ge n_0$.
+
+Source: Nimbran–Levrie lines 130–134. -/
 def ContinuedFractionEventuallyPeriodic (x : ℝ) : Prop :=
   ¬ (GenContFract.of x).Terminates ∧
     IsEventuallyPeriodic (fun n => (GenContFract.of x).partDens.get? n)
 
-/-- Real quadratic irrationality: `x` is integral over `ℚ` with minimal polynomial
-of degree two. Degree two over `ℚ` captures real quadratic irrationality.
+/-- **Real quadratic irrationals.** A real number $x$ is a real quadratic irrational if it is
+integral (equivalently, algebraic) over $\mathbb{Q}$ and its minimal polynomial over $\mathbb{Q}$
+has degree $2$.
+
+Degree two over $\mathbb{Q}$ captures real quadratic irrationality: such $x$ is exactly an
+irrational root of a quadratic polynomial with rational coefficients.
+
 Source: Nimbran–Levrie line 136 (Euler–Lagrange statement). -/
 def IsRealQuadraticIrrational (x : ℝ) : Prop :=
   IsIntegral ℚ x ∧ (minpoly ℚ x).natDegree = 2
@@ -886,11 +894,8 @@ private theorem quad_irrational (x : ℝ) (hint : IsIntegral ℚ x)
   rw [← hq] at heq
   exact heq
 
-/-- Lagrange direction of the Euler–Lagrange theorem: a real quadratic irrational
-has an eventually periodic continued fraction. The canonical biconditional
-(`continuedFractionEventuallyPeriodic_iff_isRealQuadraticIrrational`) and the
-Euler direction are proved in
-`MathlibExt.NumberTheory.ContinuedFractions.EulerPeriodic`.
+/-- **Lagrange's theorem on periodic continued fractions.** If a real number $x$ is a real
+quadratic irrational, then the continued fraction of $x$ is eventually periodic.
 -/
 theorem continuedFractionEventuallyPeriodic_of_isRealQuadraticIrrational
     (x : ℝ) (h : IsRealQuadraticIrrational x) :

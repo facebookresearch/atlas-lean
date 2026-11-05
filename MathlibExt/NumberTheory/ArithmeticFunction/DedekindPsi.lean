@@ -25,10 +25,13 @@ namespace ArithmeticFunction
 
 open Nat Finset
 
-/-- The Dedekind psi function as an arithmetic function taking values in `ℕ`.
-
-For `n = 0` the value is `0`, as required of an arithmetic function. For `n > 0`,
-`dedekindPsi n = ∏_{p ^ k ∥ n} p ^ (k - 1) * (p + 1)`.
+/-- **Dedekind psi function.** The Dedekind psi function $\psi$ is the arithmetic function with
+values in $\mathbb{N}$ given by $\psi(0) = 0$ and, for $n > 0$,
+$$
+\psi(n) = \prod_{p^k \parallel n} p^{k-1} (p + 1),
+$$
+the product running over the primes $p$ dividing $n$, with $p^k$ the exact power of $p$ dividing
+$n$.
 -/
 def dedekindPsi : ArithmeticFunction ℕ where
   toFun n := if n = 0 then 0 else n.factorization.prod fun p k => p ^ (k - 1) * (p + 1)
@@ -42,12 +45,19 @@ theorem dedekindPsi_zero : dedekindPsi (0 : ℕ) = 0 := by
 theorem dedekindPsi_one : dedekindPsi (1 : ℕ) = 1 := by
   simp [dedekindPsi, Nat.factorization_one]
 
-/-- Factorization product formula for `dedekindPsi` on nonzero inputs. -/
+/-- **Dedekind psi function as a product over prime powers.** For every natural number $n \ne 0$,
+the Dedekind psi function $\psi$ satisfies
+$$
+\psi(n) = \prod_{p^k \parallel n} p^{k-1} (p + 1),
+$$
+the product running over the primes $p$ dividing $n$, with $p^k$ the exact power of $p$ dividing
+$n$. -/
 theorem dedekindPsi_eq_prod_factorization {n : ℕ} (hn : n ≠ 0) :
     dedekindPsi n = n.factorization.prod fun p k => p ^ (k - 1) * (p + 1) := by
   simp [dedekindPsi, hn]
 
-/-- For prime `p` and positive `k`, `ψ(p ^ k) = p ^ (k - 1) * (p + 1)`. -/
+/-- **Dedekind psi function at prime powers.** For every prime $p$ and every natural number
+$k > 0$, the Dedekind psi function $\psi$ satisfies $\psi(p^k) = p^{k-1} (p + 1)$. -/
 theorem dedekindPsi_prime_pow {p k : ℕ} (hp : Nat.Prime p) (hk : 0 < k) :
     dedekindPsi (p ^ k) = p ^ (k - 1) * (p + 1) := by
   rw [dedekindPsi_eq_prod_factorization (pow_ne_zero k hp.ne_zero), hp.factorization_pow]
@@ -73,7 +83,9 @@ theorem dedekindPsi_prime {p : ℕ} (hp : Nat.Prime p) : dedekindPsi p = p + 1 :
   simpa only [pow_one, Nat.reduceSubDiff, pow_zero, one_mul] using
     dedekindPsi_prime_pow (k := 1) hp Nat.one_pos
 
-/-- The Dedekind psi function is multiplicative. -/
+/-- **Multiplicativity of the Dedekind psi function.** The Dedekind psi function $\psi$ is
+multiplicative: $\psi(1) = 1$ and $\psi(mn) = \psi(m) \psi(n)$ for all coprime natural numbers
+$m$ and $n$. -/
 theorem isMultiplicative_dedekindPsi : IsMultiplicative dedekindPsi := by
   rw [IsMultiplicative.iff_ne_zero]
   refine ⟨dedekindPsi_one, fun {m n} hm hn hmn => ?_⟩
@@ -82,7 +94,12 @@ theorem isMultiplicative_dedekindPsi : IsMultiplicative dedekindPsi := by
     Nat.factorization_mul_of_coprime hmn,
     Finsupp.prod_add_index_of_disjoint hmn.disjoint_primeFactors]
 
-/-- Cleared-denominator formula for the Dedekind psi function. -/
+/-- **Cleared-denominator product formula for the Dedekind psi function.** For every natural
+number $n \ne 0$, the Dedekind psi function $\psi$ satisfies
+$$
+\psi(n) \prod_{p \mid n} p = n \prod_{p \mid n} (p + 1),
+$$
+both products running over the prime divisors $p$ of $n$. -/
 theorem dedekindPsi_mul_prod_primeFactors {n : ℕ} (hn : n ≠ 0) :
     dedekindPsi n * ∏ p ∈ n.primeFactors, p = n * ∏ p ∈ n.primeFactors, (p + 1) := by
   rw [dedekindPsi_eq_prod_factorization hn]
@@ -115,7 +132,12 @@ theorem dedekindPsi_mul_prod_primeFactors {n : ℕ} (hn : n ≠ 0) :
       _ = p ^ n.factorization p * (p + 1) := by rw [Nat.pow_pred_mul hkpos]
   rw [hkey, ← hn_prod]
 
-/-- Rational product formula for the Dedekind psi function on nonzero inputs. -/
+/-- **Product formula for the Dedekind psi function.** For every natural number $n \ne 0$, the
+Dedekind psi function $\psi$ satisfies, as an identity of rational numbers,
+$$
+\psi(n) = n \prod_{p \mid n} \Bigl(1 + \frac{1}{p}\Bigr),
+$$
+the product running over the prime divisors $p$ of $n$. -/
 theorem dedekindPsi_eq_rational_prod {n : ℕ} (hn : n ≠ 0) :
     (dedekindPsi n : ℚ) = (n : ℚ) * ∏ p ∈ n.primeFactors, (1 + (p : ℚ)⁻¹) := by
   have hcleared : (dedekindPsi n : ℚ) * ∏ p ∈ n.primeFactors, (p : ℚ) =
