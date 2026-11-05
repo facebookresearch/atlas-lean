@@ -117,13 +117,23 @@ Sole diagnostic author: Codex, requested gpt-6-astra/high; exact serving identit
 was not exposed. `Model.lean` reuses this author's earlier diagnostic
 `ModelProbe.lean`, SHA-256
 `5a906d92d471101395bea13ab84e4fa9b18aa48ecb05e9f016038ce64b1a9332`.
-The repair evidence contains a standalone `PREDECESSOR.json` receipt checking
-the actual predecessor bytes against this digest, plus a retained source copy.
-The 26 operand pairs in `fixtures.json` are explicitly reused from F-1 #1035's
-`FLOAT-1035-TESTS.lean`, SHA-256
+The local development repair evidence retains a `PREDECESSOR.json` receipt
+checking the predecessor bytes against this digest, plus `ModelProbe.lean`.
+These two development-only records are not repository files or generated CI
+artifacts.
+
+The 26 operand pairs in `fixtures.json` are explicitly reused from F-1 PR #1035's
+public [CSLibExtTest/Algorithms/Lean/Numerical/FloatModelTests.lean](https://github.com/facebookresearch/atlas-lean/blob/d8b472dcb4e0f6318965fb56af3c143074b0e702/CSLibExtTest/Algorithms/Lean/Numerical/FloatModelTests.lean), SHA-256
 `edc8137705c534bcb63a9a6c948cb81db0c2c0e47dd41d69dda9da5221367c36`.
+The CI evidence package does not include this F-1 test source.
 No F-1 proof, production library, new float model or reviewer-authored Lean is
 copied or changed. The corpus generator defines inputs, not a rounding oracle.
+
+The reproducible public diagnostic source and reused operand pairs are
+[Model.lean](https://github.com/facebookresearch/atlas-lean/blob/a908389841c37b75c07f0c03ca3e608b64659eca/scripts/float_conformance/Model.lean)
+and [fixtures.json](https://github.com/facebookresearch/atlas-lean/blob/a908389841c37b75c07f0c03ca3e608b64659eca/scripts/float_conformance/fixtures.json),
+linked at the immutable first public commit. The generated CI evidence package
+contains the current checked-out copies of these two files.
 
 Draft publication may be used to obtain CI. Acceptance or release readiness
 requires review of the current source and passing CI for that exact commit;
