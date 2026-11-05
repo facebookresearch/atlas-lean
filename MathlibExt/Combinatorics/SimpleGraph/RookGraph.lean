@@ -72,6 +72,26 @@ theorem rookGraph_isDominating_iff {n m : ℕ}
       · exact Or.inr ⟨(i', j), Finset.mem_coe.mpr hi',
           ⟨by simp [hEq], Or.inr rfl⟩⟩
 
+/-- A finset of cells dominates the rook graph exactly when it meets
+every row or meets every column. -/
+theorem rookGraph_isDominating_iff_or {n m : ℕ}
+    {s : Finset (Fin n × Fin m)} :
+    (rookGraph n m).IsDominating ↑s ↔
+      (∀ i : Fin n, ∃ j : Fin m, (i, j) ∈ s) ∨
+        ∀ j : Fin m, ∃ i : Fin n, (i, j) ∈ s := by
+  rw [rookGraph_isDominating_iff]
+  constructor
+  · intro h
+    by_contra hne
+    obtain ⟨i, hi⟩ := not_forall.1 (not_or.1 hne).1
+    obtain ⟨j, hj⟩ := not_forall.1 (not_or.1 hne).2
+    rcases h i j with ⟨j', hj'⟩ | ⟨i', hi'⟩
+    · exact hi ⟨j', hj'⟩
+    · exact hj ⟨i', hi'⟩
+  · rintro (h | h) i j
+    · exact Or.inl (h i)
+    · exact Or.inr (h j)
+
 instance rookGraph_decidableIsDominating {n m : ℕ}
     (s : Finset (Fin n × Fin m)) :
     Decidable ((rookGraph n m).IsDominating ↑s) :=
