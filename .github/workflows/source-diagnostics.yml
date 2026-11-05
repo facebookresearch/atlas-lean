@@ -1,0 +1,35 @@
+name: Source diagnostics
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-diagnostics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Findings are advisory. Failed tests, missing inputs, and scan errors
+      # fail this job; report-only only relaxes the findings exit status.
+      - name: Test and run source diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts -p test_week2_ci.py -v
+          python3 scripts/check_duplicate_defs.py --report-only --require-declarations \
+            CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt
+          python3 scripts/check_hypothesis_debt.py --report-only --require-declarations \
+            CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt
