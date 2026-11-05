@@ -91,7 +91,7 @@ Wikipedia article. Mathlib's `Polynomial.sup_ker_aeval_eq_ker_aeval_mul_of_copri
 two-polynomial step, and independence follows from `Polynomial.disjoint_ker_aeval_of_isCoprime`
 applied to each polynomial and the product of the others.
 -/
-theorem kernels_lemma_pairwise_isCoprime {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem kernels_lemma_pairwise_isCoprime {ι : Type*} [Fintype ι]
     (f : Module.End R M) (p : ι → R[X])
     (hcop : Pairwise fun i j => IsCoprime (p i) (p j)) :
     iSupIndep (fun i => LinearMap.ker (aeval f (p i))) ∧
