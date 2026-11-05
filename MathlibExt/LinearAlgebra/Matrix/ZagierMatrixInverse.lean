@@ -660,7 +660,7 @@ public def zagierInverseQ (K : ℕ) : Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ := 
         * (Nat.choose (n + 2 * (i.val + 1) - 2) n : ℚ) * bernoulli n
 
 /-- The two Bernoulli formulas defining the candidate inverse agree. -/
-public lemma zagierInverseP_eq_zagierInverseQ (K : ℕ) (hK : 1 < K) :
+public lemma zagierInverseP_eq_zagierInverseQ (K : ℕ) :
     zagierInverseP K = zagierInverseQ K := by
   ext i j
   simp only [zagierInverseP, zagierInverseQ]
@@ -814,7 +814,7 @@ private lemma zmi_product_sum (K s t : ℕ) (hs1 : 1 ≤ s) (hsK : s < K)
 /-- The candidate inverse is a left inverse of Zagier's matrix. -/
 public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) (hK : 1 < K) :
     zagierInverseP K * zagierMatrix K = 1 := by
-  have hPQ : zagierInverseP K = zagierInverseQ K := zagierInverseP_eq_zagierInverseQ K hK
+  have hPQ : zagierInverseP K = zagierInverseQ K := zagierInverseP_eq_zagierInverseQ K
   ext i j
   rw [Matrix.mul_apply, Matrix.one_apply]
   have hi1 : 1 ≤ i.val + 1 := by omega
@@ -908,7 +908,7 @@ public theorem zagier_matrix_inverse (K : ℕ) (hK : 1 < K) :
           (↑(Nat.choose (2 * K - 2 * (j.val + 1)) (2 * K - 2 * (i.val + 1))) : ℚ)) :
       Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ)
     = 1 := by
-  have hPQ := zagierInverseP_eq_zagierInverseQ K hK
+  have hPQ := zagierInverseP_eq_zagierInverseQ K
   have hPA := zagierInverseP_mul_zagierMatrix K hK
   have hAP := zagierMatrix_mul_zagierInverseP K hK
   refine ⟨?_, ?_, ?_⟩
