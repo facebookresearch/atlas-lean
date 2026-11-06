@@ -32,8 +32,16 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.FloydWarshall
 
-/-- `distance` is a lower bound for every weighted path with at most `r`
-edges, and is either infinity or the weight of an attaining such path.
+/-- **Shortest path weight with at most $r$ edges.** Let $w$ be an $n \times n$ matrix of
+weights in $\mathbb{Z} \cup \{\infty\}$ on the vertices $\{0, \dots, n-1\}$, let $r$ be a natural
+number, let $i$ and $j$ be vertices, and let $d \in \mathbb{Z} \cup \{\infty\}$. A weighted path
+from $i$ to $j$ is a nonempty list $p$ of vertices that starts at $i$, ends at $j$ and has finite
+weight on each pair of consecutive vertices; its number of edges is its length minus one, and its
+weight $w(p)$ is the sum of the weights of its edges. Then $d$ is the shortest weight of a path
+from $i$ to $j$ with at most $r$ edges when $d \le w(p)$ for every weighted path $p$ from $i$ to
+$j$ with at most $r$ edges, and either $d = \infty$ or $d = w(p)$ for some weighted path $p$ from
+$i$ to $j$ with at most $r$ edges.
+
 Paths may repeat vertices; no absence-of-negative-cycles hypothesis is needed. -/
 @[expose] public def IsEdgeBoundedShortestPathWeight {n : Nat}
     (weight : Matrix (Fin n) (Fin n) (WithTop Int))
@@ -43,8 +51,13 @@ Paths may repeat vertices; no absence-of-negative-cycles hypothesis is needed. -
   (distance = ⊤ ∨ ∃ path, IsWeightedPath weight i j path ∧
     path.length - 1 ≤ r ∧ pathWeight weight path = distance)
 
-/-- Characterize an edge-bounded shortest weight by universal lower bounds
-and finite attainment, without unfolding the path specification. -/
+/-- **Characterization of the shortest path weight with at most $r$ edges.** Let $w$ be an
+$n \times n$ matrix of weights in $\mathbb{Z} \cup \{\infty\}$ on the vertices
+$\{0, \dots, n-1\}$, let $r$ be a natural number, let $i$ and $j$ be vertices, and let
+$d \in \mathbb{Z} \cup \{\infty\}$. For a weighted path $p$, write $w(p)$ for its weight. Then $d$
+is the shortest weight of a path from $i$ to $j$ with at most $r$ edges if and only if
+$d \le w(p)$ for every weighted path $p$ from $i$ to $j$ with at most $r$ edges, and either
+$d = \infty$ or $d = w(p)$ for some weighted path $p$ from $i$ to $j$ with at most $r$ edges. -/
 public theorem isEdgeBoundedShortestPathWeight_iff {n : Nat}
     (weight : Matrix (Fin n) (Fin n) (WithTop Int))
     (r : Nat) (i j : Fin n) (distance : WithTop Int) :
@@ -169,8 +182,12 @@ end Cslib.Algorithms.Lean.FloydWarshall
 
 namespace Cslib.Algorithms.Lean.Matrix
 
-/-- Each actual min-plus output entry is the minimum of its saved accumulator
-and every ordered candidate from the two unchanged input matrices. -/
+/-- **Entries of the min-plus matrix accumulator.** Let $A$, $B$ and $C$ be $n \times n$
+matrices with entries in $\mathbb{Z} \cup \{\infty\}$, viewed in the min-plus semiring. For all
+$i, j \in \{0, \dots, n-1\}$, the entry $(i, j)$ of the matrix returned by the matrix
+accumulator on $A$, $B$ and the accumulator $C$ equals
+$\min\bigl(C_{ij}, \min_{k} (A_{ik} + B_{kj})\bigr)$, where $k$ ranges over
+$\{0, \dots, n-1\}$. -/
 public theorem matrixAccumulate_minPlus_apply {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (MinTropical (WithTop Int)) n) n)
     (i j : Fin n) :
@@ -185,9 +202,16 @@ public theorem matrixAccumulate_minPlus_apply {n : Nat}
   simpa [Matrix.mul_apply, MinTropical.Finset.untrop_sum',
     Function.comp_def] using h
 
-/-- With a zero diagonal and a previous at-most-`r`-edge distance matrix,
-the actual infinity-initialized min-plus run returns at-most-`r+1`-edge
-shortest weights. This includes repeated walks and signed edge weights. -/
+/-- **One min-plus multiplication extends shortest paths by one edge.** Let $A$ and $B$ be
+$n \times n$ matrices with entries in $\mathbb{Z} \cup \{\infty\}$, viewed in the min-plus
+semiring, and let $r$ be a natural number. Suppose that $B_{jj} = 0$ for every $j$, and that for
+all $i$ and $j$ the entry $A_{ij}$ is the shortest weight of a path from $i$ to $j$ with at most
+$r$ edges for the weight matrix $B$. Then for all $i$ and $j$, the entry $(i, j)$ of the matrix
+returned by the matrix accumulator on $A$, $B$ and the accumulator whose entries are all $\infty$
+is the shortest weight of a path from $i$ to $j$ with at most $r + 1$ edges for the weight
+matrix $B$.
+
+Paths may repeat vertices and edge weights may be negative. -/
 public theorem matrixAccumulate_edgeBounded {n r : Nat}
     (A B : _root_.Vector (_root_.Vector (MinTropical (WithTop Int)) n) n)
     (hdiag : ∀ j : Fin n, MinTropical.untrop ((B.get j).get j) = 0)

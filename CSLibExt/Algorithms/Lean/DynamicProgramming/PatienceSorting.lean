@@ -45,22 +45,32 @@ open scoped List
 
 variable {α : Type} [LinearOrder α]
 
-/-- One step, for `tails` sorted increasingly (the invariant that `patienceScan` keeps from `#[]`,
-`PatienceInv`): replace the first entry `≥ x`, or append `x` if there is none. The position comes
-from `lowerBound`, whose contract assumes a sorted array; on unsorted input it need not be the
-first entry `≥ x`. -/
+/-- **Patience step.** Given an array $t$ of tails and an element $x$ over a linear order, let $i$
+be the index returned by the lower-bound binary search for $x$ in $t$. If $i$ is less than the
+size of $t$, the step replaces the entry of $t$ at index $i$ by $x$; otherwise it appends $x$ to
+$t$. Its cost is the number of comparisons made by the binary search.
+
+When $t$ is sorted increasingly, as it stays throughout the patience scan from the empty array,
+$i$ is the first index whose entry is at least $x$, so the step replaces the first entry $\ge x$,
+or appends $x$ if there is none. On unsorted input $i$ need not be the first such index. -/
 def patienceStep (tails : Array α) (x : α) : TimeM ℕ (Array α) := do
   let i ← lowerBound tails x
   if h : i < tails.size then pure (tails.set i x h) else pure (tails.push x)
 
-/-- Process the remaining elements in order, starting from sorted `tails`. -/
+/-- **Patience scan.** Given an array of tails and a list over a linear order, the patience scan
+applies the patience step to the elements of the list in order: on the empty list it returns the
+tails unchanged, and on a list $x$ followed by $xs$ it applies the patience step for $x$ to the
+tails and then runs the patience scan of $xs$ from the result. Its cost is the total cost of the
+steps. -/
 def patienceScan : Array α → List α → TimeM ℕ (Array α)
   | tails, [] => pure tails
   | tails, x :: xs => do
       let t ← patienceStep tails x
       patienceScan t xs
 
-/-- The length of a longest strictly increasing subsequence, by patience sorting. -/
+/-- **Patience sorting.** Given a list $xs$ over a linear order, patience sorting runs the patience
+scan of $xs$ starting from the empty array of tails and returns the size of the resulting array.
+Its cost is the number of comparisons made by the scan. -/
 def patienceLength (xs : List α) : TimeM ℕ ℕ := do
   let t ← patienceScan #[] xs
   pure t.size
@@ -119,10 +129,11 @@ private theorem getElem_replaceAt_gt {t : List α} {i j : ℕ} (x : α) (hij : i
 
 /-! ## The invariant -/
 
-/-- After processing the prefix `P`, the tails `t` are strictly increasing, entry `k` is the last
-element of some strictly increasing subsequence of `P` of length `k + 1`, and every strictly
-increasing subsequence of `P` ending at `y` has length at most `t.length`, with
-`t[length - 1] ≤ y`. -/
+/-- **Patience sorting invariant.** For lists $P$ and $t = (t_0, \dots, t_{m-1})$ over a linear
+order, the invariant holds for the processed prefix $P$ and the tails $t$ when three conditions
+hold: $t$ is strictly increasing; for every $k < m$ some strictly increasing subsequence of $P$ of
+length $k + 1$ has last element $t_k$; and every nonempty strictly increasing subsequence of $P$,
+of length $\ell$ and with last element $y$, satisfies $\ell \le m$ and $t_{\ell - 1} \le y$. -/
 structure PatienceInv (P t : List α) : Prop where
   sorted : t.Pairwise (· < ·)
   witness : ∀ k (hk : k < t.length), ∃ ys, ys <+ P ∧ ys.Pairwise (· < ·) ∧
@@ -233,6 +244,10 @@ private theorem PatienceInv.step {P t : List α} (h : PatienceInv P t) (x : α) 
 
 /-! ## Correctness -/
 
+/-- **The patience scan preserves the invariant.** Let $P$ be a list and $t$ an array of tails over
+a linear order such that the patience sorting invariant holds for $P$ and the entries of $t$. Then
+for every list $xs$, the invariant holds for $P$ followed by $xs$ and the entries of the array
+returned by the patience scan of $xs$ from $t$. -/
 theorem PatienceInv.scan {P : List α} {tails : Array α} (h : PatienceInv P tails.toList)
     (xs : List α) : PatienceInv (P ++ xs) (patienceScan tails xs).ret.toList := by
   induction xs generalizing P tails with
@@ -255,7 +270,10 @@ theorem PatienceInv.scan {P : List α} {tails : Array α} (h : PatienceInv P tai
       · simpa using hlt j hj (by simpa using hjt)
       · simpa using hge j hj (by simpa using hjt)
 
-/-- Patience sorting computes the length of a longest strictly increasing subsequence. -/
+/-- **Correctness of patience sorting.** For every list $xs$ over a linear order, the value
+returned by patience sorting on $xs$ is the length of a longest strictly increasing subsequence of
+$xs$: some strictly increasing subsequence of $xs$ has this length, and no strictly increasing
+subsequence of $xs$ is longer. -/
 theorem patienceLength_spec (xs : List α) : IsLISLength xs (patienceLength xs).ret := by
   have h := patienceInv_nil.scan (tails := #[]) xs
   simp only [List.nil_append] at h
@@ -273,13 +291,18 @@ theorem patienceLength_spec (xs : List α) : IsLISLength xs (patienceLength xs).
       simp only [List.concat_eq_append, List.length_append, List.length_singleton] at hm ⊢
       omega
 
-/-- Patience sorting agrees with the quadratic dynamic program. -/
+/-- **Patience sorting agrees with the quadratic dynamic program.** For every list $xs$ over a
+linear order, the value returned by patience sorting on $xs$ equals the length of the list
+returned on $xs$ by the quadratic dynamic program for a longest strictly increasing subsequence. -/
 theorem patienceLength_eq_length_longestIncreasingSubsequence (xs : List α) :
     (patienceLength xs).ret = (longestIncreasingSubsequence xs).ret.length :=
   ((length_longestIncreasingSubsequence_eq_iff xs _).2 (patienceLength_spec xs)).symm
 
 /-! ## Cost -/
 
+/-- **A patience step grows the tails by at most one.** Let $\alpha$ be a linear order. For every
+array $t$ over $\alpha$ and every element $x \in \alpha$, the array returned by the patience step
+for $x$ on $t$ has size at most the size of $t$ plus $1$. -/
 theorem patienceStep_size_le (tails : Array α) (x : α) :
     (patienceStep tails x).ret.size ≤ tails.size + 1 := by
   simp only [patienceStep, ret_bind]
@@ -309,7 +332,8 @@ theorem patienceScan_le (tails : Array α) (xs : List α) :
       rw [Nat.add_mul, Nat.one_mul]
       omega
 
-/-- Patience sorting uses at most `n * ⌈log₂ (n + 1)⌉` comparisons. -/
+/-- **Comparison bound for patience sorting.** For every list $xs$ of length $n$ over a linear
+order, patience sorting on $xs$ uses at most $n \lceil \log_2 (n + 1) \rceil$ comparisons. -/
 theorem patienceLength_time_le (xs : List α) :
     (patienceLength xs).time ≤ xs.length * Nat.clog 2 (xs.length + 1) := by
   simpa [patienceLength] using (patienceScan_le #[] xs).2

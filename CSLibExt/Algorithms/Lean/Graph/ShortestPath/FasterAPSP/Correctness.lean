@@ -52,7 +52,15 @@ private theorem edgeBounded_distance_of_slowAPSP {n r : Nat}
   · exact Or.inl htop
   · exact Or.inr ⟨p, hp, fun v _ => v.isLt, hweight⟩
 
-/-- The actual signed min-plus return is optimal among walks within the squared edge bound. -/
+/-- **FASTER-APSP computes edge-bounded shortest-path weights.** Let $W$ be an $n \times n$
+matrix with entries in $\mathbb{Z} \cup \{\infty\}$, read as edge weights of a directed graph on
+the vertices $0, \dots, n - 1$ (weight $\infty$ meaning no edge), with $W_{ii} = 0$ for every
+$i$, and let $k = \lceil \log_2 (n - 1) \rceil$ be the least natural number with
+$n - 1 \le 2^k$. Run FASTER-APSP on $W$ over the min-plus semiring, whose addition is $\min$
+and whose multiplication is $+$. Then for all vertices $i$ and $j$, the returned entry $d$ at
+$(i, j)$ is at most the weight of every path from $i$ to $j$ with at most $2^k$ edges, all of
+finite weight, and either $d = \infty$ or $d$ is the weight of such a path. Paths are
+nonempty vertex sequences and may repeat vertices; no assumption on negative cycles is made. -/
 public theorem fasterAPSP_edgeBounded {n : Nat}
     (W : Vector (Vector (MinTropical (WithTop Int)) n) n)
     (hdiag : ∀ i : Fin n, MinTropical.untrop ((W.get i).get i) = 0)
@@ -71,7 +79,15 @@ public theorem fasterAPSP_edgeBounded {n : Nat}
   rw [← hret] at hbound
   exact hbound
 
-/-- Without negative cycles the actual return realizes unrestricted shortest-path weights. -/
+/-- **FASTER-APSP computes shortest-path weights.** Let $W$ be an $n \times n$ matrix with
+entries in $\mathbb{Z} \cup \{\infty\}$, read as edge weights of a directed graph on the
+vertices $0, \dots, n - 1$ (weight $\infty$ meaning no edge), such that $W_{ii} = 0$ for every
+$i$ and $W$ has no negative cycle. Run FASTER-APSP on $W$ over the min-plus semiring, whose
+addition is $\min$ and whose multiplication is $+$. Then for all vertices $i$ and $j$, the
+returned entry $d$ at $(i, j)$ is the shortest-path weight from $i$ to $j$: $d$ is at most the
+weight of every path from $i$ to $j$ all of whose edges have finite weight, and either
+$d = \infty$ or $d$ is the weight of such a path. Paths are nonempty vertex sequences and may
+repeat vertices. -/
 public theorem fasterAPSP_distance_spec {n : Nat}
     (W : Vector (Vector (MinTropical (WithTop Int)) n) n)
     (hdiag : ∀ i : Fin n, MinTropical.untrop ((W.get i).get i) = 0)

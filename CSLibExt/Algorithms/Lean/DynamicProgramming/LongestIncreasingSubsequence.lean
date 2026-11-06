@@ -55,20 +55,32 @@ open scoped List
 variable {α : Type} [Preorder α] [DecidableLT α]
 
 omit [DecidableLT α] in
-/-- `k` is the length of a longest strictly increasing subsequence of `xs`. -/
+/-- **Length of a longest increasing subsequence.** For a list $xs$ over a preorder and a natural
+number $k$, $k$ is the length of a longest strictly increasing subsequence of $xs$ when some
+strictly increasing subsequence of $xs$ has length $k$ and every strictly increasing subsequence
+of $xs$ has length at most $k$. Here a subsequence need not be contiguous, and strictly increasing
+means that each element is strictly less than every later one. -/
 def IsLISLength (xs : List α) (k : ℕ) : Prop :=
   (∃ ys, ys <+ xs ∧ ys.Pairwise (· < ·) ∧ ys.length = k) ∧
     ∀ ys, ys <+ xs → ys.Pairwise (· < ·) → ys.length ≤ k
 
 omit [DecidableLT α] in
-/-- The table cell for the occurrence of `x` followed by the suffix `s`: `x :: zs` is a longest
-strictly increasing subsequence of `x :: s` that starts with this `x`, and `k` is its length. -/
+/-- **Table cell of the LIS dynamic program.** For an element $x$, lists $s$ and $zs$, and a
+natural number $k$, the pair $(k, zs)$ is a table cell for $x$ followed by $s$ when $zs$ is a
+subsequence (not necessarily contiguous) of $s$, the list $x$ followed by $zs$ is strictly
+increasing (each element strictly less than every later one) and has length $k$, and for every
+subsequence $zs'$ of $s$ such that $x$ followed by $zs'$ is strictly increasing, the list $x$
+followed by $zs'$ has length at most $k$. So $x$ followed by $zs$ is a longest strictly increasing
+subsequence of $x$ followed by $s$ that starts with this $x$. -/
 def IsLISCell (x : α) (s : List α) (k : ℕ) (zs : List α) : Prop :=
   zs <+ s ∧ (x :: zs).Pairwise (· < ·) ∧ zs.length + 1 = k ∧
     ∀ zs', zs' <+ s → (x :: zs').Pairwise (· < ·) → zs'.length + 1 ≤ k
 
-/-- Among table entries `(y, k, zs)` with `x < y`, one with the largest `k`, returned as
-`(k, y :: zs)`, or `(0, [])` if there is none; one unit per entry. -/
+/-- **Best table entry above a value.** Given a value $x$ and a list $t$ of entries $(y, k, zs)$,
+where $y$ is a value, $k$ a natural number and $zs$ a list of values, this timed computation
+returns the pair of $k$ and the list $y$ followed by $zs$ for an entry of $t$ with $x < y$ whose
+$k$ is largest among such entries, provided that $k$ is positive; if no entry with $x < y$ has
+$k > 0$, it returns $0$ and the empty list. It costs one unit per entry of $t$. -/
 def maxAbove (x : α) : List (α × ℕ × List α) → TimeM ℕ (ℕ × List α)
   | [] => pure (0, [])
   | (y, k, zs) :: t => do
@@ -76,7 +88,11 @@ def maxAbove (x : α) : List (α × ℕ × List α) → TimeM ℕ (ℕ × List �
       let b ← maxAbove x t
       pure (if x < y ∧ b.1 < k then (k, y :: zs) else b)
 
-/-- The table `(xs[i], L i, tail)` for every position `i`, built from the right. -/
+/-- **Table of the quadratic LIS program.** The table of a list is a list of triples $(y, k, zs)$,
+built from the right: the empty list has the empty table, and the table of $x$ followed by $rest$
+is the table $t$ of $rest$ with the entry $(x, b + 1, w)$ put in front, where $(b, w)$ is the
+result of the scan of $t$ for entries above $x$. Building the table costs the total cost of these
+scans. -/
 def lisTable : List α → TimeM ℕ (List (α × ℕ × List α))
   | [] => pure []
   | x :: rest => do
@@ -85,8 +101,11 @@ def lisTable : List α → TimeM ℕ (List (α × ℕ × List α))
       pure ((x, b.1 + 1, b.2) :: t)
 
 omit [Preorder α] [DecidableLT α] in
-/-- A table entry with the largest length, returned as `(k, y :: zs)`, or `(0, [])` for the
-empty table; one unit per entry. -/
+/-- **Table entry of largest length.** Given a list $t$ of entries $(y, k, zs)$, where $k$ is a
+natural number and $zs$ is a list with elements of the same type as $y$, this timed computation
+returns the pair of $k$ and the list $y$ followed by $zs$ for an entry of $t$ whose $k$ is
+largest, provided that this $k$ is positive, and returns $0$ and the empty list otherwise (in
+particular when $t$ is empty). It costs one unit per entry of $t$. -/
 def maxEntry : List (α × ℕ × List α) → TimeM ℕ (ℕ × List α)
   | [] => pure (0, [])
   | (y, k, zs) :: t => do
@@ -94,7 +113,14 @@ def maxEntry : List (α × ℕ × List α) → TimeM ℕ (ℕ × List α)
       let b ← maxEntry t
       pure (if b.1 < k then (k, y :: zs) else b)
 
-/-- A longest strictly increasing subsequence, by the quadratic dynamic program. -/
+/-- **Longest increasing subsequence by dynamic programming.** Given a list
+$x_0, \dots, x_{n-1}$ of elements of a preorder with decidable $<$, this timed computation
+builds, from the right, a table recording for each position $i$ a length and a strictly
+increasing subsequence starting with $x_i$ (the longest one, by the recurrence
+$L_i = 1 + \max \{ L_j : i < j,\ x_i < x_j \}$ with $\max \emptyset = 0$), and returns the
+stored subsequence of an entry of largest length, or the empty list when $n = 0$. The cost
+is one unit for each table entry inspected: building the entry for position $i$ scans the
+entries to its right, and the final scan inspects each entry once. -/
 def longestIncreasingSubsequence (xs : List α) : TimeM ℕ (List α) := do
   let t ← lisTable xs
   let b ← maxEntry t
@@ -102,6 +128,10 @@ def longestIncreasingSubsequence (xs : List α) : TimeM ℕ (List α) := do
 
 /-! ## Cost -/
 
+/-- **Cost of the scan for the best entry above a value.** Let $\alpha$ be a preorder with
+decidable $<$. For every value $x \in \alpha$ and every list $t$ of entries $(y, k, zs)$, where
+$y \in \alpha$, $k$ is a natural number and $zs$ is a list over $\alpha$, the scan of $t$ for the
+best table entry above $x$ costs exactly the length of $t$. -/
 @[simp]
 theorem maxAbove_time (x : α) (t : List (α × ℕ × List α)) :
     (maxAbove x t).time = t.length := by
@@ -141,7 +171,11 @@ theorem lisTable_time (xs : List α) : 2 * (lisTable xs).time = xs.length * (xs.
         rw [Nat.mul_add, ih]
         ring
 
-/-- The dynamic program inspects exactly `n * (n + 1) / 2` table entries. -/
+/-- **Running time of the quadratic LIS program.** For every list $xs$ of length $n$ over a
+preorder, twice the cost of the quadratic longest-increasing-subsequence program on $xs$ equals
+$n(n + 1)$, so the program costs exactly $n(n + 1)/2$.
+
+The cost model charges one unit for each table entry inspected. -/
 theorem longestIncreasingSubsequence_time (xs : List α) :
     2 * (longestIncreasingSubsequence xs).time = xs.length * (xs.length + 1) := by
   simp only [longestIncreasingSubsequence, time_bind, maxEntry_time, lisTable_length, time_pure,
@@ -156,8 +190,10 @@ theorem longestIncreasingSubsequence_time (xs : List α) :
 /-! ## Correctness -/
 
 omit [Preorder α] [DecidableLT α] in
-/-- A subsequence starting with `y` starts at some occurrence of `y`: it is `y` followed by a
-subsequence of the suffix after that occurrence. -/
+/-- **A subsequence starting with $y$ starts at an occurrence of $y$.** For an element $y$ and lists
+$zs$ and $l$, if the list $y$ followed by $zs$ is a subsequence (not necessarily contiguous) of $l$,
+then there is a list $s$ such that $y$ followed by $s$ is a suffix of $l$ and $zs$ is a subsequence
+of $s$. -/
 theorem exists_suffix_of_cons_sublist {y : α} {zs l : List α} (h : y :: zs <+ l) :
     ∃ s, y :: s <:+ l ∧ zs <+ s := by
   induction l with
@@ -170,8 +206,11 @@ theorem exists_suffix_of_cons_sublist {y : α} {zs l : List α} (h : y :: zs <+ 
         exact ⟨l, List.suffix_refl _, hzs⟩
 
 omit [DecidableLT α] in
-/-- The table invariant: every entry is the cell of some occurrence, and every occurrence has a
-cell in the table. -/
+/-- **Invariant of the LIS table.** A table $t$ of triples $(y, k, zs)$ satisfies the invariant for
+a list $l$ when every entry $(y, k, zs)$ of $t$ has a list $s$ such that $y$ followed by $s$ is a
+suffix of $l$ and $(k, zs)$ is a table cell for $y$ followed by $s$, and conversely, for every
+element $y$ and list $s$ such that $y$ followed by $s$ is a suffix of $l$, some entry $(y, k, zs)$
+of $t$ makes $(k, zs)$ a table cell for $y$ followed by $s$. -/
 def LISTableSpec (l : List α) (t : List (α × ℕ × List α)) : Prop :=
   (∀ y k zs, (y, k, zs) ∈ t → ∃ s, y :: s <:+ l ∧ IsLISCell y s k zs) ∧
     ∀ y s, y :: s <:+ l → ∃ k zs, (y, k, zs) ∈ t ∧ IsLISCell y s k zs
@@ -204,8 +243,12 @@ theorem maxAbove_spec (x : α) (t : List (α × ℕ × List α)) :
           · exact Or.inl h0
           · exact Or.inr ⟨y', zs', List.mem_cons_of_mem _ hy', hx, hw⟩
 
-/-- The recurrence: if the table for `rest` is correct, the entry built for the new head `x` is
-its cell. -/
+/-- **The step of the LIS recurrence.** Let $x$ be an element, $rest$ a list, and $t$ a table of
+triples $(y, k, zs)$ that satisfies the invariant of the LIS table for $rest$. Let $(b, w)$ be the
+result of the scan of $t$ for entries above $x$. Then $(b + 1, w)$ is a table cell for $x$ followed
+by $rest$: $w$ is a subsequence of $rest$, the list $x$ followed by $w$ is strictly increasing and
+has length $b + 1$, and every strictly increasing list $x$ followed by a subsequence of $rest$ has
+length at most $b + 1$. -/
 theorem isLISCell_maxAbove {x : α} {rest : List α} {t : List (α × ℕ × List α)}
     (ht : LISTableSpec rest t) :
     IsLISCell x rest ((maxAbove x t).ret.1 + 1) (maxAbove x t).ret.2 := by
@@ -288,7 +331,10 @@ theorem maxEntry_spec (t : List (α × ℕ × List α)) :
           · exact Or.inl h0
           · exact Or.inr ⟨y', zs', List.mem_cons_of_mem _ hy', hw⟩
 
-/-- The returned list is a strictly increasing subsequence of maximum length. -/
+/-- **Correctness of the quadratic LIS program.** For every list $xs$ over a preorder, the list
+returned by the quadratic longest-increasing-subsequence program on $xs$ is a subsequence of $xs$,
+is strictly increasing (each element strictly less than every later one), and is at least as long
+as every strictly increasing subsequence of $xs$. -/
 theorem longestIncreasingSubsequence_spec (xs : List α) :
     (longestIncreasingSubsequence xs).ret <+ xs ∧
       (longestIncreasingSubsequence xs).ret.Pairwise (· < ·) ∧
@@ -334,21 +380,28 @@ theorem length_le_longestIncreasingSubsequence {xs ys : List α} (hys : ys <+ xs
     (hpair : ys.Pairwise (· < ·)) : ys.length ≤ (longestIncreasingSubsequence xs).ret.length :=
   (longestIncreasingSubsequence_spec xs).2.2 ys hys hpair
 
-/-- The length of the returned subsequence is the optimum. -/
+/-- **The quadratic LIS program attains the optimal length.** For every list $xs$ over a preorder,
+the length of the list returned by the quadratic longest-increasing-subsequence program on $xs$ is
+the length of a longest strictly increasing subsequence of $xs$. -/
 theorem isLISLength_longestIncreasingSubsequence (xs : List α) :
     IsLISLength xs (longestIncreasingSubsequence xs).ret.length :=
   ⟨⟨_, longestIncreasingSubsequence_sublist xs, longestIncreasingSubsequence_pairwise xs, rfl⟩,
     fun _ hys hpair => length_le_longestIncreasingSubsequence hys hpair⟩
 
 omit [DecidableLT α] in
-/-- The longest increasing subsequence length is unique. -/
+/-- **Uniqueness of the longest increasing subsequence length.** For every list $xs$ of elements
+of a preorder and all natural numbers $k$ and $k'$, if both $k$ and $k'$ are the length of a
+longest strictly increasing subsequence of $xs$, then $k = k'$. -/
 theorem IsLISLength.unique {xs : List α} {k k' : ℕ} (h : IsLISLength xs k)
     (h' : IsLISLength xs k') : k = k' := by
   obtain ⟨ys, hys, hpair, rfl⟩ := h.1
   obtain ⟨ys', hys', hpair', rfl⟩ := h'.1
   exact le_antisymm (h'.2 ys hys hpair) (h.2 ys' hys' hpair')
 
-/-- The returned subsequence has length `k` exactly when `k` is the optimum. -/
+/-- **Correctness of the quadratic LIS program, by length.** For every list $xs$ over a preorder
+and every natural number $k$, the list returned by the quadratic longest-increasing-subsequence
+program on $xs$ has length $k$ if and only if $k$ is the length of a longest strictly increasing
+subsequence of $xs$. -/
 theorem length_longestIncreasingSubsequence_eq_iff (xs : List α) (k : ℕ) :
     (longestIncreasingSubsequence xs).ret.length = k ↔ IsLISLength xs k :=
   ⟨fun h => h ▸ isLISLength_longestIncreasingSubsequence xs,

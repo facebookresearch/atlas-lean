@@ -30,19 +30,29 @@ universe u
 
 variable {V : Type u}
 
-/-- Sum an endpoint weight over consecutive vertices of a path. -/
+/-- **Endpoint-weight sum along a vertex list.** Given a weight $w(u, v) \in \mathbb{N}$ for each
+ordered pair of vertices, the weight of a list of vertices $v_0, v_1, \dots, v_k$ is
+$w(v_0, v_1) + w(v_1, v_2) + \dots + w(v_{k-1}, v_k)$. In particular the empty list and every
+one-vertex list have weight $0$. -/
 @[expose] public def pathWeight (weight : V → V → Nat) : List V → Nat
   | [] | [_] => 0
   | source :: target :: rest =>
       weight source target + pathWeight weight (target :: rest)
 
-/-- A concrete source-to-target graph path with its stated endpoint weight. -/
+/-- **Walks of a given weight.** Let $G$ be a directed graph given by adjacency lists, let
+$w(u, v) \in \mathbb{N}$ be a weight for each ordered pair of vertices, let $s$ and $t$ be
+vertices and let $d$ be a natural number. Then $s$ reaches $t$ with weight $d$ when there is a
+nonempty list of vertices $v_0, v_1, \dots, v_k$ with $v_0 = s$, $v_k = t$ and each $v_{i+1}$ in
+the adjacency list of $v_i$, such that $w(v_0, v_1) + \dots + w(v_{k-1}, v_k) = d$. -/
 @[expose] public def HasPathWeight (graph : DirectedAdjacency V) (weight : V → V → Nat)
     (source target : V) (distance : Nat) : Prop :=
   ∃ path, path.IsChainFromTo graph.Edge source target ∧
     pathWeight weight path = distance
 
-/-- Reachability is equivalent to having a concrete path of some natural weight. -/
+/-- **Reachability via weighted walks.** Let $G$ be a directed graph given by adjacency lists and
+let $w(u, v) \in \mathbb{N}$ be a weight for each ordered pair of vertices. For vertices $s$ and
+$t$, $t$ is reachable from $s$ in $G$ if and only if there is a natural number $d$ such that $s$
+reaches $t$ with weight $d$ with respect to $w$. -/
 public theorem reachable_iff_exists_hasPathWeight (graph : DirectedAdjacency V)
     (weight : V → V → Nat) (source target : V) :
     graph.Reachable source target ↔
@@ -128,11 +138,16 @@ private lemma first_unsettled_edge {graph : DirectedAdjacency V}
           chainTail.head_eq]
         omega
 
-/-- Number of adjacency-list entries, including duplicates and self-loops. -/
+/-- **Adjacency entry count.** For a directed graph $G$ given by an out-neighbour list
+$\mathrm{adj}(v)$ for each vertex $v$, the adjacency entry count of $G$ is the total length
+$\sum_{v} |\mathrm{adj}(v)|$ of these lists over all vertices $v$, so repeated entries and
+self-loops are counted with multiplicity. -/
 @[expose] public def adjacencyEntryCount (graph : DirectedAdjacency V) : Nat :=
   (graph.vertices.map fun vertex => (graph.adjacency vertex).length).sum
 
-/-- Counts full minimum scans and inspected adjacency entries separately. -/
+/-- **Cost of dense Dijkstra.** A Dijkstra cost is a pair of natural numbers that counts two
+kinds of events separately: the number of vertex entries inspected during minimum selection,
+and the number of adjacency-list entries inspected during relaxation. -/
 public structure DijkstraCost where
   /-- Vertex entries inspected by minimum selection. -/
   minScans : Nat
@@ -178,11 +193,16 @@ public instance : AddMonoid DijkstraCost where
       DijkstraCost.mk (count * scan + scan) (count * relax + relax)
     rw [Nat.add_mul, Nat.one_mul, Nat.add_mul, Nat.one_mul]
 
-/-- Total charged events in the dense Dijkstra cost model. -/
+/-- **Total Dijkstra cost.** The total of a Dijkstra cost record is its number of vertex entries
+inspected by minimum selection plus its number of adjacency entries inspected by relaxation. -/
 @[expose] public def DijkstraCost.total (cost : DijkstraCost) : Nat :=
   cost.minScans + cost.edgeRelaxations
 
-/-- Dense Dijkstra output in fixed-length, array-backed vectors. -/
+/-- **Output of Dijkstra's algorithm.** For vertices $0, \dots, n-1$, a Dijkstra result consists
+of a source vertex $s$, a distance entry $d(v)$ for each vertex $v$ that is either a natural
+number or $\infty$, and a predecessor entry $p(v)$ for each vertex $v$ that is either a vertex or
+undefined. The entries are stored as arrays of length $n$; $d(v)$ is meant as the computed
+distance from $s$ to $v$ and $p(v)$ as the vertex before $v$ on a shortest path from $s$. -/
 public structure DijkstraResult (n : Nat) where
   /-- The starting vertex. -/
   source : Fin n
@@ -204,7 +224,12 @@ private def followPredecessors {n : Nat} (predecessor : Vector (Option (Fin n)) 
             (followPredecessors predecessor source previous fuel).map
               fun path => path ++ [current]
 
-/-- Follow predecessors for at most `n` steps, returning source-to-target order. -/
+/-- **Path recovery from Dijkstra predecessors.** Let a Dijkstra result on $n$ vertices have
+source $s$ and predecessor entries $p$. The path to a vertex $t$ follows predecessors backwards:
+starting from $u_0 = t$, as long as $u_i \ne s$ it sets $u_{i+1} = p(u_i)$. If $u_k = s$ for
+some $k \le n$, the result is the list $u_k, u_{k-1}, \dots, u_0$ from $s$ to $t$. If some
+$p(u_i)$ is undefined before $s$ is reached, or $s$ is not reached within $n$ steps, there is no
+result. -/
 public def DijkstraResult.pathTo? {n : Nat} (result : DijkstraResult n) (target : Fin n) :
     Option (List (Fin n)) :=
   let rec @[reducible] go (current : Fin n) : Nat → Option (List (Fin n))
@@ -218,7 +243,18 @@ public def DijkstraResult.pathTo? {n : Nat} (result : DijkstraResult n) (target 
           | some previous => (go previous fuel).map fun path => path ++ [current]
   go target n
 
-/-- Dense Dijkstra with natural endpoint weights and exact abstract event counts. -/
+/-- **Dense Dijkstra's algorithm.** Let $G$ be a directed graph on the vertices $0, \dots, n-1$
+given by a fixed enumeration of its vertices and adjacency lists, let $w(u, v) \in \mathbb{N}$ be
+a weight for each ordered pair of vertices, and let $s$ be a source vertex. The algorithm starts
+with $d(s) = 0$, $d(v) = \infty$ for $v \ne s$, no predecessors and no settled vertices, and runs
+$n$ rounds. In each round it scans all vertices in the order of the enumeration of $G$ and
+selects the first unsettled vertex $u$ in that order whose value $d(u)$ is minimal among
+unsettled vertices; if every vertex is settled the round does nothing. Otherwise it marks $u$
+settled and, for each entry $v$ of the adjacency list of $u$ in order, if $v$ is unsettled,
+$d(u)$ is finite and $d(u) + w(u, v) < d(v)$, it sets $d(v) := d(u) + w(u, v)$ and makes $u$ the
+predecessor of $v$. The result is $s$ together with the final distances and predecessors. The
+cost charges one minimum-selection step for each vertex inspected during selection and one
+relaxation step for each adjacency entry inspected during relaxation. -/
 public def dijkstra {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source : Fin n) :
     TimeM DijkstraCost (DijkstraResult n) :=
@@ -1689,7 +1725,12 @@ private lemma finalCore_settled {n : Nat} (graph : DirectedAdjacency (Fin n))
   exact (finalCore_order_perm graph weight source).mem_iff.mpr
     (graph.vertices_complete target)
 
-/-- Every finite output distance is realized by a concrete source path. -/
+/-- **Dijkstra's finite distances are realized by walks.** Let $G$ be a directed graph on the
+vertices $0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every ordered pair of
+vertices, and let $s$ and $t$ be vertices. If Dijkstra's algorithm on $G$ with weights $w$ from
+source $s$ outputs a finite distance $d$ for $t$, then $G$ has a walk
+$s = v_0, v_1, \dots, v_k = t$, with an edge from each $v_{i-1}$ to $v_i$, of weight
+$\sum_{i=1}^{k} w(v_{i-1}, v_i) = d$. -/
 theorem dijkstra_distance_realized {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source target : Fin n) (distance : Nat)
     (h : (dijkstra graph weight source).ret.distance.get target = some distance) :
@@ -1697,7 +1738,12 @@ theorem dijkstra_distance_realized {n : Nat} (graph : DirectedAdjacency (Fin n))
   change (finalCore graph weight source).1.get target = some distance at h
   exact (finalCore_invariant graph weight source).realized target distance h
 
-/-- Every finite output distance is no greater than any concrete source-path weight. -/
+/-- **Dijkstra's finite distances are lower bounds on walk weights.** Let $G$ be a directed graph
+on the vertices $0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every ordered pair
+of vertices, and let $s$ and $t$ be vertices. If Dijkstra's algorithm on $G$ with weights $w$
+from source $s$ outputs a finite distance $d$ for $t$, then $d \le d'$ for every walk
+$s = v_0, v_1, \dots, v_k = t$ in $G$ (with an edge from each $v_{i-1}$ to $v_i$) of weight
+$d' = \sum_{i=1}^{k} w(v_{i-1}, v_i)$. -/
 theorem dijkstra_distance_minimal {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source target : Fin n)
     (distance otherDistance : Nat)
@@ -1710,7 +1756,11 @@ theorem dijkstra_distance_minimal {n : Nat} (graph : DirectedAdjacency (Fin n))
   simp only [SettledSpec, h] at hspec
   exact hspec otherDistance path
 
-/-- An infinite output distance is equivalent to graph unreachability. -/
+/-- **Dijkstra's distance is infinite exactly at unreachable vertices.** Let $G$ be a directed
+graph on the vertices $0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every
+ordered pair of vertices, and let $s$ and $t$ be vertices. The distance to $t$ output by
+Dijkstra's algorithm on $G$ with weights $w$ from source $s$ is infinite if and only if $t$ is
+not reachable from $s$ in $G$. -/
 theorem dijkstra_distance_eq_none_iff {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source target : Fin n) :
     (dijkstra graph weight source).ret.distance.get target = none ↔
@@ -1731,7 +1781,12 @@ theorem dijkstra_distance_eq_none_iff {n : Nat} (graph : DirectedAdjacency (Fin 
             ⟨distance, (finalCore_invariant graph weight source).realized target distance
               hdistance⟩))
 
-/-- Every predecessor is an edge realizing the final distance equation. -/
+/-- **Dijkstra's predecessor pointers satisfy the distance equation.** Let $G$ be a directed
+graph on the vertices $0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every
+ordered pair of vertices, and let $s$, $t$ and $p$ be vertices. If Dijkstra's algorithm on $G$
+with weights $w$ from source $s$ outputs $p$ as the predecessor of $t$, then $G$ has an edge
+from $p$ to $t$, the distances $d(p)$ and $d(t)$ output for $p$ and $t$ are both finite, and
+$d(t) = d(p) + w(p, t)$. -/
 theorem dijkstra_predecessor_spec {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source target previous : Fin n)
     (h : (dijkstra graph weight source).ret.predecessor.get target = some previous) :
@@ -1875,7 +1930,12 @@ private lemma final_path_exists {n : Nat} (graph : DirectedAdjacency (Fin n))
       htargetRank hbound hdistance
   exact ⟨path, hfollow, hchain, hnodup, hweight⟩
 
-/-- Predecessor reconstruction fails exactly at vertices with infinite distance. -/
+/-- **Dijkstra's path reconstruction fails exactly at infinite distance.** Let $G$ be a directed
+graph on the vertices $0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every
+ordered pair of vertices, and let $s$ and $t$ be vertices. Reconstructing a path from $s$ to
+$t$ by following, for at most $n$ steps, the predecessor pointers output by Dijkstra's
+algorithm on $G$ with weights $w$ from source $s$ fails if and only if the distance output
+for $t$ is infinite. -/
 theorem dijkstra_pathTo?_eq_none_iff {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source target : Fin n) :
     (dijkstra graph weight source).ret.pathTo? target = none ↔
@@ -1910,7 +1970,14 @@ theorem dijkstra_pathTo?_eq_none_iff {n : Nat} (graph : DirectedAdjacency (Fin n
     | zero => exact Fin.elim0 source
     | succ n => simp [followPredecessors, htargetSource, hpredecessor]
 
-/-- Successful reconstruction is a simple shortest source-to-target path. -/
+/-- **Reconstructed Dijkstra paths are simple and have the output weight.** Let $G$ be a directed
+graph on the vertices $0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every
+ordered pair of vertices, and let $s$ and $t$ be vertices. Suppose that following the
+predecessor pointers output by Dijkstra's algorithm on $G$ with weights $w$ from source $s$
+reconstructs a list of vertices $P$ for $t$. Then $P$ is nonempty, say $P = v_0, \dots, v_k$,
+with $v_0 = s$ and $v_k = t$; there is an edge from each $v_{i-1}$ to $v_i$; the $v_i$ are
+pairwise distinct; and the distance $d$ output for $t$ is finite with
+$d = \sum_{i=1}^{k} w(v_{i-1}, v_i)$. -/
 theorem dijkstra_pathTo?_spec {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source target : Fin n) (path : List (Fin n))
     (h : (dijkstra graph weight source).ret.pathTo? target = some path) :
@@ -1941,7 +2008,11 @@ theorem dijkstra_pathTo?_spec {n : Nat} (graph : DirectedAdjacency (Fin n))
       · rw [List.head?_eq_some_head hchain.ne_nil, hchain.head_eq]
       · rw [List.getLast?_eq_some_getLast hchain.ne_nil, hchain.getLast_eq]
 
-/-- Every adjacency-list entry is inspected exactly once. -/
+/-- **Relaxation count of dense Dijkstra.** Let $G$ be a directed graph on the vertices
+$0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every ordered pair of vertices,
+and let $s$ be a vertex. The number of adjacency-list entries that Dijkstra's algorithm on $G$
+with weights $w$ from source $s$ inspects during relaxation equals the adjacency entry count
+of $G$, the total length of all out-neighbour lists. -/
 theorem dijkstra_edgeRelaxations {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source : Fin n) :
     (dijkstra graph weight source).time.edgeRelaxations = adjacencyEntryCount graph := by
@@ -1972,14 +2043,22 @@ private lemma runRounds_minScans {n : Nat} (graph : DirectedAdjacency (Fin n))
         simp only [Nat.zero_add, Nat.succ_mul]
         exact Nat.add_comm _ _
 
-/-- Dense minimum selection inspects exactly `n * n` vertex entries. -/
+/-- **Minimum-selection count of dense Dijkstra.** Let $G$ be a directed graph on the vertices
+$0, \dots, n-1$, let $w(u, v)$ be a natural-number weight for every ordered pair of vertices,
+and let $s$ be a vertex. Dijkstra's algorithm on $G$ with weights $w$ from source $s$ inspects
+exactly $n^2$ vertex entries during minimum selection. -/
 theorem dijkstra_minScans {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source : Fin n) :
     (dijkstra graph weight source).time.minScans = n * n := by
   simp only [dijkstra]
   rw [runRounds_minScans, vertices_length]
 
-/-- The total abstract event count is exactly `n * n` plus all adjacency entries. -/
+/-- **Running time of dense Dijkstra.** Let $G$ be a directed graph on the vertices
+$0, \dots, n-1$ given by adjacency lists, let $w(u, v) \in \mathbb{N}$ be a weight for each
+ordered pair of vertices, and let $s$ be a vertex. For dense Dijkstra from $s$, the number of
+vertex entries inspected by minimum selection plus the number of adjacency entries inspected by
+relaxation is exactly $n^2 + m$, where $m$ is the number of adjacency-list entries of $G$,
+counting duplicates and self-loops. -/
 theorem dijkstra_time {n : Nat} (graph : DirectedAdjacency (Fin n))
     (weight : Fin n → Fin n → Nat) (source : Fin n) :
     (dijkstra graph weight source).time.total = n * n + adjacencyEntryCount graph := by

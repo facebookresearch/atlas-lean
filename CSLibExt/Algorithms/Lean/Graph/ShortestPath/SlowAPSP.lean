@@ -151,8 +151,17 @@ theorem runPhases_time {n : Nat} (W : Table n) (r : Nat) (L : Table n) :
 
 @[expose] public section
 
-/-- Execute CLRS SLOW-APSP with explicit copy/fill assignment charges.
-Accumulator vector updates in `matrixAccumulate` are outside these assignment charges. -/
+/-- **Slow all-pairs shortest paths (SLOW-APSP).** Let $W$ and $L^{(0)}$ be $n \times n$ matrices
+over the min-plus semiring on $\mathbb{Z} \cup \{\infty\}$, in which addition is $\min$ and
+multiplication is $+$. SLOW-APSP copies $L^{(0)}$ cell by cell and then runs $\max(n - 1, 0)$
+phases. Phase $r$ fills a fresh $n \times n$ matrix $M$ with $\infty$, then for each triple
+$(i, j, k)$ in increasing $i$-$j$-$k$ order sets $M_{ij} \leftarrow \min(M_{ij}, L^{(r-1)}_{ik} +
+W_{kj})$, and finally copies $M$ cell by cell to give $L^{(r)}$; the result is $L^{(n-1)}$. The
+cost is a triple of natural numbers: the first coordinate counts one assignment for each cell
+copied or filled, and the second and third coordinates count one scalar addition and one scalar
+minimum for each update $M_{ij} \leftarrow \min(M_{ij}, L^{(r-1)}_{ik} + W_{kj})$.
+
+Accumulator updates inside the loop are not charged as assignments. -/
 @[no_expose] public def slowAPSP {n : Nat}
     (W L0 : _root_.Vector (_root_.Vector (MinTropical (WithTop Int)) n) n) :
     TimeM (Nat × (Nat × Nat))
@@ -160,7 +169,10 @@ Accumulator vector updates in `matrixAccumulate` are outside these assignment ch
   let saved ← copyCells L0
   runPhases W (n - 1) saved
 
-/-- The saved matrix after all phases is `L0 * W^(n-1)`. -/
+/-- **SLOW-APSP returns a min-plus matrix power.** For $n \times n$ matrices $W$ and $L^{(0)}$ over
+the min-plus semiring on $\mathbb{Z} \cup \{\infty\}$, in which addition is $\min$ and
+multiplication is $+$, the matrix returned by SLOW-APSP on $W$ and $L^{(0)}$ equals the
+min-plus matrix product $L^{(0)} W^{n-1}$. -/
 public theorem slowAPSP_ret {n : Nat}
     (W L0 : _root_.Vector
       (_root_.Vector (MinTropical (WithTop Int)) n) n) :
@@ -172,7 +184,16 @@ public theorem slowAPSP_ret {n : Nat}
   simp only [slowAPSP, TimeM.ret_bind]
   rw [runPhases_ret, copyCells_ret]
 
-/-- The source identity initialization gives the minimum over at most `n-1` edges. -/
+/-- **Bounded-edge shortest weights from SLOW-APSP.** Let $W$ and $L^{(0)}$ be
+$n \times n$ matrices over the min-plus semiring on $\mathbb{Z} \cup \{\infty\}$, and let $w_{xy}$
+be the underlying value in $\mathbb{Z} \cup \{\infty\}$ of $W_{xy}$. Suppose that $w_{ii} = 0$ for
+every $i$ and that the underlying value of $L^{(0)}_{ij}$ is $0$ if $i = j$ and $\infty$ otherwise.
+Then for all $i, j \in \{0, \dots, n-1\}$, the underlying value $d$ of the $(i, j)$ entry of the
+matrix returned by SLOW-APSP on $W$ and $L^{(0)}$ is at most the weight of every path from $i$ to
+$j$ with at most $n - 1$ edges, and $d$ is either $\infty$ or the weight of such a path. Here a
+path from $i$ to $j$ is a nonempty sequence of vertices that starts at $i$, ends at $j$ and has
+$w_{xy} \ne \infty$ for each pair of consecutive vertices $x, y$; vertices may repeat, its number
+of edges is its number of vertices minus one, and its weight is the sum of these $w_{xy}$. -/
 public theorem slowAPSP_edgeBounded {n : Nat}
     (W L0 : _root_.Vector (_root_.Vector (MinTropical (WithTop Int)) n) n)
     (hdiag : ∀ i : Fin n, MinTropical.untrop ((W.get i).get i) = 0)
@@ -199,7 +220,17 @@ public theorem slowAPSP_edgeBounded {n : Nat}
   rw [hid, one_mul] at hentry
   exact hentry.symm ▸ hpower
 
-/-- Without a negative cycle, the same executed table is minimal over all paths. -/
+/-- **SLOW-APSP computes shortest-path weights.** Let $W$ and $L^{(0)}$ be $n \times n$ matrices
+over the min-plus semiring on $\mathbb{Z} \cup \{\infty\}$, and let $w_{xy}$ be the underlying value
+in $\mathbb{Z} \cup \{\infty\}$ of $W_{xy}$. Suppose that $w_{ii} = 0$ for every $i$, that the
+underlying value of $L^{(0)}_{ij}$ is $0$ if $i = j$ and $\infty$ otherwise, and that $w$ has no
+negative cycle. Then for all $i, j \in \{0, \dots, n-1\}$, the underlying value $d$ of the
+$(i, j)$ entry of the matrix returned by SLOW-APSP on $W$ and $L^{(0)}$ is at most the weight of
+every path from $i$ to $j$, and $d$ is either $\infty$ or the weight of some path from $i$ to $j$.
+Here a path from $i$ to $j$ is a nonempty sequence of vertices that starts at $i$, ends at $j$ and
+has $w_{xy} \ne \infty$ for each pair of consecutive vertices $x, y$; its weight is the sum of
+these $w_{xy}$. A negative cycle is a path from a vertex to itself with at least two vertices,
+negative weight, and no repeated vertex once its last vertex is removed. -/
 public theorem slowAPSP_distance_spec {n : Nat}
     (W L0 : _root_.Vector (_root_.Vector (MinTropical (WithTop Int)) n) n)
     (hdiag : ∀ i : Fin n, MinTropical.untrop ((W.get i).get i) = 0)
@@ -215,8 +246,12 @@ public theorem slowAPSP_distance_spec {n : Nat}
   exact edgeBounded_distance _ le_rfl hNoCycle
     (slowAPSP_edgeBounded W L0 hdiag hinit i j)
 
-/-- Exact copy/fill assignment, scalar-addition, and scalar-minimum counts.
-The first coordinate excludes the accumulator vector updates in `matrixAccumulate`. -/
+/-- **Exact operation counts of SLOW-APSP.** For all $n \times n$ matrices $W$ and $L^{(0)}$ over
+the min-plus semiring on $\mathbb{Z} \cup \{\infty\}$, the cost of SLOW-APSP on $W$ and $L^{(0)}$
+is the triple $(n^2 + 2(n-1)n^2,\ (n-1)n^3,\ (n-1)n^3)$ of cell assignments (copies and fills),
+scalar additions and scalar minimums, where $n - 1$ means $\max(n - 1, 0)$.
+
+The assignment count excludes the accumulator updates inside the min-plus accumulation loop. -/
 public theorem slowAPSP_time {n : Nat}
     (W L0 : _root_.Vector
       (_root_.Vector (MinTropical (WithTop Int)) n) n) :
@@ -233,7 +268,11 @@ private theorem totalTime_cast {n : Nat} (W L0 : Table n) (hn : 1 ≤ n) :
   push_cast [Nat.cast_sub hn]
   ring
 
-/-- The sum of the three actual executed cost coordinates is `Θ(n^4)`. -/
+/-- **SLOW-APSP takes quartic time.** For any choice, for each $n$, of $n \times n$ matrices $W_n$
+and $L^{(0)}_n$ over the min-plus semiring on $\mathbb{Z} \cup \{\infty\}$, the total cost of
+SLOW-APSP on $W_n$ and $L^{(0)}_n$, that is the number of cell assignments (copies and fills)
+plus the number of scalar additions plus the number of scalar minimums, is $\Theta(n^4)$ as
+$n \to \infty$. -/
 public theorem slowAPSP_time_isTheta
     (W L0 : (n : Nat) →
       _root_.Vector

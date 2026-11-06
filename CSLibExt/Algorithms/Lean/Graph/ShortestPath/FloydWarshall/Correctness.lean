@@ -29,7 +29,16 @@ namespace Cslib.Algorithms.Lean.FloydWarshall
 
 open Internal
 
-/-- Under the no-negative-cycle hypothesis, the final cell is the minimum over all paths. -/
+/-- **Floyd–Warshall computes shortest-path distances.** Let $w$ assign a weight in
+$\mathbb{Z} \cup \{\infty\}$ to each ordered pair of vertices in $\{0, \dots, n-1\}$, suppose that
+$w$ has no negative cycle, and let $D$ be the distance matrix computed by Floyd–Warshall from $w$.
+Then for all vertices $s$ and $t$, $D(s, t)$ is at most the weight of every weighted path from $s$
+to $t$, and either $D(s, t) = \infty$ or $D(s, t)$ is the weight of some weighted path from $s$ to
+$t$. Here a weighted path is a nonempty vertex sequence in which every consecutive pair has finite
+weight, and its weight is the sum of these weights.
+
+Formally this is the stage-$n$ characterization, which considers only paths whose intermediate
+vertices are all below $n$; every path qualifies. -/
 theorem floydWarshall_distance_spec {n : Nat}
     (weight : Fin n → Fin n → WithTop Int) (source target : Fin n)
     (hNoCycle : NoNegativeCycle weight) :
@@ -38,7 +47,12 @@ theorem floydWarshall_distance_spec {n : Nat}
   rw [floydWarshall_ret]
   exact stageValue_spec weight hNoCycle n (by omega) source target
 
-/-- Every finite output distance is realized by a concrete weighted path. -/
+/-- **Finite Floyd–Warshall distances are attained.** Let $w$ assign a weight in
+$\mathbb{Z} \cup \{\infty\}$ to each ordered pair of vertices in $\{0, \dots, n-1\}$, and let $D$
+be the distance matrix computed by Floyd–Warshall from $w$. If $D(s, t) = d$ for vertices $s$, $t$
+and an integer $d$, then there is a weighted path from $s$ to $t$ (a nonempty vertex sequence from
+$s$ to $t$ in which every consecutive pair has finite weight) whose weight, the sum of the weights
+of its consecutive pairs, is $d$. -/
 theorem floydWarshall_distance_realized {n : Nat}
     (weight : Fin n → Fin n → WithTop Int) (source target : Fin n) (distance : Int)
     (hDistance : (floydWarshall weight).ret source target = (distance : WithTop Int)) :
@@ -49,7 +63,12 @@ theorem floydWarshall_distance_realized {n : Nat}
     stageValue_realized weight n (by omega) source target distance hDistance
   exact ⟨path, hpath, hweight⟩
 
-/-- Under the no-negative-cycle hypothesis, no concrete path is cheaper than the output. -/
+/-- **No path is shorter than the Floyd–Warshall distance.** Let $w$ assign a weight in
+$\mathbb{Z} \cup \{\infty\}$ to each ordered pair of vertices in $\{0, \dots, n-1\}$, suppose that
+$w$ has no negative cycle, and let $D$ be the distance matrix computed by Floyd–Warshall from $w$.
+Then for all vertices $s$ and $t$ and every weighted path $p$ from $s$ to $t$ (a nonempty vertex
+sequence from $s$ to $t$ in which every consecutive pair has finite weight), $D(s, t)$ is at most
+the weight of $p$, the sum of the weights of its consecutive pairs. -/
 theorem floydWarshall_distance_minimal {n : Nat}
     (weight : Fin n → Fin n → WithTop Int) (source target : Fin n)
     (path : List (Fin n)) (hNoCycle : NoNegativeCycle weight)
@@ -60,7 +79,11 @@ theorem floydWarshall_distance_minimal {n : Nat}
   intro vertex _
   exact vertex.isLt
 
-/-- An output cell is infinite exactly when no weighted path connects its endpoints. -/
+/-- **Floyd–Warshall reports $\infty$ exactly for unreachable pairs.** Let $w$ assign a weight
+in $\mathbb{Z} \cup \{\infty\}$ to each ordered pair of vertices in $\{0, \dots, n-1\}$, and let $D$
+be the distance matrix computed by Floyd–Warshall from $w$. For all vertices $s$ and $t$,
+$D(s, t) = \infty$ if and only if there is no weighted path from $s$ to $t$, that is, no nonempty
+vertex sequence from $s$ to $t$ in which every consecutive pair has finite weight. -/
 theorem floydWarshall_distance_eq_top_iff {n : Nat}
     (weight : Fin n → Fin n → WithTop Int) (source target : Fin n) :
     (floydWarshall weight).ret source target = ⊤ ↔
@@ -83,7 +106,12 @@ theorem floydWarshall_distance_eq_top_iff {n : Nat}
       hdistance.symm
     exact hnoPath ⟨path, hpath⟩
 
-/-- A negative diagonal entry in the computed matrix implies a simple negative cycle. -/
+/-- **A negative diagonal entry in Floyd–Warshall reveals a negative cycle.** Let $w$ assign a
+weight in $\mathbb{Z} \cup \{\infty\}$ to each ordered pair of vertices in $\{0, \dots, n-1\}$, and
+let $D$ be the distance matrix computed by Floyd–Warshall from $w$. If $D(v, v) < 0$ for some vertex
+$v$, then $w$ has a negative cycle: a vertex sequence $v_0, v_1, \dots, v_m$ with $m \ge 1$ and
+$v_m = v_0$, whose vertices $v_0, \dots, v_{m-1}$ are pairwise distinct, in which every consecutive
+pair has finite weight, and whose total weight is negative. -/
 theorem floydWarshall_hasNegativeDiagonal_sound {n : Nat}
     (weight : Fin n → Fin n → WithTop Int)
     (hNegative : hasNegativeDiagonal (floydWarshall weight).ret = true) :
@@ -108,7 +136,11 @@ theorem floydWarshall_hasNegativeDiagonal_sound {n : Nat}
     subst simple
     simp [pathWeight] at hsimpleNegative
 
-/-- No negative cycle implies that the diagonal detector is false. -/
+/-- **Without negative cycles, Floyd–Warshall finds no negative diagonal entry.** Let $w$
+assign a weight in $\mathbb{Z} \cup \{\infty\}$ to each ordered pair of vertices in
+$\{0, \dots, n-1\}$, and let $D$ be the distance matrix computed by Floyd–Warshall from $w$. If $w$
+has no negative cycle, then the negative-diagonal check on $D$ returns false, that is,
+$D(v, v) \ge 0$ for every vertex $v$. -/
 theorem floydWarshall_hasNegativeDiagonal_eq_false {n : Nat}
     (weight : Fin n → Fin n → WithTop Int) (hNoCycle : NoNegativeCycle weight) :
     hasNegativeDiagonal (floydWarshall weight).ret = false := by

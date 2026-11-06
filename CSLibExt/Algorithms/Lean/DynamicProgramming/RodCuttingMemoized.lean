@@ -72,15 +72,31 @@ open scoped BigOperators
 termination_by j
 decreasing_by omega
 
-/-- Solve the requested length top-down, carrying every recursive cache update.
-Known entries are returned immediately, including signed values and length zero. -/
+/-- **Memoized rod-cutting auxiliary (CLRS MEMOIZED-CUT-ROD-AUX).** Let $\alpha$ be an additive
+commutative monoid with a linear order, let $p = (p_1, \dots, p_n) \in \alpha^n$ be prices, where
+$p_i$ is the price of a piece of length $i$, and let $c = (c_0, \dots, c_n)$ be a cache whose
+entries are each either unknown or a value in $\alpha$. For $j \le n$ the procedure returns a value
+and an updated cache, and counts events, as follows. It first charges one event for probing $c_j$.
+If $c_j$ is a known value $v$, it returns $v$ and the unchanged cache $c$. Otherwise, if $j = 0$,
+it charges one event for a write and returns $0$ with $c_0$ set to $0$. If $j \ge 1$, then for
+$i = 1, \dots, j$ in turn it calls itself on length $j - i$ with the cache returned by the previous
+call (starting from $c$), obtaining a value $q_i$, and charges one event for the candidate
+$p_i + q_i$. It then charges one event for a write and returns
+$q = \max(p_1 + q_1, \dots, p_j + q_j)$ with entry $j$ of the last returned cache set to $q$. The
+event count is the total over the whole recursion.
+
+Known entries are returned as they are, whatever their sign, including at length zero. -/
 public def memoizedCutRodAux {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) (j : Nat) (hjn : j ≤ n)
     (cache : Vector (Option α) (n + 1)) :
     TimeM Nat (α × Vector (Option α) (n + 1)) :=
   memoizedAuxWorker prices j hjn cache
 
-/-- Initialize an unknown cache and invoke the memoized auxiliary on the whole rod. -/
+/-- **The memoized cut-rod procedure (CLRS MEMOIZED-CUT-ROD).** Let $\alpha$ be an additive
+commutative monoid with a linear order and let $p = (p_1, \dots, p_n) \in \alpha^n$ be prices, where
+$p_i$ is the price of a piece of length $i$. The procedure runs the memoized rod-cutting auxiliary
+on length $n$ with the cache $(c_0, \dots, c_n)$ whose entries are all unknown, and returns the
+value it computes, discarding the final cache. Its event count is that of the auxiliary call. -/
 public def memoizedCutRod {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) : TimeM Nat α := do
   let result ← memoizedCutRodAux prices n le_rfl (Vector.replicate (n + 1) none)
@@ -108,7 +124,11 @@ private lemma aux_eq_def {α : Type u} [AddCommMonoid α] [LinearOrder α]
   rw [memoizedCutRodAux, memoizedAuxWorker.eq_def]
   rfl
 
-/-- A known cache entry returns immediately without touching any saved cell. -/
+/-- **A cache hit in memoized rod cutting returns at once.** Let $\alpha$ be an additive commutative
+monoid with a linear order, let $p \in \alpha^n$ be a vector of prices, let $c = (c_0, \dots, c_n)$
+be a cache whose entries are each unknown or a value in $\alpha$, and let $j \le n$. If $c_j$ is a
+known value $v$, then the memoized rod-cutting auxiliary on length $j$ and cache $c$ returns $v$
+and the unchanged cache $c$, and charges exactly one event. -/
 public theorem memoizedCutRodAux_hit {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) (j : Nat) (hjn : j ≤ n)
     (cache : Vector (Option α) (n + 1)) (value : α)
@@ -186,7 +206,12 @@ private lemma aux_protected {α : Type u} [AddCommMonoid α] [LinearOrder α]
               exact hscan
 
 
-/-- Known entries and every cell above the requested length are preserved. -/
+/-- **The memoized auxiliary preserves known and higher cache entries.** Let $\alpha$ be an additive
+commutative monoid with a linear order, let $p \in \alpha^n$ be a vector of prices, let
+$c = (c_0, \dots, c_n)$ be a cache whose entries are each unknown or a value in $\alpha$, let
+$j \le n$, and let $c'$ be the cache returned by the memoized rod-cutting auxiliary on length $j$
+and cache $c$. Then for every $k \le n$, if $c_k$ is a known value $v$, then $c'_k = v$; and for
+every $k$ with $j < k \le n$, $c'_k = c_k$. -/
 public theorem memoizedCutRodAux_preserves {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) (j : Nat) (hjn : j ≤ n)
     (cache : Vector (Option α) (n + 1)) :
@@ -216,7 +241,9 @@ private lemma aux_saved {α : Type u} [AddCommMonoid α] [LinearOrder α]
           rw [aux_eq_def]
           simp only [htarget, TimeM.ret_bind, TimeM.ret_pure, Vector.getElem_set_self]
 
-/-- The empty uncached rod earns zero with one probe and one actual cache write. -/
+/-- **Memoized rod cutting on the empty rod.** Let $\alpha$ be an additive commutative monoid with
+a linear order. For the empty price vector ($n = 0$), the memoized cut-rod procedure returns $0$
+and charges exactly $2$ events: one cache probe and one cache write. -/
 public theorem memoizedCutRod_zero {α : Type u} [AddCommMonoid α] [LinearOrder α]
     (prices : Vector α 0) : memoizedCutRod prices = ⟨0, 2⟩ := by
   rw [memoizedCutRod]
@@ -379,7 +406,14 @@ private lemma aux_valid {α : Type u} [AddCommMonoid α] [LinearOrder α]
               exact ⟨cacheValid_set prices _ (j + 1) hjn _ hscanValid hrow, hrow⟩
 
 
-/-- A valid supplied cache yields an attained optimum and remains valid after the call. -/
+/-- **Correctness of the memoized rod-cutting auxiliary.** Let $\alpha$ be a linearly ordered
+additive commutative monoid (that is, $a \le b$ implies $a + c \le b + c$) and let
+$p = (p_1, \dots, p_n) \in \alpha^n$ be prices, where $p_i$ is the price of a piece of length $i$.
+Call a cache $c = (c_0, \dots, c_n)$, whose entries are each unknown or a value in $\alpha$, valid
+if for every known entry $c_k = v$ the value $v$ is the greatest composition revenue over
+compositions of $k$. If $c$ is valid, $j \le n$, and the memoized rod-cutting auxiliary on length
+$j$ and cache $c$ returns the value $q$ and the cache $c'$, then $q$ is the greatest composition
+revenue over compositions of $j$, the cache $c'$ is valid, and $c'_j = q$. -/
 public theorem memoizedCutRodAux_correct {α : Type u} [AddCommMonoid α] [LinearOrder α]
     [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) (j : Nat) (hjn : j ≤ n)
     (cache : Vector (Option α) (n + 1))
@@ -397,7 +431,11 @@ public theorem memoizedCutRodAux_correct {α : Type u} [AddCommMonoid α] [Linea
   obtain ⟨hcache, hvalue⟩ := aux_valid prices j hjn cache hvalid
   exact ⟨hvalue, hcache, aux_saved prices j hjn cache⟩
 
-/-- The top-down memoized result attains and dominates every whole-rod composition revenue. -/
+/-- **Correctness of memoized rod cutting.** Let $\alpha$ be a linearly ordered additive commutative
+monoid (that is, $a \le b$ implies $a + c \le b + c$) and let $p = (p_1, \dots, p_n) \in \alpha^n$
+be prices, where $p_i$ is the price of a piece of length $i$. The value returned by the memoized
+cut-rod procedure on $p$ is the greatest composition revenue over compositions of $n$: it is the
+revenue of some composition of $n$, and it is at least the revenue of every composition of $n$. -/
 public theorem memoizedCutRod_correct {α : Type u} [AddCommMonoid α] [LinearOrder α]
     [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) :
     IsGreatest (Set.range fun parts : Composition n => compositionRevenue prices parts le_rfl)
@@ -591,7 +629,13 @@ private lemma potential_full {α : Type u} {n : Nat}
   obtain ⟨value, hvalue⟩ := hfull k.val (by omega)
   simp only [hvalue]
 
-/-- An initially unknown cache is filled through the requested length with exact optima. -/
+/-- **The memoized auxiliary fills the cache up to the requested length.** Let $\alpha$ be a
+linearly ordered additive commutative monoid (that is, $a \le b$ implies $a + c \le b + c$), let
+$p = (p_1, \dots, p_n) \in \alpha^n$ be prices, where $p_i$ is the price of a piece of length $i$,
+and let $j \le n$. If the memoized rod-cutting auxiliary is run on length $j$ with the cache
+$(c_0, \dots, c_n)$ whose entries are all unknown, then for every $k \le j$ entry $k$ of the
+returned cache is a known value, and that value is the greatest composition revenue over
+compositions of $k$. -/
 public theorem memoizedCutRodAux_complete {α : Type u} [AddCommMonoid α] [LinearOrder α]
     [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) (j : Nat) (hjn : j ≤ n) :
     ∀ (k : Nat) (hk : k ≤ j), ∃ value : α,
@@ -606,7 +650,12 @@ public theorem memoizedCutRodAux_complete {α : Type u} [AddCommMonoid α] [Line
     intro l hl v hv
     simp at hv)).1 k (by omega) value hvalue
 
-/-- Exact same-execution event count: one per cache probe, candidate, and actual write. -/
+/-- **Event count of memoized rod cutting.** Let $\alpha$ be an additive commutative monoid with a
+linear order and let $p \in \alpha^n$ be a vector of prices. The memoized cut-rod procedure on $p$
+charges exactly $n^2 + 2n + 2$ events, where one event is charged per cache probe, per first-cut
+candidate, and per cache write.
+
+Allocation, initialization, arithmetic, comparisons and control are not charged. -/
 public theorem memoizedCutRod_time {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     (memoizedCutRod prices).time = n ^ 2 + 2 * n + 2 := by

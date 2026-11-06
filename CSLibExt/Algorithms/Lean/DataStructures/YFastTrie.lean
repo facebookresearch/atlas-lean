@@ -160,11 +160,16 @@ private theorem find?_spec_of_exists {α : Type*} {p : α → Bool} {l : List α
           obtain ⟨c, hc, hc_mem, hc_p⟩ := ih hb'
           exact ⟨c, by simp [hpa, hc], List.mem_cons_of_mem a hc_mem, hc_p⟩
 
-/--
-A grouped y-fast trie over `w`-bit keys: an x-fast trie of representatives plus the
-list of groups in increasing order, with group size bounded by `B`. Each group is a
-sorted list standing in for a balanced search tree; no complexity bound is claimed.
--/
+/-- **Grouped y-fast trie.** For natural numbers $w$ and $B$, a grouped y-fast trie over $w$-bit
+keys with group bound $B$ consists of an x-fast trie over $w$-bit keys, which holds the
+representatives, and a list of groups, each a list of $w$-bit keys. The structure itself imposes
+no condition on these fields; the intended invariants (the representative trie is a valid x-fast
+trie whose keys are exactly the group maxima, every group is nonempty, strictly sorted and of
+length at most $B$, and the groups are in increasing order) are imposed by the validity
+predicate.
+
+Each group is a sorted list standing in for a balanced search tree; no complexity bound is
+claimed. -/
 public structure GroupedYFastTrie (w B : Nat) where
   /-- The x-fast trie over representative keys (group maxima). -/
   reps : XFastTrie w
@@ -173,25 +178,29 @@ public structure GroupedYFastTrie (w B : Nat) where
 
 namespace GroupedYFastTrie
 
-/-- All stored keys: the flattened groups. -/
+/-- **Keys of a grouped y-fast trie.** The key set of a grouped y-fast trie $t$ is the finite
+set of all keys that occur in some group of $t$. -/
 public def contents {w B : Nat} (t : GroupedYFastTrie w B) : Finset (Fin (2 ^ w)) :=
   t.groups.flatten.toFinset
 
-/-- A key is stored exactly when it lies in some group. -/
+/-- **Stored keys are the keys of the groups.** For every grouped y-fast trie $t$ over $w$-bit
+keys and every key $x$, $x$ lies in the contents of $t$ if and only if $x$ belongs to some group
+of $t$. -/
 public theorem mem_contents_iff {w B : Nat} (t : GroupedYFastTrie w B)
     (x : Fin (2 ^ w)) : x ∈ t.contents ↔ ∃ g ∈ t.groups, x ∈ g := by
   simp [contents, List.mem_flatten]
 
-/-- Cross-group order: every key of an earlier group is smaller than every key of a
-later group. -/
+/-- **Ordered list of groups.** A list of groups, each a list of $w$-bit keys, is group ordered
+when every key of an earlier group is smaller than every key of a later group. -/
 public def GroupOrdered {w : Nat} (gs : List (List (Fin (2 ^ w)))) : Prop :=
   gs.Pairwise (fun g₁ g₂ => ∀ a ∈ g₁, ∀ b ∈ g₂, a < b)
 
-/--
-The group invariant: the representative trie is a valid x-fast trie whose keys are
-exactly the group maxima; every group is nonempty, has at most `B` keys, and is
-strictly sorted; and the groups are ordered.
--/
+/-- **Validity of a grouped y-fast trie.** A grouped y-fast trie $t$ over keys in
+$\{0, \dots, 2^w - 1\}$ with group bound $B$ is valid when its representative trie is a valid
+x-fast trie; a key $r$ is stored in the representative trie exactly when $r$ is the last element
+of some group of $t$; every group of $t$ is nonempty, has at most $B$ keys, and is strictly
+increasing; and the groups of $t$ are ordered, that is, every key of an earlier group is smaller
+than every key of a later group. -/
 public def Valid {w B : Nat} (t : GroupedYFastTrie w B) : Prop :=
   t.reps.Valid ∧
     (∀ r, r ∈ t.reps.contents ↔ ∃ g ∈ t.groups, g.getLast? = some r) ∧
@@ -222,8 +231,11 @@ private theorem groupOrdered_trichotomy {w : Nat} {gs : List (List (Fin (2 ^ w))
       · exact Or.inr (Or.inr (hhead g hg))
       · exact ih htail hg hg'
 
-/-- The group owned by representative `r` (the first group whose maximum is `r`), or
-the empty list when there is none. -/
+/-- **Group of a representative.** For a grouped y-fast trie $t$ and a key $r$, the group of $r$
+is the first group of $t$, in the order of the groups, whose last element is $r$, or the empty
+list if no group of $t$ ends with $r$.
+
+In a valid trie every group is strictly increasing, so its last element is its maximum. -/
 public def findGroup {w B : Nat} (t : GroupedYFastTrie w B) (r : Fin (2 ^ w)) :
     List (Fin (2 ^ w)) :=
   (t.groups.find? (fun g => decide (g.getLast? = some r))).getD []
@@ -243,8 +255,14 @@ private theorem findGroup_spec {w B : Nat} {t : GroupedYFastTrie w B} (hv : t.Va
   rw [hfg]
   exact ⟨hg'_mem, hg'_last⟩
 
-/-- The least representative at least `x`: `x` itself when the deepest-level probe
-finds it among the representatives, otherwise the representative successor. -/
+/-- **Least representative at or above a key.** For a grouped y-fast trie $t$ and a key $x$,
+the result is $x$ itself if the membership test of the representative x-fast trie of $t$ (a
+single probe of its deepest level) reports $x$ as present. Otherwise it is the successor of $x$
+in the representative x-fast trie, that is, the least representative greater than $x$, or
+nothing if there is none.
+
+When $t$ is valid, the result is the least representative $r$ with $x \le r$, and nothing
+when there is no such representative. -/
 public def repGe {w B : Nat} (t : GroupedYFastTrie w B) (x : Fin (2 ^ w)) :
     Option (Fin (2 ^ w)) :=
   if t.reps.member x = true then some x else t.reps.successor x
@@ -284,14 +302,21 @@ private theorem repGe_spec_none {w B : Nat} {t : GroupedYFastTrie w B} (hv : t.V
     intro z hz hxz
     exact hnone z hz (lt_of_le_of_ne hxz (fun hzx => hnotmem (hzx.symm ▸ hz)))
 
-/-- Membership: locate the least representative at least `x`, then scan its group. -/
+/-- **Membership query of a grouped y-fast trie.** Given a grouped y-fast trie $t$ over $w$-bit
+keys and a key $x$, the query first finds a representative $r$: $r = x$ if the membership probe of
+the representative x-fast trie accepts $x$, and otherwise $r$ is the successor of $x$ in the
+representative trie. If there is no such $r$, the query returns false. Otherwise it returns
+whether $x$ belongs to the group owned by $r$, namely the first group of $t$ whose last element is
+$r$ (the empty list if there is none). -/
 public def member {w B : Nat} (t : GroupedYFastTrie w B) (x : Fin (2 ^ w)) : Bool :=
   match t.repGe x with
   | none => false
   | some r => decide (x ∈ t.findGroup r)
 
-/-- Under `Valid`, representative lookup plus group scan decides membership in
-`contents` exactly. -/
+/-- **Correctness of the y-fast trie membership query.** Let $t$ be a valid grouped y-fast trie
+over $w$-bit keys. Then for every key $x$, the membership query on $t$ (locate the least
+representative at least $x$, then scan its group) returns true at $x$ if and only if $x$ lies in
+the contents of $t$. -/
 public theorem member_iff {w B : Nat} {t : GroupedYFastTrie w B} (hv : t.Valid)
     (x : Fin (2 ^ w)) : t.member x = true ↔ x ∈ t.contents := by
   constructor
@@ -324,15 +349,20 @@ public theorem member_iff {w B : Nat} {t : GroupedYFastTrie w B} (hv : t.Valid)
       · exact absurd (hgt r₀ hr₀_mem r hr₁_mem) (not_lt_of_ge hr_le_r₀)
     simp [member, hrep, hxg]
 
-/-- Successor: locate the least representative above `x` in the x-fast trie, then
-scan its group for the first key above `x`. -/
+/-- **Successor query in a grouped y-fast trie.** For a grouped y-fast trie $t$ and a key
+$x$, let $r$ be the least key greater than $x$ stored in the representative x-fast trie of
+$t$; if there is none, the query returns nothing. Otherwise let $g$ be the first group of $t$
+whose last element is $r$, or the empty list if no group has last element $r$. The query then
+returns the first key of $g$ greater than $x$, or nothing if $g$ has no such key. -/
 public def successor {w B : Nat} (t : GroupedYFastTrie w B) (x : Fin (2 ^ w)) :
     Option (Fin (2 ^ w)) :=
   match t.reps.successor x with
   | none => none
   | some r => (t.findGroup r).find? (fun z => decide (x < z))
 
-/-- The successor is `some y` exactly when `y` is the least stored key above `x`. -/
+/-- **Successor query returns the least larger stored key.** Let $t$ be a valid grouped y-fast
+trie and let $x$, $y$ be keys. The successor query for $x$ in $t$ returns $y$ if and only if
+$y$ is stored in $t$, $x < y$, and $y \le z$ for every key $z$ stored in $t$ with $x < z$. -/
 public theorem successor_eq_some_iff {w B : Nat} {t : GroupedYFastTrie w B}
     (hv : t.Valid) (x y : Fin (2 ^ w)) :
     t.successor x = some y ↔
@@ -397,7 +427,9 @@ public theorem successor_eq_some_iff {w B : Nat} {t : GroupedYFastTrie w B}
     have hyy : y' = y := le_antisymm hy'_le_y hy_le_y'
     simp [successor, hrep, hfind, hyy]
 
-/-- The successor is `none` exactly when no stored key is greater than `x`. -/
+/-- **Successor query fails exactly when no larger key is stored.** Let $t$ be a valid grouped
+y-fast trie and $x$ a key. The successor query for $x$ in $t$ returns nothing if and only if no
+key stored in $t$ is greater than $x$. -/
 public theorem successor_eq_none_iff {w B : Nat} {t : GroupedYFastTrie w B}
     (hv : t.Valid) (x : Fin (2 ^ w)) :
     t.successor x = none ↔ ∀ z ∈ t.contents, ¬ x < z := by
@@ -433,11 +465,14 @@ public theorem successor_eq_none_iff {w B : Nat} {t : GroupedYFastTrie w B}
         exact absurd hxr
           (h r ((mem_contents_iff t r).mpr ⟨t.findGroup r, hg_mem, hr₁_mem⟩))
 
-/-- The empty grouped y-fast trie: empty representative trie, no groups. -/
+/-- **The empty grouped y-fast trie.** For every key length $w$ and group bound $B$, the empty
+grouped y-fast trie has the empty x-fast trie as its trie of representatives and has no
+groups. -/
 public def empty {w B : Nat} : GroupedYFastTrie w B :=
   ⟨XFastTrie.empty, []⟩
 
-/-- The empty trie is valid. -/
+/-- **The empty grouped y-fast trie is valid.** For every key width $w$ and group bound $B$,
+the empty grouped y-fast trie satisfies the grouped y-fast trie invariant. -/
 public theorem valid_empty {w B : Nat} : (empty : GroupedYFastTrie w B).Valid := by
   refine ⟨XFastTrie.valid_empty, ?_, ?_, List.Pairwise.nil⟩
   · intro r
@@ -449,7 +484,9 @@ public theorem valid_empty {w B : Nat} : (empty : GroupedYFastTrie w B).Valid :=
     (empty : GroupedYFastTrie w B).contents = ∅ := by
   simp [contents, empty]
 
-/-- Nothing is a member of the empty trie. -/
+/-- **The empty grouped y-fast trie has no members.** For all natural numbers $w$ and $B$ and
+every $w$-bit key $x$, the membership query on the empty grouped y-fast trie over $w$-bit keys
+with group bound $B$ returns false at $x$. -/
 public theorem member_empty {w B : Nat} (x : Fin (2 ^ w)) :
     (empty : GroupedYFastTrie w B).member x = false := by
   cases h : (empty : GroupedYFastTrie w B).member x with
@@ -458,12 +495,15 @@ public theorem member_empty {w B : Nat} (x : Fin (2 ^ w)) :
       have hx := (member_iff valid_empty x).mp h
       simp at hx
 
-/-- Nothing succeeds in the empty trie. -/
+/-- **The empty grouped y-fast trie has no successors.** For every key $x$, the successor query
+for $x$ in the empty grouped y-fast trie returns nothing. -/
 public theorem successor_empty {w B : Nat} (x : Fin (2 ^ w)) :
     (empty : GroupedYFastTrie w B).successor x = none :=
   (successor_eq_none_iff valid_empty x).mpr (by simp)
 
-/-- Build the representative x-fast trie by inserting a list of representatives. -/
+/-- **Representative trie of a list.** For a list $rs$ of $w$-bit keys, the representative
+x-fast trie of $rs$ is obtained from the empty x-fast trie over $w$-bit keys by inserting the
+elements of $rs$ one at a time, from first to last. -/
 public def mkReps {w : Nat} (rs : List (Fin (2 ^ w))) : XFastTrie w :=
   rs.foldl (fun t r => t.insert r) XFastTrie.empty
 
@@ -474,7 +514,10 @@ private theorem valid_foldl_insert {w : Nat} (rs : List (Fin (2 ^ w)))
   | nil => exact hv
   | cons r rs ih => exact ih _ (XFastTrie.valid_insert t hv r)
 
-/-- The folded representative trie is a valid x-fast trie. -/
+/-- **Inserting a list of keys into the empty x-fast trie gives a valid trie.** For every list
+of $w$-bit keys, the x-fast trie obtained from the empty x-fast trie by inserting the keys of
+the list one at a time satisfies the x-fast trie invariant: each level holds exactly the
+prefixes of that length of the stored keys. -/
 public theorem valid_mkReps {w : Nat} (rs : List (Fin (2 ^ w))) : (mkReps rs).Valid :=
   valid_foldl_insert rs _ XFastTrie.valid_empty
 
@@ -491,20 +534,30 @@ private theorem contents_foldl_insert {w : Nat} (rs : List (Fin (2 ^ w)))
         List.mem_toFinset, List.mem_cons]
       tauto
 
-/-- The representative trie built from a list stores exactly that list's keys. -/
+/-- **Keys of the trie of representatives.** For every list $L$ of $w$-bit keys, the x-fast
+trie obtained by inserting the elements of $L$ one by one into the empty x-fast trie stores
+exactly the elements of $L$: its key set is the set of elements of $L$. -/
 public theorem contents_mkReps {w : Nat} (rs : List (Fin (2 ^ w))) :
     (mkReps rs).contents = rs.toFinset := by
   rw [mkReps, contents_foldl_insert]
   simp [XFastTrie.empty]
 
-/-- Assemble a grouped trie from a group list, taking the group maxima as
-representatives. -/
+/-- **Grouped y-fast trie from a list of groups.** For a list of groups $g_1, \dots, g_k$,
+each a list of $w$-bit keys, and any group-size bound $B$, this is the grouped y-fast trie
+whose groups are $g_1, \dots, g_k$ in this order and whose representative x-fast trie is
+obtained from the empty x-fast trie by inserting the last element of each nonempty group,
+in order. No condition on the groups is checked here; when a group is sorted, its last
+element is its maximum. -/
 public def ofGroups {w B : Nat} (gs : List (List (Fin (2 ^ w)))) :
     GroupedYFastTrie w B :=
   ⟨mkReps (gs.filterMap List.getLast?), gs⟩
 
-/-- Groups satisfying the size, sortedness, and order conditions assemble into a
-valid trie. -/
+/-- **Assembling a valid grouped y-fast trie from groups.** Let $w$ and $B$ be natural numbers
+and let $g_1, \dots, g_k$ be a list of groups, each a list of keys in $\{0, \dots, 2^w - 1\}$.
+Suppose every group is nonempty, has at most $B$ keys, and is strictly increasing, and the
+groups are ordered: every key of an earlier group is smaller than every key of a later group.
+Then the grouped y-fast trie with group bound $B$ assembled from these groups, whose
+representatives are the last elements of the groups, is valid. -/
 public theorem valid_ofGroups {w B : Nat} {gs : List (List (Fin (2 ^ w)))}
     (hgroups : ∀ g ∈ gs, g ≠ [] ∧ g.length ≤ B ∧ g.Pairwise (· < ·))
     (hord : GroupOrdered gs) : (ofGroups gs : GroupedYFastTrie w B).Valid := by
@@ -518,7 +571,10 @@ public theorem valid_ofGroups {w B : Nat} {gs : List (List (Fin (2 ^ w)))}
 @[simp] public theorem contents_ofGroups {w B : Nat} (gs : List (List (Fin (2 ^ w)))) :
     (ofGroups gs : GroupedYFastTrie w B).contents = gs.flatten.toFinset := rfl
 
-/-- Fuel-bounded chunking: cut off a chunk of length at most `B` and continue. -/
+/-- **Fuel-bounded chunking.** Given a bound $B$, a fuel $n$ and a list $l$ of $w$-bit keys, the
+fuel-bounded chunking is the empty list of chunks when $n = 0$ or $l$ is empty; otherwise it is
+the chunk formed by the first $\min(B, |l|)$ elements of $l$, followed by the fuel-bounded
+chunking with bound $B$ and fuel $n - 1$ of the remaining elements of $l$. -/
 def chunkGroupsAux {w : Nat} (B : Nat) :
     Nat → List (Fin (2 ^ w)) → List (List (Fin (2 ^ w)))
   | 0, _ => []
@@ -591,22 +647,28 @@ private theorem chunkGroupsAux_spec {w : Nat} {B : Nat} (hB : 0 < B) :
           · obtain ⟨hne, hlen, hsub⟩ := ih ((a :: l).drop B) hdrop_len g hg
             exact ⟨hne, hlen, hsub.trans (List.drop_sublist B (a :: l))⟩
 
-/-- Split a list into consecutive chunks (groups) of length at most `B`.
-The length bound holds only for `0 < B` (see `chunkGroups_spec`): at
-`B = 0` this degenerates to a single chunk `[l]` for nonempty `l`
-(`chunkGroups_zero_of_ne`), whose length exceeds `0`. Callers needing the
-bound must supply `0 < B`. -/
+/-- **Chunking a list into groups.** Given a bound $B$ and a list $l$ of $w$-bit keys, when
+$B > 0$ the chunking of $l$ cuts $l$ from the left into consecutive chunks of exactly $B$
+elements each, except that the last chunk holds the remaining one to $B$ elements; there are no
+chunks when $l$ is empty. When $B = 0$, the chunking has no chunks if $l$ is empty and is the
+single chunk $l$ otherwise.
+
+So every chunk has at most $B$ elements when $B > 0$, but not when $B = 0$ and $l$ is
+nonempty. -/
 public def chunkGroups {w : Nat} (B : Nat) (l : List (Fin (2 ^ w))) :
     List (List (Fin (2 ^ w))) :=
   if B = 0 then (if l = [] then [] else [l]) else chunkGroupsAux B l.length l
 
-/-- The degenerate `B = 0` chunking of a nonempty list is one chunk. -/
+/-- **Chunking with bound zero.** For every nonempty list $l$ of $w$-bit keys, the chunking of
+$l$ with bound $B = 0$ consists of the single chunk $l$. -/
 public theorem chunkGroups_zero_of_ne {w : Nat} {l : List (Fin (2 ^ w))}
     (hl : l ≠ []) : chunkGroups 0 l = [l] := by
   unfold chunkGroups
   rw [ite_eq_left rfl, ite_eq_right hl]
 
-/-- Chunking partitions the list: flattening recovers it. -/
+/-- **Chunking preserves the list.** For every bound $B$ (including $B = 0$) and every list $l$
+of $w$-bit keys, concatenating the chunks of the chunking of $l$ with bound $B$, in order,
+gives back $l$. -/
 public theorem flatten_chunkGroups {w : Nat} (B : Nat) (l : List (Fin (2 ^ w))) :
     (chunkGroups B l).flatten = l := by
   unfold chunkGroups
@@ -618,7 +680,9 @@ public theorem flatten_chunkGroups {w : Nat} (B : Nat) (l : List (Fin (2 ^ w))) 
   · rename_i hB
     exact flatten_chunkGroupsAux (Nat.pos_of_ne_zero hB) l.length l le_rfl
 
-/-- Chunks of a strictly sorted list are nonempty, bounded, and strictly sorted. -/
+/-- **Chunks of a sorted list.** Let $B > 0$ and let $l$ be a strictly increasing list of
+$w$-bit keys. Then every chunk of the chunking of $l$ into groups of at most $B$ keys is
+nonempty, has at most $B$ elements, and is strictly increasing. -/
 public theorem chunkGroups_spec {w : Nat} {B : Nat} (hB : 0 < B)
     (l : List (Fin (2 ^ w))) (hsorted : l.Pairwise (· < ·)) :
     ∀ g ∈ chunkGroups B l, g ≠ [] ∧ g.length ≤ B ∧ g.Pairwise (· < ·) := by
@@ -642,27 +706,41 @@ private theorem groupOrdered_of_flatten_pairwise {w : Nat}
       exact List.pairwise_cons.mpr ⟨fun g' hg' a ha b hb =>
         hcross a ha b (List.mem_flatten.mpr ⟨g', hg', hb⟩), ih hgs_pair⟩
 
-/-- Chunks appear in increasing order when the original list is strictly sorted. -/
+/-- **Chunks of a sorted list are ordered.** Let $B$ be a natural number and let $l$ be a
+strictly increasing list of $w$-bit keys. Then the chunk groups of $l$ with bound $B$ are group
+ordered: every key of an earlier chunk is smaller than every key of a later chunk. -/
 public theorem groupOrdered_chunkGroups {w : Nat} (B : Nat) (l : List (Fin (2 ^ w)))
     (hsorted : l.Pairwise (· < ·)) : GroupOrdered (chunkGroups B l) :=
   groupOrdered_of_flatten_pairwise ((flatten_chunkGroups B l).symm ▸ hsorted)
 
-/-- Build a grouped y-fast trie from a sorted list by cutting it into groups
-of at most `B` keys. The bound and validity require `0 < B`
-(`valid_ofSortedList`); at `B = 0` the groups degenerate to `[l]` and the
-result is invalid for nonempty `l` (`not_valid_ofSortedList_zero`). -/
+/-- **Grouped y-fast trie from a sorted list.** For a group bound $B$ and a list $l$ of
+$w$-bit keys, this is the grouped y-fast trie whose groups, in order, are consecutive pieces of
+$l$ that together make up $l$, and whose representative x-fast trie is obtained from the empty
+x-fast trie by inserting the last element of each group, in order. If $B > 0$, the groups are
+obtained by repeatedly cutting off the first $B$ keys, so every group has exactly $B$ keys
+except possibly the last, which has between one and $B$ keys. If $B = 0$, the only group is $l$
+itself. In both cases there are no groups when $l$ is empty.
+
+The construction is intended for strictly increasing $l$. It yields a valid trie when $B > 0$
+and $l$ is strictly increasing, and an invalid one when $B = 0$ and $l$ is nonempty. -/
 public def ofSortedList {w : Nat} (B : Nat) (l : List (Fin (2 ^ w))) :
     GroupedYFastTrie w B :=
   ofGroups (chunkGroups B l)
 
-/-- Building from a strictly sorted list with a positive bound gives a valid trie. -/
+/-- **Building from a sorted list gives a valid grouped y-fast trie.** Let $w$ and $B$ be
+natural numbers with $0 < B$, and let $l$ be a strictly increasing list of keys in
+$\{0, \dots, 2^w - 1\}$. Then the grouped y-fast trie with group bound $B$ built from $l$ by
+cutting it into consecutive groups of at most $B$ keys is valid. -/
 public theorem valid_ofSortedList {w B : Nat} (hB : 0 < B) {l : List (Fin (2 ^ w))}
     (hsorted : l.Pairwise (· < ·)) : (ofSortedList B l).Valid :=
   valid_ofGroups (chunkGroups_spec hB l hsorted) (groupOrdered_chunkGroups B l hsorted)
 
-/-- At `B = 0`, building from a nonempty list cannot be valid: the single
-degenerate group `l` has positive length, violating the `≤ 0` group bound
-in `Valid`. Use `0 < B` (see `valid_ofSortedList`). -/
+/-- **Building from a nonempty list with group bound zero gives an invalid trie.** For every
+natural number $w$ and every nonempty list $l$ of $w$-bit keys, the grouped y-fast trie with
+group bound $B = 0$ built from $l$ is not valid.
+
+With $B = 0$ the only group is $l$ itself, which has more than $0$ keys. For $B > 0$ and strictly
+increasing $l$, the grouped y-fast trie built from $l$ is valid. -/
 public theorem not_valid_ofSortedList_zero {w : Nat} {l : List (Fin (2 ^ w))}
     (hl : l ≠ []) : ¬ (ofSortedList 0 l).Valid := by
   intro hv
@@ -674,12 +752,17 @@ public theorem not_valid_ofSortedList_zero {w : Nat} {l : List (Fin (2 ^ w))}
   have hpos : 0 < l.length := List.length_pos_of_ne_nil hl
   omega
 
-/-- The trie built from a list stores exactly that list. -/
+/-- **Keys of the grouped y-fast trie built from a list.** For every group bound $B$ (including
+$B = 0$) and every list $l$ of $w$-bit keys, sorted or not, the key set of the grouped y-fast
+trie built from $l$ with group bound $B$ is exactly the set of elements of $l$. -/
 public theorem contents_ofSortedList {w B : Nat} (l : List (Fin (2 ^ w))) :
     (ofSortedList B l).contents = l.toFinset := by
   rw [ofSortedList, contents_ofGroups, flatten_chunkGroups]
 
-/-- Membership in the trie built from a list is membership in the list. -/
+/-- **Membership in a trie built from a sorted list.** Let $B > 0$ and let $l$ be a strictly
+increasing list of $w$-bit keys. Then for every key $x$, the membership query on the grouped
+y-fast trie built from $l$ with group bound $B$ returns true at $x$ if and only if $x$ belongs
+to $l$. -/
 public theorem member_ofSortedList_iff {w B : Nat} (hB : 0 < B)
     {l : List (Fin (2 ^ w))} (hsorted : l.Pairwise (· < ·)) (x : Fin (2 ^ w)) :
     (ofSortedList B l).member x = true ↔ x ∈ l := by
@@ -687,8 +770,10 @@ public theorem member_ofSortedList_iff {w B : Nat} (hB : 0 < B)
   rw [contents_ofSortedList] at h1
   simpa only [List.mem_toFinset] using h1
 
-/-- The successor in the trie built from a list is the least element of the list
-above the query. -/
+/-- **Successor in the trie built from a sorted list.** Let $B > 0$, let $l$ be a strictly
+increasing list of $w$-bit keys, and let $x$, $y$ be keys. The successor query for $x$ in the
+grouped y-fast trie built from $l$ with group bound $B$ returns $y$ if and only if $y$ belongs
+to $l$, $x < y$, and $y \le z$ for every $z$ in $l$ with $x < z$. -/
 public theorem successor_ofSortedList_eq_some_iff {w B : Nat} (hB : 0 < B)
     {l : List (Fin (2 ^ w))} (hsorted : l.Pairwise (· < ·)) (x y : Fin (2 ^ w)) :
     (ofSortedList B l).successor x = some y ↔

@@ -28,7 +28,12 @@ namespace Cslib.Algorithms.Lean.TimeM
 
 open MathlibExt.Analysis.Fourier.FastFourierTransformWanted
 
-/-- Actual negative-sign source inverse coefficients equal canonical inverse DFT. -/
+/-- **Inverse FFT at the negative-sign root computes the inverse DFT.** Let $N = 2^d$ and
+$x \in \mathbb{C}^N$, and run the inverse FFT procedure on $x$ with root $e^{-2\pi i/N}$, the value
+at $-1$ of the standard additive character of $\mathbb{Z}/N\mathbb{Z}$. For every $k < N$, entry $k$
+of its output equals the canonical inverse discrete Fourier transform of the function on
+$\mathbb{Z}/N\mathbb{Z}$ sending the class of $j < N$ to $x_j$, evaluated at the class of $k$;
+that is, it equals $N^{-1} \sum_{j=0}^{N-1} e^{2\pi i jk/N} x_j$. -/
 theorem ifft_stdAddChar_neg_one (d : Nat) (xs : Vector ℂ (2 ^ d))
     (k : Fin (2 ^ d)) :
     (ifft d (ZMod.stdAddChar (-1 : ZMod (2 ^ d))) xs).ret[k.val] =
@@ -42,7 +47,12 @@ theorem ifft_stdAddChar_neg_one (d : Nat) (xs : Vector ℂ (2 ^ d))
   simpa only [Nat.cast_pow, Nat.cast_ofNat] using
     invDFT_eq_dftSum_stdAddChar_vector xs k.val
 
-/-- Actual positive-sign source inverse coefficients equal normalized forward DFT. -/
+/-- **Inverse FFT at the positive-sign root computes the normalized forward DFT.** Let $N = 2^d$
+and $x \in \mathbb{C}^N$, and run the inverse FFT procedure on $x$ with root $e^{2\pi i/N}$, the
+value at $1$ of the standard additive character of $\mathbb{Z}/N\mathbb{Z}$. For every $k < N$,
+entry $k$ of its output equals $N^{-1}$ times the canonical discrete Fourier transform of the
+function on $\mathbb{Z}/N\mathbb{Z}$ sending the class of $j < N$ to $x_j$, evaluated at the class
+of $k$; that is, it equals $N^{-1} \sum_{j=0}^{N-1} e^{-2\pi i jk/N} x_j$. -/
 theorem ifft_stdAddChar_one (d : Nat) (xs : Vector ℂ (2 ^ d))
     (k : Fin (2 ^ d)) :
     (ifft d (ZMod.stdAddChar (1 : ZMod (2 ^ d))) xs).ret[k.val] =
@@ -72,7 +82,10 @@ private theorem ifft_neg_samples (d : Nat) (xs : Vector ℂ (2 ^ d)) :
   rw [ZMod.natCast_zmod_val] at h
   exact (Array.getElem_eq_getD (h := by simpa using ZMod.val_lt j) 0).symm.trans h
 
-/-- Execute the actual negative forward and inverse procedures on every admitted vector. -/
+/-- **Inverse FFT after FFT is the identity at the negative-sign root.** Let $N = 2^d$ and let
+$\omega = e^{-2\pi i/N}$, the value at $-1$ of the standard additive character of
+$\mathbb{Z}/N\mathbb{Z}$. For every $x \in \mathbb{C}^N$, running the FFT procedure on $x$ with
+root $\omega$ and then the inverse FFT procedure on its output with root $\omega$ returns $x$. -/
 theorem ifft_fft_stdAddChar_neg_one (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     (ifft d (ZMod.stdAddChar (-1 : ZMod (2 ^ d)))
       (fft d (ZMod.stdAddChar (-1 : ZMod (2 ^ d))) xs).ret).ret = xs := by
@@ -82,7 +95,10 @@ theorem ifft_fft_stdAddChar_neg_one (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     LinearEquiv.symm_apply_apply, ZMod.val_natCast_of_lt hk]
   exact (Array.getElem_eq_getD (h := by simpa using hk) 0).symm
 
-/-- Execute the actual negative inverse and forward procedures on every admitted vector. -/
+/-- **FFT after inverse FFT is the identity at the negative-sign root.** Let $N = 2^d$ and let
+$\omega = e^{-2\pi i/N}$, the value at $-1$ of the standard additive character of
+$\mathbb{Z}/N\mathbb{Z}$. For every $x \in \mathbb{C}^N$, running the inverse FFT procedure on $x$
+with root $\omega$ and then the FFT procedure on its output with root $\omega$ returns $x$. -/
 theorem fft_ifft_stdAddChar_neg_one (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     (fft d (ZMod.stdAddChar (-1 : ZMod (2 ^ d)))
       (ifft d (ZMod.stdAddChar (-1 : ZMod (2 ^ d))) xs).ret).ret = xs := by
