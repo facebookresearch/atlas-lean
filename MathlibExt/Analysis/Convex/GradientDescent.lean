@@ -221,22 +221,26 @@ private theorem gradientDescent_sum_bound
       (div_le_div_iff_of_pos_right (mul_pos (by norm_num) hη.1)).2
         (sub_le_self _ (sq_nonneg _))
 
-/-- Gradient descent on a smooth convex function in finite dimensions: with a
-step below `1 / L`, the objective gap after `k` steps is at most
-`‖X 0 - x⋆‖^2 / (2 * η * k)`.
+/-- **Sublinear rate of gradient descent for smooth convex functions.** Let $E$ be a
+finite-dimensional real inner product space, let $L > 0$, and let $f : E \to \mathbb{R}$ be
+convex and differentiable with $L$-Lipschitz gradient $\nabla f$. Let $x^\star \in E$ be a global
+minimizer of $f$, let $0 < \eta \le 1/L$, and let $(x_k)_{k \ge 0}$ be any sequence in $E$ with
+$x_{k+1} = x_k - \eta \nabla f(x_k)$ for all $k$. Then for every $k \ge 1$,
+$f(x_k) - f(x^\star) \le \|x_0 - x^\star\|^2 / (2 \eta k)$.
+
+Proves `Wanted` entry `gradient_descent_convex_sublinear_rate`.
+
+Proof: The descent lemma and first-order convexity inequality are proved on affine lines. They
+bound each objective gap by a difference of squared distances to $x^\star$; telescoping and the
+monotonicity of $f(x_k)$ in $k$ give the rate, as in L. Vandenberghe, ECE236C lecture notes
+"Gradient method" (Spring 2022), slides 1.23-1.26.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 `Iterative methods of solving systems of real and vector-valued equations`,
 entries `optimization of convex function in finite dimension` and
 `gradient descent square root` (unmapped);
 Y. Nesterov, Introductory Lectures on Convex Optimization, Section 2.1;
 stable ref https://en.wikipedia.org/wiki/Gradient_descent.
-
-Proves `Wanted` entry `gradient_descent_convex_sublinear_rate`.
-
-Proof: The descent lemma and first-order convexity inequality are proved on affine lines. They
-bound each objective gap by a difference of squared distances to `x⋆`; telescoping and the
-monotonicity of `f (X k)` give the rate, as in L. Vandenberghe, ECE236C lecture notes
-"Gradient method" (Spring 2022), slides 1.23-1.26.
 -/
 theorem gradient_descent_convex_sublinear_rate
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
