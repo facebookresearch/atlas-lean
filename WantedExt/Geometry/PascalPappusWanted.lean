@@ -55,22 +55,39 @@ Category-(b) candidates from §146 of the Knill survey.
 
 open Matrix
 
-/-- Two homogeneous coordinate vectors represent the same projective point. -/
+/-- **Same projective point.** Two vectors $v, w \in \mathbb{R}^3$ represent the same point of the
+real projective plane when $w = c v$ for some real number $c \ne 0$. -/
 def SamePoint (v w : Fin 3 → ℝ) : Prop := ∃ c : ℝ, c ≠ 0 ∧ w = c • v
 
-/-- `[v]` lies on the conic `xᵀ M x = 0`. -/
+/-- **Points on a conic.** For a real $3 \times 3$ matrix $M$, a vector $v \in \mathbb{R}^3$ lies on
+the conic $x^\top M x = 0$ when $v^\top M v = 0$. -/
 def OnConic (M : Matrix (Fin 3) (Fin 3) ℝ) (v : Fin 3 → ℝ) : Prop :=
   v ⬝ᵥ (M *ᵥ v) = 0
 
-/-- Intersection (meet) of line `[a][b]` and line `[c][d]`. -/
+/-- **Meet of two lines.** Writing $\times$ for the cross product on $\mathbb{R}^3$, the meet of
+the line through $a$ and $b$ with the line through $c$ and $d$, for $a, b, c, d \in \mathbb{R}^3$,
+is the vector $(a \times b) \times (c \times d)$.
+
+When $a \times b$ and $c \times d$ are nonzero and not proportional, this vector represents the
+intersection point of the two projective lines. -/
 def meet (a b c d : Fin 3 → ℝ) : Fin 3 → ℝ := (a ⨯₃ b) ⨯₃ (c ⨯₃ d)
 
-/-- Three projective points are collinear (vanishing triple product). -/
+/-- **Collinear projective points.** Writing $\cdot$ and $\times$ for the dot and cross products
+on $\mathbb{R}^3$, three vectors $p, q, r \in \mathbb{R}^3$ represent collinear points of the
+real projective plane when their triple product vanishes: $p \cdot (q \times r) = 0$. -/
 def Collinear3 (p q r : Fin 3 → ℝ) : Prop := p ⬝ᵥ (q ⨯₃ r) = 0
 
 /- **Pascal's theorem.** Six distinct points on a non-singular conic determine
 three collinear intersection points `Aᵢ Bⱼ ∩ Aⱼ Bᵢ`. -/
-/-- Source: B. Pascal, *Essay pour les coniques* (1640). Knill, *Some fundamental theorems in mathematics*, §146. Via leanprover/lean-eval@38361be, problem `pascal`. -/
+/-- **Pascal's theorem for real projective conics.** Let $M$ be a real symmetric $3 \times 3$
+matrix with $\det M \ne 0$, and let $a_1, a_2, a_3, b_1, b_2, b_3 \in \mathbb{R}^3$ be nonzero
+vectors on the conic $x^\top M x = 0$, no two of which represent the same projective point.
+Writing $\cdot$ and $\times$ for the dot and cross products on $\mathbb{R}^3$, let
+$p = (a_1 \times b_2) \times (a_2 \times b_1)$, $q = (a_1 \times b_3) \times (a_3 \times b_1)$ and
+$r = (a_2 \times b_3) \times (a_3 \times b_2)$ be the meets of the opposite sides of the hexagon
+$a_1 b_2 a_3 b_1 a_2 b_3$. Then $p$, $q$ and $r$ are collinear: $p \cdot (q \times r) = 0$.
+
+Source: B. Pascal, *Essay pour les coniques* (1640). Knill, *Some fundamental theorems in mathematics*, §146. Via leanprover/lean-eval@38361be, problem `pascal`. -/
 public theorem_wanted pascal
     (M : Matrix (Fin 3) (Fin 3) ℝ) (hMsymm : M.IsSymm) (hMdet : M.det ≠ 0)
     (a₁ a₂ a₃ b₁ b₂ b₃ : Fin 3 → ℝ)

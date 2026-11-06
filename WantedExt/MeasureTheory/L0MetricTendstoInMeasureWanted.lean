@@ -46,27 +46,42 @@ open scoped Topology
 
 namespace MathlibExt.MeasureTheory.L0MetricTendstoInMeasureWanted
 
-/-- Measurable real functions on `ℝ`, used as representatives of `L⁰([0, 1])`; nothing below depends
-on their values off `[0, 1]` or on a null set. -/
+/-- **Measurable functions representing $L^0([0,1])$.** The type of Borel measurable functions
+$f : \mathbb{R} \to \mathbb{R}$, used as representatives of the elements of $L^0([0,1])$.
+
+The pseudometric and the convergence in measure built on them depend only on the restriction
+of $f$ to $[0,1]$ up to a null set.
+-/
 abbrev L0UnitInterval : Type := {f : ℝ → ℝ // Measurable f}
 
-/-- `∫ x in [0, 1], |f x - g x| / (1 + |f x - g x|)`. On representatives this is a pseudometric
-(functions that agree a.e. on `[0, 1]` are at distance `0`); it is the source's metric `d` on the
-a.e.-classes of `L⁰([0, 1])`. -/
+/-- **The $L^0$ pseudometric on $[0,1]$.** For Borel measurable functions
+$f, g : \mathbb{R} \to \mathbb{R}$,
+$$
+d(f,g) = \int_{[0,1]} \frac{|f(x) - g(x)|}{1 + |f(x) - g(x)|}\,dx,
+$$
+the integral being with respect to Lebesgue measure on $[0,1]$.
+
+This is a pseudometric: functions that agree almost everywhere on $[0,1]$ are at distance $0$,
+and on the almost-everywhere classes it is the usual metric of $L^0([0,1])$.
+-/
 noncomputable def L0PseudoMetric (f g : L0UnitInterval) : ℝ :=
   ∫ x, |f.1 x - g.1 x| / (1 + |f.1 x - g.1 x|)
     ∂(MeasureTheory.volume.restrict (Set.Icc (0 : ℝ) 1))
 
-/-- Let $L^0([0,1])$ be the vector space of Lebesgue measurable functions. Let $d$ be the metric on
-$L^0([0,1])$ given by
-\[
-d(f,g) = \int_0^1 \frac{|f-g|(x)}{1 + |f-g|(x)}\,dx.
-\]
-Prove that $f_n \to f$ in the metric $d$ if and only if $f_n \to f$ in measure.
+/-- **Convergence in the $L^0$ pseudometric is convergence in measure.** Let $f$ and
+$f_0, f_1, f_2, \ldots$ be Borel measurable functions $\mathbb{R} \to \mathbb{R}$, and let $d$ be
+the pseudometric
+$$
+d(g,h) = \int_{[0,1]} \frac{|g(x) - h(x)|}{1 + |g(x) - h(x)|}\,dx
+$$
+on such functions, the integral being with respect to Lebesgue measure. Then
+$d(f_n, f) \to 0$ as $n \to \infty$ if and only if $f_n \to f$ in measure with respect to
+Lebesgue measure on $[0,1]$: for every $\varepsilon > 0$, the Lebesgue measure of
+$\{x \in [0,1] : |f_n(x) - f(x)| \ge \varepsilon\}$ tends to $0$ as $n \to \infty$.
 
-Lean variant: `L⁰([0, 1])` is represented by measurable functions on `ℝ`, so `L0PseudoMetric` is the
-source's metric `d` read on representatives (a pseudometric there); both sides of the equivalence
-depend only on the a.e.-classes on `[0, 1]`.
+The source states this for $L^0([0,1])$, on which $d$ is a metric; here it is stated for
+representatives, on which $d$ is only a pseudometric. Both sides depend only on the
+almost-everywhere classes of the functions on $[0,1]$, so the two statements say the same thing.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis; Linear
 function spaces and their duals), `benchmark/level2/ma_proofbench_l2_07.lean` at

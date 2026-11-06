@@ -46,21 +46,24 @@ open Filter MeasureTheory
 
 namespace MathlibExt.MeasureTheory.LargeLevelSetReverseHolderWanted
 
-/-- Lebesgue measure restricted to `[0, 1]`. -/
+/-- **Lebesgue measure on the unit interval.** The measure on $\mathbb{R}$ that assigns to each
+set $A \subseteq \mathbb{R}$ the Lebesgue measure of $A \cap [0,1]$.
+-/
 noncomputable abbrev μIcc01 : Measure ℝ :=
   volume.restrict (Set.Icc (0 : ℝ) 1)
 
-/-- Let $\{f_n\}_{n=1}^\infty\subset L^2([0,1])$. Suppose $\|f_n\|_{L^2}\le 2024\|f_n\|_{L^1}$ for
-all $n\in\mathbb{Z}_{>0}$.
-If $\lim_{n\to\infty}\|f_n\|_{L^1}=\infty$, prove that there exists a sequence $y_n\to\infty$ such
-that
-\[
-\inf_n |\{x: |f_n(x)|\ge y_n\}|>0.
-\]
+/-- **Uniformly large level sets under a reverse Hölder bound.** Let $\mu$ be Lebesgue measure
+on $[0,1]$, and let $f_0, f_1, f_2, \ldots : \mathbb{R} \to \mathbb{R}$ lie in $L^2(\mu)$ with
+$\|f_n\|_{L^2(\mu)} \le 2024\,\|f_n\|_{L^1(\mu)}$ for every $n$ and
+$\|f_n\|_{L^1(\mu)} \to \infty$ as $n \to \infty$. Then there is a sequence of real numbers
+$y_n \to \infty$ such that
+$$
+\inf_n \mu(\{x : |f_n(x)| \ge y_n\}) > 0.
+$$
 
-Lean variant: the source writes `Tendsto (fun n => eLpNorm (f n) 1 μ) atTop atTop` in `ℝ≥0∞`, where
-`atTop = pure ⊤`; that hypothesis forces `‖f n‖₁ = ∞` eventually and contradicts `MemLp (f n) 2`, so
-the statement was vacuous. The target filter is `nhds ⊤` here, the intended `‖f n‖₁ → ∞`.
+The divergence hypothesis is the limit $\|f_n\|_{L^1(\mu)} \to \infty$ in $[0,\infty]$; the
+formal source instead required $\|f_n\|_{L^1(\mu)} = \infty$ for all large $n$, which no function
+in $L^2(\mu)$ satisfies, so its statement was vacuous.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Measure and integration;
 Classical measure theory), `benchmark/level2/ma_proofbench_l2_04.lean` at

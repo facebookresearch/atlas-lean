@@ -35,16 +35,28 @@ false (Bradač and Christoph [BrCh24]: `f(n) = o(2^C(n,2)/n!)`). The
 historical positive proposition is preserved as `conjecture`; its
 disproof is the unregistered companion `disprovedForm`. -/
 
-/-- Some constant `c > 0` works for arbitrarily large `n`. -/
+/-- **Many unique subgraphs (Erdős Problem 426).** For a graph $H$ on a finite vertex set, let
+$u(H)$ be the number of spanning subgraphs of $H$ that are isomorphic to no other spanning
+subgraph of $H$ (its unique subgraphs). The statement is that there is a real constant $c > 0$
+such that for infinitely many $n$ some graph $H$ on $n$ vertices has
+$u(H) \ge c \cdot 2^{\binom{n}{2}} / n!$. -/
 def conjecture : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∃ᶠ (n : ℕ) in atTop, ∃ H : SimpleGraph (Fin n),
       c * ((2 : ℝ) ^ n.choose 2 / n.factorial) ≤ (uniqueSubgraphCount H : ℝ)
 
-/-- No constant `c > 0` works (companion recording the disproof). -/
+/-- **Negation of the Erdős Problem 426 statement.** For a graph $H$ on a finite vertex set, let
+$u(H)$ be the number of spanning subgraphs of $H$ that are isomorphic to no other spanning
+subgraph of $H$. This is the proposition that there is no real constant $c > 0$ such that for
+infinitely many $n$ some graph $H$ on $n$ vertices has $u(H) \ge c \cdot 2^{\binom{n}{2}} / n!$.
+-/
 def disprovedForm : Prop := ¬ conjecture
 
-/--
-Resolved false: Disproved by Bradač and Christoph [BrCh24], per erdosproblems.com/426. Source:
+/-- **Erdős Problem 426 is false (Bradač–Christoph).** For a graph $H$ on a finite vertex set, let
+$u(H)$ be the number of spanning subgraphs of $H$ that are isomorphic to no other spanning
+subgraph of $H$ (its unique subgraphs). There is no real constant $c > 0$ such that for infinitely
+many $n$ some graph $H$ on $n$ vertices has $u(H) \ge c \cdot 2^{\binom{n}{2}} / n!$.
+
+Source:
 Bradač and Christoph [BrCh24] (f(n) = o(2^C(n,2)/n!)), per erdosproblems.com/426,
 https://www.erdosproblems.com/426. Moved from `OpenConjectures/GraphTheory/ErdosProblem426`.
 -/

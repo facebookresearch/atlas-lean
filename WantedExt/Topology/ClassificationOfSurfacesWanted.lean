@@ -57,7 +57,8 @@ namespace Complex
 /-- The closed unit disc in the complex plane. -/
 abbrev ClosedUnitDisc : Type := Metric.closedBall (0 : ℂ) 1
 
-/-- The boundary point exp(2πir) on the boundary of the closed unit disc in the complex plane. -/
+/-- **Boundary point of the unit disc at a real parameter.** For a real number $r$, this is the
+point $e^{2\pi i r}$ of the closed unit disc in $\mathbb{C}$, which lies on its boundary circle. -/
 noncomputable def ClosedUnitDisc.bdyPtOfReal (r : ℝ) : ClosedUnitDisc :=
   ⟨r.fourierChar, r.fourierChar.2.le⟩
 
@@ -67,9 +68,17 @@ namespace Topology.ClassificationOfSurfaces
 
 open Complex Set
 
-/-- The representative orientable surface homeomorphic to a closed orientable genus `p`
-surface with `n` discs removed, obtained by identifying the boundary of a disc in the pattern
-`a₁b₁a₁⁻¹b₁⁻¹⋯aₚbₚaₚ⁻¹bₚ⁻¹c₁h₁c₁⁻¹⋯cₙhₙcₙ⁻¹`. -/
+/-- **Gluing relation for the orientable normal form.** For natural numbers $p$ and $n$, put
+$N = 4p + 3n$ and write $e(t) = e^{2\pi i t}$ for the boundary point of the closed unit disc at
+the real parameter $t$. This is the relation on the closed unit disc under which, for every
+$x \in [0, 1]$ and every natural number $k < p$, the point $e((4k + x)/N)$ is related to
+$e((4k + 3 - x)/N)$ and the point $e((4k + 1 + x)/N)$ is related to $e((4k + 4 - x)/N)$, and
+for every $x \in [0, 1]$ and every natural number $k < n$, the point $e(-(3k + x)/N)$ is related
+to $e(-(3k + 3 - x)/N)$; no other pairs are related.
+
+Gluing the disc along it identifies the boundary in the pattern $a_1 b_1 a_1^{-1} b_1^{-1}
+\cdots a_p b_p a_p^{-1} b_p^{-1} c_1 h_1 c_1^{-1} \cdots c_n h_n c_n^{-1}$, where the arcs $h_j$
+are left free. -/
 inductive OrientableRel (p n : ℕ) : ClosedUnitDisc → ClosedUnitDisc → Prop
   | a (x : Icc (0 : ℝ) 1) (i : Fin p) : OrientableRel p n
       (.bdyPtOfReal <| (4 * i + x) / (4 * p + 3 * n))
@@ -81,9 +90,16 @@ inductive OrientableRel (p n : ℕ) : ClosedUnitDisc → ClosedUnitDisc → Prop
       (.bdyPtOfReal <| - (3 * i + x) / (4 * p + 3 * n))
       (.bdyPtOfReal <| - (3 * i + 3 - x) / (4 * p + 3 * n))
 
-/-- The representative non-orientable surface homeomorphic to a direct sum of `p` projective
-planes with `n` discs removed, obtained by identifying the boundary of a disc in the pattern
-`a₁a₁⋯aₚaₚc₁h₁c₁⁻¹⋯cₙhₙcₙ⁻¹`. -/
+/-- **Gluing relation for the non-orientable normal form.** For natural numbers $p$ and $n$, put
+$N = 2p + 3n$ and write $e(t) = e^{2\pi i t}$ for the boundary point of the closed unit disc at
+the real parameter $t$. This is the relation on the closed unit disc under which, for every
+$x \in [0, 1]$ and every natural number $k < p$, the point $e((2k + x)/N)$ is related to
+$e((2k + 1 + x)/N)$, and for every $x \in [0, 1]$ and every natural number $k < n$, the point
+$e(-(3k + x)/N)$ is related to $e(-(3k + 3 - x)/N)$; no other pairs are related.
+
+Gluing the disc along it identifies the boundary in the pattern
+$a_1 a_1 \cdots a_p a_p c_1 h_1 c_1^{-1} \cdots c_n h_n c_n^{-1}$, where the arcs $h_j$ are left
+free. -/
 inductive NonOrientableRel (p n : ℕ) : ClosedUnitDisc → ClosedUnitDisc → Prop
   | a (x : Icc (0 : ℝ) 1) (i : Fin p) : NonOrientableRel p n
       (.bdyPtOfReal <| (2 * i + x) / (2 * p + 3 * n))
@@ -92,7 +108,17 @@ inductive NonOrientableRel (p n : ℕ) : ClosedUnitDisc → ClosedUnitDisc → P
       (.bdyPtOfReal <| -(3 * i + x) / (2 * p + 3 * n))
       (.bdyPtOfReal <| -(3 * i + 3 - x) / (2 * p + 3 * n))
 
-/-- Source: Jean Gallier & Dianna Xu, *A Guide to the Classification Theorem for Compact Surfaces*, https://www.cis.upenn.edu/~jean/surfclassif-root.pdf Via leanprover/lean-eval@38361be, problem `topological_classification_of_surfaces`. -/
+/-- **Classification of compact surfaces.** Let $S$ be a nonempty, compact, connected Hausdorff
+space that is a topological manifold of dimension $2$ with boundary, with charts in the closed
+half-plane $\{x \in \mathbb{R}^2 : x_1 \ge 0\}$. Then $S$ is homeomorphic to the unit sphere in
+$\mathbb{R}^3$, or there are natural numbers $p$ and $n$ for which one of the following holds:
+$p \ge 1$ or $n \ge 1$, and $S$ is homeomorphic to the quotient of the closed unit disc by the
+orientable gluing relation with parameters $p$ and $n$; or $p \ge 1$, and $S$ is homeomorphic to
+the quotient of the closed unit disc by the non-orientable gluing relation with parameters $p$
+and $n$. Each quotient is taken by the equivalence relation that the gluing relation generates,
+with the quotient topology.
+
+Source: Jean Gallier & Dianna Xu, *A Guide to the Classification Theorem for Compact Surfaces*, https://www.cis.upenn.edu/~jean/surfclassif-root.pdf Via leanprover/lean-eval@38361be, problem `topological_classification_of_surfaces`. -/
 public theorem_wanted classification_of_surfaces (S : Type*) [TopologicalSpace S]
     [T2Space S] [ConnectedSpace S] [CompactSpace S] [Nonempty S]
     [ChartedSpace (EuclideanHalfSpace 2) S]

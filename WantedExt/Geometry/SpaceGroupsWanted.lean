@@ -63,7 +63,8 @@ groups: `AffinelyEquivalent` (Aff(ℝ³)-conjugacy, count = 219) and
 those whose elements are all orientation-preserving isometries.
 -/
 
-/-- The Euclidean model space `ℝᵈ`. -/
+/-- **Euclidean space $\mathbb{R}^d$ for the space-group problem.** For a natural number $d$, this
+is the $d$-dimensional real Euclidean space $\mathbb{R}^d$ with its standard inner product. -/
 abbrev E (d : ℕ) := EuclideanSpace ℝ (Fin d)
 
 /- The Euclidean motion group `E_d`. -/
@@ -74,30 +75,43 @@ sense. -/
 /- A subgroup `G ≤ E_d` is **crystallographic**: discrete and contains
 `d` linearly independent translations. -/
 /- The set of crystallographic groups in dimension `d`. -/
-/-- An affine isometry is **orientation-preserving** if its linear part
-has positive determinant. -/
+/-- **Orientation-preserving isometry.** An affine isometry of the Euclidean space $\mathbb{R}^d$
+is orientation-preserving if its linear part has positive determinant. -/
 def IsOrientationPreservingIsom {d : ℕ} (g : EuclideanIsom d) : Prop :=
   0 < (g.toAffineEquiv.linear.det : ℝ)
 
 /- Two subgroups `G₁, G₂ ≤ E_d` are **affinely equivalent**. -/
-/-- Two subgroups `G₁, G₂ ≤ E_d` are **orientation-preserving affinely
-equivalent**: conjugation by a positive-determinant affine map takes
-one to the other. -/
+/-- **Orientation-preserving affine equivalence.** Two subgroups $G_1$ and $G_2$ of the group of
+affine isometries of the Euclidean space $\mathbb{R}^d$ are orientation-preserving affinely
+equivalent if there is an affine bijection $\varphi$ of $\mathbb{R}^d$ whose linear part has
+positive determinant such that $\{\varphi g \varphi^{-1} : g \in G_1\} = G_2$ as sets of affine
+maps of $\mathbb{R}^d$. -/
 def AffOPEquivalent {d : ℕ} (G₁ G₂ : Subgroup (EuclideanIsom d)) : Prop :=
   ∃ φ : AffineGroup d, 0 < (φ.linear.det : ℝ) ∧
     {h : AffineGroup d | ∃ g ∈ G₁, h = φ * g.toAffineEquiv * φ⁻¹} =
     {h : AffineGroup d | ∃ g ∈ G₂, h = g.toAffineEquiv}
 
 /- Count of crystallographic groups modulo affine equivalence. -/
-/-- Count of crystallographic groups modulo orientation-preserving
-affine equivalence. -/
+/-- **Number of orientation-preserving affine classes of crystallographic groups.** For a natural
+number $d$, this is the number, in $\mathbb{N} \cup \{\infty\}$, of classes of $d$-dimensional
+crystallographic groups under orientation-preserving affine equivalence. Here a crystallographic
+group is a subgroup $G$ of the group of affine isometries of $\mathbb{R}^d$ that is discrete (for
+every point $x$ and every $\varepsilon > 0$ only finitely many $g \in G$ satisfy
+$\operatorname{dist}(g x, x) \le \varepsilon$) and contains translations by $d$ linearly
+independent vectors. -/
 noncomputable def crystallographicCountOP (d : ℕ) : ℕ∞ :=
   Set.encard {S : Set (CrystallographicGroup d) |
     ∃ G₀ : CrystallographicGroup d,
       S = {H : CrystallographicGroup d | AffOPEquivalent G₀.1 H.1}}
 
-/-- Count of orientation-preserving crystallographic groups modulo
-orientation-preserving affine equivalence. -/
+/-- **Number of orientation-preserving affine classes of orientation-preserving crystallographic
+groups.** For a natural number $d$, this is the number, in $\mathbb{N} \cup \{\infty\}$, of classes
+under orientation-preserving affine equivalence of those $d$-dimensional crystallographic groups
+all of whose elements are orientation-preserving isometries. Here a crystallographic group is a
+subgroup $G$ of the group of affine isometries of $\mathbb{R}^d$ that is discrete (for every
+point $x$ and every $\varepsilon > 0$ only finitely many $g \in G$ satisfy
+$\operatorname{dist}(g x, x) \le \varepsilon$) and contains translations by $d$ linearly
+independent vectors. -/
 noncomputable def crystallographicCountOPOnly (d : ℕ) : ℕ∞ :=
   Set.encard {S : Set { G : CrystallographicGroup d //
                           ∀ g, g ∈ G.1 → IsOrientationPreservingIsom g } |
@@ -109,7 +123,13 @@ noncomputable def crystallographicCountOPOnly (d : ℕ) : ℕ∞ :=
 dimension 3 there are 230 space groups (orientation-preserving
 equivalence), 219 (general affine equivalence), and 65 orientation-
 preserving subfamily. -/
-/-- Source: E. Fedorov, 'Симметрія правильныхъ системъ фигуръ' (Symmetry of regular systems of figures), Trans. Min. Soc. St. Petersburg 28 (1891) 1–146; A. Schoenflies, *Krystallsysteme und Krystallstructur*, Teubner 1891, independently. Listed as §94 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `space_groups_230`. -/
+/-- **The 230 space groups.** In dimension $3$ there are exactly $230$ classes of crystallographic
+groups under orientation-preserving affine equivalence, exactly $219$ classes of crystallographic
+groups under affine equivalence (conjugation by an arbitrary affine bijection of $\mathbb{R}^3$),
+and exactly $65$ classes under orientation-preserving affine equivalence of crystallographic
+groups all of whose elements are orientation-preserving isometries.
+
+Source: E. Fedorov, 'Симметрія правильныхъ системъ фигуръ' (Symmetry of regular systems of figures), Trans. Min. Soc. St. Petersburg 28 (1891) 1–146; A. Schoenflies, *Krystallsysteme und Krystallstructur*, Teubner 1891, independently. Listed as §94 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `space_groups_230`. -/
 public theorem_wanted space_groups :
     crystallographicCountOP 3 = 230 ∧
       crystallographicCount 3 = 219 ∧

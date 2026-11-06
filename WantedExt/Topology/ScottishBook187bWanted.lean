@@ -20,9 +20,11 @@ public import Mathlib.Topology.SmallInductiveDimension
 
 namespace MathlibExt.Topology.ScottishBook187bWanted
 
-/-- Covering dimension `≤ n`: every finite open cover has a finite
-open refinement in which any `n + 2` distinct members have empty
-intersection (order `≤ n + 1`). -/
+/-- **Covering dimension at most n.** A topological space $X$ has covering dimension at most
+$n \in \mathbb{N}$ if every finite open cover $U_1, \dots, U_m$ of $X$ has a finite open
+refinement $V_1, \dots, V_k$ (open sets covering $X$, each contained in some $U_i$) in which any
+$n + 2$ members with distinct indices have empty intersection, that is, the refinement has order
+at most $n + 1$. -/
 def CoverLE (n : ℕ) (X : Type*) [TopologicalSpace X] : Prop :=
   ∀ (m : ℕ) (U : Fin m → Set X),
     (∀ i, IsOpen (U i)) → (⋃ i, U i) = Set.univ →
@@ -33,12 +35,17 @@ def CoverLE (n : ℕ) (X : Type*) [TopologicalSpace X] : Prop :=
         (⋂ j ∈ s, V j) = ∅
 
 /--
-Scottish Book Problem 187, part (2), is false as stated: the inductive
-and covering definitions of dimension are not equivalent for all compact
-Hausdorff spaces. Small inductive dimension is Mathlib's
-`HasSmallInductiveDimensionLE`; the typescript does not say small vs large
-inductive dimension. Status: solved-negative for part (2) (whole Problem 187 is
-partially_solved, part (1) remaining separate). Citation: the Lunts–Lokutsievskii example is a Hausdorff compactum (bicompactum) with dim X ≠ ind X; see Encyclopedia of Mathematics, 'Dimension theory' ('There are, however, Hausdorff compacta X for which dim X ≠ ind X (the Lunts–Lokutsievskii example)'), and R. Engelking, Dimension Theory, North-Holland, 1978. Hence for some n the inductive and covering ≤ n predicates differ, which is what the negation above asserts. (In Soviet terminology a 'bicompactum' is a compact Hausdorff space.) Dimension theory gives `dim X ≤ ind X ≤ Ind X` for compact Hausdorff `X` with either inequality possibly strict; strictness of `dim < ind` is Lunts–Lokutsievskii; strictness of `ind < Ind` is Filippov's example (same EoM article).
+**Small inductive and covering dimension can differ for compact Hausdorff spaces.** Scottish
+Book Problem 187, part (2), has a negative answer: it is not the case that for every compact
+Hausdorff space $X$ and every $n \in \mathbb{N}$, $X$ has small inductive dimension at most $n$
+if and only if $X$ has covering dimension at most $n$.
+
+The small inductive dimension is used here; Alexandroff's typescript does not say whether small or
+large inductive dimension is meant. The Lunts–Lokutsievskii example is a compact Hausdorff space
+$X$ whose covering dimension $\dim X$ differs from its small inductive dimension
+$\operatorname{ind} X$ (Encyclopedia of Mathematics, "Dimension theory"; R. Engelking, Dimension
+Theory, North-Holland, 1978).
+
 Source: P. Alexandroff, Problem 187 part (2) of the Scottish Book,
 typescript pp. 82–83.
 -/

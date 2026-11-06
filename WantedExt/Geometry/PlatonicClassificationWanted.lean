@@ -65,11 +65,13 @@ of mathlib.
 
 open scoped Topology
 
-/-- The Euclidean model space `ℝⁿ`. -/
+/-- **Ambient Euclidean space of the Platonic classification.** For a natural number $n$, the real
+Euclidean space $\mathbb{R}^n$: $n$-tuples of reals with the standard inner product and norm. -/
 abbrev E (n : ℕ) := EuclideanSpace ℝ (Fin n)
 
-/-- A **convex polytope** in `ℝⁿ`: the convex hull of a finite nonempty set
-whose listed vertices are exactly the extreme points of the hull. -/
+/-- **Convex polytope.** A convex polytope in $\mathbb{R}^n$ is given by its vertex set: a finite
+nonempty set $V \subseteq \mathbb{R}^n$ that equals the set of extreme points of its convex hull
+$\operatorname{conv}(V)$. The polytope itself is the convex set $\operatorname{conv}(V)$. -/
 structure ConvexPolytope (n : ℕ) where
   vertices : Finset (E n)
   vertices_nonempty : vertices.Nonempty
@@ -79,72 +81,99 @@ structure ConvexPolytope (n : ℕ) where
 
 namespace ConvexPolytope
 
-/-- The underlying convex set of the polytope. -/
+/-- **Underlying set of a convex polytope.** The underlying set of a convex polytope $P$ in
+$\mathbb{R}^n$ is the convex hull of its vertex set. -/
 def toSet {n : ℕ} (P : ConvexPolytope n) : Set (E n) :=
   convexHull ℝ ((P.vertices : Set (E n)))
 
-/-- The affine dimension of `P`. -/
+/-- **Dimension of a convex polytope.** The dimension of a convex polytope
+$P \subseteq \mathbb{R}^n$ is its affine dimension: the dimension of the real vector space
+spanned by the differences $x - y$ of points $x, y \in P$. -/
 noncomputable def dim {n : ℕ} (P : ConvexPolytope n) : ℕ :=
   Module.finrank ℝ (vectorSpan ℝ P.toSet)
 
-/-- `P` is **full-dimensional** if `dim P = n`. -/
+/-- **Full-dimensional convex polytope.** A convex polytope $P \subseteq \mathbb{R}^n$ is
+full-dimensional if its dimension equals $n$. -/
 def IsFullDim {n : ℕ} (P : ConvexPolytope n) : Prop := P.dim = n
 
-/-- A **face** of `P` is a nonempty exposed subset. -/
+/-- **Face of a convex polytope.** A face of a convex polytope $P \subseteq \mathbb{R}^n$ is a
+nonempty set of the form $\{x \in P : \ell(y) \le \ell(x) \text{ for all } y \in P\}$ for some
+linear functional $\ell$ on $\mathbb{R}^n$, that is, the set of points where $\ell$ attains its
+maximum over $P$. Taking $\ell = 0$ shows that $P$ itself is a face. -/
 def IsFace {n : ℕ} (P : ConvexPolytope n) (F : Set (E n)) : Prop :=
   IsExposed ℝ P.toSet F ∧ F.Nonempty
 
-/-- The affine dimension of a subset of `ℝⁿ`. -/
+/-- **Affine dimension of a set.** For a subset $F \subseteq \mathbb{R}^n$, its affine dimension is
+the dimension of the real vector space spanned by the differences $x - y$ with $x, y \in F$.
+The empty set and every single point get dimension $0$. -/
 noncomputable def faceDim {n : ℕ} (F : Set (E n)) : ℕ :=
   Module.finrank ℝ (vectorSpan ℝ F)
 
-/-- A **flag** of a full-dimensional `n`-polytope `P`: a strictly
-increasing chain `F_0 ⊂ F_1 ⊂ ⋯ ⊂ F_{n−1}` of faces with `faceDim F_k = k`. -/
+/-- **Flag of a convex polytope.** A flag of a convex polytope $P \subseteq \mathbb{R}^n$ is a
+sequence $F_0, F_1, \dots, F_{n-1}$ of faces of $P$ such that each $F_k$ has affine dimension $k$
+and $F_i \subsetneq F_j$ whenever $i < j$.
+
+The definition applies to every $P$; it is used for full-dimensional $P$. -/
 structure Flag {n : ℕ} (P : ConvexPolytope n) where
   face : Fin n → Set (E n)
   isFace : ∀ k, P.IsFace (face k)
   dim_eq : ∀ k : Fin n, faceDim (face k) = k.val
   strict_mono : ∀ i j : Fin n, i < j → face i ⊂ face j
 
-/-- Affine isometries of `ℝⁿ` — the rigid motions. -/
+/-- **Rigid motions.** The rigid motions of $\mathbb{R}^n$ are the affine isometric bijections
+$\mathbb{R}^n \to \mathbb{R}^n$. -/
 abbrev Isom (n : ℕ) := E n ≃ᵃⁱ[ℝ] E n
 
-/-- `φ` is a **symmetry** of `P` if it maps `P` onto itself. -/
+/-- **Symmetry of a convex polytope.** An affine isometry $\varphi$ of $\mathbb{R}^n$ is a
+symmetry of a convex polytope $P \subseteq \mathbb{R}^n$ if $\varphi(P) = P$. -/
 def isSymmetry {n : ℕ} (P : ConvexPolytope n) (φ : Isom n) : Prop :=
   ((φ : E n → E n)) '' P.toSet = P.toSet
 
-/-- `P` is **regular** (Platonic) if it is full-dimensional and its
-symmetry group acts transitively on its flags. -/
+/-- **Regular convex polytope.** A convex polytope $P \subseteq \mathbb{R}^n$ is regular
+(Platonic) if it is full-dimensional and for any two flags $(F_0, \dots, F_{n-1})$ and
+$(G_0, \dots, G_{n-1})$ of $P$ there is an affine isometry $\varphi$ of $\mathbb{R}^n$ with
+$\varphi(P) = P$ and $\varphi(F_k) = G_k$ for every $k < n$. -/
 def IsRegular {n : ℕ} (P : ConvexPolytope n) : Prop :=
   P.IsFullDim ∧
     ∀ F G : P.Flag, ∃ φ : Isom n,
       P.isSymmetry φ ∧
         ∀ k : Fin n, ((φ : E n → E n)) '' F.face k = G.face k
 
-/-- Two polytopes are **similar** when related by a positive scaling and an
-affine isometry. -/
+/-- **Similar polytopes.** Two convex polytopes $P$ and $Q$ in $\mathbb{R}^n$ are **similar** when
+there are a real number $a > 0$ and an affine isometry $\varphi$ of $\mathbb{R}^n$ such that the
+underlying set of $Q$ is $\{a\,\varphi(x) : x \in P\}$. -/
 def Similar {n : ℕ} (P Q : ConvexPolytope n) : Prop :=
   ∃ a : ℝ, 0 < a ∧ ∃ φ : Isom n,
     Q.toSet = (fun x : E n => a • x) '' ((φ : E n → E n) '' P.toSet)
 
 end ConvexPolytope
 
-/-- The set of regular (Platonic) polytopes in dimension `d`. -/
+/-- **Regular polytopes.** For $d \in \mathbb{N}$, this is the set of regular (Platonic) convex
+polytopes in $\mathbb{R}^d$: the convex polytopes in $\mathbb{R}^d$ that are full-dimensional and
+whose symmetry group acts transitively on their flags. -/
 def regularPolytopes (d : ℕ) : Set (ConvexPolytope d) :=
   {P | P.IsRegular}
 
-/-- The similarity relation on regular polytopes in dimension `d`. -/
+/-- **Similarity of regular polytopes.** For regular convex polytopes $P$ and $Q$ in
+$\mathbb{R}^d$, $P$ is related to $Q$ when they are similar as convex polytopes, that is, when
+there are a real number $a > 0$ and an affine isometry $\varphi$ of $\mathbb{R}^d$ such that the
+underlying set of $Q$ is $\{a\,\varphi(x) : x \in P\}$. -/
 def regularSimilar (d : ℕ) (P Q : regularPolytopes d) : Prop :=
   ConvexPolytope.Similar (P : ConvexPolytope d) (Q : ConvexPolytope d)
 
-/-- `p_d` — count of Platonic polytopes in dimension `d` up to similarity,
-in `ℕ∞ = ℕ ∪ {⊤}` so `⊤` records "infinitely many". -/
+/-- **Number of Platonic polytopes.** For $d \in \mathbb{N}$, $p_d \in \mathbb{N} \cup \{\infty\}$
+is the number of similarity classes of regular convex polytopes in $\mathbb{R}^d$, with
+$p_d = \infty$ when there are infinitely many classes. -/
 noncomputable def platonicCount (d : ℕ) : ℕ∞ :=
   Set.encard {S : Set (regularPolytopes d) |
     ∃ P, S = {Q : regularPolytopes d | regularSimilar d P Q}}
 
 /- **Platonic classification.** `p = (p_2, p_3, p_4, p_5, …) = (∞, 5, 6, 3, 3, 3, …)`. -/
-/-- Source: Euclid, Elements, Book XIII (~300 BC, p_3 = 5); L. Schläfli, Theorie der vielfachen Kontinuität (1852, posthumous publication; p_4 = 6, p_d = 3 for d ≥ 5). Listed as §42 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `platonic_classification`. -/
+/-- **Classification of the Platonic polytopes.** For $d \in \mathbb{N}$ let $p_d \in
+\mathbb{N} \cup \{\infty\}$ be the number of regular convex polytopes in $\mathbb{R}^d$ up to
+similarity. Then $p_2 = \infty$, $p_3 = 5$, $p_4 = 6$, and $p_d = 3$ for every $d \ge 5$.
+
+Source: Euclid, Elements, Book XIII (~300 BC, p_3 = 5); L. Schläfli, Theorie der vielfachen Kontinuität (1852, posthumous publication; p_4 = 6, p_d = 3 for d ≥ 5). Listed as §42 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `platonic_classification`. -/
 public theorem_wanted platonic_classification :
     platonicCount 2 = ⊤ ∧
       platonicCount 3 = 5 ∧

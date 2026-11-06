@@ -72,19 +72,23 @@ formalization of the theorem was found in any other proof assistant.
 open Set
 open scoped ContDiff
 
-/-- The model space `ℝ^{2n}` carrying the almost complex structure. -/
+/-- **Model space $\mathbb{R}^{2n}$ for the Newlander–Nirenberg theorem.** For a natural number
+$n$, $E_n$ is the Euclidean space $\mathbb{R}^{2n}$, the model space carrying the almost complex
+structure. -/
 abbrev E (n : ℕ) := EuclideanSpace ℝ (Fin (2 * n))
 
-/-- The **Nijenhuis tensor** of a field of endomorphisms `J` on `ℝ^{2n}`,
-evaluated on two vector fields `V`, `W` at a point:
+/-- **Nijenhuis tensor.** Let $n$ be a natural number, let $J$ assign to each point
+$y \in \mathbb{R}^{2n}$ a real linear map $J(y) : \mathbb{R}^{2n} \to \mathbb{R}^{2n}$, and let
+$V, W : \mathbb{R}^{2n} \to \mathbb{R}^{2n}$ be vector fields. Write $JV$ for the vector field
+$y \mapsto J(y)V(y)$ and $[V, W]$ for the Lie bracket of vector fields. The Nijenhuis tensor of
+$J$ at a point $x \in \mathbb{R}^{2n}$ is
+$$N(V, W)(x) = [JV, JW](x) - J(x)[JV, W](x) - J(x)[V, JW](x) - [V, W](x).$$
 
-  `N(V, W) = [JV, JW] - J[JV, W] - J[V, JW] - [V, W]`.
-
-For an almost complex structure the last term is `J²[V, W]`, so this is the
-usual torsion of `J`. When `U` is open and `IsAlmostComplexOn J U` holds, the
-expression is `C^∞(U)`-bilinear in `V` and `W` on `U`: the terms involving the
-derivatives of `V` and `W` cancel using `J² = -1`, so the value at a point of
-`U` depends only on `V x`, `W x` and the derivative of `J` there. -/
+For an almost complex structure the last term is $J^2[V, W]$, so this is the usual torsion of
+$J$. When $J$ is an almost complex structure on an open set $U \subseteq \mathbb{R}^{2n}$, the
+expression is $C^\infty(U)$-bilinear in $V$ and $W$ on $U$: the terms involving the derivatives
+of $V$ and $W$ cancel using $J^2 = -1$, so the value at a point $x$ of $U$ depends only on
+$V(x)$, $W(x)$ and the derivative of $J$ there. -/
 noncomputable def nijenhuis {n : ℕ} (J : E n → E n →L[ℝ] E n)
     (V W : E n → E n) (x : E n) : E n :=
   VectorField.lieBracket ℝ (fun y ↦ J y (V y)) (fun y ↦ J y (W y)) x
@@ -92,16 +96,24 @@ noncomputable def nijenhuis {n : ℕ} (J : E n → E n →L[ℝ] E n)
     - J x (VectorField.lieBracket ℝ V (fun y ↦ J y (W y)) x)
     - VectorField.lieBracket ℝ V W x
 
-/-- `J` is an **almost complex structure** on an open set `U ⊆ ℝ^{2n}` if it
-is a smooth field of endomorphisms on `U` squaring to `-1`. -/
+/-- **Almost complex structure on a subset of $\mathbb{R}^{2n}$.** Let $n$ be a natural number,
+let $U \subseteq \mathbb{R}^{2n}$ and let $J$ assign to each point $y \in \mathbb{R}^{2n}$ a real
+linear map $J(y) : \mathbb{R}^{2n} \to \mathbb{R}^{2n}$. Then $J$ is an almost complex structure
+on $U$ if $J$ is $C^\infty$ on $U$ and $J(x)(J(x)v) = -v$ for every $x \in U$ and every
+$v \in \mathbb{R}^{2n}$. -/
 def IsAlmostComplexOn {n : ℕ} (J : E n → E n →L[ℝ] E n) (U : Set (E n)) : Prop :=
   ContDiffOn ℝ ∞ J U ∧ ∀ x ∈ U, ∀ v : E n, J x (J x v) = -v
 
-/-- The Nijenhuis tensor of `J` vanishes on `U`. This is stated for all
-globally smooth vector fields, which is the textbook hypothesis. Whenever `U`
-is open and `IsAlmostComplexOn J U` holds it is equivalent to the pointwise
-condition: the tensor is bilinear over functions, and constant vector fields
-already realize every pair of tangent vectors. -/
+/-- **Vanishing of the Nijenhuis tensor on a set.** Let $n$ be a natural number, let
+$U \subseteq \mathbb{R}^{2n}$, let $J$ assign to each point $y \in \mathbb{R}^{2n}$ a real linear
+map $J(y) : \mathbb{R}^{2n} \to \mathbb{R}^{2n}$, and write $N$ for the Nijenhuis tensor of $J$.
+The Nijenhuis tensor of $J$ vanishes on $U$ if $N(V, W)(x) = 0$ for all $C^\infty$ vector fields
+$V, W : \mathbb{R}^{2n} \to \mathbb{R}^{2n}$ and every $x \in U$.
+
+The vector fields range over globally smooth fields, which is the textbook hypothesis. Whenever
+$U$ is open and $J$ is an almost complex structure on $U$ this is equivalent to the pointwise
+condition: the tensor is bilinear over functions, and constant vector fields already realize
+every pair of tangent vectors. -/
 def NijenhuisVanishesOn {n : ℕ} (J : E n → E n →L[ℝ] E n) (U : Set (E n)) : Prop :=
   ∀ V W : E n → E n, ContDiff ℝ ∞ V → ContDiff ℝ ∞ W →
     ∀ x ∈ U, nijenhuis J V W x = 0
@@ -116,7 +128,16 @@ differential is complex linear:
   `dφ_y (J y v) = i · dφ_y v`.
 
 Such charts are holomorphic coordinates for `J`. -/
-/-- Source: A. Newlander and L. Nirenberg, `Complex analytic coordinates in almost complex manifolds`, Annals of Math, 65 (3) 1957, 391-404. Via leanprover/lean-eval@38361be, problem `newlander_nirenberg`. -/
+/-- **Newlander–Nirenberg theorem.** Let $n$ be a natural number, let $U \subseteq \mathbb{R}^{2n}$
+be open and let $J$ be an almost complex structure on $U$ whose Nijenhuis tensor vanishes on $U$.
+Then every $x \in U$ has holomorphic coordinates for $J$: there are open sets
+$S \subseteq \mathbb{R}^{2n}$ and $T \subseteq \mathbb{C}^n$ with $x \in S \subseteq U$ and a
+homeomorphism $\varphi : S \to T$ such that $\varphi$ is $C^\infty$ on $S$, $\varphi^{-1}$ is
+$C^\infty$ on $T$ (both as maps of real vector spaces), and for every $y \in S$ and every
+$v \in \mathbb{R}^{2n}$ the real derivative of $\varphi$ satisfies
+$D\varphi(y)(J(y)v) = i \, D\varphi(y)v$.
+
+Source: A. Newlander and L. Nirenberg, `Complex analytic coordinates in almost complex manifolds`, Annals of Math, 65 (3) 1957, 391-404. Via leanprover/lean-eval@38361be, problem `newlander_nirenberg`. -/
 public theorem_wanted newlander_nirenberg {n : ℕ} {U : Set (E n)} (_hU : IsOpen U)
     (J : E n → E n →L[ℝ] E n) (_hJ : IsAlmostComplexOn J U)
     (_hN : NijenhuisVanishesOn J U) {x : E n} (_hx : x ∈ U) :

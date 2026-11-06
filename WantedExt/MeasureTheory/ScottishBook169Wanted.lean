@@ -24,12 +24,14 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 
 namespace MathlibExt.MeasureTheory.ScottishBook169Wanted
 
-/-- Two plane sets are congruent when an isometry of the plane carries
-one onto the other. -/
+/-- **Congruent plane sets.** Two sets $E$ and $F$ in the Euclidean plane $\mathbb{R}^2$ are
+congruent when some isometry of the plane onto itself maps $E$ onto $F$. -/
 def AreCongruent (E F : Set (EuclideanSpace ℝ (Fin 2))) : Prop :=
   ∃ T : EuclideanSpace ℝ (Fin 2) ≃ᵢ EuclideanSpace ℝ (Fin 2), T '' E = F
 
-/-- `μ` is equal on congruent sets. -/
+/-- **Congruence-invariant set functions on the plane.** A function $\mu$ that assigns to every
+subset of the Euclidean plane $\mathbb{R}^2$ a value in $[0, \infty]$ is congruence invariant when
+$\mu(E) = \mu(F)$ for all congruent plane sets $E$ and $F$. -/
 def IsCongruenceInvariant (μ : Set (EuclideanSpace ℝ (Fin 2)) → ENNReal) : Prop :=
   ∀ E F : Set (EuclideanSpace ℝ (Fin 2)), AreCongruent E F → μ E = μ F
 

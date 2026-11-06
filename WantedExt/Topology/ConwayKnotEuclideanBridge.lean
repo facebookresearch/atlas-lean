@@ -38,8 +38,9 @@ import Mathlib.Tactic.FinCases
 
 namespace MathlibExt.Topology.ConwayKnotEuclideanBridge
 
-/-- A trusted lean-eval `Knot` as a canonical `ParametrizedKnot`. The
-conversion is the identity on every field. -/
+/-- **Knots as parametrized knots.** A knot in $\mathbb{R}^3$, given by a smooth $2\pi$-periodic
+immersion $\gamma : \mathbb{R} \to \mathbb{R}^3$ that is injective on $[0, 2\pi)$, is sent to the
+parametrized knot with the same parametrization $\gamma$. -/
 def toParametrizedKnot (K : ConwayKnotShared.KnotTheory.Knot) :
     Knot.Euclidean.ParametrizedKnot where
   curve := K.curve
@@ -48,7 +49,9 @@ def toParametrizedKnot (K : ConwayKnotShared.KnotTheory.Knot) :
   injOn := K.injOn
   immersion := K.immersion
 
-/-- A canonical `ParametrizedKnot` as a trusted lean-eval `Knot`. -/
+/-- **Parametrized knots as knots.** A parametrized knot in $\mathbb{R}^3$, given by a smooth
+$2\pi$-periodic immersion $\gamma : \mathbb{R} \to \mathbb{R}^3$ that is injective on
+$[0, 2\pi)$, is sent to the knot with the same parametrization $\gamma$. -/
 def ofParametrizedKnot (K : Knot.Euclidean.ParametrizedKnot) :
     ConwayKnotShared.KnotTheory.Knot where
   curve := K.curve
@@ -71,8 +74,9 @@ theorem toParametrizedKnot_ofParametrizedKnot
   cases K
   rfl
 
-/-- The trusted lean-eval knot type is equivalent to the canonical
-parametrized-knot type, by the identity on fields. -/
+/-- **Knots are the same as parametrized knots.** Sending a knot in $\mathbb{R}^3$ to the
+parametrized knot with the same parametrization is a bijection from knots to parametrized knots,
+whose inverse sends a parametrized knot to the knot with the same parametrization. -/
 def knotEquiv :
     ConwayKnotShared.KnotTheory.Knot ≃ Knot.Euclidean.ParametrizedKnot where
   toFun := toParametrizedKnot
@@ -80,7 +84,13 @@ def knotEquiv :
   left_inv := ofParametrizedKnot_toParametrizedKnot
   right_inv := toParametrizedKnot_ofParametrizedKnot
 
-/-- A trusted lean-eval ambient isotopy as a canonical one. -/
+/-- **Conway-knot ambient isotopies as Euclidean ambient isotopies.** An ambient isotopy of
+$\mathbb{R}^3$ in the sense of the Conway knot statements, given by maps
+$H_t : \mathbb{R}^3 \to \mathbb{R}^3$ for $t \in \mathbb{R}$ with $(t, x) \mapsto H_t(x)$ smooth
+and $H_0 = \mathrm{id}$, and maps $G_t : \mathbb{R}^3 \to \mathbb{R}^3$ with
+$(t, x) \mapsto G_t(x)$ smooth and $G_t \circ H_t = H_t \circ G_t = \mathrm{id}$ for every $t$,
+is sent to the smooth ambient isotopy of Euclidean 3-space, in the sense of parametrized links,
+with the same forward family $H$ and inverse family $G$. -/
 def toEuclideanAmbientIsotopy
     (Φ : ConwayKnotShared.KnotTheory.AmbientIsotopy) :
     Knot.Euclidean.AmbientIsotopy where
@@ -92,7 +102,13 @@ def toEuclideanAmbientIsotopy
   inv_right := Φ.inv_right
   start := Φ.start
 
-/-- A canonical ambient isotopy as a trusted lean-eval one. -/
+/-- **Euclidean ambient isotopies as Conway-knot ambient isotopies.** A smooth ambient isotopy
+of Euclidean 3-space in the sense of parametrized links, given by maps
+$H_t : \mathbb{R}^3 \to \mathbb{R}^3$ for $t \in \mathbb{R}$ with $(t, x) \mapsto H_t(x)$ smooth
+and $H_0 = \mathrm{id}$, and maps $G_t : \mathbb{R}^3 \to \mathbb{R}^3$ with
+$(t, x) \mapsto G_t(x)$ smooth and $G_t \circ H_t = H_t \circ G_t = \mathrm{id}$ for every $t$,
+is sent to the ambient isotopy of $\mathbb{R}^3$ in the sense of the Conway knot statements with
+the same forward family $H$ and inverse family $G$. -/
 def ofEuclideanAmbientIsotopy (Φ : Knot.Euclidean.AmbientIsotopy) :
     ConwayKnotShared.KnotTheory.AmbientIsotopy where
   H := Φ.H
@@ -103,7 +119,12 @@ def ofEuclideanAmbientIsotopy (Φ : Knot.Euclidean.AmbientIsotopy) :
   inv_right := Φ.inv_right
   start := Φ.start
 
-/-- A trusted lean-eval circle reparametrization as a canonical one. -/
+/-- **Conway-knot circle reparametrizations as Euclidean ones.** An orientation-preserving smooth
+reparametrization of the circle in the sense of the Conway knot statements, given by a smooth
+strictly increasing map $f : \mathbb{R} \to \mathbb{R}$ with smooth two-sided inverse $g$ such that
+$f(t + 2\pi) = f(t) + 2\pi$ and $g(t + 2\pi) = g(t) + 2\pi$ for all $t$, is sent to the circle
+reparametrization, in the sense of parametrized links, with the same lift $f$ and inverse
+lift $g$. -/
 def toEuclideanCircleReparam
     (σ : ConwayKnotShared.KnotTheory.CircleReparam) :
     Knot.Euclidean.CircleReparam where
@@ -117,7 +138,12 @@ def toEuclideanCircleReparam
   periodic_inv := σ.periodic_inv
   mono := σ.mono
 
-/-- A canonical circle reparametrization as a trusted lean-eval one. -/
+/-- **Euclidean circle reparametrizations as Conway-knot ones.** A circle reparametrization in
+the sense of parametrized links, given by a smooth strictly increasing map
+$f : \mathbb{R} \to \mathbb{R}$ with smooth two-sided inverse $g$ such that
+$f(t + 2\pi) = f(t) + 2\pi$ and $g(t + 2\pi) = g(t) + 2\pi$ for all $t$, is sent to the
+orientation-preserving smooth reparametrization of the circle in the sense of the Conway knot
+statements with the same lift $f$ and inverse lift $g$. -/
 def ofEuclideanCircleReparam (σ : Knot.Euclidean.CircleReparam) :
     ConwayKnotShared.KnotTheory.CircleReparam where
   f := σ.f
@@ -130,8 +156,9 @@ def ofEuclideanCircleReparam (σ : Knot.Euclidean.CircleReparam) :
   periodic_inv := σ.periodic_inv
   mono := σ.mono
 
-/-- Ambient isotopy in the trusted lean-eval sense is ambient isotopy
-of the converted knots in the canonical sense. -/
+/-- **Isotopy of knots agrees with isotopy of parametrized knots.** For all knots $K_1$ and
+$K_2$ in $\mathbb{R}^3$, $K_1$ and $K_2$ are ambient isotopic if and only if the parametrized knots
+with the same parametrizations as $K_1$ and $K_2$ are ambient isotopic as parametrized knots. -/
 theorem knot_isotopic_iff {K₁ K₂ : ConwayKnotShared.KnotTheory.Knot} :
     ConwayKnotShared.KnotTheory.Knot.Isotopic K₁ K₂ ↔
       Knot.Euclidean.ParametrizedKnot.Isotopic
@@ -142,9 +169,10 @@ theorem knot_isotopic_iff {K₁ K₂ : ConwayKnotShared.KnotTheory.Knot} :
   · rintro ⟨Φ, σ, h⟩
     exact ⟨ofEuclideanAmbientIsotopy Φ, ofEuclideanCircleReparam σ, h⟩
 
-/-- A trusted lean-eval two-component link as a canonical labeled
-link with two components. Components keep their order and labels:
-component `0` is `L.K` and component `1` is `L.L`. -/
+/-- **Two-component links as labeled links.** A two-component link in $\mathbb{R}^3$ with first
+component $K$ and second component $L$ is sent to the labeled parametrized link with two
+components whose component $0$ is the parametrized knot with the same parametrization as $K$ and
+whose component $1$ is the parametrized knot with the same parametrization as $L$. -/
 def toParametrizedLink (L : ConwayKnotShared.KnotTheory.TwoLink) :
     Knot.Euclidean.ParametrizedLink 2 where
   component := ![toParametrizedKnot L.K, toParametrizedKnot L.L]
@@ -156,8 +184,10 @@ def toParametrizedLink (L : ConwayKnotShared.KnotTheory.TwoLink) :
     · exact L.disjoint.symm
     · exact absurd rfl hij
 
-/-- A canonical labeled link with two components as a trusted
-lean-eval two-component link, reading components `0` and `1`. -/
+/-- **Labeled two-component links as two-component links.** A labeled parametrized link with
+two components $0$ and $1$ is sent to the two-component link in $\mathbb{R}^3$ whose first
+component is the knot with the same parametrization as component $0$ and whose second component
+is the knot with the same parametrization as component $1$. -/
 def ofParametrizedLink (L : Knot.Euclidean.ParametrizedLink 2) :
     ConwayKnotShared.KnotTheory.TwoLink where
   K := ofParametrizedKnot (L.component 0)
@@ -174,8 +204,13 @@ theorem ofParametrizedLink_toParametrizedLink
   cases L
   rfl
 
-/-- Ambient isotopy of trusted two-component links is ambient isotopy
-of the converted labeled links. -/
+/-- **Two-component link isotopy agrees with labeled link isotopy.** Let $L_1$ and $L_2$ be
+oriented two-component smooth links in $\mathbb{R}^3$, and regard each as an oriented labeled
+smooth link with two components, whose component $0$ is its first component and whose
+component $1$ is its second. Then $L_1$ and $L_2$ are ambient isotopic, meaning that a single
+smooth ambient isotopy carries each component of $L_1$ onto the corresponding component of
+$L_2$ up to orientation-preserving reparametrizations of the circle, if and only if the
+associated labeled links are ambient isotopic. -/
 theorem twoLink_isotopic_iff
     {L₁ L₂ : ConwayKnotShared.KnotTheory.TwoLink} :
     ConwayKnotShared.KnotTheory.TwoLink.Isotopic L₁ L₂ ↔
