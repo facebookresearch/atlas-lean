@@ -58,7 +58,8 @@ namespace Cslib.Algorithms.SAT.Horn
 
 open Cslib.Logic.PL Cslib.Algorithms.SAT.DPLL
 
-/-- A Horn formula: every clause has at most one positive literal. -/
+/-- **Horn formula.** A CNF formula is a Horn formula when every clause contains at most one
+distinct positive literal. -/
 def IsHorn (φ : CNF) : Prop :=
   ∀ C ∈ φ, ∀ l ∈ C, ∀ m ∈ C, l.2 = true → m.2 = true → l = m
 
@@ -66,7 +67,9 @@ instance (φ : CNF) : Decidable (IsHorn φ) := by
   unfold IsHorn
   infer_instance
 
-/-- The negative literals of `C` all have their variables in `T`. -/
+/-- **Body of a clause contained in a set.** For a finite set $T$ of variables and a CNF
+clause $C$, this Boolean test is true exactly when every negative literal of $C$ has its
+variable in $T$. -/
 def bodyIn (T : Finset Nat) (C : CNFClause) : Bool :=
   C.all fun l ↦ l.2 || decide (l.1 ∈ T)
 
@@ -76,8 +79,9 @@ theorem bodyIn_eq_true_iff {T : Finset Nat} {C : CNFClause} :
   refine forall₂_congr fun l _ ↦ ?_
   cases l.2 <;> simp
 
-/-- One forward-chaining step: the positive literals of the clauses whose bodies lie in
-`T`. -/
+/-- **Forward-chaining step.** For a CNF formula $\varphi$ and a finite set $T$ of variables,
+the derived set consists of the variables $x$ such that some clause of $\varphi$ contains the
+positive literal $x$ and has every one of its negative literals on a variable in $T$. -/
 def derive (φ : CNF) (T : Finset Nat) : Finset Nat :=
   ((φ.filter (bodyIn T)).flatMap fun C ↦ (C.filter (·.2)).map Prod.fst).toFinset
 
@@ -103,7 +107,12 @@ theorem derive_subset_vars (φ : CNF) (T : Finset Nat) : derive φ T ⊆ φ.vars
   obtain ⟨C, hC, -, hxC⟩ := mem_derive.mp hx
   exact CNF.mem_vars.mpr ⟨C, hC, true, hxC⟩
 
-/-- The closure of `T` under forward chaining. -/
+/-- **Forward-chaining closure.** For a CNF formula $\varphi$ and a finite set $T$ of
+variables, the closure of $T$ is computed by iterating the forward-chaining step of $\varphi$:
+if every variable derived from $T$ already lies in $T$, the closure is $T$; otherwise it is the
+closure of the union of $T$ with the derived variables.
+
+The iteration terminates because each step that does not stop adds a variable of $\varphi$. -/
 def close (φ : CNF) (T : Finset Nat) : Finset Nat :=
   if derive φ T ⊆ T then T else close φ (T ∪ derive φ T)
 termination_by (φ.vars \ T).card
@@ -136,11 +145,14 @@ theorem close_subset {φ : CNF} {T S : Finset Nat} (hT : T ⊆ S) (hS : derive �
     rw [close]; simp only [h, ↓reduceIte]
     exact ih (Finset.union_subset hT ((derive_mono hT).trans hS))
 
-/-- The least model candidate: true exactly on the forward-chaining closure of `∅`. -/
+/-- **Least model candidate.** For a CNF formula $\varphi$, the least model candidate is the
+assignment that makes a variable true exactly when it lies in the forward-chaining closure of
+the empty set under $\varphi$. -/
 def leastModel (φ : CNF) : Nat → Bool := fun x ↦ decide (x ∈ close φ ∅)
 
-/-- **Least model**: on a Horn formula, `leastModel φ` makes true only variables that every
-model makes true. -/
+/-- **On Horn formulas, the least model candidate lies below every model.** Let $\varphi$ be a
+Horn CNF formula and $\sigma$ an assignment satisfying $\varphi$. Every variable that the least
+model candidate of $\varphi$ makes true is also true under $\sigma$. -/
 theorem leastModel_le {φ : CNF} (hφ : IsHorn φ) {σ : Nat → Bool} (hσ : φ.Satisfies σ)
     {x : Nat} (hx : leastModel φ x = true) : σ x = true := by
   let S := φ.vars.filter fun y ↦ σ y = true
@@ -160,7 +172,8 @@ theorem leastModel_le {φ : CNF} (hφ : IsHorn φ) {σ : Nat → Bool} (hσ : φ
   have hsub := close_subset (Finset.empty_subset S) hS
   exact (Finset.mem_filter.mp (hsub (of_decide_eq_true hx))).2
 
-/-- A Horn formula is satisfiable iff its least model candidate satisfies it. -/
+/-- **Horn satisfiability via the least model.** A Horn CNF formula $\varphi$ is satisfiable if
+and only if its least model candidate satisfies $\varphi$. -/
 theorem satisfies_leastModel_iff {φ : CNF} (hφ : IsHorn φ) :
     φ.Satisfies (leastModel φ) ↔ CNFSat φ := by
   refine ⟨fun h ↦ cnfSat_iff_exists_satisfies.mpr ⟨_, h⟩, fun hsat ↦ ?_⟩
@@ -186,10 +199,12 @@ theorem satisfies_leastModel_iff {φ : CNF} (hφ : IsHorn φ) :
     obtain ⟨l, hl, hneg, hnot⟩ := hbody
     exact ⟨l, hl, by simp [CNFLiteral.Satisfies, leastModel, hnot, hneg]⟩
 
-/-- Horn satisfiability: evaluate the formula at its least model candidate. -/
+/-- **Horn satisfiability test.** For a CNF formula $\varphi$, the Horn satisfiability test
+returns the Boolean truth value of $\varphi$ under its least model candidate. -/
 def hornSat (φ : CNF) : Bool := formulaSatisfied (leastModel φ) φ
 
-/-- **Correctness**: `hornSat` decides satisfiability of Horn formulas. -/
+/-- **Correctness of the Horn satisfiability test.** If $\varphi$ is a Horn CNF formula, then
+the Horn satisfiability test returns true on $\varphi$ if and only if $\varphi$ is satisfiable. -/
 theorem hornSat_eq_true_iff {φ : CNF} (hφ : IsHorn φ) : hornSat φ = true ↔ CNFSat φ := by
   rw [hornSat, formulaSatisfied_eq_true_iff, satisfies_leastModel_iff hφ]
 

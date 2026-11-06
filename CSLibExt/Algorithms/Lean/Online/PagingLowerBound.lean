@@ -71,7 +71,10 @@ namespace OnlinePager
 
 variable {α : Type*} [DecidableEq α] {k : ℕ} (A : OnlinePager α k)
 
-/-- The misses of an online pager: requests for pages not in its cache. -/
+/-- **Misses of an online pager.** For an online pager $A$, a state $q$ and a request sequence
+$\sigma$, the number of misses of $A$ from $q$ on $\sigma$ counts the requests of $\sigma$ that
+are not in the cache of the current state, where the run starts at $q$ and each request moves
+$A$ to its next state. -/
 def misses : A.State → List α → ℕ
   | _, [] => 0
   | q, p :: σ => (if p ∈ A.cache q then 0 else 1) + misses (A.step q p) σ
@@ -86,7 +89,10 @@ def lruPager.{u} (α : Type u) [DecidableEq α] (k : ℕ) : OnlinePager.{u, u} �
   step q p := ⟨lruStep k q.1 p, List.length_take_le _ _⟩
   cache_le q := q.2
 
-/-- The online pager `lruPager` misses exactly as `lruMisses` counts. -/
+/-- **LRU as an online pager has LRU's miss count.** For every cache $c$ of at most $k$ pages and
+every request sequence $\sigma$, the number of misses of LRU with capacity $k$, viewed as an
+online pager and started in the state with cache $c$, on $\sigma$ equals the number of misses of
+LRU with capacity $k$ started with cache $c$ on $\sigma$. -/
 theorem lruPager_misses {α : Type*} [DecidableEq α] {k : ℕ} :
     ∀ (q : (lruPager α k).State) (σ : List α), (lruPager α k).misses q σ = lruMisses k q.1 σ
   | _, [] => rfl
@@ -95,11 +101,14 @@ theorem lruPager_misses {α : Type*} [DecidableEq α] {k : ℕ} :
       rw [lruPager_misses _ σ]
       rfl
 
-/-- A page of `Fin (k + 1)` outside a cache (when there is one). -/
+/-- **Outside page of a cache.** For a natural number $k$ and a list $c$ of pages from
+$\{0, \dots, k\}$, the outside page of $c$ is the smallest $x \in \{0, \dots, k\}$ that does not
+occur in $c$, or $0$ if every page of $\{0, \dots, k\}$ occurs in $c$. -/
 def outside {k : ℕ} (c : List (Fin (k + 1))) : Fin (k + 1) :=
   ((List.finRange (k + 1)).find? fun x => x ∉ c).getD 0
 
-/-- A cache of at most `k` pages misses one of the `k + 1` pages. -/
+/-- **The outside page is not cached.** Let $k$ be a natural number and let $c$ be a list of at
+most $k$ pages from $\{0, \dots, k\}$. Then the outside page of $c$ does not occur in $c$. -/
 theorem outside_not_mem {k : ℕ} {c : List (Fin (k + 1))} (hc : c.length ≤ k) : outside c ∉ c := by
   unfold outside
   cases h : (List.finRange (k + 1)).find? fun x => x ∉ c with
@@ -113,7 +122,11 @@ theorem outside_not_mem {k : ℕ} {c : List (Fin (k + 1))} (hc : c.length ≤ k)
       rw [List.length_finRange] at this
       omega
 
-/-- The adversary: always request the page the pager does not hold. -/
+/-- **The paging adversary.** Let $A$ be a deterministic online pager with cache size $k$ on the
+$k + 1$ pages $0, \dots, k$. From a state $q$ of $A$, the adversary's sequence of $n$ requests is
+empty for $n = 0$; for $n + 1$ it first requests the smallest page not in the cache of $q$ (page
+$0$ if there is none) and then continues with the adversary's sequence of $n$ requests from the
+state that $A$ reaches from $q$ by serving that request. -/
 def adversary {k : ℕ} (A : OnlinePager (Fin (k + 1)) k) : ℕ → A.State → List (Fin (k + 1))
   | 0, _ => []
   | n + 1, q => outside (A.cache q) :: adversary A n (A.step q (outside (A.cache q)))
@@ -138,8 +151,15 @@ section Offline
 
 variable {α : Type*} [DecidableEq α]
 
-/-- The offline step: on a miss with a full cache, evict a page not requested among the next
-`k - 1` requests. -/
+/-- **Offline paging step.** Given a cache size $k$, a cache $c$ (a list of pages), a requested
+page $p$ and the list $f$ of future requests, the offline step returns an event and a new cache.
+If $p \in c$, it is a hit on $p$ and the cache is unchanged. Otherwise, if $c$ has fewer than $k$
+pages, it is a miss on $p$ with no eviction and the new cache is $p$ followed by $c$. Otherwise,
+if some page of $c$ does not occur among the first $k - 1$ entries of $f$ (no entries at all when
+$k = 0$, and all of $f$ when $f$ is shorter), it is a miss on $p$ evicting the first such page $v$
+in $c$, and the new cache is $p$ followed by $c$ with the first occurrence of $v$ removed. If
+there is no such page, it is a miss on $p$ with no eviction and the new cache is $p$ followed by
+$c$. -/
 def optStep (k : ℕ) (c : List α) (p : α) (future : List α) : CacheEvent α × List α :=
   if p ∈ c then (.hit p, c)
   else if c.length < k then (.miss p none, p :: c)
@@ -147,12 +167,19 @@ def optStep (k : ℕ) (c : List α) (p : α) (future : List α) : CacheEvent α 
     | some v => (.miss p (some v), p :: c.erase v)
     | none => (.miss p none, p :: c)
 
-/-- The offline trace. -/
+/-- **Offline paging trace.** Given a cache size $k$, the offline trace from a cache $c$ on a list
+of requests is defined by recursion on the list: on the empty list it is empty, and on a list
+with first request $p$ and remaining requests $r$ it is the event of the offline step with cache
+size $k$ on $c$, $p$ and $r$, followed by the offline trace on $r$ from the new cache of that
+step. -/
 def optTrace (k : ℕ) : List α → List α → List (CacheEvent α)
   | _, [] => []
   | c, p :: rest => (optStep k c p rest).1 :: optTrace k (optStep k c p rest).2 rest
 
-/-- A full cache of `k` distinct pages has a page outside any `k - 1` requests. -/
+/-- **A full cache has a page outside the next $k - 1$ requests.** Let $k \ge 1$, let $c$ be a
+list of $k$ distinct pages and let $f$ be any list of requests. Then the search through $c$ for
+the first page that does not occur among the first $k - 1$ entries of $f$ succeeds; in
+particular, some page of $c$ does not occur there. -/
 theorem find?_isSome {k : ℕ} (hk : 1 ≤ k) {c : List α} (hnd : c.Nodup) (hck : c.length = k)
     (future : List α) : ∃ v, c.find? (fun x => x ∉ future.take (k - 1)) = some v := by
   cases h : c.find? (fun x => x ∉ future.take (k - 1)) with
@@ -165,7 +192,10 @@ theorem find?_isSome {k : ℕ} (hk : 1 ≤ k) {c : List α} (hnd : c.Nodup) (hck
       have := List.length_take_le (k - 1) future
       omega
 
-/-- **Each offline step is a legal transition** and keeps the cache valid. -/
+/-- **Each offline step is a legal transition.** Let $k \ge 1$, let $c$ be a cache of at most $k$
+distinct pages, let $p$ be a requested page and let $f$ be the list of future requests. Then the
+event and the new cache produced by the offline step with cache size $k$ on $c$, $p$ and $f$
+form a legal transition from $c$ of the caching system with capacity $k$. -/
 theorem optStep_tr {k : ℕ} (hk : 1 ≤ k) {c : List α} (hnd : c.Nodup) (hck : c.length ≤ k)
     (p : α) (future : List α) :
     (cacheLTS k).Tr c (optStep k c p future).1 (optStep k c p future).2 := by
@@ -182,7 +212,10 @@ theorem optStep_tr {k : ℕ} (hk : 1 ≤ k) {c : List α} (hnd : c.Nodup) (hck :
       rw [hv]
       exact ⟨by omega, hp, by omega, List.mem_of_find?_eq_some hv, List.Perm.refl _⟩
 
-/-- **The offline trace is legal** and serves exactly the requests. -/
+/-- **The offline trace is legal.** Let $k \ge 1$, let $c$ be a cache of at most $k$ distinct
+pages and let $\sigma$ be a list of requests. Then the offline trace with cache size $k$ from
+$c$ on $\sigma$ is a legal run of the caching system with capacity $k$ from $c$ to some final
+cache, and the pages served by its events are, in order, exactly $\sigma$. -/
 theorem optTrace_legal {k : ℕ} (hk : 1 ≤ k) : ∀ (c σ : List α), c.Nodup → c.length ≤ k →
     (∃ cf, (cacheLTS k).MTr c (optTrace k c σ) cf) ∧ (optTrace k c σ).map CacheEvent.request = σ
   | c, [], _, _ => ⟨⟨c, Cslib.LTS.MTr.refl⟩, rfl⟩
@@ -199,7 +232,11 @@ theorem optTrace_legal {k : ℕ} (hk : 1 ≤ k) : ∀ (c σ : List α), c.Nodup 
       · rfl
       · split <;> rfl
 
-/-- Hits leave the offline trace's later misses unchanged. -/
+/-- **Hits do not change the offline strategy's misses.** Let $k$ be a capacity, let $c$ be a
+cache and let $w$ be a request sequence all of whose requests lie in $c$. Then for every request
+sequence $\tau$, the offline strategy with capacity $k$ (on a miss with a full cache, evict the
+first cached page not among the next $k - 1$ requests, if there is one) started with cache $c$
+misses as many times on $w$ followed by $\tau$ as on $\tau$ alone. -/
 theorem misses_optTrace_hits {k : ℕ} : ∀ (w τ c : List α), (∀ x ∈ w, x ∈ c) →
     misses (optTrace k c (w ++ τ)) = misses (optTrace k c τ)
   | [], _, _, _ => rfl
@@ -212,7 +249,10 @@ theorem misses_optTrace_hits {k : ℕ} : ∀ (w τ c : List α), (∀ x ∈ w, x
 
 end Offline
 
-/-- With `k + 1` pages, a full cache misses only the evicted page. -/
+/-- **After a miss on a full cache, every page except the evicted one is present.** Let $c$ be a
+list of $k$ distinct pages among the $k + 1$ pages $0, \dots, k$, let $p$ be a page not in $c$,
+and let $v$ be any page. Then every page $x \neq v$ lies in the cache obtained from $c$ by
+removing $v$ and adding $p$. -/
 theorem mem_of_full {k : ℕ} {c : List (Fin (k + 1))} (hnd : c.Nodup) (hck : c.length = k)
     {p v : Fin (k + 1)} (hp : p ∉ c) {x : Fin (k + 1)} (hx : x ≠ v) :
     x ∈ p :: c.erase v := by
@@ -226,8 +266,12 @@ theorem mem_of_full {k : ℕ} {c : List (Fin (k + 1))} (hnd : c.Nodup) (hck : c.
   · exact List.mem_cons_self
   · exact List.mem_cons_of_mem _ ((List.Nodup.mem_erase_iff hnd).2 ⟨hx, hxc⟩)
 
-/-- **The offline trace misses at most once every `k` requests**, after at most `k - |c|`
-misses filling the cache. -/
+/-- **The offline trace misses at most once every $k$ requests.** Let $k \ge 1$ and consider the
+$k + 1$ pages $0, 1, \dots, k$. Let $N$ be a natural number, $\sigma$ a sequence of $n \le N$
+requests to these pages, and $c$ a cache of $|c| \le k$ distinct pages. Then the number of misses
+of the offline trace with cache size $k$ from $c$ on $\sigma$ is at most
+$(k - |c|) + \lfloor (n + k - 1) / k \rfloor = (k - |c|) + \lceil n / k \rceil$: after at most
+$k - |c|$ misses filling the cache, at most one miss every $k$ requests. -/
 theorem misses_optTrace_le {k : ℕ} (hk : 1 ≤ k) : ∀ (N : ℕ) (σ : List (Fin (k + 1))),
     σ.length ≤ N → ∀ c : List (Fin (k + 1)), c.Nodup → c.length ≤ k →
     misses (optTrace k c σ) ≤ (k - c.length) + (σ.length + k - 1) / k
@@ -284,8 +328,12 @@ theorem misses_optTrace_le {k : ℕ} (hk : 1 ≤ k) : ∀ (N : ℕ) (σ : List (
 
 /-! ## The lower bound -/
 
-/-- **The adversary forces `n` misses while the optimum misses at most `k + ⌈n / k⌉` times**:
-for every deterministic online pager with cache size `k ≥ 1` on `k + 1` pages and every `n`. -/
+/-- **The adversary forces $n$ misses while the optimum misses at most $k + \lceil n / k \rceil$
+times.** Let $k \ge 1$ and let $A$ be a deterministic online pager with cache size $k$ on the
+$k + 1$ pages $0, \dots, k$. For every $n$, on the adversary's sequence of $n$ requests started
+from the initial state of $A$, the pager $A$ started in its initial state misses exactly $n$
+times, and the furthest-in-future strategy with capacity $k$ started with an empty cache misses
+at most $k + \lceil n / k \rceil$ times. -/
 theorem adversary_vs_optimum {k : ℕ} (hk : 1 ≤ k) (A : OnlinePager (Fin (k + 1)) k) (n : ℕ) :
     A.misses A.init (adversary A n A.init) = n ∧
       misses (furthestInFuture k (adversary A n A.init) []).1 ≤ k + (n + k - 1) / k := by
@@ -300,9 +348,14 @@ theorem adversary_vs_optimum {k : ℕ} (hk : 1 ≤ k) (A : OnlinePager (Fin (k +
   simp only [List.length_nil, Nat.sub_zero] at hle
   exact hopt.trans hle
 
-/-- **No deterministic online pager is better than `k`-competitive**: for every ratio
-`c / d < k` and every additive constant `b` there is a request sequence on which the pager misses
-more than `c / d` times the optimum plus `b / d`. -/
+/-- **No deterministic online pager is better than $k$-competitive.** Let $k \ge 1$ and let $A$
+be a deterministic online pager with cache size $k$ on the $k + 1$ pages $0, \dots, k$. For a
+request sequence $\sigma$, write $A(\sigma)$ for the number of misses of $A$ started in its
+initial state on $\sigma$, and $\mathrm{OPT}(\sigma)$ for the number of misses of the
+furthest-in-future strategy with capacity $k$ started with an empty cache on $\sigma$. Then for
+all natural numbers $c$, $d$ with $c < kd$ and every natural number $b$, there is a request
+sequence $\sigma$ with $c \cdot \mathrm{OPT}(\sigma) + b < d \cdot A(\sigma)$. That is, the pager
+misses more than $c / d$ times the optimum plus $b / d$. -/
 theorem not_competitive_of_lt {k : ℕ} (hk : 1 ≤ k) (A : OnlinePager (Fin (k + 1)) k) {c d : ℕ}
     (hc : c < k * d) (b : ℕ) : ∃ σ : List (Fin (k + 1)),
       c * misses (furthestInFuture k σ []).1 + b < d * A.misses A.init σ := by

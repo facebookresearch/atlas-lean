@@ -227,8 +227,14 @@ private theorem uniform_prefix_mass {n k : Nat} (hkn : k ≤ n)
   rw [← Fintype.card_subtype, arbitrary_prefix_card hkn a hinj]
   rfl
 
-/-- The ideal-oracle distribution of the actual Fisher–Yates computation,
-obtained from uniform complete legal suffix-draw histories. -/
+/-- **Output distribution of the Fisher–Yates shuffle.** For a vector $x$ of length $n$, this is
+the probability distribution on outcomes (a vector of length $n$ together with a cost pair in
+$\mathbb{N} \times \mathbb{N}$) obtained by choosing a draw history $d$ uniformly at random among
+all assignments of a number $d_i$ with $0 \le d_i < n - i$ to each position $i < n$, and returning
+the result of the Fisher–Yates computation on $x$ and $d$.
+
+This models an ideal source of random draws, not an executable pseudorandom generator, and does
+not assume that the output permutation is uniform. -/
 public def randomlyPermuteDistribution {α : Type u} {n : Nat}
     (xs : Vector α n) : PMF (Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector α n)) := by
   letI : Nonempty ((i : Fin n) → Fin (n - i.val)) := ⟨fun i => ⟨0, by omega⟩⟩
@@ -242,8 +248,15 @@ private theorem distribution_eq_sequential {α : Type u} {n : Nat} (xs : Vector 
   rfl
 
 open scoped Classical in
-/-- The mass of a full actual output is the sum of its independent suffix-draw
-history weights. Repeated values coalesce, and impossible event counts receive no mass. -/
+/-- **Probability of a Fisher–Yates outcome.** Let $x$ be a vector of length $n$, and consider the
+draw histories $d$, which assign to each position $i < n$ a number $d_i$ with $0 \le d_i < n - i$.
+For every outcome $o$ (a vector of length $n$ together with a cost pair), the probability that
+the Fisher–Yates output distribution of $x$ assigns to $o$ equals the sum, over all draw histories
+$d$ for which the Fisher–Yates computation on $x$ and $d$ yields exactly $o$, of
+$\prod_{i=0}^{n-1} \frac{1}{n - i}$.
+
+Distinct histories that yield the same outcome (for example when values of $x$ repeat) add up,
+and an outcome that no history yields has probability $0$. -/
 public theorem randomlyPermuteDistribution_apply {α : Type u} {n : Nat} (xs : Vector α n)
     (out : Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector α n)) :
     randomlyPermuteDistribution xs out =
@@ -253,8 +266,10 @@ public theorem randomlyPermuteDistribution_apply {α : Type u} {n : Nat} (xs : V
   rw [distribution_eq_sequential]
   exact independent_output_apply xs out
 
-/-- The actual ideal-oracle computation is the pushforward of the canonical uniform
-position permutation. This equation retains the saved vector and the exact same-run cost. -/
+/-- **Fisher–Yates produces a uniformly random permutation.** Let $x = (x_0, \dots, x_{n-1})$ be a
+vector and let $\sigma$ be a permutation of $\{0, \dots, n - 1\}$ chosen uniformly at random. Then
+the Fisher–Yates output distribution of $x$ equals the distribution of the outcome consisting of
+the vector $(x_{\sigma(0)}, \dots, x_{\sigma(n-1)})$ with cost pair $(n, n)$. -/
 public theorem randomlyPermuteDistribution_eq_map_uniform {α : Type u} {n : Nat}
     (xs : Vector α n) :
     randomlyPermuteDistribution xs =
@@ -265,9 +280,15 @@ public theorem randomlyPermuteDistribution_eq_map_uniform {α : Type u} {n : Nat
   rw [distribution_eq_sequential, sequentialHistory_eq_uniform]
   exact uniform_output xs
 
-/-- Every injective labelled prefix has mass `(n - k)! / n!` in the actual run.
-The finite sum uses the proved complete independent-history mass `1 / n!`;
-empty and full prefixes are included, with no new probability-event wrapper. -/
+/-- **Prefix probabilities of the Fisher–Yates shuffle.** Let $k \le n$ and let
+$a_0, \dots, a_{k-1}$ be distinct elements of $\{0, \dots, n - 1\}$. Run the Fisher–Yates
+computation on the vector $(0, 1, \dots, n - 1)$ with every draw history $d$, which assigns to each
+position $i < n$ a number $d_i$ with $0 \le d_i < n - i$, and give each history weight $1/n!$.
+Then the total weight of the histories whose output vector has entry $a_p$ at position $p$ for
+every $p < k$ equals $(n - k)!/n!$.
+
+There are exactly $n!$ draw histories, so this is the probability of the prefix under a uniformly
+random history. The cases $k = 0$ and $k = n$ are included. -/
 public theorem randomlyPermute_prefix_probability {n k : Nat} (hkn : k ≤ n)
     (a : Fin k → Fin n) (hinj : Function.Injective a) :
     (∑ draws : (i : Fin n) → Fin (n - i.val),

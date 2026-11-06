@@ -38,13 +38,23 @@ namespace Cslib.Algorithms.Lean.OfflineCaching
 
 universe u
 
-/-- One actual request, with an eviction only on a miss. -/
+/-- **Cache events.** A cache event over a type $\alpha$ of blocks records how one request is
+served: either a hit on the requested block $r \in \alpha$, or a miss on the requested block $r$
+together with an optional evicted block $v \in \alpha$, absent when nothing is evicted. -/
 public inductive CacheEvent (α : Type u) where
   | hit (request : α)
   | miss (request : α) (evicted : Option α)
   deriving Repr, DecidableEq
 
-/-- Source-legal transitions, independent of the order representing cache contents. -/
+/-- **Legal cache transitions.** For a capacity $k \in \mathbb{N}$, this is the labelled
+transition system whose states are lists of blocks (the cache contents, in any order) and whose
+labels are cache events. Write $|C|$ for the length of a list $C$, $x :: C$ for $C$ with $x$
+prepended, and $C \setminus v$ for $C$ with the first occurrence of $v$ removed. There is a
+transition from $C$ to $C'$ labelled by a hit on $r$ when $r \in C$ and $C'$ is a permutation of
+$C$; labelled by a miss on $r$ with no eviction when $r \notin C$ and either $k = 0$ and $C$ and
+$C'$ are both empty, or $|C| < k$ and $C'$ is a permutation of $r :: C$; and labelled by a miss on
+$r$ evicting $v$ when $k > 0$, $r \notin C$, $|C| = k$, $v \in C$ and $C'$ is a permutation of
+$r :: (C \setminus v)$. -/
 @[expose] public def cacheLTS {α : Type u} [DecidableEq α] (capacity : Nat) :
     Cslib.LTS (List α) (CacheEvent α) where
   Tr before event after := match event with
@@ -73,7 +83,15 @@ public inductive CacheEvent (α : Type u) where
       let suffix := run capacity future current.2
       (current.1 :: suffix.1, suffix.2)
 
-/-- Scan the real requests and evict the first resident used furthest in the strict future. -/
+/-- **Furthest-in-future caching.** Given a capacity $k$, a sequence of requested pages and an
+initial cache (a list of pages), the furthest-in-future manager serves the requests in order
+and returns the list of emitted cache events together with the final cache. A request for a
+page $r$ already in the cache is a hit and leaves the cache unchanged. Otherwise it is a miss:
+if $k = 0$, nothing is evicted and the cache becomes empty; if the cache holds fewer than $k$
+pages, nothing is evicted and $r$ is added at the front; otherwise the manager evicts the cached
+page whose next occurrence among the later requests is furthest away (a page never requested
+again counts as infinitely far, and ties go to the page listed first in the cache), removes it
+and adds $r$ at the front. -/
 public def furthestInFuture {α : Type u} [DecidableEq α]
     (capacity : Nat) (requests initialCache : List α) : List (CacheEvent α) × List α :=
   run capacity requests initialCache
@@ -611,13 +629,31 @@ private theorem manager_min {α : Type u} [DecidableEq α]
                         hmiss hpositive hfull selected hselected]
                       simpa [List.countP_cons] using Nat.add_le_add_right (hbound.trans hcount) 1
 
-/-- An empty request list preserves the exact initial cache representation. -/
+/-- **Furthest-in-future on no requests.** For every capacity $k$ and every list $C$ of blocks,
+the furthest-in-future manager with capacity $k$ on the empty request list from the initial
+cache $C$ emits no events and ends with the cache $C$, unchanged. -/
 theorem furthestInFuture_nil {α : Type u} [DecidableEq α]
     (capacity : Nat) (initialCache : List α) :
     furthestInFuture capacity [] initialCache = ([], initialCache) :=
   run_nil capacity initialCache
 
-/-- The four source branches, on the actual saved suffix result and valid initial cache. -/
+/-- **One step of the furthest-in-future manager.** Write $x :: L$ for the list $L$ with $x$
+prepended, $[\,]$ for the empty list, $|L|$ for the length of $L$, and $L \setminus v$ for $L$
+with the first occurrence of $v$ removed. Write $\mathrm{FIF}_k(R, C) = (E, D)$ when the
+furthest-in-future manager with capacity $k$ on the requests $R$ from the initial cache $C$ emits
+the events $E$ and ends with the cache $D$. Write $\mathrm{hit}(r)$ for a hit on $r$,
+$\mathrm{miss}(r)$ for a miss on $r$ with no eviction, and $\mathrm{miss}(r, v)$ for a miss on
+$r$ evicting $v$. Let $C$ be a duplicate-free list of blocks with $|C| \le k$, let $r$ be a block
+and $f$ a list of blocks, and for a block $b$ let $\nu(b) \in \mathbb{N} \cup \{\infty\}$ be the
+position of the first occurrence of $b$ in $f$, or $\infty$ if $b$ does not occur in $f$.
+If $r \in C$, then $\mathrm{FIF}_k(r :: f, C) = (\mathrm{hit}(r) :: E, D)$ where
+$(E, D) = \mathrm{FIF}_k(f, C)$. If $k = 0$, then
+$\mathrm{FIF}_k(r :: f, C) = (\mathrm{miss}(r) :: E, D)$ where $(E, D) = \mathrm{FIF}_k(f, [\,])$.
+If $r \notin C$ and $|C| < k$, then $\mathrm{FIF}_k(r :: f, C) = (\mathrm{miss}(r) :: E, D)$
+where $(E, D) = \mathrm{FIF}_k(f, r :: C)$. If $r \notin C$, $k > 0$ and $|C| = k$, and $v$ is
+the first entry of $C$ at which $\nu$ is maximal on $C$, then
+$\mathrm{FIF}_k(r :: f, C) = (\mathrm{miss}(r, v) :: E, D)$ where
+$(E, D) = \mathrm{FIF}_k(f, r :: (C \setminus v))$. -/
 theorem furthestInFuture_cons {α : Type u} [DecidableEq α]
     (capacity : Nat) (request : α) (future cache : List α)
     (hnodup : cache.Nodup) (hcapacity : cache.length ≤ capacity) :
@@ -642,8 +678,12 @@ theorem furthestInFuture_cons {α : Type u} [DecidableEq α]
             (furthestInFuture capacity future (request :: cache.erase victim)).2)) :=
   run_cons capacity request future cache hnodup hcapacity
 
-/-- The emitted events form a source-legal trace for exactly the input requests;
-the saved final cache is duplicate-free and within capacity. -/
+/-- **The furthest-in-future manager produces legal traces.** Let $k$ be a capacity, $R$ a list
+of requested blocks and $C$ a duplicate-free list of blocks of length at most $k$. Let $E$ be the
+events and $D$ the final cache produced by the furthest-in-future manager with capacity $k$ on
+$R$ from the initial cache $C$. Then $E$ leads from $C$ to $D$ by legal cache transitions for
+capacity $k$, the blocks requested by the events of $E$ are, in order, exactly $R$, and $D$ is
+duplicate-free of length at most $k$. -/
 theorem furthestInFuture_legal {α : Type u} [DecidableEq α]
     (capacity : Nat) (requests initialCache : List α)
     (hnodup : initialCache.Nodup) (hcapacity : initialCache.length ≤ capacity) :
@@ -654,14 +694,24 @@ theorem furthestInFuture_legal {α : Type u} [DecidableEq α]
       output.2.Nodup ∧ output.2.length ≤ capacity :=
   manager_legal capacity requests initialCache hnodup hcapacity
 
-/-- With no storage, each real request produces exactly one miss and the cache stays empty. -/
+/-- **Furthest-in-future caching with zero capacity.** Run with capacity $0$ on a request
+sequence $r_1, \dots, r_n$ from the empty cache, the furthest-in-future manager emits exactly
+the events $\mathrm{miss}(r_1), \dots, \mathrm{miss}(r_n)$, one miss per request in order and
+each evicting no page, and its final cache is empty. -/
 theorem furthestInFuture_zero_capacity {α : Type u} [DecidableEq α] (requests : List α) :
     furthestInFuture 0 requests [] =
       (requests.map (fun request => CacheEvent.miss request none), []) :=
   manager_zero requests
 
-/-- The actual manager emits no more misses than any source-legal trace on the same requests
-from the same valid initial cache. Competitors may permute representations. -/
+/-- **Optimality of furthest-in-future caching.** Let $k$ be a capacity, $R$ a list of requested
+blocks and $C$ a duplicate-free list of blocks of length at most $k$. Let $E'$ be any list of
+cache events that leads from $C$ to some final cache by legal cache transitions for capacity $k$
+and whose events request, in order, exactly the blocks of $R$. Then the furthest-in-future
+manager with capacity $k$ on $R$ from the initial cache $C$ emits at most as many miss events as
+$E'$ contains.
+
+Legal transitions may reorder the list representing the cache, so a competing trace need not
+keep the manager's order. -/
 theorem furthestInFuture_min_misses {α : Type u} [DecidableEq α]
     (capacity : Nat) (requests initialCache : List α)
     (hnodup : initialCache.Nodup) (hcapacity : initialCache.length ≤ capacity)
@@ -680,12 +730,14 @@ Shared vocabulary for cache traces, used by online policies (`Online/Paging.lean
 
 namespace CacheEvent
 
-/-- The page an event serves. -/
+/-- **Page served by a cache event.** The page served by a cache event is the page it requests,
+whether the event is a hit or a miss. -/
 def request {α : Type u} : CacheEvent α → α
   | .hit r => r
   | .miss r _ => r
 
-/-- Whether an event is a miss. -/
+/-- **Miss indicator.** The miss indicator of a cache event is true if the event is a miss and
+false if it is a hit. -/
 def isMiss {α : Type u} : CacheEvent α → Bool
   | .hit _ => false
   | .miss _ _ => true
@@ -702,20 +754,27 @@ def isMiss {α : Type u} : CacheEvent α → Bool
 
 end CacheEvent
 
-/-- The number of misses in a trace. -/
+/-- **Number of misses in a trace.** The number of misses of a finite list of cache events is the
+number of events in the list that are misses. -/
 def misses {α : Type u} (events : List (CacheEvent α)) : Nat := events.countP CacheEvent.isMiss
 
 theorem misses_append {α : Type u} (events events' : List (CacheEvent α)) :
     misses (events ++ events') = misses events + misses events' := List.countP_append
 
-/-- Legal transitions keep the cache duplicate-free and within capacity. -/
+/-- **Legal cache transitions preserve valid caches.** Let $k$ be a capacity and let $C \to C'$
+be a legal cache transition for capacity $k$, labelled by any cache event. If $C$ has no
+duplicate entries and length at most $k$, then $C'$ has no duplicate entries and length at
+most $k$. -/
 theorem cacheLTS_valid {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
     {event : CacheEvent α} (hstep : (cacheLTS capacity).Tr before event after)
     (hnodup : before.Nodup) (hcapacity : before.length ≤ capacity) :
     after.Nodup ∧ after.length ≤ capacity :=
   transition_valid hstep hnodup hcapacity
 
-/-- Legal traces keep the cache duplicate-free and within capacity. -/
+/-- **Legal cache traces preserve valid caches.** Let $k$ be a capacity and suppose a finite
+sequence of cache events leads from the cache $C$ to the cache $C'$ by legal cache transitions
+for capacity $k$. If $C$ has no duplicate entries and length at most $k$, then $C'$ has no
+duplicate entries and length at most $k$. -/
 theorem cacheLTS_mtr_valid {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
     {events : List (CacheEvent α)} (h : (cacheLTS capacity).MTr before events after)
     (hnodup : before.Nodup) (hcapacity : before.length ≤ capacity) :
@@ -726,7 +785,9 @@ theorem cacheLTS_mtr_valid {α : Type u} [DecidableEq α] {capacity : Nat} {befo
       obtain ⟨h1, h2⟩ := cacheLTS_valid htr hnodup hcapacity
       exact ih h1 h2
 
-/-- With positive capacity, the served page is cached afterwards. -/
+/-- **A legal step caches the served page.** Let $k > 0$ be a capacity. If a legal transition for
+capacity $k$ takes a cache $C$ to a cache $C'$ by a cache event, then the page served by that
+event lies in $C'$. -/
 theorem request_mem_of_tr {α : Type u} [DecidableEq α] {capacity : Nat} (hpos : 0 < capacity)
     {before after : List α} {event : CacheEvent α}
     (h : (cacheLTS capacity).Tr before event after) : event.request ∈ after := by
@@ -744,7 +805,9 @@ theorem request_mem_of_tr {α : Type u} [DecidableEq α] {capacity : Nat} (hpos 
           obtain ⟨_, _, _, _, hperm⟩ := h
           exact hperm.mem_iff.2 List.mem_cons_self
 
-/-- A trace without misses only serves pages already cached. -/
+/-- **A legal trace without misses serves only cached pages.** Let $k$ be a capacity. If a legal
+trace of cache events for capacity $k$ starts from a cache $C$ and contains no miss, then every
+page served by an event of the trace lies in $C$. -/
 theorem request_mem_of_misses_eq_zero {α : Type u} [DecidableEq α] {capacity : Nat}
     {before after : List α} {events : List (CacheEvent α)}
     (h : (cacheLTS capacity).MTr before events after) (h0 : misses events = 0) :
@@ -769,8 +832,10 @@ theorem request_mem_of_misses_eq_zero {α : Type u} [DecidableEq α] {capacity :
           · exact hr
           · exact hperm.mem_iff.1 (ih hes e' he')
 
-/-- **A legal trace misses at least once** on a segment that, together with a page `p` already
-cached, requests `capacity + 1` distinct pages. -/
+/-- **A legal trace misses at least once.** Let $k$ be a capacity and $C$ a cache listing at most
+$k$ pages, and consider a legal trace of cache events for capacity $k$ that starts from $C$. Let
+$p$ be a page in $C$. If at least $k + 1$ distinct pages are each equal to $p$ or served by some
+event of the trace, then the trace contains at least one miss. -/
 theorem one_le_misses {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
     {events : List (CacheEvent α)} (h : (cacheLTS capacity).MTr before events after)
     (hcapacity : before.length ≤ capacity) {p : α} (hp : p ∈ before) {distinct : List α}
@@ -787,8 +852,12 @@ theorem one_le_misses {α : Type u} [DecidableEq α] {capacity : Nat} {before af
   have := (hdistinct.subperm hsubset).length_le
   omega
 
-/-- `furthestInFuture_min_misses` in the event API: the manager misses no more than any legal
-trace serving the same requests. -/
+/-- **Furthest-in-future caching has the fewest misses.** Let $k$ be a capacity, $R$ a list of
+requested blocks and $C$ a duplicate-free list of blocks of length at most $k$. Let $E'$ be any
+list of cache events that leads from $C$ to some final cache by legal cache transitions for
+capacity $k$ and whose events serve, in order, exactly the blocks of $R$. Then the number of
+misses among the events emitted by the furthest-in-future manager with capacity $k$ on $R$ from
+the initial cache $C$ is at most the number of misses of $E'$. -/
 theorem furthestInFuture_misses_le {α : Type u} [DecidableEq α]
     (capacity : Nat) (requests initialCache : List α)
     (hnodup : initialCache.Nodup) (hcapacity : initialCache.length ≤ capacity)
@@ -799,7 +868,10 @@ theorem furthestInFuture_misses_le {α : Type u} [DecidableEq α]
   furthestInFuture_min_misses capacity requests initialCache hnodup hcapacity events finalCache
     hlegal hrequests
 
-/-- `furthestInFuture_legal` in the event API. -/
+/-- **Furthest-in-future serves exactly the requests.** Let $k$ be a capacity, $R$ a list of
+requested blocks and $C$ a duplicate-free list of blocks of length at most $k$. Then the events
+emitted by the furthest-in-future manager with capacity $k$ on $R$ from the initial cache $C$
+serve, in order, exactly the blocks of $R$. -/
 theorem furthestInFuture_requests {α : Type u} [DecidableEq α]
     (capacity : Nat) (requests initialCache : List α)
     (hnodup : initialCache.Nodup) (hcapacity : initialCache.length ≤ capacity) :

@@ -45,7 +45,9 @@ universe u
 
 variable {α : Type u} [LinearOrder α]
 
-/-- The number of entries of `xs` lying strictly between `a` and `b`. -/
+/-- **Number of list entries strictly between two values.** For a list $\ell$ over a linear order
+and elements $a$ and $b$, this is the number of entries $x$ of $\ell$, counted with multiplicity,
+such that $a < x < b$. -/
 public def betweenCount (xs : List α) (a b : α) : ℕ :=
   (xs.filter (fun x => a < x ∧ x < b)).length
 
@@ -805,11 +807,15 @@ private theorem inv_factorial_mul_sum_cmpInd {xs : List α}
         rw [mul_assoc, ENNReal.mul_inv_cancel hd0 hdT, mul_one]
     _ = 2 * ((betweenCount xs a b + 2 : ℕ) : ℝ≥0∞)⁻¹ := by rw [hkey]
 
-/-- The expected number of comparisons of deterministic quicksort on
-a uniformly random permutation of a duplicate-free input, valued in
-`ℝ≥0∞`: the sum over unordered pairs `a < b` of input values of
-`2 / (d + 2)`, where `d` is the number of input values strictly
-between `a` and `b` (CLRS Section 7.4). -/
+/-- **Expected comparisons of quicksort on a random permutation.** Let $\ell$ be a list without
+repeated entries over a linear order. The expected number of comparisons made by quicksort on the
+list obtained by rearranging the entries of $\ell$ by a uniformly random permutation of their
+positions, computed in the extended nonnegative reals $[0, \infty]$, equals
+
+$$\sum_{a < b} \frac{2}{d(a, b) + 2},$$
+
+where the sum runs over pairs of entries $a < b$ of $\ell$ and $d(a, b)$ is the number of entries
+of $\ell$ strictly between $a$ and $b$ (CLRS Section 7.4). -/
 public theorem quickSort_expectedTime_uniformPermutation
     (xs : List α) (hxs : xs.Nodup) :
     expectedTime quickSort (uniformPermutation xs) =
@@ -849,9 +855,16 @@ public theorem quickSort_expectedTime_uniformPermutation
   rw [hcast2]
   exact h
 
-/-- The expected number of comparisons of deterministic quicksort on
-a uniformly random permutation of a duplicate-free input, as a real
-number. -/
+/-- **Expected comparisons of quicksort on a random permutation, as a real number.** Let $\ell$
+be a list without repeated entries over a linear order. Take the expected number of comparisons
+made by quicksort on the list obtained by rearranging the entries of $\ell$ by a uniformly random
+permutation of their positions, which is an element of $[0, \infty]$, and convert it to a real
+number. The result equals the real sum
+
+$$\sum_{a < b} \frac{2}{d(a, b) + 2},$$
+
+where the sum runs over pairs of entries $a < b$ of $\ell$ and $d(a, b)$ is the number of entries
+of $\ell$ strictly between $a$ and $b$. -/
 public theorem quickSort_expectedTime_uniformPermutation_toReal
     (xs : List α) (hxs : xs.Nodup) :
     (expectedTime quickSort (uniformPermutation xs)).toReal =

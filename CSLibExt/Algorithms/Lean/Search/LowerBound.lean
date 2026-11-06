@@ -43,13 +43,17 @@ universe u
 variable {α : Type u} [LinearOrder α]
 
 /--
-Returns the first index containing a value at least `key`, charging one tick for each element
-comparison. If every value is below `key`, it returns `xs.size`.
+**Lower-bound search.** Given an array $a = (a_0, \dots, a_{n-1})$ over a linearly ordered type and
+a key $k$, lower-bound search maintains a half-open interval $[l, h)$ of indices, starting from
+$[0, n)$. While $l < h$, it compares $a_m$ with $k$ at the midpoint
+$m = l + \lfloor (h - l)/2 \rfloor$, charging one unit for this comparison, and continues with
+$[m + 1, h)$ if $a_m < k$ and with $[l, m)$ otherwise. When $l = h$ it returns $l$.
 
-Precondition: `xs` must be sorted (or at least partitioned at `key`: every element below the
-returned index is `< key` and every element from that index on is `≥ key`). On an unsorted array
-the result is unspecified: for example, `lowerBound #[2, 1] 2` returns `2`, not the first
-qualifying index `0`.
+When $a$ is sorted in nondecreasing order (or at least partitioned at $k$: every entry before the
+returned index is $< k$ and every entry from that index on is $\ge k$), the result is the first
+index $i$ with $k \le a_i$, or $n$ if every entry is below $k$. On an unsorted array the result is
+unspecified: for $a = (2, 1)$ and $k = 2$ the search returns $2$, not the first index $0$ with
+$k \le a_0$.
 -/
 def lowerBound (xs : Array α) (key : α) : TimeM Nat Nat :=
   let rec loop (lo hi : Nat) (hlohi : lo ≤ hi) (hhi : hi ≤ xs.size) : TimeM Nat Nat :=
@@ -125,7 +129,10 @@ private theorem lowerBound_loop_spec (xs : Array α) (key : α)
         exact ⟨hlow, fun j hj hjs => hhigh j (by omega) hjs⟩
 
 /--
-On a sorted array, the returned index separates values below `key` from values at least `key`.
+**Correctness of lower-bound search.** Let $a = (a_0, \dots, a_{n-1})$ be an array over a linearly
+ordered type, sorted in nondecreasing order, let $k$ be a key, and let $\ell$ be the index returned
+by lower-bound search for $k$ in $a$. Then $\ell \le n$, $a_j < k$ for every $j < \ell$, and
+$k \le a_j$ for every $j$ with $\ell \le j < n$.
 -/
 theorem lowerBound_spec (xs : Array α) (key : α)
     (hs : xs.Pairwise (fun x y => x ≤ y)) :
@@ -180,18 +187,24 @@ private theorem lowerBound_loop_time_le (xs : Array α) (key : α) (lo hi : Nat)
         simp only [TimeM.time_pure]
         exact Nat.zero_le _
 
-/-- Lower-bound search uses at most `clog₂(n + 1)` element comparisons. -/
+/-- **Comparison bound for lower-bound search.** For every array $a$ of length $n$ over a linearly
+ordered type and every key $k$, lower-bound search for $k$ in $a$ makes at most
+$\lceil \log_2 (n + 1) \rceil$ element comparisons. -/
 theorem lowerBound_time_le (xs : Array α) (key : α) :
     (lowerBound xs key).time ≤ Nat.clog 2 (xs.size + 1) := by
   simpa only [lowerBound, Nat.sub_zero] using
     lowerBound_loop_time_le xs key 0 xs.size (Nat.zero_le _) le_rfl
 
 /--
-Returns the first index containing `key`, or `none` when `key` is absent. A valid lower-bound index
-costs one additional equality comparison.
+**Binary search for the first occurrence.** Given an array $a = (a_0, \dots, a_{n-1})$ over a
+linearly ordered type and a key $k$, binary search for the first occurrence of $k$ in $a$ runs
+lower-bound search for $k$ in $a$, obtaining an index $\ell$. If $\ell < n$, it makes one further
+comparison, charged one unit, and returns $\ell$ when $a_\ell = k$ and no index otherwise; if
+$\ell \ge n$, it returns no index without further cost.
 
-Precondition: as for `lowerBound`, `xs` must be sorted (or partitioned at `key`); on an unsorted
-array a present key can be missed and the result can be `none`.
+When $a$ is sorted in nondecreasing order, the result is the first index $i$ with $a_i = k$, or no
+index when $k$ does not occur in $a$. On an unsorted array a present key can be missed and the
+result can be no index.
 -/
 def binarySearchFirst? (xs : Array α) (key : α) : TimeM Nat (Option Nat) := do
   let i ← lowerBound xs key
@@ -221,7 +234,10 @@ private theorem lowerBound_eq_of_first (xs : Array α) (key : α)
     have hrsize : (lowerBound xs key).ret < xs.size := hri.trans hi
     exact (not_lt_of_ge (hspec.2.2 _ le_rfl hrsize)) (hfirst _ hri hrsize)
 
-/-- The membership wrapper returns exactly the first occurrence of `key`. -/
+/-- **Binary search returns the first occurrence of the key.** Let $a = (a_0, \dots, a_{n-1})$ be
+an array over a linearly ordered type, sorted in nondecreasing order, let $k$ be a key and let $i$
+be a natural number. Binary search for the first occurrence of $k$ in $a$ returns the index $i$ if
+and only if $i < n$, $a_i = k$, and $a_j < k$ for every $j < i$. -/
 theorem binarySearchFirst?_eq_some_iff (xs : Array α) (key : α)
     (hs : xs.Pairwise (fun x y => x ≤ y)) (i : Nat) :
     (binarySearchFirst? xs key).ret = some i ↔
@@ -244,7 +260,10 @@ theorem binarySearchFirst?_eq_some_iff (xs : Array α) (key : α)
     have hr := lowerBound_eq_of_first xs key hs i hi hkey hfirst
     simp [binarySearchFirst?, hr, hi, hkey]
 
-/-- The membership wrapper returns `none` exactly when `key` is absent. -/
+/-- **Binary search reports absence exactly when the key is absent.** Let
+$a = (a_0, \dots, a_{n-1})$ be an array over a linearly ordered type, sorted in nondecreasing
+order, and let $k$ be a key. Binary search for the first occurrence of $k$ in $a$ returns no index
+if and only if $a_i \ne k$ for every $i < n$. -/
 theorem binarySearchFirst?_eq_none_iff (xs : Array α) (key : α)
     (hs : xs.Pairwise (fun x y => x ≤ y)) :
     (binarySearchFirst? xs key).ret = none ↔
@@ -273,7 +292,11 @@ theorem binarySearchFirst?_eq_none_iff (xs : Array α) (key : α)
         obtain ⟨hi, hkey, -⟩ := (binarySearchFirst?_eq_some_iff xs key hs i).mp hresult
         exact (habsent i hi hkey).elim
 
-/-- The wrapper adds one comparison exactly when the lower-bound index is valid. -/
+/-- **Exact comparison count of binary search for the first occurrence.** Let $a$ be an array of
+length $n$ over a linearly ordered type, let $k$ be a key, and let $\ell$ be the index returned by
+lower-bound search for $k$ in $a$. The number of element comparisons made by binary search for the
+first occurrence of $k$ in $a$ equals the number made by lower-bound search for $k$ in $a$, plus
+$1$ if $\ell < n$ and plus $0$ otherwise. -/
 theorem binarySearchFirst?_time (xs : Array α) (key : α) :
     (binarySearchFirst? xs key).time =
       (lowerBound xs key).time + if (lowerBound xs key).ret < xs.size then 1 else 0 := by
@@ -283,7 +306,9 @@ theorem binarySearchFirst?_time (xs : Array α) (key : α) :
     split <;> rfl
   · rfl
 
-/-- The membership wrapper uses at most one comparison beyond lower-bound search. -/
+/-- **Comparison bound for binary search for the first occurrence.** For every array $a$ of length
+$n$ over a linearly ordered type and every key $k$, binary search for the first occurrence of $k$
+in $a$ makes at most $\lceil \log_2 (n + 1) \rceil + 1$ element comparisons. -/
 theorem binarySearchFirst?_time_le (xs : Array α) (key : α) :
     (binarySearchFirst? xs key).time ≤ Nat.clog 2 (xs.size + 1) + 1 := by
   rw [binarySearchFirst?_time]

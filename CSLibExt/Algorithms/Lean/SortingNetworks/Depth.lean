@@ -46,14 +46,21 @@ namespace Cslib.Algorithms.Lean.SortingNetworks.Bitonic
 
 /-! ## Levels -/
 
-/-- The level of each wire after scheduling the comparators as early as possible: a comparator
-runs one level after the later of its two wires. -/
+/-- **Comparator levels under earliest scheduling.** Given a list of comparators on
+$\mathbb{N}$-indexed wires, each a pair $(i, j)$ of wires, and a starting level $\ell(x)$ for
+every wire $x$, process the comparators in order, keeping a current level for each wire, initially
+$\ell$: a comparator $(i, j)$ whose wires currently have levels $a$ and $b$ sets the current levels
+of both wires $i$ and $j$ to $\max(a, b) + 1$ and leaves every other level unchanged. The result
+is the level of each wire after all the comparators, that is, when each comparator runs as early
+as possible, one level after the later of its two wires. -/
 def levels : List (ℕ × ℕ) → (ℕ → ℕ) → ℕ → ℕ
   | [], lv => lv
   | c :: ps, lv => levels ps fun x =>
       if x = c.1 ∨ x = c.2 then max (lv c.1) (lv c.2) + 1 else lv x
 
-/-- A network has depth at most `d`: from all wires at level `0`, no wire passes level `d`. -/
+/-- **Depth bound for a comparator list.** A list of comparators on wires indexed by $\mathbb{N}$
+has depth at most $d$ when, starting with every wire at level $0$ and scheduling each comparator
+one level after the later of its two wires, every wire ends at level at most $d$. -/
 def DepthLE (ps : List (ℕ × ℕ)) (d : ℕ) : Prop := ∀ x, levels ps (fun _ => 0) x ≤ d
 
 theorem levels_append (ps qs : List (ℕ × ℕ)) (lv : ℕ → ℕ) :
@@ -80,7 +87,9 @@ theorem levels_add : ∀ (ps : List (ℕ × ℕ)) (lv : ℕ → ℕ) (a : ℕ) (
       funext y
       split_ifs <;> omega
 
-/-- Sequential composition: depth at most the sum of the two bounds. -/
+/-- **Depth of sequential composition of comparator lists.** If a list $p$ of comparators on wires
+indexed by $\mathbb{N}$ has depth at most $d$ and a list $q$ of comparators has depth at most
+$e$, then the concatenation of $p$ followed by $q$ has depth at most $d + e$. -/
 theorem DepthLE.append {ps qs : List (ℕ × ℕ)} {d e : ℕ} (hp : DepthLE ps d) (hq : DepthLE qs e) :
     DepthLE (ps ++ qs) (d + e) := fun x => by
   rw [levels_append]
@@ -93,7 +102,10 @@ theorem DepthLE.append {ps qs : List (ℕ × ℕ)} {d e : ℕ} (hp : DepthLE ps 
 theorem DepthLE.mono {ps : List (ℕ × ℕ)} {d e : ℕ} (h : DepthLE ps d) (hde : d ≤ e) :
     DepthLE ps e := fun x => (h x).trans hde
 
-/-- Comparators inside `[lo, hi)` leave the levels outside alone. -/
+/-- **Comparators inside a block leave levels outside it unchanged.** Let $ps$ be a list of
+comparators all of whose wires lie in $[a, b)$. Then for all initial levels
+$\ell : \mathbb{N} \to \mathbb{N}$ and every wire $x$ with $x < a$ or $b \le x$, the level of $x$
+after $ps$ starting from $\ell$ is $\ell(x)$. -/
 theorem levels_of_not_mem : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within ps lo hi →
     ∀ (lv : ℕ → ℕ) (x : ℕ), (x < lo ∨ hi ≤ x) → levels ps lv x = lv x
   | [], _, _, _, _, _, _ => rfl
@@ -104,7 +116,11 @@ theorem levels_of_not_mem : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within p
       have hne : ¬ (x = c.1 ∨ x = c.2) := by omega
       simp only [hne, ↓reduceIte]
 
-/-- Inside `[lo, hi)`, the levels depend only on the levels inside. -/
+/-- **Levels inside a block depend only on initial levels inside it.** Let $ps$ be a list of
+comparators all of whose wires lie in $[a, b)$, and let $\ell, \ell' : \mathbb{N} \to \mathbb{N}$
+be initial levels that agree on every wire in $[a, b)$. Then for every wire $x$ in $[a, b)$, the
+level of $x$ after $ps$ starting from $\ell$ equals the level of $x$ after $ps$ starting from
+$\ell'$. -/
 theorem levels_congr : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within ps lo hi →
     ∀ (lv lv' : ℕ → ℕ), (∀ y, lo ≤ y → y < hi → lv y = lv' y) →
     ∀ x, lo ≤ x → x < hi → levels ps lv x = levels ps lv' x
@@ -114,7 +130,11 @@ theorem levels_congr : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within ps lo 
       refine levels_congr (fun p hp => h p (List.mem_cons_of_mem _ hp)) _ _ fun y h1 h2 => ?_
       rw [hlv c.1 hc.1 hc.2.1, hlv c.2 hc.2.2.1 hc.2.2.2, hlv y h1 h2]
 
-/-- Networks on disjoint blocks run in parallel: depth at most their common bound. -/
+/-- **Parallel composition of comparator lists on adjacent blocks.** Let $a$, $m$, $b$, $d$ be
+natural numbers, and let $p$ and $q$ be lists of comparators on wires indexed by $\mathbb{N}$, where
+every comparator of $p$ joins two wires in $[a, m)$ and every comparator of $q$ joins two wires in
+$[m, b)$. If $p$ and $q$ both have depth at most $d$, then the concatenation of $p$ followed by
+$q$ also has depth at most $d$: the two lists run in parallel. -/
 theorem DepthLE.append_disjoint {ps qs : List (ℕ × ℕ)} {lo mid hi d : ℕ}
     (hpw : Within ps lo mid) (hqw : Within qs mid hi) (hp : DepthLE ps d) (hq : DepthLE qs d) :
     DepthLE (ps ++ qs) d := fun x => by
@@ -126,7 +146,10 @@ theorem DepthLE.append_disjoint {ps qs : List (ℕ × ℕ)} {lo mid hi d : ℕ}
   · rw [levels_of_not_mem hqw _ x (by omega)]
     exact hp x
 
-/-- Reversing comparators does not change levels. -/
+/-- **Swapping the wires of every comparator does not change levels.** For every list $ps$ of
+comparators and all initial levels $\ell : \mathbb{N} \to \mathbb{N}$, the levels after the list
+obtained from $ps$ by replacing each comparator $(i, j)$ with $(j, i)$, starting from $\ell$, equal
+the levels after $ps$ starting from $\ell$. -/
 theorem levels_swap : ∀ (ps : List (ℕ × ℕ)) (lv : ℕ → ℕ),
     levels (ps.map Prod.swap) lv = levels ps lv
   | [], _ => rfl
@@ -139,9 +162,14 @@ theorem levels_swap : ∀ (ps : List (ℕ × ℕ)) (lv : ℕ → ℕ),
 
 /-! ## Tabulated levels -/
 
-/-- The levels of wires `0, …, N - 1`, tabulated: each comparator updates two entries. Evaluating
-`levels` directly re-reads both wires' earlier levels at every comparator, a cost exponential in
-the depth; this computes the same values in time proportional to the network size times `N`. -/
+/-- **Tabulated levels.** Given a list $ps$ of comparators and a table $t$ of natural numbers
+$t_0, \dots, t_{N-1}$, the tabulated levels are computed by processing the comparators in order:
+a comparator $(i, j)$ sets both entries $t_i$ and $t_j$ to $\max(t_i, t_j) + 1$, where an entry
+outside the table reads as $0$ and a write outside the table is ignored.
+
+Evaluating the levels directly re-reads both wires' earlier levels at every comparator, a cost
+exponential in the depth; this computes the same values in time proportional to the network size
+times $N$. -/
 def levelsTab : List (ℕ × ℕ) → List ℕ → List ℕ
   | [], t => t
   | c :: ps, t =>
@@ -152,7 +180,11 @@ theorem length_levelsTab : ∀ (ps : List (ℕ × ℕ)) (t : List ℕ), (levelsT
   | [], _ => rfl
   | c :: ps, t => by simp [levelsTab, length_levelsTab ps]
 
-/-- The tabulated levels are the levels, for comparators on wires below the table's length. -/
+/-- **Tabulated levels agree with levels.** Let $t$ be a list of natural numbers of length $N$ and
+let $ps$ be a list of comparators all of whose wires lie in $[0, N)$. Extend $t$ to all wires by
+setting $t_y = 0$ for $y \ge N$. Then for every wire $x$, the entry at position $x$ of the
+tabulated levels of $ps$ starting from the table $t$ (read as $0$ when $x \ge N$) equals the level
+of wire $x$ after $ps$, starting from the initial levels $y \mapsto t_y$. -/
 theorem getD_levelsTab : ∀ (ps : List (ℕ × ℕ)) (t : List ℕ), Within ps 0 t.length →
     ∀ x, (levelsTab ps t).getD x 0 = levels ps (fun y => t.getD y 0) x
   | [], _, _, _ => rfl
@@ -185,12 +217,15 @@ private theorem levels_halfCleaner_aux (m b : ℕ) : ∀ j, j ≤ m → ∀ x,
       simp only [ih]
       split_ifs <;> omega
 
-/-- The half-cleaner has depth at most `1`: its comparators are disjoint. -/
+/-- **The half-cleaner has depth at most $1$.** For all natural numbers $m$ and $b$, the
+half-cleaner on the block of $2m$ wires $b, \dots, b + 2m - 1$ has depth at most $1$: its
+comparators join pairwise disjoint pairs of wires. -/
 theorem depthLE_halfCleaner (m b : ℕ) : DepthLE (halfCleaner m b) 1 := fun x => by
   rw [halfCleaner, levels_halfCleaner_aux m b m (Nat.le_refl m) x]
   split_ifs <;> omega
 
-/-- The bitonic merger on `2 ^ k` wires has depth at most `k`. -/
+/-- **The bitonic merger has depth at most $k$.** For all natural numbers $k$ and $b$, the bitonic
+merger on the block of $2^k$ wires $b, b + 1, \dots, b + 2^k - 1$ has depth at most $k$. -/
 theorem depthLE_bitonicMerge : ∀ k b, DepthLE (bitonicMerge k b) k
   | 0, _ => fun x => by simp [bitonicMerge, levels]
   | k + 1, b => by
@@ -199,8 +234,10 @@ theorem depthLE_bitonicMerge : ∀ k b, DepthLE (bitonicMerge k b) k
       exact (depthLE_bitonicMerge k b).append_disjoint (bitonicMerge_within k b)
         (by have := bitonicMerge_within k (b + 2 ^ k); exact this) (depthLE_bitonicMerge k _)
 
-/-- **The bitonic sorter on `2 ^ k` wires has depth at most `k (k + 1) / 2`**
-(`2 * depth ≤ k (k + 1)`). -/
+/-- **Depth of the bitonic sorter's comparator list.** For all natural numbers $k$ and $b$, the
+comparator list of Batcher's bitonic sorter on the block of $2^k$ wires
+$b, b + 1, \dots, b + 2^k - 1$ has depth at most $d$ for some natural number $d$ with
+$2d \le k(k+1)$; that is, its depth is at most $k(k+1)/2$. -/
 theorem depthLE_bitonicSortN : ∀ k b, ∃ d, DepthLE (bitonicSortN k b) d ∧ 2 * d ≤ k * (k + 1)
   | 0, _ => ⟨0, fun x => by simp [bitonicSortN, levels], le_refl _⟩
   | k + 1, b => by
@@ -222,14 +259,26 @@ theorem depthLE_bitonicSortN : ∀ k b, ∃ d, DepthLE (bitonicSortN k b) d ∧ 
 
 /-! ## Every sorting network on `n` wires has depth at least `log₂ n` -/
 
-/-- The inputs each wire can depend on, tracked through the comparators: a comparator joins the
-input sets of its two wires. A proof device: evaluating it directly re-reads both wires' earlier
-sets at every comparator, a cost exponential in the depth. -/
+/-- **Influence sets of wires.** Given a list $ps$ of comparators on wires indexed by $\mathbb{N}$
+and an assignment $S$ of a finite set of natural numbers to each wire, the influence sets after
+$ps$ are computed by processing the comparators in order: a comparator $(i, j)$ replaces the
+current sets of both wires $i$ and $j$ by their union, and leaves the sets of all other wires
+unchanged. Starting from $S(x) = \{x\}$, the set of a wire tracks the inputs it can depend on.
+
+Evaluating this definition directly re-reads both wires' earlier sets at every comparator, a cost
+exponential in the depth, so it serves as a proof device only. -/
 def influence : List (ℕ × ℕ) → (ℕ → Finset ℕ) → ℕ → Finset ℕ
   | [], S => S
   | c :: ps, S => influence ps fun x => if x = c.1 ∨ x = c.2 then S c.1 ∪ S c.2 else S x
 
-/-- A wire at level `l` depends on at most `2 ^ l` inputs. -/
+/-- **Influence sets grow at most exponentially with the level.** Let $p$ be a list of comparators
+on wires indexed by $\mathbb{N}$. Let $S$ assign to each wire a finite set of natural numbers and
+let $\ell$ assign to each wire a natural number, such that $|S(x)| \le 2^{\ell(x)}$ for every
+wire $x$. For each wire $x$, let $L(x)$ be the level of $x$ after $p$ starting from the levels
+$\ell$. Then for every wire $x$, the influence set of $x$ after $p$ starting from $S$ has at most
+$2^{L(x)}$ elements.
+
+In particular, a wire at level $l$ depends on at most $2^l$ inputs. -/
 theorem card_influence_le : ∀ (ps : List (ℕ × ℕ)) (S : ℕ → Finset ℕ) (lv : ℕ → ℕ),
     (∀ x, (S x).card ≤ 2 ^ lv x) → ∀ x, (influence ps S x).card ≤ 2 ^ levels ps lv x
   | [], _, _, h => h
@@ -246,7 +295,12 @@ theorem card_influence_le : ∀ (ps : List (ℕ × ℕ)) (S : ℕ → Finset ℕ
         omega
       · exact h x
 
-/-- A wire's output depends only on the inputs in its influence set. -/
+/-- **Outputs depend only on the influence set.** Let $f_0, g_0 : \mathbb{N} \to \alpha$ be two
+inputs with values in a linear order $\alpha$, let $S$ assign to each wire $x$ a finite set $S(x)$
+of input positions, and let $F, G : \mathbb{N} \to \alpha$ be wire values such that for every wire
+$x$, if $f_0$ and $g_0$ agree on $S(x)$, then $F(x) = G(x)$. Then for every list of comparators
+and every wire $x$, if $f_0$ and $g_0$ agree on the influence set of $x$ obtained from $S$ through
+the comparators, running the comparators on $F$ and on $G$ gives the same value at wire $x$. -/
 theorem runN_congr_influence {α : Type*} [LinearOrder α] (f₀ g₀ : ℕ → α) :
     ∀ (ps : List (ℕ × ℕ)) (S : ℕ → Finset ℕ) (F G : ℕ → α),
       (∀ x, (∀ y ∈ S x, f₀ y = g₀ y) → F x = G x) →
@@ -269,8 +323,12 @@ theorem runN_congr_influence {α : Type*} [LinearOrder α] (f₀ g₀ : ℕ → 
         simp only [h1, h2, ↓reduceIte]
         exact h x hx
 
-/-- Comparators inside `[0, n)` keep some `false` in `[0, n)`: the smaller value moves to the
-first wire of each comparator. -/
+/-- **Comparators inside $[0, n)$ keep a false value inside $[0, n)$.** Let $n$ be a natural
+number, let $p$ be a list of comparators, each joining two wires in $[0, n)$, and let $f$ assign a
+Boolean value to each wire in $\mathbb{N}$. If $f(y)$ is false for some $y < n$, then after
+running $p$ on $f$ some wire $y < n$ carries the value false.
+
+The smaller value moves to the first wire of each comparator. -/
 theorem exists_false_runN : ∀ {ps : List (ℕ × ℕ)} {n : ℕ}, Within ps 0 n →
     ∀ (f : ℕ → Bool), (∃ y < n, f y = false) → ∃ y < n, runN ps f y = false
   | [], _, _, _, h => h
@@ -287,9 +345,15 @@ theorem exists_false_runN : ∀ {ps : List (ℕ × ℕ)} {n : ℕ}, Within ps 0 
           simp [Bitonic.cmp, hfy]
         · exact ⟨y, hy, by simp [Bitonic.cmp, h1, h2, hfy]⟩
 
-/-- **Every sorting network on `n` wires has depth at least `log₂ n`**: if a network on wires
-`[0, n)` sorts every `0`-`1` input and has depth at most `d`, then `n ≤ 2 ^ d`. The smallest
-output depends on every input, and a wire at level `d` depends on at most `2 ^ d` inputs. -/
+/-- **Sorting comparator lists on $n$ wires have depth at least $\log_2 n$.** Let $ps$ be a list
+of comparators on wires indexed by $\mathbb{N}$, all of whose wires lie in $[0, n)$, and let $d$
+be a natural number. Suppose that for every Boolean input $v$ on the wires $0, \dots, n - 1$,
+extended by $\mathrm{false}$ to the wires $\ge n$, the output $w$ of $ps$ satisfies
+$w_i \le w_j$ whenever $i \le j < n$ (with $\mathrm{false} < \mathrm{true}$). If $ps$ has depth at
+most $d$, then $n \le 2^d$.
+
+The smallest output depends on every input, and a wire at level $d$ depends on at most $2^d$
+inputs. -/
 theorem le_two_pow_of_sorts {ps : List (ℕ × ℕ)} {n d : ℕ} (hw : Within ps 0 n)
     (hsort : ∀ (v : Fin n → Bool) (i j : ℕ), i ≤ j → j < n →
       runN ps (extendFalse v) i ≤ runN ps (extendFalse v) j)
@@ -319,8 +383,9 @@ theorem le_two_pow_of_sorts {ps : List (ℕ × ℕ)} {n d : ℕ} (hw : Within ps
   rw [Finset.card_range] at this
   exact this.trans (hcard.trans (Nat.pow_le_pow_right (by decide) (hd 0)))
 
-/-- The general lower bound for the bitonic sorter's comparator list: every depth bound `d` for
-it has `k ≤ d`. -/
+/-- **The bitonic sorting comparator list on $2^k$ wires has depth at least $k$.** For all natural
+numbers $k$ and $d$, if the comparator list of Batcher's bitonic sorter on the wires
+$0, \dots, 2^k - 1$ has depth at most $d$, then $k \le d$. -/
 theorem le_of_depthLE_bitonicSortN {k d : ℕ} (hd : DepthLE (bitonicSortN k 0) d) : k ≤ d := by
   have h := le_two_pow_of_sorts (bitonicSortN_within_zero k)
     (fun v i j hij hj => by simpa using bitonicSortN_sorts k 0 (extendFalse v) i j hij hj) hd
@@ -336,7 +401,9 @@ open Bitonic
 
 variable {n : ℕ}
 
-/-- The comparators of a network on `n` wires, as pairs of wire numbers. -/
+/-- **Comparator list of a network.** The comparators of a network on $n$ wires, in order, with
+each comparator $(i, j)$ written as the pair of natural numbers $(i, j)$, forgetting that
+$i, j < n$. -/
 def Network.toPairs (net : Network n) : List (ℕ × ℕ) := net.map fun c => (c.1.val, c.2.val)
 
 theorem Network.toPairs_within (net : Network n) : Within (Network.toPairs net) 0 n := by
@@ -363,12 +430,18 @@ theorem Network.toPairs_ofPairs {N : ℕ} : ∀ {ps : List (ℕ × ℕ)}, Within
       simp only [Network.toPairs, ofPairs, List.filterMap_cons, hcN, and_self, ↓reduceDIte,
         List.map_cons, ih]
 
-/-- A network on `n` wires has depth at most `d`. -/
+/-- **Depth bound for a comparator network.** A comparator network on $n$ wires has depth at most
+$d$ when its list of comparators, read as pairs of wire numbers in $\mathbb{N}$, has depth at
+most $d$: starting with every wire at level $0$ and scheduling each comparator one level after the
+later of its two wires, every wire ends at level at most $d$. -/
 def Network.DepthLE (net : Network n) (d : ℕ) : Prop := Bitonic.DepthLE (Network.toPairs net) d
 
-/-- **Every sorting network on `n` wires has depth at least `log₂ n`**: if `net` sorts every
-`0`-`1` input (hence, by the 0-1 principle, every input) and has depth at most `d`, then
-`n ≤ 2 ^ d`. -/
+/-- **Every sorting network on $n$ wires has depth at least $\log_2 n$.** Let $C$ be a comparator
+network on $n$ wires and $d$ a natural number. If $C$ sorts every Boolean input (its output is
+monotone in the wire order for every input in $\{\mathrm{false}, \mathrm{true}\}^n$, with
+$\mathrm{false} < \mathrm{true}$) and $C$ has depth at most $d$, then $n \le 2^d$.
+
+By the 0-1 principle, the hypothesis implies that $C$ sorts every input over every linear order. -/
 theorem Network.le_two_pow_of_sorts {net : Network n} {d : ℕ} (hs : Sorts net Bool)
     (hd : Network.DepthLE net d) : n ≤ 2 ^ d := by
   refine Bitonic.le_two_pow_of_sorts (Network.toPairs_within net) (fun v i j hij hj => ?_) hd
@@ -379,7 +452,9 @@ theorem Network.le_two_pow_of_sorts {net : Network n} {d : ℕ} (hs : Sorts net 
   simp only [extendFalse, hi, hj, ↓reduceDIte]
   exact hs v (show (⟨i, hi⟩ : Fin n) ≤ ⟨j, hj⟩ from hij)
 
-/-- **Batcher's bitonic sorter on `2 ^ k` wires has depth at most `k (k + 1) / 2`**. -/
+/-- **Batcher's bitonic sorting network has depth at most $k(k+1)/2$.** For every natural number
+$k$, Batcher's bitonic sorting network on $2^k$ wires has depth at most $d$ for some natural
+number $d$ with $2d \le k(k+1)$; that is, its depth is at most $k(k+1)/2$. -/
 theorem bitonicSorter_depthLE (k : ℕ) :
     ∃ d, Network.DepthLE (bitonicSorter k) d ∧ 2 * d ≤ k * (k + 1) := by
   obtain ⟨d, hd, hdk⟩ := depthLE_bitonicSortN k 0
@@ -387,7 +462,9 @@ theorem bitonicSorter_depthLE (k : ℕ) :
   rw [Network.DepthLE, bitonicSorter, Network.toPairs_ofPairs (bitonicSortN_within_zero k)]
   exact hd
 
-/-- Every depth bound `d` of the bitonic sorter on `2 ^ k` wires has `k ≤ d`. -/
+/-- **Batcher's bitonic sorter on $2^k$ wires has depth at least $k$.** For all natural numbers
+$k$ and $d$, if Batcher's bitonic sorting network on $2^k$ wires has depth at most $d$, then
+$k \le d$. -/
 theorem le_of_bitonicSorter_depthLE {k d : ℕ} (hd : Network.DepthLE (bitonicSorter k) d) :
     k ≤ d :=
   (Nat.pow_le_pow_iff_right (by decide)).1

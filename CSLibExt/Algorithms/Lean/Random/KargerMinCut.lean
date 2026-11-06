@@ -71,41 +71,61 @@ universe u
 
 variable {V : Type u} [DecidableEq V]
 
-/-- A multigraph: the current (super-)vertices and the edges between them. -/
+/-- **Multigraph state of Karger's algorithm.** A state over a vertex type $V$ consists of a
+list of current (super-)vertices in $V$ and a list of edges, each an ordered pair of elements
+of $V$; repeated pairs are parallel edges. -/
 structure State (V : Type u) where
   /-- The current vertices. -/
   verts : List V
   /-- The edges, with multiplicity. -/
   edges : List (V × V)
 
-/-- Duplicate-free vertices, and every edge joins two distinct vertices of the state. -/
+/-- **Valid multigraph.** A multigraph, given by a list of vertices and a list of edges (pairs of
+vertices, with multiplicity), is valid when its vertex list has no repeated entries and every
+edge joins two distinct vertices of the list. -/
 def State.Valid (st : State V) : Prop :=
   st.verts.Nodup ∧ ∀ e ∈ st.edges, e.1 ∈ st.verts ∧ e.2 ∈ st.verts ∧ e.1 ≠ e.2
 
-/-- The number of edges crossing the cut `X` (one endpoint on each side). -/
+/-- **Size of a cut.** For a list of edges (pairs of vertices, repeated pairs counted with
+multiplicity) and a map $X$ from vertices to booleans, the size of the cut $X$ is the number of
+edges $(u, v)$ in the list with $X(u) \ne X(v)$. -/
 def cutSize (edges : List (V × V)) (X : V → Bool) : ℕ :=
   (edges.filter fun e => X e.1 != X e.2).length
 
-/-- `X` is a cut of the state: a vertex on each side. -/
+/-- **Cuts of a multigraph.** A map $X$ from vertices to booleans is a cut of a multigraph state
+$G$ when some vertex $v$ of $G$ has $X(v) = \mathrm{true}$ and some vertex $w$ of $G$ has
+$X(w) = \mathrm{false}$. -/
 def IsCut (st : State V) (X : V → Bool) : Prop :=
   (∃ v ∈ st.verts, X v = true) ∧ ∃ v ∈ st.verts, X v = false
 
-/-- `k` is the minimum cut size of the state. -/
+/-- **Minimum cut size.** A natural number $k$ is the minimum cut size of a multigraph state $G$
+when some cut of $G$ has size $k$ and every cut of $G$ has size at least $k$. -/
 def IsMinCut (st : State V) (k : ℕ) : Prop :=
   (∃ X, IsCut st X ∧ cutSize st.edges X = k) ∧ ∀ X, IsCut st X → k ≤ cutSize st.edges X
 
-/-- Rename `b` to `a`. -/
+/-- **Renaming a vertex.** For vertices $a$ and $b$, renaming $b$ to $a$ is the map on vertices
+that sends $b$ to $a$ and fixes every other vertex. -/
 def rename (b a v : V) : V := if v = b then a else v
 
-/-- Contract the edge `e`: merge `e.2` into `e.1` and delete the resulting self-loops. -/
+/-- **Edge contraction.** For a multigraph state $G$ and a pair of vertices $e = (a, b)$, the
+contraction of $G$ along $e$ deletes the first occurrence of $b$ from the vertex list, replaces
+$b$ by $a$ in both endpoints of every edge, and then deletes every edge whose two endpoints are
+equal. -/
 def contract (st : State V) (e : V × V) : State V where
   verts := st.verts.erase e.2
   edges := (st.edges.map fun x => (rename e.2 e.1 x.1, rename e.2 e.1 x.2)).filter
     fun x => x.1 ≠ x.2
 
-/-- The probability that the contraction process, contracting a uniformly random edge while
-more than two vertices remain, ends with exactly `k` edges between the last two vertices (fuel:
-the number of contractions allowed). -/
+/-- **Success probability of the contraction process.** For a natural number $k$, a number $f$
+of allowed contractions and a multigraph $G$ with edge list $E_G$, the probability $P_k(f, G)$
+that the contraction process on $G$ returns $k$ is defined by recursion on $f$. If $f = 0$, or
+$G$ has at most two vertices, or $G$ has no edges, then $P_k(f, G)$ is $1$ when $G$ has exactly
+$k$ edges and $0$ otherwise. Otherwise
+$P_k(f, G) = \frac{1}{|E_G|} \sum_{e \in E_G} P_k(f - 1, G/e)$, where $G/e$ is the contraction of
+$G$ along $e$ and the sum runs over the edges with multiplicity.
+
+This models contracting a uniformly random edge while more than two vertices remain and counting
+the edges between the last two vertices. -/
 def successProb (k : ℕ) : ℕ → State V → ℚ
   | 0, st => if st.edges.length = k then 1 else 0
   | fuel + 1, st =>
@@ -114,8 +134,10 @@ def successProb (k : ℕ) : ℕ → State V → ℚ
 
 /-! ## Contraction and cuts -/
 
-/-- Every cut of the contracted multigraph is a cut of the original of the same size: `Y` on the
-contraction counts the same edges as `Y ∘ rename` on the original. -/
+/-- **Cut sizes under contraction.** Let $G$ be a multigraph state, $e = (a, b)$ a pair of
+vertices and $Y$ a map from vertices to booleans, and let $\rho$ send $b$ to $a$ and fix every
+other vertex. The size of the cut $Y$ in the contraction of $G$ along $e$ equals the size of the
+cut $Y \circ \rho$ in $G$. -/
 theorem cutSize_contract (st : State V) (e : V × V) (Y : V → Bool) :
     cutSize (contract st e).edges Y = cutSize st.edges fun v => Y (rename e.2 e.1 v) := by
   simp only [cutSize, contract, List.filter_filter]
@@ -163,7 +185,9 @@ private theorem isCut_contract {st : State V} (hv : st.Valid) {e : V × V} (he :
   obtain ⟨⟨v, hv1, hv2⟩, ⟨w, hw1, hw2⟩⟩ := hX
   exact ⟨hmem true v hv1 hv2, hmem false w hw1 hw2⟩
 
-/-- Contracting an edge that does not cross a minimum cut keeps the minimum cut size. -/
+/-- **Contraction preserves the minimum cut size.** Let $G$ be a valid multigraph state with
+minimum cut size $k$, and let $X$ be a cut of $G$ of size $k$. If $e = (a, b)$ is an edge of $G$
+with $X(a) = X(b)$, then the contraction of $G$ along $e$ also has minimum cut size $k$. -/
 theorem isMinCut_contract {st : State V} (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     {X : V → Bool} (hX : IsCut st X) (hk : cutSize st.edges X = k) {e : V × V}
     (he : e ∈ st.edges) (hsame : X e.1 = X e.2) : IsMinCut (contract st e) k := by
@@ -172,7 +196,9 @@ theorem isMinCut_contract {st : State V} (hv : st.Valid) {k : ℕ} (hmin : IsMin
   rw [cutSize_contract]
   exact hmin.2 _ (isCut_lift hv hY)
 
-/-- Contraction keeps the state valid and removes one vertex. -/
+/-- **Contraction preserves validity and removes one vertex.** If a multigraph $G$ is valid and
+$e$ is one of its edges, then the contraction of $G$ along $e$ is valid and has exactly one
+vertex fewer than $G$. -/
 theorem valid_contract {st : State V} (hv : st.Valid) {e : V × V} (he : e ∈ st.edges) :
     (contract st e).Valid ∧ (contract st e).verts.length = st.verts.length - 1 := by
   obtain ⟨ha, hb, hab⟩ := hv.2 e he
@@ -232,7 +258,8 @@ private theorem sum_degree_aux (verts : List V) (hnd : verts.Nodup) : ∀ E : Li
         sum_indicator hnd h1, sum_indicator hnd h2, List.length_cons]
       omega
 
-/-- Handshake lemma: the singleton cuts count every edge twice. -/
+/-- **Handshake lemma.** For a valid multigraph $G$, the sum over the vertices $v$ of $G$ of the
+number of edges crossing the singleton cut $\{v\}$ equals twice the number of edges of $G$. -/
 theorem sum_degree (st : State V) (hv : st.Valid) :
     (st.verts.map fun v => cutSize st.edges fun x => decide (x = v)).sum =
       2 * st.edges.length :=
@@ -249,7 +276,9 @@ private theorem length_mul_le_sum (k : ℕ) (f : V → ℕ) : ∀ l : List V, (�
       nlinarith
 
 omit [DecidableEq V] in
-/-- Every vertex has degree at least the minimum cut size, so `n k ≤ 2 |E|`. -/
+/-- **Minimum cut size bounds the number of edges.** Let $G$ be a valid multigraph state with
+$n \ge 2$ vertices, $m$ edges (counted with multiplicity) and minimum cut size $k$. Then
+$n k \le 2m$: every vertex has degree at least $k$, since its singleton is a cut. -/
 theorem card_mul_le_two_mul_edges {st : State V} (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) : st.verts.length * k ≤ 2 * st.edges.length := by
   classical
@@ -269,6 +298,9 @@ theorem card_mul_le_two_mul_edges {st : State V} (hv : st.Valid) {k : ℕ} (hmin
 
 /-! ## The success probability -/
 
+/-- **The success probability is nonnegative.** For every natural number $k$, every number $f$
+of allowed contractions and every multigraph state $G$, the probability $P_k(f, G)$ that the
+contraction process on $G$ returns $k$ satisfies $0 \le P_k(f, G)$. -/
 theorem successProb_nonneg (k : ℕ) : ∀ (fuel : ℕ) (st : State V), 0 ≤ successProb k fuel st
   | 0, st => by
       unfold successProb
@@ -282,7 +314,9 @@ theorem successProb_nonneg (k : ℕ) : ∀ (fuel : ℕ) (st : State V), 0 ≤ su
         obtain ⟨e, -, rfl⟩ := List.mem_map.1 hx
         exact successProb_nonneg k fuel _
 
-/-- `successProb` is a probability: it is at most `1`. -/
+/-- **The success probability is at most one.** For every natural number $k$, every number of
+allowed contractions and every multigraph $G$, the probability that the contraction process on
+$G$ returns $k$ is at most $1$. -/
 theorem successProb_le_one (k : ℕ) : ∀ (fuel : ℕ) (st : State V), successProb k fuel st ≤ 1
   | 0, st => by
       unfold successProb
@@ -412,8 +446,9 @@ private theorem successProb_ge_aux (k : ℕ) : ∀ (fuel : ℕ) (st : State V), 
         rw [div_mul_eq_mul_div, mul_div_assoc', div_le_div_iff₀ (by positivity) (by positivity)]
         nlinarith [mul_pos hN0 h1, mul_pos h1 h2]
 
-/-- Karger's bound: on a valid multigraph with `n ≥ 2` vertices and minimum cut size `k`, the
-contraction process returns `k` with probability at least `2 / (n (n - 1))`. -/
+/-- **Karger's bound.** Let $G$ be a valid multigraph with $n \ge 2$ vertices and minimum cut
+size $k$. Then the contraction process on $G$, with $n$ contractions allowed, returns $k$ with
+probability at least $2 / (n(n-1))$. -/
 theorem successProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) :
     2 / ((st.verts.length : ℚ) * (st.verts.length - 1)) ≤
@@ -422,7 +457,10 @@ theorem successProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut
 
 /-! ## Amplification -/
 
-/-- The probability that at least one of `t` independent runs returns `k`. -/
+/-- **Success probability of repeated runs.** For a multigraph $G$ with $n$ vertices and
+natural numbers $k$ and $t$, let $p$ be the probability that one run of the contraction process
+on $G$, with $n$ contractions allowed, returns $k$. The repeated success probability is
+$1 - (1 - p)^t$, the probability that at least one of $t$ independent runs returns $k$. -/
 def repeatSuccessProb (k t : ℕ) (st : State V) : ℚ :=
   1 - (1 - successProb k st.verts.length st) ^ t
 
@@ -473,8 +511,10 @@ private theorem fail_pow_le_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin 
   have hqN : q ^ N ≤ (1 - 1 / (N : ℚ)) ^ N := pow_le_pow_left₀ hq0 hq1 N
   exact ⟨N, hNeq, hq0, by linarith, hqN.trans (one_sub_inv_pow_le_half hN)⟩
 
-/-- Repeating the algorithm `n (n - 1) / 2` times (or more) and keeping the best answer finds the
-minimum cut size with probability at least `1 / 2`. -/
+/-- **Repeating Karger's algorithm succeeds with probability at least one half.** Let $G$ be a
+valid multigraph state with $n \ge 2$ vertices and minimum cut size $k$, and let $t$ be a natural
+number with $n(n-1) \le 2t$. Then the probability that at least one of $t$ independent runs of
+the contraction process returns $k$ is at least $1/2$. -/
 theorem repeatSuccessProb_ge_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) {t : ℕ} (ht : st.verts.length * (st.verts.length - 1) ≤ 2 * t) :
     1 / 2 ≤ repeatSuccessProb k t st := by
@@ -483,8 +523,10 @@ theorem repeatSuccessProb_ge_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin
   unfold repeatSuccessProb
   linarith
 
-/-- **Amplification with high probability.** Repeating the algorithm `c · n (n - 1) / 2` times (or
-more) finds the minimum cut size with probability at least `1 - (1/2)^c`. -/
+/-- **Amplification with high probability.** Let $G$ be a valid multigraph with $n \ge 2$
+vertices and minimum cut size $k$, and let $c$ and $t$ be natural numbers with
+$c \cdot n(n-1) \le 2t$. Then the probability that at least one of $t$ independent runs of the
+contraction process on $G$ returns $k$ is at least $1 - (1/2)^c$. -/
 theorem repeatSuccessProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) {c t : ℕ}
     (ht : c * (st.verts.length * (st.verts.length - 1)) ≤ 2 * t) :
@@ -499,9 +541,12 @@ theorem repeatSuccessProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : Is
   unfold repeatSuccessProb
   linarith
 
-/-- With `⌈log₂ n⌉ · n (n - 1) / 2` runs (or more), the minimum cut size is found with probability
-at least `1 - 1 / n` (Karger's algorithm succeeds with high probability after `O(n² log n)`
-runs). -/
+/-- **Karger's algorithm succeeds with high probability.** Let $G$ be a valid multigraph with
+$n \ge 2$ vertices and minimum cut size $k$, and let $t$ be a natural number with
+$\lceil \log_2 n \rceil \cdot n(n-1) \le 2t$. Then the probability that at least one of $t$
+independent runs of the contraction process on $G$ returns $k$ is at least $1 - 1/n$.
+
+Thus $O(n^2 \log n)$ runs find the minimum cut size with high probability. -/
 theorem repeatSuccessProb_ge_one_sub_inv (st : State V) (hv : st.Valid) {k : ℕ}
     (hmin : IsMinCut st k) (hn : 2 ≤ st.verts.length) {t : ℕ}
     (ht : Nat.clog 2 st.verts.length * (st.verts.length * (st.verts.length - 1)) ≤ 2 * t) :
@@ -520,8 +565,17 @@ theorem repeatSuccessProb_ge_one_sub_inv (st : State V) (hv : st.Valid) {k : ℕ
 instance (st : State V) (X : V → Bool) : Decidable (IsCut st X) := by
   unfold IsCut; infer_instance
 
-/-- The probability that the contraction process never contracts an edge crossing `X` and ends
-with two vertices that `X` separates: the run "outputs" the cut `X`. -/
+/-- **Probability that a run outputs a given cut.** For a map $X$ from vertices to booleans, a
+fuel bound $f$ and a multigraph $G$, this is the probability that the contraction process on $G$
+(contract an edge chosen uniformly at random, counted with multiplicity, while more than two
+vertices and at least one edge remain, making at most $f$ contractions) never contracts an edge
+whose endpoints $X$ separates and ends with exactly two vertices on which $X$ takes both values.
+
+Explicitly: if $f = 0$, or $G$ has at most two vertices, or $G$ has no edges, the value is $1$
+when $G$ has exactly two vertices and $X$ is a cut of $G$, and $0$ otherwise. Otherwise it is the
+average over the edges $e$ of $G$, counted with multiplicity, of the value for fuel $f - 1$ on
+the contraction of $G$ along $e$ when $X$ agrees on the two endpoints of $e$, and of $0$ when it
+does not. -/
 def surviveProb (X : V → Bool) : ℕ → State V → ℚ
   | 0, st => if st.verts.length = 2 ∧ IsCut st X then 1 else 0
   | fuel + 1, st =>
@@ -532,8 +586,9 @@ def surviveProb (X : V → Bool) : ℕ → State V → ℚ
             if X e.1 = X e.2 then surviveProb X fuel (contract st e) else 0).sum /
           st.edges.length
 
-/-- Two cuts that are distinct as partitions of `S`: they differ somewhere and agree somewhere on
-`S`, so neither is the other or its complement. -/
+/-- **Cuts distinct as partitions.** Two maps $X, Y$ from vertices to booleans are distinct on a
+list of vertices $S$ when some $v \in S$ has $X(v) \ne Y(v)$ and some $w \in S$ has
+$X(w) = Y(w)$; so on $S$ neither cut is the other or its complement. -/
 def DistinctOn (S : List V) (X Y : V → Bool) : Prop :=
   (∃ v ∈ S, X v ≠ Y v) ∧ ∃ v ∈ S, X v = Y v
 
@@ -623,8 +678,10 @@ private theorem surviveProb_ge_aux (X : V → Bool) (k : ℕ) (hk1 : 1 ≤ k) :
         rw [div_mul_eq_mul_div, mul_div_assoc', div_le_div_iff₀ (by positivity) (by positivity)]
         nlinarith [mul_pos hN0 h1, mul_pos h1 h2]
 
-/-- **Each minimum cut survives with probability at least `2 / (n (n - 1))`** (on a connected
-multigraph, minimum cut size `k ≥ 1`): the run outputs that particular cut. -/
+/-- **Each minimum cut survives with probability at least $2/(n(n-1))$.** Let $G$ be a valid
+multigraph with $n \ge 2$ vertices whose minimum cut size $k$ is at least $1$, and let $X$ be a
+cut of $G$ with exactly $k$ crossing edges. Then the probability that the contraction process on
+$G$, allowed up to $n$ contractions, outputs the cut $X$ is at least $2/(n(n-1))$. -/
 theorem surviveProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hk1 : 1 ≤ k) {X : V → Bool} (hX : IsCut st X) (hk : cutSize st.edges X = k)
     (hn : 2 ≤ st.verts.length) :
@@ -663,8 +720,13 @@ private theorem sum_comm_div {α β : Type*} (h : α → β → ℚ) (m : ℚ) :
   | X :: F, E => by
       simp only [List.map_cons, List.sum_cons, sum_comm_div h m F E, List.sum_map_add, add_div]
 
-/-- **The survival events of distinct cuts are disjoint**: a run outputs at most one partition, so
-the survival probabilities of pairwise distinct cuts add up to at most `1`. -/
+/-- **Survival probabilities of distinct cuts sum to at most one.** Let $G$ be a valid multigraph
+with vertex list $S$, let $f$ be a number of allowed contractions, and let $X_1, \dots, X_m$ be
+Boolean functions on the vertex type that are pairwise distinct as partitions of $S$. Then the
+probabilities that the contraction process on $G$, with $f$ contractions allowed, outputs
+$X_1, \dots, X_m$ add up to at most $1$.
+
+The survival events are disjoint: a run outputs at most one partition. -/
 theorem sum_surviveProb_le_one : ∀ (fuel : ℕ) (st : State V) (F : List (V → Bool)),
     st.Valid → F.Pairwise (DistinctOn st.verts) →
       (F.map fun X => surviveProb X fuel st).sum ≤ 1 := by
@@ -727,11 +789,13 @@ theorem sum_surviveProb_le_one : ∀ (fuel : ℕ) (st : State V) (F : List (V �
           _ = st.edges.length := by simp
 
 omit [DecidableEq V] in
-/-- **At most `n (n - 1) / 2` minimum cuts** (Karger; Kleinberg and Tardos, Section 13.2): on a
-valid multigraph with `n ≥ 2` vertices and minimum cut size `k ≥ 1`, any list of minimum cuts that
-are pairwise distinct as partitions has at most `n (n - 1) / 2` entries. Each one is the output of
-a run with probability at least `2 / (n (n - 1))`, and the runs that output distinct partitions
-are disjoint. -/
+/-- **At most $n(n-1)/2$ minimum cuts** (Karger; Kleinberg and Tardos, Section 13.2). Let $G$ be a
+valid multigraph with $n \ge 2$ vertices whose minimum cut size $k$ is at least $1$. If
+$X_1, \dots, X_m$ are cuts of $G$, each with exactly $k$ crossing edges, that are pairwise
+distinct as partitions of the vertices of $G$, then $2m \le n(n-1)$, that is, $m \le n(n-1)/2$.
+
+Each of these cuts is output by a run of the contraction process with probability at least
+$2/(n(n-1))$, and the runs that output distinct partitions are disjoint. -/
 theorem two_mul_length_minCuts_le (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hk1 : 1 ≤ k) (hn : 2 ≤ st.verts.length) (F : List (V → Bool))
     (hF : ∀ X ∈ F, IsCut st X ∧ cutSize st.edges X = k) (hd : F.Pairwise (DistinctOn st.verts)) :

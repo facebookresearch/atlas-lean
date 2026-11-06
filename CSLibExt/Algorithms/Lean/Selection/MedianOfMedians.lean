@@ -36,7 +36,19 @@ universe u
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- Select using recursive group-median pivots and a bounded quickselect base case. -/
+/-- **Median-of-medians selection.** Given a list $L$ over a linear order and a zero-based rank
+$k$, median-of-medians selection returns either an element of $L$ or nothing, charging one unit
+of cost per order comparison. If $k \ge |L|$, where $|L|$ is the length of $L$, it returns
+nothing at no cost. Otherwise it runs the following recursive procedure on $(L, k)$ with a budget
+of $|L|$ nested calls, returning nothing if the budget runs out. A list of length at most $140$
+is handled by deterministic quickselect at the current rank. A longer list is cut into
+consecutive groups of five entries, the last possibly shorter; each group is sorted by insertion
+sort and its lower median is kept, giving a list $M$ of $m$ medians. The procedure recursively
+selects the entry of $M$ at rank $\lfloor m/2 \rfloor$ as the pivot $x$ (returning nothing if
+that call does), and splits the list by a three-way partition into the entries below $x$, equal
+to $x$ and above $x$, with $b$ entries below and $e$ equal. If the current rank $r$ satisfies
+$r < b$ it recurses on the lower part with rank $r$; if $b \le r < b + e$ it returns $x$;
+otherwise it recurses on the upper part with rank $r - b - e$. -/
 def medianOfMedians {α : Type u} [LinearOrder α] (xs : List α) (k : Nat) :
     TimeM Nat (Option α) :=
   let rec loop : Nat → List α → Nat → TimeM Nat (Option α)
@@ -57,7 +69,10 @@ def medianOfMedians {α : Type u} [LinearOrder α] (xs : List α) (k : Nat) :
                 loop fuel parts.above (rank - (parts.below.length + parts.equal.length))
   if k < xs.length then loop xs.length xs k else pure none
 
-/-- Inputs in the fixed base range use the canonical timed quickselect exactly. -/
+/-- **Median-of-medians selection is quickselect on short lists.** For every list $L$ of length
+at most $140$ over a linearly ordered type and every natural number $k$, median-of-medians
+selection of rank $k$ in $L$ coincides with timed quickselect of rank $k$ in $L$: both return
+the same result and are charged the same number of comparisons. -/
 theorem medianOfMedians_eq_quickselect_of_length_le {α : Type u} [LinearOrder α]
     (xs : List α) (k : Nat) (hlen : xs.length ≤ 140) :
     medianOfMedians xs k = quickselect xs k := by
@@ -69,13 +84,17 @@ theorem medianOfMedians_eq_quickselect_of_length_le {α : Type u} [LinearOrder �
       · simp [medianOfMedians, medianOfMedians.loop, hk, hlen']
       · simp [medianOfMedians, quickselect, hk]
 
-/-- An out-of-range rank returns immediately with zero comparison charges. -/
+/-- **Out-of-range ranks cost no comparisons.** For every list $L$ over a linearly ordered type
+and every natural number $k$ at least the length of $L$, median-of-medians selection of rank $k$
+in $L$ returns nothing and is charged zero comparisons. -/
 theorem medianOfMedians_eq_pure_none_of_length_le_rank {α : Type u} [LinearOrder α]
     (xs : List α) (k : Nat) (hk : xs.length ≤ k) :
     medianOfMedians xs k = pure none := by
   simp [medianOfMedians, Nat.not_lt.mpr hk]
 
-/-- The fixed base range fits the final eighty-comparisons-per-occurrence budget. -/
+/-- **Comparison bound for median-of-medians selection on short lists.** For every list $L$ of
+length $n \le 140$ over a linearly ordered type and every natural number $k$, median-of-medians
+selection of rank $k$ in $L$ is charged at most $80n$ comparisons. -/
 theorem medianOfMedians_base_time {α : Type u} [LinearOrder α]
     (xs : List α) (k : Nat) (hlen : xs.length ≤ 140) :
     (medianOfMedians xs k).time ≤ 80 * xs.length := by
@@ -85,7 +104,11 @@ theorem medianOfMedians_base_time {α : Type u} [LinearOrder α]
   have hmul := Nat.mul_le_mul_left xs.length hsub
   omega
 
-/-- Successful base-case selection satisfies the duplicate-safe rank specification. -/
+/-- **Correctness of median-of-medians selection on short lists.** Let $L$ be a list of length
+at most $140$ over a linearly ordered type and let $k$ be a natural number. If median-of-medians
+selection of rank $k$ in $L$ returns an element $x$, then $x$ occurs in $L$, the number of entries
+of $L$ less than $x$, counted with multiplicity, is at most $k$, and $k$ is less than the number
+of entries of $L$ that are at most $x$. -/
 theorem medianOfMedians_base_correct {α : Type u} [LinearOrder α]
     {xs : List α} {k : Nat} {x : α} (hlen : xs.length ≤ 140)
     (hresult : (medianOfMedians xs k).ret = some x) :
@@ -200,7 +223,11 @@ private theorem medianOfMedians_loop_correct {α : Type u} [LinearOrder α] (fue
       intro xs k x hresult
       exact medianOfMedians_loop_correct_step fuel ih xs k x hresult
 
-/-- Every successful return satisfies the rank specification, including duplicates. -/
+/-- **Correctness of median-of-medians selection.** Let $L$ be a list over a linearly ordered type
+and let $k$ be a natural number. If median-of-medians selection of rank $k$ in $L$ returns an
+element $x$, then $x$ occurs in $L$, the number of entries of $L$ less than $x$, counted with
+multiplicity, is at most $k$, and $k$ is less than the number of entries of $L$ that are at
+most $x$. -/
 theorem medianOfMedians_correct {α : Type u} [LinearOrder α]
     {xs : List α} {k : Nat} {x : α} (hresult : (medianOfMedians xs k).ret = some x) :
     x ∈ xs ∧ xs.countP (fun y => decide (y < x)) ≤ k ∧
@@ -288,14 +315,18 @@ private theorem medianOfMedians_loop_exists {α : Type u} [LinearOrder α] (fuel
       intro xs k hsize hk
       exact medianOfMedians_loop_exists_step fuel ih xs k hsize hk
 
-/-- A valid rank always returns an input value; the internal fuel cannot run out. -/
+/-- **Median-of-medians selection succeeds on valid ranks.** For every list $L$ over a linearly
+ordered type and every natural number $k$ less than the length of $L$, median-of-medians
+selection of rank $k$ in $L$ returns some element. -/
 theorem medianOfMedians_exists {α : Type u} [LinearOrder α]
     (xs : List α) (k : Nat) (hk : k < xs.length) :
     ∃ x, (medianOfMedians xs k).ret = some x := by
   have h := medianOfMedians_loop_exists xs.length xs k (Nat.le_refl _) hk
   simpa only [medianOfMedians, ite_eq_left hk] using h
 
-/-- Failure occurs exactly for an out-of-range rank, including the empty input. -/
+/-- **Median-of-medians selection fails exactly on out-of-range ranks.** For every list $L$ over
+a linearly ordered type and every natural number $k$, median-of-medians selection of rank $k$ in
+$L$ returns nothing if and only if $k$ is at least the length of $L$. -/
 theorem medianOfMedians_eq_none_iff {α : Type u} [LinearOrder α] (xs : List α) (k : Nat) :
     (medianOfMedians xs k).ret = none ↔ xs.length ≤ k := by
   constructor
@@ -309,7 +340,10 @@ theorem medianOfMedians_eq_none_iff {α : Type u} [LinearOrder α] (xs : List α
     rw [medianOfMedians_eq_pure_none_of_length_le_rank xs k hk]
     rfl
 
-/-- The selector returns exactly the requested entry of the canonical sorted permutation. -/
+/-- **Median-of-medians selection agrees with sorting.** For every list $L$ over a linearly
+ordered type and every natural number $k$, median-of-medians selection of rank $k$ in $L$ returns
+the entry at zero-based position $k$ of the insertion sort of $L$ by $\le$ when $k$ is less than
+the length of $L$, and returns nothing otherwise. -/
 theorem medianOfMedians_eq_getElem?_insertionSort {α : Type u} [LinearOrder α]
     (xs : List α) (k : Nat) :
     (medianOfMedians xs k).ret = (xs.insertionSort (· ≤ ·))[k]? := by
@@ -323,7 +357,9 @@ theorem medianOfMedians_eq_getElem?_insertionSort {α : Type u} [LinearOrder α]
       rw [← quickselect_eq_getElem?_insertionSort]
       exact (quickselect_eq_some_of_count_rank hlt hle).symm
 
-/-- On distinct input the returned value has the source's one-based set rank. -/
+/-- **Set rank of a median-of-medians result.** Let $L$ be a list without repeated entries over a
+linear order and let $k \in \mathbb{N}$. If median-of-medians selection on $L$ at zero-based rank
+$k$ returns an element $x$, then the set $\{y \in L : y \le x\}$ has exactly $k + 1$ elements. -/
 theorem medianOfMedians_set_rank {α : Type u} [LinearOrder α]
     {xs : List α} {k : Nat} {x : α} (hnodup : xs.Nodup)
     (hresult : (medianOfMedians xs k).ret = some x) :
@@ -337,7 +373,9 @@ theorem medianOfMedians_set_rank {α : Type u} [LinearOrder α]
   rw [hnodup.card_eq_countP, partition3_count_le, hequal]
   omega
 
-/-- Translating a positive source rank `i` to index `i - 1` recovers set rank `i`. -/
+/-- **One-based rank of a median-of-medians result.** Let $L$ be a list without repeated entries
+over a linear order and let $i \ge 1$. If median-of-medians selection on $L$ at zero-based rank
+$i - 1$ returns an element $x$, then the set $\{y \in L : y \le x\}$ has exactly $i$ elements. -/
 theorem medianOfMedians_source_rank {α : Type u} [LinearOrder α]
     {xs : List α} (i : Nat) (hi : 0 < i) (hnodup : xs.Nodup) {x : α}
     (hresult : (medianOfMedians xs (i - 1)).ret = some x) :
@@ -345,7 +383,10 @@ theorem medianOfMedians_source_rank {α : Type u} [LinearOrder α]
   have hrank := medianOfMedians_set_rank hnodup hresult
   omega
 
-/-- Every valid one-based rank on distinct input returns a member with that set rank. -/
+/-- **Median of medians selects every one-based rank.** Let $L$ be a list without repeated
+entries over a linear order, of length $n$, and let $1 \le i \le n$. Then median-of-medians
+selection on $L$ at zero-based rank $i - 1$ returns an element $x$ of $L$, and the set
+$\{y \in L : y \le x\}$ has exactly $i$ elements. -/
 theorem medianOfMedians_source_exists {α : Type u} [LinearOrder α]
     (xs : List α) (i : Nat) (hi : 0 < i) (hlen : i ≤ xs.length) (hnodup : xs.Nodup) :
     ∃ x, (medianOfMedians xs (i - 1)).ret = some x ∧ x ∈ xs ∧
@@ -353,7 +394,11 @@ theorem medianOfMedians_source_exists {α : Type u} [LinearOrder α]
   obtain ⟨x, hx⟩ := medianOfMedians_exists xs (i - 1) (by omega)
   exact ⟨x, hx, (medianOfMedians_correct hx).1, medianOfMedians_source_rank i hi hnodup hx⟩
 
-/-- The lower median uses rank `(length - 1) / 2`, including even input lengths. -/
+/-- **Median of medians finds the lower median.** Let $L$ be a nonempty list of length $n$ over a
+linear order, and let $k = \lfloor (n - 1)/2 \rfloor$. Then median-of-medians selection on $L$ at
+zero-based rank $k$ returns an element $x$ of $L$ such that at most $k$ entries of $L$ are less
+than $x$ and more than $k$ entries of $L$ are at most $x$, where entries are counted with
+repetition. -/
 theorem medianOfMedians_lower_median {α : Type u} [LinearOrder α]
     (xs : List α) (hnonempty : 0 < xs.length) :
     ∃ x, (medianOfMedians xs ((xs.length - 1) / 2)).ret = some x ∧
@@ -362,7 +407,11 @@ theorem medianOfMedians_lower_median {α : Type u} [LinearOrder α]
   obtain ⟨x, hx⟩ := medianOfMedians_exists xs ((xs.length - 1) / 2) (by omega)
   exact ⟨x, hx, medianOfMedians_correct hx⟩
 
-/-- The upper median uses rank `length / 2`, including even input lengths. -/
+/-- **Median of medians finds the upper median.** Let $L$ be a nonempty list of length $n$ over a
+linear order, and let $k = \lfloor n/2 \rfloor$. Then median-of-medians selection on $L$ at
+zero-based rank $k$ returns an element $x$ of $L$ such that at most $k$ entries of $L$ are less
+than $x$ and more than $k$ entries of $L$ are at most $x$, where entries are counted with
+repetition. -/
 theorem medianOfMedians_upper_median {α : Type u} [LinearOrder α]
     (xs : List α) (hnonempty : 0 < xs.length) :
     ∃ x, (medianOfMedians xs (xs.length / 2)).ret = some x ∧
@@ -446,13 +495,18 @@ private theorem medianOfMedians_branch_time {α : Type u} [LinearOrder α] (fuel
     · refine ⟨(partition3 pivot xs).ret.above.length, hbound.2, ?_⟩
       simpa only [ite_eq_right hbelow, ite_eq_right hequal] using hrec _ _
 
-/-- The two BFPRT child sizes leave enough budget for linear local work. -/
+/-- **Size budget for the two median-of-medians recursive calls.** Let $n$, $m$ and $p$ be natural
+numbers with $n \ge 140$, $m \le \lfloor (n + 4)/5 \rfloor$ and
+$p \le \lfloor 7n/10 \rfloor + 6$. Then $20m + 20p + n \le 20n$. -/
 theorem medianOfMedians_child_size_budget (n m p : Nat) (hn : 140 ≤ n)
     (hm : m ≤ (n + 4) / 5) (hp : p ≤ 7 * n / 10 + 6) :
     20 * m + 20 * p + n ≤ 20 * n := by
   omega
 
-/-- The child bounds and linear local work fit the same comparison-cost budget. -/
+/-- **Cost budget for one median-of-medians step.** Let $n$, $m$, $p$, $a$, $c_1$ and $c_2$ be
+natural numbers with $n \ge 140$, $m \le \lfloor (n + 4)/5 \rfloor$,
+$p \le \lfloor 7n/10 \rfloor + 6$, $c_1 \le 20am$ and $c_2 \le 20ap$. Then
+$c_1 + c_2 + an \le 20an$. -/
 theorem medianOfMedians_combine_time (n m p a leftCost rightCost : Nat)
     (hn : 140 ≤ n) (hm : m ≤ (n + 4) / 5) (hp : p ≤ 7 * n / 10 + 6)
     (hleft : leftCost ≤ 20 * a * m) (hright : rightCost ≤ 20 * a * p) :
@@ -513,14 +567,22 @@ private theorem medianOfMedians_loop_time {α : Type u} [LinearOrder α] (fuel :
   | zero => intro xs k; simp [medianOfMedians.loop]
   | succ fuel ih => intro xs k; exact medianOfMedians_loop_time_step fuel ih xs k
 
-/-- Actual comparison charges are at most eighty per input occurrence, including duplicates. -/
+/-- **Median of medians makes linearly many comparisons.** For every list $L$ of length $n$ over
+a linear order and every $k \in \mathbb{N}$, median-of-medians selection on $L$ at rank $k$
+charges at most $80n$ comparisons, where $n$ counts repeated entries.
+
+Only order comparisons are charged; list construction, rank checks and recursion are free. -/
 theorem medianOfMedians_time {α : Type u} [LinearOrder α] (xs : List α) (k : Nat) :
     (medianOfMedians xs k).time ≤ 80 * xs.length := by
   by_cases hk : k < xs.length
   · simpa only [medianOfMedians, ite_eq_left hk] using medianOfMedians_loop_time xs.length xs k
   · simp [medianOfMedians, hk]
 
-/-- Strong induction bounds a function with the BFPRT recursive child sizes. -/
+/-- **Linear solution of the median-of-medians recurrence.** Let $T : \mathbb{N} \to \mathbb{N}$
+and $a \in \mathbb{N}$. Suppose that $T(n) \le 20an$ for every $n \le 140$, and that for every
+$n > 140$ there are $m, p \in \mathbb{N}$ with $m \le \lfloor (n + 4)/5 \rfloor$,
+$p \le \lfloor 7n/10 \rfloor + 6$ and $T(n) \le T(m) + T(p) + an$. Then $T(n) \le 20an$ for
+every $n \in \mathbb{N}$. -/
 theorem medianOfMedians_linear_recurrence (T : Nat → Nat) (a : Nat)
     (hbase : ∀ n, n ≤ 140 → T n ≤ 20 * a * n)
     (hstep : ∀ n, 140 < n → ∃ m p,

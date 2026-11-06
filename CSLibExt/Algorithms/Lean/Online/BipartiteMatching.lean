@@ -50,16 +50,29 @@ open Cslib.Algorithms.Lean.BipartiteMatching
 
 variable {a b : ℕ} (adj : Fin a → List (Fin b))
 
-/-- On the arrival of right vertex `j`, match it to the first free left neighbour, if any. -/
+/-- **Greedy step of online bipartite matching.** Consider a bipartite graph with left vertices
+$0, \dots, a-1$ and right vertices $0, \dots, b-1$, and an assignment $m$ giving each right
+vertex either a left partner or none. On the arrival of a right vertex $j$, the greedy step
+returns the assignment that agrees with $m$ at every right vertex other than $j$, and gives $j$
+the smallest left neighbour of $j$ that is free in $m$ (the partner of no right vertex), or no
+partner if $j$ has no free neighbour. -/
 def step (mate : Fin b → Option (Fin a)) (j : Fin b) : Fin b → Option (Fin a) :=
   Function.update mate j
     ((List.finRange a).find? fun i => decide (j ∈ adj i) && decide (Free mate i))
 
-/-- The greedy online matching (specification): right vertices arrive in the order `js`. -/
+/-- **Greedy online bipartite matching.** Consider a bipartite graph with left vertices
+$0, \dots, a-1$ and right vertices $0, \dots, b-1$, an assignment $m$ giving each right vertex
+either a left partner or none, and a list $j_1, \dots, j_n$ of right vertices, the arrivals in
+order. The greedy matching from $m$ on these arrivals is the assignment obtained from $m$ by
+applying the greedy step of online bipartite matching for the arrival of $j_1$, then of $j_2$,
+and so on up to $j_n$; if the list is empty, it is $m$. -/
 def greedy (js : List (Fin b)) (mate : Fin b → Option (Fin a)) : Fin b → Option (Fin a) :=
   js.foldl (step adj) mate
 
-/-- Every left vertex matched before a step stays matched with the same partner. -/
+/-- **Earlier partners survive an arrival.** Let $m$ be an assignment giving each right vertex of
+a bipartite graph either a left partner or none, and let $j$ be a right vertex with no partner
+in $m$. If a right vertex $j'$ has partner $i$ in $m$, then $j'$ still has partner $i$ after
+the greedy step for the arrival of $j$. -/
 theorem step_extends {mate : Fin b → Option (Fin a)} {j : Fin b} (hj : mate j = none)
     {j' : Fin b} {i : Fin a} (h : mate j' = some i) : step adj mate j j' = some i := by
   have : j' ≠ j := fun e => by rw [e, hj] at h; cases h
@@ -99,7 +112,9 @@ theorem step_valid {mate : Fin b → Option (Fin a)} (hv : Valid adj mate) {j : 
         · cases h₂; exact absurd h₁ (hi₀.2 j₁)
         · exact hv.inj i j₁ j₂ h₁ h₂
 
-/-- Right vertices of `S` are *done*: each is matched, or all its neighbours are matched. -/
+/-- **Done right vertices.** Given a partner array, which assigns to each right vertex its partner
+on the left if it has one, the right vertices of a list $S$ are done when, for every right vertex
+$j$ of $S$ and every left vertex $i$ adjacent to $j$, $j$ is matched or $i$ is matched. -/
 def Done (mate : Fin b → Option (Fin a)) (S : List (Fin b)) : Prop :=
   ∀ j ∈ S, ∀ i, j ∈ adj i → mate j ≠ none ∨ ¬ Free mate i
 
@@ -123,7 +138,10 @@ theorem step_done {mate : Fin b → Option (Fin a)} {S : List (Fin b)} (hd : Don
     · right
       exact fun hfree => h (free_of_free_step adj hj hfree)
 
-/-- The invariants of the greedy run: a valid partner array, and every arrived vertex done. -/
+/-- **Invariants of the greedy run.** Let $L$ be a list of distinct right vertices, all unmatched
+in a valid partner array $m$, and let $S$ be a list of right vertices that are done for $m$. Then
+the partner array obtained from $m$ by the greedy run along $L$ is valid, and every right vertex
+of $L$ or of $S$ is done for it. -/
 theorem greedy_spec : ∀ (js : List (Fin b)) (mate : Fin b → Option (Fin a)) (S : List (Fin b)),
     js.Nodup → (∀ j ∈ js, mate j = none) → Valid adj mate → Done adj mate S →
     Valid adj (greedy adj js mate) ∧ Done adj (greedy adj js mate) (js.reverse ++ S)
@@ -144,12 +162,22 @@ theorem valid_none : Valid adj (fun _ : Fin b => (none : Option (Fin a))) where
 
 /-! ## The run on arrays -/
 
-/-- A partner array stored as an array. -/
+/-- **Partner assignment from an array.** An array $A$ whose entries are each a left vertex or
+none is read as an assignment of partners to the right vertices $0, \dots, b-1$: right vertex
+$j$ gets the entry of $A$ at index $j$ when $j$ is less than the length of $A$, and no partner
+otherwise. -/
 def toFun (arr : Array (Option (Fin a))) : Fin b → Option (Fin a) := fun j => arr.getD j none
 
-/-- One arrival on the array: the same choice as `step`, written into the array. Evaluating the
-composed `Function.update`s of `greedy` directly would recompute every earlier choice at each
-lookup, a cost exponential in `b`; the array is computed once per arrival. -/
+/-- **Greedy step on an array.** In a bipartite graph with left vertices $0, \dots, a - 1$ and right
+vertices $0, \dots, b - 1$, take an array whose entry $k$ holds the partner of the right vertex $k$,
+a missing entry meaning no partner. On the arrival of a right vertex $j$, entry $j$ is set to the
+first left neighbour of $j$, in the order $0, \dots, a - 1$, that is free, that is, the partner of
+none of the right vertices $0, \dots, b - 1$ in the array, or to none if no neighbour of $j$ is
+free; if the array has no entry $j$, it is unchanged.
+
+Storing the partners in an array computes each choice once per arrival; evaluating the composed
+function updates of the specification directly would recompute every earlier choice at each
+lookup, a cost exponential in the number of right vertices. -/
 def stepArr (arr : Array (Option (Fin a))) (j : Fin b) : Array (Option (Fin a)) :=
   arr.set! j ((List.finRange a).find? fun i =>
     decide (j ∈ adj i) && decide (Free (toFun (b := b) arr) i))
@@ -167,7 +195,13 @@ theorem toFun_stepArr {arr : Array (Option (Fin a))} (h : arr.size = b) (j : Fin
   · have hne : (j : ℕ) ≠ j' := fun e => hj (Fin.ext e).symm
     simp [toFun, stepArr, step, Function.update_of_ne hj, Array.getElem?_setIfInBounds_ne hne]
 
-/-- The greedy run on arrays. -/
+/-- **Greedy run on an array.** In a bipartite graph with left vertices $0, \dots, a - 1$ and right
+vertices $0, \dots, b - 1$, start from an array whose entry $k$ holds the partner of the right
+vertex $k$, a missing entry meaning no partner, and let the right vertices of a list $L$ arrive one
+after another in the order of $L$. Each arrival performs the greedy step on the array: the entry of
+the arriving vertex $j$ is set to the first left neighbour of $j$, in the order $0, \dots, a - 1$,
+that is free, that is, the partner of none of the right vertices $0, \dots, b - 1$ in the current
+array, or to none if no neighbour of $j$ is free; if the array has no entry $j$, it is unchanged. -/
 def greedyArr (js : List (Fin b)) (arr : Array (Option (Fin a))) : Array (Option (Fin a)) :=
   js.foldl (stepArr adj) arr
 
@@ -179,7 +213,13 @@ theorem toFun_greedyArr : ∀ (js : List (Fin b)) {arr : Array (Option (Fin a))}
       rw [← toFun_stepArr adj h j]
       exact toFun_greedyArr js (by rw [size_stepArr]; exact h)
 
-/-- The greedy matching after all `b` right vertices arrive in order, computed on arrays. -/
+/-- **The greedy online matching.** In a bipartite graph with left vertices $0, \dots, a - 1$ and
+right vertices $0, \dots, b - 1$, the greedy online matching is the partner array obtained by
+starting from the empty matching and letting the right vertices arrive in the order
+$0, 1, \dots, b - 1$, each arriving vertex being matched to its first free left neighbour in the
+order $0, \dots, a - 1$, or left unmatched if no neighbour is free.
+
+It is computed on arrays, with one array write per arrival. -/
 def greedyAll : Fin b → Option (Fin a) :=
   toFun (greedyArr adj (List.finRange b) (Array.replicate b none))
 
@@ -240,12 +280,15 @@ theorem card_le_two_mul_greedyAll {M : Finset (Fin a × Fin b)} (hM : IsMatching
       _ ≤ G.card := Finset.card_image_le
   omega
 
-/-- The greedy matching is a matching. -/
+/-- **The greedy online matching is a matching.** The set of pairs $(i, j)$ such that the greedy
+online matching assigns the left vertex $i$ to the right vertex $j$ is a matching of the bipartite
+graph. -/
 theorem isMatching_greedyAll : IsMatching adj (pairs (greedyAll adj)) :=
   isMatching_pairs (greedyAll_valid adj)
 
-/-- Against the optimum: a maximum matching (`maxMatching`) has at most twice as many edges as
-the greedy online matching. -/
+/-- **Greedy online matching is within a factor $2$ of the maximum.** In a bipartite graph, the
+maximum matching computed by augmenting paths has at most twice as many edges as the greedy online
+matching, in which the right vertices arrive in increasing order. -/
 theorem card_maxMatching_le : (pairs (maxMatching adj)).card ≤ 2 * (pairs (greedyAll adj)).card :=
   card_le_two_mul_greedyAll adj isMatching_maxMatching
 

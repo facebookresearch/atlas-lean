@@ -45,14 +45,19 @@ universe u
 
 variable {α : Type u} [DecidableEq α]
 
-/-- `indep` is an independence system: `∅` is independent and independence passes to subsets. -/
+/-- **Independence system.** A predicate $\mathrm{indep}$ on the finite subsets of a type
+$\alpha$ is an independence system when the empty set is independent and every subset of an
+independent set is independent. -/
 structure IsIndepSystem (indep : Finset α → Bool) : Prop where
   empty : indep ∅ = true
   subset : ∀ ⦃S T : Finset α⦄, T ⊆ S → indep S = true → indep T = true
 
 /-! ## Greedy runs on an independence system -/
 
-/-- Scanning elements whose additions all stay inside one independent set keeps them all. -/
+/-- **A scan inside an independent set keeps everything.** Let $\alpha$ be a type, let
+$\mathrm{indep}$ be an independence system on the finite subsets of $\alpha$ and let $I$ be an
+independent set. For every list $L$ of elements of $I$ and every finite set $S \subseteq I$, the
+greedy scan of $L$ starting from $S$ returns $S$ together with all elements of $L$. -/
 theorem matroidGreedyScan_of_subset {indep : Finset α → Bool} (hsys : IsIndepSystem indep)
     {I : Finset α} (hI : indep I = true) :
     ∀ (L : List α) (S : Finset α), S ⊆ I → (∀ e ∈ L, e ∈ I) →
@@ -67,7 +72,10 @@ theorem matroidGreedyScan_of_subset {indep : Finset α → Bool} (hsys : IsIndep
       ext x
       simp
 
-/-- Scanning elements none of which extends `S` leaves `S` unchanged. -/
+/-- **A scan that accepts nothing.** Let $\alpha$ be a type, let $\mathrm{indep}$ be an
+independence oracle on the finite subsets of $\alpha$, let $S$ be a finite subset of $\alpha$
+and let $L$ be a list of elements of $\alpha$ such that $\mathrm{indep}$ rejects $S \cup \{e\}$
+for every $e$ in $L$. Then the greedy scan of $L$ starting from $S$ returns $S$. -/
 theorem matroidGreedyScan_of_forall_not {indep : Finset α → Bool} (S : Finset α) :
     ∀ L : List α, (∀ e ∈ L, indep (insert e S) = false) → (matroidGreedyScan indep S L).ret = S
   | [], _ => by simp [matroidGreedyScan]
@@ -78,11 +86,16 @@ theorem matroidGreedyScan_of_forall_not {indep : Finset α → Bool} (S : Finset
 
 /-! ## The converse -/
 
-/-- The greedy algorithm is optimal for `indep` on the finite type `α`: for every weight function
-and every listing of all elements in nonincreasing weight order, its result weighs at least as
-much as every independent set. (`Finite α` keeps this from holding vacuously: on an infinite type
-no list covers every element; the instance is a hypothesis of the definition, not used in its
-body, hence the `nolint`.) -/
+/-- **Greedy optimality.** Let $\alpha$ be a finite type and let $\mathrm{indep}$ be an
+independence oracle on the finite subsets of $\alpha$. The greedy algorithm is optimal for
+$\mathrm{indep}$ when, for every weight function $w : \alpha \to \mathbb{N}$ and every list $L$
+that contains every element of $\alpha$ exactly once, in nonincreasing order of $w$, the set $T$
+returned by the matroid greedy algorithm on $L$ with oracle $\mathrm{indep}$ satisfies
+$\sum_{x \in I} w(x) \le \sum_{x \in T} w(x)$ for every finite set $I$ independent under
+$\mathrm{indep}$.
+
+Finiteness of $\alpha$ keeps this from holding vacuously: on an infinite type no list contains
+every element. -/
 @[nolint unusedArguments]
 def GreedyOptimal [Finite α] (indep : Finset α → Bool) : Prop :=
   ∀ (w : α → ℕ) (es : List α), es.Nodup → (∀ x, x ∈ es) →
@@ -91,7 +104,10 @@ def GreedyOptimal [Finite α] (indep : Finset α → Bool) : Prop :=
 
 variable [Finite α]
 
-/-- Greedy optimality implies the augmentation axiom. -/
+/-- **Greedy optimality gives the augmentation axiom.** Let $\alpha$ be a finite type and let
+$\mathrm{indep}$ be an independence system on the finite subsets of $\alpha$ for which the greedy
+algorithm is optimal. If $I$ and $J$ are independent sets with $|I| < |J|$, then some element
+$e \in J$ with $e \notin I$ makes $I \cup \{e\}$ independent. -/
 theorem augment_of_greedyOptimal {indep : Finset α → Bool} (hsys : IsIndepSystem indep)
     (hopt : GreedyOptimal indep) {I J : Finset α} (hI : indep I = true) (hJ : indep J = true)
     (hlt : I.card < J.card) : ∃ e ∈ J, e ∉ I ∧ indep (insert e I) = true := by
@@ -179,7 +195,11 @@ theorem augment_of_greedyOptimal {indep : Finset α → Bool} (hsys : IsIndepSys
   have h2 : (k + 1) * (k + 1) = k * (k + 2) + 1 := by ring
   omega
 
-/-- A greedy-optimal independence system is the independence predicate of a matroid. -/
+/-- **Greedy-optimal independence systems are matroids.** Let $\alpha$ be a finite type and let
+$\mathrm{indep}$ be an independence system on the finite subsets of $\alpha$ for which the greedy
+algorithm is optimal. Then there is a matroid $M$ on $\alpha$ whose ground set is all of
+$\alpha$ such that a finite set $S \subseteq \alpha$ is independent in $M$ exactly when $S$ is
+independent under $\mathrm{indep}$. -/
 theorem exists_matroid_of_greedyOptimal {indep : Finset α → Bool} (hsys : IsIndepSystem indep)
     (hopt : GreedyOptimal indep) :
     ∃ M : Matroid α, M.E = Set.univ ∧ ∀ S : Finset α, M.Indep ↑S ↔ indep S = true := by
@@ -189,7 +209,11 @@ theorem exists_matroid_of_greedyOptimal {indep : Finset α → Bool} (hsys : IsI
     (fun _ _ => Set.subset_univ _)).matroid, rfl, fun S => ?_⟩
   simp only [IndepMatroid.matroid_Indep, IndepMatroid.ofFinset_indep]
 
-/-- Rado–Edmonds: an independence system is greedy-optimal exactly when it is a matroid. -/
+/-- **Rado–Edmonds theorem.** Let $\alpha$ be a finite type and let $\mathrm{indep}$ be an
+independence system on the finite subsets of $\alpha$. The greedy algorithm is optimal for
+$\mathrm{indep}$ if and only if there is a matroid $M$ on $\alpha$ whose ground set is all of
+$\alpha$ such that a finite set $S \subseteq \alpha$ is independent in $M$ exactly when $S$ is
+independent under $\mathrm{indep}$. -/
 theorem greedyOptimal_iff_exists_matroid {indep : Finset α → Bool} (hsys : IsIndepSystem indep) :
     GreedyOptimal indep ↔
       ∃ M : Matroid α, M.E = Set.univ ∧ ∀ S : Finset α, M.Indep ↑S ↔ indep S = true := by

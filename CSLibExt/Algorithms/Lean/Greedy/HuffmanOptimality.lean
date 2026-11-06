@@ -33,7 +33,9 @@ set_option autoImplicit false
 
 universe u
 
-/-- A full binary tree carrying only real-valued leaf weights. -/
+/-- **Huffman weight tree.** A Huffman weight tree is a full binary tree whose leaves carry only
+real weights: it is either a leaf with a weight $w \in \mathbb{R}$, or a fork joining a left and a
+right Huffman weight tree. -/
 inductive HuffmanWeightTree where
   | leaf (weight : Real)
   | fork (left right : HuffmanWeightTree)
@@ -42,23 +44,32 @@ deriving Inhabited
 
 namespace HuffmanWeightTree
 
-/-- Leaf weights, independent of their locations in the tree. -/
+/-- **Multiset of leaf weights.** The leaf weights of a Huffman weight tree form a multiset of
+reals that forgets where the leaves sit: a leaf of weight $w$ gives $\{w\}$, and a tree with
+subtrees $L$ and $R$ gives the multiset sum of the leaf weights of $L$ and those of $R$. -/
 def weights : HuffmanWeightTree → Multiset Real
   | .leaf weight => {weight}
   | .fork left right => left.weights + right.weights
 
-/-- Sum of all leaf weights. -/
+/-- **Total leaf weight of a Huffman weight tree.** The total weight of a Huffman weight tree is
+the sum of its leaf weights: a leaf of weight $w$ has total weight $w$, and a tree with subtrees
+$L$ and $R$ has total weight equal to the total weight of $L$ plus that of $R$. -/
 def totalWeight : HuffmanWeightTree → Real
   | .leaf weight => weight
   | .fork left right => left.totalWeight + right.totalWeight
 
-/-- Weighted external path length, defined directly by the merge recurrence. -/
+/-- **Weighted external path length of a Huffman weight tree.** For a Huffman weight tree $T$,
+write $w(T)$ for its total leaf weight. The weighted external path length $P(T)$ of $T$ is
+defined by the merge recurrence: a leaf $T$ has $P(T) = 0$, and a tree $T$ with subtrees $L$
+and $R$ has $P(T) = P(L) + P(R) + w(L) + w(R)$. -/
 def pathCost : HuffmanWeightTree → Real
   | .leaf _ => 0
   | .fork left right =>
       left.pathCost + right.pathCost + left.totalWeight + right.totalWeight
 
-/-- Height of the underlying full binary tree. -/
+/-- **Height of a weight tree.** The height of a weight tree is the number of edges on a longest
+path from the root to a leaf: a leaf has height $0$, and a fork with subtrees $L$ and $R$ has
+height $1 + \max(\mathrm{height}(L), \mathrm{height}(R))$. -/
 def height : HuffmanWeightTree → Nat
   | .leaf _ => 0
   | .fork left right => Nat.succ (max left.height right.height)
@@ -107,7 +118,11 @@ theorem eq_leaf_of_height_eq_zero {tree : HuffmanWeightTree}
   | leaf weight => exact ⟨weight, rfl⟩
   | fork left right => simp at hheight
 
-/-- A proof that a particular occurrence of a weight sits at a given depth. -/
+/-- **Weight at a given depth.** For a real number $v$, a weight tree $T$ and a natural number
+$d$, the relation "$T$ contains $v$ at depth $d$" is defined inductively: the leaf of weight $v$
+contains $v$ at depth $0$, and if $L$ contains $v$ at depth $d$ or $R$ contains $v$ at depth $d$,
+then the fork with left subtree $L$ and right subtree $R$ contains $v$ at depth $d + 1$. Thus it
+holds exactly when some leaf of $T$ of weight $v$ lies at depth $d$, the root being at depth $0$. -/
 inductive ContainsAt (value : Real) : HuffmanWeightTree → Nat → Prop where
   | root : ContainsAt value (.leaf value) 0
   | descendLeft {left right depth}
@@ -151,7 +166,12 @@ theorem ContainsAt.depth_le_height {value : Real} {tree : HuffmanWeightTree}
       simp only [height_fork]
       omega
 
-/-- Change one specified leaf occurrence and record its exact cost change. -/
+/-- **Reweighting one leaf occurrence.** Suppose a leaf of weight $v$ occurs at depth $d$ in a
+Huffman weight tree $T$, and let $r$ be a real number. Then there are a multiset $R$ of reals and
+a Huffman weight tree $T'$ such that the multiset of leaf weights of $T$ is $\{v\} + R$, that of
+$T'$ is $\{r\} + R$, the total leaf weight of $T'$ is that of $T$ plus $r - v$, the weighted
+external path length of $T'$ is that of $T$ plus $d(r - v)$, and $T'$ has the same height as
+$T$. -/
 theorem ContainsAt.reweight {value replacement : Real}
     {tree : HuffmanWeightTree} {depth : Nat}
     (h : ContainsAt value tree depth) :
@@ -190,7 +210,11 @@ theorem ContainsAt.reweight {value replacement : Real}
         ring
       · simp [hheight]
 
-/-- Replace one smaller weight by a larger one, with a height-based cost bound. -/
+/-- **Raising one leaf weight in a bounded-height tree.** Let $T$ be a Huffman weight tree whose
+height is at most a natural number $B$, and write $W(T)$ for its multiset of leaf weights. Let
+$v \le r$ be real numbers and let $S$ be a multiset of reals with $\{r\} + W(T) = \{v\} + S$.
+Then there is a Huffman weight tree $T'$ with multiset of leaf weights $S$ and height at most
+$B$ whose weighted external path length is at most that of $T$ plus $B(r - v)$. -/
 theorem raiseBounded {bound : Nat} (tree : HuffmanWeightTree)
     (hheight : tree.height ≤ bound) (target : Multiset Real)
     (replacement value : Real)
@@ -287,7 +311,12 @@ private theorem split_two_replacements
     have := (Multiset.cons_inj_right least).mp hcancel
     rw [← this, Multiset.cons_swap]
 
-/-- Perform two occurrence-preserving weight exchanges. -/
+/-- **Raising two leaf weights in a bounded-height tree.** Let $T$ be a Huffman weight tree whose
+height is at most a natural number $B$, and write $W(T)$ for its multiset of leaf weights. Let
+$f, s, \ell, n$ be real numbers with $\ell \le n$, $\ell \le f$ and $n \le s$, and let $S$ be a
+multiset of reals with $\{f, s\} + W(T) = \{\ell, n\} + S$. Then there is a Huffman weight tree
+$T'$ with multiset of leaf weights $S$ whose weighted external path length is at most that of
+$T$ plus $B(f - \ell) + B(s - n)$. -/
 theorem raisePair {bound : Nat} (tree : HuffmanWeightTree)
     (hheight : tree.height ≤ bound) (target : Multiset Real)
     (first second least next : Real)
@@ -322,8 +351,14 @@ theorem raisePair {bound : Nat} (tree : HuffmanWeightTree)
         (by rw [hfirstWeights]; exact hsecond) hnextSecond
     exact ⟨result, hresultWeights, by linarith⟩
 
-/-- Expose a deepest sibling pair and describe contraction by structural cost
-identities, without representing the whole tree as weight-depth pairs. -/
+/-- **Contracting a deepest sibling pair.** Let $T$ be a weight tree of height $h \ge 1$. Then
+there are real numbers $x$ and $y$, a multiset $M$ of real numbers and a real number $c$ such that
+the multiset of leaf weights of $T$ is $\{x, y\} + M$, the path cost of $T$ is $c + hx + hy$, and
+for every real number $z$ there is a weight tree $T'$ of height at most $h$ whose multiset of leaf
+weights is $\{z\} + M$ and whose path cost is $c + (h - 1)z$.
+
+In the proof, $x$ and $y$ are the weights of a deepest pair of sibling leaves of $T$, and $T'$
+replaces that pair by a single leaf of weight $z$. -/
 theorem exists_cherry_contraction (tree : HuffmanWeightTree)
     (hpositive : 1 ≤ tree.height) :
     ∃ (first second : Real) (remainder : Multiset Real) (baseCost : Real),
@@ -507,8 +542,13 @@ private theorem second_le_one_of_two {first second least next : Real}
   rw [hfirstEq] at hfirstSmall
   exact (not_le.mpr hfirstSmall) hnextLeast
 
-/-- Contract the two least weights after an independently derived sibling
-exchange argument on structural tree cost. -/
+/-- **Contracting the two least weights.** Let $T$ be a weight tree, let $a$ and $b$ be real
+numbers and let $M$ be a multiset of real numbers such that the multiset of leaf weights of $T$ is
+$\{a, b\} + M$, $a \le b$, and $b \le w$ for every $w \in M$. Then there is a weight tree $T'$
+whose multiset of leaf weights is $\{a + b\} + M$ and whose path cost satisfies
+$\mathrm{cost}(T') + a + b \le \mathrm{cost}(T)$, where $\mathrm{cost}$ denotes path cost.
+
+The proof is a sibling exchange argument on the structural path cost. -/
 theorem contractLeastPair (tree : HuffmanWeightTree) (least next : Real)
     (tail : Multiset Real)
     (htree : tree.weights = least ::ₘ next ::ₘ tail)
@@ -593,7 +633,12 @@ theorem contractLeastPair (tree : HuffmanWeightTree) (least next : Real)
     · exact hnextFirst
   · exact finish first second hpairs hleastFirst hnextSecond
 
-/-- A certificate that a cost is produced by repeated two-minimum merges. -/
+/-- **Two-minimum merge trace.** The relation "$c$ is a two-minimum merge cost of the multiset $W$
+of real weights" is defined inductively by two rules. A singleton multiset $\{w\}$ has merge cost
+$0$. If $a \le b$, every element of the multiset $R$ is at least $b$, and $c$ is a merge cost of
+$\{a + b\} + R$, then $a + b + c$ is a merge cost of $\{a, b\} + R$. Thus a merge cost is the total
+cost of repeatedly replacing two smallest weights by their sum until one weight remains, each
+merge costing the sum of the two merged weights. -/
 inductive MergeTrace : Multiset Real → Real → Prop where
   | singleton (weight : Real) : MergeTrace {weight} 0
   | merge {least next tailCost : Real} {rest : Multiset Real}
@@ -602,8 +647,10 @@ inductive MergeTrace : Multiset Real → Real → Prop where
       (tailTrace : MergeTrace ((least + next) ::ₘ rest) tailCost) :
       MergeTrace (least ::ₘ next ::ₘ rest) (least + next + tailCost)
 
-/-- Repeated two-minimum merges lower-bound every full tree with the same
-weight multiset. -/
+/-- **Two-minimum merge costs lower-bound weighted path length.** Let $W$ be a multiset of real
+weights and let $c$ be a merge cost of $W$ certified by a two-minimum merge trace. Then every
+Huffman weight tree whose multiset of leaf weights is $W$ has weighted external path length at
+least $c$. -/
 theorem MergeTrace.le_pathCost {weightBag : Multiset Real} {cost : Real}
     (trace : MergeTrace weightBag cost) (tree : HuffmanWeightTree)
     (htree : tree.weights = weightBag) : cost ≤ tree.pathCost := by
@@ -627,12 +674,17 @@ theorem MergeTrace.le_pathCost {weightBag : Multiset Real} {cost : Real}
 
 end HuffmanWeightTree
 
-/-- Erase symbols and cast natural weights to real weights. -/
+/-- **Erasing symbols from a Huffman tree.** Erasing the symbols of a Huffman tree gives the
+weight tree of the same shape: a leaf with symbol $s$ and natural-number weight $w$ becomes the
+leaf of real weight $w$, and a fork with subtrees $L$ and $R$ becomes the fork whose subtrees are
+the erasures of $L$ and $R$. -/
 def HuffmanTree.eraseSymbols {α : Type u} : HuffmanTree α → HuffmanWeightTree
   | .leaf _ weight => .leaf weight
   | .fork left right => .fork left.eraseSymbols right.eraseSymbols
 
-/-- Erasure preserves the multiset of leaf weights. -/
+/-- **Erasing symbols preserves leaf weights.** For every Huffman tree $T$, the multiset of leaf
+weights of the weight tree obtained from $T$ by erasing its symbols is the multiset of the weights
+$w$, viewed as real numbers, over the weighted leaves $(s, w)$ of $T$. -/
 theorem HuffmanTree.eraseSymbols_weights {α : Type u} (tree : HuffmanTree α) :
     tree.eraseSymbols.weights =
       (tree.weightedLeaves.map (fun pair => (pair.2 : Real)) : Multiset Real) := by
@@ -641,7 +693,9 @@ theorem HuffmanTree.eraseSymbols_weights {α : Type u} (tree : HuffmanTree α) :
   | fork left right ihLeft ihRight =>
       simp [HuffmanTree.eraseSymbols, HuffmanTree.weightedLeaves, ihLeft, ihRight]
 
-/-- Erasure preserves total weight after casting to the reals. -/
+/-- **Erasing symbols preserves total weight.** For every Huffman tree $T$, the total weight of
+the weight tree obtained from $T$ by erasing its symbols equals the total weight of $T$, viewed as
+a real number. -/
 theorem HuffmanTree.eraseSymbols_totalWeight {α : Type u} (tree : HuffmanTree α) :
     tree.eraseSymbols.totalWeight = tree.totalWeight := by
   induction tree with
@@ -649,7 +703,9 @@ theorem HuffmanTree.eraseSymbols_totalWeight {α : Type u} (tree : HuffmanTree �
   | fork left right ihLeft ihRight =>
       simp [HuffmanTree.eraseSymbols, HuffmanTree.totalWeight, ihLeft, ihRight]
 
-/-- Erasure preserves weighted path length after casting to the reals. -/
+/-- **Erasing symbols preserves weighted path length.** For every Huffman tree $T$, the path cost
+of the weight tree obtained from $T$ by erasing its symbols equals the weighted path length of $T$,
+viewed as a real number. -/
 theorem HuffmanTree.eraseSymbols_pathCost {α : Type u} (tree : HuffmanTree α) :
     tree.eraseSymbols.pathCost = tree.weightedPathLength := by
   induction tree with
@@ -658,22 +714,32 @@ theorem HuffmanTree.eraseSymbols_pathCost {α : Type u} (tree : HuffmanTree α) 
       simp [HuffmanTree.eraseSymbols, HuffmanTree.weightedPathLength,
         ihLeft, ihRight, HuffmanTree.eraseSymbols_totalWeight]
 
-/-- Priorities represented by a work forest. -/
+/-- **Priorities of a Huffman work forest.** The priorities of a list of Huffman work items form
+the multiset consisting of the priority of each item in the list, counted with multiplicity. -/
 def huffmanForestPriorities {α : Type u} (forest : List (HuffmanWorkItem α)) :
     Multiset HuffmanPriority :=
   forest.map HuffmanWorkItem.priority
 
-/-- Total weights represented by a work forest. -/
+/-- **Weights of a Huffman work forest.** The weights of a list of Huffman work items form the
+multiset consisting of the total leaf weight of each item's tree, taken as a real number, counted
+with multiplicity. -/
 def huffmanForestWeights {α : Type u} (forest : List (HuffmanWorkItem α)) :
     Multiset Real :=
   forest.map (fun item => (item.tree.totalWeight : Real))
 
-/-- Sum of the already-incurred subtree costs in a work forest. -/
+/-- **Cost of a Huffman work forest.** The cost of a list of Huffman work items is the real
+number obtained by summing, over the items in the list, the weighted path length of each item's
+tree. -/
 def huffmanForestCost {α : Type u} (forest : List (HuffmanWorkItem α)) : Real :=
   (forest.map (fun item => (item.tree.weightedPathLength : Real))).sum
 
-/-- The heap and the serial-indexed table describe the same
-uniquely-serial-numbered weighted trees. -/
+/-- **Huffman loop invariant.** Let $n$ be a natural number, $H$ a binary min-heap of Huffman
+priorities and $T$ an array of optional Huffman work items, and let $F$ be the list of work
+items stored in $T$, in array order. The invariant holds when the multiset of elements of $H$
+equals the multiset of priorities of the items of $F$; the serial numbers of the items of $F$ are
+pairwise distinct; every item of $F$ has serial number less than $n$; every item of $F$ has
+priority weight equal to the total leaf weight of its tree; $T$ has exactly $n$ cells; and every
+item of $F$ is stored in the cell of $T$ whose index is its serial number. -/
 structure HuffmanLoopInvariant {α : Type u} (nextSerial : Nat)
     (heap : MinHeap HuffmanPriority)
     (table : Array (Option (HuffmanWorkItem α))) : Prop where
@@ -1394,8 +1460,13 @@ private theorem huffmanLoop_isSome {α : Type u} {fuel nextSerial : Nat}
       simp only [huffmanLoop, hchoice, hfirst, hsecond]
       exact hrec
 
-/-- A successful executable run supplies the standard two-minimum merge
-certificate for its weighted path length. -/
+/-- **Huffman's construction follows a two-minimum merge trace.** Let $L$ be a list of
+symbol–weight pairs with natural-number weights, over a symbol type with decidable equality,
+and suppose the Huffman construction returns the tree $t$ on $L$. Then the weighted path length
+of $t$, as a real number, is the cost of a two-minimum merge trace for the multiset of the
+weights of $L$, taken as reals: starting from that multiset, repeatedly replace two weights
+$x \le y$ such that every other weight is at least $y$ by their sum $x + y$, until a single
+weight remains; the cost is the sum of all the sums $x + y$ formed. -/
 theorem huffman_mergeTrace {α : Type u} [DecidableEq α]
     {input : List (α × Nat)} {tree : HuffmanTree α}
     (hresult : huffman input = some tree) :
@@ -1413,7 +1484,10 @@ theorem huffman_mergeTrace {α : Type u} [DecidableEq α]
     rw [hcost]
     exact htrace
 
-/-- The constructor succeeds on every nonempty duplicate-free input. -/
+/-- **Huffman's construction succeeds on nonempty inputs with distinct symbols.** Let $L$ be a
+nonempty list of symbol–weight pairs with natural-number weights, over a symbol type with
+decidable equality. If no symbol occurs in $L$ more than once, then the Huffman construction
+returns a tree on $L$. -/
 theorem huffman_isSome {α : Type u} [DecidableEq α] {input : List (α × Nat)}
     (hne : input ≠ []) (hnd : (input.map Prod.fst).Nodup) :
     (huffman input).isSome := by
@@ -1436,8 +1510,10 @@ theorem huffman_isSome {α : Type u} [DecidableEq α] {input : List (α × Nat)}
   rw [hresult]
   rfl
 
-/-- The constructor rejects exactly the empty inputs and the inputs with a
-repeated symbol. -/
+/-- **Huffman's construction fails exactly on empty or repeated-symbol inputs.** Let $L$ be a
+list of symbol–weight pairs with natural-number weights, over a symbol type with decidable
+equality. The Huffman construction returns no tree on $L$ if and only if $L$ is empty or some
+symbol occurs in $L$ more than once. -/
 theorem huffman_eq_none_iff {α : Type u} [DecidableEq α]
     {input : List (α × Nat)} :
     huffman input = none ↔ input = [] ∨ ¬(input.map Prod.fst).Nodup := by
@@ -1455,14 +1531,24 @@ theorem huffman_eq_none_iff {α : Type u} [DecidableEq α]
         simp [hnd]
       simp [huffman, hc]
 
-/-- A competitor is a full prefix-code tree with exactly the same weighted
-symbols as the input.  Full binary structure is intrinsic to `HuffmanTree`. -/
+/-- **Admissible Huffman trees.** Given an input list of symbols with natural-number weights, a
+Huffman tree is admissible for the input when its list of weighted leaves, read from left to right,
+is a permutation of the input list: the leaves of the tree carry exactly the input's (symbol,
+weight) pairs, with the same multiplicities.
+
+Every Huffman tree is a full binary tree, so admissibility imposes no further shape condition. -/
 def HuffmanTree.Admissible {α : Type u} (tree : HuffmanTree α)
     (input : List (α × Nat)) : Prop :=
   tree.weightedLeaves.Perm input
 
-/-- The global optimality result once the executable heap loop has been related
-to its two-minimum merge trace. -/
+/-- **A two-minimum merge trace gives a minimum weighted path length.** Let $L$ be a list of
+symbol–weight pairs with natural-number weights, and let $t$ and $t'$ be coding trees with
+symbols of the same type. Suppose the weighted path length of $t$, as a real number, is the cost
+of a two-minimum merge trace for the multiset of the weights of $L$, taken as reals (repeatedly
+replace two weights $x \le y$, with every other weight at least $y$, by $x + y$ until one weight
+remains, the cost being the sum of the sums formed), and that the weighted leaves of $t'$, listed
+left to right, are a permutation of $L$. Then the weighted path length of $t$ is at most that of
+$t'$. -/
 theorem huffman_optimal_of_mergeTrace {α : Type u}
     {input : List (α × Nat)} {tree competitor : HuffmanTree α}
     (htrace : HuffmanWeightTree.MergeTrace
@@ -1479,8 +1565,11 @@ theorem huffman_optimal_of_mergeTrace {α : Type u}
   rw [competitor.eraseSymbols_pathCost] at hbound
   exact_mod_cast hbound
 
-/-- The tree returned by `huffman` globally minimizes weighted path length
-among full prefix-code trees with exactly the input's weighted symbols. -/
+/-- **Optimality of Huffman coding.** Let $L$ be a list of symbol–weight pairs with
+natural-number weights, over a symbol type with decidable equality, and suppose the Huffman
+construction returns the tree $t$ on $L$. Then every coding tree $t'$ (a full binary tree whose
+leaves carry symbols and weights) whose weighted leaves, listed left to right, form a permutation
+of $L$ has weighted path length at least that of $t$. -/
 theorem huffman_optimal {α : Type u} [DecidableEq α]
     {input : List (α × Nat)} {tree competitor : HuffmanTree α}
     (hresult : huffman input = some tree)
@@ -1488,10 +1577,14 @@ theorem huffman_optimal {α : Type u} [DecidableEq α]
     tree.weightedPathLength ≤ competitor.weightedPathLength :=
   huffman_optimal_of_mergeTrace (huffman_mergeTrace hresult) hcompetitor
 
-/-- The tree returned by `huffman` also minimizes the structural
-encoded-length objective, including the one-bit singleton code; by
-`HuffmanTree.encodedLength_eq_sum_codeLengths` this is the encoder's emitted
-cost whenever the leaf symbols are unique. -/
+/-- **Huffman's algorithm minimizes the encoded length.** Let $L$ be a list of symbol–weight
+pairs with natural-number weights, over a symbol type with decidable equality, and suppose
+Huffman's algorithm returns the tree $t$ on $L$. Then every Huffman tree $t'$ that is admissible
+for $L$, that is, whose weighted leaves listed from left to right form a permutation of $L$, has
+encoded length at least that of $t$.
+
+The encoded length charges a lone leaf for a one-bit codeword; when the leaf symbols of a tree
+are distinct, it equals the encoder's emitted cost, the total weighted codeword length. -/
 theorem huffman_encodedLength_optimal {α : Type u} [DecidableEq α]
     {input : List (α × Nat)} {tree competitor : HuffmanTree α}
     (hresult : huffman input = some tree)

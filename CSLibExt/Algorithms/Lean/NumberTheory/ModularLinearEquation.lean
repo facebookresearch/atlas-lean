@@ -125,7 +125,17 @@ private theorem xgcdSteps_le (r r' : Nat) : xgcdSteps r r' ≤ 2 * Nat.log2 r + 
         rw [Nat.log2_def r, ite_eq_left hr2]
         omega
 
-/-- Solves `a * x ≡ b [ZMOD n]`, returning the least residues in CLRS source order. -/
+/-- **Modular linear equation solver.** Given natural numbers $a > 0$ and $n > 0$ and an integer
+$b$, the solver solves $a x \equiv b \pmod{n}$ following CLRS. Let $d = \gcd(a, n)$ and let $y$ be
+the coefficient of $a$ in the Bézout identity $d = n u + a y$ computed by the extended Euclidean
+algorithm on $(n, a)$. If $d \mid b$, it returns the array $[x_0, x_1, \dots, x_{d-1}]$, where
+$x_i = \bigl((y \cdot (b / d)) \bmod n + i \cdot (n / d)\bigr) \bmod n$ and $r \bmod n$ denotes the
+least nonnegative residue of $r$; otherwise it returns the empty array.
+
+Its cost is $6s + 1 + 4 + 3d$ when $d \mid b$ and $6s + 1$ otherwise, where $s$ is the number of
+times the Euclidean algorithm, started from $(r, r') = (n, a)$, replaces $(r, r')$ by
+$(r' \bmod r, r)$ before $r$ becomes $0$: six arithmetic operations per such step, one
+divisibility test, four setup operations and three operations per returned residue. -/
 @[no_expose]
 def modularLinearEquationSolver
     (a : Nat) (b : Int) (n : Nat) (_ha : 0 < a) (_hn : 0 < n) :
@@ -141,7 +151,12 @@ def modularLinearEquationSolver
   else
     ⟨#[], extended.time + 1⟩
 
-/-- The returned list is the CLRS progression built from the canonical extended-GCD coefficient. -/
+/-- **Output of the modular linear equation solver.** Let $a > 0$ and $n > 0$ be natural numbers,
+$b$ an integer, $d = \gcd(a, n)$, and $y$ the coefficient of $a$ in the Bézout identity
+$d = n u + a y$ computed by the extended Euclidean algorithm on $(n, a)$. If $d \mid b$, the list
+returned by the modular linear equation solver on $a$, $b$, $n$ is $[x_0, x_1, \dots, x_{d-1}]$
+with $x_i = \bigl((y \cdot (b / d)) \bmod n + i \cdot (n / d)\bigr) \bmod n$, where $r \bmod n$
+denotes the least nonnegative residue of $r$; otherwise it is the empty list. -/
 theorem modularLinearEquationSolver_ret
     (a : Nat) (b : Int) (n : Nat) (ha : 0 < a) (hn : 0 < n) :
     (modularLinearEquationSolver a b n ha hn).ret.toList =
@@ -337,7 +352,9 @@ private theorem progression_injective
   have hij' : (i : Int) = (j : Int) := hi_mod.symm.trans (hdmodeq.eq.trans hj_mod)
   exact Int.ofNat_inj.mp hij'
 
-/-- Membership characterizes exactly the least nonnegative solutions of the congruence. -/
+/-- **The solver returns exactly the solutions below $n$.** Let $a > 0$ and $n > 0$ be natural
+numbers and $b$ an integer. A natural number $x$ occurs in the output of the modular linear
+equation solver on $a$, $b$, $n$ if and only if $x < n$ and $a x \equiv b \pmod{n}$. -/
 theorem modularLinearEquationSolver_mem_iff
     (a : Nat) (b : Int) (n : Nat) (ha : 0 < a) (hn : 0 < n) (x : Nat) :
     x ∈ (modularLinearEquationSolver a b n ha hn).ret.toList ↔
@@ -364,7 +381,9 @@ theorem modularLinearEquationSolver_mem_iff
     obtain ⟨i, hi, hix⟩ := progression_complete a b n x hn hd hx hsol
     exact ⟨i, hi, hix⟩
 
-/-- The ordered result contains no repeated residues. -/
+/-- **The solver returns no repeated residues.** For natural numbers $a > 0$ and $n > 0$ and an
+integer $b$, the entries of the output of the modular linear equation solver on $a$, $b$, $n$ are
+pairwise distinct. -/
 theorem modularLinearEquationSolver_nodup
     (a : Nat) (b : Int) (n : Nat) (ha : 0 < a) (hn : 0 < n) :
     (modularLinearEquationSolver a b n ha hn).ret.toList.Nodup := by
@@ -378,7 +397,9 @@ theorem modularLinearEquationSolver_nodup
     · exact List.nodup_range
   next _ => simp
 
-/-- The solver returns `gcd a n` residues exactly when the congruence is solvable. -/
+/-- **Number of residues returned by the solver.** For natural numbers $a > 0$ and $n > 0$ and an
+integer $b$, the output of the modular linear equation solver on $a$, $b$, $n$ has $\gcd(a, n)$
+entries if $\gcd(a, n)$ divides $b$, and no entries otherwise. -/
 theorem modularLinearEquationSolver_length
     (a : Nat) (b : Int) (n : Nat) (ha : 0 < a) (hn : 0 < n) :
     (modularLinearEquationSolver a b n ha hn).ret.size =
@@ -386,7 +407,9 @@ theorem modularLinearEquationSolver_length
   have h := congrArg List.length (modularLinearEquationSolver_ret a b n ha hn)
   split at h <;> simp_all
 
-/-- The returned array is empty exactly when `gcd a n` does not divide `b`. -/
+/-- **The solver returns nothing exactly when $\gcd(a, n) \nmid b$.** For natural numbers $a > 0$
+and $n > 0$ and an integer $b$, the modular linear equation solver on $a$, $b$, $n$ returns the
+empty array if and only if $\gcd(a, n)$ does not divide $b$. -/
 theorem modularLinearEquationSolver_empty_iff
     (a : Nat) (b : Int) (n : Nat) (ha : 0 < a) (hn : 0 < n) :
     (modularLinearEquationSolver a b n ha hn).ret = #[] ↔
@@ -402,7 +425,12 @@ theorem modularLinearEquationSolver_empty_iff
     simp [hdvd] at h
     simpa using h
 
-/-- The selected arithmetic-event cost is bounded by the source logarithmic-plus-output bound. -/
+/-- **Cost bounds for the modular linear equation solver.** Let $a > 0$ and $n > 0$ be natural
+numbers, $b$ an integer and $d = \gcd(a, n)$, and put $c = 4 + 3d$ if $d \mid b$ and $c = 0$
+otherwise. The cost $T$ of the modular linear equation solver on $a$, $b$, $n$ satisfies
+$1 + c \le T \le 6(2 \lfloor \log_2 n \rfloor + 2) + 1 + c$.
+
+The cost counts arithmetic events, so this is the $O(\log n + \gcd(a, n))$ bound of the source. -/
 theorem modularLinearEquationSolver_time_bounds
     (a : Nat) (b : Int) (n : Nat) (ha : 0 < a) (hn : 0 < n) :
     1 + (if (Nat.gcd a n : Int) ∣ b then 4 + 3 * Nat.gcd a n else 0)

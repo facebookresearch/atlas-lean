@@ -53,7 +53,12 @@ universe u
 
 variable {α : Type u} [DecidableEq α]
 
-/-- Scan the remaining elements, keeping each one whose insertion the oracle accepts. -/
+/-- **Greedy scan with an independence oracle.** Given an oracle $O$ that accepts or rejects each
+finite subset of a type $\alpha$, a finite set $S \subseteq \alpha$ and a list $e_1, \dots, e_n$ of
+elements of $\alpha$, the greedy scan processes $e_1, \dots, e_n$ in order, starting with $S$ as
+the current set: it replaces the current set $T$ by $T \cup \{e_i\}$ if $O$ accepts
+$T \cup \{e_i\}$, and leaves it unchanged otherwise. It returns the final current set and charges
+one unit of time per element processed. -/
 def matroidGreedyScan (indep : Finset α → Bool) (S : Finset α) : List α → TimeM ℕ (Finset α)
   | [] => pure S
   | e :: es => do
@@ -61,12 +66,21 @@ def matroidGreedyScan (indep : Finset α → Bool) (S : Finset α) : List α →
       if indep (insert e S) then matroidGreedyScan indep (insert e S) es
       else matroidGreedyScan indep S es
 
-/-- CLRS `GREEDY`: scan the elements in the given order from the empty set. -/
+/-- **Greedy algorithm on a matroid.** Given an oracle $O$ that accepts or rejects each finite
+subset of a type $\alpha$ and a list $L$ of elements of $\alpha$, the greedy algorithm starts from
+the empty set, processes the elements of $L$ in order, adds an element $e$ to the current set $T$
+when $O$ accepts $T \cup \{e\}$ and leaves $T$ unchanged otherwise, and returns the final set. It
+charges one unit of time per element processed.
+
+Source: CLRS, third edition, Section 16.4, procedure GREEDY, without its sorting step. -/
 def matroidGreedy (indep : Finset α → Bool) (es : List α) : TimeM ℕ (Finset α) :=
   matroidGreedyScan indep ∅ es
 
 /-! ## Cost -/
 
+/-- **Running time of the greedy scan.** For every oracle $O$ on finite subsets of a type
+$\alpha$, every finite set $S \subseteq \alpha$ and every list $L$ of elements of $\alpha$, the
+greedy scan with oracle $O$ from $S$ over $L$ takes time exactly the length of $L$. -/
 @[simp]
 theorem matroidGreedyScan_time (indep : Finset α → Bool) (S : Finset α) (es : List α) :
     (matroidGreedyScan indep S es).time = es.length := by
@@ -75,7 +89,9 @@ theorem matroidGreedyScan_time (indep : Finset α → Bool) (S : Finset α) (es 
   | cons e es ih =>
       by_cases h : indep (insert e S) <;> simp [matroidGreedyScan, h, ih, Nat.add_comm]
 
-/-- One oracle query per element. -/
+/-- **Running time of the matroid greedy algorithm.** For every oracle $O$ on finite subsets of a
+type $\alpha$ and every list $L$ of elements of $\alpha$, the greedy algorithm with oracle $O$ on
+$L$ takes time exactly the length of $L$, one oracle query per element. -/
 @[simp]
 theorem matroidGreedy_time (indep : Finset α → Bool) (es : List α) :
     (matroidGreedy indep es).time = es.length :=
@@ -83,6 +99,11 @@ theorem matroidGreedy_time (indep : Finset α → Bool) (es : List α) :
 
 /-! ## The scan invariant -/
 
+/-- **The greedy scan over a concatenation.** For every oracle $O$ on finite subsets of a type
+$\alpha$, every finite set $S \subseteq \alpha$ and all lists $P$ and $Q$ of elements of $\alpha$,
+the set returned by the greedy scan with oracle $O$ from $S$ over $P$ followed by $Q$ equals the
+set returned by the greedy scan with oracle $O$ over $Q$ starting from the set that the scan with
+oracle $O$ from $S$ over $P$ returns. -/
 theorem matroidGreedyScan_append (indep : Finset α → Bool) (S : Finset α) (P Q : List α) :
     (matroidGreedyScan indep S (P ++ Q)).ret =
       (matroidGreedyScan indep (matroidGreedyScan indep S P).ret Q).ret := by
@@ -119,8 +140,11 @@ theorem mem_matroidGreedyScan (indep : Finset α → Bool) (S : Finset α) (es :
 
 variable {M : Matroid α} {indep : Finset α → Bool}
 
-/-- The kept set stays independent, and every scanned element that was not kept would break
-independence of the final kept set. -/
+/-- **Invariant of the greedy scan.** Let $M$ be a matroid on a type $\alpha$, let $O$ be an oracle
+that accepts a finite set $A \subseteq \alpha$ exactly when $A$ is independent in $M$, let $S$ be a
+finite independent set of $M$ and $L$ a list of elements of $\alpha$, and let $T$ be the set
+returned by the greedy scan with oracle $O$ from $S$ over $L$. Then $T$ is independent in $M$, and
+for every element $e$ of $L$ with $e \notin T$, the set $T \cup \{e\}$ is not independent in $M$. -/
 theorem matroidGreedyScan_spec (hind : ∀ S, indep S = true ↔ M.Indep ↑S) {S : Finset α}
     (hS : M.Indep ↑S) (es : List α) :
     M.Indep ↑(matroidGreedyScan indep S es).ret ∧
@@ -148,13 +172,19 @@ theorem matroidGreedyScan_spec (hind : ∀ S, indep S = true ↔ M.Indep ↑S) {
           simp [this] at h
         · exact hmax e' he' hnot
 
-/-- The result is independent and every element comes from the input. -/
+/-- **The matroid greedy result is independent.** Let $M$ be a matroid on a type $\alpha$ and let
+$O$ be an oracle that accepts a finite set $A \subseteq \alpha$ exactly when $A$ is independent in
+$M$. For every list $L$ of elements of $\alpha$, the set returned by the greedy algorithm with
+oracle $O$ on $L$ is independent in $M$, and each of its elements occurs in $L$. -/
 theorem matroidGreedy_indep (hind : ∀ S, indep S = true ↔ M.Indep ↑S) (es : List α) :
     M.Indep ↑(matroidGreedy indep es).ret ∧ ∀ x ∈ (matroidGreedy indep es).ret, x ∈ es := by
   refine ⟨(matroidGreedyScan_spec hind (by simp) es).1, fun x hx => ?_⟩
   simpa using mem_matroidGreedyScan indep ∅ es hx
 
-/-- If `es` lists exactly the ground set, the result is a base. -/
+/-- **The matroid greedy result is a base.** Let $M$ be a matroid on a type $\alpha$ with ground set
+$E$, and let $O$ be an oracle that accepts a finite set $A \subseteq \alpha$ exactly when $A$ is
+independent in $M$. For every list $L$ in which an element of $\alpha$ occurs if and only if it lies
+in $E$, the set returned by the greedy algorithm with oracle $O$ on $L$ is a base of $M$. -/
 theorem matroidGreedy_isBase (hind : ∀ S, indep S = true ↔ M.Indep ↑S) (es : List α)
     (hground : ∀ x, x ∈ M.E ↔ x ∈ es) : M.IsBase ↑(matroidGreedy indep es).ret := by
   obtain ⟨hI, hmax⟩ := matroidGreedyScan_spec hind (S := ∅) (by simp) es
@@ -198,8 +228,13 @@ private theorem mem_dropWhile_le (w : α → ℕ) (t : ℕ) {l : List α}
         · have := List.rel_of_pairwise_cons hsorted hx
           omega
 
-/-- At each threshold the greedy result has at least as many elements heavier than `t` as any
-independent set drawn from the input. -/
+/-- **Threshold counts of the matroid greedy result.** Let $M$ be a matroid on a type $\alpha$, let
+$O$ be an oracle that accepts a finite set $A \subseteq \alpha$ exactly when $A$ is independent in
+$M$, and let $w : \alpha \to \mathbb{N}$ be a weight function. Let $L$ be a list of elements of
+$\alpha$ in nonincreasing order of weight (whenever $a$ occurs before $b$ in $L$, $w(b) \le w(a)$),
+and let $G$ be the set returned by the greedy algorithm with oracle $O$ on $L$. Then for every
+finite independent set $I$ of $M$ whose elements all occur in $L$ and every $t \in \mathbb{N}$, the
+number of $x \in I$ with $w(x) > t$ is at most the number of $x \in G$ with $w(x) > t$. -/
 theorem card_filter_le_matroidGreedy (hind : ∀ S, indep S = true ↔ M.Indep ↑S) (w : α → ℕ)
     {es : List α} (hsorted : es.Pairwise fun a b => w b ≤ w a) {I : Finset α}
     (hI : M.Indep ↑I) (hIes : ∀ x ∈ I, x ∈ es) (t : ℕ) :
@@ -239,8 +274,15 @@ theorem card_filter_le_matroidGreedy (hind : ∀ S, indep S = true ↔ M.Indep �
     · exact absurd (hQ e h) (by omega)
   exact hmax e heP heSP hins
 
-/-- CLRS Theorem 16.11: with the elements in nonincreasing weight order, the greedy result weighs
-at least as much as every independent set drawn from them. -/
+/-- **Optimality of the matroid greedy algorithm.** Let $M$ be a matroid on a type $\alpha$, let $O$
+be an oracle that accepts a finite set $A \subseteq \alpha$ exactly when $A$ is independent in $M$,
+and let $w : \alpha \to \mathbb{N}$ be a weight function. Let $L$ be a list of elements of $\alpha$
+in nonincreasing order of weight (whenever $a$ occurs before $b$ in $L$, $w(b) \le w(a)$), and let
+$G$ be the set returned by the greedy algorithm with oracle $O$ on $L$. Then every finite
+independent set $I$ of $M$ whose elements all occur in $L$ satisfies
+$\sum_{x \in I} w(x) \le \sum_{x \in G} w(x)$.
+
+Source: CLRS, third edition, Theorem 16.11. -/
 theorem matroidGreedy_optimal (hind : ∀ S, indep S = true ↔ M.Indep ↑S) (w : α → ℕ)
     {es : List α} (hsorted : es.Pairwise fun a b => w b ≤ w a) {I : Finset α}
     (hI : M.Indep ↑I) (hIes : ∀ x ∈ I, x ∈ es) :
