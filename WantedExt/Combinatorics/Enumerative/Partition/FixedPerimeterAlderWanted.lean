@@ -31,8 +31,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Prepending a largest part `m` to a multiset of `k` parts, as an embedding
-`Sym ℕ k ↪ Multiset ℕ`; it builds `fixedPerimeterPartitions` without deduplication.
+/-- **Prepending a part to a multiset.** For natural numbers $m$ and $k$, the map that sends a
+multiset $t$ of $k$ natural numbers to the multiset obtained from $t$ by adding one copy of $m$
+is injective, so it embeds the multisets of size $k$ into all multisets of natural numbers.
+
+With $m$ the largest part, it builds the partitions of a given perimeter from their largest part
+and their remaining parts.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -41,10 +45,15 @@ public def symConsEmbedding (m k : ℕ) : Sym ℕ k ↪ Multiset ℕ :=
   ⟨fun t => m ::ₘ (t : Multiset ℕ),
     fun _ _ h => Sym.coe_injective ((Multiset.cons_inj_right m).mp h)⟩
 
-/-- The partitions with perimeter `n`, as multisets `s` of positive parts with
-`max s + #s = n + 1`. They are generated directly: for `k = 1, …, n` parts the largest part is
-`n + 1 - k`, prepended to a multiset of `k - 1` parts from `1, …, n + 1 - k`, so exactly the
-`2 ^ (n - 1)` partitions are enumerated (for `n ≥ 1`), without filtering or deduplication.
+/-- **Partitions with fixed perimeter.** The perimeter of a partition is its largest part plus its
+number of parts minus $1$. For a natural number $n$, the partitions with perimeter $n$ form the
+finite set of all finite multisets $s$ of positive integers whose largest element plus number of
+elements (counted with multiplicity) equals $n + 1$.
+
+The set is enumerated directly: for each number of parts $k = 1, \dots, n$ the largest part is
+$n + 1 - k$, and it is prepended to a multiset of $k - 1$ parts from $1, \dots, n + 1 - k$, so the
+$2^{n-1}$ partitions with perimeter $n$ (for $n \ge 1$) are listed without filtering or
+deduplication.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -66,7 +75,10 @@ public def fixedPerimeterPartitions (n : ℕ) : Finset (Multiset ℕ) :=
       simp only [Finset.mem_coe, Finset.mem_Icc] at hk hk'
       omega)
 
-/-- Membership in `fixedPerimeterPartitions n`: positive parts and perimeter `n`.
+/-- **Membership in the partitions with fixed perimeter.** Let $n$ be a natural number and $s$ a
+finite multiset of natural numbers. Then $s$ is a partition with perimeter $n$ if and only if
+every element of $s$ is positive and the largest element of $s$ (taken to be $0$ if $s$ is empty)
+plus the number of elements of $s$, counted with multiplicity, equals $n + 1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -113,7 +125,11 @@ public theorem mem_fixedPerimeterPartitions {n : ℕ} {s : Multiset ℕ} :
       rw [this]
       exact Multiset.cons_erase hm
 
-/-- There are four partitions with perimeter `3`: `3`, `2 + 1`, `2 + 2`, `1 + 1 + 1`.
+/-- **The partitions of perimeter three.** There are exactly four partitions with perimeter $3$,
+that is, four finite multisets of positive integers whose largest element plus number of elements
+(counted with multiplicity) equals $4$.
+
+They are $3$, $2 + 1$, $2 + 2$ and $1 + 1 + 1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -121,8 +137,9 @@ Section 1. -/
 public theorem card_fixedPerimeterPartitions_three : (fixedPerimeterPartitions 3).card = 4 := by
   decide
 
-/-- A multiset of parts is `d`-distinct when any two parts differ by at least `d`: no part
-repeats, and `x < y` forces `x + d ≤ y`.
+/-- **Partitions into d-distinct parts.** Let $d$ be a natural number. A finite multiset $s$ of
+natural numbers has $d$-distinct parts when no element occurs in $s$ more than once and any two
+elements $x < y$ of $s$ satisfy $x + d \le y$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -138,7 +155,8 @@ Section 1. -/
 public instance (d : ℕ) : DecidablePred (IsDDistinctParts d) := fun s => by
   unfold IsDDistinctParts; infer_instance
 
-/-- `5 + 3` is `2`-distinct and `4 + 3` is not.
+/-- **Examples of 2-distinct partitions.** The partition $5 + 3$ has $2$-distinct parts, and the
+partition $4 + 3$ does not.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -147,7 +165,11 @@ public theorem isDDistinctParts_examples :
     IsDDistinctParts 2 {5, 3} ∧ ¬ IsDDistinctParts 2 {4, 3} := by
   decide
 
-/-- `h_d^(a)(n)`: the number of partitions with perimeter `n` into `d`-distinct parts `≥ a`.
+/-- **Fixed perimeter partitions into $d$-distinct parts.** For natural numbers $d$, $a$ and $n$,
+$h_d^{(a)}(n)$ is the number of partitions of perimeter $n$ into $d$-distinct parts that are all
+at least $a$. Here the perimeter of a partition is its largest part plus its number of parts
+minus $1$, and a partition has $d$-distinct parts when no part repeats and any two parts differ
+by at least $d$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -155,8 +177,10 @@ Equation (1.1). -/
 public def perimeterDistinctCount (d a n : ℕ) : ℕ :=
   ((fixedPerimeterPartitions n).filter fun s => IsDDistinctParts d s ∧ ∀ x ∈ s, a ≤ x).card
 
-/-- `h_d^(a)(α, λ)`: the number of partitions into `d`-distinct parts `≥ a` with largest part
-`m = α` and `k = λ` parts (perimeter `m + k - 1`).
+/-- **Partitions into d-distinct parts by largest part and length.** For natural numbers $d$, $a$,
+$m$ and $k$, $h_d^{(a)}(m, k)$ is the number of nonempty finite multisets of positive integers with
+largest element $m$, exactly $k$ elements counted with multiplicity, all elements at least $a$,
+and $d$-distinct parts. Such a partition has perimeter $m + k - 1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -165,7 +189,10 @@ public def perimeterDistinctArmLegCount (d a m k : ℕ) : ℕ :=
   ((fixedPerimeterPartitions (m + k - 1)).filter fun s =>
     s.sup = m ∧ Multiset.card s = k ∧ IsDDistinctParts d s ∧ ∀ x ∈ s, a ≤ x).card
 
-/-- `f_d^(a)(n)`: the number of partitions with perimeter `n` into parts `≡ a (mod d + 1)`.
+/-- **Fixed perimeter partitions into parts in one residue class.** For natural numbers $d$, $a$
+and $n$, $f_d^{(a)}(n)$ is the number of partitions with perimeter $n$ all of whose parts are
+congruent to $a$ modulo $d + 1$. Here a partition is a nonempty multiset of positive integers,
+and its perimeter is its largest part plus its number of parts minus one.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -173,8 +200,13 @@ Equation (1.2). -/
 public def perimeterResidueCount (d a n : ℕ) : ℕ :=
   ((fixedPerimeterPartitions n).filter fun s => ∀ x ∈ s, x ≡ a [MOD d + 1]).card
 
-/-- `f_d^(a)(α, λ)`: the number of partitions into parts `≡ a (mod d + 1)` with largest part
-`m = α` and `k = λ` parts.
+/-- **Partitions into parts in one residue class, by largest part and length.** For natural
+numbers $d$, $a$, $m$ and $k$, $f_d^{(a)}(m, k)$ is the number of nonempty multisets of positive
+integers with largest part $m$ and exactly $k$ elements (counted with multiplicity), all of
+which are congruent to $a$ modulo $d + 1$.
+
+Such a partition has perimeter (largest part plus number of parts minus one) equal to
+$m + k - 1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -183,7 +215,10 @@ public def perimeterResidueArmLegCount (d a m k : ℕ) : ℕ :=
   ((fixedPerimeterPartitions (m + k - 1)).filter fun s =>
     s.sup = m ∧ Multiset.card s = k ∧ ∀ x ∈ s, x ≡ a [MOD d + 1]).card
 
-/-- `ℓ_d^(a)(n)`: the number of partitions with perimeter `n` into parts `≡ ±a (mod d + 3)`.
+/-- **Fixed perimeter partitions into parts $\equiv \pm a \pmod{d+3}$.** For natural numbers
+$d$, $a$ and $n$, $\ell_d^{(a)}(n)$ is the number of partitions of perimeter $n$ into parts
+congruent to $a$ or $-a$ modulo $d + 3$, where the perimeter of a partition is its largest part
+plus its number of parts minus $1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -192,8 +227,10 @@ public def perimeterPMResidueCount (d a n : ℕ) : ℕ :=
   ((fixedPerimeterPartitions n).filter fun s => ∀ x : ℕ, x ∈ s →
     (x : ℤ) ≡ a [ZMOD d + 3] ∨ (x : ℤ) ≡ -a [ZMOD d + 3]).card
 
-/-- `ℓ_d^(a)(α, λ)`: the number of partitions into parts `≡ ±a (mod d + 3)` with largest part
-`m = α` and `k = λ` parts.
+/-- **Partitions into parts $\equiv \pm a \pmod{d+3}$ by largest part and number of parts.** For
+natural numbers $d$, $a$, $\alpha$ and $\lambda$, $\ell_d^{(a)}(\alpha, \lambda)$ is the number of
+nonempty partitions into parts congruent to $a$ or $-a$ modulo $d + 3$ with largest part $\alpha$
+and exactly $\lambda$ parts (so $\ell_d^{(a)}(0, 0) = 0$: the empty partition is not counted).
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -203,8 +240,15 @@ public def perimeterPMResidueArmLegCount (d a m k : ℕ) : ℕ :=
     s.sup = m ∧ Multiset.card s = k ∧ ∀ x : ℕ, x ∈ s →
       (x : ℤ) ≡ a [ZMOD d + 3] ∨ (x : ℤ) ≡ -a [ZMOD d + 3]).card
 
-/-- Small values at `d = a = 1`, perimeter `3`: `h = f = ℓ = 2`; `h_1^(1)(2, 2) = 1`
-(`2 + 1`), `f_1^(1)(3, 1) = 1` (`3`), `ℓ_1^(1)(1, 3) = 1` (`1 + 1 + 1`).
+/-- **Small values of the fixed-perimeter partition counts.** Take $d = a = 1$. Among the
+partitions with perimeter $3$, exactly two have $1$-distinct parts that are all at least $1$,
+exactly two have all parts congruent to $1$ modulo $2$, and exactly two have all parts congruent
+to $1$ or $-1$ modulo $4$. Moreover, exactly one partition with largest part $2$ and $2$ parts has
+$1$-distinct parts that are all at least $1$, exactly one partition with largest part $3$ and $1$
+part has all parts congruent to $1$ modulo $2$, and exactly one partition with largest part $1$
+and $3$ parts has all parts congruent to $1$ or $-1$ modulo $4$.
+
+The partitions counted in the last three cases are $2 + 1$, $3$ and $1 + 1 + 1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -215,7 +259,12 @@ public theorem perimeterCounts_small_values :
       perimeterResidueArmLegCount 1 1 3 1 = 1 ∧ perimeterPMResidueArmLegCount 1 1 1 3 = 1 := by
   decide
 
-/-- Theorem 1.4, first part: for `1 ≤ a ≤ d + 1`, `h_d^(a)(n) = f_d^(a)(n)`.
+/-- **Fixed-perimeter identity for $d$-distinct parts.** Let $d$ and $n$ be positive integers and
+let $a$ be an integer with $1 \le a \le d + 1$. Then the number $h_d^{(a)}(n)$ of partitions of
+perimeter $n$ into $d$-distinct parts (no part repeats and any two parts differ by at least $d$),
+all at least $a$, equals the number $f_d^{(a)}(n)$ of partitions of perimeter $n$ into parts
+congruent to $a$ modulo $d + 1$. Here the perimeter of a partition is its largest part plus its
+number of parts minus $1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -224,10 +273,15 @@ public theorem_wanted perimeterDistinctCount_eq_perimeterResidueCount {d a n : �
     (hn : 0 < n) (ha : 1 ≤ a) (had : a ≤ d + 1) :
     perimeterDistinctCount d a n = perimeterResidueCount d a n
 
-/-- Theorem 1.4, refinement: for `1 ≤ a ≤ d + 1`,
-`h_d^(a)(α, λ) = f_d^(a)(a + (d + 1)(λ - 1), α - a - d(λ - 1) + 1)`. The second argument is
-written `α + 1 - a - d(λ - 1)` in truncated subtraction, so it is `0` (and both sides vanish)
-when the paper's value is not positive.
+/-- **Refined equality of distinct-part and residue counts.** Let $d$, $a$, $m$ and $k$ be natural
+numbers with $d \ge 1$, $1 \le a \le d + 1$, $m \ge 1$ and $k \ge 1$. Write $h_d^{(a)}(m, k)$ for
+the number of partitions into $d$-distinct parts, all at least $a$, with largest part $m$ and $k$
+parts, and $f_d^{(a)}(m, k)$ for the number of partitions into parts congruent to $a$ modulo
+$d + 1$ with largest part $m$ and $k$ parts. Then
+$h_d^{(a)}(m, k) = f_d^{(a)}(a + (d + 1)(k - 1), j)$, where $j = \max(m + 1 - a - d(k - 1), 0)$.
+
+In the source the second argument is $m + 1 - a - d(k - 1)$; it is replaced by $0$ when it is not
+positive, and then both sides vanish.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -237,8 +291,11 @@ public theorem_wanted perimeterDistinctArmLegCount_eq_perimeterResidueArmLegCoun
     perimeterDistinctArmLegCount d a m k =
       perimeterResidueArmLegCount d a (a + (d + 1) * (k - 1)) (m + 1 - a - d * (k - 1))
 
-/-- Lemma 3.1: for positive `d, a, α, λ` with `a ≤ d + 1`, `h_d^(a)(α, λ) ≠ 0` iff
-`α ≥ a + d(λ - 1)`, and then `h_d^(a)(α, λ) = C(α - a - (d - 1)(λ - 1), λ - 1)`.
+/-- **Counting d-distinct partitions by largest part and length.** Let $d$, $a$, $m$ and $k$ be
+positive integers with $a \le d + 1$, and write $h_d^{(a)}(m, k)$ for the number of partitions into
+$d$-distinct parts, all at least $a$, with largest part $m$ and $k$ parts. Then
+$h_d^{(a)}(m, k) \ne 0$ if and only if $m \ge a + d(k - 1)$, and in that case
+$h_d^{(a)}(m, k) = \binom{m - a - (d - 1)(k - 1)}{k - 1}$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -249,8 +306,12 @@ public theorem_wanted perimeterDistinctArmLegCount_ne_zero_iff_and_eq_choose {d 
       (a + d * (k - 1) ≤ m →
         perimeterDistinctArmLegCount d a m k = (m - a - (d - 1) * (k - 1)).choose (k - 1))
 
-/-- Lemma 3.2: for positive `d, a, α, λ` with `a ≤ d + 1`, `f_d^(a)(α, λ) ≠ 0` iff `α ≥ a` and
-`α ≡ a (mod d + 1)`, and then `f_d^(a)(α, λ) = C((α - a)/(d + 1) + λ - 1, λ - 1)`.
+/-- **Nonvanishing and binomial count for parts $\equiv a \pmod{d+1}$.** Let $d$, $a$, $\alpha$
+and $\lambda$ be positive integers with $a \le d + 1$, and let $f_d^{(a)}(\alpha, \lambda)$ be the
+number of partitions into parts congruent to $a$ modulo $d + 1$ with largest part $\alpha$ and
+exactly $\lambda$ parts. Then $f_d^{(a)}(\alpha, \lambda) \ne 0$ if and only if $\alpha \ge a$ and
+$\alpha \equiv a \pmod{d + 1}$, and in that case
+$f_d^{(a)}(\alpha, \lambda) = \binom{(\alpha - a)/(d + 1) + \lambda - 1}{\lambda - 1}$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -261,10 +322,13 @@ public theorem_wanted perimeterResidueArmLegCount_ne_zero_iff_and_eq_choose {d a
       (a ≤ m → m ≡ a [MOD d + 1] →
         perimeterResidueArmLegCount d a m k = ((m - a) / (d + 1) + k - 1).choose (k - 1))
 
-/-- Lemma 4.2: for positive `d, a, n` with `a < (d + 3)/2` and `n ≥ a`,
-`⌊⌊(n - a)/(d + 1)⌋ / 2⌋ ≤ ⌊(n - a)/(d + 3)⌋` and
-`⌊(⌊(n - a)/(d + 1)⌋ + 1) / 2⌋ ≤ ⌊(n + a)/(d + 3)⌋`, in natural-number division (the lower
-bounds `0 ≤ …` are automatic).
+/-- **A floor inequality for perimeter counts.** Let $d$, $a$ and $n$ be natural numbers with
+$d \ge 1$, $a \ge 1$, $2a < d + 3$ and $a \le n$. Then
+$\lfloor \lfloor (n - a)/(d + 1) \rfloor / 2 \rfloor \le \lfloor (n - a)/(d + 3) \rfloor$
+and
+$\lfloor (\lfloor (n - a)/(d + 1) \rfloor + 1) / 2 \rfloor \le \lfloor (n + a)/(d + 3) \rfloor$.
+
+The lower bounds by $0$ in the source hold automatically and are not stated.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -274,9 +338,15 @@ public theorem_wanted floor_half_div_le_div_of_two_mul_lt {d a n : ℕ} (hd : 0 
     (n - a) / (d + 1) / 2 ≤ (n - a) / (d + 3) ∧
       ((n - a) / (d + 1) + 1) / 2 ≤ (n + a) / (d + 3)
 
-/-- Lemma 4.3: for positive `d, a, α, λ` with `a < (d + 3)/2`, `ℓ_d^(a)(α, λ) ≠ 0` iff `α ≥ a`
-and `α ≡ ±a (mod d + 3)`; then `ℓ_d^(a)(α, λ) = C(2(α - a)/(d + 3) + λ - 1, λ - 1)` if
-`α ≡ a`, and `C(2(α + a)/(d + 3) + λ - 2, λ - 1)` if `α ≡ -a`.
+/-- **Nonvanishing and binomial count for parts $\equiv \pm a \pmod{d+3}$.** Let $d$, $a$,
+$\alpha$ and $\lambda$ be positive integers with $a < (d + 3)/2$, and let
+$\ell_d^{(a)}(\alpha, \lambda)$ be the number of partitions into parts congruent to $a$ or $-a$
+modulo $d + 3$ with largest part $\alpha$ and exactly $\lambda$ parts. Then
+$\ell_d^{(a)}(\alpha, \lambda) \ne 0$ if and only if $\alpha \ge a$ and
+$\alpha \equiv \pm a \pmod{d + 3}$. Moreover, if $\alpha \ge a$ and $\alpha \equiv a \pmod{d + 3}$,
+then $\ell_d^{(a)}(\alpha, \lambda) = \binom{2(\alpha - a)/(d + 3) + \lambda - 1}{\lambda - 1}$,
+and if $\alpha \ge a$ and $\alpha \equiv -a \pmod{d + 3}$, then
+$\ell_d^{(a)}(\alpha, \lambda) = \binom{2(\alpha + a)/(d + 3) + \lambda - 2}{\lambda - 1}$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -292,8 +362,12 @@ public theorem_wanted perimeterPMResidueArmLegCount_ne_zero_iff_and_eq_choose {d
         perimeterPMResidueArmLegCount d a m k =
           (2 * ((m + a) / (d + 3)) + k - 2).choose (k - 1))
 
-/-- Theorem 1.5 (reverse Alder-type inequality): for positive `d, n, a` with `a < (d + 3)/2`,
-`h_d^(a)(n) ≤ ℓ_d^(a)(n)`.
+/-- **Reverse Alder-type inequality for fixed perimeter partitions.** Let $d$, $n$ and $a$ be
+positive integers with $a < (d + 3)/2$. Then the number $h_d^{(a)}(n)$ of partitions of perimeter
+$n$ into $d$-distinct parts (no part repeats and any two parts differ by at least $d$), all at
+least $a$, is at most the number $\ell_d^{(a)}(n)$ of partitions of perimeter $n$ into parts
+congruent to $a$ or $-a$ modulo $d + 3$. Here the perimeter of a partition is its largest part
+plus its number of parts minus $1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -302,8 +376,12 @@ public theorem_wanted perimeterDistinctCount_le_perimeterPMResidueCount {d a n :
     (hn : 0 < n) (ha : 0 < a) (had : 2 * a < d + 3) :
     perimeterDistinctCount d a n ≤ perimeterPMResidueCount d a n
 
-/-- Proposition 1.6, `h` part: for positive `d, n, a`, `h_d^(a+1)(n) ≤ h_d^(a)(n)`,
-`h_{d+1}^(a)(n) ≤ h_d^(a)(n)` and `h_d^(a)(n) ≤ h_d^(a)(n + 1)`.
+/-- **Monotonicity of fixed perimeter counts with $d$-distinct parts.** For natural numbers
+$d$, $a$ and $n$, let $h_d^{(a)}(n)$ be the number of partitions of perimeter $n$ (largest part
+plus number of parts minus $1$) into $d$-distinct parts, all at least $a$, where parts are
+$d$-distinct when no part repeats and any two parts differ by at least $d$. If $d$, $n$ and $a$
+are positive, then $h_d^{(a+1)}(n) \le h_d^{(a)}(n)$, $h_{d+1}^{(a)}(n) \le h_d^{(a)}(n)$ and
+$h_d^{(a)}(n) \le h_d^{(a)}(n + 1)$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -314,8 +392,11 @@ public theorem_wanted perimeterDistinctCount_shift_inequalities {d a n : ℕ} (h
       perimeterDistinctCount (d + 1) a n ≤ perimeterDistinctCount d a n ∧
       perimeterDistinctCount d a n ≤ perimeterDistinctCount d a (n + 1)
 
-/-- Proposition 1.6, `ℓ` part: for positive `d, n, a` with `a < (d + 3)/2`,
-`ℓ_d^(a)(n) ≤ ℓ_d^(a)(n + 1)` and `ℓ_{d+1}^(a)(n) ≤ ℓ_d^(a)(n)`.
+/-- **Monotonicity of fixed perimeter counts with parts $\equiv \pm a \pmod{d+3}$.** For natural
+numbers $d$, $a$ and $n$, let $\ell_d^{(a)}(n)$ be the number of partitions of perimeter $n$
+(largest part plus number of parts minus $1$) into parts congruent to $a$ or $-a$ modulo $d + 3$.
+If $d$, $n$ and $a$ are positive with $a < (d + 3)/2$, then
+$\ell_d^{(a)}(n) \le \ell_d^{(a)}(n + 1)$ and $\ell_{d+1}^{(a)}(n) \le \ell_d^{(a)}(n)$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
@@ -325,8 +406,12 @@ public theorem_wanted perimeterPMResidueCount_shift_inequalities {d a n : ℕ} (
     perimeterPMResidueCount d a n ≤ perimeterPMResidueCount d a (n + 1) ∧
       perimeterPMResidueCount (d + 1) a n ≤ perimeterPMResidueCount d a n
 
-/-- Proposition 4.1 (degenerate case): for positive `n` and odd `d`,
-`h_d^((d+3)/2)(n) ≥ ℓ_d^((d+3)/2)(n)`.
+/-- **Alder-type inequality in the degenerate case $a = (d + 3)/2$.** Let $n$ be a positive
+integer, let $d$ be an odd natural number and put $a = (d + 3)/2$. Then the number
+$\ell_d^{(a)}(n)$ of partitions of perimeter $n$ into parts congruent to $a$ or $-a$ modulo
+$d + 3$ is at most the number $h_d^{(a)}(n)$ of partitions of perimeter $n$ into $d$-distinct
+parts (no part repeats and any two parts differ by at least $d$), all at least $a$. Here the
+perimeter of a partition is its largest part plus its number of parts minus $1$.
 
 Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogues of Alder-Type
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,

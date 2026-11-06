@@ -38,9 +38,11 @@ namespace MetaMathlibExt
 
 open NoncrossingPartition
 
-/-- `x` and `y` lie in one block of the partition obtained from `P` by merging the blocks of
-`i` and `j`: either they already share a block, or each lies in the block of `i` or of `j`
-(for singleton blocks `{i}`, `{j}` this joins them into `{i, j}`).
+/-- **Same block after merging two blocks.** Let $P$ be a set partition of $\{0, \dots, n-1\}$ and
+let $i, j, x, y \in \{0, \dots, n-1\}$. Then $x$ and $y$ lie in the same block after merging the
+blocks of $i$ and $j$ if either $x$ and $y$ lie in the same block of $P$, or each of $x$ and $y$
+lies in the block of $i$ or in the block of $j$. For singleton blocks $\{i\}$ and $\{j\}$ this
+joins them into the block $\{i, j\}$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 3 (the
@@ -53,8 +55,10 @@ instance {n : ℕ} (P : SetPartition n) (i j x y : Fin n) :
   unfold mergedSameBlock
   infer_instance
 
-/-- The partition obtained from `P` by joining the blocks of `i` and `j` has a crossing: there are
-`a < b < c < d` with `a, c` in one of its blocks and `b, d` in another.
+/-- **Crossing after merging two blocks.** Let $P$ be a set partition of $\{0, \dots, n-1\}$ and
+let $i, j \in \{0, \dots, n-1\}$. The partition obtained from $P$ by merging the blocks of $i$ and
+$j$ has a crossing if there are $a < b < c < d$ in $\{0, \dots, n-1\}$ such that $a$ and $c$ lie
+in one of its blocks and $b$ and $d$ lie in a different one of its blocks.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definitions 2 and 3
@@ -67,9 +71,9 @@ instance {n : ℕ} (P : SetPartition n) (i j : Fin n) : Decidable (mergedHasCros
   unfold mergedHasCrossing
   infer_instance
 
-/-- A partition `P` of `[n]` is a marriageable singles partition if it has two distinct singleton
-blocks `{i}`, `{j}` such that the partition obtained by joining them into `{i, j}` is
-noncrossing.
+/-- **Marriageable singles partition.** A set partition $P$ of $\{0, \dots, n-1\}$ is a
+marriageable singles partition if it has two distinct singleton blocks $\{i\}$ and $\{j\}$ such
+that the partition obtained from $P$ by joining them into the block $\{i, j\}$ has no crossing.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 3. -/
@@ -80,22 +84,26 @@ instance {n : ℕ} (P : SetPartition n) : Decidable (IsMarriageableSingles P) :=
   unfold IsMarriageableSingles
   infer_instance
 
-/-- `M_n`, the number of marriageable singles partitions of `[n]`.
+/-- **Number of marriageable singles partitions.** For $n \ge 0$, $M_n$ is the number of
+noncrossing partitions of $\{0, \dots, n-1\}$ that are marriageable singles partitions.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 3. -/
 def marriageableSinglesCount (n : ℕ) : ℕ :=
   (Finset.univ.filter fun P : _root_.NoncrossingPartition n => IsMarriageableSingles P.val).card
 
-/-- `L_n`, the number of lonely singles partitions of `[n]` (noncrossing partitions that are not
-marriageable singles partitions).
+/-- **Number of lonely singles partitions.** For $n \ge 0$, $L_n$ is the number of lonely singles
+partitions of $\{0, \dots, n-1\}$, that is, of noncrossing partitions of $\{0, \dots, n-1\}$ that
+are not marriageable singles partitions.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 3. -/
 def lonelySinglesCount (n : ℕ) : ℕ :=
   (Finset.univ.filter fun P : _root_.NoncrossingPartition n => ¬ IsMarriageableSingles P.val).card
 
-/-- `M_0 = M_1 = 0`: a marriageable singles partition needs two distinct points.
+/-- **Small values of the marriageable singles count.** For every $n \le 1$, the number of
+marriageable singles partitions of $\{0, \dots, n-1\}$ is $M_n = 0$: a marriageable singles
+partition needs two distinct points.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Table 1. -/
@@ -105,7 +113,8 @@ theorem marriageableSinglesCount_of_le_one {n : ℕ} (hn : n ≤ 1) :
   rintro P - ⟨i, j, hij, -⟩
   exact hij (Fin.ext (by omega))
 
-/-- `L_0 = L_1 = 1`.
+/-- **Small values of the lonely singles count.** The numbers of lonely singles partitions of
+$\{0, \dots, n-1\}$ for $n = 0$ and $n = 1$ are $L_0 = 1$ and $L_1 = 1$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Table 1. -/
@@ -120,8 +129,9 @@ theorem lonelySinglesCount_zero_one : lonelySinglesCount 0 = 1 ∧ lonelySingles
     · rintro P - ⟨i, j, hij, -⟩
       exact hij (Fin.ext (by omega))
 
-/-- `NC_{n,m,k}`, the number of noncrossing partitions of `[n]` with `m` blocks of which `k` are
-singletons.
+/-- **Noncrossing partitions by number of blocks and of singleton blocks.** For natural numbers
+$n$, $m$ and $k$, $NC_{n,m,k}$ is the number of noncrossing partitions of $\{0, \dots, n-1\}$
+that have exactly $m$ blocks, exactly $k$ of which are singletons.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 23. -/
@@ -129,7 +139,10 @@ def noncrossingBlockSingletonCount (n m k : ℕ) : ℕ :=
   (Finset.univ.filter fun P : _root_.NoncrossingPartition n =>
     P.val.parts.card = m ∧ (P.val.parts.filter fun B => B.card = 1).card = k).card
 
-/-- `NC_{0,0,0} = 1`: the empty partition of `[0]` has no blocks.
+/-- **Base value of the noncrossing block and singleton count.** Exactly one noncrossing partition
+of the empty set has $0$ blocks, $0$ of which are singletons, namely the empty partition; that
+is, $NC_{0,0,0} = 1$, where $NC_{n,m,k}$ is the number of noncrossing partitions of
+$\{0, \dots, n-1\}$ with $m$ blocks of which $k$ are singletons.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Remark 25. -/
@@ -140,9 +153,13 @@ theorem noncrossingBlockSingletonCount_zero : noncrossingBlockSingletonCount 0 0
     Finset.card_univ]
   exact NoncrossingPartition.card_zero
 
-/-- The binomial coefficient `binom(a, b)` for integers `a`, `b`, taken to be `0` unless
-`0 ≤ a` and `0 ≤ b`. This is the convention under which the paper's formulas "give `0`" in the
-degenerate cases (for example `binom(-1, 0) = 0` in `NC_{1,1,0}`).
+/-- **Zero-extended binomial coefficient.** For integers $a$ and $b$, the zero-extended binomial
+coefficient $\binom{a}{b}$ is the usual binomial coefficient of $a$ and $b$ when $a \ge 0$ and
+$b \ge 0$, and $0$ otherwise.
+
+This is the convention under which the paper's formulas "give $0$" in the degenerate cases (for
+example $\binom{-1}{0} = 0$ in the count of noncrossing partitions of a one-element set with
+one block and no singleton block).
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, proof of
@@ -150,7 +167,10 @@ Proposition 24 (degenerate cases giving `0`). -/
 def zeroExtendedChoose (a b : ℤ) : ℕ :=
   if 0 ≤ a ∧ 0 ≤ b then a.toNat.choose b.toNat else 0
 
-/-- On natural arguments `zeroExtendedChoose` is `Nat.choose`.
+/-- **The zero-extended binomial coefficient on natural numbers.** Extend the binomial coefficient
+$\binom{a}{b}$ to all integers $a$, $b$ by setting it to $0$ when $a < 0$ or $b < 0$. For all
+natural numbers $a$ and $b$, this extended binomial coefficient at $a$ and $b$ viewed as integers
+equals the usual binomial coefficient $\binom{a}{b}$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, proof of
@@ -158,7 +178,9 @@ Proposition 24 (degenerate cases giving `0`). -/
 theorem zeroExtendedChoose_natCast (a b : ℕ) : zeroExtendedChoose a b = a.choose b := by
   simp [zeroExtendedChoose]
 
-/-- `binom(-1, 0) = 0` under this convention.
+/-- **The zero-extended binomial coefficient vanishes at $(-1, 0)$.** Extend the binomial
+coefficient $\binom{a}{b}$ to all integers $a$, $b$ by setting it to $0$ when $a < 0$ or $b < 0$.
+Under this convention $\binom{-1}{0} = 0$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, proof of
@@ -166,10 +188,11 @@ Proposition 24 (degenerate cases giving `0`). -/
 theorem zeroExtendedChoose_neg_one_zero : zeroExtendedChoose (-1) 0 = 0 := by
   simp [zeroExtendedChoose]
 
-/-- Two lanes `E_iX_j = (i, j)` and `E_{i'}X_{j'} = (i', j')` of a standard road intersection
-have a common point: they share an entry or an exit, or their chords cross, i.e. exactly one
-endpoint of the second chord lies strictly between the endpoints `2i`, `2j + 1` of the first
-(all four endpoints being distinct when no entry or exit is shared).
+/-- **Lanes with a common point.** The standard road intersection of size $n$ has entries
+$E_0, \dots, E_{n-1}$ and exits $X_0, \dots, X_{n-1}$ on a circle, with $E_i$ at position $2i$
+and $X_j$ at position $2j + 1$; the lane $E_iX_j$ is the chord from $E_i$ to $X_j$. Two lanes
+$E_iX_j$ and $E_{i'}X_{j'}$ have a common point if $i = i'$, or $j = j'$, or exactly one of the
+positions $2i'$ and $2j' + 1$ lies strictly between $2i$ and $2j + 1$ (that is, the chords cross).
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definitions 10 and 13
@@ -184,9 +207,12 @@ instance {n : ℕ} (ℓ ℓ' : Fin n × Fin n) : Decidable (lanesMeet ℓ ℓ') 
   unfold lanesMeet
   infer_instance
 
-/-- `S` is a maximal set of lanes (MSL) among the lanes `allowed`: its lanes pairwise have no
-common point, and every other allowed lane meets one of them. The standard road intersection
-allows every lane; the restricted one forbids the U-turns `E_iX_i`.
+/-- **Maximal set of lanes.** In the standard road intersection of size $n$, the lane $E_iX_j$
+joins the entry $E_i$ to the exit $X_j$, for $i, j \in \{0, \dots, n-1\}$. Given a set $A$ of
+allowed lanes, a set $S$ of lanes is a maximal set of lanes (MSL) among $A$ if $S \subseteq A$,
+no two distinct lanes of $S$ have a common point, and every lane of $A$ not in $S$ has a common
+point with some lane of $S$. The standard road intersection allows every lane; the restricted one
+forbids the U-turns $E_iX_i$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definitions 12 and 13
@@ -200,8 +226,11 @@ instance {n : ℕ} (allowed S : Finset (Fin n × Fin n)) :
   unfold IsMaximalSetOfLanes
   infer_instance
 
-/-- An MSL of the standard road intersection is absolute when it has no two U-turns `E_iX_i`,
-`E_jX_j` (`i ≠ j`) whose replacement by `E_iX_j` and `E_jX_i` gives another MSL.
+/-- **Absolute maximal set of lanes.** In the standard road intersection of size $n$, the lane
+$E_iX_j$ joins the entry $E_i$ to the exit $X_j$, for $i, j \in \{0, \dots, n-1\}$. A set $S$ of
+lanes is absolute if it is a maximal set of lanes among all lanes and there are no $i \ne j$ such
+that $S$ contains both U-turns $E_iX_i$ and $E_jX_j$ and replacing these two lanes in $S$ by
+$E_iX_j$ and $E_jX_i$ gives again a maximal set of lanes among all lanes.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 15. -/
@@ -214,8 +243,9 @@ instance {n : ℕ} (S : Finset (Fin n × Fin n)) : Decidable (IsAbsoluteMaximalS
   unfold IsAbsoluteMaximalSetOfLanes
   infer_instance
 
-/-- The standard road intersection of size `2` has the two MSL `{E₁X₁, E₂X₂}` and
-`{E₁X₂, E₂X₁}`.
+/-- **Maximal sets of lanes for an intersection of size two.** Write $E_iX_j$ for the lane from the
+$i$-th entry to the $j$-th exit. In the standard road intersection of size $2$, in which every lane
+is allowed, the maximal sets of lanes are exactly $\{E_1X_1, E_2X_2\}$ and $\{E_1X_2, E_2X_1\}$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Definition 13 (MSL). -/
@@ -226,7 +256,10 @@ theorem maximalSetsOfLanes_two :
 
 /-! ## Statements -/
 
-/-- The number `C_n` of noncrossing partitions of `[n]` is `L_n + M_n`.
+/-- **Noncrossing partitions split into lonely and marriageable singles partitions.** For every
+$n \ge 0$, the number $C_n$ of noncrossing partitions of $\{0, \dots, n-1\}$ equals $L_n + M_n$,
+where $M_n$ is the number of those that are marriageable singles partitions and $L_n$ is the
+number of those that are not.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Lemma 6
@@ -235,8 +268,10 @@ public theorem_wanted card_noncrossingPartition_eq_lonely_add_marriageable (n : 
     Fintype.card (_root_.NoncrossingPartition n) =
       lonelySinglesCount n + marriageableSinglesCount n
 
-/-- The MSL of a standard road intersection of size `n` are in bijection with the noncrossing
-partitions of `[n]`, and there are `C_n` (the Catalan number) of them.
+/-- **Maximal sets of lanes and noncrossing partitions.** For every $n \ge 0$, the maximal sets of
+lanes of the standard road intersection of size $n$, in which every lane is allowed, are in
+bijection with the noncrossing partitions of $\{0, \dots, n-1\}$, and their number is the Catalan
+number $C_n$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Lemma 16
@@ -247,7 +282,10 @@ public theorem_wanted maximalSetsOfLanes_equiv_noncrossingPartition (n : ℕ) :
     (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
       IsMaximalSetOfLanes Finset.univ S).card = catalan n
 
-/-- The number of nonabsolute MSL of a standard road intersection of size `n` is `M_n`.
+/-- **Nonabsolute maximal sets of lanes are counted by marriageable singles partitions.** For
+every $n \ge 0$, the number of maximal sets of lanes of the standard road intersection of size $n$
+that are not absolute equals $M_n$, the number of noncrossing partitions of $\{0, \dots, n-1\}$
+that are marriageable singles partitions.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 17
@@ -257,7 +295,10 @@ public theorem_wanted card_nonabsolute_maximalSetsOfLanes (n : ℕ) :
       IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S).card =
       marriageableSinglesCount n
 
-/-- The number of absolute MSL of a standard road intersection of size `n` is `L_n`.
+/-- **Absolute maximal sets of lanes are counted by lonely singles partitions.** For every
+$n \ge 0$, the number of absolute maximal sets of lanes of the standard road intersection of
+size $n$ equals $L_n$, the number of noncrossing partitions of $\{0, \dots, n-1\}$ that are not
+marriageable singles partitions.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 18
@@ -266,8 +307,12 @@ public theorem_wanted card_absolute_maximalSetsOfLanes (n : ℕ) :
     (Finset.univ.filter fun S : Finset (Fin n × Fin n) => IsAbsoluteMaximalSetOfLanes S).card =
       lonelySinglesCount n
 
-/-- The number of MSL of a restricted standard road intersection of size `n` (U-turns `E_iX_i`
-forbidden) is `L_n`.
+/-- **Maximal sets of lanes without U-turns are counted by lonely singles partitions.** For every
+$n \ge 0$, consider the restricted standard road intersection of size $n$, in which the lane
+$E_iX_j$ from the entry $E_i$ to the exit $X_j$, for $i, j \in \{0, \dots, n-1\}$, is allowed
+exactly when $i \ne j$ (the U-turns $E_iX_i$ are forbidden). The number of maximal sets of lanes
+among these allowed lanes equals $L_n$, the number of noncrossing partitions of
+$\{0, \dots, n-1\}$ that are not marriageable singles partitions.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 19
@@ -277,7 +322,10 @@ public theorem_wanted card_restricted_maximalSetsOfLanes (n : ℕ) :
       IsMaximalSetOfLanes (Finset.univ.filter fun ℓ : Fin n × Fin n => ℓ.1 ≠ ℓ.2) S).card =
       lonelySinglesCount n
 
-/-- `L_n < L_{n+1}` for `n ≥ 2` and `M_n < M_{n+1}` for `n ≥ 3`.
+/-- **Strict growth of the lonely and marriageable singles counts.** $L_n < L_{n+1}$ for every
+$n \ge 2$, and $M_n < M_{n+1}$ for every $n \ge 3$, where $M_n$ is the number of noncrossing
+partitions of $\{0, \dots, n-1\}$ that are marriageable singles partitions and $L_n$ is the
+number of those that are not.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 20
@@ -286,7 +334,10 @@ public theorem_wanted lonely_marriageable_strictMono :
     (∀ n, 2 ≤ n → lonelySinglesCount n < lonelySinglesCount (n + 1)) ∧
     ∀ n, 3 ≤ n → marriageableSinglesCount n < marriageableSinglesCount (n + 1)
 
-/-- `M_n → ∞` and `L_n → ∞`.
+/-- **The marriageable and lonely singles counts tend to infinity.** Let $M_n$ and $L_n$ be the
+numbers of noncrossing partitions of $\{0, \dots, n-1\}$ that are marriageable singles partitions
+and lonely singles partitions, respectively. Then $M_n \to \infty$ and $L_n \to \infty$ as
+$n \to \infty$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 21
@@ -295,8 +346,9 @@ public theorem_wanted tendsto_marriageable_lonely_atTop :
     Filter.Tendsto marriageableSinglesCount Filter.atTop Filter.atTop ∧
       Filter.Tendsto lonelySinglesCount Filter.atTop Filter.atTop
 
-/-- `C_n + 3M_n ≤ M_{n+2}` for every `n ≥ 0`, with `C_n` the number of noncrossing partitions of
-`[n]`.
+/-- **Recursive lower bound for marriageable singles partitions.** For every $n \ge 0$,
+$C_n + 3M_n \le M_{n+2}$, where $C_n$ is the number of noncrossing partitions of
+$\{0, \dots, n-1\}$ and $M_n$ is the number of those that are marriageable singles partitions.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 22
@@ -305,10 +357,15 @@ public theorem_wanted card_add_three_mul_marriageable_le (n : ℕ) :
     Fintype.card (_root_.NoncrossingPartition n) + 3 * marriageableSinglesCount n ≤
       marriageableSinglesCount (n + 2)
 
-/-- For `(n, m) ≠ (0, 0)`, `NC_{n,m,0} = binom(n, m) binom(n-m-1, m-1) / (n-m+1)`, and for
-`(n, m) ≠ (1, 1)`, `NC_{n,m,1} = binom(n, m-1) binom(n-m-1, m-2)`; binomials with a negative
-argument are `0` (`zeroExtendedChoose`), and the quotient is in `ℚ` (where `1/0 = 0`; the
-denominator vanishes only for `m = n + 1`, where `binom(n, m) = 0`).
+/-- **Counting noncrossing partitions with no or one singleton block.** Write $NC_{n,m,k}$ for the
+number of noncrossing partitions of $\{0, \dots, n-1\}$ with $m$ blocks of which $k$ are
+singletons, and extend the binomial coefficient $\binom{a}{b}$ to all integers $a$, $b$ by setting
+it to $0$ when $a < 0$ or $b < 0$. For all natural numbers $n$ and $m$: if $(n, m) \ne (0, 0)$,
+then the following holds in $\mathbb{Q}$, where $1/0$ is taken to be $0$ (the denominator
+vanishes only for $m = n + 1$, where $\binom{n}{m} = 0$):
+$$NC_{n,m,0} = \frac{1}{n-m+1} \binom{n}{m} \binom{n-m-1}{m-1};$$
+and if $(n, m) \ne (1, 1)$, then
+$$NC_{n,m,1} = \binom{n}{m-1} \binom{n-m-1}{m-2}.$$
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 24
@@ -322,10 +379,13 @@ public theorem_wanted noncrossingBlockSingletonCount_formulas (n m : ℕ) :
       noncrossingBlockSingletonCount n m 1 =
         zeroExtendedChoose n ((m : ℤ) - 1) * zeroExtendedChoose ((n : ℤ) - m - 1) ((m : ℤ) - 2))
 
-/-- For `n ≥ 2`, `L_n` is at least the number of noncrossing partitions with at most one
-singleton block, written with the formulas of Proposition 24:
-`L_n ≥ ∑_{m=1}^{⌊n/2⌋} binom(n, m) binom(n-m-1, m-1)/(n-m+1)
-  + ∑_{m=2}^{⌊(n+1)/2⌋} binom(n, m-1) binom(n-m-1, m-2)`.
+/-- **Lower bound for the number of lonely singles partitions.** For every $n \ge 2$, the number
+$L_n$ of lonely singles partitions of $\{0, \dots, n-1\}$ satisfies
+$$
+L_n \ge \sum_{m=1}^{\lfloor n/2 \rfloor} \frac{1}{n-m+1} \binom{n}{m} \binom{n-m-1}{m-1} +
+\sum_{m=2}^{\lfloor (n+1)/2 \rfloor} \binom{n}{m-1} \binom{n-m-1}{m-2},
+$$
+where a binomial coefficient $\binom{a}{b}$ with $a < 0$ or $b < 0$ is taken to be $0$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 26
@@ -338,12 +398,16 @@ public theorem_wanted lonelySinglesCount_ge_sum (n : ℕ) (hn : 2 ≤ n) :
           ℚ)) ≤
       lonelySinglesCount n
 
-/-- For `n ≥ 3`, `M_n` is at least the double sum over `1 ≤ i < j ≤ n` of the products of the
-singleton-free counts (via Proposition 24) for `[n+i-j-1]` and `[j-i-1]`:
-`M_n ≥ ∑_{i=1}^{n-1} ∑_{j=i+1}^{n}
-  (∑_{m=0}^{⌊(n+i-j-1)/2⌋} binom(n+i-j-1, m) binom(n+i-j-m-2, m-1)/(n+i-j-m))
-  (∑_{m=0}^{⌊(j-i-1)/2⌋} binom(j-i-1, m) binom(j-i-m-2, m-1)/(j-i-m))`,
-binomials with a negative argument being `0`.
+/-- **Lower bound for the number of marriageable singles partitions.** Extend the binomial
+coefficient $\binom{a}{b}$ to all integers $a$, $b$ by setting it to $0$ when $a < 0$ or $b < 0$,
+and for every natural number $N$ let
+$$S(N) = \sum_{m=0}^{\lfloor N/2 \rfloor} \frac{1}{N-m+1} \binom{N}{m} \binom{N-m-1}{m-1}.$$
+For every $n \ge 3$, the number $M_n$ of noncrossing partitions of $\{0, \dots, n-1\}$ that are
+marriageable singles partitions satisfies
+$$M_n \ge \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} S(n+i-j-1)\, S(j-i-1).$$
+
+For $N \ge 1$, $S(N)$ is the number of noncrossing partitions of an $N$-element set with no
+singleton block; with the convention above, $S(0) = 0$.
 
 Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
 Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 27

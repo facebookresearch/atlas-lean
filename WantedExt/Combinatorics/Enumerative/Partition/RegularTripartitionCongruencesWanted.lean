@@ -42,8 +42,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The number `T_ℓ(n)` of `ℓ`-regular tripartitions of `n`: triples `(λ₁, λ₂, λ₃)` of
-partitions with `|λ₁| + |λ₂| + |λ₃| = n` in which no part of any `λᵢ` is divisible by `ℓ`.
+/-- **Regular tripartition counts.** For natural numbers $\ell$ and $n$, $T_\ell(n)$ is the number
+of triples $(\lambda_1, \lambda_2, \lambda_3)$ of integer partitions with
+$|\lambda_1| + |\lambda_2| + |\lambda_3| = n$ in which no part of any $\lambda_i$ is divisible by
+$\ell$; these triples are the $\ell$-regular tripartitions of $n$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Section 1, definition of `T_ℓ(n)` (with
@@ -68,14 +70,18 @@ private theorem card_restricted_one (p : ℕ → Prop) [DecidablePred p] (h : p 
   ext x
   simp [Nat.Partition.restricted, Subsingleton.elim x default, h]
 
-/-- `T_ℓ(0) = 1`: the only tripartition of `0` is the triple of empty partitions.
+/-- **The regular tripartition count at zero.** For every natural number $\ell$, $T_\ell(0) = 1$,
+where $T_\ell(n)$ is the number of $\ell$-regular tripartitions of $n$: the only tripartition of
+$0$ is the triple of empty partitions.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86 (definition of `T_ℓ(n)`). -/
 public theorem regularTripartitionCount_zero (l : ℕ) : regularTripartitionCount l 0 = 1 := by
   simp [regularTripartitionCount, card_restricted_zero]
 
-/-- `T_ℓ(1) = 3` for `ℓ ≠ 1`: the single part `1` sits in one of the three components.
+/-- **The number of $\ell$-regular tripartitions of $1$.** For every natural number $\ell \ne 1$,
+the number $T_\ell(1)$ of $\ell$-regular tripartitions of $1$ is $3$: the single part $1$ lies in
+one of the three components.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86 (definition of `T_ℓ(n)`). -/
@@ -85,29 +91,37 @@ public theorem regularTripartitionCount_one (l : ℕ) (hl : l ≠ 1) :
   simp [regularTripartitionCount, Finset.Nat.antidiagonal_succ, card_restricted_zero,
     card_restricted_one (fun x => ¬ l ∣ x) h1]
 
-/-- `T_2(3n + 1) ≡ 0 (mod 3)` and `T_2(3n + 2) ≡ 0 (mod 6)` for all `n ≥ 0`.
+/-- **Congruences modulo 3 and 6 for 2-regular tripartitions.** Let $T_2(m)$ be the number of
+$2$-regular tripartitions of $m$. For every natural number $n$, $3 \mid T_2(3n + 1)$ and
+$6 \mid T_2(3n + 2)$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Corollary 1. -/
 public theorem_wanted regularTripartitionCount_two_mod_three_six (n : ℕ) :
     3 ∣ regularTripartitionCount 2 (3 * n + 1) ∧ 6 ∣ regularTripartitionCount 2 (3 * n + 2)
 
-/-- `T_3(3n + 1) ≡ 0 (mod 3)` and `T_3(3n + 2) ≡ 0 (mod 9)` for all `n ≥ 0`.
+/-- **Congruences modulo 3 and 9 for 3-regular tripartitions.** Let $T_3(m)$ be the number of
+$3$-regular tripartitions of $m$. For every natural number $n$, $3 \mid T_3(3n + 1)$ and
+$9 \mid T_3(3n + 2)$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Corollary 2 (congruences (53), (54)). -/
 public theorem_wanted regularTripartitionCount_three_mod_three_nine (n : ℕ) :
     3 ∣ regularTripartitionCount 3 (3 * n + 1) ∧ 9 ∣ regularTripartitionCount 3 (3 * n + 2)
 
-/-- `T_3(6n + 4) ≡ 0 (mod 6)` for all `n ≥ 0`.
+/-- **A congruence modulo 6 for 3-regular tripartitions.** Let $T_3(m)$ be the number of
+$3$-regular tripartitions of $m$. For every natural number $n$, $6 \mid T_3(6n + 4)$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Corollary 3 (congruence (64)). -/
 public theorem_wanted regularTripartitionCount_three_six_mul_add_four (n : ℕ) :
     6 ∣ regularTripartitionCount 3 (6 * n + 4)
 
-/-- For a prime `p ≥ 5`, `α, n ≥ 0` and `1 ≤ i ≤ p - 1`,
-`T_2(3 p^{2α+1} (p n + i) + (p^{2α+2} - 1)/8) ≡ 0 (mod 2)` (the division is exact).
+/-- **Even 2-regular tripartition counts for primes at least 5.** Let $T_2(n)$ be the number of
+2-regular tripartitions of $n$. For every prime $p \ge 5$, all natural numbers $\alpha$ and $n$,
+and every $i$ with $1 \le i \le p - 1$, the number
+$T_2\bigl(3 p^{2\alpha+1} (p n + i) + (p^{2\alpha+2} - 1)/8\bigr)$ is even (the division is
+exact).
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Theorem 1 (congruence (13)). -/
@@ -116,8 +130,11 @@ public theorem_wanted regularTripartitionCount_two_prime_ge_five_even
     2 ∣ regularTripartitionCount 2
       (3 * p ^ (2 * α + 1) * (p * n + i) + (p ^ (2 * α + 2) - 1) / 8)
 
-/-- For an odd prime `p`, `α, n ≥ 0` and `1 ≤ i ≤ p - 1`,
-`T_2(9 p^{2α+1} (p n + i) + (9 p^{2α+2} - 1)/8) ≡ 0 (mod 2)` (the division is exact).
+/-- **Even 2-regular tripartition counts for odd primes.** Let $T_2(n)$ be the number of 2-regular
+tripartitions of $n$. For every odd prime $p$, all natural numbers $\alpha$ and $n$, and every $i$
+with $1 \le i \le p - 1$, the number
+$T_2\bigl(9 p^{2\alpha+1} (p n + i) + (9 p^{2\alpha+2} - 1)/8\bigr)$ is even (the division is
+exact).
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Theorem 2 (congruence (21)). -/
@@ -126,8 +143,14 @@ public theorem_wanted regularTripartitionCount_two_odd_prime_even
     2 ∣ regularTripartitionCount 2
       (9 * p ^ (2 * α + 1) * (p * n + i) + (9 * p ^ (2 * α + 2) - 1) / 8)
 
-/-- For a prime `p ≡ 3 (mod 4)`, `α, n ≥ 0` and `1 ≤ i ≤ p - 1`,
-`T_3(3 p^{2α+1} (p n + i) + (p^{2α+2} - 1)/4) ≡ 0 (mod 3)` (the division is exact).
+/-- **A congruence modulo 3 for 3-regular tripartitions at primes $p \equiv 3 \pmod 4$.** Let
+$T_3(m)$ be the number of $3$-regular tripartitions of $m$, and let $p$ be a prime with
+$p \equiv 3 \pmod 4$. For all natural numbers $\alpha$ and $n$ and every integer $i$ with
+$1 \le i \le p - 1$,
+$$
+T_3\Bigl(3 p^{2\alpha+1} (p n + i) + \frac{p^{2\alpha+2} - 1}{4}\Bigr) \equiv 0 \pmod 3,
+$$
+where the division by $4$ is exact.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Theorem 5 (congruence (55)). -/
@@ -138,10 +161,16 @@ public theorem_wanted regularTripartitionCount_three_prime_three_mod_four
 
 local notation "𝔣" => qEulerProduct
 
-/-- Toh's 3-dissection
-`f_2³ / f_1³ = f_6 / f_3 + 3q f_6⁴ f_9⁵ / (f_3⁸ f_18) + 6q² f_6³ f_9² f_18² / f_3⁷
-+ 12q³ f_6² f_18⁵ / (f_3⁶ f_9)`, stated with denominators cleared (both sides multiplied by
-`f_1³ f_3⁸ f_9 f_18`).
+/-- **Toh's 3-dissection of $f_2^3 / f_1^3$.** For $k \ge 1$ let
+$f_k = \prod_{m \ge 1} (1 - q^{km})$ be the Euler product, an integer power series in $q$. Then
+$$
+f_2^3 f_3^8 f_9 f_{18} = f_1^3 \bigl(f_3^7 f_6 f_9 f_{18} + 3q f_6^4 f_9^6 +
+6q^2 f_3 f_6^3 f_9^3 f_{18}^3 + 12q^3 f_3^2 f_6^2 f_{18}^6\bigr).
+$$
+
+Since each $f_k$ has constant term $1$ and so is invertible, this is the identity
+$f_2^3/f_1^3 = f_6/f_3 + 3q f_6^4 f_9^5/(f_3^8 f_{18}) + 6q^2 f_6^3 f_9^2 f_{18}^2/f_3^7 +
+12q^3 f_6^2 f_{18}^5/(f_3^6 f_9)$ with both sides multiplied by $f_1^3 f_3^8 f_9 f_{18}$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 1, eq. (3) (`integers-2024-A86-lem-1`). -/
@@ -151,13 +180,24 @@ public theorem_wanted f2_cube_div_f1_cube_three_dissection :
         6 * X ^ 2 * 𝔣 3 * 𝔣 6 ^ 3 * 𝔣 9 ^ 3 * 𝔣 18 ^ 3 +
         12 * X ^ 3 * 𝔣 3 ^ 2 * 𝔣 6 ^ 2 * 𝔣 18 ^ 6)
 
-/-- The 3-dissection of `1 / f_1³`:
-`1 / f_1³ = (f_9³ / f_3¹²) (f_1⁶ + 9q f_1³ f_9³ + 27q² f_9⁶)` and
-`1 / f_1³ = f_6² f_9¹⁵ / (f_3¹⁴ f_18⁶) + 3q f_6 f_9¹² / (f_3¹³ f_18³) + 9q² f_9⁹ / f_3¹²
-+ 8q³ f_9⁶ f_18³ / (f_3¹¹ f_6) + 12q⁴ f_9³ f_18⁶ / (f_3¹⁰ f_6²)
-+ 16q⁶ f_18¹² / (f_3⁸ f_6⁴ f_9³)`, both stated with denominators cleared (multiplied by
-`f_1³ f_3¹²`, resp. `f_1³ f_3¹⁴ f_6⁴ f_9³ f_18⁶`). The lemma's first identity (5) is
-`f1_cube_three_dissection`.
+/-- **The 3-dissection of $1/f_1^3$.** For $k \ge 1$ let $f_k = \prod_{m \ge 1} (1 - q^{km})$ be
+the Euler product, an integer power series in $q$. Then
+$$
+f_3^{12} = f_1^3 f_9^3 \bigl(f_1^6 + 9q f_1^3 f_9^3 + 27q^2 f_9^6\bigr)
+$$
+and
+$$
+f_3^{14} f_6^4 f_9^3 f_{18}^6 = f_1^3 \bigl(f_6^6 f_9^{18} + 3q f_3 f_6^5 f_9^{15} f_{18}^3 +
+9q^2 f_3^2 f_6^4 f_9^{12} f_{18}^6 + 8q^3 f_3^3 f_6^3 f_9^9 f_{18}^9 +
+12q^4 f_3^4 f_6^2 f_9^6 f_{18}^{12} + 16q^6 f_3^6 f_{18}^{18}\bigr).
+$$
+
+Since each $f_k$ has constant term $1$ and so is invertible, these are the identities
+$1/f_1^3 = (f_9^3/f_3^{12})(f_1^6 + 9q f_1^3 f_9^3 + 27q^2 f_9^6)$ and
+$1/f_1^3 = f_6^2 f_9^{15}/(f_3^{14} f_{18}^6) + 3q f_6 f_9^{12}/(f_3^{13} f_{18}^3) +
+9q^2 f_9^9/f_3^{12} + 8q^3 f_9^6 f_{18}^3/(f_3^{11} f_6) +
+12q^4 f_9^3 f_{18}^6/(f_3^{10} f_6^2) + 16q^6 f_{18}^{12}/(f_3^8 f_6^4 f_9^3)$, multiplied by
+$f_1^3 f_3^{12}$ and by $f_1^3 f_3^{14} f_6^4 f_9^3 f_{18}^6$ respectively.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 3, eq. (6) (`integers-2024-A86-lem-3`). -/
@@ -171,12 +211,15 @@ public theorem_wanted one_div_f1_cube_three_dissection :
           12 * X ^ 4 * 𝔣 3 ^ 4 * 𝔣 6 ^ 2 * 𝔣 9 ^ 6 * 𝔣 18 ^ 12 +
           16 * X ^ 6 * 𝔣 3 ^ 6 * 𝔣 18 ^ 18)
 
-/-- Cui and Gu's `p`-dissection of `ψ(q) = f(q, q³)` for an odd prime `p`:
-`ψ(q) = ∑_{k=0}^{(p-3)/2} q^{k(k+1)/2} f(q^{(p²+(2k+1)p)/2}, q^{(p²-(2k+1)p)/2})
-+ q^{(p²-1)/8} ψ(q^{p²})`, for complex `q` with `‖q‖ < 1`; and
-`(m² + m)/2 ≢ (p² - 1)/8 (mod p)` for `0 ≤ m ≤ (p - 3)/2`. Ramanujan's `f(a, b)` is
-`ramanujanThetaRaw a b` (summable here since `‖q‖ < 1` and both exponents are positive);
-`ψ(q^{p²})` is written `f(q^{p²}, q^{3p²})`. All divisions are exact.
+/-- **Cui–Gu $p$-dissection of $\psi(q)$.** Let $p$ be an odd prime and $q$ a complex number with
+$|q| < 1$, let $f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta
+function, and let $\psi(q) = f(q, q^3)$. Then
+$$
+\psi(q) = \sum_{k=0}^{(p-3)/2} q^{k(k+1)/2}
+f\bigl(q^{(p^2 + (2k+1)p)/2}, q^{(p^2 - (2k+1)p)/2}\bigr) + q^{(p^2-1)/8} \psi(q^{p^2}),
+$$
+and $(m^2 + m)/2 \not\equiv (p^2 - 1)/8 \pmod p$ for every integer $m$ with
+$0 \le m \le (p - 3)/2$. All the divisions are exact.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 4, eq. (7) (`integers-2024-A86-lem-4`),
@@ -191,15 +234,17 @@ public theorem_wanted ramanujanPsi_prime_dissection (p : ℕ) (hp : p.Prime) (hp
           q ^ ((p ^ 2 - 1) / 8) * ramanujanThetaRaw (q ^ (p ^ 2)) (q ^ (3 * p ^ 2)) ∧
       ∀ m ≤ (p - 3) / 2, ¬ (m ^ 2 + m) / 2 ≡ (p ^ 2 - 1) / 8 [MOD p]
 
-/-- Cui and Gu's `p`-dissection of `f_1 = (q; q)_∞` for a prime `p ≥ 5`: with
-`s = (±p - 1)/6`, i.e. `s = (p - 1)/6` if `p ≡ 1 (mod 6)` and `s = (-p - 1)/6` if
-`p ≡ -1 (mod 6)`,
-`f_1 = ∑_{k = (1-p)/2, k ≠ s}^{(p-1)/2} (-1)^k q^{k(3k+1)/2}
-f(-q^{(3p²+(6k+1)p)/2}, -q^{(3p²-(6k+1)p)/2}) + (-1)^s q^{(p²-1)/24} f_{p²}`,
-for complex `q` with `‖q‖ < 1`. Ramanujan's `f(a, b)` is `ramanujanThetaRaw a b`, and
-`f_k = (q^k; q^k)_∞` is `qPochhammerInfRaw (q ^ k) (q ^ k)`. The exponents `k(3k+1)/2` and
-`(3p² ± (6k+1)p)/2` are nonnegative integers, passed to `ℕ` powers with `Int.toNat`. All
-divisions are exact.
+/-- **Cui–Gu $p$-dissection of $f_1$.** Let $p \ge 5$ be a prime, let $s = (p - 1)/6$ if
+$p \equiv 1 \pmod 6$ and $s = (-p - 1)/6$ otherwise, and let $q$ be a complex number with
+$|q| < 1$. Write $f_k = (q^k; q^k)_\infty = \prod_{m \ge 1} (1 - q^{km})$, let
+$f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function, and
+let $K$ be the set of integers $k$ with $(1 - p)/2 \le k \le (p - 1)/2$ and $k \ne s$. Then
+$$
+f_1 = \sum_{k \in K} (-1)^k q^{k(3k+1)/2}
+f\bigl(-q^{(3p^2 + (6k+1)p)/2}, -q^{(3p^2 - (6k+1)p)/2}\bigr) +
+(-1)^s q^{(p^2-1)/24} f_{p^2}.
+$$
+All the divisions are exact and all the exponents of $q$ are nonnegative integers.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 5, eq. (8) (`integers-2024-A86-lem-5`),
@@ -218,10 +263,17 @@ public theorem_wanted qPochhammer_prime_dissection (p : ℕ) (hp : p.Prime) (hp5
         (-1 : ℂ) ^ s * q ^ ((p ^ 2 - 1) / 24) *
           QPochhammer.qPochhammerInfRaw (q ^ (p ^ 2)) (q ^ (p ^ 2))
 
-/-- The 3-dissection of the generating function of `T_2`:
-`∑ T_2(3n) qⁿ = f_2 / f_1 + 12q f_2² f_6⁵ / (f_1⁶ f_3)`,
-`∑ T_2(3n + 1) qⁿ = 3 f_2⁴ f_3⁵ / (f_1⁸ f_6)` and
-`∑ T_2(3n + 2) qⁿ = 6 f_2³ f_3² f_6² / f_1⁷`, each stated with its denominator cleared.
+/-- **The 3-dissection of the 2-regular tripartition generating function.** Let $T_2(n)$ be the
+number of 2-regular tripartitions of $n$ and $f_k = \prod_{m \ge 1} (1 - q^{km})$. In the ring
+$\mathbb{Z}[[q]]$ of integer power series,
+$f_1^6 f_3 \sum_{n \ge 0} T_2(3n) q^n = f_1^5 f_2 f_3 + 12 q f_2^2 f_6^5$,
+$f_1^8 f_6 \sum_{n \ge 0} T_2(3n + 1) q^n = 3 f_2^4 f_3^5$ and
+$f_1^7 \sum_{n \ge 0} T_2(3n + 2) q^n = 6 f_2^3 f_3^2 f_6^2$.
+
+Since each $f_k$ with $k \ge 1$ is invertible in $\mathbb{Z}[[q]]$, these say
+$\sum_{n \ge 0} T_2(3n) q^n = f_2 / f_1 + 12 q f_2^2 f_6^5 / (f_1^6 f_3)$,
+$\sum_{n \ge 0} T_2(3n + 1) q^n = 3 f_2^4 f_3^5 / (f_1^8 f_6)$ and
+$\sum_{n \ge 0} T_2(3n + 2) q^n = 6 f_2^3 f_3^2 f_6^2 / f_1^7$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 7, eqs. (10)–(12)
@@ -234,9 +286,13 @@ public theorem_wanted regularTripartitionCount_two_three_dissection :
       𝔣 1 ^ 7 * PowerSeries.mk (fun n => (regularTripartitionCount 2 (3 * n + 2) : ℤ)) =
         6 * 𝔣 2 ^ 3 * 𝔣 3 ^ 2 * 𝔣 6 ^ 2
 
-/-- For all `α, n ≥ 0`, with `A_α = ∑_{i=0}^{2α+1} 3^{2i}` and `B_α = ∑_{i=0}^{2α} 3^{2i}`:
-`T_2(3^{4α+4} n + A_α + 3^{4α+3}) ≡ T_2(3^{4α+4} n + A_α + 2·3^{4α+3}) ≡ 0 (mod 12)` and
-`T_2(3^{4α+2} n + B_α + 3^{4α+1}) ≡ T_2(3^{4α+2} n + B_α + 2·3^{4α+1}) ≡ 0 (mod 12)`.
+/-- **Mod 12 congruences for 2-regular tripartitions.** Let $T_2(n)$ be the number of 2-regular
+tripartitions of $n$. For all natural numbers $\alpha$ and $n$, put
+$A_\alpha = \sum_{i=0}^{2\alpha+1} 3^{2i}$ and $B_\alpha = \sum_{i=0}^{2\alpha} 3^{2i}$. Then $12$
+divides each of $T_2(3^{4\alpha+4} n + A_\alpha + 3^{4\alpha+3})$,
+$T_2(3^{4\alpha+4} n + A_\alpha + 2 \cdot 3^{4\alpha+3})$,
+$T_2(3^{4\alpha+2} n + B_\alpha + 3^{4\alpha+1})$ and
+$T_2(3^{4\alpha+2} n + B_\alpha + 2 \cdot 3^{4\alpha+1})$.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Theorem 3, eqs. (31)–(34)
@@ -255,11 +311,26 @@ public theorem_wanted regularTripartitionCount_two_mod_twelve (α n : ℕ) :
         (3 ^ (4 * α + 2) * n + ∑ i ∈ Finset.range (2 * α + 1), 3 ^ (2 * i) +
           2 * 3 ^ (4 * α + 1))
 
-/-- The 3-dissection of the generating function of `T_3`:
-`∑ T_3(3n) qⁿ = f_2² f_3¹⁵ / (f_1¹¹ f_6⁶) + 8q f_3⁶ f_6³ / (f_1⁸ f_2)
-+ 16q² f_6¹² / (f_1⁵ f_2⁴ f_3³)`,
-`∑ T_3(3n + 1) qⁿ = 3 f_2 f_3¹² / (f_1¹⁰ f_6³) + 12q f_3³ f_6⁶ / (f_1⁷ f_2²)` and
-`∑ T_3(3n + 2) qⁿ = 9 f_3⁹ / f_1⁹`, each stated with its denominators cleared.
+/-- **The 3-dissection of the generating function of 3-regular tripartitions.** Let $T_3(n)$ be
+the number of $3$-regular tripartitions of $n$, and for $k \ge 1$ let
+$f_k = \prod_{m \ge 1} (1 - q^{km})$ be the Euler product. Then, as integer power series in $q$,
+$$
+f_1^{11} f_2^4 f_3^3 f_6^6 \sum_{n \ge 0} T_3(3n) q^n =
+f_2^6 f_3^{18} + 8q f_1^3 f_2^3 f_3^9 f_6^9 + 16q^2 f_1^6 f_6^{18},
+$$
+$$
+f_1^{10} f_2^2 f_6^3 \sum_{n \ge 0} T_3(3n + 1) q^n = 3 f_2^3 f_3^{12} + 12q f_1^3 f_3^3 f_6^9
+$$
+and
+$$
+f_1^9 \sum_{n \ge 0} T_3(3n + 2) q^n = 9 f_3^9.
+$$
+
+Since each $f_k$ has constant term $1$ and so is invertible, these are the identities
+$\sum T_3(3n) q^n = f_2^2 f_3^{15}/(f_1^{11} f_6^6) + 8q f_3^6 f_6^3/(f_1^8 f_2) +
+16q^2 f_6^{12}/(f_1^5 f_2^4 f_3^3)$,
+$\sum T_3(3n + 1) q^n = 3 f_2 f_3^{12}/(f_1^{10} f_6^3) + 12q f_3^3 f_6^6/(f_1^7 f_2^2)$ and
+$\sum T_3(3n + 2) q^n = 9 f_3^9/f_1^9$ with the denominators cleared.
 
 Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
 l in {2,3}*, INTEGERS 24 (2024), Article A86, Theorem 4, eqs. (49)–(51)
