@@ -537,10 +537,23 @@ private theorem vanishes_on_common_orthogonal {T : H →L[𝕜] H} {pad : Bool}
     simpa using h
   exact (not_lt_of_ge (hrle N)) hnear
 
-/-- The maximum principle with both terminating and nonterminating alternatives.
-The finite alternative includes the empty family for the zero operator. Only
-the infinite alternative asserts convergence. In both alternatives `T` vanishes
-on the common orthogonal complement, so the nonzero eigenspaces are exhausted. -/
+/-- **Maximum principle for compact self-adjoint operators.** Let $T$ be a compact self-adjoint
+operator on a Hilbert space $H$ over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. Then one of the
+following two alternatives holds.
+
+Either there are $N \in \mathbb{N}$ (possibly $N = 0$, as for $T = 0$), nonzero real numbers
+$s_0, \dots, s_{N-1}$ and an orthonormal family $u_0, \dots, u_{N-1}$ in $H$ such that
+$T u_i = s_i u_i$ for every $i < N$, $|s_0| \ge |s_1| \ge \dots \ge |s_{N-1}|$, for every $i < N$
+every unit vector $x \in H$ orthogonal to $u_0, \dots, u_{i-1}$ satisfies
+$|\langle T x, x \rangle| \le |s_i|$ while $|\langle T u_i, u_i \rangle| = |s_i|$, and $T x = 0$
+for every $x \in H$ orthogonal to all of $u_0, \dots, u_{N-1}$.
+
+Or there are nonzero real numbers $s_0, s_1, s_2, \dots$ and an orthonormal sequence
+$u_0, u_1, u_2, \dots$ in $H$ such that $T u_n = s_n u_n$ for every $n$, the sequence $|s_n|$ is
+nonincreasing and tends to $0$ as $n \to \infty$, for every $n$ every unit vector $x \in H$
+orthogonal to $u_0, \dots, u_{n-1}$ satisfies $|\langle T x, x \rangle| \le |s_n|$ while
+$|\langle T u_n, u_n \rangle| = |s_n|$, and $T x = 0$ for every $x \in H$ orthogonal to every
+$u_n$. -/
 theorem exists_nonzero_eigenvalue_enumeration {T : H →L[𝕜] H}
     (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H)) :
     (∃ (N : ℕ) (s : Fin N → ℝ) (u : Fin N → H),
@@ -594,8 +607,14 @@ theorem exists_nonzero_eigenvalue_enumeration {T : H →L[𝕜] H}
       exact ⟨(hf n).2.2.2.1, rayleigh_at_eigVec hT hc hpad n⟩
     · exact vanishes_on_common_orthogonal hT hc hpad
 
-/-- On a finite-dimensional Hilbert space the nonzero maximum-principle
-enumeration terminates. Its common orthogonal complement is killed by `T`. -/
+/-- **Maximum principle for compact self-adjoint operators in finite dimension.** Let $H$ be a
+finite-dimensional Hilbert space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $T$ be a
+compact self-adjoint operator on $H$. Then there are $N \in \mathbb{N}$, nonzero real numbers
+$s_0, \dots, s_{N-1}$ and an orthonormal family $u_0, \dots, u_{N-1}$ in $H$ such that
+$T u_i = s_i u_i$ for every $i < N$, $|s_0| \ge |s_1| \ge \dots \ge |s_{N-1}|$, and for every
+$i < N$ every unit vector $x \in H$ orthogonal to $u_0, \dots, u_{i-1}$ satisfies
+$|\langle T x, x \rangle| \le |s_i|$, while $|\langle T u_i, u_i \rangle| = |s_i|$. Moreover
+$T x = 0$ for every $x \in H$ orthogonal to all of $u_0, \dots, u_{N-1}$. -/
 theorem exists_finite_eigenvalue_enumeration [FiniteDimensional 𝕜 H]
     {T : H →L[𝕜] H} (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H)) :
     ∃ (N : ℕ) (s : Fin N → ℝ) (u : Fin N → H),
@@ -609,10 +628,16 @@ theorem exists_finite_eigenvalue_enumeration [FiniteDimensional 𝕜 H]
   · exact False.elim ((not_finite_iff_infinite.mpr inferInstance)
       horth.linearIndependent.finite)
 
-/-- A zero-padded maximum-principle sequence on an infinite-dimensional
-Hilbert space. This preserves the earlier public API: after all nonzero
-eigenvalues have been enumerated, unit kernel vectors may carry eigenvalue
-zero. The nonzero terminating version is `exists_nonzero_eigenvalue_enumeration`. -/
+/-- **Maximum principle as a sequence in infinite dimension.** Let $T$ be a compact self-adjoint
+operator on an infinite-dimensional Hilbert space $H$ over $\mathbb{K} = \mathbb{R}$ or
+$\mathbb{C}$. Then there are real numbers $s_0, s_1, s_2, \dots$ and an orthonormal sequence
+$u_0, u_1, u_2, \dots$ in $H$ such that $T u_n = s_n u_n$ and $|s_{n+1}| \le |s_n|$ for every
+$n$, $|s_n| \to 0$ as $n \to \infty$, and for every $n$ every unit vector $x \in H$ orthogonal to
+$u_0, \dots, u_{n-1}$ satisfies $|\langle T x, x \rangle| \le |s_n|$, while
+$|\langle T u_n, u_n \rangle| = |s_n|$.
+
+Unlike the maximum principle for compact self-adjoint operators, the $s_n$ are not required to be
+nonzero, and no claim is made that $T$ vanishes on the vectors orthogonal to every $u_n$. -/
 theorem exists_ordered_eigenvalue_sequence {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
     (hc : IsCompactOperator (T : H → H)) (hInf : ¬ FiniteDimensional 𝕜 H) :
     ∃ (s : ℕ → ℝ) (u : ℕ → H),

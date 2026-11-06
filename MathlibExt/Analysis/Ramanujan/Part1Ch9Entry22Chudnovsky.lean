@@ -67,15 +67,22 @@ def chapter9Entry22LeftTerm (x : ℝ) (k : ℕ) : ℝ :=
   chapter9Entry23FactorialTerm x k +
     chapter9Entry23FactorialTerm (Real.pi / 2 - x) k
 
-/-- Entry 22 uses the same odd reciprocal-cube term as Entry 21. -/
+/-- **Odd reciprocal cubes in Entries 21 and 22.** The sequence $j \mapsto 1/(2j+1)^3$
+($j = 0, 1, 2, \dots$) used in the statement of Entry 22 of Chapter 9 of Ramanujan's notebooks
+is, by definition, the same sequence as the one used in Entry 21. -/
 theorem chapter9Chi3Term_eq_entry21 :
     chapter9Chi3Term = Entry21Piseries2.chapter9Chi3Term := rfl
 
-/-- Entry 22 uses the same odd reciprocal-cube sum as Entry 21. -/
+/-- **The sum of the odd reciprocal cubes in Entries 21 and 22.** The constant
+$\sum_{j \ge 0} 1/(2j+1)^3$ used in the statement of Entry 22 of Chapter 9 of Ramanujan's
+notebooks is, by definition, the same constant as the one used in Entry 21. -/
 theorem chapter9Chi3AtOne_eq_entry21 :
     chapter9Chi3AtOne = Entry21Piseries2.chapter9Chi3AtOne := rfl
 
-/-- The Entry 23 factorial term is the term used by Entry 20. -/
+/-- **The factorial sine series term in Entries 20 and 22.** For real $u$ and $k \ge 0$, the
+term $2^{2k} (k!)^2 \sin^{2k+2} u / \bigl((2k+1)! \, (2k+2)^2\bigr)$ used in the statement of
+Entry 22 of Chapter 9 of Ramanujan's notebooks is, by definition, the same as the one used in
+Entry 20. -/
 theorem chapter9Entry23FactorialTerm_eq_entry20 :
     chapter9Entry23FactorialTerm = Entry20Piseries1.chapter9Entry23FactorialTerm := rfl
 
@@ -2051,17 +2058,28 @@ private lemma e22H_eq_zero (x : ℝ) (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4) :
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hx0 hcont hderiv hint
   simpa [e22H_zero] using hFTC.symm
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9,
-Entry 22, pp. 270–271. The printed range `0 ≤ x ≤ π / 2` is false. This target
-uses `0 ≤ x ≤ π / 4`, the range supported by the source proof's substitution
-of `2 * x` into Entry 20; the endpoint remains an explicit proof obligation.
+/-- **Entry 22 of Chapter 9 of Ramanujan's notebooks.** For real $u$ and $k \ge 0$ let
+$T_k(u) = \frac{2^{2k} (k!)^2 \sin^{2k+2} u}{(2k+1)! \, (2k+2)^2}$. Let $x$ be real with
+$0 \le x \le \pi/4$. Then $2 \cos x > 0$, the series $\sum_{j \ge 0} \frac{1}{(2j+1)^3}$,
+$\sum_{k \ge 0} \bigl(T_k(x) + T_k(\pi/2 - x)\bigr)$,
+$\sum_{k \ge 0} \frac{\binom{2k}{k} \cos^{2k+1} x}{2^{2k} (2k+1)^2}$ and $\sum_{k \ge 0} T_k(2x)$
+converge absolutely, and
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry22_chudnovsky`.
+$$
+\sum_{k \ge 0} \bigl(T_k(x) + T_k(\pi/2 - x)\bigr) = -\frac{\pi^2}{8} \log(2 \cos x) +
+\frac{\pi}{2} \sum_{k \ge 0} \frac{\binom{2k}{k} \cos^{2k+1} x}{2^{2k} (2k+1)^2} +
+\frac{1}{4} \sum_{k \ge 0} T_k(2x) - \frac{1}{2} \sum_{j \ge 0} \frac{1}{(2j+1)^3}.
+$$
 
 Proof: Differentiate the factorial and central-binomial series termwise, reduce
 the logarithmic integral by Abel's limit and dominated convergence, and finish
 by the fundamental theorem of calculus. This follows Berndt's Entries 20–23 and
 Lehmer's arcsine series.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9,
+Entry 22, pp. 270–271. The printed range `0 ≤ x ≤ π / 2` is false. This target
+uses `0 ≤ x ≤ π / 4`, the range supported by the source proof's substitution
+of `2 * x` into Entry 20; the endpoint remains an explicit proof obligation.
 -/
 theorem ramanujan_part1_ch9_entry22_chudnovsky (x : ℝ)
     (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4) :

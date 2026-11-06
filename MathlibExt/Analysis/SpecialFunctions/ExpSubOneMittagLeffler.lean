@@ -32,7 +32,11 @@ open Complex
 
 noncomputable section
 
-/-- The Mittag-Leffler expansion of the Bose-Einstein kernel on the real line. -/
+/-- **Mittag-Leffler expansion of $1/(e^u - 1)$.** For every real number $u \neq 0$,
+$$
+\frac{1}{e^u - 1} = \frac{1}{u} - \frac{1}{2} + \sum_{m=1}^{\infty} \frac{2u}{u^2 + 4\pi^2 m^2}.
+$$
+-/
 theorem one_div_exp_sub_one_eq_tsum (u : ℝ) (hu : u ≠ 0) :
     1 / (Real.exp u - 1) = 1 / u - 1 / 2 +
       ∑' m : ℕ, 2 * u / (u ^ 2 + 4 * Real.pi ^ 2 * (m + 1 : ℕ) ^ 2) := by
@@ -547,8 +551,15 @@ private lemma expSubOneKernel_eq (N : ℕ) (v : ℝ) (hv : v ≠ 0) :
   rw [hmittag, expSubOneKernel_tsum_eq]
   ring
 
-/-- The analytic remainder after truncating the Laurent expansion of
-`1 / (Real.exp v - 1)` after `N` odd-power terms. -/
+/-- **Remainder of the Laurent expansion of $1/(e^v - 1)$.** For a natural number $N$, the
+function $R_N : \mathbb{R} \to \mathbb{R}$ is defined by $R_N(0) = 0$ and, for $v \neq 0$,
+$$
+R_N(v) = \frac{1}{e^v - 1} - \frac{1}{v} + \frac{1}{2} -
+  \sum_{n=0}^{N-1} \frac{B_{2n+2}}{(2n+2)!} v^{2n+1},
+$$
+where $B_k$ are the Bernoulli numbers. This is the remainder after truncating the Laurent
+expansion of $1/(e^v - 1)$ at $0$ after its first $N$ terms of positive odd degree.
+-/
 def oneDivExpSubOneLaurentRemainder (N : ℕ) (v : ℝ) : ℝ :=
   if v = 0 then 0 else
     1 / (Real.exp v - 1) - 1 / v + 1 / 2 -
@@ -564,7 +575,13 @@ private lemma expSubOneRemainder_eq_oneDivExpSubOneLaurentRemainder (N : ℕ) (v
   · simp only [oneDivExpSubOneLaurentRemainder, hv, ↓reduceIte]
     exact (expSubOneKernel_eq N v hv).symm
 
-/-- The analytic Laurent remainder of the Bose-Einstein kernel is differentiable. -/
+/-- **The Laurent remainder of $1/(e^v - 1)$ is differentiable.** For every natural number $N$,
+the function $R_N : \mathbb{R} \to \mathbb{R}$ given by $R_N(0) = 0$ and, for $v \neq 0$,
+$$
+R_N(v) = \frac{1}{e^v - 1} - \frac{1}{v} + \frac{1}{2} -
+  \sum_{n=0}^{N-1} \frac{B_{2n+2}}{(2n+2)!} v^{2n+1},
+$$
+where $B_k$ are the Bernoulli numbers, is differentiable at every point of $\mathbb{R}$. -/
 theorem differentiable_oneDivExpSubOneLaurentRemainder (N : ℕ) :
     Differentiable ℝ (oneDivExpSubOneLaurentRemainder N) := by
   have hfun : oneDivExpSubOneLaurentRemainder N = expSubOneRemainder N := by
@@ -573,7 +590,17 @@ theorem differentiable_oneDivExpSubOneLaurentRemainder (N : ℕ) :
   rw [hfun]
   exact fun v => (expSubOneRemainder_hasDerivAt N v).differentiableAt
 
-/-- The analytic Laurent remainder is bounded by its first omitted odd power. -/
+/-- **Bound on the Laurent remainder of $1/(e^v - 1)$.** For a natural number $N$, let
+$R_N : \mathbb{R} \to \mathbb{R}$ be given by $R_N(0) = 0$ and, for $v \neq 0$,
+$$
+R_N(v) = \frac{1}{e^v - 1} - \frac{1}{v} + \frac{1}{2} -
+  \sum_{n=0}^{N-1} \frac{B_{2n+2}}{(2n+2)!} v^{2n+1},
+$$
+where $B_k$ are the Bernoulli numbers. Then for every real number $v$,
+$$
+|R_N(v)| \le 2(2N + 3) \left( \sum_{m=0}^{\infty} \frac{1}{(2\pi(m + 1))^{2N+2}} \right) |v|^{2N+1}.
+$$
+-/
 theorem oneDivExpSubOneLaurentRemainder_abs_le (N : ℕ) (v : ℝ) :
     |oneDivExpSubOneLaurentRemainder N v| ≤
       (2 * (2 * N + 3 : ℕ) *
@@ -582,7 +609,18 @@ theorem oneDivExpSubOneLaurentRemainder_abs_le (N : ℕ) (v : ℝ) :
   rw [← expSubOneRemainder_eq_oneDivExpSubOneLaurentRemainder]
   simpa only [expSubOneBound, expSubOnePole] using expSubOneRemainder_abs_le_bound N v
 
-/-- The derivative of the analytic Laurent remainder is bounded by the preceding even power. -/
+/-- **Bound on the derivative of the Laurent remainder of $1/(e^v - 1)$.** For a natural
+number $N$, let $R_N : \mathbb{R} \to \mathbb{R}$ be given by $R_N(0) = 0$ and, for $v \neq 0$,
+$$
+R_N(v) = \frac{1}{e^v - 1} - \frac{1}{v} + \frac{1}{2} -
+  \sum_{n=0}^{N-1} \frac{B_{2n+2}}{(2n+2)!} v^{2n+1},
+$$
+where $B_k$ are the Bernoulli numbers. Then for every real number $v$, the derivative of $R_N$
+satisfies
+$$
+|R_N'(v)| \le 2(2N + 3) \left( \sum_{m=0}^{\infty} \frac{1}{(2\pi(m + 1))^{2N+2}} \right) |v|^{2N}.
+$$
+-/
 theorem abs_deriv_oneDivExpSubOneLaurentRemainder_le (N : ℕ) (v : ℝ) :
     |deriv (oneDivExpSubOneLaurentRemainder N) v| ≤
       (2 * (2 * N + 3 : ℕ) *
@@ -594,8 +632,14 @@ theorem abs_deriv_oneDivExpSubOneLaurentRemainder_le (N : ℕ) (v : ℝ) :
   rw [hfun, (expSubOneRemainder_hasDerivAt N v).deriv]
   simpa only [expSubOneBound, expSubOnePole] using expSubOneRemainder_deriv_abs_le_bound N v
 
-/-- The truncated Laurent expansion of the Bose-Einstein kernel has a global
-`|v| ^ (2 * N + 1)` remainder bound away from its removable singularity. -/
+/-- **Global remainder bound for the Laurent expansion of $1/(e^v - 1)$.** For every natural
+number $N$ there is a constant $C \ge 0$ such that for every real number $v \neq 0$,
+$$
+\left| \frac{1}{e^v - 1} - \frac{1}{v} + \frac{1}{2} -
+  \sum_{n=0}^{N-1} \frac{B_{2n+2}}{(2n+2)!} v^{2n+1} \right| \le C |v|^{2N+1},
+$$
+where $B_k$ are the Bernoulli numbers.
+-/
 theorem abs_one_div_exp_sub_one_sub_laurent_le (N : ℕ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ v : ℝ, v ≠ 0 →
       |1 / (Real.exp v - 1) - 1 / v + 1 / 2 -

@@ -36,8 +36,11 @@ open MathlibExt.Analysis.InnerProductSpace.LpDiagonalOperator
 
 variable {ι : Type*} {𝕜 : Type*} [RCLike 𝕜]
 
-/-- Subtracting a diagonal operator from a scalar multiple of the identity
-gives the diagonal operator with the shifted coefficients. -/
+/-- **Shifting a diagonal operator by a scalar.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $a : \iota \to \mathbb{K}$ be a bounded family of coefficients, let $D_a$ be the
+diagonal operator on $\ell^2(\iota, \mathbb{K})$ given by $(D_a x)_i = a_i x_i$, and let $I$ be
+the identity operator. For every $\mu \in \mathbb{K}$, $\mu I - D_a = D_{\mu - a}$, the diagonal
+operator with coefficients $\mu - a_i$. -/
 theorem smul_one_sub_diagonalCLM_eq (μ : 𝕜) (a : ι → 𝕜)
     (ha : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     μ • (1 : ℓ²(ι, 𝕜) →L[𝕜] ℓ²(ι, 𝕜)) - diagonalCLM a ha =
@@ -49,9 +52,12 @@ theorem smul_one_sub_diagonalCLM_eq (μ : 𝕜) (a : ι → 𝕜)
     lp.coeFn_sub, Pi.sub_apply, lp_smul_apply]
   rw [sub_mul]
 
-/-- If `μ` stays a positive distance away from every coefficient, then
-`μ • 1 - D_a` is a unit, with inverse the diagonal operator of the
-reciprocal coefficients. -/
+/-- **Invertibility of a shifted diagonal operator.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $a : \iota \to \mathbb{K}$ be a bounded family of coefficients, let $D_a$ be the
+diagonal operator on $\ell^2(\iota, \mathbb{K})$ given by $(D_a x)_i = a_i x_i$, and let $I$ be
+the identity operator. If $\mu \in \mathbb{K}$ does not lie in the closure of
+$\{a_i : i \in \iota\}$, then $\mu I - D_a$ is invertible in the algebra of bounded operators on
+$\ell^2(\iota, \mathbb{K})$. -/
 theorem isUnit_smul_one_sub_diagonalCLM_of_not_mem_closure_range {a : ι → 𝕜}
     (ha : ∃ C, ∀ i, ‖a i‖ ≤ C) {μ : 𝕜} (hμ : μ ∉ closure (Set.range a)) :
     IsUnit (μ • (1 : ℓ²(ι, 𝕜) →L[𝕜] ℓ²(ι, 𝕜)) - diagonalCLM a ha) := by
@@ -87,16 +93,26 @@ theorem isUnit_smul_one_sub_diagonalCLM_of_not_mem_closure_range {a : ι → �
     simp only [hfun]
     exact diagonalCLM_one
 
-/-- If `μ` stays a positive distance away from every coefficient, then
-`μ` is not in the spectrum of the diagonal operator. -/
+/-- **Points off the closure of the coefficients are not in the spectrum.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $a : \iota \to \mathbb{K}$ be a bounded family of coefficients,
+and let $D_a$ be the diagonal operator on $\ell^2(\iota, \mathbb{K})$ given by
+$(D_a x)_i = a_i x_i$. If $\mu \in \mathbb{K}$ does not lie in the closure of
+$\{a_i : i \in \iota\}$, then $\mu$ is not in the spectrum of $D_a$ over $\mathbb{K}$, that is,
+$\mu I - D_a$ is invertible as a bounded operator, where $I$ is the identity operator. -/
 theorem not_mem_spectrum_of_not_mem_closure_range {a : ι → 𝕜}
     (ha : ∃ C, ∀ i, ‖a i‖ ≤ C) {μ : 𝕜} (hμ : μ ∉ closure (Set.range a)) :
     μ ∉ spectrum 𝕜 (diagonalCLM a ha) := by
   rw [spectrum.mem_iff, Algebra.algebraMap_eq_smul_one]
   exact not_not.mpr (isUnit_smul_one_sub_diagonalCLM_of_not_mem_closure_range ha hμ)
 
-/-- Every coefficient lies in the spectrum of the diagonal operator: the
-corresponding coordinate vector is killed by `a j • 1 - D_a`. -/
+/-- **Every coefficient of a diagonal operator lies in its spectrum.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $a : \iota \to \mathbb{K}$ be a bounded family of coefficients,
+and let $D_a$ be the diagonal operator on $\ell^2(\iota, \mathbb{K})$ given by
+$(D_a x)_i = a_i x_i$. Then every $a_j$ with $j \in \iota$ lies in the spectrum of $D_a$ over
+$\mathbb{K}$, the set of $\mu \in \mathbb{K}$ for which $\mu I - D_a$ is not invertible as a
+bounded operator, where $I$ is the identity operator.
+
+For each $j \in \iota$, the $j$-th coordinate vector lies in the kernel of $a_j I - D_a$. -/
 theorem range_subset_spectrum {a : ι → 𝕜} (ha : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     Set.range a ⊆ spectrum 𝕜 (diagonalCLM a ha) := by
   classical
@@ -120,8 +136,11 @@ theorem range_subset_spectrum {a : ι → 𝕜} (ha : ∃ C, ∀ i, ‖a i‖ �
   rw [h0, norm_zero] at hn
   exact zero_ne_one hn
 
-/-- The spectrum of a diagonal operator on `ℓ²` is the closure of the range
-of its coefficients. -/
+/-- **Spectrum of a diagonal operator.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$a : \iota \to \mathbb{K}$ be a bounded family of coefficients, and let $D_a$ be the diagonal
+operator on $\ell^2(\iota, \mathbb{K})$ given by $(D_a x)_i = a_i x_i$. The spectrum of $D_a$ over
+$\mathbb{K}$, the set of $\mu \in \mathbb{K}$ for which $\mu I - D_a$ is not invertible as a
+bounded operator ($I$ the identity operator), is the closure of $\{a_i : i \in \iota\}$. -/
 theorem spectrum_diagonalCLM (a : ι → 𝕜) (ha : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     spectrum 𝕜 (diagonalCLM a ha) = closure (Set.range a) := by
   apply le_antisymm

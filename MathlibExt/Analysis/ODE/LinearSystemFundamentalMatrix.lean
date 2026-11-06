@@ -120,8 +120,11 @@ private lemma fundMatrix_clampedAgree
       constructor <;> linarith [hs.1, hs.2, min_le_right (N : ℝ) M]
     simpa [Set.projIcc_of_mem _ hsM] using hy s
 
-/-- A continuous time-dependent family of continuous linear endomorphisms on a real Banach space
-has a unique global integral curve through every initial point. -/
+/-- **Global existence and uniqueness for homogeneous linear ODEs.** Let $E$ be a real Banach
+space, write $L(E)$ for the space of continuous linear maps $E \to E$ with the operator norm,
+let $B : \mathbb{R} \to L(E)$ be continuous, and let $t_0 \in \mathbb{R}$ and $x_0 \in E$. Then
+there is exactly one function $x : \mathbb{R} \to E$ with $x(t_0) = x_0$ such that $x$ is
+differentiable at every $t \in \mathbb{R}$ with $x'(t) = B(t)\,x(t)$. -/
 theorem _root_.ODE.existsUnique_hasDerivAt_eq_continuousLinearMap
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (B : ℝ → E →L[ℝ] E) (t₀ : ℝ) (x₀ : E) (hB : Continuous B) :
@@ -257,7 +260,11 @@ private lemma fundMatrix_detDifferential_mul {n : ℕ}
     rw [show ψ s = (1 + s • A) * M by simp [ψ, add_mul], Matrix.det_mul]
   exact hleft.unique hright
 
-/-- Jacobi's formula along a matrix curve satisfying `Φ' = A Φ`. -/
+/-- **Jacobi's formula when the derivative is a left multiple of the matrix.** Let
+$n \in \mathbb{N}$, let $A$ be a real $n \times n$ matrix, let
+$\Phi : \mathbb{R} \to \mathbb{R}^{n \times n}$, and let $t \in \mathbb{R}$. If $\Phi$ is
+differentiable at $t$ with $\Phi'(t) = A \Phi(t)$, then $s \mapsto \det \Phi(s)$ is
+differentiable at $t$ with derivative $\operatorname{tr}(A) \det \Phi(t)$. -/
 theorem _root_.HasDerivAt.det_of_mul {n : ℕ}
     {Φ : ℝ → Matrix (Fin n) (Fin n) ℝ} {A : Matrix (Fin n) (Fin n) ℝ} {t : ℝ}
     (hΦ : HasDerivAt Φ (A * Φ t) t) :
@@ -304,19 +311,25 @@ private lemma fundMatrix_liouville {n : ℕ}
     _ = (Φ t₀).det * Real.exp (I t) := by rw [hw_eq]
     _ = (Φ t₀).det * Real.exp (∫ s in t₀..t, (A s).trace) := rfl
 
-/-- Fundamental matrix of a linear ODE system: for continuous `A`, there is a
-matrix solution `Φ` of `Φ' = A Φ` with `Φ t₀ = 1`, everywhere invertible,
-and every solution of `x' = A x` is a `Φ`-multiple of its initial value.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential equations`, entry `linear differential systems` (unmapped);
-G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 3.4;
-stable ref https://en.wikipedia.org/wiki/Fundamental_matrix_(linear_differential_equation).
-
-Proves `Wanted` entry `fundamental_matrix_linear_system`.
+/-- **Fundamental matrix of a linear system.** Let $n \in \mathbb{N}$, let
+$A : \mathbb{R} \to \mathbb{R}^{n \times n}$ be continuous, let $t_0 \in \mathbb{R}$, and write $I$
+for the $n \times n$ identity matrix. Then there is a function
+$\Phi : \mathbb{R} \to \mathbb{R}^{n \times n}$ with $\Phi(t_0) = I$, $\Phi'(t) = A(t) \Phi(t)$ and
+$\det \Phi(t) \ne 0$ for every $t \in \mathbb{R}$, such that for every $x_0 \in \mathbb{R}^n$
+the function $x(t) = \Phi(t) x_0$ satisfies $x(t_0) = x_0$ and $x'(t) = A(t) x(t)$ for every
+$t \in \mathbb{R}$, and every $y : \mathbb{R} \to \mathbb{R}^n$ with $y(t_0) = x_0$ and
+$y'(t) = A(t) y(t)$ for every $t \in \mathbb{R}$ equals $x$.
 
 Proof: Global solutions are patched from clamped-time systems using Teschl, Theorem 3.9, then
 assembled into the principal matrix solution of (3.83) and Theorem 3.10. Liouville's formula gives
 invertibility as in (3.88)-(3.89).
+
+Proves `Wanted` entry `fundamental_matrix_linear_system`.
+
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential equations`, entry `linear differential systems` (unmapped);
+G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 3.4;
+stable ref https://en.wikipedia.org/wiki/Fundamental_matrix_(linear_differential_equation).
 -/
 theorem fundamental_matrix_linear_system
     {n : ℕ} (A : ℝ → Matrix (Fin n) (Fin n) ℝ) (t₀ : ℝ)
@@ -364,17 +377,22 @@ theorem fundamental_matrix_linear_system
     intro y hy0 hy
     exact (hunique y ⟨hy0, fun t ↦ by simpa [C] using hy t⟩).trans hxz.symm
 
-/-- Liouville (Abel) formula: the Wronskian determinant of a fundamental
-matrix grows by the exponential of the integrated trace.
+/-- **Liouville's formula for the principal matrix solution.** Let $n \in \mathbb{N}$, let
+$A : \mathbb{R} \to \mathbb{R}^{n \times n}$ be continuous, let $t_0 \in \mathbb{R}$, write $I$ for
+the $n \times n$ identity matrix, and let $\Phi : \mathbb{R} \to \mathbb{R}^{n \times n}$ satisfy
+$\Phi(t_0) = I$ and $\Phi'(t) = A(t) \Phi(t)$ for every $t \in \mathbb{R}$. Then for every
+$t \in \mathbb{R}$,
+$\det \Phi(t) = \det \Phi(t_0) \exp\left(\int_{t_0}^{t} \operatorname{tr} A(s)\, ds\right)$.
+
+Proof: Jacobi's formula follows from the determinant's first-order term; an integrating factor then
+gives Teschl, Lemma 3.11, formula (3.91).
+
+Proves `Wanted` entry `fundamental_matrix_liouville_det`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential equations`, entry `linear differential systems` (unmapped);
 G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 3.4;
 stable ref https://en.wikipedia.org/wiki/Abel%27s_identity.
-
-Proves `Wanted` entry `fundamental_matrix_liouville_det`.
-
-Proof: Jacobi's formula follows from the determinant's first-order term; an integrating factor then
-gives Teschl, Lemma 3.11, formula (3.91).
 -/
 theorem fundamental_matrix_liouville_det
     {n : ℕ} (A : ℝ → Matrix (Fin n) (Fin n) ℝ) (t₀ : ℝ)

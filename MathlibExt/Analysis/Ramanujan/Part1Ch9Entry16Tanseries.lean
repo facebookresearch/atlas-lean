@@ -53,10 +53,14 @@ def chapter9CentralSineTerm (x : ℝ) (k : ℕ) : ℝ :=
   (Nat.choose (2 * k) k : ℝ) * Real.sin x ^ (2 * k + 1) /
     ((2 : ℝ) ^ (2 * k) * (((2 * k + 1 : ℕ) : ℝ) ^ 2))
 
-/-- Summand of the Entry 16 tan-series (difference of the cosine and sine
-central terms). Named `Entry18` in the wishlist formalization; renamed here since
-the recorded provenance (`WantedExt/Sources/AnalysisCore.md`) attributes both the
-tan formula and this series to Entry 16, and no Entry 18 formalization exists. -/
+/-- **Terms of the cosine-minus-sine central binomial series.** For a real number $x$ and a
+natural number $k$, the $k$-th term is
+$\binom{2k}{k} \frac{\cos^{2k+1} x - \sin^{2k+1} x}{2^{2k} (2k+1)^2}$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9. This series was named
+`Entry18` in the wishlist formalization; renamed here since the recorded provenance
+(`WantedExt/Sources/AnalysisCore.md`) attributes both the tan formula and this series to
+Entry 16, and no Entry 18 formalization exists. -/
 def chapter9Entry16DifferenceTerm (x : ℝ) (k : ℕ) : ℝ :=
   (Nat.choose (2 * k) k : ℝ) *
       (Real.cos x ^ (2 * k + 1) - Real.sin x ^ (2 * k + 1)) /
@@ -562,9 +566,15 @@ private lemma chap9H_eq_zero {x : ℝ} (hx : x ∈ Set.Icc 0 (Real.pi / 4)) :
     sub_zero] at hFTC
   exact hFTC.symm
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **The central binomial series in $\cos x$ minus that in $\sin x$.** Let $x$ be a real number
+with $0 \le x \le \pi/4$, and for real $y$ let
+$S(y) = \sum_{k=0}^{\infty} \binom{2k}{k} \frac{\sin^{2k+1} y}{2^{2k} (2k+1)^2}$. Then
+$2\cos x > 0$, the series
+$D(x) = \sum_{k=0}^{\infty} \binom{2k}{k} \frac{\cos^{2k+1} x - \sin^{2k+1} x}
+{2^{2k} (2k+1)^2}$ and the series defining $S(2x)$ are both summable, and
+$D(x) = \frac{\pi}{2} \log(2\cos x) - \frac{1}{2} S(2x)$.
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry16_tanseries`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry16_tanseries (x : ℝ)
     (hx0 : 0 ≤ x) (hxUpper : x ≤ Real.pi / 4) :

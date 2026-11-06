@@ -49,11 +49,14 @@ operators; the statement below drops self-adjointness entirely.
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
 
-/-- Finite-rank approximation of a compact operator on a Hilbert space:
-for every `ε > 0` there is a bounded linear operator `F` of finite rank
-with `‖T - F‖ ≤ ε`. The approximant is the composition of `T` with the
-orthogonal projection onto the span of a finite `ε`-net for the image of
-the closed unit ball. -/
+/-- **Finite-rank approximation of compact operators.** Let $H$ be an inner product space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$ ($H$ need not be complete),
+and let $T$ be a compact bounded linear operator on $H$. For every real $\varepsilon > 0$ there
+is a bounded linear operator $F$ on $H$ with finite-dimensional range such that
+$\|T - F\| \le \varepsilon$.
+
+The approximant is the composition of $T$ with the orthogonal projection onto the span of a
+finite $\varepsilon$-net for the image of the closed unit ball. -/
 theorem exists_finiteRank_approx (T : H →L[𝕜] H)
     (hc : IsCompactOperator (T : H → H)) {ε : ℝ} (hε : 0 < ε) :
     ∃ F : H →L[𝕜] H,
@@ -91,8 +94,11 @@ theorem exists_finiteRank_approx (T : H →L[𝕜] H)
     exact le_of_lt (lt_of_le_of_lt hle hdist)
   exact ContinuousLinearMap.opNorm_le_of_unit_norm hε.le fun x hx => key x hx.le
 
-/-- Every compact operator on a Hilbert space is the norm limit of a
-sequence of finite-rank operators. -/
+/-- **Compact operators are norm limits of finite-rank operators.** Let $H$ be an inner product
+space over $\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$ ($H$ need not be
+complete), and let $T$ be a compact bounded linear operator on $H$. Then there is a sequence
+$(F_n)_{n \in \mathbb{N}}$ of bounded linear operators on $H$, each with finite-dimensional
+range, such that $\|T - F_n\| \to 0$ as $n \to \infty$. -/
 theorem exists_tendsto_finiteRank_approx (T : H →L[𝕜] H)
     (hc : IsCompactOperator (T : H → H)) :
     ∃ F : ℕ → H →L[𝕜] H,

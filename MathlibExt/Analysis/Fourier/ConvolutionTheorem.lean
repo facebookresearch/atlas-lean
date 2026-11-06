@@ -102,19 +102,21 @@ private theorem convThm_double_integral_eq_product {e : AddChar ℝ Circle}
     _ = Fourier.fourierIntegral e μ f w * Fourier.fourierIntegral e μ g w := by
       rw [Fourier.fourierIntegral_def, Fourier.fourierIntegral_def]
 
-/-- Convolution theorem: the Fourier transform turns convolution into pointwise
-product. For a sigma-finite translation-invariant Borel measure `μ` and integrable
-`f g : ℝ → ℂ`, the Fourier transform of the Mathlib convolution
-`(f ⋆[ContinuousLinearMap.lsmul ℂ ℂ, μ] g)` at `w` equals the pointwise product
-of the Fourier transforms at `w`.
-Source: https://en.wikipedia.org/wiki/Convolution_theorem
-(statement `convolution-theorem-s1`).
+/-- **Convolution theorem.** Let $e$ be a continuous additive character from $\mathbb{R}$ to the
+unit circle, and let $\mu$ be a σ-finite measure on $\mathbb{R}$ that is preserved by every
+translation $x \mapsto a + x$. For $\varphi : \mathbb{R} \to \mathbb{C}$ write
+$\hat\varphi(w) = \int e(-xw)\,\varphi(x)\,d\mu(x)$ for its Fourier transform with respect to
+$e$ and $\mu$, and for $f, g : \mathbb{R} \to \mathbb{C}$ write
+$(f * g)(x) = \int f(t)\,g(x - t)\,d\mu(t)$ for their convolution. If $f$ and $g$ are
+$\mu$-integrable, then $\widehat{f * g}(w) = \hat f(w)\,\hat g(w)$ for every $w \in \mathbb{R}$.
 
 Proves `Wanted` entry `convolution_theorem`.
 
-Proof: The proof uses convolution-integrand integrability, Fubini, translation invariance, and
-character factorization, following Stein--Shakarchi, Ch. 5, Prop. 1.11, and Mathlib's
-`Real.fourier_bilin_convolution_eq_integral`.
+Proof: Integrability of the convolution integrand, Fubini's theorem, translation invariance of
+$\mu$ and multiplicativity of $e$, following Stein--Shakarchi, Ch. 5, Prop. 1.11.
+
+Source: https://en.wikipedia.org/wiki/Convolution_theorem
+(statement `convolution-theorem-s1`).
 -/
 theorem convolution_theorem {e : AddChar ℝ Circle}
     {μ : MeasureTheory.Measure ℝ} [MeasureTheory.SigmaFinite μ] (he : Continuous e)

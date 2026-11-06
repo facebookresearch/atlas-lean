@@ -335,7 +335,8 @@ private lemma aux_D_tendsto (x : ℝ) (hx : 0 < x) :
       _ = ε := by ring
   exact hfin
 
-/-- Shifted zeta-two summability: `∑ 1/(j+1)²` converges. -/
+/-- **Summability of the Basel series.** The series of real numbers
+$\sum_{j \ge 0} \frac{1}{(j+1)^2}$ is summable. -/
 theorem summable_one_div_add_nat_succ_sq : Summable (fun j : ℕ => 1 / ((j : ℝ) + 1) ^ 2) := by
   have h := (summable_nat_add_iff (f := fun n : ℕ => 1 / ((n : ℝ)) ^ 2) 1).mpr
     hasSum_zeta_two.summable
@@ -400,8 +401,10 @@ private lemma aux_digamma_terms_summable (x : ℝ) (hx : 0 < x) :
     simpa [div_eq_mul_inv] using h
   exact hmajor.of_norm_bounded hbound
 
-/-- Digamma series on `(0, ∞)`: `∑ (1/(j+1) - 1/(x+j+1)) = ψ(x+1) + γ`,
-with `ψ = (log ∘ Gamma)'`. -/
+/-- **Digamma series on the positive reals.** For every real $x > 0$, the series
+$\sum_{j=0}^{\infty} \left(\frac{1}{j+1} - \frac{1}{x+j+1}\right)$ has sum $\psi(x+1) + \gamma$,
+where $\psi = (\log \Gamma)'$ with $\Gamma$ the real Gamma function, and $\gamma$ is the
+Euler–Mascheroni constant. -/
 theorem hasSum_digamma_series (x : ℝ) (hx : 0 < x) :
     HasSum (fun j : ℕ => 1 / ((j : ℝ) + 1) - 1 / (x + (j : ℝ) + 1))
       (deriv (fun t => Real.log (Real.Gamma t)) (x + 1)
@@ -468,7 +471,9 @@ theorem hasSum_digamma_series (x : ℝ) (hx : 0 < x) :
   rw [hfinal]
   exact hsum.hasSum
 
-/-- Term-by-term derivative of the digamma series: its derivative is `∑ 1/(y+j+1)²`. -/
+/-- **Derivative of the digamma series.** For every real $y > 0$, the real function
+$z \mapsto \sum_{j=0}^{\infty} \left(\frac{1}{j+1} - \frac{1}{z+j+1}\right)$ is differentiable
+at $y$ with derivative $\sum_{j=0}^{\infty} \frac{1}{(y+j+1)^2}$. -/
 theorem hasDerivAt_tsum_digamma_series (y : ℝ) (hy : 0 < y) :
     HasDerivAt (fun z => ∑' j : ℕ, (1 / ((j : ℝ) + 1) - 1 / (z + (j : ℝ) + 1)))
       (∑' j : ℕ, 1 / (y + (j : ℝ) + 1) ^ 2) y := by
@@ -505,7 +510,9 @@ theorem hasDerivAt_tsum_digamma_series (y : ℝ) (hy : 0 < y) :
   exact hasDerivAt_tsum_of_isPreconnected hu isOpen_Ioi isPreconnected_Ioi hg hg'
     (Set.mem_Ioi.mpr one_pos) hg0 (Set.mem_Ioi.mpr hy)
 
-/-- Trigamma series on `(1, ∞)`: `(log ∘ Gamma)''(y + 1) = ∑ 1/(y+j+1)²` for `y > 0`. -/
+/-- **Trigamma series.** For every real $y > 0$, the second derivative of $\log \Gamma$ at
+$y + 1$ equals $\sum_{j=0}^{\infty} \frac{1}{(y + j + 1)^2}$, where $\Gamma$ is the real Gamma
+function. -/
 theorem deriv_deriv_log_Gamma_add_one (y : ℝ) (hy : 0 < y) :
     deriv (deriv (fun t => Real.log (Real.Gamma t))) (y + 1)
       = ∑' j : ℕ, 1 / (y + (j : ℝ) + 1) ^ 2 := by
@@ -557,7 +564,9 @@ theorem deriv_deriv_log_Gamma_add_one (y : ℝ) (hy : 0 < y) :
   have huniq := hH2.unique hH
   exact huniq
 
-/-- On `(0, ∞)`, the derivative of `log ∘ Gamma` is `Gamma' / Gamma`. -/
+/-- **Logarithmic derivative of the real Gamma function.** For every real $u > 0$, the
+derivative of $\log \Gamma$ at $u$ equals $\Gamma'(u) / \Gamma(u)$, where $\Gamma$ is the real
+Gamma function. -/
 theorem deriv_log_Gamma (u : ℝ) (hu : 0 < u) :
     deriv (fun t => Real.log (Real.Gamma t)) u
       = deriv Real.Gamma u / Real.Gamma u := by
@@ -574,7 +583,8 @@ end Real
 
 namespace Complex
 
-/-- `Complex.Gamma` is analytic away from its poles at the nonpositive integers. -/
+/-- **Analyticity of the Gamma function.** The complex Gamma function is analytic at every
+$w \in \mathbb{C}$ that is not a nonpositive integer. -/
 theorem analyticAt_Gamma (w : ℂ) (hw : ∀ m : ℕ, w ≠ -((m : ℕ) : ℂ)) :
     AnalyticAt ℂ Complex.Gamma w := by
   set M : ℝ := ‖w‖ with hMdef
@@ -648,13 +658,17 @@ theorem analyticAt_Gamma (w : ℂ) (hw : ∀ m : ℕ, w ≠ -((m : ℕ) : ℂ)) 
     exact (Complex.differentiableAt_Gamma s (hball s hs)).differentiableWithinAt
   exact DifferentiableOn.analyticAt hDiffOn (Metric.ball_mem_nhds _ hr)
 
-/-- `Complex.digamma` is analytic at any non-pole `w`. -/
+/-- **Analyticity of the digamma function.** The digamma function $\psi = \Gamma'/\Gamma$, where
+$\Gamma$ is the complex Gamma function, is complex analytic at every $w \in \mathbb{C}$ that is
+not a nonpositive integer. -/
 theorem analyticAt_digamma (w : ℂ) (hw : ∀ m : ℕ, w ≠ -((m : ℕ) : ℂ)) :
     AnalyticAt ℂ Complex.digamma w := by
   have hG := analyticAt_Gamma w hw
   exact (AnalyticAt.deriv hG).div hG (Complex.Gamma_ne_zero hw)
 
-/-- At a positive real `t`, the complex derivative of `Gamma` is the real derivative. -/
+/-- **Complex and real derivatives of Gamma agree on the positive reals.** For every real
+$t > 0$, the derivative of the complex Gamma function at $t$ equals the derivative of the real
+Gamma function at $t$. -/
 theorem deriv_Gamma_ofReal (t : ℝ) (ht : 0 < t) :
     deriv Complex.Gamma (↑t) = ↑(deriv Real.Gamma t) := by
   have hU : ∀ m : ℕ, (↑t : ℂ) ≠ -(((m : ℕ)) : ℂ) := by
@@ -681,9 +695,12 @@ theorem deriv_Gamma_ofReal (t : ℝ) (ht : 0 < t) :
   have hC'' := hC'.congr_of_eventuallyEq heq.symm
   exact hC''.unique hR'
 
-/-- The trigamma series `∑ 1 / (z + k + 1)²` converges absolutely for every `z : ℂ`.
-At a pole `z = -(k + 1)` Lean's totalized division makes that term `0`, so no
-pole-avoidance hypothesis is needed. -/
+/-- **Absolute convergence of the trigamma series.** For every complex number $z$, the series
+$\sum_{k \ge 0} \frac{1}{(z + k + 1)^2}$ converges absolutely, that is, the series of absolute
+values $\sum_{k \ge 0} \left|\frac{1}{(z + k + 1)^2}\right|$ is summable, where a term whose
+denominator vanishes is read as $0$.
+
+Because of this convention no hypothesis excluding the poles $z = -(k + 1)$ is needed. -/
 theorem summable_norm_one_div_add_nat_succ_sq (z : ℂ) :
     Summable (fun k : ℕ => ‖(1 / (z + (k + 1 : ℕ)) ^ 2 : ℂ)‖) := by
   have hterm : (fun k : ℕ => ‖(1 / (z + (k + 1 : ℕ)) ^ 2 : ℂ)‖)
@@ -740,11 +757,18 @@ theorem summable_norm_one_div_add_nat_succ_sq (z : ℂ) :
 /-- The half-plane `Re s > 1` where the complex digamma series converges. -/
 private def seriesDomain : Set ℂ := {s : ℂ | 1 < s.re}
 
-/-- Complex digamma series term: `1/(j+1) - 1/(j+s)`. -/
+/-- **Terms of the complex digamma series.** For $j \in \mathbb{N}$ and $s \in \mathbb{C}$, the
+$j$-th term of the complex digamma series at $s$ is $\frac{1}{j+1} - \frac{1}{j+s}$, where
+$1/0$ is read as $0$. -/
 def digammaSeriesTerm (j : ℕ) (s : ℂ) : ℂ :=
   1 / ((j : ℂ) + 1) - 1 / ((j : ℂ) + s)
 
-/-- Complex digamma series function. -/
+/-- **Complex digamma series.** For $s \in \mathbb{C}$, the digamma series function at $s$ is
+$\sum_{j=0}^{\infty} \left(\frac{1}{j+1} - \frac{1}{j+s}\right)$, the sum of the terms of the
+complex digamma series at $s$.
+
+The value is taken to be $0$ when the series is not summable, and a term with $j + s = 0$ uses
+$1/0 = 0$. -/
 def digammaSeriesFun (s : ℂ) : ℂ := ∑' j : ℕ, digammaSeriesTerm j s
 
 private lemma helper_seriesDomain_open : IsOpen seriesDomain := by
@@ -955,7 +979,9 @@ private lemma helper_complex_digamma_series (s : ℂ)
   have hmem : s ∈ seriesDomain := hs
   have h := heq hmem
   simpa [digammaFun] using h
-/-- The complex digamma series terms are summable for `1 < s.re`. -/
+/-- **Summability of the digamma series terms.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the sequence of digamma series terms
+$\frac{1}{j+1} - \frac{1}{j+s}$, for $j = 0, 1, 2, \dots$, is summable. -/
 theorem summable_digammaSeriesTerm (s : ℂ) (hs : 1 < s.re) :
     Summable (fun j : ℕ => digammaSeriesTerm j s) := by
   have hmem : s ∈ seriesDomain := hs
@@ -1000,8 +1026,12 @@ theorem summable_digammaSeriesTerm (s : ℂ) (hs : 1 < s.re) :
     exact Real.summable_one_div_add_nat_succ_sq.mul_left _
   exact Summable.of_norm_bounded hmaj hbound
 
-/-- Complex digamma expansion: for `1 < s.re`, `ψ(s) + γ` is the sum of
-`1/(j+1) - 1/(j+s)`. -/
+/-- **Series expansion of the complex digamma function.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the series
+$\sum_{j=0}^{\infty} \left(\frac{1}{j+1} - \frac{1}{j+s}\right)$ of the terms of the complex
+digamma series at $s$ has sum $\psi(s) + \gamma$, where $\psi = \Gamma'/\Gamma$ is the complex
+digamma function, the logarithmic derivative of the complex Gamma function, and $\gamma$ is the
+Euler–Mascheroni constant. -/
 theorem hasSum_digamma_series (s : ℂ) (hs : 1 < s.re) :
     HasSum (fun j : ℕ => digammaSeriesTerm j s)
       (Complex.digamma s + (Real.eulerMascheroniConstant : ℂ)) := by

@@ -124,10 +124,16 @@ private theorem inner_norm_ge_of_adjoint [CompleteSpace E] {T : E →L[ℂ] E} {
   rw [h2, Complex.norm_conj]
   exact h u hu
 
-/-- If `μ` stays away from the closure of the numerical range of `A`, then
-`A - conj μ • 1` is a unit: it and its adjoint are bounded below, so it is
-injective with closed range, and its range has trivial orthogonal complement,
-hence it is surjective. -/
+/-- **Conjugate shifts off the closed numerical range are invertible.** Let $A$ be a bounded
+linear operator on a complex Hilbert space $E$, whose inner product $\langle \cdot, \cdot \rangle$
+is conjugate-linear in its first argument and linear in its second, let
+$W(A) = \{\langle A x, x \rangle : x \in E,\ \|x\| = 1\}$ be the numerical range of $A$ and let
+$\mu \in \mathbb{C}$. If $\mu$ is not in the closure of $W(A)$, then $A - \overline{\mu}\, I$,
+where $\overline{\mu}$ is the complex conjugate of $\mu$ and $I$ is the identity operator, is
+invertible in the algebra of bounded linear operators on $E$.
+
+Both this operator and its adjoint are bounded below, so it is injective with closed range, and
+its range has trivial orthogonal complement, hence it is surjective. -/
 theorem isUnit_of_notMem_closure_numericalRange [CompleteSpace E] {A : E →L[ℂ] E}
     {μ : ℂ} (hμ : μ ∉ closure (ToeplitzHausdorffWanted.numericalRange A)) :
     IsUnit (A - (starRingEnd ℂ) μ • (1 : E →L[ℂ] E)) := by
@@ -190,8 +196,12 @@ theorem isUnit_of_notMem_closure_numericalRange [CompleteSpace E] {A : E →L[�
     exact hrange
   exact (ContinuousLinearMap.isUnit_iff_bijective).mpr ⟨hinj, hsurj⟩
 
-/-- Every spectral value `z` of `A` has `conj z` in the closure of the
-numerical range of `A`. -/
+/-- **Conjugates of spectral values lie in the closed numerical range.** Let $A$ be a bounded
+linear operator on a complex Hilbert space $E$, whose inner product $\langle \cdot, \cdot \rangle$
+is conjugate-linear in its first argument and linear in its second, and let
+$W(A) = \{\langle A x, x \rangle : x \in E,\ \|x\| = 1\}$ be the numerical range of $A$. If $z$
+is in the spectrum of $A$, then the complex conjugate $\overline{z}$ lies in the closure of
+$W(A)$. -/
 theorem conj_mem_closure_numericalRange_of_mem_spectrum [CompleteSpace E]
     {A : E →L[ℂ] E} {z : ℂ} (hz : z ∈ spectrum ℂ A) :
     (starRingEnd ℂ) z ∈ closure (ToeplitzHausdorffWanted.numericalRange A) := by
@@ -204,8 +214,12 @@ theorem conj_mem_closure_numericalRange_of_mem_spectrum [CompleteSpace E]
   rw [Algebra.algebraMap_eq_smul_one]
   simpa [neg_sub] using hun.neg
 
-/-- The spectrum of `A` is contained in the conjugate of the closure of its
-numerical range. -/
+/-- **The spectrum lies in the conjugate of the closed numerical range.** Let $A$ be a bounded
+linear operator on a complex Hilbert space $E$, whose inner product $\langle \cdot, \cdot \rangle$
+is conjugate-linear in its first argument and linear in its second, and let
+$W(A) = \{\langle A x, x \rangle : x \in E,\ \|x\| = 1\}$ be the numerical range of $A$. Then
+every point of the spectrum of $A$ is the complex conjugate $\overline{w}$ of some point $w$ of
+the closure of $W(A)$. -/
 theorem spectrum_subset_star_image_closure_numericalRange [CompleteSpace E]
     (A : E →L[ℂ] E) :
     spectrum ℂ A ⊆ (starRingEnd ℂ) '' closure (ToeplitzHausdorffWanted.numericalRange A) := by
@@ -213,8 +227,14 @@ theorem spectrum_subset_star_image_closure_numericalRange [CompleteSpace E]
   have h := conj_mem_closure_numericalRange_of_mem_spectrum hz
   exact ⟨(starRingEnd ℂ) z, h, by simp⟩
 
-/-- An eigenvalue `z` of `A` has `conj z` in the numerical range itself, not
-just in its closure: for a unit eigenvector `x`, `⟪A x, x⟫ = conj z`. -/
+/-- **Conjugates of eigenvalues lie in the numerical range.** Let $A$ be a bounded linear operator
+on a complex inner product space $E$, whose inner product $\langle \cdot, \cdot \rangle$ is
+conjugate-linear in its first argument and linear in its second, let
+$W(A) = \{\langle A x, x \rangle : x \in E,\ \|x\| = 1\}$ be the numerical range of $A$ and let
+$z \in \mathbb{C}$. If there is a vector $x \in E$ with $\|x\| = 1$ and $A x = z x$, then the
+complex conjugate $\overline{z}$ lies in $W(A)$ itself, not just in its closure.
+
+Indeed $\langle A x, x \rangle = \overline{z}$ for such a unit eigenvector $x$. -/
 theorem conj_mem_numericalRange_of_exists_unit_eigenvector {A : E →L[ℂ] E} {z : ℂ}
     (h : ∃ x : E, ‖x‖ = 1 ∧ A x = z • x) :
     (starRingEnd ℂ) z ∈ ToeplitzHausdorffWanted.numericalRange A := by
@@ -223,7 +243,10 @@ theorem conj_mem_numericalRange_of_exists_unit_eigenvector {A : E →L[ℂ] E} {
   rw [hAx, inner_smul_left, inner_self_eq_norm_sq_to_K, hx]
   simp
 
-/-- The numerical range of `A` lies in the closed ball of radius `‖A‖`. -/
+/-- **The numerical range is bounded by the operator norm.** Let $A$ be a bounded linear operator
+on a complex inner product space $E$. Then every point of the numerical range $W(A)$ has absolute
+value at most the operator norm $\|A\|$: $W(A)$ lies in the closed disc of radius $\|A\|$ centred
+at $0$. -/
 theorem numericalRange_subset_closedBall_norm (A : E →L[ℂ] E) :
     ToeplitzHausdorffWanted.numericalRange A ⊆ Metric.closedBall 0 ‖A‖ := by
   intro c hc

@@ -17,9 +17,11 @@ open MeasureTheory
 
 namespace MathlibExt.Analysis.Fourier
 
-/-- Convolution over one period, `x ↦ ∫ t in 0..T, f t * g (x - t)`, with a `T`-periodic second
-factor is `T`-periodic. The values lie in any normed ring that is a normed real algebra (for
-example `ℝ` or `ℂ`); `f` need not be periodic or integrable. -/
+/-- **Periodic convolution.** Let $A$ be a normed ring that is a normed algebra over
+$\mathbb{R}$ (for example $\mathbb{R}$ or $\mathbb{C}$), let $T$ be a real number, and let
+$f, g : \mathbb{R} \to A$ with $g$ periodic of period $T$, that is, $g(x + T) = g(x)$ for all
+real $x$. Then the function $x \mapsto \int_0^T f(t)\, g(x - t)\, dt$ is periodic of period
+$T$. The function $f$ need not be periodic or integrable. -/
 theorem periodic_convolution {A : Type*} [NormedRing A] [NormedAlgebra ℝ A]
     {T : ℝ} {f g : ℝ → A} (hg : Function.Periodic g T) :
     Function.Periodic (fun x ↦ ∫ t in (0 : ℝ)..T, f t * g (x - t)) T := by

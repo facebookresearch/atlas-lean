@@ -67,20 +67,26 @@ open MathlibExt.Analysis.InnerProductSpace.BilateralShiftOperator
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- On the unit circle, `μ * star μ = 1`. -/
+/-- **A unit scalar times its conjugate is one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. If $\mu \in \mathbb{K}$ satisfies $|\mu| = 1$, then $\mu \bar{\mu} = 1$, where
+$\bar{\mu}$ is the complex conjugate of $\mu$. -/
 theorem mul_star_eq_one_of_norm_eq_one {μ : 𝕜} (hμ : ‖μ‖ = 1) : μ * star μ = 1 := by
   have h := inner_self_eq_norm_sq_to_K (𝕜 := 𝕜) (x := μ)
   rw [RCLike.inner_apply, starRingEnd_apply, hμ] at h
   simpa using h
 
-/-- On the unit circle, `star μ ≠ 0`. -/
+/-- **Conjugates of unimodular scalars are nonzero.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. If $\mu \in \mathbb{K}$ satisfies $|\mu| = 1$, then its conjugate $\bar{\mu}$ is
+nonzero. -/
 theorem star_ne_zero_of_norm_eq_one {μ : 𝕜} (hμ : ‖μ‖ = 1) : star μ ≠ 0 := by
   intro h
   have hnorm : ‖star μ‖ = 1 := by rw [norm_star, hμ]
   rw [h, norm_zero] at hnorm
   norm_num at hnorm
 
-/-- On the unit circle, `μ * (star μ) ^ n = (star μ) ^ (n - 1)`. -/
+/-- **Multiplying a power of the conjugate by a unit scalar.** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$, and write $\bar{\mu}$ for the complex conjugate of $\mu \in \mathbb{K}$. If
+$|\mu| = 1$, then for every integer $n$, $\mu \bar{\mu}^{\,n} = \bar{\mu}^{\,n-1}$. -/
 theorem mul_star_zpow {μ : 𝕜} (hμ : ‖μ‖ = 1) (n : ℤ) :
     μ * (star μ) ^ n = (star μ) ^ (n - 1) := by
   have hc0 := star_ne_zero_of_norm_eq_one hμ
@@ -90,8 +96,15 @@ theorem mul_star_zpow {μ : 𝕜} (hμ : ‖μ‖ = 1) (n : ℤ) :
   rw [h1, mul_comm ((star μ) ^ (n - 1)) (star μ), ← mul_assoc,
     mul_star_eq_one_of_norm_eq_one hμ, one_mul]
 
-/-- The truncated approximate-eigenvector function for eigenvalue `μ` on the unit
-circle: `(star μ) ^ n` on `[-N, N]`, and `0` outside. -/
+/-- **Truncated approximate eigenfunction of the bilateral shift.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $\mu \in \mathbb{K}$ and $N \in \mathbb{N}$, and write
+$\bar{\mu}$ for the complex conjugate of $\mu$. This is the function
+$f_{\mu,N} : \mathbb{Z} \to \mathbb{K}$ with $f_{\mu,N}(n) = \bar{\mu}^{\,n}$ for
+$-N \le n \le N$ and $f_{\mu,N}(n) = 0$ otherwise (negative powers are inverses, with the
+convention $0^{n} = 0$ for $n < 0$).
+
+It is used for $\mu$ on the unit circle, where it gives approximate eigenvectors of the
+bilateral shift. -/
 def approxEigenFun (μ : 𝕜) (N : ℕ) (n : ℤ) : 𝕜 :=
   if n ∈ Finset.Icc (-(N : ℤ)) (N : ℤ) then (star μ) ^ n else 0
 
@@ -112,14 +125,26 @@ theorem memℓp_approxEigenFun {μ : 𝕜} (N : ℕ) : Memℓp (approxEigenFun �
   rw [approxEigenFun_of_notMem hn]
   simp [Real.zero_rpow (by norm_num : (2 : ℝ) ≠ 0)]
 
-/-- The truncated approximate eigenvector for eigenvalue `μ` on the unit circle. -/
+/-- **Truncated approximate eigenvector of the bilateral shift.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $\mu \in \mathbb{K}$ and $N \in \mathbb{N}$, and write
+$\bar{\mu}$ for the complex conjugate of $\mu$. This is the vector
+$v_{\mu,N} \in \ell^2(\mathbb{Z}, \mathbb{K})$ whose $n$-th coordinate is the truncated
+approximate eigenfunction $f_{\mu,N}(n)$, that is, $\bar{\mu}^{\,n}$ for $-N \le n \le N$ and
+$0$ otherwise; it lies in $\ell^2$ because it has finite support.
+
+It is used for $\mu$ on the unit circle, where it is an approximate eigenvector of the
+bilateral shift. -/
 noncomputable def approxEigenVec (μ : 𝕜) (N : ℕ) : ℓ²(ℤ, 𝕜) :=
   ⟨approxEigenFun μ N, memℓp_approxEigenFun N⟩
 
 theorem approxEigenVec_apply (μ : 𝕜) (N : ℕ) (n : ℤ) :
     approxEigenVec μ N n = approxEigenFun μ N n := rfl
 
-/-- The squared norm of the truncated approximate eigenvector is `2N + 1`. -/
+/-- **Norm of the truncated approximate eigenvector.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $\mu \in \mathbb{K}$ with $|\mu| = 1$, and let $N \in \mathbb{N}$. The
+truncated approximate eigenvector $v_{\mu,N} \in \ell^2(\mathbb{Z}, \mathbb{K})$, whose $n$-th
+coordinate is $\bar{\mu}^{\,n}$ for $-N \le n \le N$ and $0$ otherwise ($\bar{\mu}$ the complex
+conjugate of $\mu$), satisfies $\|v_{\mu,N}\|^2 = 2N + 1$. -/
 theorem norm_sq_approxEigenVec {μ : 𝕜} (hμ : ‖μ‖ = 1) (N : ℕ) :
     ‖approxEigenVec μ N‖ ^ 2 = 2 * (N : ℝ) + 1 := by
   have hexp : (2 : ℝ≥0∞).toReal = (2 : ℝ) := by simp
@@ -155,15 +180,24 @@ theorem norm_sq_approxEigenVec {μ : 𝕜} (hμ : ‖μ‖ = 1) (N : ℕ) :
     ring
   rw [hcard, mul_one]
 
-/-- Applying `μ • 1 - T` to a vector, where `μ • 1` is the scalar
-operator from the algebra structure on continuous linear maps. -/
+/-- **Applying $\mu I - T$ on $\ell^2(\mathbb{Z})$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $T$ be a bounded linear operator on $\ell^2(\mathbb{Z}, \mathbb{K})$, let
+$\mu \in \mathbb{K}$, and let $\mu I$ be the image of $\mu$ under the algebra map from $\mathbb{K}$
+to the bounded operators on $\ell^2(\mathbb{Z}, \mathbb{K})$, that is, $\mu$ times the identity.
+Then for every $x \in \ell^2(\mathbb{Z}, \mathbb{K})$, $(\mu I - T)x = \mu x - Tx$. -/
 theorem algebraMap_sub_apply (T : ℓ²(ℤ, 𝕜) →L[𝕜] ℓ²(ℤ, 𝕜)) (μ : 𝕜)
     (x : ℓ²(ℤ, 𝕜)) :
     (algebraMap 𝕜 (ℓ²(ℤ, 𝕜) →L[𝕜] ℓ²(ℤ, 𝕜)) μ - T) x = μ • x - T x := by
   rw [Algebra.algebraMap_eq_smul_one]
   simp only [sub_apply, smul_apply, one_apply_eq_self]
 
-/-- Pointwise action of the residual `(μ • 1 - S)` on an approximate eigenvector. -/
+/-- **Coordinates of the residual of the truncated approximate eigenvector.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $S$ be the bilateral shift on $\ell^2(\mathbb{Z}, \mathbb{K})$,
+and let $\mu \in \mathbb{K}$, $N \in \mathbb{N}$ and $n \in \mathbb{Z}$. Let $f_{\mu,N}$ be the
+truncated approximate eigenfunction and $v_{\mu,N} \in \ell^2(\mathbb{Z}, \mathbb{K})$ the
+corresponding truncated approximate eigenvector. Then the $n$-th coordinate of
+$(\mu I - S)v_{\mu,N}$ is $\mu f_{\mu,N}(n) - f_{\mu,N}(n - 1)$, where $\mu I$ is $\mu$ times
+the identity operator. -/
 theorem residual_apply {μ : 𝕜} (N : ℕ) (n : ℤ) :
     ((algebraMap 𝕜 (ℓ²(ℤ, 𝕜) →L[𝕜] ℓ²(ℤ, 𝕜)) μ - bilateralShiftCLM (𝕜 := 𝕜))
         (approxEigenVec μ N)) n =
@@ -172,8 +206,14 @@ theorem residual_apply {μ : 𝕜} (N : ℕ) (n : ℤ) :
   simp only [lp.coeFn_sub, Pi.sub_apply, lp.coeFn_smul, Pi.smul_apply, smul_eq_mul,
     bilateralShiftCLM_apply, bilateralShiftFun_apply, approxEigenVec_apply]
 
-/-- The squared norm of the residual on an approximate eigenvector is `2`:
-the only surviving coordinates are the two boundary terms, each of norm `1`. -/
+/-- **Residual of the truncated approximate eigenvector.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $S$ be the bilateral shift on $\ell^2(\mathbb{Z}, \mathbb{K})$, let
+$\mu \in \mathbb{K}$ with $|\mu| = 1$, and let $N \in \mathbb{N}$. The truncated approximate
+eigenvector $v_{\mu,N}$ satisfies $\|(\mu I - S)v_{\mu,N}\|^2 = 2$, where $\mu I$ is $\mu$ times
+the identity operator.
+
+The only nonzero coordinates of $(\mu I - S)v_{\mu,N}$ are those at $n = -N$ and $n = N + 1$,
+each of absolute value $1$. -/
 theorem norm_sq_residual_approxEigenVec {μ : 𝕜} (hμ : ‖μ‖ = 1) (N : ℕ) :
     ‖(algebraMap 𝕜 (ℓ²(ℤ, 𝕜) →L[𝕜] ℓ²(ℤ, 𝕜)) μ - bilateralShiftCLM (𝕜 := 𝕜))
         (approxEigenVec μ N)‖ ^ 2 = 2 := by
@@ -251,10 +291,15 @@ theorem norm_sq_residual_approxEigenVec {μ : 𝕜} (hμ : ‖μ‖ = 1) (N : �
   rw [hleft, hright]
   norm_num
 
-/-- Every point of the unit circle is in the spectrum of the bilateral shift:
-if `μ • 1 - S` were a unit, it would be bounded below, contradicting the
-approximate eigenvectors, whose residual has norm `√2` while their norm is
-`√(2N + 1)`. -/
+/-- **Every point of the unit circle lies in the spectrum of the bilateral shift.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let $S$ be the bilateral shift on
+$\ell^2(\mathbb{Z}, \mathbb{K})$. Every $\mu \in \mathbb{K}$ with $|\mu| = 1$ lies in the
+spectrum of $S$ in the algebra of bounded operators on $\ell^2(\mathbb{Z}, \mathbb{K})$, that
+is, $\mu I - S$ is not invertible there, where $\mu I$ is $\mu$ times the identity operator.
+
+If $\mu I - S$ were invertible it would be bounded below, but the truncated approximate
+eigenvectors $v_{\mu,N}$ satisfy $\|v_{\mu,N}\| = \sqrt{2N + 1}$ and
+$\|(\mu I - S)v_{\mu,N}\| = \sqrt{2}$ for every $N \in \mathbb{N}$. -/
 theorem mem_spectrum_bilateralShiftCLM_of_norm_eq_one {μ : 𝕜} (hμ : ‖μ‖ = 1) :
     μ ∈ spectrum 𝕜 (bilateralShiftCLM (𝕜 := 𝕜)) := by
   rw [spectrum.mem_iff]
@@ -282,7 +327,10 @@ theorem mem_spectrum_bilateralShiftCLM_of_norm_eq_one {μ : 𝕜} (hμ : ‖μ�
   have hN' : (2 : ℝ) * (N : ℝ) + 1 ≤ 2 * (K : ℝ) ^ 2 := by linarith [hsq]
   linarith [hN, hN']
 
-/-- The spectrum of the bilateral shift is the unit circle. -/
+/-- **Spectrum of the bilateral shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+spectrum of the bilateral shift, as a bounded operator on $\ell^2(\mathbb{Z}, \mathbb{K})$, is the
+set of scalars $\mu \in \mathbb{K}$ with $|\mu| = 1$; for $\mathbb{K} = \mathbb{C}$ this is the
+unit circle. -/
 theorem spectrum_bilateralShiftCLM :
     spectrum 𝕜 (bilateralShiftCLM (𝕜 := 𝕜)) = Metric.sphere 0 1 := by
   apply Subset.antisymm
@@ -291,7 +339,10 @@ theorem spectrum_bilateralShiftCLM :
     rw [mem_sphere_zero_iff_norm] at hμ
     exact mem_spectrum_bilateralShiftCLM_of_norm_eq_one hμ
 
-/-- The spectrum of the bilateral backward shift is the unit circle. -/
+/-- **Spectrum of the bilateral backward shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$ and let $B$ be the bilateral backward shift on $\ell^2(\mathbb{Z}, \mathbb{K})$.
+The spectrum of $B$ in the algebra of bounded operators on $\ell^2(\mathbb{Z}, \mathbb{K})$ is
+the unit circle $\{\mu \in \mathbb{K} : |\mu| = 1\}$. -/
 theorem spectrum_bilateralBackwardCLM :
     spectrum 𝕜 (bilateralBackwardCLM (𝕜 := 𝕜)) = Metric.sphere 0 1 := by
   have h1 : bilateralBackwardCLM (𝕜 := 𝕜) = star (bilateralShiftCLM (𝕜 := 𝕜)) := by

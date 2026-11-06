@@ -193,8 +193,11 @@ private theorem hartogsext_continuousOn_fderiv_single
       hartogsext_fderiv_single_eq_circleIntegral hr hs hball hf hy i
   exact hderiv.continuousAt (Metric.ball_mem_nhds x hr)
 
-/-- The derivative of a complex-differentiable scalar function on an open subset of `ℂⁿ` is
-continuous. In particular, the function is `C¹` there. -/
+/-- **Holomorphic functions on open subsets of ℂⁿ have continuous derivative.** Let $n \in
+\mathbb{N}$, let $s$ be an open subset of $\mathbb{C}^n$ and let $f : \mathbb{C}^n \to \mathbb{C}$
+be complex differentiable at every point of $s$. Then the complex derivative $x \mapsto Df(x)$,
+with values in the complex linear maps $\mathbb{C}^n \to \mathbb{C}$, is continuous on $s$. Here
+$\mathbb{C}^n$ carries the Euclidean norm. -/
 theorem continuousOn_fderiv_of_differentiableOn
     {n : ℕ} {s : Set (EuclideanSpace ℂ (Fin n))}
     {f : EuclideanSpace ℂ (Fin n) → ℂ} (hs : IsOpen s)
@@ -294,7 +297,12 @@ private noncomputable def hartogsextBarPartial
     (fderiv ℝ f x (EuclideanSpace.single i 1) +
       Complex.I * fderiv ℝ f x (EuclideanSpace.single i Complex.I))
 
-/-- The Wirtinger derivative `∂f/∂z̄` of a real-differentiable complex-valued function. -/
+/-- **The Wirtinger derivative with respect to z̄.** For $f : \mathbb{C} \to \mathbb{C}$ and
+$z \in \mathbb{C}$, the Wirtinger derivative of $f$ at $z$ is
+$\frac{\partial f}{\partial \bar z}(z) = \frac{1}{2}\bigl(Df(z)(1) + i\,Df(z)(i)\bigr)$, where
+$Df(z)$ is the real derivative of $f$ at $z$, taken to be $0$ when $f$ is not real differentiable
+at $z$. When $f$ is real differentiable at $z$, this equals
+$\frac{1}{2}\bigl(\frac{\partial f}{\partial x}(z) + i\,\frac{\partial f}{\partial y}(z)\bigr)$. -/
 noncomputable def barDeriv (f : ℂ → ℂ) (z : ℂ) : ℂ :=
   (2 : ℂ)⁻¹ * (fderiv ℝ f z 1 + Complex.I * fderiv ℝ f z Complex.I)
 
@@ -883,7 +891,9 @@ private theorem hartogsext_barPartial_partialCauchyGreen
   simp only [hartogsextBarPartial]
   ring
 
-/-- A complex-differentiable function has vanishing Wirtinger derivative. -/
+/-- **Vanishing of the Wirtinger derivative at points of complex differentiability.** Let
+$f : \mathbb{C} \to \mathbb{C}$ and $z \in \mathbb{C}$. If $f$ is complex differentiable at $z$,
+then the Wirtinger derivative $\partial f / \partial \bar z$ of $f$ vanishes at $z$. -/
 theorem barDeriv_eq_zero_of_differentiableAt
     {f : ℂ → ℂ} {z : ℂ} (hf : DifferentiableAt ℂ f z) : barDeriv f z = 0 := by
   rw [barDeriv, hf.fderiv_restrictScalars (𝕜 := ℝ)]
@@ -893,8 +903,10 @@ theorem barDeriv_eq_zero_of_differentiableAt
   rw [mul_one, ← mul_assoc, Complex.I_mul_I]
   simp
 
-/-- A real-differentiable function with vanishing Wirtinger derivative is complex
-differentiable. -/
+/-- **Cauchy–Riemann criterion for complex differentiability.** Let $f : \mathbb{C} \to
+\mathbb{C}$ and $z \in \mathbb{C}$. If $f$ is real differentiable at $z$ and its Wirtinger
+derivative $\partial f / \partial \bar z$ vanishes at $z$, then $f$ is complex differentiable at
+$z$. -/
 theorem differentiableAt_of_barDeriv_eq_zero
     {f : ℂ → ℂ} {z : ℂ} (hf : DifferentiableAt ℝ f z)
     (hbar : barDeriv f z = 0) : DifferentiableAt ℂ f z := by
@@ -1413,7 +1425,11 @@ private theorem hartogsext_barDeriv_cauchyGreenTransform_eq
       rw [hartogsext_integral_inv_mul_barDeriv_const_sub hgc hg z]
       field_simp [ne_of_gt Real.pi_pos]
 
-/-- A compactly supported `C¹` function on `ℂ` is a Wirtinger derivative. -/
+/-- **Solving the ∂̄-equation for compactly supported C¹ data.** Let $g : \mathbb{C} \to
+\mathbb{C}$ be real differentiable on all of $\mathbb{C}$, with continuous real derivative and
+compact support. Then there is a function $u : \mathbb{C} \to \mathbb{C}$, real differentiable on
+all of $\mathbb{C}$, whose Wirtinger derivative satisfies
+$\frac{\partial u}{\partial \bar z}(z) = g(z)$ for every $z \in \mathbb{C}$. -/
 theorem exists_differentiable_barDeriv_eq_of_hasCompactSupport
     {g : ℂ → ℂ} (hg : Differentiable ℝ g) (hDg : Continuous (fderiv ℝ g))
     (hgc : HasCompactSupport g) :
@@ -1728,17 +1744,21 @@ private theorem hartogsext_exists_zero_germ
       (hballφ hz)
 
 /--
-Let `U ⊆ ℂⁿ` be open connected with `2 ≤ n`, `K ⊆ U` compact with `U \ K` connected. Every `f : ℂⁿ
-→ ℂ` holomorphic on `U \ K` extends to holomorphic `F` on `U` with `Set.EqOn F f (U \ K)`. Here
-`ℂⁿ` is `EuclideanSpace ℂ (Fin n)`. Source: Hartogs extension phenomenon, F. Hartogs, Math. Ann.
-62 (1906); see Hörmander, An Introduction to Complex Analysis in Several Variables; Lean is ℂⁿ n ≥
-2 finite-dimensional form via EuclideanSpace ℂ (Fin n) with U open connected K compact U\K
-connected.
+**Hartogs extension theorem.** Let $n \ge 2$, let $U \subseteq \mathbb{C}^n$ be open and
+connected, and let $K \subseteq U$ be compact with $U \setminus K$ connected. Then for every
+function $f : \mathbb{C}^n \to \mathbb{C}$ that is holomorphic on $U \setminus K$ there is a
+function $F : \mathbb{C}^n \to \mathbb{C}$ that is holomorphic on $U$ and agrees with $f$ on
+$U \setminus K$. Here $\mathbb{C}^n$ carries the Euclidean norm.
 
 Proves `Wanted` entry `hartogs_extension`.
 
 Proof: The compactly supported Cauchy–Green equation in one coordinate, combined with a smooth
 cutoff and one-variable identity continuation.
+
+Source: Hartogs extension phenomenon, F. Hartogs, Math. Ann.
+62 (1906); see Hörmander, An Introduction to Complex Analysis in Several Variables; Lean is ℂⁿ n ≥
+2 finite-dimensional form via EuclideanSpace ℂ (Fin n) with U open connected K compact U\K
+connected.
 -/
 theorem hartogs_extension
     {n : ℕ} (hn : 2 ≤ n)

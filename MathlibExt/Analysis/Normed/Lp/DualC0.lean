@@ -56,8 +56,10 @@ universe u v
 
 section C0
 
-/-- The `ℓ^∞` representation of canonical `c₀`, retained for compatibility.
-`c0LpEquiv` identifies it isometrically with the standard space. -/
+/-- **The subspace of null sequences in $\ell^\infty$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$ and let $\iota$ be an index type. The sequences $x \in \ell^\infty(\iota, \mathbb{K})$
+whose coordinates $x_i$ tend to $0$ along the cofinite filter on $\iota$ form a
+$\mathbb{K}$-linear subspace of $\ell^\infty(\iota, \mathbb{K})$. -/
 noncomputable def c0Submodule (𝕜 : Type u) [RCLike 𝕜] (ι : Type v) :
     Submodule 𝕜 (lp (fun _ : ι => 𝕜) ∞) where
   carrier := { f | Filter.Tendsto (⇑f) Filter.cofinite (𝓝 0) }
@@ -81,14 +83,22 @@ noncomputable def c0Submodule (𝕜 : Type u) [RCLike 𝕜] (ι : Type v) :
     rw [hfun]
     simpa only [smul_zero] using Filter.Tendsto.const_smul hf c
 
-/-- The canonical `C₀` space on the index type with its discrete topology.
-The scalar/index argument order is retained, and no topology on `ι` is assumed. -/
+/-- **The sequence space $c_0$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let $\iota$
+be a type. The space $c_0(\iota, \mathbb{K})$ consists of the functions $x : \iota \to \mathbb{K}$
+that tend to $0$ along the cofinite filter, that is, for every $\varepsilon > 0$ the set
+$\{i : |x_i| \ge \varepsilon\}$ is finite, with pointwise operations and the supremum norm
+$\|x\|_\infty = \sup_i |x_i|$. It is realized as the space of continuous functions vanishing at
+infinity on $\iota$ with the discrete topology; no topology on $\iota$ is assumed. -/
 abbrev c0 (𝕜 : Type u) [RCLike 𝕜] (ι : Type v) : Type (max u v) :=
   @ZeroAtInftyContinuousMap ι 𝕜 ⊥ _ _
 
 variable {𝕜 : Type u} [RCLike 𝕜] {ι : Type v}
 
-/-- Canonical `C₀` functions on the discrete index vanish along `cofinite`. -/
+/-- **Elements of $c_0$ tend to zero along the cofinite filter.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $\iota$ be an index type, and let $c_0(\iota, \mathbb{K})$ be
+the space of functions $\iota \to \mathbb{K}$ vanishing at infinity for the discrete
+topology on $\iota$. For every $x \in c_0(\iota, \mathbb{K})$, the coordinates $x_i$ tend to
+$0$ along the cofinite filter on $\iota$. -/
 theorem c0_tendsto_zero (x : c0 𝕜 ι) : Tendsto (x : ι → 𝕜) cofinite (𝓝 0) := by
   letI : TopologicalSpace ι := ⊥
   letI : DiscreteTopology ι := ⟨rfl⟩
@@ -96,13 +106,19 @@ theorem c0_tendsto_zero (x : c0 𝕜 ι) : Tendsto (x : ι → 𝕜) cofinite (�
   rw [Filter.cocompact_eq_cofinite] at h
   exact h
 
-/-- A coordinate of a canonical `c₀` element is bounded by its norm. -/
+/-- **Coordinates are bounded by the norm in $c_0$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $c_0(\iota, \mathbb{K})$ be the space of families $x = (x_i)_{i \in \iota}$ in
+$\mathbb{K}$ that tend to $0$ along the cofinite filter, with the supremum norm. Then
+$|x_i| \le \|x\|$ for every $x \in c_0(\iota, \mathbb{K})$ and every index $i \in \iota$. -/
 theorem c0_apply_norm_le (x : c0 𝕜 ι) (i : ι) : ‖(x : ι → 𝕜) i‖ ≤ ‖x‖ := by
   letI : TopologicalSpace ι := ⊥
   have h := BoundedContinuousFunction.norm_coe_le_norm x.toBCF i
   rwa [ZeroAtInftyContinuousMap.norm_toBCF_eq_norm] at h
 
-/-- The coordinate-preserving inclusion of canonical `c₀` in `ℓ^∞`. -/
+/-- **Inclusion of $c_0$ in $\ell^\infty$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$
+and let $\iota$ be an index type. Every $x \in c_0(\iota, \mathbb{K})$ is a bounded sequence,
+and this map sends it to the element of $\ell^\infty(\iota, \mathbb{K})$ with the same
+coordinates $x_i$. -/
 noncomputable def c0ToLp (x : c0 𝕜 ι) : lp (fun _ : ι => 𝕜) ∞ :=
   ⟨(x : ι → 𝕜), memℓp_infty ⟨‖x‖, by
     rintro _ ⟨i, rfl⟩
@@ -112,7 +128,9 @@ noncomputable instance : CoeTC (c0 𝕜 ι) (lp (fun _ : ι => 𝕜) ∞) := ⟨
 
 @[simp] theorem c0ToLp_apply (x : c0 𝕜 ι) (i : ι) : c0ToLp x i = (x : ι → 𝕜) i := rfl
 
-/-- The canonical norm equals the supremum norm of the `ℓ^∞` inclusion. -/
+/-- **The $c_0$ norm is the supremum norm.** Let $\mathbb{K}$ be the real or complex field and
+$\iota$ an index type. For every $x \in c_0(\iota, \mathbb{K})$, the norm of $x$ equals the
+norm $\sup_{i \in \iota} |x_i|$ of $x$ viewed as an element of $\ell^\infty(\iota, \mathbb{K})$. -/
 theorem c0_norm (x : c0 𝕜 ι) : ‖x‖ = ‖(x : lp (fun _ : ι => 𝕜) ∞)‖ := by
   letI : TopologicalSpace ι := ⊥
   apply le_antisymm
@@ -123,8 +141,11 @@ theorem c0_norm (x : c0 𝕜 ι) : ‖x‖ = ‖(x : lp (fun _ : ι => 𝕜) ∞
   · apply lp.norm_le_of_forall_le (norm_nonneg x)
     exact c0_apply_norm_le x
 
-/-- Build canonical `c₀` from an `ℓ^∞` sequence and its cofinite limit.
-This is the migration helper for the former subtype constructor. -/
+/-- **Sequences in $\ell^\infty$ tending to zero as elements of $c_0$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $\iota$ be an index type. A bounded sequence
+$x \in \ell^\infty(\iota, \mathbb{K})$ whose coordinates $x_i$ tend to $0$ along the
+cofinite filter on $\iota$ defines the element of $c_0(\iota, \mathbb{K})$ with the same
+coordinates. -/
 noncomputable def c0OfLp (x : lp (fun _ : ι => 𝕜) ∞)
     (hx : Tendsto (x : ι → 𝕜) cofinite (𝓝 0)) : c0 𝕜 ι := by
   letI : TopologicalSpace ι := ⊥
@@ -138,8 +159,11 @@ noncomputable def c0OfLp (x : lp (fun _ : ι => 𝕜) ∞)
     (hx : Tendsto (x : ι → 𝕜) cofinite (𝓝 0)) (i : ι) :
     (c0OfLp x hx : ι → 𝕜) i = x i := rfl
 
-/-- The canonical space and its existing `ℓ^∞` submodule representation are
-linearly isometric through the unchanged coordinate function. -/
+/-- **$c_0$ is isometrically isomorphic to the null sequences in $\ell^\infty$.** Let $\mathbb{K}$
+be the real or complex field and $\iota$ an index type. The map that sends
+$x \in c_0(\iota, \mathbb{K})$ to the same sequence $(x_i)_{i \in \iota}$, viewed in the subspace
+of $\ell^\infty(\iota, \mathbb{K})$ of sequences tending to $0$ along the cofinite filter, is a
+linear isometric equivalence onto that subspace. -/
 noncomputable def c0LpEquiv : c0 𝕜 ι ≃ₗᵢ[𝕜] ↥(c0Submodule 𝕜 ι) := by
   letI : TopologicalSpace ι := ⊥
   exact
@@ -167,7 +191,10 @@ noncomputable def c0LpEquiv : c0 𝕜 ι ≃ₗᵢ[𝕜] ↥(c0Submodule 𝕜 ι
 
 variable [DecidableEq ι]
 
-/-- The sequence which is `a` at `i` and `0` elsewhere, as an element of `c₀`. -/
+/-- **Sequence supported at one index.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and
+let $\iota$ be an index type. For an index $i \in \iota$ and a scalar $a \in \mathbb{K}$, this
+is the element of $c_0(\iota, \mathbb{K})$ whose $i$-th coordinate is $a$ and whose other
+coordinates are $0$. -/
 noncomputable def c0Single (i : ι) (a : 𝕜) : c0 𝕜 ι := by
   classical
   refine c0OfLp (lp.single ∞ i a) ?_
@@ -182,24 +209,37 @@ noncomputable def c0Single (i : ι) (a : 𝕜) : c0 𝕜 ι := by
     exact hj (lp.single_apply_ne (E := fun _ : ι => 𝕜) ∞ i a hne).symm
   exact Filter.Tendsto.congr' hev tendsto_const_nhds
 
-/-- The coordinates of `c0Single i a`. -/
+/-- **Coordinates of the sequence supported at one index.** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$ and let $\iota$ be an index type. For indices $i, j \in \iota$ and
+$a \in \mathbb{K}$, the $j$-th coordinate of the element of $c_0(\iota, \mathbb{K})$ that is
+$a$ at $i$ and $0$ elsewhere equals $a$ if $j = i$ and $0$ otherwise. -/
 theorem c0Single_apply (i j : ι) (a : 𝕜) :
     ((c0Single (𝕜 := 𝕜) (ι := ι) i a : c0 𝕜 ι) : ι → 𝕜) j = if j = i then a else 0 := by
   show (lp.single (E := fun _ : ι => 𝕜) ∞ i a : ι → 𝕜) j = if j = i then a else 0
   rw [lp.single_apply]
   exact Pi.single_apply i a j
 
-/-- The norm of `c0Single i a` is `‖a‖`. -/
+/-- **Norm of a sequence supported at one index.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$ and let $\iota$ be an index type. For $i \in \iota$ and $a \in \mathbb{K}$, the
+element of $c_0(\iota, \mathbb{K})$ that is $a$ at $i$ and $0$ elsewhere has norm $\|a\|$. -/
 theorem c0Single_norm (i : ι) (a : 𝕜) : ‖c0Single (𝕜 := 𝕜) (ι := ι) i a‖ = ‖a‖ := by
   rw [c0_norm]
   have hp : (0 : ℝ≥0∞) < (∞ : ℝ≥0∞) := by simp
   exact lp.norm_single (E := fun _ : ι => 𝕜) hp i a
 
-/-- A finitely supported sequence, as an element of `c₀`. -/
+/-- **Finitely supported sequences in $c_0$.** Let $\mathbb{K}$ be the real or complex field and
+$\iota$ an index type, and let $e_i \in c_0(\iota, \mathbb{K})$ be the sequence equal to $1$ at
+$i$ and $0$ elsewhere. For a finite set $s \subseteq \iota$ and $c : \iota \to \mathbb{K}$, the
+finitely supported sequence with coefficients $c$ on $s$ is the element
+$\sum_{i \in s} c_i e_i$ of $c_0(\iota, \mathbb{K})$. -/
 noncomputable def c0FinsetSum (s : Finset ι) (c : ι → 𝕜) : c0 𝕜 ι :=
   ∑ i ∈ s, c i • c0Single (𝕜 := 𝕜) (ι := ι) i (1 : 𝕜)
 
-/-- The coordinates of a finitely supported sequence. -/
+/-- **Coordinates of a finitely supported sequence.** Let $\mathbb{K}$ be the real or complex
+field and $\iota$ an index type, and let $e_i \in c_0(\iota, \mathbb{K})$ be the sequence equal
+to $1$ at $i$ and $0$ elsewhere. For every finite set $s \subseteq \iota$, every
+$c : \iota \to \mathbb{K}$ and every $j \in \iota$, the $j$-th coordinate of
+$\sum_{i \in s} c_i e_i$ is $c_j$ if $j \in s$ and $0$ otherwise. -/
 theorem c0FinsetSum_apply (s : Finset ι) (c : ι → 𝕜) (j : ι) :
     ((c0FinsetSum (𝕜 := 𝕜) (ι := ι) s c : c0 𝕜 ι) : ι → 𝕜) j
       = if j ∈ s then c j else 0 := by
@@ -215,17 +255,28 @@ theorem c0FinsetSum_apply (s : Finset ι) (c : ι → 𝕜) (j : ι) :
     mul_ite, mul_one, mul_zero]
   exact Finset.sum_ite_eq s j c
 
-/-- A functional applied to a finitely supported sequence. -/
+/-- **A functional on a finitely supported sequence.** Let $\mathbb{K}$ be the real or complex
+field and $\iota$ an index type, and let $e_i \in c_0(\iota, \mathbb{K})$ be the sequence equal
+to $1$ at $i$ and $0$ elsewhere. For every continuous linear functional $\varphi$ on
+$c_0(\iota, \mathbb{K})$, every finite set $s \subseteq \iota$ and every $c : \iota \to \mathbb{K}$,
+we have $\varphi(\sum_{i \in s} c_i e_i) = \sum_{i \in s} c_i \, \varphi(e_i)$. -/
 theorem c0FinsetSum_apply_dual (Φ : StrongDual 𝕜 (c0 𝕜 ι)) (s : Finset ι) (c : ι → 𝕜) :
     Φ (c0FinsetSum (𝕜 := 𝕜) (ι := ι) s c) = ∑ i ∈ s, c i * Φ (c0Single i (1 : 𝕜)) := by
   rw [c0FinsetSum, map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_smul, smul_eq_mul]
 
-/-- The finite truncation of `x` to the indices in `s`. -/
+/-- **Finite truncation of a $c_0$ sequence.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$\iota$ be a type, let $s \subseteq \iota$ be a finite set and let $x \in c_0(\iota, \mathbb{K})$.
+The truncation of $x$ to $s$ is the element of $c_0(\iota, \mathbb{K})$ whose $j$-th coordinate is
+$x_j$ for $j \in s$ and $0$ for $j \notin s$; it is defined as $\sum_{i \in s} x_i e_i$, where
+$e_i$ is the sequence that is $1$ at $i$ and $0$ elsewhere. -/
 noncomputable def c0Trunc (s : Finset ι) (x : c0 𝕜 ι) : c0 𝕜 ι :=
   c0FinsetSum (𝕜 := 𝕜) (ι := ι) s (fun i => (x : ι → 𝕜) i)
 
-/-- The coordinates of a finite truncation. -/
+/-- **Coordinates of a finite truncation.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$
+and let $\iota$ be an index type. For a finite set $s \subseteq \iota$, an element
+$x \in c_0(\iota, \mathbb{K})$ and an index $j \in \iota$, the $j$-th coordinate of the
+truncation of $x$ to $s$ equals $x_j$ if $j \in s$ and $0$ otherwise. -/
 theorem c0Trunc_apply (s : Finset ι) (x : c0 𝕜 ι) (j : ι) :
     ((c0Trunc (𝕜 := 𝕜) (ι := ι) s x : c0 𝕜 ι) : ι → 𝕜) j
       = if j ∈ s then (x : ι → 𝕜) j else 0 :=
@@ -237,13 +288,18 @@ section Pairing
 
 variable {𝕜 : Type u} [RCLike 𝕜] {ι : Type v}
 
-/-- The norms of the coordinates of an `ℓ¹` sequence are summable. -/
+/-- **Coordinate norms of an $\ell^1$ family are summable.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$ and let $\iota$ be any index type. For every $a \in \ell^1(\iota, \mathbb{K})$, the
+family of norms $(\|a_i\|)_{i \in \iota}$ is summable. -/
 theorem summable_norm_lp_one (a : lp (fun _ : ι => 𝕜) 1) :
     Summable fun i => ‖a i‖ := by
   have h := (memℓp_gen_iff (p := (1 : ℝ≥0∞)) (E := fun _ : ι => 𝕜) (by simp)).mp a.2
   simpa using h
 
-/-- The series defining the pairing of `a ∈ ℓ¹` with `x ∈ c₀` is summable. -/
+/-- **Summability of the $\ell^1$–$c_0$ pairing.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$
+and let $\iota$ be a type. For every $a \in \ell^1(\iota, \mathbb{K})$ and
+$x \in c_0(\iota, \mathbb{K})$, the family $(a_i x_i)_{i \in \iota}$ is (unconditionally)
+summable. -/
 theorem summable_c0Pairing (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
     Summable fun i => a i * (x : ι → 𝕜) i := by
   apply Summable.of_norm_bounded (g := fun i => ‖a i‖ * ‖x‖)
@@ -252,7 +308,10 @@ theorem summable_c0Pairing (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
   rw [norm_mul]
   exact mul_le_mul_of_nonneg_left (c0_apply_norm_le x i) (norm_nonneg _)
 
-/-- The pairing of `a ∈ ℓ¹` with `x ∈ c₀`, as a linear map in `x`. -/
+/-- **Pairing with an $\ell^1$ sequence as a linear functional on $c_0$.** Let $\mathbb{K}$
+be $\mathbb{R}$ or $\mathbb{C}$ and let $\iota$ be an index type. For
+$a \in \ell^1(\iota, \mathbb{K})$, this is the $\mathbb{K}$-linear map
+$c_0(\iota, \mathbb{K}) \to \mathbb{K}$ sending $x$ to $\sum_{i \in \iota} a_i x_i$. -/
 noncomputable def c0PairingLin (a : lp (fun _ : ι => 𝕜) 1) : c0 𝕜 ι →ₗ[𝕜] 𝕜 where
   toFun x := ∑' i, a i * (x : ι → 𝕜) i
   map_add' x y := by
@@ -266,11 +325,17 @@ noncomputable def c0PairingLin (a : lp (fun _ : ι => 𝕜) 1) : c0 𝕜 ι →�
     simp [ZeroAtInftyContinuousMap.coe_smul, Pi.smul_apply, smul_eq_mul]
     ring
 
-/-- The pairing applied to `a` and `x`, by definition. -/
+/-- **Value of the functional of an $\ell^1$ sequence on $c_0$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $\iota$ be an index type. For $a \in \ell^1(\iota, \mathbb{K})$
+and $x \in c_0(\iota, \mathbb{K})$, the linear functional on $c_0(\iota, \mathbb{K})$ given by
+pairing with $a$ takes the value $\sum_{i \in \iota} a_i x_i$ at $x$. -/
 theorem c0PairingLin_apply (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
     c0PairingLin (𝕜 := 𝕜) (ι := ι) a x = ∑' i, a i * (x : ι → 𝕜) i := rfl
 
-/-- The pairing is bounded by `‖a‖ * ‖x‖`. -/
+/-- **Bound for the $\ell^1$–$c_0$ pairing.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and
+let $\iota$ be a type. For every $a \in \ell^1(\iota, \mathbb{K})$ and
+$x \in c_0(\iota, \mathbb{K})$, $|\sum_{i \in \iota} a_i x_i| \le \|a\|_1 \|x\|_\infty$, where
+$\|a\|_1 = \sum_i |a_i|$ and $\|x\|_\infty = \sup_i |x_i|$. -/
 theorem norm_c0PairingLin_le (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
     ‖c0PairingLin (𝕜 := 𝕜) (ι := ι) a x‖ ≤ ‖a‖ * ‖x‖ := by
   show ‖∑' i, a i * (x : ι → 𝕜) i‖ ≤ ‖a‖ * ‖x‖
@@ -293,7 +358,12 @@ theorem norm_c0PairingLin_le (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
     _ = (∑' i, ‖a i‖) * ‖x‖ := tsum_mul_right
     _ = ‖a‖ * ‖x‖ := by rw [hnorm]
 
-/-- The pairing of `a ∈ ℓ¹` with `x ∈ c₀`, as a linear map in `a`. -/
+/-- **The $\ell^1$–$c_0$ pairing as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by
+$\iota$ that tend to $0$ along the cofinite filter, and let $\ell^1(\iota, \mathbb{K})$ be the
+space of absolutely summable families. This is the linear map from $\ell^1(\iota, \mathbb{K})$ to
+the space of continuous linear functionals on $c_0(\iota, \mathbb{K})$ that sends $a$ to the
+functional $x \mapsto \sum_{i \in \iota} a_i x_i$. -/
 noncomputable def c0DualPairingLin : lp (fun _ : ι => 𝕜) 1 →ₗ[𝕜] StrongDual 𝕜 (c0 𝕜 ι) where
   toFun a := (c0PairingLin (𝕜 := 𝕜) (ι := ι) a).mkContinuous ‖a‖ (norm_c0PairingLin_le a)
   map_add' a b := by
@@ -314,11 +384,21 @@ noncomputable def c0DualPairingLin : lp (fun _ : ι => 𝕜) 1 →ₗ[𝕜] Stro
     refine tsum_congr fun i => ?_
     rw [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul, mul_assoc]
 
-/-- The pairing applied to `a` and `x`. -/
+/-- **Formula for the $\ell^1$–$c_0$ pairing as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by
+$\iota$ that tend to $0$ along the cofinite filter, and let $\ell^1(\iota, \mathbb{K})$ be the
+space of absolutely summable families. For $a \in \ell^1(\iota, \mathbb{K})$ and
+$x \in c_0(\iota, \mathbb{K})$, the linear map from $\ell^1(\iota, \mathbb{K})$ to the continuous
+linear functionals on $c_0(\iota, \mathbb{K})$ given by the pairing sends $a$ to a functional
+whose value at $x$ is $\sum_{i \in \iota} a_i x_i$. This holds by definition. -/
 theorem c0DualPairingLin_apply (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
     c0DualPairingLin (𝕜 := 𝕜) (ι := ι) a x = ∑' i, a i * (x : ι → 𝕜) i := rfl
 
-/-- The pairing, as a linear map in `a`, has operator norm at most `‖a‖`. -/
+/-- **Norm bound for the functional of an $\ell^1$ sequence on $c_0$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $\iota$ be a type. For every $a \in \ell^1(\iota, \mathbb{K})$,
+the image of $a$ under the linear pairing map from $\ell^1(\iota, \mathbb{K})$ to the continuous
+linear functionals on $c_0(\iota, \mathbb{K})$, which is the functional
+$x \mapsto \sum_{i \in \iota} a_i x_i$, has operator norm at most $\|a\|_1 = \sum_i |a_i|$. -/
 theorem norm_c0DualPairingLin_le (a : lp (fun _ : ι => 𝕜) 1) :
     ‖c0DualPairingLin (𝕜 := 𝕜) (ι := ι) a‖ ≤ ‖a‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg a)
@@ -326,23 +406,43 @@ theorem norm_c0DualPairingLin_le (a : lp (fun _ : ι => 𝕜) 1) :
   show ‖∑' i, a i * (x : ι → 𝕜) i‖ ≤ ‖a‖ * ‖x‖
   exact norm_c0PairingLin_le a x
 
-/-- The pairing, as a linear map in `a`, is continuous. -/
+/-- **The $\ell^1$–$c_0$ pairing is continuous in the $\ell^1$ variable.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$
+indexed by $\iota$ that tend to $0$ along the cofinite filter, with the supremum norm, and let
+$\ell^1(\iota, \mathbb{K})$ be the space of absolutely summable families. The linear map from
+$\ell^1(\iota, \mathbb{K})$ to the space of continuous linear functionals on
+$c_0(\iota, \mathbb{K})$, with the operator norm, that sends $a$ to the functional
+$x \mapsto \sum_{i \in \iota} a_i x_i$ is continuous. -/
 theorem c0DualPairingLin_continuous :
     Continuous (c0DualPairingLin (𝕜 := 𝕜) (ι := ι)) :=
   AddMonoidHomClass.continuous_of_bound (c0DualPairingLin (𝕜 := 𝕜) (ι := ι)) 1 fun a => by
     rw [one_mul]
     exact norm_c0DualPairingLin_le a
 
-/-- The canonical pairing `ℓ¹ →L[𝕜] (c₀ →L[𝕜] 𝕜)`. -/
+/-- **The $\ell^1$–$c_0$ duality pairing.** Let $\mathbb{K}$ be the real or complex field and
+$\iota$ an index type. The pairing is the continuous linear map from $\ell^1(\iota, \mathbb{K})$
+to the continuous dual of $c_0(\iota, \mathbb{K})$ that sends $a$ to the functional
+$x \mapsto \sum_{i \in \iota} a_i x_i$. -/
 noncomputable def c0DualPairing : lp (fun _ : ι => 𝕜) 1 →L[𝕜] StrongDual 𝕜 (c0 𝕜 ι) :=
   ContinuousLinearMap.mk c0DualPairingLin c0DualPairingLin_continuous
 
-/-- The pairing is given by the sum of coordinatewise products. -/
+/-- **Formula for the $\ell^1$–$c_0$ duality pairing.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by
+$\iota$ that tend to $0$ along the cofinite filter, and let $\ell^1(\iota, \mathbb{K})$ be the
+space of absolutely summable families. For $a \in \ell^1(\iota, \mathbb{K})$ and
+$x \in c_0(\iota, \mathbb{K})$, the canonical continuous linear map from $\ell^1(\iota, \mathbb{K})$
+to the continuous linear functionals on $c_0(\iota, \mathbb{K})$ sends $a$ to a functional whose
+value at $x$ is $\sum_{i \in \iota} a_i x_i$. -/
 theorem c0DualPairing_apply (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
     c0DualPairing (𝕜 := 𝕜) (ι := ι) a x = ∑' i, a i * (x : ι → 𝕜) i :=
   c0DualPairingLin_apply a x
 
-/-- The pairing has operator norm at most `‖a‖`. -/
+/-- **The pairing map $\ell^1 \to c_0^*$ does not increase norms.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $\iota$ be a type, and let $c_0(\iota, \mathbb{K})^*$ be the
+space of continuous linear functionals on $c_0(\iota, \mathbb{K})$. For every
+$a \in \ell^1(\iota, \mathbb{K})$, the image of $a$ under the continuous linear pairing map
+$\ell^1(\iota, \mathbb{K}) \to c_0(\iota, \mathbb{K})^*$, which is the functional
+$x \mapsto \sum_{i \in \iota} a_i x_i$, has operator norm at most $\|a\|_1 = \sum_i |a_i|$. -/
 theorem norm_c0DualPairing_le (a : lp (fun _ : ι => 𝕜) 1) :
     ‖c0DualPairing (𝕜 := 𝕜) (ι := ι) a‖ ≤ ‖a‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg a)
@@ -356,15 +456,24 @@ section Coeff
 
 variable {𝕜 : Type u} [RCLike 𝕜] {ι : Type v} [DecidableEq ι]
 
-/-- The coefficients of a dual functional, evaluated on the basis vectors. -/
+/-- **Coefficients of a functional on $c_0$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$,
+let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by $\iota$ that tend
+to $0$ along the cofinite filter, and for $i \in \iota$ let $e_i \in c_0(\iota, \mathbb{K})$ be the
+family that is $1$ at $i$ and $0$ elsewhere. The coefficients of a continuous linear functional
+$\Phi$ on $c_0(\iota, \mathbb{K})$ are the family $i \mapsto \Phi(e_i)$ in $\mathbb{K}$. -/
 noncomputable def c0Coeff (Φ : StrongDual 𝕜 (c0 𝕜 ι)) : ι → 𝕜 :=
   fun i => Φ (c0Single i (1 : 𝕜))
 
-/-- The normalized scalar, zero at zero, with `unitScalar w * w = ‖w‖`. -/
+/-- **The normalizing scalar $\overline{w}/|w|$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
+For $w \in \mathbb{K}$, the normalizing scalar $u(w) \in \mathbb{K}$ of $w$ is $0$ if $w = 0$ and
+$\overline{w}/|w|$ otherwise, so that $u(w)\, w = |w|$. -/
 noncomputable def c0UnitScalar (w : 𝕜) : 𝕜 :=
   if w = 0 then 0 else (starRingEnd 𝕜) w / (↑‖w‖ : 𝕜)
 
-/-- The scalar identity behind the test vector. -/
+/-- **The normalizing scalar times $w$ is $|w|$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
+For every $w \in \mathbb{K}$, the normalizing scalar $u(w)$ of $w$, which is $0$ if $w = 0$ and
+$\overline{w}/|w|$ otherwise, satisfies $u(w)\, w = |w|$, with $|w|$ regarded as an element of
+$\mathbb{K}$. -/
 theorem c0UnitScalar_mul (w : 𝕜) : c0UnitScalar (𝕜 := 𝕜) w * w = (↑‖w‖ : 𝕜) := by
   by_cases hw : w = 0
   · simp [c0UnitScalar, hw]
@@ -374,7 +483,9 @@ theorem c0UnitScalar_mul (w : 𝕜) : c0UnitScalar (𝕜 := 𝕜) w * w = (↑�
     congr 1
     rw [pow_two, mul_div_cancel_right₀ _ hpos.ne']
 
-/-- The unit scalar has norm at most one. -/
+/-- **The normalizing scalar has absolute value at most one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every $w \in \mathbb{K}$, the normalizing scalar $u(w)$ of $w$, which is $0$ if
+$w = 0$ and $\overline{w}/|w|$ otherwise, satisfies $|u(w)| \le 1$. -/
 theorem norm_c0UnitScalar_le (w : 𝕜) : ‖c0UnitScalar (𝕜 := 𝕜) w‖ ≤ 1 := by
   by_cases hw : w = 0
   · simp [c0UnitScalar, hw]
@@ -383,7 +494,13 @@ theorem norm_c0UnitScalar_le (w : 𝕜) : ‖c0UnitScalar (𝕜 := 𝕜) w‖ �
     rw [norm_div, RCLike.norm_conj, RCLike.norm_ofReal,
       abs_of_nonneg (norm_nonneg _), div_self hpos.ne']
 
-/-- The finite-subset estimate for the coefficients of a dual functional. -/
+/-- **Finite sums of the coefficients of a functional on $c_0$.** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by
+$\iota$ that tend to $0$ along the cofinite filter, with the supremum norm, and for $i \in \iota$
+let $e_i \in c_0(\iota, \mathbb{K})$ be the family that is $1$ at $i$ and $0$ elsewhere. For every
+continuous linear functional $\Phi$ on $c_0(\iota, \mathbb{K})$ and every finite set
+$s \subseteq \iota$, we have $\sum_{i \in s} |\Phi(e_i)| \le \|\Phi\|$, where $\|\Phi\|$ is the
+operator norm. -/
 theorem c0Coeff_finset_sum_le (Φ : StrongDual 𝕜 (c0 𝕜 ι)) (s : Finset ι) :
     ∑ i ∈ s, ‖c0Coeff (𝕜 := 𝕜) (ι := ι) Φ i‖ ≤ ‖Φ‖ := by
   letI : TopologicalSpace ι := ⊥
@@ -413,7 +530,13 @@ theorem c0Coeff_finset_sum_le (Φ : StrongDual 𝕜 (c0 𝕜 ι)) (s : Finset ι
     _ ≤ ‖Φ‖ * 1 := mul_le_mul_of_nonneg_left hnormx (norm_nonneg Φ)
     _ = ‖Φ‖ := mul_one _
 
-/-- The coefficients of a dual functional form an `ℓ¹` sequence. -/
+/-- **The coefficients of a functional on $c_0$ are absolutely summable.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$
+indexed by $\iota$ that tend to $0$ along the cofinite filter, and for $i \in \iota$ let
+$e_i \in c_0(\iota, \mathbb{K})$ be the family that is $1$ at $i$ and $0$ elsewhere. For every
+continuous linear functional $\Phi$ on $c_0(\iota, \mathbb{K})$, the family
+$(\Phi(e_i))_{i \in \iota}$ lies in $\ell^1(\iota, \mathbb{K})$, that is,
+$\sum_{i \in \iota} |\Phi(e_i)| < \infty$. -/
 theorem c0Coeff_memℓp (Φ : StrongDual 𝕜 (c0 𝕜 ι)) :
     Memℓp (c0Coeff (𝕜 := 𝕜) (ι := ι) Φ) (1 : ℝ≥0∞) := by
   apply memℓp_gen' (E := fun _ : ι => 𝕜) (C := ‖Φ‖)
@@ -421,11 +544,22 @@ theorem c0Coeff_memℓp (Φ : StrongDual 𝕜 (c0 𝕜 ι)) :
   simp only [ENNReal.toReal_one, Real.rpow_one]
   exact c0Coeff_finset_sum_le Φ s
 
-/-- The `ℓ¹` element of coefficients of a dual functional. -/
+/-- **The $\ell^1$ coefficient sequence of a functional on $c_0$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$
+indexed by $\iota$ that tend to $0$ along the cofinite filter, and for $i \in \iota$ let
+$e_i \in c_0(\iota, \mathbb{K})$ be the family that is $1$ at $i$ and $0$ elsewhere. For a
+continuous linear functional $\Phi$ on $c_0(\iota, \mathbb{K})$, this is the family
+$(\Phi(e_i))_{i \in \iota}$, regarded as an element of the space $\ell^1(\iota, \mathbb{K})$ of
+absolutely summable families. -/
 noncomputable def c0CoeffLp (Φ : StrongDual 𝕜 (c0 𝕜 ι)) : lp (fun _ : ι => 𝕜) 1 :=
   ⟨c0Coeff (𝕜 := 𝕜) (ι := ι) Φ, c0Coeff_memℓp Φ⟩
 
-/-- The coefficients of a dual functional have `ℓ¹` norm at most `‖Φ‖`. -/
+/-- **$\ell^1$ norm of the coefficients of a functional on $c_0$.** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$, let $\iota$ be a type and let $\Phi$ be a continuous linear functional on
+$c_0(\iota, \mathbb{K})$. For $i \in \iota$ let $e_i$ be the sequence that is $1$ at $i$ and $0$
+elsewhere. The coefficient sequence $(\Phi(e_i))_{i \in \iota}$, as an element of
+$\ell^1(\iota, \mathbb{K})$, has norm $\sum_{i \in \iota} |\Phi(e_i)|$ at most the operator norm
+$\|\Phi\|$. -/
 theorem norm_c0CoeffLp_le (Φ : StrongDual 𝕜 (c0 𝕜 ι)) : ‖c0CoeffLp (𝕜 := 𝕜) (ι := ι) Φ‖ ≤ ‖Φ‖ := by
   apply lp.norm_le_of_forall_sum_le (p := (1 : ℝ≥0∞)) (by simp) (norm_nonneg Φ)
   intro s
@@ -438,8 +572,15 @@ section Surjectivity
 
 variable {𝕜 : Type u} [RCLike 𝕜] {ι : Type v} [DecidableEq ι]
 
-/-- The pairing with the coefficient sequence reproduces a functional, by
-finite truncation: the partial sums over finite sets tend to `Φ x`. -/
+/-- **Every functional on $c_0$ comes from $\ell^1$.** Let $\mathbb{K}$ be the real or complex
+field and $\iota$ an index type. For every continuous linear functional $\varphi$ on
+$c_0(\iota, \mathbb{K})$ there is $a \in \ell^1(\iota, \mathbb{K})$ with
+$\varphi(x) = \sum_{i \in \iota} a_i x_i$ for all $x \in c_0(\iota, \mathbb{K})$; that is, the
+pairing map from $\ell^1(\iota, \mathbb{K})$ to the continuous dual of $c_0(\iota, \mathbb{K})$
+is surjective.
+
+The proof takes $a_i = \varphi(e_i)$, where $e_i$ is the sequence equal to $1$ at $i$ and $0$
+elsewhere, and recovers $\varphi(x)$ as the limit of $\varphi$ on the finite truncations of $x$. -/
 theorem c0DualPairing_surjective : Function.Surjective (c0DualPairing (𝕜 := 𝕜) (ι := ι)) := by
   letI : TopologicalSpace ι := ⊥
   classical
@@ -502,7 +643,11 @@ theorem c0DualPairing_surjective : Function.Surjective (c0DualPairing (𝕜 := �
             _ = ε := div_mul_cancel₀ ε hne
   exact (summable_c0Pairing (c0CoeffLp Φ) x).hasSum.unique hsum
 
-/-- The pairing is norm-preserving. -/
+/-- **The $\ell^1$–$c_0$ pairing is isometric.** Let $\mathbb{K}$ be the real or complex field
+and $\iota$ an index type. For every $a \in \ell^1(\iota, \mathbb{K})$, the continuous linear
+functional $x \mapsto \sum_{i \in \iota} a_i x_i$ on $c_0(\iota, \mathbb{K})$, the space of
+sequences $\iota \to \mathbb{K}$ tending to $0$ at infinity with the supremum norm, has operator
+norm equal to $\|a\|_1 = \sum_{i \in \iota} |a_i|$. -/
 theorem c0DualPairing_norm (a : lp (fun _ : ι => 𝕜) 1) :
     ‖c0DualPairing (𝕜 := 𝕜) (ι := ι) a‖ = ‖a‖ := by
   classical
@@ -520,7 +665,13 @@ theorem c0DualPairing_norm (a : lp (fun _ : ι => 𝕜) 1) :
   rw [hba] at hbnorm
   exact hbnorm
 
-/-- The dual of `c₀` is isometrically isomorphic to `ℓ¹`. -/
+/-- **The dual of $c_0$ is $\ell^1$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by $\iota$ that tend to
+$0$ along the cofinite filter, with the supremum norm, and let $\ell^1(\iota, \mathbb{K})$ be the
+space of absolutely summable families, with the norm $\|a\|_1 = \sum_{i \in \iota} |a_i|$. This
+is the linear isometric isomorphism from $\ell^1(\iota, \mathbb{K})$ onto the space of continuous
+linear functionals on $c_0(\iota, \mathbb{K})$, with the operator norm, that sends $a$ to the
+functional $x \mapsto \sum_{i \in \iota} a_i x_i$. -/
 noncomputable def c0DualEquiv : lp (fun _ : ι => 𝕜) 1 ≃ₗᵢ[𝕜] StrongDual 𝕜 (c0 𝕜 ι) := by
   classical
   exact LinearIsometryEquiv.ofSurjective
@@ -533,7 +684,9 @@ section Eval
 
 variable {𝕜 : Type u} [RCLike 𝕜] {ι : Type v} [DecidableEq ι]
 
-/-- Evaluation at `i`, as a continuous linear functional on `c₀`. -/
+/-- **Coordinate evaluation on $c_0$.** Let $\mathbb{K}$ be the real or complex field and $\iota$
+an index type. For $i \in \iota$, evaluation at $i$ is the continuous linear functional
+$x \mapsto x_i$ on $c_0(\iota, \mathbb{K})$. -/
 noncomputable def c0Eval (i : ι) : StrongDual 𝕜 (c0 𝕜 ι) :=
   (LinearMap.mkContinuous
     { toFun := fun x : c0 𝕜 ι => (x : ι → 𝕜) i
@@ -543,7 +696,11 @@ noncomputable def c0Eval (i : ι) : StrongDual 𝕜 (c0 𝕜 ι) :=
       calc ‖(x : ι → 𝕜) i‖ ≤ ‖x‖ := c0_apply_norm_le x i
         _ = 1 * ‖x‖ := (one_mul _).symm)
 
-/-- Evaluation at `i` is given by pairing with `lp.single 1 i 1`. -/
+/-- **Pairing with a unit vector is evaluation.** Let $\mathbb{K}$ be the real or complex field
+and $\iota$ an index type, and for $i \in \iota$ let $e_i \in \ell^1(\iota, \mathbb{K})$ be the
+sequence equal to $1$ at $i$ and $0$ elsewhere. Then the functional
+$x \mapsto \sum_{j \in \iota} (e_i)_j x_j$ on $c_0(\iota, \mathbb{K})$ given by pairing with
+$e_i$ is the evaluation $x \mapsto x_i$ at $i$. -/
 theorem c0DualPairing_single_eq_eval (i : ι) :
     c0DualPairing (𝕜 := 𝕜) (ι := ι) (lp.single (E := fun _ : ι => 𝕜) 1 i (1 : 𝕜))
       = c0Eval (𝕜 := 𝕜) (ι := ι) i := by

@@ -48,21 +48,31 @@ open MathlibExt.Analysis.InnerProductSpace.WeightedShiftOperator
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- The weights truncated after `N` coordinates: `w n` for `n < N`, `0`
-for `n ≥ N`. -/
+/-- **Truncated weights.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. For a sequence
+$w : \mathbb{N} \to \mathbb{K}$ and $N \in \mathbb{N}$, the truncation of $w$ after $N$ coordinates
+is the sequence $w^{(N)}$ with $w^{(N)}_n = w_n$ for $n < N$ and $w^{(N)}_n = 0$ for $n \ge N$. -/
 def truncWeights (w : ℕ → 𝕜) (N : ℕ) : ℕ → 𝕜 := fun n => if n < N then w n else 0
 
-/-- Prefix truncation retains each weight at an index strictly below the cutoff. -/
+/-- **Truncated weights agree with the weights below the cutoff.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $w : \mathbb{N} \to \mathbb{K}$, and let $N, n \in \mathbb{N}$
+with $n < N$. Then the truncation $w^{(N)}$ of $w$ after $N$ coordinates (equal to $w_k$ for
+$k < N$ and to $0$ for $k \ge N$) satisfies $w^{(N)}_n = w_n$. -/
 theorem truncWeights_apply_lt {w : ℕ → 𝕜} {N n : ℕ} (h : n < N) :
     truncWeights w N n = w n :=
   ite_eq_left h
 
-/-- Prefix truncation vanishes at and beyond the cutoff. -/
+/-- **Truncated weights vanish from the cutoff on.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $w : \mathbb{N} \to \mathbb{K}$, and let $N, n \in \mathbb{N}$ with $n \ge N$.
+Then the truncation $w^{(N)}$ of $w$ after $N$ coordinates (equal to $w_k$ for $k < N$ and to $0$
+for $k \ge N$) satisfies $w^{(N)}_n = 0$. -/
 theorem truncWeights_apply_ge {w : ℕ → 𝕜} {N n : ℕ} (h : ¬ n < N) :
     truncWeights w N n = 0 :=
   ite_eq_right h
 
-/-- Truncation does not increase the bound on the weights. -/
+/-- **Truncated weights are bounded.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$w : \mathbb{N} \to \mathbb{K}$ be bounded, that is, $|w_n| \le C$ for all $n$ for some constant
+$C$, and let $N \in \mathbb{N}$. Then the truncation $w^{(N)}$ of $w$ after $N$ coordinates, given
+by $w^{(N)}_n = w_n$ for $n < N$ and $w^{(N)}_n = 0$ for $n \ge N$, is bounded as well. -/
 theorem bddAbove_truncWeights {w : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖)) (N : ℕ) :
     BddAbove (Set.range fun n => ‖truncWeights w N n‖) := by
@@ -76,7 +86,10 @@ theorem bddAbove_truncWeights {w : ℕ → 𝕜}
   · rw [truncWeights_apply_ge h, norm_zero]
     exact le_trans (norm_nonneg _) (hC ⟨0, rfl⟩)
 
-/-- Differences of bounded weight sequences are bounded. -/
+/-- **Differences of bounded sequences are bounded.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $w, v : \mathbb{N} \to \mathbb{K}$ be bounded sequences, that is, there are
+constants $C$ and $D$ with $|w_n| \le C$ and $|v_n| \le D$ for all $n$. Then $w - v$ is bounded:
+there is a constant $E$ with $|w_n - v_n| \le E$ for all $n$. -/
 theorem bddAbove_sub {w v : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖))
     (hv : BddAbove (Set.range fun n => ‖v n‖)) :
@@ -88,7 +101,11 @@ theorem bddAbove_sub {w v : ℕ → 𝕜}
   calc ‖w n - v n‖ ≤ ‖w n‖ + ‖v n‖ := norm_sub_le _ _
     _ ≤ Cw + Cv := add_le_add (hCw ⟨n, rfl⟩) (hCv ⟨n, rfl⟩)
 
-/-- The weighted shift is additive in the weights. -/
+/-- **Weighted shift of a difference of weights.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $w, v : \mathbb{N} \to \mathbb{K}$ be sequences such that $w$, $v$ and $w - v$
+are bounded. Writing $S_u$ for the weighted forward shift on $\ell^2(\mathbb{N}, \mathbb{K})$ with
+bounded weights $u$, sending $x$ to $(0, u_0 x_0, u_1 x_1, \dots)$, we have
+$S_{w - v} = S_w - S_v$. -/
 theorem weightedShiftCLM_sub {w v : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖))
     (hv : BddAbove (Set.range fun n => ‖v n‖))
@@ -99,8 +116,12 @@ theorem weightedShiftCLM_sub {w v : ℕ → 𝕜}
   rw [← ContinuousLinearMap.comp_sub, LpDiagonalOperator.diagonalCLM_sub]
   congr 2
 
-/-- The truncations of the weights converge to the shift in operator norm
-when the weights tend to `0`. -/
+/-- **Weighted shifts with truncated weights converge in operator norm.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $w : \mathbb{N} \to \mathbb{K}$ be a bounded sequence with
+$w_n \to 0$. For $N \in \mathbb{N}$ let $w^{(N)}$ be the truncation of $w$ after $N$ coordinates,
+with $w^{(N)}_n = w_n$ for $n < N$ and $w^{(N)}_n = 0$ for $n \ge N$, and for bounded weights $u$
+let $S_u$ be the weighted forward shift on $\ell^2(\mathbb{N}, \mathbb{K})$, sending $x$ to
+$(0, u_0 x_0, u_1 x_1, \dots)$. Then $S_{w^{(N)}} \to S_w$ in operator norm as $N \to \infty$. -/
 theorem tendsto_weightedShiftCLM_trunc {w : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖))
     (hw0 : Tendsto w atTop (𝓝 0)) :
@@ -148,7 +169,11 @@ private theorem backward_comp_weightedShift (w : ℕ → 𝕜)
     LpShiftOperator.backward_comp_shift, ContinuousLinearMap.one_def] using
     (ContinuousLinearMap.id_comp (LpDiagonalOperator.diagonalCLM w (diagonalBound hw)))
 
-/-- The weighted shift is compact if and only if its weights tend to `0`. -/
+/-- **Compactness criterion for weighted shifts.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$
+and let $w : \mathbb{N} \to \mathbb{K}$ be a bounded sequence of weights, that is, $|w_n| \le C$
+for all $n$ for some constant $C$. The weighted forward shift $S_w$ on
+$\ell^2(\mathbb{N}, \mathbb{K})$, which sends $x$ to $(0, w_0 x_0, w_1 x_1, \dots)$, is a compact
+operator if and only if $w_n \to 0$ as $n \to \infty$. -/
 theorem isCompactOperator_weightedShiftCLM_iff {w : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖)) :
     IsCompactOperator (weightedShiftCLM w hw) ↔ Tendsto w atTop (𝓝 0) := by
@@ -162,7 +187,11 @@ theorem isCompactOperator_weightedShiftCLM_iff {w : ℕ → 𝕜}
     have hc := h.clm_comp (LpShiftOperator.shiftCLM (𝕜 := 𝕜))
     simpa only [← ContinuousLinearMap.coe_comp, weightedShiftCLM] using hc
 
-/-- A weighted shift whose weights are eventually zero is compact. -/
+/-- **Weighted shifts with eventually vanishing weights are compact.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $w : \mathbb{N} \to \mathbb{K}$ be a bounded sequence of weights,
+and suppose there is $N \in \mathbb{N}$ with $w_n = 0$ for all $n \ge N$. Then the weighted forward
+shift $S_w$ on $\ell^2(\mathbb{N}, \mathbb{K})$, which sends $x$ to $(0, w_0 x_0, w_1 x_1, \dots)$,
+is a compact operator. -/
 theorem isCompactOperator_weightedShift_of_forall_eq_zero {w : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖)) {N : ℕ}
     (hN : ∀ n, N ≤ n → w n = 0) :

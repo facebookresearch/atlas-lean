@@ -71,20 +71,30 @@ variable {n : ℕ}
 
 /-! ### Coordinate flips -/
 
-/-- The point `x` with its `i`-th coordinate flipped, written `x^{⊕i}`. -/
+/-- **Coordinate flip on the Boolean cube.** For a point $x$ of the Boolean cube of dimension $n$
+and a coordinate $i \in \{0, \dots, n-1\}$, the point $x^{\oplus i}$ is obtained from $x$ by
+negating its $i$-th coordinate (exchanging true and false) and leaving every other coordinate
+unchanged. -/
 def flipCoord (x : BoolCube n) (i : Fin n) : BoolCube n :=
   Function.update x i (!x i)
 
-/-- Flipping coordinate `i` negates that coordinate. -/
+/-- **A coordinate flip negates the flipped coordinate.** For every point $x$ of the Boolean cube
+of dimension $n$ and every coordinate $i \in \{0, \dots, n-1\}$, the $i$-th coordinate of
+$x^{\oplus i}$, the point $x$ with its $i$-th coordinate flipped, is the negation $\lnot x_i$ of
+$x_i$ (true and false exchanged). -/
 @[simp] theorem flipCoord_apply_self (x : BoolCube n) (i : Fin n) : flipCoord x i i = !x i :=
   Function.update_self ..
 
-/-- Flipping coordinate `i` leaves every other coordinate unchanged. -/
+/-- **A coordinate flip fixes the other coordinates.** For every point $x$ of the Boolean cube of
+dimension $n$ and all coordinates $i, j \in \{0, \dots, n-1\}$ with $j \ne i$, the $j$-th
+coordinate of $x^{\oplus i}$, the point $x$ with its $i$-th coordinate flipped, is $x_j$. -/
 @[simp] theorem flipCoord_apply_of_ne (x : BoolCube n) {i j : Fin n} (h : j ≠ i) :
     flipCoord x i j = x j :=
   Function.update_of_ne h ..
 
-/-- Flipping the same coordinate twice is the identity. -/
+/-- **Flipping a coordinate twice.** For every point $x$ of the Boolean cube of dimension $n$ and
+every coordinate $i \in \{0, \dots, n-1\}$, writing $x^{\oplus i}$ for $x$ with its $i$-th
+coordinate flipped, we have $(x^{\oplus i})^{\oplus i} = x$. -/
 @[simp] theorem flipCoord_flipCoord (x : BoolCube n) (i : Fin n) :
     flipCoord (flipCoord x i) i = x := by
   funext j
@@ -93,27 +103,39 @@ def flipCoord (x : BoolCube n) (i : Fin n) : BoolCube n :=
     simp
   · simp [h]
 
-/-- Flipping a fixed coordinate is an involution of the cube. -/
+/-- **Flipping a coordinate is an involution.** For every $n \in \mathbb{N}$ and every coordinate
+$i \in \{0, \dots, n-1\}$, the map $x \mapsto x^{\oplus i}$ on the Boolean cube of dimension $n$,
+which flips the $i$-th coordinate, is an involution: applying it twice gives the identity. -/
 theorem flipCoord_involutive (i : Fin n) : Function.Involutive (flipCoord · i) :=
   fun x => flipCoord_flipCoord x i
 
-/-- A flip moves every point. -/
+/-- **A coordinate flip moves every point.** For every point $x$ of the Boolean cube of dimension
+$n$ and every coordinate $i \in \{0, \dots, n-1\}$, the point $x^{\oplus i}$ obtained from $x$ by
+flipping its $i$-th coordinate is different from $x$. -/
 theorem flipCoord_ne_self (x : BoolCube n) (i : Fin n) : flipCoord x i ≠ x := fun h => by
   simpa using congrFun h i
 
-/-- Negating a coordinate negates its sign. -/
+/-- **Sign of a negated Boolean value.** For every Boolean value $b$, the sign of its negation
+is the negative of its sign: $\sigma(\lnot b) = -\sigma(b)$, where $\sigma(\text{true}) = 1$
+and $\sigma(\text{false}) = -1$. -/
 @[simp] theorem cubeVal_not (b : Bool) : cubeVal (!b) = -cubeVal b := by
   cases b <;> simp
 
-/-- Coordinate signs are nonzero. -/
+/-- **Coordinate signs are nonzero.** For every Boolean value $b$, its sign $\sigma(b)$ (equal
+to $1$ for true and $-1$ for false) is nonzero. -/
 @[simp] theorem cubeVal_ne_zero (b : Bool) : cubeVal b ≠ 0 := by
   cases b <;> simp
 
-/-- Every coordinate sign has absolute value one. -/
+/-- **Coordinate signs have absolute value one.** For every Boolean value $b$, its sign $\sigma(b)$,
+which is $1$ for true and $-1$ for false, satisfies $|\sigma(b)| = 1$. -/
 @[simp] theorem abs_cubeVal (b : Bool) : |cubeVal b| = 1 := by
   cases b <;> simp
 
-/-- Flipping coordinate `i` negates the characters `χ_S` with `i ∈ S` and fixes the others. -/
+/-- **Flipping a coordinate in a Fourier character.** Let $S \subseteq \{0, \dots, n-1\}$, let
+$x$ be a point of the Boolean cube in $n$ coordinates, let $i < n$, and write $x^{\oplus i}$ for
+$x$ with coordinate $i$ flipped. Then the Fourier character $\chi_S$ satisfies
+$\chi_S(x^{\oplus i}) = -\chi_S(x)$ if $i \in S$, and $\chi_S(x^{\oplus i}) = \chi_S(x)$ if
+$i \notin S$. -/
 theorem cubeChi_flipCoord (S : Finset (Fin n)) (x : BoolCube n) (i : Fin n) :
     cubeChi n S (flipCoord x i) = if i ∈ S then -cubeChi n S x else cubeChi n S x := by
   unfold cubeChi
@@ -125,34 +147,53 @@ theorem cubeChi_flipCoord (S : Finset (Fin n)) (x : BoolCube n) (i : Fin n) :
   · exact Finset.prod_congr rfl fun j hj => by
       rw [flipCoord_apply_of_ne x (ne_of_mem_of_not_mem hj hi)]
 
-/-- Summing over the flipped points is summing over all points. -/
+/-- **Flipping a coordinate preserves sums over the cube.** Let $M$ be an additive commutative
+monoid, $n \in \mathbb{N}$, $f$ a function from the Boolean cube of dimension $n$ to $M$, and
+$i \in \{0, \dots, n-1\}$. For a point $x$ of the cube write $x^{\oplus i}$ for the point $x$ with
+its $i$-th coordinate flipped. Then $\sum_x f(x^{\oplus i}) = \sum_x f(x)$, both sums ranging over
+all points $x$ of the cube. -/
 theorem sum_comp_flipCoord {M : Type*} [AddCommMonoid M] (f : BoolCube n → M) (i : Fin n) :
     ∑ x, f (flipCoord x i) = ∑ x, f x :=
   Fintype.sum_bijective _ (flipCoord_involutive i).bijective _ _ fun _ => rfl
 
-/-- Averaging over the flipped points is averaging over all points. -/
+/-- **Averages are invariant under flipping a coordinate.** Let $M$ be an additive commutative
+monoid that is a module over the nonnegative rationals, let $f$ be a function from the Boolean
+cube in $n$ coordinates to $M$, and let $i < n$. Writing $x^{\oplus i}$ for $x$ with coordinate
+$i$ flipped, the uniform average of $f(x^{\oplus i})$ over all points $x$ of the cube equals the
+uniform average of $f(x)$. -/
 theorem expect_comp_flipCoord {M : Type*} [AddCommMonoid M] [Module ℚ≥0 M]
     (f : BoolCube n → M) (i : Fin n) : 𝔼 x, f (flipCoord x i) = 𝔼 x, f x :=
   Fintype.expect_bijective _ (flipCoord_involutive i).bijective _ _ fun _ => rfl
 
 /-! ### Fourier expansion -/
 
-/-- An average over the cube is the sum divided by `2 ^ n`. -/
+/-- **Uniform average over the Boolean cube as a sum.** For every $n \in \mathbb{N}$ and every
+function $f : \{-1, 1\}^n \to \mathbb{R}$, the uniform average of $f$ over the Boolean cube
+$\{-1, 1\}^n$ is $\mathbb{E}_x f(x) = \frac{1}{2^n} \sum_{x \in \{-1, 1\}^n} f(x)$. -/
 theorem expect_eq_sum_div_two_pow (f : BoolCube n → ℝ) : 𝔼 x, f x = (∑ x, f x) / 2 ^ n := by
   rw [Fintype.expect_eq_sum_div_card, card_boolCube]
   norm_num
 
-/-- A Fourier coefficient is the average of `f` against the character. -/
+/-- **Fourier coefficients as averages.** For every real-valued function $f$ on the Boolean cube
+in $n$ coordinates and every set $S$ of the $n$ coordinates, the Fourier coefficient $\hat f(S)$
+is the average of $f(x) \chi_S(x)$ over all points $x$ of the cube,
+$\hat f(S) = \mathbb{E}_x [f(x) \chi_S(x)]$, where $\chi_S$ is the Fourier character of $S$. -/
 theorem boolFourierCoeff_eq_expect (f : BoolCube n → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n f S = 𝔼 x, f x * cubeChi n S x :=
   (Fintype.expect_eq_sum_div_card _).symm
 
-/-- A Fourier coefficient is a sum divided by `2 ^ n`. -/
+/-- **Fourier coefficients as sums over the cube.** For every real-valued function $f$ on the
+Boolean cube in $n$ coordinates and every set $S$ of the $n$ coordinates, the Fourier coefficient
+of $f$ at $S$ is $\hat f(S) = \frac{1}{2^n} \sum_x f(x) \chi_S(x)$, where the sum runs over all
+points $x$ of the cube and $\chi_S$ is the Fourier character of $S$. -/
 theorem boolFourierCoeff_eq_sum_div_two_pow (f : BoolCube n → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n f S = (∑ x, f x * cubeChi n S x) / 2 ^ n := by
   rw [boolFourierCoeff_eq_expect, expect_eq_sum_div_two_pow]
 
-/-- The mean of `f` is its Fourier coefficient at `∅`. -/
+/-- **Average over the Boolean cube as the empty Fourier coefficient.** For every $n \in \mathbb{N}$
+and every function $f : \{-1, 1\}^n \to \mathbb{R}$, the uniform average $\mathbb{E}_x f(x)$ of $f$
+over the Boolean cube $\{-1, 1\}^n$ equals the Fourier coefficient $\hat f(\emptyset)$ of $f$ at
+the empty set. -/
 theorem expect_eq_boolFourierCoeff_empty (f : BoolCube n → ℝ) :
     𝔼 x, f x = boolFourierCoeff n f ∅ := by
   simp [boolFourierCoeff_eq_expect]
@@ -168,7 +209,10 @@ private theorem cubeChi_eq_prod_ite (S : Finset (Fin n)) (x : BoolCube n) :
     cubeChi n S x = ∏ i, if i ∈ S then cubeVal (x i) else 1 := by
   simp [cubeChi, Finset.prod_ite_mem]
 
-/-- Orthogonality of the Fourier characters. -/
+/-- **Orthogonality of the Boolean cube characters.** Let $n \in \mathbb{N}$, let $S$ and $T$ be
+subsets of $\{0, \dots, n-1\}$, and let $\chi_S$ and $\chi_T$ be their Fourier characters. Then
+$\sum_x \chi_S(x) \chi_T(x)$, the sum ranging over all points $x$ of the Boolean cube of dimension
+$n$, equals $2^n$ if $S = T$ and $0$ otherwise. -/
 theorem sum_cubeChi_mul_cubeChi_eq_ite (S T : Finset (Fin n)) :
     ∑ x : BoolCube n, cubeChi n S x * cubeChi n T x = if S = T then 2 ^ n else 0 := by
   have hfac := sum_prod_eq_prod_add (n := n) fun i b =>
@@ -188,12 +232,17 @@ theorem sum_cubeChi_mul_cubeChi_eq_ite (S T : Finset (Fin n)) :
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
     by_cases hS : i ∈ S <;> by_cases hT : i ∈ T <;> simp_all
 
-/-- The sum of a character over the cube vanishes unless the character is trivial. -/
+/-- **Sum of a Boolean cube character.** For every $n \in \mathbb{N}$ and every subset $S$ of
+$\{0, \dots, n-1\}$, the sum of the Fourier character $\chi_S$ over all points of the Boolean cube
+of dimension $n$ equals $2^n$ if $S$ is empty and $0$ otherwise. -/
 theorem sum_cubeChi_eq_ite (S : Finset (Fin n)) :
     ∑ x : BoolCube n, cubeChi n S x = if S = ∅ then 2 ^ n else 0 := by
   simpa using sum_cubeChi_mul_cubeChi_eq_ite S ∅
 
-/-- Dual orthogonality: summing `χ_S(x) χ_S(y)` over all `S` detects whether `x = y`. -/
+/-- **Dual orthogonality of the Boolean cube characters.** Let $n \in \mathbb{N}$ and let $x, y$ be
+points of the Boolean cube of dimension $n$. For each subset $S$ of $\{0, \dots, n-1\}$ let
+$\chi_S$ be the Fourier character of $S$. Then $\sum_S \chi_S(x) \chi_S(y)$, the sum ranging over
+all subsets $S$ of $\{0, \dots, n-1\}$, equals $2^n$ if $x = y$ and $0$ otherwise. -/
 theorem sum_cubeChi_apply_mul_cubeChi_apply_eq_ite (x y : BoolCube n) :
     ∑ S : Finset (Fin n), cubeChi n S x * cubeChi n S y = if x = y then 2 ^ n else 0 := by
   have h (S : Finset (Fin n)) :
@@ -210,7 +259,11 @@ theorem sum_cubeChi_apply_mul_cubeChi_apply_eq_ite (x y : BoolCube n) :
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
     cases hx : x i <;> cases hy : y i <;> simp_all
 
-/-- Fourier inversion: a function is the sum of its Fourier expansion. -/
+/-- **Fourier inversion on the Boolean cube.** Let $n \in \mathbb{N}$, let $f$ be a real-valued
+function on the Boolean cube of dimension $n$, and let $x$ be a point of the cube. For each subset
+$S$ of $\{0, \dots, n-1\}$ let $\hat f(S)$ be the Fourier coefficient of $f$ at $S$ and $\chi_S$
+the Fourier character of $S$. Then $\sum_S \hat f(S) \chi_S(x) = f(x)$, the sum ranging over all
+subsets $S$ of $\{0, \dots, n-1\}$. -/
 theorem sum_boolFourierCoeff_mul_cubeChi (f : BoolCube n → ℝ) (x : BoolCube n) :
     ∑ S, boolFourierCoeff n f S * cubeChi n S x = f x := by
   have h2 : (2 : ℝ) ^ n ≠ 0 := pow_ne_zero _ two_ne_zero
@@ -223,7 +276,11 @@ theorem sum_boolFourierCoeff_mul_cubeChi (f : BoolCube n → ℝ) (x : BoolCube 
         simp_rw [sum_cubeChi_apply_mul_cubeChi_apply_eq_ite, mul_ite, mul_zero]
         simp [h2]
 
-/-- Plancherel's identity: `𝔼[f g] = ∑_S f̂(S) ĝ(S)`. -/
+/-- **Plancherel's identity on the Boolean cube.** For every $n \in \mathbb{N}$ and all functions
+$f, g : \{-1, 1\}^n \to \mathbb{R}$, the uniform average of $f g$ over the Boolean cube
+$\{-1, 1\}^n$ is the sum, over all sets $S \subseteq \{0, \dots, n-1\}$, of the products of the
+Fourier coefficients of $f$ and $g$ at $S$:
+$\mathbb{E}_x f(x) g(x) = \sum_S \hat f(S) \hat g(S)$. -/
 theorem expect_mul_eq_sum_boolFourierCoeff_mul (f g : BoolCube n → ℝ) :
     𝔼 x, f x * g x = ∑ S, boolFourierCoeff n f S * boolFourierCoeff n g S := by
   calc 𝔼 x, f x * g x = 𝔼 x, (∑ S, boolFourierCoeff n f S * cubeChi n S x) * g x := by
@@ -235,47 +292,68 @@ theorem expect_mul_eq_sum_boolFourierCoeff_mul (f g : BoolCube n → ℝ) :
     _ = ∑ S, boolFourierCoeff n f S * boolFourierCoeff n g S := by
         simp_rw [boolFourierCoeff_eq_expect]
 
-/-- Parseval's identity: `𝔼[f²] = ∑_S f̂(S)²`. -/
+/-- **Parseval's identity on the Boolean cube.** For every $n \in \mathbb{N}$ and every function
+$f : \{-1, 1\}^n \to \mathbb{R}$, the uniform average of $f^2$ over the Boolean cube $\{-1, 1\}^n$
+is the sum, over all sets $S \subseteq \{0, \dots, n-1\}$, of the squares of the Fourier
+coefficients of $f$ at $S$: $\mathbb{E}_x f(x)^2 = \sum_S \hat f(S)^2$. -/
 theorem expect_sq_eq_sum_boolFourierCoeff_sq (f : BoolCube n → ℝ) :
     𝔼 x, f x ^ 2 = ∑ S, boolFourierCoeff n f S ^ 2 := by
   simpa [sq] using expect_mul_eq_sum_boolFourierCoeff_mul f f
 
-/-- A function is determined by its Fourier coefficients. -/
+/-- **Fourier coefficients determine the function.** If two real-valued functions $f$ and $g$ on
+the Boolean cube in $n$ coordinates have the same Fourier coefficient $\hat f(S) = \hat g(S)$ at
+every set $S$ of the $n$ coordinates, then $f = g$. -/
 theorem boolFourierCoeff_injective : Function.Injective (boolFourierCoeff n) := by
   intro f g h
   funext x
   rw [← sum_boolFourierCoeff_mul_cubeChi f x, ← sum_boolFourierCoeff_mul_cubeChi g x, h]
 
-/-- Fourier coefficients are additive. -/
+/-- **Additivity of Fourier coefficients.** For all real-valued functions $f$ and $g$ on the
+Boolean cube in $n$ coordinates and every set $S$ of the $n$ coordinates, the Fourier coefficient
+of $f + g$ at $S$ is the sum of the Fourier coefficients of $f$ and $g$ at $S$:
+$\widehat{f + g}(S) = \hat f(S) + \hat g(S)$. -/
 theorem boolFourierCoeff_add (f g : BoolCube n → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n (fun x => f x + g x) S =
       boolFourierCoeff n f S + boolFourierCoeff n g S := by
   simp only [boolFourierCoeff_eq_expect, add_mul, Finset.expect_add_distrib]
 
-/-- Fourier coefficients commute with subtraction. -/
+/-- **Fourier coefficients of a difference.** For real-valued functions $f$ and $g$ on the
+Boolean cube $\{-1, 1\}^n$ and every set $S \subseteq \{0, \dots, n-1\}$, the Fourier coefficient
+of $f - g$ at $S$ is $\widehat{f - g}(S) = \hat f(S) - \hat g(S)$. -/
 theorem boolFourierCoeff_sub (f g : BoolCube n → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n (fun x => f x - g x) S =
       boolFourierCoeff n f S - boolFourierCoeff n g S := by
   simp only [boolFourierCoeff_eq_expect, sub_mul, Finset.expect_sub_distrib]
 
-/-- Fourier coefficients are homogeneous. -/
+/-- **Homogeneity of Fourier coefficients.** For every real $c$, every real-valued function $f$
+on the Boolean cube in $n$ coordinates and every set $S$ of the $n$ coordinates, the Fourier
+coefficient of $c f$ at $S$ is $c$ times the Fourier coefficient of $f$ at $S$:
+$\widehat{c f}(S) = c \hat f(S)$. -/
 theorem boolFourierCoeff_const_mul (c : ℝ) (f : BoolCube n → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n (fun x => c * f x) S = c * boolFourierCoeff n f S := by
   simp only [boolFourierCoeff_eq_expect, mul_assoc, Finset.mul_expect]
 
-/-- A constant function has only the empty Fourier coefficient. -/
+/-- **Fourier coefficients of a constant function.** For every real $c$ and every set $S$ of the
+$n$ coordinates, the Fourier coefficient at $S$ of the constant function $x \mapsto c$ on the
+Boolean cube in $n$ coordinates is $c$ if $S = \emptyset$ and $0$ otherwise. -/
 theorem boolFourierCoeff_const (c : ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n (fun _ => c) S = if S = ∅ then c else 0 := by
   rw [boolFourierCoeff_eq_sum_div_two_pow, ← Finset.mul_sum, sum_cubeChi_eq_ite]
   split_ifs <;> simp
 
-/-- The Fourier coefficients of a character. -/
+/-- **Fourier coefficients of a character.** For all sets $S$ and $T$ of the $n$ coordinates, the
+Fourier coefficient at $S$ of the Fourier character $\chi_T$ on the Boolean cube in $n$
+coordinates, $\chi_T(x) = \prod_{i \in T} \sigma(x_i)$ with $\sigma(\text{true}) = 1$ and
+$\sigma(\text{false}) = -1$, is $1$ if $T = S$ and $0$ otherwise. -/
 theorem boolFourierCoeff_cubeChi (T S : Finset (Fin n)) :
     boolFourierCoeff n (cubeChi n T) S = if T = S then 1 else 0 := by
   rw [boolFourierCoeff_eq_sum_div_two_pow, sum_cubeChi_mul_cubeChi_eq_ite]
   split_ifs <;> simp
 
-/-- Uniqueness of the Fourier expansion: the coefficients of `∑_T a_T χ_T` are the `a_T`. -/
+/-- **Uniqueness of the Fourier expansion.** For real numbers $a_T$ indexed by the sets
+$T \subseteq \{0, \dots, n-1\}$, let $g(x) = \sum_T a_T \chi_T(x)$ on the Boolean cube
+$\{-1, 1\}^n$, where $\chi_T$ is the Fourier character of $T$. Then for every set
+$S \subseteq \{0, \dots, n-1\}$ the Fourier coefficient of $g$ at $S$ is $\hat g(S) = a_S$. -/
 theorem boolFourierCoeff_sum_mul_cubeChi (a : Finset (Fin n) → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n (fun x => ∑ T, a T * cubeChi n T x) S = a S := by
   rw [boolFourierCoeff_eq_sum_div_two_pow]
@@ -284,8 +362,12 @@ theorem boolFourierCoeff_sum_mul_cubeChi (a : Finset (Fin n) → ℝ) (S : Finse
   simp_rw [← Finset.mul_sum, sum_cubeChi_mul_cubeChi_eq_ite, mul_ite, mul_zero]
   simp
 
-/-- Precomposing with a flip of coordinate `i` negates the coefficients at the sets
-containing `i`. -/
+/-- **Flipping a coordinate negates the Fourier coefficients of the sets containing it.** Let $f$
+be a real-valued function on the Boolean cube in $n$ coordinates, let $i$ be a coordinate, and
+let $g(x) = f(x^{\oplus i})$, where $x^{\oplus i}$ is the point $x$ with its $i$-th coordinate
+flipped. Write $\hat f(S)$ and $\hat g(S)$ for the Fourier coefficients of $f$ and $g$ at a set
+$S$ of the $n$ coordinates. Then for every such $S$, $\hat g(S) = -\hat f(S)$ if $i \in S$ and
+$\hat g(S) = \hat f(S)$ if $i \notin S$. -/
 theorem boolFourierCoeff_comp_flipCoord (f : BoolCube n → ℝ) (i : Fin n) (S : Finset (Fin n)) :
     boolFourierCoeff n (fun x => f (flipCoord x i)) S =
       if i ∈ S then -boolFourierCoeff n f S else boolFourierCoeff n f S := by
@@ -298,45 +380,70 @@ theorem boolFourierCoeff_comp_flipCoord (f : BoolCube n → ℝ) (i : Fin n) (S 
 
 /-! ### Influence, total influence and variance -/
 
-/-- The influence of coordinate `i` on `f`: `Inf_i[f] = 𝔼ₓ[((f x - f x^{⊕i}) / 2)²]`. -/
+/-- **Influence of a coordinate.** For a real-valued function $f$ on the Boolean cube
+$\{-1, 1\}^n$ and a coordinate $i \in \{0, \dots, n-1\}$, the influence of $i$ on $f$ is
+$\mathrm{Inf}_i[f] = \mathbb{E}_x\big[\big((f(x) - f(x^{\oplus i})) / 2\big)^2\big]$, where the
+expectation is over $x$ uniform on the cube and $x^{\oplus i}$ is $x$ with its $i$-th coordinate
+flipped. -/
 noncomputable def boolInfluence (f : BoolCube n → ℝ) (i : Fin n) : ℝ :=
   𝔼 x, ((f x - f (flipCoord x i)) / 2) ^ 2
 
-/-- The total influence `I[f] = ∑ᵢ Inf_i[f]`. -/
+/-- **Total influence on the Boolean cube.** For a function $f$ from the Boolean cube
+$\{-1, 1\}^n$ to $\mathbb{R}$, the total influence of $f$ is the sum of the influences of its $n$
+coordinates, $\mathrm{I}[f] = \sum_{i=0}^{n-1} \mathrm{Inf}_i[f]$, where
+$\mathrm{Inf}_i[f] = \mathbb{E}_x \left[\left(\frac{f(x) - f(x^{\oplus i})}{2}\right)^2\right]$,
+$x^{\oplus i}$ is $x$ with its $i$-th coordinate flipped and $\mathbb{E}_x$ is the uniform average
+over the points $x$ of the cube. -/
 noncomputable def boolTotalInfluence (f : BoolCube n → ℝ) : ℝ :=
   ∑ i, boolInfluence f i
 
-/-- The variance `Var[f] = 𝔼ₓ[(f x - 𝔼 f)²]` under the uniform distribution. -/
+/-- **Variance on the Boolean cube.** For a function $f : \{-1, 1\}^n \to \mathbb{R}$ on the
+Boolean cube, its variance under the uniform distribution is
+$\mathrm{Var}[f] = \mathbb{E}_x\big[(f(x) - \mathbb{E}_y[f(y)])^2\big]$, where $\mathbb{E}_x$
+denotes the uniform average over the $2^n$ points $x$ of the cube. -/
 noncomputable def boolVariance (f : BoolCube n → ℝ) : ℝ :=
   𝔼 x, (f x - 𝔼 y, f y) ^ 2
 
-/-- Influences are nonnegative. -/
+/-- **Influences are nonnegative.** For every real-valued function $f$ on the Boolean cube
+$\{-1, 1\}^n$ and every coordinate $i \in \{0, \dots, n-1\}$, the influence $\mathrm{Inf}_i[f]$ of
+coordinate $i$ on $f$ satisfies $\mathrm{Inf}_i[f] \ge 0$. -/
 theorem boolInfluence_nonneg (f : BoolCube n → ℝ) (i : Fin n) : 0 ≤ boolInfluence f i :=
   Finset.expect_nonneg fun _ _ => sq_nonneg _
 
-/-- The total influence is nonnegative. -/
+/-- **Total influence is nonnegative.** For every function $f$ from the Boolean cube
+$\{-1, 1\}^n$ to $\mathbb{R}$, the total influence of $f$ is nonnegative. -/
 theorem boolTotalInfluence_nonneg (f : BoolCube n → ℝ) : 0 ≤ boolTotalInfluence f :=
   Finset.sum_nonneg fun i _ => boolInfluence_nonneg f i
 
-/-- The variance is nonnegative. -/
+/-- **Variance on the Boolean cube is nonnegative.** For every function
+$f : \{-1, 1\}^n \to \mathbb{R}$ on the Boolean cube, the variance of $f$ under the uniform
+distribution is at least $0$. -/
 theorem boolVariance_nonneg (f : BoolCube n → ℝ) : 0 ≤ boolVariance f :=
   Finset.expect_nonneg fun _ _ => sq_nonneg _
 
-/-- A constant function has zero influences. -/
+/-- **Constant functions have zero influence.** For every real number $c$ and every coordinate
+$i \in \{0, \dots, n-1\}$, the influence of coordinate $i$ on the constant function with value $c$
+on the Boolean cube $\{-1, 1\}^n$ is $0$. -/
 @[simp] theorem boolInfluence_const (c : ℝ) (i : Fin n) : boolInfluence (fun _ => c) i = 0 := by
   simp [boolInfluence]
 
-/-- A constant function has zero total influence. -/
+/-- **Constant functions have zero total influence.** For every real number $c$, the constant
+function with value $c$ on the Boolean cube $\{-1, 1\}^n$ has total influence $0$. -/
 @[simp] theorem boolTotalInfluence_const (c : ℝ) :
     boolTotalInfluence (fun _ : BoolCube n => c) = 0 := by
   simp [boolTotalInfluence]
 
-/-- A constant function has zero variance. -/
+/-- **Constant functions have zero variance.** For every real number $c$, the constant function
+with value $c$ on the Boolean cube $\{-1, 1\}^n$ has variance $0$ under the uniform
+distribution. -/
 @[simp] theorem boolVariance_const (c : ℝ) : boolVariance (fun _ : BoolCube n => c) = 0 := by
   simp [boolVariance]
 
-/-- For a `±1`-valued function, the influence of `i` is the probability that flipping `i`
-changes the value. -/
+/-- **Influence of a Boolean function as a flip probability.** Let $f$ be a real-valued function
+on the Boolean cube $\{-1, 1\}^n$ that takes only the values $1$ and $-1$, and let
+$i \in \{0, \dots, n-1\}$. Then the influence of coordinate $i$ on $f$ equals the probability,
+for $x$ uniform on the cube, that $f(x^{\oplus i}) \ne f(x)$, where $x^{\oplus i}$ is $x$ with
+its $i$-th coordinate flipped. -/
 theorem boolInfluence_eq_expect_ite_ne {f : BoolCube n → ℝ} (hf : ∀ x, f x = 1 ∨ f x = -1)
     (i : Fin n) :
     boolInfluence f i = 𝔼 x, if f (flipCoord x i) ≠ f x then (1 : ℝ) else 0 := by
@@ -356,7 +463,11 @@ private theorem boolFourierCoeff_derivative (f : BoolCube n → ℝ) (i : Fin n)
     boolFourierCoeff_comp_flipCoord]
   split_ifs <;> ring
 
-/-- `Inf_i[f] = ∑_{S ∋ i} f̂(S)²`. -/
+/-- **Fourier formula for influence.** For every real-valued function $f$ on the Boolean cube
+$\{-1, 1\}^n$ and every coordinate $i \in \{0, \dots, n-1\}$, the influence of coordinate $i$ on
+$f$ is $\mathrm{Inf}_i[f] = \sum_{S \ni i} \hat f(S)^2$, where $\hat f(S)$ is the Fourier
+coefficient of $f$ at $S$ and the sum runs over the sets $S \subseteq \{0, \dots, n-1\}$ that
+contain $i$. -/
 theorem boolInfluence_eq_sum_sq (f : BoolCube n → ℝ) (i : Fin n) :
     boolInfluence f i = ∑ S with i ∈ S, boolFourierCoeff n f S ^ 2 := by
   rw [boolInfluence, expect_sq_eq_sum_boolFourierCoeff_sq (fun x => (f x - f (flipCoord x i)) / 2),
@@ -365,7 +476,10 @@ theorem boolInfluence_eq_sum_sq (f : BoolCube n → ℝ) (i : Fin n) :
   rw [boolFourierCoeff_derivative]
   split_ifs <;> simp
 
-/-- `Var[f] = ∑_{S ≠ ∅} f̂(S)²`. -/
+/-- **Variance in terms of Fourier coefficients.** For every function
+$f : \{-1, 1\}^n \to \mathbb{R}$ on the Boolean cube, the variance of $f$ under the uniform
+distribution equals $\sum_{S \neq \emptyset} \hat f(S)^2$, where the sum runs over the nonempty
+sets $S \subseteq \{0, \dots, n-1\}$ and $\hat f(S)$ is the Fourier coefficient of $f$ at $S$. -/
 theorem boolVariance_eq_sum_sq (f : BoolCube n → ℝ) :
     boolVariance f = ∑ S with S.Nonempty, boolFourierCoeff n f S ^ 2 := by
   rw [boolVariance, expect_sq_eq_sum_boolFourierCoeff_sq (fun x => f x - 𝔼 y, f y),
@@ -377,7 +491,10 @@ theorem boolVariance_eq_sum_sq (f : BoolCube n → ℝ) :
   · simp [hS]
   · simp [hS, hS.ne_empty]
 
-/-- `Var[f] = 𝔼[f²] - (𝔼 f)²`. -/
+/-- **Variance as mean square minus squared mean.** For every function
+$f : \{-1, 1\}^n \to \mathbb{R}$ on the Boolean cube, the variance of $f$ under the uniform
+distribution equals $\mathbb{E}_x[f(x)^2] - (\mathbb{E}_x[f(x)])^2$, where $\mathbb{E}_x$
+denotes the uniform average over the $2^n$ points $x$ of the cube. -/
 theorem boolVariance_eq_expect_sq_sub_sq (f : BoolCube n → ℝ) :
     boolVariance f = 𝔼 x, f x ^ 2 - (𝔼 x, f x) ^ 2 := by
   have h (x : BoolCube n) : (f x - 𝔼 y, f y) ^ 2 =
@@ -388,7 +505,10 @@ theorem boolVariance_eq_expect_sq_sub_sq (f : BoolCube n → ℝ) :
     Fintype.expect_const]
   ring
 
-/-- `I[f] = ∑_S |S| f̂(S)²`. -/
+/-- **Total influence in Fourier form.** For every function $f$ from the Boolean cube
+$\{-1, 1\}^n$ to $\mathbb{R}$, the total influence of $f$ is
+$$\mathrm{I}[f] = \sum_{S \subseteq \{0, \dots, n-1\}} |S| \, \hat f(S)^2,$$
+where $\hat f(S)$ is the Fourier coefficient of $f$ at $S$. -/
 theorem boolTotalInfluence_eq_sum_card_mul_sq (f : BoolCube n → ℝ) :
     boolTotalInfluence f = ∑ S, (S.card : ℝ) * boolFourierCoeff n f S ^ 2 := by
   simp_rw [boolTotalInfluence, boolInfluence_eq_sum_sq, Finset.sum_filter]
@@ -396,7 +516,9 @@ theorem boolTotalInfluence_eq_sum_card_mul_sq (f : BoolCube n → ℝ) :
   refine Finset.sum_congr rfl fun S _ => ?_
   rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, nsmul_eq_mul]
 
-/-- The Poincaré inequality on the Boolean cube: `Var[f] ≤ I[f]`. -/
+/-- **Poincaré inequality on the Boolean cube.** For every function
+$f : \{-1, 1\}^n \to \mathbb{R}$ on the Boolean cube, the variance of $f$ under the uniform
+distribution is at most the total influence of $f$: $\mathrm{Var}[f] \le I[f]$. -/
 theorem boolVariance_le_boolTotalInfluence (f : BoolCube n → ℝ) :
     boolVariance f ≤ boolTotalInfluence f := by
   rw [boolVariance_eq_sum_sq, boolTotalInfluence_eq_sum_card_mul_sq, Finset.sum_filter]
@@ -408,10 +530,15 @@ theorem boolVariance_le_boolTotalInfluence (f : BoolCube n → ℝ) :
 
 /-! ### The noise operator -/
 
-/-- The noise operator `T_ρ`: `T_ρ f x` is the expectation of `f y` for `y` `ρ`-correlated with
-`x`, i.e. each coordinate of `y` independently equals that of `x` with probability `(1 + ρ) / 2`
-(for `ρ ∈ [-1, 1]`). The formula is used for every real `ρ`; `boolFourierCoeff_boolNoiseOp`
-holds for all of them. -/
+/-- **Noise operator on the Boolean cube.** For a real number $\rho$ and a function $f$ from the
+Boolean cube $\{-1, 1\}^n$ to $\mathbb{R}$, the noise operator $T_\rho$ sends $f$ to the function
+$$T_\rho f(x) = \sum_y \Bigl(\prod_{i < n} \frac{1 + \rho \sigma(x_i) \sigma(y_i)}{2}\Bigr) f(y),$$
+where $y$ runs over all points of the cube and $\sigma$ is the sign of a coordinate:
+$\sigma(\mathrm{true}) = 1$ and $\sigma(\mathrm{false}) = -1$.
+
+For $-1 \le \rho \le 1$, $T_\rho f(x)$ is the expectation of $f(y)$ when each coordinate of $y$
+independently equals the corresponding coordinate of $x$ with probability $(1 + \rho) / 2$; the
+formula is used for every real $\rho$. -/
 noncomputable def boolNoiseOp (ρ : ℝ) (f : BoolCube n → ℝ) (x : BoolCube n) : ℝ :=
   ∑ y, (∏ i, (1 + ρ * cubeVal (x i) * cubeVal (y i)) / 2) * f y
 
@@ -425,7 +552,11 @@ private theorem prod_noiseKernel (ρ : ℝ) (x y : BoolCube n) :
   refine Finset.sum_congr rfl fun S _ => ?_
   simp [cubeChi, mul_assoc, Finset.prod_mul_distrib, Finset.prod_const]
 
-/-- The Fourier expansion of `T_ρ f`. -/
+/-- **Fourier expansion of the noise operator.** For every real number $\rho$, every function $f$
+from the Boolean cube $\{-1, 1\}^n$ to $\mathbb{R}$ and every point $x$ of the cube,
+$$T_\rho f(x) = \sum_{S \subseteq \{0, \dots, n-1\}} \rho^{|S|} \, \hat f(S) \, \chi_S(x),$$
+where $T_\rho$ is the noise operator, $\hat f(S)$ is the Fourier coefficient of $f$ at $S$,
+$\chi_S$ is the Fourier character of $S$, and $\rho^0 = 1$ also when $\rho = 0$. -/
 theorem boolNoiseOp_eq_sum (ρ : ℝ) (f : BoolCube n → ℝ) (x : BoolCube n) :
     boolNoiseOp ρ f x = ∑ S, ρ ^ S.card * boolFourierCoeff n f S * cubeChi n S x := by
   simp only [boolNoiseOp, prod_noiseKernel, boolFourierCoeff_eq_sum_div_two_pow,
@@ -434,7 +565,10 @@ theorem boolNoiseOp_eq_sum (ρ : ℝ) (f : BoolCube n → ℝ) (x : BoolCube n) 
   refine Finset.sum_congr rfl fun S _ => Finset.sum_congr rfl fun y _ => ?_
   ring
 
-/-- The noise operator multiplies the coefficient at `S` by `ρ ^ |S|`. -/
+/-- **Fourier coefficients of the noise operator.** For every real $\rho$, every real-valued
+function $f$ on the Boolean cube in $n$ coordinates and every set $S$ of the $n$ coordinates, the
+Fourier coefficient at $S$ of $T_\rho f$, the noise operator with parameter $\rho$ applied to $f$,
+is $\widehat{T_\rho f}(S) = \rho^{|S|} \hat f(S)$. -/
 theorem boolFourierCoeff_boolNoiseOp (ρ : ℝ) (f : BoolCube n → ℝ) (S : Finset (Fin n)) :
     boolFourierCoeff n (boolNoiseOp ρ f) S = ρ ^ S.card * boolFourierCoeff n f S := by
   have h : boolNoiseOp ρ f =
@@ -442,12 +576,16 @@ theorem boolFourierCoeff_boolNoiseOp (ρ : ℝ) (f : BoolCube n → ℝ) (S : Fi
     funext (boolNoiseOp_eq_sum ρ f)
   rw [h, boolFourierCoeff_sum_mul_cubeChi]
 
-/-- `T_1` is the identity. -/
+/-- **The noise operator $T_1$ is the identity.** For every function $f$ from the Boolean cube
+$\{-1, 1\}^n$ to $\mathbb{R}$, the noise operator with $\rho = 1$ fixes $f$: $T_1 f = f$. -/
 @[simp] theorem boolNoiseOp_one (f : BoolCube n → ℝ) : boolNoiseOp 1 f = f := by
   funext x
   simp [boolNoiseOp_eq_sum, sum_boolFourierCoeff_mul_cubeChi]
 
-/-- `T_0 f` is the constant function `𝔼 f`. -/
+/-- **The noise operator $T_0$ takes the mean.** For every function $f$ from the Boolean cube
+$\{-1, 1\}^n$ to $\mathbb{R}$, the noise operator with $\rho = 0$ sends $f$ to the constant
+function whose value is the mean $\mathbb{E}_x f(x) = 2^{-n} \sum_x f(x)$ of $f$ under the
+uniform distribution. -/
 @[simp] theorem boolNoiseOp_zero (f : BoolCube n → ℝ) : boolNoiseOp 0 f = fun _ => 𝔼 x, f x := by
   funext x
   rw [boolNoiseOp_eq_sum, Finset.sum_eq_single ∅, expect_eq_boolFourierCoeff_empty]
@@ -456,34 +594,46 @@ theorem boolFourierCoeff_boolNoiseOp (ρ : ℝ) (f : BoolCube n → ℝ) (S : Fi
     simp [Finset.card_ne_zero.mpr (Finset.nonempty_iff_ne_empty.mpr hS)]
   · simp
 
-/-- The noise operators form a multiplicative semigroup: `T_ρ ∘ T_σ = T_{ρσ}`. -/
+/-- **Semigroup property of the noise operator.** For all real numbers $\rho$ and $\sigma$ and every
+real-valued function $f$ on the Boolean cube $\{-1, 1\}^n$, applying the noise operator $T_\sigma$
+and then $T_\rho$ to $f$ gives $T_{\rho\sigma} f$: $T_\rho(T_\sigma f) = T_{\rho\sigma} f$. -/
 theorem boolNoiseOp_boolNoiseOp (ρ σ : ℝ) (f : BoolCube n → ℝ) :
     boolNoiseOp ρ (boolNoiseOp σ f) = boolNoiseOp (ρ * σ) f :=
   boolFourierCoeff_injective <| funext fun S => by
     simp only [boolFourierCoeff_boolNoiseOp, mul_pow]
     ring
 
-/-- The noise operator preserves the mean. -/
+/-- **The noise operator preserves the mean.** For every real $\rho$ and every function
+$f : \{-1, 1\}^n \to \mathbb{R}$ on the Boolean cube, the uniform average over the cube of
+$T_\rho f$, the image of $f$ under the noise operator with parameter $\rho$, equals the uniform
+average of $f$. -/
 theorem expect_boolNoiseOp (ρ : ℝ) (f : BoolCube n → ℝ) :
     𝔼 x, boolNoiseOp ρ f x = 𝔼 x, f x := by
   rw [expect_eq_boolFourierCoeff_empty, expect_eq_boolFourierCoeff_empty,
     boolFourierCoeff_boolNoiseOp]
   simp
 
-/-- The characters are eigenfunctions of the noise operator. -/
+/-- **Characters are eigenfunctions of the noise operator.** For every real number $\rho$ and every
+set $S \subseteq \{0, \dots, n-1\}$, the noise operator $T_\rho$ maps the Fourier character $\chi_S$
+on the Boolean cube $\{-1, 1\}^n$ to the function $x \mapsto \rho^{|S|} \chi_S(x)$, so $\chi_S$ is
+an eigenfunction of $T_\rho$ with eigenvalue $\rho^{|S|}$. -/
 theorem boolNoiseOp_cubeChi (ρ : ℝ) (S : Finset (Fin n)) :
     boolNoiseOp ρ (cubeChi n S) = fun x => ρ ^ S.card * cubeChi n S x := by
   funext x
   simp [boolNoiseOp_eq_sum, boolFourierCoeff_cubeChi]
 
-/-- The noise operator fixes constant functions. -/
+/-- **The noise operator fixes constants.** For every real number $\rho$ and every real number $c$,
+the noise operator $T_\rho$ maps the constant function with value $c$ on the Boolean cube
+$\{-1, 1\}^n$ to itself. -/
 @[simp] theorem boolNoiseOp_const (ρ c : ℝ) :
     boolNoiseOp ρ (fun _ : BoolCube n => c) = fun _ => c := by
   funext x
   simp [boolNoiseOp_eq_sum, boolFourierCoeff_const]
 
-/-- For `|ρ| ≤ 1`, the noise operator is positive: it maps nonnegative functions to nonnegative
-functions. -/
+/-- **Positivity of the noise operator.** For every real number $\rho$ with $|\rho| \le 1$, the
+noise operator $T_\rho$ on the Boolean cube maps nonnegative functions to nonnegative functions:
+if $f$ is a real function on the cube with $f(y) \ge 0$ for every point $y$, then
+$T_\rho f(x) \ge 0$ for every point $x$ of the cube. -/
 theorem boolNoiseOp_nonneg {ρ : ℝ} (hρ : |ρ| ≤ 1) {f : BoolCube n → ℝ} (hf : ∀ x, 0 ≤ f x)
     (x : BoolCube n) : 0 ≤ boolNoiseOp ρ f x := by
   refine Finset.sum_nonneg fun y _ => mul_nonneg (Finset.prod_nonneg fun i _ => ?_) (hf y)

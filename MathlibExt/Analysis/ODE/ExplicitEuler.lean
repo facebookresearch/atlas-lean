@@ -69,8 +69,12 @@ private lemma explicitEuler_velocity_lipschitz
   simpa [φ] using
     (Convex.norm_image_sub_le_of_norm_hasDerivWithin_le hderiv hM (convex_Icc t₀ T) ht hs)
 
-/-- A solution of a `C²` ODE has a uniform quadratic explicit-Euler local error on a compact
-time interval. -/
+/-- **Uniform quadratic bound on the explicit Euler local error.** Let $E$ be a real normed
+space, let $t_0 < T$ be real numbers, let $f : \mathbb{R} \times E \to E$ be $C^2$, and let
+$x : \mathbb{R} \to E$ be differentiable at every $t \in [t_0, T]$ with $x'(t) = f(t, x(t))$.
+Then there is a constant $C \ge 0$ such that
+$\|x(t + h) - (x(t) + h f(t, x(t)))\| \le C h^2$ for every $h \in (0, T - t_0]$ and every
+$t \in [t_0, T]$ with $t + h \le T$. -/
 theorem _root_.ODE.exists_explicitEuler_localTruncationError_le
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (f : ℝ → E → E) (t₀ T : ℝ) (hT : t₀ < T)
@@ -188,20 +192,27 @@ private lemma explicitEuler_error_step
       gcongr
     _ = (1 + (L : ℝ) * h) * ‖X k - x tk‖ + C * h ^ 2 := by ring
 
-/-- Explicit Euler is first-order convergent: for a `C^2` right-hand side,
-Lipschitz in the state, a true solution exists on `[t₀, T]` and the Euler
-polygonal approximations have global error `O(h)` with a uniform constant.
+/-- **First-order convergence of the explicit Euler method.** Let $E$ be a real Banach space,
+let $t_0 < T$, let $x_0 \in E$ and $L \ge 0$, and let $f : \mathbb{R} \times E \to E$ be $C^2$
+with $f(t, \cdot)$ $L$-Lipschitz for every $t \in [t_0, T]$. Then there are a function
+$x : \mathbb{R} \to E$ with $x(t_0) = x_0$ and $x'(t) = f(t, x(t))$ for every $t \in [t_0, T]$,
+and a constant $C$, such that the following holds for every step size $h \in (0, T - t_0]$: if
+$(X_n)_{n \in \mathbb{N}}$ is the explicit Euler sequence $X_0 = x_0$,
+$X_{n+1} = X_n + h f(t_0 + n h, X_n)$, then $\|X_n - x(t_0 + n h)\| \le C h$ for every
+$n \in \mathbb{N}$ with $n h \le T - t_0$.
+
+Proof: clamp the time variable and use global existence for globally Lipschitz right-hand
+sides. The local truncation bound and the discrete Grönwall inequality then give the
+first-order global estimate.
+
+Proves `Wanted` entry `explicit_euler_first_order_convergence`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 `Ordinary differential equations`, entries `explicit Euler method`,
 `convergence` and `order` (unmapped);
 E. Hairer, S. P. Nørsett and G. Wanner, Solving Ordinary Differential
 Equations I, 2nd ed., Theorem I.7.3;
 stable ref https://en.wikipedia.org/wiki/Euler_method.
-
-Proves `Wanted` entry `explicit_euler_first_order_convergence`.
-
-Proof: clamp the time variable and use global Picard--Lindelöf for existence.  The local bound
-above and Mathlib's discrete Grönwall inequality then give the first-order global estimate.
 -/
 theorem explicit_euler_first_order_convergence
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -285,17 +296,22 @@ theorem explicit_euler_first_order_convergence
         (mul_nonneg (mul_nonneg hC₁0 hD0) hh.1.le)
     _ = (C₁ * D * Real.exp ((L : ℝ) * D)) * h := by ring
 
-/-- Explicit Euler consistency: one step from the exact solution has local
-truncation error `O(h^2)`.
+/-- **Local truncation error of the explicit Euler method.** Let $E$ be a real Banach space, let
+$t_0 < T$, let $f : \mathbb{R} \times E \to E$ be $C^2$, let $x_0 \in E$, and let
+$x : \mathbb{R} \to E$ satisfy $x(t_0) = x_0$ and $x'(t) = f(t, x(t))$ for every
+$t \in [t_0, T]$. Then there is a constant $C$ such that
+$\|x(t + h) - (x(t) + h f(t, x(t)))\| \le C h^2$ for every $h \in (0, T - t_0]$ and every
+$t \in [t_0, T]$ with $t + h \le T$.
+
+Proof: differentiate the velocity by the chain rule, bound that derivative on the compact time
+interval, and apply the mean value inequality twice.
+
+Proves `Wanted` entry `explicit_euler_local_truncation_error`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 `Ordinary differential equations`, entry `consistency` (unmapped);
 E. Hairer, S. P. Nørsett and G. Wanner, Solving Ordinary Differential
 Equations I, 2nd ed., Section I.7.
-
-Proves `Wanted` entry `explicit_euler_local_truncation_error`.
-
-Proof: differentiate the velocity by the chain rule, bound that derivative on the compact time
-interval, and apply the mean value inequality twice.
 -/
 theorem explicit_euler_local_truncation_error
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]

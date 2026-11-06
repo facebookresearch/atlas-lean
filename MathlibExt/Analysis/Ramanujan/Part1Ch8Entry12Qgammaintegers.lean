@@ -99,7 +99,10 @@ private lemma aux_denom (x : ℂ) (hx : 1 < x.re) (j : ℕ) :
     rw [Complex.add_re, Complex.one_re] at h2
     linarith
 
-/-- On `(0, ∞)` the unit power is the standard `Complex.cpow`. -/
+/-- **Exponential and principal powers agree for positive bases (Chapter 8, Entry 12).** For a
+complex number $x$ and a real number $u$, let $P_x(u) = 0$ if $u = 0$ and
+$P_x(u) = e^{x \log |u|}$ otherwise. Then for every complex $x$ and every real $u > 0$,
+$P_x(u) = u^x$, where $u^x$ is the principal complex power. -/
 theorem chapter8UnitPow_eq_cpow (x : ℂ) (u : ℝ) (hu : 0 < u) :
     chapter8UnitPow x u = (u : ℂ) ^ x := by
   have hune : u ≠ 0 := ne_of_gt hu
@@ -456,10 +459,20 @@ private lemma aux_kernel_intervalIntegrable (x : ℂ) (hx : 1 < x.re) :
   · have hu : u ∈ Set.Ioo 0 1 := ⟨huI.1, lt_of_le_of_ne huI.2 hu1⟩
     exact HasSum.tsum_eq (aux_hasSum x hx u hu)
 
-/-- `Complex.cpow` form of `ramanujan_part1_ch8_entry12_qgammaintegers`.
+/-- **Ramanujan's integral for $\varphi(x) - 1$ with principal powers (Chapter 8, Entry 12).**
+Let $x$ be a complex number with $\operatorname{Re} x > 1$. For real $u$ and complex $s$ put
+$P_s(u) = 0$ if $u = 0$ and $P_s(u) = e^{s \log |u|}$ otherwise, and define $K_x(0) = 0$,
+$K_x(1) = 0$ and $K_x(u) = \frac{P_{x-2}(u)\,(1 - u)^2}{1 - P_x(u)}$ for every other real $u$, the
+quotient being taken to be $0$ at $u = -1$, where its denominator vanishes. Let
+$\varphi(x) = 1 + \sum_{k \ge 1} \frac{2}{(kx)^3 - kx}$. Then $(kx)^3 - kx \ne 0$ for every
+positive integer $k$; the series $\sum_{k \ge 1} \frac{2}{(kx)^3 - kx}$ converges
+unconditionally; $K_x(0) = 0$ and $K_x(1) = 0$; for every $u \in (0, 1)$, with $u^x$ and
+$u^{x-2}$ the principal complex powers, $1 - u^x \ne 0$ and
+$K_x(u) = \frac{u^{x-2}\,(1 - u)^2}{1 - u^x}$; $K_x$ is integrable on $[0, 1]$; and
+$$\int_0^1 K_x(u)\,du = \varphi(x) - 1.$$
 
-On `u ∈ Set.Ioo 0 1` the kernel equation is stated with the standard complex power
-rather than `chapter8UnitPow`; the two agree there by `chapter8UnitPow_eq_cpow`.
+For $u > 0$ the powers $P_s(u)$ and $u^s$ agree, so this is the same statement as the version
+written with $P_s$.
 -/
 theorem ramanujan_part1_ch8_entry12_qgammaintegers_cpow (x : ℂ) (hx : 1 < x.re) :
     (∀ j : ℕ,
@@ -509,9 +522,19 @@ theorem ramanujan_part1_ch8_entry12_qgammaintegers_cpow (x : ℂ) (hx : 1 < x.re
     rw [htsum]
     ring
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
+/-- **Ramanujan's integral for $\varphi(x) - 1$ (Chapter 8, Entry 12).** Let $x$ be a complex
+number with $\operatorname{Re} x > 1$. For real $u$ and complex $s$ put $P_s(u) = 0$ if $u = 0$
+and $P_s(u) = e^{s \log |u|}$ otherwise, and define $K_x(0) = 0$, $K_x(1) = 0$ and
+$K_x(u) = \frac{P_{x-2}(u)\,(1 - u)^2}{1 - P_x(u)}$ for every other real $u$, the quotient being
+taken to be $0$ at $u = -1$, where its denominator vanishes. Let
+$\varphi(x) = 1 + \sum_{k \ge 1} \frac{2}{(kx)^3 - kx}$. Then $(kx)^3 - kx \ne 0$ for every
+positive integer $k$; the series $\sum_{k \ge 1} \frac{2}{(kx)^3 - kx}$ converges
+unconditionally; $K_x(0) = 0$ and $K_x(1) = 0$; for every $u \in (0, 1)$,
+$1 - P_x(u) \ne 0$ and $K_x(u) = \frac{P_{x-2}(u)\,(1 - u)^2}{1 - P_x(u)}$; $K_x$ is integrable
+on $[0, 1]$; and
+$$\int_0^1 K_x(u)\,du = \varphi(x) - 1.$$
 
-Proves `Wanted` entry `ramanujan_part1_ch8_entry12_qgammaintegers`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
 -/
 theorem ramanujan_part1_ch8_entry12_qgammaintegers (x : ℂ) (hx : 1 < x.re) :
     (∀ j : ℕ,

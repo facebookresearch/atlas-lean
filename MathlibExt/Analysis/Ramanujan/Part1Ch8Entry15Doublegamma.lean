@@ -949,12 +949,20 @@ private theorem ch8Entry15_s_pow_four_eq_inv_a_pow_eight {x : ℝ} (hx : -1 / 2 
     Complex.ofReal_ne_zero.mpr (Real.exp_ne_zero _)
   field_simp [ha]
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
-
-Proves `Wanted` entry `ramanujan_part1_ch8_entry15_doublegamma`.
+/-- **Ramanujan's asymptotic expansion of $((x + 1/2)/e^{\psi(x+1)})^{4n}$.** For real $x$ let
+$\psi(x) = \Gamma'(x)/\Gamma(x)$ and $a(x) = e^{\psi(x+1)}$. Then $a(x) \to \infty$ as
+$x \to \infty$, and for every complex number $n$,
+$$\left(\frac{x + 1/2}{a(x)}\right)^{4n} = 1 - \frac{n}{6 a(x)^2} +
+\frac{10 n^2 + 11 n}{720 a(x)^4} - \frac{70 n^3 + 231 n^2 + 891 n}{90720 a(x)^6} +
+O\left(\frac{1}{a(x)^8}\right)$$
+as $x \to \infty$ through the real numbers, where the power is the principal complex power.
 
 Proof: Convexity of `log Γ` gives crude digamma bounds. A telescoped centered expansion and
 Taylor's formula for the complex exponential then give the stated coefficients and remainder.
+
+Proves `Wanted` entry `ramanujan_part1_ch8_entry15_doublegamma`.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
 -/
 theorem ramanujan_part1_ch8_entry15_doublegamma (n : ℂ) :
     Tendsto chapter8Entry15A atTop atTop ∧

@@ -52,9 +52,10 @@ so `x` is in the kernel; the remaining conclusions follow from
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 
-/-- The orthogonal complement of the span of the eigenspaces of a compact
-self-adjoint operator for *nonzero* eigenvalues is exactly the kernel of
-the operator. -/
+/-- **Orthogonal complement of the nonzero-eigenvalue eigenspaces.** Let $H$ be a Hilbert space
+over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $T : H \to H$ be a compact self-adjoint
+bounded linear operator. Then the orthogonal complement of the subspace spanned by the
+eigenspaces $\ker(T - \mu I)$ for all nonzero $\mu \in \mathbb{K}$ equals the kernel of $T$. -/
 theorem orthogonal_iSup_eigenspaces_ne_zero_eq_ker {T : H →L[𝕜] H}
     (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H)) :
     (⨆ (μ : 𝕜) (_ : μ ≠ 0), (eigenspace (T : End 𝕜 H) μ : Submodule 𝕜 H))ᗮ =
@@ -106,13 +107,14 @@ theorem orthogonal_iSup_eigenspaces_ne_zero_eq_ker {T : H →L[𝕜] H}
         rw [inner_add_right, ha, hb, add_zero])
 
 /-- **Spectral theorem for compact self-adjoint operators (range
-decomposition form).** Let `T` be a compact self-adjoint operator on a
-Hilbert space. Then:
-(1) the closure of the span of all nonzero eigenspaces of `T` equals the
-closure of the range of `T`;
-(2) the closure of the range of `T` and the kernel of `T` are complementary
-closed subspaces; and
-(3) the family of eigenspaces of `T` is an orthogonal family. -/
+decomposition form).** Let $H$ be a Hilbert space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$
+and let $T : H \to H$ be a compact self-adjoint bounded linear operator. Then:
+(1) the closure of the subspace spanned by the eigenspaces $\ker(T - \mu I)$ for all
+nonzero $\mu \in \mathbb{K}$ equals the closure of the range of $T$;
+(2) the closure of the range of $T$ and the kernel of $T$ are complementary subspaces: their
+intersection is $\{0\}$ and their sum is $H$; and
+(3) the eigenspaces $\ker(T - \mu I)$, $\mu \in \mathbb{K}$, are pairwise orthogonal for distinct
+values of $\mu$. -/
 theorem spectral_theorem_range_decomposition {T : H →L[𝕜] H}
     (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H)) :
     (⨆ (μ : 𝕜) (_ : μ ≠ 0), (eigenspace (T : End 𝕜 H) μ : Submodule 𝕜 H)).topologicalClosure =

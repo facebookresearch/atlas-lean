@@ -109,8 +109,9 @@ private theorem eLpNorm_count_eq_ofReal_sum {ι : Type*} [Fintype ι]
     (Finset.sum_nonneg fun i _ => Real.rpow_nonneg (norm_nonneg _) r)
     (by positivity : (0:ℝ) ≤ 1 / r)]
 
-/-- The `p = 1` endpoint of Hausdorff–Young: each Fourier coefficient is
-bounded by the `ℓ¹` norm of the function. -/
+/-- **The $p = 1$ endpoint of Hausdorff–Young.** Let $G$ be a finite abelian group and
+$f : G \to \mathbb{C}$, with discrete Fourier transform $\hat f$. For every additive character
+$\psi$ of $G$, $|\hat f(\psi)| \le \sum_{x \in G} |f(x)|$. -/
 theorem dftFun_sup_le {G : Type*} [AddCommGroup G] [Fintype G] (f : G → ℂ)
     (ψ : AddChar G ℂ) :
     ‖dftFun f ψ‖ ≤ ∑ x : G, ‖f x‖ := by
@@ -121,9 +122,10 @@ theorem dftFun_sup_le {G : Type*} [AddCommGroup G] [Fintype G] (f : G → ℂ)
         intro x _
         rw [norm_mul, AddChar.norm_apply, one_mul]
 
-/-- Plancherel in squared-norm form: the sum of the squared norms of the
-Fourier coefficients is `card G` times the sum of the squared norms of
-the values. -/
+/-- **The $p = 2$ endpoint of Hausdorff–Young (Plancherel).** Let $G$ be a finite abelian
+group and let $f : G \to \mathbb{C}$ have discrete Fourier transform $\hat f$. Then, with
+$\psi$ running over the additive characters of $G$ and $|G|$ the number of elements of $G$,
+$\sum_{\psi} |\hat f(\psi)|^2 = |G| \sum_{x \in G} |f(x)|^2$. -/
 theorem sum_norm_sq_dftFun {G : Type*} [AddCommGroup G] [Fintype G] (f : G → ℂ) :
     (∑ ψ : AddChar G ℂ, ‖dftFun f ψ‖ ^ 2) =
       (Fintype.card G : ℝ) * ∑ x : G, ‖f x‖ ^ 2 := by
@@ -212,14 +214,16 @@ private theorem eLpNorm_dft_two {G : Type*} [AddCommGroup G] [Fintype G]
     eLpNorm_count_eq_ofReal_sum _ (by norm_num : (0:ℝ) < 2), hcard,
     ← ENNReal.ofReal_mul (Real.rpow_nonneg (Nat.cast_nonneg _) _), hreal]
 
-/-- The Hausdorff–Young inequality on a finite abelian group: for
-`1 < p ≤ 2` with conjugate exponent `q = p / (p - 1)`,
-the `ℓ^q` norm of the Fourier transform is bounded by
-`(card G) ^ (1 / q)` times the `ℓ^p` norm of the function.
+/-- **Hausdorff–Young inequality on a finite abelian group.** Let $G$ be a finite abelian
+group, let $f : G \to \mathbb{C}$ have discrete Fourier transform $\hat f$, let $p$ be a real
+number with $1 < p \le 2$, and let $q = p/(p - 1)$. Write $|G|$ for the number of elements
+of $G$ and let $\psi$ run over the additive characters of $G$. Then
+$\left(\sum_{\psi} |\hat f(\psi)|^q\right)^{1/q} \le
+|G|^{1/q} \left(\sum_{x \in G} |f(x)|^p\right)^{1/p}$.
 
-The measurability hypotheses are the ones the finite counting-measure
-Riesz–Thorin theorem in base MathlibExt takes; in applications they are
-discharged with the discrete (`⊤`) measurable-space instance. -/
+The statement also assumes $\sigma$-algebras on $G$ and on its character group in which
+singletons are measurable; on a finite set such a $\sigma$-algebra contains every subset, so
+this is no restriction. -/
 theorem hausdorffYoung_dft {G : Type*} [AddCommGroup G] [Fintype G]
     [MeasurableSpace G] [MeasurableSpace (AddChar G ℂ)]
     [MeasurableSingletonClass G] [MeasurableSingletonClass (AddChar G ℂ)]

@@ -91,7 +91,9 @@ private lemma chapter9ClausenTerm_base_pos (m : ℕ) (k : ℕ) :
   have hnn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
   linarith
 
-/-- Norm bound for the Clausen summand: `‖term‖ ≤ 1 / (k+1)^m`. -/
+/-- **Termwise bound for the Clausen series (Chapter 9, Entry 13).** For natural numbers $m$ and
+$k$ and a real number $x$, let $t_k = \sin((k+1)x)/(k+1)^m$ if $m$ is even and
+$t_k = \cos((k+1)x)/(k+1)^m$ if $m$ is odd. Then $\lvert t_k\rvert \le 1/(k+1)^m$. -/
 theorem chapter9ClausenTerm_norm_bound (m : ℕ) (x : ℝ) (k : ℕ) :
     ‖chapter9ClausenTerm m x k‖ ≤ 1 / ((((k + 1 : ℕ)) : ℝ) ^ m) := by
   have hpos := chapter9ClausenTerm_base_pos m k
@@ -108,22 +110,33 @@ private lemma chapter9ClausenTerm_shift_summable (m : ℕ) (hm : 2 ≤ m) :
     (Real.summable_one_div_nat_pow).mpr (by omega)
   exact (summable_nat_add_iff 1).mpr h
 
-/-- The Clausen series is summable for `2 ≤ m`. -/
+/-- **Summability of the Clausen series (Chapter 9, Entry 13).** For every natural number
+$m \ge 2$ and every real $x$, the series $\sum_{k \ge 1} \sin(kx)/k^m$ (if $m$ is even) or
+$\sum_{k \ge 1} \cos(kx)/k^m$ (if $m$ is odd) is summable. -/
 theorem chapter9ClausenTerm_summable_of_two_le (m : ℕ) (x : ℝ) (hm : 2 ≤ m) :
     Summable (chapter9ClausenTerm m x) :=
   Summable.of_norm_bounded (chapter9ClausenTerm_shift_summable m hm)
     (chapter9ClausenTerm_norm_bound m x)
 
-/-- `chapter9Clausen` at `m = 0` vanishes. -/
+/-- **Clausen function of order zero (Chapter 9, Entry 13).** The Clausen-type functions $C_m$
+of Entry 13 are defined by $C_1(x) = -\log\lvert 2\sin(x/2)\rvert$ and, for $m \ge 2$,
+$C_m(x) = \sum_{k \ge 1} \sin(kx)/k^m$ for even $m$ and $C_m(x) = \sum_{k \ge 1} \cos(kx)/k^m$
+for odd $m$, together with the convention $C_0 = 0$: for every real $x$, $C_0(x) = 0$. -/
 theorem chapter9Clausen_zero (x : ℝ) : chapter9Clausen 0 x = 0 := by
   rfl
 
-/-- `chapter9Clausen` at `m = 1` is the log-sine closed form. -/
+/-- **Clausen function of order one (Chapter 9, Entry 13).** The order-one Clausen-type function
+$C_1$ of Entry 13 is the log-sine function: for every real $x$,
+$C_1(x) = -\log\lvert 2\sin(x/2)\rvert$, with the convention $\log 0 = 0$, so that $C_1$ vanishes
+at the integer multiples of $2\pi$. -/
 theorem chapter9Clausen_one (x : ℝ) :
     chapter9Clausen 1 x = -Real.log |2 * Real.sin (x / 2)| := by
   rfl
 
-/-- `chapter9Clausen` for `2 ≤ m` is the Clausen series. -/
+/-- **Clausen functions of order at least two as series (Chapter 9, Entry 13).** Let $C_m$ be the
+Clausen-type function of Entry 13, with $C_0 = 0$ and $C_1(x) = -\log\lvert 2\sin(x/2)\rvert$.
+For every natural number $m \ge 2$ and every real $x$, $C_m(x) = \sum_{k \ge 1} \sin(kx)/k^m$ if
+$m$ is even and $C_m(x) = \sum_{k \ge 1} \cos(kx)/k^m$ if $m$ is odd. -/
 theorem chapter9Clausen_of_two_le (m : ℕ) (x : ℝ) (hm : 2 ≤ m) :
     chapter9Clausen m x = ∑' k : ℕ, chapter9ClausenTerm m x k := by
   unfold chapter9Clausen
@@ -1701,9 +1714,20 @@ private lemma entry13_conjunct2 (x : ℝ) (hx0 : x ≠ 0)
   rw [hl_eq] at hl
   exact hl
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **Integrals of $u^n \cot(u/2)$ via Clausen functions (Chapter 9, Entry 13).** For real $x$
+let $C_1(x) = -\log\lvert 2\sin(x/2)\rvert$ and, for $m \ge 2$, let
+$C_m(x) = \sum_{k \ge 1} \sin(kx)/k^m$ if $m$ is even and $C_m(x) = \sum_{k \ge 1} \cos(kx)/k^m$
+if $m$ is odd. Let $n \ge 1$ be a natural number and $x$ a nonzero real number with
+$\lvert x\rvert < 2\pi$. Then the function $u \mapsto \frac{u^n}{2}\cot\frac{u}{2}$ is integrable
+on the interval between $0$ and $x$; the partial sums $\sum_{k=1}^{N} \cos(kx)/k$ converge to
+$C_1(x)$ as $N \to \infty$; for every natural number $m$ with $2 \le m \le n + 1$ the series
+defining $C_m(x)$ is summable; and, with $\zeta$ the Riemann zeta function,
+$$
+\int_0^x \frac{u^n}{2}\cot\frac{u}{2}\,du = \cos\frac{n\pi}{2}\,n!\,\zeta(n+1) -
+\sum_{j=0}^{n} (-1)^{j(j+1)/2}\,\frac{n!}{(n-j)!}\,x^{n-j}\,C_{j+1}(x).
+$$
 
-Proves `Wanted` entry `ramanujan_part1_ch9_entry13_bernoulligen`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 -/
 theorem ramanujan_part1_ch9_entry13_bernoulligen (n : ℕ) (x : ℝ)
     (hn : 1 ≤ n) (hx0 : x ≠ 0) (hx : |x| < 2 * Real.pi) :
