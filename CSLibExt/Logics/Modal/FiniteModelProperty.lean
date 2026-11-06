@@ -55,8 +55,11 @@ section GeneralFiltration
 
 variable {World : Type v} (M : KripkeModel World Atom) (phi : Formula Atom)
 
-/-- A filtration of a model refutes a formula that the model refutes, with at most `2 ^ |sub φ|`
-worlds. -/
+/-- **A filtration refutes what the model refutes.** Let $M$ be a Kripke model, $\varphi$ a
+formula and $R$ a filtration of $M$ through the subformulas of $\varphi$. If $\varphi$ fails at
+some world of $M$, then $\varphi$ is not valid in the finite model whose worlds are the types of
+worlds of $M$ (the sets of subformulas of $\varphi$ satisfied at a world), with relation $R$ and
+an atom true at a type iff it belongs to it. -/
 theorem not_valid_finModel_of_isFiltration
     {R : Finset (Finset (Formula Atom) × Finset (Formula Atom))} (hR : IsFiltration M phi R)
     {w : World} (hw : ¬M.Satisfies w phi) :
@@ -72,15 +75,23 @@ section Relations
 
 variable {World : Type v} (M : KripkeModel World Atom) (phi : Formula Atom)
 
-/-- The Lemmon (transitive) filtration relation: `s R t` iff every `□ψ ∈ sub φ` in `s` has
-`□ψ ∈ t` and `ψ ∈ t`. This is the `□` form of Blackburn–de Rijke–Venema's `R^t` (Lemma 2.42). -/
+/-- **Lemmon filtration relation.** Let $M$ be a Kripke model and $\varphi$ a formula, and let
+$U_\varphi$ be the set of types of worlds of $M$ (the sets of subformulas of $\varphi$ satisfied at
+a world). The Lemmon relation is the relation $R$ on $U_\varphi$ such that $s \mathrel{R} t$ iff
+for every formula $\psi$ with $\Box\psi$ a subformula of $\varphi$, $\Box\psi \in s$ implies
+$\Box\psi \in t$ and $\psi \in t$.
+
+This is the $\Box$ form of Blackburn–de Rijke–Venema's transitive filtration $R^t$ (Lemma 2.42). -/
 noncomputable def lemmonRel : Finset (Finset (Formula Atom) × Finset (Formula Atom)) := by
   classical exact (filtrationWorlds M phi ×ˢ filtrationWorlds M phi).filter fun st ↦
     ∀ psi, Formula.box psi ∈ phi.sub → Formula.box psi ∈ st.1 →
       Formula.box psi ∈ st.2 ∧ psi ∈ st.2
 
-/-- The S5 filtration relation: `s R t` iff `s` and `t` contain the same boxed formulas of
-`sub φ`. -/
+/-- **S5 filtration relation.** Let $M$ be a Kripke model and $\varphi$ a formula, and let
+$U_\varphi$ be the set of types of worlds of $M$ (the sets of subformulas of $\varphi$ satisfied at
+a world). The S5 relation is the relation $R$ on $U_\varphi$ such that $s \mathrel{R} t$ iff for
+every formula $\psi$ with $\Box\psi$ a subformula of $\varphi$, $\Box\psi \in s$ iff
+$\Box\psi \in t$. -/
 noncomputable def s5Rel : Finset (Finset (Formula Atom) × Finset (Formula Atom)) := by
   classical exact (filtrationWorlds M phi ×ˢ filtrationWorlds M phi).filter fun st ↦
     ∀ psi, Formula.box psi ∈ phi.sub → (Formula.box psi ∈ st.1 ↔ Formula.box psi ∈ st.2)
@@ -99,7 +110,9 @@ theorem mem_s5Rel {s t : Finset (Formula Atom)} (hs : s ∈ filtrationWorlds M p
   classical
   simp [s5Rel, hs, ht]
 
-/-- The Lemmon relation is a filtration of every transitive model. -/
+/-- **The Lemmon relation is a filtration of a transitive model.** For every Kripke model $M$
+with a transitive accessibility relation and every formula $\varphi$, the Lemmon relation of $M$
+and $\varphi$ is a filtration of $M$ through the subformulas of $\varphi$. -/
 theorem isFiltration_lemmonRel (htrans : ∀ {a b c}, M.rel a b → M.rel b c → M.rel a c) :
     IsFiltration M phi (lemmonRel M phi) where
   min {w v} hwv := by
@@ -114,7 +127,9 @@ theorem isFiltration_lemmonRel (htrans : ∀ {a b c}, M.rel a b → M.rel b c �
       (subType_mem_filtrationWorlds M phi v)] at hrel
     exact ((mem_subType M phi).mp (hrel psi hpsi ((mem_subType M phi).mpr ⟨hpsi, hbox⟩)).2).2
 
-/-- The S5 relation is a filtration of every model whose relation is an equivalence. -/
+/-- **The S5 relation is a filtration of an equivalence model.** For every Kripke model $M$ whose
+accessibility relation is an equivalence relation and every formula $\varphi$, the S5 relation of
+$M$ and $\varphi$ is a filtration of $M$ through the subformulas of $\varphi$. -/
 theorem isFiltration_s5Rel (hequiv : Equivalence M.rel) : IsFiltration M phi (s5Rel M phi) where
   min {w v} hwv := by
     rw [mem_s5Rel M phi (subType_mem_filtrationWorlds M phi w)
@@ -134,17 +149,23 @@ end Relations
 
 /-! ### Frame conditions on finite models -/
 
-/-- `R` is reflexive on `U`. -/
+/-- **Reflexivity on a finite set of worlds.** Let $U$ be a finite set of finite sets of modal
+formulas and $R$ a finite set of pairs of such sets. Then $R$ is reflexive on $U$ when
+$(s, s) \in R$ for every $s \in U$. -/
 def FinRefl (U : Finset (Finset (Formula Atom)))
     (R : Finset (Finset (Formula Atom) × Finset (Formula Atom))) : Prop :=
   ∀ s ∈ U, (s, s) ∈ R
 
-/-- `R` is transitive on `U`. -/
+/-- **Transitivity on a finite set of worlds.** Let $U$ be a finite set of finite sets of modal
+formulas and $R$ a finite set of pairs of such sets. Then $R$ is transitive on $U$ when
+$(s, r) \in R$ for all $s, t, r \in U$ with $(s, t) \in R$ and $(t, r) \in R$. -/
 def FinTrans (U : Finset (Finset (Formula Atom)))
     (R : Finset (Finset (Formula Atom) × Finset (Formula Atom))) : Prop :=
   ∀ s ∈ U, ∀ t ∈ U, ∀ r ∈ U, (s, t) ∈ R → (t, r) ∈ R → (s, r) ∈ R
 
-/-- `R` is symmetric on `U`. -/
+/-- **Symmetry on a finite set of worlds.** Let $U$ be a finite set of finite sets of modal
+formulas and $R$ a finite set of pairs of such sets. Then $R$ is symmetric on $U$ when
+$(t, s) \in R$ for all $s, t \in U$ with $(s, t) \in R$. -/
 def FinSymm (U : Finset (Finset (Formula Atom)))
     (R : Finset (Finset (Formula Atom) × Finset (Formula Atom))) : Prop :=
   ∀ s ∈ U, ∀ t ∈ U, (s, t) ∈ R → (t, s) ∈ R
@@ -188,7 +209,10 @@ section FiltrationFrames
 
 variable {World : Type v} (M : KripkeModel World Atom) (phi : Formula Atom)
 
-/-- Any filtration of a reflexive model is reflexive. -/
+/-- **Filtrations of reflexive models are reflexive.** Let $M$ be a Kripke model whose
+accessibility relation is reflexive, let $\varphi$ be a modal formula, and let $R$ be a
+filtration of $M$ through the subformulas of $\varphi$. Then $(s, s) \in R$ for every set $s$
+that is the set of subformulas of $\varphi$ true at some world of $M$. -/
 theorem finRefl_of_isFiltration {R : Finset (Finset (Formula Atom) × Finset (Formula Atom))}
     (hR : IsFiltration M phi R) (hrefl : ∀ w, M.rel w w) : FinRefl (filtrationWorlds M phi) R :=
   fun s hs ↦ by
@@ -251,8 +275,10 @@ theorem exists_not_satisfies_of_not_derivable_S5 (h : ¬Derivable Axioms.S5 phi)
   push Not at hall
   exact h (derivable_S5_iff.mpr fun W M hequiv w ↦ hall W M w hequiv)
 
-/-- **Finite model property of T**: a non-theorem fails in a reflexive model with at most
-`2 ^ |sub φ|` worlds. -/
+/-- **Finite model property of T.** If a modal formula $\varphi$ is not a theorem of T, then
+there is a Kripke model with finitely many worlds, at most $2^{|\mathrm{sub}(\varphi)|}$ of them,
+where $\mathrm{sub}(\varphi)$ is the set of subformulas of $\varphi$, whose accessibility
+relation is reflexive and in which $\varphi$ is false at some world. -/
 theorem exists_finite_countermodel_T (h : ¬Derivable Axioms.T phi) :
     ∃ (W : Type u) (_ : Fintype W) (M : KripkeModel W Atom),
       Fintype.card W ≤ 2 ^ phi.sub.card ∧ (∀ w, M.rel w w) ∧ ¬M.Valid phi := by
@@ -262,8 +288,10 @@ theorem exists_finite_countermodel_T (h : ¬Derivable Axioms.T phi) :
     not_valid_finModel_of_isFiltration M phi hR hw⟩
   exact card_le_of_card_finset_le (card_filtrationWorlds_le M phi)
 
-/-- **Finite model property of S4**: a non-theorem fails in a reflexive transitive model with at
-most `2 ^ |sub φ|` worlds. -/
+/-- **Finite model property of S4.** If a modal formula $\varphi$ is not a theorem of S4, then
+there is a Kripke model with finitely many worlds, at most $2^{|\mathrm{sub}(\varphi)|}$ of them,
+where $\mathrm{sub}(\varphi)$ is the set of subformulas of $\varphi$, whose accessibility
+relation is reflexive and transitive and in which $\varphi$ is false at some world. -/
 theorem exists_finite_countermodel_S4 (h : ¬Derivable Axioms.S4 phi) :
     ∃ (W : Type u) (_ : Fintype W) (M : KripkeModel W Atom),
       Fintype.card W ≤ 2 ^ phi.sub.card ∧ ((∀ w, M.rel w w) ∧
@@ -274,8 +302,10 @@ theorem exists_finite_countermodel_S4 (h : ¬Derivable Axioms.S4 phi) :
     finModel_trans _ (finTrans_lemmonRel M phi)⟩, not_valid_finModel_of_isFiltration M phi hR hw⟩
   exact card_le_of_card_finset_le (card_filtrationWorlds_le M phi)
 
-/-- **Finite model property of S5**: a non-theorem fails in an equivalence model with at most
-`2 ^ |sub φ|` worlds. -/
+/-- **Finite model property of S5.** If a modal formula $\varphi$ is not a theorem of S5, then
+there is a Kripke model with finitely many worlds, at most $2^{|\mathrm{sub}(\varphi)|}$ of them,
+where $\mathrm{sub}(\varphi)$ is the set of subformulas of $\varphi$, whose accessibility
+relation is an equivalence relation and in which $\varphi$ is false at some world. -/
 theorem exists_finite_countermodel_S5 (h : ¬Derivable Axioms.S5 phi) :
     ∃ (W : Type u) (_ : Fintype W) (M : KripkeModel W Atom),
       Fintype.card W ≤ 2 ^ phi.sub.card ∧ Equivalence M.rel ∧ ¬M.Valid phi := by
@@ -292,8 +322,12 @@ end FMP
 
 section Decidability
 
-/-- The finite check for a frame condition `C`: `φ` holds in every model on a nonempty set `U` of
-subsets of `sub φ`, for every relation `R ⊆ U × U` satisfying `C`. -/
+/-- **Finite validity check for a frame condition.** Given a condition $C$ on pairs $(U, R)$ of a
+finite set $U$ of sets of formulas and a finite set $R$ of pairs of such sets, a formula $\varphi$
+passes the finite check for $C$ when, for every nonempty set $U$ of subsets of the subformulas of
+$\varphi$ and every relation $R \subseteq U \times U$ with $C(U, R)$, $\varphi$ holds at every
+$s \in U$ in the Kripke model with worlds $U$, accessibility relation $R$, and an atom true at
+$s$ iff it belongs to $s$. -/
 def FinValidWith (C : Finset (Finset (Formula Atom)) →
     Finset (Finset (Formula Atom) × Finset (Formula Atom)) → Prop) (phi : Formula Atom) : Prop :=
   ∀ U ∈ phi.sub.powerset.powerset, U.Nonempty → ∀ R ∈ (U ×ˢ U).powerset, C U R → ∀ s ∈ U,
@@ -305,7 +339,13 @@ instance (C : Finset (Finset (Formula Atom)) →
   unfold FinValidWith
   infer_instance
 
-/-- The filtration data `(filtrationWorlds, R)` is among the finitely many models checked. -/
+/-- **The finite check covers the filtration worlds.** Let $C$ be a condition on pairs $(U, R)$ of
+a finite set $U$ of sets of formulas and a finite relation $R$ on such sets, and let $\varphi$ be
+a formula that passes the finite check for $C$. Let $M$ be a Kripke model, let $U_\varphi$ be the
+set of types of worlds of $M$ (the sets of subformulas of $\varphi$ satisfied at a world), and
+let $R \subseteq U_\varphi \times U_\varphi$ satisfy $C(U_\varphi, R)$. Then $\varphi$ is valid in
+the finite model on $U_\varphi$ with relation $R$, in which an atom holds at $s$ iff it belongs to
+$s$. -/
 theorem finValidWith_apply {C : Finset (Finset (Formula Atom)) →
     Finset (Finset (Formula Atom) × Finset (Formula Atom)) → Prop} {phi : Formula Atom}
     (h : FinValidWith C phi) {World : Type v} (M : KripkeModel World Atom)
@@ -338,7 +378,11 @@ theorem filtrationRel_subset {World : Type v} (M : KripkeModel World Atom) (phi 
 
 variable {phi : Formula Atom}
 
-/-- `φ` is a T-theorem iff it holds in every reflexive model on subsets of `sub φ`. -/
+/-- **T-provability via finite reflexive models.** A modal formula $\varphi$ is a theorem of T
+if and only if, for every nonempty set $U$ of subsets of $\mathrm{sub}(\varphi)$, the set of
+subformulas of $\varphi$, and every relation $R \subseteq U \times U$ that is reflexive on $U$,
+the formula $\varphi$ is true at every world $s \in U$ of the finite model with worlds $U$,
+accessibility relation $R$, and each atom true at $s$ exactly when it belongs to $s$. -/
 theorem derivable_T_iff_finValidWith : Derivable Axioms.T phi ↔ FinValidWith FinRefl phi := by
   constructor
   · intro h U _ hU R _ hrefl s hs
@@ -351,8 +395,12 @@ theorem derivable_T_iff_finValidWith : Derivable Axioms.T phi ↔ FinValidWith F
     exact not_valid_finModel_of_isFiltration M phi hR hw
       (finValidWith_apply h M (filtrationRel_subset M phi) (finRefl_of_isFiltration M phi hR hrefl))
 
-/-- `φ` is an S4-theorem iff it holds in every reflexive transitive model on subsets of
-`sub φ`. -/
+/-- **S4-provability via finite reflexive transitive models.** A modal formula $\varphi$ is a
+theorem of S4 if and only if, for every nonempty set $U$ of subsets of $\mathrm{sub}(\varphi)$,
+the set of subformulas of $\varphi$, and every relation $R \subseteq U \times U$ that is reflexive
+and transitive on $U$, the formula $\varphi$ is true at every world $s \in U$ of the finite model
+with worlds $U$, accessibility relation $R$, and each atom true at $s$ exactly when it belongs
+to $s$. -/
 theorem derivable_S4_iff_finValidWith :
     Derivable Axioms.S4 phi ↔ FinValidWith (fun U R ↦ FinRefl U R ∧ FinTrans U R) phi := by
   constructor
@@ -367,7 +415,12 @@ theorem derivable_S4_iff_finValidWith :
       (finValidWith_apply h M (lemmonRel_subset M phi)
         ⟨finRefl_of_isFiltration M phi hR hrefl, finTrans_lemmonRel M phi⟩)
 
-/-- `φ` is an S5-theorem iff it holds in every equivalence model on subsets of `sub φ`. -/
+/-- **S5-provability via finite equivalence models.** A modal formula $\varphi$ is a theorem of
+S5 if and only if, for every nonempty set $U$ of subsets of $\mathrm{sub}(\varphi)$, the set of
+subformulas of $\varphi$, and every relation $R \subseteq U \times U$ that is reflexive, symmetric
+and transitive on $U$, the formula $\varphi$ is true at every world $s \in U$ of the finite model
+with worlds $U$, accessibility relation $R$, and each atom true at $s$ exactly when it belongs
+to $s$. -/
 theorem derivable_S5_iff_finValidWith :
     Derivable Axioms.S5 phi ↔
       FinValidWith (fun U R ↦ FinRefl U R ∧ FinSymm U R ∧ FinTrans U R) phi := by

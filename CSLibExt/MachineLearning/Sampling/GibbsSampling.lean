@@ -45,8 +45,11 @@ open scoped ENNReal
 
 variable {ι S : Type*} [Fintype ι] [DecidableEq ι] [Fintype S]
 
-/-- The normalizer `∑ₛ π(x with coordinate i set to s)` of the conditional law of coordinate `i`
-given the other coordinates of `x`. -/
+/-- **Normalizer of the conditional law.** Let $\pi$ be a probability distribution on the
+configurations $x : \iota \to S$, with $\iota$ and $S$ finite. For a coordinate $i \in \iota$ and a
+configuration $x$, the normalizer is $Z_i(x) = \sum_{s \in S} \pi(x[i \mapsto s]) \in [0, \infty]$,
+where $x[i \mapsto s]$ is $x$ with coordinate $i$ set to $s$. It normalizes the conditional law of
+coordinate $i$ given the other coordinates of $x$. -/
 noncomputable def condNorm (π : PMF (ι → S)) (i : ι) (x : ι → S) : ℝ≥0∞ :=
   ∑ s, π (update x i s)
 
@@ -65,8 +68,14 @@ omit [Fintype ι] in
 theorem condNorm_ne_top (π : PMF (ι → S)) (i : ι) (x : ι → S) : condNorm π i x ≠ ∞ :=
   ENNReal.sum_ne_top.mpr fun _ _ ↦ PMF.apply_ne_top _ _
 
-/-- The conditional law of coordinate `i` given the others, `π(xᵢ = s | x₋ᵢ)`, for a target with
-full support. -/
+/-- **Conditional law of a coordinate.** Let $\pi$ be a probability distribution on the
+configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every
+$x$. For a coordinate $i \in \iota$ and a configuration $x$, the conditional law of coordinate $i$
+given the others is the probability distribution on $S$ that gives $s \in S$ the mass
+$\pi(x[i \mapsto s]) / Z_i(x)$, where $x[i \mapsto s]$ is $x$ with coordinate $i$ set to $s$ and
+$Z_i(x) = \sum_{t \in S} \pi(x[i \mapsto t])$. In the usual notation this is
+$\pi(x_i = s \mid x_{-i})$, where $x_i$ is coordinate $i$ of $x$ and $x_{-i}$ is the family of
+its other coordinates. -/
 noncomputable def condLaw (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : ι) (x : ι → S) : PMF S :=
   PMF.ofFintype (fun s ↦ π (update x i s) / condNorm π i x) (by
     simp_rw [div_eq_mul_inv]
@@ -74,8 +83,11 @@ noncomputable def condLaw (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : �
     exact ENNReal.mul_inv_cancel (ne_bot_of_le_ne_bot (hπ x) (le_condNorm π i x))
       (condNorm_ne_top π i x))
 
-/-- One **Gibbs sampling** update of coordinate `i`: resample `xᵢ` from its conditional law given
-the other coordinates. -/
+/-- **Gibbs update.** Let $\pi$ be a probability distribution on the configurations
+$x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every $x$. The Gibbs
+update of coordinate $i \in \iota$ from $x$ is the probability distribution of $x[i \mapsto s]$,
+the configuration $x$ with coordinate $i$ set to $s$, where $s$ is drawn from the conditional law
+of coordinate $i$ given the other coordinates of $x$. -/
 noncomputable def gibbsStep (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : ι) (x : ι → S) :
     PMF (ι → S) :=
   (condLaw π hπ i x).map (update x i)
@@ -93,15 +105,22 @@ theorem gibbsStep_apply [DecidableEq S] (π : PMF (ι → S)) (hπ : ∀ x, π x
     exact absurd (update_self i s x).symm hs
 
 omit [Fintype ι] [Fintype S] in
-/-- Two states that differ at most in coordinate `i`: resetting the other one's coordinate `i`
-recovers each from the other. -/
+/-- **Symmetry of differing in one coordinate.** For functions $x, y : \iota \to S$ and a coordinate
+$i \in \iota$, if setting coordinate $i$ of $x$ to $y(i)$ gives $y$, then setting coordinate $i$ of
+$y$ to $x(i)$ gives $x$. -/
 theorem update_eq_comm {i : ι} {x y : ι → S} (h : update x i (y i) = y) :
     update y i (x i) = x := by
   rw [← h, update_idem, update_eq_self]
 
 omit [Fintype ι] in
-/-- **Detailed balance for a Gibbs update**: `π x P(x, y) = π y P(y, x)`. When `x` and `y` differ
-at most in coordinate `i`, both sides are `π x π y / Z` with the same normalizer `Z`. -/
+/-- **Detailed balance for a Gibbs update.** Let $\pi$ be a probability distribution on the
+configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every
+$x$, and for a coordinate $i$ let $P_i(x, y)$ be the probability that the Gibbs update of
+coordinate $i$ moves $x$ to $y$. Then $\pi(x) P_i(x, y) = \pi(y) P_i(y, x)$ for all
+configurations $x$ and $y$.
+
+When $x$ and $y$ differ at most in coordinate $i$, both sides equal $\pi(x) \pi(y) / Z$ for the
+same normalizer $Z$; otherwise both sides are $0$. -/
 theorem gibbs_detailedBalance [Finite ι] (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : ι)
     (x y : ι → S) : π x * gibbsStep π hπ i x y = π y * gibbsStep π hπ i y x := by
   have := Fintype.ofFinite ι
@@ -117,24 +136,41 @@ theorem gibbs_detailedBalance [Finite ι] (π : PMF (ι → S)) (hπ : ∀ x, π
 
 variable [MeasurableSpace S] [MeasurableSingletonClass S]
 
-/-- A Gibbs update is reversible with respect to the target. -/
+/-- **Gibbs updates are reversible.** Let $\pi$ be a probability distribution on the
+configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every
+$x$. For every coordinate $i$, the Markov kernel $K$ of the Gibbs update of coordinate $i$ is
+reversible with respect to $\pi$: for all measurable sets $A$ and $B$ of configurations,
+$\int_A K(x, B) \, d\pi(x) = \int_B K(x, A) \, d\pi(x)$. -/
 theorem isReversible_gibbsKernel (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : ι) :
     (pmfKernel (gibbsStep π hπ i)).IsReversible π.toMeasure :=
   isReversible_pmfKernel (gibbs_detailedBalance π hπ i)
 
-/-- **Gibbs sampling leaves the target stationary**, one coordinate update at a time. -/
+/-- **Gibbs sampling leaves the target stationary.** Let $\pi$ be a probability distribution on
+the configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for
+every $x$. For every coordinate $i$, $\pi$ is an invariant measure of the Markov kernel of the
+Gibbs update of coordinate $i$: if $x$ is drawn from $\pi$ and coordinate $i$ is resampled from
+its conditional law given the other coordinates, the result is again distributed as $\pi$. -/
 theorem invariant_gibbsKernel (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : ι) :
     (pmfKernel (gibbsStep π hπ i)).Invariant π.toMeasure :=
   invariant_pmfKernel (gibbs_detailedBalance π hπ i)
 
-/-- The **systematic-scan Gibbs sampler**: update the coordinates in the order of the list `l`. -/
+/-- **Systematic-scan Gibbs sampler.** Let $\pi$ be a probability distribution on the
+configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every
+$x$. For a list $l = (i_1, \dots, i_n)$ of coordinates, the systematic-scan Gibbs sampler is the
+Markov kernel on configurations that applies the Gibbs updates of the coordinates
+$i_1, i_2, \dots, i_n$ in this order; for the empty list it is the identity kernel. -/
 noncomputable def gibbsSweep (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) :
     List ι → Kernel (ι → S) (ι → S)
   | [] => Kernel.id
   | i :: l => gibbsSweep π hπ l ∘ₖ pmfKernel (gibbsStep π hπ i)
 
-/-- The sweep `i :: l` first updates coordinate `i` and then runs the sweep `l` from the result:
-Mathlib's `η ∘ₖ κ` runs `κ` first (`Kernel.comp_apply`). -/
+/-- **First step of a Gibbs sweep.** Let $\pi$ be a probability distribution on the configurations
+$x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every $x$. For a list
+$l$ of coordinates let $K_l$ be the systematic-scan Gibbs sampler for $l$, and for a coordinate $i$
+let $P_i$ be the Markov kernel of the Gibbs update of coordinate $i$. Then for every configuration
+$x$, the law $K_{(i, l)}(x)$ of the sampler for the list $(i, l)$ obtained by putting $i$ in front
+of $l$ is the mixture $\int K_l(y) \, P_i(x, dy)$: first coordinate $i$ is updated, then the sweep
+$l$ runs from the result. -/
 theorem gibbsSweep_cons_apply (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i : ι) (l : List ι)
     (x : ι → S) :
     gibbsSweep π hπ (i :: l) x = (pmfKernel (gibbsStep π hπ i) x).bind (gibbsSweep π hπ l) :=
@@ -146,7 +182,11 @@ instance (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (l : List ι) :
   | nil => exact inferInstanceAs (IsMarkovKernel Kernel.id)
   | cons i l ih => exact inferInstanceAs (IsMarkovKernel (_ ∘ₖ _))
 
-/-- **A full Gibbs sweep leaves the target stationary**, in any order of the coordinates. -/
+/-- **A full Gibbs sweep leaves the target stationary.** Let $\pi$ be a probability distribution on
+the configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for
+every $x$. For every finite list $l$ of coordinates, in any order and possibly with repetitions,
+$\pi$ is an invariant measure of the systematic-scan Gibbs sampler that updates the coordinates in
+the order of $l$. -/
 theorem invariant_gibbsSweep (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (l : List ι) :
     (gibbsSweep π hπ l).Invariant π.toMeasure := by
   induction l with

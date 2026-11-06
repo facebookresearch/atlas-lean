@@ -36,10 +36,13 @@ namespace Epistemic
 
 universe u v w
 
-/-- An epistemic model: one accessibility relation per agent, and an
-atom valuation. The world set is nonempty, as in
-`Cslib.Modal.KripkeModel`: with an empty world set, validity would hold
-vacuously and even `⊥` would be valid. -/
+/-- **Epistemic models.** Given a type of worlds $W$, a type of atoms and a type of agents, an
+epistemic model consists of a binary accessibility relation $R_i$ on $W$ for each agent $i$ and a
+valuation assigning to each world the atoms true there; the world type $W$ is required to be
+nonempty.
+
+Nonemptiness is assumed as for Kripke models: with no worlds, validity would hold vacuously and
+even $\bot$ would be valid. -/
 structure Model (World : Type u) (Atom : Type v) (Agent : Type w) where
   /-- One accessibility relation per agent. -/
   rel : Agent → World → World → Prop
@@ -48,8 +51,10 @@ structure Model (World : Type u) (Atom : Type v) (Agent : Type w) where
   /-- There is at least one world. -/
   nonempty_world : Nonempty World
 
-/-- Formulas of epistemic logic: atoms, falsity, implication, and
-`Kᵢ φ`. -/
+/-- **Epistemic formulas.** Given a type of atoms and a type of agents, the formulas of epistemic
+logic are built inductively: every atom $p$ is a formula, falsity $\bot$ is a formula, if $\varphi$
+and $\psi$ are formulas then so is the implication $\varphi \to \psi$, and if $\varphi$ is a
+formula and $i$ is an agent then $K_i \varphi$ (read "agent $i$ knows $\varphi$") is a formula. -/
 inductive Formula (Atom : Type v) (Agent : Type w) where
   | atom (a : Atom) : Formula Atom Agent
   | bot : Formula Atom Agent
@@ -58,16 +63,23 @@ inductive Formula (Atom : Type v) (Agent : Type w) where
 
 namespace Formula
 
-/-- Negation as implication into falsity. -/
+/-- **Negation of epistemic formulas.** The negation $\neg\varphi$ of an epistemic formula
+$\varphi$ is the implication $\varphi \to \bot$. -/
 def not {Atom : Type*} {Agent : Type*} (φ : Formula Atom Agent) : Formula Atom Agent := .imp φ .bot
 
-/-- Disjunction via implication. -/
+/-- **Disjunction of epistemic formulas.** The disjunction $\varphi \lor \psi$ of epistemic
+formulas $\varphi$ and $\psi$ is the implication $\neg\varphi \to \psi$. -/
 def or {Atom : Type*} {Agent : Type*} (φ ψ : Formula Atom Agent) : Formula Atom Agent :=
   .imp (.not φ) ψ
 
 end Formula
 
-/-- Satisfaction of an epistemic formula at a world. -/
+/-- **Satisfaction in an epistemic model.** Satisfaction of an epistemic formula at a world $w$
+of a model $M$ is defined by recursion on the formula, writing $R_i$ for the accessibility
+relation of agent $i$ in $M$ and $K_i \varphi$ for the formula "agent $i$ knows $\varphi$": an
+atom $a$ holds at $w$ when the valuation of $M$ makes $a$ true at $w$; $\bot$ holds at no world;
+$\varphi \to \psi$ holds at $w$ when $\psi$ holds at $w$ whenever $\varphi$ does; and
+$K_i \varphi$ holds at $w$ when $\varphi$ holds at every world $v$ with $w \mathrel{R_i} v$. -/
 def Sat {World Atom Agent : Type*} (M : Model World Atom Agent) :
     Formula Atom Agent → World → Prop
   | .atom a, w => M.valuation w a
@@ -75,12 +87,15 @@ def Sat {World Atom Agent : Type*} (M : Model World Atom Agent) :
   | .imp φ ψ, w => Sat M φ w → Sat M ψ w
   | .know i φ, w => ∀ v, M.rel i w v → Sat M φ v
 
-/-- A formula is valid in a model when it holds at every world. -/
+/-- **Validity in an epistemic model.** A formula $\varphi$ is valid in an epistemic model $M$
+when $\varphi$ is satisfied at every world of $M$. -/
 def Valid {World Atom Agent : Type*} (M : Model World Atom Agent) (φ : Formula Atom Agent) : Prop :=
   ∀ w, Sat M φ w
 
-/-- Falsity is not valid: the nonempty world set rules out vacuous
-validity. -/
+/-- **Falsity is not valid in an epistemic model.** In every epistemic model, the formula $\bot$
+is not valid: it fails at some world.
+
+The nonempty world set rules out vacuous validity. -/
 theorem not_valid_bot {World Atom Agent : Type*} (M : Model World Atom Agent) :
     ¬ Valid M .bot := by
   intro h
@@ -90,7 +105,9 @@ theorem not_valid_bot {World Atom Agent : Type*} (M : Model World Atom Agent) :
 variable {World Atom Agent : Type*} (M : Model World Atom Agent)
   {i : Agent} {φ ψ : Formula Atom Agent} {w : World}
 
-/-- Disjunction unfolds to the classical case split. -/
+/-- **Satisfaction of a disjunction.** In an epistemic model $M$, the disjunction
+$\varphi \lor \psi$ of two formulas, defined as $\neg \varphi \to \psi$, is satisfied at a world
+$w$ if and only if $\varphi$ is satisfied at $w$ or $\psi$ is satisfied at $w$. -/
 theorem sat_or :
     Sat M (.or φ ψ) w ↔ Sat M φ w ∨ Sat M ψ w := by
   constructor
@@ -100,26 +117,38 @@ theorem sat_or :
     · exact (hnot hφ).elim
     · exact hψ
 
-/-- K axiom: knowledge distributes over implication. -/
+/-- **Distribution axiom K.** Write $K_i \varphi$ for "agent $i$ knows $\varphi$". For every
+epistemic model $M$, every agent $i$ and all formulas $\varphi$ and $\psi$, the formula
+$K_i (\varphi \to \psi) \to (K_i \varphi \to K_i \psi)$ is valid in $M$: knowledge distributes
+over implication. -/
 theorem valid_know_dist :
     Valid M (.imp (.know i (.imp φ ψ)) (.imp (.know i φ) (.know i ψ))) := by
   intro w hK hφ v hv
   exact hK v hv (hφ v hv)
 
-/-- T axiom: knowledge is true, on reflexive relations. -/
+/-- **Truth axiom T.** Write $K_i \varphi$ for "agent $i$ knows $\varphi$". Let $M$ be an
+epistemic model in which the accessibility relation $R_i$ of agent $i$ is reflexive. Then for
+every formula $\varphi$, the formula $K_i \varphi \to \varphi$ is valid in $M$. -/
 theorem valid_know_truth (hrefl : ∀ v, M.rel i v v) :
     Valid M (.imp (.know i φ) φ) := by
   intro w hK
   exact hK w (hrefl w)
 
-/-- 4 axiom: positive introspection, on transitive relations. -/
+/-- **Positive introspection axiom 4.** Write $K_i \varphi$ for "agent $i$ knows $\varphi$".
+Let $M$ be an epistemic model in which the accessibility relation $R_i$ of agent $i$ is
+transitive. Then for every formula $\varphi$, the formula $K_i \varphi \to K_i K_i \varphi$ is
+valid in $M$. -/
 theorem valid_know_pos
     (htrans : ∀ {a b c}, M.rel i a b → M.rel i b c → M.rel i a c) :
     Valid M (.imp (.know i φ) (.know i (.know i φ))) := by
   intro w hK v hvw u huv
   exact hK u (htrans hvw huv)
 
-/-- 5 axiom: negative introspection, on euclidean relations. -/
+/-- **Negative introspection axiom 5.** Write $K_i \varphi$ for "agent $i$ knows $\varphi$".
+Let $M$ be an epistemic model in which the accessibility relation $R_i$ of agent $i$ is
+euclidean: for all worlds $a$, $b$, $c$, if $a \mathrel{R_i} b$ and $a \mathrel{R_i} c$ then
+$b \mathrel{R_i} c$. Then for every formula $\varphi$, the formula
+$\neg K_i \varphi \to K_i \neg K_i \varphi$ is valid in $M$. -/
 theorem valid_know_neg
     (heucl : ∀ {a b c}, M.rel i a b → M.rel i a c → M.rel i b c) :
     Valid M (.imp (.not (.know i φ)) (.know i (.not (.know i φ)))) := by
@@ -128,15 +157,19 @@ theorem valid_know_neg
   intro u hwu
   exact hK u (heucl hvw hwu)
 
-/-- The two-agent coin model: agent `0` sees the coin (identity
-relation), agent `1` does not (total relation). `p` means the coin is
-heads (`true`). -/
+/-- **The two-agent coin model.** The epistemic model whose worlds are the two booleans, with
+$\mathrm{true}$ read as heads and $\mathrm{false}$ as tails, with a single atom $p$ true exactly
+at the heads world, and with two agents $0$ and $1$: agent $0$ sees the coin, so its
+accessibility relation is equality of worlds, and agent $1$ does not, so its accessibility
+relation relates every pair of worlds. -/
 def muddy : Model Bool Unit (Fin 2) where
   rel := fun i w v => if i = 0 then w = v else True
   valuation := fun w _ => w = true
   nonempty_world := ⟨true⟩
 
-/-- Agent `0` knows `p` exactly at heads-worlds: `0` sees the coin. -/
+/-- **Agent 0 knows the coin is heads exactly at heads.** Let $p$ be the atom "the coin is heads"
+of the two-agent coin model. At a world $v$ of that model, the formula $K_0 p$ holds if and only
+if $v$ is the heads world: agent $0$ sees the coin. -/
 theorem sat_know_zero_atom (v : Bool) :
     Sat muddy (.know 0 (.atom ())) v ↔ v = true := by
   constructor
@@ -147,7 +180,9 @@ theorem sat_know_zero_atom (v : Bool) :
     rw [← hu]
     exact hv
 
-/-- Agent `0` knows `¬p` exactly at tails-worlds. -/
+/-- **Agent 0 knows the coin is tails exactly at tails.** Let $p$ be the atom "the coin is heads"
+of the two-agent coin model. At a world $v$ of that model, the formula $K_0 \neg p$ holds if and
+only if $v$ is the tails world. -/
 theorem sat_know_zero_not_atom (v : Bool) :
     Sat muddy (.know 0 (.not (.atom ()))) v ↔ v = false := by
   constructor
@@ -162,15 +197,19 @@ theorem sat_know_zero_not_atom (v : Bool) :
     rw [← hu, hv] at htu
     exact Bool.false_ne_true htu
 
-/-- Agent `1` does not know `p` at heads: `tails` is possible for `1`. -/
+/-- **Agent 1 does not know that the coin is heads.** Let $p$ be the atom "the coin is heads" of
+the two-agent coin model. The formula $K_1 p$ is false at the heads world: agent $1$ considers
+the tails world possible. -/
 theorem muddy_not_know_one_p_true :
     ¬ Sat muddy (.know 1 (.atom ())) true := by
   intro h
   have hfalse := h false (by simp [muddy])
   exact Bool.false_ne_true hfalse
 
-/-- Agent `1` knows that agent `0` knows whether `p`: from `1`'s
-viewpoint, every world has `0` knowing `p` or knowing `¬p`. -/
+/-- **Agent 1 knows that agent 0 knows whether the coin is heads.** Let $p$ be the atom "the coin
+is heads" of the two-agent coin model. At every world of that model the formula
+$K_1(K_0 p \lor K_0 \neg p)$ holds: agent $1$ knows that agent $0$ either knows $p$ or knows
+$\neg p$. -/
 theorem muddy_know_one_knows_whether (w : Bool) :
     Sat muddy (.know 1 (.or (.know 0 (.atom ()))
       (.know 0 (.not (.atom ()))))) w := by

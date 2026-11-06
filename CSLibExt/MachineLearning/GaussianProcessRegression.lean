@@ -46,7 +46,9 @@ open scoped MatrixOrder
 
 variable {X : Type*} {τ ν : Type*} [Fintype τ] [DecidableEq τ] [Fintype ν] [DecidableEq ν]
 
-/-- The kernel (Gram) matrix `k(a i, b j)` of a kernel on two families of inputs. -/
+/-- **Kernel matrix.** For a kernel $k : X \times X \to \mathbb{R}$ and two families of inputs
+$a = (a_i)_{i \in \alpha}$ and $b = (b_j)_{j \in \beta}$ in $X$, the kernel (Gram) matrix
+$K(a, b)$ is the $\alpha \times \beta$ real matrix with entries $K(a, b)_{ij} = k(a_i, b_j)$. -/
 def kernelMatrix (k : X → X → ℝ) {α β : Type*} (a : α → X) (b : β → X) : Matrix α β ℝ :=
   Matrix.of fun i j => k (a i) (b j)
 
@@ -57,22 +59,36 @@ def jointCov (k : X → X → ℝ) (σ2 : ℝ) (xt : τ → X) (xs : ν → X) :
   fromBlocks (kernelMatrix k xt xt) (kernelMatrix k xt xs) (kernelMatrix k xs xt)
     (kernelMatrix k xs xs + σ2 • 1)
 
-/-- The test values of the joint vector `(f(x*), y)`. -/
+/-- **Test-value projection.** For finite index sets $\tau$ (test inputs) and $\nu$ (training
+inputs), the test-value projection is the $\tau \times (\tau \sqcup \nu)$ real matrix with the
+identity matrix on the columns indexed by $\tau$ and a zero block on the columns indexed by $\nu$.
+It sends a joint vector $(u, y)$ with $u \in \mathbb{R}^{\tau}$ and $y \in \mathbb{R}^{\nu}$ to its
+block of test values $u$. -/
 noncomputable def testPart : Matrix τ (τ ⊕ ν) ℝ := blockRow 1 0
 
-/-- The training targets of the joint vector `(f(x*), y)`. -/
+/-- **Training-target projection.** For finite index sets $\tau$ (test inputs) and $\nu$
+(training inputs), the training-target projection is the $\nu \times (\tau \sqcup \nu)$ real
+matrix with a zero block on the columns indexed by $\tau$ and the identity matrix on the columns
+indexed by $\nu$. It sends a joint vector $(u, y)$ with $u \in \mathbb{R}^{\tau}$ and
+$y \in \mathbb{R}^{\nu}$ to its block of training targets $y$. -/
 noncomputable def targetPart : Matrix ν (τ ⊕ ν) ℝ := blockRow 0 1
 
-/-- With a positive semidefinite training kernel matrix and positive noise variance, `K + σ² I` is
-positive definite, hence invertible. -/
+/-- **Regularized kernel matrices are invertible.** Let $k : X \times X \to \mathbb{R}$ be a kernel
+and $x = (x_j)_{j \in \nu}$ a finite family of inputs whose kernel matrix
+$K = (k(x_i, x_j))_{i, j \in \nu}$ is positive semidefinite. Then for every $\sigma^2 > 0$ the
+matrix $K + \sigma^2 I$ has nonzero determinant, so it is invertible. -/
 theorem isUnit_det_kernelMatrix_add (k : X → X → ℝ) (xs : ν → X)
     (hK : (kernelMatrix k xs xs).PosSemidef)
     {σ2 : ℝ} (hσ : 0 < σ2) : IsUnit (kernelMatrix k xs xs + σ2 • 1).det :=
   (PosDef.posSemidef_add hK (PosDef.one.smul hσ)).det_pos.ne'.isUnit
 
 omit [Fintype τ] [Fintype ν] in
-/-- The joint covariance is the kernel matrix of all the inputs plus the noise variance on the
-training block. -/
+/-- **The joint covariance as a kernel matrix plus noise.** For a kernel
+$k : X \times X \to \mathbb{R}$, a real number $\sigma^2$, test inputs $x^* = (x^*_i)_{i \in \tau}$
+and training inputs $x = (x_j)_{j \in \nu}$, the joint covariance of $k$, $\sigma^2$, $x^*$ and $x$
+equals $K + D$, where $K$ is the kernel matrix of the combined family $(x^*, x)$ indexed by
+$\tau \sqcup \nu$ and $D$ is the diagonal matrix with entry $0$ at each test index and $\sigma^2$
+at each training index. -/
 theorem jointCov_eq_add (k : X → X → ℝ) (σ2 : ℝ) (xt : τ → X) (xs : ν → X) :
     jointCov k σ2 xt xs = kernelMatrix k (Sum.elim xt xs) (Sum.elim xt xs) +
       diagonal (Sum.elim 0 fun _ => σ2) := by
@@ -80,8 +96,11 @@ theorem jointCov_eq_add (k : X → X → ℝ) (σ2 : ℝ) (xt : τ → X) (xs : 
   cases a <;> cases b <;> simp [jointCov, kernelMatrix, diagonal, Matrix.one_apply]
 
 omit [Fintype τ] [Fintype ν] [DecidableEq τ] in
-/-- For a positive semidefinite kernel matrix on all the inputs and `σ² ≥ 0`, the joint covariance
-is positive semidefinite. -/
+/-- **The joint covariance is positive semidefinite.** Let $k : X \times X \to \mathbb{R}$ be a
+kernel, let $x^* = (x^*_i)_{i \in \tau}$ and $x = (x_j)_{j \in \nu}$ be families of test and
+training inputs, and let $\sigma^2 \ge 0$. If the kernel matrix of the combined family $(x^*, x)$,
+indexed by $\tau \sqcup \nu$, is positive semidefinite, then the joint covariance of $k$,
+$\sigma^2$, $x^*$ and $x$ is positive semidefinite. -/
 theorem jointCov_posSemidef (k : X → X → ℝ) {σ2 : ℝ} (hσ : 0 ≤ σ2) (xt : τ → X) (xs : ν → X)
     (hk : (kernelMatrix k (Sum.elim xt xs) (Sum.elim xt xs)).PosSemidef) :
     (jointCov k σ2 xt xs).PosSemidef := by
@@ -91,7 +110,11 @@ theorem jointCov_posSemidef (k : X → X → ℝ) {σ2 : ℝ} (hσ : 0 ≤ σ2) 
   cases a <;> simp [hσ]
 
 omit [Fintype τ] [DecidableEq τ] [Fintype ν] [DecidableEq ν] in
-/-- The training block of a positive semidefinite kernel matrix is positive semidefinite. -/
+/-- **Training blocks of positive semidefinite kernel matrices.** Let
+$k : X \times X \to \mathbb{R}$ be a kernel and let $x^* = (x^*_i)_{i \in \tau}$ and
+$x = (x_j)_{j \in \nu}$ be families of inputs. If the kernel matrix of the combined family
+$(x^*, x)$, indexed by $\tau \sqcup \nu$, is positive semidefinite, then so is the kernel matrix
+$(k(x_i, x_j))_{i, j \in \nu}$ of $x$. -/
 theorem kernelMatrix_posSemidef_train (k : X → X → ℝ) (xt : τ → X) (xs : ν → X)
     (hk : (kernelMatrix k (Sum.elim xt xs) (Sum.elim xt xs)).PosSemidef) :
     (kernelMatrix k xs xs).PosSemidef :=
@@ -99,11 +122,18 @@ theorem kernelMatrix_posSemidef_train (k : X → X → ℝ) (xt : τ → X) (xs 
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
 
-/-- **The Gaussian-process posterior**: let `k` be a covariance kernel on the inputs (its kernel
-matrix on the test and training inputs together is positive semidefinite) and `σ² > 0` the noise
-variance. If the test values and the training targets have the joint prior
-`N(0, [[K**, K*], [K*ᵀ, K + σ² I]])`, then given the targets `y` the test values are Gaussian with
-mean `K* (K + σ² I)⁻¹ y` and covariance `K** - K* (K + σ² I)⁻¹ K*ᵀ` (for almost every `y`). -/
+/-- **The Gaussian-process posterior.** Let $k : X \times X \to \mathbb{R}$ be a kernel, let
+$x^* = (x^*_i)_{i \in \tau}$ (test inputs) and $x = (x_j)_{j \in \nu}$ (training inputs) be
+finite families in $X$, and write $K(a, b)$ for the kernel matrix $(k(a_i, b_j))_{i, j}$. Assume
+that the kernel matrix of the combined family $(x^*, x)$, indexed by $\tau \sqcup \nu$, is
+positive semidefinite, and let $\sigma^2 > 0$. Let $V$ be a measurable random vector in
+$\mathbb{R}^{\tau \sqcup \nu}$ on a probability space whose law is the Gaussian $N(0, \Sigma)$,
+where $\Sigma$ is the joint covariance of $k$, $\sigma^2$, $x^*$ and $x$, and let $F$ (the test
+values) and $Y$ (the training targets), random vectors in $\mathbb{R}^{\tau}$ and
+$\mathbb{R}^{\nu}$, be the test and training blocks of $V$. Then for almost every $y$ with respect
+to the law of $Y$, the conditional distribution of $F$ given $Y = y$ is the Gaussian with mean
+$K(x^*, x) (K(x, x) + \sigma^2 I)^{-1} y$ and covariance
+$K(x^*, x^*) - K(x^*, x) (K(x, x) + \sigma^2 I)^{-1} K(x, x^*)$. -/
 theorem condDistrib_test_given_targets (k : X → X → ℝ) {σ2 : ℝ} (hσ : 0 < σ2) (xt : τ → X)
     (xs : ν → X) (hk : (kernelMatrix k (Sum.elim xt xs) (Sum.elim xt xs)).PosSemidef)
     {V : Ω → EuclideanSpace ℝ (τ ⊕ ν)} (hV : Measurable V)

@@ -48,7 +48,12 @@ namespace Cslib.Logic.PL.BDD
 
 /-! ### Restriction -/
 
-/-- The cofactor `t[x := b]`: every test of `x` takes the `b` branch. -/
+/-- **Restriction of a binary decision diagram.** For a variable $x$ and a Boolean $b$, the
+restriction (cofactor) $t[x := b]$ of a binary decision diagram $t$ is defined recursively: a
+leaf is kept; a node testing $x$ is replaced by the restriction of its $\mathrm{hi}$ child if $b$
+is true and of its $\mathrm{lo}$ child if $b$ is false; and a node testing any other variable
+$v$ is rebuilt from the restrictions of its two children with the reducing node constructor,
+which returns the common child when the two are equal and a node testing $v$ otherwise. -/
 def restrict (x : Nat) (b : Bool) : BDD → BDD
   | leaf c => leaf c
   | node v lo hi =>
@@ -77,8 +82,12 @@ theorem orderedFrom_restrict (x : Nat) (b : Bool) {n : Nat} {t : BDD} (h : Order
       · simpa [restrict, hvx] using (ihhi hhi).mono (by omega)
     · simpa [restrict, hvx] using orderedFrom_mk hv (ihlo hlo) (ihhi hhi)
 
-/-- `restrict` always returns a reduced diagram, whatever its input: kept nodes are rebuilt
-with `mk`. -/
+/-- **Restriction yields a reduced diagram.** For every binary decision diagram $t$, every
+variable $x$ and every Boolean $b$, the cofactor $t[x := b]$ is reduced: no node has two equal
+children.
+
+Nodes that restriction keeps are rebuilt with the node constructor that removes redundant
+tests, so the input need not be reduced. -/
 theorem reduced_restrict (x : Nat) (b : Bool) (t : BDD) : Reduced (restrict x b t) := by
   induction t with
   | leaf c => trivial
@@ -89,18 +98,26 @@ theorem reduced_restrict (x : Nat) (b : Bool) (t : BDD) : Reduced (restrict x b 
       · simpa [restrict, hvx] using ihhi
     · simpa [restrict, hvx] using reduced_mk (v := v) ihlo ihhi
 
-/-- Restricting an ordered diagram gives a reduced ordered one. -/
+/-- **Restriction yields an ROBDD.** If $t$ is an ordered binary decision diagram (tested
+variables strictly increase along every path), then for every variable $x$ and every Boolean
+$b$ the cofactor $t[x := b]$ is a reduced ordered binary decision diagram. -/
 theorem isROBDD_restrict (x : Nat) (b : Bool) {t : BDD} (h : OrderedFrom 0 t) :
     IsROBDD (restrict x b t) :=
   ⟨orderedFrom_restrict x b h, reduced_restrict x b t⟩
 
 /-! ### Quantification -/
 
-/-- Existential quantification over `x`: `t[x := false] ∨ t[x := true]`. -/
+/-- **Existential quantification of a diagram.** For a variable $x$ and a binary decision diagram
+$t$, the existential quantification of $t$ over $x$ is the diagram obtained by combining the
+cofactors $t[x := \mathrm{false}]$ and $t[x := \mathrm{true}]$ with Bryant's apply under
+disjunction. -/
 def existsVar (x : Nat) (t : BDD) : BDD :=
   apply (· || ·) (restrict x false t) (restrict x true t)
 
-/-- Universal quantification over `x`: `t[x := false] ∧ t[x := true]`. -/
+/-- **Universal quantification of a diagram.** For a variable $x$ and a binary decision diagram
+$t$, the universal quantification of $t$ over $x$ is the diagram obtained by combining the
+cofactors $t[x := \mathrm{false}]$ and $t[x := \mathrm{true}]$ with Bryant's apply under
+conjunction. -/
 def forallVar (x : Nat) (t : BDD) : BDD :=
   apply (· && ·) (restrict x false t) (restrict x true t)
 
@@ -127,7 +144,9 @@ theorem eval_forallVar (x : Nat) (t : BDD) (σ : Nat → Bool) :
   · intro h
     exact ⟨h false, h true⟩
 
-/-- Quantifying an ordered diagram gives a reduced ordered one. -/
+/-- **Existential quantification yields an ROBDD.** If $t$ is an ordered binary decision diagram
+(tested variables strictly increase along every path), then for every variable $x$ the
+existential quantification of $t$ over $x$ is a reduced ordered binary decision diagram. -/
 theorem isROBDD_existsVar (x : Nat) {t : BDD} (h : OrderedFrom 0 t) : IsROBDD (existsVar x t) :=
   isROBDD_apply _ (isROBDD_restrict x false h) (isROBDD_restrict x true h)
 
@@ -136,8 +155,11 @@ theorem isROBDD_forallVar (x : Nat) {t : BDD} (h : OrderedFrom 0 t) : IsROBDD (f
 
 /-! ### Satisfying paths -/
 
-/-- A path to a `true` leaf, preferring `hi` branches, as a list of tested variables with
-the branch taken. -/
+/-- **Satisfying path of a binary decision diagram.** The satisfying path of a diagram is found
+by a depth-first search for a leaf $\mathrm{true}$ that tries the $\mathrm{hi}$ (true) child of
+each node before its $\mathrm{lo}$ (false) child. It is returned as the list of pairs $(v, c)$ of
+the variables $v$ tested along the path with the branches $c$ taken (empty at a leaf
+$\mathrm{true}$), and the search returns nothing when the diagram has no leaf $\mathrm{true}$. -/
 def satPath : BDD → Option (List (Nat × Bool))
   | leaf b => if b then some [] else none
   | node v lo hi =>
@@ -145,8 +167,10 @@ def satPath : BDD → Option (List (Nat × Bool))
     | some p => some ((v, true) :: p)
     | none => (satPath lo).map ((v, false) :: ·)
 
-/-- The assignment read off a path: the recorded value on path variables, `false`
-elsewhere. -/
+/-- **Assignment read off a path.** For a path $p$, given as a list of pairs $(v, b)$ of a
+variable $v \in \mathbb{N}$ and a Boolean $b$, the assignment read off $p$ sends a variable $x$
+to the Boolean of the first pair in $p$ whose variable is $x$, and to $\mathrm{false}$ if $x$
+occurs in no pair of $p$. -/
 def ofPath (p : List (Nat × Bool)) (x : Nat) : Bool := (p.lookup x).getD false
 
 theorem ofPath_cons (v : Nat) (b : Bool) (p : List (Nat × Bool)) :
@@ -158,7 +182,10 @@ theorem ofPath_cons (v : Nat) (b : Bool) (p : List (Nat × Bool)) :
   · have hxv : (x == v) = false := beq_eq_false_iff_ne.mpr hx
     simp [ofPath, List.lookup, hxv, Function.update_of_ne hx]
 
-/-- The assignment read off a satisfying path makes an ordered diagram true. -/
+/-- **The path assignment satisfies an ordered diagram.** Let $t$ be a binary decision diagram
+ordered from some $n$ (every tested variable is at least $n$, and tested variables strictly
+increase along every path). If the satisfying-path search on $t$ returns a path $p$, then $t$
+evaluates to true under the assignment read off $p$. -/
 theorem eval_ofPath_satPath {n : Nat} {t : BDD} (h : OrderedFrom n t)
     {p : List (Nat × Bool)} (hp : satPath t = some p) : t.eval (ofPath p) = true := by
   induction t generalizing n p with
@@ -181,7 +208,9 @@ theorem eval_ofPath_satPath {n : Nat} {t : BDD} (h : OrderedFrom n t)
       rw [eval_update_of_lt hlo (by omega)]
       exact ihlo hlo hq'
 
-/-- A reduced diagram other than `leaf false` has a satisfying path. -/
+/-- **Reduced diagrams other than false have a satisfying path.** If a binary decision diagram
+$t$ is reduced and is not the leaf $\mathrm{false}$, then the search for a satisfying path in $t$
+succeeds: it returns a path from the root of $t$ to a leaf $\mathrm{true}$. -/
 theorem satPath_isSome_of_ne {t : BDD} (h : Reduced t) (hne : t ≠ leaf false) :
     (satPath t).isSome := by
   induction t with
@@ -202,10 +231,13 @@ theorem satPath_isSome_of_ne {t : BDD} (h : Reduced t) (hne : t ≠ leaf false) 
       rw [Option.isSome_map]
       exact ihlo hlo (fun hlo' ↦ hlohi (hlo'.trans hhi'.symm))
 
-/-- Satisfiability with one variable `f` fixed to `false` (for instance a variable that
-plays the role of falsum): `A` has such a model iff the cofactor of its ROBDD at `f := false`
-is not the leaf `false`. Without such a constraint, every proposition over `Nat` atoms is
-satisfied by the all-true valuation. -/
+/-- **Satisfiability with one variable fixed to false.** Let $A$ be a proposition over atoms
+indexed by natural numbers, let $t$ be its ROBDD, and let $f$ be a natural number. Then $A$
+evaluates to true under some valuation $\sigma$ with $\sigma(f) = \mathrm{false}$ if and only
+if the cofactor $t[f := \mathrm{false}]$ is not the leaf $\mathrm{false}$.
+
+The variable $f$ can, for instance, play the role of falsum. Without such a constraint, every
+proposition over atoms indexed by natural numbers is satisfied by the all-true valuation. -/
 theorem exists_evalBool_eq_false_at_iff {A : Proposition Nat} (f : Nat) :
     (∃ σ : Nat → Bool, σ f = false ∧ A.evalBool σ = true) ↔
       restrict f false (ofProposition A) ≠ leaf false := by
@@ -219,9 +251,12 @@ theorem exists_evalBool_eq_false_at_iff {A : Proposition Nat} (f : Nat) :
   · rintro ⟨σ, h⟩
     exact ⟨Function.update σ f false, Function.update_self .., h⟩
 
-/-- **Satisfy-one** with one variable `f` fixed to `false`: if `A` has a model with `f` false,
-the cofactor of its ROBDD at `f := false` has a satisfying path, and the path's assignment with
-`f` set to `false` is such a model. -/
+/-- **Satisfy-one with a variable fixed to false.** Let $A$ be a proposition over
+natural-number atoms and let $f$ be a natural number. If some assignment $\sigma$ with
+$\sigma(f) = \mathrm{false}$ satisfies $A$, then the search for a satisfying path in the
+restriction at $f := \mathrm{false}$ of the ROBDD of $A$ returns a path $p$, and the assignment
+read off $p$ (the recorded value on each variable of $p$, false elsewhere), changed to send $f$
+to $\mathrm{false}$, satisfies $A$. -/
 theorem satPath_restrict_ofProposition {A : Proposition Nat} (f : Nat)
     (h : ∃ σ : Nat → Bool, σ f = false ∧ A.evalBool σ = true) :
     ∃ p, satPath (restrict f false (ofProposition A)) = some p ∧
@@ -233,7 +268,9 @@ theorem satPath_restrict_ofProposition {A : Proposition Nat} (f : Nat)
   have := eval_ofPath_satPath hR.1 hp
   rwa [eval_restrict, eval_ofProposition] at this
 
-/-- Every proposition over atoms alone is true under the all-true valuation. -/
+/-- **The all-true valuation satisfies every proposition.** Every proposition $A$ over atoms
+indexed by natural numbers, built from atoms with $\land$, $\lor$ and $\to$ only, evaluates to
+true under the valuation that makes every atom true. -/
 theorem evalBool_allTrue (A : Proposition Nat) : A.evalBool (fun _ ↦ true) = true := by
   induction A with
   | atom x => rfl
@@ -241,9 +278,12 @@ theorem evalBool_allTrue (A : Proposition Nat) : A.evalBool (fun _ ↦ true) = t
     simp only [Proposition.evalBool, ihA, ihB]
     rfl
 
-/-- **Satisfy-one** for propositions: the ROBDD of every proposition over `Nat` atoms has a
-satisfying path, and its assignment satisfies the proposition. (Every such proposition is
-satisfiable, by the all-true valuation; the path is usually a different model.) -/
+/-- **Satisfy-one for propositions.** For every proposition $A$ over atoms indexed by natural
+numbers, the satisfying-path search on the ROBDD of $A$ returns a path $p$, and $A$ evaluates to
+true under the assignment read off $p$.
+
+Every such proposition is satisfiable, by the all-true valuation; the path usually gives a
+different model. -/
 theorem ofProposition_satPath (A : Proposition Nat) :
     ∃ p, satPath (ofProposition A) = some p ∧ A.evalBool (ofPath p) = true := by
   have hne := ofProposition_ne_leaf_false_iff.mpr ⟨fun _ ↦ true, evalBool_allTrue A⟩

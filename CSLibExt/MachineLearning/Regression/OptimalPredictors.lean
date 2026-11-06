@@ -53,7 +53,8 @@ open scoped ENNReal
 
 section SquaredLoss
 
-/-- The squared loss `(θ - y)²` of predicting `y` when the true value is `θ`. -/
+/-- **Squared loss.** The squared loss of predicting $y \in \mathbb{R}$ when the true value is
+$\theta \in \mathbb{R}$ is $(\theta - y)^2$, regarded as an element of $[0, \infty]$. -/
 noncomputable def sqLoss (θ y : ℝ) : ℝ≥0∞ :=
   ENNReal.ofReal ((θ - y) ^ 2)
 
@@ -61,8 +62,14 @@ theorem measurable_sqLoss : Measurable (Function.uncurry sqLoss) := by
   unfold sqLoss
   fun_prop
 
-/-- **The mean minimizes the expected squared loss.** When the right side is infinite the
-inequality is trivial; otherwise `ν` has a second moment and the variance decomposition applies. -/
+/-- **The mean minimizes the expected squared loss.** Let $\nu$ be a probability measure on
+$\mathbb{R}$ with mean $m = \int t \, d\nu(t)$ (taken to be $0$ when $\nu$ has no finite first
+moment). Then for every $y \in \mathbb{R}$,
+$$\int (\theta - m)^2 \, d\nu(\theta) \le \int (\theta - y)^2 \, d\nu(\theta),$$
+where both integrals are taken in $[0, \infty]$.
+
+When the right side is infinite the inequality is trivial; otherwise $\nu$ has a second moment and
+the variance decomposition applies. -/
 theorem lintegral_sqLoss_integral_le (ν : Measure ℝ) [IsProbabilityMeasure ν] (y : ℝ) :
     ∫⁻ θ, sqLoss θ (∫ t, t ∂ν) ∂ν ≤ ∫⁻ θ, sqLoss θ y ∂ν := by
   by_cases htop : ∫⁻ θ, sqLoss θ y ∂ν = ∞
@@ -95,7 +102,12 @@ theorem lintegral_sqLoss_integral_le (ν : Measure ℝ) [IsProbabilityMeasure ν
 variable {𝓧 : Type*} [MeasurableSpace 𝓧] {P : Kernel ℝ 𝓧} [IsFiniteKernel P] {π : Measure ℝ}
   [IsFiniteMeasure π] {f : 𝓧 → ℝ}
 
-/-- The posterior mean `x ↦ ∫ θ d(P†π x)(θ)`. -/
+/-- **Posterior mean.** Let $P$ be a finite kernel from $\mathbb{R}$ to a measurable space
+$\mathcal{X}$, let $\pi$ be a finite measure on $\mathbb{R}$, and write $P^\dagger\pi$ for the
+posterior kernel from $\mathcal{X}$ to $\mathbb{R}$. The posterior mean is the function on
+$\mathcal{X}$ sending $x$ to $\int \theta \, d(P^\dagger\pi)(x)(\theta)$, the mean of the posterior
+distribution given the observation $x$ (taken to be $0$ when that distribution has no finite
+first moment). -/
 noncomputable def posteriorMean (P : Kernel ℝ 𝓧) [IsFiniteKernel P] (π : Measure ℝ)
     [IsFiniteMeasure π] (x : 𝓧) : ℝ :=
   ∫ θ, θ ∂(P†π) x
@@ -105,7 +117,14 @@ theorem measurable_posteriorMean (P : Kernel ℝ 𝓧) [IsFiniteKernel P] (π : 
   (StronglyMeasurable.integral_kernel_prod_right (f := fun (_ : 𝓧) (θ : ℝ) => θ)
     measurable_snd.stronglyMeasurable).measurable
 
-/-- `f` is a measurable version of the posterior mean. -/
+/-- **Measurable versions of the posterior mean.** Let $P$ be a finite kernel from $\mathbb{R}$ to
+a measurable space $\mathcal{X}$, sending $\theta$ to the measure $P_\theta$, let $\pi$ be a
+finite measure on $\mathbb{R}$, and write $P^\dagger\pi$ for the posterior kernel from
+$\mathcal{X}$ to $\mathbb{R}$. A function $f : \mathcal{X} \to \mathbb{R}$ is a measurable version
+of the posterior mean if $f$ is measurable and $f(x) = \int \theta \, d(P^\dagger\pi)(x)(\theta)$
+(the posterior mean, taken to be $0$ when the posterior has no finite first moment) for almost
+every $x$ with respect to the marginal distribution of the data, the measure
+$A \mapsto \int P_\theta(A) \, d\pi(\theta)$ on $\mathcal{X}$. -/
 structure IsPosteriorMean (P : Kernel ℝ 𝓧) [IsFiniteKernel P] (π : Measure ℝ) [IsFiniteMeasure π]
     (f : 𝓧 → ℝ) : Prop where
   measurable : Measurable f
@@ -119,7 +138,15 @@ theorem IsPosteriorMean.isArgminEstimator (hf : IsPosteriorMean P π f) :
   rw [hx]
   exact lintegral_sqLoss_integral_le _ y
 
-/-- **The posterior mean is the Bayes estimator for squared loss.** -/
+/-- **The posterior mean is a Bayes estimator for squared loss.** Let $P$ be a finite kernel from
+$\mathbb{R}$ to a measurable space $\mathcal{X}$, sending a parameter $\theta$ to the measure
+$P_\theta$ on $\mathcal{X}$, let $\pi$ be a finite prior measure on $\mathbb{R}$, and let
+$f : \mathcal{X} \to \mathbb{R}$ be a measurable version of the posterior mean. Then the
+deterministic estimator $x \mapsto f(x)$ is a Bayes estimator for the squared loss
+$\ell(\theta, y) = (\theta - y)^2$: its average risk
+$\int \int (\theta - f(x))^2 \, dP_\theta(x) \, d\pi(\theta)$ equals the Bayes risk, the infimum
+of the average risks of all Markov kernels from $\mathcal{X}$ to $\mathbb{R}$, where risks take
+values in $[0, \infty]$. -/
 theorem IsPosteriorMean.isBayesEstimator (hf : IsPosteriorMean P π f) :
     IsBayesEstimator sqLoss P (Kernel.deterministic f hf.measurable) π :=
   hf.isArgminEstimator.isBayesEstimator measurable_sqLoss
@@ -135,7 +162,8 @@ end SquaredLoss
 
 section AbsoluteLoss
 
-/-- The absolute loss `|θ - y|` of predicting `y` when the true value is `θ`. -/
+/-- **Absolute loss.** The absolute loss of predicting $y \in \mathbb{R}$ when the true value is
+$\theta \in \mathbb{R}$ is $|\theta - y|$, regarded as an element of $[0, \infty]$. -/
 noncomputable def absLoss (θ y : ℝ) : ℝ≥0∞ :=
   ENNReal.ofReal |θ - y|
 
@@ -143,7 +171,10 @@ theorem measurable_absLoss : Measurable (Function.uncurry absLoss) := by
   unfold absLoss
   fun_prop
 
-/-- The expected absolute loss is minimized at every median, in `ℝ≥0∞`. -/
+/-- **The expected absolute loss is minimized at every median.** Let $\nu$ be a probability measure
+on $\mathbb{R}$ and let $m$ be a median of $\nu$. Then for every $y \in \mathbb{R}$,
+$$\int |\theta - m| \, d\nu(\theta) \le \int |\theta - y| \, d\nu(\theta),$$
+where both integrals are taken in $[0, \infty]$. -/
 theorem lintegral_absLoss_le_of_isMedian (ν : Measure ℝ) [IsProbabilityMeasure ν] {m : ℝ}
     (hm : IsMedian ν m) (y : ℝ) : ∫⁻ θ, absLoss θ m ∂ν ≤ ∫⁻ θ, absLoss θ y ∂ν := by
   by_cases htop : ∫⁻ θ, absLoss θ y ∂ν = ∞
@@ -162,8 +193,13 @@ theorem lintegral_absLoss_le_of_isMedian (ν : Measure ℝ) [IsProbabilityMeasur
 variable {𝓧 : Type*} [MeasurableSpace 𝓧] {P : Kernel ℝ 𝓧} [IsFiniteKernel P] {π : Measure ℝ}
   [IsFiniteMeasure π] {f : 𝓧 → ℝ}
 
-/-- `f` is a measurable choice of posterior medians: for almost every observation `x`, `f x` is
-a median of the posterior `P†π x`. -/
+/-- **Measurable choices of posterior medians.** Let $P$ be a finite kernel from $\mathbb{R}$ to a
+measurable space $\mathcal{X}$, sending $\theta$ to the measure $P_\theta$, let $\pi$ be a finite
+measure on $\mathbb{R}$, and write $P^\dagger\pi$ for the posterior kernel from $\mathcal{X}$ to
+$\mathbb{R}$. A function $f : \mathcal{X} \to \mathbb{R}$ is a measurable choice of posterior
+medians if $f$ is measurable and, for almost every $x$ with respect to the marginal distribution
+$A \mapsto \int P_\theta(A) \, d\pi(\theta)$ of the data, $f(x)$ is a median of the posterior
+distribution $(P^\dagger\pi)(x)$. -/
 structure IsPosteriorMedian (P : Kernel ℝ 𝓧) [IsFiniteKernel P] (π : Measure ℝ)
     [IsFiniteMeasure π] (f : 𝓧 → ℝ) : Prop where
   measurable : Measurable f
@@ -175,7 +211,15 @@ theorem IsPosteriorMedian.isArgminEstimator (hf : IsPosteriorMedian P π f) :
   filter_upwards [hf.ae_isMedian] with x hx
   exact le_antisymm (le_iInf fun y => lintegral_absLoss_le_of_isMedian _ hx y) (iInf_le _ _)
 
-/-- **A posterior median is a Bayes estimator for absolute loss.** -/
+/-- **A posterior median is a Bayes estimator for absolute loss.** Let $P$ be a finite kernel from
+$\mathbb{R}$ to a measurable space $\mathcal{X}$, sending a parameter $\theta$ to the measure
+$P_\theta$ on $\mathcal{X}$, let $\pi$ be a finite prior measure on $\mathbb{R}$, and let
+$f : \mathcal{X} \to \mathbb{R}$ be a measurable choice of posterior medians. Then the
+deterministic estimator $x \mapsto f(x)$ is a Bayes estimator for the absolute loss
+$\ell(\theta, y) = |\theta - y|$: its average risk
+$\int \int |\theta - f(x)| \, dP_\theta(x) \, d\pi(\theta)$ equals the Bayes risk, the infimum
+of the average risks of all Markov kernels from $\mathcal{X}$ to $\mathbb{R}$, where risks take
+values in $[0, \infty]$. -/
 theorem IsPosteriorMedian.isBayesEstimator (hf : IsPosteriorMedian P π f) :
     IsBayesEstimator absLoss P (Kernel.deterministic f hf.measurable) π :=
   hf.isArgminEstimator.isBayesEstimator measurable_absLoss

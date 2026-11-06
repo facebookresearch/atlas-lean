@@ -95,7 +95,10 @@ theorem varFinsetLeft_instantiateTerm_subset (t : L.Term α) {m : ℕ}
     rcases this with h | h
     exacts [Or.inl ⟨i, h⟩, Or.inr h]
 
-/-- Instantiation adds at most the variables of the term. -/
+/-- **Free variables of an instance.** Let $t$ be a term and $\varphi$ a first-order formula with
+$m + 1$ bound variables, and let $\varphi(t)$ be the instance obtained by substituting $t$ for the
+outermost bound variable. Every free variable of $\varphi(t)$ is a free variable of $\varphi$ or a
+variable of $t$. -/
 theorem freeVarFinset_instantiate_subset (t : L.Term α) :
     ∀ {m : ℕ} (φ : L.BoundedFormula α (m + 1)),
       (instantiate t φ).freeVarFinset ⊆ φ.freeVarFinset ∪ t.varFinset
@@ -130,7 +133,10 @@ theorem freeVarFinset_instantiate_subset (t : L.Term α) :
     rw [instantiate]
     exact freeVarFinset_instantiate_subset t φ
 
-/-- The number of connectives and quantifiers of a formula. -/
+/-- **Depth of a formula.** The depth $d(\varphi)$ of a first-order formula $\varphi$ is the
+nesting height of its implications and universal quantifiers: $\bot$, equations and relation
+atoms have depth $0$, the implication $\varphi \to \psi$ has depth
+$\max(d(\varphi), d(\psi)) + 1$, and $\forall \varphi$ has depth $d(\varphi) + 1$. -/
 def depth : ∀ {n : ℕ}, L.BoundedFormula α n → ℕ
   | _, .falsum => 0
   | _, .equal _ _ => 0
@@ -184,7 +190,12 @@ theorem renameTerm_congr_of_eqOn {f g : α → β} {n : ℕ} {t : L.Term (α ⊕
     exact ⟨i, ha⟩
 
 omit [DecidableEq β] in
-/-- Renamings that agree on the free variables agree on the formula. -/
+/-- **Renaming depends only on the free variables.** Let $\alpha$ and $\beta$ be types of
+variables, let $n \in \mathbb{N}$, and let $\varphi$ be a formula with free variables in $\alpha$
+and $n$ further variables reserved for binding by enclosing quantifiers. If two maps
+$f, g : \alpha \to \beta$ agree on every variable from $\alpha$ that occurs free in $\varphi$,
+then renaming the variables of $\varphi$ from $\alpha$ along $f$ and along $g$ gives the same
+formula. -/
 theorem rename_congr_of_eqOn {f g : α → β} {n : ℕ} {φ : L.BoundedFormula α n}
     (h : ∀ a ∈ φ.freeVarFinset, f a = g a) : rename f φ = rename g φ := by
   induction φ with
@@ -258,8 +269,13 @@ private theorem derivable_rename_of_infinite [Infinite β] {Γ : List (L.Formula
     rw [rename_instantiate] at h₂ ⊢
     exact Derivable.subst h₁ h₂
 
-/-- Derivations survive relabeling free variables along any map (Mathlib's `Formula.relabel`),
-when the target has infinitely many variables: each eigenvariable is sent to a fresh one. -/
+/-- **Renaming free variables along an arbitrary map preserves derivability.** Let $\alpha$ and
+$\beta$ be types of variables with $\beta$ infinite, and let $f : \alpha \to \beta$ be any map.
+If $\varphi$ is derivable from the list of hypotheses $\Gamma$ in natural deduction, then the
+formula obtained from $\varphi$ by renaming each free variable $x$ to $f(x)$ is derivable from
+the list obtained by renaming the free variables of each formula of $\Gamma$ in the same way.
+
+The map need not be injective: in the proof each eigenvariable is sent to a fresh variable. -/
 theorem Derivable.relabel_of_infinite [Infinite β] {Γ : List (L.Formula α)} {φ : L.Formula α}
     (h : Derivable Γ φ) (f : α → β) : Derivable (Γ.map (Formula.relabel f)) (φ.relabel f) := by
   have := derivable_rename_of_infinite h f
@@ -268,8 +284,11 @@ theorem Derivable.relabel_of_infinite [Infinite β] {Γ : List (L.Formula α)} {
 
 end Rename
 
-/-- Doubling the free variables keeps a set consistent: halving maps any derivation of `⊥`
-back. -/
+/-- **Doubling the variables preserves consistency.** If $S$ is a consistent set of formulas with
+free variables in $\mathbb{N}$, then the set obtained from $S$ by renaming every free variable
+$x$ to $2x$ in each of its formulas is consistent.
+
+Halving the variables maps any derivation of $\bot$ from the renamed set back to one from $S$. -/
 theorem Consistent.relabel_double {S : Set (L.Formula ℕ)} (hS : Consistent S) :
     Consistent (Formula.relabel (2 * ·) '' S) := by
   rintro ⟨Γ, hΓ, hd⟩
@@ -300,8 +319,12 @@ private theorem instantiateTerm_holeArgs {n : ℕ} (u : L.Term ℕ) (x : Fin n �
     rfl
   · simp only [holeArgs, hj, ↓reduceIte, Function.update_of_ne hj, instantiateTerm_relabel_inl]
 
-/-- Replacing the arguments one at a time: a property preserved by single replacements with
-related values holds after replacing all arguments. -/
+/-- **Replacing arguments one at a time.** Let $r$ be a relation on a type $\beta$, let $n$ be a
+natural number and let $P$ be a property of $n$-tuples $x = (x_i)_{i < n}$ in $\beta$. Suppose
+that for every tuple $x$, every position $i$ and all $a, b \in \beta$ with $r(a, b)$, if $P$
+holds of $x$ with its $i$-th entry replaced by $a$, then $P$ holds of $x$ with its $i$-th entry
+replaced by $b$. Then for all tuples $x, y$ with $r(x_i, y_i)$ for every $i$, $P(x)$ implies
+$P(y)$. -/
 theorem update_chain {β : Type*} {n : ℕ} {r : β → β → Prop} (P : (Fin n → β) → Prop)
     (hstep : ∀ (x : Fin n → β) (i : Fin n) (a b : β), r a b →
       P (Function.update x i a) → P (Function.update x i b))
@@ -338,7 +361,11 @@ theorem update_chain {β : Type*} {n : ℕ} {r : β → β → Prop} (P : (Fin n
 variable (hΔ : MaximalConsistent Δ)
 include hΔ
 
-/-- Replacing one argument of a function symbol by an equal term gives an equal term. -/
+/-- **Congruence for function symbols in a maximal consistent set.** Let $\Delta$ be a maximal
+consistent set of first-order formulas with free variables in $\mathbb{N}$, let $f$ be an $n$-ary
+function symbol, let $x = (x_0, \dots, x_{n-1})$ be terms over $\mathbb{N}$ and let $i < n$. For a
+term $u$, write $x[i := u]$ for $x$ with its $i$-th entry replaced by $u$. If the equation
+$a = b$ lies in $\Delta$, then the equation $f(x[i := a]) = f(x[i := b])$ lies in $\Delta$. -/
 theorem MaximalConsistent.func_update {n : ℕ} (f : L.Functions n) (x : Fin n → L.Term ℕ)
     (i : Fin n) {a b : L.Term ℕ} (hab : a.equal b ∈ Δ) :
     (Term.func f (Function.update x i a)).equal (Term.func f (Function.update x i b)) ∈ Δ := by
@@ -352,7 +379,11 @@ theorem MaximalConsistent.func_update {n : ℕ} (f : L.Functions n) (x : Fin n �
   have h := hΔ.instantiate_mem_of_equal (φ := φ) hab (by rw [key]; exact hΔ.equal_refl _)
   rwa [key] at h
 
-/-- Replacing one argument of a relation symbol by an equal term preserves membership. -/
+/-- **Replacing an argument of a relation symbol by an equal term.** Let $\Delta$ be a maximal
+consistent set of formulas with free variables in $\mathbb{N}$, let $R$ be an $n$-ary relation
+symbol, let $x_0, \dots, x_{n-1}$, $a$ and $b$ be terms with variables in $\mathbb{N}$, and let
+$i < n$. If $\Delta$ contains $a = b$ and contains $R(x_0, \dots, x_{n-1})$ with $x_i$ replaced
+by $a$, then $\Delta$ contains $R(x_0, \dots, x_{n-1})$ with $x_i$ replaced by $b$. -/
 theorem MaximalConsistent.rel_update {n : ℕ} (R : L.Relations n) (x : Fin n → L.Term ℕ)
     (i : Fin n) {a b : L.Term ℕ} (hab : a.equal b ∈ Δ)
     (h : R.formula (Function.update x i a) ∈ Δ) : R.formula (Function.update x i b) ∈ Δ := by
@@ -382,7 +413,12 @@ section TermModel
 
 variable {Δ : Set (L.Formula ℕ)}
 
-/-- Terms as a structure: function symbols build terms, `R(t⃗)` holds iff it is in `Δ`. -/
+/-- **Term structure of a set of formulas.** Let $\Delta$ be a set of first-order formulas in a
+language $L$ with free variables in $\mathbb{N}$. The term structure of $\Delta$ is the
+$L$-structure whose domain is the set of $L$-terms with variables in $\mathbb{N}$, in which an
+$n$-ary function symbol $f$ sends terms $t_1, \dots, t_n$ to the term $f(t_1, \dots, t_n)$, and
+an $n$-ary relation symbol $R$ holds of $t_1, \dots, t_n$ exactly when the atomic formula
+$R(t_1, \dots, t_n)$ belongs to $\Delta$. -/
 @[instance_reducible]
 def termStructure (Δ : Set (L.Formula ℕ)) : L.Structure (L.Term ℕ) where
   funMap f ts := Term.func f ts
@@ -396,7 +432,10 @@ theorem realize_termStructure (Δ : Set (L.Formula ℕ)) {β : Type*} (g : β �
     simp only [Term.realize, Term.subst, ih]
     rfl
 
-/-- Provable equality in a maximal consistent set. -/
+/-- **Provable equality of terms.** Let $\Delta$ be a maximal consistent set of first-order
+formulas in a language $L$ with free variables in $\mathbb{N}$. Provable equality in $\Delta$ is
+the equivalence relation on $L$-terms with variables in $\mathbb{N}$ under which $s \sim t$ holds
+exactly when the equation $s = t$ belongs to $\Delta$. -/
 def termSetoid (hΔ : MaximalConsistent Δ) : Setoid (L.Term ℕ) where
   r s t := s.equal t ∈ Δ
   iseqv := ⟨hΔ.equal_refl, hΔ.equal_symm, hΔ.equal_trans⟩
@@ -407,10 +446,15 @@ instance termPrestructure (hΔ : MaximalConsistent Δ) : L.Prestructure (termSet
   rel_equiv {_} {R} _ _ hxy := propext
     ⟨hΔ.rel_congr R hxy, hΔ.rel_congr R fun i ↦ hΔ.equal_symm (hxy i)⟩
 
-/-- The term model of a maximal consistent set. -/
+/-- **Term model of a maximal consistent set.** For a maximal consistent set $\Delta$ of formulas
+with free variables in $\mathbb{N}$, the term model of $\Delta$ is the set of terms with
+variables in $\mathbb{N}$ modulo the equivalence relation that identifies $s$ and $t$ when the
+formula $s = t$ belongs to $\Delta$. -/
 abbrev TermModel (hΔ : MaximalConsistent Δ) : Type u := Quotient (termSetoid hΔ)
 
-/-- The canonical assignment `x ↦ [x]`. -/
+/-- **Canonical assignment of the term model.** For a maximal consistent set $\Delta$ of formulas
+with free variables in $\mathbb{N}$, the canonical assignment sends each variable
+$x \in \mathbb{N}$ to $[x]$, the class of the variable term $x$ in the term model of $\Delta$. -/
 def termAssignment (hΔ : MaximalConsistent Δ) : ℕ → TermModel hΔ :=
   fun x ↦ ⟦Term.var x⟧
 
@@ -425,7 +469,9 @@ theorem realize_termAssignment (t : L.Term ℕ) :
   | var => rfl
   | func f ts ih => exact congrArg _ (funext ih)
 
-/-- Lower a term with no bound variables to a term over `ℕ`. -/
+/-- **Lowering a term with no bound variables.** A term whose variables are free variables from
+$\mathbb{N}$ together with bound variables from the empty index set is lowered to the term over
+$\mathbb{N}$ of the same shape, in which every free variable $x$ stays $x$. -/
 def lowerTerm (s : L.Term (ℕ ⊕ Fin 0)) : L.Term ℕ := s.subst (Sum.elim Term.var finZeroElim)
 
 theorem lowerTerm_relabel_inl (s : L.Term (ℕ ⊕ Fin 0)) : (lowerTerm s).relabel Sum.inl = s := by
@@ -449,8 +495,12 @@ theorem realize_lowerTerm (s : L.Term (ℕ ⊕ Fin 0)) (xs : Fin 0 → TermModel
   rw [hv, Term.realize_quotient_mk', realize_termStructure]
   rfl
 
-/-- **Truth lemma.** If `Δ` has a witness for every universal formula, then a formula holds in
-the term model under `x ↦ [x]` iff it is in `Δ`. -/
+/-- **Truth lemma for the first-order term model.** Let $\Delta$ be a maximal consistent set of
+formulas with free variables in $\mathbb{N}$ such that, for every formula $\varphi$ with one
+bound variable, if $\Delta$ contains $\varphi(t)$ for every term $t$ (where $\varphi(t)$ is the
+result of substituting $t$ for the bound variable), then $\Delta$ contains $\forall x\,\varphi$.
+Then a formula $\psi$ with free variables in $\mathbb{N}$ holds in the term model of $\Delta$
+under the canonical assignment $x \mapsto [x]$ if and only if $\psi \in \Delta$. -/
 theorem realize_termModel_iff
     (hH : ∀ φ : L.BoundedFormula ℕ 1, (∀ t, instantiate t φ ∈ Δ) → φ.all ∈ Δ)
     (φ : L.Formula ℕ) : φ.Realize (termAssignment hΔ) ↔ φ ∈ Δ := by
@@ -505,7 +555,10 @@ instance : Countable (L.BoundedFormula ℕ 1) :=
   (Function.Injective.countable
     (f := fun φ ↦ (⟨1, φ⟩ : Σ n, L.BoundedFormula ℕ n))) sigma_mk_injective
 
-/-- An enumeration of the one-variable bodies. -/
+/-- **Enumeration of formulas with one bound variable.** For a language with countably many
+symbols, the formulas $\varphi_0, \varphi_1, \dots$ are a fixed enumeration, chosen by choice, of
+all first-order formulas with free variables in $\mathbb{N}$ and one bound variable: every such
+formula is $\varphi_k$ for some $k \in \mathbb{N}$. -/
 noncomputable def enumBody : ℕ → L.BoundedFormula ℕ 1 :=
   (exists_surjective_nat (L.BoundedFormula ℕ 1)).choose
 
@@ -513,7 +566,10 @@ theorem enumBody_surjective : Function.Surjective (enumBody (L := L)) :=
   (exists_surjective_nat (L.BoundedFormula ℕ 1)).choose_spec
 
 omit [Countable L.Symbols] in
-/-- A strict upper bound on the free variables of a formula. -/
+/-- **Variable bound of a formula.** Let $\varphi$ be a first-order formula whose variables are
+natural numbers together with $n$ variables reserved for quantifiers. Its variable bound
+$b(\varphi)$ is one more than the largest natural number occurring as a free variable of
+$\varphi$, or $1$ when there is none; it is a strict upper bound on these free variables. -/
 def varBound {n : ℕ} (φ : L.BoundedFormula ℕ n) : ℕ := φ.freeVarFinset.sup id + 1
 
 omit [Countable L.Symbols] in
@@ -521,13 +577,22 @@ theorem lt_varBound {n : ℕ} {φ : L.BoundedFormula ℕ n} {x : ℕ} (hx : x �
     x < varBound φ :=
   Nat.lt_succ_of_le (Finset.le_sup (f := id) hx)
 
-/-- Base for the witnesses: above the free variables of `φ₀, …, φₖ`, strictly increasing. -/
+/-- **Witness bases.** Let $L$ be a first-order language with countably many symbols, let
+$\varphi_0, \varphi_1, \dots$ be the fixed surjective enumeration of the $L$-formulas with free
+variables in $\mathbb{N}$ and one variable reserved for a quantifier, and let $b(\varphi)$ be one
+more than the largest free variable of $\varphi$, or $1$ if it has none. The witness bases are
+defined by $w_0 = b(\varphi_0)$ and $w_{k+1} = w_k + 1 + b(\varphi_{k+1})$. They are strictly
+increasing, and $w_k$ exceeds every free variable of $\varphi_0, \dots, \varphi_k$. -/
 noncomputable def witnessBase (L : Language.{u, v}) [Countable L.Symbols] : ℕ → ℕ
   | 0 => varBound (enumBody (L := L) 0)
   | k + 1 => witnessBase L k + 1 + varBound (enumBody (L := L) (k + 1))
 
-/-- The `k`-th Henkin witness `2 * witnessBase k + 1`: odd, so it avoids a set whose free
-variables are even, and above the free variables of `φ₀, …, φₖ`. -/
+/-- **Henkin witnesses.** Let $L$ be a first-order language with countably many symbols and let
+$w_0 < w_1 < \dots$ be its witness bases, built from the fixed enumeration
+$\varphi_0, \varphi_1, \dots$ of the $L$-formulas with one variable reserved for a quantifier.
+The $k$-th Henkin witness is the variable $c_k = 2 w_k + 1$. It is odd, so it is not a free
+variable of any formula whose free variables are all even, and it exceeds every free variable
+of $\varphi_0, \dots, \varphi_k$. -/
 noncomputable def witness (L : Language.{u, v}) [Countable L.Symbols] (k : ℕ) : ℕ :=
   2 * witnessBase L k + 1
 
@@ -555,11 +620,17 @@ theorem varBound_lt_witness {i k : ℕ} (hik : i ≤ k) :
     · simp only [witnessBase]
       omega
 
-/-- The `k`-th Henkin axiom. -/
+/-- **The $k$-th Henkin axiom.** For a language with countably many symbols and $k \in \mathbb{N}$,
+the $k$-th Henkin axiom is the Henkin axiom $\neg \forall \varphi_k \to \neg \varphi_k(c_k)$, where
+$\varphi_k$ is the $k$-th formula in the enumeration of formulas with one bound variable and
+$c_k$ is the $k$-th Henkin witness. -/
 noncomputable def henkinAxiomAt (k : ℕ) : L.Formula ℕ :=
   henkinAxiom (enumBody k) (witness L k)
 
-/-- The first `k` stages of the Henkin extension of `S`. -/
+/-- **Stages of the Henkin extension.** Let $S$ be a set of first-order formulas with free variables
+in $\mathbb{N}$, in a language with countably many symbols, and let $H_k$ be the $k$-th Henkin
+axiom. The stages $S_k$ are defined by $S_0 = S$ and $S_{k+1} = S_k \cup \{H_k\}$, so $S_k$ is
+$S$ together with $H_0, \dots, H_{k-1}$. -/
 noncomputable def henkinStage (S : Set (L.Formula ℕ)) : ℕ → Set (L.Formula ℕ)
   | 0 => S
   | k + 1 => insert (henkinAxiomAt k) (henkinStage S k)
@@ -581,7 +652,9 @@ theorem mem_henkinStage {S : Set (L.Formula ℕ)} {k : ℕ} {ψ : L.Formula ℕ}
 theorem henkinStage_mono (S : Set (L.Formula ℕ)) : Monotone (henkinStage S) :=
   monotone_nat_of_le_succ fun _ ↦ Set.subset_insert _ _
 
-/-- The Henkin extension of `S`. -/
+/-- **Henkin extension.** For a language with countably many symbols, the Henkin extension of a set
+$S$ of first-order formulas with free variables in $\mathbb{N}$ is $S$ together with all Henkin
+axioms, the $k$-th Henkin axiom for every $k \in \mathbb{N}$. -/
 noncomputable def henkinSet (S : Set (L.Formula ℕ)) : Set (L.Formula ℕ) :=
   S ∪ Set.range (henkinAxiomAt (L := L))
 
@@ -612,8 +685,12 @@ theorem consistent_henkinSet {S : Set (L.Formula ℕ)} (hS : Consistent S)
     · exact Set.mem_sUnion_of_mem h ⟨0, rfl⟩
     · exact Set.mem_sUnion_of_mem (Set.mem_insert _ _) ⟨k + 1, rfl⟩
 
-/-- A consistent set whose free variables are even extends to a maximal consistent set with a
-witness for every universal formula. -/
+/-- **Henkin extension of a consistent set.** Let $L$ be a language with countably many symbols
+and let $S$ be a consistent set of first-order formulas with free variables in $\mathbb{N}$ such
+that every free variable of every formula in $S$ is even. Then $S$ is contained in a maximal
+consistent set $\Delta$ with the Henkin property: for every formula $\varphi$ with one bound
+variable, if every instance $\varphi(t)$, for $t$ a term over $\mathbb{N}$, lies in $\Delta$, then
+$\forall \varphi$ lies in $\Delta$. -/
 theorem exists_maximalConsistent_henkin {S : Set (L.Formula ℕ)} (hS : Consistent S)
     (hEven : ∀ ψ ∈ S, ∀ x ∈ ψ.freeVarFinset, x % 2 = 0) :
     ∃ Δ, S ⊆ Δ ∧ MaximalConsistent Δ ∧
@@ -625,9 +702,13 @@ theorem exists_maximalConsistent_henkin {S : Set (L.Formula ℕ)} (hS : Consiste
 
 /-! ### Model existence and completeness -/
 
-/-- **Model existence.** Every consistent set of formulas over `ℕ` is satisfiable.  The free
-variables are first doubled, which keeps the set consistent and leaves the odd variables free
-for Henkin witnesses. -/
+/-- **Model existence for first-order logic.** Let $L$ be a language with countably many symbols.
+Every consistent set $S$ of first-order formulas with free variables in $\mathbb{N}$ is
+satisfiable: there are a nonempty $L$-structure $M$, in the universe of the function symbols of
+$L$, and an assignment $v : \mathbb{N} \to M$ under which every formula of $S$ holds.
+
+The free variables are first doubled, which keeps the set consistent and leaves the odd variables
+free for Henkin witnesses. -/
 theorem exists_model_of_consistent {S : Set (L.Formula ℕ)} (hS : Consistent S) :
     ∃ (M : Type u) (_ : L.Structure M) (v : ℕ → M), Nonempty M ∧ ∀ ψ ∈ S, ψ.Realize v := by
   have hEven : ∀ ψ ∈ Formula.relabel (2 * ·) '' S, ∀ x ∈ ψ.freeVarFinset, x % 2 = 0 := by
@@ -641,8 +722,12 @@ theorem exists_model_of_consistent {S : Set (L.Formula ℕ)} (hS : Consistent S)
   have := (realize_termModel_iff hΔ hH _).mpr (hSΔ ⟨ψ, hψ, rfl⟩)
   rwa [Formula.realize_relabel] at this
 
-/-- **Strong completeness.** If every structure and assignment satisfying `S` satisfy `φ`, then
-`S` proves `φ`. -/
+/-- **Strong completeness of first-order natural deduction.** Let $L$ be a language with
+countably many function and relation symbols, whose function symbols live in universe $u$. Let
+$S$ be a set of formulas of $L$ and $\varphi$ a formula of $L$, all with free variables in
+$\mathbb{N}$. If for every $L$-structure $M$ with carrier in universe $u$ and every assignment
+$v : \mathbb{N} \to M$ under which all formulas of $S$ hold, $\varphi$ also holds under $v$,
+then $\varphi$ is provable from $S$. -/
 theorem provable_of_entails {S : Set (L.Formula ℕ)} {φ : L.Formula ℕ}
     (h : ∀ (M : Type u) [L.Structure M] (v : ℕ → M), (∀ ψ ∈ S, ψ.Realize v) → φ.Realize v) :
     Provable S φ := by
@@ -652,8 +737,12 @@ theorem provable_of_entails {S : Set (L.Formula ℕ)} {φ : L.Formula ℕ}
   exact Formula.realize_not.mp (hM _ (Set.mem_insert _ _))
     (h M v fun ψ hψ ↦ hM ψ (Set.mem_insert_of_mem _ hψ))
 
-/-- **Completeness.** If a formula over `ℕ` holds in every model of a Mathlib theory `T` (in the
-universe `max u v`), it is provable from the sentences of `T`. -/
+/-- **Completeness of first-order natural deduction for theories.** Let $L$ be a language with
+countably many function and relation symbols, whose function symbols live in universe $u$ and
+relation symbols in universe $v$. Let $T$ be a theory of $L$ and $\varphi$ a formula of $L$ with
+free variables in $\mathbb{N}$. If $\varphi$ holds under every assignment of the variables in
+every nonempty model of $T$ whose carrier lies in universe $\max(u, v)$, then $\varphi$ is
+provable from the sentences of $T$, viewed as formulas over $\mathbb{N}$. -/
 theorem provable_of_models {T : L.Theory} {φ : L.Formula ℕ} (h : T ⊨ᵇ φ) :
     Provable (Formula.relabel Empty.elim '' T) φ := by
   refine provable_of_entails fun M _ v hM ↦ ?_
@@ -668,8 +757,12 @@ theorem provable_of_models {T : L.Theory} {φ : L.Formula ℕ} (h : T ⊨ᵇ φ)
   have hφ : Formula.Realize φ (e ∘ v) := h M' (e ∘ v) _
   exact (StrongHomClass.realize_formula e.inducedStructureEquiv φ).mp hφ
 
-/-- **Soundness and completeness**: provability from the sentences of `T` is semantic
-consequence. -/
+/-- **Soundness and completeness of first-order natural deduction.** Let $L$ be a language with
+countably many function and relation symbols, whose function symbols live in universe $u$ and
+relation symbols in universe $v$. For every theory $T$ of $L$ and every formula $\varphi$ of $L$
+with free variables in $\mathbb{N}$, $\varphi$ is provable from the sentences of $T$, viewed as
+formulas over $\mathbb{N}$, if and only if $\varphi$ holds under every assignment of the
+variables in every nonempty model of $T$ whose carrier lies in universe $\max(u, v)$. -/
 theorem provable_iff_models {T : L.Theory} {φ : L.Formula ℕ} :
     Provable (Formula.relabel Empty.elim '' T) φ ↔ T ⊨ᵇ φ :=
   ⟨Provable.models, provable_of_models⟩
