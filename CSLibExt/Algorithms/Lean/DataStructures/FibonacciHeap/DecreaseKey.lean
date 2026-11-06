@@ -128,8 +128,11 @@ namespace FibonacciTree
 
 variable {α : Type u}
 
-/-- The subtree at a path of child indices from the root, or `none` when the path
-leaves the tree. The empty path addresses the whole tree. -/
+/-- **Subtree of a Fibonacci tree at a path.** For a list $p = (i_1, \dots, i_n)$ of natural
+numbers and a Fibonacci tree $t$, the subtree of $t$ at $p$ is found by starting at the root and
+moving to the child with zero-based index $i_1$, then to its child with index $i_2$, and so on.
+The result is absent when some index is at least the number of children of the current node.
+The empty path addresses the whole tree $t$. -/
 @[expose] public def subtreeAt : List Nat → FibonacciTree α → Option (FibonacciTree α)
   | [], t => some t
   | i :: p, .node _ _ children => (children[i]?).bind (subtreeAt p)
@@ -140,9 +143,17 @@ public theorem subtreeAt_cons (i : Nat) (p : List Nat) (d : Nat) (r : α)
     (cs : List (FibonacciTree α)) :
     subtreeAt (i :: p) (.node d r cs) = (cs[i]?).bind (subtreeAt p) := rfl
 
-/-- Cut out the subtree at a path: returns the extracted subtree together with the
-remainder of the tree with ancestors rebuilt and degrees corrected. The remainder is
-`none` exactly for the empty path, where the whole tree is extracted. -/
+/-- **Cutting a subtree out of a Fibonacci tree.** For a path $p$ of child indices and a Fibonacci
+tree $t$, the cut of $t$ at $p$ is either undefined or a pair of an extracted subtree and an
+optional remainder tree. For the empty path, the extracted subtree is $t$ and there is no
+remainder. For a path consisting of an index $i$ followed by a path $q$, where $t$ has root $r$
+and children $c_0, \dots, c_{k-1}$, the cut is undefined if $i \ge k$ or if the cut of $c_i$
+at $q$ is undefined. Otherwise, with $s$ the subtree extracted from $c_i$, the extracted
+subtree is $s$ and the remainder is the tree with root $r$ whose children are those of $t$
+with $c_i$ removed (if the cut of $c_i$ left no remainder) or with $c_i$ replaced by that
+remainder (otherwise), and whose stored degree is its new number of children.
+
+When the cut is defined, there is no remainder exactly when $p$ is empty. -/
 @[expose] public def cutAt : List Nat → FibonacciTree α →
     Option (FibonacciTree α × Option (FibonacciTree α))
   | [], t => some (t, none)
@@ -161,8 +172,10 @@ remainder of the tree with ancestors rebuilt and degrees corrected. The remainde
 
 @[simp] public theorem cutAt_nil (t : FibonacciTree α) : cutAt [] t = some (t, none) := rfl
 
-/-- Replace the root value of a tree, keeping its degree and children. Used on an
-extracted subtree with a key no larger than the old root. -/
+/-- **Replacing the root key of a Fibonacci tree.** For a Fibonacci tree $t$ and a key $k$, this
+is the tree whose root value is $k$ and whose stored degree and list of children are those of $t$.
+
+It is used on an extracted subtree with a key no larger than the old root. -/
 @[expose] public def decreaseRoot (t : FibonacciTree α) (newKey : α) : FibonacciTree α :=
   match t with
   | .node degree _ children => .node degree newKey children
@@ -172,15 +185,19 @@ extracted subtree with a key no larger than the old root. -/
   cases t
   rfl
 
-/-- Decreasing a root replaces one occurrence of the old root in the represented
-multiset by the new key. -/
+/-- **Elements after replacing the root key.** For a Fibonacci tree $t$ and any key $k$, the
+multiset of elements represented by the tree obtained from $t$ by replacing its root value with $k$
+equals the multiset of elements of $t$ with one occurrence of the root of $t$ removed and $k$
+added. -/
 public theorem elements_decreaseRoot [DecidableEq α] (t : FibonacciTree α) (newKey : α) :
     (t.decreaseRoot newKey).elements = newKey ::ₘ t.elements.erase t.root := by
   cases t with
   | node d r cs => simp [decreaseRoot, elements, root]
 
-/-- Lowering the root of a valid tree to a key no larger than the old root keeps the
-tree valid: the new root is still no greater than every represented element. -/
+/-- **Lowering the root keeps a Fibonacci tree valid.** Let $T$ be a valid Fibonacci tree over a
+preordered type and let $k$ be a key that is at most the root of $T$. Then the tree obtained
+from $T$ by replacing its root by $k$, keeping its degree and children, is valid: the new root
+is still no greater than every represented element. -/
 public theorem Valid.decreaseRoot [Preorder α] {t : FibonacciTree α} (hv : Valid t)
     {newKey : α} (hle : newKey ≤ t.root) : Valid (t.decreaseRoot newKey) := by
   cases t with
@@ -196,7 +213,8 @@ public theorem Valid.decreaseRoot [Preorder α] {t : FibonacciTree α} (hv : Val
         simp only [elements]
         exact Multiset.mem_cons_of_mem hv_mem
 
-/-- Every subtree addressed by a path in a valid tree is valid. -/
+/-- **Subtrees of a valid Fibonacci tree are valid.** If a Fibonacci tree $t$ is valid and a path
+$p$ of child indices addresses a subtree $s$ of $t$, then $s$ is valid. -/
 public theorem Valid.subtreeAt [LE α] {t sub : FibonacciTree α} (hv : Valid t)
     {p : List Nat} (h : subtreeAt p t = some sub) : Valid sub := by
   induction p generalizing t with
@@ -215,7 +233,9 @@ public theorem Valid.subtreeAt [LE α] {t sub : FibonacciTree α} (hv : Valid t)
               rw [hchild, Option.bind_some] at h
               exact ih (hv.child_valid (List.mem_of_getElem? hchild)) h
 
-/-- Cutting at a path extracts exactly the subtree that the path addresses. -/
+/-- **A cut extracts the addressed subtree.** Let $t$ be a Fibonacci tree and $p$ a path of
+child indices. If cutting $t$ at $p$ extracts a subtree $s$ (with or without a remainder),
+then $s$ is the subtree of $t$ at $p$. -/
 public theorem cutAt_subtreeAt {p : List Nat} {t sub : FibonacciTree α}
     {rem : Option (FibonacciTree α)} (h : cutAt p t = some (sub, rem)) :
     subtreeAt p t = some sub := by
@@ -242,7 +262,9 @@ public theorem cutAt_subtreeAt {p : List Nat} {t sub : FibonacciTree α}
                   rw [subtreeAt_cons, hchild, Option.bind_some]
                   exact hsub ▸ ih hcut
 
-/-- Every addressed subtree can be cut out. -/
+/-- **Every addressed subtree can be cut out.** If a path $p$ of child indices addresses a subtree
+$s$ of a Fibonacci tree $t$, then cutting $t$ at $p$ succeeds and extracts exactly $s$, together
+with some remainder, which may be absent. -/
 public theorem subtreeAt_cutAt {p : List Nat} {t sub : FibonacciTree α}
     (h : subtreeAt p t = some sub) : ∃ rem, cutAt p t = some (sub, rem) := by
   induction p generalizing t with
@@ -268,7 +290,9 @@ public theorem subtreeAt_cutAt {p : List Nat} {t sub : FibonacciTree α}
                   exact ⟨some (.node (cs.set i child').length r (cs.set i child')),
                     by simp [cutAt, hchild, hcut]⟩
 
-/-- A cut with no remainder extracted the whole tree. -/
+/-- **A cut without remainder extracts the whole tree.** Let $t$ be a Fibonacci tree and $p$ a
+path of child indices. If cutting $t$ at $p$ extracts a subtree $s$ and leaves no remainder,
+then $s = t$. -/
 public theorem cutAt_eq_self {p : List Nat} {t sub : FibonacciTree α}
     (h : cutAt p t = some (sub, none)) : sub = t := by
   induction p generalizing t with
@@ -287,8 +311,10 @@ public theorem cutAt_eq_self {p : List Nat} {t sub : FibonacciTree α}
                   rcases result with ⟨sub', rem'⟩
                   cases rem' <;> simp [cutAt, hchild, hcut] at h
 
-/-- Cutting partitions the represented multiset into the remainder and the extracted
-subtree. -/
+/-- **Cutting a subtree splits the elements of a Fibonacci tree.** Let $t$ be a Fibonacci tree
+and $p$ a path of child indices. If cutting $t$ at $p$ extracts a subtree $s$ and leaves a
+remainder tree $t'$, then the multiset of elements of $t$ is the sum of the multisets of
+elements of $t'$ and of $s$. -/
 public theorem cutAt_elements {p : List Nat} {t sub t' : FibonacciTree α}
     (h : cutAt p t = some (sub, some t')) :
     t.elements = t'.elements + sub.elements := by
@@ -325,14 +351,19 @@ public theorem cutAt_elements {p : List Nat} {t sub t' : FibonacciTree α}
                       rw [Multiset.add_assoc, Multiset.add_comm sub'.elements,
                         ← Multiset.add_assoc]
 
-/-- The subtree extracted by a cut from a valid tree is valid. -/
+/-- **The subtree extracted by a cut from a valid tree is valid.** Let $t$ be a valid Fibonacci
+tree over a type with a relation $\le$, and $p$ a path of child indices. If cutting $t$ at $p$
+extracts a subtree $s$ (with or without a remainder), then $s$ is valid. -/
 public theorem cutAt_sub_valid [LE α] {p : List Nat} {t sub : FibonacciTree α}
     {rem : Option (FibonacciTree α)} (hv : Valid t)
     (h : cutAt p t = some (sub, rem)) : Valid sub :=
   hv.subtreeAt (cutAt_subtreeAt h)
 
-/-- The remainder left by a cut from a valid tree is valid: its children are valid,
-its stored degree is corrected, and its root still bounds every remaining element. -/
+/-- **The remainder of a cut from a valid tree is valid.** Let $t$ be a valid Fibonacci tree
+over a type with a relation $\le$, and $p$ a path of child indices. If cutting $t$ at $p$
+extracts a subtree and leaves a remainder tree $t'$, then $t'$ is valid: its children are
+valid, its stored degree equals its number of children, and its root is $\le$ every element
+of $t'$. -/
 public theorem cutAt_remainder_valid [LE α] {p : List Nat} {t sub t' : FibonacciTree α}
     (hv : Valid t) (h : cutAt p t = some (sub, some t')) : Valid t' := by
   induction p generalizing t t' with
@@ -381,9 +412,12 @@ namespace FibonacciForest
 
 variable {α : Type u}
 
-/-- Cut the subtree at path `p` inside the `i`-th tree of a forest: returns the
-extracted subtree together with the forest in which that tree is replaced by the cut
-remainder (or removed when the whole tree was extracted). -/
+/-- **Cutting a subtree out of a Fibonacci forest.** For a forest given as a list of Fibonacci
+trees, an index $i$ and a path $p$ of child indices, the cut is undefined if the list has no
+tree at position $i$ (counting from $0$) or if cutting that tree $t$ at $p$ is undefined.
+Otherwise, if cutting $t$ at $p$ extracts the subtree $s$, the result is $s$ together with the
+list in which the tree at position $i$ is removed (if the cut of $t$ left no remainder) or
+replaced by the remainder (otherwise). -/
 @[expose] public def cutTreeAt (trees : List (FibonacciTree α)) (i : Nat) (p : List Nat) :
     Option (FibonacciTree α × List (FibonacciTree α)) :=
   match trees[i]? with
@@ -394,8 +428,10 @@ remainder (or removed when the whole tree was extracted). -/
       | some (sub, none) => some (sub, trees.eraseIdx i)
       | some (sub, some t') => some (sub, trees.set i t')
 
-/-- Cutting a subtree out of a forest partitions the represented multiset into the
-remaining forest and the extracted subtree. -/
+/-- **Cutting a subtree splits the elements of a Fibonacci forest.** Let $F$ be a forest of
+Fibonacci trees, $i$ an index and $p$ a path of child indices. If cutting $F$ at the $i$-th tree
+and path $p$ extracts a subtree $s$ and leaves the forest $F'$, then the multiset of elements
+of $F$ is the sum of the multisets of elements of $F'$ and of $s$. -/
 public theorem cutTreeAt_elements {trees : List (FibonacciTree α)} {i : Nat} {p : List Nat}
     {sub : FibonacciTree α} {rest : List (FibonacciTree α)}
     (h : cutTreeAt trees i p = some (sub, rest)) :
@@ -427,7 +463,10 @@ public theorem cutTreeAt_elements {trees : List (FibonacciTree α)} {i : Nat} {p
                 Multiset.add_assoc, Multiset.add_comm sub'.elements,
                 ← Multiset.add_assoc]
 
-/-- Both parts of a forest cut from a valid forest are valid. -/
+/-- **Cutting a valid forest leaves valid parts.** Let $F$ be a valid forest of Fibonacci trees
+over a type with a relation $\le$, $i$ an index and $p$ a path of child indices. If cutting $F$
+at index $i$ and path $p$ extracts a subtree $s$ and leaves the forest $F'$, then $s$ is a valid
+tree and $F'$ is a valid forest. -/
 public theorem cutTreeAt_valid [LE α] {trees : List (FibonacciTree α)} {i : Nat}
     {p : List Nat} {sub : FibonacciTree α} {rest : List (FibonacciTree α)}
     (hv : Valid trees) (h : cutTreeAt trees i p = some (sub, rest)) :
@@ -456,8 +495,10 @@ public theorem cutTreeAt_valid [LE α] {trees : List (FibonacciTree α)} {i : Na
               · exact ht'Valid
               · exact hv c hc
 
-/-- A subtree addressed by an index into the root list and a path inside that tree can
-be cut out of the forest. -/
+/-- **Every addressed subtree of a forest can be cut out.** Let $F$ be a forest of Fibonacci
+trees whose tree at position $i$ is $t$, and let $p$ be a path of child indices such that the
+subtree of $t$ at $p$ is $s$. Then cutting $F$ at index $i$ and path $p$ is defined and extracts
+$s$, together with some remaining forest. -/
 public theorem cutTreeAt_of_subtreeAt {trees : List (FibonacciTree α)} {i : Nat}
     {p : List Nat} {t sub : FibonacciTree α} (htree : trees[i]? = some t)
     (hpath : t.subtreeAt p = some sub) :
@@ -493,14 +534,16 @@ private theorem minRoot_eq_some_of_least [LinearOrder α]
       have h2 : x' ≤ x := findMin_le hfind hx
       exact congrArg some (le_antisymm h2 h1)
 
-/-- Decrease the key of the node addressed by root index `i` and path `p` to
-`newKey`: cut the addressed subtree out of its tree, lower its root, and put it back
-as a new tree in the root list. The cached minimum of the result is the smaller of
-`newKey` and the previous cached minimum, computed without rescanning the root
-list. When the address does not resolve or `newKey` is larger than the addressed
-root (so the operation would be an increase), the heap is returned unchanged.
-Unlike CLRS decrease-key this performs no cascading cuts: the trees carry no mark
-field (see the module documentation). -/
+/-- **Decrease-key in a Fibonacci heap.** Given a Fibonacci heap $H$ over a linearly ordered type,
+a root index $i$, a path $p$ of child indices and a key $k$, decrease-key cuts the subtree $S$ at
+path $p$ out of the $i$-th tree of the root list of $H$, replaces the root of $S$ by $k$, and
+puts the resulting tree in front of the remaining forest (the root list with the $i$-th tree
+replaced by what is left of it after the cut, or removed when $S$ is that whole tree). The
+cached minimum of the result is the smaller of $k$ and the previous cached minimum, computed
+without rescanning the root list. When the cut fails (the address does not resolve) or $k$ is
+greater than the root of $S$, the heap $H$ is returned unchanged.
+
+Unlike CLRS decrease-key, this performs no cascading cuts: the trees carry no mark field. -/
 public def decreaseKey [LinearOrder α] (heap : FibonacciHeap α) (i : Nat) (p : List Nat)
     (newKey : α) : FibonacciHeap α :=
   match found : FibonacciForest.cutTreeAt heap.trees i p with
@@ -572,8 +615,12 @@ public def decreaseKey [LinearOrder α] (heap : FibonacciHeap α) (i : Nat) (p :
         ⟨trees, newMin, trees_valid, hmin⟩
       else heap
 
-/-- On a successful cut with a genuine decrease, the new root list is the decreased
-subtree in front of the cut remainder forest. -/
+/-- **Root list after decrease-key.** Let $H$ be a Fibonacci heap, $i$ a root index, $p$ a path of
+child indices and $k$ a key. Suppose that cutting the subtree at path $p$ out of the $i$-th tree
+of the root list of $H$ succeeds, extracting the subtree $S$ and leaving the forest $R$, and that
+$k$ is at most the root of $S$. Then the root list of the heap obtained from $H$ by decreasing
+the key at root index $i$ and path $p$ to $k$ consists of $S$ with its root replaced by $k$,
+followed by the trees of $R$ in order. -/
 public theorem decreaseKey_trees_of_cut [LinearOrder α] {heap : FibonacciHeap α}
     {i : Nat} {p : List Nat} {newKey : α} {sub : FibonacciTree α}
     {rest : List (FibonacciTree α)}
@@ -591,7 +638,10 @@ public theorem decreaseKey_trees_of_cut [LinearOrder α] {heap : FibonacciHeap �
     obtain ⟨rfl, rfl⟩ := hfound
     rw [dite_eq_left hle]
 
-/-- Decrease-key with an address that does not resolve is the identity. -/
+/-- **Decrease-key at an unresolved address does nothing.** Let $H$ be a Fibonacci heap, $i$ a
+root index and $p$ a path of child indices. If cutting the subtree at path $p$ out of the $i$-th
+tree of the root list of $H$ fails, then for every key $k$, decreasing the key at root index $i$
+and path $p$ to $k$ returns $H$ unchanged. -/
 public theorem decreaseKey_eq_self_of_cut_none [LinearOrder α] {heap : FibonacciHeap α}
     {i : Nat} {p : List Nat} {newKey : α}
     (hcut : FibonacciForest.cutTreeAt heap.trees i p = none) :
@@ -603,7 +653,11 @@ public theorem decreaseKey_eq_self_of_cut_none [LinearOrder α] {heap : Fibonacc
     rw [hcut] at hfound
     simp at hfound
 
-/-- Decrease-key with a key larger than the addressed root is the identity. -/
+/-- **Decrease-key with a larger key does nothing.** Let $H$ be a Fibonacci heap, $i$ a root index,
+$p$ a path of child indices and $k$ a key. Suppose that cutting the subtree at path $p$ out of
+the $i$-th tree of the root list of $H$ succeeds and extracts the subtree $S$, and that $k$ is
+not at most the root of $S$ (keys are linearly ordered, so $k$ is greater than that root). Then
+decreasing the key at root index $i$ and path $p$ to $k$ returns $H$ unchanged. -/
 public theorem decreaseKey_eq_self_of_not_le [LinearOrder α] {heap : FibonacciHeap α}
     {i : Nat} {p : List Nat} {newKey : α} {sub : FibonacciTree α}
     {rest : List (FibonacciTree α)}
@@ -619,8 +673,12 @@ public theorem decreaseKey_eq_self_of_not_le [LinearOrder α] {heap : FibonacciH
     obtain ⟨rfl, rfl⟩ := hfound
     rw [dite_eq_right hle]
 
-/-- A successful decrease-key replaces exactly one occurrence of the old key (the
-addressed subtree's root) by the new key in the represented multiset. -/
+/-- **Decrease-key replaces one key.** Let $H$ be a Fibonacci heap, $i$ a root index, $p$ a path
+of child indices and $k$ a key. Suppose that cutting the subtree at path $p$ out of the $i$-th
+tree of the root list of $H$ succeeds and extracts the subtree $S$, and that $k$ is at most the
+root of $S$. Then the multiset represented by the heap obtained from $H$ by decreasing the key at
+root index $i$ and path $p$ to $k$ is the multiset represented by $H$ with one occurrence of the
+root of $S$ removed and one occurrence of $k$ added. -/
 public theorem decreaseKey_elements [LinearOrder α] {heap : FibonacciHeap α} {i : Nat}
     {p : List Nat} {newKey : α} {sub : FibonacciTree α} {rest : List (FibonacciTree α)}
     (hcut : FibonacciForest.cutTreeAt heap.trees i p = some (sub, rest))
@@ -637,8 +695,12 @@ public theorem decreaseKey_elements [LinearOrder α] {heap : FibonacciHeap α} {
   rw [FibonacciTree.elements_decreaseRoot, Multiset.cons_add,
     Multiset.add_comm (sub.elements.erase sub.root)]
 
-/-- `decreaseKey_elements` stated through the addressing view: the caller names the
-root tree and the addressed subtree instead of the cut remainder. -/
+/-- **Decrease-key replaces one key, stated by address.** Let $H$ be a Fibonacci heap, let $T$ be
+the $i$-th tree of its root list, and let $S$ be the subtree of $T$ at the path $p$ of child
+indices. If the key $k$ is at most the root of $S$, then the multiset represented by the heap
+obtained from $H$ by decreasing the key at root index $i$ and path $p$ to $k$ is the multiset
+represented by $H$ with one occurrence of the root of $S$ removed and one occurrence of $k$
+added. -/
 public theorem decreaseKey_elements_of_subtreeAt [LinearOrder α]
     {heap : FibonacciHeap α} {i : Nat} {p : List Nat} {newKey : α}
     {t sub : FibonacciTree α} (htree : heap.trees[i]? = some t)
@@ -648,7 +710,12 @@ public theorem decreaseKey_elements_of_subtreeAt [LinearOrder α]
   obtain ⟨rest, hcut⟩ := FibonacciForest.cutTreeAt_of_subtreeAt htree hpath
   exact decreaseKey_elements hcut hle
 
-/-- A successful decrease-key preserves the number of represented elements. -/
+/-- **Decrease-key preserves the number of elements.** Let $H$ be a Fibonacci heap, $i$ a root
+index, $p$ a path of child indices and $k$ a key. Suppose that cutting the subtree at path $p$
+out of the $i$-th tree of the root list of $H$ succeeds and extracts the subtree $S$, and that
+$k$ is at most the root of $S$. Then the multiset represented by the heap obtained from $H$ by
+decreasing the key at root index $i$ and path $p$ to $k$ has the same number of elements,
+counted with multiplicity, as the multiset represented by $H$. -/
 public theorem decreaseKey_card_elements [LinearOrder α] {heap : FibonacciHeap α}
     {i : Nat} {p : List Nat} {newKey : α} {sub : FibonacciTree α}
     {rest : List (FibonacciTree α)}
@@ -671,8 +738,12 @@ public theorem decreaseKey_card_elements [LinearOrder α] {heap : FibonacciHeap 
   rw [decreaseKey_elements hcut hle, Multiset.card_cons]
   exact hcard
 
-/-- After a successful decrease-key, minimum inspection returns the smaller of the
-new key and the old minimum. -/
+/-- **Minimum after decrease-key.** Let $H$ be a Fibonacci heap whose minimum, as returned by
+find-min, is $m$, and let $i$ be a root index, $p$ a path of child indices and $k$ a key. Suppose
+that cutting the subtree at path $p$ out of the $i$-th tree of the root list of $H$ succeeds and
+extracts the subtree $S$, and that $k$ is at most the root of $S$. Then find-min on the heap
+obtained from $H$ by decreasing the key at root index $i$ and path $p$ to $k$ returns
+$\min(k, m)$. -/
 public theorem decreaseKey_findMin [LinearOrder α] {heap : FibonacciHeap α} {i : Nat}
     {p : List Nat} {newKey m : α} {sub : FibonacciTree α}
     {rest : List (FibonacciTree α)}
@@ -711,8 +782,11 @@ public theorem decreaseKey_findMin [LinearOrder α] {heap : FibonacciHeap α} {i
   rw [hx]
   exact congrArg some (le_antisymm (le_min hxLeNew hxLeM) hMinLeX)
 
-/-- The forest after decrease-key is valid: heap order is restored. This is the
-validity field of the resulting heap, exposed as a theorem for convenience. -/
+/-- **Decrease-key yields a valid forest.** For every Fibonacci heap $H$, root index $i$, path $p$
+of child indices and key $k$, the root list of the heap obtained from $H$ by decreasing the key
+at root index $i$ and path $p$ to $k$ is a valid forest, that is, every tree in it is valid.
+
+This holds by construction: every Fibonacci heap carries a valid forest. -/
 public theorem decreaseKey_valid [LinearOrder α] (heap : FibonacciHeap α) (i : Nat)
     (p : List Nat) (newKey : α) :
     FibonacciForest.Valid (heap.decreaseKey i p newKey).trees :=

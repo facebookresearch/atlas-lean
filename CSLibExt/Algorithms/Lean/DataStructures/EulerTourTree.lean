@@ -50,7 +50,11 @@ universe u
 
 namespace EulerTourTree
 
-/-- A rooted ordered tree: a root vertex with an ordered list of child subtrees. -/
+/-- **Rooted ordered tree.** A rooted ordered tree with vertices in a type $V$ consists of a root
+vertex in $V$ together with an ordered list of child subtrees, each a rooted ordered tree with
+vertices in $V$.
+
+Vertex labels need not be distinct. -/
 inductive Tree (V : Type u) where
   | node (root : V) (children : List (Tree V)) : Tree V
 deriving Repr
@@ -59,9 +63,10 @@ namespace Tree
 
 variable {V : Type u}
 
-/-- Induction on a tree from the statement for every child subtree. The built-in
-`induction` tactic does not support the nested recursion through `List`, so this
-principle is derived from `Tree.rec` and used with `induction … using`. -/
+/-- **Induction principle for rooted trees.** Let $P$ be a property of trees. Suppose that for
+every vertex $r$ and all trees $c_1, \dots, c_k$ (with $k \ge 0$), if $P$ holds for each $c_i$, then
+$P$ holds for the tree with root $r$ and child subtrees $c_1, \dots, c_k$. Then $P$ holds for every
+tree. -/
 theorem children_ind {motive : Tree V → Prop}
     (node : ∀ (r : V) (cs : List (Tree V)), (∀ c ∈ cs, motive c) →
       motive (.node r cs))
@@ -75,11 +80,13 @@ theorem children_ind {motive : Tree V → Prop}
       · exact ihcs x h)
     t
 
-/-- The root vertex of a tree. -/
+/-- **Root of a rooted tree.** The root of the tree with root vertex $r$ and child subtrees
+$c_1, \dots, c_k$ is the vertex $r$. -/
 def root : Tree V → V
   | .node r _ => r
 
-/-- The child subtrees of the root, in order. -/
+/-- **Children of a rooted tree.** The children of a tree are the child subtrees of its root, as a
+list in their given order. -/
 def children : Tree V → List (Tree V)
   | .node _ cs => cs
 
@@ -90,7 +97,9 @@ def children : Tree V → List (Tree V)
     children (.node r cs) = cs :=
   rfl
 
-/-- The number of vertices of a tree. -/
+/-- **Size of a rooted tree.** The size of a tree is its number of nodes, counting repeated vertex
+labels with multiplicity: the tree with root $r$ and child subtrees $c_1, \dots, c_k$ has size
+$1 + \sum_{i=1}^{k} \operatorname{size}(c_i)$. -/
 def size : Tree V → Nat
   | .node _ cs => 1 + (cs.map size).sum
 
@@ -98,17 +107,27 @@ theorem size_pos (t : Tree V) : 0 < size t := by
   cases t with
   | node r cs => simp only [size]; omega
 
-/-- Accumulator preorder traversal: `verticesAux t acc = vertices t ++ acc`
-(see `verticesAux_eq`), so `vertices` is linear rather than repeatedly
-appending child lists. -/
+/-- **Accumulator preorder traversal.** For a rooted ordered tree $t$ with root $r$ and child
+subtrees $c_1, \dots, c_k$ (in order) and a list $a$, the accumulator traversal $T(t, a)$ is
+the list whose first entry is $r$ and whose remaining entries are
+$T(c_1, T(c_2, \dots, T(c_k, a) \dots))$; when $k = 0$ the remaining entries are $a$.
+
+The list $T(t, a)$ equals the preorder vertex list of $t$ followed by $a$, so the preorder list
+is computed in linear time rather than by repeatedly appending child lists. -/
 def verticesAux : Tree V → List V → List V
   | .node r cs, acc => r :: cs.foldr (fun c acc => verticesAux c acc) acc
 
-/-- The vertices of a tree in preorder. -/
+/-- **Preorder vertex list of a rooted tree.** The preorder vertex list of a rooted ordered tree
+$t$ is the accumulator preorder traversal of $t$ started from the empty list.
+
+Equivalently, it is the root of $t$ followed by the preorder vertex lists of its child subtrees
+in order; repeated vertex labels appear with multiplicity. -/
 def vertices (t : Tree V) : List V :=
   verticesAux t []
 
-/-- The accumulator traversal appends the preorder list onto its accumulator. -/
+/-- **Accumulator preorder traversal is append.** For every rooted ordered tree $t$ and every
+list $a$, the accumulator preorder traversal of $t$ started from $a$ equals the preorder vertex
+list of $t$ followed by $a$. -/
 theorem verticesAux_eq (t : Tree V) (acc : List V) :
     verticesAux t acc = vertices t ++ acc := by
   induction t using Tree.children_ind generalizing acc with
@@ -131,7 +150,10 @@ theorem verticesAux_eq (t : Tree V) (acc : List V) :
       rw [verticesAux, hfold cs acc ih, hnode]
       simp
 
-/-- Characteristic node equation for `vertices` (the former definition). -/
+/-- **Preorder vertex list of a node.** For a vertex $r$ and rooted ordered trees
+$c_1, \dots, c_k$, the preorder vertex list of the tree with root $r$ and child subtrees
+$c_1, \dots, c_k$ (in order) is $r$ followed by the concatenation of the preorder vertex lists
+of $c_1, \dots, c_k$, in this order. -/
 theorem vertices_node (r : V) (cs : List (Tree V)) :
     vertices (.node r cs) = r :: cs.flatMap vertices := by
   have hfold : ∀ (cs : List (Tree V)),
@@ -162,19 +184,27 @@ theorem vertices_length (t : Tree V) : (vertices t).length = size t := by
       rw [hsum cs ih]
       omega
 
-/-- Accumulator Euler tour: `tourAux t acc = tour t ++ acc` (see
-`tourAux_eq`), so `tour` is linear rather than repeatedly appending child
-tours. -/
+/-- **Euler tour with an accumulator.** Let $t$ be a tree with root $r$ and child subtrees
+$c_1, \dots, c_k$ in order, and let $a$ be a list of vertices. For a list $L$ of vertices, write
+$r \cdot L$ for the list $L$ with $r$ put in front. The Euler tour of $t$ with accumulator $a$,
+written $T(t, a)$, is $r \cdot L_1$, where $L_{k+1} = a$ and $L_i = T(c_i, r \cdot L_{i+1})$ for
+$i = k, \dots, 1$.
+
+It equals the Euler tour of $t$ followed by $a$, and computes the Euler tour without repeatedly
+concatenating the tours of the child subtrees. -/
 def tourAux : Tree V → List V → List V
   | .node r cs, acc =>
       r :: cs.foldr (fun c acc => tourAux c (r :: acc)) acc
 
-/-- The Euler tour of a tree: the vertex sequence of the depth-first walk that
-returns to the parent vertex after each child subtree. -/
+/-- **Euler tour.** The Euler tour of a tree $t$ with root $r$ and child subtrees
+$c_1, \dots, c_k$ in order is the list of vertices consisting of $r$, followed, for each
+$i = 1, \dots, k$ in turn, by the Euler tour of $c_i$ and then $r$. It is the vertex sequence of
+the depth-first walk that returns to the parent vertex after each child subtree. -/
 def tour (t : Tree V) : List V :=
   tourAux t []
 
-/-- The accumulator tour appends the tour onto its accumulator. -/
+/-- **Accumulator lemma for the Euler tour.** For every tree $t$ and every list $a$ of vertices,
+the Euler tour of $t$ with accumulator $a$ equals the Euler tour of $t$ followed by $a$. -/
 theorem tourAux_eq (t : Tree V) (acc : List V) :
     tourAux t acc = tour t ++ acc := by
   induction t using Tree.children_ind generalizing acc with
@@ -200,7 +230,10 @@ theorem tourAux_eq (t : Tree V) (acc : List V) :
       rw [tourAux, hfold cs acc ih, hnode]
       simp
 
-/-- Characteristic node equation for `tour` (the former definition). -/
+/-- **Recursive formula for the Euler tour.** For a vertex $r$ and a list of trees
+$c_1, \dots, c_k$, the Euler tour of the tree with root $r$ and child subtrees $c_1, \dots, c_k$
+in order is $r$, followed, for each $i = 1, \dots, k$ in turn, by the Euler tour of $c_i$ and
+then $r$. -/
 theorem tour_node (r : V) (cs : List (Tree V)) :
     tour (.node r cs) = r :: cs.flatMap (fun c => tour c ++ [r]) := by
   have hfold : ∀ (cs : List (Tree V)),
@@ -237,13 +270,18 @@ theorem tour_length (t : Tree V) : (tour t).length = 2 * size t - 1 := by
       rw [hsum cs ih]
       omega
 
-/-- The arc sequence of the Euler tour: consecutive vertex pairs. Each tree edge
-occurs once in each direction. -/
+/-- **Arc sequence of the Euler tour.** The arc sequence of a tree $t$ is the list of consecutive
+pairs of its Euler tour: if the Euler tour of $t$ is $v_0, v_1, \dots, v_k$, then the arc sequence
+of $t$ is $(v_0, v_1), (v_1, v_2), \dots, (v_{k-1}, v_k)$.
+
+Each tree edge occurs once in each direction. -/
 def arcTour (t : Tree V) : List (V × V) :=
   let tourList := tour t
   tourList.zip tourList.tail
 
-/-- `arcTour` computed from the single shared tour list. -/
+/-- **Arc sequence as the zipped Euler tour.** For every tree $t$, the arc sequence of $t$ is
+the Euler tour of $t$ zipped with its own tail: if the Euler tour of $t$ is $v_0, v_1, \dots, v_k$,
+then the arc sequence of $t$ is $(v_0, v_1), (v_1, v_2), \dots, (v_{k-1}, v_k)$. -/
 theorem arcTour_eq_zip (t : Tree V) :
     arcTour t = (tour t).zip (tour t).tail :=
   rfl
@@ -263,7 +301,8 @@ theorem root_mem_tour (t : Tree V) : t.root ∈ tour t := by
   rw [hl]
   exact List.mem_cons_self
 
-/-- A vertex occurs in the Euler tour exactly when it is a vertex of the tree. -/
+/-- **The Euler tour visits exactly the vertices of the tree.** For every tree $t$ and every $v$,
+$v$ occurs in the Euler tour of $t$ if and only if $v$ is a vertex of $t$. -/
 theorem mem_tour_iff (t : Tree V) (v : V) : v ∈ tour t ↔ v ∈ vertices t := by
   induction t using Tree.children_ind with
   | node r cs ih =>
@@ -279,22 +318,29 @@ theorem mem_tour_iff (t : Tree V) (v : V) : v ∈ tour t ↔ v ∈ vertices t :=
         · exact Or.inl rfl
         · exact Or.inr ⟨c, hc, Or.inl ((ih c hc).mpr hv)⟩
 
-/-- Forest validity: every vertex occurs at most once in the tree. Raw
-`Tree`s may repeat vertex labels; the dynamic-forest interpretation of
-`link` requires `Valid` inputs with disjoint vertex sets. -/
+/-- **Valid Euler-tour tree.** A rooted ordered tree is valid when its list of vertices in
+preorder has no duplicates, that is, every vertex label occurs at most once in the tree.
+
+Raw trees may repeat vertex labels; reading the linking of two trees as a link in a dynamic
+forest requires valid trees with disjoint vertex sets. -/
 def Valid (t : Tree V) : Prop :=
   (vertices t).Nodup
 
-/-- Validity is exactly duplicate-freeness of the preorder vertex list. -/
+/-- **Valid trees have distinct vertices.** A tree $t$ is valid if and only if its list of
+vertices in preorder has no repeated entries. -/
 theorem valid_iff (t : Tree V) : Valid t ↔ (vertices t).Nodup :=
   Iff.rfl
 
-/-- A single-vertex tree is valid. -/
+/-- **A single-vertex tree is valid.** For every vertex $r$, the tree with root $r$ and no child
+subtrees is valid. -/
 theorem valid_singleton (r : V) : Valid (.node r []) := by
   rw [Valid, vertices_node]
   simp
 
-/-- Records `t₂` as a new last child subtree of the root of `t₁`. -/
+/-- **Linking two rooted trees.** Let $t_1$ be a tree with root $r$ and child subtrees
+$c_1, \dots, c_k$, and let $t_2$ be a tree. The link of $t_1$ and $t_2$ is the tree with root $r$
+and child subtrees $c_1, \dots, c_k, t_2$, so $t_2$ becomes the new last child subtree of the root
+of $t_1$. -/
 def link : Tree V → Tree V → Tree V
   | .node r cs, t₂ => .node r (cs ++ [t₂])
 
@@ -314,8 +360,12 @@ theorem vertices_link (t₁ t₂ : Tree V) :
   cases t₁ with
   | node r cs => simp [link, vertices_node, List.flatMap_append]
 
-/-- Linking two valid trees with disjoint vertex sets stays valid: the
-forest precondition for reading `link` as a dynamic-forest link. -/
+/-- **Linking valid trees with disjoint vertices gives a valid tree.** Let $t_1$ and $t_2$ be
+valid trees such that no vertex of $t_1$ is a vertex of $t_2$. Then the link of $t_1$ and $t_2$,
+that is, $t_1$ with $t_2$ added as the last child subtree of its root, is valid.
+
+This is the forest precondition for reading the link as a link of two trees in a dynamic
+forest. -/
 theorem valid_link {t₁ t₂ : Tree V} (h₁ : Valid t₁) (h₂ : Valid t₂)
     (hd : List.Disjoint (vertices t₁) (vertices t₂)) :
     Valid (link t₁ t₂) := by
@@ -325,20 +375,28 @@ theorem valid_link {t₁ t₂ : Tree V} (h₁ : Valid t₁) (h₂ : Valid t₂)
     subst hab
     exact hd ha hb⟩
 
-/-- Without disjointness, `link` need not be valid: linking two singleton
-trees with the same root duplicates that vertex. -/
+/-- **Linking two copies of a single vertex is not valid.** For every vertex $r$, the link of the
+single-vertex tree with root $r$ and another single-vertex tree with root $r$ is not valid, since
+the vertex $r$ occurs twice in it. Hence the link of two valid trees need not be valid when their
+vertex sets are not disjoint. -/
 theorem not_valid_link_same_root (r : V) :
     ¬ Valid (link (.node r []) (.node r [])) := by
   rw [Valid, vertices_link, vertices_node]
   simp
 
-/-- The splice of two tours at the root `r` of the first tree: walk the first tour,
-then the second tree's tour, then return to `r`. -/
+/-- **Splicing two Euler tours.** For lists $\tau_1$ and $\tau_2$ of vertices and a vertex $r$,
+the splice of $\tau_1$ and $\tau_2$ at $r$ is the list consisting of the entries of $\tau_1$,
+followed by the entries of $\tau_2$, followed by $r$.
+
+It is used with $\tau_1$ and $\tau_2$ the Euler tours of two trees and $r$ the root of the first
+tree: walk the first tour, then the second tour, then return to $r$. -/
 def spliceLink (tour₁ tour₂ : List V) (r : V) : List V :=
   tour₁ ++ tour₂ ++ [r]
 
-/-- The tour of a linked tree is the splice of the two tours: the first tour is a
-prefix, and the second tour is inserted whole before the final return to the root. -/
+/-- **Euler tour of a linked tree.** For trees $t_1$ and $t_2$, let $t$ be the link of $t_1$ and
+$t_2$, that is, $t_1$ with $t_2$ added as the last child subtree of its root. The Euler tour of
+$t$ is the Euler tour of $t_1$, followed by the Euler tour of $t_2$, followed by the root of
+$t_1$. -/
 theorem tour_link (t₁ t₂ : Tree V) :
     tour (link t₁ t₂) = tour t₁ ++ (tour t₂ ++ [t₁.root]) := by
   cases t₁ with
@@ -357,8 +415,10 @@ theorem tour_infix_link (t₁ t₂ : Tree V) :
     ∃ pre post, tour (link t₁ t₂) = pre ++ tour t₂ ++ post :=
   ⟨tour t₁, [t₁.root], by rw [tour_link, ← List.append_assoc]⟩
 
-/-- Removes the last child subtree of the root, returning the remaining tree and the
-removed subtree, or `none` when the root has no children. -/
+/-- **Cutting the last child subtree.** Let $t$ be a tree with root $r$ and child subtrees
+$c_1, \dots, c_k$. Cutting the last child subtree of $t$ gives no result when $k = 0$; when
+$k \ge 1$ it gives the pair consisting of the tree with root $r$ and child subtrees
+$c_1, \dots, c_{k-1}$, together with the removed subtree $c_k$. -/
 def cutLast : Tree V → Option (Tree V × Tree V)
   | .node r cs => cs.getLast?.map (fun last => (.node r cs.dropLast, last))
 

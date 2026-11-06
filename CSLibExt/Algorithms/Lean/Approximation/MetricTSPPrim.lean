@@ -62,23 +62,38 @@ section ParentArray
 
 variable {n : ℕ} (par : Fin n → Option (Fin n))
 
-/-- One step up the parent array (a root, with no parent, stays put). -/
+/-- **One step up a parent array.** Let $p$ be a parent array on the vertices $\{0, \dots, n-1\}$,
+assigning to each vertex $v$ either a parent $p(v)$ or no parent. Then $\operatorname{up}(v)$ is
+the parent $p(v)$ when $v$ has one, and $v$ itself otherwise, so a root stays put. -/
 def up (v : Fin n) : Fin n := (par v).getD v
 
-/-- The children of `v`, in vertex order. -/
+/-- **Children in a parent array.** Let $p$ assign to each vertex of $\{0, \dots, n-1\}$
+either a parent or nothing. The children of a vertex $v$ are the vertices $c$ whose parent
+$p(c)$ is $v$, listed in increasing order. -/
 def children (v : Fin n) : List (Fin n) := (List.finRange n).filter fun c => par c = some v
 
-/-- The forest of the subtrees of the children of `v`, cut off `k` levels below `v`. -/
+/-- **Forest of a parent array below a vertex.** Let $p$ assign to each vertex of
+$\{0, \dots, n-1\}$ either a parent or nothing. For $k \in \mathbb{N}$ and a vertex $v$, the
+forest below $v$ of depth $k$ is empty when $k = 0$. For depth $k + 1$ it has one tree for each
+child $c$ of $v$ (each vertex whose parent is $v$), in increasing order of $c$, namely $c$ with
+the forest below $c$ of depth $k$ as its subtrees. -/
 def buildForest : ℕ → Fin n → Forest (Fin n)
   | 0, _ => .nil
   | k + 1, v => (children par v).foldr (fun c acc => .cons c (buildForest k c) acc) .nil
 
-/-- Every parent chain reaches `root`, which has no parent. -/
+/-- **Parent tree.** Let $p$ assign to each vertex of $\{0, \dots, n-1\}$ either a parent or
+nothing, and let a step up move a vertex to its parent, leaving a vertex without parent in place.
+The parent array $p$ is a parent tree with root $r$ when $r$ has no parent and every vertex
+reaches $r$ after finitely many steps up. -/
 structure ParentTree (root : Fin n) : Prop where
   root_none : par root = none
   reach : ∀ v, ∃ j, (up par)^[j] v = root
 
-/-- `u` lies strictly below `v`, at most `k` levels down. -/
+/-- **Descendant within $k$ levels.** Let $p$ assign to each vertex of $\{0, \dots, n-1\}$
+either a parent or nothing, and let a step up move a vertex to its parent, leaving a vertex
+without parent in place. For $k \in \mathbb{N}$, a vertex $u$ lies strictly below a vertex $v$,
+at most $k$ levels down, when for some $j < k$ the vertex reached from $u$ after $j$ steps up has
+parent $v$. -/
 def DescK (k : ℕ) (v u : Fin n) : Prop := ∃ j < k, par ((up par)^[j] u) = some v
 
 variable {par}
@@ -101,7 +116,13 @@ section Weight
 
 variable {R : Type*} [AddCommMonoid R] (d : Fin n → Fin n → R)
 
-/-- The forest below `v` weighs the sum of its parent-edge costs. -/
+/-- **Weight of the forest built from a parent array.** Let $p$ be a parent array on the vertices
+$\{0, \dots, n-1\}$, let $d$ be a cost on ordered pairs of vertices with values in an additive
+commutative monoid, and let $\operatorname{up}(u)$ be the parent of $u$, or $u$ itself if $u$ has
+no parent. For every $k \in \mathbb{N}$ and every vertex $v$, let $F$ be the forest of the subtrees
+of the children of $v$ in $p$, cut off $k$ levels below $v$. Then the weight under $d$ of $F$
+hanging below $v$ equals the sum of $d(\operatorname{up}(u), u)$ over the vertices $u$ of $F$ in
+preorder. -/
 theorem weight_buildForest : ∀ (k : ℕ) (v : Fin n),
     (buildForest par k v).weight d v =
       ((buildForest par k v).preorder.map fun u => d (up par u) u).sum
@@ -253,7 +274,11 @@ theorem nodup_buildForest (ht : ParentTree par root) : ∀ (k : ℕ) (v : Fin n)
           (by rw [hj']; exact hc'v)
         exact hne (hj.symm.trans (this.trans hj'))
 
-/-- Every vertex other than the root lies below it, fewer than `n` levels down. -/
+/-- **Every non-root vertex lies below the root.** Let $p$ assign to each vertex of
+$\{0, \dots, n-1\}$ either a parent or nothing, forming a parent tree with root $r$, and let a
+step up move a vertex to its parent, leaving a vertex without parent in place. Then every vertex
+$u \ne r$ lies strictly below $r$, at most $n$ levels down: for some $j < n$, the vertex reached
+from $u$ after $j$ steps up has parent $r$. -/
 theorem descK_root (ht : ParentTree par root) {u : Fin n} (hu : u ≠ root) :
     DescK par n root u := by
   classical
@@ -287,7 +312,11 @@ theorem descK_root (ht : ParentTree par root) {u : Fin n} (hu : u ≠ root) :
       exact absurd (this.symm.trans hstep) hprev
   | some w => rw [← hstep, up_of_some h]
 
-/-- The forest built from the root spans all vertices, each exactly once. -/
+/-- **The forest of a parent tree spans all vertices.** Let $p$ assign to each vertex of
+$\{0, \dots, n-1\}$ either a parent or nothing, forming a parent tree with root $r$. Then $r$
+together with the forest below $r$ of depth $n$ built from $p$ is a spanning tree of
+$\{0, \dots, n-1\}$: $r$ followed by the vertices of the forest in preorder lists every vertex
+exactly once. -/
 theorem isSpanning_buildForest (ht : ParentTree par root) :
     IsSpanning (List.finRange n) root (buildForest par n root) := by
   refine ⟨List.nodup_finRange n, (List.perm_ext_iff_of_nodup ?_ (List.nodup_finRange n)).2 ?_⟩
@@ -308,49 +337,77 @@ section Prim
 
 variable {n : ℕ}
 
-/-- The complete graph on `Fin n` as an ordered adjacency. -/
+/-- **Complete graph as an ordered adjacency.** For $n \in \mathbb{N}$, the complete graph on the
+vertices $\{0, \dots, n-1\}$ as a directed adjacency: the vertices are listed in increasing
+order, and the neighbours of each vertex $u$ are all vertices other than $u$, in increasing
+order. -/
 def completeAdjacency (n : ℕ) : DirectedAdjacency (Fin n) where
   vertices := List.finRange n
   vertices_nodup := List.nodup_finRange n
   vertices_complete := List.mem_finRange
   adjacency u := (List.finRange n).filter (· ≠ u)
 
-/-- Edge weights for Prim: `d u v + d v u`, symmetric by construction (twice the cost when `d`
-is symmetric, which leaves minimum spanning trees unchanged). -/
+/-- **Symmetrized edge weights.** Given costs $d(u,v)$ on the vertices $\{0, \dots, n-1\}$ with
+values in a type with commutative addition, the weight of an unordered pair $\{u, v\}$ is
+$d(u,v) + d(v,u)$, which does not depend on the order of $u$ and $v$. When $d$ is symmetric this
+is twice the cost, which leaves minimum spanning trees unchanged. -/
 def symWeight {W : Type*} [Add W] [Std.Commutative (α := W) (· + ·)] (d : Fin n → Fin n → W) :
     Sym2 (Fin n) → W :=
   Sym2.lift ⟨fun u v => d u v + d v u, fun _ _ => Std.Commutative.comm _ _⟩
 
-/-- Prim's parent array on the complete graph. -/
+/-- **Prim's parent array on the complete graph.** Given costs $d(u,v)$ on the vertices
+$\{0, \dots, n-1\}$ with values in a linearly ordered type with a zero and commutative addition,
+and a root $r$, this is the parent array returned by Prim's algorithm run from $r$ on the
+complete graph on these vertices, with the weight of the edge $\{u, v\}$ equal to
+$d(u,v) + d(v,u)$: it sends each vertex to its parent, or to no parent. -/
 def primParents {W : Type*} [LinearOrder W] [Zero W] [Add W] [Std.Commutative (α := W) (· + ·)]
     (d : Fin n → Fin n → W) (root : Fin n) : Fin n → Option (Fin n) :=
   let parents := (Prim.prim (completeAdjacency n) (symWeight d) root).ret
   fun v => parents[v]
 
-/-- The rooted forest of Prim's minimum spanning tree. -/
+/-- **Forest of Prim's tree.** Given costs $d(u,v)$ on the vertices $\{0, \dots, n-1\}$ with
+values in a linearly ordered type with a zero and commutative addition, and a root $r$, take
+Prim's parent array for $d$ and $r$ (Prim's algorithm run from $r$ on the complete graph with
+edge weights $d(u,v) + d(v,u)$). This forest is the forest of the subtrees below $r$ in that
+parent array, cut off $n$ levels below $r$, in left-child right-sibling form, with the children
+of each vertex in vertex order. -/
 def primForest {W : Type*} [LinearOrder W] [Zero W] [Add W] [Std.Commutative (α := W) (· + ·)]
     (d : Fin n → Fin n → W) (root : Fin n) : Forest (Fin n) :=
   buildForest (primParents d root) n root
 
-/-- CLRS `APPROX-TSP-TOUR` with Prim's tree: the preorder walk of the minimum spanning tree. -/
+/-- **APPROX-TSP-TOUR with Prim's tree.** Given costs $d(u,v)$ on the vertices
+$\{0, \dots, n-1\}$ with values in a linearly ordered type with a zero and commutative addition,
+and a root $r$, the tour is $r$ followed by the vertices of the forest of Prim's tree below $r$
+in preorder. Its running time counts one unit per vertex of the tour; running Prim's algorithm
+and building the forest are not counted.
+
+This is CLRS APPROX-TSP-TOUR, with the minimum spanning tree computed by Prim. -/
 def primTSPTour {W : Type*} [LinearOrder W] [Zero W] [Add W] [Std.Commutative (α := W) (· + ·)]
     (d : Fin n → Fin n → W) (root : Fin n) : TimeM ℕ (List (Fin n)) :=
   approxTSPTour root (primForest d root)
 
-/-- `completeAdjacency n` lists exactly the edges of the complete graph. -/
+/-- **Neighbours in the complete adjacency.** For all vertices $u, v$ of $\{0, \dots, n-1\}$,
+$v$ is listed among the neighbours of $u$ in the complete graph as an ordered adjacency if and
+only if $u$ and $v$ are adjacent in the complete simple graph on $\{0, \dots, n-1\}$, that is,
+$u \ne v$. -/
 theorem mem_completeAdjacency (u v : Fin n) :
     v ∈ (completeAdjacency n).adjacency u ↔ (⊤ : SimpleGraph (Fin n)).Adj u v := by
   simp only [completeAdjacency, List.mem_filter, List.mem_finRange, true_and,
     SimpleGraph.top_adj, decide_eq_true_eq]
   exact ⟨Ne.symm, Ne.symm⟩
 
-/-- Prim's tree, as a graph. -/
+/-- **Prim's tree.** Given costs $d(u,v)$ on the vertices $\{0, \dots, n-1\}$ with values in a
+linearly ordered type with a zero and commutative addition, and a root $r$, Prim's tree is the
+simple graph on these vertices in which distinct vertices $u$ and $v$ are adjacent when one of
+them is the parent of the other in Prim's parent array for $d$ and $r$. -/
 abbrev primTree {W : Type*} [LinearOrder W] [Zero W] [Add W] [Std.Commutative (α := W) (· + ·)]
     (d : Fin n → Fin n → W) (root : Fin n) : SimpleGraph (Fin n) :=
   SimpleGraph.fromRel fun u v => primParents d root v = some u
 
-/-- Prim's tree is a spanning tree of the complete graph, for any linearly ordered weights
-(from `Prim.prim_isTree`). -/
+/-- **Prim's tree is a spanning tree.** For costs $d(u,v)$ on the vertices $\{0, \dots, n-1\}$
+with values in any linearly ordered type with a zero and commutative addition, and any root $r$,
+Prim's tree for $d$ and $r$ is a tree on all of $\{0, \dots, n-1\}$, that is, a spanning tree of
+the complete graph. -/
 theorem primTree_isTree {W : Type*} [LinearOrder W] [Zero W] [Add W]
     [Std.Commutative (α := W) (· + ·)] (d : Fin n → Fin n → W) (root : Fin n) :
     (primTree d root).IsTree := by
@@ -359,8 +416,10 @@ theorem primTree_isTree {W : Type*} [LinearOrder W] [Zero W] [Add W]
     SimpleGraph.connected_top
 
 open Classical in
-/-- Prim's tree is a minimum spanning tree of the complete graph under `symWeight d`
-(from `Prim.prim_minimum_spanningTree`). -/
+/-- **Prim's tree is a minimum spanning tree.** Let $d(u,v)$ be real costs on the vertices
+$\{0, \dots, n-1\}$, let $r$ be a vertex, and weigh each edge $\{u, v\}$ by $d(u,v) + d(v,u)$.
+Then Prim's tree for $d$ and $r$ is a tree, and for every tree $H$ on these vertices the total
+weight of the edges of Prim's tree is at most the total weight of the edges of $H$. -/
 theorem primTree_isMinimumSpanningTree (d : Fin n → Fin n → ℝ) (root : Fin n) :
     (primTree d root).IsTree ∧ ∀ H : SimpleGraph (Fin n), H.IsTree →
       (∑ e ∈ (primTree d root).edgeFinset, symWeight d e) ≤
@@ -370,7 +429,12 @@ theorem primTree_isMinimumSpanningTree (d : Fin n → Fin n → ℝ) (root : Fin
     mem_completeAdjacency SimpleGraph.connected_top
   exact ⟨h.2.1, fun H hH => by convert h.2.2 H le_top hH; rfl⟩
 
-/-- Prim's parent array is a parent tree: every chain reaches the root. -/
+/-- **Prim's parent array is a parent tree.** Let $W$ be a linearly ordered type with a zero and
+a commutative addition, let $d$ assign a weight in $W$ to each ordered pair of vertices of
+$\{0, \dots, n-1\}$, and let $r$ be a vertex. Then Prim's parent array for $d$ from $r$ is a
+parent tree with root $r$: $r$ has no parent, and every vertex reaches $r$ after finitely many
+steps up, where a step up moves a vertex to its parent and leaves a vertex without parent in
+place. -/
 theorem parentTree_primParents {W : Type*} [LinearOrder W] [Zero W] [Add W]
     [Std.Commutative (α := W) (· + ·)] (d : Fin n → Fin n → W) (root : Fin n) :
     ParentTree (primParents d root) root := by
@@ -398,13 +462,20 @@ theorem parentTree_primParents {W : Type*} [LinearOrder W] [Zero W] [Add W]
             exact ⟨j, hj⟩
 
 
-/-- Prim's forest visits every vertex of `Fin n` exactly once, below the root. -/
+/-- **Prim's forest spans all vertices.** Let $W$ be a linearly ordered type with a zero and a
+commutative addition, let $d$ assign a weight in $W$ to each ordered pair of vertices of
+$\{0, \dots, n-1\}$, and let $r$ be a vertex. Then $r$ together with Prim's forest for $d$ and
+$r$ is a spanning tree of $\{0, \dots, n-1\}$: $r$ followed by the vertices of the forest in
+preorder lists every vertex exactly once. -/
 theorem isSpanning_primForest {W : Type*} [LinearOrder W] [Zero W] [Add W]
     [Std.Commutative (α := W) (· + ·)] (d : Fin n → Fin n → W) (root : Fin n) :
     IsSpanning (List.finRange n) root (primForest d root) :=
   isSpanning_buildForest (parentTree_primParents d root)
 
-/-- The result is a tour: it visits every vertex of `Fin n` exactly once. -/
+/-- **The tour from Prim's tree is a tour.** For costs $d(u,v)$ on the vertices
+$\{0, \dots, n-1\}$ with values in a linearly ordered type with a zero and commutative addition,
+and any root $r$, the list returned by APPROX-TSP-TOUR with Prim's tree for $d$ and $r$ is a
+permutation of $0, 1, \dots, n-1$: it visits every vertex exactly once. -/
 theorem primTSPTour_isTour {W : Type*} [LinearOrder W] [Zero W] [Add W]
     [Std.Commutative (α := W) (· + ·)] (d : Fin n → Fin n → W) (root : Fin n) :
     IsTour (List.finRange n) (primTSPTour d root).ret :=
@@ -438,7 +509,14 @@ private theorem par_some_of_ne_root (ht : ParentTree par root) {u : Fin n} (hu :
       exact no_return ht (show 0 < 1 by omega) h1.symm hu
 
 open Classical in
-/-- The parent edges are the edges of the parent graph, one per non-root vertex. -/
+/-- **Edge sums over a parent tree.** Let $p$ be a parent array on the vertices
+$\{0, \dots, n-1\}$ in which the root $r$ has no parent and every chain of parents reaches
+$r$, and let $w$ assign to each unordered pair $\{u, v\}$ of vertices (possibly $u = v$) a
+value in a commutative additive monoid. Write $\hat p(u)$ for the parent of $u$, or $u$ itself
+if $u$ has no parent. Then the sum of $w(e)$ over the edges $e$ of the parent graph (distinct
+$u$ and $v$ are adjacent when one is the parent of the other) equals the sum of
+$w(\{\hat p(u), u\})$ over the vertices $u$ of the forest built from $p$ below $r$, $n$ levels
+deep, listed in preorder. -/
 theorem sum_edgeFinset_eq {M : Type*} [AddCommMonoid M] (ht : ParentTree par root)
     (w : Sym2 (Fin n) → M) :
     ∑ e ∈ (SimpleGraph.fromRel fun u v => par v = some u).edgeFinset, w e =
@@ -607,8 +685,14 @@ end PathTree
 
 /-! ## The 2-approximation with Prim -/
 
-/-- CLRS Theorem 35.2 with the minimum spanning tree computed by Prim: for a metric cost on
-`Fin n`, the preorder walk of Prim's tree costs at most twice any tour. -/
+/-- **APPROX-TSP-TOUR with Prim's tree is a 2-approximation.** Let $d$ be a real metric cost
+on the vertices $\{0, \dots, n-1\}$ (symmetric, zero on the diagonal, nonnegative, and
+satisfying the triangle inequality), and let $r$ be a vertex. Then the cost of the closed tour
+through the list returned by APPROX-TSP-TOUR with Prim's tree for $d$ and $r$ is at most twice
+the cost of the closed tour through $H$, for every list $H$ that visits each of
+$0, 1, \dots, n-1$ exactly once.
+
+This is CLRS Theorem 35.2, with the minimum spanning tree computed by Prim. -/
 theorem primTSPTour_two_approx {n : ℕ} {d : Fin n → Fin n → ℝ} (hd : IsMetricCost d)
     (root : Fin n) {H : List (Fin n)} (hH : IsTour (List.finRange n) H) :
     tourCost d (primTSPTour d root).ret ≤ 2 * tourCost d H := by

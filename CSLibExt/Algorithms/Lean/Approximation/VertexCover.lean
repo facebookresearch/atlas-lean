@@ -48,8 +48,11 @@ universe u
 
 variable {V : Type u} [DecidableEq V]
 
-/-- Scan the remaining edges. A covered edge is skipped; an uncovered edge `(u, v)` puts both `u`
-and `v` into the cover. -/
+/-- **Vertex cover scan.** Given a finite set $C$ of vertices and a list of pairs of vertices,
+the scan processes the pairs in order, starting from the cover $C$ and charging one time unit
+per pair. A pair $(u, v)$ is covered when $u$ or $v$ is already in the current cover; a covered
+pair is skipped, and an uncovered pair adds both $u$ and $v$ to the cover. The scan returns the
+cover reached after the last pair. -/
 def vertexCoverScan (cover : Finset V) : List (V × V) → TimeM ℕ (Finset V)
   | [] => pure cover
   | (u, v) :: es => do
@@ -57,12 +60,21 @@ def vertexCoverScan (cover : Finset V) : List (V × V) → TimeM ℕ (Finset V)
       if u ∈ cover ∨ v ∈ cover then vertexCoverScan cover es
       else vertexCoverScan (insert u (insert v cover)) es
 
-/-- CLRS `APPROX-VERTEX-COVER` over an edge list, starting from the empty cover. -/
+/-- **APPROX-VERTEX-COVER.** Given a list $L$ of ordered pairs of vertices, APPROX-VERTEX-COVER
+starts from the empty cover and goes through $L$ in order: a pair $(u, v)$ with $u$ or $v$ already
+in the cover is skipped, and otherwise both $u$ and $v$ are added to the cover. It returns the
+final cover, a finite set of vertices, at a cost of one unit per pair of $L$.
+
+CLRS (third edition, Section 35.1) takes an arbitrary uncovered edge at each step; here it is the
+first uncovered pair in list order. -/
 def approxVertexCover (edges : List (V × V)) : TimeM ℕ (Finset V) :=
   vertexCoverScan ∅ edges
 
 /-! ## Cost -/
 
+/-- **Running time of the vertex cover scan.** For every finite set $C$ of vertices and every list
+$L$ of pairs of vertices, the running time of the vertex cover scan starting from $C$ on $L$ is
+the length of $L$. -/
 @[simp]
 theorem vertexCoverScan_time (cover : Finset V) (edges : List (V × V)) :
     (vertexCoverScan cover edges).time = edges.length := by
@@ -72,7 +84,8 @@ theorem vertexCoverScan_time (cover : Finset V) (edges : List (V × V)) :
       obtain ⟨u, v⟩ := e
       by_cases h : u ∈ cover ∨ v ∈ cover <;> simp [vertexCoverScan, h, ih, Nat.add_comm]
 
-/-- One unit per listed edge. -/
+/-- **Running time of APPROX-VERTEX-COVER.** For every list $L$ of ordered pairs of vertices, the
+cost of APPROX-VERTEX-COVER on $L$ is the length of $L$: one unit per listed pair. -/
 @[simp]
 theorem approxVertexCover_time (edges : List (V × V)) :
     (approxVertexCover edges).time = edges.length :=
@@ -80,6 +93,9 @@ theorem approxVertexCover_time (edges : List (V × V)) :
 
 /-! ## The result is a vertex cover -/
 
+/-- **The vertex cover scan only adds vertices.** For every finite set $C$ of vertices and every
+list of pairs of vertices, the cover returned by the vertex cover scan starting from $C$ on that
+list contains $C$. -/
 theorem subset_vertexCoverScan (cover : Finset V) (edges : List (V × V)) :
     cover ⊆ (vertexCoverScan cover edges).ret := by
   induction edges generalizing cover with
@@ -111,12 +127,16 @@ theorem vertexCoverScan_covers (cover : Finset V) (edges : List (V × V)) :
         · simpa [vertexCoverScan, h] using ih cover f hf
         · simpa [vertexCoverScan, h] using ih _ f hf
 
-/-- Every listed edge has an endpoint in the returned cover. -/
+/-- **APPROX-VERTEX-COVER covers every listed pair.** For every list $L$ of ordered pairs of
+vertices and every pair $(u, v)$ in $L$, the cover that APPROX-VERTEX-COVER returns on $L$
+contains $u$ or $v$. -/
 theorem approxVertexCover_covers (edges : List (V × V)) :
     ∀ e ∈ edges, e.1 ∈ (approxVertexCover edges).ret ∨ e.2 ∈ (approxVertexCover edges).ret :=
   vertexCoverScan_covers ∅ edges
 
-/-- If every edge of `G` is listed, in either orientation, the result is a vertex cover of `G`. -/
+/-- **APPROX-VERTEX-COVER returns a vertex cover.** Let $G$ be a simple graph and $L$ a list of
+ordered pairs of vertices such that for every edge $uv$ of $G$, $(u, v)$ or $(v, u)$ is in $L$.
+Then the cover that APPROX-VERTEX-COVER returns on $L$ is a vertex cover of $G$. -/
 theorem approxVertexCover_isVertexCover (G : SimpleGraph V) (edges : List (V × V))
     (hcomplete : ∀ ⦃u v⦄, G.Adj u v → (u, v) ∈ edges ∨ (v, u) ∈ edges) :
     G.IsVertexCover ↑(approxVertexCover edges).ret := by
@@ -127,8 +147,13 @@ theorem approxVertexCover_isVertexCover (G : SimpleGraph V) (edges : List (V × 
 
 /-! ## The factor-two bound -/
 
-/-- The counting invariant: every vertex cover `S` of `G` contains at least half of the vertices
-the scan has chosen, because each taken edge adds two new vertices, at least one of them in `S`. -/
+/-- **Counting invariant of the vertex cover scan.** Let $G$ be a simple graph, $S$ a vertex cover
+of $G$, $C_0$ a finite set of vertices with $|C_0| \le 2|C_0 \cap S|$, and $L$ a list of ordered
+pairs of vertices such that $u$ and $v$ are adjacent in $G$ for every $(u, v)$ in $L$. Then the
+cover $C$ that the vertex cover scan returns on $L$ starting from $C_0$ satisfies
+$|C| \le 2|C \cap S|$.
+
+The invariant holds because each taken edge adds two new vertices, at least one of them in $S$. -/
 theorem card_vertexCoverScan_le (G : SimpleGraph V) (S : Set V) (hS : G.IsVertexCover S)
     [DecidablePred (· ∈ S)] (cover : Finset V) (edges : List (V × V))
     (hsound : ∀ e ∈ edges, G.Adj e.1 e.2)
@@ -168,8 +193,11 @@ theorem card_vertexCoverScan_le (G : SimpleGraph V) (S : Set V) (hS : G.IsVertex
             rw [Finset.card_insert_of_notMem (by simp [h.2])]
             omega
 
-/-- If every listed pair is an edge of `G`, the result has at most twice as many vertices as any
-vertex cover of `G`. -/
+/-- **APPROX-VERTEX-COVER is at most twice any vertex cover.** Let $G$ be a simple graph and $L$ a
+list of ordered pairs of vertices such that $u$ and $v$ are adjacent in $G$ for every $(u, v)$ in
+$L$. Then for every vertex cover $S$ of $G$, finite or infinite, the cover $C$ that
+APPROX-VERTEX-COVER returns on $L$ satisfies $|C| \le 2|S|$, with sizes in
+$\mathbb{N} \cup \{\infty\}$. -/
 theorem card_approxVertexCover_le_two_mul (G : SimpleGraph V) (edges : List (V × V))
     (hsound : ∀ e ∈ edges, G.Adj e.1 e.2) (S : Set V) (hS : G.IsVertexCover S) :
     ((approxVertexCover edges).ret.card : ℕ∞) ≤ 2 * S.encard := by
@@ -184,9 +212,14 @@ theorem card_approxVertexCover_le_two_mul (G : SimpleGraph V) (edges : List (V �
     _ = 2 * ((C.filter (· ∈ S)).card : ℕ∞) := by push_cast; rfl
     _ ≤ 2 * S.encard := by gcongr
 
-/-- CLRS Theorem 35.1: if `edges` lists exactly the edges of `G`, each in at least one orientation,
-then `approxVertexCover edges` is a vertex cover of `G` of size at most twice the vertex cover
-number. -/
+/-- **APPROX-VERTEX-COVER is a 2-approximation.** Let $G$ be a simple graph and $L$ a list of
+ordered pairs of vertices that lists exactly the edges of $G$, each in at least one orientation:
+$u$ and $v$ are adjacent in $G$ for every $(u, v)$ in $L$, and for every edge $uv$ of $G$,
+$(u, v)$ or $(v, u)$ is in $L$. Then the cover $C$ that APPROX-VERTEX-COVER returns on $L$ is a
+vertex cover of $G$ and $|C| \le 2\tau(G)$, where $\tau(G) \in \mathbb{N} \cup \{\infty\}$ is the
+vertex cover number of $G$, the minimum size of a vertex cover of $G$.
+
+Source: CLRS, third edition, Theorem 35.1. -/
 theorem approxVertexCover_two_approximation (G : SimpleGraph V) (edges : List (V × V))
     (hsound : ∀ e ∈ edges, G.Adj e.1 e.2)
     (hcomplete : ∀ ⦃u v⦄, G.Adj u v → (u, v) ∈ edges ∨ (v, u) ∈ edges) :
@@ -199,12 +232,18 @@ theorem approxVertexCover_two_approximation (G : SimpleGraph V) (edges : List (V
 
 /-! ## The edges taken form a maximal matching -/
 
-/-- Two pairs share no endpoint. -/
+/-- **Vertex-disjoint pairs.** Two pairs $(a, b)$ and $(c, d)$ of vertices are vertex-disjoint
+when they share no endpoint: $a \ne c$, $a \ne d$, $b \ne c$ and $b \ne d$. -/
 def VertexDisjoint (e f : V × V) : Prop :=
   e.1 ≠ f.1 ∧ e.1 ≠ f.2 ∧ e.2 ≠ f.1 ∧ e.2 ≠ f.2
 
-/-- The scan's matching invariant: the edges it takes, in order, form a sublist of the scanned
-edges whose endpoints are new, pairwise disjoint, and exactly the vertices it adds. -/
+/-- **Matching invariant of the vertex cover scan.** Let $G$ be a simple graph, $C_0$ a finite set
+of vertices, and $L$ a list of ordered pairs of vertices such that $u$ and $v$ are adjacent in $G$
+for every $(u, v)$ in $L$, and let $C$ be the cover that the vertex cover scan returns on $L$
+starting from $C_0$. Then there is a sublist $A$ of $L$ such that neither endpoint of any pair in
+$A$ lies in $C_0$, pairs at different positions of $A$ are vertex-disjoint, a vertex lies in $C$
+exactly when it lies in $C_0$ or is an endpoint of some pair in $A$, and $|C| = |C_0| + 2|A|$,
+where $|A|$ is the length of $A$. -/
 theorem exists_matching_vertexCoverScan (G : SimpleGraph V) (cover : Finset V)
     (edges : List (V × V)) (hsound : ∀ e ∈ edges, G.Adj e.1 e.2) :
     ∃ A : List (V × V), A.Sublist edges ∧ (∀ e ∈ A, e.1 ∉ cover ∧ e.2 ∉ cover) ∧
@@ -246,9 +285,13 @@ theorem exists_matching_vertexCoverScan (G : SimpleGraph V) (cover : Finset V)
             Finset.card_insert_of_notMem hv]
           omega
 
-/-- The edges `APPROX-VERTEX-COVER` takes form a maximal matching `A` of the listed edges:
-they are listed edges, pairwise vertex-disjoint, every listed edge shares an endpoint with one of
-them, the returned cover is exactly their endpoints, and it has `2 * A.length` vertices. -/
+/-- **The edges APPROX-VERTEX-COVER takes form a maximal matching of the listed pairs.** Let $G$
+be a simple graph and $L$ a list of ordered pairs of vertices such that $u$ and $v$ are adjacent
+in $G$ for every $(u, v)$ in $L$, and let $C$ be the cover that APPROX-VERTEX-COVER returns on
+$L$. Then there is a sublist $A$ of $L$ such that pairs at different positions of $A$ are
+vertex-disjoint, every pair in $L$ shares an endpoint with some pair in $A$, a vertex lies in $C$
+exactly when it is an endpoint of some pair in $A$, and $|C| = 2|A|$, where $|A|$ is the length of
+$A$. -/
 theorem approxVertexCover_matching (G : SimpleGraph V) (edges : List (V × V))
     (hsound : ∀ e ∈ edges, G.Adj e.1 e.2) :
     ∃ A : List (V × V), A.Sublist edges ∧ A.Pairwise VertexDisjoint ∧

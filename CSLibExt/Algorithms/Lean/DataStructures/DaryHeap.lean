@@ -31,24 +31,37 @@ set_option autoImplicit false
 
 universe u
 
-/-- Requested arities zero and one use the binary-heap policy. -/
+/-- **Normalized heap arity.** The normalized arity of a requested arity $r \in \mathbb{N}$ is
+$\max(2, r)$: the requested arities $0$ and $1$ become $2$ (the binary-heap policy), and every
+$r \ge 2$ is left unchanged. -/
 def normalizedArity (requested : Nat) : Nat := max 2 requested
 
-/-- Normalization always produces a valid heap arity. -/
+/-- **Normalized arities are at least two.** For every natural number $r$, the normalized arity
+$\max(2, r)$ of $r$ is at least $2$. -/
 theorem normalizedArity_valid (requested : Nat) : 2 ≤ normalizedArity requested := by
   simp [normalizedArity]
 
-/-- A valid requested arity is unchanged by normalization. -/
+/-- **Normalization leaves a valid arity unchanged.** For every natural number $d \ge 2$, the
+normalized arity $\max(2, d)$ of $d$ equals $d$. -/
 @[simp] theorem normalizedArity_eq {d : Nat} (hd : 2 ≤ d) : normalizedArity d = d := by
   simp [normalizedArity, hd]
 
-/-- The parent index in a contiguous level-order `d`-ary tree. -/
+/-- **Parent index in a $d$-ary tree.** For natural numbers $d$ and $i$, the $d$-ary parent of $i$
+is $\lfloor (i - 1)/d \rfloor$, computed in the natural numbers: $i - 1$ is truncated at $0$, so
+the parent of $0$ is $0$, and division by $0$ gives $0$.
+
+This is the parent index when a $d$-ary tree is stored in level order in an array with its root
+at index $0$. -/
 def daryParent (d i : Nat) : Nat := (i - 1) / d
 
-/-- The child index with zero-based offset `k` in a contiguous `d`-ary tree. -/
+/-- **Child index in a $d$-ary heap array.** For natural numbers $d$, $i$ and $k$, the child of
+index $i$ with zero-based offset $k$ in a contiguous level-order $d$-ary tree is the index
+$d i + k + 1$. -/
 def daryChild (d i k : Nat) : Nat := d * i + k + 1
 
-/-- A child offset below `d` maps back to its parent. -/
+/-- **The parent of a $d$-ary child.** Let $d$, $i$ and $k$ be natural numbers with $d \ge 2$ and
+$k < d$. Then the $d$-ary parent of the child of $i$ with zero-based offset $k$, that is, of the
+index $di + k + 1$, is $i$. -/
 theorem daryParent_child {d i k : Nat} (_hd : 2 ≤ d) (hk : k < d) :
     daryParent d (daryChild d i k) = i := by
   simp only [daryParent, daryChild]
@@ -59,26 +72,39 @@ theorem daryParent_child {d i k : Nat} (_hd : 2 ≤ d) (hk : k < d) :
     rw [Nat.mul_comm d i]
     omega
 
-/-- The parent of a nonroot node has a strictly smaller index. -/
+/-- **A $d$-ary parent has a smaller index.** Let $d$ and $i$ be natural numbers with $d \ge 2$ and
+$i > 0$. Then the $d$-ary parent of $i$ is strictly less than $i$. -/
 theorem daryParent_lt {d i : Nat} (_hd : 2 ≤ d) (hi : 0 < i) :
     daryParent d i < i := by
   unfold daryParent
   have hdiv : (i - 1) / d ≤ i - 1 := Nat.div_le_self _ _
   omega
 
-/-- A nonroot node's parent is valid whenever the node is. -/
+/-- **The $d$-ary parent of a valid index is valid.** Let $d \ge 2$ be a natural number, let $a$ be
+an array over any type, write $|a|$ for its size, and let $i$ be an index with $0 < i < |a|$.
+Then the $d$-ary parent of $i$ is also less than $|a|$. -/
 theorem daryParent_lt_size {α : Type u} (d : Nat) (hd : 2 ≤ d)
     (a : Array α) (i : Nat) (hi : i < a.size) (hpos : 0 < i) :
     daryParent d i < a.size :=
   (daryParent_lt hd hpos).trans hi
 
-/-- Every valid nonroot node is no smaller than its immediate `d`-ary parent. -/
+/-- **$d$-ary heap order.** Let $d$ be a natural number and $a = (a_0, \dots, a_{n-1})$ an array
+with entries in a type carrying a relation $\le$. The array $a$ is $d$-ary heap ordered when
+$d \ge 2$ and every nonroot entry is at least the entry at its parent index:
+$a_{\lfloor (i-1)/d \rfloor} \le a_i$ for every index $i$ with $0 < i < n$. -/
 structure DaryHeapOrdered {α : Type u} [LE α] (d : Nat) (a : Array α) : Prop where
   arity_valid : 2 ≤ d
   parent_le : ∀ i (hi : i < a.size), (hpos : 0 < i) →
     a[daryParent d i]'(daryParent_lt_size d arity_valid a i hi hpos) ≤ a[i]
 
-/-- The only potentially bad edge is the edge entering `i`. -/
+/-- **Arrays ready for $d$-ary sift-up.** Let $a = (a_0, \dots, a_{|a|-1})$ be an array over a
+type with a relation $\le$, let $d$ and $i$ be natural numbers, and write
+$p(j) = \lfloor (j-1)/d \rfloor$ for the parent of an index $j > 0$. The array $a$ is ready for
+sift-up at $i$ when $d \ge 2$, $i < |a|$, $a_{p(j)} \le a_j$ for every $0 < j < |a|$ with
+$j \ne i$, and, if $i > 0$, $a_{p(i)} \le a_j$ for every $0 < j < |a|$ with $p(j) = i$.
+
+So the only edge that may violate heap order is the one entering $i$, and the parent of $i$ is
+no greater than the children of $i$. -/
 structure DarySiftUpReady {α : Type u} [LE α]
     (d : Nat) (a : Array α) (i : Nat) : Prop where
   arity_valid : 2 ≤ d
@@ -89,7 +115,11 @@ structure DarySiftUpReady {α : Type u} [LE α]
     daryParent d j = i → (hipos : 0 < i) →
     a[daryParent d i]'(daryParent_lt_size d arity_valid a i index_valid hipos) ≤ a[j]
 
-/-- Repeatedly swap a value with its `d`-ary parent while it is smaller. -/
+/-- **$d$-ary sift-up.** Let $d \ge 2$, let $a$ be an array over a linearly ordered type, of length
+$|a|$ with entries $a_0, \dots, a_{|a|-1}$, let $i$ be a natural number, and write
+$p(i) = \lfloor (i-1)/d \rfloor$ for the parent of $i > 0$. The sift-up of $a$ from $i$ is defined
+recursively: if $0 < i < |a|$ and $a_i < a_{p(i)}$, it is the sift-up from $p(i)$ of the array
+obtained from $a$ by swapping the entries at positions $i$ and $p(i)$; otherwise it is $a$. -/
 def darySiftUp {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) : Array α :=
   if hi : i < a.size then
@@ -107,7 +137,9 @@ termination_by i
 decreasing_by
   exact daryParent_lt hd hpos
 
-/-- Sifting up only permutes the input array. -/
+/-- **Sifting up permutes the array.** Let $d \ge 2$, let $a$ be an array over a linearly ordered
+type and let $i$ be a natural number. The array obtained from $a$ by $d$-ary sift-up from index $i$
+is a permutation of $a$. -/
 theorem darySiftUp_perm {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) :
     (darySiftUp a i d hd).Perm a := by
@@ -124,13 +156,17 @@ theorem darySiftUp_perm {α : Type u} [LinearOrder α]
       · exact Array.Perm.refl _
     · exact Array.Perm.refl _
 
-/-- Sifting up preserves the represented multiset. -/
+/-- **Sifting up preserves the multiset of entries.** Let $d \ge 2$, let $a$ be an array over a
+linearly ordered type and let $i$ be a natural number. The array obtained from $a$ by $d$-ary
+sift-up from index $i$ has the same multiset of entries as $a$. -/
 theorem darySiftUp_multiset {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) :
     (↑(darySiftUp a i d hd).toList : Multiset α) = (↑a.toList : Multiset α) :=
   Multiset.coe_eq_coe.mpr (darySiftUp_perm a i d hd).toList
 
-/-- Local heap order implies that the root is no greater than any valid entry. -/
+/-- **The root of a $d$-ary heap-ordered array is a minimum.** Let $\alpha$ be a linearly ordered
+type, let $d \ge 2$, and let $a$ be an array of elements of $\alpha$ that is $d$-ary
+heap-ordered. Then $a_0 \le a_i$ for every index $i$ smaller than the size of $a$. -/
 theorem DaryHeapOrdered.root_le {α : Type u} [LinearOrder α]
     {d : Nat} (hd : 2 ≤ d) {a : Array α} (h : DaryHeapOrdered d a)
     (i : Nat) (hi : i < a.size) : a[0]'(by omega) ≤ a[i] := by
@@ -226,7 +262,13 @@ private theorem DarySiftUpReady.ordered_at_root {α : Type u} [LinearOrder α]
   intro j hj hjpos
   exact h.ordered_except j hj hjpos (Nat.ne_of_gt hjpos)
 
-/-- Sifting up one admissible incoming-edge violation restores heap order. -/
+/-- **Sift-up restores $d$-ary heap order.** Let $a$ be an array over a linearly ordered type,
+of length $|a|$ with entries $a_0, \dots, a_{|a|-1}$, let $d$ and $i$ be natural numbers, and
+write $p(j) = \lfloor (j-1)/d \rfloor$ for the parent of an index $j > 0$. Suppose $a$ is ready
+for sift-up at $i$: $d \ge 2$, $i < |a|$, $a_{p(j)} \le a_j$ for every $0 < j < |a|$ with
+$j \ne i$, and, if $i > 0$, $a_{p(i)} \le a_j$ for every $0 < j < |a|$ with $p(j) = i$. Then the
+array $b$, of length $|b|$ with entries $b_0, \dots, b_{|b|-1}$, obtained from $a$ by $d$-ary
+sift-up from index $i$ is $d$-ary heap ordered: $b_{p(j)} \le b_j$ for every $0 < j < |b|$. -/
 theorem darySiftUp_ordered {α : Type u} [LinearOrder α]
     (d : Nat) (a : Array α) (i : Nat) (h : DarySiftUpReady d a i) :
     DaryHeapOrdered d (darySiftUp a i d h.arity_valid) := by
@@ -249,7 +291,11 @@ theorem darySiftUp_ordered {α : Type u} [LinearOrder α]
         exact h.ordered_at_root
     · exact False.elim (‹¬i < a.size› h.index_valid)
 
-/-- Appending to an ordered heap creates only the new entry's incoming-edge violation. -/
+/-- **Pushing onto a $d$-ary heap leaves it ready for sifting up.** Let $\alpha$ be a linearly
+ordered type, let $d \ge 2$, and let $a$ be an array over $\alpha$ that is $d$-ary heap ordered,
+with size $|a|$. Then for every $x \in \alpha$, the array obtained by appending $x$ to $a$ is
+ready for $d$-ary sifting up at index $|a|$, the position of $x$; in particular every nonroot
+entry other than $x$ is at least its $d$-ary parent. -/
 theorem daryPush_siftUpReady {α : Type u} [LinearOrder α]
     (d : Nat) (hd : 2 ≤ d) (a : Array α) (h : DaryHeapOrdered d a) (x : α) :
     DarySiftUpReady d (a.push x) a.size := by
@@ -281,8 +327,15 @@ private theorem daryChild_of_parent {d i j : Nat} (hd : 2 ≤ d) (hjpos : 0 < j)
   simp only [daryChild]
   omega
 
-/-- The only potentially bad edges leave `i`; lifting a smallest child to
-`i` is safe for the edge entering `i`. -/
+/-- **Readiness for $d$-ary sift-down.** Let $a$ be an array over a type with a relation $\le$,
+and let $d$ and $i$ be natural numbers. Write $|a|$ for the size of $a$ and $p(j)$ for the
+$d$-ary parent of an index $j$. The array $a$ is ready for $d$-ary sifting down at $i$ when
+$d \ge 2$, $i < |a|$, every index $j$ with $0 < j < |a|$ and $p(j) \ne i$ satisfies
+$a_{p(j)} \le a_j$, and, if $i > 0$, every index $j$ with $0 < j < |a|$ and $p(j) = i$ satisfies
+$a_{p(i)} \le a_j$.
+
+Thus the only edges that may violate heap order leave $i$, and lifting a smallest child to $i$
+keeps the edge entering $i$ ordered. -/
 structure DarySiftDownReady {α : Type u} [LE α] (d : Nat) (a : Array α)
     (i : Nat) : Prop where
   arity_valid : 2 ≤ d
@@ -295,8 +348,11 @@ structure DarySiftDownReady {α : Type u} [LE α] (d : Nat) (a : Array α)
     a[daryParent d i]'(daryParent_lt_size d arity_valid a i index_valid hipos) ≤
       a[j]
 
-/-- Scan child offsets `start, start + 1, …, d - 1` and return the index of
-a smallest valid child of `i`, if one exists. -/
+/-- **Smallest child among the offsets from $s$.** Let $a$ be an array over a linearly ordered
+type, of length $|a|$, let $d$, $i$ and $s$ be natural numbers, and call $d i + k + 1$ the child
+of $i$ at offset $k$. Scanning the offsets $s, s + 1, \dots, d - 1$, this returns the index of a
+scanned child of $i$ below $|a|$ whose entry in $a$ is least among those, taking the smallest
+offset among ties, or nothing if no scanned child index is below $|a|$. -/
 def darySmallestChildFrom {α : Type u} [LinearOrder α]
     (a : Array α) (d i start : Nat) : Option Nat :=
   if hk : start < d then
@@ -316,7 +372,11 @@ def darySmallestChildFrom {α : Type u} [LinearOrder α]
 termination_by d - start
 decreasing_by omega
 
-/-- The smallest valid child of `i` in a `d`-ary heap, if one exists. -/
+/-- **Smallest child in a $d$-ary heap array.** Let $a$ be an array of length $|a|$ over a linearly
+ordered type and let $d$ and $i$ be natural numbers. The children of $i$ are the indices
+$d i + k + 1$ for $0 \le k < d$, and a child is valid when it is below $|a|$. The smallest child
+of $i$ is the valid child of $i$ with the least entry, taking the smallest offset $k$ among ties,
+or nothing if $i$ has no valid child. -/
 def darySmallestChild {α : Type u} [LinearOrder α]
     (a : Array α) (d i : Nat) : Option Nat :=
   darySmallestChildFrom a d i 0
@@ -354,7 +414,9 @@ private theorem darySmallestChildFrom_valid {α : Type u} [LinearOrder α]
           · contradiction
     · contradiction
 
-/-- The smallest valid child of `i` is a valid array index. -/
+/-- **The smallest child is a valid index.** Let $a$ be an array of length $|a|$ over a linearly
+ordered type and let $d$, $i$ and $c$ be natural numbers. If the smallest valid child of $i$ in
+the $d$-ary heap array $a$ is $c$, then $c < |a|$. -/
 theorem darySmallestChild_valid {α : Type u} [LinearOrder α]
     (a : Array α) (d i c : Nat) (h : darySmallestChild a d i = some c) :
     c < a.size :=
@@ -402,7 +464,9 @@ private theorem darySmallestChild_parent {α : Type u} [LinearOrder α]
   obtain ⟨k, -, hk, rfl⟩ := darySmallestChildFrom_offset h
   exact daryParent_child hd hk
 
-/-- A selected child has a strictly larger index than its parent. -/
+/-- **The smallest child lies after its parent.** Let $d \ge 2$, let $a$ be an array over a
+linearly ordered type and let $i$ and $c$ be natural numbers. If the smallest valid child of $i$
+in the $d$-ary heap array $a$ is $c$, then $i < c$. -/
 theorem darySmallestChild_gt {α : Type u} [LinearOrder α]
     {a : Array α} {d i c : Nat} (hd : 2 ≤ d)
     (h : darySmallestChild a d i = some c) : i < c := by
@@ -522,8 +586,11 @@ private theorem darySmallestChild_le {α : Type u} [LinearOrder α]
   exact darySmallestChildFrom_le h k (Nat.zero_le k) hkd hj
     (darySmallestChild_valid a d i c h)
 
-/-- Repeatedly swap a value with its smallest `d`-ary child while that
-child is smaller. -/
+/-- **$d$-ary sift-down.** Let $\alpha$ be a linearly ordered type, let $a$ be an array over
+$\alpha$, and let $i$ and $d$ be natural numbers with $d \ge 2$. Sifting down from $i$ in $a$
+returns $a$ if $i$ has no valid $d$-ary child in $a$. Otherwise let $c$ be the smallest valid
+$d$-ary child of $i$, with ties broken toward the lowest child offset: if $a_c < a_i$, swap the
+entries at $i$ and $c$ and sift down from $c$ in the resulting array; otherwise return $a$. -/
 def darySiftDown {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) : Array α :=
   match hchild : darySmallestChild a d i with
@@ -541,7 +608,9 @@ decreasing_by
   have := darySmallestChild_gt hd hchild
   omega
 
-/-- Sifting down only permutes the input array. -/
+/-- **Sifting down in a $d$-ary heap permutes the array.** Let $\alpha$ be a linearly ordered type,
+let $a$ be an array over $\alpha$, and let $i$ and $d$ be natural numbers with $d \ge 2$. The
+array produced by $d$-ary sifting down from index $i$ in $a$ is a permutation of $a$. -/
 theorem darySiftDown_perm {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) :
     (darySiftDown a i d hd).Perm a := by
@@ -564,7 +633,10 @@ theorem darySiftDown_perm {α : Type u} [LinearOrder α]
           (Array.swap_perm hi hc)
       · exact Array.Perm.refl _
 
-/-- Sifting down preserves the represented multiset. -/
+/-- **Sifting down in a $d$-ary heap preserves the multiset of entries.** Let $\alpha$ be a
+linearly ordered type, let $a$ be an array over $\alpha$, and let $i$ and $d$ be natural numbers
+with $d \ge 2$. The array produced by $d$-ary sifting down from index $i$ in $a$ has the same
+multiset of entries as $a$. -/
 theorem darySiftDown_multiset {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) :
     (↑(darySiftDown a i d hd).toList : Multiset α) = (↑a.toList : Multiset α) :=
@@ -659,8 +731,10 @@ private theorem dary_no_swap_ordered {α : Type u} [LinearOrder α]
     simpa only [hp] using hbase
   · exact h.ordered_except j hj hjpos hp
 
-/-- Sifting down an array with admissible outgoing-edge violations restores
-the local `d`-ary heap-order invariant. -/
+/-- **Sifting down restores $d$-ary heap order.** Let $\alpha$ be a linearly ordered type, let
+$d \ge 2$, and let $a$ be an array over $\alpha$ that is ready for $d$-ary sifting down at an
+index $i$. Then the array produced by $d$-ary sifting down from index $i$ in $a$ is $d$-ary heap
+ordered. -/
 theorem darySiftDown_ordered {α : Type u} [LinearOrder α]
     (d : Nat) (a : Array α) (i : Nat) (hd : 2 ≤ d)
     (h : DarySiftDownReady d a i) :
@@ -692,13 +766,20 @@ theorem darySiftDown_ordered {α : Type u} [LinearOrder α]
           assumption
         exact dary_no_swap_ordered h hchild hnlt'
 
-/-- Move the last entry to the root and remove the old root. -/
+/-- **Last-to-root move on an array.** For a nonempty array $a = (a_0, \dots, a_{n-1})$, the
+last-to-root move swaps $a_0$ and $a_{n-1}$ and then deletes the last entry, producing an array
+$b = (b_0, \dots, b_{n-2})$ of length $n - 1$: when $n \ge 2$, $b_0 = a_{n-1}$ and
+$b_i = a_i$ for $0 < i < n - 1$, and $b$ is empty when $n = 1$. -/
 def daryMoveLastToRoot {α : Type u} (a : Array α) (hne : 0 < a.size) :
     Array α :=
   (a.swap 0 (a.size - 1) hne (by omega)).pop
 
-/-- Last-to-root replacement creates exactly an admissible sift-down
-violation at the root whenever at least two entries were present. -/
+/-- **Last-to-root move in a $d$-ary heap is ready for sift-down.** Let $d$ be a natural number,
+let $a$ be a $d$-ary heap ordered array with at least two entries over a linearly ordered type,
+and let $b = (b_0, \dots, b_{m-1})$ be the array obtained from $a$ by the last-to-root move.
+Then $b$ is ready for a $d$-ary sift-down at index $0$: $d \ge 2$, $0 < m$, and
+$b_{\lfloor (j-1)/d \rfloor} \le b_j$ for every index $j$ with $0 < j < m$ whose parent index
+$\lfloor (j-1)/d \rfloor$ is not $0$. -/
 theorem daryMoveLastToRoot_siftDownReady {α : Type u} [LinearOrder α]
     (d : Nat) (a : Array α) (h : DaryHeapOrdered d a) (htwo : 1 < a.size) :
     DarySiftDownReady d (daryMoveLastToRoot a (by omega)) 0 := by
@@ -745,7 +826,10 @@ private theorem daryMoveLastToRoot_cons_perm {α : Type u} [LinearOrder α]
   have hswap := (Array.swap_perm hne (by omega : a.size - 1 < a.size)).toList
   simpa [daryMoveLastToRoot, b, Array.toList_pop] using hperm.trans hswap
 
-/-- Last-to-root replacement removes exactly one occurrence of the old root. -/
+/-- **Last-to-root move in a $d$-ary heap removes one copy of the root.** For every nonempty
+array $a = (a_0, \dots, a_{n-1})$ over a linearly ordered type, the multiset of entries of the
+array obtained from $a$ by the last-to-root move equals the multiset of entries of $a$ with one
+occurrence of $a_0$ removed. -/
 theorem daryMoveLastToRoot_elements {α : Type u} [LinearOrder α]
     (a : Array α) (hne : 0 < a.size) :
     (↑(daryMoveLastToRoot a hne).toList : Multiset α) =
@@ -755,7 +839,10 @@ theorem daryMoveLastToRoot_elements {α : Type u} [LinearOrder α]
       (↑a.toList : Multiset α) := Multiset.coe_eq_coe.mpr hp
   rw [← hm, Multiset.erase_cons_head]
 
-/-- A configurable-arity min-heap with a contiguous level-order representation. -/
+/-- **$d$-ary min-heap.** A $d$-ary min-heap over a linearly ordered type $\alpha$ consists of a
+natural number $d \ge 2$, its arity, and an array $a = (a_0, \dots, a_{n-1})$ of elements of
+$\alpha$, stored in level order, that is $d$-ary heap ordered:
+$a_{\lfloor (i-1)/d \rfloor} \le a_i$ for every index $i$ with $0 < i < n$. -/
 structure DaryMinHeap (α : Type u) [LinearOrder α] where
   /-- The normalized arity, always at least two. -/
   arity : Nat
@@ -764,11 +851,15 @@ structure DaryMinHeap (α : Type u) [LinearOrder α] where
   data : Array α
   ordered : DaryHeapOrdered arity data
 
-/-- The multiset represented by a heap. -/
+/-- **Elements of a d-ary heap.** The multiset of elements of a $d$-ary min-heap $h$ over a
+linearly ordered type is the multiset of the entries of its level-order storage array, counted
+with multiplicity. -/
 def DaryMinHeap.elements {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : Multiset α := h.data.toList
 
-/-- The empty heap, normalizing a requested arity below two to two. -/
+/-- **Empty d-ary heap.** For a natural number $r$ (the requested arity), the empty heap is the
+$d$-ary min-heap over a linearly ordered type with arity $d = \max(2, r)$ and an empty storage
+array; a requested arity below two is thus normalized to two. -/
 def DaryMinHeap.empty {α : Type u} [LinearOrder α]
     (requestedArity : Nat) : DaryMinHeap α where
   arity := normalizedArity requestedArity
@@ -779,7 +870,12 @@ def DaryMinHeap.empty {α : Type u} [LinearOrder α]
     parent_le := by simp
   }
 
-/-- Insert one value, repairing only its arity-dependent ancestor path. -/
+/-- **Insertion into a $d$-ary heap.** Inserting a value $x$ into a $d$-ary min-heap $h$ of arity
+$d$ gives the heap of the same arity $d$ whose array is obtained by appending $x$ at the end of
+the level-order array of $h$ and sifting it up from that last index: while the current index
+$i > 0$ holds an entry strictly smaller than the entry at its parent index
+$\lfloor (i-1)/d \rfloor$, the two entries are swapped and the process continues from the
+parent. Only the ancestor path of the new entry is changed. -/
 def DaryMinHeap.push {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) (x : α) : DaryMinHeap α where
   arity := h.arity
@@ -788,16 +884,22 @@ def DaryMinHeap.push {α : Type u} [LinearOrder α]
   ordered := darySiftUp_ordered h.arity _ _
     (daryPush_siftUpReady h.arity h.arity_valid h.data h.ordered x)
 
-/-- Inspect the minimum without removing it. -/
+/-- **Minimum query on a $d$-ary min-heap.** The minimum query on a $d$-ary min-heap $h$
+returns the entry at index $0$ (the root) of the storage array of $h$, or nothing if the array
+is empty. -/
 def DaryMinHeap.min? {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : Option α := h.data[0]?
 
-/-- Inspection fails exactly for the empty representation. -/
+/-- **The minimum query on a $d$-ary heap fails exactly when it is empty.** For a $d$-ary
+min-heap $h$, the minimum query on $h$ (which returns the entry at index $0$ of the storage
+array, if any) returns nothing if and only if the storage array of $h$ is empty. -/
 theorem DaryMinHeap.min?_eq_none_iff {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : h.min? = none ↔ h.data.size = 0 := by
   simp [DaryMinHeap.min?, getElem?_def]
 
-/-- Inspection returns a stored value. -/
+/-- **The minimum query on a $d$-ary heap returns an element of the heap.** Let $h$ be a
+$d$-ary min-heap. If the minimum query on $h$ returns $x$, then $x$ belongs to the multiset of
+elements of $h$. -/
 theorem DaryMinHeap.min?_mem {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} (hx : h.min? = some x) : x ∈ h.elements := by
   unfold DaryMinHeap.min? at hx
@@ -808,7 +910,9 @@ theorem DaryMinHeap.min?_mem {α : Type u} [LinearOrder α]
     simp [DaryMinHeap.elements, Array.mem_toList_iff]
   · contradiction
 
-/-- Inspection returns a value no greater than every represented value. -/
+/-- **The minimum query on a $d$-ary heap returns a least element.** Let $h$ be a $d$-ary
+min-heap. If the minimum query on $h$ returns $x$, then $x \le y$ for every element $y$ of the
+multiset of elements of $h$. -/
 theorem DaryMinHeap.min?_le {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x y : α} (hx : h.min? = some x) (hy : y ∈ h.elements) :
     x ≤ y := by
@@ -822,7 +926,9 @@ theorem DaryMinHeap.min?_le {α : Type u} [LinearOrder α]
     simpa using h.ordered.root_le h.arity_valid i (by simpa using hi)
   · contradiction
 
-/-- Insertion adds exactly one multiset occurrence. -/
+/-- **Insertion into a d-ary heap adds one occurrence.** For a $d$-ary min-heap $h$ over a
+linearly ordered type and a value $x$, the multiset of elements of the heap obtained by inserting
+$x$ into $h$ is the multiset of elements of $h$ with one more occurrence of $x$. -/
 theorem DaryMinHeap.elements_push {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) (x : α) :
     (h.push x).elements = x ::ₘ h.elements := by
@@ -831,28 +937,39 @@ theorem DaryMinHeap.elements_push {α : Type u} [LinearOrder α]
   apply Multiset.coe_eq_coe.mpr
   exact hp.trans List.perm_append_comm
 
-/-- Insertion preserves local `d`-ary heap order. -/
+/-- **Insertion keeps a $d$-ary heap ordered.** Let $h$ be a $d$-ary min-heap of arity $d$ and let
+$x$ be a value. Then the level-order array of the heap obtained by inserting $x$ into $h$ is
+$d$-ary heap-ordered for the same arity $d$. -/
 theorem DaryMinHeap.push_ordered {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) (x : α) :
     DaryHeapOrdered h.arity (h.push x).data :=
   (h.push x).ordered
 
-/-- Inserting a value raises its multiplicity by one. -/
+/-- **Insertion into a $d$-ary heap raises the multiplicity by one.** For every $d$-ary min-heap
+$h$ over a linearly ordered type and every value $x$, the multiplicity of $x$ among the elements
+of the heap obtained by inserting $x$ into $h$ is one more than its multiplicity among the
+elements of $h$. -/
 theorem DaryMinHeap.count_push_self {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) (x : α) :
     Multiset.count x (h.push x).elements = Multiset.count x h.elements + 1 := by
   rw [h.elements_push x]
   simp
 
-/-- Insertion preserves every different value's multiplicity. -/
+/-- **Insertion into a $d$-ary heap preserves other multiplicities.** For every $d$-ary min-heap
+$h$ over a linearly ordered type and all values $x \ne y$, the multiplicity of $y$ among the
+elements of the heap obtained by inserting $x$ into $h$ equals the multiplicity of $y$ among the
+elements of $h$. -/
 theorem DaryMinHeap.count_push_of_ne {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) {x y : α} (hyx : y ≠ x) :
     Multiset.count y (h.push x).elements = Multiset.count y h.elements := by
   rw [h.elements_push x]
   simp [hyx]
 
-/-- Remove the root from a known nonempty heap and restore heap order:
-the last entry moves to the root and sifts down its `d`-ary child path. -/
+/-- **Removing the root of a $d$-ary min-heap.** Let $h$ be a $d$-ary min-heap whose storage
+array $a$ is nonempty. Removing the root of $h$ gives the heap of arity $d$ whose storage array
+is empty if $a$ has one entry. Otherwise the last entry of $a$ replaces the root, the last
+position is dropped, and the new root is repeatedly swapped with its smallest $d$-ary child
+while that child is smaller. -/
 def DaryMinHeap.extractTail {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) (hne : 0 < h.data.size) : DaryMinHeap α :=
   if hone : h.data.size = 1 then
@@ -867,7 +984,9 @@ def DaryMinHeap.extractTail {α : Type u} [LinearOrder α]
       darySiftDown_ordered h.arity moved 0 h.arity_valid
         (daryMoveLastToRoot_siftDownReady h.arity h.data h.ordered htwo)⟩
 
-/-- Extraction preserves the heap arity. -/
+/-- **Removing the root of a $d$-ary heap preserves its arity.** For a $d$-ary min-heap $h$
+with nonempty storage array, the heap obtained from $h$ by removing its root has the same
+arity $d$ as $h$. -/
 theorem DaryMinHeap.extractTail_arity {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) (hne : 0 < h.data.size) :
     (h.extractTail hne).arity = h.arity := by
@@ -930,13 +1049,21 @@ private theorem DaryMinHeap.extractTail_cons_elements {α : Type u}
     apply Multiset.coe_eq_coe.mpr
     exact (List.Perm.cons _ hsift).trans hmove
 
-/-- Build a heap by genuine arity-dependent insertions. -/
+/-- **Building a $d$-ary min-heap from a list.** Let $\alpha$ be a linearly ordered type, let
+$r \in \mathbb{N}$ be a requested arity, and let $d = \max(2, r)$. The min-heap built from the
+empty list is the empty min-heap of arity $d$, and the min-heap built from a list with head $x$
+and tail $xs$ of elements of $\alpha$ is obtained by inserting $x$ into the min-heap built from
+$xs$. Thus the min-heap built from $[x_1, \dots, x_n]$ starts from the empty min-heap of arity
+$d$ and inserts $x_n$, then $x_{n-1}$, and so on, ending with $x_1$, each by $d$-ary
+insertion. -/
 def DaryMinHeap.ofList {α : Type u} [LinearOrder α]
     (requestedArity : Nat) : List α → DaryMinHeap α
   | [] => DaryMinHeap.empty requestedArity
   | x :: xs => (DaryMinHeap.ofList requestedArity xs).push x
 
-/-- Building from a list preserves every occurrence. -/
+/-- **Building a heap from a list keeps its elements.** For every requested arity $r$ and every
+list $xs$ over a linearly ordered type, the multiset of elements of the min-heap of arity
+$\max(2, r)$ built from $xs$ by successive insertions equals the multiset of entries of $xs$. -/
 theorem DaryMinHeap.elements_ofList {α : Type u} [LinearOrder α]
     (requestedArity : Nat) (xs : List α) :
     (DaryMinHeap.ofList requestedArity xs).elements = (↑xs : Multiset α) := by
@@ -946,7 +1073,9 @@ theorem DaryMinHeap.elements_ofList {α : Type u} [LinearOrder α]
     rw [DaryMinHeap.ofList, DaryMinHeap.elements_push, ih]
     rfl
 
-/-- Building from a list uses the normalized requested arity. -/
+/-- **Arity of a $d$-ary heap built from a list.** For every requested arity $r \in \mathbb{N}$
+and every list $xs$ over a linearly ordered type, the $d$-ary min-heap built from $xs$ with
+requested arity $r$ has arity equal to the normalized arity of $r$, namely $\max(2, r)$. -/
 theorem DaryMinHeap.arity_ofList {α : Type u} [LinearOrder α]
     (requestedArity : Nat) (xs : List α) :
     (DaryMinHeap.ofList requestedArity xs).arity = normalizedArity requestedArity := by
@@ -954,8 +1083,11 @@ theorem DaryMinHeap.arity_ofList {α : Type u} [LinearOrder α]
   | nil => rfl
   | cons x xs ih => simpa [DaryMinHeap.ofList, DaryMinHeap.push] using ih
 
-/-- Remove and return the minimum. The last entry moves to the root and
-sifts down, so extraction follows one `d`-ary child path. -/
+/-- **Extracting the minimum of a $d$-ary min-heap.** For a $d$-ary min-heap $h$,
+extracting the minimum returns nothing if the storage array of $h$ is empty. Otherwise it
+returns the root entry (the entry at index $0$) together with the heap obtained from $h$ by
+removing its root: the last entry moves to the root and sifts down along a single $d$-ary
+child path. -/
 def DaryMinHeap.extractMin {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : Option (α × DaryMinHeap α) :=
   if hne : 0 < h.data.size then
@@ -963,12 +1095,17 @@ def DaryMinHeap.extractMin {α : Type u} [LinearOrder α]
   else
     none
 
-/-- Extraction fails exactly for the empty representation. -/
+/-- **Extracting the minimum of a d-ary heap fails exactly on the empty heap.** For a $d$-ary
+min-heap $h$ over a linearly ordered type, extracting the minimum from $h$ returns no result if
+and only if the storage array of $h$ is empty. -/
 theorem DaryMinHeap.extractMin_eq_none_iff {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : h.extractMin = none ↔ h.data.size = 0 := by
   simp [DaryMinHeap.extractMin]
 
-/-- A successful extraction partitions the represented multiset exactly. -/
+/-- **Extracted minimum and remaining d-ary heap recover the original elements.** Let $h$ be a
+$d$-ary min-heap over a linearly ordered type. If extracting the minimum from $h$ succeeds,
+returning a value $x$ and a heap $h'$, then the multiset of elements of $h$ is the multiset of
+elements of $h'$ with one more occurrence of $x$. -/
 theorem DaryMinHeap.extractMin_cons_elements {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} {rest : DaryMinHeap α}
     (hx : h.extractMin = some (x, rest)) :
@@ -980,14 +1117,20 @@ theorem DaryMinHeap.extractMin_cons_elements {α : Type u} [LinearOrder α]
     exact h.extractTail_cons_elements _
   · contradiction
 
-/-- A successful extraction erases exactly one occurrence of its result. -/
+/-- **Extracting the minimum of a d-ary heap removes one occurrence.** Let $h$ be a $d$-ary
+min-heap over a linearly ordered type. If extracting the minimum from $h$ succeeds, returning a
+value $x$ and a heap $h'$, then the multiset of elements of $h'$ is obtained from the multiset of
+elements of $h$ by removing one occurrence of $x$. -/
 theorem DaryMinHeap.extractMin_elements {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} {rest : DaryMinHeap α}
     (hx : h.extractMin = some (x, rest)) :
     rest.elements = h.elements.erase x := by
   rw [← h.extractMin_cons_elements hx, Multiset.erase_cons_head]
 
-/-- Successful extraction decreases the result's multiplicity by one. -/
+/-- **Extracting the minimum of a d-ary heap lowers its multiplicity by one.** Let $h$ be a
+$d$-ary min-heap over a linearly ordered type. If extracting the minimum from $h$ succeeds,
+returning a value $x$ and a heap $h'$, then the multiplicity of $x$ in the multiset of elements
+of $h'$ is its multiplicity in the multiset of elements of $h$ minus one. -/
 theorem DaryMinHeap.extractMin_count {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} {rest : DaryMinHeap α}
     (hx : h.extractMin = some (x, rest)) :
@@ -997,14 +1140,18 @@ theorem DaryMinHeap.extractMin_count {α : Type u} [LinearOrder α]
   simp at hc
   omega
 
-/-- A successful extraction returns a stored value. -/
+/-- **The extracted minimum of a d-ary heap is one of its elements.** Let $h$ be a $d$-ary
+min-heap over a linearly ordered type. If extracting the minimum from $h$ succeeds, returning a
+value $x$ and a heap $h'$, then $x$ belongs to the multiset of elements of $h$. -/
 theorem DaryMinHeap.extractMin_mem {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} {rest : DaryMinHeap α}
     (hx : h.extractMin = some (x, rest)) : x ∈ h.elements := by
   rw [← h.extractMin_cons_elements hx]
   simp
 
-/-- A successful extraction returns a globally minimal stored value. -/
+/-- **The extracted minimum of a d-ary heap is a lower bound.** Let $h$ be a $d$-ary min-heap
+over a linearly ordered type. If extracting the minimum from $h$ succeeds, returning a value $x$
+and a heap $h'$, then $x \le y$ for every element $y$ of the multiset of elements of $h$. -/
 theorem DaryMinHeap.extractMin_le {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x y : α} {rest : DaryMinHeap α}
     (hx : h.extractMin = some (x, rest)) (hy : y ∈ h.elements) : x ≤ y := by
@@ -1017,7 +1164,9 @@ theorem DaryMinHeap.extractMin_le {α : Type u} [LinearOrder α]
     simpa using h.ordered.root_le h.arity_valid i (by simpa using hi)
   · contradiction
 
-/-- A successful extraction preserves the heap arity. -/
+/-- **Extracting the minimum preserves the arity of a d-ary heap.** Let $h$ be a $d$-ary min-heap
+over a linearly ordered type. If extracting the minimum from $h$ succeeds, returning a value $x$
+and a heap $h'$, then $h'$ has the same arity as $h$. -/
 theorem DaryMinHeap.extractMin_arity {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} {rest : DaryMinHeap α}
     (hx : h.extractMin = some (x, rest)) : rest.arity = h.arity := by
@@ -1028,14 +1177,19 @@ theorem DaryMinHeap.extractMin_arity {α : Type u} [LinearOrder α]
     exact h.extractTail_arity _
   · contradiction
 
-/-- Every returned heap satisfies its local heap-order invariant. -/
+/-- **Extracting the minimum leaves a heap-ordered $d$-ary heap.** Let $h$ be a $d$-ary
+min-heap. If extracting the minimum of $h$ returns a value $x$ and a heap $h'$ of arity $d'$,
+then $d' \ge 2$ and the storage array $a$ of $h'$ is heap-ordered: for every index $i$ with
+$0 < i < |a|$, the entry $a_{\lfloor (i-1)/d' \rfloor}$ is at most $a_i$. -/
 theorem DaryMinHeap.extractMin_ordered {α : Type u} [LinearOrder α]
     {h : DaryMinHeap α} {x : α} {rest : DaryMinHeap α}
     (_hx : h.extractMin = some (x, rest)) :
     DaryHeapOrdered rest.arity rest.data :=
   rest.ordered
 
-/-- The backing array stores exactly one entry per represented occurrence. -/
+/-- **Size of a $d$-ary min-heap.** For every $d$-ary min-heap $h$ over a linearly ordered type,
+the number of elements of $h$, counted with multiplicity, equals the length of its backing
+array. -/
 theorem DaryMinHeap.card_elements {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : h.elements.card = h.data.size := by
   simp [DaryMinHeap.elements]

@@ -56,8 +56,10 @@ universe u
 
 variable {α : Type u} [DecidableEq α]
 
-/-- The set of `F` meeting `U` with the least cost per newly covered element (the first such in
-list order), or `none` when no set meets `U`. -/
+/-- **Set with the least cost per new element.** Given a list $F$ of finite sets, a finite set $U$
+and a rational cost $w(S)$ for each finite set $S$, this is the first set $S$ in $F$ with
+$S \cap U \ne \emptyset$ that minimizes the ratio $w(S) / |S \cap U|$ among the sets of $F$ meeting
+$U$, or nothing when no set of $F$ meets $U$. -/
 def bestRatioSet (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α) : Option (Finset α) :=
   (F.filter fun S => (S ∩ U).card ≠ 0).argmax fun S => -(w S / (S ∩ U).card)
 
@@ -82,9 +84,13 @@ theorem bestRatioSet_eq_none {w : Finset α → ℚ} {F : List (Finset α)} {U :
   rw [this] at hmem
   simp at hmem
 
-/-- Weighted greedy set cover of `U` from the family `F` with costs `w`: take a set meeting `U`
-with the least cost per newly covered element, remove it from `U`, repeat; stop when no set meets
-`U`. -/
+/-- **Weighted greedy set cover.** Let $F = [S_1, \dots, S_n]$ be a list of finite sets, $U$ a
+finite set and $w$ a function giving each finite set $S$ a rational cost $w(S)$. The weighted
+greedy set cover of $U$ from $F$ with costs $w$ is computed as follows. If no $S_i$ meets $U$,
+the result is the empty list. Otherwise let $T$ be the first $S_i$ in the list with
+$S_i \cap U \ne \emptyset$ that minimizes $w(S_i) / |S_i \cap U|$ among the sets of $F$ meeting
+$U$; the result is $T$ followed by the weighted greedy set cover of $U \setminus T$ from $F$ with
+costs $w$. Each step, including the last one, costs $n + |S_1| + \dots + |S_n|$. -/
 def weightedGreedySetCover (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α) :
     TimeM ℕ (List (Finset α)) := do
   ✓[F.length + (F.map Finset.card).sum]
@@ -98,6 +104,9 @@ decreasing_by exact card_sdiff_lt (bestRatioSet_spec _h).2.1
 
 /-! ## The result is a cover from the family -/
 
+/-- **The weighted greedy set cover uses sets of the family.** For every list $F$ of finite sets,
+finite set $U$ and rational cost function $w$ on finite sets, every set chosen by the weighted
+greedy set cover of $U$ from $F$ with costs $w$ belongs to $F$. -/
 theorem weightedGreedySetCover_mem (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α) :
     ∀ S ∈ (weightedGreedySetCover w F U).ret, S ∈ F := by
   induction h : U.card using Nat.strong_induction_on generalizing U with
@@ -111,7 +120,10 @@ theorem weightedGreedySetCover_mem (w : Finset α → ℚ) (F : List (Finset α)
         · exact (bestRatioSet_spec hb).1
         · exact ih _ (h ▸ card_sdiff_lt (bestRatioSet_spec hb).2.1) _ rfl T hT
 
-/-- If every element of `U` lies in some set of `F`, the greedy result covers `U`. -/
+/-- **The weighted greedy set cover is a cover.** Let $F$ be a list of finite sets, $U$ a finite
+set and $w$ any rational cost function on finite sets. If every element of $U$ lies in some set of
+$F$, then every element of $U$ lies in some set chosen by the weighted greedy set cover of $U$ from
+$F$ with costs $w$. -/
 theorem weightedGreedySetCover_covers (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α)
     (hU : ∀ x ∈ U, ∃ S ∈ F, x ∈ S) :
     ∀ x ∈ U, ∃ S ∈ (weightedGreedySetCover w F U).ret, x ∈ S := by
@@ -134,7 +146,11 @@ theorem weightedGreedySetCover_covers (w : Finset α → ℚ) (F : List (Finset 
 
 /-! ## Cost of the search -/
 
-/-- At most `|U| + 1` searches, each costing `|F|` plus the total size of the family. -/
+/-- **Running time of weighted greedy set cover.** Let $F = [S_1, \dots, S_m]$ be a list of finite
+sets, $U$ a finite set and $w$ a rational cost function on finite sets. The weighted greedy set
+cover of $U$ from $F$ with costs $w$ runs in time at most
+$(|U| + 1)\,(m + |S_1| + \dots + |S_m|)$: at most $|U| + 1$ searches for a best set, each costing
+$m$ plus the total size of the sets of $F$. -/
 theorem weightedGreedySetCover_time_le (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α) :
     (weightedGreedySetCover w F U).time ≤
       (U.card + 1) * (F.length + (F.map Finset.card).sum) := by
@@ -157,11 +173,17 @@ theorem weightedGreedySetCover_time_le (w : Finset α → ℚ) (F : List (Finset
 
 /-! ## The harmonic bound -/
 
-/-- The total cost of a list of sets. -/
+/-- **Total cost of a list of sets.** For a function $w$ assigning a rational cost to each finite
+set, the total cost of a list $C = [S_1, \dots, S_m]$ of finite sets is
+$w(S_1) + \dots + w(S_m)$, a set that occurs several times in $C$ being counted each time. -/
 def totalCost (w : Finset α → ℚ) (C : List (Finset α)) : ℚ := (C.map w).sum
 
-/-- **The potential bound.** With nonnegative costs, for every cover `C*` of `U` drawn from `F`,
-the greedy cover costs at most `∑_{S ∈ C*} w S · H(|S ∩ U|)`. -/
+/-- **Potential bound for weighted greedy set cover.** Let $F$ be a list of finite sets, $U$ a
+finite set and $w$ a rational cost function on finite sets with $w(S) \ge 0$ for every $S$ in $F$.
+If $C^*$ is a list of sets from $F$ whose union contains $U$, then the weighted greedy set cover of
+$U$ from $F$ with costs $w$ has total cost at most $\sum_{S \in C^*} w(S)\, H(|S \cap U|)$, the sum
+running over the entries of $C^*$ with repetition, where
+$H(n) = 1 + \frac{1}{2} + \dots + \frac{1}{n}$ is the $n$-th harmonic number. -/
 theorem weightedGreedySetCover_cost_le_sum_harmonic (w : Finset α → ℚ) (F : List (Finset α))
     (U : Finset α) (hw : ∀ S ∈ F, 0 ≤ w S) (Cstar : List (Finset α))
     (hsub : ∀ S ∈ Cstar, S ∈ F) (hcov : ∀ x ∈ U, ∃ S ∈ Cstar, x ∈ S) :
@@ -233,8 +255,12 @@ theorem weightedGreedySetCover_cost_le_sum_harmonic (w : Finset α → ℚ) (F :
         rw [List.sum_map_add] at hsum
         linarith
 
-/-- **Chvátal's bound.** With nonnegative costs, if every set of `F` has at most `d` elements, the
-greedy cover of `U` costs at most `H(d)` times any cover of `U` drawn from `F`. -/
+/-- **Chvátal's bound.** Let $F$ be a list of finite sets, $U$ a finite set, $w$ a rational cost
+function on finite sets with $w(S) \ge 0$ for every $S$ in $F$, and $d$ a natural number such that
+every set in $F$ has at most $d$ elements. If $C^*$ is a list of sets from $F$ whose union contains
+$U$, then the weighted greedy set cover of $U$ from $F$ with costs $w$ has total cost at most
+$H(d)$ times the total cost of $C^*$, where $H(d) = 1 + \frac{1}{2} + \dots + \frac{1}{d}$ is the
+$d$-th harmonic number. -/
 theorem weightedGreedySetCover_approx (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α)
     (hw : ∀ S ∈ F, 0 ≤ w S) {d : ℕ} (hd : ∀ S ∈ F, S.card ≤ d) (Cstar : List (Finset α))
     (hsub : ∀ S ∈ Cstar, S ∈ F) (hcov : ∀ x ∈ U, ∃ S ∈ Cstar, x ∈ S) :
