@@ -28,7 +28,8 @@ open MetaMathlibExt.BitstringEncoding
 
 variable {K Λ : Type} [DecidableEq K] {Γ : K → Type}
 
-/-- Consume one framed-payload pair or its terminator. -/
+/-- **Machine step reading one framed payload pair.**
+Consume one framed-payload pair or its terminator. -/
 def read (a b : K) (d : Γ a → Option Bool) (g : Bool → Γ b)
     (self good bad : Λ) : TM2.Stmt Γ Λ Bool :=
   .peek a (fun _ o => isBit d o) <| .branch id
@@ -63,7 +64,8 @@ private theorem pair_step {M : Λ → TM2.Stmt Γ Λ Bool}
   apply Run.single
   simp [hM, read, TM2.stepAux, isBit, bitOf, hS, hz, hy, hab.symm]
 
-/-- Read a complete block, preserving an arbitrary suffix and all stacks
+/-- **Reading a complete framed block.**
+Read a complete block, preserving an arbitrary suffix and all stacks
 other than the input and reversed-payload destination. -/
 theorem run_delimit {M : Λ → TM2.Stmt Γ Λ Bool}
     {a b : K} {d : Γ a → Option Bool} {g : Bool → Γ b}
@@ -99,7 +101,8 @@ theorem run_delimit {M : Λ → TM2.Stmt Γ Λ Bool}
       rw [hk k hka hkb]
       simp [S₁, hka, hkb]
 
-/-- Truncated framing reaches the failure branch within input length
+/-- **Framed block reader fails on truncated framing.**
+Truncated framing reaches the failure branch within input length
 plus one, without assuming that the input is an encoder image. The
 destination may contain a partial payload on failure; the caller must
 discard or clear it before using that stack again. -/

@@ -21,7 +21,7 @@ no subsumption or implicit type conversion rule.
 
 namespace Cslib.Languages.LambdaCalculus.SystemF
 
-/-- Extrinsic typing of scoped pure System F terms. -/
+/-- **Extrinsic typing of pure System F terms.** Extrinsic typing of scoped pure System F terms. -/
 inductive Typing : {n m : Nat} → Ctx n m → Tm n m → Ty n → Prop where
   | var {n m : Nat} {Γ : Ctx n m} (i : Fin m) :
       Typing Γ (.var i) (Γ i)
@@ -40,7 +40,8 @@ variable {n m : Nat} {Γ : Ctx n m} {A : Ty n} {t : Tm n m}
 
 namespace Typing
 
-/-- Type substitution preserves typing, including every context type. -/
+/-- **Type substitution preserves typing.**
+Type substitution preserves typing, including every context type. -/
 theorem tySubst {k : Nat} (h : Typing Γ t A) (σ : Fin n → Ty k) :
     Typing (fun i => (Γ i).subst σ) (t.tySubst σ) (A.subst σ) := by
   induction h generalizing k with
@@ -58,13 +59,14 @@ theorem tySubst {k : Nat} (h : Typing Γ t A) (σ : Fin n → Ty k) :
     rw [Tm.tySubst, Ty.subst_instantiate]
     exact .tapp (ih σ)
 
-/-- Type renaming preserves typing without adding term variables. -/
+/-- **Type renaming preserves typing.**
+Type renaming preserves typing without adding term variables. -/
 theorem tyRename {k : Nat} (h : Typing Γ t A) (ρ : Fin n → Fin k) :
     Typing (fun i => (Γ i).rename ρ) (t.tyRename ρ) (A.rename ρ) := by
   simpa only [Tm.tyRename, Ty.subst_var_rename] using
     h.tySubst (fun i => .var (ρ i))
 
-/-- A context-respecting term renaming preserves the type. -/
+/-- **Term renaming preserves typing.** A context-respecting term renaming preserves the type. -/
 theorem rename {k : Nat} {Δ : Ctx n k} (h : Typing Γ t A)
     (ρ : Fin m → Fin k) (hρ : ∀ i, Δ (ρ i) = Γ i) :
     Typing Δ (t.rename ρ) A := by
@@ -85,7 +87,8 @@ theorem rename {k : Nat} {Δ : Ctx n k} (h : Typing Γ t A)
     exact ih ρ (fun i => congrArg (Ty.rename Fin.succ) (hρ i))
   | tapp hf ih => exact .tapp (ih ρ hρ)
 
-/-- Correctly typed simultaneous term substitution preserves typing. -/
+/-- **Term substitution preserves typing.**
+Correctly typed simultaneous term substitution preserves typing. -/
 theorem subst {k : Nat} {Δ : Ctx n k} (h : Typing Γ t A)
     (σ : Fin m → Tm n k) (hσ : ∀ i, Typing Δ (σ i) (Γ i)) :
     Typing Δ (t.subst σ) A := by
@@ -105,7 +108,8 @@ theorem subst {k : Nat} {Δ : Ctx n k} (h : Typing Γ t A)
       (fun i => (hσ i).tyRename Fin.succ)
   | tapp hf ih => exact .tapp (ih σ hσ)
 
-/-- Discharging a term binder preserves the body type. -/
+/-- **Instantiating a term binder preserves typing.**
+Discharging a term binder preserves the body type. -/
 theorem instantiate {B : Ty n} {b : Tm n (m + 1)} {a : Tm n m}
     (hb : Typing (Fin.cases A Γ) b B) (ha : Typing Γ a A) :
     Typing Γ (b.instantiate a) B := by
@@ -115,7 +119,8 @@ theorem instantiate {B : Ty n} {b : Tm n (m + 1)} {a : Tm n m}
   | zero => exact ha
   | succ i => exact .var i
 
-/-- Type binder discharge substitutes the type and restores the context. -/
+/-- **Instantiating a type binder preserves typing.**
+Type binder discharge substitutes the type and restores the context. -/
 theorem tyInstantiate {b : Tm (n + 1) m} {C : Ty (n + 1)}
     (hb : Typing (fun i => (Γ i).rename Fin.succ) b C) (A : Ty n) :
     Typing Γ (b.tySubst (Fin.cases A Ty.var)) (C.instantiate A) := by

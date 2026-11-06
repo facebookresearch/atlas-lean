@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Normalization is derived from finite syntax, then NEW ranked Cong keeps ownership. -/
+/-- **Conversion-ranked processes have a typed frontier normal form.**
+Normalization is derived from finite syntax, then NEW ranked Cong keeps ownership. -/
 theorem RankedType.frontier_normal {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) : ∃ q, Cong p q ∧ RankedType n Δ q ∧ FrontierNormal q := by
   obtain ⟨q, hc, hn⟩ := finiteLinear_frontier_normal h.hasType.finiteLinear
@@ -40,7 +41,8 @@ private theorem normal_progress {n : Nat} {Δ : Context} {p : Proc}
     · exact Or.inl (Cong.trans (Cong.nu_cong hc) Cong.nu_nil)
     · exact Or.inr ⟨.nu q, PiCalculus.Step.nu hs⟩
 
-/-- For a ranked-typed process at ANY balanced interface, global progress
+/-- **Global progress of conversion-ranked processes at balanced interfaces.**
+For a ranked-typed process at ANY balanced interface, global progress
 holds, including disconnected networks.
 All private channels are tracked through the derived restriction tower.
 Completion means process congruence to nil, not completion of the interface. -/
@@ -52,12 +54,14 @@ theorem RankedType.progress_balanced {n : Nat} {Δ : Context} {p : Proc}
   · exact Or.inl (Cong.trans hc hnil)
   · exact Or.inr ⟨q, PiCalculus.Step.cong hc hs (Cong.refl _)⟩
 
-/-- A closed finite ranked network is completed or takes an ACTUAL canonical
+/-- **Closed conversion-ranked networks are completed or can step.**
+A closed finite ranked network is completed or takes an ACTUAL canonical
 step. Ambient passive-name depth is arbitrary; no readiness witness is supplied. -/
 theorem RankedType.progress_empty {n : Nat} {p : Proc} (h : RankedType n ∅ p) :
     Cong p .nil ∨ ∃ q, PiCalculus.Step p q := h.progress_balanced balanced_empty
 
-/-- Global progress holds at every finite reachable state of a closed ranked
+/-- **Progress at reachable states of closed conversion-ranked networks.**
+Global progress holds at every finite reachable state of a closed ranked
 network. No fairness, eventual liveness or recursive termination is asserted. -/
 theorem RankedType.reachable_progress {n : Nat} {p q : Proc} (h : RankedType n ∅ p)
     (hr : Relation.ReflTransGen PiCalculus.Step p q) :

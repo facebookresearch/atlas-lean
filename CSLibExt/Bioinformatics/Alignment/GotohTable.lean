@@ -74,13 +74,15 @@ open Cslib.Algorithms.Lean
 
 variable {α : Type*} (σ : α → α → ℤ) (gapOpen gapExtend : ℤ)
 
-/-- The specification of a cell: the three continuation values `(M, X, Y)` of the suffix pair
+/-- **Specification of a Gotoh table cell.**
+The specification of a cell: the three continuation values `(M, X, Y)` of the suffix pair
 `(xs, ys)`, given that the previous column was a match, a gap in `ys`, or a gap in `xs`. -/
 def cellSpec (xs ys : List α) : ℤ × ℤ × ℤ :=
   (gotohContNone σ gapOpen gapExtend xs ys, gotohContGapX σ gapOpen gapExtend xs ys,
     gotohContGapY σ gapOpen gapExtend xs ys)
 
-/-- The cell of `(a :: xs, b :: ys)` from the cells `diag` of `(xs, ys)`, `up` of `(xs, b :: ys)`
+/-- **Gotoh cell recurrence from diagonal, upper and left cells.**
+The cell of `(a :: xs, b :: ys)` from the cells `diag` of `(xs, ys)`, `up` of `(xs, b :: ys)`
 and `left` of `(a :: xs, ys)`: a match continues from `M`, a gap in `ys` from `X` (extending if
 the previous column was one), a gap in `xs` from `Y`. -/
 def step (a b : α) (diag up left : ℤ × ℤ × ℤ) : ℤ × ℤ × ℤ :=
@@ -88,11 +90,13 @@ def step (a b : α) (diag up left : ℤ × ℤ × ℤ) : ℤ × ℤ × ℤ :=
     max (diag.1 + σ a b) (max (up.2.1 + gapExtend) (left.2.2 + gapOpen)),
     max (diag.1 + σ a b) (max (up.2.1 + gapOpen) (left.2.2 + gapExtend)))
 
-/-- The cell of `(a :: xs, [])` from the cell `o` of `(xs, [])`: one more gap column in `ys`. -/
+/-- **Gotoh cell recurrence against an empty second suffix.**
+The cell of `(a :: xs, [])` from the cell `o` of `(xs, [])`: one more gap column in `ys`. -/
 def stepX (o : ℤ × ℤ × ℤ) : ℤ × ℤ × ℤ :=
   (o.2.1 + gapOpen, o.2.1 + gapExtend, o.2.1 + gapOpen)
 
-/-- The row of the suffix `[]` of `xs`: the cells of `([], t)` for the suffixes `t` of `ys`,
+/-- **Gotoh table row of the empty first suffix.**
+The row of the suffix `[]` of `xs`: the cells of `([], t)` for the suffixes `t` of `ys`,
 longest first, each one gap column in `xs` more than the next. -/
 def firstRow : List α → List (ℤ × ℤ × ℤ)
   | [] => [0]
@@ -101,7 +105,8 @@ def firstRow : List α → List (ℤ × ℤ × ℤ)
       ((rest.headD 0).2.2 + gapOpen, (rest.headD 0).2.2 + gapOpen,
         (rest.headD 0).2.2 + gapExtend) :: rest
 
-/-- The row of `a :: xs` from the row `prev` of `xs`, over the remaining suffixes of `ys`, longest
+/-- **Gotoh table row from the previous row.**
+The row of `a :: xs` from the row `prev` of `xs`, over the remaining suffixes of `ys`, longest
 first; each cell uses the cell to its right in the same row. A row `prev` that is too short gives
 junk cells (this does not happen for rows of the table, `nextRow_eq`). -/
 def nextRow (a : α) : List α → List (ℤ × ℤ × ℤ) → List (ℤ × ℤ × ℤ)
@@ -110,7 +115,8 @@ def nextRow (a : α) : List α → List (ℤ × ℤ × ℤ) → List (ℤ × ℤ
       let rest := nextRow a ys prev.tail
       step σ gapOpen gapExtend a b (prev.tail.headD 0) (prev.headD 0) (rest.headD 0) :: rest
 
-/-- The row of the suffix `xs` (of the first sequence) of the table, computed from the rows of
+/-- **Gotoh table row of a suffix of the first sequence.**
+The row of the suffix `xs` (of the first sequence) of the table, computed from the rows of
 its shorter suffixes. -/
 def gotohRows (ys : List α) : List α → List (ℤ × ℤ × ℤ)
   | [] => firstRow gapOpen gapExtend ys
@@ -194,7 +200,8 @@ theorem exists_affineScore_eq_gotohTab (xs ys : List α) :
   rw [gotohTab_eq_gotohScore]
   exact exists_affineScore_eq_gotohScore σ gapOpen gapExtend xs ys
 
-/-- With `gapOpen = gapExtend = gap`, the Gotoh table computes the linear-gap Needleman–Wunsch
+/-- **Gotoh table with equal gap costs gives the Needleman–Wunsch score.**
+With `gapOpen = gapExtend = gap`, the Gotoh table computes the linear-gap Needleman–Wunsch
 score. -/
 theorem gotohTab_eq_nwScore (gap : ℤ) (hopen : gapOpen = gap) (hext : gapExtend = gap)
     (xs ys : List α) : gotohTab σ gapOpen gapExtend xs ys = nwScore σ gap xs ys := by

@@ -28,7 +28,8 @@ private theorem encoded_list (as : List ℕ) :
   change ((as.map encodeNat).map delimit).flatten = _
   simp only [List.map_map, List.flatMap_def, Function.comp_def]
 
-/-- Summing a binary PARTITION instance cannot exceed its encoded length. -/
+/-- **Bitlength of a PARTITION sum is at most the encoded length.**
+Summing a binary PARTITION instance cannot exceed its encoded length. -/
 theorem sum_encoding_length_le (as : List ℕ) :
     (encodeNat as.sum).length ≤ (bitEncode as).length := by
   induction as with
@@ -41,7 +42,8 @@ theorem sum_encoding_length_le (as : List ℕ) :
       length_delimit, List.sum_cons] at ih ⊢
     omega
 
-/-- The padding reduction has linear output length in its encoded input. -/
+/-- **Padding reduction has linear output length.**
+The padding reduction has linear output length in its encoded input. -/
 theorem fromSubsetSum_length (as : List ℕ) (t : ℕ) :
     (bitEncode (fromSubsetSum as t)).length ≤
       3 * (encodeSS as t).length + 1 := by
@@ -53,7 +55,8 @@ theorem fromSubsetSum_length (as : List ℕ) (t : ℕ) :
     List.length_append, length_delimit, encodeSS] at hs ⊢
   omega
 
-/-- Linear output bound on all strings, including malformed encodings. -/
+/-- **Encoded SUBSET-SUM to PARTITION map has linear output length.**
+Linear output bound on all strings, including malformed encodings. -/
 theorem reduceFromSubsetSum_length (x : List Bool) :
     (reduceFromSubsetSum x).length ≤ 3 * x.length + 3 := by
   cases hd : SSVerify.decodeSS x with
@@ -80,7 +83,8 @@ private theorem doubled_bits_le (as : List ℕ) :
       List.length_append, length_delimit] at ih ⊢
     omega
 
-/-- Linear bitlength bound for the membership instance. -/
+/-- **PARTITION membership instance has linear bitlength.**
+Linear bitlength bound for the membership instance. -/
 theorem toSubsetSum_length (as : List ℕ) :
     (encodeSS (as.map (· * 2)) as.sum).length ≤
       5 * (bitEncode as).length + 1 := by

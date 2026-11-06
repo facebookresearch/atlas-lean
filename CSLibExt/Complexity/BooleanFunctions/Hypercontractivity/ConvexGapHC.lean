@@ -46,7 +46,8 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- A convex function on `[0, 1]` that is nonpositive at both endpoints is nonpositive on `[0, 1]`.
+/-- **Nonpositivity of a convex function from its endpoint values.**
+A convex function on `[0, 1]` that is nonpositive at both endpoints is nonpositive on `[0, 1]`.
   See also `ConvexOn.le_max_of_mem_Icc`. -/
 theorem cvg_convexGap_le {G : ℝ → ℝ} (hG : ConvexOn ℝ (Icc (0 : ℝ) 1) G)
     (h0 : G 0 ≤ 0) (h1 : G 1 ≤ 0) {u : ℝ} (hu0 : 0 ≤ u) (hu1 : u ≤ 1) :
@@ -59,7 +60,7 @@ theorem cvg_convexGap_le {G : ℝ → ℝ} (hG : ConvexOn ℝ (Icc (0 : ℝ) 1) 
   calc G u ≤ max (G 0) (G 1) := hkey
     _ ≤ 0 := max_le h0 h1
 
-/-- A finite sum of convex functions is convex. -/
+/-- **Finite sum of convex functions is convex.** A finite sum of convex functions is convex. -/
 theorem cvg_convexOn_sum {α : Type*} (s : Finset α) (g : α → ℝ → ℝ) {D : Set ℝ}
     (hD : Convex ℝ D) (hg : ∀ a ∈ s, ConvexOn ℝ D (g a)) :
     ConvexOn ℝ D (fun u => ∑ a ∈ s, g a u) := by
@@ -75,7 +76,7 @@ theorem cvg_convexOn_sum {α : Type*} (s : Finset α) (g : α → ℝ → ℝ) {
     rw [heq]
     exact hga.add (ih hgt)
 
-/-- `u ↦ (1 - u)^k` is convex on `[0, 1]`. -/
+/-- **Convexity of $(1 - u)^k$ on $[0, 1]$.** `u ↦ (1 - u)^k` is convex on `[0, 1]`. -/
 theorem cvg_oneSubPow_convexOn (k : ℕ) :
     ConvexOn ℝ (Icc (0 : ℝ) 1) (fun u : ℝ => (1 - u) ^ k) := by
   have hpow : ConvexOn ℝ (Ici (0 : ℝ)) (fun x : ℝ => x ^ k) := convexOn_pow k
@@ -88,7 +89,8 @@ theorem cvg_oneSubPow_convexOn (k : ℕ) :
     linarith
   · exact convex_Icc 0 1
 
-/-- The damped total weight `u ↦ ∑_S 4 |S| (1-u)^{|S|-1} f̂(S)²` is convex on `[0, 1]`. -/
+/-- **Convexity of the damped total weight.**
+The damped total weight `u ↦ ∑_S 4 |S| (1-u)^{|S|-1} f̂(S)²` is convex on `[0, 1]`. -/
 theorem cvg_L_convexOn (p : ℝ) (φ : ConfigSpace ι → Bool) :
     ConvexOn ℝ (Icc (0 : ℝ) 1)
       (fun u => ∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
@@ -140,7 +142,8 @@ theorem cvg_Q_secondDeriv (m u : ℝ) (hu : (2 : ℝ) - u ≠ 0) :
     exact hdiv.const_mul m
   exact hD.mul hE
 
-/-- `u ↦ exp (m · u/(2-u))` is concave on `[0, 1]` for `-1 ≤ m ≤ 0`. -/
+/-- **Concavity of $\exp(m u/(2-u))$ for $-1 \le m \le 0$.**
+`u ↦ exp (m · u/(2-u))` is concave on `[0, 1]` for `-1 ≤ m ≤ 0`. -/
 theorem cvg_Q_concaveOn {m : ℝ} (hm0 : m ≤ 0) (hm1 : -1 ≤ m) :
     ConcaveOn ℝ (Icc (0 : ℝ) 1) (fun u : ℝ => Real.exp (m * (u / (2 - u)))) := by
   apply concaveOn_of_hasDerivWithinAt2_nonpos (convex_Icc 0 1)
@@ -183,7 +186,8 @@ theorem cvg_Q_concaveOn {m : ℝ} (hm0 : m ≤ 0) (hm1 : -1 ≤ m) :
     have hmw : 0 ≤ m + (2 - u) := by linarith
     exact mul_nonpos_of_nonpos_of_nonneg h4m hmw
 
-/-- `u ↦ δ^{u/(2-u)} T` is concave on `[0, 1]` for `e^{-1} ≤ δ ≤ 1` and `T ≥ 0`. -/
+/-- **Concavity of $\delta^{u/(2-u)} T$ for $e^{-1} \le \delta \le 1$.**
+`u ↦ δ^{u/(2-u)} T` is concave on `[0, 1]` for `e^{-1} ≤ δ ≤ 1` and `T ≥ 0`. -/
 theorem cvg_R_concaveOn {δ T : ℝ} (hδlo : Real.exp (-1) ≤ δ) (hδhi : δ ≤ 1) (hT : 0 ≤ T) :
     ConcaveOn ℝ (Icc (0 : ℝ) 1) (fun u : ℝ => δ ^ (u / (2 - u)) * T) := by
   have hδ0 : 0 < δ := lt_of_lt_of_le (Real.exp_pos _) hδlo
@@ -198,7 +202,8 @@ theorem cvg_R_concaveOn {δ T : ℝ} (hδlo : Real.exp (-1) ≤ δ) (hδhi : δ 
   rw [heq]
   exact hQ.smul hT
 
-/-- If the right side of the capped estimate is concave in `u`, the estimate holds on `(0, 1)`. -/
+/-- **Capped estimate on $(0, 1)$ from concavity of the right side.**
+If the right side of the capped estimate is concave in `u`, the estimate holds on `(0, 1)`. -/
 theorem cvg_openResidue_of_concaveR [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool)
     (hconc : ConcaveOn ℝ (Icc (0 : ℝ) 1)
@@ -240,7 +245,8 @@ theorem cvg_openResidue_of_concaveR [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 :
   have hgoal : Lf u ≤ Rf u := by linarith
   simpa only [hLf, hRf] using hgoal
 
-/-- The maximal influence of a Boolean function is at most `1`. -/
+/-- **Maximal influence of a Boolean function is at most one.**
+The maximal influence of a Boolean function is at most `1`. -/
 theorem cvg_maxInfl_le_one [Nonempty ι] {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (φ : ConfigSpace ι → Bool) :
     maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) ≤ 1 := by
@@ -259,7 +265,8 @@ theorem cvg_maxInfl_le_one [Nonempty ι] {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 
         rcases (φ (StatMech.setOpen e ω)) <;> rcases (φ (StatMech.setClosed e ω)) <;> norm_num
     _ = 1 := OSSS.expect_one hν
 
-/-- The capped estimate holds for all `u ∈ (0, 1)` when the maximal influence is at least `e^{-1}`.
+/-- **Capped estimate when the maximal influence is at least $e^{-1}$.**
+The capped estimate holds for all `u ∈ (0, 1)` when the maximal influence is at least `e^{-1}`.
 -/
 theorem cvg_openResidue_largeDelta [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool)
@@ -276,7 +283,8 @@ theorem cvg_openResidue_largeDelta [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : 
   have hconc := cvg_R_concaveOn hδlo hδhi hTnn
   exact cvg_openResidue_of_concaveR hp0 hp1 φ hconc hu0 hu1
 
-/-- The capped estimate for all `p ∈ (1/2, q)` with `p < 1`, all Boolean functions with maximal
+/-- **Small-influence residual case of the capped estimate.**
+The capped estimate for all `p ∈ (1/2, q)` with `p < 1`, all Boolean functions with maximal
   influence `δ < e^{-1}`, and all `u ∈ (0, 1)`. Not proved in this library for any `q > 1/2`. -/
 def cvg_smallDeltaResidue (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
@@ -288,7 +296,8 @@ def cvg_smallDeltaResidue (q : ℝ) : Prop :=
         ≤ (maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
           * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
 
-/-- `cvg_smallDeltaResidue q` implies `frh_openResidue q`. -/
+/-- **Small-influence case implies the open-interval case.**
+`cvg_smallDeltaResidue q` implies `frh_openResidue q`. -/
 theorem cvg_openResidue_of_smallDelta {q : ℝ}
     (H : cvg_smallDeltaResidue q) : frh_openResidue q := by
   intro p hp hp1 E _ _ _ φ u hu0 hu1
@@ -299,7 +308,8 @@ theorem cvg_openResidue_of_smallDelta {q : ℝ}
   · rw [not_le] at hδ
     exact H p hp hp1 φ hδ u hu0 hu1
 
-/-- `cvg_smallDeltaResidue q` implies `mxd_martingaleHC_statement q`. -/
+/-- **Small-influence case implies the full capped estimate on $(1/2, q)$.**
+`cvg_smallDeltaResidue q` implies `mxd_martingaleHC_statement q`. -/
 theorem cvg_martingaleHC_of_smallDelta {q : ℝ}
     (H : cvg_smallDeltaResidue q) : mxd_martingaleHC_statement q :=
   frh_martingaleHC_of_openResidue (cvg_openResidue_of_smallDelta H)

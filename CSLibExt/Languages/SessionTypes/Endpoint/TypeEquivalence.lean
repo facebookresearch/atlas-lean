@@ -23,13 +23,15 @@ branch identity. No graph identity or typing theorem is an observation.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- The two distinct children of an endpoint action. -/
+/-- **Payload and continuation branches of an endpoint action.**
+The two distinct children of an endpoint action. -/
 inductive TypeBranch where
   | payload
   | continuation
   deriving DecidableEq
 
-/-- Observable guarded tree edges. Endpoint metadata is never erased. -/
+/-- **Labels of observable protocol-tree edges.**
+Observable guarded tree edges. Endpoint metadata is never erased. -/
 inductive TypeLabel where
   | sendName
   | recvName
@@ -37,7 +39,8 @@ inductive TypeLabel where
   | recvEndpoint (role : Role) (rank : Nat) (branch : TypeBranch)
   deriving DecidableEq
 
-/-- One visible tree edge obtained by the existing guarded root unfolding. -/
+/-- **Visible edge of a protocol tree after root unfolding.**
+One visible tree edge obtained by the existing guarded root unfolding. -/
 inductive TypeEdge : Protocol → TypeLabel → Protocol → Prop where
   | sendName {p s : Protocol} : p.unfold = .sendName s → TypeEdge p .sendName s
   | recvName {p s : Protocol} : p.unfold = .recvName s → TypeEdge p .recvName s
@@ -50,26 +53,32 @@ inductive TypeEdge : Protocol → TypeLabel → Protocol → Prop where
   | recvNext {p t s : Protocol} {r : Role} {k : Nat} :
       p.unfold = .recvEndpoint r k t s → TypeEdge p (.recvEndpoint r k .continuation) s
 
-/-- Canonical CSLib LTS instance for guarded type-tree observations only. -/
+/-- **Labelled transition system of protocol-tree observations.**
+Canonical CSLib LTS instance for guarded type-tree observations only. -/
 def protocolTree : Cslib.LTS Protocol TypeLabel := ⟨TypeEdge⟩
 
-/-- Equirecursive regular-tree equality is canonical strong bisimilarity,
+/-- **Regular-tree equivalence of protocols as bisimilarity.**
+Equirecursive regular-tree equality is canonical strong bisimilarity,
 not equality of graph codes, cursors or finite constructor syntax. -/
 def Protocol.TreeEquiv : Protocol → Protocol → Prop := Cslib.LTS.HomBisimilarity protocolTree
 
-/-- Reflexivity comes from the canonical CSLib bisimilarity API. -/
+/-- **Protocol tree equivalence is reflexive.**
+Reflexivity comes from the canonical CSLib bisimilarity API. -/
 theorem Protocol.TreeEquiv.refl (p : Protocol) : p.TreeEquiv p :=
   Cslib.LTS.HomBisimilarity.refl p
 
-/-- Symmetry comes from the canonical CSLib bisimilarity API. -/
+/-- **Protocol tree equivalence is symmetric.**
+Symmetry comes from the canonical CSLib bisimilarity API. -/
 theorem Protocol.TreeEquiv.symm {p q : Protocol} (h : p.TreeEquiv q) : q.TreeEquiv p :=
   Cslib.LTS.Bisimilarity.symm h
 
-/-- Transitivity comes from composition of canonical CSLib bisimulations. -/
+/-- **Protocol tree equivalence is transitive.**
+Transitivity comes from composition of canonical CSLib bisimulations. -/
 theorem Protocol.TreeEquiv.trans {p q r : Protocol} (h : p.TreeEquiv q)
     (h' : q.TreeEquiv r) : p.TreeEquiv r := Cslib.LTS.Bisimilarity.trans h h'
 
-/-- Root unfolding exposes exactly the same observation edges. -/
+/-- **Root unfolding preserves protocol-tree edges.**
+Root unfolding exposes exactly the same observation edges. -/
 theorem typeEdge_unfold {p q : Protocol} {l : TypeLabel} :
     TypeEdge p.unfold l q ↔ TypeEdge p l q := by
   constructor <;> intro h <;> cases h with
@@ -80,7 +89,8 @@ theorem typeEdge_unfold {p q : Protocol} {l : TypeLabel} :
   | recvPayload h => exact TypeEdge.recvPayload (by simpa only [Protocol.unfold_unfold] using h)
   | recvNext h => exact TypeEdge.recvNext (by simpa only [Protocol.unfold_unfold] using h)
 
-/-- One unfolding is semantically equivalent even though its code changes. -/
+/-- **A protocol is tree-equivalent to its unfolding.**
+One unfolding is semantically equivalent even though its code changes. -/
 theorem Protocol.treeEquiv_unfold (p : Protocol) : p.TreeEquiv p.unfold := by
   apply Cslib.LTS.HomBisimilarity.of_image_eq
   funext l
@@ -88,7 +98,8 @@ theorem Protocol.treeEquiv_unfold (p : Protocol) : p.TreeEquiv p.unfold := by
   intro q
   exact typeEdge_unfold.symm
 
-/-- Exact head and branch correspondence for a relation on child trees.
+/-- **Head and branch matching of protocols up to a child relation.**
+Exact head and branch correspondence for a relation on child trees.
 Payload and continuation are related separately; only metadata is literal. -/
 inductive HeadMatch (R : Protocol → Protocol → Prop) : Protocol → Protocol → Prop where
   | done : HeadMatch R .done .done
@@ -99,7 +110,8 @@ inductive HeadMatch (R : Protocol → Protocol → Prop) : Protocol → Protocol
   | recvEndpoint {r : Role} {k : Nat} {p q s t : Protocol} :
       R p q → R s t → HeadMatch R (.recvEndpoint r k p s) (.recvEndpoint r k q t)
 
-/-- Head matching is monotone in the child relation. -/
+/-- **Head matching is monotone in the child relation.**
+Head matching is monotone in the child relation. -/
 theorem HeadMatch.mono {R S : Protocol → Protocol → Prop} {p q : Protocol}
     (h : HeadMatch R p q) (hrs : ∀ a b, R a b → S a b) : HeadMatch S p q := by
   cases h with
@@ -109,7 +121,8 @@ theorem HeadMatch.mono {R S : Protocol → Protocol → Prop} {p q : Protocol}
   | sendEndpoint hp hs => exact HeadMatch.sendEndpoint (hrs _ _ hp) (hrs _ _ hs)
   | recvEndpoint hp hs => exact HeadMatch.recvEndpoint (hrs _ _ hp) (hrs _ _ hs)
 
-/-- A relation matching literal unfolded heads and both child branches is a
+/-- **Head-matching relations are bisimulations.**
+A relation matching literal unfolded heads and both child branches is a
 canonical CSLib bisimulation. This is the coinductive proof rule, not an axiom. -/
 theorem headMatch_isBisimulation {R : Protocol → Protocol → Prop}
     (hR : ∀ p q, R p q → HeadMatch R p.unfold q.unfold) :
@@ -126,7 +139,8 @@ theorem headMatch_isBisimulation {R : Protocol → Protocol → Prop}
   all_goals grind [→ TypeEdge.sendName, → TypeEdge.recvName, → TypeEdge.sendPayload,
     → TypeEdge.sendNext, → TypeEdge.recvPayload, → TypeEdge.recvNext]
 
-/-- Canonical bisimilarity determines literal head metadata and both
+/-- **Tree-equivalent protocols have matching heads.**
+Canonical bisimilarity determines literal head metadata and both
 semantically equivalent child branches. No graph-code equality is required. -/
 theorem Protocol.TreeEquiv.head {p q : Protocol} (h : p.TreeEquiv q) :
     HeadMatch Protocol.TreeEquiv p.unfold q.unfold := by
@@ -146,12 +160,14 @@ theorem Protocol.TreeEquiv.head {p q : Protocol} (h : p.TreeEquiv q) :
     → TypeEdge.sendNext, → TypeEdge.recvPayload, → TypeEdge.recvNext,
     cases TypeEdge, HeadMatch]
 
-/-- Coinduction on an explicitly supplied tree relation, checked by CSLib. -/
+/-- **Coinduction principle for protocol tree equivalence.**
+Coinduction on an explicitly supplied tree relation, checked by CSLib. -/
 theorem Protocol.TreeEquiv.coind {R : Protocol → Protocol → Prop}
     (hR : ∀ a b, R a b → HeadMatch R a.unfold b.unfold) {p q : Protocol}
     (hpq : R p q) : p.TreeEquiv q := ⟨R, hpq, headMatch_isBisimulation hR⟩
 
-/-- Exact semantic root/branch characterization, in BOTH directions. -/
+/-- **Characterization of tree equivalence by matching heads.**
+Exact semantic root/branch characterization, in BOTH directions. -/
 theorem Protocol.treeEquiv_iff_head {p q : Protocol} :
     p.TreeEquiv q ↔ HeadMatch Protocol.TreeEquiv p.unfold q.unfold := by
   refine ⟨Protocol.TreeEquiv.head, ?_⟩
@@ -163,7 +179,8 @@ theorem Protocol.treeEquiv_iff_head {p q : Protocol} :
   · exact hab.head.mono (fun _ _ h => Or.inl h)
   · exact hh.mono (fun _ _ h => Or.inl h)
 
-/-- Unfolding on either or both sides leaves the regular tree unchanged. -/
+/-- **Unfolding both protocols preserves and reflects tree equivalence.**
+Unfolding on either or both sides leaves the regular tree unchanged. -/
 theorem Protocol.treeEquiv_unfold_iff {p q : Protocol} :
     p.unfold.TreeEquiv q.unfold ↔ p.TreeEquiv q := by
   constructor
@@ -172,29 +189,34 @@ theorem Protocol.treeEquiv_unfold_iff {p q : Protocol} :
   · intro h
     exact (p.treeEquiv_unfold.symm.trans h).trans q.treeEquiv_unfold
 
-/-- Constructor congruence matches same-direction name continuations. -/
+/-- **Tree equivalence is a congruence for name sending.**
+Constructor congruence matches same-direction name continuations. -/
 theorem Protocol.TreeEquiv.sendName {p q : Protocol} (h : p.TreeEquiv q) :
     (Protocol.sendName p).TreeEquiv (.sendName q) :=
   Protocol.treeEquiv_iff_head.mpr (HeadMatch.sendName h)
 
-/-- Constructor congruence also matches input direction separately. -/
+/-- **Tree equivalence is a congruence for name receiving.**
+Constructor congruence also matches input direction separately. -/
 theorem Protocol.TreeEquiv.recvName {p q : Protocol} (h : p.TreeEquiv q) :
     (Protocol.recvName p).TreeEquiv (.recvName q) :=
   Protocol.treeEquiv_iff_head.mpr (HeadMatch.recvName h)
 
-/-- Payload and continuation congruence do not conflate the two branches. -/
+/-- **Tree equivalence is a congruence for endpoint sending.**
+Payload and continuation congruence do not conflate the two branches. -/
 theorem Protocol.TreeEquiv.sendEndpoint {p q s t : Protocol} (hp : p.TreeEquiv q)
     (hs : s.TreeEquiv t) (r : Role) (k : Nat) :
     (Protocol.sendEndpoint r k p s).TreeEquiv (.sendEndpoint r k q t) :=
   Protocol.treeEquiv_iff_head.mpr (HeadMatch.sendEndpoint hp hs)
 
-/-- Endpoint receive congruence preserves literal role/rank metadata. -/
+/-- **Tree equivalence is a congruence for endpoint receiving.**
+Endpoint receive congruence preserves literal role/rank metadata. -/
 theorem Protocol.TreeEquiv.recvEndpoint {p q s t : Protocol} (hp : p.TreeEquiv q)
     (hs : s.TreeEquiv t) (r : Role) (k : Nat) :
     (Protocol.recvEndpoint r k p s).TreeEquiv (.recvEndpoint r k q t) :=
   Protocol.treeEquiv_iff_head.mpr (HeadMatch.recvEndpoint hp hs)
 
-/-- Dualizing a head changes subject direction and continuation orientation,
+/-- **Head matching transfers to dual protocols.**
+Dualizing a head changes subject direction and continuation orientation,
 but leaves payload orientation and role/rank metadata untouched. -/
 theorem HeadMatch.dual {R S : Protocol → Protocol → Prop} {p q : Protocol}
     (h : HeadMatch R p q) (hpayload : ∀ a b, R a b → S a b)
@@ -206,7 +228,8 @@ theorem HeadMatch.dual {R S : Protocol → Protocol → Prop} {p q : Protocol}
   | sendEndpoint hp hs => exact HeadMatch.recvEndpoint (hpayload _ _ hp) (hnext _ _ hs)
   | recvEndpoint hp hs => exact HeadMatch.sendEndpoint (hpayload _ _ hp) (hnext _ _ hs)
 
-/-- Semantic equivalence is preserved by actual protocol duality, including
+/-- **Duality preserves protocol tree equivalence.**
+Semantic equivalence is preserved by actual protocol duality, including
 recursive payloads with independently chosen orientation. -/
 theorem Protocol.TreeEquiv.dual {p q : Protocol} (h : p.TreeEquiv q) :
     p.dual.TreeEquiv q.dual := by
@@ -220,17 +243,20 @@ theorem Protocol.TreeEquiv.dual {p q : Protocol} (h : p.TreeEquiv q) :
     exact hxy.head.dual (fun _ _ ht => Or.inl ht)
       (fun x y ht => Or.inr ⟨x, y, ht, rfl, rfl⟩)
 
-/-- Duality both preserves and reflects equivalence, not only one direction. -/
+/-- **Duality preserves and reflects protocol tree equivalence.**
+Duality both preserves and reflects equivalence, not only one direction. -/
 theorem Protocol.treeEquiv_dual_iff {p q : Protocol} :
     p.dual.TreeEquiv q.dual ↔ p.TreeEquiv q := by
   refine ⟨fun h => ?_, Protocol.TreeEquiv.dual⟩
   simpa only [Protocol.dual_dual] using h.dual
 
-/-- The semantic type relation is a genuine equivalence relation. -/
+/-- **Protocol tree equivalence is an equivalence relation.**
+The semantic type relation is a genuine equivalence relation. -/
 theorem Protocol.treeEquiv_equivalence : Equivalence Protocol.TreeEquiv :=
   ⟨Protocol.TreeEquiv.refl, Protocol.TreeEquiv.symm, Protocol.TreeEquiv.trans⟩
 
-/-- Exact endpoint-send characterization exposes literal metadata equality
+/-- **Tree equivalence of endpoint sends, componentwise.**
+Exact endpoint-send characterization exposes literal metadata equality
 and separate semantic payload/continuation equivalences for conversion. -/
 theorem Protocol.treeEquiv_sendEndpoint_iff {r r' : Role} {k k' : Nat}
     {p q s t : Protocol} :
@@ -244,7 +270,8 @@ theorem Protocol.treeEquiv_sendEndpoint_iff {r r' : Role} {k k' : Nat}
   · rintro ⟨rfl, rfl, hp, hs⟩
     exact hp.sendEndpoint hs _ _
 
-/-- Receive characterization preserves the same independent payload metadata. -/
+/-- **Tree equivalence of endpoint receives, componentwise.**
+Receive characterization preserves the same independent payload metadata. -/
 theorem Protocol.treeEquiv_recvEndpoint_iff {r r' : Role} {k k' : Nat}
     {p q s t : Protocol} :
     (Protocol.recvEndpoint r k p s).TreeEquiv (.recvEndpoint r' k' q t) ↔
@@ -257,7 +284,8 @@ theorem Protocol.treeEquiv_recvEndpoint_iff {r r' : Role} {k k' : Nat}
   · rintro ⟨rfl, rfl, hp, hs⟩
     exact hp.recvEndpoint hs _ _
 
-/-- Activity/completion is invariant under semantic type equivalence. -/
+/-- **Tree equivalence preserves completion of a protocol.**
+Activity/completion is invariant under semantic type equivalence. -/
 theorem Protocol.TreeEquiv.done_iff {p q : Protocol} (h : p.TreeEquiv q) :
     p.unfold = .done ↔ q.unfold = .done := by
   constructor

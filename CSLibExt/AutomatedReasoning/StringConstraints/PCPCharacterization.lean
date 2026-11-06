@@ -82,30 +82,34 @@ open Cslib.Language
 
 variable {α : Type*}
 
-/-- The alphabet for the PCP encoding: dominoes (as index letters) and
+/-- **Alphabet for the PCP encoding.**
+The alphabet for the PCP encoding: dominoes (as index letters) and
 plain letters. -/
 abbrev BlockSym (α : Type*) := Post.Domino α ⊕ α
 
-/-- A domino as an index letter. -/
+/-- **Domino as an index letter.** A domino as an index letter. -/
 abbrev dominoLetter (d : Post.Domino α) : BlockSym α := Sum.inl d
 
-/-- The top morphism: a domino letter maps to its top word as plain
+/-- **Top morphism of the PCP encoding.**
+The top morphism: a domino letter maps to its top word as plain
 letters; plain letters map to `[]` (they never occur in an index word). -/
 def topFun : BlockSym α → List (BlockSym α)
   | Sum.inl d => d.1.map Sum.inr
   | Sum.inr _ => []
 
-/-- The bottom morphism. -/
+/-- **Bottom morphism of the PCP encoding.** The bottom morphism. -/
 def botFun : BlockSym α → List (BlockSym α)
   | Sum.inl d => d.2.map Sum.inr
   | Sum.inr _ => []
 
-/-- The regular language of index words: concatenations of domino
+/-- **Regular language of domino index words.**
+The regular language of index words: concatenations of domino
 letters. -/
 def dominoRegex (P : List (Post.Domino α)) : RegularExpression (BlockSym α) :=
   RegularExpression.star ((P.map fun d => RegularExpression.char (Sum.inl d)).sum)
 
-/-- The PCP encoding as a string constraint over one variable. -/
+/-- **PCP encoding as a one-variable string constraint.**
+The PCP encoding as a string constraint over one variable. -/
 def pcpConstraint (P : List (Post.Domino α)) : Formula (BlockSym α) (Fin 1) :=
   Formula.and
     (Formula.atom (Atom.mem (Term.var 0) (EncodedRegex.flatten (dominoRegex P))))
@@ -114,13 +118,14 @@ def pcpConstraint (P : List (Post.Domino α)) : Formula (BlockSym α) (Fin 1) :=
         (Term.hom botFun (Term.var 0))))
       (Formula.atom (Atom.lenGe (Term.var 0) 1)))
 
-/-- The domino named by a one-letter block; junk `([], [])` otherwise. -/
+/-- **Domino named by a one-letter block.**
+The domino named by a one-letter block; junk `([], [])` otherwise. -/
 def blockDomino (b : List (BlockSym α)) : Post.Domino α :=
   match b with
   | [Sum.inl d] => d
   | _ => ([], [])
 
-/-- Membership in a sum of regular expressions. -/
+/-- **Membership in a sum of regular expressions.** Membership in a sum of regular expressions. -/
 theorem mem_sum_matches {rs : List (RegularExpression α)} {w : List α} :
     w ∈ (rs.sum).matches' ↔ ∃ r ∈ rs, w ∈ r.matches' := by
   induction rs with
@@ -137,7 +142,8 @@ theorem mem_sum_matches {rs : List (RegularExpression α)} {w : List α} :
       · exact Or.inl h'
       · exact Or.inr ⟨r', hr', h'⟩
 
-/-- Membership in the index-word language: the word is a concatenation
+/-- **Membership in the domino index-word language.**
+Membership in the index-word language: the word is a concatenation
 of domino letters. -/
 theorem mem_dominoRegex {P : List (Post.Domino α)} {w : List (BlockSym α)} :
     w ∈ (dominoRegex P).matches' ↔
@@ -165,7 +171,8 @@ theorem mem_dominoRegex {P : List (Post.Domino α)} {w : List (BlockSym α)} :
     · rw [RegularExpression.matches'_char]
       exact Set.mem_singleton_iff.mpr rfl
 
-/-- The membership atom of the encoding checks index-word membership. -/
+/-- **Membership atom of the PCP encoding checks index words.**
+The membership atom of the encoding checks index-word membership. -/
 theorem sat_mem_dominoRegex {σ : Fin 1 → List (BlockSym α)}
     {P : List (Post.Domino α)} :
     SatAtom σ (Atom.mem (Term.var 0) (EncodedRegex.flatten (dominoRegex P))) ↔
@@ -173,7 +180,7 @@ theorem sat_mem_dominoRegex {σ : Fin 1 → List (BlockSym α)}
   change σ 0 ∈ (EncodedRegex.flatten (dominoRegex P)).toRegex.matches' ↔ _
   rw [EncodedRegex.toRegex_flatten]
 
-/-- The top morphism applied to an index word. -/
+/-- **Top morphism applied to an index word.** The top morphism applied to an index word. -/
 theorem flatMap_topFun {w : List (BlockSym α)} {s : List (Post.Domino α)}
     (hw : w = s.map Sum.inl) : w.flatMap topFun = (Post.top s).map Sum.inr := by
   rw [hw, List.flatMap_map]
@@ -181,7 +188,7 @@ theorem flatMap_topFun {w : List (BlockSym α)} {s : List (Post.Domino α)}
   rw [← List.map_flatMap]
   rfl
 
-/-- The bottom morphism applied to an index word. -/
+/-- **Bottom morphism applied to an index word.** The bottom morphism applied to an index word. -/
 theorem flatMap_botFun {w : List (BlockSym α)} {s : List (Post.Domino α)}
     (hw : w = s.map Sum.inl) : w.flatMap botFun = (Post.bottom s).map Sum.inr := by
   rw [hw, List.flatMap_map]
@@ -189,7 +196,7 @@ theorem flatMap_botFun {w : List (BlockSym α)} {s : List (Post.Domino α)}
   rw [← List.map_flatMap]
   rfl
 
-/-- Flattening a list of one-letter blocks. -/
+/-- **Flattening a list of one-letter blocks.** Flattening a list of one-letter blocks. -/
 theorem map_inl_flatten (s : List (Post.Domino α)) :
     s.map dominoLetter = (s.map (fun d => [dominoLetter d])).flatten := by
   induction s with

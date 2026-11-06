@@ -62,13 +62,15 @@ variable {O K : Type*} [Semifield K] [LinearOrder K] {n : ℕ}
 def posteriorPath [NeZero n] (T : ℕ) : Fin (T + 1) → Fin n :=
   fun t => argmaxFin fun s => smoothed x g t (T - t) s
 
-/-- The posterior path picks a state of largest posterior at each time. -/
+/-- **Posterior path maximizes the posterior at each time.**
+The posterior path picks a state of largest posterior at each time. -/
 theorem smoothed_le_posteriorPath [NeZero n] (T : ℕ) (t : Fin (T + 1)) (s : Fin n) :
     smoothed x g t (T - t) s ≤ smoothed x g t (T - t) (posteriorPath x g T t) :=
   le_argmaxFin _ s
 
 omit [LinearOrder K] in
-/-- The posterior of state `s` at time `t ≤ T`, as a sum over the paths of length `T + 1`: the
+/-- **Smoothed posterior as a sum over state paths.**
+The posterior of state `s` at time `t ≤ T`, as a sum over the paths of length `T + 1`: the
 total weight of the paths through `s` at time `t` over the likelihood. -/
 theorem smoothed_eq_sum_pathProb (T : ℕ) (t : Fin (T + 1)) (s : Fin n) :
     smoothed x g t (T - t) s =
@@ -81,7 +83,8 @@ theorem smoothed_eq_sum_pathProb (T : ℕ) (t : Fin (T + 1)) (s : Fin n) :
   subst hk
   rfl
 
-/-- The posterior expected number of correctly decoded states of a path `z`: the sum over all
+/-- **Posterior expected number of correctly decoded states.**
+The posterior expected number of correctly decoded states of a path `z`: the sum over all
 state paths `w` of `pathProb w / likelihood` times the number of times `t ≤ T` with
 `w t = z t`. When the weights are probabilities and the likelihood is positive, this is the
 expectation under the posterior law of the path; for likelihood `0` it is `0` (`x / 0 = 0`), as

@@ -27,7 +27,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition.HardnessCore
 open Turing Function TM2Program TM2Embedding BitstringEncoding Computability
 open Cslib.Complexity.Karp Cslib.Complexity.SatVerifier
 
-/-- Input, reverse buffer, target, output, and unchanged sum-machine stacks. -/
+/-- **Stacks of the SUBSET-SUM to PARTITION padding machine.**
+Input, reverse buffer, target, output, and unchanged sum-machine stacks. -/
 inductive K | X | R | T | O | sum (k : SSVerify.K)
   deriving DecidableEq
 
@@ -35,24 +36,28 @@ inductive K | X | R | T | O | sum (k : SSVerify.K)
   | .sum _ => Sym
   | _ => Bool
 
-/-- Parse target, preserve numbers, sum, then emit the two padding blocks. -/
+/-- **Control labels of the SUBSET-SUM to PARTITION padding machine.**
+Parse target, preserve numbers, sum, then emit the two padding blocks. -/
 inductive Lab
   | target | copy | distribute | sum (l : SSVerify.Lab)
   | targetStart | targetBits | prefix | bits | done
   deriving DecidableEq
 
-/-- The original sum component's stacks are not reimplemented. -/
+/-- **Summation-machine stack embedding in the padding machine.**
+The original sum component's stacks are not reimplemented. -/
 def sumEmb : SEmb (fun _ : SSVerify.K => Sym) Γ where
   e := K.sum
   inj _ _ h := K.sum.inj h
   ι _ := Equiv.refl _
 
-/-- Both genuine sum-machine halts resume at target emission. -/
+/-- **Label map from summation halts to target emission.**
+Both genuine sum-machine halts resume at target emission. -/
 def sumLabel : SSVerify.Lab → Lab
   | .yes | .no => .targetStart
   | l => .sum l
 
-/-- Padding construction by binary stack operations. -/
+/-- **Program of the SUBSET-SUM to PARTITION padding machine.**
+Padding construction by binary stack operations. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .target =>
     .pop .X (fun _ o => o.getD false) <| .branch id
@@ -86,7 +91,8 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
         .push .O id <| .push .O (fun _ => true) <| .goto fun _ => .bits)
   | .done => .halt
 
-/-- The host changes only the two original halting continuations. -/
+/-- **Padding machine embeds the summation machine.**
+The host changes only the two original halting continuations. -/
 theorem embeds_sum : Embeds sumEmb sumLabel SSVerify.prog prog := by
   intro l
   cases l <;> simp [sumLabel, prog, SSVerify.prog]
@@ -319,7 +325,8 @@ private theorem sum_ready (as : List ℕ) (t : ℕ) :
   · exact hf₂ .T (fun k => by simp [sumEmb])
   · exact hf₂ .O (fun k => by simp [sumEmb])
 
-/-- The subtraction-free padding map is computed by a quadratic binary
+/-- **Quadratic run of the padding machine on canonical instances.**
+The subtraction-free padding map is computed by a quadratic binary
 machine on every canonical SUBSET-SUM instance, including `t > as.sum`. -/
 theorem run (as : List ℕ) (t : ℕ) :
     ∃ v S, RunLe prog (20 * ((encodeSS as t).length + 1) ^ 2)
@@ -360,7 +367,8 @@ noncomputable instance : Fintype Lab := Fintype.ofList
     .prefix, .bits, .done] ++ Finset.univ.toList.map Lab.sum)
   (by intro l; cases l <;> simp)
 
-/-- Finite padding component for the strict source-decoding wrapper. -/
+/-- **SUBSET-SUM to PARTITION padding machine as a host component.**
+Finite padding component for the strict source-decoding wrapper. -/
 noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   K := K
   Γ := Γ

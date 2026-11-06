@@ -40,7 +40,7 @@ namespace Cslib.Algorithms.Lean
 
 universe u
 
-/-- A finite region quadtree with a value leaf or four ordered quadrants. -/
+/-- **Region quadtree.** A finite region quadtree with a value leaf or four ordered quadrants. -/
 inductive QTree (α : Type u) where
   | L : α → QTree α
   | Q : QTree α → QTree α → QTree α → QTree α → QTree α
@@ -48,14 +48,14 @@ inductive QTree (α : Type u) where
 
 namespace QTree
 
-/-- The maximum number of branches from the root to a leaf. -/
+/-- **Height of a quadtree.** The maximum number of branches from the root to a leaf. -/
 def height {α : Type u} : QTree α → Nat
   | .L _ => 0
   | .Q t0 t1 t2 t3 =>
       Nat.succ (max (max (height t0) (height t1))
         (max (height t2) (height t3)))
 
-/-- Every subtree is compressed and no branch has four identical leaves.
+/-- **Compressed quadtree.** Every subtree is compressed and no branch has four identical leaves.
 Identical nonleaf children are allowed: they need not represent a constant. -/
 def compressed {α : Type u} : QTree α → Prop
   | .L _ => True
@@ -63,7 +63,8 @@ def compressed {α : Type u} : QTree α → Prop
       compressed t0 ∧ compressed t1 ∧ compressed t2 ∧ compressed t3 ∧
         ¬ (∃ x, t0 = .L x ∧ t1 = t0 ∧ t2 = t0 ∧ t3 = t0)
 
-/-- Selects low/low, low/high, high/low, or high/high, respectively, when
+/-- **Quadrant selection by coordinate flags.**
+Selects low/low, low/high, high/low, or high/high, respectively, when
 `(x, y)` is `(true, true)`, `(true, false)`, `(false, true)`, or
 `(false, false)`.
 In lookup, `true` means that the corresponding coordinate is below the split. -/
@@ -71,7 +72,8 @@ def selectTree {α : Type u} (x y : Bool)
     (t0 t1 t2 t3 : QTree α) : QTree α :=
   if x then if y then t0 else t1 else if y then t2 else t3
 
-/-- A bound on branch height bounds all four child heights one level lower. -/
+/-- **Height bound for the children of a quadtree branch.**
+A bound on branch height bounds all four child heights one level lower. -/
 theorem height_children_le {α : Type u} {t0 t1 t2 t3 : QTree α}
     {n : Nat} (h : height (.Q t0 t1 t2 t3) ≤ n + 1) :
     height t0 ≤ n ∧ height t1 ≤ n ∧ height t2 ≤ n ∧ height t3 ≤ n := by

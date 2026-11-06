@@ -57,31 +57,37 @@ private theorem run_mask_length {n : ℕ}
         (TM2.stepAux (SSVerify.prog l) v S) d at h
       exact (ih h).trans (step_mask_length l v S)
 
-/-- Two canonical Nat blocks in the existing list framing. -/
+/-- **Framed input of two natural numbers.**
+Two canonical Nat blocks in the existing list framing. -/
 def pairInput (m n : ℕ) : List Bool :=
   delimit (encodeNat m) ++ delimit (encodeNat n)
 
-/-- Original verifier labels plus initialization, clear, reverse, and halt. -/
+/-- **Labels of the binary addition machine.**
+Original verifier labels plus initialization, clear, reverse, and halt. -/
 abbrev Lab := SSVerify.Lab ⊕ Fin 4
 
-/-- Reuse all original verifier stacks without re-encoding symbols. -/
+/-- **Identity embedding of the verifier stacks.**
+Reuse all original verifier stacks without re-encoding symbols. -/
 def identity : SEmb (fun _ : SSVerify.K => Sym)
     (fun _ : SSVerify.K => Sym) where
   e := id
   inj := injective_id
   ι _ := Equiv.refl _
 
-/-- Redirect the two halt labels, leaving every live label distinct. -/
+/-- **Redirection of the verifier's halt labels.**
+Redirect the two halt labels, leaving every live label distinct. -/
 def redirect : SSVerify.Lab → Lab
   | .yes | .no => .inr 1
   | l => .inl l
 
-/-- The cleanup continuation cannot alias any live verifier label. -/
+/-- **Only halt labels are redirected to the cleanup label.**
+The cleanup continuation cannot alias any live verifier label. -/
 @[simp] theorem redirect_eq_clear_iff (l : SSVerify.Lab) :
     redirect l = .inr 1 ↔ l = .yes ∨ l = .no := by
   cases l <;> simp [redirect]
 
-/-- Run the existing sum machine, then clear the mask and restore LSB order.
+/-- **Binary addition program built on the SUBSET-SUM machine.**
+Run the existing sum machine, then clear the mask and restore LSB order.
 Only the original halt labels are redirected to a continuation. -/
 def prog : Lab → TM2.Stmt (fun _ : SSVerify.K => Sym) Lab Bool
   | .inl l => mapS identity redirect (SSVerify.prog l)
@@ -177,7 +183,8 @@ private theorem restore_run (bits : List Bool) :
     all_goals exact hk _ (by decide) (by decide)
   exact ⟨v', by simpa [he] using hr⟩
 
-/-- The canonical sum fits within the two framed operands' bit length. -/
+/-- **Bit length of the sum is at most the input length.**
+The canonical sum fits within the two framed operands' bit length. -/
 theorem length_sum_le_input (m n : ℕ) :
     (encodeNat (m + n)).length ≤ (pairInput m n).length := by
   have h := SSVerify.length_addB false (encodeNat m) (encodeNat n)
@@ -185,7 +192,8 @@ theorem length_sum_le_input (m n : ℕ) :
   simp only [pairInput, List.length_append, length_delimit]
   omega
 
-/-- Add two canonically framed numbers, leaving only the LSB-first result.
+/-- **Binary addition of framed numbers in quadratic time.**
+Add two canonically framed numbers, leaving only the LSB-first result.
 The bound is quadratic in encoded input length; no loop enumerates values. -/
 theorem run (m n : ℕ) (v : Bool) :
     let N := (pairInput m n).length
@@ -211,7 +219,8 @@ theorem run (m n : ℕ) (v : Bool) :
   dsimp only [N] at hl ⊢
   omega
 
-/-- The addition component runs in a host, with every external stack
+/-- **Embedded run of the binary addition component.**
+The addition component runs in a host, with every external stack
 unchanged and all embedded workspace cleared. -/
 theorem run_embedded {K Λ : Type} [DecidableEq K] {Γ : K → Type}
     (E : SEmb (fun _ : SSVerify.K => Sym) Γ) (φ : Lab → Λ)

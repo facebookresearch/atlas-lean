@@ -21,7 +21,8 @@ undefined unfolding; there is no silent recursion-variable edge.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- A graph node: completion or a communication with a bounded continuation.
+/-- **Node of a guarded protocol graph.**
+A graph node: completion or a communication with a bounded continuation.
 Endpoint payloads include their role, rank, cursor and protocol orientation. -/
 inductive Node (size : Nat) where
   | done
@@ -32,7 +33,8 @@ inductive Node (size : Nat) where
   | recvEndpoint (role : Role) (rank : Nat) (payload : Fin size)
       (payloadReversed : Bool) (next : Fin size)
 
-/-- Finite presentation of guarded equi-recursive protocols. An empty graph
+/-- **Finite guarded regular protocol graph.**
+Finite presentation of guarded equi-recursive protocols. An empty graph
 has no cursor and therefore cannot denote a protocol. -/
 structure Graph where
   size : Nat

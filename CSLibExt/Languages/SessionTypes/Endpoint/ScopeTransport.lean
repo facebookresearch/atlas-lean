@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Lifting reflects canonical process scoping at an ambient cutoff. -/
+/-- **Lifting preserves and reflects process scoping.**
+Lifting reflects canonical process scoping at an ambient cutoff. -/
 theorem closedAt_liftProc_iff {n k : Nat} (hk : k ≤ n) (p : Proc) :
     (liftProc k p).ClosedAt (n + 1) ↔ p.ClosedAt n := by
   induction p generalizing n k with
@@ -39,7 +40,8 @@ theorem closedAt_liftProc_iff {n k : Nat} (hk : k ≤ n) (p : Proc) :
   | repl p ih => exact ih hk
   | sum p q ihp ihq => exact and_congr (ihp hk) (ihq hk)
 
-/-- Swapping two binders inside the ambient scope preserves the canonical
+/-- **Swapping binders in scope preserves name scoping.**
+Swapping two binders inside the ambient scope preserves the canonical
 name predicate in both directions. -/
 theorem closedAt_swapName_iff (n k : Nat) (hk : k + 1 < n) (a : Name) :
     (swapNameAt k a).ClosedAt n ↔ a.ClosedAt n := by
@@ -49,7 +51,8 @@ theorem closedAt_swapName_iff (n k : Nat) (hk : k + 1 < n) (a : Name) :
     simp only [swapNameAt]
     split_ifs <;> simp only [Name.ClosedAt] <;> omega
 
-/-- Scope preservation by swapping extends through every existing binder. -/
+/-- **Swapping binders in scope preserves process scoping.**
+Scope preservation by swapping extends through every existing binder. -/
 theorem closedAt_swapProc_iff {n k : Nat} (hk : k + 1 < n) (p : Proc) :
     (swapProc k p).ClosedAt n ↔ p.ClosedAt n := by
   induction p generalizing n k with
@@ -65,7 +68,8 @@ theorem closedAt_swapProc_iff {n k : Nat} (hk : k + 1 < n) (p : Proc) :
   | repl p ih => exact ih hk
   | sum p q ihp ihq => exact and_congr (ihp hk) (ihq hk)
 
-/-- Every existing structural congruence transports canonical π scoping,
+/-- **Structural congruence preserves process scoping.**
+Every existing structural congruence transports canonical π scoping,
 including scope extrusion, restriction swapping and replication folding. -/
 theorem closedAt_cong_iff {p q : Proc} (h : Cong p q) (n : Nat) :
     p.ClosedAt n ↔ q.ClosedAt n := by
@@ -88,7 +92,8 @@ theorem closedAt_cong_iff {p q : Proc} (h : Cong p q) (n : Nat) :
   | nu_swap p => exact (closedAt_swapProc_iff (n := n + 2) (by omega) p).symm
   | repl_unfold => exact ⟨fun hp => ⟨hp, hp⟩, And.left⟩
 
-/-- Selection preserves canonical scope even when actual guarded choices
+/-- **Choice selection preserves process scoping.**
+Selection preserves canonical scope even when actual guarded choices
 are present in the existing π syntax. -/
 theorem closedAt_select {p q : Proc} (h : Select p q) {n : Nat}
     (hp : p.ClosedAt n) : q.ClosedAt n := by
@@ -98,7 +103,8 @@ theorem closedAt_select {p q : Proc} (h : Select p q) {n : Nat}
   | right => exact hp.2
   | trans h h' ih ih' => exact ih' (ih hp)
 
-/-- Every existing π step preserves canonical scope, not just direct
+/-- **Reduction steps preserve process scoping.**
+Every existing π step preserves canonical scope, not just direct
 head communication. Substitution is the existing capture-avoiding one. -/
 theorem closedAt_step {p q : Proc} (h : Step p q) {n : Nat}
     (hp : p.ClosedAt n) : q.ClosedAt n := by

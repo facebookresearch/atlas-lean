@@ -64,19 +64,23 @@ namespace OSSS
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The probability `∏ₑ ν e (ω e)` of the configuration `ω` under the product weight `ν`. -/
+/-- **Probability of a configuration under a product weight.**
+The probability `∏ₑ ν e (ω e)` of the configuration `ω` under the product weight `ν`. -/
 noncomputable def weight (ν : E → Bool → ℝ) (ω : ConfigSpace E) : ℝ := ∏ e, ν e (ω e)
 
-/-- The expectation `∑_ω weight ν ω * g ω` of `g` under the product weight `ν`. -/
+/-- **Expectation under a product weight.**
+The expectation `∑_ω weight ν ω * g ω` of `g` under the product weight `ν`. -/
 noncomputable def expect (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   ∑ ω, weight ν ω * g ω
 
-/-- `ν` is a product probability weight: each `ν e` is a probability vector on `Bool`. -/
+/-- **Product probability weight.**
+`ν` is a product probability weight: each `ν e` is a probability vector on `Bool`. -/
 structure IsProbWeight (ν : E → Bool → ℝ) : Prop where
   nonneg : ∀ e b, 0 ≤ ν e b
   normalized : ∀ e, ν e false + ν e true = 1
 
-/-- The point mass at `b`, as a weight on `Bool`. Replacing `ν e` by `pt b` conditions on `ω e = b`.
+/-- **Point-mass weight on the Booleans.**
+The point mass at `b`, as a weight on `Bool`. Replacing `ν e` by `pt b` conditions on `ω e = b`.
 -/
 def pt (b : Bool) : Bool → ℝ := fun c => if c = b then 1 else 0
 
@@ -153,14 +157,16 @@ lemma expect_one {ν : E → Bool → ℝ} (hν : IsProbWeight ν) :
   rw [Fintype.sum_bool, add_comm]
   exact hν.normalized e
 
-/-- The covariance `𝔼[f g] - 𝔼[f] 𝔼[g]` under the product weight `ν`. -/
+/-- **Covariance under a product weight.**
+The covariance `𝔼[f g] - 𝔼[f] 𝔼[g]` under the product weight `ν`. -/
 noncomputable def cov (ν : E → Bool → ℝ) (f g : ConfigSpace E → ℝ) : ℝ :=
   expect ν (fun ω => f ω * g ω) - expect ν f * expect ν g
 
-/-- The variance of `g` under the product weight `ν`. -/
+/-- **Variance under a product weight.** The variance of `g` under the product weight `ν`. -/
 noncomputable def var (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) : ℝ := cov ν g g
 
-/-- The influence of coordinate `e` on `g`: `𝔼 |g(ω^{e ↦ 1}) - g(ω^{e ↦ 0})|`. For the indicator of
+/-- **Influence of a coordinate.**
+The influence of coordinate `e` on `g`: `𝔼 |g(ω^{e ↦ 1}) - g(ω^{e ↦ 0})|`. For the indicator of
   an event this is the probability that `e` is pivotal (`infl_indicator_eq_pivotal`).
 
   See also `BooleanCube.boolInfluence`, the uniform-measure influence `𝔼 ((f x - f x^{⊕i}) / 2)²`;
@@ -168,7 +174,8 @@ noncomputable def var (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) : �
 noncomputable def infl (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) (e : E) : ℝ :=
   expect ν (fun ω => |g (setOpen e ω) - g (setClosed e ω)|)
 
-/-- The conditional expectation of `g` given all coordinates except `e`. -/
+/-- **Conditional expectation given the other coordinates.**
+The conditional expectation of `g` given all coordinates except `e`. -/
 noncomputable def condMean (ν : E → Bool → ℝ) (e : E) (g : ConfigSpace E → ℝ) :
     ConfigSpace E → ℝ :=
   fun ω => ν e true * g (setOpen e ω) + ν e false * g (setClosed e ω)
@@ -192,7 +199,8 @@ lemma condMean_eq (ν : E → Bool → ℝ) (e : E) (g : ConfigSpace E → ℝ)
     (ω : ConfigSpace E) :
     condMean ν e g ω = ν e true * g (setOpen e ω) + ν e false * g (setClosed e ω) := rfl
 
-/-- A binary decision tree on the variables `E`: a leaf outputs a Boolean value, and a node queries
+/-- **Binary decision tree.**
+A binary decision tree on the variables `E`: a leaf outputs a Boolean value, and a node queries
   a variable and continues in the first subtree if it is `true` and in the second otherwise. -/
 inductive DecisionTree (E : Type*) where
   | leaf : Bool → DecisionTree E
@@ -200,17 +208,20 @@ inductive DecisionTree (E : Type*) where
 
 namespace DecisionTree
 
-/-- The Boolean function computed by the decision tree. -/
+/-- **Boolean function computed by a decision tree.**
+The Boolean function computed by the decision tree. -/
 def eval : DecisionTree E → ConfigSpace E → Bool
   | leaf b, _ => b
   | node e t f, ω => if ω e then eval t ω else eval f ω
 
-/-- The set of variables the decision tree queries on input `ω`. -/
+/-- **Variables queried by a decision tree on an input.**
+The set of variables the decision tree queries on input `ω`. -/
 def queried : DecisionTree E → ConfigSpace E → Finset E
   | leaf _, _ => ∅
   | node e t f, ω => insert e (if ω e then queried t ω else queried f ω)
 
-/-- The function computed by the decision tree, as a `0/1`-valued real function. -/
+/-- **Real-valued function computed by a decision tree.**
+The function computed by the decision tree, as a `0/1`-valued real function. -/
 noncomputable def evalR (T : DecisionTree E) (ω : ConfigSpace E) : ℝ :=
   if T.eval ω then 1 else 0
 
@@ -233,7 +244,8 @@ lemma abs_evalR_diff_le_one (T : DecisionTree E) (e : E) (ω : ConfigSpace E) :
 
 end DecisionTree
 
-/-- The revealment `δₑ(T)`: the probability that the decision tree `T` queries the variable `e`. -/
+/-- **Revealment of a variable by a decision tree.**
+The revealment `δₑ(T)`: the probability that the decision tree `T` queries the variable `e`. -/
 noncomputable def reveal (ν : E → Bool → ℝ) (T : DecisionTree E) (e : E) : ℝ :=
   expect ν (fun ω => if e ∈ T.queried ω then (1 : ℝ) else 0)
 
@@ -314,7 +326,8 @@ lemma infl_condMean_self (ν : E → Bool → ℝ) (e : E) (g : ConfigSpace E �
   rw [this]
   unfold expect; simp
 
-/-- The configuration `ω` with coordinate `e` flipped.
+/-- **Configuration with one coordinate flipped.**
+The configuration `ω` with coordinate `e` flipped.
 
   See also `BooleanCube.flipCoord`, the same operation on `Fin n → Bool`. -/
 def flipAt (e : E) (ω : ConfigSpace E) : ConfigSpace E := Function.update ω e (!(ω e))
@@ -600,7 +613,8 @@ lemma infl_nonneg {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (g : ConfigS
   apply expect_mono hν
   intro ω; exact abs_nonneg _
 
-/-- Root step of the OSSS induction: the covariance of a function whose discrete derivative in `e`
+/-- **Root step of the OSSS induction.**
+Root step of the OSSS induction: the covariance of a function whose discrete derivative in `e`
   is bounded by `1` with the martingale increment `g - 𝔼[g | ω_{≠e}]` is at most `Infₑ(g)`. -/
 lemma claimA {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (e : E) (F g : ConfigSpace E → ℝ)
     (hF : ∀ ω, |F (setOpen e ω) - F (setClosed e ω)| ≤ 1) :
@@ -674,7 +688,8 @@ lemma expect_evalR_node_cond (ν : E → Bool → ℝ) (e : E) (b : Bool) (t f :
   have hωe : (Function.update ω e b) e = b := Function.update_self e b ω
   rw [evalR_node_of_eq e t f _ b hωe]
 
-/-- Subtree step of the OSSS induction: for `G` independent of the root variable `e`, the covariance
+/-- **Subtree step of the OSSS induction.**
+Subtree step of the OSSS induction: for `G` independent of the root variable `e`, the covariance
   with a tree rooted at `e` splits into the covariances with the two subtrees under the
   conditioned weights. -/
 lemma claimB {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (e : E) (t f : DecisionTree E)
@@ -829,7 +844,8 @@ lemma reveal_infl_condMean_le {ν : E → Bool → ℝ} (hν : IsProbWeight ν) 
     exact infl_nonneg hν g i
   · exact infl_condMean_le hν e i hi g
 
-/-- The OSSS covariance inequality, stated for all product weights at once so that it can be proved
+/-- **OSSS covariance inequality over all product weights.**
+The OSSS covariance inequality, stated for all product weights at once so that it can be proved
   by induction on the decision tree. Use `osss` for the usual argument order. -/
 theorem osss_cov (T : DecisionTree E) :
     ∀ ν, IsProbWeight ν → ∀ g : ConfigSpace E → ℝ,
@@ -911,7 +927,8 @@ theorem osss {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (T : DecisionTree
     cov ν T.evalR g ≤ ∑ i, reveal ν T i * infl ν g i :=
   osss_cov T ν hν g
 
-/-- The Bernoulli(`p`) product weight: every coordinate is `true` with probability `p`. -/
+/-- **Bernoulli product weight.**
+The Bernoulli(`p`) product weight: every coordinate is `true` with probability `p`. -/
 noncomputable def bernoulliWeight (p : ℝ) : E → Bool → ℝ :=
   fun _ b => if b then p else 1 - p
 
@@ -922,7 +939,8 @@ lemma bernoulliWeight_isProbWeight {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
   · intro e b; unfold bernoulliWeight; cases b <;> simp <;> linarith
   · intro e; unfold bernoulliWeight; simp
 
-/-- The OSSS inequality for the Bernoulli(`p`) product measure. -/
+/-- **OSSS inequality for the Bernoulli product measure.**
+The OSSS inequality for the Bernoulli(`p`) product measure. -/
 theorem osss_bernoulli {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (T : DecisionTree E) (g : ConfigSpace E → ℝ) :
     cov (bernoulliWeight p) T.evalR g
@@ -943,7 +961,8 @@ lemma abs_indicator_diff_eq_pivotal (A : Set (ConfigSpace E)) (e : E) (ω : Conf
     by_cases hO : setOpen e ω ∈ A <;> by_cases hC : setClosed e ω ∈ A <;>
       simp_all [Set.indicator_of_mem, Set.indicator_of_notMem]
 
-/-- The influence of `e` on the indicator of `A` is the probability that `e` is pivotal for `A`. -/
+/-- **Influence on an indicator is the pivotal probability.**
+The influence of `e` on the indicator of `A` is the probability that `e` is pivotal for `A`. -/
 theorem infl_indicator_eq_pivotal (ν : E → Bool → ℝ) (A : Set (ConfigSpace E)) (e : E) :
     infl ν (A.indicator (fun _ => (1 : ℝ))) e
       = expect ν ({ω | IsPivotal e A ω}.indicator (fun _ => (1 : ℝ))) := by
@@ -954,7 +973,8 @@ theorem infl_indicator_eq_pivotal (ν : E → Bool → ℝ) (A : Set (ConfigSpac
   rw [abs_indicator_diff_eq_pivotal]
 
 open MeasureTheory in
-/-- The Bernoulli(`p`) product weight computes integrals against
+/-- **Bernoulli product weight computes product-measure integrals.**
+The Bernoulli(`p`) product weight computes integrals against
 `StatMech.bernoulliProductMeasure`, the corresponding product probability measure. -/
 theorem expect_bernoulliWeight_eq_integral (p : NNReal) (hp : p ≤ 1) (g : ConfigSpace E → ℝ) :
     expect (bernoulliWeight (p : ℝ)) g = ∫ ω, g ω ∂(bernoulliProductMeasure p hp) := by

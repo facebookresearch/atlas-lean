@@ -35,13 +35,15 @@ existing π syntax and substitution, not its behavioural/contextual theory.
 
 namespace Cslib.PiCalculus
 
-/-- A name refers only to the `depth` surrounding binders or to a free
+/-- **Name scoped at a binder depth.**
+A name refers only to the `depth` surrounding binders or to a free
 constant. At depth zero, no variable is permitted. -/
 def Name.ClosedAt (depth : ℕ) : Name → Prop
   | .const _ => True
   | .var i => i < depth
 
-/-- Every variable refers to an enclosing input/restriction binder.
+/-- **Locally closed processes at a binder depth.**
+Every variable refers to an enclosing input/restriction binder.
 `ClosedAt 0` permits free constants, but no dangling de Bruijn variables. -/
 def Proc.ClosedAt (depth : ℕ) : Proc → Prop
   | .nil => True
@@ -53,14 +55,16 @@ def Proc.ClosedAt (depth : ℕ) : Proc → Prop
   | .repl p => Proc.ClosedAt depth p
   | .sum p q => Proc.ClosedAt depth p ∧ Proc.ClosedAt depth q
 
-/-- Lifting above the ambient binder depth fixes an in-scope name. -/
+/-- **Lifting fixes an in-scope name.**
+Lifting above the ambient binder depth fixes an in-scope name. -/
 theorem liftName_eq_of_closedAt {a : Name} {k : ℕ}
     (h : a.ClosedAt k) : liftName k a = a := by
   cases a with
   | const => rfl
   | var i => simp [liftName, Nat.not_le_of_lt h]
 
-/-- Lifting above the surrounding binders fixes a locally closed process.
+/-- **Lifting fixes a locally closed process.**
+Lifting above the surrounding binders fixes a locally closed process.
 At depth zero, insertion under a fresh binder cannot capture its names. -/
 theorem liftProc_eq_of_closedAt {p : Proc} {k : ℕ}
     (h : Proc.ClosedAt k p) : liftProc k p = p := by
@@ -76,7 +80,8 @@ theorem liftProc_eq_of_closedAt {p : Proc} {k : ℕ}
   | repl p ih => exact congrArg Proc.repl (ih h)
   | sum p q ihp ihq => exact congrArg₂ Proc.sum (ihp h.1) (ihq h.2)
 
-/-- Inserting a binder at any cutoff preserves name scoping in the
+/-- **Lifting preserves name scoping.**
+Inserting a binder at any cutoff preserves name scoping in the
 larger environment. -/
 theorem Name.ClosedAt.lift {n k : ℕ} {b : Name} (h : b.ClosedAt n) :
     (liftName k b).ClosedAt (n + 1) := by
@@ -90,7 +95,8 @@ theorem Name.ClosedAt.lift {n k : ℕ} {b : Name} (h : b.ClosedAt n) :
     · simpa only [liftName, hk, ↓reduceIte, Name.ClosedAt] using
         Nat.lt_succ_of_lt h
 
-/-- Removing the binder at `k ≤ n` preserves name scoping when its
+/-- **Name substitution preserves scoping.**
+Removing the binder at `k ≤ n` preserves name scoping when its
 replacement is scoped in the remaining environment. -/
 theorem Name.ClosedAt.subst {n k : ℕ} {b x : Name}
     (hb : b.ClosedAt n) (hx : x.ClosedAt (n + 1)) (hk : k ≤ n) :
@@ -107,7 +113,8 @@ theorem Name.ClosedAt.subst {n k : ℕ} {b x : Name}
       · simp only [Name.ClosedAt] at *
         omega
 
-/-- Shifting a process past a new binder preserves scoping. Inner input
+/-- **Lifting preserves process scoping.**
+Shifting a process past a new binder preserves scoping. Inner input
 and restriction binders increase the cutoff as in `Basic.liftProc`. -/
 theorem Proc.ClosedAt.lift {p : Proc} {n k : ℕ}
     (h : p.ClosedAt n) : (liftProc k p).ClosedAt (n + 1) := by
@@ -120,7 +127,8 @@ theorem Proc.ClosedAt.lift {p : Proc} {n k : ℕ}
   | repl p ih => exact ih h
   | sum p q ihp ihq => exact ⟨ihp h.1, ihq h.2⟩
 
-/-- Capture-avoiding substitution removes one ambient binder while
+/-- **Substitution at any cutoff preserves process scoping.**
+Capture-avoiding substitution removes one ambient binder while
 preserving every name's scope, including under input and restriction. -/
 theorem Proc.ClosedAt.substProc {p : Proc} {n k : ℕ} {b : Name}
     (h : p.ClosedAt (n + 1)) (hb : b.ClosedAt n) (hk : k ≤ n) :
@@ -137,7 +145,8 @@ theorem Proc.ClosedAt.substProc {p : Proc} {n k : ℕ} {b : Name}
   | repl p ih => exact ih h hb hk
   | sum p q ihp ihq => exact ⟨ihp h.1 hb hk, ihq h.2 hb hk⟩
 
-/-- Instantiating the innermost binder preserves process scoping. -/
+/-- **Instantiating the innermost binder preserves process scoping.**
+Instantiating the innermost binder preserves process scoping. -/
 theorem Proc.ClosedAt.subst {p : Proc} {n : ℕ} {b : Name}
     (h : p.ClosedAt (n + 1)) (hb : b.ClosedAt n) :
     (PiCalculus.subst p b).ClosedAt n :=

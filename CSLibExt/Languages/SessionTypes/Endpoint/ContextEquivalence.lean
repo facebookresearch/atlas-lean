@@ -23,21 +23,23 @@ with the original finite-map no-duplicate-key invariant.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- Same lookup domain, identical enclosing capability ranks, and equivalent
+/-- **Pointwise equivalence of ownership maps.**
+Same lookup domain, identical enclosing capability ranks, and equivalent
 protocol trees. No matching split or retyping result is stored. -/
 def ContextEquivalent (Δ Ξ : Context) : Prop :=
   ∀ e, Option.Rel Capability.Equivalent (Δ.lookup e) (Ξ.lookup e)
 
 namespace ContextEquivalent
 
-/-- Reflexivity of actual matching lookups. -/
+/-- **Reflexivity of ownership-map equivalence.** Reflexivity of actual matching lookups. -/
 theorem refl (Δ : Context) : ContextEquivalent Δ Δ := by
   intro e
   cases Δ.lookup e with
   | none => exact Option.Rel.none
   | some c => exact Option.Rel.some (Capability.Equivalent.refl c)
 
-/-- Matching source lookup yields an actual target binding and rank/tree relation. -/
+/-- **Lookups transfer along ownership-map equivalence.**
+Matching source lookup yields an actual target binding and rank/tree relation. -/
 theorem lookup {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) {e : Key} {c : Capability}
     (hc : Δ.lookup e = some c) : ∃ d, Ξ.lookup e = some d ∧ c.Equivalent d := by
   have he := h e
@@ -49,7 +51,8 @@ theorem lookup {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) {e : Key} {c : Ca
     cases he with
     | some hr => exact ⟨d, rfl, hr⟩
 
-/-- Symmetry includes both absent and present endpoints. -/
+/-- **Symmetry of ownership-map equivalence.**
+Symmetry includes both absent and present endpoints. -/
 theorem symm {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) : ContextEquivalent Ξ Δ := by
   intro e
   have he := h e
@@ -59,7 +62,8 @@ theorem symm {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) : ContextEquivalent
   | none => exact Option.Rel.none
   | some hr => exact Option.Rel.some hr.symm
 
-/-- Transitivity requires the same intermediate lookup, not a chosen representative. -/
+/-- **Transitivity of ownership-map equivalence.**
+Transitivity requires the same intermediate lookup, not a chosen representative. -/
 theorem trans {Δ Ξ Ω : Context} (h : ContextEquivalent Δ Ξ) (h' : ContextEquivalent Ξ Ω) :
     ContextEquivalent Δ Ω := by
   intro e
@@ -74,7 +78,7 @@ theorem trans {Δ Ξ Ω : Context} (h : ContextEquivalent Δ Ξ) (h' : ContextEq
     cases he' with
     | some hr' => exact Option.Rel.some (hr.trans hr')
 
-/-- Exact key-domain invariance. -/
+/-- **Equivalent ownership maps have the same keys.** Exact key-domain invariance. -/
 theorem mem_iff {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (e : Key) : e ∈ Δ ↔ e ∈ Ξ := by
   constructor
   · intro he
@@ -86,19 +90,22 @@ theorem mem_iff {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (e : Key) : e �
     obtain ⟨d, hd, hr⟩ := h.symm.lookup hc
     exact Finmap.mem_of_lookup_eq_some hd
 
-/-- Completion invariance uses actual unfolded done, not just empty ownership. -/
+/-- **Ownership-map equivalence preserves completion.**
+Completion invariance uses actual unfolded done, not just empty ownership. -/
 theorem completed {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (hc : Δ.Completed) : Ξ.Completed := by
   intro e d hd
   obtain ⟨c, he, hr⟩ := h.symm.lookup hd
   exact hr.2.done_iff.mpr (hc e c he)
 
-/-- Scope of every actual owned key is unchanged with the exact domain. -/
+/-- **Ownership-map equivalence preserves key scoping.**
+Scope of every actual owned key is unchanged with the exact domain. -/
 theorem scope {Δ Ξ : Context} {n : Nat} (h : ContextEquivalent Δ Ξ)
     (hs : ∀ e ∈ Δ, e.name.ClosedAt n) : ∀ e ∈ Ξ, e.name.ClosedAt n := by
   intro e he
   exact hs e ((h.mem_iff e).mpr he)
 
-/-- Corresponding insertions preserve literal rank and semantic type equivalence. -/
+/-- **Equivalent insertions preserve ownership-map equivalence.**
+Corresponding insertions preserve literal rank and semantic type equivalence. -/
 theorem insert {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (e : Key) {c d : Capability}
     (hr : c.Equivalent d) : ContextEquivalent (Δ.insert e c) (Ξ.insert e d) := by
   intro x
@@ -109,7 +116,7 @@ theorem insert {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (e : Key) {c d : 
   · simp only [Finmap.lookup_insert_of_ne _ he]
     exact h x
 
-/-- Both sides erase precisely the same key. -/
+/-- **Erasure preserves ownership-map equivalence.** Both sides erase precisely the same key. -/
 theorem erase {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (e : Key) :
     ContextEquivalent (Δ.erase e) (Ξ.erase e) := by
   intro x
@@ -120,7 +127,8 @@ theorem erase {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (e : Key) :
   · simp only [Finmap.lookup_erase_ne he]
     exact h x
 
-/-- Bidirectional actual lookup correspondence suffices for Option.Rel. -/
+/-- **Ownership-map equivalence from two-way lookup correspondence.**
+Bidirectional actual lookup correspondence suffices for Option.Rel. -/
 theorem of_lookups {Δ Ξ : Context}
     (hf : ∀ e c, Δ.lookup e = some c → ∃ d, Ξ.lookup e = some d ∧ c.Equivalent d)
     (hb : ∀ e d, Ξ.lookup e = some d → ∃ c, Δ.lookup e = some c ∧ c.Equivalent d) :
@@ -139,7 +147,8 @@ theorem of_lookups {Δ Ξ : Context}
     rw [hd]
     exact Option.Rel.some hr
 
-/-- Left-biased unions respect equivalent key domains on BOTH sides. -/
+/-- **Union preserves ownership-map equivalence.**
+Left-biased unions respect equivalent key domains on BOTH sides. -/
 theorem union {Γ Γ' Θ Θ' : Context} (hΓ : ContextEquivalent Γ Γ')
     (hΘ : ContextEquivalent Θ Θ') : ContextEquivalent (Γ ∪ Θ) (Γ' ∪ Θ') := by
   intro e
@@ -150,7 +159,8 @@ theorem union {Γ Γ' Θ Θ' : Context} (hΓ : ContextEquivalent Γ Γ')
     rw [Finmap.lookup_union_right he, Finmap.lookup_union_right he']
     exact hΘ e
 
-/-- Canonical binder lift preserves corresponding values and exact domains. -/
+/-- **Lifting preserves ownership-map equivalence.**
+Canonical binder lift preserves corresponding values and exact domains. -/
 theorem lift {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (k : Nat) :
     ContextEquivalent (Context.lift k Δ) (Context.lift k Ξ) := by
   apply of_lookups
@@ -163,12 +173,14 @@ theorem lift {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) (k : Nat) :
     obtain ⟨c, hc, hr⟩ := h.symm.lookup ha
     exact ⟨c, Context.lookup_lift.mpr hc, hr.symm⟩
 
-/-- A chosen exact dual private pair can be preserved or equivalently changed. -/
+/-- **Binding equivalent fresh pairs preserves ownership-map equivalence.**
+A chosen exact dual private pair can be preserved or equivalently changed. -/
 theorem bind {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ) {c d : Capability}
     (hr : c.Equivalent d) : ContextEquivalent (Context.bind c Δ) (Context.bind d Ξ) :=
   ((h.lift 0).insert ⟨.var 0, .positive⟩ hr).insert ⟨.var 0, .negative⟩ hr.dual
 
-/-- Semantic compatibility is invariant, including explicit enclosing ranks. -/
+/-- **Ownership-map equivalence preserves semantic compatibility.**
+Semantic compatibility is invariant, including explicit enclosing ranks. -/
 theorem compatible {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ)
     (hc : Conversion.Compatible Δ) : Conversion.Compatible Ξ := by
   intro e c d he hp
@@ -178,7 +190,8 @@ theorem compatible {Δ Ξ : Context} (h : ContextEquivalent Δ Ξ)
 
 end ContextEquivalent
 
-/-- Restrict actual target bindings to the exact key domain of a source map.
+/-- **Projection of an ownership map onto another map's keys.**
+Restrict actual target bindings to the exact key domain of a source map.
 The implementation is canonical multiset filtering, not a new finite map. -/
 def Context.projectKeys (Γ Ξ : Context) : Context where
   entries := Ξ.entries.filter (fun x => x.1 ∈ Γ)
@@ -187,12 +200,14 @@ def Context.projectKeys (Γ Ξ : Context) : Context where
     exact Multiset.nodup_of_le (Multiset.map_le_map (Multiset.filter_le _ _))
       Ξ.nodupKeys.nodup_keys
 
-/-- Projection retains precisely the actual target binding at a source key. -/
+/-- **Lookups in a key projection.**
+Projection retains precisely the actual target binding at a source key. -/
 theorem Context.lookup_projectKeys {Γ Ξ : Context} {e : Key} {c : Capability} :
     (Γ.projectKeys Ξ).lookup e = some c ↔ Ξ.lookup e = some c ∧ e ∈ Γ := by
   simp only [Finmap.lookup_eq_some_iff, projectKeys, Multiset.mem_filter]
 
-/-- The projected domain is the exact intersection of actual owned domains. -/
+/-- **Keys of a projection are the intersection of domains.**
+The projected domain is the exact intersection of actual owned domains. -/
 theorem Context.mem_projectKeys {Γ Ξ : Context} {e : Key} :
     e ∈ Γ.projectKeys Ξ ↔ e ∈ Ξ ∧ e ∈ Γ := by
   simp only [Finmap.mem_iff, Context.lookup_projectKeys]
@@ -202,12 +217,14 @@ theorem Context.mem_projectKeys {Γ Ξ : Context} {e : Key} :
   · rintro ⟨⟨c, hc⟩, he⟩
     exact ⟨c, hc, he⟩
 
-/-- Outside a source domain the projection is literally absent. -/
+/-- **Key projection is absent outside the source domain.**
+Outside a source domain the projection is literally absent. -/
 theorem Context.projectKeys_none {Γ Ξ : Context} {e : Key} (he : e ∉ Γ) :
     (Γ.projectKeys Ξ).lookup e = none :=
   Finmap.lookup_eq_none.mpr (fun hm => he (Context.mem_projectKeys.mp hm).2)
 
-/-- Inside a source domain the actual target value is retained verbatim. -/
+/-- **Key projection agrees with the target inside the source domain.**
+Inside a source domain the actual target value is retained verbatim. -/
 theorem Context.projectKeys_lookup {Γ Ξ : Context} {e : Key} (he : e ∈ Γ) :
     (Γ.projectKeys Ξ).lookup e = Ξ.lookup e := by
   cases hc : Ξ.lookup e with
@@ -217,7 +234,8 @@ theorem Context.projectKeys_lookup {Γ Ξ : Context} {e : Key} (he : e ∈ Γ) :
     exact (Finmap.lookup_eq_none.mp hc) (Context.mem_projectKeys.mp hm).1
   | some c => exact Context.lookup_projectKeys.mpr ⟨hc, he⟩
 
-/-- An equivalent whole map induces an equivalent child with the exact source
+/-- **Equivalence of a union restricts to its left part.**
+An equivalent whole map induces an equivalent child with the exact source
 key domain; no matching target split is supplied by a caller. -/
 theorem ContextEquivalent.project_left {Γ Θ Ξ : Context}
     (h : ContextEquivalent (Γ ∪ Θ) Ξ) : ContextEquivalent Γ (Γ.projectKeys Ξ) := by
@@ -234,7 +252,8 @@ theorem ContextEquivalent.project_left {Γ Θ Ξ : Context}
     subst v
     exact ⟨c, hc, hr⟩
 
-/-- GENERAL split derivation from source disjointness and whole-map equivalence.
+/-- **Equivalence of a disjoint union splits into equivalent parts.**
+GENERAL split derivation from source disjointness and whole-map equivalence.
 It preserves each child domain and the exact target finite-map union. -/
 theorem ContextEquivalent.split {Γ Θ Ξ : Context} (h : ContextEquivalent (Γ ∪ Θ) Ξ)
     (hd : Finmap.Disjoint Γ Θ) :
@@ -264,7 +283,8 @@ theorem ContextEquivalent.split {Γ Θ Ξ : Context} (h : ContextEquivalent (Γ 
       exact h
     exact hc.project_left
 
-/-- Equivalent singleton capabilities preserve their exact polarized key. -/
+/-- **Equivalent capabilities give equivalent singleton maps.**
+Equivalent singleton capabilities preserve their exact polarized key. -/
 theorem ContextEquivalent.singleton (e : Key) {c d : Capability} (hr : c.Equivalent d) :
     ContextEquivalent (Finmap.singleton e c) (Finmap.singleton e d) := by
   apply ContextEquivalent.of_lookups

@@ -31,7 +31,8 @@ private theorem phase_output (b : Name) (i : Nat) : PiCalculus.HasUnguardedOutpu
     simp [phase, h, PiCalculus.HasUnguardedOutput, pending, sentInvoked, bothInvoked,
       senderRequest, receiverRequest, senderWorker, receiverWorker]
 
-/-- GENERAL qualified progress produces an ACTUAL Step at every recursive phase,
+/-- **Every phase of the repeated session can step.**
+GENERAL qualified progress produces an ACTUAL Step at every recursive phase,
 BOTH roles and arbitrary scoped endpoint. Idle is excluded by exposed output syntax,
 not by assuming the previously selected execution or readiness. -/
 theorem phase_general_step {n : Nat} (r : Role) (b : Name) (hb : b.ClosedAt n)
@@ -56,7 +57,8 @@ private theorem bound_phase_typed (r : Role) (i : Nat) :
     rw [Finmap.union_comm_of_disjoint (by simp [Finmap.Disjoint, Finmap.mem_singleton])]
     exact hp
 
-/-- GENERAL empty-interface progress includes the genuine private session in
+/-- **Every phase of the restricted repeated session can step.**
+GENERAL empty-interface progress includes the genuine private session in
 BOTH orientations/all phases. Actual output syntax forces its Step branch. -/
 theorem bound_phase_general_step (r : Role) (i : Nat) :
     ∃ q, PiCalculus.Step (.nu (phase (.var 0) i)) q := by
@@ -65,7 +67,8 @@ theorem bound_phase_general_step (r : Role) (i : Nat) :
   · exact False.elim (hi.no_unguarded_output (phase_output (.var 0) i))
   · exact hs
 
-/-- EVERY m has a SAME-witness counted repeated-session trace, all state types,
+/-- **Repeated-session traces with typing, availability and progress.**
+EVERY m has a SAME-witness counted repeated-session trace, all state types,
 actual availability and ALL marked session edges, plus GENERAL progress at EVERY
 state (including the last). This is not all-schedules fairness or termination. -/
 theorem repeatable_trace_global {n : Nat} (r : Role) (b : Name) (hb : b.ClosedAt n)

@@ -52,7 +52,8 @@ namespace Cslib.AutomatedReasoning.StringConstraints
 
 variable {α : Type*}
 
-/-- Length-directed Levi's lemma: if `u` is no longer than `x`, then
+/-- **Length-directed Levi's lemma.**
+Length-directed Levi's lemma: if `u` is no longer than `x`, then
 `x` splits as `u ++ w` and the remainders satisfy `v = w ++ y`. The
 general form is Mathlib's `List.append_eq_append_iff`, used directly. -/
 theorem levi_of_le {u v x y : List α} (h : u ++ v = x ++ y)

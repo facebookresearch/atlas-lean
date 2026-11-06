@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Literal output is active and checks every other owned active key. -/
+/-- **Conversion-ranked output subjects are active.**
+Literal output is active and checks every other owned active key. -/
 theorem RankedType.out_active {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : RankedType n Δ (.out a b p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ c.protocol.unfold ≠ .done ∧ GuardMin Δ e c.rank := by
@@ -33,7 +34,8 @@ theorem RankedType.out_active {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outEndpoint hg hc hh hv he hne ha hb hp =>
     exact ⟨_, _, rfl, hc, SendsTo.active (Or.inr ⟨_, _, _, hh⟩), hg⟩
 
-/-- Literal input is active before either payload kind is received. -/
+/-- **Conversion-ranked input subjects are active.**
+Literal input is active before either payload kind is received. -/
 theorem RankedType.inp_active {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : RankedType n Δ (.inp a p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ c.protocol.unfold ≠ .done ∧ GuardMin Δ e c.rank := by
@@ -53,7 +55,8 @@ private theorem empty_ranked_nil (n : Nat) : RankedType n ∅ .nil :=
   RankedType.nil (by intro e c he; simp at he)
     (by intro e he; exact False.elim (Finmap.notMem_empty he))
 
-/-- A minimum active role is exposed as the EXACT subject of an actual leaf.
+/-- **Minimum active role is the subject of a conversion frontier leaf.**
+A minimum active role is exposed as the EXACT subject of an actual leaf.
 The disjoint ownership split and canonical rearrangement are DERIVED outputs;
 no ready guard or normalizing typing result is required from the caller. -/
 theorem GuardFrontier.expose_minimum {n : Nat} {Δ : Context} {p : Proc}
@@ -112,7 +115,8 @@ theorem GuardFrontier.expose_minimum {n : Nat} {Δ : Context} {p : Proc}
         RankedType.par (hAΘ.symm _ _) hr hp, ⟨hshape, GuardFrontier.par hfr hfp⟩⟩
       rw [Finmap.union_comm_of_disjoint hd, Finmap.union_assoc]
 
-/-- A frontier with no active ownership cannot contain a live prefix.
+/-- **Completed conversion-ranked frontiers are congruent to nil.**
+A frontier with no active ownership cannot contain a live prefix.
 Completion is the PROCESS congruence to nil, not a completed empty interface. -/
 theorem GuardFrontier.completed_nil {n : Nat} {Δ : Context} {p : Proc}
     (hf : GuardFrontier p) (ht : RankedType n Δ p) (hc : Δ.Completed) : Cong p .nil := by
@@ -156,7 +160,8 @@ private theorem minimum_prefix_guard {n : Nat} {Γ : Context} {g : Proc}
     exact hg
 
 
-/-- A semantic equal-rank active peer cannot inhabit the selected minimum guard. -/
+/-- **Minimum guard leaf cannot own an equivalent dual peer.**
+A semantic equal-rank active peer cannot inhabit the selected minimum guard. -/
 theorem minimum_peer_separate {n : Nat} {Γ : Context} {g : Proc} {e : Key} {c d : Capability}
     (ht : RankedType n Γ g) (he : Γ.lookup e = some c) (ha : c.protocol.unfold ≠ .done)
     (hmin : ∀ x v, Γ.lookup x = some v → v.protocol.unfold ≠ .done → c.rank ≤ v.rank)

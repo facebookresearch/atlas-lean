@@ -20,7 +20,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Canonical lowering removes only actual outer lifted keys, preserving
+/-- **Lowering a lifted process preserves conversion typing.**
+Canonical lowering removes only actual outer lifted keys, preserving
 all conversion typing without a closed-hole restriction. -/
 theorem HasType.unlift {n : Nat} {Γ : Context} {q : Proc}
     (h : HasType (n + 1) Γ (liftProc 0 q)) (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0) :
@@ -33,7 +34,8 @@ theorem HasType.unlift {n : Nat} {Γ : Context} {q : Proc}
   rw [substProc_liftProc] at ht
   exact ht
 
-/-- The forward canonical scope rule preserves the exact external context
+/-- **Forward scope extrusion preserves conversion typing.**
+The forward canonical scope rule preserves the exact external context
 and ambient depth, with the dual pair derived from restriction typing. -/
 theorem HasType.scope_forward {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ (.par (.nu p) q)) :
@@ -44,7 +46,8 @@ theorem HasType.scope_forward {n : Nat} {Δ : Context} {p q : Proc}
   rw [Context.bind_union c hd]
   exact HasType.par (Context.disjoint_bind_lift c hd) hbody (hq.lift 0)
 
-/-- A role missing from one component can be reattached only after actual
+/-- **Adding a role unused by the partner preserves conversion typing.**
+A role missing from one component can be reattached only after actual
 absence in its typed partner derives completion of the advertised capability. -/
 theorem HasType.insert_from_absent_partner {n : Nat} {Γ Ξ : Context} {p q : Proc}
     {e : Key} {c : Capability} (hp : HasType n Γ p) (hq : HasType n Ξ q)
@@ -57,7 +60,8 @@ theorem HasType.insert_from_absent_partner {n : Nat} {Γ Ξ : Context} {p q : Pr
   · rw [Finmap.lookup_union_right hm] at hc
     exact hp.weaken_completed hm (hq.absent_lookup_completed hc hab) he
 
-/-- In the actual scope split, either freshly bound role can be moved
+/-- **Restoring the bound pair to the restricted component.**
+In the actual scope split, either freshly bound role can be moved
 back to the restricted component only when partner absence proves it completed. -/
 theorem HasType.restore_scope_pair {n : Nat} {Δ Γ Ξ : Context} {p q : Proc}
     {c : Capability} (hp : HasType (n + 1) Γ p)
@@ -78,7 +82,8 @@ theorem HasType.restore_scope_pair {n : Nat} {Δ Γ Ξ : Context} {p q : Proc}
     (by decide : (⟨.var 0, .negative⟩ : Key) ≠ (⟨.var 0, .positive⟩ : Key))]
   exact hneg
 
-/-- Reverse scope transport recovers the exact external ownership split
+/-- **Reverse scope extrusion preserves conversion typing.**
+Reverse scope transport recovers the exact external ownership split
 from the actual restriction/parallel typing, with no closed-hole premise. -/
 theorem HasType.scope_reverse {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ (.nu (.par p (liftProc 0 q)))) :
@@ -114,7 +119,8 @@ theorem HasType.scope_reverse {n : Nat} {Δ : Context} {p q : Proc}
   rw [houter]
   exact HasType.par hdl (HasType.nu hp') (hq'.unlift hΞ)
 
-/-- Both directions of the canonical scope congruence preserve exact
+/-- **Scope extrusion preserves conversion typing in both directions.**
+Both directions of the canonical scope congruence preserve exact
 external polarized ownership and the unchanged ambient binder depth. -/
 theorem HasType.scope_iff {n : Nat} {Δ : Context} {p q : Proc} :
     HasType n Δ (.par (.nu p) q) ↔

@@ -20,12 +20,13 @@ term beta requires a value argument, whereas type beta admits any type.
 
 namespace Cslib.Languages.LambdaCalculus.SystemF
 
-/-- The two value forms of pure System F. -/
+/-- **Value forms of pure System F.** The two value forms of pure System F. -/
 inductive Value : {n m : Nat} → Tm n m → Prop where
   | lam {n m : Nat} {A : Ty n} {b : Tm n (m + 1)} : Value (.lam A b)
   | tabs {n m : Nat} {b : Tm (n + 1) m} : Value (.tabs b)
 
-/-- One step of weak, left-to-right call-by-value evaluation. -/
+/-- **One-step call-by-value evaluation.**
+One step of weak, left-to-right call-by-value evaluation. -/
 inductive Step : {n m : Nat} → Tm n m → Tm n m → Prop where
   | appFun {n m : Nat} {f f' a : Tm n m} :
       Step f f' → Step (.app f a) (.app f' a)
@@ -38,13 +39,14 @@ inductive Step : {n m : Nat} → Tm n m → Tm n m → Prop where
   | tyBeta {n m : Nat} {b : Tm (n + 1) m} {A : Ty n} :
       Step (.tapp (.tabs b) A) (b.tySubst (Fin.cases A Ty.var))
 
-/-- Zero or more call-by-value evaluation steps. -/
+/-- **Multi-step call-by-value evaluation.** Zero or more call-by-value evaluation steps. -/
 abbrev Steps {n m : Nat} : Tm n m → Tm n m → Prop :=
   Relation.ReflTransGen Step
 
 variable {n m : Nat} {Γ : Ctx n m} {A : Ty n} {t t' : Tm n m}
 
-/-- A call-by-value step preserves the exact type in arbitrary open contexts. -/
+/-- **Type preservation for a call-by-value step.**
+A call-by-value step preserves the exact type in arbitrary open contexts. -/
 theorem preservation (ht : Typing Γ t A) (hs : Step t t') :
     Typing Γ t' A := by
   induction hs generalizing A with
@@ -66,7 +68,8 @@ theorem preservation (ht : Typing Γ t A) (hs : Step t t') :
     | tapp hf => cases hf with
       | tabs hb => exact hb.tyInstantiate _
 
-/-- A function-typed value is a term lambda with the declared argument type. -/
+/-- **Canonical forms of function-typed values.**
+A function-typed value is a term lambda with the declared argument type. -/
 theorem Typing.canonical_lam {B : Ty n} (ht : Typing Γ t (.arr A B))
     (hv : Value t) : ∃ b : Tm n (m + 1), t = .lam A b := by
   cases hv with
@@ -74,7 +77,7 @@ theorem Typing.canonical_lam {B : Ty n} (ht : Typing Γ t (.arr A B))
     | lam hb => exact ⟨_, rfl⟩
   | tabs => cases ht
 
-/-- A universally typed value is a type lambda. -/
+/-- **Canonical forms of universally typed values.** A universally typed value is a type lambda. -/
 theorem Typing.canonical_tabs {C : Ty (n + 1)}
     (ht : Typing Γ t (.all C)) (hv : Value t) :
     ∃ b : Tm (n + 1) m, t = .tabs b := by
@@ -104,19 +107,22 @@ private theorem progress_aux (h : Typing Γ t A) (hm : m = 0) :
       exact .inr ⟨_, .tyBeta⟩
     · exact .inr ⟨_, .tappFun hs⟩
 
-/-- A well-typed term with no free term variables is a value or can step. -/
+/-- **Progress for well-typed terms without free term variables.**
+A well-typed term with no free term variables is a value or can step. -/
 theorem progress {Γ : Ctx n 0} {t : Tm n 0} (ht : Typing Γ t A) :
     Value t ∨ ∃ t', Step t t' :=
   progress_aux ht rfl
 
-/-- Every finite evaluation sequence preserves the exact type. -/
+/-- **Type preservation along evaluation sequences.**
+Every finite evaluation sequence preserves the exact type. -/
 theorem preservation_steps (ht : Typing Γ t A) (hs : Steps t t') :
     Typing Γ t' A := by
   induction hs with
   | refl => exact ht
   | tail hs hstep ih => exact preservation ih hstep
 
-/-- No term reachable from a closed well-typed term is stuck. -/
+/-- **Type safety for closed well-typed terms.**
+No term reachable from a closed well-typed term is stuck. -/
 theorem safety {Γ : Ctx n 0} {t t' : Tm n 0}
     (ht : Typing Γ t A) (hs : Steps t t') :
     Value t' ∨ ∃ t'', Step t' t'' :=

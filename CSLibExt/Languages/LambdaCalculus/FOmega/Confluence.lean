@@ -29,7 +29,8 @@ or a termination premise; no external confluence theorem for Fω is assumed.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega.Ty
 
-/-- Parallel type-beta reduction, retaining the context and kind indices. -/
+/-- **Parallel type-beta reduction in Fω.**
+Parallel type-beta reduction, retaining the context and kind indices. -/
 inductive Par : {Δ : List Kind} → {κ : Kind} → Ty Δ κ → Ty Δ κ → Prop where
   | var {Δ : List Kind} {κ : Kind} (x : KVar Δ κ) : Par (.var x) (.var x)
   | lam {Δ : List Kind} {κ μ : Kind} {b c : Ty (κ :: Δ) μ} :
@@ -47,7 +48,8 @@ inductive Par : {Δ : List Kind} → {κ : Kind} → Ty Δ κ → Ty Δ κ → P
 
 variable {Δ Ε : List Kind} {κ μ : Kind} {a b : Ty Δ κ}
 
-/-- Parallel reduction is reflexive on every kinded operator. -/
+/-- **Reflexivity of parallel type-beta reduction.**
+Parallel reduction is reflexive on every kinded operator. -/
 theorem Par.refl (a : Ty Δ κ) : Par a a := by
   induction a with
   | var x => exact .var x
@@ -56,7 +58,8 @@ theorem Par.refl (a : Ty Δ κ) : Par a a := by
   | arr a b iha ihb => exact .arr iha ihb
   | all b ih => exact .all ih
 
-/-- Parallel beta reduction is stable under kinded renaming. -/
+/-- **Parallel type-beta reduction is stable under renaming.**
+Parallel beta reduction is stable under kinded renaming. -/
 theorem Par.rename (h : Par a b) (ρ : KRen Δ Ε) :
     Par (Ty.rename ρ a) (Ty.rename ρ b) := by
   induction h generalizing Ε with
@@ -76,7 +79,8 @@ private theorem par_liftSub {σ τ : Sub Δ Ε}
   | zero => exact .var .zero
   | succ x => exact (h x).rename KVar.succ
 
-/-- Parallel reduction respects simultaneous substitution on both sides. -/
+/-- **Parallel type-beta reduction is stable under substitution.**
+Parallel reduction respects simultaneous substitution on both sides. -/
 theorem Par.subst (h : Par a b) {σ τ : Sub Δ Ε}
     (hσ : ∀ {ν} (x : KVar Δ ν), Par (σ x) (τ x)) :
     Par (Ty.subst σ a) (Ty.subst τ b) := by
@@ -90,7 +94,8 @@ theorem Par.subst (h : Par a b) {σ τ : Sub Δ Ε}
     rw [subst_instantiate]
     exact .beta (ih₁ (fun x => par_liftSub hσ x)) (ih₂ hσ)
 
-/-- Parallel reduction respects discharging a binder and reducing its image. -/
+/-- **Parallel type-beta reduction is stable under instantiation.**
+Parallel reduction respects discharging a binder and reducing its image. -/
 theorem Par.instantiate {b c : Ty (μ :: Δ) κ} {a a' : Ty Δ μ}
     (hb : Par b c) (ha : Par a a') :
     Par (Ty.instantiate b a) (Ty.instantiate c a') := by
@@ -100,7 +105,8 @@ theorem Par.instantiate {b c : Ty (μ :: Δ) κ} {a a' : Ty Δ μ}
   | zero => exact ha
   | succ x => exact .var x
 
-/-- Contract all originally present type-beta redexes recursively. -/
+/-- **Complete development of type-beta redexes.**
+Contract all originally present type-beta redexes recursively. -/
 def develop : {Δ : List Kind} → {κ : Kind} → Ty Δ κ → Ty Δ κ
   | _, _, .var x => .var x
   | _, _, .lam b => .lam (develop b)
@@ -109,7 +115,8 @@ def develop : {Δ : List Kind} → {κ : Kind} → Ty Δ κ → Ty Δ κ
   | _, _, .arr a b => .arr (develop a) (develop b)
   | _, _, .all b => .all (develop b)
 
-/-- Every parallel reduct reduces to the original complete development. -/
+/-- **Parallel reducts reduce to the complete development.**
+Every parallel reduct reduces to the original complete development. -/
 theorem Par.to_develop (h : Par a b) : Par b (develop a) := by
   induction h with
   | var x => exact .var x
@@ -127,12 +134,14 @@ theorem Par.to_develop (h : Par a b) : Par b (develop a) := by
         cases ihf with
         | lam ihb => exact .beta ihb iha
 
-/-- Parallel beta reduction has the diamond property at each kind. -/
+/-- **Diamond property of parallel type-beta reduction.**
+Parallel beta reduction has the diamond property at each kind. -/
 theorem par_diamond : Relation.Diamond (Par (Δ := Δ) (κ := κ)) := by
   intro a b c hab hac
   exact ⟨develop a, hab.to_develop, hac.to_develop⟩
 
-/-- Parallel type-beta reduction is confluent; no termination premise. -/
+/-- **Confluence of parallel type-beta reduction.**
+Parallel type-beta reduction is confluent; no termination premise. -/
 theorem par_confluent : Relation.Confluent (Par (Δ := Δ) (κ := κ)) := by
   intro a b c hab hac
   induction hab with
@@ -144,34 +153,40 @@ theorem par_confluent : Relation.Confluent (Par (Δ := Δ) (κ := κ)) := by
         par_diamond p hbd
     exact ⟨e, hbe, hcd.tail hde⟩
 
-/-- Finitely many parallel beta reductions, including zero reductions. -/
+/-- **Multistep parallel type-beta reduction.**
+Finitely many parallel beta reductions, including zero reductions. -/
 abbrev Red (a b : Ty Δ κ) := Relation.ReflTransGen Par a b
 
-/-- Multiple parallel reductions are stable under an operator binder. -/
+/-- **Multistep type-beta reduction under an operator abstraction.**
+Multiple parallel reductions are stable under an operator binder. -/
 theorem Red.lam {b c : Ty (μ :: Δ) κ} (h : Red b c) :
     Red (.lam b) (.lam c) :=
   h.lift Ty.lam (fun _ _ => Par.lam)
 
-/-- Multiple parallel reductions are stable under a universal binder. -/
+/-- **Multistep type-beta reduction under a universal quantifier.**
+Multiple parallel reductions are stable under a universal binder. -/
 theorem Red.all {b c : Ty (μ :: Δ) .star} (h : Red b c) :
     Red (.all b) (.all c) :=
   h.lift Ty.all (fun _ _ => Par.all)
 
-/-- Multiple reductions are congruent in both type-application arguments. -/
+/-- **Multistep type-beta reduction in type applications.**
+Multiple reductions are congruent in both type-application arguments. -/
 theorem Red.app {f g : Ty Δ (.arrow μ κ)} {a b : Ty Δ μ}
     (hf : Red f g) (ha : Red a b) : Red (.app f a) (.app g b) :=
   (hf.lift (fun f => Ty.app f a)
     (fun _ _ h => Par.app h (.refl _))).trans
   (ha.lift (Ty.app g) (fun _ _ h => Par.app (.refl _) h))
 
-/-- Multiple reductions are congruent in both term-function type arguments. -/
+/-- **Multistep type-beta reduction in function types.**
+Multiple reductions are congruent in both term-function type arguments. -/
 theorem Red.arr {a a' b b' : Ty Δ .star}
     (ha : Red a a') (hb : Red b b') : Red (.arr a b) (.arr a' b') :=
   (ha.lift (fun a => Ty.arr a b)
     (fun _ _ h => Par.arr h (.refl _))).trans
   (hb.lift (Ty.arr a') (fun _ _ h => Par.arr (.refl _) h))
 
-/-- Conversion entails a common parallel-beta reduct (Church-Rosser). -/
+/-- **Church–Rosser property of type-beta conversion.**
+Conversion entails a common parallel-beta reduct (Church-Rosser). -/
 theorem Conv.join (h : Conv a b) : ∃ c, Red a c ∧ Red b c := by
   induction h with
   | refl a => exact ⟨a, .refl, .refl⟩
@@ -193,7 +208,8 @@ theorem Conv.join (h : Conv a b) : ∃ c, Red a c ∧ Red b c := by
     obtain ⟨b, hc, hd⟩ := ih₂
     exact ⟨.arr a b, ha.arr hc, hb.arr hd⟩
 
-/-- Every parallel-beta reduction is a proved conversion. -/
+/-- **Parallel type-beta reduction implies conversion.**
+Every parallel-beta reduction is a proved conversion. -/
 theorem Par.conv (h : Par a b) : Conv a b := by
   induction h with
   | var => exact .refl _
@@ -204,17 +220,20 @@ theorem Par.conv (h : Par a b) : Conv a b := by
   | beta h₁ h₂ ih₁ ih₂ =>
     exact .trans (.app (.lam ih₁) ih₂) (.beta _ _)
 
-/-- Finitely many parallel-beta reductions are a proved conversion. -/
+/-- **Multistep type-beta reduction implies conversion.**
+Finitely many parallel-beta reductions are a proved conversion. -/
 theorem Red.conv (h : Red a b) : Conv a b := by
   induction h with
   | refl => exact .refl _
   | tail h p ih => exact .trans ih p.conv
 
-/-- Conversion is exactly common-reduct joinability, not semantic equality. -/
+/-- **Type-beta conversion is joinability by a common reduct.**
+Conversion is exactly common-reduct joinability, not semantic equality. -/
 theorem conv_iff_join : Conv a b ↔ ∃ c, Red a c ∧ Red b c :=
   ⟨Conv.join, fun ⟨_, ha, hb⟩ => .trans ha.conv hb.conv.symm⟩
 
-/-- Reduction of a term-function type keeps its outer constructor. -/
+/-- **Reducts of function types are function types.**
+Reduction of a term-function type keeps its outer constructor. -/
 theorem Red.arr_inv {a b c : Ty Δ .star} (h : Red (.arr a b) c) :
     ∃ a' b', c = .arr a' b' ∧ Red a a' ∧ Red b b' := by
   induction h with
@@ -224,7 +243,8 @@ theorem Red.arr_inv {a b c : Ty Δ .star} (h : Red (.arr a b) c) :
     cases p with
     | arr pa pb => exact ⟨_, _, rfl, ha.tail pa, hb.tail pb⟩
 
-/-- Reduction of a quantified type keeps its binder kind and outer shape. -/
+/-- **Reducts of quantified types are quantified types.**
+Reduction of a quantified type keeps its binder kind and outer shape. -/
 theorem Red.all_inv {body : Ty (μ :: Δ) .star} {c : Ty Δ .star}
     (h : Red (.all body) c) :
     ∃ body' : Ty (μ :: Δ) .star, c = .all body' ∧ Red body body' := by
@@ -235,7 +255,8 @@ theorem Red.all_inv {body : Ty (μ :: Δ) .star} {c : Ty Δ .star}
     cases p with
     | all pb => exact ⟨_, rfl, hb.tail pb⟩
 
-/-- Convertible term-function types have convertible domains and codomains. -/
+/-- **Injectivity of function types up to conversion.**
+Convertible term-function types have convertible domains and codomains. -/
 theorem Conv.arr_inj {a a' b b' : Ty Δ .star}
     (h : Conv (.arr a b) (.arr a' b')) : Conv a a' ∧ Conv b b' := by
   obtain ⟨c, hc, hc'⟩ := h.join
@@ -244,7 +265,8 @@ theorem Conv.arr_inj {a a' b b' : Ty Δ .star}
   obtain ⟨rfl, rfl⟩ := Ty.arr.inj (hxy.symm.trans hxy')
   exact ⟨.trans hx.conv hx'.conv.symm, .trans hy.conv hy'.conv.symm⟩
 
-/-- Conversion cannot change the kind of a universal binder. -/
+/-- **Conversion preserves the kind of a universal binder.**
+Conversion cannot change the kind of a universal binder. -/
 theorem Conv.all_kind {ν : Kind} {body : Ty (μ :: Δ) .star}
     {body' : Ty (ν :: Δ) .star} (h : Conv (.all body) (.all body')) :
     μ = ν := by
@@ -253,7 +275,8 @@ theorem Conv.all_kind {ν : Kind} {body : Ty (μ :: Δ) .star}
   obtain ⟨b', hb', _⟩ := hc'.all_inv
   exact (Ty.all.inj (hb.symm.trans hb')).1
 
-/-- Convertible quantified types at the same kind have convertible bodies. -/
+/-- **Injectivity of quantified types up to conversion.**
+Convertible quantified types at the same kind have convertible bodies. -/
 theorem Conv.all_inj {body body' : Ty (μ :: Δ) .star}
     (h : Conv (.all body) (.all body')) : Conv body body' := by
   obtain ⟨c, hc, hc'⟩ := h.join

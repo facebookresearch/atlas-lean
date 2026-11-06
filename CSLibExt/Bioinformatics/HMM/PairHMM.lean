@@ -90,7 +90,8 @@ namespace Cslib.Bioinformatics.HMM
 
 open Cslib.Algorithms.Lean
 
-/-- All alignments of `xs : List α` with `ys : List β`, by fuel recursion on the first column
+/-- **Fuel-bounded enumeration of two-alphabet alignments.**
+All alignments of `xs : List α` with `ys : List β`, by fuel recursion on the first column
 (the same recursion as `Cslib.Algorithms.Lean.alignmentsAux`, for two alphabets). Implementation
 detail: use `alignmentsOf`, whose fuel `xs.length + ys.length + 1` is enough. -/
 def alignmentsOfAux {α β : Type*} : ℕ → List α → List β → List (List (Option α × Option β))
@@ -103,7 +104,8 @@ def alignmentsOfAux {α β : Type*} : ℕ → List α → List β → List (List
         (alignmentsOfAux n xs (b :: ys)).map (fun A => (some a, none) :: A) ++
         (alignmentsOfAux n (a :: xs) ys).map (fun A => (none, some b) :: A)
 
-/-- All alignments of a sequence over `α` with a sequence over `β`: lists of columns
+/-- **All alignments of sequences over two alphabets.**
+All alignments of a sequence over `α` with a sequence over `β`: lists of columns
 `Option α × Option β` with no `(none, none)` column whose rows filter to `xs` and `ys`
 (`mem_alignmentsOf`), each listed once (`nodup_alignmentsOf`). For `β = α` this is
 `Cslib.Algorithms.Lean.alignments` (`alignmentsOf_eq_alignments`). -/
@@ -136,7 +138,8 @@ private theorem alignmentsOfAux_eq {α β : Type*} (m : ℕ) (xs : List α) (ys 
       · rw [alignmentsOfAux_succ m xs ys h, ih h]
       · rw [alignmentsOf, h]
 
-/-- The alignments of two nonempty sequences, by their first column. -/
+/-- **Alignments of two nonempty sequences by first column.**
+The alignments of two nonempty sequences, by their first column. -/
 theorem alignmentsOf_cons_cons {α β : Type*} (a : α) (b : β) (xs : List α) (ys : List β) :
     alignmentsOf (a :: xs) (b :: ys) =
       (alignmentsOf xs ys).map (fun A => (some a, some b) :: A) ++
@@ -147,14 +150,16 @@ theorem alignmentsOf_cons_cons {α β : Type*} (a : α) (b : β) (xs : List α) 
     alignmentsOfAux_eq _ xs ys (by omega), alignmentsOfAux_eq _ xs (b :: ys) (by simp; omega),
     alignmentsOfAux_eq _ (a :: xs) ys (by simp; omega)]
 
-/-- The alignments of the empty sequence with a nonempty one. -/
+/-- **Alignments of the empty sequence with a nonempty one.**
+The alignments of the empty sequence with a nonempty one. -/
 theorem alignmentsOf_nil_cons {α β : Type*} (b : β) (ys : List β) :
     alignmentsOf ([] : List α) (b :: ys) =
       (alignmentsOf [] ys).map (fun A => (none, some b) :: A) := by
   rw [alignmentsOf, show ([] : List α).length + (b :: ys).length + 1 =
     (ys.length + 1) + 1 by simp, alignmentsOfAux, alignmentsOfAux_eq _ [] ys (by simp)]
 
-/-- The alignments of a nonempty sequence with the empty one. -/
+/-- **Alignments of a nonempty sequence with the empty one.**
+The alignments of a nonempty sequence with the empty one. -/
 theorem alignmentsOf_cons_nil {α β : Type*} (a : α) (xs : List α) :
     alignmentsOf (a :: xs) ([] : List β) =
       (alignmentsOf xs []).map (fun A => (some a, none) :: A) := by
@@ -257,12 +262,14 @@ theorem nodup_alignmentsOf {α β : Type*} (xs : List α) (ys : List β) :
     (alignmentsOf xs ys).Nodup :=
   nodup_aux _ xs ys
 
-/-- On one alphabet, `alignmentsOf` is `Cslib.Algorithms.Lean.alignments`. -/
+/-- **Two-alphabet alignments agree with single-alphabet alignments.**
+On one alphabet, `alignmentsOf` is `Cslib.Algorithms.Lean.alignments`. -/
 theorem alignmentsOf_eq_alignments {α : Type*} (xs ys : List α) :
     alignmentsOf xs ys = alignments xs ys :=
   alignmentsOfAux_eq_alignmentsAux _ xs ys
 
-/-- A weighted automaton reading an alignment of a sequence over `α` with a sequence over `β`
+/-- **Weighted alignment automaton.**
+A weighted automaton reading an alignment of a sequence over `α` with a sequence over `β`
 column by column with a control state in `Q`: the weight of reading a column in a control
 state, the next control state, and the final weight of a control state. Weights are in `R`. -/
 structure AlignmentAutomaton (Q α β R : Type*) where
@@ -281,13 +288,15 @@ section Semiring
 
 variable [Semiring R] (M : AlignmentAutomaton Q α β R)
 
-/-- The weight of an alignment read from control state `q`: the product of the column weights
+/-- **Weight of an alignment read by an automaton.**
+The weight of an alignment read from control state `q`: the product of the column weights
 along the alignment, then the final weight. -/
 def alignWeight : Q → List (Option α × Option β) → R
   | q, [] => M.final q
   | q, c :: A => M.weight q c * alignWeight (M.next q c) A
 
-/-- The sum recursion with fuel (the fuel bounds the recursion depth). Implementation detail:
+/-- **Fuel-bounded sum recursion over alignments.**
+The sum recursion with fuel (the fuel bounds the recursion depth). Implementation detail:
 use `sumDP`, whose fuel `xs.length + ys.length + 1` is enough. -/
 def sumDPAux : ℕ → Q → List α → List β → R
   | 0, _, _, _ => 0
@@ -301,7 +310,8 @@ def sumDPAux : ℕ → Q → List α → List β → R
         M.weight q (some a, none) * sumDPAux n (M.next q (some a, none)) xs (b :: ys) +
         M.weight q (none, some b) * sumDPAux n (M.next q (none, some b)) (a :: xs) ys
 
-/-- The total weight of all alignments of `xs` and `ys` read from control state `q`, by the
+/-- **Total alignment weight by first-column recursion.**
+The total weight of all alignments of `xs` and `ys` read from control state `q`, by the
 first-column recursion (`sumDP_eq_sum`). -/
 def sumDP (q : Q) (xs : List α) (ys : List β) : R :=
   sumDPAux M (xs.length + ys.length + 1) q xs ys
@@ -326,7 +336,7 @@ theorem sumDP_eq_sum (q : Q) (xs : List α) (ys : List β) :
     sumDP M q xs ys = ((alignmentsOf xs ys).map (alignWeight M q)).sum :=
   sumDPAux_eq_sum M _ q xs ys
 
-/-- The sum recursion on two nonempty sequences. -/
+/-- **Sum recursion on two nonempty sequences.** The sum recursion on two nonempty sequences. -/
 theorem sumDP_cons_cons (q : Q) (a : α) (b : β) (xs : List α) (ys : List β) :
     sumDP M q (a :: xs) (b :: ys) =
       M.weight q (some a, some b) * sumDP M (M.next q (some a, some b)) xs ys +
@@ -335,21 +345,24 @@ theorem sumDP_cons_cons (q : Q) (a : α) (b : β) (xs : List α) (ys : List β) 
   simp only [sumDP_eq_sum, alignmentsOf_cons_cons, List.map_append, List.sum_append,
     List.map_map, Function.comp_def, alignWeight, List.sum_map_mul_left]
 
-/-- The sum recursion when the first sequence is empty. -/
+/-- **Sum recursion with an empty first sequence.**
+The sum recursion when the first sequence is empty. -/
 theorem sumDP_nil_cons (q : Q) (b : β) (ys : List β) :
     sumDP M q ([] : List α) (b :: ys) =
       M.weight q (none, some b) * sumDP M (M.next q (none, some b)) [] ys := by
   simp only [sumDP_eq_sum, alignmentsOf_nil_cons, List.map_map, Function.comp_def, alignWeight,
     List.sum_map_mul_left]
 
-/-- The sum recursion when the second sequence is empty. -/
+/-- **Sum recursion with an empty second sequence.**
+The sum recursion when the second sequence is empty. -/
 theorem sumDP_cons_nil (q : Q) (a : α) (xs : List α) :
     sumDP M q (a :: xs) ([] : List β) =
       M.weight q (some a, none) * sumDP M (M.next q (some a, none)) xs [] := by
   simp only [sumDP_eq_sum, alignmentsOf_cons_nil, List.map_map, Function.comp_def, alignWeight,
     List.sum_map_mul_left]
 
-/-- The sum recursion on two empty sequences is the final weight. -/
+/-- **Sum recursion on two empty sequences is the final weight.**
+The sum recursion on two empty sequences is the final weight. -/
 theorem sumDP_nil_nil (q : Q) : sumDP M q ([] : List α) ([] : List β) = M.final q := rfl
 
 end Semiring
@@ -358,7 +371,8 @@ section Max
 
 variable [Semiring R] [LinearOrder R] (M : AlignmentAutomaton Q α β R)
 
-/-- The max recursion with fuel. Implementation detail: use `maxDP`. -/
+/-- **Fuel-bounded max recursion over alignments.**
+The max recursion with fuel. Implementation detail: use `maxDP`. -/
 def maxDPAux : ℕ → Q → List α → List β → R
   | 0, _, _, _ => 0
   | _ + 1, q, [], [] => M.final q
@@ -371,7 +385,8 @@ def maxDPAux : ℕ → Q → List α → List β → R
         (M.weight q (some a, none) * maxDPAux n (M.next q (some a, none)) xs (b :: ys)))
         (M.weight q (none, some b) * maxDPAux n (M.next q (none, some b)) (a :: xs) ys)
 
-/-- The max-recursion value of an alignment of `xs` and `ys` read from control state `q`, by
+/-- **Max-recursion alignment value from a control state.**
+The max-recursion value of an alignment of `xs` and `ys` read from control state `q`, by
 the first-column recursion (`alignWeight_le_maxDP`, `exists_alignWeight_eq_maxDP`). It is the
 largest alignment weight only when the weights are nonnegative; in general it is the value of
 the recursively chosen alignment. -/
@@ -481,7 +496,7 @@ theorem exists_alignWeight_eq_maxDP (q : Q) (xs : List α) (ys : List β) :
     ∃ A ∈ alignmentsOf xs ys, alignWeight M q A = maxDP M q xs ys :=
   exists_alignWeight_eq_maxDPAux M _ q xs ys (Nat.lt_succ_self _)
 
-/-- The max recursion on two nonempty sequences. -/
+/-- **Max recursion on two nonempty sequences.** The max recursion on two nonempty sequences. -/
 theorem maxDP_cons_cons (q : Q) (a : α) (b : β) (xs : List α) (ys : List β) :
     maxDP M q (a :: xs) (b :: ys) =
       max (max (M.weight q (some a, some b) * maxDP M (M.next q (some a, some b)) xs ys)
@@ -492,21 +507,24 @@ theorem maxDP_cons_cons (q : Q) (a : α) (b : β) (xs : List α) (ys : List β) 
     maxDPAux_eq M _ _ xs ys (by omega), maxDPAux_eq M _ _ xs (b :: ys) (by simp; omega),
     maxDPAux_eq M _ _ (a :: xs) ys (by simp; omega)]
 
-/-- The max recursion when the first sequence is empty. -/
+/-- **Max recursion with an empty first sequence.**
+The max recursion when the first sequence is empty. -/
 theorem maxDP_nil_cons (q : Q) (b : β) (ys : List β) :
     maxDP M q ([] : List α) (b :: ys) =
       M.weight q (none, some b) * maxDP M (M.next q (none, some b)) [] ys := by
   rw [maxDP, show ([] : List α).length + (b :: ys).length + 1 = (ys.length + 1) + 1 by simp,
     maxDPAux, maxDPAux_eq M _ _ [] ys (by simp)]
 
-/-- The max recursion when the second sequence is empty. -/
+/-- **Max recursion with an empty second sequence.**
+The max recursion when the second sequence is empty. -/
 theorem maxDP_cons_nil (q : Q) (a : α) (xs : List α) :
     maxDP M q (a :: xs) ([] : List β) =
       M.weight q (some a, none) * maxDP M (M.next q (some a, none)) xs [] := by
   rw [maxDP, show (a :: xs).length + ([] : List β).length + 1 = (xs.length + 1) + 1 by simp,
     maxDPAux, maxDPAux_eq M _ _ xs [] (by simp)]
 
-/-- The max recursion on two empty sequences is the final weight. -/
+/-- **Max recursion on two empty sequences is the final weight.**
+The max recursion on two empty sequences is the final weight. -/
 theorem maxDP_nil_nil (q : Q) : maxDP M q ([] : List α) ([] : List β) = M.final q := rfl
 
 end Max
@@ -515,7 +533,8 @@ end AlignmentAutomaton
 
 /-! ## Pair HMMs -/
 
-/-- The emitting states of a pair HMM: `M` emits an aligned pair, `X` a letter of the first
+/-- **Emitting states of a pair HMM.**
+The emitting states of a pair HMM: `M` emits an aligned pair, `X` a letter of the first
 sequence only, `Y` a letter of the second sequence only. -/
 inductive PairState
   /-- Emit an aligned pair `(a, b)`. -/
@@ -526,14 +545,16 @@ inductive PairState
   | Y
   deriving DecidableEq, Repr
 
-/-- The state that emits an alignment column: `M` for `(some a, some b)`, `X` for
+/-- **Pair HMM state emitting an alignment column.**
+The state that emits an alignment column: `M` for `(some a, some b)`, `X` for
 `(some a, none)`, `Y` for `(none, some b)` (and `M`, unused, for the invalid `(none, none)`). -/
 def colState {α : Type*} : Option α × Option α → PairState
   | (some _, none) => .X
   | (none, some _) => .Y
   | _ => .M
 
-/-- A pair HMM over the alphabet `α` with weights in `R` (Durbin et al., chapter 4): the
+/-- **Pair hidden Markov model.**
+A pair HMM over the alphabet `α` with weights in `R` (Durbin et al., chapter 4): the
 transition weights from the silent begin state (`start`) and between emitting states (`trans`),
 to the silent end state (`stop` from an emitting state, `startStop` for the empty alignment),
 and the emission weights of the three emitting states. -/
@@ -561,14 +582,16 @@ section Semiring
 
 variable [Semiring R] (h : PairHMM α R)
 
-/-- The emission weight of an alignment column (`0` for the invalid `(none, none)`). -/
+/-- **Emission weight of an alignment column.**
+The emission weight of an alignment column (`0` for the invalid `(none, none)`). -/
 def emitCol : Option α × Option α → R
   | (some a, some b) => h.emitM a b
   | (some a, none) => h.emitX a
   | (none, some b) => h.emitY b
   | (none, none) => 0
 
-/-- The pair HMM as an alignment automaton: the control state is the previous HMM state
+/-- **Pair HMM as an alignment automaton.**
+The pair HMM as an alignment automaton: the control state is the previous HMM state
 (`none` for the begin state). -/
 def toAutomaton : AlignmentAutomaton (Option PairState) α α R where
   weight q c := (match q with
@@ -579,12 +602,14 @@ def toAutomaton : AlignmentAutomaton (Option PairState) α α R where
     | none => h.startStop
     | some s => h.stop s
 
-/-- The joint weight of the sequences and the state path of an alignment `A` (the path visits
+/-- **Joint weight of sequences and an alignment's state path.**
+The joint weight of the sequences and the state path of an alignment `A` (the path visits
 `colState c` for each column `c`): the product of the transition and emission weights along the
 path, from the begin state to the end state. -/
 def alignProb (A : Alignment α) : R := h.toAutomaton.alignWeight none A
 
-/-- The total weight `P(xs, ys)` of a pair HMM: the total weight of all state paths that emit
+/-- **Total weight of a sequence pair under a pair HMM.**
+The total weight `P(xs, ys)` of a pair HMM: the total weight of all state paths that emit
 `xs` and `ys` (`likelihood_eq_sum`), by the first-column recursion. -/
 def likelihood (xs ys : List α) : R := h.toAutomaton.sumDP none xs ys
 
@@ -601,12 +626,14 @@ section Viterbi
 
 variable [Semiring R] [LinearOrder R] (h : PairHMM α R)
 
-/-- The Viterbi value of a pair HMM: the max-recursion value for `xs`, `ys`. It is the
+/-- **Viterbi value of a pair HMM.**
+The Viterbi value of a pair HMM: the max-recursion value for `xs`, `ys`. It is the
 largest joint weight over alignments when the HMM weights are nonnegative
 (see `alignProb_le_viterbi`). -/
 def viterbi (xs ys : List α) : R := h.toAutomaton.maxDP none xs ys
 
-/-- Nonnegative transition weights into emitting states and nonnegative emission weights (the
+/-- **Nonnegative weights of a pair HMM.**
+Nonnegative transition weights into emitting states and nonnegative emission weights (the
 transitions into the end state may have any sign: the Viterbi bound does not need them). -/
 structure Nonneg : Prop where
   /-- Begin-state transitions are nonnegative. -/
@@ -622,7 +649,8 @@ structure Nonneg : Prop where
 
 variable {h}
 
-/-- A pair HMM with nonnegative weights is a nonnegative alignment automaton. -/
+/-- **Nonnegative pair HMM gives a nonnegative alignment automaton.**
+A pair HMM with nonnegative weights is a nonnegative alignment automaton. -/
 theorem toAutomaton_nonneg [IsOrderedRing R] (hn : h.Nonneg) : h.toAutomaton.Nonneg := by
   intro q c
   refine mul_nonneg ?_ ?_
@@ -651,7 +679,8 @@ end Viterbi
 
 section LogOdds
 
-/-- The pair HMM's transition weights do not depend on the current state: every transition into
+/-- **Memoryless pair HMM.**
+The pair HMM's transition weights do not depend on the current state: every transition into
 an emitting state `s` (from the begin state or from any emitting state) has weight `π s`, and
 every transition into the end state has weight `τ`. -/
 structure IsMemoryless (h : PairHMM α ℝ) (π : PairState → ℝ) (τ : ℝ) : Prop where
@@ -664,7 +693,8 @@ structure IsMemoryless (h : PairHMM α ℝ) (π : PairState → ℝ) (τ : ℝ) 
   /-- The begin-to-end transition. -/
   startStop : h.startStop = τ
 
-/-- The independence-model weight for `xs` and `ys` (Durbin et al., chapter 4):
+/-- **Independence-model weight of a sequence pair.**
+The independence-model weight for `xs` and `ys` (Durbin et al., chapter 4):
 `η² (1 - η)^(|xs| + |ys|) ∏ q xs ∏ q ys`. This is a probability when `q` is a
 normalized nonnegative distribution and `0 < η < 1`, as required by `LinearGapLogOdds`. -/
 noncomputable def background (q : α → ℝ) (η : ℝ) (xs ys : List α) : ℝ :=
@@ -672,7 +702,8 @@ noncomputable def background (q : α → ℝ) (η : ℝ) (xs ys : List α) : ℝ
 
 variable [Fintype α]
 
-/-- The hypotheses of the log-odds correspondence: a memoryless pair HMM with normalized
+/-- **Hypotheses of the linear-gap log-odds correspondence.**
+The hypotheses of the log-odds correspondence: a memoryless pair HMM with normalized
 positive transition and emission probabilities, normalized positive background frequencies
 and `0 < η < 1`, whose per-column log-odds scores against the independence model are the
 integer scores `σ a b` (aligned pair) and `gap` (gap column). -/

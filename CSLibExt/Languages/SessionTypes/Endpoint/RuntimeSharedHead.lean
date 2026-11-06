@@ -26,7 +26,8 @@ open PiCalculus
 private theorem insert_empty_singleton (e : Key) (c : Capability) :
     (∅ : Context).insert e c = Finmap.singleton e c := rfl
 
-/-- A declared shared invocation and ANY typed input worker preserve their EXACT
+/-- **Shared invocation and input worker preserve the combined interface.**
+A declared shared invocation and ANY typed input worker preserve their EXACT
 combined linear interface. The actual owned payload is substituted, not the
 advertised raw protocol; completed receiver annotations remain ambient. -/
 theorem HasType.shared_head {n : Nat} {Γ : ServiceEnv} {Δ Θ : Context}

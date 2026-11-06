@@ -229,7 +229,8 @@ private theorem semantic_fair (valuation : Symbol → Atom → Prop)
   | «until» φ ψ ihφ ihψ =>
       exact ⟨semantic_until_fair valuation w φ ψ, ihφ, ihψ⟩
 
-/-- The full tableau recognizes exactly the existing LTL satisfaction relation. -/
+/-- **LTL tableau accepts exactly the satisfying words.**
+The full tableau recognizes exactly the existing LTL satisfaction relation. -/
 theorem mem_automaton_iff (valuation : Symbol → Atom → Prop)
     (φ : Formula Atom) (w : ωSequence Symbol) :
     w ∈ language (automaton valuation φ) ↔ Word.Satisfies valuation w φ := by
@@ -242,23 +243,27 @@ theorem mem_automaton_iff (valuation : Symbol → Atom → Prop)
       (semantic_value valuation w 0 φ).mpr h, ?_, semantic_fair valuation w φ⟩
     exact fun n => semantic_step valuation w φ n
 
-/-- Exact omega-language equality for the generalized tableau. -/
+/-- **Generalized LTL tableau language equals the formula language.**
+Exact omega-language equality for the generalized tableau. -/
 theorem language_automaton (valuation : Symbol → Atom → Prop) (φ : Formula Atom) :
     language (automaton valuation φ) = Word.language valuation φ :=
   ωLanguage.mem_ext fun w => mem_automaton_iff valuation φ w
 
-/-- Ordinary Büchi recognition, using the existing fairness counter. -/
+/-- **Büchi automaton for an LTL formula.**
+Ordinary Büchi recognition, using the existing fairness counter. -/
 def buchi (valuation : Symbol → Atom → Prop) (φ : Formula Atom) :
     Automata.NA.Buchi (State φ × Fin (obligationCount φ + 1)) Symbol :=
   (automaton valuation φ).toBuchi
 
-/-- Every LTL formula has precisely its existing language as a Büchi language. -/
+/-- **Büchi automaton language equals the LTL formula language.**
+Every LTL formula has precisely its existing language as a Büchi language. -/
 theorem language_buchi (valuation : Symbol → Atom → Prop) (φ : Formula Atom) :
     language (buchi valuation φ) = Word.language valuation φ :=
   (Automata.NA.GenBuchi.language_toBuchi (automaton valuation φ)).trans
     (language_automaton valuation φ)
 
-/-- The ordinary Büchi recognizer accepts exactly satisfaction of the formula. -/
+/-- **Büchi automaton accepts exactly the satisfying words.**
+The ordinary Büchi recognizer accepts exactly satisfaction of the formula. -/
 theorem mem_buchi_iff (valuation : Symbol → Atom → Prop)
     (φ : Formula Atom) (w : ωSequence Symbol) :
     w ∈ language (buchi valuation φ) ↔ Word.Satisfies valuation w φ := by
@@ -272,7 +277,8 @@ open Automata.ωAcceptor
 
 variable {Atom Symbol : Type*}
 
-/-- Every existing LTL formula has a finite-state Büchi recognizer under the
+/-- **Every LTL formula has a finite-state Büchi automaton.**
+Every existing LTL formula has a finite-state Büchi recognizer under the
 same valuation. Neither atoms nor the alphabet need be finite or decidable. -/
 theorem exists_buchi (valuation : Symbol → Atom → Prop) (φ : Formula Atom) :
     ∃ (S : Type) (_ : Finite S) (a : Automata.NA.Buchi S Symbol),

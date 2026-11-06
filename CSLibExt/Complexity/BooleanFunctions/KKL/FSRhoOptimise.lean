@@ -45,7 +45,7 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- At `p = 1/2` the normalized bit is `-(-1)^b`. -/
+/-- **Normalized bit at $p = 1/2$ is $-(-1)^b$.** At `p = 1/2` the normalized bit is `-(-1)^b`. -/
 theorem fsr_ptn_psi_half (b : Bool) :
     ptn_psi (1 / 2 : ℝ) b = - khc_sign b := by
   unfold ptn_psi khc_sign
@@ -55,7 +55,8 @@ theorem fsr_ptn_psi_half (b : Bool) :
   cases b <;> norm_num [ptn_val]
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- At `p = 1/2` the `p`-biased character is `(-1)^{|S|}` times the Walsh character. -/
+/-- **$p$-biased character at $p = 1/2$ is the Walsh character up to sign.**
+At `p = 1/2` the `p`-biased character is `(-1)^{|S|}` times the Walsh character. -/
 theorem fsr_ptn_pchar_half (S : Finset ι) (ω : ConfigSpace ι) :
     ptn_pchar (1 / 2 : ℝ) S ω = (-1) ^ S.card * khc_walshChar S ω := by
   unfold ptn_pchar khc_walshChar
@@ -63,7 +64,8 @@ theorem fsr_ptn_pchar_half (S : Finset ι) (ω : ConfigSpace ι) :
     funext i; exact fsr_ptn_psi_half (ω i)]
   rw [Finset.prod_neg]
 
-/-- At `p = 1/2` the squared `p`-biased and Walsh Fourier coefficients agree. -/
+/-- **Squared $p$-biased and Walsh coefficients agree at $p = 1/2$.**
+At `p = 1/2` the squared `p`-biased and Walsh Fourier coefficients agree. -/
 theorem fsr_ptn_coeff_half_sq (f : ConfigSpace ι → ℝ) (S : Finset ι) :
     (ptn_coeff (1 / 2 : ℝ) f S) ^ 2 = (khc_fourierCoeff f S) ^ 2 := by
   have heq : ptn_coeff (1 / 2 : ℝ) f S = (-1) ^ S.card * khc_fourierCoeff f S := by
@@ -78,7 +80,8 @@ theorem fsr_ptn_coeff_half_sq (f : ConfigSpace ι → ℝ) (S : Finset ι) :
   · rw [he.neg_one_pow]; ring
   · rw [ho.neg_one_pow]; ring
 
-/-- Total influence at `p = 1/2` in terms of the `p`-biased Fourier coefficients. -/
+/-- **Total influence at $p = 1/2$ via $p$-biased Fourier coefficients.**
+Total influence at `p = 1/2` in terms of the `p`-biased Fourier coefficients. -/
 theorem fsr_totalInfl_half_eq (φ : ConfigSpace ι → Bool) :
     totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0)
       = ∑ S : Finset ι, 4 * (S.card : ℝ)

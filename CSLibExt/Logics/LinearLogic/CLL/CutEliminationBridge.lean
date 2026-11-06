@@ -30,26 +30,30 @@ universe u
 
 variable {Atom : Type u} {Γ Δ : Sequent Atom}
 
-/-- Source and pinned cut-free proof bundles contain the same proof values. -/
+/-- **Equivalence of source and pinned cut-free proof bundles.**
+Source and pinned cut-free proof bundles contain the same proof values. -/
 def CF.Proof.equivCutFreeProof : CF.Proof Γ ≃ CutFreeProof Γ where
   toFun p := ⟨p.val, (Proof.isCutFree_iff_cutFree p.val).mp p.property⟩
   invFun p := ⟨p.val, (Proof.isCutFree_iff_cutFree p.val).mpr p.property⟩
   left_inv _ := Subtype.ext rfl
   right_inv _ := Subtype.ext rfl
 
-/-- Compute a cut-free original CLL proof using an explicit list presentation. -/
+/-- **Cut-free original proof from an explicit list presentation.**
+Compute a cut-free original CLL proof using an explicit list presentation. -/
 def Proof.cut_elim_list [DecidableEq Atom]
     {Γ : List (Proposition Atom)} (p : Proof (Γ : Sequent Atom)) :
     CutFreeProof (Γ : Sequent Atom) :=
   CF.Proof.equivCutFreeProof (Proof.cutElimList p)
 
-/-- Every original CLL proof has a cut-free original proof of the same sequent.
+/-- **Cut elimination for original classical linear logic proofs.**
+Every original CLL proof has a cut-free original proof of the same sequent.
 This wrapper uses classical atom equality and a classical list representative. -/
 noncomputable def Proof.cut_elim (p : Proof Γ) : CutFreeProof Γ := by
   classical
   exact CF.Proof.equivCutFreeProof (Proof.cutElim p)
 
-/-- Cut admissibility in the existing pinned bundle, with explicit list tails. -/
+/-- **Cut admissibility in the pinned bundle with list tails.**
+Cut admissibility in the existing pinned bundle, with explicit list tails. -/
 def CutFreeProof.cutAdmList [DecidableEq Atom] {a : Proposition Atom}
     {Γ Δ : List (Proposition Atom)} (p : CutFreeProof (a ::ₘ Γ))
     (q : CutFreeProof (a⫠ ::ₘ Δ)) :

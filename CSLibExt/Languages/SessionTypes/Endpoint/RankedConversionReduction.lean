@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- From a typed source at an initially compatible interface, all five
+/-- **Conversion ranked subject reduction at compatible interfaces.**
+From a typed source at an initially compatible interface, all five
 canonical reduction constructors preserve typing and compatibility, with one
 matched external subject-pair advancement or an unchanged interface when
 communication is private. No fragment or enabled-edge premise is required. -/
@@ -68,7 +69,8 @@ theorem RankedType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (RankedType.cong_iff hq).mp hr, hc, he⟩
 
-/-- A typed source with a balanced initial interface retains typing and balance
+/-- **Conversion ranked subject reduction at balanced interfaces.**
+A typed source with a balanced initial interface retains typing and balance
 after any canonical step. Balance supplies the required compatibility; the
 exact zero-or-one external advancement evidence is retained. -/
 theorem RankedType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
@@ -81,7 +83,8 @@ theorem RankedType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Pr
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- An empty-interface typed network retains empty-interface typing through
+/-- **Conversion ranked subject reduction at the empty interface.**
+An empty-interface typed network retains empty-interface typing through
 any canonical step. The empty context is balanced, hence compatible, including
 communication behind restrictions and pre/post congruence. -/
 theorem RankedType.subject_reduction_empty {n : Nat} {p q : Proc}
@@ -93,7 +96,8 @@ theorem RankedType.subject_reduction_empty {n : Nat} {p q : Proc}
     | matched hl => simp at hl
 
 
-/-- A ranked-typed source at an initially semantically compatible interface
+/-- **Finite runs keep conversion ranked typing at compatible interfaces.**
+A ranked-typed source at an initially semantically compatible interface
 retains typing and compatibility through finite actual execution, with a finite
 trace of faithful advances. This is safety, not progress or termination. -/
 theorem RankedType.reachable {n : Nat} {Δ : Context} {p q : Proc} (h : RankedType n Δ p)
@@ -108,7 +112,8 @@ theorem RankedType.reachable {n : Nat} {Δ : Context} {p q : Proc} (h : RankedTy
     · exact ⟨_, hq, hco, ha⟩
     · exact ⟨Ξ, hq, hco, ha.tail he⟩
 
-/-- Every finite reachable closed state retains the exact empty interface. -/
+/-- **Reachable closed conversion-ranked states keep the empty interface.**
+Every finite reachable closed state retains the exact empty interface. -/
 theorem RankedType.reachable_empty {n : Nat} {p q : Proc} (h : RankedType n ∅ p)
     (hr : Relation.ReflTransGen PiCalculus.Step p q) : RankedType n ∅ q := by
   induction hr with

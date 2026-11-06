@@ -35,7 +35,8 @@ private theorem normal_progress {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : 
     · exact Or.inl hi
     · exact Or.inr ⟨.nu q, PiCalculus.Step.nu hs⟩
 
-/-- GLOBAL progress at arbitrary ambient n/shared Γ/actual balanced Δ/process p,
+/-- **Global runtime progress at balanced interfaces given availability.**
+GLOBAL progress at arbitrary ambient n/shared Γ/actual balanced Δ/process p,
 qualified ONLY by runtime typing, INITIAL semantic balance and EXISTING persistent
 availability of ALL declared signatures. Result is actual Idle syntax OR a canonical
 Step. No frontier/normal form/readiness/Step/fairness/representative is supplied. -/
@@ -47,14 +48,16 @@ theorem HasType.progress_balanced {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p 
   · exact Or.inl ((Idle.cong_iff hc).mpr hi)
   · exact Or.inr ⟨q, PiCalculus.Step.cong hc hs (Cong.refl _)⟩
 
-/-- Closed empty-interface runtime progress, at arbitrary passive-name depth,
+/-- **Closed runtime processes are idle or step given availability.**
+Closed empty-interface runtime progress, at arbitrary passive-name depth,
 requires the SAME actual all-declared-service availability. Idle includes waiting
 replicas/accepts and nil; no termination or scheduler fairness is asserted. -/
 theorem HasType.progress_empty {n : Nat} {Γ : ServiceEnv} {p : Proc}
     (h : HasType n Γ ∅ p) (ha : Available Γ p) : Idle Γ p ∨ ∃ q, PiCalculus.Step p q :=
   h.progress_balanced Conversion.balanced_empty ha
 
-/-- Every finite canonical reduction from an initially balanced, available typed
+/-- **Qualified progress at every reachable runtime state.**
+Every finite canonical reduction from an initially balanced, available typed
 runtime retains qualified GLOBAL progress. Safety supplies actual balanced residual
 ownership/advance trace, and Available.reachable supplies current persistent syntax. -/
 theorem HasType.reachable_progress {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
@@ -63,7 +66,8 @@ theorem HasType.reachable_progress {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p
   obtain ⟨Ξ, ht, hbal, hadvance⟩ := h.reachable_balanced hb hr
   exact ht.progress_balanced hbal (ha.reachable hr)
 
-/-- Finite reachable empty-interface states retain the same qualified progress;
+/-- **Qualified progress at reachable closed runtime states.**
+Finite reachable empty-interface states retain the same qualified progress;
 this is one-step safety/progress, not all-schedules eventual responsiveness. -/
 theorem HasType.reachable_progress_empty {n : Nat} {Γ : ServiceEnv} {p q : Proc}
     (h : HasType n Γ ∅ p) (ha : Available Γ p)

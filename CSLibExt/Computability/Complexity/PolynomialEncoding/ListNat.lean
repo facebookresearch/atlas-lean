@@ -24,7 +24,8 @@ namespace Cslib.Complexity.PolynomialEncoding
 
 open MetaMathlibExt BitstringEncoding Computability FramedCNF
 
-/-- Successful block parsing reconstructs the entire input. -/
+/-- **Successful block parsing reconstructs the input.**
+Successful block parsing reconstructs the entire input. -/
 theorem blocks_decode_sound {fuel : Nat} {x : List Bool}
     {bs : List (List Bool)} (h : undelimitBlocksAux fuel x = some bs) :
     x = (bs.map delimit).flatten := by
@@ -42,7 +43,8 @@ theorem blocks_decode_sound {fuel : Nat} {x : List Bool}
       rw [(Cslib.CookLevin.undelimit_eq_some_iff _ _ _).mp hp, hr]
       rfl
 
-/-- Nat payload decoding never fails, including on noncanonical bits. -/
+/-- **Decoding natural-number payloads never fails.**
+Nat payload decoding never fails, including on noncanonical bits. -/
 theorem mapM_decode_nat (bs : List (List Bool)) :
     bs.mapM (bitDecode (α := Nat)) = some (bs.map decodeNat) := by
   induction bs with
@@ -53,7 +55,8 @@ theorem mapM_decode_nat (bs : List (List Bool)) :
       (bs.mapM (bitDecode (α := Nat))).bind (fun ns => some (n :: ns))) = _
     simp [ih]
 
-/-- List Nat decoding is precisely framed-payload parsing followed by
+/-- **Decoding a list of naturals is block parsing then number decoding.**
+List Nat decoding is precisely framed-payload parsing followed by
 the existing total Nat decoder. -/
 theorem decode_list_nat (x : List Bool) :
     bitDecode (α := List Nat) x =
@@ -63,7 +66,8 @@ theorem decode_list_nat (x : List Bool) :
   | none => rfl
   | some bs => exact mapM_decode_nat bs
 
-/-- Canonical re-encoding normalizes each payload without changing
+/-- **Re-encoding decoded payloads normalizes each one.**
+Canonical re-encoding normalizes each payload without changing
 list order or multiplicity. -/
 theorem encode_decoded_nat_blocks (bs : List (List Bool)) :
     bitEncode (bs.map decodeNat) =
@@ -72,7 +76,8 @@ theorem encode_decoded_nat_blocks (bs : List (List Bool)) :
   simp only [List.map_map, Function.comp_def,
     BinaryNatEncoding.bitEncode_nat, normalizeNat_eq_encode_decode]
 
-/-- Normalizing every framed Nat payload increases length by at most
+/-- **Normalizing framed number payloads at most triples the length.**
+Normalizing every framed Nat payload increases length by at most
 threefold, even for noncanonical input. -/
 theorem normalized_nat_blocks_length_le (bs : List (List Bool)) :
     ((bs.map (fun p => delimit (normalizeNat p))).flatten).length ≤
@@ -85,7 +90,8 @@ theorem normalized_nat_blocks_length_le (bs : List (List Bool)) :
       length_delimit] at ih ⊢
     omega
 
-/-- Re-encoding a successfully decoded List Nat is linear in the raw
+/-- **Re-encoded decoded list of naturals is linear in raw input.**
+Re-encoding a successfully decoded List Nat is linear in the raw
 input, not in the decoded numeric values. -/
 theorem decoded_list_nat_encode_length_le {x : List Bool} {as : List Nat}
     (h : bitDecode x = some as) : (bitEncode as).length ≤ 3 * x.length := by

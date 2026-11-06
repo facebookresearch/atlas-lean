@@ -26,44 +26,52 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition.MembershipCore
 open Turing Function TM2Program TM2Embedding
 open Cslib.Complexity.Karp Cslib.Complexity.SatVerifier
 
-/-- Input, reversal buffer, and the two embedded components' stacks. -/
+/-- **Stacks of the canonical PARTITION membership transducer.**
+Input, reversal buffer, and the two embedded components' stacks. -/
 inductive K | X | R | sum (k : SSVerify.K) | double (k : DoubleStream.K)
   deriving DecidableEq
 
-/-- The summation stacks use the existing verifier alphabet. -/
+/-- **Stack alphabets of the canonical PARTITION membership transducer.**
+The summation stacks use the existing verifier alphabet. -/
 @[reducible] def Γ : K → Type
   | .sum _ => Sym
   | _ => Bool
 
-/-- Component phases and the final sum-prefix emitter. -/
+/-- **Control labels of the canonical PARTITION membership transducer.**
+Component phases and the final sum-prefix emitter. -/
 inductive Lab
   | copy | distribute | sum (l : SSVerify.Lab)
   | double (l : DoubleStream.Lab) | prefix | bits | done
   deriving DecidableEq
 
-/-- Stack embedding of the existing sum component. -/
+/-- **Summation-machine stack embedding in the membership transducer.**
+Stack embedding of the existing sum component. -/
 def sumEmb : SEmb (fun _ : SSVerify.K => Sym) Γ where
   e := K.sum
   inj _ _ h := K.sum.inj h
   ι _ := Equiv.refl _
 
-/-- Stack embedding of the doubling component. -/
+/-- **Doubling-machine stack embedding in the membership transducer.**
+Stack embedding of the doubling component. -/
 def doubleEmb : SEmb (fun _ : DoubleStream.K => Bool) Γ where
   e := K.double
   inj _ _ h := K.double.inj h
   ι _ := Equiv.refl _
 
-/-- Both sum halts resume at the doubling pass. -/
+/-- **Label map from summation halts to the doubling pass.**
+Both sum halts resume at the doubling pass. -/
 def sumLabel : SSVerify.Lab → Lab
   | .yes | .no => .double (.scan .start)
   | l => .sum l
 
-/-- The doubling halt resumes at the prefix emitter. -/
+/-- **Label map from the doubling halt to the prefix emitter.**
+The doubling halt resumes at the prefix emitter. -/
 def doubleLabel : DoubleStream.Lab → Lab
   | .done => .prefix
   | l => .double l
 
-/-- Copy, sum, double, and prepend the sum, using finite-stack operations. -/
+/-- **Program of the canonical PARTITION membership transducer.**
+Copy, sum, double, and prepend the sum, using finite-stack operations. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .copy => moveB .X .R some id .copy .distribute
   | .distribute =>
@@ -85,12 +93,14 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
         .goto fun _ => .bits)
   | .done => .halt
 
-/-- Only genuine halts are replaced when embedding the sum machine. -/
+/-- **Membership transducer embeds the summation machine.**
+Only genuine halts are replaced when embedding the sum machine. -/
 theorem embeds_sum : Embeds sumEmb sumLabel SSVerify.prog prog := by
   intro l
   cases l <;> simp [sumLabel, prog, SSVerify.prog]
 
-/-- Only the doubling halt is replaced by the prefix-emitter continuation. -/
+/-- **Membership transducer embeds the doubling machine.**
+Only the doubling halt is replaced by the prefix-emitter continuation. -/
 theorem embeds_double :
     Embeds doubleEmb doubleLabel DoubleStream.prog prog := by
   intro l
@@ -232,7 +242,8 @@ private theorem sum_ready (as : List ℕ) :
     have h := hf (.double k) (fun j => by simp [sumEmb])
     cases k <;> simpa [prepared] using h
 
-/-- The canonical PARTITION membership map is computed in quadratic time
+/-- **Canonical PARTITION membership transducer runs in quadratic time.**
+The canonical PARTITION membership map is computed in quadratic time
 by summing, doubling, and prefixing, with no value-sized loop. -/
 theorem run (as : List ℕ) :
     let r := as.flatMap fun a =>
@@ -289,7 +300,8 @@ noncomputable instance : Fintype Lab := Fintype.ofList
     intro l
     cases l <;> simp)
 
-/-- Finite component for normalization followed by the membership map. -/
+/-- **Canonical PARTITION membership transducer as a host component.**
+Finite component for normalization followed by the membership map. -/
 noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   K := K
   Γ := Γ

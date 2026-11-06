@@ -20,14 +20,15 @@ kind of a universal binder. They are not assumptions of the typing judgment.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega
 
-/-- Weak-CBV values: neither form of lambda evaluates beneath its binder. -/
+/-- **Weak call-by-value values of Fω.**
+Weak-CBV values: neither form of lambda evaluates beneath its binder. -/
 inductive Value : {Δ : List Kind} → {m : Nat} → Tm Δ m → Prop where
   | lam {Δ : List Kind} {m : Nat} (A : Ty Δ .star) (b : Tm Δ (m + 1)) :
       Value (.lam A b)
   | tabs {Δ : List Kind} {m : Nat} {κ : Kind} (b : Tm (κ :: Δ) m) :
       Value (.tabs b)
 
-/-- Ordinary left-to-right weak call-by-value reduction. -/
+/-- **Weak call-by-value reduction of Fω.** Ordinary left-to-right weak call-by-value reduction. -/
 inductive Step : {Δ : List Kind} → {m : Nat} → Tm Δ m → Tm Δ m → Prop where
   | beta {Δ : List Kind} {m : Nat} {A : Ty Δ .star}
       {b : Tm Δ (m + 1)} {a : Tm Δ m} :
@@ -45,7 +46,8 @@ inductive Step : {Δ : List Kind} → {m : Nat} → Tm Δ m → Tm Δ m → Prop
 
 variable {Δ : List Kind} {m : Nat} {Γ : Ctx Δ m}
 
-/-- Lambda typing inversion retains the annotation and a proved conversion. -/
+/-- **Inversion of Fω lambda typing up to conversion.**
+Lambda typing inversion retains the annotation and a proved conversion. -/
 theorem Typing.lam_inv {A T : Ty Δ .star} {b : Tm Δ (m + 1)}
     (h : Typing Γ (.lam A b) T) :
     ∃ B, Typing (Fin.cases A Γ) b B ∧ Ty.Conv (.arr A B) T := by
@@ -60,7 +62,8 @@ theorem Typing.lam_inv {A T : Ty Δ .star} {b : Tm Δ (m + 1)}
   | tabs hb ih => cases e
   | tapp hf ih => cases e
 
-/-- Type-lambda inversion retains its binder kind and body conversion. -/
+/-- **Inversion of Fω type-lambda typing up to conversion.**
+Type-lambda inversion retains its binder kind and body conversion. -/
 theorem Typing.tabs_inv {κ : Kind} {T : Ty Δ .star}
     {b : Tm (κ :: Δ) m} (h : Typing Γ (.tabs b) T) :
     ∃ B : Ty (κ :: Δ) .star,
@@ -77,7 +80,8 @@ theorem Typing.tabs_inv {κ : Kind} {T : Ty Δ .star}
   | app hf ha ihf iha => cases e
   | tapp hf ih => cases e
 
-/-- Weak-CBV reduction preserves typing in unrestricted open contexts. -/
+/-- **Type preservation for Fω weak call-by-value reduction.**
+Weak-CBV reduction preserves typing in unrestricted open contexts. -/
 theorem Typing.preservation {A : Ty Δ .star} {t t' : Tm Δ m}
     (h : Typing Γ t A) (hs : Step t t') : Typing Γ t' A := by
   induction h with
@@ -100,7 +104,8 @@ theorem Typing.preservation {A : Ty Δ .star} {t t' : Tm Δ m}
       obtain ⟨B, hb, hc⟩ := hf.tabs_inv
       exact .conv (hb.tyInstantiate A) (hc.all_inj.subst (Ty.single A))
 
-/-- A value typed at an arrow, despite conversion, is a term lambda. -/
+/-- **Canonical forms for Fω values of function type.**
+A value typed at an arrow, despite conversion, is a term lambda. -/
 theorem Value.arrow {A B : Ty Δ .star} {t : Tm Δ m}
     (hv : Value t) (h : Typing Γ t (.arr A B)) :
     ∃ C b, t = .lam C b := by
@@ -110,7 +115,8 @@ theorem Value.arrow {A B : Ty Δ .star} {t : Tm Δ m}
     obtain ⟨C, hb, hc⟩ := h.tabs_inv
     exact False.elim (Ty.not_conv_arr_all hc.symm)
 
-/-- A value at a quantified type is a type lambda of the same binder kind. -/
+/-- **Canonical forms for Fω values of quantified type.**
+A value at a quantified type is a type lambda of the same binder kind. -/
 theorem Value.all {κ : Kind} {C : Ty (κ :: Δ) .star} {t : Tm Δ m}
     (hv : Value t) (h : Typing Γ t (.all C)) :
     ∃ b : Tm (κ :: Δ) m, t = .tabs b := by
@@ -151,12 +157,14 @@ private theorem progress_of_empty {A : Ty Δ .star} {t : Tm Δ m}
       exact .inr ⟨_, .tybeta b A⟩
     · exact .inr ⟨_, .tapp hs⟩
 
-/-- Closed-term progress, allowing an arbitrary open kinded-type telescope. -/
+/-- **Progress for closed Fω terms.**
+Closed-term progress, allowing an arbitrary open kinded-type telescope. -/
 theorem Typing.progress {Γ : Ctx Δ 0} {A : Ty Δ .star} {t : Tm Δ 0}
     (h : Typing Γ t A) : Value t ∨ ∃ t', Step t t' :=
   progress_of_empty h Fin.elim0
 
-/-- Every finite weak-CBV reduction sequence preserves typing. -/
+/-- **Type preservation along multistep Fω reduction.**
+Every finite weak-CBV reduction sequence preserves typing. -/
 theorem Typing.preservation_steps {A : Ty Δ .star} {t t' : Tm Δ m}
     (h : Typing Γ t A) (hs : Relation.ReflTransGen Step t t') :
     Typing Γ t' A := by
@@ -164,7 +172,8 @@ theorem Typing.preservation_steps {A : Ty Δ .star} {t t' : Tm Δ m}
   | refl => exact h
   | tail hs p ih => exact ih.preservation p
 
-/-- No reachable closed well-typed term is stuck, with type variables allowed. -/
+/-- **Type safety of Fω weak call-by-value reduction.**
+No reachable closed well-typed term is stuck, with type variables allowed. -/
 theorem Typing.safety {Γ : Ctx Δ 0} {A : Ty Δ .star} {t t' : Tm Δ 0}
     (h : Typing Γ t A) (hs : Relation.ReflTransGen Step t t') :
     Value t' ∨ ∃ u, Step t' u := (h.preservation_steps hs).progress

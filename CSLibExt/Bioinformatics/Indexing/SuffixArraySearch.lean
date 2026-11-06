@@ -89,7 +89,8 @@ theorem prefix_of_le_of_le {β : Type*} [LinearOrder β] {P x y z : List β} (hx
   rw [← List.prefix_iff_eq_take.mp hz] at hright
   exact le_antisymm hleft hright
 
-/-- Truncation is monotone for the lexicographic order: `x ≤ y → x.take m ≤ y.take m`. -/
+/-- **Truncation is monotone for the lexicographic order.**
+Truncation is monotone for the lexicographic order: `x ≤ y → x.take m ≤ y.take m`. -/
 theorem take_le_take {β : Type*} [LinearOrder β] {x y : List β} (h : x ≤ y) (m : ℕ) :
     x.take m ≤ y.take m := by
   exact take_mono h m
@@ -121,7 +122,8 @@ theorem prefix_suffixArray_of_le_of_le (s P : List α) {r₁ r₂ r₃ : ℕ} (h
   exact prefix_of_le_of_le (suffix_row_mono (suffixArray s) s rfl h₁₂ (by omega))
     (suffix_row_mono (suffixArray s) s rfl h₂₃ h₃) hp₁ hp₃
 
-/-- Binary search for the boundary of a predicate on `[lo, hi)`: the first index at which `p`
+/-- **Binary search for the boundary of a predicate.**
+Binary search for the boundary of a predicate on `[lo, hi)`: the first index at which `p`
 is false, assuming `p` holds on an initial segment of `[lo, hi)` (`lowerBound_spec`). Each call
 probes the midpoint and recurses on one half. -/
 def lowerBound (p : ℕ → Bool) (lo hi : ℕ) : ℕ :=
@@ -132,7 +134,8 @@ def lowerBound (p : ℕ → Bool) (lo hi : ℕ) : ℕ :=
 termination_by hi - lo
 decreasing_by all_goals omega
 
-/-- The number of probes `lowerBound p lo hi` makes. -/
+/-- **Number of probes made by the binary search.**
+The number of probes `lowerBound p lo hi` makes. -/
 def lowerBoundSteps (p : ℕ → Bool) (lo hi : ℕ) : ℕ :=
   if h : lo < hi then
     if p ((lo + hi) / 2) then lowerBoundSteps p ((lo + hi) / 2 + 1) hi + 1
@@ -208,7 +211,8 @@ theorem lowerBoundSteps_le (p : ℕ → Bool) (lo hi : ℕ) :
       · rw [lowerBoundSteps, dite_eq_right h]
         omega
 
-/-- The suffix of row `r` of the (precomputed) suffix array `sa` of `s`, truncated to
+/-- **Truncated suffix of a suffix-array row.**
+The suffix of row `r` of the (precomputed) suffix array `sa` of `s`, truncated to
 `m` letters: the key compared with the pattern during the search. `sa` is computed once
 by `saSearch` and passed in, so probes do not rebuild the suffix array. -/
 def rowKey (sa : List ℕ) (s : List α) (m r : ℕ) : List α :=
@@ -235,7 +239,8 @@ private theorem rowKey_le_initial {β : Type*} [LinearOrder β] (sa : List ℕ) 
   simp only [decide_eq_true_eq] at hp ⊢
   exact le_trans (rowKey_mono sa s hsa P.length hij hj) hp
 
-/-- Suffix-array search (Manber and Myers 1993): the row interval `[sp, ep)` of the suffixes of
+/-- **Suffix-array search for a pattern's row interval.**
+Suffix-array search (Manber and Myers 1993): the row interval `[sp, ep)` of the suffixes of
 `s` that start with `P`, found by two binary searches over the rows `[0, |s|)`. The suffix
 array is computed once and shared by both searches. -/
 def saSearch (s P : List α) : ℕ × ℕ :=
@@ -243,7 +248,8 @@ def saSearch (s P : List α) : ℕ × ℕ :=
   (lowerBound (fun r => decide (rowKey sa s P.length r < P)) 0 s.length,
     lowerBound (fun r => decide (rowKey sa s P.length r ≤ P)) 0 s.length)
 
-/-- The search returns a genuine interval of rows: `sp ≤ ep ≤ |s|`. -/
+/-- **Suffix-array search returns a valid row interval.**
+The search returns a genuine interval of rows: `sp ≤ ep ≤ |s|`. -/
 theorem saSearch_bounds (s P : List α) :
     (saSearch s P).1 ≤ (saSearch s P).2 ∧ (saSearch s P).2 ≤ s.length := by
   have hsp := lowerBound_spec (fun r => decide (rowKey (suffixArray s) s P.length r < P))

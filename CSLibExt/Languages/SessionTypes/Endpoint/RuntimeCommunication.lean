@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- A nonshared input subject exposes a genuine linear passive or endpoint head.
+/-- **Inversion of runtime input on a nonshared subject.**
+A nonshared input subject exposes a genuine linear passive or endpoint head.
 The shared accept alternative is excluded by actual subject nonalias. -/
 theorem HasType.linear_input_inv {n : Nat} {Γ : ServiceEnv} {Δ : Context} {a : Name} {p : Proc}
     (h : HasType n Γ Δ (.inp a p))
@@ -40,7 +41,8 @@ theorem HasType.linear_input_inv {n : Nat} {Γ : ServiceEnv} {Δ : Context} {a :
   | inpEndpoint hg hd hc hh ha hp => exact ⟨_, _, rfl, hc, Or.inr ⟨_, _, _, _, hh, hp⟩⟩
   | accept hs hc hscope hd hp => exact False.elim (hn _ _ hs rfl)
 
-/-- Faithful semantic advancement preserves shared/linear separation by its
+/-- **Semantic advance preserves shared-linear separation.**
+Faithful semantic advancement preserves shared/linear separation by its
 actual owned-domain invariance, including every completed entry. -/
 theorem Separated.advance {Γ : ServiceEnv} {Δ Ξ : Context}
     (h : Separated Γ Δ) (ha : Conversion.SemanticAdvance Δ Ξ) : Separated Γ Ξ := by
@@ -49,7 +51,8 @@ theorem Separated.advance {Γ : ServiceEnv} {Δ Ξ : Context}
   obtain ⟨v, hv⟩ := Finmap.mem_iff.mp hm
   exact h e v hv s sig hs
 
-/-- At an INITIALLY compatible disjoint interface, a linear passive head retains
+/-- **Passive head communication preserves runtime typing.**
+At an INITIALLY compatible disjoint interface, a linear passive head retains
 both actual carrier codes and every runtime continuation guard at unchanged Γ. -/
 theorem passive_head_preservation {n : Nat} {Γ : ServiceEnv} {Λ Θ : Context}
     {e : Key} {c : Capability} {s : Protocol} {b : Name} {p q : Proc}
@@ -81,7 +84,8 @@ theorem passive_head_preservation {n : Nat} {Γ : ServiceEnv} {Λ Θ : Context}
   · rw [hu] at hv
     cases hv
 
-/-- At an INITIALLY compatible split, linear endpoint communication transfers
+/-- **Endpoint head communication preserves runtime typing.**
+At an INITIALLY compatible split, linear endpoint communication transfers
 ACTUAL v and keeps the receiver's independent advertised payload/tail codes.
 The Γ-preserving runtime substitution retains all continuation priorities. -/
 theorem endpoint_head_preservation {n k : Nat} {Γ : ServiceEnv} {Λ Θ : Context}
@@ -120,7 +124,8 @@ theorem endpoint_head_preservation {n k : Nat} {Γ : ServiceEnv} {Λ Θ : Contex
       (Finmap.mem_of_lookup_eq_some ht) hv hne] at hout
     exact ⟨d, t', u, ht, hdual.1, hu, htp, hus, hout⟩
 
-/-- At an INITIALLY semantically compatible linear interface, actual runtime
+/-- **Runtime head communication advances or keeps the interface.**
+At an INITIALLY semantically compatible linear interface, actual runtime
 heads either advance the paired linear subjects faithfully or transfer on a shared
 service with the EXACT unchanged interface. Mixed shared/linear heads are excluded
 by source separation, not a finite-fragment erasure or supplied result field. -/

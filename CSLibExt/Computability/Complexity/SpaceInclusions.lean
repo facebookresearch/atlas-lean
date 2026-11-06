@@ -81,7 +81,8 @@ private theorem exponential_bound (a c c₁ c₂ d : ℕ) :
         Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (by decide) he)
       _ ≤ _ := Nat.le_add_right _ _
 
-/-- The same finite polynomial-space decider has an exponential time bound.
+/-- **Polynomial-space decider runs in exponential time.**
+The same finite polynomial-space decider has an exponential time bound.
 All constants precede every input. Halting comes from `Decides`, not space. -/
 theorem SpaceBoundedBy.exists_exponential_timeBoundedBy
     {k : ℕ} {State : Type*} [Finite State]
@@ -101,7 +102,8 @@ namespace MetaMathlibExt.Complexity.KeyTheorems.PSPACESubsetEXP
 
 open Cslib.Complexity.Classes Cslib.Turing.MultiTapeTM
 
-/-- Every canonical polynomial-space language is in exponential time,
+/-- **PSPACE is contained in EXP.**
+Every canonical polynomial-space language is in exponential time,
 using its original finite multi-tape decider.
 
 Source: S. Arora and B. Barak, Computational Complexity: A Modern Approach,

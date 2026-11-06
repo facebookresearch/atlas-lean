@@ -26,7 +26,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 open PiCalculus
 
 set_option backward.isDefEq.respectTransparency false in
-/-- ALL10 runtime derivation rules transport actual names with Γ unchanged.
+/-- **Runtime typing under renamings that fix and avoid shared names.**
+ALL10 runtime derivation rules transport actual names with Γ unchanged.
 Shared nonalias is required only on OWNED images, not unrestricted passive names. -/
 theorem HasType.rename {n m : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc} {f : Name → Name}
     (h : HasType n Γ Δ p) (hscope : ∀ a, a.ClosedAt n → (f a).ClosedAt m)
@@ -160,7 +161,8 @@ theorem HasType.rename {n m : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc} {
     rw [← Context.rekey_bind hf hu]
     exact ih (fun _ ha => under_scoped hscope ha) hfix.under (hn.under_bind c) hu
 
-/-- Canonical binder lift retains the entire runtime derivation and Γ literally. -/
+/-- **Binder lifting preserves runtime typing.**
+Canonical binder lift retains the entire runtime derivation and Γ literally. -/
 theorem HasType.lift {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (k : Nat) : HasType (n + 1) Γ (Context.lift k Δ) (liftProc k p) := by
   have hi : Set.InjOn (Key.mapName (liftName k)) {e | e ∈ Δ} :=
@@ -168,7 +170,8 @@ theorem HasType.lift {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
   simpa only [Context.lift, mapProc_liftName] using
     h.rename (fun _ ha => ha.lift) (fun _ _ _ => rfl) (h.separated.nonaliases_lift k) hi
 
-/-- Canonical swap permutes actual owned binders without changing Γ or cap metadata. -/
+/-- **Binder swapping preserves runtime typing.**
+Canonical swap permutes actual owned binders without changing Γ or cap metadata. -/
 theorem HasType.swap {n k : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (hk : k + 1 < n) : HasType n Γ (Context.swap k Δ) (swapProc k p) := by
   have hi : Set.InjOn (Key.mapName (swapNameAt k)) {e | e ∈ Δ} :=

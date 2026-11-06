@@ -58,7 +58,8 @@ open StatMech.OSSS
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The total influence `∑ₑ Infₑ(g)` of `g` under the product weight `ν`. -/
+/-- **Total influence under a product weight.**
+The total influence `∑ₑ Infₑ(g)` of `g` under the product weight `ν`. -/
 noncomputable def totalInfl (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   ∑ e, OSSS.infl ν g e
 
@@ -66,7 +67,8 @@ theorem kkl_totalInfl_nonneg {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     (g : ConfigSpace E → ℝ) : 0 ≤ totalInfl ν g :=
   Finset.sum_nonneg (fun e _ => OSSS.infl_nonneg hν g e)
 
-/-- The maximal influence `maxₑ Infₑ(g)` of `g` under the product weight `ν`. -/
+/-- **Maximal influence under a product weight.**
+The maximal influence `maxₑ Infₑ(g)` of `g` under the product weight `ν`. -/
 noncomputable def maxInfl [Nonempty E] (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   Finset.univ.sup' Finset.univ_nonempty (OSSS.infl ν g)
 
@@ -148,7 +150,8 @@ theorem kkl_var_le_quarter (ν : E → Bool → ℝ) (φ : ConfigSpace E → Boo
   set m := OSSS.expect ν (fun ω => if φ ω then (1 : ℝ) else 0)
   nlinarith [sq_nonneg (m - 1 / 2)]
 
-/-- The KKL inequality with constant `c` for the Bernoulli(`p`) product measure: for every finite
+/-- **KKL inequality with constant $c$ for the $p$-biased measure.**
+The KKL inequality with constant `c` for the Bernoulli(`p`) product measure: for every finite
   nonempty index type `E` and every Boolean function `φ` on `{0, 1}^E`, `c · Var(φ) · log (1 /
   maxₑ Infₑ(φ)) ≤ ∑ₑ Infₑ(φ)`, with `Infₑ(φ)` the probability that `e` is pivotal.
 
@@ -185,7 +188,8 @@ theorem kkl_inequality_max {p c : ℝ} (H : KKLHypercontractive p c)
   le_trans (kkl_inequality_total H φ)
     (kkl_maxInfl_ge_avg (bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
 
-/-- `KKLHypercontractive p 0` holds trivially, since total influence is nonnegative. -/
+/-- **KKL inequality with constant 0 holds trivially.**
+`KKLHypercontractive p 0` holds trivially, since total influence is nonnegative. -/
 theorem kkl_hypercontractive_zero (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     KKLHypercontractive p 0 := by
   intro E _ _ _ φ

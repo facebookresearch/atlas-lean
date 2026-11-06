@@ -28,7 +28,8 @@ namespace Cslib.Complexity.Preimage
 open Turing Function MetaMathlibExt TM2Program TM2Composition
 open ComplexityTheory BitstringEncoding DenseSAT
 
-/-- A polynomial-time machine has polynomially bounded encoded output. -/
+/-- **Polynomial-time machines have polynomially bounded output.**
+A polynomial-time machine has polynomially bounded encoded output. -/
 theorem output_length_le {α β A B : Type} {ea : α → List A}
     {eb : β → List B} {f : α → β}
     (h : TM2ComputableInPolyTime ea eb f) (a : α) :
@@ -48,7 +49,8 @@ theorem output_length_le {α β A B : Type} {ea : α → List A}
       hl.trans ((Nat.add_le_add_right hi _).trans
         (Nat.add_le_add_left hm _))
 
-/-- Canonical polynomial-time maps can also be run on unframed bit lists. -/
+/-- **Polynomial-time maps run on unframed bit lists.**
+Canonical polynomial-time maps can also be run on unframed bit lists. -/
 theorem raw_computable {f : List Bool → List Bool} (hf : IsPolyTime f) :
     Nonempty (TM2ComputableInPolyTime
       (fun x : List Bool => x) (fun x : List Bool => x) f) := by
@@ -318,7 +320,8 @@ namespace MetaMathlibExt.ComplexityTheory
 
 open Cslib.Complexity Cslib.Complexity.Preimage
 
-/-- Mapping the first component of an encoded pair is polynomial-time;
+/-- **Mapping the first component of a pair is polynomial-time.**
+Mapping the first component of an encoded pair is polynomial-time;
 the second component is preserved, not recomputed or guessed. -/
 theorem IsPolyTime.map_fst {f : List Bool → List Bool}
     (hf : IsPolyTime f) :
@@ -328,7 +331,8 @@ theorem IsPolyTime.map_fst {f : List Bool → List Bool}
     DenseSAT.Converter.computable (MapFirst.computable h)
   exact tm2ComputableInPolyTime_comp h₁ DenseSAT.ToCanonical.computable
 
-/-- Encoded output length is polynomial in the unframed input length. -/
+/-- **Output of a polynomial-time map is polynomial in raw input length.**
+Encoded output length is polynomial in the unframed input length. -/
 theorem IsPolyTime.length_bound {f : List Bool → List Bool}
     (hf : IsPolyTime f) :
     ∃ q : Polynomial ℕ, ∀ x, (f x).length ≤ q.eval x.length := by
@@ -347,7 +351,8 @@ private theorem satVerifier_sound {x w : List Bool}
     rw [(decodeCNF_eq_some_iff x φ).1 hd]
     exact (DenseSAT.ToBinary.satDec_encodeCNF φ).2 hs
 
-/-- Pulling SAT back along a polynomial map preserves NP membership.
+/-- **Preimage of SAT under a polynomial-time map is in NP.**
+Pulling SAT back along a polynomial map preserves NP membership.
 SAT verifier soundness holds even for certificates above its length bound. -/
 theorem satDec_comp_mem_NP {f : List Bool → List Bool}
     (hf : IsPolyTime f) : satDec ∘ f ∈ NP := by
@@ -363,7 +368,8 @@ theorem satDec_comp_mem_NP {f : List Bool → List Bool}
   · rintro ⟨w, -, ha⟩
     exact satVerifier_sound ha
 
-/-- Canonical NP is closed under polynomial-time preimages.
+/-- **NP is closed under polynomial-time preimages.**
+Canonical NP is closed under polynomial-time preimages.
 Cook–Levin supplies a verifier sound for arbitrarily long certificates,
 so enlarging the transformed witness bound introduces no false positives. -/
 theorem comp_mem_NP {L : DecisionProblem} {f : List Bool → List Bool}
@@ -374,7 +380,8 @@ theorem comp_mem_NP {L : DecisionProblem} {f : List Bool → List Bool}
   rw [hEq]
   exact satDec_comp_mem_NP (hf.comp hg)
 
-/-- NP membership transfers backwards along a polynomial many-one reduction. -/
+/-- **NP membership pulls back along polynomial many-one reductions.**
+NP membership transfers backwards along a polynomial many-one reduction. -/
 theorem mem_NP_of_polyManyOneRed {L K : DecisionProblem}
     (hK : K ∈ NP) (hr : PolyManyOneRed L K) : L ∈ NP := by
   obtain ⟨f, hf, he⟩ := hr
@@ -382,7 +389,8 @@ theorem mem_NP_of_polyManyOneRed {L K : DecisionProblem}
   rw [hEq]
   exact comp_mem_NP hK hf
 
-/-- Canonical coNP is closed under polynomial-time preimages. -/
+/-- **coNP is closed under polynomial-time preimages.**
+Canonical coNP is closed under polynomial-time preimages. -/
 theorem comp_mem_coNP {L : DecisionProblem} {f : List Bool → List Bool}
     (hL : L ∈ coNP) (hf : IsPolyTime f) : L ∘ f ∈ coNP :=
   comp_mem_NP (L := Lᶜ) (f := f) hL hf
@@ -391,7 +399,8 @@ end MetaMathlibExt.ComplexityTheory
 
 namespace Cslib.CookLevin
 
-/-- The same reduction function reduces the complements. -/
+/-- **Polynomial many-one reductions also reduce complements.**
+The same reduction function reduces the complements. -/
 theorem PolyManyOneRed.compl
     {L K : MetaMathlibExt.ComplexityTheory.DecisionProblem}
     (h : PolyManyOneRed L K) : PolyManyOneRed Lᶜ Kᶜ := by

@@ -77,7 +77,8 @@ namespace Cslib.Bioinformatics.HMM
 
 open Cslib.Algorithms.Lean
 
-/-- The state types of a profile HMM node: match, insert, delete. -/
+/-- **State types of a profile HMM node.**
+The state types of a profile HMM node: match, insert, delete. -/
 inductive ProfileState
   /-- Match: emit a residue aligned to the node's column. -/
   | M
@@ -87,7 +88,8 @@ inductive ProfileState
   | D
   deriving DecidableEq, Repr
 
-/-- A profile HMM with `L` consensus columns over the alphabet `α`, with weights in `R`.
+/-- **Profile hidden Markov model.**
+A profile HMM with `L` consensus columns over the alphabet `α`, with weights in `R`.
 `trans k s t` is the weight of a transition from the state of type `s` at node `k`
 (`0 ≤ k ≤ L`; node `0` is the begin state, read as type `M`) to a state of type `t`: to `M`
 or `D` at node `k + 1`, or to `I` at node `k`. `stop s` is the weight of the transition from the
@@ -104,12 +106,13 @@ structure ProfileHMM (L : ℕ) (α R : Type*) where
 
 namespace ProfileHMM
 
-/-- The consensus columns `[1, …, L]`. -/
+/-- **Consensus columns of a profile HMM.** The consensus columns `[1, …, L]`. -/
 def columns (L : ℕ) : List ℕ := List.range' 1 L
 
 variable {L : ℕ} {α R : Type*}
 
-/-- HMMER's Plan 7 restrictions (Eddy 1998): no delete-to-insert and no insert-to-delete
+/-- **HMMER Plan 7 restrictions.**
+HMMER's Plan 7 restrictions (Eddy 1998): no delete-to-insert and no insert-to-delete
 transitions, and no insert states at node `0` (the begin state) or node `L`. -/
 structure IsPlan7 [Zero R] (h : ProfileHMM L α R) : Prop where
   /-- No `D → I` transitions. -/
@@ -125,7 +128,8 @@ section Semiring
 
 variable [Semiring R] (h : ProfileHMM L α R)
 
-/-- The profile HMM as an alignment automaton reading alignments of a sequence to the columns
+/-- **Profile HMM as an alignment automaton.**
+The profile HMM as an alignment automaton reading alignments of a sequence to the columns
 `[1, …, L]`. The control state is the type of the previous state and the current node (the last
 column consumed); it starts at `(M, 0)`, the begin state. Reading `(some a, some j)` visits `M j`,
 `(some a, none)` visits the insert state of the current node, `(none, some j)` visits `D j`; the
@@ -143,12 +147,14 @@ def toAutomaton : AlignmentAutomaton (ProfileState × ℕ) α ℕ R where
     | (none, none) => q
   final q := h.stop q.1
 
-/-- The weight of a path through the model, given as an alignment `A` of the sequence to the
+/-- **Weight of a path through a profile HMM.**
+The weight of a path through the model, given as an alignment `A` of the sequence to the
 columns: the product of its transition and emission weights from the begin state to the end
 state. -/
 def pathProb (A : List (Option α × Option ℕ)) : R := h.toAutomaton.alignWeight (.M, 0) A
 
-/-- The forward value of a sequence `x`: the total weight of all paths through the model that
+/-- **Forward value of a sequence under a profile HMM.**
+The forward value of a sequence `x`: the total weight of all paths through the model that
 emit `x` (`forward_eq_sum`), by the recursion on one residue and one column. -/
 def forward (x : List α) : R := h.toAutomaton.sumDP (.M, 0) x (columns L)
 
@@ -165,12 +171,14 @@ section Viterbi
 
 variable [Semiring R] [LinearOrder R] (h : ProfileHMM L α R)
 
-/-- The Viterbi value of a sequence `x`: the value selected by the max recursion
+/-- **Viterbi value of a sequence under a profile HMM.**
+The Viterbi value of a sequence `x`: the value selected by the max recursion
 (`pathProb_le_viterbi`, `exists_pathProb_eq_viterbi`). Under nonnegative weights it is the
 largest weight of a path through the model emitting `x`. -/
 def viterbi (x : List α) : R := h.toAutomaton.maxDP (.M, 0) x (columns L)
 
-/-- Nonnegative transition and emission weights (the transitions to the end state may have any
+/-- **Nonnegative weights of a profile HMM.**
+Nonnegative transition and emission weights (the transitions to the end state may have any
 sign: the Viterbi bound does not need them). -/
 structure Nonneg : Prop where
   /-- Transitions are nonnegative. -/
@@ -182,7 +190,8 @@ structure Nonneg : Prop where
 
 variable {h}
 
-/-- A profile HMM with nonnegative weights is a nonnegative alignment automaton. -/
+/-- **Nonnegative profile HMM gives a nonnegative alignment automaton.**
+A profile HMM with nonnegative weights is a nonnegative alignment automaton. -/
 theorem toAutomaton_nonneg [IsOrderedRing R] (hn : h.Nonneg) : h.toAutomaton.Nonneg := by
   rintro q ⟨_ | a, _ | j⟩
   · exact le_rfl
@@ -213,13 +222,15 @@ section Pseudocounts
 
 variable {K : Type*} [Fintype α] [DecidableEq α] [Field K]
 
-/-- The emission estimate of a match state from the residues `col` that a multiple alignment
+/-- **Pseudocount emission estimate of a match state.**
+The emission estimate of a match state from the residues `col` that a multiple alignment
 places in its column (gaps omitted), with pseudocounts `pc` (Durbin et al., chapter 5;
 Laplace's rule is `pc = 1`): `(count a + pc a) / (|col| + ∑ b, pc b)`. -/
 def pseudocountEmission (col : List α) (pc : α → K) (a : α) : K :=
   ((col.count a : K) + pc a) / ((col.length : K) + ∑ b, pc b)
 
-/-- With positive pseudocounts, the estimated emissions sum to one. -/
+/-- **Pseudocount emission estimates sum to one.**
+With positive pseudocounts, the estimated emissions sum to one. -/
 theorem sum_pseudocountEmission [LinearOrder K] [IsStrictOrderedRing K] [Nonempty α]
     (col : List α) {pc : α → K} (hpc : ∀ a, 0 < pc a) :
     ∑ a, pseudocountEmission col pc a = 1 := by
@@ -234,7 +245,8 @@ theorem sum_pseudocountEmission [LinearOrder K] [IsStrictOrderedRing K] [Nonempt
   simp only [Multiset.coe_count, Multiset.coe_card] at this
   exact_mod_cast this
 
-/-- With positive pseudocounts, every residue gets a positive emission estimate, including
+/-- **Pseudocount emission estimates are positive.**
+With positive pseudocounts, every residue gets a positive emission estimate, including
 residues absent from the column. -/
 theorem pseudocountEmission_pos [LinearOrder K] [IsStrictOrderedRing K] (col : List α)
     {pc : α → K} (hpc : ∀ a, 0 < pc a) (a : α) : 0 < pseudocountEmission col pc a :=

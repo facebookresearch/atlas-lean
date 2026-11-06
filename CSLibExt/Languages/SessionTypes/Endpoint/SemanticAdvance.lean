@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Both literal communication heads, with separate payload equivalence. -/
+/-- **Matching send and receive heads of two capabilities.**
+Both literal communication heads, with separate payload equivalence. -/
 inductive CommunicationHeads (c d : Capability) (s u : Protocol) : Prop where
   | passive : c.protocol.unfold = .sendName s → d.protocol.unfold = .recvName u →
       CommunicationHeads c d s u
@@ -33,7 +34,8 @@ inductive CommunicationHeads (c d : Capability) (s u : Protocol) : Prop where
       c.protocol.unfold = .sendEndpoint r k t s →
       d.protocol.unfold = .recvEndpoint r k v u → v.TreeEquiv t → CommunicationHeads c d s u
 
-/-- Actual old sender/peer values and literal continuations, not raw dual-code
+/-- **Semantic advancement of a communicating endpoint pair.**
+Actual old sender/peer values and literal continuations, not raw dual-code
 identity. Target is EXACTLY the two actual subject insertions. -/
 inductive SemanticAdvance : Context → Context → Prop where
   | matched {Δ : Context} {e : Key} {c d : Capability} {s u : Protocol} :
@@ -41,11 +43,13 @@ inductive SemanticAdvance : Context → Context → Prop where
       CommunicationHeads c d s u → u.TreeEquiv s.dual →
       SemanticAdvance Δ ((Δ.insert e ⟨c.rank, s⟩).insert e.opposite ⟨d.rank, u⟩)
 
-/-- Every actual owned key has a semantic dual peer at equal capability rank. -/
+/-- **Semantic balance of a linear context.**
+Every actual owned key has a semantic dual peer at equal capability rank. -/
 def Balanced (Δ : Context) : Prop :=
   ∀ e c, Δ.lookup e = some c → ∃ d, Δ.lookup e.opposite = some d ∧ d.Equivalent c.dual
 
-/-- Semantic balance supplies semantic compatibility by actual lookup uniqueness. -/
+/-- **Semantic balance implies semantic compatibility.**
+Semantic balance supplies semantic compatibility by actual lookup uniqueness. -/
 theorem Balanced.compatible {Δ : Context} (h : Balanced Δ) : Compatible Δ := by
   intro e c d hc hd
   obtain ⟨v, hv, hr⟩ := h e c hc
@@ -53,16 +57,19 @@ theorem Balanced.compatible {Δ : Context} (h : Balanced Δ) : Compatible Δ := 
   subst d
   exact hr
 
-/-- Empty interface balance is not a completion assertion about private work. -/
+/-- **The empty context is semantically balanced.**
+Empty interface balance is not a completion assertion about private work. -/
 theorem balanced_empty : Balanced (∅ : Context) := by
   intro e c hc
   simp at hc
 
-/-- Literal raw balance is a special case, not the semantic definition. -/
+/-- **Raw balance implies semantic balance.**
+Literal raw balance is a special case, not the semantic definition. -/
 theorem balanced_of_raw {Δ : Context} (h : Endpoint.Balanced Δ) : Balanced Δ :=
   fun e c hc => ⟨c.dual, h e c hc, Capability.Equivalent.refl _⟩
 
-/-- Exact domain preservation includes completed capabilities. -/
+/-- **Semantic advancement preserves the context's domain.**
+Exact domain preservation includes completed capabilities. -/
 theorem SemanticAdvance.mem_iff {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (x : Key) :
     x ∈ Ξ ↔ x ∈ Δ := by
   cases h with
@@ -75,12 +82,14 @@ theorem SemanticAdvance.mem_iff {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (x
       · exact hm
     · exact fun hm => Or.inr (Or.inr hm)
 
-/-- No new key can conflict with a parallel ownership frame. -/
+/-- **Semantic advancement preserves disjointness from a frame.**
+No new key can conflict with a parallel ownership frame. -/
 theorem SemanticAdvance.disjoint_frame {Δ Ξ Θ : Context} (h : SemanticAdvance Δ Ξ)
     (hd : Finmap.Disjoint Δ Θ) : Finmap.Disjoint Ξ Θ :=
   fun e he ht => hd e ((h.mem_iff e).mp he) ht
 
-/-- Canonical scope of the whole owned domain is preserved. -/
+/-- **Semantic advancement preserves scoping of owned keys.**
+Canonical scope of the whole owned domain is preserved. -/
 theorem SemanticAdvance.scope {Δ Ξ : Context} {n : Nat} (h : SemanticAdvance Δ Ξ)
     (hs : ∀ e ∈ Δ, e.name.ClosedAt n) : ∀ e ∈ Ξ, e.name.ClosedAt n :=
   fun e he => hs e ((h.mem_iff e).mp he)
@@ -101,7 +110,8 @@ private theorem opposite_not_subjects {x e : Key} (hx : x ≠ e) (hp : x ≠ e.o
   · intro he
     exact hx (by simpa only [Key.opposite_opposite] using congrArg Key.opposite he)
 
-/-- Actual compatible source retains semantic duality after the exact update. -/
+/-- **Semantic advancement preserves compatibility.**
+Actual compatible source retains semantic duality after the exact update. -/
 theorem SemanticAdvance.compatible {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
     (hc : Compatible Δ) : Compatible Ξ := by
   cases h with
@@ -127,7 +137,8 @@ theorem SemanticAdvance.compatible {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
         rw [head_update_other _ _ _ _ _ hoa hob] at hb
         exact hc x a b ha hb
 
-/-- From a semantically balanced initial interface, actual advancement retains
+/-- **Semantic advancement preserves balance.**
+From a semantically balanced initial interface, actual advancement retains
 balance with exact old keys and actual new codes. -/
 theorem SemanticAdvance.balanced {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
     (hb : Balanced Δ) : Balanced Ξ := by
@@ -151,7 +162,8 @@ theorem SemanticAdvance.balanced {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
         obtain ⟨b, hp, hr⟩ := hb x a ha
         exact ⟨b, by rw [head_update_other _ _ _ _ _ hoa hob]; exact hp, hr⟩
 
-/-- Left frame preserves actual old lookups and all literal head evidence. -/
+/-- **Semantic advancement extends from the left part to the whole union.**
+Left frame preserves actual old lookups and all literal head evidence. -/
 theorem SemanticAdvance.frame_left {Δ Ξ Θ : Context} (h : SemanticAdvance Δ Ξ) :
     SemanticAdvance (Δ ∪ Θ) (Ξ ∪ Θ) := by
   cases h with
@@ -161,14 +173,16 @@ theorem SemanticAdvance.frame_left {Δ Ξ Θ : Context} (h : SemanticAdvance Δ 
       ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hc)).trans hc)
       ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hd)).trans hd) he hh ht
 
-/-- Right frame uses actual disjointness so neither old subject is shadowed. -/
+/-- **Semantic advancement extends from the right part to a disjoint union.**
+Right frame uses actual disjointness so neither old subject is shadowed. -/
 theorem SemanticAdvance.frame_right {Δ Ξ Θ : Context} (h : SemanticAdvance Δ Ξ)
     (hd : Finmap.Disjoint Θ Δ) : SemanticAdvance (Θ ∪ Δ) (Θ ∪ Ξ) := by
   have ht : Finmap.Disjoint Θ Ξ := (h.disjoint_frame (hd.symm _ _)).symm _ _
   rw [Finmap.union_comm_of_disjoint hd, Finmap.union_comm_of_disjoint ht]
   exact h.frame_left
 
-/-- Literal duality of the ORIGINAL codes forces literal tail equality. -/
+/-- **Literally dual capabilities have literally dual continuations.**
+Literal duality of the ORIGINAL codes forces literal tail equality. -/
 theorem CommunicationHeads.literal_dual_tail {c d : Capability} {s u : Protocol}
     (h : CommunicationHeads c d s u) (hd : d = c.dual) : u = s.dual := by
   subst d
@@ -186,14 +200,16 @@ theorem CommunicationHeads.literal_dual_tail {c d : Capability} {s u : Protocol}
       rfl
     exact (Protocol.recvEndpoint.inj (hu.symm.trans ht)).2.2.2
 
-/-- The existing raw send-head observation is reused only as a pure head fact. -/
+/-- **Communication heads give a send-head observation.**
+The existing raw send-head observation is reused only as a pure head fact. -/
 theorem CommunicationHeads.sendsTo {c d : Capability} {s u : Protocol}
     (h : CommunicationHeads c d s u) : SendsTo c s := by
   cases h with
   | passive hs hu => exact Or.inl hs
   | endpoint hs hu hp => exact Or.inr ⟨_, _, _, hs⟩
 
-/-- Raw actual dual-code advancement embeds into the semantic relation. -/
+/-- **Raw dual advancement is a semantic advancement.**
+Raw actual dual-code advancement embeds into the semantic relation. -/
 theorem SemanticAdvance.of_raw {Δ Ξ : Context} (h : DualAdvance Δ Ξ) : SemanticAdvance Δ Ξ := by
   cases h with
   | @matched e c s hc hd hs =>
@@ -210,7 +226,8 @@ theorem SemanticAdvance.of_raw {Δ Ξ : Context} (h : DualAdvance Δ Ξ) : Seman
         · exact Protocol.TreeEquiv.refl _
     · exact Protocol.TreeEquiv.refl _
 
-/-- Reverse bridge requires literal ORIGINAL peer compatibility, not merely
+/-- **Semantic advancement is raw under literal compatibility.**
+Reverse bridge requires literal ORIGINAL peer compatibility, not merely
 semantic compatibility or residual retyping. -/
 theorem SemanticAdvance.to_raw {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
     (hc : Endpoint.Compatible Δ) : DualAdvance Δ Ξ := by
@@ -222,7 +239,8 @@ theorem SemanticAdvance.to_raw {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
     subst u
     exact DualAdvance.matched (e := e) (c := c) (s := s) hs hp hh.sendsTo
 
-/-- Canonical lifting preserves actual heads, ranks and code-valued payloads. -/
+/-- **Lifting preserves semantic advancement.**
+Canonical lifting preserves actual heads, ranks and code-valued payloads. -/
 theorem SemanticAdvance.lift {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (k : Nat) :
     SemanticAdvance (Context.lift k Δ) (Context.lift k Ξ) := by
   cases h with
@@ -231,7 +249,8 @@ theorem SemanticAdvance.lift {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (k : 
     exact SemanticAdvance.matched (Context.lookup_lift.mpr hs)
       (Context.lookup_lift.mpr hp) he hh ht
 
-/-- Canonical swapping permutes only subject keys, never the protocol codes. -/
+/-- **Binder swapping preserves semantic advancement.**
+Canonical swapping permutes only subject keys, never the protocol codes. -/
 theorem SemanticAdvance.swap {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (k : Nat) :
     SemanticAdvance (Context.swap k Δ) (Context.swap k Ξ) := by
   cases h with
@@ -240,7 +259,8 @@ theorem SemanticAdvance.swap {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (k : 
     exact SemanticAdvance.matched (Context.lookup_rekey.mpr ⟨e, hs, rfl⟩)
       (Context.lookup_rekey.mpr ⟨e.opposite, hp, rfl⟩) he hh ht
 
-/-- A typed opposite-head pair at an initially semantically compatible interface
+/-- **Typed head communication yields a semantic advancement.**
+A typed opposite-head pair at an initially semantically compatible interface
 yields a faithful semantic advance and a compatible typed residual. -/
 theorem HasType.head_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
     (h : HasType n Δ (.par (.out a b p) (.inp a q))) (hc : Compatible Δ) :
@@ -253,7 +273,8 @@ theorem HasType.head_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
   have ha := SemanticAdvance.matched hs hp (hc e c d hs hp) hheads ht
   exact ⟨_, hout, ha.compatible hc, ha⟩
 
-/-- Every actual capability retains its enclosing rank at the same key. -/
+/-- **Semantic advancement preserves capability ranks.**
+Every actual capability retains its enclosing rank at the same key. -/
 theorem SemanticAdvance.rank_lookup {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) {x : Key}
     {a b : Capability} (ha : Δ.lookup x = some a) (hb : Ξ.lookup x = some b) : a.rank = b.rank := by
   cases h with

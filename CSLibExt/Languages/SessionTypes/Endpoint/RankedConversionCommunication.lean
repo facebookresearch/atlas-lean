@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Input inversion retains its actual advertised code and typed continuation. -/
+/-- **Inversion of conversion-ranked input typing.**
+Input inversion retains its actual advertised code and typed continuation. -/
 theorem RankedType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : RankedType n Δ (.inp a p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧
@@ -37,7 +38,8 @@ theorem RankedType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
   | inpName hg hc hh ha hp => exact ⟨_, _, rfl, hc, Or.inl ⟨_, hh, hp⟩⟩
   | inpEndpoint hg hc hh ha hp => exact ⟨_, _, rfl, hc, Or.inr ⟨_, _, _, _, hh, hp⟩⟩
 
-/-- GENERAL passive communicating-head preservation at a semantically
+/-- **Passive head communication preserves conversion ranked typing.**
+GENERAL passive communicating-head preservation at a semantically
 compatible actual split, with literal receiver-tail and rank evidence. -/
 theorem ranked_passive_head_preservation {n : Nat} {Γ Θ : Context} {e : Key} {c : Capability}
     {s : Protocol} {b : Name} {p q : Proc}
@@ -69,7 +71,8 @@ theorem ranked_passive_head_preservation {n : Nat} {Γ Θ : Context} {e : Key} {
   · rw [hu] at hv
     cases hv
 
-/-- At an initially semantically compatible disjoint split, endpoint head
+/-- **Endpoint head communication preserves conversion ranked typing.**
+At an initially semantically compatible disjoint split, endpoint head
 communication transfers EXACT v, retaining the receiver's separately equivalent
 advertised payload/tail codes. -/
 theorem ranked_endpoint_head_preservation {n k : Nat} {Γ Θ : Context} {e f : Key}
@@ -119,7 +122,8 @@ private theorem out_full_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outEndpoint hg hc hh hv he hne ha hb hp =>
     exact ⟨_, _, rfl, hc, hb, Or.inr ⟨_, _, _, _, _, rfl, hh, hv, he, hne, hp⟩⟩
 
-/-- A typed opposite-head pair at an initially semantically compatible interface
+/-- **Head preservation for a conversion-ranked opposite pair.**
+A typed opposite-head pair at an initially semantically compatible interface
 yields packed literal-head preservation. Both actual heads and payload/tail
 correspondence are conclusions, not fields in a protocol or admission predicate. -/
 theorem RankedType.head_preservation {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
@@ -154,7 +158,8 @@ theorem RankedType.head_preservation {n : Nat} {Δ : Context} {a b : Name} {p q 
       exact ⟨e, c, d, s, u, rfl, hwhole, hpeer, hr, heq,
         Or.inr ⟨f, v, k, t, t', rfl, hvwhole, he, hs, hu, htp⟩, hout⟩
 
-/-- For a ranked-typed opposite-head pair at an initially semantically compatible
+/-- **Conversion head communication yields a semantic advance.**
+For a ranked-typed opposite-head pair at an initially semantically compatible
 interface, head preservation constructs a faithful semantic advance and a
 compatible ranked residual. -/
 theorem RankedType.head_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}

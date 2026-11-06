@@ -79,7 +79,8 @@ set_option autoImplicit false
 
 namespace Cslib.AutomatedReasoning.StringConstraints
 
-/-- The keys of the association list built from an assignment are the
+/-- **Keys of the association list built from an assignment.**
+The keys of the association list built from an assignment are the
 variables themselves. -/
 theorem map_fst_map_pair {α : Type*} {V : Type*} {vs : List V} {σ : V → List α} :
     (vs.map fun i => (i, σ i)).map Prod.fst = vs := by
@@ -91,7 +92,8 @@ section Words
 
 variable {α : Type*} [Fintype α]
 
-/-- All words of length exactly `n` over a finite alphabet, each occurring
+/-- **Words of a given length over a finite alphabet.**
+All words of length exactly `n` over a finite alphabet, each occurring
 once: each step extends only the words of the previous length, never the
 whole `wordsUpTo` enumeration, so no word is duplicated. -/
 noncomputable def wordsOfLength : ℕ → List (List α)
@@ -100,7 +102,8 @@ noncomputable def wordsOfLength : ℕ → List (List α)
     (wordsOfLength n).flatMap (fun w =>
       (Finset.univ : Finset α).toList.map (fun a => w ++ [a]))
 
-/-- Membership in the exact-length enumeration is exactly the length
+/-- **Membership in the exact-length word enumeration.**
+Membership in the exact-length enumeration is exactly the length
 equality. -/
 theorem mem_wordsOfLength {w : List α} {n : ℕ} :
     w ∈ wordsOfLength (α := α) n ↔ w.length = n := by
@@ -134,7 +137,8 @@ theorem mem_wordsOfLength {w : List α} {n : ℕ} :
         · rw [List.mem_map]
           exact ⟨a, Finset.mem_toList.mpr (Finset.mem_univ a), rfl⟩
 
-/-- Counting the exact-length enumeration: `|Σ| ^ n` words. -/
+/-- **Size of the exact-length word enumeration.**
+Counting the exact-length enumeration: `|Σ| ^ n` words. -/
 theorem wordsOfLength_length (n : ℕ) :
     (wordsOfLength (α := α) n).length = (Fintype.card α) ^ n := by
   induction n with
@@ -159,21 +163,24 @@ theorem wordsOfLength_length (n : ℕ) :
       simpa using congrArg (fun k => k * Fintype.card α) ih
     rw [wordsOfLength, List.length_flatMap, hsum, pow_succ]
 
-/-- The number of words of length at most `B`: `∑_{n ≤ B} |Σ| ^ n`. -/
+/-- **Number of words of length at most $B$.**
+The number of words of length at most `B`: `∑_{n ≤ B} |Σ| ^ n`. -/
 noncomputable def wordsUpToCount (B : ℕ) : ℕ :=
   ((List.range (B + 1)).map fun n => (Fintype.card α) ^ n).sum
 
-/-- All words of length at most `B` over a finite alphabet, each occurring
+/-- **Words of length at most $B$ over a finite alphabet.**
+All words of length at most `B` over a finite alphabet, each occurring
 once: the concatenation of the exact-length layers `0, …, B`. -/
 noncomputable def wordsUpTo (B : ℕ) : List (List α) :=
   (List.range (B + 1)).flatMap (fun n => wordsOfLength (α := α) n)
 
-/-- The empty word is enumerated at every bound. -/
+/-- **Empty word is in every bounded enumeration.** The empty word is enumerated at every bound. -/
 theorem nil_mem_wordsUpTo (B : ℕ) : [] ∈ wordsUpTo (α := α) B := by
   rw [wordsUpTo, List.mem_flatMap]
   exact ⟨0, List.mem_range.mpr (Nat.zero_lt_succ B), by simp [wordsOfLength]⟩
 
-/-- Membership in the enumeration is exactly the length bound. -/
+/-- **Membership in the bounded-length word enumeration.**
+Membership in the enumeration is exactly the length bound. -/
 theorem mem_wordsUpTo {w : List α} {B : ℕ} :
     w ∈ wordsUpTo (α := α) B ↔ w.length ≤ B := by
   constructor
@@ -187,14 +194,15 @@ theorem mem_wordsUpTo {w : List α} {B : ℕ} :
     rw [wordsUpTo, List.mem_flatMap]
     exact ⟨w.length, List.mem_range.mpr (by omega), mem_wordsOfLength.mpr rfl⟩
 
-/-- Summing a constant over a list. -/
+/-- **Sum of a constant over a list.** Summing a constant over a list. -/
 theorem sum_map_const {β : Type*} {l : List β} {c : ℕ} :
     (l.map (fun _ => c)).sum = l.length * c := by
   induction l with
   | nil => simp
   | cons _ l ih => simp only [List.map_cons, List.sum_cons, List.length_cons, ih]; ring
 
-/-- Counting the enumeration: `∑_{n ≤ B} |Σ| ^ n` words, the number of
+/-- **Size of the bounded-length word enumeration.**
+Counting the enumeration: `∑_{n ≤ B} |Σ| ^ n` words, the number of
 distinct words of length at most `B`. -/
 theorem wordsUpTo_length (B : ℕ) :
     (wordsUpTo (α := α) B).length = wordsUpToCount (α := α) B := by
@@ -206,12 +214,14 @@ section Lookup
 
 variable {α : Type*} {V : Type*} [DecidableEq V]
 
-/-- Lookup in an association list; unbound variables read as `[]`. -/
+/-- **Association-list lookup defaulting to the empty word.**
+Lookup in an association list; unbound variables read as `[]`. -/
 def getVal : List (V × List α) → V → List α
   | [], _ => []
   | (i, w) :: l, j => if j = i then w else getVal l j
 
-/-- A lookup returns one of the values in the list, so it inherits the
+/-- **Lookup inherits the length bound on values.**
+A lookup returns one of the values in the list, so it inherits the
 length bound on values. -/
 theorem getVal_length_le {l : List (V × List α)} {i : V} {B : ℕ}
     (hvalues : ∀ w ∈ l.map Prod.snd, w.length ≤ B) (hkeys : i ∈ l.map Prod.fst) :
@@ -232,7 +242,8 @@ theorem getVal_length_le {l : List (V × List α)} {i : V} {B : ℕ}
     · exact ih (fun w' hw' =>
         hvalues w' (List.mem_cons_of_mem w hw')) (Or.resolve_left hi' h)
 
-/-- Lookup in the association list built from an assignment returns the
+/-- **Lookup recovers the assignment from its association list.**
+Lookup in the association list built from an assignment returns the
 assignment. -/
 theorem getVal_map {σ : V → List α} {vs : List V} {i : V} (hi : i ∈ vs) :
     getVal (vs.map fun j => (j, σ j)) i = σ i := by
@@ -255,14 +266,16 @@ section Assignments
 
 variable {α : Type*} {V : Type*} [Fintype α]
 
-/-- All assignments of the variables in `vs` to words of length at most
+/-- **Enumeration of bounded assignments as association lists.**
+All assignments of the variables in `vs` to words of length at most
 `B`, as association lists, each occurring once (as in `wordsUpTo`). -/
 noncomputable def assignLists : List V → ℕ → List (List (V × List α))
   | [], _ => [[]]
   | i :: vs, B => (assignLists vs B).flatMap
       (fun l => (wordsUpTo B).map (fun w => (i, w) :: l))
 
-/-- Membership in the assignment enumeration: the keys are exactly `vs`
+/-- **Membership in the bounded assignment enumeration.**
+Membership in the assignment enumeration: the keys are exactly `vs`
 and every value has length at most `B`. -/
 theorem mem_assignLists {vs : List V} {l : List (V × List α)} {B : ℕ} :
     l ∈ assignLists vs B ↔
@@ -310,7 +323,8 @@ theorem mem_assignLists {vs : List V} {l : List (V × List α)} {B : ℕ} :
           rw [List.mem_map]
           exact ⟨w, mem_wordsUpTo.mpr hw, rfl⟩⟩
 
-/-- Counting the assignment enumeration: the total (worst-case) size of
+/-- **Size of the bounded assignment enumeration.**
+Counting the assignment enumeration: the total (worst-case) size of
 the candidate search space is `(wordsUpToCount B) ^ |vs|`. This counts
 enumerated association lists; see the cost model in the module header
 for when it coincides with the number of distinct assignments. -/
@@ -345,7 +359,8 @@ section Uniqueness
 
 variable {α : Type*} {V : Type*} [Fintype α] [DecidableEq V]
 
-/-- Under `vs.Nodup`, an enumerated association list is recovered from its
+/-- **Enumerated lists over distinct variables are recovered from lookups.**
+Under `vs.Nodup`, an enumerated association list is recovered from its
 lookup function: there is no duplicate key for `getVal` to shadow, so
 the list is exactly the association list built from its own lookups. -/
 theorem assignLists_eq_map_getVal {vs : List V} {l : List (V × List α)} {B : ℕ}
@@ -390,7 +405,8 @@ theorem assignLists_eq_map_getVal {vs : List V} {l : List (V × List α)} {B : �
           simp only [List.map_cons]
           rw [hhead, hmap]
 
-/-- Under `vs.Nodup`, distinct enumerated association lists denote
+/-- **Enumerated lists over distinct variables give distinct assignments.**
+Under `vs.Nodup`, distinct enumerated association lists denote
 distinct assignments: if two enumerated lists agree as lookup functions
 on `vs`, they are the same list. Without `Nodup` this fails, since a
 duplicate key lets a later entry be shadowed by an earlier one. -/
@@ -407,14 +423,16 @@ section Specification
 
 variable {α : Type*} {V : Type*} [Fintype α] [DecidableEq α] [DecidableEq V]
 
-/-- The bounded-search specification: enumerate bounded assignments and
+/-- **Bounded-search satisfiability specification.**
+The bounded-search specification: enumerate bounded assignments and
 check `φ` on each one. This is a classical specification, not an
 executable decision procedure: `assignLists` is `noncomputable`, so
 this Boolean cannot be evaluated by `decide`. -/
 noncomputable def boundedSatSpec (vs : List V) (φ : Formula α V) (B : ℕ) : Bool :=
   (assignLists vs B).any (fun l => satB (getVal l) φ)
 
-/-- Soundness and completeness of the bounded-search specification: it
+/-- **Soundness and completeness of the bounded-search specification.**
+Soundness and completeness of the bounded-search specification: it
 reports `true` exactly when `φ` has a solution whose values on `vs`
 have length at most `B`. The hypothesis is that `vs` covers the
 variables of `φ`. -/

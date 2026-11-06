@@ -21,12 +21,14 @@ corresponding star-kinded variable. No source type constructor is erased.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega
 
-/-- Extend images of System F type variables under a star-kinded binder. -/
+/-- **Lifting System F type-variable images under a star binder.**
+Extend images of System F type variables under a star-kinded binder. -/
 def liftTypes {n : Nat} {Δ : List Kind} (φ : Fin n → Ty Δ .star) :
     Fin (n + 1) → Ty (.star :: Δ) .star :=
   Fin.cases (.var .zero) (fun i => (φ i).rename KVar.succ)
 
-/-- Translate System F types with arbitrary kind-`star` variable images. -/
+/-- **Translation of System F types into Fω.**
+Translate System F types with arbitrary kind-`star` variable images. -/
 def Ty.fromSystemF : {n : Nat} → {Δ : List Kind} →
     (Fin n → Ty Δ .star) → SystemF.Ty n → Ty Δ .star
   | _, _, φ, .var i => φ i
@@ -37,14 +39,16 @@ namespace Ty
 
 variable {n k : Nat} {Δ Ε : List Kind}
 
-/-- The translation depends only on the images of free type variables. -/
+/-- **Type translation depends only on variable images.**
+The translation depends only on the images of free type variables. -/
 theorem fromSystemF_congr {φ ψ : Fin n → Ty Δ .star}
     (h : ∀ i, φ i = ψ i) (t : SystemF.Ty n) :
     fromSystemF φ t = fromSystemF ψ t := by
   have e : φ = ψ := funext h
   rw [e]
 
-/-- Target kind-preserving renaming commutes with the System F translation. -/
+/-- **Type translation commutes with target renaming.**
+Target kind-preserving renaming commutes with the System F translation. -/
 theorem fromSystemF_target_rename (φ : Fin n → Ty Δ .star)
     (ρ : KRen Δ Ε) (t : SystemF.Ty n) :
     (fromSystemF φ t).rename ρ =
@@ -66,7 +70,8 @@ theorem fromSystemF_target_rename (φ : Fin n → Ty Δ .star)
       intro ν x
       rfl
 
-/-- Target type substitution commutes with the System F translation. -/
+/-- **Type translation commutes with target substitution.**
+Target type substitution commutes with the System F translation. -/
 theorem fromSystemF_target_subst (φ : Fin n → Ty Δ .star)
     (σ : Sub Δ Ε) (t : SystemF.Ty n) :
     (fromSystemF φ t).subst σ =
@@ -84,7 +89,8 @@ theorem fromSystemF_target_subst (φ : Fin n → Ty Δ .star)
     | zero => rfl
     | succ i => exact subst_lift_rename σ (φ i)
 
-/-- Source type renaming is precomposition of the translated variable images. -/
+/-- **Type translation of a source renaming.**
+Source type renaming is precomposition of the translated variable images. -/
 theorem fromSystemF_source_rename (φ : Fin k → Ty Δ .star)
     (ρ : Fin n → Fin k) (t : SystemF.Ty n) :
     fromSystemF φ (t.rename ρ) = fromSystemF (fun i => φ (ρ i)) t := by
@@ -99,7 +105,8 @@ theorem fromSystemF_source_rename (φ : Fin k → Ty Δ .star)
     intro i
     induction i using Fin.cases <;> rfl
 
-/-- Source type substitution translates to simultaneous operator images. -/
+/-- **Type translation of a source substitution.**
+Source type substitution translates to simultaneous operator images. -/
 theorem fromSystemF_source_subst (φ : Fin k → Ty Δ .star)
     (σ : Fin n → SystemF.Ty k) (t : SystemF.Ty n) :
     fromSystemF φ (t.subst σ) =
@@ -120,7 +127,8 @@ theorem fromSystemF_source_subst (φ : Fin k → Ty Δ .star)
         fromSystemF_source_rename] using
         (fromSystemF_target_rename φ KVar.succ (σ i)).symm
 
-/-- The System F translation commutes with type-binder instantiation. -/
+/-- **Type translation commutes with type-binder instantiation.**
+The System F translation commutes with type-binder instantiation. -/
 theorem fromSystemF_instantiate (φ : Fin n → Ty Δ .star)
     (B : SystemF.Ty (n + 1)) (A : SystemF.Ty n) :
     fromSystemF φ (B.instantiate A) =
@@ -135,7 +143,8 @@ theorem fromSystemF_instantiate (φ : Fin n → Ty Δ .star)
 
 end Ty
 
-/-- Translate all five System F term constructors, retaining type binders. -/
+/-- **Translation of System F terms into Fω.**
+Translate all five System F term constructors, retaining type binders. -/
 def Tm.fromSystemF : {n m : Nat} → {Δ : List Kind} →
     (Fin n → Ty Δ .star) → SystemF.Tm n m → Tm Δ m
   | _, _, _, _, .var i => .var i
@@ -144,7 +153,8 @@ def Tm.fromSystemF : {n m : Nat} → {Δ : List Kind} →
   | _, _, _, φ, .tabs b => .tabs (fromSystemF (liftTypes φ) b)
   | _, _, _, φ, .tapp f A => .tapp (fromSystemF φ f) (Ty.fromSystemF φ A)
 
-/-- Every System F typing derivation is preserved by the star translation. -/
+/-- **Term translation preserves System F typing.**
+Every System F typing derivation is preserved by the star translation. -/
 theorem Tm.fromSystemF_typing {n m : Nat} {Δ : List Kind}
     {Γ : SystemF.Ctx n m} {t : SystemF.Tm n m} {A : SystemF.Ty n}
     (h : SystemF.Typing Γ t A) (φ : Fin n → Ty Δ .star) :
@@ -166,33 +176,39 @@ theorem Tm.fromSystemF_typing {n m : Nat} {Δ : List Kind}
     rw [Tm.fromSystemF, Ty.fromSystemF_instantiate]
     exact .tapp (ih φ)
 
-/-- The corresponding star-kinded variable in an `n`-star telescope. -/
+/-- **Star-kinded variable of an all-star telescope.**
+The corresponding star-kinded variable in an `n`-star telescope. -/
 def KVar.ofFin : {n : Nat} → Fin n → KVar (List.replicate n .star) .star
   | 0, i => nomatch i
   | _n + 1, i => Fin.cases .zero (fun j => .succ (ofFin j)) i
 
-/-- The canonical variable-for-variable embedding of System F types. -/
+/-- **Canonical embedding of System F types into Fω.**
+The canonical variable-for-variable embedding of System F types. -/
 def Ty.embed {n : Nat} (t : SystemF.Ty n) : Ty (List.replicate n .star) .star :=
   fromSystemF (fun i => .var (KVar.ofFin i)) t
 
-/-- The canonical scoped embedding of System F terms into pure Fω. -/
+/-- **Canonical embedding of System F terms into Fω.**
+The canonical scoped embedding of System F terms into pure Fω. -/
 def Tm.embed {n m : Nat} (t : SystemF.Tm n m) : Tm (List.replicate n .star) m :=
   fromSystemF (fun i => .var (KVar.ofFin i)) t
 
-/-- Canonical embedding preserves every System F typing derivation. -/
+/-- **Canonical embedding preserves System F typing.**
+Canonical embedding preserves every System F typing derivation. -/
 theorem Tm.embed_typing {n m : Nat} {Γ : SystemF.Ctx n m}
     {t : SystemF.Tm n m} {A : SystemF.Ty n} (h : SystemF.Typing Γ t A) :
     Typing (fun i => Ty.embed (Γ i)) (Tm.embed t) (Ty.embed A) :=
   fromSystemF_typing h (fun i => .var (KVar.ofFin i))
 
-/-- Term translation depends only on the images of its free type variables. -/
+/-- **Term translation depends only on type-variable images.**
+Term translation depends only on the images of its free type variables. -/
 theorem Tm.fromSystemF_congr {n m : Nat} {Δ : List Kind}
     {φ ψ : Fin n → Ty Δ .star} (h : ∀ i, φ i = ψ i) (t : SystemF.Tm n m) :
     fromSystemF φ t = fromSystemF ψ t := by
   have e : φ = ψ := funext h
   rw [e]
 
-/-- Operator substitution commutes with translating System F terms. -/
+/-- **Term translation commutes with target type substitution.**
+Operator substitution commutes with translating System F terms. -/
 theorem Tm.fromSystemF_target_tySubst {n m : Nat} {Δ Ε : List Kind}
     (φ : Fin n → Ty Δ .star) (σ : Ty.Sub Δ Ε) (t : SystemF.Tm n m) :
     (fromSystemF φ t).tySubst σ =
@@ -213,7 +229,8 @@ theorem Tm.fromSystemF_target_tySubst {n m : Nat} {Δ Ε : List Kind}
     | zero => rfl
     | succ i => exact Ty.subst_lift_rename σ (φ i)
 
-/-- Source type substitution commutes with the pure-term translation. -/
+/-- **Term translation of a source type substitution.**
+Source type substitution commutes with the pure-term translation. -/
 theorem Tm.fromSystemF_source_tySubst {n k m : Nat} {Δ : List Kind}
     (φ : Fin k → Ty Δ .star) (σ : Fin n → SystemF.Ty k)
     (t : SystemF.Tm n m) :
@@ -237,7 +254,8 @@ theorem Tm.fromSystemF_source_tySubst {n k m : Nat} {Δ : List Kind}
         Ty.fromSystemF_source_rename] using
         (Ty.fromSystemF_target_rename φ KVar.succ (σ i)).symm
 
-/-- Weakening beneath a type binder agrees in both calculus presentations. -/
+/-- **Term translation commutes with weakening under a type binder.**
+Weakening beneath a type binder agrees in both calculus presentations. -/
 theorem Tm.fromSystemF_tyRename_succ {n m : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (t : SystemF.Tm n m) :
     fromSystemF (liftTypes φ) (t.tyRename Fin.succ) =
@@ -246,7 +264,8 @@ theorem Tm.fromSystemF_tyRename_succ {n m : Nat} {Δ : List Kind}
     fromSystemF_source_tySubst, fromSystemF_target_tySubst,
     Ty.fromSystemF, liftTypes, Fin.cases_succ, Ty.subst_var_rename]
 
-/-- Term-variable renaming commutes with the System F translation. -/
+/-- **Term translation commutes with term-variable renaming.**
+Term-variable renaming commutes with the System F translation. -/
 theorem Tm.fromSystemF_rename {n m k : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (ρ : Fin m → Fin k) (t : SystemF.Tm n m) :
     fromSystemF φ (t.rename ρ) = (fromSystemF φ t).rename ρ := by
@@ -268,7 +287,8 @@ private theorem fromSystemF_liftSub {n m k : Nat} {Δ : List Kind}
     simpa only [SystemF.Tm.liftSub, Tm.liftSub, Fin.cases_succ] using
       Tm.fromSystemF_rename φ Fin.succ (σ i)
 
-/-- Simultaneous term substitution commutes with the System F translation. -/
+/-- **Term translation commutes with term substitution.**
+Simultaneous term substitution commutes with the System F translation. -/
 theorem Tm.fromSystemF_subst {n m k : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (σ : Fin m → SystemF.Tm n k)
     (t : SystemF.Tm n m) :
@@ -286,7 +306,8 @@ theorem Tm.fromSystemF_subst {n m k : Nat} {Δ : List Kind}
     funext i
     exact fromSystemF_liftSub φ σ i
 
-/-- Term-binder instantiation commutes with the System F translation. -/
+/-- **Term translation commutes with term-binder instantiation.**
+Term-binder instantiation commutes with the System F translation. -/
 theorem Tm.fromSystemF_instantiate {n m : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (b : SystemF.Tm n (m + 1))
     (a : SystemF.Tm n m) :
@@ -297,7 +318,8 @@ theorem Tm.fromSystemF_instantiate {n m : Nat} {Δ : List Kind}
   funext i
   induction i using Fin.cases <;> rfl
 
-/-- Type-binder discharge agrees for translated System F terms. -/
+/-- **Term translation commutes with type-binder instantiation.**
+Type-binder discharge agrees for translated System F terms. -/
 theorem Tm.fromSystemF_tyInstantiate {n m : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (b : SystemF.Tm (n + 1) m)
     (A : SystemF.Ty n) :
@@ -311,7 +333,8 @@ theorem Tm.fromSystemF_tyInstantiate {n m : Nat} {Δ : List Kind}
   | succ i =>
     exact (Ty.instantiate_rename_succ (φ i) (Ty.fromSystemF φ A)).symm
 
-/-- The System F translation preserves both weak-CBV value forms. -/
+/-- **Term translation preserves weak call-by-value values.**
+The System F translation preserves both weak-CBV value forms. -/
 theorem Tm.fromSystemF_value {n m : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) {t : SystemF.Tm n m} (h : SystemF.Value t) :
     Value (fromSystemF φ t) := by
@@ -319,7 +342,8 @@ theorem Tm.fromSystemF_value {n m : Nat} {Δ : List Kind}
   | lam => exact .lam _ _
   | tabs => exact .tabs _
 
-/-- Every System F weak-CBV step is simulated by one Fω weak-CBV step. -/
+/-- **Term translation simulates each weak call-by-value step.**
+Every System F weak-CBV step is simulated by one Fω weak-CBV step. -/
 theorem Tm.fromSystemF_step {n m : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) {t t' : SystemF.Tm n m}
     (h : SystemF.Step t t') : Step (fromSystemF φ t) (fromSystemF φ t') := by
@@ -334,12 +358,14 @@ theorem Tm.fromSystemF_step {n m : Nat} {Δ : List Kind}
     rw [fromSystemF_tyInstantiate]
     exact .tybeta _ _
 
-/-- The canonical embedding preserves individual System F evaluation steps. -/
+/-- **Canonical embedding preserves single evaluation steps.**
+The canonical embedding preserves individual System F evaluation steps. -/
 theorem Tm.embed_step {n m : Nat} {t t' : SystemF.Tm n m}
     (h : SystemF.Step t t') : Step (Tm.embed t) (Tm.embed t') :=
   fromSystemF_step (fun i => .var (KVar.ofFin i)) h
 
-/-- The canonical embedding preserves finite System F evaluation sequences. -/
+/-- **Canonical embedding preserves multistep evaluation.**
+The canonical embedding preserves finite System F evaluation sequences. -/
 theorem Tm.embed_steps {n m : Nat} {t t' : SystemF.Tm n m}
     (h : SystemF.Steps t t') :
     Relation.ReflTransGen Step (Tm.embed t) (Tm.embed t') :=

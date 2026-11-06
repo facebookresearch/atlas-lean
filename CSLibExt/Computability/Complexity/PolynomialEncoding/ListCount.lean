@@ -27,7 +27,8 @@ namespace Cslib.Complexity.PolynomialEncoding.ListCount
 open Turing Function MetaMathlibExt.TM2Program
 open MetaMathlibExt.BitstringEncoding FramedCNF
 
-/-- Input, one-block scratch, and a unary element counter. -/
+/-- **Stacks of the frame counter for lists of naturals.**
+Input, one-block scratch, and a unary element counter. -/
 inductive K | input | scratch | count
   deriving DecidableEq
 
@@ -35,7 +36,8 @@ instance : Fintype K where
   elems := ⟨↑[K.input, .scratch, .count], by decide⟩
   complete k := by cases k <;> decide
 
-/-- Each complete frame increments the counter and clears its scratch. -/
+/-- **Control labels of the frame counter for lists of naturals.**
+Each complete frame increments the counter and clears its scratch. -/
 inductive Lab | loop | block | bump | clear | good | bad
   deriving DecidableEq
 
@@ -43,7 +45,8 @@ instance : Fintype Lab where
   elems := ⟨↑[Lab.loop, .block, .bump, .clear, .good, .bad], by decide⟩
   complete l := by cases l <;> decide
 
-/-- Count by repeated shared block reading and shared scratch cleanup. -/
+/-- **Program of the frame counter for lists of naturals.**
+Count by repeated shared block reading and shared scratch cleanup. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .loop => .peek .input (fun _ o => o.isSome) <| .branch id
       (.goto fun _ => .block) (.goto fun _ => .good)
@@ -52,7 +55,8 @@ def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .clear => cleanS [.scratch] .clear .loop
   | .good | .bad => .halt
 
-/-- The three actual stack contents. -/
+/-- **Stack contents of the frame counter for lists of naturals.**
+The three actual stack contents. -/
 def st (input scratch count : List Bool) : K → List Bool
   | .input => input
   | .scratch => scratch
@@ -72,7 +76,8 @@ private theorem clear_run (x scratch count : List Bool) (v : Bool) :
     cases k <;> simp [st]
   rwa [he] at hr
 
-/-- One complete frame contributes exactly one unary count bit and
+/-- **One frame adds one unary count bit.**
+One complete frame contributes exactly one unary count bit and
 leaves no payload scratch, independently of the decoded Nat's value. -/
 theorem element_run (p x count : List Bool) (v : Bool) :
     RunLe prog (4 * (delimit p).length)
@@ -105,7 +110,8 @@ theorem element_run (p x count : List Bool) (v : Bool) :
     (clear_run x p.reverse (true :: count) false)
   exact run.mono (by simp only [List.length_reverse, length_delimit]; omega)
 
-/-- Counting a sequence of raw frames yields its length in unary,
+/-- **Frame counter yields the number of raw frames in unary.**
+Counting a sequence of raw frames yields its length in unary,
 with the caller's counter suffix preserved and scratch empty. -/
 theorem blocks_run (bs : List (List Bool)) (count : List Bool) (v : Bool) :
     RunLe prog (4 * ((bs.map delimit).flatten).length + 1)
@@ -125,7 +131,8 @@ theorem blocks_run (bs : List (List Bool)) (count : List Bool) (v : Bool) :
     exact hr.mono (by simp only [List.map_cons, List.flatten_cons,
       List.length_append]; omega)
 
-/-- Count every successfully decoded List Nat, including noncanonical
+/-- **Frame counter counts every successfully decoded list of naturals.**
+Count every successfully decoded List Nat, including noncanonical
 Nat payloads; the count suffix is preserved exactly. -/
 theorem run_some {x : List Bool} {as : List Nat}
     (h : bitDecode x = some as) (count : List Bool) (v : Bool) :
@@ -178,7 +185,8 @@ private theorem run_blocks_none (fuel : Nat) :
         exact ⟨v', S, ((element_run p r count v).trans rest).mono
           (by simp only [List.length_append]; omega)⟩
 
-/-- Malformed List Nat framing reaches the failure endpoint. The
+/-- **Frame counter fails on malformed list framing.**
+Malformed List Nat framing reaches the failure endpoint. The
 counter and scratch may be partial and must be cleared before reuse. -/
 theorem run_none {x : List Bool} (h : bitDecode (α := List Nat) x = none)
     (count : List Bool) (v : Bool) :
@@ -187,7 +195,8 @@ theorem run_none {x : List Bool} (h : bitDecode (α := List Nat) x = none)
   rw [decode_list_nat, Option.map_eq_none_iff] at h
   exact run_blocks_none x.length x count v le_rfl h
 
-/-- The frame counter is a finite component of the existing Host. -/
+/-- **Frame counter for lists of naturals as a host component.**
+The frame counter is a finite component of the existing Host. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -197,7 +206,8 @@ abbrev component : Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- Total List Nat decoding outcome and exact unary length on success. -/
+/-- **Frame counter decides decodability and counts length in unary.**
+Total List Nat decoding outcome and exact unary length on success. -/
 theorem run (x : List Bool) (v : Bool) :
     ∃ v' S, RunLe prog (4 * x.length + 2)
       ⟨some .loop, v, st x [] []⟩
@@ -219,7 +229,8 @@ theorem run (x : List Bool) (v : Bool) :
       obtain rfl := Option.some.inj hb
       rfl
 
-/-- Embedded counting preserves every caller stack outside its
+/-- **Embedded frame counter preserves caller stacks.**
+Embedded counting preserves every caller stack outside its
 workspace on success and failure. Scratch is empty on success. -/
 theorem run_embedded {J L : Type} [DecidableEq J] {Γ : J → Type}
     (E : MetaMathlibExt.TM2Embedding.SEmb (fun _ : K => Bool) Γ)

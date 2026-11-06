@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- GENERAL endpoint substitution: retain the ACTUAL transmitted capability's
+/-- **Endpoint substitution preserves conversion ranked typing.**
+GENERAL endpoint substitution: retain the ACTUAL transmitted capability's
 code and rank at the sent polarized key, allowing its opposite-role alias.
 Collision freedom is needed only for that exact key and canonical substitution. -/
 theorem RankedType.subst_endpoint {n : Nat} {Δ : Context} {b : Name} {r : Role}
@@ -38,7 +39,8 @@ theorem RankedType.subst_endpoint {n : Nat} {Δ : Context} {b : Name} {r : Role}
   rw [Context.rekey_received_subst hfresh hi, mapProc_substName] at hr
   exact hr
 
-/-- GENERAL split-derived freshness: actual payload ownership and the
+/-- **Split-derived freshness for conversion endpoint substitution.**
+GENERAL split-derived freshness: actual payload ownership and the
 receiver's already-owned carrier derive non-aliasing even after advancement. -/
 theorem RankedType.subst_endpoint_from_split {n : Nat} {Γ Θ : Context} {b : Name} {r : Role}
     {c v old next : Capability} {e : Key} {p : Proc}
@@ -51,7 +53,8 @@ theorem RankedType.subst_endpoint_from_split {n : Nat} {Γ Θ : Context} {b : Na
   exact Context.fresh_insert_owned (Context.fresh_of_disjoint hd hv)
     (Finmap.mem_of_lookup_eq_some hc)
 
-/-- GENERAL passive substitution transports all scoped positions but adds
+/-- **Passive substitution preserves conversion ranked typing.**
+GENERAL passive substitution transports all scoped positions but adds
 NO capability. The input context contains only lifted outer ownership. -/
 theorem RankedType.subst_passive {n : Nat} {Δ : Context} {p : Proc} {b : Name}
     (h : RankedType (n + 1) (Context.lift 0 Δ) p) (hb : b.ClosedAt n) :

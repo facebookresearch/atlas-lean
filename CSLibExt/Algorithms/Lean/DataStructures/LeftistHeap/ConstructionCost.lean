@@ -164,7 +164,8 @@ lemma size_mergeAdjacent_pow {α : Type*} (sz : α → ℕ) (merge : α → α �
     exact this
   exact size_mergeAdjacent_even sz merge hmerge_size ts n hsize heven
 
-/-- One adjacent pass costs at most the number of pairs times the merge bound. -/
+/-- **Cost bound for one adjacent merging pass.**
+One adjacent pass costs at most the number of pairs times the merge bound. -/
 theorem fdsa_chap15_ex02
     (Itree : α → Prop) (sz : α → ℕ)
     (Tmerge : α → α → ℕ)
@@ -416,7 +417,8 @@ private lemma sum_transform_2n (k n : ℕ) :
 -- mergeCostBound is concrete (2*log2(n+1)+1), mergeAllCost is concrete defined via
 -- recurrences,
 -- so bound is not for arbitrary unconstrained cost functions.
-/-- The multi-pass cost bound (15.2) for equally sized heaps. -/
+/-- **Multi-pass cost bound for equally sized heaps.**
+The multi-pass cost bound (15.2) for equally sized heaps. -/
 theorem fdsa_chap15_ex01
     (Itree : α → Prop) (sz : α → ℕ)
     (merge : α → α → α) (Tmerge : α → α → ℕ)

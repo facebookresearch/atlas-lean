@@ -28,7 +28,8 @@ open MetaMathlibExt.BitstringEncoding
 
 variable {K Λ : Type} [DecidableEq K] {Γ : K → Type}
 
-/-- Emit one raw payload as a reversed self-delimiting frame. -/
+/-- **Reversed self-delimiting frame emitter.**
+Emit one raw payload as a reversed self-delimiting frame. -/
 def emitFrame (a b : K) (d : Γ a → Option Bool) (g : Bool → Γ b)
     (self next : Λ) : TM2.Stmt Γ Λ Bool :=
   .peek a (fun _ o => isBit d o) <| .branch id
@@ -62,7 +63,8 @@ private theorem emitFrame_step {M : Λ → TM2.Stmt Γ Λ Bool}
   apply Run.single
   simp [hM, emitFrame, TM2.stepAux, isBit, bitOf, hz, hS, hab.symm]
 
-/-- Emit a complete frame in `payload.length + 1` steps, restoring the
+/-- **Frame emitter takes one step per payload bit plus one.**
+Emit a complete frame in `payload.length + 1` steps, restoring the
 input suffix and leaving every unrelated stack unchanged. -/
 theorem emitFrame_run {M : Λ → TM2.Stmt Γ Λ Bool}
     {a b : K} {d : Γ a → Option Bool} {g : Bool → Γ b}

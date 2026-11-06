@@ -48,7 +48,8 @@ private theorem input_dual_send {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     rw [Protocol.unfold_dual, hs]
     rfl
 
-/-- For disjoint ranked-typed same-name leaves at a semantically compatible
+/-- **Same-name conversion guards are opposite and communicate.**
+For disjoint ranked-typed same-name leaves at a semantically compatible
 combined interface, literal guard shapes have opposite directions and yield
 an actual canonical Step. -/
 theorem same_name_guards_step {n : Nat} {Γ Θ : Context} {g h : Proc} {a : Name}
@@ -72,7 +73,8 @@ theorem same_name_guards_step {n : Nat} {Γ Θ : Context} {g h : Proc} {a : Name
     have hud : u.dual.Equivalent c.dual.dual := hu.dual
     exact False.elim (semantic_sends_not_sends hs hud ht)
 
-/-- GENERAL balanced ranked frontier progress. A minimum over ALL active
+/-- **Progress for semantically balanced conversion frontiers.**
+GENERAL balanced ranked frontier progress. A minimum over ALL active
 owned roles exposes two distinct opposite subject leaves, from which actual
 canonical communication follows. Completion is process-level Cong to nil. -/
 theorem GuardFrontier.progress {n : Nat} {Δ : Context} {p : Proc}

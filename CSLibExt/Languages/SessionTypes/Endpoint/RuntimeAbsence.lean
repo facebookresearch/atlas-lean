@@ -21,7 +21,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- An owned name absent from ALL subject/payload/binder-adjusted positions
+/-- **Owned names absent from a runtime process are completed.**
+An owned name absent from ALL subject/payload/binder-adjusted positions
 already has an actual done unfolding, including in the shared runtime rules. -/
 theorem HasType.absent_lookup_completed {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) {z : Key} {t : Capability}
@@ -71,7 +72,8 @@ theorem HasType.absent_lookup_completed {n : Nat} {Γ : ServiceEnv} {Δ : Contex
       Finmap.lookup_insert_of_ne _ (Key.lift_ne_bound z .positive)]
     exact Context.lookup_lift.mpr hz
 
-/-- ALL10 runtime rules support erasure only under real all-position absence.
+/-- **Erasing a key whose name is absent preserves runtime typing.**
+ALL10 runtime rules support erasure only under real all-position absence.
 Accept/serve ambient erasure does NOT alter their exact fresh/empty BODY domains. -/
 theorem HasType.erase_nameAbsent {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) {z : Key} (hab : NameAbsent z.name p) :

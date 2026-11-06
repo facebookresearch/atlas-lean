@@ -60,14 +60,16 @@ instance stepDecidable (valuation : Symbol → Atom → Prop)
       dsimp only [step]
       infer_instance
 
-/-- Computable fairness-counter update, reading the destination annotation. -/
+/-- **Computable fairness-counter update.**
+Computable fairness-counter update, reading the destination annotation. -/
 def advance (φ : Formula Atom) (i : Fin (obligationCount φ + 1)) (t : State φ) :
     Fin (obligationCount φ + 1) :=
   if h : i.val < obligationCount φ then
     if obligation φ ⟨i.val, h⟩ t = true then ⟨i.val + 1, by omega⟩ else i
   else ⟨0, Nat.zero_lt_succ _⟩
 
-/-- The computable update is exactly the existing generic degeneralization. -/
+/-- **Computable counter update equals generic degeneralization.**
+The computable update is exactly the existing generic degeneralization. -/
 theorem nextCount_eq_advance (valuation : Symbol → Atom → Prop) (φ : Formula Atom)
     (i : Fin (obligationCount φ + 1)) (t : State φ) :
     (automaton valuation φ).nextCount i t = advance φ i t := by
@@ -77,7 +79,8 @@ theorem nextCount_eq_advance (valuation : Symbol → Atom → Prop) (φ : Formul
     · simp [Automata.NA.GenBuchi.nextCount, advance, automaton, h, ht]
   · simp [Automata.NA.GenBuchi.nextCount, advance, automaton, h]
 
-/-- The existing Büchi transition can be tested using the computable update. -/
+/-- **Büchi transition test via the computable counter update.**
+The existing Büchi transition can be tested using the computable update. -/
 theorem buchi_tr_iff (valuation : Symbol → Atom → Prop) (φ : Formula Atom)
     (p : State φ × Fin (obligationCount φ + 1)) (x : Symbol)
     (q : State φ × Fin (obligationCount φ + 1)) :
@@ -143,7 +146,8 @@ variable [Fintype State] [DecidableEq State] [Fintype Action]
   (valuation : State → Atom → Prop) [∀ s a, Decidable (valuation s a)]
   (φ : Formula Atom)
 
-/-- Full-LTL checking by the existing finite Büchi reachability algorithm.
+/-- **Executable full-LTL model checker.**
+Full-LTL checking by the existing finite Büchi reachability algorithm.
 The finite/decidable data requirements are only for execution, not recognition. -/
 def checkB : Bool := by
   letI : DecidablePred (· ∈ (Tableau.buchi valuation (.not φ)).start) :=
@@ -152,7 +156,8 @@ def checkB : Bool := by
     Tableau.buchiAcceptDecidable valuation (.not φ)
   exact (product lts initial (Tableau.buchi valuation (.not φ))).isEmptyB
 
-/-- The executable checker is correct for all initial infinite model runs. -/
+/-- **Correctness of the executable LTL model checker.**
+The executable checker is correct for all initial infinite model runs. -/
 theorem checkB_iff :
     checkB lts initial valuation φ = true ↔ Models lts initial valuation φ := by
   let : DecidablePred (· ∈ (Tableau.buchi valuation (.not φ)).start) :=

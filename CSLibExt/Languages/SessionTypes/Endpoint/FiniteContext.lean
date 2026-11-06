@@ -22,7 +22,8 @@ completed slots. The existing finite-support theorem supplies such a bound.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- Turn finitely many original channel slots into polarized finite-map
+/-- **Polarized ownership map of a finite channel context.**
+Turn finitely many original channel slots into polarized finite-map
 ownership. The supplied rank assignment adds no execution hypothesis. -/
 def Context.ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
     (r : Role) (rank : Nat → Nat) : Context :=
@@ -40,7 +41,8 @@ def Context.ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
       exact ⟨fun ⟨hr, hb⟩ => ⟨hb, hr.symm⟩, fun ⟨hb, hr⟩ => ⟨hr.symm, hb⟩⟩
     | var i => simp [Finset.mem_image, Key.mk.injEq]⟩
 
-/-- Exact lookup specification for the finite-resource bridge. -/
+/-- **Lookup in the finite-context ownership map.**
+Exact lookup specification for the finite-resource bridge. -/
 theorem Context.lookup_ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
     (r : Role) (rank : Nat → Nat) (e : Key) :
     (ofFinite Γ bound r rank).lookup e = match e.name with
@@ -49,7 +51,8 @@ theorem Context.lookup_ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
       | .var _ => none :=
   Finmap.keysLookupEquiv_symm_apply_lookup _ _
 
-/-- Finite bridge ownership has exactly the bounded constant keys. -/
+/-- **Keys of the finite-context ownership map.**
+Finite bridge ownership has exactly the bounded constant keys. -/
 theorem Context.mem_ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
     (r : Role) (rank : Nat → Nat) (e : Key) :
     e ∈ ofFinite Γ bound r rank ↔
@@ -57,7 +60,8 @@ theorem Context.mem_ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
   rw [← Finmap.mem_keys, ofFinite, Finmap.keysLookupEquiv_symm_apply_keys]
   simp only [Finset.mem_image, Finset.mem_range]
 
-/-- Advancing an original channel advances precisely its finite-map role. -/
+/-- **Finite ownership map commutes with channel advancement.**
+Advancing an original channel advances precisely its finite-map role. -/
 theorem Context.ofFinite_advance (Γ : Cslib.SessionTypes.Context)
     (bound a : Nat) (ha : a < bound) (s : SessionType)
     (r : Role) (rank : Nat → Nat) :
@@ -84,7 +88,8 @@ theorem Context.ofFinite_advance (Γ : Cslib.SessionTypes.Context)
     rw [Finmap.lookup_insert_of_ne _ he]
     simp [lookup_ofFinite]
 
-/-- Opposite finite roles split without duplicating any endpoint key. -/
+/-- **Ownership maps for opposite roles are disjoint.**
+Opposite finite roles split without duplicating any endpoint key. -/
 theorem Context.disjoint_ofFinite (Γ Θ : Cslib.SessionTypes.Context)
     (b c : Nat) (r s : Role) (hr : r ≠ s) (rank rank' : Nat → Nat) :
     Finmap.Disjoint (ofFinite Γ b r rank) (ofFinite Θ c s rank') := by
@@ -94,7 +99,8 @@ theorem Context.disjoint_ofFinite (Γ Θ : Cslib.SessionTypes.Context)
   have hs := congrArg Key.role h
   exact hr hs.symm
 
-/-- Original completed contexts have no active finite-map protocol. -/
+/-- **Completed finite contexts give completed ownership maps.**
+Original completed contexts have no active finite-map protocol. -/
 theorem Context.completed_ofFinite (Γ : Cslib.SessionTypes.Context) (bound : Nat)
     (r : Role) (rank : Nat → Nat) (hΓ : ∀ i, Γ i = .end) :
     (ofFinite Γ bound r rank).Completed := by

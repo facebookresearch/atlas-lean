@@ -29,7 +29,8 @@ universe u
 
 variable {Atom : Type u} {a b : Proposition Atom} {Γ Δ Θ : Sequent Atom}
 
-/-- Present both summands using only the supplied list. -/
+/-- **List presentations of two summands from a supplied list.**
+Present both summands using only the supplied list. -/
 def Sequent.presentSumForCut [DecidableEq Atom]
     (Γ : List (Proposition Atom)) {Θ T : Sequent Atom}
     (h : (Γ : Sequent Atom) = Θ + T) :
@@ -44,7 +45,8 @@ def Sequent.presentSumForCut [DecidableEq Atom]
     exact Multiset.le_add_left T Θ)
   ⟨l.val, r.val, l.property, r.property⟩
 
-/-- Present a tail without choosing a multiset representative. -/
+/-- **List presentation of a tail without choosing a representative.**
+Present a tail without choosing a multiset representative. -/
 def Sequent.presentTailForCut [DecidableEq Atom]
     (Γ : List (Proposition Atom)) {b : Proposition Atom} {Θ : Sequent Atom}
     (h : b ::ₘ Θ = (Γ : Sequent Atom)) :
@@ -53,7 +55,8 @@ def Sequent.presentTailForCut [DecidableEq Atom]
     rw [← h]
     exact Multiset.le_cons_self Θ b)
 
-/-- Split a selected occurrence against a rule head; the rule tail can be a multiset. -/
+/-- **Splitting a selected occurrence against a rule head.**
+Split a selected occurrence against a rule head; the rule tail can be a multiset. -/
 def Sequent.splitCutHead [DecidableEq Atom]
     {a b : Proposition Atom} {Γ : List (Proposition Atom)} {Θ : Sequent Atom}
     (h : a ::ₘ Γ = b ::ₘ Θ) :
@@ -64,7 +67,8 @@ def Sequent.splitCutHead [DecidableEq Atom]
   · exact .inl hp
   · exact .inr ⟨hn.val, hn.property.2⟩
 
-/-- The shape of a cut-free proof when the cut proposition is in principal position.
+/-- **Principal shapes of a cut-free proof at the cut proposition.**
+The shape of a cut-free proof when the cut proposition is in principal position.
 Each constructor corresponds to a rule whose conclusion matches the cut proposition.
 Axioms are handled separately in `cutStep`. Tensor carries explicit presentations
 of both premises' residual contexts. -/
@@ -89,7 +93,8 @@ inductive Proof.CutPrincipal (Γ : List (Proposition Atom)) :
   | bang {c : Proposition Atom} (hG : Γ.allQuest) (p : CF⇓(c ::ₘ Γ)) :
       Proof.CutPrincipal Γ (!c)
 
-/-- Decompose a cut against a cut-free proof: either expose a principal rule matching
+/-- **Cut step exposing a principal rule or commuting the cut.**
+Decompose a cut against a cut-free proof: either expose a principal rule matching
 the cut proposition, or commute the cut through one inference (non-principal case).
 Every recursive call is on a strictly shorter supplying derivation. -/
 def Proof.cutStep [DecidableEq Atom]
@@ -292,7 +297,8 @@ def Proof.cutStep [DecidableEq Atom]
   | .cut _ _, h => nomatch h
 
 
-/-- Cut a bang proposition by commuting through its supplying proof to an axiom or promotion.
+/-- **Cut admissibility for a bang proposition.**
+Cut a bang proposition by commuting through its supplying proof to an axiom or promotion.
 At promotion, delegates to `questMulticut` with one selected occurrence. -/
 def Proof.bangCutAdm [DecidableEq Atom]
     (cutSmaller : CutAdmissibleBelow Atom (sizeOf (!a)))
@@ -313,7 +319,8 @@ def Proof.bangCutAdm [DecidableEq Atom]
 termination_by p.val.height
 decreasing_by assumption
 
-/-- Reverse the exponential cut orientation using `bangCutAdm`, duality, and exchange.
+/-- **Question-mark cut via the bang case, duality and exchange.**
+Reverse the exponential cut orientation using `bangCutAdm`, duality, and exchange.
 This is a wrapper, not a recursive call that swaps premises at the same measure. -/
 def Proof.questCutAdm [DecidableEq Atom]
     (cutSmaller : CutAdmissibleBelow Atom (sizeOf (ʔa)))
@@ -329,7 +336,8 @@ def Proof.questCutAdm [DecidableEq Atom]
 
 open scoped Proposition
 
-/-- Reduce a pair of principal rules whose conclusions match the cut proposition.
+/-- **Reduction of a cut between matching principal rules.**
+Reduce a pair of principal rules whose conclusions match the cut proposition.
 Every recursive call is on a proper subproposition of the original cut proposition,
 so termination is guaranteed by proposition size. -/
 def Proof.cutPrincipal {a : Proposition Atom} (cutSmaller : CutAdmissibleBelow Atom (sizeOf a))
@@ -365,7 +373,8 @@ def Proof.cutPrincipal {a : Proposition Atom} (cutSmaller : CutAdmissibleBelow A
   | .with (c := c) (d := d) _ p2, .oplus2 q0 =>
       cutSmaller (a := d) (by grind) p2 q0
 
-/-- Cut admissibility for non-exponential propositions: uses height induction on the
+/-- **Cut admissibility for non-exponential propositions.**
+Cut admissibility for non-exponential propositions: uses height induction on the
 sum of premise heights, with commuting cases for non-principal rules.
 Only callable when neither `a` nor `a⫠` is a question mark. -/
 def Proof.cutAdmNonExponential [DecidableEq Atom]
@@ -391,7 +400,8 @@ def Proof.cutAdmNonExponential [DecidableEq Atom]
 termination_by Γ Δ p q => p.val.height + q.val.height
 decreasing_by all_goals lia
 
-/-- The proposition-size induction step for cut admissibility.
+/-- **Proposition-size induction step for cut admissibility.**
+The proposition-size induction step for cut admissibility.
 Dispatches to `bangCutAdm`, `questCutAdm`, or `cutAdmNonExponential` depending on
 the top-level connective. -/
 def Proof.cutAdmOfSmaller [DecidableEq Atom]
@@ -403,7 +413,8 @@ def Proof.cutAdmOfSmaller [DecidableEq Atom]
         (by intro b hb; cases hb)
         (by intro b hb; cases hb)
 
-/-- The core cut admissibility implementation: given decidable atom equality and explicit
+/-- **Core cut admissibility procedure on list sequents.**
+The core cut admissibility implementation: given decidable atom equality and explicit
 list sequents, combine cut-free proofs of dual distinguished propositions into a cut-free
 proof of the sum of their residual sequents. Recurses on proposition size. -/
 def Proof.cutAdmImpl {a : Proposition Atom} [DecidableEq Atom]
@@ -414,12 +425,14 @@ def Proof.cutAdmImpl {a : Proposition Atom} [DecidableEq Atom]
 termination_by sizeOf a
 decreasing_by exact _hc
 
-/-- Public entry point for cut admissibility: given cut-free proofs of `a ::ₘ Γ` and
+/-- **Cut admissibility for cut-free classical linear logic proofs.**
+Public entry point for cut admissibility: given cut-free proofs of `a ::ₘ Γ` and
 `a⫠ ::ₘ Δ`, produce a cut-free proof of `(Γ : Sequent) + Δ`. -/
 def Proof.cutAdm [DecidableEq Atom] {Γ Δ : List (Proposition Atom)}
     (p : CF⇓(a ::ₘ Γ)) (q : CF⇓(a⫠ ::ₘ Δ)) : CF⇓((Γ : Sequent Atom) + Δ) := cutAdmImpl p q
 
-/-- Compute cut-free proofs by structural recursion on the original (possibly
+/-- **Cut elimination by structural recursion on the proof.**
+Compute cut-free proofs by structural recursion on the original (possibly
 non-cut-free) proof. Each case recursively normalises the premises, then uses
 `cutAdm` at each cut. The list `Γ` is the explicit sequent for the current subgoal. -/
 def Proof.cutElimAux [DecidableEq Atom] {Θ : Sequent Atom} (r : Proof Θ) :
@@ -494,11 +507,13 @@ def Proof.cutElimAux [DecidableEq Atom] {Θ : Sequent Atom} (r : Proof Θ) :
       let t' := Proof.cutElimAux t (c⫠ :: R) (by grind only [multiset])
       exact (Proof.cutAdm (a := c) (Γ := Λ) (Δ := R) s' t').rwConclusion
 
-/-- List-based cut elimination with the concrete list presentation explicit. -/
+/-- **List-based cut elimination in the source calculus.**
+List-based cut elimination with the concrete list presentation explicit. -/
 def Proof.cutElimList [DecidableEq Atom] {Γ : List (Proposition Atom)}
     (p : ⇓(Γ : Sequent Atom)) : CF⇓(Γ : Sequent Atom) := cutElimAux p Γ rfl
 
-/-- Cut elimination, using a noncomputable list presentation. -/
+/-- **Cut elimination with a noncomputable list presentation.**
+Cut elimination, using a noncomputable list presentation. -/
 noncomputable def Proof.cutElim [DecidableEq Atom] {Γ : Sequent Atom} (p : ⇓Γ) : CF⇓Γ :=
   (cutElimAux p Γ.toList (Multiset.coe_toList Γ).symm).rwConclusion (Multiset.coe_toList Γ)
 

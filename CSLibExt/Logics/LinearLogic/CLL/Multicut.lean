@@ -29,18 +29,21 @@ universe u
 
 variable {Atom : Type u} {a b : Proposition Atom} {Γ Δ Θ : Sequent Atom}
 
-/-- Cut admissibility at a fixed proposition `a`: for any list sequents `Γ`, `Δ`, given
+/-- **Cut admissibility at a fixed proposition.**
+Cut admissibility at a fixed proposition `a`: for any list sequents `Γ`, `Δ`, given
 cut-free proofs of `a ::ₘ Γ` and `a⫠ ::ₘ Δ`, produce a cut-free proof of
 `(Γ : Sequent Atom) + Δ`. -/
 abbrev CutAdmissibleAt (a : Proposition Atom) := ∀ {Γ Δ : List (Proposition Atom)},
   CF⇓(a ::ₘ Γ) → CF⇓(a⫠ ::ₘ Δ) → CF⇓((Γ : Sequent Atom) + Δ)
 
-/-- The outer induction hypothesis for cut admissibility: for all propositions `a` with
+/-- **Cut admissibility below a size bound.**
+The outer induction hypothesis for cut admissibility: for all propositions `a` with
 `sizeOf a < bound`, cut is admissible at `a`. -/
 abbrev CutAdmissibleBelow (Atom : Type u) (bound : ℕ) :=
   ∀ {a : Proposition Atom}, sizeOf a < bound → CutAdmissibleAt a
 
-/-- Locate a selected question mark or a residual head using `Sequent.splitReplicateCons`. -/
+/-- **Locating a selected question mark or a residual head.**
+Locate a selected question mark or a residual head using `Sequent.splitReplicateCons`. -/
 def splitHead [DecidableEq Atom] {a b : Proposition Atom} {Θ : Sequent Atom} {n : ℕ}
     {Δ : List (Proposition Atom)}
     (h : b ::ₘ Θ = Multiset.replicate n (ʔ(a⫠)) + Δ) :
@@ -53,7 +56,8 @@ def splitHead [DecidableEq Atom] {a b : Proposition Atom} {Θ : Sequent Atom} {n
       Θ = Multiset.replicate n (ʔ(a⫠)) + Δ'} :=
   Sequent.splitReplicateCons h.symm
 
-/-- Split replicated question marks across two arbitrary multiset summands. -/
+/-- **Splitting replicated question marks across two summands.**
+Split replicated question marks across two arbitrary multiset summands. -/
 def splitAdd [DecidableEq Atom] {a : Proposition Atom} {Θ₁ Θ₂ : Sequent Atom} {n : ℕ}
     {Δ : List (Proposition Atom)}
     (h : Θ₁ + Θ₂ = Multiset.replicate n (ʔ(a⫠)) + Δ) :
@@ -82,7 +86,8 @@ def splitAdd [DecidableEq Atom] {a : Proposition Atom} {Θ₁ Θ₂ : Sequent At
   rcases Sequent.splitReplicateAdd (a := ʔ(a⫠)) hs with ⟨k, l, Δ₁, Δ₂, hn, h₁, h₂, hΔ⟩
   exact ⟨k, l, Δ₁, ⟨Δ₂, hn, hs₁.symm.trans h₁, hs₂.symm.trans h₂, hΔ⟩⟩
 
-/-- Ax case for `questMulticut`: the selected dual question mark is one of the copies of `a⫠`.
+/-- **Axiom case of the exponential multicut.**
+Ax case for `questMulticut`: the selected dual question mark is one of the copies of `a⫠`.
 This isolates the recursive branch from the plain-term outer proof. -/
 def Proof.questMulticutAx [DecidableEq Atom] {a : Proposition Atom}
     {Γ : List (Proposition Atom)} (hΓ : Γ.allQuest) (p : CF⇓(a ::ₘ Γ))
@@ -133,7 +138,8 @@ def Proof.questMulticutAx [DecidableEq Atom] {a : Proposition Atom}
         CF.Proof.weakenContext (by simpa using hΓ) (CF.Proof.ax (a := c))
       exact r.rwConclusion (by rw [hΔpair])
 
-/-- Exponential/multicut helper: given `p : CF⇓(a ::ₘ Γ)` (the "substitutend") and
+/-- **Exponential multicut against replicated question marks.**
+Exponential/multicut helper: given `p : CF⇓(a ::ₘ Γ)` (the "substitutend") and
 `q : CF⇓(Multiset.replicate n (ʔ(a⫠)) + Δ)` (the "supply" with `n` selected dual question marks),
 produce `CF⇓((Γ : Sequent) + Δ)`. -/
 def Proof.questMulticut [DecidableEq Atom] (cutSmaller : CutAdmissibleBelow Atom (sizeOf (!a)))

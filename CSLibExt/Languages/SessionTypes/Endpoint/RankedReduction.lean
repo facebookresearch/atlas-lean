@@ -20,7 +20,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- From a ranked-typed source with an initially compatible interface, every
+/-- **Subject reduction for ranked typing at compatible interfaces.**
+From a ranked-typed source with an initially compatible interface, every
 actual canonical step preserves the refinement and compatibility, with zero
 or one actual external matched subject advancement.
 Private head/continuation changes are derived from faithful bound projection. -/
@@ -64,7 +65,8 @@ theorem RankedType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (RankedType.cong_iff hq).mp hr, hc, he⟩
 
-/-- For a ranked-typed source, initial balance supplies compatibility and is
+/-- **Ranked subject reduction at balanced interfaces.**
+For a ranked-typed source, initial balance supplies compatibility and is
 preserved by the actual canonical step and its exact update. -/
 theorem RankedType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ p) (hb : Balanced Δ) (hs : PiCalculus.Step p q) :
@@ -76,7 +78,8 @@ theorem RankedType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Pr
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- Empty-interface ranked typing is preserved by any canonical step at any
+/-- **Ranked subject reduction at the empty interface.**
+Empty-interface ranked typing is preserved by any canonical step at any
 ambient depth and through pre/post congruence. The empty context supplies
 balance and therefore the required compatibility. -/
 theorem RankedType.subject_reduction_empty {n : Nat} {p q : Proc}

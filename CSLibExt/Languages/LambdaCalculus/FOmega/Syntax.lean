@@ -33,23 +33,25 @@ no additional data kinds, subtyping or recursion are included.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega
 
-/-- Kinds of pure Fω. `star` classifies types of terms. -/
+/-- **Kinds of pure Fω.** Kinds of pure Fω. `star` classifies types of terms. -/
 inductive Kind where
   | star : Kind
   | arrow : Kind → Kind → Kind
   deriving DecidableEq, Repr
 
-/-- A type variable with its position and kind certified by the telescope. -/
+/-- **Kinded type variables of Fω.**
+A type variable with its position and kind certified by the telescope. -/
 inductive KVar : List Kind → Kind → Type where
   | zero {Δ : List Kind} {κ : Kind} : KVar (κ :: Δ) κ
   | succ {Δ : List Kind} {κ μ : Kind} : KVar Δ κ → KVar (μ :: Δ) κ
 
-/-- Kind-preserving renamings of type variables. -/
+/-- **Kind-preserving renamings of type variables.** Kind-preserving renamings of type variables. -/
 abbrev KRen (Δ Ε : List Kind) := ∀ {κ}, KVar Δ κ → KVar Ε κ
 
 namespace KRen
 
-/-- Lift a kind-preserving renaming beneath a type binder. -/
+/-- **Lifting a renaming under a type binder.**
+Lift a kind-preserving renaming beneath a type binder. -/
 def lift {Δ Ε : List Kind} {μ : Kind} (ρ : KRen Δ Ε) :
     KRen (μ :: Δ) (μ :: Ε)
   | _, .zero => .zero
@@ -57,7 +59,8 @@ def lift {Δ Ε : List Kind} {μ : Kind} (ρ : KRen Δ Ε) :
 
 end KRen
 
-/-- Type operators, intrinsically indexed by context and result kind. -/
+/-- **Intrinsically kinded Fω type operators.**
+Type operators, intrinsically indexed by context and result kind. -/
 inductive Ty : List Kind → Kind → Type where
   | var {Δ : List Kind} {κ : Kind} : KVar Δ κ → Ty Δ κ
   | lam {Δ : List Kind} {κ μ : Kind} :
@@ -69,7 +72,8 @@ inductive Ty : List Kind → Kind → Type where
 
 namespace Ty
 
-/-- Rename free type variables, lifting at both forms of type binder. -/
+/-- **Renaming of Fω type operators.**
+Rename free type variables, lifting at both forms of type binder. -/
 def rename {Δ Ε : List Kind} (ρ : KRen Δ Ε) :
     {κ : Kind} → Ty Δ κ → Ty Ε κ
   | _, .var x => .var (ρ x)
@@ -78,16 +82,19 @@ def rename {Δ Ε : List Kind} (ρ : KRen Δ Ε) :
   | _, .arr a b => .arr (rename ρ a) (rename ρ b)
   | _, .all b => .all (rename (KRen.lift ρ) b)
 
-/-- Kind-preserving simultaneous substitutions. -/
+/-- **Kind-preserving simultaneous type substitutions.**
+Kind-preserving simultaneous substitutions. -/
 abbrev Sub (Δ Ε : List Kind) := ∀ {κ}, KVar Δ κ → Ty Ε κ
 
-/-- Lift substitution beneath a type binder without capturing old images. -/
+/-- **Lifting a type substitution under a type binder.**
+Lift substitution beneath a type binder without capturing old images. -/
 def liftSub {Δ Ε : List Kind} {μ : Kind} (σ : Sub Δ Ε) :
     Sub (μ :: Δ) (μ :: Ε)
   | _, .zero => .var .zero
   | _, .succ x => rename KVar.succ (σ x)
 
-/-- Capture-avoiding simultaneous substitution of kinded type operators. -/
+/-- **Simultaneous substitution of Fω type operators.**
+Capture-avoiding simultaneous substitution of kinded type operators. -/
 def subst {Δ Ε : List Kind} (σ : Sub Δ Ε) :
     {κ : Kind} → Ty Δ κ → Ty Ε κ
   | _, .var x => σ x
@@ -96,12 +103,14 @@ def subst {Δ Ε : List Kind} (σ : Sub Δ Ε) :
   | _, .arr a b => .arr (subst σ a) (subst σ b)
   | _, .all b => .all (subst (liftSub σ) b)
 
-/-- Substitution replacing only the newest type variable. -/
+/-- **Substitution for the newest type variable.**
+Substitution replacing only the newest type variable. -/
 def single {Δ : List Kind} {κ : Kind} (a : Ty Δ κ) : Sub (κ :: Δ) Δ
   | _, .zero => a
   | _, .succ x => .var x
 
-/-- Substitute for the newest variable and discharge its binder. -/
+/-- **Instantiation of an Fω type binder.**
+Substitute for the newest variable and discharge its binder. -/
 def instantiate {Δ : List Kind} {κ μ : Kind}
     (b : Ty (κ :: Δ) μ) (a : Ty Δ κ) : Ty Δ μ := subst (single a) b
 

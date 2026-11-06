@@ -21,18 +21,21 @@ record the active restricted channels hidden inside a process.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- Every owned role has its opposite role at the same physical name, with
+/-- **Balanced endpoint ownership.**
+Every owned role has its opposite role at the same physical name, with
 the same rank and the dual protocol. This condition may permit deadlocks. -/
 def Balanced (Δ : Context) : Prop :=
   ∀ e c, Δ.lookup e = some c → Δ.lookup e.opposite = some c.dual
 
-/-- An empty external interface is balanced. Internal ν channels still
+/-- **The empty interface is balanced.**
+An empty external interface is balanced. Internal ν channels still
 require their own balanced ownership and are not thereby completed. -/
 theorem balanced_empty : Balanced (∅ : Context) := by
   intro e c hc
   simp at hc
 
-/-- A real fresh restriction creates a balanced pair on a single physical name. -/
+/-- **A fresh restriction pair is balanced.**
+A real fresh restriction creates a balanced pair on a single physical name. -/
 theorem balanced_bind_empty (c : Capability) : Balanced (Context.bind c ∅) := by
   intro e t he
   rw [Context.bind_empty] at he
@@ -50,7 +53,8 @@ theorem balanced_bind_empty (c : Capability) : Balanced (Context.bind c ∅) := 
     subst t
     simpa [Key.opposite, Role.opposite] using Context.lookup_bind_positive c ∅
 
-/-- Capture-safe rekeying transports balance when endpoint roles are retained.
+/-- **Rekeying preserves balance.**
+Capture-safe rekeying transports balance when endpoint roles are retained.
 The injectivity condition is on owned keys, not on arbitrary passive data. -/
 theorem Balanced.rekey {Δ : Context} {f : PiCalculus.Name → PiCalculus.Name}
     (h : Balanced Δ) (hf : Set.InjOn (Key.mapName f) {e | e ∈ Δ}) :
@@ -59,17 +63,20 @@ theorem Balanced.rekey {Δ : Context} {f : PiCalculus.Name → PiCalculus.Name}
   obtain ⟨d, hd, rfl⟩ := Context.lookup_rekey.mp hc
   exact Context.lookup_rekey.mpr ⟨d.opposite, h d c hd, rfl⟩
 
-/-- A partial interface is compatible if opposite roles, WHEN both are
+/-- **Compatibility of a partial endpoint interface.**
+A partial interface is compatible if opposite roles, WHEN both are
 present, have dual protocols. A missing peer is not an enabled-edge witness. -/
 def Compatible (Δ : Context) : Prop :=
   ∀ e c d, Δ.lookup e = some c → Δ.lookup e.opposite = some d → d = c.dual
 
-/-- A balanced complete interface supplies compatibility for every present pair. -/
+/-- **Balanced interfaces are compatible.**
+A balanced complete interface supplies compatibility for every present pair. -/
 theorem Balanced.compatible {Δ : Context} (h : Balanced Δ) : Compatible Δ := by
   intro e c d hc hd
   exact Context.unique hd (h e c hc)
 
-/-- A dual-compatible pair of physically equal but disjoint owned keys
+/-- **Disjoint owned keys on one name have opposite roles.**
+A dual-compatible pair of physically equal but disjoint owned keys
 must be opposite roles. The runtime channel name alone does not supply this. -/
 theorem disjoint_subjects_opposite {Δ Θ : Context} {e d : Key} {c t : Capability}
     (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -79,7 +86,8 @@ theorem disjoint_subjects_opposite {Δ Θ : Context} {e d : Key} {c t : Capabili
   exact hd e (Finmap.mem_of_lookup_eq_some hc)
     (he.symm ▸ Finmap.mem_of_lookup_eq_some ht)
 
-/-- Any left subcontext of a compatible interface retains compatibility of
+/-- **Compatibility passes to the left part of a union.**
+Any left subcontext of a compatible interface retains compatibility of
 its present pairs; no global-progress assumption is involved. -/
 theorem Compatible.union_left {Δ Θ : Context} (h : Compatible (Δ ∪ Θ)) :
     Compatible Δ := by
@@ -88,7 +96,8 @@ theorem Compatible.union_left {Δ Θ : Context} (h : Compatible (Δ ∪ Θ)) :
     ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hc)).trans hc)
     ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hd)).trans hd)
 
-/-- A right child of a disjoint linear split inherits compatibility of
+/-- **Compatibility passes to the right part of a disjoint split.**
+A right child of a disjoint linear split inherits compatibility of
 its present pairs from the combined interface. -/
 theorem Compatible.union_right {Δ Θ : Context} (h : Compatible (Δ ∪ Θ))
     (hd : Finmap.Disjoint Δ Θ) : Compatible Θ := by

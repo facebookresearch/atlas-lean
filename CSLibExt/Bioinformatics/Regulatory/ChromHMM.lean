@@ -66,19 +66,22 @@ variable {d : ℕ}
 
 /-! ## The factored emission update -/
 
-/-- The weight `∑ o with o j = true, c o` of the binary vectors with mark `j` present. -/
+/-- **Weight of binary vectors with a mark present.**
+The weight `∑ o with o j = true, c o` of the binary vectors with mark `j` present. -/
 noncomputable def onesCount (c : (Fin d → Bool) → ℝ) (j : Fin d) : ℝ :=
   ∑ o, if o j then c o else 0
 
-/-- The weight `∑ o with o j = false, c o` of the binary vectors with mark `j` absent. -/
+/-- **Weight of binary vectors with a mark absent.**
+The weight `∑ o with o j = false, c o` of the binary vectors with mark `j` absent. -/
 noncomputable def zerosCount (c : (Fin d → Bool) → ℝ) (j : Fin d) : ℝ :=
   ∑ o, if o j then 0 else c o
 
-/-- The factored (per-mark) update `ones j / (ones j + zeros j)`. -/
+/-- **Factored per-mark update.** The factored (per-mark) update `ones j / (ones j + zeros j)`. -/
 noncomputable def factoredUpdate (c : (Fin d → Bool) → ℝ) (j : Fin d) : ℝ :=
   onesCount c j / (onesCount c j + zerosCount c j)
 
-/-- A product of Bernoulli distributions sums to one over the binary vectors, for every
+/-- **Product of Bernoulli distributions sums to one.**
+A product of Bernoulli distributions sums to one over the binary vectors, for every
 parameter vector `p` (the identity is algebraic: `∏ j, (p j + (1 - p j)) = 1`). -/
 theorem sum_bernPMF (p : Fin d → ℝ) : ∑ x, bernPMF p x = 1 := by
   classical
@@ -86,7 +89,8 @@ theorem sum_bernPMF (p : Fin d → ℝ) : ∑ x, bernPMF p x = 1 := by
   rw [← Fintype.prod_sum (fun j (b : Bool) => if b then p j else 1 - p j)]
   simp
 
-/-- The expected log-likelihood of weighted binary vectors under a product of Bernoulli
+/-- **Expected product-Bernoulli log-likelihood splits over marks.**
+The expected log-likelihood of weighted binary vectors under a product of Bernoulli
 distributions with parameters in `(0, 1)` splits over the marks. -/
 theorem sum_mul_log_bernPMF (c : (Fin d → Bool) → ℝ) {p : Fin d → ℝ} (hp0 : ∀ j, 0 < p j)
     (hp1 : ∀ j, p j < 1) :
@@ -167,12 +171,13 @@ theorem sum_mul_log_bernPMF_le_factoredUpdate {c : (Fin d → Bool) → ℝ} (hc
   rw [hcompl]
   exact bernoulli_log_le (h1 j) (h0 j) (hp0 j) (hp1 j)
 
-/-- The factored update is positive when both counts are. -/
+/-- **Positivity of the factored update.** The factored update is positive when both counts are. -/
 theorem factoredUpdate_pos {c : (Fin d → Bool) → ℝ} (h1 : ∀ j, 0 < onesCount c j)
     (h0 : ∀ j, 0 < zerosCount c j) (j : Fin d) : 0 < factoredUpdate c j :=
   div_pos (h1 j) (add_pos (h1 j) (h0 j))
 
-/-- The factored update is below one when both counts are positive. -/
+/-- **Factored update is below one.**
+The factored update is below one when both counts are positive. -/
 theorem factoredUpdate_lt_one {c : (Fin d → Bool) → ℝ} (h1 : ∀ j, 0 < onesCount c j)
     (h0 : ∀ j, 0 < zerosCount c j) (j : Fin d) : factoredUpdate c j < 1 :=
   (div_lt_one (add_pos (h1 j) (h0 j))).2 (lt_add_of_pos_right _ (h0 j))
@@ -181,7 +186,8 @@ theorem factoredUpdate_lt_one {c : (Fin d → Bool) → ℝ} (h1 : ∀ j, 0 < on
 
 variable {S : Type*} [Fintype S] [DecidableEq S]
 
-/-- ChromHMM parameters: initial and transition weights, and the presence probability of each
+/-- **ChromHMM parameters.**
+ChromHMM parameters: initial and transition weights, and the presence probability of each
 mark in each state. -/
 structure Params (S : Type*) (d : ℕ) where
   /-- The initial weight of each state. -/
@@ -191,13 +197,15 @@ structure Params (S : Type*) (d : ℕ) where
   /-- The probability that mark `j` is present in state `s`. -/
   prob : S → Fin d → ℝ
 
-/-- The HMM of ChromHMM parameters: emissions are products of Bernoulli distributions. -/
+/-- **HMM of ChromHMM parameters.**
+The HMM of ChromHMM parameters: emissions are products of Bernoulli distributions. -/
 noncomputable def Params.toHMM (θ : Params S d) : HMM S (Fin d → Bool) ℝ where
   init := θ.init
   trans := θ.trans
   emit s o := bernPMF (θ.prob s) o
 
-/-- Valid parameters: positive initial and transition distributions, mark probabilities in
+/-- **Valid ChromHMM parameters.**
+Valid parameters: positive initial and transition distributions, mark probabilities in
 `(0, 1)`. -/
 structure Params.Valid (θ : Params S d) : Prop where
   init_pos : ∀ s, 0 < θ.init s
@@ -207,11 +215,11 @@ structure Params.Valid (θ : Params S d) : Prop where
   prob_pos : ∀ s j, 0 < θ.prob s j
   prob_lt_one : ∀ s j, θ.prob s j < 1
 
-/-- The parameter space of ChromHMM. -/
+/-- **Parameter space of ChromHMM.** The parameter space of ChromHMM. -/
 abbrev ValidParams (S : Type*) [Fintype S] (d : ℕ) := {θ : Params S d // θ.Valid}
 
 omit [DecidableEq S] in
-/-- A valid ChromHMM parameter is a valid HMM. -/
+/-- **Valid ChromHMM parameters give a valid HMM.** A valid ChromHMM parameter is a valid HMM. -/
 theorem Params.Valid.toHMM {θ : Params S d} (h : θ.Valid) : BaumWelch.Valid θ.toHMM where
   init_pos := h.init_pos
   init_sum := h.init_sum
@@ -220,24 +228,28 @@ theorem Params.Valid.toHMM {θ : Params S d} (h : θ.Valid) : BaumWelch.Valid θ
   emit_pos s o := bernPMF_pos (h.prob_pos s) (h.prob_lt_one s) o
   emit_sum s := sum_bernPMF (θ.prob s)
 
-/-- The valid HMM of a valid ChromHMM parameter. -/
+/-- **Valid HMM built from a valid ChromHMM parameter.**
+The valid HMM of a valid ChromHMM parameter. -/
 noncomputable def toValidHMM (θ : ValidParams S d) : ValidHMM S (Fin d → Bool) :=
   ⟨θ.1.toHMM, θ.2.toHMM⟩
 
 variable (T : ℕ)
 
-/-- The EM model of ChromHMM: the joint weight of a state path and a sequence of mark vectors. -/
+/-- **ChromHMM joint weight of a state path and mark vectors.**
+The EM model of ChromHMM: the joint weight of a state path and a sequence of mark vectors. -/
 noncomputable def joint (θ : ValidParams S d) (x : ℕ → Fin d → Bool) (z : Fin (T + 1) → S) :
     ℝ :=
   BaumWelch.joint T (toValidHMM θ) x z
 
 variable {N : ℕ} (xs : Fin N → ℕ → Fin d → Bool)
 
-/-- The expected number of bins in state `s` with mark `j` present. -/
+/-- **Expected number of bins in a state with a mark present.**
+The expected number of bins in state `s` with mark `j` present. -/
 noncomputable def markOnes (θ : ValidParams S d) (s : S) (j : Fin d) : ℝ :=
   onesCount (emitCount T xs (toValidHMM θ) s) j
 
-/-- The expected number of bins in state `s` with mark `j` absent. -/
+/-- **Expected number of bins in a state with a mark absent.**
+The expected number of bins in state `s` with mark `j` absent. -/
 noncomputable def markZeros (θ : ValidParams S d) (s : S) (j : Fin d) : ℝ :=
   zerosCount (emitCount T xs (toValidHMM θ) s) j
 
@@ -269,7 +281,8 @@ theorem markOnes_eq (θ : ValidParams S d) (s : S) (j : Fin d) :
   · intro o _ ho; simp [Ne.symm ho]
   · simp
 
-/-- Data on which the ChromHMM M-step is valid: a sequence, a transition, and every mark both
+/-- **Rich data for the ChromHMM M-step.**
+Data on which the ChromHMM M-step is valid: a sequence, a transition, and every mark both
 present and absent somewhere. -/
 structure Rich (xs : Fin N → ℕ → Fin d → Bool) : Prop where
   pos : 0 < N
@@ -352,12 +365,12 @@ theorem mStep_valid (hx : Rich T xs) (θ : ValidParams S d) : (mStep T xs θ).Va
   prob_lt_one s := factoredUpdate_lt_one (onesCount_pos hx _ s) (zerosCount_pos hx _ s)
 
 variable (T xs) in
-/-- One ChromHMM step, on rich data. -/
+/-- **One ChromHMM step on rich data.** One ChromHMM step, on rich data. -/
 noncomputable def emStep (hx : Rich T xs) (θ : ValidParams S d) : ValidParams S d :=
   ⟨mStep T xs θ, mStep_valid hx θ⟩
 
 omit [DecidableEq S] in
-/-- The ChromHMM joint weight is positive. -/
+/-- **Positivity of the ChromHMM joint weight.** The ChromHMM joint weight is positive. -/
 theorem joint_pos (θ : ValidParams S d) (x : ℕ → Fin d → Bool) (z : Fin (T + 1) → S) :
     0 < joint T θ x z :=
   BaumWelch.joint_pos T (toValidHMM θ) x z
@@ -405,7 +418,8 @@ theorem logLik_iterate_emStep_monotone (hx : Rich T xs) (θ₀ : ValidParams S d
 
 variable (T xs) in
 omit [DecidableEq S] in
-/-- The EM log-likelihood is the sum of the HMM log-likelihoods of the sequences. -/
+/-- **EM log-likelihood as a sum of HMM log-likelihoods.**
+The EM log-likelihood is the sum of the HMM log-likelihoods of the sequences. -/
 theorem logLik_eq (θ : ValidParams S d) :
     logLik (joint T) xs θ = ∑ n, log (likelihood θ.1.toHMM (xs n) T) := rfl
 

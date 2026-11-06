@@ -23,45 +23,51 @@ namespace Cslib.Languages.LambdaCalculus.SystemF
 
 open Cslib.LambdaCalculus.LocallyNameless.Untyped
 
-/-- Locally closed terms in the pinned CSLib untyped calculus. -/
+/-- **Untyped locally closed term model.**
+Locally closed terms in the pinned CSLib untyped calculus. -/
 abbrev Model : Type := {t : Term Nat // t.LcAt 0}
 
-/-- Equivalence closure of the existing full-beta reduction. -/
+/-- **Beta equivalence in the untyped term model.**
+Equivalence closure of the existing full-beta reduction. -/
 abbrev BetaEq (f g : Model) : Prop :=
   Relation.EqvGen Term.FullBeta f.val g.val
 
 namespace Model
 
-/-- Application in the existing untyped term model preserves local closure. -/
+/-- **Application in the untyped term model.**
+Application in the existing untyped term model preserves local closure. -/
 def app (f a : Model) : Model :=
   ⟨.app f.val a.val, by
     simpa only [Term.LcAt, Bool.and_eq_true] using
       And.intro f.property a.property⟩
 
-/-- The Boolean carrier invariant implies CSLib's cofinite local closure. -/
+/-- **Model terms are locally closed.**
+The Boolean carrier invariant implies CSLib's cofinite local closure. -/
 theorem lc (t : Model) : t.val.LC :=
   (Term.lcAt_iff_LC t.val).mp t.property
 
-/-- A symbolic atom is locally closed; it is not a new System F constant. -/
+/-- **Symbolic atoms of the untyped term model.**
+A symbolic atom is locally closed; it is not a new System F constant. -/
 def atom (i : Nat) : Model := ⟨.fvar i, rfl⟩
 
 end Model
 
 namespace BetaEq
 
-/-- Upstream beta equivalence is reflexive. -/
+/-- **Reflexivity of beta equivalence.** Upstream beta equivalence is reflexive. -/
 @[refl] theorem refl (f : Model) : BetaEq f f := Relation.EqvGen.refl f.val
 
-/-- Upstream beta equivalence is symmetric. -/
+/-- **Symmetry of beta equivalence.** Upstream beta equivalence is symmetric. -/
 @[symm] theorem symm {f g : Model} (h : BetaEq f g) : BetaEq g f :=
   Relation.EqvGen.symm f.val g.val h
 
-/-- Upstream beta equivalence is transitive. -/
+/-- **Transitivity of beta equivalence.** Upstream beta equivalence is transitive. -/
 @[trans] theorem trans {f g h : Model} (hfg : BetaEq f g)
     (hgh : BetaEq g h) : BetaEq f h :=
   Relation.EqvGen.trans f.val g.val h.val hfg hgh
 
-/-- Application preserves beta equivalence in its function position. -/
+/-- **Beta equivalence is a congruence in function position.**
+Application preserves beta equivalence in its function position. -/
 theorem appFun {f g : Model} (h : BetaEq f g) (a : Model) :
     BetaEq (Model.app f a) (Model.app g a) := by
   change Relation.EqvGen Term.FullBeta
@@ -76,7 +82,8 @@ theorem appFun {f g : Model} (h : BetaEq f g) (a : Model) :
   | trans f g h hfg hgh ihfg ihgh =>
     exact Relation.EqvGen.trans _ _ _ ihfg ihgh
 
-/-- Application preserves beta equivalence in its argument position. -/
+/-- **Beta equivalence is a congruence in argument position.**
+Application preserves beta equivalence in its argument position. -/
 theorem appArg (f : Model) {a b : Model} (h : BetaEq a b) :
     BetaEq (Model.app f a) (Model.app f b) := by
   change Relation.EqvGen Term.FullBeta

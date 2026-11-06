@@ -95,7 +95,8 @@ end
 
 mutual
 
-/-- Satisfaction of a CTL* state formula at a state over canonical `Cslib.LTS`:
+/-- **CTL$^{\ast}$ state satisfaction over labeled executions.**
+Satisfaction of a CTL* state formula at a state over canonical `Cslib.LTS`:
 `E π` holds when some infinite labeled execution from the state satisfies `π`;
 `A π` when every infinite labeled execution does. -/
 def UpstreamStateSat (lts : _root_.Cslib.LTS State Label)
@@ -110,7 +111,8 @@ def UpstreamStateSat (lts : _root_.Cslib.LTS State Label)
   | .forall π, s => ∀ oss μs, oss 0 = s → lts.OmegaExecution oss μs →
       UpstreamPathSat lts valuation π oss
 
-/-- Satisfaction of a CTL* path formula on a canonical infinite labeled execution:
+/-- **CTL$^{\ast}$ path satisfaction on labeled executions.**
+Satisfaction of a CTL* path formula on a canonical infinite labeled execution:
 `next` drops the first state, while `until` asks for a target position with the guard
 before it. -/
 def UpstreamPathSat (lts : _root_.Cslib.LTS State Label)

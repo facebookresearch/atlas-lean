@@ -24,7 +24,7 @@ namespace Cslib.Complexity.FramedCNF.NormalizeMachine
 
 open Turing Function MetaMathlibExt.TM2Program
 
-/-- Input, reverse buffer, and output. -/
+/-- **Stacks of the payload normalizer machine.** Input, reverse buffer, and output. -/
 inductive K | input | buffer | output
   deriving DecidableEq
 
@@ -32,7 +32,8 @@ instance : Fintype K where
   elems := ⟨↑[K.input, .buffer, .output], by decide⟩
   complete k := by cases k <;> decide
 
-/-- The reader records the last payload bit; `none` means empty input. -/
+/-- **Control labels of the payload normalizer machine.**
+The reader records the last payload bit; `none` means empty input. -/
 inductive Lab | read (last : Option Bool) | copy | done
   deriving DecidableEq
 
@@ -42,7 +43,8 @@ instance : Fintype Lab where
   complete l := by
     rcases l with (_ | (_ | _)) | _ | _ <;> decide
 
-/-- Normalization using only Boolean stack symbols and finite control. -/
+/-- **Program of the payload normalizer machine.**
+Normalization using only Boolean stack symbols and finite control. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .read last =>
     .peek .input (fun _ o => o.isSome) <| .branch id
@@ -54,7 +56,8 @@ def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .copy => moveB .buffer .output some id .copy .done
   | .done => .halt
 
-/-- The three stack contents used in the run invariant. -/
+/-- **Stack contents for the payload normalizer invariant.**
+The three stack contents used in the run invariant. -/
 def st (input buffer output : List Bool) : K → List Bool
   | .input => input
   | .buffer => buffer
@@ -87,7 +90,8 @@ private theorem read_end (pre out : List Bool) (v : Bool) :
     cases k <;> rfl
   · simp [prog, TM2.stepAux, st, normalizeNat, h]
 
-/-- The read phase consumes each input bit once and optionally adds the
+/-- **Read phase of the payload normalizer consumes each bit once.**
+The read phase consumes each input bit once and optionally adds the
 implicit terminal one. The prefix records already-consumed input. -/
 theorem read_run (xs : List Bool) : ∀ (pre out : List Bool) (v : Bool),
     Run prog (xs.length + 1)
@@ -106,7 +110,8 @@ theorem read_run (xs : List Bool) : ∀ (pre out : List Bool) (v : Bool),
     exact ((read_step b xs pre.reverse out pre.getLast? v).trans h).of_eq
       (by simp; omega)
 
-/-- The whole component runs in at most `2 |x| + 3` steps. -/
+/-- **Linear step bound for the payload normalizer machine.**
+The whole component runs in at most `2 |x| + 3` steps. -/
 theorem run (x : List Bool) :
     ∃ v S, RunLe prog (2 * x.length + 3)
       ⟨some (.read none), false, st x [] []⟩
@@ -126,7 +131,8 @@ theorem run (x : List Bool) :
     omega
   · simpa [st, y] using hout
 
-/-- The normalizer in the canonical component interface. -/
+/-- **Payload normalizer as a host component.**
+The normalizer in the canonical component interface. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -136,7 +142,8 @@ abbrev component : Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- Total binary-payload normalization is polynomial-time in the
+/-- **Payload normalization is polynomial-time.**
+Total binary-payload normalization is polynomial-time in the
 canonical encoded machine model. -/
 theorem isPolyTime_normalizeNat :
     MetaMathlibExt.ComplexityTheory.IsPolyTime normalizeNat := by

@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- The given physical name occurs in no subject, payload or continuation
+/-- **Absence of a physical name from a process.**
+The given physical name occurs in no subject, payload or continuation
 position. Existing binders shift the tracked outer name with canonical lift. -/
 def NameAbsent (a : Name) : Proc → Prop
   | .nil => True
@@ -34,7 +35,8 @@ def NameAbsent (a : Name) : Proc → Prop
   | .nu p => NameAbsent (liftName 0 a) p
   | .repl p => NameAbsent a p
 
-/-- A transmitted endpoint payload is an occurrence, even when completed. -/
+/-- **An output payload name is not absent.**
+A transmitted endpoint payload is an occurrence, even when completed. -/
 theorem NameAbsent.out_payload {a b : Name} {p : Proc} :
     ¬ NameAbsent a (.out b a p) := by
   intro h
@@ -55,7 +57,8 @@ private theorem inserted_name_ne_lift (k : Nat) (a : Name) :
       have hi := Name.var.inj h
       omega
 
-/-- The inserted name is absent from every position of the actual lifted
+/-- **The inserted name is absent from a lifted process.**
+The inserted name is absent from every position of the actual lifted
 π term, including payloads and all nested input/restriction binders. -/
 theorem nameAbsent_fresh_lift (k : Nat) (p : Proc) :
     NameAbsent (.var k) (liftProc k p) := by

@@ -68,7 +68,7 @@ namespace Probability
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The `±1` value of a bit: `false ↦ 1`, `true ↦ -1`. -/
+/-- **$\pm 1$ value of a bit.** The `±1` value of a bit: `false ↦ 1`, `true ↦ -1`. -/
 def khc_sign (b : Bool) : ℝ := if b then -1 else 1
 
 @[simp] theorem khc_sign_false : khc_sign false = 1 := rfl
@@ -77,7 +77,8 @@ def khc_sign (b : Bool) : ℝ := if b then -1 else 1
 theorem khc_sign_sq (b : Bool) : khc_sign b * khc_sign b = 1 := by
   cases b <;> simp [khc_sign]
 
-/-- The Walsh character `χ_S(x) = ∏_{i ∈ S} (-1)^{x i}` on `{0, 1}^ι`.
+/-- **Walsh character on the Boolean cube.**
+The Walsh character `χ_S(x) = ∏_{i ∈ S} (-1)^{x i}` on `{0, 1}^ι`.
 
   This legacy sign convention is retained for KKL consumers; its proofs use
   `BooleanCube.cubeChi` through `khc_walshChar_eq_cubeChi`. -/
@@ -109,19 +110,22 @@ theorem khc_walshChar_mul (S T : Finset ι) (x : ι → Bool) :
   by_cases hS : i ∈ S <;> by_cases hT : i ∈ T <;>
     simp [hS, hT, Finset.mem_symmDiff, khc_sign_sq]
 
-/-- The Fourier–Walsh coefficient `f̂(S) = 𝔼[f χ_S]` under the uniform measure.
+/-- **Fourier–Walsh coefficient under the uniform measure.**
+The Fourier–Walsh coefficient `f̂(S) = 𝔼[f χ_S]` under the uniform measure.
 
   This retains the legacy signs; `khc_fourierCoeff_eq_boolFourierCoeff` transports
   the canonical Fourier identities used below. -/
 noncomputable def khc_fourierCoeff (f : (ι → Bool) → ℝ) (S : Finset ι) : ℝ :=
   bnt_uexp (fun x => f x * khc_walshChar S x)
 
-/-- The function `f` on `{0, 1}^ι` transported to `{0, 1}^κ` along the bijection `e : κ ≃ ι`. -/
+/-- **Reindexing a cube function along an index bijection.**
+The function `f` on `{0, 1}^ι` transported to `{0, 1}^κ` along the bijection `e : κ ≃ ι`. -/
 noncomputable def khc_reindex {κ : Type*} (e : κ ≃ ι) (f : (ι → Bool) → ℝ) :
     (κ → Bool) → ℝ :=
   fun y => f (fun i => y (e.symm i))
 
-/-- The bijection `{0, 1}^ι ≃ {0, 1}^κ` induced by `e : κ ≃ ι`. -/
+/-- **Cube bijection induced by an index bijection.**
+The bijection `{0, 1}^ι ≃ {0, 1}^κ` induced by `e : κ ≃ ι`. -/
 def khc_cubeEquiv {κ : Type*} (e : κ ≃ ι) : (ι → Bool) ≃ (κ → Bool) :=
   Equiv.arrowCongr e.symm (Equiv.refl Bool)
 
@@ -165,7 +169,8 @@ theorem khc_noiseOp_reindex {κ : Type*} [Fintype κ] [DecidableEq κ] (e : κ �
     intro i _; simp [Equiv.symm_apply_apply]
   · congr 1; funext j; simp [Equiv.apply_symm_apply]
 
-/-- On `Fin n`, the Walsh character is `BooleanCube.cubeChi` up to the sign `(-1)^{|S|}`:
+/-- **Walsh character agrees with the canonical cube character up to sign.**
+On `Fin n`, the Walsh character is `BooleanCube.cubeChi` up to the sign `(-1)^{|S|}`:
 `BooleanCube.cubeVal` sends `true` to `1`, while `khc_sign` sends it to `-1`. -/
 theorem khc_walshChar_eq_cubeChi {n : ℕ} (S : Finset (Fin n)) (x : Fin n → Bool) :
     khc_walshChar S x = (-1) ^ S.card * BooleanCube.cubeChi n S x := by
@@ -174,7 +179,8 @@ theorem khc_walshChar_eq_cubeChi {n : ℕ} (S : Finset (Fin n)) (x : Fin n → B
   refine Finset.prod_congr rfl fun i _ => ?_
   cases x i <;> simp [khc_sign, BooleanCube.cubeVal]
 
-/-- On `Fin n`, the Fourier coefficient is `BooleanCube.boolFourierCoeff` up to the sign
+/-- **Walsh coefficient is the canonical Fourier coefficient up to sign.**
+On `Fin n`, the Fourier coefficient is `BooleanCube.boolFourierCoeff` up to the sign
 `(-1)^{|S|}`. -/
 theorem khc_fourierCoeff_eq_boolFourierCoeff {n : ℕ} (f : (Fin n → Bool) → ℝ)
     (S : Finset (Fin n)) :
@@ -187,19 +193,22 @@ theorem khc_fourierCoeff_eq_boolFourierCoeff {n : ℕ} (f : (Fin n → Bool) →
   ring
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- Reindexing a Walsh character reindexes its finite set of coordinates. -/
+/-- **Reindexing a Walsh character reindexes its coordinate set.**
+Reindexing a Walsh character reindexes its finite set of coordinates. -/
 theorem khc_walshChar_reindex {κ : Type*} (e : ι ≃ κ) (S : Finset ι) :
     khc_reindex e.symm (khc_walshChar S) = khc_walshChar (e.finsetCongr S) := by
   funext x
   simp [khc_reindex, khc_walshChar, Equiv.finsetCongr_apply]
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- Reindexing back at the corresponding cube point recovers the original value. -/
+/-- **Reindexing preserves values at corresponding cube points.**
+Reindexing back at the corresponding cube point recovers the original value. -/
 theorem khc_reindex_cubeEquiv {κ : Type*} (e : κ ≃ ι) (f : (ι → Bool) → ℝ)
     (x : ι → Bool) : khc_reindex e f (khc_cubeEquiv e x) = f x := by
   simp [khc_reindex, khc_cubeEquiv, Equiv.arrowCongr_apply, Function.comp_def]
 
-/-- Fourier coefficients are unchanged when both the function and its index are reindexed. -/
+/-- **Fourier coefficients are invariant under reindexing.**
+Fourier coefficients are unchanged when both the function and its index are reindexed. -/
 theorem khc_fourierCoeff_reindex {κ : Type*} [Fintype κ] [DecidableEq κ]
     (e : ι ≃ κ) (f : (ι → Bool) → ℝ) (S : Finset ι) :
     khc_fourierCoeff (khc_reindex e.symm f) (e.finsetCongr S) = khc_fourierCoeff f S := by
@@ -263,7 +272,7 @@ theorem khc_sum_walshChar_mul (x y : ι → Bool) :
       rw [BooleanCube.sum_cubeChi_apply_mul_cubeChi_apply_eq_ite]
       simp only [Equiv.apply_eq_iff_eq]
 
-/-- Fourier inversion: `f = ∑_S f̂(S) χ_S`. -/
+/-- **Fourier inversion on the Boolean cube.** Fourier inversion: `f = ∑_S f̂(S) χ_S`. -/
 theorem khc_fourier_expansion (f : (ι → Bool) → ℝ) (x : ι → Bool) :
     (∑ S : Finset ι, khc_fourierCoeff f S * khc_walshChar S x) = f x := by
   let e := Fintype.equivFin ι
@@ -287,7 +296,7 @@ theorem khc_uexp_const_mul (c : ℝ) (g : (ι → Bool) → ℝ) :
     bnt_uexp (fun x => c * g x) = c * bnt_uexp g := by
   unfold bnt_uexp; rw [← Finset.mul_sum, mul_div_assoc]
 
-/-- Parseval's identity: `𝔼[f g] = ∑_S f̂(S) ĝ(S)`.
+/-- **Parseval's identity on the Boolean cube.** Parseval's identity: `𝔼[f g] = ∑_S f̂(S) ĝ(S)`.
 
   Transported from `BooleanCube.expect_mul_eq_sum_boolFourierCoeff_mul`. -/
 theorem khc_parseval (f g : (ι → Bool) → ℝ) :
@@ -341,7 +350,8 @@ theorem khc_noiseOp_finset_sum {κ : Type*} (ρ : ℝ) (s : Finset κ) (g : κ �
     bnt_noiseOp ρ (fun x => ∑ k ∈ s, g k x) = fun x => ∑ k ∈ s, bnt_noiseOp ρ (g k) x := by
   funext x; unfold bnt_noiseOp; simp_rw [Finset.mul_sum]; rw [Finset.sum_comm]
 
-/-- The noise operator acts diagonally on the Walsh basis: `T_ρ f = ∑_S ρ^{|S|} f̂(S) χ_S`.
+/-- **Noise operator is diagonal in the Walsh basis.**
+The noise operator acts diagonally on the Walsh basis: `T_ρ f = ∑_S ρ^{|S|} f̂(S) χ_S`.
 
   Transported from `BooleanCube.boolNoiseOp_eq_sum`, for every real `ρ`. -/
 theorem khc_noiseOp_fourier (ρ : ℝ) (f : (ι → Bool) → ℝ) :
@@ -391,7 +401,8 @@ theorem khc_hypercontractivity_general {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1
       khc_qnorm_reindex e.symm (1 + ρ ^ 2) g] at hHC
   exact hHC
 
-/-- Hypercontractivity in Fourier form: `∑_S ρ^{2|S|} f̂(S)² ≤ ‖f‖²_{1+ρ²}`. -/
+/-- **Hypercontractivity in Fourier form.**
+Hypercontractivity in Fourier form: `∑_S ρ^{2|S|} f̂(S)² ≤ ‖f‖²_{1+ρ²}`. -/
 theorem khc_lowDegreeWeight_le {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (f : (ι → Bool) → ℝ) :
     (∑ S : Finset ι, (ρ ^ S.card) ^ 2 * (khc_fourierCoeff f S) ^ 2)
@@ -444,7 +455,8 @@ theorem khc_uexp_eq_coeff_empty (g : ConfigSpace ι → ℝ) :
   congr 1; funext x; rw [khc_walshChar_empty, mul_one]
 
 open StatMech.OSSS in
-/-- Variance under the uniform measure is the Fourier weight off the empty set. -/
+/-- **Variance as Fourier weight off the empty set.**
+Variance under the uniform measure is the Fourier weight off the empty set. -/
 theorem khc_var_eq_fourierWeight (g : ConfigSpace ι → ℝ) :
     OSSS.var (OSSS.bernoulliWeight (1 / 2 : ℝ)) g
       = ∑ S ∈ (univ.erase (∅ : Finset ι)), (khc_fourierCoeff g S) ^ 2 := by
@@ -558,7 +570,8 @@ theorem khc_abs_diff_indicator (φ : ConfigSpace ι → Bool) (e : ι) (ω : Con
   by_cases hO : φ (StatMech.setOpen e ω) <;> by_cases hC : φ (StatMech.setClosed e ω) <;>
     simp [hO, hC]
 
-/-- Event influence is four times canonical quarter-square influence after reindexing. -/
+/-- **Event influence is four times the canonical influence.**
+Event influence is four times canonical quarter-square influence after reindexing. -/
 theorem khc_infl_eq_four_boolInfluence {n : ℕ} (e : ι ≃ Fin n)
     (φ : ConfigSpace ι → Bool) (i : ι) :
     OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ))
@@ -601,7 +614,8 @@ theorem khc_infl_eq_four_boolInfluence {n : ℕ} (e : ι ≃ Fin n)
     ring
 
 open StatMech.OSSS in
-/-- The influence of `e` on a Boolean function is `∑_{S ∋ e} 4 f̂(S)²`. -/
+/-- **Influence of a coordinate as Fourier weight.**
+The influence of `e` on a Boolean function is `∑_{S ∋ e} 4 f̂(S)²`. -/
 theorem khc_infl_eq_fourierWeight (φ : ConfigSpace ι → Bool) (e : ι) :
     OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) e
       = ∑ S ∈ univ.filter (fun S : Finset ι => e ∈ S),
@@ -617,7 +631,8 @@ theorem khc_infl_eq_fourierWeight (φ : ConfigSpace ι → Bool) (e : ι) :
     rw [sq, sq, ← khc_coeff_product, khc_fourierCoeff_reindex]
 
 open StatMech.OSSS in
-/-- The total influence of a Boolean function is `∑_S 4 |S| f̂(S)²`. -/
+/-- **Total influence as Fourier weight.**
+The total influence of a Boolean function is `∑_S 4 |S| f̂(S)²`. -/
 theorem khc_totalInfl_eq_fourierWeight (φ : ConfigSpace ι → Bool) :
     totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0)
       = ∑ S : Finset ι, 4 * (S.card : ℝ)
@@ -634,7 +649,8 @@ theorem khc_totalInfl_eq_fourierWeight (φ : ConfigSpace ι → Bool) :
   simp only [Equiv.finsetCongr_apply, Finset.card_map]
   ring
 
-/-- The KKL inequality at `p = 1/2` in Fourier form, with the hypercontractive bound as a
+/-- **Fourier-form KKL inequality given the hypercontractive bound.**
+The KKL inequality at `p = 1/2` in Fourier form, with the hypercontractive bound as a
   hypothesis: for every Boolean `φ`, if `∑_S ρ^{2|S|} f̂(S)² ≤ ‖f‖²_{1+ρ²}` for all `ρ ∈ [0, 1]`,
   then `c · ∑_{S ≠ ∅} f̂(S)² · log (1 / maxₑ Infₑ(f)) ≤ ∑_S 4 |S| f̂(S)²`, where `f = 1_φ`. The
   hypothesis always holds (`khc_lowDegreeWeight_le`). -/
@@ -651,7 +667,8 @@ def khc_LogSobolevStep (c : ℝ) : Prop :=
         ≤ ∑ S : Finset E, 4 * (S.card : ℝ)
             * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
 
-/-- `khc_LogSobolevStep 0` holds trivially. -/
+/-- **Hypercontractive form of KKL with constant 0 holds trivially.**
+`khc_LogSobolevStep 0` holds trivially. -/
 theorem khc_logSobolevStep_zero : khc_LogSobolevStep 0 := by
   intro E _ _ _ φ _
   rw [zero_mul, zero_mul]
@@ -659,7 +676,8 @@ theorem khc_logSobolevStep_zero : khc_LogSobolevStep 0 := by
   exact kkl_totalInfl_nonneg
     (OSSS.bernoulliWeight_isProbWeight (by norm_num) (by norm_num)) _
 
-/-- The Fourier form `khc_LogSobolevStep c` implies the KKL inequality `KKLHypercontractive (1/2)
+/-- **Hypercontractive form of KKL implies the KKL inequality at $p = 1/2$.**
+The Fourier form `khc_LogSobolevStep c` implies the KKL inequality `KKLHypercontractive (1/2)
   c`. -/
 theorem khc_KKL {c : ℝ} (H : khc_LogSobolevStep c) :
     KKLHypercontractive (1 / 2 : ℝ) c := by
@@ -676,7 +694,8 @@ theorem khc_KKL {c : ℝ} (H : khc_LogSobolevStep c) :
 
 /-! ### Comparison with `BooleanCube` on `Fin n` -/
 
-/-- On `Fin n`, the variance under the uniform product weight is `BooleanCube.boolVariance`. -/
+/-- **Uniform variance agrees with the canonical Boolean variance.**
+On `Fin n`, the variance under the uniform product weight is `BooleanCube.boolVariance`. -/
 theorem khc_var_half_eq_boolVariance {n : ℕ} (f : (Fin n → Bool) → ℝ) :
     OSSS.var (OSSS.bernoulliWeight (1 / 2 : ℝ)) f = BooleanCube.boolVariance f := by
   rw [BooleanCube.boolVariance_eq_expect_sq_sub_sq, BooleanCube.expect_eq_sum_div_two_pow,

@@ -87,7 +87,8 @@ private theorem erase_inpEndpoint {n k : Nat} {Δ : Context} {e z : Key}
       Context.erase_insert_ne hez] at hp
     exact hp
 
-/-- A role can be erased when its physical name is absent from every
+/-- **Endpoint typing drops a role whose name does not occur.**
+A role can be erased when its physical name is absent from every
 subject, payload and binder-adjusted continuation position of the typed term. -/
 theorem HasType.erase_nameAbsent {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) {z : Key} (hab : NameAbsent z.name p) :
@@ -122,7 +123,8 @@ theorem HasType.erase_nameAbsent {n : Nat} {Δ : Context} {p : Proc}
     · rw [Context.erase_of_notMem hm]
       exact HasType.nu hp
 
-/-- An owned capability with no physical-name occurrence must already be
+/-- **Owned capability with an absent name is completed.**
+An owned capability with no physical-name occurrence must already be
 completed. This is derived from typing, including endpoint payload positions. -/
 theorem HasType.absent_lookup_completed {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) {z : Key} {t : Capability}

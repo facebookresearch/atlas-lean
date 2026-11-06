@@ -24,7 +24,8 @@ namespace Cslib.CTLStar
 variable {State Label Atom : Type*} {lts : LTS State Label}
   {valuation : State → Atom → Prop} {s : State} {π : PathFormula Atom}
 
-/-- No existential infinite path formula holds at a terminal state. -/
+/-- **No existential path formula holds at a terminal state.**
+No existential infinite path formula holds at a terminal state. -/
 theorem not_stateSat_exists_of_terminal (hdead : lts.IsTerminal s) :
     ¬StateSat lts valuation (.exists π) s := by
   rintro ⟨run, h0, hrun, _⟩
@@ -32,7 +33,8 @@ theorem not_stateSat_exists_of_terminal (hdead : lts.IsTerminal s) :
   rw [h0] at hstep
   exact hdead label _ hstep
 
-/-- Universal infinite path quantification is vacuous at a terminal state. -/
+/-- **Universal path formulas hold vacuously at terminal states.**
+Universal infinite path quantification is vacuous at a terminal state. -/
 theorem stateSat_forall_of_terminal (hdead : lts.IsTerminal s) :
     StateSat lts valuation (.forall π) s := by
   intro run h0 hrun

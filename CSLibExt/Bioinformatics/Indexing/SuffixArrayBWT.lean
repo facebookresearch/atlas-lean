@@ -271,7 +271,8 @@ theorem backwardSearch_iff_prefix (t P : List α) (r : ℕ) (hr : r < t.length +
     rotate_withSentinel t _ (getD_suffixArray_le t hr)]
   exact prefix_map_sentinel _ _ _
 
-/-- The occurrences of `P` reported by the FM-index: the suffix-array entries
+/-- **Occurrences of a pattern reported by the FM-index.**
+The occurrences of `P` reported by the FM-index: the suffix-array entries
 `SA[sp], …, SA[ep - 1]` of the backward-search interval. The BWT and the interval are
 bound once with `let` and reused, so one query builds the BWT and runs the backward search
 once, not three times. -/
@@ -320,11 +321,12 @@ theorem mem_occurrences_iff (t P : List α) (i : ℕ) :
     refine List.mem_iff_getElem.mpr ⟨r - sp, by omega, ?_⟩
     rw [hget _ (by omega), show sp + (r - sp) = r by omega, getD_of_lt _ _ hr, he]
 
-/-- Each occurrence is reported once. -/
+/-- **FM-index reports each occurrence once.** Each occurrence is reported once. -/
 theorem occurrences_nodup (t P : List α) : (occurrences t P).Nodup :=
   ((suffixArray_nodup _).sublist (List.drop_sublist _ _)).sublist (List.take_sublist _ _)
 
-/-- The number of reported positions is the length `ep - sp` of the backward-search interval. -/
+/-- **Number of FM-index occurrences equals the interval length.**
+The number of reported positions is the length `ep - sp` of the backward-search interval. -/
 theorem occurrences_length (t P : List α) :
     (occurrences t P).length = (backwardSearch (bwt t) P).2 - (backwardSearch (bwt t) P).1 := by
   have hb := backwardSearch_bounds (bwt t) P
@@ -356,7 +358,8 @@ theorem suffixArray_getD_eq_lf_add_one (t : List α) (r : ℕ) (hr : r < t.lengt
     Nat.mod_eq_of_lt (by omega)]
   omega
 
-/-- `k` steps of sampled-suffix-array locate from row `r`: return the stored value of the first
+/-- **Step-bounded sampled-suffix-array locate.**
+`k` steps of sampled-suffix-array locate from row `r`: return the stored value of the first
 sampled row reached along the LF-mapping, plus the number of LF steps taken. `sample r` is the
 stored value `SA[r]` of row `r`, if any. -/
 def locateAux (L : List (WithBot α)) (sample : ℕ → Option ℕ) : ℕ → ℕ → ℕ
@@ -366,12 +369,14 @@ def locateAux (L : List (WithBot α)) (sample : ℕ → Option ℕ) : ℕ → �
     | some v => v
     | none => locateAux L sample k (lf L r) + 1
 
-/-- Sampled-suffix-array locate (Ferragina and Manzini 2000): the text position of row `r` from
+/-- **Sampled-suffix-array locate.**
+Sampled-suffix-array locate (Ferragina and Manzini 2000): the text position of row `r` from
 the last column `L` and the samples, with at most `|L|` LF steps. -/
 def locate (L : List (WithBot α)) (sample : ℕ → Option ℕ) (r : ℕ) : ℕ :=
   locateAux L sample L.length r
 
-/-- The number of LF steps `locateAux L sample k r` takes. -/
+/-- **Number of LF steps taken by sampled locate.**
+The number of LF steps `locateAux L sample k r` takes. -/
 def locateSteps (L : List (WithBot α)) (sample : ℕ → Option ℕ) : ℕ → ℕ → ℕ
   | 0, _ => 0
   | k + 1, r =>

@@ -33,12 +33,14 @@ open Automata.NA Automata.ωAcceptor
 
 variable {State Action Atom Q : Type*}
 
-/-- An initial infinite state run, witnessed by a canonical action execution. -/
+/-- **Initial infinite run of a transition system.**
+An initial infinite state run, witnessed by a canonical action execution. -/
 def IsRun (lts : LTS State Action) (initial : Set State)
     (w : ωSequence State) : Prop :=
   w 0 ∈ initial ∧ ∃ actions : ωSequence Action, lts.OmegaExecution w actions
 
-/-- Equivalently, every adjacent state pair has a real model transition. -/
+/-- **Runs are sequences with a transition between adjacent states.**
+Equivalently, every adjacent state pair has a real model transition. -/
 theorem isRun_iff (lts : LTS State Action) (initial : Set State)
     (w : ωSequence State) :
     IsRun lts initial w ↔ w 0 ∈ initial ∧
@@ -51,14 +53,16 @@ theorem isRun_iff (lts : LTS State Action) (initial : Set State)
     choose actions hexec using hsteps
     exact ⟨hstart, actions, hexec⟩
 
-/-- Synchronized state-reading product, with the recognizer's Büchi condition. -/
+/-- **Product of a transition system with a Büchi recognizer.**
+Synchronized state-reading product, with the recognizer's Büchi condition. -/
 def product (lts : LTS State Action) (initial : Set State)
     (a : Buchi Q State) : Buchi (State × Q) State where
   Tr p x q := x = p.1 ∧ (∃ action, lts.Tr p.1 action q.1) ∧ a.Tr p.2 x q.2
   start := {p | p.1 ∈ initial ∧ p.2 ∈ a.start}
   accept := {p | p.2 ∈ a.accept}
 
-/-- A product accepts precisely the model runs accepted by its recognizer. -/
+/-- **Product accepts exactly the runs accepted by the recognizer.**
+A product accepts precisely the model runs accepted by its recognizer. -/
 theorem mem_product_iff (lts : LTS State Action) (initial : Set State)
     (a : Buchi Q State) (w : ωSequence State) :
     w ∈ language (product lts initial a) ↔ IsRun lts initial w ∧ w ∈ language a := by
@@ -76,19 +80,22 @@ theorem mem_product_iff (lts : LTS State Action) (initial : Set State)
     exact ⟨fun n => (w n, ss n),
       ⟨⟨hstart, hrun.start⟩, fun n => ⟨rfl, hsteps n, hrun.trans n⟩⟩, hacc⟩
 
-/-- The finite-state product for runs that violate the full LTL formula. -/
+/-- **Counterexample product for an LTL formula.**
+The finite-state product for runs that violate the full LTL formula. -/
 def counterexample (lts : LTS State Action) (initial : Set State)
     (valuation : State → Atom → Prop) (φ : Formula Atom) :
     Buchi (State × (Tableau.State (.not φ) ×
       Fin (Tableau.obligationCount (.not φ) + 1))) State :=
   product lts initial (Tableau.buchi valuation (.not φ))
 
-/-- All initial infinite canonical executions satisfy the formula. -/
+/-- **Satisfaction of an LTL formula by all initial runs.**
+All initial infinite canonical executions satisfy the formula. -/
 def Models (lts : LTS State Action) (initial : Set State)
     (valuation : State → Atom → Prop) (φ : Formula Atom) : Prop :=
   ∀ w : ωSequence State, IsRun lts initial w → Word.Satisfies valuation w φ
 
-/-- A counterexample word is exactly an infinite model run violating LTL. -/
+/-- **Counterexample words are runs violating the formula.**
+A counterexample word is exactly an infinite model run violating LTL. -/
 theorem mem_counterexample_iff (lts : LTS State Action) (initial : Set State)
     (valuation : State → Atom → Prop) (φ : Formula Atom) (w : ωSequence State) :
     w ∈ language (counterexample lts initial valuation φ) ↔
@@ -96,7 +103,8 @@ theorem mem_counterexample_iff (lts : LTS State Action) (initial : Set State)
   change w ∈ language (product lts initial (Tableau.buchi valuation (.not φ))) ↔ _
   rw [mem_product_iff, Tableau.mem_buchi_iff, Word.Satisfies.not_iff]
 
-/-- Full-LTL model checking reduces to the proved finite Büchi lasso criterion.
+/-- **Finite-model LTL satisfaction iff no counterexample lasso.**
+Full-LTL model checking reduces to the proved finite Büchi lasso criterion.
 A cycle must be nonempty; neither seriality nor finite action/atom types are needed. -/
 theorem models_iff_no_lasso [Finite State] (lts : LTS State Action)
     (initial : Set State) (valuation : State → Atom → Prop) (φ : Formula Atom) :
@@ -111,7 +119,8 @@ theorem models_iff_no_lasso [Finite State] (lts : LTS State Action)
     by_contra hnot
     exact h ⟨w, (mem_counterexample_iff lts initial valuation φ w).mpr ⟨hrun, hnot⟩⟩
 
-/-- Universal infinite-run satisfaction is emptiness of the counterexample language. -/
+/-- **LTL satisfaction iff the counterexample language is empty.**
+Universal infinite-run satisfaction is emptiness of the counterexample language. -/
 theorem models_iff_language_empty (lts : LTS State Action) (initial : Set State)
     (valuation : State → Atom → Prop) (φ : Formula Atom) :
     Models lts initial valuation φ ↔

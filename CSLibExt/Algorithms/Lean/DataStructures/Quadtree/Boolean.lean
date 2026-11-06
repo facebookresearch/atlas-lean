@@ -43,7 +43,8 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.QTree.Boolean
 
-/-- A branch constructor that collapses four identical Boolean leaves.
+/-- **Compressing branch constructor for Boolean quadtrees.**
+A branch constructor that collapses four identical Boolean leaves.
 This is local compression, not recursive normalization of its arguments. -/
 def Qc : QTree Bool → QTree Bool → QTree Bool → QTree Bool → QTree Bool
   | .L x0, .L x1, .L x2, .L x3 =>
@@ -51,7 +52,7 @@ def Qc : QTree Bool → QTree Bool → QTree Bool → QTree Bool → QTree Bool
       else .Q (.L x0) (.L x1) (.L x2) (.L x3)
   | t0, t1, t2, t3 => .Q t0 t1 t2 t3
 
-/-- Boolean lookup with `false` on a nonleaf at scale zero.
+/-- **Boolean quadtree lookup.** Boolean lookup with `false` on a nonleaf at scale zero.
 Leaves ignore coordinates; positive scales use the shared quadrant order. -/
 def get : Nat → QTree Bool → Nat → Nat → Bool
   | _, .L b, _, _ => b
@@ -60,12 +61,13 @@ def get : Nat → QTree Bool → Nat → Nat → Bool
       get n (selectTree (decide (i < 2 ^ n)) (decide (j < 2 ^ n))
         t0 t1 t2 t3) (i % 2 ^ n) (j % 2 ^ n)
 
-/-- Complements every leaf, compressing the rebuilt branches. -/
+/-- **Complement of a Boolean quadtree.**
+Complements every leaf, compressing the rebuilt branches. -/
 def neg : QTree Bool → QTree Bool
   | .L b => .L (!b)
   | .Q t0 t1 t2 t3 => Qc (neg t0) (neg t1) (neg t2) (neg t3)
 
-/-- Boolean union, short-circuiting constant regions and compressing
+/-- **Union of Boolean quadtrees.** Boolean union, short-circuiting constant regions and compressing
 branches when both inputs are branches. -/
 def qtUnion : QTree Bool → QTree Bool → QTree Bool
   | .L true, _ => .L true
@@ -75,7 +77,8 @@ def qtUnion : QTree Bool → QTree Bool → QTree Bool
   | .Q s0 s1 s2 s3, .Q t0 t1 t2 t3 =>
       Qc (qtUnion s0 t0) (qtUnion s1 t1) (qtUnion s2 t2) (qtUnion s3 t3)
 
-/-- Ordered Boolean difference: cells in the first region but not the second.
+/-- **Difference of Boolean quadtrees.**
+Ordered Boolean difference: cells in the first region but not the second.
 A full first region complements the second; an empty second returns the
 first. -/
 def qtDiff : QTree Bool → QTree Bool → QTree Bool
@@ -86,7 +89,8 @@ def qtDiff : QTree Bool → QTree Bool → QTree Bool
   | .Q s0 s1 s2 s3, .Q t0 t1 t2 t3 =>
       Qc (qtDiff s0 t0) (qtDiff s1 t1) (qtDiff s2 t2) (qtDiff s3 t3)
 
-/-- Local compression never increases a branch's height. -/
+/-- **Local compression does not increase quadtree height.**
+Local compression never increases a branch's height. -/
 theorem height_Qc_le (t0 t1 t2 t3 : QTree Bool) :
     height (Qc t0 t1 t2 t3) ≤
       Nat.succ (max (max (height t0) (height t1))
@@ -95,7 +99,8 @@ theorem height_Qc_le (t0 t1 t2 t3 : QTree Bool) :
     simp only [Qc] <;>
       first | (split <;> simp only [height] <;> omega) | (simp only [height]; omega)
 
-/-- Four compressed children produce a compressed result. -/
+/-- **Local compression of compressed children is compressed.**
+Four compressed children produce a compressed result. -/
 theorem compressed_Qc (t0 t1 t2 t3 : QTree Bool)
     (h0 : compressed t0) (h1 : compressed t1)
     (h2 : compressed t2) (h3 : compressed t3) :
@@ -125,7 +130,8 @@ theorem compressed_Qc (t0 t1 t2 t3 : QTree Bool)
     exact hAll ⟨x, x, x, x, hx0, hx1.trans hx0,
       hx2.trans hx0, hx3.trans hx0⟩
 
-/-- Compression preserves positive-scale lookup. Scale zero is excluded:
+/-- **Local compression preserves lookup at positive scales.**
+Compression preserves positive-scale lookup. Scale zero is excluded:
 collapsing four `true` leaves changes a branch's zero-scale default. -/
 theorem get_Qc_succ (n : Nat) (t0 t1 t2 t3 : QTree Bool) (i j : Nat) :
     get (n + 1) (Qc t0 t1 t2 t3) i j =
@@ -148,7 +154,8 @@ theorem get_Qc_succ (n : Nat) (t0 t1 t2 t3 : QTree Bool) (i j : Nat) :
       exact hAll ⟨x0, x1, x2, x3, e0, e1, e2, e3⟩
     rw [hQc]
 
-/-- Complementation does not increase height. -/
+/-- **Quadtree complementation does not increase height.**
+Complementation does not increase height. -/
 theorem height_neg_le (t : QTree Bool) : height (neg t) ≤ height t := by
   induction t with
   | L b => simp [neg, height]
@@ -157,7 +164,8 @@ theorem height_neg_le (t : QTree Bool) : height (neg t) ≤ height t := by
       simp only [neg, height]
       omega
 
-/-- Complementation preserves compression of the input. -/
+/-- **Quadtree complementation preserves compression.**
+Complementation preserves compression of the input. -/
 theorem compressed_neg (t : QTree Bool) (hc : compressed t) :
     compressed (neg t) := by
   induction t with
@@ -166,7 +174,8 @@ theorem compressed_neg (t : QTree Bool) (hc : compressed t) :
       exact compressed_Qc _ _ _ _ (ih0 hc.1) (ih1 hc.2.1)
         (ih2 hc.2.2.1) (ih3 hc.2.2.2.1)
 
-/-- Complementation negates each lookup whenever the scale bounds height. -/
+/-- **Quadtree complementation negates lookup at sufficient scale.**
+Complementation negates each lookup whenever the scale bounds height. -/
 theorem get_neg_correct (t : QTree Bool) (n i j : Nat)
     (h : height t ≤ n) : get n (neg t) i j = (!get n t i j) := by
   induction t generalizing n i j with
@@ -209,7 +218,7 @@ private theorem height_Qc_le_max
     ⟨Nat.le_trans h2 (max_le_max hs2 ht2),
       Nat.le_trans h3 (max_le_max hs3 ht3)⟩⟩
 
-/-- Union height is bounded by the maximum input height. -/
+/-- **Height bound for quadtree union.** Union height is bounded by the maximum input height. -/
 theorem height_qtUnion_le (t1 t2 : QTree Bool) :
     height (qtUnion t1 t2) ≤ max (height t1) (height t2) := by
   induction t1 generalizing t2 with
@@ -221,7 +230,8 @@ theorem height_qtUnion_le (t1 t2 : QTree Bool) :
           exact height_Qc_le_max _ _ _ _ _ _ _ _ _ _ _ _
             (ih0 t0) (ih1 t1) (ih2 t2) (ih3 t3)
 
-/-- Difference height is bounded by the maximum input height. -/
+/-- **Height bound for quadtree difference.**
+Difference height is bounded by the maximum input height. -/
 theorem height_qtDiff_le (t1 t2 : QTree Bool) :
     height (qtDiff t1 t2) ≤ max (height t1) (height t2) := by
   induction t1 generalizing t2 with
@@ -236,7 +246,8 @@ theorem height_qtDiff_le (t1 t2 : QTree Bool) :
           exact height_Qc_le_max _ _ _ _ _ _ _ _ _ _ _ _
             (ih0 t0) (ih1 t1) (ih2 t2) (ih3 t3)
 
-/-- Union preserves compression when both inputs are compressed. -/
+/-- **Quadtree union preserves compression.**
+Union preserves compression when both inputs are compressed. -/
 theorem compressed_qtUnion (t1 t2 : QTree Bool)
     (hc : compressed t1 ∧ compressed t2) : compressed (qtUnion t1 t2) := by
   induction t1 generalizing t2 with
@@ -250,7 +261,8 @@ theorem compressed_qtUnion (t1 t2 : QTree Bool)
             (ih2 _ ⟨hc.1.2.2.1, hc.2.2.2.1⟩)
             (ih3 _ ⟨hc.1.2.2.2.1, hc.2.2.2.2.1⟩)
 
-/-- Difference preserves compression when both inputs are compressed. -/
+/-- **Quadtree difference preserves compression.**
+Difference preserves compression when both inputs are compressed. -/
 theorem compressed_qtDiff (t1 t2 : QTree Bool)
     (hc : compressed t1 ∧ compressed t2) : compressed (qtDiff t1 t2) := by
   induction t1 generalizing t2 with
@@ -267,7 +279,8 @@ theorem compressed_qtDiff (t1 t2 : QTree Bool)
             (ih2 _ ⟨hc.1.2.2.1, hc.2.2.2.1⟩)
             (ih3 _ ⟨hc.1.2.2.2.1, hc.2.2.2.2.1⟩)
 
-/-- Union is pointwise Boolean disjunction at a scale bounding both heights. -/
+/-- **Quadtree union is pointwise disjunction at sufficient scale.**
+Union is pointwise Boolean disjunction at a scale bounding both heights. -/
 theorem get_qtUnion_correct (t1 t2 : QTree Bool) (n i j : Nat)
     (h : height t1 ≤ n ∧ height t2 ≤ n) :
     get n (qtUnion t1 t2) i j = (get n t1 i j || get n t2 i j) := by
@@ -289,7 +302,8 @@ theorem get_qtUnion_correct (t1 t2 : QTree Bool) (n i j : Nat)
                   ih1 _ _ _ _ ⟨hs1, ht1⟩, ih2 _ _ _ _ ⟨hs2, ht2⟩,
                   ih3 _ _ _ _ ⟨hs3, ht3⟩]
 
-/-- Difference is pointwise conjunction with the second region's complement,
+/-- **Quadtree difference is pointwise set difference at sufficient scale.**
+Difference is pointwise conjunction with the second region's complement,
 provided the scale bounds both heights. -/
 theorem get_qtDiff_correct (t1 t2 : QTree Bool) (n i j : Nat)
     (h : height t1 ≤ n ∧ height t2 ≤ n) :
@@ -315,7 +329,8 @@ theorem get_qtDiff_correct (t1 t2 : QTree Bool) (n i j : Nat)
                   ih1 _ _ _ _ ⟨hs1, ht1⟩, ih2 _ _ _ _ ⟨hs2, ht2⟩,
                   ih3 _ _ _ _ ⟨hs3, ht3⟩]
 
-/-- The original graded six-part correctness statement, under its original
+/-- **Six-part correctness of Boolean quadtree operations.**
+The original graded six-part correctness statement, under its original
 name. -/
 theorem fdsa_chap13_ex01 :
     (∀ n t1 t2 i j, height t1 ≤ n ∧ height t2 ≤ n →

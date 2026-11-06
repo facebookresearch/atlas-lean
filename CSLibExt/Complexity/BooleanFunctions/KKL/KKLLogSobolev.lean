@@ -81,7 +81,8 @@ theorem kls_qnorm_indicator_sq {ρ : ℝ} (φ : ConfigSpace ι → Bool) :
   push_cast
   field_simp
 
-/-- Bonami–Beckner for an indicator of uniform measure `m`: `∑_{S ≠ ∅} ρ^{2|S|} f̂(S)² ≤
+/-- **Bonami–Beckner bound for indicator functions.**
+Bonami–Beckner for an indicator of uniform measure `m`: `∑_{S ≠ ∅} ρ^{2|S|} f̂(S)² ≤
   m^{2/(1+ρ²)} - m²` for `0 ≤ ρ ≤ 1`. -/
 theorem kls_fluctWeight_le_pow {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (φ : ConfigSpace ι → Bool) :
     (∑ S ∈ (univ.erase (∅ : Finset ι)),
@@ -104,7 +105,8 @@ theorem kls_W_nonneg (φ : ConfigSpace ι → Bool) :
         * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2 :=
   Finset.sum_nonneg (fun S _ => by positivity)
 
-/-- Poincaré inequality in Fourier form: `∑_{S ≠ ∅} f̂(S)² ≤ ∑_S 4 |S| f̂(S)²`. -/
+/-- **Poincaré inequality in Fourier form.**
+Poincaré inequality in Fourier form: `∑_{S ≠ ∅} f̂(S)² ≤ ∑_S 4 |S| f̂(S)²`. -/
 theorem kls_var_le_W (φ : ConfigSpace ι → Bool) :
     (∑ S ∈ (univ.erase (∅ : Finset ι)),
         (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
@@ -134,7 +136,8 @@ theorem kls_fourierInflWeight_le_maxInfl [Nonempty ι] (φ : ConfigSpace ι → 
   rw [← khc_infl_eq_fourierWeight φ e]
   exact kkl_infl_le_maxInfl _ _ e
 
-/-- The KKL inequality at `p = 1/2` in Fourier form, with the indicator hypercontractive bound `∑_{S
+/-- **Fourier-form KKL inequality given the indicator Bonami–Beckner bound.**
+The KKL inequality at `p = 1/2` in Fourier form, with the indicator hypercontractive bound `∑_{S
   ≠ ∅} ρ^{2|S|} f̂(S)² ≤ m^{2/(1+ρ²)} - m²` (for all `ρ ∈ [0, 1]`) as a hypothesis, where `f =
   1_φ` and `m = 𝔼 f`. The hypothesis always holds (`kls_fluctWeight_le_pow`). -/
 def kls_LogOptimisation (c : ℝ) : Prop :=
@@ -151,19 +154,22 @@ def kls_LogOptimisation (c : ℝ) : Prop :=
         ≤ ∑ S : Finset E, 4 * (S.card : ℝ)
             * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
 
-/-- `kls_LogOptimisation 0` holds trivially. -/
+/-- **Indicator-bound form of KKL with constant 0 holds trivially.**
+`kls_LogOptimisation 0` holds trivially. -/
 theorem kls_logOptimisation_zero : kls_LogOptimisation 0 := by
   intro E _ _ _ φ _
   rw [zero_mul, zero_mul]
   exact kls_W_nonneg φ
 
-/-- `kls_LogOptimisation c` implies `khc_LogSobolevStep c`. -/
+/-- **Indicator-bound form of KKL implies the hypercontractive form.**
+`kls_LogOptimisation c` implies `khc_LogSobolevStep c`. -/
 theorem kls_logOptimisation_implies_step {c : ℝ} (H : kls_LogOptimisation c) :
     khc_LogSobolevStep c := by
   intro E _ _ _ φ _hstar
   exact H φ (fun ρ h0 h1 => kls_fluctWeight_le_pow h0 h1 φ)
 
-/-- `kls_LogOptimisation c` implies the KKL inequality `KKLHypercontractive (1/2) c`. -/
+/-- **Indicator-bound form of KKL implies the KKL inequality at $p = 1/2$.**
+`kls_LogOptimisation c` implies the KKL inequality `KKLHypercontractive (1/2) c`. -/
 theorem kls_logSobolevStep {c : ℝ} (H : kls_LogOptimisation c) :
     KKLHypercontractive (1 / 2 : ℝ) c :=
   khc_KKL (kls_logOptimisation_implies_step H)

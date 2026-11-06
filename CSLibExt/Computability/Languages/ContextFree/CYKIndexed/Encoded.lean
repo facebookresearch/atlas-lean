@@ -25,21 +25,24 @@ open Cslib.Algorithms.Lean
 
 variable {T : Type*}
 
-/-- Decode symbols with a charge for each constructor test and output cons. -/
+/-- **Charged decoding of encoded grammar symbols.**
+Decode symbols with a charge for each constructor test and output cons. -/
 def decodeSymbols : List (ℕ ⊕ T) → TimeM ℕ (List (Symbol T ℕ))
   | [] => ⟨[], 1⟩
   | s :: ss =>
       let rest := decodeSymbols ss
       ⟨EncodedCFG.decodeSymbol s :: rest.ret, rest.time + 4⟩
 
-/-- The charged conversion is exactly the canonical symbol decoding. -/
+/-- **Charged symbol decoding agrees with canonical decoding.**
+The charged conversion is exactly the canonical symbol decoding. -/
 @[simp] theorem decodeSymbols_ret (ss : List (ℕ ⊕ T)) :
     (decodeSymbols ss).ret = ss.map EncodedCFG.decodeSymbol := by
   induction ss with
   | nil => rfl
   | cons s ss ih => simp [decodeSymbols, ih]
 
-/-- Decode every rule, charging all right-hand-side traversals. -/
+/-- **Charged decoding of encoded grammar rules.**
+Decode every rule, charging all right-hand-side traversals. -/
 def decodeRules : List (ℕ × List (ℕ ⊕ T)) →
     TimeM ℕ (List (ContextFreeRule T ℕ))
   | [] => ⟨[], 1⟩
@@ -48,21 +51,24 @@ def decodeRules : List (ℕ × List (ℕ ⊕ T)) →
       let rest := decodeRules rs
       ⟨⟨r.1, out.ret⟩ :: rest.ret, out.time + rest.time + 5⟩
 
-/-- The charged rule conversion agrees with the existing decoded grammar. -/
+/-- **Charged rule decoding agrees with the decoded grammar.**
+The charged rule conversion agrees with the existing decoded grammar. -/
 @[simp] theorem decodeRules_ret (rs : List (ℕ × List (ℕ ⊕ T))) :
     (decodeRules rs).ret = rs.map EncodedCFG.decodeRule := by
   induction rs with
   | nil => rfl
   | cons r rs ih => simp [decodeRules, EncodedCFG.decodeRule, ih]
 
-/-- Run indexed CYK on the existing encoded grammar, including preparation. -/
+/-- **Indexed CYK recognizer for encoded grammars.**
+Run indexed CYK on the existing encoded grammar, including preparation. -/
 def recognizesEncoded [DecidableEq T] (tc nc : ℕ) (g : EncodedCFG T)
     (w : List T) : TimeM ℕ Bool :=
   let rules := decodeRules g.rules
   let result := recognizes tc nc g.start rules.ret w
   ⟨result.ret, rules.time + result.time + 3⟩
 
-/-- Correctness for the canonical encoded language, including epsilon. -/
+/-- **Correctness of indexed CYK on encoded grammars.**
+Correctness for the canonical encoded language, including epsilon. -/
 theorem recognizesEncoded_iff [DecidableEq T] (tc nc : ℕ)
     (g : EncodedCFG T) (hg : IsChomskyNormalForm g.toCFG) (w : List T) :
     (recognizesEncoded tc nc g w).ret = true ↔ w ∈ g.language := by
@@ -70,14 +76,15 @@ theorem recognizesEncoded_iff [DecidableEq T] (tc nc : ℕ)
   exact recognizes_iff hg tc nc _
     (fun r => by simp [EncodedCFG.toCFG]) w
 
-/-- Exact symbol-decoding traversal cost. -/
+/-- **Exact cost of grammar symbol decoding.** Exact symbol-decoding traversal cost. -/
 theorem decodeSymbols_time (ss : List (ℕ ⊕ T)) :
     (decodeSymbols ss).time = 1 + 4 * ss.length := by
   induction ss with
   | nil => rfl
   | cons s ss ih => simp [decodeSymbols, ih]; omega
 
-/-- Exact grammar-preparation cost, including all production symbols. -/
+/-- **Exact cost of grammar rule decoding.**
+Exact grammar-preparation cost, including all production symbols. -/
 theorem decodeRules_time (rs : List (ℕ × List (ℕ ⊕ T))) :
     (decodeRules rs).time =
       1 + 6 * rs.length + 4 * (rs.map (fun r => r.2.length)).sum := by
@@ -85,7 +92,8 @@ theorem decodeRules_time (rs : List (ℕ × List (ℕ ⊕ T))) :
   | nil => rfl
   | cons r rs ih => simp [decodeRules, decodeSymbols_time, ih]; omega
 
-/-- Cubic word-length bound including canonical grammar preparation.
+/-- **Cubic cost bound for indexed CYK on encoded grammars.**
+Cubic word-length bound including canonical grammar preparation.
 All dependence on the fixed grammar and symbol-equality model is explicit. -/
 theorem recognizesEncoded_time_le [DecidableEq T] (tc nc : ℕ)
     (g : EncodedCFG T) (w : List T) :

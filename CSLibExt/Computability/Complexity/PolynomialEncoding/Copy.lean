@@ -26,7 +26,8 @@ open Turing Function MetaMathlibExt.TM2Program
 
 variable {K Λ : Type} [DecidableEq K] {Γ : K → Type}
 
-/-- Pop a bit block onto two distinct destinations, reversing both copies. -/
+/-- **Two-destination bit-block transfer.**
+Pop a bit block onto two distinct destinations, reversing both copies. -/
 def splitB (a b c : K) (d : Γ a → Option Bool)
     (gb : Bool → Γ b) (gc : Bool → Γ c) (self next : Λ) :
     TM2.Stmt Γ Λ Bool :=
@@ -50,7 +51,8 @@ private theorem splitB_step {M : Λ → TM2.Stmt Γ Λ Bool}
   simp [hM, splitB, TM2.stepAux, isBit, bitOf, hs, hz,
     hab.symm, hac.symm, hbc.symm]
 
-/-- Two-destination bit transfer takes one step per bit plus one,
+/-- **Two-destination bit transfer takes one step per bit plus one.**
+Two-destination bit transfer takes one step per bit plus one,
 with exact suffix and unrelated-stack preservation. -/
 theorem splitB_run {M : Λ → TM2.Stmt Γ Λ Bool}
     {a b c : K} {d : Γ a → Option Bool}
@@ -93,7 +95,8 @@ theorem splitB_run {M : Λ → TM2.Stmt Γ Λ Bool}
       rw [hk k hka hkb hkc]
       simp [T, hka, hkb, hkc]
 
-/-- Copy a bit block in its original order, restoring both the source
+/-- **Bit-block copy keeps the order and restores source and scratch.**
+Copy a bit block in its original order, restoring both the source
 and scratch, in exactly `2 * p.length + 2` steps. -/
 theorem copyB_run {M : Λ → TM2.Stmt Γ Λ Bool}
     {a b t : K} {da : Γ a → Option Bool} {dt : Γ t → Option Bool}

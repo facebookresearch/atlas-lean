@@ -57,13 +57,15 @@ open ConfigSpace Function Finset StatMech StatMech.Sharpness StatMech.BeffaraDC
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
 omit [DecidableEq E] in
-/-- The OSSS Bernoulli weight of a configuration is `StatMech.configWeight`. -/
+/-- **OSSS Bernoulli weight equals the configuration weight.**
+The OSSS Bernoulli weight of a configuration is `StatMech.configWeight`. -/
 theorem kklw_weight_eq (p : ℝ) (ω : ConfigSpace E) :
     OSSS.weight (OSSS.bernoulliWeight p) ω = StatMech.configWeight p ω := by
   unfold OSSS.weight OSSS.bernoulliWeight StatMech.configWeight StatMech.edgeWeight
   rfl
 
-/-- `StatMech.prob p A` is the OSSS expectation of the indicator of `A`. -/
+/-- **Event probability as the OSSS expectation of its indicator.**
+`StatMech.prob p A` is the OSSS expectation of the indicator of `A`. -/
 theorem kklw_prob_eq_expect (p : ℝ) (A : Set (ConfigSpace E)) :
     StatMech.prob p A
       = OSSS.expect (OSSS.bernoulliWeight p) (A.indicator (fun _ => (1 : ℝ))) := by
@@ -71,7 +73,8 @@ theorem kklw_prob_eq_expect (p : ℝ) (A : Set (ConfigSpace E)) :
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   rw [kklw_weight_eq]; ring
 
-/-- `StatMech.BeffaraDC.influence` is the OSSS influence of the indicator of `A`. -/
+/-- **Pivotal-probability influence as the OSSS influence of an indicator.**
+`StatMech.BeffaraDC.influence` is the OSSS influence of the indicator of `A`. -/
 theorem kklw_influence_eq_infl (p : ℝ) (A : Set (ConfigSpace E)) (e : E) :
     StatMech.BeffaraDC.influence p A e
       = OSSS.infl (OSSS.bernoulliWeight p) (A.indicator (fun _ => (1 : ℝ))) e := by
@@ -92,7 +95,8 @@ theorem kklw_decide_eq_indicator (A : Set (ConfigSpace E)) [DecidablePred (· �
     (fun ω => if (decide (ω ∈ A)) then (1 : ℝ) else 0) = A.indicator (fun _ => (1 : ℝ)) := by
   funext ω; rw [Set.indicator_apply]; by_cases h : ω ∈ A <;> simp [h]
 
-/-- The variance of the indicator of `A` is `P(A)(1 - P(A))`. -/
+/-- **Variance of an event indicator is $P(A)(1 - P(A))$.**
+The variance of the indicator of `A` is `P(A)(1 - P(A))`. -/
 theorem kklw_var_eq (p : ℝ) (A : Set (ConfigSpace E)) :
     OSSS.var (OSSS.bernoulliWeight p) (A.indicator (fun _ => (1 : ℝ)))
       = StatMech.prob p A * (1 - StatMech.prob p A) := by
@@ -100,11 +104,13 @@ theorem kklw_var_eq (p : ℝ) (A : Set (ConfigSpace E)) :
   rw [← kklw_decide_eq_indicator A, kkl_var_indicator_eq]
   rw [kklw_decide_eq_indicator A, ← kklw_prob_eq_expect]
 
-/-- `log (1 / maxₑ Infₑ(A))` under the Bernoulli(`p`) product measure. -/
+/-- **Logarithm of the reciprocal maximal influence of an event.**
+`log (1 / maxₑ Infₑ(A))` under the Bernoulli(`p`) product measure. -/
 noncomputable def kklw_logMaxInfl [Nonempty E] (p : ℝ) (A : Set (ConfigSpace E)) : ℝ :=
   Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (A.indicator (fun _ => (1 : ℝ))))
 
-/-- The KKL inequality `KKLHypercontractive p 2` for an event: `2 · P_p(A)(1 - P_p(A)) · log (1 /
+/-- **KKL inequality with constant 2 at $p$ implies its event form.**
+The KKL inequality `KKLHypercontractive p 2` for an event: `2 · P_p(A)(1 - P_p(A)) · log (1 /
   maxₑ Infₑ(A)) ≤ ∑ₑ Infₑ(A)`. -/
 theorem kklw_hkkl_of_hypercontractive {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     {p : ℝ}
@@ -129,7 +135,8 @@ theorem kklw_hkkl_half {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
   kklw_hkkl_of_hypercontractive
     (StatMech.Probability.bph_KKL StatMech.Probability.cro2_rhoOptimise) A
 
-/-- `kklw_hkkl_of_hypercontractive` at every `p` in the interior of `[1/2, q]`. -/
+/-- **KKL on the interior of $[1/2, q]$ implies its event form there.**
+`kklw_hkkl_of_hypercontractive` at every `p` in the interior of `[1/2, q]`. -/
 theorem kklw_hkkl {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     (A : Set (ConfigSpace E)) {q : ℝ}
     (Hbkkkl : ∀ p ∈ interior (Set.Icc (1 / 2 : ℝ) q), KKLHypercontractive p 2) :
@@ -138,7 +145,8 @@ theorem kklw_hkkl {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
         ≤ ∑ e, StatMech.BeffaraDC.influence p A e :=
   fun p hp => kklw_hkkl_of_hypercontractive (Hbkkkl p hp) A
 
-/-- Sharp-threshold bound: for an increasing event with `P_{1/2}(A) = 1/2`, if the KKL inequality
+/-- **Sharp-threshold bound assuming the KKL inequality on $(1/2, q)$.**
+Sharp-threshold bound: for an increasing event with `P_{1/2}(A) = 1/2`, if the KKL inequality
   holds for all `p ∈ (1/2, q)` and there `P_p(A)(1 - P_p(A)) ≥ v₀` and `log (1 / maxₑ Infₑ(A)) ≥
   L`, then `P_q(A) ≥ 1/2 + 2 v₀ L (q - 1/2)`.
 
@@ -157,7 +165,8 @@ theorem kklw_sharpThreshold {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
   exact ktr_sharpThreshold_via_kkl A hA hq (by norm_num) hv0 hL hhalf
     (kklw_logMaxInfl · A) (kklw_hkkl A Hbkkkl) hvar hLL'
 
-/-- Window form of `kklw_sharpThreshold`: under the same hypotheses, if `P_q(A) ≤ 1 - ε` then `q -
+/-- **Sharp-threshold window bound assuming the KKL inequality on $(1/2, q)$.**
+Window form of `kklw_sharpThreshold`: under the same hypotheses, if `P_q(A) ≤ 1 - ε` then `q -
   1/2 ≤ (1/2 - ε) / (2 v₀ L)`.
 
   The KKL hypothesis `Hbkkkl` is proved in this library only at `p = 1/2`. -/

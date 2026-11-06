@@ -25,14 +25,16 @@ namespace Cslib.Languages.LambdaCalculus.SystemF
 
 open Cslib.LambdaCalculus.LocallyNameless.Untyped
 
-/-- Shift free bound indices in CSLib syntax, preserving indices below `c`. -/
+/-- **Shift of untyped bound indices above a cutoff.**
+Shift free bound indices in CSLib syntax, preserving indices below `c`. -/
 def shiftAt (c : Nat) : Term Nat → Term Nat
   | .bvar i => .bvar (if i < c then i else i + 1)
   | .fvar x => .fvar x
   | .app f a => .app (shiftAt c f) (shiftAt c a)
   | .abs b => .abs (shiftAt (c + 1) b)
 
-/-- Lift a raw erasure environment beneath one scoped term binder. -/
+/-- **Lifting a raw erasure environment under a binder.**
+Lift a raw erasure environment beneath one scoped term binder. -/
 def liftRaw {m : Nat} (σ : Fin m → Term Nat) :
     Fin (m + 1) → Term Nat :=
   Fin.cases (.bvar 0) (fun i => shiftAt 0 (σ i))
@@ -64,7 +66,8 @@ private theorem shiftAt_eq_self {c : Nat} (t : Term Nat) (h : t.LcAt c) :
     simp only [shiftAt, ihf h.1, iha h.2]
   | abs b ih => exact congrArg Term.abs (ih h)
 
-/-- Introducing a binder does not shift an already locally closed term. -/
+/-- **Shifting leaves locally closed terms unchanged.**
+Introducing a binder does not shift an already locally closed term. -/
 theorem shiftAt_closed (c : Nat) (t : Term Nat) (h : t.LcAt 0) :
     shiftAt c t = t :=
   shiftAt_eq_self t (t.lcAt_le 0 c (Nat.zero_le c) h)
@@ -105,7 +108,8 @@ private theorem shiftAt_comm {c d : Nat} (hcd : c ≤ d) (t : Term Nat) :
 
 namespace Tm
 
-/-- Erase a scoped term under an arbitrary simultaneous untyped environment. -/
+/-- **Type erasure under an untyped environment.**
+Erase a scoped term under an arbitrary simultaneous untyped environment. -/
 @[simp] def eraseWith {n m : Nat} (σ : Fin m → Term Nat) :
     Tm n m → Term Nat
   | .var i => σ i
@@ -114,11 +118,13 @@ namespace Tm
   | .tabs b => eraseWith σ b
   | .tapp f _ => eraseWith σ f
 
-/-- Type erasure into the existing untyped de Bruijn syntax. -/
+/-- **Type erasure of System F terms to untyped terms.**
+Type erasure into the existing untyped de Bruijn syntax. -/
 def erase {n m : Nat} (t : Tm n m) : Term Nat :=
   eraseWith (fun i => .bvar i.val) t
 
-/-- Erasure preserves the closure invariant of its environment images. -/
+/-- **Erasure with locally closed images is locally closed.**
+Erasure preserves the closure invariant of its environment images. -/
 theorem eraseWith_lcAt {n m k : Nat} (σ : Fin m → Term Nat) (t : Tm n m)
     (hσ : ∀ i, (σ i).LcAt k) : (eraseWith σ t).LcAt k := by
   induction t generalizing k with
@@ -136,15 +142,18 @@ theorem eraseWith_lcAt {n m k : Nat} (σ : Fin m → Term Nat) (t : Tm n m)
   | tabs b ih => exact ih σ hσ
   | tapp f A ih => exact ih σ hσ
 
-/-- Close every scoped term variable with a locally closed model term. -/
+/-- **Closing System F terms in the term model.**
+Close every scoped term variable with a locally closed model term. -/
 def close {n m : Nat} (σ : Fin m → Model) (t : Tm n m) : Model :=
   ⟨eraseWith (fun i => (σ i).val) t,
     eraseWith_lcAt _ t (fun i => (σ i).property)⟩
 
-/-- Erase a term with no free term variables into the existing term model. -/
+/-- **Erasure of closed System F terms to the term model.**
+Erase a term with no free term variables into the existing term model. -/
 def eraseModel {n : Nat} (t : Tm n 0) : Model := close Fin.elim0 t
 
-/-- Opening an erased instance opens exactly its raw environment images. -/
+/-- **Opening commutes with erasure under an environment.**
+Opening an erased instance opens exactly its raw environment images. -/
 theorem eraseWith_openRec {n m : Nat} (u : Term Nat) (hu : u.LcAt 0)
     (k : Nat) (σ : Fin m → Term Nat) (t : Tm n m) :
     Term.openRec k u (eraseWith σ t) =
@@ -162,7 +171,8 @@ theorem eraseWith_openRec {n m : Nat} (u : Term Nat) (hu : u.LcAt 0)
   | tabs b ih => exact ih (k := k) (σ := σ)
   | tapp f A ih => exact ih (k := k) (σ := σ)
 
-/-- Type substitution changes no part of the erased untyped term. -/
+/-- **Untyped erasure is invariant under type substitution.**
+Type substitution changes no part of the erased untyped term. -/
 theorem eraseWith_tySubst {n k m : Nat} (σ : Fin n → Ty k)
     (η : Fin m → Term Nat) (t : Tm n m) :
     eraseWith η (tySubst σ t) = eraseWith η t := by
@@ -173,23 +183,25 @@ theorem eraseWith_tySubst {n k m : Nat} (σ : Fin n → Ty k)
   | tabs b ih => simp only [tySubst, eraseWith, ih]
   | tapp f A ih => simp only [tySubst, eraseWith, ih]
 
-/-- Closing a variable returns exactly its environment image. -/
+/-- **Closing a System F variable.** Closing a variable returns exactly its environment image. -/
 @[simp] theorem close_var {n m : Nat} (σ : Fin m → Model) (i : Fin m) :
     close σ (.var i : Tm n m) = σ i := rfl
 
-/-- Closing commutes with the upstream model's application. -/
+/-- **Closing a System F application.** Closing commutes with the upstream model's application. -/
 @[simp] theorem close_app {n m : Nat} (σ : Fin m → Model) (f a : Tm n m) :
     close σ (.app f a) = Model.app (close σ f) (close σ a) := rfl
 
-/-- A type lambda contributes no untyped binder. -/
+/-- **Closing erases System F type abstraction.** A type lambda contributes no untyped binder. -/
 @[simp] theorem close_tabs {n m : Nat} (σ : Fin m → Model)
     (b : Tm (n + 1) m) : close σ (.tabs b) = close σ b := rfl
 
-/-- A type argument contributes no untyped application. -/
+/-- **Closing erases System F type application.**
+A type argument contributes no untyped application. -/
 @[simp] theorem close_tapp {n m : Nat} (σ : Fin m → Model)
     (f : Tm n m) (A : Ty n) : close σ (.tapp f A) = close σ f := rfl
 
-/-- Closing is independent of every type substitution. -/
+/-- **System F closing is invariant under type substitution.**
+Closing is independent of every type substitution. -/
 @[simp] theorem close_tySubst {n k m : Nat} (σ : Fin n → Ty k)
     (η : Fin m → Model) (t : Tm n m) :
     close η (tySubst σ t) = close η t := by
@@ -211,7 +223,8 @@ private theorem open_lift {n m : Nat} (σ : Fin m → Model)
     exact Term.lcAt_openRec_above_lcAt (σ i).val a.val 0 0
       (Nat.le_refl 0) (σ i).property
 
-/-- An erased lambda application beta-converts to its extended body instance. -/
+/-- **Beta conversion of a closed System F lambda application.**
+An erased lambda application beta-converts to its extended body instance. -/
 theorem close_beta {n m : Nat} (σ : Fin m → Model) (A : Ty n)
     (b : Tm n (m + 1)) (a : Model) :
     BetaEq (Model.app (close σ (.lam A b)) a) (close (Fin.cases a σ) b) := by
@@ -221,7 +234,8 @@ theorem close_beta {n m : Nat} (σ : Fin m → Model) (A : Ty n)
   rw [open_lift] at hs
   exact Relation.EqvGen.rel _ _ hs
 
-/-- Shifting an erased instance shifts exactly its raw environment images. -/
+/-- **Shifting commutes with erasure under an environment.**
+Shifting an erased instance shifts exactly its raw environment images. -/
 theorem eraseWith_shift {n m : Nat} (c : Nat) (σ : Fin m → Term Nat)
     (t : Tm n m) : shiftAt c (eraseWith σ t) =
       eraseWith (fun i => shiftAt c (σ i)) t := by
@@ -238,7 +252,8 @@ theorem eraseWith_shift {n m : Nat} (c : Nat) (σ : Fin m → Term Nat)
   | tabs b ih => exact ih (c := c) (σ := σ)
   | tapp f A ih => exact ih (c := c) (σ := σ)
 
-/-- Erasing a term-variable renaming precomposes the raw environment. -/
+/-- **Erasure of a term-variable renaming.**
+Erasing a term-variable renaming precomposes the raw environment. -/
 theorem eraseWith_rename {n m k : Nat} (η : Fin m → Fin k)
     (σ : Fin k → Term Nat) (t : Tm n m) :
     eraseWith σ (rename η t) = eraseWith (σ ∘ η) t := by
@@ -253,7 +268,8 @@ theorem eraseWith_rename {n m k : Nat} (η : Fin m → Fin k)
   | tabs b ih => simp only [rename, eraseWith, ih]
   | tapp f A ih => simp only [rename, eraseWith, ih]
 
-/-- Actual term substitution erases by composing raw environments. -/
+/-- **Erasure of a term substitution.**
+Actual term substitution erases by composing raw environments. -/
 theorem eraseWith_subst {n m k : Nat} (σ : Fin m → Tm n k)
     (η : Fin k → Term Nat) (t : Tm n m) :
     eraseWith η (subst σ t) =
@@ -275,14 +291,16 @@ theorem eraseWith_subst {n m k : Nat} (σ : Fin m → Tm n k)
   | tabs b ih => simp only [subst, eraseWith, ih, tyRename, eraseWith_tySubst]
   | tapp f A ih => simp only [subst, eraseWith, ih]
 
-/-- Closing an actual substitution composes its model-valued environments. -/
+/-- **Closing commutes with System F term substitution.**
+Closing an actual substitution composes its model-valued environments. -/
 theorem close_subst {n m k : Nat} (σ : Fin m → Tm n k)
     (η : Fin k → Model) (t : Tm n m) :
     close η (subst σ t) = close (fun i => close η (σ i)) t := by
   apply Subtype.ext
   exact eraseWith_subst σ (fun i => (η i).val) t
 
-/-- Actual binder discharge agrees with extending the closing environment. -/
+/-- **Closing an instantiated System F term binder.**
+Actual binder discharge agrees with extending the closing environment. -/
 theorem close_instantiate {n m : Nat} (η : Fin m → Model)
     (b : Tm n (m + 1)) (a : Tm n m) :
     close η (instantiate b a) = close (Fin.cases (close η a) η) b := by

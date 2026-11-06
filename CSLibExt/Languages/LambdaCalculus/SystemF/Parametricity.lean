@@ -53,7 +53,8 @@ termination or normalization. No full set-valued model is assumed; Reynolds
 
 namespace Cslib.Languages.LambdaCalculus.SystemF
 
-/-- The fundamental binary relational-parametricity theorem of pure System F.
+/-- **Fundamental theorem of relational parametricity for System F.**
+The fundamental binary relational-parametricity theorem of pure System F.
 
 A syntactic-model adaptation of Reynolds' abstraction theorem (1983,
 Sections 3 and 8), following Wadler's related-environment formulation (1989,
@@ -84,23 +85,27 @@ theorem fundamental {n m : Nat} {Γ : Ctx n m} {t : Tm n m} {A : Ty n}
     rw [Ty.interpret_instantiate]
     exact ih ρ σ τ hστ (A.interpret ρ)
 
-/-- Every closed typed term is related to itself under arbitrary relations. -/
+/-- **Closed typed System F terms are related to themselves.**
+Every closed typed term is related to itself under arbitrary relations. -/
 theorem fundamental_closed {n : Nat} {Γ : Ctx n 0} {t : Tm n 0} {A : Ty n}
     (ht : Typing Γ t A) (ρ : Fin n → Rel) :
     (A.interpret ρ).holds (Tm.eraseModel t) (Tm.eraseModel t) :=
   fundamental ht ρ Fin.elim0 Fin.elim0 (fun i => Fin.elim0 i)
 
-/-- The polymorphic identity type, universally quantified at any type depth. -/
+/-- **Polymorphic identity type.**
+The polymorphic identity type, universally quantified at any type depth. -/
 def polyIdType {n : Nat} : Ty n := .all (.arr (.var 0) (.var 0))
 
-/-- The pure polymorphic identity term. -/
+/-- **Polymorphic identity term.** The pure polymorphic identity term. -/
 def polyId {n m : Nat} : Tm n m := .tabs (.lam (.var 0) (.var 0))
 
-/-- The polymorphic identity is well typed in any existing term context. -/
+/-- **Typing of the polymorphic identity.**
+The polymorphic identity is well typed in any existing term context. -/
 theorem polyId_typed {n m : Nat} (Γ : Ctx n m) :
     Typing Γ polyId polyIdType := .tabs (.lam (.var 0))
 
-/-- Every closed inhabitant acts as identity after every type instantiation.
+/-- **Closed inhabitants of the polymorphic identity type are identities.**
+Every closed inhabitant acts as identity after every type instantiation.
 
 The conclusion is full-beta conversion in the existing erased term model,
 for an arbitrary locally closed input. It makes no CBV termination claim.
@@ -114,7 +119,8 @@ theorem polymorphic_identity {t : Tm 0 0}
   have hx := h (Rel.betaClass x) x x ⟨BetaEq.refl x, BetaEq.refl x⟩
   exact hx.1
 
-/-- Type instantiations preserve every admissible binary input relation. -/
+/-- **Polymorphic identity inhabitants preserve admissible relations.**
+Type instantiations preserve every admissible binary input relation. -/
 theorem polymorphic_related {t : Tm 0 0}
     (ht : Typing Fin.elim0 t polyIdType) (A B : Ty 0) (R : Rel)
     {x y : Model} (hxy : R.holds x y) :
@@ -122,7 +128,8 @@ theorem polymorphic_related {t : Tm 0 0}
       (Model.app (Tm.eraseModel (.tapp t B)) y) := by
   exact fundamental_closed ht Fin.elim0 R x y hxy
 
-/-- The empty relation rules out every closed inhabitant of `forall X, X`. -/
+/-- **No closed System F term inhabits $\forall X, X$.**
+The empty relation rules out every closed inhabitant of `forall X, X`. -/
 theorem forall_var_uninhabited (t : Tm 0 0) :
     ¬ Typing Fin.elim0 t (.all (.var 0)) := by
   intro ht

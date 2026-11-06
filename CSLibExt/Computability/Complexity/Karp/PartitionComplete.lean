@@ -26,7 +26,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition
 
 open Cslib.CookLevin Cslib.Complexity.Karp ComplexityTheory
 
-/-- Binary-coded SUBSET-SUM reduces to the exact PARTITION decision problem. -/
+/-- **Polynomial-time reduction from SUBSET-SUM to PARTITION.**
+Binary-coded SUBSET-SUM reduces to the exact PARTITION decision problem. -/
 theorem subsetSum_polyManyOneRed_partition :
     PolyManyOneRed subsetSumDec partitionDec :=
   ⟨reduceFromSubsetSum, HardnessMachine.isPolyTime_reduceFromSubsetSum,

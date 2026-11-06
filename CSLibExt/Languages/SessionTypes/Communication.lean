@@ -33,10 +33,12 @@ namespace Cslib.SessionTypes
 
 open PiCalculus
 
-/-- Embed a binary configuration without changing either process. -/
+/-- **Binary configuration as a parallel composition.**
+Embed a binary configuration without changing either process. -/
 def represent (r : Proc × Proc) : Proc := .par r.1 r.2
 
-/-- The representation does not identify distinct configurations. -/
+/-- **Injectivity of the binary configuration embedding.**
+The representation does not identify distinct configurations. -/
 theorem represent_injective : Function.Injective represent := by
   intro r t h
   cases r
@@ -44,14 +46,16 @@ theorem represent_injective : Function.Injective represent := by
   cases h
   rfl
 
-/-- Opposite head guards synchronize, in either endpoint orientation. -/
+/-- **Communication step of a binary configuration.**
+Opposite head guards synchronize, in either endpoint orientation. -/
 inductive CommStep : Proc × Proc → Proc × Proc → Prop where
   | send (a : Nat) (b : Name) (p q : Proc) :
       CommStep (.out (.const a) b p, .inp (.const a) q) (p, subst q b)
   | recv (a : Nat) (b : Name) (p q : Proc) :
       CommStep (.inp (.const a) p, .out (.const a) b q) (subst p b, q)
 
-/-- Every session communication is a reduction in the unchanged π semantics. -/
+/-- **Session communication steps are π-calculus reductions.**
+Every session communication is a reduction in the unchanged π semantics. -/
 theorem represent_step {r t : Proc × Proc} (h : CommStep r t) :
     PiCalculus.Step (represent r) (represent t) := by
   cases h with
@@ -60,12 +64,14 @@ theorem represent_step {r t : Proc × Proc} (h : CommStep r t) :
     exact .cong (.par_comm _ _)
       (.commSelect (.refl _) (.refl _)) (.par_comm _ _)
 
-/-- Locally linear threads owning opposite roles on every channel.
+/-- **Dual session typing of a binary configuration.**
+Locally linear threads owning opposite roles on every channel.
 Dual compatibility permits cyclic waits; it does not assert progress. -/
 def BinaryTyped (Γ : Context) (r : Proc × Proc) : Prop :=
   HasType 0 Γ r.1 ∧ HasType 0 (dualContext Γ) r.2
 
-/-- Communication consumes dual heads and preserves linear residual typing;
+/-- **Communication preserves binary session typing.**
+Communication consumes dual heads and preserves linear residual typing;
 payload substitution never changes the session context. -/
 theorem CommStep.preservation {Γ : Context} {r t : Proc × Proc}
     (h : CommStep r t) (hr : BinaryTyped Γ r) :

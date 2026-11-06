@@ -83,7 +83,8 @@ private theorem factor_cell {g : ContextFreeGrammar T} [DecidableEq g.NT]
     omega
   · omega
 
-/-- A cell is correct once all strictly shorter, valid factors are correct.
+/-- **Correctness of one indexed CYK cell.**
+A cell is correct once all strictly shorter, valid factors are correct.
 The rule enumeration certificate constrains data only, not computation. -/
 theorem cell_correct {g : ContextFreeGrammar T} [DecidableEq g.NT]
     (hg : IsChomskyNormalForm g) (tc nc : ℕ) (w : List T)
@@ -114,7 +115,8 @@ theorem cell_correct {g : ContextFreeGrammar T} [DecidableEq g.NT]
     exact ⟨r, (hrs r).2 hr, ha, (fits_eq tc nc w tbl i len hbound
       (cykCell g len) hf r.output).2 hfit⟩
 
-/-- Row construction preserves the exact start-position indexing. -/
+/-- **Indexing of a constructed CYK row.**
+Row construction preserves the exact start-position indexing. -/
 theorem row_get (tc nc : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (len : ℕ)
     (rs : List (ContextFreeRule T N)) (i count j : ℕ) :
@@ -130,7 +132,8 @@ theorem row_get (tc nc : ℕ) (w : Array T)
           simpa [row, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
             using ih (i + 1) j
 
-/-- The outer table retains its allocated size through every update. -/
+/-- **Indexed CYK table keeps its allocated size.**
+The outer table retains its allocated size through every update. -/
 @[simp] theorem table_size (tc nc : ℕ) (w : Array T)
     (rs : List (ContextFreeRule T N)) (depth : ℕ) :
     (table tc nc w rs depth).ret.size = w.size + 1 := by
@@ -138,7 +141,8 @@ theorem row_get (tc nc : ℕ) (w : Array T)
   | zero => simp [table]
   | succ depth ih => simpa [table] using ih
 
-/-- Updating one length never changes another length's cells. -/
+/-- **CYK table update leaves other lengths' cells unchanged.**
+Updating one length never changes another length's cells. -/
 theorem lookup_table_other (tc nc : ℕ) (w : Array T)
     (rs : List (ContextFreeRule T N)) (depth i len : ℕ)
     (h : depth + 1 ≠ len) :
@@ -146,7 +150,8 @@ theorem lookup_table_other (tc nc : ℕ) (w : Array T)
       lookup (table tc nc w rs depth).ret i len := by
   simp [table, lookup, Array.set!, h]
 
-/-- The new length's row contains exactly the cells just computed. -/
+/-- **New CYK table row holds the computed cells.**
+The new length's row contains exactly the cells just computed. -/
 theorem lookup_table_new (tc nc : ℕ) (w : Array T)
     (rs : List (ContextFreeRule T N)) (depth i : ℕ)
     (hd : depth < w.size) (hi : i < w.size + 1) :
@@ -154,7 +159,8 @@ theorem lookup_table_new (tc nc : ℕ) (w : Array T)
       (cell tc nc w (table tc nc w rs depth).ret i (depth + 1) rs).ret := by
   simp [table, lookup, Array.set!, table_size, row_get, hd, hi]
 
-/-- Every completed valid cell agrees with canonical grammar derivations. -/
+/-- **Correctness of the completed indexed CYK table.**
+Every completed valid cell agrees with canonical grammar derivations. -/
 theorem table_correct {g : ContextFreeGrammar T} [DecidableEq g.NT]
     (hg : IsChomskyNormalForm g) (tc nc : ℕ) (w : List T)
     (rs : List (ContextFreeRule T g.NT))
@@ -177,7 +183,8 @@ theorem table_correct {g : ContextFreeGrammar T} [DecidableEq g.NT]
         exact ih i len hpos (by omega) hbound a
 
 omit [DecidableEq T] in
-/-- Epsilon scanning agrees with existence of a start epsilon production. -/
+/-- **Correctness of the CYK epsilon scan.**
+Epsilon scanning agrees with existence of a start epsilon production. -/
 @[simp] theorem epsilon_ret (nc : ℕ) (start : N)
     (rs : List (ContextFreeRule T N)) :
     (epsilon nc start rs).ret = true ↔
@@ -186,7 +193,8 @@ omit [DecidableEq T] in
   | nil => simp [epsilon]
   | cons r rs ih => simp [epsilon, ih]
 
-/-- The indexed recognizer decides the existing canonical language. -/
+/-- **Correctness of the indexed CYK recognizer.**
+The indexed recognizer decides the existing canonical language. -/
 theorem recognizes_iff {g : ContextFreeGrammar T} [DecidableEq g.NT]
     (hg : IsChomskyNormalForm g) (tc nc : ℕ)
     (rs : List (ContextFreeRule T g.NT))
@@ -202,7 +210,8 @@ theorem recognizes_iff {g : ContextFreeGrammar T} [DecidableEq g.NT]
         table_correct hg tc nc (x :: xs) rs hrs (x :: xs).length
           0 (x :: xs).length (by simp) le_rfl (by simp) g.initial
 
-/-- Exact Boolean correspondence with the existing list-table recognizer. -/
+/-- **Indexed CYK agrees with the list-table CYK recognizer.**
+Exact Boolean correspondence with the existing list-table recognizer. -/
 theorem recognizes_eq_cykAccepts {g : ContextFreeGrammar T}
     [DecidableEq g.NT] (hg : IsChomskyNormalForm g) (tc nc : ℕ)
     (rs : List (ContextFreeRule T g.NT))

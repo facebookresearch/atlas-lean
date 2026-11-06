@@ -66,7 +66,8 @@ open Cslib.Bioinformatics.Phylogenetics.Splits
 variable {X : Type} [Fintype X] [DecidableEq X]
 variable {L : Type*} [DecidableEq L]
 
-/-- Whether the leaf set `S` meets both sides of an edge with leaf set `B` below it, inside a
+/-- **Leaf set meeting both sides of a tree edge.**
+Whether the leaf set `S` meets both sides of an edge with leaf set `B` below it, inside a
 tree with leaf set `U`: `S ∩ B` and `S ∩ (U \ B)` are nonempty. -/
 def Separates (U S B : Finset L) : Prop := (S ∩ B).Nonempty ∧ (S ∩ (U \ B)).Nonempty
 
@@ -127,11 +128,13 @@ private theorem separates_univ_of_nonempty {B : Finset X} (hB : B.Nonempty)
 
 /-! ### The public BLS over `UnrootedBinaryTree` -/
 
-/-- Edge lengths are nonnegative: every dart's undirected edge has nonnegative length. -/
+/-- **Nonnegative edge lengths of a tree.**
+Edge lengths are nonnegative: every dart's undirected edge has nonnegative length. -/
 def NonnegWeights (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ) : Prop :=
   ∀ t : T.G.Dart, 0 ≤ w t.edge
 
-/-- The total branch length: half the sum of the edge lengths over the darts, since each
+/-- **Total branch length of a tree.**
+The total branch length: half the sum of the edge lengths over the darts, since each
 undirected edge is traversed once in each direction. -/
 noncomputable def totalLength (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ) : ℝ :=
   (1 / 2) * ∑ t : T.G.Dart, w t.edge
@@ -143,7 +146,8 @@ noncomputable def bls (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V �
   (1 / 2) * ∑ t : T.G.Dart, w t.edge *
     if Separates Finset.univ S (edgeSide T t.fst t.snd) then 1 else 0
 
-/-- The normalized Branch Length Score, `bls S T w / totalLength T w`, as reported by
+/-- **Normalized branch length score.**
+The normalized Branch Length Score, `bls S T w / totalLength T w`, as reported by
 Kheradpour et al. (a fraction of the total branch length). -/
 noncomputable def blsFrac (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ) : ℝ :=
   bls S T w / totalLength T w
@@ -173,14 +177,16 @@ private theorem edgeSide_nonempty (T : UnrootedBinaryTree X) (a : X) {p v : T.V}
     exact edgeSide_mem_edgeSplits T hpv.symm
   exact ⟨(hsplit _ hA).1, (hsplit _ hAc).1⟩
 
-/-- The BLS is nonnegative for nonnegative edge lengths. -/
+/-- **Branch length score is nonnegative for nonnegative edge lengths.**
+The BLS is nonnegative for nonnegative edge lengths. -/
 theorem bls_nonneg (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ)
     (hw : NonnegWeights T w) : 0 ≤ bls S T w := by
   rw [bls]
   refine mul_nonneg (by norm_num) (Finset.sum_nonneg fun t _ => ?_)
   exact mul_nonneg (hw t) (by split_ifs <;> norm_num)
 
-/-- The BLS is at most the total branch length. -/
+/-- **Branch length score is at most the tree length for nonnegative lengths.**
+The BLS is at most the total branch length. -/
 theorem bls_le_totalLength (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ)
     (hw : NonnegWeights T w) : bls S T w ≤ totalLength T w := by
   rw [bls, totalLength]
@@ -198,7 +204,7 @@ theorem bls_mono {S S' : Finset X} (h : S ⊆ S') (T : UnrootedBinaryTree X)
   exact mul_le_mul_of_nonneg_left
     (ite_le_ite zero_le_one fun hs => separates_mono h hs) (hw t)
 
-/-- The BLS of the empty set is `0`. -/
+/-- **Branch length score of the empty set is zero.** The BLS of the empty set is `0`. -/
 theorem bls_empty (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ) : bls ∅ T w = 0 := by
   have hnot : ∀ t : T.G.Dart, ¬ Separates Finset.univ ∅ (edgeSide T t.fst t.snd) := by
     intro t h
@@ -251,7 +257,8 @@ theorem bls_union_le {S S' : Finset X} (hSS : (S ∩ S').Nonempty) (T : Unrooted
           else 0) + w t.edge * (if Separates Finset.univ S' (edgeSide T t.fst t.snd)
           then (1 : ℝ) else 0) := by rw [mul_add]
 
-/-- The normalized BLS is nonnegative. -/
+/-- **Normalized branch length score is nonnegative for nonnegative lengths.**
+The normalized BLS is nonnegative. -/
 theorem blsFrac_nonneg (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ)
     (hw : NonnegWeights T w) : 0 ≤ blsFrac S T w := by
   rw [blsFrac]
@@ -259,7 +266,8 @@ theorem blsFrac_nonneg (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V �
   rw [totalLength]
   exact mul_nonneg (by norm_num) (Finset.sum_nonneg fun t _ => hw t)
 
-/-- The normalized BLS is at most `1` when the tree has positive total length. -/
+/-- **Normalized branch length score is at most one for nonnegative lengths.**
+The normalized BLS is at most `1` when the tree has positive total length. -/
 theorem blsFrac_le_one (S : Finset X) (T : UnrootedBinaryTree X) (w : Sym2 T.V → ℝ)
     (hw : NonnegWeights T w) (hpos : 0 < totalLength T w) : blsFrac S T w ≤ 1 := by
   rw [blsFrac]
@@ -317,7 +325,8 @@ theorem edgeSide_of_leaf (T : UnrootedBinaryTree X) {x : X} {p : T.V}
     norm_num
 
 omit [Fintype X] [DecidableEq X] in
-/-- A sum over darts of a function of the undirected edge is twice the sum over the edges:
+/-- **Sum over darts is twice the sum over edges.**
+A sum over darts of a function of the undirected edge is twice the sum over the edges:
 the two darts of each edge contribute equally. -/
 theorem dart_sum_edge (T : UnrootedBinaryTree X) (f : Sym2 T.V → ℝ) :
     ∑ t : T.G.Dart, f t.edge = ∑ e ∈ T.G.edgeFinset, 2 * f e := by

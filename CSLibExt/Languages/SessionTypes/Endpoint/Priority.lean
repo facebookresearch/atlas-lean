@@ -21,20 +21,23 @@ a distinct dependency even when both roles have the same physical name.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- A guard precedes every other active owned endpoint. Transferred payloads
+/-- **Guard priority condition on active endpoints.**
+A guard precedes every other active owned endpoint. Transferred payloads
 are included in ownership until transfer; no enabled edge is assumed. -/
 def GuardMin (Δ : Context) (e : Key) (rank : Nat) : Prop :=
   ∀ d c, Δ.lookup d = some c → c.protocol.unfold ≠ .done →
     d ≠ e → rank < c.rank
 
-/-- Owning an active peer of the guard at the same rank violates the discipline. -/
+/-- **An active same-rank peer violates the guard condition.**
+Owning an active peer of the guard at the same rank violates the discipline. -/
 theorem guardMin_rejects_peer {Δ : Context} {e : Key} {c : Capability}
     (hc : Δ.lookup e.opposite = some c) (ha : c.protocol.unfold ≠ .done) :
     ¬ GuardMin Δ e c.rank := by
   intro h
   exact (Nat.lt_irrefl c.rank) (h e.opposite c hc ha e.opposite_ne)
 
-/-- Collision-free rekeying preserves guard inequalities and the exact
+/-- **Injective rekeying preserves the guard condition.**
+Collision-free rekeying preserves guard inequalities and the exact
 same-endpoint exemption; it cannot silently identify the peer role. -/
 theorem GuardMin.rekey {f : Key → Key} {Δ : Context} {e : Key} {k : Nat}
     (hf : Set.InjOn f {d | d ∈ Δ}) (h : GuardMin Δ e k) :
@@ -45,7 +48,8 @@ theorem GuardMin.rekey {f : Key → Key} {Δ : Context} {e : Key} {k : Nat}
   intro he
   exact hde (had.symm.trans (congrArg f he))
 
-/-- A guard with only its own endpoint is permitted to keep using that
+/-- **A guard owning only its own endpoint satisfies the condition.**
+A guard with only its own endpoint is permitted to keep using that
 endpoint sequentially at the same rank. Only DIFFERENT keys must rank later. -/
 theorem guardMin_singleton (e : Key) (c : Capability) :
     GuardMin (Finmap.singleton e c) e c.rank := by
@@ -53,7 +57,8 @@ theorem guardMin_singleton (e : Key) (c : Capability) :
   have he := (Finmap.mem_singleton _ _ _).mp (Finmap.mem_of_lookup_eq_some hd)
   exact False.elim (hne he)
 
-/-- Adding a genuinely completed role introduces no guard dependency.
+/-- **Adding a completed role preserves the guard condition.**
+Adding a genuinely completed role introduces no guard dependency.
 Completion is checked by the actual unfolded protocol, not a key exemption. -/
 theorem GuardMin.insert_completed {Δ : Context} {e z : Key} {k : Nat} {c : Capability}
     (h : GuardMin Δ e k) (hc : c.protocol.unfold = .done) :

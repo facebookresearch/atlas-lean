@@ -59,53 +59,59 @@ namespace Cslib.SessionTypes
 
 open PiCalculus
 
-/-- Finite binary protocols carrying unrestricted, passive names. -/
+/-- **Finite binary session types.**
+Finite binary protocols carrying unrestricted, passive names. -/
 inductive SessionType where
   | end : SessionType
   | send (next : SessionType) : SessionType
   | recv (next : SessionType) : SessionType
   deriving DecidableEq, Repr
 
-/-- Exchange the endpoint's send and receive obligations. -/
+/-- **Dual of a session type.** Exchange the endpoint's send and receive obligations. -/
 def SessionType.dual : SessionType → SessionType
   | .end => .end
   | .send s => .recv s.dual
   | .recv s => .send s.dual
 
-/-- Duality is an involution, including at completion. -/
+/-- **Session type duality is an involution.** Duality is an involution, including at completion. -/
 @[simp] theorem SessionType.dual_dual (s : SessionType) :
     s.dual.dual = s := by
   induction s <;> simp [dual, *]
 
-/-- Number of communication actions remaining in a finite protocol. -/
+/-- **Length of a session type.** Number of communication actions remaining in a finite protocol. -/
 def SessionType.length : SessionType → Nat
   | .end => 0
   | .send s => s.length + 1
   | .recv s => s.length + 1
 
-/-- Opposite endpoint roles have the same number of actions. -/
+/-- **Dual session types have equal length.**
+Opposite endpoint roles have the same number of actions. -/
 @[simp] theorem SessionType.length_dual (s : SessionType) :
     s.dual.length = s.length := by
   induction s <;> simp [dual, length, *]
 
-/-- One linear endpoint obligation per physical channel in a thread. -/
+/-- **Per-channel session context of a thread.**
+One linear endpoint obligation per physical channel in a thread. -/
 abbrev Context := Nat → SessionType
 
-/-- Advance just the communicating endpoint; other obligations are unchanged. -/
+/-- **Advancing one endpoint of a session context.**
+Advance just the communicating endpoint; other obligations are unchanged. -/
 def advance (Γ : Context) (a : Nat) (s : SessionType) : Context :=
   fun c => if c = a then s else Γ c
 
-/-- The opposite endpoint roles, pointwise. -/
+/-- **Pointwise dual of a session context.** The opposite endpoint roles, pointwise. -/
 def dualContext (Γ : Context) : Context := fun c => (Γ c).dual
 
-/-- Advancing dual endpoints preserves pointwise compatibility. -/
+/-- **Dualizing a context commutes with advancing an endpoint.**
+Advancing dual endpoints preserves pointwise compatibility. -/
 theorem dualContext_advance (Γ : Context) (a : Nat) (s : SessionType) :
     dualContext (advance Γ a s) = advance (dualContext Γ) a s.dual := by
   funext c
   simp only [dualContext, advance]
   split <;> rfl
 
-/-- Linear typing of finite sequential threads in the existing π syntax.
+/-- **Linear session typing of sequential threads.**
+Linear typing of finite sequential threads in the existing π syntax.
 `nil` consumes only completed obligations. Input-bound names are unrestricted
 payloads, never session subjects; there is no parallel duplication rule. -/
 inductive HasType : Nat → Context → Proc → Prop where
@@ -117,7 +123,8 @@ inductive HasType : Nat → Context → Proc → Prop where
       Γ a = .recv s → HasType (n + 1) (advance Γ a s) p →
       HasType n Γ (.inp (.const a) p)
 
-/-- Capture-avoiding payload substitution preserves every linear obligation,
+/-- **Payload substitution at any cutoff preserves session typing.**
+Capture-avoiding payload substitution preserves every linear obligation,
 including through nested input binders and at nonzero cutoffs. -/
 theorem HasType.substProc {n k : Nat} {Γ : Context} {p : Proc} {b : Name}
     (h : HasType (n + 1) Γ p) (hb : b.ClosedAt n) (hk : k ≤ n) :
@@ -139,13 +146,15 @@ theorem HasType.substProc {n k : Nat} {Γ : Context} {p : Proc} {b : Name}
   | repl => cases h
   | sum => cases h
 
-/-- Receiving a closed name preserves the residual thread's typing. -/
+/-- **Receiving a closed name preserves session typing.**
+Receiving a closed name preserves the residual thread's typing. -/
 theorem HasType.subst {Γ : Context} {p : Proc} {b : Name}
     (h : HasType 1 Γ p) (hb : b.ClosedAt 0) :
     HasType 0 Γ (PiCalculus.subst p b) :=
   h.substProc hb (Nat.zero_le 0)
 
-/-- A derivation has only finitely many active channel obligations: above
+/-- **Session typing derivations have finite support.**
+A derivation has only finitely many active channel obligations: above
 some bound every channel is completed. Contexts are total functions. -/
 theorem HasType.finite_support {n : Nat} {Γ : Context} {p : Proc}
     (h : HasType n Γ p) : ∃ bound, ∀ c, bound ≤ c → Γ c = .end := by
@@ -164,7 +173,8 @@ theorem HasType.finite_support {n : Nat} {Γ : Context} {p : Proc}
     have hca : c ≠ a := by omega
     simpa [advance, hca] using hbound c (by omega)
 
-/-- Every typed thread satisfies the shared π name/process scoping predicate.
+/-- **Session-typed threads are well scoped.**
+Every typed thread satisfies the shared π name/process scoping predicate.
 Free session constants remain permitted; this is not ν-closedness. -/
 theorem HasType.closedAt {n : Nat} {Γ : Context} {p : Proc}
     (h : HasType n Γ p) : p.ClosedAt n := by

@@ -67,7 +67,8 @@ private theorem core_injective_before_halt {T : ℕ}
   · exact Fin.ext hij
   · exact (hneq j i hij hc.symm).elim
 
-/-- The first halting time is smaller than the canonical bound on reachable cores. -/
+/-- **First halting time is below the configuration-core bound.**
+The first halting time is smaller than the canonical bound on reachable cores. -/
 theorem haltTime_lt_coreBound [Fintype Symbol] [Fintype State] {s T : ℕ}
     (hs : ∀ t, tm.spaceUsed (tm.initCfg input) t ≤ s)
     (hT : tm.HaltsAt (tm.initCfg input) T) :
@@ -85,7 +86,8 @@ theorem haltTime_lt_coreBound [Fintype Symbol] [Fintype State] {s T : ℕ}
     exact_mod_cast hb
   omega
 
-/-- A halting, space-bounded run has an actual step bound. -/
+/-- **Halting space-bounded runs obey the core-count time bound.**
+A halting, space-bounded run has an actual step bound. -/
 theorem runsInTime_coreBound [Fintype Symbol] [Fintype State] {s : ℕ}
     (hs : ∀ t, tm.spaceUsed (tm.initCfg input) t ≤ s)
     (hh : ∃ t, (tm.runFrom (tm.initCfg input) t).Halted) :
@@ -100,7 +102,8 @@ private theorem spaceUsed_le_of_runsInSpace {s : ℕ}
     tm.spaceUsed (tm.initCfg input) t ≤ s := by
   exact hs (MultiTapeNTM.ComputationPath.ofDeterministic tm input t)
 
-/-- Exponential time from a visited-cell space bound and a halting run. -/
+/-- **Exponential time bound from a space bound and halting.**
+Exponential time from a visited-cell space bound and a halting run. -/
 theorem runsInTime_exponential_of_space [Fintype Symbol] [Fintype State] {s : ℕ}
     (hs : tm.RunsInSpace input s)
     (hh : ∃ t, (tm.runFrom (tm.initCfg input) t).Halted) :
@@ -110,7 +113,8 @@ theorem runsInTime_exponential_of_space [Fintype Symbol] [Fintype State] {s : �
   simpa only [Nat.mul_assoc] using Nat.mul_le_mul_left (input.length + 2)
     (storageBound_le_base_mul_pow (Symbol := Symbol) (State := State) (k := k) s)
 
-/-- One pair of constants works for every input of the fixed machine. -/
+/-- **Uniform constants for the exponential time-from-space bound.**
+One pair of constants works for every input of the fixed machine. -/
 theorem exists_exponential_time_bound [Finite Symbol] [Finite State]
     (tm : MultiTapeTM k Symbol State) :
     ∃ a c : ℕ, ∀ (input : List Symbol) (s : ℕ), tm.RunsInSpace input s →

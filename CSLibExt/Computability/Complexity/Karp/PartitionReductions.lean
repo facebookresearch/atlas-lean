@@ -27,19 +27,22 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition
 
 open Cslib.Complexity.Karp BitstringEncoding
 
-/-- SUBSET-SUM to PARTITION, with malformed inputs sent to `[1]`. -/
+/-- **Encoded reduction from SUBSET-SUM to PARTITION.**
+SUBSET-SUM to PARTITION, with malformed inputs sent to `[1]`. -/
 def reduceFromSubsetSum (x : List Bool) : List Bool :=
   match SSVerify.decodeSS x with
   | some (as, t) => bitEncode (fromSubsetSum as t)
   | none => bitEncode ([1] : List ℕ)
 
-/-- PARTITION to SUBSET-SUM, preserving the generic decoder's semantics. -/
+/-- **Encoded reduction from PARTITION to SUBSET-SUM.**
+PARTITION to SUBSET-SUM, preserving the generic decoder's semantics. -/
 def reduceToSubsetSum (x : List Bool) : List Bool :=
   match bitDecode (α := List ℕ) x with
   | some as => encodeSS (as.map (· * 2)) as.sum
   | none => noSS
 
-/-- The encoded reduction preserves every yes/no answer, including
+/-- **Correctness of the encoded SUBSET-SUM to PARTITION reduction.**
+The encoded reduction preserves every yes/no answer, including
 malformed source strings. This is the semantic, not the time, theorem. -/
 theorem reduceFromSubsetSum_correct (x : List Bool) :
     subsetSumDec x = partitionDec (reduceFromSubsetSum x) := by
@@ -64,7 +67,8 @@ theorem reduceFromSubsetSum_correct (x : List Bool) :
       partitionDec_bitEncode, fromSubsetSum_feasible,
       ← SSVerify.decodeSS_eq_some.mp hd, subsetSumDec_encodeSS_eq_true]
 
-/-- The membership map preserves the generic decoder, including accepted
+/-- **Correctness of the encoded PARTITION to SUBSET-SUM reduction.**
+The membership map preserves the generic decoder, including accepted
 noncanonical payloads and rejected malformed framing. -/
 theorem reduceToSubsetSum_correct (x : List Bool) :
     partitionDec x = subsetSumDec (reduceToSubsetSum x) := by

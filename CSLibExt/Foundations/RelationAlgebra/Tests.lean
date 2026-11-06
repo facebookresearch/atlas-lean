@@ -29,19 +29,20 @@ namespace Cslib.RelationAlgebra
 
 variable {World : Type*}
 
-/-- The diagonal relation restricted to an assertion. -/
+/-- **Diagonal test relation of an assertion.** The diagonal relation restricted to an assertion. -/
 def testSet (P : Set World) : SquareRelations World :=
   {(s, t) | s = t ∧ s ∈ P}
 
-/-- Membership in a diagonal test. -/
+/-- **Membership in a diagonal test relation.** Membership in a diagonal test. -/
 @[simp] theorem mem_testSet {P : Set World} {s t : World} :
     testSet P (s, t) ↔ s = t ∧ s ∈ P := Iff.rfl
 
-/-- A test is a subidentity, not an arbitrary relation. -/
+/-- **Diagonal tests are subidentities.** A test is a subidentity, not an arbitrary relation. -/
 theorem testSet_le_one (P : Set World) : testSet P ≤ 1 :=
   fun _ h => h.1
 
-/-- Sequential tests conjoin their assertions without changing state. -/
+/-- **Composing diagonal tests conjoins their assertions.**
+Sequential tests conjoin their assertions without changing state. -/
 @[simp] theorem testSet_mul_testSet (P Q : Set World) :
     testSet P * testSet Q = testSet (P ∩ Q) := by
   change SetRel.comp (testSet P) (testSet Q) = testSet (P ∩ Q)
@@ -53,7 +54,8 @@ theorem testSet_le_one (P : Set World) : testSet P ≤ 1 :=
   · rintro ⟨rfl, hP, hQ⟩
     exact ⟨s, ⟨rfl, hP⟩, rfl, hQ⟩
 
-/-- The verification inequality is precisely universal partial
+/-- **Verification inequality characterizes partial correctness.**
+The verification inequality is precisely universal partial
 correctness: every execution from `P` ends in `Q`. -/
 theorem test_mul_le_mul_test_iff (P Q : Set World)
     (R : SquareRelations World) :
@@ -67,7 +69,8 @@ theorem test_mul_le_mul_test_iff (P Q : Set World)
   · rintro h ⟨s, t⟩ ⟨u, ⟨rfl, hP⟩, hR⟩
     exact ⟨t, hR, rfl, h hP hR⟩
 
-/-- A postcondition can be absorbed on the right exactly when it holds
+/-- **Postcondition absorption characterizes partial correctness.**
+A postcondition can be absorbed on the right exactly when it holds
 on every execution starting in the precondition. -/
 theorem test_mul_eq_test_mul_test_iff (P Q : Set World)
     (R : SquareRelations World) :
@@ -90,7 +93,8 @@ theorem test_mul_eq_test_mul_test_iff (P Q : Set World)
     · rintro ⟨u, hin, rfl, _⟩
       exact hin
 
-/-- Classically, verification means that no execution from `P` can
+/-- **Partial correctness as unreachability of the negated postcondition.**
+Classically, verification means that no execution from `P` can
 reach the complement of `Q`. -/
 theorem test_mul_test_compl_eq_bot_iff (P Q : Set World)
     (R : SquareRelations World) :
@@ -112,19 +116,22 @@ theorem test_mul_test_compl_eq_bot_iff (P Q : Set World)
     · intro hbot
       exact hbot.elim
 
-/-- The false assertion is the zero relation. -/
+/-- **Test of the false assertion is the zero relation.**
+The false assertion is the zero relation. -/
 @[simp] theorem testSet_empty : testSet (∅ : Set World) = ⊥ := by
   apply Set.ext
   rintro ⟨s, t⟩
   exact ⟨fun h => h.2, fun h => h.elim⟩
 
-/-- The true assertion is the identity relation. -/
+/-- **Test of the true assertion is the identity relation.**
+The true assertion is the identity relation. -/
 @[simp] theorem testSet_univ : testSet (Set.univ : Set World) = 1 := by
   apply Set.ext
   rintro ⟨s, t⟩
   exact ⟨fun h => h.1, fun h => ⟨h, trivial⟩⟩
 
-/-- Boolean test negation is complement relative to identity, not the
+/-- **Test of a negated assertion is the complement within identity.**
+Boolean test negation is complement relative to identity, not the
 full relation-algebra complement (which includes off-diagonal pairs). -/
 theorem testSet_compl (P : Set World) :
     testSet Pᶜ = (testSet P)ᶜ ⊓ 1 := by
@@ -136,7 +143,8 @@ theorem testSet_compl (P : Set World) :
   · rintro ⟨hP, rfl⟩
     exact ⟨rfl, fun h => hP ⟨rfl, h⟩⟩
 
-/-- Union of assertions is union of their diagonal tests. -/
+/-- **Test of a union of assertions is the union of tests.**
+Union of assertions is union of their diagonal tests. -/
 theorem testSet_union (P Q : Set World) :
     testSet (P ∪ Q) = testSet P ⊔ testSet Q := by
   apply Set.ext

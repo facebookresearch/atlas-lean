@@ -31,19 +31,22 @@ private theorem eraseWith_fromSystemF {n m : Nat} {Δ : List Kind}
   | tabs b ih => simp [Tm.fromSystemF, Tm.eraseSyntax, ih]
   | tapp f A ih => simp [Tm.fromSystemF, Tm.eraseSyntax, ih]
 
-/-- Translated System F terms have exactly the same model closing instances. -/
+/-- **Translated System F terms have the same closing instances.**
+Translated System F terms have exactly the same model closing instances. -/
 theorem Tm.close_fromSystemF {n m : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (σ : Fin m → SystemF.Model) (t : SystemF.Tm n m) :
     close σ (fromSystemF φ t) = SystemF.Tm.close σ t := by
   apply Subtype.ext
   exact eraseWith_fromSystemF φ (fun i => (σ i).val) t
 
-/-- Canonical embedding preserves arbitrary model closing instances exactly. -/
+/-- **Canonical embedding preserves closing instances.**
+Canonical embedding preserves arbitrary model closing instances exactly. -/
 theorem Tm.close_embed {n m : Nat} (σ : Fin m → SystemF.Model)
     (t : SystemF.Tm n m) : close σ (Tm.embed t) = SystemF.Tm.close σ t :=
   close_fromSystemF (fun i => .var (KVar.ofFin i)) σ t
 
-/-- A System F term and its Fω embedding have identical model erasures. -/
+/-- **Canonical embedding preserves model erasure.**
+A System F term and its Fω embedding have identical model erasures. -/
 theorem Tm.eraseModel_embed {n : Nat} (t : SystemF.Tm n 0) :
     eraseModel (Tm.embed t) = SystemF.Tm.eraseModel t := close_embed Fin.elim0 t
 
@@ -56,7 +59,8 @@ private theorem interpret_liftTypes {n : Nat} {Δ : List Kind}
   | zero => rfl
   | succ i => exact Ty.interpret_weaken (μ := .star) (φ i) ρ R
 
-/-- The star/forall translation preserves the same binary type interpretation. -/
+/-- **Type translation preserves the relational interpretation.**
+The star/forall translation preserves the same binary type interpretation. -/
 theorem Ty.interpret_fromSystemF {n : Nat} {Δ : List Kind}
     (φ : Fin n → Ty Δ .star) (ρ : KEnv SystemF.Rel Δ) (A : SystemF.Ty n) :
     (fromSystemF φ A).interpret ρ =
@@ -81,7 +85,8 @@ theorem Ty.interpret_fromSystemF {n : Nat} {Δ : List Kind}
     funext i
     exact interpret_liftTypes φ ρ R i
 
-/-- Canonical embedding interprets each source variable by its matching kinded lookup. -/
+/-- **Relational interpretation of canonically embedded types.**
+Canonical embedding interprets each source variable by its matching kinded lookup. -/
 theorem Ty.interpret_embed {n : Nat} (A : SystemF.Ty n)
     (ρ : KEnv SystemF.Rel (List.replicate n .star)) :
     (Ty.embed A).interpret ρ = A.interpret (fun i => ρ (KVar.ofFin i)) :=

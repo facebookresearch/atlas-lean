@@ -22,22 +22,25 @@ namespace Cslib.Languages.LambdaCalculus.FOmega
 
 universe u
 
-/-- Interpret kinds over a carrier for term types. -/
+/-- **Semantic interpretation of kinds.** Interpret kinds over a carrier for term types. -/
 def Kind.Sem (α : Type u) : Kind → Type u
   | .star => α
   | .arrow κ μ => Kind.Sem α κ → Kind.Sem α μ
 
-/-- An environment supplies a value of the declared kind for every variable. -/
+/-- **Kinded semantic environment.**
+An environment supplies a value of the declared kind for every variable. -/
 abbrev KEnv (α : Type u) (Δ : List Kind) :=
   ∀ {κ}, KVar Δ κ → Kind.Sem α κ
 
-/-- Extend a semantic environment at its newest kinded variable. -/
+/-- **Extension of a kinded semantic environment.**
+Extend a semantic environment at its newest kinded variable. -/
 def KEnv.extend {α : Type u} {Δ : List Kind} {κ : Kind}
     (ρ : KEnv α Δ) (a : Kind.Sem α κ) : KEnv α (κ :: Δ)
   | _, .zero => a
   | _, .succ x => ρ x
 
-/-- The two type constructors at `star`; higher kinds need no extra laws. -/
+/-- **Kind algebra of arrow and universal type constructors.**
+The two type constructors at `star`; higher kinds need no extra laws. -/
 structure KindAlgebra (α : Type u) where
   arr : α → α → α
   all : {κ : Kind} → (Kind.Sem α κ → α) → α
@@ -46,7 +49,8 @@ namespace Ty
 
 variable {α : Type u} {Δ Ε : List Kind} {κ μ : Kind}
 
-/-- Interpret a kinded operator by ordinary function abstraction/application. -/
+/-- **Semantic evaluation of kinded type operators.**
+Interpret a kinded operator by ordinary function abstraction/application. -/
 def eval (M : KindAlgebra α) : {Δ : List Kind} → KEnv α Δ →
     {κ : Kind} → Ty Δ κ → Kind.Sem α κ
   | _, ρ, _, .var x => ρ x
@@ -55,14 +59,16 @@ def eval (M : KindAlgebra α) : {Δ : List Kind} → KEnv α Δ →
   | _, ρ, _, .arr a b => M.arr (eval M ρ a) (eval M ρ b)
   | _, ρ, _, .all b => M.all (fun a => eval M (KEnv.extend ρ a) b)
 
-/-- Interpretation depends only on the pointwise kinded environment. -/
+/-- **Evaluation depends only on the environment pointwise.**
+Interpretation depends only on the pointwise kinded environment. -/
 theorem eval_congr (M : KindAlgebra α) {ρ τ : KEnv α Δ}
     (h : ∀ {ν} (x : KVar Δ ν), ρ x = τ x) (t : Ty Δ κ) :
     eval M ρ t = eval M τ t := by
   have e : @ρ = @τ := by funext ν x; exact h x
   rw [e]
 
-/-- Semantic renaming is precomposition of the kinded environment. -/
+/-- **Evaluation of a renamed type operator.**
+Semantic renaming is precomposition of the kinded environment. -/
 theorem eval_rename (M : KindAlgebra α) (η : KEnv α Ε)
     (ρ : KRen Δ Ε) (t : Ty Δ κ) :
     eval M η (rename ρ t) = eval M (fun {_} x => η (ρ x)) t := by
@@ -96,7 +102,8 @@ private theorem eval_liftSub (M : KindAlgebra α) (η : KEnv α Ε)
   | zero => rfl
   | succ x => exact eval_rename M (KEnv.extend η a) KVar.succ (σ x)
 
-/-- Semantic simultaneous substitution at every kind, including higher kinds. -/
+/-- **Evaluation of a substituted type operator.**
+Semantic simultaneous substitution at every kind, including higher kinds. -/
 theorem eval_subst (M : KindAlgebra α) (η : KEnv α Ε)
     (σ : Sub Δ Ε) (t : Ty Δ κ) :
     eval M η (subst σ t) =
@@ -118,7 +125,8 @@ theorem eval_subst (M : KindAlgebra α) (η : KEnv α Ε)
     rw [ih]
     exact eval_congr M (fun x => eval_liftSub M η σ a x) b
 
-/-- Semantic instantiation is environment extension by the argument value. -/
+/-- **Evaluation of an instantiated type operator.**
+Semantic instantiation is environment extension by the argument value. -/
 theorem eval_instantiate (M : KindAlgebra α) (η : KEnv α Δ)
     (b : Ty (μ :: Δ) κ) (a : Ty Δ μ) :
     eval M η (instantiate b a) =

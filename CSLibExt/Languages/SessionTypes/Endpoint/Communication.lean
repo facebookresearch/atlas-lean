@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Disjoint complementary subjects in a compatible interface have exactly
+/-- **Communicating subjects in a compatible split have dual capabilities.**
+Disjoint complementary subjects in a compatible interface have exactly
 dual protocol capabilities, including their ranks and endpoint payload sorts. -/
 theorem communicating_capabilities_dual {Δ Θ : Context} {e d : Key}
     {c t : Capability} (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -39,7 +40,8 @@ theorem communicating_capabilities_dual {Δ Θ : Context} {e d : Key}
       Finmap.Disjoint.symm _ _ hd e.opposite (Finmap.mem_of_lookup_eq_some ht)
     exact (Finmap.lookup_union_right hnot).trans ht
 
-/-- Actual endpoint protocols and rank equality force matching passive
+/-- **Dual of a passive send head is a passive receive head.**
+Actual endpoint protocols and rank equality force matching passive
 receive guards at a complementary owned role. -/
 theorem passive_dual_head {c t : Capability} {s : Protocol}
     (hd : t = c.dual) (hs : c.protocol.unfold = .sendName s) :
@@ -49,7 +51,8 @@ theorem passive_dual_head {c t : Capability} {s : Protocol}
   rw [Protocol.unfold_dual, hs]
   rfl
 
-/-- At a compatible combined interface with the stated disjoint typed split
+/-- **Passive-payload communication preserves endpoint typing.**
+At a compatible combined interface with the stated disjoint typed split
 and scoped passive payload, head communication advances the two complementary
 roles and no other capability in the exact residual context. -/
 theorem passive_head_preservation {n : Nat} {Δ Θ : Context} {e : Key}
@@ -84,7 +87,8 @@ theorem passive_head_preservation {n : Nat} {Δ Θ : Context} {e : Key}
     rw [hhead] at hu
     cases hu
 
-/-- Duality preserves a delegated payload's role/rank/protocol while
+/-- **Dual of an endpoint send head is an endpoint receive head.**
+Duality preserves a delegated payload's role/rank/protocol while
 reversing only the subject continuation. -/
 theorem endpoint_dual_head {c t : Capability} {r : Role} {k : Nat}
     {v s : Protocol} (hd : t = c.dual)
@@ -95,7 +99,8 @@ theorem endpoint_dual_head {c t : Capability} {r : Role} {k : Nat}
   rw [Protocol.unfold_dual, hs]
   rfl
 
-/-- For disjoint owned same-name roles in a compatible combined interface,
+/-- **Communicating subjects in a compatible split have equal ranks.**
+For disjoint owned same-name roles in a compatible combined interface,
 their capability ranks agree, as required by exact capability duality. -/
 theorem communicating_ranks_equal {Δ Θ : Context} {e d : Key}
     {c t : Capability} (hd : Finmap.Disjoint Δ Θ) (hc : Δ.lookup e = some c)
@@ -105,7 +110,8 @@ theorem communicating_ranks_equal {Δ Θ : Context} {e d : Key}
   have hr : t.rank = c.dual.rank := congrArg Capability.rank he
   exact hr
 
-/-- At a compatible combined interface with the stated disjoint typed split,
+/-- **Endpoint-delegating communication preserves typing.**
+At a compatible combined interface with the stated disjoint typed split,
 owned payload distinct from the carrier and scoped payload name, endpoint
 communication transfers the payload role once and advances only the carrier. -/
 theorem endpoint_head_preservation {n k : Nat} {Δ Θ : Context} {e d : Key}
@@ -143,7 +149,8 @@ theorem endpoint_head_preservation {n k : Nat} {Δ Θ : Context} {e d : Key}
       (Finmap.mem_of_lookup_eq_some ht) hv hne] at htyped
     exact htyped
 
-/-- For a typed opposite-head pair at an initially compatible interface,
+/-- **Head communication preserves endpoint typing.**
+For a typed opposite-head pair at an initially compatible interface,
 direct communication in the existing π syntax yields an exact typed residual
 ownership context, including endpoint delegation. -/
 theorem HasType.head_comm_preservation {n : Nat} {Δ : Context} {a b : Name}

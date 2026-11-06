@@ -24,36 +24,42 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Existing π terms without choice or replication, including their bodies. -/
+/-- **Finite linear π fragment without choice or replication.**
+Existing π terms without choice or replication, including their bodies. -/
 def FiniteLinear : Proc → Prop
   | .nil => True
   | .out _ _ p | .inp _ p | .nu p => FiniteLinear p
   | .par p q => FiniteLinear p ∧ FiniteLinear q
   | .repl _ | .sum _ _ => False
 
-/-- Lifting cannot add or remove unsupported process constructors. -/
+/-- **Lifting preserves and reflects the finite linear fragment.**
+Lifting cannot add or remove unsupported process constructors. -/
 theorem finiteLinear_lift (k : Nat) (p : Proc) :
     FiniteLinear (liftProc k p) ↔ FiniteLinear p := by
   induction p generalizing k <;> simp_all [liftProc, FiniteLinear]
 
-/-- Swapping restrictions cannot add or remove choice or replication. -/
+/-- **Restriction swap preserves and reflects the finite linear fragment.**
+Swapping restrictions cannot add or remove choice or replication. -/
 theorem finiteLinear_swap (k : Nat) (p : Proc) :
     FiniteLinear (swapProc k p) ↔ FiniteLinear p := by
   induction p generalizing k <;> simp_all [swapProc, FiniteLinear]
 
-/-- All existing structural congruences preserve the finite linear
+/-- **Structural congruence preserves the finite linear fragment.**
+All existing structural congruences preserve the finite linear
 fragment. In particular, folding replication cannot introduce it. -/
 theorem finiteLinear_cong {p q : Proc} (h : Cong p q) :
     FiniteLinear p ↔ FiniteLinear q := by
   induction h <;> simp_all [FiniteLinear, finiteLinear_lift,
     finiteLinear_swap, and_assoc, and_comm]
 
-/-- Substitution changes names, not the finite fragment's process shape. -/
+/-- **Substitution preserves and reflects the finite linear fragment.**
+Substitution changes names, not the finite fragment's process shape. -/
 theorem finiteLinear_subst (b : Name) (k : Nat) (p : Proc) :
     FiniteLinear (substProc b k p) ↔ FiniteLinear p := by
   induction p generalizing b k <;> simp_all [substProc, FiniteLinear]
 
-/-- Selection cannot discard a branch of a term in the choice-free fragment. -/
+/-- **Selection is trivial on the choice-free fragment.**
+Selection cannot discard a branch of a term in the choice-free fragment. -/
 theorem finiteLinear_select_eq {p q : Proc} (h : Select p q)
     (hp : FiniteLinear p) : p = q := by
   induction h with
@@ -64,7 +70,8 @@ theorem finiteLinear_select_eq {p q : Proc} (h : Select p q)
     have he := ih₁ hp
     exact he.trans (ih₂ (he ▸ hp))
 
-/-- All existing π reduction constructors preserve the finite fragment,
+/-- **Reduction preserves the finite linear fragment.**
+All existing π reduction constructors preserve the finite fragment,
 including arbitrary pre/post structural congruence and selection. -/
 theorem finiteLinear_step {p q : Proc} (h : Step p q)
     (hp : FiniteLinear p) : FiniteLinear q := by

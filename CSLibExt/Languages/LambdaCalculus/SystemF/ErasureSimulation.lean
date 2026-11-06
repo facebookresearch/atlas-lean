@@ -23,7 +23,8 @@ for open and closed scoped terms. It does not assert termination.
 
 namespace Cslib.Languages.LambdaCalculus.SystemF
 
-/-- Actual CBV steps preserve beta conversion of closing instances. -/
+/-- **Erasure of a System F evaluation step is a beta conversion.**
+Actual CBV steps preserve beta conversion of closing instances. -/
 theorem erasure_step {n m : Nat} {t t' : Tm n m} (hs : Step t t')
     (σ : Fin m → Model) : BetaEq (Tm.close σ t) (Tm.close σ t') := by
   induction hs with
@@ -37,7 +38,8 @@ theorem erasure_step {n m : Nat} {t t' : Tm n m} (hs : Step t t')
     rw [Tm.close_tapp, Tm.close_tabs, Tm.close_tySubst]
     exact BetaEq.refl _
 
-/-- Finite CBV evaluation preserves conversion of erased instances. -/
+/-- **Erasure of multistep System F evaluation is a beta conversion.**
+Finite CBV evaluation preserves conversion of erased instances. -/
 theorem erasure_steps {n m : Nat} {t t' : Tm n m} (hs : Steps t t')
     (σ : Fin m → Model) : BetaEq (Tm.close σ t) (Tm.close σ t') := by
   induction hs with

@@ -49,14 +49,16 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The per-coordinate damped weight `Dₑ(u) = ∑_{S ∋ e} (1-u)^{|S|-1} (f̂(S)/√(p(1-p)))²` under
+/-- **Per-coordinate damped weight.**
+The per-coordinate damped weight `Dₑ(u) = ∑_{S ∋ e} (1-u)^{|S|-1} (f̂(S)/√(p(1-p)))²` under
   `μ_p`. -/
 noncomputable def frh_perCoordWeight (p u : ℝ) (φ : ConfigSpace ι → Bool) (e : ι) : ℝ :=
   ∑ S ∈ univ.filter (fun S : Finset ι => e ∈ S),
     (Real.sqrt (1 - u) ^ (S.erase e).card) ^ 2
       * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S / ptn_sigma p) ^ 2
 
-/-- The damped total weight is `4p(1-p) ∑ₑ Dₑ(u)`. -/
+/-- **Damped total weight as a sum of per-coordinate weights.**
+The damped total weight is `4p(1-p) ∑ₑ Dₑ(u)`. -/
 theorem frh_lhs_eq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool)
     {u : ℝ} (_hu0 : 0 ≤ u) (hu1 : u ≤ 1) :
     (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
@@ -113,7 +115,8 @@ theorem frh_perCoordWeight_nonneg (p u : ℝ) (φ : ConfigSpace ι → Bool) (e 
   unfold frh_perCoordWeight
   exact Finset.sum_nonneg (fun S _ => by positivity)
 
-/-- At `u = 0` the damped total weight is at most the total influence. -/
+/-- **Damped total weight at $u = 0$ is at most the total influence.**
+At `u = 0` the damped total weight is at most the total influence. -/
 theorem frh_at_zero {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool) :
     (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - (0 : ℝ)) ^ (S.card - 1)
         * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
@@ -143,7 +146,8 @@ theorem frh_at_zero {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι �
         mul_le_mul_of_nonneg_right h4σ hsumnn
     _ = (1 / (ptn_sigma p)^2) * ∑ S : Finset ι, (S.card : ℝ) * cc S := by rw [one_mul]
 
-/-- The capped estimate in the hypercontractive range: if `1 - u = 4p(1-p)(q'-1)` with `1 ≤ q' ≤ 2`,
+/-- **Capped estimate in the hypercontractive range.**
+The capped estimate in the hypercontractive range: if `1 - u = 4p(1-p)(q'-1)` with `1 ≤ q' ≤ 2`,
   then `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ 4p(1-p) * δ^{2/q'-1} ∑ₑ Infₑ`. -/
 theorem frh_capped_martingale [Nonempty ι] {p q' : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (hq1 : 1 ≤ q') (hq2 : q' ≤ 2) {u : ℝ} (hu0 : 0 ≤ u) (hu1 : u ≤ 1)
@@ -177,7 +181,8 @@ theorem frh_capped_martingale [Nonempty ι] {p q' : ℝ} (hp0 : 0 < p) (hp1 : p 
   apply mul_le_mul_of_nonneg_left _ (by positivity)
   exact hcap
 
-/-- Every `u ∈ [1 - 4p(1-p), 1]` has the form `1 - u = 4p(1-p)(q'-1)` with `q' ∈ [1, 2]`. -/
+/-- **Parametrization of the hypercontractive range by $q' \in [1, 2]$.**
+Every `u ∈ [1 - 4p(1-p), 1]` has the form `1 - u = 4p(1-p)(q'-1)` with `q' ∈ [1, 2]`. -/
 theorem frh_capped_param {p u : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (hlo : 1 - 4 * p * (1 - p) ≤ u) (hu1 : u ≤ 1) :
     ∃ q' : ℝ, 1 ≤ q' ∧ q' ≤ 2 ∧ 1 - u = (q' - 1) * 4 * p * (1 - p) := by
@@ -193,7 +198,8 @@ theorem frh_capped_param {p u : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
         = ((1 - u) / (4 * p * (1 - p))) * (4 * p * (1 - p)) from by ring]
     rw [div_mul_cancel₀ _ (ne_of_gt hs)]
 
-/-- The capped estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)} ∑ₑ Infₑ` for all `p ∈ (1/2,
+/-- **Open-interval residual case of the capped estimate.**
+The capped estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)} ∑ₑ Infₑ` for all `p ∈ (1/2,
   q)` with `p < 1` and all `u ∈ (0, 1)`. Not proved in this library for any `q > 1/2`. -/
 def frh_openResidue (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
@@ -203,7 +209,7 @@ def frh_openResidue (q : ℝ) : Prop :=
         ≤ (maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
           * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
 
-/-- At `u = 1` the capped estimate holds. -/
+/-- **Capped estimate at the endpoint $u = 1$.** At `u = 1` the capped estimate holds. -/
 theorem frh_endpoint_one [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) :
     (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - (1 : ℝ)) ^ (S.card - 1)
@@ -231,7 +237,8 @@ theorem frh_endpoint_one [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     _ = δ ^ ((2 : ℝ)/1 - 1) * T := by rw [one_mul]
     _ = δ ^ ((1 : ℝ) / (2 - 1)) * T := by rw [hexp1]
 
-/-- `frh_openResidue q` implies `mxd_martingaleHC_statement q`, by adding the endpoints. -/
+/-- **Open-interval case implies the full capped estimate on $(1/2, q)$.**
+`frh_openResidue q` implies `mxd_martingaleHC_statement q`, by adding the endpoints. -/
 theorem frh_martingaleHC_of_openResidue {q : ℝ} (H : frh_openResidue q) :
     mxd_martingaleHC_statement q := by
   intro p hp hp1 E _ _ _ φ u hu0 hu1
@@ -246,7 +253,8 @@ theorem frh_martingaleHC_of_openResidue {q : ℝ} (H : frh_openResidue q) :
       exact frh_endpoint_one hp0 hp1 φ
     · exact H p hp hp1 φ u hu0' hu1'
 
-/-- For `p > 1/2` the hypercontractive range `u ≥ 1 - 4p(1-p)` excludes a nonempty interval near `u
+/-- **Hypercontractive range misses an interval near $u = 0$.**
+For `p > 1/2` the hypercontractive range `u ≥ 1 - 4p(1-p)` excludes a nonempty interval near `u
   = 0`. -/
 theorem frh_lowNoise_range_nonempty {p : ℝ} (hp : 1 / 2 < p) (_hp1 : p < 1) :
     0 < 1 - 4 * p * (1 - p) := by

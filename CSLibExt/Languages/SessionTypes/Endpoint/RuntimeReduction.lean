@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Canonical choice selection is identity on an actually runtime-typed root:
+/-- **Choice selection is the identity on runtime-typed processes.**
+Canonical choice selection is identity on an actually runtime-typed root:
 there is no sum rule, although replication is admitted. No finiteLinear erasure. -/
 theorem HasType.select_eq {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
     (h : HasType n Γ Δ p) (hs : Select p q) : p = q := by
@@ -37,7 +38,8 @@ theorem HasType.select_eq {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc
     have he := ihp h
     exact he.trans (ihq (he ▸ h))
 
-/-- From a runtime-typed source at an INITIALLY semantically compatible linear
+/-- **Subject reduction for runtime typing at compatible interfaces.**
+From a runtime-typed source at an INITIALLY semantically compatible linear
 interface, ALL5 canonical Step constructors preserve Γ/n, typing and compatibility.
 The actual residual interface is unchanged OR has one faithful SemanticAdvance.
 Shared transfers are exact identity; private projection uses the chosen literal pair. -/
@@ -82,7 +84,8 @@ theorem HasType.subject_reduction {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p 
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (HasType.cong_iff hq).mp hr, hc, he⟩
 
-/-- An INITIALLY semantically balanced runtime interface derives compatibility
+/-- **Subject reduction for runtime typing at balanced interfaces.**
+An INITIALLY semantically balanced runtime interface derives compatibility
 and retains balance and the exact zero-or-one external advance after ANY Step. -/
 theorem HasType.subject_reduction_balanced {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
     (h : HasType n Γ Δ p) (hb : Conversion.Balanced Δ) (hs : PiCalculus.Step p q) :
@@ -95,7 +98,8 @@ theorem HasType.subject_reduction_balanced {n : Nat} {Γ : ServiceEnv} {Δ : Con
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- An empty linear interface is initially balanced/compatible and remains EXACTLY
+/-- **Subject reduction for runtime typing at the empty interface.**
+An empty linear interface is initially balanced/compatible and remains EXACTLY
 empty through any runtime Step, including private sessions and shared services. -/
 theorem HasType.subject_reduction_empty {n : Nat} {Γ : ServiceEnv} {p q : Proc}
     (h : HasType n Γ ∅ p) (hs : PiCalculus.Step p q) : HasType n Γ ∅ q := by
@@ -105,7 +109,8 @@ theorem HasType.subject_reduction_empty {n : Nat} {Γ : ServiceEnv} {p q : Proc}
   · cases ha with
     | matched hl => simp at hl
 
-/-- From an INITIALLY compatible runtime interface, finite actual reductions
+/-- **Multi-step subject reduction at compatible interfaces.**
+From an INITIALLY compatible runtime interface, finite actual reductions
 retain typing/compatibility and accumulate a trace of faithful semantic advances.
 Shared/private identity steps introduce no fake external advancement. -/
 theorem HasType.reachable {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
@@ -122,7 +127,8 @@ theorem HasType.reachable {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc
     · exact ⟨_, hq, hco, ha⟩
     · exact ⟨Ξ, hq, hco, ha.tail he⟩
 
-/-- Every finite reachable state from an INITIALLY balanced runtime interface
+/-- **Multi-step subject reduction at balanced interfaces.**
+Every finite reachable state from an INITIALLY balanced runtime interface
 retains semantic balance and an ACTUAL faithful advancement trace, not progress. -/
 theorem HasType.reachable_balanced {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
     (h : HasType n Γ Δ p) (hb : Conversion.Balanced Δ)
@@ -137,7 +143,8 @@ theorem HasType.reachable_balanced {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p
     | tail ha hs ih => exact hs.balanced ih
   exact ⟨Ξ, ht, hbal, ha⟩
 
-/-- Finite runtime execution from an empty interface preserves exact empty
+/-- **Multi-step subject reduction at the empty interface.**
+Finite runtime execution from an empty interface preserves exact empty
 ownership. This safety result does not identify idle replicas with Cong nil. -/
 theorem HasType.reachable_empty {n : Nat} {Γ : ServiceEnv} {p q : Proc}
     (h : HasType n Γ ∅ p) (hr : Relation.ReflTransGen PiCalculus.Step p q) : HasType n Γ ∅ q := by

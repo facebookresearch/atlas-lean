@@ -23,14 +23,16 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Restriction inversion exposes the actual bound dual pair. -/
+/-- **Inversion of endpoint typing for restriction.**
+Restriction inversion exposes the actual bound dual pair. -/
 theorem HasType.nu_inv {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ (.nu p)) :
     ∃ c, HasType (n + 1) (Context.bind c Δ) p := by
   cases h with
   | nu hp => exact ⟨_, hp⟩
 
-/-- The forward canonical scope rule preserves the exact external context
+/-- **Endpoint typing is preserved by forward scope extrusion.**
+The forward canonical scope rule preserves the exact external context
 and ambient depth, with the dual pair derived from restriction typing. -/
 theorem HasType.scope_forward {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ (.par (.nu p) q)) :
@@ -41,7 +43,8 @@ theorem HasType.scope_forward {n : Nat} {Δ : Context} {p q : Proc}
   rw [Context.bind_union c hd]
   exact HasType.par (Context.disjoint_bind_lift c hd) hbody (hq.lift 0)
 
-/-- A role missing from one component can be reattached only after actual
+/-- **Endpoint typing absorbs a role absent from its parallel partner.**
+A role missing from one component can be reattached only after actual
 absence in its typed partner derives completion of the advertised capability. -/
 theorem HasType.insert_from_absent_partner {n : Nat} {Γ Ξ : Context} {p q : Proc}
     {e : Key} {c : Capability} (hp : HasType n Γ p) (hq : HasType n Ξ q)
@@ -54,7 +57,8 @@ theorem HasType.insert_from_absent_partner {n : Nat} {Γ Ξ : Context} {p q : Pr
   · rw [Finmap.lookup_union_right hm] at hc
     exact hp.weaken_completed hm (hq.absent_lookup_completed hc hab) he
 
-/-- In the actual scope split, either freshly bound role can be moved
+/-- **Endpoint typing restores both bound roles to the restricted side.**
+In the actual scope split, either freshly bound role can be moved
 back to the restricted component only when partner absence proves it completed. -/
 theorem HasType.restore_scope_pair {n : Nat} {Δ Γ Ξ : Context} {p q : Proc}
     {c : Capability} (hp : HasType (n + 1) Γ p)
@@ -75,7 +79,8 @@ theorem HasType.restore_scope_pair {n : Nat} {Δ Γ Ξ : Context} {p q : Proc}
     (by decide : (⟨.var 0, .negative⟩ : Key) ≠ (⟨.var 0, .positive⟩ : Key))]
   exact hneg
 
-/-- Reverse scope transport recovers the exact external ownership split
+/-- **Endpoint typing is preserved by reverse scope extrusion.**
+Reverse scope transport recovers the exact external ownership split
 from the actual restriction/parallel typing, with no closed-hole premise. -/
 theorem HasType.scope_reverse {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ (.nu (.par p (liftProc 0 q)))) :
@@ -111,7 +116,8 @@ theorem HasType.scope_reverse {n : Nat} {Δ : Context} {p q : Proc}
   rw [houter]
   exact HasType.par hdl (HasType.nu hp') (hq'.unlift hΞ)
 
-/-- Both directions of the canonical scope congruence preserve exact
+/-- **Endpoint typing is invariant under scope extrusion.**
+Both directions of the canonical scope congruence preserve exact
 external polarized ownership and the unchanged ambient binder depth. -/
 theorem HasType.scope_iff {n : Nat} {Δ : Context} {p q : Proc} :
     HasType n Δ (.par (.nu p) q) ↔

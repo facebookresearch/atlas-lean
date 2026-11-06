@@ -22,18 +22,21 @@ payloads are additional cases, never silently treated as passive names.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- Embed the original finite passive-name protocol without changing actions. -/
+/-- **Embedding of finite passive-name protocols.**
+Embed the original finite passive-name protocol without changing actions. -/
 def Protocol.ofFinite : SessionType → Protocol
   | .end => .done
   | .send s => .sendName (ofFinite s)
   | .recv s => .recvName (ofFinite s)
 
-/-- The finite embedding preserves both protocol orientations. -/
+/-- **Finite protocol embedding commutes with duality.**
+The finite embedding preserves both protocol orientations. -/
 theorem Protocol.ofFinite_dual (s : SessionType) :
     ofFinite s.dual = (ofFinite s).dual := by
   induction s <;> simp [ofFinite, SessionType.dual, dual, *]
 
-/-- Recover a finite passive protocol; richer payloads and recursion are
+/-- **Partial recovery of a finite passive-name protocol.**
+Recover a finite passive protocol; richer payloads and recursion are
 not erased into a falsely finite protocol. -/
 def Protocol.toFinite? : Protocol → Option SessionType
   | .done => some .end
@@ -41,12 +44,14 @@ def Protocol.toFinite? : Protocol → Option SessionType
   | .recvName s => s.toFinite?.map SessionType.recv
   | .sendEndpoint .. | .recvEndpoint .. | .regular .. => none
 
-/-- The finite embedding has a literal left inverse. -/
+/-- **Recovery is a left inverse of the finite embedding.**
+The finite embedding has a literal left inverse. -/
 @[simp] theorem Protocol.toFinite?_ofFinite (s : SessionType) :
     (ofFinite s).toFinite? = some s := by
   induction s <;> simp [ofFinite, toFinite?, *]
 
-/-- Different finite protocols remain different in the richer representation. -/
+/-- **Injectivity of the finite protocol embedding.**
+Different finite protocols remain different in the richer representation. -/
 theorem Protocol.ofFinite_injective : Function.Injective ofFinite := by
   intro s t h
   have hs := congrArg toFinite? h

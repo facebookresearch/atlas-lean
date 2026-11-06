@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- From a typed source at an initially compatible interface, all five
+/-- **Subject reduction at a compatible conversion interface.**
+From a typed source at an initially compatible interface, all five
 canonical reduction constructors preserve typing and compatibility, with one
 matched external subject-pair advancement or an unchanged interface when
 communication is private. No fragment or enabled-edge premise is required. -/
@@ -68,7 +69,8 @@ theorem HasType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (HasType.cong_iff hq).mp hr, hc, he⟩
 
-/-- A typed source with a balanced initial interface retains typing and balance
+/-- **Subject reduction at a balanced interface.**
+A typed source with a balanced initial interface retains typing and balance
 after any canonical step. Balance supplies the required compatibility; the
 exact zero-or-one external advancement evidence is retained. -/
 theorem HasType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
@@ -81,7 +83,8 @@ theorem HasType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- An empty-interface typed network retains empty-interface typing through
+/-- **Subject reduction at the empty interface.**
+An empty-interface typed network retains empty-interface typing through
 any canonical step. The empty context is balanced, hence compatible, including
 communication behind restrictions and pre/post congruence. -/
 theorem HasType.subject_reduction_empty {n : Nat} {p q : Proc}
@@ -93,7 +96,8 @@ theorem HasType.subject_reduction_empty {n : Nat} {p q : Proc}
     | matched hl => simp at hl
 
 
-/-- A typed source at an initially semantically compatible interface retains
+/-- **Typing and compatibility persist along finite executions.**
+A typed source at an initially semantically compatible interface retains
 typing and compatibility through finite actual execution, with a finite trace
 of faithful advances. This is safety, not progress or termination. -/
 theorem HasType.reachable {n : Nat} {Δ : Context} {p q : Proc} (h : HasType n Δ p)
@@ -108,7 +112,8 @@ theorem HasType.reachable {n : Nat} {Δ : Context} {p q : Proc} (h : HasType n �
     · exact ⟨_, hq, hco, ha⟩
     · exact ⟨Ξ, hq, hco, ha.tail he⟩
 
-/-- Every finite reachable closed state retains the exact empty interface. -/
+/-- **Empty-interface typing persists along finite executions.**
+Every finite reachable closed state retains the exact empty interface. -/
 theorem HasType.reachable_empty {n : Nat} {p q : Proc} (h : HasType n ∅ p)
     (hr : Relation.ReflTransGen PiCalculus.Step p q) : HasType n ∅ q := by
   induction hr with

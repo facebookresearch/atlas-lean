@@ -29,7 +29,8 @@ private theorem outer_name_roundtrip {a : Name} (ha : a ≠ .var 0) :
     | zero => exact False.elim (ha rfl)
     | succ i => simp [substName, liftName]
 
-/-- Canonical lowering and lifting cancel for a polarized outer key,
+/-- **Lowering then lifting an outer key returns it.**
+Canonical lowering and lifting cancel for a polarized outer key,
 provided it is not either role of the freshly inserted physical name. -/
 theorem Key.lift_subst_outer_name (e : Key) (he : e.name ≠ .var 0) :
     Key.mapName (liftName 0) (Key.mapName (substName (.const 0) 0) e) = e := by
@@ -38,7 +39,8 @@ theorem Key.lift_subst_outer_name (e : Key) (he : e.name ≠ .var 0) :
     have hn := outer_name_roundtrip he
     simp only [Key.mapName, hn]
 
-/-- Canonical lowering is injective on an outer context with no fresh-name
+/-- **Lowering is injective on contexts without fresh-name keys.**
+Canonical lowering is injective on an outer context with no fresh-name
 role. The inverse is canonical lift, not a guessed fresh constant identity. -/
 theorem Context.injOn_lower {Γ : Context}
     (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0) :
@@ -49,11 +51,13 @@ theorem Context.injOn_lower {Γ : Context}
     Key.lift_subst_outer_name d (hΓ d hd)] at hl
   exact hl
 
-/-- Remove a fresh ambient binder from a finite outer ownership context. -/
+/-- **Lowering of an outer context past a fresh binder.**
+Remove a fresh ambient binder from a finite outer ownership context. -/
 def Context.lower (Γ : Context) (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0) : Context :=
   Context.rekey (Key.mapName (substName (.const 0) 0)) Γ (Context.injOn_lower hΓ)
 
-/-- Lifting the recovered outer context restores every key and capability. -/
+/-- **Lifting a lowered context recovers it.**
+Lifting the recovered outer context restores every key and capability. -/
 theorem Context.lift_lower (Γ : Context) (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0) :
     Context.lift 0 (Context.lower Γ hΓ) = Γ := by
   apply Finmap.ext
@@ -70,7 +74,8 @@ theorem Context.lift_lower (Γ : Context) (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0
       simp only [Function.comp_apply, Key.lift_subst_outer_name e (hΓ e hem), id_eq]
     _ = Γ.entries := Multiset.map_id _
 
-/-- Typing an actually lifted term under outer-only ownership reflects
+/-- **Endpoint typing reflects through binder lifting.**
+Typing an actually lifted term under outer-only ownership reflects
 back to its exact recovered context; no closed-hole premise is required. -/
 theorem HasType.unlift {n : Nat} {Γ : Context} {q : Proc}
     (h : HasType (n + 1) Γ (liftProc 0 q))
@@ -84,7 +89,8 @@ theorem HasType.unlift {n : Nat} {Γ : Context} {q : Proc}
   rw [substProc_liftProc] at ht
   exact ht
 
-/-- Removing both roles of var zero leaves only genuine outer-name keys. -/
+/-- **Erasing both roles of the fresh name leaves outer keys.**
+Removing both roles of var zero leaves only genuine outer-name keys. -/
 theorem Context.erased_pair_outer (Γ : Context) :
     ∀ e ∈ (Γ.erase (⟨.var 0, .negative⟩ : Key)).erase
       (⟨.var 0, .positive⟩ : Key), e.name ≠ .var 0 := by
@@ -97,7 +103,8 @@ theorem Context.erased_pair_outer (Γ : Context) :
     | positive => exact hp (Key.ext hn rfl)
     | negative => exact hm (Key.ext hn rfl)
 
-/-- Canonical context lifting is injective, including recorded completed slots. -/
+/-- **Context lifting is injective.**
+Canonical context lifting is injective, including recorded completed slots. -/
 theorem Context.lift_zero_injective : Function.Injective (Context.lift 0) := by
   intro Γ Ξ h
   apply Finmap.ext_lookup
@@ -107,7 +114,8 @@ theorem Context.lift_zero_injective : Function.Injective (Context.lift 0) := by
   rw [← Context.lookup_lift (k := 0) (Δ := Γ) (e := e) (c := c),
     ← Context.lookup_lift (k := 0) (Δ := Ξ) (e := e) (c := c), h]
 
-/-- Lowering disjoint outer-only contexts preserves their exact key split. -/
+/-- **Lowering preserves disjointness of outer contexts.**
+Lowering disjoint outer-only contexts preserves their exact key split. -/
 theorem Context.disjoint_lower {Γ Ξ : Context}
     (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0) (hΞ : ∀ e ∈ Ξ, e.name ≠ .var 0)
     (hd : Finmap.Disjoint Γ Ξ) :

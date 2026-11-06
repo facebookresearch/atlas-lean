@@ -56,10 +56,12 @@ open Cslib.Logic.PL
 
 variable {n : ℕ}
 
-/-- A positive SAT index for position `p` of variable `i`; `0` is reserved. -/
+/-- **SAT variable index for a bit of a string variable.**
+A positive SAT index for position `p` of variable `i`; `0` is reserved. -/
 def bitVar (i p : ℕ) : ℕ := Nat.pair i p + 1
 
-/-- Expand a word into literals at a fixed length for each string variable. -/
+/-- **Bit-blasting a word into literals.**
+Expand a word into literals at a fixed length for each string variable. -/
 def blastWord (ℓ : Fin n → ℕ) (w : List (Bool ⊕ Fin n)) : List (ℕ × Bool) :=
   w.flatMap fun
     | .inl b => [(0, b)]
@@ -68,7 +70,8 @@ def blastWord (ℓ : Fin n → ℕ) (w : List (Bool ⊕ Fin n)) : List (ℕ × B
 private def literalValue (v : ℕ → Bool) (l : ℕ × Bool) : Bool :=
   decide (v l.1 = l.2)
 
-/-- Two implication clauses forcing equal truth values of two literals. -/
+/-- **Clauses forcing two literals to be equal.**
+Two implication clauses forcing equal truth values of two literals. -/
 def iffClauses (a b : ℕ × Bool) : CNF :=
   [[(a.1, !a.2), b], [(b.1, !b.2), a]]
 
@@ -81,7 +84,8 @@ private theorem satisfies_iffClauses (v : ℕ → Bool) (a b : ℕ × Bool) :
     literalValue]
   cases hi : v i <;> cases hj : v j <;> cases a <;> cases b <;> simp
 
-/-- Compare literal vectors position by position; a length mismatch emits an empty clause. -/
+/-- **Position-wise equality clauses for literal vectors.**
+Compare literal vectors position by position; a length mismatch emits an empty clause. -/
 def equalWordClauses : List (ℕ × Bool) → List (ℕ × Bool) → CNF
   | [], [] => []
   | a :: as, b :: bs => iffClauses a b ++ equalWordClauses as bs
@@ -100,7 +104,8 @@ private theorem satisfies_equalWordClauses (v : ℕ → Bool)
       rw [equalWordClauses, CNF.satisfies_append, satisfies_iffClauses, ih]
       simp only [List.map_cons, List.cons.injEq]
 
-/-- Short-circuit unequal lengths before emitting position-wise equality clauses. -/
+/-- **Clauses for a word equation with a length check.**
+Short-circuit unequal lengths before emitting position-wise equality clauses. -/
 def equationClauses (as bs : List (ℕ × Bool)) : CNF :=
   if as.length = bs.length then equalWordClauses as bs else [[]]
 
@@ -115,16 +120,19 @@ private theorem satisfies_equationClauses (v : ℕ → Bool)
       exact h (by simpa using congrArg List.length heq)
     simp [equationClauses, h, hmap]
 
-/-- CNF for a system at fixed lengths, with shared variables and one constant bit. -/
+/-- **CNF encoding of a word-equation system at fixed lengths.**
+CNF for a system at fixed lengths, with shared variables and one constant bit. -/
 def blastSystem (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n))) : CNF :=
   [(0, true)] :: eqs.flatMap (fun e =>
     equationClauses (blastWord ℓ e.lhs) (blastWord ℓ e.rhs))
 
-/-- Read each string variable's bits from a SAT assignment. -/
+/-- **Decoding string values from a SAT assignment.**
+Read each string variable's bits from a SAT assignment. -/
 def decodeAssignment (ℓ : Fin n → ℕ) (v : ℕ → Bool) (i : Fin n) : List Bool :=
   List.ofFn (fun p : Fin (ℓ i) => v (bitVar i.val p.val))
 
-/-- Encode a substitution as a total SAT assignment, using inverse pairing. -/
+/-- **Encoding a substitution as a SAT assignment.**
+Encode a substitution as a total SAT assignment, using inverse pairing. -/
 def encodeAssignment (σ : Fin n → List Bool) (x : ℕ) : Bool :=
   if x = 0 then true
   else if h : (Nat.unpair (x - 1)).1 < n then
@@ -189,7 +197,8 @@ private theorem satisfies_blastSystem (ℓ : Fin n → ℕ) (v : ℕ → Bool)
         simpa only [map_blastWord ℓ v hv0, WordEq.Satisfies] using hEq)
     exact hcs c hc
 
-/-- Fixed-length bit-blasting is satisfiability-preserving in both directions. -/
+/-- **Fixed-length bit-blasting is equisatisfiable.**
+Fixed-length bit-blasting is satisfiability-preserving in both directions. -/
 theorem cnfSat_blastSystem (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n))) :
     CNFSat (blastSystem ℓ eqs) ↔
       ∃ σ : Fin n → List Bool, (∀ i, (σ i).length = ℓ i) ∧
@@ -203,23 +212,27 @@ theorem cnfSat_blastSystem (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n
     refine ⟨encodeAssignment σ, (satisfies_blastSystem ℓ _ eqs).mpr ⟨rfl, ?_⟩⟩
     simpa only [decode_encode ℓ σ hlen] using hs
 
-/-- Solve the fixed-length system by bit-blasting and the verified DPLL solver. -/
+/-- **Fixed-length word-equation solver via DPLL.**
+Solve the fixed-length system by bit-blasting and the verified DPLL solver. -/
 def fixedLengthSatB (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n))) : Bool :=
   Cslib.Algorithms.SAT.DPLL.dpll (blastSystem ℓ eqs)
 
-/-- The executable SAT-backed procedure accepts exactly the fixed-length solutions. -/
+/-- **Correctness of the fixed-length SAT-backed solver.**
+The executable SAT-backed procedure accepts exactly the fixed-length solutions. -/
 theorem fixedLengthSatB_iff (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n))) :
     fixedLengthSatB ℓ eqs = true ↔
       ∃ σ : Fin n → List Bool, (∀ i, (σ i).length = ℓ i) ∧
         ∀ e ∈ eqs, e.Satisfies σ := by
   rw [fixedLengthSatB, Cslib.Algorithms.SAT.DPLL.dpll_eq_true_iff, cnfSat_blastSystem]
 
-/-- All bounded length profiles, using Mathlib's finite Cartesian-product enumeration. -/
+/-- **Enumeration of bounded length profiles.**
+All bounded length profiles, using Mathlib's finite Cartesian-product enumeration. -/
 def lengthProfiles (n B : ℕ) : List (Fin n → ℕ) :=
   ((List.finRange n).pi (fun _ => List.range (B + 1))).map
     (fun f i => f i (List.mem_finRange i))
 
-/-- The profile enumeration contains exactly the pointwise-bounded length assignments. -/
+/-- **Membership in the length-profile enumeration.**
+The profile enumeration contains exactly the pointwise-bounded length assignments. -/
 theorem mem_lengthProfiles (ℓ : Fin n → ℕ) (B : ℕ) :
     ℓ ∈ lengthProfiles n B ↔ ∀ i, ℓ i ≤ B := by
   rw [lengthProfiles, List.mem_map]
@@ -233,11 +246,13 @@ theorem mem_lengthProfiles (ℓ : Fin n → ℕ) (B : ℕ) :
     intro i hi
     exact List.mem_range.mpr (Nat.lt_succ_iff.mpr (h i))
 
-/-- Solve bounded word equations by trying finite length profiles and calling DPLL. -/
+/-- **Bounded word-equation solver via DPLL.**
+Solve bounded word equations by trying finite length profiles and calling DPLL. -/
 def boundedWordSatB (B : ℕ) (eqs : List (WordEq Bool (Fin n))) : Bool :=
   (lengthProfiles n B).any (fun ℓ => fixedLengthSatB ℓ eqs)
 
-/-- The bounded SAT-backed solver is sound and complete, including empty strings. -/
+/-- **Soundness and completeness of the bounded word-equation solver.**
+The bounded SAT-backed solver is sound and complete, including empty strings. -/
 theorem boundedWordSatB_iff (B : ℕ) (eqs : List (WordEq Bool (Fin n))) :
     boundedWordSatB B eqs = true ↔
       ∃ σ : Fin n → List Bool, (∀ i, (σ i).length ≤ B) ∧
@@ -249,13 +264,15 @@ theorem boundedWordSatB_iff (B : ℕ) (eqs : List (WordEq Bool (Fin n))) :
   · rintro ⟨σ, hlen, hs⟩
     exact ⟨fun i => (σ i).length, hlen, σ, fun _ => rfl, hs⟩
 
-/-- An executable decision procedure for bounded Boolean-alphabet word equations. -/
+/-- **Decision procedure for bounded Boolean word equations.**
+An executable decision procedure for bounded Boolean-alphabet word equations. -/
 def decidableBoundedWordEq (B : ℕ) (eqs : List (WordEq Bool (Fin n))) :
     Decidable (∃ σ : Fin n → List Bool, (∀ i, (σ i).length ≤ B) ∧
       ∀ e ∈ eqs, e.Satisfies σ) :=
   decidable_of_iff (boundedWordSatB B eqs = true) (boundedWordSatB_iff B eqs)
 
-/-- The complete length-profile search has `(B + 1)^n` entries. -/
+/-- **Size of the length-profile search.**
+The complete length-profile search has `(B + 1)^n` entries. -/
 theorem lengthProfiles_length (n B : ℕ) : (lengthProfiles n B).length = (B + 1) ^ n := by
   simpa [lengthProfiles, Multiset.pi_coe] using!
     (Multiset.card_pi (List.finRange n : Multiset (Fin n))
@@ -274,7 +291,8 @@ private theorem equalWordClauses_length (as bs : List (ℕ × Bool))
         List.length_cons, List.length_nil, ih bs ht]
       omega
 
-/-- One empty clause for unequal lengths; otherwise two clauses per bit. -/
+/-- **Clause count for one word equation.**
+One empty clause for unequal lengths; otherwise two clauses per bit. -/
 theorem equationClauses_length (as bs : List (ℕ × Bool)) :
     (equationClauses as bs).length =
       if as.length = bs.length then 2 * as.length else 1 := by
@@ -282,7 +300,8 @@ theorem equationClauses_length (as bs : List (ℕ × Bool)) :
   · simp [equationClauses, h, equalWordClauses_length as bs h]
   · simp [equationClauses, h]
 
-/-- Exact CNF size: one constant-bit clause plus the position clauses for every equation.
+/-- **Exact clause count of the CNF encoding.**
+Exact CNF size: one constant-bit clause plus the position clauses for every equation.
 This is an output-size count, not a `TimeM` or DPLL runtime bound. -/
 theorem blastSystem_length (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n))) :
     (blastSystem ℓ eqs).length = 1 + (eqs.map (fun e =>
@@ -304,7 +323,8 @@ private theorem equalWordClauses_width (as bs : List (ℕ × Bool)) :
         rcases hc with rfl | rfl <;> simp
       · exact ih bs c hc
 
-/-- Every emitted clause has at most two literals, including the constant unit clause. -/
+/-- **CNF encoding uses clauses of width at most two.**
+Every emitted clause has at most two literals, including the constant unit clause. -/
 theorem blastSystem_width (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n))) :
     ∀ c ∈ blastSystem ℓ eqs, c.length ≤ 2 := by
   intro c hc
@@ -318,7 +338,8 @@ theorem blastSystem_width (ℓ : Fin n → ℕ) (eqs : List (WordEq Bool (Fin n)
       subst c
       decide
 
-/-- A source system is satisfiable iff some bounded SAT search accepts.
+/-- **Satisfiability as acceptance by some bounded SAT search.**
+A source system is satisfiable iff some bounded SAT search accepts.
 This does not make failure at one bound a decision of general UNSAT. -/
 theorem wordSystem_satisfiable_iff_exists_boundedSatB (eqs : List (WordEq Bool (Fin n))) :
     (∃ σ : Fin n → List Bool, ∀ e ∈ eqs, e.Satisfies σ) ↔
@@ -326,23 +347,27 @@ theorem wordSystem_satisfiable_iff_exists_boundedSatB (eqs : List (WordEq Bool (
   rw [wordSystem_satisfiable_iff_exists_bound]
   simp only [boundedWordSatB_iff]
 
-/-- Decide matching against a concrete target, with no bound supplied by the caller. -/
+/-- **Pattern-matching decision against a concrete target.**
+Decide matching against a concrete target, with no bound supplied by the caller. -/
 def patternMatchB (w : List (Bool ⊕ Fin n)) (target : List Bool) : Bool :=
   boundedWordSatB target.length [⟨w, target.map Sum.inl⟩]
 
-/-- The target length is a sufficient search bound for unrestricted pattern matching. -/
+/-- **Target length bounds the pattern-matching search.**
+The target length is a sufficient search bound for unrestricted pattern matching. -/
 theorem patternMatchB_iff (w : List (Bool ⊕ Fin n)) (target : List Bool) :
     patternMatchB w target = true ↔ ∃ σ : Fin n → List Bool, evalWord σ w = target := by
   simpa [patternMatchB, boundedWordSatB_iff, WordEq.Satisfies, evalWord,
     List.flatMap_map] using
     (patternMatch_iff_bounded w target).symm
 
-/-- Executable decidability for unrestricted Boolean-word pattern matching. -/
+/-- **Decidability of Boolean-word pattern matching.**
+Executable decidability for unrestricted Boolean-word pattern matching. -/
 def decidablePatternMatch (w : List (Bool ⊕ Fin n)) (target : List Bool) :
     Decidable (∃ σ : Fin n → List Bool, evalWord σ w = target) :=
   decidable_of_iff (patternMatchB w target = true) (patternMatchB_iff w target)
 
-/-- Expanded words are at most linear in source-word length and the supplied bound.
+/-- **Linear size bound for bit-blasted words.**
+Expanded words are at most linear in source-word length and the supplied bound.
 Together with `blastSystem_length`, this bounds CNF output size, not solver time. -/
 theorem blastWord_length_le (ℓ : Fin n → ℕ) (w : List (Bool ⊕ Fin n)) (B : ℕ)
     (h : ∀ i, ℓ i ≤ B) : (blastWord ℓ w).length ≤ max 1 B * w.length := by
@@ -357,7 +382,8 @@ theorem blastWord_length_le (ℓ : Fin n → ℕ) (w : List (Bool ⊕ Fin n)) (B
       simpa [blastWord, Nat.mul_add, Nat.add_comm] using
         Nat.add_le_add ((h i).trans (le_max_right 1 B)) ih
 
-/-- The SAT backend decides the same bounded semantics as the existing formula language. -/
+/-- **SAT backend agrees with the bounded formula semantics.**
+The SAT backend decides the same bounded semantics as the existing formula language. -/
 theorem boundedWordSatB_formula_iff (B : ℕ) (eqs : List (WordEq Bool (Fin n))) :
     boundedWordSatB B eqs = true ↔
       ∃ σ : Fin n → List Bool, (∀ i, (σ i).length ≤ B) ∧

@@ -60,7 +60,8 @@ namespace Cslib.AutomatedReasoning.StringConstraints
 
 open Cslib.Logic.PL
 
-/-- SAT as string constraints: each clause is a disjunction of word
+/-- **Encoding of CNF formulas as string constraints.**
+SAT as string constraints: each clause is a disjunction of word
 equations `x = [b]`, one per literal. -/
 def encodeCNF (φ : CNF) : Formula Bool ℕ :=
   andChain (φ.map (fun C =>

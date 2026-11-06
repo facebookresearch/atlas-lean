@@ -61,7 +61,8 @@ namespace CTLStar
 universe u
 
 mutual
-/-- State formulas of CTL*: atoms, truth, negation, conjunction, and
+/-- **State formulas of CTL$^{\ast}$.**
+State formulas of CTL*: atoms, truth, negation, conjunction, and
 the path quantifiers `E π` and `A π`. -/
 inductive StateFormula (Atom : Type u) where
   | atom (a : Atom) : StateFormula Atom
@@ -71,7 +72,7 @@ inductive StateFormula (Atom : Type u) where
   | exists (π : PathFormula Atom) : StateFormula Atom
   | forall (π : PathFormula Atom) : StateFormula Atom
 
-/-- Path formulas of CTL*: a state formula at the first position,
+/-- **Path formulas of CTL$^{\ast}$.** Path formulas of CTL*: a state formula at the first position,
 negation, conjunction, `next`, and `until`. -/
 inductive PathFormula (Atom : Type u) where
   | state (φ : StateFormula Atom) : PathFormula Atom
@@ -85,11 +86,13 @@ namespace PathFormula
 
 variable {Atom : Type u}
 
-/-- `G π`: `π` holds at every position, as `¬(⊤ U ¬π)`. -/
+/-- **Always operator on CTL$^{\ast}$ path formulas.**
+`G π`: `π` holds at every position, as `¬(⊤ U ¬π)`. -/
 def alwaysPath (π : PathFormula Atom) : PathFormula Atom :=
   .not (.until (.state .top) (.not π))
 
-/-- `F π`: `π` holds at some position, as `⊤ U π`. -/
+/-- **Eventually operator on CTL$^{\ast}$ path formulas.**
+`F π`: `π` holds at some position, as `⊤ U π`. -/
 def eventuallyPath (π : PathFormula Atom) : PathFormula Atom :=
   .until (.state .top) π
 
@@ -99,7 +102,8 @@ variable {State Label Atom : Type*} {lts : _root_.Cslib.LTS State Label}
   {valuation : State → Atom → Prop} {π ρ : PathFormula Atom}
 
 mutual
-/-- Satisfaction of a CTL* state formula at a state: `E π` holds when
+/-- **Satisfaction of CTL$^{\ast}$ state formulas.**
+Satisfaction of a CTL* state formula at a state: `E π` holds when
 some infinite run from the state satisfies `π`; `A π` when every
 infinite run does. -/
 def StateSat (lts : _root_.Cslib.LTS State Label) (valuation : State → Atom → Prop) :
@@ -111,7 +115,8 @@ def StateSat (lts : _root_.Cslib.LTS State Label) (valuation : State → Atom �
   | .exists π, s => ∃ run, run 0 = s ∧ LTS.OmegaRun (lts := lts) run ∧ PathSat lts valuation π run
   | .forall π, s => ∀ run, run 0 = s → LTS.OmegaRun (lts := lts) run → PathSat lts valuation π run
 
-/-- Satisfaction of a CTL* path formula on an infinite run: `next`
+/-- **Satisfaction of CTL$^{\ast}$ path formulas on infinite runs.**
+Satisfaction of a CTL* path formula on an infinite run: `next`
 shifts the run, `until` asks for a target position with the guard
 before it. -/
 def PathSat (lts : _root_.Cslib.LTS State Label) (valuation : State → Atom → Prop) :
@@ -125,33 +130,37 @@ def PathSat (lts : _root_.Cslib.LTS State Label) (valuation : State → Atom →
         ∀ j, j < k → PathSat lts valuation π (Semantics.shiftSeq run j)
 end
 
-/-- Unfolding: a state formula on a run is satisfaction at its first
+/-- **A state formula on a run holds at its first state.**
+Unfolding: a state formula on a run is satisfaction at its first
 state. -/
 theorem pathSat_state (φ : StateFormula Atom) (run : ℕ → State) :
     PathSat lts valuation (.state φ) run = StateSat lts valuation φ (run 0) :=
   rfl
 
-/-- Unfolding: `next` shifts the run. -/
+/-- **Next on a run is satisfaction on the shifted run.** Unfolding: `next` shifts the run. -/
 theorem pathSat_next (π : PathFormula Atom) (run : ℕ → State) :
     PathSat lts valuation (.next π) run =
       PathSat lts valuation π (Semantics.shiftSeq run 1) :=
   rfl
 
-/-- `(shiftSeq run k) 0 = run k`: the `0 + k` is discharged by
+/-- **A run shifted by k starts at its k-th state.**
+`(shiftSeq run k) 0 = run k`: the `0 + k` is discharged by
 `Nat.zero_add`. -/
 theorem shiftSeq_apply_zero (run : ℕ → State) (k : ℕ) :
     Semantics.shiftSeq run k 0 = run k := by
   change run (0 + k) = run k
   rw [Nat.zero_add]
 
-/-- A state formula on a shifted run is satisfaction at the shifted
+/-- **A state formula on a shifted run holds at the shifted state.**
+A state formula on a shifted run is satisfaction at the shifted
 position. -/
 theorem pathSat_state_shift (φ : StateFormula Atom) (run : ℕ → State) (k : ℕ) :
     PathSat lts valuation (.state φ) (Semantics.shiftSeq run k) =
       StateSat lts valuation φ (run k) := by
   rw [pathSat_state, shiftSeq_apply_zero]
 
-/-- `G π` holds on a run iff `π` holds on every suffix. -/
+/-- **Always holds on a run iff its argument holds on every suffix.**
+`G π` holds on a run iff `π` holds on every suffix. -/
 theorem pathSat_always (run : ℕ → State) :
     PathSat lts valuation (π.alwaysPath) run ↔
       ∀ i, PathSat lts valuation π (Semantics.shiftSeq run i) := by
@@ -162,7 +171,8 @@ theorem pathSat_always (run : ℕ → State) :
     obtain ⟨k, hk, -⟩ := hcon
     exact hk (h k)
 
-/-- `F π` holds on a run iff `π` holds on some suffix. -/
+/-- **Eventually holds on a run iff its argument holds on some suffix.**
+`F π` holds on a run iff `π` holds on some suffix. -/
 theorem pathSat_eventually (run : ℕ → State) :
     PathSat lts valuation (π.eventuallyPath) run ↔
       ∃ k, PathSat lts valuation π (Semantics.shiftSeq run k) := by
@@ -172,7 +182,8 @@ theorem pathSat_eventually (run : ℕ → State) :
   · rintro ⟨k, hk⟩
     exact ⟨k, hk, fun _ _ => True.intro⟩
 
-/-- The LTL embedding: every LTL formula is a CTL* path formula. -/
+/-- **Embedding of LTL formulas as CTL$^{\ast}$ path formulas.**
+The LTL embedding: every LTL formula is a CTL* path formula. -/
 def embedLTL : LTL.Formula Atom → PathFormula Atom
   | .atom a => .state (.atom a)
   | .top => .state .top
@@ -181,7 +192,8 @@ def embedLTL : LTL.Formula Atom → PathFormula Atom
   | .next φ => .next (embedLTL φ)
   | .until φ ψ => .until (embedLTL φ) (embedLTL ψ)
 
-/-- The LTL embedding preserves semantics on every state sequence,
+/-- **The LTL embedding preserves semantics on every sequence.**
+The LTL embedding preserves semantics on every state sequence,
 including sequences that are not valid runs of `lts`. -/
 theorem embedLTL_sat (φ : LTL.Formula Atom) :
     ∀ run, PathSat lts valuation (embedLTL φ) run ↔
@@ -224,7 +236,8 @@ theorem embedLTL_sat (φ : LTL.Formula Atom) :
         exact ⟨k, (ihψ _).mpr hk,
           fun j hjk => (ihφ _).mpr (hj j hjk)⟩
 
-/-- The structural LTL embedding also agrees at every position,
+/-- **The LTL embedding preserves semantics at every position.**
+The structural LTL embedding also agrees at every position,
 without assuming the sequence is a valid transition run. -/
 theorem embedLTL_sat_at (φ : LTL.Formula Atom) (run : ℕ → State)
     (k : ℕ) :
@@ -232,7 +245,8 @@ theorem embedLTL_sat_at (φ : LTL.Formula Atom) (run : ℕ → State)
       LTL.Word.SatisfiesAt valuation ⟨run⟩ k φ :=
   embedLTL_sat φ _
 
-/-- The CTL embedding: every CTL formula is a CTL* state formula.
+/-- **Embedding of CTL formulas as CTL$^{\ast}$ state formulas.**
+The CTL embedding: every CTL formula is a CTL* state formula.
 `EG φ` is `E G (state φ)`; `AU` is `A (state φ U state ψ)`. -/
 def embedCTL : CTL.Formula Atom → StateFormula Atom
   | .atom a => .atom a
@@ -244,7 +258,8 @@ def embedCTL : CTL.Formula Atom → StateFormula Atom
   | .existsGlobally φ => .exists (.alwaysPath (.state (embedCTL φ)))
   | .forallUntil φ ψ => .forall (.until (.state (embedCTL φ)) (.state (embedCTL ψ)))
 
-/-- The CTL embedding preserves semantics on serial systems. -/
+/-- **The CTL embedding preserves semantics on serial systems.**
+The CTL embedding preserves semantics on serial systems. -/
 theorem embedCTL_sat (hser : CTL.Serial lts) (φ : CTL.Formula Atom) :
     ∀ {s : State}, StateSat lts valuation (embedCTL φ) s ↔
       CTL.Satisfies lts valuation s φ := by
@@ -345,25 +360,27 @@ theorem embedCTL_sat (hser : CTL.Serial lts) (φ : CTL.Formula Atom) :
           rw [pathSat_state_shift]
           exact (ihφ (s := run j)).mpr (hbefore j hj)
 
-/-- The toggle system: every transition flips the state. -/
+/-- **Toggle transition system.** The toggle system: every transition flips the state. -/
 def toggleLTS : _root_.Cslib.LTS Bool Unit where
   Tr := fun s _ t => t = !s
 
-/-- The valuation: `p` holds exactly at `true`. -/
+/-- **Valuation of the toggle system.** The valuation: `p` holds exactly at `true`. -/
 def toggleValuation : Bool → Unit → Prop := fun s _ => s = true
 
-/-- The toggle system is serial: every state has a successor. -/
+/-- **The toggle system is serial.** The toggle system is serial: every state has a successor. -/
 theorem toggle_serial : CTL.Serial toggleLTS := by
   intro s
   exact ⟨(), !s, rfl⟩
 
-/-- The alternating run of the toggle system: `false, true, false,
+/-- **Alternating run of the toggle system.**
+The alternating run of the toggle system: `false, true, false,
 true, ...`, defined by recursion so each step flips the state. -/
 def toggleRun : ℕ → Bool
   | 0 => false
   | n + 1 => !toggleRun n
 
-/-- `E G F p` holds at `false` in the toggle system: the alternating
+/-- **$E\,G\,F\,p$ holds at false in the toggle system.**
+`E G F p` holds at `false` in the toggle system: the alternating
 run visits `true` at every other position. This example makes no claim
 of an expressiveness separation. -/
 theorem toggle_egf_p :

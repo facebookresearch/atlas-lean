@@ -72,7 +72,8 @@ namespace Cslib.Bioinformatics.Assembly.LanderWaterman
 
 open Filter Topology
 
-/-- A read of length `L` starting at position `s` of a circular genome of length `G` covers base
+/-- **Read covering a base of a circular genome.**
+A read of length `L` starting at position `s` of a circular genome of length `G` covers base
 `x` when `x` is one of `s, s + 1, …, s + L - 1 (mod G)`, i.e. `(x - s) mod G < L`. -/
 def Covers (G L : ℕ) (s x : Fin G) : Prop :=
   (x.val + G - s.val) % G < L
@@ -81,11 +82,13 @@ def Covers (G L : ℕ) (s x : Fin G) : Prop :=
 instance (G L : ℕ) (s x : Fin G) : Decidable (Covers G L s x) :=
   inferInstanceAs (Decidable (_ < _))
 
-/-- The depth of coverage of base `x`: the number of reads covering it. -/
+/-- **Depth of coverage of a base.**
+The depth of coverage of base `x`: the number of reads covering it. -/
 def depth {G N : ℕ} (L : ℕ) (starts : Fin N → Fin G) (x : Fin G) : ℕ :=
   (Finset.univ.filter fun j => Covers G L (starts j) x).card
 
-/-- The totalized normalized count `|E| / G ^ N` of a set of start tuples.
+/-- **Normalized count of read start tuples.**
+The totalized normalized count `|E| / G ^ N` of a set of start tuples.
 For `0 < G`, this is the probability when the `N` start positions are independent and uniform
 on `Fin G`. If `G = 0` and `N > 0`, the sample space is empty and this value is zero, so it is
 not a probability law. For `N = 0`, there is one empty start tuple, even when `G = 0`. -/
@@ -164,7 +167,8 @@ private lemma card_support {G L N : ℕ} (hL : L ≤ G) (x : Fin G) (S : Finset 
     simp
   simp [hf, Finset.card_sdiff]
 
-/-- `normalizedCount` agrees with Mathlib's totalized uniform measure on all start tuples.
+/-- **Normalized count agrees with the totalized uniform measure.**
+`normalizedCount` agrees with Mathlib's totalized uniform measure on all start tuples.
 This measure is a probability law only when the sample space is nonempty. -/
 theorem normalizedCount_eq_uniformOfFinset {G N : ℕ} (E : Finset (Fin N → Fin G)) :
     normalizedCount E =
@@ -262,7 +266,8 @@ theorem tendsto_normalizedCount_depth (L : ℕ) (G : ℕ → ℕ) (hL : ∀ N, L
   simpa only [normalizedCount_depth_eq (hL _) (x _)] using
     ProbabilityTheory.tendsto_choose_mul_pow_of_tendsto_mul_atTop k hp
 
-/-- Read `j` has no successor when no other read starts in the `L - 1` positions after it,
+/-- **Read with no successor.**
+Read `j` has no successor when no other read starts in the `L - 1` positions after it,
 `starts j + 1, …, starts j + L - 1 (mod G)` (reads starting at the same position are not
 successors of each other). In Lander and Waterman's terms such a read is counted as ending
 an island, but several no-successor reads can lie in one island, so this is not the island

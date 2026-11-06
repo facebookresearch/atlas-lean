@@ -29,11 +29,13 @@ open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program
 open MetaMathlibExt.TM2Embedding MetaMathlibExt.BitstringEncoding
 open Karp SatVerifier
 
-/-- Existing emitter labels and the cleanup/unframing continuation. -/
+/-- **Control labels of the unary-to-binary converter.**
+Existing emitter labels and the cleanup/unframing continuation. -/
 inductive Lab | emit (l : EmitSS.Lab) | clean | read | back | done
   deriving DecidableEq
 
-/-- The finite label enumeration uses the existing emitter enumeration
+/-- **Label enumeration of the unary-to-binary converter.**
+The finite label enumeration uses the existing emitter enumeration
 and two Boolean choices, without a noncomputable list conversion. -/
 def labEquiv : Lab ≃ EmitSS.Lab ⊕ Bool ⊕ Bool where
   toFun
@@ -56,15 +58,18 @@ def labEquiv : Lab ≃ EmitSS.Lab ⊕ Bool ⊕ Bool where
 
 instance : Fintype Lab := Fintype.ofEquiv _ labEquiv.symm
 
-/-- The component retains the existing emitter's heterogeneous alphabets. -/
+/-- **Emitter stack embedding in the unary-to-binary converter.**
+The component retains the existing emitter's heterogeneous alphabets. -/
 def embedding : SEmb EmitSS.Γ EmitSS.Γ :=
   ⟨id, injective_id, fun _ => Equiv.refl _⟩
 
-/-- The actual emitter halt is followed by charged scratch cleanup. -/
+/-- **Label map from the emitter halt to scratch cleanup.**
+The actual emitter halt is followed by charged scratch cleanup. -/
 def emitLabel (l : EmitSS.Lab) : Lab :=
   if l = .done then .clean else .emit l
 
-/-- `framed = true` keeps the new frame; otherwise only that frame is
+/-- **Program of the unary-to-binary converter.**
+`framed = true` keeps the new frame; otherwise only that frame is
 removed, preserving any earlier output below it. -/
 def prog (framed : Bool) : Lab → TM2.Stmt EmitSS.Γ Lab Bool
   | .emit l => mapS embedding emitLabel (EmitSS.prog l)
@@ -211,7 +216,8 @@ private theorem unframe_run (p out : List Bool) (v : Bool)
   · intro k hkx hko
     rw [hf₂ k hkx hko, hf₁ k hko hkx]
 
-/-- Emit one canonical Nat frame above any earlier output and restore
+/-- **Converter turns a unary count into a canonical binary frame.**
+Emit one canonical Nat frame above any earlier output and restore
 all conversion scratch. The old counter is consumed; unrelated stacks,
 including `X`, are preserved. Cleanup is part of the charged run. -/
 theorem run_framed (n : Nat) (out : List Bool) (v : Bool)
@@ -224,7 +230,8 @@ theorem run_framed (n : Nat) (out : List Bool) (v : Bool)
       ∀ k, k ≠ .A → k ≠ .H → k ≠ .T → k ≠ .O → U k = S k := by
   exact clean_frame_run true n out v S hA hH hT hO
 
-/-- Convert a unary count to the canonical unframed Nat payload,
+/-- **Converter turns a unary count into a raw canonical binary payload.**
+Convert a unary count to the canonical unframed Nat payload,
 preserving an earlier output suffix and clearing every used work stack. -/
 theorem run_raw (n : Nat) (out : List Bool) (v : Bool)
     (S : ∀ k, List (EmitSS.Γ k)) (hA : S .A = cnt EmitSS.U n)
@@ -252,7 +259,8 @@ theorem run_raw (n : Nat) (out : List Bool) (v : Bool)
   · intro k hka hkh hkt hko hkx
     exact (hframe k hkx hko).trans (hf k hka hkh hkt hko)
 
-/-- The adapter is a finite component of the existing Host. Its input
+/-- **Unary-to-binary converter as a host component.**
+The adapter is a finite component of the existing Host. Its input
 counter has `n` physical symbols; the bound is linear in that length,
 not in the bit length of an arbitrary binary-encoded numeric input. -/
 abbrev component (framed : Bool) : Host.Comp where

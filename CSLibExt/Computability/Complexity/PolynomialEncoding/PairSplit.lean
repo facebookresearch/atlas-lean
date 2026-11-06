@@ -28,7 +28,8 @@ namespace Cslib.Complexity.PolynomialEncoding.PairSplit
 open Turing Function MetaMathlibExt.TM2Program
 open MetaMathlibExt.BitstringEncoding FramedCNF
 
-/-- The original input becomes the second field; `left` holds the first. -/
+/-- **Stacks of the raw pair-frame splitter.**
+The original input becomes the second field; `left` holds the first. -/
 inductive K | input | left | scratch
   deriving DecidableEq
 
@@ -36,7 +37,8 @@ instance : Fintype K where
   elems := ⟨↑[K.input, .left, .scratch], by decide⟩
   complete k := by cases k <;> decide
 
-/-- Read one frame, restore its order, then report success or failure. -/
+/-- **Control labels of the raw pair-frame splitter.**
+Read one frame, restore its order, then report success or failure. -/
 inductive Lab | read | copy | good | bad
   deriving DecidableEq
 
@@ -44,19 +46,22 @@ instance : Fintype Lab where
   elems := ⟨↑[Lab.read, .copy, .good, .bad], by decide⟩
   complete l := by cases l <;> decide
 
-/-- Pair framing is split using the existing delimiter and move kernels. -/
+/-- **Program of the raw pair-frame splitter.**
+Pair framing is split using the existing delimiter and move kernels. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .read => Block.read .input .scratch some id .read .copy .bad
   | .copy => moveB .scratch .left some id .copy .good
   | .good | .bad => .halt
 
-/-- Explicit stack layout of the projection invariant. -/
+/-- **Stack layout of the raw pair-frame splitter.**
+Explicit stack layout of the projection invariant. -/
 def st (input left scratch : List Bool) : K → List Bool
   | .input => input
   | .left => left
   | .scratch => scratch
 
-/-- Extract both raw fields, restore first-field order, and clear
+/-- **Pair-frame splitter extracts both raw fields.**
+Extract both raw fields, restore first-field order, and clear
 scratch in exactly two steps per first-field bit plus two. -/
 theorem run_delimit (p r out : List Bool) (v : Bool) :
     ∃ v', Run prog (2 * p.length + 2)
@@ -89,7 +94,8 @@ theorem run_delimit (p r out : List Bool) (v : Bool) :
   rw [hf] at hc
   exact (hr.trans hc).of_eq (by simp; omega)
 
-/-- Every successful raw pair frame is projected within input length
+/-- **Pair-frame splitter projects every well-framed input in linear time.**
+Every successful raw pair frame is projected within input length
 plus one; its two payloads are left unnormalized. -/
 theorem run_some {x p r : List Bool}
     (h : undelimit x = some (p, r)) (out : List Bool) (v : Bool) :
@@ -102,7 +108,8 @@ theorem run_some {x p r : List Bool}
   simp only [List.length_append, length_delimit]
   omega
 
-/-- Malformed first-field framing reaches the actual failure label.
+/-- **Pair-frame splitter fails on malformed first-field framing.**
+Malformed first-field framing reaches the actual failure label.
 Scratch may contain a partial field and must be cleared before reuse. -/
 theorem run_none {x : List Bool} (h : undelimit x = none)
     (out : List Bool) (v : Bool) :
@@ -113,7 +120,8 @@ theorem run_none {x : List Bool} (h : undelimit x = none)
     (bad := Lab.bad) rfl (by decide) id (fun _ => rfl) x v
     (st x out []) (by simp [st]) h
 
-/-- The finite component interface used by fixed nested-codec callers. -/
+/-- **Raw pair-frame splitter as a host component.**
+The finite component interface used by fixed nested-codec callers. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -123,7 +131,8 @@ abbrev component : Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- Raw field projection agrees with the existing pair decoder. This
+/-- **Raw field projection agrees with the pair decoder.**
+Raw field projection agrees with the existing pair decoder. This
 is not a runtime assumption or implementation of either element codec. -/
 theorem run_decoded {α β : Type}
     [MetaMathlibExt.BitstringEncoding α] [MetaMathlibExt.BitstringEncoding β]
@@ -137,7 +146,8 @@ theorem run_decoded {α β : Type}
     ((Cslib.CookLevin.undelimit_eq_some_iff _ _ _).mpr hx) [] v
   exact ⟨p, r, v', by simpa using run, hp, hr⟩
 
-/-- Total framing outcome, without prematurely accepting either field
+/-- **Pair-frame splitter reaches the framing outcome.**
+Total framing outcome, without prematurely accepting either field
 as a value of its eventual element type. -/
 theorem run (x : List Bool) (v : Bool) :
     ∃ v' S, RunLe prog (x.length + 1)
@@ -158,7 +168,8 @@ theorem run (x : List Bool) (v : Bool) :
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Option.some.inj hh)
     rfl
 
-/-- Embedded projection preserves all caller stacks outside the
+/-- **Embedded pair-frame splitter preserves caller stacks.**
+Embedded projection preserves all caller stacks outside the
 three-stack workspace, even when framing fails. -/
 theorem run_embedded {J L : Type} [DecidableEq J] {Γ : J → Type}
     (E : MetaMathlibExt.TM2Embedding.SEmb (fun _ : K => Bool) Γ)

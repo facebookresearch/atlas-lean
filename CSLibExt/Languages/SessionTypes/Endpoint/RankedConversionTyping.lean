@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Linear ownership typing with a strict priority check at every guard.
+/-- **Priority-ranked conversion typing judgement.**
+Linear ownership typing with a strict priority check at every guard.
 There is no reduction, enabled-edge, progress or preservation field. -/
 inductive RankedType : Nat → Context → Proc → Prop where
   | nil {n : Nat} {Δ : Context} :
@@ -62,7 +63,8 @@ inductive RankedType : Nat → Context → Proc → Prop where
   | nu {n : Nat} {Δ : Context} {c : Capability} {p : Proc} :
       RankedType (n + 1) (Context.bind c Δ) p → RankedType n Δ (.nu p)
 
-/-- Forgetting guard priorities derives the existing conversion judgement. -/
+/-- **Forgetting priorities yields conversion typing.**
+Forgetting guard priorities derives the existing conversion judgement. -/
 theorem RankedType.hasType {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) : HasType n Δ p := by
   induction h with
@@ -74,7 +76,8 @@ theorem RankedType.hasType {n : Nat} {Δ : Context} {p : Proc}
   | par hd hp hq ihp ihq => exact HasType.par hd ihp ihq
   | nu hp ih => exact HasType.nu ih
 
-/-- Explicit seven-case raw-ranked embedding, not theorem-value inheritance. -/
+/-- **Ranked typing embeds into conversion ranked typing.**
+Explicit seven-case raw-ranked embedding, not theorem-value inheritance. -/
 theorem RankedType.of_raw {n : Nat} {Δ : Context} {p : Proc}
     (h : Endpoint.RankedType n Δ p) : RankedType n Δ p := by
   induction h with
@@ -87,20 +90,23 @@ theorem RankedType.of_raw {n : Nat} {Δ : Context} {p : Proc}
   | par hd hp hq ihp ihq => exact RankedType.par hd ihp ihq
   | nu hp ih => exact RankedType.nu ih
 
-/-- Ranked parallel typing exposes its actual disjoint ownership split. -/
+/-- **Parallel inversion for conversion ranked typing.**
+Ranked parallel typing exposes its actual disjoint ownership split. -/
 theorem RankedType.par_inv {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ (.par p q)) :
     ∃ Γ Θ, Δ = Γ ∪ Θ ∧ Finmap.Disjoint Γ Θ ∧ RankedType n Γ p ∧ RankedType n Θ q := by
   cases h with
   | par hd hp hq => exact ⟨_, _, rfl, hd, hp, hq⟩
 
-/-- Restriction chooses an actual literal-dual pair. -/
+/-- **Restriction inversion for conversion ranked typing.**
+Restriction chooses an actual literal-dual pair. -/
 theorem RankedType.nu_inv {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ (.nu p)) : ∃ c, RankedType (n + 1) (Context.bind c Δ) p := by
   cases h with
   | nu hp => exact ⟨_, hp⟩
 
-/-- Nil adds no priority premise beyond actual completed and scoped ownership. -/
+/-- **Nil typing lifts to conversion ranked typing.**
+Nil adds no priority premise beyond actual completed and scoped ownership. -/
 theorem RankedType.nil_of_hasType {n : Nat} {Δ : Context} (h : HasType n Δ .nil) :
     RankedType n Δ .nil := by
   obtain ⟨hc, hs⟩ := h.nil_inv

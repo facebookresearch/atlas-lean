@@ -29,7 +29,8 @@ namespace Cslib.LTL.Tableau
 
 variable {Atom Symbol : Type*}
 
-/-- One Boolean for each syntactic occurrence in an LTL formula. -/
+/-- **Truth-annotation states of the LTL tableau.**
+One Boolean for each syntactic occurrence in an LTL formula. -/
 @[reducible]
 def State : Formula Atom → Type
   | .atom _ => Bool
@@ -77,7 +78,7 @@ instance stateDecidableEq : (φ : Formula Atom) → DecidableEq (State φ)
       letI := stateDecidableEq ψ
       exact inferInstanceAs (DecidableEq (Bool × (State φ × State ψ)))
 
-/-- The truth bit at the root of an annotation. -/
+/-- **Root truth bit of a tableau annotation.** The truth bit at the root of an annotation. -/
 def value : (φ : Formula Atom) → State φ → Bool
   | .atom _, s => s
   | .top, s => s
@@ -86,7 +87,8 @@ def value : (φ : Formula Atom) → State φ → Bool
   | .next _, s => s.1
   | .until _ _, s => s.1
 
-/-- The number of until occurrences, hence of fairness requirements. -/
+/-- **Number of until fairness obligations.**
+The number of until occurrences, hence of fairness requirements. -/
 def obligationCount : Formula Atom → ℕ
   | .atom _ => 0
   | .top => 0
@@ -95,7 +97,8 @@ def obligationCount : Formula Atom → ℕ
   | .next φ => obligationCount φ
   | .until φ ψ => obligationCount φ + obligationCount ψ + 1
 
-/-- Local equations at every occurrence. The symbol labels the source state. -/
+/-- **Local transition relation of the LTL tableau.**
+Local equations at every occurrence. The symbol labels the source state. -/
 def step (valuation : Symbol → Atom → Prop) :
     (φ : Formula Atom) → State φ → Symbol → State φ → Prop
   | .atom a, s, x, _ => s = true ↔ valuation x a
@@ -116,7 +119,8 @@ def step (valuation : Symbol → Atom → Prop) :
         step valuation φ s.2.1 x t.2.1 ∧
         step valuation ψ s.2.2 x t.2.2
 
-/-- The Boolean test for each until fairness requirement. -/
+/-- **Boolean test for an until fairness obligation.**
+The Boolean test for each until fairness requirement. -/
 def obligation : (φ : Formula Atom) →
     Fin (obligationCount φ) → State φ → Bool
   | .atom _, i, _ => Fin.elim0 i
@@ -133,7 +137,8 @@ def obligation : (φ : Formula Atom) →
 
 open Filter
 
-/-- Every until occurrence is absent or fulfilled at arbitrarily late times. -/
+/-- **Fairness of a tableau annotation sequence.**
+Every until occurrence is absent or fulfilled at arbitrarily late times. -/
 def Fair : (φ : Formula Atom) → ωSequence (State φ) → Prop
   | .atom _, _ => True
   | .top, _ => True
@@ -145,7 +150,8 @@ def Fair : (φ : Formula Atom) → ωSequence (State φ) → Prop
       (∃ᶠ n in atTop, (ss n).1 = false ∨ value ψ (ss n).2.2 = true) ∧
         Fair φ (fun n => (ss n).2.1) ∧ Fair ψ (fun n => (ss n).2.2)
 
-/-- Generalized Büchi tableau: the root is initially true. -/
+/-- **Generalized Büchi tableau for an LTL formula.**
+Generalized Büchi tableau: the root is initially true. -/
 def automaton (valuation : Symbol → Atom → Prop) (φ : Formula Atom) :
     Automata.NA.GenBuchi (State φ) Symbol where
   Tr := step valuation φ
@@ -153,7 +159,8 @@ def automaton (valuation : Symbol → Atom → Prop) (φ : Formula Atom) :
   k := obligationCount φ
   accept i := {s | obligation φ i s = true}
 
-/-- Structural fairness is exactly generalized Büchi acceptance. -/
+/-- **Tableau fairness is generalized Büchi acceptance.**
+Structural fairness is exactly generalized Büchi acceptance. -/
 theorem fair_iff (φ : Formula Atom) (ss : ωSequence (State φ)) :
     Fair φ ss ↔ ∀ i, ∃ᶠ n in atTop, obligation φ i (ss n) = true := by
   induction φ with
@@ -183,7 +190,8 @@ theorem fair_iff (φ : Formula Atom) (ss : ωSequence (State φ)) :
 
 open Automata.ωAcceptor
 
-/-- Membership exposes exactly the initial, local, and fairness conditions. -/
+/-- **Tableau acceptance via initial, local and fairness conditions.**
+Membership exposes exactly the initial, local, and fairness conditions. -/
 theorem mem_language_iff (valuation : Symbol → Atom → Prop)
     (φ : Formula Atom) (w : ωSequence Symbol) :
     w ∈ language (automaton valuation φ) ↔

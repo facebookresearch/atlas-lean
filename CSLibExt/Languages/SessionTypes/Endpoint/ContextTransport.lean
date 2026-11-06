@@ -24,13 +24,15 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Insert an ambient name binder at any cutoff in an ownership context. -/
+/-- **Lifting an ownership map past a binder.**
+Insert an ambient name binder at any cutoff in an ownership context. -/
 def Context.lift (k : Nat) (Δ : Context) : Context :=
   rekey (Key.mapName (liftName k)) Δ
     (fun _ _ _ _ h => Key.mapName_injective (liftName_injective k) h)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Lifting keeps the entire capability at the corresponding lifted key. -/
+/-- **Lookups in a lifted ownership map.**
+Lifting keeps the entire capability at the corresponding lifted key. -/
 theorem Context.lookup_lift {k : Nat} {Δ : Context} {e : Key}
     {c : Capability} :
     (lift k Δ).lookup (Key.mapName (liftName k) e) = some c ↔
@@ -44,14 +46,16 @@ theorem Context.lookup_lift {k : Nat} {Δ : Context} {e : Key}
   · intro he
     exact ⟨e, he, rfl⟩
 
-/-- A restriction binds one physical name and creates its two distinct
+/-- **Binding a fresh dual pair under restriction.**
+A restriction binds one physical name and creates its two distinct
 linear roles. Lifted outer keys cannot be overwritten by these insertions. -/
 def Context.bind (c : Capability) (Δ : Context) : Context :=
   (lift 0 Δ).insert ⟨.var 0, .positive⟩ c |>
     Finmap.insert ⟨.var 0, .negative⟩ c.dual
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Both roles of the newly inserted name are fresh for the lifted context. -/
+/-- **Both roles of the new name are fresh for a lifted map.**
+Both roles of the newly inserted name are fresh for the lifted context. -/
 theorem Context.fresh_lift (Δ : Context) (r : Role) :
     (⟨.var 0, r⟩ : Key) ∉ lift 0 Δ := by
   intro h
@@ -59,30 +63,35 @@ theorem Context.fresh_lift (Δ : Context) (r : Role) :
   have hn := congrArg Key.name he
   exact liftName_zero_ne_var_zero e.name hn
 
-/-- Restriction installs the positive capability without losing it to the
+/-- **Positive role lookup after restriction binding.**
+Restriction installs the positive capability without losing it to the
 opposite role's insertion. -/
 theorem Context.lookup_bind_positive (c : Capability) (Δ : Context) :
     (bind c Δ).lookup ⟨.var 0, .positive⟩ = some c := by
   simp [bind]
 
-/-- The same restriction installs the negative peer at the SAME name. -/
+/-- **Negative role lookup after restriction binding.**
+The same restriction installs the negative peer at the SAME name. -/
 theorem Context.lookup_bind_negative (c : Capability) (Δ : Context) :
     (bind c Δ).lookup ⟨.var 0, .negative⟩ = some c.dual := by
   simp [bind]
 
-/-- Lifting a single capability shifts its name, not its protocol or role. -/
+/-- **Lifting a singleton ownership map.**
+Lifting a single capability shifts its name, not its protocol or role. -/
 theorem Context.lift_singleton (k : Nat) (e : Key) (c : Capability) :
     lift k (Finmap.singleton e c) =
       Finmap.singleton (Key.mapName (liftName k) e) c := by
   apply Finmap.ext
   rfl
 
-/-- Inserting a binder does not manufacture an outer capability. -/
+/-- **Lifting the empty ownership map.**
+Inserting a binder does not manufacture an outer capability. -/
 @[simp] theorem Context.lift_empty (k : Nat) : lift k (∅ : Context) = ∅ := by
   apply Finmap.ext
   rfl
 
-/-- In an empty outer context, restriction exposes exactly its two peers. -/
+/-- **Restriction binding over the empty map.**
+In an empty outer context, restriction exposes exactly its two peers. -/
 theorem Context.bind_empty (c : Capability) : bind c ∅ =
     Finmap.singleton ⟨.var 0, .positive⟩ c ∪
       Finmap.singleton ⟨.var 0, .negative⟩ c.dual := by
@@ -99,7 +108,8 @@ theorem Context.bind_empty (c : Capability) : bind c ∅ =
   apply Finmap.union_comm_of_disjoint
   simp [Finmap.Disjoint, Finmap.mem_singleton]
 
-/-- The exact restriction context has two fresh entries plus all shifted
+/-- **Entries of a restriction-bound ownership map.**
+The exact restriction context has two fresh entries plus all shifted
 outer ownership. No old entry is overwritten by a new endpoint role. -/
 theorem Context.entries_bind (c : Capability) (Δ : Context) :
     (bind c Δ).entries =
@@ -109,7 +119,8 @@ theorem Context.entries_bind (c : Capability) (Δ : Context) :
     simp [Finmap.mem_insert, fresh_lift])]
   rw [Finmap.entries_insert_of_notMem (fresh_lift Δ .positive)]
 
-/-- Lifting preserves absence of an outer role from its finite context. -/
+/-- **Lifting preserves absence of a key.**
+Lifting preserves absence of an outer role from its finite context. -/
 theorem Context.fresh_lift_of_fresh {Δ : Context} {e : Key} (he : e ∉ Δ) :
     Key.mapName (liftName 0) e ∉ Context.lift 0 Δ := by
   intro hm
@@ -117,7 +128,8 @@ theorem Context.fresh_lift_of_fresh {Δ : Context} {e : Key} (he : e ∉ Δ) :
   have h : d = e := Key.mapName_injective (liftName_injective 0) hde
   exact he (h ▸ hd)
 
-/-- An absent outer key remains absent after adding the fresh bound dual pair. -/
+/-- **Restriction binding preserves absence of an outer key.**
+An absent outer key remains absent after adding the fresh bound dual pair. -/
 theorem Context.fresh_bind_of_fresh {Δ : Context} {e : Key} {c : Capability}
     (he : e ∉ Δ) :
     Key.mapName (liftName 0) e ∉ Context.bind c Δ := by

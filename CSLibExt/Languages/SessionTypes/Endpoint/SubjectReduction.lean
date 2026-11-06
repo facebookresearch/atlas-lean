@@ -21,7 +21,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Injective physical-name rekeying retains partial dual compatibility. -/
+/-- **Injective rekeying preserves dual compatibility.**
+Injective physical-name rekeying retains partial dual compatibility. -/
 theorem Compatible.rekey {Δ : Context} {f : Name → Name}
     (h : Compatible Δ) (hf : Function.Injective f)
     (hi : Set.InjOn (Key.mapName f) {e | e ∈ Δ}) :
@@ -33,7 +34,8 @@ theorem Compatible.rekey {Δ : Context} {f : Name → Name}
   subst b
   exact h a c d ha hb
 
-/-- A fresh complete bound pair extends any ordinary compatible interface. -/
+/-- **Binding a fresh dual pair preserves dual compatibility.**
+A fresh complete bound pair extends any ordinary compatible interface. -/
 theorem Compatible.bind {Δ : Context} (h : Compatible Δ) (c : Capability) :
     Compatible (Context.bind c Δ) := by
   intro e u v hu hv
@@ -63,7 +65,8 @@ theorem Compatible.bind {Δ : Context} (h : Compatible Δ) (c : Capability) :
       (Context.lookup_bind_outer (c := c) (e := d.opposite)).mp (he' ▸ hv)
     exact h d u v hu' hv'
 
-/-- From a typed source at an initially compatible interface, all five
+/-- **Subject reduction for endpoint typing at compatible interfaces.**
+From a typed source at an initially compatible interface, all five
 canonical reduction constructors preserve typing and compatibility, with one
 matched external subject-pair advancement or an unchanged interface when
 communication is private. No fragment or enabled-edge premise is required. -/
@@ -107,7 +110,8 @@ theorem HasType.subject_reduction {n : Nat} {Δ : Context} {p q : Proc}
     obtain ⟨Ξ, hr, hc, he⟩ := ih ht hco
     exact ⟨Ξ, (HasType.cong_iff hq).mp hr, hc, he⟩
 
-/-- A typed source with a balanced initial interface retains typing and balance
+/-- **Subject reduction for endpoint typing at balanced interfaces.**
+A typed source with a balanced initial interface retains typing and balance
 after any canonical step. Balance supplies the required compatibility; the
 exact zero-or-one external advancement evidence is retained. -/
 theorem HasType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
@@ -120,7 +124,8 @@ theorem HasType.subject_reduction_balanced {n : Nat} {Δ : Context} {p q : Proc}
     · exact ha.balanced hb
   exact ⟨Ξ, ht, hbal, he⟩
 
-/-- An empty-interface typed network retains empty-interface typing through
+/-- **Subject reduction for endpoint typing at the empty interface.**
+An empty-interface typed network retains empty-interface typing through
 any canonical step. The empty context is balanced, hence compatible, including
 communication behind restrictions and pre/post congruence. -/
 theorem HasType.subject_reduction_empty {n : Nat} {p q : Proc}

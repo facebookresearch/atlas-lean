@@ -30,32 +30,38 @@ open RelationAlgebra
 
 variable {World Atom Label : Type*}
 
-/-- Interpret a PDL program in CSLib's canonical relation algebra. -/
+/-- **Relational interpretation of a PDL program.**
+Interpret a PDL program in CSLib's canonical relation algebra. -/
 def Program.toRelation (M : Model World Atom Label)
     (a : Program Atom Label) : SquareRelations World :=
   {(s, t) | ProgRel M a s t}
 
-/-- The representation conversion preserves exactly the executions. -/
+/-- **Relational interpretation preserves executions.**
+The representation conversion preserves exactly the executions. -/
 @[simp] theorem Program.mem_toRelation (M : Model World Atom Label)
     (a : Program Atom Label) (s t : World) :
     a.toRelation M (s, t) ↔ ProgRel M a s t := Iff.rfl
 
-/-- The interpretation of sequencing uses canonical composition. -/
+/-- **Sequencing is interpreted by relational composition.**
+The interpretation of sequencing uses canonical composition. -/
 @[simp] theorem Program.toRelation_seq (M : Model World Atom Label)
     (a b : Program Atom Label) :
     (a.seq b).toRelation M = a.toRelation M * b.toRelation M := rfl
 
-/-- The interpretation of choice uses canonical union. -/
+/-- **Choice is interpreted by relational union.**
+The interpretation of choice uses canonical union. -/
 @[simp] theorem Program.toRelation_choice (M : Model World Atom Label)
     (a b : Program Atom Label) :
     (a.choice b).toRelation M = a.toRelation M ⊔ b.toRelation M := rfl
 
-/-- Formula tests use the existing PDL satisfaction predicate. -/
+/-- **Tests are interpreted by PDL satisfaction.**
+Formula tests use the existing PDL satisfaction predicate. -/
 @[simp] theorem Program.toRelation_test (M : Model World Atom Label)
     (φ : Formula Atom Label) :
     (Program.test φ).toRelation M = testSet {s | Sat M φ s} := rfl
 
-/-- Iteration in the canonical carrier is the same reflexive-transitive
+/-- **Iteration is interpreted by reflexive-transitive closure.**
+Iteration in the canonical carrier is the same reflexive-transitive
 closure as in `ProgRel`, including its identity boundary. -/
 @[simp] theorem Program.toRelation_star (M : Model World Atom Label)
     (a : Program Atom Label) :

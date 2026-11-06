@@ -21,7 +21,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Installing an outer capability commutes with the entire fresh bound pair. -/
+/-- **Outer insertion commutes with binding a fresh pair.**
+Installing an outer capability commutes with the entire fresh bound pair. -/
 theorem Context.bind_insert_outer (c : Capability) (Δ : Context) (e : Key)
     (u : Capability) :
     Context.bind c (Δ.insert e u) =
@@ -35,7 +36,8 @@ theorem Context.bind_insert_outer (c : Capability) (Δ : Context) (e : Key)
     (a := Key.mapName (liftName 0) e)
     (a' := (⟨.var 0, .negative⟩ : Key)) (Key.lift_ne_bound e .negative)]
 
-/-- Two updates at the fresh positive/negative roles replace only the
+/-- **Updating both bound roles, positive first, rebinds the pair.**
+Two updates at the fresh positive/negative roles replace only the
 bound capability pair and retain the entire lifted external context. -/
 theorem Context.update_bound_positive (c d : Capability) (Δ : Context) :
     ((Context.bind c Δ).insert (⟨.var 0, .positive⟩ : Key) d).insert
@@ -47,7 +49,8 @@ theorem Context.update_bound_positive (c d : Capability) (Δ : Context) :
     (by decide)]
   rw [Finmap.insert_insert, Finmap.insert_insert]
 
-/-- A negative sender installs the dual continuation on the positive role;
+/-- **Updating both bound roles, negative first, rebinds the pair.**
+A negative sender installs the dual continuation on the positive role;
 reordering the distinct insertions retains the same complete bound pair. -/
 theorem Context.update_bound_negative (c d : Capability) (Δ : Context) :
     ((Context.bind c Δ).insert (⟨.var 0, .negative⟩ : Key) d.dual).insert
@@ -57,7 +60,8 @@ theorem Context.update_bound_negative (c d : Capability) (Δ : Context) :
     (by decide)]
   exact Context.update_bound_positive c d Δ
 
-/-- An outer lifted role lookup passes through both fresh bound entries
+/-- **Outer lookups pass through a freshly bound pair.**
+An outer lifted role lookup passes through both fresh bound entries
 and reflects to the exact old external capability. -/
 theorem Context.lookup_bind_outer {c u : Capability} {Δ : Context} {e : Key} :
     (Context.bind c Δ).lookup (Key.mapName (liftName 0) e) = some u ↔
@@ -65,7 +69,8 @@ theorem Context.lookup_bind_outer {c u : Capability} {Δ : Context} {e : Key} :
   rw [Context.bind, Finmap.lookup_insert_of_ne _ (Key.lift_ne_bound e .negative),
     Finmap.lookup_insert_of_ne _ (Key.lift_ne_bound e .positive), Context.lookup_lift]
 
-/-- Exact pure restriction projection. An internal matched pair changes
+/-- **Dual advancement under restriction splits into inner and outer cases.**
+Exact pure restriction projection. An internal matched pair changes
 only the bound pair at the same rank; an outer matched pair changes only the
 external context and retains the entire old bound pair. -/
 theorem DualAdvance.project_bind {c : Capability} {Δ Ξ : Context}
@@ -109,7 +114,8 @@ theorem DualAdvance.project_bind {c : Capability} {Δ Ξ : Context}
         congrArg Key.opposite he
       rw [he']
 
-/-- An actual external matched update lifts through restriction without
+/-- **Outer dual advancement lifts through restriction.**
+An actual external matched update lifts through restriction without
 altering its private pair, even when the payload protocol refers to private data. -/
 theorem DualAdvance.bind_outer {Δ Δ' : Context} (h : DualAdvance Δ Δ') (c : Capability) :
     DualAdvance (Context.bind c Δ) (Context.bind c Δ') := by
@@ -123,7 +129,8 @@ theorem DualAdvance.bind_outer {Δ Δ' : Context} (h : DualAdvance Δ Δ') (c : 
         (Context.lookup_bind_outer.mpr hp) hs
     exact ha
 
-/-- Projection additionally retains an actual private old-head/continuation
+/-- **Dual advancement under restriction splits, keeping the private step.**
+Projection additionally retains an actual private old-head/continuation
 transition when the communication is hidden by ν. It does not reduce private
 advancement to an arbitrary capability with the same rank. -/
 theorem DualAdvance.project_bind_faithful {c : Capability} {Δ Ξ : Context}

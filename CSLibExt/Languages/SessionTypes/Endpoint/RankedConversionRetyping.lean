@@ -17,7 +17,8 @@ public import CSLibExt.Languages.SessionTypes.Endpoint.ContextEquivalence
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- Same domains, literal cap ranks and actual done equivalence preserve GuardMin. -/
+/-- **Equivalent contexts preserve the guard condition.**
+Same domains, literal cap ranks and actual done equivalence preserve GuardMin. -/
 theorem GuardMin.retype {Δ Ξ : Context} {e : Key} {k : Nat} (hg : GuardMin Δ e k)
     (he : ContextEquivalent Δ Ξ) : GuardMin Ξ e k := by
   intro d c hc ha hd
@@ -30,7 +31,8 @@ namespace Conversion
 
 open PiCalculus
 
-/-- GENERAL arbitrary-depth, arbitrary-context retyping, by all seven typing
+/-- **Equivalent contexts preserve conversion ranked typing.**
+GENERAL arbitrary-depth, arbitrary-context retyping, by all seven typing
 constructors. Target ownership, ranks and every unfolded branch are derived. -/
 theorem RankedType.retype {n : Nat} {Δ Ξ : Context} {p : Proc}
     (h : RankedType n Δ p) (he : ContextEquivalent Δ Ξ) : RankedType n Ξ p := by
@@ -83,7 +85,8 @@ theorem RankedType.retype {n : Nat} {Δ Ξ : Context} {p : Proc}
   | @nu n Δ c p hp ih =>
     exact RankedType.nu (c := c) (ih (he.bind (Capability.Equivalent.refl c)))
 
-/-- Equivalence transports typing in BOTH directions at the same process/depth. -/
+/-- **Context equivalence transports conversion ranked typing both ways.**
+Equivalence transports typing in BOTH directions at the same process/depth. -/
 theorem RankedType.retype_iff {n : Nat} {Δ Ξ : Context} {p : Proc}
     (he : ContextEquivalent Δ Ξ) : RankedType n Δ p ↔ RankedType n Ξ p :=
   ⟨fun h => h.retype he, fun h => h.retype he.symm⟩

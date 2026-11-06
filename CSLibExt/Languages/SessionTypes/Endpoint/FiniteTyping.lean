@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint
 open PiCalculus
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The finite bridge's constant-only ownership is unaffected by binder lift. -/
+/-- **Binder lift fixes the finite ownership map.**
+The finite bridge's constant-only ownership is unaffected by binder lift. -/
 theorem Context.lift_ofFinite (Γ : Cslib.SessionTypes.Context) (bound k : Nat)
     (r : Role) (rank : Nat → Nat) :
     Context.lift k (Context.ofFinite Γ bound r rank) =
@@ -42,7 +43,8 @@ private theorem active_lt_bound {Γ : Cslib.SessionTypes.Context}
   intro hge
   exact ha (hbound a hge)
 
-/-- Every original finite passive-name derivation embeds with its exact
+/-- **Finite passive-name typing embeds into endpoint typing.**
+Every original finite passive-name derivation embeds with its exact
 protocol obligations and a bounded finite map of either endpoint role. -/
 theorem HasType.ofFinite {n : Nat} {Γ : Cslib.SessionTypes.Context} {p : Proc}
     (h : Cslib.SessionTypes.HasType n Γ p) (bound : Nat)

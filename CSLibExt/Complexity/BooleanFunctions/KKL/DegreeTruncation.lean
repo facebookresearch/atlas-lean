@@ -44,7 +44,8 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The Fourier total weight under `μ_p`: `4 ∑_S |S| f̂(S)² = 4p(1-p) ∑ₑ Infₑ`. -/
+/-- **Fourier total weight equals $4p(1-p)$ times the total influence.**
+The Fourier total weight under `μ_p`: `4 ∑_S |S| f̂(S)² = 4p(1-p) ∑ₑ Infₑ`. -/
 theorem dtr_full_weight_eq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool) :
     4 * ∑ S : Finset ι, (S.card : ℝ)
         * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
@@ -61,7 +62,8 @@ theorem dtr_full_weight_eq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpa
       = (4 * (p * (1 - p)) * (1 / (p * (1 - p)))) * W by ring]
   rw [mul_one_div, mul_div_assoc, div_self (ne_of_gt hppos), mul_one]
 
-/-- The Fourier part of degree greater than `k` contributes at most `4p(1-p)(1-u)^k ∑ₑ Infₑ` to the
+/-- **Bound on the high-degree part of the damped total weight.**
+The Fourier part of degree greater than `k` contributes at most `4p(1-p)(1-u)^k ∑ₑ Infₑ` to the
   damped total weight. -/
 theorem dtr_high_part_le {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool)
     {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (k : ℕ) :
@@ -104,7 +106,8 @@ theorem dtr_high_part_le {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace
           * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) := by
         rw [dtr_full_weight_eq hp0 hp1 φ]
 
-/-- The capped estimate follows from a bound on its part of degree at most `k`. -/
+/-- **Capped estimate from its low-degree part.**
+The capped estimate follows from a bound on its part of degree at most `k`. -/
 theorem dtr_trunc_split {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace ι → Bool)
     {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (k : ℕ) :
     (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
@@ -153,10 +156,12 @@ theorem dtr_trunc_split {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : ConfigSpace 
     rw [hconv]
     exact dtr_high_part_le hp0 hp1 φ hu0 hu1 k
 
-/-- The exponent `q*(p, u) = 1 + (1-u)/(4p(1-p))` paired with the damping `1 - u`. -/
+/-- **Exponent $q^{\ast}(p, u)$ paired with the damping.**
+The exponent `q*(p, u) = 1 + (1-u)/(4p(1-p))` paired with the damping `1 - u`. -/
 noncomputable def dtr_qstar (p u : ℝ) : ℝ := 1 + (1 - u) / (4 * p * (1 - p))
 
-/-- The low-degree form of the capped estimate for every `p ∈ (1/2, q)` with `p < 1`, small maximal
+/-- **Low-degree residual case of the capped estimate.**
+The low-degree form of the capped estimate for every `p ∈ (1/2, q)` with `p < 1`, small maximal
   influence `δ < e^{-1}`, and parameters `u` outside the range handled by `CappedExponentGap`. Not
   proved in this library for any `q > 1/2`. -/
 def dtr_lowDegreeResidue (q : ℝ) : Prop :=
@@ -177,7 +182,8 @@ def dtr_lowDegreeResidue (q : ℝ) : Prop :=
               - 4 * p * (1 - p) * (1 - u) ^ k)
               * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
 
-/-- `dtr_lowDegreeResidue q` implies `hcq_lowRangeResidue q`. -/
+/-- **Low-degree case implies the low-range case.**
+`dtr_lowDegreeResidue q` implies `hcq_lowRangeResidue q`. -/
 theorem dtr_lowDegree_of_residue {q : ℝ} (H : dtr_lowDegreeResidue q) :
     hcq_lowRangeResidue q := by
   intro p hp hp1 E _ _ _ φ hδ u hu0 hu1 hlow
@@ -203,17 +209,20 @@ theorem dtr_lowDegree_of_residue {q : ℝ} (H : dtr_lowDegreeResidue q) :
           + (1 - u) ^ k * (4 * p * (1 - p) * T) := by linarith [hk]
     _ = δ ^ (u / (2 - u)) * T := by ring
 
-/-- `dtr_lowDegreeResidue q` implies `cvg_smallDeltaResidue q`. -/
+/-- **Low-degree case implies the small-influence case.**
+`dtr_lowDegreeResidue q` implies `cvg_smallDeltaResidue q`. -/
 theorem dtr_smallDelta_of_residue {q : ℝ} (H : dtr_lowDegreeResidue q) :
     cvg_smallDeltaResidue q :=
   hcq_smallDelta_of_lowRange (dtr_lowDegree_of_residue H)
 
-/-- `dtr_lowDegreeResidue q` implies `mxd_martingaleHC_statement q`. -/
+/-- **Low-degree case implies the full capped estimate on $(1/2, q)$.**
+`dtr_lowDegreeResidue q` implies `mxd_martingaleHC_statement q`. -/
 theorem dtr_martingaleHC_of_residue {q : ℝ} (H : dtr_lowDegreeResidue q) :
     mxd_martingaleHC_statement q :=
   cvg_martingaleHC_of_smallDelta (dtr_smallDelta_of_residue H)
 
-/-- For `δ > 0` the truncation budget `δ^{u/(2-u)} - 4p(1-p)(1-u)^k` is nonnegative for some `k`. -/
+/-- **Some truncation level gives a nonnegative budget.**
+For `δ > 0` the truncation budget `δ^{u/(2-u)} - 4p(1-p)(1-u)^k` is nonnegative for some `k`. -/
 theorem dtr_budget_pos {p δ u : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hu0 : 0 < u) (_hu1 : u < 1)
     (hδ0 : 0 < δ ^ (u / (2 - u))) :
     ∃ k : ℕ, 0 ≤ δ ^ (u / (2 - u)) - 4 * p * (1 - p) * (1 - u) ^ k := by
@@ -225,7 +234,8 @@ theorem dtr_budget_pos {p δ u : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hu0 : 0 < u) 
   rw [lt_div_iff₀ hs0] at hk
   nlinarith [hk]
 
-/-- For `δ^{u/(2-u)} > 0` some truncation level `k` makes the right side of the low-degree bound
+/-- **Some truncation level makes the low-degree right side nonnegative.**
+For `δ^{u/(2-u)} > 0` some truncation level `k` makes the right side of the low-degree bound
   in `dtr_lowDegreeResidue` nonnegative. -/
 theorem dtr_residue_c0 {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1)

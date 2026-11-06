@@ -49,7 +49,8 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- In the hypercontractive range the exponent `2/q' - 1` is at most the target exponent `u/(2-u)`.
+/-- **Hypercontractive exponent is at most the target exponent.**
+In the hypercontractive range the exponent `2/q' - 1` is at most the target exponent `u/(2-u)`.
 -/
 theorem hcq_exponent_le {p q' u : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (hu1 : u < 1) (hrel : 1 - u = (q' - 1) * 4 * p * (1 - p)) :
@@ -65,7 +66,7 @@ theorem hcq_exponent_le {p q' u : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   have htgt : 2 / (2 - u) - 1 = u / (2 - u) := by field_simp; ring
   linarith [hdiv, htgt]
 
-/-- Closed form of the exponent gap `u/(2-u) - (2/q' - 1)`. -/
+/-- **Closed form of the exponent gap.** Closed form of the exponent gap `u/(2-u) - (2/q' - 1)`. -/
 theorem hcq_gap_closedForm {s u : ℝ} (hs0 : 0 < s) (hu1 : u < 1) (hslu : 0 < s + 1 - u) :
     u / (2 - u) - (2 / (1 + (1 - u) / s) - 1)
       = 2 * (1 - u) * (1 - s) / ((s + 1 - u) * (2 - u)) := by
@@ -75,7 +76,7 @@ theorem hcq_gap_closedForm {s u : ℝ} (hs0 : 0 < s) (hu1 : u < 1) (hslu : 0 < s
   field_simp
   ring
 
-/-- Upper bound on the exponent gap. -/
+/-- **Upper bound on the exponent gap.** Upper bound on the exponent gap. -/
 theorem hcq_gap_le {s u : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (hu_lo : 1 - s < u) (hu_hi : u < 1) :
     u / (2 - u) - (2 / (1 + (1 - u) / s) - 1) ≤ 2 * (1 - u) * (1 - s) / s := by
   have hslu : 0 < s + 1 - u := by linarith
@@ -85,7 +86,8 @@ theorem hcq_gap_le {s u : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (hu_lo : 1 - s < u) (
   apply div_le_div_of_nonneg_left (by positivity) hs0
   nlinarith [h1u, h1s]
 
-/-- The capped estimate in the hypercontractive range, with the matching `q'`. -/
+/-- **Capped estimate in the hypercontractive range with matching $q'$.**
+The capped estimate in the hypercontractive range, with the matching `q'`. -/
 theorem hcq_capped_full [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) {u : ℝ}
     (hlo : 1 - 4 * p * (1 - p) ≤ u) (hu1 : u ≤ 1) :
@@ -100,7 +102,8 @@ theorem hcq_capped_full [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   have hu0 : 0 ≤ u := by nlinarith [sq_nonneg (1 - 2 * p)]
   exact frh_capped_martingale hp0 hp1 hq1 hq2 hu0 hu1 hrel φ
 
-/-- If `δ^{gap} ≥ 4p(1-p)`, the bound with exponent `2/q' - 1` and factor `4p(1-p)` is at most
+/-- **Under the gap condition the hypercontractive bound is dominated.**
+If `δ^{gap} ≥ 4p(1-p)`, the bound with exponent `2/q' - 1` and factor `4p(1-p)` is at most
   `δ^{u/(2-u)}`. -/
 theorem hcq_dom_of_threshold {p δ q' u : ℝ} (hδ0 : 0 < δ)
     (hthr : 4 * (ptn_sigma p) ^ 2 ≤ δ ^ (u / (2 - u) - (2 / q' - 1))) :
@@ -110,7 +113,8 @@ theorem hcq_dom_of_threshold {p δ q' u : ℝ} (hδ0 : 0 < δ)
   rw [key]
   exact mul_le_mul_of_nonneg_right hthr (Real.rpow_nonneg hδ0.le _)
 
-/-- The capped estimate with exponent `u/(2-u)` from a domination of the hypercontractive bound. -/
+/-- **Target-exponent capped estimate from a domination bound.**
+The capped estimate with exponent `u/(2-u)` from a domination of the hypercontractive bound. -/
 theorem hcq_star_of_dominates [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) {u : ℝ}
     (hlo : 1 - 4 * p * (1 - p) ≤ u) (hu1 : u ≤ 1)
@@ -134,7 +138,8 @@ theorem hcq_star_of_dominates [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1
     _ = (4 * (ptn_sigma p) ^ 2 * δ ^ (2 / q' - 1)) * T := by ring
     _ ≤ δ ^ (u / (2 - u)) * T := mul_le_mul_of_nonneg_right hdom hTnn
 
-/-- The capped estimate with exponent `u/(2-u)` in the hypercontractive range, under the gap
+/-- **Target-exponent capped estimate under the gap condition.**
+The capped estimate with exponent `u/(2-u)` in the hypercontractive range, under the gap
   condition `δ^{gap} ≥ 4p(1-p)`. -/
 theorem hcq_star_capped_threshold [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) {u : ℝ}
@@ -152,7 +157,8 @@ theorem hcq_star_capped_threshold [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p
   have hdom := hcq_dom_of_threshold hδ0 hthr
   exact hcq_star_of_dominates hp0 hp1 φ hlo hu1.le hq1 hq2 hrel hdom
 
-/-- At `p = 1/2` the capped estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)} ∑ₑ Infₑ` holds
+/-- **Capped estimate at $p = 1/2$ for all $u \in (0, 1)$.**
+At `p = 1/2` the capped estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)} ∑ₑ Infₑ` holds
   for all `u ∈ (0, 1)`. -/
 theorem hcq_smallDelta_p_half [Nonempty ι]
     (φ : ConfigSpace ι → Bool) {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :
@@ -195,7 +201,8 @@ theorem hcq_smallDelta_p_half [Nonempty ι]
       rw [this]; exact hupos)] at hcap
     simpa using hcap
 
-/-- The capped estimate for all `p ∈ (1/2, q)` with `p < 1`, `δ < e^{-1}`, and `u ∈ (0, 1)` either
+/-- **Low-range residual case of the capped estimate.**
+The capped estimate for all `p ∈ (1/2, q)` with `p < 1`, `δ < e^{-1}`, and `u ∈ (0, 1)` either
   below the hypercontractive range or failing the gap condition. Not proved in this library for
   any `q > 1/2`. -/
 def hcq_lowRangeResidue (q : ℝ) : Prop :=
@@ -212,7 +219,8 @@ def hcq_lowRangeResidue (q : ℝ) : Prop :=
           ≤ (maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
             * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
 
-/-- `hcq_lowRangeResidue q` implies `cvg_smallDeltaResidue q`. -/
+/-- **Low-range case implies the small-influence case.**
+`hcq_lowRangeResidue q` implies `cvg_smallDeltaResidue q`. -/
 theorem hcq_smallDelta_of_lowRange {q : ℝ} (H : hcq_lowRangeResidue q) :
     cvg_smallDeltaResidue q := by
   intro p hp hp1 E _ _ _ φ hδ u hu0 hu1
@@ -262,12 +270,13 @@ theorem hcq_smallDelta_of_lowRange {q : ℝ} (H : hcq_lowRangeResidue q) :
   · rw [not_le] at hcapped
     exact H p hp hp1 φ hδ u hu0 hu1 (Or.inl hcapped)
 
-/-- `hcq_lowRangeResidue q` implies `mxd_martingaleHC_statement q`. -/
+/-- **Low-range case implies the full capped estimate on $(1/2, q)$.**
+`hcq_lowRangeResidue q` implies `mxd_martingaleHC_statement q`. -/
 theorem hcq_martingaleHC_of_lowRange {q : ℝ} (H : hcq_lowRangeResidue q) :
     mxd_martingaleHC_statement q :=
   cvg_martingaleHC_of_smallDelta (hcq_smallDelta_of_lowRange H)
 
-/-- At `u = 1` (`q' = 1`) the gap condition holds. -/
+/-- **Gap condition holds at $u = 1$.** At `u = 1` (`q' = 1`) the gap condition holds. -/
 theorem hcq_dominated_nonempty {p δ : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (_hδ0 : 0 < δ) (_hδ1 : δ ≤ 1) :
     4 * (ptn_sigma p) ^ 2 ≤ δ ^ ((1 : ℝ) / (2 - 1) - (2 / (1 : ℝ) - 1)) := by
   have hgap : (1 : ℝ) / (2 - 1) - (2 / (1 : ℝ) - 1) = 0 := by norm_num
@@ -275,7 +284,8 @@ theorem hcq_dominated_nonempty {p δ : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (_hδ0 :
   rw [ptn_sigma_sq hp0 hp1]
   nlinarith [sq_nonneg (1 - 2 * p)]
 
-/-- `s ≤ δ^g` when `g ≤ log (1/s) / log (1/δ)`. -/
+/-- **Power bound $s \le \delta^g$ from a logarithmic exponent bound.**
+`s ≤ δ^g` when `g ≤ log (1/s) / log (1/δ)`. -/
 theorem hcq_threshold_of_gap_small {s δ g : ℝ} (hs0 : 0 < s)
     (hδ0 : 0 < δ) (hδ1 : δ < 1) (hgle : g ≤ Real.log (1 / s) / Real.log (1 / δ)) :
     s ≤ δ ^ g := by
@@ -288,7 +298,8 @@ theorem hcq_threshold_of_gap_small {s δ g : ℝ} (hs0 : 0 < s)
   rw [le_div_iff₀ hlδ] at hgle
   nlinarith [hgle, mul_comm g (Real.log δ)]
 
-/-- For `p > 1/2` and `0 < δ < 1`, some `u ∈ (0, 1)` lies in the hypercontractive range and
+/-- **Gap condition holds at some $u < 1$ in the hypercontractive range.**
+For `p > 1/2` and `0 < δ < 1`, some `u ∈ (0, 1)` lies in the hypercontractive range and
   satisfies the gap condition. -/
 theorem hcq_residue_proper {p δ : ℝ} (hp : 1 / 2 < p) (hp1 : p < 1) (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     ∃ u : ℝ, (0 < u ∧ u < 1) ∧ 1 - 4 * p * (1 - p) ≤ u ∧
@@ -339,7 +350,8 @@ theorem hcq_residue_proper {p δ : ℝ} (hp : 1 / 2 < p) (hp1 : p < 1) (hδ0 : 0
     rw [hBdef] at hgle
     exact hcq_threshold_of_gap_small hs0 hδ0 hδ1 hgle
 
-/-- For `p > 1/2` and `0 < δ < 1`, the case condition in `hcq_lowRangeResidue` fails for some `u ∈
+/-- **Low-range case condition fails for some $u$.**
+For `p > 1/2` and `0 < δ < 1`, the case condition in `hcq_lowRangeResidue` fails for some `u ∈
   (0, 1)`. -/
 theorem hcq_antecedent_not_tautology {p δ : ℝ} (hp : 1 / 2 < p) (hp1 : p < 1)
     (hδ0 : 0 < δ) (hδ1 : δ < 1) :
@@ -353,7 +365,8 @@ theorem hcq_antecedent_not_tautology {p δ : ℝ} (hp : 1 / 2 < p) (hp1 : p < 1)
   · linarith [hcap]
   · linarith [hthr]
 
-/-- The right side `δ^{u/(2-u)} ∑ₑ Infₑ` of the capped estimate is nonnegative. -/
+/-- **Right side of the capped estimate is nonnegative.**
+The right side `δ^{u/(2-u)} ∑ₑ Infₑ` of the capped estimate is nonnegative. -/
 theorem hcq_lowRange_nonvacuous {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool)
     {u : ℝ} (_hu0 : 0 < u) (_hu1 : u < 1) :

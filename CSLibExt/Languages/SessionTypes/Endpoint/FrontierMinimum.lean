@@ -24,12 +24,14 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Every literal communication head is active, for both payload sorts. -/
+/-- **Send heads are active for both payload sorts.**
+Every literal communication head is active, for both payload sorts. -/
 theorem SendsTo.active {c : Capability} {s : Protocol} (h : SendsTo c s) :
     c.protocol.unfold ≠ .done := by
   rcases h with h | ⟨r, k, v, h⟩ <;> rw [h] <;> intro he <;> cases he
 
-/-- A minimum active role owned by a prefix must be that prefix's exact
+/-- **A minimum active role owned by a guard is its subject key.**
+A minimum active role owned by a prefix must be that prefix's exact
 subject key, not merely a same-name role. Every other key ranks later. -/
 theorem minimum_guard_key {Δ : Context} {e d : Key} {c u : Capability}
     (he : Δ.lookup e = some c) (ha : c.protocol.unfold ≠ .done)
@@ -42,7 +44,8 @@ theorem minimum_guard_key {Δ : Context} {e d : Key} {c u : Capability}
   have hle := hmin d u hd hu
   omega
 
-/-- Literal output subjects have an active protocol, without any stored
+/-- **Ranked output subjects are active.**
+Literal output subjects have an active protocol, without any stored
 reduction or exposed-ready-pair evidence. -/
 theorem RankedType.out_active {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : RankedType n Δ (.out a b p)) :
@@ -52,7 +55,8 @@ theorem RankedType.out_active {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   · exact ⟨e, c, hn, hc, (SendsTo.active (Or.inl hs)), hg⟩
   · exact ⟨e, c, hn, hc, (SendsTo.active (Or.inr ⟨_, _, _, hs⟩)), hg⟩
 
-/-- Literal input subjects likewise own active receive heads. -/
+/-- **Ranked input subjects are active.**
+Literal input subjects likewise own active receive heads. -/
 theorem RankedType.inp_active {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : RankedType n Δ (.inp a p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ c.protocol.unfold ≠ .done ∧ GuardMin Δ e c.rank := by
@@ -71,7 +75,8 @@ private theorem empty_ranked_nil (n : Nat) : RankedType n ∅ .nil :=
   RankedType.nil (by intro e c he; simp at he)
     (by intro e he; exact False.elim (Finmap.notMem_empty he))
 
-/-- A minimum active role is exposed as the EXACT subject of an actual leaf.
+/-- **Minimum active role is the subject of a frontier leaf.**
+A minimum active role is exposed as the EXACT subject of an actual leaf.
 The disjoint ownership split and canonical rearrangement are DERIVED outputs;
 no ready guard or normalizing typing result is required from the caller. -/
 theorem GuardFrontier.expose_minimum {n : Nat} {Δ : Context} {p : Proc}
@@ -130,7 +135,8 @@ theorem GuardFrontier.expose_minimum {n : Nat} {Δ : Context} {p : Proc}
         RankedType.par (hAΘ.symm _ _) hr hp, ⟨hshape, GuardFrontier.par hfr hfp⟩⟩
       rw [Finmap.union_comm_of_disjoint hd, Finmap.union_assoc]
 
-/-- A nonempty collection of active finite-map bindings has a least rank.
+/-- **Existence of a least-rank active binding.**
+A nonempty collection of active finite-map bindings has a least rank.
 The witness ranges over ALL active roles, not only input guards. -/
 theorem Context.active_minimum {Δ : Context}
     (hactive : ∃ e c, Δ.lookup e = some c ∧ c.protocol.unfold ≠ .done) :
@@ -146,7 +152,8 @@ theorem Context.active_minimum {Δ : Context}
   rw [hr]
   exact Nat.find_min' hex ⟨x, v, hx, hv, rfl⟩
 
-/-- A frontier with no active ownership cannot contain a live prefix.
+/-- **Completed ranked frontiers are congruent to nil.**
+A frontier with no active ownership cannot contain a live prefix.
 Completion is the PROCESS congruence to nil, not a completed empty interface. -/
 theorem GuardFrontier.completed_nil {n : Nat} {Δ : Context} {p : Proc}
     (hf : GuardFrontier p) (ht : RankedType n Δ p) (hc : Δ.Completed) : Cong p .nil := by
@@ -169,7 +176,8 @@ theorem GuardFrontier.completed_nil {n : Nat} {Δ : Context} {p : Proc}
       exact hc e c ((Finmap.lookup_union_right hn).trans he)
     exact Cong.trans (Cong.par_cong (ihp htp hΓ) (ihq htq hΞ)) (Cong.par_nil .nil)
 
-/-- Activity is preserved by protocol duality, including regular unfolding. -/
+/-- **Duality preserves activity of a capability.**
+Activity is preserved by protocol duality, including regular unfolding. -/
 theorem Capability.dual_active {c : Capability} (h : c.protocol.unfold ≠ .done) :
     c.dual.protocol.unfold ≠ .done := by
   intro he
@@ -198,7 +206,8 @@ private theorem minimum_prefix_guard {n : Nat} {Γ : Context} {g : Proc}
     subst u
     exact hg
 
-/-- A minimum active role's peer cannot be owned by the same guard leaf.
+/-- **Minimum guard leaf cannot own its dual peer.**
+A minimum active role's peer cannot be owned by the same guard leaf.
 Equal-rank opposite keys violate the actual pre-action GuardMin constraint. -/
 theorem minimum_peer_separate {n : Nat} {Γ : Context} {g : Proc} {e : Key} {c : Capability}
     (ht : RankedType n Γ g) (he : Γ.lookup e = some c) (ha : c.protocol.unfold ≠ .done)

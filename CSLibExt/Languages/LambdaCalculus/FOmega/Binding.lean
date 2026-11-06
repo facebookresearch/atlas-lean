@@ -17,14 +17,15 @@ namespace Cslib.Languages.LambdaCalculus.FOmega.Ty
 
 variable {Δ Ε Ζ : List Kind} {κ μ : Kind}
 
-/-- Renaming depends only on its action on kinded variables. -/
+/-- **Renaming of type operators depends only on variable images.**
+Renaming depends only on its action on kinded variables. -/
 theorem rename_congr {ρ τ : KRen Δ Ε}
     (h : ∀ {ν} (x : KVar Δ ν), ρ x = τ x) (t : Ty Δ κ) :
     rename ρ t = rename τ t := by
   have e : @ρ = @τ := by funext ν x; exact h x
   rw [e]
 
-/-- The identity renaming fixes every type operator. -/
+/-- **Identity renaming fixes type operators.** The identity renaming fixes every type operator. -/
 @[simp] theorem rename_id (t : Ty Δ κ) :
     rename (fun {_} x => x) t = t := by
   induction t with
@@ -36,7 +37,8 @@ theorem rename_congr {ρ τ : KRen Δ Ε}
     rw [rename_congr (ρ := KRen.lift (fun {_} x => x))
       (τ := fun {_} x => x) (by intro ν x; cases x <;> rfl), ih]
 
-/-- Successive kind-preserving renamings fuse, including beneath binders. -/
+/-- **Composition of kind-preserving renamings.**
+Successive kind-preserving renamings fuse, including beneath binders. -/
 theorem rename_rename (ρ : KRen Δ Ε) (τ : KRen Ε Ζ) (t : Ty Δ κ) :
     rename τ (rename ρ t) = rename (fun {_} x => τ (ρ x)) t := by
   induction t generalizing Ε Ζ with
@@ -50,14 +52,16 @@ theorem rename_rename (ρ : KRen Δ Ε) (τ : KRen Ε Ζ) (t : Ty Δ κ) :
     intro ν x
     cases x <;> rfl
 
-/-- Substitution depends only on the images of kinded variables. -/
+/-- **Substitution of type operators depends only on variable images.**
+Substitution depends only on the images of kinded variables. -/
 theorem subst_congr {σ τ : Sub Δ Ε}
     (h : ∀ {ν} (x : KVar Δ ν), σ x = τ x) (t : Ty Δ κ) :
     subst σ t = subst τ t := by
   have e : @σ = @τ := by funext ν x; exact h x
   rw [e]
 
-/-- Substituting each variable by itself fixes every type operator. -/
+/-- **Identity substitution fixes type operators.**
+Substituting each variable by itself fixes every type operator. -/
 @[simp] theorem subst_id (t : Ty Δ κ) : subst Ty.var t = t := by
   induction t with
   | var => rfl
@@ -68,7 +72,8 @@ theorem subst_congr {σ τ : Sub Δ Ε}
     rw [subst_congr (σ := liftSub Ty.var) (τ := Ty.var)
       (by intro ν x; cases x <;> rfl), ih]
 
-/-- Substitution after renaming is precomposition on the variable images. -/
+/-- **Substitution after renaming of type operators.**
+Substitution after renaming is precomposition on the variable images. -/
 theorem subst_rename (ρ : KRen Δ Ε) (σ : Sub Ε Ζ) (t : Ty Δ κ) :
     subst σ (rename ρ t) = subst (fun {_} x => σ (ρ x)) t := by
   induction t generalizing Ε Ζ with
@@ -82,7 +87,8 @@ theorem subst_rename (ρ : KRen Δ Ε) (σ : Sub Ε Ζ) (t : Ty Δ κ) :
     intro ν x
     cases x <;> rfl
 
-/-- Renaming after substitution renames each substituted type operator. -/
+/-- **Renaming after substitution of type operators.**
+Renaming after substitution renames each substituted type operator. -/
 theorem rename_subst (σ : Sub Δ Ε) (ρ : KRen Ε Ζ) (t : Ty Δ κ) :
     rename ρ (subst σ t) =
       subst (fun {_} x => rename ρ (σ x)) t := by
@@ -103,7 +109,8 @@ theorem rename_subst (σ : Sub Δ Ε) (ρ : KRen Ε Ζ) (t : Ty Δ κ) :
       intro ξ y
       rfl
 
-/-- Capture-avoiding simultaneous substitutions compose. -/
+/-- **Composition of simultaneous type-operator substitutions.**
+Capture-avoiding simultaneous substitutions compose. -/
 theorem subst_subst (σ : Sub Δ Ε) (τ : Sub Ε Ζ) (t : Ty Δ κ) :
     subst τ (subst σ t) =
       subst (fun {_} x => subst τ (σ x)) t := by
@@ -120,13 +127,15 @@ theorem subst_subst (σ : Sub Δ Ε) (τ : Sub Ε Ζ) (t : Ty Δ κ) :
     | zero => rfl
     | succ x => simp only [liftSub, subst_rename, rename_subst]
 
-/-- Discharging a fresh binder leaves a weakened operator unchanged. -/
+/-- **Instantiating a weakened type operator leaves it unchanged.**
+Discharging a fresh binder leaves a weakened operator unchanged. -/
 @[simp] theorem instantiate_rename_succ (t : Ty Δ κ) (a : Ty Δ μ) :
     instantiate (rename KVar.succ t) a = t := by
   rw [instantiate, subst_rename]
   exact subst_id t
 
-/-- Simultaneous substitution commutes with discharging a type binder. -/
+/-- **Substitution commutes with type-binder instantiation.**
+Simultaneous substitution commutes with discharging a type binder. -/
 theorem subst_instantiate (σ : Sub Δ Ε)
     (b : Ty (μ :: Δ) κ) (a : Ty Δ μ) :
     subst σ (instantiate b a) =
@@ -138,7 +147,8 @@ theorem subst_instantiate (σ : Sub Δ Ε)
   | zero => rfl
   | succ x => exact (instantiate_rename_succ (σ x) (subst σ a)).symm
 
-/-- Renaming commutes with discharging a type binder. -/
+/-- **Renaming commutes with type-binder instantiation.**
+Renaming commutes with discharging a type binder. -/
 theorem rename_instantiate (ρ : KRen Δ Ε)
     (b : Ty (μ :: Δ) κ) (a : Ty Δ μ) :
     rename ρ (instantiate b a) =
@@ -148,7 +158,8 @@ theorem rename_instantiate (ρ : KRen Δ Ε)
   intro ν x
   cases x <;> rfl
 
-/-- Renaming is substitution by the corresponding variable constructors. -/
+/-- **Renaming as substitution by variables.**
+Renaming is substitution by the corresponding variable constructors. -/
 theorem subst_var_rename (ρ : KRen Δ Ε) (t : Ty Δ κ) :
     subst (fun {_} x => .var (ρ x)) t = rename ρ t := by
   induction t generalizing Ε with
@@ -161,7 +172,8 @@ theorem subst_var_rename (ρ : KRen Δ Ε) (t : Ty Δ κ) :
       (τ := fun {_} x => .var (KRen.lift ρ x))
       (by intro ν x; cases x <;> rfl), ih]
 
-/-- Lifted type substitution commutes with weakening past the new binder. -/
+/-- **Lifted substitution commutes with weakening.**
+Lifted type substitution commutes with weakening past the new binder. -/
 theorem subst_lift_rename (σ : Sub Δ Ε) (t : Ty Δ κ) :
     subst (liftSub (μ := μ) σ) (rename KVar.succ t) =
       rename KVar.succ (subst σ t) := by

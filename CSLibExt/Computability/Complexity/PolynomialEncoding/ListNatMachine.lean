@@ -28,7 +28,8 @@ namespace Cslib.Complexity.PolynomialEncoding.ListNatMachine
 open Turing Function MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
 open MetaMathlibExt.BitstringEncoding FramedCNF
 
-/-- External input, reverse accumulator, final output, and Nat workspace. -/
+/-- **Stacks of the list-of-naturals canonicalizer.**
+External input, reverse accumulator, final output, and Nat workspace. -/
 inductive K | input | acc | output | nat (k : NormalizeMachine.K)
   deriving DecidableEq
 
@@ -39,13 +40,15 @@ instance : Fintype K where
     | input | acc | output => decide
     | nat k => cases k <;> decide
 
-/-- Only the Nat workspace is visible to the shared normalizer. -/
+/-- **Stack embedding of the number normalizer in the list canonicalizer.**
+Only the Nat workspace is visible to the shared normalizer. -/
 def emb : SEmb (fun _ : NormalizeMachine.K => Bool) (fun _ : K => Bool) where
   e := K.nat
   inj _ _ h := K.nat.inj h
   ι _ := Equiv.refl Bool
 
-/-- The normalizer's halt resumes frame emission. -/
+/-- **Control labels of the list-of-naturals canonicalizer.**
+The normalizer's halt resumes frame emission. -/
 inductive Lab
   | loop | block | back | nat (l : NormalizeMachine.Lab) | emit | finish
   | good | bad
@@ -59,12 +62,13 @@ instance : Fintype Lab where
     rcases l with _ | _ | _ | l | _ | _ | _ | _ <;> try decide
     rcases l with (_ | (_ | _)) | _ | _ <;> decide
 
-/-- Label embedding of the actual shared Nat normalizer. -/
+/-- **Label embedding of the number normalizer in the list canonicalizer.**
+Label embedding of the actual shared Nat normalizer. -/
 def natLabel : NormalizeMachine.Lab → Lab
   | .done => .emit
   | l => .nat l
 
-/-- The concrete canonicalizer program. -/
+/-- **Program of the list-of-naturals canonicalizer.** The concrete canonicalizer program. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .loop => .peek .input (fun _ o => o.isSome) <| .branch id
       (.goto fun _ => .block) (.goto fun _ => .finish)
@@ -76,7 +80,8 @@ def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .finish => moveB .acc .output some id .finish .good
   | .good | .bad => .halt
 
-/-- Workspace layout for the composition invariant. -/
+/-- **Workspace layout of the list-of-naturals canonicalizer.**
+Workspace layout for the composition invariant. -/
 def st (x acc out : List Bool) (s : NormalizeMachine.K → List Bool) :
     K → List Bool
   | .input => x
@@ -190,7 +195,8 @@ private theorem emit_run (p x acc out : List Bool) (v : Bool) :
       | output => exact ha
   rwa [he] at run
 
-/-- One list element is normalized and appended to the reverse
+/-- **List canonicalizer normalizes one element.**
+One list element is normalized and appended to the reverse
 accumulator; every scratch stack is ready for the next call. -/
 theorem element_run (p x acc out : List Bool) (v : Bool) :
     RunLe prog (8 * (delimit p).length)
@@ -216,7 +222,8 @@ theorem element_run (p x acc out : List Bool) (v : Bool) :
   rw [length_delimit]
   omega
 
-/-- Normalize any finite sequence of framed Nat payloads. The payloads
+/-- **List canonicalizer normalizes a sequence of framed payloads.**
+Normalize any finite sequence of framed Nat payloads. The payloads
 need not be canonical, and previous accumulator/output suffixes survive. -/
 theorem blocks_run (bs : List (List Bool)) :
     ∀ (acc out : List Bool) (v : Bool),
@@ -260,7 +267,8 @@ private theorem finish_run (acc out : List Bool) (v : Bool) :
     | nat k => exact hk (K.nat k) (by simp) (by simp)
   exact ⟨v', he ▸ run⟩
 
-/-- Successful raw List Nat decoding is implemented in linear time,
+/-- **List canonicalizer runs in linear time on decodable input.**
+Successful raw List Nat decoding is implemented in linear time,
 with canonical output and all private scratch stacks empty. -/
 theorem run_some {x : List Bool} {as : List Nat}
     (h : bitDecode x = some as) (out : List Bool) (v : Bool) :
@@ -331,7 +339,8 @@ private theorem run_blocks_none (fuel : Nat) :
         exact ⟨v', S, ((element_run p r acc out v).trans rest).mono
           (by simp only [List.length_append]; omega)⟩
 
-/-- Every malformed raw List Nat input reaches the failure endpoint.
+/-- **List canonicalizer fails on malformed input.**
+Every malformed raw List Nat input reaches the failure endpoint.
 The accumulator and Nat output may contain partial data; clear the
 workspace before reuse. No output claim is made for a failed parse. -/
 theorem run_none {x : List Bool} (h : bitDecode (α := List Nat) x = none)
@@ -342,7 +351,8 @@ theorem run_none {x : List Bool} (h : bitDecode (α := List Nat) x = none)
   rw [decode_list_nat, Option.map_eq_none_iff] at h
   exact run_blocks_none x.length x acc out v le_rfl h
 
-/-- The List Nat canonicalizer uses the existing finite Host interface. -/
+/-- **List-of-naturals canonicalizer as a host component.**
+The List Nat canonicalizer uses the existing finite Host interface. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -355,7 +365,8 @@ abbrev component : Host.Comp where
     | input | acc | output => decide
     | nat k => cases k <;> decide
 
-/-- A total success/failure contract at the two actual halt labels.
+/-- **List canonicalizer reaches the decoding outcome with canonical output.**
+A total success/failure contract at the two actual halt labels.
 Success has canonical output; failure exposes no partial-output promise. -/
 theorem run (x : List Bool) (v : Bool) :
     ∃ v' S, RunLe prog (11 * x.length + 2)
@@ -380,7 +391,8 @@ theorem run (x : List Bool) (v : Bool) :
       subst bs
       rfl
 
-/-- Embed the concrete normalizer in a caller, preserving every stack
+/-- **Embedded list canonicalizer preserves outside stacks.**
+Embed the concrete normalizer in a caller, preserving every stack
 outside its workspace on both success and failure. Entry requires clean
 scratch and output stacks. After `bad`, clear partial workspace data
 before another invocation. -/

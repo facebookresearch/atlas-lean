@@ -25,21 +25,24 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition.DoubleStream
 
 open BitstringEncoding Computability
 
-/-- Reading the first marker, a later marker, or a payload bit. -/
+/-- **Scan phases of the PARTITION doubling pass.**
+Reading the first marker, a later marker, or a payload bit. -/
 inductive Phase | start | marker | payload
   deriving DecidableEq
 
-/-- Phase after reading one input bit. -/
+/-- **Phase transition of the PARTITION doubling pass.** Phase after reading one input bit. -/
 def next : Phase → Bool → Phase
   | .payload, _ => .marker
   | _, b => if b then .payload else .start
 
-/-- Output bits for one input bit; at a nonzero block prepend its low zero. -/
+/-- **Output bits per input bit in the doubling pass.**
+Output bits for one input bit; at a nonzero block prepend its low zero. -/
 def chunk : Phase → Bool → List Bool
   | .start, true => [true, false, true]
   | _, b => [b]
 
-/-- The raw finite-state pass. Malformed strings have a total output too;
+/-- **Finite-state doubling pass on raw bitstrings.**
+The raw finite-state pass. Malformed strings have a total output too;
 validation belongs to the preceding canonical decoder. -/
 def transform : Phase → List Bool → List Bool
   | _, [] => []
@@ -57,7 +60,8 @@ private theorem encode_double {n : ℕ} (hn : n ≠ 0) :
   rw [TM2Recursive.encodeNat_eq_cons (by omega : n * 2 ≠ 0)]
   simp
 
-/-- A canonical number block becomes the canonical block of its double. -/
+/-- **Doubling pass maps a number block to the block of its double.**
+A canonical number block becomes the canonical block of its double. -/
 theorem transform_block (n : ℕ) (rest : List Bool) :
     transform .start (delimit (encodeNat n) ++ rest) =
       delimit (encodeNat (n * 2)) ++ transform .start rest := by
@@ -73,7 +77,8 @@ theorem transform_block (n : ℕ) (rest : List Bool) :
     | cons b p =>
       simp [delimit, transform, chunk, next, marker_delimit]
 
-/-- The stream pass doubles every number and preserves list multiplicity. -/
+/-- **Doubling pass doubles every number in a list.**
+The stream pass doubles every number and preserves list multiplicity. -/
 theorem transform_nums (as : List ℕ) :
     transform .start (as.flatMap fun n => delimit (encodeNat n)) =
       (as.map (· * 2)).flatMap fun n => delimit (encodeNat n) := by
@@ -84,14 +89,16 @@ theorem transform_nums (as : List ℕ) :
 
 open Turing Function TM2Program
 
-/-- Input, reversed output, and output stacks of the doubling pass. -/
+/-- **Stacks of the PARTITION doubling machine.**
+Input, reversed output, and output stacks of the doubling pass. -/
 inductive K | X | R | O
   deriving DecidableEq
 
 instance : Fintype K := Fintype.ofList [.X, .R, .O]
   (fun k => by cases k <;> simp)
 
-/-- Three scan phases followed by reversal and a halting continuation. -/
+/-- **Control labels of the PARTITION doubling machine.**
+Three scan phases followed by reversal and a halting continuation. -/
 inductive Lab | scan (q : Phase) | emit | done
   deriving DecidableEq
 
@@ -102,7 +109,7 @@ instance : Fintype Lab :=
       | emit => simp
       | done => simp)
 
-/-- Finite-stack implementation of `transform`. -/
+/-- **Program of the PARTITION doubling machine.** Finite-stack implementation of `transform`. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .scan q =>
     .peek .X (fun _ o => o.isNone) <| .branch id
@@ -177,7 +184,8 @@ private theorem transform_length (q : Phase) (x : List Bool) :
     simp only [transform, List.length_append, List.length_cons]
     omega
 
-/-- The complete pass takes at most `4 * input.length + 2` steps. -/
+/-- **Linear step bound for the PARTITION doubling machine.**
+The complete pass takes at most `4 * input.length + 2` steps. -/
 theorem run (x : List Bool) (v₀ : Bool := false) :
     ∃ v S', RunLe prog (4 * x.length + 2)
       ⟨some (.scan .start), v₀, update (fun _ => []) .X x⟩
@@ -193,7 +201,8 @@ theorem run (x : List Bool) (v₀ : Bool := false) :
   refine ⟨false, st [] [] (transform .start x), ?_, rfl⟩
   exact (h₁.trans h₂).le (by have := transform_length .start x; omega)
 
-/-- The doubling transducer as a finite component for the canonical host. -/
+/-- **PARTITION doubling machine as a host component.**
+The doubling transducer as a finite component for the canonical host. -/
 abbrev comp : Cslib.Complexity.Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -203,7 +212,8 @@ abbrev comp : Cslib.Complexity.Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> simp
 
-/-- Polynomial time in the canonical bitstring encoding, from the actual
+/-- **PARTITION doubling pass is polynomial-time.**
+Polynomial time in the canonical bitstring encoding, from the actual
 finite-state machine, including malformed raw strings. -/
 theorem isPolyTime_transform : ComplexityTheory.IsPolyTime (transform .start) :=
   Cslib.Complexity.Host.isPolyTime_reduction

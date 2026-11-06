@@ -45,7 +45,8 @@ open ConfigSpace Function Finset StatMech StatMech.OSSS
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The coordinatewise complement `ω ↦ ¬ω` of a configuration. -/
+/-- **Coordinatewise complement of a configuration.**
+The coordinatewise complement `ω ↦ ¬ω` of a configuration. -/
 def kpb_flipAll (ω : ConfigSpace E) : ConfigSpace E := fun e => !(ω e)
 
 omit [Fintype E] [DecidableEq E] in
@@ -53,7 +54,8 @@ lemma kpb_flipAll_involutive : Function.Involutive (kpb_flipAll (E := E)) := by
   intro ω; funext e; simp [kpb_flipAll]
 
 omit [DecidableEq E] in
-/-- Complementing sends the Bernoulli(`p`) weight to the Bernoulli(`1 - p`) weight. -/
+/-- **Complement swaps the Bernoulli $p$ and $1 - p$ weights.**
+Complementing sends the Bernoulli(`p`) weight to the Bernoulli(`1 - p`) weight. -/
 lemma kpb_weight_flip (p : ℝ) (ω : ConfigSpace E) :
     OSSS.weight (OSSS.bernoulliWeight (1 - p)) (kpb_flipAll ω)
       = OSSS.weight (OSSS.bernoulliWeight p) ω := by
@@ -117,7 +119,8 @@ lemma kpb_maxInfl_flip [Nonempty E] (p : ℝ) (g : ConfigSpace E → ℝ) :
   intro e _
   exact kpb_infl_flip p g e
 
-/-- The KKL inequality with constant `2` at `p` implies it at `1 - p`. -/
+/-- **Reflection of the KKL inequality from $p$ to $1 - p$.**
+The KKL inequality with constant `2` at `p` implies it at `1 - p`. -/
 theorem kpb_kkl_reflect {p : ℝ} (H : KKLHypercontractive p 2) :
     KKLHypercontractive (1 - p) 2 := by
   intro E _ _ _ φ
@@ -128,25 +131,29 @@ theorem kpb_kkl_reflect {p : ℝ} (H : KKLHypercontractive p 2) :
   rw [kpb_var_flip p, kpb_maxInfl_flip p, kpb_totalInfl_flip p]
   exact hH
 
-/-- The KKL inequality with constant `2` for every Bernoulli parameter `p ∈ (1/2, q)`. Not proved in
+/-- **KKL inequality with constant 2 on $(1/2, q)$.**
+The KKL inequality with constant `2` for every Bernoulli parameter `p ∈ (1/2, q)`. Not proved in
   this library for any `q > 1/2`. -/
 def kpb_PBiasedHC (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, KKLHypercontractive p 2
 
-/-- The KKL inequality with constant `0` holds for every `p`; this is trivial. -/
+/-- **KKL inequality with constant 0 holds trivially on $(1/2, q)$.**
+The KKL inequality with constant `0` holds for every `p`; this is trivial. -/
 theorem kpb_residue_c0 {q : ℝ} (hq : q ≤ 1) :
     ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, KKLHypercontractive p 0 := by
   intro p hp
   exact kkl_hypercontractive_zero p (by linarith [hp.1]) (by linarith [hp.2])
 
-/-- `kpb_PBiasedHC q` in the form used by `StatMech.TwoDim.kklw_sharpThreshold`. -/
+/-- **KKL hypothesis on $(1/2, q)$ restated on the interior of $[1/2, q]$.**
+`kpb_PBiasedHC q` in the form used by `StatMech.TwoDim.kklw_sharpThreshold`. -/
 theorem kpb_Hbkkkl {q : ℝ} (Hpb : kpb_PBiasedHC q) :
     ∀ p ∈ interior (Set.Icc (1 / 2 : ℝ) q), KKLHypercontractive p 2 := by
   intro p hp
   rw [interior_Icc] at hp
   exact Hpb p hp
 
-/-- `StatMech.TwoDim.kklw_sharpThreshold` under `kpb_PBiasedHC q`. -/
+/-- **Sharp-threshold bound under the $p$-biased KKL hypothesis.**
+`StatMech.TwoDim.kklw_sharpThreshold` under `kpb_PBiasedHC q`. -/
 theorem kpb_sharpThreshold {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
     {q v₀ L : ℝ} (hq : (1 : ℝ) / 2 ≤ q)
@@ -161,7 +168,8 @@ theorem kpb_sharpThreshold {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
   classical
   exact StatMech.TwoDim.kklw_sharpThreshold A hA hq hv0 hL hhalf (kpb_Hbkkkl Hpb) hvar hLL'
 
-/-- `StatMech.TwoDim.kklw_sharpThreshold_window` under `kpb_PBiasedHC q`. -/
+/-- **Sharp-threshold window under the $p$-biased KKL hypothesis.**
+`StatMech.TwoDim.kklw_sharpThreshold_window` under `kpb_PBiasedHC q`. -/
 theorem kpb_sharpThreshold_window {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
     {q v₀ L ε : ℝ} (hq : (1 : ℝ) / 2 ≤ q)

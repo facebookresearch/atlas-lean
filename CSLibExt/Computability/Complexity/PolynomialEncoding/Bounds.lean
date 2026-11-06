@@ -25,7 +25,8 @@ namespace Cslib.Complexity.PolynomialEncoding
 
 open MetaMathlibExt BitstringEncoding
 
-/-- Each decoded block consumes at least its delimiter bit. -/
+/-- **Decoded block count is at most the input length.**
+Each decoded block consumes at least its delimiter bit. -/
 theorem blocks_length_le {fuel : Nat} {x : List Bool}
     {blocks : List (List Bool)}
     (h : undelimitBlocksAux fuel x = some blocks) :
@@ -65,7 +66,8 @@ private theorem mapM_length {α β : Type} (f : α → Option β)
         subst ys
         simp [ih hb]
 
-/-- A successfully decoded list has at most one element per input bit.
+/-- **Decoded list has at most one element per input bit.**
+A successfully decoded list has at most one element per input bit.
 No canonicality assumption on the element payloads is needed. -/
 theorem decoded_list_length_le {α : Type} [BitstringEncoding α]
     {x : List Bool} {as : List α}
@@ -75,7 +77,8 @@ theorem decoded_list_length_le {α : Type} [BitstringEncoding α]
   rw [mapM_length bitDecode ha]
   exact blocks_length_le hb
 
-/-- Successful pair decoding exposes the exact raw component payloads.
+/-- **Decoded pair exposes its raw component payloads.**
+Successful pair decoding exposes the exact raw component payloads.
 This includes payloads which are not canonical encodings. -/
 theorem decoded_pair_parts {α β : Type}
     [BitstringEncoding α] [BitstringEncoding β]
@@ -100,7 +103,8 @@ theorem decoded_pair_parts {α β : Type}
     exact ⟨p, r, (Cslib.CookLevin.undelimit_eq_some_iff _ _ _).mp hu,
       hp, hr⟩
 
-/-- A list in the first field of a decoded pair is raw-input bounded. -/
+/-- **Length bound for a list in the first field of a decoded pair.**
+A list in the first field of a decoded pair is raw-input bounded. -/
 theorem decoded_fst_list_length_le {α β : Type}
     [BitstringEncoding α] [BitstringEncoding β]
     {x : List Bool} {as : List α} {b : β}
@@ -110,7 +114,8 @@ theorem decoded_fst_list_length_le {α β : Type}
   simp only [List.length_append, length_delimit]
   omega
 
-/-- A list in the second field of a decoded pair is raw-input bounded. -/
+/-- **Length bound for a list in the second field of a decoded pair.**
+A list in the second field of a decoded pair is raw-input bounded. -/
 theorem decoded_snd_list_length_le {α β : Type}
     [BitstringEncoding α] [BitstringEncoding β]
     {x : List Bool} {a : α} {bs : List β}
@@ -120,7 +125,8 @@ theorem decoded_snd_list_length_le {α β : Type}
   simp only [List.length_append, length_delimit]
   omega
 
-/-- The middle list of a right-associated triple is raw-input bounded.
+/-- **Length bound for the middle list of a decoded triple.**
+The middle list of a right-associated triple is raw-input bounded.
 Used for TSP matrix rows and SET COVER set occurrences. -/
 theorem decoded_middle_list_length_le {α β γ : Type}
     [BitstringEncoding α] [BitstringEncoding β] [BitstringEncoding γ]
@@ -131,7 +137,8 @@ theorem decoded_middle_list_length_le {α β γ : Type}
   simp only [List.length_append, length_delimit]
   omega
 
-/-- A list of binary naturals with at most `m` bits per entry has the
+/-- **Framed length bound for lists of $m$-bit naturals.**
+A list of binary naturals with at most `m` bits per entry has the
 stated framed length bound. -/
 theorem list_nat_encode_length_le (as : List Nat) (m : Nat)
     (h : ∀ a ∈ as, a.size ≤ m) :
@@ -148,7 +155,8 @@ theorem list_nat_encode_length_le (as : List Nat) (m : Nat)
       BinaryNatEncoding.length_bitEncode, List.length_cons, Nat.add_mul]
     omega
 
-/-- Lists of vertices below `n` have a quadratic certificate bound
+/-- **Quadratic encoding bound for vertex lists below $n$.**
+Lists of vertices below `n` have a quadratic certificate bound
 when their length is at most `n`; no unary Nat encoding is used. -/
 theorem bounded_nat_list_encode_length_le (as : List Nat) (n : Nat)
     (hlen : as.length ≤ n) (h : ∀ a ∈ as, a < n) :

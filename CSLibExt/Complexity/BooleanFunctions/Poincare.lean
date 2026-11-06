@@ -48,7 +48,8 @@ open DecisionTree
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The decision tree that queries the variables of `l` in order and then outputs the value of `φ`
+/-- **Decision tree querying a list of variables.**
+The decision tree that queries the variables of `l` in order and then outputs the value of `φ`
   at the configuration that agrees with the answers on `l` and is `false` elsewhere. It computes
   `φ` when `φ` depends only on the variables in `l` (`eval_fullTree`). -/
 def fullTree (φ : ConfigSpace E → Bool) : List E → DecisionTree E
@@ -57,7 +58,8 @@ def fullTree (φ : ConfigSpace E → Bool) : List E → DecisionTree E
       .node e (fullTree (fun ω => φ (setOpen e ω)) l)
               (fullTree (fun ω => φ (setClosed e ω)) l)
 
-/-- `φ` depends only on the coordinates in the list `l`. -/
+/-- **Function depending only on listed coordinates.**
+`φ` depends only on the coordinates in the list `l`. -/
 def InsensOutside (φ : ConfigSpace E → Bool) (l : List E) : Prop :=
   ∀ ω ω', (∀ e ∈ l, ω e = ω' e) → φ ω = φ ω'
 
@@ -121,7 +123,8 @@ lemma mem_queried_fullTree (e : E) (φ : ConfigSpace E → Bool) (l : List E)
         · rw [ite_eq_left hae]; exact ih (fun ω => φ (setOpen a ω)) h1 ω
         · rw [ite_eq_right hae]; exact ih (fun ω => φ (setClosed a ω)) h1 ω
 
-/-- The decision tree that queries every variable and then outputs the value of `φ`; it computes `φ`
+/-- **Decision tree querying every variable.**
+The decision tree that queries every variable and then outputs the value of `φ`; it computes `φ`
   and has revealment `1` at every variable. -/
 noncomputable def fullTreeUniv (φ : ConfigSpace E → Bool) : DecisionTree E :=
   fullTree φ (Finset.univ.toList)
@@ -153,7 +156,8 @@ lemma reveal_fullTreeUniv {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     rw [ite_eq_left (mem_queried_fullTreeUniv e φ ω)]
   rw [hone, expect_one hν]
 
-/-- Poincaré inequality for Boolean functions under a product measure: `Var(1_A) ≤ ∑ₑ Infₑ(1_A)`,
+/-- **Poincaré inequality for Boolean functions under a product measure.**
+Poincaré inequality for Boolean functions under a product measure: `Var(1_A) ≤ ∑ₑ Infₑ(1_A)`,
   where `Infₑ(1_A)` is the probability that `e` is pivotal. This is the OSSS inequality for the
   full decision tree; it is weaker than the Efron–Stein inequality `Var(f) ≤ ∑ₑ pₑ(1 - pₑ) 𝔼[(∂ₑ
   f)²]` by the factor `pₑ(1 - pₑ) ≤ 1/4`. -/
@@ -169,7 +173,8 @@ theorem poincare {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (φ : ConfigS
   intro e _
   rw [reveal_fullTreeUniv hν φ e, one_mul]
 
-/-- Covariance form of `poincare`: `Cov(1_A, g) ≤ ∑ₑ Infₑ(g)` for every real function `g`. -/
+/-- **Covariance form of the Poincaré inequality.**
+Covariance form of `poincare`: `Cov(1_A, g) ≤ ∑ₑ Infₑ(g)` for every real function `g`. -/
 theorem poincare_cov {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (φ : ConfigSpace E → Bool)
     (g : ConfigSpace E → ℝ) :
     cov ν (fun ω => if φ ω then (1 : ℝ) else 0) g ≤ ∑ e, infl ν g e := by
@@ -182,7 +187,8 @@ theorem poincare_cov {ν : E → Bool → ℝ} (hν : IsProbWeight ν) (φ : Con
   intro e _
   rw [reveal_fullTreeUniv hν φ e, one_mul]
 
-/-- `poincare` for the Bernoulli(`p`) product measure. -/
+/-- **Poincaré inequality for the Bernoulli product measure.**
+`poincare` for the Bernoulli(`p`) product measure. -/
 theorem poincare_bernoulli {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (φ : ConfigSpace E → Bool) :
     var (bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
       ≤ ∑ e, infl (bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) e :=

@@ -43,13 +43,15 @@ no CBV termination or normalization claim is made.
 
 namespace Cslib.Languages.LambdaCalculus.SystemF.Ty
 
-/-- The impredicative binary logical relation denoted by a System F type. -/
+/-- **Binary logical relation of a System F type.**
+The impredicative binary logical relation denoted by a System F type. -/
 @[simp] def interpret {n : Nat} : Ty n → (Fin n → Rel) → Rel
   | .var i, ρ => ρ i
   | .arr A B, ρ => Rel.arrow (interpret A ρ) (interpret B ρ)
   | .all B, ρ => Rel.universal (fun R : Rel => interpret B (Fin.cases R ρ))
 
-/-- Interpreting a renamed type precomposes the relation environment. -/
+/-- **Relational interpretation of a renamed System F type.**
+Interpreting a renamed type precomposes the relation environment. -/
 theorem interpret_rename {n k : Nat} (η : Fin n → Fin k) (A : Ty n)
     (ρ : Fin k → Rel) :
     interpret (rename η A) ρ = interpret A (ρ ∘ η) := by
@@ -65,7 +67,8 @@ theorem interpret_rename {n k : Nat} (η : Fin n → Fin k) (A : Ty n)
     funext i
     induction i using Fin.cases <;> rfl
 
-/-- Type substitution is interpreted by substituting arbitrary relations. -/
+/-- **Relational interpretation of a substituted System F type.**
+Type substitution is interpreted by substituting arbitrary relations. -/
 theorem interpret_subst {n k : Nat} (σ : Fin n → Ty k) (A : Ty n)
     (ρ : Fin k → Rel) :
     interpret (subst σ A) ρ = interpret A (fun i => interpret (σ i) ρ) := by
@@ -85,7 +88,8 @@ theorem interpret_subst {n k : Nat} (σ : Fin n → Ty k) (A : Ty n)
       simp only [liftSub_succ, interpret_rename]
       rfl
 
-/-- Universal instantiation inserts the argument's whole logical relation. -/
+/-- **Relational interpretation of an instantiated System F type.**
+Universal instantiation inserts the argument's whole logical relation. -/
 theorem interpret_instantiate {n : Nat} (B : Ty (n + 1)) (A : Ty n)
     (ρ : Fin n → Rel) :
     interpret (instantiate B A) ρ =
@@ -95,7 +99,8 @@ theorem interpret_instantiate {n : Nat} (B : Ty (n + 1)) (A : Ty n)
   funext i
   induction i using Fin.cases <;> rfl
 
-/-- Weakening a type does not make it depend on the new arbitrary relation. -/
+/-- **Relational interpretation of a weakened System F type.**
+Weakening a type does not make it depend on the new arbitrary relation. -/
 @[simp] theorem interpret_weaken {n : Nat} (A : Ty n) (ρ : Fin n → Rel)
     (R : Rel) : interpret (rename Fin.succ A) (Fin.cases R ρ) =
       interpret A ρ := by

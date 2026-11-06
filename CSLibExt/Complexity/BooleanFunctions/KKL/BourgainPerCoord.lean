@@ -50,7 +50,8 @@ namespace StatMech.Probability
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The discrete derivative `∂ₑ f (ω) = f(ω^{e ↦ 1}) - f(ω^{e ↦ 0})`. -/
+/-- **Discrete derivative in a coordinate.**
+The discrete derivative `∂ₑ f (ω) = f(ω^{e ↦ 1}) - f(ω^{e ↦ 0})`. -/
 noncomputable def bph_deriv (f : ConfigSpace ι → ℝ) (e : ι) : ConfigSpace ι → ℝ :=
   fun ω => f (StatMech.setOpen e ω) - f (StatMech.setClosed e ω)
 
@@ -133,7 +134,8 @@ theorem bph_qnorm_deriv_sq {ρ : ℝ} (φ : ConfigSpace ι → Bool) (e : ι) :
   push_cast
   field_simp
 
-/-- Bonami–Beckner applied to `∂ₑ 1_A`: `∑_{S ∋ e} ρ^{2|S \ {e}|} · 4 f̂(S)² ≤
+/-- **Bonami–Beckner applied to a discrete derivative.**
+Bonami–Beckner applied to `∂ₑ 1_A`: `∑_{S ∋ e} ρ^{2|S \ {e}|} · 4 f̂(S)² ≤
   Infₑ(1_A)^{2/(1+ρ²)}`. -/
 theorem bph_perCoord_hc {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (φ : ConfigSpace ι → Bool) (e : ι) :
@@ -153,7 +155,8 @@ theorem bph_perCoord_hc {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
       bph_qnorm_deriv_sq φ e] at hsq
   exact hsq
 
-/-- `bph_perCoord_hc` summed over all coordinates. -/
+/-- **Summed per-coordinate Bonami–Beckner bound.**
+`bph_perCoord_hc` summed over all coordinates. -/
 theorem bph_summed_hc {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (φ : ConfigSpace ι → Bool) :
     (∑ S : Finset ι, (S.card : ℝ) * ((ρ ^ (S.card - 1)) ^ 2
         * (4 * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)))
@@ -191,7 +194,8 @@ theorem bph_summed_hc {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (φ : ConfigSpa
   rw [hlhs]
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- `x^θ ≤ δ^{θ-1} x` for `0 ≤ x ≤ δ` and `θ ≥ 1`. -/
+/-- **Termwise cap $x^\theta \le \delta^{\theta-1} x$.**
+`x^θ ≤ δ^{θ-1} x` for `0 ≤ x ≤ δ` and `θ ≥ 1`. -/
 theorem bph_cap_term (x δ θ : ℝ) (hx : 0 ≤ x) (hcap : x ≤ δ) (hθ : 1 ≤ θ) :
     x ^ θ ≤ δ ^ (θ - 1) * x := by
   rcases eq_or_lt_of_le hx with h0 | hpos
@@ -201,7 +205,8 @@ theorem bph_cap_term (x δ θ : ℝ) (hx : 0 ≤ x) (hcap : x ≤ δ) (hθ : 1 �
     rw [h1, Real.rpow_one]
     exact mul_le_mul_of_nonneg_right (Real.rpow_le_rpow hx hcap (by linarith)) hx
 
-/-- `∑ₑ Infₑ^{θ} ≤ (maxₑ Infₑ)^{θ-1} ∑ₑ Infₑ` with `θ = 2/(1+ρ²)`. -/
+/-- **Sum of influence powers capped by the maximal influence.**
+`∑ₑ Infₑ^{θ} ≤ (maxₑ Infₑ)^{θ-1} ∑ₑ Infₑ` with `θ = 2/(1+ρ²)`. -/
 theorem bph_cap_sum [Nonempty ι] {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (φ : ConfigSpace ι → Bool) :
     (∑ e : ι, (OSSS.infl (OSSS.bernoulliWeight (1 / 2 : ℝ))
         (fun ω => if φ ω then (1 : ℝ) else 0) e) ^ (2 / (1 + ρ ^ 2)))
@@ -229,7 +234,8 @@ theorem bph_cap_sum [Nonempty ι] {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (φ
             = totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) f from rfl,
             khc_totalInfl_eq_fourierWeight φ]
 
-/-- The capped per-coordinate hypercontractive estimate: `∑_S 4 |S| ρ^{2(|S|-1)} f̂(S)² ≤
+/-- **Capped per-coordinate hypercontractive estimate.**
+The capped per-coordinate hypercontractive estimate: `∑_S 4 |S| ρ^{2(|S|-1)} f̂(S)² ≤
   δ^{2/(1+ρ²) - 1} ∑_S 4 |S| f̂(S)²`, with `δ = maxₑ Infₑ(1_A)`. -/
 theorem bph_capped_hc [Nonempty ι] {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (φ : ConfigSpace ι → Bool) :
     (∑ S : Finset ι, 4 * (S.card : ℝ) * (ρ ^ (S.card - 1)) ^ 2
@@ -243,7 +249,8 @@ theorem bph_capped_hc [Nonempty ι] {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (
   apply Finset.sum_congr rfl
   intro S _; ring
 
-/-- The KKL inequality at `p = 1/2` in Fourier form, with the capped estimate `bph_capped_hc` (for
+/-- **Fourier-form KKL at $p = 1/2$ conditional on the capped estimate.**
+The KKL inequality at `p = 1/2` in Fourier form, with the capped estimate `bph_capped_hc` (for
   all `ρ ∈ [0, 1]`) as a hypothesis. It holds with `c = 2` (`cro2_rhoOptimise`). -/
 def bph_RhoOptimise (c : ℝ) : Prop :=
   ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool),
@@ -261,19 +268,22 @@ def bph_RhoOptimise (c : ℝ) : Prop :=
         ≤ ∑ S : Finset E, 4 * (S.card : ℝ)
             * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
 
-/-- `bph_RhoOptimise 0` holds trivially. -/
+/-- **Conditional Fourier-form KKL holds trivially with constant zero.**
+`bph_RhoOptimise 0` holds trivially. -/
 theorem bph_rhoOptimise_zero : bph_RhoOptimise 0 := by
   intro E _ _ _ φ _
   rw [zero_mul, zero_mul]
   exact kls_W_nonneg φ
 
-/-- `bph_RhoOptimise c` implies `kls_LogOptimisation c`. -/
+/-- **Capped-estimate form of KKL implies the indicator-bound form.**
+`bph_RhoOptimise c` implies `kls_LogOptimisation c`. -/
 theorem bph_logOptimisation_of_rho {c : ℝ} (H : bph_RhoOptimise c) :
     kls_LogOptimisation c := by
   intro E _ _ _ φ _hfluct
   exact H φ (fun ρ h0 h1 => bph_capped_hc h0 h1 φ)
 
-/-- `bph_RhoOptimise c` implies the KKL inequality `KKLHypercontractive (1/2) c`. -/
+/-- **KKL inequality at $p = 1/2$ from the conditional statement.**
+`bph_RhoOptimise c` implies the KKL inequality `KKLHypercontractive (1/2) c`. -/
 theorem bph_KKL {c : ℝ} (H : bph_RhoOptimise c) :
     KKLHypercontractive (1 / 2 : ℝ) c :=
   kls_logSobolevStep (bph_logOptimisation_of_rho H)

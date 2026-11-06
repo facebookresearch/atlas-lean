@@ -27,24 +27,29 @@ global progress for the ranked refinement at semantically balanced interfaces.
 
 namespace Cslib.SessionTypes.Endpoint
 
-/-- Capability equivalence explicitly retains the enclosing capability rank,
+/-- **Equivalence of endpoint capabilities.**
+Capability equivalence explicitly retains the enclosing capability rank,
 which is not an observation of Protocol.TreeEquiv. -/
 def Capability.Equivalent (c d : Capability) : Prop :=
   c.rank = d.rank ∧ c.protocol.TreeEquiv d.protocol
 
-/-- Reflexivity retains rank and the exact protocol tree. -/
+/-- **Reflexivity of capability equivalence.**
+Reflexivity retains rank and the exact protocol tree. -/
 theorem Capability.Equivalent.refl (c : Capability) : c.Equivalent c :=
   ⟨rfl, Protocol.TreeEquiv.refl _⟩
 
-/-- Symmetry preserves the separately required rank equality. -/
+/-- **Symmetry of capability equivalence.**
+Symmetry preserves the separately required rank equality. -/
 theorem Capability.Equivalent.symm {c d : Capability} (h : c.Equivalent d) :
     d.Equivalent c := ⟨h.1.symm, h.2.symm⟩
 
-/-- Transitivity composes rank equality and regular-tree equivalence. -/
+/-- **Transitivity of capability equivalence.**
+Transitivity composes rank equality and regular-tree equivalence. -/
 theorem Capability.Equivalent.trans {c d e : Capability} (h : c.Equivalent d)
     (h' : d.Equivalent e) : c.Equivalent e := ⟨h.1.trans h'.1, h.2.trans h'.2⟩
 
-/-- Duality retains the separate rank and preserves protocol-tree equivalence. -/
+/-- **Duality preserves capability equivalence.**
+Duality retains the separate rank and preserves protocol-tree equivalence. -/
 theorem Capability.Equivalent.dual {c d : Capability} (h : c.Equivalent d) :
     c.dual.Equivalent d.dual := ⟨h.1, h.2.dual⟩
 
@@ -52,18 +57,21 @@ namespace Conversion
 
 open PiCalculus
 
-/-- Semantic peer compatibility keeps actual capability ranks equal and
+/-- **Semantic peer compatibility of an ownership map.**
+Semantic peer compatibility keeps actual capability ranks equal and
 compares dual protocol trees, not merely their direction or payload metadata. -/
 def Compatible (Δ : Context) : Prop :=
   ∀ e c d, Δ.lookup e = some c → Δ.lookup e.opposite = some d → d.Equivalent c.dual
 
-/-- Old syntactic peer compatibility implies the semantic condition. -/
+/-- **Syntactic compatibility implies semantic compatibility.**
+Old syntactic peer compatibility implies the semantic condition. -/
 theorem compatible_of_raw {Δ : Context} (h : Endpoint.Compatible Δ) : Compatible Δ := by
   intro e c d hc hd
   rw [h e c d hc hd]
   exact Capability.Equivalent.refl _
 
-/-- Seven syntax-directed rules. No readiness, Step, retyping, preservation
+/-- **Conversion-enabled endpoint typing judgement.**
+Seven syntax-directed rules. No readiness, Step, retyping, preservation
 or consistent raw representative is a typing premise. Endpoint input installs
 its actual advertised code; endpoint output transfers the actual owned slot. -/
 inductive HasType : Nat → Context → Proc → Prop where
@@ -99,7 +107,8 @@ inductive HasType : Nat → Context → Proc → Prop where
   | nu {n : Nat} {Δ : Context} {c : Capability} {p : Proc} :
       HasType (n + 1) (Context.bind c Δ) p → HasType n Δ (.nu p)
 
-/-- Actual seven-rule induction embeds the raw judgement. This does not
+/-- **Base endpoint typing embeds into conversion typing.**
+Actual seven-rule induction embeds the raw judgement. This does not
 transport the raw judgement's substitution or progress theorem to new terms. -/
 theorem HasType.of_raw {n : Nat} {Δ : Context} {p : Proc}
     (h : Endpoint.HasType n Δ p) : HasType n Δ p := by
@@ -113,7 +122,8 @@ theorem HasType.of_raw {n : Nat} {Δ : Context} {p : Proc}
   | par hd hp hq ihp ihq => exact HasType.par hd ihp ihq
   | nu hp ih => exact HasType.nu ih
 
-/-- Local finite-tail conversion: replacing a one-send-then-end protocol by
+/-- **Output typing at a code equivalent to one send then end.**
+Local finite-tail conversion: replacing a one-send-then-end protocol by
 an equivalent code yields a usable output subject, retaining its actual next
 code and rank. This is not arbitrary context retyping. -/
 theorem one_action_tail {n k : Nat} {Γ : Context} {d : Key} {b : Name} {t : Protocol}
@@ -139,7 +149,8 @@ theorem one_action_tail {n k : Nat} {Γ : Context} {d : Key} {b : Name} {t : Pro
         · exact hd
         · exact hscope e hm
 
-/-- Conversion output inversion exposes actual owned payload metadata and
+/-- **Output inversion for conversion typing.**
+Conversion output inversion exposes actual owned payload metadata and
 semantic comparison, never a supplied retyping result. -/
 theorem HasType.out_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : HasType n Δ (.out a b p)) :

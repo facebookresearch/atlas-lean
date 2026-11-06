@@ -26,7 +26,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Linear ownership typing with a strict priority check at every guard.
+/-- **Priority-ranked endpoint typing judgement.**
+Linear ownership typing with a strict priority check at every guard.
 There is no reduction, enabled-edge, progress or preservation field. -/
 inductive RankedType : Nat → Context → Proc → Prop where
   | nil {n : Nat} {Δ : Context} :
@@ -63,7 +64,8 @@ inductive RankedType : Nat → Context → Proc → Prop where
   | nu {n : Nat} {Δ : Context} {c : Capability} {p : Proc} :
       RankedType (n + 1) (Context.bind c Δ) p → RankedType n Δ (.nu p)
 
-/-- Forgetting priorities recovers the exact existing ownership judgement. -/
+/-- **Forgetting priorities recovers endpoint typing.**
+Forgetting priorities recovers the exact existing ownership judgement. -/
 theorem RankedType.hasType {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) : HasType n Δ p := by
   induction h with
@@ -75,7 +77,8 @@ theorem RankedType.hasType {n : Nat} {Δ : Context} {p : Proc}
   | par hd hp hq ihp ihq => exact HasType.par hd ihp ihq
   | nu hp ih => exact HasType.nu ih
 
-/-- Output inversion exposes the priority constraint for the actual owned subject. -/
+/-- **Ranked output exposes its subject's guard condition.**
+Output inversion exposes the priority constraint for the actual owned subject. -/
 theorem RankedType.out_guard {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : RankedType n Δ (.out a b p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ GuardMin Δ e c.rank := by
@@ -83,7 +86,8 @@ theorem RankedType.out_guard {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outName hg hc => exact ⟨_, _, rfl, hc, hg⟩
   | outEndpoint hg hc => exact ⟨_, _, rfl, hc, hg⟩
 
-/-- Input inversion exposes the priority constraint before either kind of receive. -/
+/-- **Ranked input exposes its subject's guard condition.**
+Input inversion exposes the priority constraint before either kind of receive. -/
 theorem RankedType.inp_guard {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : RankedType n Δ (.inp a p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ GuardMin Δ e c.rank := by
@@ -91,13 +95,15 @@ theorem RankedType.inp_guard {n : Nat} {Δ : Context} {a : Name} {p : Proc}
   | inpName hg hc => exact ⟨_, _, rfl, hc, hg⟩
   | inpEndpoint hg hc => exact ⟨_, _, rfl, hc, hg⟩
 
-/-- Nil has no guard: its refinement is exactly the base completed/scoped context. -/
+/-- **Nil typing lifts to ranked typing.**
+Nil has no guard: its refinement is exactly the base completed/scoped context. -/
 theorem RankedType.nil_of_hasType {n : Nat} {Δ : Context}
     (h : HasType n Δ .nil) : RankedType n Δ .nil := by
   obtain ⟨hc, hs⟩ := h.nil_inv
   exact RankedType.nil hc hs
 
-/-- Every other active owned role must rank strictly after an input subject. -/
+/-- **Active roles on other names rank after an input subject.**
+Every other active owned role must rank strictly after an input subject. -/
 theorem RankedType.input_other_rank {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : RankedType n Δ (.inp a p)) {d : Key} {u : Capability}
     (hd : Δ.lookup d = some u) (hu : u.protocol.unfold ≠ .done)
@@ -105,20 +111,23 @@ theorem RankedType.input_other_rank {n : Nat} {Δ : Context} {a : Name} {p : Pro
   obtain ⟨e, c, he, hc, hg⟩ := h.inp_guard
   exact ⟨e, c, he, hc, hg d u hd hu (fun hde => hn ((congrArg Key.name hde).trans he))⟩
 
-/-- Refinement preserves the original disjoint parallel ownership split. -/
+/-- **Parallel inversion for ranked typing.**
+Refinement preserves the original disjoint parallel ownership split. -/
 theorem RankedType.par_inv {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ (.par p q)) :
     ∃ Γ Ξ, Δ = Γ ∪ Ξ ∧ Finmap.Disjoint Γ Ξ ∧ RankedType n Γ p ∧ RankedType n Ξ q := by
   cases h with
   | par hd hp hq => exact ⟨_, _, rfl, hd, hp, hq⟩
 
-/-- Refinement retains the exact protocol/rank pair installed by restriction. -/
+/-- **Restriction inversion for ranked typing.**
+Refinement retains the exact protocol/rank pair installed by restriction. -/
 theorem RankedType.nu_inv {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ (.nu p)) : ∃ c, RankedType (n + 1) (Context.bind c Δ) p := by
   cases h with
   | nu hp => exact ⟨_, hp⟩
 
-/-- Every active delegated payload is included in the pre-transfer guard check. -/
+/-- **Active delegated payloads rank after the guard.**
+Every active delegated payload is included in the pre-transfer guard check. -/
 theorem GuardMin.active_payload_rank {Δ : Context} {e d : Key}
     {c : Capability} {k : Nat} (hg : GuardMin Δ e k)
     (hd : Δ.lookup d = some c) (ha : c.protocol.unfold ≠ .done) (hne : e ≠ d) :

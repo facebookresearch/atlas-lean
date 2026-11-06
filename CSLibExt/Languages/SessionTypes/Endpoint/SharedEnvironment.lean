@@ -23,29 +23,35 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Shared permission describes a transferred endpoint, not owned linear state. -/
+/-- **Shared service signature.**
+Shared permission describes a transferred endpoint, not owned linear state. -/
 structure ServiceSignature where
   priority : Nat
   role : Role
   capability : Capability
 
-/-- Constant-only shared names use the existing Finmap, not a new name foundation. -/
+/-- **Shared service environment.**
+Constant-only shared names use the existing Finmap, not a new name foundation. -/
 abbrev ServiceEnv := Finmap (fun _ : Nat => ServiceSignature)
 
-/-- An owned linear endpoint is never a declared shared trigger's physical name. -/
+/-- **Separation of owned linear names from shared names.**
+An owned linear endpoint is never a declared shared trigger's physical name. -/
 def Separated (Γ : ServiceEnv) (Δ : Context) : Prop :=
   ∀ e c, Δ.lookup e = some c → ∀ s sig, Γ.lookup s = some sig → e.name ≠ .const s
 
-/-- Shared invocation precedes every actual active owned LINEAR key; none exempt. -/
+/-- **Priority of a shared invocation over active owned keys.**
+Shared invocation precedes every actual active owned LINEAR key; none exempt. -/
 def InvocationPriority (sig : ServiceSignature) (Δ : Context) : Prop :=
   ∀ e c, Δ.lookup e = some c → c.protocol.unfold ≠ .done → sig.priority < c.rank
 
-/-- Empty captured ownership has no linear/shared alias. -/
+/-- **Empty ownership is separated from shared names.**
+Empty captured ownership has no linear/shared alias. -/
 theorem separated_empty (Γ : ServiceEnv) : Separated Γ ∅ := by
   intro e c hc
   simp at hc
 
-/-- A singleton received/actual endpoint is separate exactly at its own name. -/
+/-- **Singleton context with a nonshared name is separated.**
+A singleton received/actual endpoint is separate exactly at its own name. -/
 theorem separated_singleton {Γ : ServiceEnv} {e : Key} {c : Capability}
     (he : ∀ s sig, Γ.lookup s = some sig → e.name ≠ .const s) :
     Separated Γ (Finmap.singleton e c) := by
@@ -54,7 +60,8 @@ theorem separated_singleton {Γ : ServiceEnv} {e : Key} {c : Capability}
   subst x
   exact he s sig hs
 
-/-- Singleton invocation still compares the ACTIVE payload's actual cap rank. -/
+/-- **Invocation priority for a singleton of rank above the priority.**
+Singleton invocation still compares the ACTIVE payload's actual cap rank. -/
 theorem invocation_priority_singleton (sig : ServiceSignature) (e : Key) (c : Capability)
     (hr : sig.priority < c.rank) : InvocationPriority sig (Finmap.singleton e c) := by
   intro x v hv ha

@@ -34,7 +34,8 @@ namespace Cslib.LTS
 
 variable {State Label : Type*} {lts : LTS State Label}
 
-/-- Select a witnessing label at each step of an infinite state run. -/
+/-- **Infinite state runs lift to labeled executions.**
+Select a witnessing label at each step of an infinite state run. -/
 theorem omegaExecution_of_omegaRun {ss : ℕ → State}
     (h : lts.OmegaRun ss) :
     ∃ μs : ωSequence Label, lts.OmegaExecution ⟨ss⟩ μs := by
@@ -42,14 +43,16 @@ theorem omegaExecution_of_omegaRun {ss : ℕ → State}
   intro i
   exact Classical.choose_spec (h i)
 
-/-- Forget the labels of a canonical infinite execution. -/
+/-- **Labeled infinite executions give state runs.**
+Forget the labels of a canonical infinite execution. -/
 theorem omegaRun_of_omegaExecution {oss : ωSequence State}
     {μs : ωSequence Label} (h : lts.OmegaExecution oss μs) :
     lts.OmegaRun (fun i => oss i) := by
   intro i
   exact ⟨μs i, h i⟩
 
-/-- Function-sequence suffixes agree with canonical `ωSequence.drop`. -/
+/-- **Shifted function sequences agree with ω-sequence drop.**
+Function-sequence suffixes agree with canonical `ωSequence.drop`. -/
 theorem shiftSeq_eq_drop (ss : ℕ → State) (k : ℕ) :
     (⟨Semantics.shiftSeq ss k⟩ : ωSequence State) =
       ωSequence.drop k ⟨ss⟩ := by

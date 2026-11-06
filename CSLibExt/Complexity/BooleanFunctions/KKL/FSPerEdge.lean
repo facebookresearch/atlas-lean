@@ -70,7 +70,8 @@ theorem fpe_integral_summand (A : ℝ) (cf : Finset ι → ℝ) (S : Finset ι) 
     have hcardpos : (0 : ℝ) < (S.card : ℝ) := by exact_mod_cast hpos
     field_simp
 
-/-- Integrating the damped total-influence weights over the noise parameter, with the `p`-biased
+/-- **Integrating damped total-influence weights over the noise parameter.**
+Integrating the damped total-influence weights over the noise parameter, with the `p`-biased
   scaling `A = 4p(1-p)`. -/
 theorem fpe_integral_lhs (A : ℝ) (cf : Finset ι → ℝ) :
     (∫ u in (0 : ℝ)..1,
@@ -86,7 +87,8 @@ theorem fpe_integral_lhs (A : ℝ) (cf : Finset ι → ℝ) :
   intro S hS
   rw [ite_eq_right (Finset.ne_of_mem_erase hS)]; ring
 
-/-- The capped per-coordinate estimate under `μ_p` in the variable `u`, with `ρ² = A (1 - u)` and `A
+/-- **Capped $p$-biased per-coordinate estimate in the variable $u$.**
+The capped per-coordinate estimate under `μ_p` in the variable `u`, with `ρ² = A (1 - u)` and `A
   = 4p(1-p)`. -/
 theorem fpe_master_sub [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) (u : ℝ) (hu0 : 0 ≤ u) (hu1 : u ≤ 1) :
@@ -141,7 +143,8 @@ theorem fpe_master_sub [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   rw [hLHSeq] at Hcap
   exact Hcap
 
-/-- Damped KKL inequality under the Bernoulli(`p`) measure, `0 < p < 1`: with `A = 4p(1-p)`, `2 ·
+/-- **Damped KKL inequality under the $p$-biased measure.**
+Damped KKL inequality under the Bernoulli(`p`) measure, `0 < p < 1`: with `A = 4p(1-p)`, `2 ·
   (∑_{S ≠ ∅} (A^{|S|-1} / A) f̂(S)²) · log (1 / maxₑ Infₑ) ≤ ∑ₑ Infₑ`. -/
 theorem fpe_dampedVarLogGain [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) :
@@ -203,7 +206,8 @@ theorem fpe_dampedVarLogGain [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
       exact Real.log_nonneg (by linarith)
     nlinarith [hQnn, hTnn, hlog]
 
-/-- At `p = 1/2` the damped variance is the variance. -/
+/-- **Damped variance equals the variance at $p = 1/2$.**
+At `p = 1/2` the damped variance is the variance. -/
 theorem fpe_Q_eq_var_at_half (φ : ConfigSpace ι → Bool) :
     (∑ S ∈ (univ.erase (∅ : Finset ι)),
         ((4 * (1/2 : ℝ) * (1 - 1/2)) ^ (S.card - 1) / (4 * (1/2 : ℝ) * (1 - 1/2)))
@@ -214,7 +218,8 @@ theorem fpe_Q_eq_var_at_half (φ : ConfigSpace ι → Bool) :
   intro S _
   rw [show (4 * (1/2 : ℝ) * (1 - 1/2)) = 1 by norm_num, one_pow, div_one, one_mul]
 
-/-- The KKL inequality with constant `2` at `p = 1/2`, obtained from `fpe_dampedVarLogGain`. The
+/-- **KKL inequality with constant $2$ at $p = 1/2$.**
+The KKL inequality with constant `2` at `p = 1/2`, obtained from `fpe_dampedVarLogGain`. The
   same statement is `kkl_inequality_total fsr_pbiased_endpoint`, proved there by the
   uniform-cube argument. -/
 theorem fpe_kklGain_at_half [Nonempty ι] (φ : ConfigSpace ι → Bool) :

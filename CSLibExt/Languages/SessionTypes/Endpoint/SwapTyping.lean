@@ -21,12 +21,14 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Swap ownership of two existing ambient binders without altering any role. -/
+/-- **Swapping two ambient binders in an ownership context.**
+Swap ownership of two existing ambient binders without altering any role. -/
 def Context.swap (k : Nat) (Δ : Context) : Context :=
   rekey (Key.mapName (swapNameAt k)) Δ
     (fun _ _ _ _ h => Key.mapName_injective (swapNameAt_injective k) h)
 
-/-- Canonical swapping preserves full finite-process endpoint typing. -/
+/-- **Binder swapping preserves endpoint typing.**
+Canonical swapping preserves full finite-process endpoint typing. -/
 theorem HasType.swap {n k : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) (hk : k + 1 < n) :
     HasType n (Context.swap k Δ) (swapProc k p) := by
@@ -37,7 +39,8 @@ theorem HasType.swap {n k : Nat} {Δ : Context} {p : Proc}
   simpa only [Context.swap, mapProc_swapNameAt] using ht
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Swapping maps an inserted capability to the swapped role key verbatim. -/
+/-- **Context swapping commutes with insertion.**
+Swapping maps an inserted capability to the swapped role key verbatim. -/
 theorem Context.swap_insert (k : Nat) (Δ : Context) (e : Key) (c : Capability) :
     Context.swap k (Δ.insert e c) =
       (Context.swap k Δ).insert (Key.mapName (swapNameAt k) e) c := by
@@ -45,7 +48,8 @@ theorem Context.swap_insert (k : Nat) (Δ : Context) (e : Key) (c : Capability) 
   intro x _ y _ hxy
   exact Key.mapName_injective (swapNameAt_injective k) hxy
 
-/-- Two lifts put all outer names above both swapped binder indices. -/
+/-- **Swapping the two innermost binders fixes a twice-lifted context.**
+Two lifts put all outer names above both swapped binder indices. -/
 theorem Context.swap_double_lift (Δ : Context) :
     Context.swap 0 (Context.lift 0 (Context.lift 0 Δ)) =
       Context.lift 0 (Context.lift 0 Δ) := by
@@ -59,7 +63,8 @@ theorem Context.swap_double_lift (Δ : Context) :
     | const => rfl
     | var i => simp [Key.mapName, liftName, swapNameAt]
 
-/-- Swapping nested restrictions exchanges their complete dual pairs and
+/-- **Swapping nested restrictions exchanges their bound pairs.**
+Swapping nested restrictions exchanges their complete dual pairs and
 fixes all lifted outer ownership, rather than forgetting any bound capability. -/
 theorem Context.swap_bind_bind (Δ : Context) (c d : Capability) :
     Context.swap 0 (Context.bind d (Context.bind c Δ)) =

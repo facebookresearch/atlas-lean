@@ -26,7 +26,8 @@ namespace Cslib.Complexity.PolynomialEncoding.ListNatPairPair
 open Turing Function MetaMathlibExt.BitstringEncoding
 open MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
 
-/-- Two disjoint existing workspaces; the pair buffer also serves the
+/-- **Stacks of the four-output pair-list decoder.**
+Two disjoint existing workspaces; the pair buffer also serves the
 initial outer-frame split and is cleared before normalization starts. -/
 inductive K | items (k : ListNatPair.K) | pair (k : NatPair.K)
   deriving DecidableEq
@@ -35,7 +36,8 @@ instance : Fintype K where
   elems := Finset.univ.image K.items ∪ Finset.univ.image K.pair
   complete k := by cases k <;> simp
 
-/-- The existing split, list projector, and final pair normalizer. -/
+/-- **Control labels of the four-output pair-list decoder.**
+The existing split, list projector, and final pair normalizer. -/
 inductive Lab | split (l : PairSplit.Lab) | items (l : ListNatPair.Lab)
   | pair (l : NatPair.Lab) | good | bad
   deriving DecidableEq
@@ -45,7 +47,8 @@ instance : Fintype Lab where
     Finset.univ.image Lab.items ∪ Finset.univ.image Lab.pair
   complete l := by cases l <;> simp
 
-/-- The outer splitter reuses the final pair's input and empty buffer. -/
+/-- **Outer-splitter stack embedding in the four-output decoder.**
+The outer splitter reuses the final pair's input and empty buffer. -/
 def splitEmb : SEmb (fun _ : PairSplit.K => Bool) (fun _ : K => Bool) where
   e
     | .input => .pair (.pair .input)
@@ -54,44 +57,51 @@ def splitEmb : SEmb (fun _ : PairSplit.K => Bool) (fun _ : K => Bool) where
   inj a b h := by cases a <;> cases b <;> simp_all
   ι _ := Equiv.refl Bool
 
-/-- The list projector has its own disjoint workspace. -/
+/-- **List-projector stack embedding in the four-output decoder.**
+The list projector has its own disjoint workspace. -/
 def itemsEmb : SEmb (fun _ : ListNatPair.K => Bool) (fun _ : K => Bool) where
   e := K.items
   inj _ _ h := K.items.inj h
   ι _ := Equiv.refl Bool
 
-/-- The final pair projector has its own disjoint workspace. -/
+/-- **Final pair-projector stack embedding in the four-output decoder.**
+The final pair projector has its own disjoint workspace. -/
 def pairEmb : SEmb (fun _ : NatPair.K => Bool) (fun _ : K => Bool) where
   e := K.pair
   inj _ _ h := K.pair.inj h
   ι _ := Equiv.refl Bool
 
-/-- Successful outer framing enters the item-list projector. -/
+/-- **Label map from the outer splitter to the list projector.**
+Successful outer framing enters the item-list projector. -/
 def splitLabel : PairSplit.Lab → Lab
   | .good => .items .loop
   | .bad => .bad
   | l => .split l
 
-/-- Successful item projection enters the final pair decoder. -/
+/-- **Label map from the list projector to the final pair decoder.**
+Successful item projection enters the final pair decoder. -/
 def itemsLabel : ListNatPair.Lab → Lab
   | .good => .pair (.pair .read)
   | .bad => .bad
   | l => .items l
 
-/-- The final pair's actual halts are the whole decoder's outcomes. -/
+/-- **Label map from final pair halts to the decoder outcomes.**
+The final pair's actual halts are the whole decoder's outcomes. -/
 def pairLabel : NatPair.Lab → Lab
   | .good => .good
   | .bad => .bad
   | l => .pair l
 
-/-- The whole finite program is a composition of existing components. -/
+/-- **Program of the four-output pair-list decoder.**
+The whole finite program is a composition of existing components. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .split l => mapS splitEmb splitLabel (PairSplit.prog l)
   | .items l => mapS itemsEmb itemsLabel (ListNatPair.prog l)
   | .pair l => mapS pairEmb pairLabel (NatPair.prog l)
   | .good | .bad => .halt
 
-/-- Exact raw-field and four-output invariant, with empty private scratch.
+/-- **Stack invariant of the four-output pair-list decoder.**
+Exact raw-field and four-output invariant, with empty private scratch.
 At entry the item field is empty and the entire raw input is `pairRaw`. -/
 def st (itemsRaw pairRaw weights values capacity threshold : List Bool) :
     K → List Bool
@@ -196,7 +206,8 @@ private theorem pair_run {r : List Bool} {c t : Nat}
     | pair k => simpa [pairEmb, st] using ha k
   exact ⟨w, he ▸ ht⟩
 
-/-- The entire raw decoder emits four canonical outputs, preserving
+/-- **Four-output decoder emits four canonical outputs on success.**
+The entire raw decoder emits four canonical outputs, preserving
 caller suffixes and emptying all input and private scratch on success. -/
 theorem run_some {x : List Bool} {as : List (Nat × Nat)} {c t : Nat}
     (h : bitDecode x = some (as, (c, t)))
@@ -218,7 +229,8 @@ theorem run_some {x : List Bool} {as : List (Nat × Nat)} {c t : Nat}
   simp only [List.length_append, length_delimit]
   omega
 
-/-- The combined newly emitted output size is at most twice raw input
+/-- **Four-output decoder output is at most twice the input length.**
+The combined newly emitted output size is at most twice raw input
 length, independently of decoded magnitudes and caller output suffixes. -/
 theorem output_length_le {x : List Bool} {as : List (Nat × Nat)} {c t : Nat}
     (h : bitDecode x = some (as, (c, t))) :
@@ -279,7 +291,8 @@ private theorem pair_bad {r : List Bool}
     (by intro k; simp [pairEmb, st])
   exact ⟨w, T, ht⟩
 
-/-- Every failed raw decode reaches `bad` within the same whole-input
+/-- **Four-output decoder fails on malformed input.**
+Every failed raw decode reaches `bad` within the same whole-input
 bound. Failed owned workspace can be partial and must be discarded
 or cleared. -/
 theorem run_none {x : List Bool}
@@ -318,7 +331,8 @@ theorem run_none {x : List Bool}
       simp only [List.length_append, length_delimit]
       omega
 
-/-- The fixed seventeen-stack decoder in the existing Host interface. -/
+/-- **Four-output pair-list decoder as a host component.**
+The fixed seventeen-stack decoder in the existing Host interface. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -335,7 +349,8 @@ abbrev component : Host.Comp where
     | pair k =>
       exact Or.inr (List.mem_map.mpr ⟨k, NatPair.component.mem_ks k, rfl⟩)
 
-/-- Total raw decoder contract with four output suffixes. Exactly the
+/-- **Four-output decoder reaches exactly the canonical decoding outcome.**
+Total raw decoder contract with four output suffixes. Exactly the
 canonical decoder's success/failure label is reached, with empty
 scratch on success. -/
 theorem run (x weights values capacity threshold : List Bool) (v : Bool) :
@@ -367,7 +382,8 @@ theorem run (x weights values capacity threshold : List Bool) (v : Bool) :
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hct
     rfl
 
-/-- Embedded execution preserves every outside stack on both outcomes.
+/-- **Embedded four-output decoder preserves outside stacks.**
+Embedded execution preserves every outside stack on both outcomes.
 Successful output suffixes survive and private scratch is empty. Failed
 workspace may be partial. Callers establish continuation-label separation. -/
 theorem run_embedded {J L : Type} [DecidableEq J] {Γ : J → Type}

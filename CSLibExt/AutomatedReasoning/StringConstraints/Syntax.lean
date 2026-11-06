@@ -68,7 +68,8 @@ open Cslib.Language
 
 variable {α : Type*} {V : Type*}
 
-/-- A **string term** over variables `V`: a constant word, a variable,
+/-- **String term over variables.**
+A **string term** over variables `V`: a constant word, a variable,
 the concatenation of two terms, or a letter-to-word morphism applied
 to a term. -/
 inductive Term (α : Type*) (V : Type*) where
@@ -77,7 +78,8 @@ inductive Term (α : Type*) (V : Type*) where
   | append : Term α V → Term α V → Term α V
   | hom : (α → List α) → Term α V → Term α V
 
-/-- Evaluation of a term under an assignment. -/
+/-- **Evaluation of a string term under an assignment.**
+Evaluation of a term under an assignment. -/
 def eval (σ : V → List α) : Term α V → List α
   | .const w => w
   | .var i => σ i
@@ -96,7 +98,8 @@ def eval (σ : V → List α) : Term α V → List α
 @[simp] theorem eval_hom (σ : V → List α) (f : α → List α) (t : Term α V) :
     eval σ (Term.hom f t) = (eval σ t).flatMap f := rfl
 
-/-- The variables occurring in a term, as a list (duplicates allowed). -/
+/-- **Variables occurring in a string term.**
+The variables occurring in a term, as a list (duplicates allowed). -/
 def varsOf : Term α V → List V
   | .const _ => []
   | .var i => [i]
@@ -115,7 +118,8 @@ def varsOf : Term α V → List V
 @[simp] theorem varsOf_hom (f : α → List α) (t : Term α V) :
     varsOf (Term.hom f t) = varsOf t := rfl
 
-/-- Evaluation depends only on the values of the variables in the term. -/
+/-- **String term evaluation depends only on its variables.**
+Evaluation depends only on the values of the variables in the term. -/
 theorem eval_eq_of_agree_on_vars {σ τ : V → List α} {t : Term α V}
     (h : ∀ i ∈ varsOf t, σ i = τ i) : eval σ t = eval τ t := by
   induction t with
@@ -128,7 +132,7 @@ theorem eval_eq_of_agree_on_vars {σ τ : V → List α} {t : Term α V}
     change (eval σ t).flatMap f = (eval τ t).flatMap f
     rw [ih (fun i hi => h i (by simp [hi]))]
 
-/-- A **string atom**: a word equation, a regular-membership test, or a
+/-- **String constraint atom.** A **string atom**: a word equation, a regular-membership test, or a
 length bound. Regular languages are represented by the existing
 `Cslib.Language.EncodedRegex`. -/
 inductive Atom (α : Type*) (V : Type*) where
@@ -137,7 +141,7 @@ inductive Atom (α : Type*) (V : Type*) where
   | lenLe : Term α V → ℕ → Atom α V
   | lenGe : Term α V → ℕ → Atom α V
 
-/-- The variables occurring in an atom. -/
+/-- **Variables occurring in a string atom.** The variables occurring in an atom. -/
 def varsOfAtom : Atom α V → List V
   | .eq t₁ t₂ => varsOf t₁ ++ varsOf t₂
   | .mem t _ => varsOf t
@@ -154,17 +158,17 @@ inductive Formula (α : Type*) (V : Type*) where
   | true : Formula α V
   | false : Formula α V
 
-/-- Conjunction of a list of formulas. -/
+/-- **Conjunction of a list of string formulas.** Conjunction of a list of formulas. -/
 def andChain : List (Formula α V) → Formula α V
   | [] => .true
   | f :: fs => .and f (andChain fs)
 
-/-- Disjunction of a list of formulas. -/
+/-- **Disjunction of a list of string formulas.** Disjunction of a list of formulas. -/
 def orChain : List (Formula α V) → Formula α V
   | [] => .false
   | f :: fs => .or f (orChain fs)
 
-/-- The variables occurring in a formula. -/
+/-- **Variables occurring in a string formula.** The variables occurring in a formula. -/
 def varsOfFormula : Formula α V → List V
   | .atom a => varsOfAtom a
   | .and f g => varsOfFormula f ++ varsOfFormula g
@@ -172,14 +176,14 @@ def varsOfFormula : Formula α V → List V
   | .true => []
   | .false => []
 
-/-- Satisfaction of an atom under an assignment. -/
+/-- **Satisfaction of a string atom.** Satisfaction of an atom under an assignment. -/
 def SatAtom (σ : V → List α) : Atom α V → Prop
   | .eq t₁ t₂ => eval σ t₁ = eval σ t₂
   | .mem t e => eval σ t ∈ e.toRegex.matches'
   | .lenLe t k => (eval σ t).length ≤ k
   | .lenGe t k => k ≤ (eval σ t).length
 
-/-- Satisfaction of a formula under an assignment. -/
+/-- **Satisfaction of a string formula.** Satisfaction of a formula under an assignment. -/
 def Sat (σ : V → List α) : Formula α V → Prop
   | .atom a => SatAtom σ a
   | .and f g => Sat σ f ∧ Sat σ g
@@ -202,7 +206,8 @@ def Sat (σ : V → List α) : Formula α V → Prop
 @[simp] theorem sat_false (σ : V → List α) :
     Sat σ (Formula.false : Formula α V) ↔ False := Iff.rfl
 
-/-- Satisfaction of a conjunction chain: every member is satisfied. -/
+/-- **Satisfaction of a conjunction chain.**
+Satisfaction of a conjunction chain: every member is satisfied. -/
 theorem sat_andChain {σ : V → List α} {fs : List (Formula α V)} :
     Sat σ (andChain fs) ↔ ∀ f ∈ fs, Sat σ f := by
   induction fs with
@@ -210,7 +215,8 @@ theorem sat_andChain {σ : V → List α} {fs : List (Formula α V)} :
   | cons f fs ih =>
     simp only [andChain, sat_and, ih, List.mem_cons, forall_eq_or_imp]
 
-/-- Satisfaction of a disjunction chain: one member is satisfied. -/
+/-- **Satisfaction of a disjunction chain.**
+Satisfaction of a disjunction chain: one member is satisfied. -/
 theorem sat_orChain {σ : V → List α} {fs : List (Formula α V)} :
     Sat σ (orChain fs) ↔ ∃ f ∈ fs, Sat σ f := by
   induction fs with
@@ -218,7 +224,8 @@ theorem sat_orChain {σ : V → List α} {fs : List (Formula α V)} :
   | cons f fs ih =>
     simp only [orChain, sat_or, ih, List.mem_cons, exists_eq_or_imp]
 
-/-- Satisfaction of an atom depends only on the values of its variables. -/
+/-- **Atom satisfaction depends only on its variables.**
+Satisfaction of an atom depends only on the values of its variables. -/
 theorem satAtom_congr {σ τ : V → List α} {a : Atom α V}
     (h : ∀ i ∈ varsOfAtom a, σ i = τ i) : SatAtom σ a ↔ SatAtom τ a := by
   cases a with
@@ -236,7 +243,8 @@ theorem satAtom_congr {σ τ : V → List α} {a : Atom α V}
     simp only [SatAtom, varsOfAtom] at h ⊢
     rw [eval_eq_of_agree_on_vars h]
 
-/-- Satisfaction depends only on the values of the variables in the formula. -/
+/-- **Formula satisfaction depends only on its variables.**
+Satisfaction depends only on the values of the variables in the formula. -/
 theorem sat_congr {σ τ : V → List α} {φ : Formula α V}
     (h : ∀ i ∈ varsOfFormula φ, σ i = τ i) : Sat σ φ ↔ Sat τ φ := by
   induction φ with
@@ -254,7 +262,8 @@ section Checker
 
 variable [DecidableEq α]
 
-/-- Boolean checker for atom satisfaction. Regular membership uses
+/-- **Boolean checker for atom satisfaction.**
+Boolean checker for atom satisfaction. Regular membership uses
 `EncodedRegex.memB`. -/
 def satAtomB (σ : V → List α) : Atom α V → Bool
   | .eq t₁ t₂ => decide (eval σ t₁ = eval σ t₂)
@@ -262,7 +271,7 @@ def satAtomB (σ : V → List α) : Atom α V → Bool
   | .lenLe t k => decide ((eval σ t).length ≤ k)
   | .lenGe t k => decide (k ≤ (eval σ t).length)
 
-/-- The Boolean checker is correct. -/
+/-- **Correctness of the Boolean atom checker.** The Boolean checker is correct. -/
 theorem satAtomB_iff {σ : V → List α} {a : Atom α V} :
     satAtomB σ a = true ↔ SatAtom σ a := by
   cases a with
@@ -271,7 +280,7 @@ theorem satAtomB_iff {σ : V → List α} {a : Atom α V} :
   | lenLe t k => simp [satAtomB, SatAtom]
   | lenGe t k => simp [satAtomB, SatAtom]
 
-/-- Boolean checker for formula satisfaction. -/
+/-- **Boolean checker for formula satisfaction.** Boolean checker for formula satisfaction. -/
 def satB (σ : V → List α) : Formula α V → Bool
   | .atom a => satAtomB σ a
   | .and f g => satB σ f && satB σ g
@@ -279,7 +288,7 @@ def satB (σ : V → List α) : Formula α V → Bool
   | .true => true
   | .false => false
 
-/-- The Boolean checker is correct. -/
+/-- **Correctness of the Boolean formula checker.** The Boolean checker is correct. -/
 theorem satB_iff {σ : V → List α} {φ : Formula α V} :
     satB σ φ = true ↔ Sat σ φ := by
   induction φ with

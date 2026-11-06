@@ -23,7 +23,7 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- An input is exposed outside every communication guard. -/
+/-- **Unguarded input in a process.** An input is exposed outside every communication guard. -/
 def HasUnguardedInput : Proc → Prop
   | .nil | .out .. => False
   | .inp .. => True
@@ -38,13 +38,15 @@ private theorem input_swap (k : Nat) (p : Proc) :
     HasUnguardedInput (swapProc k p) ↔ HasUnguardedInput p := by
   induction p generalizing k <;> simp_all [HasUnguardedInput, swapProc]
 
-/-- Every existing structural congruence preserves exposed input presence. -/
+/-- **Structural congruence preserves unguarded inputs.**
+Every existing structural congruence preserves exposed input presence. -/
 theorem input_cong {p q : Proc} (h : Cong p q) :
     HasUnguardedInput p ↔ HasUnguardedInput q := by
   induction h <;> simp_all [HasUnguardedInput, input_lift, input_swap,
     or_assoc, or_comm]
 
-/-- Selection cannot hide an input that is present in its selected term. -/
+/-- **Selection reflects unguarded inputs.**
+Selection cannot hide an input that is present in its selected term. -/
 theorem input_select {p q : Proc} (h : Select p q) (hq : HasUnguardedInput q) :
     HasUnguardedInput p := by
   induction h with
@@ -53,7 +55,8 @@ theorem input_select {p q : Proc} (h : Select p q) (hq : HasUnguardedInput q) :
   | right => exact Or.inr hq
   | trans _ _ ih₁ ih₂ => exact ih₁ (ih₂ hq)
 
-/-- Every existing π step requires an exposed input in its source,
+/-- **Every π step source has an unguarded input.**
+Every existing π step requires an exposed input in its source,
 including pre-congruence, selection, context closure and replication folding. -/
 theorem Step.source_hasUnguardedInput {p q : Proc} (h : Step p q) :
     HasUnguardedInput p := by

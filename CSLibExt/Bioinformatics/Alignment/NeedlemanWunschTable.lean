@@ -56,7 +56,8 @@ open Cslib.Algorithms.Lean
 
 variable {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
 
-/-- The cells `F[i+1][j+1], F[i+1][j+2], …` of a row from the remaining letters `b :: ys` of the
+/-- **Remaining cells of a Needleman–Wunsch table row.**
+The cells `F[i+1][j+1], F[i+1][j+2], …` of a row from the remaining letters `b :: ys` of the
 second sequence, the remaining cells `up :: prev` of the previous row, the previous row's cell
 `diag` to the upper left and the cell `left` just computed. A previous row that is too short ends
 the row early (this does not happen for rows of the table, `nextRow_eq`). -/
@@ -67,18 +68,21 @@ def nextRowAux (a : α) : List α → List ℤ → ℤ → ℤ → List ℤ
       max (max (diag + σ a b) (up + gap)) (left + gap) ::
         nextRowAux a ys prev up (max (max (diag + σ a b) (up + gap)) (left + gap))
 
-/-- The row of the table for the prefix extended by `a`, from the previous row: the first cell is
+/-- **Next row of the Needleman–Wunsch table.**
+The row of the table for the prefix extended by `a`, from the previous row: the first cell is
 one more gap than the previous row's first cell, then the recurrence left to right. -/
 def nextRow (a : α) (ys : List α) (prev : List ℤ) : List ℤ :=
   (prev.headD 0 + gap) :: nextRowAux σ gap a ys prev.tail (prev.headD 0) (prev.headD 0 + gap)
 
-/-- The rows of the table, filled top to bottom over the letters of the first sequence; the
+/-- **Row-by-row filling of the Needleman–Wunsch table.**
+The rows of the table, filled top to bottom over the letters of the first sequence; the
 result is the last row. Row `0` is `F[0][j] = j * gap`. -/
 def nwRowsAux (ys : List α) : List α → List ℤ → List ℤ
   | [], row => row
   | a :: xs, row => nwRowsAux ys xs (nextRow σ gap a ys row)
 
-/-- The last row `F[|xs|][·]` of the Needleman–Wunsch table. -/
+/-- **Last row of the Needleman–Wunsch table.**
+The last row `F[|xs|][·]` of the Needleman–Wunsch table. -/
 def nwRows (xs ys : List α) : List ℤ :=
   nwRowsAux σ gap ys xs ((List.range (ys.length + 1)).map fun j : ℕ => gap * (j : ℤ))
 

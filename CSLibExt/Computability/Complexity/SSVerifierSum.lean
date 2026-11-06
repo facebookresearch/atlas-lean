@@ -56,7 +56,8 @@ private theorem compare_zero_run (w : List Sym) (bits : List Bool)
       simp [SSVerify.prog, cmpB, TM2.stepAux, isBit, bitOf,
         SSVerify.st, Sym.bit?]
 
-/-- On canonical delimited `encodeNat` blocks, the existing component
+/-- **SUBSET-SUM verifier computes the mask-selected sum.**
+On canonical delimited `encodeNat` blocks, the existing component
 leaves the selected sum at a halt label. Normalize raw payloads first:
 malformed blocks can instead reject early, leaving only a partial sum.
 The cost uses framed bit length, never numeric magnitudes. The mask is
@@ -88,7 +89,8 @@ theorem sum_component_run (as : List ℕ) (w : List Bool) (v : Bool) :
   change bits.length ≤ r.length at hlen
   omega
 
-/-- A mask long enough to select every item gives the original list. -/
+/-- **A long enough all-true mask selects the whole list.**
+A mask long enough to select every item gives the original list. -/
 theorem pick_all (as : List ℕ) (n : ℕ) (h : as.length ≤ n) :
     SSVerify.pick as (List.replicate n true) = as := by
   induction as generalizing n with
@@ -102,7 +104,8 @@ theorem pick_all (as : List ℕ) (n : ℕ) (h : as.length ≤ n) :
       rw [ih n (by simpa using Nat.le_of_succ_le_succ h)]
 
 open MetaMathlibExt.TM2Embedding in
-/-- Reach the common mapped label after summing canonical `encodeNat`
+/-- **Embedded SUBSET-SUM summing component reaches the mapped label.**
+Reach the common mapped label after summing canonical `encodeNat`
 blocks; unembedded stacks remain intact. The input agreement requires
 prior normalization. A raw parse-failure exit can expose a partial sum.
 This is only a reachability guarantee: `hφ` does not make the endpoint

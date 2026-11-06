@@ -52,7 +52,8 @@ private theorem recurring_lookup_cases {b : Name} {r : Role} {e : Key} {c : Capa
     cases hc
     exact Or.inr ⟨rfl, rfl⟩
 
-/-- Both literal opposite-role self-loop slots form an ACTUAL balanced initial
+/-- **The recurring interface is balanced.**
+Both literal opposite-role self-loop slots form an ACTUAL balanced initial
 interface; balance is derived from lookup/code facts, not a ready-pair hypothesis. -/
 theorem recurring_balanced (b : Name) (r : Role) :
     Conversion.Balanced (recurringInterface b r) := by
@@ -65,7 +66,8 @@ theorem recurring_balanced (b : Name) (r : Role) :
       exact recurring_owner b r, by
       simpa only [Capability.dual_dual] using Capability.Equivalent.refl recurringCap⟩
 
-/-- EVERY faithful advance of this actual literal self-loop interface is exact
+/-- **Semantic advances of the recurring interface are the identity.**
+EVERY faithful advance of this actual literal self-loop interface is exact
 identity. This is a code-level property of the concrete regular cursors, not a
 claim that arbitrary equivalent recursive codes stay syntactically unchanged. -/
 theorem recurring_advance_identity {b : Name} {r : Role} {Ξ : Context}
@@ -103,7 +105,8 @@ theorem recurring_advance_identity {b : Name} {r : Role} {Ξ : Context}
         rw [recurring_dual_unfold] at hs
         cases hs
 
-/-- ANY actually runtime-typed process at the concrete recurring interface keeps
+/-- **Steps preserve typing at the recurring interface.**
+ANY actually runtime-typed process at the concrete recurring interface keeps
 that EXACT interface after a canonical Step, by GENERAL preservation and the
 literal self-loop code property. No phase, readiness or schedule hypothesis. -/
 theorem recurring_step_preserved {n : Nat} {p q : Proc} (r : Role) (b : Name)
@@ -114,7 +117,8 @@ theorem recurring_step_preserved {n : Nat} {p q : Proc} (r : Role) (b : Name)
   · exact ht
   · exact recurring_advance_identity ha ▸ ht
 
-/-- GENERAL runtime subject reduction applies to every recursive phase (hence
+/-- **Each next phase is typed by subject reduction.**
+GENERAL runtime subject reduction applies to every recursive phase (hence
 all THREE phase kinds) in BOTH role orientations, at the exact self-loop interface. -/
 theorem phase_step_preserved {n : Nat} (r : Role) (b : Name) (hb : b.ClosedAt n)
     (hf : EndpointFresh b) (i : Nat) :
@@ -125,7 +129,8 @@ theorem phase_step_preserved {n : Nat} (r : Role) (b : Name) (hb : b.ClosedAt n)
   · exact ht
   · exact recurring_advance_identity ha ▸ ht
 
-/-- Every phase's ownership follows from the INITIAL pending typing and GENERAL
+/-- **Every phase is typed by preservation from the pending state.**
+Every phase's ownership follows from the INITIAL pending typing and GENERAL
 finite runtime preservation, not repeated application of concrete phase typing. -/
 theorem phase_typed_by_preservation {n : Nat} (r : Role) (b : Name) (hb : b.ClosedAt n)
     (hf : EndpointFresh b) (i : Nat) :
@@ -139,7 +144,8 @@ theorem phase_typed_by_preservation {n : Nat} (r : Role) (b : Name) (hb : b.Clos
     | tail ha hs ih => exact recurring_advance_identity (ih ▸ hs)
   exact he ▸ ht
 
-/-- Initial actual replicated daemons supply EVERY declared signature, not just
+/-- **All declared services are available in the pending state.**
+Initial actual replicated daemons supply EVERY declared signature, not just
 requests or shared permissions. Availability remains a syntactic predicate. -/
 theorem initial_available (b : Name) (r : Role) : Available (services r) (pending b) := by
   intro s sig hs
@@ -151,13 +157,15 @@ theorem initial_available (b : Name) (r : Role) : Available (services r) (pendin
     subst s
     exact (phase_offers b r 0).1.2
 
-/-- GENERAL persistent-offer reduction closure preserves the real source daemons
+/-- **Services stay available at every phase.**
+GENERAL persistent-offer reduction closure preserves the real source daemons
 through every finite actual prefix of the recursive execution. -/
 theorem phase_available_by_reduction (b : Name) (r : Role) (i : Nat) :
     Available (services r) (phase b i) :=
   (initial_available b r).reachable (phase_reachable b i)
 
-/-- EVERY m has one nonzero finite SAME-session trace with all neighbor Steps,
+/-- **Repeated-session traces with preserved typing and availability.**
+EVERY m has one nonzero finite SAME-session trace with all neighbor Steps,
 ALL round markers, ownership derived by GENERAL runtime preservation, and actual
 persistent availability derived by GENERAL reduction closure at EVERY state. -/
 theorem repeatable_trace_preserved {n : Nat} (r : Role) (b : Name) (hb : b.ClosedAt n)

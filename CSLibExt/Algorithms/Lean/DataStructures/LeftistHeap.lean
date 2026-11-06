@@ -56,7 +56,7 @@ open Multiset
 
 /-! ## Leftist Heap datatype (concrete) -/
 
-/-- Leftist heap: Empty or Node rank value left right -/
+/-- **Leftist heap.** Leftist heap: Empty or Node rank value left right -/
 inductive LHeap (α : Type u) : Type u where
 | E : LHeap α
 | N : Nat → α → LHeap α → LHeap α → LHeap α
@@ -66,32 +66,33 @@ namespace LHeap
 
 variable {α : Type u}
 
-/-- Size (number of nodes) -/
+/-- **Number of nodes of a leftist heap.** Size (number of nodes) -/
 def size : LHeap α → Nat
 | .E => 0
 | .N _ _ l r => 1 + size l + size r
 
-/-- Rank (right spine length, or stored rank) -/
+/-- **Rank of a leftist heap.** Rank (right spine length, or stored rank) -/
 def rank : LHeap α → Nat
 | .E => 0
 | .N r _ _ _ => r
 
-/-- Multiset of elements -/
+/-- **Multiset of elements of a leftist heap.** Multiset of elements -/
 def mset_tree : LHeap α → Multiset α
 | .E => 0
 | .N _ x l r => {x} + mset_tree l + mset_tree r
 
-/-- All elements in heap are ≥ x (for heap ordering) -/
+/-- **Lower bound on all elements of a heap.** All elements in heap are ≥ x (for heap ordering) -/
 def all_le [LE α] (x : α) : LHeap α → Prop
 | .E => True
 | .N _ y l r => x ≤ y ∧ all_le x l ∧ all_le x r
 
-/-- Min-heap property: root ≤ all in subtrees -/
+/-- **Min-heap property.** Min-heap property: root ≤ all in subtrees -/
 def heap [LE α] : LHeap α → Prop
 | .E => True
 | .N _ x l r => all_le x l ∧ all_le x r ∧ heap l ∧ heap r
 
-/-- Leftist invariant: stored rank is correct and left rank ≥ right rank
+/-- **Leftist invariant with correct stored ranks.**
+Leftist invariant: stored rank is correct and left rank ≥ right rank
     For every node `N storedRank x l r`, require:
     - `storedRank = rank r + 1`;
     - `rank l ≥ rank r`;
@@ -102,7 +103,7 @@ def ltree : LHeap α → Prop
 | .E => True
 | .N rk _ l r => rk = r.rank + 1 ∧ l.rank ≥ r.rank ∧ l.ltree ∧ r.ltree
 
-/-- Helper to restore leftist property.
+/-- **Node constructor restoring the leftist property.** Helper to restore leftist property.
     Constructs a node whose stored rank is exactly one plus the rank
     of its resulting right subtree (b.rank + 1 or a.rank + 1 after swap). -/
 def make (x : α) (a b : LHeap α) : LHeap α :=
@@ -111,7 +112,8 @@ def make (x : α) (a b : LHeap α) : LHeap α :=
   else
     .N (a.rank + 1) x b a
 
-/-- Auxiliary fuel-based merge to avoid termination proof complexity.
+/-- **Fuel-based auxiliary merge of leftist heaps.**
+Auxiliary fuel-based merge to avoid termination proof complexity.
     When reconstructing an existing node during recursion, preserves its
     original stored rank (does not replace it with 0). -/
 def mergeAux [LinearOrder α] : Nat → LHeap α → LHeap α → LHeap α
@@ -124,11 +126,11 @@ def mergeAux [LinearOrder α] : Nat → LHeap α → LHeap α → LHeap α
   else
     make y lb (mergeAux fuel (LHeap.N rx x la ra) rb)
 
-/-- Leftist merge (public API) -/
+/-- **Merge of leftist heaps.** Leftist merge (public API) -/
 def merge [LinearOrder α] (h1 h2 : LHeap α) : LHeap α :=
   mergeAux (h1.size + h2.size) h1 h2
 
-/-- Auxiliary fuel-based cost of merge.
+/-- **Fuel-based auxiliary cost of merging.** Auxiliary fuel-based cost of merge.
     Complexity model faithful to textbook convention: only calls/steps of `merge`
     are counted. Reversal of accumulator in `merge_adj2` and other auxiliary
     operations are not counted. -/
@@ -142,17 +144,19 @@ def T_mergeAux [LinearOrder α] : Nat → LHeap α → LHeap α → Nat
   else
     1 + T_mergeAux fuel (LHeap.N rx x (LHeap.E : LHeap α) ra) rb
 
-/-- Cost of merge: number of merge steps (only merge calls counted) -/
+/-- **Cost of merging leftist heaps.**
+Cost of merge: number of merge steps (only merge calls counted) -/
 def T_merge [LinearOrder α] (h1 h2 : LHeap α) : Nat :=
   T_mergeAux (h1.size + h2.size) h1 h2
 
-/-- Non-tail-recursive merge_adj -/
+/-- **Non-tail-recursive adjacent merging of heaps.** Non-tail-recursive merge_adj -/
 def merge_adj [LinearOrder α] : List (LHeap α) → List (LHeap α)
 | [] => []
 | [t] => [t]
 | t1 :: t2 :: ts => (t1.merge t2) :: merge_adj ts
 
-/-- Tail-recursive merge_adj2 with accumulator, no use of List.append.
+/-- **Tail-recursive adjacent merging with an accumulator.**
+Tail-recursive merge_adj2 with accumulator, no use of List.append.
     Genuinely tail-recursive: uses an accumulator and reverse at base case.
     Does not use List.append (avoids append operator).
     Complexity model: only merge steps counted, so `T_merge_adj2 acc ts = T_merge_adj ts`
@@ -165,13 +169,15 @@ def merge_adj2 [LinearOrder α] (acc : List (LHeap α)) (ts : List (LHeap α)) :
   | t1 :: t2 :: ts' => merge_adj2 (t1.merge t2 :: acc) ts'
 termination_by ts.length
 
-/-- Cost of merge_adj: only merge steps counted per textbook -/
+/-- **Cost of non-tail-recursive adjacent merging.**
+Cost of merge_adj: only merge steps counted per textbook -/
 def T_merge_adj [LinearOrder α] : List (LHeap α) → Nat
 | [] => 0
 | [_] => 0
 | t1 :: t2 :: ts => (T_merge t1 t2) + T_merge_adj ts
 
-/-- Cost of merge_adj2 (accumulator version): only merge steps counted.
+/-- **Cost of tail-recursive adjacent merging.**
+Cost of merge_adj2 (accumulator version): only merge steps counted.
     Follows textbook convention that only calls/steps of `merge` are counted,
     so accumulator handling does not contribute to cost. Hence the required
     comparison `T_merge_adj2 acc ts = T_merge_adj ts` remains valid. -/
@@ -192,7 +198,8 @@ def merge_allAux [LinearOrder α] : Nat → List (LHeap α) → LHeap α
 def merge_all [LinearOrder α] (ts : List (LHeap α)) : LHeap α :=
   merge_allAux ts.length ts
 
-/-- merge_all2 uses merge_adj2 (tail-recursive variant) -/
+/-- **Fuel-based merging of all heaps with tail-recursive passes.**
+merge_all2 uses merge_adj2 (tail-recursive variant) -/
 def merge_all2Aux [LinearOrder α] : Nat → List (LHeap α) → LHeap α
 | _, [] => .E
 | _, [t] => t
@@ -202,11 +209,12 @@ def merge_all2Aux [LinearOrder α] : Nat → List (LHeap α) → LHeap α
 def merge_all2 [LinearOrder α] (ts : List (LHeap α)) : LHeap α :=
   merge_all2Aux ts.length ts
 
-/-- Singleton heap: stored rank 1 = rank E + 1, leftist -/
+/-- **Singleton leftist heap.** Singleton heap: stored rank 1 = rank E + 1, leftist -/
 def singleton (x : α) : LHeap α :=
   .N 1 x .E .E
 
-/-- lheap_list2: convert list to leftist heap via merge_all2 (tail-recursive adj).
+/-- **Leftist heap from a list by tail-recursive merging.**
+lheap_list2: convert list to leftist heap via merge_all2 (tail-recursive adj).
     Uses merge_all2 which itself uses merge_adj2. -/
 def lheap_list2 [LinearOrder α] (xs : List α) : LHeap α :=
   merge_all2 (xs.map singleton)
@@ -502,7 +510,8 @@ theorem ltree_merge [LinearOrder α] (h1 h2 : LHeap α) (hl1 : ltree h1) (hl2 : 
   · exact hl2
 
 -- sum and list helpers
-/-- Combined multiset of every heap in a list, including duplicates. -/
+/-- **Combined multiset of a list of heaps.**
+Combined multiset of every heap in a list, including duplicates. -/
 def sumMSet : List (LHeap α) → Multiset α
 | [] => 0
 | t :: ts => mset_tree t + sumMSet ts
@@ -532,10 +541,12 @@ theorem sumMSet_merge_adj [LinearOrder α] (ts : List (LHeap α)) :
     rw [sumMSet_merge_adj ts']
     ac_rfl
 
-/-- Every heap in the list satisfies the min-heap ordering predicate. -/
+/-- **Min-heap ordering of every heap in a list.**
+Every heap in the list satisfies the min-heap ordering predicate. -/
 def HeapList [LE α] (ts : List (LHeap α)) : Prop := ∀ t ∈ ts, heap t
 
-/-- Every heap in the list has correct stored ranks and is leftist. -/
+/-- **Leftist invariant for every heap in a list.**
+Every heap in the list has correct stored ranks and is leftist. -/
 def LTreeList (ts : List (LHeap α)) : Prop := ∀ t ∈ ts, ltree t
 
 theorem HeapList_cons [LE α] {x : LHeap α} {xs : List (LHeap α)} :
@@ -1022,7 +1033,8 @@ end LHeap
 
 open LHeap
 
-/-- Graded theorem: correctness of lheap_list2 and complexity equivalence.
+/-- **Correctness and cost equivalence of tail-recursive heap construction.**
+Graded theorem: correctness of lheap_list2 and complexity equivalence.
     Complexity model faithful to textbook: only merge calls counted. -/
 theorem fdsa_chap15_ex04 {α : Type u} [LinearOrder α] :
     (∀ xs : List α, (lheap_list2 xs).mset_tree = (xs : Multiset α)) ∧
@@ -1050,26 +1062,31 @@ namespace LHeap
 
 variable {α : Type u} [LinearOrder α]
 
-/-- List construction preserves the entire input multiset, including duplicates. -/
+/-- **List-to-heap construction preserves the multiset.**
+List construction preserves the entire input multiset, including duplicates. -/
 theorem mset_lheap_list2 (xs : List α) :
     (lheap_list2 xs).mset_tree = (xs : Multiset α) :=
   fdsa_chap15_ex04.1 xs
 
-/-- List construction satisfies min-heap ordering. -/
+/-- **List-to-heap construction gives a min-heap.**
+List construction satisfies min-heap ordering. -/
 theorem heap_lheap_list2 (xs : List α) : (lheap_list2 xs).heap :=
   fdsa_chap15_ex04.2.1 xs
 
-/-- List construction satisfies both stored-rank correctness and leftist balance. -/
+/-- **List-to-heap construction gives a leftist tree.**
+List construction satisfies both stored-rank correctness and leftist balance. -/
 theorem ltree_lheap_list2 (xs : List α) : (lheap_list2 xs).ltree :=
   fdsa_chap15_ex04.2.2.1 xs
 
-/-- A reusable per-input form of the three construction-correctness conjuncts. -/
+/-- **Per-input correctness of list-to-heap construction.**
+A reusable per-input form of the three construction-correctness conjuncts. -/
 theorem lheap_list2_correct (xs : List α) :
     (lheap_list2 xs).mset_tree = (xs : Multiset α) ∧
     (lheap_list2 xs).heap ∧ (lheap_list2 xs).ltree :=
   ⟨mset_lheap_list2 xs, heap_lheap_list2 xs, ltree_lheap_list2 xs⟩
 
-/-- The accumulator is a reversed prefix; newly merged pairs follow it in
+/-- **Accumulator characterization of tail-recursive adjacent merging.**
+The accumulator is a reversed prefix; newly merged pairs follow it in
 input order. This additional output characterization is not required by the
 original exercise. Append appears only in the specification, not the algorithm. -/
 theorem merge_adj2_eq_reverse_append (acc ts : List (LHeap α)) :

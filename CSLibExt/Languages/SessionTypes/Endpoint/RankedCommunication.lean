@@ -21,7 +21,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Endpoint substitution transports every ranked subject and payload guard
+/-- **Endpoint substitution preserves ranked typing.**
+Endpoint substitution transports every ranked subject and payload guard
 with freshness derived from the actual linear ownership split. -/
 theorem RankedType.subst_endpoint {n : Nat} {Δ : Context} {b : Name}
     {r : Role} {c : Capability} {p : Proc}
@@ -33,7 +34,8 @@ theorem RankedType.subst_endpoint {n : Nat} {Δ : Context} {b : Name}
   rw [Context.rekey_received_subst hfresh hi, mapProc_substName] at ht
   exact ht
 
-/-- The transmitted role's non-aliasing is derived, not a readiness premise. -/
+/-- **Disjoint split supplies freshness for endpoint substitution.**
+The transmitted role's non-aliasing is derived, not a readiness premise. -/
 theorem RankedType.subst_endpoint_from_split {n : Nat} {Δ Θ : Context}
     {b : Name} {r : Role} {c old next : Capability} {e : Key} {p : Proc}
     (hd : Finmap.Disjoint Δ Θ) (hs : Δ.lookup ⟨b, r⟩ = some c)
@@ -46,7 +48,8 @@ theorem RankedType.subst_endpoint_from_split {n : Nat} {Δ Θ : Context}
   exact Context.fresh_insert_owned (Context.fresh_of_disjoint hd hs)
     (Finmap.mem_of_lookup_eq_some hr)
 
-/-- Ranked input inversion retains both literal payload sorts and all guards. -/
+/-- **Inversion of ranked input typing.**
+Ranked input inversion retains both literal payload sorts and all guards. -/
 theorem RankedType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : RankedType n Δ (.inp a p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ GuardMin Δ e c.rank ∧
@@ -59,7 +62,8 @@ theorem RankedType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
   | inpName hg hc hs ha hp => exact ⟨_, _, rfl, hc, hg, Or.inl ⟨_, hs, hp⟩⟩
   | inpEndpoint hg hc hs ha hp => exact ⟨_, _, rfl, hc, hg, Or.inr ⟨_, _, _, _, hs, hp⟩⟩
 
-/-- Ranked output inversion retains the pre-transfer active payload check. -/
+/-- **Inversion of ranked output typing.**
+Ranked output inversion retains the pre-transfer active payload check. -/
 theorem RankedType.out_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : RankedType n Δ (.out a b p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧ GuardMin Δ e c.rank ∧
@@ -73,7 +77,8 @@ theorem RankedType.out_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outEndpoint hg hc hs hd he ha hb hp =>
     exact ⟨_, _, rfl, hc, hg, Or.inr ⟨_, _, _, _, rfl, hs, hd, he, hp⟩⟩
 
-/-- With the stated disjoint ranked split, scoped passive payload and
+/-- **Passive head communication preserves ranked typing.**
+With the stated disjoint ranked split, scoped passive payload and
 compatible combined interface, head communication substitutes through the
 ranked input body and retains both residual guard derivations. -/
 theorem ranked_passive_head {n : Nat} {Δ Θ : Context} {e : Key}
@@ -107,7 +112,8 @@ theorem ranked_passive_head {n : Nat} {Δ Θ : Context} {e : Key}
     rw [hhead] at hu
     cases hu
 
-/-- With the stated disjoint ranked split, owned non-carrier scoped payload
+/-- **Endpoint delegation at the head preserves ranked typing.**
+With the stated disjoint ranked split, owned non-carrier scoped payload
 and compatible combined interface, delegation derives substitution freshness
 from that split and retains the combined payload value. -/
 theorem ranked_endpoint_head {n k : Nat} {Δ Θ : Context} {e d : Key}
@@ -144,7 +150,8 @@ theorem ranked_endpoint_head {n k : Nat} {Δ Θ : Context} {e d : Key}
       (Finmap.mem_of_lookup_eq_some ht) hv hne] at htyped
     exact htyped
 
-/-- A ranked-typed opposite-head pair at an initially compatible interface
+/-- **Ranked head communication exposes peers and residual typing.**
+A ranked-typed opposite-head pair at an initially compatible interface
 yields the actual subject/dual-peer heads, payload metadata and exact ranked
 continuation context after literal communication. -/
 theorem RankedType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
@@ -179,7 +186,8 @@ theorem RankedType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
     exact ⟨e, c, s, rfl, hwhole, hpeer, MatchedOutput.endpoint rfl hs hvwhole hne hpd,
       ranked_endpoint_head hd hc hs hv hne hp hi hb hco⟩
 
-/-- For a ranked-typed opposite-head pair at a compatible initial interface,
+/-- **Ranked head communication yields a dual advance.**
+For a ranked-typed opposite-head pair at a compatible initial interface,
 the head result yields one faithful update and compatible ranked residual,
 not a typing witness manufactured by forgetting the refinement. -/
 theorem RankedType.head_comm_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}

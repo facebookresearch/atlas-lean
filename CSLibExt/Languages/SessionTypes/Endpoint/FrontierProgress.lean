@@ -51,7 +51,8 @@ private theorem ranked_input_dual_send {n : Nat} {Δ : Context} {a : Name} {p : 
     rw [Protocol.unfold_dual, hs]
     rfl
 
-/-- Given disjoint ranked-typed leaves with literal same-name input/output
+/-- **Same-name ranked guards are opposite and communicate.**
+Given disjoint ranked-typed leaves with literal same-name input/output
 guard shapes and a compatible combined interface, their directions are opposite.
 The Step is canonical commSelect, possibly after parallel commutation. -/
 theorem same_name_guards_step {n : Nat} {Γ Θ : Context} {g h : Proc} {a : Name}
@@ -77,7 +78,8 @@ theorem same_name_guards_step {n : Nat} {Γ Θ : Context} {g h : Proc} {a : Name
     rw [Capability.dual_dual] at ht
     exact False.elim (sends_dual_not_sends ht hs)
 
-/-- GENERAL balanced ranked frontier progress. A minimum over ALL active
+/-- **Progress for balanced ranked guard frontiers.**
+GENERAL balanced ranked frontier progress. A minimum over ALL active
 owned roles exposes two distinct opposite subject leaves, from which actual
 canonical communication follows. Completion is process-level Cong to nil. -/
 theorem GuardFrontier.progress {n : Nat} {Δ : Context} {p : Proc}
@@ -123,7 +125,8 @@ theorem GuardFrontier.progress {n : Nat} {Δ : Context} {p : Proc}
       exact hactive ⟨e, c, he, ha⟩
     exact Or.inl (hf.completed_nil ht hc)
 
-/-- A fresh private pair preserves full dual ownership of an outer balanced
+/-- **Binding a fresh dual pair preserves balance.**
+A fresh private pair preserves full dual ownership of an outer balanced
 interface. Every nonfresh owned role is reflected through canonical lifting. -/
 theorem Balanced.bind {Δ : Context} (h : Balanced Δ) (c : Capability) :
     Balanced (Context.bind c Δ) := by

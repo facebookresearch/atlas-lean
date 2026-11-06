@@ -28,7 +28,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition.MembershipMachine
 open Turing Function TM2Program TM2Embedding BitstringEncoding
 open Cslib.Complexity.Karp Cslib.Complexity.PolynomialEncoding
 
-/-- Disjoint normalizer and numeric-core workspaces and a transfer buffer. -/
+/-- **Stacks of the raw-input PARTITION membership machine.**
+Disjoint normalizer and numeric-core workspaces and a transfer buffer. -/
 inductive K | norm (k : ListNatMachine.K) | core (k : MembershipCore.K) | buffer
   deriving DecidableEq
 
@@ -36,19 +37,22 @@ inductive K | norm (k : ListNatMachine.K) | core (k : MembershipCore.K) | buffer
   | .core k => MembershipCore.Γ k
   | _ => Bool
 
-/-- Normalization, transfer, canonical computation, and rejection. -/
+/-- **Control labels of the raw-input PARTITION membership machine.**
+Normalization, transfer, canonical computation, and rejection. -/
 inductive Lab
   | norm (l : ListNatMachine.Lab) | move1 | move2 | start
   | core (l : MembershipCore.Lab) | bad | done
   deriving DecidableEq
 
-/-- The exact canonicalizer's workspace. -/
+/-- **Normalizer workspace of the raw-input PARTITION membership machine.**
+The exact canonicalizer's workspace. -/
 def normEmb : SEmb (fun _ : ListNatMachine.K => Bool) Γ where
   e := K.norm
   inj _ _ h := K.norm.inj h
   ι _ := Equiv.refl _
 
-/-- The canonical numeric core's workspace. -/
+/-- **Numeric-core workspace of the raw-input PARTITION membership machine.**
+The canonical numeric core's workspace. -/
 def coreEmb : SEmb MembershipCore.Γ Γ where
   e := K.core
   inj _ _ h := K.core.inj h
@@ -63,7 +67,8 @@ def coreLabel : MembershipCore.Lab → Lab
   | .done => .done
   | l => .core l
 
-/-- Normalize exactly, then run the polynomial numeric core. -/
+/-- **Program of the raw-input PARTITION membership machine.**
+Normalize exactly, then run the polynomial numeric core. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .norm l => mapS normEmb normLabel (ListNatMachine.prog l)
   | .move1 => moveB (.norm .output) .buffer some id .move1 .move2
@@ -122,7 +127,8 @@ private theorem core_run (as : List ℕ) (v : Bool) (S : ∀ k, List (Γ k))
     change S₂ (.core (.double .O)) = (C₂ (.double .O)).map id at h
     simpa only [List.map_id, ho₂] using h
 
-/-- The exact all-string membership reduction has a quadratic machine
+/-- **Raw-input PARTITION membership machine runs in quadratic time.**
+The exact all-string membership reduction has a quadratic machine
 bound, including malformed inputs and noncanonical binary payloads. -/
 theorem run (x : List Bool) :
     ∃ v S, RunLe prog (100 * (x.length + 1) ^ 2)
@@ -180,7 +186,8 @@ noncomputable instance : Fintype Lab := Fintype.ofList
     Finset.univ.toList.map Lab.norm ++ Finset.univ.toList.map Lab.core)
   (by intro l; cases l <;> simp)
 
-/-- The total membership reduction in the existing finite host. -/
+/-- **Raw-input PARTITION membership machine as a host component.**
+The total membership reduction in the existing finite host. -/
 noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   K := K
   Γ := Γ
@@ -194,7 +201,8 @@ noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   ks_nodup := Finset.nodup_toList _
   mem_ks k := by simp
 
-/-- The total PARTITION-to-SUBSET-SUM map is polynomial-time. -/
+/-- **PARTITION to SUBSET-SUM map is polynomial-time.**
+The total PARTITION-to-SUBSET-SUM map is polynomial-time. -/
 theorem isPolyTime_reduceToSubsetSum : ComplexityTheory.IsPolyTime
     reduceToSubsetSum :=
   Cslib.Complexity.Host.isPolyTime_reduction
@@ -207,7 +215,7 @@ end MetaMathlibExt.Complexity.NPComplete.Partition.MembershipMachine
 
 namespace MetaMathlibExt.Complexity.NPComplete.Partition
 
-/-- Exact binary-coded PARTITION belongs to canonical NP. -/
+/-- **Binary-coded PARTITION is in NP.** Exact binary-coded PARTITION belongs to canonical NP. -/
 theorem partitionDec_mem_NP : partitionDec ∈ ComplexityTheory.NP :=
   ComplexityTheory.mem_NP_of_polyManyOneRed
     Cslib.Complexity.Karp.subsetSumDec_mem_NP

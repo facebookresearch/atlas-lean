@@ -25,7 +25,8 @@ namespace Cslib.Complexity.PolynomialEncoding.NatPair
 open Turing Function MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
 open MetaMathlibExt.BitstringEncoding FramedCNF
 
-/-- Pair workspace, one reusable Nat buffer, and two canonical outputs. -/
+/-- **Stacks of the number-pair projector.**
+Pair workspace, one reusable Nat buffer, and two canonical outputs. -/
 inductive K | pair (k : PairSplit.K) | buffer | left | right
   deriving DecidableEq
 
@@ -36,7 +37,8 @@ instance : Fintype K where
     rcases k with k | _ | _ | _ <;> try decide
     cases k <;> decide
 
-/-- Pair projection followed by normalization of the two fields. -/
+/-- **Control labels of the number-pair projector.**
+Pair projection followed by normalization of the two fields. -/
 inductive Lab | pair (l : PairSplit.Lab)
   | norm (second : Bool) (l : NormalizeMachine.Lab) | good | bad
   deriving DecidableEq
@@ -53,13 +55,15 @@ instance : Fintype Lab where
     · cases l <;> decide
     · cases s <;> rcases l with (_ | (_ | _)) | _ | _ <;> decide
 
-/-- The pair-frame component acts only on its three own stacks. -/
+/-- **Pair-frame splitter stack embedding in the number-pair projector.**
+The pair-frame component acts only on its three own stacks. -/
 def pairEmb : SEmb (fun _ : PairSplit.K => Bool) (fun _ : K => Bool) where
   e := K.pair
   inj _ _ h := K.pair.inj h
   ι _ := Equiv.refl Bool
 
-/-- Each normalizer consumes its raw field, sharing only an empty buffer. -/
+/-- **Field-normalizer stack embedding in the number-pair projector.**
+Each normalizer consumes its raw field, sharing only an empty buffer. -/
 def normEmb (second : Bool) :
     SEmb (fun _ : NormalizeMachine.K => Bool) (fun _ : K => Bool) where
   e
@@ -69,24 +73,27 @@ def normEmb (second : Bool) :
   inj a b h := by cases second <;> cases a <;> cases b <;> simp_all
   ι _ := Equiv.refl Bool
 
-/-- Only actual pair halt labels are redirected. -/
+/-- **Pair-frame splitter halt redirection in the number-pair projector.**
+Only actual pair halt labels are redirected. -/
 def pairLabel : PairSplit.Lab → Lab
   | .good => .norm false (.read none)
   | .bad => .bad
   | l => .pair l
 
-/-- Normalizing the first field continues with the second. -/
+/-- **Label map chaining the two field normalizers.**
+Normalizing the first field continues with the second. -/
 def normLabel (second : Bool) : NormalizeMachine.Lab → Lab
   | .done => if second then .good else .norm true (.read none)
   | l => .norm second l
 
-/-- All work is performed by the two existing finite components. -/
+/-- **Program of the number-pair projector.**
+All work is performed by the two existing finite components. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .pair l => mapS pairEmb pairLabel (PairSplit.prog l)
   | .norm s l => mapS (normEmb s) (normLabel s) (NormalizeMachine.prog l)
   | .good | .bad => .halt
 
-/-- Explicit six-stack invariant. -/
+/-- **Six-stack invariant of the number-pair projector.** Explicit six-stack invariant. -/
 def st (input first scratch buffer left right : List Bool) : K → List Bool
   | .pair .input => input
   | .pair .left => first
@@ -174,7 +181,8 @@ private theorem second_run (r left right : List Bool) (v : Bool) :
         exact hf (.pair .scratch) (by intro k; cases k <;> simp [normEmb])
   exact ⟨v', he ▸ ht⟩
 
-/-- Every raw pair frame is projected and normalized without changing
+/-- **Number-pair projector normalizes both fields of a raw pair frame.**
+Every raw pair frame is projected and normalized without changing
 the total Nat decoding semantics. Previous output suffixes survive. -/
 theorem run_delimit (p r left right : List Bool) (v : Bool) :
     ∃ v', RunLe prog (2 * (delimit p ++ r).length + 6)
@@ -188,7 +196,8 @@ theorem run_delimit (p r left right : List Bool) (v : Bool) :
   simp only [List.length_append, length_delimit]
   omega
 
-/-- Pair Nat decoding fails exactly when the first frame is malformed;
+/-- **Decoding a pair of naturals fails exactly on a malformed first frame.**
+Pair Nat decoding fails exactly when the first frame is malformed;
 both raw field payloads use Mathlib's total Nat decoder. -/
 theorem decode_pair_nat (x : List Bool) :
     bitDecode (α := Nat × Nat) x = (undelimit x).map (fun p =>
@@ -199,7 +208,8 @@ theorem decode_pair_nat (x : List Bool) :
       some (Computability.decodeNat p, Computability.decodeNat r)) = _
   cases h : undelimit x <;> rfl
 
-/-- A successful pair decode produces both canonical binary payloads,
+/-- **Number-pair projector yields both canonical payloads on success.**
+A successful pair decode produces both canonical binary payloads,
 with all scratch empty and arbitrary previous output suffixes preserved. -/
 theorem run_some {x : List Bool} {m n : Nat}
     (h : bitDecode x = some (m, n)) (left right : List Bool) (v : Bool) :
@@ -215,7 +225,8 @@ theorem run_some {x : List Bool} {m n : Nat}
     hm, hn, ← hx] at run
   exact ⟨v', run⟩
 
-/-- Malformed pair framing fails in linear time. Private partial
+/-- **Number-pair projector fails on malformed framing in linear time.**
+Malformed pair framing fails in linear time. Private partial
 workspace contents must be cleared before another invocation. -/
 theorem run_none {x : List Bool} (h : bitDecode (α := Nat × Nat) x = none)
     (left right : List Bool) (v : Bool) :
@@ -229,7 +240,8 @@ theorem run_none {x : List Bool} (h : bitDecode (α := Nat × Nat) x = none)
     (by intro k; cases k <;> simp [pairEmb, st, PairSplit.st])
   exact ⟨v', T, ht⟩
 
-/-- The concrete two-Nat projector in the existing Host interface. -/
+/-- **Number-pair projector as a host component.**
+The concrete two-Nat projector in the existing Host interface. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -241,7 +253,8 @@ abbrev component : Host.Comp where
     rcases k with k | _ | _ | _ <;> try decide
     cases k <;> decide
 
-/-- Canonical output payload sizes are bounded by the raw input size,
+/-- **Canonical payloads of a decoded pair are bounded by the raw input.**
+Canonical output payload sizes are bounded by the raw input size,
 even when either field had a noncanonical final zero bit. -/
 theorem decoded_payload_length_le {x : List Bool} {m n : Nat}
     (h : bitDecode x = some (m, n)) :
@@ -257,7 +270,8 @@ theorem decoded_payload_length_le {x : List Bool} {m n : Nat}
   rw [hx, List.length_append, length_delimit]
   omega
 
-/-- Total decoder outcome with exact successful output and empty
+/-- **Number-pair projector reaches the decoding outcome.**
+Total decoder outcome with exact successful output and empty
 private scratch. Failure does not promise reusable workspace contents. -/
 theorem run (x : List Bool) (v : Bool) :
     ∃ v' S, RunLe prog (2 * x.length + 6)
@@ -282,7 +296,8 @@ theorem run (x : List Bool) (v : Bool) :
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Option.some.inj hab)
     rfl
 
-/-- Callers may embed this concrete projector without disturbing
+/-- **Embedded number-pair projector preserves outside stacks.**
+Callers may embed this concrete projector without disturbing
 outside stacks. A failed workspace must be cleared before reuse. -/
 theorem run_embedded {J L : Type} [DecidableEq J] {Γ : J → Type}
     (E : SEmb (fun _ : K => Bool) Γ) (φ : Lab → L)

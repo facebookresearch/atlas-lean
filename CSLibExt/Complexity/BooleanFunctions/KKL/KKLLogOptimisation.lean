@@ -75,7 +75,8 @@ theorem klo_var_eq (φ : ConfigSpace ι → Bool) :
   linarith
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- Bernoulli's inequality in the form `1 - x^k ≤ k (1 - x)` for `0 ≤ x` (the hypothesis
+/-- **Bernoulli's inequality $1 - x^k \le k(1 - x)$.**
+Bernoulli's inequality in the form `1 - x^k ≤ k (1 - x)` for `0 ≤ x` (the hypothesis
 `x ≤ 1` is not needed). See also `one_add_mul_le_pow`. -/
 theorem klo_one_sub_pow_le (x : ℝ) (h0 : 0 ≤ x) (_h1 : x ≤ 1) (k : ℕ) :
     1 - x ^ k ≤ (1 - x) * k := by
@@ -119,7 +120,8 @@ theorem klo_var_sub_damped_le (φ : ConfigSpace ι → Bool) (ρ : ℝ) (h0 : 0 
   apply Finset.sum_congr rfl
   intro S _; ring
 
-/-- For an event of uniform measure `m` and total influence `I = ∑_S 4 |S| f̂(S)²`, `m -
+/-- **Bound on $m - m^{2/(1+\rho^2)}$ by total influence.**
+For an event of uniform measure `m` and total influence `I = ∑_S 4 |S| f̂(S)²`, `m -
   m^{2/(1+ρ²)} ≤ (1 - ρ²) I / 4` for `0 ≤ ρ ≤ 1`. -/
 theorem klo_master_le (φ : ConfigSpace ι → Bool) (ρ : ℝ) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) :
     bnt_uexp (fun ω => if φ ω then (1 : ℝ) else 0)
@@ -207,7 +209,8 @@ theorem klo_edge_isoperimetric (φ : ConfigSpace ι → Bool)
   rw [Real.log_div (by norm_num) (ne_of_gt hm0), Real.log_one, zero_sub]
   nlinarith [hL]
 
-/-- The KKL inequality at `p = 1/2` in Fourier form, with the bound `m - m^{2/(1+ρ²)} ≤ (1 - ρ²) I /
+/-- **Fourier-form KKL inequality given the measure–influence bound.**
+The KKL inequality at `p = 1/2` in Fourier form, with the bound `m - m^{2/(1+ρ²)} ≤ (1 - ρ²) I /
   4` (for all `ρ ∈ [0, 1]`) as a hypothesis, where `m` is the measure and `I` the total influence
   of `φ`. The hypothesis always holds (`klo_master_le`). -/
 def klo_DeltaUpgrade (c : ℝ) : Prop :=
@@ -224,19 +227,22 @@ def klo_DeltaUpgrade (c : ℝ) : Prop :=
         ≤ ∑ S : Finset E, 4 * (S.card : ℝ)
             * (khc_fourierCoeff (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
 
-/-- `klo_DeltaUpgrade 0` holds trivially. -/
+/-- **Measure–influence form of KKL with constant 0 holds trivially.**
+`klo_DeltaUpgrade 0` holds trivially. -/
 theorem klo_deltaUpgrade_zero : klo_DeltaUpgrade 0 := by
   intro E _ _ _ φ _
   rw [zero_mul, zero_mul]
   exact kls_W_nonneg φ
 
-/-- `klo_DeltaUpgrade c` implies `kls_LogOptimisation c`. -/
+/-- **Measure–influence form of KKL implies the indicator-bound form.**
+`klo_DeltaUpgrade c` implies `kls_LogOptimisation c`. -/
 theorem klo_logOptimisation_of_deltaUpgrade {c : ℝ} (H : klo_DeltaUpgrade c) :
     kls_LogOptimisation c := by
   intro E _ _ _ φ _hfluct
   exact H φ (fun ρ h0 h1 => klo_master_le φ ρ h0 h1)
 
-/-- `klo_DeltaUpgrade c` implies the KKL inequality `KKLHypercontractive (1/2) c`. -/
+/-- **Measure–influence form of KKL implies the KKL inequality at $p = 1/2$.**
+`klo_DeltaUpgrade c` implies the KKL inequality `KKLHypercontractive (1/2) c`. -/
 theorem klo_logOptimisation {c : ℝ} (H : klo_DeltaUpgrade c) :
     KKLHypercontractive (1 / 2 : ℝ) c :=
   kls_logSobolevStep (klo_logOptimisation_of_deltaUpgrade H)

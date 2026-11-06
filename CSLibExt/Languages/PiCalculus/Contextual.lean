@@ -32,7 +32,8 @@ no capture-avoiding theorem for arbitrary open holes is asserted.
 
 namespace Cslib.PiCalculus
 
-/-- One-hole lexical contexts, including guards, choice and replication. -/
+/-- **One-hole lexical process contexts.**
+One-hole lexical contexts, including guards, choice and replication. -/
 inductive Context where
   | hole
   | out (a b : Name) (c : Context)
@@ -44,7 +45,8 @@ inductive Context where
   | sumL (c : Context) (p : Proc)
   | sumR (p : Proc) (c : Context)
 
-/-- Fill the lexical hole. Free constants are never captured; locally
+/-- **Lexical filling of a process context.**
+Fill the lexical hole. Free constants are never captured; locally
 closed hole processes have no references into surrounding binders. -/
 def Context.fill : Context → Proc → Proc
   | .hole, p => p
@@ -61,7 +63,8 @@ instance : HasContext Proc where
   Context := Context
   fill := Context.fill
 
-/-- Structural congruence survives every one-hole lexical context. -/
+/-- **Structural congruence is closed under contexts.**
+Structural congruence survives every one-hole lexical context. -/
 theorem Cong.fill {p q : Proc} (h : Cong p q) (c : Context) :
     Cong (c.fill p) (c.fill q) := by
   induction c with
@@ -75,7 +78,7 @@ theorem Cong.fill {p q : Proc} (h : Cong p q) (c : Context) :
   | sumL _ r ih => exact Cong.sum_cong ih (.refl r)
   | sumR r _ ih => exact Cong.sum_cong (.refl r) ih
 
-/-- Substitute a context into the hole of another context. -/
+/-- **Composition of process contexts.** Substitute a context into the hole of another context. -/
 def Context.comp : Context → Context → Context
   | .hole, d => d
   | .out a b c, d => .out a b (c.comp d)
@@ -87,30 +90,35 @@ def Context.comp : Context → Context → Context
   | .sumL c p, d => .sumL (c.comp d) p
   | .sumR p c, d => .sumR p (c.comp d)
 
-/-- Context composition agrees with iterated filling. -/
+/-- **Filling a composed context is iterated filling.**
+Context composition agrees with iterated filling. -/
 @[simp] theorem Context.fill_comp (c d : Context) (p : Proc) :
     (c.comp d).fill p = c.fill (d.fill p) := by
   induction c <;> simp_all [Context.comp, Context.fill]
 
-/-- Strong barbed equivalence in every lexical process context. For
+/-- **Contextual strong barbed equivalence.**
+Strong barbed equivalence in every lexical process context. For
 capture-avoiding use, both hole processes must satisfy `Proc.ClosedAt 0`. -/
 def ContextualBarbedEquiv (p q : Proc) : Prop :=
   ∀ c : Context, BarbedBisimilar (c.fill p) (c.fill q)
 
-/-- Structural congruence is sound under every observer context, with
+/-- **Structural congruence implies contextual barbed equivalence.**
+Structural congruence is sound under every observer context, with
 one-for-one reduction matching and immediate input/output barbs. -/
 theorem Cong.contextualBarbedEquiv {p q : Proc} (h : Cong p q) :
     ContextualBarbedEquiv p q :=
   fun c => (h.fill c).barbedBisimilar
 
-/-- Contextual barbed equivalence survives filling a context. -/
+/-- **Contextual barbed equivalence is closed under contexts.**
+Contextual barbed equivalence survives filling a context. -/
 theorem ContextualBarbedEquiv.fill {p q : Proc}
     (h : ContextualBarbedEquiv p q) (d : Context) :
     ContextualBarbedEquiv (d.fill p) (d.fill q) := by
   intro c
   simpa only [Context.fill_comp] using h (c.comp d)
 
-/-- Contextual barbed equivalence implies standalone barbed bisimilarity. -/
+/-- **Contextual barbed equivalence implies barbed bisimilarity.**
+Contextual barbed equivalence implies standalone barbed bisimilarity. -/
 theorem ContextualBarbedEquiv.barbedBisimilar {p q : Proc}
     (h : ContextualBarbedEquiv p q) : BarbedBisimilar p q :=
   h .hole
@@ -126,7 +134,8 @@ instance : LawfulCongruence ContextualBarbedEquiv where
   trans _ _ _ h₁ h₂ c := LTS.Bisimilarity.trans (h₁ c) (h₂ c)
   elim c _ _ h := h.fill c
 
-/-- Capture-avoiding filling: each context binder shifts dangling names
+/-- **Capture-avoiding filling of a process context.**
+Capture-avoiding filling: each context binder shifts dangling names
 of the hole, while binders internal to the hole remain untouched. -/
 def Context.fillAvoiding : Context → Proc → Proc
   | .hole, p => p
@@ -139,14 +148,16 @@ def Context.fillAvoiding : Context → Proc → Proc
   | .sumL c q, p => .sum (c.fillAvoiding p) q
   | .sumR q c, p => .sum q (c.fillAvoiding p)
 
-/-- Lexical and capture-avoiding filling agree for locally closed holes.
+/-- **Capture-avoiding and lexical filling agree on locally closed holes.**
+Lexical and capture-avoiding filling agree for locally closed holes.
 This is the explicit admissibility condition for the contextual theorem. -/
 theorem Context.fillAvoiding_eq {p : Proc} (h : Proc.ClosedAt 0 p)
     (c : Context) : c.fillAvoiding p = c.fill p := by
   induction c <;>
     simp_all [Context.fillAvoiding, Context.fill, liftProc_eq_of_closedAt h]
 
-/-- Every structural law is strongly barbed sound under capture-avoiding
+/-- **Structural laws are barbed sound in capture-avoiding contexts.**
+Every structural law is strongly barbed sound under capture-avoiding
 contexts, for locally closed hole processes. -/
 theorem Cong.fillAvoiding_barbedBisimilar {p q : Proc} (h : Cong p q)
     (hp : Proc.ClosedAt 0 p) (hq : Proc.ClosedAt 0 q) (c : Context) :

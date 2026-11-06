@@ -26,7 +26,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 open PiCalculus
 
 set_option backward.isDefEq.respectTransparency false in
-/-- GENERAL name transport with collision freedom on actual owned keys and
+/-- **Collision-free renaming preserves conversion typing.**
+GENERAL name transport with collision freedom on actual owned keys and
 canonical ambient name scope; protocol codes, roles and ranks stay exact. -/
 theorem HasType.rename {n m : Nat} {Δ : Context} {p : Proc} {f : Name → Name}
     (h : HasType n Δ p) (hscope : ∀ a, a.ClosedAt n → (f a).ClosedAt m)
@@ -120,14 +121,16 @@ theorem HasType.rename {n m : Nat} {Δ : Context} {p : Proc} {f : Name → Name}
     rw [← Context.rekey_bind hf hu]
     exact ih (fun _ ha => under_scoped hscope ha) hu
 
-/-- Lift uses the canonical cutoff-aware name and process operations. -/
+/-- **Lifting past a binder preserves conversion typing.**
+Lift uses the canonical cutoff-aware name and process operations. -/
 theorem HasType.lift {n : Nat} {Δ : Context} {p : Proc} (h : HasType n Δ p) (k : Nat) :
     HasType (n + 1) (Context.lift k Δ) (liftProc k p) := by
   have hi : Set.InjOn (Key.mapName (liftName k)) {e | e ∈ Δ} :=
     fun _ _ _ _ he => Key.mapName_injective (liftName_injective k) he
   simpa only [Context.lift, mapProc_liftName] using h.rename (fun _ ha => ha.lift) hi
 
-/-- Swap retains roles, protocols and ranks while permuting two ambient binders. -/
+/-- **Swapping adjacent binders preserves conversion typing.**
+Swap retains roles, protocols and ranks while permuting two ambient binders. -/
 theorem HasType.swap {n k : Nat} {Δ : Context} {p : Proc} (h : HasType n Δ p) (hk : k + 1 < n) :
     HasType n (Context.swap k Δ) (swapProc k p) := by
   have hi : Set.InjOn (Key.mapName (swapNameAt k)) {e | e ∈ Δ} :=

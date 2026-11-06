@@ -35,7 +35,8 @@ open Cslib.Algorithms.Lean
 
 variable {α σ : Type*} [FinEnum α] [Fintype σ] [DecidableEq σ]
 
-/-- The actual loop with predecessor-visit and pop events recorded in
+/-- **Hopcroft loop with recorded predecessor-work.**
+The actual loop with predecessor-visit and pop events recorded in
 CSLib's `TimeM`. Pure scans are not charged in this event model. -/
 def hopcroftLoopWork (M : DFA α σ) : ℕ → List (Finset σ) →
     List (Finset σ × α) →
@@ -46,7 +47,8 @@ def hopcroftLoopWork (M : DFA α σ) : ℕ → List (Finset σ) →
       TimeM.tick ((preimage M C a).card + 1)
       hopcroftLoopWork M k (roundP M P C a) (roundW M P W C a)
 
-/-- Instrumentation preserves the exact loop result. -/
+/-- **Instrumented Hopcroft loop returns the original result.**
+Instrumentation preserves the exact loop result. -/
 @[simp]
 theorem hopcroftLoopWork_ret (M : DFA α σ) (k : ℕ)
     (P : List (Finset σ)) (W : List (Finset σ × α)) :
@@ -61,7 +63,8 @@ theorem hopcroftLoopWork_ret (M : DFA α σ) (k : ℕ)
       simpa [hopcroftLoopWork, hopcroftLoop] using
         ih (roundP M P C a) (roundW M P W C a)
 
-/-- The recorded cost is exactly the work of the actual popped trace. -/
+/-- **Recorded Hopcroft cost equals the work of the popped trace.**
+The recorded cost is exactly the work of the actual popped trace. -/
 @[simp]
 theorem hopcroftLoopWork_time (M : DFA α σ) (k : ℕ)
     (P : List (Finset σ)) (W : List (Finset σ × α)) :
@@ -76,7 +79,8 @@ theorem hopcroftLoopWork_time (M : DFA α σ) (k : ℕ)
       obtain ⟨C, a⟩ := cb
       simp [hopcroftLoopWork, hopcroftSplitters, ih, hopcroftCost]
 
-/-- The canonical cost monad records the proved total predecessor-work
+/-- **Recorded Hopcroft cost obeys the predecessor-work bound.**
+The canonical cost monad records the proved total predecessor-work
 bound for every initialized execution prefix. -/
 theorem hopcroftLoopWork_init_le [Fintype α] (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] (k : ℕ) :
@@ -86,7 +90,8 @@ theorem hopcroftLoopWork_init_le [Fintype α] (M : DFA α σ)
   rw [hopcroftLoopWork_time]
   exact hopcroftCost_init_trace_le M k
 
-/-- At the proved terminating fuel, instrumentation returns the original
+/-- **Instrumented complete Hopcroft run returns the minimization partition.**
+At the proved terminating fuel, instrumentation returns the original
 correct minimization partition and an empty waiting list. -/
 theorem hopcroftLoopWork_complete_ret [Fintype α] (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] :

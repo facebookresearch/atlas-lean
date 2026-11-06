@@ -26,7 +26,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Idle is syntax-only and excludes a canonical exposed output, including
+/-- **Idle processes have no unguarded output.**
+Idle is syntax-only and excludes a canonical exposed output, including
 inside parallel, restriction and inert replicated templates. -/
 theorem Idle.no_unguarded_output {Γ : ServiceEnv} {p : Proc} (h : Idle Γ p) :
     ¬ PiCalculus.HasUnguardedOutput p := by
@@ -43,7 +44,8 @@ theorem Idle.no_unguarded_output {Γ : ServiceEnv} {p : Proc} (h : Idle Γ p) :
   | repl p ih => exact ih h
   | sum => exact False.elim h
 
-/-- Idle services cannot Step, even through arbitrary canonical congruence. -/
+/-- **Idle processes cannot step.**
+Idle services cannot Step, even through arbitrary canonical congruence. -/
 theorem Idle.no_step {Γ : ServiceEnv} {p : Proc} (h : Idle Γ p) (q : Proc) :
     ¬ PiCalculus.Step p q := fun hs => h.no_unguarded_output hs.hasUnguardedOutput
 

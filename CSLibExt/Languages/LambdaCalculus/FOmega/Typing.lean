@@ -21,7 +21,8 @@ The sixth rule changes the result only by the proved type-beta conversion.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega
 
-/-- The five pure term rules and the type-beta conversion rule of Fω. -/
+/-- **Typing rules of pure Fω.**
+The five pure term rules and the type-beta conversion rule of Fω. -/
 inductive Typing : {Δ : List Kind} → {m : Nat} →
     Ctx Δ m → Tm Δ m → Ty Δ .star → Prop where
   | var {Δ : List Kind} {m : Nat} {Γ : Ctx Δ m} (i : Fin m) :
@@ -48,7 +49,8 @@ variable {Δ : List Kind} {m : Nat} {Γ : Ctx Δ m}
 
 namespace Typing
 
-/-- Kind-correct type substitution preserves typing in arbitrary contexts. -/
+/-- **Type substitution preserves Fω typing.**
+Kind-correct type substitution preserves typing in arbitrary contexts. -/
 theorem tySubst {Ε : List Kind} (h : Typing Γ t A) (σ : Ty.Sub Δ Ε) :
     Typing (fun i => (Γ i).subst σ) (t.tySubst σ) (A.subst σ) := by
   induction h generalizing Ε with
@@ -67,13 +69,14 @@ theorem tySubst {Ε : List Kind} (h : Typing Γ t A) (σ : Ty.Sub Δ Ε) :
     exact .tapp (ih σ)
   | conv ht hc ih => exact .conv (ih σ) (hc.subst σ)
 
-/-- Kind-preserving type renaming preserves typing. -/
+/-- **Type renaming preserves Fω typing.** Kind-preserving type renaming preserves typing. -/
 theorem tyRename {Ε : List Kind} (h : Typing Γ t A) (ρ : KRen Δ Ε) :
     Typing (fun i => (Γ i).rename ρ) (t.tyRename ρ) (A.rename ρ) := by
   simpa only [Tm.tyRename, Ty.subst_var_rename] using
     h.tySubst (fun {_} x => .var (ρ x))
 
-/-- A context-respecting term-variable renaming preserves the result type. -/
+/-- **Term renaming preserves Fω typing.**
+A context-respecting term-variable renaming preserves the result type. -/
 theorem rename {k : Nat} {Ξ : Ctx Δ k} (h : Typing Γ t A)
     (ρ : Fin m → Fin k) (hρ : ∀ i, Ξ (ρ i) = Γ i) :
     Typing Ξ (t.rename ρ) A := by
@@ -95,7 +98,8 @@ theorem rename {k : Nat} {Ξ : Ctx Δ k} (h : Typing Γ t A)
   | tapp hf ih => exact .tapp (ih ρ hρ)
   | conv ht hc ih => exact .conv (ih ρ hρ) hc
 
-/-- Arbitrary correctly typed term substitution preserves typing. -/
+/-- **Term substitution preserves Fω typing.**
+Arbitrary correctly typed term substitution preserves typing. -/
 theorem subst {k : Nat} {Ξ : Ctx Δ k} (h : Typing Γ t A)
     (σ : Fin m → Tm Δ k) (hσ : ∀ i, Typing Ξ (σ i) (Γ i)) :
     Typing Ξ (t.subst σ) A := by
@@ -116,7 +120,8 @@ theorem subst {k : Nat} {Ξ : Ctx Δ k} (h : Typing Γ t A)
   | tapp hf ih => exact .tapp (ih σ hσ)
   | conv ht hc ih => exact .conv (ih σ hσ) hc
 
-/-- Discharging a typed term binder retains the body result type. -/
+/-- **Term-binder instantiation preserves Fω typing.**
+Discharging a typed term binder retains the body result type. -/
 theorem instantiate {B : Ty Δ .star} {b : Tm Δ (m + 1)} {a : Tm Δ m}
     (hb : Typing (Fin.cases A Γ) b B) (ha : Typing Γ a A) :
     Typing Γ (b.instantiate a) B := by
@@ -126,7 +131,8 @@ theorem instantiate {B : Ty Δ .star} {b : Tm Δ (m + 1)} {a : Tm Δ m}
   | zero => exact ha
   | succ i => exact .var i
 
-/-- Discharging a type binder substitutes its result and restores context. -/
+/-- **Type-binder instantiation preserves Fω typing.**
+Discharging a type binder substitutes its result and restores context. -/
 theorem tyInstantiate {κ : Kind} {b : Tm (κ :: Δ) m}
     {C : Ty (κ :: Δ) .star}
     (hb : Typing (fun i => (Γ i).rename KVar.succ) b C) (a : Ty Δ κ) :

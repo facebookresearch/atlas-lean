@@ -24,11 +24,13 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Old shared declarations retain their EXACT signature in the larger environment. -/
+/-- **Extension of a shared service environment.**
+Old shared declarations retain their EXACT signature in the larger environment. -/
 def EnvExtends (Γ Ξ : ServiceEnv) : Prop :=
   ∀ s sig, Γ.lookup s = some sig → Ξ.lookup s = some sig
 
-/-- A declared guarded template remains such under literal signature extension. -/
+/-- **Service templates survive environment extension.**
+A declared guarded template remains such under literal signature extension. -/
 theorem ServiceTemplate.env_extend {Γ Ξ : ServiceEnv} {p : Proc}
     (h : ServiceTemplate Γ p) (he : EnvExtends Γ Ξ) : ServiceTemplate Ξ p := by
   induction p with
@@ -43,7 +45,8 @@ theorem ServiceTemplate.env_extend {Γ Ξ : ServiceEnv} {p : Proc}
   | repl p ih => exact ih h
   | sum => exact False.elim h
 
-/-- General Γ-extension requires static separation of ALL actual owned names.
+/-- **Environment extension preserves runtime typing under separation.**
+General Γ-extension requires static separation of ALL actual owned names.
 The proof establishes fresh lifted/private/received BODY names, rather than
 assuming environment monotonicity or carrying a future/result field. -/
 theorem HasType.env_extend {n : Nat} {Γ Ξ : ServiceEnv} {Δ : Context} {p : Proc}

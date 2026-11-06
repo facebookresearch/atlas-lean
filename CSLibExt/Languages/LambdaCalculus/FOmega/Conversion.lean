@@ -26,7 +26,7 @@ eta law, normalization theorem or decidable conversion procedure.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega.Ty
 
-/-- Type-beta conversion at a fixed context and kind. -/
+/-- **Type-beta conversion in Fω.** Type-beta conversion at a fixed context and kind. -/
 inductive Conv : {Δ : List Kind} → {κ : Kind} → Ty Δ κ → Ty Δ κ → Prop where
   | refl {Δ : List Kind} {κ : Kind} (a : Ty Δ κ) : Conv a a
   | symm {Δ : List Kind} {κ : Kind} {a b : Ty Δ κ} :
@@ -48,7 +48,8 @@ inductive Conv : {Δ : List Kind} → {κ : Kind} → Ty Δ κ → Ty Δ κ → 
 
 variable {Δ Ε : List Kind} {κ μ : Kind} {a b : Ty Δ κ}
 
-/-- Every type-beta conversion is sound in every semantic kind algebra. -/
+/-- **Soundness of type-beta conversion in kind algebras.**
+Every type-beta conversion is sound in every semantic kind algebra. -/
 theorem Conv.sound {α : Type*} (h : Conv a b) (M : KindAlgebra α)
     (η : KEnv α Δ) : eval M η a = eval M η b := by
   induction h with
@@ -71,7 +72,8 @@ theorem Conv.sound {α : Type*} (h : Conv a b) (M : KindAlgebra α)
     funext x
     exact ih (KEnv.extend η x)
 
-/-- Kind-preserving renaming respects proved type-beta conversion. -/
+/-- **Type-beta conversion is stable under renaming.**
+Kind-preserving renaming respects proved type-beta conversion. -/
 theorem Conv.rename (h : Conv a b) (ρ : KRen Δ Ε) :
     Conv (Ty.rename ρ a) (Ty.rename ρ b) := by
   induction h generalizing Ε with
@@ -86,7 +88,8 @@ theorem Conv.rename (h : Conv a b) (ρ : KRen Δ Ε) :
   | arr h₁ h₂ ih₁ ih₂ => exact .arr (ih₁ ρ) (ih₂ ρ)
   | all h ih => exact .all (ih (KRen.lift ρ))
 
-/-- Kind-preserving substitution respects proved type-beta conversion. -/
+/-- **Type-beta conversion is stable under substitution.**
+Kind-preserving substitution respects proved type-beta conversion. -/
 theorem Conv.subst (h : Conv a b) (σ : Sub Δ Ε) :
     Conv (Ty.subst σ a) (Ty.subst σ b) := by
   induction h generalizing Ε with
@@ -101,7 +104,8 @@ theorem Conv.subst (h : Conv a b) (σ : Sub Δ Ε) :
   | arr h₁ h₂ ih₁ ih₂ => exact .arr (ih₁ σ) (ih₂ σ)
   | all h ih => exact .all (ih (liftSub σ))
 
-/-- Pointwise convertible substitution images give convertible results. -/
+/-- **Pointwise convertible substitutions give convertible results.**
+Pointwise convertible substitution images give convertible results. -/
 theorem Conv.subst_congr {σ τ : Sub Δ Ε}
     (h : ∀ {ν} (x : KVar Δ ν), Conv (σ x) (τ x)) (t : Ty Δ κ) :
     Conv (Ty.subst σ t) (Ty.subst τ t) := by
@@ -128,7 +132,8 @@ private def kindDefault : (ν : Kind) → Kind.Sem Bool ν
   | .star => false
   | .arrow _ ν => fun _ => kindDefault ν
 
-/-- Term-function arrows cannot convert to quantified types, at any kind. -/
+/-- **Function types are not convertible to quantified types.**
+Term-function arrows cannot convert to quantified types, at any kind. -/
 theorem not_conv_arr_all {a b : Ty Δ .star} {body : Ty (μ :: Δ) .star} :
     ¬ Conv (.arr a b) (.all body) := by
   intro h

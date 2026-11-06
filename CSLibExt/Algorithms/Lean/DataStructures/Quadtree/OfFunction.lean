@@ -41,17 +41,20 @@ namespace Cslib.Algorithms.Lean.QTree
 
 universe u
 
-/-- The represented square: both natural coordinates are below `2 ^ n`. -/
+/-- **Square region represented by a quadtree.**
+The represented square: both natural coordinates are below `2 ^ n`. -/
 def sqReg (n : Nat) : Set (Nat × Nat) :=
   { p | p.1 < 2 ^ n ∧ p.2 < 2 ^ n }
 
-/-- Membership in the represented square is a pair of strict bounds. -/
+/-- **Membership in the represented square.**
+Membership in the represented square is a pair of strict bounds. -/
 @[simp]
 theorem mem_sqReg (n : Nat) (p : Nat × Nat) :
     p ∈ sqReg n ↔ p.1 < 2 ^ n ∧ p.2 < 2 ^ n :=
   Iff.rfl
 
-/-- Polymorphic lookup. A leaf is constant; at zero scale a branch follows
+/-- **Polymorphic quadtree lookup.**
+Polymorphic lookup. A leaf is constant; at zero scale a branch follows
 its first child at `(0, 0)`. Positive scales select quadrants by the split. -/
 def get {α : Type u} : Nat → QTree α → Nat → Nat → α
   | _, .L b, _, _ => b
@@ -60,7 +63,8 @@ def get {α : Type u} : Nat → QTree α → Nat → Nat → α
       get n (selectTree (decide (i < 2 ^ n)) (decide (j < 2 ^ n))
         t0 t1 t2 t3) (i % 2 ^ n) (j % 2 ^ n)
 
-/-- Samples `f` into a full tree. Every branch splits its coordinate square
+/-- **Full quadtree sampled from a function.**
+Samples `f` into a full tree. Every branch splits its coordinate square
 into four equal quadrants, without compressing equal leaves. -/
 def qt_of_fun {α : Type u} (f : Nat → Nat → α) : Nat → QTree α
   | 0 => .L (f 0 0)
@@ -71,7 +75,8 @@ def qt_of_fun {α : Type u} (f : Nat → Nat → α) : Nat → QTree α
       let t3 := qt_of_fun (fun i j => f (i + 2 ^ n) (j + 2 ^ n)) n
       .Q t0 t1 t2 t3
 
-/-- Reconstruction builds exactly the requested number of branch levels. -/
+/-- **Height of the quadtree sampled from a function.**
+Reconstruction builds exactly the requested number of branch levels. -/
 @[simp]
 theorem height_qt_of_fun {α : Type u} (f : Nat → Nat → α) (n : Nat) :
     height (qt_of_fun f n) = n := by
@@ -87,7 +92,8 @@ private theorem mod_eq_sub_of_upper_half (a p : Nat)
     a % p = (p + (a - p)) % p := by rw [← ha]
     _ = a - p := by simp [Nat.mod_eq_of_lt hlt]
 
-/-- Reading a sampled function recovers its value within the represented
+/-- **Sampled quadtree recovers the function on the represented square.**
+Reading a sampled function recovers its value within the represented
 square. -/
 theorem get_qt_of_fun {α : Type u} (f : Nat → Nat → α) (n i j : Nat)
     (h : (i, j) ∈ sqReg n) : get n (qt_of_fun f n) i j = f i j := by
@@ -137,7 +143,8 @@ theorem get_qt_of_fun {α : Type u} (f : Nat → Nat → α) (n i j : Nat)
           have hej : j - 2 ^ n + 2 ^ n = j := by omega
           simpa only [hei, hej] using hr
 
-/-- The original graded reconstruction theorem, under its original name. -/
+/-- **Correctness of function reconstruction by quadtrees.**
+The original graded reconstruction theorem, under its original name. -/
 theorem fdsa_chap13_ex02 {α : Type u} (f : Nat → Nat → α) (n i j : Nat) :
     (i, j) ∈ sqReg n → get n (qt_of_fun f n) i j = f i j :=
   get_qt_of_fun f n i j

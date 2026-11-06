@@ -27,7 +27,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Ten syntax-directed rules over canonical Pi, fixed static ranks and actual
+/-- **Runtime typing with guarded shared replication.**
+Ten syntax-directed rules over canonical Pi, fixed static ranks and actual
 ownership. Accept/serve may carry completed ambient annotations, never body capture. -/
 inductive HasType : Nat → ServiceEnv → Context → Proc → Prop where
   | nil {n : Nat} {Γ : ServiceEnv} {Δ : Context} :
@@ -76,7 +77,8 @@ inductive HasType : Nat → ServiceEnv → Context → Proc → Prop where
   | nu {n : Nat} {Γ : ServiceEnv} {Δ : Context} {c : Capability} {p : Proc} :
       Separated Γ Δ → HasType (n + 1) Γ (Context.bind c Δ) p → HasType n Γ Δ (.nu p)
 
-/-- Real ALL7-rule induction embeds finite ranked typing, including delegation;
+/-- **Finite ranked typing embeds into runtime typing under separation.**
+Real ALL7-rule induction embeds finite ranked typing, including delegation;
 there is no finite-judgement constructor in the new runtime typing. -/
 theorem HasType.of_finite {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : Conversion.RankedType n Δ p) (hs : Separated Γ Δ) : HasType n Γ Δ p := by

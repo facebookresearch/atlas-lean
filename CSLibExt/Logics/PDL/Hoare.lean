@@ -34,13 +34,15 @@ variable {World Atom Label : Type*}
   {M : Model World Atom Label} {P Q I : Set World}
   {a b : Program Atom Label}
 
-/-- Every execution of `a` from `P` ends in `Q`, without a termination
+/-- **Partial-correctness Hoare triple for PDL programs.**
+Every execution of `a` from `P` ends in `Q`, without a termination
 requirement. -/
 def Hoare (M : Model World Atom Label) (P : Set World)
     (a : Program Atom Label) (Q : Set World) : Prop :=
   ∀ ⦃s t⦄, s ∈ P → ProgRel M a s t → t ∈ Q
 
-/-- Partial correctness agrees with the canonical relation's core. -/
+/-- **Partial correctness as inclusion in the relational core.**
+Partial correctness agrees with the canonical relation's core. -/
 theorem hoare_iff_subset_core :
     Hoare M P a Q ↔ P ⊆ SetRel.core (a.toRelation M) Q := by
   constructor
@@ -49,21 +51,24 @@ theorem hoare_iff_subset_core :
   · intro h s t hP hR
     exact h hP hR
 
-/-- Hoare verification is equivalent to the KAT test inequality. -/
+/-- **Hoare triples as KAT test inequalities.**
+Hoare verification is equivalent to the KAT test inequality. -/
 theorem hoare_iff_test_le :
     Hoare M P a Q ↔ testSet P * a.toRelation M ≤
       a.toRelation M * testSet Q :=
   hoare_iff_subset_core.trans
     (test_mul_le_mul_test_iff P Q (a.toRelation M)).symm
 
-/-- The equivalent KAT absorption equation for verification. -/
+/-- **Hoare triples as KAT absorption equations.**
+The equivalent KAT absorption equation for verification. -/
 theorem hoare_iff_test_eq :
     Hoare M P a Q ↔ testSet P * a.toRelation M =
       testSet P * a.toRelation M * testSet Q :=
   hoare_iff_subset_core.trans
     (test_mul_eq_test_mul_test_iff P Q (a.toRelation M)).symm
 
-/-- Formula assertions connect Hoare verification to global PDL validity,
+/-- **Hoare triples with formula assertions as box validity.**
+Formula assertions connect Hoare verification to global PDL validity,
 not just an atomic-action modality. -/
 theorem hoare_iff_box (φ ψ : Formula Atom Label) :
     Hoare M {s | Sat M φ s} a {s | Sat M ψ s} ↔
@@ -76,19 +81,21 @@ theorem hoare_iff_box (φ ψ : Formula Atom Label) :
 
 namespace Hoare
 
-/-- Strengthen the precondition and weaken the postcondition. -/
+/-- **Hoare rule of consequence.** Strengthen the precondition and weaken the postcondition. -/
 theorem consequence {P' Q' : Set World} (h : Hoare M P a Q)
     (hP : P' ⊆ P) (hQ : Q ⊆ Q') : Hoare M P' a Q' :=
   fun _ _ hP' hR => hQ (h (hP hP') hR)
 
-/-- Sequential verification uses the first postcondition as the second
+/-- **Hoare rule for sequential composition.**
+Sequential verification uses the first postcondition as the second
 precondition. -/
 theorem seq (ha : Hoare M P a I) (hb : Hoare M I b Q) :
     Hoare M P (.seq a b) Q := by
   rintro s t hP ⟨u, hsa, hut⟩
   exact hb (ha hP hsa) hut
 
-/-- Nondeterministic choice is safe exactly when both branches are. -/
+/-- **Hoare rule for nondeterministic choice.**
+Nondeterministic choice is safe exactly when both branches are. -/
 theorem choice_iff :
     Hoare M P (.choice a b) Q ↔ Hoare M P a Q ∧ Hoare M P b Q := by
   constructor
@@ -99,7 +106,8 @@ theorem choice_iff :
     · exact ha hP hR
     · exact hb hP hR
 
-/-- A formula test requires the postcondition only where the test passes. -/
+/-- **Hoare rule for formula tests.**
+A formula test requires the postcondition only where the test passes. -/
 theorem test_iff (φ : Formula Atom Label) :
     Hoare M P (.test φ) Q ↔ P ∩ {s | Sat M φ s} ⊆ Q := by
   constructor
@@ -108,7 +116,8 @@ theorem test_iff (φ : Formula Atom Label) :
   · rintro h s t hP ⟨rfl, hφ⟩
     exact h ⟨hP, hφ⟩
 
-/-- A one-step invariant holds after every finite number of iterations,
+/-- **Hoare invariant rule for iteration.**
+A one-step invariant holds after every finite number of iterations,
 including zero, via CSLib's canonical closure-preservation theorem. -/
 theorem star (h : Hoare M I a I) : Hoare M I (.star a) I := by
   have hp : Relation.Preserves (ProgRel M a) I :=
@@ -118,7 +127,7 @@ theorem star (h : Hoare M I a I) : Hoare M I (.star a) I := by
 
 end Hoare
 
-/-- A guarded loop in the existing PDL syntax: iterate guarded body
+/-- **Guarded while loop in PDL.** A guarded loop in the existing PDL syntax: iterate guarded body
 steps, then test that the guard is false. -/
 def Program.whileDo (guard : Formula Atom Label)
     (body : Program Atom Label) : Program Atom Label :=
@@ -126,7 +135,8 @@ def Program.whileDo (guard : Formula Atom Label)
 
 namespace Hoare
 
-/-- The guarded-loop invariant rule is partial correctness, including
+/-- **Hoare invariant rule for guarded while loops.**
+The guarded-loop invariant rule is partial correctness, including
 zero-step exits; it does not guarantee termination. -/
 theorem whileDo (guard : Formula Atom Label)
     (h : Hoare M (I ∩ {s | Sat M guard s}) a I) :
@@ -138,7 +148,8 @@ theorem whileDo (guard : Formula Atom Label)
   rintro s t hI ⟨u, hR, rfl, hguard⟩
   exact ⟨hiter hI hR, hguard⟩
 
-/-- Verify a guarded loop using initialization, invariant preservation,
+/-- **While-loop rule with initialization and exit implication.**
+Verify a guarded loop using initialization, invariant preservation,
 and the exit implication to the desired postcondition. -/
 theorem whileDo_consequence (guard : Formula Atom Label)
     (hinit : P ⊆ I) (hbody : Hoare M (I ∩ {s | Sat M guard s}) a I)
@@ -146,7 +157,8 @@ theorem whileDo_consequence (guard : Formula Atom Label)
     Hoare M P (Program.whileDo guard a) Q :=
   (whileDo guard hbody).consequence hinit hexit
 
-/-- The guarded-loop rule is semantically complete for arbitrary set
+/-- **Semantic completeness of the while-loop invariant rule.**
+The guarded-loop rule is semantically complete for arbitrary set
 assertions. The witness is guarded-body reachability from `P`, independent
 of `Q`; this is not a completeness claim for a syntactic assertion language. -/
 theorem whileDo_iff_exists_invariant (guard : Formula Atom Label) :
@@ -170,7 +182,8 @@ theorem whileDo_iff_exists_invariant (guard : Formula Atom Label) :
 
 end Hoare
 
-/-- PDL induction restricted to states reachable from the initial world.
+/-- **PDL induction restricted to reachable states.**
+PDL induction restricted to states reachable from the initial world.
 This proves `[a*](φ → [a]φ) → (φ → [a*]φ)` without assuming preservation
 on unreachable states. -/
 theorem sat_box_star_induction {φ : Formula Atom Label} {s : World}
@@ -181,7 +194,8 @@ theorem sat_box_star_induction {φ : Formula Atom Label} {s : World}
   | refl => exact hinit
   | @tail u v hpath hstep' ih => exact hstep u hpath ih v hstep'
 
-/-- Concrete relational test absorption lifts through PDL iteration,
+/-- **Test absorption lifts through iteration.**
+Concrete relational test absorption lifts through PDL iteration,
 connecting the algebraic verification equation to closure invariance. -/
 theorem test_mul_star_absorption
     (h : testSet I * a.toRelation M =
@@ -190,7 +204,8 @@ theorem test_mul_star_absorption
       testSet I * a.star.toRelation M * testSet I :=
   hoare_iff_test_eq.mp (Hoare.star (hoare_iff_test_eq.mpr h))
 
-/-- A guarded-body verification equation implies the loop's exit
+/-- **Loop exit absorption from a guarded-body absorption equation.**
+A guarded-body verification equation implies the loop's exit
 verification equation over the same canonical relational carrier. -/
 theorem test_mul_whileDo_absorption (guard : Formula Atom Label)
     (h : testSet (I ∩ {s | Sat M guard s}) * a.toRelation M =

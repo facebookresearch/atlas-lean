@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- A completed frame is ignored by shared priority, with NO active-payload exemption. -/
+/-- **Inserting a completed entry preserves invocation priority.**
+A completed frame is ignored by shared priority, with NO active-payload exemption. -/
 theorem InvocationPriority.insert_completed {sig : ServiceSignature} {Δ : Context}
     (h : InvocationPriority sig Δ) {z : Key} {u : Capability} (hu : u.protocol.unfold = .done) :
     InvocationPriority sig (Δ.insert z u) := by
@@ -47,7 +48,8 @@ private theorem nonshared_lift {Γ : ServiceEnv} {a : Name}
   intro s sig hs hn
   exact h s sig hs (liftName_injective 0 hn)
 
-/-- ALL10 rules admit a fresh COMPLETED ambient annotation. Its name is scoped
+/-- **Weakening runtime typing by one fresh completed entry.**
+ALL10 rules admit a fresh COMPLETED ambient annotation. Its name is scoped
 and nonshared; accept/serve BODY ownership is unchanged, never captured. -/
 theorem HasType.weaken_completed {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) {z : Key} {u : Capability} (hz : z ∉ Δ)
@@ -166,7 +168,8 @@ theorem HasType.weaken_completed {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p :
     rw [← Context.bind_insert] at ht
     exact HasType.nu (hs.insert z u hshared) ht
 
-/-- A disjoint completed/scoped/nonshared finite ambient frame can be reattached.
+/-- **Weakening runtime typing by a disjoint completed context.**
+A disjoint completed/scoped/nonshared finite ambient frame can be reattached.
 The actual replica/accept BODY is not expanded by those annotations. -/
 theorem HasType.weaken_completed_union {n : Nat} {Γ : ServiceEnv} {Δ Θ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (hd : Finmap.Disjoint Δ Θ) (hc : Θ.Completed)
@@ -208,7 +211,8 @@ theorem HasType.weaken_completed_union {n : Nat} {Γ : ServiceEnv} {Δ Θ : Cont
       rw [Context.insert_union_right_of_fresh heD, hrestore] at ht'
       exact ht'
 
-/-- Removing an owned key preserves the shared priority inequalities on the remainder. -/
+/-- **Erasing an owned key preserves invocation priority.**
+Removing an owned key preserves the shared priority inequalities on the remainder. -/
 theorem InvocationPriority.erase {sig : ServiceSignature} {Δ : Context}
     (h : InvocationPriority sig Δ) (z : Key) : InvocationPriority sig (Δ.erase z) := by
   intro e c hc ha

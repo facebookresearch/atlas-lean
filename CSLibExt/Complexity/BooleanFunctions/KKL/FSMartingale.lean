@@ -47,7 +47,8 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The damped influence `Dₑ(ρ) = ∑_{S ∋ e} ρ^{2|S \ {e}|} (f̂(S) / √(p(1-p)))²` of coordinate `e`
+/-- **Damped influence of a coordinate.**
+The damped influence `Dₑ(ρ) = ∑_{S ∋ e} ρ^{2|S \ {e}|} (f̂(S) / √(p(1-p)))²` of coordinate `e`
   on the Boolean function `φ` under `μ_p`. -/
 noncomputable def fsm2_dampWeight (p ρ : ℝ) (φ : ConfigSpace ι → Bool) (e : ι) : ℝ :=
   ∑ S ∈ univ.filter (fun S : Finset ι => e ∈ S),
@@ -59,7 +60,8 @@ theorem fsm2_dampWeight_nonneg (p ρ : ℝ) (φ : ConfigSpace ι → Bool) (e : 
   unfold fsm2_dampWeight
   exact Finset.sum_nonneg (fun S _ => by positivity)
 
-/-- At `ρ = 1` the damped influence is the influence. -/
+/-- **Damped influence at $\rho = 1$ is the influence.**
+At `ρ = 1` the damped influence is the influence. -/
 theorem fsm2_dampWeight_one {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) (e : ι) :
     fsm2_dampWeight p 1 φ e
@@ -71,7 +73,8 @@ theorem fsm2_dampWeight_one {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   intro S _
   rw [one_pow, one_pow, one_mul, div_pow, one_div, ← div_eq_inv_mul]
 
-/-- Hypercontractive bound on the damped influence: `Dₑ(ρ) ≤ Infₑ^{2/q}` when `ρ² = 4p(1-p)(q-1)`
+/-- **Hypercontractive bound on the damped influence.**
+Hypercontractive bound on the damped influence: `Dₑ(ρ) ≤ Infₑ^{2/q}` when `ρ² = 4p(1-p)(q-1)`
   and `1 ≤ q ≤ 2`. -/
 theorem fsm2_dampWeight_le_hc {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
@@ -80,7 +83,7 @@ theorem fsm2_dampWeight_le_hc {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0
       ≤ (OSSS.infl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) e) ^ (2 / q) :=
   ptn_perCoord_hc hp0 hp1 h0 h1 hq1 hq2 hρsq φ e
 
-/-- The damped influence is at most the influence. -/
+/-- **Damped influence is at most the influence.** The damped influence is at most the influence. -/
 theorem fsm2_dampWeight_le_infl {p ρ : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (φ : ConfigSpace ι → Bool) (e : ι) :
     fsm2_dampWeight p ρ φ e
@@ -136,7 +139,8 @@ theorem fsm2_dampWeight_pos {p ρ : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hρ : 0 < 
       · exact hσ2pos
     positivity
 
-/-- The log-sum inequality for the influences against the damped influences, over the coordinates of
+/-- **Log-sum inequality for influences against damped influences.**
+The log-sum inequality for the influences against the damped influences, over the coordinates of
   positive influence. -/
 theorem fsm2_logSum_gain {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hρ : 0 < ρ) (_h1 : ρ ≤ 1)
     (_hq1 : 1 ≤ q) (_hq2 : q ≤ 2) (_hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
@@ -204,7 +208,8 @@ theorem fsm2_dampSupp_cap [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 
   intro e _
   exact fsm2_dampWeight_le_hc hp0 hp1 h0 h1 hq1 hq2 hρsq φ e
 
-/-- The capped log-sum estimate: `(∑ₑ Infₑ) · (2/q - 1) · log (1 / δ) ≤ ∑ₑ Infₑ · log (Infₑ /
+/-- **Capped log-sum estimate for damped influences.**
+The capped log-sum estimate: `(∑ₑ Infₑ) · (2/q - 1) · log (1 / δ) ≤ ∑ₑ Infₑ · log (Infₑ /
   Dₑ(ρ))` (over coordinates of positive influence), with `δ = maxₑ Infₑ ∈ (0, 1)`. -/
 theorem fsm2_logGain_capped [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (hρ : 0 < ρ) (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)

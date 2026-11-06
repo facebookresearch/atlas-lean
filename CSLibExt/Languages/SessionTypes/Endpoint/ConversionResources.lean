@@ -106,7 +106,8 @@ private theorem weaken_inpEndpoint {n k : Nat} {Δ : Context} {e z : Key}
       (Key.lift_ne_bound z r).symm] at hp
     exact hp
 
-/-- An unused completed endpoint may be added through every current typing
+/-- **Weakening conversion typing by a completed capability.**
+An unused completed endpoint may be added through every current typing
 constructor. Scope and freshness are explicit; active weakening is not admitted. -/
 theorem HasType.weaken_completed {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) {z : Key} {u : Capability} (hz : z ∉ Δ)
@@ -154,7 +155,8 @@ theorem HasType.weaken_completed {n : Nat} {Δ : Context} {p : Proc}
     rw [← Context.bind_insert] at ht
     exact HasType.nu ht
 
-/-- A disjoint completed context can be reattached to any typed process,
+/-- **Weakening conversion typing by a disjoint completed context.**
+A disjoint completed context can be reattached to any typed process,
 with the exact finite-map union required by parallel-nil congruence. -/
 theorem HasType.weaken_completed_union {n : Nat} {Δ Θ : Context} {p : Proc}
     (h : HasType n Δ p) (hd : Finmap.Disjoint Δ Θ) (hc : Θ.Completed)
@@ -204,7 +206,8 @@ theorem HasType.weaken_completed_union {n : Nat} {Δ Θ : Context} {p : Proc}
       rw [Context.insert_union_right_of_fresh heD, hrestore] at ht'
       exact ht'
 
-/-- Removing a parallel nil reattaches exactly its completed ownership;
+/-- **Removing a parallel nil preserves conversion typing.**
+Removing a parallel nil reattaches exactly its completed ownership;
 no active capability is silently dropped. -/
 theorem HasType.par_nil_elim {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ (.par p .nil)) : HasType n Δ p := by
@@ -277,7 +280,8 @@ private theorem erase_inpEndpoint {n k : Nat} {Δ : Context} {e z : Key}
       Context.erase_insert_ne hez] at hp
     exact hp
 
-/-- A role can be erased when its physical name is absent from every
+/-- **Erasing a role with an absent name preserves typing.**
+A role can be erased when its physical name is absent from every
 subject, payload and binder-adjusted continuation position of the typed term. -/
 theorem HasType.erase_nameAbsent {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) {z : Key} (hab : NameAbsent z.name p) :
@@ -312,7 +316,8 @@ theorem HasType.erase_nameAbsent {n : Nat} {Δ : Context} {p : Proc}
     · rw [Context.erase_of_notMem hm]
       exact HasType.nu hp
 
-/-- An owned capability with no physical-name occurrence must already be
+/-- **Owned capabilities with absent names are completed.**
+An owned capability with no physical-name occurrence must already be
 completed. This is derived from typing, including endpoint payload positions. -/
 theorem HasType.absent_lookup_completed {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) {z : Key} {t : Capability}

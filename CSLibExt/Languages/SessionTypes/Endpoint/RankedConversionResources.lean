@@ -27,7 +27,8 @@ private theorem fresh_owned_ne {Δ : Context} {e z : Key} {c : Capability}
   intro he
   exact hz (he ▸ Finmap.mem_of_lookup_eq_some hc)
 
-/-- Adding a fresh completed capability preserves every guard inequality
+/-- **Weakening conversion ranked typing by a completed capability.**
+Adding a fresh completed capability preserves every guard inequality
 through all seven rules. No active capability can be added by this theorem. -/
 theorem RankedType.weaken_completed {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) {z : Key} {u : Capability} (hz : z ∉ Δ)
@@ -119,7 +120,8 @@ theorem RankedType.weaken_completed {n : Nat} {Δ : Context} {p : Proc}
     rw [← Context.bind_insert] at ht
     exact RankedType.nu ht
 
-/-- Actual all-position physical-name absence permits erasure in the
+/-- **Erasing a key whose name is absent preserves conversion ranked typing.**
+Actual all-position physical-name absence permits erasure in the
 refinement too. Subject and payload lookup obligations are never discarded. -/
 theorem RankedType.erase_nameAbsent {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) {z : Key} (hab : NameAbsent z.name p) :
@@ -190,7 +192,8 @@ theorem RankedType.erase_nameAbsent {n : Nat} {Δ : Context} {p : Proc}
     · rw [Context.erase_of_notMem hm]
       exact RankedType.nu hp
 
-/-- Reattaching a disjoint completed finite context preserves all guards. -/
+/-- **Weakening conversion ranked typing by a disjoint completed context.**
+Reattaching a disjoint completed finite context preserves all guards. -/
 theorem RankedType.weaken_completed_union {n : Nat} {Δ Θ : Context} {p : Proc}
     (h : RankedType n Δ p) (hd : Finmap.Disjoint Δ Θ) (hc : Θ.Completed)
     (hs : ∀ e ∈ Θ, e.name.ClosedAt n) : RankedType n (Δ ∪ Θ) p := by

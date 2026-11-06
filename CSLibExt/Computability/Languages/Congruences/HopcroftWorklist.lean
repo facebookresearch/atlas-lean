@@ -25,7 +25,8 @@ namespace DFA.Hopcroft
 
 variable {α σ : Type*} [DecidableEq α] [DecidableEq σ]
 
-/-- Number of splitters with letter `b` containing `q`, with multiplicity.
+/-- **Splitter count of a state and letter.**
+Number of splitters with letter `b` containing `q`, with multiplicity.
 This applies both to the waiting list and to the actual popped trace. -/
 def splitterCount (q : σ) (b : α) (W : List (Finset σ × α)) : ℕ :=
   W.countP fun cb => decide (cb.2 = b ∧ q ∈ cb.1)
@@ -56,7 +57,8 @@ private theorem splitterCount_flatMap {β : Type*} (q : σ) (b : α)
 
 variable [FinEnum α]
 
-/-- Replacement contributes one token at a state in the parent block;
+/-- **Splitter count of newly added splitters.**
+Replacement contributes one token at a state in the parent block;
 otherwise only membership in the smaller half contributes a token. -/
 theorem splitterCount_newSplitters (q : σ) (b : α)
     (W : List (Finset σ × α)) (pre D : Finset σ) :
@@ -141,7 +143,8 @@ private theorem splitterCount_generated {P : List (Finset σ)}
     subst E
     exact hs (of_decide_eq_true hEs)
 
-/-- The exact token update at a state. Only its unique parent block can
+/-- **Splitter count update after one Hopcroft round.**
+The exact token update at a state. Only its unique parent block can
 contribute a new token, even when other blocks split in the same round. -/
 theorem splitterCount_roundW (M : DFA α σ) {P : List (Finset σ)}
     (hP : IsPartition P) (W : List (Finset σ × α))
@@ -160,7 +163,8 @@ theorem splitterCount_roundW (M : DFA α σ) {P : List (Finset σ)}
   by_cases hs : Splits (preimage M C a) D <;> simp [hs, hq]
 
 omit [FinEnum α] [Fintype σ] in
-/-- A waiting entry supplies a token; duplicate entries remain counted. -/
+/-- **Waiting entries give positive splitter count.**
+A waiting entry supplies a token; duplicate entries remain counted. -/
 theorem splitterCount_pos_of_mem (q : σ) (b : α)
     {W : List (Finset σ × α)} {D : Finset σ}
     (hW : (D, b) ∈ W) (hq : q ∈ D) : 0 < splitterCount q b W := by
@@ -170,7 +174,8 @@ theorem splitterCount_pos_of_mem (q : σ) (b : α)
   simp [hq] at hn
 
 omit [DecidableEq α] [FinEnum α] in
-/-- A refined block containing `q` is a subset of the old block
+/-- **Refined Hopcroft blocks lie inside their old blocks.**
+A refined block containing `q` is a subset of the old block
 containing `q`. Both partitions are the canonical Hopcroft partitions. -/
 theorem IsPartition.subset_of_mem_roundP (M : DFA α σ)
     {P : List (Finset σ)} (hP : IsPartition P)
@@ -210,7 +215,8 @@ private theorem log_child_lt_of_mem_smaller (M : DFA α σ)
         (Finset.card_ne_zero.mpr ⟨q, hqE⟩)).symm
     _ ≤ Nat.log 2 D.card := Nat.log_mono_right (by omega)
 
-/-- One refinement cannot increase logarithmic block-size credit plus
+/-- **Potential inequality for one Hopcroft refinement round.**
+One refinement cannot increase logarithmic block-size credit plus
 pending-token credit. Replacing a pending splitter spends no new credit;
 adding a nonpending smaller half spends one logarithmic unit. -/
 theorem splitterCount_round_potential (M : DFA α σ)
@@ -233,7 +239,8 @@ theorem splitterCount_round_potential (M : DFA α σ)
   · omega
   · omega
 
-/-- Total state/letter charging along the actual execution. The bound
+/-- **Splitter count bound along a Hopcroft execution.**
+Total state/letter charging along the actual execution. The bound
 includes initial tokens and tokens still pending through replacements.
 No amortized bound is assumed in the execution invariant. -/
 theorem splitterCount_hopcroftSplitters_le (M : DFA α σ) (k : ℕ)
@@ -257,7 +264,8 @@ theorem splitterCount_hopcroftSplitters_le (M : DFA α σ) (k : ℕ)
       simp only [hopcroftSplitters, splitterCount_cons]
       omega
 
-/-- Initially there is at most one token for each state and letter. -/
+/-- **Initial splitter count is at most one.**
+Initially there is at most one token for each state and letter. -/
 theorem splitterCount_initW_le (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] (q : σ) (b : α) :
     splitterCount q b (initW M) ≤ 1 := by
@@ -277,7 +285,8 @@ theorem splitterCount_initW_le (M : DFA α σ)
     · simp [splitterCount, List.countP_map, Function.comp_def, hq]
   · simp
 
-/-- Each state is processed with a fixed letter at most `log₂ n + 1`
+/-- **Hopcroft visits each of $n$ states at most $\log_2 n + 1$ times per letter.**
+Each state is processed with a fixed letter at most `log₂ n + 1`
 times during any prefix of the actual initialized Hopcroft execution. -/
 theorem splitterCount_init_trace_le (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] (k : ℕ) (q : σ) (b : α) :
@@ -291,7 +300,8 @@ theorem splitterCount_init_trace_le (M : DFA α σ)
   omega
 
 omit [DecidableEq α] in
-/-- Every popped splitter has a nonempty block, including splitters whose
+/-- **Popped Hopcroft splitters are nonempty.**
+Every popped splitter has a nonempty block, including splitters whose
 predecessor set is empty. -/
 theorem nonempty_of_mem_hopcroftSplitters (M : DFA α σ) (k : ℕ)
     {P : List (Finset σ)} {W : List (Finset σ × α)} (hI : Inv M P W)

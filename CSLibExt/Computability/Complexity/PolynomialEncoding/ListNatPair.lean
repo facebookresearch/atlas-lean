@@ -54,7 +54,8 @@ private theorem blocks_projection_length_le (bs : List (List Bool))
       length_delimit] at hb ⊢
     omega
 
-/-- Both projected canonical lists together are bounded by four times
+/-- **Projected pair lists total at most four times the input length.**
+Both projected canonical lists together are bounded by four times
 the original raw list length, including noncanonical input payloads. -/
 theorem projection_length_le {x : List Bool} {as : List (Nat × Nat)}
     (h : bitDecode x = some as) :
@@ -66,7 +67,8 @@ theorem projection_length_le {x : List Bool} {as : List (Nat × Nat)}
   rw [blocks_decode_sound hb] at h ⊢
   exact blocks_projection_length_le bs as h
 
-/-- Raw outer input, two reversed accumulators, two outputs, and the
+/-- **Stacks of the pair-list projector.**
+Raw outer input, two reversed accumulators, two outputs, and the
 existing Nat-pair component's workspace. -/
 inductive K | input | acc (right : Bool) | output (right : Bool)
   | pair (k : NatPair.K)
@@ -81,7 +83,8 @@ instance : Fintype K where
     | acc b | output b => cases b <;> simp
     | pair k => simp
 
-/-- Read one outer frame, normalize its pair, emit both fields, repeat. -/
+/-- **Control labels of the pair-list projector.**
+Read one outer frame, normalize its pair, emit both fields, repeat. -/
 inductive Lab | loop | block | back | pair (l : NatPair.Lab)
   | emit (right : Bool) | finish (right : Bool) | good | bad
   deriving DecidableEq
@@ -95,19 +98,22 @@ instance : Fintype Lab where
     | emit b | finish b => cases b <;> simp
     | pair l => simp
 
-/-- The Nat-pair component is embedded without changing its alphabets. -/
+/-- **Stack embedding of the pair normalizer in the pair-list projector.**
+The Nat-pair component is embedded without changing its alphabets. -/
 def pairEmb : SEmb (fun _ : NatPair.K => Bool) (fun _ : K => Bool) where
   e := K.pair
   inj _ _ h := K.pair.inj h
   ι _ := Equiv.refl Bool
 
-/-- Only the pair component's actual halts are redirected. -/
+/-- **Pair-normalizer halt redirection in the pair-list projector.**
+Only the pair component's actual halts are redirected. -/
 def pairLabel : NatPair.Lab → Lab
   | .good => .emit false
   | .bad => .bad
   | l => .pair l
 
-/-- Concrete outer parsing, pair normalization, and two framed streams. -/
+/-- **Program of the pair-list projector.**
+Concrete outer parsing, pair normalization, and two framed streams. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
   | .loop => .peek .input (fun _ o => o.isSome) <| .branch id
       (.goto fun _ => .block) (.goto fun _ => .finish false)
@@ -123,7 +129,8 @@ def prog : Lab → TM2.Stmt (fun _ : K => Bool) Lab Bool
       (.finish right) (if right then .good else .finish true)
   | .good | .bad => .halt
 
-/-- The exact eleven-stack invariant, with caller output suffixes. -/
+/-- **Eleven-stack invariant of the pair-list projector.**
+The exact eleven-stack invariant, with caller output suffixes. -/
 def st (input aw av ow ov : List Bool) (P : NatPair.K → List Bool) :
     K → List Bool
   | .input => input
@@ -253,7 +260,8 @@ private theorem emit_pair_run (left right r aw av ow ov : List Bool)
   rw [he] at hr₂
   exact (hr₁.trans hr₂).of_eq (by omega)
 
-/-- One successfully decoded item contributes one canonical weight
+/-- **Pair-list projector emits one weight and one value frame per item.**
+One successfully decoded item contributes one canonical weight
 frame and one canonical value frame, with pair scratch emptied again. -/
 theorem element_run {p : List Bool} {m n : Nat}
     (h : bitDecode p = some (m, n)) (r aw av ow ov : List Bool) (v : Bool) :
@@ -272,7 +280,8 @@ theorem element_run {p : List Bool} {m n : Nat}
   exact (((hr₁.le le_rfl).trans hr₂).trans (hr₃.le le_rfl)).mono
     (by simp only [length_delimit]; omega)
 
-/-- The main loop emits both lists in reverse, ready for the two
+/-- **Pair-list projector main loop emits both lists in reverse.**
+The main loop emits both lists in reverse, ready for the two
 final stack reversals. Order and multiplicity follow the decoded input. -/
 theorem blocks_run (bs : List (List Bool)) (as : List (Nat × Nat))
     (h : bitDecode (bs.map delimit).flatten = some as)
@@ -358,7 +367,8 @@ private theorem finish_run (weights values ow ov : List Bool) (v : Bool) :
   rw [he] at hr₂
   exact (hr₁.trans hr₂).of_eq (by simp; omega)
 
-/-- Successful generic decoding yields the canonical weight and value
+/-- **Pair-list projector yields canonical weight and value lists.**
+Successful generic decoding yields the canonical weight and value
 lists on separate stacks. All input and scratch stacks are emptied. -/
 theorem run_some {x : List Bool} {as : List (Nat × Nat)}
     (h : bitDecode x = some as) (ow ov : List Bool) (v : Bool) :
@@ -455,7 +465,8 @@ private theorem run_none_aux (fuel : Nat) :
           exact ⟨w, S, ((element_run hp r aw av ow ov v).trans rest).mono
             (by simp only [List.length_append]; omega)⟩
 
-/-- Malformed outer framing or any malformed pair reaches `bad` in
+/-- **Pair-list projector fails on malformed input in linear time.**
+Malformed outer framing or any malformed pair reaches `bad` in
 linear time. Failed workspaces may contain partial data and need clearing. -/
 theorem run_none {x : List Bool}
     (h : bitDecode (α := List (Nat × Nat)) x = none)
@@ -465,7 +476,8 @@ theorem run_none {x : List Bool}
       ⟨some .bad, w, S⟩ :=
   run_none_aux x.length x aw av ow ov v le_rfl h
 
-/-- The concrete eleven-stack projector uses the existing Host model. -/
+/-- **Pair-list projector as a host component.**
+The concrete eleven-stack projector uses the existing Host model. -/
 abbrev component : Host.Comp where
   K := K
   Γ := fun _ => Bool
@@ -484,7 +496,8 @@ abbrev component : Host.Comp where
       | pair k => cases k <;> decide
       | buffer | left | right => decide
 
-/-- Total decoder outcome. Success projects canonical lists with empty
+/-- **Pair-list projector always terminates at the decoding outcome.**
+Total decoder outcome. Success projects canonical lists with empty
 scratch; failure promises termination, not reusable workspace contents. -/
 theorem run (x : List Bool) (v : Bool) :
     ∃ w S, RunLe prog (16 * x.length + 3)
@@ -509,7 +522,8 @@ theorem run (x : List Bool) (v : Bool) :
     obtain rfl := Option.some.inj hb
     rfl
 
-/-- Any stack embedding preserves the external frame on both outcomes.
+/-- **Embedded pair-list projector preserves outside stacks.**
+Any stack embedding preserves the external frame on both outcomes.
 Only mapped-label reachability is promised: callers establish their own
 continuation-label separation. Failed private workspace needs clearing. -/
 theorem run_embedded {J L : Type} [DecidableEq J] {Γ : J → Type}

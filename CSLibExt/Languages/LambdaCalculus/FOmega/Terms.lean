@@ -25,7 +25,7 @@ operators.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega
 
-/-- Pure terms at a kind telescope and a finite term-variable depth. -/
+/-- **Scoped pure Fω terms.** Pure terms at a kind telescope and a finite term-variable depth. -/
 inductive Tm : List Kind → Nat → Type where
   | var {Δ : List Kind} {m : Nat} : Fin m → Tm Δ m
   | lam {Δ : List Kind} {m : Nat} : Ty Δ .star → Tm Δ (m + 1) → Tm Δ m
@@ -33,12 +33,13 @@ inductive Tm : List Kind → Nat → Type where
   | tabs {Δ : List Kind} {m : Nat} {κ : Kind} : Tm (κ :: Δ) m → Tm Δ m
   | tapp {Δ : List Kind} {m : Nat} {κ : Kind} : Tm Δ m → Ty Δ κ → Tm Δ m
 
-/-- An ordered unrestricted term context of kind-`star` types. -/
+/-- **Term contexts of pure Fω.** An ordered unrestricted term context of kind-`star` types. -/
 abbrev Ctx (Δ : List Kind) (m : Nat) := Fin m → Ty Δ .star
 
 namespace Tm
 
-/-- Substitute kinded type variables in all annotations and type arguments. -/
+/-- **Type substitution in Fω terms.**
+Substitute kinded type variables in all annotations and type arguments. -/
 @[simp] def tySubst {Δ Ε : List Kind} {m : Nat} (σ : Ty.Sub Δ Ε) :
     Tm Δ m → Tm Ε m
   | .var i => .var i
@@ -47,11 +48,13 @@ namespace Tm
   | .tabs b => .tabs (tySubst (Ty.liftSub σ) b)
   | .tapp f A => .tapp (tySubst σ f) (A.subst σ)
 
-/-- Rename type variables without changing term variables. -/
+/-- **Type-variable renaming in Fω terms.**
+Rename type variables without changing term variables. -/
 def tyRename {Δ Ε : List Kind} {m : Nat} (ρ : KRen Δ Ε) (t : Tm Δ m) :
     Tm Ε m := tySubst (fun {_} x => .var (ρ x)) t
 
-/-- Rename term variables, lifting only beneath term lambdas. -/
+/-- **Term-variable renaming in Fω terms.**
+Rename term variables, lifting only beneath term lambdas. -/
 @[simp] def rename {Δ : List Kind} {m k : Nat} (ρ : Fin m → Fin k) :
     Tm Δ m → Tm Δ k
   | .var i => .var (ρ i)
@@ -60,12 +63,14 @@ def tyRename {Δ Ε : List Kind} {m : Nat} (ρ : KRen Δ Ε) (t : Tm Δ m) :
   | .tabs b => .tabs (rename ρ b)
   | .tapp f A => .tapp (rename ρ f) A
 
-/-- Lift a term substitution beneath one term binder. -/
+/-- **Lifting a term substitution under a term binder.**
+Lift a term substitution beneath one term binder. -/
 def liftSub {Δ : List Kind} {m k : Nat} (σ : Fin m → Tm Δ k) :
     Fin (m + 1) → Tm Δ (k + 1) :=
   Fin.cases (.var 0) (fun i => rename Fin.succ (σ i))
 
-/-- Term substitution avoids capture in both namespaces. -/
+/-- **Simultaneous term substitution in Fω.**
+Term substitution avoids capture in both namespaces. -/
 @[simp] def subst {Δ : List Kind} {m k : Nat} (σ : Fin m → Tm Δ k) :
     Tm Δ m → Tm Δ k
   | .var i => σ i
@@ -74,7 +79,7 @@ def liftSub {Δ : List Kind} {m k : Nat} (σ : Fin m → Tm Δ k) :
   | .tabs b => .tabs (subst (fun i => tyRename KVar.succ (σ i)) b)
   | .tapp f A => .tapp (subst σ f) A
 
-/-- Discharge the newest term binder. -/
+/-- **Instantiation of an Fω term binder.** Discharge the newest term binder. -/
 def instantiate {Δ : List Kind} {m : Nat} (b : Tm Δ (m + 1))
     (a : Tm Δ m) : Tm Δ m := subst (Fin.cases a Tm.var) b
 

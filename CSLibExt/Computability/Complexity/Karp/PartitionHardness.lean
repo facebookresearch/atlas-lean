@@ -28,7 +28,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.Partition.HardnessMachine
 open Turing Function TM2Program TM2Embedding BitstringEncoding
 open Cslib.Complexity.Karp Cslib.Complexity.PolynomialEncoding
 
-/-- Disjoint workspaces, a preserved input, and comparison scratch stacks. -/
+/-- **Stacks of the raw-input SUBSET-SUM to PARTITION machine.**
+Disjoint workspaces, a preserved input, and comparison scratch stacks. -/
 inductive K
   | norm (k : ListNatMachine.K) | core (k : HardnessCore.K)
   | raw | buffer | left | right
@@ -38,7 +39,8 @@ inductive K
   | .core k => HardnessCore.Γ k
   | _ => Bool
 
-/-- Copy, exact normalization, canonicality check, and numeric computation. -/
+/-- **Control labels of the raw-input SUBSET-SUM to PARTITION machine.**
+Copy, exact normalization, canonicality check, and numeric computation. -/
 inductive Lab
   | copy1 | copy2 | norm (l : ListNatMachine.Lab) | nonempty | compare
   | restore | start | core (l : HardnessCore.Lab) | bad | done
@@ -63,7 +65,8 @@ def coreLabel : HardnessCore.Lab → Lab
   | .done => .done
   | l => .core l
 
-/-- A total finite-stack transducer for the exact source codec. -/
+/-- **Program of the raw-input SUBSET-SUM to PARTITION machine.**
+A total finite-stack transducer for the exact source codec. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .copy1 => moveB .raw .buffer some id .copy1 .copy2
   | .copy2 => splitB .buffer .raw (.norm .input) some id id .copy2 (.norm .loop)
@@ -268,7 +271,8 @@ private theorem normalized_run (x : List Bool) (v : Bool)
       (by rw [hf .left (fun j => by simp [normEmb]), hl]) hc'
     exact ⟨v₂, S₂, (hr.trans h₂).mono (by nlinarith), ho⟩
 
-/-- Total raw-input hardness reduction, with exact source rejection and
+/-- **Quadratic run of the raw-input SUBSET-SUM to PARTITION machine.**
+Total raw-input hardness reduction, with exact source rejection and
 an explicit bound polynomial in encoded length, not numeric magnitude. -/
 theorem run (x : List Bool) :
     ∃ v S, RunLe prog (60 * (x.length + 1) ^ 2)
@@ -311,7 +315,8 @@ noncomputable instance : Fintype Lab := Fintype.ofList
     Finset.univ.toList.map Lab.norm ++ Finset.univ.toList.map Lab.core)
   (by intro l; cases l <;> simp)
 
-/-- The all-string hardness reduction in the existing finite host. -/
+/-- **Raw-input SUBSET-SUM to PARTITION machine as a host component.**
+The all-string hardness reduction in the existing finite host. -/
 noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   K := K
   Γ := Γ
@@ -325,7 +330,8 @@ noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   ks_nodup := Finset.nodup_toList _
   mem_ks k := by simp
 
-/-- The total SUBSET-SUM-to-PARTITION map is polynomial-time. -/
+/-- **SUBSET-SUM to PARTITION map is polynomial-time.**
+The total SUBSET-SUM-to-PARTITION map is polynomial-time. -/
 theorem isPolyTime_reduceFromSubsetSum : ComplexityTheory.IsPolyTime
     reduceFromSubsetSum :=
   Cslib.Complexity.Host.isPolyTime_reduction

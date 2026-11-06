@@ -24,13 +24,15 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Left children inherit actual peer compatibility. -/
+/-- **Compatibility restricts to the left part of a union.**
+Left children inherit actual peer compatibility. -/
 theorem Compatible.union_left {Γ Θ : Context} (h : Compatible (Γ ∪ Θ)) : Compatible Γ :=
   fun e c d hc hd => h e c d
     ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hc)).trans hc)
     ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hd)).trans hd)
 
-/-- A disjoint right child inherits actual peer compatibility without shadowing. -/
+/-- **Compatibility restricts to the right part of a disjoint union.**
+A disjoint right child inherits actual peer compatibility without shadowing. -/
 theorem Compatible.union_right {Γ Θ : Context} (h : Compatible (Γ ∪ Θ))
     (hd : Finmap.Disjoint Γ Θ) : Compatible Θ := by
   intro e c d hc hp
@@ -38,7 +40,8 @@ theorem Compatible.union_right {Γ Θ : Context} (h : Compatible (Γ ∪ Θ))
     ((Finmap.lookup_union_right (hd.symm _ _ _ (Finmap.mem_of_lookup_eq_some hc))).trans hc)
     ((Finmap.lookup_union_right (hd.symm _ _ _ (Finmap.mem_of_lookup_eq_some hp))).trans hp)
 
-/-- A chosen exact dual private pair extends a semantically compatible interface. -/
+/-- **Binding a dual private pair preserves compatibility.**
+A chosen exact dual private pair extends a semantically compatible interface. -/
 theorem Compatible.bind {Δ : Context} (h : Compatible Δ) (c : Capability) :
     Compatible (Context.bind c Δ) := by
   intro e u v hu hv
@@ -67,7 +70,8 @@ theorem Compatible.bind {Δ : Context} (h : Compatible Δ) (c : Capability) :
     have hv' : Δ.lookup d.opposite = some v := Context.lookup_bind_outer.mp (hep ▸ hv)
     exact h d u v hu' hv'
 
-/-- At a semantically balanced outer interface, binding an exact dual private
+/-- **Binding a dual private pair preserves balance.**
+At a semantically balanced outer interface, binding an exact dual private
 pair retains balance for the pair and every actual outer peer. -/
 theorem Balanced.bind {Δ : Context} (h : Balanced Δ) (c : Capability) :
     Balanced (Context.bind c Δ) := by
@@ -93,7 +97,8 @@ theorem Balanced.bind {Δ : Context} (h : Balanced Δ) (c : Capability) :
     have hep : Key.mapName (liftName 0) d.opposite = e.opposite := congrArg Key.opposite he
     exact ⟨v, hep ▸ Context.lookup_bind_outer.mpr hv, hr⟩
 
-/-- Faithful projection retains an actual private-pair advance OR the actual
+/-- **Semantic advance under a private binding is private or outer.**
+Faithful projection retains an actual private-pair advance OR the actual
 outer advance and unchanged bound pair. It never chooses an arbitrary Xi. -/
 theorem SemanticAdvance.project_bind {cap : Capability} {Δ Ξ : Context}
     (h : SemanticAdvance (Context.bind cap Δ) Ξ) :
@@ -156,7 +161,8 @@ theorem SemanticAdvance.project_bind {cap : Capability} {Δ Ξ : Context}
         SemanticAdvance.matched hca hda he hh ht, ?_⟩
       rw [Context.bind_insert_outer, Context.bind_insert_outer, ha, hap]
 
-/-- An actual outer semantic advance lifts without changing its private pair. -/
+/-- **Outer semantic advances lift past a private binding.**
+An actual outer semantic advance lifts without changing its private pair. -/
 theorem SemanticAdvance.bind_outer {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ) (c : Capability) :
     SemanticAdvance (Context.bind c Δ) (Context.bind c Ξ) := by
   cases h with
@@ -165,7 +171,8 @@ theorem SemanticAdvance.bind_outer {Δ Ξ : Context} (h : SemanticAdvance Δ Ξ)
     exact SemanticAdvance.matched (Context.lookup_bind_outer.mpr ha)
       (Context.lookup_bind_outer.mpr hb) he hh ht
 
-/-- Pointwise semantic recoding retains actual paired domain and cap ranks. -/
+/-- **Equivalent retyping preserves semantic balance.**
+Pointwise semantic recoding retains actual paired domain and cap ranks. -/
 theorem Balanced.retype {Δ Ξ : Context} (h : Balanced Δ) (he : ContextEquivalent Δ Ξ) :
     Balanced Ξ := by
   intro e c hc
@@ -174,7 +181,8 @@ theorem Balanced.retype {Δ Ξ : Context} (h : Balanced Δ) (he : ContextEquival
   obtain ⟨d, hd, hrd⟩ := he.lookup hb
   exact ⟨d, hd, (hrd.symm.trans hrb).trans hra.dual.symm⟩
 
-/-- Disjoint balanced components form a balanced ownership frame union. -/
+/-- **Union of disjoint balanced contexts is balanced.**
+Disjoint balanced components form a balanced ownership frame union. -/
 theorem Balanced.union {Γ Θ : Context} (hΓ : Balanced Γ) (hΘ : Balanced Θ)
     (hd : Finmap.Disjoint Γ Θ) : Balanced (Γ ∪ Θ) := by
   intro e c hc

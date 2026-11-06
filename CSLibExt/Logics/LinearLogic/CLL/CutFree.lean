@@ -29,7 +29,8 @@ variable {Atom : Type u} {a b : Proposition Atom} {Γ Δ Θ : Sequent Atom}
 
 open Cslib.Logic.InferenceSystem
 
-/-- A proof is cut-free if it does not contain any applications of rule cut. -/
+/-- **Cut-freeness of a proof.**
+A proof is cut-free if it does not contain any applications of rule cut. -/
 @[simp]
 def Proof.IsCutFree {Γ : Sequent Atom} : ⇓Γ → Prop
   | ax | one | top => True
@@ -38,7 +39,8 @@ def Proof.IsCutFree {Γ : Sequent Atom} : ⇓Γ → Prop
   | tensor p q | .with p q => p.IsCutFree ∧ q.IsCutFree
   | cut _ _ => False
 
-/-- The source predicate agrees exactly with the pinned Boolean predicate. -/
+/-- **Cut-freeness predicate agrees with the Boolean check.**
+The source predicate agrees exactly with the pinned Boolean predicate. -/
 theorem Proof.isCutFree_iff_cutFree {Γ : Sequent Atom} (p : Proof Γ) :
     p.IsCutFree ↔ p.cutFree := by
   induction p <;> simp_all [Proof.IsCutFree, Proof.cutFree]
@@ -96,7 +98,7 @@ theorem isCutFree_bang {a : Proposition Atom} {Γ : Sequent Atom}
     {hΓ : Γ.allQuest} {p : Proof (a ::ₘ Γ)} (hp : @Proof.IsCutFree Atom (a ::ₘ Γ) p) :
     @Proof.IsCutFree Atom ((!a) ::ₘ Γ) (Proof.bang (a := a) (Γ := Γ) hΓ p) := hp
 
-/-- Recursor for cut-free proofs: never sees the `cut` case. -/
+/-- **Recursor for cut-free proofs.** Recursor for cut-free proofs: never sees the `cut` case. -/
 @[induction_eliminator, cases_eliminator, elab_as_elim]
 def Proof.IsCutFree.rec
     {motive : {Γ : Sequent Atom} → {p : Proof Γ} → (h : p.IsCutFree) → Sort v}
@@ -151,19 +153,20 @@ def Proof.IsCutFree.rec
     | .cut _ _, h => nomatch h
   go h
 
-/-- Transporting a conclusion preserves cut-freeness. -/
+/-- **Conclusion transport preserves cut-freeness.**
+Transporting a conclusion preserves cut-freeness. -/
 @[simp, scoped grind .]
 theorem Proof.isCutFree_rwConclusion (h : Γ = Δ) (p : Proof Γ)
     (hp : p.IsCutFree) : (p.rwConclusion h).IsCutFree := by grind
 
-/-- Tag for the cut-free fragment of CLL. -/
+/-- **Cut-free fragment of classical linear logic.** Tag for the cut-free fragment of CLL. -/
 opaque CF : Type := Empty
 
 namespace CF
 
 open scoped CLL.Proof Sequent
 
-/-- Proofs in the CF inference system. -/
+/-- **Proofs of the cut-free inference system.** Proofs in the CF inference system. -/
 abbrev Proof (Γ : Sequent Atom) := { p : ⇓Γ // p.IsCutFree }
 
 instance : InferenceSystem CF (Sequent Atom) := ⟨CF.Proof⟩
@@ -171,7 +174,7 @@ instance : InferenceSystem CF (Sequent Atom) := ⟨CF.Proof⟩
 instance {Γ : Sequent Atom} : Coe (CF⇓Γ) (⇓Γ) where
   coe p := p.val
 
-/-- Rewrites the conclusion of a cut-free proof.
+/-- **Rewriting the conclusion of a cut-free proof.** Rewrites the conclusion of a cut-free proof.
 If `h` is omitted, tries to prove the equality using `grind only [multiset]`. -/
 def Proof.rwConclusion {Γ Δ : Sequent Atom} (h : Γ = Δ := by grind only [multiset]) (p : CF⇓Γ) :
     CF⇓Δ := ⟨CLL.Proof.rwConclusion h p.val, CLL.Proof.isCutFree_rwConclusion h p.val p.property⟩
@@ -180,61 +183,62 @@ def Proof.rwConclusion {Γ Δ : Sequent Atom} (h : Γ = Δ := by grind only [mul
 theorem Proof.rwConclusion_val {Γ Δ : Sequent Atom} (h : Γ = Δ) (p : CF⇓Γ) :
     (p.rwConclusion h).val = CLL.Proof.rwConclusion h p.val := rfl
 
-/-- Axiom for CF. -/
+/-- **Axiom rule of the cut-free system.** Axiom for CF. -/
 def Proof.ax {a : Proposition Atom} : CF⇓({a, a⫠} : Sequent Atom) := ⟨CLL.Proof.ax, isCutFree_ax⟩
 
-/-- Rule `1` for CF. -/
+/-- **Unit rule $1$ of the cut-free system.** Rule `1` for CF. -/
 def Proof.one : CF⇓({1} : Sequent Atom) := ⟨CLL.Proof.one, isCutFree_one⟩
 
-/-- Rule `⊤` for CF. -/
+/-- **Top rule of the cut-free system.** Rule `⊤` for CF. -/
 def Proof.top {Γ : Sequent Atom} :
     CF⇓((⊤ : Proposition Atom) ::ₘ Γ) :=
   ⟨CLL.Proof.top, isCutFree_top⟩
 
-/-- Rule `⊥` for CF. -/
+/-- **Bottom rule of the cut-free system.** Rule `⊥` for CF. -/
 def Proof.bot {Γ : Sequent Atom} (p : CF⇓Γ) : CF⇓(⊥ ::ₘ Γ) :=
   ⟨CLL.Proof.bot p.val, isCutFree_bot p.property⟩
 
-/-- Rule `⅋` for CF. -/
+/-- **Par rule of the cut-free system.** Rule `⅋` for CF. -/
 def Proof.parr {a b : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓(a ::ₘ b ::ₘ Γ)) :
     CF⇓((a ⅋ b) ::ₘ Γ) := ⟨CLL.Proof.parr p.val, isCutFree_parr p.property⟩
 
-/-- Rule `⊗` for CF. -/
+/-- **Tensor rule of the cut-free system.** Rule `⊗` for CF. -/
 def Proof.tensor {a b : Proposition Atom} {Γ Δ : Sequent Atom}
     (p : CF⇓(a ::ₘ Γ)) (q : CF⇓(b ::ₘ Δ)) : CF⇓((a ⊗ b) ::ₘ (Γ + Δ)) :=
   ⟨CLL.Proof.tensor p.val q.val, isCutFree_tensor p.property q.property⟩
 
-/-- Rule `⊕₁` for CF. -/
+/-- **First plus rule of the cut-free system.** Rule `⊕₁` for CF. -/
 def Proof.oplus₁ {a b : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓(a ::ₘ Γ)) :
     CF⇓((a ⊕ b) ::ₘ Γ) :=
   ⟨CLL.Proof.oplus₁ p.val, isCutFree_oplus₁ p.property⟩
 
-/-- Rule `⊕₂` for CF. -/
+/-- **Second plus rule of the cut-free system.** Rule `⊕₂` for CF. -/
 def Proof.oplus₂ {a b : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓(b ::ₘ Γ)) :
     CF⇓((a ⊕ b) ::ₘ Γ) :=
   ⟨CLL.Proof.oplus₂ p.val, isCutFree_oplus₂ p.property⟩
 
-/-- Rule `&` for CF. -/
+/-- **With rule of the cut-free system.** Rule `&` for CF. -/
 def Proof.with {a b : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓(a ::ₘ Γ)) (q : CF⇓(b ::ₘ Γ)) :
     CF⇓((a & b) ::ₘ Γ) := ⟨CLL.Proof.with p.val q.val, isCutFree_with p.property q.property⟩
 
-/-- Rule `?` (dereliction) for CF. -/
+/-- **Dereliction rule of the cut-free system.** Rule `?` (dereliction) for CF. -/
 def Proof.quest {a : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓(a ::ₘ Γ)) : CF⇓(ʔa ::ₘ Γ) :=
   ⟨CLL.Proof.quest p.val, isCutFree_quest p.property⟩
 
-/-- Rule `?` (weaken) for CF. -/
+/-- **Weakening rule of the cut-free system.** Rule `?` (weaken) for CF. -/
 def Proof.weaken {a : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓Γ) : CF⇓(ʔa ::ₘ Γ) :=
   ⟨CLL.Proof.weaken p.val, isCutFree_weaken p.property⟩
 
-/-- Rule `?` (contract) for CF. -/
+/-- **Contraction rule of the cut-free system.** Rule `?` (contract) for CF. -/
 def Proof.contract {a : Proposition Atom} {Γ : Sequent Atom} (p : CF⇓(ʔa ::ₘ ʔa ::ₘ Γ)) :
     CF⇓(ʔa ::ₘ Γ) := ⟨CLL.Proof.contract p.val, isCutFree_contract p.property⟩
 
-/-- Rule `!` (bang/promotion) for CF. -/
+/-- **Promotion rule of the cut-free system.** Rule `!` (bang/promotion) for CF. -/
 def Proof.bang {a : Proposition Atom} {Γ : Sequent Atom} (hΓ : Γ.allQuest) (p : CF⇓(a ::ₘ Γ)) :
     CF⇓((!a) ::ₘ Γ) := ⟨CLL.Proof.bang hΓ p.val, isCutFree_bang p.property⟩
 
-/-- Given a list of `ʔ`-propositions `Γ`, transforms a cut-free proof of `Δ` into a proof of `Γ + Δ`
+/-- **Weakening by a list of question-mark propositions.**
+Given a list of `ʔ`-propositions `Γ`, transforms a cut-free proof of `Δ` into a proof of `Γ + Δ`
 via weakening. -/
 def Proof.weakenContext {Γ : List (Proposition Atom)} {Δ : Sequent Atom} (hΓ : Γ.allQuest)
     (p : CF⇓Δ) : CF⇓(Γ + Δ) :=
@@ -248,7 +252,8 @@ def Proof.weakenContext {Γ : List (Proposition Atom)} {Δ : Sequent Atom} (hΓ 
     | .oplus _ _ :: _, hΓ | .with _ _ :: _, hΓ | .bang _ :: _, hΓ =>
     nomatch hΓ
 
-/-- Given a list of `ʔ`-propositions `Γ`, transforms a proof of `Γ + Γ + Δ` into a proof of `Γ + Δ`
+/-- **Contraction of a duplicated question-mark context.**
+Given a list of `ʔ`-propositions `Γ`, transforms a proof of `Γ + Γ + Δ` into a proof of `Γ + Δ`
 via contraction. -/
 def Proof.contractContext {Γ : List (Proposition Atom)} {Δ : Sequent Atom} (hΓ : Γ.allQuest)
     (p : CF⇓((Γ : Sequent Atom) + Γ + Δ)) : CF⇓(Γ + Δ) :=
@@ -275,13 +280,15 @@ namespace Sequent
 -- only DecidableEq, so list erasure must use the corresponding lawful BEq.
 local instance [DecidableEq Atom] : BEq (Proposition Atom) := instBEqOfDecidableEq
 
-/-- An empty sum has an empty right residual context. -/
+/-- **Empty sum of sequents has an empty right summand.**
+An empty sum has an empty right residual context. -/
 theorem eq_zero_of_zero_eq_add (h : (0 : Sequent Atom) = Γ + Δ) : Δ = 0 := by
   apply Multiset.le_zero.mp
   rw [h]
   exact Multiset.le_add_left _ _
 
-/-- Distinguish a principal selected occurrence using decidable equality.
+/-- **Case split on an equation of cons sequents.**
+Distinguish a principal selected occurrence using decidable equality.
 Given `a ::ₘ Γ = b ::ₘ Δ`, either `a = b` and `Γ = Δ`, or `a ≠ b` and the propositions are swapped:
 `Γ = b ::ₘ Λ` and `Δ = a ::ₘ Λ` for some `Λ`.
 The tail `Δ` can be an arbitrary multiset; the residual list is obtained from `Γ`. -/
@@ -305,7 +312,8 @@ def splitCons [DecidableEq Atom] {Γ : List (Proposition Atom)} {Δ : Sequent At
       grind only [multiset]
     exact .inr ⟨Γ.erase b, hab, hΓ, hΔ⟩
 
-/-- Given `a ::ₘ Γ = (Δ : Sequent) + Θ`, locate `a` in either `Δ` or `Θ` and
+/-- **Locating a head proposition in a sum of sequents.**
+Given `a ::ₘ Γ = (Δ : Sequent) + Θ`, locate `a` in either `Δ` or `Θ` and
 erase it from that summand, returning the residual list. -/
 def splitConsAdd [DecidableEq Atom] {Γ Δ Θ : List (Proposition Atom)}
     (h : a ::ₘ Γ = (Δ : Sequent Atom) + Θ) :
@@ -327,7 +335,8 @@ def splitConsAdd [DecidableEq Atom] {Γ Δ Θ : List (Proposition Atom)}
       grind only [multiset]
     exact .inr ⟨Θ.erase a, hΘ, hΓ⟩
 
-/-- Given `Multiset.replicate n a + Γ = b ::ₘ Δ`, either the head `b` is one of the
+/-- **Case split of a cons against replicated copies.**
+Given `Multiset.replicate n a + Γ = b ::ₘ Δ`, either the head `b` is one of the
 `n` copies of `a` (so `b = a` and the tail is `replicate (n-1) a + Γ`), or `b` belongs to
 `Γ` (so `Δ = Multiset.replicate n a + Γ'` where `Γ = b ::ₘ Γ'`).
 The tail `Δ` can be an arbitrary multiset; the residual list is obtained from `Γ`. -/
@@ -356,7 +365,8 @@ def splitReplicateCons [DecidableEq Atom] {Γ : List (Proposition Atom)} {Δ : S
       grind only [multiset]
     exact .inr ⟨Γ.erase b, hΓ, ht⟩
 
-/-- Given `Multiset.replicate n a + Γ = (Δ : Sequent) + Θ`, split the `n` copies of `a`
+/-- **Splitting replicated copies across a sum of sequents.**
+Given `Multiset.replicate n a + Γ = (Δ : Sequent) + Θ`, split the `n` copies of `a`
 between `Δ` and `Θ`, returning counts `k` and `l` and residual lists. -/
 def splitReplicateAdd [DecidableEq Atom] {Γ Δ Θ : List (Proposition Atom)} {n : ℕ}
     (h : Multiset.replicate n a + Γ = (Δ : Sequent Atom) + Θ) :

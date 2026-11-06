@@ -18,14 +18,16 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Parallel commutation swaps a derived disjoint split, not its capabilities. -/
+/-- **Parallel commutation preserves conversion typing.**
+Parallel commutation swaps a derived disjoint split, not its capabilities. -/
 theorem HasType.par_comm {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ (.par p q)) : HasType n Δ (.par q p) := by
   obtain ⟨Γ, Ξ, rfl, hd, hp, hq⟩ := h.par_inv
   rw [Finmap.union_comm_of_disjoint hd]
   exact HasType.par (hd.symm _ _) hq hp
 
-/-- Parallel reassociation preserves the actual three-way disjoint split. -/
+/-- **Parallel reassociation preserves conversion typing.**
+Parallel reassociation preserves the actual three-way disjoint split. -/
 theorem HasType.par_assoc {n : Nat} {Δ : Context} {p q r : Proc}
     (h : HasType n Δ (.par (.par p q) r)) :
     HasType n Δ (.par p (.par q r)) := by
@@ -36,7 +38,8 @@ theorem HasType.par_assoc {n : Nat} {Δ : Context} {p q r : Proc}
   exact HasType.par ((Finmap.disjoint_union_right A B Ξ).mpr ⟨hab, ha⟩)
     hp (HasType.par hb hq hr)
 
-/-- Reverse reassociation recovers both sub-splits from the supplied typing. -/
+/-- **Reverse parallel reassociation preserves conversion typing.**
+Reverse reassociation recovers both sub-splits from the supplied typing. -/
 theorem HasType.par_assoc_reverse {n : Nat} {Δ : Context} {p q r : Proc}
     (h : HasType n Δ (.par p (.par q r))) :
     HasType n Δ (.par (.par p q) r) := by
@@ -47,7 +50,8 @@ theorem HasType.par_assoc_reverse {n : Nat} {Δ : Context} {p q r : Proc}
   exact HasType.par ((Finmap.disjoint_union_left A B C).mpr ⟨hac, hbc⟩)
     (HasType.par hab hp hq) hr
 
-/-- Adding a parallel nil allocates it no ownership; no active slot is dropped. -/
+/-- **Adding a parallel nil preserves conversion typing.**
+Adding a parallel nil allocates it no ownership; no active slot is dropped. -/
 theorem HasType.par_nil_intro {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) : HasType n Δ (.par p .nil) := by
   have hn : HasType n ∅ .nil :=
@@ -56,7 +60,8 @@ theorem HasType.par_nil_intro {n : Nat} {Δ : Context} {p : Proc}
   have ht := HasType.par ((Finmap.disjoint_empty Δ).symm _ _) h hn
   simpa only [Finmap.union_empty] using ht
 
-/-- Restriction of nil has exactly the completed external ownership of nil. -/
+/-- **Removing a restriction around nil preserves conversion typing.**
+Restriction of nil has exactly the completed external ownership of nil. -/
 theorem HasType.nu_nil_elim {n : Nat} {Δ : Context}
     (h : HasType n Δ (.nu .nil)) : HasType n Δ .nil := by
   obtain ⟨c, hb⟩ := h.nu_inv
@@ -67,7 +72,8 @@ theorem HasType.nu_nil_elim {n : Nat} {Δ : Context}
   have ht := he.subst_passive (b := .const 0) trivial
   exact ht
 
-/-- A completed fresh pair may be introduced around nil while retaining
+/-- **Adding a restriction around nil preserves conversion typing.**
+A completed fresh pair may be introduced around nil while retaining
 all original external capabilities and scope. -/
 theorem HasType.nu_nil_intro {n : Nat} {Δ : Context}
     (h : HasType n Δ .nil) : HasType n Δ (.nu .nil) := by
@@ -78,7 +84,8 @@ theorem HasType.nu_nil_intro {n : Nat} {Δ : Context}
     (c := (⟨0, .done⟩ : Capability).dual) rfl (Nat.zero_lt_succ n)
   exact HasType.nu (c := ⟨0, .done⟩) hn
 
-/-- Nested restriction commutation swaps their derived complete dual pairs. -/
+/-- **Swapping nested restrictions preserves conversion typing.**
+Nested restriction commutation swaps their derived complete dual pairs. -/
 theorem HasType.nu_swap {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ (.nu (.nu p))) :
     HasType n Δ (.nu (.nu (swapProc 0 p))) := by
@@ -88,7 +95,8 @@ theorem HasType.nu_swap {n : Nat} {Δ : Context} {p : Proc}
   rw [Context.swap_bind_bind] at ht
   exact HasType.nu (c := d) (HasType.nu (c := c) ht)
 
-/-- Reverse nested restriction commutation uses the canonical involution. -/
+/-- **Reverse restriction swap preserves conversion typing.**
+Reverse nested restriction commutation uses the canonical involution. -/
 theorem HasType.nu_swap_reverse {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ (.nu (.nu (swapProc 0 p)))) : HasType n Δ (.nu (.nu p)) := by
   have ht := h.nu_swap
@@ -111,7 +119,8 @@ private theorem inp_context_transport {p p' : Proc} {a : Name}
   | inpName hc hs ha hp => exact HasType.inpName hc hs ha ((ih _ _).mp hp)
   | inpEndpoint hc hs ha hp => exact HasType.inpEndpoint hc hs ha ((ih _ _).mp hp)
 
-/-- Every existing canonical structural congruence preserves endpoint typing
+/-- **Structural congruence preserves conversion typing.**
+Every existing canonical structural congruence preserves endpoint typing
 in both directions with exactly the same depth and ownership. Unsupported
 choice/replication shapes are rejected by the typing-derived finite invariant. -/
 theorem HasType.cong_iff {n : Nat} {Δ : Context} {p q : Proc} (hc : Cong p q) :

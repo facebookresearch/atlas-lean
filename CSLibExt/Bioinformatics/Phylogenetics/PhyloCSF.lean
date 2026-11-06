@@ -66,15 +66,18 @@ open Cslib.Bioinformatics.Phylogenetics.FelsensteinPruning
 
 variable {L S : Type*} [Fintype S] [DecidableEq S] {m : ℕ}
 
-/-- The leaf data of an alignment column `col : L → S`: the indicator of the observed codon at
+/-- **Leaf data of an alignment column.**
+The leaf data of an alignment column `col : L → S`: the indicator of the observed codon at
 each leaf. -/
 def leafData (col : L → S) (l : L) (s : S) : ℝ := if col l = s then 1 else 0
 
-/-- The likelihood of one alignment column under the model `(t, π)`. -/
+/-- **Likelihood of one alignment column.**
+The likelihood of one alignment column under the model `(t, π)`. -/
 noncomputable def siteLik (t : Tree L S ℝ) (π : S → ℝ) (col : L → S) : ℝ :=
   likelihood (leafData col) t π
 
-/-- The likelihood of an alignment of `m` independent columns: the product of the site
+/-- **Likelihood of an alignment of independent columns.**
+The likelihood of an alignment of `m` independent columns: the product of the site
 likelihoods. -/
 noncomputable def alignLik (t : Tree L S ℝ) (π : S → ℝ) (A : Fin m → L → S) : ℝ :=
   ∏ k, siteLik t π (A k)
@@ -93,13 +96,15 @@ noncomputable def score_decibans (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tre
     (A : Fin m → L → S) : ℝ :=
   (10 / log 10) * score tC πC tN πN A
 
-/-- Decibans are the natural-log score rescaled by `10 / log 10`. -/
+/-- **Deciban score as a rescaled natural-log score.**
+Decibans are the natural-log score rescaled by `10 / log 10`. -/
 theorem score_decibans_eq (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tree L S ℝ) (πN : S → ℝ)
     (A : Fin m → L → S) :
     score_decibans tC πC tN πN A = (10 / log 10) * score tC πC tN πN A :=
   rfl
 
-/-- Each site likelihood is computed by Felsenstein's pruning algorithm. -/
+/-- **Site likelihood by Felsenstein's pruning algorithm.**
+Each site likelihood is computed by Felsenstein's pruning algorithm. -/
 theorem siteLik_eq_sum_prune (t : Tree L S ℝ) (π : S → ℝ) (col : L → S) :
     siteLik t π col = ∑ s, π s * prune (leafData col) t s :=
   likelihood_eq_sum_prune _ t π
@@ -112,7 +117,8 @@ theorem score_eq_log_div {tC tN : Tree L S ℝ} {πC πN : S → ℝ} {A : Fin m
   rw [alignLik, alignLik, ← prod_div_distrib, log_prod fun k _ => (div_pos (hC k) (hN k)).ne',
     score]
 
-/-- The threshold test on the score: call the alignment coding (`1`) iff the score exceeds the
+/-- **Score threshold test for calling an alignment coding.**
+The threshold test on the score: call the alignment coding (`1`) iff the score exceeds the
 cutoff `c`. -/
 noncomputable def scoreTest (tC : Tree L S ℝ) (πC : S → ℝ) (tN : Tree L S ℝ) (πN : S → ℝ)
     (c : ℝ) (A : Fin m → L → S) : Set.Icc (0 : ℝ) 1 :=

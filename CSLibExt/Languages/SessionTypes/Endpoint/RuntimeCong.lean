@@ -106,7 +106,8 @@ private theorem inp_context {Γ : ServiceEnv} {p p' : Proc} {a : Name}
   | inpEndpoint hg hd hc hh ha hp => exact HasType.inpEndpoint hg hd hc hh ha ((ih _ _).mp hp)
   | accept hs hc hscope hd hp => exact HasType.accept hs hc hscope hd ((ih _ _).mp hp)
 
-/-- ALL16 canonical Cong rules preserve the whole runtime derivation at exactly
+/-- **Structural congruence preserves runtime typing.**
+ALL16 canonical Cong rules preserve the whole runtime derivation at exactly
 SAME Γ/n/Δ, including guarded replicated templates, completed ambient annotations,
 and actual runtime delegation continuations. No typing-up-to-Cong constructor. -/
 theorem HasType.cong_iff {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc} (hc : Cong p q) :

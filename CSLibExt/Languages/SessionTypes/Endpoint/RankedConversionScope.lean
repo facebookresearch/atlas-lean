@@ -21,7 +21,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Reflection of an actual lifted term recovers every priority and context entry. -/
+/-- **Conversion ranked typing descends from a lifted process.**
+Reflection of an actual lifted term recovers every priority and context entry. -/
 theorem RankedType.unlift {n : Nat} {Γ : Context} {q : Proc}
     (h : RankedType (n + 1) Γ (liftProc 0 q)) (hΓ : ∀ e ∈ Γ, e.name ≠ .var 0) :
     RankedType n (Context.lower Γ hΓ) q := by
@@ -33,7 +34,8 @@ theorem RankedType.unlift {n : Nat} {Γ : Context} {q : Proc}
   rw [substProc_liftProc] at ht
   exact ht
 
-/-- Extrusion lifts the partner's real ownership while retaining every guard. -/
+/-- **Forward scope extrusion preserves conversion ranked typing.**
+Extrusion lifts the partner's real ownership while retaining every guard. -/
 theorem RankedType.scope_forward {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ (.par (.nu p) q)) :
     RankedType n Δ (.nu (.par p (liftProc 0 q))) := by
@@ -43,7 +45,8 @@ theorem RankedType.scope_forward {n : Nat} {Δ : Context} {p q : Proc}
   rw [Context.bind_union c hd]
   exact RankedType.par (Context.disjoint_bind_lift c hd) hb (hq.lift 0)
 
-/-- Moving a partner-owned role back requires actual absence to DERIVE
+/-- **Adding a role unused by the partner preserves conversion ranked typing.**
+Moving a partner-owned role back requires actual absence to DERIVE
 completion from conversion typing before refined completed weakening is applied. -/
 theorem RankedType.insert_from_absent_partner {n : Nat} {Γ Ξ : Context} {p q : Proc}
     {e : Key} {c : Capability} (hp : RankedType n Γ p) (hq : RankedType n Ξ q)
@@ -56,7 +59,8 @@ theorem RankedType.insert_from_absent_partner {n : Nat} {Γ Ξ : Context} {p q :
   · rw [Finmap.lookup_union_right hm] at hc
     exact hp.weaken_completed hm (hq.hasType.absent_lookup_completed hc hab) he
 
-/-- Restoring the bound pair adds only absent completed partner roles; all
+/-- **Restoring the bound pair preserves conversion ranked typing.**
+Restoring the bound pair adds only absent completed partner roles; all
 original active ownership and inequalities of the restricted component remain. -/
 theorem RankedType.restore_scope_pair {n : Nat} {Δ Γ Ξ : Context} {p q : Proc}
     {c : Capability} (hp : RankedType (n + 1) Γ p)
@@ -76,7 +80,8 @@ theorem RankedType.restore_scope_pair {n : Nat} {Δ Γ Ξ : Context} {p q : Proc
     (by decide : (⟨.var 0, .negative⟩ : Key) ≠ (⟨.var 0, .positive⟩ : Key))]
   exact hneg
 
-/-- Reverse extrusion derives the entire outer ownership split from typing,
+/-- **Reverse scope extrusion preserves conversion ranked typing.**
+Reverse extrusion derives the entire outer ownership split from typing,
 removes only genuinely absent partner roles and retains all guard inequalities. -/
 theorem RankedType.scope_reverse {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ (.nu (.par p (liftProc 0 q)))) :
@@ -111,7 +116,8 @@ theorem RankedType.scope_reverse {n : Nat} {Δ : Context} {p q : Proc}
   rw [houter]
   exact RankedType.par hdl (RankedType.nu hp') (hq'.unlift hΞ)
 
-/-- Exact bidirectional canonical scope transport for the same refinement. -/
+/-- **Conversion ranked typing is invariant under scope extrusion.**
+Exact bidirectional canonical scope transport for the same refinement. -/
 theorem RankedType.scope_iff {n : Nat} {Δ : Context} {p q : Proc} :
     RankedType n Δ (.par (.nu p) q) ↔ RankedType n Δ (.nu (.par p (liftProc 0 q))) :=
   ⟨RankedType.scope_forward, RankedType.scope_reverse⟩

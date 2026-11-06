@@ -177,7 +177,8 @@ private theorem rename_nil {n m : Nat} {Δ : Context} {f : Name → Name}
   obtain ⟨d, hd, rfl⟩ := Context.mem_rekey.mp he
   exact hscope d.name (hs d hd)
 
-/-- Capture-safe rekeying transports all finite-process endpoint typing,
+/-- **Collision-free renaming preserves endpoint typing.**
+Capture-safe rekeying transports all finite-process endpoint typing,
 including linear payloads and actual input/ν binders. Collision freedom is
 required only on owned keys and can be derived from a delegation split. -/
 theorem HasType.rename {n m : Nat} {Δ : Context} {p : Proc} {f : Name → Name}
@@ -223,7 +224,8 @@ theorem HasType.rename {n m : Nat} {Δ : Context} {p : Proc} {f : Name → Name}
     have hu := Context.injOn_under_bind hf c
     exact rename_nu hf hu (ih (fun _ h => under_scoped hscope h) hu)
 
-/-- Any ambient binder lift transports full endpoint typing without
+/-- **Binder lifting preserves endpoint typing.**
+Any ambient binder lift transports full endpoint typing without
 changing protocols, roles or resource multiplicity. -/
 theorem HasType.lift {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) (k : Nat) :

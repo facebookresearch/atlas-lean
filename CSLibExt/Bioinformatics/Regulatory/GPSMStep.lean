@@ -64,7 +64,8 @@ open Cslib.MachineLearning.LatentVariable.BernoulliMixture (sum_mul_log_le_sum_m
 
 variable {ι : Type*}
 
-/-- The surviving weight `max (N j - α) 0` of event `j`, for expected read counts `N` and
+/-- **Surviving weight of a GPS event.**
+The surviving weight `max (N j - α) 0` of event `j`, for expected read counts `N` and
 sparseness parameter `α`. -/
 noncomputable def survivorWeight (α : ℝ) (N : ι → ℝ) (j : ι) : ℝ := max (N j - α) 0
 
@@ -73,32 +74,35 @@ noncomputable def survivorWeight (α : ℝ) (N : ι → ℝ) (j : ι) : ℝ := m
 noncomputable def mStep [Fintype ι] (α : ℝ) (N : ι → ℝ) (j : ι) : ℝ :=
   survivorWeight α N j / ∑ k, survivorWeight α N k
 
-/-- The expected complete-data log penalized likelihood of GPS, up to an additive constant:
+/-- **Expected penalized complete-data log-likelihood of GPS.**
+The expected complete-data log penalized likelihood of GPS, up to an additive constant:
 `∑ j, (N j - α) log (π j)` (the expected log-likelihood `∑ j, N j log (π j)` plus the log of the
 negative Dirichlet prior). Meaningful for positive `π`. -/
 noncomputable def penalizedQ [Fintype ι] (α : ℝ) (N π : ι → ℝ) : ℝ := ∑ j, (N j - α) * log (π j)
 
-/-- The truncated objective `∑ j, max (N j - α) 0 * log (π j)`. -/
+/-- **Truncated GPS objective.** The truncated objective `∑ j, max (N j - α) 0 * log (π j)`. -/
 noncomputable def truncatedQ [Fintype ι] (α : ℝ) (N π : ι → ℝ) : ℝ :=
   ∑ j, survivorWeight α N j * log (π j)
 
-/-- Surviving weights are nonnegative. -/
+/-- **Nonnegativity of surviving weights.** Surviving weights are nonnegative. -/
 theorem survivorWeight_nonneg (α : ℝ) (N : ι → ℝ) (j : ι) : 0 ≤ survivorWeight α N j :=
   le_max_right _ _
 
 variable [Fintype ι]
 
-/-- The total surviving weight is positive iff some event has `α < N j`. -/
+/-- **Total surviving weight is positive iff some event survives.**
+The total surviving weight is positive iff some event has `α < N j`. -/
 theorem sum_survivorWeight_pos {α : ℝ} {N : ι → ℝ} {j₀ : ι} (h : α < N j₀) :
     0 < ∑ k, survivorWeight α N k :=
   lt_of_lt_of_le (lt_max_of_lt_left (sub_pos.2 h))
     (single_le_sum (fun k _ => survivorWeight_nonneg α N k) (mem_univ j₀))
 
-/-- The update is nonnegative. -/
+/-- **Nonnegativity of the GPS M-step update.** The update is nonnegative. -/
 theorem mStep_nonneg (α : ℝ) (N : ι → ℝ) (j : ι) : 0 ≤ mStep α N j :=
   div_nonneg (survivorWeight_nonneg α N j) (sum_nonneg fun k _ => survivorWeight_nonneg α N k)
 
-/-- The update sums to one when some event survives. -/
+/-- **GPS M-step update sums to one when some event survives.**
+The update sums to one when some event survives. -/
 theorem sum_mStep {α : ℝ} {N : ι → ℝ} {j₀ : ι} (h : α < N j₀) : ∑ j, mStep α N j = 1 := by
   simp only [mStep]
   rw [← sum_div, div_self (sum_survivorWeight_pos h).ne']
@@ -110,13 +114,15 @@ theorem mStep_eq_zero_iff {α : ℝ} {N : ι → ℝ} {j₀ : ι} (h : α < N j�
   rw [mStep, div_eq_zero_iff, or_iff_left (sum_survivorWeight_pos h).ne', survivorWeight,
     max_eq_right_iff, sub_nonpos]
 
-/-- When some event survives, event `j` keeps positive probability iff `α < N j`. -/
+/-- **GPS M-step keeps positive probability exactly on surviving events.**
+When some event survives, event `j` keeps positive probability iff `α < N j`. -/
 theorem mStep_pos_iff {α : ℝ} {N : ι → ℝ} {j₀ : ι} (h : α < N j₀) (j : ι) :
     0 < mStep α N j ↔ α < N j := by
   rw [lt_iff_le_and_ne, ne_comm, Ne, mStep_eq_zero_iff h, not_le]
   exact ⟨fun h' => h'.2, fun h' => ⟨mStep_nonneg α N j, h'⟩⟩
 
-/-- With `α = 0` and nonnegative counts the update is the ordinary mixture M-step
+/-- **GPS M-step at zero sparseness is the ordinary mixture M-step.**
+With `α = 0` and nonnegative counts the update is the ordinary mixture M-step
 `N j / ∑ N`. -/
 theorem mStep_zero {N : ι → ℝ} (hN : ∀ j, 0 ≤ N j) (j : ι) :
     mStep 0 N j = N j / ∑ k, N k := by
@@ -134,12 +140,14 @@ theorem truncatedQ_le_mStep {α : ℝ} {N : ι → ℝ} {j₀ : ι} (h : α < N 
   sum_mul_log_le_sum_mul_log_div (fun j => survivorWeight_nonneg α N j)
     (sum_survivorWeight_pos h) hπ hsum
 
-/-- When every event survives, the penalized and truncated objectives agree. -/
+/-- **Truncated and penalized objectives agree when every event survives.**
+When every event survives, the penalized and truncated objectives agree. -/
 theorem truncatedQ_eq_penalizedQ {α : ℝ} {N : ι → ℝ} (h : ∀ j, α < N j) (π : ι → ℝ) :
     truncatedQ α N π = penalizedQ α N π := by
   simp only [truncatedQ, penalizedQ, survivorWeight, max_eq_left (sub_pos.2 (h _)).le]
 
-/-- When every event survives, the update is `(N j - α) / ∑ k, (N k - α)`. -/
+/-- **GPS M-step formula when every event survives.**
+When every event survives, the update is `(N j - α) / ∑ k, (N k - α)`. -/
 theorem mStep_of_forall_lt {α : ℝ} {N : ι → ℝ} (h : ∀ j, α < N j) (j : ι) :
     mStep α N j = (N j - α) / ∑ k, (N k - α) := by
   simp only [mStep, survivorWeight, max_eq_left (sub_pos.2 (h _)).le]

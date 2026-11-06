@@ -25,14 +25,16 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Semantic capability changes do not change owned physical names or Γ separation. -/
+/-- **Equivalent retyping preserves separation from shared names.**
+Semantic capability changes do not change owned physical names or Γ separation. -/
 theorem Separated.retype {Γ : ServiceEnv} {Δ Ξ : Context} (hs : Separated Γ Δ)
     (he : ContextEquivalent Δ Ξ) : Separated Γ Ξ := by
   intro e c hc s sig hsig
   obtain ⟨v, hv, hr⟩ := he.symm.lookup hc
   exact hs e v hv s sig hsig
 
-/-- Actual active-payload ranks preserve the strict shared invocation priority. -/
+/-- **Equivalent retyping preserves invocation priority.**
+Actual active-payload ranks preserve the strict shared invocation priority. -/
 theorem InvocationPriority.retype {sig : ServiceSignature} {Δ Ξ : Context}
     (hg : InvocationPriority sig Δ) (he : ContextEquivalent Δ Ξ) : InvocationPriority sig Ξ := by
   intro e c hc ha
@@ -41,7 +43,8 @@ theorem InvocationPriority.retype {sig : ServiceSignature} {Δ Ξ : Context}
   rw [hr.1]
   exact hg e v hv hva
 
-/-- ALL10 runtime rules retype at arbitrary equivalent linear contexts, with Γ
+/-- **Runtime typing transfers to an equivalent linear context.**
+ALL10 runtime rules retype at arbitrary equivalent linear contexts, with Γ
 UNCHANGED. Actual payload codes, literal cap ranks and empty BODY contexts are retained. -/
 theorem HasType.retype {n : Nat} {Γ : ServiceEnv} {Δ Ξ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (he : ContextEquivalent Δ Ξ) : HasType n Γ Ξ p := by
@@ -102,7 +105,8 @@ theorem HasType.retype {n : Nat} {Γ : ServiceEnv} {Δ Ξ : Context} {p : Proc}
   | @nu n Γ Δ c p hs hp ih =>
     exact HasType.nu (hs.retype he) (ih (he.bind (Capability.Equivalent.refl c)))
 
-/-- Equivalent linear interfaces preserve runtime typing in BOTH directions at
+/-- **Runtime typing is invariant under equivalent linear contexts.**
+Equivalent linear interfaces preserve runtime typing in BOTH directions at
 exactly the same shared environment, process and ambient depth. -/
 theorem HasType.retype_iff {n : Nat} {Γ : ServiceEnv} {Δ Ξ : Context} {p : Proc}
     (he : ContextEquivalent Δ Ξ) : HasType n Γ Δ p ↔ HasType n Γ Ξ p :=

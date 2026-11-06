@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Actual input syntax supplies an ACTUAL canonical Step with any matching
+/-- **Unguarded shared input communicates with a matching output.**
+Actual input syntax supplies an ACTUAL canonical Step with any matching
 shared-constant output. Payload and continuation are not finite-unrolled, and
 nested private/parallel/replica wrappers are handled by existing Cong/Step. -/
 theorem accept_invocation_step {s : Nat} {p : Proc} (h : AcceptIn s p) (b : Name) (c : Proc) :
@@ -57,7 +58,8 @@ theorem accept_invocation_step {s : Nat} {p : Proc} (h : AcceptIn s p) (b : Name
         (Cong.par_assoc _ _ _).symm) (PiCalculus.Step.parL hs) (Cong.refl _)⟩
   | sum => exact False.elim h
 
-/-- A persistent offered input exposes real canonical communication, including
+/-- **Offered service communicates with a matching shared output.**
+A persistent offered input exposes real canonical communication, including
 nested templates and DONE endpoint payloads; no typing or active-key premise. -/
 theorem offered_invocation_step {s : Nat} {p : Proc} (h : OfferedIn s p) (b : Name) (c : Proc) :
     ∃ q, PiCalculus.Step (.par (.out (.const s) b c) p) q :=

@@ -29,7 +29,8 @@ namespace Cslib.Language.CYKIndexed
 
 variable {T N : Type*} [DecidableEq N]
 
-/-- Exact charge for a full membership scan, including a failed scan. -/
+/-- **Exact cost of a membership scan.**
+Exact charge for a full membership scan, including a failed scan. -/
 theorem member_time (nc : ℕ) (a : N) (xs : List N) :
     (member nc a xs).time = 1 + xs.length * (nc + 3) := by
   induction xs with
@@ -38,7 +39,8 @@ theorem member_time (nc : ℕ) (a : N) (xs : List N) :
 
 variable [DecidableEq T]
 
-/-- Even with duplicates, a cell never exceeds the rule enumeration length. -/
+/-- **Computed CYK cell length bounded by the rule count.**
+Even with duplicates, a cell never exceeds the rule enumeration length. -/
 theorem cell_length (tc nc : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (i len : ℕ)
     (rs : List (ContextFreeRule T N)) :
@@ -51,7 +53,8 @@ theorem cell_length (tc nc : ℕ) (w : Array T)
       · simpa only [List.length_cons, Nat.add_le_add_iff_right] using ih
       · exact ih.trans (Nat.le_succ _)
 
-/-- All table cells, including invalid/default positions, have bounded
+/-- **Every CYK table lookup is bounded by the rule count.**
+All table cells, including invalid/default positions, have bounded
 membership-scan length. This invariant is proved from construction. -/
 theorem lookup_length (tc nc : ℕ) (w : Array T)
     (rs : List (ContextFreeRule T N)) (depth i len : ℕ) :
@@ -77,7 +80,8 @@ theorem lookup_length (tc nc : ℕ) (w : Array T)
         exact ih
 
 omit [DecidableEq T] in
-/-- Each split pays for both indexed cell reads and both membership scans. -/
+/-- **Cost bound for the CYK split scan.**
+Each split pays for both indexed cell reads and both membership scans. -/
 theorem splits_time_le (nc : ℕ) (tbl : Array (Array (List N)))
     (r : ℕ) (htbl : ∀ i len, (lookup tbl i len).length ≤ r)
     (i len : ℕ) (b c : N) (count : ℕ) :
@@ -92,7 +96,8 @@ theorem splits_time_le (nc : ℕ) (tbl : Array (Array (List N)))
       simp only [splits, member_time]
       nlinarith
 
-/-- Output inspection is bounded; only binary productions scan splits. -/
+/-- **Cost bound for the CYK production fit test.**
+Output inspection is bounded; only binary productions scan splits. -/
 theorem fits_time_le (tc nc : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (r : ℕ)
     (htbl : ∀ i len, (lookup tbl i len).length ≤ r)
@@ -111,7 +116,8 @@ theorem fits_time_le (tc nc : ℕ) (w : Array T)
       .nonterminal _ :: .terminal _ :: _ |
       .nonterminal _ :: .nonterminal _ :: _ :: _ => simp [fits]; omega
 
-/-- A cell charges every rule, its test, and its possible output cons. -/
+/-- **Cost bound for computing one CYK cell.**
+A cell charges every rule, its test, and its possible output cons. -/
 theorem cell_time_le (tc nc : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (r : ℕ)
     (htbl : ∀ i len, (lookup tbl i len).length ≤ r)
@@ -125,7 +131,8 @@ theorem cell_time_le (tc nc : ℕ) (w : Array T)
       simp only [cell, List.length_cons]
       nlinarith
 
-/-- Row cost counts all starts, not only successful or distinct factors. -/
+/-- **Cost bound for building one CYK row.**
+Row cost counts all starts, not only successful or distinct factors. -/
 theorem row_time_le (tc nc : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (r : ℕ)
     (htbl : ∀ i len, (lookup tbl i len).length ≤ r)
@@ -141,7 +148,8 @@ theorem row_time_le (tc nc : ℕ) (w : Array T)
       simp only [row]
       nlinarith
 
-/-- Table cost includes allocation, every row conversion and every update.
+/-- **Cost bound for filling the indexed CYK table.**
+Table cost includes allocation, every row conversion and every update.
 The memory-size hypothesis needed for split costs is discharged internally. -/
 theorem table_time_le (tc nc : ℕ) (w : Array T)
     (rs : List (ContextFreeRule T N)) (depth : ℕ) (hd : depth ≤ w.size) :
@@ -160,7 +168,8 @@ theorem table_time_le (tc nc : ℕ) (w : Array T)
       simp only [table]
       nlinarith
 
-/-- The linear row-conversion charge uses the actual number of entries. -/
+/-- **Length of a computed CYK row.**
+The linear row-conversion charge uses the actual number of entries. -/
 theorem row_length (tc nc : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (len : ℕ)
     (rs : List (ContextFreeRule T N)) (i count : ℕ) :
@@ -170,7 +179,7 @@ theorem row_length (tc nc : ℕ) (w : Array T)
   | succ count ih => simp [row, ih]
 
 omit [DecidableEq T] in
-/-- Exact cost of the empty-input production scan. -/
+/-- **Exact cost of the CYK epsilon scan.** Exact cost of the empty-input production scan. -/
 theorem epsilon_time (nc : ℕ) (start : N)
     (rs : List (ContextFreeRule T N)) :
     (epsilon nc start rs).time = 1 + rs.length * (nc + 6) := by
@@ -186,7 +195,8 @@ private theorem cubic_domination (n p q s : ℕ) :
     Nat.zero_le ((3 * q + 2 * p + 3 * s + 100) * n),
     Nat.zero_le (p + q + 23)]
 
-/-- Explicit cubic bound, for every word including the empty word.
+/-- **Explicit cubic cost bound for indexed CYK.**
+Explicit cubic bound, for every word including the empty word.
 The coefficient depends only on the rule enumeration and equality costs;
 no semantic or assumed recurrence hypothesis occurs in this cost theorem. -/
 theorem recognizes_time_le (tc nc : ℕ) (start : N)
@@ -214,7 +224,8 @@ theorem recognizes_time_le (tc nc : ℕ) (start : N)
         (rs.length * (nc + 3))
       nlinarith only [ht, hm, hp]
 
-/-- In the usual nonempty-input form, the bound is a constant times `n³`. -/
+/-- **Indexed CYK costs a constant times $n^3$ on nonempty words.**
+In the usual nonempty-input form, the bound is a constant times `n³`. -/
 theorem recognizes_time_le_cubic (tc nc : ℕ) (start : N)
     (rs : List (ContextFreeRule T N)) (w : List T) (hw : w ≠ []) :
     (recognizes tc nc start rs w).time ≤

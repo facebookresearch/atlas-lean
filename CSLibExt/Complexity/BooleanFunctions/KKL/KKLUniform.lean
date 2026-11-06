@@ -48,13 +48,15 @@ namespace StatMech.Probability
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- `∫_a^b exp (c x) dx = (exp (c b) - exp (c a)) / c` for `c ≠ 0`. -/
+/-- **Integral of $e^{cx}$ over an interval.**
+`∫_a^b exp (c x) dx = (exp (c b) - exp (c a)) / c` for `c ≠ 0`. -/
 theorem cro2_integral_exp_mul (c : ℝ) (hc : c ≠ 0) (a b : ℝ) :
     ∫ x in a..b, Real.exp (c * x) = (Real.exp (c * b) - Real.exp (c * a)) / c := by
   rw [intervalIntegral.integral_comp_mul_left (fun x => Real.exp x) hc, integral_exp]
   rw [smul_eq_mul]; field_simp
 
-/-- `∫₀¹ exp (-(t/2) u) du ≤ 2 / t` for `t > 0`. -/
+/-- **Bound on the integral of $e^{-tu/2}$ over $[0, 1]$.**
+`∫₀¹ exp (-(t/2) u) du ≤ 2 / t` for `t > 0`. -/
 theorem cro2_integral_exp_le (t : ℝ) (ht : 0 < t) :
     (∫ u in (0 : ℝ)..1, Real.exp (-(t / 2) * u)) ≤ 2 / t := by
   have hc : -(t / 2) ≠ 0 := by intro h; nlinarith
@@ -66,7 +68,7 @@ theorem cro2_integral_exp_le (t : ℝ) (ht : 0 < t) :
   rw [key, div_le_div_iff₀ (by linarith) (by linarith)]
   nlinarith [hexp]
 
-/-- `∫₀¹ (1 - u)^n du = 1 / (n + 1)`. -/
+/-- **Integral of $(1 - u)^n$ over $[0, 1]$.** `∫₀¹ (1 - u)^n du = 1 / (n + 1)`. -/
 theorem cro2_integral_one_sub_pow (n : ℕ) :
     ∫ u in (0 : ℝ)..1, (1 - u) ^ n = 1 / (n + 1) := by
   have h := intervalIntegral.integral_comp_sub_left (a := (0 : ℝ)) (b := 1) (fun x => x ^ n) 1
@@ -99,7 +101,8 @@ theorem cro2_integral_summand (cf : Finset ι → ℝ) (S : Finset ι) :
     have hcardpos : (0 : ℝ) < (S.card : ℝ) := by exact_mod_cast hpos
     field_simp
 
-/-- Integrating the damped total-influence weights over the noise parameter: `∫₀¹ ∑_S 4 |S|
+/-- **Integral of damped total-influence weights over the noise parameter.**
+Integrating the damped total-influence weights over the noise parameter: `∫₀¹ ∑_S 4 |S|
   (1-u)^{|S|-1} c_S du = 4 ∑_{S ≠ ∅} c_S`. -/
 theorem cro2_integral_lhs (cf : Finset ι → ℝ) :
     (∫ u in (0 : ℝ)..1, ∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1) * cf S)
@@ -128,7 +131,8 @@ theorem cro2_rpow_integrable (δ : ℝ) (hδ0 : 0 < δ) :
     · exact Set.mapsTo_univ _ _
   · intro u _; simp only; rw [Real.rpow_def_of_pos hδ0]
 
-/-- `∫₀¹ δ^{u/(2-u)} du ≤ 2 / log (1/δ)` for `0 < δ < 1`. -/
+/-- **Bound on the integral of $\delta^{u/(2-u)}$ over $[0, 1]$.**
+`∫₀¹ δ^{u/(2-u)} du ≤ 2 / log (1/δ)` for `0 < δ < 1`. -/
 theorem cro2_integral_rhs_le (δ : ℝ) (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     (∫ u in (0 : ℝ)..1, δ ^ (u / (2 - u))) ≤ 2 / (-(Real.log δ)) := by
   have ht : 0 < -(Real.log δ) := by have := Real.log_neg hδ0 hδ1; linarith
@@ -147,7 +151,8 @@ theorem cro2_integral_rhs_le (δ : ℝ) (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     rw [div_le_div_iff₀ (by norm_num) h2u]
     nlinarith [hu.1]
 
-/-- The capped estimate in the variable `u = 1 - ρ²`: `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)}
+/-- **Capped estimate rewritten in the variable $u = 1 - \rho^2$.**
+The capped estimate in the variable `u = 1 - ρ²`: `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)}
   ∑_S 4 |S| f̂(S)²`. -/
 theorem cro2_master_sub {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     (φ : ConfigSpace E → Bool)

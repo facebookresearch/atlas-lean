@@ -53,7 +53,8 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] [LinearOrder ι]
 
-/-- The maximal element of `S`, or an arbitrary element if `S` is empty. -/
+/-- **Maximal element of a finite set.**
+The maximal element of `S`, or an arbitrary element if `S` is empty. -/
 noncomputable def mxd_maxE [Nonempty ι] (S : Finset ι) : ι :=
   if h : S.Nonempty then S.max' h else Classical.arbitrary ι
 
@@ -67,7 +68,8 @@ theorem mxd_le_maxE [Nonempty ι] {S : Finset ι} {x : ι} (hx : x ∈ S) :
   have hS : S.Nonempty := ⟨x, hx⟩
   unfold mxd_maxE; rw [dite_eq_left hS]; exact S.le_max' x hx
 
-/-- The nonempty subsets of `ι` whose maximal element is `e`. -/
+/-- **Nonempty subsets with a given maximal element.**
+The nonempty subsets of `ι` whose maximal element is `e`. -/
 noncomputable def mxd_fiber [Nonempty ι] (e : ι) : Finset (Finset ι) :=
   (univ.erase (∅ : Finset ι)).filter (fun S => mxd_maxE S = e)
 
@@ -85,7 +87,8 @@ theorem mxd_fiber_subset_mem [Nonempty ι] (e : ι) :
   rw [Finset.mem_filter]
   exact ⟨Finset.mem_univ S, mxd_mem_of_mem_fiber hS⟩
 
-/-- The `p`-biased Fourier weight `Wₑ = ∑_{S : max S = e} f̂(S)²` of the fiber of `e`. -/
+/-- **Fourier weight of a maximal-element fiber.**
+The `p`-biased Fourier weight `Wₑ = ∑_{S : max S = e} f̂(S)²` of the fiber of `e`. -/
 noncomputable def mxd_fiberWeight [Nonempty ι] (p : ℝ) (φ : ConfigSpace ι → Bool) (e : ι) : ℝ :=
   ∑ S ∈ mxd_fiber e, (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
 
@@ -94,7 +97,8 @@ theorem mxd_fiberWeight_nonneg [Nonempty ι] (p : ℝ) (φ : ConfigSpace ι → 
   unfold mxd_fiberWeight
   exact Finset.sum_nonneg (fun S _ => sq_nonneg _)
 
-/-- The variance of a Boolean function is the sum of the fiber weights. -/
+/-- **Variance decomposition by maximal element.**
+The variance of a Boolean function is the sum of the fiber weights. -/
 theorem mxd_var_decomp [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) :
     OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
@@ -104,7 +108,8 @@ theorem mxd_var_decomp [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   rw [Finset.sum_fiberwise (univ.erase (∅ : Finset ι)) mxd_maxE
       (fun S => (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)]
 
-/-- The noise-damped fiber weight `∑_{S : max S = e} ρ^{2|S|} f̂(S)²`. -/
+/-- **Noise-damped fiber weight.**
+The noise-damped fiber weight `∑_{S : max S = e} ρ^{2|S|} f̂(S)²`. -/
 noncomputable def mxd_dampFiber [Nonempty ι] (p ρ : ℝ) (φ : ConfigSpace ι → Bool) (e : ι) : ℝ :=
   ∑ S ∈ mxd_fiber e, (ρ ^ S.card) ^ 2
     * (ptn_coeff p (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2
@@ -134,7 +139,8 @@ theorem mxd_dampFiber_eq_fiber_perCoord [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (h
   field_simp
   ring
 
-/-- Hypercontractive bound on the damped fiber weight. -/
+/-- **Hypercontractive bound on the damped fiber weight.**
+Hypercontractive bound on the damped fiber weight. -/
 theorem mxd_dampFiber_le_perCoord [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
     (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p)) (φ : ConfigSpace ι → Bool) (e : ι) :
@@ -232,7 +238,8 @@ theorem mxd_supp_var [Nonempty ι] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (φ : C
     linarith [he.2]
   rw [hzero, add_zero]
 
-/-- The variance log-sum estimate for the fiber weights against their damped versions. -/
+/-- **Log-sum estimate for the fiber weights.**
+The variance log-sum estimate for the fiber weights against their damped versions. -/
 theorem mxd_logSum_gain [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (hρ : 0 < ρ) (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
     (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p)) (φ : ConfigSpace ι → Bool)
@@ -290,7 +297,8 @@ theorem mxd_logSum_gain [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     _ ≤ ∑ e ∈ t, mxd_fiberWeight p φ e * Real.log (mxd_fiberWeight p φ e / mxd_dampFiber p ρ φ e) :=
         hgain
 
-/-- The capped estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)} ∑ₑ Infₑ` for all `p ∈ (1/2,
+/-- **Capped influence estimate for all $p$ in $(1/2, q)$.**
+The capped estimate `∑_S 4 |S| (1-u)^{|S|-1} f̂(S)² ≤ δ^{u/(2-u)} ∑ₑ Infₑ` for all `p ∈ (1/2,
   q)` with `p < 1` and all `u ∈ [0, 1]`. Not proved in this library for any `q > 1/2`. -/
 def mxd_martingaleHC_statement (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
@@ -300,7 +308,8 @@ def mxd_martingaleHC_statement (q : ℝ) : Prop :=
         ≤ (maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)) ^ (u / (2 - u))
           * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
 
-/-- `mxd_martingaleHC_statement q` implies `ptn_RhoOptimise q`, hence the KKL inequality with
+/-- **Capped estimate implies KKL with constant 2 on $(1/2, q)$.**
+`mxd_martingaleHC_statement q` implies `ptn_RhoOptimise q`, hence the KKL inequality with
   constant `2` on `(1/2, q)`. -/
 theorem mxd_rhoOptimise_of_martingaleHC {q : ℝ} (H : mxd_martingaleHC_statement q) :
     ptn_RhoOptimise q := by
@@ -376,7 +385,8 @@ theorem mxd_decomp_and_gain [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p 
   ⟨mxd_var_decomp hp0 hp1 φ,
    mxd_logSum_gain hp0 hp1 hρ h1 hq1 hq2 hρsq φ hVpos hδ0 hTpos⟩
 
-/-- The capped estimate with all weights multiplied by `0` holds trivially. -/
+/-- **Capped estimate with zero weights holds trivially.**
+The capped estimate with all weights multiplied by `0` holds trivially. -/
 theorem mxd_martingaleHC_c0 {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool)
     (u : ℝ) :

@@ -21,7 +21,8 @@ termination or type-operator normalization.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega
 
-/-- Every actual Fω CBV step preserves beta conversion of arbitrary closing instances. -/
+/-- **Erasure of an Fω evaluation step is a beta conversion.**
+Every actual Fω CBV step preserves beta conversion of arbitrary closing instances. -/
 theorem erasure_step {Δ : List Kind} {m : Nat} {t t' : Tm Δ m}
     (hs : Step t t') (σ : Fin m → SystemF.Model) :
     SystemF.BetaEq (Tm.close σ t) (Tm.close σ t') := by
@@ -36,7 +37,8 @@ theorem erasure_step {Δ : List Kind} {m : Nat} {t t' : Tm Δ m}
     rw [Tm.close_tapp, Tm.close_tabs, Tm.close_tySubst]
     exact SystemF.BetaEq.refl _
 
-/-- Finite Fω evaluation preserves beta conversion of the closing instances. -/
+/-- **Erasure of multistep Fω evaluation is a beta conversion.**
+Finite Fω evaluation preserves beta conversion of the closing instances. -/
 theorem erasure_steps {Δ : List Kind} {m : Nat} {t t' : Tm Δ m}
     (hs : Relation.ReflTransGen Step t t') (σ : Fin m → SystemF.Model) :
     SystemF.BetaEq (Tm.close σ t) (Tm.close σ t') := by

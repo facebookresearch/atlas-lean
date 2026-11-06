@@ -24,7 +24,8 @@ namespace Cslib.Complexity.PolynomialEncoding
 open Turing MetaMathlibExt.TM2Program
 open FramedCNF FramedCNF.NormalizeMachine
 
-/-- The canonical normalizer restores both work stacks and prepends
+/-- **Number normalizer restores its work stacks and prepends its answer.**
+The canonical normalizer restores both work stacks and prepends
 its answer to an arbitrary output suffix, within a linear bit bound. -/
 theorem normalizeNat_run_frame (x out : List Bool) (v : Bool) :
     ∃ v', RunLe prog (2 * x.length + 3)

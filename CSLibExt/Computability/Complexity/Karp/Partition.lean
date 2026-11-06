@@ -23,27 +23,31 @@ The occurrence-sensitive PARTITION language from Garey and Johnson,
 
 namespace MetaMathlibExt.Complexity.NPComplete.Partition
 
-/-- A partition instance: a list of natural numbers. -/
+/-- **PARTITION instance as a list of naturals.**
+A partition instance: a list of natural numbers. -/
 abbrev PartitionInstance := List ℕ
 
-/-- A sublist summing to half the total. -/
+/-- **Feasibility of a PARTITION instance.** A sublist summing to half the total. -/
 def PartitionFeasible (i : PartitionInstance) : Prop :=
   ∃ s : List ℕ, s.Sublist i ∧ s.sum * 2 = i.sum
 
 open Classical in
-/-- PARTITION using the canonical binary list decoder; bad framing rejects. -/
+/-- **Binary-coded PARTITION decision problem.**
+PARTITION using the canonical binary list decoder; bad framing rejects. -/
 noncomputable def partitionDec : ComplexityTheory.DecisionProblem := fun x =>
   match BitstringEncoding.bitDecode (α := PartitionInstance) x with
   | some i => decide (PartitionFeasible i)
   | none => false
 
-/-- A canonical encoding has exactly the intended feasibility semantics. -/
+/-- **Binary PARTITION decider is correct on canonical encodings.**
+A canonical encoding has exactly the intended feasibility semantics. -/
 @[simp] theorem partitionDec_bitEncode (as : List ℕ) :
     partitionDec (BitstringEncoding.bitEncode as) = true ↔
       PartitionFeasible as := by
   simp [partitionDec]
 
-/-- The two padding entries in the SUBSET-SUM reduction.
+/-- **Padding map from SUBSET-SUM to PARTITION.**
+The two padding entries in the SUBSET-SUM reduction.
 No subtraction or range check is needed, even when `t > as.sum`. -/
 def fromSubsetSum (as : List ℕ) (t : ℕ) : List ℕ :=
   as.sum :: (2 * t) :: as
@@ -59,7 +63,8 @@ private theorem complement_sum {s as : List ℕ} (h : s.Sublist as) :
     obtain ⟨r, hr, he⟩ := ih
     exact ⟨r, hr.cons a, by simp only [List.sum_cons]; omega⟩
 
-/-- SUBSET-SUM reduces to PARTITION by adding two nonnegative entries. -/
+/-- **Correctness of the SUBSET-SUM to PARTITION padding map.**
+SUBSET-SUM reduces to PARTITION by adding two nonnegative entries. -/
 theorem fromSubsetSum_feasible (as : List ℕ) (t : ℕ) :
     PartitionFeasible (fromSubsetSum as t) ↔
       ∃ s : List ℕ, s.Sublist as ∧ s.sum = t := by
@@ -83,7 +88,8 @@ theorem fromSubsetSum_feasible (as : List ℕ) (t : ℕ) :
     simp only [fromSubsetSum, List.sum_cons, he]
     omega
 
-/-- Doubling each entry reduces PARTITION membership to SUBSET-SUM
+/-- **PARTITION as SUBSET-SUM on the doubled list.**
+Doubling each entry reduces PARTITION membership to SUBSET-SUM
 without truncating division on odd totals. -/
 theorem feasible_iff_doubled_sublist (as : List ℕ) :
     PartitionFeasible as ↔ ∃ s : List ℕ,

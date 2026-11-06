@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Choice selection cannot discard a persistent SOURCE offer: sums do not expose
+/-- **Selection preserves persistent offers.**
+Choice selection cannot discard a persistent SOURCE offer: sums do not expose
 OfferedIn, and selecting an actual communicating guard exposes no persistent offer. -/
 theorem offered_select {s : Nat} {p q : Proc} (h : Select p q) :
     OfferedIn s p → OfferedIn s q := by
@@ -33,7 +34,8 @@ theorem offered_select {s : Nat} {p q : Proc} (h : Select p q) :
   | right => exact False.elim
   | trans hp hq ihp ihq => exact fun h => ihq (ihp h)
 
-/-- ALL5 canonical Step rules retain every actual persistent source service offer.
+/-- **Persistent service offers survive one reduction step.**
+ALL5 canonical Step rules retain every actual persistent source service offer.
 This is valid for arbitrary Pi syntax, WITHOUT a HasType premise. -/
 theorem offered_step {s : Nat} {p q : Proc} (h : PiCalculus.Step p q) :
     OfferedIn s p → OfferedIn s q := by
@@ -48,13 +50,15 @@ theorem offered_step {s : Nat} {p q : Proc} (h : PiCalculus.Step p q) :
   | nu hs ih => exact ih
   | cong hp hs hq ih => exact fun h => (offered_cong hq).mp (ih ((offered_cong hp).mp h))
 
-/-- Exact declared signature lookup plus an actual persistent offer is retained
+/-- **Declared signature offers survive one reduction step.**
+Exact declared signature lookup plus an actual persistent offer is retained
 by every canonical Step, at unchanged shared environment/signature. -/
 theorem Offered.step {Γ : ServiceEnv} {s : Nat} {sig : ServiceSignature} {p q : Proc}
     (h : Offered Γ p s sig) (hs : PiCalculus.Step p q) : Offered Γ q s sig :=
   ⟨h.1, offered_step hs h.2⟩
 
-/-- Every finite actual reduction preserves each SOURCE persistent signature offer.
+/-- **Declared signature offers survive finite reduction.**
+Every finite actual reduction preserves each SOURCE persistent signature offer.
 No liveness, all-schedules fairness or eventual service invocation is asserted. -/
 theorem Offered.reachable {Γ : ServiceEnv} {s : Nat} {sig : ServiceSignature} {p q : Proc}
     (h : Offered Γ p s sig) (hr : Relation.ReflTransGen PiCalculus.Step p q) :
@@ -63,28 +67,33 @@ theorem Offered.reachable {Γ : ServiceEnv} {s : Nat} {sig : ServiceSignature} {
   | refl => exact h
   | tail hr hs ih => exact ih.step hs
 
-/-- Every declared shared signature has an ACTUAL persistent offer in current syntax.
+/-- **Availability of all declared services.**
+Every declared shared signature has an ACTUAL persistent offer in current syntax.
 There is NO typing, Step, future trace, ready pair or step-closure field. -/
 def Available (Γ : ServiceEnv) (p : Proc) : Prop :=
   ∀ s sig, Γ.lookup s = some sig → OfferedIn s p
 
-/-- Availability is exactly current declared signature lookup plus persistent syntax. -/
+/-- **Availability as offers of all declared signatures.**
+Availability is exactly current declared signature lookup plus persistent syntax. -/
 theorem available_iff_offered {Γ : ServiceEnv} {p : Proc} :
     Available Γ p ↔ ∀ s sig, Γ.lookup s = some sig → Offered Γ p s sig :=
   ⟨fun h s sig hs => ⟨hs, h s sig hs⟩, fun h s sig hs => (h s sig hs).2⟩
 
-/-- All canonical structural laws preserve current syntactic availability. -/
+/-- **Structural congruence preserves service availability.**
+All canonical structural laws preserve current syntactic availability. -/
 theorem Available.cong_iff {Γ : ServiceEnv} {p q : Proc} (h : Cong p q) :
     Available Γ p ↔ Available Γ q :=
   ⟨fun hp s sig hs => (offered_cong h).mp (hp s sig hs),
     fun hq s sig hs => (offered_cong h).mpr (hq s sig hs)⟩
 
-/-- Strong actual syntactic availability survives ANY canonical Step. -/
+/-- **Service availability survives one reduction step.**
+Strong actual syntactic availability survives ANY canonical Step. -/
 theorem Available.step {Γ : ServiceEnv} {p q : Proc} (h : Available Γ p)
     (hs : PiCalculus.Step p q) : Available Γ q :=
   fun s sig hsig => offered_step hs (h s sig hsig)
 
-/-- Finite actual reductions preserve source syntactic availability; preservation
+/-- **Service availability survives finite reduction.**
+Finite actual reductions preserve source syntactic availability; preservation
 is PROVED here, not encoded into its definition. This is not a progress theorem. -/
 theorem Available.reachable {Γ : ServiceEnv} {p q : Proc} (h : Available Γ p)
     (hr : Relation.ReflTransGen PiCalculus.Step p q) : Available Γ q := by

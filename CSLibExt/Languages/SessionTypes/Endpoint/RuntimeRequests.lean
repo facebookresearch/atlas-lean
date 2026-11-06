@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- A non-request-free frontier yields an ACTUAL declared output leaf through
+/-- **Non-request-free frontier exposes a shared output up to congruence.**
+A non-request-free frontier yields an ACTUAL declared output leaf through
 canonical par rearrangement. Neither readiness nor a progress result is supplied. -/
 theorem GuardedFrontier.expose_request {Γ : ServiceEnv} {p : Proc} (hf : GuardedFrontier Γ p)
     (hn : ¬ RequestFree Γ p) :
@@ -50,7 +51,8 @@ theorem GuardedFrontier.expose_request {Γ : ServiceEnv} {p : Proc} (hf : Guarde
       exact ⟨s, sig, b, c, .par r q, hs,
         Cong.trans (Cong.par_cong hc (Cong.refl q)) (Cong.par_assoc _ _ _)⟩
 
-/-- Any actual exposed request fires under the EXISTING all-declared-services
+/-- **Exposed shared requests step when declared services are available.**
+Any actual exposed request fires under the EXISTING all-declared-services
 availability qualifier, even with ZERO active owned keys or a DONE payload.
 The Step is constructed from actual offered input syntax, not stored in Available. -/
 theorem GuardedFrontier.request_progress {Γ : ServiceEnv} {p : Proc} (hf : GuardedFrontier Γ p)

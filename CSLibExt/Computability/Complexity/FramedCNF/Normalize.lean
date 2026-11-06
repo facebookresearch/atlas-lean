@@ -23,7 +23,8 @@ namespace Cslib.Complexity.FramedCNF
 
 open Computability
 
-/-- Canonicalize a raw payload without enumerating its decoded value. -/
+/-- **Normalization of a raw binary natural-number payload.**
+Canonicalize a raw payload without enumerating its decoded value. -/
 def normalizeNat (bits : List Bool) : List Bool :=
   if bits.getLast? = some false then bits ++ [true] else bits
 
@@ -41,7 +42,8 @@ private theorem encode_decode_pos (bits : List Bool) :
           encodePosNum, List.getLast?_cons_cons, ih]
       all_goals split_ifs <;> rfl
 
-/-- Normalization agrees with the existing total decoder on every
+/-- **Payload normalization agrees with decode-then-encode.**
+Normalization agrees with the existing total decoder on every
 payload, not just canonical encodings. -/
 theorem normalizeNat_eq_encode_decode (bits : List Bool) :
     normalizeNat bits = encodeNat (decodeNat bits) := by
@@ -57,13 +59,13 @@ theorem normalizeNat_eq_encode_decode (bits : List Bool) :
     | none => simp at hl
     | some c => cases c <;> simp [normalizeNat, hl]
 
-/-- Normalization adds at most one bit. -/
+/-- **Payload normalization adds at most one bit.** Normalization adds at most one bit. -/
 theorem length_normalizeNat_le (bits : List Bool) :
     (normalizeNat bits).length ≤ bits.length + 1 := by
   unfold normalizeNat
   split_ifs <;> simp
 
-/-- Canonical encodings are unchanged. -/
+/-- **Payload normalization fixes canonical encodings.** Canonical encodings are unchanged. -/
 @[simp] theorem normalizeNat_encodeNat (n : ℕ) :
     normalizeNat (encodeNat n) = encodeNat n := by
   rw [normalizeNat_eq_encode_decode, decode_encodeNat]

@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- The actual payload kind and continuation of a matched output head. -/
+/-- **Matched output head of a capability.**
+The actual payload kind and continuation of a matched output head. -/
 inductive MatchedOutput (Δ : Context) (e : Key) (c : Capability)
     (s : Protocol) (b : Name) : Prop where
   | passive : c.protocol.unfold = .sendName s → MatchedOutput Δ e c s b
@@ -32,20 +33,23 @@ inductive MatchedOutput (Δ : Context) (e : Key) (c : Capability)
       Δ.lookup d = some ⟨k, v⟩ → e ≠ d → e.opposite ≠ d →
       MatchedOutput Δ e c s b
 
-/-- The old subject's actual head determines its literal continuation,
+/-- **Capability whose head is a send with a given continuation.**
+The old subject's actual head determines its literal continuation,
 independently of whether the transmitted endpoint is external or ν-bound. -/
 def SendsTo (c : Capability) (s : Protocol) : Prop :=
   c.protocol.unfold = .sendName s ∨
     ∃ r k v, c.protocol.unfold = .sendEndpoint r k v s
 
-/-- The detailed matched output determines the same literal continuation. -/
+/-- **A matched output head is a send with the same continuation.**
+The detailed matched output determines the same literal continuation. -/
 theorem MatchedOutput.sendsTo {Δ : Context} {e : Key} {c : Capability}
     {s : Protocol} {b : Name} (h : MatchedOutput Δ e c s b) : SendsTo c s := by
   cases h with
   | passive hs => exact Or.inl hs
   | endpoint hn hs hv he hp => exact Or.inr ⟨_, _, _, hs⟩
 
-/-- Only two actually matched dual subject capabilities advance. Payload
+/-- **Advancement of a matched dual subject pair.**
+Only two actually matched dual subject capabilities advance. Payload
 ownership transfer is invisible in the combined map; all other entries remain.
 The payload can be private to a ν binder, so external advancement records its
 protocol head rather than demanding external ownership of that payload. -/
@@ -54,7 +58,8 @@ inductive DualAdvance : Context → Context → Prop where
       Δ.lookup e = some c → Δ.lookup e.opposite = some c.dual → SendsTo c s →
       DualAdvance Δ ((Δ.insert e ⟨c.rank, s⟩).insert e.opposite ⟨c.rank, s.dual⟩)
 
-/-- For a typed opposite-head pair at an initially compatible interface,
+/-- **Head communication preserves typing and records the matched output.**
+For a typed opposite-head pair at an initially compatible interface,
 the packed result retains the literal send head, payload kind and continuation
 correspondence instead of hiding an unconstrained protocol. -/
 theorem HasType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
@@ -90,20 +95,23 @@ theorem HasType.head_comm_faithful {n : Nat} {Δ : Context} {a b : Name}
       MatchedOutput.endpoint rfl hs hvwhole hne hpd,
       endpoint_head_preservation hd hc hs hv hne hp hi hb hco⟩
 
-/-- Outside the two matched subjects, the entire capability is unchanged. -/
+/-- **Dual-continuation update leaves other lookups unchanged.**
+Outside the two matched subjects, the entire capability is unchanged. -/
 theorem dual_update_lookup_other (Δ : Context) (e x : Key) (c : Capability) (s : Protocol)
     (hx : x ≠ e) (hp : x ≠ e.opposite) :
     ((Δ.insert e ⟨c.rank, s⟩).insert e.opposite ⟨c.rank, s.dual⟩).lookup x = Δ.lookup x := by
   rw [Finmap.lookup_insert_of_ne _ hp, Finmap.lookup_insert_of_ne _ hx]
 
-/-- The matched subject's rank is retained at its exact continuation. -/
+/-- **Subject lookup after a dual-continuation update.**
+The matched subject's rank is retained at its exact continuation. -/
 theorem dual_update_lookup_subject (Δ : Context) (e : Key) (c : Capability) (s : Protocol) :
     ((Δ.insert e ⟨c.rank, s⟩).insert e.opposite ⟨c.rank, s.dual⟩).lookup e =
       some ⟨c.rank, s⟩ := by
   rw [Finmap.lookup_insert_of_ne _ (fun he => Key.opposite_ne e he.symm),
     Finmap.lookup_insert]
 
-/-- Both matched old keys remain owned; the update creates no new key. -/
+/-- **Dual advancement preserves the owned keys.**
+Both matched old keys remain owned; the update creates no new key. -/
 theorem DualAdvance.mem_iff {Δ Ξ : Context} (h : DualAdvance Δ Ξ) (x : Key) :
     x ∈ Ξ ↔ x ∈ Δ := by
   cases h with
@@ -117,7 +125,8 @@ theorem DualAdvance.mem_iff {Δ Ξ : Context} (h : DualAdvance Δ Ξ) (x : Key) 
     · intro hx
       exact Or.inr (Or.inr hx)
 
-/-- From a compatible initial interface, updating both subjects to dual
+/-- **Dual-continuation update preserves compatibility.**
+From a compatible initial interface, updating both subjects to dual
 continuations preserves compatibility independently of process typing. -/
 theorem dual_update_compatible {Δ : Context} (h : Compatible Δ)
     (e : Key) (c : Capability) (s : Protocol) :
@@ -147,14 +156,16 @@ theorem dual_update_compatible {Δ : Context} (h : Compatible Δ)
       rw [dual_update_lookup_other Δ e x.opposite c s hxe hxp] at hv
       exact h x u v hu hv
 
-/-- A faithful matched update retains compatibility if the initial
+/-- **Dual advancement preserves compatibility.**
+A faithful matched update retains compatibility if the initial
 interface is compatible. -/
 theorem DualAdvance.compatible {Δ Ξ : Context} (ha : DualAdvance Δ Ξ)
     (h : Compatible Δ) : Compatible Ξ := by
   cases ha with
   | matched => exact dual_update_compatible h _ _ _
 
-/-- Advancing a matched dual pair preserves full balance when the original
+/-- **Dual-continuation update preserves balance.**
+Advancing a matched dual pair preserves full balance when the original
 interface is balanced, including every untouched opposite-role obligation. -/
 theorem dual_update_balanced {Δ : Context} (h : Balanced Δ)
     (e : Key) (c : Capability) (s : Protocol) :
@@ -181,14 +192,16 @@ theorem dual_update_balanced {Δ : Context} (h : Balanced Δ)
       rw [dual_update_lookup_other Δ e x.opposite c s hxe hxp]
       exact h x u hu
 
-/-- Faithful subject advancement retains balance if the initial external
+/-- **Dual advancement preserves balance.**
+Faithful subject advancement retains balance if the initial external
 interface is balanced. -/
 theorem DualAdvance.balanced {Δ Ξ : Context} (ha : DualAdvance Δ Ξ)
     (h : Balanced Δ) : Balanced Ξ := by
   cases ha with
   | matched => exact dual_update_balanced h _ _ _
 
-/-- A typed opposite-head pair at an initially compatible interface yields
+/-- **Head communication yields a dual advancement.**
+A typed opposite-head pair at an initially compatible interface yields
 a faithful matched update and a compatible typed residual via the packed result. -/
 theorem HasType.head_comm_advance {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
     (h : HasType n Δ (.par (.out a b p) (.inp a q))) (hco : Compatible Δ) :
@@ -197,13 +210,15 @@ theorem HasType.head_comm_advance {n : Nat} {Δ : Context} {a b : Name} {p q : P
   have ha := DualAdvance.matched hc hp hm.sendsTo
   exact ⟨_, ha, ht, ha.compatible hco⟩
 
-/-- A matched update leaves a disjoint ownership frame disjoint. -/
+/-- **Dual advancement preserves disjointness from a frame.**
+A matched update leaves a disjoint ownership frame disjoint. -/
 theorem DualAdvance.disjoint_frame {Δ Ξ Θ : Context} (h : DualAdvance Δ Ξ)
     (hd : Finmap.Disjoint Δ Θ) : Finmap.Disjoint Ξ Θ := by
   intro e he ht
   exact hd e ((h.mem_iff e).mp he) ht
 
-/-- A left parallel frame retains all its capabilities and the exact
+/-- **Dual advancement in the left part of a union.**
+A left parallel frame retains all its capabilities and the exact
 subject head/rank/continuation correspondence of the actual update. -/
 theorem DualAdvance.frame_left {Δ Ξ Θ : Context} (h : DualAdvance Δ Ξ) :
     DualAdvance (Δ ∪ Θ) (Ξ ∪ Θ) := by
@@ -214,7 +229,8 @@ theorem DualAdvance.frame_left {Δ Ξ Θ : Context} (h : DualAdvance Δ Ξ) :
       ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hc)).trans hc)
       ((Finmap.lookup_union_left (Finmap.mem_of_lookup_eq_some hp)).trans hp) hm
 
-/-- A right parallel frame requires the actual disjoint ownership split,
+/-- **Dual advancement in the right part of a disjoint union.**
+A right parallel frame requires the actual disjoint ownership split,
 so its matched entries cannot be shadowed by the left-biased union. -/
 theorem DualAdvance.frame_right {Δ Ξ Θ : Context} (h : DualAdvance Δ Ξ)
     (hd : Finmap.Disjoint Θ Δ) : DualAdvance (Θ ∪ Δ) (Θ ∪ Ξ) := by

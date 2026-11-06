@@ -48,7 +48,8 @@ private theorem sum_predecessor_hit (M : DFA α σ) (C : Finset σ) (a : α) :
     simp [Ne.symm hba]
   · simp
 
-/-- Double counting visits by source state and letter, retaining every
+/-- **Hopcroft predecessor-work as splitter counts plus pops.**
+Double counting visits by source state and letter, retaining every
 incoming transition even when many sources have the same successor. -/
 theorem hopcroftCost_eq_sum_splitterCount (M : DFA α σ)
     (trace : List (Finset σ × α)) :
@@ -66,7 +67,8 @@ theorem hopcroftCost_eq_sum_splitterCount (M : DFA α σ)
     rw [sum_predecessor_hit]
     omega
 
-/-- A nonempty popped block pays for its pop, even if its preimage is
+/-- **Number of pops bounded by the total splitter count.**
+A nonempty popped block pays for its pop, even if its preimage is
 empty. This bounds the `+1` term independently of predecessor visits. -/
 theorem length_le_sum_splitterCount (trace : List (Finset σ × α))
     (hne : ∀ cb ∈ trace, cb.1.Nonempty) :
@@ -119,7 +121,8 @@ theorem hopcroftCost_init_trace_le (M : DFA α σ)
   dsimp only [trace] at hv hl
   nlinarith
 
-/-- A uniform `O(|Σ| n log n)` bound, with the explicit constant `4`.
+/-- **$O(|\Sigma| n \log n)$ bound on Hopcroft predecessor-work.**
+A uniform `O(|Σ| n log n)` bound, with the explicit constant `4`.
 The condition `n ≥ 2` is essential when absorbing the additive unit
 into the logarithm. This concerns predecessor-work, not scan runtime. -/
 theorem hopcroftCost_init_trace_le_log (M : DFA α σ)
@@ -135,7 +138,8 @@ theorem hopcroftCost_init_trace_le_log (M : DFA α σ)
       2 * Nat.log 2 (Fintype.card σ) by omega)
   exact (hopcroftCost_init_trace_le M k).trans (by nlinarith)
 
-/-- The bound for the complete terminating minimization execution.
+/-- **Predecessor-work bound for the complete Hopcroft run.**
+The bound for the complete terminating minimization execution.
 `DFA.hopcroftLoop_waiting_eq_nil` proves this fuel exhausts the queue;
 `hopcroftLoop_eq_hopcroftLoop_of_length` ties the trace to its result. -/
 theorem hopcroftCost_complete_le (M : DFA α σ)
@@ -147,7 +151,8 @@ theorem hopcroftCost_complete_le (M : DFA α σ)
   hopcroftCost_init_trace_le M _
 
 omit [Fintype α] [DecidableEq σ] in
-/-- With at most one state, the accepting/rejecting split has an empty
+/-- **No initial Hopcroft splitters with at most one state.**
+With at most one state, the accepting/rejecting split has an empty
 side, so the algorithm has no initial splitters. -/
 theorem initW_eq_nil_of_card_le_one (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] (hn : Fintype.card σ ≤ 1) :
@@ -165,7 +170,8 @@ theorem initW_eq_nil_of_card_le_one (M : DFA α σ)
   · rfl
 
 omit [Fintype α] in
-/-- Zero predecessor-work for zero/one-state boundary parameters.
+/-- **Zero Hopcroft predecessor-work with at most one state.**
+Zero predecessor-work for zero/one-state boundary parameters.
 This does not assert that constructing the initial partition costs zero. -/
 theorem hopcroftCost_eq_zero_of_card_le_one (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] (k : ℕ) (hn : Fintype.card σ ≤ 1) :
@@ -173,7 +179,8 @@ theorem hopcroftCost_eq_zero_of_card_le_one (M : DFA α σ)
   rw [initW_eq_nil_of_card_le_one M hn]
   cases k <;> rfl
 
-/-- An empty alphabet causes no predecessor-work, for any state count. -/
+/-- **Zero Hopcroft predecessor-work over an empty alphabet.**
+An empty alphabet causes no predecessor-work, for any state count. -/
 theorem hopcroftCost_eq_zero_of_alphabet_card_eq_zero (M : DFA α σ)
     [DecidablePred (· ∈ M.accept)] (k : ℕ) (ha : Fintype.card α = 0) :
     hopcroftCost M (hopcroftSplitters M k (initP M) (initW M)) = 0 := by

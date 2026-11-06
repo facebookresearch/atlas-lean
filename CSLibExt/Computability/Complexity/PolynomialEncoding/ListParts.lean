@@ -52,7 +52,8 @@ private theorem blocks_fuel_eq (x : List Bool) (f g : Nat)
             (undelimitBlocksAux g r).map (p :: ·)
           rw [ih r g (by omega) (by omega)]
 
-/-- Parsing a framed head leaves exactly the raw remainder, including
+/-- **Parsing a framed head leaves the raw remainder.**
+Parsing a framed head leaves exactly the raw remainder, including
 any later framing failure. The decoder's fuel does not alter this law. -/
 theorem blocks_delimit (p r : List Bool) :
     undelimitBlocks (delimit p ++ r) =
@@ -71,7 +72,8 @@ theorem blocks_delimit (p r : List Bool) :
   change (undelimitBlocksAux (2 * p.length + r.length) r).map (p :: ·) = _
   rw [blocks_fuel_eq r (2 * p.length + r.length) r.length (by omega) le_rfl]
 
-/-- The canonical list decoder consumes one raw payload at a time.
+/-- **List decoder consumes one raw payload at a time.**
+The canonical list decoder consumes one raw payload at a time.
 Both element failure and later framing failure are retained exactly. -/
 theorem decode_list_delimit {α : Type} [MetaMathlibExt.BitstringEncoding α]
     (p r : List Bool) :
@@ -94,7 +96,8 @@ theorem decode_list_delimit {α : Type} [MetaMathlibExt.BitstringEncoding α]
     cases bitDecode (α := α) p <;>
       cases bs.mapM (bitDecode (α := α)) <;> rfl
 
-/-- A nonempty input with a malformed first frame fails list decoding.
+/-- **Malformed first frame makes list decoding fail.**
+A nonempty input with a malformed first frame fails list decoding.
 Empty input is excluded because it is the valid empty list. -/
 theorem decode_list_none_of_undelimit_none {α : Type}
     [MetaMathlibExt.BitstringEncoding α] {x : List Bool}

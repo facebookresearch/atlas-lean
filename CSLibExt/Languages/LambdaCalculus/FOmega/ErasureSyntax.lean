@@ -22,7 +22,8 @@ different, type-preserving direction.
 
 namespace Cslib.Languages.LambdaCalculus.FOmega.Tm
 
-/-- Erase types using the already banked System F scoped term carrier. -/
+/-- **Erasure of Fω terms to System F syntax.**
+Erase types using the already banked System F scoped term carrier. -/
 def eraseSyntax : {Δ : List Kind} → {m : Nat} → Tm Δ m → SystemF.Tm 0 m
   | _, _, .var i => .var i
   | _, _, .lam _ b => .lam (.all (.var 0)) (eraseSyntax b)
@@ -32,7 +33,8 @@ def eraseSyntax : {Δ : List Kind} → {m : Nat} → Tm Δ m → SystemF.Tm 0 m
 
 variable {Δ Ε : List Kind} {m k : Nat}
 
-/-- Erasure ignores all kind-correct type substitutions. -/
+/-- **Fω erasure ignores type substitution.**
+Erasure ignores all kind-correct type substitutions. -/
 @[simp] theorem eraseSyntax_tySubst (σ : Ty.Sub Δ Ε) (t : Tm Δ m) :
     eraseSyntax (tySubst σ t) = eraseSyntax t := by
   induction t generalizing Ε with
@@ -42,7 +44,8 @@ variable {Δ Ε : List Kind} {m k : Nat}
   | tabs b ih => simp [eraseSyntax, ih]
   | tapp f A ih => simp [eraseSyntax, ih]
 
-/-- Erasure commutes with scoped term-variable renaming. -/
+/-- **Fω erasure commutes with term-variable renaming.**
+Erasure commutes with scoped term-variable renaming. -/
 @[simp] theorem eraseSyntax_rename (ρ : Fin m → Fin k) (t : Tm Δ m) :
     eraseSyntax (rename ρ t) = SystemF.Tm.rename ρ (eraseSyntax t) := by
   induction t generalizing k with
@@ -60,7 +63,8 @@ private theorem eraseSyntax_liftSub (σ : Fin m → Tm Δ k)
   | zero => rfl
   | succ i => simp [liftSub, SystemF.Tm.liftSub]
 
-/-- Erasure commutes with simultaneous substitution of scoped terms. -/
+/-- **Fω erasure commutes with term substitution.**
+Erasure commutes with simultaneous substitution of scoped terms. -/
 @[simp] theorem eraseSyntax_subst (σ : Fin m → Tm Δ k) (t : Tm Δ m) :
     eraseSyntax (subst σ t) =
       SystemF.Tm.subst (fun i => eraseSyntax (σ i)) (eraseSyntax t) := by
@@ -71,7 +75,8 @@ private theorem eraseSyntax_liftSub (σ : Fin m → Tm Δ k)
   | tabs b ih => simp [eraseSyntax, ih, tyRename]
   | tapp f A ih => simp [eraseSyntax, ih]
 
-/-- Erasure commutes with discharging a term binder. -/
+/-- **Fω erasure commutes with term-binder instantiation.**
+Erasure commutes with discharging a term binder. -/
 @[simp] theorem eraseSyntax_instantiate (b : Tm Δ (m + 1)) (a : Tm Δ m) :
     eraseSyntax (instantiate b a) =
       SystemF.Tm.instantiate (eraseSyntax b) (eraseSyntax a) := by

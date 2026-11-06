@@ -49,7 +49,8 @@ namespace StatMech.Probability
 
 open StatMech StatMech.OSSS
 
-/-- The function `x ↦ x log x` (with `0 log 0 = 0`). It equals `-Real.negMulLog x`
+/-- **Function $x \log x$ with $0 \log 0 = 0$.**
+The function `x ↦ x log x` (with `0 log 0 = 0`). It equals `-Real.negMulLog x`
   (`esd_Phi_eq_neg_negMulLog`). -/
 noncomputable def esd_Phi (x : ℝ) : ℝ := x * Real.log x
 
@@ -57,25 +58,29 @@ noncomputable def esd_Phi (x : ℝ) : ℝ := x * Real.log x
 
 theorem esd_Phi_eq (x : ℝ) : esd_Phi x = x * Real.log x := rfl
 
-/-- `esd_Phi` is the negative of Mathlib's `Real.negMulLog`. -/
+/-- **$x \log x$ is the negation of Mathlib's $-x \log x$.**
+`esd_Phi` is the negative of Mathlib's `Real.negMulLog`. -/
 theorem esd_Phi_eq_neg_negMulLog (x : ℝ) : esd_Phi x = -Real.negMulLog x := by
   simp [esd_Phi, Real.negMulLog]
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
-/-- The entropy `Ent_ν(g) = 𝔼_ν[g log g] - 𝔼_ν[g] log 𝔼_ν[g]` of `g` under the product weight `ν`.
+/-- **Entropy of a function under a product weight.**
+The entropy `Ent_ν(g) = 𝔼_ν[g log g] - 𝔼_ν[g] log 𝔼_ν[g]` of `g` under the product weight `ν`.
 -/
 noncomputable def esd_ent (ν : E → Bool → ℝ) (g : ConfigSpace E → ℝ) : ℝ :=
   OSSS.expect ν (fun ω => esd_Phi (g ω)) - esd_Phi (OSSS.expect ν g)
 
-/-- The conditional entropy of `g` in coordinate `e` given the other coordinates, under the
+/-- **Conditional entropy in one coordinate.**
+The conditional entropy of `g` in coordinate `e` given the other coordinates, under the
   Bernoulli(`p`) weight: `p Φ(g(ω^{e↦1})) + (1-p) Φ(g(ω^{e↦0})) - Φ(𝔼[g | ω_{≠e}])`, with `Φ(x) =
   x log x`. -/
 noncomputable def esd_entCoord (p : ℝ) (g : ConfigSpace E → ℝ) (e : E) (ω : ConfigSpace E) : ℝ :=
   p * esd_Phi (g (StatMech.setOpen e ω)) + (1 - p) * esd_Phi (g (StatMech.setClosed e ω))
     - esd_Phi (OSSS.condMean (OSSS.bernoulliWeight p) e g ω)
 
-/-- Every coordinate weight of `ν` is strictly positive. -/
+/-- **Strictly positive coordinate weights.**
+Every coordinate weight of `ν` is strictly positive. -/
 def esd_PosWeight (ν : E → Bool → ℝ) : Prop := ∀ e b, 0 < ν e b
 
 omit [Fintype E] [DecidableEq E] in
@@ -142,7 +147,8 @@ theorem esd_Phi_scale (p x : ℝ) (hp : 0 < p) (hx : 0 ≤ x) :
   · rw [← h]; simp
   · rw [Real.log_mul hp.ne' h.ne']; ring
 
-/-- Data-processing inequality for entropy under a two-point mixture: for nonnegative `g₀, g₁`, `p
+/-- **Data-processing inequality for entropy under a two-point mixture.**
+Data-processing inequality for entropy under a two-point mixture: for nonnegative `g₀, g₁`, `p
   Φ(𝔼 g₁) + (1-p) Φ(𝔼 g₀) - Φ(p 𝔼 g₁ + (1-p) 𝔼 g₀) ≤ 𝔼[p Φ(g₁) + (1-p) Φ(g₀) - Φ(p g₁ + (1-p)
   g₀)]`. -/
 theorem esd_dpi {μ : E → Bool → ℝ} (hpos : esd_PosWeight μ)

@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- GENERAL arbitrary-depth, arbitrary-context retyping, by all seven typing
+/-- **Retyping along ownership-map equivalence.**
+GENERAL arbitrary-depth, arbitrary-context retyping, by all seven typing
 constructors. Target ownership, ranks and every unfolded branch are derived. -/
 theorem HasType.retype {n : Nat} {Δ Ξ : Context} {p : Proc}
     (h : HasType n Δ p) (he : ContextEquivalent Δ Ξ) : HasType n Ξ p := by
@@ -76,7 +77,8 @@ theorem HasType.retype {n : Nat} {Δ Ξ : Context} {p : Proc}
   | @nu n Δ c p hp ih =>
     exact HasType.nu (c := c) (ih (he.bind (Capability.Equivalent.refl c)))
 
-/-- Equivalence transports typing in BOTH directions at the same process/depth. -/
+/-- **Ownership-map equivalence preserves typing in both directions.**
+Equivalence transports typing in BOTH directions at the same process/depth. -/
 theorem HasType.retype_iff {n : Nat} {Δ Ξ : Context} {p : Proc}
     (he : ContextEquivalent Δ Ξ) : HasType n Δ p ↔ HasType n Ξ p :=
   ⟨fun h => h.retype he, fun h => h.retype he.symm⟩

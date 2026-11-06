@@ -35,24 +35,28 @@ namespace Cslib.SessionTypes
 
 open PiCalculus
 
-/-- All active obligations of this thread belong to one physical channel. -/
+/-- **Single active channel condition for a session context.**
+All active obligations of this thread belong to one physical channel. -/
 def SingleChannel (Γ : Context) (a : Nat) : Prop :=
   ∀ c, c ≠ a → Γ c = .end
 
-/-- Opposite roles have the same active-channel support. -/
+/-- **Dual context keeps the single active channel.**
+Opposite roles have the same active-channel support. -/
 theorem SingleChannel.dual {Γ : Context} {a : Nat}
     (h : SingleChannel Γ a) : SingleChannel (dualContext Γ) a := by
   intro c hc
   simp [dualContext, h c hc, SessionType.dual]
 
-/-- Communication on the sole session cannot create another dependency. -/
+/-- **Advancing the sole channel keeps the single-channel condition.**
+Communication on the sole session cannot create another dependency. -/
 theorem SingleChannel.advance {Γ : Context} {a : Nat}
     (h : SingleChannel Γ a) (s : SessionType) :
     SingleChannel (advance Γ a s) a := by
   intro c hc
   simp [Cslib.SessionTypes.advance, hc, h c hc]
 
-/-- A typed thread whose endpoint obligations are completed is inert. -/
+/-- **Typed thread with completed obligations is nil.**
+A typed thread whose endpoint obligations are completed is inert. -/
 theorem HasType.eq_nil_of_completed {n : Nat} {Γ : Context} {p : Proc}
     (h : HasType n Γ p) (hΓ : ∀ c, Γ c = .end) : p = .nil := by
   cases h with
@@ -60,14 +64,16 @@ theorem HasType.eq_nil_of_completed {n : Nat} {Γ : Context} {p : Proc}
   | out ha => simp [hΓ] at ha
   | inp ha => simp [hΓ] at ha
 
-/-- Every active endpoint of a single-channel thread is the designated one. -/
+/-- **The only active channel is the designated one.**
+Every active endpoint of a single-channel thread is the designated one. -/
 theorem SingleChannel.active_eq {Γ : Context} {a c : Nat}
     (h : SingleChannel Γ a) (hc : Γ c ≠ .end) : c = a := by
   by_cases hca : c = a
   · exact hca
   · exact False.elim (hc (h c hca))
 
-/-- A send obligation forces a send guard on the sole active channel. -/
+/-- **Send obligation on the sole channel forces an output guard.**
+A send obligation forces a send guard on the sole active channel. -/
 theorem HasType.send_shape {n a : Nat} {Γ : Context} {p : Proc}
     {s : SessionType} (h : HasType n Γ p) (hΓ : SingleChannel Γ a)
     (ha : Γ a = .send s) :
@@ -87,7 +93,8 @@ theorem HasType.send_shape {n a : Nat} {Γ : Context} {p : Proc}
     rw [ha] at hc
     cases hc
 
-/-- A receive obligation forces an input guard on the sole active channel. -/
+/-- **Receive obligation on the sole channel forces an input guard.**
+A receive obligation forces an input guard on the sole active channel. -/
 theorem HasType.recv_shape {n a : Nat} {Γ : Context} {p : Proc}
     {s : SessionType} (h : HasType n Γ p) (hΓ : SingleChannel Γ a)
     (ha : Γ a = .recv s) :
@@ -106,7 +113,8 @@ theorem HasType.recv_shape {n a : Nat} {Γ : Context} {p : Proc}
     subst u
     exact ⟨q, rfl, hq⟩
 
-/-- Dual single-channel threads have either completed or can synchronize.
+/-- **Progress for dual single-channel session threads.**
+Dual single-channel threads have either completed or can synchronize.
 The single-channel hypothesis excludes cross-session dependency cycles. -/
 theorem progress {Γ : Context} {a : Nat} {r : Proc × Proc}
     (hr : BinaryTyped Γ r) (hΓ : SingleChannel Γ a) :
@@ -134,7 +142,8 @@ theorem progress {Γ : Context} {a : Nat} {r : Proc × Proc}
       (by simp [dualContext, ha, SessionType.dual])
     exact Or.inr ⟨_, .recv a b p' q'⟩
 
-/-- A completed sole protocol means both threads have reached `nil`. -/
+/-- **Completed sole protocol means both threads are nil.**
+A completed sole protocol means both threads have reached `nil`. -/
 theorem BinaryTyped.completed {Γ : Context} {a : Nat} {r : Proc × Proc}
     (hr : BinaryTyped Γ r) (hΓ : SingleChannel Γ a) (ha : Γ a = .end) :
     r = (.nil, .nil) := by
@@ -147,7 +156,8 @@ theorem BinaryTyped.completed {Γ : Context} {a : Nat} {r : Proc × Proc}
     (hr.2.eq_nil_of_completed
       (by intro c; simp [dualContext, he, SessionType.dual]))
 
-/-- Paths of session communication are paths of existing π reductions. -/
+/-- **Session communication paths are π-calculus reduction paths.**
+Paths of session communication are paths of existing π reductions. -/
 theorem represent_steps {r t : Proc × Proc}
     (h : Relation.ReflTransGen CommStep r t) :
     Relation.ReflTransGen PiCalculus.Step (represent r) (represent t) := by
@@ -155,7 +165,8 @@ theorem represent_steps {r t : Proc × Proc}
   | refl => exact .refl
   | tail h ht ih => exact .tail ih (represent_step ht)
 
-/-- Every isolated finite dual session admits a finite communication path to
+/-- **Finite completion of isolated finite binary sessions.**
+Every isolated finite dual session admits a finite communication path to
 completion. This excludes recursion and is not global π normalization. -/
 theorem finite_completion (s : SessionType) {Γ : Context} {a : Nat}
     {r : Proc × Proc} (hr : BinaryTyped Γ r) (hΓ : SingleChannel Γ a)

@@ -24,14 +24,16 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Substitution cancels binder lift on an entire polarized endpoint key. -/
+/-- **Substitution cancels lifting on endpoint keys.**
+Substitution cancels binder lift on an entire polarized endpoint key. -/
 theorem Key.subst_lift (b : Name) (e : Key) :
     mapName (substName b 0) (mapName (liftName 0) e) = e := by
   cases e
   simp [mapName, substName_liftName]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Linear input substitution is collision-free when the transmitted role
+/-- **Received-endpoint substitution is injective when the role is fresh.**
+Linear input substitution is collision-free when the transmitted role
 was absent from the receiver. Its opposite physical-name role is allowed. -/
 theorem Context.injOn_received_subst {Δ : Context} {b : Name} {r : Role}
     {c : Capability} (hfresh : (⟨b, r⟩ : Key) ∉ Δ) :
@@ -58,7 +60,8 @@ theorem Context.injOn_received_subst {Δ : Context} {b : Name} {r : Role}
     rw [Key.subst_lift, Key.subst_lift] at hxy
     rw [hxy]
 
-/-- Subject substitution consumes the bound role and inserts exactly the
+/-- **Received-endpoint substitution moves the bound role to the sent key.**
+Subject substitution consumes the bound role and inserts exactly the
 sent key, preserving every other capability and permitting its peer role. -/
 theorem Context.rekey_received_subst {Δ : Context} {b : Name} {r : Role}
     {c : Capability} (hfresh : (⟨b, r⟩ : Key) ∉ Δ)
@@ -85,7 +88,8 @@ theorem Context.rekey_received_subst {Δ : Context} {b : Name} {r : Role}
       simp [Key.subst_lift]
     _ = _ := Multiset.map_id _
 
-/-- Receiving a linear endpoint substitutes its physical name in ALL
+/-- **Endpoint typing under substitution of a transmitted endpoint.**
+Receiving a linear endpoint substitutes its physical name in ALL
 subject and payload positions, removes the bound role and inserts the sent
 role exactly once. Capture under input and ν is the canonical π substitution. -/
 theorem HasType.subst_endpoint {n : Nat} {Δ : Context} {b : Name}
@@ -98,7 +102,8 @@ theorem HasType.subst_endpoint {n : Nat} {Δ : Context} {b : Name}
   rw [Context.rekey_received_subst hfresh hi, mapProc_substName] at ht
   exact ht
 
-/-- Linear subject substitution with non-aliasing DERIVED from disjoint
+/-- **Linear subject substitution with freshness from disjoint ownership.**
+Linear subject substitution with non-aliasing DERIVED from disjoint
 sender/receiver ownership and the receiver's already-owned carrier. -/
 theorem HasType.subst_endpoint_from_split {n : Nat} {Δ Θ : Context}
     {b : Name} {r : Role} {c old next : Capability} {e : Key} {p : Proc}
@@ -112,7 +117,8 @@ theorem HasType.subst_endpoint_from_split {n : Nat} {Δ Θ : Context}
   exact Context.fresh_insert_owned (Context.fresh_of_disjoint hd hs)
     (Finmap.mem_of_lookup_eq_some hr)
 
-/-- Passive input substitution changes no linear context: every owned
+/-- **Passive substitution leaves the linear context unchanged.**
+Passive input substitution changes no linear context: every owned
 key is a lifted outer key, so the input binder owns no endpoint role. -/
 theorem Context.rekey_passive_subst {Δ : Context} (b : Name)
     (hi : Set.InjOn (Key.mapName (substName b 0)) {e | e ∈ Context.lift 0 Δ}) :
@@ -131,7 +137,8 @@ theorem Context.rekey_passive_subst {Δ : Context} (b : Name)
     _ = _ := Multiset.map_id _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Passive substitution is collision-free on all lifted outer endpoint keys. -/
+/-- **Passive substitution is injective on lifted outer keys.**
+Passive substitution is collision-free on all lifted outer endpoint keys. -/
 theorem Context.injOn_passive_subst {Δ : Context} (b : Name) :
     Set.InjOn (Key.mapName (substName b 0)) {e | e ∈ Context.lift 0 Δ} := by
   intro x hx y hy hxy
@@ -140,7 +147,8 @@ theorem Context.injOn_passive_subst {Δ : Context} (b : Name) :
   rw [Key.subst_lift, Key.subst_lift] at hxy
   rw [hxy]
 
-/-- Passive payload substitution preserves every linear obligation and
+/-- **Endpoint typing under passive name substitution.**
+Passive payload substitution preserves every linear obligation and
 cannot introduce an endpoint subject capability. -/
 theorem HasType.subst_passive {n : Nat} {Δ : Context} {p : Proc} {b : Name}
     (h : HasType (n + 1) (Context.lift 0 Δ) p) (hb : b.ClosedAt n) :

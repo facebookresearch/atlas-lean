@@ -20,7 +20,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Every actual owned key is scoped at the runtime derivation's ambient depth. -/
+/-- **Each owned key of a runtime typing is scoped at ambient depth.**
+Every actual owned key is scoped at the runtime derivation's ambient depth. -/
 theorem HasType.lookup_closedAt {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) {z : Key} {t : Capability} (hz : Δ.lookup z = some t) :
     z.name.ClosedAt n := by
@@ -79,14 +80,16 @@ theorem HasType.lookup_closedAt {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : 
       Finmap.lookup_insert_of_ne _ (Key.lift_ne_bound z .positive)]
     exact Context.lookup_lift.mpr hz
 
-/-- Scope applies to the actual complete owned domain, not only active subjects. -/
+/-- **Whole owned context of a runtime typing is scoped at ambient depth.**
+Scope applies to the actual complete owned domain, not only active subjects. -/
 theorem HasType.context_closedAt {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) : ∀ e ∈ Δ, e.name.ClosedAt n := by
   intro e he
   obtain ⟨c, hc⟩ := Finmap.mem_iff.mp he
   exact h.lookup_closedAt hc
 
-/-- A typed structurally guarded template owns only completed AMBIENT entries.
+/-- **Typed service templates own only completed entries.**
+A typed structurally guarded template owns only completed AMBIENT entries.
 Its input and replica BODY proofs remain separate and may use their own formal key. -/
 theorem HasType.template_completed {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (ht : ServiceTemplate Γ p) : Δ.Completed := by
@@ -138,7 +141,8 @@ private theorem scope_bind {n : Nat} {Δ : Context} (c : Capability)
     · obtain ⟨d, hd, rfl⟩ := Context.mem_rekey.mp he
       exact (closedAt_liftName_iff _ 0 (Nat.zero_le _) d.name).mpr (hs d hd)
 
-/-- Structurally guarded typed templates can replace only their COMPLETED ambient
+/-- **Typed service templates retype at any well-formed completed context.**
+Structurally guarded typed templates can replace only their COMPLETED ambient
 annotations. Fresh input/empty replica BODY proofs are retained unchanged. -/
 theorem HasType.template_reannotate {n : Nat} {Γ : ServiceEnv} {Δ Θ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (ht : ServiceTemplate Γ p) (hc : Θ.Completed)
@@ -169,19 +173,22 @@ theorem HasType.template_reannotate {n : Nat} {Γ : ServiceEnv} {Δ Θ : Context
       (Context.lookup_bind_positive c Δ)
     exact HasType.nu hd (ih ht (completed_bind hc hdone) (scope_bind c hs) (hd.bind c))
 
-/-- Clearing completed template annotations produces the EXACT empty BODY
+/-- **Typed service templates retype at empty ownership.**
+Clearing completed template annotations produces the EXACT empty BODY
 required by replica admission; this is not unconditional active-resource erasure. -/
 theorem HasType.template_empty {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (h : HasType n Γ Δ p) (ht : ServiceTemplate Γ p) : HasType n Γ ∅ p :=
   h.template_reannotate ht Context.completed_empty
     (fun _ he => False.elim (Finmap.notMem_empty he)) (separated_empty Γ)
 
-/-- Removing a nil restriction retains its actual completed/scoped/separated ambient. -/
+/-- **Removing a restriction around nil preserves runtime typing.**
+Removing a nil restriction retains its actual completed/scoped/separated ambient. -/
 theorem HasType.nu_nil_elim {n : Nat} {Γ : ServiceEnv} {Δ : Context}
     (h : HasType n Γ Δ (.nu .nil)) : HasType n Γ Δ .nil :=
   HasType.nil (h.template_completed trivial) h.context_closedAt h.separated
 
-/-- Introducing a nil restriction chooses a genuinely completed literal-dual pair. -/
+/-- **Adding a restriction around nil preserves runtime typing.**
+Introducing a nil restriction chooses a genuinely completed literal-dual pair. -/
 theorem HasType.nu_nil_intro {n : Nat} {Γ : ServiceEnv} {Δ : Context}
     (h : HasType n Γ Δ .nil) : HasType n Γ Δ (.nu .nil) := by
   let c : Capability := ⟨0, .done⟩

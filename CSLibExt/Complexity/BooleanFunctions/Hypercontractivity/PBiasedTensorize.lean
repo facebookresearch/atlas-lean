@@ -71,13 +71,14 @@ open StatMech StatMech.OSSS
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The `0/1` value of a bit. -/
+/-- **Zero-one value of a bit.** The `0/1` value of a bit. -/
 def ptn_val (b : Bool) : ℝ := if b then 1 else 0
 
 @[simp] theorem ptn_val_true : ptn_val true = 1 := rfl
 @[simp] theorem ptn_val_false : ptn_val false = 0 := rfl
 
-/-- The standard deviation `√(p(1-p))` of a Bernoulli(`p`) bit. -/
+/-- **Standard deviation of a Bernoulli bit.**
+The standard deviation `√(p(1-p))` of a Bernoulli(`p`) bit. -/
 noncomputable def ptn_sigma (p : ℝ) : ℝ := Real.sqrt (p * (1 - p))
 
 theorem ptn_sigma_pos {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) : 0 < ptn_sigma p :=
@@ -87,7 +88,8 @@ theorem ptn_sigma_sq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     ptn_sigma p ^ 2 = p * (1 - p) := by
   unfold ptn_sigma; rw [Real.sq_sqrt (by nlinarith)]
 
-/-- The normalized Bernoulli(`p`) bit `ψ(b) = (b - p) / √(p(1-p))`, which has mean `0` and variance
+/-- **Normalized Bernoulli bit.**
+The normalized Bernoulli(`p`) bit `ψ(b) = (b - p) / √(p(1-p))`, which has mean `0` and variance
   `1`. -/
 noncomputable def ptn_psi (p : ℝ) (b : Bool) : ℝ := (ptn_val b - p) / ptn_sigma p
 
@@ -109,7 +111,8 @@ theorem ptn_psi_sq_mean {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
   field_simp
   nlinarith [hσ2]
 
-/-- Expectations of product functions factor under the product measure. -/
+/-- **Expectations of product functions factor under product measure.**
+Expectations of product functions factor under the product measure. -/
 theorem ptn_expect_prod (p : ℝ) (h : ι → Bool → ℝ) :
     OSSS.expect (OSSS.bernoulliWeight p) (fun ω => ∏ e : ι, h e (ω e))
       = ∏ e : ι, ((1 - p) * h e false + p * h e true) := by
@@ -126,7 +129,7 @@ theorem ptn_expect_prod (p : ℝ) (h : ι → Bool → ℝ) :
   simp only [Bool.false_eq_true, ite_false, ite_true]
   ring
 
-/-- The `p`-biased character `φ_S(ω) = ∏_{i ∈ S} ψ(ω i)`. -/
+/-- **$p$-biased character.** The `p`-biased character `φ_S(ω) = ∏_{i ∈ S} ψ(ω i)`. -/
 noncomputable def ptn_pchar (p : ℝ) (S : Finset ι) (ω : ConfigSpace ι) : ℝ :=
   ∏ i ∈ S, ptn_psi p (ω i)
 
@@ -138,7 +141,8 @@ theorem ptn_pchar_as_univ (p : ℝ) (S : Finset ι) (ω : ConfigSpace ι) :
     ptn_pchar p S ω = ∏ i : ι, (if i ∈ S then ptn_psi p (ω i) else 1) := by
   unfold ptn_pchar; rw [Finset.prod_ite_mem, Finset.univ_inter]
 
-/-- The `p`-biased characters are orthonormal in `L²(μ_p)`. -/
+/-- **Orthonormality of the $p$-biased characters.**
+The `p`-biased characters are orthonormal in `L²(μ_p)`. -/
 theorem ptn_orthonormal {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (S T : Finset ι) :
     OSSS.expect (OSSS.bernoulliWeight p) (fun ω => ptn_pchar p S ω * ptn_pchar p T ω)
       = if S = T then 1 else 0 := by
@@ -178,7 +182,7 @@ theorem ptn_orthonormal {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (S T : Finset ι) 
     obtain ⟨e, he⟩ := this
     exact Finset.prod_eq_zero (Finset.mem_univ e) (by rw [ite_eq_right he])
 
-/-- The `p`-biased Fourier coefficient `f̂(S) = 𝔼_p[f φ_S]`. -/
+/-- **$p$-biased Fourier coefficient.** The `p`-biased Fourier coefficient `f̂(S) = 𝔼_p[f φ_S]`. -/
 noncomputable def ptn_coeff (p : ℝ) (f : ConfigSpace ι → ℝ) (S : Finset ι) : ℝ :=
   OSSS.expect (OSSS.bernoulliWeight p) (fun ω => f ω * ptn_pchar p S ω)
 
@@ -235,7 +239,8 @@ theorem ptn_repro_kernel {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (x y : ConfigSpac
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
     exact Finset.prod_eq_zero (Finset.mem_univ i) (by rw [ite_eq_right hi])
 
-/-- Fourier inversion under `μ_p`: `f = ∑_S f̂(S) φ_S` for `0 < p < 1`. -/
+/-- **$p$-biased Fourier inversion.**
+Fourier inversion under `μ_p`: `f = ∑_S f̂(S) φ_S` for `0 < p < 1`. -/
 theorem ptn_expansion {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (f : ConfigSpace ι → ℝ) (x : ConfigSpace ι) :
     (∑ S : Finset ι, ptn_coeff p f S * ptn_pchar p S x) = f x := by
@@ -279,7 +284,8 @@ theorem ptn_expect_finsetSum {κ : Type*} (p : ℝ) (s : Finset κ) (g : κ → 
   simp_rw [Finset.mul_sum]
   rw [Finset.sum_comm]
 
-/-- Parseval's identity under `μ_p`: `𝔼_p[f g] = ∑_S f̂(S) ĝ(S)`. -/
+/-- **Parseval's identity under the $p$-biased measure.**
+Parseval's identity under `μ_p`: `𝔼_p[f g] = ∑_S f̂(S) ĝ(S)`. -/
 theorem ptn_parseval {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (f g : ConfigSpace ι → ℝ) :
     OSSS.expect (OSSS.bernoulliWeight p) (fun ω => f ω * g ω)
       = ∑ S : Finset ι, ptn_coeff p f S * ptn_coeff p g S := by
@@ -316,7 +322,8 @@ theorem ptn_parseval_sq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (f : ConfigSpace �
   rw [ptn_parseval hp0 hp1 f f]
   apply Finset.sum_congr rfl; intro S _; rw [sq]
 
-/-- The variance under `μ_p` is the Fourier weight off the empty set. -/
+/-- **$p$-biased variance as Fourier weight off the empty set.**
+The variance under `μ_p` is the Fourier weight off the empty set. -/
 theorem ptn_var_eq_fourierWeight {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (f : ConfigSpace ι → ℝ) :
     OSSS.var (OSSS.bernoulliWeight p) f
       = ∑ S ∈ (univ.erase (∅ : Finset ι)), (ptn_coeff p f S) ^ 2 := by
@@ -412,7 +419,8 @@ theorem ptn_expect_sum_pchar_sq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     apply Finset.sum_congr rfl; intro S _
     apply Finset.sum_congr rfl; intro U _; ring
 
-/-- The influence of `e` on a Boolean function under `μ_p` is `∑_{S ∋ e} f̂(S)² / (p(1-p))`. -/
+/-- **$p$-biased influence of a coordinate as Fourier weight.**
+The influence of `e` on a Boolean function under `μ_p` is `∑_{S ∋ e} f̂(S)² / (p(1-p))`. -/
 theorem ptn_infl_eq_fourierWeight {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) (e : ι) :
     OSSS.infl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) e
@@ -434,7 +442,8 @@ theorem ptn_infl_eq_fourierWeight {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   intro S _
   rw [div_pow, one_div, ← div_eq_inv_mul]
 
-/-- The total influence of a Boolean function under `μ_p` is `∑_S |S| f̂(S)² / (p(1-p))`. -/
+/-- **$p$-biased total influence as Fourier weight.**
+The total influence of a Boolean function under `μ_p` is `∑_S |S| f̂(S)² / (p(1-p))`. -/
 theorem ptn_totalInfl_eq_fourierWeight {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace ι → Bool) :
     totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
@@ -454,11 +463,11 @@ theorem ptn_totalInfl_eq_fourierWeight {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
   intro S _
   rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, hc, nsmul_eq_mul]
 
-/-- The `q`-th moment `𝔼_p |f|^q`. -/
+/-- **$q$-th moment under the $p$-biased measure.** The `q`-th moment `𝔼_p |f|^q`. -/
 noncomputable def ptn_qnormPow (p q : ℝ) (f : ConfigSpace ι → ℝ) : ℝ :=
   OSSS.expect (OSSS.bernoulliWeight p) (fun ω => |f ω| ^ q)
 
-/-- The `L^q(μ_p)` norm `(𝔼_p |f|^q)^{1/q}`. -/
+/-- **$L^q$ norm under the $p$-biased measure.** The `L^q(μ_p)` norm `(𝔼_p |f|^q)^{1/q}`. -/
 noncomputable def ptn_qnorm (p q : ℝ) (f : ConfigSpace ι → ℝ) : ℝ :=
   (ptn_qnormPow p q f) ^ (1 / q)
 
@@ -481,7 +490,8 @@ theorem ptn_qnorm_rpow_self {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {q : ℝ} 
   rw [← Real.rpow_mul (ptn_qnormPow_nonneg hp0 hp1 q f), one_div, inv_mul_cancel₀ hq,
     Real.rpow_one]
 
-/-- The `p`-biased noise operator on the Fourier side: `T_ρ f = ∑_S ρ^{|S|} f̂(S) φ_S`. -/
+/-- **$p$-biased noise operator on the Fourier side.**
+The `p`-biased noise operator on the Fourier side: `T_ρ f = ∑_S ρ^{|S|} f̂(S) φ_S`. -/
 noncomputable def ptn_noiseOp (p ρ : ℝ) (f : ConfigSpace ι → ℝ) : ConfigSpace ι → ℝ :=
   fun ω => ∑ S : Finset ι, (ρ ^ S.card * ptn_coeff p f S) * ptn_pchar p S ω
 
@@ -552,16 +562,18 @@ theorem ptn_expect_cons_split {n : ℕ} (p : ℝ) (f : (Fin (n + 1) → Bool) �
   simp only [Bool.false_eq_true, ite_false, ite_true]
   ring
 
-/-- The one-coordinate noise kernel: keep the bit with probability `ρ`, otherwise resample it from
+/-- **One-coordinate $p$-biased noise kernel.**
+The one-coordinate noise kernel: keep the bit with probability `ρ`, otherwise resample it from
   Bernoulli(`p`). -/
 noncomputable def ptn_kbit (p ρ : ℝ) (x y : Bool) : ℝ :=
   ρ * (if x = y then 1 else 0) + (1 - ρ) * (if y then p else 1 - p)
 
-/-- The product noise kernel on `{0, 1}^ι`. -/
+/-- **Product noise kernel on the Boolean cube.** The product noise kernel on `{0, 1}^ι`. -/
 noncomputable def ptn_kernel (p ρ : ℝ) (x y : ConfigSpace ι) : ℝ :=
   ∏ i : ι, ptn_kbit p ρ (x i) (y i)
 
-/-- The `p`-biased noise operator `T_ρ f (x) = ∑_y K_ρ(x, y) f y`, defined by its Markov kernel. -/
+/-- **$p$-biased noise operator via its Markov kernel.**
+The `p`-biased noise operator `T_ρ f (x) = ∑_y K_ρ(x, y) f y`, defined by its Markov kernel. -/
 noncomputable def ptn_kop (p ρ : ℝ) (f : ConfigSpace ι → ℝ) : ConfigSpace ι → ℝ :=
   fun x => ∑ y : ConfigSpace ι, ptn_kernel p ρ x y * f y
 
@@ -609,7 +621,8 @@ theorem ptn_kop_const_mul (p ρ c : ℝ) (g : ConfigSpace ι → ℝ) :
   funext x; unfold ptn_kop; rw [Finset.mul_sum]
   apply Finset.sum_congr rfl; intro y _; ring
 
-/-- The kernel and Fourier definitions of the `p`-biased noise operator agree for `0 < p < 1`. -/
+/-- **Kernel and Fourier noise operators agree.**
+The kernel and Fourier definitions of the `p`-biased noise operator agree for `0 < p < 1`. -/
 theorem ptn_kop_eq_noiseOp {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (ρ : ℝ) (f : ConfigSpace ι → ℝ) :
     ptn_kop p ρ f = ptn_noiseOp p ρ f := by
   have hf : f = (fun x => ∑ S : Finset ι, ptn_coeff p f S * ptn_pchar p S x) := by
@@ -763,7 +776,8 @@ theorem ptn_kbit_nonneg {p ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (hp0 : 0 �
   cases a <;> cases c <;>
     simp only [ptn_kbit_ff, ptn_kbit_ft, ptn_kbit_tf, ptn_kbit_tt] <;> nlinarith
 
-/-- Induction step of the tensorization: hypercontractivity on `{0, 1}^n` implies it on `{0,
+/-- **Tensorization step for $p$-biased hypercontractivity.**
+Induction step of the tensorization: hypercontractivity on `{0, 1}^n` implies it on `{0,
   1}^{n+1}`. -/
 theorem ptn_tensorStep {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p)) (n : ℕ)
@@ -875,7 +889,8 @@ theorem ptn_tensorStep {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ
         rw [← Real.rpow_mul (ptn_qnormPow_nonneg hp0.le hp1.le q f)]
         congr 1; field_simp
 
-/-- `p`-biased hypercontractivity on `{0, 1}^n`: `‖T_ρ f‖₂ ≤ ‖f‖_q` for `0 < p < 1`, `1 ≤ q ≤ 2` and
+/-- **$p$-biased hypercontractivity on $\{0, 1\}^n$.**
+`p`-biased hypercontractivity on `{0, 1}^n`: `‖T_ρ f‖₂ ≤ ‖f‖_q` for `0 < p < 1`, `1 ≤ q ≤ 2` and
   `ρ² = 4p(1-p)(q - 1)`. The noise rate is not optimal for `p ≠ 1/2`. -/
 theorem ptn_hypercontractivity_fin {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ)
     (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
@@ -887,7 +902,8 @@ theorem ptn_hypercontractivity_fin {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h
         ptn_qnorm_fin_zero (by linarith : (0 : ℝ) < q)]
   | succ m ih => exact ptn_tensorStep hp0 hp1 h0 h1 hq1 hq2 hρsq m (fun g => ih g) f
 
-/-- Fourier form of `ptn_hypercontractivity_fin` on `{0, 1}^n`. -/
+/-- **Fourier form of $p$-biased hypercontractivity on $\{0, 1\}^n$.**
+Fourier form of `ptn_hypercontractivity_fin` on `{0, 1}^n`. -/
 theorem ptn_lowDegreeWeight_fin {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ)
     (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
     (n : ℕ) (f : (Fin n → Bool) → ℝ) :
@@ -949,7 +965,8 @@ theorem ptn_kop_reindex {κ : Type*} [Fintype κ] [DecidableEq κ] (σ : κ ≃ 
     simp only [Equiv.symm_apply_apply]
   · congr 1; funext i; rw [Equiv.apply_symm_apply]
 
-/-- `p`-biased hypercontractivity in Fourier form on any finite index type: `∑_S ρ^{2|S|} f̂(S)² ≤
+/-- **Fourier form of $p$-biased hypercontractivity on finite index types.**
+`p`-biased hypercontractivity in Fourier form on any finite index type: `∑_S ρ^{2|S|} f̂(S)² ≤
   ‖f‖_q²` for `ρ² = 4p(1-p)(q - 1)`. -/
 theorem ptn_lowDegreeWeight {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ)
     (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
@@ -1022,7 +1039,8 @@ theorem ptn_kop_deriv_l2sq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (ρ : ℝ) (f :
   apply Finset.sum_congr rfl
   intro S _; ring
 
-/-- `p`-biased hypercontractivity applied to the discrete derivative `∂ₑ 1_A`. -/
+/-- **$p$-biased hypercontractivity for a discrete derivative.**
+`p`-biased hypercontractivity applied to the discrete derivative `∂ₑ 1_A`. -/
 theorem ptn_perCoord_hc {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
     (φ : ConfigSpace ι → Bool) (e : ι) :
@@ -1039,7 +1057,8 @@ theorem ptn_perCoord_hc {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ �
   rw [ptn_qnorm_deriv_sq hp0 hp1 (by linarith : (0 : ℝ) < q)] at hldw
   exact hldw
 
-/-- `ptn_perCoord_hc` summed over all coordinates. -/
+/-- **Summed per-coordinate $p$-biased hypercontractive bound.**
+`ptn_perCoord_hc` summed over all coordinates. -/
 theorem ptn_summed_hc {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1)
     (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
     (φ : ConfigSpace ι → Bool) :
@@ -1104,7 +1123,8 @@ theorem ptn_cap_sum [Nonempty ι] {p q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (hq1 :
         rw [← Finset.mul_sum]
         rfl
 
-/-- The capped per-coordinate estimate under `μ_p`: `(1/(p(1-p))) ∑_S |S| ρ^{2(|S|-1)} f̂(S)² ≤
+/-- **Capped per-coordinate estimate under the $p$-biased measure.**
+The capped per-coordinate estimate under `μ_p`: `(1/(p(1-p))) ∑_S |S| ρ^{2(|S|-1)} f̂(S)² ≤
   δ^{2/q - 1} ∑ₑ Infₑ`, with `δ = maxₑ Infₑ`. -/
 theorem ptn_capped_hc [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (h0 : 0 ≤ ρ)
     (h1 : ρ ≤ 1) (hq1 : 1 ≤ q) (hq2 : q ≤ 2) (hρsq : ρ ^ 2 = (q - 1) * 4 * p * (1 - p))
@@ -1115,7 +1135,8 @@ theorem ptn_capped_hc [Nonempty ι] {p ρ q : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (
         * totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) :=
   le_trans (ptn_summed_hc hp0 hp1 h0 h1 hq1 hq2 hρsq φ) (ptn_cap_sum hp0 hp1 hq1 hq2 φ)
 
-/-- The KKL inequality with constant `2` for every `p ∈ (1/2, q)` with `p < 1`, with the capped
+/-- **$p$-biased KKL inequality conditional on the capped estimate.**
+The KKL inequality with constant `2` for every `p ∈ (1/2, q)` with `p < 1`, with the capped
   estimate `ptn_capped_hc` as a hypothesis. Not proved in this library for any `q > 1/2`. -/
 def ptn_RhoOptimise (q : ℝ) : Prop :=
   ∀ p ∈ Set.Ioo (1 / 2 : ℝ) q, p < 1 → ∀ {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
@@ -1129,7 +1150,8 @@ def ptn_RhoOptimise (q : ℝ) : Prop :=
           * Real.log (1 / maxInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0))
         ≤ totalInfl (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
 
-/-- `ptn_RhoOptimise q` gives the KKL inequality with constant `2` at every `p ∈ (1/2, q)`. -/
+/-- **Conditional $p$-biased KKL statement yields KKL with constant $2$.**
+`ptn_RhoOptimise q` gives the KKL inequality with constant `2` at every `p ∈ (1/2, q)`. -/
 theorem ptn_kklHC_of_rhoOptimise {q : ℝ} (H : ptn_RhoOptimise q)
     {p : ℝ} (hp : p ∈ Set.Ioo (1 / 2 : ℝ) q) (hp1 : p < 1) :
     KKLHypercontractive p 2 := by
@@ -1137,12 +1159,14 @@ theorem ptn_kklHC_of_rhoOptimise {q : ℝ} (H : ptn_RhoOptimise q)
   intro E _ _ _ φ
   exact H p hp hp1 φ fun _ρ h0 h1 _q hq1 hq2 hρsq => ptn_capped_hc hp0 hp1 h0 h1 hq1 hq2 hρsq φ
 
-/-- `ptn_RhoOptimise q` implies `kpb_PBiasedHC q`. -/
+/-- **Conditional KKL gives KKL with constant 2 on $(1/2, q)$ for $q \le 1$.**
+`ptn_RhoOptimise q` implies `kpb_PBiasedHC q`. -/
 theorem ptn_PBiasedHC_of_rhoOptimise {q : ℝ} (hq : q ≤ 1) (H : ptn_RhoOptimise q) :
     kpb_PBiasedHC q :=
   fun p hp => ptn_kklHC_of_rhoOptimise H hp (by have := hp.2; linarith)
 
-/-- The KKL inequality with constant `0` holds trivially. -/
+/-- **Trivial KKL inequality with constant $0$.**
+The KKL inequality with constant `0` holds trivially. -/
 theorem ptn_rhoOptimise_c0 {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E] (φ : ConfigSpace E → Bool) :
     (0 : ℝ) * OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
@@ -1151,7 +1175,8 @@ theorem ptn_rhoOptimise_c0 {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
   rw [zero_mul, zero_mul]
   exact kkl_totalInfl_nonneg (bernoulliWeight_isProbWeight hp0 hp1) _
 
-/-- The sharp-threshold bound `kpb_sharpThreshold` under `ptn_RhoOptimise q`. -/
+/-- **Sharp-threshold bound from the conditional KKL statement.**
+The sharp-threshold bound `kpb_sharpThreshold` under `ptn_RhoOptimise q`. -/
 theorem ptn_sharpThreshold_of_rhoOptimise {q : ℝ} (hq1 : q ≤ 1) (H : ptn_RhoOptimise q)
     {E : Type} [Fintype E] [DecidableEq E] [Nonempty E]
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A)

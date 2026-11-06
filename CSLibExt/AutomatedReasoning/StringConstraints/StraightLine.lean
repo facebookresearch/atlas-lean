@@ -67,7 +67,8 @@ namespace Cslib.AutomatedReasoning.StringConstraints
 
 variable {α : Type*}
 
-/-- A **closed straight-line system**: one defining term per variable, plus a
+/-- **Closed straight-line system.**
+A **closed straight-line system**: one defining term per variable, plus a
 query formula. The definition at position `k` is the definition of
 variable `k`. There are no free input variables: every variable the
 system talks about must be defined by the system itself. -/
@@ -77,7 +78,8 @@ structure SLSys (α : Type*) where
   /-- The query formula. -/
   query : Formula α ℕ
 
-/-- A closed straight-line system is **acyclic** when every defining term
+/-- **Acyclic closed straight-line system.**
+A closed straight-line system is **acyclic** when every defining term
 mentions only earlier variables, and the query mentions only defined
 variables. Hence every variable occurring anywhere in the system is
 defined, and unfolding the definitions terminates at ground terms:
@@ -86,30 +88,35 @@ def Acyclic (S : SLSys α) : Prop :=
   (∀ k (h : k < S.defs.length), ∀ j ∈ varsOf (S.defs[k]'h), j < k) ∧
     ∀ j ∈ varsOfFormula S.query, j < S.defs.length
 
-/-- Satisfaction of a closed straight-line system: the assignment obeys every
+/-- **Satisfaction of a closed straight-line system.**
+Satisfaction of a closed straight-line system: the assignment obeys every
 definition and satisfies the query. -/
 def SLSat (S : SLSys α) (σ : ℕ → List α) : Prop :=
   (∀ k (h : k < S.defs.length), σ k = eval σ (S.defs[k]'h)) ∧ Sat σ S.query
 
-/-- One fold step: evaluate the next defining term under the values
+/-- **One fold step of straight-line evaluation.**
+One fold step: evaluate the next defining term under the values
 computed so far and append the result. -/
 def slStep (acc : List (List α)) (t : Term α ℕ) : List (List α) :=
   acc ++ [eval (fun j => acc.getD j []) t]
 
-/-- The folded assignment values, in variable order. -/
+/-- **Folded assignment values of a straight-line system.**
+The folded assignment values, in variable order. -/
 def values (S : SLSys α) : List (List α) :=
   S.defs.foldl slStep []
 
-/-- The candidate assignment of a straight-line system. -/
+/-- **Candidate assignment of a straight-line system.**
+The candidate assignment of a straight-line system. -/
 def sol (S : SLSys α) : ℕ → List α :=
   fun i => (values S).getD i []
 
-/-- Lookup with a proof of the bound is the `getElem` value. -/
+/-- **In-bounds lookup with default equals indexed access.**
+Lookup with a proof of the bound is the `getElem` value. -/
 theorem getD_eq_of_lt {l : List (List α)} {n : ℕ} (h : n < l.length) :
     l.getD n [] = l[n]'h := by
   rw [List.getD_eq_getElem]
 
-/-- The fold preserves its initial segment. -/
+/-- **Straight-line fold preserves its initial segment.** The fold preserves its initial segment. -/
 theorem foldl_take (defs : List (Term α ℕ)) (acc : List (List α)) :
     (defs.foldl slStep acc).take acc.length = acc := by
   induction defs generalizing acc with
@@ -128,7 +135,8 @@ theorem foldl_take (defs : List (Term α ℕ)) (acc : List (List α)) :
     rw [htake, h1]
     simp [slStep]
 
-/-- The fold appends exactly one value per definition. -/
+/-- **Straight-line fold appends one value per definition.**
+The fold appends exactly one value per definition. -/
 theorem foldl_length (defs : List (Term α ℕ)) (acc : List (List α)) :
     (defs.foldl slStep acc).length = acc.length + defs.length := by
   induction defs generalizing acc with
@@ -140,26 +148,30 @@ theorem foldl_length (defs : List (Term α ℕ)) (acc : List (List α)) :
     rw [List.foldl_cons, List.length_cons]
     omega
 
-/-- Length of the folded values: one per definition. -/
+/-- **Folded values have one entry per definition.**
+Length of the folded values: one per definition. -/
 theorem values_length (S : SLSys α) :
     (values S).length = S.defs.length := by
   simp [values, foldl_length]
 
-/-- Lookup in a taken prefix agrees with lookup in the whole list. -/
+/-- **Lookup in a taken prefix agrees with the whole list.**
+Lookup in a taken prefix agrees with lookup in the whole list. -/
 theorem getD_take_of_lt {l : List (List α)} {n m : ℕ} (h : n < m) (hl : n < l.length) :
     (l.take m).getD n [] = l.getD n [] := by
   rw [getD_eq_of_lt (by rw [List.length_take]; exact Nat.lt_min.mpr ⟨h, hl⟩),
     getD_eq_of_lt hl]
   exact List.getElem_take (h := by rw [List.length_take]; exact Nat.lt_min.mpr ⟨h, hl⟩)
 
-/-- Lookup in an appended list agrees with lookup below the prefix length. -/
+/-- **Lookup in an appended list below the prefix length.**
+Lookup in an appended list agrees with lookup below the prefix length. -/
 theorem getD_append_of_lt {acc : List (List α)} {x : List α} {j : ℕ}
     (hj : j < acc.length) :
     (acc ++ [x]).getD j [] = acc.getD j [] := by
   rw [getD_eq_of_lt (by rw [List.length_append]; omega), getD_eq_of_lt hj]
   exact List.getElem_append_left hj
 
-/-- Lookup in a folded list agrees with lookup in the starting list
+/-- **Lookup in a folded list below the starting length.**
+Lookup in a folded list agrees with lookup in the starting list
 below its length. -/
 theorem getD_foldl_of_lt (defs : List (Term α ℕ)) (acc : List (List α)) {j : ℕ}
     (hj : j < acc.length) :
@@ -174,7 +186,8 @@ theorem getD_foldl_of_lt (defs : List (Term α ℕ)) (acc : List (List α)) {j :
       omega)]
     exact getD_append_of_lt hj
 
-/-- The defining equation for the folded values: the value at position
+/-- **Defining equation for the folded values.**
+The defining equation for the folded values: the value at position
 `acc.length + k` is the `k`-th defining term evaluated under the
 folded values. The variable condition says the term only looks at
 positions below `acc.length + k`. -/
@@ -243,7 +256,8 @@ theorem foldl_getD (defs : List (Term α ℕ)) (acc : List (List α)) (k : ℕ)
       rw [hidx]
       exact ih (slStep acc t) k' hk' hvars'
 
-/-- The candidate assignment satisfies every definition. -/
+/-- **Candidate assignment satisfies every definition.**
+The candidate assignment satisfies every definition. -/
 theorem sol_satisfies_defs (S : SLSys α) (hacy : Acyclic S) (k : ℕ)
     (hk : k < S.defs.length) :
     sol S k = eval (sol S) (S.defs[k]'hk) := by
@@ -254,7 +268,8 @@ theorem sol_satisfies_defs (S : SLSys α) (hacy : Acyclic S) (k : ℕ)
   simp only [List.length_nil, Nat.zero_add] at h
   exact h
 
-/-- Any satisfying assignment agrees with the candidate on defined
+/-- **Satisfying assignments agree with the candidate on defined variables.**
+Any satisfying assignment agrees with the candidate on defined
 variables. -/
 theorem eq_sol_of_sat {S : SLSys α} {σ : ℕ → List α} (hacy : Acyclic S)
     (hSat : SLSat S σ) (k : ℕ) (hk : k < S.defs.length) :
@@ -269,7 +284,8 @@ theorem eq_sol_of_sat {S : SLSys α} {σ : ℕ → List α} (hacy : Acyclic S)
       have : j < S.defs.length := by omega
       exact this)
 
-/-- Satisfiability of a closed straight-line system is equivalent to the query
+/-- **Straight-line satisfiability iff the query holds on the candidate.**
+Satisfiability of a closed straight-line system is equivalent to the query
 holding on the candidate assignment. -/
 theorem exists_sat_iff_sat_sol (S : SLSys α) (hacy : Acyclic S) :
     (∃ σ, SLSat S σ) ↔ Sat (sol S) S.query := by

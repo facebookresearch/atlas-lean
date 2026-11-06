@@ -50,25 +50,29 @@ open Cslib.Algorithms.Lean
 
 variable {T N : Type*} [DecidableEq N]
 
-/-- Full membership scan, charging equality and list/control operations. -/
+/-- **Charged list-membership scan.**
+Full membership scan, charging equality and list/control operations. -/
 def member (eqCost : ℕ) (a : N) : List N → TimeM ℕ Bool
   | [] => ⟨false, 1⟩
   | b :: bs =>
       let rest := member eqCost a bs
       ⟨decide (a = b) || rest.ret, rest.time + eqCost + 3⟩
 
-/-- The charged scan has ordinary list-membership semantics. -/
+/-- **Charged membership scan agrees with list membership.**
+The charged scan has ordinary list-membership semantics. -/
 @[simp] theorem member_ret (eqCost : ℕ) (a : N) (xs : List N) :
     (member eqCost a xs).ret = true ↔ a ∈ xs := by
   induction xs with
   | nil => simp [member]
   | cons b bs ih => simp [member, ih]
 
-/-- Two bounded array reads; invalid indices denote an empty cell. -/
+/-- **CYK table lookup with empty default cells.**
+Two bounded array reads; invalid indices denote an empty cell. -/
 def lookup (tbl : Array (Array (List N))) (i len : ℕ) : List N :=
   (tbl[len]?.getD #[])[i]?.getD []
 
-/-- Scan split positions `1,...,count`, with two table reads per split.
+/-- **Charged scan of CYK split positions.**
+Scan split positions `1,...,count`, with two table reads per split.
 The 16 units cover four array reads, bounds/default tests, index arithmetic,
 Boolean combinations and recursion control. -/
 def splits (eqCost : ℕ) (tbl : Array (Array (List N)))
@@ -81,7 +85,8 @@ def splits (eqCost : ℕ) (tbl : Array (Array (List N)))
       ⟨rest.ret || (left.ret && right.ret),
         rest.time + left.time + right.time + 16⟩
 
-/-- Every successful scan names a split in exactly the scanned interval. -/
+/-- **Successful CYK split scans find a split in range.**
+Every successful scan names a split in exactly the scanned interval. -/
 theorem splits_ret (eqCost : ℕ) (tbl : Array (Array (List N)))
     (i len : ℕ) (b c : N) (count : ℕ) :
     (splits eqCost tbl i len b c count).ret = true ↔
@@ -104,7 +109,8 @@ theorem splits_ret (eqCost : ℕ) (tbl : Array (Array (List N)))
 
 variable [DecidableEq T]
 
-/-- Test a production output without constructing or comparing substrings.
+/-- **Production-output fit test for indexed CYK.**
+Test a production output without constructing or comparing substrings.
 Pattern inspection is bounded (at most three cons and two symbol tags). -/
 def fits (termCost ntCost : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (i len : ℕ) :
@@ -116,7 +122,8 @@ def fits (termCost ntCost : ℕ) (w : Array T)
       ⟨r.ret, r.time + 8⟩
   | _ => ⟨false, 8⟩
 
-/-- Scan every production once, retaining its input exactly when it fits.
+/-- **Charged computation of one CYK cell.**
+Scan every production once, retaining its input exactly when it fits.
 Duplicates are allowed; no set insertion or uncharged deduplication occurs. -/
 def cell (termCost ntCost : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (i len : ℕ) :
@@ -128,7 +135,8 @@ def cell (termCost ntCost : ℕ) (w : Array T)
       ⟨if f.ret then r.input :: rest.ret else rest.ret,
         f.time + rest.time + 5⟩
 
-/-- Membership in a computed cell names an actual scanned production. -/
+/-- **CYK cell members come from scanned productions.**
+Membership in a computed cell names an actual scanned production. -/
 theorem mem_cell (termCost ntCost : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (i len : ℕ)
     (rs : List (ContextFreeRule T N)) (a : N) :
@@ -142,7 +150,8 @@ theorem mem_cell (termCost ntCost : ℕ) (w : Array T)
       split <;>
         simp only [List.mem_cons, ih, exists_eq_or_imp] <;> aesop
 
-/-- Build one row in increasing start-position order. Each cell is evaluated
+/-- **Charged construction of one CYK row.**
+Build one row in increasing start-position order. Each cell is evaluated
 once against the already completed shorter rows. -/
 def row (termCost ntCost : ℕ) (w : Array T)
     (tbl : Array (Array (List N))) (len : ℕ)
@@ -154,7 +163,8 @@ def row (termCost ntCost : ℕ) (w : Array T)
       let rest := row termCost ntCost w tbl len rs (i + 1) count
       ⟨c.ret :: rest.ret, c.time + rest.time + 4⟩
 
-/-- Fill rows `1,...,depth` in a fixed outer array of size `w.size + 1`.
+/-- **Charged construction of the indexed CYK table.**
+Fill rows `1,...,depth` in a fixed outer array of size `w.size + 1`.
 Row conversion is linear; the outer update is an indexed primitive. -/
 def table (termCost ntCost : ℕ) (w : Array T)
     (rs : List (ContextFreeRule T N)) :
@@ -167,7 +177,8 @@ def table (termCost ntCost : ℕ) (w : Array T)
       ⟨prev.ret.set! (depth + 1) next.ret.toArray,
         prev.time + next.time + 2 * (w.size + 1) + 8⟩
 
-/-- Scan start epsilon rules; output emptiness is a single list-tag test. -/
+/-- **Charged scan for start epsilon productions.**
+Scan start epsilon rules; output emptiness is a single list-tag test. -/
 def epsilon (ntCost : ℕ) (start : N) :
     List (ContextFreeRule T N) → TimeM ℕ Bool
   | [] => ⟨false, 1⟩
@@ -176,7 +187,8 @@ def epsilon (ntCost : ℕ) (start : N) :
       ⟨(decide (r.input = start) && r.output.isEmpty) || rest.ret,
         rest.time + ntCost + 6⟩
 
-/-- The charged indexed recognizer. The nonempty branch pays for the input
+/-- **Charged indexed CYK recognizer.**
+The charged indexed recognizer. The nonempty branch pays for the input
 length scan, conversion, completed table, final lookup and membership. -/
 def recognizes (termCost ntCost : ℕ) (start : N)
     (rs : List (ContextFreeRule T N)) (w : List T) : TimeM ℕ Bool :=

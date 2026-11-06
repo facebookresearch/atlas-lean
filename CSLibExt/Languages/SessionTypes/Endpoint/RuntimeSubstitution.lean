@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- An actual nonshared endpoint replacement keeps every owned substituted image nonshared. -/
+/-- **Nonshared endpoint substitution keeps owned names nonshared.**
+An actual nonshared endpoint replacement keeps every owned substituted image nonshared. -/
 theorem Separated.nonaliases_subst {Γ : ServiceEnv} {Δ : Context} (h : Separated Γ Δ)
     {b : Name} (hb : ∀ s sig, Γ.lookup s = some sig → b ≠ .const s) :
     NonAliases Γ Δ (substName b 0) := by
@@ -38,7 +39,8 @@ theorem Separated.nonaliases_subst {Γ : ServiceEnv} {Δ : Context} (h : Separat
     | zero => exact hb s sig hs hn
     | succ i => simp [substName] at hn
 
-/-- Passive var0 is NOT owned: even a shared-constant replacement preserves all
+/-- **Passive substitution creates no owned shared-name alias.**
+Passive var0 is NOT owned: even a shared-constant replacement preserves all
 actual lifted owned names and creates no linear shared-name alias. -/
 theorem Separated.nonaliases_passive {Γ : ServiceEnv} {Δ : Context}
     (h : Separated Γ (Context.lift 0 Δ)) (b : Name) :
@@ -52,7 +54,8 @@ theorem Separated.nonaliases_passive {Γ : ServiceEnv} {Δ : Context}
     | zero => exact False.elim (Context.fresh_lift Δ r hm)
     | succ i => simp [substName] at hn
 
-/-- Actual transmitted endpoint substitution preserves literal role/rank and raw code.
+/-- **Runtime typing under substitution of a transmitted endpoint.**
+Actual transmitted endpoint substitution preserves literal role/rank and raw code.
 Shared nonalias of b is a static consequence of ACTUAL sender ownership/separation. -/
 theorem HasType.subst_endpoint {n : Nat} {Γ : ServiceEnv} {Δ : Context} {b : Name} {r : Role}
     {c v : Capability} {p : Proc}
@@ -67,7 +70,8 @@ theorem HasType.subst_endpoint {n : Nat} {Γ : ServiceEnv} {Δ : Context} {b : N
   rw [Context.rekey_received_subst hfresh hi, mapProc_substName] at hr
   exact hr
 
-/-- Passive substitution has NO owned var0 and adds NO capability. A scoped shared
+/-- **Runtime typing under passive name substitution.**
+Passive substitution has NO owned var0 and adds NO capability. A scoped shared
 constant can be received as data without becoming a linear/service subject. -/
 theorem HasType.subst_passive {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc} {b : Name}
     (h : HasType (n + 1) Γ (Context.lift 0 Δ) p) (hb : b.ClosedAt n) :
@@ -78,7 +82,8 @@ theorem HasType.subst_passive {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Pr
   rw [Context.rekey_passive_subst b hi, mapProc_substName] at ht
   exact ht
 
-/-- Real sender ownership and a disjoint receiver carrier derive exact-role
+/-- **Endpoint substitution with side conditions derived from a split.**
+Real sender ownership and a disjoint receiver carrier derive exact-role
 freshness and shared nonalias of the actual transmitted endpoint. -/
 theorem HasType.subst_endpoint_from_split {n : Nat} {Γ : ServiceEnv} {Λ Θ : Context}
     {b : Name} {r : Role} {c v old next : Capability} {e : Key} {p : Proc}

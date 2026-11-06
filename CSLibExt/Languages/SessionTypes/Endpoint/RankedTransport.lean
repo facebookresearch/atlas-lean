@@ -140,7 +140,8 @@ private theorem ranked_inp_endpoint {n m k : Nat} {Δ : Context} {e : Key}
     exact hp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Physical-name rekeying preserves the entire syntax-directed refinement,
+/-- **Collision-free renaming preserves ranked typing.**
+Physical-name rekeying preserves the entire syntax-directed refinement,
 including all guard priorities, passive/endpoint payloads and nested binders.
 Injectivity is needed only on owned keys, as in the base ownership judgement. -/
 theorem RankedType.rename {n m : Nat} {Δ : Context} {p : Proc} {f : Name → Name}
@@ -194,7 +195,8 @@ theorem RankedType.rename {n m : Nat} {Δ : Context} {p : Proc} {f : Name → Na
     rw [← Context.rekey_bind hf hu]
     exact ih (fun _ h => under_scoped hscope h) hu
 
-/-- Canonical binder lifting preserves every priority and endpoint rank. -/
+/-- **Binder lifting preserves ranked typing.**
+Canonical binder lifting preserves every priority and endpoint rank. -/
 theorem RankedType.lift {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) (k : Nat) :
     RankedType (n + 1) (Context.lift k Δ) (liftProc k p) := by

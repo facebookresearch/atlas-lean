@@ -60,16 +60,19 @@ open Finset Real
 
 variable {σ : Type*} [Fintype σ] [DecidableEq σ] {w : ℕ}
 
-/-- The one-hot encoding of a letter: `oneHot a b = 1` if `b = a` and `0` otherwise. -/
+/-- **One-hot encoding of a letter.**
+The one-hot encoding of a letter: `oneHot a b = 1` if `b = a` and `0` otherwise. -/
 def oneHot (a : σ) (b : σ) : ℝ := if a = b then 1 else 0
 
-/-- The response of a convolution (cross-correlation) filter `W` of width `w` on the one-hot
+/-- **Convolution filter response at a window.**
+The response of a convolution (cross-correlation) filter `W` of width `w` on the one-hot
 encoded sequence `x` at the window starting at `i`:
 `∑ k, ∑ b, W k b * oneHot (x (i + k)) b`. -/
 def conv (W : Fin w → σ → ℝ) (x : ℕ → σ) (i : ℕ) : ℝ :=
   ∑ k : Fin w, ∑ b, W k b * oneHot (x (i + k)) b
 
-/-- The window of length `w` of `x` starting at `i`. -/
+/-- **Window of a sequence starting at a position.**
+The window of length `w` of `x` starting at `i`. -/
 def window (x : ℕ → σ) (i : ℕ) : Fin w → σ := fun k => x (i + k)
 
 /-- **The convolution response is the PWM score of the window.** -/
@@ -81,7 +84,8 @@ theorem conv_eq_pwmScore (W : Fin w → σ → ℝ) (x : ℕ → σ) (i : ℕ) :
 def maxPool (W : Fin w → σ → ℝ) (x : ℕ → σ) (m : ℕ) : ℝ :=
   (range (m + 1)).sup' nonempty_range_add_one (conv W x)
 
-/-- Every window's PWM score is at most the max-pooled output. -/
+/-- **Every window's PWM score is at most the max-pooled output.**
+Every window's PWM score is at most the max-pooled output. -/
 theorem le_maxPool (W : Fin w → σ → ℝ) (x : ℕ → σ) {m i : ℕ} (hi : i ≤ m) :
     Cslib.Bioinformatics.Motifs.PWM.score W (window x i) ≤ maxPool W x m := by
   rw [← conv_eq_pwmScore]
@@ -119,11 +123,13 @@ theorem conv_shift (W : Fin w → σ → ℝ) (x : ℕ → σ) (i : ℕ) :
 
 variable (comp : σ → σ)
 
-/-- The reverse complement of the length-`L` prefix of `x`: position `j < L` holds the complement
+/-- **Reverse complement of a sequence prefix.**
+The reverse complement of the length-`L` prefix of `x`: position `j < L` holds the complement
 of `x (L - 1 - j)`. -/
 def rcSeq (L : ℕ) (x : ℕ → σ) (j : ℕ) : σ := comp (x (L - 1 - j))
 
-/-- The reverse-complement filter: `rcFilter W k b = W (Fin.rev k) (comp b)`. -/
+/-- **Reverse-complement filter.**
+The reverse-complement filter: `rcFilter W k b = W (Fin.rev k) (comp b)`. -/
 def rcFilter (W : Fin w → σ → ℝ) (k : Fin w) (b : σ) : ℝ := W k.rev (comp b)
 
 /-- **The reverse-complement filter scans the other strand**: on a sequence of length `m + w`,
@@ -155,7 +161,8 @@ theorem maxPool_rcFilter (W : Fin w → σ → ℝ) (x : ℕ → σ) (m : ℕ) :
     rw [← h]
     exact le_sup' _ (mem_range.2 (by omega))
 
-/-- The responses only read the positions `< m + w` of a sequence of length `m + w`. -/
+/-- **Filter responses read only positions within the sequence length.**
+The responses only read the positions `< m + w` of a sequence of length `m + w`. -/
 theorem maxPool_congr (W : Fin w → σ → ℝ) {x y : ℕ → σ} {m : ℕ}
     (hxy : ∀ j < m + w, x j = y j) : maxPool W x m = maxPool W y m := by
   unfold maxPool
@@ -165,7 +172,8 @@ theorem maxPool_congr (W : Fin w → σ → ℝ) {x y : ℕ → σ} {m : ℕ}
   refine sum_congr rfl fun k _ => ?_
   rw [hxy (i + k) (by omega)]
 
-/-- The both-strand score: the larger of the max-pooled responses of `W` and of its reverse
+/-- **Both-strand convolution score.**
+The both-strand score: the larger of the max-pooled responses of `W` and of its reverse
 complement. -/
 def bothStrands (W : Fin w → σ → ℝ) (x : ℕ → σ) (m : ℕ) : ℝ :=
   max (maxPool W x m) (maxPool (rcFilter comp W) x m)

@@ -24,7 +24,8 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- At a semantically compatible combined interface, actual disjoint same-name
+/-- **Communicating subjects have semantically dual capabilities.**
+At a semantically compatible combined interface, actual disjoint same-name
 ownership derives opposite roles, literal cap-rank agreement and semantic
 duality, not raw capability equality. -/
 theorem communicating_equivalent {Γ Θ : Context} {e f : Key} {c d : Capability}
@@ -37,7 +38,8 @@ theorem communicating_equivalent {Γ Θ : Context} {e f : Key} {c d : Capability
   · exact (Finmap.lookup_union_right
       (hd.symm _ _ e.opposite (Finmap.mem_of_lookup_eq_some hp))).trans hp
 
-/-- Semantic duality forces an actual receive-name head and equivalent tail,
+/-- **Peer of a passive send head has an equivalent receive head.**
+Semantic duality forces an actual receive-name head and equivalent tail,
 while keeping the receiver's literal continuation code. -/
 theorem passive_peer_head {c d : Capability} {s : Protocol}
     (he : d.Equivalent c.dual) (hh : c.protocol.unfold = .sendName s) :
@@ -49,7 +51,8 @@ theorem passive_peer_head {c d : Capability} {s : Protocol}
   cases hm with
   | recvName hr => exact ⟨_, rfl, hr.symm⟩
 
-/-- Endpoint peer heads preserve literal advertised role/rank, independently
+/-- **Peer of an endpoint send head has an equivalent receive head.**
+Endpoint peer heads preserve literal advertised role/rank, independently
 equivalent payload and continuation branches, and payload orientation. -/
 theorem endpoint_peer_head {c d : Capability} {r : Role} {k : Nat} {t s : Protocol}
     (he : d.Equivalent c.dual) (hh : c.protocol.unfold = .sendEndpoint r k t s) :
@@ -61,7 +64,8 @@ theorem endpoint_peer_head {c d : Capability} {r : Role} {k : Nat} {t s : Protoc
   cases hm with
   | recvEndpoint hv hs => exact ⟨_, _, rfl, hv.symm, hs.symm⟩
 
-/-- Input inversion retains its actual advertised code and typed continuation. -/
+/-- **Input inversion for conversion typing.**
+Input inversion retains its actual advertised code and typed continuation. -/
 theorem HasType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : HasType n Δ (.inp a p)) :
     ∃ e c, e.name = a ∧ Δ.lookup e = some c ∧
@@ -74,7 +78,8 @@ theorem HasType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
   | inpName hc hh ha hp => exact ⟨_, _, rfl, hc, Or.inl ⟨_, hh, hp⟩⟩
   | inpEndpoint hc hh ha hp => exact ⟨_, _, rfl, hc, Or.inr ⟨_, _, _, _, hh, hp⟩⟩
 
-/-- GENERAL passive communicating-head preservation at a semantically
+/-- **Passive head communication preserves conversion typing.**
+GENERAL passive communicating-head preservation at a semantically
 compatible actual split, with literal receiver-tail and rank evidence. -/
 theorem passive_head_preservation {n : Nat} {Γ Θ : Context} {e : Key} {c : Capability}
     {s : Protocol} {b : Name} {p q : Proc}
@@ -106,7 +111,8 @@ theorem passive_head_preservation {n : Nat} {Γ Θ : Context} {e : Key} {c : Cap
   · rw [hu] at hv
     cases hv
 
-/-- At an initially semantically compatible disjoint split, endpoint head
+/-- **Endpoint delegation preserves conversion typing.**
+At an initially semantically compatible disjoint split, endpoint head
 communication transfers EXACT v, retaining the receiver's separately equivalent
 advertised payload/tail codes. -/
 theorem endpoint_head_preservation {n k : Nat} {Γ Θ : Context} {e f : Key}
@@ -144,7 +150,8 @@ theorem endpoint_head_preservation {n k : Nat} {Γ Θ : Context} {e f : Key}
       (Finmap.mem_of_lookup_eq_some ht) hv hne] at hout
     exact ⟨d, t', u, ht, hdual.1, hu, htp, hus, hout⟩
 
-/-- Exact two-insert head updates leave every other actual lookup unchanged,
+/-- **Head update leaves other lookups unchanged.**
+Exact two-insert head updates leave every other actual lookup unchanged,
 without requiring the receiver-tail code to equal the sender's dual. -/
 theorem head_update_other (Δ : Context) (e x : Key) (c d : Capability)
     (hx : x ≠ e) (hp : x ≠ e.opposite) :
@@ -163,7 +170,8 @@ private theorem out_full_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outEndpoint hc hh hv he hne ha hb hp =>
     exact ⟨_, _, rfl, hc, hb, Or.inr ⟨_, _, _, _, _, rfl, hh, hv, he, hne, hp⟩⟩
 
-/-- A typed opposite-head pair at an initially semantically compatible interface
+/-- **Head communication preserves conversion typing.**
+A typed opposite-head pair at an initially semantically compatible interface
 yields packed literal-head preservation. Both actual heads and payload/tail
 correspondence are conclusions, not fields in a protocol or admission predicate. -/
 theorem HasType.head_preservation {n : Nat} {Δ : Context} {a b : Name} {p q : Proc}
@@ -197,7 +205,8 @@ theorem HasType.head_preservation {n : Nat} {Δ : Context} {a b : Name} {p q : P
       exact ⟨e, c, d, s, u, rfl, hwhole, hpeer, hr, heq,
         Or.inr ⟨f, v, k, t, t', rfl, hvwhole, he, hs, hu, htp⟩, hout⟩
 
-/-- A transmitted payload slot is literally unchanged in the combined map;
+/-- **Head update leaves the transmitted payload slot unchanged.**
+A transmitted payload slot is literally unchanged in the combined map;
 its peer role may coexist, but it is neither carrier update key. -/
 theorem endpoint_payload_after {Γ Θ : Context} {e f : Key} {c v : Capability}
     (hd : Finmap.Disjoint Γ Θ) (hv : Γ.lookup f = some v) (hp : Θ.lookup e.opposite = some c)

@@ -26,7 +26,8 @@ namespace Cslib.SessionTypes.Endpoint
 
 open PiCalculus
 
-/-- Syntax-directed linear typing. Capabilities never contain preservation
+/-- **Linear endpoint typing of π-calculus processes.**
+Syntax-directed linear typing. Capabilities never contain preservation
 or progress assumptions. Protocol heads may be guarded regular protocols. -/
 inductive HasType : Nat → Context → Proc → Prop where
   | nil {n : Nat} {Δ : Context} :
@@ -65,7 +66,8 @@ inductive HasType : Nat → Context → Proc → Prop where
   | nu {n : Nat} {Δ : Context} {c : Capability} {p : Proc} :
       HasType (n + 1) (Context.bind c Δ) p → HasType n Δ (.nu p)
 
-/-- Every endpoint-typed process satisfies the canonical π scope predicate. -/
+/-- **Endpoint-typed processes are scoped at the ambient depth.**
+Every endpoint-typed process satisfies the canonical π scope predicate. -/
 theorem HasType.closedAt {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) : p.ClosedAt n := by
   induction h with
@@ -77,12 +79,14 @@ theorem HasType.closedAt {n : Nat} {Δ : Context} {p : Proc}
   | par _ _ _ ihp ihq => exact ⟨ihp, ihq⟩
   | nu _ ih => exact ih
 
-/-- Typed terms stay in the proved Cong/Step-closed finite fragment. -/
+/-- **Endpoint-typed processes lie in the finite linear fragment.**
+Typed terms stay in the proved Cong/Step-closed finite fragment. -/
 theorem HasType.finiteLinear {n : Nat} {Δ : Context} {p : Proc}
     (h : HasType n Δ p) : FiniteLinear p := by
   induction h <;> simp_all [FiniteLinear]
 
-/-- A recorded completed capability is admissible at nil; an active one
+/-- **Nil is typed by a single done capability.**
+A recorded completed capability is admissible at nil; an active one
 would fail the completed-context premise. -/
 theorem HasType.nil_singleton {n k : Nat} {e : Key}
     (he : e.name.ClosedAt n) :
@@ -100,7 +104,8 @@ theorem HasType.nil_singleton {n k : Nat} {e : Key}
     subst d
     exact he
 
-/-- Every output subject is backed by an owned role, never merely by a
+/-- **Output subjects of endpoint-typed processes are owned.**
+Every output subject is backed by an owned role, never merely by a
 passive name in the ambient data scope. -/
 theorem HasType.out_owned {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : HasType n Δ (.out a b p)) :
@@ -109,7 +114,8 @@ theorem HasType.out_owned {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outName hc _ _ _ _ => exact ⟨_, _, hc⟩
   | outEndpoint hc _ _ _ _ _ _ => exact ⟨_, _, hc⟩
 
-/-- Completed endpoint slots may be added at nil without creating a
+/-- **Adding a completed capability at nil preserves typing.**
+Completed endpoint slots may be added at nil without creating a
 communication obligation; active protocols cannot use this rule. -/
 theorem HasType.nil_insert {n : Nat} {Δ : Context} {e : Key} {c : Capability}
     (h : HasType n Δ .nil) (hc : c.protocol.unfold = .done)
@@ -123,7 +129,8 @@ theorem HasType.nil_insert {n : Nat} {Δ : Context} {e : Key} {c : Capability}
       exact he
     · exact hs d hd
 
-/-- Input inversion exposes its owned role, literal payload sort, and
+/-- **Inversion of endpoint typing for input.**
+Input inversion exposes its owned role, literal payload sort, and
 continuation context. Passive and delegated names are not conflated. -/
 theorem HasType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
     (h : HasType n Δ (.inp a p)) :
@@ -137,7 +144,8 @@ theorem HasType.inp_inv {n : Nat} {Δ : Context} {a : Name} {p : Proc}
   | inpName hc hs _ hp => exact ⟨_, _, rfl, hc, Or.inl ⟨_, hs, hp⟩⟩
   | inpEndpoint hc hs _ hp => exact ⟨_, _, rfl, hc, Or.inr ⟨_, _, _, _, hs, hp⟩⟩
 
-/-- Output inversion exposes the actual owned subject, distinct payload sort,
+/-- **Inversion of endpoint typing for output.**
+Output inversion exposes the actual owned subject, distinct payload sort,
 and literal continuation resources; delegation consumes the payload role. -/
 theorem HasType.out_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
     (h : HasType n Δ (.out a b p)) :
@@ -152,7 +160,8 @@ theorem HasType.out_inv {n : Nat} {Δ : Context} {a b : Name} {p : Proc}
   | outEndpoint hc hs hd hne _ _ hp =>
     exact ⟨_, _, rfl, hc, Or.inr ⟨_, _, _, _, rfl, hs, hd, hne, hp⟩⟩
 
-/-- Parallel typing exposes an actual disjoint ownership split, not a
+/-- **Inversion of endpoint typing for parallel composition.**
+Parallel typing exposes an actual disjoint ownership split, not a
 stored preservation or progress witness. -/
 theorem HasType.par_inv {n : Nat} {Δ : Context} {p q : Proc}
     (h : HasType n Δ (.par p q)) :
@@ -161,13 +170,15 @@ theorem HasType.par_inv {n : Nat} {Δ : Context} {p q : Proc}
   cases h with
   | par hd hp hq => exact ⟨_, _, rfl, hd, hp, hq⟩
 
-/-- Nil inversion exposes completion and scope of every recorded endpoint. -/
+/-- **Inversion of endpoint typing for nil.**
+Nil inversion exposes completion and scope of every recorded endpoint. -/
 theorem HasType.nil_inv {n : Nat} {Δ : Context} (h : HasType n Δ .nil) :
     Δ.Completed ∧ (∀ e ∈ Δ, e.name.ClosedAt n) := by
   cases h with
   | nil hc hs => exact ⟨hc, hs⟩
 
-/-- Any protocol whose guarded head is completed is admissible at a
+/-- **Nil is typed by a single capability with completed head.**
+Any protocol whose guarded head is completed is admissible at a
 single nil-owned slot, including completed regular graph cursors. -/
 theorem HasType.nil_singleton_completed {n : Nat} {e : Key} {c : Capability}
     (he : e.name.ClosedAt n) (hc : c.protocol.unfold = .done) :

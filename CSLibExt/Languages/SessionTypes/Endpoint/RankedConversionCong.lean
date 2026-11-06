@@ -22,14 +22,16 @@ namespace Cslib.SessionTypes.Endpoint.Conversion
 
 open PiCalculus
 
-/-- Commutation retains the actual disjoint split and both ranked subterms. -/
+/-- **Parallel commutation preserves conversion ranked typing.**
+Commutation retains the actual disjoint split and both ranked subterms. -/
 theorem RankedType.par_comm {n : Nat} {Δ : Context} {p q : Proc}
     (h : RankedType n Δ (.par p q)) : RankedType n Δ (.par q p) := by
   obtain ⟨Γ, Ξ, rfl, hd, hp, hq⟩ := h.par_inv
   rw [Finmap.union_comm_of_disjoint hd]
   exact RankedType.par (hd.symm _ _) hq hp
 
-/-- Reassociation derives all pairwise disjointness from actual typing. -/
+/-- **Parallel reassociation preserves conversion ranked typing.**
+Reassociation derives all pairwise disjointness from actual typing. -/
 theorem RankedType.par_assoc {n : Nat} {Δ : Context} {p q r : Proc}
     (h : RankedType n Δ (.par (.par p q) r)) : RankedType n Δ (.par p (.par q r)) := by
   obtain ⟨Γ, Ξ, rfl, hd, hpq, hr⟩ := h.par_inv
@@ -39,7 +41,8 @@ theorem RankedType.par_assoc {n : Nat} {Δ : Context} {p q r : Proc}
   exact RankedType.par ((Finmap.disjoint_union_right A B Ξ).mpr ⟨hab, ha⟩)
     hp (RankedType.par hb hq hr)
 
-/-- Reverse reassociation retains exact contexts and guard checks. -/
+/-- **Reverse parallel reassociation preserves conversion ranked typing.**
+Reverse reassociation retains exact contexts and guard checks. -/
 theorem RankedType.par_assoc_reverse {n : Nat} {Δ : Context} {p q r : Proc}
     (h : RankedType n Δ (.par p (.par q r))) : RankedType n Δ (.par (.par p q) r) := by
   obtain ⟨A, Γ, rfl, hd, hp, hqr⟩ := h.par_inv
@@ -49,13 +52,15 @@ theorem RankedType.par_assoc_reverse {n : Nat} {Δ : Context} {p q r : Proc}
   exact RankedType.par ((Finmap.disjoint_union_left A B C).mpr ⟨hac, hbc⟩)
     (RankedType.par hab hp hq) hr
 
-/-- Nil's actual completed ownership can be reattached without new dependencies. -/
+/-- **Removing a parallel nil preserves conversion ranked typing.**
+Nil's actual completed ownership can be reattached without new dependencies. -/
 theorem RankedType.par_nil_elim {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ (.par p .nil)) : RankedType n Δ p := by
   obtain ⟨Γ, Ξ, rfl, hd, hp, hn⟩ := h.par_inv
   exact hp.weaken_completed_union hd hn.hasType.nil_inv.1 hn.hasType.nil_inv.2
 
-/-- Nil introduction allocates an empty ownership context, not an active frame. -/
+/-- **Adding a parallel nil preserves conversion ranked typing.**
+Nil introduction allocates an empty ownership context, not an active frame. -/
 theorem RankedType.par_nil_intro {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ p) : RankedType n Δ (.par p .nil) := by
   have hn : RankedType n ∅ .nil := RankedType.nil
@@ -63,18 +68,21 @@ theorem RankedType.par_nil_intro {n : Nat} {Δ : Context} {p : Proc}
   have ht := RankedType.par ((Finmap.disjoint_empty Δ).symm _ _) h hn
   simpa only [Finmap.union_empty] using ht
 
-/-- Restricting nil is equivalent to its original completed/scoped interface. -/
+/-- **Removing a restriction around nil preserves conversion ranked typing.**
+Restricting nil is equivalent to its original completed/scoped interface. -/
 theorem RankedType.nu_nil_elim {n : Nat} {Δ : Context}
     (h : RankedType n Δ (.nu .nil)) : RankedType n Δ .nil :=
   RankedType.nil_of_hasType h.hasType.nu_nil_elim
 
-/-- A completed fresh pair can be introduced around nil without changing guards. -/
+/-- **Restricting nil preserves conversion ranked typing.**
+A completed fresh pair can be introduced around nil without changing guards. -/
 theorem RankedType.nu_nil_intro {n : Nat} {Δ : Context}
     (h : RankedType n Δ .nil) : RankedType n Δ (.nu .nil) := by
   obtain ⟨c, hb⟩ := h.hasType.nu_nil_intro.nu_inv
   exact RankedType.nu (RankedType.nil_of_hasType hb)
 
-/-- Swapping the two restrictions preserves all guard constraints by the
+/-- **Swapping two restrictions preserves conversion ranked typing.**
+Swapping the two restrictions preserves all guard constraints by the
 GENERAL capture-safe rename theorem and the exact four-role context equation. -/
 theorem RankedType.nu_swap {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ (.nu (.nu p))) : RankedType n Δ (.nu (.nu (swapProc 0 p))) := by
@@ -89,7 +97,8 @@ theorem RankedType.nu_swap {n : Nat} {Δ : Context} {p : Proc}
   rw [Context.swap_bind_bind] at ht
   exact RankedType.nu (c := d) (RankedType.nu (c := c) ht)
 
-/-- Reverse restriction swap uses the canonical process involution. -/
+/-- **Reverse restriction swap preserves conversion ranked typing.**
+Reverse restriction swap uses the canonical process involution. -/
 theorem RankedType.nu_swap_reverse {n : Nat} {Δ : Context} {p : Proc}
     (h : RankedType n Δ (.nu (.nu (swapProc 0 p)))) : RankedType n Δ (.nu (.nu p)) := by
   have ht := h.nu_swap
@@ -111,7 +120,8 @@ private theorem ranked_inp_context {p p' : Proc} {a : Name}
   | inpName hg hc hs ha hp => exact RankedType.inpName hg hc hs ha ((ih _ _).mp hp)
   | inpEndpoint hg hc hs ha hp => exact RankedType.inpEndpoint hg hc hs ha ((ih _ _).mp hp)
 
-/-- Every canonical Cong constructor preserves the whole priority refinement
+/-- **Structural congruence preserves conversion ranked typing.**
+Every canonical Cong constructor preserves the whole priority refinement
 at exactly the same context and ambient depth. Unsupported sum/replication
 constructors are impossible by the invariant DERIVED from refinement typing. -/
 theorem RankedType.cong_iff {n : Nat} {Δ : Context} {p q : Proc} (hc : Cong p q) :

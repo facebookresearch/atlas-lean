@@ -23,7 +23,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- Reflection of a canonical lifted term retains exact owned capabilities and Γ. -/
+/-- **Runtime typing reflects through binder lifting.**
+Reflection of a canonical lifted term retains exact owned capabilities and Γ. -/
 theorem HasType.unlift {n : Nat} {Γ : ServiceEnv} {Δ : Context} {q : Proc}
     (h : HasType (n + 1) Γ Δ (liftProc 0 q)) (hΔ : ∀ e ∈ Δ, e.name ≠ .var 0) :
     HasType n Γ (Context.lower Δ hΔ) q := by
@@ -35,7 +36,8 @@ theorem HasType.unlift {n : Nat} {Γ : ServiceEnv} {Δ : Context} {q : Proc}
   rw [substProc_liftProc] at ht
   exact ht
 
-/-- Forward extrusion uses the actual disjoint split and literal bound pair. -/
+/-- **Runtime typing is preserved by forward scope extrusion.**
+Forward extrusion uses the actual disjoint split and literal bound pair. -/
 theorem HasType.scope_forward {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
     (h : HasType n Γ Δ (.par (.nu p) q)) :
     HasType n Γ Δ (.nu (.par p (liftProc 0 q))) := by
@@ -45,7 +47,8 @@ theorem HasType.scope_forward {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : 
   rw [Context.bind_union c hd]
   exact HasType.par (Context.disjoint_bind_lift c hd) hb (hq.lift 0)
 
-/-- Partner ownership may be restored only when actual absence DERIVES completion.
+/-- **Runtime typing absorbs a role absent from its parallel partner.**
+Partner ownership may be restored only when actual absence DERIVES completion.
 Shared nonalias is obtained from the typed owner, not a new unchecked assumption. -/
 theorem HasType.insert_from_absent_partner {n : Nat} {Γ : ServiceEnv} {Δ Ξ : Context}
     {p q : Proc} {e : Key} {c : Capability} (hp : HasType n Γ Δ p) (hq : HasType n Γ Ξ q)
@@ -58,7 +61,8 @@ theorem HasType.insert_from_absent_partner {n : Nat} {Γ : ServiceEnv} {Δ Ξ : 
   · rw [Finmap.lookup_union_right hm] at hc
     exact hp.weaken_completed hm (hq.absent_lookup_completed hc hab) he (hq.separated e c hc)
 
-/-- Restoring a private pair adds only actually absent completed partner roles. -/
+/-- **Runtime typing restores both bound roles to the restricted side.**
+Restoring a private pair adds only actually absent completed partner roles. -/
 theorem HasType.restore_scope_pair {n : Nat} {Γ : ServiceEnv} {Δ Λ Ξ : Context} {p q : Proc}
     {c : Capability} (hp : HasType (n + 1) Γ Λ p)
     (hq : HasType (n + 1) Γ Ξ (liftProc 0 q)) (hs : Context.bind c Δ = Λ ∪ Ξ) :
@@ -77,7 +81,8 @@ theorem HasType.restore_scope_pair {n : Nat} {Γ : ServiceEnv} {Δ Λ Ξ : Conte
     (by decide : (⟨.var 0, .negative⟩ : Key) ≠ (⟨.var 0, .positive⟩ : Key))]
   exact hneg
 
-/-- Reverse extrusion derives the exact external split from actual typing and
+/-- **Runtime typing is preserved by reverse scope extrusion.**
+Reverse extrusion derives the exact external split from actual typing and
 removes only genuinely absent partner roles. No closed-hole or ready premise. -/
 theorem HasType.scope_reverse {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc}
     (h : HasType n Γ Δ (.nu (.par p (liftProc 0 q)))) :
@@ -113,7 +118,8 @@ theorem HasType.scope_reverse {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : 
   rw [houter]
   exact HasType.par hdl (HasType.nu hsep.union_left hp') (hq'.unlift hΞ)
 
-/-- Exact canonical scope transport preserves SAME Γ, n and Δ in both directions. -/
+/-- **Runtime typing is invariant under scope extrusion.**
+Exact canonical scope transport preserves SAME Γ, n and Δ in both directions. -/
 theorem HasType.scope_iff {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p q : Proc} :
     HasType n Γ Δ (.par (.nu p) q) ↔ HasType n Γ Δ (.nu (.par p (liftProc 0 q))) :=
   ⟨HasType.scope_forward, HasType.scope_reverse⟩

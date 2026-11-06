@@ -25,7 +25,8 @@ namespace Cslib.SessionTypes.Endpoint.Runtime
 
 open PiCalculus
 
-/-- A request-free output has an ACTUAL active linear subject and GuardMin. -/
+/-- **Request-free runtime outputs have an active linear subject.**
+A request-free output has an ACTUAL active linear subject and GuardMin. -/
 theorem HasType.linear_out_active {n : Nat} {Γ : ServiceEnv} {Δ : Context}
     {a b : Name} {p : Proc} (h : HasType n Γ Δ (.out a b p))
     (hf : RequestFree Γ (.out a b p)) :
@@ -36,7 +37,8 @@ theorem HasType.linear_out_active {n : Nat} {Γ : ServiceEnv} {Δ : Context}
     exact ⟨_, _, rfl, hc, SendsTo.active (Or.inr ⟨_, _, _, hh⟩), hg⟩
   | invoke hs hd hv hr he hg hb hp => exact False.elim (hf _ _ hs rfl)
 
-/-- Linear inputs expose active subjects; once-only shared accepts have only
+/-- **Runtime inputs are active linear or have completed ownership.**
+Linear inputs expose active subjects; once-only shared accepts have only
 completed AMBIENT ownership and may wait quiescently. -/
 theorem HasType.inp_active_or_completed {n : Nat} {Γ : ServiceEnv} {Δ : Context}
     {a : Name} {p : Proc} (h : HasType n Γ Δ (.inp a p)) :
@@ -55,7 +57,8 @@ theorem HasType.inp_active_or_completed {n : Nat} {Γ : ServiceEnv} {Δ : Contex
     cases h
   | accept hs hc hscope hd hp => exact Or.inr hc
 
-/-- With no actual requests or active owned keys, typing derives ACTUAL idle
+/-- **Request-free completed runtime frontiers are service templates.**
+With no actual requests or active owned keys, typing derives ACTUAL idle
 service-template syntax, not merely an empty/completed interface. -/
 theorem GuardedFrontier.completed_idle {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
     (hf : GuardedFrontier Γ p) (ht : HasType n Γ Δ p) (hr : RequestFree Γ p)
@@ -89,7 +92,8 @@ private theorem empty_runtime_nil (n : Nat) (Γ : ServiceEnv) : HasType n Γ ∅
   HasType.nil Context.completed_empty (fun _ he => False.elim (Finmap.notMem_empty he))
     (separated_empty Γ)
 
-/-- A minimum over ALL actual active owned keys exposes the EXACT linear subject
+/-- **Minimum active key is the subject of a runtime frontier leaf.**
+A minimum over ALL actual active owned keys exposes the EXACT linear subject
 of a real runtime leaf. Idle templates/accept ambient are completed; shared outputs
 are excluded only by the internally established request-free case. -/
 theorem GuardedFrontier.expose_minimum {n : Nat} {Γ : ServiceEnv} {Δ : Context} {p : Proc}
@@ -172,7 +176,8 @@ private theorem minimum_prefix_guard {n : Nat} {Γ : ServiceEnv} {Δ : Context} 
       exact hg
     · exact False.elim (ha (hc e c he))
 
-/-- The equal-rank semantic peer of a minimum active role cannot share its
+/-- **Runtime minimum guard leaf cannot own an equivalent dual peer.**
+The equal-rank semantic peer of a minimum active role cannot share its
 actual guard leaf. Opposite roles on the SAME physical name are distinct keys. -/
 theorem minimum_peer_separate {n : Nat} {Γ : ServiceEnv} {Δ : Context} {g : Proc}
     {e : Key} {c d : Capability} (ht : HasType n Γ Δ g) (hr : RequestFree Γ g)
