@@ -56,8 +56,12 @@ constructibility theory and no Gauss-Wantzel theorem. Category-(b) candidate
 from §174 of the Knill survey.
 -/
 
-/-- The real values constructible from rational data by straightedge and
-compass: the smallest subfield of `ℝ` closed under square roots. -/
+/-- **Constructible real numbers.** The constructible real numbers form the smallest set of real
+numbers that contains every rational number and is closed under addition, negation,
+multiplication, inverses of nonzero elements and square roots of nonnegative elements;
+equivalently, the smallest subfield of $\mathbb{R}$ closed under square roots.
+
+These are the real values constructible from rational data by straightedge and compass. -/
 inductive IsConstructible : ℝ → Prop
   | base (q : ℚ) : IsConstructible (q : ℝ)
   | add {x y : ℝ} : IsConstructible x → IsConstructible y → IsConstructible (x + y)
@@ -67,9 +71,11 @@ inductive IsConstructible : ℝ → Prop
   | sqrt {x : ℝ} : IsConstructible x → IsConstructible (Real.sqrt x)
 
 
-/-- The number-theoretic side of the Gauss-Wantzel regular-polygon theorem:
-only a power of two may occur with repeated exponent; every odd prime factor
-must be a distinct Fermat prime. -/
+/-- **Gauss–Wantzel number.** A natural number $n$ is a Gauss–Wantzel number if $n > 0$, every
+prime factor of $n$ is either $2$ or a Fermat prime, and $p^2$ does not divide $n$ for every odd
+prime factor $p$ of $n$.
+
+Equivalently, $n$ is a power of $2$ times a product of distinct Fermat primes. -/
 def GaussWantzelNumber (n : ℕ) : Prop :=
   0 < n ∧
     ∀ p : ℕ, p.Prime → p ∣ n →
@@ -78,7 +84,12 @@ def GaussWantzelNumber (n : ℕ) : Prop :=
 /- **Gauss-Wantzel constructible polygon theorem** (§174): a regular `n`-gon
 is straightedge-and-compass constructible exactly for the Gauss-Wantzel
 integers. -/
-/-- Source: C. F. Gauss, Disquisitiones Arithmeticae (1801), §365-366; P. L. Wantzel, Recherches sur les moyens de reconnaître si un problème de géométrie peut se résoudre avec la règle et le compas, J. Math. Pures Appl. 1 (1837). Listed as §174 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §174. Via leanprover/lean-eval@38361be, problem `gauss_wantzel_constructible_polygon`. -/
+/-- **Gauss–Wantzel theorem.** For every natural number $n \ge 3$, the real number
+$\cos(2\pi/n)$ is constructible (it lies in the smallest subfield of $\mathbb{R}$ closed under
+square roots) if and only if $n$ is a Gauss–Wantzel number, that is, every prime factor of $n$ is
+$2$ or a Fermat prime and every odd prime factor of $n$ divides $n$ only once.
+
+Source: C. F. Gauss, Disquisitiones Arithmeticae (1801), §365-366; P. L. Wantzel, Recherches sur les moyens de reconnaître si un problème de géométrie peut se résoudre avec la règle et le compas, J. Math. Pures Appl. 1 (1837). Listed as §174 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §174. Via leanprover/lean-eval@38361be, problem `gauss_wantzel_constructible_polygon`. -/
 public theorem_wanted gauss_wantzel_constructible_polygon (n : ℕ) (hn : 3 ≤ n) :
     IsConstructible (Real.cos (2 * Real.pi / n)) ↔ GaussWantzelNumber n
 

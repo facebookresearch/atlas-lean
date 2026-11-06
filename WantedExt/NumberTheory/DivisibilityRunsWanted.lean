@@ -20,12 +20,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A divisibility run of length at least `L`: at each of the first `L`
-indices the generalized Fibonacci term is nonzero and divides the
-corresponding generalized Tribonacci term. This is the relation `L' ≥ L`
-for the run length `L = L(x, y; a, b, c)` of the paper's Equation (1), which
-is not displayed in the extracted statements; its values at `L = 1, 2, 3`
-are determined by Proposition 3 below.
+/-- **Divisibility runs.** For integers $x, y, a, b, c$ and a natural number $L$, let
+$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(Q_n)_{n \ge 0}$
+be the generalized Tribonacci sequence with $Q_0 = a$, $Q_1 = b$ and $Q_2 = c$. The configuration
+$(x, y; a, b, c)$ has a divisibility run of length at least $L$ when $P_i \ne 0$ and
+$P_i \mid Q_i$ for every $i < L$.
+
+This is the statement that the run length $L(x, y; a, b, c)$ of the paper's Equation (1) is at
+least $L$; the paper indexes the sequences from $1$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (1) and
@@ -33,15 +35,24 @@ Proposition 3. -/
 public def IsDivRunUpTo (x y a b c : ℤ) (L : ℕ) : Prop :=
   ∀ i : ℕ, i < L → gibonacciNumber x y i ≠ 0 ∧ gibonacciNumber x y i ∣ generalizedTribonacci a b c i
 
-/-- Characteristic example: the empty run `L = 0` always holds.
+/-- **Divisibility runs of length zero.** For integers $x, y, a, b, c$, let $(P_n)_{n \ge 0}$ be
+the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, let $(Q_n)_{n \ge 0}$ be the generalized
+Tribonacci sequence with $Q_0 = a$, $Q_1 = b$ and $Q_2 = c$, and say $(x, y; a, b, c)$ has a
+divisibility run of length at least $L$ when $P_i \ne 0$ and $P_i \mid Q_i$ for every natural
+number $i < L$. Then $(x, y; a, b, c)$ always has a divisibility run of length at least $0$, since
+no natural number $i$ satisfies $i < 0$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (1). -/
 public theorem isDivRunUpTo_zero (x y a b c : ℤ) : IsDivRunUpTo x y a b c 0 :=
   fun i hi => (Nat.not_lt_zero i hi).elim
 
-/-- With `d = gcd(x, y)`, one has `gcd(P_n, P_{n-2}) = d` for all `n ≥ 3`
-(paper indexing; `n ≥ 2` in the 0-based indexing used here).
+/-- **Gibonacci terms two apart have the gcd of the initial values.** Let $x, y$ be integers and
+let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 2$,
+the nonnegative greatest common divisor of $P_n$ and $P_{n-2}$ equals that of $x$ and $y$:
+$\gcd(P_n, P_{n-2}) = \gcd(x, y)$.
+
+The paper indexes the sequence from $1$ and states this for $n \ge 3$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 2
@@ -49,8 +60,11 @@ Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 2
 public theorem_wanted int_gcd_gibonacciNumber_sub_two (x y : ℤ) (n : ℕ) (hn : 2 ≤ n) :
     Int.gcd (gibonacciNumber x y n) (gibonacciNumber x y (n - 2)) = Int.gcd x y
 
-/-- The backward recurrence identities `P_{n-1} = P_n - P_{n-2}` and
-`P_{n-3} = P_n - 2 * P_{n-2}` for `n ≥ 4` (paper indexing; `n ≥ 3` here).
+/-- **Backward recurrence for Gibonacci numbers.** Let $x, y$ be integers and let
+$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 3$,
+$P_{n-1} = P_n - P_{n-2}$ and $P_{n-3} = P_n - 2 P_{n-2}$.
+
+The paper indexes the sequence from $1$ and states these identities for $n \ge 4$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 3
@@ -59,9 +73,12 @@ public theorem_wanted gibonacciNumber_backward (x y : ℤ) (n : ℕ) (hn : 3 ≤
     gibonacciNumber x y (n - 1) = gibonacciNumber x y n - gibonacciNumber x y (n - 2) ∧
     gibonacciNumber x y (n - 3) = gibonacciNumber x y n - 2 * gibonacciNumber x y (n - 2)
 
-/-- The closed form `P_n = F_{n-2} * x + F_{n-1} * y` for `n ≥ 2`, where `F`
-is the standard Fibonacci sequence (in the 0-based indexing used here:
-`gibonacciNumber x y n = F_{n-1} * x + F_n * y` for `n ≥ 1`).
+/-- **Gibonacci numbers in terms of Fibonacci numbers.** Let $x, y$ be integers, let
+$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(F_n)_{n \ge 0}$
+be the Fibonacci sequence with $F_0 = 0$ and $F_1 = 1$. For every $n \ge 1$,
+$P_n = F_{n-1}\,x + F_n\,y$.
+
+The paper indexes $P$ from $1$ and states this as $P_n = F_{n-2}\,x + F_{n-1}\,y$ for $n \ge 2$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 1
@@ -69,9 +86,12 @@ Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 1
 public theorem_wanted gibonacciNumber_eq_fib (x y : ℤ) (n : ℕ) (hn : 1 ≤ n) :
     gibonacciNumber x y n = (Nat.fib (n - 1) : ℤ) * x + (Nat.fib n : ℤ) * y
 
-/-- There are Tribonacci basis sequences `u, v, w` with initial conditions
-`(1, 0, 0)`, `(0, 1, 0)`, `(0, 0, 1)` such that `Q_n = u_n * a + v_n * b +
-w_n * c` for every generalized Tribonacci sequence.
+/-- **Basis sequences for generalized Tribonacci sequences.** There are integer sequences
+$(u_n)_{n \ge 0}$, $(v_n)_{n \ge 0}$ and $(w_n)_{n \ge 0}$, each satisfying the Tribonacci
+recurrence $s_{n+3} = s_{n+2} + s_{n+1} + s_n$ for all $n \ge 0$, with initial values
+$(u_0, u_1, u_2) = (1, 0, 0)$, $(v_0, v_1, v_2) = (0, 1, 0)$ and $(w_0, w_1, w_2) = (0, 0, 1)$,
+such that for all integers $a, b, c$ and every $n \ge 0$ the $n$-th term of the generalized
+Tribonacci sequence with initial values $a, b, c$ equals $u_n a + v_n b + w_n c$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 2
@@ -87,9 +107,13 @@ public theorem_wanted exists_generalizedTribonacci_basis :
       ∀ a b c : ℤ, ∀ n : ℕ,
         generalizedTribonacci a b c n = u n * a + v n * b + w n * c
 
-/-- The first three run-length thresholds: a run of length `≥ 1` holds iff
-`x ≠ 0` and `x ∣ a`; of length `≥ 2` iff in addition `y ≠ 0` and `y ∣ b`;
-of length `≥ 3` iff in addition `x + y ≠ 0` and `x + y ∣ c`.
+/-- **Divisibility runs of length one, two and three.** For integers $x, y, a, b, c$, let $(P_n)$
+be the Gibonacci sequence with $P_0 = x$, $P_1 = y$ and $(Q_n)$ the generalized Tribonacci sequence
+with $Q_0 = a$, $Q_1 = b$, $Q_2 = c$, and say $(x, y; a, b, c)$ has a divisibility run of length at
+least $L$ when $P_i \ne 0$ and $P_i \mid Q_i$ for every $i < L$. Then there is a run of length at
+least $1$ if and only if $x \ne 0$ and $x \mid a$; a run of length at least $2$ if and only if
+$x \ne 0$, $x \mid a$, $y \ne 0$ and $y \mid b$; and a run of length at least $3$ if and only if
+$x \ne 0$, $x \mid a$, $y \ne 0$, $y \mid b$, $x + y \ne 0$ and $x + y \mid c$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 3
@@ -100,9 +124,11 @@ public theorem_wanted isDivRunUpTo_small (x y a b c : ℤ) :
     (IsDivRunUpTo x y a b c 3 ↔
       (x ≠ 0 ∧ x ∣ a) ∧ (y ≠ 0 ∧ y ∣ b) ∧ x + y ≠ 0 ∧ x + y ∣ c)
 
-/-- Main theorem: if a generalized Fibonacci sequence with all terms nonzero
-divides a generalized Tribonacci sequence term-by-term, then the Tribonacci
-sequence is identically zero.
+/-- **Divisibility by a Gibonacci sequence forces a Tribonacci sequence to vanish.** Let
+$x, y, a, b, c$ be integers, let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and
+$P_1 = y$, and let $(Q_n)_{n \ge 0}$ be the generalized Tribonacci sequence with $Q_0 = a$,
+$Q_1 = b$ and $Q_2 = c$. If $P_n \ne 0$ and $P_n \mid Q_n$ for every $n \ge 0$, then $Q_n = 0$
+for every $n \ge 0$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Theorem 1
@@ -113,18 +139,19 @@ public theorem_wanted generalizedTribonacci_eq_zero_of_dvd (x y a b c : ℤ)
     ∀ n : ℕ, generalizedTribonacci a b c n = 0
 
 
-/-- Lemma 1: growth bounds. With `φ` the golden ratio and `τ` the real root of
-`t³ = t² + t + 1` (the paper's dominant Tribonacci root), (i) `|P_n| ≤ (|x| + |y|) φ^(n-1)` for
-`n ≥ 1`; (ii) there are absolute constants `c₀, c₁ > 0` such that, for `(x, y) ≠ (0, 0)` and all
-`n ≥ c₁ (log (|x| + |y|) + 1)`, `|P_n| ≥ c₀ φⁿ / (|x| + |y|)`; (iii)
-`|Q_n| ≤ (|a| + |b| + |c|) τ^(n-1)` for `n ≥ 1`. Paper index `n` is `n - 1` here (`P_n` is
-`gibonacciNumber x y (n - 1)`, `Q_n` is `generalizedTribonacci a b c (n - 1)`).
+/-- **Growth bounds for Gibonacci and generalized Tribonacci sequences.** Let $\varphi$ be the
+golden ratio. For integers $x, y$ let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$
+and $P_1 = y$, and for integers $a, b, c$ let $(Q_n)_{n \ge 0}$ be the generalized Tribonacci
+sequence with $Q_0 = a$, $Q_1 = b$ and $Q_2 = c$. Then (i) for all integers $x, y$ and every
+$n \ge 0$, $|P_n| \le (|x| + |y|)\,\varphi^n$; (ii) there are real constants $c_0 > 0$ and
+$c_1 > 0$ such that for all integers $x, y$ with $(x, y) \ne (0, 0)$ and every $n \ge 0$ with
+$c_1 (\log(|x| + |y|) + 1) \le n$, one has $c_0\,\varphi^{n+1} / (|x| + |y|) \le |P_n|$; and
+(iii) for every real $\tau$ with $\tau^3 = \tau^2 + \tau + 1$, all integers $a, b, c$ and every
+$n \ge 0$, $|Q_n| \le (|a| + |b| + |c|)\,\tau^n$.
 
-Lemma 1(ii) is printed with the threshold "n large enough depending on `|x| + |y|`"; the
-logarithmic form of the threshold stated here is the one the paper uses, in the proof of
-Theorem 2: "for `n ≥ c₁ log B` (where `c₁` absorbs the `log(|x| + |y|) ≤ log(2B)` from
-Lemma 1(ii))", with the range later taken as `N = max{4, ⌈c₁ log B⌉, ⌈c₅ log B⌉}` (the `+1`
-inside the threshold here absorbs that absolute small-index cutoff).
+The paper indexes both sequences from $1$, so its $n$-th terms are $P_{n-1}$ and $Q_{n-1}$ here.
+It prints (ii) with the threshold "n large enough depending on $|x| + |y|$"; the logarithmic
+threshold is the one the paper uses in its proof of Theorem 2.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 1
@@ -147,8 +174,15 @@ public instance (x y a b c : ℤ) (L : ℕ) : Decidable (IsDivRunUpTo x y a b c 
   unfold IsDivRunUpTo
   infer_instance
 
-/-- `A_B(r)`: the number of configurations `(x, y, a, b, c) ∈ [-B, B]⁵` with `(x, y) ≠ (0, 0)`
-and `(a, b, c) ≠ (0, 0, 0)` (the set `𝒞_B`) whose divisibility run length is at least `r`.
+/-- **Counting configurations with long divisibility runs.** For natural numbers $B$ and $r$,
+$A_B(r)$ is the number of integer tuples $(x, y, a, b, c)$ with all five entries in $[-B, B]$,
+$(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at
+least $r$: for every $i < r$, the Gibonacci number $P_i$ with initial values $P_0 = x$, $P_1 = y$
+is nonzero and divides the generalized Tribonacci number $Q_i$ with initial values $Q_0 = a$,
+$Q_1 = b$, $Q_2 = c$ (indices start at $0$).
+
+The tuples satisfying the size and nonvanishing conditions form the paper's set
+$\mathcal{C}_B$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Equation (2). -/
@@ -158,16 +192,25 @@ public def divRunCount (B r : ℕ) : ℕ :=
     (t.1, t.2.1) ≠ (0, 0) ∧ (t.2.2.1, t.2.2.2.1, t.2.2.2.2) ≠ (0, 0, 0) ∧
       IsDivRunUpTo t.1 t.2.1 t.2.2.1 t.2.2.2.1 t.2.2.2.2 r).card
 
-/-- `A_1(1) = 156`.
+/-- **Run count at bound 1 and length 1.** Exactly $156$ integer tuples $(x, y, a, b, c)$ with
+all entries in $\{-1, 0, 1\}$, $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ have a
+divisibility run of length at least $1$; that is, $A_1(1) = 156$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 4 (`integers-2026-A122-prop-4`). -/
 public theorem divRunCount_one_one : divRunCount 1 1 = 156 := by
   decide +kernel
 
-/-- Theorem 2: there is an absolute constant `C > 0` with `E(B) ≤ C log B` for all `B ≥ 2`,
-stated as: every configuration in `𝒞_B` has all its divisibility runs of length at most
-`C log B` (`E(B)` is the maximum run length over `𝒞_B`).
+/-- **Divisibility runs have logarithmic length.** There is a real constant $C > 0$ such that for
+every natural number $B \ge 2$, all integers $x, y, a, b, c \in [-B, B]$ with $(x, y) \ne (0, 0)$
+and $(a, b, c) \ne (0, 0, 0)$, and every natural number $L$ such that $(x, y, a, b, c)$ has a
+divisibility run of length at least $L$, we have $L \le C \log B$. Here a divisibility run of
+length at least $L$ means that for every $i < L$ the Gibonacci number $P_i$ with $P_0 = x$,
+$P_1 = y$ is nonzero and divides the generalized Tribonacci number $Q_i$ with $Q_0 = a$,
+$Q_1 = b$, $Q_2 = c$.
+
+In the paper's notation this is $E(B) \le C \log B$, where $E(B)$ is the maximal run length
+over these configurations.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Theorem 2
@@ -179,9 +222,11 @@ public theorem_wanted divRun_length_le_log :
       (x, y) ≠ (0, 0) → (a, b, c) ≠ (0, 0, 0) →
       ∀ L : ℕ, IsDivRunUpTo x y a b c L → (L : ℝ) ≤ C * Real.log B
 
-/-- Proposition 4: `A_B(1) = 4(2B+1)³ D(B) + 2B(2B+1)((2B+1)² - 1)` with
-`D(B) = ∑_{m=1}^B ⌊B/m⌋`, and `A_B(1) = 32 B⁴ log B + O(B⁴)` (the `O` stated with an
-explicit constant for `B ≥ 2`).
+/-- **Exact formula for the length-one run count.** For every natural number $B$, let
+$D(B) = \sum_{m=1}^{B} \lfloor B/m \rfloor$ and let $A_B(1)$ be the number of integer tuples
+$(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have
+a divisibility run of length at least $1$. Then
+$$A_B(1) = 4(2B+1)^3 D(B) + 2B(2B+1)\left((2B+1)^2 - 1\right).$$
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 4
@@ -190,7 +235,11 @@ public theorem_wanted divRunCount_one (B : ℕ) :
     divRunCount B 1 = 4 * (2 * B + 1) ^ 3 * ∑ m ∈ Finset.Icc 1 B, B / m
       + 2 * B * (2 * B + 1) * ((2 * B + 1) ^ 2 - 1)
 
-/-- Proposition 4 (asymptotic): `A_B(1) = 32 B⁴ log B + O(B⁴)`.
+/-- **Asymptotics of the length-one run count.** There is a real constant $K$ such that for every
+natural number $B \ge 2$ the number $A_B(1)$ of integer tuples $(x, y, a, b, c) \in [-B, B]^5$
+with $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at
+least $1$ satisfies $|A_B(1) - 32 B^4 \log B| \le K B^4$; that is,
+$A_B(1) = 32 B^4 \log B + O(B^4)$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 4
@@ -199,8 +248,11 @@ public theorem_wanted divRunCount_one_asymptotic :
     ∃ K : ℝ, ∀ B : ℕ, 2 ≤ B →
       |(divRunCount B 1 : ℝ) - 32 * (B : ℝ) ^ 4 * Real.log B| ≤ K * (B : ℝ) ^ 4
 
-/-- Proposition 5: with `d_B(m) = 2⌊B/m⌋ + 1` and `S(B) = ∑_{m=1}^B d_B(m) = 2D(B) + B`,
-`A_B(2) = 4(2B+1) S(B)² - 4B²`.
+/-- **Exact formula for the length-two run count.** For every natural number $B$, let
+$S(B) = \sum_{m=1}^{B} \left(2\lfloor B/m \rfloor + 1\right)$ and let $A_B(2)$ be the number of
+integer tuples $(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and
+$(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at least $2$. Then
+$S(B) = 2 \sum_{m=1}^{B} \lfloor B/m \rfloor + B$ and $A_B(2) = 4(2B+1) S(B)^2 - 4B^2$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 5
@@ -210,8 +262,11 @@ public theorem_wanted divRunCount_two (B : ℕ) :
       (divRunCount B 2 : ℤ)
         = 4 * (2 * B + 1) * (∑ m ∈ Finset.Icc 1 B, (2 * (B / m) + 1) : ℕ) ^ 2 - 4 * B ^ 2
 
-/-- Proposition 5 (asymptotic): `A_B(2) = 32 B³ (log B)² + O(B³ log B)`, with an explicit
-constant for `B ≥ 2`.
+/-- **Asymptotics of the length-two run count.** There is a real constant $K$ such that for every
+natural number $B \ge 2$ the number $A_B(2)$ of integer tuples $(x, y, a, b, c) \in [-B, B]^5$
+with $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at
+least $2$ satisfies $|A_B(2) - 32 B^3 (\log B)^2| \le K B^3 \log B$; that is,
+$A_B(2) = 32 B^3 (\log B)^2 + O(B^3 \log B)$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 5
@@ -221,10 +276,17 @@ public theorem_wanted divRunCount_two_asymptotic :
       |(divRunCount B 2 : ℝ) - 32 * (B : ℝ) ^ 3 * Real.log B ^ 2|
         ≤ K * (B : ℝ) ^ 3 * Real.log B
 
-/-- Proposition 6: with `d_B(m) = 2⌊B/m⌋ + 1`,
-`A_B(3) = ∑_{x, y ∈ [-B, B], x, y, x+y ≠ 0} (d_B(|x|) d_B(|y|) d_B(|x+y|) - 1)
-  = 2∑_{m,n=1}^B d_B(m)d_B(n)d_B(m+n) + 4∑_{1 ≤ n < m ≤ B} d_B(m)d_B(n)d_B(m-n)
-    - (4B² - 2B)`.
+/-- **Exact formula for the length-three run count.** For a natural number $B$, let $A_B(3)$ be
+the number of integer tuples $(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and
+$(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at least $3$, and for integers
+$m \ge 1$ let $d_B(m) = 2\lfloor B/m \rfloor + 1$. Then
+$$A_B(3) = \sum_{x, y} \left(d_B(|x|)\, d_B(|y|)\, d_B(|x+y|) - 1\right),$$
+where the sum runs over the integers $x, y \in [-B, B]$ with $x \ne 0$, $y \ne 0$ and
+$x + y \ne 0$, and also
+$$
+A_B(3) = 2 \sum_{m=1}^{B} \sum_{n=1}^{B} d_B(m)\, d_B(n)\, d_B(m+n) +
+4 \sum_{1 \le n < m \le B} d_B(m)\, d_B(n)\, d_B(m-n) - (4B^2 - 2B).
+$$
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 6
@@ -243,12 +305,20 @@ public theorem_wanted divRunCount_three (B : ℕ) :
             ((2 * (B / m) + 1) * (2 * (B / n) + 1) * (2 * (B / (m - n)) + 1) : ℕ)
           - (4 * B ^ 2 - 2 * B)
 
-/-- Proposition 7: `A_B(4) = ∑_{x, y ≠ 0, x + y ≠ 0, x + 2y ≠ 0} (T_B(x, y) - 1)`, with
-`T_B(x, y) = #{(a, b, c) ∈ [-B, B]³ : x ∣ a, y ∣ b, x + y ∣ c, x + 2y ∣ a + b + c}`, and
-equivalently, writing `a = xα, b = yβ, c = (x+y)γ`, `T_B(x, y)` is the number of
-`(α, β, γ)` with `|α| ≤ ⌊B/|x|⌋, |β| ≤ ⌊B/|y|⌋, |γ| ≤ ⌊B/|x+y|⌋` and
-`x + 2y ∣ xα + yβ + (x+y)γ` (the paper's `∑ χ_{x,y}(α, β, γ)`). The sums run over
-`x, y ∈ [-B, B]`.
+/-- **Divisor-sum formula for the length-four run count.** For a natural number $B$, let $A_B(4)$
+be the number of integer tuples $(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and
+$(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at least $4$. For integers $x, y$
+let $T_B(x, y)$ be the number of integer triples $(a, b, c) \in [-B, B]^3$ with $x \mid a$,
+$y \mid b$, $x + y \mid c$ and $x + 2y \mid a + b + c$, and let $T'_B(x, y)$ be the number of
+integer triples $(\alpha, \beta, \gamma)$ with $|\alpha| \le \lfloor B/|x| \rfloor$,
+$|\beta| \le \lfloor B/|y| \rfloor$, $|\gamma| \le \lfloor B/|x+y| \rfloor$ and
+$x + 2y \mid x\alpha + y\beta + (x+y)\gamma$. Then
+$$A_B(4) = \sum_{x, y} \left(T_B(x, y) - 1\right) = \sum_{x, y} \left(T'_B(x, y) - 1\right),$$
+where both sums run over the integers $x, y \in [-B, B]$ with $x \ne 0$, $y \ne 0$, $x + y \ne 0$
+and $x + 2y \ne 0$.
+
+The second form comes from writing $a = x\alpha$, $b = y\beta$, $c = (x+y)\gamma$; it is the
+paper's $\sum \chi_{x,y}(\alpha, \beta, \gamma)$.
 
 Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
 Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 7

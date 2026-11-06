@@ -28,20 +28,32 @@ The source proposition is preserved; its external disproof by
 Reiher–Rödl–Sales [RRS24] and a pinned external Lean proof are recorded in the
 registry. This module states the proposition but does not refute it. -/
 
-/-- Every `n`-subset holds a large 3AP-free subset. -/
+/-- **Sets with uniformly large 3AP-free subsets.** A set $A$ of natural numbers has this property
+if there is a real number $\varepsilon > 0$ such that every finite subset $B \subseteq A$ contains
+a subset $C \subseteq B$ with $|C| \ge \varepsilon |B|$ that contains no nontrivial three-term
+arithmetic progression, that is, no $a, b, c \in C$ with $a + c = 2b$ and $a \ne b$. -/
 def HasFew3APs (A : Set ℕ) := ∃ (ε : ℝ), ε > 0 ∧
   ∀ (B : Set ℕ), B ⊆ A → Finite B →
   ∃ (C : Set ℕ), C ⊆ B ∧ C.ncard ≥ ε * B.ncard ∧ ThreeAPFree C
 
-/-- Every infinite set with uniformly large 3AP-free subsets is a finite union
-of 3AP-free sets. -/
+/-- **Erdős Problem 847.** Call a set of natural numbers 3AP-free if it contains no $a, b, c$ with
+$a + c = 2b$ and $a \ne b$. The proposition asserts that every infinite set $A$ of natural numbers
+such that, for some real number $\varepsilon > 0$, every finite subset $B \subseteq A$ has a
+3AP-free subset of size at least $\varepsilon |B|$, is a finite union of 3AP-free sets: there are
+a natural number $n$ and 3AP-free sets $S_0, \dots, S_{n-1}$ of natural numbers with
+$A = S_0 \cup \dots \cup S_{n-1}$. -/
 def conjecture : Prop :=
   ∀ (A : Set ℕ), Infinite A → HasFew3APs A →
     ∃ n, ∃ (S : Fin n → Set ℕ), (∀ i, ThreeAPFree (S i)) ∧ A = ⋃ i : Fin n, S i
 
 /--
-Resolved false: Resolved false externally by Reiher, Rödl, and Sales. This repository records
-the historical proposition, not a proof. Source: Christian Reiher, Vojtěch Rödl, and Marcelo
+**Erdős Problem 847 is false.** Call a set of natural numbers 3AP-free if it contains no
+$a, b, c$ with $a + c = 2b$ and $a \ne b$. There is an infinite set $A$ of natural numbers such
+that, for some real number $\varepsilon > 0$, every finite subset $B \subseteq A$ has a 3AP-free
+subset of size at least $\varepsilon |B|$, but $A$ is not the union of finitely many 3AP-free sets
+of natural numbers.
+
+Source: Christian Reiher, Vojtěch Rödl, and Marcelo
 Sales, Colouring versus density in integers and Hales–Jewett cubes, Journal of the London
 Mathematical Society (2024), e12987, https://doi.org/10.1112/jlms.12987. Moved from
 `OpenConjectures/NumberTheory/ErdosProblem847`.

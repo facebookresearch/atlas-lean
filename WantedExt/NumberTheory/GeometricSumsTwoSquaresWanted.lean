@@ -52,9 +52,13 @@ open Polynomial
 
 namespace MathlibExt.NumberTheory.GeometricSumsTwoSquaresWanted
 
-/-- The even polynomial
-`X_1 = x^{p-1} - x^{p-3} + ... - (-1)^{(p-1)/2} x^2 +
-(-1)^{(p-1)/2}` of Proposition 2.
+/-- **The alternating polynomial $X_1$.** For a natural number $p$, $X_1$ is the polynomial with
+integer coefficients
+$$
+X_1(x) = \sum_{i=0}^{\lfloor (p+1)/2 \rfloor - 1} (-1)^i x^{p-1-2i}.
+$$
+For odd $p \ge 5$ this is the even polynomial
+$x^{p-1} - x^{p-3} + \dots - (-1)^{(p-1)/2} x^2 + (-1)^{(p-1)/2}$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -63,9 +67,13 @@ noncomputable def phi4pX1 (p : ℕ) : ℤ[X] :=
   ∑ i ∈ Finset.range ((p + 1) / 2),
     (-1 : ℤ) ^ i • X ^ (p - 1 - 2 * i)
 
-/-- The odd polynomial
-`Y_1 = x^{p-2} - x^{p-4} + ... + (-1)^{(p-1)/2} x^3 -
-(-1)^{(p-1)/2} x` of Proposition 2.
+/-- **The alternating polynomial $Y_1$.** For a natural number $p$, $Y_1$ is the polynomial with
+integer coefficients
+$$
+Y_1(x) = \sum_{i=0}^{\lfloor (p-1)/2 \rfloor - 1} (-1)^i x^{p-2-2i}.
+$$
+For odd $p \ge 5$ this is the odd polynomial
+$x^{p-2} - x^{p-4} + \dots + (-1)^{(p-1)/2} x^3 - (-1)^{(p-1)/2} x$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -74,9 +82,10 @@ noncomputable def phi4pY1 (p : ℕ) : ℤ[X] :=
   ∑ i ∈ Finset.range ((p - 1) / 2),
     (-1 : ℤ) ^ i • X ^ (p - 2 - 2 * i)
 
-/-- **Proposition 2**: for each odd prime `p`,
-`Φ_{4p}(x) = X_1(x)^2 + Y_1(x)^2` for the explicit
-polynomials `X_1` and `Y_1` above.
+/-- **The cyclotomic polynomial $\Phi_{4p}$ as a sum of two explicit squares.** Let $p$ be an
+odd prime, let $X_1 = \sum_{i=0}^{(p-1)/2} (-1)^i x^{p-1-2i}$ and
+$Y_1 = \sum_{i=0}^{(p-3)/2} (-1)^i x^{p-2-2i}$ in $\mathbb{Z}[x]$, and let $\Phi_{4p}$ be the
+$4p$-th cyclotomic polynomial over $\mathbb{Z}$. Then $\Phi_{4p} = X_1^2 + Y_1^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -86,9 +95,11 @@ theorem_wanted cyclotomicFourMul_eq_sq_add_sq (p : ℕ) (hp : p.Prime)
     Polynomial.cyclotomic (4 * p) ℤ =
       phi4pX1 p ^ 2 + phi4pY1 p ^ 2
 
-/-- **Corollary 3**: for an odd prime `p` and
-`k ≥ 1`, `Φ_{4p^k}(x)` is the sum of the squares of
-`X_1` and `Y_1` evaluated at `x^{p^{k-1}}`.
+/-- **The cyclotomic polynomial $\Phi_{4p^k}$ as a sum of two explicit squares.** Let $p$ be an
+odd prime, let $k \ge 1$, let $X_1 = \sum_{i=0}^{(p-1)/2} (-1)^i x^{p-1-2i}$ and
+$Y_1 = \sum_{i=0}^{(p-3)/2} (-1)^i x^{p-2-2i}$ in $\mathbb{Z}[x]$, and let $\Phi_{4p^k}$ be the
+$4p^k$-th cyclotomic polynomial over $\mathbb{Z}$. Then
+$\Phi_{4p^k}(x) = X_1\bigl(x^{p^{k-1}}\bigr)^2 + Y_1\bigl(x^{p^{k-1}}\bigr)^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -99,11 +110,12 @@ theorem_wanted cyclotomicFourMulPow_eq_sq_add_sq (p k : ℕ)
       (phi4pX1 p).comp (X ^ (p ^ (k - 1))) ^ 2 +
         (phi4pY1 p).comp (X ^ (p ^ (k - 1))) ^ 2
 
-/-- **Proposition 4**: for each `q ≥ 1`, the
-cyclotomic polynomial `Φ_{4q}(x)` is a sum of two
-squares in `ℤ[x]` (the paper gives the two squares
-explicitly from a product over primitive `4q`-th roots
-of unity in the class `1 (mod 4)`).
+/-- **Every cyclotomic polynomial $\Phi_{4q}$ is a sum of two squares.** For every integer
+$q \ge 1$ there are polynomials $A, B \in \mathbb{Z}[x]$ such that the $4q$-th cyclotomic
+polynomial $\Phi_{4q}$ over $\mathbb{Z}$ satisfies $\Phi_{4q} = A^2 + B^2$.
+
+The paper gives the two squares explicitly, from a product over the primitive $4q$-th roots of
+unity in the class $1 \pmod 4$; only their existence is stated here.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -111,10 +123,11 @@ Squares", Proposition 4. -/
 theorem_wanted exists_sq_add_sq_eq_cyclotomic (q : ℕ) (hq : 1 ≤ q) :
     ∃ A B : ℤ[X], Polynomial.cyclotomic (4 * q) ℤ = A ^ 2 + B ^ 2
 
-/-- **Theorem 10**: let `n` be a positive odd integer
-and `p ≡ 3 (mod 4)` a prime. Then the geometric sum
-`1 + p^n + p^{2n} + ... + p^{(p-1)n}` is the product of
-Pythagorean primes, equivalently the sum of two squares.
+/-- **Geometric sums for primes $p \equiv 3 \pmod 4$ and odd $n$ are sums of two squares.**
+Let $p$ be a prime with $p \equiv 3 \pmod 4$, let $n$ be a positive odd integer, and let
+$S = \sum_{j=0}^{p-1} p^{nj} = 1 + p^n + p^{2n} + \cdots + p^{(p-1)n}$. Then every prime divisor
+of $S$ is $2$ or congruent to $1$ modulo $4$, and there are natural numbers $a, b$ with
+$S = a^2 + b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -125,10 +138,10 @@ theorem_wanted geomSum_pythagorean (p n : ℕ) (hp : p.Prime)
       q ∣ ∑ j ∈ Finset.range p, p ^ (n * j) → q = 2 ∨ q % 4 = 1) ∧
       ∃ a b : ℕ, ∑ j ∈ Finset.range p, p ^ (n * j) = a ^ 2 + b ^ 2
 
-/-- **Corollary 11**: let `p ≡ 3 (mod 4)` be a prime,
-`n` a positive odd integer, and `q = p^k` for some
-positive integer `k`. Then there are integers `a, b`
-with `1 + p^n + p^{2n} + ... + p^{(q-1)n} = a^2 + b^2`.
+/-- **Geometric sums with $p^k$ terms, $p \equiv 3 \pmod 4$ and $n$ odd, are sums of two squares.**
+Let $p$ be a prime with $p \equiv 3 \pmod 4$, let $n$ be a positive odd integer, let $k$ be a
+positive integer, and put $q = p^k$. Then there are integers $a, b$ with
+$\sum_{j=0}^{q-1} p^{nj} = 1 + p^n + p^{2n} + \cdots + p^{(q-1)n} = a^2 + b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -138,11 +151,11 @@ theorem_wanted geomSumPow_eq_sq_add_sq (p n k : ℕ) (hp : p.Prime)
     ∃ a b : ℤ, (∑ j ∈ Finset.range (p ^ k), (p : ℤ) ^ (n * j)) =
       a ^ 2 + b ^ 2
 
-/-- **Theorem 5**: let `n` be a positive even integer
-and `p` an odd prime. Then the alternating geometric
-sum `1 - p^n + p^{2n} - ... + p^{(p-1)n}` is the product
-of Pythagorean primes; in fact it is the sum of the
-squares of two relatively prime natural numbers.
+/-- **Alternating geometric sums for odd primes $p$ and even $n$ are sums of two coprime squares.**
+Let $p$ be an odd prime, let $n$ be a positive even integer, and let
+$S = \sum_{j=0}^{p-1} (-1)^j p^{nj} = 1 - p^n + p^{2n} - \cdots + p^{(p-1)n}$. Then every prime
+divisor of $S$ is $2$ or congruent to $1$ modulo $4$, and there are coprime natural numbers
+$a, b$ with $S = a^2 + b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -155,11 +168,11 @@ theorem_wanted altGeomSum_pythagorean (p n : ℕ) (hp : p.Prime)
       ∃ a b : ℕ, (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
         (a : ℤ) ^ 2 + (b : ℤ) ^ 2 ∧ Nat.Coprime a b
 
-/-- **Theorem 7**: let `n` be a natural number and
-`p ≡ 1 (mod 4)` a prime. Then the alternating geometric
-sum `1 - p^n + p^{2n} - ... + p^{(p-1)n}` is the product
-of Pythagorean primes, equivalently the sum of two
-squares.
+/-- **Alternating geometric sums for primes $p \equiv 1 \pmod 4$ are sums of two squares.**
+Let $p$ be a prime with $p \equiv 1 \pmod 4$, let $n \ge 0$ be an integer, and let
+$S = \sum_{j=0}^{p-1} (-1)^j p^{nj} = 1 - p^n + p^{2n} - \cdots + p^{(p-1)n}$. Then every prime
+divisor of $S$ is $2$ or congruent to $1$ modulo $4$, and there are natural numbers $a, b$ with
+$S = a^2 + b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -172,10 +185,10 @@ theorem_wanted altGeomSum_pythagorean_one_mod_four (p n : ℕ)
       ∃ a b : ℕ, (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
         (a : ℤ) ^ 2 + (b : ℤ) ^ 2
 
-/-- **Corollary 8**: let `p ≡ 1 (mod 4)` be a prime, `n`
-a positive odd integer, and `q = p^k` for some positive
-integer `k`. Then there are integers `a, b` with
-`1 - p^n + p^{2n} - ... + p^{(q-1)n} = a^2 + b^2`.
+/-- **Alternating geometric sums with $p^k$ terms, $p \equiv 1 \pmod 4$, as sums of two squares.**
+Let $p$ be a prime with $p \equiv 1 \pmod 4$, let $n$ be a positive odd integer, let $k$ be a
+positive integer, and put $q = p^k$. Then there are integers $a, b$ with
+$\sum_{j=0}^{q-1} (-1)^j p^{nj} = 1 - p^n + p^{2n} - \cdots + p^{(q-1)n} = a^2 + b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -186,10 +199,10 @@ theorem_wanted altGeomSumPow_eq_sq_add_sq (p n k : ℕ) (hp : p.Prime)
       (∑ j ∈ Finset.range (p ^ k), (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
         a ^ 2 + b ^ 2
 
-/-- **Proposition 9**: for each positive odd integer
-`n` and each prime `p ≡ 3 (mod 4)`, there are integers
-`a, b` with
-`1 - p^n + p^{2n} - ... + p^{(p-1)n} = a^2 - b^2`.
+/-- **Alternating geometric sums for primes $p \equiv 3 \pmod 4$ and odd $n$ are differences of
+two squares.** Let $p$ be a prime with $p \equiv 3 \pmod 4$ and let $n$ be a positive odd integer.
+Then there are integers $a, b$ with
+$\sum_{j=0}^{p-1} (-1)^j p^{nj} = 1 - p^n + p^{2n} - \cdots + p^{(p-1)n} = a^2 - b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two
@@ -200,11 +213,12 @@ theorem_wanted altGeomSum_eq_sq_sub_sq (p n : ℕ) (hp : p.Prime)
       (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
         a ^ 2 - b ^ 2
 
-/-- **Theorem 6**: let `x, y` be integers with
-`gcd(x, y) = 1` and `n > 0`. Then
-`x^{4n} - x^{4n-2} y^2 + ... - x^2 y^{4n-2} + y^{4n}` is
-the product of Pythagorean primes, equivalently the sum
-of the squares of two relatively prime natural numbers.
+/-- **An alternating sum in coprime integers $x, y$ is a sum of two coprime squares.**
+Let $x$ and $y$ be coprime integers, let $n$ be a positive integer, and let
+$S = \sum_{j=0}^{2n} (-1)^j x^{4n-2j} y^{2j}$, that is,
+$S = x^{4n} - x^{4n-2} y^2 + \cdots - x^2 y^{4n-2} + y^{4n}$. Then every prime divisor of $S$ is
+$2$ or congruent to $1$ modulo $4$, and there are coprime natural numbers $a, b$ with
+$S = a^2 + b^2$.
 
 Source: Lorenz Halbeisen, Norbert Hungerbühler, and
 Franz Lemmermeyer, "Geometric Sums as Sums of Two

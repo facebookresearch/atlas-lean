@@ -41,9 +41,9 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.DistinctEisensteinPrimesWanted
 
-/-- **Lemma 2** (Breusch): if `x ≥ 7`, then between `x`
-and `2x` there is at least one prime of the form
-`6k - 1`.
+/-- **Breusch's theorem for primes of the form $6k - 1$.** For every natural number $x \ge 7$
+there is a prime $p$ with $x < p < 2x$ and $p \equiv 5 \pmod 6$, that is, a prime of the form
+$6k - 1$ strictly between $x$ and $2x$.
 
 Source: Elchin Hasanalizade, "Sums of Distinct
 Eisenstein Primes", Lemma 2 (citing Breusch). -/
@@ -51,9 +51,9 @@ theorem_wanted exists_prime_modEq_five_between (x : ℕ)
     (hx : 7 ≤ x) :
     ∃ p : ℕ, p.Prime ∧ x < p ∧ p < 2 * x ∧ p % 6 = 5
 
-/-- **Lemma 3** (Makowski): every integer greater than
-`161` is the sum of distinct primes of the form
-`6k - 1`.
+/-- **Makowski's theorem on sums of distinct primes of the form $6k - 1$.** Every natural number
+$n > 161$ is the sum of the elements of some finite set of primes $p$ with $p \equiv 5 \pmod 6$;
+that is, $n$ is a sum of distinct primes of the form $6k - 1$.
 
 Source: Elchin Hasanalizade, "Sums of Distinct
 Eisenstein Primes", Lemma 3 (citing Makowski). -/

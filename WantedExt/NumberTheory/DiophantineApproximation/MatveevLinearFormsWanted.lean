@@ -17,7 +17,27 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- Matveev lower bound for a linear form in logarithms (wishlist).
+/-- **Matveev's lower bound for linear forms in logarithms (real case).** Let $L$ be a number
+field of degree $D = [L : \mathbb{Q}]$ with a field embedding $f : L \to \mathbb{R}$, let $s \ge 1$
+be a natural number, and let $\eta_1, \dots, \eta_s \in L$ satisfy $\eta_i \ne 1$ and
+$f(\eta_i) > 0$ for every $i$. Let $d_1, \dots, d_s$ be nonzero integers and let $B$ be a real
+number with $B \ge 1$ and $|d_i| \le B$ for every $i$. Let $A_1, \dots, A_s$ be real numbers with
+$A_j \ge \max(D\,h(\eta_j), |\log f(\eta_j)|, 0.16)$ for every $j$, where $h$ is the absolute
+logarithmic Weil height. Put $\Gamma = f(\eta_1)^{d_1} \cdots f(\eta_s)^{d_s} - 1$. If
+$\Gamma \ne 0$, then
+$$\log|\Gamma| > -1.4 \cdot 30^{s+3} \, s^{4.5} \, D^2 (1 + \log D)(1 + \log B) \, A_1 \cdots A_s.$$
+
+No integrality is assumed on the $\eta_i$, so the statement also covers non-integral algebraic
+numbers, such as the element in the source's application whose minimal polynomial has leading
+coefficient $23$. The source states the bound with $B = \max_i |d_i|$; since the right-hand side
+increases with $B$, any real $B \ge 1$ bounding every $|d_i|$ may be used.
+
+Source: archive provenance `wanted317_306_matveev_linear_forms_logarithms_d52ec211.zip`,
+archive SHA-256
+`871521f8571d9389873dabb8435b786b5a3b8d7ae38a8fb67f8d1171591f46c2`;
+donor candidate `Matveev.lean` SHA-256
+`d52ec2118c66e48da7507e08385ef54fc0d032821392b17f4613f170ce25c8f0`,
+treated only as untrusted input.
 
 Source: Salah Eddine Rihane, Chèfiath Awero Adegbindin, and Alain Togbé,
 "Fermat Padovan And Perrin Numbers", Journal of Integer Sequences 23 (2020),
@@ -32,27 +52,7 @@ theorem span SHA-256
 `d8d702c70dc0bd6a2e1b891a3453c7b187d1168572725b7943f27ae012de0561`.
 The source cites Bugeaud–Mignotte–Siksek, Theorem 9.4, as a modified consequence of
 E. M. Matveev, "An explicit lower bound for a homogeneous rational linear form in the
-logarithms of algebraic numbers, II", Izv. Math. 64 (2000), 1217–1269.
-
-Archive provenance: `wanted317_306_matveev_linear_forms_logarithms_d52ec211.zip`,
-archive SHA-256
-`871521f8571d9389873dabb8435b786b5a3b8d7ae38a8fb67f8d1171591f46c2`;
-donor candidate `Matveev.lean` SHA-256
-`d52ec2118c66e48da7507e08385ef54fc0d032821392b17f4613f170ce25c8f0`,
-treated only as untrusted input.
-
-Scope: wishlist statement only; no proof is claimed here. The height is Mathlib's
-canonical `NumberField.absLogHeight₁`, not a local minpoly-root formula. In particular,
-no `IsIntegral ℤ` restriction and no hand-expanded leading-coefficient-free height is
-retained, so the statement also covers the paper's own non-integral application element
-(minimal-polynomial leading coefficient 23).
-
-Notation adaptation: the live source writes `Gamma = ∏ ηᵢ ^ dᵢ - 1`, degree `l`,
-and exact maximum `D = max |dᵢ|`; the archive quote renders these as `Lambda`, `s`,
-`B`. This declaration uses `s`, `B`, and `Gamma = (∏ i, f (η i) ^ d i) - 1`, with
-`B` any real upper bound with `1 ≤ B` and `|(d i : ℝ)| ≤ B`. Since the right-hand side
-is monotone in the exponent bound, this `B ≥ max |dᵢ|` form is the standard
-application-ready form of the source's exact-maximum `D` statement. -/
+logarithms of algebraic numbers, II", Izv. Math. 64 (2000), 1217–1269. -/
 public theorem_wanted matveev_lower_bound_linear_forms_logarithms
     {L : Type*} [Field L] [NumberField L]
     (s : ℕ) (hs : 0 < s)
