@@ -51,10 +51,12 @@ open Cslib.Complexity.SatVerifier.Lookup (isBitBlock_map isBitBlock_rev)
 
 /-! ### The machine -/
 
-/-- Stacks: tokens, output, tokens in reading order, distinct variables, the variable walk's
-other side, the edges in progress, garbage, comparison scratch (`X`, `Y`), the clause count, three
-times it, the diamond top, the row end, the row vertex, the row loop index, the clause index, the
-detour vertex, copy scratch. -/
+/-- **Stacks of the HAMPATH emitter.** The emitter has eighteen distinct stacks: $T$ (the tokens),
+$O$ (the output), $F$ (the tokens in reading order), $V$ (the distinct variables), $W$ (the other
+side of the walk over $V$), $Q$ (the edges in progress), $G$ (garbage), $X$ and $Y$ (comparison
+scratch), $C$ (the clause count), $M$ (three times the clause count), $P$ (the diamond top), $N$
+(the row end), $R$ (the row vertex), $L$ (the row loop index), $J$ (the clause index), $D$ (the
+detour vertex) and $Z$ (copy scratch). -/
 inductive K | T | O | F | V | W | Q | G | X | Y | C | M | P | N | R | L | J | D | Z
   deriving DecidableEq
 
@@ -64,17 +66,23 @@ instance K.instFintypeEnumFix : Fintype K where
     by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Stack alphabets: the output stack holds bits, the others token symbols (counters hold
-`Sym.cl`). -/
+/-- **Stack alphabets of the HAMPATH emitter.** The alphabet of the output stack $O$ is the set of
+bits (booleans); every other stack has the token symbols as its alphabet.
+
+The counter stacks only ever hold the symbol $\mathrm{cl}$. -/
 @[reducible] def Γ : K → Type
   | .O => Bool
   | _ => Sym
 
-/-- The counters a copy site reads. -/
+/-- **Counters read by HAMPATH copy sites.** The type with the five elements $p, n, r, j, d$, naming
+the counters of the HAMPATH emitter that a copy site can read: the diamond top $p$, the row end
+$n$, the row vertex $r$, the clause index $j$ and the detour vertex $d$. -/
 inductive Src | p | n | r | j | d
   deriving DecidableEq
 
-/-- The stack of a counter. -/
+/-- **Stack of a HAMPATH copy-site counter.** The counters $p$, $n$, $r$, $j$, $d$ that a copy site
+of the HAMPATH emitter reads are held on the emitter's stacks $P$, $N$, $R$, $J$, $D$ respectively
+(the diamond top, the row end, the row vertex, the clause index and the detour vertex). -/
 def Src.k : Src → K
   | .p => .P
   | .n => .N
@@ -82,7 +90,9 @@ def Src.k : Src → K
   | .j => .J
   | .d => .D
 
-/-- The unit symbol of a counter. -/
+/-- **Unit symbol of an emitter counter.** For every counter $s$ read by copy sites, the unit
+symbol of $s$ is the token symbol $\mathrm{cl}$, as a letter of the alphabet of the stack that
+holds $s$. -/
 def Src.unit : (s : Src) → Γ s.k
   | .p => Sym.cl
   | .n => Sym.cl
@@ -90,14 +100,20 @@ def Src.unit : (s : Src) → Γ s.k
   | .j => Sym.cl
   | .d => Sym.cl
 
-/-- Copy sites, two per edge (source and target): the frame (`f`), the row (`w`), the positive
-(`d1`, `d2`) and negative (`d3`, `d4`) detours. -/
+/-- **Copy sites of the HAMPATH emitter.** The type of the twenty copy sites of the emitter
+machine. Each site writes one endpoint of an edge of the emitted HAMPATH instance, $u$ for the
+source and $v$ for the target: the sites $f_iu, f_iv$ for $i = 1, \dots, 4$ belong to the four
+frame edges, $w_iu, w_iv$ for $i = 1, 2$ to the two row edges, and $d_iu, d_iv$ for
+$i = 1, \dots, 4$ to the detour edges, positive for $i = 1, 2$ and negative for $i = 3, 4$. -/
 inductive Site
   | f1u | f1v | f2u | f2v | f3u | f3v | f4u | f4v | w1u | w1v | w2u | w2v
   | d1u | d1v | d2u | d2v | d3u | d3v | d4u | d4v
   deriving DecidableEq
 
-/-- The sites, listed. -/
+/-- **Copy sites of the HAMPATH emitter, listed.** The list of the twenty copy sites of the
+HAMPATH emitter, in this order: the frame sites $f_1u, f_1v, f_2u, f_2v, f_3u, f_3v, f_4u, f_4v$,
+the row sites $w_1u, w_1v, w_2u, w_2v$, and the detour sites
+$d_1u, d_1v, d_2u, d_2v, d_3u, d_3v, d_4u, d_4v$. -/
 def Site.all : List Site :=
   [.f1u, .f1v, .f2u, .f2v, .f3u, .f3v, .f4u, .f4v, .w1u, .w1v, .w2u, .w2v,
     .d1u, .d1v, .d2u, .d2v, .d3u, .d3v, .d4u, .d4v]
@@ -106,7 +122,10 @@ def Site.all : List Site :=
 instance Site.instFintypeEnumFix : Fintype Site :=
   Fintype.ofList Site.all (fun x => by cases x <;> decide)
 
-/-- The counter a site copies. -/
+/-- **Counter read by a copy site.** The map from copy sites to counters sending
+$f_1u, f_1v, f_2u, f_3u$ to the diamond top $p$; $f_2v, f_3v, f_4u, f_4v$ to the row end $n$;
+$w_1u, w_1v, w_2u, w_2v$ to the row vertex $r$; $d_1u, d_2v, d_3u, d_4v$ to the detour vertex
+$d$; and $d_1v, d_2u, d_3v, d_4u$ to the clause index $j$. -/
 def Site.src : Site → Src
   | .f1u | .f1v | .f2u | .f3u => .p
   | .f2v | .f3v | .f4u | .f4v => .n
@@ -114,19 +133,37 @@ def Site.src : Site → Src
   | .d1u | .d2v | .d3u | .d4v => .d
   | .d1v | .d2u | .d3v | .d4u => .j
 
-/-- The ones a site adds to its counter. -/
+/-- **Extra ones of a copy site.** The number of extra ones a copy site adds to its counter's value
+is $1$ for the sites $f_{1v}$, $f_{3u}$, $f_{3v}$, $f_{4v}$, $w_{1v}$, $w_{2u}$, $d_{2v}$ and
+$d_{3u}$, and $0$ for every other site. -/
 def Site.ext : Site → ℕ
   | .f1v | .f3u | .f3v | .f4v | .w1v | .w2u | .d2v | .d3u => 1
   | _ => 0
 
-/-- Labels. Phase A: `a0` reads a token; `anm` moves a name to `F`; `aw f` to `asep f` walk `V`
-(`f`: a match was found; `ac` compares, `ar1`, `ar2` restore, `amv`, `asep` move the entry to
-`W`); `ab f` moves `W` back (and on no match pushes a separator); `ad2`, `ad3` copy the name onto
-`V`. Diamonds: `b0`, `b1` set `P`; `h0` takes the next entry; `h1` to `h5` set `N`; `r0` to `r4`
-the row loop (`wi` advances `R`); `e0` to `e2` set `D`; `dw pp pn` walks `F` with the clause flags
-(`dk`, `dr1`, `dr2`, `dm`, `dl` handle a literal with match bit `b`; `dj` ends a clause); `t0`
-moves `T` back to `F`; `t1` to `t8` drop the entry and advance `P`. `z0` to `z9`: output.
-`cpA j b`, `cpB j b`, `post j b`: copy site `j` (`b` is passed on). -/
+/-- **Labels of the HAMPATH emitter.** Let $f$, $p_p$, $p_n$ and $b$ range over bits and $j$ over
+copy sites. A label of the emitter is one of $\mathrm{a0}$, $\mathrm{anm}$, $\mathrm{aw}(f)$,
+$\mathrm{ac}(f)$, $\mathrm{ar1}(f)$, $\mathrm{ar2}(f)$, $\mathrm{amv}(f)$, $\mathrm{asep}(f)$,
+$\mathrm{ab}(f)$, $\mathrm{ad2}$, $\mathrm{ad3}$, $\mathrm{b0}$, $\mathrm{b1}$,
+$\mathrm{h0}, \dots, \mathrm{h5}$, $\mathrm{r0}, \dots, \mathrm{r4}$, $\mathrm{wi}$,
+$\mathrm{e0}$, $\mathrm{e1}$, $\mathrm{e2}$, $\mathrm{dw}(p_p, p_n)$, $\mathrm{dk}(p_p, p_n)$,
+$\mathrm{dr1}(p_p, p_n, b)$, $\mathrm{dr2}(p_p, p_n, b)$, $\mathrm{dm}(p_p, p_n, b)$,
+$\mathrm{dl}(p_p, p_n, b)$, $\mathrm{dj}$, $\mathrm{t0}, \dots, \mathrm{t8}$,
+$\mathrm{z0}, \dots, \mathrm{z9}$, $\mathrm{cpA}(j, b)$, $\mathrm{cpB}(j, b)$,
+$\mathrm{post}(j, b)$ and $\mathrm{done}$, all distinct.
+
+Their roles, in terms of the emitter's stacks: in phase A, $\mathrm{a0}$ reads a token,
+$\mathrm{anm}$ moves a name to $F$, and $\mathrm{aw}(f)$ to $\mathrm{asep}(f)$ walk $V$, with $f$
+recording whether a match was found ($\mathrm{ac}$ compares, $\mathrm{ar1}$ and $\mathrm{ar2}$
+restore, $\mathrm{amv}$ and $\mathrm{asep}$ move the entry to $W$); $\mathrm{ab}(f)$ moves $W$ back
+(and, when no match was found, pushes a separator), and $\mathrm{ad2}$, $\mathrm{ad3}$ copy the
+name onto $V$. For the diamonds, $\mathrm{b0}$, $\mathrm{b1}$ set $P$; $\mathrm{h0}$ takes the next
+entry; $\mathrm{h1}$ to $\mathrm{h5}$ set $N$; $\mathrm{r0}$ to $\mathrm{r4}$ run the row loop, with
+$\mathrm{wi}$ advancing $R$; $\mathrm{e0}$ to $\mathrm{e2}$ set $D$; $\mathrm{dw}(p_p, p_n)$ walks
+$F$ with the clause flags, $\mathrm{dk}$, $\mathrm{dr1}$, $\mathrm{dr2}$, $\mathrm{dm}$,
+$\mathrm{dl}$ handle a literal with match bit $b$, and $\mathrm{dj}$ ends a clause; $\mathrm{t0}$
+moves $T$ back to $F$, and $\mathrm{t1}$ to $\mathrm{t8}$ drop the entry and advance $P$. The labels
+$\mathrm{z0}$ to $\mathrm{z9}$ produce the output, and $\mathrm{cpA}(j, b)$, $\mathrm{cpB}(j, b)$,
+$\mathrm{post}(j, b)$ copy site $j$, passing $b$ on. -/
 inductive Lab
   | a0 | anm | aw (f : Bool) | ac (f : Bool) | ar1 (f : Bool) | ar2 (f : Bool) | amv (f : Bool)
   | asep (f : Bool) | ab (f : Bool) | ad2 | ad3
@@ -138,7 +175,9 @@ inductive Lab
   | cpA (j : Site) (b : Bool) | cpB (j : Site) (b : Bool) | post (j : Site) (b : Bool) | done
   deriving DecidableEq
 
-/-- The pairs of booleans. -/
+/-- **The four pairs of Booleans.** The list of all pairs of Booleans in the order
+$(\mathrm{true}, \mathrm{true})$, $(\mathrm{true}, \mathrm{false})$,
+$(\mathrm{false}, \mathrm{true})$, $(\mathrm{false}, \mathrm{false})$. -/
 def bb : List (Bool × Bool) := [(true, true), (true, false), (false, true), (false, false)]
 
 /-- The labels, enumerated. -/
@@ -158,7 +197,13 @@ instance Lab.instFintypeEnumFix : Fintype Lab :=
       cases x <;> (try rename_i a b c; cases a <;> cases b <;> cases c) <;>
         (try rename_i a b; cases a <;> cases b) <;> (try rename_i a; cases a) <;> decide)
 
-/-- Where a site continues. -/
+/-- **Label after a HAMPATH copy site.** For a copy site $j$ and a bit $b$, the label that follows
+$j$ is $\mathrm{cpA}(j', b)$, where $j'$ is the site after $j$ in one of the chains
+$f_{1u}, f_{1v}, f_{2u}, f_{2v}, f_{3u}, f_{3v}, f_{4u}, f_{4v}$, or
+$w_{1u}, w_{1v}, w_{2u}, w_{2v}$, or $d_{1u}, d_{1v}, d_{2u}, d_{2v}$, or
+$d_{3u}, d_{3v}, d_{4u}, d_{4v}$. At the ends of the chains it is $\mathrm{r0}$ after $f_{4v}$,
+$\mathrm{wi}$ after $w_{2v}$ and $\mathrm{dj}$ after $d_{4v}$, whatever $b$ is; after $d_{2v}$ it
+is $\mathrm{cpA}(d_{3u}, \mathrm{false})$ if $b$ is true and $\mathrm{dj}$ if $b$ is false. -/
 def Site.nxt : Site → Bool → Lab
   | .f1u, b => .cpA .f1v b
   | .f1v, b => .cpA .f2u b
@@ -181,10 +226,90 @@ def Site.nxt : Site → Bool → Lab
   | .d4u, b => .cpA .d4v b
   | .d4v, _ => .dj
 
-/-- Where the detour walk goes at the end of a clause with flags `pp`, `pn`. -/
+/-- **End of a clause in the detour walk.** For booleans $p_p$ and $p_n$ (the flags recording
+whether the current clause contains the current variable positively, respectively negatively),
+the detour walk continues at the end of the clause at the label where the first positive detour
+site $d_{1u}$ starts with passed bit $p_n$ if $p_p$ is true; otherwise, if $p_n$ is true, at the
+label where the first negative detour site $d_{3u}$ starts with passed bit false; and otherwise at
+the label that ends the clause. -/
 def clEnd (pp pn : Bool) : Lab := if pp then .cpA .d1u pn else if pn then .cpA .d3u false else .dj
 
-/-- The machine. -/
+/-- **The HAMPATH emitter machine.** The emitter is the multi-stack machine with the emitter's
+stacks (the output stack $O$ holds bits, every other stack holds token symbols), the emitter's
+labels, and a boolean internal state. Below, *moving the bit block* of a stack $A$ onto a stack
+$B$ means popping $A$ while its top is a name bit $\mathrm{bit}(b)$ and pushing each popped bit
+onto $B$ (as $\mathrm{bit}(b)$, or as the bit $b$ when $B = O$). *Comparing* $F$ with $V$ means
+popping both while their tops are equal name bits, pushing each such bit onto $X$ and onto $Y$,
+and ending with "equal" if both bit blocks end together and with "different", without popping,
+at the first mismatch. *Draining* $A$, pushing on given stacks, means popping $A$ until it is
+empty and pushing on each of those stacks one symbol per popped symbol. Every pushed symbol not
+otherwise named is the separator $\mathrm{cl}$. A list of steps written for several labels in
+turn is done one label at a time, each label passing to the next.
+
+Phase A. At $\mathrm{a0}$: if $T$ is empty, go to $\mathrm{b0}$; if its top is $\mathrm{cl}$, pop
+it, push $\mathrm{cl}$ once on $F$, once on $C$ and three times on $M$, and go to $\mathrm{a0}$;
+otherwise pop it, push on $F$ the polarity marker $\mathrm{lit}(s)$, where $s$ is true exactly
+when the popped symbol is $\mathrm{lit}(\mathrm{true})$, and go to $\mathrm{anm}$. At
+$\mathrm{anm}$: move the bit block of $T$ onto $F$, then go to $\mathrm{aw}(\mathrm{false})$. At
+$\mathrm{aw}(f)$: go to $\mathrm{ab}(f)$ if $V$ is empty and to $\mathrm{ac}(f)$ otherwise. At
+$\mathrm{ac}(f)$: compare $F$ with $V$, then go to $\mathrm{ar1}(\mathrm{true})$ if equal and to
+$\mathrm{ar1}(f)$ if different. At $\mathrm{ar1}(f)$, $\mathrm{ar2}(f)$, $\mathrm{amv}(f)$ in
+turn: move the bit block of $X$ onto $F$, of $Y$ onto $V$, and of $V$ onto $W$, then go to
+$\mathrm{asep}(f)$. At $\mathrm{asep}(f)$: pop $V$, push $\mathrm{cl}$ on $W$ and go to
+$\mathrm{aw}(f)$. At $\mathrm{ab}(f)$: if $W$ is empty, go to $\mathrm{a0}$ if $f$ is true, and
+otherwise push $\mathrm{cl}$ on $V$ and go to $\mathrm{ad2}$; if the top of $W$ is $\mathrm{cl}$,
+pop it and push $\mathrm{cl}$ on $V$; otherwise pop it and push $\mathrm{bit}(s)$ on $V$, where
+$s$ is true exactly when the popped symbol is $\mathrm{bit}(\mathrm{true})$; in these last two
+cases go to $\mathrm{ab}(f)$. At $\mathrm{ad2}$: move the bit block of $F$ onto $X$ and go to
+$\mathrm{ad3}$. At $\mathrm{ad3}$: if the top of $X$ is a name bit, pop it, push it on $F$ and on
+$V$ and go to $\mathrm{ad3}$; otherwise go to $\mathrm{a0}$.
+
+Diamonds. At $\mathrm{b0}$, $\mathrm{b1}$ in turn: drain $C$ pushing on $P$ and $Z$, then drain
+$Z$ pushing on $C$, then go to $\mathrm{h0}$. At $\mathrm{h0}$: go to $\mathrm{z0}$ if $V$ is empty
+and to $\mathrm{h1}$ otherwise. At $\mathrm{h1}, \dots, \mathrm{h5}$ in turn: drain $P$ pushing on
+$N$ and $Z$, drain $Z$ pushing on $P$, drain $M$ pushing on $N$ and $Z$, drain $Z$ pushing on
+$M$, and push $\mathrm{cl}$ on $N$, then go to $\mathrm{cpA}(f_{1u}, \mathrm{false})$. At
+$\mathrm{r0}$, $\mathrm{r1}$, $\mathrm{r2}$ in turn: drain $P$ pushing on $R$ and $Z$, drain $Z$
+pushing on $P$, and push $\mathrm{cl}$ on $R$, then go to $\mathrm{r3}$. At $\mathrm{r3}$: if $M$
+is empty go to $\mathrm{r4}$, and otherwise pop it, push $\mathrm{cl}$ on $L$ and go to
+$\mathrm{cpA}(w_{1u}, \mathrm{false})$. At $\mathrm{r4}$: drain $L$ pushing on $M$ and go to
+$\mathrm{e0}$. At $\mathrm{wi}$: push $\mathrm{cl}$ on $R$ and go to $\mathrm{r3}$. At
+$\mathrm{e0}$, $\mathrm{e1}$, $\mathrm{e2}$ in turn: drain $P$ pushing on $D$ and $Z$, drain $Z$
+pushing on $P$, and push $\mathrm{cl}$ twice on $D$, then go to
+$\mathrm{dw}(\mathrm{false}, \mathrm{false})$.
+
+Detours. At $\mathrm{dw}(p_p, p_n)$: if $F$ is empty go to $\mathrm{t0}$; if its top is
+$\mathrm{cl}$, go to $\mathrm{cpA}(d_{1u}, p_n)$ if $p_p$ is true, else to
+$\mathrm{cpA}(d_{3u}, \mathrm{false})$ if $p_n$ is true, else to $\mathrm{dj}$; otherwise go to
+$\mathrm{dk}(p_p, p_n)$. At $\mathrm{dk}(p_p, p_n)$: compare $F$ with $V$, then go to
+$\mathrm{dr1}(p_p, p_n, \mathrm{true})$ if equal and to $\mathrm{dr1}(p_p, p_n, \mathrm{false})$
+if different. At $\mathrm{dr1}$, $\mathrm{dr2}$, $\mathrm{dm}$ with parameters $(p_p, p_n, b)$ in
+turn: move the bit block of $X$ onto $F$, of $Y$ onto $V$, and of $F$ onto $T$, then go to
+$\mathrm{dl}(p_p, p_n, b)$. At $\mathrm{dl}(p_p, p_n, b)$: pop $F$, push $\mathrm{lit}(s)$ on $T$,
+where $s$ is true exactly when the popped symbol is $\mathrm{lit}(\mathrm{true})$, and go to
+$\mathrm{dw}(p_p \lor (b \land s), p_n \lor (b \land \lnot s))$. At $\mathrm{dj}$: pop $F$, push
+$\mathrm{cl}$ once on $T$, once on $J$ and three times on $D$, and go to
+$\mathrm{dw}(\mathrm{false}, \mathrm{false})$. At $\mathrm{t0}$: if $T$ is empty go to
+$\mathrm{t1}$; otherwise pop it, push on $F$ the symbol $\mathrm{cl}$ if the popped symbol is
+$\mathrm{cl}$, $\mathrm{bit}(b)$ if it is $\mathrm{bit}(b)$, and otherwise $\mathrm{lit}(s)$ with
+$s$ true exactly when it is $\mathrm{lit}(\mathrm{true})$, and go to $\mathrm{t0}$. At
+$\mathrm{t1}, \dots, \mathrm{t8}$ in turn: move the bit block of $V$ onto $G$, pop $V$, drain $P$
+pushing nothing, drain $N$ pushing on $P$, push $\mathrm{cl}$ on $P$, and drain $R$, $J$ and $D$
+pushing nothing, then go to $\mathrm{h0}$.
+
+Output. At $\mathrm{z0}$: move the bit block of $Q$ onto $O$ and go to $\mathrm{z1}$. At
+$\mathrm{z1}, \dots, \mathrm{z9}$ in turn: push false and then true on $O$; drain $P$ pushing
+true on $O$ and $\mathrm{cl}$ on $Z$; drain $Z$ pushing on $P$; push false on $O$; drain $P$
+pushing true on $O$ and $\mathrm{cl}$ on $Z$; drain $Z$ pushing on $P$; push false on $O$; drain
+$C$ pushing true on $O$ and $\mathrm{cl}$ on $Z$; and drain $Z$ pushing on $C$; then go to
+$\mathrm{done}$. At $\mathrm{done}$: halt.
+
+Copy sites. For a copy site $j$ and a bit $b$: at $\mathrm{cpA}(j, b)$, drain the stack of the
+counter that $j$ reads, pushing $\mathrm{bit}(\mathrm{true})$ on $Q$ and $\mathrm{cl}$ on $Z$, and
+go to $\mathrm{cpB}(j, b)$; at $\mathrm{cpB}(j, b)$, drain $Z$ pushing $\mathrm{cl}$ on the stack
+of the counter that $j$ reads, and go to $\mathrm{post}(j, b)$; at $\mathrm{post}(j, b)$, in one
+step push on $Q$ one $\mathrm{bit}(\mathrm{true})$ for each of the ones that $j$ adds to its
+counter and then $\mathrm{bit}(\mathrm{false})$, and go to the label that follows $j$ for $b$. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .a0 => .peek .T (fun _ o => o.isNone) <| .branch id (.goto fun _ => .b0) <|
       .peek .T (fun _ o => o == some .cl) <| .branch id
@@ -273,14 +398,23 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
   | .post j b => emit .Q ((List.replicate j.ext true ++ [false]).map Sym.bit) (j.nxt b)
   | .done => .halt
 
-/-- The start label. -/
+/-- **Start label of the HAMPATH emitter.** The emitter machine starts at the label $a_0$, the
+first phase A label, which reads the next token. -/
 def start : Lab := .a0
 
 /-! ### Quiescent states -/
 
-/-- A quiescent state: counters are unary stacks of `Sym.cl`, `Q` holds the edge bits `q` (in
-reading order, so reversed on the stack), and the scratch stacks `Y`, `Z` are empty (`X` is
-empty except while a new name is copied onto `V`). -/
+/-- **Quiescent states of the HAMPATH emitter.** A quiescent state consists of lists of token
+symbols $t$, $f$, $v$, $w$, $g$, $x$ (meant as the token stack, the tokens in reading order, the
+distinct variables, the other side of the variable walk, garbage, and the first comparison
+scratch stack), a list of bits $o$ (the output stack), a list of bits $q$ (the edge bits so far,
+in reading order), and natural numbers $c$, $c_3$, $p$, $n$, $r$, $l$, $j$, $d$ (meant as the
+clause count, three times it, the diamond top, the row end, the row vertex, the row loop index,
+the clause index and the detour vertex).
+
+On the emitter's stacks such a state holds each counter as a unary stack of $\mathrm{cl}$ symbols
+and the edge bits $q$ on $Q$ reversed, as name-bit symbols; the scratch stacks $Y$ and $Z$ are
+empty, and $X$ is empty except while a new name is copied onto $V$. -/
 structure MS where
   /-- The token stack. -/
   t : List Sym
@@ -315,7 +449,14 @@ structure MS where
   /-- The detour vertex. -/
   d : ℕ
 
-/-- The stacks of a quiescent state. -/
+/-- **Stacks of a quiescent emitter state.** In a quiescent state $s$, the stacks $T$, $O$, $F$,
+$V$, $W$, $G$ and $X$ hold the lists that $s$ records for them; the stack $Q$ holds the edge
+bits of $s$ as bit symbols, reversed so that the last bit is on top; each counter stack $C$,
+$M$, $P$, $N$, $R$, $L$, $J$, $D$ holds as many copies of the symbol $\mathrm{cl}$ as the
+value that $s$ records for the corresponding counter (the clause count, the counter reserved
+for three times the clause count, the diamond top, the row end, the row vertex, the row loop
+index, the clause index and the detour vertex), with no relation imposed between these values;
+and the scratch stacks $Y$ and $Z$ are empty. -/
 def MS.stk (s : MS) : ∀ k, List (Γ k)
   | .T => s.t
   | .O => s.o
@@ -335,7 +476,9 @@ def MS.stk (s : MS) : ∀ k, List (Γ k)
   | .X => s.x
   | .Y | .Z => []
 
-/-- The value of a counter. -/
+/-- **Counter values of a quiescent emitter state.** For a quiescent state $s$, the value of the
+counters $p$, $n$, $r$, $j$, $d$ is respectively the diamond top, the row end, the row vertex,
+the clause index and the detour vertex recorded in $s$. -/
 def MS.val (s : MS) : Src → ℕ
   | .p => s.p
   | .n => s.n
@@ -411,8 +554,15 @@ theorem runLe_cast {k k' : ℕ} {c d d' : TM2.Cfg Γ Lab Bool} (h : RunLe prog k
 
 /-! ### Copies and copy sites -/
 
-/-- Copy counter `a` onto stack `c`, one `x` per unit, restoring it through `Z`: `2 val + 2`
-steps. -/
+/-- **Copying a counter in the HAMPATH emitter.** Let $a$, $c$ and $Z$ be three distinct stacks of
+the emitter machine (with $Z$ its copy scratch stack), $u$ a symbol of $a$ and $x$ a symbol of $c$.
+Suppose the machine at label $l_1$ pops $a$ until it is empty, pushing $x$ onto $c$ and the
+clause separator $\mathrm{cl}$ onto $Z$ for each popped symbol, and then continues at $l_2$; and
+at $l_2$ pops $Z$ until it is empty, pushing $u$ onto $a$ for each popped symbol, and then
+continues at $l'$. If the stacks $S$ hold exactly $n$ copies of $u$ on $a$ and nothing on $Z$,
+then for every flag $v$ there is a flag $v'$ such that the machine goes in exactly $2n + 2$ steps
+from label $l_1$ with flag $v$ and stacks $S$ to label $l'$ with flag $v'$ and the stacks $S$
+with $n$ copies of $x$ pushed onto $c$. -/
 theorem cp_run {a c : K} (ua : Γ a) (x : Γ c) (hca : c ≠ a) (haZ : a ≠ .Z) (hcZ : c ≠ .Z)
     {l₁ l₂ next : Lab} (h₁ : prog l₁ = xfer a [⟨c, x⟩, ⟨.Z, Sym.cl⟩] l₁ l₂)
     (h₂ : prog l₂ = xfer .Z [⟨a, ua⟩] l₂ next) (val : ℕ) (v : Bool) (S : ∀ k, List (Γ k))
@@ -446,7 +596,10 @@ theorem Src.k_ne_Q (u : Src) : u.k ≠ .Q := by cases u <;> decide
 
 theorem Src.k_ne_Z (u : Src) : u.k ≠ .Z := by cases u <;> decide
 
-/-- The bits site `j` pushes: its counter plus its extra ones, in ones, then `false`. -/
+/-- **Bits pushed by a copy site of the HAMPATH emitter.** For a quiescent state $s$ of the
+HAMPATH emitter and a copy site $j$, the atom of $j$ in $s$ is the list of $c + e$ copies of
+true followed by one false, where $c$ is the value in $s$ of the counter that $j$ copies and
+$e \in \{0, 1\}$ is the number of extra ones that $j$ adds. -/
 def atom (s : MS) (j : Site) : List Bool := List.replicate (s.val j.src + j.ext) true ++ [false]
 
 theorem q_push (q x : List Bool) (e : ℕ) :
@@ -456,7 +609,12 @@ theorem q_push (q x : List Bool) (e : ℕ) :
   rw [Nat.add_comm]
   simp [List.map_reverse, List.reverse_append, cnt, ← List.append_assoc]
 
-/-- A copy site: from `cpA j b`, append `atom s j` to the edge bits and continue at `j.nxt b`. -/
+/-- **Run of a HAMPATH copy site.** Let $j$ be a copy site, $b$ and $v$ bits and $s$ a quiescent
+state of the HAMPATH emitter; let $c$ be the value in $s$ of the counter that $j$ reads and $e$
+the number of ones that $j$ adds to its counter. Started at label $\mathrm{cpA}(j, b)$ with
+internal state $v$ and the stacks of $s$, the emitter runs in exactly $2c + 3$ steps to the label
+that follows $j$ for $b$, with some internal state and the stacks of the quiescent state obtained
+from $s$ by appending $c + e$ copies of true followed by one false to its edge bits. -/
 theorem site_run (j : Site) (b : Bool) (s : MS) (v : Bool) :
     ∃ v', Run prog (2 * s.val j.src + 3) ⟨some (.cpA j b), v, s.stk⟩
       ⟨some (j.nxt b), v', {s with q := s.q ++ atom s j}.stk⟩ := by
@@ -478,13 +636,18 @@ theorem site_run (j : Site) (b : Bool) (s : MS) (v : Bool) :
   rw [e] at r₂
   exact ⟨v₁, (r₁.trans r₂).of_eq (by omega)⟩
 
-/-- The sites `js` run in sequence from label `l₀` with the passed bit `b`, the last one
-continuing at `l`. -/
+/-- **Copy sites chained in the HAMPATH emitter.** Copy sites $j_1, \dots, j_n$ are chained from
+label $l_0$ to label $l$ with passed bit $b$ when $l_0$ is the label at which $j_1$ starts with
+passed bit $b$, the label where each $j_i$ with $i < n$ continues with passed bit $b$ is the label
+at which $j_{i+1}$ starts with passed bit $b$, and $j_n$ continues at $l$ with passed bit $b$. The
+empty list of sites is chained from $l_0$ to $l$ exactly when $l_0 = l$. -/
 def Chain : List Site → Bool → Lab → Lab → Bool
   | [], _, l₀, l => l₀ == l
   | j :: js, b, l₀, l => l₀ == .cpA j b && Chain js b (j.nxt b) l
 
-/-- The steps of a run of sites. -/
+/-- **Step count of a list of copy sites in the HAMPATH emitter.** For a quiescent state $s$ and
+copy sites $j_1, \dots, j_n$, the step count is $\sum_{i=1}^{n} (2 v_i + 3)$, where $v_i$ is the
+value in $s$ of the counter that $j_i$ copies. -/
 def chainCost (s : MS) (js : List Site) : ℕ := (js.map fun j => 2 * s.val j.src + 3).sum
 
 theorem atom_q (s : MS) (x : List Bool) : atom {s with q := x} = atom s := by
@@ -503,7 +666,12 @@ theorem chainCost_le (s : MS) (Bd : ℕ) (hB : ∀ u, s.val u ≤ Bd) (js : List
       simp only [chainCost, List.map_cons, List.sum_cons, List.length_cons] at ih ⊢
       nlinarith
 
-/-- A run of sites appends the atoms of its sites. -/
+/-- **Running a chain of copy sites in the HAMPATH emitter.** Let $j_1, \dots, j_n$ be copy sites
+chained from label $l_0$ to label $l$ with passed bit $b$. Then for every quiescent state $s$ and
+every flag $v$ there is a flag $v'$ such that the emitter machine goes, in exactly as many steps as
+the step count of $j_1, \dots, j_n$ at $s$, from label $l_0$ with flag $v$ and the stacks of $s$ to
+label $l$ with flag $v'$ and the stacks of the state that differs from $s$ only in that the atoms
+of $j_1, \dots, j_n$ at $s$, concatenated in this order, are appended to its edge bits. -/
 theorem chain_run (js : List Site) : ∀ (s : MS) (b : Bool) (l₀ l : Lab),
     Chain js b l₀ l = true → ∀ v : Bool, ∃ v', Run prog (chainCost s js) ⟨some l₀, v, s.stk⟩
       ⟨some l, v', {s with q := s.q ++ (js.map (atom s)).flatten}.stk⟩ := by
@@ -529,11 +697,23 @@ theorem chain_run (js : List Site) : ∀ (s : MS) (b : Bool) (l₀ l : Lab),
 
 /-! ### Comparing a name on `F` with the top entry of `V` -/
 
+/-- **A symbol that reads as a name bit is that bit.** For every symbol $x$ of the stack alphabet
+of the SAT verifier and every bit $b$, if $x$ reads as the name bit $b$, then $x$ is the name-bit
+symbol for $b$. -/
 theorem bit_inv (x : Sym) (b : Bool) (h : Sym.bit? x = some b) : Sym.bit b = x := by
   cases x <;> simp_all [Sym.bit?]
 
-/-- Compare the name block `u` on `F` with the block `w` on `V` and restore both; continue at
-`nx bT` on a match, `nx bF` otherwise. -/
+/-- **Comparing a name with the top entry of the variable stack.** Let $l_c$ be a label at which
+the emitter machine compares the bit blocks of the stacks $F$ and $V$, with scratch stacks $X$ and
+$Y$, going to $r_1(b_T)$ if the blocks are equal and to $r_1(b_F)$ otherwise. Suppose that for each
+bit $b$ the machine at $r_1(b)$ moves the bit block of $X$ onto $F$ and then continues at
+$r_2(b)$, and at $r_2(b)$ moves the bit block of $Y$ onto $V$ and then continues at $n_x(b)$. Let
+$s$ be a quiescent state whose stack $F$ holds the bit symbols of a bit list $u$ followed by a list
+$A$, whose stack $V$ holds the bit symbols of a bit list $w$ followed by a list $B$, where neither
+$A$ nor $B$ starts with a bit symbol, and whose stack $X$ is empty. Then for every flag $v$ there is
+a flag $v'$ such that the machine goes in at most $3 |w| + 3$ steps from label $l_c$ with flag $v$
+and the stacks of $s$ to label $n_x(b_T)$ if $u = w$ and to $n_x(b_F)$ otherwise, with flag $v'$
+and again the stacks of $s$. -/
 theorem cmpR_run {lc : Lab} {r1 r2 nx : Bool → Lab} {bT bF : Bool}
     (hc : prog lc = cmpB .F .V .X .Y Sym.bit? Sym.bit? Sym.bit Sym.bit lc (r1 bT) (r1 bF))
     (h1 : ∀ b, prog (r1 b) = moveB .X .F Sym.bit? Sym.bit (r1 b) (r2 b))
@@ -570,13 +750,22 @@ theorem cmpR_run {lc : Lab} {r1 r2 nx : Bool → Lab} {bT bF : Bool}
 
 /-! ### Phase A: tokens to `F`, clause counts, distinct variables -/
 
-/-- The name bits of variable `x`. -/
+/-- **Name of a variable in the HAMPATH emitter.** The name of a variable $x \in \mathbb{N}$ is the
+list of name-bit symbols $\mathrm{bit}(b_0), \dots, \mathrm{bit}(b_{k-1})$, where
+$b_0 \cdots b_{k-1}$ is the binary encoding of $x$, least significant bit first (the empty list
+for $x = 0$). -/
 abbrev name (x : ℕ) : List Sym := (encodeNat x).map Sym.bit
 
-/-- The variable stack: each name above a `cl` separator. -/
+/-- **Variable stack of the HAMPATH emitter.** For a list $x_1, \dots, x_k$ of variables (natural
+numbers), the variable stack is the list of symbols obtained by concatenating, for
+$i = 1, \dots, k$ in order, the name bits of $x_i$ followed by the separator symbol
+$\mathrm{cl}$. With the head of the list on top, $x_1$ is the top entry and each name sits above
+its separator. -/
 def vstk (vs : List ℕ) : List Sym := vs.flatMap fun x => name x ++ [Sym.cl]
 
-/-- Symbols of the variable stack. -/
+/-- **Variable-stack symbols of the HAMPATH emitter.** A token symbol is a variable-stack symbol
+when it is a name bit $\mathrm{bit}(b)$ for some bit $b$ or the separator $\mathrm{cl}$; the
+polarity markers, the value markers and the dead marker are not. -/
 def isVS : Sym → Bool
   | .bit _ | .cl => true
   | _ => false
@@ -637,7 +826,13 @@ theorem ab_step (f : Bool) (x : Sym) (hx : isVS x = true) (R : List Sym) (h : s.
 
 end PhaseA
 
-/-- Move `W` back onto `V`. -/
+/-- **HAMPATH emitter, phase A: moving the walk stack back onto the variable stack.** Let $f$ be
+a Boolean, let $L$ be a list of symbols each of which is a name bit or the separator
+$\mathrm{cl}$, and let $s$ be a quiescent state of the HAMPATH emitter whose stack $W$ is $L$.
+Then for every value $v$ of the machine's Boolean variable there is a value $v'$ such that the
+emitter goes in exactly $|L|$ steps from label $\mathrm{ab}(f)$, variable $v$ and the stacks of
+$s$ to label $\mathrm{ab}(f)$, variable $v'$ and the stacks of the state obtained from $s$ by
+emptying $W$ and replacing $V$ by the reverse of $L$ followed by the old contents of $V$. -/
 theorem ab_run (f : Bool) : ∀ (L : List Sym), (∀ x ∈ L, isVS x = true) → ∀ (s : MS) (v : Bool),
     s.w = L → ∃ v', Run prog L.length ⟨some (.ab f), v, s.stk⟩
       ⟨some (.ab f), v', {s with w := [], v := L.reverse ++ s.v}.stk⟩ := by
@@ -655,8 +850,20 @@ theorem ab_run (f : Bool) : ∀ (L : List Sym), (∀ x ∈ L, isVS x = true) →
         rfl
       exact ⟨v₂, by simpa [Nat.add_comm] using r₁.trans r₂⟩
 
-/-- Walk the variable stack `vstk vs`, comparing each entry with the name `x` on top of `F`;
-the flag ends as `f || x ∈ vs` and `V` ends on `W`, reversed. -/
+/-- **HAMPATH emitter, phase A: searching the variable stack for a name.** For $y \in \mathbb{N}$
+write $\mathrm{name}(y)$ for the canonical binary encoding of $y$ as name-bit symbols, and for a
+list $\mathit{vs}$ of naturals write $\mathrm{vstk}(\mathit{vs})$ for the variable stack: the
+names of the entries of $\mathit{vs}$, each followed by the separator $\mathrm{cl}$. Let
+$x \in \mathbb{N}$ and let $A$ be a list of symbols that is empty or does not start with a name
+bit. Then for every list $\mathit{vs}$ of naturals, every Boolean $f$, every quiescent state $s$
+of the HAMPATH emitter whose stack $F$ is $\mathrm{name}(x)$ followed by $A$, whose stack $V$ is
+$\mathrm{vstk}(\mathit{vs})$ and whose stack $X$ is empty, and every value $v$ of the machine's
+Boolean variable, writing $g$ for the Boolean that is true exactly when $f$ is true or $x$
+occurs in $\mathit{vs}$, there is a value $v'$ such that the emitter goes in at most
+$6|\mathrm{vstk}(\mathit{vs})| + 1$ steps from label $\mathrm{aw}(f)$, variable $v$ and the
+stacks of $s$ to label $\mathrm{ab}(g)$, variable $v'$ and the stacks of the state obtained
+from $s$ by emptying $V$ and replacing $W$ by the reverse of $\mathrm{vstk}(\mathit{vs})$
+followed by the old contents of $W$. -/
 theorem aw_run (x : ℕ) (A : List Sym) (hA : A.head?.bind Sym.bit? = none) :
     ∀ (vs : List ℕ) (f : Bool) (s : MS) (v : Bool), s.f = name x ++ A → s.v = vstk vs →
       s.x = [] →
@@ -706,7 +913,13 @@ theorem aw_run (x : ℕ) (A : List Sym) (hA : A.head?.bind Sym.bit? = none) :
       · simp [vstk]; omega
       · simp [vstk, List.reverse_append]
 
-/-- Copy the reversed name on `X` onto `F` and `V`. -/
+/-- **HAMPATH emitter, phase A: copying a reversed name onto two stacks.** Let $u$ be a list of
+bits and let $s$ be a quiescent state of the HAMPATH emitter whose stack $X$ holds $u$ as
+name-bit symbols. Then for every value $v$ of the machine's Boolean variable there is a value
+$v'$ such that the emitter goes in exactly $|u| + 1$ steps from label $\mathrm{ad3}$, variable
+$v$ and the stacks of $s$ to label $\mathrm{a0}$, variable $v'$ and the stacks of the state
+obtained from $s$ by emptying $X$ and replacing each of $F$ and $V$ by the reverse of $u$ (as
+name-bit symbols) followed by its old contents. -/
 theorem ad3_run : ∀ (u : List Bool) (s : MS) (v : Bool), s.x = u.map Sym.bit →
     ∃ v', Run prog (u.length + 1) ⟨some .ad3, v, s.stk⟩ ⟨some .a0, v',
       { s with
@@ -753,7 +966,22 @@ theorem vstk_lits_le (Ls : List (ℕ × Bool)) (vs : List ℕ) :
       simp only [List.foldr_cons, List.flatMap_cons, List.length_append] at this ih' ⊢
       omega
 
-/-- One literal of phase A: its tokens go to `F`, and its variable onto `V` if new. -/
+/-- **HAMPATH emitter, phase A: one literal.** For $x \in \mathbb{N}$ write $\mathrm{name}(x)$
+for the canonical binary encoding of $x$ as name-bit symbols. Let $\ell = (x, p)$ be a literal
+with variable $x$ and polarity $p$: its tokens are $\mathrm{name}(x)$ followed by the polarity
+marker $\mathrm{lit}(p)$, and its reversed tokens $r_\ell$ are $\mathrm{lit}(p)$ followed by the
+reverse of $\mathrm{name}(x)$. For a list $\mathit{vs}$ of naturals write
+$\mathrm{vstk}(\mathit{vs})$ for the names of the entries of $\mathit{vs}$, each followed by the
+separator $\mathrm{cl}$, and $\mathrm{ins}(x, \mathit{vs})$ for $\mathit{vs}$ if $x$ occurs in
+$\mathit{vs}$ and for $\mathit{vs}$ with $x$ added at the front otherwise. Let $R$ be a list of
+symbols that is empty or does not start with a name bit, let $\mathit{vs}$ be a list of
+naturals, and let $s$ be a quiescent state of the HAMPATH emitter whose stack $T$ is $r_\ell$
+followed by $R$, whose stack $V$ is $\mathrm{vstk}(\mathit{vs})$ and whose stacks $W$ and $X$
+are empty. Then for every value $v$ of the machine's Boolean variable there is a value $v'$ such
+that the emitter goes in at most $8|\mathrm{vstk}(\mathit{vs})| + 4|r_\ell| + 8$ steps from
+label $\mathrm{a0}$, variable $v$ and the stacks of $s$ to label $\mathrm{a0}$, variable $v'$
+and the stacks of the state obtained from $s$ by setting $T$ to $R$, $F$ to the tokens of $\ell$
+followed by the old contents of $F$, and $V$ to $\mathrm{vstk}(\mathrm{ins}(x, \mathit{vs}))$. -/
 theorem alit_run (l : ℕ × Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = none)
     (vs : List ℕ) (s : MS) (v : Bool) (ht : s.t = Check.litRev l ++ R) (hv : s.v = vstk vs)
     (hw : s.w = []) (hx : s.x = []) :
@@ -807,8 +1035,25 @@ theorem alit_run (l : ℕ × Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = 
     · congr 2
       simp [s₅, s₄, s₂, s₁, hlt, insV, hm, hw, hx, vstk, List.map_reverse]
 
-/-- The literals of a clause, met last-first: their tokens go to `F` and their variables onto
-`V`. -/
+/-- **HAMPATH emitter, phase A: the literals of a clause.** Notation: $\mathrm{name}(x)$ is the
+canonical binary encoding of $x \in \mathbb{N}$ as name-bit symbols; a literal $\ell = (x, p)$
+has tokens $\mathrm{name}(x)$ followed by the polarity marker $\mathrm{lit}(p)$ and reversed
+tokens $r_\ell$, namely $\mathrm{lit}(p)$ followed by the reverse of $\mathrm{name}(x)$;
+$\mathrm{vstk}(\mathit{vs})$ is the list of the names of the entries of a list $\mathit{vs}$ of
+naturals, each followed by the separator $\mathrm{cl}$; and $\mathrm{ins}(x, \mathit{vs})$ is
+$\mathit{vs}$ if $x$ occurs in $\mathit{vs}$ and $\mathit{vs}$ with $x$ added at the front
+otherwise. Let $L_b \in \mathbb{N}$, let $\ell_1, \dots, \ell_k$ be literals with variables
+$x_1, \dots, x_k$, let $n = |r_{\ell_1}| + \dots + |r_{\ell_k}|$, and let $R$ be a list of
+symbols that is empty or does not start with a name bit. Then for every list $\mathit{vs}$ of
+naturals with $|\mathrm{vstk}(\mathit{vs})| + n \le L_b$, every quiescent state $s$ of the
+HAMPATH emitter whose stack $T$ is the concatenation of $r_{\ell_k}, \dots, r_{\ell_1}$ followed
+by $R$, whose stack $V$ is $\mathrm{vstk}(\mathit{vs})$ and whose stacks $W$ and $X$ are empty,
+and every value $v$ of the machine's Boolean variable, there is a value $v'$ such that the
+emitter goes in at most $n(8L_b + 12)$ steps from label $\mathrm{a0}$, variable $v$ and the
+stacks of $s$ to label $\mathrm{a0}$, variable $v'$ and the stacks of the state obtained from
+$s$ by setting $T$ to $R$, $F$ to the concatenated tokens of $\ell_1, \dots, \ell_k$ followed by
+the old contents of $F$, and $V$ to
+$\mathrm{vstk}(\mathrm{ins}(x_1, \dots \mathrm{ins}(x_k, \mathit{vs}) \dots))$. -/
 theorem alits_run (Lb : ℕ) : ∀ (Ls : List (ℕ × Bool)) (R : List Sym),
     R.head?.bind Sym.bit? = none → ∀ (vs : List ℕ) (s : MS) (v : Bool),
     s.t = Ls.reverse.flatMap Check.litRev ++ R → s.v = vstk vs → s.w = [] → s.x = [] →
@@ -846,7 +1091,27 @@ theorem clRev_len (C : CNFClause) :
     (Check.clRev C).length = (C.flatMap Check.litRev).length + 1 := by
   simp [Check.clRev, List.length_flatMap, List.map_reverse, List.sum_reverse]
 
-/-- One clause of phase A, from its `cl` token. -/
+/-- **HAMPATH emitter, phase A: one clause.** Notation: $\mathrm{name}(x)$ is the canonical
+binary encoding of $x \in \mathbb{N}$ as name-bit symbols; a literal $\ell = (x, p)$ has tokens
+$\mathrm{name}(x)$ followed by the polarity marker $\mathrm{lit}(p)$ and reversed tokens
+$r_\ell$, namely $\mathrm{lit}(p)$ followed by the reverse of $\mathrm{name}(x)$;
+$\mathrm{vstk}(\mathit{vs})$ is the list of the names of the entries of a list $\mathit{vs}$ of
+naturals, each followed by the separator $\mathrm{cl}$; and $\mathrm{ins}(x, \mathit{vs})$ is
+$\mathit{vs}$ if $x$ occurs in $\mathit{vs}$ and $\mathit{vs}$ with $x$ added at the front
+otherwise. Let $L_b \in \mathbb{N}$ and let $C$ be a clause with literals $\ell_1, \dots, \ell_k$
+and variables $x_1, \dots, x_k$. The tokens of $C$ are the concatenated tokens of
+$\ell_1, \dots, \ell_k$ followed by $\mathrm{cl}$, and its reversed tokens $r_C$ are
+$\mathrm{cl}$ followed by the concatenation of $r_{\ell_k}, \dots, r_{\ell_1}$. Let $R$ be a list
+of symbols that is empty or starts with $\mathrm{cl}$, let $\mathit{vs}$ be a list of naturals
+with $|\mathrm{vstk}(\mathit{vs})| + |r_C| \le L_b$, and let $s$ be a quiescent state of the
+HAMPATH emitter whose stack $T$ is $r_C$ followed by $R$, whose stack $V$ is
+$\mathrm{vstk}(\mathit{vs})$ and whose stacks $W$ and $X$ are empty. Then for every value $v$ of
+the machine's Boolean variable there is a value $v'$ such that the emitter goes in at most
+$|r_C|(8L_b + 12)$ steps from label $\mathrm{a0}$, variable $v$ and the stacks of $s$ to label
+$\mathrm{a0}$, variable $v'$ and the stacks of the state obtained from $s$ by setting $T$ to
+$R$, $F$ to the tokens of $C$ followed by the old contents of $F$, and $V$ to
+$\mathrm{vstk}(\mathrm{ins}(x_1, \dots \mathrm{ins}(x_k, \mathit{vs}) \dots))$, and by
+increasing the clause count by $1$ and the triple clause count by $3$. -/
 theorem aclause_run (Lb : ℕ) (C : CNFClause) (R : List Sym) (hR : R = [] ∨ R.head? = some .cl)
     (vs : List ℕ) (s : MS) (v : Bool) (ht : s.t = Check.clRev C ++ R) (hv : s.v = vstk vs)
     (hw : s.w = []) (hx : s.x = []) (hb : (vstk vs).length + (Check.clRev C).length ≤ Lb) :
@@ -876,7 +1141,30 @@ theorem vstk_varsOf_le (φ : CNF) (vs : List ℕ) :
         List.length_append, List.flatMap_cons, List.flatMap_nil, List.append_nil] at h ih ⊢
       omega
 
-/-- The clauses `φ` of phase A, met last-first above a rest `R`. -/
+/-- **HAMPATH emitter, phase A: the clauses of a formula.** Notation: $\mathrm{name}(x)$ is the
+canonical binary encoding of $x \in \mathbb{N}$ as name-bit symbols; a literal $\ell = (x, p)$
+has tokens $\mathrm{name}(x)$ followed by the polarity marker $\mathrm{lit}(p)$; a clause $C$
+with literals $\ell_1, \dots, \ell_k$ has tokens the concatenated tokens of
+$\ell_1, \dots, \ell_k$ followed by the separator $\mathrm{cl}$, and reversed tokens $r_C$,
+namely $\mathrm{cl}$ followed by, for $\ell = \ell_k, \dots, \ell_1$ in turn,
+$\mathrm{lit}(p)$ and the reverse of $\mathrm{name}(x)$; $\mathrm{vstk}(\mathit{vs})$ is the
+list of the names of the entries of a list $\mathit{vs}$ of naturals, each followed by
+$\mathrm{cl}$; and $\mathrm{ins}(x, \mathit{vs})$ is $\mathit{vs}$ if $x$ occurs in
+$\mathit{vs}$ and $\mathit{vs}$ with $x$ added at the front otherwise. Let $L_b \in \mathbb{N}$,
+let $\varphi$ be a CNF formula with clauses $C_1, \dots, C_m$, whose tokens are the
+concatenated tokens of $C_1, \dots, C_m$, let $y_1, \dots, y_n$ be the variables of the literals
+of $\varphi$ in order of occurrence (with repetitions), let
+$N = |r_{C_1}| + \dots + |r_{C_m}|$, and let $R$ be a list of symbols that is empty or starts
+with $\mathrm{cl}$. Then for every list $\mathit{vs}$ of naturals with
+$|\mathrm{vstk}(\mathit{vs})| + N \le L_b$, every quiescent state $s$ of the HAMPATH emitter
+whose stack $T$ is the concatenation of $r_{C_m}, \dots, r_{C_1}$ followed by $R$, whose stack
+$V$ is $\mathrm{vstk}(\mathit{vs})$ and whose stacks $W$ and $X$ are empty, and every value $v$
+of the machine's Boolean variable, there is a value $v'$ such that the emitter goes in at most
+$N(8L_b + 12)$ steps from label $\mathrm{a0}$, variable $v$ and the stacks of $s$ to label
+$\mathrm{a0}$, variable $v'$ and the stacks of the state obtained from $s$ by setting $T$ to
+$R$, $F$ to the tokens of $\varphi$ followed by the old contents of $F$, and $V$ to
+$\mathrm{vstk}(\mathrm{ins}(y_1, \dots \mathrm{ins}(y_n, \mathit{vs}) \dots))$, and by
+increasing the clause count by $m$ and the triple clause count by $3m$. -/
 theorem aformula_run (Lb : ℕ) : ∀ (φ : CNF) (R : List Sym), (R = [] ∨ R.head? = some .cl) →
     ∀ (vs : List ℕ) (s : MS) (v : Bool), s.t = φ.reverse.flatMap Check.clRev ++ R →
     s.v = vstk vs → s.w = [] → s.x = [] →
@@ -910,17 +1198,35 @@ theorem aformula_run (Lb : ℕ) : ∀ (φ : CNF) (R : List Sym), (R = [] ∨ R.h
       simp [toks, varsOf_cons, List.foldr_append, List.append_assoc]
       congr 2
 
-/-- The initial state of the emitter: the token stack, the output stack `o`, the rest empty. -/
+/-- **Initial state of the HAMPATH emitter.** For a CNF formula $\varphi$ and an output list $o$,
+the initial state is the quiescent state whose token stack holds the tokens of $\varphi$ in
+reverse reading order, whose output stack is $o$, and all of whose other stacks are empty and
+counters zero. -/
 def initMS (φ : CNF) (o : List Bool) : MS :=
   ⟨(toks φ).reverse, o, [], [], [], [], [], [], 0, 0, 0, 0, 0, 0, 0, 0⟩
 
-/-- The state after phase A and `b0`, `b1`: tokens on `F`, distinct variables on `V`, `C = m`,
-`M = 3 m`, `P = m`. -/
+/-- **The emitter state before the diamonds.** For a CNF formula $\varphi$ with $m$ clauses and an
+output list $o$, this is the quiescent state whose output stack is $o$, whose stack $F$ holds the
+tokens of $\varphi$ in reading order, whose stack $V$ is the variable stack of the distinct
+variables of $\varphi$ (each kept at its last occurrence), whose clause count and diamond top are
+both $m$, whose count of three times the clauses is $3m$, and all of whose other stacks are empty
+and other counters zero.
+
+It is the state that phase A, followed by setting the diamond top, reaches from the initial
+state. -/
 def diaMS (φ : CNF) (o : List Bool) : MS :=
   ⟨[], o, toks φ, vstk (hamVars φ), [], [], [], [], φ.length, 3 * φ.length, φ.length, 0, 0, 0,
     0, 0⟩
 
-/-- **Phase A**, then `P := m`. -/
+/-- **Phase A of the HAMPATH emitter.** Let $\varphi$ be a CNF formula with $m$ clauses whose token
+list has length $L$, let $o$ be a list of bits and let $v$ be a bit. Started at label
+$\mathrm{a0}$ with internal state $v$ and the stacks of the initial emitter state of $\varphi$ and
+$o$ (the token stack holding the tokens of $\varphi$ reversed, the output stack holding $o$, and
+everything else empty), the emitter reaches, within at most $L(8L + 12) + 2m + 3$ steps, label
+$\mathrm{h0}$ with some internal state and the stacks of the emitter state of $\varphi$ and $o$
+after phase A (the tokens of $\varphi$ on $F$, the variable stack of the distinct variables of
+$\varphi$ on $V$, $m$ on the counters $C$ and $P$, $3m$ on $M$, $o$ on the output stack, and
+everything else empty). -/
 theorem phaseA_run (φ : CNF) (o : List Bool) (v : Bool) :
     ∃ v', RunLe prog ((toks φ).length * (8 * (toks φ).length + 12) + 2 * φ.length + 3)
       ⟨some .a0, v, (initMS φ o).stk⟩ ⟨some .h0, v', (diaMS φ o).stk⟩ := by

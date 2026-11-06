@@ -44,10 +44,14 @@ open Function MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Complexity.SatVeri
 
 open MetaMathlibExt.TM2Recursive (bitsVal bitsVal_encodeNat)
 
-/-- `bitsVal` (least significant bit first) of the empty list. -/
+/-- **Value of the empty bit list.** The empty bit list, read as a binary number least significant
+bit first, has value $0$. -/
 @[simp] theorem bitsVal_nil : bitsVal [] = 0 := rfl
 
-/-- `bitsVal` peels the least significant bit. -/
+/-- **Value of a bit list with a leading bit.** Write $\mathrm{val}(l)$ for the value of a bit list
+$l$ read as a binary number least significant bit first, and for a bit $b$ write $[b]$ for $1$ if
+$b$ is true and $0$ if $b$ is false. For every bit $b$ and every bit list $l$, the list with first
+entry $b$ followed by $l$ has value $[b] + 2 \cdot \mathrm{val}(l)$. -/
 @[simp] theorem bitsVal_cons (b : Bool) (l : List Bool) :
     bitsVal (b :: l) = b.toNat + 2 * bitsVal l := by
   cases b <;> simp [bitsVal] <;> omega
@@ -66,7 +70,9 @@ theorem bitsVal_eq_zero {l : List Bool} (h : ∀ b ∈ l, b = false) : bitsVal l
       simp only [List.mem_cons, forall_eq_or_imp] at h
       simp [h.1, ih h.2]
 
-/-- A bit list not ending in `false` is the binary code of its value. -/
+/-- **A bit list without trailing false is the binary code of its value.** For every bit list $l$
+whose last entry is not false (the empty list included), the binary code, least significant bit
+first, of the value of $l$ read least significant bit first is $l$ itself. -/
 theorem encodeNat_bitsVal : ∀ l : List Bool, l.getLast? ≠ some false → encodeNat (bitsVal l) = l
   | [], _ => rfl
   | b :: l, h => by
@@ -100,7 +106,10 @@ theorem encodeNat_length_le (k : ℕ) : (encodeNat k).length ≤ k := by
         have := ih (k / 2) (by omega)
         omega
 
-/-- Values of bit lists made of two-bit digits. -/
+/-- **Value of a list of two-bit digits.** Write $\mathrm{val}(l)$ for the value of a bit list $l$
+read as a binary number least significant bit first. Let $f$ assign to each bit a list of exactly
+two bits. Then for every bit list $b_0, b_1, \dots, b_{m-1}$, the concatenation
+$f(b_0) f(b_1) \cdots f(b_{m-1})$ has value $\sum_{q < m} 4^q \, \mathrm{val}(f(b_q))$. -/
 theorem bitsVal_flatMap2 (f : Bool → List Bool) (hf : ∀ b, (f b).length = 2) :
     ∀ bs : List Bool, bitsVal (bs.flatMap f) =
       ((List.range bs.length).map fun q => 4 ^ q * bitsVal (f (bs.getD q false))).sum
@@ -150,7 +159,9 @@ theorem ssTarget_eq_bitsVal (k n : ℕ) (bits : List Bool) (hb : bits.length = (
     cases bits.getD q false <;> simp [pairDigit]; ring
   · simp [pow_mul, mul_comm]
 
-/-- The binary code of the target: its digits with leading zeros dropped. -/
+/-- **Binary code of the value of a bit list.** Read a bit list $l$ as a binary number, least
+significant bit first. The binary code of its value (least significant bit first, with no trailing
+false bits) is $l$ with all of its trailing false bits removed. -/
 theorem encodeNat_bitsVal_rev (l : List Bool) :
     encodeNat (bitsVal l) = (l.reverse.dropWhile (!·)).reverse := by
   have hsplit := (List.takeWhile_append_dropWhile (p := (!·)) (l := l.reverse))
@@ -172,12 +183,20 @@ private theorem delimit_eq (l : List Bool) :
   | nil => rfl
   | cons b l ih => simp [delimit, ih]
 
-/-- A delimited block ending in `true`: the closing bits of the target's code. -/
+/-- **Delimiting a bit list that ends in true.** For every bit list $u = (u_1, \dots, u_k)$, the
+self-delimiting form of $u$ followed by the bit true is
+$(\mathrm{true}, u_1, \mathrm{true}, u_2, \dots, \mathrm{true}, u_k,
+\mathrm{true}, \mathrm{true}, \mathrm{false})$. -/
 theorem delimit_append_true (u : List Bool) :
     delimit (u ++ [true]) = u.flatMap (fun b => [true, b]) ++ [true, true, false] := by
   simp [delimit_eq, List.flatMap_append]
 
-/-- The four output bits of one pair digit of a vertex number. -/
+/-- **Output block of a vertex-number digit.** For a bit $t$, the block is the four-bit list
+$(\mathrm{true}, t, \mathrm{true}, \mathrm{false})$.
+
+In the reduction from VERTEX-COVER to SUBSET-SUM, the self-delimiting code of a vertex number
+consists of one such block for each pair digit, followed by
+$(\mathrm{true}, \mathrm{true}, \mathrm{false})$. -/
 def blk (t : Bool) : List Bool := [true, t, true, false]
 
 theorem delimit_vtx (n : ℕ) (bits : List Bool) (v : ℕ) :
@@ -188,7 +207,12 @@ theorem delimit_vtx (n : ℕ) (bits : List Bool) (v : ℕ) :
   simp [delimit_eq, List.flatMap_assoc]
   rfl
 
-/-- The output of the edge number of pair `q` with bit `b`. -/
+/-- **Output block of an edge number.** For $q \in \mathbb{N}$ and a bit $b$: if $b$ is true, the
+block is $q$ copies of $(\mathrm{true}, \mathrm{false}, \mathrm{true}, \mathrm{false})$ followed by
+$(\mathrm{true}, \mathrm{true}, \mathrm{false})$; if $b$ is false, it is the one-bit list
+$(\mathrm{false})$.
+
+This is the self-delimiting binary code of $4^q$ when $b$ is true and of $0$ when $b$ is false. -/
 def edgeEnc (q : ℕ) (b : Bool) : List Bool :=
   if b then rep [true, false, true, false] q ++ [true, true, false] else [false]
 
@@ -215,7 +239,9 @@ theorem edgeEnc_eq (bits : List Bool) (q : ℕ) :
       flatMap_replicate_false]
     simp
 
-/-- The edge numbers' output, for the pair bits listed from the last pair down. -/
+/-- **Output of all edge numbers.** Write $E(q, b)$ for the output block of the edge number of pair
+$q$ with bit $b$. For a bit list $(b_{m-1}, \dots, b_1, b_0)$, listing the bit of the last pair
+first, the output is the concatenation $E(0, b_0) \, E(1, b_1) \cdots E(m-1, b_{m-1})$. -/
 def edgeOut : List Bool → List Bool
   | [] => []
   | b :: ds => edgeOut ds ++ edgeEnc ds.length b
@@ -236,13 +262,18 @@ theorem edgeOut_reverse (bits : List Bool) :
 
 /-! ### The pair walk -/
 
-/-- The mark pairs a walk over the vertex marks meets: for the row vertex `a` on top of `L`, one
-pair with every mark of `R`; then `a` moves onto `R`. -/
+/-- **The pair walk over lists of marks.** For lists $L$ and $R$ of booleans, the pair walk
+$W(L, R)$ is the list of pairs of booleans defined by recursion on $L$. If $L$ is empty, then
+$W(L, R)$ is empty. If $L$ has first entry $a$ and remaining entries $L'$, then $W(L, R)$
+consists of the pairs $(a, r)$ for the entries $r$ of $R$ in order, followed by $W(L', R')$,
+where $R'$ is the list $R$ with $a$ put in front. -/
 def walkM : List Bool → List Bool → List (Bool × Bool)
   | [], _ => []
   | a :: L, R => R.map (a, ·) ++ walkM L (a :: R)
 
-/-- Triangular numbers: `tri n = 0 + 1 + ⋯ + (n - 1)`. -/
+/-- **Triangular numbers.** For a natural number $n$, the triangular number $T(n)$ is the sum
+$0 + 1 + \cdots + (n - 1)$ of the natural numbers below $n$. It is defined by recursion:
+$T(0) = 0$ and $T(i + 1) = T(i) + i$. -/
 def tri : ℕ → ℕ
   | 0 => 0
   | i + 1 => tri i + i
@@ -266,8 +297,13 @@ theorem filter_range_lt (i n : ℕ) :
         simp [h, show i + 1 + (n - (i + 1)) = n by omega]
       · simp [h, show n + 1 - (i + 1) = 0 by omega, show n - (i + 1) = 0 by omega]
 
-/-- The walk over the marks of vertices `0, …, n - 1` meets the pairs of `pairs n` from the last
-to the first. -/
+/-- **The pair walk lists the vertex pairs in reverse.** Let $f$ be a function from the natural
+numbers to the booleans, let $n$ be a natural number, and let $W$ be the pair walk. For every
+$i \le n$, let $L$ be the list $f(i - 1), \dots, f(1), f(0)$ (empty when $i = 0$) and $R$ the
+list $f(i), f(i + 1), \dots, f(n - 1)$ (empty when $i = n$). Then $W(L, R)$ is obtained as
+follows: list the pairs $(a, j)$ of natural numbers with $a < i$ and $a < j < n$, with $a$
+ascending and, for each $a$, $j$ descending; reverse this list; and replace each pair $(a, j)$
+by $(f(a), f(j))$. -/
 theorem walkM_pairs (f : ℕ → Bool) (n : ℕ) : ∀ i ≤ n,
     walkM ((List.range i).map f).reverse ((List.range' i (n - i)).map f) =
       ((List.range i).flatMap fun a =>
@@ -282,7 +318,8 @@ theorem walkM_pairs (f : ℕ → Bool) (n : ℕ) : ∀ i ≤ n,
         ← List.filter_reverse, List.reverse_reverse, filter_range_lt]
       simp
 
-/-- The marks of vertices `n - 1, …, 0` (top first) for vertex `v`. -/
+/-- **Vertex marks for a vertex.** For natural numbers $n$ and $v$, the list of $n$ bits whose
+entries, from first to last, record for $i = n-1, n-2, \dots, 0$ whether $i = v$. -/
 def mkL (n v : ℕ) : List Bool := ((List.range n).map (· == v)).reverse
 
 theorem walkM_mkL (n v : ℕ) :
@@ -313,7 +350,13 @@ theorem map_range_beq (n w : ℕ) (hw : w < n) :
             simpa using (List.mem_range.1 hj).ne⟩]
         simp
 
-/-- The touch bits a vertex walk computes are `touches`. -/
+/-- **Touch bits from the pair walk of a vertex.** Let $n$ and $v$ be natural numbers, let $m$ be
+the number of vertex pairs in encoding order for $n$, and let $b$ be a list of $m$ pair bits. Let
+$L$ be the list of vertex marks for $v$ among $n$, let $(x_0, y_0), \dots, (x_{k-1}, y_{k-1})$ be
+the pair walk $W(L, [\,])$, and let $c_0, \dots, c_{m-1}$ be the list $b$ reversed. Then the list
+of the entries $c_l \wedge (y_l \vee x_l)$ for $l = 0, \dots, \min(k, m) - 1$, reversed, is the
+list of the values at $q = 0, 1, \dots, m - 1$ of the test whether pair $q$ touches $v$ under
+$b$. -/
 theorem walk_touches (n : ℕ) (bits : List Bool) (v : ℕ) (hb : bits.length = (pairs n).length) :
     (List.zipWith (fun p b => b && (p.2 || p.1)) (walkM (mkL n v) []) bits.reverse).reverse =
       (List.range (pairs n).length).map (touches n bits v) := by

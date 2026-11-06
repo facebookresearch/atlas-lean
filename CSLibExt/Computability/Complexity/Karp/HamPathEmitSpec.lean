@@ -33,22 +33,39 @@ namespace Cslib.Complexity.Karp.EmitHam
 
 open Cslib.CookLevin Cslib.Logic.PL Computability Cslib.Complexity.SatVerifier
 
-/-- The instance: `s = m`, `t`, `n = t + 1` in unary, then the arcs. -/
+/-- **The HAMPATH instance as unary blocks and arc bits.** Let $\varphi$ be a CNF formula with $m$
+clauses and $k$ distinct variables, and let $t = m + k(3m + 2)$ be the top of diamond $k$. Then
+the HAMPATH instance of $\varphi$ is the bit string made of $m$ ones and a zero (the start
+vertex $s = m$), then $t$ ones and a zero (the target vertex $t$), then $t + 1$ ones and a zero
+(the vertex count $n = t + 1$), followed by the arcs of the construction, each arc $(u, v)$
+written as $u$ ones, a zero, $v$ ones and a zero. -/
 theorem toHam_eq (φ : CNF) : toHam φ = List.replicate φ.length true ++ false ::
     (List.replicate (hpT φ.length (hamVars φ).length) true ++ false ::
       (List.replicate (hpT φ.length (hamVars φ).length + 1) true ++ false ::
         Karp.edgeBits (hamEdges φ))) := by
   simp [toHam, Path.encodeP, encodeE, hpT]; rfl
 
-/-- The frame of diamond `i`. -/
+/-- **The frame of a diamond.** For natural numbers $m$ (the number of clauses) and $i$, write
+$t_i = m + i(3m + 2)$ for the top of diamond $i$ and $r_{i,l} = t_i + 1 + l$ for its row
+vertex $l$. The frame of diamond $i$ is the list of the four arcs $(t_i, r_{i,0})$,
+$(t_i, r_{i,3m})$, $(r_{i,0}, t_{i+1})$ and $(r_{i,3m}, t_{i+1})$: the top points to both row
+ends, and both row ends point to the top of the next diamond. -/
 def frameE (m i : ℕ) : List (ℕ × ℕ) :=
   [(hpT m i, hpR m i 0), (hpT m i, hpR m i (3 * m)), (hpR m i 0, hpT m (i + 1)),
     (hpR m i (3 * m), hpT m (i + 1))]
 
-/-- The two row arcs between row vertices `l` and `l + 1` of diamond `i`. -/
+/-- **The row arcs of a diamond.** For natural numbers $m$ (the number of clauses), $i$ and $l$,
+let $r_{i,l} = m + i(3m + 2) + 1 + l$ be row vertex $l$ of diamond $i$. The row arcs between row
+vertices $l$ and $l + 1$ of diamond $i$ are the list of the two arcs $(r_{i,l}, r_{i,l+1})$ and
+$(r_{i,l+1}, r_{i,l})$. -/
 def rowE (m i l : ℕ) : List (ℕ × ℕ) := [(hpR m i l, hpR m i (l + 1)), (hpR m i (l + 1), hpR m i l)]
 
-/-- The detours of clause `j` (contents `C`) in diamond `i` of variable `x`. -/
+/-- **Clause detours in a diamond.** For natural numbers $m$ (the number of clauses), $i$, $x$
+and $j$, let $r_{i,l} = m + i(3m + 2) + 1 + l$ be row vertex $l$ of diamond $i$. For a clause
+$C$, a list of literals, the detours of clause $j$ with contents $C$ in diamond $i$ of variable
+$x$ are the list of the arcs $(r_{i,3j+1}, j)$ and $(j, r_{i,3j+2})$ if the positive literal
+$x$ is in $C$, followed by the arcs $(r_{i,3j+2}, j)$ and $(j, r_{i,3j+1})$ if the negative
+literal $\lnot x$ is in $C$. -/
 def detE (m i x j : ℕ) (C : CNFClause) : List (ℕ × ℕ) :=
   (if (x, true) ∈ C then [(hpR m i (3 * j + 1), j), (j, hpR m i (3 * j + 2))] else []) ++
     (if (x, false) ∈ C then [(hpR m i (3 * j + 2), j), (j, hpR m i (3 * j + 1))] else [])
@@ -57,12 +74,20 @@ theorem diamondEdges_eq (φ : CNF) (i x : ℕ) : diamondEdges φ i x =
     frameE φ.length i ++ (List.range (3 * φ.length)).flatMap (rowE φ.length i) ++
       (List.range φ.length).flatMap fun j => detE φ.length i x j (φ.getD j []) := rfl
 
-/-- The next diamond top is the row end plus one. -/
+/-- **The next diamond top follows the row.** For natural numbers $m$ (the number of clauses) and
+$i$, write $t_i = m + i(3m + 2)$ for the top of diamond $i$ and $r_{i,l} = t_i + 1 + l$ for its
+row vertex $l$. Then $t_{i+1} = r_{i,3m} + 1$: the top of diamond $i + 1$ comes right after the
+last row vertex of diamond $i$. -/
 theorem hpT_succ_eq_hpR (m i : ℕ) : hpT m (i + 1) = hpR m i (3 * m) + 1 := by
   simp only [hpT, hpR, Nat.add_mul, Nat.one_mul]; omega
 
-/-- The detours of the clauses `pre ++ post`, indexed from `0`: those of `pre`, then those of
-`post` from `pre.length`. -/
+/-- **Splitting off the middle clause of a concatenation.** Let $P$ and $Q$ be CNF formulas, $C$ a
+clause, and $\varphi$ the formula whose clauses are those of $P$, then $C$, then those of $Q$.
+Write $|P|$ for the number of clauses of $P$ and $\varphi_j$ for clause $j$ of $\varphi$, counting
+from $0$ (the empty clause if $j$ is out of range). Let $f$ map each natural number $j$ and clause
+to a list of elements of a type $\alpha$. Then concatenating the lists $f(j, \varphi_j)$ over
+$j < |P| + 1$ in increasing order gives the concatenation of the lists $f(j, \varphi_j)$ over
+$j < |P|$, followed by $f(|P|, C)$. -/
 theorem range_flatMap_getD {α : Type} (f : ℕ → CNFClause → List α) (pre : CNF) (C : CNFClause)
     (post : CNF) :
     (List.range (pre.length + 1)).flatMap (fun j => f j ((pre ++ C :: post).getD j [])) =
@@ -71,10 +96,14 @@ theorem range_flatMap_getD {α : Type} (f : ℕ → CNFClause → List α) (pre 
   rw [List.range_succ, List.flatMap_append]
   simp
 
-/-- Insert a name when it is new. -/
+/-- **Insert a variable if new.** For a natural number $x$ and a list $V$ of natural numbers,
+inserting $x$ into $V$ gives $V$ itself if $x$ occurs in $V$, and otherwise the list obtained
+by prepending $x$ to $V$. -/
 def insV (x : ℕ) (vs : List ℕ) : List ℕ := if x ∈ vs then vs else x :: vs
 
-/-- The distinct variables are the right fold of `insV`. -/
+/-- **Removing duplicates by insertion.** For every list $l$ of natural numbers, folding $l$ from
+the right into the empty list, prepending each element unless it is already present, gives
+$l$ with duplicates removed: each element is kept at its last occurrence in $l$, in order. -/
 theorem foldr_insV (l : List ℕ) : l.foldr insV [] = l.dedup := by
   induction l with
   | nil => rfl
@@ -91,6 +120,9 @@ theorem varsOf_cons (C : CNFClause) (φ : CNF) : varsOf (C :: φ) = C.map Prod.f
 
 /-! ### Arithmetic of the vertex numbers, tokens, sizes -/
 
+/-- **Consecutive row vertices.** In the HAMPATH construction with $m$ clauses, for every diamond
+$i$ and every $l \in \mathbb{N}$, row vertex $l + 1$ of diamond $i$ is one more than row
+vertex $l$ of diamond $i$. -/
 theorem hpR_succ (m i l : ℕ) : hpR m i (l + 1) = hpR m i l + 1 := by simp [hpR]; omega
 
 theorem hpR_two (m i j : ℕ) : hpR m i (3 * j + 2) = hpR m i (3 * j + 1) + 1 := hpR_succ _ _ _
@@ -133,7 +165,10 @@ theorem flag_neg (pn : Bool) (y : ℕ) (l : ℕ × Bool) (Ls : List (ℕ × Bool
   · have h' : y ≠ z := Ne.symm h
     cases b <;> cases pn <;> simp [h, h']
 
-/-- The bits of an edge list whose ends are at most `B`: at most `2 B + 2` per edge. -/
+/-- **Length bound for the bit encoding of an edge list.** Let $B$ be a natural number and $E$ a
+list of pairs of natural numbers such that every pair $(u, v)$ in $E$ has $u \le B$ and
+$v \le B$. Then the bit encoding of $E$, which writes each pair $(u, v)$ as $u$ ones, a zero,
+$v$ ones and a zero, has length at most $|E| \cdot (2B + 2)$, where $|E|$ is the length of $E$. -/
 theorem edgeBits_length_le (B : ℕ) : ∀ (es : List (ℕ × ℕ)), (∀ e ∈ es, e.1 ≤ B ∧ e.2 ≤ B) →
     (Karp.edgeBits es).length ≤ es.length * (2 * B + 2) := by
   intro es

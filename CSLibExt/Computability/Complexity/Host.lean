@@ -48,8 +48,11 @@ namespace Cslib.Complexity.Host
 open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
   Cslib.Complexity.DenseSAT
 
-/-- A component machine: finitely many stacks and labels, state `Bool`. `ks` lists the stacks,
-so that the host can empty all of them. -/
+/-- **Component machine.** A component machine consists of a finite type $K$ of stacks with
+decidable equality, a finite alphabet $\Gamma_k$ for each stack $k$, a finite type $L$ of labels
+with decidable equality, a multi-stack Turing machine program assigning to each label in $L$ a
+statement over the alphabets $\Gamma$ and the labels $L$ with Boolean internal state, and a list
+of the stacks in which every stack occurs exactly once, so that a host can empty all of them. -/
 structure Comp where
   /-- Stack indices. -/
   K : Type
@@ -80,13 +83,17 @@ attribute [instance] Comp.decK Comp.finK Comp.finΓ Comp.decL Comp.finL
 
 /-! ### Host stacks, alphabets and labels -/
 
-/-- Host stacks: input, output, two buffers for phase 0, and the component's stacks. -/
+/-- **Stacks of the generic host.** For a component machine $c$ with stack indices $K$, the host
+stacks are an input stack, an output stack, two buffers $X_1$ and $W_1$ used in phase 0 (which
+moves the input onto the component's stacks), and one copy of each component stack $k \in K$. -/
 inductive HK (c : Comp)
   | inp | out | X1 | W1
   | comp (k : c.K)
   deriving DecidableEq
 
-/-- Every host stack, listed. -/
+/-- **The list of host stacks.** For a component machine $c$, the host stacks are listed as the
+input stack, the output stack, the two buffer stacks $X_1$ and $W_1$, and then the host's copies
+of the stacks of $c$, in the order of the list of stacks that $c$ carries. -/
 def allKs (c : Comp) : List (HK c) := .inp :: .out :: .X1 :: .W1 :: c.ks.map .comp
 
 theorem allKs_nodup (c : Comp) : (allKs c).Nodup := by
@@ -99,14 +106,19 @@ theorem mem_allKs {c : Comp} (k : HK c) : k ∈ allKs c := by
 /-- Finitely many host stacks. -/
 instance (c : Comp) : Fintype (HK c) := Fintype.ofList (allKs c) mem_allKs
 
-/-- Host alphabets: `α` on the input, the component's alphabets on its stacks, bits elsewhere. -/
+/-- **Alphabets of the generic host.** For a component machine $c$ with stack alphabets
+$(\Gamma_k)_k$ and a type $\alpha$, the alphabet of a host stack is $\alpha$ on the input stack,
+$\Gamma_k$ on the host copy of the component's stack $k$, and the booleans on the output stack and
+on the two phase-0 buffers. -/
 @[reducible] def HΓ (c : Comp) (α : Type) : HK c → Type
   | .inp => α
   | .comp k => c.Γ k
   | _ => Bool
 
-/-- Phase-0 labels: move `x` (two passes), drop the separator, move `w` (two passes), reset the
-state and start the component. -/
+/-- **Phase-0 labels of the generic host.** The six labels of a host's phase 0, which moves the
+input onto the component's stacks: two for the two passes that move the first block $x$, one that
+drops the separator, two for the two passes that move the second block $w$, and one that resets
+the state and starts the component. -/
 inductive P0 | m1 | m2 | sep | m3 | m4 | go
   deriving DecidableEq
 
@@ -115,7 +127,10 @@ instance P0.instFintypeEnumFix : Fintype P0 where
   elems := ⟨↑[P0.m1, .m2, .sep, .m3, .m4, .go], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Host labels: phase 0, the component's labels, cleanup and output (with the answer). -/
+/-- **Labels of the generic host.** For a component machine $c$ with labels $L$, and with $P_0$ the
+set of phase-0 labels, the host labels are one label for each $p \in P_0$, one copy of each
+component label $l \in L$, and, for each boolean answer $a$, a cleanup label and an output label
+carrying $a$. -/
 inductive HLab (c : Comp)
   | ph (p : P0)
   | comp (l : c.L)
@@ -123,7 +138,14 @@ inductive HLab (c : Comp)
   | fin (ans : Bool)
   deriving DecidableEq
 
-/-- `HLab` as a sum type, for its `Fintype` instance. -/
+/-- **Labels of the generic host as a sum type.** For a component machine $c$ with labels $L$, let
+$P_0$ be the set of phase-0 labels and $B = \{\mathrm{false}, \mathrm{true}\}$. The host labels of
+$c$ are in bijection with the disjoint union $P_0 \sqcup L \sqcup B \sqcup B$: the phase-0 label
+$p$ corresponds to $p$, the host copy of the component label $l$ to $l$, the cleanup label with
+answer $a$ to $a$ in the first copy of $B$, and the output label with answer $a$ to $a$ in the
+second copy of $B$.
+
+The bijection shows that there are finitely many host labels. -/
 def HLab.equiv (c : Comp) : HLab c ≃ P0 ⊕ c.L ⊕ Bool ⊕ Bool where
   toFun
     | .ph p => .inl p | .comp l => .inr (.inl l) | .clean a => .inr (.inr (.inl a))
@@ -137,13 +159,19 @@ def HLab.equiv (c : Comp) : HLab c ≃ P0 ⊕ c.L ⊕ Bool ⊕ Bool where
 /-- Finitely many host labels. -/
 instance (c : Comp) : Fintype (HLab c) := Fintype.ofEquiv _ (HLab.equiv c).symm
 
-/-- The component's stacks inside a host with input alphabet `α`. -/
+/-- **The component's stacks inside a host.** For a component machine $c$ and an input alphabet
+$\alpha$, the stack embedding of $c$ into the host over $\alpha$ sends each stack $k$ of $c$ to
+the host's copy of $k$, whose alphabet is the alphabet $\Gamma_k$ of $k$, and identifies the two
+alphabets by the identity. Distinct stacks have distinct copies, so the embedding is injective. -/
 def emb (c : Comp) (α : Type) : SEmb c.Γ (HΓ c α) where
   e := .comp
   inj _ _ h := HK.comp.inj h
   ι _ := Equiv.refl _
 
-/-- A host agrees with the component when its `comp k` stacks are the component's stacks. -/
+/-- **Agreement with the embedded component.** Let $c$ be a component machine and $\alpha$ an
+input alphabet. For stack contents $S$ of $c$ and stack contents $T$ of the host over $\alpha$,
+$T$ agrees with $S$ under the embedding of the component's stacks into the host if and only if,
+for every stack $k$ of $c$, the host's copy of $k$ holds exactly $S(k)$. -/
 theorem agree_emb {c : Comp} {α : Type} {S : ∀ k, List (c.Γ k)} {T : ∀ k, List (HΓ c α k)} :
     Agree (emb c α) S T ↔ ∀ k, T (.comp k) = S k := by
   refine forall_congr' fun k => ?_
@@ -152,8 +180,17 @@ theorem agree_emb {c : Comp} {α : Type} {S : ∀ k, List (c.Γ k)} {T : ∀ k, 
 
 /-! ### Generic pieces of a host run -/
 
-/-- **Two `moveB` passes** through an empty buffer `t` move the bit block `x` of `a` onto `b`,
-re-encoded by `g` and in the original order, in `2 |x| + 2` steps. -/
+/-- **Moving a bit block through a buffer.** Let $a$, $t$, $b$ be pairwise distinct stacks of a
+program $M$ with Boolean state, and let $l_1$, $l_2$, $l_3$ be labels such that $M$ runs at $l_1$
+the bit-moving loop from $a$ to $t$ with decoder $d$ and encoder $g_t$, looping at $l_1$ and
+exiting to $l_2$, and at $l_2$ the bit-moving loop from $t$ to $b$ with decoder $d_t$ and encoder
+$g$, looping at $l_2$ and exiting to $l_3$, where $d_t$ decodes $g_t(y)$ to $y$ for every bit $y$.
+Let $x = x_1 \cdots x_n$ be a bit list and $S$ stack contents in which $a$ holds a bit block for
+$x$ under $d$ followed by a rest $A$ that ends a bit block under $d$, and $t$ is empty. Then for
+every state $v$ there are a state $v'$ and stack contents $S'$ such that $M$ runs in exactly
+$2n + 2$ steps from label $l_1$, state $v$ and stacks $S$ to label $l_3$, state $v'$ and stacks
+$S'$, where $S'(a) = A$, $S'(t)$ is empty, $S'(b)$ is $g(x_1), \dots, g(x_n)$ (top first)
+followed by $S(b)$, and $S'(k) = S(k)$ for every other stack $k$. -/
 theorem move2_run {K Λ : Type} [DecidableEq K] {Γ : K → Type} {M : Λ → TM2.Stmt Γ Λ Bool}
     {a t b : K} {d : Γ a → Option Bool} {gt : Bool → Γ t} {dt : Γ t → Option Bool}
     {g : Bool → Γ b} {l₁ l₂ l₃ : Λ} (h₁ : M l₁ = moveB a t d gt l₁ l₂)
@@ -172,17 +209,27 @@ theorem move2_run {K Λ : Type} [DecidableEq K] {Γ : K → Type} {M : Λ → TM
   · rw [h2b, h1k b hab.symm htb.symm]; simp [List.map_reverse]
   · intro k hka hkt hkb; rw [h2k k hkt hkb, h1k k hka hkt]
 
-/-- The stacks the cleanup empties: all but the output stack `o`. -/
+/-- **Cleanup stacks of the generic host.** For a component machine $c$ and a host stack $o$, the
+cleanup stacks are the list of all host stacks with $o$ removed, in the order of the list of
+host stacks. The cleanup empties these stacks and leaves the output stack $o$. -/
 def cleanKs (c : Comp) (o : HK c) : List (HK c) := (allKs c).filter (· ≠ o)
 
 theorem cleanKs_nodup (c : Comp) (o : HK c) : (cleanKs c o).Nodup := (allKs_nodup c).filter _
 
-/-- The cleanup empties exactly the stacks other than the output. -/
+/-- **Membership in the cleanup stacks of the generic host.** For a component machine $c$ and host
+stacks $o$ and $k$, the stack $k$ belongs to the list of stacks that the cleanup for the output
+stack $o$ empties if and only if $k \ne o$. -/
 theorem mem_cleanKs {c : Comp} {o k : HK c} : k ∈ cleanKs c o ↔ k ≠ o := by
   simp [cleanKs, mem_allKs]
 
-/-- **Cleanup** in a host program whose label `clean ans` is `cleanS (cleanKs c o)`: with every
-stack of length at most `m`, `fin ans` is reached within `m + 1` steps with only `o` left. -/
+/-- **Cleanup in a host.** Let $c$ be a component machine, $\alpha$ an input alphabet, $o$ a host
+stack, $a$ a bit, and $M$ a host program with Boolean state whose statement at the cleanup label
+for $a$ is the cleanup round on the list of all host stacks with $o$ removed, kept in the order
+of the list of host stacks, repeating at the cleanup label for $a$ and exiting to the output
+label for $a$. If $S$ assigns to every host stack at most $m$ symbols, then for every state $v$,
+$M$ runs from the cleanup label for $a$ with state $v$ and stacks $S$ to the output label for $a$
+in at most $m + 1$ steps, ending with state false, stack $o$ holding $S(o)$ and every other stack
+empty. -/
 theorem cleanup_run {c : Comp} {α : Type} {M : HLab c → TM2.Stmt (HΓ c α) (HLab c) Bool}
     {o : HK c} {ans : Bool} (hM : M (.clean ans) = cleanS (cleanKs c o) (.clean ans) (.fin ans))
     (m : ℕ) (v : Bool) (S : ∀ k, List (HΓ c α k)) (hl : ∀ k, (S k).length ≤ m) :
@@ -196,19 +243,28 @@ theorem cleanup_run {c : Comp} {α : Type} {M : HLab c → TM2.Stmt (HΓ c α) (
     · simp [mem_cleanKs, hk]
   rwa [e] at h
 
-/-- Stack sizes grow by at most `pushBound` per step. -/
+/-- **Stack lengths grow by at most the push bound per step.** Let $M$ be a finite multi-stack
+Turing machine with push bound $B$. If every stack of $S$ has length at most $N$ and $M$ runs in
+$n$ steps from a configuration with some label, state $v$ and stacks $S$ to a configuration with
+some label, state $v'$ and stacks $S'$, then every stack of $S'$ has length at most $N + Bn$. -/
 theorem stk_length_le (M : FinTM2) {n N : ℕ} {S S' : ∀ k, List (M.Γ k)} {v v' : M.σ}
     {l l' : M.Λ} (hS : ∀ k, (S k).length ≤ N) (h : Run M.m n ⟨some l, v, S⟩ ⟨some l', v', S'⟩) :
     ∀ k, (S' k).length ≤ N + TM2Composition.pushBound M * n := fun k =>
   (TM2Composition.length_iter M k n _ _ h).trans (Nat.add_le_add_right (hS k) _)
 
-/-- The initial configuration: the input on `k₀`, every other stack empty. -/
+/-- **Initial configuration of a finite multi-stack machine.** For a finite multi-stack Turing
+machine $M$ with input stack $k_0$, main label $\lambda_0$ and initial internal state $\sigma_0$,
+and a list $l$ over the alphabet of $k_0$, the initial configuration of $M$ on $l$ has current
+label $\lambda_0$, internal state $\sigma_0$, the list $l$ on $k_0$ and every other stack empty. -/
 theorem initList_eq (M : FinTM2) (l : List (M.Γ M.k₀)) :
     initList M l = ⟨some M.main, M.initialState, update (fun _ => []) M.k₀ l⟩ := by
   rw [TM2Composition.update_nil_eq_initList]
   rfl
 
-/-- The halting configuration: the output on `k₁`, every other stack empty. -/
+/-- **Halting configuration of a finite multi-stack machine.** For a finite multi-stack Turing
+machine $M$ with output stack $k_1$ and initial internal state $\sigma_0$, and a list $l$ over the
+alphabet of $k_1$, the halting configuration of $M$ with output $l$ has no current label, internal
+state $\sigma_0$, the list $l$ on $k_1$ and every other stack empty. -/
 theorem haltList_eq (M : FinTM2) (l : List (M.Γ M.k₁)) :
     haltList M l = ⟨none, M.initialState, update (fun _ => []) M.k₁ l⟩ := by
   simp only [haltList]
@@ -218,7 +274,9 @@ theorem haltList_eq (M : FinTM2) (l : List (M.Γ M.k₁)) :
   · subst h; simp
   · simp [h]
 
-/-- A single non-empty stack bounds every stack's length. -/
+/-- **Stack lengths when only one stack is filled.** Let $c$ be a component machine and consider
+its host with input alphabet $\alpha$. If a host stack $o$ holds a list $l$ and every other host
+stack is empty, then every host stack has length at most the length of $l$. -/
 theorem update_length_le {c : Comp} {α : Type} (o : HK c) (l : List (HΓ c α o)) :
     ∀ k, (update (fun _ => []) o l k).length ≤ l.length := by
   intro k
@@ -232,11 +290,21 @@ section Reduction
 
 variable (c : Comp) (cX cO : c.K) (gX : Bool → c.Γ cX) (start done : c.L)
 
-/-- Component labels in the reduction host: `done` starts the cleanup. -/
+/-- **Component labels in the reduction host.** For a component with exit label $\mathit{done}$,
+the label $\mathit{done}$ is sent to the host's cleanup label with answer false, and every other
+component label $l$ to the host label that runs the component at $l$. -/
 def φR (l : c.L) : HLab c := if l = done then .clean false else .comp l
 
-/-- The reduction host: move the input bits onto `cX`, run the component, empty every stack but
-`cO`, halt. -/
+/-- **Reduction host program.** The program of the reduction host for a component with stacks
+$c_X$ and $c_O$, an encoding $g_X$ of bits as symbols of $c_X$ and labels $\mathit{start}$ and
+$\mathit{done}$. Phase 0 moves the whole input stack onto the buffer $X_1$ with the bit-moving
+loop, then moves $X_1$ onto the host's copy of $c_X$ re-encoded by $g_X$ (so in the original
+order), then sets the state to false and goes to $\mathit{start}$, or to the cleanup if
+$\mathit{start} = \mathit{done}$. At the host label of a component label $l$ it runs the
+component's statement at $l$ on the host's copies of the component stacks, with every jump to
+$\mathit{done}$ sent to the cleanup. The cleanup pops every stack other than the copy of $c_O$
+once per round, repeating while something was popped, and then goes to the final label, which
+halts. The phase-0 labels for a separator and a second block halt. -/
 def rprog : HLab c → TM2.Stmt (HΓ c Bool) (HLab c) Bool
   | .ph .m1 => moveB (Γ := HΓ c Bool) .inp .X1 some id (.ph .m1) (.ph .m2)
   | .ph .m2 => moveB (Γ := HΓ c Bool) .X1 (.comp cX) some gX (.ph .m2) (.ph .go)
@@ -246,7 +314,11 @@ def rprog : HLab c → TM2.Stmt (HΓ c Bool) (HLab c) Bool
   | .clean _ => cleanS (cleanKs c (.comp cO)) (.clean false) (.fin false)
   | .fin _ => .halt
 
-/-- The reduction host as a `FinTM2`: input `inp` (raw bits), output the component's `cO`. -/
+/-- **Reduction host machine.** The reduction host as a finite multi-stack Turing machine: its
+stacks are the host stacks with the host alphabets for bit input, its labels are the host labels,
+its state is a bit starting at false, its program is the reduction host program started at the
+first phase-0 label, its input stack is the input stack (raw bits) and its output stack is the
+host's copy of the component's stack $c_O$. -/
 def rtm : FinTM2 where
   K := HK c
   k₀ := .inp
@@ -259,8 +331,16 @@ def rtm : FinTM2 where
   Γk₀Fin := (inferInstance : Fintype Bool)
   m := rprog c cX cO gX start done
 
-/-- The reduction host's step bound: phase 0 and the component, then the cleanup (stacks of
-length at most the input plus the pushes so far) and the halt. -/
+/-- **Step bound of the reduction host.** Let $c$ be a component machine with stacks $c_X$ and
+$c_O$, an encoding $g_X$ of bits as symbols of $c_X$ and labels $\mathit{start}$ and
+$\mathit{done}$, and let $B$ be the push bound of the reduction host machine built from these
+data. For a polynomial $p$ with natural-number coefficients, the step bound of the reduction host
+is the polynomial in the variable $X$
+$$(B + 1)(2X + 3 + p) + X + 2.$$
+
+At an input length $n$ it counts phase 0 and the component, at most $2n + 3 + p(n)$ steps, then
+the cleanup, which takes at most one step more than the longest stack, of length at most $n$
+plus $B$ times the steps so far, and the halt. -/
 noncomputable def rtime (p : Polynomial ℕ) : Polynomial ℕ :=
   Polynomial.C (TM2Composition.pushBound (rtm c cX cO gX start done) + 1) *
       (Polynomial.C 2 * Polynomial.X + Polynomial.C 3 + p) + Polynomial.X + Polynomial.C 2
@@ -276,7 +356,14 @@ theorem rtime_eval (p : Polynomial ℕ) (n : ℕ) :
 
 variable {c cX cO gX start done}
 
-/-- The reduction host runs the component at `comp l`; its exit `done` leads to the cleanup. -/
+/-- **The reduction host embeds the component.** Let $c$ be a component machine with stacks
+$c_X$ and $c_O$, a map $g_X$ from bits to the alphabet of $c_X$, and labels $s$ and $d$,
+and suppose that $c$ halts at $d$. Rename the labels of $c$ by sending $d$ to the cleanup label
+with answer false and every other label $l$ to the host's copy of $l$, and embed the stacks of
+$c$ as the host's copies over the bit input alphabet. Then the reduction host built from
+$c_X$, $c_O$, $g_X$, $s$ and $d$ embeds $c$: for every label $l$ of $c$, either $c$ halts at
+$l$, or the host's statement at the renamed label of $l$ is the statement of $c$ at $l$ with
+stacks and labels translated. -/
 theorem embeds_rprog (hdone : c.prog done = .halt) :
     Embeds (emb c Bool) (φR c done) c.prog (rprog c cX cO gX start done) := by
   intro l
@@ -286,8 +373,16 @@ theorem embeds_rprog (hdone : c.prog done = .halt) :
     rw [show φR c done l = .comp l by simp [φR, h]]
     rfl
 
-/-- **The reduction host's run on one input**: a component run from the raw bits `x` on `cX` to
-`out` on `cO` within `p |x|` steps gives a host run that halts with `out.map eO.symm` on `cO` and
+/-- **The reduction host's run on one input.** Let $c$ be a component with stacks $c_X$ and $c_O$,
+an encoding $g_X$ of bits as symbols of $c_X$, an identification $e_O$ of the alphabet of $c_O$
+with the bits, and labels $\mathit{start}$ and $\mathit{done}$, where the component halts at
+$\mathit{done}$. Let $p$ be a polynomial with natural-number coefficients and $x$, $o$ bit lists,
+and suppose that the component, started at $\mathit{start}$ with state false, with $x$ encoded by
+$g_X$ on $c_X$ and every other stack empty, reaches $\mathit{done}$ within $p(|x|)$ steps with
+some state and stacks in which $c_O$ holds $o$ translated symbol by symbol by $e_O^{-1}$. Then the
+reduction host program, started at its first phase-0 label with state false, $x$ on the input
+stack and every other stack empty, halts within $T(|x|)$ steps, where $T$ is the reduction host's
+step bound for $p$, with state false, $o$ translated by $e_O^{-1}$ on the host's copy of $c_O$ and
 every other stack empty. -/
 theorem rprog_run_at (eO : c.Γ cO ≃ Bool) (out : List Bool) (p : Polynomial ℕ)
     (hdone : c.prog done = .halt) (x : List Bool)
@@ -329,8 +424,18 @@ theorem rprog_run_at (eO : c.Γ cO ≃ Bool) (out : List Bool) (p : Polynomial �
     (show 2 * x.length + 2 + 1 + n₁ ≤ 2 * x.length + 3 + p.eval x.length by omega)
   omega
 
-/-- **The reduction host's run** on the raw bits `x`: it halts with `(f x).map eO.symm` on `cO`
-and every other stack empty. -/
+/-- **The reduction host's run.** Let $c$ be a component with stacks $c_X$ and $c_O$, an encoding
+$g_X$ of bits as symbols of $c_X$, an identification $e_O$ of the alphabet of $c_O$ with the bits,
+and labels $\mathit{start}$ and $\mathit{done}$, where the component halts at $\mathit{done}$. Let
+$f$ be a function from bit lists to bit lists and $p$ a polynomial with natural-number
+coefficients, and suppose that for every bit list $y$ the component, started at $\mathit{start}$
+with state false, with $y$ encoded by $g_X$ on $c_X$ and every other stack empty, reaches
+$\mathit{done}$ within $p(|y|)$ steps with some state and stacks in which $c_O$ holds $f(y)$
+translated symbol by symbol by $e_O^{-1}$. Then for every bit list $x$ the reduction host program,
+started at its first phase-0 label with state false, $x$ on the input stack and every other stack
+empty, halts within $T(|x|)$ steps, where $T$ is the reduction host's step bound for $p$, with
+state false, $f(x)$ translated by $e_O^{-1}$ on the host's copy of $c_O$ and every other stack
+empty. -/
 theorem rprog_run (eO : c.Γ cO ≃ Bool) (f : List Bool → List Bool) (p : Polynomial ℕ)
     (hdone : c.prog done = .halt)
     (hrun : ∀ x, ∃ v S', RunLe c.prog (p.eval x.length)
@@ -342,9 +447,16 @@ theorem rprog_run (eO : c.Γ cO ≃ Bool) (f : List Bool → List Bool) (p : Pol
       ⟨none, false, update (fun _ => []) (.comp cO) ((f x).map eO.symm)⟩ :=
   rprog_run_at eO (f x) p hdone x (hrun x)
 
-/-- **Reduction host.** A component that turns the bits `x` on `cX` into `f x` on `cO` (read
-through `eO`) within `p |x|` steps gives a polynomial-time `TM2` machine for `f` on raw bit
-lists. -/
+/-- **Reduction host.** Let $c$ be a component with stacks $c_X$ and $c_O$, an encoding $g_X$ of
+bits as symbols of $c_X$, an identification $e_O$ of the alphabet of $c_O$ with the bits, and
+labels $\mathit{start}$ and $\mathit{done}$, where the component halts at $\mathit{done}$. Let $f$
+be a function from bit lists to bit lists and $p$ a polynomial with natural-number coefficients.
+Suppose that for every bit list $x$ the component, started at $\mathit{start}$ with state false,
+with $x$ encoded by $g_X$ on $c_X$ and every other stack empty, reaches $\mathit{done}$ within
+$p(|x|)$ steps with some state and stacks in which $c_O$ holds $f(x)$ translated symbol by symbol
+by $e_O^{-1}$. Then $f$ is computable in polynomial time on raw bit lists (the identity as input
+and output encoding): by the reduction host machine, with the bits as input alphabet, $e_O$ as
+output alphabet and the reduction host's step bound for $p$ as time bound. -/
 noncomputable def reduction (eO : c.Γ cO ≃ Bool) (f : List Bool → List Bool) (p : Polynomial ℕ)
     (hdone : c.prog done = .halt)
     (hrun : ∀ x, ∃ v S', RunLe c.prog (p.eval x.length)
@@ -362,8 +474,15 @@ noncomputable def reduction (eO : c.Γ cO ≃ Bool) (f : List Bool → List Bool
     erw [List.map_id, initList_eq, Option.map_some, haltList_eq]
     exact (Classical.choose_spec h).2
 
-/-- **Reduction host, canonical form**: `f` is polynomial-time (`IsPolyTime`) as soon as some
-component computes it within a polynomial number of steps. -/
+/-- **Reduction host, canonical form.** Let $c$ be a component machine with stacks $c_X$ and
+$c_O$ and labels $\mathit{start}$ and $\mathit{done}$, where the statement at $\mathit{done}$ is
+the halting statement. Let $g_X$ map bits to symbols of $c_X$, let $e_O$ be a bijection from the
+alphabet of $c_O$ to the booleans, let $f$ map bit lists to bit lists, and let $p$ be a polynomial
+with coefficients in $\mathbb{N}$. Suppose that for every bit list $x$, the component started at
+$\mathit{start}$ with internal state false, with $g_X$ applied to each bit of $x$ on $c_X$ and
+every other stack empty, reaches the label $\mathit{done}$ in at most $p(|x|)$ steps with stack
+$c_O$ holding exactly $e_O^{-1}$ applied to each bit of $f(x)$. Then $f$ is polynomial-time
+computable for the canonical bitstring encodings. -/
 theorem isPolyTime_reduction (eO : c.Γ cO ≃ Bool) (f : List Bool → List Bool)
     (p : Polynomial ℕ) (hdone : c.prog done = .halt)
     (hrun : ∀ x, ∃ v S', RunLe c.prog (p.eval x.length)
@@ -374,9 +493,19 @@ theorem isPolyTime_reduction (eO : c.Γ cO ≃ Bool) (f : List Bool → List Boo
     (reduction eO f p hdone hrun)
   exact tm2ComputableInPolyTime_comp (f := f) (g := id) h EncodeBits.computable
 
-/-- **Decider host**: a component that leaves exactly the bit `L x` on `cO` (read through `eO`)
-within `p |x|` steps makes `L` polynomial-time, i.e. puts it in `P`. The reduction host for
-`fun x => [L x]`, read with `Bool`'s one-bit encoding. -/
+/-- **Decider host.** Let $c$ be a component machine with stacks $c_X$ and $c_O$ and labels
+$\mathit{start}$ and $\mathit{done}$, where the statement at $\mathit{done}$ is the halting
+statement. Let $g_X$ map bits to symbols of $c_X$, let $e_O$ be a bijection from the alphabet of
+$c_O$ to the booleans, let $L$ map bit lists to booleans, and let $p$ be a polynomial with
+coefficients in $\mathbb{N}$. Suppose that for every bit list $x$, the component started at
+$\mathit{start}$ with internal state false, with $g_X$ applied to each bit of $x$ on $c_X$ and
+every other stack empty, reaches the label $\mathit{done}$ in at most $p(|x|)$ steps with exactly
+the one symbol $e_O^{-1}(L(x))$ on $c_O$. Then $L$ is polynomial-time computable for the
+canonical bitstring encodings, that is, $L$ belongs to the class $\mathrm{P}$ of decision
+problems decidable in polynomial time.
+
+The proof applies the reduction host to $x \mapsto [L(x)]$, read with the one-bit encoding of the
+booleans. -/
 theorem isPolyTime_decider (eO : c.Γ cO ≃ Bool) (L : List Bool → Bool) (p : Polynomial ℕ)
     (hdone : c.prog done = .halt)
     (hrun : ∀ x, ∃ v S', RunLe c.prog (p.eval x.length)
@@ -395,22 +524,45 @@ section Verifier
 
 variable (c : Comp) (cX cW : c.K) (gX : Bool → c.Γ cX) (gW : Bool → c.Γ cW) (start yes no : c.L)
 
-/-- Component labels in the verifier host: `yes` and `no` start the cleanup with the answer. -/
+/-- **Relabelling in the verifier host.** Given labels $\mathit{yes}$ and $\mathit{no}$ of a
+component machine $c$, a label $l$ of $c$ is sent to the host label that starts the cleanup with
+answer true if $l = \mathit{yes}$, to the host label that starts the cleanup with answer false if
+$l \ne \mathit{yes}$ and $l = \mathit{no}$, and to the host label that runs the component at $l$
+otherwise. -/
 def φV (l : c.L) : HLab c :=
   if l = yes then .clean true else if l = no then .clean false else .comp l
 
-/-- Read an `x` symbol of the `x # w` input as a bit. -/
+/-- **Reading a bit of $x$.** On the pair alphabet of the $x \# w$ input, the symbol that
+encodes a bit $b$ of $x$ (the left injection of $b$) is read as the bit $b$; every other symbol,
+the separator $\#$ or a bit of $w$ (both right injections), is read as no bit. -/
 def dX : Verifier.G → Option Bool
   | .inl b => some b
   | _ => none
 
-/-- Read a `w` symbol of the `x # w` input as a bit. -/
+/-- **Reading a bit of $w$.** On the pair alphabet of the $x \# w$ input, the symbol that
+encodes a bit $b$ of $w$ (the right injection of $\mathrm{some}\,b$) is read as the bit $b$;
+every other symbol, a bit of $x$ (a left injection) or the separator $\#$ (the right injection
+of $\mathrm{none}$), is read as no bit. -/
 def dW : Verifier.G → Option Bool
   | .inr (some b) => some b
   | _ => none
 
-/-- The verifier host: move `x` onto `cX` and `w` onto `cW`, run the component, empty every stack
-but the output, push the answer. -/
+/-- **Verifier host program.** The program of the verifier host for a component machine $c$ with
+stacks $c_X$ and $c_W$, encodings $g_X$ and $g_W$ of bits as symbols of $c_X$ and $c_W$, and
+labels $\mathit{start}$, $\mathit{yes}$ and $\mathit{no}$, on the host stacks with the work
+alphabet of the dense-SAT verifier on the input stack. On an input $x \# w$ in the pair encoding,
+phase 0 moves the symbols on top of the input stack that encode bits of $x$ onto the buffer $X_1$
+with the bit-moving loop, then moves $X_1$ onto the host's copy of $c_X$ re-encoded by $g_X$ (so
+in the original order); it pops one symbol off the input stack (the separator $\#$); it moves
+the symbols that encode bits of $w$ onto the buffer $W_1$ and then $W_1$ onto the host's copy of
+$c_W$ re-encoded by $g_W$; then it sets the state to false and goes to the renamed label of
+$\mathit{start}$. Here a label of $c$ is renamed to the cleanup label with answer true if it is
+$\mathit{yes}$, to the cleanup label with answer false if it is $\mathit{no}$ but not
+$\mathit{yes}$, and to the host's copy of itself otherwise. At the host's copy of a component
+label $l$ it runs the component's statement at $l$ on the host's copies of the component stacks,
+with every jump target renamed. The cleanup label with answer $a$ pops every stack other than the
+output stack once per round, repeating while something was popped, and then goes to the output
+label with answer $a$, which pushes $a$ on the output stack and halts. -/
 def vprog : HLab c → TM2.Stmt (HΓ c Verifier.G) (HLab c) Bool
   | .ph .m1 => moveB (Γ := HΓ c Verifier.G) .inp .X1 dX id (.ph .m1) (.ph .m2)
   | .ph .m2 => moveB (Γ := HΓ c Verifier.G) .X1 (.comp cX) some gX (.ph .m2) (.ph .sep)
@@ -422,7 +574,12 @@ def vprog : HLab c → TM2.Stmt (HΓ c Verifier.G) (HLab c) Bool
   | .clean ans => cleanS (cleanKs c .out) (.clean ans) (.fin ans)
   | .fin ans => .push .out (fun _ => ans) .halt
 
-/-- The verifier host as a `FinTM2`: input `inp` (the `x # w` alphabet), output `out` (bits). -/
+/-- **The verifier host machine.** The verifier host as a finite multi-stack Turing machine for a
+component machine $c$: its stacks are the host stacks, with the pair alphabet on the input stack,
+the alphabets of $c$ on the component's stacks and bits on the other stacks; its labels are the
+host labels and its program is the verifier host program; it starts at the first phase-0 label
+with a boolean internal state, initially false; it reads its input from the input stack and leaves
+its output on the output stack. -/
 def vtm : FinTM2 where
   K := HK c
   k₀ := .inp
@@ -435,8 +592,16 @@ def vtm : FinTM2 where
   Γk₀Fin := (inferInstance : Fintype Verifier.G)
   m := vprog c cX cW gX gW start yes no
 
-/-- The verifier host's step bound: phase 0 and the component, then the cleanup (stacks of
-length at most the input plus the pushes so far) and the output step. -/
+/-- **Step bound of the verifier host.** Let $c$ be a component machine with stacks $c_X$ and
+$c_W$, encodings $g_X$ and $g_W$ of bits as symbols of $c_X$ and $c_W$, and labels
+$\mathit{start}$, $\mathit{yes}$ and $\mathit{no}$, and let $B$ be the push bound of the verifier
+host machine built from these data. For a polynomial $p$ with natural-number coefficients, the
+step bound of the verifier host is the polynomial in the variable $X$
+$$(B + 1)(2X + 4 + p) + X + 2.$$
+
+At an input length $n$ it counts phase 0 and the component, at most $2n + 4 + p(n)$ steps, then
+the cleanup, which takes at most one step more than the longest stack, of length at most $n$
+plus $B$ times the steps so far, and the output step. -/
 noncomputable def vtime (p : Polynomial ℕ) : Polynomial ℕ :=
   Polynomial.C (TM2Composition.pushBound (vtm c cX cW gX gW start yes no) + 1) *
       (Polynomial.C 2 * Polynomial.X + Polynomial.C 4 + p) + Polynomial.X + Polynomial.C 2
@@ -452,7 +617,17 @@ theorem vtime_eval (p : Polynomial ℕ) (n : ℕ) :
 
 variable {c cX cW gX gW start yes no}
 
-/-- The verifier host runs the component at `comp l`; its exits lead to the cleanup. -/
+/-- **The verifier host embeds the component.** Let $c$ be a component machine with stacks $c_X$
+and $c_W$, maps $g_X$ and $g_W$ from bits to the alphabets of $c_X$ and $c_W$, and labels
+$\mathit{start}$, $\mathit{yes}$ and $\mathit{no}$, and suppose that the statement of $c$ at
+$\mathit{yes}$ and the statement of $c$ at $\mathit{no}$ are the halt statement. Rename the labels
+of $c$ by sending $\mathit{yes}$ to the cleanup label with answer true, $\mathit{no}$ (when it
+differs from $\mathit{yes}$) to the cleanup label with answer false, and every other label $l$ to
+the host's copy of $l$, and embed the stacks of $c$ as the host's copies over the work alphabet
+of the dense-SAT verifier. Then the verifier host program built from $c_X$, $c_W$, $g_X$, $g_W$,
+$\mathit{start}$, $\mathit{yes}$ and $\mathit{no}$ embeds $c$: for every label $l$ of $c$, either
+the statement of $c$ at $l$ is the halt statement, or the host's statement at the renamed label
+of $l$ is the statement of $c$ at $l$ with stacks and labels translated. -/
 theorem embeds_vprog (hyes : c.prog yes = .halt) (hno : c.prog no = .halt) :
     Embeds (emb c Verifier.G) (φV c yes no) c.prog (vprog c cX cW gX gW start yes no) := by
   intro l
@@ -464,8 +639,19 @@ theorem embeds_vprog (hyes : c.prog yes = .halt) (hno : c.prog no = .halt) :
   rw [show φV c yes no l = .comp l by simp [φV, h1, h2]]
   rfl
 
-/-- **The verifier host's run** on `x # w`: it halts with `[f x w]` on the output stack and every
-other stack empty. -/
+/-- **The verifier host's run.** Let $c$ be a component machine with stacks $c_X \ne c_W$, maps
+$g_X$ and $g_W$ from bits to the alphabets of $c_X$ and $c_W$, and labels $\mathit{start}$,
+$\mathit{yes}$ and $\mathit{no}$ with $\mathit{yes} \ne \mathit{no}$, where the program halts at
+$\mathit{yes}$ and at $\mathit{no}$. Let $f$ assign a boolean to each pair of bit lists and let
+$p$ be a polynomial with natural number coefficients. Suppose that for all bit lists $x$ and $w$,
+the component started at $\mathit{start}$ with state false, the bits of $x$ mapped by $g_X$ on
+$c_X$, the bits of $w$ mapped by $g_W$ on $c_W$ and every other stack empty reaches the label
+$\mathit{yes}$ if $f(x, w)$ is true and $\mathit{no}$ otherwise within $p(|x| + |w|)$ steps. Then
+for all bit lists $x$ and $w$, with $n$ the length of the pair encoding of $(x, w)$, the verifier
+host program started at its first phase-0 label with state false, the pair encoding of $(x, w)$
+on the input stack and every other stack empty halts within $T(n)$ steps, where $T$ is the
+verifier host's step bound for $p$, with state false, the one-element list $[f(x, w)]$ on the
+output stack and every other stack empty. -/
 theorem vprog_run (f : List Bool → List Bool → Bool) (p : Polynomial ℕ) (hXW : cX ≠ cW)
     (hyn : yes ≠ no) (hyes : c.prog yes = .halt) (hno : c.prog no = .halt)
     (hrun : ∀ x w, ∃ v S', RunLe c.prog (p.eval (x.length + w.length))
@@ -539,9 +725,17 @@ theorem vprog_run (f : List Bool → List Bool → Bool) (p : Polynomial ℕ) (h
     (show 2 * x.length + 2 + 1 + (2 * w.length + 2) + 1 + n₁ ≤ 2 * N + 4 + p.eval N by omega)
   omega
 
-/-- **Verifier host.** A component that starts with `x` on `cX` and `w` on `cW` and stops at
-`yes` or `no` according to `f x w` within `p (|x| + |w|)` steps gives a polynomial-time `TM2`
-machine for `f` on the `x # w` input. -/
+/-- **Verifier host.** Let $c$ be a component machine with stacks $c_X \ne c_W$, maps $g_X$ and
+$g_W$ from bits to the alphabets of $c_X$ and $c_W$, and labels $\mathit{start}$, $\mathit{yes}$
+and $\mathit{no}$ with $\mathit{yes} \ne \mathit{no}$, where the program halts at $\mathit{yes}$
+and at $\mathit{no}$. Let $f$ assign a boolean to each pair of bit lists and let $p$ be a
+polynomial with natural number coefficients. Suppose that for all bit lists $x$ and $w$, the
+component started at $\mathit{start}$ with state false, the bits of $x$ mapped by $g_X$ on $c_X$,
+the bits of $w$ mapped by $g_W$ on $c_W$ and every other stack empty reaches the label
+$\mathit{yes}$ if $f(x, w)$ is true and $\mathit{no}$ otherwise within $p(|x| + |w|)$ steps. Then
+the verifier host machine computes $(x, w) \mapsto f(x, w)$ in polynomial time, with the verifier
+host's step bound for $p$ as time bound: on the pair encoding of $(x, w)$, over the pair alphabet,
+it outputs the one-element bit list $[f(x, w)]$. -/
 noncomputable def verifier (f : List Bool → List Bool → Bool) (p : Polynomial ℕ) (hXW : cX ≠ cW)
     (hyn : yes ≠ no) (hyes : c.prog yes = .halt) (hno : c.prog no = .halt)
     (hrun : ∀ x w, ∃ v S', RunLe c.prog (p.eval (x.length + w.length))
@@ -560,8 +754,17 @@ noncomputable def verifier (f : List Bool → List Bool → Bool) (p : Polynomia
     erw [List.map_id, List.map_id, initList_eq, Option.map_some, haltList_eq]
     exact (Classical.choose_spec h).2
 
-/-- **Verifier host, canonical form**: `fun q => f q.1 q.2` is polynomial-time (`IsPolyTime`) as
-soon as some component decides it within a polynomial number of steps. -/
+/-- **Verifier host, canonical form.** Let $c$ be a component machine with distinct stacks $c_X$
+and $c_W$ and labels $\mathit{start}$, $\mathit{yes}$ and $\mathit{no}$, where
+$\mathit{yes} \ne \mathit{no}$ and the statements at $\mathit{yes}$ and $\mathit{no}$ are the
+halting statement. Let $g_X$ and $g_W$ map bits to symbols of $c_X$ and $c_W$, let $f$ assign a
+boolean $f(x, w)$ to all bit lists $x$ and $w$, and let $p$ be a polynomial with coefficients in
+$\mathbb{N}$. Suppose that for all bit lists $x$ and $w$, the component started at
+$\mathit{start}$ with internal state false, with $g_X$ applied to each bit of $x$ on $c_X$, $g_W$
+applied to each bit of $w$ on $c_W$ and every other stack empty, reaches in at most
+$p(|x| + |w|)$ steps the label $\mathit{yes}$ if $f(x, w)$ is true and the label $\mathit{no}$ if
+it is false. Then the map $(x, w) \mapsto f(x, w)$ on pairs of bit lists is polynomial-time
+computable for the canonical bitstring encodings. -/
 theorem isPolyTime_verifier (f : List Bool → List Bool → Bool) (p : Polynomial ℕ)
     (hXW : cX ≠ cW) (hyn : yes ≠ no) (hyes : c.prog yes = .halt) (hno : c.prog no = .halt)
     (hrun : ∀ x w, ∃ v S', RunLe c.prog (p.eval (x.length + w.length))
