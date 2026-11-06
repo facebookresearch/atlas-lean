@@ -1657,23 +1657,22 @@ private lemma nos_inertia_congruent {k K : Type*} [Field k] [Field K] [Algebra k
   · rw [← hb]
     exact A.mem_nonunits_iff.mp (A.coe_mem_nonunits_iff.mpr hmax)
 
-/-- The easy direction of the **Néron–Ogg–Shafarevich criterion**: if `E`
-over `Frac R` has good reduction at the discrete valuation ring `R`, then every
-element of the inertia subgroup fixes every `n`-torsion point of `E` over the
-separable closure, where `n` is nonzero in the residue field.
-
-Note: upstream states torsion membership via `AddSubgroup.torsionBy`, which is
-absent from Mathlib; here it is unfolded to the membership condition
-`(n : ℤ) • P = 0`, which is definitionally the same condition.
-
-Source: J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed.,
-GTM 106, Springer, Theorem VII.7.1.
+/-- **Néron–Ogg–Shafarevich criterion, easy direction.** Let $R$ be a discrete valuation ring
+with fraction field $k$, and let $E$ be an elliptic curve over $k$ given by a Weierstrass
+equation with good reduction at $R$. Let $n$ be a natural number whose image in the residue
+field of $R$ is nonzero, let $k^{\mathrm{sep}}$ be a separable closure of $k$, and let
+$\mathcal{O}$ be a valuation subring of $k^{\mathrm{sep}}$ whose intersection with $k$ is $R$.
+Then every element $\sigma$ of the inertia subgroup of $\mathcal{O}$ in
+$\mathrm{Gal}(k^{\mathrm{sep}}/k)$ fixes every point $P \in E(k^{\mathrm{sep}})$ with $nP = 0$.
 
 Proves `Wanted` entry `good_reduction_torsion_unramified`.
 
-Proof: We use Silverman's elementary valuation filtration at the origin in `(z, w)` coordinates,
+Proof: We use Silverman's elementary valuation filtration at the origin in $(z, w)$ coordinates,
 together with reduction to the nonsingular residue curve; see *The Arithmetic of Elliptic Curves*,
 IV.1, VII.3, and VII.7.
+
+Source: J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed.,
+GTM 106, Springer, Theorem VII.7.1.
 -/
 theorem good_reduction_torsion_unramified (R : Type*)
     [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
