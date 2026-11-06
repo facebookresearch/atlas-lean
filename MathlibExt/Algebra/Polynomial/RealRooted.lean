@@ -17,12 +17,15 @@ import Mathlib.Analysis.Complex.Order
 open scoped ComplexOrder
 
 namespace Polynomial
-/-- A complex polynomial is real-rooted if every member of its root multiset is real. -/
+/-- **Real-rooted polynomials.** A complex polynomial $p$ is real-rooted if every element $z$
+of its multiset of roots is real, that is, $\operatorname{Im} z = 0$. -/
 public def IsRealRooted (p : Polynomial ℂ) : Prop :=
   ∀ z ∈ p.roots, z.im = 0
 
-/-- A conjugation-invariant polynomial whose roots lie in the closed lower half-plane is
-real-rooted. -/
+/-- **Conjugation-invariant polynomials with roots in the closed lower half-plane are real-rooted.**
+Let $p$ be a nonzero complex polynomial that is unchanged when complex conjugation is applied to
+each of its coefficients. If every root $z$ of $p$ satisfies $\operatorname{Im} z \le 0$, then
+$p$ is real-rooted. -/
 public theorem isRealRooted_of_map_star_eq_self_of_roots_im_nonpos
     (p : Polynomial ℂ) (hp0 : p ≠ 0)
     (hreal : Polynomial.map (starRingEnd ℂ) p = p)
@@ -40,13 +43,18 @@ public theorem isRealRooted_of_map_star_eq_self_of_roots_im_nonpos
   rw [hstarim] at hconjle
   linarith
 
-/-- The largest real part of a root, with value zero for a polynomial without roots. -/
+/-- **Largest real part of a root.** For a complex polynomial $p$, let $\rho(p)$ be the largest
+real part $\operatorname{Re} z$ of an element $z$ of the multiset of roots of $p$, with
+$\rho(p) = 0$ when that multiset is empty (as it is for nonzero constants and for $p = 0$). -/
 public noncomputable def maxRealRoot (p : Polynomial ℂ) : ℝ :=
   if h : (p.roots.map Complex.re).toFinset.Nonempty then
     (p.roots.map Complex.re).toFinset.max' h
   else 0
 
-/-- The real part of every root is at most `maxRealRoot`. -/
+/-- **Real parts of roots are bounded by the largest one.** Let $p$ be a complex polynomial and
+let $\rho(p)$ be the largest real part of an element of its multiset of roots, or $0$ if that
+multiset is empty. Then every element $z$ of the multiset of roots of $p$ satisfies
+$\operatorname{Re} z \le \rho(p)$. -/
 public theorem root_re_le_maxRealRoot {p : Polynomial ℂ} {z : ℂ} (hz : z ∈ p.roots) :
     z.re ≤ p.maxRealRoot := by
   classical
@@ -58,7 +66,9 @@ public theorem root_re_le_maxRealRoot {p : Polynomial ℂ} {z : ℂ} (hz : z ∈
     apply h
     exact ⟨z.re, by simpa using Multiset.mem_map.mpr ⟨z, hz, rfl⟩⟩
 
-/-- A polynomial with a root has a root whose real part is `maxRealRoot`. -/
+/-- **The largest real part of a root is attained.** Let $p$ be a complex polynomial whose
+multiset of roots is nonempty, and let $\rho(p)$ be the largest real part of a root of $p$.
+Then some root $z$ of $p$ satisfies $\operatorname{Re} z = \rho(p)$. -/
 public theorem exists_root_re_eq_maxRealRoot {p : Polynomial ℂ} (hp : p.roots ≠ 0) :
     ∃ z ∈ p.roots, z.re = p.maxRealRoot := by
   classical
@@ -73,7 +83,8 @@ public theorem exists_root_re_eq_maxRealRoot {p : Polynomial ℂ} (hp : p.roots 
     exact ⟨z, hz, hzeq⟩
   · exact (h hnonempty).elim
 
-/-- A positive-degree complex polynomial has at least one root. -/
+/-- **Nonconstant complex polynomials have a root.** Every complex polynomial of positive
+degree has at least one root. -/
 public theorem roots_ne_zero_of_natDegree_pos {p : Polynomial ℂ} (hp : 0 < p.natDegree) :
     p.roots ≠ 0 := by
   intro hzero
@@ -81,7 +92,9 @@ public theorem roots_ne_zero_of_natDegree_pos {p : Polynomial ℂ} (hp : 0 < p.n
     (IsAlgClosed.roots_eq_zero_iff_natDegree_eq_zero (k := ℂ) (p := p)).mp hzero
   omega
 
-/-- For a real-rooted polynomial of positive degree, `maxRealRoot` is itself a root. -/
+/-- **For a real-rooted polynomial, the largest real part of a root is a root.** Let $p$ be a
+real-rooted complex polynomial of positive degree, and let $\rho(p)$ be the largest real part of
+a root of $p$. Then the real number $\rho(p)$, viewed as a complex number, is a root of $p$. -/
 public theorem coe_maxRealRoot_mem_roots {p : Polynomial ℂ} (hp : p.IsRealRooted)
     (hdegree : 0 < p.natDegree) : (p.maxRealRoot : ℂ) ∈ p.roots := by
   obtain ⟨z, hz, hreal⟩ :=
@@ -93,7 +106,10 @@ public theorem coe_maxRealRoot_mem_roots {p : Polynomial ℂ} (hp : p.IsRealRoot
     · simpa using him
   rwa [← hzeq]
 
-/-- A monic real-rooted polynomial is positive to the right of its largest root. -/
+/-- **Monic real-rooted polynomials have positive real part right of the largest root.**
+Let $p$ be a monic real-rooted complex polynomial, and let $\rho(p)$ be the largest real part of
+a root of $p$, or $0$ if $p$ has no roots. Then $\operatorname{Re} p(x) > 0$ for every real
+number $x > \rho(p)$. -/
 public theorem eval_re_pos_of_maxRealRoot_lt {p : Polynomial ℂ} (hmonic : p.Monic)
     (hrooted : p.IsRealRooted) {x : ℝ} (hx : p.maxRealRoot < x) :
     0 < (p.eval (x : ℂ)).re := by
@@ -108,7 +124,10 @@ public theorem eval_re_pos_of_maxRealRoot_lt {p : Polynomial ℂ} (hmonic : p.Mo
     · simpa using hrooted z hz
   exact (RCLike.pos_iff.mp hprod).1
 
-/-- A monic real-rooted polynomial is nonnegative at and to the right of its largest root. -/
+/-- **Monic real-rooted polynomials have nonnegative real part from the largest root on.**
+Let $p$ be a monic real-rooted complex polynomial, and let $\rho(p)$ be the largest real part of
+a root of $p$, or $0$ if $p$ has no roots. Then $\operatorname{Re} p(x) \ge 0$ for every real
+number $x \ge \rho(p)$. -/
 public theorem eval_re_nonneg_of_maxRealRoot_le {p : Polynomial ℂ} (hmonic : p.Monic)
     (hrooted : p.IsRealRooted) {x : ℝ} (hx : p.maxRealRoot ≤ x) :
     0 ≤ (p.eval (x : ℂ)).re := by

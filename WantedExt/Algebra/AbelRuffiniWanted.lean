@@ -49,15 +49,15 @@ namespace MathlibExt.Algebra.AbelRuffiniWanted
 open Polynomial
 
 /--
-**Abel–Ruffini theorem** (§57). For each positive `n`, every root in `ℂ` of
-every nonzero rational polynomial of degree `n` lies in `solvableByRad ℚ ℂ` iff
-`n ≤ 4`. The forward direction (universal radical solvability implies
-`n ≤ 4`) is the classical insolvability of the general quintic, padded to
-higher degrees; the reverse direction proves radical solvability for
-degrees at most four using the explicit low-degree (Cardano/Ferrari)
-formulas. This corrects the direction descriptions in the lean-eval
-source docstring, which assigned the two arguments to the opposite
-implications.
+**Abel–Ruffini theorem.** Let $n \ge 1$ be a natural number. Every complex root of every
+polynomial with rational coefficients of degree exactly $n$ is expressible by radicals over
+$\mathbb{Q}$ if and only if $n \le 4$. Here a complex number is expressible by radicals over
+$\mathbb{Q}$ when it lies in the smallest subfield $S$ of $\mathbb{C}$ such that $z \in S$
+whenever $z \in \mathbb{C}$ and $z^k \in S$ for some integer $k \ge 1$.
+
+The direction from radical solvability to $n \le 4$ is the classical insolvability of the
+general quintic, extended to higher degrees; the converse follows from the explicit formulas
+of Cardano and Ferrari for degrees at most four.
 
 Source: P. Ruffini (1799), N. H. Abel (1824), É. Galois (1832). Listed as §57
 in O. Knill, *Some Fundamental Theorems in Mathematics*

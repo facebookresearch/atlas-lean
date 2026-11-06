@@ -25,22 +25,30 @@ import Mathlib.Topology.MetricSpace.Sequences
 open scoped BigOperators ComplexOrder
 namespace MvPolynomial
 
-/-- A complex multivariate polynomial is stable if it has no zero when every variable lies in the
-open upper half-plane. -/
+/-- **Stable polynomials.** A complex multivariate polynomial is stable if it has no zero when
+every variable lies in the open upper half-plane. -/
 public def IsStable {σ : Type*} (p : MvPolynomial σ ℂ) : Prop :=
   ∀ z : σ → ℂ, (∀ i, 0 < (z i).im) → eval z p ≠ 0
 
-/-- A complex multivariate polynomial is real stable if it is stable and has real coefficients. -/
+/-- **Real stable polynomials.** A complex multivariate polynomial is real stable if it is stable
+and has real coefficients. -/
 public def IsRealStable {σ : Type*} (p : MvPolynomial σ ℂ) : Prop :=
   map (starRingEnd ℂ) p = p ∧ p.IsStable
 
-/-- Regard one variable of a multivariate polynomial as the variable of a univariate polynomial,
-and specialize all other variables. -/
+/-- **Univariate specialization.** Let $R$ be a commutative ring, let $p$ be a multivariate
+polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, and let $i \in \sigma$ and
+$x : \sigma \to R$. The univariate specialization of $p$ at $i$ and $x$ is the polynomial in
+$R[X]$ obtained from $p$ by substituting $X$ for $X_i$ and the constant $x_j$ for every $X_j$ with
+$j \ne i$; the value $x_i$ is not used. -/
 public noncomputable def univariateSpecialization {σ R : Type*} [CommRing R]
     (i : σ) [DecidableEq σ] (x : σ → R) (p : MvPolynomial σ R) : Polynomial R :=
   eval₂Hom Polynomial.C (fun j ↦ if j = i then Polynomial.X else Polynomial.C (x j)) p
 
-/-- Partial differentiation becomes ordinary differentiation after univariate specialization. -/
+/-- **Partial derivatives under univariate specialization.** Let $R$ be a commutative ring, let
+$p$ be a multivariate polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, let
+$i \in \sigma$ and $x : \sigma \to R$, and for a polynomial $q$ write $q_{i,x} \in R[X]$ for its
+univariate specialization that keeps $X_i$ as the variable $X$ and sets every other $X_j$ to
+$x_j$. Then $(\partial p / \partial X_i)_{i,x} = (p_{i,x})'$, the derivative of $p_{i,x}$. -/
 public theorem derivative_univariateSpecialization {σ R : Type*} [CommRing R]
     (i : σ) [DecidableEq σ] (x : σ → R) (p : MvPolynomial σ R) :
     univariateSpecialization i x (pderiv i p) =
@@ -64,7 +72,11 @@ public theorem derivative_univariateSpecialization {σ R : Type*} [CommRing R]
         simp only [hji, ↓reduceIte, Polynomial.derivative_C, mul_zero, add_zero]
         rw [hp]
 
-/-- Evaluating a univariate specialization amounts to updating the selected variable. -/
+/-- **Evaluating a univariate specialization.** Let $R$ be a commutative ring, let $p$ be a
+multivariate polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, and let
+$i \in \sigma$, $x : \sigma \to R$ and $t \in R$. Evaluating at $t$ the univariate specialization
+of $p$ that keeps $X_i$ as the variable and sets every other $X_j$ to $x_j$ gives $p(y)$, where
+$y_i = t$ and $y_j = x_j$ for $j \ne i$. -/
 public theorem eval_univariateSpecialization {σ R : Type*} [CommRing R]
     (i : σ) [DecidableEq σ] (x : σ → R) (t : R) (p : MvPolynomial σ R) :
     Polynomial.eval t (univariateSpecialization i x p) =
@@ -85,8 +97,11 @@ public theorem eval_univariateSpecialization {σ R : Type*} [CommRing R]
         simp
       · simp [hji, Function.update_of_ne]]
 
-/-- Complex conjugation commutes with univariate specialization at real values of the other
-variables. -/
+/-- **Univariate specialization at real values preserves real coefficients.** Let $p$ be a
+complex multivariate polynomial with real coefficients in variables $X_j$ indexed by
+$j \in \sigma$, let $i \in \sigma$, and let $a : \sigma \to \mathbb{C}$ with $a_j$ real for every
+$j \ne i$. Then the univariate specialization of $p$ that keeps $X_i$ as the variable and sets
+every other $X_j$ to $a_j$ has real coefficients. -/
 public theorem map_star_univariateSpecialization {σ : Type*} [DecidableEq σ]
     (i : σ) (a : σ → ℂ) (p : MvPolynomial σ ℂ)
     (hp : MvPolynomial.map (starRingEnd ℂ) p = p)

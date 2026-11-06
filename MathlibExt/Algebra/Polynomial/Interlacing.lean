@@ -301,19 +301,28 @@ private lemma ksMaxRealRoot_lt_of_segment
   rw [hevalZero] at hevalPos
   exact (lt_irrefl 0 hevalPos)
 
-/-- `a` interlaces the two largest roots of `p`: one copy of the largest root lies above `a`,
-and every remaining root lies below `a`. -/
+/-- **Upper interlacing point.** Let $p$ be a complex polynomial and let
+$\operatorname{maxroot}(p)$ be the largest real part of an element of the multiset of roots of
+$p$, with $\operatorname{maxroot}(p) = 0$ when that multiset is empty (as it is for nonzero
+constants and for $p = 0$). A real number $a$ is an upper interlacing point of $p$ if
+$a \le \operatorname{maxroot}(p)$ and, after removing one copy of $\operatorname{maxroot}(p)$
+from the multiset of roots of $p$ (if it occurs there), every remaining root has real part at
+most $a$. -/
 public def HasUpperInterlacingPoint (p : Polynomial ℂ) (a : ℝ) : Prop :=
   a ≤ p.maxRealRoot ∧
     ∀ z ∈ p.roots.erase (p.maxRealRoot : ℂ), z.re ≤ a
 
-/-- A finite polynomial family has a common upper interlacing point when one real number lies
-between the two largest roots of every member, with multiplicity. -/
+/-- **Common upper interlacing point.** A family $(P_i)_{i \in I}$ of complex polynomials,
+indexed by an arbitrary type $I$, has a common upper interlacing point if some real number $a$
+is an upper interlacing point of $P_i$ for every $i \in I$. -/
 public def HasCommonUpperInterlacing {ι : Type*} (P : ι → Polynomial ℂ) : Prop :=
   ∃ a : ℝ, ∀ i, (P i).HasUpperInterlacingPoint a
 
-/-- Below its largest root but above an upper interlacing point, a monic real-rooted polynomial
-is nonpositive. -/
+/-- **Nonpositivity between an upper interlacing point and the largest root.** Let $p$ be a
+monic complex polynomial of positive degree all of whose roots are real, let
+$\operatorname{maxroot}(p)$ be its largest root, and let $a$ be an upper interlacing point
+of $p$. Then for every real $x$ with $a \le x \le \operatorname{maxroot}(p)$, the real part
+of $p(x)$ is at most $0$. -/
 public theorem eval_re_nonpos_of_upperInterlacing
     {p : Polynomial ℂ} (hmonic : p.Monic) (hrooted : p.IsRealRooted)
     {a x : ℝ} (ha : p.HasUpperInterlacingPoint a) (hax : a ≤ x)
@@ -347,8 +356,13 @@ private lemma ksEval_re_weightedSum {ι : Type*} [Fintype ι]
   change ((w i : ℂ) * (P i).eval (x : ℂ)).re = _
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
 
-/-- In a finite family with a common upper interlacing point, one member has largest root no
-larger than the largest root of any real-rooted monic nonnegative weighted sum. -/
+/-- **Common upper interlacing bounds some member's largest root by a weighted sum's.** Let $I$
+be a nonempty finite set and, for each $i \in I$, let $P_i$ be a monic complex polynomial of
+positive degree all of whose roots are real, such that the family $(P_i)_{i \in I}$ has a
+common upper interlacing point. Let $w_i \ge 0$ be real weights such that
+$Q = \sum_{i \in I} w_i P_i$ is monic and all of its roots are real. Then there is $i \in I$
+with $\operatorname{maxroot}(P_i) \le \operatorname{maxroot}(Q)$, where
+$\operatorname{maxroot}(f)$ denotes the largest root of a real-rooted polynomial $f$. -/
 public theorem exists_maxRealRoot_le_weightedSum_of_commonUpperInterlacing
     {ι : Type*} [Fintype ι] [Nonempty ι] (w : ι → ℝ) (P : ι → Polynomial ℂ)
     (hw : ∀ i, 0 ≤ w i) (hmonic : ∀ i, (P i).Monic)
@@ -413,8 +427,13 @@ public theorem exists_maxRealRoot_le_weightedSum_of_commonUpperInterlacing
   have hmin := hi₀min i (Finset.mem_univ i)
   linarith
 
-/-- If the segment from a weighted sum to every member of a finite monic family stays
-real-rooted, some member has largest root no larger than that of the weighted sum. -/
+/-- **Some member's largest root is at most that of a weighted sum, via real-rooted segments.**
+Let $I$ be a nonempty finite set, let $n \ge 1$, and for each $i \in I$ let $P_i$ be a monic
+complex polynomial of degree $n$ and $w_i \ge 0$ a real weight. Suppose that
+$Q = \sum_{i \in I} w_i P_i$ is monic of degree $n$ and that, for every $i \in I$ and every
+$t \in [0, 1]$, all roots of $(1 - t) Q + t P_i$ are real. Then there is $i \in I$ with
+$\operatorname{maxroot}(P_i) \le \operatorname{maxroot}(Q)$, where $\operatorname{maxroot}(f)$
+denotes the largest real part of a root of $f$. -/
 public theorem exists_maxRealRoot_le_weightedSum_of_segment_realRooted
     {ι : Type*} [Fintype ι] (hne : Nonempty ι) (w : ι → ℝ) (P : ι → Polynomial ℂ)
     {n : ℕ} (hn : 0 < n) (hw : ∀ i, 0 ≤ w i)

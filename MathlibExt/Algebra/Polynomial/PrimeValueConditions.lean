@@ -35,11 +35,18 @@ unchanged.
 
 namespace Polynomial
 
-/-- A nonconstant irreducible integer polynomial with positive leading coefficient. -/
+/-- **Bunyakovsky condition.** An integer polynomial $f \in \mathbb{Z}[x]$ satisfies the
+Bunyakovsky condition when it has degree at least $1$, is irreducible in $\mathbb{Z}[x]$, and has
+positive leading coefficient.
+
+Unlike the hypothesis of Bunyakovsky's conjecture, this condition does not require the values of
+$f$ to have no common prime divisor. -/
 def BunyakovskyCondition (f : ℤ[X]) : Prop :=
   1 ≤ f.degree ∧ Irreducible f ∧ 0 < f.leadingCoeff
 
-/-- A finite family of integer polynomials has no fixed prime divisor. -/
+/-- **Schinzel condition.** A finite set $F$ of integer polynomials satisfies the Schinzel
+condition when it has no fixed prime divisor: for every prime $p$ there is a natural number $n$
+such that $p$ divides none of the values $f(n)$ for $f \in F$. -/
 def SchinzelCondition (fs : Finset ℤ[X]) : Prop :=
   ∀ p : ℕ, p.Prime → ∃ n : ℕ, ∀ f ∈ fs, ¬(p : ℤ) ∣ f.eval (n : ℤ)
 

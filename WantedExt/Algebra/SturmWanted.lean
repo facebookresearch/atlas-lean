@@ -62,18 +62,21 @@ for which the count is the difference `σ(a) − σ(b)`.
 open Polynomial
 open scoped Classical
 
-/-- Recursive helper for the Sturm chain. `sturmAux a b n` extends the chain
-starting from successive entries `a, b` with fuel `n`: at each step it
-appends `a` and continues with `b` and `-(a % b)`, stopping when the next
-entry is `0` (or the fuel runs out). -/
+/-- **Negated-remainder sequence with fuel.** For real polynomials $a$, $b$ and a natural
+number $n$, this is the list of polynomials defined recursively by: for $n = 0$ it is the
+one-entry list $(a)$; for fuel $n + 1$ it is $(a)$ if $b = 0$, and otherwise it is $a$
+followed by the list for the pair $b$, $-(a \bmod b)$ with fuel $n$, where $a \bmod b$ is the
+remainder of $a$ on division by $b$. -/
 noncomputable def sturmAux : ℝ[X] → ℝ[X] → ℕ → List ℝ[X]
   | a, _, 0       => [a]
   | a, b, (n + 1) =>
     if b = 0 then [a] else a :: sturmAux b (-(a % b)) n
 
-/-- The **Sturm chain** of a real polynomial `p`: `p₀ = p`, `p₁ = p'`, and
-each subsequent entry is `-(pₖ₋₁ mod pₖ)`, terminating at the last nonzero
-entry. -/
+/-- **Sturm chain.** The Sturm chain of a real polynomial $p$ is the list $p_0, p_1, \dots, p_m$
+with $p_0 = p$, $p_1 = p'$ and $p_{k+1} = -(p_{k-1} \bmod p_k)$, the negated remainder of
+$p_{k-1}$ on division by $p_k$, where the list stops at $p_m$ as soon as the next entry would
+be $0$; thus $p_m$ is its last entry and, for $p \ne 0$, every entry is nonzero. For $p = 0$
+the chain is the one-entry list $(0)$. -/
 noncomputable def sturmChain (p : ℝ[X]) : List ℝ[X] :=
   sturmAux p (derivative p) (p.natDegree + 2)
 
@@ -83,14 +86,21 @@ noncomputable def signChanges (xs : List ℝ) : ℕ :=
   let ys := xs.filter (· ≠ 0)
   ((ys.zip ys.tail).filter (fun q => q.1 * q.2 < 0)).length
 
-/-- The Sturm sign-variation function `σ_p(x)` of a real polynomial `p`. -/
+/-- **Sturm sign-variation function.** For a real polynomial $p$ with Sturm chain
+$p_0, p_1, \dots, p_m$ and a real number $x$, $\sigma_p(x)$ is the number of sign changes,
+ignoring zeros, in the sequence of values $p_0(x), p_1(x), \dots, p_m(x)$. -/
 noncomputable def sigma (p : ℝ[X]) (x : ℝ) : ℕ :=
   signChanges ((sturmChain p).map fun q => q.eval x)
 
 /- **Sturm's theorem.** For a squarefree real polynomial `p` and an interval
 `(a, b)` with `a < b` whose endpoints are not roots of `p`, the number of
 distinct roots of `p` in `(a, b)` equals `σ(a) − σ(b)`. -/
-/-- Source: J. C. F. Sturm (1829). Listed as §97 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Formalized in Isabelle/HOL by Manuel Eberl (AFP entry Sturm_Sequences). Via leanprover/lean-eval@38361be, problem `sturm`. -/
+/-- **Sturm's theorem.** Let $p$ be a squarefree real polynomial and let $a < b$ be real numbers
+with $p(a) \ne 0$ and $p(b) \ne 0$. Then the number of distinct real roots $x$ of $p$ with
+$a < x < b$ equals $\sigma_p(a) - \sigma_p(b)$, where $\sigma_p$ is the Sturm sign-variation
+function of $p$ and the subtraction is truncated subtraction of natural numbers.
+
+Source: J. C. F. Sturm (1829). Listed as §97 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Formalized in Isabelle/HOL by Manuel Eberl (AFP entry Sturm_Sequences). Via leanprover/lean-eval@38361be, problem `sturm`. -/
 public theorem_wanted sturm (p : ℝ[X]) (hp : Squarefree p) {a b : ℝ} (hab : a < b)
     (ha : p.eval a ≠ 0) (hb : p.eval b ≠ 0) :
     ((p.roots.toFinset).filter (fun x => a < x ∧ x < b)).card =
