@@ -50,7 +50,9 @@ namespace Entry2Corollary2HarmonicSeries
 def harmonic (n : ℕ) : ℚ :=
   (Finset.range n).sum fun k => (1 : ℚ) / ((k + 1 : ℕ) : ℚ)
 
-/-- The local `harmonic` agrees with Mathlib's `_root_.harmonic`. -/
+/-- **Agreement of two definitions of the harmonic numbers.** For every natural number $n$, the
+rational number $\sum_{k=0}^{n-1} \frac{1}{k+1}$ equals Mathlib's harmonic number
+$H_n = \sum_{k=0}^{n-1} (k+1)^{-1}$. -/
 theorem harmonic_eq_mathlib_harmonic (n : ℕ) :
     harmonic n = _root_.harmonic n := by
   unfold harmonic _root_.harmonic
@@ -461,9 +463,11 @@ private theorem corollary2_core_aux (x : ℂ) :
   rw [← hHtransfer]
   exact hteq
 
-/-- Canonical version of
-`ramanujan_part1_ch3_entry2_corollary2_harmonic_series` stated with
-Mathlib's `_root_.harmonic`, for direct use with the standard harmonic API. -/
+/-- **Ramanujan's series for the harmonic numbers, with Mathlib's harmonic numbers.** Let
+$H_k = \sum_{i=0}^{k-1} (i+1)^{-1}$ be Mathlib's $k$-th harmonic number. For every complex number
+$x$, the series $\sum_{k \ge 1} \frac{H_k x^k}{k!}$ and
+$\sum_{k \ge 1} \frac{(-1)^{k-1} x^k}{k!\, k}$ converge absolutely, and
+$\sum_{k=1}^{\infty} \frac{H_k x^k}{k!} = e^x \sum_{k=1}^{\infty} \frac{(-1)^{k-1} x^k}{k!\, k}$. -/
 theorem ramanujan_part1_ch3_entry2_corollary2_harmonic_series_mathlib (x : ℂ) :
     Summable (fun j : ℕ => (_root_.harmonic (j + 1) : ℂ) * x ^ (j + 1) /
         (Nat.factorial (j + 1) : ℂ)) ∧
@@ -476,7 +480,13 @@ theorem ramanujan_part1_ch3_entry2_corollary2_harmonic_series_mathlib (x : ℂ) 
                   ((j + 1 : ℕ) : ℂ)))) :=
   corollary2_core_aux x
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.3) and
+/-- **Ramanujan's series for the harmonic numbers (Chapter 3, Entry 2, Corollary 2).** Let
+$H_k = \sum_{i=1}^{k} \frac{1}{i}$ be the $k$-th harmonic number. For every complex number $x$, the
+series $\sum_{k \ge 1} \frac{H_k x^k}{k!}$ and $\sum_{k \ge 1} \frac{(-1)^{k-1} x^k}{k!\, k}$
+converge absolutely, and $\sum_{k=1}^{\infty} \frac{H_k x^k}{k!} =
+e^x \sum_{k=1}^{\infty} \frac{(-1)^{k-1} x^k}{k!\, k}$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.3) and
     Corollary 2, printed pp. 46--47 / PDF pp. 56--57.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry2_corollary2_harmonic_series`.

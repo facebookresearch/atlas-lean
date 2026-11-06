@@ -47,8 +47,9 @@ private lemma mul_top_pow_lt_start_pow_of_two_mul_top_le_three_mul_start
       _ = 2 ^ e * k ^ n := by rw [Nat.sub_add_cancel he]
   exact Nat.lt_of_mul_lt_mul_left (hscaled_le.trans_lt hscaled_lt)
 
-/-- The small residual range `7 ≤ n < 38` satisfies the prime-counting conditional
-estimate once `100 ≤ k`. -/
+/-- **Tiny-range prime-counting bound.** Let $n$ and $k$ be natural numbers with $7 \le n < 38$
+and $k \ge 100$, and let $\pi(n)$ be the number of primes $p \le n$. Then
+$n! \cdot (k + n - 1)^{\pi(n)} < k^{n}$. -/
 lemma second_residual_tiny_primeCounting_lt_start_pow {n k : ℕ}
     (hn7 : 7 ≤ n) (hnlt38 : n < 38) (hk100 : 100 ≤ k) :
     Nat.factorial n * (k + n - 1) ^ Nat.primeCounting n < k ^ n := by

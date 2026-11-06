@@ -72,15 +72,20 @@ namespace Modulus
 variable {K : Type*} [Field K] [NumberField K]
 variable (m : Modulus K)
 
-/-- A number-field extension `L / K` is unramified outside `m` when every finite
-prime of `K` outside the finite support of `m` is unramified in `𝓞 L`, in the
-sense of Mathlib's `Algebra.IsUnramifiedIn`. -/
+/-- **Extensions unramified outside a modulus.** Let $m$ be a modulus of a number field $K$.
+An extension of number fields $L / K$ is unramified outside $m$ when every finite prime
+$\mathfrak p$ of $K$ not dividing the finite part of $m$ is unramified in $\mathcal O_L$,
+that is, every prime of $\mathcal O_L$ lying over $\mathfrak p$ is unramified over
+$\mathcal O_K$. -/
 def IsUnramifiedOutside (L : Type*) [Field L] [NumberField L] [Algebra K L] :
     Prop :=
   ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 K), ¬ m.finiteSupported v →
     Algebra.IsUnramifiedIn (𝓞 L) v.asIdeal
 
-/-- Elimination of `IsUnramifiedOutside` at a prime coprime to `m`. -/
+/-- **Unramified outside a modulus implies unramified at coprime primes.** Let $m$ be a
+modulus of a number field $K$ and let $L / K$ be an extension of number fields that is
+unramified outside $m$. Then every finite prime $\mathfrak p$ of $K$ not dividing the finite
+part of $m$ is unramified in $\mathcal O_L$. -/
 theorem IsUnramifiedOutside.at_coprimePrime {L : Type*} [Field L] [NumberField L]
     [Algebra K L] (h : m.IsUnramifiedOutside L) (p : m.CoprimePrimes) :
     Algebra.IsUnramifiedIn (𝓞 L) p.val.asIdeal :=
@@ -111,22 +116,29 @@ section Frobenius
 
 variable {L : Type*} [Field L] [NumberField L] [Algebra K L] [IsGalois K L]
 
-/-- Chosen Frobenius at a privately chosen unramified prime above `p`: the
-arithmetic Frobenius of `Gal (L / K)` acting on `𝓞 L` at the privately chosen
-prime above `p`. Takes the unramifiedness-outside-`m` witness so that the
-value is the chosen Frobenius at an unramified prime, not an arbitrary lift
-modulo inertia. Equality across different primes is deferred to the abelian
-choice-independence stage. -/
+/-- **Chosen Frobenius element at a coprime prime.** Let $m$ be a modulus of a number field
+$K$, let $L / K$ be a Galois extension of number fields that is unramified outside $m$, and
+let $\mathfrak p$ be a finite prime of $K$ not dividing the finite part of $m$. Fix a prime
+$\mathfrak P$ of $\mathcal O_L$ lying over $\mathfrak p$. The chosen Frobenius element at
+$\mathfrak p$ is a fixed element $\sigma \in \mathrm{Gal}(L/K)$ that is an arithmetic
+Frobenius at $\mathfrak P$, that is, $\sigma(x) \equiv x^q \pmod{\mathfrak P}$ for all
+$x \in \mathcal O_L$, where $q$ is the number of elements of $\mathcal O_K / \mathfrak p$.
+
+The value may depend on the choice of $\mathfrak P$. -/
 noncomputable def frobeniusAtCoprimePrime (_h : m.IsUnramifiedOutside L)
     (p : m.CoprimePrimes) : (L ≃ₐ[K] L) :=
   haveI := (m.chosenPrime (L := L) p).property.1
   haveI := m.chosenFinite (L := L) p
   arithFrobAt (𝓞 K) (L ≃ₐ[K] L) (m.chosenPrime (L := L) p).1
 
-/-- Public specification of the Frobenius value: it is an arithmetic Frobenius
-at a prime above `p` with finite residue field, and that prime is unramified
-(proved from the `IsUnramifiedOutside` witness, which appears materially in the
-`Algebra.IsUnramifiedAt` conjunct). -/
+/-- **The chosen Frobenius is an arithmetic Frobenius at an unramified prime.** Let $m$ be
+a modulus of a number field $K$, let $L / K$ be a Galois extension of number fields that is
+unramified outside $m$, and let $\mathfrak p$ be a finite prime of $K$ not dividing the
+finite part of $m$, with chosen Frobenius element $\sigma \in \mathrm{Gal}(L/K)$. Then there
+is a prime $\mathfrak P$ of $\mathcal O_L$ lying over $\mathfrak p$ such that
+$\mathcal O_L / \mathfrak P$ is finite, $\mathfrak P$ is unramified over $\mathcal O_K$, and
+$\sigma(x) \equiv x^q \pmod{\mathfrak P}$ for all $x \in \mathcal O_L$, where $q$ is the
+number of elements of $\mathcal O_K / \mathfrak p$. -/
 theorem frobeniusAtCoprimePrime_spec (h : m.IsUnramifiedOutside L)
     (p : m.CoprimePrimes) :
     ∃ Q : Ideal.primesOver p.val.asIdeal (𝓞 L),
@@ -140,13 +152,20 @@ theorem frobeniusAtCoprimePrime_spec (h : m.IsUnramifiedOutside L)
   unfold frobeniusAtCoprimePrime
   exact IsArithFrobAt.arithFrobAt _ _ _
 
-/-- Free group on the coprime primes mapping to the Galois group via the
-unramified Frobenius values. -/
+/-- **Frobenius homomorphism on the free group of coprime primes.** Let $m$ be a modulus
+of a number field $K$ and let $L / K$ be a Galois extension of number fields that is
+unramified outside $m$. The Frobenius homomorphism is the group homomorphism from the free
+group on the finite primes of $K$ not dividing the finite part of $m$ to $\mathrm{Gal}(L/K)$
+that sends each such prime $\mathfrak p$ to the chosen Frobenius element at $\mathfrak p$. -/
 noncomputable def freeGroupToGal (h : m.IsUnramifiedOutside L) :
     FreeGroup m.CoprimePrimes →* (L ≃ₐ[K] L) :=
   FreeGroup.lift (fun p => m.frobeniusAtCoprimePrime (L := L) h p)
 
-/-- Generator computation for `freeGroupToGal`. -/
+/-- **The Frobenius homomorphism on generators.** Let $m$ be a modulus of a number field
+$K$ and let $L / K$ be a Galois extension of number fields that is unramified outside $m$.
+For every finite prime $\mathfrak p$ of $K$ not dividing the finite part of $m$, the
+Frobenius homomorphism from the free group on these primes to $\mathrm{Gal}(L/K)$ sends the
+generator $\mathfrak p$ to the chosen Frobenius element at $\mathfrak p$. -/
 @[simp]
 theorem freeGroupToGal_of (h : m.IsUnramifiedOutside L) (p : m.CoprimePrimes) :
     m.freeGroupToGal (L := L) h (FreeGroup.of p) =

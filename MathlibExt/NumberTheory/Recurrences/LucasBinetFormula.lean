@@ -26,9 +26,17 @@ private theorem lucas_binet_aux_mul_pow_pred {K : Type*} [Field K] (alpha : K) (
   | zero => simp
   | succ m => rw [Nat.add_sub_cancel]; ring
 
-/-- Binet formulas for the Lucas sequences `U(P, Q)` and `V(P, Q)` over an arbitrary field,
-e.g. `ZMod p`; see `lucas_binet_formulas`. In positive characteristic the coefficient `n` of the
-double-root formula is read modulo the characteristic. -/
+/-- **Binet formulas for Lucas sequences over any field.** Let $P$ and $Q$ be integers with
+$Q \ne 0$, let $U_n = U_n(P, Q)$ and $V_n = V_n(P, Q)$ be the associated Lucas sequences, and let
+$\alpha$ and $\beta$ be elements of a field $K$ with $\alpha + \beta = P$ and $\alpha \beta = Q$
+in $K$. If $\alpha \ne \beta$, then for every natural number $n$,
+$U_n = (\alpha^n - \beta^n) / (\alpha - \beta)$ and $V_n = \alpha^n + \beta^n$ in $K$. If
+$\beta = \alpha$, then for every natural number $n$, $U_n = n \alpha^{n-1}$ and $V_n = 2 \alpha^n$
+in $K$, where $\alpha^{n-1}$ is read as $1$ when $n = 0$. Here the integers $U_n$, $V_n$, $P$, $Q$
+and $n$ are mapped into $K$.
+
+No assumption on the characteristic of $K$ is made; for example $K$ may be $\mathbb{Z}/p\mathbb{Z}$
+for a prime $p$, where the coefficient $n$ of the double-root formula is read modulo $p$. -/
 theorem lucas_binet_formulas_of_field
     {K : Type*} [Field K]
     (params : LucasSequenceParams) (alpha beta : K)
@@ -109,18 +117,20 @@ theorem lucas_binet_formulas_of_field
       · rw [hV, ihV1, ihV0]
         ring
 
-/-- Binet formulas for the Lucas sequences `U(P, Q)` and `V(P, Q)`.
+/-- **Binet formulas for Lucas sequences.** Let $P$ and $Q$ be integers with $Q \ne 0$, let
+$U_n = U_n(P, Q)$ and $V_n = V_n(P, Q)$ be the associated Lucas sequences, and let $\alpha$ and
+$\beta$ be elements of a field $K$ of characteristic zero with $\alpha + \beta = P$ and
+$\alpha \beta = Q$ in $K$. If $\alpha \ne \beta$, then for every natural number $n$,
+$U_n = (\alpha^n - \beta^n) / (\alpha - \beta)$ and $V_n = \alpha^n + \beta^n$ in $K$. If
+$\beta = \alpha$, then for every natural number $n$, $U_n = n \alpha^{n-1}$ and $V_n = 2 \alpha^n$
+in $K$, where $\alpha^{n-1}$ is read as $1$ when $n = 0$. Here the integers $U_n$, $V_n$, $P$, $Q$
+and $n$ are mapped into $K$.
 
-Distinct-root case (`alpha ≠ beta`): with `alpha + beta = P` and
-`alpha * beta = Q`, one has `Uₙ = (alpha ^ n - beta ^ n) / (alpha - beta)`
-and `Vₙ = alpha ^ n + beta ^ n` for all `n`.
+In the double-root case the hypotheses give $P = 2 \alpha$ and $Q = \alpha^2$.
 
-Double-root case (`beta = alpha`): then `P = 2 * alpha` and `Q = alpha ^ 2`,
-and the formulas degenerate to `Uₙ = n * alpha ^ (n - 1)` and
-`Vₙ = 2 * alpha ^ n` for all `n`. The natural subtraction in `n - 1` is
-harmless at `n = 0` because the coefficient `(n : K)` is zero there.
+Proves `Wanted` entry `lucas_binet_formulas`.
 
-Provenance: Christian Ballot, "A Further Generalization of a Congruence of
+Source: Christian Ballot, "A Further Generalization of a Congruence of
 Wolstenholme", Journal of Integer Sequences 15 (2012), Article 12.8.6,
 sequence definitions and formulas at lines 274–289,
 https://cs.uwaterloo.ca/journals/JIS/VOL15/Ballot/ballot4.tex
@@ -130,8 +140,6 @@ normalized lines 274–289 SHA-256
 `a1f6755e5072c434c537d1e8c874715fad642cdc2f3ecae191f676022d222a5e`;
 normalized formula lines 283–289 SHA-256
 `955c225b2d2be3f81e25044e2179816a66f1923c22b4b40bf21c9cdef276e0c9`.
-
-Proves `Wanted` entry `lucas_binet_formulas`.
 -/
 theorem lucas_binet_formulas
     {K : Type*} [Field K] [CharZero K]

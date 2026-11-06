@@ -58,16 +58,17 @@ namespace Entry9Odd
 open Entry9IiGeneralizedbellgeneratingDefining (generalizedBellGenerating
   ramanujan_part1_ch3_entry9_ii_generalizedbellgenerating_defining)
 
-/-- Ramanujan's Entry 9(i) product series `P(a, b, x; z)`: the `j`-th summand is
-`(-b)^j * x^(j+1)` divided by `∏ r ∈ Finset.range (j + 1), (z + a + b * (r + 1))`.
+/-- **Ramanujan's product series.** For complex numbers $a$, $b$, $x$, $z$, Ramanujan's product
+series of Entry 9(i) is
+$$P(a, b, x; z) = \sum_{j=0}^{\infty} \frac{(-b)^j x^{j+1}}{\prod_{r=0}^{j} (z + a + b(r + 1))}.$$
 
-This is a totalized extension of the source expression: Lean's division sends `c / 0` to `0`,
-and `∑'` of a non-summable family to `0`. Hence at a pole of the source expression -- for
-example `a = 0`, `b = 1`, `x = 1`, `z = -1`, where every product contains the vanishing
-factor `z + a + b * (0 + 1) = 0` -- every quotient, and so `entry9_P` itself, evaluates to
-`0`, whereas the source expression has a singularity there. Off the poles, with
-`w = (z + a) / b` in the sector `|arg w| ≤ π - ε` and `‖w‖ > 0`, `entry9_P_closed` identifies
-`entry9_P` with the source's closed form. -/
+The definition is totalized: a quotient with vanishing denominator is taken to be $0$, and the sum
+of a non-summable series is taken to be $0$. Hence at a pole of the source expression, for example
+$a = 0$, $b = 1$, $x = 1$, $z = -1$, where every product contains the vanishing factor
+$z + a + b = 0$, every term and so $P$ itself equals $0$, whereas the source expression has a
+singularity there. Off the poles, when $b \neq 0$ and $w = (z + a)/b$ is nonzero and satisfies
+$|\arg w| \le \pi - \varepsilon$ for some $0 < \varepsilon < \pi$, the closed form of Ramanujan's
+product series identifies $P$ with the source's closed form. -/
 noncomputable def entry9_P (a b x : ℂ) (z : ℂ) : ℂ :=
   ∑' (j : ℕ), ((-b) ^ j * x ^ (j + 1) / ∏ r ∈ Finset.range (j + 1), (z + a + b * ((r : ℂ) + 1)))
 
@@ -266,12 +267,11 @@ private lemma partial_fraction : ∀ (N : ℕ) (w : ℂ), (∀ r : ℕ, w + ((r 
     rw [hsplit, ih w hw, ih (w + 1) hw1]
     exact key
 
-/-- Closed form of `entry9_P` off the poles: with `w = (z + a) / b` in the sector
-`|arg w| ≤ π - ε`, `‖w‖ > 0`, and no vanishing factor `w + (r + 1)`, the defining product
-series equals `Complex.exp (-x)` times the factorial-weighted series
-`∑' m, x^(m+1) / (m! * (z + (a + b * (m + 1))))`. The two exponential series multiplied in
-the proof are absolutely summable, so this is the source's value of the Entry 9(i)
-expression on this domain. -/
+/-- **Closed form of Ramanujan's product series off the poles.** Let $a, b, x, z \in \mathbb{C}$
+with $b \neq 0$, let $0 < \varepsilon < \pi$, and put $w = (z + a)/b$. Suppose that $w \neq 0$,
+that $-\pi + \varepsilon \le \arg w \le \pi - \varepsilon$, and that $w + r + 1 \neq 0$ for every
+natural number $r$. Then Ramanujan's product series $P$ satisfies
+$$P(a, b, x; z) = e^{-x} \sum_{m=0}^{\infty} \frac{x^{m+1}}{m!\,(z + a + b(m + 1))}.$$ -/
 theorem entry9_P_closed (a b x z w : ℂ) (ε : ℝ)
     (hεpos : 0 < ε) (hεlt : ε < Real.pi)
     (hb : b ≠ 0)
@@ -806,10 +806,20 @@ private lemma final_bound (a b x z w : ℂ) (ε : ℝ) (n : ℕ)
   rw [hdiff_eq, hgnorm]
   exact hfin
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 9(i), definitions printed
-    p. 53 / PDF p. 63 and result printed p. 54 / PDF p. 64.
+/-- **Asymptotic expansion of Ramanujan's product series.** Let $a, b, x \in \mathbb{C}$ with
+$b \neq 0$, let $0 < \varepsilon < \pi$, and let $n$ be a natural number. Write $F(a, b, x; k)$
+for Ramanujan's generalized Bell function and $P(a, b, x; z)$ for Ramanujan's product series.
+Then
+$$P(a, b, x; z) = \sum_{k=0}^{n} \frac{(-1)^k F(a, b, x; k)}{z^{k+1}} + O(|z|^{-n-2})$$
+as $|(z + a)/b| \to \infty$ with $-\pi + \varepsilon \le \arg((z + a)/b) \le \pi - \varepsilon$:
+there are real numbers $C$ and $R$ such that the difference of the two sides has absolute value
+at most $C / |z|^{n+2}$ for every complex $z$ with $|(z + a)/b| \ge R$ and
+$-\pi + \varepsilon \le \arg((z + a)/b) \le \pi - \varepsilon$.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry9_odd`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 9(i), definitions printed
+    p. 53 / PDF p. 63 and result printed p. 54 / PDF p. 64.
 -/
 theorem ramanujan_part1_ch3_entry9_odd (a b x : ℂ)
     (hb : b ≠ 0) (ε : ℝ) (hεpos : 0 < ε) (hεlt : ε < Real.pi) (n : ℕ) :

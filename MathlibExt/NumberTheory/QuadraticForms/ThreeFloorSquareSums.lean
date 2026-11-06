@@ -73,10 +73,13 @@ private theorem odd_sq_eight_mul_div_add_one {x : ℕ} (h : Odd x) :
   omega
 
 /--
-Every natural number is a sum of three values of the form `⌊n² / 8⌋`.
-Source: Bakir Farhi, "On the Representation of the Natural Numbers as the Sum of Three Terms of the Sequence floor(n^2/a)", Journal of Integer Sequences 16 (2013), Article 13.6.4, Theorem 1, lines 104-106, <https://cs.uwaterloo.ca/journals/JIS/VOL16/Farhi/farhi7.tex>.
+**Sums of three terms of the sequence ⌊n²/8⌋.** For every natural number $m$ there are natural
+numbers $a$, $b$, $c$ with
+$m = \lfloor a^2/8 \rfloor + \lfloor b^2/8 \rfloor + \lfloor c^2/8 \rfloor$.
 
 Proves `Wanted` entry `every_nat_eq_sum_three_sq_div_eight`.
+
+Source: Bakir Farhi, "On the Representation of the Natural Numbers as the Sum of Three Terms of the Sequence floor(n^2/a)", Journal of Integer Sequences 16 (2013), Article 13.6.4, Theorem 1, lines 104-106, <https://cs.uwaterloo.ca/journals/JIS/VOL16/Farhi/farhi7.tex>.
 -/
 public theorem every_nat_eq_sum_three_sq_div_eight (m : ℕ) :
     ∃ a b c : ℕ, m = a ^ 2 / 8 + b ^ 2 / 8 + c ^ 2 / 8 := by

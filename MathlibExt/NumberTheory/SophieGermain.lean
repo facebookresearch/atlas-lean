@@ -882,9 +882,11 @@ private theorem case_q_dvd_z (p x y z : ℕ)
     have hle : 2 * p + 1 ≤ p + 1 := Nat.le_of_dvd (by positivity) hdvd
     omega
 
-/-- Sophie Germain's theorem (Case 1 of Fermat's Last Theorem for Sophie Germain primes):
-source https://en.wikipedia.org/wiki/Sophie_Germain%27s_theorem, statement `sophie-s1`.
+/-- **Sophie Germain's theorem.** Let $p$ be an odd prime such that $2p + 1$ is also prime. If
+$x$, $y$, $z$ are pairwise coprime positive integers with $x^p + y^p = z^p$, then $p$ divides
+$xyz$.
 
+Source: https://en.wikipedia.org/wiki/Sophie_Germain%27s_theorem, statement `sophie-s1`.
 Proves `Wanted` entry `sophieGermain`.
 -/
 theorem sophieGermain (p x y z : ℕ) :

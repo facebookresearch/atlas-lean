@@ -25,7 +25,8 @@ namespace Zsqrtd.NegTwo
 
 open Zsqrtd
 
-/-- The units of `ℤ[√-2]` are exactly `1` and `-1`. -/
+/-- **Units of ℤ[√−2].** An element $x$ of $\mathbb{Z}[\sqrt{-2}]$ is a unit if and only if $x = 1$
+or $x = -1$. -/
 public theorem zsqrtd_neg_two_isUnit_iff (x : ℤ√(-2 : ℤ)) :
     IsUnit x ↔ x = 1 ∨ x = -1 := by
   rw [← Zsqrtd.norm_eq_one_iff]
@@ -53,20 +54,27 @@ public theorem zsqrtd_neg_two_isUnit_iff (x : ℤ√(-2 : ℤ)) :
       · exact Or.inr rfl
   · rintro (rfl | rfl) <;> decide
 
-/-- An element of `ℤ[√-2]` whose norm has prime `natAbs` is prime. -/
+/-- **Elements of ℤ[√−2] of prime norm are prime.** For $\pi = a + b\sqrt{-2}$ in
+$\mathbb{Z}[\sqrt{-2}]$ let $N(\pi) = a^2 + 2b^2$ be its norm. If $|N(\pi)|$ is a prime number, then
+$\pi$ is a prime element of $\mathbb{Z}[\sqrt{-2}]$. -/
 public theorem zsqrtd_neg_two_prime_of_natAbs_norm_prime {π : ℤ√(-2 : ℤ)}
     (h : (Zsqrtd.norm π).natAbs.Prime) : Prime π :=
   Zsqrtd.prime_of_natAbs_norm_prime h
 
-/-- `√-2` is prime in `ℤ[√-2]`, since its norm is `2`. -/
+/-- **√−2 is prime in ℤ[√−2].** The element $\sqrt{-2}$ is a prime element of
+$\mathbb{Z}[\sqrt{-2}]$.
+
+Its norm is $2$, a prime number. -/
 public theorem zsqrtd_neg_two_prime_sqrtd : Prime (⟨0, 1⟩ : ℤ√(-2 : ℤ)) :=
   zsqrtd_neg_two_prime_of_natAbs_norm_prime (by decide)
 
-/-- `2` factors in `ℤ[√-2]` as the negation of `(√-2)^2`. -/
+/-- **$2$ is minus the square of $\sqrt{-2}$.** In $\mathbb{Z}[\sqrt{-2}]$ one has
+$2 = -(\sqrt{-2})^2$. -/
 public theorem zsqrtd_neg_two_two_eq : (2 : ℤ√(-2 : ℤ)) = -⟨0, 1⟩ ^ 2 := by
   decide
 
-/-- `x² + 2y²` over `ZMod 8` is never `5` or `7`. -/
+/-- **x² + 2y² is never 5 or 7 modulo 8.** For all $x, y \in \mathbb{Z}/8\mathbb{Z}$,
+$x^2 + 2y^2 \ne 5$ and $x^2 + 2y^2 \ne 7$. -/
 public theorem zsqrtd_neg_two_mod8_obstruction :
     ∀ x y : ZMod 8, x ^ 2 + 2 * y ^ 2 ≠ 5 ∧ x ^ 2 + 2 * y ^ 2 ≠ 7 := by
   decide
@@ -119,7 +127,9 @@ private theorem one_lt_natAbs_norm {x : ℤ√(-2 : ℤ)} (h0 : x ≠ 0)
     exact h0 ((Zsqrtd.norm_eq_zero_iff (show (-2 : ℤ) < 0 by norm_num) x).mp hz)
   omega
 
-/-- A rational prime `≡ 5, 7 mod 8` stays prime in `ℤ[√-2]`. -/
+/-- **Primes congruent to 5 or 7 mod 8 are inert in ℤ[√−2].** If $p$ is a prime number with
+$p \equiv 5 \pmod 8$ or $p \equiv 7 \pmod 8$, then $p$ is a prime element of
+$\mathbb{Z}[\sqrt{-2}]$. -/
 public theorem zsqrtd_neg_two_inert {p : ℕ} [Fact p.Prime]
     (h : p % 8 = 5 ∨ p % 8 = 7) : Prime (p : ℤ√(-2 : ℤ)) := by
   apply UniqueFactorizationMonoid.irreducible_iff_prime.mp
@@ -163,7 +173,10 @@ public theorem zsqrtd_neg_two_inert {p : ℕ} [Fact p.Prime]
       rw [mul_one, hnorm, hk]
     exact Or.inr (Zsqrtd.norm_eq_one_iff.mp (mul_left_cancel₀ hA0 hcancel))
 
-/-- A rational prime `≡ 1, 3 mod 8` splits: some prime has norm `p`. -/
+/-- **Primes $p \equiv 1, 3 \pmod 8$ are norms of primes of $\mathbb{Z}[\sqrt{-2}]$.**
+Let $p$ be a prime number with $p \equiv 1 \pmod 8$ or $p \equiv 3 \pmod 8$. Then there is a
+prime element $\pi = a + b\sqrt{-2}$ of $\mathbb{Z}[\sqrt{-2}]$ whose norm $a^2 + 2b^2$ equals
+$p$. -/
 public theorem zsqrtd_neg_two_split {p : ℕ} [Fact p.Prime]
     (h : p % 8 = 1 ∨ p % 8 = 3) :
     ∃ π : ℤ√(-2 : ℤ), Zsqrtd.norm π = p ∧ Prime π := by
@@ -262,7 +275,11 @@ public theorem zsqrtd_neg_two_split {p : ℕ} [Fact p.Prime]
     have hB : (Zsqrtd.norm β).natAbs = 1 := mul_left_cancel₀ hA0 hcancel
     omega
 
-/-- The conjugate of a norm-`p` element is prime, `p = π * star π`, nonassociate. -/
+/-- **Conjugate factorization of an odd prime in $\mathbb{Z}[\sqrt{-2}]$.** Let $p$ be an odd
+prime number and let $\pi = a + b\sqrt{-2}$ be an element of $\mathbb{Z}[\sqrt{-2}]$ whose norm
+$a^2 + 2b^2$ equals $p$. Write $\bar\pi = a - b\sqrt{-2}$ for the conjugate of $\pi$. Then
+$p = \pi\bar\pi$, $\bar\pi$ is prime in $\mathbb{Z}[\sqrt{-2}]$, and $\bar\pi$ is not associated
+to $\pi$. -/
 public theorem zsqrtd_neg_two_split_conj {p : ℕ} [Fact p.Prime] {π : ℤ√(-2 : ℤ)}
     (hnorm : Zsqrtd.norm π = p) (hodd : p % 2 = 1) :
     (p : ℤ√(-2 : ℤ)) = π * star π ∧ Prime (star π) ∧ ¬ Associated (star π) π := by
@@ -330,27 +347,36 @@ public theorem zsqrtd_neg_two_split_conj {p : ℕ} [Fact p.Prime] {π : ℤ√(-
     have hbb : 2 * (b * b) = (p : ℤ) := by linear_combination hnorm'
     exact h2b b hbb
 
-/-- The two units of `ℤ[√-2]`, enumerated. -/
+/-- **Enumeration of the units of ℤ[√−2].** The map $\{0, 1\} \to \mathbb{Z}[\sqrt{-2}]$ sending
+$0$ to $1$ and $1$ to $-1$, which lists the two units of $\mathbb{Z}[\sqrt{-2}]$. -/
 public def unitVal : Fin 2 → ℤ√(-2 : ℤ) :=
   fun i => if i = 0 then 1 else -1
 
-/-- The enumeration of the units is injective. -/
+/-- **The enumeration of the units of ℤ[√−2] is injective.** Let $\varepsilon_0 = 1$ and
+$\varepsilon_1 = -1$ in $\mathbb{Z}[\sqrt{-2}]$. For $i, j \in \{0, 1\}$, if
+$\varepsilon_i = \varepsilon_j$ then $i = j$. -/
 public theorem unitVal_inj : Function.Injective unitVal := by
   intro i j h
   fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)
 
-/-- Every unit is enumerated. -/
+/-- **Every unit of ℤ[√−2] is enumerated.** Let $\varepsilon_0 = 1$ and $\varepsilon_1 = -1$ be the
+enumeration of the units of $\mathbb{Z}[\sqrt{-2}]$. Every unit $u$ of $\mathbb{Z}[\sqrt{-2}]$
+equals $\varepsilon_i$ for some $i \in \{0, 1\}$. -/
 public theorem unitVal_complete (u : ℤ√(-2 : ℤ)) (hu : IsUnit u) :
     ∃ i, unitVal i = u := by
   rcases (zsqrtd_neg_two_isUnit_iff u).mp hu with rfl | rfl
   · exact ⟨0, by decide⟩
   · exact ⟨1, by decide⟩
 
-/-- Inverses of the enumerated units (each is self-inverse). -/
+/-- **Inverses of the enumerated units of ℤ[√−2].** The map $\{0, 1\} \to \mathbb{Z}[\sqrt{-2}]$
+sending $0$ to $1$ and $1$ to $-1$. Since $1$ and $-1$ are their own inverses, its value at $i$ is
+the inverse of the $i$-th enumerated unit. -/
 public def unitValInv : Fin 2 → ℤ√(-2 : ℤ) :=
   fun i => if i = 0 then 1 else -1
 
-/-- `unitValInv i` is the inverse of `unitVal i`. -/
+/-- **Each enumerated unit of ℤ[√−2] times its listed inverse is one.** Let $\varepsilon_0 = 1$,
+$\varepsilon_1 = -1$ be the enumerated units of $\mathbb{Z}[\sqrt{-2}]$ and $\eta_0 = 1$,
+$\eta_1 = -1$ their listed inverses. Then $\varepsilon_i \eta_i = 1$ for each $i \in \{0, 1\}$. -/
 public theorem unitVal_mul_unitValInv (i : Fin 2) :
     unitVal i * unitValInv i = 1 := by
   fin_cases i <;> decide

@@ -14,8 +14,8 @@ public import Mathlib.Data.Nat.Prime.Basic
 
 namespace Nat
 
-/-- `SamePrimeSupport a b` states that `a` and `b` are divisible
-    by exactly the same prime numbers. -/
+/-- **Natural numbers with the same prime divisors.** Natural numbers $a$ and $b$ have the same
+prime support when every prime $p$ divides $a$ if and only if it divides $b$. -/
 def SamePrimeSupport (a b : ℕ) : Prop := ∀ p : ℕ, p.Prime → (p ∣ a ↔ p ∣ b)
 
 theorem samePrimeSupport_refl (a : ℕ) : SamePrimeSupport a a :=

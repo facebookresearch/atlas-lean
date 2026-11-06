@@ -26,9 +26,10 @@ the nonzero premise for the Dirichlet inverse. -/
 namespace MetaMathlibExt
 
 set_option backward.proofsInPublic true in
-/-- The Rearick logarithm of a real arithmetic function `f` with `0 < f 1`: it is `0` at `0`,
-`Real.log (f 1)` at `1`, and `∑ d ∣ n, f d * f⁻¹ (n / d) * Real.log d` at `n > 1`, where `f⁻¹` is
-the Dirichlet inverse of `f`. -/
+/-- **Rearick logarithm.** Let $f$ be a real-valued arithmetic function with $f(1) > 0$, and let
+$f^{-1}$ be its Dirichlet inverse. The Rearick logarithm of $f$ is the arithmetic function $L(f)$
+with $L(f)(0) = 0$, $L(f)(1) = \log f(1)$, and
+$L(f)(n) = \sum_{d \mid n} f(d) \, f^{-1}(n/d) \log d$ for $n > 1$. -/
 noncomputable def rearickLog (f : ArithmeticFunction ℝ) (hf : 0 < f 1) :
     ArithmeticFunction ℝ :=
   ⟨fun n =>
@@ -149,8 +150,10 @@ private theorem exists_coprime_mul (N : ℕ) (hN1 : 1 < N) (hpp : ¬ IsPrimePow 
       exact hpp ((isPrimePow_nat_iff N).mpr ⟨p, k, hp, hkpos, heq⟩)
   exact ⟨a, b, ha1, hb1, hcop, hab⟩
 
-/-- For `f 1 = 1`, the Rearick logarithm of `f` is the Dirichlet convolution of `f · log` with
-the Dirichlet inverse of `f`. -/
+/-- **The Rearick logarithm as a Dirichlet convolution.** Let $f$ be a real-valued arithmetic
+function with $f(1) = 1$, and let $f^{-1}$ be its Dirichlet inverse. Then the Rearick logarithm
+of $f$ is the Dirichlet convolution of the pointwise product $n \mapsto f(n) \log n$ with
+$f^{-1}$. -/
 theorem rearickLog_eq_pmul_log_mul_dirichletInverse (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
     (h1 : f 1 = 1) :
     rearickLog f hf =
@@ -562,6 +565,12 @@ private theorem reverse_mult_aux (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
           exact mul_right_cancel₀ hlogNe hE
 
 /--
+**Rearick's characterization of multiplicative functions.** Let $f$ be a real-valued arithmetic
+function with $f(1) > 0$, and let $L(f)$ be its Rearick logarithm. Then $f$ is multiplicative
+(that is, $f(1) = 1$ and $f(mn) = f(m) f(n)$ whenever $m$ and $n$ are coprime) if and only if
+$L(f)(m) = 0$ for every natural number $m$ that is not a prime power, including $m = 0$ and
+$m = 1$.
+
 Source: Rearick logarithm support characterization of multiplicative
 arithmetic functions, after Huilan Li and Trueman MacHenry,
 arXiv:1009.1892v1, <https://arxiv.org/abs/1009.1892>, lines 444-450

@@ -39,7 +39,8 @@ open scoped BigOperators
 
 open Finset Nat
 
-/-- The consecutive theorem for blocks of length two. -/
+/-- **Sylvester–Schur theorem for two consecutive integers.** For every natural number $k > 2$,
+one of the two integers $k$, $k + 1$ is divisible by a prime $p > 2$. -/
 theorem consecutive_two {k : ℕ} (hk : 2 < k) :
     ∃ i : ℕ, i < 2 ∧ ∃ p : ℕ, p.Prime ∧ 2 < p ∧ p ∣ k + i := by
   by_cases hk_even : 2 ∣ k
@@ -130,7 +131,8 @@ private lemma consecutive_three_witness {k : ℕ} (hk : 3 < k) :
   · exact ⟨1, k + 1, by norm_num, by omega, by simp, by omega, by omega⟩
   · exact ⟨0, k, by norm_num, by omega, by simp, by omega, by omega⟩
 
-/-- The consecutive theorem for blocks of length three. -/
+/-- **Sylvester–Schur theorem for three consecutive integers.** For every natural number
+$k > 3$, one of the three integers $k$, $k + 1$, $k + 2$ is divisible by a prime $p > 3$. -/
 theorem consecutive_three {k : ℕ} (hk : 3 < k) :
     ∃ i : ℕ, i < 3 ∧ ∃ p : ℕ, p.Prime ∧ 3 < p ∧ p ∣ k + i := by
   obtain ⟨i, m, hi, hm, hmdvd, h2, h3⟩ := consecutive_three_witness hk
@@ -138,7 +140,8 @@ theorem consecutive_three {k : ℕ} (hk : 3 < k) :
     exists_prime_gt_three_dvd_of_not_two_dvd_of_not_three_dvd hm h2 h3
   exact ⟨i, hi, p, hp, hp_gt, hp_dvd.trans hmdvd⟩
 
-/-- The consecutive theorem for blocks of length four. -/
+/-- **Four consecutive integers above four have a prime factor above four.** For every natural
+number $k > 4$, some prime $p > 4$ divides one of $k$, $k+1$, $k+2$, $k+3$. -/
 theorem consecutive_four {k : ℕ} (hk : 4 < k) :
     ∃ i : ℕ, i < 4 ∧ ∃ p : ℕ, p.Prime ∧ 4 < p ∧ p ∣ k + i := by
   obtain ⟨i, hi, p, hp, hp_gt_three, hp_dvd⟩ := consecutive_three (k := k) (by omega)
@@ -247,18 +250,23 @@ private lemma consecutive_five_finite_certificate {k : ℕ} (hk : 5 < k) :
       hm h2 h3 h5
   exact ⟨i, hi, p, hp, hp_gt, hp_dvd.trans hmdvd⟩
 
-/-- The consecutive theorem for blocks of length five. -/
+/-- **Five consecutive integers above five have a prime factor above five.** For every natural
+number $k > 5$, some prime $p > 5$ divides one of $k$, $k+1$, $k+2$, $k+3$, $k+4$. -/
 theorem consecutive_five {k : ℕ} (hk : 5 < k) :
     ∃ i : ℕ, i < 5 ∧ ∃ p : ℕ, p.Prime ∧ 5 < p ∧ p ∣ k + i :=
   consecutive_five_finite_certificate hk
 
-/-- The consecutive theorem for blocks of length six. -/
+/-- **Six consecutive integers above six have a prime factor above six.** For every natural
+number $k > 6$, some prime $p > 6$ divides one of $k$, $k+1$, $k+2$, $k+3$, $k+4$, $k+5$. -/
 theorem consecutive_six {k : ℕ} (hk : 6 < k) :
     ∃ i : ℕ, i < 6 ∧ ∃ p : ℕ, p.Prime ∧ 6 < p ∧ p ∣ k + i := by
   obtain ⟨i, hi, p, hp, hp_gt_five, hp_dvd⟩ := consecutive_five (k := k) (by omega)
   exact ⟨i, by omega, p, hp, six_lt_of_prime_of_five_lt hp hp_gt_five, hp_dvd⟩
 
-/-- Conditional consecutive form using the sharper `Nat.primeCounting n` exponent. -/
+/-- **Prime-counting criterion for a large prime in a consecutive block.** Let $1 \le n < k$ be
+natural numbers and let $\pi(n)$ be the number of primes at most $n$. If
+$n! \cdot (k+n-1)^{\pi(n)} < k^n$, then some prime $p > n$ divides one of the integers
+$k, k+1, \dots, k+n-1$. -/
 theorem consecutive_of_factorial_mul_top_pow_primeCounting_lt_start_pow {n k : ℕ}
     (hn : 1 ≤ n) (hk : n < k)
     (hbound : n ! * (k + n - 1) ^ Nat.primeCounting n < k ^ n) :
@@ -268,8 +276,12 @@ theorem consecutive_of_factorial_mul_top_pow_primeCounting_lt_start_pow {n k : �
     (by omega) (by omega)
   simpa [show k + n - 1 + 1 - n = k by omega] using hbound
 
-/-- Conditional consecutive form using the project prime-counting estimate
-`Nat.primeCounting n ≤ n / 2 + 1`. -/
+/-- **Half-exponent criterion for a large prime in a consecutive block.** Let $1 \le n < k$ be
+natural numbers. If $n! \cdot (k+n-1)^{\lfloor n/2 \rfloor + 1} < k^n$, then some prime $p > n$
+divides one of the integers $k, k+1, \dots, k+n-1$.
+
+The exponent comes from the bound $\pi(n) \le \lfloor n/2 \rfloor + 1$ on the prime-counting
+function $\pi$. -/
 theorem consecutive_of_factorial_mul_top_pow_half_add_one_lt_start_pow {n k : ℕ}
     (hn : 1 ≤ n) (hk : n < k)
     (hbound : n ! * (k + n - 1) ^ (n / 2 + 1) < k ^ n) :
@@ -308,7 +320,9 @@ private lemma consecutive_of_three_eighth_self_pow_large_start {n k : ℕ} (hn :
       congr 1
       omega
 
-/-- A simple sufficient condition for the pure-power large-start criterion. -/
+/-- **Quadratic starts give a large prime in a consecutive block.** Let $n \ge 38$ and $k > n^2$
+be natural numbers. Then some prime $p > n$ divides one of the integers
+$k, k+1, \dots, k+n-1$. -/
 theorem consecutive_of_quadratic_start {n k : ℕ} (hn : 38 ≤ n)
     (hkquad : n ^ 2 < k) :
     ∃ i < n, ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ k + i := by
@@ -348,8 +362,10 @@ private lemma consecutive_of_factorial_mul_top_pow_sub_one_lt_start_pow {n k : �
     (by omega) hn (by omega)
   simpa [show k + n - 1 + 1 - n = k by omega] using hbound
 
-/-- Conditional consecutive form using the split `sqrt/primorial` factorization estimate and
-the elementary lower bound `k ^ n / n! ≤ Nat.choose (k+n-1) n`. -/
+/-- **Square-root and primorial criterion for a large prime in a consecutive block.** Let
+$1 \le n < k$ be natural numbers, write $N = k + n - 1$, and let $P(n)$ denote the product of all
+primes at most $n$. If $n! \cdot N^{\lfloor \sqrt{N} \rfloor + 1} \cdot P(n) < k^n$, then some prime
+$p > n$ divides one of the integers $k, k+1, \dots, k+n-1$. -/
 theorem consecutive_of_factorial_mul_top_pow_sqrt_mul_primorial_lt_start_pow {n k : ℕ}
     (hn : 1 ≤ n) (hk : n < k)
     (hbound :
@@ -360,8 +376,11 @@ theorem consecutive_of_factorial_mul_top_pow_sqrt_mul_primorial_lt_start_pow {n 
     (by omega) (by omega)
   simpa [show k + n - 1 + 1 - n = k by omega] using hbound
 
-/-- Conditional consecutive form using the sharpened Erdős layer product estimate and the
-elementary lower bound `k ^ n / n! ≤ Nat.choose (k+n-1) n`. -/
+/-- **Erdős layer criterion for a large prime in a consecutive block.** Let $1 \le n < k$ be
+natural numbers, write $N = k + n - 1$ and $L = \lfloor \log_2 N \rfloor$, and for a natural number
+$m$ let $P(m)$ denote the product of all primes at most $m$. If
+$n! \cdot P(n) \cdot \prod_{i=2}^{L} P(\lfloor N^{1/i} \rfloor) < k^n$, then some prime $p > n$
+divides one of the integers $k, k+1, \dots, k+n-1$. -/
 theorem consecutive_of_factorial_mul_prod_erdos_layers_lt_start_pow {n k : ℕ}
     (hn : 1 ≤ n) (hk : n < k)
     (hbound :
@@ -375,8 +394,11 @@ theorem consecutive_of_factorial_mul_prod_erdos_layers_lt_start_pow {n k : ℕ}
     (by omega) (by omega)
   simpa [show k + n - 1 + 1 - n = k by omega] using hbound
 
-/-- Conditional consecutive form using the `N / 3` first-layer Erdős product estimate.
-This criterion does not require a central-range assumption. -/
+/-- **Erdős layer criterion with a one-third first layer for a large prime in a consecutive block.**
+Let $n < k$ be natural numbers, write $N = k + n - 1$ and $L = \lfloor \log_2 N \rfloor$, assume
+$N \ge 6$, and for a natural number $m$ let $P(m)$ denote the product of all primes at most $m$.
+If $n! \cdot P(\lfloor N/3 \rfloor) \cdot \prod_{i=2}^{L} P(\lfloor N^{1/i} \rfloor) < k^n$, then
+some prime $p > n$ divides one of the integers $k, k+1, \dots, k+n-1$. -/
 theorem consecutive_of_factorial_mul_prod_erdos_div_three_layers_lt_start_pow {n k : ℕ}
     (hk : n < k) (hN6 : 6 ≤ k + n - 1)
     (hbound :
@@ -414,8 +436,9 @@ private lemma factorial_mul_top_pow_sub_one_lt_start_pow_of_large_start {n k : �
       _ = k ^ n := by rw [Nat.sub_add_cancel hn]
   exact hmul.trans_lt hstrict
 
-/-- A first unconditional-looking partial case of the consecutive form, valid for starts far
-enough to make the elementary estimate work. -/
+/-- **Large starts give a large prime in a consecutive block.** Let $n \ge 2$ and $k > n$ be
+natural numbers with $n! \cdot 2^{n-1} < k$. Then some prime $p > n$ divides one of the integers
+$k, k+1, \dots, k+n-1$. -/
 theorem consecutive_of_large_start {n k : ℕ} (hn : 2 ≤ n) (hk : n < k)
     (hlarge : n ! * 2 ^ (n - 1) < k) :
     ∃ i < n, ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ k + i := by

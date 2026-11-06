@@ -32,13 +32,14 @@ namespace NumberField.Set
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Polar density of a set of height-one primes, via a meromorphic continuation.
+/-- **Polar density.** Let $K$ be a number field, let $S$ be a set of height-one primes of the
+ring of integers of $K$, and let $\zeta_S$ be the partial Dedekind zeta function of $S$. A
+rational number $\rho$ is a polar density of $S$ when there exist a positive integer $n$, an
+integer $m$ and a function $F : \mathbb{C} \to \mathbb{C}$ such that $F$ is meromorphic at $1$,
+$F(s) = \zeta_S(s)^n$ for all $s$ with $\operatorname{Re} s > 1$ in some neighbourhood of $1$,
+the meromorphic order of $F$ at $1$ equals $-m$, and $\rho = m / n$.
 
-`HasPolarDensity S ρ` asserts the existence of a positive exponent `n : ℕ+`, a
-pole order `m : ℤ`, and an actual meromorphic continuation `F : ℂ → ℂ` such that
-`F` is meromorphic at `1`, agrees with the pointwise `n`-th power of the partial
-Dedekind zeta function on the right-half-plane germ at `1`, has
-`meromorphicOrderAt F 1 = -m`, and `ρ = m / n`. -/
+Meromorphy is required of the continuation $F$, not of the Euler product defining $\zeta_S$. -/
 def HasPolarDensity (S : Set (HeightOneSpectrum (𝓞 K))) (ρ : ℚ) : Prop :=
   ∃ (n : ℕ+) (m : ℤ) (F : ℂ → ℂ),
     MeromorphicAt F (1 : ℂ) ∧
@@ -64,8 +65,13 @@ private theorem eventuallyEq_nhdsNE_of_eventuallyEq_re_gt_one
     rintro rfl
     simp at hz
 
-/-- Uniqueness of the polar density: the `NeBot`/closure argument above is
-essential, without it side equality could be vacuous. -/
+/-- **Uniqueness of the polar density.** Let $K$ be a number field and let $S$ be a set of
+height-one primes of the ring of integers of $K$. If $\rho_1$ and $\rho_2$ are both polar
+densities of $S$, then $\rho_1 = \rho_2$.
+
+The point $1$ lies in the closure of the half-plane $\operatorname{Re} s > 1$, so two meromorphic
+functions that agree on that half-plane near $1$ agree on a punctured neighbourhood of $1$ and
+have the same order there. -/
 theorem HasPolarDensity.unique {S : Set (HeightOneSpectrum (𝓞 K))} {ρ₁ ρ₂ : ℚ}
     (h₁ : S.HasPolarDensity ρ₁) (h₂ : S.HasPolarDensity ρ₂) : ρ₁ = ρ₂ := by
   obtain ⟨n₁, m₁, F₁, hmer₁, hcont₁, hord₁, rfl⟩ := h₁
@@ -89,8 +95,11 @@ theorem HasPolarDensity.unique {S : Set (HeightOneSpectrum (𝓞 K))} {ρ₁ ρ�
     exact_mod_cast hint
   exact hq
 
-/-- The empty set of height-one primes has polar density `0`, witnessed by the
-constant continuation `F = fun _ => 1` with `n = 1` and `m = 0`. -/
+/-- **The empty set has polar density zero.** For every number field $K$, the empty set of
+height-one primes of the ring of integers of $K$ has polar density $0$.
+
+The partial Dedekind zeta function of the empty set is the constant $1$, so the constant
+continuation $F = 1$ with $n = 1$ and $m = 0$ witnesses this. -/
 @[simp] theorem hasPolarDensity_empty (K : Type*) [Field K] [NumberField K] :
     (∅ : Set (HeightOneSpectrum (𝓞 K))).HasPolarDensity 0 := by
   refine ⟨1, 0, fun _ => 1, MeromorphicAt.const (1 : ℂ) (1 : ℂ), ?_, ?_, ?_⟩

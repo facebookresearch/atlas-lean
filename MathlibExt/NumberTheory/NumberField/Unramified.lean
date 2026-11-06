@@ -93,12 +93,14 @@ maximal ideal. The assertion that this localization is the compositum factor—a
 hence an equivalence—is still deliberately absent.
 -/
 
-/-- Unramifiedness descends along intermediate fields: if `𝔭` is unramified in the
-ring of integers of `F`, it is unramified in the ring of integers of any smaller
-intermediate field `E ≤ F`.
+/-- **Unramifiedness descends to smaller intermediate fields.** Let $L$ be a number field, let
+$E \subseteq F$ be intermediate fields of $L/\mathbb{Q}$, and let $\mathfrak{p}$ be an ideal of
+$\mathbb{Z}$. If $\mathfrak{p}$ is unramified in $\mathcal{O}_F$, that is, every prime ideal of
+$\mathcal{O}_F$ lying over $\mathfrak{p}$ is unramified over $\mathbb{Z}$, then $\mathfrak{p}$ is
+unramified in $\mathcal{O}_E$.
 
-This is the generic form of `isUnramifiedAtPrime_of_le` from the primary Lean
-source for ATLAS `NumberTheoryI` target N390, Proposition 19.14. -/
+Source: generic form of `isUnramifiedAtPrime_of_le` in the primary Lean source for ATLAS
+`NumberTheoryI` target N390, Proposition 19.14. -/
 theorem isUnramifiedIn_mono (E F : IntermediateField ℚ L) (hEF : E ≤ F)
     (𝔭 : Ideal ℤ) (hF : Algebra.IsUnramifiedIn (𝓞 F) 𝔭) :
     Algebra.IsUnramifiedIn (𝓞 E) 𝔭 := by
@@ -116,15 +118,18 @@ theorem isUnramifiedIn_mono (E F : IntermediateField ℚ L) (hEF : E ≤ F)
   let _ : Algebra.IsUnramifiedAt ℤ Q := hQ
   exact Algebra.IsUnramifiedAt.of_liesOver ℤ P Q
 
-/-- Semilocal étaleness above an unramified prime: localizing the whole finite
-algebra `𝓞 K` at the prime-complement of `p` (inverting everything outside `p`,
-keeping all local factors above `p` simultaneously) is étale over the local
-base `Localization.AtPrime p`.
+/-- **Localizing the ring of integers at an unramified prime gives an étale algebra.** Let $K$ be
+a number field with ring of integers $\mathcal{O}_K$, and let $p$ be a prime ideal of $\mathbb{Z}$
+that is unramified in $\mathcal{O}_K$, that is, every prime ideal of $\mathcal{O}_K$ lying over $p$
+is unramified over $\mathbb{Z}$. Let $S$ be the localization of $\mathcal{O}_K$ at the image of
+the multiplicative set $\mathbb{Z} \setminus p$. Then $S$ is an étale algebra over the local ring
+$\mathbb{Z}_{(p)}$.
 
-This packages the primewise unramified hypothesis used by
-`isUnramifiedAtPrime_sup` in the primary Lean source for ATLAS `NumberTheoryI`
-target N390, Proposition 19.14. It is the semilocal algebra, not a single local
-factor `Localization.AtPrime Q`. -/
+The ring $S$ is semilocal: it keeps every prime of $\mathcal{O}_K$ above $p$ at once, rather than
+the localization $(\mathcal{O}_K)_Q$ at a single such prime $Q$.
+
+Source: packages the primewise unramified hypothesis used by `isUnramifiedAtPrime_sup` in the
+primary Lean source for ATLAS `NumberTheoryI` target N390, Proposition 19.14. -/
 theorem IsUnramifiedIn.etale_localization {K : Type*} [Field K] [NumberField K]
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 K) p) :
     Algebra.Etale (Localization.AtPrime p)
@@ -170,16 +175,17 @@ theorem IsUnramifiedIn.etale_localization {K : Type*} [Field K] [NumberField K]
     exact Algebra.IsUnramifiedAt.of_restrictScalars ℤ x.asIdeal
   exact Algebra.Etale.of_formallyUnramified_of_flat
 
-/-- Global normalization base-change bridge above an unramified prime: for number
-fields `E` and `F` and `p` unramified in `𝓞 F`, tensoring the semilocal
-integral-closure identification of `E` with the semilocal ring of `F` identifies
-`S_F ⊗[R] S_E` with the integral closure of `S_F` in the base-changed fraction
-ring.
+/-- **Normalization commutes with base change along an unramified prime.** Let $E$ and $F$ be
+number fields and let $\mathfrak p$ be a prime ideal of $\mathbb Z$ that is unramified in the ring
+of integers $\mathcal O_F$. Write $R = \mathbb Z_{\mathfrak p}$ for the localization of $\mathbb Z$
+at $\mathfrak p$, and for $K = E, F$ write $S_K$ for the localization of $\mathcal O_K$ at the
+image of $\mathbb Z \setminus \mathfrak p$. Let $K_E$ be the fraction field of $\mathcal O_E$ and
+let $\iota : S_E \to K_E$ be the canonical map. This is the isomorphism of $S_F$-algebras from
+$S_F \otimes_R S_E$ onto the integral closure of $S_F$ in $S_F \otimes_R K_E$ that, for
+$s \in S_F$ and $t \in S_E$, sends $s \otimes t$ to $s \otimes \iota(t)$.
 
-This is the normalization-under-étale-base-change route toward the compositum
-step `baseChange_ramificationIdx_eq_one` and `isUnramifiedAtPrime_sup` in the
-primary Lean source for ATLAS N390. The local-factor/compositum identification
-needed to recover those source theorems is not claimed here. -/
+It is obtained from the identification of $S_E$ with the integral closure of $R$ in $K_E$, using
+that $S_F$ is étale over $R$. -/
 noncomputable def IsUnramifiedIn.tensorProductLocalizationEquivIntegralClosure
     {E F : Type*} [Field E] [NumberField E] [Field F] [NumberField F]
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p) :
@@ -204,8 +210,14 @@ end NumberField
 
 namespace Localization
 
-/-- Semilocal-to-local factor map: localize the semilocal ring away from `p`
-further at the prime `Q` lying over `p`. -/
+/-- **Map from the localization away from a prime to the local ring at a prime above it.** Let
+$R \to S \to T$ be homomorphisms of commutative rings whose algebra structures form a scalar
+tower, let $\mathfrak p$ be a prime ideal of $R$, and let $\mathfrak Q$ be a prime ideal of $T$
+lying over $\mathfrak p$. Write $S_{\mathfrak p}$ for the localization of $S$ at the image of
+$R \setminus \mathfrak p$. This is the homomorphism of $S$-algebras
+$S_{\mathfrak p} \to T_{\mathfrak Q}$ extending the composite $S \to T \to T_{\mathfrak Q}$; it
+exists because elements of $R \setminus \mathfrak p$ map outside $\mathfrak Q$, hence to units of
+$T_{\mathfrak Q}$. -/
 noncomputable def semilocalizationToAtPrime
     {R S T : Type*} [CommRing R] [CommRing S] [CommRing T]
     [Algebra R S] [Algebra S T] [Algebra R T] [IsScalarTower R S T]
@@ -220,8 +232,15 @@ noncomputable def semilocalizationToAtPrime
           simp_all [Q.over_def p]
         ⟩)
 
-/-- Characteristic equation for `semilocalizationToAtPrime` on a localization
-representative. It avoids exposing the implementation's chosen inverse unit. -/
+/-- **Values of the localization-to-local-ring map on fractions.** Let $R \to S \to T$ be
+homomorphisms of commutative rings whose algebra structures form a scalar tower, let
+$\mathfrak p$ be a prime ideal of $R$, and let $\mathfrak Q$ be a prime ideal of $T$ lying over
+$\mathfrak p$. Write $S_{\mathfrak p}$ for the localization of $S$ at the image of
+$R \setminus \mathfrak p$, and let $\varphi : S_{\mathfrak p} \to T_{\mathfrak Q}$ be the
+$S$-algebra homomorphism extending the composite $S \to T \to T_{\mathfrak Q}$. For $x \in S$,
+$y$ in the image of $R \setminus \mathfrak p$ in $S$, and $z \in T_{\mathfrak Q}$, we have
+$\varphi(x/y) = z$ if and only if $x = yz$ in $T_{\mathfrak Q}$, where $x$ and $y$ stand for
+their images under $S \to T \to T_{\mathfrak Q}$. -/
 theorem semilocalizationToAtPrime_mk'_eq_iff
     {R S T : Type*} [CommRing R] [CommRing S] [CommRing T]
     [Algebra R S] [Algebra S T] [Algebra R T] [IsScalarTower R S T]
@@ -247,13 +266,22 @@ variable {L : Type*} [Field L] [NumberField L]
 
 namespace IsUnramifiedIn
 
-/-- This maps the normalized tensor algebra to the local ring at `Q` and
-selects the compositum component, but does NOT yet claim the induced
-localization is an equivalence.
+/-- **Map from the normalized tensor algebra to the local ring of the compositum.** Let $E$ and
+$F$ be intermediate fields of a number field $L$ over $\mathbb Q$, let $\mathfrak p$ be a prime
+ideal of $\mathbb Z$ that is unramified in $\mathcal O_F$, and let $\mathfrak Q$ be a prime ideal of
+the ring of integers $\mathcal O_{EF}$ of the compositum $EF$ of $E$ and $F$ in $L$ lying over
+$\mathfrak p$. Write $R = \mathbb Z_{\mathfrak p}$ for the localization of $\mathbb Z$ at
+$\mathfrak p$; for $K = E, F$ write $S_K$ for the localization of $\mathcal O_K$ at the image of
+$\mathbb Z \setminus \mathfrak p$ and $\varphi_K : S_K \to (\mathcal O_{EF})_{\mathfrak Q}$ for the
+map induced by the inclusion $\mathcal O_K \subseteq \mathcal O_{EF}$; and let $C$ be the integral
+closure of $S_F$ in $S_F \otimes_R \operatorname{Frac}(\mathcal O_E)$. This is the $R$-algebra
+homomorphism $C \to (\mathcal O_{EF})_{\mathfrak Q}$ obtained by composing the inverse of the
+canonical isomorphism $S_F \otimes_R S_E \cong C$ with the map
+$S_F \otimes_R S_E \to (\mathcal O_{EF})_{\mathfrak Q}$ that, for $s \in S_F$ and $t \in S_E$,
+sends $s \otimes t$ to $\varphi_F(s) \varphi_E(t)$.
 
-It is the normalized, prime-selected map corresponding to the fixed-`Q` stage
-of `baseChange_ramificationIdx_eq_one` in the primary Lean source for ATLAS
-N390. -/
+No claim is made that this map induces an isomorphism from a localization of $C$ onto
+$(\mathcal O_{EF})_{\mathfrak Q}$. -/
 noncomputable def normalizedTensorToCompositumAtPrime
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -292,9 +320,17 @@ noncomputable def normalizedTensorToCompositumAtPrime
     (E := E) (F := F) p h
   exact g.comp (e.symm.restrictScalars R).toAlgHom
 
-/-- Characteristic formula on normalized simple tensors: after transporting a
-tensor generator through the normalization equivalence, the selected component
-is the product of its two semilocal images. -/
+/-- **The normalized tensor map on simple tensors.** Let $L$ be a number field, let $E$ and $F$ be
+intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime ideal of
+$\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ and $S_E$ be the
+localizations of $\mathcal{O}_F$ and $\mathcal{O}_E$ at the image of $\mathbb{Z} \setminus p$, let
+$C$ be the integral closure of $S_F$ in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, let
+$T = (\mathcal{O}_{EF})_Q$, and let $g \colon C \to T$ be the normalized tensor map to the
+compositum at $Q$. Let $e \colon S_F \otimes_R S_E \to C$ be the normalization isomorphism, and
+let $f_F \colon S_F \to T$ and $f_E \colon S_E \to T$ be the maps induced by the inclusions of
+$\mathcal{O}_F$ and $\mathcal{O}_E$ into $\mathcal{O}_{EF}$. Then for all $x \in S_F$ and
+$y \in S_E$, we have $g(e(x \otimes y)) = f_F(x)\,f_E(y)$. -/
 theorem normalizedTensorToCompositumAtPrime_equiv_tmul
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -319,10 +355,18 @@ theorem normalizedTensorToCompositumAtPrime_equiv_tmul
   simp [normalizedTensorToCompositumAtPrime]
   congr 1
 
-/-- The kernel of the compositum-component map is prime because the target
-localization at `Q` is a domain. The kernel selects the generic component,
-while the prime for the local ring is the contraction of the target maximal
-ideal. No localization equivalence or maximality is claimed. -/
+/-- **The kernel of the normalized tensor map is prime.** Let $L$ be a number field, let $E$ and
+$F$ be intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime ideal of
+$\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ be the localization of
+$\mathcal{O}_F$ at the image of $\mathbb{Z} \setminus p$, let $C$ be the integral closure of $S_F$
+in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, and let
+$g \colon C \to (\mathcal{O}_{EF})_Q$ be the normalized tensor map to the compositum at $Q$. Then
+the kernel of $g$ is a prime ideal of $C$.
+
+This holds because $(\mathcal{O}_{EF})_Q$ is an integral domain. The kernel of $g$ is in general
+strictly smaller than the preimage under $g$ of the maximal ideal of the local ring
+$(\mathcal{O}_{EF})_Q$, which is the prime of $C$ at which to localize. -/
 theorem normalizedTensorToCompositumAtPrime_ker_isPrime
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -335,23 +379,23 @@ theorem normalizedTensorToCompositumAtPrime_ker_isPrime
   dsimp
   exact RingHom.ker_isPrime _
 
-/-- Contracted maximal prime: the correct prime of the normalized tensor algebra
-at which to localize to obtain the local factor `Localization.AtPrime Q`.
+/-- **The contracted maximal prime of the normalized tensor algebra.** Let $L$ be a number field,
+let $E$ and $F$ be intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime
+ideal of $\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ be the localization of
+$\mathcal{O}_F$ at the image of $\mathbb{Z} \setminus p$, let $C$ be the integral closure of $S_F$
+in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, let $T = (\mathcal{O}_{EF})_Q$ be the
+localization of $\mathcal{O}_{EF}$ at $Q$, and let $g \colon C \to T$ be the normalized tensor map
+to the compositum at $Q$. The contracted maximal prime is the ideal $g^{-1}(\mathfrak{m}_T)$ of
+$C$, where $\mathfrak{m}_T$ is the maximal ideal of the local ring $T$.
 
-Let `g := normalizedTensorToCompositumAtPrime E F p h Q` and
-`T := Localization.AtPrime Q`. This is the comap of the maximal ideal of the
-local ring `T` under `g`. It contains the prime kernel of `g` (see
-`normalizedTensorToCompositumAtPrime_ker_le`), but it is in general strictly
-larger: for a nonzero prime below `Q`, a nonzero uniformizer lies outside
-`RingHom.ker g` yet maps to a nonunit of `T`.
+It contains the kernel of $g$, and is in general strictly larger. It is intended as the prime of
+$C$ at which to localize in order to recover the local factor $T$.
 
-This is a named alternative-normalization prerequisite stage for the missing
-`cyclotomic_ramIdx_eq_of_unramified` and
-[`baseChange_ramificationIdx_eq_one`, lines 1549--1586](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/AnalyticClassNumber.lean#L1549-L1586)
-in the primary Lean source for ATLAS `NumberTheoryI` target N390,
-Proposition 19.14. It does not prove
-compositum unramifiedness, any `IsLocalization` identification, or the final
-maximality theorem. -/
+Source: prerequisite stage for `cyclotomic_ramIdx_eq_of_unramified` and
+`baseChange_ramificationIdx_eq_one` in the primary Lean source for ATLAS `NumberTheoryI`
+target N390, Proposition 19.14; the identification of this localization with the local factor $T$,
+compositum unramifiedness and the maximality theorem are not proved here. -/
 noncomputable def normalizedTensorCompositumPrime
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -368,8 +412,14 @@ noncomputable def normalizedTensorCompositumPrime
   (IsLocalRing.maximalIdeal T).comap
     (normalizedTensorToCompositumAtPrime E F p h Q).toRingHom
 
-/-- The contracted maximal prime is prime, as the comap of the maximal (hence
-prime) ideal of the local factor. -/
+/-- **The contracted maximal prime is prime.** Let $L$ be a number field, let $E$ and $F$ be
+intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime ideal of
+$\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Then the contracted maximal prime of the normalized tensor
+algebra at $Q$ is a prime ideal.
+
+It is the preimage of the maximal ideal of the local ring $(\mathcal{O}_{EF})_Q$, which is
+prime. -/
 theorem normalizedTensorCompositumPrime_isPrime
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -381,9 +431,15 @@ theorem normalizedTensorCompositumPrime_isPrime
 
 attribute [instance] normalizedTensorCompositumPrime_isPrime
 
-/-- Defining membership characterization of the contracted maximal prime: an
-element lies in the contracted prime exactly when its image lies in the maximal
-ideal of the local target. -/
+/-- **Membership in the contracted maximal prime.** Let $L$ be a number field, let $E$ and $F$ be
+intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime ideal of
+$\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ be the localization of
+$\mathcal{O}_F$ at the image of $\mathbb{Z} \setminus p$, let $C$ be the integral closure of $S_F$
+in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, let $T = (\mathcal{O}_{EF})_Q$, and let
+$g \colon C \to T$ be the normalized tensor map to the compositum at $Q$. An element $x \in C$
+lies in the contracted maximal prime if and only if $g(x)$ lies in the maximal ideal of the local
+ring $T$. -/
 theorem normalizedTensorCompositumPrime_mem_iff
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -400,8 +456,19 @@ theorem normalizedTensorCompositumPrime_mem_iff
   unfold normalizedTensorCompositumPrime
   rfl
 
-/-- The kernel of the normalized-tensor-to-compositum map is contained in the
-contracted maximal prime. -/
+/-- **The kernel lies in the contracted maximal ideal.** Let $E$ and $F$ be intermediate fields of
+a number field $L$ over $\mathbb Q$, let $\mathfrak p$ be a prime ideal of $\mathbb Z$ that is
+unramified in $\mathcal O_F$, and let $\mathfrak Q$ be a prime ideal of the ring of integers
+$\mathcal O_{EF}$ of the compositum $EF$ of $E$ and $F$ in $L$ lying over $\mathfrak p$. Write
+$R = \mathbb Z_{\mathfrak p}$ for the localization of $\mathbb Z$ at $\mathfrak p$; for
+$K = E, F$ let $S_K$ be the localization of $\mathcal O_K$ at the image of
+$\mathbb Z \setminus \mathfrak p$ and let $\varphi_K : S_K \to (\mathcal O_{EF})_{\mathfrak Q}$ be
+the map induced by the inclusion $\mathcal O_K \subseteq \mathcal O_{EF}$; let $C$ be the integral
+closure of $S_F$ in $S_F \otimes_R \operatorname{Frac}(\mathcal O_E)$; and let
+$g : C \to (\mathcal O_{EF})_{\mathfrak Q}$ be the $R$-algebra homomorphism that, for $s \in S_F$
+and $t \in S_E$, sends the image of $s \otimes t$ under the canonical isomorphism
+$S_F \otimes_R S_E \cong C$ to $\varphi_F(s) \varphi_E(t)$. Then the kernel of $g$ is contained in
+the preimage under $g$ of the maximal ideal of $(\mathcal O_{EF})_{\mathfrak Q}$. -/
 theorem normalizedTensorToCompositumAtPrime_ker_le
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -415,16 +482,17 @@ theorem normalizedTensorToCompositumAtPrime_ker_le
   unfold normalizedTensorCompositumPrime
   exact Ideal.ker_le_comap _
 
-/-- Canonical localization map: the universal property of
-`Localization.AtPrime` applied at the contracted maximal prime. An element
-outside the contracted prime maps outside the maximal ideal of the local target
-`T`, hence to a unit.
-
-This is a plain `RingHom`, not an `AlgHom`: no `Algebra A S` or
-`IsScalarTower A C S` data is installed, since that instance search is fragile.
-No `IsLocalization` or `AlgEquiv` claim is made here: the missing
-bijection/local-factor identification remains a later infrastructure problem,
-and localization at `RingHom.ker g` is in general false. -/
+/-- **The localization map to the compositum at a prime.** Let $L$ be a number field, let $E$ and
+$F$ be intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime ideal of
+$\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ be the localization of
+$\mathcal{O}_F$ at the image of $\mathbb{Z} \setminus p$, let $C$ be the integral closure of $S_F$
+in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, let $T = (\mathcal{O}_{EF})_Q$, let
+$g \colon C \to T$ be the normalized tensor map to the compositum at $Q$, and let $\mathfrak{q}$
+be the contracted maximal prime of $C$. Since $g$ sends every element of $C \setminus \mathfrak{q}$
+outside the maximal ideal of the local ring $T$, hence to a unit, $g$ induces by the universal
+property of localization a ring homomorphism $C_{\mathfrak{q}} \to T$, sending $x/s$ to
+$g(x)\,g(s)^{-1}$. -/
 noncomputable def normalizedTensorLocalizationToCompositumAtPrime
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -451,8 +519,16 @@ noncomputable def normalizedTensorLocalizationToCompositumAtPrime
           exact hmem)
       exact IsLocalRing.notMem_maximalIdeal.mp hy')
 
-/-- The canonical localization map extends the normalized-tensor map: it sends
-each algebraMap image to the value of `normalizedTensorToCompositumAtPrime`. -/
+/-- **The localization map restricts to the normalized tensor map.** Let $L$ be a number field,
+let $E$ and $F$ be intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime
+ideal of $\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ be the localization of
+$\mathcal{O}_F$ at the image of $\mathbb{Z} \setminus p$, let $C$ be the integral closure of $S_F$
+in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, let $T = (\mathcal{O}_{EF})_Q$, let
+$g \colon C \to T$ be the normalized tensor map to the compositum at $Q$, let $\mathfrak{q}$ be the
+contracted maximal prime of $C$, and let $\varphi \colon C_{\mathfrak{q}} \to T$ be the
+localization map to the compositum at $Q$. Then for every $x \in C$, $\varphi$ sends the image of
+$x$ in $C_{\mathfrak{q}}$ to $g(x)$. -/
 theorem normalizedTensorLocalizationToCompositumAtPrime_algebraMap
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)
@@ -470,12 +546,16 @@ theorem normalizedTensorLocalizationToCompositumAtPrime_algebraMap
   rw [IsLocalization.lift_eq]
   rfl
 
-/-- Characteristic equation for the canonical localization map on a
-localization representative: the value at `IsLocalization.mk' _ x y` is
-characterized by cross multiplication against the base map. This is the stable
-`IsLocalization.lift_mk'`-style form; it avoids exposing the
-implementation-only unit proof inside
-`normalizedTensorLocalizationToCompositumAtPrime`. -/
+/-- **Value of the localization map on fractions.** Let $L$ be a number field, let $E$ and $F$ be
+intermediate fields of $L/\mathbb{Q}$ with compositum $EF$, let $p$ be a prime ideal of
+$\mathbb{Z}$ that is unramified in $\mathcal{O}_F$, and let $Q$ be a prime ideal of
+$\mathcal{O}_{EF}$ lying over $p$. Write $R = \mathbb{Z}_{(p)}$, let $S_F$ be the localization of
+$\mathcal{O}_F$ at the image of $\mathbb{Z} \setminus p$, let $C$ be the integral closure of $S_F$
+in $S_F \otimes_R \operatorname{Frac}(\mathcal{O}_E)$, let $T = (\mathcal{O}_{EF})_Q$, let
+$g \colon C \to T$ be the normalized tensor map to the compositum at $Q$, let $\mathfrak{q}$ be the
+contracted maximal prime of $C$, and let $\varphi \colon C_{\mathfrak{q}} \to T$ be the
+localization map to the compositum at $Q$. Then for all $x \in C$, $s \in C \setminus \mathfrak{q}$
+and $v \in T$, we have $\varphi(x/s) = v$ if and only if $g(x) = g(s)\,v$. -/
 theorem normalizedTensorLocalizationToCompositumAtPrime_mk'_spec
     (E F : IntermediateField ℚ L)
     (p : Ideal ℤ) [p.IsPrime] (h : Algebra.IsUnramifiedIn (𝓞 F) p)

@@ -304,7 +304,10 @@ private lemma central_layers_two_mul_add_two_le_four_pow {n : ℕ} (hn : 512 ≤
       apply Nat.pow_le_pow_right (by norm_num : 0 < 4)
       omega
 
-/-- Explicit large-`n` estimate for the central Erdős layer product at `N = 2 * n + 2`. -/
+/-- **Central Erdős layer estimate.** Let $n \ge 512$ be a natural number and $N = 2n + 2$. For a
+natural number $x$ write $x\#$ for the primorial of $x$, the product of all primes $p \le x$, and
+let $L = \lfloor \log_2 N \rfloor$. Then
+$n \cdot \lfloor N/3 \rfloor\# \cdot \prod_{m=2}^{L} \lfloor N^{1/m} \rfloor\# < 4^n$. -/
 theorem central_erdos_layers_two_mul_add_two_lt_four_pow {n : ℕ} (hn : 512 ≤ n) :
     n * (∏ j ∈ Finset.range (Nat.log 2 (2 * n + 2)),
         if j = 0 then primorial ((2 * n + 2) / 3)
@@ -371,20 +374,29 @@ private lemma erdos_layers_le_four_pow_aux (N r : ℕ) :
       omega
     simpa [hlog] using Nat.succ_le_of_lt (pow_pos (by norm_num : 0 < 4) r)
 
-/-- Coarse generic power-of-four bound for the Erdős product with first layer `r`.
+/-- **Power-of-four bound for the Erdős layer product.** Let $N$ and $r$ be natural numbers. For
+a natural number $x$ write $x\#$ for the primorial of $x$, the product of all primes $p \le x$.
+Let $L = \lfloor \log_2 N \rfloor$, with $L = 0$ when $N = 0$, and let $P = 1$ if $L = 0$ and
+$P = r\# \cdot \prod_{m=2}^{L} \lfloor N^{1/m} \rfloor\#$ if $L \ge 1$. Then
+$P \le 4^{r + \lfloor \sqrt{N} \rfloor L}$.
 
-This is weaker than the full Erdős estimate, but much sharper than replacing the
-first layer by `N / 3` when `N` is several multiples of `r`. -/
+This is a coarse bound, weaker than the full Erdős estimate, but much sharper than replacing the
+first layer by $\lfloor N/3 \rfloor$ when $N$ is several multiples of $r$. -/
 theorem erdos_layers_le_four_pow (N r : ℕ) :
     (∏ j ∈ Finset.range (Nat.log 2 N),
         if j = 0 then primorial r else primorial (Nat.nthRoot (j + 1) N)) ≤
       4 ^ (r + Nat.sqrt N * Nat.log 2 N) := by
   exact erdos_layers_le_four_pow_aux N r
 
-/-- Three-layer version of `erdos_layers_le_four_pow`: the first layer contributes `r`, the
-second contributes `sqrt N`, and all remaining layers are controlled by the cube root of `N`.
+/-- **Three-layer power-of-four bound for the Erdős layer product.** Let $N$ and $r$ be natural
+numbers. For a natural number $x$ write $x\#$ for the primorial of $x$, the product of all primes
+$p \le x$. Let $L = \lfloor \log_2 N \rfloor$, with $L = 0$ when $N = 0$, and let $P = 1$ if
+$L = 0$ and $P = r\# \cdot \prod_{m=2}^{L} \lfloor N^{1/m} \rfloor\#$ if $L \ge 1$. Then
+$P \le 4^{r + \lfloor \sqrt{N} \rfloor + \lfloor N^{1/3} \rfloor L}$.
 
-This is the reusable form of the estimate used in Erdős's case split. -/
+The first layer contributes $r$, the second $\lfloor \sqrt{N} \rfloor$, and all remaining layers
+are controlled by the cube root of $N$. This is the reusable form of the estimate used in
+Erdős's case split. -/
 theorem erdos_layers_le_four_pow_three_layers (N r : ℕ) :
     (∏ j ∈ Finset.range (Nat.log 2 N),
         if j = 0 then primorial r else primorial (Nat.nthRoot (j + 1) N)) ≤

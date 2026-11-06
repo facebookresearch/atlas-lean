@@ -347,8 +347,11 @@ private theorem key {k e c x n j : ℕ}
   have hnn := jacobi_sq_nonneg (y := ((x : ℕ) : ℤ)) (b := lucasNumber k)
   omega
 
-/-- Cohn's square-Lucas classification (Keskin–Yosma Theorem 2.1, third
-claim): for `0 < n`, `Lₙ = x²` forces `n ∈ {1, 3}`.
+/-- **Cohn's theorem on square Lucas numbers.** Let $L_0 = 2$, $L_1 = 1$ and
+$L_{n+2} = L_{n+1} + L_n$ be the Lucas numbers. If $n \ge 1$ and $L_n = x^2$ for some natural
+number $x$, then $n = 1$ or $n = 3$.
+
+This is the third claim of Theorem 2.1 of Keskin and Yosma, which they attribute to Cohn.
 
 Proves `Wanted` entry `cohn_square_lucas`.
 -/

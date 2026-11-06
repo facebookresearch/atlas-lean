@@ -119,11 +119,15 @@ open Classical in
 
 noncomputable def infinite (v : RealPlace K) : Modulus K := ⟨1, {v}⟩
 
-/-- Finite part of `infinite v` is trivial. -/
+/-- **Finite part of the modulus of a real place.** For a real place $v$ of a number field $K$,
+let $\mathfrak m_v$ be the modulus of $K$ with finite part the unit ideal $\mathcal O_K$ and
+infinite part $\{v\}$. The finite part of $\mathfrak m_v$ is the unit ideal $\mathcal O_K$. -/
 @[simp] theorem infinite_finitePart (v : RealPlace K) :
     (infinite v).finitePart = 1 := rfl
 
-/-- Infinite part of `infinite v` is the singleton. -/
+/-- **Infinite part of the modulus of a real place.** For a real place $v$ of a number field $K$,
+let $\mathfrak m_v$ be the modulus of $K$ with finite part the unit ideal $\mathcal O_K$ and
+infinite part $\{v\}$. The infinite part of $\mathfrak m_v$ is the singleton $\{v\}$. -/
 @[simp] theorem infinite_infinitePart (v : RealPlace K) :
     (infinite v).infinitePart = {v} := rfl
 

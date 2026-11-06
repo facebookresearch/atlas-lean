@@ -56,13 +56,19 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Module.Free ℤ R]
   [Module.Finite ℤ R]
 variable {F : Type*} [Field F] [Algebra R F] [IsFractionRing R F]
 
-/-- The absolute norm of an invertible fractional ideal is nonzero. -/
+/-- **Invertible fractional ideals have nonzero absolute norm.** Let $R$ be a Dedekind domain
+that is a free $\mathbb{Z}$-module of finite rank, and let $F$ be its field of fractions. For
+every invertible fractional ideal $I$ of $R$ in $F$, the absolute norm of $I$, a rational
+number, is nonzero. -/
 theorem absNorm_units_ne_zero (I : (FractionalIdeal R⁰ F)ˣ) :
     absNorm (I : FractionalIdeal R⁰ F) ≠ 0 := by
   rw [ne_eq, absNorm_eq_zero_iff]
   exact Units.ne_zero I
 
-/-- The absolute norm of an invertible fractional ideal is positive. -/
+/-- **Invertible fractional ideals have positive absolute norm.** Let $R$ be a Dedekind domain
+that is a free $\mathbb{Z}$-module of finite rank, and let $F$ be its field of fractions. For
+every invertible fractional ideal $I$ of $R$ in $F$, the absolute norm of $I$, a rational
+number, is positive. -/
 theorem absNorm_units_pos (I : (FractionalIdeal R⁰ F)ˣ) :
     0 < absNorm (I : FractionalIdeal R⁰ F) :=
   lt_of_le_of_ne (absNorm_nonneg _) (Ne.symm (absNorm_units_ne_zero I))
@@ -73,22 +79,28 @@ namespace NumberField
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- An Arakelov divisor on a number field: an invertible fractional ideal together with
-a positive real at each infinite place. -/
+/-- **Arakelov divisor.** Let $K$ be a number field with ring of integers $\mathcal{O}_K$. An
+Arakelov divisor on $K$ is a pair $(I, r)$, where $I$ is an invertible fractional ideal of
+$\mathcal{O}_K$ in $K$ and $r$ assigns a positive real number $r_w$ to each infinite place $w$
+of $K$. -/
 abbrev ArakelovDivisor :=
   (FractionalIdeal (𝓞 K)⁰ K)ˣ × (InfinitePlace K → { r : ℝ // 0 < r })
 
 /-- The natural commutative group structure on Arakelov divisors (pointwise). -/
 noncomputable instance : CommGroup (ArakelovDivisor K) := inferInstance
 
-/-- The archimedean factor of an Arakelov divisor: the finite product over all infinite
-places of each value raised to that place's multiplicity. -/
+/-- **Archimedean factor.** Let $D = (I, r)$ be an Arakelov divisor on a number field $K$. Its
+archimedean factor is the positive real number $\prod_w r_w^{m_w}$, where the product runs over
+all infinite places $w$ of $K$ and $m_w$ is $1$ if $w$ is real and $2$ if $w$ is complex. -/
 noncomputable def ArakelovDivisor.archimedeanFactor (D : ArakelovDivisor K) :
     { r : ℝ // 0 < r } :=
   ∏ w : InfinitePlace K, D.2 w ^ w.mult
 
 open Classical in
-/-- Coercion of the archimedean factor to the reals. -/
+/-- **Archimedean factor as a real number.** Let $D = (I, r)$ be an Arakelov divisor on a number
+field $K$, and for each infinite place $w$ of $K$ let $m_w$ be $1$ if $w$ is real and $2$ if $w$
+is complex. Viewed as a real number, the archimedean factor of $D$ equals the real product
+$\prod_w r_w^{m_w}$ over all infinite places $w$ of $K$. -/
 @[simp]
 theorem ArakelovDivisor.archimedeanFactor_coe (D : ArakelovDivisor K) :
     (D.archimedeanFactor : ℝ) = ∏ w : InfinitePlace K, (D.2 w : ℝ) ^ w.mult := by
@@ -104,7 +116,9 @@ theorem ArakelovDivisor.archimedeanFactor_coe (D : ArakelovDivisor K) :
   have := h Finset.univ
   simpa [ArakelovDivisor.archimedeanFactor] using this
 
-/-- The absolute norm of the finite (ideal) component, as a positive real. -/
+/-- **Ideal norm of an Arakelov divisor.** For an Arakelov divisor $D$ of a number field $K$ with
+invertible fractional ideal $I$, the ideal norm of $D$ is the absolute norm $N(I)$ of $I$,
+regarded as a positive real number; it is positive because $I$ is invertible. -/
 noncomputable def ArakelovDivisor.idealNorm (D : ArakelovDivisor K) :
     { r : ℝ // 0 < r } :=
   ⟨((FractionalIdeal.absNorm (D.1 : FractionalIdeal (𝓞 K)⁰ K) : ℚ) : ℝ),
@@ -112,14 +126,18 @@ noncomputable def ArakelovDivisor.idealNorm (D : ArakelovDivisor K) :
       have h := FractionalIdeal.absNorm_units_pos (R := 𝓞 K) (F := K) D.1
       exact_mod_cast h⟩
 
-/-- Coercion of the ideal norm to the reals. -/
+/-- **Real value of the ideal norm.** For every Arakelov divisor $D$ of a number field $K$ with
+fractional ideal $I$, the ideal norm of $D$, viewed as a real number, equals the absolute norm
+$N(I) \in \mathbb{Q}$ of $I$, viewed as a real number. -/
 @[simp]
 theorem ArakelovDivisor.idealNorm_coe (D : ArakelovDivisor K) :
     (D.idealNorm : ℝ) =
       ((FractionalIdeal.absNorm (D.1 : FractionalIdeal (𝓞 K)⁰ K) : ℚ) : ℝ) :=
   rfl
 
-/-- The archimedean factor as a bundled monoid homomorphism. -/
+/-- **Archimedean factor homomorphism.** For a number field $K$, the map sending an Arakelov
+divisor on $K$ to its archimedean factor is a monoid homomorphism from the Arakelov divisors on
+$K$, multiplied componentwise, to the positive real numbers under multiplication. -/
 noncomputable def ArakelovDivisor.archHom :
     ArakelovDivisor K →* { r : ℝ // 0 < r } where
   toFun := ArakelovDivisor.archimedeanFactor K
@@ -139,7 +157,10 @@ noncomputable def ArakelovDivisor.archHom :
     intro w _
     rw [Prod.snd_mul, Pi.mul_apply, Positive.val_mul, mul_pow])
 
-/-- The ideal norm as a bundled monoid homomorphism. -/
+/-- **Ideal norm homomorphism.** For a number field $K$, the map sending an Arakelov divisor
+$(I, r)$ on $K$ to the absolute norm of $I$, viewed as a positive real number, is a monoid
+homomorphism from the Arakelov divisors on $K$, multiplied componentwise, to the positive real
+numbers under multiplication. -/
 noncomputable def ArakelovDivisor.idealHom :
     ArakelovDivisor K →* { r : ℝ // 0 < r } where
   toFun := ArakelovDivisor.idealNorm K
@@ -156,20 +177,32 @@ noncomputable def ArakelovDivisor.idealHom :
       ArakelovDivisor.idealNorm_coe, ArakelovDivisor.idealNorm_coe, Prod.fst_mul,
       Units.val_mul, map_mul, Rat.cast_mul])
 
-/-- The size (norm) homomorphism on Arakelov divisors: the archimedean factor divided
-by the absolute norm of the finite component. -/
+/-- **Size of an Arakelov divisor.** For a number field $K$, the size homomorphism sends an
+Arakelov divisor $D = (I, (r_w)_w)$, with $I$ an invertible fractional ideal of the ring of
+integers of $K$ and $r_w > 0$ for each infinite place $w$, to the positive real number
+$\prod_w r_w^{m_w} / N(I)$, where $w$ runs over the infinite places of $K$, $m_w$ is $1$ for a
+real place and $2$ for a complex place, and $N(I)$ is the absolute norm of $I$. It is a group
+homomorphism from Arakelov divisors to the multiplicative group of positive reals. -/
 noncomputable def ArakelovDivisor.sizeHom :
     ArakelovDivisor K →* { r : ℝ // 0 < r } :=
   ArakelovDivisor.archHom K / ArakelovDivisor.idealHom K
 
-/-- The size homomorphism unfolds to the quotient of its two factors. -/
+/-- **Size as a quotient of homomorphisms.** For every Arakelov divisor $D$ of a number field
+$K$, the size of $D$ equals the archimedean-factor homomorphism evaluated at $D$ divided by the
+ideal-norm homomorphism evaluated at $D$, the quotient taken in the group of positive reals. -/
 @[simp]
 theorem ArakelovDivisor.sizeHom_apply (D : ArakelovDivisor K) :
     ArakelovDivisor.sizeHom K D =
       ArakelovDivisor.archHom K D / ArakelovDivisor.idealHom K D :=
   rfl
 
-/-- Coercion of the size homomorphism to the reals. -/
+/-- **Explicit formula for the size of an Arakelov divisor.** Let $D = (I, (r_w)_w)$ be an
+Arakelov divisor of a number field $K$, where $I$ is an invertible fractional ideal of the ring
+of integers of $K$ and $r_w > 0$ for each infinite place $w$ of $K$. For each $w$ let $m_w$ be
+$1$ if $w$ is real and $2$ if $w$ is complex, and let $N(I)$ be the absolute norm of $I$. Then
+the size of $D$, as a real number, is
+$$\frac{\prod_w r_w^{m_w}}{N(I)},$$
+where the product runs over all infinite places $w$ of $K$. -/
 theorem ArakelovDivisor.sizeHom_coe (D : ArakelovDivisor K) :
     (ArakelovDivisor.sizeHom K D : ℝ) =
       (∏ w : InfinitePlace K, (D.2 w : ℝ) ^ w.mult) /
@@ -181,16 +214,21 @@ theorem ArakelovDivisor.sizeHom_coe (D : ArakelovDivisor K) :
     ArakelovDivisor.archimedeanFactor_coe, ArakelovDivisor.idealNorm_coe,
     (div_eq_mul_inv _ _).symm]
 
-/-- The section set of an Arakelov divisor: the elements of the finite (ideal)
-component bounded by the ordinary archimedean radii at every infinite place.
-Complex-place bounds are ordinary (unsquared) radii; the `w.mult = 2` squaring
-enters only in the size homomorphism. -/
+/-- **Section set of an Arakelov divisor.** Let $D$ be an Arakelov divisor of a number field $K$,
+with invertible fractional ideal $I$ and positive real number $r_w$ at each infinite place $w$
+of $K$. The section set of $D$ is the set of $x \in I$ such that $w(x) \le r_w$ for every
+infinite place $w$ of $K$.
+
+At a complex place the bound is on $w(x)$ itself, not on $w(x)^2$; the squaring at complex
+places enters only in the size of $D$. -/
 noncomputable def ArakelovDivisor.sectionSet (D : ArakelovDivisor K) : Set K :=
   { x | x ∈ (D.1 : FractionalIdeal (𝓞 K)⁰ K) ∧
     ∀ w : InfinitePlace K, w x ≤ (D.2 w : ℝ) }
 
-/-- Membership in a section set unfolds to the ideal membership plus the
-archimedean bounds. -/
+/-- **Membership in the section set.** Let $D$ be an Arakelov divisor of a number field $K$, with
+invertible fractional ideal $I$ and positive real number $r_w$ at each infinite place $w$ of $K$.
+An element $x \in K$ lies in the section set of $D$ if and only if $x \in I$ and
+$w(x) \le r_w$ for every infinite place $w$ of $K$. -/
 @[simp]
 theorem ArakelovDivisor.mem_sectionSet (D : ArakelovDivisor K) (x : K) :
     x ∈ D.sectionSet ↔
@@ -198,10 +236,14 @@ theorem ArakelovDivisor.mem_sectionSet (D : ArakelovDivisor K) (x : K) :
         ∀ w : InfinitePlace K, w x ≤ (D.2 w : ℝ) :=
   Iff.rfl
 
-/-- Every section set of an Arakelov divisor is finite. Clearing denominators by a
-nonzero element of `𝓞 K` lands in the ring of integers, and the ordinary-radius
-archimedean bounds transfer to uniform bounds on all complex embeddings, so
-`NumberField.Embeddings.finite_of_norm_le` applies. -/
+/-- **Finiteness of section sets.** For every Arakelov divisor $D$ of a number field $K$, the
+section set of $D$ is finite.
+
+Multiplying by a nonzero $d \in \mathcal{O}_K$ that clears the denominators of the fractional
+ideal of $D$ sends the section set into $\mathcal{O}_K$, and the bounds at the infinite places
+give a uniform bound $B$ on $|\sigma(dx)|$ for all $x$ in the section set and all complex
+embeddings $\sigma$ of $K$; only finitely many algebraic integers of $K$ have all conjugates of
+absolute value at most $B$. -/
 theorem ArakelovDivisor.sectionSet_finite (D : ArakelovDivisor K) :
     D.sectionSet.Finite := by
   obtain ⟨d, hd_mem, hden⟩ := (D.1 : FractionalIdeal (𝓞 K)⁰ K).isFractional
@@ -231,28 +273,37 @@ theorem ArakelovDivisor.sectionSet_finite (D : ArakelovDivisor K) :
     rw [map_mul, norm_mul]
     exact mul_le_mul (hφ₀ _ (Set.mem_univ _)) hφx (norm_nonneg _) (norm_nonneg _)
 
-/-- The archimedean component of the principal divisor of a unit. -/
+/-- **Archimedean part of a principal divisor.** For a nonzero element $x$ of a number field $K$,
+this is the family that assigns to each infinite place $w$ of $K$ the positive real
+number $w(x)$. -/
 noncomputable def principalArch (x : Kˣ) : InfinitePlace K → { r : ℝ // 0 < r } :=
   fun w => ⟨w (x : K), InfinitePlace.pos_iff.mpr (Units.ne_zero x)⟩
 
-/-- The principal Arakelov divisor of a unit: the principal fractional ideal together
-with the archimedean absolute values. -/
+/-- **Principal Arakelov divisor.** For a nonzero element $x$ of a number field $K$, the principal
+Arakelov divisor of $x$ consists of the principal fractional ideal $x\mathcal{O}_K$ together with
+the positive real number $w(x)$ at each infinite place $w$ of $K$. -/
 noncomputable def principalDivisor (x : Kˣ) : ArakelovDivisor K :=
   (toPrincipalIdeal (𝓞 K) K x, principalArch K x)
 
-/-- Coercion of the infinite component of a principal divisor. -/
+/-- **Infinite component of a principal divisor.** Let $K$ be a number field, $x \in K$ nonzero
+and $w$ an infinite place of $K$. The positive real number that the principal Arakelov divisor
+of $x$ assigns to $w$ is $w(x)$, the absolute value of $x$ at $w$. -/
 @[simp]
 theorem coe_principalDivisor_snd (x : Kˣ) (w : InfinitePlace K) :
     (((principalDivisor K x).2 w : { r : ℝ // 0 < r }) : ℝ) = w (x : K) :=
   rfl
 
-/-- The finite component of a principal divisor is the principal fractional ideal. -/
+/-- **Finite component of a principal divisor.** Let $K$ be a number field with ring of integers
+$\mathcal{O}_K$. For every nonzero $x \in K$, the fractional ideal component of the principal
+Arakelov divisor of $x$ is the principal fractional ideal $x\mathcal{O}_K$. -/
 theorem coe_principalDivisor_fst (x : Kˣ) :
     ((principalDivisor K x).1 : FractionalIdeal (𝓞 K)⁰ K) =
       FractionalIdeal.spanSingleton (𝓞 K)⁰ (x : K) :=
   coe_toPrincipalIdeal x
 
-/-- The principal-divisor homomorphism from units of `K`. -/
+/-- **Principal divisor homomorphism.** For a number field $K$, the map sending a nonzero element
+$x \in K$ to its principal Arakelov divisor is a group homomorphism from the multiplicative
+group $K^\times$ to the group of Arakelov divisors of $K$. -/
 noncomputable def principalHom : Kˣ →* ArakelovDivisor K where
   toFun := principalDivisor K
   map_one' := by
@@ -275,16 +326,24 @@ noncomputable def principalHom : Kˣ →* ArakelovDivisor K where
       rw [Units.val_mul, Pi.mul_apply, Positive.val_mul]
       exact map_mul w _ _
 
-/-- The subgroup of principal Arakelov divisors. -/
+/-- **Subgroup of principal Arakelov divisors.** For a number field $K$, the principal subgroup is
+the image of the principal divisor homomorphism, that is, the subgroup of the group of Arakelov
+divisors of $K$ consisting of the principal Arakelov divisors of the nonzero elements of $K$. -/
 noncomputable def principalSubgroup : Subgroup (ArakelovDivisor K) := (principalHom K).range
 
-/-- The degree-zero subgroup: the kernel of the size homomorphism. -/
+/-- **Degree-zero Arakelov divisors.** For a number field $K$, the degree-zero subgroup of the
+group of Arakelov divisors on $K$ is the kernel of the size homomorphism, that is, the subgroup
+of Arakelov divisors of size $1$. -/
 noncomputable def degreeZero : Subgroup (ArakelovDivisor K) := (ArakelovDivisor.sizeHom K).ker
 
-/-- Every principal divisor has size one. This is Mathlib's number-field product
-formula: the archimedean factor is `|Algebra.norm ℚ x|` by
-`NumberField.InfinitePlace.prod_eq_abs_norm`, and the ideal norm of the principal
-ideal is the same value by `FractionalIdeal.absNorm_span_singleton`. -/
+/-- **Principal Arakelov divisors have size one.** Let $K$ be a number field with ring of
+integers $\mathcal{O}_K$. For every nonzero $x \in K$, the principal Arakelov divisor of $x$,
+formed by the principal fractional ideal $x\mathcal{O}_K$ and the values $w(x)$ at the infinite
+places $w$ of $K$, has size $1$.
+
+This is the product formula: with $m_w$ equal to $1$ at real and $2$ at complex places, the
+archimedean factor $\prod_w w(x)^{m_w}$ equals $|N_{K/\mathbb{Q}}(x)|$, where $N_{K/\mathbb{Q}}$
+is the field norm from $K$ to $\mathbb{Q}$, and so does the absolute norm of $x\mathcal{O}_K$. -/
 theorem size_principal (x : Kˣ) : ArakelovDivisor.sizeHom K (principalHom K x) = 1 := by
   have hmap : principalHom K x = principalDivisor K x := rfl
   rw [hmap]
@@ -303,7 +362,8 @@ theorem size_principal (x : Kˣ) : ArakelovDivisor.sizeHom K (principalHom K x) 
   apply pow_pos
   exact InfinitePlace.pos_iff.mpr (Units.ne_zero x)
 
-/-- The principal subgroup is contained in the degree-zero subgroup. -/
+/-- **Principal Arakelov divisors have degree zero.** For a number field $K$, the subgroup of
+principal Arakelov divisors of $K$ is contained in the degree-zero subgroup. -/
 theorem principalSubgroup_le_degreeZero : principalSubgroup K ≤ degreeZero K := by
   rw [principalSubgroup, degreeZero, MonoidHom.range_le_ker_iff]
   exact MonoidHom.ext fun x => size_principal K x

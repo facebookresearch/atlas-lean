@@ -68,24 +68,43 @@ namespace Modulus
 
 variable (m : Modulus K)
 
-/-- Primes outside the finite support of `m`, indexing the free-group generators. -/
+/-- **Primes coprime to a modulus.** Let $\mathfrak m$ be a modulus of a number field $K$. The
+primes coprime to $\mathfrak m$ are the nonzero prime ideals $\mathfrak p$ of the ring of
+integers $\mathcal O_K$ that do not contain the finite part of $\mathfrak m$, that is, that do
+not divide it. They index the generators of a free group that maps to the group of
+fractional ideals coprime to the finite part of $\mathfrak m$. -/
 abbrev CoprimePrimes :=
   { v : IsDedekindDomain.HeightOneSpectrum (𝓞 K) // ¬ m.finiteSupported v }
 
-/-- Prime fractional ideals coprime to `m`, as a set of coprime units. -/
+/-- **Prime coprime units.** Let $\mathfrak m$ be a modulus of a number field $K$, and let
+$I_K^{\mathfrak m}$ be the group of invertible fractional ideals of $K$ coprime to the finite
+part of $\mathfrak m$. The prime coprime units of $\mathfrak m$ are the elements of
+$I_K^{\mathfrak m}$ of the form $\mathfrak p$, where $\mathfrak p$ is a nonzero prime ideal of
+the ring of integers $\mathcal O_K$ that does not divide the finite part of $\mathfrak m$. -/
 def coprimePrimeUnits : Set m.coprimeFractionalIdeals :=
   { I | ∃ (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K))
     (hvm : ¬ m.finiteSupported v), I = m.primeCoprimeUnit v hvm }
 
-/-- Usable membership characterization for `coprimePrimeUnits`. -/
+/-- **Membership in the prime coprime units.** Let $\mathfrak m$ be a modulus of a number field
+$K$, and let $I_K^{\mathfrak m}$ be the group of invertible fractional ideals of $K$ coprime to
+the finite part of $\mathfrak m$. An element $I$ of $I_K^{\mathfrak m}$ is a prime coprime unit
+of $\mathfrak m$ if and only if $I = \mathfrak p$ for some nonzero prime ideal $\mathfrak p$ of
+the ring of integers $\mathcal O_K$ that does not divide the finite part of $\mathfrak m$. -/
 theorem mem_coprimePrimeUnits (I : m.coprimeFractionalIdeals) :
     I ∈ m.coprimePrimeUnits ↔
       ∃ (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K))
         (hvm : ¬ m.finiteSupported v), I = m.primeCoprimeUnit v hvm :=
   Iff.rfl
 
-/-- The prime coprime units are exactly the range of the generator map,
-the direct native counterpart of ATLAS `primesCoprime_eq_range`. -/
+/-- **The prime coprime units are the image of the coprime primes.** Let $\mathfrak m$ be a
+modulus of a number field $K$, let $I_K^{\mathfrak m}$ be the group of invertible fractional
+ideals of $K$ coprime to the finite part of $\mathfrak m$, and let $P$ be the set of nonzero
+prime ideals of the ring of integers $\mathcal O_K$ that do not divide the finite part of
+$\mathfrak m$. Then the set of prime coprime units of $\mathfrak m$ equals the range of the map
+$P \to I_K^{\mathfrak m}$ sending each $\mathfrak p \in P$ to $\mathfrak p$ viewed as an element
+of $I_K^{\mathfrak m}$.
+
+Source: direct native counterpart of ATLAS `primesCoprime_eq_range`. -/
 theorem coprimePrimeUnits_eq_range :
     m.coprimePrimeUnits =
       Set.range (fun p : m.CoprimePrimes => m.primeCoprimeUnit p.val p.property) := by
@@ -97,7 +116,11 @@ theorem coprimePrimeUnits_eq_range :
   · rintro ⟨⟨v, hvm⟩, rfl⟩
     exact (m.mem_coprimePrimeUnits _).mpr ⟨v, hvm, rfl⟩
 
-/-- The prime coprime units generate the full group of coprime ideals. -/
+/-- **The coprime primes generate the coprime ideals.** Let $\mathfrak m$ be a modulus of a
+number field $K$, and let $I_K^{\mathfrak m}$ be the group of invertible fractional ideals
+of $K$ coprime to the finite part of $\mathfrak m$. Then $I_K^{\mathfrak m}$ is generated,
+as a group, by the nonzero prime ideals $\mathfrak p$ of the ring of integers
+$\mathcal O_K$ that do not divide the finite part of $\mathfrak m$. -/
 theorem closure_coprimePrimeUnits_eq_top :
     Subgroup.closure m.coprimePrimeUnits = ⊤ := by
   rw [eq_top_iff]
@@ -136,33 +159,55 @@ theorem closure_coprimePrimeUnits_eq_top :
     Subgroup.zpow_mem _ (Subgroup.subset_closure
       ((m.mem_coprimePrimeUnits _).mpr ⟨v, hsupp v hv, rfl⟩)) _)
 
-/-- Free group on the coprime primes mapping to the coprime ideals. -/
+/-- **The free group on the coprime primes maps to the coprime ideals.** Let $\mathfrak m$ be
+a modulus of a number field $K$, let $P$ be the set of nonzero prime ideals of the ring of
+integers $\mathcal O_K$ that do not divide the finite part of $\mathfrak m$, and let
+$I_K^{\mathfrak m}$ be the group of invertible fractional ideals of $K$ coprime to the finite
+part of $\mathfrak m$. This is the group homomorphism $F(P) \to I_K^{\mathfrak m}$ from the free
+group on $P$ that sends each generator $\mathfrak p$ to $\mathfrak p$, viewed as an element of
+$I_K^{\mathfrak m}$. -/
 noncomputable def freeGroupToCoprime :
     FreeGroup m.CoprimePrimes →* m.coprimeFractionalIdeals :=
   FreeGroup.lift (fun p => m.primeCoprimeUnit p.val p.property)
 
-/-- Generator computation for `freeGroupToCoprime`. -/
+/-- **The free-group map on generators.** Let $\mathfrak m$ be a modulus of a number field $K$,
+let $P$ be the set of nonzero prime ideals of the ring of integers $\mathcal O_K$ that do not
+divide the finite part of $\mathfrak m$, and let $I_K^{\mathfrak m}$ be the group of invertible
+fractional ideals of $K$ coprime to the finite part of $\mathfrak m$. For every
+$\mathfrak p \in P$, the homomorphism $F(P) \to I_K^{\mathfrak m}$ from the free group on $P$
+sends the generator attached to $\mathfrak p$ to $\mathfrak p$, viewed as an element of
+$I_K^{\mathfrak m}$. -/
 @[simp]
 theorem freeGroupToCoprime_of (p : m.CoprimePrimes) :
     m.freeGroupToCoprime (FreeGroup.of p) = m.primeCoprimeUnit p.val p.property := by
   simp only [freeGroupToCoprime, FreeGroup.lift_apply_of]
 
-/-- The free-group map surjects onto the coprime ideals. -/
+/-- **The free group on the coprime primes surjects onto the coprime ideals.** Let
+$\mathfrak m$ be a modulus of a number field $K$, let $P$ be the set of nonzero prime ideals
+of the ring of integers $\mathcal O_K$ that do not divide the finite part of $\mathfrak m$, and
+let $I_K^{\mathfrak m}$ be the group of invertible fractional ideals of $K$ coprime to the
+finite part of $\mathfrak m$. The homomorphism $F(P) \to I_K^{\mathfrak m}$ from the free group
+on $P$ sending each generator $\mathfrak p$ to $\mathfrak p$ is surjective. -/
 theorem freeGroupToCoprime_surjective :
     Function.Surjective m.freeGroupToCoprime := by
   unfold freeGroupToCoprime
   rw [FreeGroup.lift_surjective_iff_closure_range_eq_top,
     ← m.coprimePrimeUnits_eq_range, m.closure_coprimePrimeUnits_eq_top]
 
-/-- The kernel of the free-group presentation lies in the commutator subgroup,
-the direct native counterpart of ATLAS `freeGroupToCoprime_ker_le_commutator`
-(source lines 429--487). The prime basis-vector computation at source lines
-416--427 is replaced by
-`FractionalIdeal.factorizationMulEquiv_primeUnitFractionalIdeal`. The proof
-builds the ATLAS retraction to the abelianization through
-`FractionalIdeal.factorizationMulEquiv`,
-`Finsupp.comapDomain.addMonoidHom`, `Finsupp.toFreeAbelianGroup`, and
-`Abelianization.of`; the retraction itself stays private to this proof. -/
+/-- **The kernel of the free-group map lies in the commutator subgroup.** Let $\mathfrak m$ be
+a modulus of a number field $K$, let $P$ be the set of nonzero prime ideals of the ring of
+integers $\mathcal O_K$ that do not divide the finite part of $\mathfrak m$, and let
+$I_K^{\mathfrak m}$ be the group of invertible fractional ideals of $K$ coprime to the finite
+part of $\mathfrak m$. The kernel of the homomorphism $F(P) \to I_K^{\mathfrak m}$ from the free
+group on $P$ sending each generator $\mathfrak p$ to $\mathfrak p$ is contained in the
+commutator subgroup $[F(P), F(P)]$.
+
+Source: direct native counterpart of ATLAS `freeGroupToCoprime_ker_le_commutator` (source
+lines 429--487). The prime basis-vector computation at source lines 416--427 is replaced by
+`FractionalIdeal.factorizationMulEquiv_primeUnitFractionalIdeal`. The proof builds the ATLAS
+retraction to the abelianization through `FractionalIdeal.factorizationMulEquiv`,
+`Finsupp.comapDomain.addMonoidHom`, `Finsupp.toFreeAbelianGroup`, and `Abelianization.of`;
+the retraction itself stays private to this proof. -/
 theorem freeGroupToCoprime_ker_le_commutator :
     MonoidHom.ker m.freeGroupToCoprime ≤
       commutator (FreeGroup m.CoprimePrimes) := by
@@ -207,9 +252,15 @@ theorem freeGroupToCoprime_ker_le_commutator :
   rw [hx, map_one] at hx2
   exact hx2.symm
 
-/-- The kernel of the free-group presentation is exactly the commutator
-subgroup. The reverse inclusion is the generic
-`Abelianization.commutator_subset_ker`, since the coprime ideals commute. -/
+/-- **The kernel of the free-group map is the commutator subgroup.** Let $\mathfrak m$ be a
+modulus of a number field $K$, let $P$ be the set of nonzero prime ideals of the ring of
+integers $\mathcal O_K$ that do not divide the finite part of $\mathfrak m$, and let
+$I_K^{\mathfrak m}$ be the group of invertible fractional ideals of $K$ coprime to the finite
+part of $\mathfrak m$. The kernel of the homomorphism $F(P) \to I_K^{\mathfrak m}$ from the free
+group on $P$ sending each generator $\mathfrak p$ to $\mathfrak p$ equals the commutator
+subgroup $[F(P), F(P)]$.
+
+The commutator subgroup lies in the kernel because $I_K^{\mathfrak m}$ is abelian. -/
 @[simp]
 theorem freeGroupToCoprime_ker :
     MonoidHom.ker m.freeGroupToCoprime =

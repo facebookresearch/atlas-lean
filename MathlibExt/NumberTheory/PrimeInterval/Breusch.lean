@@ -38,12 +38,31 @@ namespace MathlibExt.NumberTheory.BreuschWanted
 
 namespace Internal
 
-/-- The assumed upper-bound shape for the endgame. -/
+/-- **Breusch's endgame upper-bound inequality.** For a natural number $n$ write
+$L(n) = \sum_{d \mid 210} \mu(d) \log \binom{2100n/d}{210n/d}$, where $\mu$ is the Möbius function;
+this is the logarithm of Breusch's product $F_9(n)$. The endgame upper-bound inequality at $n$ is
+the statement
+
+$$L(n) \le \left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right)
+n \log 3.4 + \sqrt{2100n}\,\log(2100n).$$ -/
 def upper_ineq (n : ℕ) : Prop :=
   logF9 n ≤ (18900/279 + 18900/657 + 18900/963 : ℝ) * n
     * Real.log 3.4 + Real.sqrt ((2100:ℝ)*n) * Real.log ((2100:ℝ)*n)
 
-/-- Certified prime chain from `53` to `9820997` with ratio below `9 / 8`. -/
+/-- **Breusch's prime chain.** The chain is the list of the following 111 natural numbers, in
+order:
+
+53, 59, 61, 67, 73, 79, 83, 89, 97, 109, 113, 127, 139, 151, 167, 181, 199, 223, 241, 271, 293,
+317, 353, 397, 443, 491, 547, 613, 683, 761, 853, 953, 1069, 1201, 1327, 1489, 1669, 1877, 2111,
+2371, 2663, 2971, 3331, 3739, 4201, 4723, 5309, 5953, 6691, 7523, 8461, 9511, 10691, 12011, 13499,
+15173, 17053, 19183, 21577, 24251, 27281, 30689, 34519, 38833, 43669, 49123, 55259, 62143, 69899,
+78623, 88427, 99469, 111893, 125863, 141587, 159233, 179119, 201499, 226669, 254993, 286859,
+322709, 363047, 408427, 459479, 516911, 581521, 654209, 735983, 827969, 931421, 1047841, 1178809,
+1326151, 1491913, 1678399, 1888193, 2124197, 2389721, 2688421, 3024457, 3402473, 3827767, 4306231,
+4844501, 5450041, 6131239, 6897643, 7759831, 8729801, 9820997.
+
+Every entry is prime, and each entry after the first is less than $\frac{9}{8}$ times the entry
+before it. -/
 def chain : List ℕ :=
   [53, 59, 61, 67, 73, 79,
   83, 89, 97, 109, 113, 127,
@@ -65,24 +84,28 @@ def chain : List ℕ :=
   3827767, 4306231, 4844501, 5450041, 6131239, 6897643,
   7759831, 8729801, 9820997]
 
-/-- Every chain entry is prime. -/
+/-- **Entries of Breusch's prime chain are prime.** Every entry of the chain is a prime number. -/
 theorem chain_prime : ∀ p ∈ chain, p.Prime := by
   intro p hp
   fin_cases hp <;> norm_num
 
-/-- The chain is strictly increasing. -/
+/-- **Breusch's prime chain is strictly increasing.** Each entry of the chain is less than every
+later entry. -/
 theorem chain_sorted : chain.Pairwise (· < ·) := by decide
 
-/-- Consecutive chain entries have ratio below `9 / 8`. -/
+/-- **Consecutive entries of Breusch's prime chain are within a factor $9/8$.** If $b$ immediately
+follows $a$ in the chain, then $8b < 9a$. -/
 theorem chain_ratio : ∀ pr ∈ chain.zip chain.tail, 8 * pr.2 < 9 * pr.1 := by
   decide
 
-/-- The chain ends at `9820997`. -/
+/-- **Last entry of Breusch's prime chain.** The last entry of the chain is $9820997$. -/
 theorem chain_getLast : chain.getLast (by decide : chain ≠ []) = 9820997 := rfl
 
 -- Bracketing: X between prev and the last element lies in some
 -- consecutive pair interval.
-/-- An `X` inside a sorted list lies between consecutive entries. -/
+/-- **Bracketing a real number in an increasing list.** Let $X$ be a real number and let
+$c_0 < c_1 < \dots < c_k$ be natural numbers with $c_0 \le X < c_k$. Then there is an index
+$i < k$ with $c_i \le X < c_{i+1}$. -/
 lemma bracket (X : ℝ) : ∀ (l : List ℕ) (prev : ℕ),
     List.Pairwise (· < ·) (prev :: l) → (prev:ℝ) ≤ X →
     ∀ (hne : prev :: l ≠ []), (X:ℝ) < ((((prev :: l).getLast hne : ℕ)):ℝ) →
@@ -109,7 +132,10 @@ lemma bracket (X : ℝ) : ∀ (l : List ℕ) (prev : ℕ),
         rw [show (prev :: l1) ++ [a, b] ++ l2 = prev :: (l1 ++ [a, b] ++ l2) by simp,
           ← heq], haX, hXb⟩
 
-/-- Zip-membership is preserved under cons. -/
+/-- **Consecutive pairs survive prepending.** Let $R$ be a list of natural numbers and let
+$a, b, d$ be natural numbers. If $(a, b)$ is a pair of consecutive entries of $R$ (an element
+of the list obtained by zipping $R$ with its tail), then $(a, b)$ is also a pair of consecutive
+entries of the list obtained by prepending $d$ to $R$. -/
 lemma zip_cons_mem {R : List ℕ} {d a b : ℕ}
     (h : (a, b) ∈ R.zip R.tail) : (a, b) ∈ (d :: R).zip (d :: R).tail := by
   have etail : (d :: R).tail = R := rfl
@@ -122,7 +148,10 @@ lemma zip_cons_mem {R : List ℕ} {d a b : ℕ}
     rw [List.zip_cons_cons]
     exact List.mem_cons_of_mem _ h
 
-/-- Consecutive list entries appear in the zip. -/
+/-- **Adjacent entries form a consecutive pair.** Let $l$, $l_1$, $l_2$ be lists of natural
+numbers and let $a, b$ be natural numbers. If $l$ is the concatenation of $l_1$, the two-entry
+list $a, b$, and $l_2$, then $(a, b)$ is a pair of consecutive entries of $l$ (an element of the
+list obtained by zipping $l$ with its tail). -/
 lemma zip_mem_of_consec {l : List ℕ} {a b : ℕ} {l1 l2 : List ℕ}
     (h : l = l1 ++ [a, b] ++ l2) : (a, b) ∈ l.zip l.tail := by
   subst h
@@ -138,7 +167,8 @@ lemma zip_mem_of_consec {l : List ℕ} {a b : ℕ} {l1 l2 : List ℕ}
     rw [e]
     exact zip_cons_mem ih
 
-/-- The chain covers `[53, 9820997)` with ratio `9 / 8`. -/
+/-- **Primes in $(X, 9X/8)$ for $53 \le X < 9820997$.** For every real number $X$ with
+$53 \le X < 9820997$ there is a prime $p$ with $X < p < \frac{9}{8}X$. -/
 theorem chain_cover (X : ℝ) (hlo : (53 : ℝ) ≤ X) (hhi : X < (9820997 : ℝ)) :
     ∃ p : ℕ, p.Prime ∧ (X : ℝ) < (p : ℝ) ∧ (p : ℝ) < (9 / 8 : ℝ) * X := by
   have hchain : chain = 53 :: chain.tail := rfl
@@ -160,7 +190,9 @@ theorem chain_cover (X : ℝ) (hlo : (53 : ℝ) ≤ X) (hhi : X < (9820997 : ℝ
   linarith [hratioR, haR]
 
 -- Overlap: every X ≥ 5600*4762/3 sits in some [5600n/3, 1890n] with n ≥ 4762.
-/-- Large `X` lies in some window `[5600 * n / 3, 1890 * n]`. -/
+/-- **Every large real lies in a window $[5600n/3, 1890n]$.** For every real number
+$X \ge 5600 \cdot 4762 / 3$ there is a natural number $n \ge 4762$ with
+$5600n/3 \le X \le 1890n$. -/
 lemma overlap (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X) :
     ∃ n : ℕ, 4762 ≤ n ∧ (5600 : ℝ) * n / 3 ≤ X ∧ X ≤ (1890 : ℝ) * n := by
   set n := ⌊3 * X / 5600⌋₊ with hn
@@ -175,7 +207,9 @@ lemma overlap (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X) :
     linarith [hlt, hX]
 
 -- Main contradiction at level n.
-/-- Contradiction at level `n ≥ 4762` from the two bounds. -/
+/-- **Endgame contradiction in Breusch's theorem.** Let $n \ge 4762$ be a natural number. If
+there is no prime $p$ with $1890n < p \le 2100n$ and $n$ satisfies the endgame upper-bound
+inequality, then we have a contradiction. -/
 lemma main_contra (n : ℕ) (hn : 4762 ≤ n)
     (_hA : ∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False)
     (hupper : upper_ineq n) : False := by
@@ -192,7 +226,12 @@ lemma main_contra (n : ℕ) (hn : 4762 ≤ n)
   have hmargin_n := mul_lt_mul_of_pos_right hmargin hn0
   linarith [hlower, hupper, hgap, hmargin_n]
 
-/-- Analytic prime interval above `5600 * 4762 / 3`. -/
+/-- **Primes in $(X, 9X/8)$ for large $X$, assuming the upper bound.** For a natural number $n$
+write $L(n) = \sum_{m \mid 210} \mu(m) \log \binom{2100n/m}{210n/m}$, where $\mu$ is the Möbius
+function. Let $X \ge 5600 \cdot 4762 / 3$ be a real number, and suppose that every natural number
+$n \ge 1$ such that no prime $p$ satisfies $1890n < p \le 2100n$ also satisfies
+$L(n) \le \left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right) n \log 3.4 +
+\sqrt{2100n}\,\log(2100n)$. Then there is a prime $p$ with $X < p < \frac{9}{8}X$. -/
 theorem analytic_at_X (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X)
     (hU : ∀ n : ℕ, 1 ≤ n →
       (∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) → upper_ineq n) :
@@ -227,7 +266,12 @@ theorem analytic_at_X (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X)
     exact ⟨p, hp, h1, h2⟩
   exact main_contra n hn0 hA (hU n (by omega) hA)
 
-/-- Breusch intervals from the chain and the upper bound. -/
+/-- **Breusch's theorem from the upper bound.** For a natural number $n$ write
+$L(n) = \sum_{m \mid 210} \mu(m) \log \binom{2100n/m}{210n/m}$, where $\mu$ is the Möbius function.
+Let $x \ge 48$ be a real number, and suppose that every natural number $n \ge 1$ such that no
+prime $p$ satisfies $1890n < p \le 2100n$ also satisfies
+$L(n) \le \left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right) n \log 3.4 +
+\sqrt{2100n}\,\log(2100n)$. Then there is a prime $p$ with $x < p < \frac{9}{8}x$. -/
 theorem breusch_prime_interval_of_upper (x : ℝ) (hx : 48 ≤ x)
     (hU : ∀ n : ℕ, 1 ≤ n →
       (∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) → upper_ineq n) :
@@ -246,7 +290,9 @@ theorem breusch_prime_interval_of_upper (x : ℝ) (hx : 48 ≤ x)
 
 end Internal
 
-/-- Every real `x ≥ 48` has a prime strictly between `x` and `(9 / 8) * x`.
+/-- **Breusch's theorem on primes between $x$ and $9x/8$.** For every real number $x \ge 48$
+there is a prime $p$ with $x < p < \frac{9}{8}x$.
+
 Source: R. Breusch, *Zur Verallgemeinerung des Bertrandschen Postulates*,
 Math. Z. 34 (1932), 505–526, conclusion on p. 515. -/
 theorem breusch_prime_interval : ∀ x : ℝ, 48 ≤ x →

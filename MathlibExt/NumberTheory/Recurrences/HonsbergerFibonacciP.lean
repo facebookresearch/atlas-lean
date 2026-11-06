@@ -21,8 +21,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Fibonacci `p`-numbers with `F_p(0)=0`, `F_p(r)=1` for `1 ≤ r ≤ p`, and
-`F_p(r)=F_p(r-1)+F_p(r-p-1)` for `r>p`. Definition binds source lines 79-85
+/-- **Fibonacci p-numbers.** For a natural number $p$, the Fibonacci $p$-numbers are the
+natural numbers $F_p(r)$, $r \in \mathbb{N}$, given by $F_p(0) = 0$, $F_p(r) = 1$ for
+$1 \le r \le p$, and $F_p(r) = F_p(r-1) + F_p(r-p-1)$ for $r > p$.
+
+Source: Definition binds source lines 79-85
 with source-text SHA-256 `d9bb7efe9d48a303e5c3db6559ba63bcbaf2967585215ca8b11ee32311955a00`.
 From `https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.tex`,
 source-file SHA-256 `dad9ca89271449561bda39a96e5705728a24469f6106405f6b2cc021c3d16524`,
@@ -38,18 +41,21 @@ decreasing_by
   · exact Nat.lt_succ_self _
   · exact Nat.lt_succ_of_le (Nat.sub_le _ _)
 
-/-- The zeroth Fibonacci `p`-number is zero. -/
+/-- **Zeroth Fibonacci p-number.** For every natural number $p$, the Fibonacci $p$-number
+$F_p(0)$ equals $0$. -/
 @[simp]
 theorem fibonacciP_zero (p : ℕ) : fibonacciP p 0 = 0 := by
   rw [fibonacciP]
 
-/-- Fibonacci `p`-numbers from index one through index `p` are one. -/
+/-- **Initial Fibonacci p-numbers equal one.** For all natural numbers $p$ and $r$ with
+$1 \le r \le p$, the Fibonacci $p$-number $F_p(r)$ equals $1$. -/
 theorem fibonacciP_eq_one (p r : ℕ) (hr : 1 ≤ r) (hrp : r ≤ p) : fibonacciP p r = 1 := by
   cases r with
   | zero => omega
   | succ r => simp [fibonacciP, hrp]
 
-/-- Fibonacci `p`-numbers satisfy their defining recurrence above index `p`. -/
+/-- **Recurrence for Fibonacci p-numbers.** For all natural numbers $p$ and $r$ with $p < r$,
+the Fibonacci $p$-numbers satisfy $F_p(r) = F_p(r-1) + F_p(r-p-1)$. -/
 theorem fibonacciP_rec (p r : ℕ) (hpr : p < r) :
     fibonacciP p r = fibonacciP p (r - 1) + fibonacciP p (r - p - 1) := by
   cases r with
@@ -59,7 +65,9 @@ theorem fibonacciP_rec (p r : ℕ) (hpr : p < r) :
     have hsub : r + 1 - p - 1 = r - p := by omega
     simp [fibonacciP, hnot, hsub]
 
-/-- The Fibonacci `1`-numbers are the ordinary Fibonacci numbers. -/
+/-- **Fibonacci 1-numbers are the Fibonacci numbers.** For every natural number $n$, the
+Fibonacci $1$-number $F_1(n)$ equals the $n$-th Fibonacci number $f_n$, where $f_0 = 0$,
+$f_1 = 1$ and $f_{k+2} = f_{k+1} + f_k$. -/
 theorem fibonacciP_one (n : ℕ) : fibonacciP 1 n = Nat.fib n := by
   induction n using Nat.strong_induction_on with
   | _ n ih =>
@@ -226,20 +234,26 @@ private theorem honsberger_generic
     · exact honsberger_induction_step p m n f hzero hone hrec (by omega)
         (ih (m - 1) (by omega)) (ih (m - p - 1) (by omega))
 
-/-- Honsberger identity for Fibonacci `p`-numbers. Binds source lines 425-449
+/-- **Honsberger identity for Fibonacci p-numbers.** Let $p$, $m$ and $n$ be positive integers
+with $p \le m + 1$ and $p \le n + 2$, and write $F_p(r)$ for the Fibonacci $p$-numbers. Suppose
+that $F_p(0) = 0$, that $F_p(r) = 1$ for $1 \le r \le p$, and that
+$F_p(r) = F_p(r-1) + F_p(r-p-1)$ for $r > p$ (these hold by definition). Then
+$$F_p(m+1)\,F_p(n+2) + \sum_{i=1}^{p} F_p(m+1-i)\,F_p(n+i+1-p) = F_p(m+n+2).$$
+
+All indices in the sum are natural numbers, since $i \le p \le m + 1$ and
+$n + i + 1 \ge n + 2 \ge p$.
+
+Proof: by strong induction on $m$ from a uniform form of the recurrence, with a telescoping
+base case.
+
+Source: Binds source lines 425-449
 with source-text SHA-256 `754dee8cf3e11595590ad2539aee76a3ad6d7ffcb80282b6a4488271f6392bd9`.
 From `https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.tex`,
 source-file SHA-256 `dad9ca89271449561bda39a96e5705728a24469f6106405f6b2cc021c3d16524`,
 stable ID `jis_grounded_9dbbcac802edaa76c96bd1ff`. Corrected accounting:
 2 mentions / 1 paper / 1 proof use. Excludes the downstream generalized
-Leonardo identity and the separate finite-sum identity. The hypotheses make
-the initial values and recurrence part of the Lean proposition.
-
+Leonardo identity and the separate finite-sum identity. Definition from lines 79-85.
 Proves `Wanted` entry `honsberger_fibonacciP`.
-
-Proof: The definition follows Kuhapatanakul et al., JIS 27 (2024), lines 79-85; the identity cited
-at lines 425-449 follows from a uniform recurrence and strong induction on `m` with a telescoping
-base case.
 -/
 theorem honsberger_fibonacciP
     (p m n : ℕ) (hp : 0 < p) (hm_pos : 0 < m) (hn_pos : 0 < n)

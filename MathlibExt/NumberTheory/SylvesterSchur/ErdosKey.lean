@@ -294,11 +294,12 @@ private lemma erdos_choose_prime_factor_gt_hard
   have hn7 : 7 ≤ n := by omega
   exact erdos_choose_prime_factor_gt_bertrand_steps n k hn7 hk
 
-/-- **Erdős key lemma** (1934): for `1 ≤ n < k`, the binomial coefficient
-`Nat.choose (k + n - 1) n` has a prime factor strictly greater than `n`.
+/-- **Erdős key lemma.** For all natural numbers $n$ and $k$ with $1 \le n < k$, the binomial
+coefficient $\binom{k + n - 1}{n}$ has a prime factor $p > n$.
 
-The cases `n = 1`, `k = n + 1`, and `k = n + 2` are direct Bertrand arguments.
-All later starts are handled by the consolidated hard-case estimate above. -/
+This is the binomial form of the Sylvester–Schur theorem, as in Erdős's 1934 proof. The case
+$n = 1$ is immediate, and the cases $k = n + 1$ and $k = n + 2$ follow directly from Bertrand's
+postulate. -/
 lemma erdos_choose_prime_factor_gt (n : ℕ) (hn : 1 ≤ n) (k : ℕ) (hk : n < k) :
     ∃ p : ℕ, p.Prime ∧ n < p ∧ p ∣ Nat.choose (k + n - 1) n := by
   by_cases hn1 : n = 1

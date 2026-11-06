@@ -47,8 +47,11 @@ private def pFibonacci {R : Type*} [CommRing R] (p : R) : ℕ → R
   | 1 => 1
   | n + 2 => p * pFibonacci p (n + 1) + pFibonacci p n
 
-/-- Binet form of a solution of `W (k + 2) = p * W (k + 1) + W k`, with the roots
-`(p ± √(p ^ 2 + 4)) / 2` of `z ^ 2 - p * z - 1`. -/
+/-- **Binet formula for generalized Fibonacci sequences.** Let $p$ be a real number and let
+$(W_k)_{k \ge 0}$ be a real sequence with $W_{k+2} = p W_{k+1} + W_k$ for all $k \ge 0$. Put
+$s = \sqrt{p^2 + 4}$, and let $\alpha = (p + s)/2$ and $\beta = (p - s)/2$, the roots of
+$z^2 - pz - 1$. Then for every $n \ge 0$,
+$W_n = \frac{W_1 - W_0 \beta}{s} \alpha^n + \frac{W_0 \alpha - W_1}{s} \beta^n$. -/
 theorem generalizedFibonacci_binet (p : ℝ) (W : ℕ → ℝ)
     (hW : ∀ k, W (k + 2) = p * W (k + 1) + W k) (n : ℕ) :
     W n = (W 1 - W 0 * ((p - Real.sqrt (p ^ 2 + 4)) / 2)) / Real.sqrt (p ^ 2 + 4) *
@@ -64,9 +67,10 @@ theorem generalizedFibonacci_binet (p : ℝ) (W : ℕ → ℝ)
     Real.sqrt (p ^ 2 + 4) by ring]
   ring
 
-/-- Mixed identity `F (m - 2) W (n - 2) - F (m - 3) W (n - 1) = (-1) ^ (m - 1) W (n - m + 1)`
-for a two-sided solution `W` of `W (k + 2) = p * W (k + 1) + W k` and the two-sided
-`p`-Fibonacci sequence `F`, for all integers `m` and `n`. -/
+/-- **Mixed identity for generalized Fibonacci sequences.** Let $p$ be a real number and let
+$W, F : \mathbb{Z} \to \mathbb{R}$ satisfy $W_{k+2} = p W_{k+1} + W_k$ and
+$F_{k+2} = p F_{k+1} + F_k$ for every integer $k$, with $F_0 = 0$ and $F_1 = 1$. Then for all
+integers $m$ and $n$, $F_{m-2} W_{n-2} - F_{m-3} W_{n-1} = (-1)^{m-1} W_{n-m+1}$. -/
 theorem generalizedFibonacci_mixed_identity (p : ℝ) (W F : ℤ → ℝ)
     (hWrec : ∀ k : ℤ, W (k + 2) = p * W (k + 1) + W k) (hF0 : F 0 = 0) (hF1 : F 1 = 1)
     (hFrec : ∀ k : ℤ, F (k + 2) = p * F (k + 1) + F k) (m n : ℤ) :
@@ -196,9 +200,10 @@ theorem generalizedFibonacci_mixed_identity (p : ℝ) (W F : ℤ → ℝ)
   exact seq_eq_of_rec_aux (fun mm : ℤ => F (mm - 2) * W (n - 2) - F (mm - 3) * W (n - 1))
     (fun mm : ℤ => (-1 : ℝ) ^ (mm - 1) * W (n - mm + 1)) p hGrec' hHrec' h0' h1' m
 
-/-- Cassini-type identity `W n W (n + 2) - W (n + 1) ^ 2 = (-1) ^ n Δ` with
-`Δ = W 0 ^ 2 + p W 0 W 1 - W 1 ^ 2`, a specialization of
-`horadam_generalized_catalan_identity`. -/
+/-- **Cassini identity for generalized Fibonacci sequences.** Let $R$ be a commutative ring, let
+$p \in R$, and let $(W_k)_{k \ge 0}$ be a sequence in $R$ with $W_{k+2} = p W_{k+1} + W_k$ for
+all $k \ge 0$. Then for every $n \ge 0$,
+$W_n W_{n+2} - W_{n+1}^2 = (-1)^n (W_0^2 + p W_0 W_1 - W_1^2)$. -/
 theorem generalizedFibonacci_cassini {R : Type*} [CommRing R] (p : R) (W : ℕ → R)
     (hW : ∀ k, W (k + 2) = p * W (k + 1) + W k) (n : ℕ) :
     W n * W (n + 2) - W (n + 1) ^ 2 = (-1) ^ n * (W 0 ^ 2 + p * W 0 * W 1 - W 1 ^ 2) := by
@@ -209,8 +214,10 @@ theorem generalizedFibonacci_cassini {R : Type*} [CommRing R] (p : R) (W : ℕ �
   rw [h2, show pFibonacci p 1 = 1 from rfl, show n + 1 + 1 = n + 2 by ring] at h
   linear_combination -h
 
-/-- Ratio limit: for `p > 0` and a solution of `W (k + 2) = p * W (k + 1) + W k` with
-`W 0 ≥ 0` and `W 1 > 0`, `W (k + 1) / W k` tends to the dominant root `(p + √(p ^ 2 + 4)) / 2`. -/
+/-- **Ratio limit for generalized Fibonacci sequences.** Let $p > 0$ be a real number and let
+$(W_k)_{k \ge 0}$ be a real sequence with $W_0 \ge 0$, $W_1 > 0$ and
+$W_{k+2} = p W_{k+1} + W_k$ for all $k \ge 0$. Then $W_{k+1}/W_k$ tends to
+$(p + \sqrt{p^2 + 4})/2$ as $k \to \infty$. -/
 theorem generalizedFibonacci_tendsto_ratio (p : ℝ) (hp : 0 < p) (W : ℕ → ℝ) (hW0 : 0 ≤ W 0)
     (hW1 : 0 < W 1) (hW : ∀ k, W (k + 2) = p * W (k + 1) + W k) :
     Filter.Tendsto (fun k => W (k + 1) / W k) Filter.atTop
@@ -264,22 +271,24 @@ theorem generalizedFibonacci_tendsto_ratio (p : ℝ) (hp : 0 < p) (W : ℕ → �
   exact hLim.congr fun k => (hEq k).symm
 
 set_option linter.unusedVariables false in
-/--
-Binet form, mixed Fibonacci identity, Cassini-type identity, and ratio limit
-for the generalized Fibonacci sequence `W_{p,n}` with `W 0 = a`, `W 1 = b`
-and `W (k+2) = p * W (k+1) + W k`; `F` is the `p`-Fibonacci case.
+/-- **Binet, Cassini, mixed identity and ratio limit for generalized Fibonacci sequences.**
+Let $p \ge 1$, $a \ge 0$ and $b > 0$ be integers, and let $m \ge 0$ and $n \ge 0$ be integers.
+Let $W, F : \mathbb{Z} \to \mathbb{R}$ satisfy $W_0 = a$, $W_1 = b$, $F_0 = 0$, $F_1 = 1$,
+$W_{k+2} = p W_{k+1} + W_k$ and $F_{k+2} = p F_{k+1} + F_k$ for every integer $k$. Put
+$s = \sqrt{p^2 + 4}$, $\alpha = (p + s)/2$ and $\beta = (p - s)/2$. Then
+$W_n = \frac{b - a \beta}{s} \alpha^n + \frac{a \alpha - b}{s} \beta^n$,
+$F_{m-2} W_{n-2} - F_{m-3} W_{n-1} = (-1)^{m-1} W_{n-m+1}$,
+$W_n W_{n+2} - W_{n+1}^2 = (-1)^n (a^2 + p a b - b^2)$, and $W_{k+1}/W_k$ tends to $\alpha$ as
+$k \to \infty$ through the natural numbers.
+
+Here $a^2 + pab - b^2$ is the source's $\Delta$. The four parts also hold separately under weaker
+hypotheses; in particular the mixed identity holds for all integers $m$ and $n$.
 
 Source: Abdelhak Taane, Ihab-Eddine Djellas, and Mohammed Mekkaoui, "Total
 Positivity of Toeplitz Matrices Involving Generalized Hyper-Fibonacci
 Numbers," Journal of Integer Sequences 29 (2026), Article 26.2.5,
 preliminary-results lemma, lines 192–200,
 https://cs.uwaterloo.ca/journals/JIS/VOL29/Djellas/djellas7.tex
-
-`Δ = a^2 + p*a*b - b^2`; `α` and `β` are the roots `(p ± √(p^2+4))/2`.
-The four parts are also stated separately, each with only the hypotheses it needs:
-`generalizedFibonacci_binet`, `generalizedFibonacci_mixed_identity` (for all `m n : ℤ`, so
-`0 ≤ m` is not used), `generalizedFibonacci_cassini` and `generalizedFibonacci_tendsto_ratio`.
-Proves `Wanted` entry `generalizedFibonacci_binet_cassini_and_ratio_limit`.
 -/
 theorem generalizedFibonacci_binet_cassini_and_ratio_limit (p a b : ℤ) (W F : ℤ → ℝ)
   (m n : ℤ) (hp : 1 ≤ p) (ha : 0 ≤ a) (hb : 0 < b) (hm : 0 ≤ m) (hn : 0 ≤ n) (hW0 : W 0 = (a : ℝ))

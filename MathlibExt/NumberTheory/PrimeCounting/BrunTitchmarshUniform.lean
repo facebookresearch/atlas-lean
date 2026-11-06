@@ -744,10 +744,20 @@ private theorem brunTitchmarsh_primeCount_le_uniform (X k ell : ℕ)
     _ = 42 * (X : ℝ) /
         ((Nat.totient k : ℝ) * Real.log y) := by ring
 
-/-- For every exponent `β ∈ (0, 1)` there is a constant `ξ₁ > 0`, depending only
-on `β`, such that the inclusive residue-class prime count satisfies
-`π(X; k, ell) < ξ₁ X / (φ(k) log(X/k))` whenever `2 ≤ X`, `1 ≤ k`, and
-`k ≤ X ^ β`.
+/-- **Uniform Brun–Titchmarsh bound.** Write $\pi(X; k, \ell)$ for the number of primes $p \le X$
+with $p \equiv \ell \pmod{k}$, and $\varphi$ for Euler's totient function. For every real $\beta$
+with $0 < \beta < 1$ there is a real constant $\xi_1 > 0$ such that for all natural numbers $X$,
+$k$ and $\ell$ with $X \ge 2$, $k \ge 1$ and $k \le X^{\beta}$,
+$$
+\pi(X; k, \ell) < \frac{\xi_1 X}{\varphi(k) \log(X/k)}.
+$$
+
+No coprimality of $k$ and $\ell$ is assumed.
+
+The proof applies Selberg's $\Lambda^2$ upper-bound sieve to the arithmetic progression, with
+optimized weights and a harmonic lower bound for the diagonal sum.
+
+Proves `Wanted` entry `brun_titchmarsh_uniform`.
 
 Source: Jean-Marie De Koninck and Imre Kátai, "Some Remarks on a Paper of
 L. Toth," Journal of Integer Sequences 13 (2010),
@@ -759,11 +769,6 @@ exact lines 424–429 joined by LF without a terminal LF have SHA-256
 cites E. C. Titchmarsh, "A divisor problem," Rend. Palermo 54 (1930), 414–429
 and 57 (1933), 478–479. The bound `2 ≤ X` makes the source's implicit analytic
 lower range explicit, and the source prints no coprimality hypothesis.
-
-Proves `Wanted` entry `brun_titchmarsh_uniform`.
-
-Proof: Selberg's `Λ²` upper-bound sieve on an arithmetic progression, with
-optimized weights and a harmonic lower bound for the diagonal sum.
 -/
 public theorem brun_titchmarsh_uniform (β : ℝ) (hβ0 : 0 < β)
     (hβ1 : β < 1) :

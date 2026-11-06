@@ -20,12 +20,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Odd Lichtenberg numbers (OEIS A002450): the sequence of positive `3`-key
-distances `(1 / 3) * M_{2 * k} = ℓ_{2 * k - 1} = 1, 5, 21, 85, …`, described as
-the self-generating sequence for seed `1` with generating function set
-`{k ↦ 4 * k + 1}`, so `a 0 = 1` and `a (n + 1) = 4 * a n + 1`.
+/-- **Odd Lichtenberg numbers.** The odd Lichtenberg numbers form the sequence $(a_n)_{n \ge 0}$
+of natural numbers defined by $a_0 = 1$ and $a_{n+1} = 4 a_n + 1$, so the sequence begins
+$1, 5, 21, 85, \dots$; these are the positive terms of OEIS A002450.
 
-Concept `jis_sem_21a46571c2d8f3f53edb5728` (`odd Lichtenberg numbers`);
+Equivalently, it is the self-generating sequence with seed $1$ and generating function
+$k \mapsto 4k + 1$.
+
+Source: Concept `jis_sem_21a46571c2d8f3f53edb5728` (`odd Lichtenberg numbers`);
 required clause from stable statement `jis_e2a7cb75f919d56e388fa0b1` in
 `https://cs.uwaterloo.ca/journals/JIS/VOL25/Hinz/hinz5.tex`. -/
 def oddLichtenberg : ℕ → ℕ

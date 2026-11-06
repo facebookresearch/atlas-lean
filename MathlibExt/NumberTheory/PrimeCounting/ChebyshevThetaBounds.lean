@@ -951,8 +951,13 @@ section
 namespace MetaMathlibExt
 
 /--
-Chebyshev's explicit two-sided bounds for the Chebyshev `θ` function, for
-`x > 1`, with `A = log(2^(1/2) * 3^(1/3) * 5^(1/5) / 30^(1/30))`.
+**Chebyshev's explicit bounds for the theta function.** Let $\theta(x) = \sum_{p \le x} \log p$,
+the sum running over primes, and let
+$$A = \log \frac{2^{1/2} \, 3^{1/3} \, 5^{1/5}}{30^{1/30}}.$$
+Then for every real $x > 1$,
+$$\theta(x) < \frac{6}{5}Ax - A\sqrt{x} + \frac{5}{4\log 6}(\log x)^2 + \frac{5}{2}\log x + 2$$
+and
+$$\theta(x) > Ax - \frac{12}{5}A\sqrt{x} - \frac{5}{8\log 6}(\log x)^2 - \frac{15}{4}\log x - 3.$$
 
 Source: S. Nazardonyavi and S. Yakubovich, "Extremely Abundant Numbers and
 the Riemann Hypothesis," Journal of Integer Sequences 17 (2014),

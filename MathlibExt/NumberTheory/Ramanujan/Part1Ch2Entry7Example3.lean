@@ -23,7 +23,12 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch2
 
 namespace Entry7Example3
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Arctangent series with halved squares (Entry 7, Example 3).** For every real number
+$n > 0$, the series
+$$\sum_{k=0}^{\infty} \arctan \frac{1}{2(n + k + 1)^2}$$
+converges absolutely and its sum is $\arctan \frac{1}{2n + 1}$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     7, Example 3, formula (7.6), printed p. 36 / PDF p. 46.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry7_example3`.
 -/

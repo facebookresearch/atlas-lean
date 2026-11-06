@@ -36,12 +36,13 @@ private theorem eval_zero_eq_one_of_isCoprime_X
   · exact h1
 
 /--
-Every odd perfect polynomial over `F₂` is a square (Canaday).
+**Odd perfect polynomials over $\mathbb{F}_2$ are squares (Canaday).** Let $A$ be a polynomial
+over $\mathbb{F}_2$ that is coprime to both $X$ and $X + 1$ (that is, odd: $A$ has no linear
+factor) and that equals the sum of its monic divisors (that is, perfect). Then $A$ is a square:
+$A = B^2$ for some polynomial $B$ over $\mathbb{F}_2$.
 
-Odd means having no linear factor, i.e. coprime to both `X` and `X + 1`;
-perfect means equal to the sum of all its divisors. Since every nonzero
-polynomial over `F₂` is monic, summing over monic divisors is the full
-divisor sum.
+Since every nonzero polynomial over $\mathbb{F}_2$ is monic, the sum over monic divisors is the
+full divisor sum.
 
 Source: Luis H. Gallardo and Olivier Rahavandrainy, "A Polynomial Variant of
 Perfect Numbers," Journal of Integer Sequences 23 (2020), Article 20.8.6,
