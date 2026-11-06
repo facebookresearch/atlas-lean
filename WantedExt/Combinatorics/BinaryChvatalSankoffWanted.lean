@@ -49,30 +49,45 @@ these known bounds are not registered as open conjectures.
 noncomputable section
 
 
-/-- A binary string with exactly `n` ordered coordinates. -/
+/-- **Binary strings.** For a natural number $n$, a binary string of length $n$ is a function
+from $\{0, 1, \dots, n - 1\}$ to $\{\mathrm{false}, \mathrm{true}\}$, that is, a sequence of $n$
+bits listed in order. -/
 abbrev BinaryString (n : ℕ) := Fin n → Bool
 
-/-- An ordered pair of binary strings, the finite sample space for the source
-expectation. -/
+/-- **Pairs of binary strings.** For a natural number $n$, a pair of binary strings of length $n$
+is an ordered pair $(x, y)$ of binary strings $x$ and $y$, each of length $n$. These pairs form
+the finite sample space over which expected longest common subsequence lengths are taken. -/
 abbrev BinaryStringPair (n : ℕ) := BinaryString n × BinaryString n
 
-/-- `z` is an order-preserving common subsequence of the two binary strings.
-Using `List.Sublist` retains repeated symbols and their multiplicities. -/
+/-- **Common subsequence.** For binary strings $x$ and $y$ of length $n$, a finite sequence of bits
+$z$ is a common subsequence of $x$ and $y$ if $z$ is obtained both from $x$ and from $y$ by
+deleting some (possibly no) entries and keeping the remaining entries in order.
+
+Repeated symbols are kept with their multiplicities. -/
 def IsCommonSubsequence {n : ℕ} (z : List Bool)
     (x y : BinaryString n) : Prop :=
   z.Sublist (List.ofFn x) ∧ z.Sublist (List.ofFn y)
 
-/-- The lengths admitted by common subsequences of `x` and `y`. -/
+/-- **Lengths of common subsequences.** For binary strings $x$ and $y$ of length $n$, the set of
+natural numbers $k$ such that some binary list of length $k$ is a common subsequence of $x$
+and $y$. -/
 def commonSubsequenceLengths {n : ℕ} (x y : BinaryString n) : Set ℕ :=
   {k | ∃ z : List Bool, IsCommonSubsequence z x y ∧ z.length = k}
 
-/-- The longest-common-subsequence length, computed by the proved CSLib
-dynamic-programming implementation. -/
+/-- **Length of a longest common subsequence.** For binary strings $x$ and $y$ of length $n$,
+$\mathrm{LCS}(x, y)$ is the length returned by the dynamic-programming algorithm for the longest
+common subsequence, applied to $x$ and $y$ read as lists of bits.
+
+This value is the greatest length of a common subsequence of $x$ and $y$. -/
 def lcsLength {n : ℕ} (x y : BinaryString n) : ℕ :=
   (Cslib.Algorithms.Lean.longestCommonSubsequence
     (List.ofFn x) (List.ofFn y)).ret.1
 
-/-- `lcsLength` is attained and is the maximum common-subsequence length. -/
+/-- **The LCS length is the maximum common-subsequence length.** For binary strings $x$ and $y$ of
+length $n$, let $\mathrm{LCS}(x, y)$ be the length returned by the dynamic-programming algorithm
+for the longest common subsequence on $x$ and $y$. Then some common subsequence of $x$ and $y$
+has length $\mathrm{LCS}(x, y)$, and every common subsequence of $x$ and $y$ has length at most
+$\mathrm{LCS}(x, y)$. -/
 theorem lcsLength_isGreatest {n : ℕ} (x y : BinaryString n) :
     IsGreatest (commonSubsequenceLengths x y) (lcsLength x y) := by
   let result := (Cslib.Algorithms.Lean.longestCommonSubsequence
@@ -90,8 +105,10 @@ theorem lcsLength_isGreatest {n : ℕ} (x y : BinaryString n) :
     change z.length ≤ result.1
     exact (h.2.2.2 z hz.1 hz.2).trans_eq h.1
 
-/-- A longest common subsequence exists with the reported length, and every
-other common subsequence is no longer. -/
+/-- **Existence of a longest common subsequence.** For binary strings $x$ and $y$ of length $n$,
+there is a binary list $z$ that is a common subsequence of $x$ and $y$, whose length equals the
+LCS length of $x$ and $y$, and such that every common subsequence $w$ of $x$ and $y$ has length at
+most the length of $z$. -/
 theorem exists_longestCommonSubsequence {n : ℕ} (x y : BinaryString n) :
     ∃ z : List Bool,
       IsCommonSubsequence z x y ∧ z.length = lcsLength x y ∧
@@ -100,14 +117,18 @@ theorem exists_longestCommonSubsequence {n : ℕ} (x y : BinaryString n) :
   exact ⟨z, hz, hlen, fun w hw =>
     (lcsLength_isGreatest x y).2 ⟨w, hw, rfl⟩ |>.trans_eq hlen.symm⟩
 
-/-- No common subsequence is longer than either input string. -/
+/-- **The LCS length is at most the string length.** For binary strings $x$ and $y$ of length $n$,
+the length $\mathrm{LCS}(x, y)$ of a longest common subsequence satisfies
+$\mathrm{LCS}(x, y) \le n$. -/
 theorem lcsLength_le {n : ℕ} (x y : BinaryString n) : lcsLength x y ≤ n := by
   obtain ⟨z, hz, hlen, _⟩ := exists_longestCommonSubsequence x y
   rw [← hlen]
   simpa using hz.1.length_le
 
-/-- Mathematical `Nat.findGreatest` characterization used to export proof
-tasks without depending on the CSLib implementation module. -/
+/-- **The LCS length as a bounded maximum.** For binary strings $x$ and $y$ of length $n$, the
+length $\mathrm{LCS}(x, y)$ of a longest common subsequence equals the largest $k \le n$ such that
+$x$ and $y$ have a common subsequence of length $k$ (such $k$ exist, since the empty sequence is a
+common subsequence). -/
 theorem lcsLength_eq_findGreatest {n : ℕ} (x y : BinaryString n) :
     lcsLength x y =
       (by
@@ -121,18 +142,24 @@ theorem lcsLength_eq_findGreatest {n : ℕ} (x y : BinaryString n) :
     · exact Nat.zero_le _
     · exact ⟨[], by simp [IsCommonSubsequence], rfl⟩
 
-/-- All ordered pairs of length-`n` binary strings. -/
+/-- **The finite set of pairs of binary strings.** For a natural number $n$, this is the finite
+set of all ordered pairs $(x, y)$ of binary strings $x$ and $y$ of length $n$. -/
 def uniformBinaryStringPairs (n : ℕ) : Finset (BinaryStringPair n) :=
   Finset.univ
 
-/-- The exact uniform expectation of LCS length over the finite product sample
-space. Each ordered pair has weight `1 / |BinaryStringPair n|`. -/
+/-- **Expected length of a longest common subsequence.** For $n \in \mathbb{N}$, the expected LCS
+length $E_n$ is the average of $\mathrm{LCS}(x, y)$, the length of a longest common subsequence of
+$x$ and $y$, over all ordered pairs $(x, y)$ of binary strings of length $n$: it is the sum of
+$\mathrm{LCS}(x, y)$ over these pairs divided by their number $4^n$. Equivalently, $E_n$ is the
+expectation of $\mathrm{LCS}(x, y)$ for two independent uniformly random binary strings $x$, $y$
+of length $n$. -/
 def expectedLCSLength (n : ℕ) : ℝ :=
   (∑ pair ∈ uniformBinaryStringPairs n,
       (lcsLength pair.1 pair.2 : ℝ)) /
     (Fintype.card (BinaryStringPair n) : ℝ)
 
-/-- Expected LCS length is nonnegative. -/
+/-- **Expected LCS length is nonnegative.** For every $n$, the expected length of a longest common
+subsequence of two independent uniformly random binary strings of length $n$ is at least $0$. -/
 theorem expectedLCSLength_nonneg (n : ℕ) : 0 ≤ expectedLCSLength n := by
   apply div_nonneg
   · apply Finset.sum_nonneg
@@ -140,7 +167,9 @@ theorem expectedLCSLength_nonneg (n : ℕ) : 0 ≤ expectedLCSLength n := by
     exact Nat.cast_nonneg _
   · exact Nat.cast_nonneg _
 
-/-- Expected LCS length is at most the common input length. -/
+/-- **Expected LCS length is at most the string length.** For every $n$, the expected length of a
+longest common subsequence of two independent uniformly random binary strings of length $n$ is at
+most $n$. -/
 theorem expectedLCSLength_le (n : ℕ) : expectedLCSLength n ≤ n := by
   have hcard : (0 : ℝ) < Fintype.card (BinaryStringPair n) :=
     Nat.cast_pos.mpr Fintype.card_pos
@@ -155,13 +184,16 @@ theorem expectedLCSLength_le (n : ℕ) : expectedLCSLength n ≤ n := by
     _ = (n : ℝ) * Fintype.card (BinaryStringPair n) := by
       simp [uniformBinaryStringPairs, mul_comm]
 
-/-- The normalized expectation, with the irrelevant initial index made
-explicit instead of relying on totalized `0 / 0`. -/
+/-- **Normalized expected LCS length.** For $n \ge 1$, the normalized expected LCS length at $n$
+is $E_n / n$, where $E_n$ is the expected length of a longest common subsequence of two
+independent uniformly random binary strings of length $n$. At $n = 0$ it is defined to be $0$. -/
 def normalizedExpectedLCS (n : ℕ) : ℝ :=
   if n = 0 then 0 else expectedLCSLength n / (n : ℝ)
 
-/-- Every normalized expectation lies in the source's trivial interval
-`[0,1]`. -/
+/-- **Normalized expected LCS lengths lie in $[0,1]$.** For every natural number $n$, the
+normalized expected LCS length at $n$ (the expected length of a longest common subsequence of
+two independent uniformly random binary strings of length $n$, divided by $n$, and $0$ for
+$n = 0$) lies in the closed interval $[0,1]$. -/
 theorem normalizedExpectedLCS_mem_Icc (n : ℕ) :
     normalizedExpectedLCS n ∈ Set.Icc (0 : ℝ) 1 := by
   by_cases hn : n = 0
@@ -172,23 +204,35 @@ theorem normalizedExpectedLCS_mem_Icc (n : ℕ) :
     · rw [div_le_one (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn))]
       exact expectedLCSLength_le n
 
-/-- The bounded real liminf of normalized expectations. The source's ordinary
-limit-existence theorem below identifies this value with the ordinary limit;
-unlike `Filter.limUnder`, this definition does not select an arbitrary fallback
-when convergence has not yet been supplied. -/
+/-- **Binary Chvátal–Sankoff constant.** Let $L_n$ be the length of a longest common subsequence
+of two independent uniformly random binary strings of length $n$. The binary Chvátal–Sankoff
+constant is the real number $\liminf_{n \to \infty} \mathbb{E}[L_n]/n$.
+
+For every $n \ge 1$ the quotient $\mathbb{E}[L_n]/n$ lies in $[0, 1]$, so this limit inferior is
+finite. By the theorem of Chvátal and Sankoff the sequence converges, so the constant equals the
+ordinary limit $\lim_{n \to \infty} \mathbb{E}[L_n]/n$; defining it as a limit inferior avoids
+choosing an arbitrary value before convergence is known. -/
 noncomputable def binaryChvatalSankoffConstant : ℝ :=
   Filter.liminf normalizedExpectedLCS Filter.atTop
 
-/-- Source notation `C₃₁ₐ`. -/
+/-- **Catalogue notation for the binary Chvátal–Sankoff constant.** Let $L_n$ be the length of a
+longest common subsequence of two independent uniformly random binary strings of length $n$.
+The notation $C_{31a}$ stands for the binary Chvátal–Sankoff constant
+$\liminf_{n \to \infty} \mathbb{E}[L_n]/n$. -/
 noncomputable abbrev C31a : ℝ :=
   binaryChvatalSankoffConstant
 
-/-- Chvátal and Sankoff's source-reported theorem that the ordinary limit
-exists. -/
+/-- **Statement of the Chvátal–Sankoff limit theorem.** Let $L_n$ be the length of a longest
+common subsequence of two independent uniformly random binary strings of length $n$. This
+proposition asserts that the sequence $\mathbb{E}[L_n]/n$ converges to a real number as
+$n \to \infty$. Chvátal and Sankoff proved that it holds. -/
 def chvatalSankoffLimitExists : Prop :=
   ∃ c : ℝ, Filter.Tendsto normalizedExpectedLCS Filter.atTop (nhds c)
 
-/-- The bounded liminf lies in the source's trivial interval `[0,1]`. -/
+/-- **Trivial bounds for the binary Chvátal–Sankoff constant.** Let $L_n$ be the length of a
+longest common subsequence of two independent uniformly random binary strings of length $n$, and
+let $C_{31a} = \liminf_{n \to \infty} \mathbb{E}[L_n]/n$ be the binary Chvátal–Sankoff constant.
+Then $0 \le C_{31a} \le 1$. -/
 theorem binaryChvatalSankoffConstant_mem_Icc :
     C31a ∈ Set.Icc (0 : ℝ) 1 := by
   constructor
@@ -202,45 +246,73 @@ theorem binaryChvatalSankoffConstant_mem_Icc :
     · exact Filter.isBoundedUnder_of_eventually_ge
         (Filter.Eventually.of_forall fun n => (normalizedExpectedLCS_mem_Icc n).1)
 
-/-- The trivial exact upper endpoint `C₃₁ₐ ≤ 1`. -/
+/-- **Trivial upper bound for the binary Chvátal–Sankoff constant.** Let $C_{31a}$ be the
+binary Chvátal–Sankoff constant: the limit inferior as $n \to \infty$ of $E_n / n$, where $E_n$
+is the expected length of a longest common subsequence of two independent uniformly random
+binary strings of length $n$. This is the proposition $C_{31a} \le 1$. -/
 def trivialUpperBound : Prop :=
   C31a ≤ 1
 
-/-- Dančík--Paterson's exact upper endpoint `0.837623`. -/
+/-- **Statement of the Dančík–Paterson upper bound.** The proposition that the binary
+Chvátal–Sankoff constant $\gamma$ satisfies $\gamma \le 0.837623$. Here $\gamma$ is the limit
+inferior, as $n \to \infty$, of $\mathbb{E}[L_n]/n$, where $L_n$ is the length of a longest common
+subsequence of two independent uniformly random binary strings of length $n$. -/
 def dancikPatersonUpperBound : Prop :=
   C31a ≤ (837623 : ℝ) / 1000000
 
-/-- Lueker's computer-assisted exact upper endpoint `0.826280`. -/
+/-- **Statement of Lueker's upper bound.** The proposition that the binary
+Chvátal–Sankoff constant $C_{31a}$ is at most $0.826280$. -/
 def luekerUpperBound : Prop :=
   C31a ≤ (826280 : ℝ) / 1000000
 
-/-- The trivial exact lower endpoint `0 ≤ C₃₁ₐ`. -/
+/-- **Statement of the trivial lower bound.** The proposition that the binary Chvátal–Sankoff
+constant $C_{31a}$ satisfies $0 \le C_{31a}$. -/
 def trivialLowerBound : Prop :=
   0 ≤ C31a
 
-/-- Chvátal--Sankoff's strict positive lower bound. -/
+/-- **Statement of the Chvátal–Sankoff positivity bound.** The proposition that the binary
+Chvátal–Sankoff constant $\gamma$ is strictly positive, $0 < \gamma$. Here $\gamma$ is the limit
+inferior, as $n \to \infty$, of $\mathbb{E}[L_n]/n$, where $L_n$ is the length of a longest common
+subsequence of two independent uniformly random binary strings of length $n$. -/
 def chvatalSankoffStrictPositive : Prop :=
   0 < C31a
 
-/-- Dančík's computer-assisted exact lower endpoint `0.773911`. -/
+/-- **Statement of Dančík's lower bound.** The proposition that the binary Chvátal–Sankoff
+constant $\gamma$ satisfies $0.773911 \le \gamma$. Here $\gamma$ is the limit inferior, as
+$n \to \infty$, of $\mathbb{E}[L_n]/n$, where $L_n$ is the length of a longest common
+subsequence of two independent uniformly random binary strings of length $n$. -/
 def dancikLowerBound : Prop :=
   (773911 : ℝ) / 1000000 ≤ C31a
 
-/-- Lueker's computer-assisted exact lower endpoint `0.788071`. -/
+/-- **Statement of Lueker's lower bound.** The proposition that the binary
+Chvátal–Sankoff constant $C_{31a}$ is at least $0.788071$. -/
 def luekerLowerBound : Prop :=
   (788071 : ℝ) / 1000000 ≤ C31a
 
-/-- Heineman et al.'s computer-assisted exact lower endpoint `0.792665992`. -/
+/-- **Statement of the Heineman et al. lower bound.** For each $n$, let $E_n$ be the expected
+length of a longest common subsequence of two independent uniformly random binary strings of
+length $n$, and let $C$, the binary Chvátal–Sankoff constant, be the limit inferior of $E_n / n$
+as $n \to \infty$. This is the proposition $0.792665992 \le C$.
+
+Heineman et al. obtained this computer-assisted bound; the decimal is an exact rational endpoint. -/
 def heinemanLowerBound : Prop :=
   (792665992 : ℝ) / 1000000000 ≤ C31a
 
-/-- The source-reported 2026 claim `0.79970 ≤ C₃₁ₐ`, explicitly marked
-AI and computer assisted (unverified). This declaration records the claim and
-does not verify or prove it. -/
+/-- **Statement of the reported 2026 lower bound $0.79970$.** The proposition that the binary
+Chvátal–Sankoff constant $C_{31a}$ is at least $0.79970$.
+
+This bound was reported in 2026 as AI and computer assisted and has not been verified. -/
 def sourceReportedUnverified2026LowerBound : Prop :=
   (79970 : ℝ) / 100000 ≤ C31a
 
-/-- Source: uniform independent binary-string model; concatenation
+/-- **Concatenation of binary string pairs.** For natural numbers $m$ and $n$, sending a pair
+$(x_1, y_1)$ of binary strings of length $m$ together with a pair $(x_2, y_2)$ of binary strings
+of length $n$ to the pair $(x_1 x_2, y_1 y_2)$ of concatenations is a bijection from the product
+of the set of pairs of length-$m$ binary strings and the set of pairs of length-$n$ binary
+strings onto the set of pairs of binary strings of length $m + n$. Its inverse splits each
+string of length $m + n$ into its first $m$ and its last $n$ symbols.
+
+Source: uniform independent binary-string model; concatenation
 identifies two independent pairs with a pair of the combined length. -/
 def appendBinaryStringPairEquiv (m n : ℕ) :
     BinaryStringPair m × BinaryStringPair n ≃ BinaryStringPair (m + n) where
@@ -261,7 +333,13 @@ def appendBinaryStringPairEquiv (m n : ℕ) :
     · exact (Fin.appendEquiv m n).apply_symm_apply x
     · exact (Fin.appendEquiv m n).apply_symm_apply y
 
-/-- Source: common subsequences concatenate without changing their order. -/
+/-- **Superadditivity of the LCS length under concatenation.** Write $\mathrm{LCS}(x, y)$ for the
+length of a longest common subsequence of binary strings $x$ and $y$ of equal length. Let
+$x_1, y_1$ be binary strings of length $m$ and $x_2, y_2$ binary strings of length $n$, and write
+$x_1x_2$ and $y_1y_2$ for the concatenated strings of length $m + n$. Then
+$\mathrm{LCS}(x_1, y_1) + \mathrm{LCS}(x_2, y_2) \le \mathrm{LCS}(x_1x_2, y_1y_2)$.
+
+Source: common subsequences concatenate without changing their order. -/
 theorem lcsLength_append_le {m n : ℕ}
     (x₁ y₁ : BinaryString m) (x₂ y₂ : BinaryString n) :
     lcsLength x₁ y₁ + lcsLength x₂ y₂ ≤
@@ -277,8 +355,10 @@ theorem lcsLength_append_le {m n : ℕ}
     · simpa only [List.ofFn_fin_append] using hz₁.2.append hz₂.2
   · simp [hlen₁, hlen₂]
 
-/-- Under the source's existence theorem, the normalized expectations tend to
-the selected constant. -/
+/-- **Any limit of the normalized expected LCS lengths is the binary Chvátal–Sankoff constant.**
+If the normalized expected LCS lengths converge to some real number as $n \to \infty$, then they
+converge to the binary Chvátal–Sankoff constant $C_{31a}$, which is defined as their limit
+inferior. -/
 theorem tendsto_binaryChvatalSankoffConstant
     (h : chvatalSankoffLimitExists) :
     Filter.Tendsto normalizedExpectedLCS Filter.atTop
@@ -287,9 +367,12 @@ theorem tendsto_binaryChvatalSankoffConstant
   rw [binaryChvatalSankoffConstant, hc.liminf_eq]
   exact hc
 
-/-- Fekete's lemma turns expected-LCS superadditivity into the source's
-ordinary-limit-existence statement. The nonlocal superadditivity premise is
-kept explicit here. -/
+/-- **Superadditivity implies the binary LCS limit exists.** For each natural number $n$, let $E_n$
+be the expected length of a longest common subsequence of two independent uniformly random binary
+strings of length $n$. If $E_m + E_n \le E_{m+n}$ for all natural numbers $m$ and $n$, then the
+sequence $(E_n / n)_{n \ge 1}$ converges to a real number as $n \to \infty$.
+
+The proof applies Fekete's lemma. -/
 theorem chvatalSankoffLimitExists_of_superadditive
     (h : ∀ m n : ℕ,
       expectedLCSLength m + expectedLCSLength n ≤ expectedLCSLength (m + n)) :
@@ -324,16 +407,21 @@ theorem chvatalSankoffLimitExists_of_superadditive
   filter_upwards [Filter.eventually_gt_atTop 0] with n hn
   simp [normalizedExpectedLCS, hn.ne']
 
-/-- The trivial endpoints follow from the proved finite-level bounds. -/
+/-- **The binary Chvátal–Sankoff constant is nonnegative.** The binary Chvátal–Sankoff constant
+$C_{31a}$ satisfies $0 \le C_{31a}$. -/
 theorem trivialLowerBound_holds : trivialLowerBound :=
   binaryChvatalSankoffConstant_mem_Icc.1
 
-/-- The trivial upper endpoint follows from the proved finite-level bounds. -/
+/-- **The binary Chvátal–Sankoff constant is at most one.** The binary Chvátal–Sankoff constant
+$C_{31a}$ satisfies $C_{31a} \le 1$. -/
 theorem trivialUpperBound_holds : trivialUpperBound :=
   binaryChvatalSankoffConstant_mem_Icc.2
 
-/-- Expected binary LCS length is superadditive under concatenation. Adapted
-from the verified gpt-5.6-sol proof in task T292145496. -/
+/-- **Superadditivity of the expected LCS length.** Let $E_n$ be the expected length of a longest
+common subsequence of two independent uniformly random binary strings of length $n$. Then for all
+natural numbers $m$ and $n$, $E_m + E_n \le E_{m+n}$.
+
+Source: adapted from the verified gpt-5.6-sol proof in task T292145496. -/
 theorem expectedLCSLength_superadditive :
     ∀ m n : ℕ,
       expectedLCSLength m + expectedLCSLength n ≤ expectedLCSLength (m + n) := by
@@ -397,31 +485,61 @@ theorem expectedLCSLength_superadditive :
       (div_le_div_iff_of_pos_right (mul_pos hcard_m hcard_n)).2 hsum
 
 
-/-- The source-reported ordinary limit exists unconditionally. -/
+/-- **Chvátal–Sankoff theorem: the binary LCS limit exists.** Let $L_n$ be the length of a longest
+common subsequence of two independent uniformly random binary strings of length $n$. Then the
+sequence $\mathbb{E}[L_n]/n$ converges to a real number as $n \to \infty$. -/
 theorem chvatalSankoffLimitExists_holds : chvatalSankoffLimitExists :=
   chvatalSankoffLimitExists_of_superadditive expectedLCSLength_superadditive
 
-/-- Source: Dančík--Paterson (1995), catalogue upper bound `0.837623`.
+/-- **Dančík–Paterson upper bound for the binary Chvátal–Sankoff constant.** The binary
+Chvátal–Sankoff constant $\gamma$ satisfies $\gamma \le 0.837623$, where $\gamma$ is the limit
+inferior, as $n \to \infty$, of $\mathbb{E}[L_n]/n$ and $L_n$ is the length of a longest common
+subsequence of two independent uniformly random binary strings of length $n$.
+
+Source: Dančík--Paterson (1995), catalogue upper bound `0.837623`.
 Known literature result; its proof is not supplied here. -/
 theorem_wanted dancikPatersonUpperBound_wanted : dancikPatersonUpperBound
 
-/-- Source: Lueker (2009), catalogue computer-assisted upper bound `0.826280`.
+/-- **Lueker's upper bound for the binary Chvátal–Sankoff constant.** The binary Chvátal–Sankoff
+constant $C_{31a}$ is at most $0.826280$.
+
+Source: Lueker (2009), catalogue computer-assisted upper bound `0.826280`.
 Known literature result; its proof and certificate are not supplied here. -/
 theorem_wanted luekerUpperBound_wanted : luekerUpperBound
 
-/-- Source: Chvátal--Sankoff (1975), catalogue strict lower bound `> 0`.
+/-- **The binary Chvátal–Sankoff constant is positive.** Let $L_n$ be the length of a longest
+common subsequence of two independent uniformly random binary strings of length $n$. The binary
+Chvátal–Sankoff constant $C_{31a} = \liminf_{n \to \infty} \mathbb{E}[L_n]/n$ satisfies
+$C_{31a} > 0$.
+
+Source: Chvátal--Sankoff (1975), catalogue strict lower bound `> 0`.
 Known literature result; its proof is not supplied here. -/
 theorem_wanted chvatalSankoffStrictPositive_wanted : chvatalSankoffStrictPositive
 
-/-- Source: Dančík (1994), catalogue computer-assisted lower bound `0.773911`.
+/-- **Dančík's lower bound for the binary Chvátal–Sankoff constant.** The binary
+Chvátal–Sankoff constant $\gamma$ satisfies $0.773911 \le \gamma$, where $\gamma$ is the limit
+inferior, as $n \to \infty$, of $\mathbb{E}[L_n]/n$ and $L_n$ is the length of a longest common
+subsequence of two independent uniformly random binary strings of length $n$.
+
+Source: Dančík (1994), catalogue computer-assisted lower bound `0.773911`.
 Known literature result; its proof and certificate are not supplied here. -/
 theorem_wanted dancikLowerBound_wanted : dancikLowerBound
 
-/-- Source: Lueker (2009), catalogue computer-assisted lower bound `0.788071`.
+/-- **Lueker's lower bound for the binary Chvátal–Sankoff constant.** For each $n$, let $E_n$ be
+the expected length of a longest common subsequence of two independent uniformly random binary
+strings of length $n$, and let $C$, the binary Chvátal–Sankoff constant, be the limit inferior of
+$E_n / n$ as $n \to \infty$. Then $0.788071 \le C$.
+
+Source: Lueker (2009), catalogue computer-assisted lower bound `0.788071`.
 Known literature result; its proof and certificate are not supplied here. -/
 theorem_wanted luekerLowerBound_wanted : luekerLowerBound
 
-/-- Source: Heineman et al., arXiv:2407.10925v1 (2024), catalogue
+/-- **Heineman et al. lower bound for the binary Chvátal–Sankoff constant.** For each $n$, let
+$E_n$ be the expected length of a longest common subsequence of two independent uniformly random
+binary strings of length $n$, and let $C$, the binary Chvátal–Sankoff constant, be the limit
+inferior of $E_n / n$ as $n \to \infty$. Then $0.792665992 \le C$.
+
+Source: Heineman et al., arXiv:2407.10925v1 (2024), catalogue
 computer-assisted lower bound `0.792665992`. Known literature result;
 its proof and certificate are not supplied here. -/
 theorem_wanted heinemanLowerBound_wanted : heinemanLowerBound

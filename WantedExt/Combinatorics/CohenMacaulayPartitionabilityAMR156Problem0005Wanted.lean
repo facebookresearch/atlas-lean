@@ -40,32 +40,55 @@ forces the integral homology to be finite), and their complexes are built from s
 
 open MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
-/-- `K` is Cohen–Macaulay over `ℚ` (Reisner's criterion): for every face `F`, including `∅`,
-`H̃_i(link_K(F); ℚ) = 0` for all `i < dim link_K(F)`; in the vertex-count indexing of
-`reducedBetti`, degree `i = k - 1` and `dim link_K(F) = topCard (link K F) - 1`. -/
+/-- **Cohen–Macaulay complexes over $\mathbb{Q}$.** A finite family $K$ of finite subsets of
+$\mathbb{N}$ is Cohen–Macaulay over $\mathbb{Q}$ when for every member $F$ of $K$ (the empty face
+included, if it belongs to $K$) the link
+$L = \operatorname{lk}_K F = \{G \in K : G \cap F = \emptyset,\ G \cup F \in K\}$ satisfies
+$\tilde\beta_i(L) = 0$ for every integer $i$ with $-1 \le i < \dim L$. Here $\dim L$ is one less
+than the largest number of elements of a member of $L$, taken to be $-1$ when $L$ has no nonempty
+member, and $\tilde\beta_i(L)$ is the number of members of $L$ with $i + 1$ elements minus the
+ranks of the augmented rational simplicial boundary maps (vertices ordered as in $\mathbb{N}$) out
+of and into the span of these members; when $L$ is a simplicial complex,
+$\tilde\beta_i(L) = \dim \tilde H_i(L; \mathbb{Q})$.
+
+For a simplicial complex this is Reisner's criterion. -/
 def IsCohenMacaulayOverRat (K : Finset (Finset ℕ)) : Prop :=
   ∀ F ∈ K, ∀ k, k < topCard (link K F) → reducedBetti (link K F) k = 0
 
-/-- `K` is pure: all facets have the same number of vertices. -/
+/-- **Pure complexes.** A finite family $K$ of finite subsets of $\mathbb{N}$ is pure when all
+its facets (maximal members) have the same number of elements. -/
 def IsPure (K : Finset (Finset ℕ)) : Prop :=
   ∃ d : ℕ, ∀ F, IsFacet K F → F.card = d
 
-/-- `K` is partitionable: its faces are partitioned into intervals `[r F, F]` (all faces between
-`r F` and `F`) with `F` running over the facets. -/
+/-- **Partitionable complexes.** A finite family $K$ of finite subsets of $\mathbb{N}$ is
+partitionable when there is a map $r$ assigning to each facet $F$ of $K$ a set $r(F) \subseteq F$
+such that for every member $\sigma$ of $K$ there is exactly one facet $F$ of $K$ with
+$r(F) \subseteq \sigma \subseteq F$.
+
+For a simplicial complex this says that its faces are partitioned into the intervals
+$[r(F), F] = \{\sigma : r(F) \subseteq \sigma \subseteq F\}$, one for each facet $F$. -/
 def IsPartitionable (K : Finset (Finset ℕ)) : Prop :=
   ∃ r : Finset ℕ → Finset ℕ, (∀ F, IsFacet K F → r F ⊆ F) ∧
     ∀ σ ∈ K, ∃! F, IsFacet K F ∧ r F ⊆ σ ∧ σ ⊆ F
 
-/-- The partitionability conjecture of Stanley and Garsia (Stanley, Positivity Problems, Problem
-6): every pure Cohen–Macaulay (over `ℚ`) simplicial complex is partitionable. -/
+/-- **Stanley–Garsia partitionability conjecture.** Every finite simplicial complex on the vertex
+set $\mathbb{N}$ that is pure and Cohen–Macaulay over $\mathbb{Q}$ is partitionable.
+
+Source: R. P. Stanley, Positivity Problems and Conjectures in Algebraic Combinatorics, Problem 6
+(partitionability conjecture of Stanley and Garsia). -/
 def cohenMacaulayPartitionable : Prop :=
   ∀ K : Finset (Finset ℕ), IsSimplicialComplex K → IsPure K → IsCohenMacaulayOverRat K →
     IsPartitionable K
 
 /--
-Resolved false: Duval, Goeckner, Klivans and Martin constructed explicit pure `3`-dimensional
-Cohen–Macaulay simplicial complexes that are not partitionable, disproving the Stanley–Garsia
-partitionability conjecture. Source: R. P. Stanley, Positivity Problems and Conjectures in Algebraic
+**The Stanley–Garsia partitionability conjecture is false.** There is a finite simplicial complex
+on the vertex set $\mathbb{N}$ that is pure and Cohen–Macaulay over $\mathbb{Q}$ but not
+partitionable.
+
+Duval, Goeckner, Klivans and Martin constructed explicit pure $3$-dimensional Cohen–Macaulay
+simplicial complexes that are not partitionable.
+
+Source: R. P. Stanley, Positivity Problems and Conjectures in Algebraic
 Combinatorics (1999), Problem 6 (Stanley–Garsia partitionability conjecture); resolution: A. M.
 Duval, B. Goeckner, C. J. Klivans and J. L. Martin, A non-partitionable Cohen-Macaulay simplicial
 complex, Adv. Math. 299 (2016), 381-395, arXiv:1504.04279, Theorem 3.5 (arXiv numbering): the

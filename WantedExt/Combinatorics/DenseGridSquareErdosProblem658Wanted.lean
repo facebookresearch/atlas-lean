@@ -35,18 +35,26 @@ statement. It follows from the density Hales-Jewett theorem, which MathlibExt pr
 statement `ErdosProblems/658.lean` (equivalent; no code imported).
 -/
 
-/-- Erdős Problem 658 (Graham), with axis-parallel squares: for every `δ > 0` and all large `N`,
-every `A ⊆ {1, …, N}²` with `|A| ≥ δ N²` contains the four vertices
-`(a, b), (a + d, b), (a, b + d), (a + d, b + d)` of a square with `d ≥ 1`. -/
+/-- **Erdős Problem 658 (axis-parallel squares in dense subsets of the grid).** The statement that
+for every real number $\delta > 0$ there is a natural number $N_0$ such that for every $N \ge N_0$,
+every set $A \subseteq \{1, \dots, N\}^2$ of pairs of natural numbers with $|A| \ge \delta N^2$
+contains the four vertices $(a, b)$, $(a + d, b)$, $(a, b + d)$ and $(a + d, b + d)$ of an
+axis-parallel square, for some natural numbers $a$, $b$ and $d \ge 1$. -/
 def denseGridContainsSquare : Prop :=
   ∀ δ > (0 : ℝ), ∀ᶠ N : ℕ in Filter.atTop, ∀ A : Finset (ℕ × ℕ),
     A ⊆ Finset.Icc 1 N ×ˢ Finset.Icc 1 N → δ * (N : ℝ) ^ 2 ≤ A.card →
       ∃ a b d : ℕ, 0 < d ∧ (a, b) ∈ A ∧ (a + d, b) ∈ A ∧ (a, b + d) ∈ A ∧ (a + d, b + d) ∈ A
 
 /--
-Resolved true: the statement with axis-parallel squares follows from the density Hales-Jewett
-theorem of Furstenberg and Katznelson, and Solymosi gave a quantitative proof; erdosproblems.com/658
-lists the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem #658,
+**Erdős Problem 658 is true.** For every real number $\delta > 0$ there is a natural number $N_0$
+such that for every $N \ge N_0$, every set $A \subseteq \{1, \dots, N\}^2$ of pairs of natural
+numbers with $|A| \ge \delta N^2$ contains the four vertices $(a, b)$, $(a + d, b)$, $(a, b + d)$
+and $(a + d, b + d)$ of an axis-parallel square, for some natural numbers $a$, $b$ and $d \ge 1$.
+
+This follows from the density Hales–Jewett theorem of Furstenberg and Katznelson; Solymosi gave a
+quantitative proof.
+
+Source: T. F. Bloom, Erdős Problems, Problem #658,
 https://www.erdosproblems.com/658 (status PROVED (LEAN)); resolution: H. Furstenberg and Y.
 Katznelson, A density version of the Hales-Jewett theorem, J. Anal. Math. (1991), 64-119,
 erdosproblems.com/658: the qualitative statement follows from the density Hales-Jewett theorem; a

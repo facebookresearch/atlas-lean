@@ -36,16 +36,21 @@ A `K(d)`-family (source's definition): any `d` distinct members with union of si
 a common element. `[n]` is `Fin n`; `d` distinct members are an injective map from `Fin d`.
 -/
 
-/-- A `K(d)`-family of `k`-subsets of `Fin n`: every member has `k` elements, and any `d` distinct
-members whose union has at most `2 k` elements have a common element. -/
+/-- **$K(d)$-families.** Let $n$, $k$ and $d$ be natural numbers and let
+$[n] = \{0, 1, \dots, n - 1\}$. A family $G$ of subsets of $[n]$ is a $K(d)$-family of
+$k$-subsets when every member of $G$ has exactly $k$ elements and any $d$ distinct members
+$A_1, \dots, A_d$ of $G$ with $|A_1 \cup \dots \cup A_d| \le 2k$ have a common element. -/
 def IsKdFamily (n k d : ℕ) (G : Finset (Finset (Fin n))) : Prop :=
   (∀ A ∈ G, A.card = k) ∧
     ∀ A : Fin d → Finset (Fin n), Function.Injective A → (∀ i, A i ∈ G) →
       (Finset.univ.biUnion A).card ≤ 2 * k → ∃ x, ∀ i, x ∈ A i
 
-/-- Mubayi's conjecture (Oberwolfach Report 48/2006, Conjecture 3): for `3 ≤ d ≤ k` and
-`n ≥ d k / (d - 1)`, every `K(d)`-family `G` of `k`-subsets of an `n`-set has
-`|G| ≤ C(n - 1, k - 1)`, and equality holds only if all members of `G` share a point. -/
+/-- **Mubayi's Erdős–Ko–Rado conjecture for $K(d)$-families.** For all natural numbers $n$, $k$
+and $d$ with $3 \le d \le k$ and $n \ge dk/(d - 1)$, every $K(d)$-family $G$ of $k$-subsets of
+$[n] = \{0, 1, \dots, n - 1\}$ satisfies $|G| \le \binom{n-1}{k-1}$, and if
+$|G| = \binom{n-1}{k-1}$ then some element of $[n]$ lies in every member of $G$.
+
+Source: D. Mubayi, Oberwolfach Report 48/2006, Conjecture 3. -/
 def kdFamilyErdosKoRado : Prop :=
   ∀ n k d : ℕ, 3 ≤ d → d ≤ k → (d : ℝ) * k / (d - 1) ≤ n →
     ∀ G : Finset (Finset (Fin n)), IsKdFamily n k d G →
@@ -53,10 +58,14 @@ def kdFamilyErdosKoRado : Prop :=
         (G.card = (n - 1).choose (k - 1) → ∃ x, ∀ A ∈ G, x ∈ A)
 
 /--
-Resolved true: Currier proved that for `2 ≤ d ≤ k` and `n ≥ d k/(d - 1)` a family of `k`-subsets of
-`[n]` with no `d` members having empty intersection and union of size at most `2k` has at most `C(n
-- 1, k - 1)` members, with equality only for a full star when `d ≥ 3`, resolving Mubayi's
-conjecture. Source: D. Mubayi, in Combinatorics, Probability and Computing, Oberwolfach Reports 3
+**Mubayi's Erdős–Ko–Rado conjecture for $K(d)$-families holds.** For all natural numbers $n$, $k$
+and $d$ with $3 \le d \le k$ and $n \ge dk/(d - 1)$, every $K(d)$-family $G$ of $k$-subsets of
+$[n] = \{0, 1, \dots, n - 1\}$ satisfies $|G| \le \binom{n-1}{k-1}$, and if
+$|G| = \binom{n-1}{k-1}$ then some element of $[n]$ lies in every member of $G$.
+
+Currier proved the bound for $2 \le d \le k$, with the equality case for $d \ge 3$.
+
+Source: D. Mubayi, in Combinatorics, Probability and Computing, Oberwolfach Reports 3
 (2006), no. 48, p. 2922, Conjecture 3, DOI 10.4171/OWR/2006/48; resolution: G. Currier, On the
 d-cluster generalization of Erdős-Ko-Rado, J. Combin. Theory Ser. A 182 (2021), 105464,
 arXiv:1812.11153, abstract and Theorem 2: for 2 ≤ d ≤ k and n ≥ dk/(d - 1), a family of k-subsets of
