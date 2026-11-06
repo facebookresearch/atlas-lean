@@ -34,16 +34,20 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The smallest denominator `q_min(x, δ)`: the least `q ≥ 1` such that some
-rational `p / q` lies in `(x - δ/2, x + δ/2)` (`0` if there is none, which only
-happens for `δ ≤ 0`).
+/-- **Smallest denominator in an interval.** For real numbers $x$ and $\delta$, the smallest
+denominator $q_{\min}(x, \delta)$ is the least positive integer $q$ for which there is an integer
+$p$ with $|x - p/q| < \delta/2$, that is, with $p/q$ in the open interval
+$(x - \delta/2, x + \delta/2)$. If there is no such $q$, which happens only when $\delta \le 0$,
+then $q_{\min}(x, \delta) = 0$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
 noncomputable def smallestDenominator (x δ : ℝ) : ℕ :=
   sInf {q : ℕ | 0 < q ∧ ∃ p : ℤ, |x - p / q| < δ / 2}
 
-/-- Any denominator of a rational in the window bounds `q_min(x, δ)`.
+/-- **Denominators of nearby rationals bound the smallest denominator.** Let $x$ and $\delta$ be
+real numbers, let $q$ be a positive integer and let $p$ be an integer. If $|x - p/q| < \delta/2$,
+then the smallest denominator satisfies $q_{\min}(x, \delta) \le q$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
@@ -51,8 +55,11 @@ theorem smallestDenominator_le {x δ : ℝ} {q : ℕ} {p : ℤ} (hq : 0 < q)
     (hp : |x - p / q| < δ / 2) : smallestDenominator x δ ≤ q :=
   Nat.sInf_le ⟨hq, p, hp⟩
 
-/-- For `δ > 0` some rational lies in the window: with `q > 1/δ` and `p` the integer nearest to
-`q x`, `|x - p/q| ≤ 1/(2q) < δ/2`.
+/-- **Every real number has arbitrarily close rationals.** For every real number $x$ and every
+real $\delta > 0$ there are a positive integer $q$ and an integer $p$ with $|x - p/q| < \delta/2$.
+
+Taking $q > 1/\delta$ and $p$ the integer nearest to $qx$ gives
+$|x - p/q| \le 1/(2q) < \delta/2$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
@@ -70,8 +77,9 @@ theorem exists_denominator_mem_window (x : ℝ) {δ : ℝ} (hδ : 0 < δ) :
   rw [h2, abs_div, abs_of_pos hq0, div_lt_iff₀ hq0]
   nlinarith
 
-/-- For `δ > 0`, `q_min(x, δ)` is positive and attained: some rational `p / q_min(x, δ)` lies in
-the window.
+/-- **The smallest denominator is positive and attained.** For every real number $x$ and every
+real $\delta > 0$, the smallest denominator $q = q_{\min}(x, \delta)$ is positive and there is an
+integer $p$ with $|x - p/q| < \delta/2$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
@@ -80,8 +88,9 @@ theorem smallestDenominator_spec (x : ℝ) {δ : ℝ} (hδ : 0 < δ) :
       ∃ p : ℤ, |x - p / smallestDenominator x δ| < δ / 2 :=
   Nat.sInf_mem (exists_denominator_mem_window x hδ)
 
-/-- Minimality of `q_min(x, δ)`: no positive `q < q_min(x, δ)` is the denominator of a rational
-in the window.
+/-- **Minimality of the smallest denominator.** Let $x$ and $\delta$ be real numbers and let $q$
+be a positive integer with $q < q_{\min}(x, \delta)$, where $q_{\min}(x, \delta)$ is the smallest
+denominator. Then there is no integer $p$ with $|x - p/q| < \delta/2$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
@@ -89,8 +98,10 @@ theorem not_mem_window_of_lt_smallestDenominator {x δ : ℝ} {q : ℕ} (hq : 0 
     (hlt : q < smallestDenominator x δ) (p : ℤ) : ¬ |x - p / q| < δ / 2 :=
   fun hp => absurd (smallestDenominator_le hq hp) (not_le.mpr hlt)
 
-/-- For `δ > 0`, `q_min(x, δ) ≤ q` exactly when some positive `q' ≤ q` is the denominator of a
-rational in the window.
+/-- **Upper bounds on the smallest denominator.** Let $x$ be a real number, let $\delta > 0$ be
+real, let $q$ be a natural number and let $q_{\min}(x, \delta)$ be the smallest denominator. Then
+$q_{\min}(x, \delta) \le q$ if and only if there are a positive integer $q' \le q$ and an integer
+$p$ with $|x - p/q'| < \delta/2$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
@@ -102,7 +113,11 @@ theorem smallestDenominator_le_iff (x : ℝ) {δ : ℝ} (hδ : 0 < δ) (q : ℕ)
   · rintro ⟨q', hq', hq0, p, hp⟩
     exact (smallestDenominator_le hq0 hp).trans hq'
 
-/-- For `δ > 1` the window always contains an integer, so `q_min(x, δ) = 1`.
+/-- **Wide intervals have smallest denominator one.** For every real number $x$ and every real
+$\delta > 1$, the smallest denominator $q_{\min}(x, \delta)$ equals $1$.
+
+The open interval $(x - \delta/2, x + \delta/2)$ has length greater than $1$, so it contains an
+integer.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.1). -/
@@ -120,10 +135,18 @@ theorem smallestDenominator_eq_one {x δ : ℝ} (hδ : 1 < δ) : smallestDenomin
   · rw [h] at hmem
     exact hmem
 
-/-- The limit density `η_log(s)` of `log q_min(x, δ) + ½ log δ`:
-`(6/π²) e^{2s}` for `s ≤ 0`, `(6/π²)(-e^{2s} + 2 + 4s)` for `0 ≤ s ≤ log 2`, and
-`(6/π²)(-e^{2s} + 2 + 2 e^{2s} √(1/4 - e^{-2s}) - 4 log(1/2 + √(1/4 - e^{-2s})))`
-for `s ≥ log 2`.
+/-- **Density of the logarithmic smallest denominator.** The function $\eta_{\log}$ on the real
+line is defined by $\eta_{\log}(s) = \frac{6}{\pi^2} e^{2s}$ for $s \le 0$, by
+$\eta_{\log}(s) = \frac{6}{\pi^2}\left(-e^{2s} + 2 + 4s\right)$ for $0 < s \le \log 2$, and by
+$$
+\eta_{\log}(s) = \frac{6}{\pi^2}\left(-e^{2s} + 2 + 2e^{2s}\sqrt{\tfrac14 - e^{-2s}} -
+4\log\left(\tfrac12 + \sqrt{\tfrac14 - e^{-2s}}\right)\right)
+$$
+for $s > \log 2$.
+
+In the cited paper, $\eta_{\log}$ is the density of the limit law, as $\delta \to 0^+$, of
+$\log q_{\min}(x, \delta) + \frac12 \log \delta$ for uniformly random $x$, where
+$q_{\min}(x, \delta)$ is the smallest denominator of a rational in $(x - \delta/2, x + \delta/2)$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.3). -/
@@ -134,14 +157,17 @@ noncomputable def logSmallestDenominatorDensity (s : ℝ) : ℝ :=
     else -Real.exp (2 * s) + 2 + 2 * Real.exp (2 * s) * Real.sqrt (1 / 4 - Real.exp (-2 * s)) -
       4 * Real.log (1 / 2 + Real.sqrt (1 / 4 - Real.exp (-2 * s)))
 
-/-- `η_log(0) = 6/π²`.
+/-- **Value of the log smallest-denominator density at zero.** The density $\eta_{\log}$ of the
+logarithmic smallest denominator satisfies $\eta_{\log}(0) = 6/\pi^2$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.3). -/
 theorem logSmallestDenominatorDensity_zero : logSmallestDenominatorDensity 0 = 6 / Real.pi ^ 2 := by
   simp [logSmallestDenominatorDensity]
 
-/-- On `s ≤ 0`, `η_log(s) = (6/π²) e^{2s}`.
+/-- **The log smallest-denominator density for nonpositive arguments.** For every real $s \le 0$,
+the density $\eta_{\log}$ of the logarithmic smallest denominator satisfies
+$\eta_{\log}(s) = \frac{6}{\pi^2} e^{2s}$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Equation (1.3). -/
@@ -149,11 +175,16 @@ theorem logSmallestDenominatorDensity_of_nonpos {s : ℝ} (hs : s ≤ 0) :
     logSmallestDenominatorDensity s = 6 / Real.pi ^ 2 * Real.exp (2 * s) := by
   simp [logSmallestDenominatorDensity, hs]
 
-/-- Limit law of the smallest denominator: `η_log` is a probability density (nonnegative with
-total integral `1`) and,
-for an interval `D = [a, b] ⊆ [0, 1]` and `L ∈ ℝ`,
-`vol {x ∈ D : log q_min(x, δ) > L - ½ log δ} → vol D · ∫_L^∞ η_log(s) ds` as
-`δ → 0⁺`. The interval is taken closed (endpoints do not affect volumes).
+/-- **Limit law of the smallest denominator.** For real $x$ and $\delta > 0$ let
+$q_{\min}(x, \delta)$ be the smallest positive integer $q$ such that some rational $p/q$ lies in
+the open interval $(x - \delta/2, x + \delta/2)$, and let $\eta_{\log}$ be the log smallest
+denominator density. Then $\eta_{\log}$ is a probability density on $\mathbb{R}$:
+$\eta_{\log}(s) \ge 0$ for every real $s$ and $\int_{-\infty}^{\infty} \eta_{\log}(s) \, ds = 1$.
+Moreover, for all real numbers $a$, $b$, $L$ with $0 \le a \le b \le 1$, as $\delta \to 0^+$ the
+Lebesgue measure of $\{x \in [a, b] : \log q_{\min}(x, \delta) > L - \tfrac12 \log \delta\}$
+tends to $(b - a) \int_L^\infty \eta_{\log}(s) \, ds$.
+
+The interval is taken closed; its endpoints do not affect the measures.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Proposition 1 (`integers-2024-A55-prop-1`). -/
@@ -164,13 +195,19 @@ public theorem_wanted tendsto_volume_log_smallestDenominator_gt (a b L : ℝ) (h
           L - Real.log δ / 2 < Real.log (smallestDenominator x δ)}).toReal)
         (𝓝[>] 0) (𝓝 ((b - a) * ∫ s in Set.Ioi L, logSmallestDenominatorDensity s))
 
-/-- Convergence of the logarithmic moments: for an interval `D = [a, b] ⊆ [0, 1]`
-and `n ≥ 0`, `∫_D (log q_min(x, δ) + ½ log δ)^n dx → μ_n vol D` as `δ → 0⁺`, with
-`μ_n = ∫ s^n η_log(s) ds` over all of `ℝ`. The record prints the lower limit `0`;
-the whole line is used, as the paper's own second expression
-`∫_0^∞ (log s)^n η(s) ds` with `η_log(s) = e^s η(e^s)` gives (with lower limit
-`0`, `n = 0` would give `μ_0 = 1 - 3/π² ≠ 1 = lim ∫_D 1 / vol D`). The second
-expression, through the density `η` of the cited paper, is not included.
+/-- **Convergence of the log moments of smallest denominators.** Let $0 \le a \le b \le 1$ be
+real numbers and let $n \ge 0$ be an integer. For real $x$ and $\delta > 0$ let
+$q_{\min}(x, \delta)$ be the smallest positive integer $q$ such that some rational $p/q$ lies in
+the open interval $(x - \delta/2, x + \delta/2)$, and let $\eta_{\log}$ be the log smallest
+denominator density. Then, as $\delta \to 0^+$,
+$$
+\int_a^b \bigl(\log q_{\min}(x, \delta) + \tfrac12 \log \delta\bigr)^n \, dx \to \mu_n \, (b - a),
+$$
+where $\mu_n = \int_{-\infty}^{\infty} s^n \, \eta_{\log}(s) \, ds$.
+
+The moment $\mu_n$ is an integral over the whole real line: $\eta_{\log}$ has mass $3/\pi^2$ on
+$(-\infty, 0]$, so integrating only over $s \ge 0$ would give $\mu_0 = 1 - 3/\pi^2$ instead of
+the correct limit $1$.
 
 Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 (2024), Article A55, Proposition 2 (`integers-2024-A55-prop-2`). -/

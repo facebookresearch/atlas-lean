@@ -29,13 +29,19 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Convergents as paths. Let `A_n / B_n` be the convergents of `[q₀; q₁, q₂, …]`, with
-`A_n = q_n A_{n-1} + A_{n-2}`, `B_n = q_n B_{n-1} + B_{n-2}`, `A_{-1} = 1`, `A_0 = q₀`,
-`B_{-1} = 0`, `B_0 = 1`; here `A k`, `B k` stand for `A_{k-1}`, `B_{k-1}`. The path
-`W_n = R^{q₀} L^{q₁} ⋯` (alternating, `n + 1` blocks) equals `!![A_{n-1}, A_n; B_{n-1}, B_n]`
-when it ends with an `R`-move (`n` even) and `!![A_n, A_{n-1}; B_n, B_{n-1}]` when it ends with an
-`L`-move (`n` odd). The last move is read off the parity of `n`, which is the paper's case split
-when every `q_i ≥ 1`; the identity is stated for all `q_i ∈ ℕ`.
+/-- **Continued fraction convergents as matrix paths.** Let
+$R = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and
+$L = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$, as matrices over $\mathbb{N}$. Let
+$q_0, q_1, q_2, \dots$ be natural numbers, and define natural numbers $A_k$, $B_k$ for $k \ge -1$
+by $A_{-1} = 1$, $A_0 = q_0$, $B_{-1} = 0$, $B_0 = 1$ and, for $k \ge 1$,
+$A_k = q_k A_{k-1} + A_{k-2}$ and $B_k = q_k B_{k-1} + B_{k-2}$. For $n \ge 0$ let
+$W_n = M_0^{q_0} M_1^{q_1} \cdots M_n^{q_n}$, where $M_i = R$ for even $i$ and $M_i = L$ for odd
+$i$. Then $W_n = \begin{pmatrix} A_{n-1} & A_n \\ B_{n-1} & B_n \end{pmatrix}$ when $n$ is even,
+and $W_n = \begin{pmatrix} A_n & A_{n-1} \\ B_n & B_{n-1} \end{pmatrix}$ when $n$ is odd.
+
+When every $q_i$ is positive, $A_k / B_k$ is the $k$-th convergent of $[q_0; q_1, q_2, \dots]$,
+and the parity of $n$ says whether the path $W_n$ ends with an $R$-move or an $L$-move, which is
+the paper's case split; the identity holds for all $q_i \ge 0$.
 
 Source: Hongshen Chua, *Binary Trees and Sum of Two Squares*, INTEGERS 26 (2026), Article A76,
 Theorem 1 (`integers-2026-A76-thm-1`). -/
@@ -48,11 +54,14 @@ public theorem_wanted continuedFraction_path_eq_convergents (q A B : ℕ → ℕ
       if Even n then !![A n, A (n + 1); B n, B (n + 1)]
       else !![A (n + 1), A n; B (n + 1), B n]
 
-/-- Perron's lemma. Let `p ≡ 1 (mod 4)` be prime and `0 < x₀ < p/2` with `x₀² ≡ -1 (mod p)`.
-Then the continued fraction of `p / x₀` has an even number of terms and is palindromic. Stated
-as the existence of a palindromic expansion of even length with positive terms; since
-`x₀ < p/2` forces `q₀ ≥ 2`, such an expansion is the canonical one (the other expansion ends
-in `1`).
+/-- **Perron's lemma.** Let $p$ be a prime with $p \equiv 1 \pmod 4$, and let $x_0$ be an integer
+with $0 < x_0 < p/2$ and $x_0^2 \equiv -1 \pmod p$. Then there are positive integers
+$q_0, q_1, \dots, q_m$ with $m + 1$ even and $q_i = q_{m-i}$ for every $i$ such that
+$p / x_0 = [q_0; q_1, \dots, q_m] = q_0 + 1/(q_1 + 1/(\cdots + 1/q_m))$.
+
+Since $x_0 < p/2$ forces $q_0 \ge 2$, such an expansion is the canonical continued fraction of
+$p / x_0$ (the other expansion ends in $1$): the continued fraction of $p / x_0$ has an even
+number of terms and is palindromic.
 
 Source: Hongshen Chua, *Binary Trees and Sum of Two Squares*, INTEGERS 26 (2026), Article A76,
 Lemma 1 (Perron) (`integers-2026-A76-lem-1`). -/
@@ -61,11 +70,18 @@ public theorem_wanted exists_palindrome_continuedFraction_div {p x₀ : ℕ} (hp
     ∃ qs : List ℕ, Even qs.length ∧ qs.reverse = qs ∧ (∀ a ∈ qs, 1 ≤ a) ∧
       (p : ℚ) / x₀ = qs.foldr (fun a acc => (a : ℚ) + acc⁻¹) 0
 
-/-- The two squares from the Stern–Brocot tree. With `p`, `x₀` as in Lemma 1, let
-`p / x₀ = [q₀, q₁, …, q_n, q_n, …, q₁, q₀]` (all `q_i ≥ 1`) and
-`M = R^{q₀ - 1} L^{q₁} ⋯ S^{q_n}` (alternating moves, `S = R` for even `n`, `L` for odd `n`).
-If `x / y` is the fraction of the path `Mᵀ` in the Stern–Brocot tree, i.e.
-`(x, y) = Mᵀ (1, 1)ᵀ`, then `p = x² + y²`.
+/-- **Sums of two squares from the Stern–Brocot tree.** Let $p$ be a prime with
+$p \equiv 1 \pmod 4$, and let $x_0$ be an integer with $0 < x_0 < p/2$ and
+$x_0^2 \equiv -1 \pmod p$. Let $n \ge 0$ and let $q_0, q_1, \dots, q_n$ be positive integers with
+$p / x_0 = [q_0; q_1, \dots, q_n, q_n, \dots, q_1, q_0]$, where
+$[a_0; a_1, \dots, a_m] = a_0 + 1/(a_1 + 1/(\cdots + 1/a_m))$. With
+$R = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and
+$L = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$, let
+$M = R^{q_0 - 1} M_1^{q_1} M_2^{q_2} \cdots M_n^{q_n}$, where $M_i = R$ for even $i$ and
+$M_i = L$ for odd $i$. If $(x, y)^{\mathsf T} = M^{\mathsf T} (1, 1)^{\mathsf T}$, then
+$p = x^2 + y^2$.
+
+The fraction $x / y$ is the label of the path $M^{\mathsf T}$ in the Stern–Brocot tree.
 
 Source: Hongshen Chua, *Binary Trees and Sum of Two Squares*, INTEGERS 26 (2026), Article A76,
 Theorem 3 (`integers-2026-A76-thm-3`). -/

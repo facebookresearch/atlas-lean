@@ -18,9 +18,9 @@ namespace MetaMathlibExt
 
 open Filter Topology
 
-/-- The floor sequence parity count `𝓕_n`: the number of `k` with `1 ≤ k ≤ n`
-for which `⌊n/k⌋` is odd (OEIS A059851). Natural-number division `n / k` is
-`⌊n/k⌋`.
+/-- **Floor sequence parity count.** For a natural number $n$, the floor sequence parity count
+$\mathcal{F}_n$ is the number of integers $k$ with $1 \le k \le n$ for which
+$\lfloor n/k \rfloor$ is odd (OEIS A059851).
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -28,8 +28,10 @@ Article 24.2.5, Section 1 (definition of `𝓕_n`). -/
 public def floorQuotientOddCount (n : ℕ) : ℕ :=
   ((Finset.Icc 1 n).filter (fun k => Odd (n / k))).card
 
-/-- Characteristic value `𝓕_10 = 7` (the paper's introduction:
-`10, 5, 3, 2, 2, 1, 1, 1, 1, 1` has seven odd terms).
+/-- **The floor sequence parity count at $10$.** The number $\mathcal{F}_{10}$ of integers $k$
+with $1 \le k \le 10$ for which $\lfloor 10/k \rfloor$ is odd equals $7$: the quotients
+$\lfloor 10/k \rfloor$ for $k = 1, \dots, 10$ are $10, 5, 3, 2, 2, 1, 1, 1, 1, 1$, and seven of
+them are odd.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -37,8 +39,9 @@ Article 24.2.5, Section 1 and Figure 1. -/
 public theorem floorQuotientOddCount_ten : floorQuotientOddCount 10 = 7 := by
   decide
 
-/-- The ceiling sequence parity count `𝓒_n`: the number of `k` with
-`1 ≤ k ≤ n` for which `⌈n/k⌉` is odd (OEIS A330926).
+/-- **Ceiling parity count.** For a natural number $n$, the ceiling parity count $\mathcal{C}_n$
+is the number of integers $k$ with $1 \le k \le n$ for which $\lceil n/k \rceil$ is odd
+(OEIS A330926).
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -46,7 +49,10 @@ Article 24.2.5, Section 1 (definition of `𝓒_n`). -/
 public def ceilQuotientOddCount (n : ℕ) : ℕ :=
   ((Finset.Icc 1 n).filter (fun k : ℕ => Odd ⌈(n : ℚ) / (k : ℚ)⌉)).card
 
-/-- Characteristic value `𝓒_9 = 5` (Figure 1 of the paper).
+/-- **The ceiling parity count at $9$.** The ceiling parity count $\mathcal{C}_9$, the number of
+integers $k$ with $1 \le k \le 9$ for which $\lceil 9/k \rceil$ is odd, equals $5$.
+
+The ceilings $\lceil 9/k \rceil$ for $k = 1, \dots, 9$ are $9, 5, 3, 3, 2, 2, 2, 2, 1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -54,10 +60,12 @@ Article 24.2.5, Figure 1. -/
 public theorem ceilQuotientOddCount_nine : ceilQuotientOddCount 9 = 5 := by
   decide +kernel
 
-/-- The rounding sequence parity count `𝓡_n`: the number of `k` with
-`1 ≤ k ≤ n` for which the nearest integer to `n/k` is odd, half-integers
-rounded up. Mathlib's `round` rounds half-integers up (`round_eq`:
-`round x = ⌊x + 1/2⌋`), which is the paper's convention for `nint`.
+/-- **Rounding sequence parity count.** For a natural number $n$, the rounding sequence parity
+count $\mathcal R_n$ is the number of integers $k$ with $1 \le k \le n$ for which the nearest
+integer to $n/k$ is odd, where half-integers are rounded up: the nearest integer to a rational
+number $x$ is taken to be $\lfloor x + 1/2 \rfloor$.
+
+Rounding half-integers up is the paper's convention for $\mathrm{nint}$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -65,7 +73,9 @@ Article 24.2.5, Section 1 (definition of `𝓡_n` and the footnote on `nint`). -
 public def roundQuotientOddCount (n : ℕ) : ℕ :=
   ((Finset.Icc 1 n).filter (fun k : ℕ => Odd (round ((n : ℚ) / (k : ℚ))))).card
 
-/-- Characteristic value `𝓡_10 = 7` (Figure 1 of the paper).
+/-- **The rounding sequence parity count at $10$.** The number $\mathcal{R}_{10}$ of integers $k$
+with $1 \le k \le 10$ for which the nearest integer to $10/k$ (half-integers rounded up) is odd
+equals $7$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -73,9 +83,13 @@ Article 24.2.5, Figure 1. -/
 public theorem roundQuotientOddCount_ten : roundQuotientOddCount 10 = 7 := by
   decide +kernel
 
-/-- The count `𝓝_{n,α,ν,r,m}` of terms of the `α`-shifted, `ν`-offset floor
-sequence `⌊(n-ν)/1 + α⌋, …, ⌊(n-ν)/n + α⌋` that are congruent to `r`
-modulo `m`.
+/-- **Residue counts of the shifted floor sequence.** For a natural number $n$, real numbers
+$\alpha$ and $\nu$, an integer $r$ and a natural number $m$, the count
+$\mathcal N_{n,\alpha,\nu,r,m}$ is the number of integers $k$ with $1 \le k \le n$ such that
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$. In other words, it counts the terms of
+the $\alpha$-shifted, $\nu$-offset floor sequence
+$\lfloor (n - \nu)/1 + \alpha \rfloor, \dots, \lfloor (n - \nu)/n + \alpha \rfloor$ that are
+congruent to $r$ modulo $m$, where congruence modulo $0$ means equality.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -85,8 +99,13 @@ public noncomputable def shiftedFloorResidueCount (n : ℕ) (α ν : ℝ) (r : �
   ((Finset.Icc 1 n).filter
     (fun k : ℕ => ⌊((n : ℝ) - ν) / (k : ℝ) + α⌋ ≡ r [ZMOD m])).card
 
-/-- Characteristic value: modulo `1` every term is counted, so
-`𝓝_{n,α,ν,r,1} = n` (the paper's remark after equation (4.2)).
+/-- **Every term is counted modulo one.** For a natural number $n$, real numbers $\alpha$ and
+$\nu$, an integer $r$ and a natural number $m$, let $\mathcal N_{n,\alpha,\nu,r,m}$ be the number
+of integers $k$ with $1 \le k \le n$ such that
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$. Then $\mathcal N_{n,\alpha,\nu,r,1} = n$
+for every natural number $n$, all real numbers $\alpha$ and $\nu$ and every integer $r$.
+
+This is the remark after equation (4.2) of the paper.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -97,9 +116,10 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
 
-/-- Lemma 1: for `k ≥ 1`, exactly `⌊n/k⌋` terms of the floor sequence
-`⌊n/1⌋, …, ⌊n/n⌋` are at least `k`. Stated for every `n : ℕ` (the case
-`n = 0` is the empty sequence).
+/-- **Counting large terms of the floor sequence.** For every natural number $n$ and every
+integer $k \ge 1$, exactly $\lfloor n/k \rfloor$ of the integers $d$ with $1 \le d \le n$
+satisfy $\lfloor n/d \rfloor \ge k$; that is, exactly $\lfloor n/k \rfloor$ terms of the floor
+sequence $\lfloor n/1 \rfloor, \dots, \lfloor n/n \rfloor$ are at least $k$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -107,7 +127,9 @@ Article 24.2.5, Lemma 1 (`jis-2024-24.2.5-lem-1`). -/
 public theorem_wanted floor_div_sequence_card_ge (n k : ℕ) (hk : 1 ≤ k) :
     ((Finset.Icc 1 n).filter (fun d : ℕ => k ≤ n / d)).card = n / k
 
-/-- Proposition 2: `𝓕_n = ∑_{d=1}^n ⌊n/d⌋ (-1)^{d+1}`.
+/-- **The floor parity count as an alternating sum.** Let $\mathcal{F}_n$ be the number of
+integers $k$ with $1 \le k \le n$ for which $\lfloor n/k \rfloor$ is odd. For every natural
+number $n$, $\mathcal{F}_n = \sum_{d=1}^{n} \lfloor n/d \rfloor (-1)^{d+1}$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -116,9 +138,11 @@ public theorem_wanted floorQuotientOddCount_eq_alternating_sum (n : ℕ) :
     (floorQuotientOddCount n : ℤ) =
       ∑ d ∈ Finset.Icc 1 n, ((n / d : ℕ) : ℤ) * (-1) ^ (d + 1)
 
-/-- Corollary 3: `𝓕_n = D(n) - 2 D(n/2)`, where `D(x) = ∑_{m ≤ x} τ(m)` is
-the divisor summatory function; for integer `m`, `m ≤ n/2` means
-`m ≤ ⌊n/2⌋ = n / 2`.
+/-- **The floor parity count through the divisor summatory function.** Let $\tau(m)$ be the
+number of positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$, and let
+$\mathcal{F}_n$ be the number of integers $k$ with $1 \le k \le n$ for which
+$\lfloor n/k \rfloor$ is odd. For every natural number $n$, $\mathcal{F}_n = D(n) - 2D(n/2)$,
+where $D(n/2) = D(\lfloor n/2 \rfloor)$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -128,10 +152,10 @@ public theorem_wanted floorQuotientOddCount_eq_divisor_summatory_sub (n : ℕ) :
       ∑ m ∈ Finset.Icc 1 n, (m.divisors.card : ℤ) -
         2 * ∑ m ∈ Finset.Icc 1 (n / 2), (m.divisors.card : ℤ)
 
-/-- Proposition 4: `𝓕_n` is the number of lattice points `(x, y)` with
-`x, y ≥ 1` and `n/2 < xy ≤ n` (the region `H_{1,n}` without its boundary
-curve `xy = n/2`) minus the number of lattice points with `x, y ≥ 1` and
-`xy ≤ n/2` (the closed region `H_{2,n}`).
+/-- **Odd floor quotients as a hyperbolic lattice-point difference.** For every natural number
+$n$, the floor sequence parity count $\mathcal{F}_n$ equals the number of integer pairs $(x, y)$
+with $x, y \ge 1$ and $n/2 < xy \le n$ minus the number of integer pairs $(x, y)$ with
+$x, y \ge 1$ and $xy \le n/2$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -143,8 +167,10 @@ public theorem_wanted floorQuotientOddCount_eq_hyperbolic_lattice_difference
           (n : ℤ) < 2 * (p.1 * p.2) ∧ p.1 * p.2 ≤ n} : ℤ) -
         Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧ 2 * (p.1 * p.2) ≤ n}
 
-/-- Theorem 6 (Dirichlet): for `x ≥ 1`,
-`D(x) = x log x + (2γ - 1) x + O(√x)`, with `D(x) = ∑_{m ≤ x} τ(m)`.
+/-- **Dirichlet's asymptotic for the divisor summatory function.** Let $\tau(m)$ be the number of
+positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$ for real $x$, and let
+$\gamma$ be the Euler–Mascheroni constant. There is a real constant $C$ such that
+$|D(x) - (x \log x + (2\gamma - 1)\, x)| \le C \sqrt{x}$ for every real $x \ge 1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -155,7 +181,10 @@ public theorem_wanted divisor_summatory_asymptotic :
           (x * Real.log x + (2 * Real.eulerMascheroniConstant - 1) * x)| ≤
         C * Real.sqrt x
 
-/-- Proposition 7: `𝓕_n = n log 2 + O(√n)` and `𝓕_n / n → log 2`.
+/-- **Asymptotics of the floor parity count.** Let $\mathcal{F}_n$ be the number of integers $k$
+with $1 \le k \le n$ for which $\lfloor n/k \rfloor$ is odd. There is a real constant $C$ such
+that $|\mathcal{F}_n - n \log 2| \le C \sqrt{n}$ for every integer $n \ge 1$, and
+$\mathcal{F}_n / n \to \log 2$ as $n \to \infty$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -166,9 +195,14 @@ public theorem_wanted floorQuotientOddCount_asymptotic :
     Tendsto (fun n : ℕ => (floorQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (Real.log 2))
 
-/-- Proposition 9, first equality: `𝓒_n = n - 𝓕_{n-1}`, written for `n + 1`.
-The printed second equality `= ∑_{d=2}^n ⌊n/d⌋ (-1)^d` is omitted (false:
-at `n = 3`, `𝓒_3 = 2` while the sum is `1 - 1 = 0`).
+/-- **Ceiling parity count from the floor parity count.** For a natural number $m$, let
+$\mathcal{C}_m$ and $\mathcal{F}_m$ be the numbers of integers $k$ with $1 \le k \le m$ for which
+$\lceil m/k \rceil$, respectively $\lfloor m/k \rfloor$, is odd. Then for every natural number
+$n$, $\mathcal{C}_{n+1} = (n + 1) - \mathcal{F}_n$.
+
+The source prints a second equality $\mathcal{C}_n = \sum_{d=2}^{n} \lfloor n/d \rfloor (-1)^d$,
+which is not part of this statement: it fails at $n = 3$, where $\mathcal{C}_3 = 2$ but the sum
+is $1 - 1 = 0$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -176,7 +210,10 @@ Article 24.2.5, Proposition 9 (`jis-2024-24.2.5-prop-9`). -/
 public theorem_wanted ceilQuotientOddCount_succ_eq (n : ℕ) :
     (ceilQuotientOddCount (n + 1) : ℤ) = (n + 1 : ℤ) - floorQuotientOddCount n
 
-/-- Corollary 10: `𝓒_n = (1 - log 2) n + O(√n)` and `𝓒_n / n → 1 - log 2`.
+/-- **Asymptotics of the ceiling parity count.** Let $\mathcal{C}_n$ be the number of integers
+$k$ with $1 \le k \le n$ for which $\lceil n/k \rceil$ is odd. There is a real constant $C$ such
+that $|\mathcal{C}_n - (1 - \log 2)\, n| \le C \sqrt{n}$ for every integer $n \ge 1$, and
+$\mathcal{C}_n / n \to 1 - \log 2$ as $n \to \infty$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -188,7 +225,9 @@ public theorem_wanted ceilQuotientOddCount_asymptotic :
     Tendsto (fun n : ℕ => (ceilQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (1 - Real.log 2))
 
-/-- Lemma 12: `n` has at most `2√n` positive divisors.
+/-- **Square-root bound for the number of divisors.** For every natural number $n$, the number
+of positive divisors of $n$ is at most $2\sqrt{n}$. For $n = 0$ the set of divisors is taken to
+be empty, so the bound holds trivially.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -196,9 +235,10 @@ Article 24.2.5, Lemma 12 (`jis-2024-24.2.5-lem-12`). -/
 public theorem_wanted card_divisors_le_two_mul_sqrt (n : ℕ) :
     (n.divisors.card : ℝ) ≤ 2 * Real.sqrt n
 
-/-- Lemma 13: in the rounding sequence `⌊n/1 + 1/2⌋, …, ⌊n/n + 1/2⌋`, all
-`n` terms are at least `1`, and for `k ≥ 2` exactly `⌊2n/(2k-1)⌋` terms are
-at least `k`.
+/-- **Counting large terms of the rounded quotient sequence.** Let $n$ be a natural number.
+Every $d$ with $1 \le d \le n$ satisfies $\lfloor n/d + 1/2 \rfloor \ge 1$, and for every
+integer $k \ge 2$ the number of $d$ with $1 \le d \le n$ and $\lfloor n/d + 1/2 \rfloor \ge k$
+is $\lfloor 2n/(2k-1) \rfloor$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -211,7 +251,9 @@ public theorem_wanted round_div_sequence_card_ge (n : ℕ) :
             (fun d : ℕ => (k : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card =
           2 * n / (2 * k - 1)
 
-/-- Proposition 14: `𝓡_n = -n + ∑_{d=1}^n ⌊2n/(2d-1)⌋ (-1)^{d+1}`.
+/-- **Alternating-sum formula for the rounding sequence parity count.** For every natural
+number $n$, the rounding sequence parity count $\mathcal{R}_n$ satisfies
+$\mathcal{R}_n = -n + \sum_{d=1}^{n} (-1)^{d+1} \lfloor 2n/(2d-1) \rfloor$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -220,8 +262,10 @@ public theorem_wanted roundQuotientOddCount_eq_alternating_sum (n : ℕ) :
     (roundQuotientOddCount n : ℤ) =
       -n + ∑ d ∈ Finset.Icc 1 n, ((2 * n / (2 * d - 1) : ℕ) : ℤ) * (-1) ^ (d + 1)
 
-/-- Lemma 15: `𝓡_n = -n + ∑_{k=1}^{2n} (d_{1,4}(k) - d_{3,4}(k))`, where
-`d_{r,4}(k)` counts the positive divisors of `k` congruent to `r` mod `4`.
+/-- **Divisor-sum formula for the rounding sequence parity count.** For a positive integer $k$
+and $r \in \{1, 3\}$, let $d_{r,4}(k)$ be the number of positive divisors of $k$ congruent to
+$r$ modulo $4$. Then for every natural number $n$, the rounding sequence parity count
+$\mathcal{R}_n$ satisfies $\mathcal{R}_n = -n + \sum_{k=1}^{2n} (d_{1,4}(k) - d_{3,4}(k))$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -232,9 +276,10 @@ public theorem_wanted roundQuotientOddCount_eq_sum_divisor_difference (n : ℕ) 
         (((k.divisors.filter (fun d : ℕ => d % 4 = 1)).card : ℤ) -
           (k.divisors.filter (fun d : ℕ => d % 4 = 3)).card)
 
-/-- Theorem 16 (Jacobi's two-square theorem): for `n ≥ 1`, the number
-`r_2(n)` of pairs `(a, b) ∈ ℤ²` with `a² + b² = n` is
-`4 (d_{1,4}(n) - d_{3,4}(n))`.
+/-- **Jacobi's formula for the number of representations as a sum of two squares.** For every
+integer $n \ge 1$, the number $r_2(n)$ of pairs $(a, b) \in \mathbb{Z}^2$ with $a^2 + b^2 = n$
+equals $4\,(d_{1,4}(n) - d_{3,4}(n))$, where $d_{r,4}(n)$ is the number of positive divisors of
+$n$ congruent to $r$ modulo $4$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -244,9 +289,11 @@ public theorem_wanted card_sq_add_sq_eq (n : ℕ) (hn : 0 < n) :
       4 * (((n.divisors.filter (fun d : ℕ => d % 4 = 1)).card : ℤ) -
         (n.divisors.filter (fun d : ℕ => d % 4 = 3)).card)
 
-/-- Proposition 17: the closed disc of radius `√(2n)` about the origin
-contains `4 𝓡_n + 4n + 1` lattice points, i.e. `C(2n) = 4 𝓡_n + 4n + 1`.
-Stated for every `n : ℕ` (both sides are `1` at `n = 0`).
+/-- **Lattice points in the disc of radius $\sqrt{2n}$.** For every natural number $n$, the
+number of pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + y^2 \le 2n$ equals
+$4\,\mathcal{R}_n + 4n + 1$, where $\mathcal{R}_n$ is the number of $k \in \{1, \dots, n\}$ for
+which the nearest integer to $n/k$, with half-integers rounded up, is odd. At $n = 0$ both sides
+are $1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -255,7 +302,9 @@ public theorem_wanted card_lattice_disc_two_mul (n : ℕ) :
     Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * n} =
       4 * roundQuotientOddCount n + 4 * n + 1
 
-/-- Corollary 19: `𝓡` decreases by at most `1` in any step.
+/-- **The rounding sequence parity count drops by at most one.** For every natural number $n$,
+the rounding sequence parity count $\mathcal{R}$ satisfies
+$\mathcal{R}_{n+1} \ge \mathcal{R}_n - 1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -263,8 +312,9 @@ Article 24.2.5, Corollary 19 (`jis-2024-24.2.5-cor-19`). -/
 public theorem_wanted roundQuotientOddCount_sub_one_le_succ (n : ℕ) :
     (roundQuotientOddCount n : ℤ) - 1 ≤ roundQuotientOddCount (n + 1)
 
-/-- Theorem 20 (Gauss circle problem): for `x ≥ 1`, the closed disc of
-radius `√x` about the origin contains `π x + O(√x)` lattice points.
+/-- **Gauss's bound for lattice points in a disc.** There is a constant $C$ such that for every
+real $x \ge 1$, the number $N(x)$ of integer pairs $(a, b)$ with $a^2 + b^2 \le x$ satisfies
+$|N(x) - \pi x| \le C \sqrt{x}$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -274,7 +324,10 @@ public theorem_wanted gauss_circle_asymptotic :
       |(Nat.card {p : ℤ × ℤ // ((p.1 : ℝ) ^ 2 + (p.2 : ℝ) ^ 2) ≤ x} : ℝ) -
           Real.pi * x| ≤ C * Real.sqrt x
 
-/-- Proposition 21: `𝓡_n = (π/2 - 1) n + O(√n)` and `𝓡_n / n → π/2 - 1`.
+/-- **Asymptotic density of odd rounded quotients.** There is a constant $C$ such that the
+rounding sequence parity count $\mathcal{R}_n$ satisfies $|\mathcal{R}_n - (\pi/2 - 1)n| \le
+C\sqrt{n}$ for every natural number $n \ge 1$; moreover $\mathcal{R}_n / n \to \pi/2 - 1$ as
+$n \to \infty$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -286,9 +339,11 @@ public theorem_wanted roundQuotientOddCount_asymptotic :
     Tendsto (fun n : ℕ => (roundQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (Real.pi / 2 - 1))
 
-/-- Lemma 24: for `α, ν ∈ [0, 1)` and `nα ≥ ν`, all `n` terms of the
-`α`-shifted, `ν`-offset floor sequence of length `n` are at least `1`, and
-for `k ≥ 2` exactly `⌊(n-ν)/(k-α)⌋` of them are at least `k`.
+/-- **Tail counts of the shifted floor sequence.** Let $n$ be a natural number and let $\alpha$
+and $\nu$ be real numbers with $0 \le \alpha < 1$, $0 \le \nu < 1$ and $\nu \le n\alpha$. Then
+$\lfloor (n - \nu)/d + \alpha \rfloor \ge 1$ for all $n$ integers $d$ with $1 \le d \le n$, and
+for every natural number $k \ge 2$ the number of integers $d$ with $1 \le d \le n$ and
+$\lfloor (n - \nu)/d + \alpha \rfloor \ge k$ is $\lfloor (n - \nu)/(k - \alpha) \rfloor$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -303,12 +358,23 @@ public theorem_wanted shifted_floor_sequence_card_ge (n : ℕ) (α ν : ℝ)
             (fun d : ℕ => (k : ℤ) ≤ ⌊((n : ℝ) - ν) / (d : ℝ) + α⌋)).card : ℤ) =
           ⌊((n : ℝ) - ν) / (k - α)⌋
 
-/-- Proposition 25: for `m ≥ 2`, `α, ν ∈ [0, 1)` and `nα ≥ ν`,
-`𝓝_{n,α,ν,1,m} = n - ⌊(n-ν)/(1-α)⌋ + ∑_{i ≥ 0} (⌊(n-ν)/(1+im-α)⌋ -
-⌊(n-ν)/(2+im-α)⌋)` and, for `2 ≤ r ≤ m`,
-`𝓝_{n,α,ν,r,m} = ∑_{i ≥ 0} (⌊(n-ν)/(r+im-α)⌋ - ⌊(n-ν)/(r+1+im-α)⌋)`.
-The series over `i ≥ 0` is written as the sum over `i ≤ n`; every omitted
-term vanishes since `r + im - α > n - ν` for `i > n`.
+/-- **Floor-sum formulas for the shifted floor residue counts.** Let $n$ and $m$ be natural
+numbers with $m \ge 2$, and let $\alpha$ and $\nu$ be real numbers with $0 \le \alpha < 1$,
+$0 \le \nu < 1$ and $\nu \le n\alpha$. For an integer $r$ let $\mathcal N_{n,\alpha,\nu,r,m}$ be
+the number of integers $k$ with $1 \le k \le n$ such that
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$. Then
+
+$$\mathcal N_{n,\alpha,\nu,1,m} = n - \Bigl\lfloor \frac{n - \nu}{1 - \alpha} \Bigr\rfloor +
+\sum_{i=0}^{n} \Bigl( \Bigl\lfloor \frac{n - \nu}{1 + im - \alpha} \Bigr\rfloor -
+\Bigl\lfloor \frac{n - \nu}{2 + im - \alpha} \Bigr\rfloor \Bigr),$$
+
+and for every natural number $r$ with $2 \le r \le m$,
+
+$$\mathcal N_{n,\alpha,\nu,r,m} = \sum_{i=0}^{n} \Bigl( \Bigl\lfloor \frac{n - \nu}{r + im - \alpha}
+\Bigr\rfloor - \Bigl\lfloor \frac{n - \nu}{r + 1 + im - \alpha} \Bigr\rfloor \Bigr).$$
+
+The paper sums over all $i \ge 0$; the terms with $i > n$ vanish, because for them every
+denominator exceeds $n - \nu \ge 0$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -327,10 +393,12 @@ public theorem_wanted shiftedFloorResidueCount_eq_sum_floor_sub (n m : ℕ)
           (⌊((n : ℝ) - ν) / (r + i * m - α)⌋ -
             ⌊((n : ℝ) - ν) / (r + 1 + i * m - α)⌋)
 
-/-- Proposition 32: for a strictly increasing sequence `b_0, b_1, …` of
-reals with `b_k ≥ 1` and `b_k ≥ k`, and `ν ∈ [0, 1)`,
-`∑_{k ≤ n-ν} ⌊(n-ν)/b_k⌋ (-1)^k = n ∑_{k ≤ n-ν} (-1)^k / b_k + O(√n)`;
-the implied constant may depend on `b` and `ν`.
+/-- **Alternating sums of floor quotients along an increasing sequence.** Let $0 \le \nu < 1$
+and let $b_0, b_1, b_2, \dots$ be a strictly increasing sequence of real numbers with $b_k \ge 1$
+and $b_k \ge k$ for every $k \ge 0$. Then there is a real constant $C$ such that for every integer
+$n \ge 1$, with both sums taken over the integers $k$ satisfying $0 \le k \le n - \nu$,
+
+$$\Bigl| \sum_k (-1)^k \lfloor (n - \nu)/b_k \rfloor - n \sum_k (-1)^k/b_k \Bigr| \le C\sqrt{n}.$$
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -344,9 +412,17 @@ public theorem_wanted alternating_sum_floor_div_eq_add_bigO (ν : ℝ)
           n * ∑ k ∈ (Finset.range (n + 1)).filter (fun k : ℕ => (k : ℝ) ≤ n - ν),
             (-1) ^ k / b k| ≤ C * Real.sqrt n
 
-/-- Corollary 34: for `2 ≤ r ≤ m` and `α, ν ∈ [0, 1)`, uniformly over `n`
-with `nα ≥ ν`,
-`𝓝_{n,α,ν,r,m} = n ∑_{i ≥ 0} (1/(r+im-α) - 1/(r+1+im-α)) + O(√n)`.
+/-- **Series asymptotics for the shifted floor residue counts with $2 \le r \le m$.** Let $r$ and
+$m$ be natural numbers with $2 \le r \le m$, and let $\alpha$ and $\nu$ be real numbers with
+$0 \le \alpha < 1$ and $0 \le \nu < 1$. For a natural number $n$ let
+$\mathcal N_{n,\alpha,\nu,r,m}$ be the number of integers $k$ with $1 \le k \le n$ such that
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$, and put
+
+$$S = \sum_{i \ge 0} \Bigl( \frac{1}{r + im - \alpha} - \frac{1}{r + 1 + im - \alpha} \Bigr).$$
+
+Then there is a constant $C$ such that
+$\bigl| \mathcal N_{n,\alpha,\nu,r,m} - nS \bigr| \le C \sqrt n$ for every natural number
+$n \ge 1$ with $\nu \le n\alpha$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -359,9 +435,20 @@ public theorem_wanted shiftedFloorResidueCount_asymptotic_series (r m : ℕ)
           n * ∑' i : ℕ, (1 / ((r : ℝ) + i * m - α) - 1 / ((r : ℝ) + 1 + i * m - α))|
         ≤ C * Real.sqrt n
 
-/-- Corollary 35: for `m ≥ 2` and `α, ν ∈ [0, 1)`, uniformly over `n` with
-`nα ≥ ν`, `𝓝_{n,α,ν,1,m} = -αn/(1-α) +
-n ∑_{i ≥ 0} (1/(1+im-α) - 1/(2+im-α)) + O(√n)`.
+/-- **Series asymptotics for the shifted floor residue count with $r = 1$.** Let $m \ge 2$ be a
+natural number and let $\alpha$ and $\nu$ be real numbers with $0 \le \alpha < 1$ and
+$0 \le \nu < 1$. For a natural number $n$ let $\mathcal N_{n,\alpha,\nu,1,m}$ be the number of
+integers $k$ with $1 \le k \le n$ such that
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv 1 \pmod m$, and put
+
+$$S = \sum_{i \ge 0} \Bigl( \frac{1}{1 + im - \alpha} - \frac{1}{2 + im - \alpha} \Bigr).$$
+
+Then there is a constant $C$ such that
+
+$$\Bigl| \mathcal N_{n,\alpha,\nu,1,m} - \Bigl( -\frac{\alpha n}{1 - \alpha} + nS \Bigr) \Bigr| \le
+C \sqrt n$$
+
+for every natural number $n \ge 1$ with $\nu \le n\alpha$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -375,8 +462,11 @@ public theorem_wanted shiftedFloorResidueCount_one_asymptotic_series (m : ℕ)
             n * ∑' i : ℕ, (1 / (1 + (i : ℝ) * m - α) - 1 / (2 + (i : ℝ) * m - α)))|
         ≤ C * Real.sqrt n
 
-/-- Proposition 36: for integers `2 ≤ r ≤ m` and `α ∈ [0, 1)`,
-`∑_{i ≥ 0} (1/(r+im-α) - 1/(r+1+im-α)) = ∫_0^1 (1-x) x^{r-1-α} / (1-x^m) dx`.
+/-- **Integral formula for an alternating series of reciprocals.** Let $r$ and $m$ be natural
+numbers with $2 \le r \le m$ and let $\alpha$ be a real number with $0 \le \alpha < 1$. Then
+
+$$\sum_{i \ge 0} \Bigl( \frac{1}{r + im - \alpha} - \frac{1}{r + 1 + im - \alpha} \Bigr) =
+\int_0^1 \frac{(1 - x)\, x^{r - 1 - \alpha}}{1 - x^m} \, dx.$$
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -386,10 +476,22 @@ public theorem_wanted tsum_alternating_inv_eq_integral (r m : ℕ) (hr : 2 ≤ r
     ∑' i : ℕ, (1 / ((r : ℝ) + i * m - α) - 1 / ((r : ℝ) + 1 + i * m - α)) =
       ∫ x in (0 : ℝ)..1, (1 - x) * x ^ ((r : ℝ) - 1 - α) / (1 - x ^ m)
 
-/-- Theorem 37: for `m ≥ 1` and `α, ν ∈ [0, 1)`, uniformly over `n` with
-`nα ≥ ν`, `𝓝_{n,α,ν,1,m} = -αn/(1-α) + n ∫_0^1 (1-x) x^{-α}/(1-x^m) dx +
-O(√n)` and, for `2 ≤ r ≤ m`,
-`𝓝_{n,α,ν,r,m} = n ∫_0^1 (1-x) x^{r-1-α}/(1-x^m) dx + O(√n)`.
+/-- **Integral asymptotics for the shifted floor residue counts.** Let $m \ge 1$ be a natural
+number and let $\alpha$ and $\nu$ be real numbers with $0 \le \alpha < 1$ and $0 \le \nu < 1$.
+For natural numbers $n$ and $r$ let $\mathcal N_{n,\alpha,\nu,r,m}$ be the number of integers $k$
+with $1 \le k \le n$ such that $\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$, and put
+
+$$I_r = \int_0^1 \frac{(1 - x)\, x^{r - 1 - \alpha}}{1 - x^m} \, dx.$$
+
+Then there is a constant $C$ such that
+
+$$\Bigl| \mathcal N_{n,\alpha,\nu,1,m} - \Bigl( -\frac{\alpha n}{1 - \alpha} + n I_1 \Bigr) \Bigr|
+\le C \sqrt n$$
+
+for every natural number $n \ge 1$ with $\nu \le n\alpha$, and for every natural number $r$ with
+$2 \le r \le m$ there is a constant $C_r$ such that
+$\bigl| \mathcal N_{n,\alpha,\nu,r,m} - n I_r \bigr| \le C_r \sqrt n$ for every natural number
+$n \ge 1$ with $\nu \le n\alpha$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -408,9 +510,16 @@ public theorem_wanted shiftedFloorResidueCount_asymptotic_integral (m : ℕ)
             n * ∫ x in (0 : ℝ)..1, (1 - x) * x ^ ((r : ℝ) - 1 - α) / (1 - x ^ m)|
           ≤ C * Real.sqrt n
 
-/-- Corollary 38: for `α, ν ∈ [0, 1)` and `1 ≤ r ≤ m`, `𝓝_{n,α,ν,r,m} / n`
-tends to `-α/(1-α) + ∫_0^1 (1-x) x^{-α}/(1-x^m) dx` if `r = 1` and to
-`∫_0^1 (1-x) x^{r-1-α}/(1-x^m) dx` if `2 ≤ r ≤ m`.
+/-- **Limiting densities of the shifted floor residue counts.** Let $r$ and $m$ be natural
+numbers with $1 \le r \le m$, and let $\alpha$ and $\nu$ be real numbers with $0 \le \alpha < 1$
+and $0 \le \nu < 1$. For a natural number $n$ let $\mathcal N_{n,\alpha,\nu,r,m}$ be the number
+of integers $k$ with $1 \le k \le n$ such that
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$, and for a natural number $s$ put
+
+$$I_s = \int_0^1 \frac{(1 - x)\, x^{s - 1 - \alpha}}{1 - x^m} \, dx.$$
+
+Then, as $n \to \infty$, $\mathcal N_{n,\alpha,\nu,r,m}/n$ tends to $-\alpha/(1 - \alpha) + I_1$
+if $r = 1$ and to $I_r$ if $r \ge 2$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -423,10 +532,12 @@ public theorem_wanted shiftedFloorResidueCount_div_tendsto (r m : ℕ)
           -α / (1 - α) + ∫ x in (0 : ℝ)..1, (1 - x) * x ^ (-α) / (1 - x ^ m)
         else ∫ x in (0 : ℝ)..1, (1 - x) * x ^ ((r : ℝ) - 1 - α) / (1 - x ^ m)))
 
-/-- Proposition 39: the closed disc of radius `√n` about the origin contains
-`4 𝓝_{⌈n/2⌉,1/2,{n/2},1,2} + 4 ⌊n/2⌋ + 1` lattice points, where `{n/2}` is
-the fractional part of `n/2`. Stated for every `n : ℕ` (both sides are `1`
-at `n = 0`).
+/-- **Lattice points in the disc of radius $\sqrt{n}$ via shifted floor sequences.** For every
+natural number $n$, the number of pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + y^2 \le n$ equals
+$4\,\mathcal{N}_{\lceil n/2 \rceil, 1/2, \{n/2\}, 1, 2} + 4\lfloor n/2 \rfloor + 1$, where
+$\{n/2\}$ is the fractional part of $n/2$ and $\mathcal{N}_{N,\alpha,\nu,r,m}$ is the number of
+$k \in \{1, \dots, N\}$ with $\lfloor (N - \nu)/k + \alpha \rfloor \equiv r \pmod m$. At $n = 0$
+both sides are $1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -436,8 +547,12 @@ public theorem_wanted card_lattice_disc_eq_shiftedFloorResidueCount (n : ℕ) :
       4 * shiftedFloorResidueCount ⌈(n : ℝ) / 2⌉₊ (1 / 2)
           (Int.fract ((n : ℝ) / 2)) 1 2 + 4 * (n / 2) + 1
 
-/-- Proposition 42 (Dickson, Exercise XXII.2): for `n ≥ 1`, the number of
-pairs `(x, y) ∈ ℤ²` with `x² + xy + y² = n` is `6 (d_{1,3}(n) - d_{2,3}(n))`.
+/-- **Number of representations by $x^2 + xy + y^2$.** For every integer $n \ge 1$, the number
+of pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + xy + y^2 = n$ equals
+$6\,(d_{1,3}(n) - d_{2,3}(n))$, where $d_{r,3}(n)$ is the number of positive divisors of $n$
+congruent to $r$ modulo $3$.
+
+The paper cites this as Dickson, Exercise XXII.2.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -447,9 +562,11 @@ public theorem_wanted card_eisenstein_form_eq (n : ℕ) (hn : 0 < n) :
       6 * (((n.divisors.filter (fun d : ℕ => d % 3 = 1)).card : ℤ) -
         (n.divisors.filter (fun d : ℕ => d % 3 = 2)).card)
 
-/-- Corollary 43: the elliptical region `x² + xy + y² ≤ n` contains
-`6 𝓝_{n,0,0,1,3} + 1` lattice points. Stated for every `n : ℕ` (both sides
-are `1` at `n = 0`).
+/-- **Lattice points in the ellipse $x^2 + xy + y^2 \le n$.** For every natural number $n$, the
+number of pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + xy + y^2 \le n$ equals
+$6\,\mathcal{N}_{n,0,0,1,3} + 1$, where $\mathcal{N}_{n,0,0,1,3}$ is the number of
+$k \in \{1, \dots, n\}$ with $\lfloor n/k \rfloor \equiv 1 \pmod 3$. At $n = 0$ both sides
+are $1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -458,8 +575,10 @@ public theorem_wanted card_eisenstein_ellipse_eq (n : ℕ) :
     Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.1 * p.2 + p.2 ^ 2 ≤ n} =
       6 * shiftedFloorResidueCount n 0 0 1 3 + 1
 
-/-- Corollary 45: the elliptical region `x² + xy + y² ≤ n` contains
-`(2/3)√3 π n + O(√n)` lattice points.
+/-- **Lattice points in the ellipse $x^2 + xy + y^2 \le n$, asymptotically.** There is a real
+constant $C$ such that for every integer $n \ge 1$, the number $E(n)$ of pairs
+$(x, y) \in \mathbb{Z}^2$ with $x^2 + xy + y^2 \le n$ satisfies
+$\bigl| E(n) - \tfrac{2}{3}\sqrt{3}\,\pi n \bigr| \le C\sqrt{n}$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -469,13 +588,17 @@ public theorem_wanted card_eisenstein_ellipse_asymptotic :
       |(Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.1 * p.2 + p.2 ^ 2 ≤ n} : ℝ) -
           2 / 3 * Real.sqrt 3 * Real.pi * n| ≤ C * Real.sqrt n
 
-/-- Corollary 47: in the hexagonal (triangular) lattice `ℤ + ℤω`,
-`ω = e^{2πi/3}`, whose neighboring points are one unit apart, the closed
-disc of radius `√n` centered at a lattice point contains
-`1 + 6 𝓝_{n,0,0,1,3}` lattice points, and `𝓝_{n,0,0,1,3}` is the number of
-terms of `⌊n/1⌋, …, ⌊n/n⌋` that are `1` modulo `3`. Every hexagonal lattice
-with unit spacing is congruent to this one, and the disc is centered at the
-lattice point `0`.
+/-- **Lattice points in a disc of the hexagonal lattice.** Let $\omega = e^{2\pi i/3}$, so that
+$\mathbb{Z} + \mathbb{Z}\omega$ is the hexagonal (triangular) lattice whose neighboring points are
+one unit apart. For every natural number $n$, the number of pairs $(x, y) \in \mathbb{Z}^2$ with
+$|x + y\omega| \le \sqrt{n}$ equals $1 + 6\,\mathcal{N}_{n,0,0,1,3}$, where
+$\mathcal{N}_{n,\alpha,\nu,r,m}$ is the number of $k \in \{1, \dots, n\}$ with
+$\lfloor (n - \nu)/k + \alpha \rfloor \equiv r \pmod m$. Moreover, $\mathcal{N}_{n,0,0,1,3}$ is
+the number of terms of $\lfloor n/1 \rfloor, \dots, \lfloor n/n \rfloor$ that are congruent to
+$1$ modulo $3$.
+
+Every hexagonal lattice with unit spacing is congruent to this one, so this counts the lattice
+points in any closed disc of radius $\sqrt{n}$ centered at a lattice point.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -488,9 +611,10 @@ public theorem_wanted card_hexagonal_lattice_disc_eq (n : ℕ) :
     shiftedFloorResidueCount n 0 0 1 3 =
       ((Finset.Icc 1 n).filter (fun k => n / k % 3 = 1)).card
 
-/-- Proposition 48 (Dickson, Exercise XXII.1): for `n ≥ 1`, the number of
-pairs `(x, y) ∈ ℤ²` with `x² + 2y² = n` is
-`2 (d_{1,8}(n) + d_{3,8}(n) - d_{5,8}(n) - d_{7,8}(n))`.
+/-- **Dickson's divisor formula for $x^2 + 2y^2$.** For every integer $n \ge 1$, the number of
+pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + 2y^2 = n$ equals
+$2\,(d_1(n) + d_3(n) - d_5(n) - d_7(n))$, where $d_r(n)$ denotes the number of positive divisors
+$d$ of $n$ with $d \equiv r \pmod 8$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
@@ -502,12 +626,14 @@ public theorem_wanted card_sq_add_two_mul_sq_eq (n : ℕ) (hn : 0 < n) :
         (n.divisors.filter (fun d : ℕ => d % 8 = 5)).card -
         (n.divisors.filter (fun d : ℕ => d % 8 = 7)).card)
 
-/-- Corollary 49: the number `F(n)` of lattice points in `x² + 2y² ≤ n`
-satisfies `F(0) = 1`, `F(1) = 3`, `F(2) = 5`, `F(5) = 11`, and for
-`n ∉ {1, 2, 5}`, `F(n) = 1 + 2 𝓝_{⌈n/4⌉,3/4,{-n/4},1,2} +
-2 𝓝_{⌈n/4⌉,1/4,{-n/4},1,2} + 2n + 2 ⌊n/3⌋ - 4 ⌈n/4⌉`. The general formula
-is stated for every `n : ℕ` outside `{1, 2, 5}`, including `n = 0` where
-both sides are `1`.
+/-- **Lattice points in the ellipse $x^2 + 2y^2 \le n$.** For a natural number $n$, let $F(n)$ be
+the number of pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + 2y^2 \le n$, and let
+$\mathcal{N}_{N,\alpha,\nu,r,m}$ be the number of $k \in \{1, \dots, N\}$ with
+$\lfloor (N - \nu)/k + \alpha \rfloor \equiv r \pmod m$. Then $F(0) = 1$, $F(1) = 3$,
+$F(2) = 5$ and $F(5) = 11$. For every natural number $n \notin \{1, 2, 5\}$, writing
+$N = \lceil n/4 \rceil$ and $\theta = \{-n/4\}$ for the fractional part of $-n/4$,
+$F(n) = 1 + 2\,\mathcal{N}_{N,3/4,\theta,1,2} + 2\,\mathcal{N}_{N,1/4,\theta,1,2} +
+2n + 2\lfloor n/3 \rfloor - 4N$. This formula includes $n = 0$, where both sides are $1$.
 
 Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
 Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),

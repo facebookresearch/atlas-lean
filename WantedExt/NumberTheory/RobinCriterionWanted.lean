@@ -16,10 +16,10 @@ public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
 namespace MetaMathlibExt
 
-/-- Robin's criterion for the Riemann hypothesis: `RiemannHypothesis` holds iff
-`σ(n) < e ^ γ * n * log (log n)` for every natural `n > 5040`, where `σ`
-is the sum of positive divisors (`ArithmeticFunction.sigma 1`) and `γ` is
-Euler's constant.
+/-- **Robin's criterion for the Riemann hypothesis.** The Riemann hypothesis holds if and only if
+$\sigma(n) < e^{\gamma}\, n \log\log n$ for every natural number $n > 5040$, where $\sigma(n)$ is
+the sum of the positive divisors of $n$, $\gamma$ is the Euler–Mascheroni constant, and
+$\log$ is the natural logarithm.
 
 Source: Sadegh Nazardonyavi and Semyon Yakubovich, "Extremely Abundant
 Numbers and the Riemann Hypothesis", Journal of Integer Sequences 17
