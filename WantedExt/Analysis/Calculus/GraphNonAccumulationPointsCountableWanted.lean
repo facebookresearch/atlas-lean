@@ -41,12 +41,10 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Calculus.GraphNonAccumulationPointsCountableWanted
 
-/-- For $E \subset \mathbb{R}^n$ and $f : E \to \mathbb{R}^n$, let
-\[
-F = \{x \in E : \text{there is } \{x_k\}_{k=1}^\infty \subset E \setminus \{x\} \text{ with } x_k
-\to x \text{ and } f(x_k) \to f(x)\}.
-\]
-Prove that $E \setminus F$ is at most countable.
+/-- **Isolated points of a graph are countable.** Let $E \subseteq \mathbb{R}^n$, let
+$f : \mathbb{R}^n \to \mathbb{R}^n$, and let $F$ be the set of $x\in E$ for which there is a
+sequence $(x_k)$ in $E\setminus\{x\}$ with $x_k \to x$ and $f(x_k) \to f(x)$. Then $E \setminus F$
+is countable.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Real functions; Functions of
 several variables), `benchmark/level2/ma_proofbench_l2_63.lean` at

@@ -65,15 +65,20 @@ Cantor-set example, the section's other statements, are not included here.)
 open scoped Topology ENNReal NNReal
 open MeasureTheory
 
-/-- A set `S ⊆ X` is an **attractor** of the IFS `f : Fin n → X → X` if it is
-nonempty compact and fixed by the Hutchinson operator `H(A) = ⋃ᵢ fᵢ(A)`. -/
+/-- **Attractor of an iterated function system.** Let $X$ be a topological space and let
+$(f_i)_{i < n}$ be a finite family of maps $X \to X$. A set $S \subseteq X$ is an attractor of the
+family if it is nonempty and compact and is fixed by the Hutchinson operator, that is,
+$S = \bigcup_{i < n} f_i(S)$. -/
 def IsAttractor {X : Type*} [TopologicalSpace X] {n : ℕ}
     (f : Fin n → X → X) (S : Set X) : Prop :=
   IsCompact S ∧ S.Nonempty ∧ S = ⋃ i, f i '' S
 
-/-- An IFS on `ℝᵈ` is **affine-symmetric** with common contraction factor
-`λ ∈ (0,1)` if each map is `fᵢ(x) = λ · Aᵢ(x) + βᵢ` with `Aᵢ` a linear isometry
-(orthogonal transformation) and `βᵢ` a translation. -/
+/-- **Affine-symmetric iterated function system.** Let $(f_i)_{i < n}$ be a finite family of maps
+$f_i \colon \mathbb{R}^d \to \mathbb{R}^d$ on Euclidean space. The family is affine-symmetric with
+common contraction factor $\lambda$ if $0 < \lambda < 1$ and there are linear isometries
+$A_i \colon \mathbb{R}^d \to \mathbb{R}^d$ (orthogonal transformations) and vectors
+$\beta_i \in \mathbb{R}^d$ such that $f_i(x) = \lambda A_i(x) + \beta_i$ for every $i < n$ and every
+$x \in \mathbb{R}^d$. -/
 def IsAffineSymmetricIFS {d n : ℕ}
     (f : Fin n → EuclideanSpace ℝ (Fin d) → EuclideanSpace ℝ (Fin d)) (lam : ℝ) :
     Prop :=
@@ -82,8 +87,10 @@ def IsAffineSymmetricIFS {d n : ℕ}
     ∃ β : Fin n → EuclideanSpace ℝ (Fin d),
       ∀ i x, f i x = lam • A i x + β i
 
-/-- The **open set condition**: a nonempty open `G` with `fᵢ(G) ⊆ G` for all `i`
-and the images `fᵢ(G)` pairwise disjoint. -/
+/-- **Open set condition.** A finite family of maps $f_i \colon \mathbb{R}^d \to \mathbb{R}^d$,
+$i < n$, satisfies the open set condition if there is a nonempty open set $G \subseteq \mathbb{R}^d$
+such that $f_i(G) \subseteq G$ for every $i < n$ and the images $f_i(G)$ and $f_j(G)$ are disjoint
+whenever $i \neq j$. -/
 def OpenSetCondition {d n : ℕ}
     (f : Fin n → EuclideanSpace ℝ (Fin d) → EuclideanSpace ℝ (Fin d)) : Prop :=
   ∃ G : Set (EuclideanSpace ℝ (Fin d)), IsOpen G ∧ G.Nonempty ∧
@@ -94,7 +101,13 @@ def OpenSetCondition {d n : ℕ}
 on `ℝᵈ` with common contraction factor `λ ∈ (0,1)`, orthogonal linear parts, and
 the open set condition, the Hausdorff dimension of the attractor is
 `−log n / log λ` (positive since `λ < 1`). -/
-/-- Source: P. A. P. Moran, *Additive functions of intervals and Hausdorff measure*, Proc. Cambridge Philos. Soc. 42 (1946); J. E. Hutchinson, *Fractals and self similarity*, Indiana Univ. Math. J. 30 (1981). Knill, *Some fundamental theorems in mathematics*, §105. Via leanprover/lean-eval@38361be, problem `moran_equality_affine`. -/
+/-- **Moran's equality for affine-symmetric iterated function systems.** Let $n \ge 1$ and let
+$(f_i)_{i < n}$ be an affine-symmetric iterated function system on $\mathbb{R}^d$ with common
+contraction factor $\lambda \in (0,1)$ that satisfies the open set condition. Then every attractor
+$S \subseteq \mathbb{R}^d$ of the system has Hausdorff dimension
+$$\dim_H S = -\frac{\log n}{\log \lambda}.$$
+
+Source: P. A. P. Moran, *Additive functions of intervals and Hausdorff measure*, Proc. Cambridge Philos. Soc. 42 (1946); J. E. Hutchinson, *Fractals and self similarity*, Indiana Univ. Math. J. 30 (1981). Knill, *Some fundamental theorems in mathematics*, §105. Via leanprover/lean-eval@38361be, problem `moran_equality_affine`. -/
 public theorem_wanted moran_equality_affine
     {d n : ℕ} (hn : 1 ≤ n)
     (f : Fin n → EuclideanSpace ℝ (Fin d) → EuclideanSpace ℝ (Fin d)) (lam : ℝ)

@@ -66,15 +66,20 @@ both forward and backward orbits remaining in `U` and converging to
 open scoped Topology
 open Filter Polynomial
 
-/-- The Euclidean model space `ℝⁿ`. -/
+/-- **Euclidean space $\mathbb{R}^n$ for local stable and unstable sets.** For a natural number
+$n$, this is the space $\mathbb{R}^n$ of real $n$-tuples with the Euclidean inner product and
+norm. -/
 abbrev E (n : ℕ) : Type := EuclideanSpace ℝ (Fin n)
 
-/-- Multiset of complex eigenvalues of `L : ℝⁿ →L[ℝ] ℝⁿ`. -/
+/-- **Complex eigenvalues of a real linear map.** For a continuous linear map $L$ from
+$\mathbb{R}^n$ to itself, the complex eigenvalues of $L$ form the multiset of complex roots of the
+characteristic polynomial of $L$, each counted with its multiplicity as a root. -/
 noncomputable def complexEigenvalues {n : ℕ} (L : E n →L[ℝ] E n) : Multiset ℂ :=
   ((L : E n →ₗ[ℝ] E n).charpoly.map (algebraMap ℝ ℂ)).roots
 
-/-- `L` is **hyperbolic**: no complex eigenvalue lies on the unit
-circle. -/
+/-- **Hyperbolic linear map.** A continuous linear map $L$ from $\mathbb{R}^n$ to itself is
+hyperbolic when none of its complex eigenvalues lies on the unit circle, that is, every complex
+root $\mu$ of the characteristic polynomial of $L$ satisfies $|\mu| \ne 1$. -/
 def IsHyperbolicLinear {n : ℕ} (L : E n →L[ℝ] E n) : Prop :=
   ∀ μ ∈ complexEigenvalues L, ‖μ‖ ≠ 1
 
@@ -85,7 +90,19 @@ carries the local stable set `Wˢ` (points whose forward orbit stays in
 `U` and converges to `x₀`) and the local unstable set `Wᵘ` (points
 admitting a backward orbit staying in `U` and converging to `x₀`), and
 `Wˢ ∩ Wᵘ = {x₀}`. -/
-/-- Source: J. Hadamard, 'Sur l'itération et les solutions asymptotiques des équations différentielles', Bull. Soc. Math. France 29 (1901); O. Perron, 'Über Stabilität und asymptotisches Verhalten der Integrale von Differentialgleichungssystemen', Math. Z. 29 (1929) 129–160. Listed as §104 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `stable_unstable_manifolds`. -/
+/-- **Local stable and unstable sets at a hyperbolic fixed point.** Let $f : \mathbb{R}^n \to
+\mathbb{R}^n$ be continuously differentiable on a neighbourhood of a point $x_0$ with
+$f(x_0) = x_0$, and suppose that the derivative $Df(x_0)$ is invertible and hyperbolic. Then
+there is an open set $U$ containing $x_0$ such that the local stable set
+$W^s = \{x : f^k(x) \in U \text{ for all } k \ge 0 \text{ and } f^k(x) \to x_0 \text{ as }
+k \to \infty\}$ and the local unstable set $W^u$, consisting of the points $x$ for which there
+is a sequence $(y_k)_{k \ge 0}$ in $U$ with $y_0 = x$, $f(y_{k+1}) = y_k$ for all $k$ and
+$y_k \to x_0$, satisfy $W^s \cap W^u = \{x_0\}$.
+
+This is only the set-level part of the Hadamard–Perron theorem: it does not assert that $W^s$
+and $W^u$ are $C^1$ submanifolds tangent to the stable and unstable subspaces of $Df(x_0)$.
+
+Source: J. Hadamard, 'Sur l'itération et les solutions asymptotiques des équations différentielles', Bull. Soc. Math. France 29 (1901); O. Perron, 'Über Stabilität und asymptotisches Verhalten der Integrale von Differentialgleichungssystemen', Math. Z. 29 (1929) 129–160. Listed as §104 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `stable_unstable_manifolds`. -/
 public theorem_wanted stable_unstable_manifolds_exist (n : ℕ) (f : E n → E n) (x₀ : E n)
     (_hf : ContDiffAt ℝ 1 f x₀)
     (_hfix : f x₀ = x₀)

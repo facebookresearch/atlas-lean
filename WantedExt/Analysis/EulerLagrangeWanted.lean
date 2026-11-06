@@ -63,22 +63,41 @@ data.
 open MeasureTheory Set
 open scoped ContDiff
 
-/-- `∂L/∂x` along the path `x` at time `t`: the derivative of the partial map
-`y ↦ L t y (x' t)` at `y = x t`. -/
+/-- **Partial derivative of the Lagrangian in position.** For a real function $L(t, y, v)$
+of three real variables, a function $x : \mathbb{R} \to \mathbb{R}$ and a real number $t$, this
+is the value $\frac{\partial L}{\partial y}(t, x(t), x'(t))$, the derivative at $y = x(t)$ of
+the function $y \mapsto L(t, y, x'(t))$.
+
+By convention, a derivative that does not exist is taken to be $0$, both for $x'(t)$ and for
+the derivative in $y$. -/
 noncomputable def lagrangianPartialX
     (L : ℝ → ℝ → ℝ → ℝ) (x : ℝ → ℝ) (t : ℝ) : ℝ :=
   deriv (fun y => L t y (deriv x t)) (x t)
 
-/-- `∂L/∂x'` along the path `x` at time `t`: the derivative of the partial map
-`z ↦ L t (x t) z` at `z = x' t`. -/
+/-- **Partial derivative of the Lagrangian in velocity.** For a real function $L(t, y, v)$
+of three real variables, a function $x : \mathbb{R} \to \mathbb{R}$ and a real number $t$, this
+is the value $\frac{\partial L}{\partial v}(t, x(t), x'(t))$, the derivative at $v = x'(t)$ of
+the function $v \mapsto L(t, x(t), v)$.
+
+By convention, a derivative that does not exist is taken to be $0$, both for $x'(t)$ and for
+the derivative in $v$. -/
 noncomputable def lagrangianPartialV
     (L : ℝ → ℝ → ℝ → ℝ) (x : ℝ → ℝ) (t : ℝ) : ℝ :=
   deriv (fun z => L t (x t) z) (deriv x t)
 
-/-- A `C¹` path `x : ℝ → ℝ` is a **variational extremum** of the action
-`I(y) := ∫_a^b L(t, y(t), y'(t)) dt` on `(a, b)` if for every smooth compactly
-supported variation `h` with `tsupport h ⊆ (a, b)`, the first variation
-`d/dε|_{ε=0} ∫_a^b L(t, x(t) + ε h(t), x'(t) + ε h'(t)) dt` vanishes. -/
+/-- **Variational extremum.** Let $a, b$ be real numbers and let $L(t, y, v)$
+be a real function of three real variables. A function $x : \mathbb{R} \to \mathbb{R}$ is a
+variational extremum of the action of $L$ on $(a, b)$ if $x$ is continuously differentiable and,
+for every infinitely differentiable function $h : \mathbb{R} \to \mathbb{R}$ of compact support
+whose closed support lies in the open interval $(a, b)$, the derivative at $\varepsilon = 0$ of
+$$
+\varepsilon \mapsto \int_{(a, b)}
+L\big(t, x(t) + \varepsilon h(t), x'(t) + \varepsilon h'(t)\big)\,dt
+$$
+is $0$.
+
+By convention, a derivative that does not exist is taken to be $0$, and so is the integral of a
+function that is not integrable. -/
 def IsVariationalExtremum
     (a b : ℝ) (L : ℝ → ℝ → ℝ → ℝ) (x : ℝ → ℝ) : Prop :=
   ContDiff ℝ 1 x ∧
@@ -91,7 +110,18 @@ def IsVariationalExtremum
 variational extremum `x` of the action `I(y) = ∫_a^b L(t, y(t), y'(t)) dt`, with
 `C²` Lagrangian `L`, satisfies the pointwise equation
 `∂L/∂x (t, x(t), x'(t)) = (d/dt)(∂L/∂x' (t, x(t), x'(t)))` on `(a, b)`. -/
-/-- Source: L. Euler (1744) and J.-L. Lagrange (1755). Listed as §44 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `euler_lagrange_equation`. -/
+/-- **Euler–Lagrange equation.** Let $a < b$ be real numbers, let $L(t, y, v)$ be a real function
+of three real variables that is twice continuously differentiable on $\mathbb{R}^3$, and let
+$x : \mathbb{R} \to \mathbb{R}$ be twice continuously differentiable. Write
+$\partial L / \partial y$ and $\partial L / \partial v$ for the partial derivatives of $L$ in its
+second and third arguments. If $x$ is a variational extremum of the action of $L$ on $(a, b)$,
+then for every $t \in (a, b)$
+$$
+\frac{\partial L}{\partial y}(t, x(t), x'(t))
+= \frac{d}{ds}\Big|_{s = t} \frac{\partial L}{\partial v}(s, x(s), x'(s)).
+$$
+
+Source: L. Euler (1744) and J.-L. Lagrange (1755). Listed as §44 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `euler_lagrange_equation`. -/
 public theorem_wanted euler_lagrange_equation
     {a b : ℝ} (L : ℝ → ℝ → ℝ → ℝ) (x : ℝ → ℝ) (_hab : a < b)
     (_hL : ContDiff ℝ 2 (fun p : ℝ × ℝ × ℝ => L p.1 p.2.1 p.2.2))

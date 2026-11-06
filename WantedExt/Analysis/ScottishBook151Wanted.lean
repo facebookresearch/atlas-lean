@@ -17,22 +17,25 @@ public import Mathlib.Topology.Defs.Basic
 
 namespace MathlibExt.Analysis.ScottishBook151Wanted
 
-/-- The closed cube `[-1, 1]³` in `ℝ³`. -/
+/-- **The closed cube $[-1, 1]^3$.** The closed cube $[-1, 1]^3$ in $\mathbb{R}^3$: the set of
+points of three-dimensional Euclidean space all of whose coordinates lie in $[-1, 1]$. -/
 def Cube : Set (EuclideanSpace ℝ (Fin 3)) :=
   {x | ∀ i, x i ∈ Set.Icc (-1 : ℝ) 1}
 
-/-- The union of the edges of the cube `[-1, 1]³`: points of the cube with
-at least two coordinates equal to `1` or `-1`. -/
+/-- **Edges of the cube $[-1, 1]^3$.** The union of the edges of the cube $[-1, 1]^3$ in
+$\mathbb{R}^3$: the set of points $x$ with every coordinate in $[-1, 1]$ such that at least two
+distinct coordinates $x_i$ and $x_j$ are each equal to $1$ or $-1$. -/
 def CubeEdges : Set (EuclideanSpace ℝ (Fin 3)) :=
   {x | (∀ i, x i ∈ Set.Icc (-1 : ℝ) 1) ∧
     ∃ i j, i ≠ j ∧ (x i = 1 ∨ x i = -1) ∧ (x j = 1 ∨ x j = -1)}
 
 /--
-There is a nonzero harmonic function, defined in a region containing a cube
-in its interior, which vanishes on all the edges of the cube. The function
-is harmonic on an open region `U` whose interior contains the cube
-`[-1, 1]³`, vanishes on every point of the cube's edges, and is nonzero
-somewhere in `U`.
+**Scottish Book Problem 151: a harmonic function vanishing on the edges of a cube.** There
+exist an open set $U \subseteq \mathbb{R}^3$ whose interior contains the closed cube
+$[-1, 1]^3$ and a function $f : \mathbb{R}^3 \to \mathbb{R}$ that is harmonic at every point of
+$U$, vanishes at every point of the edges of the cube $[-1, 1]^3$, and satisfies $f(x) \neq 0$
+for some $x \in U$.
+
 Source: R. Wavre, Problem 151 of the Scottish Book; the affirmative answer
 is given by I. Vasilyev, "On the zero sets of harmonic polynomials",
 arXiv:2506.24116, Theorem 1, as reported in the 2026 survey "90+ years of

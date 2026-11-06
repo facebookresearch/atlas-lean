@@ -59,8 +59,14 @@ strictly decreasing as a function of the radius.
 open Metric
 open scoped NNReal
 
-/-- `u` solved a semilinear Poisson problem if `-Δ u = f(u)` in the open unit
-ball and `u = 0` on the unit sphere. -/
+/-- **Semilinear Poisson problem on the unit ball.** Let $n$ be a natural number, let
+$f : \mathbb{R} \to \mathbb{R}$, and let $u : \mathbb{R}^n \to \mathbb{R}$ be a function on
+Euclidean space. Then $u$ solves the semilinear Poisson problem for $f$ if
+$-\Delta u(x) = f(u(x))$ for every $x$ in the open unit ball and $u(x) = 0$ for every $x$ on the
+unit sphere.
+
+The definition imposes no differentiability on $u$; regularity is assumed separately where it is
+needed. -/
 def SolvesSemilinearPoisson {n : ℕ} (f : ℝ → ℝ) (u : EuclideanSpace ℝ (Fin n) → ℝ) : Prop :=
   (∀ x ∈ ball 0 1, -Laplacian.laplacian u x = f (u x)) ∧ ∀ x ∈ sphere 0 1, u x = 0
 
@@ -69,7 +75,15 @@ solution of the semilinear Poisson problem `-Δ u = f(u)` in the open unit ball,
 with zero Dirichlet boundary values on the unit sphere. If `f : ℝ → ℝ` is
 Lipschitz, then `u` is radial: `u x = v ‖x‖` for a nonnegative strictly
 decreasing radial profile `v` on `[0, 1]`. -/
-/-- Source: B. Gidas, W. M. Ni, and L. Nirenberg, Symmetry and related properties via the maximum principle, Comm. Math. Phys. 68 (1979), 209-243. Also stated as Theorem 2 (Radial symmetry) in L. C. Evans, Partial Differential Equations, Section 9 on nonvariational techniques. Via leanprover/lean-eval@38361be, problem `semilinear_poisson_radial_symmetry`. -/
+/-- **Radial symmetry of positive solutions of the semilinear Poisson problem.** Let $n \ge 1$,
+let $f : \mathbb{R} \to \mathbb{R}$ be Lipschitz, and let $u : \mathbb{R}^n \to \mathbb{R}$ be a
+function on Euclidean space that is $C^2$ on the closed unit ball $\overline{B}$. Suppose that $u$
+solves the semilinear Poisson problem for $f$, that is, $-\Delta u = f(u)$ on the open unit ball
+$B$ and $u = 0$ on the unit sphere, and that $u > 0$ on $B$. Then there is a function
+$v : \mathbb{R} \to [0, \infty)$ that is strictly decreasing on $[0, 1]$ and satisfies
+$u(x) = v(\|x\|)$ for every $x \in \overline{B}$.
+
+Source: B. Gidas, W. M. Ni, and L. Nirenberg, Symmetry and related properties via the maximum principle, Comm. Math. Phys. 68 (1979), 209-243. Also stated as Theorem 2 (Radial symmetry) in L. C. Evans, Partial Differential Equations, Section 9 on nonvariational techniques. Via leanprover/lean-eval@38361be, problem `semilinear_poisson_radial_symmetry`. -/
 public theorem_wanted semilinear_poisson_radial_symmetry {n : ℕ} (hn : 0 < n)
     {f : ℝ → ℝ} (u : EuclideanSpace ℝ (Fin n) → ℝ)
     (hf_lipschitz : ∃ K : ℝ≥0, LipschitzWith K f)

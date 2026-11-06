@@ -62,17 +62,26 @@ noncomputable section
 
 variable {T : ℝ} [Fact (0 < T)]
 
-/-- The Wiener-algebra predicate on the additive circle: a continuous
-complex-valued function whose Fourier coefficients are absolutely summable.
-For complex series, `Summable` is equivalent to absolute summability of the
-norms. -/
+/-- **Wiener algebra on the circle.** Let $T > 0$. A continuous function
+$f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ lies in the Wiener algebra when the family of its
+Fourier coefficients $\hat f(n) = \frac{1}{T} \int_0^T f(x) e^{-2\pi i n x / T} \, dx$,
+$n \in \mathbb{Z}$, is summable in $\mathbb{C}$.
+
+For complex families, summability is equivalent to $\sum_{n \in \mathbb{Z}} |\hat f(n)| < \infty$,
+so these are the functions with absolutely convergent Fourier series. -/
 def InWienerAlgebra (f : C(AddCircle T, ℂ)) : Prop :=
   Summable (fourierCoeff f)
 
 /- **Wiener–Lévy theorem.** If `φ` is complex-analytic on a neighbourhood of
 the range of a Wiener-algebra function `f`, then the composed function
 `φ ∘ f` is again in the Wiener algebra. -/
-/-- Source: P. Lévy, Sur la convergence absolue des séries de Fourier, Compositio Math. 1 (1935), 1-14; N. Wiener, Tauberian theorems, Ann. of Math. 33 (1932), 1-100. Listed as §226 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §226. Via leanprover/lean-eval@38361be, problem `wiener_levy_analytic_calculus`. -/
+/-- **Wiener–Lévy theorem.** Let $T > 0$, and let $f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ be a
+continuous function in the Wiener algebra. Let $U \subseteq \mathbb{C}$ be an open set containing
+the range of $f$, and let $\varphi : \mathbb{C} \to \mathbb{C}$ be analytic at every point of $U$.
+Then there is a continuous function $g : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ with
+$g(x) = \varphi(f(x))$ for every $x$, and $g$ lies in the Wiener algebra.
+
+Source: P. Lévy, Sur la convergence absolue des séries de Fourier, Compositio Math. 1 (1935), 1-14; N. Wiener, Tauberian theorems, Ann. of Math. 33 (1932), 1-100. Listed as §226 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §226. Via leanprover/lean-eval@38361be, problem `wiener_levy_analytic_calculus`. -/
 public theorem_wanted wiener_levy_analytic_calculus (f : C(AddCircle T, ℂ))
     (φ : ℂ → ℂ) (U : Set ℂ) (hf : InWienerAlgebra f)
     (hU : IsOpen U) (hrange : range f ⊆ U)

@@ -94,13 +94,21 @@ variable {k : Type u} [Field k] {C : Over (Spec (.of k))}
 
 -- data
 /- The genus of a smooth proper curve. -/
-/-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+/-- **Genus of a smooth proper curve.** For a field $k$ and a curve $C$ over $k$, that is, a
+$k$-scheme that is proper, smooth of relative dimension $1$ and geometrically irreducible, the
+genus of $C$ is a natural number.
+
+Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted genus (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom] : ℕ
 
 -- data
 /- The Jacobian of a smooth, proper curve over a field `k`. -/
-/-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+/-- **Jacobian of a smooth proper curve.** For a field $k$ and a curve $C$ over $k$, that is, a
+$k$-scheme that is proper, smooth of relative dimension $1$ and geometrically irreducible, the
+Jacobian $J(C)$ of $C$ is a $k$-scheme.
+
+Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted Jacobian (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom] : Over (Spec (.of k))
 
@@ -115,7 +123,11 @@ public instance_wanted instGrpObj : GrpObj (❰Jacobian❱ C)
 
 /- The Jacobian of `C` is smooth of relative dimension `g` over `k`, where `g` is the
 genus of `C`. -/
-/-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+/-- **The Jacobian has dimension equal to the genus.** Let $C$ be a proper, smooth, geometrically
+irreducible curve over a field $k$. The Jacobian $J(C)$ is smooth of relative dimension $g$ over
+$k$, where $g$ is the genus of $C$.
+
+Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted smoothOfRelativeDimension_genus :
     SmoothOfRelativeDimension (❰genus❱ C) (❰Jacobian❱ C).hom
 
@@ -130,22 +142,35 @@ public instance_wanted instGeometricallyIrreducible : GeometricallyIrreducible (
 -- data
 /- The Abel-Jacobi map from a smooth, proper curve to its Jacobian associated
 to a `k`-rational point of `C`. -/
-/-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+/-- **Abel–Jacobi map.** Let $C$ be a proper, smooth, geometrically irreducible curve over a field
+$k$. Each $k$-rational point $P$ of $C$ gives a morphism of $k$-schemes $C \to J(C)$ from $C$ to
+its Jacobian, the Abel–Jacobi map based at $P$.
+
+Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted ofCurve (P : 𝟙_ (Over (Spec (.of k))) ⟶ C) : C ⟶ ❰Jacobian❱ C
 
 /- The Abel-Jacobi map sends the `k`-rational point `P` to `0`, where `0` (denoted by `η` below) is
 the neutral element of the group scheme `Jacobian C`. -/
-/-- Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+/-- **The Abel–Jacobi map sends the base point to zero.** Let $C$ be a proper, smooth,
+geometrically irreducible curve over a field $k$, let $J(C)$ be its Jacobian, and let $P$ be a
+$k$-rational point of $C$. The Abel–Jacobi map $C \to J(C)$ based at $P$ sends $P$ to the
+identity point of $J(C)$ for its group scheme structure.
+
+Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted comp_ofCurve (C : Over (Spec (.of k))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
     (P : 𝟙_ (Over (Spec (.of k))) ⟶ C) :
     P ≫ ❰ofCurve❱ P = η[❰Jacobian❱ C]
 
-/--
-The universal property of the Jacobian variety: For any abelian variety `A`,
-any morphism `f : C ⟶ A` such that `f(P) = 0` factors uniquely through the
-Jacobian of `C`.
-In other words, `Jacobian C` is the Albanese variety of `C`.
+/-- **Universal property of the Jacobian.** Let $C$ be a proper, smooth, geometrically irreducible
+curve over a field $k$, let $J(C)$ be its Jacobian, let $P$ be a $k$-rational point of $C$, and
+let $\iota_P : C \to J(C)$ be the Abel–Jacobi map based at $P$. Let $A$ be a group scheme over $k$
+that is smooth, proper and geometrically irreducible. For every morphism of $k$-schemes
+$f : C \to A$ sending $P$ to the identity point of $A$, there is a unique morphism of $k$-schemes
+$g : J(C) \to A$ with $f = g \circ \iota_P$.
+
+In other words, the Jacobian of $C$ is the Albanese variety of $C$.
+
 Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`.
 -/
 public theorem_wanted exists_unique_ofCurve_comp (C : Over (Spec (.of k))) [IsProper C.hom]
@@ -178,8 +203,14 @@ noncomputable instance_wanted instCommGroup {k : Type u} [Field k]
     [IsProper C.hom] [GeometricallyIrreducible C.hom] :
     CommGroup (𝟙_ (Over (Spec (.of k))) ⟶ ❰Jacobian❱ C)
 
-/-- The group law on Jacobian points above is the canonical one induced by the
-group-object structure, not an arbitrary commutative-group structure.
+/-- **Group law on the rational points of the Jacobian.** Let $C$ be a proper, smooth,
+geometrically irreducible curve over a field $k$. The commutative group structure on the set of
+$k$-rational points of the Jacobian $J(C)$ is the one induced by its commutative group scheme
+structure: the product of two $k$-points $x$ and $y$ is $\mu \circ (x, y)$, where $\mu$ is the
+multiplication morphism of $J(C)$.
+
+This pins down the group law rather than allowing an arbitrary commutative group structure.
+
 Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted instCommGroup_eq {k : Type u} [Field k]
     {C : Over (Spec (.of k))} [SmoothOfRelativeDimension 1 C.hom]
@@ -215,7 +246,11 @@ open CommGroup Module CategoryTheory MonoidalCategory _root_.AlgebraicGeometry
 open _root_.MathlibExt.AlgebraicGeometry.JacobianChallengeWanted.AlgebraicGeometry.JacobianChallenge
 
 /- The function `c` of Theorem 1.1 of the paper. -/
-/-- Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
+/-- **Uniform Mordell–Lang constant.** For natural numbers $g$ and $d$, $c(g, d)$ is a natural
+number: the constant in the uniform bound on rational points of curves in Theorem 1.1 of
+Dimitrov, Gao and Habegger.
+
+Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
 public def_wanted c (g : ℕ) (d : ℕ) : ℕ
 
 /-
@@ -231,11 +266,17 @@ The uniform Mordell–Lang declarations below are co-located in this file with t
 Note however that the characterization of the Jacobian of `C` is only correct when the `C` has an
 `F`-point, but Theorem 1.1 is trivial when `C` has no `F`-points, so this is not a problem.
 -/
-/-- The uniform constant of Theorem 1.1 satisfies `c(g, d) ≥ 1`, as the
-source statement requires. -/
+/-- **The uniform Mordell–Lang constant is at least one.** For all natural numbers $g$ and
+$d$, the uniform constant satisfies $c(g, d) \ge 1$. -/
 public theorem_wanted c_pos (g d : ℕ) : 1 ≤ ❰c❱ g d
 
-/-- Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
+/-- **Uniform Mordell–Lang for curves.** Let $g \ge 2$ and $d \ge 1$ be natural numbers, let $F$
+be a number field with $[F : \mathbb{Q}] \le d$, and let $C$ be a proper, smooth, geometrically
+irreducible curve over $F$. If $C$ has genus $g$, then the number of $F$-rational points of $C$,
+possibly infinite, is at most $c(g, d)^{1 + \rho}$, where $c$ is the uniform constant and $\rho$
+is the free rank of the group of $F$-rational points of the Jacobian of $C$.
+
+Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
 public theorem_wanted theorem_1_1 (g d : ℕ) (hg : g ≥ 2) (hd : d ≥ 1) {F : Type*} [Field F] [NumberField F]
     (hF : finrank ℚ F ≤ d) (C : Over (Spec (.of F))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom] :

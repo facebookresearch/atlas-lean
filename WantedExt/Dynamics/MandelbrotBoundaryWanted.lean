@@ -54,17 +54,24 @@ Shishikura dimension API. Category-(b) candidate from §260 of the Knill survey.
 
 open Function MeasureTheory
 
-/-- The quadratic family member `T_c(z) = z² + c`. -/
+/-- **Quadratic family.** For each complex number $c$, the map $T_c : \mathbb{C} \to \mathbb{C}$ is
+given by $T_c(z) = z^2 + c$. -/
 def Tc (c : ℂ) (z : ℂ) : ℂ :=
   z ^ 2 + c
 
-/-- The **Mandelbrot set** `M = { c ∈ ℂ | T_c^n(0) stays bounded }`. -/
+/-- **Mandelbrot set.** The Mandelbrot set is the set $M$ of complex numbers $c$ for which the orbit
+of $0$ under the quadratic map $T_c(z) = z^2 + c$ is bounded: there is a real number $R$ with
+$|T_c^n(0)| \le R$ for every $n \in \mathbb{N}$, where $T_c^n$ is the $n$-th iterate of $T_c$ and
+$T_c^0$ is the identity. -/
 def Mandelbrot : Set ℂ :=
   { c : ℂ | ∃ R : ℝ, ∀ n : ℕ, ‖(Tc c)^[n] 0‖ ≤ R }
 
 /- **Shishikura's theorem** (§260). The boundary of the Mandelbrot set has
 Hausdorff dimension `2`. -/
-/-- Source: M. Shishikura, The Hausdorff dimension of the boundary of the Mandelbrot set and Julia sets, Ann. of Math. 147 (1998). Listed as §260 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §260. Via leanprover/lean-eval@38361be, problem `mandelbrot_boundary_dimh`. -/
+/-- **Hausdorff dimension of the Mandelbrot boundary (Shishikura).** The boundary of the
+Mandelbrot set $M \subseteq \mathbb{C}$ has Hausdorff dimension $2$.
+
+Source: M. Shishikura, The Hausdorff dimension of the boundary of the Mandelbrot set and Julia sets, Ann. of Math. 147 (1998). Listed as §260 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §260. Via leanprover/lean-eval@38361be, problem `mandelbrot_boundary_dimh`. -/
 public theorem_wanted mandelbrot_boundary_dimh :
     dimH (frontier Mandelbrot) = 2
 

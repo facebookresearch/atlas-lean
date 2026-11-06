@@ -41,16 +41,16 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Complex.LacunarySeriesDiscWanted
 
-/-- The lacunary power series `f z = ∑' j, (1 / 2) ^ j * z ^ (2 ^ j)` of the problem. -/
+/-- **A lacunary power series.** For $z \in \mathbb{C}$, let
+$f(z) = \sum_{j=0}^{\infty} 2^{-j} z^{2^j}$, where $f(z)$ is taken to be $0$ when the series is
+not summable. -/
 noncomputable def f (z : ℂ) : ℂ :=
   ∑' j : ℕ, ((1 / (2 : ℂ)) ^ j) * z ^ (2 ^ j)
 
-/-- Prove that the function
-
-\[
-f(z)=\sum_{j=0}^{\infty} 2^{-j} z^{(2^j)}
-\]
-is holomorphic on $D(0,1)$ and continuous on $\overline{D}(0,1)$.
+/-- **Regularity of a lacunary series on the unit disc.** Let $f$ be the lacunary series
+$f(z) = \sum_{j=0}^{\infty} 2^{-j} z^{2^j}$. Then $f$ is holomorphic on the open unit disc
+$\{z \in \mathbb{C} : |z| < 1\}$ and continuous on its closure, the closed unit disc
+$\{z \in \mathbb{C} : |z| \le 1\}$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functions of a complex
 variable; Series expansions of functions of one complex variable),

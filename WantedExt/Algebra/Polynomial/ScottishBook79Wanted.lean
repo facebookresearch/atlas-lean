@@ -19,11 +19,15 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 namespace MathlibExt.Algebra.Polynomial.ScottishBook79Wanted
 
-/-- Mazur and Orlicz's Problem 79 from the Scottish Book, for the
-Euclidean plane: if a polynomial map of the plane to itself is
-bijective with polynomial inverse (the two coordinate polynomials
-`P` and the coordinate polynomials `Q` of the inverse), must the map
-be affine, with nonzero determinant? -/
+/-- **Mazur–Orlicz claim on polynomial automorphisms of the plane.** The statement that every
+polynomial map of the plane with a polynomial inverse is affine: for all pairs
+$P = (P_1, P_2)$ and $Q = (Q_1, Q_2)$ of real polynomials in two variables such that
+$Q(P(x)) = x$ for every $x \in \mathbb{R}^2$ and $P(Q(y)) = y$ for every $y \in \mathbb{R}^2$,
+there are a real $2 \times 2$ matrix $A$ with $\det A \neq 0$ and a vector $c \in \mathbb{R}^2$
+such that $P(x) = Ax + c$ for every $x \in \mathbb{R}^2$.
+
+This is the affirmative answer to Mazur and Orlicz's Problem 79 of the Scottish Book,
+restricted to the Euclidean plane. -/
 def ScottishBookProblem79Claim : Prop :=
   ∀ (P Q : Fin 2 → MvPolynomial (Fin 2) ℝ),
     (∀ x : Fin 2 → ℝ,
@@ -38,8 +42,13 @@ def ScottishBookProblem79Claim : Prop :=
         MvPolynomial.eval x (P i) = ∑ j, a i j * x j + c i
 
 /--
-Mazur–Orlicz Problem 79 is false: a bijective polynomial map of the
-plane with polynomial inverse need not be affine. Source: S. Mazur and
+**Mazur–Orlicz Problem 79 has a negative answer.** The claim of Problem 79 of the Scottish Book
+for the plane is false: there is a polynomial map $P$ of $\mathbb{R}^2$ to itself with a
+polynomial two-sided inverse that is not of the form $x \mapsto Ax + c$ with $A$ an invertible
+real $2 \times 2$ matrix and $c \in \mathbb{R}^2$. For example, the map
+$(x_1, x_2) \mapsto (x_1, x_2 + x_1^2)$ has the inverse $(y_1, y_2) \mapsto (y_1, y_2 - y_1^2)$.
+
+Source: S. Mazur and
 W. Orlicz, Problem 79 of the Scottish Book; typescript Ad 79 records
 the negative answer, via triangular polynomial automorphisms: maps
 `y₁ = x₁ + k`, `y₂ = x₂ + φ₂(x₁)`, …, `yₙ = xₙ + φₙ(x₁, …, xₙ₋₁)`

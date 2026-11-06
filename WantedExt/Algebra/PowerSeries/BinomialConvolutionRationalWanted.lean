@@ -36,11 +36,11 @@ open PowerSeries
 
 @[expose] public section
 
-/-- **Theorem 1.** If a power series `A` with coefficients in a field `F` is a quotient of
-polynomials `p / q` with coefficients in an extension field `G`, then `A = P / Q` for
-polynomials `P`, `Q` with coefficients in `F`.
-
-The quotients are stated with denominators cleared (`A q = p`, `q ≠ 0`).
+/-- **Rationality of power series descends from field extensions.** Let $F$ be a field, let $G$ be
+a field extension of $F$ (a field with an $F$-algebra structure), and let $A$ be a power series
+over $F$. If there are polynomials $p$, $q$ over $G$ with $q \ne 0$ and $A q = p$, where $A$ is
+viewed as a power series over $G$, then there are polynomials $P$, $Q$ over $F$ with $Q \ne 0$ and
+$A Q = P$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 1 (`jis-2024-24.1.3-thm-1`). -/
@@ -49,8 +49,11 @@ public theorem_wanted exists_polynomial_quotient_of_extension {F G : Type*} [Fie
     (h : PowerSeries.map (algebraMap F G) A * (q : PowerSeries G) = p) :
     ∃ P Q : Polynomial F, Q ≠ 0 ∧ A * (Q : PowerSeries F) = P
 
-/-- **Lemma 3.** Let `F ⊆ G` be fields and `S ⊆ Fⁿ`. If some nonzero `t ∈ Gⁿ` has `s · t = 0`
-for all `s ∈ S`, then some nonzero `u ∈ Fⁿ` has `s · u = 0` for all `s ∈ S`.
+/-- **Orthogonal vectors descend from field extensions.** Let $F$ be a field, let $G$ be a field
+extension of $F$ (a field with an $F$-algebra structure), let $n \in \mathbb{N}$ and let
+$S \subseteq F^n$. If some nonzero $t \in G^n$ satisfies $\sum_{i=1}^n s_i t_i = 0$ in $G$ for
+every $s \in S$, then some nonzero $u \in F^n$ satisfies $\sum_{i=1}^n s_i u_i = 0$ for every
+$s \in S$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 3 (`jis-2024-24.1.3-lem-3`). -/
@@ -59,8 +62,13 @@ public theorem_wanted exists_orthogonal_of_orthogonal_over_extension {F G : Type
     (horth : ∀ s ∈ S, ∑ i, algebraMap F G (s i) * t i = 0) :
     ∃ u : Fin n → F, u ≠ 0 ∧ ∀ s ∈ S, ∑ i, s i * u i = 0
 
-/-- **Lemma 4.** `xʲ / (1 - αx)^{j+1} ⊙ xᵏ / (1 - βx)^{k+1} =
-binom(j + k, j) x^{j+k} / (1 - (α + β)x)^{j+k+1}`.
+/-- **Binomial product of shifted powers of geometric series.** For every field $K$ of
+characteristic $0$, all $j, k \in \mathbb{N}$ and all $\alpha, \beta \in K$,
+
+$$\frac{x^j}{(1 - \alpha x)^{j+1}} \odot \frac{x^k}{(1 - \beta x)^{k+1}} =
+\binom{j + k}{j} \frac{x^{j+k}}{(1 - (\alpha + \beta) x)^{j+k+1}},$$
+
+where $\odot$ is the binomial product.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 4 (`jis-2024-24.1.3-lem-4`). -/
@@ -70,7 +78,13 @@ public theorem_wanted binomialProduct_X_pow_mul_inv_pow {K : Type*} [Field K] [C
         (X ^ k * ((1 - C β * X)⁻¹) ^ (k + 1)) =
       ((j + k).choose j : PowerSeries K) * X ^ (j + k) * ((1 - C (α + β) * X)⁻¹) ^ (j + k + 1)
 
-/-- **Corollary 5.** `A(x) ⊙ 1 / (1 - βx) = 1 / (1 - βx) · A(x / (1 - βx))`.
+/-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
+power series $A(x)$ over $K$ and every $\beta \in K$,
+
+$$A(x) \odot \frac{1}{1 - \beta x} = \frac{1}{1 - \beta x} A\left(\frac{x}{1 - \beta x}\right),$$
+
+where $\odot$ is the binomial product and $A(x/(1 - \beta x))$ is the substitution of the series
+$x/(1 - \beta x)$, which has zero constant term, into $A$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Corollary 5 (`jis-2024-24.1.3-cor-5`). -/
@@ -79,12 +93,18 @@ public theorem_wanted binomialProduct_inv_one_sub {K : Type*} [Field K] [CharZer
     binomialProduct A (1 - C β * X)⁻¹ =
       (1 - C β * X)⁻¹ * PowerSeries.subst (X * (1 - C β * X)⁻¹) A
 
-/-- **Theorem 6.** If `A = R / ∏_{i ≤ m} (1 - αᵢx)` with `deg R < m` and
-`B = S / ∏_{j ≤ n} (1 - βⱼx)` with `deg S < n` (the `αᵢ`, `βⱼ` need not be distinct nor
-nonzero), then `A ⊙ B = T / ∏ᵢ ∏ⱼ (1 - (αᵢ + βⱼ)x)` for a polynomial `T` of degree at most
-`mn - 1`.
+/-- **Binomial products of proper rational series.** Let $K$ be a field of characteristic $0$, let
+$\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, not necessarily distinct or nonzero,
+and let $R$, $S$ be polynomials over $K$ with $\deg R < m$ and $\deg S < n$. If $A$, $B$ are power
+series over $K$ with $A(x) \prod_{i=1}^m (1 - \alpha_i x) = R(x)$ and
+$B(x) \prod_{j=1}^n (1 - \beta_j x) = S(x)$, then there is a polynomial $T$ over $K$ with
+$\deg T < mn$ such that
 
-Denominators are cleared; `deg T < mn` (so `T = 0` when `mn = 0`).
+$$(A \odot B)(x) \prod_{i=1}^m \prod_{j=1}^n \bigl(1 - (\alpha_i + \beta_j) x\bigr) = T(x),$$
+
+where $\odot$ is the binomial product.
+
+Here $\deg 0 = -\infty$, so $T = 0$ when $mn = 0$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 6 (`jis-2024-24.1.3-thm-6`). -/
@@ -95,12 +115,19 @@ public theorem_wanted binomialProduct_rational {K : Type*} [Field K] [CharZero K
     ∃ T : Polynomial K, T.degree < (m * n : ℕ) ∧
       binomialProduct A B * ∏ i, ∏ j, (1 - C (α i + β j) * X) = (T : PowerSeries K)
 
-/-- **Corollary 7.** If `A = R / ∏_{i ≤ m} (1 - αᵢx)` and `B = S / ∏_{j ≤ n} (1 - βⱼx)` with all
-`αᵢ`, `βⱼ` nonzero, `u = max(deg R + 1 - m, 0)` and `v = max(deg S + 1 - n, 0)`, then
-`A ⊙ B = T / ((∏ᵢ (1 - αᵢx))^v (∏ⱼ (1 - βⱼx))^u ∏ᵢ ∏ⱼ (1 - (αᵢ + βⱼ)x))` for a polynomial `T`
-of degree less than `(u + m)(v + n)`.
+/-- **Binomial products of arbitrary rational series.** Let $K$ be a field of characteristic $0$,
+let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be nonzero elements of $K$, and let
+$R$, $S$ be polynomials over $K$. Let $A$, $B$ be power series over $K$ with
+$A(x) \prod_{i=1}^m (1 - \alpha_i x) = R(x)$ and $B(x) \prod_{j=1}^n (1 - \beta_j x) = S(x)$.
+Put $u = \max(d_R + 1 - m, 0)$ and $v = \max(d_S + 1 - n, 0)$, where $d_R$ and $d_S$ are the
+degrees of $R$ and $S$, the zero polynomial counting as degree $0$. Then there is a polynomial
+$T$ over $K$ of degree less than $(u + m)(v + n)$ such that
 
-Denominators are cleared; `u`, `v` use truncated subtraction of `natDegree`.
+$$(A \odot B)(x) \Big(\prod_{i=1}^m (1 - \alpha_i x)\Big)^{v}
+\Big(\prod_{j=1}^n (1 - \beta_j x)\Big)^{u} \prod_{i=1}^m \prod_{j=1}^n (1 - (\alpha_i + \beta_j) x)
+= T(x),$$
+
+where $\odot$ is the binomial product.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Corollary 7 (`jis-2024-24.1.3-cor-7`). -/
@@ -113,7 +140,12 @@ public theorem_wanted binomialProduct_rational_general {K : Type*} [Field K] [Ch
         (∏ j, (1 - C (β j) * X)) ^ (R.natDegree + 1 - m) *
         ∏ i, ∏ j, (1 - C (α i + β j) * X)) = (T : PowerSeries K)
 
-/-- **Lemma 8.** `xᵐ ⊙ A(x) = (xᵐ / m!) (d/dx)ᵐ (xᵐ A(x))`.
+/-- **Binomial product with a monomial.** For every field $K$ of characteristic $0$, every
+$m \in \mathbb{N}$ and every power series $A(x)$ over $K$,
+
+$$x^m \odot A(x) = \frac{x^m}{m!} \frac{d^m}{dx^m}\bigl(x^m A(x)\bigr),$$
+
+where $\odot$ is the binomial product and $d/dx$ is the formal derivative.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 8 (`jis-2024-24.1.3-lem-8`). -/
@@ -122,12 +154,20 @@ public theorem_wanted binomialProduct_X_pow {K : Type*} [Field K] [CharZero K] (
     binomialProduct (X ^ m) A =
       C ((m.factorial : K)⁻¹) * X ^ m * (⇑(PowerSeries.derivative (R := K)))^[m] (X ^ m * A)
 
-/-- **Theorem 10.** With `U(x) = ∏_{i ≤ m} (1 - αᵢx)` and `V(x) = ∏_{j ≤ n} (1 - βⱼx)`,
-`∏ᵢ ∏ⱼ (1 - (αᵢ + βⱼ)x) = (-1)^{mn} Res((1 - y)^m U(x / (1 - y)), yⁿ V(x / y), y)`.
+/-- **Resultant identity for pairwise sums.** Let $K$ be a field of characteristic $0$, let
+$m, n \ge 0$ be integers, and let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be
+elements of $K$. Regard $f(y) = \prod_{i=1}^{m} (1 - y - \alpha_i x)$ and
+$g(y) = \prod_{j=1}^{n} (y - \beta_j x)$ as polynomials in $y$ with coefficients in $K[x]$,
+and let $\operatorname{Res}_{m,n}(f, g)$ be the determinant of their Sylvester matrix formed with
+the formal degrees $m$ and $n$. Then in $K[x]$
 
-The two resultant arguments are written expanded as polynomials in `y` over `K[x]`:
-`(1 - y)^m U(x / (1 - y)) = ∏ᵢ (1 - y - αᵢx)` and `yⁿ V(x / y) = ∏ⱼ (y - βⱼx)`; the resultant
-uses the formal degrees `m` and `n`.
+$$
+\prod_{i=1}^{m} \prod_{j=1}^{n} \bigl(1 - (\alpha_i + \beta_j)x\bigr)
+= (-1)^{mn} \operatorname{Res}_{m,n}(f, g).
+$$
+
+With $U(x) = \prod_{i=1}^{m} (1 - \alpha_i x)$ and $V(x) = \prod_{j=1}^{n} (1 - \beta_j x)$, these
+are $f(y) = (1 - y)^m U(x / (1 - y))$ and $g(y) = y^n V(x / y)$, the form used in the source.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 10 (`jis-2024-24.1.3-thm-10`). -/
@@ -138,10 +178,14 @@ public theorem_wanted prod_one_sub_add_eq_resultant {K : Type*} [Field K] [CharZ
         (∏ i, (1 - Polynomial.X - Polynomial.C (Polynomial.C (α i) * Polynomial.X)))
         (∏ j, (Polynomial.X - Polynomial.C (Polynomial.C (β j) * Polynomial.X))) m n
 
-/-- **Theorem 11.** If `g(x) = ∑ Gₙ xⁿ = (2 - ax) / (1 - ax - bx²)`, then
-`g ⊙ g = 2 / (1 - ax) + g(2x)`, so `∑_k binom(n, k) G_k G_{n-k} = 2aⁿ + 2ⁿ Gₙ`.
+/-- **Binomial square of the Lucas generating function.** Let $K$ be a field of characteristic
+$0$, let $a, b \in K$, and let $g(x) = \sum_{n \ge 0} G_n x^n$ be a power series over $K$ with
+$g(x)(1 - ax - bx^2) = 2 - ax$. Then
 
-`g` is given by `g (1 - ax - bx²) = 2 - ax`; `g(2x)` is `PowerSeries.rescale 2 g`.
+$$g \odot g = \frac{2}{1 - ax} + g(2x),$$
+
+where $\odot$ is the binomial product, and
+$\sum_{k=0}^{n} \binom{n}{k} G_k G_{n-k} = 2a^n + 2^n G_n$ for every $n \ge 0$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 11 (`jis-2024-24.1.3-thm-11`). -/
@@ -153,19 +197,19 @@ public theorem_wanted binomialProduct_lucasV_generatingFunction {K : Type*} [Fie
           (n.choose k : K) * PowerSeries.coeff k g * PowerSeries.coeff (n - k) g =
         2 * a ^ n + 2 ^ n * PowerSeries.coeff n g
 
-/-- **Theorem 12.** Let `r`, `s` be proper rational series with denominator
-`D(x) = 1 + Ax + Bx² + Cx³ = ∏_{i ≤ 3} (1 - αᵢx)`, `C ≠ 0`, where `2αᵢ ≠ αⱼ + α_k` for
-`i, j, k` not all equal. Then for some polynomials `u`, `v` of degree at most `2`,
-`r ⊙ s = u(x) / D(2x) + 1 / (1 + Ax) ⊙ v(x) / D(-x)`.
+/-- **Binomial products of series with a cubic denominator.** Let $K$ be a field of characteristic
+$0$, let $A, B, C \in K$ with $C \ne 0$, and let $D(x) = 1 + Ax + Bx^2 + Cx^3$. Suppose that
+$D(x) = \prod_{i=1}^{3} (1 - \alpha_i x)$ with $\alpha_1, \alpha_2, \alpha_3 \in K$ and that
+$2\alpha_i \ne \alpha_j + \alpha_k$ whenever $i, j, k \in \{1, 2, 3\}$ are not all equal. Let $r$
+and $s$ be power series over $K$ such that $r D$ and $s D$ are polynomials of degree less than $3$.
+Then there are polynomials $u$, $v$ over $K$ of degree at most $2$ such that
 
-Corrected reading: the record prints `1 / (1 - Ax)`, which is false. For the tribonacci series
-`t = x / (1 - x - x² - x³)` (`A = -1`), the paper's own computation gives
-`t ⊙ t = (1 + x + 10x²) / (11 D(2x)) - (1 + x - 8x²) / (11 (1 - 2x + 2x³))` and
-`(1 + x - 8x²) / (1 - 2x + 2x³) = 1 / (1 - x) ⊙ (1 + 3x - 6x²) / D(-x)`, i.e. the factor is
-`1 / (1 + Ax)`; with `1 / (1 - Ax) = 1 / (1 + x)` the second part `1 / (1 - x) ⊙ (…)` times
-`D(-x)` is not a polynomial (exact check: nonzero coefficient of `x⁴`). The hypothesis
-"not all equal" is from the paper's statement (the record drops it, which would make the
-hypothesis unsatisfiable). The `αᵢ` are taken in `K`.
+$$r \odot s = \frac{u(x)}{D(2x)} + \frac{1}{1 + Ax} \odot \frac{v(x)}{D(-x)},$$
+
+where $\odot$ is the binomial product.
+
+The second term uses the factor $1/(1 + Ax)$; with $1/(1 - Ax)$ in its place the statement already
+fails for the tribonacci series $x/(1 - x - x^2 - x^3)$, where $A = -1$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 12 (`jis-2024-24.1.3-thm-12`). -/
@@ -182,13 +226,14 @@ public theorem_wanted binomialProduct_cubic_denominator {K : Type*} [Field K] [C
           binomialProduct (1 + C A * X)⁻¹
             ((v : PowerSeries K) * (1 - C A * X + C B * X ^ 2 - C C' * X ^ 3)⁻¹)
 
-/-- **Theorem 13.** If `A` is rational with denominator `∏_{i ≤ m} (1 - αᵢx)` and `B` with
-denominator `∏_{j ≤ n} (1 - βⱼx)`, then the Hadamard product `A * B` is rational and may be
-written with denominator `∏ᵢ ∏ⱼ (1 - αᵢβⱼx)`; moreover, if `A` and `B` are proper then so is
-`A * B`.
-
-Denominators are cleared. Properness is intrinsic: some representation `P / Q` with
-`Q(0) ≠ 0` and `deg P < deg Q`.
+/-- **Hadamard products of rational series.** Let $K$ be a field of characteristic $0$, let
+$\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, and let $A = \sum_k a_k x^k$ and
+$B = \sum_k b_k x^k$ be power series over $K$ such that $A(x) \prod_{i=1}^m (1 - \alpha_i x)$ and
+$B(x) \prod_{j=1}^n (1 - \beta_j x)$ are polynomials. Then their Hadamard product
+$A * B = \sum_k a_k b_k x^k$ has the property that
+$(A * B)(x) \prod_{i=1}^m \prod_{j=1}^n (1 - \alpha_i \beta_j x)$ is a polynomial. Moreover, call a
+power series $f$ over $K$ proper if $f Q = P$ for some polynomials $P$, $Q$ over $K$ with
+$Q(0) \ne 0$ and $\deg P < \deg Q$. If $A$ and $B$ are proper, then so is $A * B$.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 13 (`jis-2024-24.1.3-thm-13`). -/
@@ -204,11 +249,19 @@ public theorem_wanted hadamardProduct_rational {K : Type*} [Field K] [CharZero K
           PowerSeries.mk (fun k => PowerSeries.coeff k A * PowerSeries.coeff k B) *
             (Q : PowerSeries K) = (P : PowerSeries K))
 
-/-- **Theorem 14.** With `U(x) = ∏_{i ≤ m} (1 - αᵢx)` and `V(x) = ∏_{j ≤ n} (1 - βⱼx)`,
-`∏ᵢ ∏ⱼ (1 - αᵢβⱼx) = (-1)^{mn} Res(U(y), yⁿ V(x / y), y)`.
+/-- **Resultant identity for pairwise products.** Let $K$ be a field of characteristic $0$, let
+$m, n \ge 0$ be integers, and let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be
+elements of $K$. Regard $f(y) = \prod_{i=1}^{m} (1 - \alpha_i y)$ and
+$g(y) = \prod_{j=1}^{n} (y - \beta_j x)$ as polynomials in $y$ with coefficients in $K[x]$,
+and let $\operatorname{Res}_{m,n}(f, g)$ be the determinant of their Sylvester matrix formed with
+the formal degrees $m$ and $n$. Then in $K[x]$
 
-The resultant arguments are polynomials in `y` over `K[x]`, with `yⁿ V(x / y)` written
-expanded as `∏ⱼ (y - βⱼx)`; the resultant uses the formal degrees `m` and `n`.
+$$
+\prod_{i=1}^{m} \prod_{j=1}^{n} (1 - \alpha_i \beta_j x) = (-1)^{mn} \operatorname{Res}_{m,n}(f, g).
+$$
+
+With $U(x) = \prod_{i=1}^{m} (1 - \alpha_i x)$ and $V(x) = \prod_{j=1}^{n} (1 - \beta_j x)$, these
+are $f(y) = U(y)$ and $g(y) = y^n V(x / y)$, the form used in the source.
 
 Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
 Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 14 (`jis-2024-24.1.3-thm-14`). -/

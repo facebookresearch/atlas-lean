@@ -29,9 +29,12 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- `X ^ d` (with `d ≥ 1`) is a permutation polynomial of the finite field `K` with `q`
-elements if and only if `gcd(d, q - 1) = 1`. The hypothesis `d ≥ 1` is added: at `d = 0`,
-`q = 2` the right side holds but `X ^ 0 = 1` is constant.
+/-- **Monomial permutation polynomials of a finite field.** Let $K$ be a finite field with $q$
+elements and let $d \ge 1$ be an integer. Then $X^d$ is a permutation polynomial of $K$ if and
+only if $\gcd(d, q - 1) = 1$.
+
+The hypothesis $d \ge 1$ is needed: for $d = 0$ and $q = 2$ the condition $\gcd(d, q - 1) = 1$
+holds, but $X^0 = 1$ is constant.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 2
@@ -40,8 +43,10 @@ public theorem_wanted isPermutationPolynomial_X_pow_iff_coprime {K : Type*} [Fie
     [Fintype K] {d : ℕ} (hd : 0 < d) :
     (X ^ d : K[X]).IsPermutationPolynomial ↔ d.Coprime (Fintype.card K - 1)
 
-/-- Elements `a₁, …, a_q` of the finite field `K` with `q` elements are distinct if and only
-if `∑ aᵢ^t = 0` for `t = 0, 1, …, q - 2` and `∑ aᵢ^(q-1) = -1` (with `0 ^ 0 = 1`).
+/-- **Power-sum criterion for distinct elements of a finite field.** Let $K$ be a finite field
+with $q$ elements and let $a_1, \dots, a_q \in K$. Then $a_1, \dots, a_q$ are pairwise distinct
+if and only if $\sum_{i=1}^{q} a_i^t = 0$ for every $t = 0, 1, \dots, q - 2$ and
+$\sum_{i=1}^{q} a_i^{q-1} = -1$, where $0^0 = 1$.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 3
@@ -52,9 +57,12 @@ public theorem_wanted injective_iff_sum_pow_eq {K : Type*} [Field K] [Fintype K]
       (∀ t : ℕ, t < Fintype.card K - 1 → ∑ i, a i ^ t = 0) ∧
         ∑ i, a i ^ (Fintype.card K - 1) = -1
 
-/-- For complex `x, y, k` and positive integers `n, m`,
-`∑_{i=0}^{n} (-1)^i C(n, i) (kx + iy)^m` equals `(-1)^n y^n n!` when `n = m` and `0` when
-`n > m`.
+/-- **Alternating binomial sums of powers.** Let $x, y, k \in \mathbb{C}$ and let $n, m$ be
+positive integers. If $n = m$, then
+
+$$\sum_{i=0}^{n} (-1)^i \binom{n}{i} (kx + iy)^m = (-1)^n y^n n!,$$
+
+and if $m < n$, then $\sum_{i=0}^{n} (-1)^i \binom{n}{i} (kx + iy)^m = 0$.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Theorem 3
@@ -67,9 +75,11 @@ public theorem_wanted sum_neg_one_pow_choose_mul_pow (x y k : ℂ) {n m : ℕ} (
       (m < n → ∑ i ∈ Finset.range (n + 1),
         (-1 : ℂ) ^ i * (n.choose i : ℂ) * (k * x + i * y) ^ m = 0)
 
-/-- For an odd prime `p`, positive integers `k, t, a` with `gcd(a + 1, p - 1) = 1` and
-`k ≡ 1 (mod p(p - 1))`, the polynomial `∑_{n=1}^{k} n^t X^(n+a)` permutes `𝔽_p` provided
-`p - 1 ∤ t`, or `p² ∣ k - 1`.
+/-- **Shifted power-sum permutation polynomials of a prime field.** Let $p$ be an odd prime and
+let $k, t, a$ be positive integers with $\gcd(a + 1, p - 1) = 1$ and $k \equiv 1 \pmod{p(p-1)}$.
+Suppose that $p - 1 \nmid t$ or $p^2 \mid k - 1$. Then the polynomial
+$\sum_{n=1}^{k} n^t X^{n+a}$, with coefficients reduced modulo $p$, is a permutation polynomial
+of $\mathbb{F}_p$.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Corollary 1
@@ -80,9 +90,11 @@ public theorem_wanted isPermutationPolynomial_sum_pow_mul_X_pow_add {p : ℕ} [F
     (hcases : ¬(p - 1) ∣ t ∨ p ^ 2 ∣ k - 1) :
     (∑ n ∈ Finset.Icc 1 k, C ((n : ZMod p) ^ t) * X ^ (n + a)).IsPermutationPolynomial
 
-/-- For an odd prime `p`, positive integers `k, t, a` with `p ∤ a`, `gcd(a, p - 1) = 1` and
-`k ≡ 1 (mod p(p - 1))`, the polynomial `∑_{n=1}^{k} (an)^t X^(an)` permutes `𝔽_p` provided
-`p - 1 ∤ t`, or `p² ∣ k - 1`.
+/-- **Dilated power-sum permutation polynomials of a prime field.** Let $p$ be an odd prime and
+let $k, t, a$ be positive integers with $p \nmid a$, $\gcd(a, p - 1) = 1$ and
+$k \equiv 1 \pmod{p(p-1)}$. Suppose that $p - 1 \nmid t$ or $p^2 \mid k - 1$. Then the
+polynomial $\sum_{n=1}^{k} (an)^t X^{an}$, with coefficients reduced modulo $p$, is a
+permutation polynomial of $\mathbb{F}_p$.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Corollary 3
@@ -94,11 +106,15 @@ public theorem_wanted isPermutationPolynomial_sum_mul_pow_mul_X_pow_mul {p : ℕ
     (∑ n ∈ Finset.Icc 1 k,
       C (((a * n : ℕ) : ZMod p) ^ t) * X ^ (a * n)).IsPermutationPolynomial
 
-/-- For positive integers `t, k`, `(1 - X)^(t+1) ∑_{n=1}^{k} n^t X^n` equals
-`∑_{n=1}^{t} (∑_{i=0}^{n-1} (-1)^i C(t+1, i) (n - i)^t) X^n
-+ ∑_{m=1}^{t+1} (∑_{i=m}^{t+1} (-1)^i C(t+1, i) (k + m - i)^t) X^(k+m)`, i.e. for `x ≠ 1` the
-polynomial `h_t^k(x) = ∑ n^t x^n` is this numerator divided by `(1 - x)^(t+1)`. Stated as an
-identity in `ℤ[X]` (equivalent to the paper's quotient form at every `x ≠ 1`).
+/-- **Rational form of the power-weighted geometric sum.** For positive integers $t$ and $k$,
+the following identity holds in $\mathbb{Z}[X]$:
+
+$$(1 - X)^{t+1} \sum_{n=1}^{k} n^t X^n =
+\sum_{n=1}^{t} \Bigl(\sum_{i=0}^{n-1} (-1)^i \binom{t+1}{i} (n - i)^t\Bigr) X^n +
+\sum_{m=1}^{t+1} \Bigl(\sum_{i=m}^{t+1} (-1)^i \binom{t+1}{i} (k + m - i)^t\Bigr) X^{k+m}.$$
+
+Equivalently, for every $x \ne 1$ the value $h_t^k(x) = \sum_{n=1}^{k} n^t x^n$ is the
+right-hand side at $x$ divided by $(1 - x)^{t+1}$, which is the form the source states.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 4
@@ -110,12 +126,18 @@ public theorem_wanted one_sub_X_pow_mul_sum_pow_mul_X_pow (t k : ℕ) (ht : 0 < 
         ∑ m ∈ Finset.Icc 1 (t + 1), C (∑ i ∈ Finset.Icc m (t + 1),
           (-1) ^ i * ((t + 1).choose i : ℤ) * ((k : ℤ) + m - i) ^ t) * X ^ (k + m)
 
-/-- For an odd prime `p` and positive integers `k, s, t` with `s ≤ p - 2`,
-`k ≡ 1 (mod p(p - 1))` and `p² ∣ k - 1` whenever `p - 1 ∣ t`, with `μ = ⌊ks/(p - 1)⌋`:
-`∑_{j=1}^{μ} ∑ (ω_1 ⋯ ω_s)^t ≡ 0 (mod p)`, the inner sum over `s`-tuples `ω` with entries in
-`{1, …, k}` and `ω_1 + ⋯ + ω_s = j(p - 1)`. The printed hypothesis `s ≢ 0 (mod p)` is replaced
-by `s ≤ p - 2`, the range of Hermite's criterion (the paper's Theorem 2) used in the proof; as
-printed the claim fails, e.g. `p = 3`, `k = 1`, `s = 2`, `t = 1` gives the sum `1`.
+/-- **Vishwakarma–Singh congruence for ordered partitions.** Let $p$ be an odd prime and let
+$k, s, t$ be positive integers with $s \le p - 2$ and $k \equiv 1 \pmod{p(p-1)}$, such that
+$p^2 \mid k - 1$ whenever $p - 1 \mid t$. Let $\mu = \lfloor ks/(p - 1) \rfloor$. Then
+
+$$\sum_{j=1}^{\mu} \sum_{\omega} (\omega_1 \cdots \omega_s)^t \equiv 0 \pmod{p},$$
+
+where for each $j$ the inner sum runs over all $s$-tuples $\omega = (\omega_1, \dots, \omega_s)$
+with entries in $\{1, \dots, k\}$ and $\omega_1 + \cdots + \omega_s = j(p - 1)$.
+
+The source states the hypothesis $s \not\equiv 0 \pmod{p}$ in place of $s \le p - 2$, the range
+of Hermite's criterion used in its proof; with that hypothesis the claim fails, e.g. for $p = 3$,
+$k = 1$, $s = 2$, $t = 1$ the sum is $1$.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Theorem 1
@@ -128,11 +150,18 @@ public theorem_wanted prime_dvd_sum_compositions_prod_pow {p : ℕ} (hp : p.Prim
           (fun ω => ∑ i, ω i = j * (p - 1)),
         (∏ i, ω i) ^ t
 
-/-- The case `t = 1` of Theorem 1: for an odd prime `p` and positive integers `k, s` with
-`s ≤ p - 2` and `k ≡ 1 (mod p(p - 1))`, with `μ = ⌊ks/(p - 1)⌋`,
-`∑_{j=1}^{μ} ∑ ω_1 ⋯ ω_s ≡ 0 (mod p)` over `s`-tuples with entries in `{1, …, k}` summing to
-`j(p - 1)`. The printed hypothesis `s ≢ 0 (mod p)` is replaced by `s ≤ p - 2` (as in
-Theorem 1); as printed the claim fails, e.g. `p = 3`, `k = 7`, `s = 2` gives `400 ≡ 1 (mod 3)`.
+/-- **Vishwakarma–Singh congruence for ordered partitions, linear case.** Let $p$ be an odd
+prime and let $k, s$ be positive integers with $s \le p - 2$ and $k \equiv 1 \pmod{p(p-1)}$.
+Let $\mu = \lfloor ks/(p - 1) \rfloor$. Then
+
+$$\sum_{j=1}^{\mu} \sum_{\omega} \omega_1 \cdots \omega_s \equiv 0 \pmod{p},$$
+
+where for each $j$ the inner sum runs over all $s$-tuples $\omega = (\omega_1, \dots, \omega_s)$
+with entries in $\{1, \dots, k\}$ and $\omega_1 + \cdots + \omega_s = j(p - 1)$.
+
+This is the case $t = 1$ of the source's Theorem 1. The source states the hypothesis
+$s \not\equiv 0 \pmod{p}$ in place of $s \le p - 2$; with that hypothesis the claim fails, e.g.
+for $p = 3$, $k = 7$, $s = 2$ the sum is $400 \equiv 1 \pmod{3}$.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Corollary 2
@@ -144,15 +173,22 @@ public theorem_wanted prime_dvd_sum_compositions_prod {p : ℕ} (hp : p.Prime) (
           (fun ω => ∑ i, ω i = j * (p - 1)),
         ∏ i, ω i
 
-/-- For an odd prime `p`, positive integers `a, k, s, t` with `gcd(a, p - 1) = 1`, `s ≤ p - 2`,
-`k ≡ 1 (mod p(p - 1))` and `p² ∣ k - 1` whenever `p - 1 ∣ t`, with `μ = ⌊aks/(p - 1)⌋`:
-`∑_{j=1}^{μ} ∑ (ω_1 ⋯ ω_s)^t ≡ 0 (mod p)` over `s`-tuples with entries in `{an : 1 ≤ n ≤ k}`
-summing to `j(p - 1)`. Two corrections. The printed hypothesis `s ≢ 0 (mod p)` is replaced by
-`s ≤ p - 2` (as in Theorem 1); as printed the claim fails, e.g. `a = 1`, `p = 3`, `k = 7`,
-`s = 2`, `t = 1`. The printed bound `μ = ⌊ks/(p - 1)⌋` is extended to `⌊aks/(p - 1)⌋`, the
-largest `j` with `j(p - 1)` an exponent of `h_{k,a}(x)^s` (the paper's proof applies Hermite's
-criterion to that power); with the printed bound the claim fails for `a > 1`, e.g. `p = 5`,
-`a = 3`, `k = 21`, `s = t = 1` gives the sum `12`.
+/-- **Vishwakarma–Singh congruence for ordered partitions into multiples.** Let $p$ be an odd
+prime and let $a, k, s, t$ be positive integers with $\gcd(a, p - 1) = 1$, $s \le p - 2$ and
+$k \equiv 1 \pmod{p(p-1)}$, such that $p^2 \mid k - 1$ whenever $p - 1 \mid t$. Let
+$\mu = \lfloor aks/(p - 1) \rfloor$. Then
+
+$$\sum_{j=1}^{\mu} \sum_{\omega} (\omega_1 \cdots \omega_s)^t \equiv 0 \pmod{p},$$
+
+where for each $j$ the inner sum runs over all $s$-tuples $\omega = (\omega_1, \dots, \omega_s)$
+with entries in $\{an : 1 \le n \le k\}$ and $\omega_1 + \cdots + \omega_s = j(p - 1)$.
+
+The source states this with two differences. It assumes $s \not\equiv 0 \pmod{p}$ in place of
+$s \le p - 2$; with that hypothesis the claim fails, e.g. for $a = 1$, $p = 3$, $k = 7$, $s = 2$,
+$t = 1$. It takes $\mu = \lfloor ks/(p - 1) \rfloor$; with that bound the claim fails for $a > 1$,
+e.g. for $p = 5$, $a = 3$, $k = 21$, $s = t = 1$ the sum is $12$. The bound
+$\lfloor aks/(p - 1) \rfloor$ covers every multiple of $p - 1$ up to $aks$, the degree of the
+$s$-th power of $\sum_{n=1}^{k} (an)^t X^{an}$, to which the proof applies Hermite's criterion.
 
 Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
 Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Corollary 4

@@ -17,10 +17,12 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Analysis.ScottishBook144Wanted
 
-/-- Mazur and Ulam's Problem 144 from the Scottish Book, as printed: in a
-separable Banach space, is there an injective map from the unit sphere
-`K` into the interval `[0, 1]` under which the image of every nonempty
-open subset of `K` has positive measure? -/
+/-- **Scottish Book Problem 144 (Mazur–Ulam), as a claim.** For every separable real Banach
+space $E$, with unit sphere $K = \{x \in E : \|x\| = 1\}$, there is an injective map
+$f \colon K \to [0, 1]$ such that for every nonempty open subset $U$ of $K$ the image $f(U)$ has
+positive Lebesgue outer measure.
+
+Mazur and Ulam ask, in a separable Banach space, whether such a map exists. -/
 def ScottishBookProblem144Claim : Prop :=
   ∀ (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     [TopologicalSpace.SeparableSpace E],
@@ -30,13 +32,16 @@ def ScottishBookProblem144Claim : Prop :=
         0 < MeasureTheory.volume (f '' U)
 
 /--
-Mazur–Ulam Problem 144 is false as stated: take `E = ℝ`. Its unit sphere
-is `{-1, 1}`, so the singleton `U = {1}` is a nonempty open subset of the
-sphere, but for every `f` its image `f '' U` is a singleton, hence of
-Lebesgue measure zero, contradicting `0 < volume (f '' U)`. The source
-contains no dimension restriction (it says "infinite-dimensional"
-explicitly when it means it, e.g. Problem 7), so no
-`¬ Module.Finite ℝ E` restriction is added here. Status: solved-negative.
+**Scottish Book Problem 144 is false as stated.** The Scottish Book Problem 144 claim fails: some
+separable real Banach space $E$ admits no injective map $f$ from its unit sphere $K$ to $[0, 1]$
+such that the image under $f$ of every nonempty open subset of $K$ has positive Lebesgue outer
+measure.
+
+For example, take $E = \mathbb{R}$: its unit sphere is $\{-1, 1\}$, so $U = \{1\}$ is a nonempty
+open subset of $K$, and its image under any $f$ is a single point, of measure zero. The source
+contains no dimension restriction (it says "infinite-dimensional" explicitly when it means it,
+e.g. Problem 7), so none is added here.
+
 Source: S. Mazur and S. Ulam, Problem 144 of the Scottish Book,
 typescript p. 63 (printed), PDF p. 66; see the commentary in
 R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).

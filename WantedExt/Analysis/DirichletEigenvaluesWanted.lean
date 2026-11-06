@@ -64,7 +64,15 @@ zero solution), and for `λ > 0` showing that `√λ` must be a positive integer
 `-y'' = λ y` on `[0, π]` (i.e. there is a nontrivial `C²` solution on some open interval
 containing `[0, π]`, vanishing at both endpoints) iff `λ = n²` for some positive natural
 number `n`. -/
-/-- Source: Classical Sturm-Liouville theory. Via leanprover/lean-eval@38361be, problem `dirichlet_eigenvalues_eq_nat_sq`. -/
+/-- **Dirichlet eigenvalues of $-y'' = \lambda y$ on $[0, \pi]$.** For every real number
+$\lambda$, the following are equivalent:
+(i) there are a function $y : \mathbb{R} \to \mathbb{R}$ and an open set $J \subseteq \mathbb{R}$
+containing $[0, \pi]$ such that $y$ is differentiable at every point of $J$, its derivative $y'$
+is differentiable at every $x \in J$ with $y''(x) = -\lambda y(x)$, $y(0) = y(\pi) = 0$, and
+$y(x) \ne 0$ for some $x \in (0, \pi)$;
+(ii) $\lambda = n^2$ for some positive integer $n$.
+
+Source: Classical Sturm-Liouville theory. Via leanprover/lean-eval@38361be, problem `dirichlet_eigenvalues_eq_nat_sq`. -/
 public theorem_wanted dirichlet_eigenvalues_eq_nat_sq (lam : ℝ) :
     (∃ (y : ℝ → ℝ) (J : Set ℝ),
         IsOpen J ∧ Set.Icc (0 : ℝ) Real.pi ⊆ J ∧

@@ -65,18 +65,22 @@ which is the minimal data the shadowing proof depends on.
 
 open scoped Topology
 
-/-- The Euclidean model space `ℝᵈ`. -/
+/-- **Euclidean model space for the shadowing lemma.** For a natural number $d$, $E_d$ is the
+Euclidean space $\mathbb{R}^d$, the real $d$-tuples with the Euclidean norm. -/
 abbrev E (d : ℕ) := EuclideanSpace ℝ (Fin d)
 
 variable {d : ℕ}
 
-/-- A **hyperbolic structure** for a homeomorphism `T : ℝᵈ → ℝᵈ` on a
-`T`-invariant set `K`: at each point `x ∈ K` the ambient space `ℝᵈ`
-splits as a direct sum of a stable subspace `Eˢ x` and an unstable
-subspace `Eᵘ x`; the derivative `dT_x` preserves the splitting; and
-forward (resp. backward) iteration contracts `Eˢ` (resp. `Eᵘ`)
-exponentially at a uniform rate `λ ∈ (0, 1)` with a uniform constant
-`C > 0`. -/
+/-- **Hyperbolic structure.** Let $T : \mathbb{R}^d \to \mathbb{R}^d$ be a homeomorphism and let
+$K \subseteq \mathbb{R}^d$. Write $DF_x$ for the derivative of a map $F$ at $x$, $T^n$ for the
+$n$-fold iterate of $T$ and $T^{-n}$ for the $n$-fold iterate of $T^{-1}$. A hyperbolic structure
+for $T$ on $K$ consists of the following: $T$ and $T^{-1}$ are $C^1$; $T(K) = K$; to every
+$x \in \mathbb{R}^d$ are assigned linear subspaces $E^s(x)$ and $E^u(x)$ of $\mathbb{R}^d$ such that
+for every $x \in K$ we have $\mathbb{R}^d = E^s(x) \oplus E^u(x)$, $DT_x(E^s(x)) = E^s(T(x))$ and
+$DT_x(E^u(x)) = E^u(T(x))$; and there are real numbers $\lambda$ with $0 < \lambda < 1$ and
+$C > 0$ such that for every $x \in K$ and every $n \in \mathbb{N}$,
+$\|D(T^n)_x v\| \le C \lambda^n \|v\|$ for all $v \in E^s(x)$ and
+$\|D(T^{-n})_x v\| \le C \lambda^n \|v\|$ for all $v \in E^u(x)$. -/
 structure HyperbolicStructure (T : E d ≃ₜ E d) (K : Set (E d)) where
   contDiff_fwd : ContDiff ℝ 1 (T : E d → E d)
   contDiff_bwd : ContDiff ℝ 1 (T.symm : E d → E d)
@@ -98,20 +102,25 @@ structure HyperbolicStructure (T : E d ≃ₜ E d) (K : Set (E d)) where
   contract_unstable : ∀ x ∈ K, ∀ v : E d, v ∈ unstable x → ∀ n : ℕ,
     ‖fderiv ℝ ((T.symm : E d → E d)^[n]) x v‖ ≤ const * rate ^ n * ‖v‖
 
-/-- `K ⊆ ℝᵈ` is a **hyperbolic invariant set** for `T` if it admits a
-hyperbolic splitting. -/
+/-- **Hyperbolic invariant set.** Let $T : \mathbb{R}^d \to \mathbb{R}^d$ be a homeomorphism. A set
+$K \subseteq \mathbb{R}^d$ is a hyperbolic invariant set for $T$ if there exists a hyperbolic
+structure for $T$ on $K$. -/
 def IsHyperbolic (T : E d ≃ₜ E d) (K : Set (E d)) : Prop :=
   Nonempty (HyperbolicStructure T K)
 
-/-- `(xₙ)_{n : ℕ}` is an **ε-pseudo orbit** of `T : ℝᵈ → ℝᵈ`:
-`‖x (n+1) − T (xₙ)‖ < ε` for every `n`. -/
+/-- **Pseudo-orbit.** Let $d$ be a natural number, let $\mathbb{R}^d$ carry the Euclidean norm,
+let $T : \mathbb{R}^d \to \mathbb{R}^d$ be a map and let $\varepsilon$ be a real number. A
+sequence $(x_n)_{n \in \mathbb{N}}$ in $\mathbb{R}^d$ is an $\varepsilon$-pseudo orbit of $T$
+if $\|x_{n+1} - T(x_n)\| < \varepsilon$ for every $n \in \mathbb{N}$. -/
 def IsPseudoOrbit (T : E d → E d) (ε : ℝ) (x : ℕ → E d) : Prop :=
   ∀ n : ℕ, ‖x (n + 1) - T (x n)‖ < ε
 
-/-- `K ⊆ ℝᵈ` has the **shadowing property** for `T`: some neighbourhood
-`U ⊇ K` (open in `ℝᵈ`) admits, for every accuracy `δ > 0`, a tolerance
-`ε > 0` such that every `ε`-pseudo orbit inside `U` stays within `δ` of
-a real forward `T`-orbit. -/
+/-- **Shadowing property.** Let $T : \mathbb{R}^d \to \mathbb{R}^d$ be a map, write $T^n$ for its
+$n$-fold iterate, and let $K \subseteq \mathbb{R}^d$. The set $K$ has the shadowing property for
+$T$ if there is an open set $U \subseteq \mathbb{R}^d$ containing $K$ such that for every
+$\delta > 0$ there is $\varepsilon > 0$ with the following property: for every $\varepsilon$-pseudo
+orbit $(x_n)_{n \in \mathbb{N}}$ of $T$ with $x_n \in U$ for all $n$, there is a point
+$y \in \mathbb{R}^d$ with $\|x_n - T^n(y)\| < \delta$ for all $n \in \mathbb{N}$. -/
 def HasShadowing (T : E d → E d) (K : Set (E d)) : Prop :=
   ∃ U : Set (E d), IsOpen U ∧ K ⊆ U ∧
     ∀ δ > 0, ∃ ε > 0, ∀ x : ℕ → E d,
@@ -120,7 +129,11 @@ def HasShadowing (T : E d → E d) (K : Set (E d)) : Prop :=
 
 /- **Anosov–Bowen shadowing lemma** (Anosov 1967; Bowen 1975). Every
 compact hyperbolic invariant set has the shadowing property. -/
-/-- Source: D.V. Anosov, 'Geodesic flows on closed Riemannian manifolds with negative curvature', Trudy Mat. Inst. Steklov. 90 (1967); R. Bowen, 'ω-limit sets for Axiom A diffeomorphisms', J. Differential Equations 18 (1975) 333–339. Listed as §67 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `anosov_bowen_shadowing`. -/
+/-- **Anosov–Bowen shadowing lemma.** Let $T : \mathbb{R}^d \to \mathbb{R}^d$ be a homeomorphism and
+let $K \subseteq \mathbb{R}^d$ be a compact set that is a hyperbolic invariant set for $T$. Then $K$
+has the shadowing property for $T$.
+
+Source: D.V. Anosov, 'Geodesic flows on closed Riemannian manifolds with negative curvature', Trudy Mat. Inst. Steklov. 90 (1967); R. Bowen, 'ω-limit sets for Axiom A diffeomorphisms', J. Differential Equations 18 (1975) 333–339. Listed as §67 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `anosov_bowen_shadowing`. -/
 public theorem_wanted hyperbolic_has_shadowing
     (T : E d ≃ₜ E d) (K : Set (E d))
     (_hKc : IsCompact K) (_hK : IsHyperbolic T K) :
