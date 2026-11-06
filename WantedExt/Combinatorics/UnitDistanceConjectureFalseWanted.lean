@@ -70,13 +70,13 @@ constant-factor improvements.
 
 open scoped Classical
 
-/-- For a finite planar set `P ⊆ ℝ²`, `unitDist P` is the number of
-unordered pairs `{x, y} ⊆ P` at Euclidean distance exactly `1`.
+/-- **Unit distance count of a planar point set.** For a finite set $P$ of points in the Euclidean
+plane $\mathbb{R}^2$, the unit distance count of $P$ is the number of unordered pairs of points of
+$P$ at distance exactly $1$.
 
-Points are modelled as `EuclideanSpace ℝ (Fin 2)` rather than `ℝ × ℝ`
-so that `dist x y = √((x₀ - y₀)² + (x₁ - y₁)²)`; the product space
-`ℝ × ℝ` carries the sup-norm and would give the wrong notion of
-unit-distance pair. -/
+The distance is the Euclidean one, $\sqrt{(x_1 - y_1)^2 + (x_2 - y_2)^2}$ for $x = (x_1, x_2)$ and
+$y = (y_1, y_2)$, not the largest coordinate difference used by the product metric on
+$\mathbb{R} \times \mathbb{R}$. -/
 noncomputable abbrev unitDist (P : Finset (EuclideanSpace ℝ (Fin 2))) : ℕ := unitDistNum P
 
 end Combinatorics
@@ -135,7 +135,16 @@ for which some `n`-point set `P ⊆ ℝ²` has at least `n^{1+δ}`
 unit-distance pairs. Concretely: for every threshold `N` there exist
 `n ≥ N` and a finite `P ⊆ ℝ²` with `|P| = n` and
 `n^{1+δ} ≤ unitDist P`. -/
-/-- Source: OpenAI, *Planar Point Sets with Many Unit Distances*, 2026. https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf . Original conjecture: P. Erdős, *On sets of distances of n points*, Amer. Math. Monthly 53 (1946), 248-250. k-equidistant variant: P. Erdős, K. Falconer, *Some problems in combinatorial geometry*, 1997. Via leanprover/lean-eval@38361be, problem `erdos_unit_distance_conjecture_false`. -/
+/-- **Erdős's unit distance conjecture is false.** There is a real number $\delta > 0$ such that for
+every natural number $N$ there are an integer $n \ge N$ and a set $P$ of exactly $n$ points in the
+Euclidean plane $\mathbb{R}^2$ with at least $n^{1+\delta}$ unordered pairs of points of $P$ at
+distance exactly $1$.
+
+Because $C / \log \log n \to 0$ for every constant $C$, this contradicts Erdős's conjecture that
+$n$ points in the plane determine at most $n^{1 + C / \log \log n}$ unit distances for some
+constant $C$ and all large $n$.
+
+Source: OpenAI, *Planar Point Sets with Many Unit Distances*, 2026. https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf . Original conjecture: P. Erdős, *On sets of distances of n points*, Amer. Math. Monthly 53 (1946), 248-250. k-equidistant variant: P. Erdős, K. Falconer, *Some problems in combinatorial geometry*, 1997. Via leanprover/lean-eval@38361be, problem `erdos_unit_distance_conjecture_false`. -/
 public theorem_wanted erdos_unit_distance_conjecture_false :
     ∃ δ : ℝ, 0 < δ ∧
       ∀ N : ℕ, ∃ (n : ℕ) (P : Finset (EuclideanSpace ℝ (Fin 2))),

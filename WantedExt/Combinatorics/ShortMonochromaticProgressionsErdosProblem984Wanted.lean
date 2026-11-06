@@ -33,18 +33,23 @@ constant progressions). A colouring is a function `ℕ → Fin 2` (its value at 
 problem.
 -/
 
-/-- Erdős Problem 984: the positive integers can be coloured with two colours so that, for every
-`ε > 0`, every monochromatic arithmetic progression `a, a + d, …, a + (k - 1) d` (`a, d ≥ 1`) has
-`k ≤ C_ε a^ε`. -/
+/-- **Statement of Erdős Problem 984 on short monochromatic progressions.** The proposition that
+there is a colouring of the positive integers with two colours such that for every real
+$\varepsilon > 0$ there is a real constant $C_\varepsilon$ with the following property: whenever
+$a \ge 1$, $d \ge 1$ and $k \ge 0$ are integers and $a, a + d, \dots, a + (k - 1)d$ all have the
+same colour, $k \le C_\varepsilon a^\varepsilon$. -/
 def twoColouringShortProgressions : Prop :=
   ∃ c : ℕ → Fin 2, ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, ∀ a d k : ℕ, 1 ≤ a → 1 ≤ d →
     (∀ i < k, c (a + i * d) = c a) → (k : ℝ) ≤ C * (a : ℝ) ^ ε
 
 /--
-Resolved true: Hunter showed (erdosproblems.com/984 comments) that colouring each block `[100^t,
-100^{t+1})` by a colouring with no red `3`-term progression and only short blue ones (colours
-swapped on alternate blocks) makes every monochromatic progression with first term `a` have length
-`a^{o(1)}`; erdosproblems.com/984 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
+**Erdős Problem 984: a two-colouring with short monochromatic progressions exists.** There is a
+colouring of the positive integers with two colours such that for every real $\varepsilon > 0$
+there is a real constant $C_\varepsilon$ with the following property: whenever $a \ge 1$,
+$d \ge 1$ and $k \ge 0$ are integers and $a, a + d, \dots, a + (k - 1)d$ all have the same
+colour, $k \le C_\varepsilon a^\varepsilon$.
+
+Source: T. F. Bloom, Erdős Problems,
 Problem #984, https://www.erdosproblems.com/984 (status PROVED); resolution: Z. Hunter, proof in the
 erdosproblems.com/984 comments, using Green's red-blue colourings for off-diagonal van der Waerden
 numbers, erdosproblems.com/984: 'Zach Hunter has proved the answer is yes (see the comments)'; the

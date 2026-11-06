@@ -34,9 +34,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Fuel-indexed Ulam test: `ulamWordAux f w` decides whether `w` is an Ulam word whenever
-`w.length ≤ f`. A word of length `1` is Ulam; a longer word is Ulam iff exactly one split
-position `k` gives two distinct Ulam halves `w.take (k + 1)` and `w.drop (k + 1)`.
+/-- **Fuel-bounded Ulam test.** For a natural number $f$ (the fuel) and a word $w$ in the letters
+$0$ and $1$, the test returns false when $f = 0$. With fuel $f + 1$ it returns true when $w$ has
+length $1$; otherwise it returns true exactly when there is exactly one $k$ with
+$1 \le k < |w|$ such that the prefix $w_1 \cdots w_k$ and the suffix $w_{k+1} \cdots w_{|w|}$
+are distinct and both pass the test with fuel $f$.
+
+This is the Ulam recursion: with fuel at least $|w|$, the test decides whether $w$ is an Ulam
+word.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -50,7 +55,10 @@ public def ulamWordAux : ℕ → List Bool → Bool
         w.take (k + 1) != w.drop (k + 1) && ulamWordAux f (w.take (k + 1)) &&
           ulamWordAux f (w.drop (k + 1))) == 1
 
-/-- `w` is an Ulam word.
+/-- **Ulam words.** Ulam words are finite words over the alphabet $\{0, 1\}$, defined by
+recursion on the length. The empty word is not an Ulam word, and the two words $0$ and $1$ of
+length $1$ are Ulam words. A word $w$ of length at least $2$ is an Ulam word if and only if there
+is exactly one way to write $w = uv$ with $u$ and $v$ nonempty, distinct Ulam words.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -65,8 +73,9 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public instance : DecidablePred IsUlamWord := fun w =>
   inferInstanceAs (Decidable (ulamWordAux w.length w = true))
 
-/-- The paper's lists `U₂ = {01, 10}` and `U₃ = {001, 011, 100, 110}`, checked on all words
-of length `2` and `3`.
+/-- **Ulam words of length at most three.** The empty word is not an Ulam word, and both words
+$0$ and $1$ of length one are Ulam words. The Ulam words of length two are exactly $01$ and $10$,
+and the Ulam words of length three are exactly $001$, $011$, $100$ and $110$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -81,8 +90,8 @@ public theorem isUlamWord_small :
       IsUlamWord [true, true, false] ∧ ¬ IsUlamWord [true, true, true] := by
   decide
 
-/-- The defining recursion for a word of length `4`: `0001` is Ulam (only the split
-`0 · 001` has distinct Ulam halves) and `0011` is not (no split does).
+/-- **Ulam words of length four: examples.** The words $0001$ and $1011$ are Ulam words, while
+$0011$ and $0110$ are not.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -92,14 +101,18 @@ public theorem isUlamWord_length_four_examples :
       IsUlamWord [true, false, true, true] ∧ ¬ IsUlamWord [false, true, true, false] := by
   decide
 
-/-- The number `#U_n` of Ulam words of length `n`.
+/-- **Number of Ulam words of a given length.** For a natural number $n$, $\#U_n$ denotes the
+number of Ulam words of length $n$, that is, of words $w_1 \cdots w_n$ of length $n$ in the
+letters $0$ and $1$ that are Ulam words.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1. -/
 public def ulamWordCount (n : ℕ) : ℕ :=
   (Finset.univ.filter fun v : Fin n → Bool => IsUlamWord (List.ofFn v)).card
 
-/-- `#U₁, …, #U₄ = 2, 2, 4, 8`.
+/-- **Numbers of short Ulam words.** There are $2$, $2$, $4$ and $8$ Ulam words of length $1$,
+$2$, $3$ and $4$ respectively: $\#U_1 = 2$, $\#U_2 = 2$, $\#U_3 = 4$ and $\#U_4 = 8$, where
+$\#U_n$ is the number of Ulam words of length $n$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -108,8 +121,14 @@ public theorem ulamWordCount_small :
     ulamWordCount 1 = 2 ∧ ulamWordCount 2 = 2 ∧ ulamWordCount 3 = 4 ∧ ulamWordCount 4 = 8 := by
   decide
 
-/-- The number of Ulam words `w` of length `n` with `π(w) = a` in `ZMod N`; the paper's
-relative density is `ρ_{a,N}(n) = ulamResidueCount N n a / #U_n`.
+/-- **Ulam words in a residue class.** For natural numbers $N$ and $n$ and a residue class
+$a \in \mathbb{Z}/N\mathbb{Z}$, this is the number of Ulam words $w$ of length $n$ in the letters
+$0$ and $1$ whose binary value $\pi(w)$, read with the most significant letter first, lies in the
+class $a$ modulo $N$. For $N = 0$, $\mathbb{Z}/0\mathbb{Z}$ is $\mathbb{Z}$ and the condition is
+$\pi(w) = a$.
+
+The paper's relative density $\rho_{a,N}(n)$ is this number divided by the number $\#U_n$ of
+Ulam words of length $n$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -119,7 +138,9 @@ public def ulamResidueCount (N n : ℕ) (a : ZMod N) : ℕ :=
     IsUlamWord (List.ofFn v) ∧
       ((Nat.ofDigits 2 ((List.ofFn v).reverse.map Bool.toNat) : ℕ) : ZMod N) = a).card
 
-/-- Residues of `π(U₂) = {1, 2}` modulo `3`: one word in each of the classes `1`, `2`.
+/-- **Residues of the Ulam words of length 2 modulo 3.** Read the Ulam words of length $2$ as
+binary numerals, most significant letter first. None of their values is congruent to $0$ modulo
+$3$, exactly one is congruent to $1$, and exactly one is congruent to $2$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 6. -/
@@ -127,7 +148,9 @@ public theorem ulamResidueCount_three_two :
     ulamResidueCount 3 2 0 = 0 ∧ ulamResidueCount 3 2 1 = 1 ∧ ulamResidueCount 3 2 2 = 1 := by
   decide
 
-/-- The sorted list `u₁ < ⋯ < u_k` of the integers `π(U_n)`.
+/-- **Sorted binary values of Ulam words.** For a natural number $n$, this is the list
+$u_1 < u_2 < \dots < u_k$ of the distinct binary values $\pi(w)$, read with the most significant
+letter first, of the Ulam words $w$ of length $n$, in increasing order.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -136,7 +159,11 @@ public def ulamValuesSorted (n : ℕ) : List ℕ :=
   ((Finset.univ.filter fun v : Fin n → Bool => IsUlamWord (List.ofFn v)).image
     fun v => Nat.ofDigits 2 ((List.ofFn v).reverse.map Bool.toNat)).sort (· ≤ ·)
 
-/-- `π(U₃) = {1, 3, 4, 6}` (from `U₃ = {001, 011, 100, 110}`).
+/-- **Binary values of the Ulam words of length 3.** The increasing list of the distinct binary
+values $\pi(w)$, read with the most significant letter first, of the Ulam words $w$ of length $3$
+has exactly the entries $1, 3, 4, 6$.
+
+These values come from the Ulam words $001$, $011$, $100$, $110$ of length $3$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1. -/
@@ -145,8 +172,11 @@ public theorem ulamValuesSorted_three :
   rw [ulamValuesSorted, Finset.sort_toFinset]
   decide
 
-/-- The mean gap `μ_g(n) = (∑ᵢ (u_{i+1} - u_i)) / (k - 1)` of the sorted list
-`u₁ < ⋯ < u_k` of `π(U_n)`.
+/-- **Mean gap of the Ulam values.** For $n \in \mathbb{N}$, read each Ulam word of length $n$
+as a binary numeral, most significant letter first, and list the resulting values in increasing
+order as $u_1 < u_2 < \dots < u_k$. The mean gap of these values is the rational number
+$$\mu_g(n) = \frac{1}{k - 1} \sum_{i=1}^{k-1} (u_{i+1} - u_i),$$
+where a quotient by $0$ is read as $0$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 1
@@ -156,8 +186,10 @@ public def ulamGapMean (n : ℕ) : ℚ :=
       (ulamValuesSorted n).tail).sum : ℕ) : ℚ) /
     (((ulamValuesSorted n).length : ℚ) - 1)
 
-/-- The stages `S₀ = {(2, 1)}`, `S_{n+1} = S_n ∪ (S_n + (2ⁿ, 0)) ∪ (S_n + (2ⁿ, 2ⁿ))` of the
-discrete Sierpiński triangle.
+/-- **Stages of the discrete Sierpiński triangle.** The stages
+$S_n \subseteq \mathbb{N} \times \mathbb{N}$ of the discrete Sierpiński triangle are defined by
+$S_0 = \{(2, 1)\}$ and $S_{n+1} = S_n \cup (S_n + (2^n, 0)) \cup (S_n + (2^n, 2^n))$, where
+$S + (u, v) = \{(x + u, y + v) : (x, y) \in S\}$ denotes a translate.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 4
@@ -168,14 +200,17 @@ public def discreteSierpinskiStage : ℕ → Set (ℕ × ℕ)
     discreteSierpinskiStage n ∪ (fun p => (p.1 + 2 ^ n, p.2)) '' discreteSierpinskiStage n ∪
       (fun p => (p.1 + 2 ^ n, p.2 + 2 ^ n)) '' discreteSierpinskiStage n
 
-/-- The discrete Sierpiński triangle `𝒮 = ⋃ₙ S_n`.
+/-- **The discrete Sierpiński triangle.** The discrete Sierpiński triangle is the set
+$\mathcal{S} = \bigcup_{n \ge 0} S_n \subseteq \mathbb{N} \times \mathbb{N}$, the union of all the
+stages $S_n$ of the discrete Sierpiński triangle.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 4. -/
 public def discreteSierpinski : Set (ℕ × ℕ) :=
   ⋃ n, discreteSierpinskiStage n
 
-/-- `S₁ = {(2, 1), (3, 1), (3, 2)}`.
+/-- **The first stage of the discrete Sierpiński triangle.** The stage $S_1$ of the discrete
+Sierpiński triangle is $\{(2, 1), (3, 1), (3, 2)\}$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Section 4. -/
@@ -187,7 +222,9 @@ public theorem discreteSierpinskiStage_one :
   norm_num
   tauto
 
-/-- For `a + b ≥ 1`, `0^a 1⁴ 0^b` is Ulam iff `a + b ≡ 1 (mod 4)`.
+/-- **Ulam words with a block of four ones.** For natural numbers $a$ and $b$ with $a + b \ge 1$,
+the binary word $0^a 1111 0^b$ ($a$ zeros, then four ones, then $b$ zeros) is an Ulam word if
+and only if $a + b \equiv 1 \pmod 4$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Lemma 1. -/
@@ -195,14 +232,17 @@ public theorem_wanted isUlamWord_zeros_four_ones_zeros_iff (a b : ℕ) (hab : 1 
     IsUlamWord (List.replicate a false ++ List.replicate 4 true ++ List.replicate b false) ↔
       (a + b) % 4 = 1
 
-/-- `#U_n² ≤ #U_n + #U_{n+1} + ⋯ + #U_{2n}`.
+/-- **Square of the Ulam word count is at most a block sum.** For every natural number $n$,
+$(\#U_n)^2 \le \sum_{i=n}^{2n} \#U_i$, where $\#U_i$ is the number of Ulam words of length $i$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Lemma 2. -/
 public theorem_wanted ulamWordCount_sq_le_sum (n : ℕ) :
     ulamWordCount n ^ 2 ≤ ∑ i ∈ Finset.Icc n (2 * n), ulamWordCount i
 
-/-- For `n ≥ 3`, `1³ 0^{n-3}` is Ulam iff `n ≡ 0` or `1 (mod 4)`.
+/-- **Ulam words with three leading ones.** For every $n \ge 3$, the word $1^3 0^{n-3}$ (three
+ones followed by $n - 3$ zeros) is an Ulam word if and only if $n \equiv 0 \pmod 4$ or
+$n \equiv 1 \pmod 4$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Lemma 3. -/
@@ -210,16 +250,21 @@ public theorem_wanted isUlamWord_three_ones_zeros_iff (n : ℕ) (hn : 3 ≤ n) :
     IsUlamWord (List.replicate 3 true ++ List.replicate (n - 3) false) ↔
       n % 4 = 0 ∨ n % 4 = 1
 
-/-- For all `n ≥ 6`, `#U_n ≥ 2n + 4`.
+/-- **Linear lower bound on the number of Ulam words.** For every natural number $n \ge 6$, the
+number of Ulam words of length $n$ is at least $2n + 4$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 1. -/
 public theorem_wanted two_mul_add_four_le_ulamWordCount (n : ℕ) (hn : 6 ≤ n) :
     2 * n + 4 ≤ ulamWordCount n
 
-/-- `limsup #U_n / αⁿ = ∞` for every `1 < α < α₀`, where `α₀ = (#U₃₀ / (2 · 31))^{1/30}` is
-the constant of the paper's proof (`n₁ = 30`); stated as: for every `C` and `N` some
-`n ≥ N` has `C αⁿ ≤ #U_n`.
+/-- **Exponential lower bound for Ulam word counts along a subsequence.** Let $\#U_n$ be the
+number of Ulam words of length $n$ and $\alpha_0 = (\#U_{30} / (2 \cdot 31))^{1/30}$. For every
+real $\alpha$ with $1 < \alpha < \alpha_0$, every real $C$ and every natural number $N$, there
+is some $n \ge N$ with $C \alpha^n \le \#U_n$; that is,
+$\limsup_{n \to \infty} \#U_n / \alpha^n = \infty$.
+
+Here $\alpha_0$ is the constant from the paper's proof, with $n_1 = 30$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 2. -/
@@ -227,7 +272,11 @@ public theorem_wanted ulamWordCount_limsup_div_pow_eq_top (α : ℝ) (hα : 1 < 
     (hα₀ : α < ((ulamWordCount 30 : ℝ) / (2 * 31)) ^ ((1 : ℝ) / 30)) (C : ℝ) (N : ℕ) :
     ∃ n ≥ N, C * α ^ n ≤ ulamWordCount n
 
-/-- `ρ(n)⁻¹ ≍ μ_g(n)`, where `ρ(n) = #U_n / 2ⁿ` and `μ_g(n)` is the mean gap of `π(U_n)`.
+/-- **The inverse Ulam density has the order of the mean gap.** For $n \in \mathbb{N}$ let $U_n$
+be the set of Ulam words of length $n$, and let $\mu_g(n)$ be the mean gap of the binary values
+of the words in $U_n$. Then $2^n / |U_n|$ (the reciprocal of the density $|U_n| / 2^n$) and
+$\mu_g(n)$ have the same order of growth as $n \to \infty$: there are constants $c, C > 0$ such
+that $c \, \mu_g(n) \le 2^n / |U_n| \le C \, \mu_g(n)$ for all sufficiently large $n$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first sentence). -/
@@ -235,8 +284,10 @@ public theorem_wanted ulamDensity_inv_isTheta_ulamGapMean :
     (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
       fun n => (ulamGapMean n : ℝ)
 
-/-- For `n ≥ 1` there are `G(n - 1) = 2^{s₂(n-1)}` Ulam words of length `n` of the form
-`0^a 1 0^b` (`G` is Gould's sequence, `s₂` the binary digit sum).
+/-- **Counting Ulam words with a single one.** For every $n \ge 1$, the number of
+$a \in \{0, \dots, n - 1\}$ for which the word $0^a 1 0^{n-1-a}$ ($a$ zeros, then a one, then
+$n - 1 - a$ zeros) is an Ulam word equals $2^{s_2(n-1)}$, where $s_2(m)$ is the sum of the binary
+digits of $m$. This number is the term $G(n - 1)$ of Gould's sequence.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 5
@@ -246,7 +297,9 @@ public theorem_wanted card_ulam_zeros_one_zeros (n : ℕ) (hn : 1 ≤ n) :
         IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (n - 1 - a) false)).card =
       2 ^ (Nat.digits 2 (n - 1)).sum
 
-/-- `0^a 1² 0^b` is Ulam iff `a + b` is odd.
+/-- **Ulam words with a block of two ones.** For natural numbers $a$ and $b$, the binary word
+$0^a 11 0^b$ ($a$ zeros, then two ones, then $b$ zeros) is an Ulam word if and only if $a + b$ is
+odd.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 6
@@ -255,7 +308,9 @@ public theorem_wanted isUlamWord_zeros_two_ones_zeros_iff (a b : ℕ) :
     IsUlamWord (List.replicate a false ++ List.replicate 2 true ++ List.replicate b false) ↔
       (a + b) % 2 = 1
 
-/-- For `a + b ≥ 2`, `0^a 101 0^b` is Ulam iff `a + b` is odd.
+/-- **Ulam words with one 101 block.** For natural numbers $a$ and $b$ with $a + b \ge 2$, the
+binary word $0^a 101 0^b$ ($a$ zeros, then the letters $1, 0, 1$, then $b$ zeros) is an Ulam word
+if and only if $a + b$ is odd.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 7
@@ -264,7 +319,9 @@ public theorem_wanted isUlamWord_zeros_one_zero_one_zeros_iff (a b : ℕ) (hab :
     IsUlamWord (List.replicate a false ++ [true, false, true] ++ List.replicate b false) ↔
       (a + b) % 2 = 1
 
-/-- `0^a 1 0^b` is Ulam iff `binom(a + b, a)` is odd.
+/-- **Parity criterion for Ulam words with a single one.** For natural numbers $a$ and $b$, the
+binary word $0^a 1 0^b$ ($a$ zeros, then a one, then $b$ zeros) is an Ulam word if and only if
+the binomial coefficient $\binom{a + b}{a}$ is odd.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8
@@ -273,8 +330,10 @@ public theorem_wanted isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
     IsUlamWord (List.replicate a false ++ [true] ++ List.replicate b false) ↔
       Odd ((a + b).choose a)
 
-/-- For `1 ≤ y ≤ x`, `1^y 0^{x-y}` is Ulam iff `(x, y) = (1, 1)` or `(x, y)` lies in the
-discrete Sierpiński triangle `𝒮`.
+/-- **Ulam words made of ones followed by zeros.** For natural numbers $x$ and $y$ with
+$1 \le y \le x$, the word $1^y 0^{x-y}$ ($y$ ones followed by $x - y$ zeros) is an Ulam word if
+and only if $(x, y) = (1, 1)$ or $(x, y)$ belongs to the discrete Sierpiński triangle
+$\mathcal{S}$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 9
@@ -284,7 +343,9 @@ public theorem_wanted isUlamWord_ones_zeros_iff_mem_discreteSierpinski (x y : �
     IsUlamWord (List.replicate y true ++ List.replicate (x - y) false) ↔
       (x, y) = (1, 1) ∨ (x, y) ∈ discreteSierpinski
 
-/-- For `a + b ≥ 1`, `0^a 10101 0^b` is Ulam iff `a, b` are even and one of them is zero.
+/-- **Padding the word 10101 with zeros.** For natural numbers $a$ and $b$ with $a + b \ge 1$, the
+word $0^a 10101 0^b$ ($a$ zeros, then $10101$, then $b$ zeros) is an Ulam word if and only if $a$
+and $b$ are both even and at least one of $a$ and $b$ is zero.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 10. -/
@@ -293,9 +354,17 @@ public theorem_wanted isUlamWord_zeros_10101_zeros_iff (a b : ℕ) (hab : 1 ≤ 
         List.replicate b false) ↔
       Even a ∧ Even b ∧ (a = 0 ∨ b = 0)
 
-/-- Complement symmetry (corrected reading): if `w ∈ U_n` then its complement `ŵ` is in
-`U_n` with `π(ŵ) = 2ⁿ - 1 - π(w)`; consequently `ρ_{a,N}(n) = ρ_{2ⁿ-1-a,N}(n)`, stated
-with the common denominator `#U_n` cleared.
+/-- **Complement symmetry of Ulam words.** For a word $w$ over $\{0, 1\}$, let $\bar w$ be its
+complement (every letter swapped) and let $\pi(w)$ be the integer whose binary expansion is $w$,
+most significant letter first. If $w$ is an Ulam word of length $n$, then $\bar w$ is an Ulam
+word and $\pi(\bar w) + \pi(w) = 2^n - 1$. Moreover, for all natural numbers $N$ and $n$ and every
+$a \in \mathbb{Z}/N\mathbb{Z}$, the number of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv a \pmod N$ equals the number of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv 2^n - 1 - a \pmod N$.
+
+For $n \ge 1$, writing $\rho_{a,N}(n)$ for the proportion of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv a \pmod N$ among all Ulam words of length $n$, the second statement says
+$\rho_{a,N}(n) = \rho_{2^n-1-a,N}(n)$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 11. -/
@@ -307,9 +376,12 @@ public theorem_wanted isUlamWord_map_not_and_ulamResidueCount_eq :
       ∀ (N n : ℕ) (a : ZMod N),
         ulamResidueCount N n a = ulamResidueCount N n (2 ^ n - 1 - a)
 
-/-- For `n ≥ 1`, `ρ_{0,2}(n) = ρ_{1,2}(n)`, and for `a ∈ ℤ/3ℤ`, `ρ_{a,3}(n) = ρ_{-a,3}(n)`
-if `n` is even and `ρ_{a,3}(n) = ρ_{1-a,3}(n)` if `n` is odd (corrected parity), stated
-with the common denominator `#U_n` cleared.
+/-- **Residue symmetries of Ulam words modulo 2 and 3.** For natural numbers $N$ and $n$ and a
+residue $a \in \mathbb{Z}/N\mathbb{Z}$, let $c_{a,N}(n)$ be the number of Ulam words of length
+$n$ whose value as a binary numeral, most significant letter first, is congruent to $a$ modulo
+$N$. Then for every $n \ge 1$ we have $c_{0,2}(n) = c_{1,2}(n)$, and for every
+$a \in \mathbb{Z}/3\mathbb{Z}$ we have $c_{a,3}(n) = c_{-a,3}(n)$ if $n$ is even and
+$c_{a,3}(n) = c_{1-a,3}(n)$ if $n$ is odd.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 *Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102,
