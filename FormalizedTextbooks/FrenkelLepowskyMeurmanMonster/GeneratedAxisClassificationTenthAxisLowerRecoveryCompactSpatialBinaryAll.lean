@@ -1,0 +1,44 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialBinary10
+
+/-! Ungated actual spatial binary proof drafts; no declaration has passed Lean. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- All eleven genuine spatial constructors have every retained binary coordinate. -/
+theorem generatedTenth_compact_spatial_binary_all (g : Fin 11) :
+    generatedTenthAxisLowerRecoveryCompactSpatialBinaryCondition g := by
+  fin_cases g
+  · exact generatedTenth_compact_spatial_binary_00
+  · exact generatedTenth_compact_spatial_binary_01
+  · exact generatedTenth_compact_spatial_binary_02
+  · exact generatedTenth_compact_spatial_binary_03
+  · exact generatedTenth_compact_spatial_binary_04
+  · exact generatedTenth_compact_spatial_binary_05
+  · exact generatedTenth_compact_spatial_binary_06
+  · exact generatedTenth_compact_spatial_binary_07
+  · exact generatedTenth_compact_spatial_binary_08
+  · exact generatedTenth_compact_spatial_binary_09
+  · exact generatedTenth_compact_spatial_binary_10
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

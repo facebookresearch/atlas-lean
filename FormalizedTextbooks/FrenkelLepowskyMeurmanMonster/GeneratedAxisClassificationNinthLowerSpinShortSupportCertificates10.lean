@@ -1,0 +1,53 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortPacketJoinGeneric
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinShortSupportPacket10Part11
+
+/-! All 98,280 actual preferred-short source rows for generator 10. -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option maxRecDepth 100000
+
+set_option maxHeartbeats 8000000 in
+-- Join all complete source packets, retaining every nonzero source certificate.
+/-- Every nonzero actual preferred-short coordinate retains its full source Q image
+and signed coefficient. -/
+theorem generatedNinth_lower_spin_short_support_certificate_10 :
+    ∀ a : Fin 98280, generatedNinthLowerSpinShortSupportCondition 10 a :=
+  generatedNinth_lower_spin_short_packet_join
+    (generatedNinthLowerSpinShortSupportCondition 10)
+    generatedNinth_lower_spin_short_support_packet_10_part_00
+    generatedNinth_lower_spin_short_support_packet_10_part_01
+    generatedNinth_lower_spin_short_support_packet_10_part_02
+    generatedNinth_lower_spin_short_support_packet_10_part_03
+    generatedNinth_lower_spin_short_support_packet_10_part_04
+    generatedNinth_lower_spin_short_support_packet_10_part_05
+    generatedNinth_lower_spin_short_support_packet_10_part_06
+    generatedNinth_lower_spin_short_support_packet_10_part_07
+    generatedNinth_lower_spin_short_support_packet_10_part_08
+    generatedNinth_lower_spin_short_support_packet_10_part_09
+    generatedNinth_lower_spin_short_support_packet_10_part_10
+    generatedNinth_lower_spin_short_support_packet_10_part_11
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

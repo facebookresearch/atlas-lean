@@ -1,0 +1,146 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- All actual original-source matrix cache recurrences are checked. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCCacheCheck56
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Every literal source-matrix recurrence block passes its exact kernel check. -/
+theorem y322Orthogonal3TCCacheCheckBlock (block : Fin 57) (i : Fin 128) :
+    y322Orthogonal3TCCacheCheckAt (block.val * 128 + i.val) := by
+  fin_cases block
+  · exact y322Orthogonal3TCCacheCheck00 i
+  · exact y322Orthogonal3TCCacheCheck01 i
+  · exact y322Orthogonal3TCCacheCheck02 i
+  · exact y322Orthogonal3TCCacheCheck03 i
+  · exact y322Orthogonal3TCCacheCheck04 i
+  · exact y322Orthogonal3TCCacheCheck05 i
+  · exact y322Orthogonal3TCCacheCheck06 i
+  · exact y322Orthogonal3TCCacheCheck07 i
+  · exact y322Orthogonal3TCCacheCheck08 i
+  · exact y322Orthogonal3TCCacheCheck09 i
+  · exact y322Orthogonal3TCCacheCheck10 i
+  · exact y322Orthogonal3TCCacheCheck11 i
+  · exact y322Orthogonal3TCCacheCheck12 i
+  · exact y322Orthogonal3TCCacheCheck13 i
+  · exact y322Orthogonal3TCCacheCheck14 i
+  · exact y322Orthogonal3TCCacheCheck15 i
+  · exact y322Orthogonal3TCCacheCheck16 i
+  · exact y322Orthogonal3TCCacheCheck17 i
+  · exact y322Orthogonal3TCCacheCheck18 i
+  · exact y322Orthogonal3TCCacheCheck19 i
+  · exact y322Orthogonal3TCCacheCheck20 i
+  · exact y322Orthogonal3TCCacheCheck21 i
+  · exact y322Orthogonal3TCCacheCheck22 i
+  · exact y322Orthogonal3TCCacheCheck23 i
+  · exact y322Orthogonal3TCCacheCheck24 i
+  · exact y322Orthogonal3TCCacheCheck25 i
+  · exact y322Orthogonal3TCCacheCheck26 i
+  · exact y322Orthogonal3TCCacheCheck27 i
+  · exact y322Orthogonal3TCCacheCheck28 i
+  · exact y322Orthogonal3TCCacheCheck29 i
+  · exact y322Orthogonal3TCCacheCheck30 i
+  · exact y322Orthogonal3TCCacheCheck31 i
+  · exact y322Orthogonal3TCCacheCheck32 i
+  · exact y322Orthogonal3TCCacheCheck33 i
+  · exact y322Orthogonal3TCCacheCheck34 i
+  · exact y322Orthogonal3TCCacheCheck35 i
+  · exact y322Orthogonal3TCCacheCheck36 i
+  · exact y322Orthogonal3TCCacheCheck37 i
+  · exact y322Orthogonal3TCCacheCheck38 i
+  · exact y322Orthogonal3TCCacheCheck39 i
+  · exact y322Orthogonal3TCCacheCheck40 i
+  · exact y322Orthogonal3TCCacheCheck41 i
+  · exact y322Orthogonal3TCCacheCheck42 i
+  · exact y322Orthogonal3TCCacheCheck43 i
+  · exact y322Orthogonal3TCCacheCheck44 i
+  · exact y322Orthogonal3TCCacheCheck45 i
+  · exact y322Orthogonal3TCCacheCheck46 i
+  · exact y322Orthogonal3TCCacheCheck47 i
+  · exact y322Orthogonal3TCCacheCheck48 i
+  · exact y322Orthogonal3TCCacheCheck49 i
+  · exact y322Orthogonal3TCCacheCheck50 i
+  · exact y322Orthogonal3TCCacheCheck51 i
+  · exact y322Orthogonal3TCCacheCheck52 i
+  · exact y322Orthogonal3TCCacheCheck53 i
+  · exact y322Orthogonal3TCCacheCheck54 i
+  · exact y322Orthogonal3TCCacheCheck55 i
+  · exact y322Orthogonal3TCCacheCheck56 i
+
+/-- All 7253 original-source prefixes have exact chronological and matrix recurrence checks. -/
+theorem y322Orthogonal3TCCache_checked (i : Fin 7253) :
+    y322Orthogonal3TCCacheCheckAt i.val := by
+  let block : Fin 57 := ⟨i.val / 128, by omega⟩
+  let offset : Fin 128 := ⟨i.val % 128, Nat.mod_lt _ (by decide)⟩
+  have h := y322Orthogonal3TCCacheCheckBlock block offset
+  have he : block.val * 128 + offset.val = i.val := by
+    dsimp [block, offset]
+    omega
+  simpa only [he] using h
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

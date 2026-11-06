@@ -1,0 +1,53 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Exact replacement of one incorrectly reused prior-source instruction. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCIndexRepairContexts
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option maxRecDepth 100000
+
+/-- Literal original-source and earlier-equation contexts replacing instruction 149279. -/
+def y322TCIndexRepairRaw059 : List Y322RawContextEquationMove :=
+  [
+    ⟨78373, false, false,
+      [],
+      []⟩,
+    ⟨78381, false, false,
+      [],
+      []⟩
+  ]
+
+set_option maxHeartbeats 64000000 in
+-- Exact kernel reduction verifies the finite literal replacement certificate.
+/-- All replacement letters and original-source or chronological references have exact bounds. -/
+theorem y322TCIndexRepairAllowed059 :
+    ∀ move ∈ y322TCIndexRepairRaw059, move.Allowed 48648 226522 := by
+  decide +kernel
+
+set_option maxHeartbeats 64000000 in
+-- Exact kernel reduction verifies the finite literal replacement certificate.
+/-- Exact contextual replay proves the unchanged literal equation 149279. -/
+theorem y322TCIndexRepairChecked059 :
+    y322TCIndexRepairChecked ⟨149279, by decide⟩ y322TCIndexRepairRaw059
+      y322TCIndexRepairAllowed059 := by
+  decide +kernel
+
+/-- The repaired equation follows from original sources and strictly earlier valid equations. -/
+theorem y322TCIndexRepairValid059
+    (hp : ∀ j : Fin 174819, j.val < 149279 →
+      (y322TCIndexProgram j).1.Valid (y322FiniteAuxiliaryValue y322TransportProgram)) :
+    (y322TCIndexProgram ⟨149279, by decide⟩).1.Valid
+      (y322FiniteAuxiliaryValue y322TransportProgram) := by
+  exact y322TCIndexRepair_valid _ _ y322TCIndexRepairAllowed059
+    y322TCIndexRepairChecked059 hp
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

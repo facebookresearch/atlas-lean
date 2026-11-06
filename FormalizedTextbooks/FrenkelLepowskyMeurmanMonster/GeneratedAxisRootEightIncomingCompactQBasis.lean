@@ -1,0 +1,29 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import
+  FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightIncomingCompactQConjugation
+
+/-! Complete original compact Q images at all twenty-four binary coordinates. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+set_option maxHeartbeats 64000000 in
+-- Evaluate all original binary coordinates and retain the entire central coefficient.
+set_option maxRecDepth 100000 in
+-- Expand only one compact original generator, with at most eight Fourier factors.
+/-- Every original compact basis image has the full recorded binary and central coordinates. -/
+theorem generatedRootEight_incoming_compact_q_basis_00 : ∀ j : Fin 24,
+    generatedRootEightIncomingCompactQImage 0 (qCoordinateGenerator j) =
+      generatedRootEightIncomingCompactBasisImage 0 j := by
+  decide +kernel
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

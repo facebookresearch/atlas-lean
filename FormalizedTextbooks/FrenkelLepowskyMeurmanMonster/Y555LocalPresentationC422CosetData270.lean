@@ -1,0 +1,403 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Literal chronological right-coset proof data from actual original-source consequences. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationRawCosetPrograms
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+set_option maxRecDepth 100000 in
+/-- Exact literal coset claims and source or chronological right-context moves in this interval. -/
+def y422CosetData270 : Fin 128 → Y522RawCosetCertificate :=
+  ![
+    ⟨[187, 15], [1297], [
+      .prior 3509 false [],
+      .prior 8823 false []]⟩,
+    ⟨[187, 17], [715], [
+      .prior 1467 false []]⟩,
+    ⟨[195, 3], [41], [
+      .prior 337 false [],
+      .prior 347 false []]⟩,
+    ⟨[195, 5], [195], [
+      .prior 329 false [],
+      .prior 330 false []]⟩,
+    ⟨[195, 7], [195], [
+      .prior 332 false [],
+      .prior 332 false [],
+      .prior 319 true [7],
+      .prior 331 true [11, 7],
+      .equation 21 false false
+        [37]
+        [10],
+      .prior 325 false [],
+      .prior 322 false []]⟩,
+    ⟨[195, 9], [195], [
+      .prior 334 false [],
+      .prior 334 false [],
+      .prior 319 true [9],
+      .prior 333 true [11, 9],
+      .equation 9 false false
+        [37]
+        [10],
+      .prior 325 false [],
+      .prior 322 false []]⟩,
+    ⟨[195, 11], [37], [
+      .equation 127 true false
+        []
+        [],
+      .prior 340 false []]⟩,
+    ⟨[195, 15], [195], [
+      .prior 344 false [],
+      .prior 345 false []]⟩,
+    ⟨[195, 17], [1313], [
+      .prior 3501 false [],
+      .prior 3502 false []]⟩,
+    ⟨[203, 1], [33], [
+      .prior 294 false [],
+      .prior 295 false []]⟩,
+    ⟨[203, 3], [321], [
+      .prior 839 false [],
+      .prior 840 false []]⟩,
+    ⟨[203, 5], [203], [
+      .prior 300 false []]⟩,
+    ⟨[203, 7], [203], [
+      .equation 131 true false
+        []
+        [],
+      .prior 298 false []]⟩,
+    ⟨[203, 9], [203], [
+      .prior 303 false [],
+      .prior 305 false []]⟩,
+    ⟨[203, 11], [203], [
+      .prior 314 false [],
+      .prior 315 false []]⟩,
+    ⟨[211, 1], [211], [
+      .prior 275 false [],
+      .prior 277 false []]⟩,
+    ⟨[211, 3], [211], [
+      .prior 278 false [],
+      .prior 279 false []]⟩,
+    ⟨[211, 5], [211], [
+      .prior 280 false [],
+      .prior 281 false []]⟩,
+    ⟨[211, 7], [211], [
+      .prior 282 false [],
+      .prior 283 false []]⟩,
+    ⟨[211, 9], [211], [
+      .prior 284 false [],
+      .prior 285 false []]⟩,
+    ⟨[211, 11], [33], [
+      .prior 268 false [],
+      .prior 272 false []]⟩,
+    ⟨[211, 13], [211], [
+      .prior 286 false [],
+      .prior 287 false []]⟩,
+    ⟨[213, 1], [213], [
+      .prior 520 false [],
+      .prior 522 false []]⟩,
+    ⟨[213, 3], [213], [
+      .prior 523 false [],
+      .prior 524 false []]⟩,
+    ⟨[213, 5], [213], [
+      .prior 525 false [],
+      .prior 526 false []]⟩,
+    ⟨[213, 7], [213], [
+      .prior 527 false [],
+      .prior 528 false []]⟩,
+    ⟨[213, 9], [213], [
+      .prior 529 false [],
+      .prior 529 false [],
+      .prior 519 true [9],
+      .equation 11 false false
+        [31, 8]
+        [12],
+      .prior 110 false [12],
+      .equation 10 true false
+        [31, 12]
+        [],
+      .equation 140 true false
+        []
+        [],
+      .prior 521 false []]⟩,
+    ⟨[213, 11], [213], [
+      .prior 530 false [],
+      .prior 531 false []]⟩,
+    ⟨[213, 13], [31], [
+      .prior 518 false []]⟩,
+    ⟨[213, 15], [35], [
+      .prior 532 false [],
+      .prior 533 false []]⟩,
+    ⟨[213, 17], [213], [
+      .prior 535 false [],
+      .prior 536 false []]⟩,
+    ⟨[215, 3], [215], [
+      .prior 539 false [],
+      .prior 541 false []]⟩,
+    ⟨[215, 5], [215], [
+      .prior 542 false [],
+      .prior 543 false []]⟩,
+    ⟨[215, 7], [215], [
+      .prior 544 false [],
+      .prior 545 false []]⟩,
+    ⟨[215, 9], [215], [
+      .prior 546 false [],
+      .prior 547 false []]⟩,
+    ⟨[215, 11], [215], [
+      .prior 548 false [],
+      .prior 549 false []]⟩,
+    ⟨[215, 13], [611], [
+      .prior 1155 false [],
+      .prior 1156 false []]⟩,
+    ⟨[215, 15], [215], [
+      .prior 550 false [],
+      .prior 551 false []]⟩,
+    ⟨[215, 17], [35], [
+      .prior 537 false []]⟩,
+    ⟨[217, 1], [215], [
+      .prior 552 false []]⟩,
+    ⟨[217, 5], [217], [
+      .prior 554 false [],
+      .prior 556 false []]⟩,
+    ⟨[217, 7], [217], [
+      .prior 557 false [],
+      .prior 558 false []]⟩,
+    ⟨[217, 9], [217], [
+      .prior 559 false [],
+      .prior 560 false []]⟩,
+    ⟨[217, 11], [1313], [
+      .prior 3484 false [],
+      .prior 3491 false []]⟩,
+    ⟨[217, 13], [1181], [
+      .prior 3205 false []]⟩,
+    ⟨[217, 17], [37], [
+      .prior 561 false [],
+      .prior 562 false []]⟩,
+    ⟨[219, 1], [219], [
+      .prior 567 false [],
+      .prior 569 false []]⟩,
+    ⟨[219, 3], [217], [
+      .prior 564 false []]⟩,
+    ⟨[219, 7], [219], [
+      .prior 571 false [],
+      .prior 572 false []]⟩,
+    ⟨[219, 9], [219], [
+      .prior 574 false [],
+      .prior 575 false []]⟩,
+    ⟨[219, 13], [319], [
+      .prior 862 false []]⟩,
+    ⟨[219, 15], [615], [
+      .prior 1179 false []]⟩,
+    ⟨[219, 17], [39], [
+      .prior 577 false [],
+      .prior 578 false []]⟩,
+    ⟨[221, 1], [221], [
+      .prior 582 false [],
+      .prior 584 false []]⟩,
+    ⟨[221, 3], [221], [
+      .prior 585 false [],
+      .prior 586 false []]⟩,
+    ⟨[221, 5], [219], [
+      .prior 580 false []]⟩,
+    ⟨[221, 7], [1827], [
+      .prior 5432 false []]⟩,
+    ⟨[221, 9], [221], [
+      .prior 588 false [],
+      .prior 589 false []]⟩,
+    ⟨[221, 13], [1601], [
+      .prior 4864 false []]⟩,
+    ⟨[221, 15], [617], [
+      .prior 1208 false []]⟩,
+    ⟨[221, 17], [1003], [
+      .prior 1702 false [],
+      .prior 1703 false []]⟩,
+    ⟨[223, 1], [227], [
+      .prior 1712 false []]⟩,
+    ⟨[223, 3], [223], [
+      .prior 592 false [],
+      .prior 594 false []]⟩,
+    ⟨[223, 5], [1183], [
+      .prior 3210 false []]⟩,
+    ⟨[223, 7], [1707], [
+      .prior 5116 false []]⟩,
+    ⟨[223, 9], [223], [
+      .prior 595 false [],
+      .prior 596 false []]⟩,
+    ⟨[227, 1], [223], [
+      .prior 599 false [],
+      .prior 1711 false []]⟩,
+    ⟨[227, 3], [2135], [
+      .prior 6042 false []]⟩,
+    ⟨[227, 5], [715], [
+      .prior 1727 false []]⟩,
+    ⟨[227, 7], [1823], [
+      .prior 5405 false []]⟩,
+    ⟨[227, 9], [227], [
+      .prior 600 false [],
+      .prior 602 false []]⟩,
+    ⟨[229, 1], [1263], [
+      .prior 4870 false [],
+      .prior 21271 false []]⟩,
+    ⟨[229, 3], [4599], [
+      .prior 8792 false []]⟩,
+    ⟨[229, 5], [713], [
+      .prior 1736 false [],
+      .prior 1737 false []]⟩,
+    ⟨[229, 7], [1991], [
+      .prior 5816 false []]⟩,
+    ⟨[229, 9], [229], [
+      .prior 605 false [],
+      .prior 607 false []]⟩,
+    ⟨[229, 15], [227], [
+      .prior 603 false []]⟩,
+    ⟨[231, 5], [1185], [
+      .prior 3231 false []]⟩,
+    ⟨[231, 7], [1989], [
+      .prior 5802 false []]⟩,
+    ⟨[231, 9], [231], [
+      .prior 610 false [],
+      .prior 612 false []]⟩,
+    ⟨[231, 11], [231], [
+      .prior 1741 false [],
+      .prior 1742 false []]⟩,
+    ⟨[231, 15], [1337], [
+      .prior 4027 false []]⟩,
+    ⟨[231, 17], [229], [
+      .prior 608 false []]⟩,
+    ⟨[233, 1], [231], [
+      .prior 613 false []]⟩,
+    ⟨[233, 5], [1187], [
+      .prior 3244 false []]⟩,
+    ⟨[233, 7], [3367], [
+      .prior 12864 false [],
+      .prior 22120 false []]⟩,
+    ⟨[233, 9], [233], [
+      .prior 616 false [],
+      .prior 618 false []]⟩,
+    ⟨[233, 11], [4851], [
+      .prior 9270 false [],
+      .prior 9271 false []]⟩,
+    ⟨[233, 17], [1263], [
+      .prior 4879 false [],
+      .prior 4880 false [],
+      .prior 21271 false []]⟩,
+    ⟨[235, 1], [1237], [
+      .prior 9578 false [],
+      .prior 20887 false []]⟩,
+    ⟨[235, 3], [233], [
+      .prior 619 false []]⟩,
+    ⟨[235, 7], [1929], [
+      .prior 13071 false [],
+      .prior 21626 false []]⟩,
+    ⟨[235, 9], [235], [
+      .prior 621 false [],
+      .prior 623 false []]⟩,
+    ⟨[235, 11], [291], [
+      .prior 11979 false [],
+      .prior 22625 false []]⟩,
+    ⟨[235, 17], [1229], [
+      .prior 4882 false [],
+      .prior 21220 false []]⟩,
+    ⟨[237, 3], [1191], [
+      .prior 3273 false []]⟩,
+    ⟨[237, 5], [235], [
+      .prior 624 false []]⟩,
+    ⟨[237, 7], [7763], [
+      .prior 13367 false [],
+      .prior 22301 false []]⟩,
+    ⟨[237, 9], [237], [
+      .prior 626 false [],
+      .prior 628 false []]⟩,
+    ⟨[237, 11], [251], [
+      .prior 9707 false [],
+      .prior 22296 false []]⟩,
+    ⟨[237, 17], [5247], [
+      .prior 12386 false [],
+      .prior 21285 false []]⟩,
+    ⟨[239, 1], [237], [
+      .prior 629 false []]⟩,
+    ⟨[239, 5], [1237], [
+      .prior 9588 false [],
+      .prior 9589 false [],
+      .prior 20887 false []]⟩,
+    ⟨[239, 7], [7463], [
+      .prior 13928 false [],
+      .prior 21181 false []]⟩,
+    ⟨[239, 9], [239], [
+      .prior 632 false [],
+      .prior 634 false []]⟩,
+    ⟨[239, 15], [1711], [
+      .prior 9603 false []]⟩,
+    ⟨[239, 17], [5249], [
+      .prior 12395 false [],
+      .prior 21287 false []]⟩,
+    ⟨[241, 1], [645], [
+      .prior 13934 false [],
+      .prior 20912 false []]⟩,
+    ⟨[241, 5], [651], [
+      .prior 9596 false [],
+      .prior 22251 false []]⟩,
+    ⟨[241, 7], [6247], [
+      .prior 14322 false [],
+      .prior 22361 false []]⟩,
+    ⟨[241, 9], [241], [
+      .prior 637 false [],
+      .prior 639 false []]⟩,
+    ⟨[241, 11], [239], [
+      .prior 635 false []]⟩,
+    ⟨[241, 15], [1465], [
+      .prior 9632 false [],
+      .prior 21172 false []]⟩,
+    ⟨[241, 17], [1469], [
+      .prior 12405 false [],
+      .prior 21160 false []]⟩,
+    ⟨[243, 3], [243], [
+      .prior 3287 false [],
+      .prior 3288 false []]⟩,
+    ⟨[243, 5], [299], [
+      .prior 11806 true [5],
+      .equation 6 false false
+        [6943]
+        [],
+      .prior 21519 false []]⟩,
+    ⟨[243, 7], [5537], [
+      .prior 14717 false [],
+      .prior 33310 false []]⟩,
+    ⟨[243, 9], [243], [
+      .prior 642 false [],
+      .prior 644 false []]⟩,
+    ⟨[243, 11], [243], [
+      .prior 1762 false [],
+      .prior 1763 false []]⟩,
+    ⟨[243, 13], [241], [
+      .prior 640 false []]⟩,
+    ⟨[243, 15], [1715], [
+      .prior 9635 false []]⟩,
+    ⟨[243, 17], [683], [
+      .prior 12422 false [],
+      .prior 21530 false []]⟩,
+    ⟨[245, 1], [243], [
+      .prior 645 false []]⟩,
+    ⟨[245, 3], [1749], [
+      .prior 15098 false [],
+      .prior 21040 false []]⟩,
+    ⟨[245, 5], [297], [
+      .prior 11813 false [],
+      .prior 20671 false []]⟩,
+    ⟨[245, 7], [5539], [
+      .prior 15109 false [],
+      .prior 27125 false []]⟩,
+    ⟨[245, 9], [245], [
+      .prior 647 false [],
+      .prior 649 false []]⟩,
+    ⟨[245, 11], [639], [
+      .prior 12026 false []]⟩]
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

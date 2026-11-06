@@ -1,0 +1,247 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket61
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket62
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket63
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket64
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket65
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket66
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket67
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket68
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket69
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket70
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket71
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket72
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket73
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket74
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket75
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket76
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket77
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket78
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket79
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket80
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket81
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket82
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket83
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket84
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket85
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket86
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket87
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket88
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket89
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket90
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket91
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket92
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket93
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket94
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightShortSupportCountPacket95
+
+/-! Exact whole support cardinalities obtained from every original bounded count. -/
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option maxRecDepth 100000
+open scoped BigOperators
+set_option maxHeartbeats 8000000
+
+/-- All proved original source support block counts. -/
+def generatedRootEightSourceShortSupportCounts : Fin 96 → ℕ :=
+  ![648, 416, 0, 216, 488, 216, 688, 440, 0, 535, 323, 422, 216, 424, 544, 394, 358, 504, 0, 424, 486, 362, 135, 687, 265, 185, 304, 520, 0, 400, 455, 345, 239, 640, 317, 308, 334, 321, 512, 497, 256, 544, 335, 65, 416, 336, 367, 305, 202, 652, 180, 502, 0, 522, 470, 0, 480, 176, 637, 147, 176, 637, 157, 470, 0, 500, 492, 0, 512, 202, 656, 176, 534, 0, 544, 222, 714, 152, 234, 693, 107, 566, 0, 468, 428, 0, 576, 116, 715, 193, 184, 726, 200, 522, 0, 544]
+
+/-- All proved original canonical support block counts. -/
+def generatedRootEightCanonicalShortSupportCounts : Fin 96 → ℕ :=
+  ![777, 576, 576, 576, 575, 577, 576, 576, 576, 576, 576, 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 485, 576, 576, 576, 576, 576, 576, 575, 577, 575, 784, 832, 816, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 832, 840, 860, 762, 778, 760, 766, 778, 790, 750, 572, 596, 704, 596, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 692, 740, 680, 692, 716, 704, 712, 720, 680, 716, 716, 668]
+
+private theorem exact_counts : ∀ b : Fin 96,
+    generatedRootEightShortSupportBlockCount generatedRootEightPositiveFinalShortCachedNumerator b =
+      generatedRootEightSourceShortSupportCounts b ∧
+    generatedRootEightShortSupportBlockCount generatedRootEightCanonicalShortCachedNumerator b =
+      generatedRootEightCanonicalShortSupportCounts b := by
+  intro b
+  fin_cases b
+  · exact generatedRootEight_short_support_count_packet_00
+  · exact generatedRootEight_short_support_count_packet_01
+  · exact generatedRootEight_short_support_count_packet_02
+  · exact generatedRootEight_short_support_count_packet_03
+  · exact generatedRootEight_short_support_count_packet_04
+  · exact generatedRootEight_short_support_count_packet_05
+  · exact generatedRootEight_short_support_count_packet_06
+  · exact generatedRootEight_short_support_count_packet_07
+  · exact generatedRootEight_short_support_count_packet_08
+  · exact generatedRootEight_short_support_count_packet_09
+  · exact generatedRootEight_short_support_count_packet_10
+  · exact generatedRootEight_short_support_count_packet_11
+  · exact generatedRootEight_short_support_count_packet_12
+  · exact generatedRootEight_short_support_count_packet_13
+  · exact generatedRootEight_short_support_count_packet_14
+  · exact generatedRootEight_short_support_count_packet_15
+  · exact generatedRootEight_short_support_count_packet_16
+  · exact generatedRootEight_short_support_count_packet_17
+  · exact generatedRootEight_short_support_count_packet_18
+  · exact generatedRootEight_short_support_count_packet_19
+  · exact generatedRootEight_short_support_count_packet_20
+  · exact generatedRootEight_short_support_count_packet_21
+  · exact generatedRootEight_short_support_count_packet_22
+  · exact generatedRootEight_short_support_count_packet_23
+  · exact generatedRootEight_short_support_count_packet_24
+  · exact generatedRootEight_short_support_count_packet_25
+  · exact generatedRootEight_short_support_count_packet_26
+  · exact generatedRootEight_short_support_count_packet_27
+  · exact generatedRootEight_short_support_count_packet_28
+  · exact generatedRootEight_short_support_count_packet_29
+  · exact generatedRootEight_short_support_count_packet_30
+  · exact generatedRootEight_short_support_count_packet_31
+  · exact generatedRootEight_short_support_count_packet_32
+  · exact generatedRootEight_short_support_count_packet_33
+  · exact generatedRootEight_short_support_count_packet_34
+  · exact generatedRootEight_short_support_count_packet_35
+  · exact generatedRootEight_short_support_count_packet_36
+  · exact generatedRootEight_short_support_count_packet_37
+  · exact generatedRootEight_short_support_count_packet_38
+  · exact generatedRootEight_short_support_count_packet_39
+  · exact generatedRootEight_short_support_count_packet_40
+  · exact generatedRootEight_short_support_count_packet_41
+  · exact generatedRootEight_short_support_count_packet_42
+  · exact generatedRootEight_short_support_count_packet_43
+  · exact generatedRootEight_short_support_count_packet_44
+  · exact generatedRootEight_short_support_count_packet_45
+  · exact generatedRootEight_short_support_count_packet_46
+  · exact generatedRootEight_short_support_count_packet_47
+  · exact generatedRootEight_short_support_count_packet_48
+  · exact generatedRootEight_short_support_count_packet_49
+  · exact generatedRootEight_short_support_count_packet_50
+  · exact generatedRootEight_short_support_count_packet_51
+  · exact generatedRootEight_short_support_count_packet_52
+  · exact generatedRootEight_short_support_count_packet_53
+  · exact generatedRootEight_short_support_count_packet_54
+  · exact generatedRootEight_short_support_count_packet_55
+  · exact generatedRootEight_short_support_count_packet_56
+  · exact generatedRootEight_short_support_count_packet_57
+  · exact generatedRootEight_short_support_count_packet_58
+  · exact generatedRootEight_short_support_count_packet_59
+  · exact generatedRootEight_short_support_count_packet_60
+  · exact generatedRootEight_short_support_count_packet_61
+  · exact generatedRootEight_short_support_count_packet_62
+  · exact generatedRootEight_short_support_count_packet_63
+  · exact generatedRootEight_short_support_count_packet_64
+  · exact generatedRootEight_short_support_count_packet_65
+  · exact generatedRootEight_short_support_count_packet_66
+  · exact generatedRootEight_short_support_count_packet_67
+  · exact generatedRootEight_short_support_count_packet_68
+  · exact generatedRootEight_short_support_count_packet_69
+  · exact generatedRootEight_short_support_count_packet_70
+  · exact generatedRootEight_short_support_count_packet_71
+  · exact generatedRootEight_short_support_count_packet_72
+  · exact generatedRootEight_short_support_count_packet_73
+  · exact generatedRootEight_short_support_count_packet_74
+  · exact generatedRootEight_short_support_count_packet_75
+  · exact generatedRootEight_short_support_count_packet_76
+  · exact generatedRootEight_short_support_count_packet_77
+  · exact generatedRootEight_short_support_count_packet_78
+  · exact generatedRootEight_short_support_count_packet_79
+  · exact generatedRootEight_short_support_count_packet_80
+  · exact generatedRootEight_short_support_count_packet_81
+  · exact generatedRootEight_short_support_count_packet_82
+  · exact generatedRootEight_short_support_count_packet_83
+  · exact generatedRootEight_short_support_count_packet_84
+  · exact generatedRootEight_short_support_count_packet_85
+  · exact generatedRootEight_short_support_count_packet_86
+  · exact generatedRootEight_short_support_count_packet_87
+  · exact generatedRootEight_short_support_count_packet_88
+  · exact generatedRootEight_short_support_count_packet_89
+  · exact generatedRootEight_short_support_count_packet_90
+  · exact generatedRootEight_short_support_count_packet_91
+  · exact generatedRootEight_short_support_count_packet_92
+  · exact generatedRootEight_short_support_count_packet_93
+  · exact generatedRootEight_short_support_count_packet_94
+  · exact generatedRootEight_short_support_count_packet_95
+
+/-- The complete source literal support has its exact original cardinality. -/
+theorem generatedRootEight_source_short_support_card :
+    Nat.card {r : GriessShortIndex // generatedRootEightPositiveFinalShortCachedNumerator r ≠ 0} = 33576 := by
+  rw [generatedRootEight_short_support_card_blocks]
+  simp_rw [(exact_counts _).1]
+  decide +kernel
+
+/-- The complete canonical literal support has its exact original cardinality. -/
+theorem generatedRootEight_canonical_short_support_card :
+    Nat.card {r : GriessShortIndex // generatedRootEightCanonicalShortCachedNumerator r ≠ 0} = 33576 := by
+  rw [generatedRootEight_short_support_card_blocks]
+  simp_rw [(exact_counts _).2]
+  decide +kernel
+
+/-- Source and canonical supports have equal full cardinality, including their entire original domains. -/
+theorem generatedRootEight_short_support_cards_equal :
+    Nat.card {r : GriessShortIndex // generatedRootEightPositiveFinalShortCachedNumerator r ≠ 0} =
+      Nat.card {r : GriessShortIndex // generatedRootEightCanonicalShortCachedNumerator r ≠ 0} := by
+  rw [generatedRootEight_source_short_support_card, generatedRootEight_canonical_short_support_card]
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

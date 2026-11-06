@@ -1,0 +1,76 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- The complete actual code-nine monomial prefix before its forward Gaussian. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationNortonRelationsCodeNineSpinPrefixData
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 10000
+
+/-- The full actual integer word before the forward Gaussian. -/
+def monsterNortonCodeNineSpinPrefix : NortonUIntegerVector :=
+  monsterNortonUCompactIntegerPermutation (monsterNortonUCompactPermutation 1)
+    (monsterNortonUCompactIntegerDiagonal (monsterNortonUCompactDiagonal 1)
+      monsterNortonCodeNineForwardSpinInteger)
+
+private theorem diagonal_embed (M : Fin 12 → Fin 12 → ZMod 2)
+    (v : NortonUIntegerVector) :
+    monsterMonomialDiagonalEquiv M (nortonUIntegerEmbed v) =
+      nortonUIntegerEmbed (monsterNortonUCompactIntegerDiagonal M v) := by
+  ext t
+  change qSign (monsterMonomialQuadratic M t) * (v (nortonUIntegerLabel t) : ℝ) = _
+  simp only [nortonUIntegerEmbed, monsterNortonUCompactIntegerDiagonal,
+    nortonUIntegerLabel_inverse, Int.cast_mul, nortonUIntegerSign_real]
+
+private theorem permutation_embed (P : SpinIndex ≃ₗ[ZMod 2] SpinIndex)
+    (v : NortonUIntegerVector) :
+    monsterMonomialPermutation P (nortonUIntegerEmbed v) =
+      nortonUIntegerEmbed (monsterNortonUCompactIntegerPermutation P v) := by
+  ext t
+  simp only [monsterMonomialPermutation_apply, nortonUIntegerEmbed,
+    monsterNortonUCompactIntegerPermutation, nortonUIntegerLabel_inverse]
+
+/-- The integer prefix is the actual product of two orthogonal monomial factors. -/
+theorem monsterNortonCodeNineSpinPrefix_actual :
+    (monsterMonomialPermutationHolomorph (monsterNortonUCompactPermutation 1) *
+      monsterMonomialDiagonalHolomorph (monsterNortonUCompactDiagonal 1)).val
+        (nortonUIntegerEmbed monsterNortonCodeNineForwardSpinInteger) =
+      nortonUIntegerEmbed monsterNortonCodeNineSpinPrefix := by
+  simp only [nortonUIntegerSpin_mul_apply]
+  change monsterMonomialPermutation (monsterNortonUCompactPermutation 1)
+    (monsterMonomialDiagonalEquiv (monsterNortonUCompactDiagonal 1)
+      (nortonUIntegerEmbed monsterNortonCodeNineForwardSpinInteger)) = _
+  rw [diagonal_embed, permutation_embed]
+  rfl
+
+/-- Orthogonality gives the full actual monomial prefix norm independently of its support. -/
+theorem monsterNortonCodeNineSpinPrefix_norm :
+    spinPairing (nortonUIntegerEmbed monsterNortonCodeNineSpinPrefix)
+      (nortonUIntegerEmbed monsterNortonCodeNineSpinPrefix) = 64 := by
+  let e : SpinHolomorph :=
+    monsterMonomialPermutationHolomorph (monsterNortonUCompactPermutation 1) *
+      monsterMonomialDiagonalHolomorph (monsterNortonUCompactDiagonal 1)
+  have h := e.property.2 (nortonUIntegerEmbed monsterNortonCodeNineForwardSpinInteger)
+    (nortonUIntegerEmbed monsterNortonCodeNineForwardSpinInteger)
+  dsimp only [e] at h
+  rw [monsterNortonCodeNineSpinPrefix_actual, monsterNortonCodeNineForwardSpin_norm] at h
+  exact h
+
+set_option maxHeartbeats 16000000 in
+-- Check all sixty-four actual prefix entries before substituting the full cached vector.
+/-- Each supported prefix sign comes from the complete genuine monomial input word. -/
+theorem monsterNortonCodeNineSpinPrefix_coefficient (i : Fin 64) :
+    monsterNortonCodeNineSpinPrefix (monsterNortonCodeNineSpinPrefixLabel i) =
+      monsterNortonCodeNineSpinPrefixCoefficient i := by
+  fin_cases i <;> decide +kernel
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

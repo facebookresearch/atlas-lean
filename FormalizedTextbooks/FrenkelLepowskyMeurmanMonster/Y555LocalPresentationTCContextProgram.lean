@@ -1,0 +1,261 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Exact acyclic contextual equation program of the independent C322 transporter trace. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds000
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds001
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds002
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds003
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds004
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds005
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds006
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds007
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds008
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds009
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds010
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds011
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds012
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds013
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds014
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds015
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds016
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds017
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds018
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds019
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds020
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds021
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds022
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds023
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds024
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds025
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds026
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds027
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds028
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds029
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds030
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds031
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds032
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds033
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds034
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds035
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds036
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds037
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds038
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds039
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds040
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds041
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds042
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds043
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds044
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds045
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds046
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds047
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds048
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds049
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds050
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds051
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds052
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds053
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds054
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds055
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds056
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds057
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds058
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds059
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds060
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds061
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds062
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds063
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds064
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds065
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds066
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds067
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds068
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds069
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds070
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds071
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds072
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds073
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds074
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds075
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds076
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds077
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds078
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds079
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds080
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds081
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds082
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds083
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds084
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds085
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds086
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds087
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds088
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds089
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds090
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds091
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds092
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds093
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds094
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds095
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds096
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds097
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds098
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds099
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds100
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds101
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds102
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds103
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds104
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds105
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds106
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds107
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds108
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds109
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds110
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationTCContextBounds111
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- All literal TC records satisfy their exact alphabet, source and earlier-reference bounds. -/
+theorem y322TCContextAllowedBlock (block : Fin 112) (i : Fin 256) :
+    y322TCContextAllowedAt (block.val * 256 + i.val) := by
+  fin_cases block
+  · exact y322TCContextAllowed000 i
+  · exact y322TCContextAllowed001 i
+  · exact y322TCContextAllowed002 i
+  · exact y322TCContextAllowed003 i
+  · exact y322TCContextAllowed004 i
+  · exact y322TCContextAllowed005 i
+  · exact y322TCContextAllowed006 i
+  · exact y322TCContextAllowed007 i
+  · exact y322TCContextAllowed008 i
+  · exact y322TCContextAllowed009 i
+  · exact y322TCContextAllowed010 i
+  · exact y322TCContextAllowed011 i
+  · exact y322TCContextAllowed012 i
+  · exact y322TCContextAllowed013 i
+  · exact y322TCContextAllowed014 i
+  · exact y322TCContextAllowed015 i
+  · exact y322TCContextAllowed016 i
+  · exact y322TCContextAllowed017 i
+  · exact y322TCContextAllowed018 i
+  · exact y322TCContextAllowed019 i
+  · exact y322TCContextAllowed020 i
+  · exact y322TCContextAllowed021 i
+  · exact y322TCContextAllowed022 i
+  · exact y322TCContextAllowed023 i
+  · exact y322TCContextAllowed024 i
+  · exact y322TCContextAllowed025 i
+  · exact y322TCContextAllowed026 i
+  · exact y322TCContextAllowed027 i
+  · exact y322TCContextAllowed028 i
+  · exact y322TCContextAllowed029 i
+  · exact y322TCContextAllowed030 i
+  · exact y322TCContextAllowed031 i
+  · exact y322TCContextAllowed032 i
+  · exact y322TCContextAllowed033 i
+  · exact y322TCContextAllowed034 i
+  · exact y322TCContextAllowed035 i
+  · exact y322TCContextAllowed036 i
+  · exact y322TCContextAllowed037 i
+  · exact y322TCContextAllowed038 i
+  · exact y322TCContextAllowed039 i
+  · exact y322TCContextAllowed040 i
+  · exact y322TCContextAllowed041 i
+  · exact y322TCContextAllowed042 i
+  · exact y322TCContextAllowed043 i
+  · exact y322TCContextAllowed044 i
+  · exact y322TCContextAllowed045 i
+  · exact y322TCContextAllowed046 i
+  · exact y322TCContextAllowed047 i
+  · exact y322TCContextAllowed048 i
+  · exact y322TCContextAllowed049 i
+  · exact y322TCContextAllowed050 i
+  · exact y322TCContextAllowed051 i
+  · exact y322TCContextAllowed052 i
+  · exact y322TCContextAllowed053 i
+  · exact y322TCContextAllowed054 i
+  · exact y322TCContextAllowed055 i
+  · exact y322TCContextAllowed056 i
+  · exact y322TCContextAllowed057 i
+  · exact y322TCContextAllowed058 i
+  · exact y322TCContextAllowed059 i
+  · exact y322TCContextAllowed060 i
+  · exact y322TCContextAllowed061 i
+  · exact y322TCContextAllowed062 i
+  · exact y322TCContextAllowed063 i
+  · exact y322TCContextAllowed064 i
+  · exact y322TCContextAllowed065 i
+  · exact y322TCContextAllowed066 i
+  · exact y322TCContextAllowed067 i
+  · exact y322TCContextAllowed068 i
+  · exact y322TCContextAllowed069 i
+  · exact y322TCContextAllowed070 i
+  · exact y322TCContextAllowed071 i
+  · exact y322TCContextAllowed072 i
+  · exact y322TCContextAllowed073 i
+  · exact y322TCContextAllowed074 i
+  · exact y322TCContextAllowed075 i
+  · exact y322TCContextAllowed076 i
+  · exact y322TCContextAllowed077 i
+  · exact y322TCContextAllowed078 i
+  · exact y322TCContextAllowed079 i
+  · exact y322TCContextAllowed080 i
+  · exact y322TCContextAllowed081 i
+  · exact y322TCContextAllowed082 i
+  · exact y322TCContextAllowed083 i
+  · exact y322TCContextAllowed084 i
+  · exact y322TCContextAllowed085 i
+  · exact y322TCContextAllowed086 i
+  · exact y322TCContextAllowed087 i
+  · exact y322TCContextAllowed088 i
+  · exact y322TCContextAllowed089 i
+  · exact y322TCContextAllowed090 i
+  · exact y322TCContextAllowed091 i
+  · exact y322TCContextAllowed092 i
+  · exact y322TCContextAllowed093 i
+  · exact y322TCContextAllowed094 i
+  · exact y322TCContextAllowed095 i
+  · exact y322TCContextAllowed096 i
+  · exact y322TCContextAllowed097 i
+  · exact y322TCContextAllowed098 i
+  · exact y322TCContextAllowed099 i
+  · exact y322TCContextAllowed100 i
+  · exact y322TCContextAllowed101 i
+  · exact y322TCContextAllowed102 i
+  · exact y322TCContextAllowed103 i
+  · exact y322TCContextAllowed104 i
+  · exact y322TCContextAllowed105 i
+  · exact y322TCContextAllowed106 i
+  · exact y322TCContextAllowed107 i
+  · exact y322TCContextAllowed108 i
+  · exact y322TCContextAllowed109 i
+  · exact y322TCContextAllowed110 i
+  · exact y322TCContextAllowed111 i
+
+/-- Every TC record retains its checked literal letters, sources and earlier references. -/
+theorem y322TCContextRaw_allowed (i : Fin 28530) :
+    (y322TCContextRaw i).Allowed 48648 48713 i.val := by
+  let block : Fin 112 := ⟨i.val / 256, by omega⟩
+  let offset : Fin 256 := ⟨i.val % 256, Nat.mod_lt _ (by decide)⟩
+  have h := y322TCContextAllowedBlock block offset
+  have he : block.val * 256 + offset.val = i.val := by
+    dsimp [block, offset]
+    omega
+  rw [he] at h
+  simpa only [y322TCContextAllowedAt, dite_eq_left i.isLt] using h
+
+/-- The literal contextual derivation table, with every reference and letter bound checked. -/
+def y322TCContextProgram : Y322ContextEquationProgram (Fin 48648) (Fin 48713) 28530 :=
+  y322RawContextProgram 48648 48713 y322TCContextRaw y322TCContextRaw_allowed
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

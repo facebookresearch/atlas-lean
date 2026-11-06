@@ -1,0 +1,72 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Exact inverse checks binding the proposed packets to the actual seventh tensor. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationNortonRelationsLine01SeventhForwardData
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.MonsterPresentationNortonRelationsUCompactColumnInverse
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 10000
+
+set_option maxHeartbeats 16000000 in
+-- Check one fixed physical packet using the exact sixty-four-term inverse operator.
+private theorem inverse_column0 (p : Fin 128) :
+    8 * monsterNortonUCompactInverseNumerator (monsterNortonLine01SeventhForwardPacket 0)
+      (monsterNortonLine01TensorSpinLabel p) =
+        -monsterNortonLine01TensorSeventhCoefficientLookup 0 p := by
+  rw [monsterNortonUCompactColumnInverseNumerator_actual]
+  revert p
+  decide +kernel
+
+set_option maxHeartbeats 16000000 in
+-- Check one fixed physical packet using the exact sixty-four-term inverse operator.
+private theorem inverse_column1 (p : Fin 128) :
+    8 * monsterNortonUCompactInverseNumerator (monsterNortonLine01SeventhForwardPacket 1)
+      (monsterNortonLine01TensorSpinLabel p) =
+        -monsterNortonLine01TensorSeventhCoefficientLookup 1 p := by
+  rw [monsterNortonUCompactColumnInverseNumerator_actual]
+  revert p
+  decide +kernel
+
+set_option maxHeartbeats 16000000 in
+-- Check one fixed physical packet using the exact sixty-four-term inverse operator.
+private theorem inverse_column2 (p : Fin 128) :
+    8 * monsterNortonUCompactInverseNumerator (monsterNortonLine01SeventhForwardPacket 2)
+      (monsterNortonLine01TensorSpinLabel p) =
+        -monsterNortonLine01TensorSeventhCoefficientLookup 2 p := by
+  rw [monsterNortonUCompactColumnInverseNumerator_actual]
+  revert p
+  decide +kernel
+
+set_option maxHeartbeats 16000000 in
+-- Check one fixed physical packet using the exact sixty-four-term inverse operator.
+private theorem inverse_column3 (p : Fin 128) :
+    8 * monsterNortonUCompactInverseNumerator (monsterNortonLine01SeventhForwardPacket 3)
+      (monsterNortonLine01TensorSpinLabel p) =
+        -monsterNortonLine01TensorSeventhCoefficientLookup 3 p := by
+  rw [monsterNortonUCompactColumnInverseNumerator_actual]
+  revert p
+  decide +kernel
+
+/-- Batch 0 of the exact actual inverse packet checks. -/
+theorem monsterNortonLine01SeventhForward_inverse_batch0 (i : Fin 4) (p : Fin 128) :
+    8 * monsterNortonUCompactInverseNumerator
+      (monsterNortonLine01SeventhForwardPacket ⟨0 + i.val, by omega⟩)
+        (monsterNortonLine01TensorSpinLabel p) =
+          -monsterNortonLine01TensorSeventhCoefficientLookup ⟨0 + i.val, by omega⟩ p := by
+  fin_cases i
+  · exact inverse_column0 p
+  · exact inverse_column1 p
+  · exact inverse_column2 p
+  · exact inverse_column3 p
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

@@ -1,0 +1,157 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Exact bounded block of the original-source C522 auxiliary path definitions. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC522WordPrograms
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Exact earlier path and source letter for this bounded auxiliary path interval. -/
+def y522TPathData01 : Fin 128 → ℕ × Fin 11 :=
+  ![
+    (11, 7),
+    (53, 7),
+    (107, 2),
+    (130, 5),
+    (131, 1),
+    (132, 0),
+    (133, 3),
+    (40, 7),
+    (38, 0),
+    (7, 4),
+    (118, 9),
+    (128, 6),
+    (127, 8),
+    (140, 0),
+    (141, 1),
+    (142, 2),
+    (143, 5),
+    (144, 6),
+    (145, 0),
+    (146, 7),
+    (147, 8),
+    (148, 0),
+    (149, 1),
+    (150, 2),
+    (151, 0),
+    (152, 5),
+    (153, 6),
+    (154, 0),
+    (155, 7),
+    (156, 8),
+    (157, 0),
+    (158, 1),
+    (159, 2),
+    (160, 0),
+    (161, 5),
+    (162, 6),
+    (163, 0),
+    (164, 7),
+    (165, 8),
+    (166, 0),
+    (167, 1),
+    (168, 2),
+    (169, 0),
+    (170, 5),
+    (171, 6),
+    (172, 0),
+    (173, 7),
+    (174, 8),
+    (175, 0),
+    (176, 1),
+    (177, 2),
+    (178, 0),
+    (179, 5),
+    (180, 6),
+    (181, 0),
+    (182, 7),
+    (183, 0),
+    (184, 1),
+    (185, 2),
+    (186, 0),
+    (187, 5),
+    (135, 8),
+    (8, 4),
+    (137, 3),
+    (137, 9),
+    (9, 4),
+    (190, 3),
+    (190, 9),
+    (10, 8),
+    (141, 7),
+    (197, 1),
+    (198, 2),
+    (199, 0),
+    (200, 5),
+    (201, 6),
+    (202, 0),
+    (203, 7),
+    (204, 8),
+    (205, 1),
+    (206, 2),
+    (207, 0),
+    (208, 5),
+    (209, 6),
+    (210, 0),
+    (211, 7),
+    (212, 8),
+    (213, 0),
+    (214, 1),
+    (215, 2),
+    (216, 0),
+    (217, 5),
+    (218, 6),
+    (219, 0),
+    (220, 7),
+    (221, 8),
+    (222, 0),
+    (223, 1),
+    (224, 2),
+    (225, 0),
+    (226, 5),
+    (227, 6),
+    (228, 0),
+    (229, 7),
+    (230, 8),
+    (231, 0),
+    (232, 1),
+    (233, 2),
+    (234, 0),
+    (235, 5),
+    (236, 6),
+    (237, 0),
+    (238, 7),
+    (239, 8),
+    (240, 0),
+    (241, 1),
+    (242, 2),
+    (243, 0),
+    (244, 5),
+    (245, 6),
+    (246, 0),
+    (247, 7),
+    (193, 3),
+    (193, 5),
+    (193, 7),
+    (193, 9),
+    (251, 3),
+    (251, 5),
+    (251, 8)]
+
+set_option maxRecDepth 100000 in
+-- At most 128 literal path definitions are checked here, with their exact global positions.
+/-- Every nonempty path in this block refers strictly to an earlier actual path. -/
+theorem y522TPathData01_prior (i : Fin 128) (hi : 0 < 128 + i.val) :
+    (y522TPathData01 i).1 < 128 + i.val := by
+  revert i
+  decide +kernel
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

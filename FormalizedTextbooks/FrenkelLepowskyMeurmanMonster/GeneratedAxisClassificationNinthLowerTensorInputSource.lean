@@ -1,0 +1,83 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorSourceFormula
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerTensorInputPacket23
+
+/-! The full original tensor input is bound at all24 spatial columns and all4096 spin labels. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+
+/-- Every normalized tensor input coordinate equals the complete original source numerator. -/
+theorem generatedNinth_lower_tensor_input_certificate (n : Fin 4096) (i : Fin 24) :
+    generatedNinthLowerSpinTensorInputInteger n i =
+      generatedNinthLowerTensorSourceInteger n i := by
+  fin_cases i
+  · exact generatedNinth_lower_tensor_input_packet_00 n
+  · exact generatedNinth_lower_tensor_input_packet_01 n
+  · exact generatedNinth_lower_tensor_input_packet_02 n
+  · exact generatedNinth_lower_tensor_input_packet_03 n
+  · exact generatedNinth_lower_tensor_input_packet_04 n
+  · exact generatedNinth_lower_tensor_input_packet_05 n
+  · exact generatedNinth_lower_tensor_input_packet_06 n
+  · exact generatedNinth_lower_tensor_input_packet_07 n
+  · exact generatedNinth_lower_tensor_input_packet_08 n
+  · exact generatedNinth_lower_tensor_input_packet_09 n
+  · exact generatedNinth_lower_tensor_input_packet_10 n
+  · exact generatedNinth_lower_tensor_input_packet_11 n
+  · exact generatedNinth_lower_tensor_input_packet_12 n
+  · exact generatedNinth_lower_tensor_input_packet_13 n
+  · exact generatedNinth_lower_tensor_input_packet_14 n
+  · exact generatedNinth_lower_tensor_input_packet_15 n
+  · exact generatedNinth_lower_tensor_input_packet_16 n
+  · exact generatedNinth_lower_tensor_input_packet_17 n
+  · exact generatedNinth_lower_tensor_input_packet_18 n
+  · exact generatedNinth_lower_tensor_input_packet_19 n
+  · exact generatedNinth_lower_tensor_input_packet_20 n
+  · exact generatedNinth_lower_tensor_input_packet_21 n
+  · exact generatedNinth_lower_tensor_input_packet_22 n
+  · exact generatedNinth_lower_tensor_input_packet_23 n
+
+/-- Complete chronological source replay binds every actual normalized Ninth tensor coefficient. -/
+theorem generatedNinth_lower_tensor_input_actual
+    (hrows : ∀ k : Fin 4136, GeneratedNinthShortRowCertificate k)
+    (t : SpinIndex) (i : Fin 24) :
+    64 * Real.sqrt 2 * (griessConwayEncode generatedNinthAxis).2.2 t i =
+      (generatedNinthLowerSpinTensorInputInteger (nortonUIntegerLabel t) i : ℝ) := by
+  rw [generatedNinth_lower_tensor_input_certificate,
+    generatedNinth_lower_tensor_source_actual hrows]
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

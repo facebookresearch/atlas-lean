@@ -1,0 +1,201 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- All finite recurrence checks identify literal candidates with actual source-word vectors. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks61
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks62
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks63
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks64
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks65
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks66
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks67
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks68
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks69
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationC422Orthogonal3VectorChecks70
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Reassemble an exact coordinate interval index into its actual original path index. -/
+def y422Orthogonal3VectorGlobal (b : Fin 71)
+    (j : Fin (y422Orthogonal3VectorChunks b).size) : Fin 9033 :=
+  ⟨(y422Orthogonal3VectorChunks b).offset + j.val, by
+    have hj : j.val < (if b.val < 70 then 128 else 73) :=
+      j.isLt.trans_le (y422Orthogonal3VectorChunks_size b).le
+    rw [y422Orthogonal3VectorChunks_offset]
+    split_ifs at hj <;> omega⟩
+
+/-- Interval lookup and reassembly preserve the original path exactly. -/
+theorem y422Orthogonal3VectorGlobal_local (i : Fin 9033) :
+    y422Orthogonal3VectorGlobal (y422Orthogonal3VectorBlock i)
+      (y422Orthogonal3VectorLocal i) = i := by
+  apply Fin.ext
+  change (y422Orthogonal3VectorChunks (y422Orthogonal3VectorBlock i)).offset +
+    i.val % 128 = i.val
+  rw [y422Orthogonal3VectorChunks_offset]
+  unfold y422Orthogonal3VectorBlock
+  dsimp only
+  omega
+
+set_option maxRecDepth 100000 in
+set_option maxHeartbeats 16000000 in
+-- All 71 exact finite interval proofs are combined without adding any recurrence assumptions.
+/-- Every actual finite coordinate interval satisfies its original source recurrence. -/
+theorem y422Orthogonal3VectorChunks_checked (b : Fin 71) :
+    ∀ j : Fin (y422Orthogonal3VectorChunks b).size,
+      y422Orthogonal3VectorRecurrence (y422Orthogonal3VectorGlobal b j) := by
+  fin_cases b
+  · exact y422Orthogonal3VectorChecks00
+  · exact y422Orthogonal3VectorChecks01
+  · exact y422Orthogonal3VectorChecks02
+  · exact y422Orthogonal3VectorChecks03
+  · exact y422Orthogonal3VectorChecks04
+  · exact y422Orthogonal3VectorChecks05
+  · exact y422Orthogonal3VectorChecks06
+  · exact y422Orthogonal3VectorChecks07
+  · exact y422Orthogonal3VectorChecks08
+  · exact y422Orthogonal3VectorChecks09
+  · exact y422Orthogonal3VectorChecks10
+  · exact y422Orthogonal3VectorChecks11
+  · exact y422Orthogonal3VectorChecks12
+  · exact y422Orthogonal3VectorChecks13
+  · exact y422Orthogonal3VectorChecks14
+  · exact y422Orthogonal3VectorChecks15
+  · exact y422Orthogonal3VectorChecks16
+  · exact y422Orthogonal3VectorChecks17
+  · exact y422Orthogonal3VectorChecks18
+  · exact y422Orthogonal3VectorChecks19
+  · exact y422Orthogonal3VectorChecks20
+  · exact y422Orthogonal3VectorChecks21
+  · exact y422Orthogonal3VectorChecks22
+  · exact y422Orthogonal3VectorChecks23
+  · exact y422Orthogonal3VectorChecks24
+  · exact y422Orthogonal3VectorChecks25
+  · exact y422Orthogonal3VectorChecks26
+  · exact y422Orthogonal3VectorChecks27
+  · exact y422Orthogonal3VectorChecks28
+  · exact y422Orthogonal3VectorChecks29
+  · exact y422Orthogonal3VectorChecks30
+  · exact y422Orthogonal3VectorChecks31
+  · exact y422Orthogonal3VectorChecks32
+  · exact y422Orthogonal3VectorChecks33
+  · exact y422Orthogonal3VectorChecks34
+  · exact y422Orthogonal3VectorChecks35
+  · exact y422Orthogonal3VectorChecks36
+  · exact y422Orthogonal3VectorChecks37
+  · exact y422Orthogonal3VectorChecks38
+  · exact y422Orthogonal3VectorChecks39
+  · exact y422Orthogonal3VectorChecks40
+  · exact y422Orthogonal3VectorChecks41
+  · exact y422Orthogonal3VectorChecks42
+  · exact y422Orthogonal3VectorChecks43
+  · exact y422Orthogonal3VectorChecks44
+  · exact y422Orthogonal3VectorChecks45
+  · exact y422Orthogonal3VectorChecks46
+  · exact y422Orthogonal3VectorChecks47
+  · exact y422Orthogonal3VectorChecks48
+  · exact y422Orthogonal3VectorChecks49
+  · exact y422Orthogonal3VectorChecks50
+  · exact y422Orthogonal3VectorChecks51
+  · exact y422Orthogonal3VectorChecks52
+  · exact y422Orthogonal3VectorChecks53
+  · exact y422Orthogonal3VectorChecks54
+  · exact y422Orthogonal3VectorChecks55
+  · exact y422Orthogonal3VectorChecks56
+  · exact y422Orthogonal3VectorChecks57
+  · exact y422Orthogonal3VectorChecks58
+  · exact y422Orthogonal3VectorChecks59
+  · exact y422Orthogonal3VectorChecks60
+  · exact y422Orthogonal3VectorChecks61
+  · exact y422Orthogonal3VectorChecks62
+  · exact y422Orthogonal3VectorChecks63
+  · exact y422Orthogonal3VectorChecks64
+  · exact y422Orthogonal3VectorChecks65
+  · exact y422Orthogonal3VectorChecks66
+  · exact y422Orthogonal3VectorChecks67
+  · exact y422Orthogonal3VectorChecks68
+  · exact y422Orthogonal3VectorChecks69
+  · exact y422Orthogonal3VectorChecks70
+
+/-- All 9033 original source-path vector recurrences are actually checked. -/
+theorem y422Orthogonal3VectorRecurrence_checked (i : Fin 9033) :
+    y422Orthogonal3VectorRecurrence i := by
+  have h := y422Orthogonal3VectorChunks_checked (y422Orthogonal3VectorBlock i)
+    (y422Orthogonal3VectorLocal i)
+  rw [y422Orthogonal3VectorGlobal_local] at h
+  exact h
+
+/-- The literal finite vector coordinates equal their actual original source-word actions. -/
+theorem y422Orthogonal3VectorCache_actual (i : Fin 9033) :
+    y422Orthogonal3TPathVector i = y422Orthogonal3VectorCache i :=
+  y422Orthogonal3VectorCache_eq_actual y422Orthogonal3VectorRecurrence_checked i
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

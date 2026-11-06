@@ -1,0 +1,62 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Matrix00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Odd06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Even06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsOddFourthMiddlePairingPartCheck01Pair00
+
+/-! Every bounded original packet assembles the entire genuine finite pairing. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option autoImplicit false
+
+/-- All original matrix and preferred short terms give the complete pairing 128. -/
+theorem generatedAxisGlobalOddFourthMiddlePairingBoundedCheck01 :
+    generatedAxisGlobalOddFourthMiddlePairingBitQ 1 = 128 := by
+  rw [← generatedAxisGlobalOddFourthMiddlePairingSparseBitQ_eq,
+    generatedAxisGlobalOddFourthMiddlePairingParts_complete,
+    generatedAxisGlobalOddFourthMiddlePairingPartCheck01Matrix00,
+    generatedAxisGlobalOddFourthMiddlePairingPartCheck01Pair00]
+  have hOdd (b : Fin 7) : generatedAxisGlobalOddFourthMiddleOddPairingPart 1 b = 8 := by
+    fin_cases b
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd00
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd01
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd02
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd03
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd04
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd05
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Odd06
+  have hEven (b : Fin 7) : generatedAxisGlobalOddFourthMiddleEvenPairingPart 1 b = 9 := by
+    fin_cases b
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even00
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even01
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even02
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even03
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even04
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even05
+    · exact generatedAxisGlobalOddFourthMiddlePairingPartCheck01Even06
+  simp only [hOdd, hEven, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  norm_num
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

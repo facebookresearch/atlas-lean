@@ -1,0 +1,8091 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentShortPilot1Data
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentSrcSeventhL
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentWFamSixthF
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalIdentSrcSeventhG
+
+/-! # Data of the identification Sixth cell record S6c1- (gforest:S6c1-, e = -1)
+
+Letter data, composite mask data and the transported short lists (data only; every value is
+checked in the kernel in
+`GeneratedAxisGlobalTwelveSixthIdC1nChkH` and `GeneratedAxisGlobalTwelveSixthIdC1nChkG`). -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+namespace GeneratedAxisGlobalIdent
+
+/-- Packed columns of the letter data `s6c1nQ12694168`. -/
+def s6c1nQ12694168Cols : ℕ :=
+    0x000800000400000200000100000080000040000020000010000008000004000002000001 |||
+    (0x800000400000200000100000080000040000020000010000008000004000002000001000 <<< 288)
+
+/-- Packed correction rows of the letter data `s6c1nQ12694168`. -/
+def s6c1nQ12694168Rows : ℕ :=
+    0x0
+
+/-- Packed letter data `s6c1nQ12694168` (qel 12694168). -/
+def s6c1nQ12694168 : QMaskP := ⟨s6c1nQ12694168Cols, s6c1nQ12694168Rows, 2722843⟩
+
+/-- Packed columns of the letter data `s6c1nSg240`. -/
+def s6c1nSg240Cols : ℕ :=
+    0x0008000004000aca0005c900204080108040209020105010360808390804000002030801 |||
+    (0xb0d0f0400000200000100000080800040800020800010800008000004000002000001000 <<< 288)
+
+/-- Packed correction rows of the letter data `s6c1nSg240`. -/
+def s6c1nSg240Rows : ℕ :=
+    0x000000000000000000000000000200000100000200000100000360000390000000000030 |||
+    (0x800000800000800000800000000000000000000000000000 <<< 288)
+
+/-- Packed letter data `s6c1nSg240` (sign 240). -/
+def s6c1nSg240 : QMaskP := ⟨s6c1nSg240Cols, s6c1nSg240Rows, 781⟩
+
+/-- The source word with its letter data (head letter acts last). -/
+def s6c1nHW : List (IdentLetter × QMaskP) :=
+  [(.xi, sourceLetterP 0),
+    (.xi, sourceLetterP 0),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false)))]
+
+/-- The target word with its letter data (head letter acts last). -/
+def s6c1nGW : List (IdentLetter × QMaskP) :=
+  [(.qel (qmElt (12694168, true)), s6c1nQ12694168),
+    (.sign 240 0, s6c1nSg240),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, true), sourceLetterP (monoLetterIndex (0, true))),
+    (.mono (1, false), sourceLetterP (monoLetterIndex (1, false))),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.xi, sourceLetterP 0),
+    (.xi, sourceLetterP 0),
+    (.mono (0, false), sourceLetterP (monoLetterIndex (0, false))),
+    (.mono (1, true), sourceLetterP (monoLetterIndex (1, true)))]
+
+/-- Packed columns of the composite data `s6c1nHD`. -/
+def s6c1nHDCols : ℕ :=
+    0x4008008017f240b00000c00056f9403f03c066ea203f03305fc2006fc100301300c027f2 |||
+    (0x3f04020f080e00000c3000040c00000808000300000108002900031600030308030f000e <<< 288)
+
+/-- Packed correction rows of the composite data `s6c1nHD`. -/
+def s6c1nHDRows : ℕ :=
+    0x80000045c80020000010000050140000000050f4800000009000709000d800e0ac05d8a0
+
+/-- The composite mask data `s6c1nHD`. -/
+def s6c1nHD : QMaskP := ⟨s6c1nHDCols, s6c1nHDRows, 4003⟩
+
+/-- Packed columns of the composite data `s6c1nGD`. -/
+def s6c1nGDCols : ℕ :=
+    0x40080098a709e807799a0fa04dd9520003901103fd0d71e6f2beb7a80466060a08329819 |||
+    (0x6ef3957080a58080611000c5708070c080d02080917000300000b1e080b70080f40080e <<< 288)
+
+/-- Packed correction rows of the composite data `s6c1nGD`. -/
+def s6c1nGDRows : ℕ :=
+    0x800000d17800ee7800ee7c006526000000000005005a27a0de9db06e7f98800188d913ac |||
+    (0x800000800000000000000000800000800000 <<< 288)
+
+/-- The composite mask data `s6c1nGD`. -/
+def s6c1nGD : QMaskP := ⟨s6c1nGDCols, s6c1nGDRows, 1251041⟩
+
+/-- Packed labels (17-bit fields) of chunk `0` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL0 : ℕ :=
+    0x036f007380abc071e812600f88097004b4026602300116808b80466013000b0007008120 |||
+    (0x020080af4067a030103c081cf40d7a070101c0814040c000e81023402cf006f2047005c0 <<< 288) |||
+    (0x0c0005f402fc018300d00080c81a0000c2053d021e002d40b0205bd01de812f40c7804ad <<< 576) |||
+    (0x1e300a00044a817a01fd00de902f80400011300df007f8022740c300e180678033a01a30 <<< 864) |||
+    (0x13a010c80ae90278021301f480af00428040940a300b1804f8027a014300f00077403bc0 <<< 1152) |||
+    (0x49e80dc015000cbc045e026f01a7a0398048000b90056006fc0940049a024e01298084c8 <<< 1440) |||
+    (0x6f007cc02e9021480ea4061281c60223011a40912048600be8063c02fc0360406d00a3c0 <<< 1728) |||
+    (0xd980f7005e6043301d980c4d0352043c02398124c08f8007b003480c99037403c90224a0 <<< 2016) |||
+    (0x5540e980f6805ea043501da80c550392043a023a8125408f4006a018e206d407a6045340 <<< 2304) |||
+    (0xb403cf0227a077007c002ef021780ebc061e81e60220011bc091e0480018d2075407aa04 <<< 2592) |||
+    (0xe801560366405d00a24049280bc015300ca40452026901a4a0318048c01c000e680c8103 <<< 2880) |||
+    (0x9808cc04e603534054808f006b480d5014a8095501a6029a019a808d404ea03554064808 <<< 3168) |||
+    (0x6407d00b2403f680fc017300da403e402a901c4a041806b880b501498094d0166029c019 <<< 3456) |||
+    (0xa039540c98103c022203930209a0698028281494084804b102cc81694074a04a5031203a <<< 3744) |||
+    (0x101ea02d3006ea03cc05b80373020e204d401fe02b540998041407e602b3008920654082 <<< 4032) |||
+    (0x80b550338001740a9a044c0840815a008000b6902b8011340ba80fd406ea817301f780e7 <<< 4320) |||
+    (0x006a0098c04ca0259022f8119408c60459012f80afc06fe811f40cd0106902aa039a408a <<< 4608) |||
+    (0x81d040d8206fd01be813f40bf80e7d024a02d000f3a048c05be037000f300ac007208119 <<< 4896) |||
+    (0x07f2819f008aa05410220011440afa05c101e0813040c80000901fe80b04068202fd03be <<< 5184) |||
+    (0x0e15030603ff008780e0c0806010e40bc80de406860345019c80bfc060a0303017c80cfc <<< 5472) |||
+    (0x1fb00b0c01f20416409c80ae405060285013c80efc078a03c301dc809fc0220818502028 <<< 5760) |||
+    (0x27001a820364047e01b000d880278093e04a502518126408328145007c00b15028600fa0 <<< 6048) |||
+    (0x62c81b9021c811d8092c0479002c0015800ae035f407280a4004a080e3014f80cc004600 <<< 6336) |||
+    (0xc31036c04430236012300906016a00b600c65038a03d6022b2070c07b202f6021b00ed80 <<< 6624) |||
+    (0xd500c2903ac0445023501228090a016b0191a06a80798044c40d600f8c05d8042c01d600 <<< 6912) |||
+    (0xf0021800ec0062081d9021f811c00920047f0192a07280794044a40e600f9405d4042a01 <<< 7200) |||
+    (0xac80c3014c80cd8046c027601ab202e40472009d004e00c7d03ca03d002282078c07be02 <<< 7488) |||
+    (0x0c06ca80ca014500929019802a50195008a804d4034a406b0091403640359406280a5804 <<< 7776) |||
+    (0xc80dd801a602b601cb203e406c680aa014600931015802a30196008b004d8034c405b009 <<< 8064) |||
+    (0xc02062066400008156408b0000502b28176407b204d9032c0399408280b5801a48103016 <<< 8352) |||
+    (0x40c6010400448038 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `0` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV0 : ℕ :=
+    0x7fff8003800380017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff |||
+    (0x800180017fff80017fff7fff800180017fff7fff80017fff80017fff7fff7fff7fff7ffb <<< 288) |||
+    (0x80017fff7fff800180017fff7fff80017fff8001800180018001800580017ffd7ffd7fff <<< 576) |||
+    (0x80017fff7fff800180017fff8001800180018001800580017ffd7ffd7fff800180017fff <<< 864) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff8001 <<< 1152) |||
+    (0x7fff7fff80018001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff <<< 1440) |||
+    (0x80017fff7fff7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff80018001 <<< 1728) |||
+    (0x80017fff7fff80017fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff8001 <<< 2016) |||
+    (0x800180017fff80017fff7fff8001800180018001800580017ffd7ffd7fff800180017fff <<< 2304) |||
+    (0x7fff8003800380017fff7fff80017fff80018001800180018001800580017ffd7ffd7fff <<< 2592) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff7fff7fff7fff7fff7ffb <<< 2880) |||
+    (0x7fff8003800380017fff7fff8001800180018001800580017ffd7ffd7fff800180017fff <<< 3168) |||
+    (0x7ffd7ffd7fff8001800180018001800580017ffd7ffd7fff80017fff7fff7fff7fff7ffb <<< 3456) |||
+    (0x7ffd7fe57ffd800d7fff7fff7fff7fff7ffb7fff80038003800180018001800180058001 <<< 3744) |||
+    (0x8005800580058005800180018001800180057ffd7ffd7ffd7ffd7fe57ffd7ffd7ffd7ffd <<< 4032) |||
+    (0x80017fff800180017fff7fff800180017fff80017fff7fff800180018001800180018001 <<< 4320) |||
+    (0x800180017fff7fff80017fff80017fff7fff7fff7fff7ffb7fff8003800380017fff7fff <<< 4608) |||
+    (0x7fff80017fff8001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff <<< 4896) |||
+    (0x8001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff800180017fff <<< 5184) |||
+    (0x7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff800180017fff <<< 5472) |||
+    (0x8001800580017ffd7ffd7fff800180017fff80017fff7fff800180017fff7fff7fff7fff <<< 5760) |||
+    (0x7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff8001800180018001 <<< 6048) |||
+    (0x7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff7fff7fff7fff <<< 6336) |||
+    (0x8001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff80017fff7fff <<< 6624) |||
+    (0x80017fff80018001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff <<< 6912) |||
+    (0x8003800380017fff7fff80017fff7fff7fff7fff7fff7ffb7fff8003800380017fff7fff <<< 7200) |||
+    (0x8001800180018001800580017ffd7ffd7fff800180017fff7fff7fff7fff7fff7ffb7fff <<< 7488) |||
+    (0x8001800580017ffd7ffd7fff80017fff7fff7fff7fff7ffb7fff8003800380017fff7fff <<< 7776) |||
+    (0x800580017ffd7ffd7fff800180018001 <<< 8064)
+
+/-- Chunk `0` of `s6c1nHT`. -/
+def s6c1nHT0 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL0 s6c1nHTV0 512
+
+/-- Packed labels (17-bit fields) of chunk `1` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL1 : ℕ :=
+    0x02cc00f4203b005c6036c0211a04a8041c02aa40960083007d802ac0111a06280814038a |||
+    (0x0346011640a620430083e8165010680b9502c6022240b500fa806d4816c01f800e8d01d4 <<< 288) |||
+    (0x9f56cd0d66ceb3af59f5acd0b66cdb343d9b3eceb967d440d281095029403a5408500b29 <<< 576) |||
+    (0x3c6d9d16ce2d669eb3c759d1ace2b669db38bd9a7ecf196744b34259b32cebf67d7b3aed <<< 864) |||
+    (0x6b7b37ed9ad6cf4d672eb37f59adacf4b672db3d3d9cbecdf966b4b38a59a72cf1f6747b <<< 1152) |||
+    (0xcdf66e7b336d9b96ceed67beb33759b9aceeb67bdb3bbd9efeccd966e4b3d259cb2cdff6 <<< 1440) |||
+    (0x136beeb5f15b002d8196bebb5efdaf9657e32c0695fd4afa257e92c0395fbcb3ba59ef2c <<< 1728) |||
+    (0xded8076bf4b5f45afead80d6bf1b5f2daf7e57d72c0c96004af8a57dd2c0995fecaff6d8 <<< 2016) |||
+    (0x2eaf97d7e3ec06f5fd7afa3d7e9ec03f5fbfaff75813abeed5f16b0035819abebd5efeaf <<< 2304) |||
+    (0x936de8af7fd7d7ec0cf6007af8bd7ddec09f5fefafdf5807abf4d5f46afeb580dabf1d5f <<< 2592) |||
+    (0x82dcf16e19b76ddbceadcc56e03b7795bd4edc976deab76cdbce2dcc16e01b7785bd46dc <<< 2880) |||
+    (0x8dba42de116ea9b7555bc2edd276e32b761dbc8adcf56e1bb7545bc26dd236e30b760dbc <<< 3168) |||
+    (0x1b7005b986de736ed8b70d5b9eede476ec2b719dba4ade156eabb70c5b9e6de436ec0b71 <<< 3456) |||
+    (0x42e9c46970ba805bd68de5b6f5db92adea56ef3b7015b98ede776edab6f4db922dea16ef <<< 3744) |||
+    (0x05b868d8d16dfa364519f42e5416fa237691a622e9f46968ba8c5bd08de616fba37651a6 <<< 4032) |||
+    (0x0b8605ce68d5d1737a35851b542e2446828b92c5b808d8e16de2364919f22e5746830b92 <<< 4320) |||
+    (0x1723a34251b042dcc46bf0b7405c768d1546da8b86c5ce08d5e1736235891b522e2746db <<< 4608) |||
+    (0x58f5ad2356852b21d593cad2f568b2b1ed59241722234291b022dcf46be8b74c5c708d16 <<< 4896) |||
+    (0xb1e95926ad0ad691eb27b590fad16d697eb24b58f7ad0bd6916b27f590dad17d6976b24f <<< 5184) |||
+    (0x6676b3cf59b5acc356552b39d59fcaccf565b2b36d59e4ad225685ab219593ead2e568ba <<< 5472) |||
+    (0xcce565bab36959e6acaad661eb3fb59cfacb6d667eb3cb59b7acabd6616b3ff59cdacb7d <<< 5760) |||
+    (0x581a36851b468ad7456aa35cd1ae28b054583a36951b4e8ad34568acc25655ab39959fea <<< 6048) |||
+    (0xb6745b2a351d1a8a8b314599a34551a2e8b6345b0a350d1a828b35459ba35dd1aea8b014 <<< 6336) |||
+    (0x7e68c874642a309d184a8c514629a2fd517ee8c834640a308d18428c55462ba34451a268 <<< 6624) |||
+    (0xe5d172a8ce14671a2f0517868cb7465aa2e4d17228ce54673a2f15178e8cb34658a2fc51 <<< 6912) |||
+    (0x08b3b559f26cf0567e1b37959a46cdb56679b3e5d9da2cfc76780b349d9bc2ccf766d8a2 <<< 7200) |||
+    (0x776798b39d59e66cea567b1b39159b06ce1566a9b3cdd9ce2cf676750b361d9c82cd5767 <<< 7488) |||
+    (0x82ced767c8b35559c26cd856721b3d959d46cf356739b385d9aa2ce4766c0b3a9d9ec2ce <<< 7776) |||
+    (0x3d42929fff50bcb33d59b66cd2566f1b3f159e06cf956769b36dd99e2cde76690b3c1d9f <<< 8064) |||
+    (0x4a89bd41d2a05f50eca846d453aa1ab5016a852d459aa17b4ffea8a7d4232a02f50d4a8b <<< 8352) |||
+    (0xa88fd4172a08f510 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `1` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV1 : ℕ :=
+    0x7ffd7ffd7ffd7ffd7ffd80057fff7fff7fff7fff7ffb7fff800380038001800180018001 |||
+    (0x800180018005800580058005800180018001800180057ffd7ffd7ffd7ffd7ffd7ffd7ffd <<< 288) |||
+    (0x7ffd800380037ffd800380037ffd80037ffd7ffd800380037ffd80038001800180018001 <<< 576) |||
+    (0x80037ffd800380037ffd7ffd80037ffd800380037ffd800380037ffd8003800380038003 <<< 864) |||
+    (0x80037ffd80037ffd800380037ffd7ffd80037ffd800380037ffd800380037ffd80038003 <<< 1152) |||
+    (0x7ffd8003800380037ffd7ffd80037ffd7ffd80037ffd7ffd80037ffd800380037ffd7ffd <<< 1440) |||
+    (0x800380037ffd7ffd7ffd800380037ffd7ffd7ffd8003800380037ffd8003800380037ffd <<< 1728) |||
+    (0x7ffd8003800380037ffd7ffd7ffd80038003800380037ffd7ffd8003800380037ffd8003 <<< 2016) |||
+    (0x7ffd80037ffd7ffd7ffd800380037ffd7ffd7ffd8003800380037ffd7ffd800380038003 <<< 2304) |||
+    (0x7ffd80037ffd7ffd80037ffd800380037ffd7ffd80037ffd7ffd8003800380037ffd7ffd <<< 2592) |||
+    (0x800380037ffd7ffd80037ffd800380037ffd800380037ffd800380037ffd7ffd80037ffd <<< 2880) |||
+    (0x80037ffd800380037ffd7ffd80037ffd800380037ffd800380037ffd8003800380037ffd <<< 3168) |||
+    (0x80038003800380037ffd800380037ffd800380037ffd80037ffd7ffd800380037ffd8003 <<< 3456) |||
+    (0x7ffd7ffd80038003800380037ffd7ffd7ffd7ffd80038003800380037ffd7ffd7ffd7ffd <<< 3744) |||
+    (0x80038003800380037ffd7ffd800380037ffd7ffd7ffd7ffd80038003800380037ffd7ffd <<< 4032) |||
+    (0x7ffd7ffd80038003800380037ffd7ffd7ffd7ffd80038003800380037ffd7ffd7ffd7ffd <<< 4320) |||
+    (0x8003800380037ffd7ffd7ffd7ffd7ffd7ffd80037ffd7ffd80038003800380037ffd7ffd <<< 4608) |||
+    (0x7ffd7ffd7ffd80038003800380037ffd80037ffd7ffd7ffd7ffd7ffd7ffd80037ffd8003 <<< 4896) |||
+    (0x800380038003800380037ffd7ffd7ffd7ffd80037ffd80038003800380037ffd7ffd7ffd <<< 5184) |||
+    (0x7ffd7ffd7ffd80037ffd80038003800380037ffd7ffd7ffd7ffd7ffd7ffd80037ffd8003 <<< 5472) |||
+    (0x7ffd7ffd7ffd7ffd7ffd80037ffd80038003800380037ffd7ffd7ffd7ffd7ffd7ffd8003 <<< 5760) |||
+    (0x80037ffd7ffd7ffd80037ffd7ffd7ffd7ffd7ffd7ffd80038003800380037ffd80037ffd <<< 6048) |||
+    (0x800380038003800380037ffd80037ffd7ffd7ffd7ffd7ffd7ffd80038003800380037ffd <<< 6336) |||
+    (0x7ffd7ffd80037ffd80037ffd800380038003800380037ffd80037ffd7ffd7ffd7ffd8003 <<< 6624) |||
+    (0x8003800380037ffd80038003800380037ffd80037ffd80037ffd7ffd7ffd7ffd80037ffd <<< 6912) |||
+    (0x80037ffd8003800380037ffd80038003800380037ffd80037ffd7ffd80037ffd80037ffd <<< 7200) |||
+    (0x80038003800380037ffd8003800380037ffd80037ffd80037ffd7ffd7ffd7ffd80037ffd <<< 7488) |||
+    (0x7ffd7ffd80037ffd80037ffd8003800380037ffd80038003800380037ffd800380037ffd <<< 7776) |||
+    (0x7ffd7ffd80037ffd80037ffd80038003 <<< 8064)
+
+/-- Chunk `1` of `s6c1nHT`. -/
+def s6c1nHT1 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL1 s6c1nHTV1 512
+
+/-- Packed labels (17-bit fields) of chunk `2` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL2 : ℕ :=
+    0x50bfa84754536a1ad5015a85354596a17d4ffda82ed447aa20b5046a83ad44daa1db502e |||
+    (0xa05950efa82f54476a20d5045a83b544d6a1dd502da8a65423ea02950d7a8b25429e9ff9 <<< 288) |||
+    (0x7332b8af5c84aea3d7452b81f5c3caeafd74b2b7ef5c24a88e5417ea0895107a89a541de <<< 576) |||
+    (0xe66d73fab90b5c56ae8ad751ab87b5c0eae96d757ab84b5bf6ae73d72d2b8df5c9cae7fd <<< 864) |||
+    (0xd5cae1fd7032ba2f5d44ae43d7152b99f5cfcae4fd71b2b96f5ce4ae5ad739ab93b5c6ea <<< 1152) |||
+    (0xabb5d2eae06d70faba8b5d16ae2ad721ab9fb5cceae36d727ab9cb5cb6ae13d6fd2ba5f5 <<< 1440) |||
+    (0xb1ea3df518fa93fd4b7ea3af5177a91a54a52a43951bca92654ab2a40951a4adfad709ab <<< 1728) |||
+    (0x1b54a5aa43d51bea92754abaa40d51a6a932d4b16a3db518da93ed4b76a3ab5175a933d4 <<< 2016) |||
+    (0x35a8d3d481ea55f524fa8dfd487ea52f5237a8ba54752a5b9527ca8c6547b2a5895264a9 <<< 2304) |||
+    (0x568828a8bb5475aa5bd527ea8c7547baa58d5266a8d2d4816a55b524da8ded4876a52b52 <<< 2592) |||
+    (0x0051f228fa14cd0a66510408823440e2207c534c29a5441ba20d0525a292e14988a4c910 <<< 2880) |||
+    (0x9a1fc052d2296a44642232c51a428d114670a33511a888d714828a41910fe887c4441a22 <<< 3168) |||
+    (0xe14608a309117688b8442c2216c52c4296114af0a57510c8886714ba8a5d90fde87ec43f <<< 3456) |||
+    (0xa8c0d16b40b50118f48cb214850a4251120889344462223c522c29154463a2310517a28b <<< 3744) |||
+    (0xd18228c59169e0b5d1195c8c8616638b3bd186a8bfd16cc0b54119148ce2166b8b47d18c <<< 4032) |||
+    (0x8b53d192a8cdd165c0b3c118548c0216798b2ed18028c2916a60b69119bc8c9616918b32 <<< 4320) |||
+    (0x16a98b66d19c28c8916760b31117fc8c3616bb8b4fd190a8cad16640b48118b48c1216d3 <<< 4608) |||
+    (0x263242e7a17304d12268a134a89a590ba685d016a18b5ad19628c79168e0b351181c8c66 <<< 4896) |||
+    (0x0b8685c0132e899790b36859842d3a16904cc226621316898b90ad6856842bba15d04c62 <<< 5184) |||
+    (0x97650a38851f1301098050a888547429c214ec4bfc25fd42dfa16f04cf2267a134289a19 <<< 5472) |||
+    (0x2a42152c4c1c260d4278213cc4b6c25b512d5096a509d884ef42902148c4bcc25e512ed0 <<< 5760) |||
+    (0x36091f8c8fc24697234a921cc90e2460723029229c914a45d322e81309098450aa885574 <<< 6048) |||
+    (0x727239291e1c8f0a46f323789205c902a466323309210c90824637231a91edc8f6a46c32 <<< 6336) |||
+    (0xc62484724229199c8cca4813240891bdc8dea478323c091c8c8e42475723aa91d4c8ea24 <<< 6624) |||
+    (0x75c8baa48a324509180c8c024877243a91a4c8d2247e723f291b1c8d8a47b323d8918cc8 <<< 6912) |||
+    (0x131a7e250b5290a35344a3c8d4a06a0094311a7fa50b9290c35374a3d0d4ac6a06943291 <<< 7200) |||
+    (0x9a359c4a2e8d4306ac894951aac2522528c235104a2f0d43c6ace94961aada522928c435 <<< 7488) |||
+    (0x106ad894bd4a690d68c6996941a1a6ba5099299c359f4a688d680699094191a6a2509529 <<< 7776) |||
+    (0xe0e5b4727298a81ab9a530927d434bb49fb0d31c6ade94be1ab82530527d234b849fa8d3 <<< 8064) |||
+    (0x01ccea623131b039494c058e468719c985f1c692618d302e39261ca2a62d1310039714c3 <<< 8352) |||
+    (0x4c720e5547342989 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `2` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV2 : ℕ :=
+    0x7ffd8003800380037ffd80037ffd80037ffd7ffd7ffd80037ffd7ffd7ffd7ffd80037ffd |||
+    (0x80037ffd8003800380037ffd80038003800380037ffd800380037ffd8003800380038003 <<< 288) |||
+    (0x7ffd7ffd7ffd7ffd7ffd80037ffd7ffd7ffd80037ffd8003800380037ffd7ffd80037ffd <<< 576) |||
+    (0x8003800380037ffd80037ffd7ffd7ffd80037ffd7ffd7ffd7ffd7ffd7ffd800380037ffd <<< 864) |||
+    (0x7ffd7ffd8003800380037ffd80037ffd7ffd7ffd80037ffd7ffd7ffd7ffd7ffd7ffd8003 <<< 1152) |||
+    (0x7ffd8003800380037ffd8003800380038003800380037ffd8003800380037ffd80037ffd <<< 1440) |||
+    (0x800380038003800380037ffd80037ffd7ffd7ffd7ffd7ffd7ffd80037ffd7ffd7ffd8003 <<< 1728) |||
+    (0x80037ffd7ffd7ffd7ffd7ffd7ffd80037ffd7ffd7ffd80037ffd8003800380037ffd8003 <<< 2016) |||
+    (0x7ffd80037ffd7ffd7ffd80037ffd8003800380038003800380037ffd80037ffd7ffd7ffd <<< 2304) |||
+    (0x7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd80037ffd7ffd7ffd7ffd7ffd <<< 2592) |||
+    (0x800380038003800380038003800380038003800380038003800380037ffd7ffd7ffd7ffd <<< 2880) |||
+    (0x800380038003800380038003800380038003800380038003800380038003800380038003 <<< 3168) |||
+    (0x800380037ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd7ffd <<< 3456) |||
+    (0x7ffd7ffd80038003800380037ffd7ffd800380037ffd7ffd7ffd7ffd800380037ffd7ffd <<< 3744) |||
+    (0x7ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd7ffd7ffd80038003 <<< 4032) |||
+    (0x800380037ffd7ffd800380037ffd7ffd7ffd7ffd800380037ffd7ffd8003800380038003 <<< 4320) |||
+    (0x800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd80038003 <<< 4608) |||
+    (0x7ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd <<< 4896) |||
+    (0x7ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd7ffd7ffd80038003 <<< 5184) |||
+    (0x800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd80038003 <<< 5472) |||
+    (0x80038003800380037ffd800380037ffd800380037ffd80037ffd7ffd800380037ffd8003 <<< 5760) |||
+    (0x80037ffd8003800380037ffd800380037ffd7ffd80037ffd800380037ffd800380037ffd <<< 6048) |||
+    (0x800380037ffd7ffd80037ffd80037ffd800380037ffd7ffd80037ffd800380037ffd8003 <<< 6336) |||
+    (0x800380037ffd7ffd800380037ffd7ffd7ffd7ffd80037ffd7ffd80037ffd7ffd80037ffd <<< 6624) |||
+    (0x7ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd <<< 6912) |||
+    (0x800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd80038003 <<< 7200) |||
+    (0x7ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd <<< 7488) |||
+    (0x7ffd80037ffd800380037ffd80037ffd7ffd80037ffd800380037ffd80037ffd80038003 <<< 7776) |||
+    (0x80037ffd80037ffd7ffd80037ffd8003 <<< 8064)
+
+/-- Chunk `2` of `s6c1nHT`. -/
+def s6c1nHT2 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL2 s6c1nHTV2 512
+
+/-- Packed labels (17-bit fields) of chunk `3` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL3 : ℕ :=
+    0x98e74c020e3d4718298301c5ea60b12ff038e91c7525fed305e38be4c198e30871ec9807 |||
+    (0x316e39461c92a605130c038d14c2e0e334723298081ca52636d311e399e4c498e68872ac <<< 288) |||
+    (0x9a2acfb366d1b3b0d9a26cfb566d2b3edd9b4ecec166884c558e4e872dc987f1cb92620d <<< 576) |||
+    (0x3c959c6ace9366a1b3c8d9c66ce9566a2b3a5d9a8ecf216718b3ec59b42cec7668bb3b15 <<< 864) |||
+    (0x7abb38159eaacd736731b380d9ea6cd756732b35dd9ccece0167a8b3a459a82cf27671bb <<< 1152) |||
+    (0xce7677bb33959deacdd367c1b338d9de6cdd567c2b375d9f0ecce16778b35c59cc2ce076 <<< 1440) |||
+    (0x8512cfe37394b300dc986eda96ab1b68a585d2cf8373a4b318dc946edc96a8b37459f02c <<< 1728) |||
+    (0x040db386e8a96831b8d259712d6e37714b058db346e8c96801b8ca597d2d6837721b6925 <<< 2016) |||
+    (0x904b180dbd86f3a96db1b61258112d1e37494b198dbd46f3c96d81b60a581d2d18374a4b <<< 2304) |||
+    (0x129a471b75258b12dce37a14afc0daf86eaa96931b74a58bd2dc837a24afd8daf46eac96 <<< 2592) |||
+    (0xbd35b03af64d5a0ec68755a9aa31d58a6a7d35503b261dcaa68ed34183b424d080ecf877 <<< 2880) |||
+    (0x8a67fd34903b861dc2a692d33f83b524d000ed3876f29a574d720eba875ba9a731d70a69 <<< 3168) |||
+    (0x24d500eab876329ab71d7aa6b6d34d83ae24d380eb7875d29ae74d2a0ede8769a9a031da <<< 3456) |||
+    (0x8821811c108cd904e682c74d220ee28767a9a131da0a683d34703b961d92a6aad35383ab <<< 3744) |||
+    (0x504488250119508df90576826f115688be5047881e811c908d99054682d7116e88c25049 <<< 4032) |||
+    (0x88d65053882c8115908c19048681f7118288ac503e8824011ad08e390596829f118a88b8 <<< 4320) |||
+    (0x11b288e4505a882a0117d08ab903d6823f11be88ca504d882b8117108c5904a6822711c6 <<< 4608) |||
+    (0x589cac66d6032af2b5854ac72d6092aefb583c119a88e0505888270118508b790436824f <<< 4896) |||
+    (0xb01b58ccac4ed5f72af8b5884ac5ad5fd2af5b586cac36d5eb2afeb58b4ac42d5f12afbb <<< 5184) |||
+    (0x621eb13d57dfac075633eb0ad5797ac135639eb07d577fac1ed5df2b04b58e4ac2ad5e52 <<< 5472) |||
+    (0xbcb5615eb19d580fabef5627eb10d57c7abfb562deb0dd57afabd7561beb16d57f7abe35 <<< 5760) |||
+    (0xd09071f8393c1b560ddb071e039301b500dd806b70367819f40d0aabbf560feb1cd5827a <<< 6048) |||
+    (0xae20da106db8379c1c860e5306da037901c800e500683034581ae40da206b68367419f20 <<< 6336) |||
+    (0x8081d4c0e760670032c01aa80d440671832cc1aae0d470708838041d4a0e750682834541 <<< 6624) |||
+    (0x4d039a81c1c0dfe06a4034e019b80cac06a5834ec19be0caf074c839a41c1a0dfd070903 <<< 6912) |||
+    (0xdd44ef226c5131c898144b3224a5122c88f944ad224d51214890544f1226b51324897d07 <<< 7200) |||
+    (0x202a7f44bf22645135c89e1448322425126c8959447d224551254896544c122635136489 <<< 7488) |||
+    (0x3c54602a5f152e0a8cc55182a8314f20a6ac542829fb14ec0a6dc54102a0715300a8bc55 <<< 7776) |||
+    (0x7cd53e6a693654153e0aa4c54582a6315020a82c536829db14fc0a85c535029e715400aa <<< 8064) |||
+    (0x59b13cd41e6af935dc9ad64d5326a6f36579a9acd9566b5d354e9a9b4d95a6b5b354d9ad <<< 8352) |||
+    (0x9abf4d77a6c4b350 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `3` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV3 : ℕ :=
+    0x7ffd800380037ffd80037ffd7ffd80037ffd800380037ffd80037ffd7ffd80037ffd8003 |||
+    (0x80037ffd80037ffd7ffd80037ffd800380037ffd80037ffd80037ffd80037ffd7ffd8003 <<< 288) |||
+    (0x7ffd800380037ffd800380037ffd80037ffd7ffd800380037ffd80037ffd80037ffd8003 <<< 576) |||
+    (0x80037ffd800380037ffd7ffd80037ffd800380037ffd800380037ffd8003800380038003 <<< 864) |||
+    (0x80037ffd80037ffd800380037ffd7ffd80037ffd800380037ffd800380037ffd80038003 <<< 1152) |||
+    (0x80037ffd7ffd80037ffd7ffd80037ffd7ffd80037ffd7ffd80037ffd800380037ffd7ffd <<< 1440) |||
+    (0x7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd8003 <<< 1728) |||
+    (0x80037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd <<< 2016) |||
+    (0x7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd8003 <<< 2304) |||
+    (0x7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd80037ffd7ffd800380037ffd <<< 2592) |||
+    (0x80037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd <<< 2880) |||
+    (0x7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd8003 <<< 3168) |||
+    (0x7ffd7ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd800380037ffd <<< 3456) |||
+    (0x800380037ffd7ffd7ffd7ffd800380037ffd7ffd80038003800380037ffd7ffd80038003 <<< 3744) |||
+    (0x800380037ffd7ffd800380037ffd7ffd800380037ffd7ffd80038003800380037ffd7ffd <<< 4032) |||
+    (0x7ffd7ffd800380037ffd7ffd80038003800380037ffd7ffd800380037ffd7ffd7ffd7ffd <<< 4320) |||
+    (0x800380037ffd8003800380037ffd7ffd7ffd8003800380037ffd7ffd800380037ffd7ffd <<< 4608) |||
+    (0x8003800380037ffd8003800380037ffd7ffd8003800380038003800380037ffd7ffd8003 <<< 4896) |||
+    (0x800380037ffd7ffd7ffd80037ffd7ffd7ffd800380037ffd7ffd7ffd80037ffd7ffd7ffd <<< 5184) |||
+    (0x8003800380037ffd7ffd8003800380037ffd8003800380037ffd7ffd7ffd80037ffd8003 <<< 5472) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 5760) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 6048) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 6336) |||
+    (0x80018001800180017fff7fff7fff7fff800180017fff7fff7fff7fff8001800180018001 <<< 6624) |||
+    (0x8001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff8001800180018001 <<< 6912) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 7200) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180018001800180018001 <<< 7488) |||
+    (0x7fff8001800180017fff7fff7fff80018001800180017fff7fff80018001800180018001 <<< 7776) |||
+    (0x7fff8001800180017fff7fff7fff8001 <<< 8064)
+
+/-- Chunk `3` of `s6c1nHT`. -/
+def s6c1nHT3 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL3 s6c1nHTV3 512
+
+/-- Packed labels (17-bit fields) of chunk `4` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL4 : ℕ :=
+    0x34ee9acb4d7da6c1b34ed9b07cd3be6b2935f49b124d4126aff35df9abecd7766c4d3506 |||
+    (0x6b8d35669a8f4d8fa6b8b35659ae3cd59e6a39363c9b064d3b26b2f35f79acacd7d66c1d <<< 288) |||
+    (0x563c2ab6150b0a6e056302ab015080b0f059382d3415ca9ae24d5926a3f363f9a8ecd8f6 <<< 576) |||
+    (0xab38545c29c615930ab20545029c015900b53057582c4416520b0e859342d3215c90a6f8 <<< 864) |||
+    (0x6690abf852bc29f6152b0abe052b029f015280b1f057b82b74166a0b52857542c4216510 <<< 1152) |||
+    (0xc8215f10a83854dc2b0614b30a82054d02b0014b00ae3059d82c8415f20b1e857b42b721 <<< 1440) |||
+    (0xef878de9b6e1de3a6d1877ee9af61ddda6ce877d69aea1e21a6f0878e69b720ae2859d42 <<< 1728) |||
+    (0x4fa6e78789e9bce1e13a6c9877ae9b561e0da6c6877969b4a1e51a6e8878a69bd21e1fa6 <<< 2016) |||
+    (0x504dde8f0f136da3c6c4da28ef1135ea3bf44d9c8eee135d23be84de08f10136e23c701e <<< 2304) |||
+    (0xf001754dce8f271379a3c4c4d928f09136aa3bd44d8c8f06136923bc84dd08f28137a23c <<< 2592) |||
+    (0xa0075c03ce01d880f44012e009400c50061c076803d400cd80660076403d201d400f2002 <<< 2880) |||
+    (0xc00f1c02ee0062003200184076e03d701d680f34010e008401d580f2c00ec007300d5806 <<< 3168) |||
+    (0x800d50025407bc03c101f080ef8012c01a900c4801d007c803bb00cd0021407c403bd01e <<< 3456) |||
+    (0x221ce10fa0862c4500211f0031805d807ce03b801ee80f08010c019901ed80f1000ea018 <<< 3744) |||
+    (0x841722266113e0848c43d0219710fb886204506211c106308964426421cd106288968426 <<< 4032) |||
+    (0x883284382215e10c20886c41e0228f113f8848043d621941097087444174226510968874 <<< 4320) |||
+    (0x10de88588445220d6107608a4c42f0222710c38886041e6228c111b083244384215d111a <<< 4608) |||
+    (0x10f30862045d0228010f00903048d8250411b2107788a4042f6222410df08584445420d5 <<< 4896) |||
+    (0x2176116b089e043b021701168093f046b823f4122a0902848d4250211b10863845dc2286 <<< 5184) |||
+    (0x46602298111c08658466c229e111f090484964251a11dd093e846b423f21229089f843bc <<< 5472) |||
+    (0x8a80448021a811a408a98448c21ae11a7094884784242a1265090504968251c11de08640 <<< 5760) |||
+    (0xfc40fc707e043e141f050fc687e083e121f0610260810c3f901fc7094904788242c12660 <<< 6048) |||
+    (0x0a6203c0f8b07be43f241f7d0f8a87be83f221f7e0fea07eec40a0203f1027881003f961 <<< 6336) |||
+    (0x08040d620a40f5707b843e541f650f5687b883e521f660ff60808c40d020a70feb87ee04 <<< 6624) |||
+    (0x3b882603fe6201c0f9b07d643d641edd0f9a87d683d621ede103a0826c3fe0201f0ff788 <<< 6912) |||
+    (0xceb9df5cd7ae6ed73d6b973dca1ee4df72cfb972dca16e4db72cdb9de5cd72e6e973d410 <<< 7200) |||
+    (0x2972b4b9725ca12e4d972ccb9dedcd76e6eb73d5b9dfdcd7ee6ef73d7b9735ca1ae4dd72 <<< 7488) |||
+    (0x9ae71d732eb94f5cbfae62d72b6b9a3dce9ee71f732fb9a2dce96e71b732db94e5cbf2e6 <<< 7776) |||
+    (0x3d9b3eceb967d4b9a25ce92e719732cb94edcbf6e62b72b5b94fdcbfee62f72b7b9a35ce <<< 8064) |||
+    (0xdb38bd9a7ecf196744b34259b32cebf67d7b3aed9f56cd0d66ceb3af59f5acd0b66cdb34 <<< 8352) |||
+    (0xb3c759d1ace2b669 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `4` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV4 : ℕ :=
+    0x7fff7fff7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff |||
+    (0x8001800180017fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff800180017fff <<< 288) |||
+    (0x80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff7fff7fff <<< 576) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff800180017fff <<< 864) |||
+    (0x80017fff7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 1152) |||
+    (0x800180018001800180017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 1440) |||
+    (0x8001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff8001800180018001 <<< 1728) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff80018001 <<< 2016) |||
+    (0x7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 2304) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 2592) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 2880) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff80018001 <<< 3168) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 3456) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 3744) |||
+    (0x7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 4032) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff8001800180018001 <<< 4320) |||
+    (0x80018001800180017fff7fff800180017fff7fff7fff7fff80018001800180017fff7fff <<< 4608) |||
+    (0x800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff800180017fff7fff <<< 4896) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff800180017fff7fff <<< 5184) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff <<< 5472) |||
+    (0x7fff7fff800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 5760) |||
+    (0x7fff7fff800180017fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 6048) |||
+    (0x7fff7fff800180017fff7fff800180017fff7fff800180017fff7fff7fff7fff80018001 <<< 6336) |||
+    (0x800180017fff800180017fff800180017fff7fff800180017fff7fff8001800180018001 <<< 6624) |||
+    (0x7fff7fff80017fff800180017fff7fff80017fff80017fff800180017fff7fff80017fff <<< 6912) |||
+    (0x80017fff800180017fff80017fff7fff800180017fff80017fff7fff80017fff7fff8001 <<< 7200) |||
+    (0x800180017fff7fff80017fff800180017fff800180017fff80018001800180017fff8001 <<< 7488) |||
+    (0x7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff80017fff <<< 7776) |||
+    (0x800180017fff800180017fff80018001 <<< 8064)
+
+/-- Chunk `4` of `s6c1nHT`. -/
+def s6c1nHT4 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL4 s6c1nHTV4 512
+
+/-- Packed labels (17-bit fields) of chunk `5` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL5 : ℕ :=
+    0x672eb37f59adacf4b672db3d3d9cbecdf966b4b38a59a72cf1f6747b3c6d9d16ce2d669e |||
+    (0xceed67beb33759b9aceeb67bdb3bbd9efeccd966e4b3d259cb2cdff66b7b37ed9ad6cf4d <<< 288) |||
+    (0xdf566d0d372e9b7f4df5a6d0b372d9b43cdcbe6df937d4b3ba59ef2ccdf66e7b336d9b96 <<< 576) |||
+    (0xbc6cdb966eed369e9bc74db9a6eeb369d9bbbcda7e6f1936e49b424dcb26dff37d79b7ec <<< 864) |||
+    (0x7179bdecdc566e8d366e9bdf4dc5a6e8b366d9ba3cd9be6f7937149bba4da726f1f36e79 <<< 1152) |||
+    (0xd9f37a79b66cde966d6d375e9b674de9a6d6b375d9b5bcdd7e6d9937a49ba24d9b26f7f3 <<< 1440) |||
+    (0x932f5ef7b57bd7aded56f3dd7a4ebd7b5ed5af3db7a4dbcf7de93ef5e97b549b5a4dd726 <<< 1728) |||
+    (0x325e812f67f7adfbd9edeb76f4cd7a06bd9f5eb7af4cb7a05bd33de81ef6797adcbcf65e <<< 2016) |||
+    (0x0cbd3e5e872f64f7ac7bd92deb16f4fd7a1ebd935eb1af4fb7a1dbd3fde87ef6497ac4bd <<< 2304) |||
+    (0xd29568bd1a5ea52f55f7b0fbd56dec36f46d7a96bd575ec3af46b7a95bd1bdea5ef5597b <<< 2592) |||
+    (0x606c9295c81b22a57106cea95741ae0a55006be294f01adea54f06bda94ec1b1ca56e06c <<< 2880) |||
+    (0xb2575c6d4c95a71b52a56906caa95d41b10a54806ba295501b0ea54706b9a954c1b4ca56 <<< 3168) |||
+    (0x31b3b255dc6c8c95c71b252572c6d34959b1ae72553c6c3c951f1ae92554c6c4495231b2 <<< 3456) |||
+    (0xb66cdb343d9b3eceb967d41b35255ac6c7495bb1af7253bc6b7c953f1af9253cc6b84954 <<< 3744) |||
+    (0xace2b669db38bd9a7ecf196744b34259b32cebf67d7b3aed9f56cd0d66ceb3af59f5acd0 <<< 4032) |||
+    (0x59adacf4b672db3d3d9cbecdf966b4b38a59a72cf1f6747b3c6d9d16ce2d669eb3c759d1 <<< 4320) |||
+    (0xb33759b9aceeb67bdb3bbd9efeccd966e4b3d259cb2cdff66b7b37ed9ad6cf4d672eb37f <<< 4608) |||
+    (0x24cd928b4921a493d24ce92c6495724a8925d4b3ba59ef2ccdf66e7b336d9b96ceed67be <<< 4896) |||
+    (0x4a8d25d692c6c95764a8b25d5928bc921e493f24cf92c7c957e4a8f25d7928ac9216493b <<< 5184) |||
+    (0x939649fb246d925b4939a49fd246e9296496f24b492574928a49212493924cc92c74957a <<< 5472) |||
+    (0x297496fa4b4d25769296c96f64b4b2575925bc939e49ff246f9297c96fe4b4f2577925ac <<< 5760) |||
+    (0xcd7a622d3356973d4bcea6235335a973b4bcda5cfd2f3e98894cd4925a4939249f9246c9 <<< 6048) |||
+    (0x91f4c5fa646d3176982d4b86a6475317a982b4b85a60bd2e1e99194c5ca5ce52f32988f4 <<< 6336) |||
+    (0x0b297cf4bb7a5f2d2ed6997d4c2ea5f352eda997b4c2da65fd30be97c94bb4a60a52e129 <<< 6624) |||
+    (0x3a5329296df4bffa5b6d2ff698ed4ca6a5b752ffa98eb4ca5a63bd329e96d94bfca65e53 <<< 6912) |||
+    (0xa10248812780344008c0036805fc0928049b003f006400924049d02440129c00b6016da6 <<< 7200) |||
+    (0xe0016e00b780164092e04980246812880324007c0245812900302006b004700680091c04 <<< 7488) |||
+    (0x8408fc046e0240811c4011e008d00c1006000908047400c98064409040472023c011a002 <<< 7776) |||
+    (0x3d39be9f794fd4002e00168090e0477023e811b400fe007d023d811ac00dc006c00d1806 <<< 8064) |||
+    (0xda75bd3a7e9f194fa4a742539b29f7f4fd7a7ded3f569d0d4e6ea7df53f5a9d0b4e6da74 <<< 8352) |||
+    (0xa7c753e9a9d6b4e9 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `5` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV5 : ℕ :=
+    0x7fff80017fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff |||
+    (0x7fff80017fff7fff80017fff800180017fff7fff80017fff7fff80017fff7fff80018001 <<< 288) |||
+    (0x800180017fff7fff80017fff800180017fff800180017fff800180017fff7fff80017fff <<< 576) |||
+    (0x800180017fff800180017fff800180017fff80017fff7fff800180017fff800180017fff <<< 864) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff <<< 1152) |||
+    (0x80017fff7fff7fff80017fff800180017fff7fff80017fff800180017fff800180017fff <<< 1440) |||
+    (0x800180017fff7fff7fff800180017fff7fff7fff8001800180017fff7fff7fff7fff8001 <<< 1728) |||
+    (0x7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff7fff8001 <<< 2016) |||
+    (0x7fff80018001800180017fff7fff8001800180017fff7fff7fff800180017fff7fff7fff <<< 2304) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff80017fff8001800180017fff7fff <<< 2592) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 2880) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff80017fff8001 <<< 3168) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 3456) |||
+    (0x7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff <<< 3744) |||
+    (0x7fff800180017fff800180017fff80017fff7fff800180017fff80017fff7fff80017fff <<< 4032) |||
+    (0x80017fff800180017fff7fff80017fff80017fff800180017fff7fff80017fff80018001 <<< 4320) |||
+    (0x7fff7fff7fff8001800180017fff7fff7fff80017fff7fff80017fff7fff80017fff7fff <<< 4608) |||
+    (0x7fff7fff7fff80018001800180017fff7fff8001800180017fff7fff7fff800180017fff <<< 4896) |||
+    (0x800180017fff7fff7fff80018001800180017fff7fff8001800180017fff800180018001 <<< 5184) |||
+    (0x8001800180017fff7fff80018001800180017fff7fff7fff8001800180017fff7fff8001 <<< 5472) |||
+    (0x7fff7fff800180017fff800180017fff800180017fff80017fff7fff800180017fff8001 <<< 5760) |||
+    (0x80017fff800180017fff80017fff7fff800180017fff80017fff7fff80017fff7fff8001 <<< 6048) |||
+    (0x7fff7fff800180017fff800180017fff800180017fff7fff80017fff800180017fff8001 <<< 6336) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff800180017fff800180017fff8001 <<< 6624) |||
+    (0x80018001800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff <<< 6912) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff <<< 7200) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 7488) |||
+    (0x80017fff800180017fff7fff80017fff800180017fff800180017fff8001800180018001 <<< 7776) |||
+    (0x80017fff800180017fff7fff80017fff <<< 8064)
+
+/-- Chunk `5` of `s6c1nHT`. -/
+def s6c1nHT5 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL5 s6c1nHTV5 512
+
+/-- Packed labels (17-bit fields) of chunk `6` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL6 : ℕ :=
+    0x4ecea7af53dda9dcb4ecda773d3b3e9eb94f74a75a53a729f1f4fa7a7c6d3e969d6d4e9e |||
+    (0x9e2d4efea79753d1a9e2b4efda78bd3bfe9e594f44a77253b329ebf4f77a7aed3dd69dcd <<< 288) |||
+    (0x221e925f48cfa4d35221a925d48cea47e52572916949d4a78a53bf29e5f4f47a796d3d16 <<< 576) |||
+    (0x47f5257a916d49d6a47fd257e916f49d7a4d2d2216925b48cda47ed2576916b49d5a4d3d <<< 864) |||
+    (0x945a4bbd245e937f489fa4bb5245a937d489ea4365263291c94944a4d252212925948cca <<< 1152) |||
+    (0x379489ca4375263a91cd4946a437d263e91cf4947a4bad2456937b489da436d263691cb4 <<< 1440) |||
+    (0xe36ff7b7eb4bf7edfdd2fe897ecdbfaedfc52fdc97f2dbfd25f9b6fd3b7fd4a4ba524529 <<< 1728) |||
+    (0xeadfa72fcd97fa5bf965fb96fe2b7f5cbf665fd16feeb7efcbf5adfef2ff197e85bf425f <<< 2016) |||
+    (0x87bf435fe3eff7f7eb6bf7fdfddafe8d7ecfbfafdfc5afdcd7f2fbfd35f9befd3f7fd6bf <<< 2304) |||
+    (0xf41725bfebdfa7afcdd7fa7bf975fb9efe2f7f5ebf675fd1efeef7efebf5bdfefaff1d7e <<< 2592) |||
+    (0x642fe4178d0bf685e4830f217260b5f861802e5617d40b5e0618c2e5017d70bf705e4430 <<< 2880) |||
+    (0xf05e04311416f50c4285c682fe2178e0b9b85f202d86185c0b9a05f2c2d80185f0c4305c <<< 3168) |||
+    (0xf0c4b05ba43044177d0c0e85e08311216f60b67860c02eb617c40b66060cc2eb017c70c0 <<< 3456) |||
+    (0xc2beb45ab0b14c589e8b4a0c4a85ba83042177e0bb385ee02da6182c0bb205eec2da0182 <<< 3744) |||
+    (0x516da2be845aa8b14058988b4945a30b10c587e8b3a1613a2e89173c2c1b15fba2dc916d <<< 4032) |||
+    (0x8af7057c08be5163c22bf516022c8445a28b10058788b39161222e85173a2c1815fa22dc <<< 4320) |||
+    (0x45ed0af7c57c68be6163da2bf916042c87164422c3516222c9445d48aeb057608bb545ec <<< 4608) |||
+    (0x30f498934c6d2612d3184986f4c732615d313c1645a2c3916242c9745d50aebc57668bb6 <<< 4896) |||
+    (0x636d3124987b4c792618d315498874c67260fd316c98b74c1f2633d310c98ab4c31263cd <<< 5184) |||
+    (0xc55e61eb31e798dacc49e630b309798e6cc37e627b30af989f4c2b2639d30dc98c34c252 <<< 5472) |||
+    (0x84acc61e624b31b798f2cc3de62ab30c798cecc43e62db307f983ecc5be621b319f9862c <<< 5760) |||
+    (0xb130e2306ec838ac1be20e2286ec438aa1be10dba06c0037481b109856cc4fe61bb31cf9 <<< 6048) |||
+    (0x61e1b9b0dd7070e837bc1c4a0dd6870e437ba1c490d7e06da036181b980dbb86c0c374e1 <<< 6336) |||
+    (0x27037f01c6c0d6c86d3435521b3d0d6d06d3835541b3e0e058727c37f61c6f0d7f86dac3 <<< 6624) |||
+    (0x500705038e01c040da886b9436821ab50da906b9836841ab60e518705c38e61c070e0407 <<< 6912) |||
+    (0x581d1ba671874ce99d61d3fa65b8751e999e1d41a65c8752699a21d15a66e874b699ca0e <<< 7200) |||
+    (0x0898f54ce28e8d133aa3a644cb68e9f1333a3a8c4cb88ea0133423a904cdc8e8a133923a <<< 7488) |||
+    (0x5d31ec3a071d042646473f098e91cf026544736099411cee265347358993d1d0a2649474 <<< 7776) |||
+    (0x7037281b180ce84c8d0e82d31d439fb4ca90e78d328439b34ca70e77d327c39af4c930e8 <<< 8064) |||
+    (0x60660835941c460e87067b8364c1baa0e3106eb038c819e80d9006c7833ac1c5a0dc9071 <<< 8352) |||
+    (0x71003a1019840d6 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `6` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV6 : ℕ :=
+    0x7fff7fff80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff |||
+    (0x800180017fff80017fff7fff80017fff7fff80017fff7fff7fff7fff80017fff7fff8001 <<< 288) |||
+    (0x7fff7fff800180017fff8001800180017fff800180017fff800180017fff80017fff7fff <<< 576) |||
+    (0x800180017fff800180017fff8001800180017fff800180017fff7fff80017fff7fff8001 <<< 864) |||
+    (0x7fff7fff800180017fff800180017fff8001800180017fff800180017fff7fff80017fff <<< 1152) |||
+    (0x7fff7fff80017fff80017fff800180017fff7fff80017fff7fff7fff80017fff7fff8001 <<< 1440) |||
+    (0x80017fff80017fff800180017fff7fff80017fff80017fff800180017fff80017fff7fff <<< 1728) |||
+    (0x800180017fff80017fff80017fff7fff80017fff80018001800180017fff80017fff7fff <<< 2016) |||
+    (0x800180017fff80017fff7fff7fff7fff80017fff7fff80017fff7fff7fff7fff80017fff <<< 2304) |||
+    (0x8001800180018001800180018001800180018001800180017fff7fff80017fff80017fff <<< 2592) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 2880) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 3168) |||
+    (0x7fff80018001800180018001800180018001800180018001800180018001800180018001 <<< 3456) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff <<< 3744) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff <<< 4032) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff8001 <<< 4320) |||
+    (0x7fff7fff80017fff7fff7fff7fff7fff7fff800180017fff7fff80017fff800180017fff <<< 4608) |||
+    (0x8001800180017fff8001800180017fff80017fff7fff7fff8001800180017fff80017fff <<< 4896) |||
+    (0x800180018001800180017fff8001800180017fff80017fff7fff7fff7fff800180018001 <<< 5184) |||
+    (0x7fff7fff7fff80017fff8001800180017fff8001800180018001800180017fff7fff8001 <<< 5472) |||
+    (0x80017fff7fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff8001 <<< 5760) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff80017fff80017fff800180017fff <<< 6048) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 6336) |||
+    (0x8001800180018001800180018001800180017fff80017fff7fff80017fff80017fff8001 <<< 6624) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 6912) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 7200) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 7488) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff8001800180018001800180018001800180018001 <<< 7776) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff <<< 8064)
+
+/-- Chunk `6` of `s6c1nHT`. -/
+def s6c1nHT6 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL6 s6c1nHTV6 512
+
+/-- Packed labels (17-bit fields) of chunk `7` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL7 : ℕ :=
+    0x0d8006bf8346c1cba0db9072f036e81af80d18073c038701ab40cbe06ac832f41cf60e1f |||
+    (0x1d160def06f803a5019a40d360668834d41be60e9706938360c1b8a0e6106e3039881a48 <<< 288) |||
+    (0x5f702ea617ac0ba005f7c2ea017af0c3905c34314416fd0744037b01a540cce069483334 <<< 576) |||
+    (0xb55861502db618440b540615c2db018470bfd05e94301417750c3885c38314216fe0ba18 <<< 864) |||
+    (0x76a0b5b861202dce18380b5a0612c2dc8183b0c0305e64302c17690bfc85e98301217760 <<< 1152) |||
+    (0x13a17020b9f85f802e9e17b00b9e05f8c2e9817b30c3705c44313c17010c0285e68302a1 <<< 1440) |||
+    (0xec4112a088903fb81fac109e085303fa01fa01098085003d701ec8112c088a0c3685c483 <<< 1728) |||
+    (0x8d01c980e84073e037001b700ef00784037181b7c0ef60787038c81c940e82073d03d681 <<< 2016) |||
+    (0xf50442821e40fba07e1041f8210c104e081b041e02100104808180443021e80fbc07e203 <<< 2304) |||
+    (0xb0194a03a901d380dd406f603c401e500d6006ac03c581e5c0d6606af03a881d340dd206 <<< 2592) |||
+    (0xac3350193a0caa8679c33c819560cce8683c3418199e0cd08684c342019a20ca48676c33 <<< 2880) |||
+    (0xb06410320e1a750ca2866dc336819460cb6867fc33f8196e0cb88680c340019720c9c866 <<< 3168) |||
+    (0xd0d5306450322e1aa50d35063e031f61a690d21062c031661a410d1f062b0315e1a3d0d3 <<< 3456) |||
+    (0xd6b1eb5fa5af12d8496c540d4d0642032161a990d290638031c61a510d270637031be1a4 <<< 3744) |||
+    (0x6d84b6c55b5bfdad3ed5df6b1fb5fbdaf1ed84f6c57b5bedad36d5db6b1db5bf5ad3ad5d <<< 4032) |||
+    (0x5ae5ad66d6b06b5d65af72d8796c0cb5be5ad32d5d96b1cb5fb5af1ad84d6c56b5fadaf1 <<< 4320) |||
+    (0xb5d6daf76d87b6c0db5b3dae5ed66f6b07b5d7daf7ed87f6c0fb5b2dae56d66b6b05b5b3 <<< 4608) |||
+    (0x5efdaf9657e32c0695fd4afa257e92c0395fbcb5b25ae52d6696b04b5d75af7ad87d6c0e <<< 4896) |||
+    (0xbf1b5f2daf7e57d72c0c96004af8a57dd2c0995fecaff6d8136beeb5f15b002d8196bebb <<< 5184) |||
+    (0x7e9ec03f5fbfaff75813abeed5f16b0035819abebd5efeafded8076bf4b5f45afead80d6 <<< 5472) |||
+    (0xf8bd7ddec09f5fefafdf5807abf4d5f46afeb580dabf1d5f2eaf97d7e3ec06f5fd7afa3d <<< 5760) |||
+    (0xfa097e9cbf425e532f2a97f5cbfa25e232f129830cc18a5eb72f58af7fd7d7ec0cf6007a <<< 6048) |||
+    (0xe832f429818cc0ca5f172f889824cc12a5ee72f709801cc0025df32efa980ccc06a5f472 <<< 6336) |||
+    (0x06e5f452fa197e94bf465e512f2b97f54bfa65e212f1398304c18e5eb52f5997ddcbee25 <<< 6624) |||
+    (0xdd4bee65e812f4398184c0ce5f152f8998244c12e5ee52f7198014c0065df12efb980c4c <<< 6912) |||
+    (0xa1bb3d5d92aed5576dabb185d982ed817690bb015d74aeae575a2baf45d862eb71758897 <<< 7200) |||
+    (0xe775a3bb19dd98eed877693bb3cdd926ed5376d9baf5dd86eeb77758bbb00dd746eae375 <<< 7488) |||
+    (0x6aeb75758abb18dd986ed837691bb3ddd92eed5776dbbaf4dd866eb737589bb01dd74eea <<< 7776) |||
+    (0x88cbc924269210bb3c5d922ed5176d8bb195d98aed857692bb005d742eae175a0baf55d8 <<< 8064) |||
+    (0x7496e24b7c667c333d19768cbb9241e920c493ba49d0672a33964935a49a06712338a197 <<< 8352) |||
+    (0x19730cb952488924 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `7` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV7 : ℕ :=
+    0x800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180018001800180018001 |||
+    (0x7fff7fff7fff7fff80018001800180018001800180018001800180018001800180018001 <<< 288) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 576) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180018001800180018001 <<< 864) |||
+    (0x7fff7fff7fff7fff7fff7fff80018001800180017fff7fff7fff7fff8001800180018001 <<< 1152) |||
+    (0x7fff800180017fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 1440) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff7fff800180017fff <<< 1728) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff800180017fff <<< 2016) |||
+    (0x7fff800180017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff <<< 2304) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff800180017fff7fff800180017fff <<< 2592) |||
+    (0x80017fff80017fff80017fff80017fff80017fff80017fff80017fff7fff80017fff8001 <<< 2880) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff800180017fff <<< 3168) |||
+    (0x7fff800180017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 3456) |||
+    (0x80017fff7fff7fff8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff <<< 3744) |||
+    (0x7fff80017fff8001800180017fff8001800180018001800180017fff8001800180017fff <<< 4032) |||
+    (0x80017fff7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff80017fff7fff <<< 4320) |||
+    (0x7fff7fff80017fff7fff7fff8001800180017fff8001800180017fff80017fff7fff7fff <<< 4608) |||
+    (0x7fff7fff7fff80017fff7fff7fff800180017fff7fff7fff7fff7fff7fff800180017fff <<< 4896) |||
+    (0x7fff7fff8001800180017fff8001800180017fff7fff8001800180017fff800180018001 <<< 5184) |||
+    (0x7fff7fff7fff800180017fff7fff7fff80017fff7fff7fff8001800180017fff80017fff <<< 5472) |||
+    (0x7fff800180017fff7fff7fff8001800180017fff8001800180017fff7fff800180018001 <<< 5760) |||
+    (0x7fff7fff7fff80018001800180017fff7fff8001800180017fff8001800180017fff7fff <<< 6048) |||
+    (0x7fff800180017fff7fff7fff8001800180017fff7fff8001800180017fff800180018001 <<< 6336) |||
+    (0x8001800180017fff7fff8001800180017fff8001800180017fff7fff7fff80017fff7fff <<< 6624) |||
+    (0x8001800180017fff7fff7fff8001800180017fff7fff8001800180017fff7fff7fff8001 <<< 6912) |||
+    (0x80017fff7fff7fff7fff8001800180017fff7fff7fff80018001800180017fff7fff8001 <<< 7200) |||
+    (0x800180017fff7fff7fff80018001800180017fff7fff8001800180017fff7fff7fff8001 <<< 7488) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff8001 <<< 7776) |||
+    (0x800180017fff7fff800180017fff7fff <<< 8064)
+
+/-- Chunk `7` of `s6c1nHT`. -/
+def s6c1nHT7 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL7 s6c1nHTV7 512
+
+/-- Packed labels (17-bit fields) of chunk `8` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL8 : ℕ :=
+    0x92a419bc8cde9253692984901a480066423322497024b8c66843341196d0cb652470923b |||
+    (0x655432a9492a2495c656c32b519a70cd35255892af48ffa47f0663a331e19c28ce19254e <<< 288) |||
+    (0x8196bebb5efdaf9657e32c0695fd4afa257e92c0395fbc19a90cd45256092b349242492c <<< 576) |||
+    (0xfead80d6bf1b5f2daf7e57d72c0c96004af8a57dd2c0995fecaff6d8136beeb5f15b002d <<< 864) |||
+    (0xfd7afa3d7e9ec03f5fbfaff75813abeed5f16b0035819abebd5efeafded8076bf4b5f45a <<< 1152) |||
+    (0x0cf6007af8bd7ddec09f5fefafdf5807abf4d5f46afeb580dabf1d5f2eaf97d7e3ec06f5 <<< 1440) |||
+    (0x7da544d2a5694bfca53e523f28ef94beca536523b28ed94e24a7d254492a54af7fd7d7ec <<< 1728) |||
+    (0xbe4a532523928ec94e2ca7d6544b2a5594e3ca7de544f2a5794bf4a53a523d28ee94e34a <<< 2016) |||
+    (0x0694d74a77a541d2a3e94cbca59e526f290794caca596526b290594d64a77254192a3c94 <<< 2304) |||
+    (0x71440894ca4a5925269290494d6ca776541b2a3d94d7ca77e541f2a3f94cb4a59a526d29 <<< 2592) |||
+    (0x46884343f1a265d13ee8a57455ba258513828a214540a241d114e884743f3a24c511a288 <<< 2880) |||
+    (0x15114a884543f2a2595138a8a254542a264d13e68a534559a24d511aa8875440aa240d11 <<< 3168) |||
+    (0x0a24dd11ae8877440ba258d13868a234541a265513ea8a55455aa24cd11a688734409a24 <<< 3456) |||
+    (0x20de106d9037881a000d10a264513e28a514558a259d138e8a274543a24051142884143f <<< 3744) |||
+    (0xc1c8a0e550723039581ae80da406b58366c1c720e49071d039281ad00d9806818344c1b6 <<< 4032) |||
+    (0x039b01a9c0d3e06a6834f41d3e0e6f067f8343c1b5a0ddd06d70377819f80d0c06bb8369 <<< 4320) |||
+    (0x0704037e019b40caa066c832a41c160dfb070a0381019cc0cb60672832d41c2e0e07074e <<< 4608) |||
+    (0x47bba3f4d1fa28e254713a4315218e8eb347580750039c01aa40d4206a8835041d460e73 <<< 4896) |||
+    (0x8f7147b9a3f5d1faa8e214711a430521868eb7475aa3c551e2e90634830a3a0d1d028f75 <<< 5184) |||
+    (0x1dce90934848a40d5206e8f4347a0a3e8d1f428e55472ba3c451e2690674832a3a1d1d0a <<< 5472) |||
+    (0x3b851dc69097484aa40c520668f4747a2a3e9d1f4a8e514729a37cd1be290054803a3b95 <<< 5760) |||
+    (0xd8ca6bb538d29a2d4dd4a703535129ccd4da4a6af5387299fd4dbca37dd1bea90014801a <<< 6048) |||
+    (0xc3d4d5ca6d3539929a8d4e04a6eb534529c6d4d74a6c7539329a5d4deca6f7534b29c9d4 <<< 6336) |||
+    (0x7be9b1b4e4fa71ad35de9bab4d17a6a2d381e9b4b4e67a70ed357e9b7b4cffa6df533f29 <<< 6624) |||
+    (0x7ed36fe9abb4e1fa732d369e9c0b4d47a68ad375e9aeb4e37a726d363e9bdb4d2fa696d3 <<< 6912) |||
+    (0x34bc1b5e01aefad7866bb8a5de92eee97744bbc75dbfaee5d775ebbf65e072f09977bca6 <<< 7200) |||
+    (0x5f775fbbdf5e13af03d77eebbae5dcb2edf9778cbba35dddaef4d7716bc325df52f00978 <<< 7488) |||
+    (0xdeef4f7717bb8adde96eeeb7745bc1bde01eefaf7867bbf6de076f09b77bdbbc7ddbfeee <<< 7776) |||
+    (0x408a9c42102107bbaeddcb6edfb778dbbdfde13ef03f77efbc32ddf56f00b7835bba3ddd <<< 8064) |||
+    (0xe10b80867c442021ff113588a904216210410d5087944294214510d48879842922146113 <<< 8352) |||
+    (0x10588837844a2223 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `8` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV8 : ℕ :=
+    0x7fff7fff7fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80018001 |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 288) |||
+    (0x7fff800180017fff7fff7fff80017fff7fff7fff8001800180017fff7fff7fff80018001 <<< 576) |||
+    (0x80017fff7fff7fff8001800180017fff8001800180017fff7fff8001800180017fff7fff <<< 864) |||
+    (0x80017fff7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff <<< 1152) |||
+    (0x80017fff800180017fff7fff7fff800180017fff7fff7fff80017fff7fff7fff80018001 <<< 1440) |||
+    (0x7fff7fff800180017fff80017fff80017fff7fff800180017fff8001800180017fff8001 <<< 1728) |||
+    (0x7fff80017fff7fff800180017fff80017fff7fff80017fff7fff80017fff7fff7fff8001 <<< 2016) |||
+    (0x80017fff7fff7fff80017fff7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff <<< 2304) |||
+    (0x7fff7fff80017fff7fff7fff80017fff80017fff8001800180017fff800180017fff7fff <<< 2592) |||
+    (0x80017fff80017fff8001800180017fff80018001800180017fff80017fff80017fff7fff <<< 2880) |||
+    (0x7fff7fff80017fff80017fff8001800180017fff80018001800180017fff80017fff7fff <<< 3168) |||
+    (0x7fff7fff80017fff80018001800180017fff8001800180017fff80017fff80017fff7fff <<< 3456) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 3744) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff800180017fff7fff <<< 4032) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff <<< 4320) |||
+    (0x80017fff8001800180017fff7fff8001800180017fff7fff80018001800180017fff7fff <<< 4608) |||
+    (0x80017fff7fff7fff80017fff7fff7fff8001800180017fff80017fff7fff7fff80018001 <<< 4896) |||
+    (0x80017fff7fff8001800180017fff8001800180017fff7fff7fff80017fff7fff7fff8001 <<< 5184) |||
+    (0x80017fff7fff7fff8001800180017fff8001800180017fff7fff80018001800180018001 <<< 5472) |||
+    (0x7fff7fff8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff <<< 5760) |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff7fff80018001800180017fff80017fff <<< 6048) |||
+    (0x800180018001800180017fff7fff8001800180018001800180017fff7fff7fff7fff8001 <<< 6336) |||
+    (0x800180017fff80017fff80017fff7fff8001800180017fff80017fff7fff7fff7fff8001 <<< 6624) |||
+    (0x7fff7fff7fff80017fff7fff7fff7fff80017fff80017fff80018001800180017fff8001 <<< 6912) |||
+    (0x80017fff8001800180017fff80018001800180017fff8001800180017fff80017fff8001 <<< 7200) |||
+    (0x80018001800180017fff8001800180017fff80017fff80017fff7fff7fff7fff80017fff <<< 7488) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 7776) |||
+    (0x7fff800180017fff7fff800180017fff <<< 8064)
+
+/-- Chunk `8` of `s6c1nHT`. -/
+def s6c1nHT8 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL8 s6c1nHTV8 512
+
+/-- Packed labels (17-bit fields) of chunk `9` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL9 : ℕ :=
+    0x2241105688388449a224210b60868c4418220310b988670442621fc10590837444a4223d |||
+    (0x42ac213910da8876842aa213a113a08a6c422820fb10b788680441e2200105708384449c <<< 288) |||
+    (0x018280014090a0614ff4a80653fa2a0545006280f13f88113b88a60422e20f810db08764 <<< 576) |||
+    (0xfdcd01267fd340d9a055d006e80f73f8ba060cff4680633fa19fdd5012a7fd540da9fb85 <<< 864) |||
+    (0x0919fddd012e7fd740dba054d006680f33f89a061cff4e80673fa39fb9d018e800740939 <<< 1152) |||
+    (0xfd140d89fb95018a80054092a0604ff4280613fa0a0555006a80f53f8a9fb8d018680034 <<< 1440) |||
+    (0x33907e284c142532115908d28439424d2112908ea844542112134907da84bd9fdc501227 <<< 1728) |||
+    (0x5f20fb909a284214223211d908928499421d211a908aa84a5426120fc9099a841d420f21 <<< 2016) |||
+    (0x5f12ae094304a6625031272096504956257b126c09620496e258712b0094404a5e24ff42 <<< 2304) |||
+    (0x0c9587127e094b04a26256312c2092d04b1624db12bc092a04b2e24e71280094c04a1e25 <<< 2592) |||
+    (0xa06ccc95e71b4aa56506cf4957b1b08a54406bfc94ff1b06a54306c0495031b44a56206d <<< 2880) |||
+    (0xca57606c6c95b71b1aa56d06cb495db1ad8a54c06bbc955f1ad6a54b06bc495631b14a56 <<< 3168) |||
+    (0x31b3ca55e06d2c95971b32a57906c5495ab1af0a55806b5c952f1aeea55706b6495331b2 <<< 3456) |||
+    (0xc890144b1223f5136a898a1b42a56106d14958b1b00a54006c1c950f1afea53f06c24951 <<< 3744) |||
+    (0xc53662a0c14d78a84054b02a8744c3227651222892e4486a24c912f489e544d4a265912b <<< 4032) |||
+    (0x225e51262890e4496a244913b4898515458a8d053f829e315000a77c552e2a2815320a9e <<< 4320) |||
+    (0x15158aa5053b82a0314f00a7fc546e2a8844c4a26d911fc8961448122575132a89aa44f3 <<< 4608) |||
+    (0x8669431d21a950c9486754359218350dc485fd15420a96c542629ac15078a6c054f02a67 <<< 4896) |||
+    (0x4dc8277b135409e5c4db0278713a009c7c4ea026ef4357218450dbc8601432321a650cac <<< 5184) |||
+    (0x19250d4c86394335219550d348645430121b750c2486ad139e09c8c4e9826f3135a09e2c <<< 5472) |||
+    (0x3c209b6c4f2826ab13bc09b9c4f1026b7137809d3c4e40273f42ff21b850c1c86b1433b2 <<< 5760) |||
+    (0xa994511227c9149a8a3d450f227b914a28a41455d22b2914ea8aa5137609d4c4e3827431 <<< 6048) |||
+    (0x6962b3b15600ab4055de2b1f155e0ab3055e62b2315cc0ada056ae2b47456322b5914d28 <<< 6336) |||
+    (0x9d915928ab945212294913da8a1d451f2293913e28a21454d229a915aa8ac515d20add05 <<< 6624) |||
+    (0xa20ad5056d62b9b15900abc0559e2abf158e0abb055a62ac3159c0ad2056ee2ba7455322 <<< 6912) |||
+    (0x9243c8a1c250e2a878d43d8a1ca50e6a87ad43f0a1d650eca87dd43c0a1be50e0a877d15 <<< 7200) |||
+    (0x0e287f43bf21c190df4878243ef21d990eb487e243d721cd90e5487b243c721c590e1487 <<< 7488) |||
+    (0x505010289014498a02c502e288f141989eac4f6e282f143189f6c4fce285f144189fec50 <<< 7776) |||
+    (0x4d89e2c43361e8143e0a0104ff02880142e09f904fb02860141609ed04f50283014460a0 <<< 8064) |||
+    (0x2b13dd892ac3d7621ab16cd8aa2c6136338b148d8982c4036230b160d8bc2c6a36320b12 <<< 8352) |||
+    (0xb179d8b0ac647635 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `9` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV9 : ℕ :=
+    0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff80017fff800180017fff7fff8001 <<< 288) |||
+    (0x80017fff7fff8001800180017fff8001800180017fff7fff7fff800180017fff7fff8001 <<< 576) |||
+    (0x7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff80018001 <<< 864) |||
+    (0x7fff800180017fff7fff7fff8001800180017fff8001800180017fff7fff800180018001 <<< 1152) |||
+    (0x7fff80017fff80018001800180017fff7fff8001800180017fff8001800180017fff7fff <<< 1440) |||
+    (0x80017fff80017fff80017fff7fff80017fff80017fff80017fff80017fff80017fff8001 <<< 1728) |||
+    (0x80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 2016) |||
+    (0x7fff80017fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff <<< 2304) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 2592) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 2880) |||
+    (0x80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff7fff8001 <<< 3168) |||
+    (0x7fff800180017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 3456) |||
+    (0x80017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff <<< 3744) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff80017fff7fff8001 <<< 4032) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 4320) |||
+    (0x7fff7fff7fff7fff7fff7fff800180018001800180017fff7fff800180017fff7fff8001 <<< 4608) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 4896) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 5184) |||
+    (0x7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff80018001 <<< 5472) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 5760) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff <<< 6048) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff <<< 6336) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff80017fff800180017fff7fff8001 <<< 6624) |||
+    (0x80017fff80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff8001 <<< 6912) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff8001 <<< 7200) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff7fff800180017fff <<< 7488) |||
+    (0x80017fff80018001800180017fff8001800180017fff80017fff80017fff7fff80017fff <<< 7776) |||
+    (0x7fff80017fff7fff7fff7fff80017fff <<< 8064)
+
+/-- Chunk `9` of `s6c1nHT`. -/
+def s6c1nHT9 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL9 s6c1nHTV9 512
+
+/-- Packed labels (17-bit fields) of chunk `10` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL10 : ℕ :=
+    0x62c0b118d8802c4c36290b19cd8c22c55362d8b155d8b6ac677630ab131d8a4ac4676202 |||
+    (0xc58762f2b101d88cac5276262b185d8ceac5b762aab0f4d8862c4f36248b190d8d42c5e3 <<< 288) |||
+    (0xbd4edc976deab76cdbce2dcc16e01b7785bd46dc936de8b10dd87aac497627ab1a9d8c8a <<< 576) |||
+    (0x761dbc8adcf56e1bb7545bc26dd236e30b760dbc82dcf16e19b76ddbceadcc56e03b7795 <<< 864) |||
+    (0xec2b719dba4ade156eabb70c5b9e6de436ec0b718dba42de116ea9b7555bc2edd276e32b <<< 1152) |||
+    (0xea56ef3b7015b98ede776edab6f4db922dea16ef1b7005b986de736ed8b70d5b9eede476 <<< 1440) |||
+    (0xc6a7d473ea09f69cfb427c533e2a9f75cfba27c233e129fb0cfd8a7cb73e58b6f5db92ad <<< 1728) |||
+    (0xfdcf7e27e033f029f38cf9ca7e973f489f44cfa2a7e673f309f21cf9027d733eba9f8ccf <<< 2016) |||
+    (0xbb9f8c4fc6e7d453ea19f694fb467c513e2b9f754fba67c213e139fb04fd8e7cb53e599e <<< 2304) |||
+    (0xd55a689efd4f7e67e013f039f384f9ce7e953f499f444fa2e7e653f319f214f9067d713e <<< 2592) |||
+    (0xe2b5335a9badacd6d6eb7755bb8adb956dc2b7a35bd3ad7156b82b5035a83ad64d6b2eb4 <<< 2880) |||
+    (0x456b2ab4d75a69ad9556ca2b7135b8bada0d6d0eb7455ba0ad88d6c4eb5655ab0ad7d56b <<< 3168) |||
+    (0x1ad7dd6be6b5315a9aadac56d6ab7775bb9adb9d6dc6b7a15bd2ad71d6b86b5015a82ad6 <<< 3456) |||
+    (0x83c071e498f24136fc9b7dad95d6ca6b7115b8aada056d0ab7475ba1ad8856c4ab5675ab <<< 3744) |||
+    (0x136cc9b654dd8a6ec878b83c5f1e478f23137049b814d8aa6c5877f03bfb4d84a6c28780 <<< 4032) |||
+    (0x8ef61366c9b354df0a6f8878583c2f4dd6a6eb878c03c631ddb8eed136b49b591dd58eea <<< 4320) |||
+    (0x4d7ca6be878283c171e418f201371c9b8d4deea6f7878603c331df38ef9136549b291ded <<< 4608) |||
+    (0x6deab76cdbce2dcc16e01b7785bd46dc936de81e3f8f1f137249b914d82a6c1878103c0b <<< 4896) |||
+    (0xdcf56e1bb7545bc26dd236e30b760dbc82dcf16e19b76ddbceadcc56e03b7795bd4edc97 <<< 5184) |||
+    (0xba4ade156eabb70c5b9e6de436ec0b718dba42de116ea9b7555bc2edd276e32b761dbc8a <<< 5472) |||
+    (0x7015b98ede776edab6f4db922dea16ef1b7005b986de736ed8b70d5b9eede476ec2b719d <<< 5760) |||
+    (0x555a23fd113e883f43efa23f5113a883d43eea262513d28a494554b6f5db92adea56ef3b <<< 6048) |||
+    (0x83943eca263513da8a4d4556a263d13de8a4f4557a23ed1136883b43eda262d13d68a4b4 <<< 6336) |||
+    (0x3768a1b453da24bd119e886f4407a24b5119a886d4406a256513728a19453ca23e511328 <<< 6624) |||
+    (0x4a5119288694404a2575137a8a1d453ea257d137e8a1f453fa24ad1196886b4405a256d1 <<< 6912) |||
+    (0xf294e4ca7e654532a5994d84a78254212a4094c0ca546524328f194cc4a5a252712908a2 <<< 7200) |||
+    (0x4728f394d9ca78e54272a4394e54a7ea54552a5a94cdca5ae5277290b94c14a54a524528 <<< 7488) |||
+    (0xa65273290994d94a78a54252a4294e5ca7ee54572a5b94cd4a5aa5275290a94c1ca54e52 <<< 7776) |||
+    (0x92247512d489a594e44a7e254512a5894d8ca78654232a4194c04a542524128f094ccca5 <<< 8064) |||
+    (0x144a122535137489d544eb226e5129c894144a9224f5139489c544bb2266511dc8921447 <<< 8352) |||
+    (0x44e322725127c895 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `10` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV10 : ℕ :=
+    0x8001800180017fff80018001800180017fff8001800180017fff80017fff80017fff7fff |||
+    (0x800180017fff8001800180017fff80017fff80017fff7fff7fff7fff80017fff80017fff <<< 288) |||
+    (0x800180017fff7fff80017fff800180017fff800180017fff8001800180017fff80018001 <<< 576) |||
+    (0x7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff80017fff <<< 864) |||
+    (0x80018001800180017fff800180017fff800180017fff80017fff7fff800180017fff8001 <<< 1152) |||
+    (0x7fff80017fff7fff80017fff800180017fff7fff80017fff800180017fff800180017fff <<< 1440) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff800180017fff80017fff7fff80017fff <<< 1728) |||
+    (0x80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff80017fff <<< 2016) |||
+    (0x80017fff800180017fff800180017fff800180017fff7fff80017fff7fff80017fff7fff <<< 2304) |||
+    (0x800180017fff80017fff7fff80017fff80017fff8001800180017fff800180017fff7fff <<< 2592) |||
+    (0x7fff80017fff80017fff7fff80017fff80018001800180017fff800180017fff80018001 <<< 2880) |||
+    (0x800180017fff80017fff80017fff7fff80017fff80018001800180017fff800180018001 <<< 3168) |||
+    (0x7fff80017fff80017fff7fff7fff7fff80017fff800180017fff80017fff80017fff7fff <<< 3456) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 3744) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 4032) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff7fff8001 <<< 4320) |||
+    (0x80017fff800180017fff800180017fff8001800180017fff7fff800180017fff7fff8001 <<< 4608) |||
+    (0x80017fff800180017fff80017fff7fff800180017fff800180017fff800180017fff7fff <<< 4896) |||
+    (0x80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff800180017fff8001 <<< 5184) |||
+    (0x80017fff800180017fff7fff80017fff800180017fff800180017fff800180017fff7fff <<< 5472) |||
+    (0x7fff7fff800180017fff800180017fff800180017fff80017fff7fff800180017fff8001 <<< 5760) |||
+    (0x80017fff800180017fff80017fff7fff800180017fff80017fff7fff80017fff7fff8001 <<< 6048) |||
+    (0x7fff7fff800180017fff800180017fff800180017fff7fff80017fff800180017fff8001 <<< 6336) |||
+    (0x7fff80017fff7fff800180017fff8001800180017fff800180017fff800180017fff8001 <<< 6624) |||
+    (0x7fff8001800180017fff800180017fff800180017fff7fff80017fff7fff80017fff7fff <<< 6912) |||
+    (0x800180017fff8001800180017fff800180017fff800180017fff80017fff7fff80018001 <<< 7200) |||
+    (0x7fff800180017fff8001800180017fff800180017fff7fff80017fff7fff80017fff7fff <<< 7488) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180018001800180018001 <<< 7776) |||
+    (0x80018001800180017fff7fff7fff7fff <<< 8064)
+
+/-- Chunk `10` of `s6c1nHT`. -/
+def s6c1nHT10 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL10 s6c1nHTV10 512
+
+/-- Packed labels (17-bit fields) of chunk `11` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL11 : ℕ :=
+    0x2a47153a0aa6c53d82a2314f80a87c54d02aa744d3225a5123c88f14491223b513348975 |||
+    (0x55302a7715220a92c537829d314e00a73c54702a57152a0a8ec539829c314e80a6fc5490 <<< 288) |||
+    (0x9c024bf525fb9374c9ba24c25261393b149d8e4cb3265815520a9ac543829f315100a7bc <<< 576) |||
+    (0x381c9c0a4bf125f99375c9baa4c21261193b049d864cb7265a93a549d2e4ce326709380c <<< 864) |||
+    (0x643939949cce4d132688938d49c6e4d4326a09368c9b424c55262b93a449d264ce726729 <<< 1152) |||
+    (0xc812641939849cc64d17268a938c49c664d4726a29369c9b4a4c512629935cc9ae24c852 <<< 1440) |||
+    (0x31e40cf2157909ec8136415b201d909f4813a415d201e901a4831240c92154935dc9aea4 <<< 1728) |||
+    (0x9e481324159201c901b4831a40cd2156901ac831640cb2155909fc813e415f201f901bc8 <<< 2016) |||
+    (0x078ff7c837e40ff210f9092c825641eb200590934825a41ed20068ff64837240f9210c90 <<< 2304) |||
+    (0xf155e890924825241e920048ff74837a40fd210e8ff6c837640fb210d9093c825e41ef20 <<< 2592) |||
+    (0x06ac615660ab30d58c6ac015690ab60d5d46ae4156f0ab9cd5aa6adb15708ab0cd5926ac <<< 2880) |||
+    (0xdd57aeac35564aaaf4d59e6ac915618ab84d5b66ad515738ab78d5c86aea156c0ab48d58 <<< 3168) |||
+    (0x2ab19d598ead255602ab01d5a4eacc55632ab91d5bcead855752ab6dd5c2eae7556aaab3 <<< 3456) |||
+    (0x42484417909170482683bdab25d586eabd5567aab55d5ceeae1556daaba9d5b0eade5572 <<< 3744) |||
+    (0x90692248741788917c482083be417709180481e83c111dba0e6506ac247811d5a0e95069 <<< 4032) |||
+    (0x0925047b683751201a0f350644242c41768918c481883c211da20e6906aa247b11d420e9 <<< 4320) |||
+    (0x419c8925c47b08376120020f390642242f11ffa0f45063c243041a30922047ce8369419d <<< 4608) |||
+    (0x2bdf95bf4adf2551b2a8f959acacde554d2aa411fe20f49063a243341a28922c47c8836a <<< 4896) |||
+    (0x57b92bde95bfcadf655192a8e959a4acda554f2aa59582cac1e572d2b9495774abb257bb <<< 5184) |||
+    (0xac7e575d2bac95a6cad3e557d2abc95b34ad9254eb2a7795824ac1a572f2b959577cabb6 <<< 5472) |||
+    (0x58e4ac7a575f2bad95a64ad3a557f2abd95b3cad9654e92a76956b4ab52578b2bc7958ec <<< 5760) |||
+    (0x55bba285d202ea817510ba71dd2cee7e77423ba645d3e2e8717408956bcab5657892bc69 <<< 6048) |||
+    (0xa857512ba4cdd1a6ea537559ba655d3eae875740aba70dd2c6e7e37421ba4ddd1aeea577 <<< 6336) |||
+    (0x206ea837511ba4d5d1aaea55755aba64dd3e6e8737409ba715d2cae7e57422ba295d20ae <<< 6624) |||
+    (0x4c5d1a2ea517558ba29dd20eea877513ba705d2c2e7e17420ba65dd3eee877740bba28dd <<< 6912) |||
+    (0x889ac5cd86e69f135e89b01cd44e6c6135a09ab9cd98e6a8135d09addcd4ae6c913558ba <<< 7200) |||
+    (0x7335299aadcd92e6a5135b89ae9cd50e6cc135709ad1cd8ce6a2136009af5cd3ee6c3135 <<< 7488) |||
+    (0x2a6bd334f99a7d4d7aa6b1336199b194d68a6c0335119aa14d74a6ae336619b254d56a6b <<< 7776) |||
+    (0xd48a42434521889a954d6ea6ab336499b314d5ca6ba335419a894d80a6b4336319b0d4d6 <<< 8064) |||
+    (0x1915548b0242e521b8916c48a4a4341218a9148c8b6e431321a39149c8b66431721a1916 <<< 8352) |||
+    (0x9161c8aa64377217 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `11` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV11 : ℕ :=
+    0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff |||
+    (0x80018001800180017fff7fff7fff7fff800180018001800180018001800180017fff7fff <<< 288) |||
+    (0x7fff7fff800180017fff80017fff7fff80017fff7fff80017fff7fff7fff7fff7fff7fff <<< 576) |||
+    (0x800180017fff800180017fff800180017fff80017fff7fff800180017fff80017fff8001 <<< 864) |||
+    (0x7fff7fff7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff <<< 1152) |||
+    (0x7fff8001800180017fff80017fff7fff800180017fff80017fff7fff80017fff7fff8001 <<< 1440) |||
+    (0x800180017fff7fff7fff800180017fff7fff7fff8001800180017fff8001800180017fff <<< 1728) |||
+    (0x7fff8001800180017fff7fff7fff80018001800180017fff7fff8001800180017fff8001 <<< 2016) |||
+    (0x7fff80017fff7fff7fff800180017fff7fff7fff8001800180017fff7fff800180018001 <<< 2304) |||
+    (0x7fff7fff7fff80018001800180017fff7fff8001800180017fff8001800180017fff7fff <<< 2592) |||
+    (0x80017fff7fff80018001800180017fff7fff7fff8001800180017fff7fff800180018001 <<< 2880) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff800180018001 <<< 3168) |||
+    (0x80017fff7fff8001800180017fff7fff7fff80018001800180017fff7fff800180018001 <<< 3456) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 3744) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff8001 <<< 4032) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 4320) |||
+    (0x7fff7fff80017fff80018001800180017fff800180017fff7fff80017fff800180017fff <<< 4608) |||
+    (0x800180017fff80017fff7fff80017fff80017fff80018001800180017fff80017fff8001 <<< 4896) |||
+    (0x80018001800180017fff80017fff7fff80017fff80017fff8001800180017fff80018001 <<< 5184) |||
+    (0x7fff7fff80017fff80017fff800180017fff80017fff7fff7fff7fff80017fff80017fff <<< 5472) |||
+    (0x7fff800180017fff80018001800180017fff8001800180017fff80017fff80017fff7fff <<< 5760) |||
+    (0x800180017fff80017fff7fff80017fff80017fff8001800180017fff8001800180018001 <<< 6048) |||
+    (0x80017fff80017fff800180017fff7fff80017fff80017fff8001800180017fff80018001 <<< 6336) |||
+    (0x7fff8001800180017fff7fff7fff80017fff80017fff7fff7fff7fff80017fff7fff7fff <<< 6624) |||
+    (0x80017fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff800180017fff7fff7fff <<< 6912) |||
+    (0x7fff7fff7fff80018001800180017fff7fff80018001800180017fff7fff7fff80018001 <<< 7200) |||
+    (0x7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff80017fff800180018001 <<< 7488) |||
+    (0x80017fff80018001800180017fff80017fff7fff80017fff80017fff800180017fff7fff <<< 7776) |||
+    (0x7fff80017fff7fff7fff7fff80017fff <<< 8064)
+
+/-- Chunk `11` of `s6c1nHT`. -/
+def s6c1nHT11 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL11 s6c1nHTV11 512
+
+/-- Packed labels (17-bit fields) of chunk `12` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL12 : ℕ :=
+    0x22339101c87a644f7223190f54880244652278915448b0a42e121ba9160c8aae43732173 |||
+    (0x4493226390e9c886644972261910d4874244c5224890f44880a4461227a9100c87ae44f3 <<< 288) |||
+    (0xb8025d212ec097314b8ca5b452d72973c4b9225b712d88910c4874a44c1224a90e8c886e <<< 576) |||
+    (0x6f4cb8665d532ed9973dcb92e5b772d8b9730cb8c65b432d7196f54b86a5d552eda96e84 <<< 864) |||
+    (0xec196f5cb86e5d572edb973ccb9265b732d899731cb8ce5b472d7396e9cb80e5d272ec39 <<< 1152) |||
+    (0xd512ed896e94b80a5d252ec297304b8c25b412d70973d4b92a5b752d8a96e8cb8065d232 <<< 1440) |||
+    (0x32e40d7215b8ff8483824101211090a1c814e4167202390944826241f1200896f44b8625 <<< 1728) |||
+    (0xf94838a41052112901cc832640d3215990954826a41f5200a90a0c814641632021901dc8 <<< 2016) |||
+    (0x0b8ff8c838641032111901d4832a40d5215a9094c826641f3200990a14814a416520228f <<< 2304) |||
+    (0xcc9d65901c4832240d121588ff9c838e4107211390a048142416120209095c826e41f720 <<< 2592) |||
+    (0xb87cc03e631ee18f7013b1c9d8d4e78a73c87cb83e5f4edca76e87c283e171f358f9a13a <<< 2880) |||
+    (0x4a77287c083e074ee2a77187c103e0b1f3b8f9d13ab49d591edf8f6f13b249d914e76a73 <<< 3168) |||
+    (0x31ee78f7313b049d814e90a74887c583e2f1ee98f7413afc9d7d1f4d8fa613a6c9d354ee <<< 3456) |||
+    (0x42e9c46970ba805bd68de51f538fa913a549d294eeaa77587bf03dfb4e8ea74787c603e3 <<< 3744) |||
+    (0x05b868d8d16dfa364519f42e5416fa237691a622e9f46968ba8c5bd08de616fba37651a6 <<< 4032) |||
+    (0x0b8605ce68d5d1737a35851b542e2446828b92c5b808d8e16de2364919f22e5746830b92 <<< 4320) |||
+    (0x1723a34251b042dcc46bf0b7405c768d1546da8b86c5ce08d5e1736235891b522e2746db <<< 4608) |||
+    (0x05d7028181a700ae4060d02b8818380a00069f1722234291b022dcf46be8b74c5c708d16 <<< 4896) |||
+    (0x0b7005670339814300c04059d0300816780ce0050f02958175009740665025c819980a50 <<< 5184) |||
+    (0x18d80ab005c70289819b00b4405fd02d0817f80a20066f02dd815900c5404d5031481358 <<< 5472) |||
+    (0x32c813180b9005370351813f00c24056d0308815b80d4004ff02ad817100994063502648 <<< 5760) |||
+    (0x8c11c73a615872f098691c6da6128730898751c89a6088725898bd02e5814d00cb404c50 <<< 6048) |||
+    (0x2c098d11c5ba6118731098991c55a60e8732898a51c81a5fc872b898cd1c87a607872609 <<< 6336) |||
+    (0x431318439334c2a8e39130d4397b4c248e36130ec39874c108e441317c392f1c7fa5fb87 <<< 6624) |||
+    (0xf68e3f131a439634c228e2d13134398b4c1c8e2a1314c39974bf88e401319c395f4c0e8e <<< 6912) |||
+    (0x9aaa7cd5322ab1355b8aa70d5442aba355a0aab8d5502a90354b0aa94d5562a93354684b <<< 7200) |||
+    (0x9354f8aa65d53eaab77558aaa89d538aab4755d2aaa1d55caa9675482aaadd54aaa8d754 <<< 7488) |||
+    (0xeaa9f754caaa34d5262aab35528aa58d5202aa835570aad0d5742aa2354e0aadcd5622a9 <<< 7776) |||
+    (0x70ba805bd68de5aa4dd51aaaa57555aaa41d52caaae75542aae9d568aa9c75512aac5d56 <<< 8064) |||
+    (0xd16dfa364519f42e5416fa237691a622e9f46968ba8c5bd08de616fba37651a642e9c469 <<< 8352) |||
+    (0x46830b9205b868d8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `12` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV12 : ℕ :=
+    0x7fff7fff80017fff80018001800180017fff80017fff7fff80017fff80017fff80018001 |||
+    (0x800180017fff80017fff7fff80017fff80017fff80018001800180017fff80017fff8001 <<< 288) |||
+    (0x80017fff7fff80018001800180017fff7fff7fff8001800180017fff80017fff80018001 <<< 576) |||
+    (0x7fff8001800180017fff7fff7fff80018001800180017fff7fff80018001800180018001 <<< 864) |||
+    (0x80017fff80017fff7fff7fff8001800180017fff7fff7fff7fff800180017fff7fff7fff <<< 1152) |||
+    (0x7fff7fff7fff80018001800180017fff7fff80018001800180017fff7fff7fff80018001 <<< 1440) |||
+    (0x80017fff80017fff7fff7fff8001800180017fff80017fff7fff7fff80017fff7fff7fff <<< 1728) |||
+    (0x8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff80018001 <<< 2016) |||
+    (0x800180017fff8001800180018001800180017fff7fff8001800180018001800180017fff <<< 2304) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff80017fff7fff7fff80017fff8001 <<< 2592) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 2880) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff <<< 3168) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 3456) |||
+    (0x80017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff80017fff <<< 3744) |||
+    (0x80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff <<< 4032) |||
+    (0x80017fff80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff <<< 4320) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff80017fff80017fff80017fff8001 <<< 4608) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 4896) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 5184) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff80018001 <<< 5472) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 5760) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 6048) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 6336) |||
+    (0x7fff8001800180018001800180017fff7fff80017fff80017fff80017fff80017fff8001 <<< 6624) |||
+    (0x7fff80017fff7fff7fff80017fff8001800180017fff7fff7fff80017fff800180018001 <<< 6912) |||
+    (0x7fff7fff7fff80017fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff <<< 7200) |||
+    (0x80017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff800180017fff7fff7fff <<< 7488) |||
+    (0x7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff80018001 <<< 7776) |||
+    (0x7fff80017fff80017fff80017fff8001 <<< 8064)
+
+/-- Chunk `12` of `s6c1nHT`. -/
+def s6c1nHT12 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL12 s6c1nHTV12 512
+
+/-- Packed labels (17-bit fields) of chunk `13` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL13 : ℕ :=
+    0x2e2746db0b8605ce68d5d1737a35851b542e2446828b92c5b808d8e16de2364919f22e57 |||
+    (0x5c708d161723a34251b042dcc46bf0b7405c768d1546da8b86c5ce08d5e1736235891b52 <<< 288) |||
+    (0x73a03bae1dc70f2f078b83b221d810f3d07a283a6a1d651722234291b022dcf46be8b74c <<< 576) |||
+    (0xf3c87a243a6c1d660e5f8733c3be01e200e8d873ac3ba81dc40e5e073303be61e230e8c0 <<< 864) |||
+    (0xdbb0e60073403bde1e1f0f4307a583a521d590f31078c83b1a1d7d0f2e878b43b241d820 <<< 1152) |||
+    (0xa541d5a0f30878c43b1c1d7e0e93873dc3b901db80e618734c3bd81e1c0e92073d03b961 <<< 1440) |||
+    (0x4590b5285d942af214b90b22858142b1214c90b1a857d427d214290b6a85e50f4287a543 <<< 1728) |||
+    (0x12097d04c96263b12de097304ce626a312e0097404cde269f130c097a04cae2647428321 <<< 2016) |||
+    (0x2742f3216d90a1284f942bf216390a62856142c1216490a5a855d42ed216a90a2a850513 <<< 2304) |||
+    (0x5135081322099504bd6261b134e099b04ba625c31350099c04b9e25bf131c099204bee26 <<< 2592) |||
+    (0x2a6b6735539ac1cd78e6a75365a9b15cd42e6b6535529a9ccd9666b0135e09ad8cd5466c <<< 2880) |||
+    (0x8cd3c66b9135689a9c4d9626b0335e19ad84d5426c5335099ac14d78a6a77365b9b154d4 <<< 3168) |||
+    (0xb9ae54d5aa6c2734f39a91cd90e6b3535fa9ae5cd5ae6c2534f29acccd7e66a4136409b0 <<< 3456) |||
+    (0x4249c41970928047d683e59acc4d7e26a4336419b084d3c26b9335699a914d90a6b3735f <<< 3744) |||
+    (0x04786838d11dfa0e4505f4245411fa20f690662249f41968928c47d083e611fba0f65066 <<< 4032) |||
+    (0x090e047a6837d11e7a0e050614244441828912c4780838e11de20e4905f2245741830912 <<< 4320) |||
+    (0x1213a0ea506c4246c41af091c0483683b5418a890ec47a0837e11e620e0906122447418b <<< 4608) |||
+    (0x87c543e4a1e650ea2872143a6a1c750faa87a5121220ea906c2246f41ae891cc483083b6 <<< 4896) |||
+    (0x0f3487ca43e321dd90e7c86ee43a121bc90f74876a43b4a1ee50de287414376a1cf50eea <<< 5184) |||
+    (0x9efc50ee284714258a26c4fa6282313e78a07c50ae28a743d321f590e3c874e439121d49 <<< 5472) |||
+    (0x41009f405130284814220a1d04f7827ec13e009fc05070286814358a0ec4fe627c313f78 <<< 5760) |||
+    (0x72e1be80e2812f2297611c1d8dfad2df497aa1c2a0e0912e2a97e514520a150503827cc1 <<< 6048) |||
+    (0xe0c97b61c240e0612e1297d91be18e1cd2f0497321be60e2712f1a975d1bdf8e1bd2efc9 <<< 6336) |||
+    (0xcb46f78386c4bc925d886fa638a34b7ca5ea4707037e84b8b25f9870ae38271c238dfdd2 <<< 6624) |||
+    (0x82a5ed4708837f44b8525f687096381b4bc0a5cc46f8038704bc725d786f9e389f4bbea5 <<< 6912) |||
+    (0x3893ac49c4e4c41260b9388c9d6a4c132622938949d664c15262193adc9c424c4726084b <<< 7200) |||
+    (0xa72698939449d0e4be1263b93a0c9caa4c7325f293a149ca64c7525f19395c9d024be726 <<< 7488) |||
+    (0xc24d072668936449b8e4ca1269b9370c9b2a4d332652937149b264d3526519365c9b824c <<< 7776) |||
+    (0x2101ad3ed49fa5937c49ace4d01266b9358c9bea4cd32682935949be64cd52681937dc9a <<< 8064) |||
+    (0x12025901113f8a9fca204c101dd3eec9f991ff9900713e3a9ef21ff7900813e429eee205 <<< 8352) |||
+    (0x1fe00ff3d3e9c9f4 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `13` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV13 : ℕ :=
+    0x80017fff7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff |||
+    (0x7fff80017fff800180017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 288) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff80017fff8001 <<< 576) |||
+    (0x7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff <<< 864) |||
+    (0x7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff <<< 1152) |||
+    (0x800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 1440) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff800180017fff7fff <<< 1728) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff <<< 2016) |||
+    (0x800180017fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff <<< 2304) |||
+    (0x7fff7fff80017fff800180017fff80017fff80017fff7fff7fff7fff800180017fff7fff <<< 2592) |||
+    (0x7fff80017fff80017fff7fff80017fff80018001800180017fff80017fff80017fff7fff <<< 2880) |||
+    (0x7fff7fff80017fff80017fff800180017fff80017fff7fff7fff7fff80017fff80018001 <<< 3168) |||
+    (0x7fff80017fff80017fff7fff7fff7fff80017fff800180017fff80017fff80017fff7fff <<< 3456) |||
+    (0x80017fff80017fff80017fff80017fff80017fff80017fff7fff80017fff80017fff8001 <<< 3744) |||
+    (0x80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff <<< 4032) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff800180017fff <<< 4320) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff80017fff80017fff80017fff <<< 4608) |||
+    (0x80017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff <<< 4896) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 5184) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff <<< 5472) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 5760) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 6048) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 6336) |||
+    (0x80017fff800180017fff7fff80017fff7fff7fff7fff7fff80018001800180017fff7fff <<< 6624) |||
+    (0x7fff8001800180017fff800180017fff80018001800180017fff800180017fff80018001 <<< 6912) |||
+    (0x800180017fff8001800180017fff800180017fff800180017fff80017fff7fff80018001 <<< 7200) |||
+    (0x80017fff7fff80017fff7fff7fff80017fff7fff800180017fff80017fff80017fff7fff <<< 7488) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 7776) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff <<< 8064)
+
+/-- Chunk `13` of `s6c1nHT`. -/
+def s6c1nHT13 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL13 s6c1nHTV13 512
+
+/-- Packed labels (17-bit fields) of chunk `14` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL14 : ℕ :=
+    0x9f4d1fe80fefd3e7c9f51201d901513faa9fba202b900e13f729fd61fde0ff4d3ea49f3d |||
+    (0x3dda9f22200f8ffc13de29f1e203a1026d3f349f752023901213f929fc61fe60ff0d3e84 <<< 288) |||
+    (0x54282a6a15650b1e059302be616230b4c059a02bae15c720341029d3f4c9f6920118ffb1 <<< 576) |||
+    (0xb4d859ac2ba815c40a6e852b42b2415820a7c854242a6c15660a6f052b82b2215810a7d0 <<< 864) |||
+    (0x5590a71052c82b1a157d0b52059d02b9615bb0b20059402bde161f0b1f8593c2be016200 <<< 1152) |||
+    (0xb9015b80b218594c2bd8161c0a82854542a54155a0a70852c42b1c157e0a83054582a521 <<< 1440) |||
+    (0x1c41e9c0f3e078183c4c1f580fdc078003c401f5e0fdf0851041c81e9a0f3d0b53859dc2 <<< 1728) |||
+    (0x1c841241eec0fa6076d83aac20281004076c03aa0202e1007081d041281eea0fa5085084 <<< 2016) |||
+    (0x410822841541ed40f9a077383adc20100ff8077203ad020160ffb0823041581ed20f9908 <<< 2304) |||
+    (0xc21fd0084e841b41ea40f42077f83c3c1f600fe0077e03c301f660fe3084f041b81ea20f <<< 2592) |||
+    (0xc83e621fc00fe787d783eba1fcc101387e583f2a2024100d87e283f1220180fe987d883e <<< 2880) |||
+    (0x187c483e2220a00fdf87cb83e5a1fbc0ffb87e183f0a1ff40ff587de83ef21fe80fe187c <<< 3168) |||
+    (0x8103987c083e022070104f87c383e1a209c102b87b983dca2054102587b683db22048105 <<< 3456) |||
+    (0xe1147093d04a28236a11e5103787bf83dfa206c102387ad83d6a2044101d87aa83d52203 <<< 3744) |||
+    (0x022de119f0931048c8241a11fd093c84a24236c11e6088d843ac22a81144088c043a022a <<< 4032) |||
+    (0x0433022e611a3092f048b8242212010930848c4241c11fe08618434c22d8119c08600434 <<< 4320) |||
+    (0x0892043d02296113b094304a58235211d9092e848b424241202085f8433c22e011a0085e <<< 4608) |||
+    (0x7d0fbf175f8b2fcbb7e5fbe7adf3defa4d7d24094284a54235411da0893843dc22901138 <<< 4896) |||
+    (0xfa197d0ebf17df8b6fcb97e5ebe7a5f3dafa4f7d25bf22df91efc2d7e14be9f5f4f2fa1b <<< 5184) |||
+    (0xf73efbfd7dfcbecedf67efadd7d6cbef35f792fb6b7db7bf225f91afc2f7e15be9fdf4f6 <<< 5472) |||
+    (0xee65f73afbff7dfdbece5f67afadf7d6dbef3df796fb697db6beab5f552fb0b7d87bee6d <<< 5760) |||
+    (0x90dad17d6976b24f58f5ad2356852b21d593cad2f568b2b1ed5924beabdf556fb097d86b <<< 6048) |||
+    (0x219593ead2e568bab1e95926ad0ad691eb27b590fad16d697eb24b58f7ad0bd6916b27f5 <<< 6336) |||
+    (0x616b3ff59cdacb7d6676b3cf59b5acc356552b39d59fcaccf565b2b36d59e4ad225685ab <<< 6624) |||
+    (0xc25655ab39959feacce565bab36959e6acaad661eb3fb59cfacb6d667eb3cb59b7acabd6 <<< 6912) |||
+    (0xbb94dc4a92e528729709519ca802531128fb950dca7a25341291394e84a98e52572958ac <<< 7200) |||
+    (0x55295994adca4a254c129d394884a68e53d72a18947c4a62e54072a3094b9ca502549129 <<< 7488) |||
+    (0x06549329ba94dcca92a5285297195194a806531328fa950d4a7a65343291294e8ca98a52 <<< 7776) |||
+    (0xc5bfa2e0316f8894ad4a4a654c329d29488ca68a53d52a19947cca62a54052a3194b94a5 <<< 8064) |||
+    (0xbb800dbdc6df436fd1b8555c1eae09570dab8185c302e1217060b8015bdcadf456fd2b7d <<< 8352) |||
+    (0xb7dddbfaee0376f8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `14` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV14 : ℕ :=
+    0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 288) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff <<< 576) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff <<< 864) |||
+    (0x800180017fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 1152) |||
+    (0x7fff7fff7fff7fff800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 1440) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180018001800180018001 <<< 1728) |||
+    (0x7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff <<< 2016) |||
+    (0x8001800180018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 2304) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff80018001 <<< 2592) |||
+    (0x7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 2880) |||
+    (0x7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff <<< 3168) |||
+    (0x800180017fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff <<< 3456) |||
+    (0x7fff7fff7fff7fff80018001800180018001800180018001800180018001800180018001 <<< 3744) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 4032) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 4320) |||
+    (0x800180017fff80017fff7fff7fff7fff80017fff80018001800180018001800180018001 <<< 4608) |||
+    (0x7fff7fff80017fff800180017fff80017fff80017fff7fff7fff7fff80017fff80017fff <<< 4896) |||
+    (0x7fff7fff7fff7fff80017fff800180017fff80017fff80017fff7fff7fff80017fff7fff <<< 5184) |||
+    (0x800180017fff80017fff80017fff7fff80017fff80018001800180017fff80017fff8001 <<< 5472) |||
+    (0x7fff800180017fff7fff7fff7fff7fff7fff80018001800180017fff80017fff7fff7fff <<< 5760) |||
+    (0x7fff7fff7fff80017fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff <<< 6048) |||
+    (0x7fff80017fff8001800180017fff7fff7fff80017fff80018001800180017fff7fff7fff <<< 6336) |||
+    (0x7fff80017fff7fff7fff7fff80017fff7fff8001800180018001800180017fff7fff7fff <<< 6624) |||
+    (0x7fff80017fff7fff80017fff80017fff800180017fff7fff80017fff80017fff80018001 <<< 6912) |||
+    (0x7fff7fff80017fff800180017fff80017fff80017fff7fff80017fff8001800180018001 <<< 7200) |||
+    (0x80017fff80017fff800180017fff80017fff7fff7fff7fff80017fff7fff80017fff7fff <<< 7488) |||
+    (0x80017fff7fff7fff8001800180017fff8001800180017fff7fff8001800180017fff7fff <<< 7776) |||
+    (0x80017fff7fff7fff8001800180017fff <<< 8064)
+
+/-- Chunk `14` of `s6c1nHT`. -/
+def s6c1nHT14 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL14 s6c1nHTV14 512
+
+/-- Packed labels (17-bit fields) of chunk `15` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL15 : ℕ :=
+    0x70dbb7dcdbfa6e0336f89b801dbdcedf476fd3b819dc30ee1277063b854dc1e6e09370d9 |||
+    (0xe1257062b8005bdc2df416fd0b7dd5bfaae0356f8ab818dc306e1237061b855dc1eee097 <<< 288) |||
+    (0xc45520c88ffb185b0c42520b0900718b08c5f9215e9090b8545c1e2e09170d8b8195c30a <<< 576) |||
+    (0x8828c36920169034187c8c399202e902818c70c4c5210090df18ae8c6092166908c18550 <<< 864) |||
+    (0x08318728c3e920569014186c8c419206e900818970c64521c0907f18c90c4b520f890e31 <<< 1152) |||
+    (0x12690ac18850c2d52008905b188b0c2a51ff0906718c08c579211e90b018990c63521b89 <<< 1440) |||
+    (0x916b27f590dad17d6976b24f58f5ad2356852b21d593cad2f568b2b1ed592418be8c5892 <<< 1728) |||
+    (0x225685ab219593ead2e568bab1e95926ad0ad691eb27b590fad16d697eb24b58f7ad0bd6 <<< 2016) |||
+    (0xb7acabd6616b3ff59cdacb7d6676b3cf59b5acc356552b39d59fcaccf565b2b36d59e4ad <<< 2304) |||
+    (0x9d3054acc25655ab39959feacce565bab36959e6acaad661eb3fb59cfacb6d667eb3cb59 <<< 2592) |||
+    (0x7e5e3d2fc497824bf7a5fbf2f0597eecbc1e5e0d2fdc97a64c15a60af2f4d982acbd3e5e <<< 2880) |||
+    (0xacbbbe5ddd2ff497ca4c03a601f2f959806cbe5e5f2d300c978e4bf1a5f8f2f1d97e2cbc <<< 3168) |||
+    (0xd9812cbdfe5efd302497b24c0fa607f2f65981ecbd9e5ecd303c97764bfda5fef2eed97f <<< 3456) |||
+    (0x53e519fadcfb827ca73e08979a4beba5f5f2f3597d6cbcde5e6d2fac97be4c09a604f2f7 <<< 3744) |||
+    (0x67d353e219f65cfc427c473e989fac4fb8e7ca13e0b9f70cfd6a7c133e529f714fd667c1 <<< 4032) |||
+    (0x4f8e67e553eb19f1dcfa027d673f289f644fc4e7c413e9b9f88cfb2a7d333e229f894fb2 <<< 4320) |||
+    (0x9ef94f9a67df53f419f35cf7c27e873ef89f1c4fa0e7d613f2b9f40cf8ea7e533eb29f41 <<< 4608) |||
+    (0x16480b518574c2ac215110ab1054482d4015d09f344f7ce7e813efb9ef8cf9aa7df33f42 <<< 4896) |||
+    (0x2d3815cc0b138595c29ca15950a73056582c4816540b0d8592c29b215890a6d056282c30 <<< 5184) |||
+    (0x52a82c7015e80ae1859cc2a0215310a81054c82b8016700b4f8573c2aba150d0aaf05438 <<< 5472) |||
+    (0xa7f054b82b78166c0b23857dc2b0a14b50ac3052d82c8815f40b1d857ac2af214a90abd0 <<< 5760) |||
+    (0x10ea117d097a824f40f6a122d0852821b413ca12ed08b281eb41240adf859bc29fa152d0 <<< 6048) |||
+    (0x33f416ea0e7d07fa830f4156a0f2d06d282db419ca0fed073282ab4184a10bd091a827f4 <<< 6336) |||
+    (0x8568219413da12e508b681e94125a10b5091e827d410fa1175097e824d40f7a0dbd079a8 <<< 6624) |||
+    (0xf2506d682d9419da0fe5073682a94185a0db5079e833d416fa0e7507fe830d4157a12250 <<< 6912) |||
+    (0x4f9db3cecde778f3c579e1eceeb6763b3b4d9e1f4eeba763d3b4e9db24ecd277893c54a0 <<< 7200) |||
+    (0x193bdc9e1e4eeb276393b4c9db34ecda778d3c569db2cecd6778b3c559e1fceebe763f3b <<< 7488) |||
+    (0x9e772f3b079d77cedfe781f3bdf9dfacf096772b3b059dfb4f09a772d3b069d764edf278 <<< 7776) |||
+    (0xc5c6e6e1f371589dfa4f09277293b049d774edfa781d3bde9d76cedf6781b3bdd9dfbcf0 <<< 8064) |||
+    (0x2b8e8dc8c2e2e17111b8d15c50ee4077262b8d0dc502e4017261b90ddc6eae1f5715bb90 <<< 8352) |||
+    (0xb8e95c8cee2e7711 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `15` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV15 : ℕ :=
+    0x800180017fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff |||
+    (0x8001800180017fff8001800180017fff7fff8001800180018001800180017fff7fff8001 <<< 288) |||
+    (0x7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff80017fff7fff7fff <<< 576) |||
+    (0x800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 864) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff <<< 1152) |||
+    (0x80017fff7fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 1440) |||
+    (0x800180018001800180017fff80017fff7fff7fff7fff7fff7fff80018001800180017fff <<< 1728) |||
+    (0x7fff8001800180018001800180017fff8001800180017fff80017fff7fff7fff7fff8001 <<< 2016) |||
+    (0x80017fff7fff7fff7fff80017fff8001800180018001800180017fff80017fff7fff7fff <<< 2304) |||
+    (0x80017fff8001800180017fff800180017fff7fff80017fff7fff80018001800180018001 <<< 2592) |||
+    (0x800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff800180017fff8001 <<< 2880) |||
+    (0x80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff80017fff <<< 3168) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff7fff80017fff7fff800180017fff8001 <<< 3456) |||
+    (0x800180017fff80017fff80017fff7fff7fff7fff80017fff7fff7fff80017fff80017fff <<< 3744) |||
+    (0x80018001800180017fff80017fff7fff80017fff80017fff8001800180017fff80018001 <<< 4032) |||
+    (0x800180017fff80017fff80017fff7fff7fff7fff80017fff80017fff8001800180017fff <<< 4320) |||
+    (0x80017fff7fff800180017fff7fff800180017fff80017fff80018001800180017fff8001 <<< 4608) |||
+    (0x7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff8001 <<< 4896) |||
+    (0x7fff800180017fff7fff800180017fff7fff800180017fff7fff80017fff800180017fff <<< 5184) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 5472) |||
+    (0x7fff800180017fff7fff7fff7fff7fff7fff80018001800180017fff80017fff7fff7fff <<< 5760) |||
+    (0x8001800180017fff7fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff <<< 6048) |||
+    (0x80017fff80017fff7fff7fff8001800180017fff80017fff7fff7fff7fff800180018001 <<< 6336) |||
+    (0x8001800180017fff7fff80018001800180017fff7fff7fff7fff7fff7fff800180018001 <<< 6624) |||
+    (0x800180017fff8001800180017fff7fff7fff800180017fff7fff7fff8001800180017fff <<< 6912) |||
+    (0x80017fff7fff7fff80017fff7fff7fff8001800180017fff8001800180017fff7fff8001 <<< 7200) |||
+    (0x7fff7fff8001800180017fff8001800180017fff7fff8001800180017fff7fff7fff8001 <<< 7488) |||
+    (0x80017fff7fff7fff8001800180017fff8001800180017fff7fff80018001800180017fff <<< 7776) |||
+    (0x80017fff7fff7fff8001800180017fff <<< 8064)
+
+/-- Chunk `15` of `s6c1nHT`. -/
+def s6c1nHT15 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL15 s6c1nHTV15 512
+
+/-- Packed labels (17-bit fields) of chunk `16` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL16 : ℕ :=
+    0x71d0b8f55c92ee317712ab8f4dc922e3117129b895dc62ae49571ebb8945c626e49371e8 |||
+    (0xe3717219b931dc80ae28571a3b9305c806e28371a0b889dc5cae46571d3b8885c5c6e463 <<< 288) |||
+    (0x25c414b409fe046b025c814b209fd049a0244013760a9fb8ad5c3eee377721ab8acdc3e2 <<< 576) |||
+    (0x4b68232414040a6604b70232814020a650486024a0154609c7049b8244c13700a9c046a8 <<< 864) |||
+    (0xa6c04628268414540a0e04630268814520a0d04b20240013960a6f0487824ac154009c40 <<< 1152) |||
+    (0x4e009d404ce822e414240a3604cf022e814220a35047e0256014e609d704b38240c13900 <<< 1440) |||
+    (0xf01369c9b4d4d78a6bc878383c1f4ddca6ee878a83c571e358f1a1374c9ba5047f8256c1 <<< 1728) |||
+    (0xe2a6f1878903c4b1e3b8f1d137349b991ddf8eef136a49b514d76a6bb878403c231de18e <<< 2016) |||
+    (0x414d90a6c8877d83bef1de98ef41367c9b3d1e4d8f26136ec9b754de4a6f2878883c474d <<< 2304) |||
+    (0x7c9d3d1e538f29136d49b694deaa6f5878703c3b4d8ea6c7877e03bf31de78ef3136849b <<< 2592) |||
+    (0xc87c383e1f1f478fa313a849d414e8aa74587c703e3b4e84a74287c883e471f498fa413a <<< 2880) |||
+    (0x0a77887bd83def4ed6a76b87c403e231edb8f6d13b349d991ed58f6a13b4c9da54ed8a76 <<< 3168) |||
+    (0x71f418fa013a9c9d4d4eeea77787be03df31ef38f7913ad49d691eed8f7613aec9d754ef <<< 3456) |||
+    (0x4978a1c218e14d2fc497b21f3f8f9f13aa49d514e82a74187c903e4b4e7ca73e87ca83e5 <<< 3744) |||
+    (0x4713038684bf0a5ec4708038501c1f8e13d2fbc97ae1c538e1dd2f0c97961c4d8e1ad2ef <<< 4032) |||
+    (0x8df2d2eb4972a1c118dfcd2e0497124beea5eb47078384c4bc2a5e54714838744bbca5e2 <<< 4320) |||
+    (0x4baca5ca46f7037c84b80a5c44704037f01c0f8dfbd2dfc970e1be38df5d2ecc97361bdd <<< 4608) |||
+    (0x9c291e6da70287a089c351ec9a73887a589c7d4b7ea5c34703837ec4bb2a5cd46f8837d4 <<< 4896) |||
+    (0x7a109c591e55a6fe87a289c651ec1a72c87ab89c8d1ec7a73787a609c811e73a705879f0 <<< 5184) |||
+    (0xf39138543cfb4e048f361386c3d074e708f64138fc3d2f1ebfa72b87ac09c911e5ba7018 <<< 5472) |||
+    (0xe028f2d138b43d0b4dfc8f2a138cc3d174e588f601391c3d5f4e6e8f63139043d334e0a8 <<< 5760) |||
+    (0x1879147c8616430d228c90ce48b5a45ab219f916bc8676433d22d44e568f5f139243d634 <<< 6048) |||
+    (0x57b21b7915fc86d6436d22bc90b648a9a454b216f9153c85b642dd22a490c248a3a451b2 <<< 6336) |||
+    (0x7fa43fb227790ffc89d644ed21fc91164879a43cb222f90f3c88b6445d21e490da48afa4 <<< 6624) |||
+    (0x224873a439b224790e7c8916448d21cc912e4885a442b225f910bc897644bd2214913a48 <<< 6912) |||
+    (0x9ba35dd1aea8b014581a36851b468ad7456aa35cd1ae28b054583a36951b4e8ad3456891 <<< 7200) |||
+    (0x55462ba34451a268b6745b2a351d1a8a8b314599a34551a2e8b6345b0a350d1a828b3545 <<< 7488) |||
+    (0x8e8cb34658a2fc517e68c874642a309d184a8c514629a2fd517ee8c834640a308d18428c <<< 7776) |||
+    (0x05db8eeaf775d8a2e5d172a8ce14671a2f0517868cb7465aa2e4d17228ce54673a2f1517 <<< 8064) |||
+    (0x0bb11dd702ed31763bbb1c5da6eeb877620bb59dd942ec1175abbb65dd9a2ebe17593bb4 <<< 8352) |||
+    (0xbad45d82eeca776b <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `16` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV16 : ℕ :=
+    0x800180017fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff |||
+    (0x8001800180017fff8001800180017fff7fff8001800180018001800180017fff7fff8001 <<< 288) |||
+    (0x8001800180018001800180018001800180018001800180018001800180017fff7fff7fff <<< 576) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 864) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 1152) |||
+    (0x7fff7fff7fff7fff80018001800180018001800180018001800180018001800180018001 <<< 1440) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 1728) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 2016) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 2304) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 2592) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff80018001 <<< 2880) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff <<< 3168) |||
+    (0x80017fff800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 3456) |||
+    (0x80017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff80017fff <<< 3744) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff800180017fff80017fff <<< 4032) |||
+    (0x7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff8001 <<< 4320) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff80017fff <<< 4608) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 4896) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff <<< 5184) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff7fff8001 <<< 5472) |||
+    (0x800180018001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff8001 <<< 5760) |||
+    (0x80017fff7fff7fff80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff8001 <<< 6048) |||
+    (0x7fff7fff7fff7fff7fff80017fff8001800180018001800180017fff8001800180017fff <<< 6336) |||
+    (0x8001800180017fff80017fff7fff7fff8001800180017fff80017fff7fff7fff80017fff <<< 6624) |||
+    (0x8001800180017fff7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff8001 <<< 6912) |||
+    (0x80017fff7fff7fff7fff8001800180018001800180017fff7fff7fff7fff80017fff8001 <<< 7200) |||
+    (0x7fff7fff7fff7fff7fff80018001800180017fff80017fff7fff7fff8001800180017fff <<< 7488) |||
+    (0x80017fff80018001800180017fff80017fff7fff80017fff80017fff8001800180017fff <<< 7776) |||
+    (0x7fff80017fff7fff7fff7fff80017fff <<< 8064)
+
+/-- Chunk `16` of `s6c1nHT`. -/
+def s6c1nHT16 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL16 s6c1nHTV16 512
+
+/-- Packed labels (17-bit fields) of chunk `17` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL17 : ℕ :=
+    0x75aabb655d9a6ebe37592bb40ddb8aeaf575d9baeddd5e2edc17683bac85d7ceecd776c8 |||
+    (0xecd576c9bad4dd82aeca576b1bb115d706ed33763abb1cdda6aeb857621bb595d946ec13 <<< 288) |||
+    (0xc16e5e152f5397f1cc16a5e172f52982ccbf825ea32f08baed5d5e6edc37682bac8dd7ca <<< 576) |||
+    (0x8094bf2e5f352f239809cbf2a5f372f2297e4cc0425e432f98982c4bf865ea12f0997f14 <<< 864) |||
+    (0xf6998214bfee5ed52ef39821cbfea5ed72ef297fccc1025de32f6897e44c0465e412f999 <<< 1152) |||
+    (0xf012f3997d94c0ae5e752f8397d9cc0aa5e772f829814cbec25f032f3897fc4c1065de12 <<< 1440) |||
+    (0x3a511ea89a244e8a2519127489cd44e0a2559129489bd44b722465124a897298144bec65 <<< 1728) |||
+    (0x398a89054302a6f151e0a72c53ae2a4015260a6ec538e2a5015518a7d053d02a9f44cf22 <<< 2016) |||
+    (0x7044b8a24991234896d44df2252512aa89c244e7224e5128a89d244d0a23d911d4899d15 <<< 2304) |||
+    (0xd34568154e0a7ac53ee2aa015298a71053702a4f15218a75053902a3f15360a86c544e2a <<< 2592) |||
+    (0x828b35459ba35dd1aea8b014581a36851b468ad7456aa35cd1ae28b054583a36951b4e8a <<< 2880) |||
+    (0x8d18428c55462ba34451a268b6745b2a351d1a8a8b314599a34551a2e8b6345b0a350d1a <<< 3168) |||
+    (0x3a2f15178e8cb34658a2fc517e68c874642a309d184a8c514629a2fd517ee8c834640a30 <<< 3456) |||
+    (0xb6fcdb8525c1d2e08970d4a2e5d172a8ce14671a2f0517868cb7465aa2e4d17228ce5467 <<< 3744) |||
+    (0xee08f70d7b7ff5bdbadf3d6fceb8535c1dae08d70d6b7ffdbdbedf3f6fcfb7fedbdb6df3 <<< 4032) |||
+    (0xdbf96e02b6f85b8165c2f2e119705cb7fe5bdb2df396fccb852dc1d6e08b70d5b853dc1d <<< 4320) |||
+    (0xb817dc2fee11f705fb7db5bf9ae02d6f86b8175c2fae11d705eb7dbdbf9ee02f6f87b7da <<< 4608) |||
+    (0x6170b088d8206c16160e0b04cd8326c1f16068b7da5bf92e0296f84b816dc2f6e11b705d <<< 4896) |||
+    (0xc28561d2b059d838ec2256082b07dd81aec13560cab0c4d8566c25161b8b0a0d8746c341 <<< 5184) |||
+    (0x82c6c1016110b0b8d8686c3a16140b0dcd84a6c2b16188b095d86eec315615ab0d1d85ce <<< 5472) |||
+    (0x041d844ec1c560b2b0e9d850ec2e561a2b0add862ec375612ab034d83e6c1916098b070d <<< 5760) |||
+    (0xb2e1dd9a6cc878569baa1e4ba6e58781e9b0e1e09a6c4879169b8ab065d826ec0d560fab <<< 6048) |||
+    (0x7fe9afe1e01a6c0878f69b7a1e33a6f9877be9b5e1df1a6d8878b69bda1e1ba6ed8775e9 <<< 6336) |||
+    (0x0d1365a3bac4d988eec137523c284dca8f251361a3c0c4d888f04137123c881e43a6e187 <<< 6624) |||
+    (0xc28f21135fa3bfc4d808f00136f23c784df28f19136ba3bdc4db08ef8137b23c584dda8f <<< 6912) |||
+    (0xcbaf5dd7ae6bb015d82af6857b4abad75d69af5d57ae2bb035d83af68d7b4ebad55d684d <<< 7200) |||
+    (0x335d9baf2c5796abbc75de1af39d79c6bb915dcaaf2cd796ebbc55de0af39579c2bb935d <<< 7488) |||
+    (0x0ebbf55df8af4457a2abb675db1af51d7a86bb315d9aaf44d7a2ebb655db0af5157a82bb <<< 7776) |||
+    (0x4d9222c7936368af15d78a6bc215e12af205790abbf75df9af15578a2bc235e13af20d79 <<< 8064) |||
+    (0x0b25cd9162c73363f8b1fcd8e62c8b364b8b250d9102c70363e0b1d8d9042c9a36470b21 <<< 8352) |||
+    (0xb1f0d8e02c88364a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `17` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV17 : ℕ :=
+    0x7fff7fff80017fff80018001800180017fff80017fff7fff80017fff80017fff80018001 |||
+    (0x800180017fff80017fff7fff80017fff80017fff80018001800180017fff80017fff8001 <<< 288) |||
+    (0x80017fff7fff80017fff7fff7fff80017fff7fff800180017fff800180017fff80018001 <<< 576) |||
+    (0x80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff7fff7fff <<< 864) |||
+    (0x80017fff80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff <<< 1152) |||
+    (0x7fff80017fff8001800180017fff800180017fff8001800180017fff800180017fff7fff <<< 1440) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 1728) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff80017fff8001 <<< 2016) |||
+    (0x7fff80017fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 2304) |||
+    (0x7fff7fff7fff80018001800180017fff80017fff7fff7fff80017fff80017fff7fff8001 <<< 2592) |||
+    (0x80017fff80017fff7fff7fff7fff8001800180018001800180017fff80017fff7fff7fff <<< 2880) |||
+    (0x7fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff7fff800180018001 <<< 3168) |||
+    (0x80017fff80017fff7fff7fff7fff7fff7fff80018001800180017fff80017fff7fff7fff <<< 3456) |||
+    (0x7fff8001800180017fff7fff7fff80017fff8001800180017fff80018001800180018001 <<< 3744) |||
+    (0x80017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff80017fff7fff7fff8001 <<< 4032) |||
+    (0x7fff8001800180018001800180017fff7fff8001800180018001800180017fff80018001 <<< 4320) |||
+    (0x8001800180017fff80018001800180017fff80017fff7fff7fff80017fff800180018001 <<< 4608) |||
+    (0x800180017fff8001800180017fff80017fff80017fff7fff7fff7fff80017fff80017fff <<< 4896) |||
+    (0x7fff7fff7fff7fff80017fff7fff7fff80017fff80017fff8001800180017fff80018001 <<< 5184) |||
+    (0x7fff7fff80017fff80017fff8001800180017fff80018001800180017fff80017fff8001 <<< 5472) |||
+    (0x7fff7fff8001800180018001800180018001800180018001800180018001800180018001 <<< 5760) |||
+    (0x80018001800180017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 6048) |||
+    (0x7fff7fff7fff7fff7fff7fff800180018001800180018001800180018001800180018001 <<< 6336) |||
+    (0x8001800180017fff80017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff <<< 6624) |||
+    (0x7fff7fff7fff8001800180018001800180017fff80017fff7fff7fff7fff7fff7fff8001 <<< 6912) |||
+    (0x80017fff7fff7fff7fff8001800180018001800180017fff8001800180017fff80017fff <<< 7200) |||
+    (0x800180018001800180017fff7fff7fff7fff80017fff8001800180018001800180017fff <<< 7488) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff8001800180017fff8001 <<< 7776) |||
+    (0x7fff8001800180018001800180017fff <<< 8064)
+
+/-- Chunk `17` of `s6c1nHT`. -/
+def s6c1nHT17 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL17 s6c1nHTV17 512
+
+/-- Packed labels (17-bit fields) of chunk `18` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL18 : ℕ :=
+    0x6382b209d8ecac8e764d2b245d90aac6d763cab1b4d8f22c9136428b238d9342c82363b0 |||
+    (0xc7676412b1c1d8f8ac9476442b22dd92eac7f7639ab1cdd8feac977645ab221d928ac7c7 <<< 288) |||
+    (0xb7025ca12ee19765cb8ea5b552ddb97644b8e65b532dd8b1e5d8daac857648ab269d91ca <<< 576) |||
+    (0x6bc4b8265d332e6897414bace5c472d929740cbac25c412d9196f94b70e5ca72ee296f8c <<< 864) |||
+    (0xe8396c84b8865d632e8097354ba6e5c172d7a9734cba625c112d7996bdcb82a5d352e6b9 <<< 1152) |||
+    (0xc772eca96eccb6a25c712ec99771cb94a5b852df397704b9465b832df096c9cb88a5d652 <<< 1440) |||
+    (0xb587df09e191f69a78c87f389e7d1f67a78b87f409e811f95a7b287e089e2596ed4b6ae5 <<< 1728) |||
+    (0x6a8fcd13c343efb4f188fb413cfc3f9f4f168fb313d043fa34f648fca13c4c3f071f9ba7 <<< 2016) |||
+    (0x171fb3a7b187e109de91f61a79887ed89e8d1f5fa79787ee09e911fada7ae87e289df54f <<< 2304) |||
+    (0x2420fd4f628fd913bd43f0b4f308fb013d1c3f6f4f2e8faf13d243f734f5c8fd613bec3f <<< 2592) |||
+    (0x7042a6213c105a0836c44a8223b10d80877c42a0213f10bb08664442c21f9113908a7442 <<< 2880) |||
+    (0x5086944414220510ba88668442a21fa113888a78422220fe105b8836044ae223810d9887 <<< 3168) |||
+    (0x01055883904496224410d60878c4298214310540839c44902247113708a84421c210110b <<< 3456) |||
+    (0x611fb094004a40235e11df113688a88421a210210b4886984412220610d788780429e214 <<< 3744) |||
+    (0x422d4119a0890843c4229c113e08630435822d211990891043c8229a113d0932048d0241 <<< 4032) |||
+    (0x04a30236611e3092c048a0242e12070933848dc241011f8094184a4c235811dc08628435 <<< 4320) |||
+    (0x088e843b422a41142085c8432422ec11a6088f043b822a21141085d0432822ea11a5093e <<< 4608) |||
+    (0x2022100e87f243f1e1f5b0fc607d60403c1fca093f84a3c236011e0092d848ac24281204 <<< 4896) |||
+    (0x3f8c1ff20ff687ee43efe1f2b0fbe07ca03fdc1fba0fea880843ece1f930fb207e403fac <<< 5184) |||
+    (0x7b80414c20521026882643dbe1f0b0f6e07c20409c209a0fe287fc43e6e1f830f9a07e00 <<< 5472) |||
+    (0xf8207ac040ec2042101e881a43d5e1efb0f5607be0407c206a1052881443e2e1ee30f8a0 <<< 5760) |||
+    (0x368b9d9dcf8ee7017350b961dca4ee5e17320b93ddcaaee61172d8103a881043e0e1eb30 <<< 6048) |||
+    (0x5517278b991dcbcee52172c0b9a9dce0ee7c173b0b9b5dcceee73173c8b9e5dce6ee6717 <<< 6336) |||
+    (0xdaae7937399b9c15cd4ae76373e1b9795cc8ae5837291b9855cb6ae4f372a9b96ddcc2ee <<< 6624) |||
+    (0x555c9eae5b37309b9495cb0ae64372f1b9f15cecae6a37381b9cd5cf2ae6d37339b99d5c <<< 6912) |||
+    (0x08b3b559f26cf0567e1b37959a46cdb56679b3e5d9da2cfc76780b349d9bc2ccf766d8b9 <<< 7200) |||
+    (0x776798b39d59e66cea567b1b39159b06ce1566a9b3cdd9ce2cf676750b361d9c82cd5767 <<< 7488) |||
+    (0x82ced767c8b35559c26cd856721b3d959d46cf356739b385d9aa2ce4766c0b3a9d9ec2ce <<< 7776) |||
+    (0x94da466db736d8b33d59b66cd2566f1b3f159e06cf956769b36dd99e2cde76690b3c1d9f <<< 8064) |||
+    (0x09b79cdbc26cf536799bcd4de666ea737509b91cdc826d5536a99bb5cdda26fc537e19b4 <<< 8352) |||
+    (0x9be54df266f07378 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `18` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV18 : ℕ :=
+    0x800180017fff8001800180018001800180017fff7fff7fff7fff80017fff800180018001 |||
+    (0x8001800180017fff8001800180017fff80017fff7fff7fff7fff7fff7fff80017fff8001 <<< 288) |||
+    (0x80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff7fff800180018001 <<< 576) |||
+    (0x7fff80017fff7fff800180017fff80017fff7fff80017fff7fff80017fff7fff7fff7fff <<< 864) |||
+    (0x80017fff80017fff800180017fff7fff80017fff800180017fff800180017fff80018001 <<< 1152) |||
+    (0x7fff80017fff80017fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff <<< 1440) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 1728) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff80017fff8001 <<< 2016) |||
+    (0x7fff80017fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 2304) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff80017fff80017fff7fff8001 <<< 2592) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 2880) |||
+    (0x80018001800180017fff7fff7fff7fff7fff7fff7fff7fff800180018001800180018001 <<< 3168) |||
+    (0x80017fff7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff <<< 3456) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff80017fff800180017fff7fff8001 <<< 3744) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff80017fff7fff8001 <<< 4032) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80017fff8001 <<< 4320) |||
+    (0x80018001800180017fff7fff7fff7fff800180017fff800180017fff7fff800180017fff <<< 4608) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff <<< 4896) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 5184) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff <<< 5472) |||
+    (0x800180018001800180017fff7fff80018001800180017fff7fff7fff8001800180017fff <<< 5760) |||
+    (0x80017fff7fff7fff7fff8001800180017fff7fff7fff80018001800180017fff7fff8001 <<< 6048) |||
+    (0x7fff7fff8001800180017fff80017fff7fff7fff8001800180017fff7fff7fff7fff8001 <<< 6336) |||
+    (0x7fff80017fff7fff7fff7fff80017fff8001800180017fff7fff80018001800180017fff <<< 6624) |||
+    (0x7fff8001800180017fff80017fff80017fff7fff800180017fff80017fff80017fff7fff <<< 6912) |||
+    (0x7fff7fff80017fff7fff7fff80017fff80017fff8001800180017fff8001800180018001 <<< 7200) |||
+    (0x7fff80017fff80017fff7fff7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff <<< 7488) |||
+    (0x7fff80017fff7fff7fff7fff80017fff7fff7fff80017fff80017fff8001800180018001 <<< 7776) |||
+    (0x80017fff80018001800180017fff8001 <<< 8064)
+
+/-- Chunk `18` of `s6c1nHT`. -/
+def s6c1nHT18 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL18 s6c1nHTV18 512
+
+/-- Packed labels (17-bit fields) of chunk `19` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL19 : ℕ :=
+    0x37c89b854dc266d8736c09bd9cdec26e7537399b9dcdce26f6537b19b614db066e173708 |||
+    (0x6ed537699b55cdaa26e4537219ba94dd466f3737989b3dcd9e26de536f19bc14de066f97 <<< 288) |||
+    (0xe84ef4e17a12bd80ded8ef6017b62bcfdde966f3f57a589b6d4db666d2736909bf1cdf82 <<< 576) |||
+    (0xd21dea86f4857aa0bd99deb46f6657ad0bd44de8aef5117a2abda5deba6f6957ae8bd38d <<< 864) |||
+    (0xaebbd395e842f4e77a11bd815ed82f6077b61bcfc5e96af3f37a5bbd5cdec6ef5717b1ab <<< 1152) |||
+    (0x5777b19bd205ea8af4837aa3bd985eb4af6637ad3bd455e8a2f5177a29bda45ebaaf6937 <<< 1440) |||
+    (0x4e06bac95571af4a53a06c4c95271b20a57006c9c95cf1b38a55c06d3c959fbd5d5ec62f <<< 1728) |||
+    (0x1ea56f06ca495d31b36a55b06d4495a31ae2a55106b94954b1afaa53d06c34951b1adca5 <<< 2016) |||
+    (0x3b1b0ca54606bec94f71ae4a55206b8c95471b50a56806cdc956f1b28a57406c7c95bf1b <<< 2304) |||
+    (0xf766d81b4ea56706ce495731b26a57306c8495c31b12a54906bd494eb1aeaa55506b7495 <<< 2592) |||
+    (0x82cd576708b3b559f26cf0567e1b37959a46cdb56679b3e5d9da2cfc76780b349d9bc2cc <<< 2880) |||
+    (0x9d9ec2ce776798b39d59e66cea567b1b39159b06ce1566a9b3cdd9ce2cf676750b361d9c <<< 3168) |||
+    (0x0b3c1d9f82ced767c8b35559c26cd856721b3d959d46cf356739b385d9aa2ce4766c0b3a <<< 3456) |||
+    (0x124929255c9366495524d8b33d59b66cd2566f1b3f159e06cf956769b36dd99e2cde7669 <<< 3744) |||
+    (0x6498524f09284c91ee4a11247a92cdc95a64b35256892a8c978e4aa125e29290c924e4a4 <<< 4032) |||
+    (0x492424a47249192544936a495324db929cc972e4a7125ca92d9c96064b6525809261c93c <<< 4320) |||
+    (0x9260493ca498324f39285491e24a17247992cc495aa4b33256b92a9497824aa725e19291 <<< 4608) |||
+    (0x4b92a628d338e98a14ce2a5d5d2f6697554bd8929d497224a7725c992d84960a4b632583 <<< 4896) |||
+    (0x99054cb0a5f9d2f0697e54bc0a664d30ee99914c3aa64dd31a699354c68a610d2e4e9841 <<< 5184) |||
+    (0x2e4298474b91a6295338298a74ce1a5d452f6a97534bdba5bcd302e96f14c0aa641d32c6 <<< 5472) |||
+    (0x640532ca99034cb3a5f852f0a97e34bc3a665530e299974c39a64c531aa99334c6ba6115 <<< 5760) |||
+    (0x1c50060802f804e8029400f08077804d00288013700a38037401b7a5bd5302296f74c09a <<< 6048) |||
+    (0x4e20291013b80a5c019a00ca013580a2c03aa01d2005a002c404e40292013680a3403900 <<< 6336) |||
+    (0xa08038e00b200600074c0548027b00f00032c05300287014f00a04037200a400530028c0 <<< 6624) |||
+    (0x52806e00542027e0153809e0019801df014d80a1003a800bf0059807180544027d014e80 <<< 6912) |||
+    (0x7aa7b553f2e9f054fe3a77953a4e9db54e7ba7e4d3da29fc34f80a748d3bc29cf34ed800 <<< 7200) |||
+    (0x534f08a7e453da69fc14f81a74853bc69cf14ed9a7b5d3f2a9f074fe2a779d3a4a9db74e <<< 7488) |||
+    (0x0a9e174eaaa79d53e6e9ea54fb3a79153b0e9e154eaba7ccd3ce29f634f50a760d3c829d <<< 7776) |||
+    (0xdd2366927548d8a7cc53ce69f614f51a76053c869d514f09a79dd3e6a9ea74fb2a791d3b <<< 8064) |||
+    (0x0a4e4d22ae939148aaa485d25a692154968a460d278e918149e2a4d8d224e93614892a49 <<< 8352) |||
+    (0xa4c1d24869305492 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `19` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV19 : ℕ :=
+    0x8001800180017fff80018001800180017fff80017fff7fff80017fff80017fff80018001 |||
+    (0x800180017fff8001800180017fff80017fff80017fff7fff7fff7fff80017fff80017fff <<< 288) |||
+    (0x7fff800180017fff7fff7fff80017fff7fff7fff8001800180017fff80017fff80018001 <<< 576) |||
+    (0x7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff7fff7fff <<< 864) |||
+    (0x7fff80017fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff <<< 1152) |||
+    (0x7fff7fff800180018001800180017fff7fff8001800180017fff8001800180017fff7fff <<< 1440) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 1728) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff8001800180018001 <<< 2016) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 2304) |||
+    (0x7fff80017fff7fff7fff80017fff7fff7fff7fff80017fff800180017fff7fff7fff7fff <<< 2592) |||
+    (0x7fff7fff7fff7fff80017fff7fff7fff80017fff80017fff80018001800180017fff8001 <<< 2880) |||
+    (0x80017fff80018001800180017fff8001800180017fff80017fff80017fff7fff7fff8001 <<< 3168) |||
+    (0x80018001800180017fff80017fff80017fff7fff7fff80017fff7fff7fff7fff80017fff <<< 3456) |||
+    (0x7fff7fff80017fff7fff80017fff7fff800180017fff8001800180017fff800180017fff <<< 3744) |||
+    (0x7fff7fff800180017fff8001800180017fff800180017fff8001800180017fff80018001 <<< 4032) |||
+    (0x800180017fff800180017fff800180017fff7fff80017fff7fff80017fff7fff7fff8001 <<< 4320) |||
+    (0x7fff8001800180017fff800180017fff800180017fff80017fff7fff800180017fff8001 <<< 4608) |||
+    (0x80017fff8001800180017fff800180017fff7fff80017fff7fff80017fff7fff80018001 <<< 4896) |||
+    (0x80017fff7fff80017fff7fff7fff80017fff7fff800180017fff8001800180017fff8001 <<< 5184) |||
+    (0x7fff80017fff7fff800180017fff8001800180017fff800180017fff800180017fff7fff <<< 5472) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff <<< 5760) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 6048) |||
+    (0x80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 6336) |||
+    (0x7fff80017fff7fff7fff7fff80017fff800180017fff7fff7fff7fff800180017fff7fff <<< 6624) |||
+    (0x7fff8001800180017fff80017fff80017fff7fff800180017fff80017fff80017fff7fff <<< 6912) |||
+    (0x7fff7fff80017fff7fff7fff80017fff80017fff8001800180017fff8001800180018001 <<< 7200) |||
+    (0x7fff80017fff80017fff7fff7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff <<< 7488) |||
+    (0x8001800180017fff7fff8001800180017fff8001800180017fff7fff7fff800180018001 <<< 7776) |||
+    (0x8001800180017fff7fff800180018001 <<< 8064)
+
+/-- Chunk `19` of `s6c1nHT`. -/
+def s6c1nHT19 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL19 s6c1nHTV19 512
+
+/-- Packed labels (17-bit fields) of chunk `20` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL20 : ℕ :=
+    0x49e1a4d95224293674891a49c5236a927348dba43cd266e90f1499aa479d254691e54950 |||
+    (0x91e34953a4c05248a93034923a4e5522a2939748a9a484525aa9213496ba461527829187 <<< 288) |||
+    (0xfbc2fe417e93bfb5dfe62ff917f3bbf845f9eefd577ed8a43d5266290f74999a4785254a <<< 576) |||
+    (0xf9c5ff2eff377f68bf485fc8efde77ec0bfd9dfe02fea17fe3bff05fd4eff077fb0bf61d <<< 864) |||
+    (0xfb1bf615fbc6fe437e92bfb55fe66ff937f3abf84df9eafd557ed9bf6ddfaa2fcf17f0bb <<< 1152) |||
+    (0xcf37f0abf9cdff2aff357f69bf48dfc8afde57ec1bfd95fe06fea37fe2bff0dfd4aff057 <<< 1440) |||
+    (0x1442dbc18410b9d05f942e9417b50bfe05e8c301817730c3405c5c31301707bf6d5faa6f <<< 1728) |||
+    (0xff85e80301e17700c3585c50313617040b56861482dba18420b9c85f982e9217b60b5706 <<< 2016) |||
+    (0x3e0ba305f642eac17a90b59061342dc4183d0c3a05c2c314816fb0c0005e7c3020176f0b <<< 2304) |||
+    (0x3213250c3b85c20314e16f80c0185e703026176c0ba285f682eaa17aa0b58861382dc218 <<< 2592) |||
+    (0xa82842141d09f684fc426341326099b84cac28c0145c099a04ca028c6145f09f704fc826 <<< 2880) |||
+    (0x3051e82722138d097a84ba42844141e0a17850cc26b013640a16050c026b61367097b04b <<< 3168) |||
+    (0xf09bf04e08291214950a42851e42724138e095f84b0c279013d4095e04b00279613d70a4 <<< 3456) |||
+    (0x0063b0279017640aac067d09be84e042914149609e384eec25a012cc09e204ee025a612c <<< 3744) |||
+    (0xc0b1806470277017940a9406810278817680aaa067e025b818700b260638025a0187c0b2 <<< 4032) |||
+    (0x0136c0ca8057f02db014740d2405390276817980a9206820255818800b1e064402540188 <<< 4320) |||
+    (0x02f60139c0c90058302d5014840d1c054502da814780d22053a02f9813600cae057c02f8 <<< 4608) |||
+    (0x741fba6f5d2bae7dd741eba4a5d192ea49755402d4814880d1a054602f7813900c960580 <<< 4896) |||
+    (0xea4d7556ba4bdd19eea4f7557ba6edd2b6e7db741dba4add196ea4b7555ba6fdd2bee7df <<< 5184) |||
+    (0xd3dee86f7407ba635d3dae86d7406ba265d1f2ea79750cba6e5d2b2e7d9741cba4b5d19a <<< 5472) |||
+    (0xa275d1faea7d750eba27dd1feea7f750fba62dd3d6e86b7405ba26dd1f6ea7b750dba63d <<< 5760) |||
+    (0x016a852d459aa17b4ffea8a7d4232a02f50d4a8b3d42929fff50bcba625d3d2e8697404b <<< 6048) |||
+    (0x20b5046a83ad44daa1db502ea88fd4172a08f5104a89bd41d2a05f50eca846d453aa1ab5 <<< 6336) |||
+    (0x23ea02950d7a8b25429e9ff950bfa84754536a1ad5015a85354596a17d4ffda82ed447aa <<< 6624) |||
+    (0x8e5417ea0895107a89a541dea05950efa82f54476a20d5045a83b544d6a1dd502da8a654 <<< 6912) |||
+    (0xfb8ffc4846e420720a09039c83424291202b9045c83a24261201390204858e41772058a8 <<< 7200) |||
+    (0x752059902dc82e242c120439008484ce41d7208890144852e41a720709051c840242311f <<< 7488) |||
+    (0x0642331ffa8ffcc846a420520a19039483464293202a9045483a6426320129020c858a41 <<< 7776) |||
+    (0xf5b37adb396d3c902d482e642c320429008c84ca41d520899014c852a41a520719051484 <<< 8064) |||
+    (0x4b6875b2badad96dccb6e75b5bad9596d0cb6c35b79ada496cc4b67b5b25adaa96db4b63 <<< 8352) |||
+    (0xb6635b49adbc96d8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `20` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV20 : ℕ :=
+    0x80017fff8001800180017fff7fff80018001800180017fff7fff7fff8001800180017fff |||
+    (0x80017fff7fff7fff80017fff7fff7fff8001800180017fff80017fff7fff7fff80018001 <<< 288) |||
+    (0x7fff7fff7fff7fff80017fff800180017fff80017fff80017fff7fff7fff7fff7fff8001 <<< 576) |||
+    (0x7fff7fff80017fff80017fff800180017fff80017fff7fff7fff7fff80017fff7fff8001 <<< 864) |||
+    (0x7fff7fff800180017fff80017fff80017fff7fff80017fff80018001800180017fff8001 <<< 1152) |||
+    (0x7fff800180017fff7fff80017fff7fff7fff7fff80017fff800180017fff80017fff8001 <<< 1440) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff80017fff7fff8001 <<< 1728) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 2016) |||
+    (0x80017fff80017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 2304) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff80017fff7fff80017fff8001 <<< 2592) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 2880) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff80017fff8001 <<< 3168) |||
+    (0x80017fff80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 3456) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff80017fff800180017fff7fff8001 <<< 3744) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 4032) |||
+    (0x7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff80017fff <<< 4320) |||
+    (0x7fff7fff80017fff800180017fff7fff80017fff80017fff7fff800180017fff7fff8001 <<< 4608) |||
+    (0x800180017fff80017fff7fff80017fff7fff80017fff7fff7fff7fff80017fff7fff8001 <<< 4896) |||
+    (0x800180017fff7fff80017fff800180017fff800180017fff800180017fff80017fff7fff <<< 5184) |||
+    (0x7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff80017fff <<< 5472) |||
+    (0x80017fff80017fff80018001800180017fff8001800180017fff80017fff80017fff7fff <<< 5760) |||
+    (0x7fff7fff80017fff800180017fff80017fff80017fff7fff7fff80017fff7fff7fff7fff <<< 6048) |||
+    (0x80017fff80017fff80018001800180017fff80017fff80017fff7fff7fff80017fff7fff <<< 6336) |||
+    (0x7fff7fff80017fff80017fff800180017fff80017fff7fff7fff7fff80017fff7fff7fff <<< 6624) |||
+    (0x800180017fff80017fff7fff7fff7fff80017fff80017fff80018001800180017fff8001 <<< 6912) |||
+    (0x7fff80017fff7fff80017fff80018001800180017fff80017fff7fff80017fff80017fff <<< 7200) |||
+    (0x80018001800180017fff80017fff7fff80017fff80017fff80018001800180017fff8001 <<< 7488) |||
+    (0x7fff80017fff7fff800180017fff8001800180017fff800180017fff8001800180017fff <<< 7776) |||
+    (0x80017fff800180017fff7fff80017fff <<< 8064)
+
+/-- Chunk `20` of `s6c1nHT`. -/
+def s6c1nHT20 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL20 s6c1nHTV20 512
+
+/-- Packed labels (17-bit fields) of chunk `21` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL21 : ℕ :=
+    0x6de7b6aadb6d6d9ef6c97b6cedb4f6d8ff6cdfb69f5b67ad9b96c7cb6db5b55ad9296cf4 |||
+    (0xdb6f6d57b6f2db616d98f6d27b6b6db736da1f6cafb656db436db9f6d6fb692db316db0f <<< 288) |||
+    (0x38d05f348e7b1764a38a05f4c8e871778a38405e7c8edfb66edb1f6da7f6d9fb64adb3d6 <<< 576) |||
+    (0x7baa3a505d748e5b17b4a3a205d8c8e6717a8a3ac05e3c8dff1776a38305e848ee3176aa <<< 864) |||
+    (0xeb31762a39905ed48e8b175ca39605eec8e971790a38005e9c8eaf17a6a3ab05e448e031 <<< 1152) |||
+    (0xde48e1317d2a3a105d948e2b17cca39e05dac8e3717a0a3b805ddc8e0f178ea37f05ea48 <<< 1440) |||
+    (0x53aa1ab5016a852d459aa17b4ffea8a7d4232a02f50d4a8b3d42929fff50bc179ea3b705 <<< 1728) |||
+    (0x2ed447aa20b5046a83ad44daa1db502ea88fd4172a08f5104a89bd41d2a05f50eca846d4 <<< 2016) |||
+    (0x2da8a65423ea02950d7a8b25429e9ff950bfa84754536a1ad5015a85354596a17d4ffda8 <<< 2304) |||
+    (0x9932bca88e5417ea0895107a89a541dea05950efa82f54476a20d5045a83b544d6a1dd50 <<< 2592) |||
+    (0xfa65d9331c998f4cbba63f9328c99534c85a66093334996b4cd9a64e9324499174c97a66 <<< 2880) |||
+    (0x6ccaf6645f325f995f4cd3a64b9322c99234c9da66c932d4999b4cc1a642932a499474c7 <<< 3168) |||
+    (0x79976ccc76651f31ff98fecca36663f32ef9982cccd6654f3217993acc91665af336799a <<< 3456) |||
+    (0x33b519dfc4f0a277313b08992ecc8b6657f334f99b2ccb56648f3277990acca96666f330 <<< 3744) |||
+    (0xe77373b0b9e214eeca76453b529db4cece677933c599d784ee0278213be09e20ceec6764 <<< 4032) |||
+    (0x4f0aa77353b0a9e21ceece76473b539d79cee0e78273be39db54ecea77953c5a9dfdcf0a <<< 4320) |||
+    (0x9e204eec276413b509dfccf0a677333b099d794ee0a78253be29db5cecee77973c5b9dfd <<< 4608) |||
+    (0x218d113c88498425621d410940875c44f421259db44ece277913c589d78cee0678233be1 <<< 4896) |||
+    (0x450c211910f688648417e2260105e0898c43dc219110f8886384186225c10600897c43e4 <<< 5184) |||
+    (0x833c4304221d107488a584376216410dc0859c41d42295114288468426e21c8109a0872c <<< 5472) |||
+    (0x0e20856c41ec228910be88888445e20d011160834c42fc222110c088878446620cc11180 <<< 5760) |||
+    (0x8179c52ce59e717b37ff9ca74e232702d38d49cb34e2926ffd38bc107a88a28438e21581 <<< 6048) |||
+    (0x26b38779c22ce41e723b385f9c774e0b270ed39349c834e11270bd391c9c46ce53e71ab3 <<< 6336) |||
+    (0x47e720b38479c3ace4de71db382f9c8f4e172708d39049c9b4e1d2705d38ec9c16ce3be7 <<< 6624) |||
+    (0xfece2fe72cb38a79c0ace35e729b388f9c5f4dff2714d39649c6b4e052711d394c9c2ece <<< 6912) |||
+    (0xc49f024fb767dbf3e069f6f4f81e7c0b3edc9f264fd567eaf3e4e9fab4f93e7c9b3f549b <<< 7200) |||
+    (0x5b3e349f4a4fc367e1f3e969f874fa5e7d2b3f0c9f0e4fb167d8f3e1e9f634f87e7c3b3e <<< 7488) |||
+    (0xfe7e7b3e649f924f9f67cff3f269f3f4fc9e7e4b3e7c9f564f8d67c6f3eae9f1b4fabe7d <<< 7776) |||
+    (0x459fe6d05368589f7a4f7b67bdf3ef69ef74fbde7deb3dec9f9e4f9967ccf3f3e9f334fc <<< 8064) |||
+    (0x2b420da1c2d1416811b4995a40ed1a76962b498da402d1a16961b445d9fead055685bb44 <<< 8352) |||
+    (0xb4215a1ced147681 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `21` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV21 : ℕ :=
+    0x7fff7fff7fff80017fff7fff800180017fff8001800180017fff800180017fff80018001 |||
+    (0x800180017fff8001800180017fff800180017fff800180017fff7fff80017fff7fff8001 <<< 288) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80017fff7fff <<< 576) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80017fff8001 <<< 864) |||
+    (0x7fff80017fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 1152) |||
+    (0x7fff80017fff7fff80017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 1440) |||
+    (0x80018001800180017fff800180017fff80018001800180017fff8001800180017fff8001 <<< 1728) |||
+    (0x80017fff80018001800180017fff80017fff7fff80017fff80017fff8001800180017fff <<< 2016) |||
+    (0x80017fff7fff7fff80017fff80017fff800180017fff7fff80017fff80017fff80018001 <<< 2304) |||
+    (0x80017fff7fff7fff80017fff7fff7fff8001800180017fff7fff80017fff7fff7fff7fff <<< 2592) |||
+    (0x800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff7fff7fff7fff8001 <<< 2880) |||
+    (0x7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff7fff8001 <<< 3168) |||
+    (0x80017fff8001800180017fff7fff8001800180017fff8001800180017fff7fff7fff8001 <<< 3456) |||
+    (0x80017fff7fff7fff8001800180017fff80017fff7fff7fff7fff80018001800180018001 <<< 3744) |||
+    (0x80017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff80018001800180017fff <<< 4032) |||
+    (0x80017fff7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff800180018001 <<< 4320) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff7fff80017fff800180018001 <<< 4608) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 4896) |||
+    (0x80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 5184) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff <<< 5472) |||
+    (0x7fff800180017fff80018001800180017fff8001800180017fff80017fff80017fff7fff <<< 5760) |||
+    (0x800180017fff80017fff7fff80017fff80017fff8001800180017fff8001800180018001 <<< 6048) |||
+    (0x80017fff80017fff800180017fff7fff80017fff80017fff8001800180017fff80018001 <<< 6336) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff80017fff7fff7fff7fff80017fff7fff7fff <<< 6624) |||
+    (0x7fff7fff7fff8001800180017fff7fff7fff800180017fff7fff7fff8001800180017fff <<< 6912) |||
+    (0x80017fff7fff7fff7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff <<< 7200) |||
+    (0x800180017fff7fff7fff80018001800180017fff7fff8001800180017fff7fff7fff8001 <<< 7488) |||
+    (0x7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff7fff8001 <<< 7776) |||
+    (0x7fff7fff80017fff7fff80017fff7fff <<< 8064)
+
+/-- Chunk `21` of `s6c1nHT`. -/
+def s6c1nHT21 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL21 s6c1nHTV21 512
+
+/-- Packed labels (17-bit fields) of chunk `22` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL22 : ℕ :=
+    0x6840b4755a46ed29768bab474da462d29168b9b45dda52ad23568ebb45c5a526d23368e8 |||
+    (0xcff16889b4b1da34ad2056933b4b05a346d2036930b409da28ad0e56843b4085a286d0e3 <<< 288) |||
+    (0x38dc1c680d9606c4838ac1c500d8a06788374c1ba00cf2b42d5a0aecff7688ab42cda0a2 <<< 576) |||
+    (0x70d032e019760e19071303310198e0e25073f035701abe0e7d06768373c1b980cee06ca8 <<< 864) |||
+    (0xd1e06c28399c1cc80d8606bc8396c1cb00d7a06908370c1b800d220741035801ac60e810 <<< 1152) |||
+    (0xa660e9106f50332019960de906fb0335019ae0df50747034b01a5e0e8d068e836fc1b780 <<< 1440) |||
+    (0x9c42b9c15be0a818544c2a58155c0a80054402a5e155f0b51059c82b9a15bd0749034c01 <<< 1728) |||
+    (0x1c859242bec16260a6d852ac2b2815840a6c052a02b2e15870b1d059282bea16250b5085 <<< 2016) |||
+    (0xc10b22859542bd4161a0a73852dc2b1015780a72052d02b16157b0b23059582bd216190b <<< 2304) |||
+    (0xc969540b4e859b42ba415c20a7f8543c2a6015600a7e054302a6615630b4f059b82ba215 <<< 2592) |||
+    (0xbed03f68afb493da25ed0cf6957b46ed9fb6d03b68adb46f59fbad03d68aeb4925a252d0 <<< 2880) |||
+    (0x65a4f2d219687cb46e59fb2d03968acb4935a25ad0cd6956b492da256d0cb6955b46fd9f <<< 3168) |||
+    (0xdb41bda31ed1ef6807b427da4fed21f687fb41ada316d1eb6805b41b5a31ad1ed6806b42 <<< 3456) |||
+    (0xf5c3caeafd74b2b7ef5c24b41a5a312d1e96804b4275a4fad21d687eb426da4f6d21b687 <<< 3744) |||
+    (0xab87b5c0eae96d757ab84b5bf6ae73d72d2b8df5c9cae7fd7332b8af5c84aea3d7452b81 <<< 4032) |||
+    (0xd7152b99f5cfcae4fd71b2b96f5ce4ae5ad739ab93b5c6eae66d73fab90b5c56ae8ad751 <<< 4320) |||
+    (0xae2ad721ab9fb5cceae36d727ab9cb5cb6ae13d6fd2ba5f5d5cae1fd7032ba2f5d44ae43 <<< 4608) |||
+    (0x2c569672cb452581b2c9c96aecb33258ab2c24adfad709ababb5d2eae06d70faba8b5d16 <<< 4896) |||
+    (0x590f2bf696a2cb2d258db2c3c967ecb4b257eb2c84968bcb39a593f2c0e9667cb57a584f <<< 5184) |||
+    (0xb0fa5a8f2cb69642cafd25a5b2cfc961ecb1b2596b2d44965bcb51a587f2c6e9697cb3fa <<< 5472) |||
+    (0x607cb27a59cf2d169612cb152599b2d5c964ecb0325a2b2ce495fbcb21a59ff2d2e9637c <<< 5760) |||
+    (0x994bcd75e6b2f3bb79dfbc5f5e2f2f11b788fbc3ade1def14d78a4962bcb09a5abf2cce9 <<< 6048) |||
+    (0x32f7995bcd7de6b6f3b979debc5fde2f6f119788ebc3a5e1daf14f78a5bce2de71ef32d7 <<< 6336) |||
+    (0x4d2f2cb7967bcbede5fef29d794cbc76de3bef23d791cbc835e412f1ab78d7bce25e71af <<< 6624) |||
+    (0x9bde4d6f2c97966bcbe5e5faf29f794dbc765e3baf23f791dbc83de416f1a978d6bc9b5e <<< 6912) |||
+    (0xdf1a468d2092706938c19fd0d055262892fb1a030d025261093071a488d1f926fe9390bc <<< 7200) |||
+    (0xc093af1a310d0b5275893e319da8cf6926b6933419d48cf9926ce93281a2f0d0c5276093 <<< 7488) |||
+    (0x39271e93801a190d17527b893b319f28cea92656936419ec8ced9266e93581a170d18527 <<< 7776) |||
+    (0xfd74b2b7ef5c241a3e8d2492726937c1a050d0152608930b1a0b0cfe525f093171a408d2 <<< 8064) |||
+    (0xeae96d757ab84b5bf6ae73d72d2b8df5c9cae7fd7332b8af5c84aea3d7452b81f5c3caea <<< 8352) |||
+    (0xae8ad751ab87b5c0 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `22` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV22 : ℕ :=
+    0x80017fff800180017fff800180017fff800180017fff80017fff7fff800180017fff8001 |||
+    (0x7fff80017fff7fff80017fff800180017fff7fff80017fff80017fff800180017fff7fff <<< 288) |||
+    (0x7fff7fff7fff7fff7fff7fff800180018001800180018001800180017fff7fff80017fff <<< 576) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff800180018001800180018001800180017fff7fff <<< 864) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180018001800180018001 <<< 1152) |||
+    (0x7fff80017fff80017fff7fff7fff7fff7fff7fff7fff7fff800180018001800180018001 <<< 1440) |||
+    (0x80017fff80017fff80017fff80017fff80017fff80017fff80017fff7fff80017fff8001 <<< 1728) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff800180017fff <<< 2016) |||
+    (0x7fff800180017fff80017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 2304) |||
+    (0x7fff8001800180017fff8001800180018001800180017fff7fff80017fff80017fff8001 <<< 2592) |||
+    (0x7fff7fff7fff7fff7fff80017fff7fff7fff80017fff8001800180017fff7fff7fff8001 <<< 2880) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff80018001800180017fff <<< 3168) |||
+    (0x80017fff8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff8001 <<< 3456) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff8001800180017fff80018001800180018001 <<< 3744) |||
+    (0x7fff80017fff8001800180017fff8001800180018001800180017fff8001800180017fff <<< 4032) |||
+    (0x7fff8001800180018001800180017fff80017fff7fff7fff7fff7fff7fff80017fff7fff <<< 4320) |||
+    (0x7fff80017fff7fff80017fff80017fff800180017fff7fff7fff80017fff800180018001 <<< 4608) |||
+    (0x80017fff800180017fff80017fff7fff7fff7fff80017fff80017fff8001800180018001 <<< 4896) |||
+    (0x80017fff80017fff800180017fff80017fff7fff7fff7fff80017fff7fff7fff80017fff <<< 5184) |||
+    (0x7fff80017fff7fff7fff7fff80017fff800180017fff80017fff80017fff7fff7fff7fff <<< 5472) |||
+    (0x7fff80017fff80017fff7fff7fff7fff80017fff7fff7fff80017fff80017fff80018001 <<< 5760) |||
+    (0x7fff7fff80017fff7fff7fff80017fff80017fff8001800180017fff8001800180018001 <<< 6048) |||
+    (0x80017fff80017fff80018001800180017fff80017fff80017fff7fff7fff80017fff7fff <<< 6336) |||
+    (0x80017fff7fff80017fff800180017fff7fff80017fff7fff7fff7fff80017fff7fff7fff <<< 6624) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff <<< 6912) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 7200) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff8001 <<< 7488) |||
+    (0x7fff7fff7fff80017fff8001800180017fff8001800180018001800180017fff80017fff <<< 7776) |||
+    (0x7fff7fff7fff80017fff800180018001 <<< 8064)
+
+/-- Chunk `22` of `s6c1nHT`. -/
+def s6c1nHT22 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL22 s6c1nHTV22 512
+
+/-- Packed labels (17-bit fields) of chunk `23` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL23 : ℕ :=
+    0x5d44ae43d7152b99f5cfcae4fd71b2b96f5ce4ae5ad739ab93b5c6eae66d73fab90b5c56 |||
+    (0xba8b5d16ae2ad721ab9fb5cceae36d727ab9cb5cb6ae13d6fd2ba5f5d5cae1fd7032ba2f <<< 288) |||
+    (0x981e4c0b270c930e49d564eaf261e93ab4987e4c3b2754adfad709ababb5d2eae06d70fa <<< 576) |||
+    (0x39f498de4c6b273c92f649c964e4f25ee9393497be4bdb2724930249c364e1f260693874 <<< 864) |||
+    (0x696936f49a5e4d2b26dc932649b164d8f264e93634993e4c9b26c4931a49cf64e7f26369 <<< 1152) |||
+    (0xd5f266693574999e4ccb26ac933e49bd64def267e937b499fe4cfb26f4934a49b764dbf2 <<< 1440) |||
+    (0x0468e414709a4095216e8e154723a409d216a8e174722a42cd20428e434708933249ab64 <<< 1728) |||
+    (0xb451e068f6147f9a3c151dae8ff547b3a3c1d1daa8ff747b2a3b4d1e028f6347f8a42c52 <<< 2016) |||
+    (0x28a3e451f868ea14799a3f151f2e8f354753a3f1d1f2a8f374752a3e4d1f828ea34798a3 <<< 2304) |||
+    (0xf011a8a39c51bc690814829a37951cee90554843a379d1cea90574842a39cd1bc2908348 <<< 2592) |||
+    (0xb823f8122c0901848cc218211710861045c824001230093d846ac227210e9089d043a824 <<< 2880) |||
+    (0xa84494252e11e70943846dc228a10f508a3043d8250811b408ff848bc217a116d085f045 <<< 3168) |||
+    (0x208688468424261263090604970219c119e086684674241e125f094a0479022ac112608a <<< 3456) |||
+    (0x14470a26851402891144580944047602294111a08a484464251611db09080498021a411a <<< 3744) |||
+    (0xe88874413a299d158e885743fba28d5152a88854412a2995158a885543faa25c513a2894 <<< 4032) |||
+    (0xd152688834411a298d1586885343f9a25cd13a689434471a268d140689134459a28dd152 <<< 4320) |||
+    (0xa25d513aa89454472a2695140a8915445aa25dd13ae89474473a269d140e8917445ba28c <<< 4608) |||
+    (0x4a0fa537529b296bb4b5fa55ad2ade944d4a24a28c5152288814410a29851582885143f8 <<< 4896) |||
+    (0x94194a0ea537d29b696b94b5ea55a52ada944f4a25a542d2a1e962d4b14a57f52bf2941b <<< 5184) |||
+    (0x2cbe953d4a9ca51ed28fe959d4acca5a352d1294ab4a57a54252a1a962f4b15a57fd2bf6 <<< 5472) |||
+    (0x59652cba953f4a9da51e528fa959f4acda5a3d2d1694a94a56a4fb527d295cb4ae7a596d <<< 5760) |||
+    (0x561ba515d102ea017562ba8ddd2e6e7f3745bba8c5d2eae7f57458a4fbd27d695c94ae6a <<< 6048) |||
+    (0xa9374ebba145d22aea9574e8ba68dd4cee8e77411ba695d4c2e8e17412ba50dd10eea077 <<< 6336) |||
+    (0x10aea057560ba51dd106ea037563ba8d5d2e2e7f1745aba8cdd2eee7f77459ba15dd226e <<< 6624) |||
+    (0x155d222ea9174eaba14dd22eea9774e9ba685d4cae8e57410ba69dd4c6e8e37413ba505d <<< 6912) |||
+    (0x870f4187a4c3a581d5c0e91073c83b9a1dbd0e90873c43b9c1dbe0f4007a403a5e1d5fba <<< 7200) |||
+    (0x161d7b0f2d878ac3b281d840e5d073283bea1e250e5c873243bec1e260f2c078a03b2e1d <<< 7488) |||
+    (0x303a661d630f33878dc3b101d780e63073583bd21e190e62873543bd41e1a0f32078d03b <<< 7776) |||
+    (0xa5d912ed4976d40f3f87a3c3a601d600e8f073b83ba21dc10e8e873b43ba41dc20f3e07a <<< 8064) |||
+    (0x7bafedd736eadb759dbb3add916ed4b76d5baffdd73eeadf759fbaff5d73aeadd759ebb3 <<< 8352) |||
+    (0xbb3bdd91eed4f76d <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `23` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV23 : ℕ :=
+    0x80017fff8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff8001 |||
+    (0x7fff8001800180017fff8001800180018001800180017fff7fff80018001800180018001 <<< 288) |||
+    (0x7fff80017fff80018001800180017fff7fff7fff7fff7fff7fff80017fff7fff7fff8001 <<< 576) |||
+    (0x7fff8001800180018001800180017fff7fff7fff7fff80017fff8001800180017fff7fff <<< 864) |||
+    (0x80017fff7fff8001800180018001800180017fff7fff7fff7fff80017fff800180018001 <<< 1152) |||
+    (0x7fff7fff80017fff8001800180017fff80017fff7fff7fff7fff80018001800180018001 <<< 1440) |||
+    (0x7fff80017fff80017fff7fff800180017fff80017fff80017fff7fff7fff80017fff7fff <<< 1728) |||
+    (0x800180017fff80017fff80017fff7fff80017fff80018001800180017fff800180018001 <<< 2016) |||
+    (0x8001800180017fff80018001800180017fff800180017fff80018001800180017fff8001 <<< 2304) |||
+    (0x80018001800180017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff80017fff80017fff <<< 2592) |||
+    (0x8001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff8001800180018001 <<< 2880) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff80018001 <<< 3168) |||
+    (0x7fff8001800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 3456) |||
+    (0x80017fff7fff7fff8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff <<< 3744) |||
+    (0x80017fff80017fff7fff7fff7fff8001800180018001800180017fff8001800180017fff <<< 4032) |||
+    (0x7fff8001800180018001800180017fff7fff8001800180018001800180017fff80018001 <<< 4320) |||
+    (0x7fff8001800180017fff80017fff80017fff7fff7fff7fff7fff80017fff800180018001 <<< 4608) |||
+    (0x7fff80017fff7fff7fff80017fff7fff7fff7fff80017fff80017fff8001800180018001 <<< 4896) |||
+    (0x80017fff80017fff8001800180017fff80018001800180017fff8001800180017fff8001 <<< 5184) |||
+    (0x80017fff80018001800180017fff8001800180017fff80017fff80017fff7fff7fff7fff <<< 5472) |||
+    (0x7fff80017fff8001800180017fff7fff7fff80018001800180017fff7fff800180018001 <<< 5760) |||
+    (0x8001800180017fff7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff <<< 6048) |||
+    (0x80017fff7fff8001800180018001800180017fff7fff80018001800180017fff7fff7fff <<< 6336) |||
+    (0x7fff80017fff800180017fff80017fff7fff8001800180017fff7fff7fff800180018001 <<< 6624) |||
+    (0x7fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff8001 <<< 6912) |||
+    (0x80017fff80017fff80017fff80017fff7fff80017fff800180017fff80017fff7fff8001 <<< 7200) |||
+    (0x7fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff80017fff8001 <<< 7488) |||
+    (0x7fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff7fff80017fff8001 <<< 7776) |||
+    (0x7fff7fff7fff80017fff800180018001 <<< 8064)
+
+/-- Chunk `23` of `s6c1nHT`. -/
+def s6c1nHT23 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL23 s6c1nHTV23 512
+
+/-- Packed labels (17-bit fields) of chunk `24` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL24 : ℕ :=
+    0x7587baf35d85aeb6d7586bb165d972ed79768cbafe5d732ead9759cbb3b5d91aed4d76d6 |||
+    (0xed7d768ebb17dd97eed7f768fbaf2dd856eb6b7585bb16dd976ed7b768dbaf3dd85eeb6f <<< 288) |||
+    (0x4b7ea3af5177a91a54a52a43951bca92654ab2a40951a4baf25d852eb697584bb175d97a <<< 576) |||
+    (0x92754abaa40d51a6a932d4b16a3db518da93ed4b76a3ab5175a933d4b1ea3df518fa93fd <<< 864) |||
+    (0x24fa8dfd487ea52f5237a8ba54752a5b9527ca8c6547b2a5895264a91b54a5aa43d51bea <<< 1152) |||
+    (0x5bd527ea8c7547baa58d5266a8d2d4816a55b524da8ded4876a52b5235a8d3d481ea55f5 <<< 1440) |||
+    (0xb2a43e721f09141c8a0242f3217a9135c89a2432321929170c8b8a43b721d8a8bb5475aa <<< 1728) |||
+    (0xd5c86a244a322529110c888a453722989104c882a456722b090e1c87024473223a9164c8 <<< 2016) |||
+    (0x3b916448b2e43e521f1914148a0642f1217b9135489a643212193917048b8e43b521d990 <<< 2304) |||
+    (0x716b0890d5486a644a1225391104888e4535229991044882e456522b190e148706447122 <<< 2592) |||
+    (0x4ad5e56b22b5fcdaf26d8536c59b5d85af82d8816c10b5c0dad46d5e36b21b5b45ae62d6 <<< 2880) |||
+    (0x1dad4ed5e76b23b5d9daf8ed8876c13b5fd5af2ad8556c5ab5b5dae6ed6776b0bb5c15ad <<< 3168) |||
+    (0x0b5b4dae66d6736b09b5d95af8ad8856c12b5fddaf2ed8576c5bb5b55ae6ad6756b0ab5c <<< 3456) |||
+    (0xc8f6f1804a3c60606c8fc7b5fc5af22d8516c58b5d8daf86d8836c11b5c05ad42d5e16b2 <<< 3744) |||
+    (0x0611c8f9f17fca3ba060cc8fd7180aa3c9060548fbb17eea3d3061048f7317f0a3d4060f <<< 4032) |||
+    (0xa3e805f5c8f3f182ca3f20600c8ef71802a3bd060b48fcb17d6a3cf061248fa317d8a3d0 <<< 4320) |||
+    (0x1840a3dc05fbc8f4f1814a3ee0602c8f271832a3f505ff48eeb1846a3e705f648f431848 <<< 4608) |||
+    (0x5177a91a54a52a43951bca92654ab2a40951a4181aa3f1060148f1b183ea3db05fc48f53 <<< 4896) |||
+    (0xa40d51a6a932d4b16a3db518da93ed4b76a3ab5175a933d4b1ea3df518fa93fd4b7ea3af <<< 5184) |||
+    (0x487ea52f5237a8ba54752a5b9527ca8c6547b2a5895264a91b54a5aa43d51bea92754aba <<< 5472) |||
+    (0x8c7547baa58d5266a8d2d4816a55b524da8ded4876a52b5235a8d3d481ea55f524fa8dfd <<< 5760) |||
+    (0x4949a0f4d072671b338f9a274d13269bb34df99eaccf5e674d33a4a8bb5475aa5bd527ea <<< 6048) |||
+    (0x92f34959a0fcd0766719338e9a27cd13669b934de99ea4cf5a674f33a59a32cd19e692d3 <<< 6336) |||
+    (0x0d2698b34c799f6ccfbe677d33bc9a3ecd1fe695d34ac9a034d01266eb33779a324d19a6 <<< 6624) |||
+    (0x1bcd0d6698934c699f64cfba677f33bd9a3e4d1fa695f34ad9a03cd01666e933769a1b4d <<< 6912) |||
+    (0xa59eb2cf59e7b2d3d949ea74f5327bbb3ddf9e8f4f472791b3c8f9e6acf35e794d3ca49a <<< 7200) |||
+    (0x6b3d379eb24f59a7b2f3d959ea7cf5367bb93dde9e8fcf47679193c8e9e6a4f35a794f3c <<< 7488) |||
+    (0x167a693d369e3b4f1d27a0b3d079e5ecf2fe79dd3cec9ed6cf6be7afd3d7c9ee34f7127a <<< 7776) |||
+    (0x807bfc3fa41fbd9e3bcf1d67a093d069e5e4f2fa79df3ced9ed64f6ba7aff3d7d9ee3cf7 <<< 8064) |||
+    (0x80fca07dec40ac20391024881183f161f840fc407e1c409420450fe887ef83e261efc0f8 <<< 8352) |||
+    (0x102a880e83f2e1f7 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `24` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV24 : ℕ :=
+    0x7fff80018001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff <<< 288) |||
+    (0x7fff80017fff8001800180017fff8001800180018001800180017fff7fff7fff7fff8001 <<< 576) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff8001800180017fff7fff <<< 864) |||
+    (0x7fff800180017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff800180018001 <<< 1152) |||
+    (0x80017fff7fff7fff8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff <<< 1440) |||
+    (0x800180018001800180017fff7fff8001800180018001800180017fff8001800180017fff <<< 1728) |||
+    (0x7fff8001800180018001800180017fff7fff7fff7fff80017fff8001800180017fff8001 <<< 2016) |||
+    (0x7fff80017fff7fff7fff80017fff8001800180017fff7fff7fff80017fff800180018001 <<< 2304) |||
+    (0x8001800180017fff7fff7fff7fff800180017fff7fff7fff80017fff7fff7fff7fff7fff <<< 2592) |||
+    (0x7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff800180017fff7fff7fff <<< 2880) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff80017fff7fff <<< 3168) |||
+    (0x7fff7fff7fff8001800180017fff7fff7fff80018001800180017fff7fff800180018001 <<< 3456) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 3744) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff80018001 <<< 4032) |||
+    (0x7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff80018001 <<< 4320) |||
+    (0x800180017fff8001800180018001800180017fff7fff7fff800180017fff7fff80018001 <<< 4608) |||
+    (0x8001800180017fff8001800180017fff80017fff7fff7fff7fff7fff7fff80017fff8001 <<< 4896) |||
+    (0x800180018001800180017fff8001800180017fff80017fff7fff7fff7fff800180018001 <<< 5184) |||
+    (0x8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff80017fff8001 <<< 5472) |||
+    (0x800180017fff7fff7fff80017fff8001800180017fff8001800180018001800180017fff <<< 5760) |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff8001 <<< 6048) |||
+    (0x7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff80017fff7fff7fff8001 <<< 6336) |||
+    (0x7fff8001800180018001800180017fff8001800180017fff80017fff7fff7fff80017fff <<< 6624) |||
+    (0x7fff80017fff7fff7fff80017fff8001800180017fff7fff7fff80017fff800180018001 <<< 6912) |||
+    (0x7fff7fff7fff80017fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff <<< 7200) |||
+    (0x80017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff800180017fff7fff7fff <<< 7488) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff8001800180018001800180018001800180018001 <<< 7776) |||
+    (0x80018001800180018001800180018001 <<< 8064)
+
+/-- Chunk `24` of `s6c1nHT`. -/
+def s6c1nHT24 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL24 s6c1nHTV24 512
+
+/-- Packed labels (17-bit fields) of chunk `25` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL25 : ℕ :=
+    0x20251038882783e661f5c0f9807d7c40e4209d0fe687f083e1e1f000f8607c0c3f9c1fc1 |||
+    (0x40dc20a10ffa880683d6e1ed80f5a07b6c3fec20190ff4880983d561ee40f5407b9c3fd4 <<< 288) |||
+    (0xe94273553a089d654e9a2732539f09d714ea0272f539d81036882883e5e1f600f9607d8c <<< 576) |||
+    (0xd29ceac6741739a99d35ceb2673e739919d41ceb8673b739799d4d4e8e273853a209d594 <<< 864) |||
+    (0x9c39d28ceace741339ab9d34ceb2e73e339939d40ceb8e73b3397b9d1dcea66744739c19 <<< 1152) |||
+    (0x3813a229d584e94a73513a0a9d644e9aa732139f29d704ea0a72f139da9d1ccea6e74433 <<< 1440) |||
+    (0x11a7fcd40d6a05fcff3e805f3f9fa05ecff36805b3f9d9fda501127fc940d49d4c4e8ea7 <<< 1728) |||
+    (0x5e4ff3280593f9c9fdad01167fcb40d59fdbd011e7fcf40d7a05f4ff3a805d3f9e9fdb50 <<< 2016) |||
+    (0x869fb75017a7ffd408ea053d005e80ef3f87a052d005680eb3f859fb6501727ff9408ca0 <<< 2304) |||
+    (0xab69a4a0525005280e93f849fb6d01767ffb408d9fb7d017e7fff408fa0535005a80ed3f <<< 2592) |||
+    (0xf2d31b6a1cb50eda632d37b69ecb53edaab2d5bb6a4cb54ada992d46b6ac4b4bada812d3 <<< 2880) |||
+    (0x3da5dad34f69d6b4d2da752d40b6974b562da8d2d4cb6a94b526dab72d55b6a7cb4f6da6 <<< 3168) |||
+    (0xeb4dfda7bad43f698eb4c7da87ad3df69beb557da9fad49f6adeb533daa5ad58f6a36b50 <<< 3456) |||
+    (0x00c3b063902e64182c0afdb4ebda69ad2ef6a06b51bdab1ad52f6a66b56fda93ad4ff6aa <<< 3744) |||
+    (0xc16980c47063702e9418140b01063882e68182a0afe055b82f7016a60c38055a02f7c16a <<< 4032) |||
+    (0x0312c15c80baf060302c3419440b69063682e9818120b02055582f80169e0c44055402f8 <<< 4320) |||
+    (0x059e0315c15b00bb305fd02c44193c0b75060282c3819420b6a05a18312015ce0bac05a0 <<< 4608) |||
+    (0x29a5441ba20d0525a292e14988a4c91056882805fc82c48193a0b76059f8315015b60bb0 <<< 4896) |||
+    (0x11a888d714828a41910fe887c4441a220051f228fa14cd0a66510408823440e2207c534c <<< 5184) |||
+    (0xa57510c8886714ba8a5d90fde87ec43f9a1fc052d2296a44642232c51a428d114670a335 <<< 5472) |||
+    (0x4462223c522c29154463a2310517a28be14608a309117688b8442c2216c52c4296114af0 <<< 5760) |||
+    (0xc2e1e59a70c87a569caa1ecba72587a1e9c0e1e89a70487b169c8a14850a425112088934 <<< 6048) |||
+    (0x85a3cac4e188f2c139523d284e4a8f651381a3d0c4e088f44139123d881e9ba72d8795e9 <<< 6336) |||
+    (0x36479c09c611e6e271747ac89ce51ebc271e47a009c011e7e26ff47b089c854e5a8f4d13 <<< 6624) |||
+    (0x6d0f56d38c43ce34e2f0f37d39cc3d674e3d0f5ed38043d034dff0f3fd390c3d871eac27 <<< 6912) |||
+    (0x400ca78666c33ba1a090cef06828329819980cd38654c342a19e10d0b06788334819504e <<< 7200) |||
+    (0x761a6f0c9f865ac335a19f90cd7067e8327819680cbb8650c340a19b10d03066c832e819 <<< 7488) |||
+    (0x3434961a9f0d3806910320418b60c80862d434e61a470d1c069b0315418fe0c54863f434 <<< 7776) |||
+    (0xad1c7e8e3d48540d5006950322418e60c888639435461a570d2406a7031b4190e0c6c864 <<< 8064) |||
+    (0xda3b2d1ebe8f5d4764a3825203a901f4705a406d1c1e8e0d480ca38e5215a90af471da42 <<< 8352) |||
+    (0xa3d651d9a8ecf47a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `25` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV25 : ℕ :=
+    0x7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff |||
+    (0x7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff <<< 288) |||
+    (0x80017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff80017fff7fff7fff7fff <<< 576) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff80018001800180018001 <<< 864) |||
+    (0x80017fff80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff800180018001 <<< 1152) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff8001800180017fff80018001800180018001 <<< 1440) |||
+    (0x7fff7fff7fff7fff7fff80017fff8001800180018001800180017fff8001800180017fff <<< 1728) |||
+    (0x7fff8001800180018001800180017fff8001800180017fff80017fff7fff7fff80017fff <<< 2016) |||
+    (0x80017fff8001800180017fff80017fff7fff7fff7fff7fff7fff80017fff800180018001 <<< 2304) |||
+    (0x7fff8001800180017fff8001800180018001800180017fff7fff80018001800180018001 <<< 2592) |||
+    (0x7fff7fff7fff7fff7fff80017fff7fff7fff80017fff8001800180017fff7fff7fff8001 <<< 2880) |||
+    (0x80017fff7fff7fff7fff7fff7fff80017fff7fff7fff80017fff80018001800180017fff <<< 3168) |||
+    (0x80017fff8001800180017fff80017fff7fff7fff80017fff7fff7fff7fff7fff7fff8001 <<< 3456) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 3744) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff7fff800180017fff <<< 4032) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff800180017fff <<< 4320) |||
+    (0x80017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff <<< 4608) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 4896) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff7fff80017fff800180017fff <<< 5184) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff80017fff <<< 5472) |||
+    (0x800180017fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 5760) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 6048) |||
+    (0x80018001800180017fff7fff800180017fff7fff7fff7fff80018001800180017fff7fff <<< 6336) |||
+    (0x7fff800180017fff80017fff7fff80017fff7fff80018001800180017fff7fff7fff7fff <<< 6624) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff8001 <<< 6912) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff7fff800180017fff80017fff <<< 7200) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff8001 <<< 7488) |||
+    (0x7fff7fff80017fff80017fff8001800180017fff80018001800180017fff800180017fff <<< 7776) |||
+    (0x800180017fff80017fff80017fff7fff <<< 8064)
+
+/-- Chunk `25` of `s6c1nHT`. -/
+def s6c1nHT25 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL25 s6c1nHTV25 512
+
+/-- Packed labels (17-bit fields) of chunk `26` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL26 : ℕ :=
+    0x47dca3a651f1a8f8f474da3e2d1d3e8e9d47c4a3fa51dfa8eff47f5a3bed1fde8fed477c |||
+    (0x904d46eca41e51cda8e6f483da39ad20fe907d4734a3ca51f7a8fbf4795a3eed1e5e8f2d <<< 288) |||
+    (0x207c534c29a5441ba20d0525a292e14988a4c910568828a41251bba8ddf4825a376d209e <<< 576) |||
+    (0x4670a33511a888d714828a41910fe887c4441a220051f228fa14cd0a66510408823440e2 <<< 864) |||
+    (0x96114af0a57510c8886714ba8a5d90fde87ec43f9a1fc052d2296a44642232c51a428d11 <<< 1152) |||
+    (0x120889344462223c522c29154463a2310517a28be14608a309117688b8442c2216c52c42 <<< 1440) |||
+    (0xc3d34bc9a2e1db38ecdd350c9a961dad8ecad34f49a8a1d818ec4d34c49a3214850a4251 <<< 1728) |||
+    (0x2ea68b475f83b0c4d42a6a5476c83b344d3ca6a2476b03b284d30a68c476003b101d7f8e <<< 2016) |||
+    (0x9f1db80ee8135a29ac11d640eae133d29a191d6a0eb1133ea9a251db60ee71359a9abd4d <<< 2304) |||
+    (0x4e93684d6926b0876e63ba34cf52686875963abb4cfb2689875ae3ac74d6726af876de3b <<< 2592) |||
+    (0xb525d8932319e08cf39269e93401a0f0cfc525e0931f1a2b0d0e5277093d71a348d29927 <<< 2880) |||
+    (0x30d125279093c71a250d115278893cb1a3a8d2692736937419de8cf4926a6933c1a110cf <<< 3168) |||
+    (0x319e68cf092686934c19f70d085264092ef19e88cef9267e93501a4c8d1d926ee93981a2 <<< 3456) |||
+    (0x772d3b9e05cd82e5d172881a528d1a926d693a41a1d0d15527a893bb19f90d075263892f <<< 3744) |||
+    (0xae5d5728ab9bcdcf66e4e372d1b9e0dcd86e5d37289b9bd5cf6ae4e572d2b9bddcf6ee4e <<< 4032) |||
+    (0xdcaeee7277333b9505cc02e69173a8b9bc5cf62e4e172d0b9e1dcd8ee5d7728bb9e15cd8 <<< 4320) |||
+    (0xb9515cc0ae69573aab98cdcae6e7237331b950dcc06e69373a9b98d5caeae7257332b98d <<< 4608) |||
+    (0x336548fba47d066da336e19b88cdc923d691e8b98c5cae2e7217330b951dcc0ee69773ab <<< 4896) |||
+    (0x25a892d719828cc1924fe927c4941a4a0065f232fa19ad0cd6524c09263492e2497c66cc <<< 5184) |||
+    (0xcaf5258892c7198a8cc59251e928c4949a4a406612330a496424b2c65a432d119670cb35 <<< 5472) |||
+    (0x916248bc666c33354913a4890673a339e19d08ce8924369218495c24aec658432c1195f0 <<< 5760) |||
+    (0x43b1a70a50406a7c946f1a6ea50306a8494731ac4a536069ec944719950cca5246092334 <<< 6048) |||
+    (0xa34944b1a58a50006a9c949f1a56a4ff06aa494a31abca52a06a4c94571acaa539069d49 <<< 6336) |||
+    (0x1506af494ab1aa8a5280695c93ff1aa6a5270696494031a8ca51206b0c94b71ac2a52d06 <<< 6624) |||
+    (0x7aa51106b1494db1aa0a51c069bc940f1a9ea51b069c494131a74a50e06b2c94e71a92a5 <<< 6912) |||
+    (0xb6095704ce828a213e5096f04d28288213b509fe051a0274613170a060526026e613071a <<< 7200) |||
+    (0x06147709ff851ac274013140a078526c26e01304095684ce428a413e6096e84d24288413 <<< 7488) |||
+    (0x64256413460a1f04ea825c213550a2704f682562134509b604be0282614a709ce04c2028 <<< 7776) |||
+    (0xf5eebaf8d97c3c09b784bec282014a409cf84c2c280014740a1e84ea425c413560a2684f <<< 8064) |||
+    (0x7be36df0f6f6ff7bafbe675f27af7b97c0cbde35ee5af8a97c84be5b5f39af8497bf4bdb <<< 8352) |||
+    (0xbe12defd6f96f7ce <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `26` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV26 : ℕ :=
+    0x7fff8001800180017fff80017fff80017fff7fff80017fff80018001800180017fff8001 |||
+    (0x7fff80017fff7fff7fff80017fff7fff7fff7fff80017fff80017fff8001800180018001 <<< 288) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff7fff8001800180017fff8001 <<< 576) |||
+    (0x80017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff <<< 864) |||
+    (0x80017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff <<< 1152) |||
+    (0x7fff7fff800180017fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 1440) |||
+    (0x7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff <<< 1728) |||
+    (0x800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 2016) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff <<< 2304) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff8001800180018001 <<< 2592) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff8001800180018001 <<< 2880) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 3168) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 3456) |||
+    (0x8001800180017fff80017fff7fff7fff7fff7fff7fff80018001800180017fff80017fff <<< 3744) |||
+    (0x800180018001800180017fff8001800180017fff80017fff7fff7fff7fff800180018001 <<< 4032) |||
+    (0x7fff7fff7fff80017fff8001800180018001800180017fff80017fff7fff7fff7fff8001 <<< 4320) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff8001800180018001800180017fff <<< 4608) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff <<< 4896) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff <<< 5184) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff8001 <<< 5472) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 5760) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff <<< 6048) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff <<< 6336) |||
+    (0x80018001800180017fff7fff7fff7fff80017fff7fff80017fff800180017fff7fff8001 <<< 6624) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 6912) |||
+    (0x80018001800180017fff7fff7fff7fff800180018001800180018001800180017fff7fff <<< 7200) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 7488) |||
+    (0x800180017fff800180017fff8001800180017fff800180017fff7fff80017fff7fff7fff <<< 7776) |||
+    (0x7fff7fff80017fff7fff80017fff7fff <<< 8064)
+
+/-- Chunk `26` of `s6c1nHT`. -/
+def s6c1nHT26 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL26 s6c1nHTV26 512
+
+/-- Packed labels (17-bit fields) of chunk `27` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL27 : ℕ :=
+    0x7cb4be435f15af7297bc4be075ef7af9397cccbdeedf036f99f7c9fbe2adf216f78f7b97 |||
+    (0xf7ef7c27bdcadef16f90f7c57be4edf336f81f7bdfbe1f5f1baf7597b7cbdfb5f09af9c9 <<< 288) |||
+    (0xb54119148ce2166b8b47d18ca8c0d16b40b50118f48cb2bdd6dedf6f87f7c6fbe72df2d6 <<< 576) |||
+    (0x6a60b69119bc8c9616918b32d18228c59169e0b5d1195c8c8616638b3bd186a8bfd16cc0 <<< 864) |||
+    (0xcad16640b48118b48c1216d38b53d192a8cdd165c0b3c118548c0216798b2ed18028c291 <<< 1152) |||
+    (0x9628c79168e0b351181c8c6616a98b66d19c28c8916760b31117fc8c3616bb8b4fd190a8 <<< 1440) |||
+    (0x8b90ad6856842bba15d04c62263242e7a17304d12268a134a89a590ba685d016a18b5ad1 <<< 1728) |||
+    (0xdfa16f04cf2267a134289a190b8685c0132e899790b36859842d3a16904cc22662131689 <<< 2016) |||
+    (0xef42902148c4bcc25e512ed097650a38851f1301098050a888547429c214ec4bfc25fd42 <<< 2304) |||
+    (0xd322e81309098450aa8855742a42152c4c1c260d4278213cc4b6c25b512d5096a509d884 <<< 2592) |||
+    (0x824637231a91edc8f6a46c3236091f8c8fc24697234a921cc90e2460723029229c914a45 <<< 2880) |||
+    (0x8c8e42475723aa91d4c8ea24727239291e1c8f0a46f323789205c902a466323309210c90 <<< 3168) |||
+    (0x291b1c8d8a47b323d8918cc8c62484724229199c8cca4813240891bdc8dea478323c091c <<< 3456) |||
+    (0xc35374a3d0d4ac6a0694329175c8baa48a324509180c8c024877243a91a4c8d2247e723f <<< 3744) |||
+    (0xc6ace94961aada522928c435131a7e250b5290a35344a3c8d4a06a0094311a7fa50b9290 <<< 4032) |||
+    (0x8d680699094191a6a25095299a359c4a2e8d4306ac894951aac2522528c235104a2f0d43 <<< 4320) |||
+    (0x1ab82530527d234b849fa8d3106ad894bd4a690d68c6996941a1a6ba5099299c359f4a68 <<< 4608) |||
+    (0x39261ca2a62d1310039714c3e0e5b4727298a81ab9a530927d434bb49fb0d31c6ade94be <<< 4896) |||
+    (0x71ec98074c720e554734298901ccea623131b039494c058e468719c985f1c692618d302e <<< 5184) |||
+    (0xe68872ac98e74c020e3d4718298301c5ea60b12ff038e91c7525fed305e38be4c198e308 <<< 5472) |||
+    (0xcb92620d316e39461c92a605130c038d14c2e0e334723298081ca52636d311e399e4c498 <<< 5760) |||
+    (0x68bb3b159a2acfb366d1b3b0d9a26cfb566d2b3edd9b4ecec166884c558e4e872dc987f1 <<< 6048) |||
+    (0xf27671bb3c959c6ace9366a1b3c8d9c66ce9566a2b3a5d9a8ecf216718b3ec59b42cec76 <<< 6336) |||
+    (0xcc2ce0767abb38159eaacd736731b380d9ea6cd756732b35dd9ccece0167a8b3a459a82c <<< 6624) |||
+    (0x7459f02cce7677bb33959deacdd367c1b338d9de6cdd567c2b375d9f0ecce16778b35c59 <<< 6912) |||
+    (0x721b69258512cfe37394b300dc986eda96ab1b68a585d2cf8373a4b318dc946edc96a8b3 <<< 7200) |||
+    (0x18374a4b040db386e8a96831b8d259712d6e37714b058db346e8c96801b8ca597d2d6837 <<< 7488) |||
+    (0xf46eac96904b180dbd86f3a96db1b61258112d1e37494b198dbd46f3c96d81b60a581d2d <<< 7776) |||
+    (0x80ecf877129a471b75258b12dce37a14afc0daf86eaa96931b74a58bd2dc837a24afd8da <<< 8064) |||
+    (0x31d70a69bd35b03af64d5a0ec68755a9aa31d58a6a7d35503b261dcaa68ed34183b424d0 <<< 8352) |||
+    (0x4d720eba875ba9a7 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `27` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV27 : ℕ :=
+    0x7fff8001800180017fff800180017fff8001800180017fff800180017fff7fff80017fff |||
+    (0x80017fff8001800180017fff800180017fff7fff80017fff7fff80017fff7fff80018001 <<< 288) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff800180017fff8001 <<< 576) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff <<< 864) |||
+    (0x7fff7fff800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 1152) |||
+    (0x80017fff80017fff7fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 1440) |||
+    (0x7fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff80017fff8001 <<< 1728) |||
+    (0x7fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff8001 <<< 2016) |||
+    (0x7fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff8001 <<< 2304) |||
+    (0x800180017fff80017fff7fff80017fff7fff80017fff7fff80017fff80017fff7fff8001 <<< 2592) |||
+    (0x80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff7fff80017fff7fff <<< 2880) |||
+    (0x800180017fff800180017fff800180017fff80017fff7fff800180017fff80017fff7fff <<< 3168) |||
+    (0x7fff80017fff80017fff7fff800180017fff80017fff7fff80017fff7fff80017fff7fff <<< 3456) |||
+    (0x7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff8001 <<< 3744) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 4032) |||
+    (0x7fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff8001 <<< 4320) |||
+    (0x7fff7fff7fff7fff800180017fff7fff8001800180017fff80017fff7fff80017fff8001 <<< 4608) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 4896) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff80018001 <<< 5184) |||
+    (0x7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff80018001 <<< 5472) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff <<< 5760) |||
+    (0x7fff80017fff7fff80017fff800180017fff7fff80017fff800180017fff800180017fff <<< 6048) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff800180017fff80017fff7fff80017fff <<< 6336) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff80017fff7fff80017fff7fff80017fff <<< 6624) |||
+    (0x80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 6912) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff <<< 7200) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff80018001 <<< 7488) |||
+    (0x80018001800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180017fff7fff <<< 7776) |||
+    (0x7fff7fff7fff7fff8001800180018001 <<< 8064)
+
+/-- Chunk `27` of `s6c1nHT`. -/
+def s6c1nHT27 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL27 s6c1nHTV27 512
+
+/-- Packed labels (17-bit fields) of chunk `28` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL28 : ℕ :=
+    0x9ae74d2a0ede8769a9a031da8a67fd34903b861dc2a692d33f83b524d000ed3876f29a57 |||
+    (0x34703b961d92a6aad35383ab24d500eab876329ab71d7aa6b6d34d83ae24d380eb7875d2 <<< 288) |||
+    (0x8d99054682d7116e88c250498821811c108cd904e682c74d220ee28767a9a131da0a683d <<< 576) |||
+    (0x1ad08e390596829f118a88b8504488250119508df90576826f115688be5047881e811c90 <<< 864) |||
+    (0x2b8117108c5904a6822711c688d65053882c8115908c19048681f7118288ac503e882401 <<< 1152) |||
+    (0x5888270118508b790436824f11b288e4505a882a0117d08ab903d6823f11be88ca504d88 <<< 1440) |||
+    (0xeb2afeb58b4ac42d5f12afbb589cac66d6032af2b5854ac72d6092aefb583c119a88e050 <<< 1728) |||
+    (0x1ed5df2b04b58e4ac2ad5e52b01b58ccac4ed5f72af8b5884ac5ad5fd2af5b586cac36d5 <<< 2016) |||
+    (0xafabd7561beb16d57f7abe35621eb13d57dfac075633eb0ad5797ac135639eb07d577fac <<< 2304) |||
+    (0x8699b2abbf560feb1cd5827abcb5615eb19d580fabef5627eb10d57c7abfb562deb0dd57 <<< 2592) |||
+    (0x647438990d4cd68e8f132f23a684cc28e9d133623a401d1fa66b874d6997a1d3ba661874 <<< 2880) |||
+    (0x3a665874a699e24c890e88d32cc39d74cad0e72d321c3a1f1d102644473a899651ce4265 <<< 3168) |||
+    (0x51cdc264a473d898fd4cee8e93133123a984cca8ea9133c23a501d27a67787536998a1d5 <<< 3456) |||
+    (0x35360aa28d4fc2a69352e84c810e7cd326c39c74c950e6ed31fc39ef1cf8264047388993 <<< 3744) |||
+    (0xaa6c75302a9f9d514aa5d7534aaa04d4ea2a7235330a9e0d5082a6335378a9ecd50e2a60 <<< 4032) |||
+    (0xd4c62a84353c0a998d4e42a7535408a9d5d502aa6675392aa11d4f0aa6f7531aaa1dd4f6 <<< 4320) |||
+    (0xa98dd4deaa7875422a9c9d4ccaa81753aaa974d4d22a7e35450a9b0d4c02a87353d8a9bc <<< 4608) |||
+    (0x8ce2166b8b47d18ca8c0d16b40b50118f48cb2a9a5d4baaa8a753f2a981d4d8aa7b7543a <<< 4896) |||
+    (0x19bc8c9616918b32d18228c59169e0b5d1195c8c8616638b3bd186a8bfd16cc0b5411914 <<< 5184) |||
+    (0xb48118b48c1216d38b53d192a8cdd165c0b3c118548c0216798b2ed18028c2916a60b691 <<< 5472) |||
+    (0x68e0b351181c8c6616a98b66d19c28c8916760b31117fc8c3616bb8b4fd190a8cad16640 <<< 5760) |||
+    (0xc2b0dde070a035dc1b7a0dc286bc4386e1bc30e1a06f00370c1af216a18b5ad19628c791 <<< 6048) |||
+    (0x6c01ad40db186b5c39221c250e0d0723835901b5c0d6586d7c38321c8d0d7686de4377e1 <<< 6336) |||
+    (0xe24379e1c5b0de607160363c1b8a0dca86c8438ce1bd30e3206f40372c1b220e49070983 <<< 6624) |||
+    (0x4106fd836601ac40d9986b1c39021bf50df5071f835701b2c0d5d86cbc37d21c7d0d8e86 <<< 6912) |||
+    (0x08426320fd908848472421f211b9097483ea42132135909448452424f21139083484ca0e <<< 7200) |||
+    (0xea84c51282094d04b0024b012be092b049f0252812b20945049c02590126e096304ab025 <<< 7488) |||
+    (0x0c4a6e25074264a1065089a849d4228a128509aa842541f4a12e508da843d4238a110507 <<< 7776) |||
+    (0xdcdcce6e01368812858956c4b1e24df12c98938c4a2e25671295893ec495e257f1259896 <<< 8064) |||
+    (0x29b75cda8e6f2137789bec4dcc26e07368b9b814da2a6fb337319b80cda266fb537329be <<< 8352) |||
+    (0x9bc8cdde66dd536a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `28` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV28 : ℕ :=
+    0x8001800180018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff80018001 <<< 288) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff7fff7fff <<< 576) |||
+    (0x7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff80018001 <<< 864) |||
+    (0x800180017fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff <<< 1152) |||
+    (0x80017fff7fff7fff800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff <<< 1440) |||
+    (0x7fff7fff8001800180017fff7fff8001800180017fff7fff7fff80017fff7fff7fff8001 <<< 1728) |||
+    (0x80017fff7fff7fff8001800180017fff7fff7fff7fff800180017fff7fff7fff80017fff <<< 2016) |||
+    (0x80017fff8001800180017fff7fff8001800180017fff7fff7fff800180017fff7fff7fff <<< 2304) |||
+    (0x800180018001800180018001800180017fff7fff7fff7fff80017fff7fff7fff80018001 <<< 2592) |||
+    (0x7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 2880) |||
+    (0x80018001800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180017fff7fff <<< 3168) |||
+    (0x7fff800180018001800180017fff7fff7fff7fff7fff7fff7fff7fff8001800180018001 <<< 3456) |||
+    (0x80017fff7fff7fff8001800180017fff7fff8001800180017fff8001800180017fff7fff <<< 3744) |||
+    (0x7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff80017fff7fff7fff8001 <<< 4032) |||
+    (0x80017fff7fff7fff8001800180017fff7fff8001800180017fff7fff7fff80017fff7fff <<< 4320) |||
+    (0x80018001800180017fff7fff800180017fff7fff7fff7fff7fff800180017fff7fff7fff <<< 4608) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff <<< 4896) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff80018001 <<< 5184) |||
+    (0x7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff <<< 5472) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 5760) |||
+    (0x80017fff7fff80017fff800180017fff7fff800180017fff7fff800180017fff7fff8001 <<< 6048) |||
+    (0x7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff8001 <<< 6336) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff800180017fff <<< 6624) |||
+    (0x7fff800180017fff7fff800180017fff7fff80017fff800180017fff7fff800180017fff <<< 6912) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 7200) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff80017fff7fff8001 <<< 7488) |||
+    (0x80017fff800180017fff7fff80017fff800180017fff800180017fff800180017fff8001 <<< 7776) |||
+    (0x7fff80017fff7fff800180017fff8001 <<< 8064)
+
+/-- Chunk `28` of `s6c1nHT`. -/
+def s6c1nHT28 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL28 s6c1nHTV28 512
+
+/-- Packed labels (17-bit fields) of chunk `29` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL29 : ℕ :=
+    0x36719be0cdd266e3536729b8dcd9ce6f8137489b744da826f27377b9bc94ddea6dd336a1 |||
+    (0x6f5337619b68cdae66f5537629bd5cdd8e6da136b89b8c4d9c26f87374b9be14dd2a6e33 <<< 288) |||
+    (0x8d0104f42343413308c7d04ca231c11b420ac446d682b29bd44dd826da736bb9b694daea <<< 576) |||
+    (0x19e20a14467e82861191a096846408259415688dd1055c2377116ba083845a8820d413c8 <<< 864) |||
+    (0x2ec11cc20b84473682e21163a07f8458881fd414488d4105142353410908b2d042222c81 <<< 1152) |||
+    (0x5e08229416e88e9105bc23a7410108aed040222b811a620a54469e8296411b08bbd046a2 <<< 1440) |||
+    (0xc2c4d7827a3136009e7c4e5027174363218650c5c8691431921a350d7486251179a08a84 <<< 1728) |||
+    (0x8209d6c4ed826d313b809b3c4df0276742fb21b250cfc86614341219750bd486d5139a09 <<< 2016) |||
+    (0xc513b209bec4d982773136809dbc4eb02707436b217a50cbc86814331219f50d9485f513 <<< 2304) |||
+    (0x7296bd138a09cac4f3826c313d009afc4e102737431321ae50d1c86314349218b50c3486 <<< 2592) |||
+    (0x112d8296451b5b8dccd2cec95f21b6c0dd712d32961d1bcb8dc4d2cac96d21bbc0dbf12c <<< 2880) |||
+    (0xd25af86ef636ff1b978daad2bdc966a1bb00db912c4296a51b878de2d2d9c964a1b800de <<< 3168) |||
+    (0x84b61259186e0637874b3aa57c46d6837304b4d258786db6375f4b2aa5b446f2837104b1 <<< 3456) |||
+    (0xd28b4947349f124fbd283c4af6a59a46e5836a84b1125a986ec636e74b66a59246e18378 <<< 3744) |||
+    (0x24fed285494434a0924efd289c944f49df2504d2884942b49fd24f5d28cc94374a0324f2 <<< 4032) |||
+    (0xca1be516b279793e2ca39e507b27df941f49f724f8d28e4945b49e52501d286c946749eb <<< 4320) |||
+    (0x93d6ca33e50ab27f79412ca21e513b277f93beca27e510b282793faca15e519b27af9406 <<< 4608) |||
+    (0x39739d61ceb66731739719d6d4eb0272e5398893eeca0fe51cb27c793caca2de50db280f <<< 4896) |||
+    (0x737339a39d49ceaa6737739a19d554ea42734539b89d6c4eb0a72e1398a9d60ceb6e7313 <<< 5184) |||
+    (0xe9ee73d339d39d31ce9e673d739d19d3d4e98273a539e89d544ea4a734139ba9d48ceaae <<< 5472) |||
+    (0xd18ce92e74333a039d19ce92674373a019d254e8c274053a189d3c4e98a73a139ea9d30c <<< 5760) |||
+    (0x56842bba15d04c62263242e7a17304d12268a134a89a590ba685d09d244e8ca74013a1a9 <<< 6048) |||
+    (0xcf2267a134289a190b8685c0132e899790b36859842d3a16904cc226621316898b90ad68 <<< 6336) |||
+    (0x48c4bcc25e512ed097650a38851f1301098050a888547429c214ec4bfc25fd42dfa16f04 <<< 6624) |||
+    (0x09098450aa8855742a42152c4c1c260d4278213cc4b6c25b512d5096a509d884ef429021 <<< 6912) |||
+    (0x161fda0ff6d3eb49f352005900113e0a9f0a2031900b13f5a9fe2203e1024d3f249f7d13 <<< 7200) |||
+    (0xba9fb2202f900c13f629fde20401023d3f1c9f811fd40ff9d3ecc9f29200b8ffe13df29f <<< 7488) |||
+    (0xdd3e6c9f591ffd900513e2a9efa1ff20fead3e549f6520461020d3f049f8d2019901713f <<< 7776) |||
+    (0x0a374c5cc48dd02048101fd3efc9f912017901813fc29fae2003900213e129f061fec0fe <<< 8064) |||
+    (0x846e18b8c51b802e32172ea373c5cbc8dcc46d38ba551b482e9646cd8ba251b302e8a173 <<< 8352) |||
+    (0x173ca35ac5cf48d6 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `29` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV29 : ℕ :=
+    0x7fff7fff80017fff800180017fff7fff80017fff800180017fff800180017fff80018001 |||
+    (0x7fff7fff80017fff800180017fff800180017fff800180017fff7fff80017fff7fff8001 <<< 288) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180017fff80018001 <<< 576) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 864) |||
+    (0x7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff <<< 1152) |||
+    (0x7fff7fff7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 1440) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180018001800180018001 <<< 1728) |||
+    (0x7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff <<< 2016) |||
+    (0x8001800180018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 2304) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff80018001 <<< 2592) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 2880) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff80018001 <<< 3168) |||
+    (0x80018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff80018001 <<< 3456) |||
+    (0x8001800180017fff7fff8001800180017fff7fff7fff80018001800180017fff7fff8001 <<< 3744) |||
+    (0x800180017fff7fff7fff80018001800180017fff7fff80018001800180017fff7fff7fff <<< 4032) |||
+    (0x8001800180017fff7fff8001800180017fff7fff7fff800180017fff7fff7fff7fff8001 <<< 4320) |||
+    (0x800180017fff80017fff7fff800180017fff80017fff8001800180017fff7fff7fff8001 <<< 4608) |||
+    (0x800180017fff80017fff7fff80017fff7fff80017fff7fff800180017fff800180017fff <<< 4896) |||
+    (0x800180017fff7fff80017fff800180017fff800180017fff800180017fff80017fff7fff <<< 5184) |||
+    (0x800180017fff800180017fff800180017fff80017fff7fff800180017fff800180017fff <<< 5472) |||
+    (0x7fff800180017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff <<< 5760) |||
+    (0x7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff8001 <<< 6048) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 6336) |||
+    (0x7fff800180017fff80017fff7fff800180017fff80017fff7fff80017fff80017fff8001 <<< 6624) |||
+    (0x80017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff <<< 6912) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 7200) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff8001 <<< 7488) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff80017fff <<< 7776) |||
+    (0x800180017fff7fff7fff7fff80018001 <<< 8064)
+
+/-- Chunk `29` of `s6c1nHT`. -/
+def s6c1nHT29 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL29 s6c1nHTV29 512
+
+/-- Packed labels (17-bit fields) of chunk `30` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL30 : ℕ :=
+    0x8d3b16db235105b6a8d4746760b7f919de2dfd46df8b8b51b782e2e1742a35dc5d0c8d74 |||
+    (0x1a962dd946aa0b7991aae2de51707234705c1a8d1f46780b80919e62e0116d5234e05b52 <<< 288) |||
+    (0xe82af3e37a51bd7dded6ef6817ae0bcf9de94ef4d17a081709234805c228d2346a40b769 <<< 576) |||
+    (0xcf85e942f4d77a0bbda0deb86f5f57b5abd34de826f3e57a52bda15eb8af5f37b59bd355 <<< 864) |||
+    (0xac9bd1d5ea6af5037a21bd95deb2ef5617b10bd41de88ef4717a98bd7c5ed62f6877ae3b <<< 1152) |||
+    (0x5677b13bd405e882f4777a9bbd58dec46f6557acabd1cdea66f5057a22bd595ec4af6537 <<< 1440) |||
+    (0xc8c5fcc8f6817ed23dd060628f1f180123f3061128f47184aa3cec5ffc8fd0bd945eb22f <<< 1728) |||
+    (0x3123bb05f528fa717daa3e6c60bc8ef01806a3f0c610c8f48183d23d5060228fbf1816a3 <<< 2016) |||
+    (0x20180923ef060f28f571842a3d2c601c8fc0182ea3bcc5f6c8f9817d523e9060c28eef18 <<< 2304) |||
+    (0x88914717fea3f4c612c8f38184523d1060028fcf181923c705fb28f7717f2a3dac605c8f <<< 2592) |||
+    (0x306484324118f08c78922d8916f4889a4440647c323d48eda476063ec31f519448ca2922 <<< 2880) |||
+    (0x5a46a0644c322548f3a479063d431e9194a8ca592270913b18ee8c77922e091734887a44 <<< 3168) |||
+    (0x118d68c6b9234091a34881a4400649c324d18d88c6c92338919f193c8c9e922a8915748d <<< 3456) |||
+    (0x20a8d04ab0248813520a7d19428ca192290914b48dba46d064343219487fa43f064a4325 <<< 3744) |||
+    (0x014960a1f047202640147609ef045b8260c14900a1c04738264c147009ec04a3023c813b <<< 4032) |||
+    (0x024e8152209e5048f02528150209b504a2823c413b40a8e04aa8248413540a7e045a0260 <<< 4320) |||
+    (0x04be022a014460a5704c60236013e60a4704bf822ac14400a5404c78236c13e00a440477 <<< 4608) |||
+    (0x7210b8f0dc6c6e1e37121b8e45c7e2e27171080476824e4152409e6048e82524150409b6 <<< 4896) |||
+    (0xe455725ab8e5dc7eee277710bb8f15c6cae1e57122b8ccdc5a6e4537259b8a85c602e481 <<< 5184) |||
+    (0xc5aee457725bb8e55c7eae275710ab8f1dc6cee1e77123b8a9dc60ee4877213b8cd5c5aa <<< 5472) |||
+    (0x8a8dc606e4837211b8f05c6c2e1e17120b8e4dc7e6e2737109b8a95c60ae4857212b8cdd <<< 5760) |||
+    (0x36091f8c8fc24697234a921cc90e2460723029229c914a45d322e8b8cc5c5a2e4517258b <<< 6048) |||
+    (0x727239291e1c8f0a46f323789205c902a466323309210c90824637231a91edc8f6a46c32 <<< 6336) |||
+    (0xc62484724229199c8cca4813240891bdc8dea478323c091c8c8e42475723aa91d4c8ea24 <<< 6624) |||
+    (0x75c8baa48a324509180c8c024877243a91a4c8d2247e723f291b1c8d8a47b323d8918cc8 <<< 6912) |||
+    (0xe9b304d98eacc176638b29959406ca616503b31159946cc416653b28cd93aaca3764e891 <<< 7200) |||
+    (0xf1654bb304598eecc156639b299d9402ca636502b311d9942cc436652b28c593aeca3564 <<< 7488) |||
+    (0x22caf3654ab2d559766cb5165dbb2c8d958acb276560b2e0d97cacb8765f0b2bd59526ca <<< 7776) |||
+    (0xc5a322d1f16808b2d5d9762cb5365dab2c85958ecb256561b2e0597cecb8565f1b2bdd95 <<< 8064) |||
+    (0xab470d9fc6d04368b1b495da26ed0d7695bb4285a502d2216880b471d9fced04768b3b41 <<< 8352) |||
+    (0xb41d5a32ad1f5680 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `30` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV30 : ℕ :=
+    0x7fff7fff7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff80018001 |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 288) |||
+    (0x7fff7fff8001800180017fff7fff7fff7fff800180017fff7fff7fff800180017fff7fff <<< 576) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff800180017fff <<< 864) |||
+    (0x800180017fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff8001 <<< 1152) |||
+    (0x80017fff80017fff7fff8001800180017fff7fff7fff80018001800180017fff7fff8001 <<< 1440) |||
+    (0x7fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff80017fff8001 <<< 1728) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff80017fff8001 <<< 2016) |||
+    (0x80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff <<< 2304) |||
+    (0x80017fff7fff80017fff800180017fff7fff800180017fff7fff80017fff800180017fff <<< 2592) |||
+    (0x7fff800180017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 2880) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff800180017fff <<< 3168) |||
+    (0x80017fff7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff8001 <<< 3456) |||
+    (0x80017fff80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff <<< 3744) |||
+    (0x7fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff80017fff8001 <<< 4032) |||
+    (0x7fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff80017fff8001 <<< 4320) |||
+    (0x7fff8001800180017fff80017fff80017fff7fff80017fff80017fff7fff80017fff8001 <<< 4608) |||
+    (0x80017fff8001800180017fff80018001800180017fff800180017fff8001800180018001 <<< 4896) |||
+    (0x80017fff80017fff8001800180017fff80018001800180017fff80017fff7fff80017fff <<< 5184) |||
+    (0x7fff80017fff7fff7fff7fff80017fff7fff7fff80017fff80017fff800180017fff7fff <<< 5472) |||
+    (0x7fff80017fff80017fff7fff800180017fff80017fff7fff80017fff7fff80017fff7fff <<< 5760) |||
+    (0x7fff7fff80017fff800180017fff800180017fff800180017fff80017fff7fff80018001 <<< 6048) |||
+    (0x80017fff7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff80017fff80018001 <<< 6336) |||
+    (0x7fff7fff80017fff80017fff800180017fff80017fff7fff800180017fff80017fff7fff <<< 6624) |||
+    (0x800180017fff80017fff7fff7fff7fff80017fff80017fff80018001800180017fff8001 <<< 6912) |||
+    (0x80017fff800180017fff80017fff7fff7fff7fff80017fff7fff7fff80017fff80017fff <<< 7200) |||
+    (0x7fff7fff7fff7fff80017fff800180017fff80017fff80017fff7fff7fff7fff80017fff <<< 7488) |||
+    (0x7fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7fff7fff8001 <<< 7776) |||
+    (0x80017fff7fff7fff8001800180017fff <<< 8064)
+
+/-- Chunk `30` of `s6c1nHT`. -/
+def s6c1nHT30 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL30 s6c1nHTV30 512
+
+/-- Packed labels (17-bit fields) of chunk `31` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL31 : ℕ :=
+    0x695ab41cda326d1f36809b47159fcad04568b2b4295a50ad2256882b494da266d0d36959 |||
+    (0xd2276883b47059fc2d04168b0b41dda32ed1f7680bb428da506d2236881b4955a26ad0d5 <<< 288) |||
+    (0x54a06c6295b01b46a56306c2a95141b04a54206d229590b4945a262d0d16958b429da50e <<< 576) |||
+    (0xafca53e06d0295801b2ea57706bca95641aeca55606cc295e01b16a56b06b6a95341ad4a <<< 864) |||
+    (0x55b1af32559c6cbc95df1b412560c6bf494fb1b032541c6cfc957f1b3ea55f06c0a95041 <<< 1152) |||
+    (0xc14950b1b0b2545c6d1c958f1b19256cc6b54952b1adb254dc6c5c95af1b312578c6bb49 <<< 1440) |||
+    (0xfaed6e76b12b601db18ad5f56b5bb624dafa2d6e16b11b6005b186d5f36b581b492564c6 <<< 1728) |||
+    (0x245afa6d6e36b10b600db182d5f16b59b625dafaad6e56b13b6015b18ed5f76b5ab6255a <<< 2016) |||
+    (0x2bb5dddb06ad6856ba3b6195af4ed7176b2ab5dc5b066d6836ba0b618daf42d7116b29b6 <<< 2304) |||
+    (0x497254b5dcdb062d6816ba1b6185af46d7136b28b5dd5b06ed6876ba2b619daf4ad7156b <<< 2592) |||
+    (0xbae1dd711eb8cb5c59ae44d7256b8efdc6bee1df711fb8eedc6b6e1db711db8ca5c592e4 <<< 2880) |||
+    (0x65c5f2e479720cb8ee5c6b2e1d9711cb8cadc596e44b7255b8cbdc59ee44f7257b8ef5c6 <<< 3168) |||
+    (0xfb8e35c7dae26d7106b8a75c5fae47d720eb8e3dc7dee26f7107b8e2dc7d6e26b7105b8a <<< 3456) |||
+    (0x33b5b9e244eeea76553b58b8e25c7d2e2697104b8a6dc5f6e47b720db8a7dc5fee47f720 <<< 3744) |||
+    (0xe77473b119e014f0c277413b129db8ced0e77a73c619db94ed0277a13c629e25ceee6765 <<< 4032) |||
+    (0x4eee276513b5a9e24ceeee76573b599d7dcee2678333beb9d7c4ee2a78353be89e00cf0c <<< 4320) |||
+    (0x9e004f0ca77453b109e01cf0c677433b139db84ed0a77a53c609db9ced0677a33c639e25 <<< 4608) |||
+    (0x32594875a43a064cc326519388c9c922b8915f9d7d4ee2278313bea9d7ccee2e78373be9 <<< 4896) |||
+    (0x22f0917b18e48c7292308918748e9a474063fc31fd19368c9b922c09163487ba43d064b4 <<< 5184) |||
+    (0xc7192310918b18dc8c6e92328919748e1a4700641c320d48e7a47306404320118ea8c759 <<< 5472) |||
+    (0x893a449064543229488da4460646c323519508ca892258912f48dfa46f06424321118e28 <<< 5760) |||
+    (0x5344a3c8d4a06a0094311a7fa50b9290c35374a3d0d4ac6a069432194e8ca79226091334 <<< 6048) |||
+    (0xac894951aac2522528c235104a2f0d43c6ace94961aada522928c435131a7e250b5290a3 <<< 6336) |||
+    (0x68c6996941a1a6ba5099299c359f4a688d680699094191a6a25095299a359c4a2e8d4306 <<< 6624) |||
+    (0xb9a530927d434bb49fb0d31c6ade94be1ab82530527d234b849fa8d3106ad894bd4a690d <<< 6912) |||
+    (0x494c058e468719c985f1c692618d302e39261ca2a62d1310039714c3e0e5b4727298a81a <<< 7200) |||
+    (0xf038e91c7525fed305e38be4c198e30871ec98074c720e554734298901ccea623131b039 <<< 7488) |||
+    (0x34723298081ca52636d311e399e4c498e68872ac98e74c020e3d4718298301c5ea60b12f <<< 7776) |||
+    (0xdd9b4ecec166884c558e4e872dc987f1cb92620d316e39461c92a605130c038d14c2e0e3 <<< 8064) |||
+    (0x2b3a5d9a8ecf216718b3ec59b42cec7668bb3b159a2acfb366d1b3b0d9a26cfb566d2b3e <<< 8352) |||
+    (0xb3c8d9c66ce9566a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `31` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV31 : ℕ :=
+    0x7fff7fff80017fff7fff7fff8001800180017fff7fff7fff7fff800180017fff7fff7fff |||
+    (0x8001800180017fff8001800180017fff7fff8001800180017fff7fff7fff800180017fff <<< 288) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff7fff7fff <<< 576) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 864) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff <<< 1152) |||
+    (0x80017fff8001800180017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 1440) |||
+    (0x800180017fff7fff80017fff80017fff800180017fff7fff80017fff800180017fff8001 <<< 1728) |||
+    (0x80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff80017fff <<< 2016) |||
+    (0x7fff80017fff7fff80017fff7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff <<< 2304) |||
+    (0x7fff80017fff7fff7fff80017fff7fff7fff7fff80017fff7fff80017fff7fff80018001 <<< 2592) |||
+    (0x7fff7fff7fff7fff80017fff7fff7fff80017fff80017fff80018001800180017fff8001 <<< 2880) |||
+    (0x7fff80017fff7fff7fff7fff80017fff7fff7fff80017fff80017fff800180017fff8001 <<< 3168) |||
+    (0x80017fff7fff7fff80017fff80017fff8001800180017fff80018001800180017fff8001 <<< 3456) |||
+    (0x80017fff800180017fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff <<< 3744) |||
+    (0x7fff800180017fff8001800180017fff800180017fff7fff80017fff800180017fff8001 <<< 4032) |||
+    (0x7fff80017fff7fff800180017fff800180017fff800180017fff7fff80017fff80018001 <<< 4320) |||
+    (0x8001800180018001800180018001800180018001800180017fff800180017fff80018001 <<< 4608) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 4896) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 5184) |||
+    (0x800180018001800180018001800180018001800180018001800180018001800180018001 <<< 5472) |||
+    (0x80017fff7fff80017fff800180017fff80017fff80017fff80017fff7fff80017fff8001 <<< 5760) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff80017fff80017fff800180017fff <<< 6048) |||
+    (0x7fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff80017fff <<< 6336) |||
+    (0x7fff7fff800180017fff7fff8001800180017fff80017fff7fff80017fff80017fff8001 <<< 6624) |||
+    (0x7fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff800180017fff7fff <<< 6912) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 7200) |||
+    (0x800180017fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff80018001 <<< 7488) |||
+    (0x7fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff7fff7fff <<< 7776) |||
+    (0x7fff7fff80017fff7fff80017fff7fff <<< 8064)
+
+/-- Chunk `31` of `s6c1nHT`. -/
+def s6c1nHT31 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL31 s6c1nHTV31 512
+
+/-- Packed labels (17-bit fields) of chunk `32` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL32 : ℕ :=
+    0x6731b380d9ea6cd756732b35dd9ccece0167a8b3a459a82cf27671bb3c959c6ace9366a1 |||
+    (0xcdd367c1b338d9de6cdd567c2b375d9f0ecce16778b35c59cc2ce0767abb38159eaacd73 <<< 288) |||
+    (0xdc986eda96ab1b68a585d2cf8373a4b318dc946edc96a8b37459f02cce7677bb33959dea <<< 576) |||
+    (0xb8d259712d6e37714b058db346e8c96801b8ca597d2d6837721b69258512cfe37394b300 <<< 864) |||
+    (0x6db1b61258112d1e37494b198dbd46f3c96d81b60a581d2d18374a4b040db386e8a96831 <<< 1152) |||
+    (0xdce37a14afc0daf86eaa96931b74a58bd2dc837a24afd8daf46eac96904b180dbd86f3a9 <<< 1440) |||
+    (0xc68755a9aa31d58a6a7d35503b261dcaa68ed34183b424d080ecf877129a471b75258b12 <<< 1728) |||
+    (0xc2a692d33f83b524d000ed3876f29a574d720eba875ba9a731d70a69bd35b03af64d5a0e <<< 2016) |||
+    (0xb71d7aa6b6d34d83ae24d380eb7875d29ae74d2a0ede8769a9a031da8a67fd34903b861d <<< 2304) |||
+    (0xe682c74d220ee28767a9a131da0a683d34703b961d92a6aad35383ab24d500eab876329a <<< 2592) |||
+    (0xf90576826f115688be5047881e811c908d99054682d7116e88c250498821811c108cd904 <<< 2880) |||
+    (0x908c19048681f7118288ac503e8824011ad08e390596829f118a88b8504488250119508d <<< 3168) |||
+    (0x0117d08ab903d6823f11be88ca504d882b8117108c5904a6822711c688d65053882c8115 <<< 3456) |||
+    (0xb5854ac72d6092aefb583c119a88e0505888270118508b790436824f11b288e4505a882a <<< 3744) |||
+    (0x2af8b5884ac5ad5fd2af5b586cac36d5eb2afeb58b4ac42d5f12afbb589cac66d6032af2 <<< 4032) |||
+    (0x5633eb0ad5797ac135639eb07d577fac1ed5df2b04b58e4ac2ad5e52b01b58ccac4ed5f7 <<< 4320) |||
+    (0xabef5627eb10d57c7abfb562deb0dd57afabd7561beb16d57f7abe35621eb13d57dfac07 <<< 4608) |||
+    (0x2c1315ffa2cb9170c2c3745bd0b0ac58068b32abbf560feb1cd5827abcb5615eb19d580f <<< 4896) |||
+    (0x16c22c1015fe22cb5170a2c3445bc8b0a058008b3145af0b03c58ce8b96162da2e2916c4 <<< 5184) |||
+    (0xaf1058d88bbd45e88b28057908b1915ea22c95179a2c9c45ae8b03058c88b95162c22e25 <<< 5472) |||
+    (0x57b0af1c58de8bbe45e90b28c57968b1a15eba2c99179c2c9f163822f0515d22bb8457a8 <<< 5760) |||
+    (0x48992a54976a494524d292a5c976e494724d392c8495824a3124881639a2f0915d42bbb4 <<< 6048) |||
+    (0x94124d092c9c958e4a37248b92c94958a4a35248a92a4c9766494324d192c8c95864a332 <<< 6336) |||
+    (0x706497324e992d5495ea4a05247292d5c95ee4a072473929849702497124e892a4497624 <<< 6624) |||
+    (0xd4495e24a0124709299c970e497724eb92994970a497524ea92d4c95e64a0324719298c9 <<< 6912) |||
+    (0x9d159e0ae8c55962af4156b8aba056802b9f4568a29b9148c8a19451d22895159a8a7292 <<< 7200) |||
+    (0x448abd15a98adb055882b1b155c0ac9c569e2b70455f22a85149289f6452aa27a915848a <<< 7488) |||
+    (0x1514da8ad215b98ad3056482abb158c0ab1c56de2b50454f22b0513d28a5644faa292915 <<< 7776) |||
+    (0x10a64c51d8883d15ce0ad0c55d62ad4157b8ab2057402b3f4538a2b39144c8a39450d229 <<< 8064) |||
+    (0x514c1a22c9109a291c446f0a63c51e088411473a205910d22938146da202910ea2944447 <<< 8352) |||
+    (0x43fd0a2ac52a888a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `32` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV32 : ℕ :=
+    0x80017fff800180017fff800180017fff800180017fff80017fff7fff800180017fff8001 |||
+    (0x7fff80017fff7fff80017fff800180017fff7fff80017fff80017fff800180017fff7fff <<< 288) |||
+    (0x7fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff7fff80017fff <<< 576) |||
+    (0x7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff7fff8001 <<< 864) |||
+    (0x80017fff7fff80017fff80017fff80017fff800180017fff80017fff80017fff80017fff <<< 1152) |||
+    (0x80018001800180017fff80017fff80017fff80017fff800180017fff80017fff80017fff <<< 1440) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 1728) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180018001800180018001 <<< 2016) |||
+    (0x8001800180018001800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff <<< 2304) |||
+    (0x800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff7fff7fff80018001 <<< 2592) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff <<< 2880) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 3168) |||
+    (0x7fff7fff800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001 <<< 3456) |||
+    (0x7fff7fff7fff80017fff8001800180017fff7fff7fff80017fff7fff7fff800180017fff <<< 3744) |||
+    (0x800180017fff7fff7fff80018001800180017fff7fff8001800180017fff800180018001 <<< 4032) |||
+    (0x8001800180017fff7fff8001800180018001800180017fff7fff8001800180017fff8001 <<< 4320) |||
+    (0x80017fff7fff80017fff800180017fff80017fff80017fff7fff7fff8001800180017fff <<< 4608) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff80017fff80017fff800180017fff <<< 4896) |||
+    (0x80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff <<< 5184) |||
+    (0x7fff80017fff800180017fff80017fff7fff80017fff800180017fff80017fff80017fff <<< 5472) |||
+    (0x800180017fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff8001 <<< 5760) |||
+    (0x7fff8001800180017fff8001800180017fff7fff7fff80018001800180017fff7fff8001 <<< 6048) |||
+    (0x7fff7fff8001800180017fff7fff8001800180017fff7fff7fff80018001800180017fff <<< 6336) |||
+    (0x7fff7fff800180017fff7fff800180018001800180017fff7fff80018001800180017fff <<< 6624) |||
+    (0x800180017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 6912) |||
+    (0x7fff7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff <<< 7200) |||
+    (0x800180017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 7488) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff800180018001800180018001800180017fff7fff <<< 7776) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff <<< 8064)
+
+/-- Chunk `32` of `s6c1nHT`. -/
+def s6c1nHT32 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL32 s6c1nHTV32 512
+
+/-- Packed labels (17-bit fields) of chunk `33` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL33 : ℕ :=
+    0x293b146c2202510ec294744708a64051de883e14bfa22b910a2292044030a2dc52908899 |||
+    (0x5296889a43fc8a2a052ae88a614c0222c5109c291f446e8a63051e6884214722205510d4 <<< 288) |||
+    (0x79287f089e751fa1a7ac87e389e0d1fa9a7b887dd89dfd14be222b510a4292344028a2d0 <<< 576) |||
+    (0xfa7a7b787de09e011f5ba79187f109e991f73a79587ef09e691f55a78e87f289ea51f6da <<< 864) |||
+    (0xf974f248fb613cec3f874f588fd013c1c3f1f4f708fd413bfc3eef1f9fa7ab87e409e111 <<< 1152) |||
+    (0xc243f234f6e8fd313c043ef34f228fad13d343f8b4f2a8fb913cd43f7b4f1c8faa13d4c3 <<< 1440) |||
+    (0x8565d4b2ed5972fcb8be5b3f2d6f972f4b8ba5b3d2d6e96f24b8525d492ed44f568fcf13 <<< 1728) |||
+    (0x2e4b8b25b392d6c96f34b85a5d4d2ed696f3cb85e5d4f2ed7972ecb8b65b3b2d6d96f2cb <<< 2016) |||
+    (0x8596e6cb7f65d1b2ebd973bcb91e5b6f2d87973b4b91a5b6d2d8696e64b7f25d192ebc97 <<< 2304) |||
+    (0x314b88973a4b9125b692d8496e74b7fa5d1d2ebe96e7cb7fe5d1f2ebf973acb9165b6b2d <<< 2592) |||
+    (0x2697474bd3a649d318e98934cd9a60dd2e2e97434bd1a6255336a99214c60a5d152f4a98 <<< 2880) |||
+    (0x1530ca98f14ca8a6245336299254c62a5d052f4298354b8aa648d318698974cdba60cd2e <<< 3168) |||
+    (0xba63cd32a699874c33a5b9d300e97d34bb9a63dd32ae99834c31a5f552eea96e14c00a66 <<< 3456) |||
+    (0xc080a0416820240f980868a5f452ee296e54c02a660530c298f54caaa5b8d300697d74bb <<< 3744) |||
+    (0xc10bc07fa042e81fe40f78089803b001c100d8207a5036101e980ec6070703e7821ac105 <<< 4032) |||
+    (0x81f4c102c0832040a820c410e807d0039801c500da20775036901dd80e66071703df8226 <<< 4320) |||
+    (0x045381f0c100c0862040282184114807c0037c01d700f3206bd03cd01af80df6075f043b <<< 4608) |||
+    (0x0fe5081e041301ee60fa3084c041a01eae0f47038401cb00ed206cd03b501b380e16072f <<< 4896) |||
+    (0x1ea80f44076e83ab420241002077c83c241f6c0fe6076f03ab820221001077d03c281f6a <<< 5184) |||
+    (0x3ac8201a0ffd0852041d01e960f3b0820041401ede0f9f081f8413c1ee00fa0084d841ac <<< 5472) |||
+    (0x8218414c1ed80f9c078283c541f540fda077083ac4201c0ffe078303c581f520fd907710 <<< 5760) |||
+    (0xea3176ea39305f048e73177ca37a05ecc8ed71784a38605e6c8ec70853841dc1e900f380 <<< 6048) |||
+    (0xeb48ecb178aa38905e548ebb1758a39005f1c8e9f1770a39405efc8e6f1756a38f05f248 <<< 6336) |||
+    (0x9b05dc48e5317c6a3a705d648e431794a3ae05e2c8e2717aca3b205e0c8df71782a37d05 <<< 6624) |||
+    (0x9aa3b105e148e1b17b2a3b505df48deb17c0a39c05dbc8e4f17c8a3a805d5c8e3f17bea3 <<< 6912) |||
+    (0x7fa1cf50f3a85b9430ca1db50f9a85e94324a16350a5a87094354a157509fa86d9433c17 <<< 7200) |||
+    (0x99439ca16ed0c36873f43cfa17ad0c96876f43e7a1c2d0d56858f4297a1b6d0cf6855f42 <<< 7488) |||
+    (0x76861f42dfa19f50dba84f942aca1ab50e1a852942c4a19350bda87c943b4a18750b7a87 <<< 7776) |||
+    (0xdd39ce9f814e88a13ed0ab6867f436fa14ad0b1686af4387a1f2d0ed6864f42f7a1e6d0e <<< 8064) |||
+    (0x2a7d5d3a8e9f214eb8a7ec539c29f874e8ba7e153a2a9fb34e71a7e0d3a269fb54e72a7e <<< 8352) |||
+    (0xa7c8d3ae69f554ea <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `33` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV33 : ℕ :=
+    0x800180017fff7fff7fff7fff7fff7fff7fff7fff80018001800180018001800180018001 |||
+    (0x7fff7fff7fff7fff80018001800180018001800180018001800180018001800180018001 <<< 288) |||
+    (0x800180017fff7fff7fff7fff80018001800180017fff7fff7fff7fff7fff7fff7fff7fff <<< 576) |||
+    (0x7fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180018001800180018001 <<< 864) |||
+    (0x7fff7fff7fff7fff7fff7fff80018001800180017fff7fff7fff7fff8001800180018001 <<< 1152) |||
+    (0x80017fff7fff7fff80018001800180017fff7fff7fff7fff80018001800180017fff7fff <<< 1440) |||
+    (0x800180018001800180017fff80017fff7fff7fff7fff7fff7fff80018001800180017fff <<< 1728) |||
+    (0x80017fff7fff7fff7fff7fff7fff80018001800180017fff80017fff7fff7fff7fff8001 <<< 2016) |||
+    (0x7fff80018001800180017fff80017fff7fff7fff7fff7fff7fff80017fff800180018001 <<< 2304) |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff <<< 2592) |||
+    (0x800180018001800180017fff7fff7fff7fff80017fff8001800180017fff7fff7fff8001 <<< 2880) |||
+    (0x7fff8001800180018001800180017fff7fff7fff7fff80017fff8001800180017fff8001 <<< 3168) |||
+    (0x7fff7fff8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff <<< 3456) |||
+    (0x800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff80018001 <<< 3744) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff80018001800180017fff7fff <<< 4032) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 4320) |||
+    (0x80017fff7fff800180017fff80017fff7fff80017fff7fff800180017fff7fff80018001 <<< 4608) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 4896) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff8001 <<< 5184) |||
+    (0x80017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff <<< 5472) |||
+    (0x80017fff80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff8001 <<< 5760) |||
+    (0x80017fff80017fff7fff80017fff800180017fff80017fff7fff80017fff800180017fff <<< 6048) |||
+    (0x80017fff7fff80017fff80017fff80017fff800180017fff80017fff7fff80017fff8001 <<< 6336) |||
+    (0x7fff7fff7fff800180017fff7fff7fff80017fff80017fff7fff80017fff800180017fff <<< 6624) |||
+    (0x8001800180017fff7fff7fff8001800180017fff80017fff7fff7fff8001800180017fff <<< 6912) |||
+    (0x80017fff7fff7fff7fff8001800180017fff7fff7fff80018001800180017fff7fff8001 <<< 7200) |||
+    (0x7fff7fff8001800180017fff7fff7fff7fff800180017fff7fff7fff7fff7fff7fff8001 <<< 7488) |||
+    (0x80017fff800180017fff7fff80017fff800180017fff800180017fff8001800180017fff <<< 7776) |||
+    (0x80017fff800180017fff7fff80017fff <<< 8064)
+
+/-- Chunk `33` of `s6c1nHT`. -/
+def s6c1nHT33 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL33 s6c1nHTV33 512
+
+/-- Packed labels (17-bit fields) of chunk `34` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL34 : ℕ :=
+    0x4ed1a7b0d3ba69ef54ed2a7bdd3b4e9ec14ee8a7d453a829f274ebba7c953aea9f534ea1 |||
+    (0x9e934f01a798d3c669e954f02a7a5d3c0e9e614f18a7bc53b429ec74eeba7b153baa9ef3 <<< 288) |||
+    (0x276a926548d2a45dd276e926748d3a4805258293514888a7a453c029e674f1ba79953c6a <<< 576) |||
+    (0x481d258e9357488ba4815258a9355488aa45cd2766926348d1a480d258693534889a45d5 <<< 864) |||
+    (0x919a4755252a938548a2a475d252e938748a3a4385264292f14918a45c52762926148d0a <<< 1152) |||
+    (0x38148a0a439d264e92f7491ba4395264a92f5491aa474d2526938348a1a438d264692f34 <<< 1440) |||
+    (0xe4aff857fa8bf815fba2fe317ed2bfb15fd22fef17f32bf5c5f9cafd457e88a474525229 <<< 1728) |||
+    (0x455fa82fce17ebabf985fdeafe957f60bf685fc6afdd57f00bfd55ff02ff217fdabfec5f <<< 2016) |||
+    (0xdbbfecdfe4eff877fa9bf81dfba6fe337ed3bfb1dfd26fef37f33bf5cdf9cefd477e89bf <<< 2304) |||
+    (0x00171fbf45dfa86fce37ebbbf98dfdeefe977f61bf68dfc6efdd77f01bfd5dff06ff237f <<< 2592) |||
+    (0x642fe8178b0bf585e502d7218660b5d061942fd017970c4185c702e6217ce0b9905f3431 <<< 2880) |||
+    (0x105ef4312016ef0c3f85c802e5a17d20b9705f4430f817230bfb85e202d8a185a0b63061 <<< 3168) |||
+    (0xa0b6b060a43048177b0c0d85e102d9218360b65060d4303017870c4985bb02ec217be0bb <<< 3456) |||
+    (0x20bbe059902ef419200b1f0c4785bc02eba17c20baf05f04311816f30c1385de02daa182 <<< 3744) |||
+    (0x016c20bce05b102f3419000aef05f582e1015920c6605650319417d00b87064982c70166 <<< 4032) |||
+    (0x82de015aa0c5a056b0316417e80b7b060d82e5015720c36055d030d418300b97064182bb <<< 4320) |||
+    (0x061382e20158a0c2a0563030a418480b8b064782c80165a0bc2059702f0419180b2305fb <<< 4608) |||
+    (0x2d6546278b42518982d0a16c1233105b028cc7063f82bc016ba0bd205af02f4418f80af3 <<< 4896) |||
+    (0x5ab28c9f168aa314c5a2c8c50465c0b5f919762d7d1656a2fac595c8be846500b5991946 <<< 5184) |||
+    (0x33505b228cd7166ea306c59bc8c1846380b4d918e62d3545fb8b2c517e82cb216ad23270 <<< 5472) |||
+    (0x6640b63919962d8d46138b38518482ce21695231b05a528c6f461f8b3e518782cfa16c92 <<< 5760) |||
+    (0xf929fe1d038a80753fdba004d01a281613f919fe05038680733fd81682a310c5a0c8c404 <<< 6048) |||
+    (0x1633f909fe0d038280713fd9a005d01aa81653f939fe15038e80773fdaa005501ae81673 <<< 6336) |||
+    (0x26a810540239ff95014e81973faa9fbc50266810340209ff8d014281913fa9a004501a68 <<< 6624) |||
+    (0xbcd0262810140219ff85014681933fa89fbd5026e810740229ff9d014a81953fab9fbdd0 <<< 6912) |||
+    (0x0318708c44520c0901018570c3f9205e8fff18ac8c62521b09088189b0c619216e90879f <<< 7200) |||
+    (0x2e90e718b28c65521c8909418950c5e92156907b186e8c43520b8900c18590c409206690 <<< 7488) |||
+    (0x892026906318808c2c52000903018870c379201e905f18bc8c4a520f090a818cb0c59921 <<< 7776) |||
+    (0xbce5b672dd3ad418c28c4d5210890b418c50c569211690db187e8c2b51ff8902c18890c3 <<< 8064) |||
+    (0xf9d53ce676733d3aa49cc24eafa757b39879d5fce616730d3abc9cb64eb5a75ab396f9d6 <<< 8352) |||
+    (0x9cce4ea9a754b399 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `34` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV34 : ℕ :=
+    0x7fff7fff80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff |||
+    (0x800180017fff80017fff7fff80017fff7fff80017fff7fff7fff7fff80017fff7fff8001 <<< 288) |||
+    (0x800180017fff7fff80017fff800180017fff800180017fff800180017fff80017fff7fff <<< 576) |||
+    (0x800180017fff800180017fff800180017fff80017fff7fff800180017fff800180017fff <<< 864) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff80017fff800180017fff7fff80017fff <<< 1152) |||
+    (0x7fff7fff80017fff80017fff800180017fff7fff80017fff800180017fff800180017fff <<< 1440) |||
+    (0x80017fff80017fff800180017fff7fff80017fff80017fff800180017fff80017fff7fff <<< 1728) |||
+    (0x800180017fff80017fff80017fff7fff80017fff80018001800180017fff80017fff7fff <<< 2016) |||
+    (0x800180017fff80017fff7fff7fff7fff80017fff7fff80017fff7fff7fff7fff80017fff <<< 2304) |||
+    (0x800180017fff7fff800180017fff7fff800180017fff7fff7fff7fff80017fff80017fff <<< 2592) |||
+    (0x800180017fff7fff800180017fff7fff800180017fff7fff80018001800180017fff7fff <<< 2880) |||
+    (0x800180017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff7fff7fff <<< 3168) |||
+    (0x7fff7fff7fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80018001 <<< 3456) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff800180018001800180018001800180017fff7fff <<< 3744) |||
+    (0x7fff7fff80018001800180017fff7fff7fff7fff80018001800180018001800180018001 <<< 4032) |||
+    (0x7fff7fff7fff7fff800180018001800180018001800180017fff7fff7fff7fff7fff7fff <<< 4320) |||
+    (0x80018001800180017fff7fff800180017fff7fff80018001800180017fff7fff7fff7fff <<< 4608) |||
+    (0x7fff7fff80018001800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff <<< 4896) |||
+    (0x7fff7fff800180017fff7fff7fff7fff800180017fff7fff800180017fff7fff80018001 <<< 5184) |||
+    (0x800180017fff7fff800180017fff7fff7fff7fff800180017fff7fff8001800180018001 <<< 5472) |||
+    (0x80017fff80017fff7fff7fff8001800180017fff8001800180017fff7fff800180018001 <<< 5760) |||
+    (0x8001800180017fff7fff7fff7fff800180017fff7fff7fff80017fff7fff7fff80018001 <<< 6048) |||
+    (0x7fff800180017fff7fff7fff7fff7fff7fff800180017fff7fff7fff80017fff7fff7fff <<< 6336) |||
+    (0x7fff800180017fff80017fff7fff80017fff8001800180017fff7fff7fff80017fff7fff <<< 6624) |||
+    (0x80017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff <<< 6912) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 7200) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff8001 <<< 7488) |||
+    (0x80017fff7fff7fff8001800180017fff8001800180017fff7fff80018001800180017fff <<< 7776) |||
+    (0x7fff8001800180017fff7fff7fff8001 <<< 8064)
+
+/-- Chunk `34` of `s6c1nHT`. -/
+def s6c1nHT34 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL34 s6c1nHTV34 512
+
+/-- Packed labels (17-bit fields) of chunk `35` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL35 : ℕ :=
+    0x3a5c9ce64e9da74eb39cf9d3bce736739d3a749cda4ea3a751b39b79d47ce6d6736d3a8c |||
+    (0x742d3a2c9cfe4e91a748b39ff9d23ce7f673fd3a449cf24e97a74bb39e79d2fce79673cd <<< 288) |||
+    (0xc202e0a170e2b805dbde6df536fdbb8045bdeadf556fd89d0a4e8ba745b3a179d17ce856 <<< 576) |||
+    (0x81c5c32ae1357068b7e0dbfcee0476f91b7e15bfc2e0416f92b858dc20ee0a770e1b8595 <<< 864) |||
+    (0x0e0b859dc206e0a370e3b8055bde2df516fdab804dbdeedf576fd9b81ddc326e133706bb <<< 1152) |||
+    (0x131706ab81cdc32ee1377069b7e05bfcae0456f90b7e1dbfc6e0436f93b8585c20ae0a57 <<< 1440) |||
+    (0x39c8150a0284ffe280013fd0a0ee507a283c941d09ff45034282a08156a040b81d5c322e <<< 1728) |||
+    (0xdf47ef63f7f1e708f7847d523d011ebc5064102b94110a0582056a8261418ea050503c28 <<< 2016) |||
+    (0x688fabc7a0a3de31ebe8f40c7bce3ead1ebd8f7947d563d071ebf8f38c79ca3ce71fbc8f <<< 2304) |||
+    (0x0e6d8036941b3a177dc6d9836de1b700db506cae365a1b2c8d9506db436a41b49d77d06d <<< 2592) |||
+    (0xc9ace6d7bc6bdf35ef5af7ed6706b7935d55ad06d6bf36842efb4da706d905df59b560da <<< 2880) |||
+    (0x891479681845896bab35a05ade6d6bd6b4135bc5aeaed6be6b7835d51ad00d6bc6b38b59 <<< 3168) |||
+    (0x15a05114c489e2457922b0913f96812457122ee917848b9244cf226a9134c899245d522a <<< 3456) |||
+    (0x506be8338c19ca0ce707bc83df41ef60f7f06708379c1d5a0d0306bd2288ad03c8a8245a <<< 3744) |||
+    (0x4b1ce59db2cab964617048598f83aac1a0e0de506bf834041bc20ea906bc8378c1d5e0d0 <<< 4032) |||
+    (0xae088b26e597f5c139659cb22e59a72ca3963e1704259772ce99673cb3ce58e12c6d9637 <<< 4320) |||
+    (0x77c1bbc99dfa2efad77e0bbf09df86ee6c77373b9b5dcdeefc077c0bbc9ddfa4efae2c7b <<< 4608) |||
+    (0x58cf2c6a9634cb19259d52ca8964797018598977923bf41df00efac77e9bbe09de4aefaf <<< 4896) |||
+    (0xdd04eebe2c78ae028b26259795c0796584b22259a12ca0963f9701259712cee96784b392 <<< 5184) |||
+    (0xbbc9deaaeebf7779bbd59dd02eebd7738bb9c9dce6efbc77df3bef5df7eee707778bbd5d <<< 5472) |||
+    (0x2e99173c8bce44e1226d9137489ce45db22ab914616848458f77aa3ba01dde0eebc7741b <<< 5760) |||
+    (0x7c083c1c1c9a0fa307ad228bad09c8a8e45a75a11114dc89ee457f22b3913e1684245772 <<< 6048) |||
+    (0xf0507af83e841e020e4907ac83c0c1c9e0fa507ae83e0c1f0a0f87066c8337419b60cdf0 <<< 6336) |||
+    (0x3b9780c6d9e36d91b6b8db8c6cc0365d1b2f0d98c6dba36a71b48578006d6e8392c1f4e0 <<< 6624) |||
+    (0x37359b5acded7c06bc135c95afa6d7af36872f014da7c6d965e019b578da026d8636971b <<< 6912) |||
+    (0x466b9335f45af06d7ad6be935e05ae4ed7ae6bc035c91afa0d7ac6be0b5f09af86d66c6b <<< 7200) |||
+    (0x82a056503f283848180a02e4ff927fb9400ca100507d283f1420c9ffa5037282b88186a0 <<< 7488) |||
+    (0x0a3f871e6c8f37479b63cdf1fc08fc047c923fa11fac506710319411ca05e2062a827941 <<< 7776) |||
+    (0x295d296f38568d8f93c7f4a3f031fae8fe8c7e0e3e4d1fad8fc147c963fa71faf8fe0c7f <<< 8064) |||
+    (0x55bcd158d4ae8a567d2b2a95ca96f3256a52b7295b44ad9a57192b9195c7cae4a56d92b3 <<< 8352) |||
+    (0x2bb2ade7cac8a567 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `35` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV35 : ℕ :=
+    0x7fff7fff80017fff7fff7fff8001800180017fff8001800180017fff7fff800180018001 |||
+    (0x8001800180017fff8001800180017fff7fff8001800180017fff7fff7fff800180017fff <<< 288) |||
+    (0x7fff800180017fff8001800180017fff800180017fff7fff80017fff80017fff7fff7fff <<< 576) |||
+    (0x80017fff800180017fff7fff80017fff7fff7fff80017fff7fff80017fff7fff80018001 <<< 864) |||
+    (0x80017fff7fff80017fff7fff800180017fff8001800180017fff800180017fff80018001 <<< 1152) |||
+    (0x80017fff7fff8001800180017fff800180017fff8001800180017fff800180017fff7fff <<< 1440) |||
+    (0x7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff800180017fff <<< 1728) |||
+    (0x7fff800180017fff7fff80017fff80017fff80017fff80017fff800180017fff7fff7fff <<< 2016) |||
+    (0x7fff800180017fff7fff800180017fff7fff800180017fff80017fff7ffb80017ffd8003 <<< 2304) |||
+    (0x80017fff7fff80017fff7fff7fff7fff7ffb7fff8003800380017fff7fff800180017fff <<< 2592) |||
+    (0x80017fff7ffb80017ffd800380017fff7fff800180017fff80017fff80017fff80017fff <<< 2880) |||
+    (0x7fff80017fff80017fff800180017fff7fff800180017fff7fff80017fff800180017fff <<< 3168) |||
+    (0x7fff80017fff80017fff80017fff80017fff800180017fff80017fff7ffb80017ffd8003 <<< 3456) |||
+    (0x7fff80017fff80017fff7fff7fff7fff800580017ffd7ffd80017fff80017fff7fff8001 <<< 3744) |||
+    (0x80017fff7ffb80017ffd80037fff80017fff800180017fff7fff800180017fff7fff8001 <<< 4032) |||
+    (0x7fff80017fff800180017fff80017fff80017fff80017fff80017fff80017fff80017fff <<< 4320) |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff7fff7fff7fff800580017ffd7ffd <<< 4608) |||
+    (0x80017fff80017fff7fff80017fff800180057fff80037ffd80017fff80017fff80017fff <<< 4896) |||
+    (0x7fff7fff800580017ffd7ffd7fff80017fff800180017fff80017fff80017fff80017fff <<< 5184) |||
+    (0x80017fff80017fff7fff800180017fff7fff800180017fff80017fff80017fff7fff7fff <<< 5472) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff80017fff800180057fff80037ffd <<< 5760) |||
+    (0x7fff800180017fff7fff7fff7fff7fff800580017ffd7ffd80017fff80017fff7fff8001 <<< 6048) |||
+    (0x80018001800580017ffd7ffd7fff800180017fff80017fff7fff800180017fff7fff8001 <<< 6336) |||
+    (0x80017fff7fff800180017fff80017fff80017fff80017fff80017fff7fff800180018001 <<< 6624) |||
+    (0x80017fff7fff800180017fff7fff800180017fff80017fff80017fff7ffb80017ffd8003 <<< 6912) |||
+    (0x7fff800180017fff8001800180018001800580017ffd7ffd7fff800180017fff7fff8001 <<< 7200) |||
+    (0x80017fff7ffb80017ffd80037fff800180017fff7fff80017fff80017fff80017fff8001 <<< 7488) |||
+    (0x80017fff8001800180017fff7fff7fff7fff80018001800180017fff8001800180017fff <<< 7776) |||
+    (0x7fff80017fff7fff80057fff80038003 <<< 8064)
+
+/-- Chunk `35` of `s6c1nHT`. -/
+def s6c1nHT35 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL35 s6c1nHTV35 512
+
+/-- Packed labels (17-bit fields) of chunk `36` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL36 : ℕ :=
+    0xf1ed78e13cb9de424f1ef7901bc801e402f22f7916bc8b9e458f20278e03cb99e422f1ec |||
+    (0xd4866b3735969acc4d6566a3735659ac9176e86a6b7972bc84de382f1ee79083c70de5c8 <<< 288) |||
+    (0x689db5a4daaf3575aedc8d5766a935dbb9ab6cd6166a8335559ac1176e26a9b35159a8fc <<< 576) |||
+    (0xd69b6a05b44adaae6d4036899b5a2daac6d61b6b01b582d96f6cb6b65b9b2d8dac26d413 <<< 864) |||
+    (0x25c59022c7c163d8b1b858e12c6f96388b1f8593e2c5f08876b2446d1236b41b506daad6 <<< 1152) |||
+    (0x4590a0284e1c2b92142109ed58ce110f96518b22c221eaca7162e6b25459362c64c8870b <<< 1440) |||
+    (0x84a138509ef8508c270215cd09ec84e0c2b96142709ee8501c280214030a2f8516c28ba1 <<< 1728) |||
+    (0x621fbd17f3c7e743f321f940fc987f583fb11fd78fec87e583f6a1fc6d7f307e8c8573c2 <<< 2016) |||
+    (0xbf615eb0af98578c17260f8b09558306c1be3f8a2fe74fd687e7c5fcd9fb90fdf67ea43f <<< 2304) |||
+    (0x207e8a612b3060583e0c1bc60c1307c984aec1bf60f9b09518300c1bd60b9b05c182e2c2 <<< 2592) |||
+    (0x88fdfa7ea23f611fbc97f2c7e723f251f978fcc47f563fa61fd40fe947e563f691fc757f <<< 2880) |||
+    (0x1b0b018582c16f60b6b05b982d8c2c26140b089585a6c2ae3f892fe54fd647e7a5fc99fb <<< 3168) |||
+    (0x6593d2c5e88866b242611330b458500c2ac616930a09844ec2af6141b089185a0c2ad616 <<< 3456) |||
+    (0x4b22a221aaca6962eab25259352c6548860b25a58f52c7f96404b1b658d62c6c16354b1f <<< 3744) |||
+    (0x614870a7e8519c28c2146309ff84fec27fa13f90a328559c265214810a7d58cd110d9651 <<< 4032) |||
+    (0x9acfcd68a6a3935669ac8976f86a6d84cbc290a15650a7f8520c2ac2132d0a7c8558c265 <<< 4320) |||
+    (0x3576aede8d57a6a955dbf9ab74d61a6a8535569ac0976f26a9d35229a8c4d45a6b3935a1 <<< 4608) |||
+    (0xd9be6cf836959b302d9bc6cb9b65c1b2e2dabf6d5eb6af9b578d9726cf93695db304d9bf <<< 4896) |||
+    (0xadc657172b8695c44ae1656d72b3195d316f28568b6d2a36601b3e6d9bd6cc1b67c5b4aa <<< 5184) |||
+    (0xc659e482f27c2bb1ade5cac8656735bc9158ccae86567b2b2995cb16f2256a32b6595b7c <<< 5472) |||
+    (0x9203cacde328f27d79593c65de484f27f7919bc8c1e462f1ff78febc7f9e3f8f23279583 <<< 5760) |||
+    (0x6675349a9a9d4d1ea76153b3a9d754eb6a69b536ba9c608448a64f78cabc90de562f27e7 <<< 6048) |||
+    (0x01d17218bd1c601a2e61170c538b908854d8ea637211129add4deea63f5373a9be0844ea <<< 6336) |||
+    (0xcca2f45170e8b98c5e823009170d8bd0c601e2e67170f8b9045c8e2e45180d8c07c60323 <<< 6624) |||
+    (0xbc1cf1d7a5c7358397e1cba0e60073ee39f41cfc8e7e872f439c41cf9d7a5073288c02c5 <<< 6912) |||
+    (0xed6777b3bb19ddcd0416800b3e9da0a6d02f39d42f4b4e6d073505e959ce60e790734039 <<< 7200) |||
+    (0x864c0667d234145a000d02d6829340099f4ad02e6801b3e99a0a0d02c68203410da084ce <<< 7488) |||
+    (0x7896824c1625bf12d856a8c4c1e25d912f18975c4b00258312bf095f44bba25b712cb96a <<< 7776) |||
+    (0x03fc8dfe45000d8007c0032001cff217fd040011fe62ff0d25a72d500971c4bee5aa292e <<< 8064) |||
+    (0xb2fcb97f6172c85f4f8003bfccdff42ff0f7f983fe8e000cff0c7fd140015fe64ff0e7f9 <<< 8352) |||
+    (0x301398074c0365f1 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `36` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV36 : ℕ :=
+    0x7ffd80037fff7fff80017fff7fff7fff7fff800180017fff7fff7fff7fff80017fff7fff |||
+    (0x7fff80018001800180017fff7fff7fff80017fff800180017fff7fff80017fff80058001 <<< 288) |||
+    (0x8001800180017fff800180017fff80017fff7fff80057fff8003800380017fff80018001 <<< 576) |||
+    (0x7fff7fff80017fff800580017ffd8003800180017fff80018001800180017fff7fff8001 <<< 864) |||
+    (0x80037ffd80017fff7fff7fff7fff80018001800180017fff7fff7fff80017fff7fff7fff <<< 1152) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff80017ffb7fff <<< 1440) |||
+    (0x8001800180017fff7fff7fff80017fff7fff7fff7ffb80017ffd7ffd8001800180017fff <<< 1728) |||
+    (0x7fff7fff7fff80017ffb7fff80037ffd80017fff7fff7fff80017fff7fff7fff7fff8001 <<< 2016) |||
+    (0x7ffd7ffd7fff7fff7fff80018001800180017fff7fff80018001800180017fff7fff7fff <<< 2304) |||
+    (0x80017fff7fff7fff7fff8001800180017fff80018001800180017fff7fff7fff7ffb8001 <<< 2592) |||
+    (0x8001800180017fff7fff7fff8001800180017fff800580017ffd80037fff800180018001 <<< 2880) |||
+    (0x80017fff7fff7fff7ffb80017ffd7ffd7fff7fff7fff80018001800180017fff7fff8001 <<< 3168) |||
+    (0x7ffd80037fff8001800180017fff80018001800180017fff7fff7fff7fff800180018001 <<< 3456) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180018001800180017fff80058001 <<< 3744) |||
+    (0x7fff7fff7fff80017fff7fff80017fff7fff7fff7ffb80017ffd7ffd8001800180017fff <<< 4032) |||
+    (0x80017fff800180017ffb80017ffd7ffd7fff80017fff7fff7fff80018001800180017fff <<< 4320) |||
+    (0x7ffd8003800180017fff80018001800180017fff7fff80018001800180017fff80018001 <<< 4608) |||
+    (0x80017fff7fff7fff7fff8001800180017fff80017fff7fff7fff7fff80017fff80058001 <<< 4896) |||
+    (0x7fff7fff7fff80017fff7fff80017fff800180017ffb80017ffd7ffd7fff80017fff7fff <<< 5184) |||
+    (0x7fff7fff80017fff800580017ffd80037fff7fff80017fff7fff7fff7fff800180017fff <<< 5472) |||
+    (0x8003800380017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff8001 <<< 5760) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7fff800180017fff7fff7fff7fff7fff7ffb7fff <<< 6048) |||
+    (0x80017fff80017fff7fff80017fff7fff7fff7fff7ffb80017ffd800380017fff80017fff <<< 6336) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff8001 <<< 6624) |||
+    (0x80037ffd80017fff80017fff800180017fff7fff7fff7fff7fff7fff7fff800180017fff <<< 6912) |||
+    (0x80017fff7fff800180017fff7fff80017fff80017fff8001800180018001800180057fff <<< 7200) |||
+    (0x7fff7fff7fff80017fff800180017fff80017fff7ffb80017ffd80037fff80017fff8001 <<< 7488) |||
+    (0x80017fff80017fff800580017ffd7ffd7fff800180017fff800180017fff7fff7fff7fff <<< 7776) |||
+    (0x7fff800180017fff7fff80017fff8001 <<< 8064)
+
+/-- Chunk `36` of `s6c1nHT`. -/
+def s6c1nHT36 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL36 s6c1nHTV36 512
+
+/-- Packed labels (17-bit fields) of chunk `37` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL37 : ℕ :=
+    0xe73e2febae588bf0e5f3f5cb397e9cbf705f672fbb97edd72c25f372f8997c9cbe1e6021 |||
+    (0xcfaee73f73b839f51ce02e73d737839bcdcde4e83d741fba0f1d07ce6f173b939f55ce04 <<< 288) |||
+    (0x7c24be42600f30049804cc02a5f152fc897f7972985f4973eb39c01cee6e73c7381b9dc5 <<< 576) |||
+    (0x40139e95d0a4e82e2fe8ae528bf025f395ca797e84bf7c5f612fb897ec572925f312f8e9 <<< 864) |||
+    (0x82c7429ba005cf4ee82f740039e91d0a2e82d74203a10dd084e6ed7377b9bb1cddce8417 <<< 1152) |||
+    (0xa5c4c1825de12ea097804aee257412bc895e84bb425b412ca16a564c0073d33a141d006e <<< 1440) |||
+    (0xc71fe3d00117fe83fdd20043005d25a42d4a097104be85a9692e60968e4c1025bc12d9d6 <<< 1728) |||
+    (0xbbc008dffa3005f80103ff4dfeed005c7fe93fdd60045005e80084004e0024ff1d7f8fbf <<< 2016) |||
+    (0x4639bf1cf057a8c735e39791cc18e5dc74003a031cff0e7f472fa39c71cf857a80732e7f <<< 2304) |||
+    (0xe4d03d681fb40f1a07ccef167b8b3f5d9e06cf3f39d72f514e6dc73565ea19ce78e79c73 <<< 2592) |||
+    (0x788418a64967ea33c059ee0cf3d678133dc99faacf3e67b9b3f599e00cf3c677833bcd9d <<< 2880) |||
+    (0x529ac54de2a6395370a9bf8841ea661534ea9a254d42a74f53a4a9d4d4eaaa6955368a9c <<< 3168) |||
+    (0xf8c084604e3025171d8b8fc5c722e3d18118be9c5dda3041185c5388908254d82a631210 <<< 3456) |||
+    (0x8534429be149f16d7653048bbac608a2fa5185e8c10c5f422ee9185d8be8c5dde3047185 <<< 3744) |||
+    (0x0a718531c5b5e94e70a4e6531429b614a4d6d7c52ec299c14cc0a65852be296114ae0a58 <<< 4032) |||
+    (0xbd915ede4f6cf7b713db85edc0f64e7b263d93dec9af6e37bb1bd911ede2f6cc294e2dae <<< 4320) |||
+    (0x33c199de4cf0a6685338699d89757866ad7b23bdbcdeec4f6ce7b783dd81ec8cf6cd7bb0 <<< 4608) |||
+    (0xdf2f33a6aeae8cdda66d55d5f99c74ce8466c5337e99cb5757266dd333c999c4ccda677f <<< 4896) |||
+    (0xbd4edf2e6f81b7a91bea2df2c6fa137d05be80ddee6ef6377bdbbdadf436f80b7a95bea4 <<< 5184) |||
+    (0xb8455c1aae9f5751aba655d4aae2556f2abb288738ae4d6f5337d41be00df2d6fa9b7c09 <<< 5472) |||
+    (0x7b04391a1de10ecd577290e655b8aae6521cd2b6d55d8aae3d56eaabaa8873eae35570ca <<< 5760) |||
+    (0xecf8778c3d8e1c890ecc87b14391e1de70ece877143b861dc10e4e87264393e1c9b0ee38 <<< 6048) |||
+    (0xdac7ab23d4b1ea78f5447b903dc61ee58f7147a8a3d891ed757da07aca8722c3bca1ec30 <<< 6336) |||
+    (0xcfd8e7ac5f3633931b5d8c06c63e3d992fb54f6047aba5f699ec88f6a47ae23d791ecf57 <<< 6624) |||
+    (0x6a318058ce6c63c6301319c58daac63f633831b598c00c63d62f9317c58be0c73e639e31 <<< 6912) |||
+    (0xe43d7a1eced7dbc7ab43d4c1ea40f5187b9e3dd11ee60f7487aa43d8a1ed6d7db07acc63 <<< 7200) |||
+    (0x80c5ee62f6317bd8bdac743638131a9d8ea6c72e3d9a2fb74f6087abc5f6d9ec90f6a87a <<< 7488) |||
+    (0x308728ae4b635231d458e06c72c63a931c058d4ac72f638031a998ea0c72d63a131d058e <<< 7776) |||
+    (0x92b6cd5d86ae3b56e9abab0872eae33570bab87d5c46ae915746aba5d5d16ae0b56f1abb <<< 8064) |||
+    (0xe8729439461ca10ede876e43b7e1dbb0e53870843cda1cc10e9d577190e455b86ae6321c <<< 8352) |||
+    (0x870943cde1cc70e9 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `37` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV37 : ℕ :=
+    0x7fff800180017fff80017fff7ffb80017ffd80037fff80017fff80017fff800180017fff |||
+    (0x7ffb7fff800380037fff800180017fff800180017fff7fff7fff7fff7fff7fff7fff8001 <<< 288) |||
+    (0x7fff800180017fff7fff800180017fff7fff80017fff80017fff80017fff80017fff8001 <<< 576) |||
+    (0x800180018001800180017fff80017fff80017fff80017fff7ffb80017ffd80037fff8001 <<< 864) |||
+    (0x7fff800180017fff80017fff800580017ffd7ffd80017fff7fff80017fff7fff80018001 <<< 1152) |||
+    (0x7ffb80017ffd80037fff80017fff80017fff800180017fff7fff800180017fff7fff8001 <<< 1440) |||
+    (0x7fff80017fff7fff80018001800180018001800180017fff80017fff80017fff80017fff <<< 1728) |||
+    (0x80017fff7fff800180017fff7fff80017fff80017fff80017ffb7fff8003800380017fff <<< 2016) |||
+    (0x7fff80017fff7fff7fff7fff7ffb7fff8003800380017fff7fff800180017fff7fff8001 <<< 2304) |||
+    (0x7ffb80017ffd80037fff80017fff80017fff7fff80018001800180018001800180017fff <<< 2592) |||
+    (0x7fff80017fff800180017fff7fff800180017fff80017fff7fff80017fff7fff7fff7fff <<< 2880) |||
+    (0x800180018001800180017fff7fff80017fff7fff7fff7fff7ffb7fff8003800380017fff <<< 3168) |||
+    (0x80018001800180018001800180057fff80037ffd7fff80017fff80017fff7fff80018001 <<< 3456) |||
+    (0x80057fff8003800380017fff800180017fff80018001800180017fff7fff7fff80017fff <<< 3744) |||
+    (0x80017fff80017fff7fff7fff800180017fff80017fff80017fff7fff7fff80017fff7fff <<< 4032) |||
+    (0x80017fff7fff7fff7fff80017fff7fff80017fff7fff7fff800580017ffd800380018001 <<< 4320) |||
+    (0x7fff7fff80017fff800180017ffb80017ffd7ffd7fff80017fff7fff7fff800180018001 <<< 4608) |||
+    (0x7ffb7fff80037ffd8001800180017fff80017fff7fff7fff800180017fff80017fff8001 <<< 4896) |||
+    (0x7fff7fff80017fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180018001 <<< 5184) |||
+    (0x800180017fff80017fff8001800180017fff7fff7fff80017ffb7fff80037ffd80017fff <<< 5472) |||
+    (0x800180017fff7fff80017fff7ffb80017ffd7ffd7fff7fff80017fff80017fff7fff7fff <<< 5760) |||
+    (0x800580017ffd80037fff80018001800180017fff7fff7fff7fff8001800180017fff8001 <<< 6048) |||
+    (0x80017fff80017fff7fff7fff800180017fff80017fff8001800180018001800180017fff <<< 6336) |||
+    (0x80017fff7fff7fff7fff800180018001800180017fff800180057fff800380037fff7fff <<< 6624) |||
+    (0x7fff7fff8001800180017fff800580017ffd80037fff8001800180017fff800180018001 <<< 6912) |||
+    (0x7ffb80017ffd7ffd800180017fff80017fff8001800180017fff7fff80017fff80017fff <<< 7200) |||
+    (0x7fff7fff7fff80018001800180017fff7fff7fff80017fff7fff7fff7fff7fff80017fff <<< 7488) |||
+    (0x7fff7fff80017fff80017fff7fff7fff7fff7fff7fff80017ffb7fff80037ffd80017fff <<< 7776) |||
+    (0x800180017fff80017fff800180018001 <<< 8064)
+
+/-- Chunk `37` of `s6c1nHT`. -/
+def s6c1nHT37 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL37 s6c1nHTV37 512
+
+/-- Packed labels (17-bit fields) of chunk `38` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL38 : ℕ :=
+    0x677133b699ddcced6666b338599d91756866ab879ac398a1c230e9f8730c384e1e690e9c |||
+    (0xbc04de3f33a5aeac8cdd666d35d5b99c6cce8866c3337d99cad756266db333b999fccd06 <<< 288) |||
+    (0x79c9bdaede3e6f39b7b51bc02de3c6ef9377c5bbe0df3e6f9e37cfdbe7addf36f38b7b55 <<< 576) |||
+    (0x99b14cf8a68452b0295614ad8a554532a29bd149e96d6653026f6b37801bce0de3d6f01b <<< 864) |||
+    (0x6537b09bdcd1ecc2f69c294d2dac0a714531a5b5a94e68a4ea531229b514a556d6c52ea2 <<< 1152) |||
+    (0xc24f69e7b303d841ee6cf69d7b08bdcd5ecc4f69f7b293d945eca0f6de7b6e3db7dedbaf <<< 1440) |||
+    (0x91d685c46e8235e11aa08d8045ee22fa117c88bd046b423441199d685647007b9bbd98de <<< 1728) |||
+    (0x2b419560caf050982ad416fe09d3052423142d0a08cf047185a1691a608c904710233411 <<< 2016) |||
+    (0xa682de413ae0ab705268274415660b7b052582ac416fa09d5052782844142e0a15065483 <<< 2304) |||
+    (0x0c5a8e2d8b167a570cc5a762d6916b98b59c5a602d2d16970b4cc5ada2d931682570c65a <<< 2592) |||
+    (0x2ddb94ed9476cb3b655db2eedc9770c3b3f9db54ede72d132e194b60c5a7e5c3016bd8b4 <<< 2880) |||
+    (0x7286848206a206767ebb6a1dc32ede576d5bb86dd9f8ede6770d3b3fddb52ede476e43b7 <<< 3168) |||
+    (0xe2082a87794302a21650df285b88200a21e511928919445ca140509d284f1428ca23a50e <<< 3456) |||
+    (0x71e468f14478ae3c551d348e9b474d63a6f1e298edcc75763c111e4550c710419435ca1e <<< 3744) |||
+    (0x0ddcc6e9a37031bc1978c06e4e8eaf4782a3b711e478f04c76ea3abf1e448eddc75723c1 <<< 4032) |||
+    (0x2f194dc2c6e3e5e319b898ddd26e6636fb1bc2578cc6e3637491ba98dd1c6ee0376d1bb7 <<< 4320) |||
+    (0x6b24b54b5abb0d5b56afc357edabf4d5646ab335595aaced5f96b25b54b1abb6d5b63793 <<< 4608) |||
+    (0x6ece376a1bb48dd906e9437001bc0178906e486a97b5765ac94d5b46aed35921aa5cd5b7 <<< 4896) |||
+    (0xaa96d58637902f134dc206e385e259b880ddde6e6036f81bc3d789c6e30374e1ba20dd40 <<< 5184) |||
+    (0x53e1ac3cd5876a7cb5875aa90d5856ab4355adaad4d5f46afb357d5abeed5696a7db5871 <<< 5472) |||
+    (0x11e288a14480a12e509a284c94250a23450e42869c81d6a2006b0fb5525a9f4d5846aa53 <<< 5760) |||
+    (0xd398ec4c77b63a311cf550c4103b94350a1e82076a8761430ea21050dc285a081d0a2185 <<< 6048) |||
+    (0xb111cf78e8cc762a3bdf1cf48ec5c77b23a371cf68e9c474ee3a751e248f13478963c4f1 <<< 6336) |||
+    (0x7bd709c5a702d6e16b20b5c05a4e2d2a16948b4905ad42d901683d70965aa08ef74746a3 <<< 6624) |||
+    (0xe33b715db8eed9976943b939daf4ed572d102e134b6005a785c2416bc0b4005a882d8816 <<< 6912) |||
+    (0x067726bb5e1da52ed5576bdbb4addc98ed5676953b93ddaf2ed5476cc3b66ddb34edc476 <<< 7200) |||
+    (0x9c4716233711905688c46ee235911b188d5c460022fd117f08c0c46ba234711985688647 <<< 7488) |||
+    (0x6e0cb505048283414160a0f065982f54163e0c73061423172d1008cfc471e5a2291a788c <<< 7776) |||
+    (0x72ce848906b2c682c6418ee0bd70616831c417a60b1b061582f44163a0c750617832c419 <<< 8064) |||
+    (0xe2242acd796702b2d659972cdb88900b2ae597d2cbc965dcb3c659de2cf016774b30659a <<< 8352) |||
+    (0x59c711219667cb2d <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `38` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV38 : ℕ :=
+    0x7fff7fff7fff8001800180017fff80017fff7fff800180017fff800180057fff80038003 |||
+    (0x80017fff8001800180017fff800180017ffb80017ffd7ffd7fff80017fff7fff80017fff <<< 288) |||
+    (0x7fff7fff800580017ffd80037fff7fff7fff80017fff8001800180017fff7fff80017fff <<< 576) |||
+    (0x80017fff8001800180017fff7fff7fff7fff80018001800180017fff8001800180017fff <<< 864) |||
+    (0x800180017fff7fff80017fff80017fff800180017fff80017fff7fff80057fff80038003 <<< 1152) |||
+    (0x80017fff7fff7fff7fff8001800180017ffb7fff80037ffd7fff7fff7fff80017fff8001 <<< 1440) |||
+    (0x7fff80017ffb7fff80037ffd80017fff7fff7fff7fff80018001800180017fff7fff7fff <<< 1728) |||
+    (0x800180017fff80017fff7fff80017fff80017fff8001800180017fff800180017fff7fff <<< 2016) |||
+    (0x8001800180017fff7fff7fff7fff8001800180017fff8001800180017ffb80017ffd7ffd <<< 2304) |||
+    (0x7fff80017fff7fff8001800180017fff800580017ffd80037fff8001800180017fff8001 <<< 2592) |||
+    (0x800180017ffb80017ffd7ffd7fff7fff80017fff800180017fff80017fff80017fff7fff <<< 2880) |||
+    (0x7fff80017fff7fff7fff80018001800180017fff7fff7fff7fff80017fff7fff7fff8001 <<< 3168) |||
+    (0x80017fff80017fff8001800180017fff7fff7fff80017fff800180017ffb80017ffd7ffd <<< 3456) |||
+    (0x80017fff80018001800180017fff8001800580017ffd80037fff7fff7fff80017fff7fff <<< 3744) |||
+    (0x7fff7fff80057fff8003800380017fff800180017fff80018001800180017fff7fff7fff <<< 4032) |||
+    (0x8001800180017fff800180017fff80017fff80017fff7fff7fff8001800180017fff8001 <<< 4320) |||
+    (0x8001800180017fff7fff7fff7fff80017fff7fff800180017fff8001800580017ffd8003 <<< 4608) |||
+    (0x80017fff7fff7fff80017fff800180017ffb80017ffd7ffd7fff80017fff7fff7fff8001 <<< 4896) |||
+    (0x80017fff7ffb7fff80037ffd7fff7fff7fff80017fff7fff80017fff80017fff80018001 <<< 5184) |||
+    (0x80017fff800180017fff80018001800180017fff7fff7fff80017fff800180017fff7fff <<< 5472) |||
+    (0x7fff80017fff80017fff7fff7fff8001800180017fff80017fff7fff80057fff80038003 <<< 5760) |||
+    (0x80017fff7fff7fff7fff7fff80017fff7ffb7fff80037ffd8001800180017fff80018001 <<< 6048) |||
+    (0x7fff80017ffb7fff80037ffd80017fff7fff7fff7fff80018001800180017fff7fff7fff <<< 6336) |||
+    (0x800180017fff80017fff7fff80017fff80017fff8001800180017fff800180017fff7fff <<< 6624) |||
+    (0x8001800180017fff7fff7fff7fff80018001800180017fff7fff7fff80057fff80038003 <<< 6912) |||
+    (0x7fff80017fff7fff8001800180017fff800580017ffd80037fff8001800180017fff8001 <<< 7200) |||
+    (0x7fff7fff80057fff800380037fff7fff80017fff800180017fff80017fff80017fff7fff <<< 7488) |||
+    (0x7fff80017fff80017fff800180017fff7fff800180017fff7fff80017fff800180017fff <<< 7776) |||
+    (0x80017fff80017fff7ffb80017ffd8003 <<< 8064)
+
+/-- Chunk `38` of `s6c1nHT`. -/
+def s6c1nHT38 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL38 s6c1nHTV38 512
+
+/-- Packed labels (17-bit fields) of chunk `39` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL39 : ℕ :=
+    0x092d84804229212a7092f84a142506128107ef83f6c1fba0fd9094384814229612a1092c |||
+    (0x005c7f863fbe1fe00fef480463ff71feb97f80806e84534254a1207092e84a8c2406114f <<< 288) |||
+    (0x029182a6c12f3fe72ff15001c80965fe1a0078ff8280863fff1ff857f8c809e401d200c9 <<< 576) |||
+    (0x0a93040d814cc12e60813029582a0c12c60a1305058280bfef5ff6affb97fd8c14360803 <<< 864) |||
+    (0x7d82bba15df0af0058682c39161b8b0e857682c041619d6f5657c06053b05458202c12d6 <<< 1152) |||
+    (0x218f0237850bc41de062f00d2c142dea0afd057a85bd696060b09057d02bfc1611d6f5c5 <<< 1440) |||
+    (0x0cde140f00f78183c289e20af00c7851bc419e064f00e78113c085e040f10f7886bc439e <<< 1728) |||
+    (0x0f1b105778c6bde35bd1adc8d6dc6c86363e1b200d8f46b8636071b18577866bc678823c <<< 2016) |||
+    (0x1f6c0eb6079b038d9136c69b61d9b244d95e36272ef14d7fc6bd65de01afb8d85c6bae36 <<< 2304) |||
+    (0x566bc06c3ab6481b1a4d95c6c91b6341b0e8d95f6c68b61ddb242d95d6c8936445b220d8 <<< 2592) |||
+    (0xa0d8506ba8360c1b11d775c6bd835ba1adf0d7006c6836391b1b8d8e86b6836041b19d77 <<< 2880) |||
+    (0x136085b040d90f6c86b6439b218d8236c51b6419b064d80e36242eeb4d7f06bd05dd41af <<< 3168) |||
+    (0x62c07161856f8657c66c82b60c1b144d80c6c19b6281b208d80f6c50b641db062d80d6c1 <<< 3456) |||
+    (0xc57ae5be296078b09c57d62bff161056f8c57de2bbd15dc8aedc58862c3e16200b0f4578 <<< 3744) |||
+    (0x9e244f15e78893c445e220f01f780ebc079e038f1137868bc1dde242f15d2c172df00afd <<< 4032) |||
+    (0x1fdb8fee880283ff41fea17f508068783a3c48de1a0f15f78903c349e0eaf15c7869bc1d <<< 4320) |||
+    (0x3fe42feb5001080905fd5a0060ff8e80803ffc1ff9d7f5c8098401a200f100807f683fb9 <<< 4608) |||
+    (0xc03e6039303558000c03c5ff92ffc57fe0c13f609eb04f98278bff36038303518006c03f <<< 4896) |||
+    (0x6600b3a859d92ceb96768b2e859a42ce9c88d6b2c0606bb000580e2c03d6001301cd81ac <<< 5184) |||
+    (0x23561001083c59c4111b96670b2d82236acd61670eb2d059942cda088d0b2a8597a2cbf1 <<< 5472) |||
+    (0x400c21c611af083d8438423521007083f83f941fc60fe1093f849ec24fa127907f384394 <<< 5760) |||
+    (0x9a824fe1280093d04aae255412ac8956849f4252412a9d69d649c0846b4200a10e7083e8 <<< 6048) |||
+    (0x10d01d880b4c04360373019425442d3a0945049d85a7692960950e49d0251c129a169dc4 <<< 6336) |||
+    (0x6ee02d1019680dc405aa021f019580b5c04320375019780ecc076a03b700858043c02120 <<< 6624) |||
+    (0x549775971d25e992f1e97904bc525def2ef4977ccbbea5e352f5c976e571d85e69808740 <<< 6912) |||
+    (0xe57473ba391d1cce97874e5ba2b1d2b4e9372eecae3a8bd925e915c7797b64bb6c5e812f <<< 7200) |||
+    (0x86a5467457ba561d394e93574adba721d15ce93674e4ba2b5d2b2e93474bcba5e9d2f6e8 <<< 7488) |||
+    (0x794b9ca55652b7297048380a55e5279293b94a0ca6005303297f14bf4a4fa52c72978483 <<< 7776) |||
+    (0xcc62ea317719a58cd3c6692334d18b88c85465be3131187552d7107194afca52e20e2a96 <<< 8064) |||
+    (0x538ec9cb5979de72418cb64626a321718778c4cc642632db18748c84465ba313718768c5 <<< 8352) |||
+    (0x39349c9cce4ea71f <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `39` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV39 : ℕ :=
+    0x800380037fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff |||
+    (0x80017fff7fff800180017fff7fff80017fff80017fff80017fff7fff7fff7fff7ffb7fff <<< 288) |||
+    (0x80017fff80017fff7fff800180017fff80017fff7ffb80017ffd80037fff80017fff8001 <<< 576) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff8001 <<< 864) |||
+    (0x8003800380017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 1152) |||
+    (0x7fff800180017fff7fff800180017fff80017fff80017fff7fff7fff7fff7fff7ffb7fff <<< 1440) |||
+    (0x7fff800180017fff7fff80017fff80017fff80017ffb80017ffd80037fff80017fff8001 <<< 1728) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff800180017fff7fff800180017fff <<< 2016) |||
+    (0x7ffd800380017fff80017fff80017fff7fff800180017fff7fff80017fff80017fff8001 <<< 2304) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff7fff80017fff80017ffb8001 <<< 2592) |||
+    (0x7fff80017fff80017fff80018001800180018001800580017ffd7ffd7fff800180017fff <<< 2880) |||
+    (0x7fff80017fff80017ffb80017ffd800380017fff80017fff80017fff7fff800180017fff <<< 3168) |||
+    (0x7ffd7ffd7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 3456) |||
+    (0x7fff800180017fff7fff800180017fff80017fff80017fff800180018001800180058001 <<< 3744) |||
+    (0x7fff800180017fff80017fff7fff80017fff80017ffb80017ffd80037fff80017fff8001 <<< 4032) |||
+    (0x7fff80017fff800180057fff80037ffd80017fff80017fff80017fff7fff800180017fff <<< 4320) |||
+    (0x8003800380017fff7fff80017fff800180017fff7fff800180017fff80017fff7fff8001 <<< 4608) |||
+    (0x7fff800180017fff7fff800180017fff80017fff80017fff7fff7fff7fff7fff7ffb7fff <<< 4896) |||
+    (0x7fff80017fff800180017fff7fff80017fff800180057fff80037ffd80017fff80017fff <<< 5184) |||
+    (0x7fff7fff7fff7fff7ffb7fff800380037fff800180017fff80017fff7fff800180017fff <<< 5472) |||
+    (0x7ffd80037fff8001800180017fff80018001800180017fff7fff7fff7fff800180018001 <<< 5760) |||
+    (0x80017fff800180018001800180017fff80017fff800180018001800180017fff80058001 <<< 6048) |||
+    (0x800180017fff800180018001800180017fff80017ffb80017ffd7ffd7fff7fff7fff8001 <<< 6336) |||
+    (0x8001800180017fff800580017ffd80037fff80018001800180017fff7fff7fff7fff8001 <<< 6624) |||
+    (0x800380037fff7fff7fff800180017fff800180018001800180017fff80017fff80018001 <<< 6912) |||
+    (0x7fff80018001800180017fff7fff7fff80017fff800180017fff7fff80017fff80057fff <<< 7200) |||
+    (0x80017fff80017fff7fff7fff7fff80017fff7fff80057fff8003800380017fff80018001 <<< 7488) |||
+    (0x7fff800180018001800580017ffd8003800180017fff800180017fff8001800180018001 <<< 7776) |||
+    (0x7fff80018001800180017fff80018001 <<< 8064)
+
+/-- Chunk `39` of `s6c1nHT`. -/
+def s6c1nHT39 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL39 s6c1nHTV39 512
+
+/-- Packed labels (17-bit fields) of chunk `40` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL40 : ℕ :=
+    0xd166396caf3a8e37272515e761c6a4e572722938e49cad979d2725938fe9c804e3d2726f |||
+    (0xa0f8d16768cd341fda250d16568a4b4529a296d115688bb4451a22cd14868cc341f9a256 <<< 288) |||
+    (0xc7bce40e728139439c9f4e4f671fb38ef9cb417a0e7247683eb44a5a332d16468953466d <<< 576) |||
+    (0x85434739a1f6d0d6396faf408e37e72575e821c6bce57e722f38e79cac17a02725f38f99 <<< 864) |||
+    (0x0d4687d342ada398d0d768553473da1f0d0d5688cb4469a236d14568a3b4511a28cd1186 <<< 1152) |||
+    (0x350a558527e2940149d0a5ee52f4297c94be8a4f452c42979c8356a54068e6b43e5a152d <<< 1440) |||
+    (0x2d2316d19a88c9d4637e331119c552d4106b94af0a52820d6a96614b90a55052b42971c8 <<< 1728) |||
+    (0x6e4662a327719c78cc4c64e631bb19c48c9c4637a331719c68cd4c66aa335718b58c5bc6 <<< 2016) |||
+    (0x872f579774172025e9f2f19978bcbc8e5e012f03977f4bbf65e3b2f5f976fd72085e6f8c <<< 2304) |||
+    (0xd6e97574bbba5d1d2ece8e8743dba671d194e9072eefae408bd9e5e975c8397b7cbb605e <<< 2592) |||
+    (0x856a0649c674cfba321d0f4e9057465ba1e1d33ce906743cba675d192e9047474ba3a9d1 <<< 2880) |||
+    (0x292978950249d6251f129b96a0c49ae24f9127b8940c4ac0256312af0957449fa252712a <<< 3168) |||
+    (0x78044c022a011701d580ebc075203ad0088806cc04f600d300a425472d400945c49de5a8 <<< 3456) |||
+    (0x8acb456842b59c8656ac80809f401ae01b100a680344036a027f00a5806dc04f200d500a <<< 3744) |||
+    (0x959d0ac982196ab4615a90ac90567c2b51c8650ac6856542b2f15980ad6e56b92b5a15ae <<< 4032) |||
+    (0xc409a21a710af8861c430221830f6e87b643dbe1edb10c28840c409e21a110ac569410cb <<< 4320) |||
+    (0x3d2e9e99cf4b6795b3ceb9e8617d4e79a788124434a210110ae8868c420a204b10ad8841 <<< 4608) |||
+    (0xc78f3d0bafa88f38e797f5f521e6dcf3ee798f3cf39e7e17d4279773cb39e54cf29e7a61 <<< 4896) |||
+    (0x9108c78e6410b221d8f60c78c63d1b1e818f42c88e64463223d911ac7a26411b22198f66 <<< 5184) |||
+    (0x44c8a25c5240291e14918a474513a28e7148856d0651866442b1ec59044c78d63d932081 <<< 5472) |||
+    (0xc113e215ef62f78d29072da00a37c516e5b4294778a402519628d7147b96d0c519e28a31 <<< 5760) |||
+    (0x78f7bd83e085f10ef78c7c103e211ef64f78e7bd1bde81ef42f88e7c463e23df11af7a27 <<< 6048) |||
+    (0x542663733139984ccc1e656132ae9959ccab6661b32db995dd7548664f7c433decdf046f <<< 6336) |||
+    (0x2fdc17adf726ff838151bf04dfbe32cbaea88cbae663f5d539979ccaf0666732e3996617 <<< 6624) |||
+    (0x2bb7e01bfe2dfbc6fc1b7fcdc0acdfbf6ff938155bf02dfbd6fb9b7dc1bee2e0be705e38 <<< 6912) |||
+    (0x6132e09967975126631330499874cc42654f32a999524caaa661532d8995c57518664970 <<< 7200) |||
+    (0x82df6e6fb637dbdbedae0c2704038091c1a4e0ae32c8aea28cba266395d4799784cafc66 <<< 7488) |||
+    (0x9d6cd651807013b8341c102e0ac7069b820dc04ce0af704138095c1a2e0ad7061b8301c1 <<< 7776) |||
+    (0x694760a40e519028d4147a16cdc51982894144f0a280522e2919148a0a468513428e4148 <<< 8064) |||
+    (0xe7c49be241f122f79e7bce3de7def3af8927c293dfd5f142f8dd29042d9a0a37051685b3 <<< 8352) |||
+    (0x7c283dfd1f144f8d <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `40` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV40 : ℕ :=
+    0x7fff7fff7fff80017fff7fff80057fff8003800380017fff8001800180017fff7fff7fff |||
+    (0x7ffb7fff80037ffd800180017fff800180017fff800180018001800180017fff80017fff <<< 288) |||
+    (0x800180017fff80018001800180017fff7fff7fff80017fff8001800180017fff7fff7fff <<< 576) |||
+    (0x8001800180017fff80017fff7fff7fff7fff80017fff7fff80057fff8003800380017fff <<< 864) |||
+    (0x8001800180017fff7fff7fff7ffb7fff80037ffd800180017fff800180017fff80018001 <<< 1152) |||
+    (0x80057fff8003800380017fff8001800180017fff7fff7fff7fff80018001800180017fff <<< 1440) |||
+    (0x7fff800180017fff800180018001800180017fff80017fff7fff7fff7fff80017fff7fff <<< 1728) |||
+    (0x80017fff7fff7fff7fff8001800180017fff800180018001800580017ffd800380018001 <<< 2016) |||
+    (0x800180018001800180017fff800580017ffd80037fff8001800180017fff800180018001 <<< 2304) |||
+    (0x80057fff800380037fff7fff7fff800180017fff800180018001800180017fff80017fff <<< 2592) |||
+    (0x8001800180017fff7fff7fff7fff8001800180017fff8001800180017fff7fff80017fff <<< 2880) |||
+    (0x8001800180017fff80017fff800180018001800180017fff800580017ffd80037fff8001 <<< 3168) |||
+    (0x80017fff800180017fff80017ffb80017ffd7ffd7fff7fff7fff800180017fff80018001 <<< 3456) |||
+    (0x80057fff80037ffd80017fff80017fff7fff800180017fff7fff800180017fff80017fff <<< 3744) |||
+    (0x80017fff7fff7fff7fff7fff800180017fff7fff7fff800180017fff7fff80017fff8001 <<< 4032) |||
+    (0x80017fff7fff800180017fff80017fff80017fff80017fff7ffb7fff8003800380017fff <<< 4320) |||
+    (0x80017fff7fff80017fff800180057fff80037ffd80017fff80017fff80017fff7fff8001 <<< 4608) |||
+    (0x800580017ffd7ffd80017fff80017fff7fff7fff7fff7fff800180017fff7fff7fff8001 <<< 4896) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff7fff80017fff8001 <<< 5184) |||
+    (0x7fff7fff8001800180017fff80017fff8001800180018001800580017ffd7ffd7fff8001 <<< 5472) |||
+    (0x80017fff80018001800180017ffb80017ffd800380017fff7fff80018001800180018001 <<< 5760) |||
+    (0x800580017ffd7ffd7fff800180017fff80017fff7fff800180017fff7fff80017fff8001 <<< 6048) |||
+    (0x7fff800180018001800180017fff7fff8001800180017fff80017fff8001800180018001 <<< 6336) |||
+    (0x7fff800180017fff7fff800180017fff7fff7fff7fff7fff80057fff80037ffd80017fff <<< 6624) |||
+    (0x7fff80018001800180018001800580017ffd7ffd7fff800180017fff7fff800180017fff <<< 6912) |||
+    (0x7ffb80017ffd80037fff800180017fff7fff7fff7fff7fff800180017fff7fff7fff8001 <<< 7200) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff8001800180018001 <<< 7488) |||
+    (0x800180017fff7fff7fff80017fff80018001800180018001800580017ffd7ffd7fff8001 <<< 7776) |||
+    (0x7fff800180017fff7fff7fff7fff7fff <<< 8064)
+
+/-- Chunk `40` of `s6c1nHT`. -/
+def s6c1nHT40 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL40 s6c1nHTV40 512
+
+/-- Packed labels (17-bit fields) of chunk `41` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL41 : ℕ :=
+    0x7a4f3d299e924f4aa79553ce89e8797d1e79a17bfb3e28df0a6f8df7c503e145efeef8dc |||
+    (0x9146c8df3d08afa28f38279795f461e6c4f3e279893cf09e7f97d1279713ca49e574f2c2 <<< 288) |||
+    (0x21418fe8c8de6428b1fdd9140c8dc6449b22419122c79e63ce31e7d8f3ac8926429b1fd9 <<< 576) |||
+    (0x6632b2c9595cad8056be2b6195af4acba56872b5848686ac8663fab228590a4c8dd64513 <<< 864) |||
+    (0xf7287f8c415e1f010fbc569710d1959dcac9e21a2ab4795a9cac96567f2b5048680ac6e5 <<< 1152) |||
+    (0xfe10fbe87c0c3fca20ab0fbd87f9c415a1f070fbf87b9c3dc21ee310be885e442fe217b0 <<< 1440) |||
+    (0x2b179a271a338ab9c57ce2c6709138459c234e12e714b38819c33179ae718b882a43e0a1 <<< 1728) |||
+    (0x4b34a55a52ed2cb698cb47f9a556d2e43871af348e24671735e6a1c3cce186717b38899c <<< 2016) |||
+    (0x6c68feb4aa5a630d2e6695534c69a3f8d2e5698db47fda550d2e7696534b25a590d29469 <<< 2304) |||
+    (0x38a484521628fcc82f0a49c525c292c14958a3be51e228f094770a4c4521e2904c82f6a4 <<< 2592) |||
+    (0xa634d11af48d7b46bd635ef1a6b8cfdc6c7e34911a8751fe105f94898a49420bea917148 <<< 2880) |||
+    (0x5975ad71685cc38d8e4692a33f51a858d24c67e2363b1a868cfcc6c7a34971a848d35469 <<< 3168) |||
+    (0xb5c5b9726cbb085cd32e359769171625cdb2e7b973fcba065d312e95974b4ba6e5ceb2e4 <<< 3456) |||
+    (0x2eb4675953aca5d650ea34751b3a8d5d46eeb2b755d3a971d614eb452ec5ae2c8b8f65ca <<< 3744) |||
+    (0x091ac494a24b91227569a6490a752fbac21d576eb477585baae5d4bceb44755c3a975d61 <<< 4032) |||
+    (0x2d340932448fa5a6a9268890fa492224c1121c969ac48f224ab1257892c448d024651233 <<< 4320) |||
+    (0x817540a320675031581ad40d6606b10204810340816040f035b817440a36067303162449 <<< 4608) |||
+    (0x48de24721238891b0496424ba1226d69b6490c814740cee05d30314819c40bae051f0317 <<< 4896) |||
+    (0x03d30226244a2d360932848fc5a6e9269090f6492424c2121d169bc48f424ac125409298 <<< 5184) |||
+    (0x096e057f0227812d40af203d502258105408260411035481ab40d5606af020b812c40af6 <<< 5472) |||
+    (0xe7c973c4b9da5d3f2ea29750cba725d052e46975b571785cc5815f407ae04b3022480f44 <<< 5760) |||
+    (0xa3b75453abb1d434e9f52ec6ae2e8b8fa5cad5c5f97274bb045cd52e369768971725cdd2 <<< 6048) |||
+    (0x516e9f7750dbaa25d5dce9f475443abb5d432e9f6751d3a8e5d470eb2475933ac95d64ee <<< 6336) |||
+    (0xfd482e0a49a525b292f94984a3b051d528eb1476ca4aa521d2905482e6a46a7577ba861d <<< 6624) |||
+    (0x334699634cf1afb8da5c68be35b11ab751fd105d94894a49220baa91694834a482521528 <<< 6912) |||
+    (0x8d8d1646b6a36951ab58d6cc6d22345b1ab68da4c68ba35b71ab48d7d46be635f11a648d <<< 7200) |||
+    (0x8a717d388a9c2a979b271a538ac9c544e29a709f38529c28ce132716538829c32979be71 <<< 7488) |||
+    (0x65a530d2c4696334b15a58ed29b6914b4d39a4f6d2543872af368e24a71755e6e1c3d4e1 <<< 7776) |||
+    (0x59a3ad7668698369a6b49e5a450d256693d348a9a698d2556915b4d3da4f0d257694d34a <<< 8064) |||
+    (0xb5d9b9a86cd208699334fd9a4917662696b34df9a6acd386693734969a4c4d25669b7350 <<< 8352) |||
+    (0x3485aecc8d3d6699 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `41` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV41 : ℕ :=
+    0x80017fff7fff800180017fff80017fff80017fff7fff7fff7fff7fff80057fff80037ffd |||
+    (0x80017fff7fff80017fff80017fff800180057fff80037ffd80017fff80017fff7fff8001 <<< 288) |||
+    (0x80017fff7ffb7fff800380037fff80017fff800180018001800180017fff7fff80018001 <<< 576) |||
+    (0x80017fff80017fff80017fff7fff800180017fff7fff800180017fff80017fff80017fff <<< 864) |||
+    (0x800180017fff7fff8001800180017fff7fff80017fff80017fff800180057fff80037ffd <<< 1152) |||
+    (0x7fff7fff800180017fff80017fff8001800580017ffd7ffd7fff80017fff800180018001 <<< 1440) |||
+    (0x80017fff80058001800380037fff7fff800180017fff800180017fff7fff800180017fff <<< 1728) |||
+    (0x80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff7fff8001 <<< 2016) |||
+    (0x80017fff7fff800180017fff800180017fff7fff7fff800180017fff80057fff7ffd8003 <<< 2304) |||
+    (0x7fff800180017fff80017fff7fff80017ffb7fff7ffd7ffd800180017fff7fff7fff8001 <<< 2592) |||
+    (0x7fff80017ffb800180037ffd80017fff80017fff80017fff7fff80017fff80017fff8001 <<< 2880) |||
+    (0x80018001800180017fff800180017fff7fff800180017fff800180018001800180017fff <<< 3168) |||
+    (0x7fff80017fff80017fff80017fff80017fff8001800180017fff7fff80057fff7ffd8003 <<< 3456) |||
+    (0x7fff7fff7fff7fff800180017fff7fff7ffb7fff7ffd7ffd7fff800180017fff80017fff <<< 3744) |||
+    (0x800180017ffb800180037ffd7fff7fff7fff7fff7fff800180017fff7fff800180017fff <<< 4032) |||
+    (0x7fff800180017fff80017fff7fff80017fff80017fff80017fff80017fff80017fff7fff <<< 4320) |||
+    (0x7fff800180017fff7fff80017fff7fff7fff7fff7fff7fff800180018005800180038003 <<< 4608) |||
+    (0x7fff80017fff80017fff7fff800180017ffb800180037ffd7fff7fff7fff7fff80017fff <<< 4896) |||
+    (0x8001800180058001800380037fff800180017fff80017fff7fff80017fff80017fff8001 <<< 5184) |||
+    (0x800180018001800180017fff7fff800180017fff7fff800180018001800180017fff7fff <<< 5472) |||
+    (0x7fff80017fff80017fff80017fff80017fff8001800180017fff7fff80057fff7ffd8003 <<< 5760) |||
+    (0x800180017fff7fff800180017fff7fff7ffb7fff7ffd7ffd7fff800180017fff80017fff <<< 6048) |||
+    (0x7fff80017ffb7fff7ffd7ffd800180017fff7fff80017fff7fff800180017fff7fff8001 <<< 6336) |||
+    (0x80017fff80017fff80017fff7fff80017fff80017fff80017fff800180017fff80017fff <<< 6624) |||
+    (0x7fff800180017fff7fff80017fff7fff8001800180017fff7fff80017ffb800180037ffd <<< 6912) |||
+    (0x7fff800180017fff7fff800180017fff80058001800380037fff7fff8001800180017fff <<< 7200) |||
+    (0x80017fff80057fff7ffd800380017fff80017fff80017fff7fff80017fff80017fff8001 <<< 7488) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff80017fff8001 <<< 7776) |||
+    (0x7fff7fff80017fff7ffb800180038003 <<< 8064)
+
+/-- Chunk `41` of `s6c1nHT`. -/
+def s6c1nHT41 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL41 s6c1nHTV41 512
+
+/-- Packed labels (17-bit fields) of chunk `42` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL42 : ℕ :=
+    0xdc2d6e01b6e95b8a2dc2f6e203710db884daef6d76b6bb9b5d8dc416e00b6e91b8a4dc2c |||
+    (0xaa0455f62af6157c0abd454f62abd157556e66552a6dd3b7141b800dc2e6e29b7009b74c <<< 288) |||
+    (0xcd15e7e2f3cf2aed2dcc0ab1455525b9a95668ab6a55422ab5156e96e6c555a2a7f153a8 <<< 576) |||
+    (0x9f83d181e68ef3ce7a30bcd11e7e4f3cc79f03cf8de7c4f34f79a6bcd39e698f3e17a31b <<< 864) |||
+    (0xd333e8f9f42cfa467e173f069f844fc167d173ec19f7317eae7d4b79a33cfcde8c4f3cd7 <<< 1152) |||
+    (0x698c3e1623130d1987e6c3cd3ef1afd48fb267d635faa1f5ccfb867d3b3ed19f6b17ea27 <<< 1440) |||
+    (0xfc588c6c3cf61f9311858688c3cc623030d1d87e0c3ce61f030f8d87c4c34f61a6b0d398 <<< 1728) |||
+    (0x222c4ec8830b0b458482c2916118b11858912c4796248b098581a2c56c8836b0cc61a2b0 <<< 2016) |||
+    (0x3f861ec30fa18790af185b842f5e16010b3e589a1107960a8b0bc220eac19162a8b0e458 <<< 2304) |||
+    (0x26b0ca85ea42c0a16e30b3c8580c2dce17ab0b3f85b942f5a16070b3d857842bce15e50c <<< 2592) |||
+    (0x8962a4b0e258212c4f48820b0b2584f2c2296144b11658862c4416214b09658192c57488 <<< 2880) |||
+    (0x04310e18850aef8576c2bba15d90c41860042e9e18a10c2e58991105960a4b0ba220aac1 <<< 3168) |||
+    (0x93ec29f7297ebe7d4d85d24314a18030c2c8628c300e174b0c2f860142e9a18a70c2d862 <<< 3456) |||
+    (0xa7d655fae1f5d4fb8a7d3d3ed29f6a97eb27d353e889f494fa1a7e193f119f87cfc4a7d1 <<< 3744) |||
+    (0xd86c0c39e61a830d4d86a4c3df61eeb0f7987b8c3516189310d986c6c39d3ef2afd68fb2 <<< 4032) |||
+    (0x157f8ac0854f82abe1574d6e76552c621ab0d858626c39f61b130c458868c39c6188310d <<< 4320) |||
+    (0x2aee2dce0ab1855545b9e95670ab6655442ab6156f16e7c555c2a7815410a9d855f82b01 <<< 4608) |||
+    (0xf39e7988bd0d1e6c4f39c79a83cd4de6a4f3df79eebcf79e7b8f3517989bd0d5e6c2f39f <<< 4896) |||
+    (0xd35a693934a19a4fcd28a69b935069a3b5767869857a1b3cd8de624f39d79b03cc41e86e <<< 5184) |||
+    (0x6f51b604db3c3486aece8d3da699d5d9f9a874d204699534fe9a4897672696d34d89a714 <<< 5472) |||
+    (0xd81b6dc9b7acdb3d6db9b6f55b602db3f6d7836bcdb5e4dc3f6e1eb70f9b878daf16db8b <<< 5760) |||
+    (0x4a83a741d3f0ea00746e3a341d1c8e8e874f43aa41d0a17ad074c06debb6c01b6e0db3e6 <<< 6048) |||
+    (0xadccec26741338919da6ceac3a242f5b4ea7074d85eb59d560e88e74d03a941d19d7adc7 <<< 6336) |||
+    (0xb459d06ceae676933a059c4ccead6740338959da0ceaf6761b3b019d82cd6d66b7b35b19 <<< 6624) |||
+    (0xbc2a1a08450a81853d429ef14f80a82e54142a0c95068a7b453b42a29c8456a7e86713b3 <<< 6912) |||
+    (0x6d8ab7c55b22add16c28b40458962da116af5444108b94f10a8102116a9e61510ea80053 <<< 7200) |||
+    (0x1660888b1345b4a2d0316ad8b68c5a0e2c4f16ae8b41458922da716ac8b61c5b022d8315 <<< 7488) |||
+    (0xc0c20060783068183bd731c6070302418170c0c0614e30a418548c2a8605430601843d73 <<< 7776) |||
+    (0x1b9981ccc2e5cd72e7b9731cb9ce6627370b9719cce4e64d30902e634c1c060a05cc4182 <<< 8064) |||
+    (0xa2663134256b464c8e72e2b99c1cdc0e64f7339b9b89cb88e64c7371b971dcce2e64e733 <<< 8352) |||
+    (0x26b3135709ab44c5 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `42` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV42 : ℕ :=
+    0x80037ffd7fff7fff7fff80017fff7fff80017fff7fff80018001800180017fff80018001 |||
+    (0x80017fff7fff7fff7fff8001800180018001800180017fff7fff7fff7fff800180058001 <<< 288) |||
+    (0x8001800180017fff80018001800180017fff800180057fff7ffd7ffd8001800180017fff <<< 576) |||
+    (0x8001800180017fff7ffb7fff7ffd80037fff7fff7fff80017fff7fff80017fff7fff8001 <<< 864) |||
+    (0x7ffd8003800180017fff800180017fff7fff7fff7fff800180018001800180017fff8001 <<< 1152) |||
+    (0x800180017fff800180017fff7fff7fff7fff80018001800180017fff7fff7fff7ffb7fff <<< 1440) |||
+    (0x800180017fff7fff80017fff7fff80017fff7fff80057fff7ffd7ffd7fff7fff80017fff <<< 1728) |||
+    (0x7fff8001800180018005800180037ffd7fff7fff80017fff80017fff7fff7fff7fff8001 <<< 2016) |||
+    (0x800380037fff7fff80017fff800180017fff800180017fff7fff7fff7fff800180018001 <<< 2304) |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff80017fff80017fff800180017ffb8001 <<< 2592) |||
+    (0x8001800180017fff7fff7fff7fff8001800180018005800180037ffd7fff7fff80017fff <<< 2880) |||
+    (0x7fff80017fff7fff80057fff7ffd7ffd800180017fff80017fff7fff80017fff7fff8001 <<< 3168) |||
+    (0x7ffd8003800180017fff80017fff80018001800180017fff7fff7fff800180017fff8001 <<< 3456) |||
+    (0x7fff7fff80017fff7fff80018001800180017fff7fff7fff80017fff7fff7fff7ffb7fff <<< 3744) |||
+    (0x7fff7fff8001800180017fff80017fff800180017ffb800180038003800180017fff8001 <<< 4032) |||
+    (0x800180017fff800180057fff7ffd7ffd8001800180017fff7fff80018001800180017fff <<< 4320) |||
+    (0x80037ffd8001800180017fff800180017fff800180017fff7fff7fff7fff80017fff7fff <<< 4608) |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff7fff80017fff7fff7fff800180058001 <<< 4896) |||
+    (0x7fff7fff7fff80017fff7fff7fff7fff80017fff7ffb8001800380037fff7fff7fff8001 <<< 5184) |||
+    (0x8001800180017fff7ffb7fff7ffd80038001800180017fff800180017fff800180017fff <<< 5472) |||
+    (0x800380037fff7fff8001800180017fff7fff800180017fff7fff80017fff7fff80018001 <<< 5760) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff800180017fff7fff800180017fff80058001 <<< 6048) |||
+    (0x80017fff7fff7fff80018001800180017fff7fff80057fff7ffd80037fff800180017fff <<< 6336) |||
+    (0x7fff800180017fff80058001800380037fff7fff800180017fff800180017fff7fff8001 <<< 6624) |||
+    (0x7ffd800380017fff7fff80018001800180018001800180018001800180017fff7fff8001 <<< 6912) |||
+    (0x7fff800180017fff7fff800180017fff7fff7fff7fff7fff800180017fff7fff80057fff <<< 7200) |||
+    (0x8001800180017fff80017fff7fff7fff800180017ffb800180037ffd7fff7fff7fff7fff <<< 7488) |||
+    (0x80017fff7fff800180058001800380037fff80017fff8001800180018001800180018001 <<< 7776) |||
+    (0x80017fff7fff80017fff7fff7fff7fff <<< 8064)
+
+/-- Chunk `42` of `s6c1nHT`. -/
+def s6c1nHT42 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL42 s6c1nHTV42 512
+
+/-- Packed labels (17-bit fields) of chunk `43` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL43 : ℕ :=
+    0xfe1e26832d68099ac4c7e5ad2933989a4c4ca6265b133a56b4c4c76263313148989c4d60 |||
+    (0xfd6afe1f7ec8bfad9fbc4fe1d7ee9bf741fba2fe5d7f2fbf971fcbcfdd27ec9bfaddfbc2 <<< 288) |||
+    (0x317098c04d4e26a4135489aa84c5426601343d6b164c887f5a3f78dfb24fe1c7ef03f641 <<< 576) |||
+    (0xf71bf71dfce2fe4e26802d62099a04c785ac6933809a404ca02658133bd6b1c4c7026241 <<< 864) |||
+    (0xe4c7f383fb81fb8afe4f7f70bf719fce4fe4d7f31bf981fcc2fdcd7ee7bf731fb9cfe627 <<< 1152) |||
+    (0x34c6076303318148c09c616030b318570c2b4605a3063184257346608e7ee23f9cdfdc4f <<< 1440) |||
+    (0x971ccbce5d272c8b9ad9cbc4e61d30932e694c1cc60a65cd0182d8c20c607e306b183a57 <<< 1728) |||
+    (0x5ab9781cb20e61f72f1b9649cd68e61c72c9b9addcbc2e61e72e9b9741cba2e65d732fb9 <<< 2016) |||
+    (0x0653bf2a1b88480a81e53e329ec94f5ca84054232a0f15074a7ba53b72a2848486a7ee73 <<< 2304) |||
+    (0xe316bd8b5fc5af22d7d15728af8459562b0115bf5447109194f1ca8162122a9e795102a8 <<< 2592) |||
+    (0xb97b0074c68b2b4560a2be315bd8ac0c57ce2caf15be8af9459522b0715bc8ab9c55c22a <<< 2880) |||
+    (0x19d578e88274d63a971d1857b0c74ae3a831d3c8e9dc74803a431d1f0e8f474fa3aa71d0 <<< 3168) |||
+    (0xf66b9b35c19ae2cebd675fb3af19d7ccd7266f9339519b06cdbc3a272f614ea7c74de5ec <<< 3456) |||
+    (0x4631a31a318e25744662ce672bb36059be6cdbe66c1337c59caccdbd66f8339559b00cdb <<< 3744) |||
+    (0x4c6ac62b65d1018cd8c70c62be31b318da5744c62e6318918c38c64c63e031ee18f98c7b <<< 4032) |||
+    (0x38f3dc5f2e2d7718cb8c69c636e34671a238d1dc68ae318715538f39c5f4e2d431d32e89 <<< 4320) |||
+    (0x27b913da09ee84ef4275413f9d6bd64f2871e6b8be1c556e2d6717db8aa5c798e2d57154 <<< 4608) |||
+    (0xfb9727d42d7a09d904f505af693b609f904f40275c13f1d6bdc4f58277e13c009dd04f6e <<< 4896) |||
+    (0xf61afb967db53ec39f774fb947decbef69f7b6fa867d423ea1df50afbd87db43ec3df772 <<< 5184) |||
+    (0xdcb8ee8c77003b7e1dc18edf4773a3be71dab97c0077867d863eeedf6d2fb957ddc3edad <<< 5472) |||
+    (0x584b2db19536ca753b672f814ef5c776e5f019df78ed8277963bdf1db857c0c779e3b991 <<< 5760) |||
+    (0xa77654d32c2996dcca746585b2db59530ca76655cb2ae99576cba665d232e9d974acab86 <<< 6048) |||
+    (0x5c0aa3655092a839544cab20558e2ac995634aa1a55432ab2485c6aa4e65b7b2a659610c <<< 6336) |||
+    (0xdde26eb12e8893dc4e7625911306557310b99552caa3e2172aaa995552aa66553b2ab188 <<< 6624) |||
+    (0xcf44b2a24f513048964c49e2273f1307893cc4e72259713058974c4baa25d7137689ba44 <<< 6912) |||
+    (0x6055382ab008590aa30550e2a8815410ab0e55892ac215628aa1455402ab3c8596aa4889 <<< 7200) |||
+    (0xf712e6897244b9e25cb137889e5c4ab626b11336557010b395520aa382166aaa81555eaa <<< 7488) |||
+    (0xa17bd07780895744d6a2795133489acc4f22255f133789e4c4ab226b7133589bcc4dea26 <<< 7776) |||
+    (0x59df60ed8e77903bdc1db9d7bdc77983b9e1dd00ee5076ee3b791dba0ede877343be41da <<< 8064) |||
+    (0x665d4b2ea99756cab6655a32add956acba8659cb2b719716cbc53b642f7b4ef5077685ef <<< 8352) |||
+    (0x659db2b759710cbc <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `43` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV43 : ℕ :=
+    0x7fff80017fff7fff800180017ffb800180037ffd7fff7fff7fff7fff80017fff7fff8001 |||
+    (0x800580018003800380017fff80017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff8001 <<< 288) |||
+    (0x8001800180017fff7fff800180017fff7fff8001800180018001800180017fff7fff8001 <<< 576) |||
+    (0x7fff7fff7fff7fff7fff80017fff8001800180017fff7fff80057fff7ffd800380018001 <<< 864) |||
+    (0x8001800180017fff7fff8001800580018003800380017fff80017fff7fff7fff7fff7fff <<< 1152) |||
+    (0x80057fff7ffd800380018001800180017fff800180017fff7fff800180017fff80018001 <<< 1440) |||
+    (0x7fff80018001800180018001800180018001800180017fff80017fff800180017fff7fff <<< 1728) |||
+    (0x7fff800180017fff800180017fff7fff80017fff7fff800180058001800380037fff8001 <<< 2016) |||
+    (0x7fff800180017fff7fff80017ffb7fff7ffd7ffd800180017fff7fff7fff800180017fff <<< 2304) |||
+    (0x80057fff7ffd800380017fff7fff80018001800180018001800180018001800180017fff <<< 2592) |||
+    (0x7fff7fff80017fff7fff800180017fff7fff8001800180017fff7fff800180017fff7fff <<< 2880) |||
+    (0x7fff7fff7fff7fff7fff800180017fff80017fff7fff80017ffb7fff7ffd7ffd80018001 <<< 3168) |||
+    (0x7fff8001800180017fff7fff80057fff7ffd80037fff800180017fff7fff7fff7fff7fff <<< 3456) |||
+    (0x7ffb8001800380037fff7fff7fff80017fff80018001800180017fff7fff7fff7fff7fff <<< 3744) |||
+    (0x7fff800180017fff800180017fff7fff80017fff80017fff800180017fff7fff80017fff <<< 4032) |||
+    (0x80017fff7fff7fff8001800180017fff80017fff800180018005800180037ffd80018001 <<< 4320) |||
+    (0x7fff7fff800180017fff800180057fff7ffd7ffd8001800180017fff7fff800180018001 <<< 4608) |||
+    (0x8005800180037ffd7fff7fff80017fff7fff80017fff7fff800180017fff80017fff8001 <<< 4896) |||
+    (0x80017fff80017fff7fff7fff7fff8001800180017fff7fff80017fff80017fff80018001 <<< 5184) |||
+    (0x7fff7fff80017fff80017fff7fff7fff7fff8001800180018005800180037ffd7fff7fff <<< 5472) |||
+    (0x7fff80017fff7fff7fff80017ffb8001800380037fff7fff7fff800180017fff80018001 <<< 5760) |||
+    (0x7ffb7fff7ffd8003800180017fff800180017fff7fff7fff7fff80018001800180018001 <<< 6048) |||
+    (0x80017fff7fff80017fff7fff800180017fff80017fff80018001800180017fff7fff7fff <<< 6336) |||
+    (0x7fff8001800180017fff7fff80017fff7fff7fff7fff80017ffb80018003800380018001 <<< 6624) |||
+    (0x7fff7fff7fff8001800180018005800180037ffd7fff7fff80017fff80017fff7fff7fff <<< 6912) |||
+    (0x80057fff7ffd7ffd7fff7fff7fff800180017fff800180017fff7fff80017fff80017fff <<< 7200) |||
+    (0x7fff800180017fff7fff7fff7fff800180018001800180017fff80018001800180017fff <<< 7488) |||
+    (0x800180017fff80017fff80018001800180017fff7fff7fff7ffb7fff7ffd800380018001 <<< 7776) |||
+    (0x8001800180017fff7fff80017fff7fff <<< 8064)
+
+/-- Chunk `43` of `s6c1nHT`. -/
+def s6c1nHT43 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL43 s6c1nHTV43 512
+
+/-- Packed labels (17-bit fields) of chunk `44` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL44 : ℕ :=
+    0x4f8027be13e189ef44efa275713f856c064f2e656fb2e259670cbc765c532ce995bccbc4 |||
+    (0xf4d2faa727d72d8009d9c4f565b0293b789f9c4f46275f13f056c0c4f5e277913bb89e0c <<< 288) |||
+    (0xeb6df67afaa67d6d3ecf9f4d4faa47d44bea29f516fbd67dea3ef5df7aafa887d6c3ecfd <<< 576) |||
+    (0x18e18c80c61063ce31e918f20c7a8631431a018e3d741662c87d9e3e9adf5b2faa57d343 <<< 864) |||
+    (0x34871cd389f9c654e36431d02e834c6a062b05d0418cc0c70062b831b018dbd741c62e03 <<< 1152) |||
+    (0x736e3667195b8e65c4f8e36571cc389fdc652e36771a4b8d29c696e316718a38c5dc62ae <<< 1440) |||
+    (0xde570d25c292df496ff4b8025b2f2d9a96cccb6525bf52ddc96e5970d85c41713eb8ca1c <<< 1728) |||
+    (0x3b3b1d5d8eeebea75bdbb275d794ec042dccae1a8b7925c595c3796f64b6ec5c512dd496 <<< 2016) |||
+    (0x68764f3af21d6f4ec0675e5bade1d93eec0575bcbb271d792ec0775f5bafa1d7d2ec7476 <<< 2304) |||
+    (0x8e4780239c1219d68dc479823d411ef08f8047ee23fa11fc88fd047b423a4120a168d647 <<< 2592) |||
+    (0x22071304d4826b4135609af038a81ecc10f206d303a724242d1a08e5047905a3691d6090 <<< 2880) |||
+    (0x71bd8579006fc6821fc0dae07b103a581b440f6a087d03a681edc10f606d503a481c5c0e <<< 3168) |||
+    (0xe5e419c178de9c6fd6381f1bd05790c6fde38031bfc8dfdc6f8037bd1bdf0df0c6ffa381 <<< 3456) |||
+    (0x0d4c66a55b52a1a952d3b469db34ed5a76ed4aa6a1c34f7da916d4c537972f214e09c6fa <<< 3744) |||
+    (0xd44d2a375517ca8b588258a34169ee35225a872d4c76a45350eda7bad4c46a1d34f79a91 <<< 4032) |||
+    (0x904a54612a351209528ba54572a329518ca8ad8825ea35951b4a8df54702a26f513aa89c <<< 4320) |||
+    (0x8dd44733e37f71bd58e0dc706238331c448e2347116388f1c1a8dd54733a37f11bd6516c <<< 4608) |||
+    (0xa281513da89f5450ea37b517fa8b408288a3478e66c6fea37571bd48dfcc6ea639991bd7 <<< 4896) |||
+    (0x38511c66516f90505461ea35720a128bbd457ea32f518fa8ac0828ea35f51c3a8dcd46de <<< 5184) |||
+    (0x726636f91c678e4c46dfe38571c658e25c712238931c148e0b47056382f1c4a8e4d46dfa <<< 5472) |||
+    (0x7f41bff0e0006f6e37ba1bdc8ded06ff438141bd9d78d06fc08dbec70aa39371c648e14c <<< 5760) |||
+    (0x3ba6a04351bda736d37537942f1b4e0906fa85e359c160de906fd0381c1bd1d78dc6fd83 <<< 6048) |||
+    (0x812d37769cd3502da8dad3746a05351b9a730d37669ddb4ee1a772d4a46a5335295a94ed <<< 6336) |||
+    (0x185690c479e23e311ec88f5c480023fd11ff0900c47ba23a7120b96906476e6a3634e65a <<< 6624) |||
+    (0xc340e16070f04da8234c10320973049724272d2008e5c47965a4291d7890824786239f12 <<< 6912) |||
+    (0x478207c12ee08d10495825c411aa081d04968235c103609750494826dc136209b3038481 <<< 7200) |||
+    (0xe05c572dd796dfd71025c2f2e0396fccb7de5b412d9d96cf4b68e5bfb2ddf96e4171085c <<< 7488) |||
+    (0xe1d8f2ebe475f33af95d7ceec7a7665baeb5d8b4ec342dcfae208b79e5c5f5c4396f7cb6 <<< 7776) |||
+    (0xd1f2557de07bc275d73b161d994ec36762dbb321d75eec357664baeb1d8b2ec37763dbb1 <<< 8064) |||
+    (0xa5f799f168f9347bd23e151f1d57dec7baa3dff1f008f7d47cb63e561f2c0f9547bf63e1 <<< 8352) |||
+    (0x3e3d2fbd4f8947bd <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `44` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV44 : ℕ :=
+    0x8001800180017fff7fff7fff7fff7fff7fff80018001800180017fff80057fff7ffd7ffd |||
+    (0x80017fff800180017fff7fff80017fff7ffb8001800380037fff7fff7fff80017fff8001 <<< 288) |||
+    (0x7fff7fff7ffb7fff7ffd8003800180017fff800180017fff800180017fff7fff80017fff <<< 576) |||
+    (0x8001800180017fff7fff80018001800180017fff7fff7fff8001800180017fff7fff8001 <<< 864) |||
+    (0x7fff7fff800180017fff80017fff80017fff7fff800180017fff800180057fff7ffd7ffd <<< 1152) |||
+    (0x7fff7fff80017fff7fff80017fff7fff7ffb7fff7ffd80037fff7fff80017fff7fff8001 <<< 1440) |||
+    (0x800180018005800180037ffd7fff7fff80017fff7fff80018001800180017fff7fff7fff <<< 1728) |||
+    (0x7fff7fff7fff80018001800180017fff80017fff8001800180017fff800180017fff8001 <<< 2016) |||
+    (0x7fff7fff7fff8001800180017fff7fff80017fff80017fff8001800180057fff7ffd7ffd <<< 2304) |||
+    (0x80017fff800180017fff8001800180018005800180037ffd7fff7fff80017fff80017fff <<< 2592) |||
+    (0x7fff7fff7ffb8001800380037fff7fff7fff80018001800180017fff80017fff80018001 <<< 2880) |||
+    (0x8001800180017fff7fff80018001800180017fff7fff7fff8001800180017fff7fff8001 <<< 3168) |||
+    (0x7fff80017fff80017fff7fff7fff800180018001800180017fff800180057fff7ffd7ffd <<< 3456) |||
+    (0x8001800180017fff8001800180017fff8005800180037ffd7fff7fff80017fff7fff7fff <<< 3744) |||
+    (0x7fff800180057fff7ffd7ffd8001800180017fff80017fff7fff7fff7fff800180018001 <<< 4032) |||
+    (0x7fff7fff80017fff7fff7fff7fff80017fff80017fff7fff7fff80018001800180018001 <<< 4320) |||
+    (0x8001800180017fff7fff7fff8001800180017fff7fff7fff7fff80017ffb7fff7ffd8003 <<< 4608) |||
+    (0x7fff800180018001800180017fff800180057fff7ffd7ffd8001800180017fff7fff8001 <<< 4896) |||
+    (0x7fff80017ffb7fff7ffd80037fff7fff80017fff7fff7fff7fff80017fff80017fff7fff <<< 5184) |||
+    (0x8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff7fff7fff <<< 5472) |||
+    (0x7fff80017fff80017fff7fff7fff800180018001800180017fff800180057fff7ffd7ffd <<< 5760) |||
+    (0x7fff7fff80017fff8001800180017fff8005800180037ffd7fff7fff80017fff7fff7fff <<< 6048) |||
+    (0x800180018005800180037ffd7fff7fff80017fff7fff80018001800180017fff7fff7fff <<< 6336) |||
+    (0x7fff7fff7fff80018001800180017fff80017fff8001800180017fff800180017fff8001 <<< 6624) |||
+    (0x7fff7fff7fff8001800180017fff7fff80017fff7fff80017fff7fff7ffb800180038003 <<< 6912) |||
+    (0x80017fff800180017fff8001800180018005800180037ffd7fff7fff80017fff80017fff <<< 7200) |||
+    (0x8001800180057fff7ffd7ffd7fff7fff7fff80018001800180017fff80017fff80018001 <<< 7488) |||
+    (0x80018001800180017fff800180017fff7fff800180017fff800180018001800180017fff <<< 7776) |||
+    (0x800180017fff7fff80057fff7ffd8003 <<< 8064)
+
+/-- Chunk `44` of `s6c1nHT`. -/
+def s6c1nHT44 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL44 s6c1nHTV44 512
+
+/-- Packed labels (17-bit fields) of chunk `45` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL45 : ℕ :=
+    0xc53562e4b12b98ab0c53762bcb15e98af6c4e76272b139989c8c57862e5b12bd8ab6c534 |||
+    (0x5e4ab0195811ac07d604aaf1957c2abf2887b8af656256315658b94c53662ad31721895a <<< 288) |||
+    (0x373a19f10cd757f290f655f4aaf3d21ed2bdd55f8aaf4d57caabea887beaf355788abc35 <<< 576) |||
+    (0x67cc32aa1b990cd68655c373e19f70cd4868cc346a1a370d4786a2c351a1a890d188654c <<< 864) |||
+    (0x85d33f899fb4d00a687934419a1fcd10a67f933d69a38975f8684586e6c33ea19510cd58 <<< 1152) |||
+    (0xb48dcb86e84375b5b934dc753466aebe8cf9a682d5d7f99f74d184685533de9a2b575f26 <<< 1440) |||
+    (0x261ba12dc776e4db742dbadedc746e85375b1b932dc766e5cb72e9b976dda76ed2b7699b <<< 1728) |||
+    (0x5a14f6d6e3c54742a2815130a8c854182a1115078a84854582a6a14ed16e36548c6eb737 <<< 2016) |||
+    (0xd77aeabd759eba8f4887a6d3d4f1e8d2f4a629ea2dc60a988547c5b8e95390a77654a42a <<< 2304) |||
+    (0x26548a7a9fbd1ade9b6f4a47a343d365ea7cf4a77a6c3d4f5e8d4f4a57a44bd229e916f5 <<< 2592) |||
+    (0x88a77a54a22a5914f756e2c54722a2f15188a89454162a0615040a81454562a6914ec96e <<< 2880) |||
+    (0xcbd769ebb6f4877a42bd219e908f5d87ab53d431eb72f59629e92dc40a984547a5b8a953 <<< 3168) |||
+    (0x733d59a39175e868437a87bd6edead6f5947adc3d5a5ea1cf5977ab43d435eb74f5957ae <<< 3456) |||
+    (0x6682b5d7b99f6cd188685333dd9a2ad75e2685b33ff9a00ccfd6687734369a1c4d0d667f <<< 3744) |||
+    (0x1bb12ddc66ed4b76a9bb56dcb76e5ab72d9b968dda86e9c37375bb14ddc53465aebc8cf9 <<< 4032) |||
+    (0xac0456016af1757c1abf3087a8af636e6f37621ba72ddc76ec5b74edb9beddc46e9d3737 <<< 4320) |||
+    (0x57f190f455f46af3b21e92bdcd5f86af4b57c9abeb087aeaf33578fabc8d5e16b0175806 <<< 4608) |||
+    (0x0d6686cdc31fe1a570d6486a4c352a1a970d17868ac345a1a290d4886ccc31fa1a510d67 <<< 4896) |||
+    (0xf8087cb83e611f2f8f9887bf83e1e1f24d7df07bc4863ec34aa1b310d658694c366a18f9 <<< 5184) |||
+    (0x167d8996c5043e3e2fbf4f8987bdc5f7d9f170f9387bd43e161f1cd7dfc7bac3df81efb0 <<< 5472) |||
+    (0x265311e18b3ac505623cb16798990c5076274b13a989d6c57762bab15d98ae8c4e8623db <<< 5760) |||
+    (0x1ad30fc987c4c3da623f311c9890cc48a620530b698a89737861c562ce3132588f4c5066 <<< 6048) |||
+    (0x7dce54372803929dcaa4e52c3136ae6e8c31a61dd5cdf98674c51a61d530be98a0973726 <<< 6336) |||
+    (0x541ca02e52e72a9b940dc94ae52d728139299caa2e52f72a139505ca80e3ed71f7b8fb1c <<< 6624) |||
+    (0x11938b16ba24db326cb9367c9b464e91274b93a349d164d8b2701939316ba84de3725239 <<< 6912) |||
+    (0xad7e57bf2b1f95cfc837e213f599f922fc6f2731ad75c9c264dbb5ae9137cc9c864dcb27 <<< 7200) |||
+    (0x6075c27eb2bf24df886fc6d7e483f105fac8fc6e7e203f59df924fc6c7e413f205f900fc <<< 7488) |||
+    (0x68ec6a75d23af51d8e97b6c75da3abb1d5f8eb0476703b3b1d9b0ecd4756a3afd1d9557b <<< 7776) |||
+    (0x1332059900ccad6657b32b1995ccc836621b35959926cc6d3b2d2f6d4ec1475aa5ed99d8 <<< 8064) |||
+    (0xa54e92a2c88526a98a66b3332459884cc6f6649331019acecc6c6620b35919920cc6e664 <<< 8352) |||
+    (0x548b2a4315214a94 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `45` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV45 : ℕ :=
+    0x7ffd7ffd7fff80017fff800180017fff80017fff7fff800180017fff80017fff7fff8001 |||
+    (0x7fff800180017fff7fff800180017fff7fff7fff7fff7fff7fff7fff800180017ffb7fff <<< 288) |||
+    (0x80017fff80017fff7fff80017fff7fff800180017ffb800180037ffd7fff7fff7fff7fff <<< 576) |||
+    (0x800180017fff7fff80058001800380037fff80017fff800180017fff80017fff7fff8001 <<< 864) |||
+    (0x7ffd7ffd800180017fff7fff80017fff7fff800180017fff7fff8001800180017fff7fff <<< 1152) |||
+    (0x7fff80017fff800180017fff7fff80017fff80017fff800180017fff7fff80017ffb7fff <<< 1440) |||
+    (0x7fff80017fff7fff800180017fff800180017fff7ffb800180037ffd7fff800180017fff <<< 1728) |||
+    (0x7fff800180017fff80058001800380037fff7fff8001800180017fff7fff800180017fff <<< 2016) |||
+    (0x7ffd80037fff800180017fff7fff80017fff800180017fff7fff80017fff80017fff8001 <<< 2304) |||
+    (0x7fff800180017fff7fff800180017fff7fff7fff8001800180017fff7fff800180057fff <<< 2592) |||
+    (0x7fff80017fff80017fff80017fff800180017fff80058001800380037fff7fff80018001 <<< 2880) |||
+    (0x80017fff7fff800180057fff7ffd80037fff800180017fff7fff80017fff800180017fff <<< 3168) |||
+    (0x7ffd7ffd800180017fff7fff7fff800180017fff7fff800180017fff800180017fff7fff <<< 3456) |||
+    (0x7fff80017fff800180017fff7fff80017fff80017fff800180017fff7fff80017ffb7fff <<< 3744) |||
+    (0x7fff80017fff7fff7fff7fff7fff800180017fff7ffb800180037ffd7fff800180017fff <<< 4032) |||
+    (0x7fff7fff800180017ffb800180037ffd7fff7fff7fff7fff80017fff7fff800180017fff <<< 4320) |||
+    (0x800380037fff80017fff800180017fff80017fff7fff800180017fff80017fff7fff8001 <<< 4608) |||
+    (0x80017fff7fff800180017fff7fff80018001800180018001800180017fff7fff80058001 <<< 4896) |||
+    (0x80017fff80017fff7fff8001800180017fff7fff80057fff7ffd80038001800180018001 <<< 5184) |||
+    (0x7fff7fff800180017ffb7fff7ffd7ffd7fff80017fff800180017fff80017fff7fff8001 <<< 5472) |||
+    (0x7ffd8003800180017fff80017fff80018001800180017fff7fff7fff800180017fff8001 <<< 5760) |||
+    (0x7fff8001800180018001800180017fff80017fff8001800180017fff7fff7fff7ffb7fff <<< 6048) |||
+    (0x80018001800180017fff80017fff7fff7fff800180057fff7ffd7ffd800180017fff8001 <<< 6336) |||
+    (0x80017fff7fff7fff7ffb7fff7ffd8003800180017fff800180017fff7fff7fff7fff8001 <<< 6624) |||
+    (0x7ffd7ffd7fff7fff80017fff80017fff7fff7fff7fff7fff7fff80017fff80017fff7fff <<< 6912) |||
+    (0x80017fff7fff7fff7fff8001800180018001800180017fff7fff7fff7fff800180057fff <<< 7200) |||
+    (0x80017fff80017fff7fff7fff800180017fff800180057fff7ffd7ffd8001800180017fff <<< 7488) |||
+    (0x80017fff800180017ffb7fff7ffd80037fff7fff7fff80017fff80018001800180018001 <<< 7776) |||
+    (0x80017fff7fff7fff8001800180017fff <<< 8064)
+
+/-- Chunk `45` of `s6c1nHT`. -/
+def s6c1nHT45 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL45 s6c1nHTV45 512
+
+/-- Packed labels (17-bit fields) of chunk `46` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL46 : ℕ :=
+    0x143e546910a595364a97a214aaa789517aa9a254e12a3748520a97254ab2a57952c4a910 |||
+    (0x29ad143f8a39c53562807143d89f944fc627e1153d8a9fc54f22a7d13f38a38c53522801 <<< 288) |||
+    (0xa5415298a91e548c2a4895248a96454ea2a2d08536a98c8a6bc500a28e1143c8a00c51ca <<< 576) |||
+    (0xa80c52922aa1152e546a10a795368a97c214eaa7915176a9a454e22a36c8530a97454ac2 <<< 864) |||
+    (0x52c8aa8c540a294d152f8a81c52962aa7152d8aa1455062a8113ed89f7c4fb227dd15438 <<< 1152) |||
+    (0xb7c75dc3abc1d5c0ead8767e3b3c1da08ed0875843afe1d94d7b7075c48a53c554a2a011 <<< 1440) |||
+    (0x1f198fcccb36699b30559986ccfd3b2e2f6f4ec1875ac5edd9d870ec6675d43af61d8f17 <<< 1728) |||
+    (0x0b333059a64ccff6661334c1982eccfc6698b30519980ccfe6659332c59960cc7d663fb3 <<< 2016) |||
+    (0xcd2712938a96bb24db526cc936449b1a4e9f274c93a8c9d4a4da52702939296bb84de566 <<< 2304) |||
+    (0x60fc7d7e3fbf1f1f8fcfcb37e993f059f982fcff2732ad77c9c2a4dbd5aed137d49c8a4d <<< 2592) |||
+    (0x91736861c37e0abf30dfa66fcfd7e603f4c5f828fcfe7e983f05df984fcfc7e593f2c5f9 <<< 2880) |||
+    (0xb9866cc51661d330bd98a11736261ab30fb987fcc4066231311b988b4c45661eb30b598a <<< 3168) |||
+    (0xf71f938fc5c7e0e53d729fb94f1ca7ce3f372383935dc804e43c3135ae6c8c31661db5cd <<< 3456) |||
+    (0x878743bf41e49d7c507840726a39001c8e2e43e7201b91cdc9aae43d723939359c802e43 <<< 3744) |||
+    (0x4f01078585f159e060f20e78503bfc1e3a17c5c78283c3e1e1a0f10078ae3c591e2a0f16 <<< 4032) |||
+    (0x3269194a0ca2f65203290d9484c8ee6476323bd91daca4165003269594a6ca2c3c842f8b <<< 4320) |||
+    (0x55b92ada156e8abb456242aca085d6abe864d3329459402ca2e65293280d934eca2d6501 <<< 4608) |||
+    (0x122f55a410bb95870ac102176ab161568eac0056142ad9c85d0ac1855de2aea15780ab6e <<< 4896) |||
+    (0x234d122e89004469624a7122c89204490e248510ee8876443be21db124189014469224a1 <<< 5184) |||
+    (0x901cc7de6501327e9941cc9f663fb323f993417488644788d3c494a2407122d8928c4806 <<< 5472) |||
+    (0x0a1b899dc324e16d325fae908c91e642f5d239927cc9be64573237992c17482645f31f99 <<< 5760) |||
+    (0x16f70c9b8501c4cae16c70a0b8999c322e16e70c03860dc304e1ae70d6386bdc35ae1817 <<< 6048) |||
+    (0xc52505927fe93fa4a00250ef2879943a4a1ea4ff5283c943596c585041713238641c284e <<< 6336) |||
+    (0x5fdf2faf9b17d18be459f382f9fe286cad8bca13250515b15141a4a17250292844942d96 <<< 6624) |||
+    (0x8abe70df460f9fc7ce03e8c9f228f9ff7d19be45df384f9fd7cd83e6cdf364f97e7cbe3e <<< 6912) |||
+    (0x2f2847942c16c82505f27f99401c9fde5101287e9441ca1f64ffb283f943416c8850477c <<< 7200) |||
+    (0x04f9ae7cd63e6bdf35af9817ca0be999f322f96e286fad91ca13e50575b21141bca17e50 <<< 7488) |||
+    (0x59745864417d32be64df280f96c7cc83e509f4c8f96f7ca1be99df324f96d7cc03e60df3 <<< 7776) |||
+    (0x799264c9b264513234992d97452645931fe98fa4c80264ef3279993a4c9ea63f5323c993 <<< 8064) |||
+    (0xe70d8386cdc364e17e70be385fdc2fae1b17119b845dc384e1fd325cae8a8c91264295d1 <<< 8352) |||
+    (0x7118b8459c382e1f <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `46` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV46 : ℕ :=
+    0x80018001800180017fff800180057fff7ffd7ffd8001800180017fff7fff800180018001 |||
+    (0x7ffb7fff7ffd80038001800180017fff80017fff7fff7fff7fff7fff7fff80017fff8001 <<< 288) |||
+    (0x7fff80017fff80018001800180017fff7fff7fff7fff7fff7fff800180017fff80018001 <<< 576) |||
+    (0x7fff7fff7fff80017fff8001800180017fff7fff80017fff7ffb8001800380037fff7fff <<< 864) |||
+    (0x7fff800180017fff800180017ffb7fff7ffd80038001800180017fff80017fff7fff7fff <<< 1152) |||
+    (0x7ffb8001800380037fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff <<< 1440) |||
+    (0x7fff80017fff8001800180018001800180017fff80017fff7fff7fff7fff7fff80017fff <<< 1728) |||
+    (0x7fff8001800180017fff7fff80017fff80017fff800180017ffb7fff7ffd80037fff7fff <<< 2016) |||
+    (0x7fff7fff7fff8001800180018005800180037ffd7fff7fff80017fff80017fff7fff7fff <<< 2304) |||
+    (0x80057fff7ffd7ffd7fff7fff80017fff80017fff7fff7fff7fff7fff7fff80017fff8001 <<< 2592) |||
+    (0x80017fff7fff80018001800180017fff7fff7fff7fff7fff80017fff7fff7fff7fff8001 <<< 2880) |||
+    (0x8001800180017fff80017fff800180017fff8001800180018005800180037ffd7fff7fff <<< 3168) |||
+    (0x7fff7fff7fff7fff7fff800180057fff7ffd7ffd800180017fff80017fff800180018001 <<< 3456) |||
+    (0x7ffb800180037ffd7fff7fff7fff7fff7fff800180017fff7fff800180017fff7fff7fff <<< 3744) |||
+    (0x7fff80017fff7fff800180017fff7fff8001800180017fff7fff80017fff7fff80018001 <<< 4032) |||
+    (0x80017fff7fff80017fff7fff7fff7fff80017fff7fff80017ffb7fff7ffd7ffd80017fff <<< 4320) |||
+    (0x80017fff7fff7fff800180017ffb800180037ffd7fff7fff7fff7fff80017fff7fff8001 <<< 4608) |||
+    (0x7ffb7fff7ffd7ffd7fff800180017fff800180017fff7fff800180017fff7fff7fff8001 <<< 4896) |||
+    (0x7fff7fff7fff800180017fff7fff800180017fff800180017fff7fff80017fff7fff8001 <<< 5184) |||
+    (0x7fff7fff8001800180017fff80017fff80017fff7fff80017ffb7fff7ffd7ffd80018001 <<< 5472) |||
+    (0x7fff7fff7fff7fff8001800180057fff7ffd80037fff80017fff80017fff7fff80018001 <<< 5760) |||
+    (0x7ffb7fff7ffd7ffd800180017fff7fff80017fff7fff800180017fff7fff800180018001 <<< 6048) |||
+    (0x80017fff800180017fff7fff800180017fff7fff7fff80017fff800180017fff7fff8001 <<< 6336) |||
+    (0x80017fff7fff80017fff7fff800180017fff7fff8001800180057fff7ffd800380017fff <<< 6624) |||
+    (0x7fff80017fff800180017fff80058001800380037fff7fff8001800180017fff7fff8001 <<< 6912) |||
+    (0x80057fff7ffd800380017fff80017fff800180017fff7fff800180017fff7fff7fff8001 <<< 7200) |||
+    (0x800180017fff800180017fff7fff800180017fff7fff7fff800180017fff7fff80018001 <<< 7488) |||
+    (0x7fff7fff8001800180017fff80017fff7fff800180017fff80058001800380037fff7fff <<< 7776) |||
+    (0x7fff80017fff80017fff7fff80018001 <<< 8064)
+
+/-- Chunk `46` of `s6c1nHT`. -/
+def s6c1nHT46 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL46 s6c1nHTV46 512
+
+/-- Packed labels (17-bit fields) of chunk `47` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL47 : ℕ :=
+    0xab8055be2ae1956f4abba56272acb88606abee708a38701c464e1ff70e1b88c1c22ae1fc |||
+    (0x2201113f55a710c19587cac162182ab1795682ac0656172ad848600ac1e55d92af19575c <<< 288) |||
+    (0x45c623ad113e88b8447562207113c8878443ce21e5123e891e448fe247b10f188b944752 <<< 576) |||
+    (0xc391e218f0dc78c03c5e1e318f174787a3bf71e4857c80784688ebc440a22e7113d8880c <<< 864) |||
+    (0x8f164b8327559206c93c3c872f914f01c785e5f219e078f20278563bff1e3b97c8c782e3 <<< 1152) |||
+    (0x2e2c93e6481325cd93aec93d64b9327519200c93f6478323cd91e4ca3e651e328fd947ac <<< 1440) |||
+    (0x091d9a2ecaf7661bb301d982eb6c75b73adb5d6deecc27641bb095d9a4ecac64eb324059 <<< 1728) |||
+    (0x9596cb4b66e5bf72de596e9170e85c4376133b341d904ecae7669bb201d84eecad7640bb <<< 2016) |||
+    (0x4f2dc5ae1c8b7765c5b5c3b96eacb7085c532ded96dad70e25c2b2df596ffcb8065b312d <<< 2304) |||
+    (0x8d044e8271c0f1608e5044c8231c118208c303cc81e740f36079f04628270c0f1208e304 <<< 2592) |||
+    (0xf88f8447f023f511fb08fec47b6239d120e968e6476a81e3c11ce09c1044d82384138a07 <<< 2880) |||
+    (0x03539da826d3ed242d2d1c08eb447925a3a91ca8906a478223a51215568ec479a23d511e <<< 3168) |||
+    (0xf6a0934f0da9cad3ec69e135399a820d3ee6a01b5001a802d42c6a17350b5a85ed40269e <<< 3456) |||
+    (0xc6fdc38021bfc0dfd86f7e37c21be08def06ff8382e1bd4d78f06fc46a7235045a782d3e <<< 3744) |||
+    (0x6373f1c928e2946fda39411cde379e2f1f4e0786fac5e3d9c0b0deb86fd438261bccd78f <<< 4032) |||
+    (0xc728a38a71cdc8e50c714637e91cdf8e2846fde39471cdd8e49c724239231b9c8dcf46e7 <<< 4320) |||
+    (0x5175a8b10826ea35b51b5a8dfd4706a2715135a89b544eea3775185a8b908268a3438dfa <<< 4608) |||
+    (0x1c8c8e4747236391f1ba28e114721a37611b8e5165904c545f6a353209928c6d4556a32b <<< 4896) |||
+    (0x8278a3458e42c6eca38471b8c8dd8c708639091b8f8e104721e37671b8d8dd1c6e823743 <<< 5184) |||
+    (0x8c75455aa32d5176a8b08827ea35d51c2a8dc546daa27f5142a8a0d44f2a3795186a8b88 <<< 5472) |||
+    (0xa19b50c1a862d3fc69ff34ff5a7fed4326a5834e5da886d47d5166904e545faa355209d2 <<< 5760) |||
+    (0xff6382d1bd5578e06fc269ca35105a962d47f6a21352cda72ad47c6a5934e59a880d47e6 <<< 6048) |||
+    (0x0746faa5e399c0a8deb46fd238251bcd578ec6fda37f51bff8e0046f7037b51bdb0deec6 <<< 6336) |||
+    (0x2d607c5041c81e9c0f4207a3045c822f4117608bf03d281c8c12d207c3041f379d2f1d4e <<< 6624) |||
+    (0x02120088ff047b8239e120f168f6476c825bc0f8e0721041d81f040e4a096d041e81c9c1 <<< 6912) |||
+    (0xbc242e2d1e08eb847945a3e91cb09066478423a61214d68fc479c23e211ec08f5847fe24 <<< 7200) |||
+    (0xaeebbd75f8bb151d702ebbf75b9badc1d6e2ecbc765f3b2f5d97eeb7275f9bb155d704eb <<< 7488) |||
+    (0xc4b7da5b3f2da296d0cb6725bf92de696e8970f85c45762b3ae01d7e4ebbe75c1bafc1d8 <<< 7776) |||
+    (0x9b155d8906c4bc2dc6ae1e8b77a5c5d5c3f96eb4b7045c552dee96db570f25c2d2e0296f <<< 8064) |||
+    (0xe6241313c18aaac4bd6278b15598900c4bf6238b11c988e6c5bf62deb16f98b78c470627 <<< 8352) |||
+    (0x62aa3120589e4c4b <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `47` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV47 : ℕ :=
+    0x7fff800180017fff7fff800180018001800180017fff7fff8001800180057fff7ffd8003 |||
+    (0x7fff800180017fff800180017fff7fff80057fff7ffd8003800180018001800180017fff <<< 288) |||
+    (0x7fff80017ffb7fff7ffd7ffd7fff800180017fff800180017fff7fff800180017fff7fff <<< 576) |||
+    (0x80018001800180017fff800180017fff7fff800180017fff800180018001800180017fff <<< 864) |||
+    (0x800180017fff7fff8001800180017fff7fff8001800180017fff7fff80057fff7ffd8003 <<< 1152) |||
+    (0x80017fff8001800180017fff7fff80017ffb7fff7ffd7ffd80017fff7fff80017fff7fff <<< 1440) |||
+    (0x8001800180057fff7ffd7ffd7fff7fff7fff80018001800180017fff80017fff80018001 <<< 1728) |||
+    (0x80017fff80017fff7fff800180017fff7fff800180017fff80017fff80017fff80017fff <<< 2016) |||
+    (0x7fff80017fff80017fff7fff7fff80017fff7fff7fff80017fff800180057fff80037ffd <<< 2304) |||
+    (0x80017fff80017fff80017fff8001800180057fff7ffd7ffd8001800180017fff7fff7fff <<< 2592) |||
+    (0x7fff800180057fff80037ffd80017fff80017fff80017fff7fff800180017fff7fff8001 <<< 2880) |||
+    (0x7fff7fff80017fff7fff7fff7fff80017fff80017fff7fff7fff8001800180017fff8001 <<< 3168) |||
+    (0x80017fff7fff800180017fff7fff800180017fff8001800180017fff8005800180037ffd <<< 3456) |||
+    (0x7fff8001800180018001800180018001800580017ffd7ffd7fff800180017fff7fff8001 <<< 3744) |||
+    (0x7fff80017ffb7fff7ffd80037fff7fff80017fff7fff7fff7fff80017fff80017fff7fff <<< 4032) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff7fff <<< 4320) |||
+    (0x7fff80017fff80017fff7fff7fff8001800180018001800180018001800580017ffd7ffd <<< 4608) |||
+    (0x80017fff7fff80017fff7fff7fff80017ffb7fff7ffd80037fff7fff80017fff7fff7fff <<< 4896) |||
+    (0x7fff7fff7ffb7fff8003800380017fff7fff800180017fff7fff800180017fff7fff8001 <<< 5184) |||
+    (0x7fff7fff80017fff7fff7fff7fff80017fff80017fff7fff7fff8001800180017fff7fff <<< 5472) |||
+    (0x80017fff7fff800180017fff80017fff7fff80018001800180017fff8005800180037ffd <<< 5760) |||
+    (0x7fff80017fff7fff7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff8001 <<< 6048) |||
+    (0x8001800180057fff7ffd7ffd8001800180017fff7fff7fff7fff80017fff80017fff7fff <<< 6336) |||
+    (0x7fff80017fff800180017fff7fff800180017fff7fff80017fff80017fff800180017fff <<< 6624) |||
+    (0x80017fff80017fff8001800180017fff8001800180017fff80017fff7ffb80017ffd8003 <<< 6912) |||
+    (0x7fff80017fff800180017fff8001800180057fff7ffd7ffd7fff7fff7fff800180018001 <<< 7200) |||
+    (0x80017fff7ffb80017ffd80037fff80017fff80017fff800180017fff7fff800180017fff <<< 7488) |||
+    (0x7fff80017fff800180017fff80017fff7fff800180017fff80017fff7fff800180017fff <<< 7776) |||
+    (0x7fff7fff800180017ffb7fff7ffd7ffd <<< 8064)
+
+/-- Chunk `47` of `s6c1nHT`. -/
+def s6c1nHT47 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL47 s6c1nHTV47 512
+
+/-- Packed labels (17-bit fields) of chunk `48` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL48 : ℕ :=
+    0x7bd03e2c1f21d7ddc7ba83dfe1f000f7d07ca83e591f2b8f9687bf43e241f29d7dd07bc0 |||
+    (0x1b270c9f864ec327a19390d9086a8c33da1b410ddf3e342fbb4f8707bd85f759f0a0f910 <<< 288) |||
+    (0xbf6087c8af67867ac368a1aa10ddd86d0c354a19e90dde86a9c33de1b470ddc86c8c364a <<< 576) |||
+    (0x1f12be9d5f6eaf4f57c3abee087ceaf375789abc3d5e4eb027580eac0856036af1b57cba <<< 864) |||
+    (0xd7e6e98b74c9ba66dcff6e7eb73f9b9f8dd306ed837255ba84dd7d57eb90f855eeeaf3f2 <<< 1152) |||
+    (0x0f667fb33ef9a341760868476e4b37501bb62dd7f6ea1b76cdb92edd7c6ed937251ba82d <<< 1440) |||
+    (0xc08cf7e682f5d8399ebcd160685733e79a2fd7602685f33f999fbcd00e6887343e9a204d <<< 1728) |||
+    (0xf03d315eae4f54d7ab0bd589eac6f4cf7a66bd339e998f5607af13d311eae2f54e346fae <<< 2016) |||
+    (0x262a0e15080a834545a2a6314f196e46548e7a63bd5cdebc6f54c7ab83d785e98cf54f7a <<< 2304) |||
+    (0xc2f51e29f32dc80a9ac547e5b92952d8a75254a62a7314f256e4c54762a2915138a8cc54 <<< 2592) |||
+    (0x45eb6cf51f7a483d6d5e9c4f51d7a68bd349e9a6f55f7aaebd579eab8f4d07a493d6d1e9 <<< 2880) |||
+    (0xe15180a89054082a0915038a82854542a6014f016e1654887adbbd38de926f51c7a703d2 <<< 3168) |||
+    (0x06e6037795ba24dced29f02dc20a9a054785b86952c0a75e54a02a7014f3d6e1c54702a2 <<< 3456) |||
+    (0x2dcef6e89b730dbbcedcec6e6137791ba22dcee6e80b7409ba06dd2f6e96b74b9ba58dd0 <<< 3744) |||
+    (0x575d2685933fe9a004cfd2686934399a1bcd0ea67f533ec9a35975d868416ef337441b98 <<< 4032) |||
+    (0xc363a1b190ca08690c361a19610c8f346caeba8cf7268295d7799ea4d16c685133e49a2e <<< 4320) |||
+    (0x86c2c32ca1a410c8d8658c348a1b090c8e8691c361e19670c8c8650c328a19470d8f86c6 <<< 4608) |||
+    (0xaf4957c0abef8879eaf31578eabc855e12b0095809ac03d602aaf1557c8abf788798af61 <<< 4896) |||
+    (0x8b86c46f6236b11b988d8c5c062c1b149d8ba6c5ac57e890f255ee2af3921e52be855f62 <<< 5184) |||
+    (0xf2857e007bc66292317458b04c5ae62e9316018a4ac5ad62c0b14998ba0c5af62e0b1709 <<< 5472) |||
+    (0xf819f0b8f91c7bd63e2f1f2057e0c7bae3df91efb8f80c7cc63e5e1f300f9747bfa3e271 <<< 5760) |||
+    (0x4877235391a5c8d0e4f5727bb93d1c9ece46b71fc3947dc894e4843e372fc14f87c7bde5 <<< 6048) |||
+    (0x476620730cf98a41738861c7728e39121c7f2e4867225b8fedca3ae48571fd39479c892e <<< 6336) |||
+    (0x708c2fe61df5ce3985bcc53e61d730c7989c1738261af30fd987ccc3de62413123988f4c <<< 6624) |||
+    (0x5c3f17dfa14fd447e953f4a5fa50fc357e1bbf0d1f86cfd2b7e5d3f179fa12fd47313fae <<< 6912) |||
+    (0x8f274493a4c9d2a4d892708939796b984de17e2ebf42df976fd457e843f2e5f8b8fd467e <<< 7200) |||
+    (0x16cd452728ad73c9c024db95ae5138849c624dc926f8938f96b924db126ca936749b424e <<< 7488) |||
+    (0xe198becd44665cb31719a10cd466695334a59a50cc35661bb30d1986ccd2b665db31759a <<< 7776) |||
+    (0xa1d5f0eb00766e3b341d9c8ece875683b041d99d7b5075c0662f334259974cd476685332 <<< 8064) |||
+    (0xb8aa4c50b229b114b63b242f6b4ebf075a85ed59d7a0ec8e75d03b0c1d8a17b5c75d83ab <<< 8352) |||
+    (0x8a33c519228cd14f <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `48` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV48 : ℕ :=
+    0x80037ffd80017fff7fff7fff80017fff7fff7fff7fff80018001800180017fff7fff7fff |||
+    (0x7fff80017fff800180017fff7fff80017fff800180017fff7fff7fff7fff80017ffb7fff <<< 288) |||
+    (0x800180017fff8001800180017fff7fff800180017ffb7fff7ffd7ffd80017fff80017fff <<< 576) |||
+    (0x8001800180017fff800580017ffd80037fff80018001800180017fff7fff7fff7fff8001 <<< 864) |||
+    (0x80037ffd7fff800180017fff7fff80017fff800180017fff7fff80017fff80017fff8001 <<< 1152) |||
+    (0x7fff80018001800180017fff7fff7fff80017fff800180017fff800180017fff7ffb8001 <<< 1440) |||
+    (0x7fff80017fff80017fff80017fff80017fff7fff80057fff8003800380017fff80018001 <<< 1728) |||
+    (0x80017fff7fff800180057fff7ffd80037fff800180017fff7fff80017fff800180017fff <<< 2016) |||
+    (0x7ffd7ffd7fff80017fff7fff7fff80018001800180017fff7fff7fff7fff80017fff7fff <<< 2304) |||
+    (0x7fff80017fff800180017fff7fff80017fff80017fff800180017fff800180017ffb8001 <<< 2592) |||
+    (0x7fff7fff80017fff8001800180017fff7fff800180057fff7ffd80037fff800180017fff <<< 2880) |||
+    (0x7fff80017fff7fff80057fff8003800380017fff800180017fff80018001800180017fff <<< 3168) |||
+    (0x80037ffd7fff800180017fff7fff80017fff800180017fff7fff80017fff80017fff8001 <<< 3456) |||
+    (0x7fff80018001800180017fff7fff7fff7fff80017fff7fff7fff800180017fff7ffb8001 <<< 3744) |||
+    (0x7fff80017fff800180017fff80017fff800180017ffb80017ffd7ffd7fff80017fff7fff <<< 4032) |||
+    (0x7fff7fff800180017ffb7fff7ffd7ffd80017fff80017fff7fff80017fff800180017fff <<< 4320) |||
+    (0x80037ffd80017fff7fff7fff80017fff7fff7fff7fff80018001800180017fff7fff7fff <<< 4608) |||
+    (0x80017fff80017fff7fff800180017fff80017fff7fff80017fff7fff7fff80017ffb7fff <<< 4896) |||
+    (0x800180017fff8001800180017fff7fff800180017ffb7fff7ffd7ffd7fff80017fff8001 <<< 5184) |||
+    (0x8001800180017fff800580017ffd80037fff80018001800180017fff7fff7fff7fff8001 <<< 5472) |||
+    (0x7ffd7ffd800180017fff80017fff8001800180018001800180017fff80017fff80018001 <<< 5760) |||
+    (0x7fff800180017fff7fff800180017fff7fff80017fff80017fff7fff7fff800180057fff <<< 6048) |||
+    (0x7fff80017fff80017fff7fff80017fff80017fff7ffb80017ffd80037fff80017fff8001 <<< 6336) |||
+    (0x7fff7fff7fff800180057fff7ffd7ffd7fff7fff80017fff80017fff7fff7fff7fff7fff <<< 6624) |||
+    (0x7ffd80037fff80017fff800180017fff7fff800180017fff7fff80017fff80017fff8001 <<< 6912) |||
+    (0x7fff8001800180018001800180017fff80017fff7fff7fff80017fff80017fff7ffb8001 <<< 7200) |||
+    (0x7fff80017fff800180017fff80017fff800180017ffb7fff7ffd80037fff7fff7fff8001 <<< 7488) |||
+    (0x8001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff800180017fff <<< 7776) |||
+    (0x8001800180017fff80017fff7fff7fff <<< 8064)
+
+/-- Chunk `48` of `s6c1nHT`. -/
+def s6c1nHT48 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL48 s6c1nHTV48 512
+
+/-- Packed labels (17-bit fields) of chunk `49` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL49 : ℕ :=
+    0xa9888a17c536a2a9114b48a6cc552a285d14b78aa5c50b629b714b58a7d453e629f11465 |||
+    (0x515ea9a054e82a33c8510a97054aa2a57152c0a90e54842a4495228a94854e02a3008516 <<< 288) |||
+    (0x51a628d114f58a7bc53d229ed146b89fcc547228911486547010a3953c0a9782146aa6c1 <<< 576) |||
+    (0x4e32a3188546a98e8a8fc512a27f114848a24c4fea2a3d148789fdc5476289714858a354 <<< 864) |||
+    (0x97e2152aa6d95152a9a654eb2a3248540a97654ad2a549529ca92054932a4715234a9665 <<< 1152) |||
+    (0x830cbf6661d330e59870cd256693b34919a4ccc3b6645b33b59836cbf5547310a9953cca <<< 1440) |||
+    (0x9f0ecf475863b071d9857b8075c66677330659914cbf7660d3322199decbf46644b33b19 <<< 1728) |||
+    (0x272f714ebfc75ae5ee19d7b8ec8275d63b0f1d8b97b8c75de3abd1d5c8eadc76803b431d <<< 2016) |||
+    (0xf67e443f3bdf834fbf47e1d3f0e5f870fd257e93bf491fa4cfc3b7e453f3b9f832fbf73b <<< 2304) |||
+    (0x1e4ea1275393a749d364da7270b939616bc84de77e76bf06df916fbf57e0c3f225f9d8fb <<< 2592) |||
+    (0xbdc9b4e4b4272bad79c9c0e4dbf5af11389c9c6e4dcf26fb938e16bc24db726cd9364c9b <<< 2880) |||
+    (0xdb952dc85ae4b572a5390b9c9b2e4b7727d393e5c9f0e4657233b9191c8cce4fb72a4390 <<< 3168) |||
+    (0x930fa987f4c402622f3114988ccc46a61e930cc98a59735861c1721639361ca92e4b6726 <<< 3456) |||
+    (0xac969647c328759296c984313cae6a8c2f261d95cd7985a4c53261d130c4989d9735261a <<< 3744) |||
+    (0x591f2c98664a5323ed943ec985647d328719290c98764b4325ad92d4c9f664fa327dd93e <<< 4032) |||
+    (0x1e3e97c6c782a3c3f1e1a8f10478b03c561e2d8f15478763c0d1e4557c607842650f3252 <<< 4320) |||
+    (0x88fa447de23eb1169887d44872229111873c8d2f8d4eff4785a5f199dfa8f1ea78523c05 <<< 4608) |||
+    (0xabea890fc452a21f7118588a4c43e6243d1186887c448762297118488b4445ae22d511f6 <<< 4896) |||
+    (0x566aac02562d2ad5485e0ac1a55df2aea95784ab7055b62add956d4abb6561d2ace885e6 <<< 5184) |||
+    (0x88adc454e136709a384ddc26ae22970ddb857dc414e24555ad10bd95894ac12217aab0a9 <<< 5472) |||
+    (0x246993897478644570ae38821c374e2477105b86e1c2bae24470dcb8579c412e24671143 <<< 5760) |||
+    (0x42d5d1f991b4c99a6455324e993097472645d31f899014c7da64ff3281993e4ca0a63f93 <<< 6048) |||
+    (0x234f8f57c9c3e4edf274fa267d123e89df44af9397cc4be7b9f232f8f63256ae8e8c8fa6 <<< 6336) |||
+    (0x3dca1d64ff72845943916c6850437cf6be46df310f8f47c8c3e629f3d8f8f77cc5be7bdf <<< 6624) |||
+    (0x65ad8dca0d650535b191426ca156502b283d943116c62505b27ff93faca00650f1287694 <<< 6912) |||
+    (0x477cddbe57df414fa457d143e8adf454f9367c9a3e4ddf26afa297cdcbe579f412fa4628 <<< 7200) |||
+    (0xda50ff2881943e4a20a4ff92846943896c7850457caebe82df370fa447d043e6e9f2b8fa <<< 7488) |||
+    (0xbdc234e0f52866ad8fca0da50555b1d14274a15a502d283e943096c72505d27f8940149f <<< 7776) |||
+    (0xdb8621c3dae0f470c4b87b9c232e0f6709c384edc274e22671123889dc44ae13970c5b87 <<< 8064) |||
+    (0xb31ff98facc80664f13276993dcc9d663f73245993917468644370f638461c314e0f7708 <<< 8352) |||
+    (0x324d993117462645 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `49` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV49 : ℕ :=
+    0x80017fff7fff80017fff7fff8005800180037ffd7fff7fff7fff80017fff800180018001 |||
+    (0x800580017ffd7ffd7fff800180017fff7fff800180017fff7fff800180017fff7fff8001 <<< 288) |||
+    (0x7fff80017fff8001800180018001800180017fff80017fff7fff7fff8001800180018001 <<< 576) |||
+    (0x80017fff7fff80017fff800180017fff7fff80017fff7fff8005800180037ffd7fff7fff <<< 864) |||
+    (0x7fff7fff8001800180018001800580017ffd7ffd7fff800180017fff80017fff7fff8001 <<< 1152) |||
+    (0x7ffb7fff7ffd80037fff7fff7fff80017fff8001800180018001800180017fff80017fff <<< 1440) |||
+    (0x80017fff7fff800180017fff7fff800180017fff7fff800180017fff80017fff80018001 <<< 1728) |||
+    (0x7fff7fff7fff80017fff80017fff7fff8001800180018001800580017ffd7ffd7fff8001 <<< 2016) |||
+    (0x7fff80017fff7fff7fff800180057fff7ffd7ffd7fff7fff80017fff80017fff7fff7fff <<< 2304) |||
+    (0x7ffb80017ffd80037fff80017fff80017fff800180017fff7fff800180017fff7fff8001 <<< 2592) |||
+    (0x7fff80017fff8001800180018001800180017fff80017fff8001800180017fff80017fff <<< 2880) |||
+    (0x80017fff7fff80017fff80017fff80017fff7fff7fff800180057fff7ffd7ffd80018001 <<< 3168) |||
+    (0x80017fff80017fff80017fff7ffb80017ffd80037fff80017fff800180017fff7fff8001 <<< 3456) |||
+    (0x80058001800380037fff800180017fff800180017fff7fff800180017fff7fff7fff8001 <<< 3744) |||
+    (0x8001800180017fff7fff7fff7fff8001800180017fff8001800180017fff800180017fff <<< 4032) |||
+    (0x7fff7fff8001800180017fff7fff80018001800180017fff800580017ffd80037fff8001 <<< 4320) |||
+    (0x800180017fff800180017fff800580018003800380017fff7fff80017fff7fff80018001 <<< 4608) |||
+    (0x800580017ffd80037fff8001800180017fff80018001800180017fff7fff7fff7fff8001 <<< 4896) |||
+    (0x80017fff800180017fff7fff800180017fff7fff7fff80017fff80018001800180017fff <<< 5184) |||
+    (0x7fff80018001800180017fff80018001800180017fff7fff7ffb800180037ffd80017fff <<< 5472) |||
+    (0x7fff80017fff80017fff7fff80057fff8003800380017fff8001800180017fff7fff7fff <<< 5760) |||
+    (0x80057fff7ffd800380017fff80017fff800180017fff7fff800180017fff7fff7fff8001 <<< 6048) |||
+    (0x800180017fff80018001800180017fff7fff7fff80017fff800180017fff7fff80018001 <<< 6336) |||
+    (0x800180017fff7fff7fff80017fff80017fff80017fff7fff80057fff8003800380017fff <<< 6624) |||
+    (0x800180017fff7fff8001800180057fff7ffd800380017fff80017fff800180017fff7fff <<< 6912) |||
+    (0x80057fff8003800380017fff8001800180017fff7fff7fff7fff80018001800180017fff <<< 7200) |||
+    (0x80017fff800180017fff7fff800180017fff7fff7fff80017fff80017fff80017fff7fff <<< 7488) |||
+    (0x80017fff7fff7fff80017fff80018001800180017fff7fff7ffb800180037ffd80017fff <<< 7776) |||
+    (0x80017fff800180017fff800180018001 <<< 8064)
+
+/-- Chunk `49` of `s6c1nHT`. -/
+def s6c1nHT49 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL49 s6c1nHTV49 512
+
+/-- Packed labels (17-bit fields) of chunk `50` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL50 : ℕ :=
+    0x116688b24459e22cb11f98925444b223b111b73255ae8c8c8f6642b5d1b991acc9966453 |||
+    (0x85f6abec8897c476a249711b588ecc4926225d11b68924444b623b711b488fc447ee23f5 <<< 288) |||
+    (0xb0b15666ac04562e2ad4c85f0ac1c55d82af115758ab7e55c12ade15708abb8561e2acf0 <<< 576) |||
+    (0x4fc327ed93f4c96664b23259d92cac9f96524324b593b6c9b455ae10bf95898ac14217ea <<< 864) |||
+    (0x8783c0e1e44d7c7078446497327659492c9b664ed3292d925ec9b56525324b193b0c9b76 <<< 1152) |||
+    (0xff8785c5f1d9dfb0f1e678543c061e3f17c7c782c3c381e210f0d878be3c611e2e0f1887 <<< 1440) |||
+    (0xc1da460d20f691134885a440d30c698734c35a61ed2236950b4c19a466d20c3c8e2f8f4e <<< 1728) |||
+    (0x4a9c24ce112714938889c379799e71896982b48c5a540d20e691934a89a608d20d6951b4 <<< 2016) |||
+    (0x2f3868af328e1e271715e661c484e162717938809c2f9799271a138aa9c574e2c2708f38 <<< 2304) |||
+    (0x4b1b2e8d80c6a9a36a71b2c8da146d06368119ec8cf7467b633df1b438d81c6a9e36a11b <<< 2592) |||
+    (0xc9495ca3c051dd28ef1478ca4c65227290848306a46e8d5246d4a36051b2d8da8c6c0235 <<< 2880) |||
+    (0x13ad91d524ea6d51f710619487ca49620c2a90b9481ca486522f290048300a49e525d292 <<< 3168) |||
+    (0xf7549ba905d6ccea6c75203ad95d522ea6e75413aa05d500eaac75573aab5d55eea83752 <<< 3456) |||
+    (0x25cd92e7a973f4ba025d2f2e9a974ccba525ce92e3c975e571585cc175b3baa41d486ea6 <<< 3744) |||
+    (0x605bf0253810840cd604c3029e2eccae2a8b9125ca95c57971a4baec5cd12e4c97659715 <<< 4032) |||
+    (0x4098e0423029c81304084e066f029f810940cd204c5029d81294094604a102dc816f40b7 <<< 4320) |||
+    (0x24c812201699c48f024aa1257092c048ce246a123489190494824d01223d69964908819b <<< 4608) |||
+    (0x024c812740936049f02e381b04091605e302ce24502d320930048f85a66925c090de4920 <<< 4896) |||
+    (0x69c6490e812340bce06c302cc817840d8e048f02cf81b14091205e502cd817140b8605c1 <<< 5184) |||
+    (0x25d890d2492624cb1221969cc48f624ad12548929c48e0246d1237091cc496624d312225 <<< 5472) |||
+    (0x5593aac5d560ea7c753f3a9f5d4feeab375993a851d584eafd24532d380930c48fe5a729 <<< 5760) |||
+    (0xd072e3f975fd71885cc7750bbab01d666eaff7561bacc5d42ceafc75983a855d582eafe7 <<< 6048) |||
+    (0x91e5caf5c63971bcbae05cd72e4f9764171825cdf2e7d973ccb9de5d412e9d974f4ba8e5 <<< 6336) |||
+    (0xb5a34071a3c8cf9467c633e11b3c8d9f46cf6367f19f38d39c6b5e34011a3f2ecfae308b <<< 6624) |||
+    (0xda28ec94750a4a852242909c82d6a4688d6a4680a34e51a3d8d00c69c235ab1a3e8d38c6 <<< 6912) |||
+    (0x5c51f4105b94870a49020b6a90a14810a480522c2901c82d0a498525a292f14980a3ae51 <<< 7200) |||
+    (0xe8d35d6969b49dda640d35f698934c45a620d21c690f34875a43ed3136968b49d9a646d3 <<< 7488) |||
+    (0x4ce29e70a1384d9c274e14e7167388b9c36179ce718f693ab4c85a5a0d35e699134b49a4 <<< 7776) |||
+    (0xcb7071b694db84386baf388e1ee71775e721c49ce16e717f38839c2e179c271a738ad9c5 <<< 8064) |||
+    (0x66da5b6be9b83cdb856d7db7075b692db876db436dadb6d4dbf76dfab6fd9b7e8db696d7 <<< 8352) |||
+    (0x6e0fb6d21b5f0db8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `50` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV50 : ℕ :=
+    0x800180017fff7fff8001800180017fff7fff80017fff80017fff7fff80057fff80038003 |||
+    (0x7fff8001800180017fff800180017fff800580018003800380017fff7fff80017fff7fff <<< 288) |||
+    (0x80017fff800580017ffd80037fff80018001800180017fff7fff7fff7fff800180018001 <<< 576) |||
+    (0x7fff800180017fff800180017fff7fff800180017fff7fff7fff800180017fff80018001 <<< 864) |||
+    (0x8001800180017fff7fff7fff7fff8001800180017fff800180017fff8005800180038003 <<< 1152) |||
+    (0x80017fff7fff80018001800180017fff800580017ffd80037fff8001800180017fff8001 <<< 1440) |||
+    (0x7fff80017ffb800180037ffd7fff80017fff80017fff800180017fff80017fff80017fff <<< 1728) |||
+    (0x80017fff800180017fff80018001800180017fff7fff7fff80017fff8001800180017fff <<< 2016) |||
+    (0x7fff80017fff80017fff80017fff800180017fff7fff80017fff7fff80057fff80038003 <<< 2304) |||
+    (0x7fff80017fff7fff80017fff7fff80017ffb800180037ffd80017fff80017fff80017fff <<< 2592) |||
+    (0x800180017ffb80017ffd7ffd7fff80017fff7fff7fff80018001800180017fff7fff7fff <<< 2880) |||
+    (0x7fff800180017fff80017fff7fff80017fff80017fff80017fff80017fff800180017fff <<< 3168) |||
+    (0x8001800180017fff7fff7fff7fff800180018001800180017fff7fff7ffb7fff7ffd7ffd <<< 3456) |||
+    (0x7fff80017fff80018001800180017fff800580017ffd80037fff8001800180017fff8001 <<< 3744) |||
+    (0x8001800180058001800380037fff800180017fff80017fff7fff80017fff80017fff8001 <<< 4032) |||
+    (0x80017fff7fff7fff7fff80018001800180017fff7fff7fff80017fff7fff7fff7fff7fff <<< 4320) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff7fff7fff80017ffb7fff80037ffd <<< 4608) |||
+    (0x7fff8001800180017fff7fff8001800180058001800380037fff800180017fff80017fff <<< 4896) |||
+    (0x80017fff800580017ffd80037fff8001800180017fff80018001800180017fff7fff7fff <<< 5184) |||
+    (0x7fff800180017fff80017fff7fff80017fff80017fff80017fff80017fff800180018001 <<< 5472) |||
+    (0x8001800180017fff7fff7fff80017fff7fff7fff800180017fff7fff7ffb7fff7ffd7ffd <<< 5760) |||
+    (0x7fff800180017fff7fff7fff7fff80017ffb7fff80037ffd80017fff7fff7fff7fff8001 <<< 6048) |||
+    (0x7fff80017ffb800180037ffd80017fff80017fff80017fff7fff80017fff80017fff8001 <<< 6336) |||
+    (0x80017fff800180017fff80018001800180017fff7fff7fff80017fff8001800180017fff <<< 6624) |||
+    (0x80017fff80017fff80017fff80017fff7fff80017fff80017fff7fff80057fff80038003 <<< 6912) |||
+    (0x7fff80017fff7fff80017fff7fff80017ffb800180037ffd7fff80017fff80017fff8001 <<< 7200) |||
+    (0x800180017ffb80017ffd7ffd7fff80017fff7fff7fff80018001800180017fff7fff7fff <<< 7488) |||
+    (0x8001800180017fff800180017fff800180017fff7fff7fff7fff80017fff7fff80017fff <<< 7776) |||
+    (0x8001800180017fff7ffb7fff7ffd8003 <<< 8064)
+
+/-- Chunk `50` of `s6c1nHT`. -/
+def s6c1nHT50 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL50 s6c1nHTV50 512
+
+/-- Packed labels (17-bit fields) of chunk `51` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL51 : ℕ :=
+    0x699135049a4597652696934de9a6a4d382692934999a4bcd26a69b534fc9a3e576586981 |||
+    (0xe614f4577a2abd159e8a8f30979adbcef5e5d2f327348caeca8d43269995d979a7a4d1ec <<< 288) |||
+    (0x579d6e56552879df3cbade6b4f32579743cd61e77ef32679acbcef1e5d4f32479843cc2d <<< 576) |||
+    (0xb96955a0ab8e55402acc156a16e5c55582a7e153a0aa0055e82af9157b8abe854f42ac41 <<< 864) |||
+    (0x326618430c2d8614c457622ab115988a8c30961ad30ef985d6c3252ae42dca0aaf055505 <<< 1152) |||
+    (0xc2a7d153ec89f7797e9e7d4961deb0ba586b6c327617530d658778c32461ac30efd85d0c <<< 1440) |||
+    (0xd28fb027d615fa61f684fb627d393eb89f6f97e927d313e8e9f424fa427e093f099f83cf <<< 1728) |||
+    (0x2542cba17b70bb585fc42fee17f50b6785b2c2d9a16c90bf9862442cbe17b10bb63ee8af <<< 2016) |||
+    (0x26588e2c4816234b09a58332c5248846b0ce859642f6a18930bb485ecc312e165b0bb786 <<< 2304) |||
+    (0x910b8658a311099608cb0be2212ac0d962ccb0e6582b2c4a48840b0b658492c299611cb1 <<< 2592) |||
+    (0xee183b0b87857d4307a16970b8585b442dae16d50bf785fac2fda17e90b69857c4307e16 <<< 2880) |||
+    (0xe2c2216140b10858892c4396228b09458302c53c8816b0c8860e42d2a15f30b8485a4c2b <<< 3168) |||
+    (0x961f530e398876c41558a0110396080b0b82206ac0c162c0b0e058282c4bc8810b0b0584 <<< 3456) |||
+    (0x6c417621d30fa58718c41461f430e3d8870c416622c3116d88b4c3076182b0c198608c45 <<< 3744) |||
+    (0x17ec27d373e899f49cfa1e7e273f0e9f884fc367d1b3ecb9f7617ece7d4f61c6b10e587d <<< 4032) |||
+    (0xbcc19e608f45979f5bce35e872f4173eebafd88fb0e7d675fb21f69cfb6e7d3f3ebb9f6e <<< 4320) |||
+    (0x79c73d0ede7d4f4157a1c3cfa1e71ef41679f4bce31e874f4147a2c3d16de8b4f3077982 <<< 4608) |||
+    (0x55462acf156b96e8c555e2a7915418a9dc56062afe15800abf454fa2ac7157856e86552e <<< 4896) |||
+    (0xb7f4db676db2b6d99b6c8dbf96e24b6cb1b7b4dbb42ae72dd00aafc55565ba2955b8ab82 <<< 5184) |||
+    (0xa3fd768869876d97b6f61b890dbb66dedb7129b65cdbb56e25b6cb5b7b2dbb76dfc36fed <<< 5472) |||
+    (0xda39a7bcd1e0699735079a4417682696f34d99a71cd35e6947349e9a504d27669bb34ff9 <<< 5760) |||
+    (0xe0766f5b37a19bd2ce75673bb39d19ceccdea66bd33a719b96ce04348faed08d43e699f5 <<< 6048) |||
+    (0x8d474f63a9d1d0e97ae074c2674fb37259af6ce0666e5335e59d3cce0566bc33a759b90c <<< 6336) |||
+    (0x5d4ea9474da5eb99d4a8e86a74d23aad1d1557aec74aa3a751d3f8ea0474703a3b1d1b0e <<< 6624) |||
+    (0xbd45a722b9716048af5c57a22bd316758b3bc59d22ced15ea8abc45a762b9116073a2d2f <<< 6912) |||
+    (0x30541b2a0b15054a7b653cd2a2548466a7ea8b4f4572a2af316058ae4c55ee2d3f16068a <<< 7200) |||
+    (0xd4e5a5544d108d94ef4a812211aa9da950eaa80253c52a1e88460a81a53d529ef94f84a8 <<< 7488) |||
+    (0x69cc78e5a472edb98fdcad2e5a672c5b9621cb12e6d5736bb9b51cdace58a72ecb98f9ca <<< 7776) |||
+    (0x518178c0c4615030ab18530c29460563069184757326608a731eb95a1cbb0e5a772b5b97 <<< 8064) |||
+    (0xa7f35bf83dfd72fe9630892e654c16460a25cc818388c1e4607a3061183f5732c6072302 <<< 8352) |||
+    (0x7ec3bf611fb0cfed <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `51` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV51 : ℕ :=
+    0x7ffd7ffd7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff |||
+    (0x7fff7fff80017fff7fff80018001800180017fff80018001800180018001800180058001 <<< 288) |||
+    (0x80017fff80017fff7fff80018001800180017fff7ffb7fff7ffd80037fff7fff7fff8001 <<< 576) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff8001 <<< 864) |||
+    (0x7ffd7ffd7fff7fff80017fff800180017fff800180017fff7fff7fff7fff800180018001 <<< 1152) |||
+    (0x7fff800180017fff7fff800180017fff80017fff80017fff7fff80017fff7fff80057fff <<< 1440) |||
+    (0x7fff7fff7fff8001800180017fff80017fff800180057fff80037ffd80017fff80017fff <<< 1728) |||
+    (0x80017fff800180017ffb8001800380037fff7fff80017fff800180017fff800180017fff <<< 2016) |||
+    (0x7ffd80037fff80017fff80017fff800180017fff7fff800180017fff7fff80017fff8001 <<< 2304) |||
+    (0x7fff7fff80017fff7fff80018001800180017fff7fff7fff80017fff80017fff7ffb8001 <<< 2592) |||
+    (0x80017fff80017fff80017fff7fff80017fff7fff80057fff7ffd7ffd800180017fff8001 <<< 2880) |||
+    (0x7fff80017fff800180057fff80037ffd80017fff80017fff7fff800180017fff7fff8001 <<< 3168) |||
+    (0x80038003800180017fff80017fff7fff80017fff7fff80018001800180017fff7fff7fff <<< 3456) |||
+    (0x7fff800180017fff7fff800180017fff7fff80017fff800180017fff800180017ffb8001 <<< 3744) |||
+    (0x7fff7fff7fff80017fff7fff80017fff80017fff7ffb80017ffd80037fff80017fff8001 <<< 4032) |||
+    (0x7fff7fff7fff80018005800180037ffd8001800180017fff800180017fff800180017fff <<< 4320) |||
+    (0x7ffd7ffd7fff800180017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 4608) |||
+    (0x7fff7fff80017fff7fff80018001800180017fff80018001800180018001800180058001 <<< 4896) |||
+    (0x80017fff80017fff7fff80017fff7fff7fff80018005800180037ffd7fff7fff7fff8001 <<< 5184) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff8001 <<< 5472) |||
+    (0x7ffd80037fff800180017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff800180017fff <<< 5760) |||
+    (0x80017fff7fff7fff7fff80018001800180017fff80018001800180017fff7fff80057fff <<< 6048) |||
+    (0x8001800180017fff7fff80017fff80017fff7fff80057fff8003800380017fff80018001 <<< 6336) |||
+    (0x800180017fff7fff80057fff7ffd800380017fff7fff8001800180018001800180018001 <<< 6624) |||
+    (0x8003800380017fff800180017fff80018001800180017fff7fff7fff80017fff80018001 <<< 6912) |||
+    (0x7fff7fff7fff7fff7fff7fff7fff7fff7fff80017fff80017fff80017fff7fff80057fff <<< 7200) |||
+    (0x7fff7fff80017fff7fff7fff7fff800180017fff7ffb7fff7ffd7ffd80017fff80017fff <<< 7488) |||
+    (0x7fff7fff7fff80017ffb7fff80037ffd80017fff7fff7fff7fff80018001800180017fff <<< 7776) |||
+    (0x7fff7fff7fff7fff7fff80017fff8001 <<< 8064)
+
+/-- Chunk `51` of `s6c1nHT`. -/
+def s6c1nHT51 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL51 s6c1nHTV51 512
+
+/-- Packed labels (17-bit fields) of chunk `52` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL52 : ℕ :=
+    0x4c8c7f063faedfcd4fe947f5c3f9a1fc1afe977f34bf839fd74fe957f6dbfb61fdb2fd85 |||
+    (0x9a284ca42672133ed6b3c4c7426321314098984d5e26ac135889ac84c58266a1346d6b36 <<< 288) |||
+    (0xf621fb12fed57f6bbfb51fdacfd8a7eedbf8fdfad2fda6267a2d66099884c7c5ace932d0 <<< 576) |||
+    (0x669134756b264c8a7f1e3f5adfbb4fda47eb43f761fc7afda77eecbf8f9fad4fda57ec5b <<< 864) |||
+    (0xc7a5aca932c89a244ca22671133f56b2c4c7226251317898c44d5026ab135309a944c562 <<< 1152) |||
+    (0xd72e696736db9b61cdb2e58572c3b9611cb0ce6da7334b9839cd74e69526792d64099844 <<< 1440) |||
+    (0x588c2c86058306a1846d7336608c7306b9ae1ccd0e697735db99a9cc18e6947335b983dc <<< 1728) |||
+    (0x8a2e674c16860a45ccc18390c1e8607c3062183ed733c6074303218140c098615e30ac18 <<< 2016) |||
+    (0x368b65456b22cb716348b3dc59e22cf315e58af3c57922bcd167a8b64456b62cb1163730 <<< 2304) |||
+    (0x58a83e541c2a1095088a7b853ce2a24c8476a7ec8ad74596a2d9316358b2cc5b2e2b5f16 <<< 2592) |||
+    (0xb19cb6ce34544e108f94ef8a814211ea9db150e6a80453c62a1f08470a81c53e229ec14f <<< 2880) |||
+    (0xd33b259b5cce356764336b59cb0ce37673db39e19cf2cde566f3b37919bccce7a6765336 <<< 3168) |||
+    (0xc3a821d3c0e9d8747e3a3c1d208e90874f83a9e1d0f17af074c466d7b39659d96ce36672 <<< 3456) |||
+    (0xae39071a938bd9c744e3dc3a2e2f5f4ea9874dc5ebd9d4b0e86674d43aae1d14d7afc74a <<< 3744) |||
+    (0x1c6a6e3de71d1b8d45c5e8e3dd71a838bddc742e3df71c8b8e49c726e29e714e38a7dc53 <<< 4032) |||
+    (0x18ded743c62e4318818c30c64863de31f118f60c7c8631831aa18e6d743662cc717ab8e8 <<< 4320) |||
+    (0x7dae3ed7df6bafad07d483eeddf5c2fb1f31ca2e874c68862b45d0c18d90c6e862bc319a <<< 4608) |||
+    (0x4f2a7dda3eb8df522fb1d7d703ea4df76afb1e7d493eed9f5c4fb1c7d68beb49f5a6fb5e <<< 4896) |||
+    (0x9fb44f42276513ed56bec4f5a277f13c089dd44f7027b613dd89ed44ef6276d13f556be6 <<< 5184) |||
+    (0x2cc99666cafe657e32bfd95facb3065d8b2a519686cb7d27dd2d7c09d744f525afa93aa8 <<< 5472) |||
+    (0xbde1daf17bf07784654bb2d059760cb7f65a132ec9952ccb7c65d9b2a559680cb7e6598b <<< 5760) |||
+    (0x76c5efd9deb0ed6677943be61db4d7bfc779c3b981dcb0ee8876fe3b811dbe0ee0877383 <<< 6048) |||
+    (0x7a713ad89e0c4f0a2787126e8936449be24db13c089c1c4c9627a113ae3b6e2f7f4efb87 <<< 6336) |||
+    (0xc615648aa18554a2ab6c85b6aa4c899344f4a270513ac89e8c4e02264f13af89c0c4c922 <<< 6624) |||
+    (0x6a10b795508aa3c216eaa9d15576aa6455522aad085b0aa3455082a8315448ab1e55912a <<< 6912) |||
+    (0xbf8978c4d52250712bd8938c49ca24e713be89de44efe277b12708979c4d56250112be55 <<< 7200) |||
+    (0x14ab1055862ac595614aa1655492ab7485a6aa4a89ab44a0a25e512bc8940c4bc226af12 <<< 7488) |||
+    (0x919626caed556910b595504aa3a216aaa9c9557aaa6255512aac885a0aa32550f2a88954 <<< 7776) |||
+    (0x932b0997cccaec6561b2f959620caee6580b2c099606cb2e659632cbd965acb006560b2f <<< 8064) |||
+    (0xa3b9f1dd08ee5476f03b761dbd8edd477363bdd1dae97be0778265f3b2c459580caef658 <<< 8352) |||
+    (0x3be51db557bec779 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `52` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV52 : ℕ :=
+    0x7fff7fff80017fff7fff8001800580018003800380017fff80017fff7fff7fff7fff7fff |||
+    (0x7ffb7fff80037ffd80017fff7fff7fff80017fff7fff7fff7fff80018001800180017fff <<< 288) |||
+    (0x80017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff80017fff80017fff7fff7fff8001 <<< 576) |||
+    (0x80017fff7fff7fff80017fff7fff7fff80017fff7fff8001800580018003800380017fff <<< 864) |||
+    (0x7fff80017fff7fff7fff80017ffb7fff80037ffd80017fff7fff7fff7fff800180018001 <<< 1152) |||
+    (0x7ffb7fff7ffd7ffd80017fff80017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff8001 <<< 1440) |||
+    (0x7fff7fff80017fff7fff7fff7fff80018001800180017fff7fff7fff7fff800180017fff <<< 1728) |||
+    (0x800180018001800180017fff7fff80017fff7fff7fff80017ffb7fff80037ffd80017fff <<< 2016) |||
+    (0x80018001800180017fff7fff80057fff7ffd800380017fff7fff80018001800180018001 <<< 2304) |||
+    (0x80057fff8003800380017fff8001800180017fff7fff7fff7fff80018001800180017fff <<< 2592) |||
+    (0x80017fff7fff7fff7fff7fff7fff7fff7fff7fff7fff800180017fff7fff80017fff7fff <<< 2880) |||
+    (0x80017fff7fff7fff80017fff80018001800180017fff7fff80057fff7ffd80037fff8001 <<< 3168) |||
+    (0x7fff7fff7fff80017fff7fff80057fff8003800380017fff800180017fff800180018001 <<< 3456) |||
+    (0x7ffb7fff7ffd80037fff7fff80017fff7fff80017fff7fff800180017fff80017fff8001 <<< 3744) |||
+    (0x80017fff80017fff7fff800180017fff7fff80017fff800180017fff7fff80017fff7fff <<< 4032) |||
+    (0x7fff7fff80017fff80017fff800180018001800180018001800580017ffd7ffd7fff8001 <<< 4320) |||
+    (0x7fff80017fff80017fff7fff7ffb7fff7ffd8003800180017fff800180017fff80018001 <<< 4608) |||
+    (0x7ffb7fff8003800380017fff7fff800180017fff7fff800180017fff7fff800180017fff <<< 4896) |||
+    (0x7fff800180017fff800180017fff7fff80017fff80017fff7fff7fff7fff7fff7fff7fff <<< 5184) |||
+    (0x7fff800180017fff7fff80017fff80017fff7fff7fff80017ffb8001800380037fff7fff <<< 5472) |||
+    (0x7fff7fff80017fff80017fff7ffb80017ffd80037fff80017fff80017fff800180017fff <<< 5760) |||
+    (0x80057fff7ffd7ffd7fff7fff7fff800180017fff800180017fff7fff80017fff80017fff <<< 6048) |||
+    (0x80017fff7fff800180017fff7fff800180017fff80017fff80017fff8001800180017fff <<< 6336) |||
+    (0x800180017fff80017fff8001800180017fff80017fff800180057fff80037ffd80017fff <<< 6624) |||
+    (0x80017fff7fff7fff7fff80017ffb8001800380038001800180017fff7fff80017fff7fff <<< 6912) |||
+    (0x80057fff80037ffd80017fff80017fff80017fff7fff800180017fff7fff800180017fff <<< 7200) |||
+    (0x80017fff7fff80017fff7fff800180017fff80017fff8001800180017fff80017fff8001 <<< 7488) |||
+    (0x80017fff7fff80017fff80017fff80018001800180017fff80057fff7ffd7ffd80018001 <<< 7776) |||
+    (0x7fff80017fff800180017fff7fff8001 <<< 8064)
+
+/-- Chunk `52` of `s6c1nHT`. -/
+def s6c1nHT52 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL52 s6c1nHTV52 512
+
+/-- Packed labels (17-bit fields) of chunk `53` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL53 : ℕ :=
+    0xface7d663eb3df59afb607df03eb1df6e2fb4f3b6d2f7d4efb4776a5ef99dea8ed6a7792 |||
+    (0x6bf64f2c7d623edcdf7c2fb4d7db83ef8df58afb4e7df13eb19f6e4fb4c7db0bed89f6c6 <<< 288) |||
+    (0x3ab09fb84f44276613ecd6bfc4f5c277813bb09e084f7e27c113de09f084ef8276e13f4d <<< 576) |||
+    (0x150b8a89c546e38e71c638e3dc71ae2a0719138e19c564e28c27de2d7e09d784f545afe9 <<< 864) |||
+    (0x31631a918e75742662ca71c2b8ac1c646e28e7159b8c85c708e28d719038e1dc562e28f7 <<< 1152) |||
+    (0x68462b25d0818d88c6e462ba319918df5742c62e2318f18c88c61463d031e618f58c7946 <<< 1440) |||
+    (0x51a0be505cf82f04178e0bc5054c82a7415360a9f05e183314151e0be305cc31c92e854c <<< 1728) |||
+    (0xf5117b08bec46b6233d119556866470282a2417ce0cc705ce82f8419860a8b05cd833041 <<< 2016) |||
+    (0x0f231d2d0c08d14471a5a1a919a88cb44712234d118d5686c46ea235f11aa88d8445f022 <<< 2304) |||
+    (0x08ed0e76d13b81dda62ed0c76903b48dda44ee0c77073b835dc1eed2176d03b819da64ed <<< 2592) |||
+    (0x90b5985a5e2d3216988b4b05ad82d7a1686d70b65aa47702bb4c1db42ed0d7699bb68ddc <<< 2880) |||
+    (0x0c79963b211d6d2d0a2e174b6285a7c5c2c16c90b3e85a8c2d82167ed70bc5a742d6816b <<< 3168) |||
+    (0xf8ec8c750a3ccf1d6c8ea1c79923b271d6e8ec04760e3b051dac8ed7476b63b5f1d818ea <<< 3456) |||
+    (0x0a21c5118289114458a13e50a2285094270a23850de2864c81f6a2048f334764a3a811d6 <<< 3744) |||
+    (0x5ac7ed4f16ab9b5751aa06d53e50ce103f943b8a1ec207ea86b142e6a21450e6285f081f <<< 4032) |||
+    (0xb5405aae4d53c6a81355c1abacd53f6ab8b5755aa00d53d6a78353cda9e4d63c6b1f358f <<< 4320) |||
+    (0x37121bc6d78bc6e3437481ba90dd186ede37721bb88ddb06e98370a1bbd178b06e4c6aeb <<< 4608) |||
+    (0xd4ec6a77353b5a9ded6416b01b5691aca6d62e378a2f174dc086e3c5e2d9b7d0ddf66e64 <<< 4896) |||
+    (0x78a06e4a6ad3b5945ac04d62c6b2935801ab4cd62f6b00b5695aca0d62d6b203590dac84 <<< 5184) |||
+    (0xb7c8ddfa6e6237111bc7578ac6e32374f1ba28dd446ed037651bb30ddac6e9637091bbc9 <<< 5472) |||
+    (0xed8476ce3b651d7c8ebf475f63aff1db18f18c74563b811dfd37892f154dc046e3a5e299 <<< 5760) |||
+    (0x23650dd2865481e6a2028e8b4770a3c611dff8ee0c78ca3a2f1dfc8f19c74523b871dfe8 <<< 6048) |||
+    (0x3b4a1ea207aa86a942eaa21250e5285e881e0a21a511f288a94484a1305095284b1426ca <<< 6336) |||
+    (0x5dddc42ee5c77083b84ddc24ed1c768f3b475da3eee1176e83b5d9dc44ee5f50cd103d94 <<< 6624) |||
+    (0x2516930b4ac5ad62d791687570a65aa276babb881dba2ee5d7711bb74ddae8ee5e76e93b <<< 6912) |||
+    (0x9c2d092e154b6245a7a5c2816c88b3e45a8a2d81167f570ac5a722d6f16b28b5c45a502d <<< 7200) |||
+    (0x6b059d8288418da0ac5059f82a84154e0aa505dc82ef417760bbf05518289418de0ac305 <<< 7488) |||
+    (0x108d5845fe2302118088bf046b8233e1194d68764704831a4158e0a27059e82b0414460c <<< 7776) |||
+    (0xd4247610910884231e2d0e08d18471c5a1e919b08cb84714234e118cd687c46ec235811b <<< 8064) |||
+    (0x68424c1fe6123f088583fc42472109708878435421a610d108f7847ac23da11e9086b83f <<< 8352) |||
+    (0x848f4212a0ff7088 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `53` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV53 : ℕ :=
+    0x7fff7fff800180017fff80017fff80017fff7fff80017fff80017fff7ffb80017ffd8003 |||
+    (0x80017fff7fff800180017fff800180018005800180037ffd7fff7fff80017fff7fff8001 <<< 288) |||
+    (0x7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff800180017fff <<< 576) |||
+    (0x800180017fff800180017fff800180017fff7fff80017fff80017fff800180017fff7fff <<< 864) |||
+    (0x80017fff7fff800180017fff7fff800180017fff80017fff800180018005800180037ffd <<< 1152) |||
+    (0x80017fff800180018001800180018001800580017ffd7ffd7fff800180017fff7fff8001 <<< 1440) |||
+    (0x800180017ffb80017ffd7ffd800180017fff80017fff7fff80017fff80017fff80018001 <<< 1728) |||
+    (0x800180018001800180017fff7fff800180017fff7fff800180018001800180017fff8001 <<< 2016) |||
+    (0x7fff80017fff80017fff7fff7fff80017fff7fff800180017fff7fff80057fff7ffd8003 <<< 2304) |||
+    (0x7fff7fff7fff7fff7fff8001800180017ffb80017ffd7ffd7fff7fff80017fff80018001 <<< 2592) |||
+    (0x800180017ffb800180037ffd7fff7fff7fff7fff80017fff7fff800180017fff7fff8001 <<< 2880) |||
+    (0x8001800180017fff800180017fff80017fff80017fff7fff7fff8001800180017fff7fff <<< 3168) |||
+    (0x7fff800180017fff7fff80017fff7fff800180017fff7fff80017fff7ffb7fff80037ffd <<< 3456) |||
+    (0x7fff8001800180017fff800180017fff80058001800380037fff7fff8001800180017fff <<< 3744) |||
+    (0x7fff8001800580017ffd80038001800180017fff800180017fff80017fff80017fff7fff <<< 4032) |||
+    (0x800180017fff7fff80017fff7fff800180017fff7fff8001800180017fff7fff80018001 <<< 4320) |||
+    (0x80017fff80017fff8001800180017fff7fff7fff80017fff7fff80017ffb7fff7ffd7ffd <<< 4608) |||
+    (0x800180017fff7fff7fff7fff80017fff7ffb7fff80037ffd7fff7fff7fff80017fff7fff <<< 4896) |||
+    (0x7fff80017ffb7fff7ffd7ffd800180017fff7fff7fff800180017fff7fff800180017fff <<< 5184) |||
+    (0x7fff7fff7fff80017fff7fff80017fff80017fff8001800180017fff7fff7fff80017fff <<< 5472) |||
+    (0x80017fff7fff800180017fff7fff7fff80018001800180017fff8001800580017ffd8003 <<< 5760) |||
+    (0x80017fff800180017fff800180017fff80058001800380037fff7fff800180017fff8001 <<< 6048) |||
+    (0x7fff7fff80057fff80038003800180017fff80017fff7fff80017fff80017fff80018001 <<< 6336) |||
+    (0x7fff7fff7fff7fff7fff800180017fff7fff800180017fff7fff7fff7fff7fff80017fff <<< 6624) |||
+    (0x7fff80017fff80017fff7fff7fff80017fff7fff7fff7fff800180017ffb800180037ffd <<< 6912) |||
+    (0x800180018001800180017fff7fff7fff80057fff800380037fff7fff80017fff80018001 <<< 7200) |||
+    (0x7fff7fff80057fff7ffd800380018001800180017fff800180017fff7fff800180017fff <<< 7488) |||
+    (0x7fff800180017fff80017fff7fff800180017fff7fff80017fff800180017fff80018001 <<< 7776) |||
+    (0x7fff7fff7fff7fff7ffb7fff80038003 <<< 8064)
+
+/-- Chunk `53` of `s6c1nHT`. -/
+def s6c1nHT53 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL53 s6c1nHTV53 512
+
+/-- Packed labels (17-bit fields) of chunk `54` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL54 : ℕ :=
+    0xb2d459ae2cdf088f0b2ac597c2cbc165d8b3b859e12cef96788b304599e2ce4c88f6b2c4 |||
+    (0x80d0c0f7607ab03d981e8c06b5ffc304718096c08759ce111f96698b2dc223eaccb166e6 <<< 288) |||
+    (0xfef17f70806c608fb01257ff2c08560252ffed823cc0865ffd304758090c0846035301a5 <<< 576) |||
+    (0xfdd9ffb0ff66808440061ff4d7f7c809c401c200c100587f783fc11fdf8ff088044400e1 <<< 864) |||
+    (0x0e678653c325e190f097784abc259e128f0cb788cbbffde152f0e53fee2fef4fff880945 <<< 1152) |||
+    (0x0d4576a2bfd161556f6657c277fe3c2ade230f0e778543c469dffaf0e4788dbbff9e154f <<< 1440) |||
+    (0xec0b03457aa5bda95fa8b0b457d22c05160d56f6c57da2bbb15df8af0458762c36161c0b <<< 1728) |||
+    (0x14b653db0f2d8556c4d36265b130d8c76c62b6319b188d89b6c15b6539b0f4d8562c1d2d <<< 2016) |||
+    (0x7836411b1f8d9086b8435fe1b14d77766bc46ca6b61e1b054d8546c3db60a1b298d8576c <<< 2304) |||
+    (0x54d8e6362e2eef4d8186bd45ddc1b070d8786bac35f61b0cd777c6bdc35bc1adc0d6d86c <<< 2592) |||
+    (0x61aff8d8e76c8cb5ffdb152d8e56c6536325b190d8976c4ab6259b128d8cb6c8db5ff9b1 <<< 2880) |||
+    (0xb1adf8d7046c7636361b1c0d8d46b6a35fd1b15577666bc26bfeb62a1b234d8e46c55b64 <<< 3168) |||
+    (0xb7814bc53de0f2f055362d2eed4d8146bd25dd81b068d8746baa35f51b0d5776c6bda35b <<< 3456) |||
+    (0x0f057783c3c0a9e29af0547815bc539e0f4f056784d3c265e130f0c77862bc319e188f09 <<< 3744) |||
+    (0xd6f7c57dc2bbc15dc0aed858782c41161f8b10857842bfe1614d6f7657c478a63c1ede05 <<< 4032) |||
+    (0xb019980c8c0fb60a4300b181b6c0b72c1e2dee0b03857ac5bde95fb0b0b857d42c06160c <<< 4320) |||
+    (0x6017b03658292c0b5606d3052d805cc0b660a5300b581b0c0b4607d303e581f0c0676032 <<< 4608) |||
+    (0x808240051ff557f6c809a401b200f900847f763fb61fdc0fed4802a400d1fee97f60806a <<< 4896) |||
+    (0x11f108678432c219a10c908fb84a5420b611b108b43fed2fed4fff480925fd99ffa8ff6a <<< 5184) |||
+    (0xce5488e6b2c284174236a129708b6846cc2526105f08b584a4420b211b708b7847d423e6 <<< 5472) |||
+    (0x23aacca966eab2d259ad2cde888e0b2aa597b2cbf96604b3b659d62cec16754b2ea599d2 <<< 5760) |||
+    (0x11f8068c034a01a7015d80afc057202bd00d08048c06d601c3011c59cd111d96694b2da2 <<< 6048) |||
+    (0x55449f6251d12a5569e649c280db4038e0121011e80704024a036f011d8049c06d201c50 <<< 6336) |||
+    (0x3c094b449da5a7a928a894ea49d22525129e969ec49aa24ff1280893d44ab0255b12ab09 <<< 6624) |||
+    (0x78ba555d102e8bc7438ba1c9d0e6e9bd74dfba6f1d37ce8707479ba551d104e8bf254d2d <<< 6912) |||
+    (0xf12efb977b4bbd65e372f65976ad71e85e6b74abba201d1e4e8bd7441ba3c1d2ace8be74 <<< 7200) |||
+    (0x81197d2ee5ae3c8bd765e935c7b97aacbb885e832f6d9779171e25e9b2f1f9790cbc565d <<< 7488) |||
+    (0xc6312b197c8cd84625a3287197e8c98c64ca326718fd8c7fc63f231fd19308cd94625e32 <<< 7776) |||
+    (0x8293b14a08a5fe52fc298094c08a4f852be2974c8376a5448c4a4650a3367197f8ca0c66 <<< 8064) |||
+    (0x0689034619a166d08e52de106f94b18a52c20dea95b14bb8a55452ce296cc8370a55c527 <<< 8352) |||
+    (0x68c7b4631a31cd0a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `54` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV54 : ℕ :=
+    0x7ffd8003800180017fff80017fff80018001800180017fff7fff7fff800180017fff8001 |||
+    (0x7fff800180017fff7fff800180017fff80017fff7fff800180017fff7fff7fff7ffb7fff <<< 288) |||
+    (0x80018001800180017fff80017fff7fff7fff7fff7ffb7fff8003800380017fff7fff8001 <<< 576) |||
+    (0x80017fff7fff7fff7ffb7fff7ffd8003800180017fff800180017fff7fff7fff7fff8001 <<< 864) |||
+    (0x80037ffd80017fff80017fff80017fff7fff800180017fff7fff80017fff80017fff8001 <<< 1152) |||
+    (0x7fff80018001800180017fff7fff7fff7fff7fff7fff800180017fff80017fff80057fff <<< 1440) |||
+    (0x7fff80017fff80017fff80017fff7fff80017fff7ffb8001800380037fff7fff7fff8001 <<< 1728) |||
+    (0x7fff80017fff80017ffb80017ffd800380017fff80017fff80017fff7fff800180017fff <<< 2016) |||
+    (0x800380037fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff7fff8001 <<< 2304) |||
+    (0x80017fff7fff800180017fff7fff80017fff80017fff80017fff7fff80017fff7ffb8001 <<< 2592) |||
+    (0x7fff7fff7fff7fff7fff80017fff80017fff80017ffb80017ffd800380017fff80017fff <<< 2880) |||
+    (0x7fff7fff80017fff7ffb8001800380037fff7fff7fff80017fff80018001800180017fff <<< 3168) |||
+    (0x80037ffd80017fff80017fff80017fff7fff800180017fff7fff80017fff80017fff8001 <<< 3456) |||
+    (0x80017fff7fff7fff7fff8001800180017fff7fff7fff800180017fff80017fff80057fff <<< 3744) |||
+    (0x80017fff80017fff7fff80017fff7fff80017fff7ffb8001800380037fff7fff7fff8001 <<< 4032) |||
+    (0x7fff7fff7fff7fff7ffb7fff8003800380017fff7fff80017fff800180017fff7fff8001 <<< 4320) |||
+    (0x7ffd8003800180017fff80017fff80018001800180017fff7fff7fff800180017fff8001 <<< 4608) |||
+    (0x80017fff7fff800180017fff7fff80017fff800180017fff80017fff7fff7fff7ffb7fff <<< 4896) |||
+    (0x80018001800180017fff80017fff7fff7fff7fff7ffb7fff800380037fff800180017fff <<< 5184) |||
+    (0x80017fff7fff7fff7ffb7fff7ffd8003800180017fff800180017fff7fff7fff7fff8001 <<< 5472) |||
+    (0x800380038001800180017fff7fff80017fff7fff7fff7fff7fff80017fff80017fff7fff <<< 5760) |||
+    (0x80017fff7fff800180017fff7fff80017fff7fff7fff7fff7fff7fff80017fff80057fff <<< 6048) |||
+    (0x80017fff80017fff800180017fff7fff800180017ffb800180037ffd7fff7fff7fff7fff <<< 6336) |||
+    (0x7fff7fff80017fff80057fff800380037fff7fff7fff800180017fff8001800180018001 <<< 6624) |||
+    (0x80037ffd7fff7fff7fff7fff7fff800180017fff7fff800180017fff7fff7fff7fff7fff <<< 6912) |||
+    (0x80017fff800180018001800180017fff80017fff7fff7fff7fff7fff800180017ffb8001 <<< 7200) |||
+    (0x7fff8001800180017fff7fff7fff800180018001800580017ffd8003800180017fff8001 <<< 7488) |||
+    (0x80017fff7fff80017ffb7fff7ffd7ffd800180017fff7fff80017fff7fff800180017fff <<< 7776) |||
+    (0x8001800180017fff80017fff7fff7fff <<< 8064)
+
+/-- Chunk `54` of `s6c1nHT`. -/
+def s6c1nHT54 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL54 s6c1nHTV54 512
+
+/-- Packed labels (17-bit fields) of chunk `55` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL55 : ℕ :=
+    0x724368c2b42c5a242d08c68593448da308d08f68913461da160d08d6850b4289a146d18d |||
+    (0xe556722b38dd9cb1179e2725b38ff9c80ce3d67271393b9c9b4e4d671f738d59cb9179ee <<< 288) |||
+    (0x4649a326d09d684fb4271a13cd19068a8343d9a346d1de3965af3c8e39672535e7a1c76c <<< 576) |||
+    (0x8d69cb8979fe7245687ab4685a2a2d1dc68d13454da1e8d1df68a9343dda340d1dd68c8b <<< 864) |||
+    (0x2555e7e1c774e55a722d38de9cb0979f2725d38f89c7b4e40a727f393c9ca0ce50a71f93 <<< 1152) |||
+    (0x22718ee8c80c640a3207192d8c97c64b2325d19008c614679e322118ed3966af3e8e39a7 <<< 1440) |||
+    (0x7b14bd4a4f652bd297548366a5428cf24644a318718ef8c88c630633cb18ec8c604679a3 <<< 1728) |||
+    (0xdd106d94b14a52a20daa95a94bb4a55252cd296d48360a55a527f2940949d4a5f052fb29 <<< 2016) |||
+    (0xae74c0ba495d3a2e9ac74e0ba709d386e86d7437ba1b1d0dce9c074c1ba491d3a4e9af52 <<< 2304) |||
+    (0x8a5dff2efc9780cbc0a5e392f66976b571f85e6d7493ba741d304e9ad74e9ba601d24ce9 <<< 2592) |||
+    (0x1602e3014c2ee6ae3e8bd7a5e955c7f97ab4bb845e852f6e9778971f25e9d2f18978b4bc <<< 2880) |||
+    (0x84078a018f014d80f1c031202e5014f80b0c058a02c700cd8067c0332019d016080f0c03 <<< 3168) |||
+    (0xc24f8127b094084abe255c12b08958849f8251e12a4d69f649c48063405ce03c1014e80b <<< 3456) |||
+    (0xb0fea87bcc427e1f911004254e2d3e094b849dc5a7e928b094e649d42526129f169fc49a <<< 3744) |||
+    (0xa1ef1100687e4c3dea213b100587bdc427a1f97100787f5c3fa21fd31076883a441de20e <<< 4032) |||
+    (0x2b4d48660ac6a56552b2f95984ad7056b62b5d95ad4acb6567d2b5548666ac82884e43f2 <<< 4320) |||
+    (0x640a3205d902ac84a644db1df99056c867569d10cd95a34ac9a219aab3a95ab4ac925685 <<< 4608) |||
+    (0x79a563beb20a59134c8656415322618ef8c866644cb1dfd9050c8646425b21219092c816 <<< 4896) |||
+    (0xf40a798d3cda9e7a97d3279753cb29e544f29a7a5f3d319e964f4ca79593ce29e8297d3e <<< 5184) |||
+    (0xe121f092f8167c0a3e05df02af84a7c4d3ddf5f052f8653d12afa68f3aa797d5f4e1e794 <<< 5472) |||
+    (0x8de1484d6cf651847bbf3e0adf136f8677c143e265eefef8647c4c3ddf1f054f8667c25b <<< 5760) |||
+    (0x16c5b3e946b0a3e6519428ee147f16cfc519c28a2144c0a258523e2921148e0a48851382 <<< 6048) |||
+    (0x0b2e035703db81e1c0f2dfe66ff237f9dbfcae07a706437eb1c0b4e036290e2d9e0a3985 <<< 6336) |||
+    (0x564caca661932f2996157538664d6fd7b8161c192e034702db832dbf5ce037706537eb5c <<< 6624) |||
+    (0xd2aea68cb8a663d5d4f996d4cad4666532ea9962975326635331299844cc1a655f32b199 <<< 6912) |||
+    (0x076fbd38275bf92e0056ff5b7fa1bfd2e076703a381ddc0eadfea6fbc38271bf94e00632 <<< 7200) |||
+    (0x46655132a69955cca96661732f19960d7528664b704fb7f21bef2e0046fe5b7dedc13ce0 <<< 7488) |||
+    (0x35eff2f7d532d1aea48cb86663b5d4b996cccad8666332e9996317522663333059987ccc <<< 7776) |||
+    (0xc3dea5f19ef7d47bd43e331eff4f7d67c0dbe061f032f8467c223e11df08af81a7bd53e3 <<< 8064) |||
+    (0xa2895144f8a28452302916148d8a454513628dd148556ce651827c673dfedef56f7d77bf <<< 8352) |||
+    (0x28ed147e96cec519 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `55` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV55 : ℕ :=
+    0x7fff7fff80017fff7fff7fff7ffb7fff80037ffd800180017fff800180017fff80018001 |||
+    (0x7ffb7fff7ffd7ffd800180017fff7fff7fff800180017fff7fff800180017fff80018001 <<< 288) |||
+    (0x7fff800180017fff800180018001800180017fff80017fff7fff7fff80017fff7fff8001 <<< 576) |||
+    (0x7fff800180017fff7fff7fff8001800180017fff7fff7fff7ffb7fff80037ffd80018001 <<< 864) |||
+    (0x7fff7fff7fff800180017fff80058001800380037fff7fff800180017fff800180017fff <<< 1152) |||
+    (0x800580017ffd8003800180017fff800180017fff800180018001800180017fff80017fff <<< 1440) |||
+    (0x8001800180017fff7fff800180017fff7fff80017fff7fff800180017fff800180018001 <<< 1728) |||
+    (0x8001800180017fff80017fff800180017fff800180017fff80058001800380037fff7fff <<< 2016) |||
+    (0x800180017fff7fff80017fff80057fff800380037fff7fff7fff800180017fff80018001 <<< 2304) |||
+    (0x80057fff7ffd800380018001800180017fff800180017fff7fff800180017fff80018001 <<< 2592) |||
+    (0x80017fff7fff80017fff7fff7fff7fff7fff80017fff80017fff7fff800180017fff7fff <<< 2880) |||
+    (0x80017fff7fff800180018001800180017fff7fff80017fff80057fff8003800380018001 <<< 3168) |||
+    (0x80017fff800180017fff7fff80057fff7ffd8003800180018001800180017fff7fff8001 <<< 3456) |||
+    (0x7ffb7fff8003800380017fff80017fff7fff7fff7fff7fff800180017fff7fff7fff8001 <<< 3744) |||
+    (0x80017fff7fff80018001800180017fff7fff7fff7fff7fff80017fff80017fff80017fff <<< 4032) |||
+    (0x7fff7fff8001800180017fff7fff80017fff8001800180018005800180037ffd7fff7fff <<< 4320) |||
+    (0x80017fff80017fff80017fff7ffb7fff800380037fff80017fff80018001800180018001 <<< 4608) |||
+    (0x8005800180037ffd7fff7fff80017fff80017fff7fff7fff7fff8001800180017fff7fff <<< 4896) |||
+    (0x80017fff7fff7fff7fff7fff800180017fff7fff7fff80017fff80017fff800180018001 <<< 5184) |||
+    (0x80017fff7fff7fff8001800180017fff7fff7fff7fff7fff80057fff80037ffd7fff8001 <<< 5472) |||
+    (0x7fff8001800180017fff800180057fff7ffd7ffd8001800180017fff7fff800180018001 <<< 5760) |||
+    (0x7ffb80017ffd80037fff800180017fff7fff7fff7fff7fff800180017fff7fff7fff8001 <<< 6048) |||
+    (0x80017fff80017fff7fff7fff7fff8001800180018001800180017fff8001800180018001 <<< 6336) |||
+    (0x7fff7fff8001800180017fff80017fff800180017fff800180057fff7ffd7ffd80018001 <<< 6624) |||
+    (0x7fff80017fff7fff7fff7fff80057fff80037ffd80017fff7fff80018001800180018001 <<< 6912) |||
+    (0x7ffb8001800380037fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff <<< 7200) |||
+    (0x7fff800180018001800180017fff7fff8001800180017fff80017fff7fff7fff80017fff <<< 7488) |||
+    (0x80017fff7fff7fff7fff7fff7fff800180018001800180017ffb80017ffd800380017fff <<< 7776) |||
+    (0x7fff7fff7fff80017fff800180018001 <<< 8064)
+
+/-- Chunk `55` of `s6c1nHT`. -/
+def s6c1nHT55 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL55 s6c1nHTV55 512
+
+/-- Packed labels (17-bit fields) of chunk `56` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL56 : ℕ :=
+    0xc84664223211d908ac81a63d5b23398ff6c7d7290d2d9c0a394516a5b3a946a8a3ea5192 |||
+    (0x7d2e79a36466b1fe58f54c7d563fd31ea19198c7d663d4b233d8ff0c7d4640db20619032 <<< 288) |||
+    (0xe78cf406798b3cd99e7b17d2279733ca59e57cf2c67a513d269e95cf49679573ce19e831 <<< 576) |||
+    (0x83dc41e220f30fe687f243f9e1fcb107a8864c3ebe20b110343d11afa48f3a6797b5f4a1 <<< 864) |||
+    (0xcb8567e2b54c8676ac8487d64416a21911036882cc432a1f5b10358865c3eba20b710378 <<< 1152) |||
+    (0xa38ac9c219eab3b15ab8ac9456862b4cc8670ac6c56622b2c15958ad7e56c12b5e15b08a <<< 1440) |||
+    (0xab63eb71f378fbcc7dea3ef71ee48f7347b963dcf1f788fe447ab23eb11f34569e10cf95 <<< 1728) |||
+    (0x75283b141ec9ff6504d282e88166a0428f57c7d6a3f931f368facc7f2e3d5d1f358fe547 <<< 2016) |||
+    (0x37506d102d940f4a05a205aa81a9416aa0525045283548160a02a4fff280093fd4a0f050 <<< 2304) |||
+    (0x5ed7366be435ab1aeb0d7346bbcb5de9aef6d6e46b7335b95adced7786be535ab5aeb6d7 <<< 2592) |||
+    (0x08db546cb036551b2b0d96c6db6369d1b45577e06d6a6b5735d65af96d7356bad35f25ad <<< 2880) |||
+    (0x5c1aba0eb30735368d2efd4da946d925df99b4a8d9ea6d8236ad1b3e977ec6d9a36df1b7 <<< 3168) |||
+    (0x783ac41f220d59073483e4c1abe0eb5073683bcc1dea0ef706e4837341b960dcf077883e <<< 3456) |||
+    (0x2457322ef9178c8b9644d122659133489ae45d722a1914316828458b8356c1d6e0f95073 <<< 3744) |||
+    (0x5deeeeee8773cbbe7ddd94ef062291ad05c8aa645a35a091158c8a06457b2299913b1682 <<< 4032) |||
+    (0x3bb21dcf0ef047765bb9e9df3aef07773dbbe79dd92ef057774bbba9ddd6ef7477bb3bdd <<< 4320) |||
+    (0x2caa963a9703259752ce896734b3ca58df2c729638cb1b259d92ca2964297038598d77ce <<< 4608) |||
+    (0xeee477733bb95ddceef7877e4bbabddeb4ef362c82ae068b2ca597d5c0f964d4b24a59a5 <<< 4896) |||
+    (0x7028598b77563bd61df90ef3477adbbf29dd5aef3777e5bbab9deb2ef3577bcbbde9def6 <<< 5184) |||
+    (0x64ccb24659a32ca9963b1702259732cef9678cb39658d12c6596334b1ae59d72ca196431 <<< 5472) |||
+    (0x374c1baa0dd7077483bb41dd60eef06e8833dc1e7a0d9307052c81ae048b2c6597b5c0b9 <<< 5760) |||
+    (0x5d922a2914296838458d83cec1b2e0cf507078364419e20f390704833cc1e7e0d9507068 <<< 6048) |||
+    (0xaaa45a55a0d115948a0a457d229a913a96832457522e8917348bca44df22729138c89b24 <<< 6336) |||
+    (0xe71ad90d7046b74b5ba9add6d7746bbb35dd5aeeed6e86b3d35e75ad96d7072292ad07c8 <<< 6624) |||
+    (0x621b308d9706db8369e1b44d77f06d6c6bcf35b25acf6d7056b65359e5af3ed7066b3c35 <<< 6912) |||
+    (0x04368e2eff4da986d945dfd9b4b0d9e66d8436ae1b3f177fc6d9c36d81b6b0db886cbe36 <<< 7200) |||
+    (0x3d1f058f3d47e763d971f078f74c7baa3dd71f748fbb47dd63eef1ee88f3c47e723d911f <<< 7488) |||
+    (0xb14008a0fe50822840941f09ff8504e282f08176a0448fcfc7b2a3cf31f068f64c79ee3f <<< 7776) |||
+    (0xc3c779e512f2c4506e102f940f8a05c205ea81b14166a05450462834c8170a02c4ff827f <<< 8064) |||
+    (0x679443c8ede3b8f2c5791d3c77de514f2c77955bcaa1e552f1b778dabc6d9e368f2aa791 <<< 8352) |||
+    (0x78eebca2de472f2c <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `56` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV56 : ℕ :=
+    0x7fff7fff800180017fff7fff7fff800180017fff7fff7fff80017fff7ffb800180038003 |||
+    (0x800180017fff80017fff80017fff8001800580017ffd7ffd80017fff80017fff7fff7fff <<< 288) |||
+    (0x7fff7fff7ffb7fff7ffd8003800180017fff800180017fff7fff7fff7fff800180018001 <<< 576) |||
+    (0x7fff80017fff800180018001800180017fff7fff8001800180017fff7fff800180017fff <<< 864) |||
+    (0x8001800180017fff7fff7fff800180017fff80017fff80017fff8001800580017ffd7ffd <<< 1152) |||
+    (0x7fff800180017fff80017fff7fff7fff7ffb7fff7ffd8003800180017fff80017fff8001 <<< 1440) |||
+    (0x80017fff7ffb80017ffd80037fff800180017fff7fff80017fff80017fff80017fff8001 <<< 1728) |||
+    (0x8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff80017fff <<< 2016) |||
+    (0x80017fff80017fff80017fff80017fff7fff8001800180017fff800180057fff7ffd7ffd <<< 2304) |||
+    (0x8001800180017fff80017fff80017fff7ffb80017ffd800380017fff7fff800180017fff <<< 2592) |||
+    (0x7fff800180057fff7ffd7ffd8001800180017fff7fff80018001800180017fff7fff7fff <<< 2880) |||
+    (0x80017fff80017fff7fff80017fff80017fff80017fff80017fff80017fff800180018001 <<< 3168) |||
+    (0x7fff7fff7fff8001800180017fff7fff80017fff7fff7fff7fff7fff800580017ffd7ffd <<< 3456) |||
+    (0x7fff80017fff80017fff8001800180018005800180037ffd7fff7fff80017fff80017fff <<< 3744) |||
+    (0x800180017ffb7fff8003800380017fff80017fff7fff80017fff80017fff80017fff8001 <<< 4032) |||
+    (0x7fff7fff80017fff7fff80018001800180017fff7fff7fff7fff7fff80017fff80018001 <<< 4320) |||
+    (0x7fff80017fff80017fff80017fff80017fff80017fff8001800180018005800180037ffd <<< 4608) |||
+    (0x7fff7fff80017fff80018001800180017ffb7fff8003800380017fff80017fff7fff8001 <<< 4896) |||
+    (0x800180018005800180037ffd7fff7fff80017fff80017fff7fff7fff7fff800180018001 <<< 5184) |||
+    (0x80017fff80017fff7fff80017fff80017fff80017fff80017fff80017fff80017fff8001 <<< 5472) |||
+    (0x8001800180017fff7fff7fff7fff7fff80017fff7fff7fff7fff7fff800580017ffd7ffd <<< 5760) |||
+    (0x80017fff7fff80017fff8001800180018005800180037ffd7fff7fff80017fff7fff8001 <<< 6048) |||
+    (0x80017fff7ffb80017ffd800380017fff7fff800180017fff80017fff80017fff80017fff <<< 6336) |||
+    (0x8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff80017fff <<< 6624) |||
+    (0x7fff80017fff80017fff80017fff800180017fff800180017fff800180057fff7ffd7ffd <<< 6912) |||
+    (0x8001800180017fff80017fff80017fff7ffb80017ffd80037fff800180017fff7fff8001 <<< 7200) |||
+    (0x7fff800180057fff7ffd7ffd8001800180017fff7fff80018001800180017fff7fff7fff <<< 7488) |||
+    (0x7fff7fff80017fff7fff7fff7fff800180017fff7fff7fff7fff80017fff7fff80018001 <<< 7776) |||
+    (0x7fff7fff80017fff800580017ffd8003 <<< 8064)
+
+/-- Chunk `56` of `s6c1nHT`. -/
+def s6c1nHT56 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL56 s6c1nHTV56 512
+
+/-- Packed labels (17-bit fields) of chunk `57` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL57 : ℕ :=
+    0x567f2b2395ce16f4256a72b7395b4cad9e57272b8e95c84ae3656db2b1b95d616f48568f |||
+    (0xb3d2da776d3ab69d9b4e8d9ea6cbd36a7db394da072babade9cacae56775bd11599cae6e <<< 288) |||
+    (0xac5976d86a696d4e36721b2f6da056ce5b65e5b53ada066cbc36a79b392da046cf5b67a1 <<< 576) |||
+    (0xdb79aaa4d6326a81356c9abd976d26a9935149a8f4d4826b2935999acbcd66a6a35355c9 <<< 864) |||
+    (0xac68555c2aa2155309b784dac26da13690aaa851dc277215110ac5357caeda8d5926a915 <<< 1152) |||
+    (0x374b1fa59472c5b88886b24684efc2a2a14750ac78544c28e213bd0ac4851cc277615170 <<< 1440) |||
+    (0x11964fcb22e2222ac9b96302b256594f2c6848880b25e59032c7c963dcb1c658de2c7016 <<< 1728) |||
+    (0x65b06b184b0c235613db09e184f2c1e760f2b079983c8c27a6164b06b584b6c23658c711 <<< 2016) |||
+    (0x663fae1fd80feb47e5a3f631fc257f407e8e60d7309658590c234612d30b29835ec23761 <<< 2304) |||
+    (0x96c2063f932fe94fdcc7e7e5fd19fad8fdd27ea63f6b1fc197f4c7e763f331f948fc9c7f <<< 2592) |||
+    (0xe9853ec20760bdb0a718390c20560f5b07a183d2c277613ab09d984e8c1ea60bcb0a7583 <<< 2880) |||
+    (0x41f970fcc07f483fa91fd38fea87e543f601fc3d7f107e88614f3072582f0c20460e5305 <<< 3168) |||
+    (0xa8505c29b2133109753f902fe34fdc07e785fc59fac0fdde7ea03f681fc017f1c7e703f2 <<< 3456) |||
+    (0x5097784ccc282214dd09748504c29b61337097684ddc26e213730aa78552c2a9a154909b <<< 3744) |||
+    (0xc8850b25858f42c7f16400b1a858d92c6b96368b1f459442c5a08856b2408537c266a141 <<< 4032) |||
+    (0xb6799b3c8da7a6d65366bdb4b4da3758c4110b964f0b2282216ac9a1630eb250594c2c69 <<< 4320) |||
+    (0x6cd636961b596da356d2db6b25b35ada366d64366b9b4b2da346d3db69e1b4f2d9e76cf2 <<< 4608) |||
+    (0x6a87356f9abc177026a9f35239a8ccd45e6b47359e9ad04d6766a3b355f9ac4177086a6f <<< 4896) |||
+    (0xe372f2a77952bca99e548f1ba79043c9b9e332f174357faee08d59e6a975dc39aabcd63e <<< 5184) |||
+    (0x5d796f1856897936bc66de412f17678cc3c82de4d8f17579053c9bde334f17778ddbc6e1 <<< 5472) |||
+    (0xbc515984ae6256792b2095cf96f1256a12b6495b74adc257092b8995c3cae2a56d52b189 <<< 5760) |||
+    (0x7e78be445f2e2f9517958bcbc5e522f2d17c98c0dc5bfa2f5117e42ba8ade3caca256715 <<< 6048) |||
+    (0xecaa6995362a9c288438a64d8b7ec5eaa303517e68bd4c60622df917e58c0cc5bfe2f571 <<< 6336) |||
+    (0x8654daaa635210d29b954e0aa63d535aa9ba8843ea6655348a9a954d1aa75f53aca9d8d4 <<< 6624) |||
+    (0x7db40799e90cf8467b433dad9ed4cff567fbb3fd19feccf69677cb407d9e96cf87539290 <<< 6912) |||
+    (0xf039fb1cfb0e7d472f639bd1cf557a60732a680e33d259df0cf8567a533be9a03acf8667 <<< 7200) |||
+    (0x52ffe539dd2f4d4e73473525e999cda8e7b4734239c51ced57a6c735a397f1cba8e60473 <<< 7488) |||
+    (0x6dfdfcffe4800d3fbf5ff54ffe67fe43ff2dff94ff957fcbbfe51ff2cffc9800c3fbf1ff <<< 7776) |||
+    (0x812f1097584afe257c12c0896084bb825ce12cf16a764c047f7fbfeae0032ffe77fd4400 <<< 8064) |||
+    (0x9742539cb5cfb4e7b625ae2d4e096f84bec5a9e92db096664c1425c612d4d6a7c4c1c25d <<< 8352) |||
+    (0x73b3b9d91cecce7f <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `57` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV57 : ℕ :=
+    0x800380037fff7fff8001800180017fff7fff800180017fff7fff80017fff7fff80018001 |||
+    (0x8001800180017fff7fff80018001800180017fff800180017fff800180017fff80058001 <<< 288) |||
+    (0x80017fff7fff7fff800180017fff7fff80017fff800580017ffd8003800180017fff8001 <<< 576) |||
+    (0x7fff800180017fff80058001800380037fff7fff800180017fff800180017fff7fff8001 <<< 864) |||
+    (0x7ffd7ffd8001800180017fff7fff7fff7fff800180017fff7fff7fff7fff800180018001 <<< 1152) |||
+    (0x7fff800180017fff7fff800180017fff7fff7fff7fff7fff80017fff7fff7fff7ffb8001 <<< 1440) |||
+    (0x7fff7fff7fff8001800180017fff7fff800180017ffb800180037ffd7fff7fff7fff7fff <<< 1728) |||
+    (0x7fff80018001800180057fff800380038001800180017fff7fff7fff7fff800180017fff <<< 2016) |||
+    (0x80037ffd7fff7fff7fff7fff80017fff7fff800180017fff7fff80017fff7fff7fff7fff <<< 2304) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff800180017ffb8001 <<< 2592) |||
+    (0x80017fff7fff7fff7fff7fff7fff80018001800180057fff800380038001800180017fff <<< 2880) |||
+    (0x7fff7fff800180017ffb800180037ffd7fff7fff7fff7fff7fff800180017fff7fff8001 <<< 3168) |||
+    (0x7ffd7ffd8001800180017fff7fff7fff7fff800180017fff7fff7fff7fff800180018001 <<< 3456) |||
+    (0x80017fff7fff800180017fff7fff80017fff7fff7fff7fff80017fff7fff7fff7ffb8001 <<< 3744) |||
+    (0x8001800180017fff800180017fff7fff800180017ffb800180037ffd7fff7fff7fff7fff <<< 4032) |||
+    (0x7fff7fff80017fff800580017ffd8003800180017fff80018001800180017fff7fff8001 <<< 4320) |||
+    (0x800380037fff7fff8001800180017fff7fff800180017fff7fff80017fff7fff80018001 <<< 4608) |||
+    (0x7fff7fff7fff800180017fff7fff7fff7fff80017fff7fff7fff800180017fff80058001 <<< 4896) |||
+    (0x80017fff7fff7fff800180017fff7fff80017fff800580017ffd80037fff7fff80017fff <<< 5184) |||
+    (0x7fff800180017fff80058001800380037fff7fff800180017fff800180017fff7fff8001 <<< 5472) |||
+    (0x7ffd800380017fff80017fff800180017fff7fff7fff7fff7fff7fff7fff800180017fff <<< 5760) |||
+    (0x7fff80018001800180017fff7fff7fff8001800180017fff7fff7fff7fff7fff7ffb8001 <<< 6048) |||
+    (0x8001800180017fff7fff8001800180017fff800180057fff7ffd7ffd8001800180017fff <<< 6336) |||
+    (0x7fff7fff7fff7fff7ffb80017ffd80037fff80017fff80017fff7fff8001800180018001 <<< 6624) |||
+    (0x7ffd7ffd8001800180017fff80017fff7fff7fff7fff8001800180018001800180017fff <<< 6912) |||
+    (0x800180017fff7fff7fff7fff7fff7fff7fff80017fff8001800180017fff800180057fff <<< 7200) |||
+    (0x7fff7fff7fff7fff80017fff80017fff80017fff800580017ffd7ffd7fff800180017fff <<< 7488) |||
+    (0x7fff8001800180018005800180037ffd7fff7fff80017fff7fff80018001800180017fff <<< 7776) |||
+    (0x7fff7fff7fff7fff7fff80017fff8001 <<< 8064)
+
+/-- Chunk `57` of `s6c1nHT`. -/
+def s6c1nHT57 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL57 s6c1nHTV57 512
+
+/-- Packed labels (17-bit fields) of chunk `58` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL58 : ℕ :=
+    0x5f4d739739f61d096e7b473edba125ce5ee7b7742439cb1cfb2e7b573fc39fedcff4e765 |||
+    (0xbf545f652fd297f1572b25f352f8897c94be1a601f300c9808cc04a5f192fc297f2972b8 <<< 288) |||
+    (0x9dadced4e7f573fbb9fd1cfece769737d3a075ce94e7862ff2ae568bf2a5f3d5caf97dd4 <<< 576) |||
+    (0xfc197f3172a85f4b740f39d21cdf6e78473a5b9be5d03ee787737c3a071ce92e78573b43 <<< 864) |||
+    (0xf3b5cab97dccbf585f632fd197f0d72a25f332f8f97c2cbe466011300b98034c0165f172 <<< 1152) |||
+    (0xef4ff567fcc3fe6dff34ffc57fe3bff11ff8cff997f9440131fef2ff552ff1ae548bf265 <<< 1440) |||
+    (0xbb095d44bb625cd12ce96a664c028027bfdedfe52ff577fbc3fcae009cff547f9540135f <<< 1728) |||
+    (0xad2d4c096f44bea5a9a92da8966a4c1225c512d556a6c4c1a25df12ea897844af0257b12 <<< 2016) |||
+    (0xb66825b3cb99fb0cfb467fc33fed9ff4cf6567b3b3d919ecccff96824b3cbd9fb6cfb725 <<< 2304) |||
+    (0xd873fe39fc1d008e80872f839be1cf4d7a70732c679633f65a090cfb567ed341299e5acf <<< 2592) |||
+    (0x3a2ef1175439de2f4f4e73873545e9d9cdb0e7b8734439c61cecd7a7c735c39781cc10e5 <<< 2880) |||
+    (0xcc5ca2309917558b94c613e2ef717578bcc45e6e2f3517c58be3c5f122f8d17998b95c61 <<< 3168) |||
+    (0x3534fa9a2d4d46a75153aba9d354e96a6975361a9c308428a64b8c26c5dea2e5517568bb <<< 3456) |||
+    (0xaf60b7b2dbdaf1ebd2f6245391908454da6a633210929b8d4e06a63b5359a9bb0842ea66 <<< 3744) |||
+    (0xdecb4f6267af43d961ed7cf6257b2cbdaf5ebd4f6277b053d825ec10f7567baa3dd5deea <<< 4032) |||
+    (0x14a856d8c52ee299d14cc8a65c52c0295e14b18a574534629c7149b96d8653067b5fbd7a <<< 4320) |||
+    (0x6f7a37bddbdeade6b6efcb7c75bc94de8729472db00a6fc531e5b6294db8a502531629cf <<< 4608) |||
+    (0x66af6f8f37921bbf0de856f25b77e9be3ede866efdb7c71bc92de846f35379a5bcd0def6 <<< 4896) |||
+    (0xce6066c7338799cfd758266df333d999ccccde678133be99e1ccef66687337f99d417588 <<< 5184) |||
+    (0x38261c110f5687aa43d5e1eab0e0b872c43afa1bd10e2533afaeb08ce3e66d75d6399bbc <<< 5472) |||
+    (0x6dbabb608748ae4f875ec37aa1cb30e2786f4c396e1d790e24872d43afe1bd70e2687054 <<< 5760) |||
+    (0xe6721d12b79d5d6eae3f56e3abae0874eae37570dab84d5c1eaea1574eaba9d5d36ae275 <<< 6048) |||
+    (0xdb0c6b5637d31be58df0c66663323199d8ccac6fb63a5318bd8db6c6b6576b90e855baea <<< 6336) |||
+    (0xe20f7287a883d801ed3d7d907ac8631631b658e96c6b4636d31d258c5ac6b763a4318b98 <<< 6624) |||
+    (0xa02fb34f6207ab85f659ebc0f6c07ae03d901ecbd7d9c7ab03d4a1ea70f5407b8e3dc91e <<< 6912) |||
+    (0x8762fc31c798c90c6856335319a58cd0c6f6637a31bdd8deac66b62fd31c7d8c96c6863d <<< 7200) |||
+    (0x1c7ba03dce1ee98f7347aa63d831ed257dc07ace638e319258bf6c6846325317e58e3ac6 <<< 7488) |||
+    (0x3a1e710f153da32fb94f62c7abe5f719ebd8f6cc7ae63d931eca57dcc7ab63d4d1ea48f5 <<< 7776) |||
+    (0xcc3bae1d190f14877543a3e1e770f1687ad43d661eb10e0687024381e1c0b0f5b877443a <<< 8064) |||
+    (0x1570aab8755c42ae8f5749aba255d2aae0956d8abb788718ae498746c3cea1dd30f17879 <<< 8352) |||
+    (0x56e0abaf8871eae3 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `58` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV58 : ℕ :=
+    0x80017fff7fff80017fff80017ffb7fff800380037fff800180017fff800180017fff7fff |||
+    (0x8005800180037ffd7fff7fff80017fff80017fff7fff7fff7fff8001800180017fff7fff <<< 288) |||
+    (0x7fff80017fff7fff80018001800180018001800180017fff80017fff7fff800180018001 <<< 576) |||
+    (0x7fff800180018001800180017fff800180017fff80017fff800580017ffd7ffd80017fff <<< 864) |||
+    (0x80017fff80017fff7fff7fff7ffb7fff7ffd8003800180017fff800180017fff7fff7fff <<< 1152) |||
+    (0x7ffb7fff8003800380017fff7fff80017fff7fff80018001800180018001800180017fff <<< 1440) |||
+    (0x7fff80017fff80018001800180017fff7fff7fff800180017fff80017fff80017fff8001 <<< 1728) |||
+    (0x7fff7fff7fff7fff7fff800180017fff80017fff7fff7fff7ffb7fff7ffd800380018001 <<< 2016) |||
+    (0x7fff8001800180018001800180057fff80037ffd80017fff80017fff800180017fff7fff <<< 2304) |||
+    (0x7ffb8001800380037fff7fff7fff800180017fff7fff7fff7fff8001800180017fff7fff <<< 2592) |||
+    (0x7fff80017fff7fff80018001800180018001800180017fff7fff80017fff7fff80017fff <<< 2880) |||
+    (0x80017fff7fff7fff7fff7fff7fff8001800180018001800180057fff80037ffd7fff8001 <<< 3168) |||
+    (0x800180017fff7fff80017fff7ffb8001800380037fff7fff7fff80017fff800180018001 <<< 3456) |||
+    (0x7ffb7fff80037ffd7fff7fff7fff80017fff8001800180017fff7fff80017fff80017fff <<< 3744) |||
+    (0x800180017fff800180017fff7fff800180017fff7fff7fff800180017fff800180018001 <<< 4032) |||
+    (0x800180017fff80017fff80017fff7fff7fff800180017fff80058001800380037fff7fff <<< 4320) |||
+    (0x7fff7fff7fff8001800180017ffb7fff80037ffd8001800180017fff80017fff7fff7fff <<< 4608) |||
+    (0x7ffb7fff7ffd7ffd800180017fff7fff7fff800180017fff7fff800180017fff80018001 <<< 4896) |||
+    (0x7fff80017fff8001800180017fff7fff80017fff80017fff7fff7fff80017fff7fff8001 <<< 5184) |||
+    (0x80017fff7fff80017fff7fff7fff7fff800180017fff800180057fff8003800380018001 <<< 5472) |||
+    (0x7fff7fff7fff7fff800180017ffb800180037ffd7fff7fff7fff7fff80017fff7fff8001 <<< 5760) |||
+    (0x7ffb80017ffd7ffd800180017fff80017fff8001800180017fff7fff80017fff80017fff <<< 6048) |||
+    (0x8001800180017fff7fff800180017fff7fff800180018001800180017fff7fff80017fff <<< 6336) |||
+    (0x800180017fff80017fff800180018001800180017fff7fff80057fff7ffd800380018001 <<< 6624) |||
+    (0x7fff7fff800180017fff800180057fff800380037fff7fff80017fff80017fff7fff7fff <<< 6912) |||
+    (0x7ffb800180037ffd7fff7fff7fff7fff80017fff7fff800180017fff7fff80017fff7fff <<< 7200) |||
+    (0x80017fff80017fff7fff7fff800180017fff80017fff8001800180017fff7fff80018001 <<< 7488) |||
+    (0x80017fff7fff800180018001800180017fff7fff80017fff7ffb80017ffd7ffd7fff7fff <<< 7776) |||
+    (0x800180018001800180017fff7fff8001 <<< 8064)
+
+/-- Chunk `58` of `s6c1nHT`. -/
+def s6c1nHT58 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL58 s6c1nHTV58 512
+
+/-- Packed labels (17-bit fields) of chunk `59` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTL59 : ℕ :=
+    0xde666f323799dbccadefb6fa4b78b5bdb4deb7576890e255ba2ae6121c52b7855d62ae39 |||
+    (0x755866a96f1737b61be90deb56f6db7d29bc5edeb66fa5b78b1bdb2deb46f7d37be5bdf0 <<< 288) |||
+    (0x9ba4ce6c66c1338499ce5755266d9333a999f4cd02676f33b999da4ceea6669337c99d59 <<< 576) |||
+    (0xbad3dd65eeb0f6067b023d81dec0af75b7b75bda31ee72f71433acaeaa8ce3266d15d579 <<< 864) |||
+    (0x32829c4149a16d5653007b47bdcededd4f7167b9c3dba1ed1cf7157b74bda35ee74f7177 <<< 1152) |||
+    (0x6f053185b5694da0a50e531029cc14a9d6d5c52e8299a14cf0a68052ae295914aa0a5685 <<< 1440) |||
+    (0x29442daa0a <<< 1728)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `59` of `s6c1nHT`. -/
+@[irreducible] def s6c1nHTV59 : ℕ :=
+    0x800180017fff7fff80017fff80017fff80018001800180017fff7fff80057fff7ffd8003 |||
+    (0x7fff7fff8001800180017fff7fff7fff800580017ffd80037fff7fff7fff80017fff8001 <<< 288) |||
+    (0x80017fff80058001800380037fff7fff800180017fff800180017fff7fff800180017fff <<< 576) |||
+    (0x8001800180017fff80017fff7fff7fff800180017fff80017fff80017fff7fff7fff8001 <<< 864) |||
+    (0x80017fff7fff800180017fff800180017fff7fff80017fff7fff7fff800580017ffd8003 <<< 1152) |||
+    (0x80017fff7fff80017ffb7fff7ffd7ffd800180017fff7fff7fff8001 <<< 1440)
+
+/-- Chunk `59` of `s6c1nHT`. -/
+def s6c1nHT59 : List (ℕ × ℤ) := srcDecode16 s6c1nHTL59 s6c1nHTV59 104
+
+/-- The transported short list `s6c1nHT` (30312 terms, source order; right-nested). -/
+def s6c1nHT : List (ℕ × ℤ) :=
+    s6c1nHT0 ++
+    (s6c1nHT1 ++
+    (s6c1nHT2 ++
+    (s6c1nHT3 ++
+    (s6c1nHT4 ++
+    (s6c1nHT5 ++
+    (s6c1nHT6 ++
+    (s6c1nHT7 ++
+    (s6c1nHT8 ++
+    (s6c1nHT9 ++
+    (s6c1nHT10 ++
+    (s6c1nHT11 ++
+    (s6c1nHT12 ++
+    (s6c1nHT13 ++
+    (s6c1nHT14 ++
+    (s6c1nHT15 ++
+    (s6c1nHT16 ++
+    (s6c1nHT17 ++
+    (s6c1nHT18 ++
+    (s6c1nHT19 ++
+    (s6c1nHT20 ++
+    (s6c1nHT21 ++
+    (s6c1nHT22 ++
+    (s6c1nHT23 ++
+    (s6c1nHT24 ++
+    (s6c1nHT25 ++
+    (s6c1nHT26 ++
+    (s6c1nHT27 ++
+    (s6c1nHT28 ++
+    (s6c1nHT29 ++
+    (s6c1nHT30 ++
+    (s6c1nHT31 ++
+    (s6c1nHT32 ++
+    (s6c1nHT33 ++
+    (s6c1nHT34 ++
+    (s6c1nHT35 ++
+    (s6c1nHT36 ++
+    (s6c1nHT37 ++
+    (s6c1nHT38 ++
+    (s6c1nHT39 ++
+    (s6c1nHT40 ++
+    (s6c1nHT41 ++
+    (s6c1nHT42 ++
+    (s6c1nHT43 ++
+    (s6c1nHT44 ++
+    (s6c1nHT45 ++
+    (s6c1nHT46 ++
+    (s6c1nHT47 ++
+    (s6c1nHT48 ++
+    (s6c1nHT49 ++
+    (s6c1nHT50 ++
+    (s6c1nHT51 ++
+    (s6c1nHT52 ++
+    (s6c1nHT53 ++
+    (s6c1nHT54 ++
+    (s6c1nHT55 ++
+    (s6c1nHT56 ++
+    (s6c1nHT57 ++
+    (s6c1nHT58 ++
+    s6c1nHT59))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+
+/-- Packed labels (17-bit fields) of chunk `0` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL0 : ℕ :=
+    0x026c0107204a807d802aa4097809a8080602ac013480ec0083802b601db0041405600413 |||
+    (0x031e034a008700e3006920310008900e58062c040f01c800eb004de812c007c80ea90252 <<< 288) |||
+    (0x096408c0039f00f88119805be030c01a7a0630082c030a40c480d300814818a011200e29 <<< 576) |||
+    (0x16c80f6408b8025f408e00b0008b48119012e00b3d0234036f006f2047c04b4038000738 <<< 864) |||
+    (0x2a040b1803e807ca816601518083502ca03f00172a0580054a03ff017180a9807be04200 <<< 1152) |||
+    (0x78c018f40dc811a4079281ba017481125037e04890183010a408f2017d018c8111807c60 <<< 1440) |||
+    (0x0e901f2023c0164a03e806d201fb407f808e8070c01f2011c811000732017e024ca06f00 <<< 1728) |||
+    (0x92a069806c6042540d280888074a81a001b28044007460366018f810f0047e80fc016301 <<< 2016) |||
+    (0xc000352076408de03cf40ed00bbc089e81df024780c00085e047f019180d810346041901 <<< 2304) |||
+    (0x7e80c3013c81215018c009d014b20314066c025640600027006720236003d8127d03b803 <<< 2592) |||
+    (0xfc067404330118203cc05780435407b008cc05a680f501b98037501e0023501be0120c03 <<< 2880) |||
+    (0x580a5501aa0335012aa034005f8033f40be0101805f48179019e00fe902f4022601bd205 <<< 3168) |||
+    (0x0407000451027e81d00095a02c102a0011540b820440092601b14069809e8092a80d6005 <<< 3456) |||
+    (0x603e9017aa05d8066603f540ba8114c04a08113015d01155022c0253016aa045406ea81b <<< 3744) |||
+    (0xc05208153010c80f5502ac029340daa0394002e813a40ea80001016a8155017980cc102e <<< 4032) |||
+    (0xa04f000d204a540e980ee9036c80e60000a04e503ac047300d8202cc04f80475405b00f4 <<< 4320) |||
+    (0x4098009d407f802b3013b00ebc084602a901d480830055e040c0251a06cd01c603bc013f <<< 4608) |||
+    (0x030f011180e240612041001c780ecc04e08133010a00ed5026c0273007fa04d407e602b5 <<< 4896) |||
+    (0x05c0031301a82064c0812031540cb00d4c082a8195008880e5503200355011380e4c06ac <<< 5184) |||
+    (0x0afc08ca8126013180b41024a037000f3a048004ca037f00f30099808be03a0006a01164 <<< 5472) |||
+    (0x14e0040102b403ef016d2057c05340400016e00a6407c0041f017300f9808c6026040918 <<< 5760) |||
+    (0x1c5017b0115903800496017c810d8090c00580193010e407b8029f40ae0084c07b481590 <<< 6048) |||
+    (0x6ec00d240800091406f200d30123010fc074c005702532070c0772005640e3011d807ac8 <<< 6336) |||
+    (0x44c0734819f01ad008940738035901900110c04808103015c81115020c0243016b204140 <<< 6624) |||
+    (0xf280bc008a081e0024800bfc08600480018e00d7d03380426018d2066406b8041a40cd00 <<< 6912) |||
+    (0xc00144a02e806520249405f80734068c022900b50128103c603bf00b5a079808e003d040 <<< 7200) |||
+    (0x86042a4074808b0059880ea01b6007a101de022a01c1811f0013c80bc0143011e9017201 <<< 7488) |||
+    (0x3c0606034040c180fe4060a818601a181015030a010f01c2a0600068a042c0117a03b005 <<< 7776) |||
+    (0x1202bd029e001840b7a043c091800ac406600a14091480c900d900a290194032a0125203 <<< 8064) |||
+    (0xa40b501130049e810c0162811290212024c01652042806d481af406f800b5028081cf000 <<< 8352) |||
+    (0x175205a4065803e <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `0` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV0 : ℕ :=
+    0x7d00810081007d007d00830083007f007f007f007f0081007f007f0081007f0081007f00 |||
+    (0x83007d007d0081008100810081007f00810081007f0081007f007f007f00810081008100 <<< 288) |||
+    (0x7f007f007f007f0081007f007f0081007f00810081007f007f007f0083007f007f008300 <<< 576) |||
+    (0x810081007f00810081007f007f007f008100810081007d00810081007d007d0083008300 <<< 864) |||
+    (0x7f0081007f007f00810081007f007f007f0083007f007f00830083007d007d0081008100 <<< 1152) |||
+    (0x81007f0081007f007f008100810081007d00810081007d007d00830083007f007f007f00 <<< 1440) |||
+    (0x810081007f00810081007f007f007f0083007f007f00830083007d007d00810081008100 <<< 1728) |||
+    (0x7f007f007f007f00810081007f007f007f0083007f007f00830083007d007d0081008100 <<< 2016) |||
+    (0x83007d007d008100810081007f007f008100810081007d00810081007d007d0083008300 <<< 2304) |||
+    (0x83007f007f00830083007d007d0081008100810081007f007f007f0083007f007f008300 <<< 2592) |||
+    (0x810081007f007f007f0083007f007f00830083007d007d008100810081007f007f007f00 <<< 2880) |||
+    (0x770083008300770077008900810081007f007f007f0083007f007f00830083007d007d00 <<< 3168) |||
+    (0x7d007d0089007d007d00830083008300770083008300770077007d007d00830083008300 <<< 3456) |||
+    (0x810085007d008500830083007d007d007d0089007d007d00830083007d007d007d008900 <<< 3744) |||
+    (0x7f007f0081008100830083007d007d007d007f007f008100810085007d007f007f008100 <<< 4032) |||
+    (0x7d0081008100810081007f00810081007f0081007f00810081007f007f007f007f008100 <<< 4320) |||
+    (0x7f0081007f007f0081007f008100810081007f007f007f0083007f007f00830083007d00 <<< 4608) |||
+    (0x81007f0081007f007f008100810081007d00810081007d007d00830083007f007f007f00 <<< 4896) |||
+    (0x810081007f007f007f0083007f007f00830083007d007d0081008100810081007f008100 <<< 5184) |||
+    (0x8100810081007d00810081007d007d00830083007f007f007f007f0081007f007f008100 <<< 5472) |||
+    (0x7f007f0083007f007f00830083007d007d0081008100810081007f00810081007f007f00 <<< 5760) |||
+    (0x810081007d00810081007d007d00830083007f007f007f007f0081007f00810081007f00 <<< 6048) |||
+    (0x8100810081007d00810081007d007d00830083007f007f007f007f0081007f007f008100 <<< 6336) |||
+    (0x810081007f007f007f0083007f007f00830083007d007d0081008100810081007f007f00 <<< 6624) |||
+    (0x83007f007f007f007f008100810081007d00810081007d007d00830083007f007f007f00 <<< 6912) |||
+    (0x810081007d007d00830083007f007f007f008100810081007d00810081007d007d008300 <<< 7200) |||
+    (0x7f007f008100810081007d00810081007d007d00830083007f007f008100810081007d00 <<< 7488) |||
+    (0x7d007d0089007d007d0089008900830083007d007d007d0089007d007d00890089007700 <<< 7776) |||
+    (0x83007700830083007700830083007d00 <<< 8064)
+
+/-- Chunk `0` of `s6c1nGT`. -/
+def s6c1nGT0 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL0 s6c1nGTV0 512
+
+/-- Packed labels (17-bit fields) of chunk `1` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL1 : ℕ :=
+    0x814c007c00f290292028c40d520368022c814540e5005050154814a017600cbd02d803f6 |||
+    (0x02d8049a40e600f15035280d90096205190392046c005ca02b00506046a405480f30051e <<< 288) |||
+    (0xb9485d342e2217208b6e45be22e6917270b7585c3c2ea6024e206b101b803c301402050c <<< 576) |||
+    (0x6c5a344d1ab68de34680235e11b608d284687a365d1bbe8d6716e28b8f45cea2ded16e50 <<< 864) |||
+    (0xe4d17350b7c85b742e4217108ba645ca22dc916f70b9d85c7c2dc646c2233f11a688dac4 <<< 1152) |||
+    (0xb288d0c4695a36cd1af68d0346f0235611a208d8846d7a34dd19fe8d8717528b8745baa2 <<< 1440) |||
+    (0xde656652b4995514aae654e52a8995bc4ad8e56912b33955c4aa8e55112a7346b2237711 <<< 1728) |||
+    (0xe14af6657252ba995814ac6655a52ae995ec4af0e57512b93958c4ac0e55d12ad395b14a <<< 2016) |||
+    (0xea95bdcad8256972b30955dcaa8255172a7095b0cadea56632b4a9550caaea54e32a8a95 <<< 2304) |||
+    (0xd158eb95edcaf0257572b90958dcac0255d72ad095e0caf6a57232baa9580cac6a55a32a <<< 2592) |||
+    (0xeeb2955949acecd676ab35759a8ac8dd6462b1d358eaacec5676eb35559a9ac8d56466b1 <<< 2880) |||
+    (0x8564ceb2055901ad1dd68e2b4135a0aacbcd65eab2975948ad1d568e6b4115a0bacbc565 <<< 3168) |||
+    (0x1acc956646b2c15963acf9d67c2b38359c2ac98d64cab2075900acf9567c6b38159c3ac9 <<< 3456) |||
+    (0xb5bd4adbad6b92b65b5afcad28d694ab4475a20acc9d6642b2c35962ad285694eb4455a2 <<< 3744) |||
+    (0x2b59b5b5cadded69b2b74b5ab4adc7d6a7ab7af5a86ad73d6ddab5ff5b2ead4ed6e32b50 <<< 4032) |||
+    (0xd6e92b4db5bbcadaed6b32b68b5b14ada3d6c5ab6bf5acead37d6efab56f5ba6ad8ad6d1 <<< 4320) |||
+    (0xad7ed6cb2b5cb5b74adead6a12b71b5a9cadd3d6adab77f5a6ead67d6d7ab62f5b46ad5a <<< 4608) |||
+    (0x5f09affc57feebf635fb2af90d7c8abe115f0bad97d6bfab6ef5ae6ad43d6f5ab53f5b8e <<< 4896) |||
+    (0xbea75f50b020d810ac051602bafcc57e6ebea35f52affd57fe6bf675fb0af91d7c82be15 <<< 5184) |||
+    (0x7ce6bde75ef0aff0d7f8abf915fcbaf9c57ceebde35ef2b021d8102c0556029afcd57e66 <<< 5472) |||
+    (0xfc1d7e02bed55f69b02c5816ec0236012afc0d7e0abed15f6baff1d7f82bf955fc9af9d5 <<< 5760) |||
+    (0x142984ccc2ca6103306a98ac4c5ce6281312b98584c26e60d13083b02d58166c0276010a <<< 6048) |||
+    (0x343318a9888cc3ea619330e298e84c6ee631131a3987c4c44e61c130cb98b8cc56a62533 <<< 6336) |||
+    (0x5c2628731289859cc26260d7308098b94c56662553141984d4c2c66105306998dccc74a6 <<< 6624) |||
+    (0xe9cc6e2631731a0987dcc44261c730c898dd4c7466345318998894c3e6619530e198adcc <<< 6912) |||
+    (0x349813cbc7660af2eed97b3cbf765f2f2fad978f4c0925ddd305497ef4bd925f5d2f9498 <<< 7200) |||
+    (0x8d2f7c97e3cbdf65fef2f4d9783cc0f65e6f300d97bf4bf125e9d2ff4981f4bc12601d2f <<< 7488) |||
+    (0xb2604d2f1c9807cbcd6607f2f0597a7cbfd65eff2fc5979b4c0325e0d303c97fb4bd325f <<< 7776) |||
+    (0xb8d91c6d4e365797d7cbe565fbf2f659777cc1565e3f302597cb4beb25ecd2fdc982b4bb <<< 8064) |||
+    (0xa1b240da606c7036684a76a54f52a3a954d1adf8d7bc6b9e361f4ae2a55d52baa95a51b3 <<< 8352) |||
+    (0x4acd257292ad495b <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `1` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV1 : ℕ :=
+    0x81007f007f008300830083007d007d008300830083007700830083007d007d0083008300 |||
+    (0x81007f00810081007f007f007d007d00830083008300810081007f007f00830083008100 <<< 288) |||
+    (0x7d00830083007d008300830083007d00830083007d007d0083007d007f00810081008100 <<< 576) |||
+    (0x7d0083007d007d00830083007d008300830083007d00830083007d008300830083008300 <<< 864) |||
+    (0x7d0083007d0083007d007d00830083007d008300830083007d00830083007d0083008300 <<< 1152) |||
+    (0x7d0083007d0083007d007d0083007d007d0083007d007d007d0083007d007d0083008300 <<< 1440) |||
+    (0x7f0081007f0081007f00810083007d0083007d0083007d0083007d007d0083007d008300 <<< 1728) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f007f008100 <<< 2016) |||
+    (0x81007f007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 2304) |||
+    (0x77007700770077008900890089008900770077007700770081007f0081007f0081007f00 <<< 2592) |||
+    (0x830083007d007d007d007d0083008300830083007d007d007d007d008900890089008900 <<< 2880) |||
+    (0x83008300830083007d007d007d007d0083008300830083007d007d007d007d0083008300 <<< 3168) |||
+    (0x81007f007d007d007d007d0083008300830083007d007d007d007d008300830083008300 <<< 3456) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 3744) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 4032) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 4320) |||
+    (0x7f007f007f007f0081008100810081007f007f007f0081007f00810081007f0081007f00 <<< 4608) |||
+    (0x7f007f0081008100810081007f007f007f007f00810081007f007f008100810081008100 <<< 4896) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f0081008100810081007f007f00 <<< 5184) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081007f007f0081008100 <<< 5472) |||
+    (0x7d0083007d0083007d00830083007d0083007d0083007d0083007d007d0083007d008300 <<< 5760) |||
+    (0x7d0083007d0083007d0083007d00830083007d0083007d0083007d0083007d007d008300 <<< 6048) |||
+    (0x83007d007d0083007d0083007d0083007d00830083007d0083007d0083007d0083007d00 <<< 6336) |||
+    (0x7d0083007d00830083007d0083007d007d0083007d00830083007d0083007d0083007d00 <<< 6624) |||
+    (0x81007f007f0081007f00810081007f0081007f007d0083007d00830083007d0083007d00 <<< 6912) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 7200) |||
+    (0x81007f007f0081007f00810081007f0081007f007f0081007f0081007f0081007f008100 <<< 7488) |||
+    (0x7d0081007f0081007d007f00810081007f0081007f008300810081007f007d0081007f00 <<< 7776) |||
+    (0x7f007f00810083007f0081007f008300 <<< 8064)
+
+/-- Chunk `1` of `s6c1nGT`. -/
+def s6c1nGT1 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL1 s6c1nGTV1 512
+
+/-- Packed labels (17-bit fields) of chunk `2` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL2 : ℕ :=
+    0x954e1b3a0d9106d4836544ae3255d92bac95a64aa9254892a8494f21b100d7406be035c0 |||
+    (0x2a8294f11b258da6c6c76366b4acca57252ad295b91ade0d7b06b98361c4a77254f92a3c <<< 288) |||
+    (0xd2d46b1a353a1a730d3c46a92357e1a548d4786a8c35911b118d74c6be635c34aa8a5485 <<< 576) |||
+    (0xa562526d288694144a342537d280e94504a53a52c12810943f1a768d3686b0435551a910 <<< 864) |||
+    (0x4aa1abe8d52869e434e51a9c8d638696c35211aab0d60469b234ee4a71a51d1289893fb4 <<< 1152) |||
+    (0x96694a44a29a501129b8946b4a0ba5101293094af49fc2513d28ee94e01ac90d5146a3a3 <<< 1440) |||
+    (0x2ac3c921e040eb4873903c8c1e0b0e54076943c0e1e4a0e73875a83c101e454a1e2502d2 <<< 1728) |||
+    (0x38877703a7c1d130f4f076cc3aa21cfc0eef879c83a201d3d0ed807a7439fe1d520ed307 <<< 2016) |||
+    (0x6d0f1c878503aec1cdb0f2b077ec3b321cb40f0b878e839b01d750efc07954396e1d9a0f <<< 2304) |||
+    (0x50102c0ea70740c3d421dac0ea0874303cdc1de30e80075343b5e1ea20e87875083bc01e <<< 2592) |||
+    (0x341f18108807e283b041f00108407f883bd41e68103007dc83af41ef8107807f683ba41e <<< 2880) |||
+    (0x30408820c60f67081083c941ec8106007ea83b441f201094080e83c641eb0105c07e483b <<< 3168) |||
+    (0x7076103f18210e0f83076703f2821160f8f078d0407820be0f5b076903f58212e0f93079 <<< 3456) |||
+    (0xc328619290c788644c3296077503fb8205e0f2b075f03ee820f60f7f077b03fc820660f3 <<< 3744) |||
+    (0xd228e91b748d1a444d22ae91e718ee8c9346512321918d68c8f464f231e919210c6c863e <<< 4032) |||
+    (0x24401228891b448d02444122a891e448862467123b09148487e245b12350913848b9a440 <<< 4320) |||
+    (0x19208c6c463ea328519288c784644a32954887a467d23b6914b487fa45bd2356913b48b8 <<< 4608) |||
+    (0x21239061c806e42a7204b9085c824e41b7200318ef0c9386514321a18d70c8f864f431ea <<< 4896) |||
+    (0x403120c09090481e241e11fe89054480c2427120609031c84ee406720ab8ff5c83ce40f7 <<< 5184) |||
+    (0x854a403520c29091481ea41e51fea9055480ca4275206290004836241212108902448542 <<< 5472) |||
+    (0xff4c83c640f321219060c806642a320499084c824641b3200190014836a4125210a90254 <<< 5760) |||
+    (0x18da933d463ea529521ca9275469aa5bb51d5a96fd475ea49951a49030c84e6406320a98 <<< 6048) |||
+    (0x52f521fa94ad4876a4cd518ea96e54752a49f51a7a926d4696a5bd51d6a94b5487aa4cb5 <<< 6336) |||
+    (0x9faa40b52ada903d4abea2e9527ca8f754b1aa37b5235a8dfd48dea3d952c4a93254632a <<< 6624) |||
+    (0x0254ab2a2ef527fa8bad49f6a40d52aea8de548d2a3df52c7a8f6d4b16a37d5236a8bb54 <<< 6912) |||
+    (0xa6b1b2d891ec4bb62bfb176d8a3ec42b6337b12258d9ac579625eb14658bbac6696216a9 <<< 7200) |||
+    (0x2f6335b16ad89dec45b634fb18ed87fec54b6307b13a58b5ac699622eb0fe58c7ac60962 <<< 7488) |||
+    (0xf6c54f6305b12358d92c57d625cb14758bb2c66d6214b1b3d8916c4bf62bdb177d8a36c4 <<< 7776) |||
+    (0x9ccece6797342bb13b58b52c69d622cb0ff58c72c60d62a4b16bd89d6c45f634db18fd87 <<< 8064) |||
+    (0x89a384d04266d134889a45ccdae682734739a2dccfee670734a39a21ccf8e673734bb9a6 <<< 8352) |||
+    (0x9a504ce0267f1345 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `2` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV2 : ℕ :=
+    0x7f0081007f007f00810083007f0081007f008300830081007f007f007d0081007f008100 |||
+    (0x830081007f007f0081007f0081007d007f007f0081008300830081007f007f007d008100 <<< 288) |||
+    (0x7d00830083007d008300830083007d00830083007d007d0083007d0083007f0081007f00 <<< 576) |||
+    (0x83007d00830083007d007d0083007d007d007d0083007d007d0083007d007d0083008300 <<< 864) |||
+    (0x83007d007d0083007d007d00830083007d008300830083007d00830083007d0083008300 <<< 1152) |||
+    (0x810081007f008100830083007d00830083007d008300830083007d00830083007d007d00 <<< 1440) |||
+    (0x7f0081007f0081007f007f00810081007f0081007f0081007f007f0081007f0081008100 <<< 1728) |||
+    (0x810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f0081008100 <<< 2016) |||
+    (0x810081007f0081007f007f007f007f0081007f007f0081007f007f007f007f0081007f00 <<< 2304) |||
+    (0x8100810081007f007f007f007f00810081007f007f007f007f007f0081007f0081007f00 <<< 2592) |||
+    (0x7f00810081007f007f007f007f008100810081007f007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x7f007f007f00810081007f007f007f007f008100810081007f007f007f0081007f007f00 <<< 3168) |||
+    (0x81007f007f008100810081007f007f007f0081008100810081007f007f00810081008100 <<< 3456) |||
+    (0x7f0081007f007f007f007f0081007f007f0081007f007f0081007f00810081007f007f00 <<< 3744) |||
+    (0x81007f007f0081007f007f007f0081007f007f00810081007f0081007f007f0081007f00 <<< 4032) |||
+    (0x7f0081007f007f00810081007f0081007f0081007f007f00810081007f0081007f007f00 <<< 4320) |||
+    (0x81007f007f00810081007f0081007f007f008100810081007f00810081007f0081008100 <<< 4608) |||
+    (0x7f00810081007f007f00810081007f0081007f007f00810081007f007f0081007f008100 <<< 4896) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f0081007f007f008100 <<< 5184) |||
+    (0x7f00810081007f0081007f007f00810081007f007f0081007f00810081007f007f008100 <<< 5472) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 5760) |||
+    (0x81008100810081007f007f007f007f00810081008100810081008100810081007f007f00 <<< 6048) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f007f007f007f007f00 <<< 6336) |||
+    (0x8100810081008100810081008100810081008100810081007f007f007f007f007f007f00 <<< 6624) |||
+    (0x810081008100810081008100810081008100810081008100810081008100810081008100 <<< 6912) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f00810081008100810081008100 <<< 7200) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 7488) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f00810081007f007f00 <<< 7776) |||
+    (0x7f007f0081008100810081007f007f00 <<< 8064)
+
+/-- Chunk `2` of `s6c1nGT`. -/
+def s6c1nGT2 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL2 s6c1nGTV2 512
+
+/-- Packed labels (17-bit fields) of chunk `3` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL3 : ℕ :=
+    0x34429a514ce0a67f5345a9a394d04a66d5348a9a144cf22676134d09a5c4ce6267c13440 |||
+    (0x670334a19a20ccf86673334b99a68ccec6679334299a154cf2a676534d29a5d4ce6a67c5 <<< 288) |||
+    (0xd28467ec343e19f48d10467ac349e19dc8d1c4684c344e9a44ccda6682334719a2cccfe6 <<< 576) |||
+    (0x98c24f41268e936f499c24dc1264e93cf497424f0126ae939f1a0c8d144678c346e19e48 <<< 864) |||
+    (0x3bc498da4f4d2688936c499da4dcd264893cc4975a4f0d26a8939c49a424e8125ee93bf4 <<< 1152) |||
+    (0x78a346d19e50d28867ea343d19f50d10867aa349d19dd0d1c8684a344d49a5a4e8d25e89 <<< 1440) |||
+    (0x9c832201a560c54069b832181a4a0cef8666433f6193d0cf186694340e19411a0d0d1486 <<< 1728) |||
+    (0x800691831c81aa20c7e068e831b01a9e0d0586534335e19690d0b86544336619750c5a06 <<< 2016) |||
+    (0x710cd8065d8342819520cd6065a83410194e0c6d86a7431fe1a390c7386a8432061a450c <<< 2304) |||
+    (0x4c9a470d020650833c019a60cfc064f833b8199a0c878692431561a6d0c8986954316e1a <<< 2592) |||
+    (0x0d35ce3b864cfe0eb7476f29ad81d56a683135503b891da9269cd34ae3af64d518ed0876 <<< 2880) |||
+    (0x00ed04764a9a441d9ea6a7134703b194d360ed3475d29a484d098eac8772c9ab71d71268 <<< 3168) |||
+    (0x41d70a680135c83b854cff8eb7876f49adb1d572683d35563b8a1da8a69c134a83af54d5 <<< 3456) |||
+    (0x2878413d6a1d810f5628661d9f26a7d34763b1a4d378ed3875d49a4b4d080eac4772a9ab <<< 3744) |||
+    (0x45114878713d721d8d0f50286513eea1cc10fb62836437f8a04850f2879443878a008511 <<< 4032) |||
+    (0xa1c010f162886439789f88505287e413ef21ccd0fb02835437e0a04450f4879743860a00 <<< 4320) |||
+    (0x140721c0d0f102885439609f84505487e743af89ec850b287b413fea1c410ef628961406 <<< 4608) |||
+    (0x6c10b5fcdabc6d7336c11b621dadaed6476bcb43ae09ec450b487b713ff21c4d0ef02895 <<< 4896) |||
+    (0xd6716bb0b62cdad46d6736bb1b5f1dac2ed7076c2bb6215adaad6456bcab5fc5abc2d731 <<< 5184) |||
+    (0xae02d6116be0b614dae06d6136be1b5d9daceed6a76c5bb5f15ac2ad7056c2ab62c5ad42 <<< 5472) |||
+    (0x5e45ac82d6d16c40b5e4dac86d6d36c41b609dae6ed5e76bfbb5d95acead6a56c5ab6145 <<< 5760) |||
+    (0xd879eb6cf2567a1f3db79e3e4f6127b3d3d269e864f6d27add3c96b6095ae6ad5e56bfab <<< 6048) |||
+    (0xb393d249e874f6da7ad93c949ecfcf49e78fb3d859eb7cf25e7a1b3db59ececf49678ff3 <<< 6336) |||
+    (0x31679bf3de79ee6cf3d6795f3d579e6e4f7927a7d3cc69e564f5527b9d3cf69e3f4f61a7 <<< 6624) |||
+    (0x6f4f79a7a793cc49e574f55a7b993cf49e9fcf31e79bb3de59ee7cf3de795b3d559e9ecf <<< 6912) |||
+    (0x2ba7095378a9b354d0aa6e4539629a414d50a6e4d39669a434d51a709d378e9b374d0b9e <<< 7200) |||
+    (0x774d6ba6795360a9bf54e2aa6b4534e29c814db0a6b4d34e69c834db1a679d360e9bf74e <<< 7488) |||
+    (0x8e9cb74dcba6d95390a9a754d6aa714537e29b014cf0a714d37e69b034cf1a6d9d390e9a <<< 7776) |||
+    (0x3dfcd2fddf7ebca6a95348a9cb54dcaa684536629bc14e10a684d36669bc34e11a6a9d34 <<< 8064) |||
+    (0xdbfb3dfe52fd1f7f1cbf6b5fa96ffbd7f4dbf53dfb52fe9f7fdcbf9b5ff16fd7d7eedbfe <<< 8352) |||
+    (0xbfcb5fd96fe3d7e8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `3` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV3 : ℕ :=
+    0x81008100810081007f007f007f007f00810081007f007f0081008100810081007f007f00 |||
+    (0x810081007f007f007f007f0081008100810081007f007f00810081007f007f007f007f00 <<< 288) |||
+    (0x810081007f007f007f0081007f007f007f00810081007f007f007f007f007f0081008100 <<< 576) |||
+    (0x7f007f007f00810081007f007f007f0081007f007f007f008100810081007f007f008100 <<< 864) |||
+    (0x810081007f007f007f00810081007f007f007f0081007f007f007f008100810081007f00 <<< 1152) |||
+    (0x81007f007f007f0081007f007f007f008100810081007f008100810081007f007f008100 <<< 1440) |||
+    (0x810081008100810081007f0081007f007f007f007f007f007f0081008100810081007f00 <<< 1728) |||
+    (0x7f008100810081008100810081007f008100810081007f0081007f007f007f007f008100 <<< 2016) |||
+    (0x81007f007f007f007f0081007f008100810081008100810081007f0081007f007f007f00 <<< 2304) |||
+    (0x7f0081007f007f0081007f00810081007f007f0081007f007f0081008100810081008100 <<< 2592) |||
+    (0x7f007f00810081007f0081007f007f0081007f007f0081007f007f007f007f0081007f00 <<< 2880) |||
+    (0x7f0081007f007f00810081007f0081007f007f0081007f007f0081007f007f007f008100 <<< 3168) |||
+    (0x81008100810081007f00810081007f00810081007f0081007f007f00810081007f008100 <<< 3456) |||
+    (0x810081007f00810081007f00810081007f007f0081007f00810081007f00810081007f00 <<< 3744) |||
+    (0x7f007f00810081007f008100810081007f00810081007f00810081007f0081007f007f00 <<< 4032) |||
+    (0x7f007f0081007f007f0081007f007f00810081007f00810081007f00810081007f008100 <<< 4320) |||
+    (0x81008100810081007f007f007f007f00810081007f0081007f007f00810081007f008100 <<< 4608) |||
+    (0x810081007f007f007f007f0081008100810081007f007f00810081007f007f007f007f00 <<< 4896) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 5184) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f00810081007f007f00 <<< 5472) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 5760) |||
+    (0x81007f007f0081007f00810081007f0081007f007f0081007f00810081007f0081007f00 <<< 6048) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 6336) |||
+    (0x7f007f007f007f007f007f007f007f007f00810081007f0081007f007f0081007f008100 <<< 6624) |||
+    (0x810081007f007f007f007f007f007f007f007f0081008100810081008100810081008100 <<< 6912) |||
+    (0x7f007f007f007f0081008100810081008100810081008100810081008100810081008100 <<< 7200) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 7488) |||
+    (0x81007f007f0081007f00810081007f007f00810081007f0081007f007f0081007f007f00 <<< 7776) |||
+    (0x7f00810081007f0081007f007f008100 <<< 8064)
+
+/-- Chunk `3` of `s6c1nGT`. -/
+def s6c1nGT3 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL3 s6c1nGTV3 512
+
+/-- Packed labels (17-bit fields) of chunk `4` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL4 : ℕ :=
+    0x7f4ebfe25fcdefdd97ebfbf9adff1afd7b7eeebf3b5fc16fefd7fadbf83df9d2ff5f7f7c |||
+    (0xfefb7faebfb25fe5efd197f1fbfcadfd9afe3b7e8ebf525fb5efe997fdfbf6adfa9affbb <<< 288) |||
+    (0xa5c452528833444a0a43851ac88cc14b3221711048299ebf825f9deff597f7fbf3adfc1a <<< 576) |||
+    (0x3f40a5c852548830444b8a43451aa88cf14b2a217d104e299d145ca230d10f6290143f58 <<< 864) |||
+    (0x8631464a234d11162911149b220b10fe8296e44420a3f8518c88bc145d2230110f029024 <<< 1152) |||
+    (0x2b4886014652234111102912149aa20bd0fee296d44438a3f4518a88bf440d8a68452b28 <<< 1440) |||
+    (0x8847bb29de01f1ca750139f03e811f24a75413a103e914eb40f7c47b529db0440c0a6885 <<< 1728) |||
+    (0xdb276bd3aee3dee4e8b8fa387cac9d4f4e838f9f87c8c9d3f1ef32777d3b4e3e1e4ecc0f <<< 2016) |||
+    (0x1d4ecd8f8887bb49de31f1d2750d39f63e821f252754d3a163e924eb58f7c87b549db31e <<< 2304) |||
+    (0xc498431edaa76b13ae83ded4e8a0fa347caa9d4c4e820f9f47c8a9d3c1ef2a77713b483e <<< 2592) |||
+    (0xcd30a638b24bfa0e454726a98d41cad262ed303638fa1c56a613130d8398d4c518e60871 <<< 2880) |||
+    (0x00e60471c298401c82a6091318839654c658e4a8721497eb4c1e0e37472fa989c1cc9261 <<< 3168) |||
+    (0xf1cc8a61c130a038b14bfb8e458726c98d71caca62e1303038f91c572613d30de398e4c5 <<< 3456) |||
+    (0xa85571316a173d09de260d1c832609d318e39664c640e4a4721297e84c1f8e37872fc989 <<< 3744) |||
+    (0x84b6c855413172173109d8260e1342a169d0a8e25e542df899744bfa851f42bb89a544b6 <<< 4032) |||
+    (0x214e10b30267a4290098084cc485c01343216910a8825e642de099784bfc851c42ba09a5 <<< 4320) |||
+    (0x12eca14ed0b3626794291898044cc285c342a4096a84d1485681309213c10ba0263212ed <<< 4608) |||
+    (0x6eacb77bdb7badbdb6ef4b79fdb99adccb6f3c42a5896a44d12856b1308a13cd0ba62631 <<< 4896) |||
+    (0xdd2b6f0cb7abdb93adc9b6f54b76fdb81adc0b6edcb793db9fadcfb6f24b757db8dadc6b <<< 5184) |||
+    (0xbd5adeab6e4cb74bdbc3ade1b6e94b70fdbb1add8b6e1cb763db87adc3b6ec4b787dba5a <<< 5472) |||
+    (0x6f7dbbdaddeb6decb71bdbabadd5b6e34b73fdbc9ade4b6e7cb703dbb7addbb6e04b727d <<< 5760) |||
+    (0xffca02fcfe1a7f0b405c9fdbd00ba805b3fb4a06bcff3a7f9b40d4b733dbcfade7b6e64b <<< 6048) |||
+    (0x0eb3f6ca047d005a802b408c9ff3d02fa817b3fe4a023cfe7a7f3b40449fffd029a814b3 <<< 6336) |||
+    (0x11a808b3f9ca05fcff9a7fcb40bca00bd023a811b4014a03bcfdba7edb40749fb7d01da8 <<< 6624) |||
+    (0xe7d035a81ab3fcca017cfeda7f6b402c9fc3d017a80bb3f84a053cfffa7ffb40a49fcfd0 <<< 6912) |||
+    (0x2ea213511568a8d44b5a24f5103689fd452da22bd1092896f4544a207d12728a5f44fc9f <<< 7200) |||
+    (0x9f455ca22a5109e89694547a2065127e8a5944ffa212d115a8a8b44b6a24ed103a89fb45 <<< 7488) |||
+    (0xba8abb44cea24350fd689cd4515a21f511b68abd44cda1fbd12128a2f44e4a237d10f289 <<< 7776) |||
+    (0x65da72ec1d757ea1fa5121e8a2944e7a236510fe8999455fa242d0fda89cb4516a21ed11 <<< 8064) |||
+    (0xfbb665d8f2eb5d75debae2dd7d6edcf7657bb725d952eb8d75f6bb06dd5f6ecdf769fbb3 <<< 8352) |||
+    (0xbad6dd776ed9f763 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `4` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV4 : ℕ :=
+    0x7f00810081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 |||
+    (0x81007f007f00810081007f007f0081007f00810081007f007f00810081007f0081007f00 <<< 288) |||
+    (0x7f0081007f008100810081007f008100810081008100810081007f007f00810081007f00 <<< 576) |||
+    (0x81007f007f007f007f007f007f0081007f007f007f0081007f008100810081007f007f00 <<< 864) |||
+    (0x81007f007f008100810081008100810081007f008100810081007f0081007f007f007f00 <<< 1152) |||
+    (0x81007f00810081007f007f007f0081007f008100810081007f0081008100810081008100 <<< 1440) |||
+    (0x81008100810081007f00810081007f0081008100810081007f0081007f007f0081007f00 <<< 1728) |||
+    (0x7f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f0081007f00 <<< 2016) |||
+    (0x7f0081007f007f0081007f0081007f00810081007f007f0081007f0081007f0081008100 <<< 2304) |||
+    (0x810081007f008100810081007f0081007f0081007f007f0081007f008100810081008100 <<< 2592) |||
+    (0x81007f0081007f008100810081007f0081008100810081007f00810081007f0081008100 <<< 2880) |||
+    (0x810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f007f007f00 <<< 3168) |||
+    (0x7f00810081007f0081008100810081007f008100810081007f0081007f0081007f007f00 <<< 3456) |||
+    (0x81007f007f007f007f007f007f00810081007f007f007f007f008100810081007f007f00 <<< 3744) |||
+    (0x7f00810081007f007f007f0081007f007f007f008100810081007f007f007f007f008100 <<< 4032) |||
+    (0x81007f007f007f008100810081007f0081007f007f007f008100810081007f007f007f00 <<< 4320) |||
+    (0x81007f007f00810081007f007f00810081007f008100810081007f007f00810081008100 <<< 4608) |||
+    (0x81007f007f00810081007f007f00810081007f007f0081007f00810081007f007f008100 <<< 4896) |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f0081007f007f008100 <<< 5184) |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f007f0081007f008100 <<< 5472) |||
+    (0x81008100810081008100810081008100810081007f007f007f007f007f007f007f007f00 <<< 5760) |||
+    (0x81008100810081007f007f007f007f007f007f007f007f00810081008100810081008100 <<< 6048) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f008100810081008100 <<< 6336) |||
+    (0x81008100810081007f007f007f007f00810081008100810081008100810081007f007f00 <<< 6624) |||
+    (0x810081007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 6912) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f007f007f007f007f0081008100 <<< 7200) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081008100810081008100 <<< 7488) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f0081007f007f00 <<< 7776) |||
+    (0x81007f0081007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `4` of `s6c1nGT`. -/
+def s6c1nGT4 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL4 s6c1nGTV4 512
+
+/-- Packed labels (17-bit fields) of chunk `5` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL5 : ℕ :=
+    0x7655bb375da7aec19757cbb07dd5feecdb769dbb12dd656ed0f76b7bb425dad2ec4d7596 |||
+    (0xed0b76b5bb675d8faeb5975dcbad7dd77eed9b763dbb735d95aeb8975f4bae3dd7deedcb <<< 288) |||
+    (0xb0a8586c8b2c45df8af1457728bc3160922e2117282c0ebb435dadaec497594bb13dd65e <<< 576) |||
+    (0x5998b0a4586a8b2f45de0af1857748bc01608a2e2d172e2c0d164ea2c9d16362ca145980 <<< 864) |||
+    (0xb63163922ba115e82c6e15fea2e1d16f62c0145e80af2857ac8bcc164f22c9116302ca24 <<< 1152) |||
+    (0x8b48b601638a2bad15ee2c6d15ff22e1116f02c0245e98af2457aa8bcf45af8b19458b28 <<< 1440) |||
+    (0xf947fb29fe0203ea7c113df04081202ea7d913eb040614fbe100147ff29f8045ae0b1985 <<< 1728) |||
+    (0x1927cad3e6e402e4fc990028802c9f8f4fd98fea87f6c9faf204927c2d3e2e408e4fee0f <<< 2016) |||
+    (0x8d4fef8ff987fb49fe3203f27c1d3df64082202f27d9d3eb640624fbf900187ff49f8320 <<< 2304) |||
+    (0xaf491c2018a7ca13e68402d4fc810024802a9f8c4fd80fea47f6a9fac2048a7c213e2840 <<< 2592) |||
+    (0x36923d48d5a4bed24da938b49aea49bd25f2935f49c4a452d223a923b48d6a447d229291 <<< 2880) |||
+    (0xbd22f291df4904a49a525fe935949c7a4bf524d6938d49ada4465229e91a9491fa453522 <<< 3168) |||
+    (0x7a45f521d6920d48eda4b2d253a93bb4996a4a7d2592932f49dca45ed21da920b48eea43 <<< 3456) |||
+    (0x37768bb9dddbcaef05776ba4a65259e932949dfa4b35253693bd4995a43a522fe91d9490 <<< 3744) |||
+    (0x2ef317751bb915dc2eef377752bb9d5dbceef07776abb9cddbc2ef017769bb9c5dbc6ef0 <<< 4032) |||
+    (0xddf22f0b17811bbf15df2ef0b77812bb91ddc2aef357753bb905dc26ef337750bb90ddc2 <<< 4320) |||
+    (0xbbfc5dec6f0837828bbfdddecaf085782bbbf1ddf2af0b57813bbf05df26f0b37810bbf0 <<< 4608) |||
+    (0x97ac4b8025f7d2e1e97b04bcba5ca12ef09767bbfd5decef087782abbfcddec2f0817829 <<< 4896) |||
+    (0x2fb897034bd7a5c412fc096ff4bac25e1d2e6e97884bc5a5cd12f08975b4b7e25f8d2e26 <<< 5184) |||
+    (0xdfb8707c38211c268dfc87084381d1bdd0e2946faa386a4bb225ded2e5697944bd9a5c31 <<< 5472) |||
+    (0xc0f0e1046fe2384e1c110e0f46fda38521c3a8df28713437c51be30e2646f9238761c288 <<< 5760) |||
+    (0x2e1115688c2445ba22f911ad08df84654238e11c108d98472423361c348df58714c37b91 <<< 6048) |||
+    (0x44882404126207a104788218415da0a7d0596826f4151a0b1d04e682d7118a88ac4460a2 <<< 6336) |||
+    (0xe4446ca238111c688ca446fa2359117d08b78461422ae117108c184564231640fa209410 <<< 6624) |||
+    (0x6a209c1058882a0413620b21053882b8410da08fd03d6824f4121a089d04a681f7119a88 <<< 6912) |||
+    (0xdca5fa5339e98af4bc4a5fad339a98ad4bc5a5d7d30f299994bdfa5d7530f6999b4bde41 <<< 7200) |||
+    (0x4d4cb5a5fb5339698ab4bc6a5fbd339298a94bc7a5d6d30fa999d4bdda5d6530fe999f4b <<< 7488) |||
+    (0x5298494cb7a64fd303296f94c6fa64f5303696fb4c6ea64252e5e984f4cb4a642d2e5a98 <<< 7776) |||
+    (0x7debf2f65f7b5ca64ed303a96fd4c6da64e5303e96ff4c6ca64352e56984b4cb6a643d2e <<< 8064) |||
+    (0x4bd5bdeb92f62f7b44bda3dec52f5cf7ab4bd43de952f44f79f4bd07de8f2f4df7a9cbd6 <<< 8352) |||
+    (0xbcfbde892f4af7a8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `5` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV5 : ℕ :=
+    0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f0081007f008100 |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 288) |||
+    (0x7f0081007f0081007f007f007f0081007f007f007f007f0081007f0081007f0081007f00 <<< 576) |||
+    (0x81007f0081008100810081007f008100810081007f0081007f0081007f007f0081008100 <<< 864) |||
+    (0x81007f007f0081007f007f007f007f0081007f007f007f0081007f0081007f0081008100 <<< 1152) |||
+    (0x81007f0081008100810081007f0081007f0081007f007f007f0081007f007f007f007f00 <<< 1440) |||
+    (0x7f007f007f007f0081007f007f0081007f007f007f007f0081007f007f007f0081007f00 <<< 1728) |||
+    (0x7f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f007f008100 <<< 2016) |||
+    (0x7f008100810081007f0081007f0081007f007f00810081007f0081007f0081007f007f00 <<< 2304) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f0081007f008100810081008100 <<< 2592) |||
+    (0x81007f007f0081007f00810081007f0081007f007f0081007f0081007f0081007f008100 <<< 2880) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 3168) |||
+    (0x7f0081007f0081007f00810081007f0081007f007f0081007f00810081007f0081007f00 <<< 3456) |||
+    (0x81007f0081007f0081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 3744) |||
+    (0x81007f007f0081007f0081007f0081007f00810081007f0081007f007f0081007f008100 <<< 4032) |||
+    (0x7f0081007f00810081007f0081007f0081007f0081007f007f0081007f00810081007f00 <<< 4320) |||
+    (0x7f0081007f007f0081007f0081007f00810081007f0081007f00810081007f0081007f00 <<< 4608) |||
+    (0x81007f00810081007f0081007f007f007f007f0081007f0081007f008100810081008100 <<< 4896) |||
+    (0x81007f0081007f00810081007f0081007f007f007f007f0081007f007f007f0081007f00 <<< 5184) |||
+    (0x7f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f007f007f00 <<< 5472) |||
+    (0x81008100810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f00 <<< 5760) |||
+    (0x7f0081007f007f007f0081007f007f007f007f0081007f007f007f0081007f0081007f00 <<< 6048) |||
+    (0x7f007f007f007f0081007f0081007f0081008100810081007f008100810081007f008100 <<< 6336) |||
+    (0x7f007f00810081007f007f0081008100810081007f0081007f0081007f007f007f008100 <<< 6624) |||
+    (0x7f007f00810081007f007f00810081007f007f007f007f00810081007f007f0081008100 <<< 6912) |||
+    (0x7f007f00810081007f007f00810081007f007f0081008100810081007f007f0081008100 <<< 7200) |||
+    (0x7f007f00810081007f007f00810081007f007f00810081007f007f007f007f0081008100 <<< 7488) |||
+    (0x7f007f00810081007f007f0081008100810081007f007f00810081007f007f0081008100 <<< 7776) |||
+    (0x810081007f007f00810081007f007f00 <<< 8064)
+
+/-- Chunk `5` of `s6c1nGT`. -/
+def s6c1nGT5 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL5 s6c1nGTV5 512
+
+/-- Packed labels (17-bit fields) of chunk `6` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL6 : ℕ :=
+    0x7a26bd1ede83af53b7a6ebd7edeb3af6bb7b2ebdafdecb2f5ff7accbd4fde9b2f47f7a0c |||
+    (0xf41b7a3ebd12de7daf50b7a56bd72deadaf68b7b16bd8aded1af56b7ae6bd2adea1af3eb <<< 288) |||
+    (0xa5dad40f69d6b56edaab2d4fb6a4cb4bada692d3ab6a04bd96ded7af59b7afebd36dea7a <<< 576) |||
+    (0x533da8dad58f6a96b50eda7b2d37b698cb51ada992d52b6ac4b557dab7ad49f6a7eb4d3d <<< 864) |||
+    (0xa66b4dfda63ad43f69eeb562daa52d4cb6a34b4c6da6f2d3db6a1cb4f7da87ad31f69beb <<< 1152) |||
+    (0x2ef69a6b53fda93ad5bf6aaeb502da752d34b6974b526da9f2d55b6adcb54bdab1ad46f6 <<< 1440) |||
+    (0x2166fef38e59c7fce036713f392d9c434e45271cd37f49c074e3f2725d389cb4ebda81ad <<< 1728) |||
+    (0x37ce576719f383d9c13ce2d6728f38559caf4e1b2707d38cc9c5b4e09270ad39449c8bce <<< 2016) |||
+    (0x579c424e45a71c937f69c064e3fa7259389e9c8ace21e6feb38e79c7ece03e713b392f9c <<< 2304) |||
+    (0xdb671c9cae4e1ba707938ce9c5a4e09a70a939469c36ce57e719b383f9c12ce2de728b38 <<< 2592) |||
+    (0x3ece3d66efb3cbd9f1ace6f6766b3e2d9e52cecb6734b35fd9a3ace3f66eeb346d9af2cd <<< 2880) |||
+    (0x6d9df2cf5b67dcb3e259e56cec96735b3cb59f1ece6d6767b34659af6cdd9671db35f59a <<< 3168) |||
+    (0xdb3bf59d3ecfbd67afb36bd9c1accef66a6b382d9b52cd4b6674b3bfd9d3acfbf67aeb3a <<< 3456) |||
+    (0x813380a07051a827fc149ab38259b56cd496675b36b59c1ecced66a7b3a659df6cf5967d <<< 3744) |||
+    (0x0268812e00a3b05048294c14020a2604ea0287813d809b704c28273c12fa095604d2025b <<< 4032) |||
+    (0x84f9c28a613b709d084c1426e2131509da0514027c81440098b04dc8260c13a209aa04ac <<< 4320) |||
+    (0x09ed850fc2756144f097c84e742612136d097184d1c256613570a0085294282214750a21 <<< 4608) |||
+    (0x310d18bc8c598632c3129189b0c62462b23186099d84b7c269612af0a4c84ff428d2140d <<< 4896) |||
+    (0x20b89003484ba42a120f090e7486c2421d216e908818890c2b461fa30e2186e8c4086164 <<< 5184) |||
+    (0x403d20be9000484a242ad20f690e4486da42112168908b47fe2418d2026902c4819a4031 <<< 5472) |||
+    (0x86f0c4046162310e18bd0c594632a312a189a8c62862b4318547ffa41812020902f48182 <<< 5760) |||
+    (0x55b9258c920e4a2724e19264c93ee48d7249992b9c95064ba325a318888c2b861fc30e11 <<< 6048) |||
+    (0xa51255a92584920a4a2524e09264493ea48d5249892b9495024ba125a292c5c96e64a532 <<< 6336) |||
+    (0x6ea4a5525589259492024a2124e29265493e248d1249a92b84950a4ba525a092c5496e24 <<< 6624) |||
+    (0xc4c96ee4a5725599259c92064a2324e39265c93e648d3249b92b8c950e4ba725a192c449 <<< 6912) |||
+    (0x97aed3d75d6bc0f5dd5aebb57692bbad5e04af33d78d6bd8f5e95af1b57992bd2d5ec492 <<< 7200) |||
+    (0x5d5edcaeba5769abba95e06aed2d75debc0b5dd7af1a5799abd295ec6af32d78debd8b5e <<< 7488) |||
+    (0x3ebdbb5eafaedfd7636bc3f5dedaec7576f2bbdd5e1caf3fd7936bdbf5eadaf27579f2bd <<< 7776) |||
+    (0x8880b83ffc2061aec6576fabbd95e1eaeded763ebc3b5defaf26579fabd595edeaf3ed79 <<< 8064) |||
+    (0x3102f080044062200e1009080b43ffa20620f5f87e803da01f6f0f5e07e8c3da61f6c100 <<< 8352) |||
+    (0xfb987b303f381ec <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `6` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV6 : ℕ :=
+    0x81008100810081007f007f00810081007f007f007f007f00810081007f007f0081008100 |||
+    (0x7f007f0081008100810081007f007f00810081007f007f007f007f00810081007f007f00 <<< 288) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f007f007f0081008100 <<< 576) |||
+    (0x81008100810081007f007f007f007f007f007f007f007f0081008100810081007f007f00 <<< 864) |||
+    (0x810081007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 1152) |||
+    (0x81007f007f00810081008100810081007f007f007f007f007f007f007f007f0081008100 <<< 1440) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f007f00810081007f00 <<< 1728) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f00810081007f00 <<< 2016) |||
+    (0x7f00810081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 2304) |||
+    (0x7f00810081007f007f00810081007f0081007f007f0081007f00810081007f0081007f00 <<< 2592) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f0081007f007f008100 <<< 2880) |||
+    (0x81007f007f0081007f00810081007f007f00810081007f0081007f007f0081007f008100 <<< 3168) |||
+    (0x7f007f007f00810081007f0081007f007f00810081007f007f0081007f00810081007f00 <<< 3456) |||
+    (0x810081007f0081007f0081007f007f007f007f0081007f00810081007f0081007f008100 <<< 3744) |||
+    (0x81008100810081007f008100810081007f0081007f0081007f007f0081007f0081008100 <<< 4032) |||
+    (0x7f007f0081007f0081007f0081008100810081007f0081007f0081007f007f0081007f00 <<< 4320) |||
+    (0x7f0081008100810081007f0081007f007f007f0081007f0081008100810081007f008100 <<< 4608) |||
+    (0x7f0081008100810081007f007f007f007f007f007f00810081007f007f007f007f007f00 <<< 4896) |||
+    (0x7f0081007f0081008100810081007f007f007f007f007f007f0081007f007f007f008100 <<< 5184) |||
+    (0x7f008100810081008100810081007f007f007f007f0081007f008100810081007f007f00 <<< 5472) |||
+    (0x81007f0081007f0081007f0081007f0081007f007f0081007f0081007f0081007f008100 <<< 5760) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f00810081007f0081007f0081007f00 <<< 6048) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f007f0081007f008100 <<< 6336) |||
+    (0x81007f007f0081007f00810081007f007f0081007f0081007f0081007f00810081007f00 <<< 6624) |||
+    (0x7f00810081007f007f0081007f00810081007f007f00810081007f0081007f007f008100 <<< 6912) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f007f00810081007f0081007f00 <<< 7200) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 <<< 7488) |||
+    (0x81007f0081008100810081007f0081007f007f0081007f0081007f00810081007f008100 <<< 7776) |||
+    (0x81007f0081008100810081007f008100 <<< 8064)
+
+/-- Chunk `6` of `s6c1nGT`. -/
+def s6c1nGT6 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL6 s6c1nGTV6 512
+
+/-- Packed labels (17-bit fields) of chunk `7` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL7 : ℕ :=
+    0x1f180fa587bd03e881f1b104307f6441121fb6102e880084064200d0fb807b3c3f3e1ec0 |||
+    (0x3dd01f570f9207cec3dd61f540fd4882583fcc2079104287f6841141fb50fa407bdc3e8e <<< 288) |||
+    (0x29f813540a8e04910251811e40956049d02478129408ee0fd5082543fca207a0f9387ce0 <<< 576) |||
+    (0x51c02870149009ec04c002390132008b4046c025f01150098c054102798152409b604ed0 <<< 864) |||
+    (0x93904aa823c4128a09210546826a414fa09d904da82a4413ca0a8105100291013e00a540 <<< 1152) |||
+    (0x2fe08db045b8264c11ce098304f78292c143e0a3b052b827cc148e0a23047682524123a0 <<< 1440) |||
+    (0xcfead5f56dfab1b5581aad2d5666ab1ad5816ad2b5665ab8655cf2ad5956dc04c7822ac1 <<< 1728) |||
+    (0x93d5d5ead8f56f7ab0f557baacfd564eab0ed57b6acfb564dab9255d52ad8956f4ab87d5 <<< 2016) |||
+    (0x34ab27d59feabdf561fab7b55b1aaead5726ab7ad5b16aeab5725ab26559f2abd9561cab <<< 2304) |||
+    (0x395ddeab33d5a5eac0f5637ab6f55abaae7d570eab6ed5ab6ae7b570dab3255a52ac0956 <<< 2592) |||
+    (0xbabd995e0eaecbd7956bbef5eb5af2a5765abd695df6aebfd78f6bbbf5e9daf1e575fabd <<< 2880) |||
+    (0xed78febbbb5e9faee3d7a16bc4f5ee5af425771abdc95e26aed7d79b6bc1f5ecdaf36576 <<< 3168) |||
+    (0xcaed6d79bebc1b5ecfaf2b57652bd6d5df4aecad795ebbeb5eb7af1f575f2bd3d5ddcaeb <<< 3456) |||
+    (0x72d099601cb30658c32d23af4357712bdcd5e24aee2d7a1ebc4b5ee7af37576b2bd9d5e0 <<< 3744) |||
+    (0xa58952d0896014b30258c12d22960dcb36658f32d3b9618cb3ce59272d5195f4cb2ae589 <<< 4032) |||
+    (0x4b2a258912d0a96004b30a58c52d20960d4b36258f12d3a96184b3ca59252d5095f44b2a <<< 4320) |||
+    (0x95f5cb2a658932d0b9600cb30e58c72d21960c4b36a58f52d3896194b3c259212d5295f5 <<< 4608) |||
+    (0x095204f5826101436099405448249814f208f6960ccb36e58f72d399619cb3c659232d53 <<< 4896) |||
+    (0x150a08ea052982370148608ac04d8824f813c2094e052782380147e08b004d68250813ba <<< 5184) |||
+    (0x2788127a09b204c58289012f609f4047482a1812320a9604fb825e0144e0988054a82468 <<< 5472) |||
+    (0x47a829e8124a0a8a0459828f011c60a4c04a882778128209ae04578290011be0a5004a68 <<< 5760) |||
+    (0xf6517ad0bbe85e542f0a17568be345dba2f7d17c10bb885f242eb204cb82860130e09e80 <<< 6048) |||
+    (0xc488ec4475da386d1d968deb4726239b11c788e9c4751a390d1ce68e53178a8bcd45e0a2 <<< 6336) |||
+    (0xb5d1c4e8ec7475c238611d908de84727a39bd1c7e8e9f4750239011ce08e5046fa23b511 <<< 6624) |||
+    (0x8b0bcd85e0c2f6617ac8bbe45e522f0917570be385dbc2f7e17c08bb845f222eb146fba3 <<< 6912) |||
+    (0xe6b38659f3ecd59676fb3e6d9c3acedb66aeb3aa59a5ecf6966f7b34ad9d5acdeb67b617 <<< 7200) |||
+    (0x6f66f4b36e59e7eccf9673fb3ced9b7ace7b667eb3c259b1ecfc96727b362d9e1ace4b67 <<< 7488) |||
+    (0x12cfcf6724b3e759c36cedd66adb387d9f32cd5f676cb34b59d56cded67b5b3abd9a52cf <<< 7776) |||
+    (0xe85274261a146db3cf59b76ce7d667db36fd9e72ccff673cb36359e16ce4d67e5b3c3d9b <<< 8064) |||
+    (0xb09cc84fe426d214090a2384b9c28ae12b709d28501426ea141509ef84cfc275e134f097 <<< 8352) |||
+    (0xa1d84b6c289612a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `7` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV7 : ℕ :=
+    0x810081007f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f00 |||
+    (0x810081007f0081007f007f0081007f0081007f00810081007f007f0081007f0081007f00 <<< 288) |||
+    (0x810081008100810081007f007f007f007f0081007f0081008100810081007f0081008100 <<< 576) |||
+    (0x8100810081007f0081007f007f007f007f008100810081008100810081007f007f008100 <<< 864) |||
+    (0x810081007f007f007f0081007f0081008100810081007f007f007f007f007f007f008100 <<< 1152) |||
+    (0x7f0081007f0081007f008100810081008100810081007f007f007f007f0081007f008100 <<< 1440) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 1728) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 2016) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 2304) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f007f0081007f0081007f008100 <<< 2592) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f00810081007f007f008100 <<< 2880) |||
+    (0x81007f007f0081007f00810081007f0081007f007f0081007f00810081007f007f008100 <<< 3168) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 3456) |||
+    (0x81007f0081007f007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 3744) |||
+    (0x7f0081007f0081007f00810081007f0081007f0081007f0081007f0081007f0081007f00 <<< 4032) |||
+    (0x81007f0081007f0081007f0081007f007f0081007f0081007f0081007f0081007f008100 <<< 4320) |||
+    (0x810081007f008100810081007f007f007f00810081007f0081007f0081007f0081007f00 <<< 4608) |||
+    (0x8100810081007f008100810081007f007f008100810081008100810081007f007f008100 <<< 4896) |||
+    (0x7f007f008100810081007f008100810081007f007f0081008100810081007f007f007f00 <<< 5184) |||
+    (0x7f007f007f00810081007f007f007f0081007f007f007f008100810081007f0081007f00 <<< 5472) |||
+    (0x81008100810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f00 <<< 5760) |||
+    (0x81007f00810081007f0081007f007f007f007f0081007f007f007f0081007f0081007f00 <<< 6048) |||
+    (0x81008100810081007f0081007f0081007f007f007f007f0081007f007f007f0081007f00 <<< 6336) |||
+    (0x7f00810081007f0081007f007f0081007f007f0081007f0081007f008100810081007f00 <<< 6624) |||
+    (0x81007f007f00810081007f0081007f007f00810081007f007f0081007f00810081007f00 <<< 6912) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 7200) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 <<< 7488) |||
+    (0x7f007f0081007f0081007f008100810081007f0081008100810081007f0081007f008100 <<< 7776) |||
+    (0x810081007f0081007f0081007f007f00 <<< 8064)
+
+/-- Chunk `7` of `s6c1nGT`. -/
+def s6c1nGT7 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL7 s6c1nGTV7 512
+
+/-- Packed labels (17-bit fields) of chunk `8` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL8 : ℕ :=
+    0x139a09a804ec0268013e00a3904c482944130209f184d0c2766135309808528426221471 |||
+    (0x293c12fe095a0515025c814440a0b04dd8280c13a609540512025b014380a0504da827f4 <<< 288) |||
+    (0x391819b20e5606b40381c1b300e1707040369c1bf00d7709a604eb0267813dc0a3704c38 <<< 576) |||
+    (0x6a8837781a820dae068803a7c1a000e6f0738033fc1d400d0f0724833981c720cb606548 <<< 864) |||
+    (0xd5206a6837881a7a0db2068603a8c19f80e7307360340c1d380d1306d8834f81bc20d4e0 <<< 1152) |||
+    (0xc8a0caa065a838e819ca0e4a06ba037ec1b480e0b070a0366c1c080d6b06d6835081bba0 <<< 1440) |||
+    (0xd4ea76752f3a99dd4feea737545baa21d4e0ea7c75323a985d4f2ea6d7542b072a833681 <<< 1728) |||
+    (0x14d4da6a7935309a990d4f86a7035441aa2cd4e66a7f35339a978d4ec6a6a35411aa09d4 <<< 2016) |||
+    (0x2aaa1454da2a7915308a99054f82a7015440aa2c54e62a7f15338a97854ec2a6a15410aa <<< 2304) |||
+    (0xad4cc4aa0954d4aa76552f2a99d54feaa735545aaa2154e0aa7c55322a98554f2aa6d554 <<< 2592) |||
+    (0xd697ab4cc7a66fd2fb6989b4bbfa66f52fb298994bbea5d2d30de97af4cc5a5d2530da97 <<< 2880) |||
+    (0x7531f298394caea66e52fba989d4bbca66ed2fbe989f4bbda5d3530d297a94cc6a5d3d30 <<< 3168) |||
+    (0xca5c6d31fe983f4cada64ad301e98cf4b75a64a5301a98cd4b74a5c7d31f6983b4cafa5c <<< 3456) |||
+    (0x97aa6bd6a5e85af6697a76a64b5301298c94b76a64bd301698cb4b77a5c6531fa983d4ca <<< 3744) |||
+    (0xaf6997a8ebd5e5e7faf6397a5ebd2e5ec7af3f97abebd465ed3af4597aeebd825e91af6c <<< 4032) |||
+    (0xdec16f54f7b65bd0bdeb56f4ef7b35bd3a5ecdaf4297ad6bd525ed9af4897b06bd765e8b <<< 4320) |||
+    (0xbd17debb6f51f7b4dbcffdeaf6f4bf7b1dbd8fde976f57f79fdbda7dea36f5df7a2dbd23 <<< 4608) |||
+    (0x69ddb573da89ad50f69c6b4bfda8fad3bf6a9ebd9bde9d6f5af7a15bdb3dea96f60f7a45 <<< 4896) |||
+    (0xd5996a0db55bda7dad4af6996b4d7da9bad41f6aceb5125ab96d3896a85b51e5a5f6d539 <<< 5184) |||
+    (0xa656d56969f5b567da83ad4df69aeb4cbda95ad3ef6ab6b4fa5aad6d3296a55b5365a6b6 <<< 5472) |||
+    (0x5425a716d5c96a25b54fda77ad47f697eb4e3daa1ad44f6ae6b5065ab36d3596a6db52a5 <<< 5760) |||
+    (0x8ef9c824e05e726938a79c8ece23a71db37fe9c0ace41a714b3936b4ee5aa76d2f96a3db <<< 6048) |||
+    (0x08938d79c5e4e0be7299385f9cb2ce1da71ab38469c16ce2fa70bb394e9c464e47e6ff93 <<< 6336) |||
+    (0x23671dd37fd9c0b4e416714d39359c47ce4726fff38ec9c83ce052726f38a49c3a4e59e7 <<< 6624) |||
+    (0xb34e1d671ad38459c174e2f670bd394d9c3bce592708f38d49c5fce0b2729f385c9c8f4e <<< 6912) |||
+    (0xdca4c2522b693994925a49e52256936948dda457d261a924f49cea44bd24fa91bf49b69c <<< 7200) |||
+    (0xef499ea4575261e924d49cfa44b524fe91bd49b7a4c2d22b2939b4924a49ed2252936b48 <<< 7488) |||
+    (0xf2933b48f4a4b65231693c9490da4aa521f6933948f5a463d25ba921f49e6a43fd255a91 <<< 7776) |||
+    (0x827b7d3c009eafa463525be921d49e7a43f5255e91ed499fa4b6d231293cb490ca4aad21 <<< 8064) |||
+    (0x74f58277fd3dc09e0f4f0627b8d3bf89eb34f3a278ed3d489e4b4f342791d3d309e574f0 <<< 8352) |||
+    (0x4f2427a9d3c709e7 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `8` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV8 : ℕ :=
+    0x81007f007f007f0081007f0081007f008100810081007f0081008100810081007f008100 |||
+    (0x81007f008100810081007f0081008100810081007f0081007f0081007f007f007f007f00 <<< 288) |||
+    (0x81007f007f008100810081007f008100810081007f007f007f0081007f007f0081007f00 <<< 576) |||
+    (0x81007f007f007f008100810081007f008100810081007f007f0081008100810081008100 <<< 864) |||
+    (0x7f0081007f008100810081007f007f007f0081007f007f007f00810081007f007f007f00 <<< 1152) |||
+    (0x81007f0081007f008100810081007f007f008100810081007f008100810081007f007f00 <<< 1440) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f00 <<< 1728) |||
+    (0x7f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f0081007f00 <<< 2016) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 2304) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 2592) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 2880) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 3168) |||
+    (0x810081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 3456) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f007f007f007f007f0081008100 <<< 3744) |||
+    (0x810081007f007f007f007f007f007f007f007f0081008100810081008100810081008100 <<< 4032) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f00810081008100810081008100 <<< 4320) |||
+    (0x81008100810081007f007f00810081007f007f0081008100810081007f007f007f007f00 <<< 4608) |||
+    (0x810081007f007f007f007f00810081007f007f00810081007f007f00810081007f007f00 <<< 4896) |||
+    (0x810081007f007f0081008100810081007f007f00810081007f007f00810081007f007f00 <<< 5184) |||
+    (0x810081007f007f00810081007f007f007f007f00810081007f007f00810081007f007f00 <<< 5472) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 5760) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 6048) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 6336) |||
+    (0x7f007f0081008100810081007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 6624) |||
+    (0x7f007f00810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 6912) |||
+    (0x7f007f00810081007f007f0081008100810081007f007f007f007f008100810081008100 <<< 7200) |||
+    (0x81008100810081007f007f00810081007f007f007f007f0081008100810081007f007f00 <<< 7488) |||
+    (0x7f007f007f00810081007f007f007f007f008100810081007f007f007f0081007f007f00 <<< 7776) |||
+    (0x8100810081007f007f00810081008100 <<< 8064)
+
+/-- Chunk `8` of `s6c1nGT`. -/
+def s6c1nGT8 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL8 s6c1nGTV8 512
+
+/-- Packed labels (17-bit fields) of chunk `9` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL9 : ℕ :=
+    0x3ea91fc50fb947ef43eb51f790fcf47e443f4d4f562780d3db89e134f2a27a6d3c889e6b |||
+    (0x7dcc3f891f550fe147db43f951fa90fc747e843eed1f770fd047e3c3f511fcb0fb647f0c <<< 288) |||
+    (0x8bf846c2230e115488e1845b22396118888d784602232e1fa70fc847e7c3ef11f5b0fde4 <<< 576) |||
+    (0x1682087d058081ef412420a9d0470827740f820afd044082cf11c488b9846f222b611988 <<< 864) |||
+    (0x31211ca88b68470a22aa118688d8845fa2332115a88de845ca238a41342091d053082574 <<< 1152) |||
+    (0x57881f3413a208ed0548824b40f620b0d043882d3412a20a6d0488826b119688c0846ba2 <<< 1440) |||
+    (0xc5ee6ef729fb9375cd1ae5cd738eb936dcd16e5cb738db9de5cc52e6e9729c41662088d0 <<< 1728) |||
+    (0xebdcbfee6bf72b7b9435ccbae59d73a6b942dccb6e59b73a5b9ea5cbf2e6b972b4b9dfdc <<< 2016) |||
+    (0x6cb9d3dcb3ee65f7287b95b5cd7ae5fd73d6b95adcd76e5fb73d5b9d25cb32e6597284b9 <<< 2304) |||
+    (0xda9863b9c7dcb9ee68f726fb94f5cddae62d73beb94edcdd6e62b73bdb9c65cb92e68972 <<< 2592) |||
+    (0x4d305839a24c720e3a872aa97fb1ca2a602d3168391a1ccea60cd311838c24c3e0e34872 <<< 2880) |||
+    (0xf8e34472dc98601c92a62ad3028393a4c020e52871ea98db4c2e0e5c8719a98831c5ea62 <<< 3168) |||
+    (0x01c5f26241305e39a14c738e3a472ac97f81ca326021316e39191ccf260c1311e38c14c3 <<< 3456) |||
+    (0x485581329214410bc026221c93262a1302e39394c038e52471ec98d84c2f8e5c4719c988 <<< 3744) |||
+    (0x44d32855b1328a144d0bc6262112e2a161d0a6e2675427f898f44bda85af42c4097284d3 <<< 4032) |||
+    (0x214a10af025ba42d8097c84c84850012e3216110a682676427e098f84bdc85ac42c58972 <<< 4320) |||
+    (0x1334a14ad0af625b942d9897c44c82850342b389a944baa8597130ea177d0a1e264d1335 <<< 4608) |||
+    (0x4535a2a6510ba8979445ea2825129a8a69441642b209a984bac8594130f217710a18264e <<< 4896) |||
+    (0x8a6d4414a216d153e88bb44bfa252d141e882b4537a217d153688bf44bda253d1416882f <<< 5184) |||
+    (0x159688ef44d5a2765123a8a3943fea2b25111a89a94476a2a7510b2897d445ca28351292 <<< 5472) |||
+    (0x2b35111289ad4474a246d13be87fb451fa222d159e88eb44d7a247d13b687ff451da223d <<< 5760) |||
+    (0x64ebaf7dd93eeb7976dcbb02dd996eaed7696babbdda5eec097664a277512328a3d43fca <<< 6048) |||
+    (0xb1d76aebac7ddabeec39767cbad2ddb16ebad7636baebdd8deeb4976c4badeddb76ebdd7 <<< 6336) |||
+    (0x932eb7f76dfbadf5db7aebdb764dbaba5da52ec0f7667bb035d99aeaeb7695bb0edd9f6e <<< 6624) |||
+    (0xc65dab2ec3f767fbb0f5d9faeb1b76adbaea5d8d2eb4f76c7bad35db1aebab7635baf65d <<< 6912) |||
+    (0x064d3e0eb48765a9a231d5ea6a4d33d83b621d7ca6b5d34503ba64d5c0ec5876d29a67ba <<< 7200) |||
+    (0xd49a641daea67cd35183ac24d0e0ecc8759a9a834d2c0edd876129ac71dcca68dd35903b <<< 7488) |||
+    (0xd135963b054d3f8eb44765c9a201d5f26a4133de3b611d7d26b5134563ba54d5d8ec5476 <<< 7776) |||
+    (0x6cf6b67a393d7c1daf267c1351e3ac14d0f8ecc4759c9a804d2d8edd476149ac41dcd268 <<< 8064) |||
+    (0x79e8f4f5fa791f3daf9ecbcf1de7acd3d069e8fcf5fe791d3dae9eb2cf4167b293c749e4 <<< 8352) |||
+    (0x9ecb4f1da7acf3d0 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `9` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV9 : ℕ :=
+    0x81007f007f007f007f00810081007f007f007f007f008100810081007f007f007f008100 |||
+    (0x81007f007f007f007f008100810081007f007f007f00810081007f007f007f0081008100 <<< 288) |||
+    (0x810081008100810081007f008100810081007f0081007f007f007f007f007f007f008100 <<< 576) |||
+    (0x8100810081007f0081007f007f007f0081007f007f007f007f007f007f0081007f008100 <<< 864) |||
+    (0x810081008100810081007f0081007f007f007f0081007f007f007f007f007f007f008100 <<< 1152) |||
+    (0x81007f0081007f0081007f007f007f007f007f007f0081007f007f007f0081007f008100 <<< 1440) |||
+    (0x81007f007f0081007f00810081007f0081007f007f0081007f0081007f0081007f008100 <<< 1728) |||
+    (0x81007f0081007f007f0081007f0081007f0081007f00810081007f0081007f0081007f00 <<< 2016) |||
+    (0x7f0081007f0081007f00810081007f0081007f007f0081007f00810081007f0081007f00 <<< 2304) |||
+    (0x7f0081008100810081007f007f007f008100810081007f0081007f0081007f007f008100 <<< 2592) |||
+    (0x810081007f007f007f0081008100810081007f007f008100810081008100810081007f00 <<< 2880) |||
+    (0x81007f007f007f008100810081007f007f007f007f00810081007f007f007f007f008100 <<< 3168) |||
+    (0x81007f008100810081007f007f0081008100810081007f007f007f008100810081007f00 <<< 3456) |||
+    (0x81007f00810081007f007f0081007f0081007f00810081007f0081007f007f007f007f00 <<< 3744) |||
+    (0x7f0081007f0081007f007f0081007f0081008100810081007f0081007f007f0081007f00 <<< 4032) |||
+    (0x7f0081007f007f007f007f0081007f007f0081007f007f007f007f0081007f0081008100 <<< 4320) |||
+    (0x81007f007f00810081007f007f00810081007f007f007f0081007f0081007f0081008100 <<< 4608) |||
+    (0x81007f007f00810081007f007f00810081007f007f0081007f00810081007f007f008100 <<< 4896) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 <<< 5184) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f0081007f00 <<< 5472) |||
+    (0x7f0081007f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f00 <<< 5760) |||
+    (0x7f0081007f00810081007f0081007f0081007f0081007f007f0081007f0081007f008100 <<< 6048) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f007f0081007f008100 <<< 6336) |||
+    (0x7f007f007f0081007f008100810081007f0081007f0081007f0081007f00810081007f00 <<< 6624) |||
+    (0x7f007f0081007f007f007f007f007f007f00810081007f007f007f007f007f007f008100 <<< 6912) |||
+    (0x81007f007f007f0081007f007f007f007f007f007f0081008100810081007f0081007f00 <<< 7200) |||
+    (0x810081008100810081007f008100810081007f0081007f007f007f008100810081007f00 <<< 7488) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 <<< 7776) |||
+    (0x7f00810081007f007f00810081007f00 <<< 8064)
+
+/-- Chunk `9` of `s6c1nGT`. -/
+def s6c1nGT9 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL9 s6c1nGTV9 512
+
+/-- Packed labels (17-bit fields) of chunk `10` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL10 : ℕ :=
+    0x3d4e9ee2cf2967a693cd49e76cf53679793ddc9eb24f4127b2b3c759e464f6b27a3b3d7d |||
+    (0x797b3ddd9e9b4f35a7b8f3ca79e5f4f77a79df3d4f9e9bcf35e7b8d3ca69e5fcf77e79dd <<< 288) |||
+    (0xfb7aff9f7eaebff25fb16fea97ef5bf63dff9afdef7f569ee24f2927a6b3cd59e764f532 <<< 576) |||
+    (0xfcfdf9fafedf7f0ebfc25fc96ff697e95bf93dfe1afd2f7fb6bf6e5fcf6fd597fcdbf9fd <<< 864) |||
+    (0xeafbf6edfcf2fd5b7fccbf635ff9efded7f57bff2dfb12feab7ef4bf3e5fe76fe197f6db <<< 1152) |||
+    (0xedd7f0fbf3edfe72fe1b7f6cbf935fe1efd2d7fb7bfc2dfc92ff6b7e94bf9f5fb7eff9d7 <<< 1440) |||
+    (0x05110d628e644218a63851e288dc444d8a2d8529288041490a22b110a6297ebfcf5f9fef <<< 1728) |||
+    (0x9d2205d10d028e544200a63451e488df444c0a2d4529488071491222bd10a0297d149ca2 <<< 2016) |||
+    (0x3f43fd8a558515288a414c0a21311166291e146ca21d11016294644718a3b85322883c14 <<< 2304) |||
+    (0x8e104343fc0a554515488a714c12213d1160291d146d221dd1010294544700a3b4532488 <<< 2592) |||
+    (0x7020980f48080903c581fcc0ee207db03ac820040f0607ab8414c1f4610a707b9841dc1e <<< 2880) |||
+    (0x7841ac1e76103f077c83ff41d5a0fa9076e83f641e12100d081e03ce020d00f6c084c03e <<< 3168) |||
+    (0x0085203e8020a00f54080703c281fb40ede07d503ab81ffc0efa07a58413c1f3e109b07b <<< 3456) |||
+    (0xb51c6a8d6d4b3aa3bb523e0782840041d620fb5077083f941e2a1011082003d1020e80f7 <<< 3744) |||
+    (0x2a38f52e4a967d46b2a47f51dca8fa5495ea38952e7a966546bea47951dfa92ad47daa5c <<< 4032) |||
+    (0xd45faa4db520ea912d4a1aa32b52b6a92b547d6a5cd51c5a8d754b36a3bd523da8fbd495 <<< 4320) |||
+    (0xa8bfd4a72a41f526ca943d4892a56f5194a8be54a7ea419526fa9425489ea5695197a94e <<< 4608) |||
+    (0x61f4b14fd8bfec41b632db10758cbac53962fca94f545f6a4dd520da91354a16a32d52b5 <<< 4896) |||
+    (0xc599626cb113d8d1ec4ab62b5b12b58adac4496344b18bd87dec5cb6285b17358a1ac629 <<< 5184) |||
+    (0x87d6c5cf6287b10658cb2c53d62feb14ed8bf6c41f632fb167d89bec6bb623db1af588fa <<< 5472) |||
+    (0x166d89b6c6bf623fb12a58ad2c44d6346b112d8d16c4af62b7b17258a12c62d61f6b18ad <<< 5760) |||
+    (0x9230cbd06a44325c1a650c5c0674c31d81a270d3f0665434541961b1ae588f2c59d626eb <<< 6048) |||
+    (0x3e8191f0cc306a3432641a590c620673c31e01a1b0d4106624346c195d0cde0635c33d01 <<< 6336) |||
+    (0x3cc339818c70caf068d433141a810c8e067dc319019c30d2d064c4351c19850ce00632c3 <<< 6624) |||
+    (0x12063bc33a018bb0cb1068a4332c1a7d0c90067ac31a819bf0d33064b4352419790d0c06 <<< 6912) |||
+    (0x0a010400e8803ee03a7007600e8403da039b01c6803d8071000e501c700808072800db0d <<< 7200) |||
+    (0xe00384006c80e900400039e007180e6001e8039d01c5807bc072200ee01cb807e4072402 <<< 7488) |||
+    (0x1c01ee038201b68082406d001f801b7003b406e801ee010580df403f40378007780df803 <<< 7776) |||
+    (0xca35dd1a902e8601b58036806e2020101bb8039006e400f5006e00dec04060381007300e <<< 8064) |||
+    (0xe46900b8b85c228dbf173ca355d1ad02de646cc0b6d85d128d47469c0ba585b528da716e <<< 8352) |||
+    (0x1700a373d19e02e5 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `10` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV10 : ℕ :=
+    0x7f00810081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f007f00810081007f00 <<< 288) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f0081007f007f008100 <<< 576) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f00810081007f007f00 <<< 864) |||
+    (0x810081007f007f0081008100810081007f007f007f007f0081008100810081007f007f00 <<< 1152) |||
+    (0x7f007f0081007f00810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 1440) |||
+    (0x7f00810081007f0081008100810081007f00810081007f008100810081007f0081008100 <<< 1728) |||
+    (0x810081007f00810081007f00810081007f0081007f007f00810081007f00810081008100 <<< 2016) |||
+    (0x7f007f007f0081007f007f00810081007f0081007f0081007f007f00810081007f008100 <<< 2304) |||
+    (0x7f007f007f0081008100810081007f0081007f007f007f007f007f0081007f007f008100 <<< 2592) |||
+    (0x7f0081007f0081008100810081007f007f007f007f007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x7f007f007f0081007f0081008100810081007f007f007f007f007f007f0081007f007f00 <<< 3168) |||
+    (0x810081007f008100810081008100810081007f007f007f007f0081007f00810081008100 <<< 3456) |||
+    (0x810081008100810081008100810081008100810081008100810081008100810081008100 <<< 3744) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081008100810081008100 <<< 4032) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 4320) |||
+    (0x81008100810081008100810081008100810081007f007f007f007f007f007f007f007f00 <<< 4608) |||
+    (0x810081008100810081008100810081008100810081008100810081008100810081008100 <<< 4896) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f008100810081008100 <<< 5184) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 5472) |||
+    (0x810081008100810081007f0081007f007f007f007f008100810081008100810081007f00 <<< 5760) |||
+    (0x7f008100810081007f008100810081008100810081007f007f007f007f0081007f008100 <<< 6048) |||
+    (0x7f007f007f007f007f0081007f008100810081008100810081007f007f007f007f008100 <<< 6336) |||
+    (0x81007f007f007f008100810081007f007f007f007f0081007f0081008100810081007f00 <<< 6624) |||
+    (0x81007f007f007f007f00810081007f007f007f008100810081007f007f00810081008100 <<< 6912) |||
+    (0x7f007f007f0081008100810081007f007f0081008100810081007f007f007f0081008100 <<< 7200) |||
+    (0x81007f007f0081008100810081007f007f007f008100810081007f007f00810081008100 <<< 7488) |||
+    (0x7f0081007f007f007f007f0081007f007f007f0081007f0081007f008100810081008100 <<< 7776) |||
+    (0x81007f0081008100810081007f008100 <<< 8064)
+
+/-- Chunk `10` of `s6c1nGT`. -/
+def s6c1nGT10 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL10 s6c1nGTV10 512
+
+/-- Packed labels (17-bit fields) of chunk `11` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL11 : ℕ :=
+    0x2e0216fea374d19d82e62468e0b8c85c1a8dc346e00b8385c628d1f1730a33bd1ba02dfe |||
+    (0x5d2a8d3b46a20ba285b6a8d9b16f2a35ad1aa82e7a46de0b8485c5a8d23172ea33cd1b98 <<< 288) |||
+    (0xd3286ab4941b4a4b8d3586acc94271a872533d28be359e1742a352d1ae82dda46d20b6a8 <<< 576) |||
+    (0xa9524fad28f634ba1a9b24fdd290e34c64a178d5b869fc94bf1a892534d28c635a24a458 <<< 864) |||
+    (0x42c1a62a521127e835351a5ca51e127d035294a600d4046ae294304a198d5c86a0494c31 <<< 1152) |||
+    (0x998350d4a120d59469aa94944a0c0d564699294881ad0a518129a035114a5e0d3f46ada9 <<< 1440) |||
+    (0x8d83b121e660f0d873503bd61cc40f0c0735c3bd01cc70ebd078d43b141e651acea51712 <<< 1728) |||
+    (0xb087a383a621e7e0ee1873b03ba61d1c0ee0073bc3ba01d1f0eb107a343a641e7d0ebc87 <<< 2016) |||
+    (0x590eae87a483a5a1e820edf873c03b9e1d200ede073cc3b981d230eaf07a443a5c1e810e <<< 2304) |||
+    (0x6924f60ec2878a83b2a1e5a0f13873203bee1cb80f120732c3be81cbb0ec3078a43b2c1e <<< 2592) |||
+    (0x9649ef25b5926e4967a4a1925ce923e494fa4959256e92c24931a4aa9249692f24949a4b <<< 2880) |||
+    (0x2c979e49eb25b792cfc93764b9f250d929fc91f64adf24ad9263c9616492f25559293c97 <<< 3168) |||
+    (0x492f3494924b6d24f492cec937e4b9b250f929ec91fe4adb24af9262c961e492b2557929 <<< 3456) |||
+    (0x92cfc9636cb4b659392d5c926f496724a1d25cc923f494f2495d256c92c3493124aad249 <<< 3744) |||
+    (0x658492ce4962acb45659092d44961fcb3fe581d2cce964fcb57e58dd2d2e9606cb336587 <<< 4032) |||
+    (0x4b3fa581f2ccf964f4b57a58df2d2f9613cb39e57ed2cb69643cb51e58ad2d1695facb2d <<< 4320) |||
+    (0x96134b39a57ef2cb796434b51a58af2d1796064b332587b2cfd96364b4b2593b2d5d961f <<< 4608) |||
+    (0x81f5412708e0c461082c5116e209c50434233795fa4b2d2584b2ce5962a4b452590b2d45 <<< 4896) |||
+    (0x054422af118a20ae504a4237f411308cac45c0826d11c62090505942307414f08acc46b0 <<< 5184) |||
+    (0x8ac046b681f6412688e00461682c6116fa09c904322334416b08bec4720823d11b2207a5 <<< 5472) |||
+    (0x1b3a07a9054222ac118ba0ae904a2237c411288ca045c6826e11c7a090905922304414e8 <<< 5760) |||
+    (0xc13a62152e0e98e74bb2a5cd5316e96d74c2aa5fdd32ea97954c8b416a88be04726823e1 <<< 6048) |||
+    (0x9774bfaa615d2daa98b54b9ba5d9d31ca97054c43a6095334e97c74ca2a651d2f8a99a54 <<< 6336) |||
+    (0xf8699a34c10a620d2e0298e14bb1a5ccd316296d14c29a5fc532e697934c88a64552f2e9 <<< 6624) |||
+    (0x44d2f2299714bf9a61452da698b34b98a5d8531c697034c40a608d334297c14ca1a65052 <<< 6912) |||
+    (0xf44d368eb80769e9a021d57a6a89341a3b401d75a6b9934923b844d548ec9077169a46a6 <<< 7200) |||
+    (0x109a451d9fa6849353a3ab04cfe8ed4075be9a724d1c8ee5076369ab61dbda695935b23a <<< 7488) |||
+    (0x5535b43af74d370eb8c76989a011d5626a85341c3b431d7426b9534943b874d550ec9c77 <<< 7776) |||
+    (0xdcf3e279013d431d9e26845353c3ab34cff0ed4c75b89a714d1d0ee5c76309ab51dbc269 <<< 8064) |||
+    (0x29edccf3ea79053d419ec4cf32a79653d719edd4f3e679033d429ec44f32e79673d709ed <<< 8352) |||
+    (0x9ec54f32679633d7 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `11` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV11 : ℕ :=
+    0x7f007f007f0081007f007f007f007f0081007f007f007f0081007f0081007f0081008100 |||
+    (0x7f007f0081007f007f007f0081007f0081007f0081008100810081007f0081007f008100 <<< 288) |||
+    (0x81008100810081007f0081007f007f0081007f0081007f00810081007f0081007f007f00 <<< 576) |||
+    (0x7f007f0081007f0081007f00810081007f0081007f007f007f007f0081007f0081007f00 <<< 864) |||
+    (0x7f007f007f007f0081007f0081007f00810081007f0081007f007f007f007f0081007f00 <<< 1152) |||
+    (0x81007f007f007f007f0081007f007f007f007f0081007f00810081007f0081007f008100 <<< 1440) |||
+    (0x810081007f007f007f00810081007f007f007f008100810081007f007f007f007f008100 <<< 1728) |||
+    (0x81007f007f007f008100810081007f007f007f007f00810081007f007f007f007f008100 <<< 2016) |||
+    (0x81007f007f007f007f00810081007f007f007f008100810081007f007f00810081008100 <<< 2304) |||
+    (0x810081007f007f007f007f0081008100810081007f007f0081007f007f007f0081008100 <<< 2592) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f00810081007f007f0081008100 <<< 2880) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f008100810081008100 <<< 3168) |||
+    (0x7f0081007f007f0081008100810081007f007f007f007f0081008100810081007f007f00 <<< 3456) |||
+    (0x7f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f007f008100 <<< 3744) |||
+    (0x81007f007f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f00 <<< 4032) |||
+    (0x81007f0081007f007f0081007f0081007f0081007f00810081007f0081007f0081007f00 <<< 4320) |||
+    (0x8100810081007f0081008100810081007f0081007f0081007f00810081007f0081007f00 <<< 4608) |||
+    (0x7f007f0081007f007f007f0081007f0081007f00810081007f007f0081007f0081007f00 <<< 4896) |||
+    (0x7f007f007f007f0081007f007f007f0081007f0081007f00810081007f0081007f007f00 <<< 5184) |||
+    (0x810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f007f008100 <<< 5472) |||
+    (0x81007f007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 5760) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 6048) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f0081007f007f008100 <<< 6336) |||
+    (0x7f007f007f00810081007f007f007f007f00810081007f0081007f007f0081007f008100 <<< 6624) |||
+    (0x7f007f007f008100810081007f007f007f00810081007f007f007f008100810081007f00 <<< 6912) |||
+    (0x81007f007f007f007f008100810081007f007f007f0081007f007f007f00810081007f00 <<< 7200) |||
+    (0x810081007f007f007f0081008100810081007f007f008100810081007f007f007f008100 <<< 7488) |||
+    (0x81008100810081007f007f007f007f007f007f007f007f0081008100810081007f008100 <<< 7776) |||
+    (0x7f007f007f007f008100810081008100 <<< 8064)
+
+/-- Chunk `11` of `s6c1nGT`. -/
+def s6c1nGT11 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL11 s6c1nGTV11 512
+
+/-- Packed labels (17-bit fields) of chunk `12` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL12 : ℕ :=
+    0x3da19e95cf1a27a213dd39eac4f26e79c73da09ec5cf32279613d739edc4f3ee79073d40 |||
+    (0x79c13da39e94cf1aa7a253dd19ead4f26679c33da29e954f1a67a233dd29eaccf26a79c5 <<< 288) |||
+    (0xf6befca97daebf12df77efc497ddebe77df656f9dd7d949e944f1ae7a273dd09eadcf262 <<< 576) |||
+    (0xea7df4d6fa9d7d34bebfdf416fafd7d04befadf83efbe97e0ebe8fdf596fa3d7d64bf2ad <<< 864) |||
+    (0xdf6be83df5f6fa0d7d7cbe9bdf536fa6d7d4cbf1edf71efc797dc6bee2df8fefb897e3eb <<< 1152) |||
+    (0xb2d7cecbeeedf89efbb97e26bed6df95efb597e56beb3df476facd7d1cbf06df7defc197 <<< 1440) |||
+    (0x92c7d269d511ed5a75a53b623df31f22274193a7c3e7c4ed30f7907c389ddebecbdf3b6f <<< 1728) |||
+    (0xeda76653bc23e234e7c8f8ec7d069d414ebb0f6d07bd89dae1f2a274593a9c3e8c4e848f <<< 2016) |||
+    (0x8f4e850f9207d209d521ed4275a93b643df01f23a74153a7a3e7f4ed28f79c7c3e9ddd1e <<< 2304) |||
+    (0x64299f1eec276693bc43e204e7d0f8e07d009d424eba8f6dc7bde9dad1f2ba74553a9a3e <<< 2592) |||
+    (0x9c52e0885d14ac21fd510c4296f44450a31c522088bd443d0a35c520088cd14942209510 <<< 2880) |||
+    (0x5a20991062299c440d0a4dc5340882d14642221511a428ff145c222551184290f43f50a5 <<< 3168) |||
+    (0xc43f48a59052e6885e14ada1fd910c2296c44448a310522688be443c8a350520688ce149 <<< 3456) |||
+    (0x685391331a14850b822603440c8a4d05346882e1465a221911a228fc145da22591182290 <<< 3744) |||
+    (0x90aac26944277098b04c1885ce1345a15250ad225ab42e88984c4c6684f142cc8976c4cf <<< 4032) |||
+    (0x097604cf0853a1330214890b84260042a309a104bc885a612fe216f90a3c265c12da215d <<< 4320) |||
+    (0x12dba15d50aaa26974276898bc4c1e85cd1344215290ad425a842e9098404c6084f242cd <<< 4608) |||
+    (0x98411c9ba606931aa38f84c368e380731e984242a289a1c4bce85a512ffa16f50a3a265f <<< 4896) |||
+    (0x313c38b34c628e42072ce97ea1cbfa6149313a38b01c9a2606531ac38fb4c370e38c7318 <<< 5184) |||
+    (0x6285309c39834bfa8e560722e98ba1c57a6289309a39804c630e42c72c897e91cbe26145 <<< 5472) |||
+    (0xc1f0e64c71b898711c83a6329304a39284c1e8e64071be98724bfb0e56c722898b91c562 <<< 5760) |||
+    (0xeca9f95cfb8e7be73e9b9f894fbea7c153e829f11cf9ae7eb73eb31c8226325304c392b4 <<< 6048) |||
+    (0xcd53e229f41cf82e7df73f139f4d4f7ca7dc53f2a9f65cfd0e7ca73e3b9f1d4f94a7e853 <<< 6336) |||
+    (0xb827be13e989f1ccf9467e833ec99f104f9a27eb13eb09f88cfbe67c133e819f594fd6a7 <<< 6624) |||
+    (0x404f8227df13f109f58cfd667cd33e219f644fd027ca13e389f4ccf7c67dc33f299f944f <<< 6912) |||
+    (0x29bad8dd9c2eb017641bacc5d966ead37628bad95d9ceeb077642bacddd96aead5762b9f <<< 7200) |||
+    (0x97768abad9dd9caeb057643bacd5d96eead7762abad85d9c6eb037640baccdd962ead176 <<< 7488) |||
+    (0xe6eb937688bb085db46ebc376a0bafcddae2eb917689bb09ddb4aebc576a3bafd5daeeeb <<< 7776) |||
+    (0xc22e5517842c0fbb095db4eebc776a2bafdddaeaeb95768bbb08ddb42ebc176a1bafc5da <<< 8064) |||
+    (0xf458d0b0dc59408b2d15fe22f45170c2bcb45df0b04c57888b8945bd0af5c58008bcd15d <<< 8352) |||
+    (0x162c22bd516c42c6 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `12` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV12 : ℕ :=
+    0x8100810081008100810081007f007f007f007f0081008100810081007f007f007f007f00 |||
+    (0x810081008100810081008100810081007f007f007f007f007f007f007f007f0081008100 <<< 288) |||
+    (0x810083007f007d007d007f0081008300830081007d007f007f007d007f007f007f007f00 <<< 576) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f007f00810081007f0083008100 <<< 864) |||
+    (0x8300810081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 <<< 1152) |||
+    (0x810081007f0081007f007d007d007f0083008100810083007d007f007f007d0081008300 <<< 1440) |||
+    (0x81007f0081007f00810081007f007f0081007f0081007f008100810081007f0081008100 <<< 1728) |||
+    (0x810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f007f007f00 <<< 2016) |||
+    (0x8100810081007f0081008100810081007f00810081007f0081008100810081007f008100 <<< 2304) |||
+    (0x7d007d007d0083008300830083007d0083007d007d007d007f007f0081007f0081007f00 <<< 2592) |||
+    (0x83007d0083007d007d007d007d008300830083008300830083007d0083007d007d007d00 <<< 2880) |||
+    (0x7d007d007d0083007d0083008300830083007d007d007d007d007d007d00830083008300 <<< 3168) |||
+    (0x81007f0083007d007d007d007d007d007d0083008300830083007d0083007d007d007d00 <<< 3456) |||
+    (0x81007f007f007f007f007f007f00810081007f007f007f0081007f007f007f0081008100 <<< 3744) |||
+    (0x7f00810081007f007f007f007f008100810081007f007f007f0081007f007f007f008100 <<< 4032) |||
+    (0x7f008100810081007f007f007f0081007f008100810081007f007f007f0081007f007f00 <<< 4320) |||
+    (0x7d008300830083007d00830083007d00830083008100810081007f007f00810081008100 <<< 4608) |||
+    (0x7d0083007d007d007d0083007d007d00830083007d0083007d0083007d007d0083008300 <<< 4896) |||
+    (0x83007d007d0083007d007d007d0083007d007d00830083007d0083007d007d0083007d00 <<< 5184) |||
+    (0x83007d00830083007d007d0083007d007d007d0083007d007d0083007d007d007d007d00 <<< 5472) |||
+    (0x7f007f0083007f0081007d0081007d0083007f007f0083007d0081007d0081007f008300 <<< 5760) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f008100810081008100 <<< 6048) |||
+    (0x81007d0081007d0083007f007f007f0081008100810081007f007f007f007f0081008100 <<< 6336) |||
+    (0x810081007f007f007f007f00810081007f0083007d0081007d0081007f00830083007f00 <<< 6624) |||
+    (0x7f007f00810081007f007f007f007f00810081007f007f0081008100810081007f007f00 <<< 6912) |||
+    (0x7f007f00810081007f007f0081008100810081007f007f007f007f008100810081008100 <<< 7200) |||
+    (0x7f007f007f007f00810081007f007f0081008100810081007f007f00810081007f007f00 <<< 7488) |||
+    (0x7f0081007f007f007f007f0081007f007f007f0081007f0081007f008100810081008100 <<< 7776) |||
+    (0x81007f0081008100810081007f008100 <<< 8064)
+
+/-- Chunk `12` of `s6c1nGT`. -/
+def s6c1nGT12 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL12 s6c1nGTV12 512
+
+/-- Packed labels (17-bit fields) of chunk `13` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL13 : ℕ :=
+    0x8b8a45bc8af5058068bce15dda2e5917822c0c45af0b1cc58c88ae9164e22cc5164c2c2b |||
+    (0x164a2c28162da2bd916c22c6c458c8b0d059468b2e15ffa2f49170a2bc845de8b040578e <<< 288) |||
+    (0xb75c5b708d9546d90b87c5be08ddd1734235951a542ea745ae8b1c058ce8aea164fa2cc9 <<< 576) |||
+    (0x71e2344519fc2e53173a235651a6c2e9b46d70b88c5bd88de11720234351a042e4f46bd0 <<< 864) |||
+    (0xdad174c234d51ab42e771728233f51a242e3f46c50b71c5b908d8546c30b72c5b888d891 <<< 1152) |||
+    (0xacc2e6b46ef0b7cc5c388db146cb0b6ec5ba88d791726234051a1c2e4346f10b7bc5c408 <<< 1440) |||
+    (0x4a0025481780093a069d0310001540b70059c02d2817e00b320685031c00541752234a51 <<< 1728) |||
+    (0x94a065d0330001340c3800580028817700b420645033c005240c08015400a6817140b400 <<< 2016) |||
+    (0x7240ba004f802808184009ea066d0328002b40b6800fc0082817d001f20689031a015400 <<< 2304) |||
+    (0xcb59be009fa062d0348002940bd800b00054816b002020649033a015240c10055402a681 <<< 2592) |||
+    (0x7eb2bb5946ac97565d6b2ef592cacba564beb25b5976ad33566f6b37f5a64acde5699eb4 <<< 2880) |||
+    (0x65645eb22b598eaceb56936b49f59d4ad265675eb3ab5a4eacaf56516b28f595caca2565 <<< 3168) |||
+    (0xcad1a567beb3db5a36ad0f56816b40f5a1cad025687eb43b5a06ac8b56636b31f5914acc <<< 3456) |||
+    (0xf307c98aa4c1fe60fb3156acd3563f6b1ff59a4ac7e5669eb34b58feacf7568d6b46f59e <<< 3744) |||
+    (0x6627f3094989e4c25e612b313e98634c5b662df30c498b64c31e618b316e983f4c55662a <<< 4032) |||
+    (0x4c676633f30f498ce4c3de61eb319e98574c616630f30ac98c24c2be615b3186984b4c4f <<< 4320) |||
+    (0x986f4c6d6636f30dc98da4c37e61bb31b698874c79663cf310c98f24c43e621b31e6987b <<< 4608) |||
+    (0x93f94a528d39c6a3e94dd1aa3a5015287a357f98934c736639f312498e64c49e624b31ce <<< 4896) |||
+    (0x282c35541a54251a9296434f04a050d5206b2094521a91a5385293234db4a208d60c6a76 <<< 5184) |||
+    (0x52c528d234ab1aaba5055289a358f4a3a8d2dc69de94ad4a570d3b0696894761ac625139 <<< 5472) |||
+    (0xa6f0d47069c894a649fd0d4e06b0094421a6c2526929c435204a288d64c6a9694091a79a <<< 5760) |||
+    (0x1f718d60c94c64f0322719260c6cc64303287191e0c78c63d032971abe250f9280c35444 <<< 6048) |||
+    (0x3b49145487f246852354915548cf24405229491b548b724445227491e518ee0c90c65103 <<< 6336) |||
+    (0x5c923b29146487ea46892352915648cea4409229291b648b6a4449227291e64887245c52 <<< 6624) |||
+    (0xef8c900651631f418d78c94064f6322419278c6c064363284191f8c78063d632944886a4 <<< 6912) |||
+    (0xbe902e484764209204590464853641a92015908fc817a408f210690a7c823a402f20d618 <<< 7200) |||
+    (0xab2014903a484d641d9202d90524859641791ffd909bc81da405f20ee90b3c829a3fff20 <<< 7488) |||
+    (0x92417b1ffc908f4817e408d210790a74823e402d20d7902ec8472420b20449046c853241 <<< 7776) |||
+    (0x24d39a6879337e909b481de405d20ef90b34829e3ffd20bf903ac84d241db202c9052c85 <<< 8064) |||
+    (0x69a064d33a68a933969a5bccfd6675f346d9a73cd09666ff343d99fa4d2da68d933ae9a1 <<< 8352) |||
+    (0x99ee4d27a690933c <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `13` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV13 : ℕ :=
+    0x8100810081007f0081008100810081007f0081007f007f0081007f0081007f0081008100 |||
+    (0x810081007f008100810081007f0081007f0081007f007f007f007f0081007f0081007f00 <<< 288) |||
+    (0x810081008100810081007f007f007f007f0081007f0081008100810081007f0081008100 <<< 576) |||
+    (0x7f007f007f0081007f0081008100810081007f007f007f007f007f007f0081007f008100 <<< 864) |||
+    (0x7f007f007f007f007f0081007f0081008100810081007f007f007f007f007f007f008100 <<< 1152) |||
+    (0x7d007d007d00830081007f007f007f007f007f007f0081008100810081007f0081007f00 <<< 1440) |||
+    (0x83007d0083007d007d007d007d007d007d0083007d0083008300830083007d007d007d00 <<< 1728) |||
+    (0x8300830083007d0083007d007d007d0083007d007d007d007d007d007d00830083008300 <<< 2016) |||
+    (0x7d007d007d008300830083008300830083007d0083007d007d007d007d007d007d008300 <<< 2304) |||
+    (0x8100830083008100810083008300810083008100810083008300830083007d0083007d00 <<< 2592) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f008300810081008300 <<< 2880) |||
+    (0x7f00810081007f0081007f007f00810081007f007f0081007f00810081007f007f008100 <<< 3168) |||
+    (0x7f007f007f007d007d007f007d007f007f007d007d007f007f007d007f007d007d007f00 <<< 3456) |||
+    (0x81008100810081007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 3744) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081008100810081008100 <<< 4032) |||
+    (0x810081008100810081008100810081007f007f007f007f007f007f007f007f007f007f00 <<< 4320) |||
+    (0x7f007f007f008100810081007f007f007f00810081008100810081008100810081008100 <<< 4608) |||
+    (0x8100810081007f007f007f007f00810081007f007f007f007f007f007f00810081007f00 <<< 4896) |||
+    (0x7f007f008100810081007f007f007f007f00810081007f007f007f0081007f007f007f00 <<< 5184) |||
+    (0x8100810081007f007f0081008100810081007f007f007f008100810081007f0081007f00 <<< 5472) |||
+    (0x7f007f00810081007f0081007f0081007f007f007f0081007f007f007f007f0081007f00 <<< 5760) |||
+    (0x7f0081007f007f0081007f0081008100810081007f008100810081007f0081007f008100 <<< 6048) |||
+    (0x81008100810081007f00810081007f0081008100810081007f008100810081007f008100 <<< 6336) |||
+    (0x7f007f00810081007f007f00810081007f007f0081007f0081007f008100810081007f00 <<< 6624) |||
+    (0x7f007f007f007f00810081007f007f0081008100810081007f007f00810081007f007f00 <<< 6912) |||
+    (0x810081007f007f007f007f00810081007f007f0081008100810081007f007f0081008100 <<< 7200) |||
+    (0x7f007f00810081007f007f007f007f00810081007f007f0081008100810081007f007f00 <<< 7488) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081008100 <<< 7776) |||
+    (0x81007f0081007f0081007f0081007f00 <<< 8064)
+
+/-- Chunk `13` of `s6c1nGT`. -/
+def s6c1nGT13 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL13 s6c1nGTV13 512
+
+/-- Packed labels (17-bit fields) of chunk `14` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL14 : ℕ :=
+    0x337c9a5accfde675b346f9a72cd09e66fb343f9a4fccf76678f34859a67cd036672f3455 |||
+    (0x68ad33949a4eccf7e678b34879a66cd03e672b345799fb4d2d268dd33ac9a134d392687d <<< 288) |||
+    (0x89eac40562c0b1a8d8a4ec3d762a9b19dd89e6c40362c399ef4d272690d33c49a074d332 <<< 576) |||
+    (0x18558922c46162f2b191d8986c43362dbb184d892ec46762f1b1a958a42c3d162aab19c5 <<< 864) |||
+    (0x2abb19cd89eec40762c1b1a858a4ac3d562a8b19d589e2c40162c2b1905898ac43562d8b <<< 1152) |||
+    (0x43762d9b185d8926c46362f3b19158982c43162dab1845892ac46562f0b1a9d8a46c3d36 <<< 1440) |||
+    (0xbf02ea416ff0c0586118301018450b8985cf82e20173d0c248601030941807b190d898ec <<< 1728) |||
+    (0x5185eb8314017ad0b6c85dd02db417770bf0861b02fc4186f0bcd85ad82f3016b50ba885 <<< 2016) |||
+    (0x730c0b860e8302818390ba685c002e9c17030c2a85fe030ac17fb0b8785d082e1817410c <<< 2304) |||
+    (0xa811e50b7285da02dcc176b0c4f85ec8313817b10bd385aa82f4816a90bee861c02fbc18 <<< 2592) |||
+    (0x9c252a112408b7847f822d811fd08db0451c236a114409070467c241a119c08ab8479822 <<< 2880) |||
+    (0x90468c242211a00917042fc245a10bc087b84a1821e812850867849782198125d094b044 <<< 3168) |||
+    (0x808698498821a0126108d5044ec2352113808b98480822e0120108a584768229011d9090 <<< 3456) |||
+    (0x75181a951d4b46a333516b0875849e821d0127909190430c246210c009450446c2512111 <<< 3744) |||
+    (0x6a4e35243a8f0d484ea4b75229a94554ae2a3615182a95054b4aa3355168a944d4aeea36 <<< 4032) |||
+    (0x54aeaa3655180a95154b42a331516aa8e4547eaa4e55240a8f154842a4b1522aa8e5d47e <<< 4320) |||
+    (0xa8e5547e2a4e15242a8f05484aa4b55228a945d4ae6a3635183a950d4b4ea3375169a944 <<< 4608) |||
+    (0x200e90afc84b23fef202490a3c8452401f203ca8e4d47eea4e75241a8f1d4846a4b3522b <<< 4896) |||
+    (0x41fb20ce904fc81b2416f20e49043c8152419f20fc9096c857a404b1ff6908ac851a407b <<< 5184) |||
+    (0x845e4019203f909748576404d1ff5908b48516407d200d9036c827a41cb20b6902ac821a <<< 5472) |||
+    (0x0424815e419920ff90374827641cd20b5902b4821641fd20cd90ae484be3fe9202790a24 <<< 5760) |||
+    (0x4ac99f7cd07a683b33ec99d3ccdda66eb33a49a33cd0da686b3464904e481be416920e79 <<< 6048) |||
+    (0x98b349499ebcd01a680b33d499dfcce3a671b33bc9a3fcd13a689b347c9a57cd37a69bb3 <<< 6336) |||
+    (0x2b6695d34df9a0e4cfb667dd341f99ba4ce96674d33779a1a4d19668cd34379a4bcd31a6 <<< 6624) |||
+    (0x624d256692d34c79a024cf5667ad340799c64cef6677d338f9a264d1f668fd344f9a6e4d <<< 6912) |||
+    (0x7219fb8cf1c687e346f1a138cf5c689e349f19e40d0606940345019dc0cfa068e034409a <<< 7200) |||
+    (0x82937149a2a4bd526da93bd49aaa4c95273a93cd498d24d2927a493a2497524ce9278493 <<< 7488) |||
+    (0xac68e6344349a324bd926dc93be49ab24c99273c93ce498ca4d2527a293a14974a4ce527 <<< 7776) |||
+    (0xba36951aea2e8719fa0cf106878346c1a120cf506898349c19e58d06c6946345319dd8cf <<< 8064) |||
+    (0xb46e88b98c5c668dc11700233c91a442e10469d0b6a05bb08d4a46e68b97c5c5e8dbd174 <<< 8352) |||
+    (0x1745a36651ad22e7 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `14` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV14 : ℕ :=
+    0x7f0081007f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f00 |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 288) |||
+    (0x830083008300830083008300830083008300830083008300830083007f0081007f008100 <<< 576) |||
+    (0x830083008300830083008300830083008300830083008300830083008300830083008300 <<< 864) |||
+    (0x830083008300830083008300830083008300830083008300830083008300830083008300 <<< 1152) |||
+    (0x7d007f0081007d0083008300830083008300830083008300830083008300830083008300 <<< 1440) |||
+    (0x81008100810081007f008100830081007f0083007f0083007d007f007f0083007d007f00 <<< 1728) |||
+    (0x81007f0081008100810081007f0081007f007f0081007f0081007f008100810081007f00 <<< 2016) |||
+    (0x7f007d007d0081007f007d007f007d0083007f007f007f0081007f0081007f0081008100 <<< 2304) |||
+    (0x7f0083007d007f007f0083007d007f007d007f0081007d00810083007d0081007d008100 <<< 2592) |||
+    (0x7f0081007f0081007f007f007f0081007f007f007f007f0081007f00830081007f008300 <<< 2880) |||
+    (0x7f007f0081007f0081007f008100810081007f0081008100810081007f00810081008100 <<< 3168) |||
+    (0x7d007d007f007d0083007f0083007f008100830083007f0081008300810083007d008100 <<< 3456) |||
+    (0x830083008300830083008300830083007d007d007d007d0083008300830083007d007d00 <<< 3744) |||
+    (0x830083007d007d007d007d007d007d007d007d0083008300830083007d007d007d007d00 <<< 4032) |||
+    (0x7d007d007d007d00830083008300830083008300830083007d007d007d007d0083008300 <<< 4320) |||
+    (0x810081007f007f007f007f0081008100810081007d007d007d007d008300830083008300 <<< 4608) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 4896) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f007f007f007f007f00 <<< 5184) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 5472) |||
+    (0x81007f007f0081007f00810081007f0081007f0081007f0081007f007f0081007f008100 <<< 5760) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f0081007f0081007f00810081007f00 <<< 6048) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f0081007f0081007f00 <<< 6336) |||
+    (0x81007f0081008100810081007f00810081007f0081007f007f0081007f0081007f008100 <<< 6624) |||
+    (0x7f008100810081007f0081007f0081007f007f007f007f0081007f0081007f0081008100 <<< 6912) |||
+    (0x810081007f008100810081007f0081007f0081007f007f0081007f008100810081008100 <<< 7200) |||
+    (0x7f0081007f0081007f007f007f0081007f007f007f007f0081007f0081007f0081008100 <<< 7488) |||
+    (0x7f0081007f007f00810081007f008100810081007f00810081007f008100810081008100 <<< 7776) |||
+    (0x7f0081007f007f00810081007f008100 <<< 8064)
+
+/-- Chunk `14` of `s6c1nGT`. -/
+def s6c1nGT14 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL14 s6c1nGTV14 512
+
+/-- Packed labels (17-bit fields) of chunk `15` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL15 : ℕ :=
+    0x2e881707a347519da2dff46aa8b79c5b6e8d4546a30b6d05bc88d5616fe233b91a3c2e0c |||
+    (0x5cb88dce46a48b76c5b568d391709a348519e22e0346e10b8c05cc08dd2173c235a91b34 <<< 288) |||
+    (0x03a10210011f408f005800096810100b0a03b9021c015e1742235d91b4c2e9446df0b8b0 <<< 576) |||
+    (0x07c00480001a812700252044501e2004d407f0057c00988121408c004840018810700912 <<< 864) |||
+    (0x0fb009c203d102280135408e800e002968102001ca03b5021a00360005a045d01ee000e4 <<< 1152) |||
+    (0x1d600244082004d80046811b00a52044901e4014d407e800dc029881224092004dc00448 <<< 1440) |||
+    (0x5bab2db59b7acb7d66d6b36d596cad2e5649ab24b5a5fac93d6976b4bd59240010a042d0 <<< 1728) |||
+    (0x9e5691ab48b593fad23d64f6b27d5a44acaa5673ab39b5957ace7d6556b2ad59ccacda56 <<< 2016) |||
+    (0x9cacc2567fab3fb5987acffd6616b30d59fcac865685ab42b590fad0bd6436b21d5a14ac <<< 2304) |||
+    (0xed30bcad16563dab1eb5a2fac7bd68b6b45d58f4acf25667ab33b59e7accfd6796b3cd59 <<< 2592) |||
+    (0x36611d30a498a64c59a62cb314f98b3cc536629d3164983a4c2fa617b3077985fcc1d660 <<< 2880) |||
+    (0x3cc3b661dd3104989a4c5fa62fb313798bfcc4d6626d317c98464c29a614b308f9853cc2 <<< 3168) |||
+    (0x7988fcc35661ad311c98ca4c77a63bb319798efcc656632d31dc98764c41a620b30ef988 <<< 3456) |||
+    (0x094321a5c24fa92984357098d64c71a638b31af98e3cc6b6635d31c4986a4c47a623b30d <<< 3744) |||
+    (0x928c435104a0d0d3206b4094d21a7e250b9290c35344a5f0d5b0698893f64a3d0d4a06a0 <<< 4032) |||
+    (0xa5095299a359f4a4a8d59c6a1e945d4a2f0d4306ac894961ace25339284c34d41aac2522 <<< 4320) |||
+    (0x49fa8d31c6ade94bd1a9ba5215285a34ff4a688d68c699694191a89a51852912355b1a6b <<< 4608) |||
+    (0x850e42c3099d04b888536131e216b909fc25ec1ab9a530527d234bb4a188d40c6a569479 <<< 4896) |||
+    (0x0b62264312e5a15650b12269b42888988c4ca685e11352216590acc25d442ef099304c38 <<< 5184) |||
+    (0x993c4c3e850d42c2899dc4b8e8535131fa16b509fa25ef4294896ec4cd6857912f9a1405 <<< 5472) |||
+    (0x2f8214090b64264012e4215690b1426984289098804ca085e21353a16550aca25d742ee8 <<< 5760) |||
+    (0x88d1c5fa60b530fa396f1cb826209306438c04c490e68071a098624295096e04cd0857a1 <<< 6048) |||
+    (0x1ca39574c028e3dc728e98b54c550e4e071d097fa1ca426369301439184c2e8e33c733e9 <<< 6336) |||
+    (0x3307338988e1c5e260b930fc396c1cb9a6205306238c34c488e68c71a698611c93a60553 <<< 6624) |||
+    (0x922605931cc39544c030e3d0728898b64c548e4ec71d697f91ca5a63653012391b4c2f0e <<< 6912) |||
+    (0xa3b7d15c36adfd57032b849dbe2ee0f77003b8555bdcae0c5701ab7dddc30edfa7704b1c <<< 7200) |||
+    (0xc17018b8255bf4ae1856fbab80ddc18edee770abb8015c1eadf157092b819dbfaee1b76f <<< 7488) |||
+    (0xe2df117090b848dbe26e0f37001b7d05c362dfd17030b7dcdc306dfa37049b8545bdc2e0 <<< 7776) |||
+    (0x9d100289e144c3b80cdc186dee370a9b8245bf42e1816fb8b818dbfa6e1b36fa1b8005c1 <<< 8064) |||
+    (0xaa218d100a89e544c1a20cd0faa89b544a9a2195100689e344c2a20c50fae89b744a8a21 <<< 8352) |||
+    (0xa20d50fa689b344a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `15` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV15 : ℕ :=
+    0x7f007f007f0081007f007f00810081007f0081007f007f0081007f007f0081007f007f00 |||
+    (0x7f007f0081007f007f007f0081007f007f0081007f007f007f007f0081007f007f008100 <<< 288) |||
+    (0x7d007d007d007d0083007d00830083007d0083007d0083007d007d0081007f0081008100 <<< 576) |||
+    (0x7d007d0083007d0083007d00830083007d0083007d007d007d007d0083007d007d008300 <<< 864) |||
+    (0x7d007d00830083007d0083007d0083007d007d0083007d0083008300830083007d008300 <<< 1152) |||
+    (0x7d007f007f007d007d0083007d007d007d007d0083007d00830083007d0083007d008300 <<< 1440) |||
+    (0x7f00810081007f007f0081007d007f007f007d0081008300830081008100830083008100 <<< 1728) |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f007f00810081007f00 <<< 2016) |||
+    (0x7f007d007d007f007f007d00810083008300810081007f007f00810081007f007f008100 <<< 2304) |||
+    (0x7f007f007f007f007f007f007f007f00810081008100810081008300830081007d007f00 <<< 2592) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f008100810081008100 <<< 2880) |||
+    (0x81008100810081007f007f007f007f007f007f007f007f0081008100810081007f007f00 <<< 3168) |||
+    (0x7f0081007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 3456) |||
+    (0x7f008100810081008100810081007f0081007f007f007f0081007f007f007f007f007f00 <<< 3744) |||
+    (0x81007f0081007f007f007f0081007f007f007f007f007f007f0081007f007f007f008100 <<< 4032) |||
+    (0x81007f007f007f007f007f007f0081007f008100810081008100810081007f0081008100 <<< 4320) |||
+    (0x8300830083007d00830083007d007d0083007d008100810081007f0081007f007f007f00 <<< 4608) |||
+    (0x7d007d0083007d007d007d0083007d007d0083007d007d00830083007d00830083007d00 <<< 4896) |||
+    (0x7d007d00830083007d008300830083007d00830083007d008300830083007d0083008300 <<< 5184) |||
+    (0x830083007d00830083007d008300830083007d00830083007d007d0083007d007d008300 <<< 5472) |||
+    (0x810081008100810081007f0081007f007f007f007f008100810081008100810081007f00 <<< 5760) |||
+    (0x7f008100810081007f008100810081008100810081007f007f007f007f0081007f008100 <<< 6048) |||
+    (0x7f007f007f007f007f0081007f008100810081008100810081007f007f007f007f008100 <<< 6336) |||
+    (0x81007d007d0081007d00810081007d007f007f007f0081007f0081008100810081007f00 <<< 6624) |||
+    (0x81008100810081008100810081008100810081007d00810081007d0081007d007d008100 <<< 6912) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f00810081008100810081008100 <<< 7200) |||
+    (0x83007f0083007f007f00830083007f007f0083007f00830083007f007f007f007f007f00 <<< 7488) |||
+    (0x810081008100810081008100810081007f007f007f007f007f007f007f007f007f008300 <<< 7776) |||
+    (0x7f007f007f007f007f007f007f007f00 <<< 8064)
+
+/-- Chunk `15` of `s6c1nGT`. -/
+def s6c1nGT15 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL15 s6c1nGTV15 512
+
+/-- Packed labels (17-bit fields) of chunk `16` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL16 : ℕ :=
+    0x4521a23dd11228a71450ba2485118e8aa74520a20dd0fa289b144aba2185100e89e744c0 |||
+    (0x8aa14523a23cd112a8a754509a249511868aa34522a23d511268a73450aa248d118a8aa5 <<< 288) |||
+    (0x7e493e1440081ffda7be53f0240834f8b1005081189f8ea23c5112e8a774508a249d1182 <<< 576) |||
+    (0xfd9100c07f509f2a4fac8ff6c80c69fe11fda27cd93f5c402c4fbe901fc800e9f0520482 <<< 864) |||
+    (0xf062049a7e453e12400b1ffc27be93f0440804f8a9005c811e9f8d202fa7f753eca3fe74 <<< 1152) |||
+    (0xecc3fe44fd8900cc7f569f294fad0ff6080c09fe21fdba7cd53f5a402f4fbf101f080089 <<< 1440) |||
+    (0xc050f0a288743b089f8c50ce87e543870a0305110878a13d621cb90f542828202e27f793 <<< 1728) |||
+    (0x9889ecc506e87b51409a1c450f2a289713ee21d790fb42858437f09ff050f0877a1401a1 <<< 2016) |||
+    (0x79140021c090f0c288443b109f8050c887e643868a03c5116878913d7a1cb50f52282b43 <<< 2304) |||
+    (0x289a66439909ec0506887b6140821c490f2c289413efa1d750fb2285b437e89ffc50f687 <<< 2592) |||
+    (0x09346c3b041d5e267b935743b684d488ed8c762e9a651d5fa67b535723b6b4d490ed8076 <<< 2880) |||
+    (0x82688935ac3ba44d0f0eb3077309aca1d99a6a05346a3b074d0e8eb3c77369ac91d9826a <<< 3168) |||
+    (0xb4cf90eb0076e89ac64d3f0ecb075f09a2a1d69a688535aa3ba74d3e8ecbc75f69a291d6 <<< 3456) |||
+    (0x93bad9d8fcf15a763b3c541dae26a3934b43b084cf88eb0c76ee9ac51dafa6a3534b23b0 <<< 3744) |||
+    (0xa787b3b349de34ed3e77893b4d9defcee5a77bb3b949e134ebbe78493aed9db34eebe76c <<< 4032) |||
+    (0xcedfa77eb3b7c9e074ec1e78193b059d834f03e76093c0d9dbfcefda76fb3bf49e1fcecd <<< 4320) |||
+    (0x9d774f09e75d93c259dcbcef7a772b3bdc9da74ef1e76993bc59d9bcf0fa766b3c3c9dfb <<< 4608) |||
+    (0x7e80bf655fbeefee77f42bfc5dfeeafd657e839e2bcec7a78ab3b1c9dd74ed9e77593b65 <<< 4896) |||
+    (0xfd677e82bf645fbe6fee37f40bfc4dfee2fd617e81bf64dfbe2fee17f41bfc45fee6fd63 <<< 5184) |||
+    (0xfd62fe217ee1bf35dfa6affa57fa3bf955fd6efe277ee2bf65dfbeafee57f43bfc55feee <<< 5472) |||
+    (0xf95dfd6afe257ee3bf34dfa62ffa17fa1bf945fd66fe237ee0bf345fa66ffa37fa0bf94d <<< 5760) |||
+    (0x91f443a8a51c51de883d440a8a39c531e88dd145ba2015115a297fbf355fa6effa77fa2b <<< 6048) |||
+    (0x30088b2146c2202911c42990149c221a9108428f0444d0a5205240885214aba2295109a2 <<< 6336) |||
+    (0x299109c291c443b0a51051d8883e440b0a390531888de145a22019115c297c43fd0a2a05 <<< 6624) |||
+    (0xfc8a2ac530688b1146da202511c22993149da21a5108228f3444c8a52c5246885114aa22 <<< 6912) |||
+    (0x08bd85deaa2f6717adbbd245e7aef4f77a18bd185ea4ef4077a60bd79ded42f5817b2343 <<< 7200) |||
+    (0x837b22bd905eb0ef6a77af0bd31de802f5217a33bd0dde9e2f3d17a4bbd6c5eceef5577b <<< 7488) |||
+    (0xeaf5557b09bd855eaa6f6737adabd24de7aaf4f57a19bd18dea4af4057a61bd795ed46f5 <<< 7776) |||
+    (0xb8a79c54be2a8fbd90deb0af6a57af1bd315e806f5237a32bd0d5e9e6f3d37a4abd6cdec <<< 8064) |||
+    (0xd44b2a2455131a89dd449b2241912fc89ae44b322459131c89de15038a6dc545e2a7f150 <<< 8352) |||
+    (0x449aa241512fa89a <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `16` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV16 : ℕ :=
+    0x7f007f008100810081008100810081008100810081008100810081008100810081008100 |||
+    (0x7f007f007f007f00810081008100810081008100810081007f007f007f007f007f007f00 <<< 288) |||
+    (0x810081007f007f0081007f00810081007f00810081007f00810081007f007f007f007f00 <<< 576) |||
+    (0x7f007f0081007f007f0081007f007f0081007f00810081007f007f0081007f0081007f00 <<< 864) |||
+    (0x7f007f007f007f0081007f007f0081007f007f0081007f00810081007f007f0081007f00 <<< 1152) |||
+    (0x8100810081007f007f0081007f007f00810081007f0081007f007f0081007f007f008100 <<< 1440) |||
+    (0x7f00810081007f007f007f008100810081007f007f0081008100810081007f007f007f00 <<< 1728) |||
+    (0x7f007f007f00810081007f007f007f0081007f007f007f008100810081007f007f007f00 <<< 2016) |||
+    (0x7f007f007f008100810081007f007f007f00810081007f007f007f008100810081007f00 <<< 2304) |||
+    (0x83007d007d007d007d008300830083008300830083007d007f007f007f00810081007f00 <<< 2592) |||
+    (0x830083008300830083007d007d007d007d0083007d008300830083008300830083007d00 <<< 2880) |||
+    (0x7d008300830083008300830083007d007d007d007d0083007d008300830083007d008300 <<< 3168) |||
+    (0x7f0083007d007d007d0083007d0083008300830083007d007d007d007d007d007d008300 <<< 3456) |||
+    (0x7f007f007f007f007d00810081007d007f00830083007f0081007d007d00810083007f00 <<< 3744) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f008100810081008100 <<< 4032) |||
+    (0x7d00810081007d007f00830083007f0081008100810081007f007f007f007f0081008100 <<< 4320) |||
+    (0x7f007f007f007f007f007f00810081008100810081007d007d00810083007f007f008300 <<< 4608) |||
+    (0x7f007f007f007f007f007f007f007f00810081008100810081008100810081007f007f00 <<< 4896) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f008100810081008100 <<< 5184) |||
+    (0x7f007f007f007f00810081008100810081008100810081007f007f007f007f007f007f00 <<< 5472) |||
+    (0x81007f007f0081007f007f00810081007f008100810081007f00810081007f0081008100 <<< 5760) |||
+    (0x810081007f008100810081007f00810081007f008100810081007f00810081007f007f00 <<< 6048) |||
+    (0x7f00810081007f00810081007f007f0081007f007f0081007f007f007f0081007f007f00 <<< 6336) |||
+    (0x7f007f007f007f0081008100810081007f0081007f007f00810081007f00810081008100 <<< 6624) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 6912) |||
+    (0x810081008100810081008100810081007f007f007f007f0081008100810081007f007f00 <<< 7200) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f007f007f007f007f00 <<< 7488) |||
+    (0x81007f00810081007f007f0081007f00810081007f00810081007f00810081007f007f00 <<< 7776) |||
+    (0x7f0081007f007f00810081007f008100 <<< 8064)
+
+/-- Chunk `16` of `s6c1nGT`. -/
+def s6c1nGT16 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL16 s6c1nGTV16 512
+
+/-- Packed labels (17-bit fields) of chunk `17` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL17 : ℕ :=
+    0x898114ec0a82055202a6014d40a7e055002a3015020a6d054582a7c150a0a79054b82a8c |||
+    (0x55062a3344852256913c48992447d224a9136489824484a256513c28991447ca24a51362 <<< 288) |||
+    (0xeea878643bb64dc626c2137209b144d9426eb136689bb014ed8a82c55262a6314d58a7ec <<< 576) |||
+    (0xdf28f18477b23c5d4d83a6e0d35f69b7f4df1a6d9d37be9b5b1e050f238782c3c921e170 <<< 864) |||
+    (0xbe61dfd0f1f8780c3c824dac26f7136c89be04dbe26be137009b041e408f01478fa3bf91 <<< 1152) |||
+    (0x7523c2d1e488f054791a3c094dd9a6cdd375e9b2b4d8ba6e4d36169b8f1e2f0ef6878c43 <<< 1440) |||
+    (0x3c26fd138499c9c4e366700338609ca94e3ce6fd7384a9c9dce36a700538631dda8f0c47 <<< 1728) |||
+    (0x904e306703338789c84ce2a2706138919c91ce30a7035387b9c854e2ae706738929ca8ce <<< 2016) |||
+    (0x539c484e0c6715339089c3cce062718139219c49ce0ca7155390b9c3d4e06e718739229c <<< 2304) |||
+    (0xd169cb9c30ce00271b139399c244dfa671e339509c314e00e71b7393a9c25cdfaa71e539 <<< 2592) |||
+    (0x6ed30769e0b4f1da602d4b16abbb5085a6ced4576a88b5505a90ed33769f8b569da9c2d2 <<< 2880) |||
+    (0x95a9c6d2d369cab4e45a5aed4e76ad0b4fdda662d4816aa3b545da8a2d3616a13b55c5a9 <<< 3168) |||
+    (0x2b55cda96ad30569e1b4f15a606d4b36abab508da6cad4556a89b550da90ad33569f9b56 <<< 3456) |||
+    (0x7498ba459d23ee90d748e3b4e4da5aad4e56ad1b4fd5a666d4836aa2b5455a8a6d3636a1 <<< 3744) |||
+    (0xa925549a2a44d5244a910548caa4b8d26e6925349a1a44cd2446910348c9a4add274e928 <<< 4032) |||
+    (0x526e2925149a0a44c52442910148c8a4ac5274292814988a458523e290d148e0a4b9526e <<< 4320) |||
+    (0xa4acd274692834989a458d23e690d348e1a4ad5274a9285498aa459523ea90d548e2a4b8 <<< 4608) |||
+    (0x3ea81fc2279d93bfc3eec4f230fad07e789eaea4b9d26ee925749a3a44dd244e910748cb <<< 4896) |||
+    (0x7f2e9ea54f248fb6c7ea69ee11fc5a7a653c223f234f010fbc07ef09e6a1fa027ac93c74 <<< 5184) |||
+    (0x7ac53c723eab1fc3a79d53bfa3eef4f228fadc7e7e9ead1fa7a7b753caa3ee74f068fc7c <<< 5472) |||
+    (0xf070fc707f289ea64f250fb607ea09ee21fc427a693c243f204f008fbcc7ef69e691fa1a <<< 5760) |||
+    (0x2e4416088ccc46f68269412508b604620822211c3a09d5057a232f1fa627b793cac3ee44 <<< 6048) |||
+    (0x72882a61181a07c5047222ab11c420a6905a42360412288adc45fe81ed11862087904ac2 <<< 6336) |||
+    (0x87504aa22e7416108cc046f0826a412488b6c4626822111c2209d9057c232c416708d704 <<< 6624) |||
+    (0x6688d7c472e82a51180207c9047422a811c5a0a6505a22363412308ad045f881ee1187a0 <<< 6912) |||
+    (0x004be70e030705896ee1c4a25d592eec37b41c2e25c792f7c37fc4bd30df907108974641 <<< 7200) |||
+    (0x0e97451c4425d292ed437a84be90e040706096f24bcd0df6070f0973a1c3025c892f8438 <<< 7488) |||
+    (0x852f8238034be68e03c705e96ed1c4ba5d552eea37b71c2fa5c752f7a37ff4bd28df9c71 <<< 7776) |||
+    (0x45c8c6e40170f91c45a5d252ed237ab4be88e04c706696f14bcc8df6c70f697391c31a5c <<< 8064) |||
+    (0xab919dc62ae1f77202b9245c5c6e28171b9b8e85c4a6e2b17261b8885c7a6e43171a1b8c <<< 8352) |||
+    (0xb8f5dc44ae347721 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `17` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV17 : ℕ :=
+    0x810081007f0081007f007f00810081007f008100810081007f00810081007f0081008100 |||
+    (0x810081007f0081007f007f0081007f007f0081007f007f00810081007f00810081007f00 <<< 288) |||
+    (0x7f007d008100830083007f008100830083007f007d008100810083007f0081007f007f00 <<< 576) |||
+    (0x7f008100810081007f007f007f0081007f007f007f00810081007f007f007f0083007f00 <<< 864) |||
+    (0x7d007f0081007f007f007f008100810081007f008100810081007f007f00810081008100 <<< 1152) |||
+    (0x7d007d007d007d007f008300830081007d007f007f0083007d007f007f00830081007d00 <<< 1440) |||
+    (0x7d007d007d007d007d007d007d007d007d007d007d007d007d007d007d007d007d007d00 <<< 1728) |||
+    (0x830083008300830083008300830083007d007d007d007d007d007d007d007d007d007d00 <<< 2016) |||
+    (0x830083008300830083008300830083008300830083008300830083008300830083008300 <<< 2304) |||
+    (0x810081008100810081008100810081008100810081008100830083008300830083008300 <<< 2592) |||
+    (0x810081008100810081008100810081008100810081008100810081008100810081008100 <<< 2880) |||
+    (0x7f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f0081008100 <<< 3168) |||
+    (0x7f0081007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 3456) |||
+    (0x81007f0081007f007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 3744) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f00 <<< 4032) |||
+    (0x7f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f0081007f00 <<< 4320) |||
+    (0x7f007f007f008100810081007f007f007f0081007f0081007f0081007f0081007f008100 <<< 4608) |||
+    (0x8100810081007f007f007f007f00810081007f007f007f007f007f007f00810081007f00 <<< 4896) |||
+    (0x7f007f008100810081007f007f007f007f00810081007f007f007f0081007f007f007f00 <<< 5184) |||
+    (0x8100810081007f007f0081008100810081007f007f007f008100810081007f0081007f00 <<< 5472) |||
+    (0x830083008300830083007d0083007d007d007d007d008300830083008300830083007d00 <<< 5760) |||
+    (0x7d008300830083007d008300830083008300830083007d007d007d007d0083007d008300 <<< 6048) |||
+    (0x7d007d007d007d007d0083007d008300830083008300830083007d007d007d007d008300 <<< 6336) |||
+    (0x81007f007f007f008100810081007f007d007d007d0083007d0083008300830083007d00 <<< 6624) |||
+    (0x7f0081007f007f007f00810081007f007f007f007f007f007f00810081007f007f007f00 <<< 6912) |||
+    (0x8100810081007f008100810081007f007f008100810081007f008100810081007f007f00 <<< 7200) |||
+    (0x7f00810081007f007f007f0081007f007f007f008100810081007f0081007f007f007f00 <<< 7488) |||
+    (0x7d007f007f007d007f007d007d007f00810083008300810083008100810083007f007f00 <<< 7776) |||
+    (0x7f00810081007f0081007f007f008100 <<< 8064)
+
+/-- Chunk `17` of `s6c1nGT`. -/
+def s6c1nGT17 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL17 s6c1nGTV17 512
+
+/-- Packed labels (17-bit fields) of chunk `18` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL18 : ℕ :=
+    0x7111b9305c566e25171d1b8dc5c506e2e17249b8b9dc92ae3777142b895dc74ae4c7715a |||
+    (0xe22771eab8addc98ae3a7712ab8a1dc6eae4977172b87c5c806e4617189b8d05c866e3d1 <<< 288) |||
+    (0xb592588d2ca6965e4b47257fd2c5e966a4b4d2582d2c76b901dc3eae3177232b90ddc68a <<< 576) |||
+    (0x622cb2965a0f2d6795fecb176597f2d1f960acb1d659af2d3796764b532585d2c8e96824 <<< 864) |||
+    (0xd4d9623cb29e5a0b2d6595ffcb17e597b2d1d960bcb1de59ab2d359616cb23659df2d4f9 <<< 1152) |||
+    (0x8592c8c96834b59a58892ca4965f4b47a57f92c5c966b4b4da58292c749617cb23e59db2 <<< 1440) |||
+    (0x782bc815ea2aeb45772abc555e88aec0d778ebc875ea1aeb5d7726bc535e8b96774b53a5 <<< 1728) |||
+    (0xd85784abce55ed0aecd577e2bcb15ebaaed9d7846bce35ed3aeccd77eebcb75eb9aec157 <<< 2016) |||
+    (0xb8aec1d7786bc835ea3aeb4d772ebc575e89aec05778abc855ea0aeb557722bc515e8aae <<< 2304) |||
+    (0x542278aed8d784ebce75ed1aecdd77e6bcb35ebbaed957842bce15ed2aecc577eabcb55e <<< 2592) |||
+    (0x604510215a110f8833444ba218f10b288a5c424e21d511190860043e020c21074086e842 <<< 2880) |||
+    (0x7085f043d820be105e887bc42fe222d1143884d4438a20f710c80898841a4222010e5084 <<< 3168) |||
+    (0x610c608978419c221c10ac88a2c423621c911118834444c22193107a08718426c2284111 <<< 3456) |||
+    (0x88e2517c623a751c9a2edc113d884a4437220eb1060887cc4306223110eb084904528216 <<< 3744) |||
+    (0xc5e2e8e2617c7a3a791c9c2edf177da37a91d742f2b47210bacc5f068e72476a8bd905e2 <<< 4032) |||
+    (0x23b151bea2f0447368bdf05d588e3d177c237a51d722f2847208bac05f008e71476b0bd9 <<< 4320) |||
+    (0x179ba3b191bec2f0747370bdfc5d5e8e3e470d0bc2c5eb68eca1771a39491d442f93179a <<< 4608) |||
+    (0x27ce93cec9ff65149284493b6c9f3651a92874470c8bc205eb08ec91770239451d422f90 <<< 4896) |||
+    (0x4f0d27e693daca0565119282c93c2c9f965179285c9453ca11e4f3d27fe946bca1de4edd <<< 5184) |||
+    (0x9ede505d288e942eca2f64fc927849416ca236502927b49447ca0be4f6d2816945fca17e <<< 5472) |||
+    (0x3ffc9e7e508d28a6943aca3564f99276c9422ca2964ff9279c93f3c9e1e50bd28be940bc <<< 5760) |||
+    (0x6119ac1cd48e6b97362b9b2ccd7e669e335519b21cd78e6a17356b93e7c9dbe50ed28d69 <<< 6048) |||
+    (0xb95362a9acc4d4e26b6136109b214d78a6a15356a9b2c4d7e269e135509acccd4e66b633 <<< 6336) |||
+    (0x4266bc336419aa9cd3ce6bf7365b9b14cd7266a4335819b09cd6ce6a77359b9ac14d48a6 <<< 6624) |||
+    (0xa94d3ca6bf5365a9ab44d4226bc136409b094d6ca6a75359a9b144d7226a4135809ab4cd <<< 6912) |||
+    (0xa1b3c559ca2cd616712b3dc59d6acd0566e0b3c4d9caecd676711b3ddd9d66cd0366e39a <<< 7200) |||
+    (0x0166e2b364599aacee567d0b37d59a62ce8167a2b365d99a6cee367d3b37cd9a6ece8767 <<< 7488) |||
+    (0x6ace8567a0b3c5d9ca6cd636713b3dcd9d6ecd0766e1b3c459caacd656710b3dd59d62cd <<< 7776) |||
+    (0x6858bc2adc162cb364d99aecee767d1b37dd9a66ce8367a3b365599a2cee167d2b37c59a <<< 8064) |||
+    (0x30b30056882cc615a10ace8597c2b3c165c0b07853342c1814ce0aff852f42bf814be0ab <<< 8352) |||
+    (0xa690584029a2161 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `18` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV18 : ℕ :=
+    0x81007f0081007f007f0081007f00810081007f007f00810081007f0081007f007f008100 |||
+    (0x7d007f007f007d008300810081008300810083008300810081007f007f0081007f008100 <<< 288) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007d007d007f00 <<< 576) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 864) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 1152) |||
+    (0x7d007d007d007d00810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 1440) |||
+    (0x830083007d007d007d007d0083008300830083007d007d007d007d008300830083008300 <<< 1728) |||
+    (0x83008300830083007d007d007d007d0083008300830083007d007d007d007d0083008300 <<< 2016) |||
+    (0x7d007d0083008300830083007d007d007d007d0083008300830083007d007d007d007d00 <<< 2304) |||
+    (0x7f0083008300810081007d007d007f007d007f007f00830083008300830083007d007d00 <<< 2592) |||
+    (0x7f0081007f0081008100810081007f007f007f007f007f007f0081007d007f007f008300 <<< 2880) |||
+    (0x7f007f007f0081007f0081008100810081007f007f007f007f007f007f0081007f007f00 <<< 3168) |||
+    (0x81007f007f007d007d0081007d0081008100830083007f007f007d007f007d007d008100 <<< 3456) |||
+    (0x81007f00810081007f007f0081007f0081007f00810081007f0081007f007f007f007f00 <<< 3744) |||
+    (0x81007f0081007f008100810081007f0081008100810081007f0081007f007f0081007f00 <<< 4032) |||
+    (0x81007f0081008100810081007f00810081007f0081008100810081007f0081007f007f00 <<< 4320) |||
+    (0x810081007f007f00810081007f007f0081008100810081007f0081007f0081007f007f00 <<< 4608) |||
+    (0x810081007f007f00810081007f007f00810081007f007f007f007f00810081007f007f00 <<< 4896) |||
+    (0x810081007f007f00810081007f007f00810081007f007f0081008100810081007f007f00 <<< 5184) |||
+    (0x810081007f007f00810081007f007f00810081007f007f00810081007f007f007f007f00 <<< 5472) |||
+    (0x8100810081008100810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 5760) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 6048) |||
+    (0x810081007f007f007f007f007f007f007f007f0081008100810081007f007f007f007f00 <<< 6336) |||
+    (0x83008300830083007d007d007d007d0081008100810081007f007f007f007f0081008100 <<< 6624) |||
+    (0x830083007d007d007d007d00830083008300830083008300830083007d007d007d007d00 <<< 6912) |||
+    (0x7d007d007d007d0083008300830083007d007d007d007d007d007d007d007d0083008300 <<< 7200) |||
+    (0x7d007d0083008300830083007d007d007d007d0083008300830083008300830083008300 <<< 7488) |||
+    (0x830081007f00830081007d008300810081007d00830081007d007f0081007d007d007d00 <<< 7776) |||
+    (0x81007f00810081007f007f0081007f00 <<< 8064)
+
+/-- Chunk `18` of `s6c1nGT`. -/
+def s6c1nGT18 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL18 s6c1nGTV18 512
+
+/-- Packed labels (17-bit fields) of chunk `19` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL19 : ℕ :=
+    0x16940aa285a1c2a8c16840adb853d42b6814f60b18055c82c6615710a610580029821603 |||
+    (0x2cf615390b44055282d1615490a8d057602a3215db0af3854942bc815260aaa85a5c2aac <<< 288) |||
+    (0xc30c628e90c648290c34c62ae90d61891a4089214c31a70a75056a029d215ab0b3c054e8 <<< 576) |||
+    (0x8208c300628890c548288c34062a890d5189024085214a31a41879a3fc920ec317748210 <<< 864) |||
+    (0x09918662413521923148185e240f52172313847f68c3b062d09069187823fc520ea31744 <<< 1152) |||
+    (0x336909a1867a41392194314b185fa40f92174313b47f70c3bc62d6906a480e8c47063309 <<< 1440) |||
+    (0x59e491f24ef92ca494d24979251c9283c929e4a9f25af926a491d24af925dc480f0c47c6 <<< 1728) |||
+    (0xcb494da497d251e92e2c9596491b24ed926b491da4afd25de9282c92964a9b25ad92e3c9 <<< 2016) |||
+    (0xdf92cac94d6497b251d92e34959a491d24ee926ac91d64afb25dd92834929a4a9d25ae92 <<< 2304) |||
+    (0xf0057792e249592491924ec92cbc94de497f251f9282492924a9925ac926bc91de4aff25 <<< 2592) |||
+    (0xd40a2a069a0331813300c5804c302b40181c0b4e0608025e018cc09a6065c030b816600b <<< 2880) |||
+    (0x0018bc099e06600297017040ac205ce0352814280cd4050502e8815780b7c0531027d019 <<< 3168) |||
+    (0x602e6815880b84052d02ba017ec0b360614032f813400c6004bf0305816900c08056b026 <<< 3456) |||
+    (0x42d72169c8b4645aac2cf6034c814580cec04f90299016f40aba05d20283019a40a1206a <<< 3744) |||
+    (0x119268c3345fc23361182e8cb716b68b3345b442cc216748b5245a4c2d46165e8b67459a <<< 4032) |||
+    (0x8b4945a942cea16608b684599c2d6e46162323118c68c8346542302119ce8c07463e2317 <<< 4320) |||
+    (0x46022339118168cab464023181191e8c2f167a8b5545a342d3a16b88b3445b3c2cbe16a2 <<< 4608) |||
+    (0x29ba9495ca62653d72a49947dca56653772a19465a2305119b68bfb46182324118be8c7f <<< 4896) |||
+    (0x53732a1b94c54a4a2549529e894ad4a3e2543529b894c44a4aa549129ea94ac4a3ea5431 <<< 5184) |||
+    (0xa44a546129d294a1ca68654072a619489ca5c653a72a319494ca62e53d32a4b947cca56e <<< 5472) |||
+    (0x488ca5ce53a32a3394d14a50254c52a0094b94a442546529d094d04a50a54c12a0294b84 <<< 5760) |||
+    (0x183b06c5824ec361613bb05558486c30561c9b04958366c27561b194a0ca68e54032a639 <<< 6048) |||
+    (0x30361cab048d836ac27361b2b091d82a2c3976180b06dd8242c3676138b090582aec3916 <<< 6336) |||
+    (0x30ec3c1616bb078581eec3316153b06158426c2d561e1b03d583c6c2a56199b054d848ac <<< 6624) |||
+    (0x60d842ac2d361e2b03cd83cac2a3619ab085d8302c3c76168b079d81e2c3376150b08458 <<< 6912) |||
+    (0x2f0dfb06e5838321b790d7907248363a1c7d0dc30709837121be90e4106c88391a1aedb0 <<< 7200) |||
+    (0x2a1bf50e1a06b5038b61abb0d9806f4036be1bbf0d620719035961c2b0de006d80379e1b <<< 7488) |||
+    (0x6035ae1c370d770723836421c810df506e28384a1b850e3f06c7839221af10dbd0706837 <<< 7776) |||
+    (0x5d1d4a8f65482b0d9606f3036c61bc30e1406b2038ce1ac70dde06d7037a61b330d5c071 <<< 8064) |||
+    (0x1a39151e6e8ff74842a38551d4e8f67482aa384d1d428f614829a38451d468f634828a38 <<< 8352) |||
+    (0xa390d1e628ff1484 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `19` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV19 : ℕ :=
+    0x8100810081007f00810081007f007f0081007f00810081007f00810081007f0081008100 |||
+    (0x83007f008100830083007f00810083007f007d0083007f00810081007f00810081007f00 <<< 288) |||
+    (0x7f00810081007f007f007f0081007f007f007f008100810081007f00810083007d008100 <<< 576) |||
+    (0x81007f007f007f008100810081007f008100810081007f007f008100810081007f007f00 <<< 864) |||
+    (0x7f00810081007f007f007f008100810081007f008100810081007f007f00810081008100 <<< 1152) |||
+    (0x810081007f007f008100810081007f007f008100810081007f008100810081007f007f00 <<< 1440) |||
+    (0x7f007f00810081007f007f007f007f00810081007f007f0081008100810081007f007f00 <<< 1728) |||
+    (0x810081007f007f00810081007f007f007f007f00810081007f007f008100810081008100 <<< 2016) |||
+    (0x81008100810081007f007f00810081007f007f007f007f00810081007f007f0081008100 <<< 2304) |||
+    (0x7f007f007f0081008100810081007f0081007f007f007f007f007f00810081007f007f00 <<< 2592) |||
+    (0x7f0081007f0081008100810081007f007f007f007f007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x8100810081007f0081007f007f007f007f008100810081008100810081007f007f007f00 <<< 3168) |||
+    (0x7d007d0081007f007f007f007f007f007f0081008100810081007f0081007f007f007f00 <<< 3456) |||
+    (0x7d007d0083007d007d0083007d007d00830083007d0083007d007d0083007d007d008300 <<< 3744) |||
+    (0x830083007d007d0083007d007d007d0083007d007d0083007d007d0083007d0083008300 <<< 4032) |||
+    (0x830083007d00830083007d00830083007d007d0083007d007d0083007d007d0083007d00 <<< 4320) |||
+    (0x830083007d007d0083008300830083007d007d0083007d00830083007d007d0083007d00 <<< 4608) |||
+    (0x7f007f00810081007f007f0081008100810081007f007f00830083007d007d007d007d00 <<< 4896) |||
+    (0x7f007f007f007f00810081007f007f0081008100810081007f007f00810081007f007f00 <<< 5184) |||
+    (0x7f007f0081008100810081007f007f00810081007f007f007f007f008100810081008100 <<< 5472) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 5760) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 6048) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 6336) |||
+    (0x81007f0081008100810081007f00810081007f007f0081007f00810081007f0081007f00 <<< 6624) |||
+    (0x7f008100810081007f0081007f0081007f007f007f007f0081007f0081007f0081008100 <<< 6912) |||
+    (0x7f007f0081007f007f007f0081007f0081007f008100810081007f008100810081008100 <<< 7200) |||
+    (0x81007f0081007f008100810081007f0081008100810081007f0081007f0081007f007f00 <<< 7488) |||
+    (0x7f00810081007f007f00810081007f0081007f007f00810081007f007f0081007f007f00 <<< 7776) |||
+    (0x7f00810081007f007f00810081007f00 <<< 8064)
+
+/-- Chunk `19` of `s6c1nGT`. -/
+def s6c1nGT19 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL19 s6c1nGTV19 512
+
+/-- Packed labels (17-bit fields) of chunk `20` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL20 : ℕ :=
+    0x4810a378d1da28f914811a37951dae8f974812a391d1e6a8ff54843a39051e668ff34840 |||
+    (0x8fc14859a39c51e068fc34858a39dd1e0a8fc5485ba379d1daa8f954813a37851da68f93 <<< 288) |||
+    (0xe3def2ab799dbcb65e792f18d790ebcaa5e672f0fd78f6a39d51e0e8fc7485aa39cd1e02 <<< 576) |||
+    (0xc4bde37ef27b79b5bcc25e732f15d7926bc9e5e6d2f12d78debc63de43ef2db79e5bc3fd <<< 864) |||
+    (0x90cbcab5e67af0f978f4bc62de436f2df79e7bc3ede3d6f2af799fbc57de49ef30b79cdb <<< 1152) |||
+    (0x1597924bc9f5e6daf12978dcbc56de496f30f79cfbc4ade376f27f79b7bcb75e79af1897 <<< 1440) |||
+    (0x8f12cd8969c4af4258612d9096b84b51a59cd2c8696534b63a5b5d2c4e95f7bcc35e73af <<< 1728) |||
+    (0xfa258912da896c44b28259012ce096a04b5da5b2d2c3695eb4b4fa59bd2c7e964f4b2625 <<< 2016) |||
+    (0xad1b570db786f1c377e1b850dbe86e54375a1bc08de446dc236b11bb28dcd46e0a37154a <<< 2304) |||
+    (0xcc23b61b8b0dc186e6c37661b590db886f2437821bac8dca46df237091bbe8de346dba36 <<< 2592) |||
+    (0x61068e8357124a8921447b423aa1216891744804241212188918447fc240e1244891e447 <<< 2880) |||
+    (0x488f64490c249641ba20e910676834b41e620ef1064682f341e820f01063e82ef41b420e <<< 3168) |||
+    (0xf41a420ce1074e837711da88f9448f4248a120688ff448c4243212088900448bc242e11d <<< 3456) |||
+    (0xb4b37a50bd2cd694294b3641aa20d110736836b417620c71078683d3417820c81077e83c <<< 3744) |||
+    (0xa957f4a5da55ed297e957d4a5ca54652bba951f4aeda546d2bbe951d4aeca50b52cd2942 <<< 4032) |||
+    (0x52a9a960f4aa5a582d2a9e960d4aa4a5b35291296cb4a47a5b3d291696c94a46a55e5297 <<< 4320) |||
+    (0xa51752d32945b4b4fa517d2d3694594b4ea58f527f2963b49ffa58fd27f6963949fea582 <<< 4608) |||
+    (0x7bc6be1e5f272f6ff7bdfbdbedef76f87d7c9ea53a52b5a94ef4ad5a53ad2b5e94ed4ad4 <<< 4896) |||
+    (0xf9c97c84bdbf5ef7af87b7c9dbe1fdf27ef6f97bdcbe125ef12f9cf7c87be72df216f84d <<< 5184) |||
+    (0xf1b6f81d7baebe2a5f2d2f72f7bf7bdcadefd6f8ad7cb6be735f21af84b7bc5be13def1e <<< 5472) |||
+    (0xe07deebef9997c6cbdcb5efdaf8ab7cb5be2bdf2def7297bf4be065eeb2f99f7c6fbe66d <<< 5760) |||
+    (0x827b407da1bed19f692fb48a5a2d2d0a967f4b41e5a272d1f9695cbe675f1baf81b7badb <<< 6048) |||
+    (0x13f683fb3fbda15ed16f6917b4965a332d0d9680cb4125a212d1c96944b4a3da39ed10f6 <<< 6336) |||
+    (0x2dad0ad67f6b41f5a27ad1fd695eb4a2da396d10b6825b406da1b6d19b692db4afda3fed <<< 6624) |||
+    (0x975a33ad0dd680eb4135a21ad1cd6946b4aeda3f6d13b683db3fada156d16b6915b48b5a <<< 6912) |||
+    (0xdc9cfa4e95673ef3a569cd6ceb32735d3acf9d72ce71275cd39c79d1e4e776747f39deb4 <<< 7200) |||
+    (0x2d3ab79cfb4e95e73eb3a549cd7ceb3a73593acd9d73ce71a75c939c59d1f4e77e747b39 <<< 7488) |||
+    (0xda73293ab59d4ece5f2753d397f9d424e896750f3a269d064e9b6741f3a6e9ccacead273 <<< 7776) |||
+    (0x1cdb866e8337a39d4fce5fa7539397d9d434e89e750b3a249d074e9be741b3a6c9ccbcea <<< 8064) |||
+    (0x09b414db826e8137a29bc5cdca66d93366b9bdccdd6e6df736999b58cdc4e6ee737d19b4 <<< 8352) |||
+    (0x9b584dc4a6ee537d <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `20` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV20 : ℕ :=
+    0x7f0081007f00810081007f007f00810081007f0081007f007f00810081007f007f008100 |||
+    (0x7f00810081007f0081007f007f00810081007f007f00810081007f007f00810081007f00 <<< 288) |||
+    (0x81007f0081007f0081007f007f0081007f0081007f0081007f0081007f00810081007f00 <<< 576) |||
+    (0x7f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f0081007f00 <<< 864) |||
+    (0x7f0081007f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f00 <<< 1152) |||
+    (0x7f007f007f00810081007f0081007f0081007f0081007f007f0081007f0081007f008100 <<< 1440) |||
+    (0x7f0081007f008100810081008100810081007f0081007f007f007f0081007f007f007f00 <<< 1728) |||
+    (0x7f007f007f0081007f0081008100810081007f007f007f007f007f007f0081007f007f00 <<< 2016) |||
+    (0x810081007f008100810081008100810081007f0081007f007f007f007f007f007f008100 <<< 2304) |||
+    (0x7f007f0081007f00810081007f00810081007f00810081007f007f007f0081007f008100 <<< 2592) |||
+    (0x7f00810081007f00810081007f0081007f007f00810081007f00810081007f0081008100 <<< 2880) |||
+    (0x810081007f00810081007f00810081007f0081007f007f00810081007f00810081008100 <<< 3168) |||
+    (0x810081007f0081007f007f00810081007f0081007f007f0081007f007f0081007f007f00 <<< 3456) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 3744) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 4032) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f0081008100810081007f007f00 <<< 4320) |||
+    (0x81007f0081007f0081007f0081007f0081007f007f007f007f007f008100810081008100 <<< 4608) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f00 <<< 4896) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f00810081007f0081007f00 <<< 5184) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 5472) |||
+    (0x7f007f008100810081008100810081008100810081008100810081008100810081008100 <<< 5760) |||
+    (0x81008100810081007f007f007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 6048) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081008100810081008100 <<< 6336) |||
+    (0x7f007f0081008100810081007f007f007f007f007f007f007f007f007f007f007f007f00 <<< 6624) |||
+    (0x810081007f007f0081008100810081007f007f00810081007f007f007f007f0081008100 <<< 6912) |||
+    (0x810081007f007f00810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 7200) |||
+    (0x81008100810081007f007f00810081007f007f007f007f00810081007f007f0081008100 <<< 7488) |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f007f0081007f007f00 <<< 7776) |||
+    (0x81007f007f00810081007f007f008100 <<< 8064)
+
+/-- Chunk `20` of `s6c1nGT`. -/
+def s6c1nGT20 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL20 s6c1nGTV20 512
+
+/-- Packed labels (17-bit fields) of chunk `21` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL21 : ℕ :=
+    0x369a9b594dc426ee137d29b404db8a6e8537a09bc54dca26d91366a9bdc4dd6a6df53698 |||
+    (0x6df3369b9b59cdc466ee337d39b40cdb8e6e8737a19bc44dcaa6d9536689bdd4dd626df1 <<< 288) |||
+    (0xcc84667c334e19548cb64670c339619a88cd04663c32ee9bc4cdcae6d9736699bddcdd66 <<< 576) |||
+    (0x9082480125be92af4924248e1254e9277495824b8123fe920f19c48cde465cc32b619788 <<< 864) |||
+    (0x2544909a480d25b892ac4925a48ed254892744959a4b8d23f8920c493424a61248e92574 <<< 1152) |||
+    (0x5ca32b519790cc88667a334d19550cb68670a339519a90cd08663a32ed4935a4a6d24889 <<< 1440) |||
+    (0x0e415cc0ab605d882f84167c0b4e05b402e60180e0c17058802c00193e0c6f19c50cde86 <<< 1728) |||
+    (0xd682f7416840b52062a8311415b40aaa058602bf019460c7305ba02e9017f60c0b062483 <<< 2016) |||
+    (0x6b055482b64188c0c5605a882d0417bc0bae060402fe0174e0b7706380328015fe0b0f05 <<< 2304) |||
+    (0xad55b605a682cf417c40bb2055a82b9418740c4a06360327016060b13060a0301017360b <<< 2592) |||
+    (0x9eab0d55e6aa86552b2ab9b556daaaa556d2a92b54f5aae7d55beaa1d54aeaa4bd53deaa <<< 2880) |||
+    (0xad56d6a92954f4aa6e551f2ab3b553daac255792a98b5525aacfd54fea9bd547eaa63d54 <<< 3168) |||
+    (0xcaac2d5796a9895524aae7555baaa1f54afaa4b553daaaaf55b7aa86d52b6ab99556caaa <<< 3456) |||
+    (0xd5d66ae0ad71d6b9ad5d36aacf554faa9bf547faa635549aab0f55e7aa6ed51f6ab39553 <<< 3744) |||
+    (0x6b9dd5d4eadfed7176b97d5d1eae8257592b88f5ca7ae6a574d2b82f5c77ae22d7296ba0 <<< 4032) |||
+    (0xd759eb8895ca4ae6bd74deb8295c74ae7657532b85f5c8fae5e57472b7ff5c5fae16d723 <<< 4320) |||
+    (0xae77d753eb8595c8cae5fd747eb7f95c5cae235729aba0b5d65ae0b571dab9ab5d35ae83 <<< 4608) |||
+    (0x215010f1886cc4286215310808844445422271ae175723ab9db5d4dadff5717ab97b5d1d <<< 4896) |||
+    (0x41b020a8111d8892c41b620ab10cc885a443f222091081084484544227210f0086c04280 <<< 5184) |||
+    (0x84fc435e21df10a6084f0435821dc113708a78421c20fe10cd085a843f4220a111c08920 <<< 5472) |||
+    (0x05b8839c44ae2247105a0839044a82244110b0881842ec21a6113688a74421a20fd10a78 <<< 5760) |||
+    (0x6b603f8820840efc078e035481b64108c085603c881e04103c07ee110a8881442ea21a51 <<< 6048) |||
+    (0xf040792042a821140db406aa03c681df4104407f2035a81b941074084a0424820e40dcc0 <<< 6336) |||
+    (0xf6c0e88075404498220c0e3806ec03a581cec0fc807b4037981c8c10f8088c03f6820740 <<< 6624) |||
+    (0x47821fc0e4006f003db81f9c0e700748037781c7c1100089003ab81d1c0fb007a803d581 <<< 6912) |||
+    (0x84ac6bd61deb02f57b7abb755f3ab05d588eabb6d5f36b05b588dac6a561d2b02957b404 <<< 7200) |||
+    (0xf9579cac53d611eafcf5787abcf55ffab0bd58beabced5ff6b0bb58bdac5256112afc957 <<< 7488) |||
+    (0xb2af99576cac5fd617eafff579fabc355f9ab08d58a6abc2d5f96b08b58a5ac5e56172af <<< 7776) |||
+    (0x7d71beb8795c9cac47d60beaf9f576fabdb5605ab0ed58d6abdad6056b0eb58d5ac46560 <<< 8064) |||
+    (0x5ae1f5727ab81b5c6dae12d7216b7ed5c56ae1ed7276b81d5c6eadfbd715eb8495c84ae0 <<< 8352) |||
+    (0xae135721ab7eb5c5 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `21` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV21 : ℕ :=
+    0x81007f007f00810081007f007f00810081007f0081007f007f00810081007f007f008100 |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 <<< 288) |||
+    (0x81007f0081007f00810081007f0081007f007f007f007f0081007f007f00810081007f00 <<< 576) |||
+    (0x7f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f007f007f00 <<< 864) |||
+    (0x7f0081007f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f00 <<< 1152) |||
+    (0x7f0081007f007f00810081007f0081007f0081007f007f0081007f008100810081008100 <<< 1440) |||
+    (0x81008100810081007f0081007f0081007f007f007f007f0081007f00810081007f008100 <<< 1728) |||
+    (0x7f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f0081007f00 <<< 2016) |||
+    (0x81007f00810081007f0081007f0081007f007f007f007f0081007f0081007f0081008100 <<< 2304) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f0081007f007f007f007f00 <<< 2592) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f007f007f007f007f00 <<< 2880) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 3168) |||
+    (0x7f007f007f007f007f007f0081008100810081007f007f007f007f008100810081008100 <<< 3456) |||
+    (0x7f007f00810081007f007f00810081007f007f0081008100810081007f007f0081008100 <<< 3744) |||
+    (0x810081007f007f0081008100810081007f007f00810081007f007f007f007f0081008100 <<< 4032) |||
+    (0x810081007f007f00810081007f007f00810081007f007f00810081007f007f007f007f00 <<< 4320) |||
+    (0x81007f007f007f007f0081007f008100810081007f007f00810081007f007f0081008100 <<< 4608) |||
+    (0x7f0081008100810081007f007f007f007f007f007f0081007f0081008100810081008100 <<< 4896) |||
+    (0x81007f0081007f007f007f007f008100810081008100810081007f007f007f007f008100 <<< 5184) |||
+    (0x7f008100810081008100810081007f007f007f007f0081007f0081008100810081008100 <<< 5472) |||
+    (0x7f007f00810081007f00810081007f008100810081007f00810081007f007f0081007f00 <<< 5760) |||
+    (0x7f0081007f007f0081007f00810081007f007f0081007f007f007f0081007f007f008100 <<< 6048) |||
+    (0x7f007f00810081007f00810081007f00810081007f007f0081007f007f007f0081007f00 <<< 6336) |||
+    (0x7f00810081007f0081007f007f0081007f007f0081007f007f0081007f007f007f008100 <<< 6624) |||
+    (0x81007f007f00810081007f0081007f007f00810081007f007f0081007f00810081007f00 <<< 6912) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 7200) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 <<< 7488) |||
+    (0x7f007f007f007f00810081008100810081008100810081007f007f007f007f007f008100 <<< 7776) |||
+    (0x81008100810081007f007f007f007f00 <<< 8064)
+
+/-- Chunk `21` of `s6c1nGT`. -/
+def s6c1nGT21 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL21 s6c1nGTV21 512
+
+/-- Packed labels (17-bit fields) of chunk `22` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL22 : ℕ :=
+    0x5d2eae5bd745eb9c95d44ae67d74beb9f95d5cadfa57152b84f5c87ae06571b2b87f5c9f |||
+    (0xb9ff5d5fae735751ab96b5d15ae7f5757ab99b5d2dae72d7516b96d5d16ae7ed7576b99d <<< 288) |||
+    (0xb84e5b072de1972ccbaee5c572e8996cdcb7e65ad32dcbae5a57452b9cf5d47ae66574b2 <<< 576) |||
+    (0x6d84b84a5b052de0972c4baea5c552e8896cd4b7e25ad12dca9739cbb465c832ea396d8c <<< 864) |||
+    (0xea096d94b8425b012de2972d4bae25c512e8a96cc4b7ea5ad52dc897394bb425c812ea29 <<< 1152) |||
+    (0xc872ea196d9cb8465b032de3972dcbae65c532e8b96cccb7ee5ad72dc997384bb4a5c852 <<< 1440) |||
+    (0xcfc0dd6071b03f001ec011080894035681b740f120779042102148104c07f69738cbb4e5 <<< 1728) |||
+    (0x7b81c9c0ea60743043c022200fb807ac03ca81e140d6206e1040d01fa8107c084e03a781 <<< 2016) |||
+    (0xae03d781f7c1116087b03a001d400e4806f40426820f40fd20819037101ac80f0c079603 <<< 2304) |||
+    (0xda3022044b8221c0f6607e3038c01ba00e78074c03fa8209410a2084103bd01e280dbc06 <<< 2592) |||
+    (0x4d1fc68fac18350c2945faa2fba180e8bfc86084304d17e28bf286134307518290c0f45f <<< 2880) |||
+    (0xfa3c411fc08faf47b223cad1ef68f9447d9a3f711e188f0347c5a3e111e688f5b477e23c <<< 3168) |||
+    (0x618288c0f85fdc302147b3a3ca11ef08f9747d823f7d1e1e8f0047c423e1d1e6e8f58477 <<< 3456) |||
+    (0x7656bb2fdd996ecb97662b18348c2985fac2fb9180f0bfc46082304e17e30bf246132307 <<< 3744) |||
+    (0x6c9e36551b2f0d9906cb636611b309d96cecc8765e3b2a9d93cecb076523b29dd966eca1 <<< 4032) |||
+    (0x59602c9e16550b2f059902cb616610b314d9726ccb365f9b2b4d9426cb336539b290d960 <<< 4320) |||
+    (0xb29d5966aca15656ab2fd5996acb95662ab31459722ccb165f8b2b459422cb316538b290 <<< 4608) |||
+    (0x15ea0a6c052dc2b0e15880afa858682c941645b309596cacc8565e2b2a9593cacb056522 <<< 4896) |||
+    (0x2ce4169d0a97855802a2014ff0b51059b42b7a15d20acb855e0295014e70b1d059542c4a <<< 5184) |||
+    (0x56f82cdc16a10a99855702a1815030b4f059c42b8215ce0a800543c2abe15300ae685708 <<< 5472) |||
+    (0xb23059242c3215f60a72052ac2af615940af4858982cac16390a7e0544c2ac6152c0ae88 <<< 5760) |||
+    (0xbb6057102ac8168c0b5605d182dcc160e0b1706018304c194e0c770ac585610296814db0 <<< 6048) |||
+    (0x87c0c4e059d02d2815bc0aae057d82c2c173e0b6f064d831ac17fe0c0f06210314817cc0 <<< 6336) |||
+    (0xb7416920b390626830f417520bd9060602ff018d00c9805b602e7016100af805ed02ea81 <<< 6624) |||
+    (0xaa82d1415620ae105da82f9418a20c41063a0329018200c00058a02c1016e00ba0055682 <<< 6912) |||
+    (0xefaacbd54deab8b5565aa5fd547ea91b54edaae35559aab295534aa47553baa979551c05 <<< 7200) |||
+    (0xf955dcaae255592ab2d5536aa46553b2a97d551eaacad54d6ab8f5567aa5ed5476a91f54 <<< 7488) |||
+    (0x76aa9f55afaa6bd51deaa0b54a5aabfd577eaa9b55adaa835529aa9a95474aaa7556baaa <<< 7776) |||
+    (0x6d2a7a941f4a9caa8255292a9ad5476aaa6556b2aafd55deaa6ad51d6aa0f54a7aabed57 <<< 8064) |||
+    (0x6a5135295694494a57a58bd2b92962b4ae6a58b52b9696294ae7a50652a7e941d4a9da50 <<< 8352) |||
+    (0xa513d2952944b4a5 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `22` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV22 : ℕ :=
+    0x8100810081008100810081007f007f007f007f007f007f007f007f008100810081008100 |||
+    (0x810081008100810081008100810081007f007f007f007f007f007f007f007f0081008100 <<< 288) |||
+    (0x7f00810081007f007f0081007f00810081007f007f00810081007f007f007f007f007f00 <<< 576) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f007f00810081007f0081007f00 <<< 864) |||
+    (0x7f0081007f00810081007f007f00810081007f0081007f007f00810081007f007f008100 <<< 1152) |||
+    (0x7f008100810081007f00810081007f007f00810081007f0081007f007f00810081007f00 <<< 1440) |||
+    (0x7f007f008100810081007f0081007f007f007f008100810081007f008100810081007f00 <<< 1728) |||
+    (0x7f008100810081007f007f007f0081007f007f007f00810081007f007f007f0081007f00 <<< 2016) |||
+    (0x81007f008100810081007f007f008100810081008100810081007f007f00810081008100 <<< 2304) |||
+    (0x81007f007f007f0081007f007f007f007f007f007f00810081007f007f007f0081008100 <<< 2592) |||
+    (0x7f007f007f007f007f0081007f007f007f0081007f008100810081008100810081007f00 <<< 2880) |||
+    (0x81007f007f007f007f007f007f0081007f007f007f0081007f0081008100810081007f00 <<< 3168) |||
+    (0x7f0081007f007f007f0081007f008100810081007f008100810081008100810081007f00 <<< 3456) |||
+    (0x7f00810081007f007f00810081007f0081007f007f0081007f00810081007f0081007f00 <<< 3744) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f0081007f007f008100 <<< 4032) |||
+    (0x81007f007f0081007f00810081007f007f00810081007f0081007f007f0081007f008100 <<< 4320) |||
+    (0x81007f007f007f0081007f0081007f008100810081007f007f0081007f00810081007f00 <<< 4608) |||
+    (0x7f0081007f007f007f0081007f007f007f007f0081007f007f0081007f007f007f007f00 <<< 4896) |||
+    (0x81007f0081007f008100810081007f0081008100810081007f008100810081007f008100 <<< 5184) |||
+    (0x7f0081007f007f007f007f0081007f007f007f0081007f0081007f00810081007f007f00 <<< 5472) |||
+    (0x810081008100810081007f007f0081008100810081007f007f007f008100810081007f00 <<< 5760) |||
+    (0x7f008100810081007f008100810081007f007f007f0081008100810081007f007f008100 <<< 6048) |||
+    (0x810081007f007f007f0081007f008100810081007f007f007f0081008100810081007f00 <<< 6336) |||
+    (0x7f007f0081008100810081007f007f007f007f007f00810081007f007f007f007f008100 <<< 6624) |||
+    (0x810081007f007f0081008100810081007f007f00810081007f007f007f007f0081008100 <<< 6912) |||
+    (0x7f007f00810081007f007f0081008100810081007f007f00810081007f007f007f007f00 <<< 7200) |||
+    (0x7f007f007f007f00810081007f007f0081008100810081007f007f00810081007f007f00 <<< 7488) |||
+    (0x7f0081007f00810081007f0081007f0081007f0081007f007f0081007f00810081008100 <<< 7776) |||
+    (0x81007f0081007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `22` of `s6c1nGT`. -/
+def s6c1nGT22 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL22 s6c1nGTV22 512
+
+/-- Packed labels (17-bit fields) of chunk `23` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL23 : ℕ :=
+    0x49f4a57fd2cb295fb4b2ea57f52cb695f94b2fa5ae52b3e96bd4acda5aed2b3a96bf4acc |||
+    (0x94d94a3fa55a52d1e956d4b45a55ad2d1a956f4b44a542527de950d49f5a542d27da950f <<< 288) |||
+    (0xf1faf9597c4cbdd3df01ef6eb7bd5bdbb5ef5af7497c04a537d28f294db4a3ea537528f6 <<< 576) |||
+    (0xe56df136f9bf7c7fbdba5ef52f74d7c06bdd2df016f6ef7bd7be57df13ef9bb7c7dbe6f5 <<< 864) |||
+    (0xc65be635f19af9297c34bddfdf07ef71b7bedbdc75efbaf7797c1cbe6e5f1f2f95d7c4eb <<< 1152) |||
+    (0x92d7c36be4adf0d6f98f7c67bdc65efb2f77d7c1ebddedf076f71f7befbe4bdf0def98b7 <<< 1440) |||
+    (0xff2d119682cb4825a592d1a96934b48f5a2fad29d68eeb4235a29ad02d6876be625f192f <<< 1728) |||
+    (0x3a5a052d1496844b4765a532d179691cb49b5a35ad2cd6906b4175a23acffd685eb42e59 <<< 2016) |||
+    (0x1fb48eda2f6d29b68edb422da296d02b6875b42fd9ffed11f682fb483da59ed1af6937b4 <<< 2304) |||
+    (0x6b3ac4b49ada356d2cb6905b416da236cffb685db43bda05ed14f6847b477da53ed17f69 <<< 2592) |||
+    (0x16746d3ac79d6fce93a75bb3a4c9cd34e75e734939d59cf74e6fe73d939bd9d1bceb1a74 <<< 2880) |||
+    (0xf4eabe74f93aad9d6e4e93675bd3a4f9cd2ce752734f39d69cf6ce6f273df39be9d1a4eb <<< 3168) |||
+    (0x79d3eceab274ff3aae9d4b4e99e75293a659cc7ce87a731b3a1c9d03ce5da740b39749d3 <<< 3456) |||
+    (0xd7996bca6de656f2c979dc9d4ace992752f3a669cc64e876731d3a1f9d024e5d6740d397 <<< 3744) |||
+    (0xef26d79aebc9ade6b6f2f979c4bc5fde41ef0ed78eebc3ade3b6f1797904bcb3de77ef29 <<< 4032) |||
+    (0x5e652f2cb79ddbcb35e77af29f7997bc53de47ef11d78d6bc46de356f149791cbcbfde71 <<< 4320) |||
+    (0xbc9a5e6b2f2fb79c5bcbf5e71af26f79afbc3a5e3b2f17b7905bc5f5e41af0ef78efbca6 <<< 4608) |||
+    (0x2af5155c8ab58564c2ae915a70ad0456e22b9ebc465e352f14b791dbc535e47af11f78d7 <<< 4896) |||
+    (0x13e88a1b452ba28e113d08a27456022b3d153e8a7015a90acf456da2ba215628ab285634 <<< 5184) |||
+    (0xac9455aa2aba157b0ac6455922ac615d08adb8567c2b51455e22b4d15468a6c4525a2911 <<< 5472) |||
+    (0x512227ad14768a54450c227dd148e8a484537a2a8115a08abf15ce8adc856842b4d15750 <<< 5760) |||
+    (0x6984b3a25a912da096c04af6258712c9096384b2a259112be096204539a2a7115988ac34 <<< 6048) |||
+    (0xc8e96574b1da592d2c3e95ef4b61a5b4d2d4e96774b4da59ad2d7e96cf4b6625af12cd09 <<< 6336) |||
+    (0xd786f14377a1bcb0de186e6437621b870dbf86d5436da1b5b0db986e2437024b11a57cd2 <<< 6624) |||
+    (0x808dc446dca36b51b6c8daa46dfa370d1bb08dcc46f0a37951bbc8de246eba372d1b970d <<< 6912) |||
+    (0xb4a1c7d0d1e87af435fa14f50c5a850d42cea14ed0c56850b42cda1c650d1287a9435c1b <<< 7200) |||
+    (0x794374a173d09be85ff42b7a1bb50efa865d43a6a1bad0ef6865b43a5a172509b285f942 <<< 7488) |||
+    (0x128629429ca1d3d0cbe877f4377a15b50bfa84dd42e6a15ad0bf684db42e5a1d250cb287 <<< 7776) |||
+    (0x18e90874a499b3a167d0a1e862f429fa1af50f5a868d438ea1aed0f56868b438da16650a <<< 8064) |||
+    (0xb1d112640d322639f24c9a0e754738a99641cf6a643131f83a1d1d4d265ed33163a6a4cf <<< 8352) |||
+    (0x4cad8e6e87394992 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `23` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV23 : ℕ :=
+    0x81007f0081007f0081007f007f0081007f0081007f0081007f00810081007f0081007f00 |||
+    (0x81007f0081007f0081007f0081007f007f0081007f0081007f0081007f00810081007f00 <<< 288) |||
+    (0x7f0081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 576) |||
+    (0x81007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f007f008100 <<< 864) |||
+    (0x7f00810081007f0081007f0081007f0081007f0081007f0081007f0081007f0081007f00 <<< 1152) |||
+    (0x81008100810081007f0081007f0081007f0081007f0081007f0081007f0081007f008100 <<< 1440) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f007f007f007f007f00 <<< 1728) |||
+    (0x7f007f007f007f00810081008100810081008100810081007f007f007f007f007f007f00 <<< 2016) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 2304) |||
+    (0x81007f007f0081007f00810081007f0081007f007f00810081008100810081007f007f00 <<< 2592) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f007f00810081007f00 <<< 2880) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f00810081007f00 <<< 3168) |||
+    (0x7f007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 3456) |||
+    (0x810081007f007f00810081007f007f00810081007f007f00810081007f007f0081008100 <<< 3744) |||
+    (0x810081007f007f0081008100810081007f007f00810081007f007f00810081007f007f00 <<< 4032) |||
+    (0x7f007f00810081007f007f00810081007f007f00810081007f007f00810081007f007f00 <<< 4320) |||
+    (0x81007f007f007f007f00810081007f007f007f007f007f00810081007f007f0081008100 <<< 4608) |||
+    (0x7f0081008100810081007f007f007f008100810081007f0081007f007f007f0081008100 <<< 4896) |||
+    (0x7f00810081007f007f007f007f008100810081007f007f007f0081008100810081007f00 <<< 5184) |||
+    (0x81007f007f007f008100810081007f007f007f007f00810081007f007f007f007f007f00 <<< 5472) |||
+    (0x7f007f007f007f0081007f007f0081007f007f007f0081007f007f00810081007f008100 <<< 5760) |||
+    (0x81007f008100810081007f00810081007f007f0081007f007f007f0081007f007f008100 <<< 6048) |||
+    (0x7f007f00810081007f0081007f0081007f007f00810081007f008100810081007f008100 <<< 6336) |||
+    (0x7f00810081007f007f00810081007f007f007f0081007f007f0081007f007f007f008100 <<< 6624) |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f007f00810081007f00 <<< 6912) |||
+    (0x81007f007f00810081007f007f00810081007f007f0081007f00810081007f007f008100 <<< 7200) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 <<< 7488) |||
+    (0x7f008100810081007f007f007f0081008100810081007f007f0081008100810081007f00 <<< 7776) |||
+    (0x81007f007f007f008100810081007f00 <<< 8064)
+
+/-- Chunk `23` of `s6c1nGT`. -/
+def s6c1nGT23 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL23 s6c1nGTV23 512
+
+/-- Packed labels (17-bit fields) of chunk `24` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL24 : ℕ :=
+    0x3a1e1d4ca65e133103a694cf00e90474a299b01d3aa665133083aa54cd60e934747a99dc |||
+    (0x747c99df4cac0e6e4739299281d10a6401322039f14c9b8e758738c99671cf72643d31fe <<< 288) |||
+    (0x946849ea84d8423f89348497a849012b6a1181085e25a21d3b2665d330e3aa64cd78e938 <<< 576) |||
+    (0x25a0946449ec84db423e09344497c849312b72118d085825a112a2a1021080e254a425b8 <<< 864) |||
+    (0x4a812aaa0fe1082e253a12cea10c108be2572424789308499a848012a32102d080825494 <<< 1152) |||
+    (0xa4c84ab12ab20fed0828253912cf210cd08b82571424609304499c84834273893a84a4a8 <<< 1440) |||
+    (0x88a8c474621a2c8d164e8b254590a2d4d16ae8b5545a8a2ec5176a8bb745d94272093a44 <<< 1728) |||
+    (0x40d1a0e8d054680a35851aca8d6746b1a36451b2a8d9746c9a31cd18ee8c754638a31051 <<< 2016) |||
+    (0x99a2e0d170e8b8545c0a2f8517ca8be745f1a3045182a8c174609a2bcd15ee8af54578a3 <<< 2304) |||
+    (0xe77471a37051b8a8dc746e1a328d194e8ca54650a334d19ae8cd54668a34c51a6a8d3746 <<< 2592) |||
+    (0x4ee8257410ba8c5d46aea377519ba68dd34ee9a574d0b9fcdcfeee7f573f8ba385d1cae8 <<< 2880) |||
+    (0x0dd10ee8857440ba5cdd2eee97574b8ba985d4caea677531ba2c5d16ae8b77459ba08dd0 <<< 3168) |||
+    (0x8ba505d28ae94774a1ba74dd3aee9d574e8bab05d58aeac77561ba445d22ae9177489ba2 <<< 3456) |||
+    (0x2861b1394a1b2d0d762759baa45d52aea977549ba80dd40eea057500ba14dd0aee855742 <<< 3744) |||
+    (0x84df48618139521b210d70275a13b6a1a3d0cfe279d431789b344d7a865f42f589c244df <<< 4032) |||
+    (0x21b110da82736431209c184e2c85f413b721a310cf8279e431609b384d7c865c42f409c2 <<< 4320) |||
+    (0x13b2a1b1d0dae2735431389c144e2a85f7433009b084da4863013d121a010d20277213b3 <<< 4608) |||
+    (0x6cc0b6e4db72edb956dc8b6785b3cad9e76cf1433189b044da2863313d0a1a0d0d262771 <<< 4896) |||
+    (0xda476d21b6b45b5aadad76d69b648db24ed9256c90b69c5b4eada776d39b660db30ed985 <<< 5184) |||
+    (0xb78adbc76de1b6545b2aad9576ca9b6a8db54edaa56d50b6ccdb66edb356d98b6905b48a <<< 5472) |||
+    (0x6c0db60edb056d80b684db42eda156d08b6d85b6cadb676db1b66cdb36ed9b56cd8b6f05 <<< 5760) |||
+    (0xf69a784d3c2e9e154f08a748d3a4e9d254e90a7d853eca9f674fb1b63c5b1ead8f76c79b <<< 6048) |||
+    (0xf354f98a73c539ea9cf74e79a79053c8a9e474f21a7c0d3e0e9f054f80a7b453daa9ed74 <<< 6336) |||
+    (0xf2e9f954fc8a75453aaa9d574ea9a77853bca9de74ef1a7a8d3d4e9ea54f50a7ccd3e6e9 <<< 6624) |||
+    (0x9c53cea9e774f39a76cd3b6e9db54ed8a760d3b0e9d854ec0a7f053f8a9fc74fe1a7e4d3 <<< 6912) |||
+    (0x2e4e140f39879529c671e98a737d39603d5e1e84a701d38103d064e480f5f87b229c7fa7 <<< 7200) |||
+    (0x249c7c1e7ca705d37f03d164e400f6387b029c8f4e2c0f2d879b29c371eb0a72bd39c03d <<< 7488) |||
+    (0xb139c63d2d4e158f39479549c641e992737139663d5d1e852701138163d054e498f5f47b <<< 7776) |||
+    (0x60491c249011c31e7d2705137f63d154e418f6347b049c8c4e2d8f2d479b49c341eb1272 <<< 8064) |||
+    (0xb08e8048ec24a811bf0896843982152116208c484408221a118608f404a8c24d8122708e <<< 8352) |||
+    (0x8fa04a7c24e0121 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `24` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV24 : ℕ :=
+    0x8100810081007f007f007f008100810081007f008100810081007f007f00810081008100 |||
+    (0x8100810081007f007f007f007f00810081007f007f007f008100810081007f007f008100 <<< 288) |||
+    (0x81007f0081007f007f007f007f008100810081008100810081007f0081007f007f007f00 <<< 576) |||
+    (0x81007f007f007f007f007f007f0081008100810081007f0081007f007f007f0081008100 <<< 864) |||
+    (0x81007f007f008100810081008100810081007f007f007f007f0081007f00810081008100 <<< 1152) |||
+    (0x81008100810081008100810081007f0081007f007f007f007f0081008100810081008100 <<< 1440) |||
+    (0x810081007f007f007f007f007f007f007f007f0081008100810081007f007f007f007f00 <<< 1728) |||
+    (0x7f007f007f007f00810081008100810081008100810081007f007f007f007f0081008100 <<< 2016) |||
+    (0x7f007f0081008100810081007f007f007f007f007f007f007f007f008100810081008100 <<< 2304) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f0081008100810081007f007f00 <<< 2592) |||
+    (0x81007f0081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 <<< 2880) |||
+    (0x7f00810081007f0081007f007f00810081007f007f0081007f00810081007f007f008100 <<< 3168) |||
+    (0x81007f007f00810081007f0081007f007f00810081007f007f0081007f00810081007f00 <<< 3456) |||
+    (0x81007f007f007f007f007f007f0081007f008100810081007f0081008100810081008100 <<< 3744) |||
+    (0x81007f0081007f007f007f007f008100810081008100810081007f008100810081007f00 <<< 4032) |||
+    (0x81007f007f007f007f007f007f0081007f008100810081008100810081007f0081008100 <<< 4320) |||
+    (0x7f00810081007f007f0081007f00810081007f008100810081007f0081007f007f007f00 <<< 4608) |||
+    (0x81007f007f00810081007f007f0081007f00810081007f007f00810081007f0081007f00 <<< 4896) |||
+    (0x7f0081007f00810081007f007f00810081007f0081007f007f0081007f00810081007f00 <<< 5184) |||
+    (0x81007f007f0081007f00810081007f007f00810081007f0081007f007f00810081007f00 <<< 5472) |||
+    (0x7f007f00810081008100810081008100810081007f007f007f007f007f007f007f007f00 <<< 5760) |||
+    (0x7f007f007f007f00810081008100810081008100810081007f007f007f007f007f007f00 <<< 6048) |||
+    (0x7f007f007f007f007f007f00810081008100810081008100810081007f007f007f007f00 <<< 6336) |||
+    (0x7f007f007f0081007f00810081008100810081008100810081008100810081007f007f00 <<< 6624) |||
+    (0x7f007f0081007f007f007f007f007f007f00810081007f007f007f007f007f007f008100 <<< 6912) |||
+    (0x7f008100810081007f008100810081008100810081007f008100810081007f0081007f00 <<< 7200) |||
+    (0x7f007f007f007f007f0081007f007f007f0081007f008100810081007f007f007f008100 <<< 7488) |||
+    (0x7f008100810081008100810081007f007f007f007f0081007f0081008100810081007f00 <<< 7776) |||
+    (0x81007f007f007f007f007f007f008100 <<< 8064)
+
+/-- Chunk `24` of `s6c1nGT`. -/
+def s6c1nGT24 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL24 s6c1nGTV24 512
+
+/-- Packed labels (17-bit fields) of chunk `25` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL25 : ℕ :=
+    0x113208de0495c247011d3090c049cc253811f7089884368216a115e08ca843f82222117a |||
+    (0x21ca112e08e00492c248811cf0912049bc254011eb08bc8444821fa119608ae842d821b2 <<< 288) |||
+    (0x404ea0255010a844d422ea1155088a898544caa267513108c2844382202118a08b0842a8 <<< 576) |||
+    (0x82c5416aa0b75059a8205410aa0875041a85cd42eea17550b8a874543aaa1d750e9a808d <<< 864) |||
+    (0x118a8505428aa14750a1a7fc53fea9ff74ff9a880d440ea2055100a8b0d458ea2c55160a <<< 1152) |||
+    (0x1a750d1a814d40aea0555028a838d41cea0e55070a8a45452aa2975149a88cd446ea2355 <<< 1440) |||
+    (0x14ac8a76451b270d938ec9c564e0b1d4d8eaec75563a8b1ec58f6ac7b763d9a8685434aa <<< 1728) |||
+    (0xf8d8fcec7e563f0b1e058f0ac78763c1b2645932ac99764c9b21cd90eec8756438b22859 <<< 2016) |||
+    (0xb1b24cd926ec9356498b234591aac8d76469b2105908ac8476421b1c8d8e4ec7256390b1 <<< 2304) |||
+    (0x2a17f1b1bc58deac6f76379b204d902ec8156408b240d920ec9056480b258592cac96764 <<< 2592) |||
+    (0x382efc171a0c3185f1c2fae18330b9285e042f2216f50bb385b0c2da617370c108621431 <<< 2880) |||
+    (0xe861e4311217ed0b9405b302d7817580bf70622830f4181e0c1605f202f70185c0b7505e <<< 3168) |||
+    (0x00b7b05e482f0417260c2f85eec2f96182f0b8c85df42f1a16e90bad85afc2d9e172b0c0 <<< 3456) |||
+    (0x0059c02b801350098805a00b9a05b402d8017640bf906258310c18220c1805f502f88186 <<< 3744) |||
+    (0x809fc055a029b014480a0405660314018300bf80658031a018400c00066402b601320097 <<< 4032) |||
+    (0x8143409fa0559029a814440a0205650337017280b74069e0339017580b8c06a202950143 <<< 4320) |||
+    (0x02b78132c0976059f02b98135c098e05a30336817240b72069d0338817540b8a06a10294 <<< 4608) |||
+    (0x8caf46338b31859ac8c37168f22ffd181e2cee03158183c0bfe065b031b8184c0c060667 <<< 4896) |||
+    (0x19162d6a16912300d18262cf2462d8b2e859948c2b16d32321d192e2d76466f8b4f85a9c <<< 5184) |||
+    (0x304118002d2116b4a322118f02d9946580b5445a828ce046718b5085aa48cb316cd231ed <<< 5472) |||
+    (0x61a0b354598a8c6446560b5345a7a8cdc16baa325119082da546140b32459728c581678a <<< 5760) |||
+    (0x6624a9a0d7686b6a955b4a940d7986b5295671b18a577d2b60365e1676a303117f82d1d4 <<< 6048) |||
+    (0xd1a95831b0aa53ed2a2835fa1b04a541d2a1036064ac80d9f86d22957f1b16a578d2b583 <<< 6336) |||
+    (0xa486cfa95931b02a542d2a08360a1afca545d29f036164ac00da386d02958f4ac60da086 <<< 6624) |||
+    (0x2ea56cd2bb836324ab20d6a86bca952b4aac0d6d86bb295371b30a56bd2bc0362e4abe0d <<< 6912) |||
+    (0xe90d9306df8371c1af60e2e06f1037a81c2c0e2f86f1c37ae1c2f0d9286df4371a1af51b <<< 7200) |||
+    (0xf41c220d8d06e0837241aea0e3006ee037901c300e3186eec37961c330d8c86e0437221a <<< 7488) |||
+    (0x58390c1c1e0df88722438f21c210d9586b4c35861b5b0d9406b4035801b580df90722838 <<< 7776) |||
+    (0x34dc9a6d2d36f60df687254390a1c1d0d9b86b3c357e1b670d9a06b3035781b640df7072 <<< 8064) |||
+    (0x59bc3cdf9e6eaf37b79b6e4d9f26e1936ac9bcf4dcfa6f9d376e9bc24df926ea937b49b6 <<< 8352) |||
+    (0x9b62cdc966d2b36f <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `25` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV25 : ℕ :=
+    0x7f007f007f008100810081008100810081007f007f007f007f0081007f00810081008100 |||
+    (0x8100810081007f007f007f007f0081007f008100810081008100810081007f0081007f00 <<< 288) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081007f00810081008100 <<< 576) |||
+    (0x81008100810081007f007f007f007f0081008100810081007f007f007f007f007f007f00 <<< 864) |||
+    (0x8100810081008100810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 1152) |||
+    (0x81007f007f0081007f007f007f007f0081008100810081007f007f007f007f0081008100 <<< 1440) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f007f00810081007f00 <<< 1728) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f00810081007f00 <<< 2016) |||
+    (0x7f00810081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 2304) |||
+    (0x7f007f007f0081007f007f007f00810081007f007f007f007f00810081007f0081007f00 <<< 2592) |||
+    (0x7f00810081007f007f007f0081007f007f007f008100810081007f007f00810081008100 <<< 2880) |||
+    (0x7f007f007f00810081007f007f007f0081007f007f007f008100810081007f007f007f00 <<< 3168) |||
+    (0x81007f0081007f007f007f008100810081007f008100810081007f007f00810081008100 <<< 3456) |||
+    (0x7f008100810081007f007f007f0081007f008100810081007f0081008100810081008100 <<< 3744) |||
+    (0x81007f0081007f007f007f0081007f007f007f007f007f007f0081007f007f007f008100 <<< 4032) |||
+    (0x7f008100810081008100810081007f007f008100810081008100810081007f0081008100 <<< 4320) |||
+    (0x8100810081007f007f007f008100810081007f007f007f007f0081007f00810081008100 <<< 4608) |||
+    (0x7f007f007f0081008100810081007f007f008100810081008100810081007f007f008100 <<< 4896) |||
+    (0x7f007f008100810081007f007f007f007f00810081007f007f007f007f00810081008100 <<< 5184) |||
+    (0x8100810081007f007f0081008100810081007f007f007f008100810081007f0081007f00 <<< 5472) |||
+    (0x81007f007f008100810081008100810081007f007f007f007f0081007f00810081008100 <<< 5760) |||
+    (0x7f007f007f0081008100810081007f0081007f007f007f007f0081008100810081008100 <<< 6048) |||
+    (0x7f0081007f008100810081007f007f007f0081007f0081008100810081007f007f007f00 <<< 6336) |||
+    (0x7f008100810081007f007f007f0081007f008100810081008100810081007f007f007f00 <<< 6624) |||
+    (0x81007f007f007f007f00810081007f007f007f007f007f007f00810081007f007f007f00 <<< 6912) |||
+    (0x8100810081007f007f007f007f00810081007f007f007f0081007f007f007f0081008100 <<< 7200) |||
+    (0x81007f007f0081008100810081007f007f007f008100810081007f0081007f007f007f00 <<< 7488) |||
+    (0x7f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f0081008100 <<< 7776) |||
+    (0x7f0081007f0081007f0081007f008100 <<< 8064)
+
+/-- Chunk `25` of `s6c1nGT`. -/
+def s6c1nGT25 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL25 s6c1nGTV25 512
+
+/-- Packed labels (17-bit fields) of chunk `26` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL26 : ℕ :=
+    0x36ad9b63cdc9e6d2f36f79bc2cdf966eab37b59bcecdcf66f9b376d9b6fcd9fe6e1f36af |||
+    (0x6f99376c9bc34df9a6ead37b69b624dc926d2936f49bcfcdcfe6f9f376f9b6ecd9f66e1b <<< 288) |||
+    (0xcadc667e92ae49248cb6066a092e119c3a49d923fc32ef9b6f4d9fa6e1d36ae9bce4dcf2 <<< 576) |||
+    (0x9228cad0667892ad49250cb6c66a692e219c2249d523fa32ec19c424a652422332049230 <<< 864) |||
+    (0x2011973a495925bc334f1954248e52562334049530ce5c663e920e19c5a4a69242433234 <<< 1152) |||
+    (0x5e6920219722495525ba334c1955a48e92564334349528ce506638920d49348cde065e09 <<< 1440) |||
+    (0x5f41c5e0d7e07110334c1c420cd006f6832f01bdc0cbf0731836481cc00d9149350cdec6 <<< 1728) |||
+    (0xc6839701b1c0e5f0661837c819800df1066603874199e0e1e06c1038cc1b020e30071603 <<< 2016) |||
+    (0xe9067a8371019ec0dc706ad83a281ab00e89069a03a141a6e0e86068d0372c1a320dc806 <<< 2304) |||
+    (0x0354e306ea034941bae0d26073d034ac1cf20d28074a835901d2c0d6706dd833a81b700c <<< 2592) |||
+    (0xaea9675511aa7d55262aa8155a2aadc5556aa90554e0aa7cd526eaa8755a1aaddd5566a9 <<< 2880) |||
+    (0xd55562a90154e2aa64551aaaae555d0aac5554a2a9615512aa65d51a6aae355d3aac4d54 <<< 3168) |||
+    (0x2aac4554aaa9655510aa7dd5266aa8355a3aadcd556ea90754e1aa7c5526aaa8555a0aad <<< 3456) |||
+    (0x323519221c8f8e4617236baa64d51aeaae755d1aac5d54a6a9635513aa65551a2aae155d <<< 3744) |||
+    (0xa4615236a922c48fe245e123509214c8f26464323819209c8ece4677239b922cc8fe645e <<< 4032) |||
+    (0xc8ce64763241191c1c8c8e4797242b920948eca4675239a921448f2246412380922148f8 <<< 4320) |||
+    (0x91c148c8a4795242a91cc48ce24761241091b4c8c2647c3244191a9c8bce47f7245b91cc <<< 4608) |||
+    (0x2ec496d34b81a5aeb2dd596bbcb75e5b492e0491a948bca47f5245a91b448c2247c12440 <<< 4896) |||
+    (0x5cf92edc96df4b87a5b1b2ded96c7cb7be5b792e1c97334bb1a5c6b2e95971bcba5e5cc9 <<< 5184) |||
+    (0xbb165c6d2e9696ba4b7525b4f2e0796d2cb8165aed2dd6973f4bb7a5c9b2ead9727cbabe <<< 5472) |||
+    (0x73ecbb765c9d2eae96c64b7b25b7f2e1f96decb8765b1d2dee971a4ba525ccf2ec79732c <<< 5760) |||
+    (0xc4aae185724ab8055c60ae0cd71eeb7d75c49ae19d7246b8035c6397264bab25cff2edf9 <<< 6048) |||
+    (0x9555d08ae7957542b9815d22ae6dd74e6b9535d0bae78d754eb9875d21ae0d571e2b7d15 <<< 6336) |||
+    (0x1e6b7d35c4bae18d724eb8075c61ae0c571eab7d55c48ae1957242b8015c62ae6c574eab <<< 6624) |||
+    (0x6cd74eeb9575d09ae79d7546b9835d23ae6d574e2b9515d0aae785754ab9855d20ae0dd7 <<< 6912) |||
+    (0x850fe007c083ec420a00fbd080e040301eda0f99081c03fa01f120ff407aa83f142048ae <<< 7200) |||
+    (0x981f0e0f8687f3c40de1f2d102b87e543d6a1ff7104f87d743dfa1fbf0f728809c408e1f <<< 7488) |||
+    (0x843e021fc30fc30811040481ee60fde07bf83ebc209c0ffa07ad83f2c20540f97081b03f <<< 7776) |||
+    (0x1a3c891f843003102587e243d521feb0f8887f4c40e61f310f6c8806c40761f79105187d <<< 8064) |||
+    (0x9183023c851f8230001845a3d291ed42fab47e90c04c60668ef247cd0bf6c60f68f3a183 <<< 8352) |||
+    (0x47cc8bf6060f08f3 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `26` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV26 : ℕ :=
+    0x81007f007f0081007f0081007f0081007f00810081007f0081007f0081007f0081007f00 |||
+    (0x7f0081007f00810081007f0081007f0081007f0081007f0081007f0081007f0081007f00 <<< 288) |||
+    (0x7f007f008100810081007f007f007f007f00810081007f007f007f007f0081007f008100 <<< 576) |||
+    (0x7f007f007f00810081007f007f007f007f008100810081007f007f007f00810081007f00 <<< 864) |||
+    (0x810081007f007f007f00810081007f007f007f007f008100810081007f007f007f008100 <<< 1152) |||
+    (0x830081007f0083007f008100810081007f007f007f0081008100810081007f007f008100 <<< 1440) |||
+    (0x810081007f007f0081007f00830081007f00830081007d00830081007f0083007d007f00 <<< 1728) |||
+    (0x81007f00810081007f007f0081007f007f007f0081007f007f0081007f007f0081007f00 <<< 2016) |||
+    (0x810083007d0081007f007d00810083007d0081007f007f0081007f007f0081007f007f00 <<< 2304) |||
+    (0x83007d0083007d007d0083007d00830083007d0083007d00810083007d00810083007f00 <<< 2592) |||
+    (0x7d00830083007d0083007d007d0083007d00830083007d0083007d007d0083007d008300 <<< 2880) |||
+    (0x7d0083007d00830083007d0083007d007d0083007d00830083007d0083007d007d008300 <<< 3168) |||
+    (0x7f0081007d0083007d00830083007d0083007d007d0083007d00830083007d0083007d00 <<< 3456) |||
+    (0x81007f0081007f0081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 3744) |||
+    (0x81007f007f0081007f0081007f0081007f00810081007f0081007f007f0081007f008100 <<< 4032) |||
+    (0x7f0081007f00810081007f0081007f0081007f0081007f007f0081007f00810081007f00 <<< 4320) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f0081007f00810081007f0081007f00 <<< 4608) |||
+    (0x81007f007f0081007f00810081007f0081007f007f0081007f00810081007f0081007f00 <<< 4896) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 5184) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 5472) |||
+    (0x83007d0083007d007d00830083007d007d00830083007d007d00830083007d007d008300 <<< 5760) |||
+    (0x83007d007d0083007d00830083007d007d00830083007d007d00830083007d007d008300 <<< 6048) |||
+    (0x83007d007d00830083007d0083007d007d00830083007d007d00830083007d007d008300 <<< 6336) |||
+    (0x8100830083007f0083007f007f007d007d00830083007d007d00830083007d007d008300 <<< 6624) |||
+    (0x81007f008100810081007f0081007f007f007f007d008100810083008100830083007f00 <<< 6912) |||
+    (0x7f007f007f0081007f007f007f0081007f008100810081007f0081008100810081008100 <<< 7200) |||
+    (0x7d007f007d007f007f0083007d007f007f0083007f0083008300810081007f007f007f00 <<< 7488) |||
+    (0x7f0081007f007f007f007f0081007f007f007f0081007f0081007f008100810081007d00 <<< 7776) |||
+    (0x7f0081007f007f007f007f0081007f00 <<< 8064)
+
+/-- Chunk `26` of `s6c1nGT`. -/
+def s6c1nGT26 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL26 s6c1nGTV26 512
+
+/-- Packed labels (17-bit fields) of chunk `27` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL27 : ℕ :=
+    0x305c17da23dd51eaa309447768c0b060188fcd184423d251ed22fa847e88c04060608ef1 |||
+    (0x1e3c305f17dba3dd91eac309747770c0bc601e8fce47a28c2105fc88fa517fe23ef51e3a <<< 288) |||
+    (0x987e4d8d27269302c99964e7926dc9362c9c964cf9261c47a30c21c5fce8fa617ffa3ef9 <<< 576) |||
+    (0x34bc98de4d5d270e92f6c99364ea926f49356c9c364d292634939fc9b7e4c0d2666933fc <<< 864) |||
+    (0x6969327c97be4ded2756931ac9a564e1926ac937ac9d564c9925ec93abc9bde4bdd264e9 <<< 1152) |||
+    (0xc3d267e9333c981e4dbd273e930ec99f64e4926c4936ec9cf64cc926049387c9abe4c6d2 <<< 1440) |||
+    (0x3e6f2b379d1bc34de386f2837989bc4dde44ef2e779bbbc41de32ef25779a39393c9b1e4 <<< 1728) |||
+    (0x4d5e44af2e579babc415e32af25579a2bc585e3e2f2b179d0bc345e382f2817988bc58de <<< 2016) |||
+    (0xa1bc4c5e442f2e179b8bc405e322f25179a0bc595e3eaf2b579d2bc355e38af285798abc <<< 2304) |||
+    (0xfa2b7fbc59de3eef2b779d3bc35de38ef287798bbc4cde446f2e379b9bc40de326f25379 <<< 2592) |||
+    (0xdc565e8aad15b1a2b8514b22adb45408ae0c55f689f945328ab9c56be8add1583a281514 <<< 2880) |||
+    (0x22281914fc2b7c45488ae4c56168a091599a2ac514522aab158ba2855151a2b8f451a8aa <<< 3168) |||
+    (0xc451b0aad056588aae15b022b8914b42ad845410ae0055f089fa45330ab9056b88ade158 <<< 3456) |||
+    (0xe82ed1243a0dd5068a23b745490ae4056108a0a159822ac914542aa8158a22859151c2b8 <<< 3744) |||
+    (0x5067223ab41e0890cc480682f1120820c8907a4246041a508f604910839a41de890bc47f <<< 4032) |||
+    (0x090b047f882ee124220dd9068c23b441ab08f90492883a6120620c79079c245c123da0da <<< 4320) |||
+    (0x123c20da9067423a841e1090c0480082f21209a0c8507a2246341a488f6c4916839941df <<< 4608) |||
+    (0x961a1bc7a5a752c9a36df4b648dd6c6e16961941aa88f9c492e83a51207a0c75079a245f <<< 4896) |||
+    (0x2ca436e04b6a8dd9c6e2e96251bc9a5a852ca236e31bc625a792c9c36dc4b650dd606e10 <<< 5184) |||
+    (0x57d52d8a37374b210dac06f0096721b82257d92d8c37344b6b0dd906e2896261bc825a89 <<< 5472) |||
+    (0xb1e8dabc6efe966d1b7c257a92d7437284b1f0dab06ef8966e4b208dacc6f0696711b83a <<< 5760) |||
+    (0x1e9a100503e6843141a1a0e8504a684914171a0ac50986828141b91b7da57a52d72372b4 <<< 6048) |||
+    (0x3d54113a07d5080e8345421ba0955074e82e5424ba1315056e83754143a0c4508c682214 <<< 6336) |||
+    (0x50684c14159a0b850926825141d1a0d05086681f14201a0f45044684614189a1195062e8 <<< 6624) |||
+    (0xa1506ee82b54263a125505ce83a5412ba10d5068e840540fba089507ae83154233a0dc50 <<< 6912) |||
+    (0x88be45df0a2f7617c13be505f10ef7377bf8be5c5f16ef7077be0be69df1c2f6d17bcba0 <<< 7200) |||
+    (0xd37bcabde45edaef8e77cd0bdf1dee02f8b17cbbbdfddee62f8817ca3be085eecef8577c <<< 7488) |||
+    (0xcaf8557c89be455f0a6f7637c12be50df10af7357bf9be5cdf16af7057be1be695f1c6f6 <<< 7776) |||
+    (0xdd2b6a94054a63bde4dedaaf8e57cd1bdf15ee06f8b37cbabdfd5ee66f8837ca2be08dee <<< 8064) |||
+    (0xba53d5286e95874b22a591d2b0a94354a7ba58552aae94674a92a5a952bce93d74a4aa59 <<< 8352) |||
+    (0xa549d28ca95554b0 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `27` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV27 : ℕ :=
+    0x7f007f007f0081007f007f007f007f0081007f00810081007f0081007f0081007f007f00 |||
+    (0x810081007f008100810081007f0081007f0081007f007f00810081007f0081007f008100 <<< 288) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f00810081007f0081008100 <<< 576) |||
+    (0x7f00810081007f0081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 864) |||
+    (0x81007f0081007f007f0081007f00810081007f0081007f007f0081007f00810081007f00 <<< 1152) |||
+    (0x7f007f008100810081007f007f0081007f00810081007f0081007f007f0081007f008100 <<< 1440) |||
+    (0x7f007f00810081007f007f007f007f00810081007f007f00810081007f007f0081008100 <<< 1728) |||
+    (0x810081007f007f00810081007f007f00810081007f007f00810081007f007f0081008100 <<< 2016) |||
+    (0x810081007f007f00810081007f007f0081008100810081007f007f00810081007f007f00 <<< 2304) |||
+    (0x810081007f0081007f007f0081007f007f0081007f007f007f007f00810081007f007f00 <<< 2592) |||
+    (0x7f00810081007f00810081007f0081007f007f00810081007f0081007f0081007f007f00 <<< 2880) |||
+    (0x7f007f0081007f007f0081007f007f0081007f00810081007f007f0081007f0081008100 <<< 3168) |||
+    (0x7f007f007f0081007f007f00810081007f0081007f007f0081007f007f0081007f007f00 <<< 3456) |||
+    (0x7f007f0081007f0081007f00810081007f007f0081007f007f007f0081007f007f008100 <<< 3744) |||
+    (0x810081007f007f0081007f00810081007f00810081007f008100810081007f0081008100 <<< 4032) |||
+    (0x810081007f00810081007f0081008100810081007f00810081007f008100810081007f00 <<< 4320) |||
+    (0x83007d008300830083007d0083007d007d007d007f0081007f007f00810081007f008100 <<< 4608) |||
+    (0x83007d007d007d0083007d007d007d007d007d007d0083007d0083008300830083008300 <<< 4896) |||
+    (0x7d0083007d008300830083007d008300830083008300830083007d008300830083007d00 <<< 5184) |||
+    (0x7d008300830083008300830083007d008300830083007d0083007d007d007d007d007d00 <<< 5472) |||
+    (0x7f007f0083007f007f00830081007d007d0081007f00830083007f007d00810081007d00 <<< 5760) |||
+    (0x810081008100810081008100810081007f007f007f007f0081008100810081007f007f00 <<< 6048) |||
+    (0x81007d007f00830083007f007f007f007f007f0081008100810081007f007f007f007f00 <<< 6336) |||
+    (0x7d0083007d00830083007d0083007d0081007d007d00810083007f007f0083007d008100 <<< 6624) |||
+    (0x7d00830083007d0083007d007d0083007d0083007d0083007d00830083007d0083007d00 <<< 6912) |||
+    (0x83007d0083007d007d0083007d00830083007d0083007d0083007d0083007d007d008300 <<< 7200) |||
+    (0x83007d007d0083007d00830083007d0083007d007d0083007d0083007d0083007d008300 <<< 7488) |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f0083007d00 <<< 7776) |||
+    (0x7f0081007f00810081007f0081007f00 <<< 8064)
+
+/-- Chunk `27` of `s6c1nGT`. -/
+def s6c1nGT27 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL27 s6c1nGTV27 512
+
+/-- Packed labels (17-bit fields) of chunk `28` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL28 : ℕ :=
+    0x4a91a5a8d2bc293d14a49a59c52b6694034a60a5315280e95b74b3aa525d27aa95e54b53 |||
+    (0x95e34b50a548528c695534b08a53cd286295814b21a59052b0694334a78a584d2aa29461 <<< 288) |||
+    (0x23b112d088f0152a8a734549229d114f68a9d453e22a69a530d280295b14b39a524527a6 <<< 576) |||
+    (0x491a266d123e89a714e10a8e8537c2a46154d0a888554c2a1e44a62275112a089c844ba2 <<< 864) |||
+    (0x920449e22711128089b8150e8aa9454422a9915228a6f4547229c144dda250d138e893f4 <<< 1152) |||
+    (0x1de897744e5a254d13ae894f15350a7c854ec29ee14e90a928539c2a5644d22247113308 <<< 1440) |||
+    (0xf0c788e3c771e118ef4c78ae3ca74da126bc936ec9bc64da926c89374c9bd64479a25ad1 <<< 1728) |||
+    (0xa0a6bc536ea9bc54da8a6c85374a9bd51df80ef0078883c741e100ef4078a83ca41df98e <<< 2016) |||
+    (0x3b1de60f07079303c481dde0efb078d03c384d8ea6d3537929b994d76a6cf537729b694d <<< 2304) |||
+    (0x553a8b4d8f26d3937949b9a4d7726cf937749b6a1de78f07c79363c4b1ddf8efbc78d63c <<< 2592) |||
+    (0x6e74873aa29d51ce90a733539fb9d694e9ce72d739ca9cf14e60e74b73aba9d09ce6ca74 <<< 2880) |||
+    (0x84e6c674533a889d454e8ae73673a129d5dce96a730539e39ce5ce5aa74e53ad39cfd4e6 <<< 3168) |||
+    (0x09cfcce66274813aa19d504e906733339f89d68ce9c272d139c99cf0ce60274b13ab99d0 <<< 3456) |||
+    (0x23d9c4e608f5307ae69c9e9d44ce8a273613a119d5c4e966730339e09ce44e5a674e33ad <<< 3744) |||
+    (0x07aa69cbe1ed1a71b939a23d3c4e1c8f35079d69c261e5da715937d23d241ea1a733938e <<< 4032) |||
+    (0x2733538e43d9f4e610f53c7ae09c9d1e8da6fd938923cc44e0c8f3d079969c464e508f5b <<< 4320) |||
+    (0x4e510f5bc7aa09cbd1ed0271b539a43d3f4e1d0f35c79d09c251e5c2715537d43d271ea0 <<< 4608) |||
+    (0x84a1424f092cc4b188441126e211c5089c25831e8c26fd538943cc74e0d0f3dc79909c45 <<< 4896) |||
+    (0x07ec255b12b220fa509ac24fb4213094ac4a2884b912be2114508dc24e3421f0964c4958 <<< 5184) |||
+    (0x9640495e84a2424e892c04b1e8442126fa11c9089a258042630942c4a688419128221325 <<< 5472) |||
+    (0x283a132907ea255812b3a0fa909aa24f84212894a04a2e84ba12bfa114908da24e0421e8 <<< 5760) |||
+    (0xd4746488b5cc5aae8cb546308b30c5a4e8c051669a30c5182a2cf74262894204a6e841a1 <<< 6048) |||
+    (0x9d08c0a165e2317917f42d1816b62323919542d48463f0b6705a708cda16d1a320519ca2 <<< 6336) |||
+    (0x4ec5b3e8c7d16a5a32a5191a2d6f168da2fe518ba2cbf46048b3ac599e8c2d46170b3305 <<< 6624) |||
+    (0x7a2305918642cd046030b49059808c62465b0b5505ae08c9216a22339919042da0466c8b <<< 6912) |||
+    (0x59995c4cc6e65d1334b998d4cae6669532e999504c90e64e1321399214ca866425327116 <<< 7200) |||
+    (0xa5333199684ccce6601336399994cb4666c5330199444c8ae64b131fb99154ca2663f532 <<< 7488) |||
+    (0x266575331998fc4c96e6451328b992d4c7e66515322999b04cc0e666132d399814cd8665 <<< 7776) |||
+    (0xd487664475229999084c9ce648132a399394c8466545324199a44cbae663132bb99754cd <<< 8064) |||
+    (0x390c9487c644a522b1914048b8e43812223917148a06444521c190ec485ee4531223b90b <<< 8352) |||
+    (0x90f84864e4561225 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `28` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV28 : ℕ :=
+    0x7f00810081007f0081007f007f0081007f0081007f0081007f00810081007f0081007f00 |||
+    (0x7f0081007f00810081007f0081007f007f0081007f00810081007f0081007f007f008100 <<< 288) |||
+    (0x810083007f007d007d0081007f007d007d00810083007f007f007d0081007f0081007f00 <<< 576) |||
+    (0x7f008100810081007f007f007f0081007f007f007f00810081007f007f007f007d008100 <<< 864) |||
+    (0x7d007f007f008100810081007f007f007f0081007f007f007f00810081007f007f007f00 <<< 1152) |||
+    (0x7f0081007f007f007f008300830081007d007f007f0083007d007f007f00830081007d00 <<< 1440) |||
+    (0x7f007f00810081007f0081007f0081007f007f00810081007f0081007f007f0081007f00 <<< 1728) |||
+    (0x7f0081007f007f00810081007f008100810081007f00810081007f00810081007f008100 <<< 2016) |||
+    (0x81007f00810081007f00810081007f0081008100810081007f00810081007f0081008100 <<< 2304) |||
+    (0x81007f007f0081007f00810081007f007f00810081007f0081007f00810081007f007f00 <<< 2592) |||
+    (0x81007f007f00810081007f0081007f007f00810081007f007f00810081007f007f008100 <<< 2880) |||
+    (0x7f00810081007f007f00810081007f0081007f007f00810081007f007f0081007f008100 <<< 3168) |||
+    (0x8100810081007f007f00810081007f007f0081007f00810081007f007f00810081007f00 <<< 3456) |||
+    (0x7f007f007f0081007f008100810081007f007f007f0081008100810081007f007f008100 <<< 3744) |||
+    (0x7f007f008100810081007f007f007f007f00810081007f007f007f007f00810081008100 <<< 4032) |||
+    (0x8100810081007f007f008100810081008100810081007f007f0081008100810081007f00 <<< 4320) |||
+    (0x81007f007f007f0081007f0081007f00810081007f008100810081007f007f007f008100 <<< 4608) |||
+    (0x81007f008100810081007f0081008100810081007f0081007f0081007f007f007f007f00 <<< 4896) |||
+    (0x81007f0081007f008100810081007f0081008100810081007f0081007f007f0081007f00 <<< 5184) |||
+    (0x81007f0081008100810081007f008100810081007f0081007f0081007f007f007f007f00 <<< 5472) |||
+    (0x81007f0081007f007f007f008100810081007f008100810081007f007f00810081008100 <<< 5760) |||
+    (0x7f007f007f0081007f007f007f00810081007f007f007f0081007f007f007f0081008100 <<< 6048) |||
+    (0x81007f007f008100810081008100810081007f007f008100810081007f00810081008100 <<< 6336) |||
+    (0x81007f007f00810081007f007f00810081007f007f007f008100810081007f0081008100 <<< 6624) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 <<< 6912) |||
+    (0x81007f007f00810081007f007f00810081007f007f00810081007f007f00810081007f00 <<< 7200) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 <<< 7488) |||
+    (0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f0081007f00 <<< 7776) |||
+    (0x81007f007f00810081007f007f008100 <<< 8064)
+
+/-- Chunk `28` of `s6c1nGT`. -/
+def s6c1nGT28 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL28 s6c1nGTV28 512
+
+/-- Packed labels (17-bit fields) of chunk `29` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL29 : ℕ :=
+    0x21919104486ae4591226b90d54882644d522c9913448b2e4351220b9165489a6441521a9 |||
+    (0x43b5217991104870e45c1228390e148886450522e1912848ace432121f391594894643e5 <<< 288) |||
+    (0xb66059ae8c3546590b5405a3e8bfd16a023389181a2cef911c48a6e42f121db914d488e6 <<< 576) |||
+    (0x69e2337918222cf316ba2325918b22cbb46430b69059968c2916b42322918ca2cc7463d0 <<< 864) |||
+    (0xc85165c23169192a2d7716782304919ba2d3f46010b4805a9e8cad46570b5305a468c011 <<< 1152) |||
+    (0x9c22d4345ff0b4705aa68cb1461b0b3505b368c7916622319919122d6b46150b3205b4e8 <<< 1440) |||
+    (0x93c744099021d1fa6775322439f01cf7a643533c43a404c7e8e87c74a099b21676230391 <<< 1728) |||
+    (0x3ba665532b439b84cc28ea9c7390992a4c9a8e75c7530997a1ce3a659533143a684cd68e <<< 2016) |||
+    (0x6b4cd70e930744699011d1e26779322239f31cf62643933c23a434c7f0e87074a699b11d <<< 2304) |||
+    (0xaa27371d3a2665932b239bb4cc30ea90739699294c9b0e750753699791ce22659933123a <<< 2592) |||
+    (0x604df0861a13d1a1a050cc226c3434889dcc4da68631431289c1c4ece86c5138ba17d50d <<< 2880) |||
+    (0xa217d90dac2734431709b304ed8868e135e219790cfc279c139421b290bd42708435d09d <<< 3168) |||
+    (0xb435c89d6c4df6861913d021a090cc426c0434909dc04da08632431309c104ec886c6138 <<< 3456) |||
+    (0x76950b401da182d1816923431689b3c4ede868d135fa19750cfa279f1395a1b250bd2270 <<< 3744) |||
+    (0x2d1b1693bb3f45a12ed1576908b485da2a2d09167ebb49c5a36ed0f76818b4185a24ed1e <<< 4032) |||
+    (0xda24ad1e56951b4015a186d1836922b4905a30ed0c76800b4a9da3c2d1216833b40dda1e <<< 4320) |||
+    (0xb40d5a1e6d1b3693ab3f4da12ad1556909b4855a2a6d09367eab49cda36ad0f56819b418 <<< 4608) |||
+    (0x36b41bbc259a92c7436a84b5f0dcb06df895eeb490da30ad0c56801b4a95a3c6d1236832 <<< 4896) |||
+    (0x6f1696994b2a8db9c6f2e96a51b89a58852da237634b610dcc06e0095f21bc2259d92c8c <<< 5184) |||
+    (0x59d52c8a36b71bbda59a52c7236ab4b5e8dcbc6dfe95ed1b87a58752d9a375f4b248db6c <<< 5472) |||
+    (0xb250db606f10969a4b2b0db906f2896a61b88258892da437604b608dccc6e0695f11bc3a <<< 5760) |||
+    (0xe0d971e4ba725afb2ddd96d7cb83e5cdd2ece96bfcb77e5c7d2e9e1b86258792d9c375c4 <<< 6048) |||
+    (0xb8b2e25972a4bad25b2b2df596e3cb89e5d0d2ee696cbcb7de5cad2eb697364bb325b5b2 <<< 6336) |||
+    (0x83a5cdf2ecf96bf4b77a5c7f2e9f9736cbb365b592e0c971ecba765af92ddc97424bb925 <<< 6624) |||
+    (0xe34b89a5d0f2ee796cb4b7da5caf2eb79742cbb965b892e24972acbad65b292df496d74b <<< 6912) |||
+    (0xae9be3cdd9e6e0f36a79bca4dcd26da936749b47cdbbe6e9f37af9b5e4dc726ef937dc96 <<< 7200) |||
+    (0x9b37ad9bcacdcd66dab36759be34dd9a6e0d36a69b5ecdc766efb37dd9b474dbba6e9d37 <<< 7488) |||
+    (0x7e6eff37df9bcb4dcda6dad36769be2cdd966e0b36a59b5f4dc7a6efd37de9b46cdbb66e <<< 7776) |||
+    (0xd9263ce08871079be24dd926e0936a49bcbcdcde6daf36779b464dbb26e9937ac9b5fcdc <<< 8064) |||
+    (0xb252512e08e384737d3ffc1fb30b00e56448b65452edcc76e45a6fb1b814a1da50ff3239 <<< 8352) |||
+    (0x6e01b772a17450d3 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `29` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV29 : ℕ :=
+    0x7f00810081007f007f00810081007f007f00810081007f007f00810081007f007f008100 |||
+    (0x7f00810081007f007f00810081007f007f00810081007f0081007f007f00810081007f00 <<< 288) |||
+    (0x81008100810081007f008100810081007f0081007f0081007f007f007f00810081007f00 <<< 576) |||
+    (0x7f007f0081007f0081007f008100810081007f0081008100810081007f00810081007f00 <<< 864) |||
+    (0x810081007f007f0081007f0081007f008100810081007f0081008100810081007f008100 <<< 1152) |||
+    (0x81007f00810081007f0081007f007f007f007f0081007f007f007f0081007f0081007f00 <<< 1440) |||
+    (0x7f007f007f007f0081007f0081007f0081008100810081007f0081007f007f0081007f00 <<< 1728) |||
+    (0x7f0081007f007f007f007f0081007f007f007f0081007f0081007f00810081007f008100 <<< 2016) |||
+    (0x81007f00810081007f0081007f0081007f007f007f007f0081007f0081007f0081008100 <<< 2304) |||
+    (0x8100810081007f008100810081007f007f008100810081007f0081007f007f007f007f00 <<< 2592) |||
+    (0x7f00810081007f007f007f0081007f007f007f008100810081007f0081007f007f007f00 <<< 2880) |||
+    (0x8100810081007f007f008100810081007f008100810081007f007f007f0081007f007f00 <<< 3168) |||
+    (0x8100810081007f007f007f008100810081007f008100810081007f007f00810081008100 <<< 3456) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 3744) |||
+    (0x81008100810081007f007f00810081007f007f007f007f0081008100810081007f007f00 <<< 4032) |||
+    (0x7f007f0081008100810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 4320) |||
+    (0x7f007f007f0081007f007f00810081007f0081007f007f0081008100810081007f007f00 <<< 4608) |||
+    (0x7f007f0081007f007f007f0081007f007f0081007f007f007f007f0081007f007f008100 <<< 4896) |||
+    (0x810081007f007f0081007f007f007f0081007f007f0081007f007f0081007f0081008100 <<< 5184) |||
+    (0x810081007f00810081007f008100810081007f00810081007f007f0081007f0081007f00 <<< 5472) |||
+    (0x810081007f007f0081008100810081007f007f007f007f0081008100810081007f007f00 <<< 5760) |||
+    (0x810081007f007f00810081007f007f007f007f0081008100810081007f007f007f007f00 <<< 6048) |||
+    (0x7f007f007f007f00810081007f007f0081008100810081007f007f007f007f0081008100 <<< 6336) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f008100810081008100 <<< 6624) |||
+    (0x7f007f007f007f0081008100810081007f007f00810081007f007f007f007f0081008100 <<< 6912) |||
+    (0x810081007f007f007f007f0081008100810081007f007f007f007f008100810081008100 <<< 7200) |||
+    (0x7f007f007f007f0081008100810081007f007f007f007f00810081007f007f0081008100 <<< 7488) |||
+    (0x7f007f007f0081008100810081007f007f00810081008100810081007f00810081008100 <<< 7776) |||
+    (0x8100810081008100810081007f007f00 <<< 8064)
+
+/-- Chunk `29` of `s6c1nGT`. -/
+def s6c1nGT29 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL29 s6c1nGTV29 512
+
+/-- Packed labels (17-bit fields) of chunk `30` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL30 : ℕ :=
+    0x034a785dbc7698114c17b3060986094f20a9c43c079df1ca10e4eb88f6d4744dde76eda2 |||
+    (0x0156ffa27cc5bed499254cb232ca396be14102a1c956e0ab408ce2065c46a0534bae0877 <<< 288) |||
+    (0x727d4634a4615998aca74d8306ae3674c33465fbb2fd485820abdf8d40e67cf688533f4e <<< 576) |||
+    (0xf7117dc94b38a6db56332a9d8c930635f6b84355c60db306307b68be1418c20c8812dd99 <<< 864) |||
+    (0x9d9266f13894eab275f53d8f9e790a73051b48e6446965d992eb487a18bd72188c0c5092 <<< 1152) |||
+    (0x1f112c122ac11a7cda506e183ecf9f160aade54df8ce445e85d1b2e7a06c2cb6b2210b10 <<< 1440) |||
+    (0xd4223d113512297919a0dabe6def3eb41f0bcab3054a88c6c460c5d392e83070f4b8b022 <<< 1728) |||
+    (0xa4b676212910ac92654937c8ea5c76223d741e6cca6de51e38dec46d25d7b2ea58707cb8 <<< 2016) |||
+    (0x5879d0bd36186e0c5992f5a97e954ad6a6ac5618aaa84c8de63286bcc359860f9305a06c <<< 2304) |||
+    (0x2ca1be7b20bdf018e00c7912df2171a145daa43659b32c9a8d7de6ab4670433225fd92fc <<< 2592) |||
+    (0x554f0ea9d3582b2be24d42067b868cd33d0e027700327d0dbeb099374cbb32ca816c3d41 <<< 2880) |||
+    (0xe92e54e3aa738a56eb2b454ce0e65d36a4d347ee0757025a7815bcb298234c26b306b186 <<< 3168) |||
+    (0x323a6125e0e0a671103bfc1df40a1204ecf8fe54780ddd56ee326d89b736a18650cab251 <<< 3456) |||
+    (0x279aa7604baa2238111b1940079faecb02056538aed450adcb56e54a6f39b7f0a1c8510e <<< 3744) |||
+    (0x4fae27c3674ccba18232111861848c42a65b232da083a9b9d86c99604deb29bb14768f5e <<< 4032) |||
+    (0x1aab566beb2737f4cbf2219bb0cc5988dc44e05c252e38036b31b7d88a6c46712ad0952c <<< 4320) |||
+    (0x323b18cc55850aa9883ccc15c1af90d631636831f05ec22f790517a290bcb7ba5c7135fb <<< 4608) |||
+    (0xd22b60a5308eddff6f29a53bf2a728c19e618c61d031725e6e2f50852b929ad4bd585f9c <<< 4896) |||
+    (0xa394cf1364f532f8df496fa925047a871cb2925b16337f197295b9ead0c81bdc0a29a994 <<< 5184) |||
+    (0x946a2c1513fb8709442cdbd46df9238251c4248eaa4981350499f05609eaf9080b5c0189 <<< 5472) |||
+    (0x73dbb98a3f351dd38631431edb686dd0a38e61ce4c94884b8c2c0495929002c7ec272bdb <<< 5760) |||
+    (0x7be77b5bb5ca3e151d4385b9435adb7a6dd9a38dd9ce1094a64b7b284493b58f00277c97 <<< 6048) |||
+    (0x0027ed57335b922a2d3514eb87814408dbe66e082381e9c3f88e844996283f13b04f02c7 <<< 6336) |||
+    (0xf596070af87803dbfdc9a1b4d003647d32bcdf2b6fb82503c28740b27c5b012bff158f50 <<< 6624) |||
+    (0x84996f55b70acfb8235c0c69a7b4d2bb602d306ade1d6f20a53c4aa6f4c170617b34ff19 <<< 6912) |||
+    (0x49621831365e8c2f59852d2a9b88bdb65f6b325098d9958beaa6f8384c1981adb0d5a133 <<< 7200) |||
+    (0x311771632032145ee02f8805191a9160b7545ca636109ab696650b2a47f04bf4619d90cd <<< 7488) |||
+    (0x6239311a89889444a45c372e29036989b8848ac246a62abb15398fb4c7c617484b9dc233 <<< 7776) |||
+    (0x2121fcde7670b8844442825b112da983ab01d7b099ce4e1c29d0946b4f64c79dd764cbac <<< 8064) |||
+    (0xf253d12d74e57a73c23ff39fbf0b070573b8ad645175cbbee4be6f2237fd61cef1056243 <<< 8352) |||
+    (0x6dd2b72b2180d0cd <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `30` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV30 : ℕ :=
+    0x7f0081007f007f00810081007f00810081007f0081007f0081007f00810081007f007f00 |||
+    (0x810081007f0081007f007f0081007f0081007f007f007f0081007f007f00810081007f00 <<< 288) |||
+    (0x8100810081007f007f007f008100810081007f0081007f0081008100810081007f008100 <<< 576) |||
+    (0x7f0081007f00810081007f0081007f007f00810081007f007f007f00810081007f008100 <<< 864) |||
+    (0x8100810081007f007f0081007f0081007f0081007f007f007f007f0081007f007f008100 <<< 1152) |||
+    (0x81007f00810081007f007f0081007f007f0081008100810081007f007f007f007f008100 <<< 1440) |||
+    (0x7f007f007f0081007f0081008100810081007f008100810081007f007f007f007f008100 <<< 1728) |||
+    (0x7f007f008100810081008100810081007f0081007f00810081007f007f00810081008100 <<< 2016) |||
+    (0x7f007f008100810081007f007f0081008100810081007f007f0081008100810081008100 <<< 2304) |||
+    (0x7f007f007f0081008100810081007f007f0081007f007f0081007f008100810081007f00 <<< 2592) |||
+    (0x7f007f007f0081007f008100810081008100810081008100810081007f007f007f008100 <<< 2880) |||
+    (0x81007f0081007f007f007f007f007f007f007f0081008100810081007f007f007f007f00 <<< 3168) |||
+    (0x7f007f007f0081007f007f007f007f0081007f0081007f008100810081007f007f007f00 <<< 3456) |||
+    (0x7f0081007f007f007f007f007f007f007f0081007f007f007f007f007f0081007f007f00 <<< 3744) |||
+    (0x810081007f008100810081007f007f007f00810081008100810081007f007f007f007f00 <<< 4032) |||
+    (0x7f007f007f00810081007f0081007f007f0081007f007f0081007f007f00810081008100 <<< 4320) |||
+    (0x7f007f0081007f0081007f0081007f007f007f007f007f0081008100810081007f008100 <<< 4608) |||
+    (0x8100810081007f007f007f007f0081007f007f007f007f0081007f007f007f007f007f00 <<< 4896) |||
+    (0x7f007f007f007f0081007f007f0081007f007f007f007f008100810081007f0081007f00 <<< 5184) |||
+    (0x7f007f0081007f007f0081007f00810081007f007f00810081007f00810081007f007f00 <<< 5472) |||
+    (0x81007f007f007f0081007f007f00810081007f0081007f0081007f0081007f0081008100 <<< 5760) |||
+    (0x7f007f00810081007f0081007f0081007f007f007f0081007f008100810081007f008100 <<< 6048) |||
+    (0x7f0081008100810081007f0081007f007f008100810081007f0081007f007f0081007f00 <<< 6336) |||
+    (0x7f0081007f007f0081007f007f0081008100810081007f007f007f008100810081007f00 <<< 6624) |||
+    (0x7f00810081008100810081007f0081007f007f007f007f007f007f0081007f007f007f00 <<< 6912) |||
+    (0x81007f007f0081007f00810081007f007f008100810081007f0081008100810081007f00 <<< 7200) |||
+    (0x810081007f008100810081007f007f0081007f007f007f00810081007f007f0081007f00 <<< 7488) |||
+    (0x81007f00810081007f0081007f007f007f007f0081007f0081007f007f007f007f007f00 <<< 7776) |||
+    (0x81007f0081007f0081007f007f008100 <<< 8064)
+
+/-- Chunk `30` of `s6c1nGT`. -/
+def s6c1nGT30 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL30 s6c1nGTV30 512
+
+/-- Packed labels (17-bit fields) of chunk `31` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL31 : ℕ :=
+    0x022c782f3c8fd81dac29c307f189f55100a8db3c7f9db60a1704fc78f9ec78d1ddbcee07 |||
+    (0x039900057cf7bebd99498cb852c7c1681d41bca179575f2b4f4ce80659b6a3734a3e07bb <<< 288) |||
+    (0x7641456aa3fe59b8ac688d88e6aec66beb2ff1fc7cfc2f589f2bf04d23068bf68b7b3dda <<< 576) |||
+    (0xeee97ec94b66a70455a4aab18c98e63706bb6357560e7f05167b3abdfd18e6cc8272dc19 <<< 864) |||
+    (0xa3d2680938a8e8ac76453d981e7eca54e51f48dd7c6af9d758ea2d798a3d2b5868ec56e2 <<< 1152) |||
+    (0x43b13e42283918c0d9d06f273ed81f21cab7e53d08c574601dd27ae8046c5fb66ba11790 <<< 1440) |||
+    (0xbde231b12f422781191cd9fe6f103ee39f1c0ab5053e78c9f45c5dd15ae71470c738f9e2 <<< 1728) |||
+    (0x17b68fa105909ad267b138f4e8c276323da39e7b0a52052038e1fc68b9d878eabd710f38 <<< 2016) |||
+    (0xbf7a023d4f587aec47e2ee517f154b88a6f355af2aac4c96063876b3e355160d5f06066c <<< 2304) |||
+    (0x92a16e7bb2be3918d4cc8b72dba1769d4584a3e959c32c654d8606afb6736b33b1fb5cfc <<< 2592) |||
+    (0xa950eea8cc5894abed8d21e68a8683fb419a01b8ff157c7fbef9992b8ca952c77967c141 <<< 2880) |||
+    (0x692d28e55473b55754ab4a8ce6e658c69bf34c7e099b02bc78a73c6bd7ffac20c3074989 <<< 3168) |||
+    (0x62429921a0de5870af3c741db3ca15e4fb08f56c7691df9ced176e1ab74f2162d0dcf253 <<< 3456) |||
+    (0xc79f576363abb638df19fe3fe81fbacb05e572c8b1e45535cd9ee42e6f6a383961ecf0fc <<< 3744) |||
+    (0x8fb7c7c69743eb9d1232dd174783fe425f5affeda6e3a2c1d8ac99de4e442944947e8f67 <<< 4032) |||
+    (0x9ac0966feb18c7ebf3f3bd9c7accbc88aec4c91c49ce32736831bc2489d2463e2ad894f7 <<< 4320) |||
+    (0x325498df956ceaaa8833fc1759ad58d515633b3239dee6af8b4515da8fc0b6da5d9e3614 <<< 4608) |||
+    (0xd34f6016b0771e23cf17f54372a354c1e062736203b12b9e7a8f56d52dea9ba8bba65fbc <<< 4896) |||
+    (0xa15ed03664c632b15f25efbb65068285dcb1ec59e93397196555d60ad33824ec0bb1a75c <<< 5184) |||
+    (0x8ffa2cd9151d879bc3e59be08e0b5379a9c2d890944871348b1a2c56260afaf80863fd15 <<< 5472) |||
+    (0x7cf3b51e3cfb1d7485a34367db8cadd6c39599ceb094e84b532c1b15cd4ff927ef2734fb <<< 5760) |||
+    (0x6e177873b75e3edb1e6485eb4343db6eadc7c39621ceec95064b64285b13ea4f1e276d67 <<< 6048) |||
+    (0xfbc7f057307b93ba2af9148d8753c4219bc28e02537a11c30490ba4886286093ef8f20c7 <<< 6336) |||
+    (0x319628eafb880ce3ff55a27ecfa6650e32d55f37efb265073a8600b20259fe2c2095d08f <<< 6624) |||
+    (0x9c996895d8ead448206c07f1a87cd25f605eb0b31e11cf26f543caa388c20e628434909a <<< 6912) |||
+    (0x2c618bb14f9e688f47d52d529bf4bbc85fab325f18da556a0aabf83b7c1519ae78d60533 <<< 7200) |||
+    (0xfd17d763b331fdded4af82451562901cb6f45d89361f1abd566d0b19b7f373effd9b5acc <<< 7488) |||
+    (0xf636ff1aee8926c4ed1c2bce3b736789bc7889fc46292ae314f24fb527c7e74b6b9f5230 <<< 7776) |||
+    (0x59241cdf98718f8476429b5b1ded97e3a279d8f099f04e33294f147b4f6527a0275be3a7 <<< 8064) |||
+    (0x724e113028e494732d40341fa10af9e568c8b1bc5519cd8ae4246f67b837a1ebb0fbc23b <<< 8352) |||
+    (0x6e16374d6161d0dc <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `31` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV31 : ℕ :=
+    0x7f007f0081007f007f008100810081007f007f007f007f007f007f007f00810081007f00 |||
+    (0x81007f007f007f0081007f007f007f007f007f0081007f00810081007f007f0081008100 <<< 288) |||
+    (0x81007f00810081007f0081007f0081007f007f007f007f007f00810081007f007f007f00 <<< 576) |||
+    (0x7f007f007f007f008100810081008100810081007f007f0081007f007f0081007f007f00 <<< 864) |||
+    (0x81007f007f007f008100810081008100810081007f0081007f008100810081007f007f00 <<< 1152) |||
+    (0x7f007f007f00810081007f007f007f00810081007f008100810081007f0081007f007f00 <<< 1440) |||
+    (0x7f008100810081008100810081007f00810081007f0081007f007f007f0081007f007f00 <<< 1728) |||
+    (0x81007f007f00810081007f0081007f007f007f007f007f007f007f008100810081007f00 <<< 2016) |||
+    (0x7f0081007f0081007f007f007f007f0081007f007f007f008100810081007f0081007f00 <<< 2304) |||
+    (0x81007f008100810081007f00810081008100810081007f007f007f007f00810081008100 <<< 2592) |||
+    (0x7f008100810081008100810081007f0081007f007f0081007f0081007f0081007f007f00 <<< 2880) |||
+    (0x7f007f007f007f007f0081007f00810081007f007f00810081007f007f0081007f008100 <<< 3168) |||
+    (0x81007f008100810081007f007f008100810081007f007f007f008100810081007f008100 <<< 3456) |||
+    (0x8100810081007f007f0081007f0081008100810081007f007f0081007f007f0081007f00 <<< 3744) |||
+    (0x7f0081007f007f0081007f007f0081007f007f007f0081007f0081007f0081007f008100 <<< 4032) |||
+    (0x81007f008100810081008100810081008100810081007f00810081007f007f007f008100 <<< 4320) |||
+    (0x81007f0081008100810081007f007f0081007f0081007f007f00810081007f007f007f00 <<< 4608) |||
+    (0x7f0081007f007f007f0081007f007f0081007f0081007f00810081007f00810081007f00 <<< 4896) |||
+    (0x81007f007f008100810081008100810081007f007f00810081007f008100810081008100 <<< 5184) |||
+    (0x81007f007f007f007f007f007f007f007f007f00810081008100810081007f0081007f00 <<< 5472) |||
+    (0x8100810081007f007f007f00810081007f007f0081008100810081008100810081007f00 <<< 5760) |||
+    (0x81007f007f008100810081008100810081007f00810081007f007f0081007f007f007f00 <<< 6048) |||
+    (0x810081007f0081007f007f00810081007f007f0081007f007f007f0081007f007f007f00 <<< 6336) |||
+    (0x8100810081007f007f007f008100810081007f00810081007f00810081007f007f007f00 <<< 6624) |||
+    (0x7f007f007f0081007f0081008100810081007f007f0081007f008100810081007f008100 <<< 6912) |||
+    (0x7f007f00810081007f007f00810081007f007f0081007f007f007f0081007f0081008100 <<< 7200) |||
+    (0x7f008100810081007f0081007f008100810081007f00810081007f0081007f007f007f00 <<< 7488) |||
+    (0x8100810081007f008100810081007f0081007f007f007f00810081007f00810081007f00 <<< 7776) |||
+    (0x7f007f007f007f00810081007f007f00 <<< 8064)
+
+/-- Chunk `31` of `s6c1nGT`. -/
+def s6c1nGT31 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL31 s6c1nGTV31 512
+
+/-- Packed labels (17-bit fields) of chunk `32` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL32 : ℕ :=
+    0x02b678a2bc6917feec2063044987295040a98c3c239de3ca09e4f288f5247675df8ced0f |||
+    (0x01a8ff0d7c7b3ef7d92a8ca8d2cc7969a14092a2015724ab228cdc0664c69bab4c52098f <<< 288) |||
+    (0x731d4684a4a15964ac914d7806aa3673233395fb4cfcb75864abcb8d31e6847683b3417e <<< 576) |||
+    (0xf5117d294a88a64356132a938c88062c76b3bb54fa0d4b05fc7bae3e3758d3cc8af2e259 <<< 864) |||
+    (0x9a5264313794e98275cd3d639e690a600518c8e1b4689dd868eab579ffbd4d9879ac4742 <<< 1152) |||
+    (0x30f12ee22c011c1cdad06e403ea39ef00aa5e54878c9ac5c31d14ee70e6c13368de10490 <<< 1440) |||
+    (0xf72242f13de22c391c00dade6e473ea01ef1caa5054808c52c5ff1d26ee7fe710ab8bb22 <<< 1728) |||
+    (0x5b3669e11690a35264093788e98c75ca3d601e68ca60e518b8dd346addd748ea2570c2b8 <<< 2016) |||
+    (0x277987bd299867ac5642f5297d354a86a6445610aa924c88e62c06bb3b573a0e6b050c6c <<< 2304) |||
+    (0x9ca2067b363dfb58e5cc81f2e2617301468aa4a659672c908d78e6aa466ba32fd5fc6cfc <<< 2592) |||
+    (0x35504ea98b58672bca4d310684068b333dbe0388fffd7cf33ebbd9488cb7d2cc4169bd40 <<< 2880) |||
+    (0x293034e49a732a57272b234cdce664b6a32b4a1207af0226782abc8d181cec2963047187 <<< 3168) |||
+    (0xc23b612400df9671883c201de20a0904f2f8f9a478b5ddacedff6dce3729617fd0cd724e <<< 3456) |||
+    (0x2796a75ba3a7d636ed1ae740379fa0caf90568b8ad3c5159cbaae4b46f1fb7fba1cdb104 <<< 3744) |||
+    (0x4fa927bce74b3b9f3a30eb17cc847242995b1ccd9773a679d70c99104dab298714608f59 <<< 4032) |||
+    (0x1a9b5658eb24b7f333efdd9b48cc258923c4eb9c2aae3ac36d31b9388b1c47092ab09522 <<< 4320) |||
+    (0x322718b2557d0aa4083b2c14f1ae6ed5fe63af31fbded38f81d51a6291bcb88a5cc935e7 <<< 4608) |||
+    (0xd254605bb0b19e10af26453f72a608c10e61c46186b14d1e67ef47652a529934bcd85f44 <<< 4896) |||
+    (0xa26ccf9f650a32d35f36cfb1f5023a883cb3025aa63357199095c8eac848203c07d9a86a <<< 5184) |||
+    (0x93922aef1486874ec41f1bc1ee01e37e11c6048f4a490934c09a125618eaf6080ca3ff35 <<< 5472) |||
+    (0x7833b73e3ec91e5d85e74341db6d8dc7539221cd8c93984c042be095a09014c7e8a7302b <<< 5760) |||
+    (0x78677cb3b4fe3ce91d6d859f4365db8b8dd6539219cd9093964c03282093d98f09277817 <<< 6048) |||
+    (0x1427e8d734ab8fd22ccf15168796c3e31bdfee0ae37e29c6188f44490e282313d84f09c7 <<< 6336) |||
+    (0x1396180af6780823fcf5a14cd02f64c232af5f24cfbaf502028820b30c5aa12be315a150 <<< 6624) |||
+    (0x54999155c80ac83824bc0b99a74ad3446013b0759e22af17453f4aa614c10061c334c31a <<< 6912) |||
+    (0xb561feb1291e79ef56652a6a9928bcd65f43322498b3957deaa47833ac1731ad4ed50e33 <<< 7200) |||
+    (0xcb173c63373237dee58f8ad51a5a91a0b8845cce35e49a9a96580b24c7ebb3f39d9c68cc <<< 7488) |||
+    (0x9638cd19f788abc4c79c48ae31c36d09b9248b12470e2ab315238fa9c7bc9743bb9cfa32 <<< 7776) |||
+    (0xd925bce0c8712783fa425d5afecda673a641d710991e4dac298494614f59c796d76323ab <<< 8064) |||
+    (0xa251512e88e3c4739d400c1fab0b04e56648b65c52e9cc74e45b6fb13814e1da70ff223a <<< 8352) |||
+    (0x6e013772e17470d3 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `32` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV32 : ℕ :=
+    0x81007f007f007f008100810081007f007f0081007f0081007f008100810081007f007f00 |||
+    (0x7f007f0081007f007f007f0081007f007f0081008100810081007f007f0081007f008100 <<< 288) |||
+    (0x8100810081007f007f007f007f007f007f0081007f0081007f007f00810081007f008100 <<< 576) |||
+    (0x7f0081007f00810081007f0081007f0081007f007f008100810081007f007f007f008100 <<< 864) |||
+    (0x810081007f00810081007f0081007f0081007f007f007f007f007f0081007f007f008100 <<< 1152) |||
+    (0x7f0081007f007f00810081007f00810081007f007f007f0081007f007f007f007f008100 <<< 1440) |||
+    (0x7f007f0081007f0081007f008100810081007f007f007f007f0081007f007f007f008100 <<< 1728) |||
+    (0x810081007f007f0081008100810081007f0081007f0081007f00810081007f0081008100 <<< 2016) |||
+    (0x7f007f007f007f007f0081007f008100810081007f00810081007f008100810081008100 <<< 2304) |||
+    (0x7f007f007f0081007f007f007f00810081007f00810081007f0081007f007f0081007f00 <<< 2592) |||
+    (0x7f007f007f0081007f0081007f007f007f007f007f007f007f007f007f007f007f008100 <<< 2880) |||
+    (0x7f0081007f00810081008100810081007f007f0081008100810081007f007f007f007f00 <<< 3168) |||
+    (0x7f007f0081007f0081008100810081007f00810081007f008100810081007f007f007f00 <<< 3456) |||
+    (0x7f0081007f007f00810081008100810081007f00810081007f007f007f0081007f007f00 <<< 3744) |||
+    (0x7f007f0081007f007f007f008100810081007f007f007f007f007f007f007f007f007f00 <<< 4032) |||
+    (0x8100810081007f007f0081007f0081007f0081007f007f0081007f007f0081007f007f00 <<< 4320) |||
+    (0x8100810081007f0081007f007f008100810081007f007f0081008100810081007f008100 <<< 4608) |||
+    (0x7f007f007f0081007f007f007f008100810081008100810081007f007f007f0081008100 <<< 4896) |||
+    (0x810081007f007f0081007f0081007f00810081007f007f008100810081007f0081007f00 <<< 5184) |||
+    (0x810081007f0081007f0081007f0081007f00810081007f0081007f008100810081008100 <<< 5472) |||
+    (0x81007f00810081007f00810081007f007f00810081007f0081007f0081007f0081008100 <<< 5760) |||
+    (0x810081007f007f0081007f0081007f008100810081007f007f008100810081007f008100 <<< 6048) |||
+    (0x81007f007f007f007f00810081007f007f008100810081007f008100810081007f008100 <<< 6336) |||
+    (0x81007f008100810081007f007f0081008100810081007f007f007f00810081007f008100 <<< 6624) |||
+    (0x7f0081007f007f007f007f007f0081007f007f00810081008100810081007f007f007f00 <<< 6912) |||
+    (0x7f00810081007f007f00810081007f0081007f007f007f0081007f007f007f0081007f00 <<< 7200) |||
+    (0x8100810081007f007f007f007f007f0081007f00810081007f007f007f007f0081007f00 <<< 7488) |||
+    (0x8100810081007f007f007f007f00810081007f007f007f007f007f0081007f007f007f00 <<< 7776) |||
+    (0x7f007f007f007f007f007f0081008100 <<< 8064)
+
+/-- Chunk `32` of `s6c1nGT`. -/
+def s6c1nGT32 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL32 s6c1nGTV32 512
+
+/-- Packed labels (17-bit fields) of chunk `33` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL33 : ℕ :=
+    0x034b785d3c76d8116c17a3070986894ee0a9e43bf79df9ca14e4ed88f6dc7449de74eda3 |||
+    (0x0154ffa37cc53ed4d9256cb222cb396c614142a1a956f0ab488cde065e46a05b4baa0875 <<< 288) |||
+    (0x71bd45d4a43159b0ac9b4d7d06ab3674cb3461fbb0fd495830abe78d44e67af6885b3f4a <<< 576) |||
+    (0xf5917e894ad8a6ab561b2aa98c8d0632f6b84b55c20db106317b683e1458c22c8802df19 <<< 864) |||
+    (0x9d82657137d4ea5276253d779e6d0a6d051e48e64c6961d990eb497a183d72588c2c5082 <<< 1152) |||
+    (0x1f312c02294119bcdab06de83eb79f0a0ab3e54af8ce4c5e81d1b0e7a16c2c36b2610b30 <<< 1440) |||
+    (0xd4623d3135022af91a60da5e6e1f3ecc1f17caad054d88c6cc60c1d390e83170f438b062 <<< 1728) |||
+    (0xa43676612930ac8266c93888eabc75f23d8c1e78ca73e51b38decc6d21d7b0ea59707c38 <<< 2016) |||
+    (0x5979d03d36586e2c5982f7297dd54b36a6dc5630aa9c4c93e63586bccb59820f9105a16c <<< 2304) |||
+    (0xeca1de7b203df058e02c7902dda17261463aa466599b2ca68d83e6ae46704b3221fd90fc <<< 2592) |||
+    (0xd54f4ea9b3581b2bda4d3e067d868cdb3d0a027500337d0d3eb0d9376cbb22c9816bbd40 <<< 2880) |||
+    (0xe92dd4e36a736a56db2b3d4ce4e65b36a4db47ea0755025b78153cb2d8236c26a305b185 <<< 3168) |||
+    (0x2239612660e06670f03c0c1dec0a0e04eaf8fe5c7809dd54ee336d893736e18670caa252 <<< 3456) |||
+    (0x279da76043aa2638131b183ff79fb6cafe056338aedc50a9cb54e54b6f3937f0e1c8710e <<< 3744) |||
+    (0x4fb427c6674cc3a18632131860848cc2a61b230da093ab39d7ac99c04e1b29d3146a8f64 <<< 4032) |||
+    (0x1ab75665eb2a37f4c3f2259bb2cc5888dcc4e01c250e381369b1b8988acc46a12ab89538 <<< 4320) |||
+    (0x325318d8558b0aa6883cc415c5af92d6306368b1f01ec20f79151922917cb75a5ca13613 <<< 4608) |||
+    (0xd22a60a5b08e9dff4f29b53cf2a6a8c15e616c61d0b1721e6e0f50952d129b94bdb85f6c <<< 4896) |||
+    (0xa396cf1264f5b2f89f494fa935037a879cb2525af6338f196a95b5eacec81bd40a2da996 <<< 5184) |||
+    (0x946e2c1713fa8709c42c9bd44df9338151c3a48e6a49a134f499f85605eaf7080b54018d <<< 5472) |||
+    (0x73d3b98e3f371dd28631c31e9b684dd0b38d61cdcc94c84b6c2bf4958a8ffec7ee272bd3 <<< 5760) |||
+    (0x7de77b53b5ce3e171d4285b9c35a9b7a4dd9b38ed9ce9094664b9b283493ad8f04277a97 <<< 6048) |||
+    (0x0427eb573353922e2d3714ea8781c4089be64e083382e9c4788ec44976284f13b84efec7 <<< 6336) |||
+    (0xed960b0afa7803d3fdcda1b6d002647db2bc9f2b4fb83504c286c0b2bc5b212c0f159750 <<< 6624) |||
+    (0x74997755bb0ad1b823540c6da7b6d2ba602db06a9e1d4f20b53b4aa774c1b0619b350f19 <<< 6912) |||
+    (0x486218b1361e8c0f59952baa9ac8bd565f9b323898cd9585eaa9f838441985adb2d5a033 <<< 7200) |||
+    (0x3317706320b2141ee00f8815179a90a0b7b45c7635f89aaa966b0b2747f043f4659d92cd <<< 7488) |||
+    (0x6639331a888894c4a41c370e29136b09b7c48a6246762ad3152d8faec7c31748439dc633 <<< 7776) |||
+    (0xb9231cdf3070a78444c2821b110da993a981d870996e4dec29b894774f5ec79ad764c3ac <<< 8064) |||
+    (0x4255512c28e51474053fba1fd10b13657248af3450d9cb6ce5566f26b7e761c3b10bd23f <<< 8352) |||
+    (0x6d763739218190cb <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `33` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV33 : ℕ :=
+    0x81007f00810081007f007f0081007f007f0081007f0081007f0081007f007f0081008100 |||
+    (0x7f007f0081007f00810081007f0081007f008100810081007f00810081007f007f008100 <<< 288) |||
+    (0x7f007f0081007f007f007f008100810081007f007f0081007f007f007f007f0081007f00 <<< 576) |||
+    (0x81007f0081007f0081007f0081007f007f00810081007f00810081007f007f0081007f00 <<< 864) |||
+    (0x7f007f007f00810081007f007f0081007f0081007f007f007f007f007f00810081007f00 <<< 1152) |||
+    (0x7f0081007f007f00810081007f0081007f0081008100810081007f007f007f0081007f00 <<< 1440) |||
+    (0x7f007f0081007f0081007f007f007f007f0081008100810081007f007f007f007f008100 <<< 1728) |||
+    (0x7f007f00810081007f007f007f007f0081007f0081007f0081007f007f00810081008100 <<< 2016) |||
+    (0x7f007f008100810081007f0081007f007f007f007f00810081007f008100810081008100 <<< 2304) |||
+    (0x8100810081007f007f007f007f00810081007f00810081007f0081007f007f0081007f00 <<< 2592) |||
+    (0x8100810081007f0081007f007f007f007f007f007f007f007f007f008100810081007f00 <<< 2880) |||
+    (0x7f0081007f0081008100810081008100810081007f007f007f007f008100810081008100 <<< 3168) |||
+    (0x8100810081007f0081008100810081007f0081007f0081007f007f007f00810081008100 <<< 3456) |||
+    (0x81007f008100810081008100810081007f0081007f007f007f007f007f00810081008100 <<< 3744) |||
+    (0x8100810081007f007f007f008100810081007f0081008100810081007f007f007f007f00 <<< 4032) |||
+    (0x7f007f007f0081007f0081007f00810081007f008100810081007f007f00810081008100 <<< 4320) |||
+    (0x810081007f0081007f0081007f00810081008100810081007f007f00810081007f008100 <<< 4608) |||
+    (0x7f007f007f0081008100810081007f0081008100810081007f0081008100810081008100 <<< 4896) |||
+    (0x81008100810081007f00810081007f0081008100810081007f007f007f0081007f008100 <<< 5184) |||
+    (0x810081007f00810081007f0081007f007f00810081007f007f0081007f007f0081008100 <<< 5472) |||
+    (0x7f008100810081007f00810081007f007f0081007f0081007f0081007f0081007f007f00 <<< 5760) |||
+    (0x810081007f007f0081007f0081007f008100810081007f0081007f007f007f0081007f00 <<< 6048) |||
+    (0x81007f007f007f007f0081007f00810081007f007f007f0081007f00810081007f008100 <<< 6336) |||
+    (0x7f0081007f007f007f00810081007f007f007f007f008100810081007f007f007f008100 <<< 6624) |||
+    (0x7f008100810081008100810081007f0081008100810081008100810081007f007f007f00 <<< 6912) |||
+    (0x81007f007f0081007f00810081007f0081007f007f007f0081007f007f007f0081007f00 <<< 7200) |||
+    (0x7f007f007f008100810081007f007f0081007f00810081007f007f00810081007f008100 <<< 7488) |||
+    (0x81007f007f007f007f007f007f0081007f0081008100810081007f008100810081008100 <<< 7776) |||
+    (0x810081008100810081007f0081007f00 <<< 8064)
+
+/-- Chunk `33` of `s6c1nGT`. -/
+def s6c1nGT33 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL33 s6c1nGTV33 512
+
+/-- Packed labels (17-bit fields) of chunk `34` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL34 : ℕ :=
+    0x0267781a3cb518248c27430aa9892950a8a9243c5d9dc6ca2364f748febc777ddd6eee0f |||
+    (0x028d000e7d12bea75938acb8d2c73968a14212a129574aab628cf2865646a53b481e076f <<< 288) |||
+    (0x751d44eca3c959eaac714d8e86b4b670b33259fdacfc66588aabfe8d2b6687b68d333c7a <<< 576) |||
+    (0xf05180294c08a72b55cd2ac68c9e863bb6bd3b58fe0faf057f7b0ebde758dbac76d2dab9 <<< 864) |||
+    (0xad4269d13a94e8ea76a53dbd9e990a56852648df3c6d5dd7ceea6779be3d3918698c5a42 <<< 1152) |||
+    (0x3eb132d22541181cd9506ea83efd9f2d0abf653fb8c7346039d3ace80e6caa3679212a90 <<< 1440) |||
+    (0xa76220b129d2263917a0d98e6ec73efa1f2ecabe853f48ceb45df9d1cce77e7082b8cb62 <<< 1728) |||
+    (0x3236b5210c909e4269a93a28e8f4768a3dba1e92ca576524b8e6bc699dd9aeeb5770fab8 <<< 2016) |||
+    (0x567a063d7518878c5142f12980954bd6a74455caaac54c9f663b46b8bb553e0dcf060f6c <<< 2304) |||
+    (0x4ca1467b56be0b58bdac85d2dac174a144f2a3e659ed2c6a8d8f66b64675333499fbccfd <<< 2592) |||
+    (0x9550b6a90b588d2bfd4d2a86874688b33eba016cff7e7ccabecb5926acafd2c641691d42 <<< 2880) |||
+    (0x292c94e54a73ea574d2b694cf36654b6a0bb4bde088f035778623c7918128c18430ad189 <<< 3168) |||
+    (0xd23fc122a0df2e70883c5a1dc50a2284f7b8f73c73bdde8eed7f6dee3775216f90d44256 <<< 3456) |||
+    (0xa7a2a7653bac9e394f1a973fbd9fcacb128570b8b6b45319cc8ce4666f9eb80b61d5b0fc <<< 3744) |||
+    (0x4fc2a7cda748b39d3a334d174e844a42851b128daa43a4d9d9ac9aa84e6b296d148a8f72 <<< 4032) |||
+    (0x1ad156776b1cb7f0b3f4999daccd56889ac49b5c38ae26d36731bb9889cc46092b0a9505 <<< 4320) |||
+    (0x328d18f5556e8aaf4838bc18fdadced57f630eb20b5edbaf85d514c28f1cb6725d49364d <<< 4608) |||
+    (0xd2c76032306d1e1e8f214541d2a3a8c2766244620631391e878f5a4530529d94bc086004 <<< 4896) |||
+    (0xa1cccfde6482b2b35f2cafb5d5083a859cb1525a6633bd194a95cf6ad84823bc0c9da7ce <<< 5184) |||
+    (0x925a2d4d14f6876ec3ff5be1ae05d37bb1c1a4903248c9349a9a25561f6b01480433fd39 <<< 5472) |||
+    (0x7bbbb53e3e2f1d1f85a6435d1b758dda439421d02c95c84b042c3a95ba8ff347f4a733b3 <<< 5760) |||
+    (0x6fa7743bb8fe3f4f1daf861e43211b638dd1439359d09095964aeb287a93e68f1aa76f57 <<< 6048) |||
+    (0xf2a7f6572c33949a2c2d140686f6c4235bcfadf6d37bc9c218902c48e6287d13e54f1b47 <<< 6336) |||
+    (0x26961e8b01b80bb400f9a3acceee64fab2ef5f4aafa6d507428520b18c5a492c3d15c14f <<< 6624) |||
+    (0xba995155ce8ad6b81c3c0a5da9aed23760aa30911e008f2a4541aaa414c268622b349d1a <<< 6912) |||
+    (0x6661be31751e698f5145312a9d28bbd65feb328a98f6956f6aafb83d3c153dafaed60f33 <<< 7200) |||
+    (0x2d183e6356b1e75ebdaf76d514ba8ea0b66c5d66364a9aca96768b1e47f533f2599bcccc <<< 7488) |||
+    (0x5e382f1b2788e2c4d75c26ae35d36649bb24899246262b0d15068fc347cd574d33a0fa32 <<< 7776) |||
+    (0xd9247cdf6871a7849242a91b248da143a4a1da109ab64e84296a94914f7347a45760bbaa <<< 8064) |||
+    (0x424d512fc8e464735d404c1fa70af6e56a48b1a45515cd8ce4276f66383761ebd0fbf23c <<< 8352) |||
+    (0x6e17b74da161b0dc <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `34` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV34 : ℕ :=
+    0x81007f007f007f00810081007f007f007f007f007f007f00810081007f007f0081008100 |||
+    (0x7f007f0081007f007f007f0081007f008100810081007f007f007f007f007f007f008100 <<< 288) |||
+    (0x7f007f008100810081007f007f0081008100810081007f00810081007f0081007f007f00 <<< 576) |||
+    (0x81007f0081007f00810081007f007f0081008100810081007f007f008100810081007f00 <<< 864) |||
+    (0x810081007f00810081007f007f007f008100810081007f007f00810081007f007f008100 <<< 1152) |||
+    (0x81007f0081008100810081007f0081007f007f007f0081007f007f007f0081007f008100 <<< 1440) |||
+    (0x7f0081007f0081007f0081007f007f007f00810081007f007f007f0081007f007f007f00 <<< 1728) |||
+    (0x81007f0081007f00810081008100810081007f0081007f0081008100810081007f008100 <<< 2016) |||
+    (0x81007f007f008100810081007f008100810081007f00810081007f0081007f007f008100 <<< 2304) |||
+    (0x8100810081007f008100810081007f007f007f0081007f007f0081007f007f0081008100 <<< 2592) |||
+    (0x7f00810081007f0081007f00810081008100810081007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x7f007f008100810081008100810081007f007f008100810081007f0081007f0081007f00 <<< 3168) |||
+    (0x7f007f00810081007f008100810081007f00810081007f00810081008100810081007f00 <<< 3456) |||
+    (0x7f0081007f007f008100810081008100810081007f0081007f008100810081007f007f00 <<< 3744) |||
+    (0x7f0081007f008100810081008100810081007f007f00810081007f007f00810081007f00 <<< 4032) |||
+    (0x7f0081008100810081007f0081007f0081007f00810081007f007f007f007f0081007f00 <<< 4320) |||
+    (0x8100810081007f0081007f007f007f007f008100810081007f007f007f0081007f007f00 <<< 4608) |||
+    (0x7f007f007f0081007f007f007f00810081007f007f0081008100810081007f0081008100 <<< 4896) |||
+    (0x81007f00810081007f0081007f0081007f007f0081007f0081007f00810081007f007f00 <<< 5184) |||
+    (0x7f0081007f007f0081007f0081007f0081007f007f0081007f007f0081007f007f008100 <<< 5472) |||
+    (0x810081007f0081007f007f0081007f007f00810081007f0081007f007f007f0081007f00 <<< 5760) |||
+    (0x81007f0081007f007f007f00810081008100810081007f007f0081008100810081008100 <<< 6048) |||
+    (0x7f0081007f0081008100810081008100810081007f007f0081007f007f007f0081007f00 <<< 6336) |||
+    (0x7f007f0081007f0081007f007f00810081007f007f007f00810081007f007f0081007f00 <<< 6624) |||
+    (0x7f007f0081007f007f0081007f0081007f007f0081008100810081007f007f007f008100 <<< 6912) |||
+    (0x7f007f007f007f007f007f007f007f007f0081008100810081007f007f007f007f007f00 <<< 7200) |||
+    (0x7f007f008100810081007f007f0081007f007f007f007f0081008100810081007f008100 <<< 7488) |||
+    (0x7f008100810081008100810081007f0081007f007f007f007f0081007f007f0081008100 <<< 7776) |||
+    (0x7f007f007f007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `34` of `s6c1nGT`. -/
+def s6c1nGT34 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL34 s6c1nGTV34 512
+
+/-- Packed labels (17-bit fields) of chunk `35` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL35 : ℕ :=
+    0x02b578a33c69d7fe8c2053038987894fe0a9743c179dddca06e4f588f53c7679df8aed0c |||
+    (0x01aeff0e7c7abef7192aeca8e2cbb96a6140c2a2195718ab288cd60663469bb34c5e0989 <<< 288) |||
+    (0x737d46b4a4715970ac974d7b06a736733b3399fb4afcb45858abd78d34e685f683ab4172 <<< 576) |||
+    (0xf3917cc94ab8a62b55fb2a8d8c8b062af6b3a354f60d4d05ff7bafbe3798d3ac8ac2e319 <<< 864) |||
+    (0x9a6264f136d4e95275b53d6f9e5d0a5d051748e1ac6891d86eeab679fe3d4d5879cc4772 <<< 1152) |||
+    (0x30912ed22cc11bbcdb306e583eaf9eea0aabe549f8c9b45c3dd148e70d6c12b68d2104f0 <<< 1440) |||
+    (0xf7e242913dd22cf91ba0db3e6e5f3eac1eebcaab054988c5345ffdd268e7fd710b38bbe2 <<< 1728) |||
+    (0x5ab6692116f0a36264c936c8e95c75b23d6c1e5cca5de51738dd2c6ad1d74eea2670c338 <<< 2016) |||
+    (0x2479863d295867cc5672f3a97cd54ab6a62c55f8aa8c4c8be62a86bb2357360e6d050f6c <<< 2304) |||
+    (0xcca21e7b37bdfb98e5ac81c2e321736146baa47659732c968d7be6a7466bbb2fd9fc6afc <<< 2592) |||
+    (0x954feea973585b2bd64d340685868b2b3db2038efffe7cf2bebb1948ecb7e2cb816a7d40 <<< 2880) |||
+    (0x692fd4e46a735a571b2b294cd6e66336a3334a1e07a90225782b3c8dd81c8c295303b187 <<< 3168) |||
+    (0xf23ce12460df6671a03c141ddc0a0604f5f8f9bc78b9ddaaedfc6dcfb729a17fb0cd424d <<< 3456) |||
+    (0x2799a75bbba7da36eb1ae4404f9fa6caf6056a38ad245155cbace4b76f1e37fb61cdd104 <<< 3744) |||
+    (0x4fa627be674b239f3630ed17cf8473c2999b1cad9743a739d76c98e04ddb299314668f56 <<< 4032) |||
+    (0x1aa75655eb2337f32befd19b4ecc26892244eb5c2ace3af36bb1b8d88aec47212a98951c <<< 4320) |||
+    (0x321b18b855830aa5883b3414fdae68d5fd63aeb1fb1ed3ef81e519a2927cb85a5cb135db <<< 4608) |||
+    (0xd257605a30b15e10cf267540f2a668c13e61ac6187314dde678f475529929994bd385f5c <<< 4896) |||
+    (0xa26acf9c650bb2d39f36afb1c5017a87dcb3325a76336f199695cbeac6c8202407d5a86c <<< 5184) |||
+    (0x939e2ae91485874f441fdbc18e01d37ed1c5a48eea48f134b49a0c561beaf3080cbbff39 <<< 5472) |||
+    (0x782bb7323ecf1e5e85e6c3411b6dedc76392e1cccc93c84c1c2bec959a900ec7e7273033 <<< 5760) |||
+    (0x79e77cabb4f23cef1d6e859ec3651b8bedd66392d9ccd093c64c1b282c93cd8f0c277997 <<< 6048) |||
+    (0x0e27e75734b38fde2cc91515879743e3dbdf8e0ad37ee9c5b88ee448f6282f13cc4f0cc7 <<< 6336) |||
+    (0x0d961b0af378083bfcf9a14ad02c64c3b2af9f24afbac5014287c0b33c5a712bef159b50 <<< 6624) |||
+    (0x6c999755cb0ac6b824a40b95a74cd347601230755e22cf177540caa674c13061ab34b71a <<< 6912) |||
+    (0xb661ff3129de798f565529aa9988bd365f5b321898b99583eaa5f833b4173dad48d50d33 <<< 7200) |||
+    (0xcd173f6336b2371ee5ef8ae5199a9260b8545cb635d89aa696550b2347ebabf3919c6ecc <<< 7488) |||
+    (0x9a38cb19f488aa44c75c48ce31f36b89b8c48ae247262a9b151d8fa6c7be1743a39cf632 <<< 7776) |||
+    (0x59227cde6870d783fbc25d9afeada643a701d77098ee4ddc299094674f56c799d7633bab <<< 8064) |||
+    (0xd254d12d48e5a473ad3fe41fc70b06e57548ad74517dcbbae4bc6f2337fde1ceb1054242 <<< 8352) |||
+    (0x6dd3b72ba18090cd <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `35` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV35 : ℕ :=
+    0x81007f007f007f00810081008100810081008100810081007f007f00810081007f007f00 |||
+    (0x7f007f0081007f007f007f0081007f007f007f007f00810081008100810081007f008100 <<< 288) |||
+    (0x810081007f007f007f00810081007f007f007f007f0081007f007f0081007f0081008100 <<< 576) |||
+    (0x7f0081007f0081007f007f00810081007f007f007f007f00810081007f007f007f008100 <<< 864) |||
+    (0x810081007f00810081007f00810081007f007f007f00810081007f0081007f007f008100 <<< 1152) |||
+    (0x7f0081007f007f00810081007f0081008100810081007f008100810081007f007f008100 <<< 1440) |||
+    (0x81007f0081007f0081007f008100810081007f007f008100810081007f00810081008100 <<< 1728) |||
+    (0x7f0081007f00810081008100810081007f0081007f0081007f007f007f007f0081007f00 <<< 2016) |||
+    (0x7f00810081007f007f007f007f008100810081007f00810081007f007f00810081007f00 <<< 2304) |||
+    (0x7f007f007f0081007f007f007f008100810081007f0081007f0081007f007f007f007f00 <<< 2592) |||
+    (0x81007f007f0081007f0081007f007f007f007f007f00810081007f007f00810081008100 <<< 2880) |||
+    (0x810081007f007f0081008100810081007f007f00810081007f0081007f0081007f008100 <<< 3168) |||
+    (0x7f007f007f007f0081007f00810081007f00810081007f00810081007f007f007f008100 <<< 3456) |||
+    (0x7f0081007f007f0081008100810081007f007f0081007f0081007f007f007f007f007f00 <<< 3744) |||
+    (0x81007f0081007f007f007f008100810081007f0081007f007f00810081007f007f008100 <<< 4032) |||
+    (0x81007f007f007f007f0081007f0081007f0081007f007f0081008100810081007f008100 <<< 4320) |||
+    (0x8100810081007f0081007f008100810081007f007f007f008100810081007f0081008100 <<< 4608) |||
+    (0x7f007f007f0081007f007f007f0081007f00810081007f007f007f007f00810081008100 <<< 4896) |||
+    (0x7f0081007f007f0081007f0081007f00810081007f0081007f0081007f007f0081008100 <<< 5184) |||
+    (0x81007f00810081007f0081007f0081007f00810081007f00810081007f00810081007f00 <<< 5472) |||
+    (0x7f007f0081007f008100810081007f007f00810081007f0081007f00810081007f008100 <<< 5760) |||
+    (0x7f0081007f008100810081007f007f008100810081007f007f008100810081007f007f00 <<< 6048) |||
+    (0x81007f0081007f007f007f007f007f007f007f00810081007f008100810081007f008100 <<< 6336) |||
+    (0x810081007f00810081007f007f0081007f008100810081007f007f00810081007f008100 <<< 6624) |||
+    (0x810081007f00810081007f007f0081007f007f0081008100810081008100810081007f00 <<< 6912) |||
+    (0x8100810081008100810081008100810081007f007f007f0081007f007f007f0081008100 <<< 7200) |||
+    (0x810081007f007f007f00810081007f0081008100810081007f007f007f007f0081007f00 <<< 7488) |||
+    (0x810081007f0081007f0081007f007f007f007f0081007f008100810081007f007f007f00 <<< 7776) |||
+    (0x81007f0081007f007f007f007f007f00 <<< 8064)
+
+/-- Chunk `35` of `s6c1nGT`. -/
+def s6c1nGT35 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL35 s6c1nGTV35 512
+
+/-- Packed labels (17-bit fields) of chunk `36` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL36 : ℕ :=
+    0x022e782e3c8f581dec29e3088989c95140a8d43c8f9db5ca1ae4fa88f9fc78d9ddb8ee05 |||
+    (0x039d00077cf6bebd1949ccb872c7b9682141a2a1995768ab4c8cec065946a3634a3607bf <<< 288) |||
+    (0x767d45b4a3f159c8ac634d8906b0366bfb2ff9fc78fc2d5898abf38d22e68df68b6b3dd2 <<< 576) |||
+    (0xee917f494b78a70b55b32ab98c950639f6bb73575e0e7b05147b3bbdfd98e68c8252dd19 <<< 864) |||
+    (0xa3f267713994e8b276653d9f9e850a51052148dd6c6af1d75cea2f798b3d2bd868ac56c2 <<< 1152) |||
+    (0x43f13e62284118fcda106f083eef9f1a0abbe53df8c5646015d27ee8066c5eb66b2117d0 <<< 1440) |||
+    (0xbd6231f12f6228f918a0da3e6f1f3ee41f1fcab9053c88c9e45c55d15ee71670c638f962 <<< 1728) |||
+    (0x16b68f2105d09af267c93948e89c76523d941e88ca53e52238e1ec68b1d87ceabf710e38 <<< 2016) |||
+    (0xbd7a033d4fd87aac47c2ef297f954b56a71c55a8aab44c97e63886b3f3551e0d5b06046c <<< 2304) |||
+    (0xcca18e7bb3be3998d48c8b52dca17621459aa40659d32c668d8be6af46737b33b9fb58fc <<< 2592) |||
+    (0x15512ea8e358a32bf64d24068c8683eb419201bcff177c7ebef9192bcca972c801687d41 <<< 2880) |||
+    (0x692d94e5ca73ba57732b514ceae65a369be34c76099f02be78a63c6b57ffec20e309318a <<< 3168) |||
+    (0x4242e12220de8670e03c841db80a1c04fbf8f57c7699df98ed156e1bb74fa16290dcd254 <<< 3456) |||
+    (0x27a1a76373abbe38db19fc3fef9fc2cb08057638b1f4553dcd9ae42c6f6b3839e1ecb0fc <<< 3744) |||
+    (0x4fba27c86743fb9d1a32d9174583ff425fdaffada6c3a2b9d92c9a004e4b295314868f66 <<< 4032) |||
+    (0x1abb5673eb1a37ebe3f3b59c7eccbe88afc4c99c498e32536931bc988a4c46312ae894f4 <<< 4320) |||
+    (0x326318e455690aac8833ec1751ad5cd517633a32395ee6ef8b6516a28ffcb71a5d913633 <<< 4608) |||
+    (0xd34d6017b0779e238f17d54472a368c23e627c6202b12b1e7acf56f52d929c94bbb85fdc <<< 4896) |||
+    (0xa15ad03464c732b1df25afbb4506fa865cb1f25a2633a7196695dbead3c824fc0bb9a758 <<< 5184) |||
+    (0x8ff22cdd151f879ac3e51be0ce0b7379d1c36490ca4891348c9a345627eafe080873fd1d <<< 5472) |||
+    (0x7ce3b5163cff1d7685a243675b8cedd6e396e1cf0c95284b5c2c1c95d68ffcc7f12734eb <<< 5760) |||
+    (0x6ce77863b7563edf1e6685ea43435b6eedc7e39659ced095464b4b286c93f18f22276d97 <<< 6048) |||
+    (0xfa27f257306b93b22afd148f8752c4211bc2ce02737969c33890a448a6286713ec4f24c7 <<< 6336) |||
+    (0x3996250afd780cf3ff5da27acfa4650f32d5df37afb24506428680b1dc5a112c1715d34f <<< 6624) |||
+    (0xac996355d90ad2b8207c07f9a878d25d605fb0b39e118f26d544caa334c210626b34871a <<< 6912) |||
+    (0x2e618ab14f1e68cf47f52e2a9c48bb965fcb325898e9956beaadf83b6c1511ae7cd60733 <<< 7200) |||
+    (0xf917d563b231fd5ed4ef8265171a8fa0b7345da636289abe96710b1947f363eff59b5ecc <<< 7488) |||
+    (0xfe36fb1aec8927c4ed9c2b8e3b536889bc448a2246462af314f98fbcc7c7174b7b9f5a30 <<< 7776) |||
+    (0x892304df3c70a18477429bdb1dad97c3a301d97099ee4e5c294894834f68c7a0d75bf3a7 <<< 8064) |||
+    (0x7255812c40e52073ff3fb41fce0b14e57188af2c50d5cb6ae5556f2737e7a1c3d10be23f <<< 8352) |||
+    (0x6d77b739e181f0cb <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `36` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV36 : ℕ :=
+    0x7f007f0081007f007f00810081007f0081007f0081007f007f0081007f00810081007f00 |||
+    (0x81007f007f007f0081007f007f007f0081007f008100810081007f0081007f0081008100 <<< 288) |||
+    (0x81007f007f0081007f007f00810081007f0081007f007f007f0081007f007f007f008100 <<< 576) |||
+    (0x7f007f007f007f0081007f007f00810081007f0081007f0081007f007f0081007f007f00 <<< 864) |||
+    (0x81007f007f007f00810081007f00810081007f00810081007f007f00810081007f007f00 <<< 1152) |||
+    (0x7f007f007f00810081007f007f007f0081007f008100810081007f00810081007f007f00 <<< 1440) |||
+    (0x7f007f00810081008100810081007f00810081007f007f0081007f007f007f0081007f00 <<< 1728) |||
+    (0x810081008100810081007f0081007f007f007f007f007f0081007f0081007f007f007f00 <<< 2016) |||
+    (0x7f007f00810081007f0081007f007f0081007f007f007f0081008100810081007f007f00 <<< 2304) |||
+    (0x81007f008100810081007f00810081007f008100810081007f007f007f0081007f008100 <<< 2592) |||
+    (0x81008100810081008100810081007f0081007f007f007f0081008100810081007f008100 <<< 2880) |||
+    (0x81007f007f0081007f0081007f00810081007f007f0081007f007f007f007f007f007f00 <<< 3168) |||
+    (0x81007f0081007f007f007f007f008100810081007f007f007f00810081007f0081008100 <<< 3456) |||
+    (0x8100810081007f007f0081007f00810081007f007f007f007f007f0081007f0081007f00 <<< 3744) |||
+    (0x810081007f007f0081007f007f0081007f007f00810081007f007f00810081007f007f00 <<< 4032) |||
+    (0x7f007f0081007f0081008100810081008100810081007f0081007f0081007f007f007f00 <<< 4320) |||
+    (0x81007f00810081008100810081007f008100810081007f007f0081007f007f007f008100 <<< 4608) |||
+    (0x7f0081007f007f007f0081007f007f00810081007f007f007f0081007f007f0081007f00 <<< 4896) |||
+    (0x810081007f008100810081008100810081007f00810081008100810081007f007f008100 <<< 5184) |||
+    (0x8100810081007f007f007f007f007f007f007f008100810081007f007f007f007f007f00 <<< 5472) |||
+    (0x81007f008100810081007f00810081007f007f00810081008100810081007f007f007f00 <<< 5760) |||
+    (0x81008100810081007f00810081007f0081007f00810081007f007f0081007f0081007f00 <<< 6048) |||
+    (0x81008100810081007f00810081007f0081007f0081007f007f007f0081007f007f007f00 <<< 6336) |||
+    (0x7f008100810081007f007f00810081007f007f0081007f007f00810081007f007f007f00 <<< 6624) |||
+    (0x81007f007f007f00810081008100810081007f007f0081007f0081007f0081007f007f00 <<< 6912) |||
+    (0x81007f0081007f0081007f0081007f007f007f0081007f007f007f0081007f0081007f00 <<< 7200) |||
+    (0x7f00810081007f00810081007f007f007f0081007f00810081007f0081007f007f007f00 <<< 7488) |||
+    (0x81007f007f007f008100810081007f0081007f007f007f0081007f008100810081007f00 <<< 7776) |||
+    (0x7f007f007f007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `36` of `s6c1nGT`. -/
+def s6c1nGT36 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL36 s6c1nGTV36 512
+
+/-- Packed labels (17-bit fields) of chunk `37` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL37 : ℕ :=
+    0x0264781bbcb5d824ec27730a798941509ca91e3c609dc84a2424f6e8fea47771dd68ee0c |||
+    (0x028b000d7d133ea79938ccb8e2c70968b9421ea12f5747ab640cf1c655e6a52348120769 <<< 288) |||
+    (0x750544e0a3cf59e4ac6e4d8d06b57670ab3255fdaafc655884ac018d2ce688768d2b3c76 <<< 576) |||
+    (0xf08180414bfca73155d02ac80c9dc63c16bd2358f20fa9057c7b0f3de798dbcc76e2da89 <<< 864) |||
+    (0xad726a013a7ce8de769f3dc09e978a55c525e8df246d51d7c8ea6479bfbd39d869ec5a72 <<< 1152) |||
+    (0x3ed132e225711804d95c6eae3f039f2a0ac0e54078c72c6035d3aae80d6cabb679e12af0 <<< 1440) |||
+    (0xa7a220d129e2260917b8d9826ec13ef41f31cabd053e88ceac5df5d1cae77d708338cba2 <<< 1728) |||
+    (0x33b6b5e10cf09e7269793a40e90076903db71e944a58252518e6a46991d9a8eb5470fb38 <<< 2016) |||
+    (0x557a07bd75d887ec5172f0f9807d4be2a73e55c7aac3cca0263ae6b8a355320dc9060c6c <<< 2304) |||
+    (0x40a1407b573e0b98bdcc85e2daf174b944fea3e059f32c6d8d90e6b586752b3495fbcafd <<< 2592) |||
+    (0x7d50c2a91158932bfa4d2906868688ab3eb6016aff7d7ccb3ecb9926ccafe2c671690542 <<< 2880) |||
+    (0xf92c7ce53e73f057502b67ccf4265516a0a34bd2088903547863bc79d812ec18730b0189 <<< 3168) |||
+    (0xe23ff122b8df22708e3c571dc38a21c4f818f72473b1de88ed7c6defb775e16ff0d47255 <<< 3456) |||
+    (0xe7a3076523ac9239491a943fc39fcdcb11057178b6ac5315cc8ae4656f9f380ba1d5d0fc <<< 3744) |||
+    (0x4fc127ce6748ab9d36334b174d844bc285db12edaa73a509d9c49a9c4e712970148c0f71 <<< 4032) |||
+    (0x1ace5678eb1d77f0abf4959daacd55889b449b9c38ce26e36701bb8089c0460f2b049502 <<< 4320) |||
+    (0x329018f3d56dcaaee838a418f1adc8d57c630f320b9edbcf85e514f28f04b67e5d4f3653 <<< 4608) |||
+    (0xd2c46033b06dde1eef21754202a3c0c282623e6207b139de87ef5a7530829d7cbbfc5ffe <<< 4896) |||
+    (0xa1cacfdd648332b39f2ccfb5e5080a8584b15e5a6033c0194c15d02ad7e823a40c91a7c8 <<< 5184) |||
+    (0x92562d4b14f5876f43ff9be1ce05e37b81c1bc903e48cf34949a225620eb0088042bfd35 <<< 5472) |||
+    (0x7ba3b5323e291d1c85a7c35ddb75edda7393f1d04495bc4afe2c3495bd8ff4c7f56733ab <<< 5760) |||
+    (0x70077423b8f23f491dac861fc321db63edd1739389d07895a24af1287793e80f19e76ef7 <<< 6048) |||
+    (0xf127f5972c2b94962c2b140586f744239bcfcdf6e37bf9c200902048e0288013e3cf1c07 <<< 6336) |||
+    (0x29961d0b02780bac00f5a3aaceed64fb32ef9f4acfa6e507728538b1805a4f2c4315be4f <<< 6624) |||
+    (0xb7994fd5cdcad7181c240a51a9a8d23460abb091de00ef2a75417aa3fcc25c623134a31a <<< 6912) |||
+    (0x6561bfb175de69ef517530fa9d40bbe25ff1328798f815702ab0183d241531afa8d60c33 <<< 7200) |||
+    (0x2b183d635731e79ebdcf76e5148a8eb8b6605d6036449acd96750b1d87f52bf2559bcacc <<< 7488) |||
+    (0x5238291b2488e344d79c26ce35e36679bb3c899e46202b1315098fc4c7cc974d2ba0f632 <<< 7776) |||
+    (0x1924bce018714f8493c2a9db24eda173a471d9f89ac24e7e2967948fcf7407a3f760a3aa <<< 8064) |||
+    (0xb24f512f88e41472ed40201f8b0af1e56cc8b3cc54a1cd52e4086f70382461e210f7123e <<< 8352) |||
+    (0x6e21375ee16450da <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `37` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV37 : ℕ :=
+    0x7f008100810081007f007f008100810081008100810081007f007f00810081007f007f00 |||
+    (0x810081007f008100810081007f0081008100810081007f00810081008100810081007f00 <<< 288) |||
+    (0x810081008100810081007f007f008100810081007f0081007f007f007f0081007f007f00 <<< 576) |||
+    (0x7f0081007f0081007f007f00810081007f007f007f007f00810081007f007f007f008100 <<< 864) |||
+    (0x7f007f0081007f007f008100810081007f007f007f00810081007f007f00810081007f00 <<< 1152) |||
+    (0x7f0081007f007f007f007f0081007f007f007f007f0081007f007f007f00810081007f00 <<< 1440) |||
+    (0x81007f0081007f0081007f008100810081007f0081007f007f007f0081007f007f007f00 <<< 1728) |||
+    (0x7f0081007f0081007f007f007f007f007f0081007f0081007f007f007f007f0081007f00 <<< 2016) |||
+    (0x81007f007f0081008100810081007f007f007f0081007f007f0081007f00810081007f00 <<< 2304) |||
+    (0x7f007f007f0081007f007f007f0081007f007f0081007f0081007f008100810081008100 <<< 2592) |||
+    (0x81007f007f0081007f0081007f007f007f007f007f00810081007f0081007f007f007f00 <<< 2880) |||
+    (0x810081007f007f007f007f007f007f00810081007f007f007f0081007f0081007f008100 <<< 3168) |||
+    (0x81008100810081007f0081007f007f0081007f007f0081007f007f008100810081007f00 <<< 3456) |||
+    (0x81007f00810081007f007f007f007f007f007f0081007f0081007f007f007f0081008100 <<< 3744) |||
+    (0x7f00810081007f007f007f007f007f007f0081007f00810081007f007f00810081007f00 <<< 4032) |||
+    (0x81007f007f007f007f0081007f0081007f0081007f007f007f007f007f007f0081007f00 <<< 4320) |||
+    (0x7f007f007f0081007f0081008100810081007f007f007f008100810081007f0081008100 <<< 4608) |||
+    (0x8100810081007f008100810081007f0081007f007f0081007f007f007f0081007f007f00 <<< 4896) |||
+    (0x81007f007f007f0081007f0081007f008100810081007f0081007f00810081007f007f00 <<< 5184) |||
+    (0x81007f00810081007f0081007f0081007f00810081007f00810081007f0081007f008100 <<< 5472) |||
+    (0x8100810081007f00810081007f00810081007f007f0081007f008100810081007f008100 <<< 5760) |||
+    (0x81007f0081007f007f007f00810081007f007f007f00810081007f007f007f0081008100 <<< 6048) |||
+    (0x81007f0081007f007f007f008100810081008100810081007f008100810081007f008100 <<< 6336) |||
+    (0x810081007f0081007f00810081007f007f008100810081007f007f00810081007f008100 <<< 6624) |||
+    (0x7f007f0081007f007f00810081007f00810081007f007f007f007f008100810081007f00 <<< 6912) |||
+    (0x7f007f007f007f007f007f007f007f0081007f007f007f007f008100810081007f007f00 <<< 7200) |||
+    (0x810081007f007f007f00810081007f0081008100810081007f007f007f007f0081007f00 <<< 7488) |||
+    (0x81007f007f007f007f0081007f007f007f007f0081007f0081007f00810081007f007f00 <<< 7776) |||
+    (0x81007f0081007f0081007f0081007f00 <<< 8064)
+
+/-- Chunk `37` of `s6c1nGT`. -/
+def s6c1nGT37 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL37 s6c1nGTV37 512
+
+/-- Packed labels (17-bit fields) of chunk `38` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL38 : ℕ :=
+    0x02f878943c6258070c1e93030988894fc0a94c3c379dd9ca01e4ee88f45c7549df56ed22 |||
+    (0x0236ff227c9d3ee4d9334caa32cf396b014012a2415710ab388cd40660c69dcb4d620953 <<< 288) |||
+    (0x73bd4704a4e15990ac7b4d7006a636724b3321fb12fcf85850abc18d39e6807685db404a <<< 576) |||
+    (0xf2517c894a08a68355e72a898c80063076b5db53ca0d1705b27b883e2458ca0c8c12e119 <<< 864) |||
+    (0x989261713634ea02758d3d379e530a680514c8e3cc6821d8f2eaf879d93d5ed87c4c4bb2 <<< 1152) |||
+    (0x2d5130322d411abcdb506e803e779efa0a9de54478cbdc5c89d116e7226c04369e610110 <<< 1440) |||
+    (0xe4e24b5139322e391b00db8e6e6f3e801f01caa0054288c45c5ec9d2f6e7b2712d38c0e2 <<< 1728) |||
+    (0x7c3662611f10a79262093688e9dc75a23d401e58ca65e51638dc4c6be1d712ea0870b538 <<< 2016) |||
+    (0x0879913d22d85e4c54b2f3297c3549d6a66c55f0aa824c7de62e86ba5b578a0ef705226c <<< 2304) |||
+    (0x4ca22e7b403e0058e80c7d12e061740146daa4ce59872c808d6de6a4c66dcb30e1fcf2fc <<< 2592) |||
+    (0x354f9ea96358472bba4d3c067e868a5b3e0a0356ffb27ce53ec0d9454cb332ce416abd40 <<< 2880) |||
+    (0x292f34e44a730257072b334cd1e66236a24b49a208330208784c3c9e58190c2d93027188 <<< 3168) |||
+    (0x123d612500e04671603c401dd20a0404f078fbdc7909de36edb26da93722e17650d1b250 <<< 3456) |||
+    (0x2794275dcba8e237731ac840179f90caf4056e38ac4c5261cc32e4f86ef8380061d01106 <<< 3744) |||
+    (0x4fa427c2674a5b9f8a317717e2846442925b190d9b93a879d60c98c04d8329a714508f54 <<< 4032) |||
+    (0x1a8b565deb2237f24bf0e19b12cc08891544f0dc334e3c336f31ba388bcc46e12a909512 <<< 4320) |||
+    (0x320718c255780a9e883a5c13c9aef6d5b2638832005eca0f7d151c6292bcb7da5d2135c7 <<< 4608) |||
+    (0xd298607c30aa5e0d0f24953d72a508c05e61ec6191315ede5e4f4bb528529a34bc885eec <<< 4896) |||
+    (0xa2f6cf52652d32d8df3f4fad35003a893cb3525ace3337198095bdeacac81f4c08e1a8f2 <<< 5184) |||
+    (0x93222b7314688728440c5bc40dfd138011c5048f9a496134e09a02560deaf0880edbff89 <<< 5472) |||
+    (0x775bb78a3e971e1285f1433adb704dcbb39021cc8c94484bac2bc095b09009c7e6272f4b <<< 5760) |||
+    (0x74677edbb3ca3d771d8285794376db824dd4b38f59cc3094164bc3280093c98f14277297 <<< 6048) |||
+    (0x0c27e4d736cb90e22c93155887a043e85bd60e0c137f69c4b88fc4494e27f713c24f11c7 <<< 6336) |||
+    (0x0996100af278075bfbc9a116d04264b5329cdf214fbc34ff428980b38c5ae12bb715ab50 <<< 6624) |||
+    (0x40997b55c00acc3826cc0b21a712d328600430865e2b0f1b953e0aa4b4c080620334d71a <<< 6912) |||
+    (0xf861d93122de7c4f54b5292a9a88bc565f03321098c99575eaa07835dc1789ad16d52233 <<< 7200) |||
+    (0x9716f2634032245ee80f8c151d1a9300b8045d0e35d09a9096600b20c7edcbf3219cf2cc <<< 7488) |||
+    (0x2238931a3888cd44b4dc454e2d336e49ba848b9246ce2a8715198fa1c7c09745db9bca32 <<< 7776) |||
+    (0x1923bcdf78717f841c426e5b070da493a901d5b0989e4d6c29b0944b4f51c792d7624bab <<< 8064) |||
+    (0x624e912fe8e4c4734540401f9b0af7e567c8b1b4551dcd88e4256f673837e1eb90fbd23c <<< 8352) |||
+    (0x6e16b74d2161f0dc <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `38` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV38 : ℕ :=
+    0x810081007f00810081007f007f007f007f007f007f007f00810081007f00810081007f00 |||
+    (0x7f008100810081007f008100810081008100810081007f007f007f007f007f007f007f00 <<< 288) |||
+    (0x7f0081008100810081007f007f008100810081008100810081007f007f0081007f007f00 <<< 576) |||
+    (0x8100810081008100810081007f007f0081008100810081007f00810081007f0081008100 <<< 864) |||
+    (0x81007f007f007f00810081007f007f008100810081007f007f008100810081007f007f00 <<< 1152) |||
+    (0x8100810081007f0081007f007f007f007f007f007f0081007f007f007f0081007f007f00 <<< 1440) |||
+    (0x7f0081007f007f007f007f007f0081007f007f0081007f007f007f0081007f007f007f00 <<< 1728) |||
+    (0x81007f0081007f0081007f0081007f00810081008100810081008100810081007f008100 <<< 2016) |||
+    (0x81007f007f008100810081007f007f0081007f007f007f008100810081007f007f008100 <<< 2304) |||
+    (0x81007f008100810081007f00810081007f007f0081007f007f007f007f00810081008100 <<< 2592) |||
+    (0x7f008100810081008100810081007f0081007f0081007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x7f007f008100810081007f0081007f007f00810081007f0081007f0081007f0081007f00 <<< 3168) |||
+    (0x7f008100810081007f00810081007f007f007f008100810081007f008100810081007f00 <<< 3456) |||
+    (0x7f007f007f00810081007f0081007f00810081007f0081007f008100810081007f008100 <<< 3744) |||
+    (0x7f0081007f007f0081007f0081007f00810081007f00810081007f007f00810081007f00 <<< 4032) |||
+    (0x7f0081008100810081008100810081008100810081007f007f007f007f007f0081007f00 <<< 4320) |||
+    (0x81007f0081008100810081007f007f007f00810081007f007f0081007f0081007f007f00 <<< 4608) |||
+    (0x7f0081007f007f007f0081007f007f0081007f007f0081008100810081007f0081007f00 <<< 4896) |||
+    (0x81007f0081007f007f007f007f007f007f00810081007f0081007f00810081007f007f00 <<< 5184) |||
+    (0x7f0081007f007f008100810081008100810081007f007f007f007f0081007f007f008100 <<< 5472) |||
+    (0x810081007f0081007f007f00810081007f007f0081008100810081007f007f0081007f00 <<< 5760) |||
+    (0x81007f0081007f007f007f008100810081007f00810081007f007f0081007f0081008100 <<< 6048) |||
+    (0x7f007f007f0081008100810081008100810081007f008100810081007f00810081008100 <<< 6336) |||
+    (0x7f007f0081007f00810081007f007f0081007f007f007f0081007f007f00810081008100 <<< 6624) |||
+    (0x7f007f0081007f007f0081007f007f007f00810081007f0081007f007f007f007f008100 <<< 6912) |||
+    (0x7f007f007f007f007f007f007f007f007f007f0081007f00810081007f0081007f007f00 <<< 7200) |||
+    (0x7f0081008100810081007f007f0081007f007f007f00810081007f0081007f007f007f00 <<< 7488) |||
+    (0x810081007f0081007f007f007f0081007f008100810081008100810081007f0081007f00 <<< 7776) |||
+    (0x81008100810081007f007f007f007f00 <<< 8064)
+
+/-- Chunk `38` of `s6c1nGT`. -/
+def s6c1nGT38 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL38 s6c1nGTV38 512
+
+/-- Packed labels (17-bit fields) of chunk `39` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL39 : ℕ :=
+    0x02b778a23c6957fecc207303c986e95010a9a43c2b9ddfca0ce4f408f52c7671df8eed0e |||
+    (0x01aaff0c7c7bbef7992aaca8c2cd396a014072a211571cab1e8cd90666469ba34c56098d <<< 288) |||
+    (0x735d4654a489595cac954d7506a8b6732b3391fb4efcb65870abd18d2fe6857683bb417a <<< 576) |||
+    (0xf4517d894aa8a65356072a998c8a062d76b3b354fe0d4905fd7baebe3718d3ec8ae2e1d9 <<< 864) |||
+    (0x9a4263713734e9a275bd3d579e630a620517c8e1bc6899d86aeab479ff3d4dd8798c4752 <<< 1152) |||
+    (0x30d12ef22c811c5cdb006e283eab9ef40aa8e546f8c9a45c35d14ce70f6c13b68da104b0 <<< 1440) |||
+    (0xf76242d13df22cb91c40db0e6e2f3ea81ef5caa8054688c5245ff5d26ce7ff710a38bb62 <<< 1728) |||
+    (0x5bb669a116b0a34263493728e9ac75ba3d541e62ca62e517b8dd3c6ad9d74aea2470c238 <<< 2016) |||
+    (0x2679873d29d8678c5652f4697d954aa6a6545604aa984c8ae62d06bb33573e0e69050d6c <<< 2304) |||
+    (0x7ca2167b36bdfb18e5ec81e2e1e17341465aa48e595f2c948d75e6a8c66bab2fd1fc6efc <<< 2592) |||
+    (0xf5501ea9a358732bd04d2f0685068b3b3dba038afffc7cf3bebb9948acb7c2cd016a1d40 <<< 2880) |||
+    (0xa92ff4e4ca7342571f2b1f4cd9e66636a3234a1607ad0227782a3c8d581ccc297303f186 <<< 3168) |||
+    (0xd23c2123a0df7671783c281dde0a0c04f478f9ac78b1ddaeedfe6dceb729217ff0cd624e <<< 3456) |||
+    (0x2798275baba7d236ef1ae640439f9acaf70567b8ad34515dcba8e4b56f1f37fbe1cd9104 <<< 3744) |||
+    (0x4fa727bbe74b339f3e30e917cd8472c2991b1ced9763a5f9d74c99404dc3297f14648f5c <<< 4032) |||
+    (0x1aa1565aeb23b7f33befd99b4acc24892344ebdc2a8e3ad36c71b9988afc46f92aa49528 <<< 4320) |||
+    (0x321f18ae55800aa2883b2414f5ae6cd5ff63afb1fb9ed3af81c51b22921cb8aa5cb935f3 <<< 4608) |||
+    (0xd255605b30b1de108f26554032a5a8c12e61d46186314d5e67cf477529d298f4bd085f2c <<< 4896) |||
+    (0xa26ecf9e650ab2d31f36efb1e502ba87fcb2d25a8e3363198a95caeac948203407dda868 <<< 5184) |||
+    (0x93962aed1487874e441f5bc1ce01f37e91c6448f1a492134c89a0e5615eaf4880cabff31 <<< 5472) |||
+    (0x783bb73a3ecb1e5c85e7c3419b6dadc7439161cd2c93784c142be895a49011c7ea273023 <<< 5760) |||
+    (0x79677cbbb4fa3ceb1d6c859fc3659b8badd6439159cd3093764c13281493d38f07277917 <<< 6048) |||
+    (0x1127ea5734a38fd62ccd1517879643e35bdfce0af37ea9c6588f144926281713d24f07c7 <<< 6336) |||
+    (0x0f96150af4f8082bfcf1a14ed02e64c2b2af1f24efbae5028287e0b2dc5a892beb15a550 <<< 6624) |||
+    (0x60998b55ca0ac93824b40b9da748d34560133075de228f1755400aa5b4c12061d334cb1a <<< 6912) |||
+    (0xb461fe31295e79cf567529ea98e8bd065f2b321c98af9580eaa2f833a41735ad4cd50f33 <<< 7200) |||
+    (0xc9173d6337b2379ee5af8ac51b1a9200b8a45cbe35f09aa0965a0b23c7ebbbf3999c6acc <<< 7488) |||
+    (0x9238cf19f688ab44c7dc488e31d36c49b9848af246fe2aa715298fa7c7bb9743b39cfe32 <<< 7776) |||
+    (0x592240deb670d883fac25d1afeeda663a5c1d750994e4dc4297c94654f5cc79857632bab <<< 8064) |||
+    (0xe254a92cc8e5ba73e23fd41fc4cb0b0575b8ad6c5171cbbce4bf6f22b7fd21ced1057241 <<< 8352) |||
+    (0x6dd2372b6180f0cd <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `39` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV39 : ℕ :=
+    0x7f008100810081007f007f007f0081007f00810081007f007f0081007f007f0081008100 |||
+    (0x810081007f008100810081007f0081007f0081007f007f007f0081007f00810081007f00 <<< 288) |||
+    (0x7f007f007f0081007f007f00810081007f00810081007f00810081008100810081007f00 <<< 576) |||
+    (0x81007f0081007f0081007f007f00810081007f0081007f007f007f008100810081007f00 <<< 864) |||
+    (0x7f007f0081007f007f00810081007f007f0081007f007f00810081007f00810081007f00 <<< 1152) |||
+    (0x81007f00810081007f007f0081007f007f0081007f007f007f0081007f007f0081007f00 <<< 1440) |||
+    (0x810081007f0081007f0081007f007f007f008100810081007f008100810081007f008100 <<< 1728) |||
+    (0x81008100810081007f007f007f007f0081007f0081007f007f0081007f00810081008100 <<< 2016) |||
+    (0x7f007f00810081007f00810081007f007f007f0081007f007f008100810081007f007f00 <<< 2304) |||
+    (0x8100810081007f008100810081007f0081007f007f007f0081007f00810081007f008100 <<< 2592) |||
+    (0x7f007f0081007f0081007f008100810081008100810081007f007f007f007f0081007f00 <<< 2880) |||
+    (0x81007f007f0081007f007f007f007f00810081007f007f007f007f007f007f0081008100 <<< 3168) |||
+    (0x8100810081007f007f007f007f007f0081007f007f0081007f007f0081007f0081008100 <<< 3456) |||
+    (0x81007f00810081007f007f007f007f007f00810081008100810081007f00810081008100 <<< 3744) |||
+    (0x810081007f008100810081007f007f007f0081007f007f00810081007f007f0081008100 <<< 4032) |||
+    (0x7f007f0081007f0081007f0081007f0081007f008100810081007f0081007f007f007f00 <<< 4320) |||
+    (0x7f007f007f0081007f0081007f0081007f007f00810081007f007f007f007f007f008100 <<< 4608) |||
+    (0x8100810081007f008100810081007f007f007f008100810081007f00810081007f007f00 <<< 4896) |||
+    (0x81008100810081007f0081007f0081007f007f0081008100810081007f00810081007f00 <<< 5184) |||
+    (0x8100810081007f0081007f0081007f0081007f007f00810081007f007f007f007f007f00 <<< 5472) |||
+    (0x81007f008100810081007f007f00810081007f007f0081007f00810081007f007f007f00 <<< 5760) |||
+    (0x7f007f007f007f007f00810081007f007f007f007f00810081007f007f007f0081007f00 <<< 6048) |||
+    (0x7f0081007f007f0081007f007f0081007f0081007f007f0081007f007f007f0081007f00 <<< 6336) |||
+    (0x7f008100810081007f00810081007f00810081007f008100810081007f007f0081007f00 <<< 6624) |||
+    (0x81007f007f007f008100810081007f00810081007f007f007f007f007f0081007f007f00 <<< 6912) |||
+    (0x7f0081007f0081007f0081007f0081007f008100810081007f0081008100810081007f00 <<< 7200) |||
+    (0x7f007f007f0081007f007f008100810081007f007f007f0081008100810081007f008100 <<< 7488) |||
+    (0x7f008100810081007f0081007f007f007f007f0081007f007f0081007f007f0081008100 <<< 7776) |||
+    (0x81007f0081007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `39` of `s6c1nGT`. -/
+def s6c1nGT39 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL39 s6c1nGTV39 512
+
+/-- Packed labels (17-bit fields) of chunk `40` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL40 : ℕ :=
+    0x022d782fbc8f981d8c29d308f18a75511ea8b43c881dadca1b04fe78f9e478d5ddbeee06 |||
+    (0x039b00047cf73ebdd949acb842c8c1689d4162a196576f2b574ce9e65746a37b4a3a07b9 <<< 288) |||
+    (0x75fd45aaa41e59cf2c5b4d8ce6b0c66be32ff5fc7efc2e58af2bf84d1ee68d068b733dde <<< 576) |||
+    (0xed917f754ba6a72455a32ab24c9ce63906bb6b57520e7d05177b3a3dfd58e6ec8262dc61 <<< 864) |||
+    (0xa3c269093928e872764a3da81e86ca4d0521b8dd746afdd75aea2c798abd2b1868cc56f2 <<< 1152) |||
+    (0x43913e5229391940da4e6ee83ee81f29caba053bf8c57c6019d278e8056c5f366be117b0 <<< 1440) |||
+    (0xbda231912f522881199cda206eff3ef39f240abce53a88c9fc5c59d158e71570c7b8f9a2 <<< 1728) |||
+    (0x17368fe105b09ac268b13974e85c765d3db39e830a4fe520c8e1f468bdd87aeabc710fb8 <<< 2016) |||
+    (0xbe7a02bd4f187acc47f2ee297f294bc8a7135598aab78c9a063a76b3eb55120d5d06076c <<< 2304) |||
+    (0x8ca1a17bb23e3958d4ec8b62dcd975a145c4a40959c4ac5e8d8a06b1b6736333b5fb5efc <<< 2592) |||
+    (0x295130a8c358a4abf58d20068e7683f3419e01baff147c7f3ef9d92baca942c879684141 <<< 2880) |||
+    (0x112d14e59473d55764ab528ceb0658369bfb4c7a099902bd78a7bc6b97ff8c20d308498a <<< 3168) |||
+    (0x7241e1229cde9870cf3c939db00a19e4fd08f5647695df9eed166e1a374f6162f0dce255 <<< 3456) |||
+    (0xc7a157636babb238dd19ff3fdf9fc90b09e574c8b1ec5531cd9ce42f6f6ab83921ecd0fc <<< 3744) |||
+    (0x4fbbc7c89743e39d1632df174683fec25f1affcda6f3a1b9d9909a1e4e64294314854f6b <<< 4032) |||
+    (0x9ac896720b1837ebfbf3b99c78ccbd88ae44c95c49ee32636849bc188a12465e2aef14ec <<< 4320) |||
+    (0x326498e795650aae7833f4175dad5ad514633bb2399ee68f8b5516da9040b7445d713624 <<< 4608) |||
+    (0xd34e601630775e23ef17e5450aa2e8c22062936203312bde7aaf56c52eea9c28bb785fd3 <<< 4896) |||
+    (0xa15cd03764c6b2b11f25cfbb7505fa8660b22c5a0933b0995e95da0ad53824e40bb5a75e <<< 5184) |||
+    (0x8ffe2cdb151c879b43e5dbe0ae0b437aa9c358908a489e347c9a37962a0afcf8086bfd11 <<< 5472) |||
+    (0x7cfbb51a3cf91d7585a3c3679b8c8dd6d39699cf3095364b3c2c2b15d54ff8c7f1d734f3 <<< 5760) |||
+    (0x6ae7787bb75a3ed91e6585ebc3439b6e8dc7d39721cf6c95184b2b286b13f24f23c76b97 <<< 6048) |||
+    (0xf627f0a7307393be2afb148c87534421dbc2ae02437b11c38490644889287093f78f2127 <<< 6336) |||
+    (0x32562ceafd880cebff51a27ccfa7650eb2d51f37cfb2750542863cb2425a1e2c3095d88f <<< 6624) |||
+    (0xab195b55dcead648206407f5a87ed25e605e30b35e11ef26e544b2a2b4c24e62a434771a <<< 6912) |||
+    (0x2d618b314fde68af47c52e529c74bb565fe4326f18e25567eaad083b74151dae7ad60433 <<< 7200) |||
+    (0xff17d663b3b1fd9ed48f82551662909cb72a5d86362f1ac55674eb1747f37beff99b58cc <<< 7488) |||
+    (0xf236fd1aef892644ed5c2bee3b6368f1bbc48a3c46492ae494f18fb927c9e74b639f5630 <<< 7776) |||
+    (0xf924cce02071538476c29b1b1dcd97f3a201d94c9a304e53293894888f6927a2275beba7 <<< 8064) |||
+    (0xa250112f28e4447305401e1f8c0af2656d08b3c454a5cd50e4096f70b82421e230f7023d <<< 8352) |||
+    (0x6e21b75ea16470da <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `40` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV40 : ℕ :=
+    0x7f007f0081007f007f0081008100810081008100810081007f007f007f00810081007f00 |||
+    (0x81007f007f007f0081007f007f007f007f007f007f008100810081008100810081008100 <<< 288) |||
+    (0x81007f007f007f007f00810081007f007f007f007f007f007f00810081007f0081008100 <<< 576) |||
+    (0x7f007f007f007f007f007f00810081007f007f007f007f0081007f007f0081007f007f00 <<< 864) |||
+    (0x81007f007f007f0081008100810081007f007f007f00810081007f00810081007f007f00 <<< 1152) |||
+    (0x7f007f007f00810081007f007f007f008100810081007f008100810081007f007f007f00 <<< 1440) |||
+    (0x81007f00810081008100810081007f00810081007f008100810081007f00810081008100 <<< 1728) |||
+    (0x7f0081007f00810081007f0081007f007f007f007f007f007f007f007f007f0081007f00 <<< 2016) |||
+    (0x7f00810081007f007f007f007f007f0081007f007f007f00810081007f00810081007f00 <<< 2304) |||
+    (0x81007f008100810081007f0081008100810081007f0081007f007f007f0081007f007f00 <<< 2592) |||
+    (0x81007f00810081008100810081007f0081007f007f00810081007f007f00810081008100 <<< 2880) |||
+    (0x810081007f007f007f0081007f00810081007f007f0081007f0081007f0081007f008100 <<< 3168) |||
+    (0x81007f007f007f0081007f007f008100810081007f007f007f0081007f007f007f008100 <<< 3456) |||
+    (0x8100810081007f007f0081007f0081007f007f0081007f0081007f007f007f0081007f00 <<< 3744) |||
+    (0x81007f007f007f0081007f007f0081007f007f0081007f007f00810081007f007f008100 <<< 4032) |||
+    (0x81007f007f007f0081008100810081008100810081007f0081008100810081007f008100 <<< 4320) |||
+    (0x81007f0081008100810081008100810081007f0081007f007f00810081007f0081008100 <<< 4608) |||
+    (0x7f0081007f007f007f0081007f007f007f00810081007f007f007f007f00810081007f00 <<< 4896) |||
+    (0x7f0081007f008100810081008100810081007f007f0081007f0081007f007f0081008100 <<< 5184) |||
+    (0x81007f00810081007f007f007f007f007f007f0081008100810081007f00810081007f00 <<< 5472) |||
+    (0x7f007f0081007f0081008100810081007f007f008100810081008100810081007f008100 <<< 5760) |||
+    (0x7f0081007f008100810081007f007f0081007f00810081007f007f0081007f007f007f00 <<< 6048) |||
+    (0x8100810081007f007f007f007f007f007f007f0081007f007f007f0081007f007f007f00 <<< 6336) |||
+    (0x810081007f0081007f007f00810081007f008100810081007f00810081007f007f007f00 <<< 6624) |||
+    (0x810081007f00810081007f008100810081007f007f0081007f0081008100810081007f00 <<< 6912) |||
+    (0x810081008100810081008100810081007f007f0081007f007f007f0081007f0081008100 <<< 7200) |||
+    (0x7f0081007f007f007f00810081007f00810081007f00810081007f0081007f007f007f00 <<< 7488) |||
+    (0x81007f007f007f007f0081007f007f007f007f0081007f0081007f008100810081007f00 <<< 7776) |||
+    (0x81007f0081007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `40` of `s6c1nGT`. -/
+def s6c1nGT40 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL40 s6c1nGTV40 512
+
+/-- Packed labels (17-bit fields) of chunk `41` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL41 : ℕ :=
+    0x02f97894bc6218072c1e8302e988794fb8a9503c439dd3ca04e4f008f454754ddf54ed23 |||
+    (0x0234ff237c9dbee499336caa22ce796aa14042a229570eab378cd38661069dc34d660951 <<< 288) |||
+    (0x73cd46fca4dd598eac7c4d6f86a5f672433325fb10fcf95844abbb8d3ce67ef685d3404e <<< 576) |||
+    (0xf3117c2949d8a66b55f32a838c7d062ef6b5d353ce0d1505b37b88be2418ca2c8c02e0f9 <<< 864) |||
+    (0x988261913644e9fa75913d399e540a67851508e3c46825d8f0eaf979d9bd5e987c6c4ba2 <<< 1152) |||
+    (0x2d7130222e011b1cdb806e683e839f000aa0e542f8cbd45c8dd114e7236c04b69e210130 <<< 1440) |||
+    (0xe4a24b7139222d791aa0db5e6e873e741efbca9d054408c4545ecdd2f4e7b3712db8c0a2 <<< 1728) |||
+    (0x7cb662211f30a78261e93678e9e4759e3d3e1e57ca666515f8dc446be5d710ea0970b5b8 <<< 2016) |||
+    (0x097991bd22985e6c54a2f2697c954a06a68455e4aa884c80e63006ba53578e0ef505236c <<< 2304) |||
+    (0x1ca2467b40be0018e82c7d02e08173f146e2a4d259892c7f8d6e66a5066dc330e5fcf0fc <<< 2592) |||
+    (0x454fa6a95f58532bc04d390680068a533e0e0354ffb37ce5bec099456cb322cf016b1d40 <<< 2880) |||
+    (0x692f94e41a72ea57092b344cd26661f6a24349a608310209784cbc9e18192c2d83029188 <<< 3168) |||
+    (0x023d8124f0e03e715c3c341dd80a0104eef8fbd4790dde34edb36da9b722a17670d1a24f <<< 3456) |||
+    (0xa793e75dc3a8e637711ac940199f8fcaf3856df8ac445265cc30e4f96ef8b80021d03106 <<< 3744) |||
+    (0x4fa127c0e74a539f8e317517e38464c2921b192d9b83a899d5fc98b84d7f29a9144f8f53 <<< 4032) |||
+    (0x1a8c565e6b21f7f243f0e59b10cc098915c4f09c336e3c236e71ba988b9c46c92a849518 <<< 4320) |||
+    (0x321318c855750aa0083a5413cdaef4d5b36388b2001eca2f7d051c8292ccb7e25d1d35c9 <<< 4608) |||
+    (0xd299607cb0aa1e0d2f24853d92a4f8c06661f06191b15e9e5e6f4ba529129a94bc585f04 <<< 4896) |||
+    (0xa2f4cf53652db2d89f3f6fad24ff7a899cb3825ae63339197f95be6acb081f4408e5a8f0 <<< 5184) |||
+    (0x93262b7114698728c40c1bc42dfd037ff1c4f48fa2495d34d49a085610eaf2080ed3ff8d <<< 5472) |||
+    (0x7753b78e3e951e1385f1c33a9b706dcba38f61cc2c94184bc42bbe95af900a47e5e72f43 <<< 5760) |||
+    (0x72e77ed3b3ce3d751d838579c3769b826dd4a39019cc9094464bab27f493c38f11277417 <<< 6048) |||
+    (0x0ba7e51736c390e62c91155987a0c3e81bd62e0c037f89c4c88fbc4952280313c84f14c7 <<< 6336) |||
+    (0x03960d0af0f80753fbcda114d04364b5b29c9f216fbc2500028920b35c5ac92bb915ac50 <<< 6624) |||
+    (0x3e997c55bf8acbf826c40b25a710d3296004b0861e2b2f1b853deaa4c4c07861ff34e31a <<< 6912) |||
+    (0xf961d9b1229e7c6f54a5286a9a28bc865eeb320498c39578ea9ef835d4178dad14d52333 <<< 7200) |||
+    (0x9516f36340b2241ee82f8c051cfa92f0b7fc5d1235ce9a8f965f8b2107edc3f3259cf0cc <<< 7488) |||
+    (0x2638911a3988cdc4b49c456e2d236f09ba248bc246e62a9315138fa4c7c21745d39bce32 <<< 7776) |||
+    (0xa2d3117930bce7841cc26e1b072da483a8e1d5c098a64d7029ae944c4f524793176243ab <<< 8064) |||
+    (0x85a79ad54d7a20bd3f5fd42fde16fc8b79b8b2c45421cd14e3ea6f793828a1e410f805a3 <<< 8352) |||
+    (0x6e293756a16610d8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `41` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV41 : ℕ :=
+    0x810081007f00810081007f007f007f007f007f00810081007f007f007f00810081007f00 |||
+    (0x7f008100810081007f008100810081007f007f007f0081007f007f007f007f007f007f00 <<< 288) |||
+    (0x7f0081008100810081007f007f008100810081008100810081007f0081007f0081008100 <<< 576) |||
+    (0x81008100810081007f007f00810081007f007f007f007f007f00810081007f0081008100 <<< 864) |||
+    (0x81007f007f007f00810081007f007f008100810081007f007f008100810081007f007f00 <<< 1152) |||
+    (0x8100810081007f0081007f007f007f008100810081007f008100810081007f007f007f00 <<< 1440) |||
+    (0x7f0081007f007f007f007f007f0081007f007f007f008100810081007f00810081008100 <<< 1728) |||
+    (0x7f0081007f00810081007f0081007f00810081008100810081008100810081007f008100 <<< 2016) |||
+    (0x81007f007f008100810081007f007f0081007f007f007f00810081007f00810081007f00 <<< 2304) |||
+    (0x81007f008100810081007f0081008100810081007f0081007f007f007f00810081008100 <<< 2592) |||
+    (0x7f008100810081008100810081007f0081007f0081007f007f0081007f00810081008100 <<< 2880) |||
+    (0x810081007f007f0081007f0081007f007f00810081007f007f0081007f00810081007f00 <<< 3168) |||
+    (0x7f008100810081007f00810081007f007f007f008100810081007f008100810081007f00 <<< 3456) |||
+    (0x7f007f007f00810081007f0081007f00810081007f0081007f008100810081007f008100 <<< 3744) |||
+    (0x7f0081007f007f0081007f0081007f008100810081007f007f00810081007f007f008100 <<< 4032) |||
+    (0x81007f007f007f0081008100810081008100810081007f007f007f007f007f0081007f00 <<< 4320) |||
+    (0x81007f0081008100810081007f007f007f00810081007f007f00810081007f0081008100 <<< 4608) |||
+    (0x7f0081007f007f007f0081007f007f007f00810081007f008100810081007f0081007f00 <<< 4896) |||
+    (0x81007f0081007f007f007f007f007f007f00810081007f0081007f007f007f0081008100 <<< 5184) |||
+    (0x81007f00810081008100810081008100810081007f007f00810081007f0081007f008100 <<< 5472) |||
+    (0x8100810081007f0081008100810081007f007f008100810081008100810081007f008100 <<< 5760) |||
+    (0x7f0081007f0081007f007f008100810081007f00810081007f007f0081007f0081008100 <<< 6048) |||
+    (0x7f007f007f008100810081007f007f007f007f007f008100810081007f00810081008100 <<< 6336) |||
+    (0x810081007f008100810081007f007f0081007f007f007f0081007f007f00810081008100 <<< 6624) |||
+    (0x7f007f0081007f007f0081007f007f007f00810081007f0081007f008100810081007f00 <<< 6912) |||
+    (0x810081008100810081008100810081007f007f0081007f00810081007f0081007f007f00 <<< 7200) |||
+    (0x7f0081008100810081007f007f0081007f007f007f00810081007f0081007f007f007f00 <<< 7488) |||
+    (0x7d0083007d007d008300830083007d007d0083008300830083007d007d007d0081007f00 <<< 7776) |||
+    (0x830083008300830083007d007d008300 <<< 8064)
+
+/-- Chunk `41` of `s6c1nGT`. -/
+def s6c1nGT41 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL41 s6c1nGTV41 512
+
+/-- Packed labels (17-bit fields) of chunk `42` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL42 : ℕ :=
+    0x02d97884bc5a58036c1cb5cc62e74c8496429b5f23af89d6cc8b5eb8f3447581df14ed32 |||
+    (0x01f2ff317c8cbee8592f6cab35c122e0ac819840ec21c610d4d7596ba9b69cdb4cee0913 <<< 288) |||
+    (0xe3108266418c2246110f17756bb946715b32adfad2fcd9220610f0d76c8bb04684db408e <<< 576) |||
+    (0xc89ae54c837641f4219190b8d7456ba046b4db540e0cd305c17b90be2858cc6c8d35c4a2 <<< 864) |||
+    (0x9685ac1ad7717adebddf5f63afa616d56b69b8e2c467a1d8b4eada79e0bd56587e6c49b5 <<< 1152) |||
+    (0x291131059f5ad11177d0bc285fa3afba16e88b7048cac45cc1d0d4e7326bf53696a0fd10 <<< 1440) |||
+    (0xe8a247113a05a022d0ad780ebc475f942fc1d6e56b6eb8c3445f01d2b4e7c2711d38c4a2 <<< 1728) |||
+    (0x6d365aa11b10a585ab62d74d7b00bdd05f542fa5d6d88b6948db446b61d6d4e9ea70a538 <<< 2016) |||
+    (0xe97998bd1a58606c52b5c8e2e570836841fb218610b317488b9eb6b95b57ce0eb305316c <<< 2304) |||
+    (0xc641037b48be0458ea6c7e35c4dae2ac827841a32251910cd7788bb9b66cdb306dfcb2fb <<< 2592) |||
+    (0x7084c84294221190eb17696baeb6895b3e4e0312ffc17cd4bec459416cb435c05ae11081 <<< 2880) |||
+    (0xe2d5717a3ebd3021d190d7175c8ba946a15b492e07f301e9783cbc9658156c2bb5cd1ae7 <<< 3168) |||
+    (0x05a3dad2ad792ebcc85f142f8216c96b6048fac47941ddf4edc26db1371aa17810cf85a7 <<< 3456) |||
+    (0xebe7075cd3a86a37311aa85fe3afddd6f96b7948ab4451e1cbf4e4da6f013804a1d21107 <<< 3744) |||
+    (0x17e9ebf20749539fca313117f08454428a1b154d99a5ed3af6dd6b16b5b45b71ad9cd7d9 <<< 4032) |||
+    (0xaedf0890844547f14bf0659ad6cbeb890444f41c2f4e3d25e102f1816846b44c5ba62dc3 <<< 4320) |||
+    (0x5d31ae83085d642ab8394c1405aeb6d5c36391b204decc2f7e120ad9061170f8b8cc5df1 <<< 4608) |||
+    (0xd27b606db0a2de092f2292121909cd7308b9bb6199b156de602f49920e99087171f6b93b <<< 4896) |||
+    (0xa2b6cf63651db2dcdf3b2fae12062104916fd8b8635d61ae9cc8708433b81e4c0865a8b6 <<< 5184) |||
+    (0x92aa2b311448873044101bc64dfe25e382f2bd6938b4cc5d962ec30880843cb80dcbffc5 <<< 5472) |||
+    (0x7653b7ca3e511e2085f843321b724dc9a5e7c2f55d6a36b53b5bd62ddcd7fc0bf9072e53 <<< 5760) |||
+    (0xe0077dd3b40a3d311d908580436e1b844dd2a5e7baf5616a28b5345b162d88d7c9ebdef7 <<< 6048) |||
+    (0xf9ebf9f735d3906a2c51153887a843ec1bd84e0d25e3faf3016926b4e35b21ad8317cc0b <<< 6336) |||
+    (0xc8c87d643e48064bfc05a0d6d05364a5b2a0df1d2fbd120559042d7006b84c5be1addf17 <<< 6624) |||
+    (0x562e9f086d64334825cc0aa5a6d6d30b5ff5b07ede272f1992116109f172d6b9b45da1ae <<< 6912) |||
+    (0xdb61e1b11ade7e2f52920ee1084d71e8b9345d262e88c860842c4834cc17c5acd6d5335d <<< 7200) |||
+    (0x5117006349b228deea2f8d120aa105ad70e6b8e35de62edcc88d6445b7eccbf2a59cb6cc <<< 7488) |||
+    (0xaa38511a1888bc44b81c414e2e25e07af13d6818b4635bb1adc8d7ec0bf0f744d39c0a32 <<< 7776) |||
+    (0x99245cdfc87177840c42661b034da2a5ec42f6e16b48b5bb5b662d9f17dc0be7f76153aa <<< 8064) |||
+    (0x524ed13088e474735540481fa50afce56748b1ac5511cd8ee4266f66b83721ebf0fbe23c <<< 8352) |||
+    (0x6e17374de16190dc <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `42` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV42 : ℕ :=
+    0x7d0083007d007d00830083007d007d00830083008300830083008300830083007d007d00 |||
+    (0x830083007d0083007d007d0083007d00830083007d008300830083007d007d0083007d00 <<< 288) |||
+    (0x7d007d00830083007d00830083007d00830083007d0083007d007d0083007d007d007d00 <<< 576) |||
+    (0x83007d0083007d0083008300830083007d007d0083008300830083007d007d0083007d00 <<< 864) |||
+    (0x7d007d007d00830083007d007d007d007d007d007d0083007d0083007d00830083007d00 <<< 1152) |||
+    (0x7d0083007d007d00830083007d0083007d007d0083007d00830083007d00830083007d00 <<< 1440) |||
+    (0x7d00830083007d0083007d007d007d007d00830083007d00830083007d0083007d007d00 <<< 1728) |||
+    (0x7d00830083007d007d007d007d007d0083007d0083007d00830083007d007d0083007d00 <<< 2016) |||
+    (0x7d00830083007d008300830083007d007d007d007d00830083007d0083007d0083007d00 <<< 2304) |||
+    (0x7d007d007d0083008300830083007d007d007d007d0083007d0083007d007d0083008300 <<< 2592) |||
+    (0x7d0083007d0083007d008300830083008300830083007d0083007d007d0083007d007d00 <<< 2880) |||
+    (0x83008300830083007d007d007d007d007d007d008300830083007d007d0083007d008300 <<< 3168) |||
+    (0x7d007d007d007d007d0083007d007d0083007d0083007d0083008300830083007d008300 <<< 3456) |||
+    (0x7d0083007d007d007d007d007d007d007d007d007d0083007d0083007d007d007d007d00 <<< 3744) |||
+    (0x83007d007d008300830083007d007d007d00830083007d0083007d007d0083007d008300 <<< 4032) |||
+    (0x7d0083007d007d0083007d0083007d007d0083007d007d00830083007d007d0083007d00 <<< 4320) |||
+    (0x830083007d0083007d008300830083007d0083007d007d008300830083007d007d007d00 <<< 4608) |||
+    (0x7d007d007d0083008300830083007d007d0083007d008300830083007d00830083008300 <<< 4896) |||
+    (0x7d008300830083007d00830083007d00830083007d00830083007d008300830083008300 <<< 5184) |||
+    (0x7d0083008300830083007d0083007d007d00830083007d008300830083007d007d008300 <<< 5472) |||
+    (0x830083007d0083008300830083007d007d0083007d0083007d0083008300830083007d00 <<< 5760) |||
+    (0x7d00830083007d007d007d007d007d008300830083007d0083007d007d007d007d007d00 <<< 6048) |||
+    (0x83007d0083007d0083008300830083007d007d007d007d0083007d00830083007d008300 <<< 6336) |||
+    (0x7d007d007d00830083007d007d00830083007d0083008300830083007d007d007d008300 <<< 6624) |||
+    (0x7d007d0083007d0083007d007d0083007d007d007d007d007d007d00830083007d008300 <<< 6912) |||
+    (0x830083007d007d007d007d00830083007d008300830083007d0083008300830083008300 <<< 7200) |||
+    (0x830083007d007d0083007d007d008300830083007d007d00830083007d007d0083007d00 <<< 7488) |||
+    (0x7d0083007d007d008300830083007d0083007d007d007d007d008300830083007d007d00 <<< 7776) |||
+    (0x7d007d007d007d0083007d007d008300 <<< 8064)
+
+/-- Chunk `42` of `s6c1nGT`. -/
+def s6c1nGT42 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL42 s6c1nGTV42 512
+
+/-- Packed labels (17-bit fields) of chunk `43` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL43 : ℕ :=
+    0x02b478a3bc6997feac2043050986c94ff0a97c3c2f9de9ca07e4f508f534767ddf88ed0d |||
+    (0x01acff0f7c7a3ef7592acca8f2cbf96a414062a1e95730ab1c8cd70663c69bbb4c5a098b <<< 288) |||
+    (0x72bd46a4a4795958ac8b4d7a06a7b67333339dfb48fcb5585cabd58d2ee682f683a34176 <<< 576) |||
+    (0xf3d17ce94a58a65b55ff2a8f8c85062df6b3ab54f20d4f05fe7baf3e37d8d38c8ad2e199 <<< 864) |||
+    (0x9a7264b136f4e9b275e53d6b9e5f0a63051a48e1a46895d86ceab779febd4d1879ec4762 <<< 1152) |||
+    (0x30b12ec22b411c7cdb206e503e979ef60aaae54978c9bc5c39d14ae70c6c12368d6104d0 <<< 1440) |||
+    (0xf7a242b13dc22b791c60db2e6e573e941ef7caaa054908c53c5ff9d26ae7fc710bb8bba2 <<< 1728) |||
+    (0x5a36696116d0a372648936e8e9bc75e23d681e5eca63e51a38dd246ad5d74cea2770c3b8 <<< 2016) |||
+    (0x257986bd291867ec5662f3e97cf54a56a65c55fcaa8e4c85e62d86bb2b57320e6f050e6c <<< 2304) |||
+    (0x6ca1ee7b373dfbd8e58c81d2e1a172a146aaa47e595b2c8a8d7ae6a7c66bb32fddfc68fc <<< 2592) |||
+    (0xd54ffea97b585f2bd44d2e0682868b233db6038cffff7cf23ebb5948ccb7f2cbc16a5d40 <<< 2880) |||
+    (0xe93094e47a735257332b1d4cd7e663b6a33b4a1a07ab0224782bbc8d981cac2943053186 <<< 3168) |||
+    (0xe23ca12440dfc671703c2c1de80a0704f578f9b478bddda8edfd6dcf3729e17f90cd524e <<< 3456) |||
+    (0x2799275bb3a7de36e91ae5404b9fa4cafc056738ad2c5151cbaee4b66f1eb7fb21cdf104 <<< 3744) |||
+    (0x4fac27bb674b2b9f3230ef17ce84734299db1c8d9753a5b9d6ac98f04dd3297b145a8f57 <<< 4032) |||
+    (0x1aa5565beb2637f323efd59b4ccc278922c4eb1c2aee3ae36bf1b8f88b4c46f12a9c951e <<< 4320) |||
+    (0x323318ac55820aa5083b3c14f9ae6ad5fc63ae31fb5ed3cf81f519e2925cb8ba5ce135df <<< 4608) |||
+    (0xd256605ab0b11e10ef266540b2a648c0de61dc6187b14d9e67af47452b1298d4bd285f54 <<< 4896) |||
+    (0xa268cf9d650b32d3df368fb1d502fa889cb3225a7e336b199495c5eac9c8202c07d1a86e <<< 5184) |||
+    (0x939a2aeb1484874fc41f9bc1ae01c37d51c6648efa48f934cc9a18561aeaf3880cb3ff3d <<< 5472) |||
+    (0x7823b7363ecd1e5f85e643415b6dcdc77392a1ccec93684bec2bd495a6900fc7e7a7303b <<< 5760) |||
+    (0x76e77ca3b4f63ced1d6f859e43655b8bcdd6739299ccf093664beb282893cf8f06277697 <<< 6048) |||
+    (0x0f27e7d734bb8fda2ccb15148797c3e39bdfae0ac37d69c6788ef448fe282b13ce4f06c7 <<< 6336) |||
+    (0x19961a0af3f80833fcfda148d02d64c332afdf248fbad502c28880b32c5a792bd715a750 <<< 6624) |||
+    (0x68999555c50ac9b824ac0b91a74ed3466012b0751e22ef1765408aa654c0d061db34cf1a <<< 6912) |||
+    (0xb761ffb1299e79af56452b2a98c8bd265f53323098ad9582eaa57833bc1739ad4ad50c33 <<< 7200) |||
+    (0xcf173e633632375ee5cf8af519da9240b8b45ce635dc9aa4965b0b2647eba3f3959c6ccc <<< 7488) |||
+    (0x9e38c919f588aac4c71c48ee31e36bc9b8e48b4246f62a9f151f8facc7bb1743ab9cf232 <<< 7776) |||
+    (0x2121c0dea870b783fb425ddafe8da653a581d6b098fe4dd42978945b4f57c799576333ab <<< 8064) |||
+    (0xc253a92cf4e56473cd3fe39fbccb0ae57348ad7c5179cbb8e4bd6f23b7fda1ce91055242 <<< 8352) |||
+    (0x6dd3372be180b0cd <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `43` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV43 : ℕ :=
+    0x83007d007d007d00830083007d007d00830083007d007d007d007d00830083007d007d00 |||
+    (0x7d007d0083007d007d007d0083007d007d007d0083007d007d007d00830083007d008300 <<< 288) |||
+    (0x83008300830083007d0083007d0083007d007d007d0083007d007d0083007d007d007d00 <<< 576) |||
+    (0x7d0083007d0083007d007d007d007d007d007d0083008300830083007d007d007d008300 <<< 864) |||
+    (0x830083007d00830083007d0083008300830083007d0083007d00830083007d007d008300 <<< 1152) |||
+    (0x7d0083007d007d00830083007d0083007d007d0083007d007d007d0083007d007d008300 <<< 1440) |||
+    (0x7d00830083007d0083007d008300830083007d0083007d008300830083007d0083008300 <<< 1728) |||
+    (0x7d00830083007d0083008300830083007d0083007d0083007d007d008300830083007d00 <<< 2016) |||
+    (0x7d0083007d0083007d007d007d008300830083007d00830083007d007d0083007d008300 <<< 2304) |||
+    (0x7d007d007d0083007d007d007d0083008300830083007d007d0083007d007d0083008300 <<< 2592) |||
+    (0x83007d007d0083007d0083007d007d007d007d0083007d0083007d007d0083007d007d00 <<< 2880) |||
+    (0x7d007d007d007d0083008300830083007d007d008300830083007d007d00830083007d00 <<< 3168) |||
+    (0x7d007d007d007d007d008300830083007d00830083007d00830083007d007d0083007d00 <<< 3456) |||
+    (0x7d0083007d007d0083008300830083008300830083007d007d0083007d007d007d007d00 <<< 3744) |||
+    (0x7d00830083007d007d007d008300830083007d0083007d0083007d0083007d0083007d00 <<< 4032) |||
+    (0x7d0083007d007d007d0083007d0083007d0083007d007d00830083007d007d007d008300 <<< 4320) |||
+    (0x8300830083007d0083007d00830083007d0083007d007d00830083007d00830083008300 <<< 4608) |||
+    (0x7d007d007d0083007d007d007d00830083007d0083007d007d007d0083007d0083008300 <<< 4896) |||
+    (0x7d0083007d007d0083007d0083007d008300830083007d007d0083008300830083008300 <<< 5184) |||
+    (0x83007d007d007d007d0083007d0083007d00830083007d008300830083007d007d008300 <<< 5472) |||
+    (0x7d007d0083007d007d007d0083007d007d00830083007d0083007d008300830083007d00 <<< 5760) |||
+    (0x83007d007d0083007d007d007d007d008300830083007d007d0083008300830083008300 <<< 6048) |||
+    (0x83007d0083007d0083008300830083007d007d00830083007d008300830083007d008300 <<< 6336) |||
+    (0x7d007d007d00830083007d007d0083007d0083007d007d007d007d00830083007d008300 <<< 6624) |||
+    (0x7d007d007d0083007d0083007d0083007d007d0083008300830083007d007d0083007d00 <<< 6912) |||
+    (0x830083007d007d00830083007d007d0083007d007d007d0083007d007d007d0083008300 <<< 7200) |||
+    (0x83008300830083007d0083007d00830083008300830083007d007d007d007d0083007d00 <<< 7488) |||
+    (0x7d007d007d00830083007d0083008300830083007d0083007d007d0083007d007d007d00 <<< 7776) |||
+    (0x7d0083007d008300830083007d007d00 <<< 8064)
+
+/-- Chunk `43` of `s6c1nGT`. -/
+def s6c1nGT43 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL43 s6c1nGTV43 512
+
+/-- Packed labels (17-bit fields) of chunk `44` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL44 : ℕ :=
+    0x022f782ebc8f181dcc29f307898a4950dea8bb3c781dae0a16e4fc88f9f478ddddbaee04 |||
+    (0x039f00067cf63ebd5949ecb862c8b967a1417ca1765758ab548ce5e657b6a36b4a3207bd <<< 288) |||
+    (0x75c14574a41159bf2c608d8506b2366bf32ffdfc7afc2c58a8abeb8d1f068b068b633dd6 <<< 576) |||
+    (0xede97ef54bb8a6eb5594aaaa4c990637f6bb7b575a0e7905157b3b3dfdd8e6ac8242db61 <<< 864) |||
+    (0xa3e268713914e86c762a3daf9e7d0a50e51fb8dd646af5d75eea2e798bbd2b98688c56d2 <<< 1152) |||
+    (0x43d13e722741197cda0e6f073edf9f220ab6053b08c56c6011d27ce8076c5e366b6117f0 <<< 1440) |||
+    (0xbd2231d12f7227f91920d9e06ef03ed41f27cab8e53c78c9ec5c51d15ce71770c6b8f922 <<< 1728) |||
+    (0x16368f6105f09ae268c938c8e882763d3da41e80ca4e051ec8e1e468b5d87eeabe710eb8 <<< 2016) |||
+    (0xbc7a03bd4f987a8c47d2ed517ea94b96a6fc559f2aaf8c9be63686b3fb551a0d5906056c <<< 2304) |||
+    (0x52a1817bb33e39d8d4ac8b42dbd9761d455aa42659b4ac5d4d87e6b146737333bdfb5afc <<< 2592) |||
+    (0x9550f0a8ac58b32bee4d1de68c7683e3419601beff167c7e3ef9592beca962c90167fd41 <<< 2880) |||
+    (0x112ca8e58a73da57632b594ce70656c69beb4c72099d02bf78a6bc6b17ffcc20f308318a <<< 3168) |||
+    (0x524199221cdec670c03c839dabca1804fdf8f574769ddf9aed146e1b374fe162b0dcc254 <<< 3456) |||
+    (0x279fa7637babba38d919fd3fd81fc10b0c057438b1fc5539cd98e42d6f6bb839a1ec90fc <<< 3744) |||
+    (0x8fb627ca6743f39d1e32db174483ffc25f9aff8da6d3a1c1d9109a404e2b2934947d4f6a <<< 4032) |||
+    (0x1ac3566e0b16c7ebebf3b19c7cccbf88af44c9dc49ae32436749bba48a0c46512adf14ef <<< 4320) |||
+    (0x327318dc5568eaac7833e41755ad5ed516633ab2391ee6cf8b7515a2907cb7045d7e3623 <<< 4608) |||
+    (0xd34c60173077de23af17c5440aa2d4c1fe629c6202312b5e7aef56e52e929c14bb665fb3 <<< 4896) |||
+    (0xa158d03564c7b2b19f258fbb55058285e0b2325a0633a0995d55d7ead5c824f40bbda75a <<< 5184) |||
+    (0x8ff62cdf151e879a43e55be0ee0b637ad1c2e49054487e347b1a2f962beafc08087bfd19 <<< 5472) |||
+    (0x7cebb5123cfd1d7785a2c3671b8ccdd6f395e1cf8c94f64b332c2c95ce8ff527efd734e3 <<< 5760) |||
+    (0x6c17786bb7523edd1e6785eac3431b6ecdc7f39559cf5094d84b44285c93f98f1fc76b67 <<< 6048) |||
+    (0xf7c7eea7306393b62aff148e875244215bc2ee02637a69c2b8907a4869285713f44f1d27 <<< 6336) |||
+    (0x2a56290afb780cfbff59a278cfa5650fb2d59f378fb255063a85bcb21c59f12c2715cb4f <<< 6624) |||
+    (0x9b196095d50ad4b8207407fda87ad25c605f30b3de11af26c543b2a308c1d0628b34809a <<< 6912) |||
+    (0x2f618a314f5e68ef47e52f2a9bc8bb885fc4326898e195660aab083b641515ae7ed60633 <<< 7200) |||
+    (0xfb17d463b2b1fd1ed4cf8275161a9020b6ea5d6936189ac69670eb17b7f36beff19b5ccc <<< 7488) |||
+    (0xfa36f91aed892744eddc2bae3b4367f1bbf889e246662ad494ea4fb8c7c9174b739f5e30 <<< 7776) |||
+    (0xbad31d793abce28477c29b9b1d8d97d3a179d8cc9a2e4e3c293f14808f6cc79ed75bfba7 <<< 8064) |||
+    (0xa5a782d5417a2abd3a5fd6afdf56fceb7988b2d45429cd10e3e86f78382821e450f825a3 <<< 8352) |||
+    (0x6e283756216650d8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `44` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV44 : ℕ :=
+    0x830083007d00830083007d0083007d007d0083007d0083007d00830083007d007d008300 |||
+    (0x7d008300830083007d0083008300830083007d007d007d0083007d007d0083007d007d00 <<< 288) |||
+    (0x7d00830083007d007d007d007d007d007d0083008300830083007d007d007d0083007d00 <<< 576) |||
+    (0x83008300830083007d0083007d0083007d00830083007d007d00830083007d0083008300 <<< 864) |||
+    (0x7d008300830083007d007d007d0083007d00830083008300830083007d007d0083008300 <<< 1152) |||
+    (0x8300830083007d007d0083008300830083007d007d007d0083007d007d007d0083008300 <<< 1440) |||
+    (0x830083007d007d007d007d007d0083007d007d007d007d007d0083007d007d007d008300 <<< 1728) |||
+    (0x7d007d00830083007d0083007d008300830083008300830083007d007d0083007d007d00 <<< 2016) |||
+    (0x7d007d007d007d007d008300830083007d008300830083007d007d007d007d007d007d00 <<< 2304) |||
+    (0x7d0083007d007d007d0083007d007d007d0083007d007d008300830083007d0083007d00 <<< 2592) |||
+    (0x7d007d007d007d007d007d007d0083007d0083007d007d007d007d008300830083007d00 <<< 2880) |||
+    (0x7d0083007d00830083007d0083007d007d00830083007d00830083007d007d007d007d00 <<< 3168) |||
+    (0x7d0083007d0083007d007d0083007d007d007d008300830083007d007d00830083008300 <<< 3456) |||
+    (0x7d007d007d00830083007d0083007d007d0083007d007d008300830083007d007d008300 <<< 3744) |||
+    (0x7d007d00830083007d00830083007d00830083007d007d007d007d007d007d007d007d00 <<< 4032) |||
+    (0x7d007d007d0083007d007d007d007d007d007d007d00830083007d007d0083007d007d00 <<< 4320) |||
+    (0x7d0083007d007d007d007d007d008300830083007d00830083007d007d007d0083007d00 <<< 4608) |||
+    (0x83007d008300830083007d00830083007d007d007d007d0083007d007d007d007d008300 <<< 4896) |||
+    (0x7d007d0083007d007d007d007d007d007d008300830083007d007d007d0083007d008300 <<< 5184) |||
+    (0x830083007d0083008300830083008300830083007d007d0083007d00830083007d007d00 <<< 5472) |||
+    (0x7d008300830083007d0083007d007d00830083007d007d007d007d0083007d0083008300 <<< 5760) |||
+    (0x7d007d00830083007d0083007d0083007d0083007d007d00830083007d00830083007d00 <<< 6048) |||
+    (0x7d007d007d007d007d0083007d00830083007d007d008300830083007d00830083008300 <<< 6336) |||
+    (0x7d0083007d007d00830083007d007d008300830083007d0083007d007d00830083008300 <<< 6624) |||
+    (0x7d0083007d007d007d007d007d007d007d00830083007d0083007d007d00830083008300 <<< 6912) |||
+    (0x7d00830083007d007d00830083007d00830083007d008300830083007d00830083007d00 <<< 7200) |||
+    (0x83007d007d00830083008300830083007d00830083007d007d0083007d00830083008300 <<< 7488) |||
+    (0x83007d00830083008300830083007d007d008300830083007d008300830083007d008300 <<< 7776) |||
+    (0x83008300830083007d00830083007d00 <<< 8064)
+
+/-- Chunk `44` of `s6c1nGT`. -/
+def s6c1nGT44 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL44 s6c1nGTV44 512
+
+/-- Packed labels (17-bit fields) of chunk `45` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL45 : ℕ :=
+    0x02db7885bc5ad8032c1c95cc52e754849c429e5f212f8896cceb5e88f3547589df10ed30 |||
+    (0x01f6ff337c8dbee8d92f2cab15c112e0b4819240e921c490d59759aba9d69ccb4ce60917 <<< 288) |||
+    (0xe308826c41892244910e5775abb926714b32a5fad6fcdb220490f1976c4bb02684cb4086 <<< 576) |||
+    (0xc8aae554837c41f1219310b99745aba026b4cb54060cd705c37b91be28d8cc2c8d15c492 <<< 864) |||
+    (0x96a5ac02d77d7ad4bdda5f612fa756d50b6988e2d467a9d8b0ead879e1bd56d87e2c4995 <<< 1152) |||
+    (0x295131259f42d11d77dabc2d5fa12fbb56e8eb7078cad45cc9d0d0e7306bf4369620fd50 <<< 1440) |||
+    (0xe82247513a25a03ad0a17804bc425f96afc096e50b6e88c3545f09d2b0e7c0711c38c422 <<< 1728) |||
+    (0x6c365a211b50a5a5ab7ad7417b0abdd55f56afa496d8eb6978db546b69d6d0e9e870a438 <<< 2016) |||
+    (0xeb7999bd1ad8602c5295c8d2e568836241fe218490b257484b9ed6b94b57c60eb705336c <<< 2304) |||
+    (0xcc41067b49be04d8ea2c7e15c4eae2b4827241a62253110d97784bb9d66ccb3065fcb6fb <<< 2592) |||
+    (0x6884c24291221310ea5769abaed6894b3e460316ffc37cd5bec4d9412cb415c06ae10881 <<< 2880) |||
+    (0xfad57d7a34bd3521d310d6575c4ba926a14b492607f701eb783dbc96d8152c2b95cd2ae7 <<< 3168) |||
+    (0x25a3c2d2a17924bccd5f16af8356c90b6078fad47949ddf0edc06db0371a217850cfa5a7 <<< 3456) |||
+    (0x4be7575cc3a86237351aaa5fe12fdc96f90b7978ab5451e9cbf0e4d86f00380421d25107 <<< 3744) |||
+    (0xd7e94bf25749439fc2313517f28455428a9b150d9985ed12f6c96b10b5b75b702d9c17d9 <<< 4032) |||
+    (0xaede8890244517f15bf06d9ad2cbe9890544f49c2f0e3d05e12af1956840b44f5ba7adc3 <<< 4320) |||
+    (0x5d32ae82885dc42ae8395c140daeb2d5c16390b2045ecc6f7e320af1060570f4b8ca5df2 <<< 4608) |||
+    (0xd279606cb0a25e096f22b2123109d97304b9bd6198b1565e606f49b20eb1086571fab93d <<< 4896) |||
+    (0xa2b2cf61651cb2dc5f3b6fae32060904856fd4b8655d62ae9d48702433e81e5c086da8b2 <<< 5184) |||
+    (0x92a22b35144a873144109bc60dfe05e3aaf2a9693eb4cf5d952ec28880243ce80ddbffcd <<< 5472) |||
+    (0x7643b7c23e551e2285f943329b720dc985e7eaf5496a30b5385bd7addc17fcabf9572e43 <<< 5760) |||
+    (0xe0577dc3b4023d351d928581436e9b840dd285e792f5756a2eb5375b17ad8817c94bdea7 <<< 6048) |||
+    (0xf94bf9a735c390622c55153a87a943ec9bd80e0d05e3d2f3156920b4e05b202d83d7ccab <<< 6336) |||
+    (0xc9487dc43e18065bfc0da0d2d05164a4b2a05f1d6fbd3205710439700ab84a5be02ddfd7 <<< 6624) |||
+    (0x552e9e886dc4331825dc0aada6d2d3095ff4b07e5e276f19b2114909e572dab9b25da2ae <<< 6912) |||
+    (0xd961e0b11a5e7e6f52b20ec9085971e4b9325d252e894860242c1834dc17cdacd2d5315d <<< 7200) |||
+    (0x5517026348b2285eea6f8d320a8905b970eab8e55de52edd488dc445e7ecdbf2ad9cb2cc <<< 7488) |||
+    (0xa238551a1a88bd44b89c410e2e05e052f129681eb4605bb02dc817ecabf0a744c39c0232 <<< 7776) |||
+    (0x5925fce0a870f7840d42669b030da285ec6af6f56b4eb5b85b67ad9fd7dcabe7a76143aa <<< 8064) |||
+    (0x8252d12e48e3a4736d40041fb70afee56548b64c52e1cc70e4596fb0381461da30ff0239 <<< 8352) |||
+    (0x6e003772617430d3 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `45` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV45 : ℕ :=
+    0x7d0083007d007d00830083007d007d00830083007d007d007d007d00830083007d007d00 |||
+    (0x830083007d0083007d007d0083007d00830083007d008300830083007d007d0083007d00 <<< 288) |||
+    (0x7d007d00830083007d00830083007d00830083007d0083007d007d0083007d007d007d00 <<< 576) |||
+    (0x83007d0083007d0083008300830083007d007d0083008300830083007d007d0083007d00 <<< 864) |||
+    (0x7d007d007d00830083007d00830083008300830083007d0083007d007d00830083007d00 <<< 1152) |||
+    (0x7d0083007d007d00830083007d008300830083007d0083007d007d0083007d0083007d00 <<< 1440) |||
+    (0x83007d0083007d0083007d007d007d007d0083007d0083007d007d0083007d0083008300 <<< 1728) |||
+    (0x7d00830083007d007d007d007d007d0083007d0083007d007d007d00830083007d008300 <<< 2016) |||
+    (0x7d00830083007d008300830083007d007d007d007d00830083007d0083007d0083007d00 <<< 2304) |||
+    (0x7d007d007d0083008300830083007d007d007d007d0083007d0083007d007d0083008300 <<< 2592) |||
+    (0x7d0083007d0083007d008300830083008300830083007d0083007d007d0083007d007d00 <<< 2880) |||
+    (0x7d007d007d007d007d007d007d007d007d007d00830083007d00830083007d007d008300 <<< 3168) |||
+    (0x7d007d008300830083007d007d007d0083007d0083007d00830083007d007d0083007d00 <<< 3456) |||
+    (0x7d0083007d007d007d007d007d007d008300830083007d0083007d00830083007d007d00 <<< 3744) |||
+    (0x83007d007d008300830083007d007d007d0083007d0083007d00830083007d0083007d00 <<< 4032) |||
+    (0x7d0083007d007d0083007d0083007d007d0083007d007d00830083007d007d0083007d00 <<< 4320) |||
+    (0x830083007d0083007d008300830083007d0083007d007d008300830083007d007d007d00 <<< 4608) |||
+    (0x7d007d007d0083008300830083007d007d0083007d008300830083007d00830083008300 <<< 4896) |||
+    (0x83007d00830083007d00830083007d008300830083007d007d0083008300830083008300 <<< 5184) |||
+    (0x83007d007d007d0083007d0083007d007d00830083007d007d007d007d00830083007d00 <<< 5472) |||
+    (0x7d007d0083007d007d007d0083007d007d0083007d0083007d0083007d007d007d008300 <<< 5760) |||
+    (0x7d00830083007d0083008300830083008300830083007d0083007d007d007d0083008300 <<< 6048) |||
+    (0x83007d0083007d0083008300830083007d007d007d007d0083007d00830083007d008300 <<< 6336) |||
+    (0x7d007d007d00830083007d007d00830083007d0083008300830083007d007d007d008300 <<< 6624) |||
+    (0x7d007d0083007d0083007d007d0083007d007d007d007d007d007d00830083007d008300 <<< 6912) |||
+    (0x7d007d0083008300830083007d007d007d008300830083007d0083008300830083008300 <<< 7200) |||
+    (0x83008300830083007d00830083007d007d007d007d007d00830083007d007d0083007d00 <<< 7488) |||
+    (0x81007f007f007f007f007f007f00810081007f007f007f0081007f00810081007d007d00 <<< 7776) |||
+    (0x7f007f007f007f0081007f0081007f00 <<< 8064)
+
+/-- Chunk `45` of `s6c1nGT`. -/
+def s6c1nGT45 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL45 s6c1nGTV45 512
+
+/-- Packed labels (17-bit fields) of chunk `46` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL46 : ℕ :=
+    0x0349785c3c7658112c1783058986494f00a9b43bff9dedca0ee4ec88f6cc7441de70eda1 |||
+    (0x0150ffa17cc43ed459252cb202c9b96c214122a1d956e8ab3c8ce4065d46a04b4ba20871 <<< 288) |||
+    (0x723d4614a44159a0ac9f4d7f06ad3674db3469fbb4fd4b5828abdb8d3ee67bf6884b3f42 <<< 576) |||
+    (0xf6117e094b18a6bb562b2aa58c8f0634f6b85b55ca0db506337b693e14d8c26c8822de99 <<< 864) |||
+    (0x9da265f13854ea9276153d879e710a6f051c48e65c6969d994eb4b7a193d72d88c6c50a2 <<< 1152) |||
+    (0x1f712c2229c11a3cda706df83ec79f0e0ab1e54cf8ce5c5e89d1b4e7a36c2d36b2e10b70 <<< 1440) |||
+    (0xd4e23d7135222a7919e0da9e6e0f3ebc1f13caaf054b88c6dc60c9d394e83370f538b0e2 <<< 1728) |||
+    (0xa53676e12970aca266493808ea7c76023d7c1e74ca71e51d38dedc6d29d7b4ea5b707d38 <<< 2016) |||
+    (0x5b79d13d36d86e6c59a2f6a97e554af6a6cc5620aaa04c91e63386bcdb598a0f9505a36c <<< 2304) |||
+    (0x0ca1ae7b213df0d8e06c7922de2171e145faa45659ab2ca28d81e6ac46705b3229fd94fc <<< 2592) |||
+    (0x154f2ea9e358232be64d44067c868ccb3d02027100317d0c3eb059372cbb02cb016bfd41 <<< 2880) |||
+    (0x692e14e38a739a56e32b494cdee65c36a4cb47e20751025978143cb258232c2683073186 <<< 3168) |||
+    (0x023ae12620e08671203c041df80a1404ebf8fe4c7801dd50ee316d883736618630ca8251 <<< 3456) |||
+    (0x279ca76053aa2e38171b1a3fff9faacb04056438aecc50a1cb50e5496f3837f061c8310e <<< 3744) |||
+    (0x4fb027c5674cd3a18e32171862848dc2a69b234da0b3aa39d7ec99a04dfb29cb14728f60 <<< 4032) |||
+    (0x1aaf5669eb2937f4d3f22d9bb6cc5a88ddc4e09c254e38336ab1b8588aac46812ac09530 <<< 4320) |||
+    (0x324b18d055870aa7883cd415cdaf96d6326369b1f09ec24f79351822913cb77a5c81360b <<< 4608) |||
+    (0xd22860a4b08e1dff0f29953c72a768c1be617c61d1b1729e6e4f50b52c129b54bd985f8c <<< 4896) |||
+    (0xa392cf1064f4b2f81f490fa91503fa86dcb2b25b063377196e95b7ead1c81bc40a25a992 <<< 5184) |||
+    (0x94662c1313f88708c42c1bd40df91381d1c4648eca4991350c99f45607eafa080b440185 <<< 5472) |||
+    (0x73c3b9863f331dd08630c31e1b680dd0938de1ce8c94684b7c2c0c958e9000c7eb272bc3 <<< 5760) |||
+    (0x7ae77b43b5c63e131d4085b8c35a1b7a0dd9938e59cdd094c64b8b284c93b18f02277d97 <<< 6048) |||
+    (0x0227ee57334392262d3314e88780c4081be60e08138269c3b88e644986283713b44f00c7 <<< 6336) |||
+    (0xf196090af77803c3fdc5a1b2d000647cb2bc1f2b0fb81504428780b25c5b112bf7159350 <<< 6624) |||
+    (0x8c997355b90aceb823440c65a7b2d2b8602cb06a1e1d0f20953bcaa6b4c150618b34f719 <<< 6912) |||
+    (0x4a6219b1369e8c4f59b52caa9b08bd765f7b324098d59589eaa8f83854198dadb6d5a233 <<< 7200) |||
+    (0x3717726321b2149ee04f8835189a90e0b7945c9636009ab296670b2847f053f46d9d96cd <<< 7488) |||
+    (0x6e39371a8a8895c4a49c374e29336a09b8048a8246962acb15358fb2c7c41748539dce33 <<< 7776) |||
+    (0x5924ece048715b8445c2829b114da9b3aa81d830998e4e0c29c0946f4f62c79bd764d3ac <<< 8064) |||
+    (0x924ff12f78e43c72f1401a1f910af3656e48b3dc54a9cd56e40a6f713824e1e250f7323d <<< 8352) |||
+    (0x6e20375e616410da <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `46` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV46 : ℕ :=
+    0x81007f00810081007f007f007f007f007f007f007f007f00810081007f007f0081008100 |||
+    (0x7f007f0081007f00810081007f0081008100810081007f007f007f007f007f007f008100 <<< 288) |||
+    (0x7f007f007f007f007f00810081007f007f007f007f0081007f007f007f0081007f007f00 <<< 576) |||
+    (0x81007f0081007f007f007f00810081007f007f007f007f00810081007f007f0081007f00 <<< 864) |||
+    (0x7f007f007f00810081007f00810081007f007f007f00810081007f007f00810081007f00 <<< 1152) |||
+    (0x7f0081007f007f00810081007f0081008100810081007f008100810081007f0081007f00 <<< 1440) |||
+    (0x81007f0081007f0081007f007f007f007f0081007f008100810081007f00810081008100 <<< 1728) |||
+    (0x7f0081007f0081007f007f007f007f0081007f0081007f007f007f007f007f0081007f00 <<< 2016) |||
+    (0x7f00810081007f007f007f0081007f007f007f007f00810081007f007f00810081007f00 <<< 2304) |||
+    (0x8100810081007f007f007f007f0081007f007f0081007f007f0081007f007f007f007f00 <<< 2592) |||
+    (0x7f00810081007f0081007f007f007f007f007f0081007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x7f007f00810081008100810081008100810081007f007f0081007f0081007f0081007f00 <<< 3168) |||
+    (0x81008100810081007f008100810081007f0081007f0081007f007f008100810081007f00 <<< 3456) |||
+    (0x81007f008100810081008100810081007f007f0081007f0081007f007f007f0081008100 <<< 3744) |||
+    (0x81007f0081007f007f007f008100810081007f0081007f007f00810081007f007f008100 <<< 4032) |||
+    (0x81007f007f007f007f0081007f00810081007f008100810081008100810081007f008100 <<< 4320) |||
+    (0x810081007f0081007f0081007f007f007f008100810081007f007f0081007f0081008100 <<< 4608) |||
+    (0x7f007f007f0081008100810081007f0081007f007f0081008100810081007f0081008100 <<< 4896) |||
+    (0x81007f00810081007f00810081007f008100810081007f0081007f00810081007f007f00 <<< 5184) |||
+    (0x7f0081007f007f0081007f0081007f007f00810081007f007f007f0081007f007f008100 <<< 5472) |||
+    (0x810081007f0081007f007f0081007f007f0081007f0081007f0081007f007f0081007f00 <<< 5760) |||
+    (0x81007f0081007f007f007f00810081008100810081007f0081007f007f007f0081008100 <<< 6048) |||
+    (0x81007f007f0081008100810081008100810081007f007f0081007f00810081007f008100 <<< 6336) |||
+    (0x810081007f0081007f00810081007f0081007f007f007f00810081007f007f007f008100 <<< 6624) |||
+    (0x810081007f00810081007f0081007f008100810081008100810081008100810081007f00 <<< 6912) |||
+    (0x8100810081008100810081008100810081007f007f007f0081007f007f007f0081008100 <<< 7200) |||
+    (0x7f007f007f007f007f00810081007f0081008100810081007f007f00810081007f008100 <<< 7488) |||
+    (0x7f007f0081007f0081007f0081008100810081007f0081008100810081007f0081008100 <<< 7776) |||
+    (0x7f0081007f0081008100810081008100 <<< 8064)
+
+/-- Chunk `46` of `s6c1nGT`. -/
+def s6c1nGT46 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL46 s6c1nGTV46 512
+
+/-- Packed labels (17-bit fields) of chunk `47` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL47 : ℕ :=
+    0x02fa78953c62d8074c1eb3024988594f90a9583c399dd4ca0264efc8f44c7541df52ed20 |||
+    (0x0232ff207c9c3ee459330caa12ce996af1403aa23d570aab328cd28662469ddb4d6a0957 <<< 288) |||
+    (0x73ed46d4a4d5598aac814d6e86a4b6725b3329fb16fcfa584eabbc8d3a667f3685cb4042 <<< 576) |||
+    (0xf2f17c7949e0a67f55e92a848c7f862f36b5cb53c20d1305b07b893e24d8ca4c8c32e059 <<< 864) |||
+    (0x98b262313664e9d275993d3d9e590a66851648e3dc6829d8f6eafa79d83d5e587c0c4b92 <<< 1152) |||
+    (0x2d1130122de11accdb786e7c3e799eff0a9e654338cbcc5c81d112e7206c05369ee10150 <<< 1440) |||
+    (0xe4624b1139122d991af0db666e733e7e1efcca9f8543c8c44c5ec1d2f2e7b0712c38c062 <<< 1728) |||
+    (0x7d3662e11f50a7b261493658ea0c75963d3a1e52ca676514b8dc5c6be9d716ea0a70b438 <<< 2016) |||
+    (0x0a79903d22585e0c5492f2897c4549fea67055eeaa874c7e662fc6ba4b57820ef305206c <<< 2304) |||
+    (0x24a2327b413e00d8e84c7d32e12173d1470aa4da598d2c7a8d6f66a6466ddb30e9fcf6fc <<< 2592) |||
+    (0x654fcea95758492bbf4d3b867fc68a4b3e020352ffb07ce43ec059450cb312cee16acd40 <<< 2880) |||
+    (0x892f44e42272fe570d2b394cd36660b6a25b49aa0837020a784d3c9ed8194c2db3033188 <<< 3168) |||
+    (0x323e2124d0e01671543c3e1dd70a0384ef38fbcc7901de32edb06da83722617610d1924f <<< 3456) |||
+    (0xa792a75ddba8ea37771aca401d9f8acaf2856cb8ac5c5269cc36e4fa6ef93800e1d05106 <<< 3744) |||
+    (0x4fa3a7c1274a4b9f82317317e084654292db194d9bb3a939d5dc98904d7729ad144a8f52 <<< 4032) |||
+    (0x1a91565f6b20b7f25bf0e99b16cc0a891444f05c330e3c136e91ba488ba446dd2a8e9517 <<< 4320) |||
+    (0x320918c755778a9fc83a4c13c1aef2d5b063893200deca4f7d351d2292ecb80a5d1535cd <<< 4608) |||
+    (0xd29a607d30aade0d4f24b53e32a4d8c08e61f86190315e5e5e0f4b9528f29a44bc605ef0 <<< 4896) |||
+    (0xa2f2cf50652c32d85f3f0fad14ff9a894cb37a5ad2333d197a95bf6acc481f5c08e9a8f6 <<< 5184) |||
+    (0x932a2b77146a8729440cdbc44dfd337f51c4d48fca495534de9a07560e6af1c80ecbff81 <<< 5472) |||
+    (0x774bb7823e931e1085f0433a5b700dcb938f81cc7c94204bb02bba95aa900b47e4a72f5b <<< 5760) |||
+    (0x73277ecbb3c23d731d80857843765b820dd4938ff9cc40943e4bbf27fe93c48f13a773d7 <<< 6048) |||
+    (0x0aa7e65736db90ea2c97155a87a143e8dbd64e0c338029c4e88f94495a27f913c74f1247 <<< 6336) |||
+    (0x04960f8af138074bfbc1a112d04064b4329c5f210fbc14ffe28970b3645add2bbd15b150 <<< 6624) |||
+    (0x3a998155be8acab826dc0b29a716d32a60053086de2b4f1bb53d4aa4e4c05061f734d91a <<< 6912) |||
+    (0xfa61d831225e7c0f5495288a9a78bc7e5eff320e98c495766a9f3835cc1781ad12d52033 <<< 7200) |||
+    (0x9316f063413224dee84f8c351c5a92d0b7d45d1a35ca9a8a965e8b2247eddbf3299cf6cc <<< 7488) |||
+    (0x2a38971a3a88cc44b45c450e2d136ee9ba748bba46d22a8915148fa247c1d745cb9bc232 <<< 7776) |||
+    (0x8ad305793cbce1841d426edb074da4b3a841d5e098ce4d7829aa94514f53479457625bab <<< 8064) |||
+    (0xb5a7b2d5597a2cbd395fd72fdf96fc2b79e8b2dc542dcd12e3e96f78b82861e470f835a3 <<< 8352) |||
+    (0x6e28b756616670d8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `47` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV47 : ℕ :=
+    0x7f007f0081007f007f0081007f0081007f00810081007f007f00810081007f007f008100 |||
+    (0x81007f007f007f0081007f007f007f0081007f008100810081007f0081007f0081008100 <<< 288) |||
+    (0x81007f0081007f0081008100810081007f0081007f007f007f0081008100810081007f00 <<< 576) |||
+    (0x7f007f007f007f0081007f007f0081007f0081007f00810081007f007f0081007f007f00 <<< 864) |||
+    (0x7f008100810081007f007f007f00810081007f007f007f00810081007f007f0081008100 <<< 1152) |||
+    (0x7f007f007f0081007f008100810081007f0081007f007f0081007f008100810081008100 <<< 1440) |||
+    (0x81008100810081008100810081007f0081008100810081007f0081007f007f0081007f00 <<< 1728) |||
+    (0x7f007f007f007f007f0081007f0081007f007f007f007f0081007f0081007f0081008100 <<< 2016) |||
+    (0x81008100810081007f008100810081007f008100810081007f007f00810081007f007f00 <<< 2304) |||
+    (0x7f0081007f007f007f0081007f007f007f008100810081008100810081007f0081007f00 <<< 2592) |||
+    (0x810081007f007f007f007f007f0081007f008100810081007f007f007f007f0081007f00 <<< 2880) |||
+    (0x81007f007f0081007f0081007f00810081007f007f00810081008100810081007f007f00 <<< 3168) |||
+    (0x81007f007f008100810081007f008100810081007f007f007f00810081007f0081008100 <<< 3456) |||
+    (0x8100810081007f007f0081007f00810081007f007f007f00810081007f00810081007f00 <<< 3744) |||
+    (0x81008100810081007f0081007f0081007f007f007f007f0081008100810081007f007f00 <<< 4032) |||
+    (0x810081007f0081007f007f007f007f007f007f007f0081007f0081007f0081007f007f00 <<< 4320) |||
+    (0x7f0081007f007f007f007f007f0081007f007f007f00810081007f007f007f007f008100 <<< 4608) |||
+    (0x81007f008100810081007f0081008100810081007f007f007f0081007f007f007f008100 <<< 4896) |||
+    (0x7f007f007f008100810081008100810081007f0081008100810081007f00810081007f00 <<< 5184) |||
+    (0x8100810081007f007f007f007f007f007f007f00810081007f0081008100810081008100 <<< 5472) |||
+    (0x81007f008100810081007f007f007f00810081007f007f007f007f007f00810081008100 <<< 5760) |||
+    (0x810081008100810081007f007f0081007f0081007f007f00810081007f00810081007f00 <<< 6048) |||
+    (0x810081007f007f0081007f007f0081007f00810081007f007f007f0081007f007f007f00 <<< 6336) |||
+    (0x81007f007f007f007f007f00810081007f007f0081007f007f00810081007f007f007f00 <<< 6624) |||
+    (0x7f0081007f007f00810081008100810081007f007f0081007f0081007f0081007f007f00 <<< 6912) |||
+    (0x7f0081007f00810081007f0081007f00810081007f0081007f007f0081007f007f008100 <<< 7200) |||
+    (0x81007f0081007f00810081008100810081007f0081007f007f0081007f00810081008100 <<< 7488) |||
+    (0x83007d007d007d008300830083007d007d0083008300830083007d00830083007f008100 <<< 7776) |||
+    (0x830083008300830083007d0083007d00 <<< 8064)
+
+/-- Chunk `47` of `s6c1nGT`. -/
+def s6c1nGT47 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL47 s6c1nGTV47 512
+
+/-- Packed labels (17-bit fields) of chunk `48` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL48 : ℕ :=
+    0x02da78853c5a98030c1c85cc4ae758849042985f20af8856cc2b5ee8f35c758ddf12ed31 |||
+    (0x01f4ff327c8d3ee8992f0cab05c10ae0b8819e40ef21c790d41759cba9e69cc34ce20915 <<< 288) |||
+    (0xe3048260418f2247910fd775cbb916714332a1fad4fcda220790f0176c2bb01684c34082 <<< 576) |||
+    (0xc8b2e558837041f7219010b81745cba016b4c354020cd505c27b913e2898cc0c8d05c48a <<< 864) |||
+    (0x96b5ac32d7657ad2bdd95f60afa796d5cb69e8e2dc67add8b2ead979e13d56987e0c4985 <<< 1152) |||
+    (0x297131359f72d10577dcbc2e5fa0afbb96e82b7018cadc5ccdd0d2e7316bf4b69660fd70 <<< 1440) |||
+    (0xe86247713a35a00ad0b97802bc415f972fc056e5cb6ee8c35c5f0dd2b2e7c1711cb8c462 <<< 1728) |||
+    (0x6cb65a611b70a5b5ab4ad7597b0cbdd65f572fa456d82b6918db5c6b6dd6d2e9e970a4b8 <<< 2016) |||
+    (0xea79993d1a98600c5285c8cae564836e41f8218790b3d7482b9ee6b94357c20eb505326c <<< 2304) |||
+    (0xc041007b493e0498ea0c7e05c4f2e2b8827e41a02250110c17782bb9e66cc33061fcb4fb <<< 2592) |||
+    (0x6484ce4297221010ebd769cbaee689433e420314ffc27cd53ec499410cb405c072e10481 <<< 2880) |||
+    (0xcad5657a32bd3621d010d7d75c2ba916a143492207f501ea783d3c9698150c2b85cd32e7 <<< 3168) |||
+    (0x35a3f2d2b97922bcce5f172f8396c9cb6018fadc794dddf2edc16db0b71a617870cfb5a7 <<< 3456) |||
+    (0x2be7675ccba86637371aab5fe0afdc56f9cb7918ab5c51edcbf2e4d96f00b80461d27107 <<< 3744) |||
+    (0x57e92bf267494b9fc6313717f38455c28adb152d9995ed0af6c56b1cb5b15b732d9d97d9 <<< 4032) |||
+    (0x2ede4890e44577f153f0699ad0cbe88905c4f4dc2f2e3d15e132f199684cb4495ba4adc2 <<< 4320) |||
+    (0x5d332e82485d042a8839541409aeb0d5c0639032041ecc4f7e220ac1061d70f2b8c95df3 <<< 4608) |||
+    (0xd278606c30a21e094f22a2120109c17302b9be619831561e604f49a20e81087d71fcb93e <<< 4896) |||
+    (0xa2b0cf60651c32dc1f3b4fae220639049d6fd2b8665d632e9d8870e433881e540869a8b0 <<< 5184) |||
+    (0x92a62b37144b8731c410dbc62dfe15e3b2f2a56932b4c95d94aec24880e43c880dd3ffc9 <<< 5472) |||
+    (0x764bb7c63e571e2385f9c332db722dc995e7f2f5456a3cb53e5bd4addd97fccbf9672e4b <<< 5760) |||
+    (0xe0677dcbb4063d371d938581c36edb842dd295e78af5796a22b5315b14ad8997c92bde97 <<< 6048) |||
+    (0xf92bf99735cb90662c57153b87a9c3ecdbd82e0d15e3caf319692cb4e65b232d8257cccb <<< 6336) |||
+    (0xc9887d043e780653fc09a0d0d05064a432a01f1d4fbd2205410421700cb8495be32dde57 <<< 6624) |||
+    (0x54ae9e486d04337825d40aa9a6d0d3085ff4307e1e274f19a2117909fd72dcb9b15da32e <<< 6912) |||
+    (0xd861e0311a1e7e4f52a20ef9084171e2b9315d24ae898860e42c7834d417c9acd0d5305d <<< 7200) |||
+    (0x571703634832281eea4f8d220ab905a170ecb8e65de4aedd888d044587ecd3f2a99cb0cc <<< 7488) |||
+    (0xa638571a1b88bdc4b8dc412e2e15e04af1256812b4665bb32dc997eccbf09744cb9c0632 <<< 7776) |||
+    (0x5922ecdf48709b840dc266db032da295ec72f6f96b42b5be5b64ad9e57dccbe797614baa <<< 8064) |||
+    (0x5255b12c58e52c73f93fb91fd08b13a57228af3c50ddcb6ee5576f2637e721c3910bc23f <<< 8352) |||
+    (0x6d76b7396181b0cb <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `48` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV48 : ℕ :=
+    0x7d0083007d007d00830083007d007d007d007d007d007d0083008300830083007d007d00 |||
+    (0x830083007d0083007d007d0083007d008300830083007d007d007d007d007d0083007d00 <<< 288) |||
+    (0x7d007d008300830083007d007d008300830083007d0083007d007d007d0083007d007d00 <<< 576) |||
+    (0x83007d0083007d00830083007d007d008300830083008300830083007d007d0083007d00 <<< 864) |||
+    (0x7d007d007d00830083007d007d007d008300830083007d007d0083007d00830083007d00 <<< 1152) |||
+    (0x7d0083007d007d00830083007d0083007d007d007d0083007d007d007d00830083007d00 <<< 1440) |||
+    (0x7d00830083007d0083007d007d007d007d00830083007d007d007d0083007d007d007d00 <<< 1728) |||
+    (0x83007d0083007d007d007d007d007d0083007d0083007d0083008300830083007d008300 <<< 2016) |||
+    (0x83007d007d0083008300830083007d007d007d007d00830083007d0083007d007d008300 <<< 2304) |||
+    (0x7d007d007d0083008300830083007d007d007d0083007d007d0083007d007d0083008300 <<< 2592) |||
+    (0x7d0083007d0083007d008300830083008300830083007d007d00830083007d007d007d00 <<< 2880) |||
+    (0x7d007d00830083007d007d007d007d007d007d008300830083007d0083007d0083007d00 <<< 3168) |||
+    (0x7d007d00830083007d0083007d007d0083007d0083007d00830083008300830083007d00 <<< 3456) |||
+    (0x7d0083007d007d007d007d007d007d00830083007d0083007d008300830083007d007d00 <<< 3744) |||
+    (0x7d0083007d008300830083007d007d007d0083007d00830083007d007d00830083007d00 <<< 4032) |||
+    (0x7d0083008300830083007d0083007d007d0083007d007d007d007d007d007d0083007d00 <<< 4320) |||
+    (0x830083007d0083007d0083007d007d007d0083007d007d00830083007d0083007d007d00 <<< 4608) |||
+    (0x7d007d007d0083008300830083007d0083007d007d0083008300830083007d0083008300 <<< 4896) |||
+    (0x83007d00830083007d00830083007d008300830083007d0083007d00830083007d007d00 <<< 5184) |||
+    (0x7d0083007d007d0083007d0083007d007d00830083007d007d007d0083007d007d008300 <<< 5472) |||
+    (0x830083007d0083007d007d0083007d007d0083007d0083007d0083007d007d0083007d00 <<< 5760) |||
+    (0x83007d0083007d007d007d00830083008300830083007d0083007d007d007d0083008300 <<< 6048) |||
+    (0x83007d007d0083008300830083008300830083007d007d0083007d00830083007d008300 <<< 6336) |||
+    (0x7d007d0083007d0083007d007d00830083007d007d007d00830083007d007d007d008300 <<< 6624) |||
+    (0x7d007d0083007d007d0083007d0083007d007d007d007d007d007d007d007d007d008300 <<< 6912) |||
+    (0x7d007d007d007d007d007d007d007d007d008300830083007d008300830083007d007d00 <<< 7200) |||
+    (0x830083008300830083007d007d0083007d007d007d007d00830083007d007d0083007d00 <<< 7488) |||
+    (0x7f008100810081008100810081007f0081007f007f007f0081007f00810081007d007d00 <<< 7776) |||
+    (0x7f007f007f007f0081007f0081007f00 <<< 8064)
+
+/-- Chunk `48` of `s6c1nGT`. -/
+def s6c1nGT48 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL48 s6c1nGTV48 512
+
+/-- Packed labels (17-bit fields) of chunk `49` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL49 : ℕ :=
+    0x0266781abcb55824ac27530a4989595090a9183c5e9dc74a23a4f728feb47779dd6cee0e |||
+    (0x028f000f7d123ea719388cb8c2c6d968d1422aa1355749ab630cf2465626a533481a076d <<< 288) |||
+    (0x74ed44d4a3d559e9ac70cd8e46b4d670bb325dfdaefc675889abff0d2ba687d68d3b3c7e <<< 576) |||
+    (0xf0b180594bf0a73755ce2ac70c9e463bd6bd3358fa0fad057e7b0e3de718db8c76c2da59 <<< 864) |||
+    (0xad526a313a64e8d276993dbe9e988a56452628df346d59d7ccea6679bebd395869ac5a52 <<< 1152) |||
+    (0x3e9132c225a117ecd9686eb43efe9f2c8abfa53fd8c73c603dd3aee80f6caab679612ab0 <<< 1440) |||
+    (0xa722209129c225d917d0d9766ebb3ef91f2f4abe453f28cebc5dfdd1cee77f708238cb22 <<< 1728) |||
+    (0x32b6b5610cb09e5269493a58e90c76963db91e934a57a524d8e6b46999d9aceb5670fa38 <<< 2016) |||
+    (0x577a06bd755887ac5152f0c980654beea73855c9aac4cc9fa63b26b8b3553a0dcd060e6c <<< 2304) |||
+    (0x34a13a7b563e0b18bd8c85c2db2174d1450aa3da59ee2c6b0d8fa6b626753b349dfbcefd <<< 2592) |||
+    (0x6550cea917588e2bfccd2a46872688bb3ebe016eff7f7cca3ecb19268cafc2c6a168ed42 <<< 2880) |||
+    (0xc92c64e53273f6574e2b68ccf3a654d6a0b34bda088d03567862bc795812ac18530b3189 <<< 3168) |||
+    (0xc2402122d0df1670943c591dc48a2244f7d8f73473b9de8ced7e6deeb775616fb0d45255 <<< 3456) |||
+    (0x67a2c76533ac9a394d1a963fbe9fcb4b124570d8b6bc531dcc8ee4676f9e380b21d590fc <<< 3744) |||
+    (0xcfc267cdc748bb9d3e334f174f844ac2855b12adaa53a539d9dc9a904e77296e148b0f72 <<< 4032) |||
+    (0x1ad0d677ab1cd7f0bbf49d9daecd57889a449b1c388e26c366d1bb6889b446152b099504 <<< 4320) |||
+    (0x328e18f4d56e4aaf2838b418f9adccd57e630e320b1edb8f85c515228eecb68a5d55364e <<< 4608) |||
+    (0xd2c66032b06d5e1eaf21554232a3d8c28e62386206b1395e87af5a5530b29d64bbf05ff8 <<< 4896) |||
+    (0xa1cecfdf648232b31f2c8fb5c507da856cb16a5a5a33be194b15cfaad82823b40c99a7cc <<< 5184) |||
+    (0x925e2d4f14f7876e43ff1be18e05c37b51c1d4904a48d534999a24d61fab0128043bfd3d <<< 5472) |||
+    (0x7bb3b53a3e2d1d1e85a6c35d5b75adda5393c1d05c95b04af82c3995bb0ff387f4c733bb <<< 5760) |||
+    (0x6fc77433b8fa3f4d1dae861ec3215b63add15393b9d06095ae4af7287993e70f1a676f37 <<< 6048) |||
+    (0xf267f6372c3b949e2c2f140786f644231bcf8df6c37c29c1e8901448da287e13e4cf1b87 <<< 6336) |||
+    (0x27161e4b01d80bbc00fda3aeceef64fa32ef1f4a8fa6c507a28550b1745a552c3e15c0cf <<< 6624) |||
+    (0xb99950d5ce4ad6d81c340a59a9acd23660aab0915e00af2a55414aa3e4c2506237349e1a <<< 6912) |||
+    (0x6761beb1755e69af515530ca9d58bbee5ff7328998f7156faaafd83d341539afacd60e33 <<< 7200) |||
+    (0x2f183f635631e71ebd8f76c5145a8ed0b6545d5a36499acb16764b1e27f53bf25d9bcecc <<< 7488) |||
+    (0x5a382d1b2688e244d71c268e35c366a9bb5489aa461a2b0e15070fc387cd374d3ba0fe32 <<< 7776) |||
+    (0x59267ce06871178492c2a95b24ada153a441d9e09ace4e7829699490cf7387a43760b3aa <<< 8064) |||
+    (0x9251d12dc8e364738d3ff41faf0b02e56348b64452e5cc72e4586fb0b81421da10ff123a <<< 8352) |||
+    (0x6e00b772217410d3 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `49` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV49 : ℕ :=
+    0x7f008100810081007f007f007f007f007f007f00810081007f007f00810081007f007f00 |||
+    (0x810081007f008100810081007f0081008100810081007f00810081008100810081007f00 <<< 288) |||
+    (0x810081008100810081007f0081007f007f007f007f0081007f007f0081007f0081008100 <<< 576) |||
+    (0x7f0081007f008100810081007f007f007f007f007f007f00810081007f007f007f008100 <<< 864) |||
+    (0x7f007f0081007f007f0081007f007f00810081007f00810081007f007f00810081007f00 <<< 1152) |||
+    (0x7f0081007f007f007f007f0081007f007f007f007f0081008100810081007f0081007f00 <<< 1440) |||
+    (0x81007f0081007f0081007f008100810081007f0081007f007f007f007f00810081008100 <<< 1728) |||
+    (0x7f0081007f0081007f007f007f007f007f0081007f008100810081008100810081007f00 <<< 2016) |||
+    (0x81007f0081007f007f007f0081007f007f007f0081007f007f00810081007f007f008100 <<< 2304) |||
+    (0x7f007f007f0081007f007f007f0081007f007f0081007f0081007f008100810081008100 <<< 2592) |||
+    (0x81007f007f0081007f0081007f007f007f007f0081007f007f0081007f00810081008100 <<< 2880) |||
+    (0x810081007f007f007f007f007f007f00810081007f007f0081007f0081007f007f008100 <<< 3168) |||
+    (0x810081007f007f0081007f007f007f0081007f007f0081007f007f008100810081007f00 <<< 3456) |||
+    (0x81007f00810081007f007f007f007f00810081007f00810081007f007f007f0081008100 <<< 3744) |||
+    (0x81007f0081007f007f007f007f007f007f0081007f00810081007f0081007f007f008100 <<< 4032) |||
+    (0x81007f007f007f007f0081007f0081007f0081007f007f007f007f007f007f007f008100 <<< 4320) |||
+    (0x7f007f007f0081007f0081007f007f007f0081007f007f00810081007f0081007f007f00 <<< 4608) |||
+    (0x8100810081007f008100810081007f0081007f007f0081007f007f007f0081007f007f00 <<< 4896) |||
+    (0x7f0081007f007f0081007f0081007f008100810081007f0081007f007f007f0081008100 <<< 5184) |||
+    (0x81007f00810081007f0081007f0081007f00810081007f007f007f0081007f0081007f00 <<< 5472) |||
+    (0x8100810081007f00810081007f00810081007f007f0081007f0081007f007f0081007f00 <<< 5760) |||
+    (0x81007f0081007f00810081007f007f007f007f007f00810081007f007f007f0081008100 <<< 6048) |||
+    (0x81007f007f008100810081007f007f007f007f00810081007f008100810081007f008100 <<< 6336) |||
+    (0x810081007f0081007f00810081007f007f008100810081007f007f00810081007f008100 <<< 6624) |||
+    (0x7f007f007f00810081007f0081007f00810081007f007f007f007f007f007f007f008100 <<< 6912) |||
+    (0x7f007f007f007f00810081008100810081007f007f007f007f008100810081007f007f00 <<< 7200) |||
+    (0x810081008100810081007f0081007f0081008100810081007f007f007f007f0081007f00 <<< 7488) |||
+    (0x81007f007f007f008100810081007f007f0081008100810081007f00810081007f007f00 <<< 7776) |||
+    (0x810081008100810081007f0081007f00 <<< 8064)
+
+/-- Chunk `49` of `s6c1nGT`. -/
+def s6c1nGT49 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL49 s6c1nGTV49 512
+
+/-- Packed labels (17-bit fields) of chunk `50` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL50 : ℕ :=
+    0x0348785cbc7618110c1793068985c94f40a9d43c0f9df5ca12e4ea88f6c47445de72eda0 |||
+    (0x0152ffa07cc4bed419250cb212cab96ba140e2a1b956d8ab448ce0065b46a0434ba60873 <<< 288) |||
+    (0x71fd45f4a45159a8aca34d8106ac3674d3346dfbb6fd4a5818abe38d42e67df688433f46 <<< 576) |||
+    (0xf6917e494af8a6cb56232aa18c910633f6b85355ce0db706327b69be1498c24c8832de19 <<< 864) |||
+    (0x9db266713814ea7276053d7f9e750a71051d48e654696dd996eb4a7a19bd72988c4c50b2 <<< 1152) |||
+    (0x1f512c322a4119fcda906e083ebf9f120aafe54bf8ce545e8dd1b6e7a26c2db6b2a10b50 <<< 1440) |||
+    (0xd4a23d51353229f91a20da7e6dff3ec41f0fcab1054c88c6d460cdd396e83270f5b8b0a2 <<< 1728) |||
+    (0xa5b676a12950acb265c93848ea9c76123d841e70ca6fe51c38ded46d2dd7b6ea5a707db8 <<< 2016) |||
+    (0x5a79d1bd36986e4c59b2f6297e154b16a6bc5628aaa44c8fe63486bcd3598e0f9705a26c <<< 2304) |||
+    (0x4ca1ce7b21bdf098e04c7932dea17221461aa44659a32c9e8d7fe6ad467053322dfd96fc <<< 2592) |||
+    (0x954eeea9c358332bde4d40067a868cc33d06027300307d0cbeb019370cbb12ca016c7d41 <<< 2880) |||
+    (0x692e94e3ca737a56f32b414ce2e65e36a4c347e6075302587814bcb218230c2693063186 <<< 3168) |||
+    (0x1239e125a0e0c671003bf41df00a1004edf8fe447805dd52ee306d88b736218610ca9252 <<< 3456) |||
+    (0x279ba7605baa2a38151b1b400f9fb2cb00056638aec450a5cb52e5486f38b7f021c8110e <<< 3744) |||
+    (0x4fb227c4674cdba18a32151863848d42a6db236da0a3aab9d82c99804e0b29c3146e8f62 <<< 4032) |||
+    (0x1ab35667eb2837f4dbf2299bb4cc5b88dd44e0dc256e38236a31b8188a8c46912ac89534 <<< 4320) |||
+    (0x324318d455890aa8883cdc15c9af94d633636931f0dec26f792518a290fcb79a5c913603 <<< 4608) |||
+    (0xd22960a4308e5dff2f29853b72a6e8c17e619c61d13172de6e6f50a52c929b14bd785f7c <<< 4896) |||
+    (0xa390cf1164f432f85f492fa90504fa875cb2725b263387197695bbeacfc81bcc0a21a990 <<< 5184) |||
+    (0x94622c1113f98708442c5bd42df90382d1c3e48e8a497134fc99ec560beaf8080b4c0181 <<< 5472) |||
+    (0x73cbb9823f311dd18630431e5b682dd0838ee1ce0c94a84b9c2bfc95969004c7ed272bcb <<< 5760) |||
+    (0x7ce77b4bb5c23e111d4185b8435a5b7a2dd9838d59ce5094864b6b283c93b98efe277b97 <<< 6048) |||
+    (0xfe27ec57334b92222d3114e9878044085be62e08038169c4388ea449a6284713ac4f04c7 <<< 6336) |||
+    (0xf996050af97803cbfdc1a1b0d001647c32bc5f2b2fb80503428700b29c5af12c07158b4f <<< 6624) |||
+    (0x7c996b55b50ad0b8234c0c61a7b0d2b9602c306a5e1d2f20853ccaa734c190616b350719 <<< 6912) |||
+    (0x4b62193136de8c6f59a52c2a9b48bd965f8b324898d19587eaa7f8385c1989adb4d5a333 <<< 7200) |||
+    (0x35177363213214dee06f8825181a9120b7745c8636089aae96690b2947f05bf4699d94cd <<< 7488) |||
+    (0x6a39351a8b889544a4dc376e29236a89b8448aa246862ac315318fb0c7c517485b9dca33 <<< 7776) |||
+    (0x92d3097936bce484454282db116da9a3aa01d7f099ae4dfc29c894734f60c79cd764dbac <<< 8064) |||
+    (0x95a7aad5557a26bd3c5fd5afded6fc4b79d8b2cc5425cd16e3eb6f79b828e1e430f815a3 <<< 8352) |||
+    (0x6e29b756e16630d8 <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `50` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV50 : ℕ :=
+    0x7f0081007f007f00810081007f007f007f007f007f007f0081008100810081007f007f00 |||
+    (0x810081007f0081007f007f0081007f008100810081007f007f007f007f007f0081007f00 <<< 288) |||
+    (0x810081008100810081007f007f0081008100810081007f00810081007f0081007f007f00 <<< 576) |||
+    (0x7f0081007f008100810081007f007f0081008100810081007f007f00810081007f008100 <<< 864) |||
+    (0x8100810081007f007f0081007f007f008100810081007f007f00810081007f007f008100 <<< 1152) |||
+    (0x81007f00810081007f007f0081007f007f007f007f0081007f007f007f0081007f008100 <<< 1440) |||
+    (0x7f0081007f0081007f0081008100810081007f0081007f007f007f0081007f007f007f00 <<< 1728) |||
+    (0x81007f0081007f0081008100810081007f0081007f00810081008100810081007f008100 <<< 2016) |||
+    (0x81007f007f008100810081007f0081008100810081007f007f00810081007f007f008100 <<< 2304) |||
+    (0x7f007f007f0081008100810081007f007f007f0081007f0081007f008100810081008100 <<< 2592) |||
+    (0x7f0081007f0081007f008100810081008100810081007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x7f007f00810081007f007f007f007f007f007f008100810081007f0081007f0081007f00 <<< 3168) |||
+    (0x7f007f00810081007f0081007f007f0081007f0081007f00810081008100810081007f00 <<< 3456) |||
+    (0x7f0081007f007f007f007f007f007f00810081007f0081007f008100810081007f007f00 <<< 3744) |||
+    (0x7f0081007f008100810081007f007f007f0081007f00810081007f007f00810081007f00 <<< 4032) |||
+    (0x7f0081008100810081007f0081007f007f0081007f007f007f007f007f007f0081007f00 <<< 4320) |||
+    (0x7f007f0081007f0081007f007f007f007f0081007f007f00810081007f0081007f007f00 <<< 4608) |||
+    (0x8100810081007f007f007f007f00810081007f007f0081008100810081007f007f007f00 <<< 4896) |||
+    (0x81007f007f007f0081007f007f0081007f007f0081007f0081007f00810081007f007f00 <<< 5184) |||
+    (0x7f0081007f007f007f0081007f00810081007f007f0081007f007f0081007f007f008100 <<< 5472) |||
+    (0x810081007f0081007f007f007f00810081007f0081007f0081007f007f007f0081007f00 <<< 5760) |||
+    (0x81007f0081007f007f007f00810081007f007f007f0081007f0081008100810081008100 <<< 6048) |||
+    (0x7f0081007f008100810081008100810081008100810081007f0081007f007f0081007f00 <<< 6336) |||
+    (0x7f007f0081007f0081007f007f00810081007f007f007f007f007f008100810081007f00 <<< 6624) |||
+    (0x7f007f0081007f007f0081007f0081007f007f007f007f007f007f007f007f007f008100 <<< 6912) |||
+    (0x7f007f007f007f007f007f007f007f007f008100810081007f008100810081007f007f00 <<< 7200) |||
+    (0x810081008100810081007f007f0081007f007f007f007f00810081007f007f0081007f00 <<< 7488) |||
+    (0x7f008100810081007f007f007f00810081007f007f007f007f0081007f007f007f007f00 <<< 7776) |||
+    (0x7f007f007f007f007f0081007f008100 <<< 8064)
+
+/-- Chunk `50` of `s6c1nGT`. -/
+def s6c1nGT50 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL50 s6c1nGTV50 512
+
+/-- Packed labels (17-bit fields) of chunk `51` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL51 : ℕ :=
+    0x02d878843c5a18034c1ca5cc7ae740849a429d5f222f8916cc4b5ed8f34c7585df16ed33 |||
+    (0x01f0ff307c8c3ee8192f4cab25c13ae0a0819440ea21c510d557590ba9869cd34cea0911 <<< 288) |||
+    (0xe31c826a418a2245110e97750bb976715332a9fad0fcd8220510f1576cebb07684d3408a <<< 576) |||
+    (0xc882e540837a41f2219290b957450ba076b4d3540a0cd105c07b903e2818cc4c8d25c4ba <<< 864) |||
+    (0x9695ac2ad7697ad8bddc5f622fa6d6d5ab69d8e2cc67a5d8b6eadb79e03d56187e4c49a5 <<< 1152) |||
+    (0x293131159f6ad10977d6bc2b5fa22fbad6e84b7028cacc5cc5d0d6e7336bf5b696e0fd30 <<< 1440) |||
+    (0xe8e247313a15a012d0b57808bc445f95afc116e5ab6ed8c34c5f05d2b6e7c3711db8c4e2 <<< 1728) |||
+    (0x6db65ae11b30a595ab52d7557b06bdd35f55afa516d84b6928db4c6b65d6d6e9eb70a5b8 <<< 2016) |||
+    (0xe879983d1a18604c52a5c8fae57c836441fd218510b29748eb9e86b95357ca0eb105306c <<< 2304) |||
+    (0xca41057b483e0418ea4c7e25c4c2e2a0827441a52252910d5778ebb9866cd33069fcb0fb <<< 2592) |||
+    (0x7c84c44292221290ea97690bae8689533e4a0310ffc07cd43ec419414cb425c042e11c81 <<< 2880) |||
+    (0xd2d5697a38bd3321d290d6975ceba976a153492a07f101e8783c3c9618154c2ba5cd02e7 <<< 3168) |||
+    (0x15a3ead2b57928bccb5f15af82d6c9ab6028facc7945ddf6edc36db1b71ae17830cf95a7 <<< 3456) |||
+    (0x8be7375cdba86e37331aa95fe22fdd16f9ab7928ab4c51e5cbf6e4db6f01b804e1d23107 <<< 3744) |||
+    (0x97e98bf237495b9fce313317f18454c28a5b156d99b5ed22f6d16b1ab5b25b72ad9d57d9 <<< 4032) |||
+    (0x2edfc890444527f143f0619ad4cbea8904c4f45c2f6e3d35e11af18d684ab44a5ba52dc2 <<< 4320) |||
+    (0x5d302e83c85da42ad839441401aeb4d5c2639132049ecc0f7e020ae9060970feb8cf5df0 <<< 4608) |||
+    (0xd27a606d30a29e090f2282122909d5730eb9b8619931569e600f49820ea9086971f0b938 <<< 4896) |||
+    (0xa2b4cf62651d32dc9f3b0fae02061104896fdeb8605d602e9c08704433d81e440861a8b4 <<< 5184) |||
+    (0x92ae2b3314498730c4105bc66dfe35e39af2b16934b4ca5d97aec3c880443cd80dc3ffc1 <<< 5472) |||
+    (0x765bb7ce3e531e2185f8c3325b726dc9b5e7daf5516a3ab53d5bd52ddd57fc6bf9372e5b <<< 5760) |||
+    (0xe0377ddbb40e3d331d918580c36e5b846dd2b5e7a2f56d6a24b5325b152d8957c98bdec7 <<< 6048) |||
+    (0xf98bf9c735db906e2c53153987a8c3ec5bd86e0d35e3e2f30d692ab4e55b22ad8297cc6b <<< 6336) |||
+    (0xc8087da43e280643fc01a0d4d05264a532a09f1d0fbd02056904357000b84f5be2adde97 <<< 6624) |||
+    (0x57ae9fc86da4332825c40aa1a6d4d30a5ff5307e9e270f1982115109e972d0b9b75da02e <<< 6912) |||
+    (0xda61e1311a9e7e0f52820ed1085571eeb9375d27ae880860442c2834c417c1acd4d5325d <<< 7200) |||
+    (0x531701634932289eea0f8d020a9105b570e0b8e05de7aedc088da445d7ecc3f2a19cb4cc <<< 7488) |||
+    (0xae38531a1988bcc4b85c416e2e35e062f1316814b4655bb2adc957ec6bf0c744db9c0e32 <<< 7776) |||
+    (0xb9251ce0307167840cc2665b036da2b5ec5af6ed6b44b5bd5b652d9e97dc6be7c7615baa <<< 8064) |||
+    (0x824fb12f58e42c72f940141f8e0af4e56d88b3d454adcd54e40b6f71b824a1e270f7223d <<< 8352) |||
+    (0x6e20b75e216430da <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `51` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV51 : ℕ :=
+    0x81007f00810081007f007f007f007f007f007f00810081007f007f007f007f0081008100 |||
+    (0x7f007f0081007f00810081007f0081008100810081007f007f007f007f007f007f008100 <<< 288) |||
+    (0x810081008100810081007f007f0081008100810081007f00810081007f0081007f007f00 <<< 576) |||
+    (0x7f0081007f008100810081007f007f0081008100810081007f007f00810081007f008100 <<< 864) |||
+    (0x8100810081007f007f008100810081007f007f007f00810081007f0081007f007f008100 <<< 1152) |||
+    (0x81007f00810081007f007f0081007f008100810081007f008100810081007f007f008100 <<< 1440) |||
+    (0x81007f007f0081007f0081008100810081007f007f008100810081007f00810081008100 <<< 1728) |||
+    (0x81007f0081007f0081008100810081007f0081007f0081007f007f007f007f0081007f00 <<< 2016) |||
+    (0x81007f007f008100810081007f0081008100810081007f007f00810081007f007f008100 <<< 2304) |||
+    (0x8100810081007f007f007f007f0081007f007f0081007f0081007f008100810081008100 <<< 2592) |||
+    (0x7f00810081007f0081007f007f007f007f007f0081007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x810081007f007f008100810081008100810081007f007f007f0081007f00810081007f00 <<< 3168) |||
+    (0x810081007f007f0081007f00810081007f0081007f0081007f007f007f007f007f008100 <<< 3456) |||
+    (0x81007f008100810081008100810081007f007f0081007f0081007f007f007f0081008100 <<< 3744) |||
+    (0x7f00810081007f007f007f008100810081007f0081007f007f00810081007f007f008100 <<< 4032) |||
+    (0x7f008100810081007f0081007f00810081007f00810081007f007f007f007f0081007f00 <<< 4320) |||
+    (0x7f007f0081007f0081007f007f007f007f008100810081007f007f007f0081007f007f00 <<< 4608) |||
+    (0x8100810081007f007f007f007f00810081007f007f0081008100810081007f007f007f00 <<< 4896) |||
+    (0x7f0081007f007f0081007f007f0081007f007f007f0081007f008100810081007f007f00 <<< 5184) |||
+    (0x81007f00810081007f0081007f00810081007f007f008100810081007f00810081007f00 <<< 5472) |||
+    (0x7f007f0081007f00810081007f00810081007f0081007f0081007f00810081007f008100 <<< 5760) |||
+    (0x81007f0081007f00810081007f007f007f007f007f0081007f008100810081007f007f00 <<< 6048) |||
+    (0x7f0081007f008100810081008100810081008100810081007f0081007f007f0081007f00 <<< 6336) |||
+    (0x7f007f0081007f007f00810081007f0081007f007f007f007f007f008100810081007f00 <<< 6624) |||
+    (0x7f007f0081007f007f00810081007f008100810081008100810081007f007f007f008100 <<< 6912) |||
+    (0x8100810081008100810081008100810081007f007f007f0081007f007f007f007f007f00 <<< 7200) |||
+    (0x7f007f007f007f007f00810081007f0081008100810081007f007f00810081007f008100 <<< 7488) |||
+    (0x810081007f00810081007f0081008100810081007f0081007f007f007f00810081008100 <<< 7776) |||
+    (0x7f0081007f0081008100810081008100 <<< 8064)
+
+/-- Chunk `51` of `s6c1nGT`. -/
+def s6c1nGT51 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL51 s6c1nGTV51 512
+
+/-- Packed labels (17-bit fields) of chunk `52` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL52 : ℕ :=
+    0x02fb7895bc6298076c1ea302a988294fa8a9643c3d9dd6ca0364ef48f4447545df50ed21 |||
+    (0x0230ff217c9cbee419332caa02ced96ad1402aa2355704ab358cd10661869dd34d6e0955 <<< 288) |||
+    (0x741d46eca4c95984ac7e4d6d06a5767253332dfb14fcfb584aabbe8d3b667fb685c34046 <<< 576) |||
+    (0xf2b17c5949f0a67755ed2a868c7e862fb6b5c353c60d1105b17b89be2498ca6c8c22e0b9 <<< 864) |||
+    (0x98a261d13694e9ea75a53d439e560a65051588e3d4682dd8f4eafb79d8bd5e187c2c4b82 <<< 1152) |||
+    (0x2d3130022da11aecdb686e743e7d9efd0a9f6543b8cbc45c85d110e7216c05b69ea10170 <<< 1440) |||
+    (0xe4224b3139022dd91ad0db766e7b3e7a1efeca9e854348c4445ec5d2f0e7b1712cb8c022 <<< 1728) |||
+    (0x7db662a11f70a7a261a93628e9f4758a3d341e55ca68e51578dc546bedd714ea0b70b4b8 <<< 2016) |||
+    (0x0b7990bd22185e2c5482f2c97c6549eea67855eaaa854c7f662f46ba4357860ef105216c <<< 2304) |||
+    (0x34a23a7b41be0098e86c7d22e0c173a146f2a4e659932c7d8d70e6a5866dd330edfcf4fc <<< 2592) |||
+    (0x954fb6a94b584d2bbd4d3a867f468a433e060350ffb17ce4bec019452cb302cea16aed40 <<< 2880) |||
+    (0xc92f64e43272f657132b364cd4e66176a25349ae0835020b784dbc9e98196c2da302d188 <<< 3168) |||
+    (0x223dc124a0e02e71483c3a1dd50a0284efb8fbc47905de30edb16da8b722217630d1824f <<< 3456) |||
+    (0x2793675dd3a8ee37751acb40239f8dcaf1056d78ac54526dcc34e4fb6ef9b800a1d07106 <<< 3744) |||
+    (0x4fa2a7c1a74a439f86317117e18465c2929b196d9ba3a8d9d5ac98a84d6b29b3144d8f51 <<< 4032) |||
+    (0x1a8e5660eb2177f253f0ed9b14cc0b8914c4f01c332e3c036ed1ba688bb446d52a8a9515 <<< 4320) |||
+    (0x320d18c555768a9f483a4413c5aef0d5b16389b2009eca6f7d251cc2931cb7f25d0935d3 <<< 4608) |||
+    (0xd29b607db0aa9e0d6f24a53dd2a4a8c07662046190b15e1e5e2f4b8528b29a64bc705ef8 <<< 4896) |||
+    (0xa2f0cf51652cb2d81f3f2fad04ffda896cb36a5ada3343197d95c0eacb881f5408eda8f4 <<< 5184) |||
+    (0x932e2b75146b8729c40c9bc46dfd237fb1c4a48fb2494934da9a05560f6af1480ec3ff85 <<< 5472) |||
+    (0x7743b7863e911e1185f0c33a1b702dcb838fc1cc5c94304bb82bb495ad900cc7e5672f53 <<< 5760) |||
+    (0x73a77ec3b3c63d711d818578c3761b822dd4838fb9cc60942e4bb727fa93c68f12a77357 <<< 6048) |||
+    (0x0927e59736d390ee2c95155b87a1c3e89bd66e0c237fc9c5188fac496627fd13c54f1347 <<< 6336) |||
+    (0x06960e8af1b80743fbc5a110d04164b4b29c1f212fbc04ffa28950b3745ad52bc315ae50 <<< 6624) |||
+    (0x34997e55bd0acb7826d40b2da714d32b6005b0869e2b6f1ba53daaa514c06861eb34dd1a <<< 6912) |||
+    (0xfb61d8b1221e7c2f548528ca9a58bc6e5ef7320a98c695776a9fb835c41785ad10d52133 <<< 7200) |||
+    (0x9116f16341b2249ee86f8c251cba92a0b7ec5d2635c49a8d965d0b2187edd3f32d9cf4cc <<< 7488) |||
+    (0x2e38951a3b88ccc4b41c452e2d036ea9ba548baa46da2a8d15168fa347c15745c39bc632 <<< 7776) |||
+    (0x6922f4df44709d841dc26e9b076da4a3a8a1d61098b64d8429a4944e4f54c793976253ab <<< 8064) |||
+    (0x6255612c30e51874033fb71fcf8b142571e8af2450d1cb68e5546f27b7e7e1c3f10bf23f <<< 8352) |||
+    (0x6d773739a181d0cb <<< 8640)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `52` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV52 : ℕ :=
+    0x7f007f0081007f007f00810081007f0081007f0081007f007f00810081007f007f008100 |||
+    (0x81007f007f007f0081007f007f007f0081007f00810081007f0081007f00810081008100 <<< 288) |||
+    (0x81007f007f0081007f007f007f007f0081007f007f007f007f0081008100810081007f00 <<< 576) |||
+    (0x7f007f007f007f0081007f007f0081007f0081007f00810081007f007f0081007f007f00 <<< 864) |||
+    (0x7f008100810081007f007f0081007f007f008100810081007f007f007f007f0081008100 <<< 1152) |||
+    (0x7f007f007f0081007f008100810081007f0081007f007f0081007f008100810081008100 <<< 1440) |||
+    (0x7f007f00810081008100810081007f0081008100810081007f0081007f007f0081007f00 <<< 1728) |||
+    (0x7f007f007f007f007f0081007f0081007f007f007f007f007f0081007f0081007f007f00 <<< 2016) |||
+    (0x7f007f007f007f0081007f00810081007f008100810081007f007f00810081007f007f00 <<< 2304) |||
+    (0x7f0081007f007f007f0081007f007f007f008100810081008100810081007f007f008100 <<< 2592) |||
+    (0x7f007f007f007f007f007f007f0081007f0081007f007f00810081007f007f0081007f00 <<< 2880) |||
+    (0x81007f007f0081007f0081007f00810081007f007f008100810081008100810081008100 <<< 3168) |||
+    (0x81007f0081007f007f007f007f008100810081007f007f007f0081007f0081007f007f00 <<< 3456) |||
+    (0x8100810081007f007f0081007f0081007f008100810081007f007f0081007f0081007f00 <<< 3744) |||
+    (0x7f007f00810081007f0081007f0081007f007f007f007f0081008100810081007f007f00 <<< 4032) |||
+    (0x810081007f0081007f007f007f007f007f007f007f00810081007f0081007f0081008100 <<< 4320) |||
+    (0x7f0081007f007f007f007f0081007f00810081007f00810081007f007f007f007f008100 <<< 4608) |||
+    (0x81007f008100810081007f0081008100810081007f007f0081007f00810081007f008100 <<< 4896) |||
+    (0x810081007f008100810081008100810081007f007f007f007f007f007f00810081007f00 <<< 5184) |||
+    (0x8100810081007f007f007f007f007f007f007f00810081007f008100810081007f007f00 <<< 5472) |||
+    (0x7f0081008100810081007f007f007f00810081007f007f007f007f007f00810081008100 <<< 5760) |||
+    (0x81008100810081007f00810081007f007f0081007f007f00810081007f0081007f008100 <<< 6048) |||
+    (0x81008100810081007f0081007f0081007f00810081007f007f007f0081007f007f007f00 <<< 6336) |||
+    (0x81007f007f007f007f007f0081008100810081007f0081007f00810081007f007f007f00 <<< 6624) |||
+    (0x81007f00810081007f007f008100810081007f007f0081007f0081007f0081007f007f00 <<< 6912) |||
+    (0x7f0081007f00810081007f0081007f00810081007f0081007f007f0081007f0081007f00 <<< 7200) |||
+    (0x81007f007f0081007f007f007f007f007f00810081007f007f0081007f00810081008100 <<< 7488) |||
+    (0x81007f007f007f007f007f007f0081007f008100810081007f0081007f007f007f008100 <<< 7776) |||
+    (0x810081008100810081007f0081007f00 <<< 8064)
+
+/-- Chunk `52` of `s6c1nGT`. -/
+def s6c1nGT52 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL52 s6c1nGTV52 512
+
+/-- Packed labels (17-bit fields) of chunk `53` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTL53 : ℕ :=
+    0x0265781b3cb59824cc27630a99893150a4a9223c639dc9ca24e4f688feac7775dd6aee0d |||
+    (0x0289000c7d13bea7d938ecb8f2c6e968c94226a1335744ab658cf1065586a52b4816076b <<< 288) |||
+    (0x74f544d8a3d359e7ac6fcd8dc6b51670a33251fda8fc645887ac000d2c2688168d233c72 <<< 576) |||
+    (0xf06180314c04a72d55d32ac98c9d063c76bd2b58f60fab057d7b0fbde7d8dbec76f2da69 <<< 864) |||
+    (0xad6269e13a8ce8e676a33dc39e960a55052588df2c6d55d7caea6579bf3d399869cc5a62 <<< 1152) |||
+    (0x3ef132f2259117f4d9646eb23f009f2b8ac0254018c7246031d3a8e80c6cab3679a12ad0 <<< 1440) |||
+    (0xa7e220f129f225e917c8d97a6ebd3ef71f304abdc53ee8cea45df1d1c8e77c7083b8cbe2 <<< 1728) |||
+    (0x3336b5a10cd09e6269993a30e8f8768c3db41e95ca58e52578e6ac6995d9aaeb5570fbb8 <<< 2016) |||
+    (0x547a073d759887cc5162f119808d4bdaa74255c4aac24ca0e63a86b8ab55360dcb060d6c <<< 2304) |||
+    (0x38a13c7b57be0bd8bdec85f2db1174c94506a3dc59f02c6c0d9026b5e675233491fbc8fd <<< 2592) |||
+    (0x8d50baa90d58902bfbcd29c686e688a33eb20168ff7c7ccbbecbd926ecaff2c69168f542 <<< 2880) |||
+    (0x192c8ce54673ec57532b664cf4e65576a0ab4bd6088b035578633c799812cc18630ae189 <<< 3168) |||
+    (0xf2401122c8df1a70923c541dc20a2104f878f72c73b5de8aed7d6def3775a16fd0d46256 <<< 3456) |||
+    (0x27a367652bac96394b1a953fc09fcc4b11c57118b6a45311cc88e4646f9fb80be1d5f0fc <<< 3744) |||
+    (0xcfc1e7ce0748a39d323349174c844b42859b12cdaa63a4e9d9b49aa44e6d2973148d8f71 <<< 4032) |||
+    (0x1acfd6782b1d17f0a3f4919da8cd54889bc49bdc38ee26f366e1bb7089b846132b079503 <<< 4320) |||
+    (0x329318f2556d0aae8838ac18f5adcad57d630fb20bdedbef85f515128ef4b6865d533650 <<< 4608) |||
+    (0xd2c56033306d9e1ecf216541e2a3b0c27a6242620731399e87cf5a6530629d8cbc046002 <<< 4896) |||
+    (0xa1c8cfdc6483b2b3df2cefb5f507ea8574b1665a5c33c3194d95d0ead78823ac0c95a7ca <<< 5184) |||
+    (0x92522d4914f4876fc3ffdbe1ee05f37b61c1cc904648d334979a23d6202b00e80423fd31 <<< 5472) |||
+    (0x7babb5363e2b1d1d85a7435d9b75cdda639411d03495c44b022c3795bc0ff407f50733a3 <<< 5760) |||
+    (0x7067742bb8f63f4b1dad861f43219b63cdd1639369d088959a4aed287493e98f19276e97 <<< 6048) |||
+    (0xf1e7f5f72c2394922c29140486f7c423dbcfedf6f37c19c1f0901848dc288313e24f1cc7 <<< 6336) |||
+    (0x28161dcb02180ba400f1a3a8ceec64fbb2efdf4aefa6f507928548b1785a532c4015bfcf <<< 6624) |||
+    (0xb4994e55cd0ad7781c2c0a55a9aad23560ab30919e00cf2a65419aa40cc264622d34a01a <<< 6912) |||
+    (0x6461bf31759e69cf5165311a9d30bbda5fed328498f99570eab0783d2c1535afaad60d33 <<< 7200) |||
+    (0x29183c6357b1e7debdef76f5146a8ec8b6585d5c36479acc1675cb1de7f523f2519bc8cc <<< 7488) |||
+    (0x56382b1b2588e3c4d7dc26ee35f36699bb4c89a6461c2b1015080fc407ccf74d23a0f232 <<< 7776) |||
+    (0x849342a99b24cda163a491da089aba4e822964948e4f74c7a39760abaa <<< 8064)
+
+/-- Packed values (16-bit fields, offset 32768) of chunk `53` of `s6c1nGT`. -/
+@[irreducible] def s6c1nGTV53 : ℕ :=
+    0x81007f007f007f00810081007f007f007f007f00810081007f007f007f007f0081008100 |||
+    (0x7f007f0081007f007f007f0081007f007f007f007f00810081008100810081007f008100 <<< 288) |||
+    (0x7f007f007f007f007f0081007f0081008100810081007f00810081007f0081007f007f00 <<< 576) |||
+    (0x81007f0081007f00810081007f007f007f007f007f007f007f007f008100810081007f00 <<< 864) |||
+    (0x810081007f00810081007f007f007f00810081007f00810081007f0081007f007f008100 <<< 1152) |||
+    (0x81007f0081008100810081007f0081008100810081007f007f007f007f0081007f008100 <<< 1440) |||
+    (0x81007f007f0081007f0081007f007f007f0081007f0081008100810081007f007f007f00 <<< 1728) |||
+    (0x7f0081007f008100810081008100810081007f0081007f00810081008100810081007f00 <<< 2016) |||
+    (0x7f0081007f008100810081007f008100810081007f00810081007f0081007f007f008100 <<< 2304) |||
+    (0x8100810081007f008100810081007f00810081007f0081007f0081007f007f007f007f00 <<< 2592) |||
+    (0x81007f0081007f0081007f00810081008100810081007f007f00810081007f007f007f00 <<< 2880) |||
+    (0x810081007f007f0081008100810081007f007f008100810081007f0081007f007f008100 <<< 3168) |||
+    (0x7f007f00810081007f008100810081007f00810081007f00810081007f007f007f008100 <<< 3456) |||
+    (0x7f0081007f007f008100810081008100810081007f00810081007f007f007f007f007f00 <<< 3744) |||
+    (0x7f0081007f008100810081008100810081007f0081007f007f0081007f00810081007f00 <<< 4032) |||
+    (0x81007f007f007f0081007f0081007f0081007f0081008100810081008100810081007f00 <<< 4320) |||
+    (0x8100810081007f0081007f007f007f007f008100810081007f007f007f0081007f007f00 <<< 4608) |||
+    (0x7f007f007f0081007f007f007f0081007f00810081007f007f007f007f00810081008100 <<< 4896) |||
+    (0x81007f00810081007f0081007f0081007f007f007f0081007f008100810081007f007f00 <<< 5184) |||
+    (0x81007f008100810081007f0081007f0081007f007f0081007f007f0081007f007f008100 <<< 5472) |||
+    (0x7f007f0081007f008100810081007f007f00810081007f0081007f007f007f0081007f00 <<< 5760) |||
+    (0x7f0081007f0081007f007f00810081008100810081007f007f008100810081007f007f00 <<< 6048) |||
+    (0x7f0081007f0081008100810081008100810081007f007f0081007f007f007f0081007f00 <<< 6336) |||
+    (0x810081007f00810081007f007f0081007f00810081008100810081007f007f0081007f00 <<< 6624) |||
+    (0x8100810081007f007f0081007f0081007f007f0081008100810081007f007f007f008100 <<< 6912) |||
+    (0x81008100810081007f007f007f007f007f0081008100810081007f007f007f0081008100 <<< 7200) |||
+    (0x7f007f008100810081007f0081007f00810081007f007f0081008100810081007f008100 <<< 7488) |||
+    (0x81008100 <<< 7776)
+
+/-- Chunk `53` of `s6c1nGT`. -/
+def s6c1nGT53 : List (ℕ × ℤ) := srcDecode16 s6c1nGTL53 s6c1nGTV53 488
+
+/-- The transported short list `s6c1nGT` (27624 terms, source order; right-nested). -/
+def s6c1nGT : List (ℕ × ℤ) :=
+    s6c1nGT0 ++
+    (s6c1nGT1 ++
+    (s6c1nGT2 ++
+    (s6c1nGT3 ++
+    (s6c1nGT4 ++
+    (s6c1nGT5 ++
+    (s6c1nGT6 ++
+    (s6c1nGT7 ++
+    (s6c1nGT8 ++
+    (s6c1nGT9 ++
+    (s6c1nGT10 ++
+    (s6c1nGT11 ++
+    (s6c1nGT12 ++
+    (s6c1nGT13 ++
+    (s6c1nGT14 ++
+    (s6c1nGT15 ++
+    (s6c1nGT16 ++
+    (s6c1nGT17 ++
+    (s6c1nGT18 ++
+    (s6c1nGT19 ++
+    (s6c1nGT20 ++
+    (s6c1nGT21 ++
+    (s6c1nGT22 ++
+    (s6c1nGT23 ++
+    (s6c1nGT24 ++
+    (s6c1nGT25 ++
+    (s6c1nGT26 ++
+    (s6c1nGT27 ++
+    (s6c1nGT28 ++
+    (s6c1nGT29 ++
+    (s6c1nGT30 ++
+    (s6c1nGT31 ++
+    (s6c1nGT32 ++
+    (s6c1nGT33 ++
+    (s6c1nGT34 ++
+    (s6c1nGT35 ++
+    (s6c1nGT36 ++
+    (s6c1nGT37 ++
+    (s6c1nGT38 ++
+    (s6c1nGT39 ++
+    (s6c1nGT40 ++
+    (s6c1nGT41 ++
+    (s6c1nGT42 ++
+    (s6c1nGT43 ++
+    (s6c1nGT44 ++
+    (s6c1nGT45 ++
+    (s6c1nGT46 ++
+    (s6c1nGT47 ++
+    (s6c1nGT48 ++
+    (s6c1nGT49 ++
+    (s6c1nGT50 ++
+    (s6c1nGT51 ++
+    (s6c1nGT52 ++
+    s6c1nGT53))))))))))))))))))))))))))))))))))))))))))))))))))))
+
+end GeneratedAxisGlobalIdent
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

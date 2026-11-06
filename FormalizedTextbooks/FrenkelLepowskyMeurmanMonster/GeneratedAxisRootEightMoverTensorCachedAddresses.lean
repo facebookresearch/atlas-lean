@@ -1,0 +1,86 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightMoverTensorCircuitActions
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinLabelMatrixFast
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinQuadraticFast
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTwelfthSpinPauliFast
+
+/-! Exact full monomial address checks for the genuine corrected mover compact operator. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open scoped Matrix
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+/-- Every original inverse column has the complete twelve-bit bound. -/
+theorem generatedRootEight_mover_tensor_inverse_columns_bound : ∀ j : Fin 12,
+    generatedRootEightCompactRightInverseColumns 10 j < 4096 ∧
+      generatedRootEightCompactLeftInverseColumns 10 j < 4096 := by
+  decide +kernel
+
+/-- Complete column XOR evaluates the actual original right inverse. -/
+theorem generatedRootEight_mover_tensor_right_inverse_fast (n : Fin 4096) :
+    nortonUIntegerLabel ((generatedRootEightCompactRight 10).symm
+      (golayLabelCoefficients n)) =
+      ⟨generatedNinthLowerSpinLabelMatrixFast
+        (generatedRootEightCompactRightInverseColumns 10) n.val % 4096,
+        Nat.mod_lt _ (by decide)⟩ := by
+  exact generatedNinth_lower_spin_label_matrix_fast_code _
+    (fun j => (generatedRootEight_mover_tensor_inverse_columns_bound j).1) n
+
+set_option maxHeartbeats 8000000 in
+-- Evaluate the original certified inverse while retaining its full source equivalence.
+/-- Complete column XOR retains the original left inverse and actual Pauli translation. -/
+theorem generatedRootEight_mover_tensor_left_inverse_fast (n : Fin 4096) :
+    nortonUIntegerLabel ((generatedRootEightCompactLeft 10).symm
+      (golayLabelCoefficients n + spinTranslation (generatedRootEightMoverTensorPostPauli))) =
+      ⟨generatedNinthLowerSpinLabelMatrixFast
+        (generatedRootEightCompactLeftInverseColumns 10)
+        (Nat.xor n.val (nortonUIntegerLabel
+          (spinTranslation (generatedRootEightMoverTensorPostPauli))).val % 4096) % 4096,
+        Nat.mod_lt _ (by decide)⟩ := by
+  change nortonUIntegerLabel (generatedNinthLowerSpinCompactMatrix
+    (generatedRootEightCompactLeftInverseColumns 10) *ᵥ _) = _
+  rw [generatedNinth_lower_spin_label_matrix_fast_index _
+    (fun j => (generatedRootEight_mover_tensor_inverse_columns_bound j).2),
+    generatedNinth_lower_spin_label_add]
+
+/-- The complete original post address is shared inside its full quadratic phase. -/
+def generatedRootEightMoverTensorCachedAddressCondition (n : Fin 4096) : Prop :=
+  let t := golayLabelCoefficients n
+  generatedRootEightMoverTensorPreLabel n =
+      nortonUIntegerLabel ((generatedRootEightCompactRight 10).symm t) ∧
+    generatedRootEightMoverTensorPreSign n =
+      nortonUIntegerSign (monsterMonomialQuadratic
+        (generatedNinthLowerSpinCompactPhase (generatedRootEightCompactSecondPhaseRows 10))
+          t) ∧
+    generatedRootEightMoverTensorPostLabel n = nortonUIntegerLabel
+      ((generatedRootEightCompactLeft 10).symm
+        (t + spinTranslation (generatedRootEightMoverTensorPostPauli))) ∧
+    generatedRootEightMoverTensorPostSign n =
+      nortonUIntegerSign (spinPhase (generatedRootEightMoverTensorPostPauli) t) *
+        nortonUIntegerSign (monsterMonomialQuadratic
+          (generatedNinthLowerSpinCompactPhase (generatedRootEightCompactFirstPhaseRows 10))
+            (golayLabelCoefficients (generatedRootEightMoverTensorPostLabel n)))
+
+/-- The complete post coordinate certificate evaluates exactly the original inverse phase. -/
+theorem generatedRootEight_mover_tensor_address_of_cached (n : Fin 4096)
+    (h : generatedRootEightMoverTensorCachedAddressCondition n) :
+    generatedRootEightMoverTensorAddressCondition n := by
+  unfold generatedRootEightMoverTensorCachedAddressCondition at h
+  unfold generatedRootEightMoverTensorAddressCondition
+  refine ⟨h.1, h.2.1, h.2.2.1, ?_⟩
+  have hp := congrArg golayLabelCoefficients h.2.2.1
+  simp only [nortonUIntegerLabel_inverse] at hp
+  simpa only [hp] using h.2.2.2
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

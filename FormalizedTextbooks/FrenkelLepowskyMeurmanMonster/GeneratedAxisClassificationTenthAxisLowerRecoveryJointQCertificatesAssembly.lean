@@ -1,0 +1,118 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryJointQCertificatesBasis23
+
+/-! Complete original full-Q source certificates. All finite proof bodies remain uncompiled. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open Multiplicative
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- All24 complete original basis images retain their actual central phases. -/
+theorem generatedTenth_joint_q_certificates_all (j : Fin 24) :
+    generatedTenthAxisLowerRecoveryJointCompactQImage 0 (qCoordinateGenerator j) =
+      generatedTenthAxisLowerRecoveryJointCompactFullQCache 0 j := by
+  fin_cases j
+  · exact generatedTenth_joint_q_certificates_image_00
+  · exact generatedTenth_joint_q_certificates_image_01
+  · exact generatedTenth_joint_q_certificates_image_02
+  · exact generatedTenth_joint_q_certificates_image_03
+  · exact generatedTenth_joint_q_certificates_image_04
+  · exact generatedTenth_joint_q_certificates_image_05
+  · exact generatedTenth_joint_q_certificates_image_06
+  · exact generatedTenth_joint_q_certificates_image_07
+  · exact generatedTenth_joint_q_certificates_image_08
+  · exact generatedTenth_joint_q_certificates_image_09
+  · exact generatedTenth_joint_q_certificates_image_10
+  · exact generatedTenth_joint_q_certificates_image_11
+  · exact generatedTenth_joint_q_certificates_image_12
+  · exact generatedTenth_joint_q_certificates_image_13
+  · exact generatedTenth_joint_q_certificates_image_14
+  · exact generatedTenth_joint_q_certificates_image_15
+  · exact generatedTenth_joint_q_certificates_image_16
+  · exact generatedTenth_joint_q_certificates_image_17
+  · exact generatedTenth_joint_q_certificates_image_18
+  · exact generatedTenth_joint_q_certificates_image_19
+  · exact generatedTenth_joint_q_certificates_image_20
+  · exact generatedTenth_joint_q_certificates_image_21
+  · exact generatedTenth_joint_q_certificates_image_22
+  · exact generatedTenth_joint_q_certificates_image_23
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- The complete genuine compact full-Q cache condition is certified. -/
+theorem generatedTenth_joint_q_certificates_full :
+    generatedTenthAxisLowerRecoveryJointCompactFullQCondition 0 :=
+  generatedTenth_joint_q_certificates_all
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- Projection of the complete full-Q images gives the exact spin binary condition. -/
+theorem generatedTenth_joint_q_certificates_binary :
+    generatedTenthAxisLowerRecoveryJointCompactBinaryCondition 0 := by
+  intro j
+  rw [generatedTenth_joint_q_certificates_all j]
+  rfl
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- The source cache evaluates genuine compact conjugation on every extraspecial input. -/
+theorem generatedTenth_joint_q_certificates_fast (q : Q) :
+    spinConjugation (generatedTenthAxisLowerRecoveryJointCompactSpin 0) q =
+      generatedTenthAxisLowerRecoveryJointCompactFullQFast 0 q :=
+  generatedTenth_axis_lower_recovery_joint_compact_full_Q_fast 0
+    generatedTenth_joint_q_certificates_full q
+
+set_option maxHeartbeats 4000000 in
+-- Scope the source-coordinate computation budget to this theorem.
+/-- Genuine compatibility now requires only the complete actual spatial binary certificate. -/
+theorem generatedTenth_joint_q_certificates_compatibility
+    (hspatial : generatedTenthAxisLowerRecoveryJointCompactSpatialBinaryCondition 0) :
+    spinBinaryAction (generatedTenthAxisLowerRecoveryJointCompactSpin 0) =
+      leechBinaryAction (generatedTenthAxisLowerRecoveryJointCompactSpatial 0) :=
+  generatedTenth_axis_lower_recovery_joint_compact_compatibility 0
+    generatedTenth_joint_q_certificates_binary hspatial
+
+/-- The exact compact spin plus certified actual spatial representative is a genuine local fiber. -/
+def generatedTenthJointQCertificatesFiber
+    (hspatial : generatedTenthAxisLowerRecoveryJointCompactSpatialBinaryCondition 0) :
+      localFiberSubgroup :=
+  generatedTenthAxisLowerRecoveryJointCompactFiber 0 generatedTenth_joint_q_certificates_binary
+    hspatial
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

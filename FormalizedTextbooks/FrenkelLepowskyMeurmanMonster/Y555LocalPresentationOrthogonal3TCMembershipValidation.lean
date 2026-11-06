@@ -1,0 +1,245 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/- Complete exact finite fingerprints for the original-source local representatives. -/
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipValidationProofs
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck61
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck62
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck63
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck64
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck65
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck66
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck67
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck68
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck69
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck70
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck71
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck72
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck73
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck74
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck75
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck76
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck77
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck78
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck79
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck80
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck81
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck82
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck83
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck84
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck85
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck86
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck87
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck88
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck89
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck90
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck91
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck92
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck93
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck94
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck95
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck96
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck97
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.Y555LocalPresentationOrthogonal3TCMembershipCheck98
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Each bounded block supplies exact source matrix and sorted-label checks. -/
+theorem y322Orthogonal3TCMembershipCheck_block (block : Fin 99) (i : Fin 32) :
+    y322Orthogonal3TCMembershipCheckAt (block.val * 32 + i.val) := by
+  fin_cases block
+  · simpa only [Fin.val_zero, Nat.zero_mul, Nat.zero_add] using
+      y322Orthogonal3TCMembershipCheck00 i
+  · exact y322Orthogonal3TCMembershipCheck01 i
+  · exact y322Orthogonal3TCMembershipCheck02 i
+  · exact y322Orthogonal3TCMembershipCheck03 i
+  · exact y322Orthogonal3TCMembershipCheck04 i
+  · exact y322Orthogonal3TCMembershipCheck05 i
+  · exact y322Orthogonal3TCMembershipCheck06 i
+  · exact y322Orthogonal3TCMembershipCheck07 i
+  · exact y322Orthogonal3TCMembershipCheck08 i
+  · exact y322Orthogonal3TCMembershipCheck09 i
+  · exact y322Orthogonal3TCMembershipCheck10 i
+  · exact y322Orthogonal3TCMembershipCheck11 i
+  · exact y322Orthogonal3TCMembershipCheck12 i
+  · exact y322Orthogonal3TCMembershipCheck13 i
+  · exact y322Orthogonal3TCMembershipCheck14 i
+  · exact y322Orthogonal3TCMembershipCheck15 i
+  · exact y322Orthogonal3TCMembershipCheck16 i
+  · exact y322Orthogonal3TCMembershipCheck17 i
+  · exact y322Orthogonal3TCMembershipCheck18 i
+  · exact y322Orthogonal3TCMembershipCheck19 i
+  · exact y322Orthogonal3TCMembershipCheck20 i
+  · exact y322Orthogonal3TCMembershipCheck21 i
+  · exact y322Orthogonal3TCMembershipCheck22 i
+  · exact y322Orthogonal3TCMembershipCheck23 i
+  · exact y322Orthogonal3TCMembershipCheck24 i
+  · exact y322Orthogonal3TCMembershipCheck25 i
+  · exact y322Orthogonal3TCMembershipCheck26 i
+  · exact y322Orthogonal3TCMembershipCheck27 i
+  · exact y322Orthogonal3TCMembershipCheck28 i
+  · exact y322Orthogonal3TCMembershipCheck29 i
+  · exact y322Orthogonal3TCMembershipCheck30 i
+  · exact y322Orthogonal3TCMembershipCheck31 i
+  · exact y322Orthogonal3TCMembershipCheck32 i
+  · exact y322Orthogonal3TCMembershipCheck33 i
+  · exact y322Orthogonal3TCMembershipCheck34 i
+  · exact y322Orthogonal3TCMembershipCheck35 i
+  · exact y322Orthogonal3TCMembershipCheck36 i
+  · exact y322Orthogonal3TCMembershipCheck37 i
+  · exact y322Orthogonal3TCMembershipCheck38 i
+  · exact y322Orthogonal3TCMembershipCheck39 i
+  · exact y322Orthogonal3TCMembershipCheck40 i
+  · exact y322Orthogonal3TCMembershipCheck41 i
+  · exact y322Orthogonal3TCMembershipCheck42 i
+  · exact y322Orthogonal3TCMembershipCheck43 i
+  · exact y322Orthogonal3TCMembershipCheck44 i
+  · exact y322Orthogonal3TCMembershipCheck45 i
+  · exact y322Orthogonal3TCMembershipCheck46 i
+  · exact y322Orthogonal3TCMembershipCheck47 i
+  · exact y322Orthogonal3TCMembershipCheck48 i
+  · exact y322Orthogonal3TCMembershipCheck49 i
+  · exact y322Orthogonal3TCMembershipCheck50 i
+  · exact y322Orthogonal3TCMembershipCheck51 i
+  · exact y322Orthogonal3TCMembershipCheck52 i
+  · exact y322Orthogonal3TCMembershipCheck53 i
+  · exact y322Orthogonal3TCMembershipCheck54 i
+  · exact y322Orthogonal3TCMembershipCheck55 i
+  · exact y322Orthogonal3TCMembershipCheck56 i
+  · exact y322Orthogonal3TCMembershipCheck57 i
+  · exact y322Orthogonal3TCMembershipCheck58 i
+  · exact y322Orthogonal3TCMembershipCheck59 i
+  · exact y322Orthogonal3TCMembershipCheck60 i
+  · exact y322Orthogonal3TCMembershipCheck61 i
+  · exact y322Orthogonal3TCMembershipCheck62 i
+  · exact y322Orthogonal3TCMembershipCheck63 i
+  · exact y322Orthogonal3TCMembershipCheck64 i
+  · exact y322Orthogonal3TCMembershipCheck65 i
+  · exact y322Orthogonal3TCMembershipCheck66 i
+  · exact y322Orthogonal3TCMembershipCheck67 i
+  · exact y322Orthogonal3TCMembershipCheck68 i
+  · exact y322Orthogonal3TCMembershipCheck69 i
+  · exact y322Orthogonal3TCMembershipCheck70 i
+  · exact y322Orthogonal3TCMembershipCheck71 i
+  · exact y322Orthogonal3TCMembershipCheck72 i
+  · exact y322Orthogonal3TCMembershipCheck73 i
+  · exact y322Orthogonal3TCMembershipCheck74 i
+  · exact y322Orthogonal3TCMembershipCheck75 i
+  · exact y322Orthogonal3TCMembershipCheck76 i
+  · exact y322Orthogonal3TCMembershipCheck77 i
+  · exact y322Orthogonal3TCMembershipCheck78 i
+  · exact y322Orthogonal3TCMembershipCheck79 i
+  · exact y322Orthogonal3TCMembershipCheck80 i
+  · exact y322Orthogonal3TCMembershipCheck81 i
+  · exact y322Orthogonal3TCMembershipCheck82 i
+  · exact y322Orthogonal3TCMembershipCheck83 i
+  · exact y322Orthogonal3TCMembershipCheck84 i
+  · exact y322Orthogonal3TCMembershipCheck85 i
+  · exact y322Orthogonal3TCMembershipCheck86 i
+  · exact y322Orthogonal3TCMembershipCheck87 i
+  · exact y322Orthogonal3TCMembershipCheck88 i
+  · exact y322Orthogonal3TCMembershipCheck89 i
+  · exact y322Orthogonal3TCMembershipCheck90 i
+  · exact y322Orthogonal3TCMembershipCheck91 i
+  · exact y322Orthogonal3TCMembershipCheck92 i
+  · exact y322Orthogonal3TCMembershipCheck93 i
+  · exact y322Orthogonal3TCMembershipCheck94 i
+  · exact y322Orthogonal3TCMembershipCheck95 i
+  · exact y322Orthogonal3TCMembershipCheck96 i
+  · exact y322Orthogonal3TCMembershipCheck97 i
+  · exact y322Orthogonal3TCMembershipCheck98 i
+
+/-- All 3159 original-source representatives have exact finite fingerprints and sorted labels. -/
+theorem y322Orthogonal3TCMembership_checked (i : Fin 3159) :
+    y322Orthogonal3TCMembershipCheckAt i.val := by
+  let block : Fin 99 := ⟨i.val / 32, by omega⟩
+  let offset : Fin 32 := ⟨i.val % 32, Nat.mod_lt _ (by decide)⟩
+  have h := y322Orthogonal3TCMembershipCheck_block block offset
+  have he : block.val * 32 + offset.val = i.val := by
+    dsimp [block, offset]
+    omega
+  rw [he] at h
+  exact h
+
+/-- All declared finite matrix fingerprints equal their kernel-checked integer values. -/
+theorem y322Orthogonal3TCMembership_matrix_value (i : Fin 3159) :
+    y322Orthogonal3TCMembershipEval
+        (y322Orthogonal3TCCacheMatrix (y322Orthogonal3TCRepresentativeCache i)) =
+      y322Orthogonal3TCMembershipValue i :=
+  (y322Orthogonal3TCMembershipCheck_unpack i (y322Orthogonal3TCMembership_checked i)).1
+
+/-- The kernel-checked finite integer fingerprints distinguish all original representatives. -/
+theorem y322Orthogonal3TCMembershipValue_injective :
+    Function.Injective y322Orthogonal3TCMembershipValue :=
+  y322Orthogonal3TCMembershipValue_injective_of_checked y322Orthogonal3TCMembership_checked
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

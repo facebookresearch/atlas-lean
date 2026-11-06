@@ -1,0 +1,44 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationTenthAxisLowerRecoveryCompactSpatialPhysical10
+
+/-! Prospective physical binding proof draft. No declaration has passed Lean. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Exhaustive binding of all eleven actual spatial constructors. -/
+theorem generatedTenth_compact_spatial_physical_all (g : Fin 11) :
+    generatedTenthAxisLowerRecoveryCompactPhysicalCondition g := by
+  fin_cases g
+  · exact generatedTenth_compact_spatial_physical_00
+  · exact generatedTenth_compact_spatial_physical_01
+  · exact generatedTenth_compact_spatial_physical_02
+  · exact generatedTenth_compact_spatial_physical_03
+  · exact generatedTenth_compact_spatial_physical_04
+  · exact generatedTenth_compact_spatial_physical_05
+  · exact generatedTenth_compact_spatial_physical_06
+  · exact generatedTenth_compact_spatial_physical_07
+  · exact generatedTenth_compact_spatial_physical_08
+  · exact generatedTenth_compact_spatial_physical_09
+  · exact generatedTenth_compact_spatial_physical_10
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

@@ -1,0 +1,321 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortKeyCheck60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck11
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck12
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck13
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck14
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck15
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck16
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck17
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck18
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck19
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck20
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck21
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck22
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck23
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck24
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck25
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck26
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck27
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck28
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck29
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck30
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck31
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck32
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck33
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck34
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck35
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck36
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck37
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck38
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck39
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck40
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck41
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck42
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck43
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck44
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck45
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck46
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck47
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck48
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck49
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck50
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck51
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck52
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck53
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck54
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck55
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck56
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck57
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck58
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck59
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck60
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck61
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck62
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck63
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortCoverageCheck64
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisFifthRootEightIncomingShortGeneric
+
+/-! Complete exact source bindings of all original root-eight incoming short coordinates. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+
+/-- Every bounded packet preserves its complete original source equation. -/
+theorem generatedFifthRootEight_incoming_short_key_all (a : Fin 3856) :
+    generatedFifthRootEightIncomingShortKey a =
+      generatedNinthLowerShortAddress
+        (generatedFifthRootEightIncomingShortTarget
+          (generatedFifthRootEightIncomingShortRow a)) := by
+  have hp : ∀ (b : Fin 61) (i : Fin 64),
+      let a : Fin 3856 := ⟨(64 * b.val + i.val) % 3856, Nat.mod_lt _ (by decide)⟩
+      generatedFifthRootEightIncomingShortKey a =
+      generatedNinthLowerShortAddress
+        (generatedFifthRootEightIncomingShortTarget
+          (generatedFifthRootEightIncomingShortRow a)) := by
+    intro b i
+    fin_cases b
+    · exact generatedFifthRootEight_incoming_short_key_check00 i
+    · exact generatedFifthRootEight_incoming_short_key_check01 i
+    · exact generatedFifthRootEight_incoming_short_key_check02 i
+    · exact generatedFifthRootEight_incoming_short_key_check03 i
+    · exact generatedFifthRootEight_incoming_short_key_check04 i
+    · exact generatedFifthRootEight_incoming_short_key_check05 i
+    · exact generatedFifthRootEight_incoming_short_key_check06 i
+    · exact generatedFifthRootEight_incoming_short_key_check07 i
+    · exact generatedFifthRootEight_incoming_short_key_check08 i
+    · exact generatedFifthRootEight_incoming_short_key_check09 i
+    · exact generatedFifthRootEight_incoming_short_key_check10 i
+    · exact generatedFifthRootEight_incoming_short_key_check11 i
+    · exact generatedFifthRootEight_incoming_short_key_check12 i
+    · exact generatedFifthRootEight_incoming_short_key_check13 i
+    · exact generatedFifthRootEight_incoming_short_key_check14 i
+    · exact generatedFifthRootEight_incoming_short_key_check15 i
+    · exact generatedFifthRootEight_incoming_short_key_check16 i
+    · exact generatedFifthRootEight_incoming_short_key_check17 i
+    · exact generatedFifthRootEight_incoming_short_key_check18 i
+    · exact generatedFifthRootEight_incoming_short_key_check19 i
+    · exact generatedFifthRootEight_incoming_short_key_check20 i
+    · exact generatedFifthRootEight_incoming_short_key_check21 i
+    · exact generatedFifthRootEight_incoming_short_key_check22 i
+    · exact generatedFifthRootEight_incoming_short_key_check23 i
+    · exact generatedFifthRootEight_incoming_short_key_check24 i
+    · exact generatedFifthRootEight_incoming_short_key_check25 i
+    · exact generatedFifthRootEight_incoming_short_key_check26 i
+    · exact generatedFifthRootEight_incoming_short_key_check27 i
+    · exact generatedFifthRootEight_incoming_short_key_check28 i
+    · exact generatedFifthRootEight_incoming_short_key_check29 i
+    · exact generatedFifthRootEight_incoming_short_key_check30 i
+    · exact generatedFifthRootEight_incoming_short_key_check31 i
+    · exact generatedFifthRootEight_incoming_short_key_check32 i
+    · exact generatedFifthRootEight_incoming_short_key_check33 i
+    · exact generatedFifthRootEight_incoming_short_key_check34 i
+    · exact generatedFifthRootEight_incoming_short_key_check35 i
+    · exact generatedFifthRootEight_incoming_short_key_check36 i
+    · exact generatedFifthRootEight_incoming_short_key_check37 i
+    · exact generatedFifthRootEight_incoming_short_key_check38 i
+    · exact generatedFifthRootEight_incoming_short_key_check39 i
+    · exact generatedFifthRootEight_incoming_short_key_check40 i
+    · exact generatedFifthRootEight_incoming_short_key_check41 i
+    · exact generatedFifthRootEight_incoming_short_key_check42 i
+    · exact generatedFifthRootEight_incoming_short_key_check43 i
+    · exact generatedFifthRootEight_incoming_short_key_check44 i
+    · exact generatedFifthRootEight_incoming_short_key_check45 i
+    · exact generatedFifthRootEight_incoming_short_key_check46 i
+    · exact generatedFifthRootEight_incoming_short_key_check47 i
+    · exact generatedFifthRootEight_incoming_short_key_check48 i
+    · exact generatedFifthRootEight_incoming_short_key_check49 i
+    · exact generatedFifthRootEight_incoming_short_key_check50 i
+    · exact generatedFifthRootEight_incoming_short_key_check51 i
+    · exact generatedFifthRootEight_incoming_short_key_check52 i
+    · exact generatedFifthRootEight_incoming_short_key_check53 i
+    · exact generatedFifthRootEight_incoming_short_key_check54 i
+    · exact generatedFifthRootEight_incoming_short_key_check55 i
+    · exact generatedFifthRootEight_incoming_short_key_check56 i
+    · exact generatedFifthRootEight_incoming_short_key_check57 i
+    · exact generatedFifthRootEight_incoming_short_key_check58 i
+    · exact generatedFifthRootEight_incoming_short_key_check59 i
+    · exact generatedFifthRootEight_incoming_short_key_check60 i
+  have h := hp ⟨a.val / 64, by omega⟩
+    ⟨a.val % 64, Nat.mod_lt _ (by decide)⟩
+  have he : (⟨(64 * (a.val / 64) + a.val % 64) % 3856,
+      Nat.mod_lt _ (by decide)⟩ : Fin 3856) = a := by
+    apply Fin.ext
+    change (64 * (a.val / 64) + a.val % 64) % 3856 = a.val
+    omega
+  simpa only [he] using h
+
+/-- Every bounded packet preserves its complete original source equation. -/
+theorem generatedFifthRootEight_incoming_short_coverage_all (k : Fin 4136) :
+    generatedFifthRootEightIncomingShortCoefficient
+        (generatedFifthRootEightIncomingShortTarget k) =
+      generatedFifthRootEightIncomingSignedRowNumerator k := by
+  have hp : ∀ (b : Fin 65) (i : Fin 64),
+      let k : Fin 4136 := ⟨(64 * b.val + i.val) % 4136, Nat.mod_lt _ (by decide)⟩
+      generatedFifthRootEightIncomingShortCoefficient
+        (generatedFifthRootEightIncomingShortTarget k) =
+      generatedFifthRootEightIncomingSignedRowNumerator k := by
+    intro b i
+    fin_cases b
+    · exact generatedFifthRootEight_incoming_short_coverage_check00 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check01 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check02 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check03 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check04 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check05 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check06 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check07 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check08 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check09 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check10 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check11 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check12 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check13 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check14 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check15 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check16 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check17 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check18 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check19 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check20 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check21 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check22 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check23 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check24 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check25 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check26 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check27 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check28 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check29 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check30 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check31 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check32 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check33 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check34 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check35 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check36 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check37 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check38 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check39 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check40 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check41 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check42 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check43 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check44 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check45 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check46 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check47 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check48 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check49 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check50 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check51 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check52 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check53 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check54 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check55 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check56 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check57 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check58 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check59 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check60 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check61 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check62 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check63 i
+    · exact generatedFifthRootEight_incoming_short_coverage_check64 i
+  have h := hp ⟨k.val / 64, by omega⟩
+    ⟨k.val % 64, Nat.mod_lt _ (by decide)⟩
+  have he : (⟨(64 * (k.val / 64) + k.val % 64) % 4136,
+      Nat.mod_lt _ (by decide)⟩ : Fin 4136) = k := by
+    apply Fin.ext
+    change (64 * (k.val / 64) + k.val % 64) % 4136 = k.val
+    omega
+  simpa only [he] using h
+
+/-- The entire genuine original root-eight source short constituent has its complete exact lookup. -/
+theorem generatedFifthRootEight_incoming_short_actual (r : GriessShortIndex) :
+    generatedAxisGlobalFifthRoot08Packet.2.1 r =
+      (generatedFifthRootEightIncomingShortCoefficient r : ℝ) / 16 :=
+  generatedFifthRootEight_incoming_short_generic_actual
+    generatedFifthRootEight_incoming_short_key_all generatedFifthRootEight_incoming_short_coverage_all r
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

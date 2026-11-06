@@ -1,0 +1,37 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightIncomingMatrixCache
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisRootEightPositiveFinalShortCacheData
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisGlobalTransitionsPairCoordinates
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationFifthMonomialSignFourierCache
+
+/-! A complete independent interval of original signed short-source coordinates. -/
+
+@[expose] public noncomputable section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+set_option backward.isDefEq.respectTransparency false
+set_option maxRecDepth 100000
+
+set_option maxHeartbeats 64000000 in
+-- Check every original coordinate in this complete bounded source interval.
+/-- Every original signed short-source numerator agrees with the complete integer cache. -/
+theorem generatedRootEight_positive_final_short_source_packet_00_block_02 : ∀ u : Fin 256,
+    generatedRootEightPositiveFinalShortNumerator
+      (generatedNinthLowerSpinShortIndex ⟨512 + u.val, by omega⟩) =
+      generatedRootEightPositiveFinalShortCachedNumerator
+        (generatedNinthLowerSpinShortIndex ⟨512 + u.val, by omega⟩) := by
+  unfold generatedRootEightPositiveFinalShortNumerator
+  simp only [← generatedAxisGlobalPairCoordinates_actual]
+  simp_rw [generatedRootEight_incoming_matrix_numerator_cache]
+  simp_rw [← generatedFifth_sign_fourier_cache]
+  decide +kernel
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster

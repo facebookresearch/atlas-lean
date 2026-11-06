@@ -1,0 +1,52 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData00
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData01
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData02
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData03
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData04
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData05
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData06
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData07
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData08
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData09
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectSourceBinaryData10
+public import FormalizedTextbooks.FrenkelLepowskyMeurmanMonster.GeneratedAxisClassificationNinthLowerSpinDirectIntegralBinaryData
+
+/-! All complete candidate lattice actions intertwine with their actual original source words. -/
+
+@[expose] public section
+namespace FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
+open scoped Matrix
+set_option backward.isDefEq.respectTransparency false
+
+/-- All eleven entire original lattice actions retain their true source conjugacy. -/
+theorem generatedNinth_lower_spin_direct_source_binary_certificate (i : Fin 11) :
+    sixthFrameOrbitColumnMatrix generatedNinthAffineTransportBinaryColumns *
+      (leechHyperbolicInverse *
+        (generatedNinthLowerSpinDirectIntegralMatrix i).map (Int.castRingHom (ZMod 2)) *
+          leechHyperbolicMatrix) =
+      sixthFrameOrbitColumnMatrix (generatedNinthAffineLowerSourceColumns i) *
+        sixthFrameOrbitColumnMatrix generatedNinthAffineTransportBinaryColumns := by
+  fin_cases i
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_00
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_01
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_02
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_03
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_04
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_05
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_06
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_07
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_08
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_09
+  · exact generatedNinth_lower_spin_direct_source_binary_certificate_10
+
+end FormalizedTextbooks.FrenkelLepowskyMeurmanMonster
