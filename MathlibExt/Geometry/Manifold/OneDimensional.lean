@@ -3341,11 +3341,14 @@ namespace MathlibExt.Geometry.Manifold.OneDimensionalWanted
 open MathlibExt.Geometry.Manifold.OneDimensionalClassification
 
 /--
-Every connected Hausdorff second-countable boundaryless smooth 1-manifold is diffeomorphic to
-either `Circle` or `EuclideanSpace ℝ (Fin 1)`. Source: Classification of connected boundaryless
-1-manifolds; Milnor (1965); Hirsch; Lean states dichotomy specialization for `𝓡 1`.
+**Classification of connected $1$-manifolds without boundary.** Every connected, Hausdorff,
+second-countable smooth $1$-manifold $M$ without boundary is diffeomorphic either to the circle
+$S^1$ or to the real line $\mathbb{R}$.
 
 Proves `Wanted` entry `connected_boundaryless_one_manifold_classification`.
+
+Source: Classification of connected boundaryless
+1-manifolds; Milnor (1965); Hirsch; Lean states dichotomy specialization for `𝓡 1`.
 -/
 theorem connected_boundaryless_one_manifold_classification
     (M : Type*) [TopologicalSpace M] [ChartedSpace (EuclideanSpace ℝ (Fin 1)) M]
@@ -5403,12 +5406,15 @@ private theorem omb_diffeomorph_Icc_of_boundary_nonempty (M : Type*) [Topologica
   exact ⟨(hld.diffeomorphOfBijective ⟨hinj, hsurj⟩).symm⟩
 
 /--
-Every compact connected Hausdorff second-countable smooth 1-manifold with boundary (`𝓡∂ 1`) is
-diffeomorphic to either `Circle` or `Icc (0:ℝ) 1`. Source: Classification of 1-manifolds with
-boundary; Hirsch, Differential Topology; J. Lee, Introduction to Smooth Manifolds, 2nd ed.,
-collar theorem; Lean states compact connected `𝓡∂ 1` with closed interval specialization.
+**Classification of compact connected $1$-manifolds with boundary.** Every compact, connected,
+Hausdorff, second-countable smooth $1$-manifold $M$ with (possibly empty) boundary is
+diffeomorphic either to the circle $S^1$ or to the closed interval $[0, 1]$.
 
 Proves `Wanted` entry `compact_connected_one_manifold_with_boundary_classification`.
+
+Source: Classification of 1-manifolds with
+boundary; Hirsch, Differential Topology; J. Lee, Introduction to Smooth Manifolds, 2nd ed.,
+collar theorem; Lean states compact connected `𝓡∂ 1` with closed interval specialization.
 -/
 theorem compact_connected_one_manifold_with_boundary_classification
     (M : Type*) [TopologicalSpace M] [ChartedSpace (EuclideanHalfSpace 1) M]

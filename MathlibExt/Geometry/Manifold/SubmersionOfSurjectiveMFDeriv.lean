@@ -294,9 +294,16 @@ namespace Manifold.IsSubmersionAt
 
 universe u
 
-/-- A map from a Banach manifold to a finite-dimensional manifold over `ℝ` or `ℂ` is a
-submersion at a point if it is `C^n` on a neighbourhood and its manifold derivative there is
-surjective. -/
+/-- **Surjective differential into a finite-dimensional manifold gives a submersion.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $n \in \mathbb{N} \cup \{\infty, \omega\}$ with
+$n \ge 1$, let $M$ be a $C^n$ manifold without boundary over $\mathbb{K}$ modelled on a Banach
+space, and let $N$ be a $C^n$ manifold, possibly with boundary or corners, over $\mathbb{K}$
+modelled on a finite-dimensional space. If $f : M \to N$ is $C^n$ at every point of some
+neighbourhood of $x \in M$ and the manifold derivative of $f$ at $x$ is surjective, then $f$ is a
+$C^n$ submersion at $x$: there are charts of the $C^n$ maximal atlases around $x$ and $f(x)$, the
+first mapped by $f$ into the second, in which $f$ reads $(u, v) \mapsto u$ after a continuous linear
+identification of the model space of $M$ with the product of the model space of $N$ and some
+normed space. -/
 theorem of_surjective_mfderiv
     {𝕜 : Type*} [NontriviallyNormedField 𝕜] [IsRCLikeNormedField 𝕜]
     {E : Type u} {E'' H G M N : Type*}
@@ -352,15 +359,22 @@ variable {M N : Type*}
 variable {n : ℕ∞ω}
 
 /--
-A map between finite-dimensional manifolds without boundary over `ℝ` or `ℂ` that is `C^n` on a
-neighbourhood of `x` and has surjective differential at `x` is a submersion at `x`.
-Sources: Mathlib `Mathlib/Geometry/Manifold/Submersion.lean` TODO (finite-dimensional
-surjective-`mfderiv` criterion); J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
+**Surjective differential gives a submersion between finite-dimensional manifolds.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $n \in \mathbb{N} \cup \{\infty, \omega\}$ with
+$n \ge 1$, and let $M$ and $N$ be $C^n$ manifolds without boundary over $\mathbb{K}$ modelled on
+finite-dimensional spaces. If $f : M \to N$ is $C^n$ at every point of some neighbourhood of
+$x \in M$ and the manifold derivative of $f$ at $x$ is surjective, then $f$ is a $C^n$ submersion
+at $x$: there are charts of the $C^n$ maximal atlases around $x$ and $f(x)$, the first mapped by
+$f$ into the second, in which $f$ reads $(u, v) \mapsto u$ after a linear identification of the
+model space of $M$ with the product of the model space of $N$ and some normed space.
 
 Proves `Wanted` entry `submersionAt_of_surjective_mfderiv`.
 
 Proof: Split the surjective derivative, augment the map by its kernel coordinate, and apply the
 inverse function theorem to obtain charts in which the map is the first projection.
+
+Sources: Mathlib `Mathlib/Geometry/Manifold/Submersion.lean` TODO (finite-dimensional
+surjective-`mfderiv` criterion); J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
 -/
 theorem submersionAt_of_surjective_mfderiv
     [CompleteSpace 𝕜] [IsRCLikeNormedField 𝕜]

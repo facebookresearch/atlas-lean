@@ -32,7 +32,9 @@ A. Terras, Fourier Analysis on Finite Groups and Applications, Ch. 1–2
 (convolution on finite groups and its Fourier transform).
 -/
 
-/-- Convolution of complex-valued functions on a finite group. -/
+/-- **Convolution on a finite group.** For a finite group $G$ and functions
+$f, g : G \to \mathbb{C}$, the convolution $f \ast g : G \to \mathbb{C}$ is defined by
+$(f \ast g)(x) = \sum_{y \in G} f(y)\, g(y^{-1} x)$ for $x \in G$. -/
 def conv {G : Type*} [Group G] [Fintype G] (f g : G → ℂ) : G → ℂ :=
   fun x => ∑ y : G, f y * g (y⁻¹ * x)
 
@@ -52,16 +54,18 @@ private theorem conv_assoc_apply {G : Type*} [Group G] [Fintype G]
   simp_rw [mul_assoc, ← Finset.mul_sum, conv_assoc_inner]
 
 /--
-Convolution is associative.
+**Associativity of convolution.** Let $G$ be a finite group and write $f \ast g$ for the
+convolution $(f \ast g)(x) = \sum_{y \in G} f(y)\, g(y^{-1} x)$ of functions on $G$. For all
+$f, g, h : G \to \mathbb{C}$ we have $(f \ast g) \ast h = f \ast (g \ast h)$.
+
+Proof: Expand into double sums, swap them, and reindex by left multiplication,
+following the finite group-algebra argument in Terras, Ch. 1.
+
+Proves `Wanted` entry `conv_assoc`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "convolution"; A. Terras, Fourier Analysis on Finite Groups and
 Applications, Ch. 1 (the group algebra).
-
-Proves `Wanted` entry `conv_assoc`.
-
-Proof: Expand into double sums, swap them, and reindex by left multiplication,
-following the finite group-algebra argument in Terras, Ch. 1.
 -/
 public theorem conv_assoc {G : Type*} [Group G] [Fintype G]
     (f g h : G → ℂ) : conv (conv f g) h = conv f (conv g h) := by
@@ -74,16 +78,19 @@ private theorem conv_single_one_apply {G : Type*} [Group G] [Fintype G]
   simp [conv, Pi.single_apply]
 
 /--
-The delta function at the identity is a left identity for convolution.
+**The delta function at the identity is a left unit for convolution.** Let $G$ be a finite group,
+write $f \ast g$ for the convolution $(f \ast g)(x) = \sum_{y \in G} f(y)\, g(y^{-1} x)$ of
+functions on $G$, and let $\delta_1 : G \to \mathbb{C}$ be given by $\delta_1(1) = 1$ and
+$\delta_1(x) = 0$ for $x \neq 1$. Then $\delta_1 \ast f = f$ for every $f : G \to \mathbb{C}$.
+
+Proof: Expand the convolution and collapse the sum at the unique nonzero value
+of the delta function, following the identity-element argument in Terras, Ch. 1.
+
+Proves `Wanted` entry `conv_single_one`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "convolution"; A. Terras, Fourier Analysis on Finite Groups and
 Applications, Ch. 1 (identity of the group algebra).
-
-Proves `Wanted` entry `conv_single_one`.
-
-Proof: Expand the convolution and collapse the sum at the unique nonzero value
-of `Pi.single`, following the identity-element argument in Terras, Ch. 1.
 -/
 public theorem conv_single_one {G : Type*} [Group G] [Fintype G]
     [DecidableEq G] (f : G → ℂ) : conv (Pi.single (1 : G) (1 : ℂ)) f = f := by
@@ -97,16 +104,18 @@ private theorem conv_comm_apply {G : Type*} [CommGroup G] [Fintype G]
   simp [mul_comm]
 
 /--
-Convolution is commutative on abelian groups.
+**Convolution on a finite abelian group is commutative.** Let $G$ be a finite abelian group and
+write $f \ast g$ for the convolution $(f \ast g)(x) = \sum_{y \in G} f(y)\, g(y^{-1} x)$ of
+functions on $G$. For all $f, g : G \to \mathbb{C}$ we have $f \ast g = g \ast f$.
+
+Proof: Reindex by $y \mapsto y^{-1} x$ and use commutativity in $G$ and in $\mathbb{C}$,
+as in the commutative group-algebra argument in Terras, Ch. 2.
+
+Proves `Wanted` entry `conv_comm_of_comm`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "convolution"; A. Terras, Fourier Analysis on Finite Groups and
 Applications, Ch. 2 (commutative group algebra of an abelian group).
-
-Proves `Wanted` entry `conv_comm_of_comm`.
-
-Proof: Reindex by `y ↦ y⁻¹ * x` and use commutativity in the group and in `ℂ`,
-as in the commutative group-algebra argument in Terras, Ch. 2.
 -/
 public theorem conv_comm_of_comm {G : Type*} [CommGroup G] [Fintype G]
     (f g : G → ℂ) : conv f g = conv g f := by
@@ -144,18 +153,24 @@ private theorem conv_charPair_apply {G : Type*} [Group G] [Fintype G]
       ac_rfl
 
 /--
-Convolution theorem, coefficient form: pairing a convolution against a
-one-dimensional character splits as a product of pairings.
+**Convolution theorem for one-dimensional characters.** Let $G$ be a finite group, let
+$\varphi : G \to \mathbb{C}$ satisfy $\varphi(1) = 1$ and $\varphi(xy) = \varphi(x)\varphi(y)$
+for all $x, y \in G$ (a one-dimensional character), and let $f, g : G \to \mathbb{C}$. Writing
+$f \ast g$ for the convolution $(f \ast g)(x) = \sum_{y \in G} f(y)\, g(y^{-1} x)$, we have
+$$
+\sum_{x \in G} \varphi(x)\,(f \ast g)(x) =
+\Big(\sum_{x \in G} \varphi(x) f(x)\Big)\Big(\sum_{x \in G} \varphi(x) g(x)\Big).
+$$
+
+Proof: Swap the finite sums, reindex by $x = yz$, and use multiplicativity of $\varphi$ to
+factor the character pairing, following Terras, Ch. 2–3.
+
+Proves `Wanted` entry `charPair_conv`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "convolution"; A. Terras, Fourier Analysis on Finite Groups and
 Applications, Ch. 2–3 (the Fourier transform takes convolution to pointwise
 products).
-
-Proves `Wanted` entry `charPair_conv`.
-
-Proof: Swap the finite sums, reindex by `x = y * z`, and use `map_mul` to
-factor the character pairing, following Terras, Ch. 2–3.
 -/
 public theorem charPair_conv {G : Type*} [Group G] [Fintype G]
     (φ : G →* ℂ) (f g : G → ℂ) :

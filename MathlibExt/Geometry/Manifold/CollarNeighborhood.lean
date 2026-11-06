@@ -2752,16 +2752,19 @@ private theorem collarAbstractGluing
     collarGluedMap_zero hA g''⟩
 
 /--
-For `n ≥ 1` and a Hausdorff second-countable `C^∞` manifold with boundary `M` modeled on
-`EuclideanHalfSpace n` via `𝓡∂ n`, there exists an open embedding collar `c : boundary M × [0, 1)
-→ M` with `c (b, 0)=b`. Source: M. Hirsch, Differential Topology, GTM 33; J. Lee, Introduction to
-Smooth Manifolds, 2nd ed.; Kosinski, Differential Manifolds; Lean states topological collar
-`IsOpenEmbedding` corollary for `EuclideanHalfSpace` model.
+**Collar neighborhood theorem (topological form).** Let $n \ge 1$ and let $M$ be a Hausdorff,
+second-countable smooth ($C^\infty$) manifold with boundary modeled on the closed half-space
+$\{x \in \mathbb{R}^n : x_1 \ge 0\}$, and let $\partial M$ be its boundary. Then there is an open
+embedding $c : \partial M \times [0, 1) \to M$ such that $c(b, 0) = b$ for every $b \in \partial M$.
 
 Proves `Wanted` entry `topological_collar_neighborhood_of_smooth_manifold_with_boundary`.
 
 Proof: Local chart collars are glued by Brown's external-collar construction, following Hatcher,
 *Algebraic Topology*, Proposition 3.42, and the locally finite extension of Connelly (1971).
+
+Source: M. Hirsch, Differential Topology, GTM 33; J. Lee, Introduction to
+Smooth Manifolds, 2nd ed.; Kosinski, Differential Manifolds; Lean states topological collar
+`IsOpenEmbedding` corollary for `EuclideanHalfSpace` model.
 -/
 theorem topological_collar_neighborhood_of_smooth_manifold_with_boundary
     {n : ℕ} [NeZero n]

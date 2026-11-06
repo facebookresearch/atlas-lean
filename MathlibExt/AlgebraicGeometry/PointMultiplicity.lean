@@ -70,7 +70,9 @@ section Basic
 
 variable {K V : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
 
-/-- Rescaling a representative by a nonzero scalar does not change the point. -/
+/-- **Rescaling a representative does not change the projective point.** Let $V$ be a module over
+a division ring $K$. For every nonzero scalar $a \in K$ and every nonzero vector $v \in V$, the
+points of the projectivization $\mathbb{P}(V)$ represented by $a v$ and by $v$ are equal. -/
 theorem mk_smul_eq {a : K} (ha : a ≠ 0) {v : V} (hv : v ≠ 0) :
     mk K (a • v) (smul_ne_zero ha hv) = mk K v hv :=
   (mk_eq_mk_iff' K _ _ _ hv).2 ⟨a, rfl⟩
@@ -79,7 +81,11 @@ end Basic
 
 variable {K m : Type*} [Field K] [Fintype m]
 
-/-- Orthogonality of two points is the vanishing of the dot product of their representatives. -/
+/-- **Orthogonality of projective points via representatives.** Let $K$ be a field and $m$ a
+finite set. Let $p, q$ be points of the projective space $\mathbb{P}(K^m)$ and let
+$\hat p, \hat q \in K^m$ be the fixed nonzero representatives chosen for $p$ and $q$. Then $p$
+and $q$ are orthogonal (the dot product of a representative of $p$ with a representative of $q$
+vanishes, which does not depend on the representatives) if and only if $\hat p \cdot \hat q = 0$. -/
 theorem orthogonal_iff_rep_dotProduct_rep {v w : ℙ K (m → K)} :
     v.orthogonal w ↔ v.rep ⬝ᵥ w.rep = 0 := by
   conv_lhs => rw [← v.mk_rep, ← w.mk_rep]
@@ -95,13 +101,20 @@ section CommSemiring
 
 variable [CommSemiring R]
 
-/-- The order of vanishing of `F` at the point `v`: the order at the origin
-(`MvPowerSeries.order`, the least total degree of a monomial with nonzero coefficient) of the
-Taylor expansion `F(v + X)`. It is `⊤` for `F = 0`. -/
+/-- **Order of vanishing at a point.** Let $R$ be a commutative semiring, let $F$ be a
+polynomial over $R$ in the variables $(X_i)_{i \in \sigma}$ and let $v \in R^\sigma$. The order
+of vanishing $\operatorname{ord}_v F \in \mathbb{N} \cup \{\infty\}$ of $F$ at $v$ is the order
+at the origin of the Taylor expansion $F(v + X)$, the polynomial obtained from $F$ by
+substituting $X_i + v_i$ for each $X_i$: the least total degree of a monomial with nonzero
+coefficient in $F(v + X)$, or $\infty$ if $F(v + X) = 0$. In particular it is $\infty$ for
+$F = 0$. -/
 noncomputable def orderAt (F : MvPolynomial σ R) (v : σ → R) : ℕ∞ :=
   ((aeval fun i => (X i + C (v i) : MvPolynomial σ R)) F : MvPowerSeries σ R).order
 
-/-- The constant term of the Taylor expansion `F(v + X)` is `F(v)`. -/
+/-- **Constant term of the Taylor expansion.** Let $R$ be a commutative semiring, $F$ a
+polynomial over $R$ in the variables $(X_i)_{i \in \sigma}$, and $v \in R^\sigma$. The constant
+term of the Taylor expansion $F(X + v)$, obtained by substituting $X_i + v_i$ for each $X_i$, is
+the value $F(v)$. -/
 theorem constantCoeff_aeval_X_add_C (F : MvPolynomial σ R) (v : σ → R) :
     constantCoeff (aeval (fun i => X i + C (v i)) F) = eval v F := by
   induction F using MvPolynomial.induction_on with
@@ -109,7 +122,11 @@ theorem constantCoeff_aeval_X_add_C (F : MvPolynomial σ R) (v : σ → R) :
   | add p q hp hq => simp [hp, hq]
   | mul_X p i hp => simp [hp]
 
-/-- Partial derivatives commute with Taylor expansion. -/
+/-- **Partial derivatives commute with Taylor expansion.** Let $R$ be a commutative semiring,
+let $F$ be a polynomial over $R$ in the variables $(X_j)_{j \in \sigma}$, let $v \in R^\sigma$ and
+let $i \in \sigma$. Writing $G(X + v)$ for the polynomial obtained from a polynomial $G$ by
+substituting $X_j + v_j$ for each $X_j$, we have
+$\frac{\partial}{\partial X_i}\bigl(F(X + v)\bigr) = \frac{\partial F}{\partial X_i}(X + v)$. -/
 theorem pderiv_aeval_X_add_C (i : σ) (v : σ → R) (F : MvPolynomial σ R) :
     pderiv i (aeval (fun j => X j + C (v j)) F) = aeval (fun j => X j + C (v j)) (pderiv i F) := by
   induction F using MvPolynomial.induction_on with
@@ -142,14 +159,19 @@ private theorem order_coe_eq_of_coeff_eq_zero_iff {G H : MvPolynomial σ R}
   · rw [coeff_coe, h, ← coeff_coe]
     exact MvPowerSeries.coeff_of_lt_order hd
 
-/-- A polynomial vanishes to order at least one at `v` iff it vanishes at `v`. -/
+/-- **Vanishing to order at least one.** Let $R$ be a commutative semiring, let $F$ be a
+polynomial over $R$ in the variables $(X_i)_{i \in \sigma}$ and let $v \in R^\sigma$. Then the
+order of vanishing $\operatorname{ord}_v F$ of $F$ at $v$ is at least $1$ if and only if
+$F(v) = 0$. -/
 theorem one_le_orderAt_iff {F : MvPolynomial σ R} {v : σ → R} :
     1 ≤ F.orderAt v ↔ eval v F = 0 := by
   rw [orderAt, MvPowerSeries.one_le_order_iff_constCoeff_eq_zero,
     ← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, coeff_coe, ← constantCoeff_eq,
     constantCoeff_aeval_X_add_C]
 
-/-- A polynomial vanishes to order zero at `v` iff it does not vanish at `v`. -/
+/-- **Vanishing to order zero.** Let $R$ be a commutative semiring, let $F$ be a polynomial over
+$R$ in the variables $(X_i)_{i \in \sigma}$ and let $v \in R^\sigma$. Then the order of vanishing
+$\operatorname{ord}_v F$ of $F$ at $v$ is $0$ if and only if $F(v) \neq 0$. -/
 theorem orderAt_eq_zero_iff {F : MvPolynomial σ R} {v : σ → R} :
     F.orderAt v = 0 ↔ eval v F ≠ 0 := by
   rw [ne_eq, ← one_le_orderAt_iff, not_le, Order.lt_one_iff]
@@ -158,7 +180,9 @@ theorem orderAt_eq_zero_iff {F : MvPolynomial σ R} {v : σ → R} :
 theorem orderAt_zero (v : σ → R) : (0 : MvPolynomial σ R).orderAt v = ⊤ := by
   simp [orderAt]
 
-/-- A nonzero constant vanishes to order zero everywhere. -/
+/-- **Nonzero constants vanish to order zero.** Let $R$ be a commutative semiring and let
+$a \in R$ be nonzero. For every point $v \in R^\sigma$, the constant polynomial $a$ in the
+variables $(X_i)_{i \in \sigma}$ has order of vanishing $\operatorname{ord}_v a = 0$ at $v$. -/
 theorem orderAt_C_of_ne_zero {a : R} (ha : a ≠ 0) (v : σ → R) :
     (C a : MvPolynomial σ R).orderAt v = 0 :=
   orderAt_eq_zero_iff.2 (by simpa using ha)
@@ -216,7 +240,10 @@ private theorem aeval_X_add_C_neg (v : σ → R) (F : MvPolynomial σ R) :
   funext i
   simp
 
-/-- The order of vanishing is `⊤` exactly for the zero polynomial. -/
+/-- **Only the zero polynomial vanishes to infinite order.** Let $R$ be a commutative ring, let
+$F$ be a polynomial over $R$ in the variables $(X_i)_{i \in \sigma}$ and let $v \in R^\sigma$.
+Then the order of vanishing $\operatorname{ord}_v F \in \mathbb{N} \cup \{\infty\}$ of $F$ at $v$
+equals $\infty$ if and only if $F = 0$. -/
 @[simp]
 theorem orderAt_eq_top_iff {F : MvPolynomial σ R} {v : σ → R} :
     F.orderAt v = ⊤ ↔ F = 0 := by
@@ -263,15 +290,23 @@ private theorem natCast_add_one_le_order_coe_iff {G : MvPolynomial σ R} {n : �
     rw [hsplit] at h'
     exact (mul_eq_zero.1 h').resolve_right (Nat.cast_add_one_ne_zero _)
 
-/-- In characteristic zero, `F` vanishes to order at least `n + 1` at `v` iff `F(v) = 0` and
-every first partial derivative of `F` vanishes to order at least `n` at `v`. -/
+/-- **Order of vanishing via first partial derivatives.** Let $R$ be an integral domain of
+characteristic zero, $F$ a polynomial over $R$ in the variables $(X_i)_{i \in \sigma}$,
+$v \in R^\sigma$ and $n \in \mathbb{N}$. Then $F$ vanishes to order at least $n + 1$ at $v$ if
+and only if $F(v) = 0$ and every first partial derivative $\partial F / \partial X_i$ vanishes to
+order at least $n$ at $v$. -/
 theorem natCast_add_one_le_orderAt_iff {F : MvPolynomial σ R} {v : σ → R} {n : ℕ} :
     (n : ℕ∞) + 1 ≤ F.orderAt v ↔ eval v F = 0 ∧ ∀ i, (n : ℕ∞) ≤ (pderiv i F).orderAt v := by
   simp only [orderAt, natCast_add_one_le_order_coe_iff, ← constantCoeff_eq,
     constantCoeff_aeval_X_add_C, pderiv_aeval_X_add_C]
 
-/-- In characteristic zero, `F` vanishes to order at least two at `v` (`v` is a singular point of
-`F = 0`) iff `F` and all its first partial derivatives vanish at `v`. -/
+/-- **Vanishing to order at least two via first partial derivatives.** Let $R$ be an integral
+domain of characteristic zero and let $F$ be a multivariate polynomial over $R$ in the
+variables $(X_i)_{i \in \sigma}$. For every point $v \in R^\sigma$, the polynomial $F$ vanishes
+to order at least $2$ at $v$ if and only if $F(v) = 0$ and
+$\frac{\partial F}{\partial X_i}(v) = 0$ for every $i \in \sigma$.
+
+Equivalently, $v$ is a singular point of the hypersurface $F = 0$. -/
 theorem two_le_orderAt_iff {F : MvPolynomial σ R} {v : σ → R} :
     2 ≤ F.orderAt v ↔ eval v F = 0 ∧ ∀ i, eval v (pderiv i F) = 0 := by
   have h := natCast_add_one_le_orderAt_iff (F := F) (v := v) (n := 1)
@@ -284,8 +319,10 @@ section Field
 
 variable {K : Type*} [Field K]
 
-/-- For a homogeneous polynomial, rescaling the point by a nonzero scalar does not change the
-order of vanishing. -/
+/-- **Scaling invariance of the order of vanishing.** Let $K$ be a field and let $F$ be a
+polynomial over $K$ in the variables $(X_i)_{i \in \sigma}$ that is homogeneous of some degree
+$d$. For every nonzero $c \in K$ and every point $v \in K^\sigma$, the orders of vanishing agree:
+$\operatorname{ord}_{cv} F = \operatorname{ord}_v F$. -/
 theorem orderAt_smul {F : MvPolynomial σ K} {d : ℕ} (hF : F.IsHomogeneous d) {c : K}
     (hc : c ≠ 0) (v : σ → K) : F.orderAt (c • v) = F.orderAt v := by
   have key : aeval (fun i => X i + C ((c • v) i)) F =
@@ -304,20 +341,32 @@ theorem orderAt_smul {F : MvPolynomial σ K} {d : ℕ} (hF : F.IsHomogeneous d) 
   rw [key, coeff_C_mul, coeff_aeval_C_mul_X]
   simp [hc]
 
-/-- The multiplicity of `F` at the point `p` of `ℙ K (σ → K)`: the order of vanishing of `F` at
-a representative of `p`. For homogeneous `F` it does not depend on the representative
-(`MvPolynomial.multiplicityAt_mk`); it takes the junk value `0` at `F = 0`. -/
+/-- **Multiplicity of a polynomial at a projective point.** Let $K$ be a field and $F$ a
+polynomial over $K$ in the variables $(X_i)_{i \in \sigma}$. The multiplicity of $F$ at a point
+$p$ of the projective space $\mathbb{P}(K^\sigma)$ is the order of vanishing of $F$ at the chosen
+representative $\bar p \in K^\sigma$ of $p$, as a natural number, with the value $\infty$ read
+as $0$.
+
+For homogeneous $F$ it does not depend on the representative. The order of vanishing is $\infty$
+only for $F = 0$, so the multiplicity of the zero polynomial is the junk value $0$. -/
 noncomputable def multiplicityAt (F : MvPolynomial σ K) (p : ℙ K (σ → K)) : ℕ :=
   (F.orderAt p.rep).toNat
 
-/-- The multiplicity of a homogeneous polynomial can be computed at any representative. -/
+/-- **The multiplicity can be computed at any representative.** Let $K$ be a field and $F$ a
+homogeneous polynomial over $K$ in the variables $(X_i)_{i \in \sigma}$. For every nonzero
+$v \in K^\sigma$, the multiplicity of $F$ at the point $[v]$ of $\mathbb{P}(K^\sigma)$ spanned by
+$v$ equals the order of vanishing of $F$ at $v$, with the value $\infty$ read as $0$. -/
 theorem multiplicityAt_mk {F : MvPolynomial σ K} {d : ℕ} (hF : F.IsHomogeneous d) {v : σ → K}
     (hv : v ≠ 0) :
     F.multiplicityAt (Projectivization.mk K v hv) = (F.orderAt v).toNat := by
   obtain ⟨a, ha⟩ := Projectivization.exists_smul_eq_mk_rep K v hv
   rw [multiplicityAt, ← ha, Units.smul_def, orderAt_smul hF a.ne_zero]
 
-/-- For `F ≠ 0`, the multiplicity is the order of vanishing at the representative. -/
+/-- **The multiplicity of a nonzero polynomial is its order of vanishing.** Let $K$ be a field
+and $F \neq 0$ a polynomial over $K$ in the variables $(X_i)_{i \in \sigma}$. For every point
+$p$ of $\mathbb{P}(K^\sigma)$, the multiplicity of $F$ at $p$, viewed in
+$\mathbb{N} \cup \{\infty\}$, equals the order of vanishing of $F$ at the chosen representative
+$\bar p \in K^\sigma$ of $p$. -/
 theorem natCast_multiplicityAt {F : MvPolynomial σ K} (hF : F ≠ 0) (p : ℙ K (σ → K)) :
     (F.multiplicityAt p : ℕ∞) = F.orderAt p.rep :=
   ENat.natCast_toNat (orderAt_ne_top hF _)
@@ -330,8 +379,10 @@ theorem le_multiplicityAt_iff {F : MvPolynomial σ K} (hF : F ≠ 0) {p : ℙ K 
 theorem multiplicityAt_zero (p : ℙ K (σ → K)) : (0 : MvPolynomial σ K).multiplicityAt p = 0 := by
   simp [multiplicityAt]
 
-/-- Constants have multiplicity zero everywhere (for the zero constant, this is the junk
-value). -/
+/-- **Constants have multiplicity zero.** Let $K$ be a field. For every $a \in K$, the constant
+polynomial $a$ in the variables $(X_i)_{i \in \sigma}$ has multiplicity $0$ at every point $p$ of
+the projective space $\mathbb{P}(K^\sigma)$. For $a = 0$ this is the junk value of the
+multiplicity of the zero polynomial. -/
 @[simp]
 theorem multiplicityAt_C (a : K) (p : ℙ K (σ → K)) :
     (C a : MvPolynomial σ K).multiplicityAt p = 0 := by
@@ -339,8 +390,10 @@ theorem multiplicityAt_C (a : K) (p : ℙ K (σ → K)) :
   · simp
   · simp [multiplicityAt, orderAt_C_of_ne_zero ha]
 
-/-- A nonzero polynomial has positive multiplicity at `p` iff it vanishes at the representative
-of `p`. -/
+/-- **Positive multiplicity means vanishing.** Let $K$ be a field, $F \neq 0$ a polynomial over
+$K$ in the variables $(X_i)_{i \in \sigma}$, and $p$ a point of $\mathbb{P}(K^\sigma)$ with
+chosen representative $\bar p \in K^\sigma$. The multiplicity of $F$ at $p$ is positive if and
+only if $F(\bar p) = 0$. -/
 theorem multiplicityAt_pos_iff {F : MvPolynomial σ K} (hF : F ≠ 0) {p : ℙ K (σ → K)} :
     0 < F.multiplicityAt p ↔ eval p.rep F = 0 := by
   rw [← Nat.one_le_iff_ne_zero.trans Nat.pos_iff_ne_zero.symm, le_multiplicityAt_iff hF,
@@ -348,13 +401,18 @@ theorem multiplicityAt_pos_iff {F : MvPolynomial σ K} (hF : F ≠ 0) {p : ℙ K
 
 variable [Fintype σ]
 
-/-- A linear form `∑ i, w i X i` vanishes to order zero at a point off its hyperplane. -/
+/-- **A linear form vanishes to order zero off its hyperplane.** Let $K$ be a field, let
+$\sigma$ be a finite set and let $w, v \in K^\sigma$ with
+$w \cdot v = \sum_{i \in \sigma} w_i v_i \neq 0$. Then the linear form
+$L = \sum_{i \in \sigma} w_i X_i$ has order of vanishing $\operatorname{ord}_v L = 0$ at $v$. -/
 theorem orderAt_sum_C_mul_X_of_dotProduct_ne_zero {w v : σ → K} (h : w ⬝ᵥ v ≠ 0) :
     (∑ i, C (w i) * X i).orderAt v = 0 :=
   orderAt_eq_zero_iff.2 (by simpa [dotProduct] using h)
 
-/-- A nonzero linear form `∑ i, w i X i` vanishes to order one at the points of its
-hyperplane. -/
+/-- **A nonzero linear form vanishes to order one on its hyperplane.** Let $K$ be a field, let
+$\sigma$ be a finite set and let $w, v \in K^\sigma$ with $w \neq 0$ and
+$w \cdot v = \sum_{i \in \sigma} w_i v_i = 0$. Then the linear form
+$L = \sum_{i \in \sigma} w_i X_i$ has order of vanishing $\operatorname{ord}_v L = 1$ at $v$. -/
 theorem orderAt_sum_C_mul_X_of_dotProduct_eq_zero {w v : σ → K} (hw : w ≠ 0)
     (h : w ⬝ᵥ v = 0) : (∑ i, C (w i) * X i).orderAt v = 1 := by
   classical
@@ -371,7 +429,10 @@ theorem orderAt_sum_C_mul_X_of_dotProduct_eq_zero {w v : σ → K} (hw : w ≠ 0
         MvPowerSeries.order_le (by rw [coeff_coe, hcoeff]; exact hi)
     _ = 1 := by simp
 
-/-- A line (hyperplane) has multiplicity one at its points. -/
+/-- **A hyperplane has multiplicity one at its points.** Let $K$ be a field, $\sigma$ a finite
+type and $w \in K^\sigma$ nonzero, and let $p$ be a point of $\mathbb{P}(K^\sigma)$ orthogonal to
+the point $[w]$ spanned by $w$, that is, $p$ lies on the hyperplane $\sum_i w_i x_i = 0$. Then
+the linear form $\sum_i w_i X_i$ has multiplicity $1$ at $p$. -/
 theorem multiplicityAt_sum_C_mul_X_of_orthogonal {w : σ → K} (hw : w ≠ 0) {p : ℙ K (σ → K)}
     (h : p.orthogonal (Projectivization.mk K w hw)) :
     (∑ i, C (w i) * X i).multiplicityAt p = 1 := by
@@ -379,7 +440,10 @@ theorem multiplicityAt_sum_C_mul_X_of_orthogonal {w : σ → K} (hw : w ≠ 0) {
   rw [multiplicityAt, orderAt_sum_C_mul_X_of_dotProduct_eq_zero hw h]
   rfl
 
-/-- A line (hyperplane) has multiplicity zero at the points off it. -/
+/-- **A hyperplane has multiplicity zero off it.** Let $K$ be a field, $\sigma$ a finite type and
+$w \in K^\sigma$ nonzero, and let $p$ be a point of $\mathbb{P}(K^\sigma)$ that is not orthogonal
+to the point $[w]$ spanned by $w$, that is, $p$ does not lie on the hyperplane
+$\sum_i w_i x_i = 0$. Then the linear form $\sum_i w_i X_i$ has multiplicity $0$ at $p$. -/
 theorem multiplicityAt_sum_C_mul_X_of_not_orthogonal {w : σ → K} (hw : w ≠ 0) {p : ℙ K (σ → K)}
     (h : ¬p.orthogonal (Projectivization.mk K w hw)) :
     (∑ i, C (w i) * X i).multiplicityAt p = 0 := by

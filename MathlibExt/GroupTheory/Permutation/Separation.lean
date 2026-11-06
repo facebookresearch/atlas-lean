@@ -15,13 +15,19 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The quaternary separation relation on a circular order: the pairs
-`a, b` and `c, d` separate each other around the circle. -/
+/-- **Separation of pairs in a circular order.** Let $\alpha$ be a circular order, and write
+$\operatorname{sbtw}(x, y, z)$ for its strict betweenness relation ($y$ lies strictly between
+$x$ and $z$ going around the circle). For $a, b, c, d \in \alpha$, the pairs $a, b$ and $c, d$
+separate each other when either $\operatorname{sbtw}(a, c, b)$ and $\operatorname{sbtw}(b, d, a)$
+both hold, or $\operatorname{sbtw}(a, d, b)$ and $\operatorname{sbtw}(b, c, a)$ both hold. -/
 def circularSeparates {α : Type*} [CircularOrder α] (a b c d : α) : Prop :=
   (sbtw a c b ∧ sbtw b d a) ∨ (sbtw a d b ∧ sbtw b c a)
 
-/-- The subgroup of permutations of a circular order preserving separation
-in both directions. -/
+/-- **Separation-preserving permutation group.** For a circular order $\alpha$, the
+separation-preserving group of $\alpha$ is the subgroup of the group of permutations of $\alpha$
+consisting of the permutations $\sigma$ such that for all $a, b, c, d \in \alpha$, the pairs
+$a, b$ and $c, d$ separate each other if and only if the pairs $\sigma(a), \sigma(b)$ and
+$\sigma(c), \sigma(d)$ separate each other. -/
 def separationAutSubgroup (α : Type*) [CircularOrder α] : Subgroup (Equiv.Perm α) where
   carrier :=
     {σ | ∀ a b c d, circularSeparates a b c d ↔

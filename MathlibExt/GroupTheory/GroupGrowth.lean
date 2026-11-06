@@ -68,38 +68,50 @@ namespace Group.Generators
 
 variable {G ι : Type*} [Group G] (P : Group.Generators G ι)
 
-/-- The growth function of the generating family `P`: the number of elements of `G` whose word
-length with respect to `P` is at most `n`, i.e. the cardinality of the word ball of radius `n`. -/
+/-- **Growth function of a generating family.** Let $P$ be a generating family of a group $G$.
+The growth function $\gamma_P$ of $P$ assigns to each natural number $n$ the number of elements
+$g \in G$ whose word length with respect to $P$ is at most $n$, that is, the cardinality of the
+ball of radius $n$ in the word metric of $P$; when this ball is infinite, $\gamma_P(n)$ is taken
+to be $0$. -/
 noncomputable def growth (n : ℕ) : ℕ := Nat.card {g : G // P.wordLength g ≤ n}
 
-/-- `P` has *polynomial growth* if its growth function is bounded by a polynomial: there exist
-`C d : ℕ` such that the ball of radius `n` has at most `C * (n + 1) ^ d` elements for every `n`. -/
+/-- **Polynomial growth.** Let $P$ be a generating family of a group $G$, with growth function
+$\gamma_P$. Then $P$ has polynomial growth if, for every natural number $n$, the ball of radius
+$n$ (the set of elements of $G$ of word length at most $n$ with respect to $P$) is finite, and
+there are natural numbers $C$ and $d$ such that $\gamma_P(n) \le C (n + 1)^d$ for every
+natural number $n$. -/
 def HasPolynomialGrowth : Prop :=
   (∀ n, Finite {g : G // P.wordLength g ≤ n}) ∧
     ∃ C d : ℕ, ∀ n, P.growth n ≤ C * (n + 1) ^ d
 
-/-- The ball of radius `0` is exactly `{1}`, so the growth function starts at `1`. -/
+/-- **The growth function at radius zero.** For every generating family $P$ of a group $G$, the
+growth function of $P$ takes the value $1$ at $0$: the ball of radius $0$ consists of the identity
+element alone. -/
 lemma growth_zero : P.growth 0 = 1 := by
   show Nat.card {g : G // P.wordLength g ≤ 0} = 1
   refine Nat.card_eq_one_iff_unique.mpr ⟨⟨fun a b => Subtype.ext ?_⟩, ⟨⟨1, by simp⟩⟩⟩
   rw [P.wordLength_eq_zero_iff.mp (Nat.le_zero.mp a.2),
     P.wordLength_eq_zero_iff.mp (Nat.le_zero.mp b.2)]
 
-/-- Over a finite group every ball is nonempty (it contains the identity), so the growth function
-is positive. -/
+/-- **The growth function of a finite group is positive.** For every generating family $P$ of a
+finite group $G$ and every natural number $n$, the growth function of $P$ is positive at $n$: the
+ball of radius $n$ contains the identity. -/
 lemma growth_pos [Finite G] (n : ℕ) : 0 < P.growth n := by
   show 0 < Nat.card {g : G // P.wordLength g ≤ n}
   have : Nonempty {g : G // P.wordLength g ≤ n} :=
     ⟨⟨1, by rw [P.wordLength_one]; exact Nat.zero_le n⟩⟩
   exact Nat.card_pos
 
-/-- The growth function is bounded by the order of the group, since every ball is a subset of `G`. -/
+/-- **The growth function is bounded by the order of the group.** For every generating family $P$
+of a finite group $G$ and every natural number $n$, the value of the growth function of $P$ at $n$
+is at most the order of $G$, since every ball is a subset of $G$. -/
 lemma growth_le_card [Finite G] (n : ℕ) : P.growth n ≤ Nat.card G := by
   show Nat.card {g : G // P.wordLength g ≤ n} ≤ Nat.card G
   exact Finite.card_subtype_le _
 
-/-- Every generating family of a finite group has polynomial growth: the growth function is bounded
-by the (constant) order of the group, i.e. by a polynomial of degree `0`. -/
+/-- **Finite groups have polynomial growth.** Every generating family of a finite group has
+polynomial growth: its growth function is bounded by the order of the group, a polynomial of
+degree $0$. -/
 theorem hasPolynomialGrowth_of_finite [Finite G] : P.HasPolynomialGrowth := by
   refine ⟨fun _ => inferInstance, Nat.card G, 0, fun n => ?_⟩
   simpa using P.growth_le_card n
@@ -112,7 +124,9 @@ lemma growth_pos_of_finite (hfin : ∀ n, Finite {g : G // P.wordLength g ≤ n}
     ⟨⟨1, by rw [P.wordLength_one]; exact Nat.zero_le n⟩⟩
   exact Nat.card_pos
 
-/-- Polynomial growth implies positive growth at every radius. -/
+/-- **Polynomial growth makes the growth function positive.** If a generating family $P$ of a
+group $G$ has polynomial growth, then the growth function of $P$ is positive at every natural
+number $n$. -/
 lemma HasPolynomialGrowth.growth_pos (h : P.HasPolynomialGrowth) (n : ℕ) : 0 < P.growth n :=
   P.growth_pos_of_finite h.1 n
 

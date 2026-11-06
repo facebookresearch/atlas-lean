@@ -42,41 +42,59 @@ open MeasureTheory Set ENNReal Pointwise
 
 namespace LatticePointCubeSandwich
 
-/-- Half-open integer unit cube translated by `v`. -/
+/-- **Integer unit cube.** For $v \in \mathbb{Z}^n$, the integer unit cube at $v$ is the half-open
+cube $Q_v = \prod_i [v_i, v_i + 1) \subseteq \mathbb{R}^n$, the set of $x \in \mathbb{R}^n$ with
+$v_i \le x_i < v_i + 1$ for every coordinate $i$. -/
 noncomputable def integerUnitCube {n : ℕ} (v : Fin n → ℤ) :
     Set (Fin n → ℝ) :=
   Set.pi Set.univ (fun i => Set.Ico (v i : ℝ) ((v i : ℝ) + 1))
 
-/-- Unfolding lemma for `integerUnitCube`. -/
+/-- **Membership in an integer unit cube.** For $v \in \mathbb{Z}^n$ and $x \in \mathbb{R}^n$, $x$
+lies in the integer unit cube at $v$ if and only if $v_i \le x_i < v_i + 1$ for every
+coordinate $i$. -/
 @[simp] theorem mem_integerUnitCube_iff {n : ℕ} {v : Fin n → ℤ}
     {x : Fin n → ℝ} :
     x ∈ integerUnitCube v ↔ ∀ i, (v i : ℝ) ≤ x i ∧ x i < (v i : ℝ) + 1 := by
   simp only [integerUnitCube, Set.mem_pi, Set.mem_univ, true_implies,
     Set.mem_Ico]
 
-/-- Lattice indices whose unit cube meets the scaled set. -/
+/-- **Outer cube set.** For a set $S \subseteq \mathbb{R}^n$ and a real number $t$, the outer cube
+set of $S$ at scale $t$ is the set of $v \in \mathbb{Z}^n$ such that
+$(x_1/t, \dots, x_n/t) \in S$ for some $x$ in the integer unit cube
+$Q_v = \prod_i [v_i, v_i + 1)$. For $t > 0$ these are the $v$ with $Q_v$ meeting $tS$; for $t = 0$
+the division is read as $x_i/0 = 0$. -/
 def outerCubeSet {n : ℕ} (S : Set (Fin n → ℝ)) (t : ℝ) :
     Set (Fin n → ℤ) :=
   {v | ∃ x ∈ integerUnitCube v, (fun i => x i / t) ∈ S}
 
-/-- Unfolding lemma for `outerCubeSet`. -/
+/-- **Membership in the outer cube set.** For $S \subseteq \mathbb{R}^n$, $t \in \mathbb{R}$ and
+$v \in \mathbb{Z}^n$, $v$ belongs to the outer cube set of $S$ at scale $t$ if and only if
+$(x_1/t, \dots, x_n/t) \in S$ for some $x$ in the integer unit cube at $v$. -/
 @[simp] theorem mem_outerCubeSet_iff {n : ℕ} {S : Set (Fin n → ℝ)} {t : ℝ}
     {v : Fin n → ℤ} :
     v ∈ outerCubeSet S t ↔ ∃ x ∈ integerUnitCube v, (fun i => x i / t) ∈ S :=
   Iff.rfl
 
-/-- Lattice indices whose whole unit cube lies in the scaled set. -/
+/-- **Inner cube set.** For a set $S \subseteq \mathbb{R}^n$ and a real number $t$, the inner cube
+set of $S$ at scale $t$ is the set of $v \in \mathbb{Z}^n$ such that
+$(x_1/t, \dots, x_n/t) \in S$ for every $x$ in the integer unit cube
+$Q_v = \prod_i [v_i, v_i + 1)$. For $t > 0$ these are the $v$ with $Q_v \subseteq tS$; for $t = 0$
+the division is read as $x_i/0 = 0$. -/
 def innerCubeSet {n : ℕ} (S : Set (Fin n → ℝ)) (t : ℝ) :
     Set (Fin n → ℤ) :=
   {v | ∀ x ∈ integerUnitCube v, (fun i => x i / t) ∈ S}
 
-/-- Unfolding lemma for `innerCubeSet`. -/
+/-- **Membership in the inner cube set.** For $S \subseteq \mathbb{R}^n$, $t \in \mathbb{R}$ and
+$v \in \mathbb{Z}^n$, $v$ belongs to the inner cube set of $S$ at scale $t$ if and only if
+$(x_1/t, \dots, x_n/t) \in S$ for every $x$ in the integer unit cube at $v$. -/
 @[simp] theorem mem_innerCubeSet_iff {n : ℕ} {S : Set (Fin n → ℝ)} {t : ℝ}
     {v : Fin n → ℤ} :
     v ∈ innerCubeSet S t ↔ ∀ x ∈ integerUnitCube v, (fun i => x i / t) ∈ S :=
   Iff.rfl
 
-/-- Every inner cube index is an outer cube index. -/
+/-- **Inner cube indices are outer cube indices.** For every set $S \subseteq \mathbb{R}^n$ and
+every real $t$, the inner cube set of $S$ at scale $t$ is contained in the outer cube set of $S$
+at scale $t$. -/
 theorem innerCubeSet_subset_outerCubeSet {n : ℕ} (S : Set (Fin n → ℝ))
     (t : ℝ) : innerCubeSet S t ⊆ outerCubeSet S t := by
   intro v hv
@@ -88,7 +106,9 @@ theorem innerCubeSet_subset_outerCubeSet {n : ℕ} (S : Set (Fin n → ℝ))
     exact ⟨le_refl _, by linarith⟩
   exact ⟨_, hmem, hv _ hmem⟩
 
-/-- The outer cube index set of a bounded set is finite for `0 < t`. -/
+/-- **Finiteness of the outer cube set.** If $S \subseteq \mathbb{R}^n$ is bounded and $t > 0$,
+then the outer cube set of $S$ at scale $t$, the set of $v \in \mathbb{Z}^n$ whose integer unit
+cube $\prod_i [v_i, v_i + 1)$ meets $tS$, is finite. -/
 theorem finite_outerCubeSet {n : ℕ} (S : Set (Fin n → ℝ))
     (hS : Bornology.IsBounded S) {t : ℝ} (ht : 0 < t) :
     (outerCubeSet S t).Finite := by
@@ -127,7 +147,11 @@ theorem finite_outerCubeSet {n : ℕ} (S : Set (Fin n → ℝ))
       _ ≤ (⌈R * t + 1⌉ : ℤ) := Int.le_ceil _
       _ < (⌈R * t + 1⌉ : ℤ) + 1 := by linarith
 
-/-- Cubical measure sandwich for a bounded set at a positive scale. -/
+/-- **Cubical measure sandwich.** Let $S \subseteq \mathbb{R}^n$ be bounded, let $t > 0$, and let
+$\mathrm{vol}(S)$ be the Lebesgue (outer) measure of $S$, which is finite. For
+$v \in \mathbb{Z}^n$ let $Q_v = \prod_i [v_i, v_i + 1)$. Let $I$ be the inner cube set of $S$ at
+scale $t$, the $v$ with $Q_v \subseteq tS$, and $O$ the outer cube set, the $v$ with $Q_v$
+meeting $tS$. Then $|I| \le \mathrm{vol}(S)\, t^n \le |O|$. -/
 theorem cube_measure_sandwich {n : ℕ} (S : Set (Fin n → ℝ))
     (hS : Bornology.IsBounded S) {t : ℝ} (ht : 0 < t) :
     (Nat.card (innerCubeSet S t) : ℝ) ≤ (volume S).toReal * t ^ n ∧
