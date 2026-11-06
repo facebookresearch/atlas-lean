@@ -26,10 +26,10 @@ are represented by divisibility of an integer difference, while congruences in
 -/
 
 /--
-`oddPart n` is the factor of `n` left after removing the full power of two in
-`n`.  The paper writes this as `od(n)`; the formalization reuses Mathlib's
-`ordCompl[2] n`, rather than introducing a quotient with a separately defined
-valuation.
+**Odd part.** For a natural number $n \ge 1$, the odd part $\operatorname{od}(n)$ is
+$n / 2^{\nu_2(n)}$, where $2^{\nu_2(n)}$ is the largest power of $2$ dividing $n$; it is the odd
+factor of $n$ left after removing that power of $2$. For $n = 0$ the definition gives
+$\operatorname{od}(0) = 0$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of od.
@@ -38,9 +38,9 @@ public def oddPart (n : ℕ) : ℕ :=
   ordCompl[2] n
 
 /--
-The characteristic formula for `oddPart`: it divides `n` by `2` raised to the
-exponent recorded by `Nat.factorization`.  This makes the correspondence with
-the paper's `n / 2^{ν(n)}` explicit.
+**Odd part as a quotient by a power of two.** For every natural number $n$,
+$\mathrm{od}(n) = n / 2^{\nu_2(n)}$, where $\mathrm{od}(n)$ is the odd part of $n$ and
+$\nu_2(n)$ is the exponent of $2$ in the prime factorization of $n$, with $\nu_2(0) = 0$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of od.
@@ -50,9 +50,9 @@ public theorem oddPart_eq (n : ℕ) :
   rfl
 
 /--
-`oddRangeProduct l m` is the product of the odd natural numbers in the closed
-interval `[l,m]`.  This is the paper's `odpr(l,m)`; a filtered `Finset.Icc`
-makes both endpoints and the oddness restriction explicit.
+**Odd-range product.** For natural numbers $l$ and $m$, the odd-range product
+$\operatorname{odpr}(l, m)$ is the product of the odd natural numbers $j$ with $l \le j \le m$;
+it equals $1$ when there are none.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of odpr.
@@ -61,9 +61,9 @@ public def oddRangeProduct (l m : ℕ) : ℕ :=
   ∏ j ∈ (Finset.Icc l m).filter Odd, j
 
 /--
-The characteristic expansion of `oddRangeProduct` is exactly the product over
-the closed interval filtered by `Odd`; this lemma exposes the computation used
-for the paper's `odpr(l,m)`.
+**Odd-range product as a filtered product.** For all natural numbers $l$ and $m$, the odd-range
+product $\operatorname{odpr}(l, m)$ equals the product $\prod j$ over the odd natural numbers $j$ in
+the closed interval $[l, m]$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of odpr.
@@ -73,9 +73,9 @@ public theorem oddRangeProduct_eq (l m : ℕ) :
   rfl
 
 /--
-`oddProductBlock m` is the odd product from `2^(m-1)+1` through `2^m-1`, matching the
-paper's definition.  Natural subtraction is used only in `m-1`, exactly as in
-the paper; all results that need a nontruncated exponent impose a lower bound.
+**Odd product block.** For a natural number $m$, the odd product block $h(m)$ is the product of
+the odd integers $j$ with $2^{m-1}+1 \le j \le 2^m-1$. In particular $h(0) = h(1) = 1$, as empty
+products.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of h.
@@ -84,8 +84,9 @@ public def oddProductBlock (m : ℕ) : ℕ :=
   oddRangeProduct (2 ^ (m - 1) + 1) (2 ^ m - 1)
 
 /--
-The characteristic formula for `h` unfolds it to the paper's stated odd-range
-product, including its lower and upper endpoints.
+**Odd product block as an odd-range product.** For every natural number $m$, the odd product block
+$h(m)$ equals $\operatorname{odpr}(2^{m-1}+1, 2^m-1)$, the product of the odd integers $j$ with
+$2^{m-1}+1 \le j \le 2^m-1$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of h.
@@ -95,10 +96,13 @@ public theorem oddProductBlock_eq (m : ℕ) :
   rfl
 
 /--
-`unstableBits e d` extracts the `d` bits beginning at position `e+1` from
-`od((2^e)!)`: natural division shifts right and remainder modulo `2^d` keeps
-the requested window.  The paper assumes `e>d` only when asserting Theorem 1,
-so the computational definition itself is total.
+**Unstable bits.** Write $\operatorname{od}(n)$ for the odd part of a natural number $n$. For
+natural numbers $e$ and $d$, the unstable bits $\operatorname{uns}(e,d)$ are the natural number
+$\lfloor \operatorname{od}((2^e)!) / 2^{e+1} \rfloor \bmod 2^d$, whose binary digits are the $d$
+bits of $\operatorname{od}((2^e)!)$ at positions $e+1, \dots, e+d$ (position $0$ being the least
+significant bit).
+
+The paper assumes $e > d$ only when stating Theorem 1, so the definition itself is total.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of uns.
@@ -107,9 +111,12 @@ public def unstableBits (e d : ℕ) : ℕ :=
   oddPart (Nat.factorial (2 ^ e)) / 2 ^ (e + 1) % 2 ^ d
 
 /--
-The characteristic formula for `uns` explicitly identifies the shifted and
-reduced odd factorial whose least-significant-first binary digits are the
-paper's first `d` unstable bits.
+**Formula for the unstable bits.** Write $\operatorname{od}(n)$ for the odd part of a natural
+number $n$. For all natural numbers $e$ and $d$, the unstable bits are
+$\operatorname{uns}(e,d) = \lfloor \operatorname{od}((2^e)!) / 2^{e+1} \rfloor \bmod 2^d$.
+
+The binary digits of this number, least significant first, are the paper's first $d$ unstable
+bits of $\operatorname{od}((2^e)!)$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of uns.
@@ -119,11 +126,15 @@ public theorem unstableBits_eq (e d : ℕ) :
   rfl
 
 /--
-`stableBits s d` extracts positions `s,...,s+d-1` from
-`od((2^(s+d-1))!)`.  Substituting `s=e+1` gives the paper's
-`stab(e+1,d)`, namely positions `e+1,...,e+d` of `od((2^(e+d))!)`.
-The total definition uses truncated natural subtraction only outside the
-paper's applications, where `s=e+1`.
+**Stable bits of the odd part of a factorial.** For natural numbers $s$ and $d$, let
+$\operatorname{stab}(s, d)$ be the number whose binary digits are the digits of
+$\operatorname{od}((2^{s+d-1})!)$ in positions $s, \dots, s + d - 1$ (position $0$ being the
+units digit), where $\operatorname{od}(m)$ is the odd part of $m$ and $s + d - 1$ is truncated
+subtraction. That is,
+$$\operatorname{stab}(s, d) = \lfloor \operatorname{od}((2^{s+d-1})!) / 2^s \rfloor \bmod 2^d.$$
+
+For $s = e + 1$ this is the source's $\operatorname{stab}(e + 1, d)$, the digits in positions
+$e + 1, \dots, e + d$ of $\operatorname{od}((2^{e+d})!)$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of stab.
@@ -132,8 +143,13 @@ public def stableBits (s d : ℕ) : ℕ :=
   oddPart (Nat.factorial (2 ^ (s + d - 1))) / 2 ^ s % 2 ^ d
 
 /--
-The characteristic formula for `stab` exposes the factorial exponent, right
-shift, and modulus; at `s=e+1` these are respectively `e+d`, `e+1`, and `d`.
+**Formula for the stable bits.** Write $\operatorname{od}(n)$ for the odd part of a natural
+number $n$. For all natural numbers $s$ and $d$, the stable bits are
+$\operatorname{stab}(s, d) = \lfloor \operatorname{od}((2^{s+d-1})!) / 2^s \rfloor \bmod 2^d$,
+where $s + d - 1$ is read as $0$ when $s = d = 0$.
+
+For $s = e + 1$ the factorial is that of $2^{e+d}$, the shift is by $e + 1$ binary digits and the
+modulus is $2^d$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of stab.
@@ -143,10 +159,11 @@ public theorem stableBits_eq (s d : ℕ) :
   rfl
 
 /--
-The smaller executable unstable-window check `uns(4,2)=3` witnesses that the
-definition extracts bits by first shifting and then reducing modulo `2^2`.
-It replaces the paper's much larger `uns(17,7)=74` check, whose direct
-factorial evaluation is impractical with the non-native kernel evaluator.
+**The unstable bits for $e = 4$ and $d = 2$.** The unstable bits $\operatorname{uns}(4,2)$ equal
+$3$; that is, $\lfloor \operatorname{od}(16!) / 2^5 \rfloor \bmod 2^2 = 3$, where
+$\operatorname{od}(16!)$ is the odd part of $16!$.
+
+This small case stands in for the paper's worked example $\operatorname{uns}(17,7) = 74$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Worked example after Theorem 1.
@@ -158,10 +175,13 @@ public theorem unstableBits_four_two : unstableBits 4 2 = 3 := by
   norm_num [Finset.sum_Ico_succ_top]
 
 /--
-The smaller executable stable-window check `stab(5,2)=0` validates the same
-factorial, shift, and remainder convention used in the paper's larger
-`stab(18,7)=55` example, whose direct factorial evaluation is impractical with
-the non-native kernel evaluator.
+**The stable bits $\operatorname{stab}(5, 2)$ vanish.** Writing $\operatorname{od}(m)$ for the odd
+part of $m$, the binary digits of $\operatorname{od}(64!)$ in positions $5$ and $6$ (the units
+digit being position $0$) are both $0$; that is,
+$\operatorname{stab}(5, 2) = \lfloor \operatorname{od}(64!) / 2^5 \rfloor \bmod 4 = 0$.
+
+This small instance checks the same factorial, shift and remainder convention as the source's
+larger worked example $\operatorname{stab}(18, 7) = 55$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Worked example after Theorem 1.
@@ -173,9 +193,9 @@ public theorem stableBits_five_two : stableBits 5 2 = 0 := by
   norm_num [Finset.sum_Ico_succ_top]
 
 /--
-`dyadicUpperHalf e` is the finite interval `I_e={i | 2^(e-1)<i≤2^e}`.  The paper's
-interval is represented by `Finset.Ioc`; Lemma 5 supplies `1≤e`, since the
-displayed interval degenerates under natural subtraction at `e=0`.
+**Dyadic upper half interval.** For a natural number $e$, $I_e$ is the finite set of natural
+numbers $i$ with $2^{e-1} < i \le 2^e$, where $e - 1$ is truncated subtraction, so that $I_0$ is
+empty.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of I_e.
@@ -184,8 +204,9 @@ public def dyadicUpperHalf (e : ℕ) : Finset ℕ :=
   Finset.Ioc (2 ^ (e - 1)) (2 ^ e)
 
 /--
-Membership in `dyadicUpperHalf e` is precisely the conjunction
-`2^(e-1)<i ∧ i≤2^e`, making the two inequalities defining `I_e` explicit.
+**Membership in the dyadic upper half.** For natural numbers $e$ and $i$, $i$ belongs to the
+dyadic upper half $I_e$ if and only if $2^{e-1} < i$ and $i \le 2^e$, where $e - 1$ is truncated
+subtraction.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of I_e.
@@ -195,8 +216,8 @@ public theorem mem_dyadicUpperHalf (e i : ℕ) :
   simp [dyadicUpperHalf]
 
 /--
-`oddBelowTwoPow e` is `S_e`, the odd positive natural numbers strictly below `2^e`.
-The bounds are encoded by `Ico 1 (2^e)` and oddness by a filter.
+**Odd numbers below a power of two.** For a natural number $e$, $S_e$ is the finite set of odd
+natural numbers $i$ with $1 \le i < 2^e$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of S_e.
@@ -205,8 +226,8 @@ public def oddBelowTwoPow (e : ℕ) : Finset ℕ :=
   (Finset.Ico 1 (2 ^ e)).filter Odd
 
 /--
-Membership in `oddBelowTwoPow e` means simultaneously `1≤i`, `i<2^e`, and `Odd i`,
-which are exactly the three clauses in the paper's definition of `S_e`.
+**Membership in the odd numbers below $2^e$.** For natural numbers $e$ and $i$, $i$ belongs to the
+set $S_e$ of odd positive integers below $2^e$ if and only if $1 \le i$, $i < 2^e$ and $i$ is odd.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of S_e.
@@ -216,9 +237,9 @@ public theorem mem_oddSet (e i : ℕ) :
   simp [oddBelowTwoPow, and_assoc]
 
 /--
-`integerMultiset s` changes the elements of a natural-number finite set to
-integers while preserving multiplicity.  This is the explicit coercion used
-when the paper's products and symmetric functions enter integer congruences.
+**Integer multiset of a finite set of naturals.** For a finite set $s$ of natural numbers, its
+integer multiset is the multiset of integers obtained by sending each element $n \in s$ to $n$
+viewed as an integer, so each element of $s$ occurs exactly once.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Convention for finite multisets.
@@ -227,8 +248,8 @@ public def integerMultiset (s : Finset ℕ) : Multiset ℤ :=
   s.val.map fun n : ℕ => (n : ℤ)
 
 /--
-The characteristic cardinality formula states that casting a finite set to an
-integer multiset neither adds nor removes entries.
+**Cardinality of the integer multiset.** For every finite set $s$ of natural numbers, the integer
+multiset of $s$ has the same number of elements, counted with multiplicity, as $s$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Convention for finite multisets.
@@ -238,10 +259,11 @@ public theorem integerMultiset_card (s : Finset ℕ) :
   simp [integerMultiset]
 
 /--
-`reverseESymm i s` is the elementary symmetric function of degree
-`s.card-i`.  It formalizes the paper's reversed indexing
-`σ̂_i(S)=σ_(n-i)(S)` for a multiset of cardinality `n`; truncated subtraction
-is Mathlib's standard interpretation when `i>n`.
+**Reversed elementary symmetric functions.** Let $R$ be a commutative semiring, let $S$ be a
+finite multiset of elements of $R$ with $n$ elements counted with multiplicity, and let $i$ be a
+natural number. The reversed elementary symmetric function $\hat\sigma_i(S)$ is
+$\sigma_{n-i}(S)$, the elementary symmetric function of degree $n - i$ in the elements of $S$.
+Here $n - i$ is truncated subtraction, so $\hat\sigma_i(S) = \sigma_0(S) = 1$ whenever $i \ge n$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of σ̂_i.
@@ -250,8 +272,11 @@ public def reverseESymm {R : Type*} [CommSemiring R] (i : ℕ) (s : Multiset R) 
   Multiset.esymm s (s.card - i)
 
 /--
-The characteristic formula for `reverseESymm` is the paper's reversal of the
-elementary-symmetric degree from `i` to `s.card-i`.
+**Unfolding the reversed elementary symmetric function.** For every commutative semiring $R$,
+natural number $i$ and finite multiset $S$ of elements of $R$ with $n$ elements counted with
+multiplicity, the reversed elementary symmetric function satisfies
+$\hat\sigma_i(S) = \sigma_{n-i}(S)$, the elementary symmetric function of $S$ of degree $n - i$,
+where $n - i$ is truncated subtraction.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of σ̂_i.
@@ -261,8 +286,9 @@ public theorem reverseESymm_eq {R : Type*} [CommSemiring R] (i : ℕ) (s : Multi
   rfl
 
 /--
-`oddDoubleFactorial e` is `(2^e-1)!!`, represented through the paper's identity
-as `odpr(1,2^e-1)`.  The parameter is the exponent `e`, not the odd endpoint.
+**Odd double factorial below a power of two.** For a natural number $e$, $(2^e-1)!!$ is the
+product of the odd natural numbers in the closed interval $[1, 2^e-1]$. The parameter is the
+exponent $e$, not the odd endpoint $2^e-1$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of (2^e-1)!!.
@@ -271,8 +297,9 @@ public def oddDoubleFactorial (e : ℕ) : ℕ :=
   oddRangeProduct 1 (2 ^ e - 1)
 
 /--
-The characteristic formula unfolds `oddDoubleFactorial e` to the odd-range
-product from `1` through `2^e-1`, exactly as stated in the paper.
+**Odd double factorial below a power of two as an odd-range product.** For every natural number
+$e$, $(2^e-1)!!$ equals the product of the odd natural numbers in the closed interval
+$[1, 2^e-1]$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition of (2^e-1)!!.
@@ -282,9 +309,11 @@ public theorem oddDoubleFactorial_eq (e : ℕ) :
   rfl
 
 /--
-`oneModEightBelowTwoPow e` is the finite set of natural numbers below `2^e` congruent to
-`1` modulo `8`, i.e. the displayed sequence `{1,9,...,2^e-7}` in Lemma 21.
-Using a filter avoids an endpoint subtraction at small `e`.
+**Numbers below $2^e$ congruent to $1$ modulo $8$.** For a natural number $e$, this is the
+finite set of natural numbers $n$ with $n < 2^e$ and $n \equiv 1 \pmod 8$.
+
+For $e \ge 3$ its elements are $1, 9, \dots, 2^e - 7$, the sequence displayed in Lemma 21 of
+the source.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 21 notation.
@@ -293,8 +322,9 @@ public def oneModEightBelowTwoPow (e : ℕ) : Finset ℕ :=
   (Finset.range (2 ^ e)).filter fun n => n % 8 = 1
 
 /--
-Membership in `oneModEightBelowTwoPow e` is exactly the pair of clauses `n<2^e` and
-`n≡1 (mod 8)`, with the congruence represented by natural remainder.
+**Membership in the residues one modulo eight below a power of two.** For all natural numbers $e$
+and $n$, $n$ lies in the set of natural numbers below $2^e$ that are congruent to $1$ modulo $8$
+if and only if $n < 2^e$ and $n \equiv 1 \pmod 8$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 21 notation.
@@ -304,9 +334,9 @@ public theorem mem_oneModEight (e n : ℕ) :
   simp [oneModEightBelowTwoPow]
 
 /--
-`fourCopiesOneModEightBelowTwoPow e` is the multiset containing four copies of every
-member of `{1,9,...,2^e-7}`.  Multiset scalar multiplication is the formal
-counterpart of the paper's phrase “four copies”.
+**Four copies of the residues $1 \bmod 8$ below $2^e$.** For a natural number $e$, this is the
+multiset of integers containing exactly four copies of each natural number $n < 2^e$ with
+$n \equiv 1 \pmod 8$, that is, of each of $1, 9, \dots, 2^e - 7$ when $e \ge 3$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 21.
@@ -315,9 +345,9 @@ public def fourCopiesOneModEightBelowTwoPow (e : ℕ) : Multiset ℤ :=
   4 • integerMultiset (oneModEightBelowTwoPow e)
 
 /--
-The characteristic formula for `fourCopiesOneModEightBelowTwoPow` exposes the multiset
-scalar multiplication used to create four occurrences of every integer in the
-`1 mod 8` set.
+**Four copies as a multiset scalar multiple.** For every natural number $e$, the multiset of four
+copies of the residues $1 \bmod 8$ below $2^e$ equals $4 \cdot M$, the sum of four copies of $M$,
+where $M$ is the integer multiset of the set of natural numbers $n < 2^e$ with $n \equiv 1 \pmod 8$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 21.
@@ -327,9 +357,12 @@ public theorem fourCopiesOneModEight_eq (e : ℕ) :
   rfl
 
 /--
-There is a 2-adic integer `K` such that for every `d<e`, adding `K` to the
-unstable window `unstableBits e d` gives the stable window `stableBits (e+1) d` modulo `2^d`.
-The congruence is represented by divisibility of the difference in `ℤ_[2]`.
+**A 2-adic constant relating unstable and stable bits.** Write
+$\mathrm{od}(n)$ for the odd part of a natural number $n$, and for natural numbers $d$ and $e$ let
+$\mathrm{uns}(e, d) = \lfloor \mathrm{od}((2^e)!) / 2^{e+1} \rfloor \bmod 2^d$ and
+$\mathrm{stab}(e + 1, d) = \lfloor \mathrm{od}((2^{e+d})!) / 2^{e+1} \rfloor \bmod 2^d$. There is a
+2-adic integer $K$ such that for all natural numbers $d < e$, $2^d$ divides
+$\mathrm{uns}(e, d) + K - \mathrm{stab}(e + 1, d)$ in $\mathbb{Z}_2$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Theorem 1.
@@ -339,9 +372,11 @@ public theorem_wanted exists_twoAdic_unstable_add_eq_stable :
       (2 : ℤ_[2]) ^ d ∣ (unstableBits e d : ℤ_[2]) + K - (stableBits (e + 1) d : ℤ_[2])
 
 /--
-For `e≥1`, the odd part of `(2^e)!` equals the product over `m=2,...,e` of
-`h(m)^(e+1-m)`.  The finite range is `Finset.Icc 2 e`; all quantities remain
-natural numbers because this is an exact factorial identity, not a congruence.
+**Odd part of a dyadic factorial as a product of odd blocks.** For every natural number
+$e \ge 1$,
+$$\mathrm{od}((2^e)!) = \prod_{m=2}^{e} h(m)^{e+1-m},$$
+where $\mathrm{od}(n)$ is the odd part of $n$ and $h(m)$ is the product of the odd numbers from
+$2^{m-1}+1$ to $2^m-1$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Proposition 3.
@@ -351,14 +386,18 @@ public theorem_wanted oddPart_factorial_eq_prod_h (e : ℕ) (he : 1 ≤ e) :
       ∏ m ∈ Finset.Icc 2 e, oddProductBlock m ^ (e + 1 - m)
 
 /--
-For `4≤m` and `m-1≤B≤3m-7`, put `d=2+⌊(B-m)/2⌋`, written in `ℕ` as `(B+4-m)/2`
-(so `d=1` when `B=m-1`); then `h(m)` is congruent modulo `2^B` to the stated initial
-odd-range product raised to `2^(m-1-d)`.  Divisibility in `ℤ` represents the congruence.
-The printed hypotheses `2≤m-1≤B≤3m-7` also allow `m=3`, whose only admissible case is
-`(m,B)=(3,2)`; there `d=1`, `h(3)=35`, and the comparison value is `25`, whose difference
-`10` is not divisible by `4`.  Requiring `4≤m` removes exactly that case and keeps every
-other printed case, including `B=m-1` (e.g. `(m,B)=(4,3)`: `d=1`, `h(4)=19305`, `9^4=6561`,
-`8∣12744`).
+**Initial-segment congruence for the odd product block.** For natural numbers $l$ and $u$ write
+$\operatorname{odpr}(l, u)$ for the product of the odd integers $j$ with $l \le j \le u$, and let
+$h(m) = \operatorname{odpr}(2^{m-1}+1, 2^m-1)$. Let $m \ge 4$ and $B$ be natural numbers with
+$m - 1 \le B \le 3m - 7$, and put $d = \lfloor (B + 4 - m)/2 \rfloor$, that is,
+$d = 2 + \lfloor (B - m)/2 \rfloor$ (so $d = 1$ when $B = m - 1$). Then
+$$
+h(m) \equiv \operatorname{odpr}\bigl(2^{m-1}+1,\ 2^{m-1}+2^d-1\bigr)^{2^{m-1-d}} \pmod{2^B}.
+$$
+
+The paper prints the hypotheses $2 \le m - 1 \le B \le 3m - 7$, which also allow $(m, B) = (3, 2)$.
+There $d = 1$, $h(3) = 35$ and the right-hand side is $5^2 = 25$, but $35 - 25 = 10$ is not
+divisible by $4$. Requiring $m \ge 4$ removes exactly that case and keeps every other printed case.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Theorem 4.
@@ -371,10 +410,10 @@ public theorem_wanted oddProductBlock_congr_initial_segment
         (2 ^ (m - 1 - d))
 
 /--
-For `e≥1`, the map taking a number to its odd part is a bijection from
-`I_e=(2^(e-1),2^e]` onto `S_e`, expressed as `Set.BijOn` between the coerced
-finite sets.  The lower bound is added because natural subtraction makes the
-paper's interval degenerate at `e=0`.
+**Odd parts biject the upper dyadic half onto the odd numbers below a power of two.**
+For every natural number $e \ge 1$, the map sending each natural number to its odd part restricts
+to a bijection from $I_e = \{i \in \mathbb{N} : 2^{e-1} < i \le 2^e\}$ onto the set $S_e$ of odd
+natural numbers $i$ with $1 \le i < 2^e$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 5.
@@ -383,10 +422,8 @@ public theorem_wanted oddPart_bijOn_upperHalf_oddSet (e : ℕ) (he : 1 ≤ e) :
     Set.BijOn oddPart (↑(dyadicUpperHalf e) : Set ℕ) (↑(oddBelowTwoPow e) : Set ℕ)
 
 /--
-For `e≥3`, the product of all positive odd integers below `2^e` is congruent
-to `2^e+1` modulo `2^(e+1)`.  Integer divisibility is used so subtraction does
-not truncate, while the product itself is the natural-number product over
-`S_e`.
+**Product of the odd numbers below $2^e$.** For every natural number $e \ge 3$, the product of the
+odd integers $i$ with $1 \le i < 2^e$ is congruent to $2^e + 1$ modulo $2^{e+1}$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 6.
@@ -396,9 +433,9 @@ public theorem_wanted oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
       ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) - ((2 ^ e + 1 : ℕ) : ℤ)
 
 /--
-For `e≥3`, the odd parts of `(2^(e-1))!` and `(2^e)!` agree modulo `2^e`.
-The factorial values are naturals, but their difference is taken in `ℤ` to
-avoid truncated subtraction.
+**Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
+number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
+$\mathrm{od}(n)$ denotes the odd part of $n$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Corollary 7.
@@ -408,9 +445,9 @@ public theorem_wanted oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) 
       (oddPart (Nat.factorial (2 ^ e)) : ℤ)
 
 /--
-There is a 2-adic integer `z` congruent to `od((2^(e-1))!)` modulo `2^e` for
-every `e≥1`.  The paper's limiting equality is represented by divisibility in
-`ℤ_[2]`; the explicit lower bound avoids a truncated exponent in the factorial.
+**A 2-adic limit of the odd parts of $(2^e)!$.** There is a 2-adic integer $z \in \mathbb{Z}_2$
+such that $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ in $\mathbb{Z}_2$ for every natural
+number $e \ge 1$, where $\operatorname{od}(n)$ is the odd part of $n$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Corollary 8.
@@ -420,9 +457,11 @@ public theorem_wanted exists_twoAdic_oddPart_factorial_limit :
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2])
 
 /--
-For `e≥2`, the product over `i∈S_e` of `i` agrees modulo `2^(2e)` with the
-product of `2^e+i`.  Both natural products are cast to `ℤ` before subtraction,
-so the divisibility formulation of congruence cannot truncate.
+**Shifting the odd numbers below $2^e$ by $2^e$.** For every natural number $e \ge 2$, let $S_e$ be
+the set of odd integers $i$ with $1 \le i < 2^e$. Then
+$$
+\prod_{i \in S_e} i \equiv \prod_{i \in S_e} (2^e + i) \pmod{2^{2e}}.
+$$
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Proposition 9.
@@ -433,11 +472,13 @@ public theorem_wanted oddSet_product_congr_shift (e : ℕ) (he : 2 ≤ e) :
         (∏ i ∈ oddBelowTwoPow e, ((2 ^ e + i : ℕ) : ℤ))
 
 /--
-For `e≥3`, the two normalized odd double-factorial differences are congruent modulo `2^(e-1)`. The
-paper states `e≥2`, but at `e=2` the first quotient is not an integer: `(2^2-1)!! - 1 = 2` is not
-divisible by `4`; the paper's proof takes integrality from Lemma 6, which needs `e≥3`. The
-conjunction explicitly records that `2^e` and `2^(e+1)` divide the respective numerators, justifying
-the two integer quotients; the final clause is the paper's congruence, represented in `ℤ`.
+**Congruence of normalized odd double factorials.** For every natural number $e \ge 3$, writing
+$(2^k-1)!!$ for the product of the odd numbers from $1$ to $2^k-1$, the integer $2^e$ divides
+$(2^e-1)!! - 1$, the integer $2^{e+1}$ divides $(2^{e+1}-1)!! - 1$, and
+$$\frac{(2^e-1)!! - 1}{2^e} \equiv \frac{(2^{e+1}-1)!! - 1}{2^{e+1}} \pmod{2^{e-1}}.$$
+
+The source states this for $e \ge 2$, but at $e = 2$ the first quotient is not an integer:
+$(2^2-1)!! - 1 = 2$ is not divisible by $4$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Corollary 10.
@@ -450,11 +491,13 @@ public theorem_wanted oddDoubleFactorial_normalized_congr (e : ℕ) (he : 3 ≤ 
         ((oddDoubleFactorial (e + 1) : ℤ) - 1) / (2 : ℤ) ^ (e + 1)
 
 /--
-There is a 2-adic integer `w` agreeing modulo `2^(e-1)` with the normalized
-odd double-factorial difference for every `e≥3` (the paper writes `e≥2`; at
-`e=2` the quotient `(3-1)/4` is not an integer, see Corollary 10).  This packages the defining
-property used later without introducing a global constant; the quotient is
-integer division, whose exactness is supplied by Corollary 10.
+**A 2-adic limit of normalized odd double factorials.** Write $(2^e - 1)!!$ for the product of
+the odd natural numbers from $1$ to $2^e - 1$. There is a 2-adic integer $w$ such that for every
+natural number $e \ge 3$, $2^{e-1}$ divides $w - \lfloor ((2^e - 1)!! - 1) / 2^e \rfloor$ in
+$\mathbb{Z}_2$.
+
+For $e \ge 3$ the division is exact. The paper writes $e \ge 2$, but at $e = 2$ the quotient
+$(3 - 1)/4$ is not an integer.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Definition after Corollary 10.
@@ -465,11 +508,13 @@ public theorem_wanted exists_twoAdic_oddDoubleFactorial_limit :
         (↑(((oddDoubleFactorial e : ℤ) - 1) / (2 : ℤ) ^ e) : ℤ_[2])
 
 /--
-For `e≥3`, the normalized difference of consecutive odd factorial parts is
-congruent to `z*w` modulo `2^(e-1)`.  Rather than defining global constants,
-`z` and `w` are quantified together with exactly their Corollary 8 and
-post-Corollary 10 congruence properties; the displayed quotient is formed in
-`ℤ`, cast to `ℤ_[2]`, and compared there.
+**Normalized difference of odd parts of dyadic factorials.** Write $\mathrm{od}(n)$ for the odd
+part of $n$, $(2^e-1)!!$ for the product of the odd numbers from $1$ to $2^e-1$, and
+$\lfloor x \rfloor$ for the floor of $x$; congruences are taken in the $2$-adic integers
+$\mathbb{Z}_2$. Let $z, w \in \mathbb{Z}_2$ satisfy $z \equiv \mathrm{od}((2^{e-1})!) \pmod{2^e}$
+for every $e \ge 1$ and $w \equiv \lfloor ((2^e-1)!! - 1)/2^e \rfloor \pmod{2^{e-1}}$ for every
+$e \ge 3$. Then for every $e \ge 3$,
+$$\lfloor (\mathrm{od}((2^e)!) - \mathrm{od}((2^{e-1})!))/2^e \rfloor \equiv zw \pmod{2^{e-1}}.$$
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Theorem 12.
@@ -487,11 +532,17 @@ public theorem_wanted oddPart_factorial_difference_congr_product
           (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ)) / (2 : ℤ) ^ e) : ℤ_[2]) - z * w
 
 /--
-Any `K`, `z`, and `w` satisfying their defining properties obey `K=-z*w`.
-The hypothesis on `K` reproduces the full Theorem 1 property for every
-`d<e`; the other hypotheses reproduce Corollary 8 and the definition after
-Corollary 10.  Quantification avoids choosing any of these 2-adic limits as a
-global constant.
+**The unstable translation constant equals $-zw$.** Write $\operatorname{od}(n)$ for the odd part
+of a natural number $n$, $(2^e-1)!!$ for the product of the odd numbers from $1$ to $2^e-1$,
+$\operatorname{uns}(e,d) = \lfloor \operatorname{od}((2^e)!)/2^{e+1} \rfloor \bmod 2^d$ and
+$\operatorname{stab}(e+1,d) = \lfloor \operatorname{od}((2^{e+d})!)/2^{e+1} \rfloor \bmod 2^d$.
+Let $K$, $z$ and $w$ be $2$-adic integers such that, with congruences in $\mathbb{Z}_2$,
+$\operatorname{uns}(e,d) + K \equiv \operatorname{stab}(e+1,d) \pmod{2^d}$ for all natural
+numbers $d < e$, $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ for all $e \ge 1$, and
+$w \equiv \lfloor ((2^e-1)!! - 1)/2^e \rfloor \pmod{2^{e-1}}$ for all $e \ge 3$. Then $K = -zw$.
+
+The three hypotheses are the defining properties of $K$ (Theorem 1), $z$ (Corollary 8) and $w$
+(the definition after Corollary 10).
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Theorem 14.
@@ -508,9 +559,11 @@ public theorem_wanted unstable_translation_eq_neg_product
     K = -z * w
 
 /--
-For every integer `A` and `e≥2`, shifting each `i∈S_e` by `A*2^e` leaves
-their product unchanged modulo `2^(3e-1)`.  Products and the congruence are in
-`ℤ`, permitting negative `A` and avoiding natural subtraction.
+**Shifting the odd numbers below $2^e$ by a multiple of $2^e$.** For every integer $A$ and every
+natural number $e \ge 2$, let $S_e$ be the set of odd integers $i$ with $1 \le i < 2^e$. Then
+$$
+\prod_{i \in S_e} (A \cdot 2^e + i) \equiv \prod_{i \in S_e} i \pmod{2^{3e-1}}.
+$$
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Theorem 16.
@@ -522,9 +575,13 @@ public theorem_wanted oddSet_product_linear_shift_congr
         ∏ i ∈ oddBelowTwoPow e, (i : ℤ)
 
 /--
-For integers `A,B`, natural `j`, and `e≥2`, the `2^j` powers of the two shifted
-products over `S_e` agree modulo `2^(3e-1+j)`.  The exponentiation applies to
-each factor as printed, and integer products allow arbitrary signs of `A,B`.
+**Powers of shifted products over the odd numbers below $2^e$.** For all integers $A$ and $B$ and
+all natural numbers $j$ and $e$ with $e \ge 2$, let $S_e$ be the set of odd integers $i$ with
+$1 \le i < 2^e$. Then
+$$
+\prod_{i \in S_e} (A \cdot 2^e + i)^{2^j} \equiv \prod_{i \in S_e} (B \cdot 2^e + i)^{2^j}
+\pmod{2^{3e-1+j}}.
+$$
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Corollary 17.
@@ -536,9 +593,11 @@ public theorem_wanted oddSet_product_power_shift_congr
         ∏ i ∈ oddBelowTwoPow e, (B * (2 : ℤ) ^ e + (i : ℤ)) ^ (2 ^ j)
 
 /--
-For `e≥2`, the reversed elementary symmetric function `σ̂_1(S_e)` is
-congruent to `2^(2e-2)` modulo `2^(2e-1)`.  `S_e` is cast to an integer
-multiset and congruence is integer divisibility, so all subtractions are exact.
+**$\hat\sigma_1$ of the odd numbers below $2^e$.** Let $e \ge 2$ and let $S_e$ be the set of odd
+natural numbers $i$ with $1 \le i < 2^e$, regarded as a multiset of integers with $n$ elements,
+and write $\sigma_k$ for the elementary symmetric function of degree $k$. Then the reversed
+elementary symmetric function $\hat\sigma_1(S_e) = \sigma_{n-1}(S_e)$ satisfies
+$\hat\sigma_1(S_e) \equiv 2^{2e-2} \pmod{2^{2e-1}}$ in $\mathbb{Z}$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 18.
@@ -548,9 +607,11 @@ public theorem_wanted reverseESymm_one_oddSet_congr (e : ℕ) (he : 2 ≤ e) :
       reverseESymm 1 (integerMultiset (oddBelowTwoPow e)) - (2 : ℤ) ^ (2 * e - 2)
 
 /--
-For `e≥2`, the reversed elementary symmetric function `σ̂_2(S_e)` is
-congruent to `2^(e-2)` modulo `2^(e-1)`.  As in Lemma 18, the multiset and
-congruence are taken in `ℤ` rather than relying on truncated natural subtraction.
+**$\hat\sigma_2$ of the odd numbers below $2^e$.** Let $e \ge 2$ and let $S_e$ be the set of odd
+natural numbers $i$ with $1 \le i < 2^e$, regarded as a multiset of integers with $n$ elements,
+and write $\sigma_k$ for the elementary symmetric function of degree $k$. Then the reversed
+elementary symmetric function $\hat\sigma_2(S_e) = \sigma_{n-2}(S_e)$ satisfies
+$\hat\sigma_2(S_e) \equiv 2^{e-2} \pmod{2^{e-1}}$ in $\mathbb{Z}$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 19.
@@ -560,10 +621,9 @@ public theorem_wanted reverseESymm_two_oddSet_congr (e : ℕ) (he : 2 ≤ e) :
       reverseESymm 2 (integerMultiset (oddBelowTwoPow e)) - (2 : ℤ) ^ (e - 2)
 
 /--
-For `e≥3`, every `v<2^e` with `v≡1 (mod 8)` has exactly four preimages among
-`i∈S_e` under `i↦i^2 mod 2^e`.  The cardinality of the explicitly filtered
-finite set formalizes “occurs exactly four times”; the paper's count of
-`2^(e-3)` possible values is represented by the quantified range of `v`.
+**Each residue $1 \bmod 8$ has four odd square roots modulo $2^e$.** Let $e \ge 3$ and let $S_e$
+be the set of odd natural numbers $i$ with $1 \le i < 2^e$. For every natural number $v < 2^e$
+with $v \equiv 1 \pmod 8$, exactly four elements $i \in S_e$ satisfy $i^2 \bmod 2^e = v$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 20.
@@ -573,10 +633,13 @@ public theorem_wanted square_mod_twoPower_fiber_card
     ({i ∈ oddBelowTwoPow e | i ^ 2 % 2 ^ e = v}).card = 4
 
 /--
-For `e≥3`, `σ̂_1` of the multiset with four copies of each number below `2^e`
-congruent to `1 mod 8` is congruent to `2^(e-1)` modulo `2^e`.  The displayed
-sequence `{1,9,...,2^e-7}` is represented by `oneModEightBelowTwoPow e`, and four copies
-by multiset scalar multiplication.
+**$\hat\sigma_1$ of four copies of the numbers $1 \bmod 8$ below $2^e$.** Let $e \ge 3$ and let
+$M_e$ be the multiset of integers containing each natural number $n < 2^e$ with
+$n \equiv 1 \pmod 8$ (that is, $1, 9, \dots, 2^e - 7$) exactly four times, let $N$ be the
+number of elements of $M_e$ counted with multiplicity, and write $\sigma_k$ for the elementary
+symmetric function of degree $k$. Then the reversed elementary symmetric function
+$\hat\sigma_1(M_e) = \sigma_{N-1}(M_e)$ satisfies $\hat\sigma_1(M_e) \equiv 2^{e-1} \pmod{2^e}$
+in $\mathbb{Z}$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Lemma 21.
@@ -587,10 +650,12 @@ public theorem_wanted reverseESymm_fourCopies_oneModEight_congr
       reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) - (2 : ℤ) ^ (e - 1)
 
 /--
-For `e≥1`, summing the squares of the products over `S_e\{i}` is congruent to
-`2^(e-1)` modulo `2^e`.  Each erased product squared equals the paper's
-`((2^e-1)!!)^2/i^2`; this equivalent exact-product form avoids adding an
-integer exact-division side condition for every summand.
+**Squared products of the odd residues omitting one factor.** Let $e \ge 1$ and let
+$S_e$ be the set of odd positive integers below $2^e$. Then, as integers,
+$$\sum_{i \in S_e} \Bigl(\prod_{j \in S_e \setminus \{i\}} j\Bigr)^2 \equiv 2^{e-1} \pmod{2^e}.$$
+
+Each squared product equals the paper's $((2^e-1)!!)^2/i^2$; the product form avoids an exact
+division for every summand.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Proposition 22.
