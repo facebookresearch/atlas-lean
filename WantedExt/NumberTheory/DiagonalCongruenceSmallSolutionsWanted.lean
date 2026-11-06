@@ -22,8 +22,10 @@ open Pointwise
 
 @[expose] public section
 
-/-- Sumset-product covering in `ℤ/pℤ`: if `A₁, A₂, A₃, D ⊆ ℤ/pℤ` satisfy
-`|A₁| |A₂| |A₃| |D| > p³`, then `A₁ D + A₂ + A₃ = ℤ/pℤ`.
+/-- **Sum-product sets cover the integers modulo a prime.** Let $p$ be a prime and let
+$A_1, A_2, A_3, D$ be subsets of $\mathbb{Z}/p\mathbb{Z}$ with $|A_1| |A_2| |A_3| |D| > p^3$.
+Then every residue class modulo $p$ can be written as $a_1 d + a_2 + a_3$ with $a_1 \in A_1$,
+$d \in D$, $a_2 \in A_2$ and $a_3 \in A_3$; that is, $A_1 D + A_2 + A_3 = \mathbb{Z}/p\mathbb{Z}$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
 Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 3
@@ -42,11 +44,12 @@ bound, and a prime `q` satisfies `q ≤ B^η` iff `q < ⌊B^η⌋₊ + 1`). The 
 `k (log k + log log k + 2 + g k)` for `k ≥ 4`, where `g k = O(log log k / log k)`; the
 function `g` is existentially quantified in each statement. -/
 
-/-- Lemma 2 (quoting Lemma 8.1 of Cochrane, Ostergaard and Spencer): `Γ(k, p) ≤ k`, where
-`Γ(k, p)` is the least `n` such that every congruence
-`a_1 x_1^k + ⋯ + a_n x_n^k ≡ c (mod p)` with `p ∤ a_i` is solvable. Since solvability with
-`n` variables gives solvability with more (set the extra variables to `0`), this is stated
-as: every such congruence in exactly `k` variables is solvable.
+/-- **Diagonal congruences in $k$ variables are solvable.** Let $p$ be a prime and $k \ge 1$. For
+all integers $a_1, \dots, a_k$ not divisible by $p$ and every integer $c$, there are integers
+$x_1, \dots, x_k$ with $a_1 x_1^k + \dots + a_k x_k^k \equiv c \pmod p$.
+
+Equivalently, $\Gamma(k, p) \le k$, where $\Gamma(k, p)$ is the least $n$ such that every such
+congruence in $n$ variables is solvable; extra variables can be set to $0$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
 Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 2 (`integers-2026-A14-lem-2`). -/
@@ -54,11 +57,16 @@ public theorem_wanted diagonal_congruence_solvable_of_card_eq_exponent (p : ℕ)
     {k : ℕ} (hk : 1 ≤ k) (a : Fin k → ℤ) (ha : ∀ i, ¬ (p : ℤ) ∣ a i) (c : ℤ) :
     ∃ x : Fin k → ℤ, ∑ i, a i * x i ^ k ≡ c [ZMOD p]
 
-/-- Theorem 2 (Chow, Lindqvist and Prendiville, Theorem B.1): for `k ≥ 2` there is
-`η_0(k) > 0` such that, for nonzero integers `c_1, …, c_s` with a nonempty zero
-subsum, `s ≥ s_0(k)` and `0 < η ≤ η_0(k)`, the number of `x ∈ A(N, N^η)^s` with
-`∑ c_i x_i^k = 0` is `≍_{c,η,k} N^{s-k}` for all `N ≥ N_0(c, η, k)`; moreover
-`s_0(2) = 5`, `s_0(3) = 8` and `s_0(k) = k (log k + log log k + 2 + O(log log k / log k))`.
+/-- **Smooth solutions of diagonal equations (Chow–Lindqvist–Prendiville).** For a natural number
+$N$ and real $\eta > 0$, let $A(N, N^\eta)$ be the set of integers $1 \le x \le N$ all of whose
+prime factors are at most $N^\eta$. There is a real-valued function $g$ on the natural numbers
+with $g(k) = O(\log \log k / \log k)$ as $k \to \infty$ such that for every $k \ge 2$ there is
+$\eta_0 > 0$ with the following property. Let $c_1, \dots, c_s$ be nonzero integers such that
+$\sum_{i \in I} c_i = 0$ for some nonempty $I \subseteq \{1, \dots, s\}$, and suppose $s \ge 5$
+if $k = 2$, $s \ge 8$ if $k = 3$, and $s \ge k (\log k + \log \log k + 2 + g(k))$ if $k \ge 4$.
+Then for every $0 < \eta \le \eta_0$ there are a natural number $N_0$ and constants
+$C_1, C_2 > 0$ such that for all $N \ge N_0$ the number of $x \in A(N, N^\eta)^s$ with
+$c_1 x_1^k + \dots + c_s x_s^k = 0$ is at least $C_1 N^{s-k}$ and at most $C_2 N^{s-k}$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
 Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 2 (`integers-2026-A14-thm-2`), quoting Chow, Lindqvist and Prendiville,
@@ -82,10 +90,16 @@ public theorem_wanted smooth_diagonal_solution_count_asymp :
                   fun x => ∑ i, c i * (x i : ℤ) ^ k = 0).card : ℝ) ≤
                 C₂ * (N : ℝ) ^ ((s : ℝ) - k)
 
-/-- Lemma 1: for `k ≥ 2`, `0 < η ≤ η_0(k)`, `n ≥ 1` with `2n ≥ s_0(k)`, there is
-`C = C(k, n, η) > 0` such that for every prime `p`, every `B ≥ 1` with `n B^k ≤ p` and all
-integers `a_i` prime to `p`, the set
-`S_{A^n} = {∑ a_i x_i^k mod p : x ∈ A(B, B^η)^n}` has at least `C B^k` elements.
+/-- **Many values of a smooth diagonal form modulo a prime.** For a natural number $B$ and real
+$\eta > 0$, let $A(B, B^\eta)$ be the set of integers $1 \le x \le B$ all of whose prime factors
+are at most $B^\eta$. There is a real-valued function $g$ on the natural numbers with
+$g(k) = O(\log \log k / \log k)$ as $k \to \infty$ such that for every $k \ge 2$ there is
+$\eta_0 > 0$ with the following property. Let $0 < \eta \le \eta_0$ and let $n \ge 1$ satisfy
+$2n \ge 5$ if $k = 2$, $2n \ge 8$ if $k = 3$, and $2n \ge k (\log k + \log \log k + 2 + g(k))$
+if $k \ge 4$. Then there is $C > 0$ such that for every prime $p$, every natural number $B \ge 1$
+with $n B^k \le p$ and all integers $a_1, \dots, a_n$ not divisible by $p$, the set of residues
+modulo $p$ of $a_1 x_1^k + \dots + a_n x_n^k$ with $x \in A(B, B^\eta)^n$ has at least $C B^k$
+elements.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
 Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 1 (`integers-2026-A14-lem-1`). -/
@@ -102,10 +116,13 @@ public theorem_wanted card_smooth_diagonal_values_ge :
                     Nat.smoothNumbersUpTo B (⌊(B : ℝ) ^ η⌋₊ + 1)).image
                   fun x => ∑ i, (a i : ZMod p) * (x i : ZMod p) ^ k).card : ℝ)
 
-/-- Theorem 1: for `k ≥ 2` there is `C = C(k) > 0` such that for every `n` with `n ≥ 9`
-(`k = 2`), `n ≥ 12` (`k = 3`), or `n ≥ (3/2) k (log k + log log k + 2 + O(log log k / log k))`
-(`k ≥ 4`), every prime `p`, integer `c` and integers `a_i` with `p ∤ a_i`, the congruence
-`a_1 x_1^k + ⋯ + a_n x_n^k ≡ c (mod p)` has a solution with `1 ≤ x_i ≤ C p^{1/k}`.
+/-- **Small solutions of diagonal congruences.** There is a real-valued function $g$ on the natural
+numbers with $g(k) = O(\log \log k / \log k)$ as $k \to \infty$ such that for every $k \ge 2$
+there is a constant $C > 0$ with the following property. Let $n$ satisfy $n \ge 9$ if $k = 2$,
+$n \ge 12$ if $k = 3$, and $n \ge \frac{3}{2} k (\log k + \log \log k + 2 + g(k))$ if $k \ge 4$.
+Then for every prime $p$, every integer $c$ and all integers $a_1, \dots, a_n$ not divisible by
+$p$, the congruence $a_1 x_1^k + \dots + a_n x_n^k \equiv c \pmod p$ has a solution in natural
+numbers $x_1, \dots, x_n$ with $1 \le x_i \le C p^{1/k}$ for every $i$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
 Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 1 (`integers-2026-A14-thm-1`). -/

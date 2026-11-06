@@ -27,14 +27,22 @@ entry and omitted here. Newman's threshold theorem, which converts
 these into bounds on `deBruijnNewmanConstant`, is not formalized.
 -/
 
-/-- Source: Rodgers and Tao, *The de Bruijn--Newman constant is
+/-- **Nonreal zeros of the de Bruijn–Newman deformation at negative times.** For every real
+$\lambda < 0$, not every zero of the de Bruijn–Newman deformation $H_\lambda$ is real: there is
+a complex $z$ with $H_\lambda(z) = 0$ and nonzero imaginary part.
+
+Source: Rodgers and Tao, *The de Bruijn--Newman constant is
 non-negative*, Forum Math. Pi 8 (2020): at every negative deformation
 time, `H` has a nonreal zero. Known literature result; its proof is
 not supplied here. -/
 theorem_wanted rodgersTaoNegativeTime_wanted :
     ∀ lam : ℝ, lam < 0 → ¬ ZerosAllReal lam
 
-/-- Source: Platt and Trudgian, *The Riemann hypothesis is true up to
+/-- **All zeros of the de Bruijn–Newman deformation are real at time 1/5.** Every zero of the
+de Bruijn–Newman deformation $H_{1/5}$ is real: every complex $z$ with $H_{1/5}(z) = 0$ has
+imaginary part $0$.
+
+Source: Platt and Trudgian, *The Riemann hypothesis is true up to
 3·10¹²*, Bull. Lond. Math. Soc. 53 (2021), via the Polymath15
 criterion: at time `1 / 5` all zeros of `H` are real (catalogue upper
 bound `0.2`). Known literature result; its proof and computation are

@@ -45,9 +45,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.AmicableWanted
 
-/-- **Lemma 1**: for each fixed positive integer `N`, the
-set of integers `l` for which `N` does not divide `σ l`
-has natural density `0`.
+/-- **A fixed positive integer divides the divisor sum of almost every natural number.** For
+a natural number $l$ let $\sigma(l)$ denote the sum of the positive divisors of $l$, with
+$\sigma(0) = 0$. Then for every positive integer $N$, the set of natural numbers $l$ such
+that $N$ does not divide $\sigma(l)$ has natural density $0$.
 
 Source: Stoyan Dimitrov, "Generalizations of Amicable
 Numbers", Lemma 1. -/
@@ -55,8 +56,10 @@ theorem_wanted tendsto_density_not_dvd_sigma (N : ℕ)
     (hN : 1 ≤ N) :
     {l : ℕ | ¬ N ∣ ArithmeticFunction.sigma 1 l}.HasDensity 0
 
-/-- **Lemma 2**: for each real `x ≥ 1`,
-`∑_{n ≤ x} σ n / n < ζ 2 * x`.
+/-- **Linear bound for the partial sums of the abundancy index.** For a positive integer
+$n$ let $\sigma(n)$ denote the sum of the positive divisors of $n$, and let
+$\zeta(2) = \sum_{n=1}^{\infty} 1/n^2$. Then for every real number $x \ge 1$,
+$$\sum_{n=1}^{\lfloor x \rfloor} \frac{\sigma(n)}{n} < \zeta(2)\, x.$$
 
 Source: Stoyan Dimitrov, "Generalizations of Amicable
 Numbers", Lemma 2. -/

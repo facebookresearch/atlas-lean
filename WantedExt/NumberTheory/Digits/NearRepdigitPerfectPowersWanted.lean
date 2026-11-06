@@ -22,19 +22,17 @@ namespace MetaMathlibExt
 Finiteness of perfect `l`-th powers whose decimal digits are all equal but one.
 -/
 
-/--
-For fixed `l ≥ 3`, there are only finitely many perfect `l`-th powers all of
-whose decimal digits are equal but one, except for the trivial families
-`10 ^ (l * n)` and, for `l = 3`, `8 * 10 ^ (3 * n)`.
+/-- **Perfect powers with all decimal digits equal but one (Kihel–Luca).** Fix a natural number
+$l \ge 3$. There are only finitely many perfect $l$-th powers $y = x^l$ ($x \in \mathbb{N}$) whose
+decimal digits are all equal but one, that is, some digit $c$ occurs in the decimal
+representation of $y$ and exactly one digit position of $y$ holds a digit other than $c$, apart
+from the powers $10^{ln}$ ($n \in \mathbb{N}$) and, when $l = 3$, the cubes $8 \cdot 10^{3n}$
+($n \in \mathbb{N}$).
 
 Source: Omar Kihel and Florian Luca, "Perfect Powers with All Equal Digits
 but One," Journal of Integer Sequences 8 (2005), Article 05.5.7, Theorem 1
 (label thm:1), lines 134–140,
-https://cs.uwaterloo.ca/journals/JIS/VOL8/Kihel/kihel7.tex.
-
-The digit condition says some digit `c < 10` occurs in `Nat.digits 10 y`
-with exactly one digit different from `c`.
--/
+https://cs.uwaterloo.ca/journals/JIS/VOL8/Kihel/kihel7.tex. -/
 public theorem_wanted finite_near_repdigit_perfect_powers (l : ℕ) (hl : 3 ≤ l) :
   Set.Finite
     { y : ℕ | (∃ x : ℕ, y = x ^ l) ∧
