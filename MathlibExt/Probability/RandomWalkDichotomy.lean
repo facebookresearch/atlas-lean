@@ -80,36 +80,51 @@ open MathlibExt.Probability.RandomWalkTailMeasurability (randomWalkPartialSum)
 
 namespace MathlibExt.Probability.RandomWalkDichotomy
 
-/-- Almost surely every partial sum of the random walk is zero. -/
+/-- **Zero random walk.** Let $\mu$ be a probability measure on a measurable space $\Omega$, let
+$X_0, X_1, \ldots$ be real-valued functions on $\Omega$, and let $S_n = \sum_{i < n} X_i$ be the
+partial sums of the random walk. The walk is a zero walk when, for $\mu$-almost every
+$\omega \in \Omega$, we have $S_n(\omega) = 0$ for every $n \in \mathbb{N}$. -/
 def ZeroWalk {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, ∀ n, randomWalkPartialSum X n ω = 0
 
-/-- The random walk *drifts to `+∞`*: almost surely `Sₙ → +∞` as `n → ∞`. -/
+/-- **Random walk drifting to $+\infty$.** Let $X_0, X_1, \dots$ be real random variables on a
+probability space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$ drifts
+to $+\infty$ if for $\mu$-almost every $\omega$, $S_n(\omega) \to +\infty$ as $n \to \infty$. -/
 def DriftsToTop {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop Filter.atTop
 
-/-- The random walk *drifts to `-∞`*: almost surely `Sₙ → -∞` as `n → ∞`. -/
+/-- **Random walk drifting to $-\infty$.** Let $X_0, X_1, \dots$ be real random variables on a
+probability space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$ drifts
+to $-\infty$ if for $\mu$-almost every $\omega$, $S_n(\omega) \to -\infty$ as $n \to \infty$. -/
 def DriftsToBot {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop Filter.atBot
 
-/-- The random walk *oscillates*: almost surely `limsup Sₙ = +∞` and
-`liminf Sₙ = -∞`. -/
+/-- **Oscillating random walk.** Let $X_0, X_1, \dots$ be real random variables on a probability
+space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$ oscillates if for
+$\mu$-almost every $\omega$, $\limsup_n S_n(\omega) = +\infty$ and
+$\liminf_n S_n(\omega) = -\infty$, the limits taken in the extended reals. -/
 def Oscillates {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, randomWalkLimsup X ω = ⊤ ∧ randomWalkLiminf X ω = ⊥
 
-/-- The random walk *converges to a finite limit*: almost surely there
-exists `l ∈ ℝ` with `Sₙ → l`. The limit may depend on the path; this is a
-weaker consequence of the zero-walk alternative in the i.i.d. dichotomy. -/
+/-- **Random walk with a finite limit.** Let $X_0, X_1, \dots$ be real random variables on a
+probability space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$
+converges to a finite limit if for $\mu$-almost every $\omega$ there is $l \in \mathbb{R}$ with
+$S_n(\omega) \to l$ as $n \to \infty$.
+
+The limit may depend on $\omega$; the zero-walk alternative of the i.i.d. random-walk dichotomy
+implies this property. -/
 def ConvergesFinite {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, ∃ l : ℝ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop
     (𝓝 l)
 
-/-- Every partial sum vanishes almost surely if and only if every increment does. -/
+/-- **A random walk is zero exactly when its steps are.** Let $X_0, X_1, \dots$ be real random
+variables on a probability space and $S_n = \sum_{i < n} X_i$. Then almost surely $S_n = 0$ for
+every $n$ if and only if almost surely $X_i = 0$ for every $i$. -/
 theorem zeroWalk_iff_ae_forall_eq_zero {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℝ} :
     ZeroWalk μ X ↔ ∀ᵐ ω ∂μ, ∀ i, X i ω = 0 := by
@@ -123,7 +138,9 @@ theorem zeroWalk_iff_ae_forall_eq_zero {Ω : Type*} [MeasurableSpace Ω]
     filter_upwards [h] with ω hω n
     exact Finset.sum_eq_zero fun i _ => hω i
 
-/-- A zero walk converges to the finite limit zero. -/
+/-- **A zero walk converges to a finite limit.** Let $X_0, X_1, \dots$ be real random
+variables on a probability space and $S_n = \sum_{i < n} X_i$. If almost surely $S_n = 0$ for
+every $n$, then almost surely there is $l \in \mathbb{R}$ with $S_n \to l$ as $n \to \infty$. -/
 theorem ZeroWalk.convergesFinite {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℝ}
     (h : ZeroWalk μ X) : ConvergesFinite μ X :=
@@ -234,8 +251,12 @@ private theorem ae_all_coords_eq_zero_of_ae_coord_zero (ρ : Measure ℝ)
   exact ae_mem_of_measure_eq_one (measurable_pi_apply i (measurableSet_singleton 0))
     (h1.trans (h2.symm.trans h3))
 
-/-- The dichotomy on the canonical sequence space: for the i.i.d. product
-measure, the coordinate walk satisfies one of the four alternatives. -/
+/-- **Random-walk dichotomy on sequence space.** Let $\rho$ be a probability measure on
+$\mathbb{R}$, let $\nu = \rho^{\otimes \mathbb{N}}$ be the product measure on
+$\mathbb{R}^{\mathbb{N}}$, and let $S_n(\omega) = \sum_{i < n} \omega_i$ be the partial sums of
+the coordinates. Then one of the following holds: $\nu$-almost surely $S_n = 0$ for every $n$;
+$\nu$-almost surely $S_n \to +\infty$; $\nu$-almost surely $S_n \to -\infty$; or $\nu$-almost
+surely $\limsup_n S_n = +\infty$ and $\liminf_n S_n = -\infty$. -/
 theorem dichotomy_product_zero (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     ZeroWalk (Measure.infinitePi (fun _ : ℕ => ρ)) coordSeq ∨
     DriftsToTop (Measure.infinitePi (fun _ : ℕ => ρ)) coordSeq ∨
@@ -415,7 +436,13 @@ theorem dichotomy_product_zero (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
       ae_all_coords_eq_zero_of_ae_coord_zero ρ h0
     exact zeroWalk_iff_ae_forall_eq_zero.mpr hall
 
-/-- The finite-convergence form of the product-space dichotomy. -/
+/-- **Random-walk dichotomy on sequence space, finite-limit form.** Let $\rho$ be a probability
+measure on $\mathbb{R}$, let $\nu = \rho^{\otimes \mathbb{N}}$ be the product measure on
+$\mathbb{R}^{\mathbb{N}}$, and let $S_n(\omega) = \sum_{i < n} \omega_i$ be the partial sums of
+the coordinates. Then one of the following holds: $\nu$-almost surely $S_n$ converges to a
+finite limit (which may depend on $\omega$); $\nu$-almost surely $S_n \to +\infty$;
+$\nu$-almost surely $S_n \to -\infty$; or $\nu$-almost surely $\limsup_n S_n = +\infty$ and
+$\liminf_n S_n = -\infty$. -/
 theorem dichotomy_product (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     ConvergesFinite (Measure.infinitePi (fun _ : ℕ => ρ)) coordSeq ∨
     DriftsToTop (Measure.infinitePi (fun _ : ℕ => ρ)) coordSeq ∨
@@ -423,10 +450,10 @@ theorem dichotomy_product (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     Oscillates (Measure.infinitePi (fun _ : ℕ => ρ)) coordSeq :=
   Or.imp_left ZeroWalk.convergesFinite (dichotomy_product_zero ρ)
 
-/-- **Random-walk dichotomy.** If `X₁, X₂, …` are i.i.d. real-valued random
-variables and `Sₙ = X₁ + ⋯ + Xₙ`, then almost surely one of the following
-occurs: `Sₙ = 0` for every `n`, `Sₙ → +∞`, `Sₙ → -∞`, or
-`liminf Sₙ = -∞` and `limsup Sₙ = +∞`. -/
+/-- **Random-walk dichotomy.** Let $X_0, X_1, \dots$ be independent, identically distributed
+real random variables on a probability space and $S_n = \sum_{i < n} X_i$. Then one of the
+following events has probability one: $S_n = 0$ for every $n$; $S_n \to +\infty$;
+$S_n \to -\infty$; or $\limsup_n S_n = +\infty$ and $\liminf_n S_n = -\infty$. -/
 theorem random_walk_dichotomy_zero {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ)
     (hindep : iIndepFun X μ) (hident : ∀ i, IdentDistrib (X i) (X 0) μ μ) :
@@ -471,7 +498,11 @@ theorem random_walk_dichotomy_zero {Ω : Type*} [MeasurableSpace Ω] (μ : Measu
     filter_upwards [hE] with ω hω
     exact hω
 
-/-- The finite-convergence corollary of the random-walk dichotomy. -/
+/-- **Random-walk dichotomy, finite-limit form.** Let $X_0, X_1, \dots$ be independent,
+identically distributed real random variables on a probability space and
+$S_n = \sum_{i < n} X_i$. Then one of the following events has probability one: $S_n$
+converges to a finite limit (which may depend on the outcome); $S_n \to +\infty$;
+$S_n \to -\infty$; or $\limsup_n S_n = +\infty$ and $\liminf_n S_n = -\infty$. -/
 theorem random_walk_dichotomy {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ)
     (hindep : iIndepFun X μ) (hident : ∀ i, IdentDistrib (X i) (X 0) μ μ) :

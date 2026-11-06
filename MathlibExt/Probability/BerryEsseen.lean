@@ -3457,8 +3457,13 @@ private lemma berry_esseen_finsetSum {Ω : Type*}
         _ ≤ ε := h42
         _ = 42 * 0 + ε := by ring
 
-/-- Finite-sum Berry–Esseen bound with explicit constant `42`, stated with
-`gaussianReal` so it is usable from the public API. -/
+/-- **Berry–Esseen bound for finite sums.** Let $(\xi_j)_{j \in \mathbb{N}}$ be measurable, mutually
+independent real random variables on a probability space, and let $s$ be a finite set of indices
+such that for each $j \in s$ the variable $\xi_j$ has a finite third moment and mean
+$\mathbb{E}[\xi_j] = 0$, and such that $\sum_{j \in s} \mathbb{E}[\xi_j^2] = 1$. Write $\Phi$
+for the distribution function of the standard normal distribution. If $\gamma \ge 0$ is a real
+number with $\sum_{j \in s} \mathbb{E}|\xi_j|^3 \le \gamma$, then for every real $z$,
+$$\left|\mathbb{P}\left(\sum_{j \in s} \xi_j \le z\right) - \Phi(z)\right| \le 42\gamma.$$ -/
 theorem berry_esseen_finsetSum_gaussian {Ω : Type*}
     [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {ξ : ℕ → Ω → ℝ} (hmeas : ∀ j, Measurable (ξ j))
@@ -3474,11 +3479,17 @@ theorem berry_esseen_finsetSum_gaussian {Ω : Type*}
   have h := berry_esseen_finsetSum hmeas hindep hmem hmean hvar hγ hγ3 z
   rwa [show stdNormalCDF z = (gaussianReal 0 1).real (Iic z) from rfl] at h
 
-/-- I.i.d. Berry–Esseen bound with explicit constant `42`.
+/-- **Berry–Esseen theorem with constant 42.** Let $X_0, X_1, X_2, \dots$ be measurable, mutually
+independent real random variables on a probability space, each with the same distribution as
+$X_0$, where $X_0$ has a finite third moment, mean $\mathbb{E}[X_0] = 0$ and variance
+$\sigma^2 = \operatorname{Var}(X_0) > 0$ with $\sigma > 0$. Write $\rho = \mathbb{E}|X_0|^3$,
+$S_n = X_0 + \dots + X_{n-1}$, and $\Phi$ for the distribution function of the standard normal
+distribution. Then for every $n \ge 1$ and every real $x$,
+$$\left|\mathbb{P}\left(\frac{S_n}{\sqrt{n\sigma^2}} \le x\right) - \Phi(x)\right| \le
+\frac{42\rho}{\sigma^3\sqrt{n}}.$$
 
-Reusable public API for `berry_esseen`: the constant is stated explicitly, and
-the redundant `Integrable (X 0) P` premise is omitted since it follows from
-`hXmem` via `MemLp.integrable` on a probability space. -/
+Integrability of $X_0$ is not assumed separately, since on a probability space it follows from
+the finite third moment. -/
 theorem berry_esseen_explicit
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     (X : ℕ → Ω → ℝ)
@@ -3644,12 +3655,18 @@ theorem berry_esseen_explicit
   rw [hγdef, ← mul_div_assoc] at hmain
   exact hmain
 
-/--
-Universal `C>0` with `sup_x |F_{Sₙ}(x)-Φ(x)| ≤ C ρ/(σ³√n)`.
+/-- **Berry–Esseen theorem.** There is a constant $C > 0$ with the following property. Let
+$X_0, X_1, X_2, \dots$ be measurable, mutually independent real random variables on a probability
+space, each with the same distribution as $X_0$, where $X_0$ is integrable and has a finite third
+moment, mean $\mathbb{E}[X_0] = 0$ and variance $\sigma^2 = \operatorname{Var}(X_0) > 0$ with
+$\sigma > 0$. Write $\rho = \mathbb{E}|X_0|^3$, $S_n = X_0 + \dots + X_{n-1}$, and $\Phi$ for the
+distribution function of the standard normal distribution. Then for every $n \ge 1$ and every
+real $x$,
+$$\left|\mathbb{P}\left(\frac{S_n}{\sqrt{n\sigma^2}} \le x\right) - \Phi(x)\right| \le
+\frac{C\rho}{\sigma^3\sqrt{n}}.$$
+
 Source: A. C. Berry, Trans. AMS 49 (1941), 122-136, DOI 10.2307/1990053; and C.-G. Esseen, Arkiv för
 Matematik, Astronomi och Fysik 28A no. 9 (1942), 1-19.
-
-Proves `Wanted` entry `berry_esseen`.
 -/
 theorem berry_esseen
     : ∃ C : ℝ, 0 < C ∧

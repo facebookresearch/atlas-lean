@@ -25,14 +25,18 @@ namespace MathlibExt.Probability.ThinShell
 open MeasureTheory
 open scoped ENNReal
 
-/-- The volume-preserving orthonormal identification of ℝ with EuclideanSpace ℝ (Fin 1). -/
+/-- **Identification of the line with one-dimensional Euclidean space.** The linear isometric
+isomorphism from $\mathbb{R}$ onto one-dimensional Euclidean space $\mathbb{R}^1$ that sends a
+real number $x$ to the vector whose only coordinate is $x$. -/
 noncomputable def lineIsometry : ℝ ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin 1) :=
   (OrthonormalBasis.singleton (Fin 1) ℝ).repr
 
 @[simp] theorem lineIsometry_apply (x : ℝ) (i : Fin 1) : lineIsometry x i = x :=
   OrthonormalBasis.singleton_repr x i
 
-/-- An actual closed symmetric interval in one-dimensional Euclidean space. -/
+/-- **Symmetric interval in one-dimensional Euclidean space.** For a real number $a$, the set of
+points of one-dimensional Euclidean space $\mathbb{R}^1$ whose only coordinate lies in the closed
+interval $[-a, a]$. It is empty when $a < 0$. -/
 def symmetricInterval (a : ℝ) : Set (EuclideanSpace ℝ (Fin 1)) :=
   lineIsometry.symm ⁻¹' Set.Icc (-a) a
 
@@ -55,7 +59,14 @@ theorem symmetricInterval_volume (a : ℝ) : volume (symmetricInterval a) =
   congr 1
   ring
 
-/-- Actual conditioned Lebesgue volume, not a discrete uniform measure. -/
+/-- **Uniform distribution on a symmetric interval.** For a real number $a$, the measure on
+one-dimensional Euclidean space $\mathbb{R}^1$ obtained by conditioning Lebesgue measure on the
+set $\{x : -a \le x_1 \le a\}$ of points whose only coordinate $x_1$ lies in $[-a, a]$, that is,
+Lebesgue measure restricted to this set and divided by its measure. For $a > 0$ this is the
+uniform probability distribution with density $1/(2a)$ on the interval; for $a \le 0$ the set has
+measure zero and the conditioned measure is the zero measure.
+
+It is conditioned Lebesgue measure, not a discrete uniform measure. -/
 noncomputable def uniformInterval (a : ℝ) : Measure (EuclideanSpace ℝ (Fin 1)) :=
   ProbabilityTheory.cond volume (symmetricInterval a)
 
@@ -151,7 +162,11 @@ theorem uniformInterval_logConcave {a : ℝ} (ha : 0 < a) :
     ENNReal.toReal_ofReal (by positivity)]
   positivity
 
-/-- A proved actual positive-dimensional member of the shared admissible family.
+/-- **The uniform law on [−√3, √3] is isotropic log-concave.** The uniform distribution on the
+symmetric interval $[-\sqrt{3}, \sqrt{3}]$ of one-dimensional Euclidean space $\mathbb{R}^1$ is
+an isotropic log-concave probability measure: it has a log-concave density with respect to
+Lebesgue measure, mean zero and identity covariance.
+
 Source: the one-dimensional isotropic cube, uniform on [-√3, √3]. -/
 theorem uniformInterval_sqrt_three_isIsotropicLogConcave :
     IsIsotropicLogConcave (uniformInterval (Real.sqrt 3)) := by
@@ -170,20 +185,31 @@ theorem uniformInterval_sqrt_three_isIsotropicLogConcave :
     rw [uniformInterval_secondMoment ha, Real.sq_sqrt (by norm_num : 0 ≤ (3 : ℝ))]
     simp [Subsingleton.elim i j]
 
-/-- The proved interval law exercises the actual universal-supremum bridge. -/
+/-- **Thin-shell variance bound for the uniform law on [−√3, √3].** Let $\mu$ be the uniform
+distribution on the symmetric interval $[-\sqrt{3}, \sqrt{3}]$ of one-dimensional Euclidean
+space $\mathbb{R}^1$. Its normalized radius variance $\int (\|x\|^2 - 1)^2 \, d\mu(x)$ is at most
+the thin-shell variance constant, the supremum of the normalized radius variance over all
+isotropic log-concave probability measures in all positive dimensions. -/
 theorem uniformInterval_variance_le_thinShellConstant :
     normalizedRadiusVariance (uniformInterval (Real.sqrt 3)) ≤ thinShellVarianceConstant :=
   normalizedRadiusVariance_le_constant (by decide)
     uniformInterval_sqrt_three_isIsotropicLogConcave
 
-/-- The same actual law exercises the radius-fluctuation bridge. -/
+/-- **Radius fluctuation of the uniform law on [−√3, √3].** Let $\mu$ be the uniform distribution
+on the symmetric interval $[-\sqrt{3}, \sqrt{3}]$ of one-dimensional Euclidean space
+$\mathbb{R}^1$. Then $\int (\|x\| - \sqrt{1})^2 \, d\mu(x)$, the mean squared deviation of the
+Euclidean norm from $\sqrt{1} = 1$, is at most the thin-shell variance constant. -/
 theorem uniformInterval_radiusFluctuation_le_thinShellConstant :
     (∫⁻ x, ENNReal.ofReal ((‖x‖ - Real.sqrt (1 : ℝ)) ^ 2)
       ∂uniformInterval (Real.sqrt 3)) ≤ thinShellVarianceConstant :=
     (by simpa only [Nat.cast_one] using
       radius_fluctuation_le_constant (by decide) uniformInterval_sqrt_three_isIsotropicLogConcave)
 
-/-- An actual unscaled interval law is a negative control for isotropy. -/
+/-- **The uniform law on [−1, 1] is not isotropic log-concave.** The uniform distribution on the
+symmetric interval $[-1, 1]$ of one-dimensional Euclidean space $\mathbb{R}^1$ is not an isotropic
+log-concave probability measure.
+
+Its second moment is $1/3$ rather than $1$. -/
 theorem uniformInterval_one_not_isIsotropicLogConcave :
     ¬ IsIsotropicLogConcave (uniformInterval 1) := by
   intro h

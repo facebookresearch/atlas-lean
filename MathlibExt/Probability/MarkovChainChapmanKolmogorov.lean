@@ -67,14 +67,17 @@ then uses `MeasureTheory.ae_eq_condExp_of_forall_setIntegral_eq`.
 * `IsMarkovChain.map_eq_bind_pow`: the forward form above.
 -/
 
-/-- `IsMarkovChain X ℱ κ μ` asserts that the sequence of random variables `X : ℕ → Ω → S`
-is a Markov chain with respect to the filtration `ℱ` with transition probability kernel
-`κ` under the measure `μ`. Concretely it requires that `X` is `ℱ`-adapted and that for
-each `n` and measurable `B ⊆ S`,
+/-- **Markov chain with respect to a filtration.** Let $\mu$ be a measure on $\Omega$, let
+$(\mathcal{F}_n)_{n \in \mathbb{N}}$ be a filtration on $\Omega$, and let $\kappa$ be a Markov
+kernel from a measurable space $S$ to itself. A sequence of random variables
+$X_n : \Omega \to S$ is a Markov chain with respect to $(\mathcal{F}_n)$ with transition kernel
+$\kappa$ under $\mu$ if it is adapted to $(\mathcal{F}_n)$ and, for every $n \in \mathbb{N}$ and
+every measurable $B \subseteq S$,
 
-  `μ[1_{B} ∘ X (n+1) | ℱ n] = κ (X n ·) B  μ`-a.e.,
+$$\mathbb{E}_\mu[\mathbf{1}_B(X_{n+1}) \mid \mathcal{F}_n] = \kappa(X_n, B)$$
 
-which is the standard form `P(X_{n+1} ∈ B | ℱ_n) = κ(X_n, B)` of the Markov property. -/
+$\mu$-almost everywhere. This is the standard form
+$P(X_{n+1} \in B \mid \mathcal{F}_n) = \kappa(X_n, B)$ of the Markov property. -/
 structure IsMarkovChain {Ω S : Type*} {m : MeasurableSpace Ω} [MeasurableSpace S]
     (X : ℕ → Ω → S) (ℱ : Filtration ℕ m) (κ : Kernel S S)
     [IsMarkovKernel κ] (μ : Measure Ω) : Prop where
@@ -214,11 +217,15 @@ private lemma map_restrict_eq_bind_pow (hMC : IsMarkovChain X ℱ κ μ)
     exact (lintegral_map (Kernel.measurable_coe (κ ^ (n + 1)) hA)
       (hMC.measurable m)).symm
 
-/-- **Chapman–Kolmogorov equations, conditional form.** For a Markov chain
-with transition kernel `κ`, the conditional probability that `X (m + n)`
-lies in `B`, given the past up to time `m`, is `(κ ^ n) (X m) B`. For
-`n = 1` this is the defining one-step Markov property; for general `n`
-the `n`-step kernel is the `n`-fold composition of `κ`. -/
+/-- **Chapman–Kolmogorov equations, conditional form.** Let $X = (X_n)_{n \in \mathbb{N}}$ be a
+Markov chain with state space $S$, with respect to a filtration $(\mathcal{F}_n)$, with Markov
+transition kernel $\kappa$, under a probability measure $\mu$. Then for all $m, n \in \mathbb{N}$
+and every measurable $B \subseteq S$,
+
+$$\mathbb{E}_\mu[\mathbf{1}_B(X_{m+n}) \mid \mathcal{F}_m] = \kappa^n(X_m, B)$$
+
+$\mu$-almost everywhere, where $\kappa^n$ is the $n$-fold composition of $\kappa$ (the identity
+kernel for $n = 0$). For $n = 1$ this is the defining one-step Markov property. -/
 theorem condExp_indicator_eq (hMC : IsMarkovChain X ℱ κ μ)
     (m n : ℕ) {B : Set S} (hB : MeasurableSet B) :
     μ[((B.indicator (fun _ => (1 : ℝ))) ∘ (X (m + n))) | ℱ m] =ᵐ[μ]
@@ -270,9 +277,12 @@ theorem condExp_indicator_eq (hMC : IsMarkovChain X ℱ κ μ)
       exact h1.comp (hMC.adapted m)
     exact h_meas.stronglyMeasurable.aestronglyMeasurable
 
-/-- **Chapman–Kolmogorov equations, forward (law) form.** The law of
-`X (m + n)` is the law of `X m` pushed forward through the `n`-step
-kernel `κ ^ n`. -/
+/-- **Chapman–Kolmogorov equations, forward (law) form.** Let $X = (X_n)_{n \in \mathbb{N}}$ be
+a Markov chain with state space $S$, with respect to a filtration, with Markov transition kernel
+$\kappa$, under a probability measure $\mu$, and let $\kappa^n$ be the $n$-fold composition of
+$\kappa$ (the identity kernel for $n = 0$). Then for all $m, n \in \mathbb{N}$ the law of
+$X_{m+n}$ is the law $\nu_m$ of $X_m$ pushed forward through $\kappa^n$: for every measurable
+$B \subseteq S$, $\mu(X_{m+n} \in B) = \int_S \kappa^n(x, B) \, d\nu_m(x)$. -/
 theorem map_eq_bind_pow (hMC : IsMarkovChain X ℱ κ μ) (m n : ℕ) :
     μ.map (X (m + n)) = (μ.map (X m)).bind (fun x => (κ ^ n) x) := by
   have h := hMC.map_restrict_eq_bind_pow n m MeasurableSet.univ

@@ -44,15 +44,19 @@ This file proves the functional CLT: polygonal partial-sum processes converge in
 
 noncomputable section
 
-/-- Clamps a real to `[0,1]`. -/
+/-- **Clamping to the unit interval.** For a real number $x$, its clamp to $[0,1]$ is
+$\min(\max(x, 0), 1)$. -/
 noncomputable def donskerClamp (x : ℝ) : ℝ :=
   min (max x 0) 1
 
-/-- Weight `t ↦ clamp(n·t - i)` for the polygonal interpolation. -/
+/-- **Polygonal interpolation weight.** For natural numbers $n$ and $i$ and $t \in [0,1]$, the
+weight is $w_{n,i}(t) = \min(\max(nt - i, 0), 1)$, the clamp of $nt - i$ to $[0,1]$. -/
 noncomputable def donskerWeight (n i : ℕ) (t : Set.Icc (0 : ℝ) 1) : ℝ :=
   donskerClamp ((n : ℝ) * t.val - (i : ℝ))
 
-/-- Bundled continuous version of `donskerWeight` in `C([0,1],ℝ)`. -/
+/-- **Polygonal interpolation weight as a continuous function.** For natural numbers $n$ and $i$,
+this is the function $t \mapsto \min(\max(nt - i, 0), 1)$ on $[0,1]$, regarded as an element of
+the space $C([0,1], \mathbb{R})$ of continuous real functions on $[0,1]$. -/
 noncomputable def donskerWeightCM (n i : ℕ) : C(Set.Icc (0 : ℝ) 1, ℝ) where
   toFun := donskerWeight n i
   continuous_toFun := by
@@ -127,7 +131,14 @@ private lemma donsker_weighted_sum_eq {Ω : Type*} (n : ℕ) (X : ℕ → Ω →
     simp only [hm_lt, ↓reduceIte, add_zero]
     simpa [hm_eq] using hprefix
 
-/-- Polygonal normalized partial-sum process as a `C([0,1],ℝ)`-valued variable. -/
+/-- **Polygonal partial-sum process.** Let $X_0, X_1, \dots$ be real-valued functions on a set
+$\Omega$. For $n \in \mathbb{N}$ and $\omega \in \Omega$, $S_n(\omega)$ is the element of the space
+$C([0,1], \mathbb{R})$ of continuous real functions on $[0,1]$ defined by $S_0(\omega) = 0$ and,
+for $n \ge 1$ and $t \in [0,1]$,
+$$S_n(\omega)(t) = \frac{1}{\sqrt{n}} \sum_{i=0}^{n-1} X_i(\omega) \min(\max(nt - i, 0), 1).$$
+
+Thus for $n \ge 1$, $S_n(\omega)$ linearly interpolates the values
+$(X_0(\omega) + \dots + X_{k-1}(\omega))/\sqrt{n}$ at the times $k/n$ for $0 \le k \le n$. -/
 noncomputable def donskerProcess {Ω : Type*} (n : ℕ) (X : ℕ → Ω → ℝ) (ω : Ω) :
     C(Set.Icc (0 : ℝ) 1, ℝ) :=
   if n = 0 then 0
@@ -135,7 +146,11 @@ noncomputable def donskerProcess {Ω : Type*} (n : ℕ) (X : ℕ → Ω → ℝ)
     let sqrtInv : ℝ := (Real.sqrt (n : ℝ))⁻¹
     sqrtInv • (Finset.sum (Finset.range n) fun i => (X i ω) • donskerWeightCM n i)
 
-/-- Explicit partial-sum interpolation formula for `donskerProcess`. -/
+/-- **Explicit formula for the polygonal partial-sum process.** Let $X_0, X_1, \dots$ be
+real-valued functions on a set $\Omega$ and let $S_n$ be their polygonal partial-sum process. For
+$n \ge 1$, $\omega \in \Omega$ and $t \in [0,1]$, write $m = \lfloor nt \rfloor$. Then
+$$S_n(\omega)(t) = \frac{1}{\sqrt{n}} \Big( \sum_{i=0}^{m-1} X_i(\omega) + c \Big),$$
+where $c = (nt - m) X_m(\omega)$ if $m < n$ and $c = 0$ otherwise. -/
 public theorem donskerProcess_apply_eq {Ω : Type*} (n : ℕ) (X : ℕ → Ω → ℝ) (ω : Ω)
     (t : Set.Icc (0 : ℝ) 1) (hn : n ≠ 0) :
     donskerProcess n X ω t =
@@ -162,7 +177,8 @@ private lemma donskerProcess_measurable {Ω : Type*} [MeasurableSpace Ω]
       ContinuousMap.sum_apply]
     fun_prop
 
-/-- Inclusion of `Set.Icc 0 1` into `ℝ≥0`. -/
+/-- **Inclusion of the unit interval into the nonnegative reals.** This map sends $t \in [0,1]$
+to $t$ regarded as a nonnegative real number. -/
 noncomputable def iccToNNReal (t : Set.Icc (0 : ℝ) 1) : ℝ≥0 :=
   ⟨t.val, t.2.1⟩
 
@@ -1330,7 +1346,11 @@ private lemma biUnion_firstHit_eq_biUnion_level
   ext ω
   simp
 
-/-- Etemadi's maximal inequality for partial sums of independent real random variables. -/
+/-- **Etemadi's maximal inequality.** Let $X_0, X_1, \dots$ be independent real random variables
+on a probability space $(\Omega, P)$ and write $S_k = X_0 + \dots + X_{k-1}$, so that $S_0 = 0$.
+Then for every natural number $n$ and every real number $a$,
+$$P\Big(\max_{0 \le k \le n} |S_k| \ge 3a\Big) \le 3 \max_{0 \le k \le n} P(|S_k| \ge a).$$
+-/
 public theorem etemadi_maximal_inequality
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     (X : ℕ → Ω → ℝ) (hX : ∀ i, Measurable (X i))
@@ -2601,19 +2621,30 @@ private lemma donsker_process_tendstoInDistribution
     simpa only [hmap, hlim] using hfd.tendsto
 
 /--
-If `X : ℕ → Ω → ℝ` is i.i.d. with mean `0`, variance `1` and `MemLp` `2`, then for any Brownian
-motion `B` with `IsBrownianReal B P'` there exists `Y : Ω' → C([0, 1], ℝ)` restricting to `B` a.e.
-on `[0, 1]` such that `donskerProcess n X` converges in distribution to `Y`. Source: M. D.
+**Donsker's invariance principle.** Let $X_0, X_1, \dots$ be independent, identically
+distributed, measurable real random variables on a probability space $(\Omega, P)$ such that
+$X_0$ is integrable, $\mathbb{E}[X_0^2] < \infty$, $\mathbb{E}[X_0] = 0$ and
+$\operatorname{Var}(X_0) = 1$. Let $(B_t)_{t \ge 0}$ be a real Brownian motion on a probability
+space $(\Omega', P')$: its finite-dimensional laws are those of Brownian motion and its paths are
+$P'$-almost surely continuous. For $n \ge 1$ let $S_n$ be the polygonal partial-sum process of
+the $X_i$, the random element of $C([0,1], \mathbb{R})$ that linearly interpolates the values
+$(X_0 + \dots + X_{k-1})/\sqrt{n}$ at the times $k/n$ for $0 \le k \le n$. Then there is a random
+element $Y$ of $C([0,1], \mathbb{R})$ defined on $\Omega'$ such that $P'$-almost surely
+$Y(t) = B_t$ for all $t \in [0,1]$, and $S_n$ converges in distribution to $Y$ as $n \to \infty$.
+Here $C([0,1], \mathbb{R})$ carries the topology of uniform convergence and its Borel
+$\sigma$-algebra.
+
+Proof: The route combines finite-dimensional convergence from the central limit theorem,
+tightness from a maximal inequality and a modulus-of-continuity criterion, Prokhorov's theorem,
+and uniqueness of laws on $C([0,1], \mathbb{R})$ from finite-dimensional distributions.
+
+Proves `Wanted` entry `donsker_invariance_principle`.
+
+Source: M. D.
 Donsker, An invariance principle for certain probability limit theorems, Mem. Amer. Math. Soc. 6
 (1951); extension Prohorov 1956 to Polish; textbook in Billingsley, Convergence of Probability
 Measures, 2nd ed., Kallenberg, Foundations of Modern Probability; Lean is `C(Icc 0 1, ℝ)`
 polygonal process with `MemLp 2`, mean-zero variance-one standardization.
-
-Proves `Wanted` entry `donsker_invariance_principle`.
-
-Proof: The route combines finite-dimensional convergence from the central limit theorem,
-tightness from a maximal inequality and a modulus-of-continuity criterion, Prokhorov's theorem,
-and uniqueness of laws on `C([0,1])` from finite-dimensional distributions.
 -/
 public theorem donsker_invariance_principle
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]

@@ -23,7 +23,8 @@ open MeasureTheory
 
 namespace MathlibExt.Probability.ProductBondPercolation
 
-/-- The integer line graph: nearest-neighbor graph on `ℤ`. -/
+/-- **The integer line graph.** The integer line is the simple graph on $\mathbb{Z}$ in which
+$m$ and $n$ are adjacent exactly when $|m - n| = 1$. -/
 def intLine : SimpleGraph ℤ where
   Adj a b := b = a + 1 ∨ a = b + 1
   symm := ⟨by
@@ -35,14 +36,19 @@ def intLine : SimpleGraph ℤ where
     intro a h
     rcases h with h | h <;> omega⟩
 
-/-- The product graph `G × ℤ` is the box product of `G` with the
-integer line: `G`-edges within a level together with vertical
-line edges (see `SimpleGraph.boxProd_adj`). -/
+/-- **The product graph $G \times \mathbb{Z}$.** For a simple graph $G$ on $V$, the graph
+$G \times \mathbb{Z}$ is the box product of $G$ with the integer line: its vertex set is
+$V \times \mathbb{Z}$, and $(v, m)$ and $(w, n)$ are adjacent exactly when either $v$ and $w$
+are adjacent in $G$ and $m = n$, or $v = w$ and $|m - n| = 1$. -/
 def prodGraph {V : Type u} (G : SimpleGraph V) : SimpleGraph (V × ℤ) :=
   G □ intLine
 
-/-- The open subgraph of `prodGraph G` determined by an edge-opening
-pattern `ω`: keep exactly the product edges with `ω e = true`. -/
+/-- **Open subgraph of the product graph.** Let $G$ be a simple graph on $V$, let
+$G \times \mathbb{Z}$ denote the box product of $G$ with the integer line, and let $\omega$
+assign true or false to every unordered pair of points of $V \times \mathbb{Z}$. The open
+subgraph of $G \times \mathbb{Z}$ determined by $\omega$ is the simple graph on
+$V \times \mathbb{Z}$ in which $a$ and $b$ are adjacent exactly when they are adjacent in
+$G \times \mathbb{Z}$ and $\omega(\{a, b\})$ is true. -/
 def configGraph {V : Type u} (G : SimpleGraph V) (ω : Sym2 (V × ℤ) → Bool) :
     SimpleGraph (V × ℤ) :=
   SimpleGraph.fromEdgeSet {e | ω e = true} ⊓ prodGraph G
@@ -62,8 +68,13 @@ theorem configGraph_le_prodGraph {V : Type u} (G : SimpleGraph V)
     (ω : Sym2 (V × ℤ) → Bool) :
     configGraph G ω ≤ prodGraph G := inf_le_right
 
-/-- The open cluster of `x` in the configuration `ω`: vertices reachable
-from `x` by open edges. -/
+/-- **Open cluster in the product graph.** Let $G$ be a simple graph on $V$, let
+$G \times \mathbb{Z}$ denote the box product of $G$ with the integer line, let $\omega$ assign
+true or false to every unordered pair of points of $V \times \mathbb{Z}$, and let
+$x \in V \times \mathbb{Z}$. The open cluster of $x$ is the set of points
+$y \in V \times \mathbb{Z}$ that are reachable from $x$ (including $x$ itself) in the open
+subgraph of $G \times \mathbb{Z}$ determined by $\omega$, that is, joined to $x$ by a path whose
+edges $e$ are edges of $G \times \mathbb{Z}$ with $\omega(e)$ true. -/
 def cluster {V : Type u} (G : SimpleGraph V) (ω : Sym2 (V × ℤ) → Bool)
     (x : V × ℤ) : Set (V × ℤ) :=
   {y | (configGraph G ω).Reachable x y}
@@ -73,14 +84,21 @@ theorem self_mem_cluster {V : Type u} (G : SimpleGraph V) (ω : Sym2 (V × ℤ) 
   change (configGraph G ω).Reachable x x
   exact SimpleGraph.Reachable.refl x
 
-/-- Product Bernoulli(`p`) bond law on edge-opening patterns of `G × ℤ`:
-the infinite product measure over all unordered pairs, each independently open
-with probability `p` (`Measure.infinitePi`). -/
+/-- **Bernoulli bond law on $V \times \mathbb{Z}$.** For a type $V$ and $0 \le p \le 1$, the
+Bernoulli($p$) bond law on $V \times \mathbb{Z}$ is the product measure on configurations
+$\omega$, which assign true (open) or false (closed) to every unordered pair $\{a, b\}$ of
+points of $V \times \mathbb{Z}$ (with $a = b$ allowed), under which the values $\omega(e)$ are
+independent and each is true with probability $p$ and false with probability $1 - p$. -/
 noncomputable def bernoulliLaw {V : Type u} (p : ℝ)
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) : Measure (Sym2 (V × ℤ) → Bool) :=
   Measure.infinitePi fun _ => ProbabilityTheory.bernoulliMeasure true false ⟨p, hp0, hp1⟩
 
-/-- Almost-sure truth under the Bernoulli(`p`) bond law. -/
+/-- **Almost-sure properties under the Bernoulli bond law.** Let $V$ be a type, let $p$ be a real
+number with $0 \le p \le 1$, and let $P$ be a property of configurations $\omega$, that is, of
+functions assigning true or false to every unordered pair $\{a, b\}$ of points of
+$V \times \mathbb{Z}$ (with $a = b$ allowed). We say that $P$ holds almost surely if $P(\omega)$
+holds for almost every $\omega$ with respect to the Bernoulli($p$) bond law on
+$V \times \mathbb{Z}$. -/
 def AlmostSurely {V : Type u} (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (P : (Sym2 (V × ℤ) → Bool) → Prop) : Prop :=
   ∀ᵐ ω ∂(bernoulliLaw p hp0 hp1), P ω
@@ -89,15 +107,21 @@ section GeneralGraph
 
 variable {V : Type u} (G : SimpleGraph V)
 
-/-- The open subgraph of a general graph `G` determined by an
-edge-opening pattern `ω` on `Sym2 V`. -/
+/-- **Open subgraph of a graph.** Let $G$ be a simple graph on $V$ and let $\omega$ assign true or
+false to every unordered pair of elements of $V$. The open subgraph of $G$ determined by
+$\omega$ is the simple graph on $V$ in which $a$ and $b$ are adjacent exactly when they are
+adjacent in $G$ and $\omega(\{a, b\})$ is true. -/
 def openSubgraph (ω : Sym2 V → Bool) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet {e | ω e = true} ⊓ G
 
 theorem openSubgraph_le (ω : Sym2 V → Bool) : openSubgraph G ω ≤ G :=
   inf_le_right
 
-/-- The open cluster of `x` for bond percolation on `G`. -/
+/-- **Open cluster in a graph.** Let $G$ be a simple graph on $V$, let $\omega$ assign true or
+false to every unordered pair of elements of $V$, and let $x \in V$. The open cluster of $x$ is
+the set of vertices $y \in V$ that are reachable from $x$ (including $x$ itself) in the open
+subgraph of $G$ determined by $\omega$, that is, joined to $x$ by a path whose edges $e$ are
+edges of $G$ with $\omega(e)$ true. -/
 def gcluster (ω : Sym2 V → Bool) (x : V) : Set V :=
   {y | (openSubgraph G ω).Reachable x y}
 
@@ -105,21 +129,25 @@ theorem self_mem_gcluster (ω : Sym2 V → Bool) (x : V) : x ∈ gcluster G ω x
   change (openSubgraph G ω).Reachable x x
   exact SimpleGraph.Reachable.refl x
 
-/-- Product Bernoulli(`p`) bond law on `G` itself. -/
+/-- **Bernoulli bond law on $V$.** For a type $V$ and $0 \le p \le 1$, the Bernoulli($p$) bond
+law on $V$ is the product measure on configurations $\omega$, which assign true (open) or false
+(closed) to every unordered pair $\{a, b\}$ of elements of $V$ (with $a = b$ allowed), under
+which the values $\omega(e)$ are independent and each is true with probability $p$ and false
+with probability $1 - p$. -/
 noncomputable def gbernoulliLaw (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     Measure (Sym2 V → Bool) :=
   Measure.infinitePi fun _ => ProbabilityTheory.bernoulliMeasure true false ⟨p, hp0, hp1⟩
 
 end GeneralGraph
 
-/-- The critical probability `p_c(G)` for bond percolation on a graph
-`G` with countable vertex type: the infimum of densities at which an
-infinite open cluster exists with positive probability, with `1`
-inserted so that graphs which never percolate (empty density set) get
-`p_c(G) = 1`, the standard `[0, 1]`-valued threshold convention
-(`sInf ∅ = 0` in `ℝ`). Countability is part of the domain so that the
-global "some infinite cluster exists" event is measurable for the
-`Measure.infinitePi` product law. -/
+/-- **Critical probability for bond percolation.** For a simple graph $G$ on a countable vertex
+set $V$, the critical probability $p_c(G)$ is the infimum of the set consisting of $1$ together
+with every $p \in [0, 1]$ for which, under the Bernoulli($p$) bond law on $V$, the event that
+the open cluster in $G$ of some vertex is infinite has positive probability. In particular
+$p_c(G) = 1$ when no such $p$ exists.
+
+Countability of $V$ makes the event that some open cluster is infinite measurable for the
+product law. -/
 noncomputable def criticalProb {V : Type u} [Countable V] (G : SimpleGraph V) : ℝ :=
   sInf (insert 1 {p : ℝ | ∃ hp0 : 0 ≤ p, ∃ hp1 : p ≤ 1,
     0 < gbernoulliLaw p hp0 hp1 {ω | ∃ x : V, (gcluster G ω x).Infinite}})

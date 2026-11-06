@@ -30,25 +30,40 @@ open MeasureTheory
 open scoped ENNReal
 open scoped BigOperators
 
-/-- The actual covariance matrix of the coordinate random variables.
+/-- **Covariance matrix.** For a measure $\mu$ on $\mathbb{R}^n$, the covariance matrix of $\mu$ is
+the $n \times n$ real matrix whose $(i, j)$ entry is
+$\int (x_i - m_i)(x_j - m_j) \, d\mu(x)$, where $m_i = \int x_i \, d\mu(x)$ is the mean of the
+$i$-th coordinate.
+
 Source: `constants/20b.md`, covariance definition. -/
 noncomputable def covarianceMatrix {n : ℕ}
     (μ : Measure (EuclideanSpace ℝ (Fin n))) : Matrix (Fin n) (Fin n) ℝ :=
   fun i j => ProbabilityTheory.covariance (fun x => x i) (fun x => x j) μ
 
-/-- Differential entropy of a Lebesgue density, using the actual entropy integral.
+/-- **Differential entropy.** For a function $f \colon \mathbb{R}^n \to \mathbb{R}$, usually the
+Lebesgue density of a probability law, the differential entropy of $f$ is
+$-\int_{\mathbb{R}^n} f(x) \log f(x) \, dx$, with the natural logarithm and $0 \log 0 = 0$.
+
 Source: `constants/20b.md`, Ent(μ)=-∫f log f. -/
 noncomputable def differentialEntropy {n : ℕ} (f : EuclideanSpace ℝ (Fin n) → ℝ) : ℝ :=
   -(∫ x, f x * Real.log (f x))
 
-/-- A full-dimensional convex body in a positive-dimensional Euclidean space.
+/-- **Full-dimensional convex body.** For a natural number $n$, a full-dimensional convex body in
+dimension $n$ is a nonempty compact convex set $K$ in the Euclidean space $\mathbb{R}^n$ whose
+interior is nonempty, where $n$ is required to be positive.
+
 Source: `constants/20b.md`, convex-body domain. -/
 structure FullDimensionalBody (n : ℕ) where
   body : ConvexBody (EuclideanSpace ℝ (Fin n))
   dimension_pos : 0 < n
   interior_nonempty : (interior (body : Set (EuclideanSpace ℝ (Fin n)))).Nonempty
 
-/-- A genuine log-concave probability law and its Lebesgue density.
+/-- **Log-concave law.** For a positive integer $n$, a log-concave law on $\mathbb{R}^n$ is a
+probability measure $\mu$ on $\mathbb{R}^n$ together with a Lebesgue density $f$ of $\mu$ that is
+log-concave: $f$ is measurable and nonnegative, and $f((1-t)x + ty) \ge f(x)^{1-t} f(y)^t$ for all
+$x, y \in \mathbb{R}^n$ and $0 < t < 1$. Moreover every coordinate $x_i$ and every product
+$x_i x_j$ is $\mu$-integrable, and $f \log f$ is Lebesgue integrable.
+
 Source: `constants/20b.md`; finite moments and entropy integrability ensure the
 displayed real integrals do not use the non-integrable default value. -/
 structure LogConcaveLaw (n : ℕ) where
@@ -62,7 +77,11 @@ structure LogConcaveLaw (n : ℕ) where
   moment_two : ∀ i j : Fin n, Integrable (fun x => x i * x j) law
   entropy_integrable : Integrable (fun x => density x * Real.log (density x)) volume
 
-/-- Actual covariance is positive semidefinite, by integrating squared linear forms. -/
+/-- **Covariance matrices of log-concave laws are positive semidefinite.** For every log-concave
+law $\mu$ on $\mathbb{R}^n$, the covariance matrix of $\mu$ is positive semidefinite.
+
+The proof writes the quadratic form of the covariance matrix as the integral of the square of a
+centered linear form. -/
 theorem covarianceMatrix_posSemidef {n : ℕ} (μ : LogConcaveLaw n) :
     (covarianceMatrix μ.law).PosSemidef := by
   let : IsProbabilityMeasure μ.law := μ.probability
@@ -118,7 +137,9 @@ theorem covarianceMatrix_det_nonneg {n : ℕ} (μ : LogConcaveLaw n) :
     0 ≤ (covarianceMatrix μ.law).det :=
   (covarianceMatrix_posSemidef μ).det_nonneg
 
-/-- The shared probabilistic isotropy convention gives the actual identity covariance. -/
+/-- **Isotropic log-concave laws have identity covariance.** If $\mu$ is an isotropic log-concave
+probability measure on $\mathbb{R}^n$, then the covariance matrix of $\mu$ is the $n \times n$
+identity matrix. -/
 theorem covarianceMatrix_eq_one_of_isIsotropic {n : ℕ}
     {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : ThinShell.IsIsotropicLogConcave μ) :
     covarianceMatrix μ = 1 := by
@@ -127,54 +148,98 @@ theorem covarianceMatrix_eq_one_of_isIsotropic {n : ℕ}
     (hμ.2.2.1 j).2, sub_zero, Matrix.one_apply]
   exact (hμ.2.2.2 i j).2
 
-/-- Actual normalized Lebesgue volume on a full-dimensional convex body. -/
+/-- **Uniform distribution on a convex body.** For a full-dimensional convex body $K$ in
+$\mathbb{R}^n$, the uniform law on $K$ is the probability measure obtained by restricting
+Lebesgue measure to $K$ and dividing by the volume of $K$; it gives a set $A$ the mass
+$\operatorname{vol}(A \cap K) / \operatorname{vol}(K)$. -/
 noncomputable def bodyLaw {n : ℕ} (K : FullDimensionalBody n) :
     Measure (EuclideanSpace ℝ (Fin n)) :=
   ProbabilityTheory.cond volume (K.body : Set (EuclideanSpace ℝ (Fin n)))
 
-/-- The determinant-and-volume convention for convex bodies. -/
+/-- **Isotropic constant of a convex body.** For a full-dimensional convex body $K$ in
+$\mathbb{R}^n$, let $\operatorname{Cov}(K)$ be the covariance matrix of the uniform probability
+law on $K$ and let $\operatorname{vol}(K)$ be the Lebesgue volume of $K$. The isotropic constant
+of $K$ is the real number
+$L_K = \left(\det \operatorname{Cov}(K) / \operatorname{vol}(K)^2\right)^{1/(2n)}$. -/
 noncomputable def bodyIsotropicConstant {n : ℕ} (K : FullDimensionalBody n) : ℝ :=
   Real.rpow ((covarianceMatrix (bodyLaw K)).det /
     (volume (K.body : Set (EuclideanSpace ℝ (Fin n)))).toReal ^ 2)
     (1 / (2 * (n : ℝ)))
 
-/-- The entropy convention for actual log-concave laws. -/
+/-- **Isotropic constant of a log-concave law.** For a log-concave law $\mu$ on $\mathbb{R}^n$ with
+Lebesgue density $f$, the isotropic constant of $\mu$ is
+$L_\mu = e^{-h(f)/n} (\det \mathrm{Cov}(\mu))^{1/(2n)}$, where
+$h(f) = -\int_{\mathbb{R}^n} f \log f$ is the differential entropy of $f$ and $\mathrm{Cov}(\mu)$
+is the covariance matrix of the coordinates under $\mu$. -/
 noncomputable def lawIsotropicConstant {n : ℕ} (μ : LogConcaveLaw n) : ℝ :=
   Real.exp (-differentialEntropy μ.density / (n : ℝ)) *
     Real.rpow (covarianceMatrix μ.law).det (1 / (2 * (n : ℝ)))
 
-/-- The supremum over actual full-dimensional convex bodies in dimension n. -/
+/-- **Supremum of isotropic constants in a fixed dimension.** For $n \in \mathbb{N}$, this is
+$\sup_K L_K \in [0, \infty]$, the supremum of the isotropic constants $L_K$ over all
+full-dimensional convex bodies $K$ in $\mathbb{R}^n$. Full-dimensional convex bodies are taken
+only in dimension $n \ge 1$, so for $n = 0$ the supremum is over the empty family and is $0$. -/
 noncomputable def dimensionBodySupremum (n : ℕ) : ℝ≥0∞ :=
   ⨆ K : FullDimensionalBody n, ENNReal.ofReal (bodyIsotropicConstant K)
 
-/-- The supremum over actual full-dimensional laws with integrable entropy. -/
+/-- **Supremum of entropic isotropic constants in a fixed dimension.** For $n \in \mathbb{N}$, this
+is $\sup_\mu L_\mu \in [0, \infty]$, the supremum of the isotropic constants
+$L_\mu = e^{-\operatorname{Ent}(f)/n} (\det \operatorname{Cov}(\mu))^{1/(2n)}$ over all
+log-concave laws $\mu$ on $\mathbb{R}^n$, where $f$ is the log-concave Lebesgue density of $\mu$,
+$\operatorname{Ent}(f)$ its differential entropy and $\operatorname{Cov}(\mu)$ its covariance
+matrix. Here a log-concave law is a probability measure on $\mathbb{R}^n$ with $n \ge 1$, with
+finite second moments and with $f \log f$ integrable, so for $n = 0$ the supremum is over the
+empty family and is $0$. -/
 noncomputable def dimensionLawSupremum (n : ℕ) : ℝ≥0∞ :=
   ⨆ μ : LogConcaveLaw n, ENNReal.ofReal (lawIsotropicConstant μ)
 
-/-- The sharp-value body constant from `constants/20b.md`. -/
+/-- **Supremum of isotropic constants of convex bodies.** This is the value
+$\sup_{n \ge 1} \sup_K L_K \in [0, \infty]$, where for each dimension $n \ge 1$ the inner
+supremum runs over all full-dimensional convex bodies $K$ in $\mathbb{R}^n$ and $L_K$ is the
+isotropic constant of $K$.
+
+Source: `constants/20b.md`, the sharp-value body constant. -/
 noncomputable def bodySupremum : ℝ≥0∞ :=
   ⨆ n : ℕ, ⨆ (_ : 0 < n), dimensionBodySupremum n
 
-/-- The centered symmetry convention `K = -K` used by the sharp body conjecture.
+/-- **Centrally symmetric convex body.** For a natural number $n$, a full-dimensional convex
+body $K \subseteq \mathbb{R}^n$ is centrally symmetric when $K = -K$, that is, for every
+$x \in \mathbb{R}^n$, $x \in K$ if and only if $-x \in K$.
+
 Source: arXiv:2412.15044v1, Introduction after Theorem 1.2. -/
 def IsCentrallySymmetric {n : ℕ} (K : FullDimensionalBody n) : Prop :=
   ∀ x : EuclideanSpace ℝ (Fin n),
     x ∈ (K.body : Set (EuclideanSpace ℝ (Fin n))) ↔
       -x ∈ (K.body : Set (EuclideanSpace ℝ (Fin n)))
 
-/-- The actual body supremum restricted to bodies symmetric about the origin. -/
+/-- **Supremum of isotropic constants of symmetric convex bodies.** This is the value
+$\sup_{n \ge 1} \sup_K L_K \in [0, \infty]$, where for each dimension $n \ge 1$ the inner
+supremum runs over the full-dimensional convex bodies $K$ in $\mathbb{R}^n$ that are centrally
+symmetric, that is $K = -K$, and $L_K$ is the isotropic constant of $K$. -/
 noncomputable def centrallySymmetricBodySupremum : ℝ≥0∞ :=
   ⨆ n : ℕ, ⨆ (_ : 0 < n), ⨆ K : FullDimensionalBody n,
     ⨆ (_ : IsCentrallySymmetric K), ENNReal.ofReal (bodyIsotropicConstant K)
 
-/-- The squared-radius thin-shell convention in KL2022 and JLV2022.
-This is not the radius-fluctuation width used elsewhere in the catalogue. -/
+/-- **Squared-radius thin-shell width.** For a natural number $n$, the squared-radius thin-shell
+width in dimension $n$ is the supremum, in $[0, \infty]$, of
+$\left(\int (|x|^2 - n)^2 \, d\mu(x) / n\right)^{1/2}$ (with $0/0 = 0$) over all isotropic
+log-concave probability measures $\mu$ on $\mathbb{R}^n$, that is, those with a log-concave
+Lebesgue density, mean zero and identity covariance.
+
+It measures the fluctuation of the squared radius $|x|^2$, not of the radius $|x|$. -/
 noncomputable def squaredRadiusThinShellWidth (n : ℕ) : ℝ≥0∞ :=
   ⨆ μ : Measure (EuclideanSpace ℝ (Fin n)), ⨆ (_ : ThinShell.IsIsotropicLogConcave μ),
     ENNReal.rpow (ThinShell.normalizedRadiusVariance μ) (1 / 2)
 
-/-- The full-dimensional entropy-law supremum. Proper affine spans require the
-separately tracked intrinsic-coordinate bridge. -/
+/-- **Supremum of the isotropic constant over full-dimensional log-concave laws.** This is the
+supremum, in $[0, \infty]$, of the isotropic constant
+$L_\mu = e^{-h(f)/n} (\det \mathrm{Cov}(\mu))^{1/(2n)}$ over all positive integers $n$ and all
+log-concave laws $\mu$ on $\mathbb{R}^n$ with Lebesgue density $f$, where
+$h(f) = -\int_{\mathbb{R}^n} f \log f$ is the differential entropy of $f$ and $\mathrm{Cov}(\mu)$
+is the covariance matrix of the coordinates under $\mu$.
+
+Each such law has a density on all of $\mathbb{R}^n$, so laws supported on a proper affine
+subspace are not included here. -/
 noncomputable def fullDimensionalLawSupremum : ℝ≥0∞ :=
   ⨆ n : ℕ, ⨆ (_ : 0 < n), dimensionLawSupremum n
 

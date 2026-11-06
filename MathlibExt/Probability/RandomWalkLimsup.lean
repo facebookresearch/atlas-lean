@@ -53,20 +53,28 @@ open MathlibExt.Probability.RandomWalkTailMeasurability (randomWalkPartialSum)
 
 namespace MathlibExt.Probability.RandomWalkDichotomy
 
-/-- The `limsup` of the random-walk partial sums, as an `EReal`-valued
-function. -/
+/-- **Limsup of a random walk.** For real-valued functions $X_0, X_1, \dots$ on a set $\Omega$ and
+a point $\omega \in \Omega$, this is $\limsup_{n \to \infty} S_n(\omega)$, taken in the extended
+reals $[-\infty, +\infty]$, where $S_n(\omega) = \sum_{i < n} X_i(\omega)$ is the $n$-th partial
+sum. -/
 noncomputable def randomWalkLimsup {Ω : Type*} (X : ℕ → Ω → ℝ) (ω : Ω) : EReal :=
   Filter.limsup (fun n => ((randomWalkPartialSum X n ω : ℝ) : EReal)) Filter.atTop
 
-/-- The `liminf` of the random-walk partial sums, as an `EReal`-valued
-function. -/
+/-- **Liminf of a random walk.** For real-valued functions $X_0, X_1, \dots$ on a set $\Omega$ and
+a point $\omega \in \Omega$, this is $\liminf_{n \to \infty} S_n(\omega)$, taken in the extended
+reals $[-\infty, +\infty]$, where $S_n(\omega) = \sum_{i < n} X_i(\omega)$ is the $n$-th partial
+sum. -/
 noncomputable def randomWalkLiminf {Ω : Type*} (X : ℕ → Ω → ℝ) (ω : Ω) : EReal :=
   Filter.liminf (fun n => ((randomWalkPartialSum X n ω : ℝ) : EReal)) Filter.atTop
 
-/-- The one-step shift on sequence space: `(shiftSeq ω) i = ω (i + 1)`. -/
+/-- **Shift of a real sequence.** The one-step shift sends a real sequence
+$\omega = (\omega_0, \omega_1, \omega_2, \dots)$ to the sequence $(\omega_1, \omega_2, \dots)$
+whose $i$-th term is $\omega_{i+1}$. -/
 def shiftSeq (ω : ℕ → ℝ) : ℕ → ℝ := fun i => ω (i + 1)
 
-/-- The coordinate process on sequence space. -/
+/-- **Coordinate process on sequence space.** For $i \in \mathbb{N}$, the $i$-th coordinate is
+the map $\mathbb{R}^{\mathbb{N}} \to \mathbb{R}$ sending a real sequence
+$\omega = (\omega_0, \omega_1, \dots)$ to its $i$-th term $\omega_i$. -/
 def coordSeq (i : ℕ) (ω : ℕ → ℝ) : ℝ := ω i
 
 theorem partialSum_succ {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
@@ -100,7 +108,9 @@ theorem measurable_randomWalkLiminf {Ω : Type*} [MeasurableSpace Ω] (X : ℕ �
   intro n
   exact continuous_coe_real_ereal.measurable.comp (measurable_partialSum X hX n)
 
-/-- Dropping the first term does not change the `limsup` of a sequence. -/
+/-- **Dropping the first term preserves the limsup.** For every sequence
+$(u_n)_{n \in \mathbb{N}}$ of extended reals,
+$\limsup_{n \to \infty} u_{n+1} = \limsup_{n \to \infty} u_n$. -/
 theorem limsup_succ_eq {u : ℕ → EReal} :
     Filter.limsup (fun n => u (n + 1)) Filter.atTop = Filter.limsup u Filter.atTop := by
   rw [Filter.limsup_eq, Filter.limsup_eq]
@@ -119,7 +129,9 @@ theorem limsup_succ_eq {u : ℕ → EReal} :
     obtain ⟨N, hN⟩ := h
     exact ⟨N, fun n hn => hN (n + 1) (by omega)⟩
 
-/-- Dropping the first term does not change the `liminf` of a sequence. -/
+/-- **Dropping the first term does not change the liminf.** For every sequence $(u_n)$ in the
+extended reals $[-\infty, +\infty]$,
+$\liminf_{n \to \infty} u_{n+1} = \liminf_{n \to \infty} u_n$. -/
 theorem liminf_succ_eq {u : ℕ → EReal} :
     Filter.liminf (fun n => u (n + 1)) Filter.atTop = Filter.liminf u Filter.atTop := by
   rw [Filter.liminf_eq, Filter.liminf_eq]
@@ -138,8 +150,9 @@ theorem liminf_succ_eq {u : ℕ → EReal} :
     obtain ⟨N, hN⟩ := h
     exact ⟨N, fun n hn => hN (n + 1) (by omega)⟩
 
-/-- Adding a finite constant commutes with `limsup` for real sequences,
-viewed in `EReal`. -/
+/-- **Limsup commutes with adding a constant.** For every real $c$ and every real sequence
+$(u_n)$, with limits superior taken in the extended reals $[-\infty, +\infty]$,
+$\limsup_{n \to \infty} (c + u_n) = c + \limsup_{n \to \infty} u_n$. -/
 theorem limsup_add_const (c : ℝ) (u : ℕ → ℝ) :
     Filter.limsup (fun n => ((c + u n : ℝ) : EReal)) Filter.atTop =
       (c : EReal) + Filter.limsup (fun n => ((u n : ℝ) : EReal)) Filter.atTop := by
@@ -190,8 +203,9 @@ theorem limsup_add_const (c : ℝ) (u : ℕ → ℝ) :
     have h2 : sInf B ≤ b := csInf_le hB_bdd hb
     exact add_le_add_right h2 _
 
-/-- Adding a finite constant commutes with `liminf` for real sequences,
-viewed in `EReal`. -/
+/-- **Liminf commutes with adding a constant.** For every real $c$ and every real sequence
+$(u_n)$, with limits inferior taken in the extended reals $[-\infty, +\infty]$,
+$\liminf_{n \to \infty} (c + u_n) = c + \liminf_{n \to \infty} u_n$. -/
 theorem liminf_add_const (c : ℝ) (u : ℕ → ℝ) :
     Filter.liminf (fun n => ((c + u n : ℝ) : EReal)) Filter.atTop =
       (c : EReal) + Filter.liminf (fun n => ((u n : ℝ) : EReal)) Filter.atTop := by
@@ -245,8 +259,11 @@ theorem liminf_add_const (c : ℝ) (u : ℕ → ℝ) :
       (EReal.le_sub_iff_add_le (Or.inl hc_ne_bot) (Or.inl hc_ne_top)).mp hub
     rwa [add_comm] at h2
 
-/-- The `limsup` of the partial sums satisfies the one-step shift identity
-`limsup Sₙ = ω₀ + limsup Sₙ ∘ shift` pointwise on sequence space. -/
+/-- **One-step shift identity for the limsup of partial sums.** For a real sequence
+$\omega = (\omega_0, \omega_1, \dots)$ write $S_n(\omega) = \sum_{i < n} \omega_i$, and let
+$\theta\omega = (\omega_1, \omega_2, \dots)$ be the one-step shift. Then for every $\omega$,
+$\limsup_{n \to \infty} S_n(\omega) = \omega_0 + \limsup_{n \to \infty} S_n(\theta\omega)$,
+where both limits superior are taken in the extended reals $[-\infty, +\infty]$. -/
 theorem limsup_shift (ω : ℕ → ℝ) :
     randomWalkLimsup coordSeq ω =
       (ω 0 : EReal) + randomWalkLimsup coordSeq (shiftSeq ω) := by
@@ -268,8 +285,11 @@ theorem limsup_shift (ω : ℕ → ℝ) :
   rw [h1, h2, limsup_add_const]
   rfl
 
-/-- The `liminf` of the partial sums satisfies the one-step shift identity
-`liminf Sₙ = ω₀ + liminf Sₙ ∘ shift` pointwise on sequence space. -/
+/-- **One-step shift identity for the liminf of the partial sums.** For a real sequence
+$\omega = (\omega_0, \omega_1, \dots)$ write $S_n(\omega) = \sum_{i<n} \omega_i$, and let
+$\omega'$ be its shift, $\omega'_i = \omega_{i+1}$. Then, with limits inferior taken in
+$[-\infty, +\infty]$, we have
+$\liminf_{n \to \infty} S_n(\omega) = \omega_0 + \liminf_{n \to \infty} S_n(\omega')$. -/
 theorem liminf_shift (ω : ℕ → ℝ) :
     randomWalkLiminf coordSeq ω =
       (ω 0 : EReal) + randomWalkLiminf coordSeq (shiftSeq ω) := by
@@ -315,8 +335,10 @@ private theorem perm_maps_range {σ : Equiv.Perm ℕ} {N n : ℕ} (hN : n ≥ N)
       have h2 : σ i = i := σ.injective h1
       exact hfix h2
 
-/-- Partial sums are invariant under finitely supported coordinate
-permutations, eventually in `n`. -/
+/-- **Partial sums are unchanged by permuting the first coordinates.** Let $\sigma$ be a
+permutation of $\mathbb{N}$ with $\sigma(m) = m$ for every $m \ge N$. Then for every real
+sequence $(\omega_i)_{i \in \mathbb{N}}$ and every $n \ge N$,
+$\sum_{i < n} \omega_{\sigma(i)} = \sum_{i < n} \omega_i$. -/
 theorem partialSum_comp_perm_eq {σ : Equiv.Perm ℕ} {N : ℕ}
     (hσ : ∀ m, m ≥ N → σ m = m) {ω : ℕ → ℝ} {n : ℕ} (hn : n ≥ N) :
     randomWalkPartialSum coordSeq n (ω ∘ ⇑σ) =
@@ -333,8 +355,11 @@ theorem partialSum_comp_perm_eq {σ : Equiv.Perm ℕ} {N : ℕ}
   calc σ.symm m = σ.symm (σ m) := by rw [this]
     _ = m := σ.symm_apply_apply m
 
-/-- The `limsup` of the partial sums is invariant under finitely supported
-coordinate permutations. -/
+/-- **Finite permutations do not change the limsup of the partial sums.** Let $\sigma$ be a
+permutation of $\mathbb{N}$ that moves only finitely many points. For every real sequence
+$\omega = (\omega_0, \omega_1, \dots)$, the limit superior in $[-\infty, +\infty]$ of the partial
+sums $\sum_{i<n} \omega_{\sigma(i)}$ equals the limit superior of the partial sums
+$\sum_{i<n} \omega_i$. -/
 theorem limsup_comp_perm {σ : Equiv.Perm ℕ} (hσ : Set.Finite {n : ℕ | σ n ≠ n})
     (ω : ℕ → ℝ) :
     randomWalkLimsup coordSeq (ω ∘ ⇑σ) = randomWalkLimsup coordSeq ω := by
@@ -354,8 +379,11 @@ theorem limsup_comp_perm {σ : Equiv.Perm ℕ} (hσ : Set.Finite {n : ℕ | σ n
   filter_upwards [Filter.eventually_ge_atTop N] with n hn
   rw [partialSum_comp_perm_eq hfix hn]
 
-/-- The `liminf` of the partial sums is invariant under finitely supported
-coordinate permutations. -/
+/-- **Finite permutations do not change the liminf of the partial sums.** Let $\sigma$ be a
+permutation of $\mathbb{N}$ that moves only finitely many points. For every real sequence
+$\omega = (\omega_0, \omega_1, \dots)$, the limit inferior in $[-\infty, +\infty]$ of the partial
+sums $\sum_{i<n} \omega_{\sigma(i)}$ equals the limit inferior of the partial sums
+$\sum_{i<n} \omega_i$. -/
 theorem liminf_comp_perm {σ : Equiv.Perm ℕ} (hσ : Set.Finite {n : ℕ | σ n ≠ n})
     (ω : ℕ → ℝ) :
     randomWalkLiminf coordSeq (ω ∘ ⇑σ) = randomWalkLiminf coordSeq ω := by
@@ -375,7 +403,11 @@ theorem liminf_comp_perm {σ : Equiv.Perm ℕ} (hσ : Set.Finite {n : ℕ | σ n
   filter_upwards [Filter.eventually_ge_atTop N] with n hn
   rw [partialSum_comp_perm_eq hfix hn]
 
-/-- The i.i.d. product measure is invariant under the one-step shift. -/
+/-- **Shift invariance of the i.i.d. product measure.** Let $\rho$ be a probability measure on
+$\mathbb{R}$, and let $\rho^{\otimes \mathbb{N}}$ be the product measure on the sequence space
+$\mathbb{R}^{\mathbb{N}}$. The image of $\rho^{\otimes \mathbb{N}}$ under the one-step shift
+$(\omega_0, \omega_1, \dots) \mapsto (\omega_1, \omega_2, \dots)$ is
+$\rho^{\otimes \mathbb{N}}$. -/
 theorem map_shiftSeq_infinitePi (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     (Measure.infinitePi (fun _ : ℕ => ρ)).map shiftSeq =
       Measure.infinitePi (fun _ : ℕ => ρ) := by
@@ -416,8 +448,10 @@ theorem map_shiftSeq_infinitePi (ρ : Measure ℝ) [IsProbabilityMeasure ρ] :
     rw [ite_eq_right (by omega : i + 1 ≠ 0), Nat.add_sub_cancel]
     exact ht i
 
-/-- If every real level set of an `EReal`-valued random variable has
-probability `0` or `1`, then the variable is almost surely constant. -/
+/-- **Zero–one sublevel sets force an almost surely constant variable.** Let $\mu$ be a
+probability measure on $\Omega$ and let $F : \Omega \to [-\infty, +\infty]$ be measurable. If
+for every real $a$ the set $\{\omega : F(\omega) \le a\}$ has $\mu$-measure $0$ or $1$, then
+there is $c \in [-\infty, +\infty]$ with $F = c$ $\mu$-almost everywhere. -/
 theorem exists_ae_eq_const_of_forall_le_zero_or_one {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {F : Ω → EReal}
     (hF : Measurable F)
@@ -483,7 +517,9 @@ theorem exists_ae_eq_const_of_forall_le_zero_or_one {Ω : Type*} [MeasurableSpac
   filter_upwards [hae_le, hae_not_lt] with ω hle hnotlt
   exact le_antisymm hle (le_of_not_gt hnotlt)
 
-/-- `limsup Sₙ = ⊥` (in `EReal`) if and only if `Sₙ → -∞`. -/
+/-- **Limsup minus infinity forces divergence to minus infinity.** Let $(S_n)$ be a sequence of
+real numbers. If $\limsup_{n \to \infty} S_n = -\infty$ in the extended reals, then
+$S_n \to -\infty$ as $n \to \infty$. -/
 theorem tendsto_atBot_of_limsup_eq_bot {S : ℕ → ℝ}
     (h : Filter.limsup (fun n => ((S n : ℝ) : EReal)) Filter.atTop = ⊥) :
     Tendsto S Filter.atTop Filter.atBot := by
@@ -512,7 +548,9 @@ theorem tendsto_atBot_of_limsup_eq_bot {S : ℕ → ℝ}
   rw [h] at hle
   exact absurd hle (by simp)
 
-/-- `Sₙ → -∞` if and only if `limsup Sₙ = ⊥` (in `EReal`). -/
+/-- **A sequence tending to $-\infty$ has limsup $-\infty$.** Let $(S_n)_{n \in \mathbb{N}}$
+be a sequence of real numbers with $S_n \to -\infty$ as $n \to \infty$. Then the limit
+superior of $(S_n)$, taken in the extended reals $[-\infty, +\infty]$, equals $-\infty$. -/
 theorem limsup_eq_bot_of_tendsto_atBot {S : ℕ → ℝ}
     (h : Tendsto S Filter.atTop Filter.atBot) :
     Filter.limsup (fun n => ((S n : ℝ) : EReal)) Filter.atTop = ⊥ := by
@@ -545,7 +583,9 @@ theorem limsup_eq_bot_of_tendsto_atBot {S : ℕ → ℝ}
   rw [hbot] at hinf
   exact hinf
 
-/-- `liminf Sₙ = ⊤` (in `EReal`) if and only if `Sₙ → +∞`. -/
+/-- **Liminf plus infinity forces divergence to plus infinity.** Let $(S_n)$ be a sequence of real
+numbers. If $\liminf_{n \to \infty} S_n = +\infty$ in the extended reals, then $S_n \to +\infty$ as
+$n \to \infty$. -/
 theorem tendsto_atTop_of_liminf_eq_top {S : ℕ → ℝ}
     (h : Filter.liminf (fun n => ((S n : ℝ) : EReal)) Filter.atTop = ⊤) :
     Tendsto S Filter.atTop Filter.atTop := by
@@ -574,7 +614,9 @@ theorem tendsto_atTop_of_liminf_eq_top {S : ℕ → ℝ}
   rw [h] at hge
   exact absurd hge (by simp)
 
-/-- `Sₙ → +∞` if and only if `liminf Sₙ = ⊤` (in `EReal`). -/
+/-- **A real sequence tending to $+\infty$ has liminf $+\infty$.** If a real sequence $(S_n)$
+tends to $+\infty$, then its limit inferior in the extended reals $[-\infty, +\infty]$ is
+$+\infty$. -/
 theorem liminf_eq_top_of_tendsto_atTop {S : ℕ → ℝ}
     (h : Tendsto S Filter.atTop Filter.atTop) :
     Filter.liminf (fun n => ((S n : ℝ) : EReal)) Filter.atTop = ⊤ := by
@@ -607,23 +649,31 @@ theorem liminf_eq_top_of_tendsto_atTop {S : ℕ → ℝ}
   rw [htop] at hsup
   exact hsup
 
-/-- The event that the coordinate random walk drifts to `+∞` is
-measurable. -/
+/-- **The event of drift to $+\infty$ on sequence space is measurable.** Equip
+$\mathbb{R}^{\mathbb{N}}$ with its product σ-algebra and write
+$S_n(\omega) = \sum_{i < n} \omega_i$. The set of $\omega \in \mathbb{R}^{\mathbb{N}}$ with
+$S_n(\omega) \to +\infty$ as $n \to \infty$ is measurable. -/
 theorem measurableSet_coord_driftsToTop :
     MeasurableSet {ω : ℕ → ℝ |
       Tendsto (fun n => randomWalkPartialSum coordSeq n ω) Filter.atTop Filter.atTop} :=
   measurableSet_tendsto Filter.atTop (fun n =>
     measurable_partialSum coordSeq (fun i => measurable_pi_apply i) n)
 
-/-- The event that the coordinate random walk drifts to `-∞` is
-measurable. -/
+/-- **The event of drift to $-\infty$ on sequence space is measurable.** Equip
+$\mathbb{R}^{\mathbb{N}}$ with its product σ-algebra and write
+$S_n(\omega) = \sum_{i < n} \omega_i$. The set of $\omega \in \mathbb{R}^{\mathbb{N}}$ with
+$S_n(\omega) \to -\infty$ as $n \to \infty$ is measurable. -/
 theorem measurableSet_coord_driftsToBot :
     MeasurableSet {ω : ℕ → ℝ |
       Tendsto (fun n => randomWalkPartialSum coordSeq n ω) Filter.atTop Filter.atBot} :=
   measurableSet_tendsto Filter.atBot (fun n =>
     measurable_partialSum coordSeq (fun i => measurable_pi_apply i) n)
 
-/-- The event that the coordinate random walk oscillates is measurable. -/
+/-- **The oscillation event on sequence space is measurable.** Equip $\mathbb{R}^{\mathbb{N}}$ with
+its product σ-algebra and write $S_n(\omega) = \sum_{i < n} \omega_i$. The set of
+$\omega \in \mathbb{R}^{\mathbb{N}}$ with $\limsup_{n \to \infty} S_n(\omega) = +\infty$ and
+$\liminf_{n \to \infty} S_n(\omega) = -\infty$ (limits taken in the extended reals) is
+measurable. -/
 theorem measurableSet_coord_oscillates :
     MeasurableSet {ω : ℕ → ℝ |
       randomWalkLimsup coordSeq ω = ⊤ ∧ randomWalkLiminf coordSeq ω = ⊥} := by
@@ -633,7 +683,9 @@ theorem measurableSet_coord_oscillates :
   · exact (measurable_randomWalkLiminf coordSeq (fun i => measurable_pi_apply i))
       (measurableSet_singleton ⊥)
 
-/-- The event that every coordinate vanishes is measurable. -/
+/-- **The zero-sequence event is measurable.** In the sequence space $\mathbb{R}^{\mathbb{N}}$ with
+its product σ-algebra, the set of sequences $\omega$ with $\omega_i = 0$ for every $i$ is
+measurable. -/
 theorem measurableSet_coord_forall_eq_zero :
     MeasurableSet {ω : ℕ → ℝ | ∀ i, ω i = 0} := by
   have : {ω : ℕ → ℝ | ∀ i, ω i = 0} = ⋂ i, (fun ω : ℕ → ℝ => ω i) ⁻¹' {0} := by
@@ -642,8 +694,11 @@ theorem measurableSet_coord_forall_eq_zero :
   rw [this]
   exact MeasurableSet.iInter fun i => measurable_pi_apply i (measurableSet_singleton 0)
 
-/-- If every coordinate vanishes almost surely, the random walk converges
-to the finite limit `0`. -/
+/-- **Vanishing steps give a convergent random walk.** Let $\mu$ be a measure on $\Omega$ and
+let $X_0, X_1, \dots$ be real-valued functions on $\Omega$, with partial sums
+$S_n = \sum_{i<n} X_i$. If for $\mu$-almost every $\omega$ we have $X_i(\omega) = 0$ for all
+$i$, then for $\mu$-almost every $\omega$ the sequence $S_n(\omega)$ converges to a finite real
+limit. -/
 theorem convergesFinite_of_ae_forall_eq_zero {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} {X : ℕ → Ω → ℝ} (h : ∀ᵐ ω ∂μ, ∀ i, X i ω = 0) :
     ∀ᵐ ω ∂μ, ∃ l : ℝ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop
@@ -657,8 +712,10 @@ theorem convergesFinite_of_ae_forall_eq_zero {Ω : Type*} [MeasurableSpace Ω]
   simp only [hsum]
   exact tendsto_const_nhds
 
-/-- The event that the coordinate random walk converges to a finite limit is
-measurable. -/
+/-- **The convergence event on sequence space is measurable.** Equip $\mathbb{R}^{\mathbb{N}}$
+with its product σ-algebra and write $S_n(\omega) = \sum_{i < n} \omega_i$. The set of
+$\omega \in \mathbb{R}^{\mathbb{N}}$ for which $S_n(\omega)$ converges to a finite real limit as
+$n \to \infty$ is measurable. -/
 theorem measurableSet_coord_convergesFinite :
     MeasurableSet {ω : ℕ → ℝ | ∃ l : ℝ,
       Tendsto (fun n => randomWalkPartialSum coordSeq n ω) Filter.atTop (𝓝 l)} :=

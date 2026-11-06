@@ -32,7 +32,10 @@ The uniform SLLN: empirical CDFs converge uniformly a.s. to the
 theoretical CDF.
 -/
 
-/-- Counts indices `i ≤ n` with `X i ω ≤ x` for the empirical CDF. -/
+/-- **Empirical count.** Let $X_0, X_1, X_2, \dots$ be real-valued functions on a set $\Omega$.
+For a natural number $n$, a point $\omega \in \Omega$ and a real number $x$, the empirical count is
+the number of indices $i \in \{0, 1, \dots, n\}$ with $X_i(\omega) \le x$. Divided by $n + 1$, it
+is the value at $x$ of the empirical distribution function of $X_0(\omega), \dots, X_n(\omega)$. -/
 noncomputable def empiricalCount {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) (x : ℝ) : ℕ :=
   by classical
     exact (Finset.filter (fun i => X i ω ≤ x) (Finset.range (n + 1))).card
@@ -307,13 +310,22 @@ private lemma eCDF_le_eCDFlt {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω
   gcongr
 
 /--
-If `X : ℕ → Ω → ℝ` is i.i.d. on a probability space, then almost surely the empirical CDF
-`(empiricalCount X n ω x : ℝ)/(n+1)` converges uniformly in `x : ℝ` to `(P (X 0 ⁻¹' Iic
-x)).toReal`. Source: V. Glivenko, Sulla determinazione empirica delle leggi di probabilita, Giorn.
-Ist. Ital. Attuari 4 (1933) 92–99; F. Cantelli 1933; textbook in Durrett, Probability Theory and
-Examples, 5th ed., Probability and Measure
+**Glivenko–Cantelli theorem.** Let $P$ be a probability measure on a measurable space $\Omega$,
+and let $X_0, X_1, X_2, \dots$ be measurable real-valued functions on $\Omega$ that are mutually
+independent under $P$ and each have the same distribution as $X_0$. Write $F(x) = P(X_0 \le x)$
+for the distribution function of $X_0$, and $C_n(\omega, x)$ for the empirical count, the number
+of indices $i \in \{0, 1, \dots, n\}$ with $X_i(\omega) \le x$. Then for $P$-almost every
+$\omega \in \Omega$: for every $\varepsilon > 0$ there is a natural number $N$ such that for all
+$n \ge N$ and all real $x$,
+$$\left| \frac{C_n(\omega, x)}{n + 1} - F(x) \right| < \varepsilon.$$
+That is, almost surely the empirical distribution function of $X_0, \dots, X_n$ converges to $F$
+uniformly on $\mathbb{R}$.
 
 Proves `Wanted` entry `glivenko_cantelli`.
+
+Source: V. Glivenko, Sulla determinazione empirica delle leggi di probabilita, Giorn.
+Ist. Ital. Attuari 4 (1933) 92–99; F. Cantelli 1933; textbook in Durrett, Probability Theory and
+Examples, 5th ed., Probability and Measure
 -/
 theorem glivenko_cantelli
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]

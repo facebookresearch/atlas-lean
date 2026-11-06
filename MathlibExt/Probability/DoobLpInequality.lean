@@ -247,9 +247,10 @@ private lemma measurable_ofReal_setIntegral_abs_ge {M g : Ω → ℝ} [SFinite �
   rw [hEq]
   exact hFmeas.lintegral_prod_right
 
-/-- **Doob's L² maximal inequality, finite horizon.** For a square-integrable
-martingale, the expected square of the running maximum up to time `n` is at
-most four times the expected square of the value at time `n`. -/
+/-- **Doob's L² maximal inequality, finite horizon.** Let $\mu$ be a probability measure and let
+$(f_k)_{k \in \mathbb{N}}$ be a real-valued martingale with respect to a filtration
+$(\mathcal{F}_k)$ and $\mu$ such that every $f_k$ is in $L^2(\mu)$. Then for every
+$n \in \mathbb{N}$, $\int (\max_{k \le n} |f_k|)^2 \, d\mu \le 4 \int f_n^2 \, d\mu$. -/
 theorem Martingale.doob_sq_maximal_ineq [IsProbabilityMeasure μ] (hmart : Martingale f ℱ μ)
     (hL2 : ∀ n, MemLp (f n) 2 μ) (n : ℕ) :
     ∫ ω, ((Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
@@ -433,10 +434,13 @@ theorem Martingale.doob_sq_maximal_ineq [IsProbabilityMeasure μ] (hmart : Marti
     simpa using h3
   exact hBochner
 
-/-- The **predictable quadratic variation** of a process `f` with respect to a
-filtration `ℱ` and a measure `μ`, defined pointwise by
-`A_n(ω) = ∑_{k=0}^{n-1} E[(f_{k+1} - f_k)² | ℱ_k] (ω)`. For a square-integrable
-martingale this is the predictable part of `f²` in Doob's decomposition. -/
+/-- **Predictable quadratic variation.** Let $\mu$ be a measure on $\Omega$, let
+$(\mathcal{F}_k)_{k \in \mathbb{N}}$ be a filtration and let $(f_k)_{k \in \mathbb{N}}$ be a
+real-valued process. The predictable quadratic variation of $f$ with respect to
+$(\mathcal{F}_k)$ and $\mu$ is the process defined pointwise by
+$A_n(\omega) = \sum_{k=0}^{n-1} \mathbb{E}_\mu[(f_{k+1} - f_k)^2 \mid \mathcal{F}_k](\omega)$,
+so $A_0 = 0$. For a square-integrable martingale this is the predictable part of $f^2$ in Doob's
+decomposition. -/
 noncomputable def predictableQuadraticVariation (μ : Measure Ω) (ℱ : Filtration ℕ m0)
     (f : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
   (Finset.range n).sum (fun k =>
@@ -492,8 +496,13 @@ private theorem Martingale.integral_mul_succ_eq [IsProbabilityMeasure μ]
         (integral_condExp (ℱ.le k)).symm
     _ = ∫ ω, (f k ω) ^ 2 ∂μ := integral_congr_ae hcond
 
-/-- The expectation of the predictable quadratic variation telescopes:
-`E[A_n] = E[f_n²] - E[f_0²]`, by orthogonality of martingale increments. -/
+/-- **Expectation of the predictable quadratic variation.** Let $\mu$ be a probability measure
+and let $(f_k)_{k \in \mathbb{N}}$ be a real-valued martingale with respect to a filtration
+$(\mathcal{F}_k)$ and $\mu$ such that every $f_k$ is in $L^2(\mu)$, and let $A_n$ be its
+predictable quadratic variation. Then for every $n \in \mathbb{N}$,
+$\int A_n \, d\mu = \int f_n^2 \, d\mu - \int f_0^2 \, d\mu$.
+
+The proof telescopes, using the orthogonality of martingale increments. -/
 theorem Martingale.integral_predictableQuadraticVariation [IsProbabilityMeasure μ]
     (hmart : Martingale f ℱ μ) (hL2 : ∀ n, MemLp (f n) 2 μ) (n : ℕ) :
     ∫ ω, predictableQuadraticVariation μ ℱ f n ω ∂μ =
@@ -532,8 +541,11 @@ theorem Martingale.integral_predictableQuadraticVariation [IsProbabilityMeasure 
   exact Finset.sum_range_sub (fun k => ∫ ω, (f k ω) ^ 2 ∂μ) n
 
 /-- **Doob's L² maximal inequality in terms of the predictable quadratic
-variation, finite horizon.** If the martingale starts at `0` a.e., then
-`∫ (max_{k ≤ n} |f k|)² ≤ 4 ∫ A_n`. -/
+variation, finite horizon.** Let $\mu$ be a probability measure and let $(f_k)_{k \in \mathbb{N}}$
+be a real-valued martingale with respect to a filtration $(\mathcal{F}_k)$ and $\mu$ such that
+every $f_k$ is in $L^2(\mu)$ and $f_0 = 0$ almost everywhere, and let $A_n$ be its predictable
+quadratic variation. Then for every $n \in \mathbb{N}$,
+$\int (\max_{k \le n} |f_k|)^2 \, d\mu \le 4 \int A_n \, d\mu$. -/
 theorem Martingale.doob_sq_maximal_ineq_predictableQuadraticVariation
     [IsProbabilityMeasure μ] (hmart : Martingale f ℱ μ) (hL2 : ∀ n, MemLp (f n) 2 μ)
     (hf0 : f 0 =ᵐ[μ] 0) (n : ℕ) :
@@ -550,8 +562,15 @@ theorem Martingale.doob_sq_maximal_ineq_predictableQuadraticVariation
   rw [hEq]
   exact hmart.doob_sq_maximal_ineq hL2 n
 
-/-- **Doob's L² maximal inequality, infinite horizon.** If the martingale starts
-at `0` a.e., then `E[sup_n |f n|²] ≤ 4 E[A_∞]`, where `A_∞ = sup_n A_n`. -/
+/-- **Doob's L² maximal inequality, infinite horizon.** Let $\mu$ be a probability measure, let
+$(f_n)_{n \in \mathbb{N}}$ be a real-valued martingale with respect to a filtration
+$(\mathcal{F}_n)$ and $\mu$ such that every $f_n$ is in $L^2(\mu)$ and $f_0 = 0$ almost
+everywhere, and let $A_n$ be its predictable quadratic variation. Then
+$\int \sup_n |f_n|^2 \, d\mu \le 4 \int \sup_n \max(A_n, 0) \, d\mu$, where both integrals are
+of $[0, \infty]$-valued functions and may be infinite.
+
+Since each $A_n$ is nonnegative almost everywhere, the right side is $4\,\mathbb{E}[A_\infty]$
+with $A_\infty = \sup_n A_n$. -/
 theorem Martingale.doob_sq_maximal_ineq_iSup [IsProbabilityMeasure μ]
     (hmart : Martingale f ℱ μ) (hL2 : ∀ n, MemLp (f n) 2 μ) (hf0 : f 0 =ᵐ[μ] 0) :
     ∫⁻ ω, ⨆ n, ENNReal.ofReal (|f n ω| ^ 2) ∂μ ≤

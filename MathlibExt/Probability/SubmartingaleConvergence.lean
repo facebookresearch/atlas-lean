@@ -60,8 +60,9 @@ open MeasureTheory Filter Topology
 
 namespace MeasureTheory
 
-/-- Monotonicity of expectations along a submartingale: if `X` is a submartingale and `i ≤ j`,
-then `∫ X i dμ ≤ ∫ X j dμ`. -/
+/-- **Expectations increase along a submartingale.** Let $(X_n)_{n \ge 0}$ be a real-valued
+submartingale with respect to a filtration $(\mathcal F_n)_{n \ge 0}$ on a probability space
+$(\Omega, \mu)$. Then $\int X_i \, d\mu \le \int X_j \, d\mu$ for all natural numbers $i \le j$. -/
 theorem Submartingale.integral_mono
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
@@ -73,9 +74,14 @@ theorem Submartingale.integral_mono
         integral_mono_ae (hsub.2.2 i) integrable_condExp h_ae
     _ = ∫ ω, X j ω ∂μ := integral_condExp (ℱ.le i) (μ := μ)
 
-/-- `L¹`-bound for a submartingale `X` from a uniform bound on the positive parts: if
-`∫ (X n)⁺ dμ ≤ C` for every `n`, then `∫ ‖X n‖ dμ ≤ 2C - ∫ X 0 dμ`. This uses the
-identity `‖x‖ = 2 x⁺ - x` together with monotonicity of `∫ X n dμ`. -/
+/-- **L¹ bound for a submartingale with bounded positive parts.** Let $(X_n)_{n \ge 0}$ be a
+real-valued submartingale with respect to a filtration $(\mathcal F_n)_{n \ge 0}$ on a probability
+space $(\Omega, \mu)$, and let $C$ be a real number with $\int X_n^+ \, d\mu \le C$ for every $n$,
+where $X_n^+$ is the positive part of $X_n$. Then for every $n$,
+$\int |X_n| \, d\mu \le 2C - \int X_0 \, d\mu$.
+
+The proof uses the identity $|x| = 2x^+ - x$ together with the monotonicity of
+$n \mapsto \int X_n \, d\mu$. -/
 theorem Submartingale.integral_norm_le
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ} {C : ℝ}
@@ -98,9 +104,12 @@ theorem Submartingale.integral_norm_le
     hsub.integral_mono (Nat.zero_le n)
   linarith [hbdd n]
 
-/-- **Submartingale almost-sure convergence theorem.** If `X` is a submartingale on a
-probability space with `∫ (X n)⁺ dμ` uniformly bounded by some `C`, then there exists an
-integrable limit `X_∞` such that `X n → X_∞` almost surely. -/
+/-- **Submartingale almost-sure convergence theorem.** Let $(X_n)_{n \ge 0}$ be a real-valued
+submartingale with respect to a filtration $(\mathcal F_n)_{n \ge 0}$ on a probability space
+$(\Omega, \mu)$, and let $C$ be a real number with $\int X_n^+ \, d\mu \le C$ for every $n$, where
+$X_n^+$ is the positive part of $X_n$. Then there is an integrable function
+$X_\infty : \Omega \to \mathbb R$ such that $X_n(\omega) \to X_\infty(\omega)$ as $n \to \infty$
+for $\mu$-almost every $\omega$. -/
 theorem Submartingale.exists_ae_tendsto_of_posPart_bdd
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ} {C : ℝ}
@@ -124,11 +133,14 @@ theorem Submartingale.exists_ae_tendsto_of_posPart_bdd
     memLp_one_iff_integrable.mp (Filtration.memLp_limitProcess_of_eLpNorm_bdd hasm h_eLpNorm)
   exact ⟨ℱ.limitProcess X μ, hint_lim, hconv⟩
 
-/-- **Supermartingale almost-sure convergence theorem** (dual form). If `X` is a
-supermartingale on a probability space with `∫ (X n)⁻ dμ` uniformly bounded by some `C`,
-then there exists an integrable limit `X_∞` such that `X n → X_∞` almost surely.
-This follows from the submartingale theorem applied to `-X`, since
-`((-X) n ω)⁺ = (X n ω)⁻`. -/
+/-- **Supermartingale almost-sure convergence theorem.** Let $(X_n)_{n \ge 0}$ be a real-valued
+supermartingale with respect to a filtration $(\mathcal F_n)_{n \ge 0}$ on a probability space
+$(\Omega, \mu)$, and let $C$ be a real number with $\int X_n^- \, d\mu \le C$ for every $n$, where
+$X_n^-$ is the negative part of $X_n$. Then there is an integrable function
+$X_\infty : \Omega \to \mathbb R$ such that $X_n(\omega) \to X_\infty(\omega)$ as $n \to \infty$
+for $\mu$-almost every $\omega$.
+
+This follows from the submartingale theorem applied to $-X$, since $(-X_n)^+ = X_n^-$. -/
 theorem Supermartingale.exists_ae_tendsto_of_negPart_bdd
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ} {C : ℝ}
@@ -149,9 +161,13 @@ theorem Supermartingale.exists_ae_tendsto_of_negPart_bdd
   filter_upwards [hconv] with ω hω
   simpa using hω.neg
 
-/-- **Martingale almost-sure convergence theorem** (positive-part form). If `X` is a
-martingale on a probability space with `∫ (X n)⁺ dμ` uniformly bounded by some `C`,
-then there exists an integrable limit `X_∞` such that `X n → X_∞` almost surely.
+/-- **Martingale almost-sure convergence theorem.** Let $(X_n)_{n \ge 0}$ be a real-valued
+martingale with respect to a filtration $(\mathcal F_n)_{n \ge 0}$ on a probability space
+$(\Omega, \mu)$, and let $C$ be a real number with $\int X_n^+ \, d\mu \le C$ for every $n$, where
+$X_n^+$ is the positive part of $X_n$. Then there is an integrable function
+$X_\infty : \Omega \to \mathbb R$ such that $X_n(\omega) \to X_\infty(\omega)$ as $n \to \infty$
+for $\mu$-almost every $\omega$.
+
 This is the submartingale theorem, since every martingale is a submartingale. -/
 theorem Martingale.exists_ae_tendsto_of_posPart_bdd
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]

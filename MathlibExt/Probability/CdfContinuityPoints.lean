@@ -57,16 +57,19 @@ open scoped ENNReal
 
 namespace MathlibExt.Probability.CdfContinuityPoints
 
-/-- The atom of a probability measure at `x` is the jump of its cdf at `x`:
-`μ {x} = ENNReal.ofReal (cdf μ x - leftLim (cdf μ) x)`. -/
+/-- **Atoms are the jumps of the cdf.** Let $\mu$ be a probability measure on $\mathbb{R}$ with
+cumulative distribution function $F(y) = \mu((-\infty, y])$, and for $x \in \mathbb{R}$ let
+$F(x^-) = \lim_{y \to x^-} F(y)$ be its left limit at $x$. Then $\mu(\{x\})$ equals the jump
+$F(x) - F(x^-)$, which is a nonnegative real number since $F$ is nondecreasing. -/
 theorem measure_singleton_eq_cdf_sub_leftLim
     (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) :
     μ {x} = ENNReal.ofReal (cdf μ x - Function.leftLim (cdf μ) x) := by
   have h := StieltjesFunction.measure_singleton (cdf μ) x
   rwa [measure_cdf] at h
 
-/-- The cdf of a probability measure is continuous at `x` if and only if the
-measure has no atom at `x`. -/
+/-- **The cdf is continuous exactly at the non-atoms.** Let $\mu$ be a probability measure on
+$\mathbb{R}$ with cumulative distribution function $F(y) = \mu((-\infty, y])$. For every
+$x \in \mathbb{R}$, $F$ is continuous at $x$ if and only if $\mu(\{x\}) = 0$. -/
 theorem continuousAt_cdf_iff_measure_singleton_eq_zero
     (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) :
     ContinuousAt (cdf μ) x ↔ μ {x} = 0 := by
@@ -90,33 +93,39 @@ theorem continuousAt_cdf_iff_measure_singleton_eq_zero
       rw [heq, StieltjesFunction.rightLim_eq]
     exact (monotone_cdf μ).continuousAt_iff_leftLim_eq_rightLim.mpr hlim
 
-/-- If the cdf of a probability measure `μ` is continuous at `x`, then `μ`
-assigns zero mass to the singleton `{x}`. Continuity of the cdf at `x`
-corresponds to absence of an atom at `x`. -/
+/-- **No atom at a continuity point of the cdf.** Let $\mu$ be a probability measure on
+$\mathbb{R}$ with cumulative distribution function $F(y) = \mu((-\infty, y])$. If $F$ is
+continuous at a point $x \in \mathbb{R}$, then $\mu(\{x\}) = 0$. -/
 theorem cdf_continuousAt_singleton_null
     (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) (hx : ContinuousAt (cdf μ) x) :
     μ {x} = 0 :=
   (continuousAt_cdf_iff_measure_singleton_eq_zero μ x).mp hx
 
-/-- If the cdf of a probability measure `μ` is continuous at `x`, then the
-boundary `frontier (Iic x) = {x}` is `μ`-null. -/
+/-- **Continuity points of the cdf have null boundary.** Let $\mu$ be a probability measure on
+$\mathbb{R}$ with cumulative distribution function $F(y) = \mu((-\infty, y])$. If $F$ is
+continuous at a point $x \in \mathbb{R}$, then the boundary of the half-line $(-\infty, x]$,
+which is $\{x\}$, has $\mu$-measure zero. -/
 theorem cdf_continuousAt_frontier_Iic_null
     (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) (hx : ContinuousAt (cdf μ) x) :
     μ (frontier (Iic x)) = 0 := by
   rw [frontier_Iic]
   exact cdf_continuousAt_singleton_null μ x hx
 
-/-- For a probability measure `μ` on `ℝ`, the mass of a half-open interval
-`(a, b]` equals `ENNReal.ofReal (cdf μ b - cdf μ a)`. -/
+/-- **Mass of a half-open interval via the cdf.** Let $\mu$ be a probability measure on
+$\mathbb{R}$ with cumulative distribution function $F(y) = \mu((-\infty, y])$. For all
+$a, b \in \mathbb{R}$, the measure $\mu((a, b])$ equals $\max(F(b) - F(a), 0)$, as an extended
+nonnegative real. -/
 theorem measure_Ioc_eq_ofReal_cdf
     (μ : Measure ℝ) [IsProbabilityMeasure μ] (a b : ℝ) :
     μ (Ioc a b) = ENNReal.ofReal (cdf μ b - cdf μ a) := by
   have h := StieltjesFunction.measure_Ioc (cdf μ) a b
   rwa [measure_cdf] at h
 
-/-- The set of continuity points of the cdf of a probability measure is dense
-in `ℝ`. This follows from the fact that a monotone function has only
-countably many discontinuities. -/
+/-- **The continuity points of the cdf are dense.** Let $\mu$ be a probability measure on
+$\mathbb{R}$ with cumulative distribution function $F(y) = \mu((-\infty, y])$. The set of
+points $x \in \mathbb{R}$ at which $F$ is continuous is dense in $\mathbb{R}$.
+
+This follows from the fact that a monotone function has only countably many discontinuities. -/
 theorem dense_cdf_continuityPoints (μ : Measure ℝ) [IsProbabilityMeasure μ] :
     Dense {x : ℝ | ContinuousAt (cdf μ) x} := by
   have hcount : {x : ℝ | ¬ContinuousAt (cdf μ) x}.Countable :=
