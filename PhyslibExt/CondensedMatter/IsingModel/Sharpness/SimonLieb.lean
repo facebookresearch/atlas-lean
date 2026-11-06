@@ -135,7 +135,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## B. The Simon weight -/
 
-/-- The Simon weight `w(x, y) = tanh(βJ_{xy}) ⟨σ_oσ_x⟩_{J|S}`. -/
+/-- **Simon weight of a boundary pair.**
+The Simon weight `w(x, y) = tanh(βJ_{xy}) ⟨σ_oσ_x⟩_{J|S}`. -/
 noncomputable def simonWeight (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V) (o : V) :
     V → V → ℝ :=
   fun x y => Real.tanh (β * J s(x, y)) * expectationJ G β (couplingIn J S) {o, x}

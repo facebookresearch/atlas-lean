@@ -48,7 +48,8 @@ namespace StatMech.Onsager
 
 /-! ## A. Block-circulant structure -/
 
-/-- The `4 × 4` block of the Kac-Ward matrix between the darts at site `g` and the darts at the
+/-- **4 × 4 block of the Kac-Ward matrix between a site and the origin.**
+The `4 × 4` block of the Kac-Ward matrix between the darts at site `g` and the darts at the
 origin. -/
 noncomputable def ons_KWblock (L : ℕ) (x ωt : ℂ) (g : ZMod L × ZMod L) : Matrix (Fin 4) (Fin 4) ℂ :=
   fun a b => ons_KWmat L x ωt (g, a) (0, b)

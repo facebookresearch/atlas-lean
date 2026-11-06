@@ -51,12 +51,14 @@ namespace StatMech.Onsager
 
 /-! ## A. External darts of a walk -/
 
-/-- Whether a dart of the decorated graph traverses an external edge (from a torus dart to its
+/-- **Test for a dart traversing an external edge.**
+Whether a dart of the decorated graph traverses an external edge (from a torus dart to its
 reverse). -/
 def ons_decDartIsExternal {L : ℕ} (a : (ons_decGraph L).Dart) : Bool :=
   decide (a.snd = ons_dartRev L a.fst)
 
-/-- The torus darts at which a decorated walk traverses an external edge, in order. -/
+/-- **External darts of a decorated walk in order.**
+The torus darts at which a decorated walk traverses an external edge, in order. -/
 def ons_decWalkExternalDarts {L : ℕ} {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) : List (ons_Dart L) :=
   (p.darts.filter ons_decDartIsExternal).map (fun a => a.fst)
@@ -227,7 +229,8 @@ lemma ons_walkOriginalEdges_prod_eq_externalDarts
 
 /-! ## B. First-return loops of cycles -/
 
-/-- The first-return loop at `d` read off from a decorated cycle rooted at `d`: the root, the
+/-- **First-return loop of a rooted decorated cycle.**
+The first-return loop at `d` read off from a decorated cycle rooted at `d`: the root, the
 remaining external darts in reverse order, and the root again. -/
 def ons_decCycleFirstReturn {L : ℕ} {d : ons_Dart L}
     (q : (ons_decGraph L).Walk d d) : List (ons_Dart L) :=

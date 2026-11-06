@@ -65,14 +65,16 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Currents, sources and weights -/
 
-/-- A current on the edges of `V`: a multiplicity `n_e ∈ ℕ` for every unordered pair `e`. -/
+/-- **Current: a multiplicity in $\mathbb{N}$ for each unordered pair.**
+A current on the edges of `V`: a multiplicity `n_e ∈ ℕ` for every unordered pair `e`. -/
 abbrev Current (V : Type*) : Type _ := Sym2 V → ℕ
 
-/-- The total multiplicity `∑_{e ∋ x} n_e` of the edges of `G` incident to `x`. -/
+/-- **Incident flux of a current at a vertex.**
+The total multiplicity `∑_{e ∋ x} n_e` of the edges of `G` incident to `x`. -/
 noncomputable def incidentFlux (n : Current V) (x : V) : ℕ :=
   ∑ e ∈ G.edgeFinset.filter (fun e => x ∈ e), n e
 
-/-- The sources `∂n`: the vertices with odd incident flux. -/
+/-- **Sources of a current.** The sources `∂n`: the vertices with odd incident flux. -/
 noncomputable def sources (n : Current V) : Finset V :=
   Finset.univ.filter (fun x => Odd (incidentFlux G n x))
 
@@ -81,12 +83,13 @@ lemma mem_sources {n : Current V} {x : V} :
     x ∈ sources G n ↔ Odd (incidentFlux G n x) := by
   simp [sources]
 
-/-- The current weight `w(n) = ∏_{e ∈ E(G)} (βJ_e)^{n_e}/n_e!`. -/
+/-- **Weight of a random current.** The current weight `w(n) = ∏_{e ∈ E(G)} (βJ_e)^{n_e}/n_e!`. -/
 noncomputable def weight (β : ℝ) (J : Sym2 V → ℝ) (n : Current V) : ℝ :=
   ∏ e ∈ G.edgeFinset, (β * J e) ^ (n e) / (Nat.factorial (n e))
 
 omit [DecidableEq V] in
-/-- Current weights are nonnegative for `β ≥ 0` and nonnegative couplings. -/
+/-- **Current weights are nonnegative for nonnegative $\beta$ and couplings.**
+Current weights are nonnegative for `β ≥ 0` and nonnegative couplings. -/
 lemma weight_nonneg (β : ℝ) (J : Sym2 V → ℝ) (hβ : 0 ≤ β) (hJ : ∀ e, 0 ≤ J e)
     (n : Current V) : 0 ≤ weight G β J n := by
   unfold weight
@@ -101,7 +104,7 @@ lemma weight_zero (β : ℝ) (J : Sym2 V → ℝ) :
 
 /-! ## B. Connectivity -/
 
-/-- The subgraph of `G` of edges with `n_e ≥ 1`. -/
+/-- **Subgraph of edges carrying positive current.** The subgraph of `G` of edges with `n_e ≥ 1`. -/
 def currentSubgraph (n : Current V) : SimpleGraph V where
   Adj x y := G.Adj x y ∧ 1 ≤ n s(x, y)
   symm := by
@@ -124,7 +127,8 @@ omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma currentSubgraph_le (n : Current V) : currentSubgraph G n ≤ G :=
   fun _ _ h => h.1
 
-/-- `x` and `y` are joined by a path of edges carrying positive current. -/
+/-- **Connectivity through edges carrying positive current.**
+`x` and `y` are joined by a path of edges carrying positive current. -/
 def CurrentConnected (n : Current V) (x y : V) : Prop :=
   (currentSubgraph G n).Reachable x y
 
@@ -146,7 +150,7 @@ lemma CurrentConnected.trans {n : Current V} {x y z : V}
 
 /-! ## C. Backbones -/
 
-/-- The subgraph of `G` of edges with odd multiplicity. -/
+/-- **Subgraph of edges with odd current.** The subgraph of `G` of edges with odd multiplicity. -/
 def oddSubgraph (n : Current V) : SimpleGraph V where
   Adj x y := G.Adj x y ∧ Odd (n s(x, y))
   symm := by
@@ -175,11 +179,13 @@ lemma oddSubgraph_le_currentSubgraph (n : Current V) :
   intro x y ⟨hadj, hodd⟩
   exact ⟨hadj, hodd.pos⟩
 
-/-- Backbone paths from `x` to `y`: paths in the subgraph of odd edges. -/
+/-- **Backbone paths along odd-current edges.**
+Backbone paths from `x` to `y`: paths in the subgraph of odd edges. -/
 abbrev IsBackbonePath (n : Current V) (x y : V) : Type _ :=
   (oddSubgraph G n).Path x y
 
-/-- A canonical backbone path: the least one for a given linear order on backbone paths. -/
+/-- **Canonical backbone path of a current.**
+A canonical backbone path: the least one for a given linear order on backbone paths. -/
 noncomputable def backbone (n : Current V) (x y : V)
     [LinearOrder (IsBackbonePath G n x y)]
     (h : Nonempty (IsBackbonePath G n x y)) : IsBackbonePath G n x y :=
@@ -199,7 +205,8 @@ lemma IsBackbonePath.currentConnected {n : Current V} {x y : V}
 
 /-! ## D. The trace of a current -/
 
-/-- The trace of a current: the bond configuration with `e` open iff `n_e ≥ 1`. -/
+/-- **Trace of a current as a bond configuration.**
+The trace of a current: the bond configuration with `e` open iff `n_e ≥ 1`. -/
 def percolationField (n : Current V) : Sym2 V → Bool :=
   fun e => decide (1 ≤ n e)
 
@@ -230,10 +237,11 @@ lemma currentConnected_iff_percolationField (n : Current V) (x y : V) :
 
 /-! ## E. The ghost vertex -/
 
-/-- The ghost vertex `none` of `Option V`. -/
+/-- **Ghost vertex of the extended vertex set.** The ghost vertex `none` of `Option V`. -/
 def ghost : Option V := none
 
-/-- The graph on `V ⊔ {ghost}` with the edges of `G` and an edge from every site to the ghost. -/
+/-- **Graph with a ghost vertex joined to every site.**
+The graph on `V ⊔ {ghost}` with the edges of `G` and an edge from every site to the ghost. -/
 def withGhost : SimpleGraph (Option V) where
   Adj a b :=
     match a, b with

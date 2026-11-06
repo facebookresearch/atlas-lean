@@ -52,7 +52,7 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Reindexing -/
 
-/-- The function `s(x, y) ↦ F(x) + F(y)` on unordered pairs. -/
+/-- **Endpoint sum on unordered pairs.** The function `s(x, y) ↦ F(x) + F(y)` on unordered pairs. -/
 noncomputable def abcrEndpointSum (F : V → ℝ) : Sym2 V → ℝ :=
   Sym2.lift ⟨fun x y => F x + F y, fun x y => by ring⟩
 
@@ -60,7 +60,8 @@ omit [Fintype V] [DecidableEq V] in
 @[simp] lemma abcrEndpointSum_mk (F : V → ℝ) (x y : V) :
     abcrEndpointSum F s(x, y) = F x + F y := rfl
 
-/-- The incident coupling `∑_{y ∼ x} J_{xy}` of `x`, as a sum over darts starting at `x`. -/
+/-- **Incident coupling of a vertex.**
+The incident coupling `∑_{y ∼ x} J_{xy}` of `x`, as a sum over darts starting at `x`. -/
 noncomputable def abcrIncidentCoupling (J : Sym2 V → ℝ) (x : V) : ℝ :=
   ∑ d : {d : G.Dart // d.fst = x}, J d.1.edge
 

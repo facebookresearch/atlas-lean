@@ -121,7 +121,8 @@ lemma iti_plus_multiOpen_antitone {β : ℝ} (hβ : 0 ≤ β) {h : ℝ} (hh : 0 
 
 /-! ## B. Monomials -/
 
-/-- The monomial `ω ↦ ∏_{x ∈ T} 1_{ω_x = +}` as a continuous function. -/
+/-- **All-plus monomial as a continuous function.**
+The monomial `ω ↦ ∏_{x ∈ T} 1_{ω_x = +}` as a continuous function. -/
 noncomputable def iti_monomialCM (T : Finset (Site d)) : C(ConfigSpace (Site d), ℝ) :=
   ∏ x ∈ T, pstc_coordCM x
 
@@ -175,7 +176,8 @@ lemma iti_closure_isMonomial {hh : C(ConfigSpace (Site d), ℝ)}
     obtain ⟨T₁, rfl⟩ := hx; obtain ⟨T₂, rfl⟩ := hy
     exact ⟨T₁ ∪ T₂, iti_monomialCM_mul T₁ T₂⟩
 
-/-- The monomial `ω ↦ ∏_{x ∈ T} 1_{ω_x = +}` as a bounded continuous function. -/
+/-- **All-plus monomial as a bounded continuous function.**
+The monomial `ω ↦ ∏_{x ∈ T} 1_{ω_x = +}` as a bounded continuous function. -/
 noncomputable def iti_monomialBcf (T : Finset (Site d)) : ConfigSpace (Site d) →ᵇ ℝ :=
   BoundedContinuousFunction.mkOfCompact (iti_monomialCM T)
 
@@ -229,7 +231,8 @@ lemma iti_plus_multiOpen_tendsto (β h : ℝ) (φ : ℕ → ℕ) (T : Finset (Si
 
 /-! ## C. Homogeneity and translation invariance -/
 
-/-- The plus state gives the all-plus events on `T` and on `g⁻¹ T` the same probability, for
+/-- **Shift homogeneity of all-plus events in the plus state.**
+The plus state gives the all-plus events on `T` and on `g⁻¹ T` the same probability, for
 every finite `T`. -/
 def iti_PlusMultiHomogeneous (β h : ℝ) (g : Multiplicative (Site d)) : Prop :=
   ∀ T : Finset (Site d),
@@ -288,7 +291,8 @@ lemma iti_decayFun_zero (μ : ℕ → ProbabilityMeasure (ConfigSpace (Site d)))
   simp only [pstc_decayFun, BoundedContinuousFunction.coe_zero, Pi.zero_apply, integral_zero,
     sub_zero]
 
-/-- The continuous functions whose shifted integrals against the plus box measures decay along
+/-- **Continuous functions with decaying shifted integrals.**
+The continuous functions whose shifted integrals against the plus box measures decay along
 `φ`. -/
 noncomputable def iti_decaySet (β h : ℝ) (g : Multiplicative (Site d)) (φ : ℕ → ℕ) :
     Submodule ℝ C(ConfigSpace (Site d), ℝ) where

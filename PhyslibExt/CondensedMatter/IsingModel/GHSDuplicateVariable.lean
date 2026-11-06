@@ -64,7 +64,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Three replicas -/
 
-/-- The expectation of `F a b c` over three independent copies `a, b, c` of the Ising Gibbs
+/-- **Three-replica Ising expectation.**
+The expectation of `F a b c` over three independent copies `a, b, c` of the Ising Gibbs
 distribution. -/
 noncomputable def isingExp3 (β h : ℝ)
     (F : ConfigSpace V → ConfigSpace V → ConfigSpace V → ℝ) : ℝ :=
@@ -174,7 +175,8 @@ lemma isingExp3_const_mul (β h : ℝ) (r : ℝ)
 
 /-! ## B. The three-replica form of the GHS inequality -/
 
-/-- The three-replica variable `d_w = σ_w(b) + σ_w(c) - 2σ_w(a)`. -/
+/-- **Three-replica variable $d_w$.**
+The three-replica variable `d_w = σ_w(b) + σ_w(c) - 2σ_w(a)`. -/
 def dvar (a b c : ConfigSpace V) (w : V) : ℝ := spin b w + spin c w - 2 * spin a w
 
 omit [Fintype V] [DecidableEq V] in
@@ -274,7 +276,8 @@ lemma ghsDV_ghs_iff_three_replica_nonneg (β h : ℝ) (o x y : V) :
 
 /-! ## C. Two replicas and rotated variables -/
 
-/-- The expectation of `F a b` over two independent copies `a, b` of the Ising Gibbs
+/-- **Two-replica Ising expectation.**
+The expectation of `F a b` over two independent copies `a, b` of the Ising Gibbs
 distribution. -/
 noncomputable def isingExp2 (β h : ℝ) (F : ConfigSpace V → ConfigSpace V → ℝ) : ℝ :=
   ∑ a : ConfigSpace V, ∑ b : ConfigSpace V,
@@ -324,10 +327,12 @@ lemma isingExp2_factor_b (β h : ℝ) (g : ConfigSpace V → ℝ) :
   have := isingExp2_factor G β h (fun _ => (1:ℝ)) g
   simpa [h1] using this
 
-/-- The rotated two-replica variable `u_w = (σ_w(a) - σ_w(b)) / 2`. -/
+/-- **Rotated two-replica difference variable $u_w$.**
+The rotated two-replica variable `u_w = (σ_w(a) - σ_w(b)) / 2`. -/
 noncomputable def uvar (a b : ConfigSpace V) (w : V) : ℝ := (spin a w - spin b w) / 2
 
-/-- The rotated two-replica variable `t_w = (σ_w(a) + σ_w(b)) / 2`. -/
+/-- **Rotated two-replica sum variable $t_w$.**
+The rotated two-replica variable `t_w = (σ_w(a) + σ_w(b)) / 2`. -/
 noncomputable def tvar (a b : ConfigSpace V) (w : V) : ℝ := (spin a w + spin b w) / 2
 
 lemma ghsDV_cov2_eq_two_uu (β h : ℝ) (o x : V) :

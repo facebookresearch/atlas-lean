@@ -67,7 +67,8 @@ lemma ons_prod_scaleEdgeWeight
           ring
         · simp [ons_scaleEdgeWeight, hfe, hef, he]
 
-/-- The part of the edge-weighted character sum coming from even subgraphs that contain `edge`. -/
+/-- **Weighted character sum over even subgraphs containing an edge.**
+The part of the edge-weighted character sum coming from even subgraphs that contain `edge`. -/
 noncomputable def ons_weightedSpinEdgeCoefficient
     (L : ℕ) [Fact (2 < L)]
     (weight : Sym2 (ZMod L × ZMod L) → ℂ)

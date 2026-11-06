@@ -68,12 +68,14 @@ open StatMech.Ising
 
 /-! ## A. The decorated graph -/
 
-/-- Internal adjacency of the decoration: two darts at the same site whose directions are
+/-- **Internal adjacency of the torus decoration.**
+Internal adjacency of the decoration: two darts at the same site whose directions are
 consecutive in `0, 1, 2, 3`. -/
 def ons_decInternalAdj {L : ℕ} (d e : ons_Dart L) : Prop :=
   d.1 = e.1 ∧ (d.2.val + 1 = e.2.val ∨ e.2.val + 1 = d.2.val)
 
-/-- Adjacency of the decorated graph: a dart is joined to its reverse and to its internal neighbors.
+/-- **Adjacency of the decorated torus graph.**
+Adjacency of the decorated graph: a dart is joined to its reverse and to its internal neighbors.
 -/
 def ons_decAdj (L : ℕ) (d e : ons_Dart L) : Prop :=
   e = ons_dartRev L d ∨ ons_decInternalAdj d e
@@ -100,7 +102,8 @@ lemma ons_dartRev_ne_self (L : ℕ) (d : ons_Dart L) :
   simp only [ons_dartRev] at hdir
   fin_cases mu <;> simp at hdir
 
-/-- The decorated graph of the torus: vertices are darts, external edges join each dart to its
+/-- **Decorated graph of the torus.**
+The decorated graph of the torus: vertices are darts, external edges join each dart to its
 reverse, and internal edges form the path `(s, 0) - (s, 1) - (s, 2) - (s, 3)` at each site `s`. -/
 def ons_decGraph (L : ℕ) : SimpleGraph (ons_Dart L) where
   Adj := ons_decAdj L
@@ -116,7 +119,8 @@ def ons_decGraph (L : ℕ) : SimpleGraph (ons_Dart L) where
 instance (L : ℕ) : DecidableRel (ons_decGraph L).Adj :=
   inferInstanceAs (DecidableRel (ons_decAdj L))
 
-/-- The internal neighbors of a dart in the path at its site. -/
+/-- **Internal neighbors of a dart in the decoration.**
+The internal neighbors of a dart in the path at its site. -/
 def ons_decInternalNeighbors {L : ℕ} (d : ons_Dart L) : Finset (ons_Dart L) :=
   match d.2 with
   | 0 => {(d.1, 1)}
@@ -145,12 +149,14 @@ lemma ons_decGraph_degree_le_three (L : ℕ) [NeZero L] (d : ons_Dart L) :
 
 /-! ## B. Completing a site -/
 
-/-- The internal-edge bits `(b₀, b₀ + b₁, b₀ + b₁ + b₂)` that complete port bits `b₀, …, b₃` at one
+/-- **Internal-edge bits completing port bits at a site.**
+The internal-edge bits `(b₀, b₀ + b₁, b₀ + b₁ + b₂)` that complete port bits `b₀, …, b₃` at one
 site to an even subgraph. -/
 def ons_decChainCompletion (b0 b1 b2 : Fin 2) : Fin 3 → Fin 2 :=
   ![b0, b0 + b1, b0 + b1 + b2]
 
-/-- Parity of the decorated subgraph at the four darts of one site, for port bits `b₀, …, b₃` and
+/-- **Parity condition of the decoration at one site.**
+Parity of the decorated subgraph at the four darts of one site, for port bits `b₀, …, b₃` and
 internal-edge bits `y`. -/
 def ons_decChainEven (b0 b1 b2 b3 : Fin 2) (y : Fin 3 → Fin 2) : Prop :=
   b0 + y 0 = 0 ∧
@@ -198,7 +204,8 @@ lemma ons_decChainEven_port_even {b0 b1 b2 b3 : Fin 2}
 
 /-! ## C. Port patterns -/
 
-/-- A port pattern: one bit per dart, equal on a dart and its reverse, with an even number of ones
+/-- **Port pattern on the darts of the torus.**
+A port pattern: one bit per dart, equal on a dart and its reverse, with an even number of ones
 at each site. Port patterns encode even subgraphs of the torus. -/
 structure ons_PortPattern (L : ℕ) where
   bit : ons_Dart L → Fin 2
@@ -213,12 +220,14 @@ structure ons_PortPattern (L : ℕ) where
   simp only [ons_PortPattern.mk.injEq]
   exact h
 
-/-- The internal-edge bits at a site determined by a port pattern. -/
+/-- **Internal-edge bits at a site from a port pattern.**
+The internal-edge bits at a site determined by a port pattern. -/
 def ons_portChainBit {L : ℕ} (P : ons_PortPattern L)
     (s : ZMod L × ZMod L) : Fin 3 → Fin 2 :=
   ons_decChainCompletion (P.bit (s, 0)) (P.bit (s, 1)) (P.bit (s, 2))
 
-/-- The bit of the decorated edge between `d` and `e` determined by a port pattern. -/
+/-- **Port-pattern bit of the decorated edge between two darts.**
+The bit of the decorated edge between `d` and `e` determined by a port pattern. -/
 def ons_decNeighborBit {L : ℕ} (P : ons_PortPattern L)
     (d e : ons_Dart L) : Fin 2 :=
   if e = ons_dartRev L d then P.bit d else
@@ -253,7 +262,8 @@ lemma ons_decNeighborBit_symm {L : ℕ} (P : ons_PortPattern L)
       fin_cases mu <;> fin_cases nu <;> rfl
     · rw [ite_eq_right hs, ite_eq_right (Ne.symm hs)]
 
-/-- The bit of a decorated edge determined by a port pattern. -/
+/-- **Port-pattern bit of an unordered decorated edge.**
+The bit of a decorated edge determined by a port pattern. -/
 def ons_decEdgeBit {L : ℕ} (P : ons_PortPattern L) :
     Sym2 (ons_Dart L) → Fin 2 :=
   Sym2.lift ⟨ons_decNeighborBit P, ons_decNeighborBit_symm P⟩
@@ -262,7 +272,8 @@ def ons_decEdgeBit {L : ℕ} (P : ons_PortPattern L) :
     (d e : ons_Dart L) :
     ons_decEdgeBit P s(d, e) = ons_decNeighborBit P d e := rfl
 
-/-- The even subgraph of the decorated graph determined by a port pattern. -/
+/-- **Even decorated subgraph determined by a port pattern.**
+The even subgraph of the decorated graph determined by a port pattern. -/
 noncomputable def ons_decoratedEdges {L : ℕ} [NeZero L]
     (P : ons_PortPattern L) : Finset (Sym2 (ons_Dart L)) :=
   (ons_decGraph L).edgeFinset.filter (fun e => ons_decEdgeBit P e = 1)
@@ -401,7 +412,7 @@ lemma ons_decNeighborBit_sum_zero (L : ℕ) [Fact (2 < L)]
 
 /-! ## E. From torus subgraphs to port patterns -/
 
-/-- The torus edge underlying a dart. -/
+/-- **Torus edge underlying a dart.** The torus edge underlying a dart. -/
 def ons_portEdge (L : ℕ) (d : ons_Dart L) : Sym2 (ZMod L × ZMod L) :=
   s(d.1, ons_dirStep L d.2 d.1)
 
@@ -489,13 +500,15 @@ lemma ons_torus_neighbor_sum_eq_direction_sum (L : ℕ) [Fact (2 < L)]
       fin_cases mu <;> simp
   rw [hset, Finset.sum_image (fun _ _ _ _ h => ons_dirStep_injective L v h)]
 
-/-- The bit of a dart in the port pattern of an edge set `F`: `1` if its underlying torus edge lies
+/-- **Port bit of a dart for a torus edge set.**
+The bit of a dart in the port pattern of an edge set `F`: `1` if its underlying torus edge lies
 in `F`. -/
 def ons_portBit {L : ℕ} (F : Finset (Sym2 (ZMod L × ZMod L)))
     (d : ons_Dart L) : Fin 2 :=
   if ons_portEdge L d ∈ F then 1 else 0
 
-/-- The port pattern of an even subgraph of the torus. -/
+/-- **Port pattern of an even subgraph of the torus.**
+The port pattern of an even subgraph of the torus. -/
 noncomputable def ons_evenSubgraphPortPattern (L : ℕ) [Fact (2 < L)]
     (F : Finset (Sym2 (ZMod L × ZMod L)))
     (hF : F ∈ evenSubgraphs (onsTorusGraph L)) : ons_PortPattern L where
@@ -528,13 +541,15 @@ noncomputable def ons_evenSubgraphPortPattern (L : ℕ) [Fact (2 < L)]
 
 /-! ## F. From decorated subgraphs to port patterns -/
 
-/-- The port bit of a dart in a decorated edge set: whether the external edge at the dart is
+/-- **Port bit of a dart in a decorated edge set.**
+The port bit of a dart in a decorated edge set: whether the external edge at the dart is
 present. -/
 def ons_decoratedPortBit {L : ℕ}
     (D : Finset (Sym2 (ons_Dart L))) (d : ons_Dart L) : Fin 2 :=
   if s(d, ons_dartRev L d) ∈ D then 1 else 0
 
-/-- The three internal-edge bits of a decorated edge set at one site. -/
+/-- **Internal-edge bits of a decorated edge set at a site.**
+The three internal-edge bits of a decorated edge set at one site. -/
 def ons_decoratedChainBits {L : ℕ}
     (D : Finset (Sym2 (ons_Dart L))) (s : ZMod L × ZMod L) :
     Fin 3 → Fin 2 :=
@@ -597,7 +612,8 @@ lemma ons_decorated_local_even (L : ℕ) [Fact (2 < L)]
   · simp [ons_decoratedPortBit, ons_decoratedChainBits] at h3 ⊢
     exact h3
 
-/-- The port pattern of an even subgraph of the decorated graph. -/
+/-- **Port pattern of an even decorated subgraph.**
+The port pattern of an even subgraph of the decorated graph. -/
 noncomputable def ons_portPatternOfDecorated (L : ℕ) [Fact (2 < L)]
     (D : Finset (Sym2 (ons_Dart L)))
     (hD : D ∈ evenSubgraphs (ons_decGraph L)) : ons_PortPattern L where
@@ -794,7 +810,7 @@ lemma ons_portEdge_eq_iff (L : ℕ) [Fact (2 < L)] (d e : ons_Dart L) :
     · cases h
       exact ons_portEdge_rev L (u, mu)
 
-/-- The torus edge set of a port pattern. -/
+/-- **Torus edge set of a port pattern.** The torus edge set of a port pattern. -/
 noncomputable def ons_portPatternEdges (L : ℕ) [NeZero L]
     (P : ons_PortPattern L) :
     Finset (Sym2 (ZMod L × ZMod L)) :=
@@ -906,7 +922,8 @@ lemma ons_evenSubgraphPortPattern_portPatternEdges
   simp [ons_evenSubgraphPortPattern, ons_portBit,
     ons_portEdge_mem_portPatternEdges_iff, ons_fin2_indicator_eq]
 
-/-- Even subgraphs of the torus are equivalent to port patterns. -/
+/-- **Equivalence between even torus subgraphs and port patterns.**
+Even subgraphs of the torus are equivalent to port patterns. -/
 noncomputable def ons_evenSubgraphPortEquiv (L : ℕ) [Fact (2 < L)] :
     {F : Finset (Sym2 (ZMod L × ZMod L)) //
       F ∈ evenSubgraphs (onsTorusGraph L)} ≃ ons_PortPattern L where
@@ -928,7 +945,8 @@ lemma ons_portPatternOfDecorated_decoratedEdges
     ons_decoratedEdges, Finset.mem_filter, hedge, true_and,
     ons_decEdgeBit_external, ons_fin2_indicator_eq]
 
-/-- Even subgraphs of the decorated graph are equivalent to port patterns. -/
+/-- **Equivalence between even decorated subgraphs and port patterns.**
+Even subgraphs of the decorated graph are equivalent to port patterns. -/
 noncomputable def ons_decoratedPortEquiv (L : ℕ) [Fact (2 < L)] :
     {D : Finset (Sym2 (ons_Dart L)) //
       D ∈ evenSubgraphs (ons_decGraph L)} ≃ ons_PortPattern L where
@@ -937,7 +955,8 @@ noncomputable def ons_decoratedPortEquiv (L : ℕ) [Fact (2 < L)] :
   left_inv D := Subtype.ext (ons_decoratedEdges_portPatternOfDecorated L D.1 D.2)
   right_inv P := ons_portPatternOfDecorated_decoratedEdges L P
 
-/-- Even subgraphs of the torus are equivalent to even subgraphs of the decorated graph. -/
+/-- **Equivalence between even subgraphs of the torus and its decoration.**
+Even subgraphs of the torus are equivalent to even subgraphs of the decorated graph. -/
 noncomputable def ons_decorationEquiv (L : ℕ) [Fact (2 < L)] :
     {F : Finset (Sym2 (ZMod L × ZMod L)) //
       F ∈ evenSubgraphs (onsTorusGraph L)} ≃

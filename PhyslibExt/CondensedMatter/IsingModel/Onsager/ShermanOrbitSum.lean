@@ -104,7 +104,8 @@ lemma ons_cyclicShift_iterate_mod (v : Fin n → E) (j : ℕ) :
 
 /-! ## B. Orbits and orbit sums -/
 
-/-- The rotation-orbit equivalence relation on cyclic sequences: `v ∼ w` when `w` is obtained from
+/-- **Rotation-orbit equivalence on cyclic sequences.**
+The rotation-orbit equivalence relation on cyclic sequences: `v ∼ w` when `w` is obtained from
 `v` by an iterated rotation. -/
 def ons_orbitSetoid (E : Type*) [Fintype E] [DecidableEq E] (n : ℕ) [NeZero n] :
     Setoid (Fin n → E) where
@@ -124,7 +125,8 @@ def ons_orbitSetoid (E : Type*) [Fintype E] [DecidableEq E] (n : ℕ) [NeZero n]
         rintro u v w ⟨i, rfl⟩ ⟨j, rfl⟩
         exact ⟨j + i, by rw [Function.iterate_add_apply]⟩ }
 
-/-- A chosen representative of the rotation orbit of `v`. -/
+/-- **Chosen representative of a rotation orbit.**
+A chosen representative of the rotation orbit of `v`. -/
 noncomputable def ons_rep (v : Fin n → E) : Fin n → E :=
   (Quotient.mk (ons_orbitSetoid E n) v).out
 
@@ -132,7 +134,8 @@ lemma ons_rep_rel (v : Fin n → E) :
     (ons_orbitSetoid E n).r (ons_rep v) v :=
   Quotient.exact (Quotient.out_eq (Quotient.mk (ons_orbitSetoid E n) v))
 
-/-- The number of sequences whose chosen orbit representative is `r`; for a representative `r` this
+/-- **Number of sequences with a given orbit representative.**
+The number of sequences whose chosen orbit representative is `r`; for a representative `r` this
 is the size of its rotation orbit, and `0` otherwise. -/
 noncomputable def ons_orbitCard (r : Fin n → E) : ℕ :=
   (Finset.univ.filter (fun v => ons_rep v = r)).card

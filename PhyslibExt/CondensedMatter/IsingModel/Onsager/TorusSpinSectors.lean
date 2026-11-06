@@ -61,15 +61,18 @@ open StatMech.Ising
 
 /-! ## A. Seam crossings and homology -/
 
-/-- Edges of the torus crossing the vertical seam between the columns `x = -1` and `x = 0`. -/
+/-- **Edges crossing the vertical seam of the torus.**
+Edges of the torus crossing the vertical seam between the columns `x = -1` and `x = 0`. -/
 def ons_xSeamEdge (L : ℕ) (e : Sym2 (ZMod L × ZMod L)) : Prop :=
   ∃ y : ZMod L, e = s(((0 : ZMod L), y), (-1, y))
 
-/-- Edges of the torus crossing the horizontal seam between the rows `y = -1` and `y = 0`. -/
+/-- **Edges crossing the horizontal seam of the torus.**
+Edges of the torus crossing the horizontal seam between the rows `y = -1` and `y = 0`. -/
 def ons_ySeamEdge (L : ℕ) (e : Sym2 (ZMod L × ZMod L)) : Prop :=
   ∃ x : ZMod L, e = s((x, (0 : ZMod L)), (x, -1))
 
-/-- The homology class mod 2 of an edge set: the parities of its numbers of edges crossing the
+/-- **Mod 2 homology class of an edge set.**
+The homology class mod 2 of an edge set: the parities of its numbers of edges crossing the
 vertical and the horizontal seam. -/
 noncomputable def ons_evenHomology (L : ℕ)
     (F : Finset (Sym2 (ZMod L × ZMod L))) : Fin 2 × Fin 2 :=
@@ -125,7 +128,8 @@ lemma ons_evenHomology_biUnion
 
 /-! ## B. Sector weights -/
 
-/-- The sector weight `Z_h(x) = ∑ x^|F|` over even subgraphs `F` of the torus with homology class
+/-- **Sector weight of a homology class.**
+The sector weight `Z_h(x) = ∑ x^|F|` over even subgraphs `F` of the torus with homology class
 `h`. -/
 noncomputable def ons_sectorWeight (L : ℕ) [Fact (2 < L)] (x : ℝ) (h : Fin 2 × Fin 2) : ℝ :=
   ∑ F ∈ evenSubgraphs (onsTorusGraph L) with ons_evenHomology L F = h, x ^ F.card
@@ -138,35 +142,43 @@ lemma ons_X_eq_sum_sectorWeight (L : ℕ) [Fact (2 < L)] (x : ℝ) :
 
 /-! ## C. Signed sector sums -/
 
-/-- The sector weight of the trivial homology class. -/
+/-- **Sector weight of the trivial homology class.**
+The sector weight of the trivial homology class. -/
 noncomputable def ons_sector00 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sectorWeight L x (0, 0)
 
-/-- The sector weight of the homology class `(1, 0)`. -/
+/-- **Sector weight of the homology class $(1, 0)$.**
+The sector weight of the homology class `(1, 0)`. -/
 noncomputable def ons_sector10 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sectorWeight L x (1, 0)
 
-/-- The sector weight of the homology class `(0, 1)`. -/
+/-- **Sector weight of the homology class $(0, 1)$.**
+The sector weight of the homology class `(0, 1)`. -/
 noncomputable def ons_sector01 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sectorWeight L x (0, 1)
 
-/-- The sector weight of the homology class `(1, 1)`. -/
+/-- **Sector weight of the homology class $(1, 1)$.**
+The sector weight of the homology class `(1, 1)`. -/
 noncomputable def ons_sector11 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sectorWeight L x (1, 1)
 
-/-- The signed sector sum `Z₀₀ + Z₁₀ + Z₀₁ - Z₁₁`. -/
+/-- **Signed sector sum $Z_{00} + Z_{10} + Z_{01} - Z_{11}$.**
+The signed sector sum `Z₀₀ + Z₁₀ + Z₀₁ - Z₁₁`. -/
 noncomputable def ons_spin00 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sector00 L x + ons_sector10 L x + ons_sector01 L x - ons_sector11 L x
 
-/-- The signed sector sum `Z₀₀ - Z₁₀ + Z₀₁ + Z₁₁`. -/
+/-- **Signed sector sum $Z_{00} - Z_{10} + Z_{01} + Z_{11}$.**
+The signed sector sum `Z₀₀ - Z₁₀ + Z₀₁ + Z₁₁`. -/
 noncomputable def ons_spin10 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sector00 L x - ons_sector10 L x + ons_sector01 L x + ons_sector11 L x
 
-/-- The signed sector sum `Z₀₀ + Z₁₀ - Z₀₁ + Z₁₁`. -/
+/-- **Signed sector sum $Z_{00} + Z_{10} - Z_{01} + Z_{11}$.**
+The signed sector sum `Z₀₀ + Z₁₀ - Z₀₁ + Z₁₁`. -/
 noncomputable def ons_spin01 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sector00 L x + ons_sector10 L x - ons_sector01 L x + ons_sector11 L x
 
-/-- The signed sector sum `Z₀₀ - Z₁₀ - Z₀₁ - Z₁₁`. -/
+/-- **Signed sector sum $Z_{00} - Z_{10} - Z_{01} - Z_{11}$.**
+The signed sector sum `Z₀₀ - Z₁₀ - Z₀₁ - Z₁₁`. -/
 noncomputable def ons_spin11 (L : ℕ) [Fact (2 < L)] (x : ℝ) : ℝ :=
   ons_sector00 L x - ons_sector10 L x - ons_sector01 L x - ons_sector11 L x
 

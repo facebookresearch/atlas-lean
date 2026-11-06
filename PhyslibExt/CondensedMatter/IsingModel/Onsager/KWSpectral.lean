@@ -137,7 +137,8 @@ lemma ons_KWmatPhase_spectral_lt_one (L : ℕ) [NeZero L] (x : ℝ) (a b : Fin 2
   exact lt_of_le_of_lt halpha_le
     ((norm_ons_KWmatPhase_le L x a b).trans_lt hx)
 
-/-- The radius `1 / (number of darts) = 1 / (4L²)` below which the walk expansion of the twisted
+/-- **Convergence radius of the twisted Kac-Ward walk expansion.**
+The radius `1 / (number of darts) = 1 / (4L²)` below which the walk expansion of the twisted
 Kac-Ward determinant converges. -/
 noncomputable def ons_KWconvergenceRadius (L : ℕ) [NeZero L] : ℝ :=
   (Fintype.card (ons_Dart L) : ℝ)⁻¹

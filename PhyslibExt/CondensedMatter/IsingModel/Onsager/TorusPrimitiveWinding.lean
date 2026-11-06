@@ -159,19 +159,22 @@ lemma ons_zeroFluxPotential_vertical_boundary_of_zeroHomology
 
 /-! ## B. Signed boundaries -/
 
-/-- The signed difference of a face potential across the horizontal edge at `p`. -/
+/-- **Signed potential difference across a horizontal edge.**
+The signed difference of a face potential across the horizontal edge at `p`. -/
 def ons_signedHorizontalBoundary
     {L : ℕ} (P : (ZMod L × ZMod L) → ZMod 2)
     (p : ZMod L × ZMod L) : ℤ :=
   (P p).val - (P (p.1, p.2 - 1)).val
 
-/-- The signed difference of a face potential across the vertical edge at `p`. -/
+/-- **Signed potential difference across a vertical edge.**
+The signed difference of a face potential across the vertical edge at `p`. -/
 def ons_signedVerticalBoundary
     {L : ℕ} (P : (ZMod L × ZMod L) → ZMod 2)
     (p : ZMod L × ZMod L) : ℤ :=
   (P (p.1 - 1, p.2)).val - (P p).val
 
-/-- The signed boundary coefficient of a potential on the edge leaving `p` in direction `μ`. -/
+/-- **Signed boundary coefficient on an outgoing edge.**
+The signed boundary coefficient of a potential on the edge leaving `p` in direction `μ`. -/
 def ons_outgoingBoundaryCoeff
     {L : ℕ} (P : (ZMod L × ZMod L) → ZMod 2)
     (p : ZMod L × ZMod L) (mu : Fin 4) : ℤ :=
@@ -316,7 +319,8 @@ lemma ons_fin4_sum_eq_two
         exact hzero mu hnot.1 hnot.2
     _ = f a + f b := by simp [hab]
 
-/-- The signed boundary coefficient on the `k`-th step of a torus loop. -/
+/-- **Signed boundary coefficient along a torus loop.**
+The signed boundary coefficient on the `k`-th step of a torus loop. -/
 def ons_loopBoundaryCoeff
     {L n : ℕ} [NeZero n]
     (P : (ZMod L × ZMod L) → ZMod 2)

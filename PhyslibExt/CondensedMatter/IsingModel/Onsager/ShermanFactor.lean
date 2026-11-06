@@ -55,7 +55,8 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ## A. Powers as sums over tuples and lists -/
 
-/-- The product over a tuple equals the product over the list `List.ofFn p`; see also
+/-- **Product over a tuple equals the product over its list.**
+The product over a tuple equals the product over the list `List.ofFn p`; see also
 `List.prod_ofFn` and `List.map_ofFn`. -/
 lemma ons_tupleProd_eq_listProd (wt : α → ℂ) {k : ℕ} (p : Fin k → α) :
     ∏ i : Fin k, wt (p i) = ((List.ofFn p).map wt).prod := by

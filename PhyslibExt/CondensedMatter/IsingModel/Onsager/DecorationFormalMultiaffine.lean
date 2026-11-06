@@ -63,12 +63,14 @@ open BigOperators
 
 /-! ## A. Second differences -/
 
-/-- The factor `2^k - 2 + 0^k` by which a second difference multiplies a monomial of degree `k` in
+/-- **Second-difference factor for a monomial of degree k.**
+The factor `2^k - 2 + 0^k` by which a second difference multiplies a monomial of degree `k` in
 one variable. -/
 def ons_secondDifferenceFactor (k : ℕ) : ℂ :=
   (2 : ℂ) ^ k - 2 + (0 : ℂ) ^ k
 
-/-- The second difference of a formal series in the variable `edge`: the coefficient at `m` is
+/-- **Second difference of a formal series in one variable.**
+The second difference of a formal series in the variable `edge`: the coefficient at `m` is
 multiplied by `2^{m edge} - 2 + 0^{m edge}`. -/
 noncomputable def ons_decFormalSecondDifference
     {L : ℕ} (series : MvPowerSeries (ons_DecEdge L) ℂ)

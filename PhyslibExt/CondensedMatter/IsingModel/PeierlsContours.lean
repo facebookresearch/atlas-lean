@@ -74,7 +74,8 @@ variable {d : ℕ}
 
 /-! ## A. Flipping a set -/
 
-/-- The configuration with the spins in `K` flipped. -/
+/-- **Configuration with the spins in a set flipped.**
+The configuration with the spins in `K` flipped. -/
 noncomputable def flipOnSet (K : Set (Site d)) (σ : ConfigSpace (Site d)) :
     ConfigSpace (Site d) :=
   fun x => if x ∈ K then !(σ x) else σ x
@@ -98,7 +99,7 @@ lemma spin_flipOnSet_not_mem (K : Set (Site d)) (σ : ConfigSpace (Site d)) {x :
 
 /-! ## B. Contours -/
 
-/-- The bond `e` has exactly one endpoint in `K`. -/
+/-- **Bond crossing the boundary of a set.** The bond `e` has exactly one endpoint in `K`. -/
 noncomputable def crosses (K : Set (Site d)) (e : Sym2 (Site d)) : Prop :=
   Sym2.lift ⟨fun x y => (x ∈ K ↔ y ∉ K), by
     intro x y; simp only [eq_iff_iff]
@@ -107,16 +108,17 @@ noncomputable def crosses (K : Set (Site d)) (e : Sym2 (Site d)) : Prop :=
 @[simp] lemma crosses_mk (K : Set (Site d)) (x y : Site d) :
     crosses K s(x, y) ↔ (x ∈ K ↔ y ∉ K) := Iff.rfl
 
-/-- The bonds of `B` crossing the boundary of `K` (the contour of `K`). -/
+/-- **Contour of a set: bonds crossing its boundary.**
+The bonds of `B` crossing the boundary of `K` (the contour of `K`). -/
 noncomputable def crossEdges (K : Set (Site d)) (B : Finset (Sym2 (Site d))) :
     Finset (Sym2 (Site d)) :=
   B.filter (crosses K)
 
-/-- The number of bonds of `B` crossing the boundary of `K`. -/
+/-- **Contour length of a set.** The number of bonds of `B` crossing the boundary of `K`. -/
 noncomputable def contourLen (K : Set (Site d)) (B : Finset (Sym2 (Site d))) : ℕ :=
   (crossEdges K B).card
 
-/-- The bond variable of a crossing bond. -/
+/-- **Bond variable of a crossing bond.** The bond variable of a crossing bond. -/
 noncomputable def crossEdgeBond (K : Set (Site d)) (σ : ConfigSpace (Site d))
     (e : Sym2 (Site d)) : ℝ :=
   Sym2.lift ⟨fun x y => if (x ∈ K ↔ y ∉ K) then bond σ s(x, y) else 0, by
@@ -171,7 +173,8 @@ lemma sum_crossEdgeBond (K : Set (Site d)) (σ : ConfigSpace (Site d))
 
 /-! ## C. Contour events and their probability -/
 
-/-- Every bond of `B` crossing the boundary of `K` joins a minus spin inside to a plus spin
+/-- **Contour event of a set: opposite spins across every crossing bond.**
+Every bond of `B` crossing the boundary of `K` joins a minus spin inside to a plus spin
 outside. -/
 def ContourEvent (K : Set (Site d)) (B : Finset (Sym2 (Site d))) (σ : ConfigSpace (Site d)) :
     Prop :=
@@ -183,7 +186,8 @@ lemma sum_crossEdgeBond_event (K : Set (Site d)) (σ : ConfigSpace (Site d))
   rw [sum_crossEdgeBond, Finset.sum_congr rfl (fun e he => h e he)]
   simp [contourLen]
 
-/-- The inside configuration with the spins in `K` flipped. -/
+/-- **Inside configuration with the spins in a set flipped.**
+The inside configuration with the spins in `K` flipped. -/
 noncomputable def flipInteriorOn {n : ℕ} (K : Set (Site d))
     (τ : {x // x ∈ box d n} → Bool) : {x // x ∈ box d n} → Bool :=
   fun x => if (x : Site d) ∈ K then !(τ x) else τ x
@@ -192,7 +196,8 @@ lemma flipInteriorOn_involutive {n : ℕ} (K : Set (Site d))
     (τ : {x // x ∈ box d n} → Bool) : flipInteriorOn K (flipInteriorOn K τ) = τ := by
   funext x; unfold flipInteriorOn; by_cases hx : (x : Site d) ∈ K <;> simp [hx]
 
-/-- Flipping the spins in `K` as an involutive equivalence of inside configurations. -/
+/-- **Flipping spins in a set as an involutive equivalence.**
+Flipping the spins in `K` as an involutive equivalence of inside configurations. -/
 noncomputable def flipInteriorOnEquiv {n : ℕ} (K : Set (Site d)) :
     ({x // x ∈ box d n} → Bool) ≃ ({x // x ∈ box d n} → Bool) where
   toFun := flipInteriorOn K
@@ -252,7 +257,8 @@ lemma fvWeight_flipInteriorOn_eq_of_event (n : ℕ) (K : Set (Site d)) (hK : K �
   rw [show (-(2 * β) * (contourLen K B : ℝ)) + (-β * (2 * -(contourLen K B : ℝ))) = 0 by ring]
   rw [Real.exp_zero, one_mul]
 
-/-- The probability of the contour event of `K` under the box measure. -/
+/-- **Probability of the contour event of a set.**
+The probability of the contour event of `K` under the box measure. -/
 noncomputable def probContour (K : Set (Site d)) (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β : ℝ) : ℝ :=
   ∑ τ : {x // x ∈ box d n} → Bool,
@@ -316,19 +322,21 @@ lemma contour_energy_bound (n : ℕ) (K : Set (Site d)) (hK : K ⊆ box d n)
 
 /-! ## D. Minus clusters -/
 
-/-- The set of minus sites. -/
+/-- **Set of minus sites.** The set of minus sites. -/
 def minusSet (σ : ConfigSpace (Site d)) : Set (Site d) := {x | σ x = false}
 
 @[simp] lemma mem_minusSet {σ : ConfigSpace (Site d)} {x : Site d} :
     x ∈ minusSet σ ↔ σ x = false := Iff.rfl
 
-/-- The nearest-neighbour graph on the minus sites. -/
+/-- **Nearest-neighbour graph on the minus sites.**
+The nearest-neighbour graph on the minus sites. -/
 def minusGraph (σ : ConfigSpace (Site d)) : SimpleGraph (Site d) where
   Adj x y := (hypercubicLattice d).Adj x y ∧ x ∈ minusSet σ ∧ y ∈ minusSet σ
   symm := ⟨fun _ _ ⟨h1, h2, h3⟩ => ⟨h1.symm, h3, h2⟩⟩
   loopless := ⟨fun _ h => (hypercubicLattice d).irrefl h.1⟩
 
-/-- The minus cluster of `o`: the sites joined to `o` by a path of minus sites. -/
+/-- **Minus cluster of a site.**
+The minus cluster of `o`: the sites joined to `o` by a path of minus sites. -/
 def minusCluster (σ : ConfigSpace (Site d)) (o : Site d) : Set (Site d) :=
   {x | (minusGraph σ).Reachable o x}
 
@@ -418,11 +426,13 @@ lemma minusCluster_glue_plus_finite {n : ℕ} (τ : {x // x ∈ box d n} → Boo
 
 /-! ## E. Cluster families and the Peierls sum -/
 
-/-- The finite sets of sites in `Λ_n` containing the origin. -/
+/-- **Cluster family: all subsets of the box.**
+The finite sets of sites in `Λ_n` containing the origin. -/
 noncomputable def clusterFamily (n : ℕ) : Finset (Finset (Site d)) :=
   (boxFinset d n).powerset
 
-/-- The minus cluster of the origin in a plus-boundary box configuration, as a finset. -/
+/-- **Minus cluster of the origin as a finite set.**
+The minus cluster of the origin in a plus-boundary box configuration, as a finset. -/
 noncomputable def minusClusterFinset {n : ℕ} (τ : {x // x ∈ box d n} → Bool)
     (ho : glue (plusField d) τ (origin d) = false) : Finset (Site d) :=
   (minusCluster_glue_plus_finite τ ho).toFinset
@@ -499,7 +509,8 @@ lemma probOriginMinus_le_sum_exp (n : ℕ) (β : ℝ) :
   have hbound := contour_energy_bound n (↑K) hKbox (plusField d) (bondFinsetTouch d n) β
   exact hbound
 
-/-- The sum of `e^{-2β |∂K|}` over the cluster family is at most the Peierls series. -/
+/-- **Peierls series bound on the cluster-family contour sum.**
+The sum of `e^{-2β |∂K|}` over the cluster family is at most the Peierls series. -/
 def ContourCountBound (d n : ℕ) (β : ℝ) : Prop :=
   ∑ K ∈ clusterFamily (d := d) n,
       Real.exp (-(2 * β) * (contourLen (↑K) (bondFinsetTouch d n) : ℝ))

@@ -59,7 +59,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. The GHS inequality and its consequences -/
 
-/-- The Griffiths–Hurst–Sherman inequality: for `β ≥ 0` and `h ≥ 0`, the third Ursell function
+/-- **Griffiths–Hurst–Sherman inequality.**
+The Griffiths–Hurst–Sherman inequality: for `β ≥ 0` and `h ≥ 0`, the third Ursell function
 `u₃(o, x, y)` is nonpositive for distinct sites. Reference: R. B. Griffiths, C. A. Hurst, S.
 Sherman, "Concavity of magnetization of an Ising ferromagnet in a positive external field", J. Math.
 Phys. 11 (1970) 790–795; proof via J. L. Lebowitz, "GHS and other inequalities", Comm. Math. Phys.
@@ -71,7 +72,8 @@ theorem ghs_signDominance (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (o : V) :
   rw [← sub_nonpos, ghsThreePoint_eq_ursell] at hpair
   simpa [eg_ursell3] using hpair
 
-/-- GHS concavity: for `β ≥ 0` the magnetization `h ↦ ⟨σ_o⟩_{β,h}` is concave on `[0, ∞)`.
+/-- **GHS concavity of the magnetization in the field.**
+GHS concavity: for `β ≥ 0` the magnetization `h ↦ ⟨σ_o⟩_{β,h}` is concave on `[0, ∞)`.
 Reference: R. B. Griffiths, C. A. Hurst, S. Sherman, "Concavity of magnetization of an Ising
 ferromagnet in a positive external field", J. Math. Phys. 11 (1970) 790–795. -/
 theorem ghs_magnetization_concaveOn (β : ℝ) (hβ : 0 ≤ β) (o : V) :
@@ -79,7 +81,8 @@ theorem ghs_magnetization_concaveOn (β : ℝ) (hβ : 0 ≤ β) (o : V) :
   gc4_magnetization_concaveOn G β hβ o
     (fun h hh => ghs_signDominance G β h hβ hh o)
 
-/-- The GHS susceptibility bound: for `β ≥ 0` and `h > 0`, the field derivative of the magnetization
+/-- **GHS susceptibility bound $\chi \le 1/h$.**
+The GHS susceptibility bound: for `β ≥ 0` and `h > 0`, the field derivative of the magnetization
 equals `β ∑_x (⟨σ_oσ_x⟩ - ⟨σ_o⟩⟨σ_x⟩)` and is at most `1/h`. Reference: R. B. Griffiths, C. A.
 Hurst, S. Sherman, "Concavity of magnetization of an Ising ferromagnet in a positive external
 field", J. Math. Phys. 11 (1970) 790–795. Scope: a finite graph with uniform coupling and uniform

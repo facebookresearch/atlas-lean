@@ -57,11 +57,13 @@ namespace IsingFK
 
 /-! ## A. The FK parametrization -/
 
-/-- The Potts inverse temperature `-((q - 1)/q) log (1 - p)` corresponding to the FK edge parameter
+/-- **Potts inverse temperature of an FK edge parameter.**
+The Potts inverse temperature `-((q - 1)/q) log (1 - p)` corresponding to the FK edge parameter
 `p`. -/
 noncomputable def pToBeta (q p : ℝ) : ℝ := -((q - 1) / q) * Real.log (1 - p)
 
-/-- The FK edge parameter `1 - e^{-qβ/(q-1)}` of the `q`-state Potts model at inverse temperature
+/-- **FK edge parameter of a Potts inverse temperature.**
+The FK edge parameter `1 - e^{-qβ/(q-1)}` of the `q`-state Potts model at inverse temperature
 `β`. -/
 noncomputable def betaToP (q β : ℝ) : ℝ := 1 - Real.exp (-(q / (q - 1)) * β)
 
@@ -71,11 +73,13 @@ lemma pToBeta_two (p : ℝ) : pToBeta 2 p = -(1 / 2) * Real.log (1 - p) := by
 lemma betaToP_two (β : ℝ) : betaToP 2 β = 1 - Real.exp (-2 * β) := by
   unfold betaToP; norm_num
 
-/-- At `q = 2` the general parametrization `pToBeta` is `betaOfP`. -/
+/-- **Inverse-temperature map of the Potts model at $q = 2$ is the Ising map.**
+At `q = 2` the general parametrization `pToBeta` is `betaOfP`. -/
 lemma pToBeta_two_eq_betaOfP (p : ℝ) : pToBeta 2 p = betaOfP p := by
   rw [pToBeta_two, betaOfP]
 
-/-- At `q = 2` the general parametrization `betaToP` is `pOfBeta`. -/
+/-- **FK edge-parameter map of the Potts model at $q = 2$ is the Ising map.**
+At `q = 2` the general parametrization `betaToP` is `pOfBeta`. -/
 lemma betaToP_two_eq_pOfBeta (β : ℝ) : betaToP 2 β = pOfBeta β := by
   rw [betaToP_two, pOfBeta]
 
@@ -164,7 +168,8 @@ lemma pToBeta_bijOn (q : ℝ) (hq : 1 < q) :
 
 /-! ## B. Critical inverse temperatures -/
 
-/-- The critical inverse temperature `sup {β > 0 : m*(β) = 0}` of a spontaneous-magnetization curve
+/-- **Critical inverse temperature of a magnetization curve.**
+The critical inverse temperature `sup {β > 0 : m*(β) = 0}` of a spontaneous-magnetization curve
 `m*`. See also `Ising.betaC`, the infimum of the inverse temperatures with positive
 magnetization. -/
 noncomputable def betaC (mStar : ℝ → ℝ) : ℝ :=
@@ -202,7 +207,8 @@ lemma magnetization_pos_iff (mStar : ℝ → ℝ) (q pc p : ℝ) (hq : 1 < q)
   rw [hpos_iff _ hβpos]
   exact (strictMonoOn_pToBeta q hq).lt_iff_lt (Set.mem_Iio.mpr hpc.2) (Set.mem_Iio.mpr hp.2)
 
-/-- The critical inverse temperature of the `d`-dimensional Ising model, `sup {β > 0 : m*(β) =
+/-- **Critical inverse temperature of the $d$-dimensional Ising model.**
+The critical inverse temperature of the `d`-dimensional Ising model, `sup {β > 0 : m*(β) =
 0}`. -/
 noncomputable def isingBetaC (d : ℕ) : ℝ :=
   betaC (Ising.magnetization d)

@@ -65,13 +65,15 @@ variable {d : ℕ}
 ## A. Continuity of finite-volume marginals
 -/
 
-/-- The logistic map `t ↦ e^t / (1 + e^t)` is continuous. It equals Mathlib's `Real.sigmoid`. -/
+/-- **Continuity of the logistic map.**
+The logistic map `t ↦ e^t / (1 + e^t)` is continuous. It equals Mathlib's `Real.sigmoid`. -/
 lemma osc_fsc_logistic_continuous : Continuous fsc_logistic := by
   unfold fsc_logistic
   exact Real.continuous_exp.div (continuous_const.add Real.continuous_exp)
     (fun s => by positivity)
 
-/-- The Bernoulli edge weight of a fixed configuration is continuous in `p`. -/
+/-- **Continuity in $p$ of the Bernoulli edge weight.**
+The Bernoulli edge weight of a fixed configuration is continuous in `p`. -/
 lemma osc_edgeProduct_continuous {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (ω : ConfigSpace (Sym2 V)) :
     Continuous (fun p : ℝ => edgeProduct G p ω) := by
@@ -82,7 +84,8 @@ lemma osc_edgeProduct_continuous {V : Type*} [Fintype V] [DecidableEq V]
   · simp only [h, ite_true]; exact continuous_id
   · simp only [h]; exact continuous_const.sub continuous_id
 
-/-- The edge marginal of the free `q = 2` FK measure on a finite graph is continuous in `t`. -/
+/-- **Continuity in $t$ of free $q = 2$ edge marginals on a finite graph.**
+The edge marginal of the free `q = 2` FK measure on a finite graph is continuous in `t`. -/
 lemma osc_freeBoxMarg_continuous {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (e : Sym2 V) :
     Continuous (fun s : ℝ => edgeMargProb (fkProb G (fsc_logistic s) 2) e) := by
@@ -104,7 +107,8 @@ lemma osc_freeBoxMarg_continuous {V : Type*} [Fintype V] [DecidableEq V]
   unfold edgeMargProb
   exact continuous_finsetSum _ (fun ω _ => continuous_const.mul (hprob ω))
 
-/-- The edge marginal of the wired `q = 2` FK measure on a finite graph is continuous in `t`. -/
+/-- **Continuity in $t$ of wired $q = 2$ edge marginals on a finite graph.**
+The edge marginal of the wired `q = 2` FK measure on a finite graph is continuous in `t`. -/
 lemma osc_wiredBoxMarg_continuous {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (bdry : V → Prop) [DecidablePred bdry]
     (e : Sym2 V) :
@@ -131,7 +135,8 @@ lemma osc_wiredBoxMarg_continuous {V : Type*} [Fintype V] [DecidableEq V]
 ## B. Monotonicity in the edge parameter
 -/
 
-/-- The edge marginal of the free `q = 2` FK measure on a finite graph is monotone in `p`. -/
+/-- **Monotonicity in $p$ of free $q = 2$ edge marginals on a finite graph.**
+The edge marginal of the free `q = 2` FK measure on a finite graph is monotone in `p`. -/
 lemma osc_fkEdgeMarg_monotone_in_p {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (e : Sym2 V) {p1 p2 : ℝ}
     (hp1 : 0 < p1) (hp1' : p1 < 1) (hp2 : 0 < p2) (hp2' : p2 < 1) (hle : p1 ≤ p2) :
@@ -156,7 +161,8 @@ lemma osc_fkEdgeMarg_monotone_in_p {V : Type*} [Fintype V] [DecidableEq V]
         fkProb_sum_eq_one G hp2 hp2' (by norm_num)])
     (fun a b => fkProb_cross G hp1 hp1' hp2 hp2' hle (by norm_num) a b) hAinc
 
-/-- The free infinite-volume `q = 2` edge density is monotone in `p ∈ (0, 1)`. -/
+/-- **Free $q = 2$ edge density is monotone in $p$ on $(0, 1)$.**
+The free infinite-volume `q = 2` edge density is monotone in `p ∈ (0, 1)`. -/
 lemma osc_freeEdgeDensity_q2_monotoneOn (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
     MonotoneOn (freeEdgeDensity d 2 (edgeIncl d N eb)) (Ioo (0 : ℝ) 1) := by
   intro p1 hp1mem p2 hp2mem hle
@@ -171,14 +177,16 @@ lemma osc_freeEdgeDensity_q2_monotoneOn (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
     fun k => osc_fkEdgeMarg_monotone_in_p (boxGraph d (N+k)) _ hp1 hp1' hp2 hp2' hle
   exact le_of_tendsto_of_tendsto htend1 htend2 (Filter.Eventually.of_forall hmono)
 
-/-- The free infinite-volume `q = 2` edge density is monotone in `t`. -/
+/-- **Free $q = 2$ edge density is monotone in $t$.**
+The free infinite-volume `q = 2` edge density is monotone in `t`. -/
 lemma osc_freeEdgeDensity_logistic_monotone (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
     Monotone (fun s => freeEdgeDensity d 2 (edgeIncl d N eb) (fsc_logistic s)) := by
   intro s1 s2 hs
   exact osc_freeEdgeDensity_q2_monotoneOn d N eb (fsc_logistic_mem_Ioo s1)
     (fsc_logistic_mem_Ioo s2) (fsc_logistic_strictMono.monotone hs)
 
-/-- The wired infinite-volume `q = 2` edge density is monotone in `t`. -/
+/-- **Wired $q = 2$ edge density is monotone in $t$.**
+The wired infinite-volume `q = 2` edge density is monotone in `t`. -/
 lemma osc_wiredEdgeDensity_logistic_monotone (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
     Monotone (fun s => wiredEdgeDensity d 2 (edgeIncl d N eb) (fsc_logistic s)) := by
   intro s1 s2 hs
@@ -189,7 +197,8 @@ lemma osc_wiredEdgeDensity_logistic_monotone (d N : ℕ) (eb : Sym2 (boxVerts d 
 ## C. One-sided continuity of the limits
 -/
 
-/-- The free infinite-volume `q = 2` edge density is left-continuous in `t`. -/
+/-- **Left-continuity of the free $q = 2$ edge density in $t$.**
+The free infinite-volume `q = 2` edge density is left-continuous in `t`. -/
 lemma osc_freeEdgeDensity_left_continuous (d N : ℕ) (eb : Sym2 (boxVerts d N)) (t : ℝ) :
     ContinuousWithinAt
       (fun s => freeEdgeDensity d 2 (edgeIncl d N eb) (fsc_logistic s)) (Iio t) t := by
@@ -216,7 +225,8 @@ lemma osc_freeEdgeDensity_left_continuous (d N : ℕ) (eb : Sym2 (boxVerts d N))
   have hle2 : F t ≤ leftLim F t := le_of_tendsto hFlim (Filter.Eventually.of_forall hGle)
   exact le_antisymm hle1 hle2
 
-/-- The wired infinite-volume `q = 2` edge density is right-continuous in `t`. -/
+/-- **Right-continuity of the wired $q = 2$ edge density in $t$.**
+The wired infinite-volume `q = 2` edge density is right-continuous in `t`. -/
 lemma osc_wiredEdgeDensity_right_continuous (d N : ℕ) (eb : Sym2 (boxVerts d N)) (t : ℝ) :
     ContinuousWithinAt
       (fun s => wiredEdgeDensity d 2 (edgeIncl d N eb) (fsc_logistic s)) (Ioi t) t := by

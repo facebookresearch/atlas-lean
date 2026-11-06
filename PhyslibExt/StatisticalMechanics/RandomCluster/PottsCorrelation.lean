@@ -108,7 +108,8 @@ lemma spinAgree_sum_eq {q : ℕ} [NeZero q] (p : ℝ) (ω : ConfigSpace (Sym2 V)
 
 /-! ## B. The Potts agreement probability -/
 
-/-- The Potts two-point agreement probability `μ_{G,β,J,q}(σ_x = σ_y)`. -/
+/-- **Potts two-point agreement probability.**
+The Potts two-point agreement probability `μ_{G,β,J,q}(σ_x = σ_y)`. -/
 noncomputable def pottsAgreeProb (q : ℕ) (β J : ℝ) (x y : V) : ℝ :=
   ∑ σ ∈ Finset.univ.filter (fun σ : V → Fin q => σ x = σ y), Potts.pottsProb G q β J σ
 
@@ -184,7 +185,8 @@ theorem edwards_sokal_correlation (q : ℕ) [NeZero q] (β J : ℝ) (x y : V)
   field_simp
   ring
 
-/-- The Edwards–Sokal correlation identity with the prefactor written as `(q - 1)/q`. -/
+/-- **Edwards–Sokal correlation identity in $(q-1)/q$ form.**
+The Edwards–Sokal correlation identity with the prefactor written as `(q - 1)/q`. -/
 lemma edwards_sokal_correlation' (q : ℕ) [NeZero q] (β J : ℝ) (x y : V)
     (hp : 0 < 1 - Real.exp (-(β * J))) (hp1 : 1 - Real.exp (-(β * J)) < 1)
     (hq : 0 < (q : ℝ)) :
@@ -194,7 +196,8 @@ lemma edwards_sokal_correlation' (q : ℕ) [NeZero q] (β J : ℝ) (x y : V)
   congr 1
   field_simp
 
-/-- For `q ≥ 2` and `βJ > 0`, two Potts spins agree with probability at least `1/q`. -/
+/-- **Potts two-point agreement at least $1/q$ for $q \ge 2$, $\beta J > 0$.**
+For `q ≥ 2` and `βJ > 0`, two Potts spins agree with probability at least `1/q`. -/
 lemma pottsAgreeProb_ge (q : ℕ) [NeZero q] (β J : ℝ) (x y : V)
     (hp : 0 < 1 - Real.exp (-(β * J))) (hp1 : 1 - Real.exp (-(β * J)) < 1)
     (hq : 2 ≤ q) :

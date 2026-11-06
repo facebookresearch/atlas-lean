@@ -76,7 +76,8 @@ variable {d : ℕ}
 ## A. Coordinate permutations
 -/
 
-/-- The permutation of `ℤ^d` permuting coordinates by `π`: `(x ∘ π⁻¹)_i = x_{π⁻¹ i}`. -/
+/-- **Coordinate permutation of $\mathbb{Z}^d$.**
+The permutation of `ℤ^d` permuting coordinates by `π`: `(x ∘ π⁻¹)_i = x_{π⁻¹ i}`. -/
 def rot_permEquiv (d : ℕ) (π : Equiv.Perm (Fin d)) : Site d ≃ Site d where
   toFun := fun x i => x (π.symm i)
   invFun := fun x i => x (π i)
@@ -86,7 +87,7 @@ def rot_permEquiv (d : ℕ) (π : Equiv.Perm (Fin d)) : Site d ≃ Site d where
 @[simp] lemma rot_permEquiv_apply (d : ℕ) (π : Equiv.Perm (Fin d)) (x : Site d) (i : Fin d) :
     rot_permEquiv d π x i = x (π.symm i) := rfl
 
-/-- A coordinate permutation as a box symmetry. -/
+/-- **Coordinate permutation as a box symmetry.** A coordinate permutation as a box symmetry. -/
 def rot_permBoxSym (d : ℕ) (π : Equiv.Perm (Fin d)) : BoxSym d where
   τ := rot_permEquiv d π
   adj := by
@@ -114,7 +115,8 @@ lemma rot_site_mem_box (x : Site d) :
     x ∈ box d (Finset.univ.sup (fun i => (x i).natAbs)) :=
   fun i => Finset.le_sup (f := fun i => (x i).natAbs) (Finset.mem_univ i)
 
-/-- Box symmetries preserve the free `q = 2` density of any edge of `ℤ^d`. -/
+/-- **Box symmetries preserve the free $q = 2$ density of any pair of sites.**
+Box symmetries preserve the free `q = 2` density of any edge of `ℤ^d`. -/
 lemma rot_free_density_boxSym (S : BoxSym d) (e : Sym2 (Site d))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     freeEdgeDensity d 2 (Sym2.map S.τ e) p = freeEdgeDensity d 2 e p := by
@@ -131,7 +133,8 @@ lemma rot_free_density_boxSym (S : BoxSym d) (e : Sym2 (Site d))
     rw [← hincl, ← rot_lift_edgeIncl S N eb]
     exact (fkTI_free_density_shift_inv S N eb hp hp1).symm
 
-/-- Box symmetries preserve the wired `q = 2` density of any edge of `ℤ^d`. -/
+/-- **Box symmetries preserve the wired $q = 2$ density of any pair of sites.**
+Box symmetries preserve the wired `q = 2` density of any edge of `ℤ^d`. -/
 lemma rot_wired_density_boxSym (S : BoxSym d) (e : Sym2 (Site d))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     wiredEdgeDensity d 2 (Sym2.map S.τ e) p = wiredEdgeDensity d 2 e p := by
@@ -215,7 +218,7 @@ lemma rot_permEquiv_axis_to_zero (j : Fin d) (hd : 0 < d) :
   · rw [ite_eq_left h, ite_eq_left (hiff.mp h)]
   · rw [ite_eq_right h, ite_eq_right (fun hc => h (hiff.mpr hc))]
 
-/-- The reference edge `{0, e_0}` of `ℤ^d`. -/
+/-- **Reference edge $\{0, e_0\}$ of $\mathbb{Z}^d$.** The reference edge `{0, e_0}` of `ℤ^d`. -/
 def rot_refUnitEdge (d : ℕ) (hd : 0 < d) : Sym2 (Site d) :=
   s((0 : Site d), candMap d (0 : Site d) (⟨0, hd⟩, true))
 
@@ -223,7 +226,8 @@ lemma rot_map_centred_edge (S : BoxSym d) (w : Site d) :
     Sym2.map S.τ (s((0 : Site d), w) : Sym2 (Site d)) = s((0 : Site d), S.τ w) := by
   rw [Sym2.map_mk, rot_boxSym_fixes_zero S]
 
-/-- Every unit edge `{0, ±e_j}` has the free density of `{0, e_0}`. -/
+/-- **Unit edges at the origin have the free density of $\{0, e_0\}$.**
+Every unit edge `{0, ±e_j}` has the free density of `{0, e_0}`. -/
 lemma rot_free_centred_unit_const (hd : 0 < d) (j : Fin d) (b : Bool) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     freeEdgeDensity d 2 (s((0 : Site d), candMap d (0 : Site d) (j, b)) : Sym2 (Site d)) p
@@ -245,7 +249,8 @@ lemma rot_free_centred_unit_const (hd : 0 < d) (j : Fin d) (b : Bool) {p : ℝ}
   rw [rot_permEquiv_axis_to_zero j hd]
   rfl
 
-/-- Every unit edge `{0, ±e_j}` has the wired density of `{0, e_0}`. -/
+/-- **Unit edges at the origin have the wired density of $\{0, e_0\}$.**
+Every unit edge `{0, ±e_j}` has the wired density of `{0, e_0}`. -/
 lemma rot_wired_centred_unit_const (hd : 0 < d) (j : Fin d) (b : Bool) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     wiredEdgeDensity d 2 (s((0 : Site d), candMap d (0 : Site d) (j, b)) : Sym2 (Site d)) p
@@ -272,7 +277,8 @@ lemma rot_wired_centred_unit_const (hd : 0 < d) (j : Fin d) (b : Bool) {p : ℝ}
 ## E. All lattice edges have the same density
 -/
 
-/-- The difference of adjacent sites is a signed unit vector. See also `ocs_edge_dir_candMap`,
+/-- **Adjacent sites differ by a signed unit vector.**
+The difference of adjacent sites is a signed unit vector. See also `ocs_edge_dir_candMap`,
 the same statement for vertices of a box. -/
 lemma rot_edge_dir (x y : Site d) (hadj : (hypercubicLattice d).Adj x y) :
     ∃ p : Fin d × Bool, y - x = candMap d (0 : Site d) p := by
@@ -289,7 +295,8 @@ lemma rot_edge_dir (x y : Site d) (hadj : (hypercubicLattice d).Adj x y) :
     rcases hs with rfl | rfl <;> simp
   · rw [Function.update_of_ne hi]; simp [hi]
 
-/-- Every nearest-neighbour edge of `ℤ^d` has the free `q = 2` density of `{0, e_0}`. -/
+/-- **Every lattice edge has the free $q = 2$ density of $\{0, e_0\}$.**
+Every nearest-neighbour edge of `ℤ^d` has the free `q = 2` density of `{0, e_0}`. -/
 lemma rot_free_edge_const (hd : 0 < d) (x y : Site d)
     (hadj : (hypercubicLattice d).Adj x y) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     freeEdgeDensity d 2 (s(x, y) : Sym2 (Site d)) p
@@ -298,7 +305,8 @@ lemma rot_free_edge_const (hd : 0 < d) (x y : Site d)
   rw [rot_free_density_recentre x y hp hp1, hdir]
   exact rot_free_centred_unit_const hd j b hp hp1
 
-/-- Every nearest-neighbour edge of `ℤ^d` has the wired `q = 2` density of `{0, e_0}`. -/
+/-- **Every lattice edge has the wired $q = 2$ density of $\{0, e_0\}$.**
+Every nearest-neighbour edge of `ℤ^d` has the wired `q = 2` density of `{0, e_0}`. -/
 lemma rot_wired_edge_const (hd : 0 < d) (x y : Site d)
     (hadj : (hypercubicLattice d).Adj x y) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     wiredEdgeDensity d 2 (s(x, y) : Sym2 (Site d)) p
@@ -331,7 +339,8 @@ lemma rot_wired_box_edge_const (hd : 0 < d) (m : ℕ) (eb : Sym2 (boxVerts d m))
 ## F. Rotation residues and uniqueness
 -/
 
-/-- The free rotation residue holds for every lattice edge `e'` of the box `Λ_N`. -/
+/-- **All box edges have the same free $q = 2$ density.**
+The free rotation residue holds for every lattice edge `e'` of the box `Λ_N`. -/
 lemma rot_freeRotationResidue (hd : 0 < d) (N : ℕ) (e' : Sym2 (boxVerts d N))
     (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ) :
     ocs_FreeRotationResidue (d := d) N e' t := by
@@ -339,7 +348,8 @@ lemma rot_freeRotationResidue (hd : 0 < d) (N : ℕ) (e' : Sym2 (boxVerts d N))
   rw [rot_free_box_edge_const hd m eb heb (fsc_logistic_pos t) (fsc_logistic_lt_one t),
       rot_free_box_edge_const hd N e' he' (fsc_logistic_pos t) (fsc_logistic_lt_one t)]
 
-/-- The wired rotation residue holds for every lattice edge `e'` of the box `Λ_N`. -/
+/-- **All box edges have the same wired $q = 2$ density.**
+The wired rotation residue holds for every lattice edge `e'` of the box `Λ_N`. -/
 lemma rot_wiredRotationResidue (hd : 0 < d) (N : ℕ) (e' : Sym2 (boxVerts d N))
     (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ) :
     ocs_WiredRotationResidue (d := d) N e' t := by

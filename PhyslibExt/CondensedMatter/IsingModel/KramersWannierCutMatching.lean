@@ -57,7 +57,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Cuts and the low-temperature expansion -/
 
-/-- The edges `{x, y}` of `G` whose endpoints have different spins in `s`. -/
+/-- **Edges cut by a spin configuration.**
+The edges `{x, y}` of `G` whose endpoints have different spins in `s`. -/
 noncomputable def cutEdges (s : ConfigSpace V) : Finset (Sym2 V) :=
   G.edgeFinset.filter (fun e => bond s e = -1)
 
@@ -121,7 +122,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## B. Duality -/
 
-/-- The cut sum `∑_s t^{|∂s|}` of `Gp` equals `mult` times the even-subgraph sum `∑_F t^{|F|}` of
+/-- **Proportionality of the cut sum and the dual even-subgraph sum.**
+The cut sum `∑_s t^{|∂s|}` of `Gp` equals `mult` times the even-subgraph sum `∑_F t^{|F|}` of
 `Gd`. -/
 def CutEvenSubgraphMatching (t mult : ℝ) : Prop :=
   (∑ s : ConfigSpace V, t ^ (cutEdges Gp s).card)

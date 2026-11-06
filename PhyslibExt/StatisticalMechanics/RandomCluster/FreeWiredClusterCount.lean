@@ -55,10 +55,10 @@ open StatMech.Lattice
 
 /-! ## A. Surface and volume of boxes -/
 
-/-- The surface count `2d (2n + 1)^{d - 1}` of the box `Λ_n`. -/
+/-- **Surface count of a box.** The surface count `2d (2n + 1)^{d - 1}` of the box `Λ_n`. -/
 noncomputable def boxSecantSurface (d n : ℕ) : ℝ := (2 * d) * (2 * n + 1) ^ (d - 1)
 
-/-- The edge-volume count `d (2n + 1)^d` of the box `Λ_n`. -/
+/-- **Edge-volume count of a box.** The edge-volume count `d (2n + 1)^d` of the box `Λ_n`. -/
 noncomputable def boxSecantVolume (d n : ℕ) : ℝ := (d : ℝ) * (2 * n + 1) ^ d
 
 lemma boxSecantVolume_pos {d : ℕ} (hd : 1 ≤ d) (n : ℕ) : 0 < boxSecantVolume d n := by
@@ -107,7 +107,8 @@ lemma boxSecant_surface_volume_asymptotics {d : ℕ} (hd : 1 ≤ d) :
 
 /-! ## B. Free and wired cluster counts -/
 
-/-- Adding edges with both endpoints in `{v | p v}` lowers the number of connected components by at
+/-- **Adding edges within a vertex set drops components by at most its size.**
+Adding edges with both endpoints in `{v | p v}` lowers the number of connected components by at
 most `|{v | p v}|`. See also `card_connectedComponent_le_sup_fromEdgeSet` (`EdgeMarginal`) for
 the
 bound by the number of added edges.

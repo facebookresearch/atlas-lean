@@ -75,7 +75,8 @@ variable {d : ℕ}
 ## A. Translations of `ℤ^d`
 -/
 
-/-- Translation `x ↦ x + v` as a permutation of `ℤ^d`. -/
+/-- **Translation of $\mathbb{Z}^d$ by a vector.**
+Translation `x ↦ x + v` as a permutation of `ℤ^d`. -/
 def fktc_translate (v : Site d) : Site d ≃ Site d where
   toFun := fun x => x + v
   invFun := fun x => x - v
@@ -95,7 +96,8 @@ lemma fktc_translate_adj (v : Site d) (x y : Site d) :
     rw [this]
   rw [Finset.sum_congr rfl (fun i _ => hcoord i)]
 
-/-- Translation by a unit vector does not preserve the centered boxes, so it is not a `BoxSym`. -/
+/-- **Unit translations are not box symmetries.**
+Translation by a unit vector does not preserve the centered boxes, so it is not a `BoxSym`. -/
 lemma fktc_translate_not_box_mem (j : Fin d) :
     ¬ (∀ n x, fktc_translate (fun i => if i = j then (1:ℤ) else 0) x ∈ box d n
         ↔ x ∈ box d n) := by
@@ -108,7 +110,8 @@ lemma fktc_translate_not_box_mem (j : Fin d) :
   simp only [fktc_translate_apply, Pi.add_apply] at hj
   norm_num at hj
 
-/-- A site and its translate lie in a common centered box. -/
+/-- **A site and its translate lie in a common centered box.**
+A site and its translate lie in a common centered box. -/
 lemma fktc_point_and_translate_in_box (v x : Site d) :
     ∃ N, x ∈ box d N ∧ fktc_translate v x ∈ box d N := by
   refine ⟨Finset.univ.sup (fun i => (x i).natAbs ⊔ ((x + v) i).natAbs), ?_, ?_⟩
@@ -120,7 +123,8 @@ lemma fktc_point_and_translate_in_box (v x : Site d) :
     refine le_trans le_sup_right
       (Finset.le_sup (f := fun i => (x i).natAbs ⊔ ((x + v) i).natAbs) (Finset.mem_univ i))
 
-/-- The endpoints of an edge and of its translate lie in a common centered box. -/
+/-- **An edge and its translate lie in a common centered box.**
+The endpoints of an edge and of its translate lie in a common centered box. -/
 lemma fktc_edge_and_translate_in_box (v x y : Site d) :
     ∃ N, x ∈ box d N ∧ y ∈ box d N ∧
       fktc_translate v x ∈ box d N ∧ fktc_translate v y ∈ box d N := by
@@ -154,7 +158,8 @@ lemma fktc_edge_and_translate_in_box (v x y : Site d) :
         (Finset.mem_univ i))
     exact le_sup_right
 
-/-- The pair `{x, y}` as an element of `Sym2 Λ_N`, for sites `x, y ∈ Λ_N`. -/
+/-- **Unordered pair of two sites of a box $\Lambda_N$.**
+The pair `{x, y}` as an element of `Sym2 Λ_N`, for sites `x, y ∈ Λ_N`. -/
 def fktc_boxEdge {N : ℕ} {x y : Site d} (hx : x ∈ box d N) (hy : y ∈ box d N) :
     Sym2 (boxVerts d N) :=
   s(⟨x, hx⟩, ⟨y, hy⟩)
@@ -168,7 +173,8 @@ lemma fktc_edgeIncl_boxEdge {N : ℕ} {x y : Site d} (hx : x ∈ box d N) (hy : 
 ## B. Constancy along orbits of box symmetries
 -/
 
-/-- The wired edge density is constant on each orbit of a box symmetry. -/
+/-- **Wired edge density is constant on orbits of a box symmetry.**
+The wired edge density is constant on each orbit of a box symmetry. -/
 lemma fktc_wired_box_density_const_of_orbit (S : BoxSym d) (N : ℕ)
     (EB : Finset (Sym2 (boxVerts d N))) (eb₀ : Sym2 (boxVerts d N)) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -187,7 +193,8 @@ lemma fktc_wired_box_density_const_of_orbit (S : BoxSym d) (N : ℕ)
   obtain ⟨k, hk⟩ := horb eb heb
   rw [hk, hstep k]
 
-/-- The free edge density is constant on each orbit of a box symmetry. -/
+/-- **Free edge density is constant on orbits of a box symmetry.**
+The free edge density is constant on each orbit of a box symmetry. -/
 lemma fktc_free_box_density_const_of_orbit (S : BoxSym d) (N : ℕ)
     (EB : Finset (Sym2 (boxVerts d N))) (eb₀ : Sym2 (boxVerts d N)) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -210,7 +217,8 @@ lemma fktc_free_box_density_const_of_orbit (S : BoxSym d) (N : ℕ)
 ## C. Equal densities from merging marginals
 -/
 
-/-- If the wired marginals of two box edges on `Λ_{N+k}` differ by a quantity tending to zero,
+/-- **Equal wired densities from merging wired marginals.**
+If the wired marginals of two box edges on `Λ_{N+k}` differ by a quantity tending to zero,
 the two edges have the same wired density. -/
 lemma fktc_wired_density_eq_of_marg_decay (N : ℕ) (eb eb' : Sym2 (boxVerts d N))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -228,7 +236,8 @@ lemma fktc_wired_density_eq_of_marg_decay (N : ℕ) (eb eb' : Sym2 (boxVerts d N
       hdecay
   linarith [hlim]
 
-/-- If the free marginals of two box edges on `Λ_{N+k}` differ by a quantity tending to zero, the
+/-- **Equal free densities from merging free marginals.**
+If the free marginals of two box edges on `Λ_{N+k}` differ by a quantity tending to zero, the
 two edges have the same free density. -/
 lemma fktc_free_density_eq_of_marg_decay (N : ℕ) (eb eb' : Sym2 (boxVerts d N))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -246,7 +255,8 @@ lemma fktc_free_density_eq_of_marg_decay (N : ℕ) (eb eb' : Sym2 (boxVerts d N)
       hdecay
   linarith [hlim]
 
-/-- An edge and its translate have the same wired density if their wired marginals merge along
+/-- **Translation invariance of the wired density given merging marginals.**
+An edge and its translate have the same wired density if their wired marginals merge along
 the boxes. See also `bdp_wiredEdgeDensity_translation_inv`, which proves the conclusion without
 the merging hypothesis. -/
 lemma fktc_wired_density_translation_inv (v x y : Site d) {p : ℝ}
@@ -268,7 +278,8 @@ lemma fktc_wired_density_translation_inv (v x y : Site d) {p : ℝ}
   exact fktc_wired_density_eq_of_marg_decay N (fktc_boxEdge hx hy) (fktc_boxEdge hx' hy')
     hp hp1 hdecay
 
-/-- An edge and its translate have the same free density if their free marginals merge along the
+/-- **Translation invariance of the free density given merging marginals.**
+An edge and its translate have the same free density if their free marginals merge along the
 boxes. See also `bdp_freeEdgeDensity_translation_inv`, which proves the conclusion without the
 merging hypothesis. -/
 lemma fktc_free_density_translation_inv (v x y : Site d) {p : ℝ}
@@ -290,7 +301,8 @@ lemma fktc_free_density_translation_inv (v x y : Site d) {p : ℝ}
   exact fktc_free_density_eq_of_marg_decay N (fktc_boxEdge hx hy) (fktc_boxEdge hx' hy')
     hp hp1 hdecay
 
-/-- Translation invariance of the free and wired densities of an edge under the merging
+/-- **Translation invariance of free and wired densities if marginals merge.**
+Translation invariance of the free and wired densities of an edge under the merging
 hypotheses of `fktc_wired_density_translation_inv` and `fktc_free_density_translation_inv`. -/
 lemma fktc_density_translation_inv (v x y : Site d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hcofW : ∃ N, ∃ hx : x ∈ box d N, ∃ hy : y ∈ box d N,
@@ -318,7 +330,8 @@ lemma fktc_density_translation_inv (v x y : Site d) {p : ℝ} (hp : 0 < p) (hp1 
 ## D. Box averages over orbits
 -/
 
-/-- If the wired density is constant on a set `EB` of box edges, `|EB|` times that density is at
+/-- **Constant wired density gives a lower bound on expected open edges.**
+If the wired density is constant on a set `EB` of box edges, `|EB|` times that density is at
 most the expected number of open edges of `EB` under the wired measure on any larger box. -/
 lemma fktc_wired_density_eq_const (N n : ℕ) (hNn : N ≤ n)
     (EB : Finset (Sym2 (boxVerts d N))) (eb₀ : Sym2 (boxVerts d N)) {p : ℝ}
@@ -335,7 +348,8 @@ lemma fktc_wired_density_eq_const (N n : ℕ) (hNn : N ≤ n)
   rw [← hsum]
   exact dfi_box_density_bound_wired N n hNn EB hp hp1
 
-/-- If the free density is constant on a set `EB` of box edges, the expected number of open edges
+/-- **Constant free density gives an upper bound on expected open edges.**
+If the free density is constant on a set `EB` of box edges, the expected number of open edges
 of `EB` under the free measure on any larger box is at most `|EB|` times that density. -/
 lemma fktc_free_density_eq_const (N n : ℕ) (hNn : N ≤ n)
     (EB : Finset (Sym2 (boxVerts d N))) (eb₀ : Sym2 (boxVerts d N)) {p : ℝ}
@@ -352,7 +366,8 @@ lemma fktc_free_density_eq_const (N n : ℕ) (hNn : N ≤ n)
   rw [← hsum]
   exact dfi_box_density_bound_free N n hNn EB hp hp1
 
-/-- `fktc_wired_density_eq_const` for a set of edges contained in one orbit of a box symmetry. -/
+/-- **Wired lower bound on expected open edges along a box-symmetry orbit.**
+`fktc_wired_density_eq_const` for a set of edges contained in one orbit of a box symmetry. -/
 lemma fktc_wired_density_eq_const_orbit (S : BoxSym d) (N n : ℕ) (hNn : N ≤ n)
     (EB : Finset (Sym2 (boxVerts d N))) (eb₀ : Sym2 (boxVerts d N)) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -364,7 +379,8 @@ lemma fktc_wired_density_eq_const_orbit (S : BoxSym d) (N n : ℕ) (hNn : N ≤ 
   fktc_wired_density_eq_const N n hNn EB eb₀
     (fktc_wired_box_density_const_of_orbit S N EB eb₀ hp hp1 horb) hp hp1
 
-/-- `fktc_free_density_eq_const` for a set of edges contained in one orbit of a box symmetry. -/
+/-- **Free upper bound on expected open edges along a box-symmetry orbit.**
+`fktc_free_density_eq_const` for a set of edges contained in one orbit of a box symmetry. -/
 lemma fktc_free_density_eq_const_orbit (S : BoxSym d) (N n : ℕ) (hNn : N ≤ n)
     (EB : Finset (Sym2 (boxVerts d N))) (eb₀ : Sym2 (boxVerts d N)) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)

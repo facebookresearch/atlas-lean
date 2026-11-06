@@ -55,15 +55,18 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## A. Monotone couplings and edge marginals -/
 
-/-- The probability `μ(ω(e) = 1)` that the coordinate `e` is open under the mass function `μ`. -/
+/-- **Edge marginal of a mass function.**
+The probability `μ(ω(e) = 1)` that the coordinate `e` is open under the mass function `μ`. -/
 noncomputable def edgeMargProb (μ : ConfigSpace E → ℝ) (e : E) : ℝ :=
   ∑ ω : ConfigSpace E, (if ω e then (1 : ℝ) else 0) * μ ω
 
-/-- The mass `μ(A)` of an event under the mass function `μ`. -/
+/-- **Mass of an event under a mass function.**
+The mass `μ(A)` of an event under the mass function `μ`. -/
 noncomputable def eventMassProb (μ : ConfigSpace E → ℝ) (A : Set (ConfigSpace E)) : ℝ :=
   ∑ ω : ConfigSpace E, A.indicator (fun _ => (1 : ℝ)) ω * μ ω
 
-/-- `P` is a monotone coupling of the mass functions `μ` and `ν`: a nonnegative mass function on
+/-- **Monotone coupling of two mass functions.**
+`P` is a monotone coupling of the mass functions `μ` and `ν`: a nonnegative mass function on
 pairs
 with marginals `μ` and `ν`, supported on pairs `(ω, ω')` with `ω ≤ ω'`.
 -/
@@ -185,7 +188,8 @@ lemma coupling_eventMass_le {P : ConfigSpace E × ConfigSpace E → ℝ}
   · exact mul_le_mul_of_nonneg_right (hA.indicator_monotone hz) (hP.nonneg z)
   · rw [hP.supportLE z hz]; simp
 
-/-- Two monotonically coupled measures with the same edge marginals give the same mass to every
+/-- **Monotone couplings with equal edge marginals agree on up-sets.**
+Two monotonically coupled measures with the same edge marginals give the same mass to every
 increasing event.
 -/
 lemma eventMass_eq_of_edgeMarg_eq {P : ConfigSpace E × ConfigSpace E → ℝ}
@@ -210,7 +214,8 @@ lemma edgeMargProb_fkProb (p q : ℝ) (e : Sym2 V) :
   refine Finset.sum_congr rfl fun ω _ => ?_
   by_cases h : ω e <;> simp [h]
 
-/-- The mass `φ^C_{G,p,q}(A)` of an event under the random-cluster measure with boundary graph `C`.
+/-- **Event mass under the random-cluster measure with a boundary graph.**
+The mass `φ^C_{G,p,q}(A)` of an event under the random-cluster measure with boundary graph `C`.
 -/
 noncomputable def bcEventMass (C : SimpleGraph V) [DecidableRel C.Adj] (p q : ℝ)
     (A : Set (ConfigSpace (Sym2 V))) : ℝ :=
@@ -267,7 +272,8 @@ private lemma div_le_qpow_div {Nw Nf Zc Zc' qN : ℝ} (hNum : Nw ≤ Nf)
     _ ≤ Nf * (qN * Zc') := mul_le_mul_of_nonneg_left hZbound hNumnn
     _ = qN * Nf * Zc' := by ring
 
-/-- If the cluster counts with boundary graphs `C ≤ C'` differ by at most `N`, then
+/-- **Boundary-graph comparison $\varphi^{C'}(A) \le q^N \varphi^C(A)$.**
+If the cluster counts with boundary graphs `C ≤ C'` differ by at most `N`, then
 `φ^C(A) ≤ q^N φ^{C'}(A)` for nonnegative event indicators.
 -/
 lemma bcEventMass_le_qpow (C C' : SimpleGraph V) [DecidableRel C.Adj]

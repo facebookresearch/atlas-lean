@@ -67,7 +67,8 @@ variable {d : ℕ}
 -/
 
 set_option linter.unusedVariables false in
-/-- If the non-bulk edges of `Λ_n` number at most `C` times the boundary of `Λ_n`, their fraction
+/-- **Non-bulk edge fraction bound from a boundary bound on their count.**
+If the non-bulk edges of `Λ_n` number at most `C` times the boundary of `Λ_n`, their fraction
 is at most `C` times the boundary-to-edge ratio. -/
 lemma spc_boundaryFraction_le_surfaceVolume (n : ℕ) (C : ℝ) (hC : 0 ≤ C)
     (In : Finset (Sym2 (boxVerts d n)))
@@ -86,7 +87,8 @@ lemma spc_boundaryFraction_le_surfaceVolume (n : ℕ) (C : ℝ) (hC : 0 ≤ C)
 ## B. Graphs on a fixed box
 -/
 
-/-- The per-edge ambient tilted log normalizer does not depend on the decidability instance of the
+/-- **Ambient tilted log normalizer ignores the decidability instance.**
+The per-edge ambient tilted log normalizer does not depend on the decidability instance of the
   adjacency
 relation. -/
 lemma spc_ambientTiltLogZ_instIrrel (N : ℕ) (H : SimpleGraph (boxVerts d N))
@@ -94,7 +96,8 @@ lemma spc_ambientTiltLogZ_instIrrel (N : ℕ) (H : SimpleGraph (boxVerts d N))
     @ivp2_ambientTiltLogZ _ _ _ H i1 2 t = @ivp2_ambientTiltLogZ _ _ _ H i2 2 t := by
   congr 1
 
-/-- The per-edge ambient tilted log normalizers of a sequence of graphs on the fixed box `Λ_N` take
+/-- **Tilted log normalizers on a fixed box take finitely many values.**
+The per-edge ambient tilted log normalizers of a sequence of graphs on the fixed box `Λ_N` take
   finitely many
 values. -/
 lemma spc_range_finite (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
@@ -108,7 +111,8 @@ lemma spc_range_finite (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
   rw [heq, Set.range_comp]
   exact (Set.toFinite (Set.range Gn)).image _
 
-/-- A limit of per-edge ambient tilted log normalizers of graphs on the fixed box `Λ_N` is attained
+/-- **Limits of tilted log normalizers on a fixed box are attained.**
+A limit of per-edge ambient tilted log normalizers of graphs on the fixed box `Λ_N` is attained
   by one of the
 graphs. -/
 lemma spc_feketeLimit_mem_finiteRange (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))
@@ -119,7 +123,8 @@ lemma spc_feketeLimit_mem_finiteRange (N : ℕ) (Gn : ℕ → SimpleGraph (boxVe
   (spc_range_finite N Gn t).isClosed.mem_of_tendsto (hfree t)
     (Eventually.of_forall (fun n => ⟨n, rfl⟩))
 
-/-- If graphs on the fixed box `Λ_N` and the growing boxes `Λ_n` have the same limiting per-edge
+/-- **A limit shared with growing boxes is one fixed-box graph's value.**
+If graphs on the fixed box `Λ_N` and the growing boxes `Λ_n` have the same limiting per-edge
 ambient tilted log normalizer `g t`, then `g t` is the ambient tilted log normalizer of a single
   graph on `Λ_N`. -/
 lemma spc_fixedBox_collapse_obstruction (N : ℕ) (Gn : ℕ → SimpleGraph (boxVerts d N))

@@ -137,7 +137,8 @@ lemma sources_ofEdgeFun_add₃ (m K₁ K₂ : ↥G.edgeFinset → ℕ)
 
 /-! ## B. Triple-current sums -/
 
-/-- Triples of functions to `ℕ` correspond to a sum `m` together with two functions with pointwise
+/-- **Reparametrizing triples of functions by their sum and two summands.**
+Triples of functions to `ℕ` correspond to a sum `m` together with two functions with pointwise
 sum `≤ m`. -/
 def tripleEquivSigma {E : Type*} :
     ((E → ℕ) × (E → ℕ) × (E → ℕ)) ≃
@@ -178,7 +179,8 @@ noncomputable instance instFintypeTripleLe (m : ↥G.edgeFinset → ℕ) :
       simpa using h2
   exact Fintype.ofFinite _
 
-/-- The triple-current sum `∑_{∂n₁ = A, ∂n₂ = B, ∂n₃ = C} w(n₁) w(n₂) w(n₃)`. -/
+/-- **Triple-current sum with prescribed sources.**
+The triple-current sum `∑_{∂n₁ = A, ∂n₂ = B, ∂n₃ = C} w(n₁) w(n₂) w(n₃)`. -/
 noncomputable def sourceTripleSum (β : ℝ) (J : Sym2 V → ℝ) (A B C : Finset V) : ℝ :=
   ∑' z : (↥G.edgeFinset → ℕ) × (↥G.edgeFinset → ℕ) × (↥G.edgeFinset → ℕ),
     (if sources G (ofEdgeFun G z.1) = A then weight G β J (ofEdgeFun G z.1) else 0)

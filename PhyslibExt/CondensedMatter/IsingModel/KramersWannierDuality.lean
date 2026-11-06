@@ -57,11 +57,11 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Cut space and cycle space -/
 
-/-- The cut space: the edge sets `∂s` cut by configurations `s`. -/
+/-- **Cut space of a graph.** The cut space: the edge sets `∂s` cut by configurations `s`. -/
 noncomputable def cutSpace : Finset (Finset (Sym2 V)) :=
   Finset.univ.image (fun s : ConfigSpace V => cutEdges Gp s)
 
-/-- The even subgraphs of `G`. -/
+/-- **Even subgraphs of a graph.** The even subgraphs of `G`. -/
 noncomputable def evenSubgraphs : Finset (Finset (Sym2 V)) :=
   Gd.edgeFinset.powerset.filter IsEvenSubgraph
 
@@ -207,11 +207,13 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## B. Boolean descriptions -/
 
-/-- Whether the spins of `s` differ at the endpoints of `e`. -/
+/-- **Spin disagreement test across an edge.**
+Whether the spins of `s` differ at the endpoints of `e`. -/
 def edgeDiff (s : ConfigSpace V) (e : Sym2 V) : Bool :=
   Sym2.lift ⟨fun x y => s x != s y, fun _ _ => by simp [bne_comm]⟩ e
 
-/-- The edges cut by `s`, defined through `edgeDiff`. -/
+/-- **Edges cut by a configuration via the edge disagreement test.**
+The edges cut by `s`, defined through `edgeDiff`. -/
 def cutEdgesB (s : ConfigSpace V) : Finset (Sym2 V) :=
   G.edgeFinset.filter (fun e => edgeDiff s e)
 
@@ -227,11 +229,12 @@ lemma cutEdges_eq_cutEdgesB (s : ConfigSpace V) :
     simp only [Sym2.lift_mk]
     by_cases hx : s x <;> by_cases hy : s y <;> simp [hx, hy] <;> norm_num
 
-/-- The cut space, defined through `cutEdgesB`. -/
+/-- **Cut space defined through Boolean cut edges.** The cut space, defined through `cutEdgesB`. -/
 def cutSpaceB : Finset (Finset (Sym2 V)) :=
   Finset.univ.image (fun s : ConfigSpace V => cutEdgesB G s)
 
-/-- The even subgraphs, defined with a Boolean test. -/
+/-- **Even subgraphs defined by a Boolean test.**
+The even subgraphs, defined with a Boolean test. -/
 def evenSubgraphsB : Finset (Finset (Sym2 V)) :=
   G.edgeFinset.powerset.filter IsEvenSubgraph
 
@@ -248,7 +251,7 @@ section K4
 
 /-! ## C. The complete graph on four vertices -/
 
-/-- The complete graph `K₄` on `Fin 4`. -/
+/-- **Complete graph on four vertices.** The complete graph `K₄` on `Fin 4`. -/
 abbrev K4 : SimpleGraph (Fin 4) := ⊤
 
 /-- Adjacency in `K₄` is decidable. -/

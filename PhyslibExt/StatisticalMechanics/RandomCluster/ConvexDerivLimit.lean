@@ -79,7 +79,8 @@ lemma cdl_leftDeriv_tendsto_slope (hg : ConvexOn ℝ univ g) (t : ℝ) :
   rw [hasDerivWithinAt_iff_tendsto_slope' (by simp)] at h
   exact h
 
-/-- A pointwise limit `g` of convex functions on `ℝ` is convex; its one-sided derivatives exist,
+/-- **Pointwise limits of convex maps are convex with one-sided derivatives.**
+A pointwise limit `g` of convex functions on `ℝ` is convex; its one-sided derivatives exist,
 are
 monotone, are one-sided limits of slopes, and agree off a countable set; slopes of the
 approximants converge to slopes of `g`.

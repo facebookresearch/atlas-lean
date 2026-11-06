@@ -59,7 +59,7 @@ open ConfigSpace StatMech.Lattice
 
 /-! ## A. Box edge events -/
 
-/-- The event that the box edge `eb` of `Λ_N` is open. -/
+/-- **Event that a box edge is open.** The event that the box edge `eb` of `Λ_N` is open. -/
 def boxEdgeOpenEvent (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
     Set (ConfigSpace (Sym2 (boxVerts d N))) :=
   {σ | σ eb = true}

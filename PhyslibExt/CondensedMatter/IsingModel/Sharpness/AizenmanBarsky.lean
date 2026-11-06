@@ -62,11 +62,13 @@ namespace Sharpness
 
 /-! ## A. The differential inequalities -/
 
-/-- The Aizenman–Barsky inequality `∂_β M(β, h) ≤ J M(β, h) ∂_h M(β, h)` for all `β, h`. -/
+/-- **Aizenman–Barsky inequality for all $\beta$ and $h$.**
+The Aizenman–Barsky inequality `∂_β M(β, h) ≤ J M(β, h) ∂_h M(β, h)` for all `β, h`. -/
 def AizenmanBarskyInequality (M : ℝ → ℝ → ℝ) (J : ℝ) : Prop :=
   ∀ β h, deriv (fun β => M β h) β ≤ J * (M β h * deriv (fun h => M β h) h)
 
-/-- The second Aizenman–Barsky inequality `M ≤ h ∂_h M + M² + β M ∂_β M`. -/
+/-- **Second Aizenman–Barsky inequality.**
+The second Aizenman–Barsky inequality `M ≤ h ∂_h M + M² + β M ∂_β M`. -/
 def AizenmanBarskyPDI (M : ℝ → ℝ → ℝ) : Prop :=
   ∀ β h, M β h ≤
       h * deriv (fun h => M β h) h + (M β h) ^ 2 + β * (M β h * deriv (fun β => M β h) β)
@@ -181,7 +183,8 @@ lemma ab_field_meanfield_bound (K : ℝ) (hK : 0 < K) (m : ℝ → ℝ)
   rw [hsplit] at hbound
   exact hbound
 
-/-- The Aizenman–Barsky critical bound: from `∂_β M ≤ J M ∂_h M` and `1 - M(β_c, h) ≤ β_c ∂_β M(β_c,
+/-- **Aizenman–Barsky critical bound $M(\beta_c, h) \ge c\sqrt{h}$.**
+The Aizenman–Barsky critical bound: from `∂_β M ≤ J M ∂_h M` and `1 - M(β_c, h) ≤ β_c ∂_β M(β_c,
 h)` with `M(β_c, 0) = 0`, `M(β_c, h) ≥ c √h` for `0 < h ≤ β_c J/4`. Reference: M. Aizenman, D. J.
 Barsky, "Sharpness of the phase transition in percolation models", Comm. Math. Phys. 108 (1987)
 489–526. -/
@@ -317,7 +320,8 @@ lemma ab_field_meanfield_bound_pos (K : ℝ) (hK : 0 < K) (m : ℝ → ℝ)
 
 /-! ## D. The physical predicate -/
 
-/-- The Aizenman–Barsky inequality `∂_β M ≤ J M ∂_h M` for `β ≥ 0` and `h > 0`. -/
+/-- **Aizenman–Barsky inequality for $\beta \ge 0$ and $h > 0$.**
+The Aizenman–Barsky inequality `∂_β M ≤ J M ∂_h M` for `β ≥ 0` and `h > 0`. -/
 def AizenmanBarskyInequalityPhysical (M : ℝ → ℝ → ℝ) (J : ℝ) : Prop :=
   ∀ β, 0 ≤ β → ∀ h, 0 < h →
     deriv (fun b => M b h) β ≤

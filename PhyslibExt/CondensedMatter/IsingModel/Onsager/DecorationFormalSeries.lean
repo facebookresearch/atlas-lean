@@ -64,10 +64,12 @@ open BigOperators Finset
 
 /-! ## A. Transition monomials -/
 
-/-- Decorated edges, used as the variables of the formal series. -/
+/-- **Decorated edges as formal-series variables.**
+Decorated edges, used as the variables of the formal series. -/
 abbrev ons_DecEdge (L : ℕ) := Sym2 (ons_Dart L)
 
-/-- The exponent of a transition: one for the external edge at `d₁` and one for each internal edge
+/-- **Exponent of a Kac-Ward transition.**
+The exponent of a transition: one for the external edge at `d₁` and one for each internal edge
 on the path at the site of `d₂`. -/
 noncomputable def ons_decTransitionExponent
     (L : ℕ) (d₂ d₁ : ons_Dart L) : ons_DecEdge L →₀ ℕ := by
@@ -76,7 +78,8 @@ noncomputable def ons_decTransitionExponent
     ∑ i ∈ ons_decChainPathIndices (d₁.2 + 2) d₂.2,
       Finsupp.single (ons_decChainEdge d₂.1 i) 1
 
-/-- The scalar of a transition: its boundary phase times its turn weight, or `0` if `d₂` does not
+/-- **Scalar of a Kac-Ward transition.**
+The scalar of a transition: its boundary phase times its turn weight, or `0` if `d₂` does not
 start at the head of `d₁`. -/
 noncomputable def ons_decTransitionScalar
     (L : ℕ) (omega u v : ℂ) (d₂ d₁ : ons_Dart L) : ℂ :=
@@ -84,20 +87,22 @@ noncomputable def ons_decTransitionScalar
     ons_dirPhase u v d₁.2 * ons_turnW omega d₁.2 d₂.2
   else 0
 
-/-- The monomial of the transition from `d₁` to `d₂`. -/
+/-- **Monomial of a Kac-Ward transition.** The monomial of the transition from `d₁` to `d₂`. -/
 noncomputable def ons_decFormalTransition
     (L : ℕ) (omega u v : ℂ) (d₂ d₁ : ons_Dart L) :
     MvPowerSeries (ons_DecEdge L) ℂ :=
   MvPowerSeries.monomial (ons_decTransitionExponent L d₂ d₁)
     (ons_decTransitionScalar L omega u v d₂ d₁)
 
-/-- The exponent of a closed walk: the sum of the exponents of its transitions. -/
+/-- **Exponent of a closed Kac-Ward walk.**
+The exponent of a closed walk: the sum of the exponents of its transitions. -/
 noncomputable def ons_decLoopExponent
     (L : ℕ) {n : ℕ} [NeZero n] (d : Fin n → ons_Dart L) :
     ons_DecEdge L →₀ ℕ :=
   ∑ k, ons_decTransitionExponent L (d k) (d (k + 1))
 
-/-- The scalar of a closed walk: the product of the scalars of its transitions. -/
+/-- **Scalar of a closed Kac-Ward walk.**
+The scalar of a closed walk: the product of the scalars of its transitions. -/
 noncomputable def ons_decLoopScalar
     (L : ℕ) (omega u v : ℂ) {n : ℕ} [NeZero n]
     (d : Fin n → ons_Dart L) : ℂ :=
@@ -105,11 +110,13 @@ noncomputable def ons_decLoopScalar
 
 /-! ## B. Total degree -/
 
-/-- The total degree `∑ m e` of an exponent; this is `Finsupp.degree`. -/
+/-- **Total degree of an exponent.**
+The total degree `∑ m e` of an exponent; this is `Finsupp.degree`. -/
 def ons_finsuppTotalDegree {E : Type*} (m : E →₀ ℕ) : ℕ :=
   m.sum fun _ n ↦ n
 
-/-- `ons_finsuppTotalDegree` agrees with Mathlib's `Finsupp.degree`. -/
+/-- **Total degree of an exponent agrees with Mathlib's degree.**
+`ons_finsuppTotalDegree` agrees with Mathlib's `Finsupp.degree`. -/
 lemma ons_finsuppTotalDegree_eq_degree {E : Type*} (m : E →₀ ℕ) :
     ons_finsuppTotalDegree m = m.degree :=
   rfl
@@ -166,7 +173,8 @@ lemma ons_decLoopExponent_length_le
 
 /-! ## C. The formal logarithm and root -/
 
-/-- The coefficient of `x^m` in the formal logarithm: minus one half of the sum over closed walks of
+/-- **Coefficient of the formal Kac-Ward logarithm.**
+The coefficient of `x^m` in the formal logarithm: minus one half of the sum over closed walks of
 length `r + 1 ≤ deg m` with exponent `m` of their scalars divided by `r + 1`. -/
 noncomputable def ons_decFormalLogCoeff
     (L : ℕ) [NeZero L] (omega u v : ℂ)
@@ -177,7 +185,7 @@ noncomputable def ons_decFormalLogCoeff
           ons_decLoopScalar L omega u v d
         else 0) / ((r : ℂ) + 1)) / 2
 
-/-- The formal logarithm of the Kac-Ward root. -/
+/-- **Formal logarithm of the Kac-Ward root.** The formal logarithm of the Kac-Ward root. -/
 noncomputable def ons_decFormalLog
     (L : ℕ) [NeZero L] (omega u v : ℂ) :
     MvPowerSeries (ons_DecEdge L) ℂ :=
@@ -226,7 +234,8 @@ lemma ons_decFormalLog_hasSubst
   PowerSeries.HasSubst.of_constantCoeff_zero
     (ons_decFormalLog_constantCoeff L omega u v)
 
-/-- The formal Kac-Ward root: the formal exponential of `ons_decFormalLog`. -/
+/-- **Formal Kac-Ward root.**
+The formal Kac-Ward root: the formal exponential of `ons_decFormalLog`. -/
 noncomputable def ons_decFormalRoot
     (L : ℕ) [NeZero L] (omega u v : ℂ) :
     MvPowerSeries (ons_DecEdge L) ℂ :=
@@ -235,7 +244,8 @@ noncomputable def ons_decFormalRoot
 
 /-! ## D. The decorated spin polynomial -/
 
-/-- The squarefree exponent `∑_{e ∈ S} single e 1` of a set of variables. -/
+/-- **Squarefree exponent of a set of variables.**
+The squarefree exponent `∑_{e ∈ S} single e 1` of a set of variables. -/
 noncomputable def ons_finsetExponent
     {E : Type*} [DecidableEq E] (S : Finset E) : E →₀ ℕ :=
   ∑ edge ∈ S, Finsupp.single edge 1
@@ -316,7 +326,8 @@ lemma ons_finsetExponent_prod
       · intro e he n₁ n₂
         simp [pow_add]
 
-/-- The decorated spin polynomial `∑_D χ_{a,b}(hom D) ∏_{e ∈ D} x_e` over decorated even subgraphs.
+/-- **Decorated spin polynomial.**
+The decorated spin polynomial `∑_D χ_{a,b}(hom D) ∏_{e ∈ D} x_e` over decorated even subgraphs.
 -/
 noncomputable def ons_decoratedSpinPolynomial
     (L : ℕ) [Fact (2 < L)] (a b : Fin 2) :
@@ -361,7 +372,8 @@ lemma ons_decoratedSpinPolynomial_coeff
 
 /-! ## E. Evaluation -/
 
-/-- Evaluation of a multivariate formal power series at weights, as the sum
+/-- **Evaluation of a multivariate power series at weights.**
+Evaluation of a multivariate formal power series at weights, as the sum
 `∑_m coeff_m · weight^m`. -/
 noncomputable def ons_mvSeriesEval
     {E : Type*} (series : MvPowerSeries E ℂ) (weight : E → ℂ) : ℂ :=
@@ -386,7 +398,8 @@ lemma ons_mvSeriesEval_coe
       simpa [MvPolynomial.mem_support_iff] using hm
     rw [hcoeff, zero_mul]
 
-/-- The formal Kac-Ward identity on the `L × L` torus: for every spin structure, the formal Kac-Ward
+/-- **Formal Kac-Ward identity on the torus.**
+The formal Kac-Ward identity on the `L × L` torus: for every spin structure, the formal Kac-Ward
 root equals the decorated spin polynomial. -/
 def ons_decoratedFormalKacWardIdentity
     (L : ℕ) [Fact (2 < L)] : Prop :=

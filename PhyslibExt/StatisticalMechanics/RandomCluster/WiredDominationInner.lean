@@ -93,7 +93,8 @@ variable (C : SimpleGraph V) [DecidableRel C.Adj]
 ## B. The conditional measure
 -/
 
-/-- The partition function of the fibre of `ψ` off `F`: the sum of `bcWeight` over configurations
+/-- **Partition function of a conditioning fibre.**
+The partition function of the fibre of `ψ` off `F`: the sum of `bcWeight` over configurations
 agreeing with `ψ` off `F`. -/
 noncomputable def inducedBcZ (p q : ℝ) (F : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) : ℝ :=
   ∑ ρ ∈ condFibre F ψ, bcWeight G C p q ρ
@@ -108,7 +109,8 @@ lemma inducedBcZ_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     inducedBcZ G C p q F ψ ≠ 0 :=
   (inducedBcZ_pos G C hp hp1 hq F ψ).ne'
 
-/-- The random-cluster measure with wiring `C` conditioned on agreeing with `ψ` off the edge set
+/-- **Conditional random-cluster measure with a boundary wiring.**
+The random-cluster measure with wiring `C` conditioned on agreeing with `ψ` off the edge set
 `F`. -/
 noncomputable def condBcProb (p q : ℝ) (F : Finset (Sym2 V)) (ψ ω : ConfigSpace (Sym2 V)) : ℝ :=
   if AgreesOff F ψ ω then bcWeight G C p q ω / inducedBcZ G C p q F ψ else 0
@@ -147,7 +149,8 @@ lemma condBcProb_eq_div_bcProb {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < 
 ## C. Monotonicity in the boundary condition
 -/
 
-/-- Holley's condition for the conditional measures with nested wirings `C ≤ C'` and `q ≥ 1`. -/
+/-- **Holley's condition for nested-wiring conditional measures, $q \ge 1$.**
+Holley's condition for the conditional measures with nested wirings `C ≤ C'` and `q ≥ 1`. -/
 lemma condBcProb_cross (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ C')
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (F : Finset (Sym2 V)) (ψ a b : ConfigSpace (Sym2 V)) :
@@ -171,7 +174,8 @@ lemma condBcProb_cross (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ 
   · rw [ite_eq_right ha, zero_mul]
     simpa only [condBcProb] using hRHSnn
 
-/-- For `q ≥ 1` and `C ≤ C'`, the conditional measure with wiring `C` is dominated by the one with
+/-- **Conditional measures increase with the wiring for $q \ge 1$.**
+For `q ≥ 1` and `C ≤ C'`, the conditional measure with wiring `C` is dominated by the one with
 wiring `C'` on increasing events. -/
 lemma condBcProb_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ C')
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -190,7 +194,8 @@ lemma condBcProb_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C �
 ## D. Disintegration and wired domination
 -/
 
-/-- Disintegration: `φ_C(ω)` is the mass of the fibre of `ω` times the conditional probability of
+/-- **Disintegration of a boundary-wired measure over conditioning fibres.**
+Disintegration: `φ_C(ω)` is the mass of the fibre of `ω` times the conditional probability of
 `ω` in that fibre. -/
 lemma bcProb_eq_fibreMass_mul_condBcProb {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (F : Finset (Sym2 V)) (ω : ConfigSpace (Sym2 V)) :
@@ -206,7 +211,8 @@ lemma bcProb_eq_fibreMass_mul_condBcProb {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) 
 
 variable (bdry : V → Prop) [DecidablePred bdry]
 
-/-- For `q ≥ 1` the wired measure is dominated by `φ_C'` for any wiring `C'` containing the boundary
+/-- **Wirings with the boundary clique dominate the wired measure, $q \ge 1$.**
+For `q ≥ 1` the wired measure is dominated by `φ_C'` for any wiring `C'` containing the boundary
 clique. -/
 lemma wiredFkProb_inner_dominated (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : StatMech.Lattice.boundaryCliqueGraph bdry ≤ C')
@@ -217,7 +223,8 @@ lemma wiredFkProb_inner_dominated (C' : SimpleGraph V) [DecidableRel C'.Adj]
   rw [Finset.sum_congr rfl (fun ω _ => by rw [← bcProb_clique_eq_wiredFkProb])]
   exact bcProb_mono_bc G (StatMech.Lattice.boundaryCliqueGraph bdry) C' hCC' hp hp1 hq hA
 
-/-- Conditional version of `wiredFkProb_inner_dominated`. -/
+/-- **Wired measure conditionally dominated by larger wirings, $q \ge 1$.**
+Conditional version of `wiredFkProb_inner_dominated`. -/
 lemma wiredFkProb_inner_dominated_cond (C' : SimpleGraph V) [DecidableRel C'.Adj]
     (hCC' : StatMech.Lattice.boundaryCliqueGraph bdry ≤ C')
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

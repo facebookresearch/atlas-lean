@@ -67,7 +67,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. The Lebowitz four-point form -/
 
-/-- Lebowitz's four-point combination `⟨σ_oσ_xσ_y⟩ - ⟨σ_oσ_x⟩⟨σ_y⟩ - ⟨σ_oσ_y⟩⟨σ_x⟩ - ⟨σ_o⟩⟨σ_xσ_y⟩`,
+/-- **Lebowitz four-point combination.**
+Lebowitz's four-point combination `⟨σ_oσ_xσ_y⟩ - ⟨σ_oσ_x⟩⟨σ_y⟩ - ⟨σ_oσ_y⟩⟨σ_x⟩ - ⟨σ_o⟩⟨σ_xσ_y⟩`,
 which differs from the Ursell function `u₃` by `2⟨σ_o⟩⟨σ_x⟩⟨σ_y⟩`. -/
 noncomputable def gc_lebowitzU4 (β h : ℝ) (o x y : V) : ℝ :=
   isingExpectation G β h (fun s => spin s o * (spin s x * spin s y))
@@ -108,7 +109,8 @@ lemma gc_lebowitz_le_ursell (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (o x y 
 
 /-! ## B. The GHS sign condition -/
 
-/-- The GHS sign condition at `(β, h)` and root `o`: the third Ursell function `u₃(o, x, y)` is
+/-- **GHS sign condition.**
+The GHS sign condition at `(β, h)` and root `o`: the third Ursell function `u₃(o, x, y)` is
 nonpositive for all pairwise distinct `o, x, y`. It holds for `β, h ≥ 0` by `ghs_signDominance`. -/
 def GHSSignDominance (β h : ℝ) (o : V) : Prop :=
   ∀ x y : V, o ≠ x → o ≠ y → x ≠ y → eg_ursell3 G β h o x y ≤ 0

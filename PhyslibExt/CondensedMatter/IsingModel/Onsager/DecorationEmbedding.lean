@@ -54,7 +54,8 @@ namespace StatMech.Onsager
 
 /-! ## A. Positions of darts -/
 
-/-- The offset of a dart in direction `μ` inside its `8 × 8` cell: east `(6, 4)`, north `(4, 6)`,
+/-- **Offset of a dart inside its 8 × 8 cell.**
+The offset of a dart in direction `μ` inside its `8 × 8` cell: east `(6, 4)`, north `(4, 6)`,
 west `(2, 4)`, south `(4, 2)`. -/
 def ons_decEmbedOffset (mu : Fin 4) : ℕ × ℕ :=
   match mu with
@@ -63,7 +64,8 @@ def ons_decEmbedOffset (mu : Fin 4) : ℕ × ℕ :=
   | 2 => (2, 4)
   | 3 => (4, 2)
 
-/-- The position `8 s + offset(μ)` of the dart `(s, μ)` in the `8L × 8L` torus. -/
+/-- **Position of a dart in the 8L × 8L torus.**
+The position `8 s + offset(μ)` of the dart `(s, μ)` in the `8L × 8L` torus. -/
 def ons_decEmbedVertex (L : ℕ) (d : ons_Dart L) :
     ZMod (8 * L) × ZMod (8 * L) :=
   ((8 * d.1.1.val + (ons_decEmbedOffset d.2).1 : ℕ),
@@ -120,7 +122,8 @@ lemma ons_decEmbedVertex_injective (L : ℕ) [Fact (2 < L)] :
 
 /-! ## B. Routes of decorated edges -/
 
-/-- The four step directions of the route of the decorated edge from `d` to `e`: straight for an
+/-- **Step directions of the route of a decorated edge.**
+The four step directions of the route of the decorated edge from `d` to `e`: straight for an
 external edge, an L-shaped turn for an internal edge. -/
 def ons_decEdgeRouteDirs (L : ℕ) (d e : ons_Dart L) : Fin 4 → Fin 4 :=
   if e = ons_dartRev L d then fun _ => d.2
@@ -134,7 +137,8 @@ def ons_decEdgeRouteDirs (L : ℕ) (d e : ons_Dart L) : Fin 4 → Fin 4 :=
     | 3, 2 => ![2, 2, 1, 1]
     | _, _ => ![0, 0, 0, 0]
 
-/-- The endpoint of four lattice steps in the given directions. -/
+/-- **Endpoint of four lattice steps.**
+The endpoint of four lattice steps in the given directions. -/
 def ons_fourDirSteps (N : ℕ) (r : Fin 4 → Fin 4)
     (p : ZMod N × ZMod N) : ZMod N × ZMod N :=
   ons_dirStep N (r 3)
@@ -236,7 +240,8 @@ lemma ons_torusAdj_dirStep (N : ℕ) [Fact (2 < N)]
   rcases p with ⟨x, y⟩
   fin_cases mu <;> simp [onsTorusGraph, onsTorusAdj, ons_dirStep]
 
-/-- The torus walk of four lattice steps in the given directions. -/
+/-- **Torus walk of four lattice steps.**
+The torus walk of four lattice steps in the given directions. -/
 def ons_fourDirStepWalk (N : ℕ) [Fact (2 < N)]
     (r : Fin 4 → Fin 4) (p : ZMod N × ZMod N) :
     (onsTorusGraph N).Walk p (ons_fourDirSteps N r p) :=
@@ -249,7 +254,8 @@ def ons_fourDirStepWalk (N : ℕ) [Fact (2 < N)]
               (ons_dirStep N (r 1) (ons_dirStep N (r 0) p))) (r 3))
           .nil)))
 
-/-- The `8L × 8L` torus graph in which the decorated graph is drawn. -/
+/-- **Finer 8L × 8L torus graph for the decorated graph.**
+The `8L × 8L` torus graph in which the decorated graph is drawn. -/
 def ons_decEmbedGraph (L : ℕ) [Fact (2 < L)] :
     SimpleGraph (ZMod (8 * L) × ZMod (8 * L)) := by
   letI : Fact (2 < 8 * L) := ⟨by have := (Fact.out : 2 < L); omega⟩
@@ -261,7 +267,8 @@ instance (L : ℕ) [Fact (2 < L)] : DecidableRel (ons_decEmbedGraph L).Adj := by
   letI : Fact (2 < 8 * L) := ⟨by have := (Fact.out : 2 < L); omega⟩
   infer_instance
 
-/-- The four-step route of the decorated edge from `d` to `e` in the finer torus. -/
+/-- **Four-step route of a decorated edge in the finer torus.**
+The four-step route of the decorated edge from `d` to `e` in the finer torus. -/
 def ons_decEdgeRoute (L : ℕ) [Fact (2 < L)] (d e : ons_Dart L)
     (hde : (ons_decGraph L).Adj d e) :
     (ons_decEmbedGraph L).Walk
@@ -290,7 +297,8 @@ def ons_decEdgeRoute (L : ℕ) [Fact (2 < L)] (d e : ons_Dart L)
   exact ons_fourDirStepWalk_length (8 * L)
     (ons_decEdgeRouteDirs L d e) (ons_decEmbedVertex L d)
 
-/-- The five points of the route of the decorated edge from `d` to `e`. -/
+/-- **Five points of the route of a decorated edge.**
+The five points of the route of the decorated edge from `d` to `e`. -/
 def ons_decEdgeRouteVertices
     (L : ℕ) (d e : ons_Dart L) : List (ZMod (8 * L) × ZMod (8 * L)) :=
   let r := ons_decEdgeRouteDirs L d e
@@ -411,14 +419,16 @@ lemma ons_decEdgeRoute_isPath
 
 /-! ## C. Micro points and corridors -/
 
-/-- A point of the `8L × 8L` torus given as a coarse cell and an offset in `Fin 8 × Fin 8`. -/
+/-- **Micro point of the finer torus as a cell and an offset.**
+A point of the `8L × 8L` torus given as a coarse cell and an offset in `Fin 8 × Fin 8`. -/
 structure ons_DecMicroPoint (L : ℕ) where
   cell : ZMod L × ZMod L
   offsetX : Fin 8
   offsetY : Fin 8
 deriving DecidableEq
 
-/-- The point of the finer torus represented by a micro point. -/
+/-- **Point of the finer torus represented by a micro point.**
+The point of the finer torus represented by a micro point. -/
 def ons_decMicroVertex (L : ℕ) (z : ons_DecMicroPoint L) :
     ZMod (8 * L) × ZMod (8 * L) :=
   ((8 * z.cell.1.val + z.offsetX.val : ℕ),
@@ -468,7 +478,8 @@ lemma ons_decMicroVertex_injective (L : ℕ) [Fact (2 < L)] :
   cases w
   simp_all
 
-/-- The three interior points of the route of the decorated edge from `d` to `e`, as micro points.
+/-- **Interior points of the route of a decorated edge.**
+The three interior points of the route of the decorated edge from `d` to `e`, as micro points.
 -/
 def ons_decEdgeInteriorData (L : ℕ) (d e : ons_Dart L) :
     List (ons_DecMicroPoint L) :=
@@ -513,7 +524,8 @@ lemma ons_decInternalRoute_interior_support
       ons_decEmbedOffset, ons_dartRev, ons_dirStep] <;>
     ring_nf <;> simp
 
-/-- The decorated edge whose route passes through a given interior micro point. -/
+/-- **Decorated edge whose route passes through an interior micro point.**
+The decorated edge whose route passes through a given interior micro point. -/
 def ons_decMicroCorridorEdge (L : ℕ) (z : ons_DecMicroPoint L) :
     Sym2 (ons_Dart L) :=
   match z.offsetX.val, z.offsetY.val with
@@ -615,7 +627,8 @@ lemma ons_decEdgeRoute_edge_eq_of_interior_mem
     _ = ons_decMicroCorridorEdge L w := by rw [hzw]
     _ = s(f, g) := ons_decMicroCorridorEdge_of_mem L f g hfg hw
 
-/-- The offsets inside a cell used by interior points of routes. -/
+/-- **Cell offsets used by interior route points.**
+The offsets inside a cell used by interior points of routes. -/
 def ons_decInteriorOffsets : Finset (Fin 8 × Fin 8) :=
   {(7, 4), (0, 4), (1, 4), (4, 7), (4, 0), (4, 1),
     (6, 5), (6, 6), (5, 6), (3, 6), (2, 6), (2, 5),
@@ -638,7 +651,7 @@ lemma ons_decEdgeInteriorData_offset_mem
       rcases hz with rfl | rfl | rfl <;>
       simp [ons_decInteriorOffsets]
 
-/-- The micro point at which a dart is placed. -/
+/-- **Micro point at which a dart is placed.** The micro point at which a dart is placed. -/
 def ons_decPortMicroPoint (L : ℕ) (d : ons_Dart L) :
     ons_DecMicroPoint L :=
   match d.2 with
@@ -691,7 +704,8 @@ lemma ons_decEdgeRoute_tail_support
 
 /-! ## D. Images of walks -/
 
-/-- The points of the route of a decorated edge after its starting point. -/
+/-- **Route points of a decorated edge after its start.**
+The points of the route of a decorated edge after its starting point. -/
 def ons_decDartSegment (L : ℕ) [Fact (2 < L)]
     (a : (ons_decGraph L).Dart) :
     List (ZMod (8 * L) × ZMod (8 * L)) :=
@@ -732,7 +746,8 @@ lemma ons_decDartSegment_disjoint
   · apply hsnd
     exact ons_decEmbedVertex_injective L (hxa.symm.trans hxb)
 
-/-- The image of a decorated walk in the finer torus, obtained by concatenating the routes of its
+/-- **Image of a decorated walk in the finer torus.**
+The image of a decorated walk in the finer torus, obtained by concatenating the routes of its
 edges. -/
 def ons_decEmbedWalk (L : ℕ) [Fact (2 < L)] {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) :

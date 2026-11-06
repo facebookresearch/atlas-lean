@@ -56,7 +56,8 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 
 /-! ## A. The subgraph spanned by an edge set -/
 
-/-- The simple graph on `V` whose edges are the non-loop elements of `F`; this is
+/-- **Simple graph spanned by an edge set.**
+The simple graph on `V` whose edges are the non-loop elements of `F`; this is
 `SimpleGraph.fromEdgeSet F`. -/
 def ons_edgeSubgraph (F : Finset (Sym2 V)) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet (F : Set (Sym2 V))

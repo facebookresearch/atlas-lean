@@ -70,10 +70,10 @@ instance decRelWithGhost : DecidableRel (withGhost G).Adj := by
   intro a b
   rcases a with _ | x <;> rcases b with _ | y <;> simp only [withGhost] <;> infer_instance
 
-/-- The edges of `G`, as edges of the ghost graph. -/
+/-- **Graph edges as ghost-graph edges.** The edges of `G`, as edges of the ghost graph. -/
 noncomputable def origEdges : Finset (Sym2 (Option V)) := G.edgeFinset.image (Sym2.map some)
 
-/-- The ghost edges `{x, ghost}`. -/
+/-- **Ghost edges.** The ghost edges `{x, ghost}`. -/
 noncomputable def ghostEdges (V : Type*) [Fintype V] [DecidableEq V] :
     Finset (Sym2 (Option V)) := (univ : Finset V).image (fun x => s(some x, none))
 
@@ -118,7 +118,8 @@ lemma disjoint_orig_ghost : Disjoint (origEdges G) (ghostEdges V) := by
 
 /-! ## B. The ghost coupling -/
 
-/-- The coupling on the ghost graph: `J` on the edges of `G` and `h` on the ghost edges. -/
+/-- **Coupling on the ghost graph with uniform field.**
+The coupling on the ghost graph: `J` on the edges of `G` and `h` on the ghost edges. -/
 noncomputable def ghostCoupling (h _β : ℝ) (J : Sym2 V → ℝ) (e : Sym2 (Option V)) : ℝ :=
   Sym2.lift ⟨fun a b =>
     match a, b with
@@ -175,7 +176,7 @@ lemma fgd_ghost_weight_eq (β h : ℝ) (s : ConfigSpace (Option V)) :
 
 /-! ## C. The global spin flip -/
 
-/-- The global spin flip `σ ↦ -σ`. -/
+/-- **Global spin flip.** The global spin flip `σ ↦ -σ`. -/
 def flipV (s : ConfigSpace V) : ConfigSpace V := fun v => ! s v
 
 omit [Fintype V] [DecidableEq V] in
@@ -248,7 +249,7 @@ lemma fgd_num_neg_odd (β h : ℝ) (A : Finset V) (hA : Odd A.card) :
 
 /-! ## D. Summing over the ghost spin -/
 
-/-- The embedding `V ↪ Option V`. -/
+/-- **Embedding of vertices into the ghost graph.** The embedding `V ↪ Option V`. -/
 def someEmb : V ↪ Option V := ⟨some, Option.some_injective V⟩
 
 omit [Fintype V] [DecidableEq V] in
@@ -388,7 +389,8 @@ lemma fgd_expectationJ_ghost_eq_odd (β h : ℝ) (A : Finset V) (hA : Odd A.card
     rw [div_self (isingZ_ne_zero G β h)]]
   rw [mul_one_div]
 
-/-- The random-current representation with a field: for `|A|` even, `⟨σ_A⟩_{β,h} = Z_ghost(∂ =
+/-- **Random-current representation with a field for even source sets.**
+The random-current representation with a field: for `|A|` even, `⟨σ_A⟩_{β,h} = Z_ghost(∂ =
 A)/Z_ghost(∂ = ∅)` on the ghost graph. Reference: M. Aizenman, D. J. Barsky, R. Fernández, "The
 phase transition in a general class of Ising-type models is sharp", J. Stat. Phys. 47 (1987)
 343–374; H. Duminil-Copin, "Random currents expansion of the Ising model", lecture notes (2016),

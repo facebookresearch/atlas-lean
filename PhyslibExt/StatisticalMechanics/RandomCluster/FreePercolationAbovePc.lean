@@ -64,7 +64,8 @@ open StatMech.Lattice StatMech.Percolation
 
 /-! ## A. Wired percolation above the critical point -/
 
-/-- Above the critical point the wired measure percolates: `θ¹(p, q) > 0` for `p > p_c(q, d)`. -/
+/-- **Wired percolation above the random-cluster critical point.**
+Above the critical point the wired measure percolates: `θ¹(p, q) > 0` for `p > p_c(q, d)`. -/
 lemma frp_fkTheta_pos_of_gt_fkPc (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (hpc : fkPc d q < p) :
     0 < fkTheta d hp hp1 hq (q := q) := by
@@ -75,13 +76,13 @@ lemma frp_fkTheta_pos_of_gt_fkPc (d : ℕ) {p q : ℝ}
     have hle : p ≤ fkPc d q := le_csSup (fkSubcriticalSet_bddAbove d q) hmem
     exact absurd hle (not_le.mpr hpc)
 
-/-- The percolation event is measurable. -/
+/-- **Measurability of the percolation event.** The percolation event is measurable. -/
 lemma frp_measurableSet_percolationEvent (d : ℕ) :
     MeasurableSet (Percolation.percolationEvent d) := by
   rw [Percolation.percolationEvent_eq_iInter]
   exact MeasurableSet.iInter (fun n => Percolation.measurableSet_crossingEvent (n + 1))
 
-/-- The percolation event is increasing. -/
+/-- **The percolation event is increasing.** The percolation event is increasing. -/
 lemma frp_isIncreasing_percolationEvent (d : ℕ) :
     IsIncreasing (Percolation.percolationEvent d) := by
   intro ω ω' h hω
@@ -90,7 +91,8 @@ lemma frp_isIncreasing_percolationEvent (d : ℕ) :
 
 /-! ## B. Free percolation above the critical point -/
 
-/-- If `p_c < p'`, the free measure at `p'` is dominated by the free measure at `p`, and `θ⁰(p', q)
+/-- **Free percolation from domination and free–wired agreement at $p'$.**
+If `p_c < p'`, the free measure at `p'` is dominated by the free measure at `p`, and `θ⁰(p', q)
 = θ¹(p', q)`, then `θ⁰(p, q) > 0`. -/
 lemma frp_free_percolation_above_pc (d : ℕ) {p p' q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -108,7 +110,8 @@ lemma frp_free_percolation_above_pc (d : ℕ) {p p' q : ℝ}
       (frp_isIncreasing_percolationEvent d)
   exact lt_of_lt_of_le hfree' hmono'
 
-/-- For `p > p_c(q, d)`, the free measure percolates, `θ⁰(p, q) > 0`, assuming monotonicity of the
+/-- **Free percolation above $p_c$ from monotonicity and countable agreement.**
+For `p > p_c(q, d)`, the free measure percolates, `θ⁰(p, q) > 0`, assuming monotonicity of the
 free measures in `p` on `(p_c, p)` (`hmono`) and `θ⁰ = θ¹` off a countable set (`hagree`). -/
 lemma frp_free_percolation_above_pc_of_countable_agreement
     (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)

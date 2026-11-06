@@ -69,7 +69,8 @@ open ConfigSpace StatMech.Lattice
 
 -/
 
-/-- If `ε ≤ q ^ (S n) λ ^ (m V n) / ε` for all `n`, with `q ≥ 1`, `0 < λ < 1`, `V n → ∞` and
+/-- **Volume-growth lemma for tilted finite-volume bounds.**
+If `ε ≤ q ^ (S n) λ ^ (m V n) / ε` for all `n`, with `q ≥ 1`, `0 < λ < 1`, `V n → ∞` and
 `S n / V n → 0`, then `m ≤ 0`. -/
 lemma secant_exponent_le_zero {q lam m ε : ℝ}
     (hq : 1 ≤ q) (hlampos : 0 < lam) (hlam1 : lam < 1) (hε : 0 < ε)
@@ -112,7 +113,8 @@ lemma secant_exponent_le_zero {q lam m ε : ℝ}
     le_of_tendsto_of_tendsto hLHS hRHS (Filter.Eventually.of_forall hdiv)
   nlinarith [mul_pos hpos (neg_pos.mpr hloglam)]
 
-/-- If for every `ε > 0` the bound `ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` holds for all
+/-- **Tilted finite-volume bounds for all $\varepsilon > 0$ force $b \le a$.**
+If for every `ε > 0` the bound `ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` holds for all
 `n`, with `V n → ∞` and `S n = o(V n)`, then `b ≤ a`. -/
 lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
     (hq : 1 ≤ q) (hlampos : 0 < lam) (hlam1 : lam < 1)
@@ -133,7 +135,8 @@ lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
 
 -/
 
-/-- Finite-volume tilt data for the box edge `eb` at `q = 2`: volumes `V n → ∞` and surface
+/-- **Finite-volume tilt data for a box edge at $q = 2$.**
+Finite-volume tilt data for the box edge `eb` at `q = 2`: volumes `V n → ∞` and surface
 terms `S n = o(V n)` such that, for all `p' < p` in `(0, 1)` and `ε > 0`,
 `ε ≤ 2 ^ (S n) λ ^ ((θ^w(p') - θ^f(p) - 2ε) V n) / ε` with `λ = tiltFactor p p'`, where `θ^w` and
 `θ^f` are the wired and free infinite-volume densities of the edge. -/
@@ -147,7 +150,8 @@ def FKSecantData (d N : ℕ) (eb : Sym2 (boxVerts d N)) : Prop :=
               ^ ((wiredEdgeDensity d 2 (edgeIncl d N eb) p'
                     - freeEdgeDensity d 2 (edgeIncl d N eb) p - 2 * ε) * V n) / ε
 
-/-- Under `FKSecantData`, the wired edge density at `p'` is at most the free edge density at
+/-- **Tilt data give wired density at $p'$ at most free density at $p > p'$.**
+Under `FKSecantData`, the wired edge density at `p'` is at most the free edge density at
 `p` whenever `p' < p`. -/
 lemma hsecant_discharged (d N : ℕ) (eb : Sym2 (boxVerts d N))
     (hdata : FKSecantData d N eb) :
@@ -166,7 +170,8 @@ lemma hsecant_discharged (d N : ℕ) (eb : Sym2 (boxVerts d N))
     hVpos hSV hVinf
     (fun ε hε n => hineq p ⟨hp0, hp1⟩ p' ⟨hp'0, hp'1⟩ hlt ε hε n)
 
-/-- Under `FKSecantData`, at `q = 2` there is a countable set `S` of parameters off which every
+/-- **Box-edge marginal uniqueness off a countable set under tilt data.**
+Under `FKSecantData`, at `q = 2` there is a countable set `S` of parameters off which every
 measure `φ` whose box-edge marginal lies between the free and wired ones has the same marginal
 as both. -/
 lemma fk_uniqueness_q2_secant_from_finiteVolumeData (d N : ℕ) (eb : Sym2 (boxVerts d N))

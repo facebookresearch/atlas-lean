@@ -57,11 +57,13 @@ open BigOperators StatMech.Ising
 
 /-! ## A. Seam crossings -/
 
-/-- A dart crosses the vertical seam between the columns `x = -1` and `x = 0`. -/
+/-- **Crossing of the vertical seam by a dart.**
+A dart crosses the vertical seam between the columns `x = -1` and `x = 0`. -/
 def ons_xWrap {L : ℕ} (d : ons_Dart L) : Prop :=
   (d.2 = 0 ∧ d.1.1 = -1) ∨ (d.2 = 2 ∧ d.1.1 = 0)
 
-/-- A dart crosses the horizontal seam between the rows `y = -1` and `y = 0`. -/
+/-- **Crossing of the horizontal seam by a dart.**
+A dart crosses the horizontal seam between the rows `y = -1` and `y = 0`. -/
 def ons_yWrap {L : ℕ} (d : ons_Dart L) : Prop :=
   (d.2 = 1 ∧ d.1.2 = -1) ∨ (d.2 = 3 ∧ d.1.2 = 0)
 
@@ -75,13 +77,15 @@ instance {L : ℕ} (d : ons_Dart L) : Decidable (ons_yWrap d) := by
   unfold ons_yWrap
   infer_instance
 
-/-- The signed crossing of the vertical seam by a dart: `1` eastward, `-1` westward, `0` otherwise.
+/-- **Signed crossing of the vertical seam by a dart.**
+The signed crossing of the vertical seam by a dart: `1` eastward, `-1` westward, `0` otherwise.
 -/
 def ons_xWrapSign {L : ℕ} (d : ons_Dart L) : ℤ :=
   if d.2 = 0 ∧ d.1.1 = -1 then 1
   else if d.2 = 2 ∧ d.1.1 = 0 then -1 else 0
 
-/-- The signed crossing of the horizontal seam by a dart: `1` northward, `-1` southward, `0`
+/-- **Signed crossing of the horizontal seam by a dart.**
+The signed crossing of the horizontal seam by a dart: `1` northward, `-1` southward, `0`
 otherwise. -/
 def ons_yWrapSign {L : ℕ} (d : ons_Dart L) : ℤ :=
   if d.2 = 1 ∧ d.1.2 = -1 then 1
@@ -421,7 +425,8 @@ noncomputable instance ons_ySeamEdge_decidable {L : ℕ}
     (e : Sym2 (ZMod L × ZMod L)) : Decidable (ons_ySeamEdge L e) :=
   Classical.propDecidable _
 
-/-- The set of torus edges traversed by a closed walk of darts. -/
+/-- **Edge set of a closed walk of darts.**
+The set of torus edges traversed by a closed walk of darts. -/
 noncomputable def ons_dartEdgeSet {L n : ℕ}
     (d : Fin n → ons_Dart L) :
     Finset (Sym2 (ZMod L × ZMod L)) :=

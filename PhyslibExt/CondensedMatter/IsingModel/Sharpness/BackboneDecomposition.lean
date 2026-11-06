@@ -65,7 +65,7 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 noncomputable instance shb_pathLinearOrder (x y : V) : LinearOrder (G.Path x y) :=
   LinearOrder.lift' (Fintype.equivFin (G.Path x y)) (Fintype.equivFin _).injective
 
-/-- Every edge of the path carries odd current. -/
+/-- **Odd current on every edge of a path.** Every edge of the path carries odd current. -/
 def shb_IsBackboneOf (n : Current V) (x y : V) (ω : G.Path x y) : Prop :=
   ∀ e ∈ ω.1.edges, Odd (n e)
 
@@ -74,7 +74,8 @@ instance (n : Current V) (x y : V) (ω : G.Path x y) :
     Decidable (shb_IsBackboneOf G n x y ω) := by
   unfold shb_IsBackboneOf; infer_instance
 
-/-- The paths from `x` to `y` all of whose edges carry odd current. -/
+/-- **Odd-current paths between two vertices.**
+The paths from `x` to `y` all of whose edges carry odd current. -/
 noncomputable def shb_backboneSet (n : Current V) (x y : V) : Finset (G.Path x y) :=
   Finset.univ.filter (fun ω => shb_IsBackboneOf G n x y ω)
 
@@ -92,7 +93,8 @@ lemma shb_isBackbonePath_mem_backboneSet (n : Current V) (x y : V)
   rw [Walk.edges_mapLe_eq_edges] at he
   exact isBackbonePath_edge_odd G p he
 
-/-- A path with odd current on every edge as a backbone path. -/
+/-- **Odd-current path as a backbone path.**
+A path with odd current on every edge as a backbone path. -/
 noncomputable def shb_backboneOf_imp_isBackbonePath (n : Current V) (x y : V) (ω : G.Path x y)
     (h : shb_IsBackboneOf G n x y ω) : IsBackbonePath G n x y := by
   refine ⟨ω.1.transfer (oddSubgraph G n) ?_, ω.2.transfer _⟩
@@ -149,7 +151,8 @@ lemma shb_backboneSet_nonempty_of_sources (n : Current V) {x y : V} (hxy : x ≠
 
 /-! ## C. The backbone decomposition -/
 
-/-- The least backbone path from `x` to `y`, if any. -/
+/-- **Least backbone path between two vertices.**
+The least backbone path from `x` to `y`, if any. -/
 noncomputable def shb_backboneSelect (n : Current V) (x y : V) : Option (G.Path x y) :=
   if h : (shb_backboneSet G n x y).Nonempty then
     some ((shb_backboneSet G n x y).min' h) else none
@@ -170,14 +173,15 @@ lemma shb_summable_indicator (β : ℝ) (J : Sym2 V → ℝ) (hβ : 0 ≤ β) (h
   · intro m; split <;> [exact weight_nonneg G β J hβ hJ _; rfl]
   · intro m; split <;> [exact le_refl _; exact weight_nonneg G β J hβ hJ _]
 
-/-- `Z_ω`: the total weight of currents with sources `{x, y}` whose selected backbone is `ω`. -/
+/-- **Weight of currents with a given selected backbone.**
+`Z_ω`: the total weight of currents with sources `{x, y}` whose selected backbone is `ω`. -/
 noncomputable def shb_backboneNum (β : ℝ) (J : Sym2 V → ℝ) (x y : V) (ω : G.Path x y) : ℝ :=
   ∑' m : ↥G.edgeFinset → ℕ,
     if Sharpness.sources G (ofEdgeFun G m) = {x, y}
         ∧ shb_backboneSelect G (ofEdgeFun G m) x y = some ω then
       weight G β J (ofEdgeFun G m) else 0
 
-/-- The backbone weight `ρ(ω) = Z_ω/Z(∂ = ∅)`. -/
+/-- **Backbone weight $\rho(\omega)$.** The backbone weight `ρ(ω) = Z_ω/Z(∂ = ∅)`. -/
 noncomputable def shb_rho (β : ℝ) (J : Sym2 V → ℝ) (x y : V) (ω : G.Path x y) : ℝ :=
   shb_backboneNum G β J x y ω / currentSum G β J ∅
 

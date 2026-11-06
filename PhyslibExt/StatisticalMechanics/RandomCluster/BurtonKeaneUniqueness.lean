@@ -60,7 +60,8 @@ variable {d : ℕ}
 
 /-! ## A. Removing a site -/
 
-/-- The configuration obtained from `ω` by closing every edge incident to `x`. -/
+/-- **Configuration with all edges at a site closed.**
+The configuration obtained from `ω` by closing every edge incident to `x`. -/
 noncomputable def removeSite (x : Site d) (ω : ConfigSpace (Sym2 (Site d))) :
     ConfigSpace (Sym2 (Site d)) :=
   fun e => if x ∈ e then false else ω e
@@ -102,7 +103,8 @@ lemma removeSite_shift (g : Multiplicative (Site d)) (x : Site d)
 
 /-! ## B. Trifurcations -/
 
-/-- `x` is connected to three distinct sites with infinite `ω`-clusters that are pairwise
+/-- **Trifurcation point, without requiring infinite branches.**
+`x` is connected to three distinct sites with infinite `ω`-clusters that are pairwise
 disconnected after removing `x`. Unlike the classical definition, the three branches at `x` are
 not required to be infinite.
 -/
@@ -239,11 +241,12 @@ lemma trifurcationProb_const (μ : Measure (ConfigSpace (Sym2 (Site d))))
 
 /-! ## C. Counting trifurcations in boxes -/
 
-/-- The sites of the box `Λ_n` as a finset. -/
+/-- **Sites of a box as a finite set.** The sites of the box `Λ_n` as a finset. -/
 noncomputable def boxFinsetBK (d n : ℕ) : Finset (Site d) := (box_finite d n).toFinset
 
 open Classical in
-/-- The number of trifurcation points of `ω` in the box `Λ_n`. -/
+/-- **Number of trifurcation points in a box.**
+The number of trifurcation points of `ω` in the box `Λ_n`. -/
 noncomputable def Tcount (d : ℕ) (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : ℕ :=
   ((boxFinsetBK d n).filter (fun x => IsTrifurcation d ω x)).card
 

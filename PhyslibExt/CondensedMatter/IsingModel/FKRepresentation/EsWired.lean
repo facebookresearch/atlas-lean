@@ -66,7 +66,8 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 
 /-! ## A. The Potts model with boundary color `b` -/
 
-/-- The coloring `σ` equals `b` on every boundary vertex. -/
+/-- **Coloring fixed to a color on the boundary.**
+The coloring `σ` equals `b` on every boundary vertex. -/
 def BoundaryFixed {q : ℕ} (b : Fin q) (σ : V → Fin q) : Prop := ∀ x, bdry x → σ x = b
 
 /-- Whether a coloring has boundary color `b` is decidable. -/
@@ -78,11 +79,13 @@ omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] [DecidablePred bdry] in
 lemma boundaryFixed_const {q : ℕ} (b : Fin q) : BoundaryFixed bdry b (fun _ => b) :=
   fun _ _ => rfl
 
-/-- The Potts weight restricted to colorings with boundary color `b`. -/
+/-- **Potts weight with fixed boundary color.**
+The Potts weight restricted to colorings with boundary color `b`. -/
 noncomputable def pottsWeightWired {q : ℕ} (b : Fin q) (β J : ℝ) (σ : V → Fin q) : ℝ :=
   if BoundaryFixed bdry b σ then Potts.pottsWeight G β J σ else 0
 
-/-- The partition function of the Potts model with boundary color `b`. -/
+/-- **Potts partition function with fixed boundary color.**
+The partition function of the Potts model with boundary color `b`. -/
 noncomputable def pottsZWired (q : ℕ) (b : Fin q) (β J : ℝ) : ℝ :=
   ∑ σ : V → Fin q, pottsWeightWired G bdry b β J σ
 
@@ -100,7 +103,8 @@ lemma pottsZWired_ne_zero (q : ℕ) [NeZero q] (b : Fin q) (β J : ℝ) :
     pottsZWired G bdry q b β J ≠ 0 :=
   (pottsZWired_pos G bdry q b β J).ne'
 
-/-- The Gibbs probability of the Potts model with boundary color `b`. -/
+/-- **Potts Gibbs probability with fixed boundary color.**
+The Gibbs probability of the Potts model with boundary color `b`. -/
 noncomputable def pottsProbWired (q : ℕ) (b : Fin q) (β J : ℝ) (σ : V → Fin q) : ℝ :=
   pottsWeightWired G bdry b β J σ / pottsZWired G bdry q b β J
 
@@ -141,7 +145,8 @@ lemma pottsProbWired_eq_conditional {q : ℕ} [NeZero q] (b : Fin q) (β J : ℝ
 
 /-! ## B. The wired Edwards–Sokal weight and its spin marginal -/
 
-/-- The Edwards–Sokal weight restricted to colorings with boundary color `b`. -/
+/-- **Edwards–Sokal weight with fixed boundary color.**
+The Edwards–Sokal weight restricted to colorings with boundary color `b`. -/
 noncomputable def esWeightWired {q : ℕ} (b : Fin q) (p : ℝ) (σ : V → Fin q)
     (ω : ConfigSpace (Sym2 V)) : ℝ :=
   if BoundaryFixed bdry b σ then esWeight G p σ ω else 0
@@ -163,7 +168,7 @@ lemma esWeightWired_sum_omega {q : ℕ} (b : Fin q) (β J : ℝ) (σ : V → Fin
     rw [esWeight_sum_eq_pottsWeight]
   · simp only [ite_eq_right h, Finset.sum_const_zero, mul_zero]
 
-/-- The total wired Edwards–Sokal weight. -/
+/-- **Total wired Edwards–Sokal weight.** The total wired Edwards–Sokal weight. -/
 noncomputable def esZWired (q : ℕ) (b : Fin q) (p : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), ∑ σ : V → Fin q, esWeightWired G bdry b p σ ω
 
@@ -174,7 +179,8 @@ lemma esZWired_eq_pottsZWired {q : ℕ} [NeZero q] (b : Fin q) (β J : ℝ) :
   rw [Finset.sum_comm, Finset.mul_sum]
   exact Finset.sum_congr rfl fun σ _ => esWeightWired_sum_omega G bdry b β J σ
 
-/-- The spin marginal of the wired Edwards–Sokal measure. -/
+/-- **Spin marginal of the wired Edwards–Sokal measure.**
+The spin marginal of the wired Edwards–Sokal measure. -/
 noncomputable def esWiredFirstMarginal (q : ℕ) (b : Fin q) (p : ℝ) (σ : V → Fin q) : ℝ :=
   (∑ ω : ConfigSpace (Sym2 V), esWeightWired G bdry b p σ ω) / esZWired G bdry q b p
 
@@ -188,7 +194,8 @@ lemma esWiredFirstMarginal_eq_pottsProbWired {q : ℕ} [NeZero q] (b : Fin q) (�
 
 /-! ## C. Colorings constant on wired clusters -/
 
-/-- The graph of open edges of `ω` together with a clique on the boundary vertices. -/
+/-- **Open-edge graph with a boundary clique.**
+The graph of open edges of `ω` together with a clique on the boundary vertices. -/
 noncomputable def wiredSub (ω : ConfigSpace (Sym2 V)) : SimpleGraph V :=
   openSub G ω ⊔ boundaryCliqueGraph bdry
 
@@ -197,7 +204,8 @@ instance instDecidableRelWiredSub (ω : ConfigSpace (Sym2 V)) :
     DecidableRel (wiredSub G bdry ω).Adj := by
   unfold wiredSub; infer_instance
 
-/-- The coloring `σ` is constant along the edges of `wiredSub`. -/
+/-- **Coloring constant on the wired graph.**
+The coloring `σ` is constant along the edges of `wiredSub`. -/
 def ConstOnWired {q : ℕ} (ω : ConfigSpace (Sym2 V)) (σ : V → Fin q) : Prop :=
   ∀ x y, (wiredSub G bdry ω).Adj x y → σ x = σ y
 
@@ -235,7 +243,8 @@ lemma constOnOpen_boundaryFixed_iff {q : ℕ} (b : Fin q) (ω : ConfigSpace (Sym
     intro x y hxy
     exact hwired x y (by rw [wiredSub, SimpleGraph.sup_adj]; exact Or.inl hxy)
 
-/-- Colorings constant on the clusters of `wiredSub` correspond to colorings of those clusters. -/
+/-- **Colorings constant on wired clusters as cluster colorings.**
+Colorings constant on the clusters of `wiredSub` correspond to colorings of those clusters. -/
 noncomputable def constOnWiredEquiv {q : ℕ} (ω : ConfigSpace (Sym2 V)) :
     ((wiredSub G bdry ω).ConnectedComponent → Fin q)
       ≃ {σ : V → Fin q // ConstOnWired G bdry ω σ} where
@@ -268,7 +277,8 @@ lemma wiredSub_componentMk_eq_of_bdry {ω : ConfigSpace (Sym2 V)} {x y : V}
     rw [wiredSub, SimpleGraph.sup_adj]; right
     rw [boundaryCliqueGraph_adj]; exact ⟨h, hx, hy⟩
 
-/-- Functions to `Fin q` taking the value `b` at `c₀` correspond to functions on the complement of
+/-- **Functions pinned at a point as functions on its complement.**
+Functions to `Fin q` taking the value `b` at `c₀` correspond to functions on the complement of
 `c₀`. See also `Equiv.piSplitAt`. -/
 def pinnedFunEquiv {α : Type*} [DecidableEq α] {q : ℕ} (c₀ : α) (b : Fin q) :
     {τ : α → Fin q // τ c₀ = b} ≃ ({c : α // c ≠ c₀} → Fin q) where
@@ -367,7 +377,8 @@ lemma esWeightWired_sum_spins_eq_bcWeight {q : ℕ} (b : Fin q) (p : ℝ)
       = edgeProduct G p ω * ((q : ℝ) * (q : ℝ) ^ (k - 1)) := by ring
     _ = edgeProduct G p ω * (q : ℝ) ^ k := by rw [hpow]
 
-/-- The bond marginal of the wired Edwards–Sokal measure. -/
+/-- **Bond marginal of the wired Edwards–Sokal measure.**
+The bond marginal of the wired Edwards–Sokal measure. -/
 noncomputable def esWiredSecondMarginal (q : ℕ) (b : Fin q) (p : ℝ)
     (ω : ConfigSpace (Sym2 V)) : ℝ :=
   (∑ σ : V → Fin q, esWeightWired G bdry b p σ ω) / esZWired G bdry q b p

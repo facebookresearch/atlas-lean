@@ -177,7 +177,8 @@ lemma sct_c_to_one (M c : ℕ → ℝ) {L : ℝ} (hLpos : 0 < L)
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le
     (sct_ratioSeq_tendsto_one M hLpos hM) tendsto_const_nhds hsqueeze hle_one
 
-/-- The minimal ratio `min_{y ∈ sites n} M(n)/m(n, y)` for sites indexed by `ℕ`. -/
+/-- **Minimal magnetization ratio for sites indexed by $\mathbb{N}$.**
+The minimal ratio `min_{y ∈ sites n} M(n)/m(n, y)` for sites indexed by `ℕ`. -/
 noncomputable def sct_cInf (M : ℕ → ℝ) (sites : ℕ → Finset ℕ)
     (m : ℕ → ℕ → ℝ) (hne : ∀ n, (sites n).Nonempty) (n : ℕ) : ℝ :=
   (sites n).inf' (hne n) (fun y => M n / m n y)
@@ -213,7 +214,8 @@ lemma sct_cInf_to_one (M : ℕ → ℝ) (sites : ℕ → Finset ℕ) (m : ℕ �
     (sct_ratio_le_cInf M sites m hne hmpos hMnn hbox)
     (sct_cInf_le_one M sites m hne o ho hoM hMne)
 
-/-- The minimal ratio `min_{y ∈ sites n} M(n)/m(n, y)` for site types depending on `n`. -/
+/-- **Minimal magnetization ratio for $n$-dependent site types.**
+The minimal ratio `min_{y ∈ sites n} M(n)/m(n, y)` for site types depending on `n`. -/
 noncomputable def sct_cInfDep (ι : ℕ → Type*) [∀ n, DecidableEq (ι n)]
     (M : ℕ → ℝ) (sites : (n : ℕ) → Finset (ι n))
     (m : (n : ℕ) → ι n → ℝ) (hne : ∀ n, (sites n).Nonempty) (n : ℕ) : ℝ :=

@@ -73,12 +73,13 @@ open StatMech StatMech.FK StatMech.Lattice
 
 -/
 
-/-- The box free energy `-log Z^E` of the random-cluster model on `[-n, n]^d` at edge parameter
+/-- **Box free energy $-\log Z^E$ of the random-cluster model.**
+The box free energy `-log Z^E` of the random-cluster model on `[-n, n]^d` at edge parameter
 `fsc_logistic s`, over configurations closed off the box edges. -/
 noncomputable def fkc_u (d : ℕ) (s q : ℝ) (n : ℕ) : ℝ :=
   -Real.log (ecz_fkZEdge (boxGraph d n) (fsc_logistic s) q)
 
-/-- The per-edge box free energy `fkc_u / |E|`. -/
+/-- **Per-edge box free energy.** The per-edge box free energy `fkc_u / |E|`. -/
 noncomputable def fkc_f (d : ℕ) (s q : ℝ) (n : ℕ) : ℝ :=
   fkc_u d s q n / ((boxGraph d n).edgeFinset.card : ℝ)
 
@@ -95,7 +96,8 @@ lemma fkc_edgeFreeEnergy_eq (d : ℕ) (s q : ℝ) (n : ℕ) :
 
 -/
 
-/-- Doubling bound: the free energy of the box of side `2(2K + 1) + 1` is at most `2^d` times that
+/-- **Doubling bound for the box free energy when $q \ge 1$.**
+Doubling bound: the free energy of the box of side `2(2K + 1) + 1` is at most `2^d` times that
 of side `2K + 1` plus `-log (1 - p)` times the number of boundary edges. -/
 lemma fkc_box_neglog_doubling (d K : ℕ) (s q : ℝ) (hq : 1 ≤ q) :
     fkc_u d s q (2 * K + 1) ≤ (2 : ℝ) ^ d * fkc_u d s q K
@@ -160,7 +162,8 @@ lemma fkc_box_neglog_doubling (d K : ℕ) (s q : ℝ) (hq : 1 ≤ q) :
   push_cast at hIle hnone hIbound ⊢
   nlinarith [hIle, hnone, hIbound, hc0, mul_le_mul_of_nonneg_right hIbound hc0]
 
-/-- Van Hove subadditivity: packing `T^d` copies of the side-`(2m + 1)` box into the
+/-- **Van Hove subadditivity of the box free energy for $q \ge 1$.**
+Van Hove subadditivity: packing `T^d` copies of the side-`(2m + 1)` box into the
 side-`(2n + 1)` box, the free energy is at most `T^d fkc_u m` plus `-log (1 - p)` per remaining
 edge. -/
 lemma fkc_box_vanHove_subadd (d m n : ℕ) (s q : ℝ) (hq : 1 ≤ q) :
@@ -255,7 +258,8 @@ lemma fkc_perEdge_vanHove (d m n : ℕ) (s q : ℝ) (hq : 1 ≤ q)
 
 -/
 
-/-- A doubling bound along the dyadic sides `agl_K j` with nonnegative errors `I j` whose
+/-- **Doubling-bound property of the box free energy along $K_j$.**
+A doubling bound along the dyadic sides `agl_K j` with nonnegative errors `I j` whose
 per-edge values are summable. -/
 def fkc_AdditiveDoublingBound (d : ℕ) (s q : ℝ) : Prop :=
   ∃ I : ℕ → ℝ,
@@ -266,7 +270,8 @@ def fkc_AdditiveDoublingBound (d : ℕ) (s q : ℝ) : Prop :=
           + I j * (-Real.log (1 - fsc_logistic s)))
     ∧ (∀ j, |(2 : ℝ) ^ d * agl_E d (agl_K j) - agl_E d (agl_K (j + 1))| ≤ I j)
 
-/-- The doubling bound holds for all `q ≥ 1`. -/
+/-- **Box free-energy doubling bound along $K_j$ holds for $d, q \ge 1$.**
+The doubling bound holds for all `q ≥ 1`. -/
 lemma fkc_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (s q : ℝ) (hq : 1 ≤ q) :
     fkc_AdditiveDoublingBound d s q := by
   set c := -Real.log (1 - fsc_logistic s) with hc
@@ -333,7 +338,8 @@ lemma fkc_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (s q : ℝ) (hq : 1 ≤
     · rw [hG] at hGnn
       linarith [hGnn j]
 
-/-- The per-edge free energy converges along the dyadic sides `agl_K j`. -/
+/-- **Per-edge free energy converges along $K_j$ for $d, q \ge 1$.**
+The per-edge free energy converges along the dyadic sides `agl_K j`. -/
 lemma fkc_dyadic_f_tendsto (d : ℕ) (hd : 1 ≤ d) (s q : ℝ) (hq : 1 ≤ q) :
     ∃ L : ℝ, Tendsto (fun j => fkc_f d s q (agl_K j)) atTop (nhds L) := by
   classical
@@ -420,7 +426,8 @@ lemma fkc_dyadic_f_tendsto (d : ℕ) (hd : 1 ≤ d) (s q : ℝ) (hq : 1 ≤ q) :
 
 -/
 
-/-- The per-edge box free energy `fkc_f d s q n` converges as `n → ∞`. -/
+/-- **Convergence of the per-edge box free energy.**
+The per-edge box free energy `fkc_f d s q n` converges as `n → ∞`. -/
 def fkc_PerEdgeDensityConverges (d : ℕ) (s q : ℝ) : Prop :=
   ∃ ρ : ℝ, Tendsto (fun n => fkc_f d s q n) atTop (nhds ρ)
 
@@ -466,7 +473,8 @@ lemma fkc_f_lower (d : ℕ) (hd : 1 ≤ d) (s q : ℝ) (hq : 1 ≤ q)
   rw [halg, hc] at hsolve
   exact hsolve
 
-/-- The limit of the van Hove upper bound for a fixed side `2m + 1`. -/
+/-- **Limit of the van Hove upper bound for a fixed box side.**
+The limit of the van Hove upper bound for a fixed side `2m + 1`. -/
 noncomputable def fkc_g (d : ℕ) (s q : ℝ) (m : ℕ) : ℝ :=
   (2 * (m : ℝ) / (2 * m + 1)) * fkc_f d s q m
     + (1 - 2 * (m : ℝ) / (2 * m + 1)) * (-Real.log (1 - fsc_logistic s))

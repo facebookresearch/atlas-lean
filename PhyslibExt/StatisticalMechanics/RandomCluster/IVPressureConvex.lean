@@ -105,13 +105,15 @@ lemma ivp2_sumExp_hasDerivAt (b a : ι → ℝ) (t : ℝ) :
     apply Finset.sum_congr rfl; intro i _; ring
   rw [heq] at key; exact key
 
-/-- The exponential sum `S₀(t) = ∑_i w_i e^{a_i t}`. -/
+/-- **Weighted exponential sum.** The exponential sum `S₀(t) = ∑_i w_i e^{a_i t}`. -/
 noncomputable def ivp2_Ssum (w a : ι → ℝ) (t : ℝ) : ℝ := ∑ i, w i * Real.exp (a i * t)
 
-/-- The first moment sum `S₁(t) = ∑_i w_i a_i e^{a_i t}`, the derivative of `S₀`. -/
+/-- **First moment exponential sum.**
+The first moment sum `S₁(t) = ∑_i w_i a_i e^{a_i t}`, the derivative of `S₀`. -/
 noncomputable def ivp2_S1 (w a : ι → ℝ) (t : ℝ) : ℝ := ∑ i, w i * a i * Real.exp (a i * t)
 
-/-- The second moment sum `S₂(t) = ∑_i w_i a_i² e^{a_i t}`, the derivative of `S₁`. -/
+/-- **Second moment exponential sum.**
+The second moment sum `S₂(t) = ∑_i w_i a_i² e^{a_i t}`, the derivative of `S₁`. -/
 noncomputable def ivp2_S2 (w a : ι → ℝ) (t : ℝ) : ℝ := ∑ i, w i * a i ^ 2 * Real.exp (a i * t)
 
 lemma ivp2_Ssum_pos (w a : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (hpos : ∃ i, 0 < w i) (t : ℝ) :
@@ -138,7 +140,8 @@ lemma ivp2_S1_hasDerivAt (w a : ι → ℝ) (t : ℝ) :
 
 -/
 
-/-- Cauchy–Schwarz for the exponential sums: `S₁² ≤ S₂ S₀`. -/
+/-- **Cauchy–Schwarz inequality for weighted exponential sums.**
+Cauchy–Schwarz for the exponential sums: `S₁² ≤ S₂ S₀`. -/
 lemma ivp2_cauchy_schwarz_cgf (w a : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (t : ℝ) :
     (ivp2_S1 w a t) ^ 2 ≤ (ivp2_S2 w a t) * (ivp2_Ssum w a t) := by
   unfold ivp2_S1 ivp2_S2 ivp2_Ssum
@@ -156,7 +159,8 @@ lemma ivp2_cauchy_schwarz_cgf (w a : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (t : �
     rw [Real.sq_sqrt (mul_nonneg (hw i) (Real.exp_pos _).le)]
   rw [e1, e2, e3] at hcs; exact hcs
 
-/-- The log-sum-exp function `K(t) = log ∑_i w_i e^{a_i t}`, the cumulant generating function of
+/-- **Log-sum-exp cumulant generating function.**
+The log-sum-exp function `K(t) = log ∑_i w_i e^{a_i t}`, the cumulant generating function of
 `a` under the weights `w`. -/
 noncomputable def ivp2_Kcgf (w a : ι → ℝ) (t : ℝ) : ℝ := Real.log (ivp2_Ssum w a t)
 
@@ -190,7 +194,8 @@ lemma ivp2_Kcgf_deriv2_nonneg (w a : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (hpos :
     nlinarith [hcs]
   · positivity
 
-/-- A cumulant generating function is convex. -/
+/-- **Convexity of log-sum-exp with nonnegative nonzero weights.**
+A cumulant generating function is convex. -/
 lemma ivp2_Kcgf_convexOn (w a : ι → ℝ) (hw : ∀ i, 0 ≤ w i) (hpos : ∃ i, 0 < w i) :
     ConvexOn ℝ univ (ivp2_Kcgf w a) := by
   apply convexOn_univ_of_deriv2_nonneg
@@ -239,7 +244,8 @@ lemma ivp2_fkZ_logistic (t q : ℝ) :
   intro ω _
   rw [ivp2_fkWeight_logistic G t q ω]
 
-/-- The ambient logit normalizer `|E|⁻¹ log (fkZ G p q) + log (1 + eᵗ)`,
+/-- **Ambient tilted log normalizer of a finite graph.**
+The ambient logit normalizer `|E|⁻¹ log (fkZ G p q) + log (1 + eᵗ)`,
 with `p = fsc_logistic t`. For `|E| > 0`, the added term removes the Bernoulli denominator,
 not the unused-coordinate factor in `fkZ`. At zero edges this definition uses totalized
 real division and equals `log (1 + eᵗ)`; no per-edge physical interpretation is intended. -/
@@ -267,7 +273,8 @@ lemma ivp2_ambientTiltLogZ_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset
   field_simp
   ring
 
-/-- The finite-volume ambient tilted log normalizer is convex in `t`. -/
+/-- **Convexity of the ambient tilted log normalizer.**
+The finite-volume ambient tilted log normalizer is convex in `t`. -/
 lemma ivp2_ambientTiltLogZ_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card) :
     ConvexOn ℝ univ (ivp2_ambientTiltLogZ G q) := by
   set w : ConfigSpace (Sym2 V) → ℝ := fun ω => q ^ numClusters G ω with hw
@@ -289,7 +296,8 @@ lemma ivp2_ambientTiltLogZ_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinse
 
 -/
 
-/-- A pointwise limit of convex functions on `ℝ` along a nontrivial filter is convex. -/
+/-- **Pointwise limits of convex functions are convex.**
+A pointwise limit of convex functions on `ℝ` along a nontrivial filter is convex. -/
 lemma ivp2_convexOn_of_tendsto {κ : Type*} {l : Filter κ} [l.NeBot]
     (f : κ → ℝ → ℝ) (g : ℝ → ℝ)
     (hconv : ∀ i, ConvexOn ℝ univ (f i))
@@ -304,7 +312,8 @@ lemma ivp2_convexOn_of_tendsto {κ : Type*} {l : Filter κ} [l.NeBot]
     Tendsto.add ((hlim x).const_smul s) ((hlim y).const_smul t)
   exact le_of_tendsto_of_tendsto h1 h2 (Filter.Eventually.of_forall hle)
 
-/-- Every pointwise limit of finite-volume ambient tilted log normalizers along a nontrivial filter
+/-- **Limits of ambient tilted log normalizers are convex.**
+Every pointwise limit of finite-volume ambient tilted log normalizers along a nontrivial filter
   is convex. -/
 lemma ivp2_limitAmbientTiltLogZ_convexOn
     {κ : Type*} {l : Filter κ} [l.NeBot]

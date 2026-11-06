@@ -66,7 +66,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Derivatives of the Boltzmann weights -/
 
-/-- The energy observable `∑_{e ∈ E(G)} σ_x σ_y + h ∑_x σ_x`, the `β`-derivative of the
+/-- **Energy observable of the Ising model.**
+The energy observable `∑_{e ∈ E(G)} σ_x σ_y + h ∑_x σ_x`, the `β`-derivative of the
 log-weight. -/
 noncomputable def energyObs (h : ℝ) (s : ConfigSpace V) : ℝ :=
   (∑ e ∈ G.edgeFinset, bond s e) + h * ∑ x, spin s x

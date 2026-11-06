@@ -91,7 +91,8 @@ theorem main_high_temperature_expansion (beta : ℝ) :
         ons_X G (Real.tanh beta) :=
   ons_hte G beta
 
-/-- The finite-volume pressure as `log 2 + (|E|/|V|) log cosh β + log X(tanh β) / |V|`, for `β ≥ 0`.
+/-- **Finite-volume pressure decomposition for $\beta \ge 0$.**
+The finite-volume pressure as `log 2 + (|E|/|V|) log cosh β + log X(tanh β) / |V|`, for `β ≥ 0`.
 -/
 lemma main_finite_pressure_decomposition
     (beta : ℝ) (hbeta : 0 ≤ beta) (hV : 0 < Fintype.card V) :
@@ -114,12 +115,14 @@ theorem main_critical_beta_value :
     Real.sinh (2 * ons_betaC) = 1 :=
   ons_betaC_sinh
 
-/-- `β_c` is the only positive `β` with `sinh 2β = 1`. -/
+/-- **$\beta_c$ is the unique positive root of $\sinh 2\beta = 1$.**
+`β_c` is the only positive `β` with `sinh 2β = 1`. -/
 theorem main_critical_beta_unique (beta : ℝ) (hbeta : 0 < beta) :
     Real.sinh (2 * beta) = 1 ↔ beta = ons_betaC :=
   ons_betaC_unique beta hbeta
 
-/-- Onsager's pressure is continuous at `β_c`. Its non-analyticity there is not proved here. -/
+/-- **Continuity of Onsager's pressure at the critical point.**
+Onsager's pressure is continuous at `β_c`. Its non-analyticity there is not proved here. -/
 lemma main_pressure_continuous_at_critical :
     ContinuousAt ons_pressure ons_betaC :=
   ons_continuousAt_pressure_betaC
@@ -130,7 +133,8 @@ section TorusLimit
 
 /-! ## C. The torus limit -/
 
-/-- On the `L × L` torus, `p_L(β) = log 2 + 2 log cosh β + log X_L(tanh β) / L²` for `β ≥ 0`. -/
+/-- **Pressure decomposition on the $L \times L$ torus for $\beta \ge 0$.**
+On the `L × L` torus, `p_L(β) = log 2 + 2 log cosh β + log X_L(tanh β) / L²` for `β ≥ 0`. -/
 lemma main_torus_pressure_decomposition
     (L : ℕ) [Fact (2 < L)] (beta : ℝ) (hbeta : 0 ≤ beta) :
     ons_pressureFinite (onsTorusGraph L) beta =
@@ -138,7 +142,8 @@ lemma main_torus_pressure_decomposition
         Real.log (ons_X (onsTorusGraph L) (Real.tanh beta)) / ((L : ℝ) ^ 2) :=
   ons_torusPressure_eq L beta hbeta
 
-/-- Onsager's formula follows from the spin Kac-Ward identities at all `β`. -/
+/-- **Onsager's formula from the spin Kac-Ward identities.**
+Onsager's formula follows from the spin Kac-Ward identities at all `β`. -/
 lemma main_free_energy_from_spin_kacWard
     (hall : ∀ beta : ℝ, ons_spinKacWardIdentities beta)
     (beta : ℝ) (hbeta : 0 ≤ beta) :
@@ -152,7 +157,8 @@ section FiniteKacWard
 
 /-! ## D. The Kac-Ward identities and Onsager's formula -/
 
-/-- The spin Kac-Ward identities follow from the edge-weighted root identity on all tori. -/
+/-- **Spin Kac-Ward identities from the edge-weighted root identity.**
+The spin Kac-Ward identities follow from the edge-weighted root identity on all tori. -/
 lemma main_spin_kacWard_from_weighted_root
     (hweighted : ∀ (L : ℕ) (hL : 2 < L),
       letI : Fact (2 < L) := ⟨hL⟩
@@ -161,7 +167,8 @@ lemma main_spin_kacWard_from_weighted_root
     ons_spinKacWardIdentities beta :=
   ons_spinKacWardIdentities_of_weightedRoot hweighted beta
 
-/-- The edge-weighted root identity follows from the formal Kac-Ward identity on the decorated
+/-- **Edge-weighted root identity from the decorated-torus formal identity.**
+The edge-weighted root identity follows from the formal Kac-Ward identity on the decorated
 torus. -/
 lemma main_weighted_root_from_decorated_formal
     (L : ℕ) [Fact (2 < L)]
@@ -169,7 +176,8 @@ lemma main_weighted_root_from_decorated_formal
     ons_weightedRootIdentity L :=
   ons_weightedRootIdentity_of_decoratedFormal L hformal
 
-/-- The spin Kac-Ward identities follow from the formal Kac-Ward identity on all decorated tori. -/
+/-- **Spin Kac-Ward identities from the decorated-torus formal identity.**
+The spin Kac-Ward identities follow from the formal Kac-Ward identity on all decorated tori. -/
 lemma main_spin_kacWard_from_decorated_formal
     (hformal : ∀ (L : ℕ) (hL : 2 < L),
       letI : Fact (2 < L) := ⟨hL⟩

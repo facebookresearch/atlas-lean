@@ -67,7 +67,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. The third Ursell function -/
 
-/-- The third Ursell function (joint cumulant) `u₃(o, x, y) = ⟨σ_oσ_xσ_y⟩ - ⟨σ_o⟩⟨σ_xσ_y⟩ -
+/-- **Third Ursell function of the finite Ising model.**
+The third Ursell function (joint cumulant) `u₃(o, x, y) = ⟨σ_oσ_xσ_y⟩ - ⟨σ_o⟩⟨σ_xσ_y⟩ -
 ⟨σ_oσ_x⟩⟨σ_y⟩ - ⟨σ_oσ_y⟩⟨σ_x⟩ + 2⟨σ_o⟩⟨σ_x⟩⟨σ_y⟩` of the finite Ising model at `(β, h)`. -/
 noncomputable def eg_ursell3 (β h : ℝ) (o x y : V) : ℝ :=
   isingExpectation G β h (fun s => spin s o * (spin s x * spin s y))
@@ -83,7 +84,8 @@ noncomputable def eg_ursell3 (β h : ℝ) (o x y : V) : ℝ :=
 
 /-! ## B. The GHS gap -/
 
-/-- On an edge `{x, y}`, the gap `cov3sym - ghsBoundSym` between the three-point covariance and the
+/-- **GHS gap on an edge equals the third Ursell function.**
+On an edge `{x, y}`, the gap `cov3sym - ghsBoundSym` between the three-point covariance and the
 GHS bound equals `u₃(o, x, y)`. -/
 lemma ghc_ursellEqGap (β h : ℝ) (o x y : V) :
     cov3sym G β h o s(x, y) - ghsBoundSym G β h o s(x, y) = eg_ursell3 G β h o x y := by

@@ -51,12 +51,14 @@ open Matrix BigOperators
 
 /-! ## A. Loop weights and rotations -/
 
-/-- The weight `∏ₖ Λ (v k) (v (k + 1))` of a cyclic sequence `v : Fin n → E`, indices taken modulo
+/-- **Weight of a cyclic sequence.**
+The weight `∏ₖ Λ (v k) (v (k + 1))` of a cyclic sequence `v : Fin n → E`, indices taken modulo
 `n`. -/
 noncomputable def ons_loopWeight {E : Type*} [Fintype E] [DecidableEq E] (Λ : Matrix E E ℂ)
     {n : ℕ} [NeZero n] (v : Fin n → E) : ℂ := ∏ k : Fin n, Λ (v k) (v (k + 1))
 
-/-- Rotation of a cyclic sequence by one step: `(ons_cyclicShift v) k = v (k + 1)`. -/
+/-- **Rotation of a cyclic sequence by one step.**
+Rotation of a cyclic sequence by one step: `(ons_cyclicShift v) k = v (k + 1)`. -/
 def ons_cyclicShift {E : Type*} {n : ℕ} [NeZero n] (v : Fin n → E) : Fin n → E :=
   fun k => v (k + 1)
 

@@ -165,7 +165,8 @@ variable {d : ℕ}
 
 /-! ## C. Box restrictions of the infinite-volume measures -/
 
-/-- The mass function on configurations of `Λ_N` of the free `q = 2` infinite-volume measure at
+/-- **Free $q = 2$ infinite-volume mass function on a box.**
+The mass function on configurations of `Λ_N` of the free `q = 2` infinite-volume measure at
 `p = logistic(t)`, restricted to `Λ_N`.
 -/
 noncomputable def fuc_freeMass (d N : ℕ) (t : ℝ) : ConfigSpace (Sym2 (boxVerts d N)) → ℝ :=
@@ -173,7 +174,8 @@ noncomputable def fuc_freeMass (d N : ℕ) (t : ℝ) : ConfigSpace (Sym2 (boxVer
       (by norm_num : (0 : ℝ) < 2) : Measure (ConfigSpace (Sym2 (Site d)))).real
         (boxRestrict d N ⁻¹' {ω})
 
-/-- The mass function on configurations of `Λ_N` of the wired `q = 2` infinite-volume measure at
+/-- **Wired $q = 2$ infinite-volume mass function on a box.**
+The mass function on configurations of `Λ_N` of the wired `q = 2` infinite-volume measure at
 `p = logistic(t)`, restricted to `Λ_N`.
 -/
 noncomputable def fuc_wiredMass (d N : ℕ) (t : ℝ) : ConfigSpace (Sym2 (boxVerts d N)) → ℝ :=
@@ -281,7 +283,8 @@ lemma fuc_hmono (d N : ℕ) (eb : Sym2 (boxVerts d N)) :
 
 /-! ## D. Uniqueness from free-energy data -/
 
-/-- There is a convex `g` whose right and left derivatives at `t` are the wired and free `q = 2`
+/-- **Homogeneous free-energy data on a box at $q = 2$.**
+There is a convex `g` whose right and left derivatives at `t` are the wired and free `q = 2`
 edge
 densities at `p = logistic(t)`, for every edge of `Λ_N`.
 -/
@@ -292,7 +295,8 @@ def fuc_HomogeneousFreeEnergyData (d N : ℕ) : Prop :=
     ∧ (∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
         freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t)
 
-/-- Given `fuc_HomogeneousFreeEnergyData`, the free and wired `q = 2` measures agree on every
+/-- **Free-energy data give $q = 2$ box uniqueness off countably many $t$.**
+Given `fuc_HomogeneousFreeEnergyData`, the free and wired `q = 2` measures agree on every
 increasing event of `Λ_N` for all but countably many `t`.
 -/
 lemma fuc_fk_uniqueness (d N : ℕ) (eb : Sym2 (boxVerts d N))

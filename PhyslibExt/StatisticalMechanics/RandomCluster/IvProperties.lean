@@ -54,7 +54,8 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 ## A. Free and wired measures as boundary wirings
 -/
 
-/-- A wiring whose edges join boundary vertices lies below the boundary clique. -/
+/-- **Boundary-supported wirings lie below the boundary clique.**
+A wiring whose edges join boundary vertices lies below the boundary clique. -/
 lemma bc_le_boundaryClique (C : SimpleGraph V)
     (hC : ∀ x y, C.Adj x y → bdry x ∧ bdry y) :
     C ≤ StatMech.Lattice.boundaryCliqueGraph bdry := by
@@ -63,7 +64,8 @@ lemma bc_le_boundaryClique (C : SimpleGraph V)
   obtain ⟨hx, hy⟩ := hC x y hxy
   exact ⟨C.ne_of_adj hxy, hx, hy⟩
 
-/-- The empty wiring gives the free random-cluster measure. -/
+/-- **Empty wiring gives the free random-cluster measure.**
+The empty wiring gives the free random-cluster measure. -/
 lemma bcProb_bot_eq_fkProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) :
     bcProb G (⊥ : SimpleGraph V) p q ω = fkProb G p q ω := by
   have hw : ∀ η, bcWeight G (⊥ : SimpleGraph V) p q η = fkWeight G p q η := by
@@ -73,7 +75,8 @@ lemma bcProb_bot_eq_fkProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) :
     rw [bcZ, fkZ]; exact Finset.sum_congr rfl (fun η _ => hw η)
   rw [bcProb, fkProb, hw, hZ]
 
-/-- The boundary clique gives the wired random-cluster measure. -/
+/-- **Boundary clique gives the wired random-cluster measure.**
+The boundary clique gives the wired random-cluster measure. -/
 lemma bcProb_clique_eq_wiredFkProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) :
     bcProb G (StatMech.Lattice.boundaryCliqueGraph bdry) p q ω
       = wiredFkProb G bdry p q ω := by
@@ -117,7 +120,8 @@ lemma bcProb_extremality (C : SimpleGraph V) [DecidableRel C.Adj]
             * bcProb G (StatMech.Lattice.boundaryCliqueGraph bdry) p q ω :=
   ⟨bcProb_free_le G C hp hp1 hq hA, bcProb_le_wired G bdry C hC hp hp1 hq hA⟩
 
-/-- For `q ≥ 1` and a wiring `C` supported on the boundary, free ≤ `φ_C` ≤ wired on every increasing
+/-- **Boundary wirings lie between free and wired when $q \ge 1$.**
+For `q ≥ 1` and a wiring `C` supported on the boundary, free ≤ `φ_C` ≤ wired on every increasing
 event. -/
 lemma fkProb_le_bcProb_le_wiredFkProb (C : SimpleGraph V) [DecidableRel C.Adj]
     (hC : ∀ x y, C.Adj x y → bdry x ∧ bdry y)

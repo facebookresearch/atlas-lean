@@ -68,18 +68,21 @@ namespace Ising
 
 /-! ## A. Currents and sources -/
 
-/-- A current: a multiplicity in `ℕ` on every unordered pair. See also
+/-- **Current as a multiplicity on unordered pairs.**
+A current: a multiplicity in `ℕ` on every unordered pair. See also
 `StatMech.Sharpness.Current`. -/
 abbrev Current (V : Type*) : Type _ := Sym2 V → ℕ
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (E : Finset (Sym2 V))
 
-/-- The total multiplicity of the edges of `E` incident to `x`. -/
+/-- **Incident flux of a current on an edge set.**
+The total multiplicity of the edges of `E` incident to `x`. -/
 def incidentFlux (n : Current V) (x : V) : ℕ :=
   ∑ e ∈ E.filter (fun e => x ∈ e), n e
 
-/-- The source set of a current: the sites with odd incident flux. See also
+/-- **Source set of a current on an edge set.**
+The source set of a current: the sites with odd incident flux. See also
 `StatMech.Sharpness.sources` and `StatMech.Ising.sources_edgeFinset_eq`. -/
 def sources (n : Current V) : Finset V :=
   Finset.univ.filter (fun x => Odd (incidentFlux E n x))
@@ -106,11 +109,13 @@ lemma sources_add (n m : Current V) :
 
 /-! ## B. Connectivity through edge sets -/
 
-/-- `a` and `b` are distinct endpoints of an edge in `P`. -/
+/-- **Adjacency through an edge of an edge set.**
+`a` and `b` are distinct endpoints of an edge in `P`. -/
 def adjP (P : Finset (Sym2 V)) (a b : V) : Prop :=
   ∃ e ∈ P, a ∈ e ∧ b ∈ e ∧ a ≠ b
 
-/-- Connectivity through the edges of `P`: the reflexive-transitive closure of `adjP P`. -/
+/-- **Connectivity through the edges of an edge set.**
+Connectivity through the edges of `P`: the reflexive-transitive closure of `adjP P`. -/
 def connP (P : Finset (Sym2 V)) : V → V → Prop :=
   Relation.ReflTransGen (adjP P)
 
@@ -131,10 +136,11 @@ lemma connP_mono {P Q : Finset (Sym2 V)} (hPQ : P ⊆ Q) {a b : V} (h : connP P 
   refine Relation.ReflTransGen.mono ?_ _ _ h
   rintro x y ⟨e, he, hx, hy, hne⟩; exact ⟨e, hPQ he, hx, hy, hne⟩
 
-/-- The edges of `E` with positive multiplicity. -/
+/-- **Edges of an edge set with positive multiplicity.**
+The edges of `E` with positive multiplicity. -/
 def posEdges (m : Current V) : Finset (Sym2 V) := E.filter (fun e => 1 ≤ m e)
 
-/-- The edges of `E` with odd multiplicity. -/
+/-- **Edges of an edge set with odd multiplicity.** The edges of `E` with odd multiplicity. -/
 def oddEdges (m : Current V) : Finset (Sym2 V) := E.filter (fun e => Odd (m e))
 
 omit [Fintype V] [DecidableEq V] in
@@ -154,17 +160,17 @@ lemma connOdd_imp_connPos (m : Current V) {u v : V}
 
 /-! ## C. Degrees, odd sets and clusters -/
 
-/-- The number of edges of `P` incident to `x`. -/
+/-- **Degree of a site in an edge set.** The number of edges of `P` incident to `x`. -/
 def degP (P : Finset (Sym2 V)) (x : V) : ℕ := #(P.filter (fun e => x ∈ e))
 
-/-- The sites of odd degree in the edge set `P`. -/
+/-- **Odd-degree sites of an edge set.** The sites of odd degree in the edge set `P`. -/
 def srcP (P : Finset (Sym2 V)) : Finset V :=
   Finset.univ.filter (fun x => Odd (degP P x))
 
 @[simp] lemma mem_srcP {P : Finset (Sym2 V)} {x : V} :
     x ∈ srcP P ↔ Odd (degP P x) := by simp [srcP]
 
-/-- The cluster of `u` in the edge set `P`. -/
+/-- **Cluster of a site in an edge set.** The cluster of `u` in the edge set `P`. -/
 noncomputable def compOf (P : Finset (Sym2 V)) (u : V) : Finset V :=
   Finset.univ.filter (fun x => connP P u x)
 
@@ -375,7 +381,8 @@ lemma srcP_oddEdges (m : Current V) : srcP (oddEdges E m) = sources E m := by
 
 /-! ## D. Reflection along a path -/
 
-/-- The reflection of a sub-current `n ≤ m` along `P`: `m e - n e` on `P` and `n e` elsewhere. -/
+/-- **Reflection of a sub-current along an edge set.**
+The reflection of a sub-current `n ≤ m` along `P`: `m e - n e` on `P` and `n e` elsewhere. -/
 def reflect (m : Current V) (P : Finset (Sym2 V)) (n : Current V) : Current V :=
   fun e => if e ∈ P then m e - n e else n e
 

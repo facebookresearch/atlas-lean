@@ -62,7 +62,8 @@ variable {E G : Type*} [Group G] [MulAction G E]
 
 /-! ## A. Independence and cylinder factorization -/
 
-/-- Coordinates are independent under the Bernoulli product measure. See also Mathlib's
+/-- **Independence of coordinates under the Bernoulli product measure.**
+Coordinates are independent under the Bernoulli product measure. See also Mathlib's
 `ProbabilityTheory.iIndepFun_infinitePi`, of which this is a special case.
 -/
 lemma bernoulli_iIndepFun (p : ℝ≥0) (hp : p ≤ 1) :
@@ -173,7 +174,8 @@ private lemma cylinder_eq_of_mem
 
 /-! ## D. Ergodicity -/
 
-/-- Invariant events of the Bernoulli product measure have probability `0` or `1`. -/
+/-- **Bernoulli zero-one law for infinite groups acting finite-to-one.**
+Invariant events of the Bernoulli product measure have probability `0` or `1`. -/
 lemma bernoulli_ergodic [Countable E] [Infinite G]
     (hfin : ∀ a b : E, {g : G | g • a = b}.Finite)
     (p : ℝ≥0) (hp : p ≤ 1) {s : Set (ConfigSpace E)} (hs : MeasurableSet s)
@@ -284,7 +286,8 @@ lemma bernoulli_ergodic [Countable E] [Infinite G]
     have : μ s = ENNReal.ofReal (μ.real s) := (ENNReal.ofReal_toReal (measure_ne_top μ s)).symm
     rw [this, h1, ENNReal.ofReal_one]
 
-/-- The Bernoulli product measure is ergodic under every action of an infinite group with injective
+/-- **Ergodicity of Bernoulli measures under free infinite-group actions.**
+The Bernoulli product measure is ergodic under every action of an infinite group with injective
 orbit maps.
 -/
 lemma bernoulli_isErgodic [Countable E] [Infinite G]

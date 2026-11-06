@@ -71,7 +71,8 @@ namespace StatMech.LeeYang
 
 /-! ## A. Asano contraction -/
 
-/-- Asano's lemma in one variable: if `A + E t + D t²` has no zero in the open unit disk, then
+/-- **Asano's lemma in one variable.**
+Asano's lemma in one variable: if `A + E t + D t²` has no zero in the open unit disk, then
 neither has `A + D t`. -/
 theorem asano_quadratic_contraction
     (A E D z : ℂ)
@@ -111,7 +112,8 @@ theorem asano_quadratic_contraction
     rw [hzratio, norm_neg] at hz
     exact (not_lt_of_ge hratio) hz
 
-/-- A function of finitely many complex variables is multi-affine if it is affine in each variable
+/-- **Multi-affine function of several complex variables.**
+A function of finitely many complex variables is multi-affine if it is affine in each variable
 separately. -/
 def IsMultiAffine {I : Type*} [DecidableEq I] (p : (I → ℂ) → ℂ) : Prop :=
   ∀ (i : I) (z : I → ℂ) (t : ℂ),
@@ -119,12 +121,14 @@ def IsMultiAffine {I : Type*} [DecidableEq I] (p : (I → ℂ) → ℂ) : Prop :
       p (Function.update z i 0) +
         t * (p (Function.update z i 1) - p (Function.update z i 0))
 
-/-- A function of complex variables is polydisc stable if it has no zero when every variable lies in
+/-- **Polydisc stability of a function of complex variables.**
+A function of complex variables is polydisc stable if it has no zero when every variable lies in
 the open unit disk. -/
 def PolydiscStable {I : Type*} (p : (I → ℂ) → ℂ) : Prop :=
   ∀ z : I → ℂ, (∀ i, ‖z i‖ < 1) → p z ≠ 0
 
-/-- The Asano contraction of the variables `i` and `j`: for `p = A + B z_i + C z_j + D z_i z_j` it
+/-- **Asano contraction of two variables.**
+The Asano contraction of the variables `i` and `j`: for `p = A + B z_i + C z_j + D z_i z_j` it
 is `A + D z_i`, computed from the values of `p` at `z_i, z_j ∈ {0, 1}`. -/
 def asanoContract {I : Type*} [DecidableEq I]
     (p : (I → ℂ) → ℂ) (i j : I) :
@@ -135,7 +139,8 @@ def asanoContract {I : Type*} [DecidableEq I]
   let z11 := Function.update (Function.update z i 1) j 1
   p z00 + z i * (p z11 - p z10 - p z01 + p z00)
 
-/-- Asano's contraction lemma: the Asano contraction of a multi-affine polydisc-stable polynomial is
+/-- **Asano's contraction lemma.**
+Asano's contraction lemma: the Asano contraction of a multi-affine polydisc-stable polynomial is
 polydisc stable (Asano, Phys. Rev. Lett. 24 (1970)). -/
 theorem asanoContract_stable {I : Type*} [DecidableEq I]
     (p : (I → ℂ) → ℂ) (hpAff : IsMultiAffine p)
@@ -230,7 +235,8 @@ lemma asanoContract_multiAffine {I : Type*} [DecidableEq I]
       simp [Ne.symm hki]
       ring
 
-/-- The two-variable edge factor `1 + ab + r (a + b)` with `0 ≤ r ≤ 1` has no zero in the open unit
+/-- **Edge factor has no zero in the open unit bidisk for 0 ≤ r ≤ 1.**
+The two-variable edge factor `1 + ab + r (a + b)` with `0 ≤ r ≤ 1` has no zero in the open unit
 bidisk. -/
 lemma leeYang_edgeFactor_ne_zero {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r ≤ 1)
     {a b : ℂ} (ha : ‖a‖ < 1) (hb : ‖b‖ < 1) :
@@ -288,17 +294,19 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## B. The half-edge polynomial -/
 
-/-- The variables of the half-edge polynomial: one anchor variable per vertex and one half-edge
+/-- **Variables of the half-edge polynomial.**
+The variables of the half-edge polynomial: one anchor variable per vertex and one half-edge
 variable per incidence `(v, e)`. -/
 abbrev LeeYangVar : Type _ := V ⊕ (V × ↑G.edgeFinset)
 
-/-- The anchor variable of a vertex. -/
+/-- **Anchor variable of a vertex.** The anchor variable of a vertex. -/
 def leeYangAnchor (v : V) : LeeYangVar G := Sum.inl v
 
-/-- The half-edge variable of the incidence `(v, e)`. -/
+/-- **Half-edge variable of an incidence.** The half-edge variable of the incidence `(v, e)`. -/
 def leeYangHalf (v : V) (e : ↑G.edgeFinset) : LeeYangVar G := Sum.inr (v, e)
 
-/-- The edge factor `1 + w_u w_v + e^{-2β} (w_u + w_v)` of the edge `e = {u, v}`, in its half-edge
+/-- **Edge factor in half-edge variables.**
+The edge factor `1 + w_u w_v + e^{-2β} (w_u + w_v)` of the edge `e = {u, v}`, in its half-edge
 variables. -/
 noncomputable def leeYangNormalizedEdgeFactor (beta : ℝ)
     (e : ↑G.edgeFinset) (z : LeeYangVar G → ℂ) : ℂ :=
@@ -309,18 +317,21 @@ noncomputable def leeYangNormalizedEdgeFactor (beta : ℝ)
           intro u v
           ring⟩ e.1
 
-/-- The half-edge polynomial: the product of `1 + z_v` over the vertices and of the edge factors
+/-- **Half-edge polynomial of a graph.**
+The half-edge polynomial: the product of `1 + z_v` over the vertices and of the edge factors
 over the edges. -/
 noncomputable def leeYangHalfEdgeProduct (beta : ℝ)
     (z : LeeYangVar G → ℂ) : ℂ :=
   (∏ v : V, (1 + z (leeYangAnchor G v))) *
     ∏ e : ↑G.edgeFinset, leeYangNormalizedEdgeFactor G beta e z
 
-/-- The vertex part `∏_v (1 + z_v)` of the half-edge polynomial. -/
+/-- **Vertex part of the half-edge polynomial.**
+The vertex part `∏_v (1 + z_v)` of the half-edge polynomial. -/
 noncomputable def leeYangAnchorProduct (z : LeeYangVar G → ℂ) : ℂ :=
   ∏ v : V, (1 + z (leeYangAnchor G v))
 
-/-- The edge part of the half-edge polynomial: the product of the edge factors. -/
+/-- **Edge part of the half-edge polynomial.**
+The edge part of the half-edge polynomial: the product of the edge factors. -/
 noncomputable def leeYangEdgeProduct (beta : ℝ) (z : LeeYangVar G → ℂ) : ℂ :=
   ∏ e : ↑G.edgeFinset, leeYangNormalizedEdgeFactor G beta e z
 
@@ -531,7 +542,8 @@ lemma leeYangHalfEdgeProduct_multiAffine (beta : ℝ) :
 
 /-! ## C. Contracting all incidences -/
 
-/-- Successive Asano contraction of the half-edge variable of each incidence in the list into the
+/-- **Successive Asano contraction along a list of incidences.**
+Successive Asano contraction of the half-edge variable of each incidence in the list into the
 anchor variable of its vertex. -/
 def leeYangContractList (L : List (V × ↑G.edgeFinset))
     (p : (LeeYangVar G → ℂ) → ℂ) : (LeeYangVar G → ℂ) → ℂ :=
@@ -563,11 +575,13 @@ lemma leeYangContractList_stable (L : List (V × ↑G.edgeFinset))
       · apply asanoContract_stable p hpAff hpStable
         simp [leeYangAnchor, leeYangHalf]
 
-/-- The incidences `(v, e)` of `G`, with `v` an endpoint of `e`. -/
+/-- **Vertex–edge incidences of a graph.**
+The incidences `(v, e)` of `G`, with `v` an endpoint of `e`. -/
 noncomputable def leeYangIncidenceFinset : Finset (V × ↑G.edgeFinset) :=
   Finset.univ.filter fun x ↦ x.1 ∈ x.2.1
 
-/-- The half-edge polynomial after contracting every incidence. -/
+/-- **Half-edge polynomial with every incidence contracted.**
+The half-edge polynomial after contracting every incidence. -/
 noncomputable def leeYangContractedProduct (beta : ℝ) :
     (LeeYangVar G → ℂ) → ℂ :=
   leeYangContractList G (leeYangIncidenceFinset G).toList
@@ -584,7 +598,7 @@ lemma leeYangContractedProduct_stable {beta : ℝ} (hbeta : 0 ≤ beta) :
 
 /-! ## D. Expansion of the contracted polynomial -/
 
-/-- The monomial `∏_{i ∈ S} z_i`. -/
+/-- **Monomial of a set of variables.** The monomial `∏_{i ∈ S} z_i`. -/
 def leeYangMonomial {I : Type*} (S : Finset I) (z : I → ℂ) : ℂ :=
   ∏ i ∈ S, z i
 
@@ -646,10 +660,10 @@ lemma asanoContract_monomial {I : Type*} [DecidableEq I]
   · simp_all [Finset.mem_erase]
   · simp_all
 
-/-- A chosen first endpoint of an edge. -/
+/-- **Chosen first endpoint of an edge.** A chosen first endpoint of an edge. -/
 noncomputable def leeYangEndpoint0 (e : ↑G.edgeFinset) : V := e.1.out.1
 
-/-- The other endpoint of an edge. -/
+/-- **Other endpoint of an edge.** The other endpoint of an edge. -/
 noncomputable def leeYangEndpoint1 (e : ↑G.edgeFinset) : V := e.1.out.2
 
 omit [DecidableEq V] in
@@ -666,11 +680,13 @@ lemma leeYang_endpoints_ne (e : ↑G.edgeFinset) :
   rw [← leeYang_endpoints_mk G e] at he
   simpa [SimpleGraph.mem_edgeFinset] using he
 
-/-- The term of `1 + z_v` selected by a Boolean choice. -/
+/-- **Term of a vertex factor selected by a Boolean choice.**
+The term of `1 + z_v` selected by a Boolean choice. -/
 def leeYangAnchorChoiceFactor (z : LeeYangVar G → ℂ) (v : V) (b : Bool) : ℂ :=
   if b then z (leeYangAnchor G v) else 1
 
-/-- The term of the edge factor selected by a pair of Boolean choices, one per endpoint. -/
+/-- **Term of an edge factor selected by two Boolean choices.**
+The term of the edge factor selected by a pair of Boolean choices, one per endpoint. -/
 noncomputable def leeYangEdgeChoiceFactor (beta : ℝ) (z : LeeYangVar G → ℂ)
     (e : ↑G.edgeFinset) (b : Bool × Bool) : ℂ :=
   (if b.1 = b.2 then 1 else (Real.exp (-2 * beta) : ℂ)) *
@@ -703,7 +719,8 @@ lemma sum_leeYangEdgeChoiceFactor (beta : ℝ) (z : LeeYangVar G → ℂ)
         Sym2.eq_iff.mp hout
       rcases h0 with h0 | h0 <;> rw [h0.1, h0.2] <;> ring
 
-/-- The term of the expanded half-edge polynomial selected by a choice at every vertex and every
+/-- **Term of the expanded half-edge polynomial for a choice.**
+The term of the expanded half-edge polynomial selected by a choice at every vertex and every
 edge. -/
 noncomputable def leeYangChoiceTerm (beta : ℝ)
     (x : (V → Bool) × (↑G.edgeFinset → Bool × Bool))
@@ -727,14 +744,15 @@ lemma leeYangHalfEdgeProduct_eq_sum_choices (beta : ℝ) :
   intro y hy
   rw [Finset.sum_mul]
 
-/-- The coefficient of a term of the expanded half-edge polynomial: `e^{-2β}` for every edge whose
+/-- **Coefficient of a term of the expanded half-edge polynomial.**
+The coefficient of a term of the expanded half-edge polynomial: `e^{-2β}` for every edge whose
 two choices differ. -/
 noncomputable def leeYangChoiceWeight (beta : ℝ)
     (x : (V → Bool) × (↑G.edgeFinset → Bool × Bool)) : ℂ :=
   ∏ e : ↑G.edgeFinset,
     if (x.2 e).1 = (x.2 e).2 then 1 else (Real.exp (-2 * beta) : ℂ)
 
-/-- Whether a choice selects each variable. -/
+/-- **Selection indicator of a choice on the variables.** Whether a choice selects each variable. -/
 noncomputable def leeYangChoiceSelected
     (x : (V → Bool) × (↑G.edgeFinset → Bool × Bool)) :
     LeeYangVar G → Bool
@@ -744,7 +762,8 @@ noncomputable def leeYangChoiceSelected
       else if v = leeYangEndpoint1 G e then (x.2 e).2
       else false
 
-/-- The set of variables selected by a choice, the support of its monomial. -/
+/-- **Set of variables selected by a choice.**
+The set of variables selected by a choice, the support of its monomial. -/
 noncomputable def leeYangChoiceSupport
     (x : (V → Bool) × (↑G.edgeFinset → Bool × Bool)) :
     Finset (LeeYangVar G) :=
@@ -852,12 +871,14 @@ lemma leeYangContractList_const_mul (L : List (V × ↑G.edgeFinset))
       rw [asanoContract_const_mul]
       exact ih _
 
-/-- Remove from a set of variables the half-edge variables of the listed incidences. -/
+/-- **Removal of listed half-edge variables from a variable set.**
+Remove from a set of variables the half-edge variables of the listed incidences. -/
 def leeYangEraseHalves (L : List (V × ↑G.edgeFinset))
     (S : Finset (LeeYangVar G)) : Finset (LeeYangVar G) :=
   L.foldl (fun T x ↦ T.erase (leeYangHalf G x.1 x.2)) S
 
-/-- A set of variables is consistent with a list of incidences if each listed half-edge variable is
+/-- **Consistency of a variable set with a list of incidences.**
+A set of variables is consistent with a list of incidences if each listed half-edge variable is
 selected exactly when the anchor variable of its vertex is. -/
 def LeeYangConsistent (L : List (V × ↑G.edgeFinset))
     (S : Finset (LeeYangVar G)) : Prop :=
@@ -937,7 +958,8 @@ lemma leeYangContractList_sum {A : Type*} [Fintype A]
           (Finset.univ : Finset A) p (leeYangAnchor G x.1) (leeYangHalf G x.1 x.2)]
       exact ih _
 
-/-- The edge choices induced by a spin configuration: each edge copies the spins of its
+/-- **Edge choices induced by a spin configuration.**
+The edge choices induced by a spin configuration: each edge copies the spins of its
 endpoints. -/
 noncomputable def leeYangTauOf (sigma : V → Bool) :
     ↑G.edgeFinset → Bool × Bool := fun e ↦
@@ -1016,7 +1038,8 @@ lemma mem_leeYangEraseHalves (L : List (V × ↑G.edgeFinset))
       simp only [Finset.mem_erase, List.mem_cons, forall_eq_or_imp]
       aesop
 
-/-- The anchor variables of the vertices with spin `true`. -/
+/-- **Anchor variables of the vertices with plus spin.**
+The anchor variables of the vertices with spin `true`. -/
 noncomputable def leeYangAnchorSupport (sigma : V → Bool) :
     Finset (LeeYangVar G) :=
   Finset.univ.filter fun k ↦ match k with
@@ -1097,7 +1120,8 @@ lemma leeYangContractedProduct_eq_sum_sigma (beta : ℝ)
 
 /-! ## E. Restriction to the diagonal -/
 
-/-- The point with every anchor variable equal to `q` and every half-edge variable equal to `0`. -/
+/-- **Diagonal point with anchors at q and half-edge variables at zero.**
+The point with every anchor variable equal to `q` and every half-edge variable equal to `0`. -/
 def leeYangDiagonal (q : ℂ) : LeeYangVar G → ℂ
   | Sum.inl _ => q
   | Sum.inr _ => 0
@@ -1113,7 +1137,8 @@ lemma leeYangMonomial_anchorSupport_diagonal (sigma : V → Bool) (q : ℂ) :
   rw [← Finset.prod_const]
   rw [Finset.prod_filter]
 
-/-- The real weight `∏_e e^{-2β [σ_u ≠ σ_v]}` of a spin configuration. -/
+/-- **Real disagreement weight of a spin configuration.**
+The real weight `∏_e e^{-2β [σ_u ≠ σ_v]}` of a spin configuration. -/
 noncomputable def leeYangRealChoiceWeight (beta : ℝ) (sigma : V → Bool) : ℝ :=
   ∏ e : ↑G.edgeFinset,
     if sigma (leeYangEndpoint0 G e) = sigma (leeYangEndpoint1 G e) then 1
@@ -1213,7 +1238,8 @@ lemma leeYangContractedProduct_diagonal (beta : ℝ) (q : ℂ) :
 
 /-! ## F. The Lee–Yang circle theorem -/
 
-/-- The Lee–Yang polynomial of a ferromagnetic Ising model has no zero in the open unit disk. -/
+/-- **Ferromagnetic Lee–Yang polynomial has no zero in the open unit disk.**
+The Lee–Yang polynomial of a ferromagnetic Ising model has no zero in the open unit disk. -/
 lemma leeYangComplexPolynomial_ne_zero_in_openUnitDisk
     {beta : ℝ} (hbeta : 0 ≤ beta) {q : ℂ} (hq : ‖q‖ < 1) :
     (leeYangComplexPolynomial G beta).eval q ≠ 0 := by

@@ -51,7 +51,8 @@ variable {d : ℕ}
 
 /-! ## A. The event of at least two infinite clusters -/
 
-/-- The event that there are at least two infinite open clusters. -/
+/-- **Event of at least two infinite open clusters.**
+The event that there are at least two infinite open clusters. -/
 def atLeastTwoInfinite (d : ℕ) : Set (ConfigSpace (Sym2 (Site d))) :=
   {ω | 2 ≤ numInfiniteClusters d ω}
 

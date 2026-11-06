@@ -59,11 +59,13 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Partition function and even subgraphs -/
 
-/-- The zero-field Ising partition function of `G` with unit couplings at inverse temperature `β`.
+/-- **Zero-field Ising partition function with unit couplings.**
+The zero-field Ising partition function of `G` with unit couplings at inverse temperature `β`.
 -/
 noncomputable def ons_Z (β : ℝ) : ℝ := isingZ G β 0
 
-/-- The even-subgraph generating function `∑_F x^|F|` of `G`, over edge sets `F` in which every
+/-- **Even-subgraph generating function of a graph.**
+The even-subgraph generating function `∑_F x^|F|` of `G`, over edge sets `F` in which every
 vertex has even degree. -/
 noncomputable def ons_X (x : ℝ) : ℝ :=
   ∑ F ∈ G.edgeFinset.powerset.filter IsEvenSubgraph, x ^ F.card

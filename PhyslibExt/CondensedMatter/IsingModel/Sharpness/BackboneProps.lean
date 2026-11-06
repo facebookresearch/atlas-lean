@@ -58,7 +58,7 @@ variable {H : SimpleGraph V}
 
 /-! ## A. Degrees along walks -/
 
-/-- The number of edges of the walk `p` incident to `x`. -/
+/-- **Number of walk edges at a vertex.** The number of edges of the walk `p` incident to `x`. -/
 def walkDeg {a b : V} (p : H.Walk a b) (x : V) : ℕ :=
   (p.edges.filter (fun e => x ∈ e)).length
 
@@ -198,7 +198,8 @@ lemma backbone_edge_odd (n : Current V) (a b : V)
 
 /-! ## C. Removing a backbone -/
 
-/-- The current `n` with one unit removed from each traversal of an edge of `p`. -/
+/-- **Current with a walk removed.**
+The current `n` with one unit removed from each traversal of an edge of `p`. -/
 def removeWalk {a b : V} (n : Current V) (p : H.Walk a b) : Current V :=
   fun e => n e - p.edges.count e
 

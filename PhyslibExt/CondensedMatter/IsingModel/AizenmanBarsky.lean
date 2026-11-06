@@ -69,7 +69,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Derivatives of the partition function -/
 
-/-- The negative Hamiltonian `∑_{xy ∈ E} σ_xσ_y + h ∑_x σ_x`. -/
+/-- **Negative Hamiltonian of the Ising model.**
+The negative Hamiltonian `∑_{xy ∈ E} σ_xσ_y + h ∑_x σ_x`. -/
 noncomputable def negHam (h : ℝ) (s : ConfigSpace V) : ℝ :=
   (∑ e ∈ G.edgeFinset, bond s e) + h * ∑ x, spin s x
 
@@ -159,15 +160,16 @@ lemma expectation_const_mul (β h : ℝ) (c : ℝ) (f : ConfigSpace V → ℝ) :
 
 /-! ## B. Covariances -/
 
-/-- The spin covariance `Cov(σ_x, σ_y) = ⟨σ_xσ_y⟩ - ⟨σ_x⟩⟨σ_y⟩`. -/
+/-- **Two-point spin covariance.** The spin covariance `Cov(σ_x, σ_y) = ⟨σ_xσ_y⟩ - ⟨σ_x⟩⟨σ_y⟩`. -/
 noncomputable def cov2 (β h : ℝ) (x y : V) : ℝ :=
   isingExpectation G β h (fun s => spin s x * spin s y)
     - isingExpectation G β h (fun s => spin s x) * isingExpectation G β h (fun s => spin s y)
 
-/-- The one-point function `⟨σ_x⟩`. -/
+/-- **Ising one-point function.** The one-point function `⟨σ_x⟩`. -/
 noncomputable def onePt (β h : ℝ) (x : V) : ℝ := isingExpectation G β h (fun s => spin s x)
 
-/-- The covariance `⟨σ_o σ_x σ_y⟩ - ⟨σ_o⟩⟨σ_x σ_y⟩` of `σ_o` with the bond variable of `e = {x,
+/-- **Covariance of a spin with a bond variable.**
+The covariance `⟨σ_o σ_x σ_y⟩ - ⟨σ_o⟩⟨σ_x σ_y⟩` of `σ_o` with the bond variable of `e = {x,
 y}`. -/
 noncomputable def cov3sym (β h : ℝ) (o : V) (e : Sym2 V) : ℝ :=
   Sym2.lift ⟨fun x y =>
@@ -187,7 +189,8 @@ noncomputable def cov3sym (β h : ℝ) (o : V) (e : Sym2 V) : ℝ :=
           - isingExpectation G β h (fun s => spin s o)
               * isingExpectation G β h (fun s => spin s x * spin s y) := rfl
 
-/-- The GHS bound `Cov(σ_o, σ_x)⟨σ_y⟩ + Cov(σ_o, σ_y)⟨σ_x⟩` for the bond `e = {x, y}`. -/
+/-- **GHS bound for a bond.**
+The GHS bound `Cov(σ_o, σ_x)⟨σ_y⟩ + Cov(σ_o, σ_y)⟨σ_x⟩` for the bond `e = {x, y}`. -/
 noncomputable def ghsBoundSym (β h : ℝ) (o : V) (e : Sym2 V) : ℝ :=
   Sym2.lift ⟨fun x y => cov2 G β h o x * onePt G β h y + cov2 G β h o y * onePt G β h x,
     fun a b => by ring⟩ e
@@ -198,11 +201,11 @@ noncomputable def ghsBoundSym (β h : ℝ) (o : V) (e : Sym2 V) : ℝ :=
 
 /-! ## C. Susceptibilities and the derivative of the magnetization -/
 
-/-- The bond-energy susceptibility `∑_{e ∈ E} Cov(σ_o, σ_e)`. -/
+/-- **Bond-energy susceptibility.** The bond-energy susceptibility `∑_{e ∈ E} Cov(σ_o, σ_e)`. -/
 noncomputable def bondEnergySusceptibility (β h : ℝ) (o : V) : ℝ :=
   ∑ e ∈ G.edgeFinset, cov3sym G β h o e
 
-/-- The susceptibility `χ(o) = ∑_x Cov(σ_o, σ_x)`. -/
+/-- **Ising susceptibility at a site.** The susceptibility `χ(o) = ∑_x Cov(σ_o, σ_x)`. -/
 noncomputable def susceptibility (β h : ℝ) (o : V) : ℝ :=
   ∑ x, cov2 G β h o x
 
@@ -282,7 +285,8 @@ lemma deriv_magnetization_beta_eq (β h : ℝ) (o : V) :
 
 /-! ## D. The GHS-type bound -/
 
-/-- The GHS inequality at `o` for every edge: `cov3sym ≤ ghsBoundSym`, equivalently `u₃(o, x, y)
+/-- **GHS three-point inequality at a site for every edge.**
+The GHS inequality at `o` for every edge: `cov3sym ≤ ghsBoundSym`, equivalently `u₃(o, x, y)
 ≤ 0` for every edge `{x, y}`. -/
 def GHSThreePointSym (β h : ℝ) (o : V) : Prop :=
   ∀ e ∈ G.edgeFinset, cov3sym G β h o e ≤ ghsBoundSym G β h o e
@@ -292,7 +296,8 @@ lemma bondEnergy_le_ghsSum (β h : ℝ) (o : V) (hghs : GHSThreePointSym G β h 
   unfold bondEnergySusceptibility
   exact Finset.sum_le_sum hghs
 
-/-- A conditional finite-volume form of the Aizenman–Barsky–Fernández inequality: if the GHS
+/-- **Conditional finite-volume Aizenman–Barsky–Fernández inequality.**
+A conditional finite-volume form of the Aizenman–Barsky–Fernández inequality: if the GHS
 bound holds at `o` and the GHS bounds sum to `J ⟨σ_o⟩ χ(o)`, then the bond-energy
 susceptibility is at most `J ⟨σ_o⟩ χ(o)`. -/
 lemma aizenman_barsky_inequality (β h : ℝ) (o : V) (J : ℝ)

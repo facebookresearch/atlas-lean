@@ -62,7 +62,8 @@ variable {d : ℕ}
 
 /-! ## A. Indicator configurations of clusters -/
 
-/-- The bond configuration that is open exactly on the edges with both endpoints in `K`. -/
+/-- **Bond configuration open on the edges inside a set.**
+The bond configuration that is open exactly on the edges with both endpoints in `K`. -/
 noncomputable def indicatorConfig (K : Finset (Site d)) : ConfigSpace (Sym2 (Site d)) :=
   fun e => Sym2.lift ⟨fun x y => decide (x ∈ K ∧ y ∈ K), by
     intro x y; simp only [decide_eq_decide]; tauto⟩ e
@@ -105,7 +106,7 @@ lemma cluster_indicatorConfig_finite (K : Finset (Site d)) (hconn : IsConnectedC
 
 /-! ## B. Anchored boundary walks in two dimensions -/
 
-/-- The anchor row `{(j, 0) : j < ℓ}` in `ℤ²`. -/
+/-- **Anchor row of $\ell$ sites in $\mathbb{Z}^2$.** The anchor row `{(j, 0) : j < ℓ}` in `ℤ²`. -/
 noncomputable def ccb_anchorRow (ℓ : ℕ) : Finset (Site 2) :=
   (Finset.range ℓ).image (fun j : ℕ => (![ (j : ℤ), 0] : Site 2))
 
@@ -121,7 +122,8 @@ lemma mem_ccb_anchorRow {ℓ : ℕ} {v : Site 2} :
   · rintro ⟨j, hj, rfl⟩; exact ⟨j, Finset.mem_range.mp hj, rfl⟩
   · rintro ⟨j, hj, rfl⟩; exact ⟨j, Finset.mem_range.mpr hj, rfl⟩
 
-/-- In `ℤ²`, every connected cluster in `Λ_n` with contour length `ℓ` has its contour decoded from a
+/-- **Anchored closed-walk decoding of cluster contours in $\mathbb{Z}^2$.**
+In `ℤ²`, every connected cluster in `Λ_n` with contour length `ℓ` has its contour decoded from a
 closed walk of length `ℓ` based in the anchor row. -/
 def ccb_AnchoredBoundaryWalkExists (n ℓ : ℕ) : Prop :=
   ∃ D : (Σ v : Site 2, (hypercubicLattice 2).Walk v v) → Finset (Sym2 (Site 2)),

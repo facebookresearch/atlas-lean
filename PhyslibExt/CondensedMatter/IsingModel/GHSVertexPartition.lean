@@ -207,11 +207,13 @@ lemma ghsvp_ZJ_zero_logSupermodular (J : Sym2 W -> Real) (hJ : forall e, 0 <= J 
 
 /-! ## B. Induced subgraphs -/
 
-/-- The edges of `E` with both endpoints in `S` (the edges of the induced subgraph on `S`). -/
+/-- **Edges of the induced subgraph on a vertex set.**
+The edges of `E` with both endpoints in `S` (the edges of the induced subgraph on `S`). -/
 def ghsvp_vertexEdges (E : Finset (Sym2 W)) (S : Finset W) : Finset (Sym2 W) :=
   E.filter (Sharpness.edgeInside S)
 
-/-- The zero-field partition function of the induced subgraph on `S`, with couplings `J`. -/
+/-- **Zero-field partition function of an induced subgraph.**
+The zero-field partition function of the induced subgraph on `S`, with couplings `J`. -/
 noncomputable def ghsvp_vertexZ (E : Finset (Sym2 W)) (J : Sym2 W -> Real)
     (S : Finset W) : Real :=
   ZJ (ghsvp_vertexEdges E S) J (fun _ => 0)
@@ -255,12 +257,14 @@ lemma ghsvp_vertexZ_logSupermodular (E : Finset (Sym2 W)) (J : Sym2 W -> Real)
     (ZJ_pos _ _ _).le
   exact hlat.trans (mul_le_mul_of_nonneg_right hmono hz)
 
-/-- The zero-field correlation `⟨σ_P⟩` in the induced subgraph on `S`. -/
+/-- **Zero-field correlation in an induced subgraph.**
+The zero-field correlation `⟨σ_P⟩` in the induced subgraph on `S`. -/
 noncomputable def ghsvp_vertexCorr (E : Finset (Sym2 W)) (J : Sym2 W -> Real)
     (S P : Finset W) : Real :=
   expJ (ghsvp_vertexEdges E S) J (fun _ => 0) (spinProd P)
 
-/-- The correlation `⟨σ_P⟩` in the induced subgraph on `S`, with field `hf`. -/
+/-- **Correlation with field in an induced subgraph.**
+The correlation `⟨σ_P⟩` in the induced subgraph on `S`, with field `hf`. -/
 noncomputable def ghsvp_vertexCorrField (E : Finset (Sym2 W)) (J : Sym2 W -> Real)
     (hf : W -> Real) (S P : Finset W) : Real :=
   expJ (ghsvp_vertexEdges E S) J hf (spinProd P)
@@ -301,12 +305,14 @@ lemma ghsvp_vertexCorrField_mono (E : Finset (Sym2 W)) (J : Sym2 W -> Real)
 
 /-! ## C. Active and inactive vertices -/
 
-/-- The configuration equal to `a` on `S` and to `b` off `S`. -/
+/-- **Configuration merged from two configurations along a set.**
+The configuration equal to `a` on `S` and to `b` off `S`. -/
 def ghsvp_mergeConfig (S : Finset W) (a : (↑S -> Bool))
     (b : ({v : W // v ∉ S}) -> Bool) : ConfigSpace W :=
   fun v => if hv : v ∈ S then a ⟨v, hv⟩ else b ⟨v, hv⟩
 
-/-- Configurations split into their restrictions to `S` and to its complement. -/
+/-- **Splitting a configuration into a set and its complement.**
+Configurations split into their restrictions to `S` and to its complement. -/
 def ghsvp_splitConfig (S : Finset W) :
     ConfigSpace W ≃ ((↑S -> Bool) × (({v : W // v ∉ S}) -> Bool)) where
   toFun s := (fun v => s v, fun v => s v)
@@ -343,7 +349,8 @@ lemma ghsvp_wJ_mergeConfig_independent (E : Finset (Sym2 W)) (J : Sym2 W -> Real
       simp only [ghsvp_mergeConfig, dite_eq_left hx, dite_eq_left hy]
   · simp
 
-/-- The partition function of the induced subgraph on `S`, summed over configurations on `S`
+/-- **Induced-subgraph partition function over the active sites only.**
+The partition function of the induced subgraph on `S`, summed over configurations on `S`
 only. -/
 noncomputable def ghsvp_activeZ (E : Finset (Sym2 W)) (J : Sym2 W -> Real)
     (S : Finset W) : Real :=
@@ -373,13 +380,16 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## D. The ghost-vertex representation -/
 
-/-- The image of `A` among the non-ghost vertices `some x` of `Option V`. -/
+/-- **Image of a vertex set among non-ghost vertices.**
+The image of `A` among the non-ghost vertices `some x` of `Option V`. -/
 def ghsvp_someSet (A : Finset V) : Finset (Option V) := A.map someEmb
 
-/-- The image of `A` together with the ghost vertex `none`. -/
+/-- **Image of a vertex set together with the ghost vertex.**
+The image of `A` together with the ghost vertex `none`. -/
 def ghsvp_fieldSet (A : Finset V) : Finset (Option V) := insert none (ghsvp_someSet A)
 
-/-- The weight of the agreement set `A` in the duplicated system: the product of the ghost-vertex
+/-- **Weight of an agreement set in the duplicated system.**
+The weight of the agreement set `A` in the duplicated system: the product of the ghost-vertex
 partition functions of `A ∪ {ghost}` and of `Aᶜ`, with doubled couplings `2β` and field
 `2βh`. -/
 noncomputable def ghsvp_subsetMass (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -585,13 +595,15 @@ lemma ghsvp_ZJ_negField (E : Finset (Sym2 V)) (J : Sym2 V -> Real)
   intro s hs
   exact ghsvp_wJ_negField_flip E J hf s
 
-/-- The partition function on the induced subgraph on `A` with couplings `2β` and field `2βh`. -/
+/-- **Induced-subgraph partition function with doubled coupling and field.**
+The partition function on the induced subgraph on `A` with couplings `2β` and field `2βh`. -/
 noncomputable def ghsvp_tZ (G : SimpleGraph V) [DecidableRel G.Adj]
     (β h : Real) (A : Finset V) : Real :=
   ZJ (ghsvp_vertexEdges G.edgeFinset A) (fun _ => 2 * β)
     (fun x => if x ∈ A then 2 * β * h else 0)
 
-/-- The zero-field partition function on the induced subgraph on `A` with couplings `2β`. -/
+/-- **Zero-field induced-subgraph partition function with doubled coupling.**
+The zero-field partition function on the induced subgraph on `A` with couplings `2β`. -/
 noncomputable def ghsvp_uZ (G : SimpleGraph V) [DecidableRel G.Adj]
     (β : Real) (A : Finset V) : Real :=
   ZJ (ghsvp_vertexEdges G.edgeFinset A) (fun _ => 2 * β) (fun _ => 0)
@@ -711,14 +723,16 @@ lemma ghsvp_subsetMass_logSupermodular (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## F. Monotone correlations -/
 
-/-- The zero-field correlation `⟨σ_o σ_x⟩` in the subgraph induced by `Aᶜ` (couplings `2β`), or
+/-- **Two-point correlation on the disagreement subgraph.**
+The zero-field correlation `⟨σ_o σ_x⟩` in the subgraph induced by `Aᶜ` (couplings `2β`), or
 `0` if `o` or `x` lies in `A`. -/
 noncomputable def ghsvp_disagreementCorr (G : SimpleGraph V) [DecidableRel G.Adj]
     (β : Real) (o x : V) (A : Finset V) : Real :=
   if o ∈ A ∨ x ∈ A then 0
   else ghsvp_vertexCorr G.edgeFinset (fun _ => 2 * β) Aᶜ {o, x}
 
-/-- The magnetization `⟨σ_y⟩` in the subgraph induced by `A` (couplings `2β`, field `2βh`), or
+/-- **Magnetization on the agreement subgraph.**
+The magnetization `⟨σ_y⟩` in the subgraph induced by `A` (couplings `2β`, field `2βh`), or
 `0` if `y ∉ A`. -/
 noncomputable def ghsvp_agreementMag (G : SimpleGraph V) [DecidableRel G.Adj]
     (β h : Real) (y : V) (A : Finset V) : Real :=

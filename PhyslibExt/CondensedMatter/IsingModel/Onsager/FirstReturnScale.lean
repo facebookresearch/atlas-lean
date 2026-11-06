@@ -46,7 +46,8 @@ open Matrix BigOperators
 
 /-! ## A. Column scaling and first returns -/
 
-/-- The matrix `Λ` with every column indexed by an element of `S` multiplied by `t`. -/
+/-- **Matrix with selected columns scaled.**
+The matrix `Λ` with every column indexed by an element of `S` multiplied by `t`. -/
 def ons_scaleColumns {E : Type*} [DecidableEq E]
     (S : Finset E) (t : ℂ) (Lambda : Matrix E E ℂ) : Matrix E E ℂ :=
   fun i j => if j ∈ S then t * Lambda i j else Lambda i j

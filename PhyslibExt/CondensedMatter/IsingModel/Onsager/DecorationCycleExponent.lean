@@ -214,7 +214,8 @@ lemma ons_internalPath_eq_decPortChainPath
 
 /-! ## B. Rebuilding cycles -/
 
-/-- The one-edge decorated walk along the external edge from `d` to its reverse. -/
+/-- **One-edge decorated walk along an external edge.**
+The one-edge decorated walk along the external edge from `d` to its reverse. -/
 def ons_decExternalStepWalk (L : ℕ) (d : ons_Dart L) :
     (ons_decGraph L).Walk d (ons_dartRev L d) :=
   .cons (@id ((ons_decGraph L).Adj d (ons_dartRev L d)) (Or.inl rfl)) .nil

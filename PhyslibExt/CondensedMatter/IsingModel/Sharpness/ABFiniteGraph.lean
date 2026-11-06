@@ -63,11 +63,13 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Parameters and the magnetization -/
 
-/-- The coupling `J` restricted to the edges of `G`. -/
+/-- **Coupling restricted to the edges of a graph.**
+The coupling `J` restricted to the edges of `G`. -/
 noncomputable def abfaBaseCoupling (J : Sym2 V → ℝ) (e : Sym2 V) : ℝ :=
   if e ∈ G.edgeFinset then J e else 0
 
-/-- The coupling on the ghost graph: `J` on the edges of `G` and `0` on the ghost edges. -/
+/-- **Coupling lifted to the ghost graph.**
+The coupling on the ghost graph: `J` on the edges of `G` and `0` on the ghost edges. -/
 noncomputable def abfaLiftCoupling (J : Sym2 V → ℝ) : Sym2 (Option V) → ℝ :=
   FieldGhostDict.ghostCoupling 0 1 (abfaBaseCoupling G J)
 
@@ -78,13 +80,15 @@ noncomputable def abfaLiftCoupling (J : Sym2 V → ℝ) : Sym2 (Option V) → �
 @[simp] lemma abfaLiftCoupling_some_none (J : Sym2 V → ℝ) (x : V) :
     abfaLiftCoupling G J s(some x, none) = 0 := rfl
 
-/-- Edge parameters `1 - e^{-βJ_e}` on the edges of `G` and `1 - e^{-h}` on the ghost edges. -/
+/-- **Edge parameters with a ghost field.**
+Edge parameters `1 - e^{-βJ_e}` on the edges of `G` and `1 - e^{-h}` on the ghost edges. -/
 noncomputable def abfaParams (J : Sym2 V → ℝ) (beta h : ℝ) :
     Sym2 (Option V) → ℝ :=
   abpdBetaFieldParams (FieldGhostDict.ghostEdges V) (qField h)
     (abfaLiftCoupling G J) beta
 
-/-- The percolation magnetization `M(β, h) = P(o ↔ ghost)`. -/
+/-- **Finite-volume percolation magnetization.**
+The percolation magnetization `M(β, h) = P(o ↔ ghost)`. -/
 noncomputable def abfaMag (J : Sym2 V → ℝ) (o : V) (beta h : ℝ) : ℝ :=
   probV (abfaParams G J beta h)
     (connEvent (withGhost G) Set.univ (some o) {none})
@@ -376,7 +380,8 @@ lemma abfaMag_monotoneOn_field (J : Sym2 V → ℝ) (o : V) (beta : ℝ)
 
 /-! ## D. The inequality -/
 
-/-- The Aizenman–Barsky inequality on a finite graph: if all row sums equal `J₀` and all sites have
+/-- **Aizenman–Barsky inequality on a finite graph.**
+The Aizenman–Barsky inequality on a finite graph: if all row sums equal `J₀` and all sites have
 the same magnetization, then `∂_β M ≤ J₀ M ∂_h M` for `β, h ≥ 0`. Reference: M. Aizenman, D. J.
 Barsky, "Sharpness of the phase transition in percolation models", Comm. Math. Phys. 108 (1987)
 489–526. -/

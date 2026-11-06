@@ -208,7 +208,8 @@ end Sum
 
 /-! ## B. Two replicas with inhomogeneous weights -/
 
-/-- The expectation of `F a b` over two independent copies of the Ising model with couplings `K`
+/-- **Two-replica expectation with inhomogeneous couplings.**
+The expectation of `F a b` over two independent copies of the Ising model with couplings `K`
 and fields `hf`. -/
 noncomputable def ghsiExp2 (K : Sym2 V → ℝ) (hf : V → ℝ)
     (F : ConfigSpace V → ConfigSpace V → ℝ) : ℝ :=
@@ -231,7 +232,8 @@ lemma ghsiExp2_factor (K : Sym2 V → ℝ) (hf : V → ℝ)
   intro b _
   ring
 
-/-- The Boltzmann weight, with couplings `2K` and fields `2hf`, of `a` on the subgraph induced by
+/-- **Inhomogeneous agreement-set Boltzmann weight.**
+The Boltzmann weight, with couplings `2K` and fields `2hf`, of `a` on the subgraph induced by
 the agreement set of `q`. -/
 noncomputable def ghsiTWeight (K : Sym2 V → ℝ) (hf : V → ℝ)
     (q a : ConfigSpace V) : ℝ :=
@@ -240,7 +242,8 @@ noncomputable def ghsiTWeight (K : Sym2 V → ℝ) (hf : V → ℝ)
         (2 * K e) * bond a e) +
       ∑ v ∈ ghsLAgreeFinset q, (2 * hf v) * spin a v)
 
-/-- The zero-field Boltzmann weight, with couplings `2K`, of `a` on the subgraph induced by the
+/-- **Inhomogeneous zero-field disagreement-set weight.**
+The zero-field Boltzmann weight, with couplings `2K`, of `a` on the subgraph induced by the
 disagreement set of `q`. -/
 noncomputable def ghsiUWeight (K : Sym2 V → ℝ) (q a : ConfigSpace V) : ℝ :=
   Real.exp
@@ -367,27 +370,32 @@ lemma ghsiUWeight_eq_wJ (K : Sym2 V → ℝ) (q a : ConfigSpace V) :
 
 /-! ## C. Fibres of the agreement map -/
 
-/-- The two-replica weight of `a` and its mate in the fibre over the agreement configuration `q`. -/
+/-- **Inhomogeneous two-replica weight in an agreement fibre.**
+The two-replica weight of `a` and its mate in the fibre over the agreement configuration `q`. -/
 noncomputable def ghsiFibreWeight (K : Sym2 V → ℝ) (hf : V → ℝ)
     (q a : ConfigSpace V) : ℝ :=
   wJ G.edgeFinset K hf a * wJ G.edgeFinset K hf (ghsLMate q a)
 
-/-- The total two-replica weight of the fibre over `q`. -/
+/-- **Inhomogeneous total weight of an agreement fibre.**
+The total two-replica weight of the fibre over `q`. -/
 noncomputable def ghsiFibreMass (K : Sym2 V → ℝ) (hf : V → ℝ)
     (q : ConfigSpace V) : ℝ :=
   ∑ a : ConfigSpace V, ghsiFibreWeight G K hf q a
 
-/-- The two-replica weight of the fibre over `q`, integrated against `F`. -/
+/-- **Inhomogeneous fibre weight integrated against an observable.**
+The two-replica weight of the fibre over `q`, integrated against `F`. -/
 noncomputable def ghsiFibreNumerator (K : Sym2 V → ℝ) (hf : V → ℝ)
     (F : ConfigSpace V → ConfigSpace V → ℝ) (q : ConfigSpace V) : ℝ :=
   ∑ a : ConfigSpace V, ghsiFibreWeight G K hf q a * F a (ghsLMate q a)
 
-/-- The conditional two-replica expectation of `F` given the agreement configuration `q`. -/
+/-- **Inhomogeneous conditional expectation given the agreement.**
+The conditional two-replica expectation of `F` given the agreement configuration `q`. -/
 noncomputable def ghsiFibreExpectation (K : Sym2 V → ℝ) (hf : V → ℝ)
     (F : ConfigSpace V → ConfigSpace V → ℝ) (q : ConfigSpace V) : ℝ :=
   ghsiFibreNumerator G K hf F q / ghsiFibreMass G K hf q
 
-/-- The probability that two independent replicas have agreement configuration `q`. -/
+/-- **Inhomogeneous law of the agreement configuration.**
+The probability that two independent replicas have agreement configuration `q`. -/
 noncomputable def ghsiAgreementProb (K : Sym2 V → ℝ) (hf : V → ℝ)
     (q : ConfigSpace V) : ℝ :=
   ghsiFibreMass G K hf q / (ZJ G.edgeFinset K hf) ^ 2
@@ -494,23 +502,27 @@ lemma ghsiAgreementProb_fkg (K : Sym2 V → ℝ) (hf : V → ℝ)
   rw [div_mul_div_comm, div_mul_div_comm]
   exact div_le_div_of_nonneg_right hfibre (mul_nonneg (sq_nonneg _) (sq_nonneg _))
 
-/-- The conditional expectation `E[u_o u_x | q]` of the rotated variables. -/
+/-- **Inhomogeneous conditional expectation of $u_o u_x$.**
+The conditional expectation `E[u_o u_x | q]` of the rotated variables. -/
 noncomputable def ghsiFibreUU (K : Sym2 V → ℝ) (hf : V → ℝ)
     (o x : V) (q : ConfigSpace V) : ℝ :=
   ghsiFibreExpectation G K hf (fun a b => uvar a b o * uvar a b x) q
 
-/-- The conditional expectation `E[t_y | q]` of the rotated variable. -/
+/-- **Inhomogeneous conditional expectation of $t_y$.**
+The conditional expectation `E[t_y | q]` of the rotated variable. -/
 noncomputable def ghsiFibreT (K : Sym2 V → ℝ) (hf : V → ℝ)
     (y : V) (q : ConfigSpace V) : ℝ :=
   ghsiFibreExpectation G K hf (fun a b => tvar a b y) q
 
-/-- The zero-field expectation on the subgraph induced by the disagreement set of `q`. -/
+/-- **Inhomogeneous zero-field expectation on the disagreement set.**
+The zero-field expectation on the subgraph induced by the disagreement set of `q`. -/
 noncomputable def ghsiUExpectation (K : Sym2 V → ℝ) (q : ConfigSpace V)
     (F : ConfigSpace V → ℝ) : ℝ :=
   (∑ a : ConfigSpace V, ghsiUWeight G K q a * F a) /
     ∑ a : ConfigSpace V, ghsiUWeight G K q a
 
-/-- The expectation with field on the subgraph induced by the agreement set of `q`. -/
+/-- **Inhomogeneous expectation with field on the agreement set.**
+The expectation with field on the subgraph induced by the agreement set of `q`. -/
 noncomputable def ghsiTExpectation (K : Sym2 V → ℝ) (hf : V → ℝ)
     (q : ConfigSpace V) (F : ConfigSpace V → ℝ) : ℝ :=
   (∑ a : ConfigSpace V, ghsiTWeight G K hf q a * F a) /
@@ -638,14 +650,16 @@ lemma ghsiFibreT_eq_tExpectation (K : Sym2 V → ℝ) (hf : V → ℝ)
 
 /-! ## D. Monotonicity of the fibre expectations -/
 
-/-- The zero-field correlation `⟨σ_o σ_x⟩` on the subgraph induced by `Aᶜ` (couplings `2K`), or
+/-- **Inhomogeneous two-point correlation on the disagreement set.**
+The zero-field correlation `⟨σ_o σ_x⟩` on the subgraph induced by `Aᶜ` (couplings `2K`), or
 `0` if `o` or `x` lies in `A`. -/
 noncomputable def ghsiDisagreementCorr (K : Sym2 V → ℝ)
     (o x : V) (A : Finset V) : ℝ :=
   if o ∈ A ∨ x ∈ A then 0
   else ghsvp_vertexCorr G.edgeFinset (fun e => 2 * K e) Aᶜ {o, x}
 
-/-- The magnetization `⟨σ_y⟩` on the subgraph induced by `A` (couplings `2K`, fields `2hf`), or
+/-- **Inhomogeneous magnetization on the agreement set.**
+The magnetization `⟨σ_y⟩` on the subgraph induced by `A` (couplings `2K`, fields `2hf`), or
 `0` if `y ∉ A`. -/
 noncomputable def ghsiAgreementMag (K : Sym2 V → ℝ) (hf : V → ℝ)
     (y : V) (A : Finset V) : ℝ :=
@@ -731,7 +745,8 @@ lemma ghsiFibreUU_eq_disagreementCorr (K : Sym2 V → ℝ) (hf : V → ℝ)
         intro a _
         rw [ghsiUWeight_eq_wJ]
 
-/-- The field weight `exp (∑_{v ∉ q} 2h_v σ_v(a))` of the disagreement set. -/
+/-- **Inhomogeneous field weight of the disagreement set.**
+The field weight `exp (∑_{v ∉ q} 2h_v σ_v(a))` of the disagreement set. -/
 noncomputable def ghsiOutFieldWeight (hf : V → ℝ)
     (q a : ConfigSpace V) : ℝ :=
   Real.exp (∑ v ∈ (ghsLAgreeFinset q)ᶜ, (2 * hf v) * spin a v)
@@ -1101,11 +1116,11 @@ theorem ghsi_ursell_nonpos (K : Sym2 V → ℝ) (hf : V → ℝ)
 
 /-! ## F. Concavity of the magnetization -/
 
-/-- The directional spin `∑_x d_x σ_x`. -/
+/-- **Directional spin sum.** The directional spin `∑_x d_x σ_x`. -/
 noncomputable def ghsiDirSpin (dir : V → ℝ) (s : ConfigSpace V) : ℝ :=
   ∑ x, dir x * spin s x
 
-/-- The field line `t ↦ h + t·d`. -/
+/-- **Field line in a given direction.** The field line `t ↦ h + t·d`. -/
 def ghsiFieldLine (hf dir : V → ℝ) (t : ℝ) : V → ℝ :=
   fun x => hf x + t * dir x
 
@@ -1201,7 +1216,8 @@ lemma ghsi_hasDerivAt_expectation_fieldLine (K : Sym2 V → ℝ)
     change A / Z - B / Z * (C / Z) = (A * Z - B * C) / Z ^ 2
     field_simp
 
-/-- The covariance of `f` with the directional spin `∑_x d_x σ_x`. -/
+/-- **Covariance with the directional spin.**
+The covariance of `f` with the directional spin `∑_x d_x σ_x`. -/
 noncomputable def ghsiDirectionalCovariance (K : Sym2 V → ℝ)
     (hf dir : V → ℝ) (f : ConfigSpace V → ℝ) : ℝ :=
   expJ G.edgeFinset K hf (fun s => f s * ghsiDirSpin dir s) -
@@ -1234,7 +1250,8 @@ lemma ghsi_hasDerivAt_directionalCovariance (K : Sym2 V → ℝ)
   convert h using 1
   ring
 
-/-- The third Ursell function `u₃(o, x, y)` of the inhomogeneous Ising model. -/
+/-- **Third Ursell function of the inhomogeneous Ising model.**
+The third Ursell function `u₃(o, x, y)` of the inhomogeneous Ising model. -/
 noncomputable def ghsiUrsell3 (K : Sym2 V → ℝ) (hf : V → ℝ)
     (o x y : V) : ℝ :=
   expJ G.edgeFinset K hf (fun s => spin s o * (spin s x * spin s y)) -
@@ -1248,7 +1265,8 @@ noncomputable def ghsiUrsell3 (K : Sym2 V → ℝ) (hf : V → ℝ)
       expJ G.edgeFinset K hf (fun s => spin s x) *
       expJ G.edgeFinset K hf (fun s => spin s y)
 
-/-- The GHS inequality `u₃(o, x, y) ≤ 0` for the named Ursell function, when `o ≠ x`. -/
+/-- **Third Ursell function nonpositive for $o \ne x$, $K, h \ge 0$.**
+The GHS inequality `u₃(o, x, y) ≤ 0` for the named Ursell function, when `o ≠ x`. -/
 lemma ghsiUrsell3_nonpos (K : Sym2 V → ℝ) (hf : V → ℝ)
     (hK : ∀ e, 0 ≤ K e) (hhf : ∀ x, 0 ≤ hf x)
     (o x y : V) (hox : o ≠ x) :
@@ -1331,7 +1349,7 @@ lemma ghsi_expJ_mul_dirSpin_sq (K : Sym2 V → ℝ) (hf dir : V → ℝ)
   intro y _
   ring
 
-/-- The spin covariance `⟨σ_o σ_x⟩ - ⟨σ_o⟩⟨σ_x⟩`. -/
+/-- **Spin covariance in the inhomogeneous model.** The spin covariance `⟨σ_o σ_x⟩ - ⟨σ_o⟩⟨σ_x⟩`. -/
 noncomputable def ghsiCovariance (K : Sym2 V → ℝ) (hf : V → ℝ)
     (o x : V) : ℝ :=
   expJ G.edgeFinset K hf (fun s => spin s o * spin s x) -

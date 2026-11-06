@@ -72,7 +72,8 @@ variable (H : SimpleGraph V) [DecidableRel H.Adj]
 
 /-! ## A. Switching gap and pair sums on the edge-copy multigraph -/
 
-/-- The switching gap of a current `m` with sources `A`: the number of sub-currents (subsets of edge
+/-- **Switching gap of a current.**
+The switching gap of a current `m` with sources `A`: the number of sub-currents (subsets of edge
 copies) with sources `A` minus the number with sources `A ∆ {u, v}`; zero if the sources of `m` are
 not `A`. -/
 noncomputable def hca_gap (m : ↥H.edgeFinset → ℕ) (A : Finset V) (u v : V) : ℝ :=
@@ -109,7 +110,8 @@ lemma hca_gap_disconn (m : ↥H.edgeFinset → ℕ) (A : Finset V) {u v : V} (hu
   · rw [ite_eq_right hAm, mul_zero]
 
 open Classical in
-/-- The current sum `∑_m 1_{P m} · gap(m) · w(m)` of the switching gap weighted by the current
+/-- **Gap-weighted current sum restricted to a predicate.**
+The current sum `∑_m 1_{P m} · gap(m) · w(m)` of the switching gap weighted by the current
 weight, restricted to currents satisfying `P`. -/
 noncomputable def hca_pairSum (β : ℝ) (J : Sym2 V → ℝ) (A : Finset V) (u v : V)
     (P : (↥H.edgeFinset → ℕ) → Prop) : ℝ :=
@@ -255,7 +257,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## B. Bond and field covariances in the ghost representation -/
 
-/-- The ghost-graph source set `{ghost} ∪ ({o} ∆ {x, y})` attached to the bond covariance `Cov(σ_o,
+/-- **Ghost source set of a bond covariance.**
+The ghost-graph source set `{ghost} ∪ ({o} ∆ {x, y})` attached to the bond covariance `Cov(σ_o,
 σ_xσ_y)`. -/
 noncomputable def hcaBondSource (o : V) : Sym2 V -> Finset (Option V) :=
   Sym2.lift <| by
@@ -267,17 +270,20 @@ omit [Fintype V] in
 @[simp] lemma hcaBondSource_mk (o x y : V) :
     hcaBondSource o s(x, y) = insert none ((({o} : Finset V) ∆ {x, y}).map someEmb) := rfl
 
-/-- The bond term `Δ_e`: the ghost-graph double-current sum with sources `hcaBondSource o e` and `∅`
+/-- **Bond term $\Delta_e$ of the magnetization derivative.**
+The bond term `Δ_e`: the ghost-graph double-current sum with sources `hcaBondSource o e` and `∅`
 in which `o` is not connected to the ghost. -/
 noncomputable def hcaBondDelta (β h : ℝ) (o : V) (e : Sym2 V) : ℝ :=
   sourcePairDisconnSum (withGhost G) β (ghostCoupling h β (fun _ => 1))
     (hcaBondSource o e) ∅ (some o) none
 
-/-- The ghost-graph source set `{o} ∆ {z}` attached to the field covariance `Cov(σ_o, σ_z)`. -/
+/-- **Ghost source set of a field covariance.**
+The ghost-graph source set `{o} ∆ {z}` attached to the field covariance `Cov(σ_o, σ_z)`. -/
 noncomputable def hcaFieldSource (o z : V) : Finset (Option V) :=
   ((({o} : Finset V) ∆ {z}).map someEmb)
 
-/-- The field term `Δ_z`: the ghost-graph double-current sum with sources `hcaFieldSource o z` and
+/-- **Field term $\Delta_z$ of the magnetization derivative.**
+The field term `Δ_z`: the ghost-graph double-current sum with sources `hcaFieldSource o z` and
 `∅` in which `o` is not connected to the ghost. -/
 noncomputable def hcaFieldDelta (β h : ℝ) (o z : V) : ℝ :=
   sourcePairDisconnSum (withGhost G) β (ghostCoupling h β (fun _ => 1))
@@ -480,7 +486,8 @@ lemma hca_field_covariance_eq_delta (β h : ℝ) (o z : V)
   rw [spin_mul_spin_eq_spinProd o z, spin_eq_spinProd z, spin_eq_spinProd o]
   exact hca_field_covariance_sourcePair G β h o z hZne
 
-/-- The `β`-derivative of the magnetization in random-current form: `∂_β ⟨σ_o⟩_{β,h} = Z⁻² (∑_{e ∈
+/-- **Random-current form of the $\beta$-derivative of the magnetization.**
+The `β`-derivative of the magnetization in random-current form: `∂_β ⟨σ_o⟩_{β,h} = Z⁻² (∑_{e ∈
 E(G)} Δ_e + h ∑_z Δ_z)`, with `Z` the sourceless ghost-graph current sum. Reference: M. Aizenman, D.
 J. Barsky, R. Fernández, "The phase transition in a general class of Ising-type models is sharp", J.
 Stat. Phys. 47 (1987) 343–374. -/

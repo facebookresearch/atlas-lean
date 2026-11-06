@@ -98,7 +98,8 @@ lemma pcc_not_contourCountBound :
 
 /-! ## B. Clusters containing the origin -/
 
-/-- The finite sets of sites in `Λ_n` containing the origin. -/
+/-- **Origin cluster family: finite site sets in the box through the origin.**
+The finite sets of sites in `Λ_n` containing the origin. -/
 noncomputable def originClusterFamily (n : ℕ) : Finset (Finset (Site d)) :=
   (clusterFamily (d := d) n).filter (fun K => origin d ∈ K)
 
@@ -157,7 +158,8 @@ lemma pcc_probOriginMinus_le_sum_origin (n : ℕ) (β : ℝ) :
   have hbound := contour_energy_bound n (↑K) hKbox (plusField d) (bondFinsetTouch d n) β
   exact hbound
 
-/-- The site `j e_c` on the `c`-th coordinate axis. -/
+/-- **Site $j e_c$ on the $c$-th coordinate axis.**
+The site `j e_c` on the `c`-th coordinate axis. -/
 def pcc_rayS (c : Fin d) (j : ℕ) : Site d := fun i => if i = c then (j : ℤ) else 0
 
 lemma pcc_rayS_zero (c : Fin d) : pcc_rayS c 0 = origin d := by
@@ -225,7 +227,8 @@ lemma pcc_one_le_contourLen {n : ℕ} (hd : 1 ≤ d) {K : Finset (Site d)}
       ← Finset.nonempty_iff_ne_empty]
   exact ⟨_, hcross⟩
 
-/-- The sum of `e^{-2β |∂K|}` over the origin cluster family is at most the Peierls series. -/
+/-- **Peierls series bound on the origin-cluster contour sum.**
+The sum of `e^{-2β |∂K|}` over the origin cluster family is at most the Peierls series. -/
 def OriginContourCountBound (d n : ℕ) (β : ℝ) : Prop :=
   ∑ K ∈ originClusterFamily (d := d) n,
       Real.exp (-(2 * β) * (contourLen (↑K) (bondFinsetTouch d n) : ℝ))

@@ -63,12 +63,14 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ## A. Open walks and their edges -/
 
-/-- The edges of `V` used by a walk in the open subgraph induced on `A`. -/
+/-- **Edges used by an open walk in an induced subgraph.**
+The edges of `V` used by a walk in the open subgraph induced on `A`. -/
 def sab_inducedEdgeSet (G : SimpleGraph V) (ω : ConfigSpace (Sym2 V)) (A : Set V) {x y : A}
     (w : ((openSub G ω).induce A).Walk x y) : Set (Sym2 V) :=
   {e | ∃ z ∈ w.edges, e = Sym2.map Subtype.val z}
 
-/-- An open walk in `A` for `ω`, read as an open walk for `ω'` when `ω` and `ω'` agree on its edges.
+/-- **Transfer of an open walk between agreeing configurations.**
+An open walk in `A` for `ω`, read as an open walk for `ω'` when `ω` and `ω'` agree on its edges.
 -/
 noncomputable def sab_inducedWalkTransfer (G : SimpleGraph V) {ω ω' : ConfigSpace (Sym2 V)}
     {A : Set V} {x y : A}
@@ -140,7 +142,8 @@ lemma sab_occursOn_connEventSet_of_walk (G : SimpleGraph V) (ω : ConfigSpace (S
 
 /-! ## B. Walks avoiding a fixed edge -/
 
-/-- An open walk for `ω_S` avoiding the edge `xy`, read as an open walk for `ω` when the two agree
+/-- **Transfer of an open walk avoiding a fixed edge.**
+An open walk for `ω_S` avoiding the edge `xy`, read as an open walk for `ω` when the two agree
 off `xy`. -/
 noncomputable def sab_transfer_avoid (G : SimpleGraph V) {ωS ω : ConfigSpace (Sym2 V)}
     (A : Set V) (x y : V) (hx : x ∈ A) (hy : y ∈ A) {u a : A}

@@ -65,7 +65,8 @@ variable {d : ℕ}
 ## A. The FKG inequality for the free measures
 -/
 
-/-- FKG inequality for the free box measure `φ⁰_m` (`q = 2`) on two increasing cylinder events of a
+/-- **FKG inequality for free $q = 2$ box measures on smaller-box events.**
+FKG inequality for the free box measure `φ⁰_m` (`q = 2`) on two increasing cylinder events of a
 smaller box `Λ_N`, `N ≤ m`. -/
 lemma freeFiniteMeasure_fkg (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
@@ -107,7 +108,8 @@ lemma freeFiniteMeasure_fkg (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) (
     _ = ∑ ω, (T₁ ∩ T₂).indicator (fun _ => (1 : ℝ)) ω * fkProb (boxGraph d m) p 2 ω :=
         Finset.sum_congr rfl (fun ω _ => mul_comm _ _)
 
-/-- FKG inequality for the free infinite-volume measure at `q = 2` on increasing cylinder events of
+/-- **FKG inequality for the free $q = 2$ infinite-volume measure.**
+FKG inequality for the free infinite-volume measure at `q = 2` on increasing cylinder events of
 a box. -/
 lemma ivp_iv_fkg (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
@@ -149,7 +151,8 @@ section Wired
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 variable (bdry : V → Prop) [DecidablePred bdry]
 
-/-- The wired random-cluster measure satisfies the FKG lattice condition when `q ≥ 1`. -/
+/-- **FKG lattice condition for the wired measure when $q \ge 1$.**
+The wired random-cluster measure satisfies the FKG lattice condition when `q ≥ 1`. -/
 lemma wiredFkProb_FKGLatticeCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     FKGLatticeCondition (fun ω => wiredFkProb G bdry p q ω) := by
   intro a b
@@ -163,7 +166,8 @@ lemma wiredFkProb_FKGLatticeCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
     _ = bcProb G (StatMech.Lattice.boundaryCliqueGraph bdry) p q (a ⊔ b)
           * bcProb G (StatMech.Lattice.boundaryCliqueGraph bdry) p q (a ⊓ b) := mul_comm _ _
 
-/-- FKG inequality for the wired random-cluster measure on a finite graph: increasing events are
+/-- **FKG inequality for the wired measure when $q \ge 1$.**
+FKG inequality for the wired random-cluster measure on a finite graph: increasing events are
 positively correlated when `q ≥ 1`. -/
 lemma wiredFkProb_positively_associated_events {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -179,7 +183,8 @@ lemma wiredFkProb_positively_associated_events {p q : ℝ}
 
 end Wired
 
-/-- FKG inequality for the wired box measure `φ¹_m` (`q = 2`) on two increasing cylinder events of a
+/-- **FKG inequality for wired $q = 2$ box measures on smaller-box events.**
+FKG inequality for the wired box measure `φ¹_m` (`q = 2`) on two increasing cylinder events of a
 smaller box `Λ_N`, `N ≤ m`. -/
 lemma wiredFiniteMeasure_fkg (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
@@ -226,7 +231,8 @@ lemma wiredFiniteMeasure_fkg (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) 
           * wiredFkProb (boxGraph d m) (boxBoundary d m) p 2 ω :=
         Finset.sum_congr rfl (fun ω _ => mul_comm _ _)
 
-/-- FKG inequality for the wired infinite-volume measure at `q = 2` on increasing cylinder events of
+/-- **FKG inequality for the wired $q = 2$ infinite-volume measure.**
+FKG inequality for the wired infinite-volume measure at `q = 2` on increasing cylinder events of
 a box. -/
 lemma ivp_iv_fkg_wired (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
@@ -264,7 +270,8 @@ lemma ivp_iv_fkg_wired (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
 ## C. Ordering of the infinite-volume measures
 -/
 
-/-- At `q = 2` the free infinite-volume measure gives every increasing cylinder event at most the
+/-- **Wired $q = 2$ measure dominates the free one on increasing cylinders.**
+At `q = 2` the free infinite-volume measure gives every increasing cylinder event at most the
 probability the wired one gives it. -/
 lemma ivp_iv_monotone (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :

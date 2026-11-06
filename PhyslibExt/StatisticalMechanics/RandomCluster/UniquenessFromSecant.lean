@@ -107,7 +107,8 @@ lemma heq_at_cont_q2_of_secant (d N : ℕ) (eb : Sym2 (boxVerts d N))
   exact density_le_of_secant_continuousWithinAt hp0 hp1 hcont
     (fun p' hp'mem hp'lt => hsecant p ⟨hp0, hp1⟩ p' hp'mem hp'lt)
 
-/-- For `q = 2`: assuming `φ^1_{p'}(e open) ≤ φ^0_p(e open)` for `p' < p` in `(0, 1)`, for all but
+/-- **Secant bound gives $q = 2$ edge-event uniqueness off a countable set.**
+For `q = 2`: assuming `φ^1_{p'}(e open) ≤ φ^0_p(e open)` for `p' < p` in `(0, 1)`, for all but
 countably many `p` every measure between the free and wired infinite-volume measures on the
 event
 `{eb open}` agrees with both.

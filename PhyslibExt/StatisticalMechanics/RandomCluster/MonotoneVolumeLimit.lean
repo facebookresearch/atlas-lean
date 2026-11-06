@@ -55,7 +55,8 @@ variable {d : ℕ}
 ## A. Ordered infinite-volume limits
 -/
 
-/-- At `q = 2`, for an increasing cylinder event `S`, `φ⁰_m(S) → φ⁰(S)`, `φ¹_m(S) → φ¹(S)`, and
+/-- **Convergence and ordering of free and wired limits at $q = 2$.**
+At `q = 2`, for an increasing cylinder event `S`, `φ⁰_m(S) → φ⁰(S)`, `φ¹_m(S) → φ¹(S)`, and
 `φ⁰(S) ≤ φ¹(S)`. -/
 lemma mvl_infiniteVolume_extremal (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
@@ -74,7 +75,8 @@ lemma mvl_infiniteVolume_extremal (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   ⟨fk_free_infinite_measure N hp hp1 hS, fk_wired_infinite_measure N hp hp1 hS,
     ivp_iv_monotone N hp hp1 hS⟩
 
-/-- Subsequence form of `mvl_infiniteVolume_extremal` (with the identity subsequence). -/
+/-- **Convergence and ordering at $q = 2$ in subsequence form.**
+Subsequence form of `mvl_infiniteVolume_extremal` (with the identity subsequence). -/
 lemma mvl_infiniteVolume_extremal_subseq (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
     ∃ (ψ : ℕ → ℕ)

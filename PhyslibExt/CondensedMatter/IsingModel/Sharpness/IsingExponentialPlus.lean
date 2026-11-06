@@ -206,7 +206,8 @@ lemma mem_boxFinset_of_l1dist_origin_le (N : ℕ) (z : Site d)
     (fun j (_ : j ∈ Finset.univ) => Nat.zero_le (z j).natAbs)
     (Finset.mem_univ i)).trans h
 
-/-- One more than the largest `ℓ¹` distance from the origin of a point of `T` or of the outer
+/-- **Simon radius of a finite set.**
+One more than the largest `ℓ¹` distance from the origin of a point of `T` or of the outer
 endpoint of a boundary edge of `T`. -/
 noncomputable def isingSimonRadius (d : ℕ) (T : Finset (Site d)) : ℕ :=
   max (T.sup (fun x ↦ l1dist d (origin d) x))
@@ -235,12 +236,14 @@ lemma boundary_lt_isingSimonRadius (T : Finset (Site d))
 
 /-! ## C. The tail supremum and its recursion -/
 
-/-- The set of values `⟨σ_0σ_z⟩^+_β` with `‖z‖₁ ≥ n`, together with `0`. -/
+/-- **Tail set of plus-state correlations.**
+The set of values `⟨σ_0σ_z⟩^+_β` with `‖z‖₁ ≥ n`, together with `0`. -/
 def plusCorrTailSet (d : ℕ) (beta : ℝ) (n : ℕ) : Set ℝ :=
   insert 0 {r | ∃ z : Site d, n ≤ l1dist d (origin d) z ∧
     r = plusCorr d beta (origin d) z}
 
-/-- The tail supremum `sup {⟨σ_0σ_z⟩^+_β | ‖z‖₁ ≥ n}` (and `0`). -/
+/-- **Tail supremum of plus-state correlations.**
+The tail supremum `sup {⟨σ_0σ_z⟩^+_β | ‖z‖₁ ≥ n}` (and `0`). -/
 noncomputable def plusCorrTailSup (d : ℕ) (beta : ℝ) (n : ℕ) : ℝ :=
   sSup (plusCorrTailSet d beta n)
 

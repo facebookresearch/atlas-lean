@@ -62,7 +62,8 @@ variable {d : ℕ}
 
 /-! ## A. Generating π-systems -/
 
-/-- The finite intersections of sets from `S` (together with `univ`), a π-system generating the
+/-- **Finite intersections of a family of sets.**
+The finite intersections of sets from `S` (together with `univ`), a π-system generating the
 same σ-algebra. -/
 noncomputable def finInterSystem {Ω : Type*} (S : Set (Set Ω)) : Set (Set Ω) :=
   Set.range (fun F : Finset S => ⋂₀ (Subtype.val '' (F : Set S)))
@@ -212,7 +213,8 @@ lemma meas_fvMeasure_coe (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
 
 /-! ## C. The Ising specification -/
 
-/-- The Ising specification in `Λ_n`: the kernel `η ↦ fvMeasure η n B β h`, measurable with
+/-- **Ising specification in a box.**
+The Ising specification in `Λ_n`: the kernel `η ↦ fvMeasure η n B β h`, measurable with
 respect to the spins outside `Λ_n`. -/
 noncomputable def isingSpec (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ) :
     @Kernel (ConfigSpace (Site d)) (ConfigSpace (Site d)) (outsideSigma (box d n)) _ :=
@@ -314,7 +316,8 @@ lemma isDLRState_add_smul (β h : ℝ) {a b : ℝ≥0∞} (hab : a + b = 1)
         Filter.EventuallyEq.rfl⟩
   rw [hLHS, hRHS, e₁, e₂]
 
-/-- The DLR states form a convex set: `a μ₁ + b μ₂` with `a + b = 1` is a DLR state if `μ₁`, `μ₂`
+/-- **Convexity of the set of DLR states.**
+The DLR states form a convex set: `a μ₁ + b μ₂` with `a + b = 1` is a DLR state if `μ₁`, `μ₂`
 are. -/
 lemma convex_isDLRState (β h : ℝ) {a b : ℝ≥0∞} (hab : a + b = 1)
     (μ₁ μ₂ : Measure (ConfigSpace (Site d))) [IsFiniteMeasure μ₁] [IsFiniteMeasure μ₂]

@@ -59,17 +59,20 @@ variable {d : ℕ}
 
 /-! ## A. Two-point connectivity and infinite clusters -/
 
-/-- The two-point connectivity `μ(x ↔ y)` of a measure on bond configurations of `ℤ^d`. -/
+/-- **Two-point connectivity of a bond measure on $\mathbb{Z}^d$.**
+The two-point connectivity `μ(x ↔ y)` of a measure on bond configurations of `ℤ^d`. -/
 noncomputable def infiniteTwoPointReal
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) (x y : Site d) : ℝ :=
   μ.real {ω | StatMech.Lattice.Connected d ω x y}
 
-/-- The event `{x ↔ ∞}` that the open cluster of `x` is infinite. -/
+/-- **Event that the open cluster of a site is infinite.**
+The event `{x ↔ ∞}` that the open cluster of `x` is infinite. -/
 def clusterInfiniteEvent (d : ℕ) (x : Site d) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   {ω | (cluster d ω x).Infinite}
 
-/-- If `x` and `y` both lie in infinite clusters, either they are connected or there are at least
+/-- **Disconnected sites in infinite clusters give two infinite clusters.**
+If `x` and `y` both lie in infinite clusters, either they are connected or there are at least
 two infinite clusters. -/
 lemma two_infinite_clusters_of_not_connected (x y : Site d) :
     clusterInfiniteEvent d x ∩ clusterInfiniteEvent d y ⊆
@@ -98,7 +101,8 @@ lemma two_infinite_clusters_of_not_connected (x y : Site d) :
     rw [← Set.encard_pair hne]
     exact Set.encard_le_encard hpair
 
-/-- With at most one infinite cluster almost surely, `μ(x ↔ ∞, y ↔ ∞) ≤ μ(x ↔ y)`. -/
+/-- **Joint percolation at most connectivity given no two infinite clusters.**
+With at most one infinite cluster almost surely, `μ(x ↔ ∞, y ↔ ∞) ≤ μ(x ↔ y)`. -/
 lemma infinite_cluster_inter_le_twoPoint
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsFiniteMeasure μ]
     (huniq : μ (atLeastTwoInfinite d) = 0) (x y : Site d) :
@@ -116,7 +120,8 @@ lemma infinite_cluster_inter_le_twoPoint
       _ = μ {ω | StatMech.Lattice.Connected d ω x y} := by rw [huniq, add_zero]
   exact ENNReal.toReal_mono (measure_ne_top μ _) hle
 
-/-- If `μ` satisfies the FKG inequality for the events `{x ↔ ∞}` (`hPA`), is translation
+/-- **Two-point lower bound from FKG, invariance, uniqueness and percolation.**
+If `μ` satisfies the FKG inequality for the events `{x ↔ ∞}` (`hPA`), is translation
 invariant on them (`hTI`), has at most one infinite cluster almost surely (`huniq`), and
 percolates (`htheta`), then `μ(0 ↔ x) ≥ θ²` for every `x`. -/
 lemma infiniteTwoPoint_uniform_pos_of_fkg_unique
@@ -146,7 +151,8 @@ lemma infiniteTwoPoint_uniform_pos_of_fkg_unique
 
 /-! ## B. Box-boundary connections and the percolation probability -/
 
-/-- For any finite measure, the probability that the origin is connected to the complement of the
+/-- **Crossing probabilities converge to the percolation probability.**
+For any finite measure, the probability that the origin is connected to the complement of the
 box of radius `n - 1` tends to the percolation probability. -/
 lemma crossingEvent_real_tendsto_percolation
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsFiniteMeasure μ] :
@@ -161,7 +167,8 @@ lemma crossingEvent_real_tendsto_percolation
   rw [iInter_crossingEvent_eq_percolationEvent] at htend
   exact (ENNReal.tendsto_toReal (measure_ne_top μ _)).comp htend
 
-/-- For any finite measure, the probability that the origin is connected to the boundary of the box
+/-- **Box-boundary connection probability tends to percolation probability.**
+For any finite measure, the probability that the origin is connected to the boundary of the box
 of radius `n` inside the box tends to the percolation probability. -/
 lemma boxBdryConnEvent_real_tendsto_percolation
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsFiniteMeasure μ] :
@@ -175,7 +182,8 @@ lemma boxBdryConnEvent_real_tendsto_percolation
   · filter_upwards with n
     exact measureReal_mono (boxBdryConnEvent_subset_crossingEvent n)
 
-/-- A connection from the origin to a site outside the box passes through the box boundary. -/
+/-- **A connection to outside the box passes through the box boundary.**
+A connection from the origin to a site outside the box passes through the box boundary. -/
 lemma connectionEvent_subset_boxBdryConnEvent (n : ℕ) (hn : 1 ≤ n)
     (x : Site d) (hx : x ∉ box d n) :
     {ω | StatMech.Lattice.Connected d ω (origin d) x} ⊆ boxBdryConnEvent d n := by
@@ -183,7 +191,8 @@ lemma connectionEvent_subset_boxBdryConnEvent (n : ℕ) (hn : 1 ≤ n)
   simp only [boxBdryConnEvent, Set.mem_preimage, Set.mem_ofPred_eq]
   exact boxBdryConn_of_crossing n hn ω hx hconn
 
-/-- Without percolation, the two-point connectivity from the origin tends to zero uniformly: for
+/-- **Uniform decay of two-point connectivity without percolation.**
+Without percolation, the two-point connectivity from the origin tends to zero uniformly: for
 every `ε > 0` there is `n` with `μ(0 ↔ x) < ε` for all `x` outside the box of radius `n`. -/
 lemma infiniteTwoPoint_uniform_decay_of_no_percolation
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsFiniteMeasure μ]

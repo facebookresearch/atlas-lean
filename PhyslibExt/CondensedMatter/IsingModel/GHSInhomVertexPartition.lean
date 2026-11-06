@@ -54,7 +54,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Ghost-vertex couplings -/
 
-/-- The ghost-vertex couplings: `2K_{xy}` on an edge `{x, y}`, `2h_x` between `x` and the ghost. -/
+/-- **Inhomogeneous ghost-vertex couplings.**
+The ghost-vertex couplings: `2K_{xy}` on an edge `{x, y}`, `2h_x` between `x` and the ghost. -/
 noncomputable def ghsiGhostCoupling (K : Sym2 V → ℝ) (hf : V → ℝ)
     (e : Sym2 (Option V)) : ℝ :=
   Sym2.lift ⟨fun a b =>
@@ -75,14 +76,16 @@ omit [Fintype V] [DecidableEq V] in
     (x : V) :
     ghsiGhostCoupling K hf s(some x, none) = 2 * hf x := rfl
 
-/-- The partition function of the subgraph induced by `A` with couplings `2K` and fields `2h` on
+/-- **Inhomogeneous induced-subgraph partition function with field.**
+The partition function of the subgraph induced by `A` with couplings `2K` and fields `2h` on
 `A`. -/
 noncomputable def ghsiTZ (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : Sym2 V → ℝ) (hf : V → ℝ) (A : Finset V) : ℝ :=
   ZJ (ghsvp_vertexEdges G.edgeFinset A) (fun e => 2 * K e)
     (fun x => if x ∈ A then 2 * hf x else 0)
 
-/-- The zero-field partition function of the subgraph induced by `A` with couplings `2K`. -/
+/-- **Inhomogeneous zero-field induced-subgraph partition function.**
+The zero-field partition function of the subgraph induced by `A` with couplings `2K`. -/
 noncomputable def ghsiUZ (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : Sym2 V → ℝ) (A : Finset V) : ℝ :=
   ZJ (ghsvp_vertexEdges G.edgeFinset A) (fun e => 2 * K e) (fun _ => 0)
@@ -244,7 +247,8 @@ lemma ghsi_vertexZ_someSet_eq_two_mul_uZ
 
 /-! ## C. The subset weight -/
 
-/-- The weight of the agreement set `A` in the duplicated inhomogeneous system. -/
+/-- **Inhomogeneous weight of an agreement set.**
+The weight of the agreement set `A` in the duplicated inhomogeneous system. -/
 noncomputable def ghsiSubsetMass (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : Sym2 V → ℝ) (hf : V → ℝ) (A : Finset V) : ℝ :=
   ghsvp_vertexZ (withGhost G).edgeFinset (ghsiGhostCoupling K hf)

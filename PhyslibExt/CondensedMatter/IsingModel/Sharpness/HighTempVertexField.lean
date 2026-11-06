@@ -63,7 +63,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. The field model and the ghost coupling -/
 
-/-- The coupling on `G` plus a ghost vertex: `J` on the edges of `G` and `H_x` on the edge `{x,
+/-- **Ghost-graph coupling with a site field.**
+The coupling on `G` plus a ghost vertex: `J` on the edges of `G` and `H_x` on the edge `{x,
 ghost}`. -/
 noncomputable def vertexGhostCoupling (J : Sym2 V → ℝ) (H : V → ℝ)
     (e : Sym2 (Option V)) : ℝ :=
@@ -85,24 +86,26 @@ omit [Fintype V] [DecidableEq V] in
     (J : Sym2 V → ℝ) (H : V → ℝ) (x : V) :
     vertexGhostCoupling J H s(some x, none) = H x := rfl
 
-/-- The Boltzmann weight `exp(β(∑_e J_e σ_e + ∑_x H_x σ_x))` with a site field `H`. -/
+/-- **Boltzmann weight with a site field.**
+The Boltzmann weight `exp(β(∑_e J_e σ_e + ∑_x H_x σ_x))` with a site field `H`. -/
 noncomputable def vertexFieldWeight (β : ℝ) (J : Sym2 V → ℝ)
     (H : V → ℝ) (s : ConfigSpace V) : ℝ :=
   Real.exp (β * ((∑ e ∈ G.edgeFinset, J e * bond s e) +
     ∑ x : V, H x * spin s x))
 
-/-- The partition function with site field `H`. -/
+/-- **Partition function with a site field.** The partition function with site field `H`. -/
 noncomputable def vertexFieldZ (β : ℝ) (J : Sym2 V → ℝ)
     (H : V → ℝ) : ℝ :=
   ∑ s : ConfigSpace V, vertexFieldWeight G β J H s
 
-/-- The Gibbs expectation with site field `H`. -/
+/-- **Gibbs expectation with a site field.** The Gibbs expectation with site field `H`. -/
 noncomputable def vertexFieldExpectation (β : ℝ) (J : Sym2 V → ℝ)
     (H : V → ℝ) (f : ConfigSpace V → ℝ) : ℝ :=
   (∑ s : ConfigSpace V, f s * vertexFieldWeight G β J H s) /
     vertexFieldZ G β J H
 
-/-- The two-point function `⟨σ_aσ_b⟩_{β,J,H}` with site field `H`. -/
+/-- **Two-point function with a site field.**
+The two-point function `⟨σ_aσ_b⟩_{β,J,H}` with site field `H`. -/
 noncomputable def vertexFieldTwoPoint (β : ℝ) (J : Sym2 V → ℝ)
     (H : V → ℝ) (a b : V) : ℝ :=
   vertexFieldExpectation G β J H (spinProd (sourcePair a b))

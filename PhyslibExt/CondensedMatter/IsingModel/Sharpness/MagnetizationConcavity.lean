@@ -59,7 +59,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. The second field derivative of the magnetization -/
 
-/-- The field derivative of the two-point covariance `Cov(σ_o, σ_x)`, written as a combination of
+/-- **Field derivative of the two-point covariance.**
+The field derivative of the two-point covariance `Cov(σ_o, σ_x)`, written as a combination of
 Gibbs expectations involving the total spin. -/
 noncomputable def gc4_D1cov2 (β h : ℝ) (o x : V) : ℝ :=
     (β * (isingExpectation G β h (fun s => (spin s o * spin s x) * totalSpin s)

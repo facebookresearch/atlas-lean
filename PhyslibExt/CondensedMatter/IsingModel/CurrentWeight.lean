@@ -63,18 +63,20 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Restriction to a cut -/
 
-/-- The restriction of the current `n` to the edges satisfying `p` (zero elsewhere). -/
+/-- **Restriction of a current to an edge predicate.**
+The restriction of the current `n` to the edges satisfying `p` (zero elsewhere). -/
 noncomputable def acwRestrict (p : Sym2 V → Prop) [DecidablePred p] (n : Current V) : Current V :=
   fun e => if p e then n e else 0
 
-/-- Both endpoints of `e` lie in `S`. -/
+/-- **Internal edge of a vertex set.** Both endpoints of `e` lie in `S`. -/
 def acwInternal (S : Finset V) (e : Sym2 V) : Prop := ∀ z ∈ e, z ∈ S
 
 /-- Being an internal edge of `S` is decidable. -/
 instance (S : Finset V) : DecidablePred (acwInternal S) := fun e => by
   unfold acwInternal; infer_instance
 
-/-- Every edge of `G` lies inside `S` or inside its complement. -/
+/-- **Vertex set that no edge of the graph crosses.**
+Every edge of `G` lies inside `S` or inside its complement. -/
 def acwClosedCut (S : Finset V) : Prop :=
   ∀ e ∈ G.edgeFinset, acwInternal S e ∨ acwInternal Sᶜ e
 
@@ -167,7 +169,7 @@ lemma acw_sources_partition (S : Finset V) (hcut : acwClosedCut G S) (n : Curren
 
 /-! ## D. Current sums -/
 
-/-- `Z_A = ⟨σ_A⟩ Z_∅`. -/
+/-- **Sourced current sum as correlation times sourceless sum.** `Z_A = ⟨σ_A⟩ Z_∅`. -/
 lemma acw_currentSum_eq_expectation (β : ℝ) (J : Sym2 V → ℝ) (A : Finset V)
     (h0 : Sharpness.currentSum G β J ∅ ≠ 0) :
     Sharpness.currentSum G β J A = Sharpness.expectationJ G β J A * Sharpness.currentSum G β J ∅ :=

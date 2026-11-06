@@ -77,7 +77,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 -/
 
-/-- The open subgraph of `G` under the edge configuration `ω`: the edges of `G` that `ω`
+/-- **Open subgraph of an edge configuration.**
+The open subgraph of `G` under the edge configuration `ω`: the edges of `G` that `ω`
 declares open. -/
 def openSub (ω : ConfigSpace (Sym2 V)) : SimpleGraph V where
   Adj x y := G.Adj x y ∧ ω s(x, y) = true
@@ -97,7 +98,8 @@ omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma openSub_le (ω : ConfigSpace (Sym2 V)) : openSub G ω ≤ G := fun _ _ h => h.1
 
 omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
-/-- The open subgraph is `G ⊓ fromEdgeSet {e | ω e = true}` in Mathlib's terms. -/
+/-- **Open subgraph as the meet of $G$ with the open-edge graph.**
+The open subgraph is `G ⊓ fromEdgeSet {e | ω e = true}` in Mathlib's terms. -/
 lemma openSub_eq_inf_fromEdgeSet (ω : ConfigSpace (Sym2 V)) :
     openSub G ω = G ⊓ SimpleGraph.fromEdgeSet {e | ω e = true} := by
   ext x y
@@ -111,7 +113,8 @@ instance instDecidableRelOpenSubAdj (ω : ConfigSpace (Sym2 V)) :
   change Decidable (G.Adj x y ∧ ω s(x, y) = true)
   infer_instance
 
-/-- The number `k(ω)` of open clusters: connected components of the open subgraph, isolated
+/-- **Number of open clusters.**
+The number `k(ω)` of open clusters: connected components of the open subgraph, isolated
 vertices included. -/
 def numClusters (ω : ConfigSpace (Sym2 V)) : ℕ :=
   Fintype.card (openSub G ω).ConnectedComponent
@@ -122,7 +125,8 @@ def numClusters (ω : ConfigSpace (Sym2 V)) : ℕ :=
 
 -/
 
-/-- The Bernoulli edge product `∏_{e ∈ E(G)} (p if e open, 1 - p if e closed)`. -/
+/-- **Bernoulli edge product.**
+The Bernoulli edge product `∏_{e ∈ E(G)} (p if e open, 1 - p if e closed)`. -/
 def edgeProduct (p : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   ∏ e ∈ G.edgeFinset, (if ω e then p else 1 - p)
 
@@ -136,7 +140,8 @@ lemma edgeProduct_pos {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (ω : ConfigSpace (Sy
   · exact hp
   · linarith
 
-/-- The unnormalized random-cluster weight `p ^ o(ω) (1 - p) ^ c(ω) q ^ k(ω)`. -/
+/-- **Unnormalized random-cluster weight.**
+The unnormalized random-cluster weight `p ^ o(ω) (1 - p) ^ c(ω) q ^ k(ω)`. -/
 def fkWeight (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   edgeProduct G p ω * q ^ numClusters G ω
 
@@ -148,7 +153,8 @@ lemma fkWeight_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 V)) : 0 ≤ fkWeight G p q ω :=
   (fkWeight_pos G hp hp1 hq ω).le
 
-/-- The ambient FK normalizer, summing over every bit assignment on `Sym2 V`.
+/-- **Ambient FK normalizer.**
+The ambient FK normalizer, summing over every bit assignment on `Sym2 V`.
 Each loop or nonedge contributes a factor of two relative to the edge partition function
 `ecz_fkZEdge` defined in `EdgePartitionFunction`. -/
 def fkZ (p q : ℝ) : ℝ :=
@@ -166,7 +172,8 @@ lemma fkZ_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : fkZ G p 
 
 -/
 
-/-- The probability of an ambient configuration: `fkWeight G p q ω / fkZ G p q`.
+/-- **Probability of an ambient FK configuration.**
+The probability of an ambient configuration: `fkWeight G p q ω / fkZ G p q`.
 For `0 < p < 1` and `q > 0`, its graph-edge marginal is the random-cluster law and
 unused coordinates are uniform. -/
 noncomputable def fkProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
@@ -186,7 +193,8 @@ lemma fkProb_sum_eq_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
   rw [← Finset.sum_div]
   exact div_self (fkZ_ne_zero G hp hp1 hq)
 
-/-- The ambient extension of the random-cluster edge law as a `PMF` on all `Sym2 V`
+/-- **Ambient random-cluster law as a probability mass function.**
+The ambient extension of the random-cluster edge law as a `PMF` on all `Sym2 V`
 configurations, with independent uniform bits on loops and nonedges. -/
 noncomputable def fkPMF {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     PMF (ConfigSpace (Sym2 V)) :=
@@ -207,7 +215,8 @@ lemma fkPMF_apply {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 
 -/
 
-/-- At `q = 1` the random-cluster weight is the Bernoulli product weight. -/
+/-- **At $q = 1$ the random-cluster weight is the Bernoulli product.**
+At `q = 1` the random-cluster weight is the Bernoulli product weight. -/
 lemma fkWeight_one (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
     fkWeight G p 1 ω = edgeProduct G p ω := by
   unfold fkWeight

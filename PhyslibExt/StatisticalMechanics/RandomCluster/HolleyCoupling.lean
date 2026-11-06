@@ -72,7 +72,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 -/
 
-/-- The finite measure `∑_ω μ(ω) δ_ω` on `ConfigSpace E` with point masses `μ(ω)` (negative
+/-- **Finite measure with prescribed point masses.**
+The finite measure `∑_ω μ(ω) δ_ω` on `ConfigSpace E` with point masses `μ(ω)` (negative
 masses are truncated to `0`). For a normalized nonnegative `μ` it is the measure of the `PMF`
 `PMF.ofFintype μ`; see `measOfMass_eq_toMeasure`. -/
 noncomputable def measOfMass (μ : ConfigSpace E → ℝ) : Measure (ConfigSpace E) :=
@@ -105,7 +106,8 @@ lemma measOfMass_isProbabilityMeasure (μ : ConfigSpace E → ℝ) (hμ : 0 ≤ 
   simp only [Set.mem_univ, ite_true]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun ω _ => hμ ω), hsum, ENNReal.ofReal_one]
 
-/-- For a normalized nonnegative mass function, `measOfMass μ` is the measure of the `PMF`
+/-- **Normalized point masses give the probability mass function's measure.**
+For a normalized nonnegative mass function, `measOfMass μ` is the measure of the `PMF`
 `PMF.ofFintype (ENNReal.ofReal ∘ μ)`. -/
 lemma measOfMass_eq_toMeasure (μ : ConfigSpace E → ℝ)
     (h : ∑ ω, ENNReal.ofReal (μ ω) = 1) :

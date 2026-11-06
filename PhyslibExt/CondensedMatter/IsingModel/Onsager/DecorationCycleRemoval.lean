@@ -127,13 +127,15 @@ lemma ons_decoratedWeightedSpinWeight_split_eq_neg_cycleWeight
 
 /-! ## B. Splits at an external edge -/
 
-/-- Decorated even subgraphs that contain the external edge at `d`. -/
+/-- **Decorated even subgraphs containing a given external edge.**
+Decorated even subgraphs that contain the external edge at `d`. -/
 abbrev ons_DecoratedContainingEdge
     (L : ℕ) [Fact (2 < L)] (d : ons_Dart L) :=
   {D : ons_DecoratedEvenSubgraph L //
     s(d, ons_dartRev L d) ∈ D.1}
 
-/-- A split of a decorated even subgraph containing the external edge at `d` into a simple cycle
+/-- **Split of a decorated even subgraph into a rooted cycle and remainder.**
+A split of a decorated even subgraph containing the external edge at `d` into a simple cycle
 rooted at `d` (starting along that edge) and an even remainder disjoint from the cycle. -/
 structure ons_DecoratedEdgeSplit
     (L : ℕ) [Fact (2 < L)] (d : ons_Dart L)
@@ -148,7 +150,8 @@ structure ons_DecoratedEdgeSplit
   remainder_zero_root : incCount remainder.1 d = 0
   remainder_zero_rev : incCount remainder.1 (ons_dartRev L d) = 0
 
-/-- A chosen split of a decorated even subgraph at the external edge of `d`. -/
+/-- **Chosen split of a decorated even subgraph at an external edge.**
+A chosen split of a decorated even subgraph at the external edge of `d`. -/
 noncomputable def ons_decoratedEdgeSplit
     (L : ℕ) [Fact (2 < L)] (d : ons_Dart L)
     (D : ons_DecoratedContainingEdge L d) :
@@ -199,7 +202,8 @@ lemma ons_weightedSpinEdgeCoefficient_eq_decoratedCycleSplit
 
 /-! ## C. The cycle removal identity -/
 
-/-- The cycle removal identity: the Kac-Ward root with `d` and its reverse masked, times the total
+/-- **Cycle removal identity for decorated even subgraphs.**
+The cycle removal identity: the Kac-Ward root with `d` and its reverse masked, times the total
 first-return weight at `d`, equals the sum over decorated even subgraphs through `d` of the
 first-return weight of the split-off cycle times the spin weight of the remainder. -/
 def ons_decoratedCycleRemovalIdentity (L : ℕ) [Fact (2 < L)] : Prop :=

@@ -160,12 +160,14 @@ lemma ghy_Zdep_supermod (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → �
 
 /-! ## B. The weights ζ and ρ -/
 
-/-- The edge-removal ratio `ζ(S) = (Z_{E∖S} / Z_E) ∏_{e ∈ S} cosh J_e`. -/
+/-- **Edge-removal ratio of partition functions.**
+The edge-removal ratio `ζ(S) = (Z_{E∖S} / Z_E) ∏_{e ∈ S} cosh J_e`. -/
 noncomputable def ghy_zeta (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ)
     (S : Finset (Sym2 V)) : ℝ :=
   ZJ (E \ S) J hf / ZJ E J hf * ∏ e ∈ S, Real.cosh (J e)
 
-/-- The weight `ρ(S) = ζ(S) ∏_{e ∈ S} tanh J_e = (Z_{E∖S} / Z_E) ∏_{e ∈ S} sinh J_e`. -/
+/-- **Edge-removal weight with hyperbolic sine factors.**
+The weight `ρ(S) = ζ(S) ∏_{e ∈ S} tanh J_e = (Z_{E∖S} / Z_E) ∏_{e ∈ S} sinh J_e`. -/
 noncomputable def ghy_rho (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ)
     (S : Finset (Sym2 V)) : ℝ :=
   ghy_zeta E J hf S * ∏ e ∈ S, Real.tanh (J e)

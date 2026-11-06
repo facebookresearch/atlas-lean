@@ -79,7 +79,8 @@ variable {d : ℕ}
 ## A. Multi-edge events
 -/
 
-/-- The event `A_t` that every edge of the finite set `t` is open. On box configurations it is
+/-- **Event that all edges of a finite set are open.**
+The event `A_t` that every edge of the finite set `t` is open. On box configurations it is
 `cdc_boxMultiOpenEvent` (`med_boxMultiOpenEvent_eq`). -/
 def med_genericMultiOpenEvent {V : Type*} (t : Finset (Sym2 V)) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -109,7 +110,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 ## B. Finite-volume masses
 -/
 
-/-- The mass `∑_ω 1_{A_t}(ω) μ(ω)` of the event that every edge of `t` is open, for a weight
+/-- **Mass of the all-open event under a weight function.**
+The mass `∑_ω 1_{A_t}(ω) μ(ω)` of the event that every edge of `t` is open, for a weight
 function `μ` on a finite configuration space; it is `eventMassProb μ A_t`
 (`med_multiMassProb_eq_eventMassProb`). -/
 noncomputable def med_multiMassProb (μ : ConfigSpace (Sym2 V) → ℝ) (t : Finset (Sym2 V)) : ℝ :=
@@ -119,7 +121,8 @@ noncomputable def med_multiMassProb (μ : ConfigSpace (Sym2 V) → ℝ) (t : Fin
 lemma med_multiMassProb_eq_eventMassProb (μ : ConfigSpace (Sym2 V) → ℝ) (t : Finset (Sym2 V)) :
     med_multiMassProb μ t = eventMassProb μ (med_genericMultiOpenEvent t) := rfl
 
-/-- The wired box measure on `Λ_m`, pushed to `ℤ^d`, gives `A_t` the box mass of `t`. -/
+/-- **Wired box measure of an all-open event equals its box mass.**
+The wired box measure on `Λ_m`, pushed to `ℤ^d`, gives `A_t` the box mass of `t`. -/
 lemma med_centred_mass_eq (m : ℕ) (t : Finset (Sym2 (boxVerts d m))) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     (wiredFiniteMeasure d m hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -132,7 +135,8 @@ lemma med_centred_mass_eq (m : ℕ) (t : Finset (Sym2 (boxVerts d m))) {p : ℝ}
   rw [wiredFiniteMeasure_real_boxRestrictEvent m hp hp1 (cdc_boxMultiOpenEvent m t) hmeas]
   rfl
 
-/-- The free box measure on `Λ_m`, pushed to `ℤ^d`, gives `A_t` the box mass of `t`. -/
+/-- **Free box measure of an all-open event equals its box mass.**
+The free box measure on `Λ_m`, pushed to `ℤ^d`, gives `A_t` the box mass of `t`. -/
 lemma med_free_centred_mass_eq (m : ℕ) (t : Finset (Sym2 (boxVerts d m))) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     (freeFiniteMeasure d m hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -150,7 +154,8 @@ lemma med_free_centred_mass_eq (m : ℕ) (t : Finset (Sym2 (boxVerts d m))) {p :
 ## C. Translation covariance
 -/
 
-/-- The wired mass of `t` in `Λ_m` equals the wired mass of `t + v` in `v + Λ_m`. -/
+/-- **Translation covariance of wired box masses.**
+The wired mass of `t` in `Λ_m` equals the wired mass of `t + v` in `v + Λ_m`. -/
 lemma med_centred_eq_translated_wired (m : ℕ) (v : Site d) (t : Finset (Sym2 (boxVerts d m)))
     {p : ℝ} :
     med_multiMassProb (wiredFkProb (boxGraph d m) (boxBoundary d m) p 2) t
@@ -168,7 +173,8 @@ lemma med_centred_eq_translated_wired (m : ℕ) (v : Site d) (t : Finset (Sym2 (
   refine Finset.sum_congr rfl fun ω _ => ?_
   rw [med_reCfgIso_preimage (fvs_transEquiv d m v) t]
 
-/-- The free mass of `t` in `Λ_m` equals the free mass of `t + v` in `v + Λ_m`. -/
+/-- **Translation covariance of free box masses.**
+The free mass of `t` in `Λ_m` equals the free mass of `t + v` in `v + Λ_m`. -/
 lemma med_centred_eq_translated_free (m : ℕ) (v : Site d) (t : Finset (Sym2 (boxVerts d m)))
     {p : ℝ} :
     med_multiMassProb (fkProb (boxGraph d m) p 2) t
@@ -189,7 +195,8 @@ lemma med_centred_eq_translated_free (m : ℕ) (v : Site d) (t : Finset (Sym2 (b
 ## D. Limits along boxes
 -/
 
-/-- Restatement of `cdc_wired_multiOpenEvent_tendsto`: the wired box probabilities of `A_t`
+/-- **Wired all-open probabilities converge to the infinite-volume value.**
+Restatement of `cdc_wired_multiOpenEvent_tendsto`: the wired box probabilities of `A_t`
 converge to the wired infinite-volume probability. -/
 lemma med_centred_tendsto_iv (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -201,7 +208,8 @@ lemma med_centred_tendsto_iv (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
           (cdc_multiOpenEvent (t.image (edgeIncl d N))))) :=
   cdc_wired_multiOpenEvent_tendsto N t hp hp1
 
-/-- Restatement of `cdc_free_multiOpenEvent_tendsto`: the free box probabilities of `A_t`
+/-- **Free all-open probabilities converge to the infinite-volume value.**
+Restatement of `cdc_free_multiOpenEvent_tendsto`: the free box probabilities of `A_t`
 converge to the free infinite-volume probability. -/
 lemma med_free_centred_tendsto_iv (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -234,7 +242,8 @@ lemma med_centred_mass_lift (N m : ℕ) (hNm : N ≤ m) (t : Finset (Sym2 (boxVe
 ## E. The off-centre multi-edge carrier
 -/
 
-/-- The difference between the wired mass of `t` in `Λ_m` and the wired mass of `t + v` in
+/-- **Difference of wired all-open masses of an edge set and its translate.**
+The difference between the wired mass of `t` in `Λ_m` and the wired mass of `t + v` in
 `v + Λ_m`; it vanishes by translation covariance. -/
 noncomputable def med_offCentreMultiCarrier (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     (p : ℝ) (m : ℕ) (hNm : N ≤ m) : ℝ :=
@@ -264,7 +273,8 @@ lemma med_offCentreMultiCarrier_squeeze (v : Site d) (N : ℕ) (t : Finset (Sym2
 ## F. Homogeneity from translated masses
 -/
 
-/-- If the wired mass of `t + v` in `v + Λ_m` eventually equals the wired mass of `t'` in `Λ_m`,
+/-- **Equal wired probabilities from eventually equal translated masses.**
+If the wired mass of `t + v` in `v + Λ_m` eventually equals the wired mass of `t'` in `Λ_m`,
 the wired infinite-volume measure gives `A_t` and `A_{t'}` the same probability. -/
 lemma med_wiredMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
     (t t' : Finset (Sym2 (boxVerts d N))) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -302,7 +312,8 @@ lemma med_wiredMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
     hCs'.congr' (heqradius.mono fun m h => h.symm)
   exact tendsto_nhds_unique hCs hCs_to_s'
 
-/-- If the free mass of `t + v` in `v + Λ_m` eventually equals the free mass of `t'` in `Λ_m`,
+/-- **Equal free probabilities from eventually equal translated masses.**
+If the free mass of `t + v` in `v + Λ_m` eventually equals the free mass of `t'` in `Λ_m`,
 the free infinite-volume measure gives `A_t` and `A_{t'}` the same probability. -/
 lemma med_freeMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
     (t t' : Finset (Sym2 (boxVerts d N))) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -345,7 +356,8 @@ lemma med_freeMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
 ## G. Placements and translation invariance
 -/
 
-/-- A wired placement for the shift `g`: every finite edge set `s` and its shift `g⁻¹ s` are
+/-- **Wired placement for a shift via eventually equal box masses.**
+A wired placement for the shift `g`: every finite edge set `s` and its shift `g⁻¹ s` are
 images of box edge sets `t`, `t'` of a common box `Λ_N` such that the wired mass of `t + g` in
 `g + Λ_m` eventually equals the wired mass of `t'` in `Λ_m`. See also `lmc_wiredPlacement`. -/
 def med_wiredPlacement {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1) (g : Multiplicative (Site d)) : Prop :=
@@ -362,7 +374,8 @@ def med_wiredPlacement {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1) (g : Multiplicativ
               = med_multiMassProb (wiredFkProb (boxGraph d m) (boxBoundary d m) p 2)
                   (t'.image (innerEdgeLE d hNm)))
 
-/-- A free placement for the shift `g`, defined as `med_wiredPlacement` with free masses. -/
+/-- **Free placement for a shift via eventually equal box masses.**
+A free placement for the shift `g`, defined as `med_wiredPlacement` with free masses. -/
 def med_freePlacement {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1) (g : Multiplicative (Site d)) : Prop :=
   ∀ s : Finset (Sym2 (Site d)),
     ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
@@ -414,7 +427,8 @@ lemma med_freePlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     exact (med_centred_eq_translated_free m (Multiplicative.toAdd (1 : Multiplicative (Site d)))
       (t.image (innerEdgeLE d hNm))).symm
 
-/-- The wired infinite-volume `q = 2` measure is translation invariant if every shift has a wired
+/-- **Wired translation invariance from wired placements of every shift.**
+The wired infinite-volume `q = 2` measure is translation invariant if every shift has a wired
 placement. See also `flc_wiredIV_isTranslationInvariant`, which proves invariance without
 hypotheses. -/
 lemma med_wiredIV_isTranslationInvariant_of_placement {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -425,7 +439,8 @@ lemma med_wiredIV_isTranslationInvariant_of_placement {p : ℝ} (hp : 0 < p) (hp
   cdc_wiredIV_isTranslationInvariant_of_homogeneous hp hp1
     (fun g _ _ _ => med_wiredMultiHomogeneous hp hp1 g (hplace g))
 
-/-- The free infinite-volume `q = 2` measure is translation invariant if every shift has a free
+/-- **Free translation invariance from free placements of every shift.**
+The free infinite-volume `q = 2` measure is translation invariant if every shift has a free
 placement. See also `bdp_freeIV_isTranslationInvariant`, which proves invariance without
 hypotheses. -/
 lemma med_freeIV_isTranslationInvariant_of_placement {p : ℝ} (hp : 0 < p) (hp1 : p < 1)

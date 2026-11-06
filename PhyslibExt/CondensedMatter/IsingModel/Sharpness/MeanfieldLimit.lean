@@ -126,7 +126,8 @@ lemma si4_meanfield_lower_bound_of_finiteVolume (β₀ : ℝ) (hβ₀ : 0 < β�
 
 /-! ## B. Integration -/
 
-/-- If `(m²)' ≥ (2/β)(1 - m²)` above `β₀ > 0` and `m ≥ 0`, then `m(β) ≥ √(1 - (β₀/β)²)` for `β ≥
+/-- **Integrated mean-field lower bound without an initial condition.**
+If `(m²)' ≥ (2/β)(1 - m²)` above `β₀ > 0` and `m ≥ 0`, then `m(β) ≥ √(1 - (β₀/β)²)` for `β ≥
 β₀`. This strengthens `meanfield_lower_bound` by dropping `m(β₀) = 0`. -/
 lemma meanfield_lower_bound_of_initial_nonneg
     (β₀ : ℝ) (hβ₀ : 0 < β₀) (m : ℝ → ℝ)
@@ -153,7 +154,8 @@ lemma meanfield_lower_bound_of_initial_nonneg
 
 /-! ## C. The infinite-volume limit -/
 
-/-- The infinite-volume magnetization in field `h`, the supremum over `n` of the origin
+/-- **Infinite-volume magnetization in a field as a supremum over boxes.**
+The infinite-volume magnetization in field `h`, the supremum over `n` of the origin
 magnetizations in the boxes `Λ_n`. -/
 noncomputable def sctInfiniteFieldMag (d : ℕ) (beta h : ℝ) : ℝ :=
   ⨆ n : ℕ, sctOriginMag d beta h n

@@ -66,7 +66,8 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 
 /-! ## A. The wired Ising model on a graph -/
 
-/-- The Ising bond `σ_x σ_y` of a two-state coloring, with color `0` as spin `+1`. See also
+/-- **Ising bond variable of a two-state coloring.**
+The Ising bond `σ_x σ_y` of a two-state coloring, with color `0` as spin `+1`. See also
 `Ising.bond` for Boolean configurations. -/
 noncomputable def isingBond (σ : V → Fin 2) (e : Sym2 V) : ℝ :=
   Sym2.lift ⟨fun x y => isingSpin (σ x) * isingSpin (σ y), fun _ _ => mul_comm _ _⟩ e
@@ -92,16 +93,19 @@ lemma agreement_eq_isingBondSum (σ : V → Fin 2) :
     Finset.sum_add_distrib, Finset.sum_div, Finset.sum_const, nsmul_eq_mul]
   ring
 
-/-- The Ising weight `exp (β ∑_e σ_x σ_y)` of a two-state coloring with boundary color `0`, and `0`
+/-- **Ising weight of a coloring with plus boundary.**
+The Ising weight `exp (β ∑_e σ_x σ_y)` of a two-state coloring with boundary color `0`, and `0`
 otherwise. -/
 noncomputable def isingWiredWeight (β : ℝ) (σ : V → Fin 2) : ℝ :=
   if BoundaryFixed bdry (0 : Fin 2) σ then
     Real.exp (β * ∑ e ∈ G.edgeFinset, isingBond σ e) else 0
 
-/-- The partition function of the Ising model with `+` boundary condition on a graph. -/
+/-- **Plus-boundary Ising partition function on a graph.**
+The partition function of the Ising model with `+` boundary condition on a graph. -/
 noncomputable def isingWiredZ (β : ℝ) : ℝ := ∑ σ : V → Fin 2, isingWiredWeight G bdry β σ
 
-/-- The one-point function `⟨σ_x⟩⁺` of the Ising model with `+` boundary condition on a graph. -/
+/-- **Plus-boundary Ising one-point function on a graph.**
+The one-point function `⟨σ_x⟩⁺` of the Ising model with `+` boundary condition on a graph. -/
 noncomputable def isingWiredOnePoint (β : ℝ) (x : V) : ℝ :=
   (∑ σ : V → Fin 2, isingWiredWeight G bdry β σ * isingSpin (σ x)) / isingWiredZ G bdry β
 
@@ -175,13 +179,15 @@ lemma fvMagnetization_eq_fvProb_sum (d : ℕ) (β : ℝ) (n : ℕ) :
     apply Integrable.smul_measure (integrable_spin _ _)
     simp [ENNReal.ofReal_ne_top]
 
-/-- The two-state color of a Boolean spin: `true ↦ 0`, `false ↦ 1`. -/
+/-- **Two-state color of a Boolean spin.**
+The two-state color of a Boolean spin: `true ↦ 0`, `false ↦ 1`. -/
 def bToF (b : Bool) : Fin 2 := if b then 0 else 1
 
 lemma isingSpin_bToF (b : Bool) : isingSpin (bToF b) = (if b then (1 : ℝ) else -1) := by
   unfold bToF isingSpin; cases b <;> simp
 
-/-- A configuration in the box `Λ_n` as a two-state coloring of `Λ_{n+1}`, with color `0` (spin `+`)
+/-- **Box configuration as a coloring of the next larger box.**
+A configuration in the box `Λ_n` as a two-state coloring of `Λ_{n+1}`, with color `0` (spin `+`)
 outside `Λ_n`. -/
 noncomputable def latToBox (d n : ℕ) (τ : {x // x ∈ box d n} → Bool) :
     boxVerts d (n + 1) → Fin 2 :=

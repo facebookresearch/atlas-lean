@@ -94,7 +94,8 @@ lemma spinProd_mul_self (A B : Finset V) (s : ConfigSpace V) :
 
 /-! ## B. Duplicated variables -/
 
-/-- The pointwise product of two configurations: spin `σ_y σ'_y` at `y` (`true` when the spins
+/-- **Pointwise product of two configurations.**
+The pointwise product of two configurations: spin `σ_y σ'_y` at `y` (`true` when the spins
 agree). -/
 def xnor (σ q : ConfigSpace V) : ConfigSpace V := fun y => σ y == q y
 
@@ -118,7 +119,8 @@ lemma spinProd_xnor (B : Finset V) (σ q : ConfigSpace V) :
   rw [← Finset.prod_mul_distrib]
   exact Finset.prod_congr rfl (fun x _ => spin_xnor σ q x)
 
-/-- The involution `(σ, q) ↦ (σ, σ q)` of pairs of configurations. -/
+/-- **Duplicated-variable involution on configuration pairs.**
+The involution `(σ, q) ↦ (σ, σ q)` of pairs of configurations. -/
 def dblFun (p : ConfigSpace V × ConfigSpace V) : ConfigSpace V × ConfigSpace V :=
   (p.1, xnor p.1 p.2)
 
@@ -131,7 +133,8 @@ lemma dblFun_invol : Function.Involutive (dblFun (V := V)) := by
   · rfl
   · simp only [dblFun, xnor]; cases σ x <;> cases q x <;> rfl
 
-/-- Ginibre's duplicated-variable change of variables `(σ, q) ↦ (σ, σ q)` as an equivalence. -/
+/-- **Ginibre's duplicated-variable change of variables.**
+Ginibre's duplicated-variable change of variables `(σ, q) ↦ (σ, σ q)` as an equivalence. -/
 def dblEquiv : (ConfigSpace V × ConfigSpace V) ≃ (ConfigSpace V × ConfigSpace V) where
   toFun := dblFun
   invFun := dblFun
@@ -284,7 +287,8 @@ lemma inner_q_nonneg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (A B : Finset 
     (fun s => spinProd A s * spinProd B s)
     ((isSpinMonomial_spinProd A).mul (isSpinMonomial_spinProd B))
 
-/-- The unnormalized second Griffiths inequality: `Z² (⟨σ_{A ∆ B}⟩ - ⟨σ_A⟩⟨σ_B⟩) ≥ 0`. -/
+/-- **Unnormalized second Griffiths inequality.**
+The unnormalized second Griffiths inequality: `Z² (⟨σ_{A ∆ B}⟩ - ⟨σ_A⟩⟨σ_B⟩) ≥ 0`. -/
 lemma unnorm_gks2 (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (A B : Finset V) :
     (∑ s, spinProd A s * isingWeight G β h s) * (∑ s, spinProd B s * isingWeight G β h s)
       ≤ (∑ s, spinProd (A ∆ B) s * isingWeight G β h s) * (∑ s, isingWeight G β h s) := by

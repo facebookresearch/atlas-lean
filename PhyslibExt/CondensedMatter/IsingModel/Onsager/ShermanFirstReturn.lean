@@ -60,7 +60,7 @@ section Analytic
 
 /-! ## A. The logarithm series -/
 
-/-- `1 - z ≠ 0` when `‖z‖ < 1`. -/
+/-- **$1 - z \neq 0$ for $|z| < 1$.** `1 - z ≠ 0` when `‖z‖ < 1`. -/
 lemma ons_one_sub_ne_zero_of_norm_lt_one {z : ℂ} (hz : ‖z‖ < 1) : (1 : ℂ) - z ≠ 0 := by
   rw [sub_ne_zero]
   intro h
@@ -80,7 +80,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E] {n : ℕ} [NeZero n]
 
 /-! ## B. First-return loops -/
 
-/-- A cyclic sequence `v` is a first-return loop at `e` (avoiding `rev e`) if it starts at `e`, does
+/-- **First-return loop at a directed edge.**
+A cyclic sequence `v` is a first-return loop at `e` (avoiding `rev e`) if it starts at `e`, does
 not visit `e` again, and never uses the reverse edge `rev e`. -/
 def ons_isFirstReturn (e : E) (rev : E → E) (v : Fin n → E) : Prop :=
   v 0 = e ∧ (∀ k : Fin n, k ≠ 0 → v k ≠ e) ∧ (∀ k : Fin n, v k ≠ rev e)
@@ -106,7 +107,8 @@ lemma ons_firstReturn_visits_once [DecidableEq (Fin n → E)] {e : E} {rev : E �
   · rintro rfl
     exact ons_firstReturn_root h
 
-/-- The cyclic sequences of length `n` that start at `e` and never use `rev e`. -/
+/-- **Cyclic sequences rooted at an edge avoiding its reverse.**
+The cyclic sequences of length `n` that start at `e` and never use `rev e`. -/
 def ons_rootedAvoiding (e : E) (rev : E → E) : Finset (Fin n → E) :=
   {v ∈ (Finset.univ : Finset (Fin n → E)) | v 0 = e ∧ (∀ k : Fin n, v k ≠ rev e)}
 

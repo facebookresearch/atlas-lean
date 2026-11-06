@@ -53,11 +53,13 @@ open BigOperators
 
 /-! ## A. Internal paths -/
 
-/-- Two directions are adjacent in the order `0, 1, 2, 3` of the internal path at a site. -/
+/-- **Adjacency of directions along the port line.**
+Two directions are adjacent in the order `0, 1, 2, 3` of the internal path at a site. -/
 def ons_portLineAdj (a b : Fin 4) : Prop :=
   a.val + 1 = b.val ∨ b.val + 1 = a.val
 
-/-- The micro directions of the routes along a sequence of internal decorated edges at one site. -/
+/-- **Micro directions along internal decorated edges at a site.**
+The micro directions of the routes along a sequence of internal decorated edges at one site. -/
 def ons_internalMicroDirections : List (Fin 4) → List (Fin 4)
   | a :: b :: rest =>
       [b, b, a + 2, a + 2] ++ ons_internalMicroDirections (b :: rest)
@@ -271,13 +273,15 @@ lemma ons_internalWalk_refined_turn
 
 /-! ## B. Expanded and external directions -/
 
-/-- The directions of the expanded dart list of a decorated walk. -/
+/-- **Directions of the expanded dart list of a decorated walk.**
+The directions of the expanded dart list of a decorated walk. -/
 def ons_walkExpandedDirections
     (L : ℕ) [Fact (2 < L)] {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) : List (Fin 4) :=
   (ons_decExpandedDartList L p).map (fun a ↦ a.2)
 
-/-- The directions of the external darts of a decorated walk. -/
+/-- **Directions of the external darts of a decorated walk.**
+The directions of the external darts of a decorated walk. -/
 def ons_walkExternalDirections
     {L : ℕ} {u v : ons_Dart L}
   (p : (ons_decGraph L).Walk u v) : List (Fin 4) :=

@@ -69,7 +69,7 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Derivatives of the Gibbs expectation in the field -/
 
-/-- The total spin `∑_x σ_x` of a configuration. -/
+/-- **Total spin of a configuration.** The total spin `∑_x σ_x` of a configuration. -/
 noncomputable def totalSpin (s : ConfigSpace V) : ℝ := ∑ x, spin s x
 
 omit [DecidableEq V] in
@@ -226,7 +226,8 @@ lemma expectation_spin_bounds (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (x : 
       ∧ isingExpectation G β h (fun s => spin s x) ≤ 1 :=
   ⟨expectation_spin_nonneg G β h hβ hh x, expectation_spin_le_one G β h x⟩
 
-/-- Griffiths' second inequality for two distinct spins: `⟨σ_x⟩⟨σ_y⟩ ≤ ⟨σ_x σ_y⟩` for `β, h ≥ 0`. -/
+/-- **Griffiths' second inequality for two distinct spins.**
+Griffiths' second inequality for two distinct spins: `⟨σ_x⟩⟨σ_y⟩ ≤ ⟨σ_x σ_y⟩` for `β, h ≥ 0`. -/
 lemma cov_nonneg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (x y : V) (hxy : x ≠ y) :
     isingExpectation G β h (fun s => spin s x) * isingExpectation G β h (fun s => spin s y)
       ≤ isingExpectation G β h (fun s => spin s x * spin s y) := by
@@ -244,7 +245,8 @@ lemma hasDerivAt_magnetization (β h : ℝ) (o : V) :
       h :=
   hasDerivAt_expectation G β h (fun s => spin s o)
 
-/-- The field derivative of the magnetization is `β` times the sum of the two-point covariances
+/-- **Field derivative of the magnetization as a sum of covariances.**
+The field derivative of the magnetization is `β` times the sum of the two-point covariances
 `⟨σ_o σ_x⟩ - ⟨σ_o⟩⟨σ_x⟩` (the finite-volume susceptibility). -/
 lemma deriv_magnetization_eq_sum_cov (β h : ℝ) (o : V) :
     deriv (fun h => isingExpectation G β h (fun s => spin s o)) h
@@ -274,7 +276,7 @@ lemma deriv_magnetization_nonneg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) (o
 
 /-! ## D. The global spin flip and the zero-field magnetization -/
 
-/-- The global spin flip `σ ↦ -σ`. -/
+/-- **Global spin flip.** The global spin flip `σ ↦ -σ`. -/
 def flipCfg (s : ConfigSpace V) : ConfigSpace V := fun x => ! s x
 
 omit [Fintype V] [DecidableEq V] in
@@ -288,14 +290,16 @@ lemma bond_flipCfg (s : ConfigSpace V) (e : Sym2 V) : bond (flipCfg s) e = bond 
     rw [bond_mk, bond_mk]; unfold flipCfg spin
     cases ha : s a <;> cases hb : s b <;> simp [ha, hb]
 
-/-- The global spin flip as an involutive equivalence of configuration space. -/
+/-- **Global spin flip as an involutive equivalence.**
+The global spin flip as an involutive equivalence of configuration space. -/
 def flipEquiv : ConfigSpace V ≃ ConfigSpace V where
   toFun := flipCfg
   invFun := flipCfg
   left_inv := by intro s; funext x; unfold flipCfg; cases s x <;> rfl
   right_inv := by intro s; funext x; unfold flipCfg; cases s x <;> rfl
 
-/-- At zero field the global spin-flip symmetry forces the magnetization `⟨σ_o⟩_{β,0}` to vanish. -/
+/-- **Magnetization vanishes at zero field.**
+At zero field the global spin-flip symmetry forces the magnetization `⟨σ_o⟩_{β,0}` to vanish. -/
 lemma magnetization_zero_field (β : ℝ) (o : V) :
     isingExpectation G β 0 (fun s => spin s o) = 0 := by
   unfold isingExpectation
@@ -318,7 +322,8 @@ lemma magnetization_zero_field (β : ℝ) (o : V) :
 
 /-! ## E. The susceptibility bound from concavity -/
 
-/-- If the magnetization is concave in the field on `[0, ∞)` (the GHS inequality), then for `h > 0`
+/-- **Susceptibility bound $\chi(h) \le m(h)/h \le 1/h$ from concavity.**
+If the magnetization is concave in the field on `[0, ∞)` (the GHS inequality), then for `h > 0`
 the susceptibility satisfies `χ(h) ≤ m(h)/h ≤ 1/h`. Reference: R. B. Griffiths, C. A. Hurst, S.
 Sherman, "Concavity of magnetization of an Ising ferromagnet in a positive external field", J. Math.
 Phys. 11 (1970) 790–795. -/

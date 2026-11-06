@@ -143,7 +143,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## B. Side colourings of dual walks -/
 
-/-- Every closed walk of `Gd` has a two-colouring of the vertices of `Gp` whose boundary is the
+/-- **Side-colouring property of closed dual walks.**
+Every closed walk of `Gd` has a two-colouring of the vertices of `Gp` whose boundary is the
 pullback of its edges. -/
 def DualWalkHasSideColouring (Gp Gd : SimpleGraph V) [DecidableRel Gp.Adj]
     (ψ : Sym2 V ≃ Sym2 V) : Prop :=
@@ -169,7 +170,8 @@ lemma even_to_cut_of_sideColouring [Nonempty V] (hG : Gp.Preconnected)
   even_to_cut_of_closedWalkParity hG ψ hsymm hdecomp
     (closedDualWalkParity_of_sideColouring ψ hside)
 
-/-- An edge crossing built from side colourings of dual walks. -/
+/-- **Edge crossing from side colourings of dual walks.**
+An edge crossing built from side colourings of dual walks. -/
 noncomputable def edgeCrossing_of_sideColouring [Nonempty V] (hG : Gp.Preconnected)
     (ψ : Sym2 V ≃ Sym2 V)
     (hedge : ∀ e ∈ Gp.edgeFinset, ψ e ∈ Gd.edgeFinset)
@@ -205,7 +207,7 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## C. Even subgraphs decompose into closed walks -/
 
-/-- The simple graph with edge set `F`. -/
+/-- **Simple graph spanned by an edge set.** The simple graph with edge set `F`. -/
 def subgraphF (F : Finset (Sym2 V)) : SimpleGraph V := SimpleGraph.fromEdgeSet (↑F : Set (Sym2 V))
 
 omit [Fintype V] [DecidableEq V] in
@@ -252,7 +254,8 @@ lemma subgraphF_even (F : Finset (Sym2 V)) (hF : ∀ e ∈ F, ¬ e.IsDiag)
     (hev : IsEvenSubgraph F) (v : V) : Even ((subgraphF F).degree v) := by
   rw [degree_subgraphF_eq_incCount F hF v]; exact hev v
 
-/-- The component of `f` in the graph spanned by `F`. -/
+/-- **Component of a vertex in the graph spanned by an edge set.**
+The component of `f` in the graph spanned by `F`. -/
 def compF (F : Finset (Sym2 V)) (f : V) : SimpleGraph V where
   Adj a b := (subgraphF F).Adj a b ∧ (subgraphF F).Reachable f a ∧ (subgraphF F).Reachable f b
   symm := ⟨fun a b ⟨h, ha, hb⟩ => ⟨h.symm, hb, ha⟩⟩
@@ -296,7 +299,8 @@ lemma compF_degree_even (F : Finset (Sym2 V)) (hF : ∀ e ∈ F, ¬ e.IsDiag)
       rw [Fintype.card_eq_zero_iff]; exact ⟨fun x => (hempty ▸ x.2 : (x:V) ∈ (∅:Set V))⟩
     rw [hcard]; exact Even.zero
 
-/-- The vertices of the component of `f` in the graph spanned by `F`. -/
+/-- **Vertex set of a component of the graph spanned by an edge set.**
+The vertices of the component of `f` in the graph spanned by `F`. -/
 noncomputable def compSuppF (F : Finset (Sym2 V)) (f : V) : Finset V :=
   Finset.univ.filter (fun g => (subgraphF F).Reachable f g)
 
@@ -411,7 +415,8 @@ lemma mem_compF_edgeSet (F : Finset (Sym2 V)) (hF : ∀ e ∈ F, ¬ e.IsDiag) (f
           intro hxy; subst hxy; exact hF _ hmem (by rw [Sym2.mk_isDiag_iff])⟩
       exact ⟨hadj, hxr, hyr⟩
 
-/-- A closed Eulerian walk of the component of `f` in an even edge set `F`. -/
+/-- **Closed Eulerian walk of a component of an even edge set.**
+A closed Eulerian walk of the component of `f` in an even edge set `F`. -/
 noncomputable def compEulerWalk (F : Finset (Sym2 V)) (hF : ∀ e ∈ F, ¬ e.IsDiag)
     (hev : IsEvenSubgraph F) (f : V) : (compF F f).Walk f f :=
   (compF_eulerCircuit F hF hev f).choose
@@ -541,7 +546,8 @@ lemma edges_mapLe_toFinset {G H : SimpleGraph V} (h : G ≤ H) {a b : V} (p : G.
     (p.mapLe h).edges.toFinset = p.edges.toFinset := by
   rw [SimpleGraph.Walk.edges_mapLe_eq_edges]
 
-/-- Every even subgraph decomposes into closed walks. -/
+/-- **Even subgraphs of a finite graph decompose into closed walks.**
+Every even subgraph decomposes into closed walks. -/
 lemma evenSubgraphWalkDecomp_general (Gd : SimpleGraph V) [DecidableRel Gd.Adj] :
     EvenSubgraphWalkDecomp Gd := by
   classical
@@ -575,7 +581,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## D. Region boundaries -/
 
-/-- The edges of `Gp` whose endpoints lie on different sides of the region `S`. -/
+/-- **Edge boundary of a region in a graph.**
+The edges of `Gp` whose endpoints lie on different sides of the region `S`. -/
 noncomputable def regionBoundary (Gp : SimpleGraph V) [DecidableRel Gp.Adj] (S : V → Bool) :
     Finset (Sym2 V) :=
   cutEdges Gp S
@@ -589,7 +596,8 @@ lemma evenOnCycles_regionBoundary (S : V → Bool) :
     EvenOnCycles Gp (regionBoundary Gp S) :=
   evenOnCycles_of_isCoboundary S (fun h => mem_regionBoundary_iff S h)
 
-/-- Every closed walk of `Gd` pulls back to the boundary of a region of `Gp`. -/
+/-- **Region-bounding property of closed dual walks.**
+Every closed walk of `Gd` pulls back to the boundary of a region of `Gp`. -/
 def DualWalkBoundsRegion (Gp Gd : SimpleGraph V) [DecidableRel Gp.Adj]
     (ψ : Sym2 V ≃ Sym2 V) : Prop :=
   ∀ {w : V} (W : Gd.Walk w w), ∃ S : V → Bool,
@@ -624,7 +632,8 @@ lemma even_to_cut_of_boundsRegion [Nonempty V] (hG : Gp.Preconnected)
   even_to_cut_of_sideColouring hG ψ hsymm hdecomp
     (dualWalkBoundsRegion_isSideColouring ψ hreg)
 
-/-- An edge crossing built from dual walks bounding regions. -/
+/-- **Edge crossing from region-bounding dual walks and a walk decomposition.**
+An edge crossing built from dual walks bounding regions. -/
 noncomputable def edgeCrossing_of_boundsRegion [Nonempty V] (hG : Gp.Preconnected)
     (ψ : Sym2 V ≃ Sym2 V)
     (hedge : ∀ e ∈ Gp.edgeFinset, ψ e ∈ Gd.edgeFinset)
@@ -658,7 +667,8 @@ open StatMech.Lattice
 
 /-! ## E. Regions of the square lattice -/
 
-/-- The indicator of a set of sites of `ℤ²`, as a Boolean function. -/
+/-- **Boolean indicator of a set of sites of ℤ².**
+The indicator of a set of sites of `ℤ²`, as a Boolean function. -/
 noncomputable def latticeSide (S : Set (Site 2)) : Site 2 → Bool :=
   fun x => @decide (x ∈ S) (Classical.propDecidable _)
 
@@ -731,7 +741,8 @@ lemma even_to_cut_of_boundsRegion' [Nonempty V] (hG : Gp.Preconnected)
     ∀ F ∈ evenSubgraphs Gd, (F.image ψ.symm) ∈ cutSpace Gp :=
   even_to_cut_of_boundsRegion hG ψ hsymm (evenSubgraphWalkDecomp_general Gd) hreg
 
-/-- An edge crossing built from dual walks bounding regions (variant using
+/-- **Edge crossing from region-bounding dual walks, no decomposition needed.**
+An edge crossing built from dual walks bounding regions (variant using
 `even_to_cut_of_boundsRegion'`). -/
 noncomputable def edgeCrossing_of_boundsRegion' [Nonempty V] (hG : Gp.Preconnected)
     (ψ : Sym2 V ≃ Sym2 V)

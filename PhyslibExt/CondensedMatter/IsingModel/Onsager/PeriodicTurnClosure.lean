@@ -66,24 +66,28 @@ open StatMech.Onsager.BaseCase
 
 /-! ## A. Lattice paths as direction lists -/
 
-/-- The total displacement in `ℤ²` of a list of lattice directions. -/
+/-- **Total displacement of a list of lattice directions.**
+The total displacement in `ℤ²` of a list of lattice directions. -/
 def ons_pathDisplacement : List (Fin 4) → ℤ × ℤ
   | [] => 0
   | d :: ds => stepOf d + ons_pathDisplacement ds
 
-/-- The lattice points visited by a path from the origin with the given directions. -/
+/-- **Lattice points visited by a path from the origin.**
+The lattice points visited by a path from the origin with the given directions. -/
 def ons_pathVertices : List (Fin 4) → List (ℤ × ℤ)
   | [] => [0]
   | d :: ds => 0 :: (ons_pathVertices ds).map (stepOf d + ·)
 
-/-- The total turning (in quarter turns) between consecutive directions of a list. -/
+/-- **Open turning sum of a direction list.**
+The total turning (in quarter turns) between consecutive directions of a list. -/
 def ons_openTurnSum : List (Fin 4) → ℤ
   | [] => 0
   | [_] => 0
   | d :: e :: ds =>
       ons_turnPow d e + ons_openTurnSum (e :: ds)
 
-/-- The total turning of a direction list read cyclically, including the turn from the last
+/-- **Cyclic turning sum of a direction list.**
+The total turning of a direction list read cyclically, including the turn from the last
 direction back to the first. -/
 def ons_cyclicTurnSum : List (Fin 4) → ℤ
   | [] => 0
@@ -317,7 +321,8 @@ lemma ons_mem_pathVertices_replicate_dropLast_iff
 
 /-! ## B. The outside connector -/
 
-/-- A path east, north, west, south and east again that runs around the bounding box of a periodic
+/-- **Outside connector around the bounding box of a periodic arc.**
+A path east, north, west, south and east again that runs around the bounding box of a periodic
 arc with displacement `(dx, dy)` and height `top`. -/
 def ons_outsideConnector (dx dy top : ℤ) : List (Fin 4) :=
   [0] ++
@@ -498,7 +503,8 @@ lemma ons_mem_outsideConnector_vertices_dropLast
       Int.toNat_of_nonneg hv]
     constructor <;> ring
 
-/-- The lattice points visited by the outside connector. -/
+/-- **Lattice points visited by the outside connector.**
+The lattice points visited by the outside connector. -/
 def ons_outsideConnectorVertexList (dx dy top : ℤ) :
     List (ℤ × ℤ) :=
   [0] ++
@@ -932,16 +938,19 @@ lemma ons_three_values_force_step_zero
 
 /-! ## D. Periodic arcs -/
 
-/-- The states `(r, i)` (period index `r`, position `i`) of one period of a periodic walk. -/
+/-- **States of one period of a periodic walk.**
+The states `(r, i)` (period index `r`, position `i`) of one period of a periodic walk. -/
 def ons_periodStateList (n r : ℕ) : List (ℕ × Fin n) :=
   List.ofFn (fun i : Fin n ↦ (r, i))
 
-/-- The states of the first `N` periods of a periodic walk followed by the initial state of the next
+/-- **States of the first $N + 1$ periods of a periodic walk.**
+The states of the first `N` periods of a periodic walk followed by the initial state of the next
 period. -/
 def ons_allPeriodStates (n N : ℕ) : List (ℕ × Fin n) :=
   (List.range (N + 1)).flatMap (ons_periodStateList n)
 
-/-- The states of the periodic arc from position `imin` in the first period to position `imax` in
+/-- **States of a periodic arc across $N$ periods.**
+The states of the periodic arc from position `imin` in the first period to position `imax` in
 period `N`. -/
 def ons_periodicArcStates {n : ℕ} (N : ℕ)
     (imin imax : Fin n) : List (ℕ × Fin n) :=
@@ -1019,7 +1028,8 @@ lemma ons_mem_periodicArcStates_fst_le {n : ℕ}
   exact List.Sublist.mem hz
     ((List.take_sublist _ _).trans (List.drop_sublist _ _))
 
-/-- The lattice point of the state `(r, i)`: the `i`-th point of the lift shifted by `r` periods. -/
+/-- **Lattice point of a period state.**
+The lattice point of the state `(r, i)`: the `i`-th point of the lift shifted by `r` periods. -/
 def ons_periodStateCoord {n : ℕ} [NeZero n]
     (d : Fin n → Fin 4) (z : ℕ × Fin n) : ℤ × ℤ :=
   pos d z.2 + z.1 • ons_pathDisplacement (List.ofFn d)
@@ -1059,7 +1069,7 @@ lemma ons_periodState_boundary {m : ℕ}
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (NeZero.ne n)
   simp [ons_periodStateList, List.ofFn_succ]
 
-/-- The last element of `Fin n`. -/
+/-- **Last element of $\{0, \ldots, n - 1\}$.** The last element of `Fin n`. -/
 def ons_lastFin (n : ℕ) [NeZero n] : Fin n :=
   ⟨n - 1, Nat.sub_lt (Nat.pos_of_ne_zero (NeZero.ne n)) (by omega)⟩
 
@@ -1161,7 +1171,7 @@ lemma ons_periodicArcStates_isChain {n : ℕ} [NeZero n]
     simp [List.length_flatMap])]
   simp [ons_periodStateList, imax.isLt]
 
-/-- The directions along the periodic arc. -/
+/-- **Directions along a periodic arc.** The directions along the periodic arc. -/
 def ons_periodicArcDirections {n : ℕ}
     (d : Fin n → Fin 4) (N : ℕ) (imin imax : Fin n) :
     List (Fin 4) :=
@@ -1358,7 +1368,7 @@ lemma ons_periodicArc_adjustedTurn_eq_four_or_neg_four
     delta.1 delta.2 top hdx hdy htop] at hturn
   exact hturn
 
-/-- `N` repetitions of the direction sequence. -/
+/-- **$N$ repetitions of a direction sequence.** `N` repetitions of the direction sequence. -/
 def ons_directionPeriods {n : ℕ}
     (d : Fin n → Fin 4) (N : ℕ) : List (Fin 4) :=
   (List.range N).flatMap (fun _ ↦ List.ofFn d)
@@ -1704,7 +1714,8 @@ lemma ons_periodicSimple_cyclicTurnSum_eq_zero
 
 /-! ## F. Rotations -/
 
-/-- Rotation of a lattice point by `c` quarter turns. -/
+/-- **Rotation of a lattice point by quarter turns.**
+Rotation of a lattice point by `c` quarter turns. -/
 def ons_rotatePoint (c : Fin 4) (p : ℤ × ℤ) : ℤ × ℤ :=
   match c.val with
   | 0 => p

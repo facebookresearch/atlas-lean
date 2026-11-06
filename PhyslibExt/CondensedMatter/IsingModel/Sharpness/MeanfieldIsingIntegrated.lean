@@ -60,7 +60,8 @@ open StatMech.Lattice StatMech.Percolation StatMech.Ising
 
 /-! ## A. β-derivatives in the box -/
 
-/-- The `β`-derivative of the origin magnetization in `Λ_n`, as the covariance of `σ_0` with `-H`.
+/-- **$\beta$-derivative of the origin magnetization in a box.**
+The `β`-derivative of the origin magnetization in `Λ_n`, as the covariance of `σ_0` with `-H`.
 -/
 noncomputable def sctOriginMagBetaDeriv (d n : ℕ) (h beta : ℝ) : ℝ :=
   isingExpectation (sctBoxGraph d n) beta h
@@ -74,7 +75,8 @@ lemma hasDerivAt_sctOriginMag_beta (d n : ℕ) (h beta : ℝ) :
   exact hasDerivAt_expectation_beta (sctBoxGraph d n) beta h
     (fun s => spin s (sctBoxOrigin d n))
 
-/-- The `β`-derivative of the squared origin magnetization. -/
+/-- **$\beta$-derivative of the squared origin magnetization in a box.**
+The `β`-derivative of the squared origin magnetization. -/
 noncomputable def sctOriginMagSqBetaDeriv (d n : ℕ) (h beta : ℝ) : ℝ :=
   2 * sctOriginMag d beta h n * sctOriginMagBetaDeriv d n h beta
 
@@ -90,11 +92,12 @@ lemma deriv_sctOriginMag_sq_beta (d n : ℕ) (h beta : ℝ) :
       sctOriginMagSqBetaDeriv d n h beta :=
   (hasDerivAt_sctOriginMag_sq_beta d n h beta).deriv
 
-/-- `g_n(β) = β²(1 - ⟨σ_0⟩²_{Λ_n,β,h})`. -/
+/-- **Box mean-field function $\beta^2(1 - \langle\sigma_0\rangle^2)$.**
+`g_n(β) = β²(1 - ⟨σ_0⟩²_{Λ_n,β,h})`. -/
 noncomputable def sctMeanfieldG (d n : ℕ) (h beta : ℝ) : ℝ :=
   beta ^ 2 * (1 - (sctOriginMag d beta h n) ^ 2)
 
-/-- The `β`-derivative of `g_n`. -/
+/-- **$\beta$-derivative of the box mean-field function.** The `β`-derivative of `g_n`. -/
 noncomputable def sctMeanfieldGDeriv (d n : ℕ) (h beta : ℝ) : ℝ :=
   2 * beta * (1 - (sctOriginMag d beta h n) ^ 2) -
     beta ^ 2 * sctOriginMagSqBetaDeriv d n h beta
@@ -185,7 +188,8 @@ lemma continuous_sctBoundaryCovarianceError_beta (d n : ℕ) (h : ℝ) :
 
 /-! ## C. The integrated error -/
 
-/-- The error `2β(1 - c_n)(1 - ⟨σ_0⟩²) + 2β² c_n ε_n` bounding `g_n'` from above. -/
+/-- **Error term bounding the derivative of the box mean-field function.**
+The error `2β(1 - c_n)(1 - ⟨σ_0⟩²) + 2β² c_n ε_n` bounding `g_n'` from above. -/
 noncomputable def sctMeanfieldIntegratedError
     (d n : ℕ) (h beta : ℝ) : ℝ :=
   2 * beta * (1 - sctLatticeC d beta h n) *
@@ -420,7 +424,8 @@ lemma sctMeanfieldIntegratedError_integral_tendsto_zero
 
 /-! ## D. The infinite-volume bound -/
 
-/-- `β²(1 - m(β, h)²)` for the infinite-volume magnetization in field `h`. -/
+/-- **Infinite-volume mean-field function $\beta^2(1 - m(\beta,h)^2)$.**
+`β²(1 - m(β, h)²)` for the infinite-volume magnetization in field `h`. -/
 noncomputable def sctInfiniteMeanfieldG (d : ℕ) (h beta : ℝ) : ℝ :=
   beta ^ 2 * (1 - (sctInfiniteFieldMag d beta h) ^ 2)
 

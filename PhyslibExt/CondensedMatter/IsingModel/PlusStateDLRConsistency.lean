@@ -60,13 +60,15 @@ variable {d : ℕ}
 
 /-! ## A. Nested boxes -/
 
-/-- The configuration on `Λ_m` obtained from `σ` by overwriting its spins in `Λ_n` with `τ`. -/
+/-- **Overwriting a configuration on an inner box.**
+The configuration on `Λ_m` obtained from `σ` by overwriting its spins in `Λ_n` with `τ`. -/
 noncomputable def ovrBox {n m : ℕ} (_hnm : n ≤ m)
     (σ : {x // x ∈ box d m} → Bool) (τ : {x // x ∈ box d n} → Bool) :
     {x // x ∈ box d m} → Bool :=
   fun x => if hn : (x : Site d) ∈ box d n then τ ⟨x, hn⟩ else σ x
 
-/-- The restriction of a configuration on `Λ_m` to `Λ_n`. -/
+/-- **Restriction of a configuration to an inner box.**
+The restriction of a configuration on `Λ_m` to `Λ_n`. -/
 noncomputable def resBox {n m : ℕ} (hnm : n ≤ m)
     (σ : {x // x ∈ box d m} → Bool) : {x // x ∈ box d n} → Bool :=
   fun x => σ ⟨x, box_mono d hnm x.2⟩
@@ -251,7 +253,8 @@ lemma fvProb_eq_of_agree_off_box {n : ℕ} (B : Finset (Sym2 (Site d))) (β h : 
 
 /-! ## D. Consistency and the DLR property -/
 
-/-- The involution of pairs exchanging the `Λ_n` parts of a configuration on `Λ_m` and a
+/-- **Involution swapping inner-box parts of configuration pairs.**
+The involution of pairs exchanging the `Λ_n` parts of a configuration on `Λ_m` and a
 configuration on `Λ_n`. -/
 noncomputable def swapPair {n m : ℕ} (hnm : n ≤ m) :
     (({x // x ∈ box d m} → Bool) × ({x // x ∈ box d n} → Bool))

@@ -73,7 +73,8 @@ variable {d : ℕ}
 ## A. Gluing inner and outer configurations
 -/
 
-/-- Glue a configuration `ω` on `Λ_n` into an outer configuration `ψ` on `Λ_(n+1)`: edges of `Λ_n`
+/-- **Gluing a box configuration into an outer configuration.**
+Glue a configuration `ω` on `Λ_n` into an outer configuration `ψ` on `Λ_(n+1)`: edges of `Λ_n`
 follow `ω`, the others follow `ψ`. -/
 noncomputable def psiExt (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (ω : ConfigSpace (Sym2 (boxVerts d n))) : ConfigSpace (Sym2 (boxVerts d (n + 1))) :=
@@ -139,7 +140,8 @@ lemma condFibre_eq_image_psiExt (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d 
 ## B. The outer graph and the induced wiring
 -/
 
-/-- The open edges of `ψ` on `Λ_(n+1)` that are not edges of `Λ_n`. -/
+/-- **Open edges of an outer configuration outside the inner box.**
+The open edges of `ψ` on `Λ_(n+1)` that are not edges of `Λ_n`. -/
 noncomputable def outsideOpenGraph (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     SimpleGraph (boxVerts d (n + 1)) where
   Adj x y := (boxGraph d (n + 1)).Adj x y ∧ ψ s(x, y) = true ∧ s(x, y) ∉ Set.range (innerEdge d n)
@@ -154,7 +156,8 @@ noncomputable instance instDecidableRelOutsideOpenGraph (d n : ℕ)
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : DecidableRel (outsideOpenGraph d n ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- The outer graph: open outer edges of `ψ` together with the clique on `∂Λ_(n+1)`. -/
+/-- **Outer open graph plus the outer boundary clique.**
+The outer graph: open outer edges of `ψ` together with the clique on `∂Λ_(n+1)`. -/
 noncomputable def outsideGraph (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     SimpleGraph (boxVerts d (n + 1)) :=
   outsideOpenGraph d n ψ ⊔ StatMech.Lattice.boundaryCliqueGraph (boxBoundary d (n + 1))
@@ -172,7 +175,8 @@ lemma outsideGraph_adj (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))
   rw [outsideGraph, SimpleGraph.sup_adj, StatMech.Lattice.boundaryCliqueGraph_adj]
   exact Iff.rfl
 
-/-- The wiring induced on `Λ_n` by `ψ`: distinct vertices of `Λ_n` connected in the outer graph. -/
+/-- **Wiring induced on a box through the outer graph.**
+The wiring induced on `Λ_n` by `ψ`: distinct vertices of `Λ_n` connected in the outer graph. -/
 noncomputable def inducedWiring (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     SimpleGraph (boxVerts d n) where
   Adj x y := x ≠ y ∧ (outsideGraph d n ψ).Reachable (boxVertIncl d n x) (boxVertIncl d n y)
@@ -197,7 +201,8 @@ lemma inducedWiring_adj (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))
 ## C. Decomposition of the glued graph
 -/
 
-/-- The open edges of `ω`, viewed as edges of `Λ_(n+1)`. -/
+/-- **Inner open edges viewed in the larger box.**
+The open edges of `ω`, viewed as edges of `Λ_(n+1)`. -/
 noncomputable def innerImageGraph (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     SimpleGraph (boxVerts d (n + 1)) where
   Adj x y := (boxGraph d (n + 1)).Adj x y ∧ psiExt d n (fun _ => false) ω s(x, y) = true
@@ -220,7 +225,8 @@ lemma psiExt_eq_false_of_range (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (
   obtain ⟨e', rfl⟩ := he
   rw [psiExt_innerEdge, psiExt_innerEdge]
 
-/-- The wired open graph of the glued configuration is the union of the inner open edges and the
+/-- **Wired glued open graph is the union of inner and outer graphs.**
+The wired open graph of the glued configuration is the union of the inner open edges and the
 outer graph. -/
 lemma psiWiredGraph_eq_sup (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (ω : ConfigSpace (Sym2 (boxVerts d n))) :
@@ -245,12 +251,14 @@ lemma psiWiredGraph_eq_sup (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 
       rwa [psiExt_eq_psi_of_not_range d n ψ ω hr]
     · exact Or.inr hclique
 
-/-- The wired open graph of the glued configuration on `Λ_(n+1)`. -/
+/-- **Wired open graph of a glued configuration.**
+The wired open graph of the glued configuration on `Λ_(n+1)`. -/
 noncomputable abbrev fullGraph (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : SimpleGraph (boxVerts d (n + 1)) :=
   innerImageGraph d n ω ⊔ outsideGraph d n ψ
 
-/-- The open graph of `ω` on `Λ_n` with the induced wiring added. -/
+/-- **Inner open graph with the induced wiring.**
+The open graph of `ω` on `Λ_n` with the induced wiring added. -/
 noncomputable abbrev innerGraph (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : SimpleGraph (boxVerts d n) :=
   openSub (boxGraph d n) ω ⊔ inducedWiring d n ψ
@@ -347,7 +355,8 @@ lemma innerGraph_reachable_of_fullGraph (d n : ℕ)
         exact ⟨w', hKw', SimpleGraph.Reachable.refl _⟩
       · exact ⟨x₀, hKx₀, hout.trans hoadj.reachable⟩
 
-/-- Two vertices of `Λ_n` are connected in the glued graph iff they are connected in `innerGraph`.
+/-- **Glued and inner graphs have the same connections on the box.**
+Two vertices of `Λ_n` are connected in the glued graph iff they are connected in `innerGraph`.
 -/
 lemma fullGraph_reachable_boxVertIncl (d n : ℕ)
     (ω : ConfigSpace (Sym2 (boxVerts d n))) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
@@ -369,7 +378,8 @@ lemma fullGraph_adj_of_outside (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n
 ## D. Counting clusters
 -/
 
-/-- A vertex of `Λ_(n+1)` whose outer component contains no vertex of `Λ_n`. -/
+/-- **Outer vertex whose outer component avoids the inner box.**
+A vertex of `Λ_(n+1)` whose outer component contains no vertex of `Λ_n`. -/
 def OutsideOnly (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (u : boxVerts d (n + 1)) : Prop :=
   ∀ v, (outsideGraph d n ψ).Reachable u v → ¬ IsInnerVert d n v
@@ -396,7 +406,8 @@ lemma outsideGraph_reachable_of_fullGraph_outsideOnly (d n : ℕ)
       have ha_not_inner : ¬ IsInnerVert d n a := hu a ha_out
       exact ha_out.trans (fullGraph_adj_of_outside d n ω ψ ha_not_inner hadj).reachable
 
-/-- `OutsideOnly` as a predicate on components of the outer graph. -/
+/-- **Outer component avoiding the inner box.**
+`OutsideOnly` as a predicate on components of the outer graph. -/
 noncomputable def IsOutsideOnly (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     (outsideGraph d n ψ).ConnectedComponent → Prop :=
   ConnectedComponent.lift (OutsideOnly d n ψ)
@@ -408,7 +419,8 @@ noncomputable def IsOutsideOnly (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d 
     IsOutsideOnly d n ψ ((outsideGraph d n ψ).connectedComponentMk v) ↔ OutsideOnly d n ψ v :=
   Iff.rfl
 
-/-- The components of the outer graph that avoid `Λ_n`. -/
+/-- **Outer components avoiding the inner box.**
+The components of the outer graph that avoid `Λ_n`. -/
 def OutsideOnlyComp (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : Type :=
   {c : (outsideGraph d n ψ).ConnectedComponent // IsOutsideOnly d n ψ c}
 
@@ -418,7 +430,8 @@ noncomputable instance instFintypeOutsideOnlyComp (d n : ℕ)
   classical
   unfold OutsideOnlyComp; infer_instance
 
-/-- The map from components of `innerGraph` and outer components avoiding `Λ_n` to components of the
+/-- **Component map into the wired glued graph.**
+The map from components of `innerGraph` and outer components avoiding `Λ_n` to components of the
 glued graph. -/
 noncomputable def fullComponentMap (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -497,7 +510,8 @@ lemma fullComponentMap_surjective (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts 
       (isOutsideOnly_mk d n ψ u).mpr hOut⟩, ?_⟩
     rw [fullComponentMap_inr_mk]
 
-/-- Components of the glued graph are components of `innerGraph` plus the outer components avoiding
+/-- **Component decomposition of the wired glued graph.**
+Components of the glued graph are components of `innerGraph` plus the outer components avoiding
 `Λ_n`. -/
 noncomputable def fullComponentEquiv (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -506,11 +520,13 @@ noncomputable def fullComponentEquiv (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVer
   Equiv.ofBijective (fullComponentMap d n ω ψ)
     ⟨fullComponentMap_injective d n ω ψ, fullComponentMap_surjective d n ω ψ⟩
 
-/-- The number of outer components avoiding `Λ_n`. -/
+/-- **Number of outer components avoiding the inner box.**
+The number of outer components avoiding `Λ_n`. -/
 noncomputable def outsideShift (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : ℕ :=
   Nat.card (OutsideOnlyComp d n ψ)
 
-/-- The wired cluster count of a glued configuration is the induced cluster count of `ω` plus
+/-- **Wired cluster count of a glued configuration splits additively.**
+The wired cluster count of a glued configuration is the induced cluster count of `ω` plus
 `outsideShift d n ψ`. -/
 lemma numClustersBC_psiExt (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -531,7 +547,8 @@ lemma numClustersBC_psiExt (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
 ## E. Factorization of the weights
 -/
 
-/-- The Bernoulli edge product over the edges of `Λ_(n+1)` outside `Λ_n`, evaluated at `ψ`. -/
+/-- **Outer Bernoulli edge factor of an outer configuration.**
+The Bernoulli edge product over the edges of `Λ_(n+1)` outside `Λ_n`, evaluated at `ψ`. -/
 noncomputable def psiEdgeFactor (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (p : ℝ) : ℝ :=
   ∏ e ∈ (boxGraph d (n + 1)).edgeFinset.filter (fun e => e ∉ Set.range (innerEdge d n)),
@@ -546,7 +563,8 @@ lemma psiEdgeFactor_pos {d n : ℕ} {ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))
   · exact hp
   · linarith
 
-/-- The edge product of a glued configuration factorizes into the inner edge product and
+/-- **Edge product of a glued configuration factorizes.**
+The edge product of a glued configuration factorizes into the inner edge product and
 `psiEdgeFactor`. -/
 lemma edgeProduct_psiExt (d n : ℕ) {p : ℝ} (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (ω : ConfigSpace (Sym2 (boxVerts d n))) :
@@ -565,7 +583,8 @@ lemma edgeProduct_psiExt (d n : ℕ) {p : ℝ} (ψ : ConfigSpace (Sym2 (boxVerts
     rw [Finset.mem_filter] at he
     rw [psiExt_eq_psi_of_not_range d n ψ ω he.2]
 
-/-- The factor depending only on `ψ`: `psiEdgeFactor · q ^ outsideShift`. -/
+/-- **Outer weight factor of an outer configuration.**
+The factor depending only on `ψ`: `psiEdgeFactor · q ^ outsideShift`. -/
 noncomputable def psiShift (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (p q : ℝ) : ℝ :=
   psiEdgeFactor d n ψ p * q ^ outsideShift d n ψ
@@ -595,7 +614,8 @@ lemma inducedBcZ_innerEdgeFinset_psi (d n : ℕ) {p q : ℝ}
     bcZ, Finset.sum_mul]
   exact Finset.sum_congr rfl (fun ω _ => bcWeight_psiExt d n ψ ω)
 
-/-- Domain Markov property: the wired measure on `Λ_(n+1)`, conditioned on the outer configuration
+/-- **Domain Markov property for the wired measure on nested boxes.**
+Domain Markov property: the wired measure on `Λ_(n+1)`, conditioned on the outer configuration
 `ψ`, is the random-cluster measure on `Λ_n` with the induced wiring. -/
 lemma condBcProb_psiExt_eq_bcProb (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -689,7 +709,8 @@ lemma inducedWiring_only_bdry (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n
     · exact boxBoundary_of_outsideGraph_adj d n hn ψ hadj
   exact ⟨hbx, hby⟩
 
-/-- The induced wiring lies below the clique on `∂Λ_n`. -/
+/-- **Induced wiring lies below the inner boundary clique.**
+The induced wiring lies below the clique on `∂Λ_n`. -/
 lemma inducedWiring_le_wired (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     inducedWiring d n ψ ≤ StatMech.Lattice.boundaryCliqueGraph (boxBoundary d n) := by
   intro x y hxy
@@ -751,7 +772,8 @@ lemma condBcProb_psiExt_dominated (d n : ℕ)
     (StatMech.Lattice.boundaryCliqueGraph (boxBoundary d n))
     (inducedWiring_le_wired d n ψ) hp hp1 hq hA
 
-/-- For `q ≥ 1`, the measure on `Λ_n` with the induced wiring is dominated by the wired measure on
+/-- **Wired box measure dominates the induced-wiring measure for $q \ge 1$.**
+For `q ≥ 1`, the measure on `Λ_n` with the induced wiring is dominated by the wired measure on
 `Λ_n`. -/
 lemma condBcProb_psiExt_dominated_wired (d n : ℕ)
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) {p q : ℝ}

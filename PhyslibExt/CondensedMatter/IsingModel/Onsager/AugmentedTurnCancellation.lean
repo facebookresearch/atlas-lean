@@ -521,7 +521,8 @@ lemma ons_reversibleFactorProduct_surgery
 
 /-! ## C. Reversible turn matrices -/
 
-/-- The matrix `q x y · turnW(dir y, dir x)` on an abstract state space with directions. -/
+/-- **Reversible turn matrix on a state space with directions.**
+The matrix `q x y · turnW(dir y, dir x)` on an abstract state space with directions. -/
 noncomputable def ons_reversibleTurnMatrix
     {E : Type*} (dir : E → Fin 4) (omega : ℂ)
     (q : E → E → ℂ) : Matrix E E ℂ :=
@@ -649,7 +650,8 @@ lemma ons_invariantStateProduct_surgery
         show U = Finset.univ.filter (fun k ↦ l ≤ k ∧ k ≤ m) from rfl,
         Finset.prod_filter_mul_prod_filter_not]
 
-/-- The reversible turn matrix with additional row and column weights on states. -/
+/-- **State-weighted reversible turn matrix.**
+The reversible turn matrix with additional row and column weights on states. -/
 noncomputable def ons_stateWeightedReversibleTurnMatrix
     {E : Type*} (dir : E → Fin 4) (omega : ℂ)
     (rowWeight colWeight : E → ℂ) (q : E → E → ℂ) :
@@ -794,7 +796,8 @@ lemma ons_cyclicTurnProduct_omega_inv
       _root_.inv_zpow, h4]
     simp
 
-/-- Reversal of a cyclic sequence of states: position `k` carries `rev` of the state at position
+/-- **Reversal of a cyclic sequence of states.**
+Reversal of a cyclic sequence of states: position `k` carries `rev` of the state at position
 `-k`. -/
 def ons_involutiveLoopRev
     {E : Type*} {n : ℕ} [NeZero n]
@@ -921,7 +924,8 @@ lemma ons_loopWeight_stateWeightedReversibleTurnMatrix_loopRev
 
 /-! ## F. Masks -/
 
-/-- The reversible factor with the rows and columns of `forbidden` set to zero. -/
+/-- **Masked reversible factor.**
+The reversible factor with the rows and columns of `forbidden` set to zero. -/
 noncomputable def ons_maskedReversibleFactor
     {E : Type*} [DecidableEq E]
     (forbidden : Finset E) (q : E → E → ℂ) : E → E → ℂ :=

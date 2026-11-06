@@ -175,7 +175,8 @@ lemma dfi_free_per_edge_le (N n : ℕ) (hNn : N ≤ n) (eb : Sym2 (boxVerts d N)
 
 /-! ## D. Open-edge counts -/
 
-/-- The number of open edges of `ω` in the finite set `E`, as a real number. -/
+/-- **Number of open edges in a finite edge set.**
+The number of open edges of `ω` in the finite set `E`, as a real number. -/
 noncomputable def dfi_openEdgeCount {V : Type*} [Fintype V] [DecidableEq V]
     (E : Finset (Sym2 V)) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   ∑ e ∈ E, (if ω e then (1 : ℝ) else 0)

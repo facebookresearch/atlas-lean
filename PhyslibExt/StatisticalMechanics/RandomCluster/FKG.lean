@@ -266,7 +266,8 @@ lemma card_connectedComponent_marginal {A B : SimpleGraph V} (hAB : A ≤ B)
   rw [hK] at h
   exact h
 
-/-- The number of connected components of simple graphs on a finite vertex set is supermodular:
+/-- **Supermodularity of the number of connected components.**
+The number of connected components of simple graphs on a finite vertex set is supermodular:
 `#comp(G₁) + #comp(G₂) ≤ #comp(G₁ ⊔ G₂) + #comp(G₁ ⊓ G₂)`.
 -/
 lemma card_connectedComponent_submodular (G₁ G₂ : SimpleGraph V)
@@ -300,7 +301,8 @@ lemma openSub_inf (a b : ConfigSpace (Sym2 V)) :
   rw [Bool.and_eq_true]
   tauto
 
-/-- The cluster count of the random-cluster model is supermodular in the configuration. -/
+/-- **Supermodularity of the random-cluster cluster count.**
+The cluster count of the random-cluster model is supermodular in the configuration. -/
 lemma numClusters_supermodular (a b : ConfigSpace (Sym2 V)) :
     numClusters G a + numClusters G b
       ≤ numClusters G (a ⊔ b) + numClusters G (a ⊓ b) := by
@@ -358,7 +360,8 @@ lemma fkWeight_logSupermodular {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 �
     mul_nonneg (edgeProduct_pos G hp hp1 _).le (edgeProduct_pos G hp hp1 _).le
   exact mul_le_mul_of_nonneg_left hcluster hprod_nonneg
 
-/-- For `q ≥ 1` and `p ∈ (0, 1)`, the random-cluster measure satisfies the FKG lattice condition
+/-- **FKG lattice condition for the random-cluster measure.**
+For `q ≥ 1` and `p ∈ (0, 1)`, the random-cluster measure satisfies the FKG lattice condition
 `φ(a) φ(b) ≤ φ(a ⊔ b) φ(a ⊓ b)`.
 -/
 lemma fkProb_FKGLatticeCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -388,7 +391,8 @@ theorem fkProb_positively_associated {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq 
     (fkProb_sum_eq_one G hp hp1 hq0)
     (fkProb_FKGLatticeCondition G hp hp1 hq) hf hg
 
-/-- The FKG inequality for increasing events: `φ(A) φ(B) ≤ φ(A ∩ B)` for `q ≥ 1`. -/
+/-- **FKG inequality for increasing random-cluster events.**
+The FKG inequality for increasing events: `φ(A) φ(B) ≤ φ(A ∩ B)` for `q ≥ 1`. -/
 lemma fkProb_positively_associated_events {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A B : Set (ConfigSpace (Sym2 V))} (hA : IsIncreasing A) (hB : IsIncreasing B) :
     (∑ ω, fkProb G p q ω * A.indicator (fun _ => (1 : ℝ)) ω)

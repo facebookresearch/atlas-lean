@@ -72,11 +72,13 @@ variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 
 /-! ## A. Graphs glued along an interface -/
 
-/-- The interface edges of `K`: edges not in the disjoint union `G ⊕ H`. -/
+/-- **Interface edges of a graph on a disjoint union.**
+The interface edges of `K`: edges not in the disjoint union `G ⊕ H`. -/
 noncomputable def fis_interface : Finset (Sym2 (V ⊕ W)) :=
   K.edgeFinset \ (G ⊕g H).edgeFinset
 
-/-- `K` contains `G ⊕ H` and adds no edges inside `V` or inside `W`; all extra edges join `V` to
+/-- **Graph glued from two graphs along an interface.**
+`K` contains `G ⊕ H` and adds no edges inside `V` or inside `W`; all extra edges join `V` to
 `W`.
 -/
 structure fis_CrossInterface : Prop where

@@ -61,7 +61,8 @@ variable {ι V : Type*} [DecidableEq ι] [DecidableEq V] [Fintype V] [Fintype ι
 /-! ## A. Clusters and crossings in multigraphs -/
 
 open Classical in
-/-- The vertices not connected to `o` using edges of `m` in the multigraph `ends`. -/
+/-- **Vertices not connected to a root through a multigraph edge set.**
+The vertices not connected to `o` using edges of `m` in the multigraph `ends`. -/
 noncomputable def notConnCompK (ends : ι → Sym2 V) (m : Finset ι) (o : V) : Finset V :=
   (Finset.univ : Finset V).filter (fun w => ¬ connK ends m o w)
 
@@ -71,10 +72,12 @@ lemma mem_notConnCompK {ends : ι → Sym2 V} {m : Finset ι} {o w : V} :
     w ∈ notConnCompK ends m o ↔ ¬ connK ends m o w := by
   simp [notConnCompK]
 
-/-- Both endpoints of the multigraph edge `i` lie in `S`. -/
+/-- **Multigraph edge lying inside a vertex set.**
+Both endpoints of the multigraph edge `i` lie in `S`. -/
 def edgeInsideK (ends : ι → Sym2 V) (S : Finset V) (i : ι) : Prop := ∀ w ∈ ends i, w ∈ S
 
-/-- Every edge of `m` lies inside `S` or inside `Sᶜ`. -/
+/-- **Multigraph edge set with no edge crossing a vertex set.**
+Every edge of `m` lies inside `S` or inside `Sᶜ`. -/
 def NoCrossingK (ends : ι → Sym2 V) (m : Finset ι) (S : Finset V) : Prop :=
   ∀ i ∈ m, edgeInsideK ends S i ∨ edgeInsideK ends Sᶜ i
 
@@ -109,7 +112,8 @@ lemma noCrossingK_of_event (ends : ι → Sym2 V) (m : Finset ι) (S : Finset V)
 
 /-! ## B. Pair families and switching -/
 
-/-- The sum over edge sets `m` with sources `A ∆ B` and over splittings `m = K ⊔ (m \ K)` with
+/-- **Sum over edge sets split into parts with sources $A$ and $B$.**
+The sum over edge sets `m` with sources `A ∆ B` and over splittings `m = K ⊔ (m \ K)` with
 sources `A` and `B` of `F m`. -/
 noncomputable def srcPairFamily (ends : ι → Sym2 V) (A B : Finset V) (F : Finset ι → ℝ) : ℝ :=
   ∑ m ∈ (Finset.univ.powerset.filter (fun m => sources ends m = A ∆ B)),

@@ -55,7 +55,8 @@ open Matrix BigOperators StatMech.Ising
 
 /-! ## A. Edge-weighted character sums -/
 
-/-- The edge-weighted spin-character sum `∑_F χ_{a,b}(hom F) ∏_{e ∈ F} w_e` over even subgraphs of
+/-- **Edge-weighted spin-character sum over even subgraphs.**
+The edge-weighted spin-character sum `∑_F χ_{a,b}(hom F) ∏_{e ∈ F} w_e` over even subgraphs of
 the torus. -/
 noncomputable def ons_weightedSpinCharacterSum
     (L : ℕ) [Fact (2 < L)]
@@ -77,7 +78,8 @@ lemma ons_weightedSpinCharacterSum_const
 
 /-! ## B. The root identity -/
 
-/-- The edge-weighted root identity on the `L × L` torus: for every spin structure and every edge
+/-- **Edge-weighted root identity on the torus.**
+The edge-weighted root identity on the `L × L` torus: for every spin structure and every edge
 weight bounded by `q` below Sherman's radius, the walk-series square root of the twisted
 edge-weighted Kac-Ward determinant equals the edge-weighted character sum. -/
 def ons_weightedRootIdentity (L : ℕ) [Fact (2 < L)] : Prop :=
@@ -114,7 +116,8 @@ lemma ons_spinCoefficientIdentity_of_weightedRoot
           (ons_spinPhase L a) (ons_spinPhase L b)) ^ 2 := by rw [hroot]
     _ = _ := hsq
 
-/-- Sherman's radius for `L > 2`, and `1` otherwise. -/
+/-- **Sherman's radius for $L > 2$, with value 1 otherwise.**
+Sherman's radius for `L > 2`, and `1` otherwise. -/
 noncomputable def ons_spinShermanRadius (L : ℕ) : ℝ :=
   if h : 2 < L then
     letI : NeZero L := ⟨by omega⟩

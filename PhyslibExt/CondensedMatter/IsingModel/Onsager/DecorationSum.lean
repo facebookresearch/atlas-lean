@@ -57,17 +57,19 @@ open BigOperators StatMech.Ising
 
 /-! ## A. Decorated and torus even subgraphs -/
 
-/-- Even subgraphs of the `L × L` torus. -/
+/-- **Even subgraphs of the L × L torus.** Even subgraphs of the `L × L` torus. -/
 abbrev ons_TorusEvenSubgraph (L : ℕ) [Fact (2 < L)] :=
   {F : Finset (Sym2 (ZMod L × ZMod L)) //
     F ∈ evenSubgraphs (onsTorusGraph L)}
 
-/-- Even subgraphs of the decorated graph of the torus. -/
+/-- **Even subgraphs of the decorated torus graph.**
+Even subgraphs of the decorated graph of the torus. -/
 abbrev ons_DecoratedEvenSubgraph (L : ℕ) [Fact (2 < L)] :=
   {D : Finset (Sym2 (ons_Dart L)) //
     D ∈ evenSubgraphs (ons_decGraph L)}
 
-/-- The torus even subgraph corresponding to a decorated even subgraph under the decoration
+/-- **Torus even subgraph of a decorated even subgraph.**
+The torus even subgraph corresponding to a decorated even subgraph under the decoration
 bijection. -/
 noncomputable def ons_originalEdgesOfDecorated
     (L : ℕ) [Fact (2 < L)]
@@ -90,17 +92,19 @@ lemma ons_originalEdgesOfDecorated_even
 
 /-! ## B. External edges and projection -/
 
-/-- An edge of the decorated graph is external if it joins a dart to its reverse. -/
+/-- **Externality of a decorated edge.**
+An edge of the decorated graph is external if it joins a dart to its reverse. -/
 def ons_decIsExternal {L : ℕ} (edge : Sym2 (ons_Dart L)) : Prop :=
   ∃ d : ons_Dart L, edge = s(d, ons_dartRev L d)
 
-/-- The external edges of a decorated edge set. -/
+/-- **External edges of a decorated edge set.** The external edges of a decorated edge set. -/
 noncomputable def ons_decoratedExternalEdges {L : ℕ}
     (D : Finset (Sym2 (ons_Dart L))) : Finset (Sym2 (ons_Dart L)) := by
   classical
   exact D.filter ons_decIsExternal
 
-/-- The projection of a decorated edge to the torus, taking each dart to its starting site. -/
+/-- **Projection of a decorated edge to the torus.**
+The projection of a decorated edge to the torus, taking each dart to its starting site. -/
 def ons_decEdgeProjection {L : ℕ}
     (edge : Sym2 (ons_Dart L)) : Sym2 (ZMod L × ZMod L) :=
   Sym2.map Prod.fst edge
@@ -170,7 +174,8 @@ lemma ons_originalEdgesOfDecorated_card
 
 /-! ## C. Spin weights -/
 
-/-- The weight `χ_{a,b}(hom F) x^|F|` of the torus even subgraph `F` corresponding to a decorated
+/-- **Spin weight of a decorated even subgraph.**
+The weight `χ_{a,b}(hom F) x^|F|` of the torus even subgraph `F` corresponding to a decorated
 even subgraph. -/
 noncomputable def ons_decoratedSpinWeight
     (L : ℕ) [Fact (2 < L)] (x : ℝ) (a b : Fin 2)
@@ -192,12 +197,14 @@ lemma ons_decoratedSpinWeight_eq_external
 
 /-! ## D. Walks and cycles -/
 
-/-- The external edges used by a walk in the decorated graph. -/
+/-- **External edges used by a decorated walk.**
+The external edges used by a walk in the decorated graph. -/
 noncomputable def ons_walkExternalEdges {L : ℕ} {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) : Finset (Sym2 (ons_Dart L)) :=
   ons_decoratedExternalEdges p.edges.toFinset
 
-/-- The torus edges underlying the external edges of a decorated walk. -/
+/-- **Torus edges underlying a decorated walk.**
+The torus edges underlying the external edges of a decorated walk. -/
 noncomputable def ons_walkOriginalEdges {L : ℕ} {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) :
     Finset (Sym2 (ZMod L × ZMod L)) :=

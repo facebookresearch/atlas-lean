@@ -80,7 +80,8 @@ variable {U : Type*} [Fintype U] [DecidableEq U] (K₀ : SimpleGraph U) [Decidab
 ## A. Partition functions of induced subgraphs
 -/
 
-/-- Graphs induced on `K₀` by two injections with the same range are isomorphic. -/
+/-- **Isomorphism of induced graphs from injections with equal range.**
+Graphs induced on `K₀` by two injections with the same range are isomorphic. -/
 noncomputable def qp_comapIsoOfRangeEq {V W : Type*} (f : V → U) (g : W → U)
     (hf : Function.Injective f) (hg : Function.Injective g) (hr : Set.range f = Set.range g) :
     K₀.comap f ≃g K₀.comap g where
@@ -94,7 +95,8 @@ noncomputable def qp_comapIsoOfRangeEq {V W : Type*} (f : V → U) (g : W → U)
       fun z => by rw [Equiv.apply_ofInjective_symm hg]; rfl
     rw [key a, key b]
 
-/-- Graphs induced by two injections with the same range have the same FK partition function. -/
+/-- **Induced graphs with equal range have equal FK partition functions.**
+Graphs induced by two injections with the same range have the same FK partition function. -/
 lemma qp_fkZ_comap_range {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
     (f : V → U) (g : W → U) (hf : Function.Injective f) (hg : Function.Injective g)
     (hr : Set.range f = Set.range g) (p q : ℝ)
@@ -102,7 +104,8 @@ lemma qp_fkZ_comap_range {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [
     fkZ (K₀.comap f) p q = fkZ (K₀.comap g) p q :=
   fsm_fkZ_iso _ _ (qp_comapIsoOfRangeEq K₀ f g hf hg hr) p q
 
-/-- For `q ≥ 1`, the FK partition function is at least the weight `(1 - p)^{|E|}` of the all-
+/-- **FK partition function at least the all-closed weight for $q \ge 1$.**
+For `q ≥ 1`, the FK partition function is at least the weight `(1 - p)^{|E|}` of the all-
 closed configuration. -/
 lemma qp_fkZ_ge_allClosed {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q) :
@@ -123,7 +126,8 @@ lemma qp_fkZ_ge_allClosed {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGra
         exact Finset.single_le_sum (f := fun ω => fkWeight G p q ω)
           (fun ω _ => fkWeight_nonneg G hp hp1 (by linarith) ω) (Finset.mem_univ _)
 
-/-- For `q ≥ 1`, `-log Z ≤ |E| · (-log (1 - p))`. -/
+/-- **Bound $-\log Z \le |E|\,(-\log(1-p))$ for $q \ge 1$.**
+For `q ≥ 1`, `-log Z ≤ |E| · (-log (1 - p))`. -/
 lemma qp_neglogZ_le_edges {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q) :
     -Real.log (fkZ G p q) ≤ (G.edgeFinset.card : ℝ) * (-Real.log (1 - p)) := by
@@ -144,11 +148,13 @@ variable {T : Type*} [DecidableEq T] (tag : U → T)
 ## B. Peeling blocks off a tagged graph
 -/
 
-/-- The graph induced on the vertices whose tag lies in `S`. -/
+/-- **Graph induced on vertices with tags in $S$.**
+The graph induced on the vertices whose tag lies in `S`. -/
 noncomputable def qp_restG (S : Finset T) : SimpleGraph {x : U // tag x ∈ S} :=
   K₀.comap Subtype.val
 
-/-- The block of tag `τ`: the graph induced on the vertices with tag `τ`. -/
+/-- **Block of a tag: graph induced on its vertices.**
+The block of tag `τ`: the graph induced on the vertices with tag `τ`. -/
 noncomputable def qp_blkG (τ : T) : SimpleGraph {x : U // tag x = τ} := K₀.comap Subtype.val
 
 /-- Classical decidability of adjacency in `qp_restG`. -/
@@ -156,7 +162,8 @@ noncomputable instance (S : Finset T) : DecidableRel (qp_restG K₀ tag S).Adj :
 /-- Classical decidability of adjacency in `qp_blkG`. -/
 noncomputable instance (τ : T) : DecidableRel (qp_blkG K₀ tag τ).Adj := Classical.decRel _
 
-/-- An edge straddles `P` if exactly one endpoint satisfies `P`. -/
+/-- **Straddling of a predicate by an edge.**
+An edge straddles `P` if exactly one endpoint satisfies `P`. -/
 def qp_straddleP (P : U → Prop) [DecidablePred P] : Sym2 U → Prop :=
   Sym2.lift ⟨fun a b => (P a ∧ ¬ P b) ∨ (¬ P a ∧ P b),
     by intro a b; by_cases ha : P a <;> by_cases hb : P b <;> simp [ha, hb]⟩
@@ -165,11 +172,12 @@ def qp_straddleP (P : U → Prop) [DecidablePred P] : Sym2 U → Prop :=
 noncomputable instance (P : U → Prop) [DecidablePred P] : DecidablePred (qp_straddleP P) :=
   fun _ => Classical.dec _
 
-/-- The edges of `K₀` that straddle `P`. -/
+/-- **Set of edges straddling a predicate.** The edges of `K₀` that straddle `P`. -/
 noncomputable def qp_straddleEdges (P : U → Prop) [DecidablePred P] : Finset (Sym2 U) :=
   K₀.edgeFinset.filter (qp_straddleP P)
 
-/-- An iterated induced graph is isomorphic to the graph induced by any injection with the same
+/-- **Isomorphism of an iterated induced graph with a single one.**
+An iterated induced graph is isomorphic to the graph induced by any injection with the same
 range as the composite. -/
 noncomputable def qp_comapComapIso {V W X : Type*} (g : W → U) (f : V → W) (h : X → U)
     (hgf : Function.Injective (g ∘ f)) (hh : Function.Injective h)
@@ -184,7 +192,8 @@ noncomputable def qp_comapComapIso {V W X : Type*} (g : W → U) (f : V → W) (
           = g (f z) := fun z => by rw [Equiv.apply_ofInjective_symm hh]; rfl
     rw [key a, key b]
 
-/-- An iterated induced graph has the FK partition function of the graph induced by any injection
+/-- **Iterated and single induced graphs share the FK partition function.**
+An iterated induced graph has the FK partition function of the graph induced by any injection
 with the same range. -/
 lemma qp_fkZ_comapComap {V W X : Type*} [Fintype V] [Fintype X] [DecidableEq V] [DecidableEq X]
     (g : W → U) (f : V → W) (h : X → U) (hgf : Function.Injective (g ∘ f))
@@ -193,7 +202,8 @@ lemma qp_fkZ_comapComap {V W X : Type*} [Fintype V] [Fintype X] [DecidableEq V] 
     fkZ ((K₀.comap g).comap f) p q = fkZ (K₀.comap h) p q :=
   fsm_fkZ_iso _ _ (qp_comapComapIso K₀ g f h hgf hh hr) p q
 
-/-- The left part of the restriction to `insert τ S`, split by tag `τ`, has the partition function
+/-- **Left part of a tag split has the block partition function.**
+The left part of the restriction to `insert τ S`, split by tag `τ`, has the partition function
 of the block of `τ`. -/
 lemma qp_left_eq (τ : T) (S : Finset T) (hτ : τ ∉ S) (p q : ℝ) :
     fkZ (agl_left (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)) p q
@@ -208,7 +218,8 @@ lemma qp_left_eq (τ : T) (S : Finset T) (hτ : τ ∉ S) (p q : ℝ) :
     · rintro ⟨v, rfl⟩
       exact ⟨⟨⟨v.1, by rw [v.2]; exact Finset.mem_insert_self τ S⟩, v.2⟩, rfl⟩
 
-/-- The right part of the restriction to `insert τ S`, split by tag `τ`, has the partition
+/-- **Right part of a tag split has the restricted partition function.**
+The right part of the restriction to `insert τ S`, split by tag `τ`, has the partition
 function of the restriction to `S`. -/
 lemma qp_right_eq (τ : T) (S : Finset T) (hτ : τ ∉ S) (p q : ℝ) :
     fkZ (agl_right (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)) p q
@@ -227,7 +238,8 @@ lemma qp_right_eq (τ : T) (S : Finset T) (hτ : τ ∉ S) (p q : ℝ) :
     · rintro ⟨v, rfl⟩
       exact ⟨⟨⟨v.1, Finset.mem_insert_of_mem v.2⟩, fun hc => hτ (hc ▸ v.2)⟩, rfl⟩
 
-/-- The interface of the left/right split by `P` has at most as many edges as there are edges
+/-- **Interface edges of a split are at most the straddling edges.**
+The interface of the left/right split by `P` has at most as many edges as there are edges
 straddling `P`. -/
 lemma qp_interface_le_straddle (P : U → Prop) [DecidablePred P] :
     agl_interfaceCard K₀ P ≤ (qp_straddleEdges K₀ P).card := by
@@ -266,7 +278,8 @@ lemma qp_interface_le_straddle (P : U → Prop) [DecidablePred P] :
   · intro a _ b _ hab
     exact Sym2.map.injective (Equiv.injective _) hab
 
-/-- Restricting to `insert τ S` does not increase the number of edges straddling tag `τ`. -/
+/-- **Restriction does not increase straddling edges of a tag.**
+Restricting to `insert τ S` does not increase the number of edges straddling tag `τ`. -/
 lemma qp_restG_straddle_le (τ : T) (S : Finset T) :
     (qp_straddleEdges (qp_restG K₀ tag (insert τ S)) (fun x => tag x.1 = τ)).card
       ≤ (qp_straddleEdges K₀ (fun u => tag u = τ)).card := by
@@ -288,7 +301,8 @@ lemma qp_restG_straddle_le (τ : T) (S : Finset T) :
   · intro a _ b _ hab
     exact Sym2.map.injective Subtype.val_injective hab
 
-/-- The FK partition function of a graph with no vertices is `1`. -/
+/-- **FK partition function of a graph with no vertices is one.**
+The FK partition function of a graph with no vertices is `1`. -/
 lemma qp_fkZ_empty {V : Type*} [Fintype V] [DecidableEq V] [IsEmpty V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (p q : ℝ) : fkZ G p q = 1 := by
   unfold fkZ
@@ -308,11 +322,13 @@ lemma qp_fkZ_empty {V : Type*} [Fintype V] [DecidableEq V] [IsEmpty V] (G : Simp
   · intro b _ hb; exact absurd (Subsingleton.elim b _) hb
   · intro h; exact absurd (Finset.mem_univ _) h
 
-/-- The negative log ambient normalizer `-log (fkZ G p q)`, including unused coordinates. -/
+/-- **Negative log of the ambient FK normalizer.**
+The negative log ambient normalizer `-log (fkZ G p q)`, including unused coordinates. -/
 noncomputable def qp_ambientNegLogZ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (p q : ℝ) : ℝ := -Real.log (fkZ G p q)
 
-/-- Peeling: `-log Z` of the restriction to `S` is at most the sum over `τ ∈ S` of `-log Z` of the
+/-- **Peeling bound for $-\log Z$ of a tagged graph.**
+Peeling: `-log Z` of the restriction to `S` is at most the sum over `τ ∈ S` of `-log Z` of the
 blocks plus `I · (-log (1 - p))`, with `I` at most the number of edges straddling the tags in
 `S`. -/
 lemma qp_peel_le (p q : ℝ) (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -368,17 +384,20 @@ namespace EdgeCount
 ## C. Edge count of boxes
 -/
 
-/-- The ordered nearest-neighbor pairs of `Λ_n` that differ in coordinate `i`. -/
+/-- **Ordered nearest-neighbour pairs of $\Lambda_n$ in direction $i$.**
+The ordered nearest-neighbor pairs of `Λ_n` that differ in coordinate `i`. -/
 noncomputable def edgeAxisI (d n : ℕ) (i : Fin d) : Finset (Site d × Site d) :=
   (boxSV_edgeF d n).filter (fun p => p.1 i ≠ p.2 i)
-/-- The sites of `Λ_n` whose shift by `b` in coordinate `i` stays in `Λ_n`. -/
+/-- **Sites of $\Lambda_n$ whose shift in coordinate $i$ stays in the box.**
+The sites of `Λ_n` whose shift by `b` in coordinate `i` stays in `Λ_n`. -/
 noncomputable def shiftDom (d n : ℕ) (i : Fin d) (b : ℤ) : Finset (Site d) :=
   (boxSV_boxF d n).filter (fun x => x i + b ∈ Finset.Icc (-(n : ℤ)) n)
-/-- The ordered pair `(x, x + b e_i)`. -/
+/-- **Shift map $x \mapsto (x, x + b e_i)$.** The ordered pair `(x, x + b e_i)`. -/
 noncomputable def shiftMap (d n : ℕ) (i : Fin d) (b : ℤ) (x : Site d) : Site d × Site d :=
   (x, Function.update x i (x i + b))
 
-/-- A site is adjacent to its shift by `±1` in one coordinate. -/
+/-- **A site is adjacent to its unit shift in one coordinate.**
+A site is adjacent to its shift by `±1` in one coordinate. -/
 lemma shift_adj (d n : ℕ) (i : Fin d) (x : Site d) (b : ℤ) (hb : b = 1 ∨ b = -1) :
     (hypercubicLattice d).Adj x (Function.update x i (x i + b)) := by
   classical
@@ -387,7 +406,8 @@ lemma shift_adj (d n : ℕ) (i : Fin d) (x : Site d) (b : ℤ) (hb : b = 1 ∨ b
   · intro c _ hc; rw [Function.update_of_ne hc]; simp
   · intro h; exact absurd (Finset.mem_univ _) h
 
-/-- For `b = ±1`, `2n (2n + 1)^{d-1}` sites of `Λ_n` stay in `Λ_n` after the shift. -/
+/-- **$2n(2n+1)^{d-1}$ sites of $\Lambda_n$ stay inside after a unit shift.**
+For `b = ±1`, `2n (2n + 1)^{d-1}` sites of `Λ_n` stay in `Λ_n` after the shift. -/
 lemma card_shiftDom (d n : ℕ) (i : Fin d) (b : ℤ) (hb : b = 1 ∨ b = -1) (hd : 1 ≤ d) :
     (shiftDom d n i b).card = (2 * n) * (2 * n + 1) ^ (d - 1) := by
   unfold shiftDom boxSV_boxF
@@ -430,7 +450,8 @@ lemma card_shiftDom (d n : ℕ) (i : Fin d) (b : ℤ) (hb : b = 1 ∨ b = -1) (h
     Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ _),
     Finset.card_univ, Fintype.card_fin]
 
-/-- For `b = ±1`, the shift of a site that stays in the box gives a pair in direction `i`. -/
+/-- **Unit shifts of sites staying in the box are pairs in direction $i$.**
+For `b = ±1`, the shift of a site that stays in the box gives a pair in direction `i`. -/
 lemma shiftMap_mem (d n : ℕ) (i : Fin d) (b : ℤ) (hb : b = 1 ∨ b = -1) (x : Site d)
     (hx : x ∈ shiftDom d n i b) : shiftMap d n i b x ∈ edgeAxisI d n i := by
   rw [shiftDom, Finset.mem_filter] at hx
@@ -443,11 +464,12 @@ lemma shiftMap_mem (d n : ℕ) (i : Fin d) (b : ℤ) (hb : b = 1 ∨ b = -1) (x 
     · simp only [Function.update_of_ne hj]; exact hxbox j
   · simp only [Function.update_self, ne_eq]; rcases hb with h|h <;> subst h <;> omega
 
-/-- The shift map is injective. -/
+/-- **Injectivity of the shift map.** The shift map is injective. -/
 lemma shiftMap_inj (d n : ℕ) (i : Fin d) (b : ℤ) : Function.Injective (shiftMap d n i b) :=
   fun x y h => (Prod.ext_iff.mp h).1
 
-/-- The pairs in direction `i` are the forward and the backward shifts. -/
+/-- **Pairs in direction $i$ are the forward and backward shifts.**
+The pairs in direction `i` are the forward and the backward shifts. -/
 lemma edgeAxisI_eq (d n : ℕ) (i : Fin d) :
     edgeAxisI d n i = (shiftDom d n i 1).image (shiftMap d n i 1)
         ∪ (shiftDom d n i (-1)).image (shiftMap d n i (-1)) := by
@@ -504,7 +526,8 @@ lemma edgeAxisI_eq (d n : ℕ) (i : Fin d) :
     · exact shiftMap_mem d n i 1 (Or.inl rfl) x hx
     · exact shiftMap_mem d n i (-1) (Or.inr rfl) x hx
 
-/-- Forward and backward pairs in one direction are disjoint. -/
+/-- **Forward and backward shift pairs are disjoint.**
+Forward and backward pairs in one direction are disjoint. -/
 lemma fwd_bwd_disjoint (d n : ℕ) (i : Fin d) :
     Disjoint ((shiftDom d n i 1).image (shiftMap d n i 1))
         ((shiftDom d n i (-1)).image (shiftMap d n i (-1))) := by
@@ -520,7 +543,8 @@ lemma fwd_bwd_disjoint (d n : ℕ) (i : Fin d) :
   simp only [Function.update_self] at this
   omega
 
-/-- There are `2 · 2n (2n + 1)^{d-1}` ordered pairs in each direction. -/
+/-- **$\Lambda_n$ has $4n(2n+1)^{d-1}$ ordered pairs in each direction.**
+There are `2 · 2n (2n + 1)^{d-1}` ordered pairs in each direction. -/
 lemma card_edgeAxisI (d n : ℕ) (i : Fin d) (hd : 1 ≤ d) :
     (edgeAxisI d n i).card = 2 * ((2 * n) * (2 * n + 1) ^ (d - 1)) := by
   rw [edgeAxisI_eq, Finset.card_union_of_disjoint (fwd_bwd_disjoint d n i),
@@ -529,7 +553,8 @@ lemma card_edgeAxisI (d n : ℕ) (i : Fin d) (hd : 1 ≤ d) :
     card_shiftDom d n i 1 (Or.inl rfl) hd, card_shiftDom d n i (-1) (Or.inr rfl) hd]
   ring
 
-/-- The ordered nearest-neighbor pairs of `Λ_n` are the union over directions. -/
+/-- **Ordered neighbour pairs of $\Lambda_n$ as a union over directions.**
+The ordered nearest-neighbor pairs of `Λ_n` are the union over directions. -/
 lemma edgeF_biUnion (d n : ℕ) :
     (boxSV_edgeF d n) = Finset.univ.biUnion (fun i : Fin d => edgeAxisI d n i) := by
   ext p; rw [Finset.mem_biUnion]
@@ -543,7 +568,8 @@ lemma edgeF_biUnion (d n : ℕ) :
       rw [edgeAxisI, Finset.mem_filter]; exact ⟨hp, fun he => hi (by rw [he]; simp)⟩⟩
   · rintro ⟨i, _, hp⟩; rw [edgeAxisI, Finset.mem_filter] at hp; exact hp.1
 
-/-- Pairs in different directions are disjoint. -/
+/-- **Ordered pairs in different directions are disjoint.**
+Pairs in different directions are disjoint. -/
 lemma edgeAxis_disjoint (d n : ℕ) (i j : Fin d) (hij : i ≠ j) :
     Disjoint (edgeAxisI d n i) (edgeAxisI d n j) := by
   rw [Finset.disjoint_left]
@@ -566,7 +592,8 @@ lemma edgeAxis_disjoint (d n : ℕ) (i j : Fin d) (hij : i ≠ j) :
     exact Finset.sum_le_sum_of_subset (Finset.subset_univ _)
   omega
 
-/-- The box `Λ_n` has `d · 2 · 2n (2n + 1)^{d-1}` ordered nearest-neighbor pairs. -/
+/-- **$\Lambda_n$ has $4dn(2n+1)^{d-1}$ ordered nearest-neighbour pairs.**
+The box `Λ_n` has `d · 2 · 2n (2n + 1)^{d-1}` ordered nearest-neighbor pairs. -/
 lemma edgeCard_eq (d n : ℕ) (hd : 1 ≤ d) :
     boxSV_edgeCard d n = d * (2 * ((2 * n) * (2 * n + 1) ^ (d - 1))) := by
   unfold boxSV_edgeCard
@@ -575,7 +602,8 @@ lemma edgeCard_eq (d n : ℕ) (hd : 1 ≤ d) :
     Finset.sum_const, Finset.card_univ, Fintype.card_fin]
   ring
 
-/-- The box `Λ_n` has `d · 2n (2n + 1)^{d-1}` edges. -/
+/-- **$\Lambda_n$ has $d \cdot 2n(2n+1)^{d-1}$ edges.**
+The box `Λ_n` has `d · 2n (2n + 1)^{d-1}` edges. -/
 lemma boxGraph_edgeCard (d n : ℕ) (hd : 1 ≤ d) :
     (boxGraph d n).edgeFinset.card = d * ((2 * n) * (2 * n + 1) ^ (d - 1)) := by
   have h := fup_edge_card_eq d n
@@ -595,22 +623,26 @@ section BoxGeom
 ### D.1. Orthant tags
 -/
 
-/-- The translation vector `(±(K + 1))_i` that moves `Λ_K` onto the orthant with sign pattern
+/-- **Translation vector onto an orthant of $\Lambda_{2K+1}$.**
+The translation vector `(±(K + 1))_i` that moves `Λ_K` onto the orthant with sign pattern
 `s`. -/
 def qp_vshift (d K : ℕ) (s : Fin d → Bool) : Site d :=
   fun i => if s i then (K + 1 : ℤ) else -(K + 1 : ℤ)
 
-/-- `|x| ≤ n` for an integer, written with `natAbs`. -/
+/-- **$|x| \le n$ iff $-n \le x \le n$ for an integer $x$.**
+`|x| ≤ n` for an integer, written with `natAbs`. -/
 lemma qp_natAbs_iff (x : ℤ) (n : ℕ) : x.natAbs ≤ n ↔ -(n : ℤ) ≤ x ∧ x ≤ n := by
   rw [show x.natAbs ≤ n ↔ |x| ≤ (n : ℤ) from by rw [Int.abs_eq_natAbs]; exact Int.ofNat_le.symm]
   exact abs_le
 
-/-- The orthant tag of a site of `Λ_{2K+1}`: `none` on a coordinate hyperplane, otherwise its sign
+/-- **Orthant tag of a site of $\Lambda_{2K+1}$.**
+The orthant tag of a site of `Λ_{2K+1}`: `none` on a coordinate hyperplane, otherwise its sign
 pattern. -/
 noncomputable def qp_boxTag (d K : ℕ) (x : boxVerts d (2 * K + 1)) : Option (Fin d → Bool) :=
   if (∃ i, (x : Site d) i = 0) then none else some (fun i => decide (0 < (x : Site d) i))
 
-/-- A site has tag `s` iff each coordinate lies in `[1, 2K + 1]` or `[-(2K + 1), -1]` according to
+/-- **Coordinate description of the sites with a given orthant tag.**
+A site has tag `s` iff each coordinate lies in `[1, 2K + 1]` or `[-(2K + 1), -1]` according to
 `s`. -/
 lemma qp_boxTag_some_iff (d K : ℕ) (x : boxVerts d (2 * K + 1)) (s : Fin d → Bool) :
     qp_boxTag d K x = some s ↔ ∀ i, if s i then (1 ≤ (x : Site d) i ∧ (x : Site d) i ≤ 2 * K + 1)
@@ -648,7 +680,8 @@ lemma qp_boxTag_some_iff (d K : ℕ) (x : boxVerts d (2 * K + 1)) (s : Fin d →
       · exact (decide_eq_true_iff (p := 0 < (x : Site d) i)).mpr (by omega)
       · exact (decide_eq_false_iff_not (p := 0 < (x : Site d) i)).mpr (by omega)
 
-/-- The translation of `Λ_K` onto the sites of `Λ_{2K+1}` with tag `s`. -/
+/-- **Translation of $\Lambda_K$ onto an orthant block of $\Lambda_{2K+1}$.**
+The translation of `Λ_K` onto the sites of `Λ_{2K+1}` with tag `s`. -/
 noncomputable def qp_quadφ (d K : ℕ) (s : Fin d → Bool) :
     boxVerts d K ≃ {x : boxVerts d (2 * K + 1) // qp_boxTag d K x = some s} where
   toFun y := ⟨⟨fun i => (y : Site d) i + qp_vshift d K s i, by
@@ -670,7 +703,8 @@ noncomputable def qp_quadφ (d K : ℕ) (s : Fin d → Bool) :
   left_inv y := by apply Subtype.ext; funext i; simp
   right_inv x := by apply Subtype.ext; apply Subtype.ext; funext i; simp
 
-/-- Each orthant block of `Λ_{2K+1}` has the FK partition function of `Λ_K`. -/
+/-- **Orthant blocks have the FK partition function of $\Lambda_K$.**
+Each orthant block of `Λ_{2K+1}` has the FK partition function of `Λ_K`. -/
 lemma qp_block_fkZ (d K : ℕ) (s : Fin d → Bool) (p q : ℝ) :
     fkZ (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) (some s)) p q
       = fkZ (boxGraph d K) p q := by
@@ -687,15 +721,18 @@ lemma qp_block_fkZ (d K : ℕ) (s : Fin d → Bool) (p q : ℝ) :
 ### D.2. The hyperplane set
 -/
 
-/-- The hyperplane set: sites of `Λ_{2K+1}` with some coordinate equal to `0`. -/
+/-- **Hyperplane set of $\Lambda_{2K+1}$.**
+The hyperplane set: sites of `Λ_{2K+1}` with some coordinate equal to `0`. -/
 noncomputable def qp_Jset (d K : ℕ) : Finset (boxVerts d (2 * K + 1)) :=
   Finset.univ.filter (fun x => ∃ i, (x : Site d) i = 0)
 
-/-- The sites of `Λ_{2K+1}` with coordinate `i` equal to `0`. -/
+/-- **Coordinate slab of $\Lambda_{2K+1}$.**
+The sites of `Λ_{2K+1}` with coordinate `i` equal to `0`. -/
 noncomputable def qp_Jslab (d K : ℕ) (i : Fin d) : Finset (boxVerts d (2 * K + 1)) :=
   Finset.univ.filter (fun x => (x : Site d) i = 0)
 
-/-- The hyperplane set is the union of the coordinate slabs. -/
+/-- **Hyperplane set lies in the union of the coordinate slabs.**
+The hyperplane set is the union of the coordinate slabs. -/
 lemma qp_Jset_subset_biUnion (d K : ℕ) :
     qp_Jset d K ⊆ Finset.univ.biUnion (fun i : Fin d => qp_Jslab d K i) := by
   intro x hx
@@ -704,7 +741,8 @@ lemma qp_Jset_subset_biUnion (d K : ℕ) :
   rw [Finset.mem_biUnion]
   exact ⟨i, Finset.mem_univ _, by rw [qp_Jslab, Finset.mem_filter]; exact ⟨Finset.mem_univ _, hi⟩⟩
 
-/-- Each coordinate slab has at most `(4K + 3)^{d-1}` sites. -/
+/-- **A coordinate slab has at most $(4K+3)^{d-1}$ sites.**
+Each coordinate slab has at most `(4K + 3)^{d-1}` sites. -/
 lemma qp_Jslab_card (d K : ℕ) (hd : 1 ≤ d) (i : Fin d) :
     (qp_Jslab d K i).card ≤ (2 * (2 * K + 1) + 1) ^ (d - 1) := by
   classical
@@ -740,7 +778,8 @@ lemma qp_Jslab_card (d K : ℕ) (hd : 1 ≤ d) (i : Fin d) :
         rw [Finset.prod_congr rfl hicc, Finset.prod_const,
           Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, Fintype.card_fin]
 
-/-- The hyperplane set has at most `d (4K + 3)^{d-1}` sites. -/
+/-- **The hyperplane set has at most $d(4K+3)^{d-1}$ sites.**
+The hyperplane set has at most `d (4K + 3)^{d-1}` sites. -/
 lemma qp_Jset_card_le (d K : ℕ) (hd : 1 ≤ d) :
     (qp_Jset d K).card ≤ d * (2 * (2 * K + 1) + 1) ^ (d - 1) := by
   calc (qp_Jset d K).card
@@ -752,7 +791,8 @@ lemma qp_Jset_card_le (d K : ℕ) (hd : 1 ≤ d) :
     _ = d * (2 * (2 * K + 1) + 1) ^ (d - 1) := by
         rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
 
-/-- Every vertex of a box has degree at most `2d`. See also
+/-- **Vertex degrees in a box are at most $2d$.**
+Every vertex of a box has degree at most `2d`. See also
 `MathlibExt...PlanarTopology.degree_le` for `ℤ^d`. -/
 lemma qp_boxGraph_degree_le (d n : ℕ) (v : boxVerts d n) : (boxGraph d n).degree v ≤ 2 * d := by
   rw [← SimpleGraph.card_incidenceFinset_eq_degree]
@@ -783,7 +823,8 @@ lemma qp_boxGraph_degree_le (d n : ℕ) (v : boxVerts d n) : (boxGraph d n).degr
 ### D.3. Edges meeting the hyperplanes
 -/
 
-/-- An edge leaving an orthant has an endpoint on a coordinate hyperplane. -/
+/-- **An edge leaving an orthant ends on a coordinate hyperplane.**
+An edge leaving an orthant has an endpoint on a coordinate hyperplane. -/
 lemma qp_straddle_endpoint_in_J (d K : ℕ) (s : Fin d → Bool) (x y : boxVerts d (2 * K + 1))
     (hadj : (boxGraph d (2 * K + 1)).Adj x y) (hx : qp_boxTag d K x = some s)
     (hy : qp_boxTag d K y ≠ some s) : ∃ i, (y : Site d) i = 0 := by
@@ -835,7 +876,8 @@ lemma qp_straddle_endpoint_in_J (d K : ℕ) (s : Fin d → Bool) (x y : boxVerts
   rw [hsigns] at hx
   exact hy (hyt.trans (by rw [hx]))
 
-/-- A site has tag `none` iff it lies on a coordinate hyperplane. -/
+/-- **Untagged sites are exactly those on a coordinate hyperplane.**
+A site has tag `none` iff it lies on a coordinate hyperplane. -/
 lemma qp_tag_none_iff (d K : ℕ) (x : boxVerts d (2 * K + 1)) :
     qp_boxTag d K x = none ↔ ∃ i, (x : Site d) i = 0 := by
   unfold qp_boxTag
@@ -843,7 +885,8 @@ lemma qp_tag_none_iff (d K : ℕ) (x : boxVerts d (2 * K + 1)) :
   · rw [ite_eq_left hz]; simp [hz]
   · rw [ite_eq_right hz]; simp [hz]
 
-/-- An edge between sites of different tags has an endpoint on a coordinate hyperplane. -/
+/-- **An edge between differently tagged sites meets a coordinate hyperplane.**
+An edge between sites of different tags has an endpoint on a coordinate hyperplane. -/
 lemma qp_straddle_endpoint_in_J_all (d K : ℕ) (τ : Option (Fin d → Bool))
     (x y : boxVerts d (2 * K + 1)) (hadj : (boxGraph d (2 * K + 1)).Adj x y)
     (hx : qp_boxTag d K x = τ) (hy : qp_boxTag d K y ≠ τ) :
@@ -852,7 +895,8 @@ lemma qp_straddle_endpoint_in_J_all (d K : ℕ) (τ : Option (Fin d → Bool))
   | none => left; exact (qp_tag_none_iff d K x).mp hx
   | some s => right; exact qp_straddle_endpoint_in_J d K s x y hadj hx hy
 
-/-- The edges straddling a tag are incident to the hyperplane set. -/
+/-- **Edges straddling a tag are incident to the hyperplane set.**
+The edges straddling a tag are incident to the hyperplane set. -/
 lemma qp_straddle_subset_all (d K : ℕ) (τ : Option (Fin d → Bool)) :
     qp_straddleEdges (boxGraph d (2 * K + 1)) (fun x => qp_boxTag d K x = τ)
       ⊆ (qp_Jset d K).biUnion (fun v => (boxGraph d (2 * K + 1)).incidenceFinset v) := by
@@ -881,7 +925,7 @@ lemma qp_straddle_subset_all (d K : ℕ) (τ : Option (Fin d → Bool)) :
         rw [SimpleGraph.mem_incidenceFinset]
         exact ⟨by rw [mem_edgeSet]; exact hedge, Sym2.mem_mk_left _ _⟩
 
-/-- At most `2d |J|` edges straddle a tag. -/
+/-- **At most $2d|J|$ edges straddle an orthant tag.** At most `2d |J|` edges straddle a tag. -/
 lemma qp_straddle_card_le_all (d K : ℕ) (τ : Option (Fin d → Bool)) :
     (qp_straddleEdges (boxGraph d (2 * K + 1)) (fun x => qp_boxTag d K x = τ)).card
       ≤ 2 * d * (qp_Jset d K).card := by
@@ -896,7 +940,8 @@ lemma qp_straddle_card_le_all (d K : ℕ) (τ : Option (Fin d → Bool)) :
     _ = (qp_Jset d K).card * (2 * d) := by rw [Finset.sum_const, smul_eq_mul]
     _ = 2 * d * (qp_Jset d K).card := by ring
 
-/-- The hyperplane block has at most `2d |J|` edges. -/
+/-- **The hyperplane block has at most $2d|J|$ edges.**
+The hyperplane block has at most `2d |J|` edges. -/
 lemma qp_blkNone_edge_le (d K : ℕ) :
     (qp_blkG (boxGraph d (2 * K + 1)) (qp_boxTag d K) none).edgeFinset.card
       ≤ 2 * d * (qp_Jset d K).card := by
@@ -934,19 +979,22 @@ lemma qp_blkNone_edge_le (d K : ℕ) :
 ### D.4. The doubling inequality
 -/
 
-/-- The restriction of `Λ_{2K+1}` to all tags is `Λ_{2K+1}`. -/
+/-- **Isomorphism from the all-tag restriction to $\Lambda_{2K+1}$.**
+The restriction of `Λ_{2K+1}` to all tags is `Λ_{2K+1}`. -/
 noncomputable def qp_restGUnivIso (d K : ℕ) :
     qp_restG (boxGraph d (2 * K + 1)) (qp_boxTag d K) Finset.univ ≃g boxGraph d (2 * K + 1) where
   toEquiv := Equiv.subtypeUnivEquiv (fun x => Finset.mem_univ (qp_boxTag d K x))
   map_rel_iff' := by intro a b; rfl
 
-/-- The restriction to all tags has the partition function of `Λ_{2K+1}`. -/
+/-- **The all-tag restriction has the partition function of $\Lambda_{2K+1}$.**
+The restriction to all tags has the partition function of `Λ_{2K+1}`. -/
 lemma qp_restG_univ_fkZ (d K : ℕ) (p q : ℝ) :
     fkZ (qp_restG (boxGraph d (2 * K + 1)) (qp_boxTag d K) Finset.univ) p q
       = fkZ (boxGraph d (2 * K + 1)) p q :=
   fsm_fkZ_iso _ _ (qp_restGUnivIso d K) p q
 
-/-- The doubling inequality `u(2K + 1) ≤ 2^d u(K) + I_K · (-log (1 - p))` for `u = -log Z` of the
+/-- **Doubling inequality for $-\log Z$ of the free $q = 2$ FK model.**
+The doubling inequality `u(2K + 1) ≤ 2^d u(K) + I_K · (-log (1 - p))` for `u = -log Z` of the
 free `q = 2` FK model, with `I_K = (2^d + 2) · 2d |J|`. -/
 lemma qp_box_neglog_doubling (d K : ℕ) (t : ℝ) :
     agl_ambientNegLogZ d t (2 * K + 1) ≤ (2 : ℝ) ^ d * agl_ambientNegLogZ d t K
@@ -1010,7 +1058,8 @@ lemma qp_box_neglog_doubling (d K : ℕ) (t : ℝ) :
   push_cast at hIle hnone hIbound ⊢
   nlinarith [hIle, hnone, hIbound, hc0, mul_le_mul_of_nonneg_right hIbound hc0]
 
-/-- The `2^d` orthant copies of `Λ_K` have at most as many edges as `Λ_{2K+1}`. -/
+/-- **$\Lambda_{2K+1}$ has at least $2^d$ times as many edges as $\Lambda_K$.**
+The `2^d` orthant copies of `Λ_K` have at most as many edges as `Λ_{2K+1}`. -/
 lemma qp_edge_le (d K : ℕ) (hd : 1 ≤ d) :
     (2 : ℝ) ^ d * ((boxGraph d K).edgeFinset.card)
       ≤ ((boxGraph d (2 * K + 1)).edgeFinset.card) := by
@@ -1029,7 +1078,8 @@ lemma qp_edge_le (d K : ℕ) (hd : 1 ≤ d) :
     · positivity
   nlinarith [key, Nat.cast_nonneg (α := ℝ) d]
 
-/-- The edge-number gap `|E(Λ_{2K+1})| - 2^d |E(Λ_K)|` is at most `d (d + 2)(4K + 3)^{d-1}`. -/
+/-- **Bound on the edge gap $|E(\Lambda_{2K+1})| - 2^d |E(\Lambda_K)|$.**
+The edge-number gap `|E(Λ_{2K+1})| - 2^d |E(Λ_K)|` is at most `d (d + 2)(4K + 3)^{d-1}`. -/
 lemma qp_edge_gap_le (d K : ℕ) (hd : 1 ≤ d) :
     (((boxGraph d (2 * K + 1)).edgeFinset.card : ℝ))
         - (2 : ℝ) ^ d * ((boxGraph d K).edgeFinset.card)
@@ -1088,7 +1138,8 @@ end BoxGeom
 ## E. The additive doubling bound and uniqueness
 -/
 
-/-- The box `Λ_n` has at least `n (2n + 1)^{d-1}` edges. -/
+/-- **Lower bound $n(2n+1)^{d-1}$ on the number of edges of $\Lambda_n$.**
+The box `Λ_n` has at least `n (2n + 1)^{d-1}` edges. -/
 lemma qp_edge_lower (d n : ℕ) (hd : 1 ≤ d) :
     (n : ℝ) * (2 * (n : ℝ) + 1) ^ (d - 1) ≤ ((boxGraph d n).edgeFinset.card : ℝ) := by
   have h1 := boxSV_edge_card_lower (d := d) (n := n) hd
@@ -1101,7 +1152,8 @@ lemma qp_edge_lower (d n : ℕ) (hd : 1 ≤ d) :
         push_cast; ring
     _ ≤ ((boxGraph d n).edgeFinset.card : ℝ) := by exact_mod_cast hnat
 
-/-- Corrections of order `K_j^{d-1}` divided by `|E(Λ_{K_{j+1}})|` are summable along `K_j =
+/-- **Summability of doubling corrections relative to edge counts.**
+Corrections of order `K_j^{d-1}` divided by `|E(Λ_{K_{j+1}})|` are summable along `K_j =
 2^{j+1} - 1`. -/
 lemma qp_summable_ratio (d : ℕ) (hd : 1 ≤ d) (I : ℕ → ℝ)
     (hIbd : ∀ j,
@@ -1142,7 +1194,8 @@ lemma qp_summable_ratio (d : ℕ) (hd : 1 ≤ d) (I : ℕ → ℝ)
         apply mul_le_mul_of_nonneg_left _ hCtot0
         rw [inv_le_inv₀ hKj1pos h2jpos]; exact hKge
 
-/-- The additive doubling bound for `u = -log Z` of the free `q = 2` FK model along the doubling
+/-- **Additive doubling bound for $-\log Z$ of the free $q = 2$ FK model.**
+The additive doubling bound for `u = -log Z` of the free `q = 2` FK model along the doubling
 boxes `K_j = 2^{j+1} - 1`, in every dimension `d ≥ 1`. -/
 lemma qp_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (t : ℝ) : agl_AdditiveDoublingBound d t := by
   set c := -Real.log (1 - fsc_logistic t) with hc
@@ -1207,7 +1260,8 @@ lemma qp_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (t : ℝ) : agl_Additive
       rw [hGval]; ring
     rw [hGeq]; linarith
 
-/-- The box Fekete data for the free `q = 2` FK model from a uniform bound on `u / |E|` along
+/-- **Box Fekete data from a uniform bound and an oscillation bound.**
+The box Fekete data for the free `q = 2` FK model from a uniform bound on `u / |E|` along
 doubling boxes and an oscillation bound between general and doubling boxes. -/
 lemma qp_additiveBoxFeketeData (d : ℕ) (hd : 1 ≤ d) (t : ℝ)
     (hbdd : ∃ M : ℝ, ∀ j, |agl_ambientNegLogZ d t (agl_K j) / agl_E d (agl_K j)| ≤ M)

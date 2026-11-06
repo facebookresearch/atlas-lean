@@ -58,18 +58,20 @@ open StatMech.Ising
 
 /-! ## A. Onsager's pressure -/
 
-/-- The integral
+/-- **Onsager's free-energy double integral.** The integral
 `(1 / (8π²)) ∫_{-π}^{π} ∫_{-π}^{π} log (cosh² 2β - sinh 2β (cos k₁ + cos k₂)) dk₁ dk₂` in Onsager's
 formula. -/
 noncomputable def ons_freeEnergyIntegral (β : ℝ) : ℝ :=
   (1 / (8 * Real.pi ^ 2)) *
     ∫ k₁ in (-Real.pi)..Real.pi, ∫ k₂ in (-Real.pi)..Real.pi, Real.log (ons_gInt β k₁ k₂)
 
-/-- Onsager's pressure (minus `β` times the free energy per site) of the square-lattice Ising model:
+/-- **Onsager's pressure of the square-lattice Ising model.**
+Onsager's pressure (minus `β` times the free energy per site) of the square-lattice Ising model:
 `log 2` plus `ons_freeEnergyIntegral β`. -/
 noncomputable def ons_pressure (β : ℝ) : ℝ := Real.log 2 + ons_freeEnergyIntegral β
 
-/-- The statement that `log X_L(tanh β) / L²` on the `L × L` torus converges to
+/-- **Limit statement for $\log X_L(\tanh\beta)/L^2$ on the torus.**
+The statement that `log X_L(tanh β) / L²` on the `L × L` torus converges to
 `ons_freeEnergyIntegral β - 2 log cosh β` as `L → ∞`. -/
 def ons_KacWardResidue (β : ℝ) : Prop :=
   Filter.Tendsto

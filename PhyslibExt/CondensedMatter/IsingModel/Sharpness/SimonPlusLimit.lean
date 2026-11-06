@@ -56,7 +56,8 @@ variable {d : ℕ}
 
 /-! ## A. Two-point functions as bounded continuous functions -/
 
-/-- The bounded continuous function `σ ↦ σ_x σ_y` on configuration space. -/
+/-- **Spin pair product as a bounded continuous function.**
+The bounded continuous function `σ ↦ σ_x σ_y` on configuration space. -/
 noncomputable def spinPairBCF (x y : Site d) :
     ConfigSpace (Site d) →ᵇ ℝ :=
   spinBCF x * spinBCF y
@@ -65,7 +66,8 @@ noncomputable def spinPairBCF (x y : Site d) :
     (ω : ConfigSpace (Site d)) :
     spinPairBCF x y ω = spin ω x * spin ω y := rfl
 
-/-- The plus-state two-point function `⟨σ_xσ_y⟩^+_β` at zero field. -/
+/-- **Plus-state two-point function at zero field.**
+The plus-state two-point function `⟨σ_xσ_y⟩^+_β` at zero field. -/
 noncomputable def plusCorr (d : ℕ) (β : ℝ) (x y : Site d) : ℝ :=
   ∫ ω, spin ω x * spin ω y
     ∂(plusState d β 0 : Measure (ConfigSpace (Site d)))
@@ -82,7 +84,8 @@ lemma plusMeasure_pair_tendsto (β : ℝ) (φ : ℕ → ℕ)
 
 /-! ## B. The limit passage -/
 
-/-- The Simon–Lieb boundary sum `∑_{(x,y) ∈ ∂S} tanh β ⟨σ_0σ_x⟩_S ∫ σ_yσ_z dμ` for a measure `μ`. -/
+/-- **Simon–Lieb boundary sum against a measure.**
+The Simon–Lieb boundary sum `∑_{(x,y) ∈ ∂S} tanh β ⟨σ_0σ_x⟩_S ∫ σ_yσ_z dμ` for a measure `μ`. -/
 noncomputable def simonBoundaryIntegral
     (β : ℝ) (S : Finset (Site d)) (_o z : Site d)
     (μ : Measure (ConfigSpace (Site d))) : ℝ :=
@@ -90,7 +93,8 @@ noncomputable def simonBoundaryIntegral
     Real.tanh β * corrOriginInner d β S e.1 *
       (∫ ω, spin ω e.2 * spin ω z ∂μ)
 
-/-- The Simon–Lieb boundary sum `∑_{(x,y) ∈ ∂S} tanh β ⟨σ_0σ_x⟩_S ⟨σ_yσ_z⟩^+_β` in the plus state.
+/-- **Simon–Lieb boundary sum in the plus state.**
+The Simon–Lieb boundary sum `∑_{(x,y) ∈ ∂S} tanh β ⟨σ_0σ_x⟩_S ⟨σ_yσ_z⟩^+_β` in the plus state.
 -/
 noncomputable def simonBoundaryPlus
     (β : ℝ) (S : Finset (Site d)) (_o z : Site d) : ℝ :=

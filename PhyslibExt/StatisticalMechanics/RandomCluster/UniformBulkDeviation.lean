@@ -64,7 +64,8 @@ variable {d : ℕ}
 ## A. Growing-box collapse
 -/
 
-/-- Free growing-box collapse: for every edge `e'` of `Λ_N` and every `t`, the average free edge
+/-- **Free growing-box collapse at $q = 2$.**
+Free growing-box collapse: for every edge `e'` of `Λ_N` and every `t`, the average free edge
 density of `Λ_n` converges to the free infinite-volume density of `e'`. -/
 def ubd_FreeGrowingBoxCollapse (N : ℕ) : Prop :=
   ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
@@ -75,7 +76,8 @@ def ubd_FreeGrowingBoxCollapse (N : ℕ) : Prop :=
 ## B. Bounds on edge densities
 -/
 
-/-- The free infinite-volume `q = 2` edge density lies in `[0, 1]`. -/
+/-- **Free $q = 2$ edge density lies in $[0, 1]$.**
+The free infinite-volume `q = 2` edge density lies in `[0, 1]`. -/
 lemma ubd_freeEdgeDensity_mem_Icc (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) ∈ Set.Icc (0:ℝ) 1 := by
   have hp := fsc_logistic_pos t
@@ -87,7 +89,8 @@ lemma ubd_freeEdgeDensity_mem_Icc (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
   · exact le_of_tendsto hlim (Filter.Eventually.of_forall fun k =>
       adc_edgeMargProb_fkProb_le_one (boxGraph d (N + k)) hp hp1 (by norm_num) _)
 
-/-- Edge marginals of a wired FK measure are nonnegative. -/
+/-- **Nonnegativity of wired FK edge marginals.**
+Edge marginals of a wired FK measure are nonnegative. -/
 lemma ubd_edgeMargProb_wiredFkProb_nonneg {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (bdry : V → Prop) [DecidablePred bdry]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (e : Sym2 V) :
@@ -98,7 +101,8 @@ lemma ubd_edgeMargProb_wiredFkProb_nonneg {V : Type*} [Fintype V] [DecidableEq V
   apply mul_nonneg _ (wiredFkProb_nonneg G bdry hp hp1 hq ω)
   split <;> norm_num
 
-/-- Edge marginals of a wired FK measure are at most `1`. -/
+/-- **Wired FK edge marginals are at most one.**
+Edge marginals of a wired FK measure are at most `1`. -/
 lemma ubd_edgeMargProb_wiredFkProb_le_one {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (bdry : V → Prop) [DecidablePred bdry]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (e : Sym2 V) :
@@ -115,7 +119,8 @@ lemma ubd_edgeMargProb_wiredFkProb_le_one {V : Type*} [Fintype V] [DecidableEq V
           _ = wiredFkProb G bdry p q ω := one_mul _
     _ = 1 := wiredFkProb_sum_eq_one G bdry hp hp1 hq
 
-/-- The wired infinite-volume `q = 2` edge density lies in `[0, 1]`. -/
+/-- **Wired $q = 2$ edge density lies in $[0, 1]$.**
+The wired infinite-volume `q = 2` edge density lies in `[0, 1]`. -/
 lemma ubd_wiredEdgeDensity_mem_Icc (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) :
     wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) ∈ Set.Icc (0:ℝ) 1 := by
   have hp := fsc_logistic_pos t
@@ -133,7 +138,8 @@ lemma ubd_wiredEdgeDensity_mem_Icc (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ
 ## C. Uniform bulk deviation
 -/
 
-/-- The average wired edge density of `Λ_n` is the mean of the wired edge marginals. -/
+/-- **Average wired $q = 2$ edge density of a box as a mean of marginals.**
+The average wired edge density of `Λ_n` is the mean of the wired edge marginals. -/
 lemma ubd_avgWiredDensity_eq_sum (n : ℕ) (t : ℝ) :
     wpd_avgWiredDensity (boxGraph d n) (boxBoundary d n) 2 t
       = (1 / ((boxGraph d n).edgeFinset.card : ℝ))
@@ -141,7 +147,8 @@ lemma ubd_avgWiredDensity_eq_sum (n : ℕ) (t : ℝ) :
               edgeMargProb (wiredFkProb (boxGraph d n) (boxBoundary d n) (fsc_logistic t) 2) e :=
   wpd_avgWiredDensity_eq_sum_edgeMarg (boxGraph d n) (boxBoundary d n) 2 t
 
-/-- Free uniform bulk deviation: for every edge `e'` and `t`, each box `Λ_n` has a bulk edge set
+/-- **Free uniform bulk deviation at $q = 2$.**
+Free uniform bulk deviation: for every edge `e'` and `t`, each box `Λ_n` has a bulk edge set
 with free marginals within `δ_n → 0` of the free density of `e'`, and the non-bulk edge
 fraction tends to zero. -/
 def ubd_FreeUniformBulkDeviation (N : ℕ) : Prop :=
@@ -156,7 +163,8 @@ def ubd_FreeUniformBulkDeviation (N : ℕ) : Prop :=
         (((boxGraph d n).edgeFinset.card - (In n).card : ℝ)) / (boxGraph d n).edgeFinset.card)
         atTop (𝓝 0)
 
-/-- Wired uniform bulk deviation: for every edge `e'` and `t`, each box `Λ_n` has a bulk edge set
+/-- **Wired uniform bulk deviation at $q = 2$.**
+Wired uniform bulk deviation: for every edge `e'` and `t`, each box `Λ_n` has a bulk edge set
 with wired marginals within `δ_n → 0` of the wired density of `e'`, and the non-bulk edge
 fraction tends to zero. -/
 def ubd_WiredUniformBulkDeviation (N : ℕ) : Prop :=

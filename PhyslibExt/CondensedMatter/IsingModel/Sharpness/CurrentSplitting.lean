@@ -56,7 +56,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Edges inside a set and restriction -/
 
-/-- An unordered pair `e` is inside `S` if both of its endpoints lie in `S`. -/
+/-- **Unordered pair inside a set.**
+An unordered pair `e` is inside `S` if both of its endpoints lie in `S`. -/
 def edgeInside (S : Finset V) (e : Sym2 V) : Prop := ∀ v ∈ e, v ∈ S
 
 /-- Decidability of `edgeInside`. -/
@@ -70,12 +71,14 @@ lemma not_edgeInside_compl_of_edgeInside (S : Finset V) (e : Sym2 V)
   have ha : a ∈ e := hab ▸ Sym2.mem_mk_left a b
   exact (Finset.mem_compl.mp (hc a ha)) (h a ha)
 
-/-- The current `n` uses no edge joining `S` to `Sᶜ`: every edge with `n e ≥ 1` is inside `S` or
+/-- **Current with no edge crossing a set's boundary.**
+The current `n` uses no edge joining `S` to `Sᶜ`: every edge with `n e ≥ 1` is inside `S` or
 inside `Sᶜ`. -/
 def NoCrossing (n : Current V) (S : Finset V) : Prop :=
   ∀ e ∈ G.edgeFinset, 1 ≤ n e → edgeInside S e ∨ edgeInside Sᶜ e
 
-/-- The restriction `n|_S` of a current to the edges inside `S`, zero elsewhere. -/
+/-- **Restriction of a current to a set.**
+The restriction `n|_S` of a current to the edges inside `S`, zero elsewhere. -/
 noncomputable def restrictTo (n : Current V) (S : Finset V) : Current V :=
   fun e => if edgeInside S e then n e else 0
 

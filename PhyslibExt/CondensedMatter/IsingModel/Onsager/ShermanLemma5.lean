@@ -60,7 +60,8 @@ open Matrix BigOperators
 
 /-! ## A. Cancellation by involutions -/
 
-/-- A fixed-point-free involution of `S` that reverses the sign of the loop weight forces the loop
+/-- **Loop sum vanishes under a fixed-point-free sign-reversing involution.**
+A fixed-point-free involution of `S` that reverses the sign of the loop weight forces the loop
 weights over `S` to sum to zero. See also `Finset.sum_involution`. -/
 lemma ons_sum_zero_of_sign_involution {E} [Fintype E] [DecidableEq E] (Λ : Matrix E E ℂ)
     {n : ℕ} [NeZero n] (S : Finset (Fin n → E)) (g : (Fin n → E) → (Fin n → E))
@@ -78,7 +79,8 @@ lemma ons_sum_zero_of_sign_involution {E} [Fintype E] [DecidableEq E] (Λ : Matr
   · intro v hv
     exact hinv v hv
 
-/-- The cyclic sequences of length `n` that visit both `a` and `b`. -/
+/-- **Cyclic sequences visiting two given states.**
+The cyclic sequences of length `n` that visit both `a` and `b`. -/
 noncomputable def ons_loopSetBoth {E} [Fintype E] [DecidableEq E] {n : ℕ}
     (a b : E) : Finset (Fin n → E) :=
   {v ∈ (Finset.univ : Finset (Fin n → E)) | (∃ i, v i = a) ∧ (∃ j, v j = b)}
@@ -102,7 +104,8 @@ lemma ons_lemma5_of_involution {E} [Fintype E] [DecidableEq E] (Λ : Matrix E E 
 
 /-! ## B. Mirror positions and segment reversal -/
 
-/-- The mirror image `l + m - k` of a position `k` in the segment `[l, m]` (truncated to `n - 1`).
+/-- **Mirror position within a segment.**
+The mirror image `l + m - k` of a position `k` in the segment `[l, m]` (truncated to `n - 1`).
 -/
 def ons_mir {n : ℕ} [NeZero n] (l m k : Fin n) : Fin n :=
   ⟨min (l.val + m.val - k.val) (n - 1), by have := NeZero.pos n; omega⟩
@@ -147,7 +150,8 @@ lemma ons_mir_m {n : ℕ} [NeZero n] {l m : Fin n} (hlm : l ≤ m) :
   have hv := ons_mir_val hlm (le_refl m)
   apply Fin.ext; rw [hv]; have : l.val ≤ m.val := hlm; omega
 
-/-- Reversal of the segment `[l, m]` of `v`: positions inside are mirrored and their entries
+/-- **Reversal of a segment of a cyclic sequence.**
+Reversal of the segment `[l, m]` of `v`: positions inside are mirrored and their entries
 replaced by their reverses; positions outside are unchanged. -/
 def ons_revSeg {E} {n : ℕ} [NeZero n] (rev : E → E) (l m : Fin n) (v : Fin n → E) :
     Fin n → E :=
@@ -176,7 +180,8 @@ lemma ons_revSeg_involutive {E} {n : ℕ} [NeZero n] {rev : E → E}
 
 /-! ## C. The surgery -/
 
-/-- The positions where `v` meets `e` or `rev e`. -/
+/-- **Positions where a sequence meets an edge or its reverse.**
+The positions where `v` meets `e` or `rev e`. -/
 noncomputable def ons_hitSet {E} [DecidableEq E] {n : ℕ} (e : E) (rev : E → E)
     (v : Fin n → E) : Finset (Fin n) :=
   {k | v k = e ∨ v k = rev e}
@@ -186,12 +191,14 @@ lemma ons_mem_hitSet {E} [DecidableEq E] {n : ℕ} (e : E) (rev : E → E)
     k ∈ ons_hitSet e rev v ↔ v k = e ∨ v k = rev e := by
   unfold ons_hitSet; simp
 
-/-- The first position where `v` meets `e` or `rev e` (`0` if there is none). -/
+/-- **First position meeting an edge or its reverse.**
+The first position where `v` meets `e` or `rev e` (`0` if there is none). -/
 noncomputable def ons_l {E} [DecidableEq E] {n : ℕ} [NeZero n] (e : E) (rev : E → E)
     (v : Fin n → E) : Fin n :=
   if h : (ons_hitSet e rev v).Nonempty then (ons_hitSet e rev v).min' h else 0
 
-/-- The positions where `v` meets the reverse of its entry at `ons_l e rev v`. -/
+/-- **Positions meeting the reverse of the first hit.**
+The positions where `v` meets the reverse of its entry at `ons_l e rev v`. -/
 noncomputable def ons_mSet {E} [DecidableEq E] {n : ℕ} [NeZero n] (e : E) (rev : E → E)
     (v : Fin n → E) : Finset (Fin n) :=
   {j | v j = rev (v (ons_l e rev v))}
@@ -201,13 +208,15 @@ lemma ons_mem_mSet {E} [DecidableEq E] {n : ℕ} [NeZero n] (e : E) (rev : E →
     j ∈ ons_mSet e rev v ↔ v j = rev (v (ons_l e rev v)) := by
   unfold ons_mSet; simp
 
-/-- The last position where `v` meets the reverse of its entry at `ons_l e rev v` (`0` if there is
+/-- **Last position meeting the reverse of the first hit.**
+The last position where `v` meets the reverse of its entry at `ons_l e rev v` (`0` if there is
 none). -/
 noncomputable def ons_m {E} [DecidableEq E] {n : ℕ} [NeZero n] (e : E) (rev : E → E)
     (v : Fin n → E) : Fin n :=
   if h : (ons_mSet e rev v).Nonempty then (ons_mSet e rev v).max' h else 0
 
-/-- Sherman's surgery: reverse the segment between `ons_l` and `ons_m` when `v` visits both `e` and
+/-- **Sherman's segment-reversal surgery.**
+Sherman's surgery: reverse the segment between `ons_l` and `ons_m` when `v` visits both `e` and
 `rev e`; otherwise leave `v` unchanged. -/
 noncomputable def ons_surgery {E} [DecidableEq E] {n : ℕ} [NeZero n] (e : E) (rev : E → E)
     (v : Fin n → E) : Fin n → E :=

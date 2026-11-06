@@ -56,7 +56,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. The global spin flip -/
 
-/-- The global spin flip `σ ↦ -σ`. -/
+/-- **Global spin flip.** The global spin flip `σ ↦ -σ`. -/
 def leeYangFlip (s : ConfigSpace V) : ConfigSpace V := fun x => !(s x)
 
 omit [Fintype V] [DecidableEq V] in
@@ -69,7 +69,8 @@ omit [Fintype V] [DecidableEq V] in
   funext x
   simp [leeYangFlip]
 
-/-- The global spin flip as an involutive equivalence of configurations. -/
+/-- **Global spin flip as an involutive equivalence.**
+The global spin flip as an involutive equivalence of configurations. -/
 def leeYangFlipEquiv : ConfigSpace V ≃ ConfigSpace V where
   toFun := leeYangFlip
   invFun := leeYangFlip

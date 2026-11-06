@@ -72,7 +72,8 @@ open StatMech.Lattice
 
 /-! ## A. Bernoulli percolation as the `q = 1` random-cluster measure -/
 
-/-- Pulling a Bernoulli product configuration back along an injective map `f : I → E` gives the
+/-- **Bernoulli product pulled back along an injection is Bernoulli.**
+Pulling a Bernoulli product configuration back along an injective map `f : I → E` gives the
 Bernoulli product measure on `I`. See also `MeasureTheory.Measure.infinitePi_map_restrict'` for
 the case of a subset. -/
 lemma bernoulliProduct_map_injective_restrict
@@ -101,7 +102,8 @@ lemma bernoulliProduct_map_injective_restrict
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The `q = 1` random-cluster probability of a given pattern on the graph edges is its Bernoulli
+/-- **$q = 1$ probability of an edge pattern is its Bernoulli weight.**
+The `q = 1` random-cluster probability of a given pattern on the graph edges is its Bernoulli
 weight. -/
 lemma fkProbOne_pattern (p : ℝ) (eta : ConfigSpace ↥G.edgeFinset) :
     ∑ omega : ConfigSpace (Sym2 V),
@@ -191,7 +193,8 @@ lemma fkProbOne_pattern (p : ℝ) (eta : ConfigSpace ↥G.edgeFinset) :
           2 ^ (Fintype.card (Sym2 V) - F.card) := by rw [hnum, hZ]
     _ = configWeight p eta := by field_simp)
 
-/-- The `q = 1` random-cluster measure on a finite graph agrees with Bernoulli percolation on events
+/-- **$q = 1$ measure equals Bernoulli percolation on graph-edge events.**
+The `q = 1` random-cluster measure on a finite graph agrees with Bernoulli percolation on events
 that depend only on the graph edges. -/
 lemma fkProbOne_event_eq_bernoulli {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (A : Set (ConfigSpace (Sym2 V)))
@@ -247,7 +250,8 @@ lemma fkProbOne_event_eq_bernoulli {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
       rfl
 
 omit [DecidableEq V] in
-/-- The event that `x` is connected to the boundary depends only on the graph edges. -/
+/-- **Connection to the boundary depends only on graph edges.**
+The event that `x` is connected to the boundary depends only on the graph edges. -/
 lemma connToBdryEvent_dependsOn (G : SimpleGraph V) [DecidableRel G.Adj]
     (bdry : V → Prop) (x : V) :
     _root_.DependsOn
@@ -285,7 +289,8 @@ variable {d : ℕ}
 
 /-! ## B. Comparison of wired `q = 2` and Bernoulli percolation probabilities -/
 
-/-- Restricting Bernoulli percolation on `ℤ^d` to the box gives Bernoulli percolation on the box. -/
+/-- **Bernoulli percolation restricted to a box is Bernoulli on the box.**
+Restricting Bernoulli percolation on `ℤ^d` to the box gives Bernoulli percolation on the box. -/
 lemma bernoulliProduct_map_boxRestrict (p : ℝ≥0) (hp : p ≤ 1) (n : ℕ) :
     Measure.map (boxRestrict d n)
         (bernoulliProductMeasure (E := Sym2 (Site d)) p hp) =
@@ -294,7 +299,8 @@ lemma bernoulliProduct_map_boxRestrict (p : ℝ≥0) (hp : p ≤ 1) (n : ℕ) :
     (bernoulliProduct_map_injective_restrict p hp (edgeIncl d n)
       (edgeIncl_injective d n))
 
-/-- The Bernoulli probability of a box cylinder event equals its probability on the box. -/
+/-- **Bernoulli box cylinder probability equals its probability on the box.**
+The Bernoulli probability of a box cylinder event equals its probability on the box. -/
 lemma bernoulliProduct_boxRestrict_preimage (p : ℝ≥0) (hp : p ≤ 1)
     (n : ℕ) (A : Set (ConfigSpace (Sym2 (boxVerts d n)))) :
     (bernoulliProductMeasure (E := Sym2 (Site d)) p hp).real
@@ -307,7 +313,8 @@ lemma bernoulliProduct_boxRestrict_preimage (p : ℝ≥0) (hp : p ≤ 1)
       bernoulliProduct_map_boxRestrict p hp n⟩
   exact hpres.measureReal_preimage MeasurableSet.of_discrete.nullMeasurableSet
 
-/-- The wired `q = 2` box measure of "the origin is connected to the box boundary" is at most its
+/-- **Wired $q = 2$ origin-to-boundary probability at most Bernoulli.**
+The wired `q = 2` box measure of "the origin is connected to the box boundary" is at most its
 Bernoulli probability. -/
 lemma wiredFinite_boxBdryConnEvent_le_bernoulli
     (p : ℝ≥0) (hp0 : 0 < p) (hp1 : p < 1) (n : ℕ) :
@@ -342,7 +349,8 @@ lemma wiredFinite_boxBdryConnEvent_le_bernoulli
     bernoulliProduct_boxRestrict_preimage]
   exact hfinite
 
-/-- The wired `q = 2` percolation probability is at most the Bernoulli one: `θ¹(p, 2) ≤ θ(p)`. -/
+/-- **Wired $q = 2$ percolation probability at most the Bernoulli one.**
+The wired `q = 2` percolation probability is at most the Bernoulli one: `θ¹(p, 2) ≤ θ(p)`. -/
 lemma fkTheta_two_le_bernoulliTheta
     (p : ℝ≥0) (hp0 : 0 < p) (hp1 : p < 1) :
     fkTheta d (p := (p : ℝ)) (by exact_mod_cast hp0) (by exact_mod_cast hp1)
@@ -367,48 +375,54 @@ variable {d : ℕ}
 
 /-! ## C. Embedding the plane in `ℤ^d` -/
 
-/-- The embedding of `ℤ²` into `ℤ^{2+k}` as the plane of the first two coordinates. -/
+/-- **Plane embedding of $\mathbb{Z}^2$ into $\mathbb{Z}^{2+k}$.**
+The embedding of `ℤ²` into `ℤ^{2+k}` as the plane of the first two coordinates. -/
 def pcv_siteEmbed (k : ℕ) (x : Site 2) : Site (2 + k) :=
   Fin.addCases x (fun _ => 0)
 
-/-- The first two coordinates of an embedded site. -/
+/-- **First two coordinates of an embedded site are the original ones.**
+The first two coordinates of an embedded site. -/
 @[simp] lemma pcv_siteEmbed_castAdd (k : ℕ) (x : Site 2) (i : Fin 2) :
     pcv_siteEmbed k x (Fin.castAdd k i) = x i := by
   simp [pcv_siteEmbed]
 
-/-- The last `k` coordinates of an embedded site vanish. -/
+/-- **Last $k$ coordinates of an embedded site vanish.**
+The last `k` coordinates of an embedded site vanish. -/
 @[simp] lemma pcv_siteEmbed_natAdd (k : ℕ) (x : Site 2) (i : Fin k) :
     pcv_siteEmbed k x (Fin.natAdd 2 i) = 0 := by
   simp [pcv_siteEmbed]
 
-/-- The plane embedding is injective. -/
+/-- **Injectivity of the plane embedding.** The plane embedding is injective. -/
 lemma pcv_siteEmbed_injective (k : ℕ) : Function.Injective (pcv_siteEmbed k) := by
   intro x y hxy
   funext i
   have := congrFun hxy (Fin.castAdd k i)
   simpa using this
 
-/-- The plane embedding preserves and reflects lattice adjacency. -/
+/-- **Plane embedding preserves and reflects adjacency.**
+The plane embedding preserves and reflects lattice adjacency. -/
 lemma pcv_siteEmbed_adj_iff (k : ℕ) (x y : Site 2) :
     (hypercubicLattice (2 + k)).Adj (pcv_siteEmbed k x) (pcv_siteEmbed k y) ↔
       (hypercubicLattice 2).Adj x y := by
   simp only [hypercubicLattice_adj, Fin.sum_univ_add]
   simp
 
-/-- The plane embedding on edges. -/
+/-- **Plane embedding on edges.** The plane embedding on edges. -/
 def pcv_edgeEmbed (k : ℕ) : Sym2 (Site 2) → Sym2 (Site (2 + k)) :=
   Sym2.map (pcv_siteEmbed k)
 
-/-- The plane embedding on edges is injective. -/
+/-- **Injectivity of the plane embedding on edges.** The plane embedding on edges is injective. -/
 lemma pcv_edgeEmbed_injective (k : ℕ) : Function.Injective (pcv_edgeEmbed k) :=
   Sym2.map.injective (pcv_siteEmbed_injective k)
 
-/-- Restrict a configuration on `ℤ^{2+k}` to the embedded plane. -/
+/-- **Restriction of a configuration to the embedded plane.**
+Restrict a configuration on `ℤ^{2+k}` to the embedded plane. -/
 def pcv_planeRestrict (k : ℕ)
     (omega : ConfigSpace (Sym2 (Site (2 + k)))) : ConfigSpace (Sym2 (Site 2)) :=
   fun e => omega (pcv_edgeEmbed k e)
 
-/-- Restricting Bernoulli percolation on `ℤ^{2+k}` to the plane gives Bernoulli percolation on `ℤ²`.
+/-- **Bernoulli percolation restricted to the plane is planar Bernoulli.**
+Restricting Bernoulli percolation on `ℤ^{2+k}` to the plane gives Bernoulli percolation on `ℤ²`.
 -/
 lemma bernoulliProduct_map_planeRestrict (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
     Measure.map (pcv_planeRestrict k)
@@ -417,13 +431,14 @@ lemma bernoulliProduct_map_planeRestrict (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) 
   exact bernoulliProduct_map_injective_restrict p hp (pcv_edgeEmbed k)
     (pcv_edgeEmbed_injective k)
 
-/-- The plane embedding sends the origin to the origin. -/
+/-- **Plane embedding fixes the origin.** The plane embedding sends the origin to the origin. -/
 @[simp] lemma pcv_siteEmbed_origin (k : ℕ) :
     pcv_siteEmbed k (origin 2) = origin (2 + k) := by
   funext i
   refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [origin]
 
-/-- Open connections in the restricted plane configuration are open connections in `ℤ^{2+k}`. -/
+/-- **Plane open connections are open connections in $\mathbb{Z}^{2+k}$.**
+Open connections in the restricted plane configuration are open connections in `ℤ^{2+k}`. -/
 lemma pcv_connected_of_planeRestrict (k : ℕ)
     (omega : ConfigSpace (Sym2 (Site (2 + k)))) {x y : Site 2}
     (h : Lattice.Connected 2 (pcv_planeRestrict k omega) x y) :
@@ -437,7 +452,8 @@ lemma pcv_connected_of_planeRestrict (k : ℕ)
         simpa [pcv_planeRestrict, pcv_edgeEmbed] using huv.2 }
   exact h.map f
 
-/-- Percolation in the plane implies percolation in `ℤ^{2+k}`. -/
+/-- **Percolation in the plane implies percolation in $\mathbb{Z}^{2+k}$.**
+Percolation in the plane implies percolation in `ℤ^{2+k}`. -/
 lemma pcv_plane_percolation_subset (k : ℕ) :
     pcv_planeRestrict k ⁻¹' percolationEvent 2 ⊆ percolationEvent (2 + k) := by
   intro omega hperco
@@ -450,7 +466,8 @@ lemma pcv_plane_percolation_subset (k : ℕ) :
   rw [mem_cluster] at hx ⊢
   simpa using pcv_connected_of_planeRestrict k omega hx
 
-/-- The Bernoulli percolation probability does not decrease with the dimension: `θ_2(p) ≤
+/-- **$\theta_2(p) \le \theta_{2+k}(p)$ for Bernoulli percolation.**
+The Bernoulli percolation probability does not decrease with the dimension: `θ_2(p) ≤
 θ_{2+k}(p)`. -/
 lemma theta_two_le_theta_add (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
     theta 2 p hp ≤ theta (2 + k) p hp := by
@@ -467,7 +484,8 @@ lemma theta_two_le_theta_add (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
 
 /-! ## D. Non-triviality of the critical point -/
 
-/-- The Bernoulli percolation probability `θ_d(p)` is monotone in `p`. -/
+/-- **Monotonicity in $p$ of the Bernoulli percolation probability.**
+The Bernoulli percolation probability `θ_d(p)` is monotone in `p`. -/
 lemma theta_mono_parameter {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
     (hpq : p ≤ q) : theta d p hp ≤ theta d q hq := by
   let mup := bernoulliProductMeasure (E := Sym2 (Site d)) p hp
@@ -499,7 +517,8 @@ lemma theta_mono_parameter {p q : ℝ≥0} (hp : p ≤ 1) (hq : q ≤ 1)
   simpa only [show boxBdryConnEvent d n = boxRestrict d n ⁻¹' A from rfl,
     bernoulliProduct_boxRestrict_preimage] using hmono
 
-/-- Positive percolation probability at `p` gives `p_c(d) ≤ p`. -/
+/-- **Positive percolation at $p$ gives $p_c(d) \le p$.**
+Positive percolation probability at `p` gives `p_c(d) ≤ p`. -/
 lemma pc_le_of_theta_pos (p : ℝ≥0) (hp : p ≤ 1)
     (hpos : 0 < theta d p hp) : pc d ≤ p := by
   unfold pc
@@ -512,7 +531,8 @@ lemma pc_le_of_theta_pos (p : ℝ≥0) (hp : p ≤ 1)
   rw [hqzero] at hmono
   exact (not_lt_of_ge hmono) hpos
 
-/-- There is `p < 1` with `θ_2(p) > 0`, from spontaneous magnetization of the two-dimensional Ising
+/-- **Positive planar percolation at some $p < 1$ via the Ising model.**
+There is `p < 1` with `θ_2(p) > 0`, from spontaneous magnetization of the two-dimensional Ising
 model. -/
 lemma exists_theta_two_pos_below_one :
     ∃ (p : ℝ≥0) (hp1 : p < 1), 0 < theta 2 p hp1.le := by
@@ -532,16 +552,18 @@ lemma exists_theta_two_pos_below_one :
     lt_of_lt_of_le hfk (fkTheta_two_le_bernoulliTheta p hp0 hp1)
   exact ⟨p, hp1, htheta⟩
 
-/-- The Bernoulli critical probability on `ℤ²` is below `1`. -/
+/-- **Bernoulli critical probability on $\mathbb{Z}^2$ is below one.**
+The Bernoulli critical probability on `ℤ²` is below `1`. -/
 lemma pc_two_lt_one_via_fk : pc 2 < 1 := by
   obtain ⟨p, hp1, htheta⟩ := exists_theta_two_pos_below_one
   exact lt_of_le_of_lt (pc_le_of_theta_pos p hp1.le htheta) hp1
 
-/-- `0 < p_c(2) < 1`. -/
+/-- **Nontrivial Bernoulli critical probability on $\mathbb{Z}^2$.** `0 < p_c(2) < 1`. -/
 lemma pc_two_nontrivial : 0 < pc 2 ∧ pc 2 < 1 :=
   ⟨pc_pos (by norm_num), pc_two_lt_one_via_fk⟩
 
-/-- The Bernoulli critical probability on `ℤ^d` is below `1` for `d ≥ 2`. -/
+/-- **Bernoulli critical probability below one for $d \ge 2$.**
+The Bernoulli critical probability on `ℤ^d` is below `1` for `d ≥ 2`. -/
 lemma pc_lt_one_of_two_le_via_fk {d : ℕ} (hd : 2 ≤ d) : pc d < 1 := by
   obtain ⟨p, hp1, htheta2⟩ := exists_theta_two_pos_below_one
   have htheta : 0 < theta (2 + (d - 2)) p hp1.le :=

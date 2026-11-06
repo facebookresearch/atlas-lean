@@ -63,7 +63,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E] {β : E → Type*}
 
 /-! ## A. Subsets of a sigma type -/
 
-/-- Subsets of `Σ e, β e` correspond to families of subsets of the fibres. -/
+/-- **Subsets of a sigma type as families of fibre subsets.**
+Subsets of `Σ e, β e` correspond to families of subsets of the fibres. -/
 noncomputable def sigmaFinsetEquivPi : Finset (Σ e : E, β e) ≃ Π e : E, Finset (β e) where
   toFun S := fun e => (univ : Finset (β e)).filter (fun b => (⟨e, b⟩ : Σ e, β e) ∈ S)
   invFun f := univ.filter (fun i : Σ e, β e => i.2 ∈ f i.1)
@@ -121,13 +122,15 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## B. Edge copies -/
 
-/-- The edge copies of a current `m`: `m_e` copies of each edge `e`. -/
+/-- **Edge copies of a current.**
+The edge copies of a current `m`: `m_e` copies of each edge `e`. -/
 abbrev Copy (m : ↥G.edgeFinset → ℕ) : Type _ := Σ e : ↥G.edgeFinset, Fin (m e)
 
-/-- The endpoints of an edge copy. -/
+/-- **Endpoints of an edge copy.** The endpoints of an edge copy. -/
 def endsM (m : ↥G.edgeFinset → ℕ) : Copy G m → Sym2 V := fun i => i.1.1
 
-/-- The profile of a set of copies: the number of copies of each edge it contains. -/
+/-- **Profile of a set of edge copies.**
+The profile of a set of copies: the number of copies of each edge it contains. -/
 noncomputable def profileFlux (m : ↥G.edgeFinset → ℕ) (S : Finset (Copy G m)) :
     ↥G.edgeFinset → ℕ :=
   fun e => #(S.filter (fun i : Copy G m => i.1 = e))
@@ -433,7 +436,8 @@ lemma sourcePair_superposition_bridge_disconn (β : ℝ) (J : Sym2 V → ℝ) (A
 /-! ## D. Disconnection sums -/
 
 open Classical in
-/-- The double-current sum `∑_{∂n₁ = A, ∂n₂ = B} w(n₁) w(n₂) 1_{u ↮ v in n₁ + n₂}`. -/
+/-- **Double-current sum restricted to disconnection.**
+The double-current sum `∑_{∂n₁ = A, ∂n₂ = B} w(n₁) w(n₂) 1_{u ↮ v in n₁ + n₂}`. -/
 noncomputable def sourcePairDisconnSum (β : ℝ) (J : Sym2 V → ℝ) (A B : Finset V) (u v : V) : ℝ :=
   ∑' pq : (↥G.edgeFinset → ℕ) × (↥G.edgeFinset → ℕ),
     ((if sources G (ofEdgeFun G pq.1) = A then weight G β J (ofEdgeFun G pq.1) else 0)

@@ -69,12 +69,14 @@ namespace Ising
 
 section Energy
 
-/-- The Boolean spin value `spinB` is Physlib's `CondensedMatter.IsingModel.spin`. -/
+/-- **Boolean spin agrees with Physlib's Ising spin.**
+The Boolean spin value `spinB` is Physlib's `CondensedMatter.IsingModel.spin`. -/
 lemma spinB_eq_isingModelSpin : spinB = CondensedMatter.IsingModel.spin := rfl
 
 variable {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The edge sum of `bond s` is half the sum of `σ_x σ_y` over ordered adjacent pairs. -/
+/-- **Edge bond sum is half the sum over ordered adjacent pairs.**
+The edge sum of `bond s` is half the sum of `σ_x σ_y` over ordered adjacent pairs. -/
 lemma two_mul_sum_bond (s : ConfigSpace V) :
     2 * ∑ e ∈ G.edgeFinset, bond s e =
       ∑ x, ∑ y, if G.Adj x y then spin s x * spin s y else 0 := by
@@ -99,7 +101,8 @@ lemma two_mul_sum_bond (s : ConfigSpace V) :
   rfl
 
 open scoped Classical in
-/-- The Hamiltonian `hamiltonian G h` is Physlib's Ising energy
+/-- **Hamiltonian agrees with Physlib's Ising energy.**
+The Hamiltonian `hamiltonian G h` is Physlib's Ising energy
 `CondensedMatter.IsingModel.energy` of the model with coupling `J = 1` and field `h`, on the region
 of all vertices. -/
 lemma hamiltonian_eq_energy (h : ℝ) (s : ConfigSpace V) :
@@ -122,7 +125,8 @@ section Ensemble
 
 variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The Ising model on a finite graph `G` with field `h`, as Physlib's finite canonical ensemble:
+/-- **Ising model as a Physlib canonical ensemble.**
+The Ising model on a finite graph `G` with field `h`, as Physlib's finite canonical ensemble:
 microstates are spin configurations, the energy is `hamiltonian G h`, and the measure is the
 counting measure. -/
 noncomputable def canonicalEnsemble (h : ℝ) : CanonicalEnsemble (ConfigSpace V) where
@@ -138,14 +142,16 @@ instance (h : ℝ) : (canonicalEnsemble G h).IsFinite where
   dof_eq_zero := rfl
   phase_space_unit_eq_one := rfl
 
-/-- The Ising partition function at inverse temperature `T.β` is Physlib's mathematical partition
+/-- **Ising partition function agrees with Physlib's partition function.**
+The Ising partition function at inverse temperature `T.β` is Physlib's mathematical partition
 function of `canonicalEnsemble G h` at temperature `T`. -/
 lemma isingZ_eq_mathematicalPartitionFunction (h : ℝ) (T : Temperature) :
     isingZ G T.β h = (canonicalEnsemble G h).mathematicalPartitionFunction T := by
   rw [CanonicalEnsemble.mathematicalPartitionFunction_of_fintype]
   rfl
 
-/-- The Ising Gibbs probability at inverse temperature `T.β` is Physlib's canonical probability of
+/-- **Ising Gibbs probability agrees with Physlib's canonical probability.**
+The Ising Gibbs probability at inverse temperature `T.β` is Physlib's canonical probability of
 `canonicalEnsemble G h` at temperature `T`. -/
 lemma isingProb_eq_probability (h : ℝ) (T : Temperature) (s : ConfigSpace V) :
     isingProb G T.β h s = (canonicalEnsemble G h).probability T s := by
@@ -162,7 +168,8 @@ section Hypercubic
 
 open CondensedMatter.Crystal StatMech.Lattice
 
-/-- Two sites of `ℤ^d` are at `ℓ¹` distance one exactly when they differ by a unit vector. -/
+/-- **Sites at $\ell^1$ distance one are those differing by a unit vector.**
+Two sites of `ℤ^d` are at `ℓ¹` distance one exactly when they differ by a unit vector. -/
 lemma natAbs_sum_eq_one_iff {d : ℕ} (x y : Fin d → ℤ) :
     (∑ i, (x i - y i).natAbs) = 1 ↔
       ∃ j, y = x + Pi.single j 1 ∨ x = y + Pi.single j 1 := by
@@ -195,7 +202,8 @@ lemma natAbs_sum_eq_one_iff {d : ℕ} (x y : Fin d → ℤ) :
       rw [Finset.sum_eq_single j (fun i _ hi => by simp [hi])
         (fun h => absurd (mem_univ j) h)] <;> simp
 
-/-- The nearest-neighbour graph `hypercubicLattice d` on `ℤ^d` is isomorphic to the bond graph of
+/-- **Isomorphism of the hypercubic lattice with Physlib's crystal graph.**
+The nearest-neighbour graph `hypercubicLattice d` on `ℤ^d` is isomorphic to the bond graph of
 Physlib's hypercubic crystal `CondensedMatter.Crystal.hypercubicGraph d`, by sending `x` to the
 site in cell `x`. -/
 def hypercubicLatticeIsoCrystal (d : ℕ) :

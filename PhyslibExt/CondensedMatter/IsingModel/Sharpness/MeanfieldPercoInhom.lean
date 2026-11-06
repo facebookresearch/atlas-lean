@@ -65,17 +65,18 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Crossing and surface events -/
 
-/-- The event that `o` is connected to `B`. -/
+/-- **Event that a vertex is connected to a target set.** The event that `o` is connected to `B`. -/
 def mpiCrossingEvent (o : V) (B : Set V) : Set (ConfigSpace (Sym2 V)) :=
   connEvent G Set.univ o B
 
-/-- The set of vertices not connected to `B` in `ω`. -/
+/-- **Vertices not connected to a target set.** The set of vertices not connected to `B` in `ω`. -/
 noncomputable def mpiBlockedSet (B : Set V) (omega : ConfigSpace (Sym2 V)) : Finset V :=
   by
     classical
     exact Finset.univ.filter fun x => ¬ ConnToSet G omega Set.univ x B
 
-/-- The event that the set of vertices not connected to `B` is exactly `S`. -/
+/-- **Event that the set of vertices not connected to $B$ is $S$.**
+The event that the set of vertices not connected to `B` is exactly `S`. -/
 def mpiSurfaceEvent (B : Set V) (S : Finset V) : Set (ConfigSpace (Sym2 V)) :=
   {omega | mpiBlockedSet G B omega = S}
 
@@ -180,7 +181,7 @@ lemma mpi_boundary_edge_isPivotal (o : V) (B : Set V)
 
 /-! ## B. Independence inside and outside a surface -/
 
-/-- The edges with both endpoints in `S`. -/
+/-- **Edges with both endpoints in a vertex set.** The edges with both endpoints in `S`. -/
 def mpiInternalEdges (S : Set V) : Set (Sym2 V) :=
   {e | ∃ x ∈ S, ∃ y ∈ S, e = s(x, y)}
 
@@ -360,7 +361,8 @@ lemma mpi_conn_surface_factor (beta : ℝ) (J : Sym2 V → ℝ)
 
 /-! ## C. The quantity `φ` and the surface decomposition -/
 
-/-- The inhomogeneous Duminil-Copin–Tassion quantity `φ(S) = ∑_{(x,y) ∈ ∂S} (1 - e^{-βJ_{xy}}) P(o ↔
+/-- **Inhomogeneous Duminil-Copin–Tassion quantity $\varphi(S)$.**
+The inhomogeneous Duminil-Copin–Tassion quantity `φ(S) = ∑_{(x,y) ∈ ∂S} (1 - e^{-βJ_{xy}}) P(o ↔
 x in S)`. -/
 noncomputable def mpiPhi (beta : ℝ) (J : Sym2 V → ℝ)
     (o : V) (S : Finset V) : ℝ :=
@@ -476,7 +478,8 @@ lemma mpi_phi_surface_le_boundaryJ (beta : ℝ) (J : Sym2 V → ℝ)
 
 /-! ## D. Closed pivotal edges -/
 
-/-- The event that `e` is closed and pivotal for `A`. -/
+/-- **Event that an edge is closed and pivotal.**
+The event that `e` is closed and pivotal for `A`. -/
 def mpiPivotalClosed (e : Sym2 V) (A : Set (ConfigSpace (Sym2 V))) :
     Set (ConfigSpace (Sym2 V)) :=
   {omega | IsPivotal e A omega ∧ omega e = false}
@@ -720,7 +723,8 @@ lemma mpi_surface_reassembly_of_nonempty (beta : ℝ) (J : Sym2 V → ℝ)
 
 /-! ## E. Russo's formula and the inequality -/
 
-/-- The product of the edge laws over all edges other than `e`. -/
+/-- **Product of the edge laws over all other edges.**
+The product of the edge laws over all edges other than `e`. -/
 noncomputable def mpiWeightOff (beta : ℝ) (J : Sym2 V → ℝ)
     (e : Sym2 V) (omega : ConfigSpace (Sym2 V)) : ℝ :=
   ∏ j ∈ Finset.univ.erase e, shk_edgeLaw beta J j (omega j)
@@ -883,7 +887,8 @@ lemma mpi_hasDerivAt_wprob (beta : ℝ) (J : Sym2 V → ℝ)
   intro e _
   exact mpi_perEdge_beta_pivotal beta J A hA e
 
-/-- The mean-field differential inequality for inhomogeneous percolation: Russo's formula `∂_β P(o ↔
+/-- **Mean-field differential inequality for inhomogeneous percolation.**
+The mean-field differential inequality for inhomogeneous percolation: Russo's formula `∂_β P(o ↔
 B) = ∑_e J_e P(e closed pivotal)` and, if `φ(S) ≥ m` for all `S ∋ o`, `(m/β)(1 - P(o ↔ B)) ≤ ∂_β P(o
 ↔ B)`. Reference: H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of the phase
 transition for Bernoulli percolation and the Ising model", Comm. Math. Phys. 343 (2016) 725–745. -/

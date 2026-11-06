@@ -55,7 +55,8 @@ open BigOperators
 
 /-! ## A. The walk-series square root -/
 
-/-- The walk-series square root of `det (1 - Λ)`: the exponential of minus one half of
+/-- **Walk-series square root of det(1 − Λ).**
+The walk-series square root of `det (1 - Λ)`: the exponential of minus one half of
 `∑ₙ (∑ over closed walks of length n + 1 of their weight) / (n + 1)`. -/
 noncomputable def ons_detWalkRoot {E : Type*} [Fintype E] [DecidableEq E]
     (Λ : Matrix E E ℂ) : ℂ :=
@@ -65,7 +66,8 @@ noncomputable def ons_detWalkRoot {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## B. Masked matrices -/
 
-/-- The matrix `Λ` with every row and column indexed by a state of `forbidden` set to zero. -/
+/-- **Matrix with forbidden rows and columns set to zero.**
+The matrix `Λ` with every row and column indexed by a state of `forbidden` set to zero. -/
 def ons_maskMatrix {E : Type*} [DecidableEq E]
     (forbidden : Finset E) (Λ : Matrix E E ℂ) : Matrix E E ℂ :=
   fun i j => if i ∈ forbidden ∨ j ∈ forbidden then 0 else Λ i j

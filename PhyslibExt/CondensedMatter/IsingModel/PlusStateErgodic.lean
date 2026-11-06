@@ -75,18 +75,18 @@ variable {d : ℕ}
 
 /-! ## A. Finite sets and their bonds -/
 
-/-- The unit vector `e_i` of `ℤ^d`. -/
+/-- **Unit vector of $\mathbb{Z}^d$.** The unit vector `e_i` of `ℤ^d`. -/
 def gvUnit (d : ℕ) (i : Fin d) : Site d := fun j => if j = i then 1 else 0
 
-/-- The site `x` and its nearest neighbours. -/
+/-- **Site with its nearest neighbours.** The site `x` and its nearest neighbours. -/
 noncomputable def gvBall (x : Site d) : Finset (Site d) :=
   insert x ((Finset.univ : Finset (Fin d)).biUnion
     (fun i => {x + gvUnit d i, x - gvUnit d i}))
 
-/-- The sites of `S` together with their nearest neighbours. -/
+/-- **Set with its nearest neighbours.** The sites of `S` together with their nearest neighbours. -/
 noncomputable def gvCand (S : Finset (Site d)) : Finset (Site d) := S.biUnion gvBall
 
-/-- The bonds with at least one endpoint in `S`. -/
+/-- **Bonds touching a set.** The bonds with at least one endpoint in `S`. -/
 noncomputable def gvBondTouch (S : Finset (Site d)) : Finset (Sym2 (Site d)) :=
   (((gvCand S) ×ˢ (gvCand S)).filter
     (fun p => (hypercubicLattice d).Adj p.1 p.2 ∧ (p.1 ∈ S ∨ p.2 ∈ S))).image (fun p => s(p.1, p.2))
@@ -175,7 +175,8 @@ lemma gv_bondTouch_subset {Sin Sout : Finset (Site d)} (hsub : Sin ⊆ Sout) :
 
 /-! ## B. Finite-volume measures on finite sets -/
 
-/-- The configuration equal to `τ` on `S` and to `η` off `S`. -/
+/-- **Configuration glued from a set and a boundary condition.**
+The configuration equal to `τ` on `S` and to `η` off `S`. -/
 noncomputable def gvGlue (η : ConfigSpace (Site d)) (S : Finset (Site d))
     (τ : {x // x ∈ S} → Bool) : ConfigSpace (Site d) :=
   fun x => if h : x ∈ S then τ ⟨x, h⟩ else η x
@@ -188,12 +189,14 @@ noncomputable def gvGlue (η : ConfigSpace (Site d)) (S : Finset (Site d))
     (τ : {x // x ∈ S} → Bool) {x : Site d} (hx : x ∉ S) :
     gvGlue η S τ x = η x := by simp [gvGlue, hx]
 
-/-- The energy `-∑_{e touching S} σ_e - h ∑_{x ∈ S} σ_x` of `gvGlue η S τ`. -/
+/-- **Energy on a set with a boundary condition.**
+The energy `-∑_{e touching S} σ_e - h ∑_{x ∈ S} σ_x` of `gvGlue η S τ`. -/
 noncomputable def gvEnergy (η : ConfigSpace (Site d)) (S : Finset (Site d)) (h : ℝ)
     (τ : {x // x ∈ S} → Bool) : ℝ :=
   - (∑ e ∈ gvBondTouch S, bond (gvGlue η S τ) e) - h * ∑ x ∈ S, spin (gvGlue η S τ) x
 
-/-- The Boltzmann weight of the configuration `τ` on `S` with boundary condition `η`. -/
+/-- **Boltzmann weight on a set with a boundary condition.**
+The Boltzmann weight of the configuration `τ` on `S` with boundary condition `η`. -/
 noncomputable def gvWeight (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ)
     (τ : {x // x ∈ S} → Bool) : ℝ :=
   Real.exp (-β * gvEnergy η S h τ)
@@ -201,7 +204,8 @@ noncomputable def gvWeight (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β
 lemma gvWeight_pos (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ)
     (τ : {x // x ∈ S} → Bool) : 0 < gvWeight η S β h τ := Real.exp_pos _
 
-/-- The partition function on `S` with boundary condition `η`. -/
+/-- **Partition function on a set with a boundary condition.**
+The partition function on `S` with boundary condition `η`. -/
 noncomputable def gvZ (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ) : ℝ :=
   ∑ τ : {x // x ∈ S} → Bool, gvWeight η S β h τ
 
@@ -213,7 +217,8 @@ lemma gvZ_pos (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ) :
 lemma gvZ_ne_zero (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ) :
     gvZ η S β h ≠ 0 := (gvZ_pos η S β h).ne'
 
-/-- The Gibbs probability of `τ` on `S` with boundary condition `η`. -/
+/-- **Gibbs probability on a set with a boundary condition.**
+The Gibbs probability of `τ` on `S` with boundary condition `η`. -/
 noncomputable def gvProb (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ)
     (τ : {x // x ∈ S} → Bool) : ℝ :=
   gvWeight η S β h τ / gvZ η S β h
@@ -227,7 +232,8 @@ lemma gvProb_sum_eq_one (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h 
   unfold gvProb
   rw [← Finset.sum_div, div_eq_one_iff_eq (gvZ_ne_zero η S β h)]; rfl
 
-/-- The finite-volume Gibbs measure on the finite set `S` with boundary condition `η`. -/
+/-- **Finite-volume Gibbs measure on a finite set.**
+The finite-volume Gibbs measure on the finite set `S` with boundary condition `η`. -/
 noncomputable def gvMeasure (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ) :
     Measure (ConfigSpace (Site d)) :=
   ∑ τ : {x // x ∈ S} → Bool,
@@ -246,7 +252,8 @@ lemma gvMeasure_univ (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : �
 instance gvMeasure_isProbabilityMeasure (η : ConfigSpace (Site d)) (S : Finset (Site d)) (β h : ℝ) :
     IsProbabilityMeasure (gvMeasure η S β h) := ⟨gvMeasure_univ η S β h⟩
 
-/-- The finite-volume Gibbs measure on `S` with plus boundary condition. -/
+/-- **Finite-volume Gibbs measure with plus boundary condition.**
+The finite-volume Gibbs measure on `S` with plus boundary condition. -/
 noncomputable def gvPlusMeasure (S : Finset (Site d)) (β h : ℝ) : Measure (ConfigSpace (Site d)) :=
   gvMeasure (plusField d) S β h
 
@@ -422,12 +429,14 @@ lemma gvMeasure_le_plusField (S : Finset (Site d)) {β : ℝ} (hβ : 0 ≤ β) {
 
 /-! ## C. Consistency on nested sets -/
 
-/-- The configuration on `Sout` obtained by overwriting its spins in `Sin` with `τ`. -/
+/-- **Overwriting a configuration on an inner set.**
+The configuration on `Sout` obtained by overwriting its spins in `Sin` with `τ`. -/
 noncomputable def gvOvr {Sin Sout : Finset (Site d)} (_hsub : Sin ⊆ Sout)
     (σ : {x // x ∈ Sout} → Bool) (τ : {x // x ∈ Sin} → Bool) : {x // x ∈ Sout} → Bool :=
   fun x => if hn : (x : Site d) ∈ Sin then τ ⟨x, hn⟩ else σ x
 
-/-- The restriction of a configuration on `Sout` to `Sin`. -/
+/-- **Restriction of a configuration to an inner set.**
+The restriction of a configuration on `Sout` to `Sin`. -/
 noncomputable def gvRes {Sin Sout : Finset (Site d)} (hsub : Sin ⊆ Sout)
     (σ : {x // x ∈ Sout} → Bool) : {x // x ∈ Sin} → Bool :=
   fun x => σ ⟨x, hsub x.2⟩
@@ -545,7 +554,8 @@ lemma gv_fvZ_eq_of_agree_off {Sin : Finset (Site d)} (β h : ℝ)
   unfold gvZ
   exact Finset.sum_congr rfl (fun τ _ => gv_fvWeight_eq_of_agree_off β h hagree τ)
 
-/-- The involution exchanging the `Sin` parts of a configuration on `Sout` and a configuration on
+/-- **Involution swapping inner-set parts of configuration pairs.**
+The involution exchanging the `Sin` parts of a configuration on `Sout` and a configuration on
 `Sin`. -/
 noncomputable def gvSwapPair {Sin Sout : Finset (Site d)} (hsub : Sin ⊆ Sout) :
     (({x // x ∈ Sout} → Bool) × ({x // x ∈ Sin} → Bool))
@@ -654,7 +664,8 @@ lemma iptp_gv_crossbox_dom {Sin Sout : Finset (Site d)} (hsub : Sin ⊆ Sout)
 
 /-! ## D. Boxes and translates -/
 
-/-- The sites of the box `Λ_n` as a set and as a finset. -/
+/-- **Box sites as a set and as a finite set.**
+The sites of the box `Λ_n` as a set and as a finset. -/
 noncomputable def iptp_boxEquiv (d n : ℕ) :
     {x : Site d // x ∈ box d n} ≃ {x : Site d // x ∈ boxFinset d n} :=
   Equiv.subtypeEquivProp (by ext x; rw [mem_boxFinset])
@@ -733,7 +744,8 @@ lemma iptp_gvPlusMeasure_eq_plusMeasure (n : ℕ) (β h : ℝ) :
 
 /-! ## E. Translation invariance, ergodicity and extremality -/
 
-/-- Translation by `g` as an equivalence between `S` and its translate. -/
+/-- **Translation as an equivalence onto a translate.**
+Translation by `g` as an equivalence between `S` and its translate. -/
 noncomputable def iptp_transInteriorEquiv (g : Multiplicative (Site d)) (S : Finset (Site d)) :
     {x : Site d // x ∈ S} ≃ {x : Site d // x ∈ S.image (fun x => g • x)} where
   toFun x := ⟨g • (x : Site d), Finset.mem_image_of_mem _ x.2⟩

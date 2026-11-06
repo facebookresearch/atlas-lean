@@ -54,7 +54,7 @@ open StatMech.Lattice
 
 /-! ## A. Exhausting boxes -/
 
-/-- The box `Λ_n` as a finite set of sites. -/
+/-- **Box as a finite set of sites.** The box `Λ_n` as a finite set of sites. -/
 noncomputable def ablBoxFinset (d n : Nat) : Finset (Site d) :=
   (box_finite d n).toFinset
 
@@ -163,7 +163,8 @@ lemma abl_row_tsum_eq {d : Nat} (J : Sym2 (Site d) → Real)
 
 /-! ## C. The inequality on `ℤ^d` -/
 
-/-- The Aizenman–Barsky inequality on `ℤ^d` with the row sum written over lattice neighbours.
+/-- **Aizenman–Barsky inequality on $\mathbb{Z}^d$ with neighbour row sum.**
+The Aizenman–Barsky inequality on `ℤ^d` with the row sum written over lattice neighbours.
 Reference: M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
 Comm. Math. Phys. 108 (1987) 489–526. Scope and fidelity: this is the first Aizenman–Barsky
 differential inequality `∂_β M ≤ |J| M ∂_h M` for independent bond percolation on `ℤ^d` with
@@ -221,7 +222,8 @@ lemma abl_origin_row_tsum_eq {d : Nat} (J : Sym2 (Site d) → Real)
   · rw [ite_eq_left h]
   · rw [ite_eq_right h, hJsupport 0 y h]
 
-/-- The Aizenman–Barsky inequality on `ℤ^d`: `∂_β M ≤ |J| M ∂_h M` with `|J| = ∑_y J_{0y}`.
+/-- **Aizenman–Barsky inequality on $\mathbb{Z}^d$.**
+The Aizenman–Barsky inequality on `ℤ^d`: `∂_β M ≤ |J| M ∂_h M` with `|J| = ∑_y J_{0y}`.
 Reference: M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
 Comm. Math. Phys. 108 (1987) 489–526. Scope and fidelity: this is the first Aizenman–Barsky
 differential inequality `∂_β M ≤ |J| M ∂_h M` for independent bond percolation on `ℤ^d` with

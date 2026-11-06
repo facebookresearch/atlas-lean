@@ -59,7 +59,8 @@ variable {V : Type*} [DecidableEq V] (Gp : SimpleGraph V) (δ : Finset (Sym2 V))
 
 /-! ## A. Crossing parity along walks -/
 
-/-- The parity of the number of steps of a walk that use an edge of `δ`. -/
+/-- **Crossing parity of a walk with respect to an edge set.**
+The parity of the number of steps of a walk that use an edge of `δ`. -/
 def walkParity : {x y : V} → Gp.Walk x y → Bool
   | _, _, .nil => false
   | _, _, .cons (u := u) (v := v) _ p => (decide (s(u, v) ∈ δ)).xor (walkParity p)
@@ -100,7 +101,8 @@ section ParityConfig
 variable {V : Type*} [Fintype V] [DecidableEq V]
   (Gp : SimpleGraph V) [DecidableRel Gp.Adj] (δ : Finset (Sym2 V))
 
-/-- Every closed walk of `Gp` uses edges of `δ` an even number of times. -/
+/-- **Evenness of an edge set on every closed walk.**
+Every closed walk of `Gp` uses edges of `δ` an even number of times. -/
 def EvenOnCycles : Prop := ∀ (x : V) (p : Gp.Walk x x), walkParity Gp δ p = false
 
 variable {Gp δ}
@@ -116,7 +118,8 @@ lemma walkParity_eq_of_evenOnCycles (hev : EvenOnCycles Gp δ) {x y : V}
 /-! ## B. Edge sets even on cycles are cuts -/
 
 variable (Gp δ) in
-/-- The configuration assigning to `v` the crossing parity of `δ` along a walk from `v₀` to `v`. -/
+/-- **Spin configuration from crossing parities along walks.**
+The configuration assigning to `v` the crossing parity of `δ` along a walk from `v₀` to `v`. -/
 noncomputable def parityConfig (hG : Gp.Preconnected) (v₀ : V) : ConfigSpace V :=
   fun v => walkParity Gp δ (hG v₀ v).some
 
@@ -182,7 +185,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## C. Edge crossings from cycle parities -/
 
-/-- Every closed walk of `Gp` crosses the pullback of `F` an even number of times. -/
+/-- **Cycle-parity compatibility of a dual edge set.**
+Every closed walk of `Gp` crosses the pullback of `F` an even number of times. -/
 def CycleParityCompatible (Gp : SimpleGraph V) [DecidableRel Gp.Adj]
     (ψ : Sym2 V ≃ Sym2 V) (F : Finset (Sym2 V)) : Prop :=
   EvenOnCycles Gp (F.image ψ.symm)
@@ -230,7 +234,8 @@ lemma even_to_cut_of_cycleParity [Nonempty V] (hG : Gp.Preconnected)
   exact mem_cutSpace_of_evenOnCycles hG
     (image_symm_subset_edgeFinset ψ hsymm hFsub) (hcyc F hF)
 
-/-- An edge crossing built from cycle-parity compatibility of all even subgraphs of `Gd`. -/
+/-- **Edge crossing from cycle-parity compatibility of even subgraphs.**
+An edge crossing built from cycle-parity compatibility of all even subgraphs of `Gd`. -/
 noncomputable def edgeCrossing_of_cycleParity [Nonempty V] (hG : Gp.Preconnected)
     (ψ : Sym2 V ≃ Sym2 V)
     (hedge : ∀ e ∈ Gp.edgeFinset, ψ e ∈ Gd.edgeFinset)
@@ -318,7 +323,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## D. Single dual cycles and closed walks -/
 
-/-- Every edge set in `cycleSets` is cycle-parity compatible. -/
+/-- **Cycle-parity compatibility of a family of dual cycle sets.**
+Every edge set in `cycleSets` is cycle-parity compatible. -/
 def SingleDualCycleParity (Gp : SimpleGraph V) [DecidableRel Gp.Adj]
     (ψ : Sym2 V ≃ Sym2 V) (cycleSets : Finset (Sym2 V) → Prop) : Prop :=
   ∀ C : Finset (Sym2 V), cycleSets C → EvenOnCycles Gp (C.image ψ.symm)
@@ -359,12 +365,14 @@ section ClosedWalk
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Gp Gd : SimpleGraph V} [DecidableRel Gp.Adj] [DecidableRel Gd.Adj]
 
-/-- Every closed walk of `Gd` has edge set whose pullback is cycle-parity compatible. -/
+/-- **Cycle-parity compatibility of closed dual walks.**
+Every closed walk of `Gd` has edge set whose pullback is cycle-parity compatible. -/
 def ClosedDualWalkParity (Gp Gd : SimpleGraph V) [DecidableRel Gp.Adj]
     (ψ : Sym2 V ≃ Sym2 V) : Prop :=
   ∀ {w : V} (W : Gd.Walk w w), EvenOnCycles Gp ((W.edges.toFinset).image ψ.symm)
 
-/-- Every even subgraph of `Gd` is a symmetric difference of edge sets of closed walks. -/
+/-- **Closed-walk decomposition property of even subgraphs.**
+Every even subgraph of `Gd` is a symmetric difference of edge sets of closed walks. -/
 def EvenSubgraphWalkDecomp (Gd : SimpleGraph V) [DecidableRel Gd.Adj] : Prop :=
   ∀ F ∈ evenSubgraphs Gd, ∃ (ι : Type) (_ : DecidableEq ι) (s : Finset ι)
       (w : ι → V) (W : (i : ι) → Gd.Walk (w i) (w i)),
@@ -387,7 +395,8 @@ lemma even_to_cut_of_closedWalkParity [Nonempty V] (hG : Gp.Preconnected)
   exact cycleParityCompatible_of_decomposition ψ hsingle s
     (fun i => (W i).edges.toFinset) hcov hdisj (fun i _ => ⟨w i, W i, rfl⟩)
 
-/-- An edge crossing built from closed-walk parities and the decomposition of even subgraphs into
+/-- **Edge crossing from closed-walk parities and walk decompositions.**
+An edge crossing built from closed-walk parities and the decomposition of even subgraphs into
 closed walks. -/
 noncomputable def edgeCrossing_of_closedWalkParity [Nonempty V] (hG : Gp.Preconnected)
     (ψ : Sym2 V ≃ Sym2 V)

@@ -53,24 +53,28 @@ open StatMech.Onsager.NoDoubleWind
 
 /-! ## A. Periodic lifts -/
 
-/-- The translation `(L m₁, L m₂)` of `ℤ²` corresponding to winding `(m₁, m₂)` around the torus. -/
+/-- **Translation of $\mathbb{Z}^2$ for a winding around the torus.**
+The translation `(L m₁, L m₂)` of `ℤ²` corresponding to winding `(m₁, m₂)` around the torus. -/
 def ons_windingTranslation (L : ℕ) (mx my : ℤ) : ℤ × ℤ :=
   ((L : ℤ) * mx, (L : ℤ) * my)
 
-/-- The `i`-th point of the `r`-th period of the lift of a torus loop with winding `(m₁, m₂)`,
+/-- **Points of the periodic lift of a torus loop.**
+The `i`-th point of the `r`-th period of the lift of a torus loop with winding `(m₁, m₂)`,
 relative to the starting point. -/
 def ons_periodicLiftVertex {L n : ℕ} [NeZero n]
     (v : Fin n → ons_Dart L) (mx my r : ℤ) (i : Fin n) : ℤ × ℤ :=
   pos (ons_liftDir v) i +
     ((L : ℤ) * (r * mx), (L : ℤ) * (r * my))
 
-/-- A base point in `ℤ²` over the starting site of a torus loop. -/
+/-- **Base point in $\mathbb{Z}^2$ over the start of a torus loop.**
+A base point in `ℤ²` over the starting site of a torus loop. -/
 def ons_liftBase {L n : ℕ} [NeZero n]
     (v : Fin n → ons_Dart L) : ℤ × ℤ :=
   (((ons_liftSite v 0).1.val : ℤ),
     ((ons_liftSite v 0).2.val : ℤ))
 
-/-- The periodic lift translated to start at the base point over the starting site. -/
+/-- **Periodic lift anchored at the base point.**
+The periodic lift translated to start at the base point over the starting site. -/
 def ons_anchoredPeriodicLiftVertex {L n : ℕ} [NeZero n]
     (v : Fin n → ons_Dart L) (mx my r : ℤ) (i : Fin n) : ℤ × ℤ :=
   ons_liftBase v + ons_periodicLiftVertex v mx my r i

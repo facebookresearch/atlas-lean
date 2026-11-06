@@ -187,7 +187,8 @@ lemma ons_exists_decPortChainWalk
   · refine ⟨.nil, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainPathIndices]
 
-/-- A walk along the internal path from port `a` to port `b` at a site. -/
+/-- **Internal walk between two ports at a site.**
+A walk along the internal path from port `a` to port `b` at a site. -/
 noncomputable def ons_decPortChainWalk
     (L : ℕ) (site : ZMod L × ZMod L) (a b : Fin 4) :
     (ons_decGraph L).Walk (site, a) (site, b) :=
@@ -268,7 +269,8 @@ lemma ons_exists_decPortChainPath
   · refine ⟨.nil, by simp, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainPathIndices]
 
-/-- The internal path from port `a` to port `b` at a site, as a path in the decorated graph. -/
+/-- **Internal path between two ports at a site.**
+The internal path from port `a` to port `b` at a site, as a path in the decorated graph. -/
 noncomputable def ons_decPortChainPath
     (L : ℕ) (site : ZMod L × ZMod L) (a b : Fin 4) :
     (ons_decGraph L).Walk (site, a) (site, b) :=
@@ -292,7 +294,8 @@ lemma ons_dartRev_fst_eq_step
 
 /-! ## C. Transition walks -/
 
-/-- The decorated walk of the Kac-Ward transition from `d₁` to `d₂`: the external edge at `d₁`
+/-- **Decorated walk of a Kac-Ward transition.**
+The decorated walk of the Kac-Ward transition from `d₁` to `d₂`: the external edge at `d₁`
 followed by the internal path to `d₂`. -/
 noncomputable def ons_decTransitionWalk
     (L : ℕ) (d₂ d₁ : ons_Dart L)

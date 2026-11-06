@@ -101,7 +101,8 @@ lemma dgf_cross_eq_boxRestrict_inter (M : ℕ) (g : Multiplicative (Site d))
 
 /-! ## B. The analytic cap and factorization -/
 
-/-- For every finite family of finite edge sets and scale `N`, some translation `g` and margin `r`
+/-- **Disjoint-box cap hypothesis for multi-open events.**
+For every finite family of finite edge sets and scale `N`, some translation `g` and margin `r`
 realize each pair `T`, `g⁻¹T'` in `Λ_{N+r}` with `g⁻¹T'` outside a set `F`, such that the
 conditional masses of `O_T` on fibres of `F` (with a boundary graph containing the wired one)
 are at

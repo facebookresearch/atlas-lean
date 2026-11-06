@@ -211,7 +211,8 @@ lemma ocs_sqrt_div_to_zero : Tendsto (fun n : ℕ => (Nat.sqrt n : ℝ) / n) atT
     _ ≤ (n : ℝ) := by exact_mod_cast hsq
     _ = 1 * n := by ring
 
-/-- The fraction of ordered edges of `Λ_n` outside `Λ_m` is at most `4 d² (n - m)/n`. -/
+/-- **Shell edge fraction is at most $4d^2(n-m)/n$.**
+The fraction of ordered edges of `Λ_n` outside `Λ_m` is at most `4 d² (n - m)/n`. -/
 lemma ocs_edgeCard_shell_fraction_le (d : ℕ) (hd : 1 ≤ d) (n m : ℕ) (hn : 1 ≤ n) (hmn : m ≤ n) :
     ((boxSV_edgeCard d n - boxSV_edgeCard d m : ℕ) : ℝ) / (boxSV_edgeCard d n)
       ≤ 4 * (d : ℝ) ^ 2 * (((n - m : ℕ) : ℝ) / n) := by
@@ -295,7 +296,8 @@ lemma ocs_gap_sub_one_tendsto_zero :
   have : n - (n - Nat.sqrt n - 1) = Nat.sqrt n + 1 := by omega
   rw [this]; push_cast; ring
 
-/-- If `(n - m(n))/n → 0`, the edges of `Λ_n` outside `Λ_{m(n)}` form a vanishing fraction of
+/-- **Vanishing shell edge fraction when $(n - m(n))/n \to 0$.**
+If `(n - m(n))/n → 0`, the edges of `Λ_n` outside `Λ_{m(n)}` form a vanishing fraction of
 the edges of `Λ_n`. -/
 lemma ocs_edgeFinset_shell_fraction_tendsto_zero (d : ℕ) (hd : 1 ≤ d) (m : ℕ → ℕ)
     (hm : ∀ n, m n ≤ n) (hgap : Tendsto (fun n => ((n - m n : ℕ) : ℝ) / n) atTop (𝓝 0)) :
@@ -352,7 +354,8 @@ lemma ocs_innerEdge_recentre (d R n md : ℕ) (hmn : md ≤ n) (u v : boxVerts d
         = ((boxVertInclLE d hmn v) : Site d)
     rw [flc_incl_val, fvs_transEquiv_val]; simp [boxVertInclLE]
 
-/-- For `u, v` adjacent in `Λ_{n-R}`, the free marginal in `Λ_n` of the edge `{u, v}` is at least
+/-- **Free off-centre lower bound by the recentred small-box marginal.**
+For `u, v` adjacent in `Λ_{n-R}`, the free marginal in `Λ_n` of the edge `{u, v}` is at least
 the free marginal in `Λ_R` of the recentered edge `{0, v - u}`. -/
 lemma ocs_free_offCentre_lower (d R n : ℕ) (hRn : R ≤ n) (hmn : n - R ≤ n)
     (u v : boxVerts d (n - R)) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -411,7 +414,8 @@ lemma ocs_wired_margin (d R n : ℕ) (a : Site d) (ha : a ∈ box d (n - R - 1))
       _ ≤ n - 1 := by omega
   exact (hbd.2) hxbox
 
-/-- For `u, v` adjacent in `Λ_{n-R-1}` and `R ≥ 1`, the wired marginal in `Λ_n` of `{u, v}` is at
+/-- **Wired off-centre upper bound by the recentred small-box marginal.**
+For `u, v` adjacent in `Λ_{n-R-1}` and `R ≥ 1`, the wired marginal in `Λ_n` of `{u, v}` is at
 most the wired marginal in `Λ_R` of the recentered edge `{0, v - u}`. -/
 lemma ocs_wired_offCentre_upper (d R n : ℕ) (hR : 1 ≤ R) (hRn1 : R + 1 ≤ n) (hmn : n - R - 1 ≤ n)
     (u v : boxVerts d (n - R - 1)) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -471,7 +475,8 @@ lemma ocs_candMap_mem_box (d R : ℕ) (hR : 1 ≤ R) (p : Fin d × Bool) :
     rcases hp2 : p.2 <;> simp <;> omega
   · rw [Function.update_of_ne hi]; simp
 
-/-- The difference of adjacent box vertices is a signed unit vector. See also `rot_edge_dir`. -/
+/-- **Adjacent box vertices differ by a signed unit vector.**
+The difference of adjacent box vertices is a signed unit vector. See also `rot_edge_dir`. -/
 lemma ocs_edge_dir_candMap (d m : ℕ) (u v : boxVerts d m) (hadj : (boxGraph d m).Adj u v) :
     ∃ p : Fin d × Bool, (v : Site d) - (u : Site d) = candMap d (0 : Site d) p := by
   rw [boxGraph, SimpleGraph.comap_adj] at hadj
@@ -489,7 +494,8 @@ lemma ocs_edge_dir_candMap (d m : ℕ) (u v : boxVerts d m) (hadj : (boxGraph d 
     rcases hs with rfl | rfl <;> simp
   · rw [Function.update_of_ne hi, Function.update_of_ne hi]; simp
 
-/-- The unit edge `{0, ±e_j}` of the box `Λ_R`, `R ≥ 1`, indexed by `(j, sign)`. -/
+/-- **Unit edge $\{0, \pm e_j\}$ of a box.**
+The unit edge `{0, ±e_j}` of the box `Λ_R`, `R ≥ 1`, indexed by `(j, sign)`. -/
 def ocs_unitEdge (d R : ℕ) (hR : 1 ≤ R) (p : Fin d × Bool) : Sym2 (boxVerts d R) :=
   s((⟨(0 : Site d), ocs_zero_mem_box d R⟩ : boxVerts d R),
     (⟨candMap d (0 : Site d) p, ocs_candMap_mem_box d R hR p⟩ : boxVerts d R))
@@ -510,7 +516,8 @@ lemma ocs_unitEdge1_mem_edgeFinset (d : ℕ) (p : Fin d × Bool) :
 set_option maxHeartbeats 1500000 in
 -- elaborating the dependent `if hR : 1 ≤ Nat.sqrt n` family and its `congrArg` transport
 -- exceeds the default budget
-/-- The free marginal of a unit edge in `Λ_{⌊√n⌋}` converges to its free `q = 2` density. -/
+/-- **Free unit-edge marginals converge to the free density.**
+The free marginal of a unit edge in `Λ_{⌊√n⌋}` converges to its free `q = 2` density. -/
 lemma ocs_unitEdge_marg_tendsto (d : ℕ) (p : Fin d × Bool) {pr : ℝ} (hp : 0 < pr) (hp1 : pr < 1) :
     Tendsto (fun n =>
         if hR : 1 ≤ Nat.sqrt n then
@@ -543,14 +550,16 @@ lemma ocs_unitEdge_marg_tendsto (d : ℕ) (p : Fin d × Bool) {pr : ℝ} (hp : 0
 ## D. The free sandwich
 -/
 
-/-- The free rotation residue at tilt `t` for the box pair `e'`: every lattice edge of every box
+/-- **Free rotation residue for a box pair.**
+The free rotation residue at tilt `t` for the box pair `e'`: every lattice edge of every box
 has the free `q = 2` density of `e'` at `p = logistic t`. -/
 def ocs_FreeRotationResidue (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) : Prop :=
   ∀ (m : ℕ) (eb : Sym2 (boxVerts d m)), eb ∈ (boxGraph d m).edgeFinset →
     freeEdgeDensity d 2 (edgeIncl d m eb) (fsc_logistic t)
       = freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)
 
-/-- The free marginal at `p = logistic t` of the unit edge `(j, sign)` in `Λ_{⌊√n⌋}`, and `0`
+/-- **Free unit-edge marginal in the square-root box.**
+The free marginal at `p = logistic t` of the unit edge `(j, sign)` in `Λ_{⌊√n⌋}`, and `0`
 when `⌊√n⌋ = 0`. -/
 noncomputable def ocs_unitMarg (d n : ℕ) (p : Fin d × Bool) (t : ℝ) : ℝ :=
   if hR : 1 ≤ Nat.sqrt n then
@@ -558,7 +567,8 @@ noncomputable def ocs_unitMarg (d n : ℕ) (p : Fin d × Bool) (t : ℝ) : ℝ :
       (ocs_unitEdge d (Nat.sqrt n) hR p)
   else 0
 
-/-- The total deviation `∑_{(j, sign)} |density(e') - unit-edge marginal|` of the free unit-edge
+/-- **Total deviation of free unit-edge marginals from the density.**
+The total deviation `∑_{(j, sign)} |density(e') - unit-edge marginal|` of the free unit-edge
 marginals in `Λ_{⌊√n⌋}` from the free density of `e'`. -/
 noncomputable def ocs_freeDelta (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) (n : ℕ) : ℝ :=
   ∑ p : Fin d × Bool,
@@ -607,11 +617,13 @@ lemma ocs_innerEdgeLE_mem_edgeFinset (d : ℕ) {m n : ℕ} (h : m ≤ n) (eb : S
     rw [innerEdgeLE, Sym2.map_mk, SimpleGraph.mem_edgeSet, boxGraph, SimpleGraph.comap_adj]
     exact heb
 
-/-- The bulk edges of `Λ_n`: the edges of the inner box `Λ_{n - ⌊√n⌋}`. -/
+/-- **Bulk edges of $\Lambda_n$.**
+The bulk edges of `Λ_n`: the edges of the inner box `Λ_{n - ⌊√n⌋}`. -/
 noncomputable def ocs_bulkSet (d n : ℕ) : Finset (Sym2 (boxVerts d n)) :=
   (boxGraph d (n - Nat.sqrt n)).edgeFinset.image (innerEdgeLE d (Nat.sub_le n (Nat.sqrt n)))
 
-/-- Every bulk edge of `Λ_n` has free marginal at least `density(e') - ocs_freeDelta`. -/
+/-- **Lower bound on free bulk edge marginals.**
+Every bulk edge of `Λ_n` has free marginal at least `density(e') - ocs_freeDelta`. -/
 lemma ocs_free_bulk_lower (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) (n : ℕ) (hn : 1 ≤ n)
     (u v : boxVerts d (n - Nat.sqrt n)) (hadj : (boxGraph d (n - Nat.sqrt n)).Adj u v) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) - ocs_freeDelta N e' t n
@@ -650,7 +662,8 @@ lemma ocs_free_bulk_lower (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) (n : �
   rw [hmarg] at h1
   exact le_trans h1 hlow
 
-/-- The free off-centre sandwich from the free rotation residues for all pairs `e'` of `Λ_N`. -/
+/-- **Free off-centre sandwich from free rotation residues.**
+The free off-centre sandwich from the free rotation residues for all pairs `e'` of `Λ_N`. -/
 lemma ocs_freeOffCentreSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ)
     (hres : ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ), ocs_FreeRotationResidue (d := d) N e' t) :
     bdp_FreeOffCentreSandwich (d := d) N := by
@@ -707,7 +720,8 @@ lemma ocs_freeOffCentreSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ)
 set_option maxHeartbeats 1500000 in
 -- elaborating the dependent `if hR : 1 ≤ Nat.sqrt n` family and its `congrArg` transport
 -- exceeds the default budget
-/-- The wired marginal of a unit edge in `Λ_{⌊√n⌋}` converges to its wired `q = 2` density. -/
+/-- **Wired unit-edge marginals converge to the wired density.**
+The wired marginal of a unit edge in `Λ_{⌊√n⌋}` converges to its wired `q = 2` density. -/
 lemma ocs_unitEdge_wired_marg_tendsto (d : ℕ) (p : Fin d × Bool) {pr : ℝ}
     (hp : 0 < pr) (hp1 : pr < 1) :
     Tendsto (fun n =>
@@ -738,14 +752,16 @@ lemma ocs_unitEdge_wired_marg_tendsto (d : ℕ) (p : Fin d × Bool) {pr : ℝ}
     (show (⟨1 + (Nat.sqrt n - 1), Nat.le_add_right 1 _⟩ : {s : ℕ // 1 ≤ s}) = ⟨Nat.sqrt n, hR⟩ from
       Subtype.ext hrr)
 
-/-- The wired rotation residue at tilt `t` for the box pair `e'`: every lattice edge of every box
+/-- **Wired rotation residue for a box pair.**
+The wired rotation residue at tilt `t` for the box pair `e'`: every lattice edge of every box
 has the wired `q = 2` density of `e'` at `p = logistic t`. -/
 def ocs_WiredRotationResidue (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) : Prop :=
   ∀ (m : ℕ) (eb : Sym2 (boxVerts d m)), eb ∈ (boxGraph d m).edgeFinset →
     wiredEdgeDensity d 2 (edgeIncl d m eb) (fsc_logistic t)
       = wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)
 
-/-- The wired marginal at `p = logistic t` of the unit edge `(j, sign)` in `Λ_{⌊√n⌋}`, and `0`
+/-- **Wired unit-edge marginal in the square-root box.**
+The wired marginal at `p = logistic t` of the unit edge `(j, sign)` in `Λ_{⌊√n⌋}`, and `0`
 when `⌊√n⌋ = 0`. -/
 noncomputable def ocs_unitWiredMarg (d n : ℕ) (p : Fin d × Bool) (t : ℝ) : ℝ :=
   if hR : 1 ≤ Nat.sqrt n then
@@ -754,7 +770,8 @@ noncomputable def ocs_unitWiredMarg (d n : ℕ) (p : Fin d × Bool) (t : ℝ) : 
       (ocs_unitEdge d (Nat.sqrt n) hR p)
   else 0
 
-/-- The total deviation of the wired unit-edge marginals in `Λ_{⌊√n⌋}` from the wired density of
+/-- **Total deviation of wired unit-edge marginals from the density.**
+The total deviation of the wired unit-edge marginals in `Λ_{⌊√n⌋}` from the wired density of
 `e'`. -/
 noncomputable def ocs_wiredDelta (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) (n : ℕ) : ℝ :=
   ∑ p : Fin d × Bool,
@@ -793,12 +810,14 @@ lemma ocs_wiredDelta_tendsto_zero (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
   rw [Finset.sum_const_zero] at h
   exact h
 
-/-- The wired bulk edges of `Λ_n`: the edges of the inner box `Λ_{n - ⌊√n⌋ - 1}`. -/
+/-- **Wired bulk edges of $\Lambda_n$.**
+The wired bulk edges of `Λ_n`: the edges of the inner box `Λ_{n - ⌊√n⌋ - 1}`. -/
 noncomputable def ocs_wiredBulkSet (d n : ℕ) : Finset (Sym2 (boxVerts d n)) :=
   (boxGraph d (n - Nat.sqrt n - 1)).edgeFinset.image
     (innerEdgeLE d (Nat.sub_le (n - Nat.sqrt n) 1 |>.trans (Nat.sub_le n (Nat.sqrt n))))
 
-/-- Every wired bulk edge of `Λ_n` has wired marginal at most `density(e') + ocs_wiredDelta`. -/
+/-- **Upper bound on wired bulk edge marginals.**
+Every wired bulk edge of `Λ_n` has wired marginal at most `density(e') + ocs_wiredDelta`. -/
 lemma ocs_wired_bulk_upper (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) (n : ℕ) (hn : 2 ≤ n)
     (u v : boxVerts d (n - Nat.sqrt n - 1)) (hadj : (boxGraph d (n - Nat.sqrt n - 1)).Adj u v) :
     edgeMargProb (wiredFkProb (boxGraph d n) (boxBoundary d n) (fsc_logistic t) 2)
@@ -844,7 +863,8 @@ lemma ocs_wired_bulk_upper (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ) (n : �
   rw [hmarg] at h1
   exact le_trans hup h1
 
-/-- The wired off-centre sandwich from the wired rotation residues for all pairs `e'` of
+/-- **Wired off-centre sandwich from wired rotation residues.**
+The wired off-centre sandwich from the wired rotation residues for all pairs `e'` of
 `Λ_N`. -/
 lemma ocs_wiredOffCentreSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ)
     (hres : ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ), ocs_WiredRotationResidue (d := d) N e' t) :

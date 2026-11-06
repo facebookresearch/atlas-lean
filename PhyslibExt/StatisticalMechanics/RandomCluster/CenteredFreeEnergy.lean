@@ -62,7 +62,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. Centered free energies -/
 
-/-- The centered free energy `F_G(t) - F_G(0)`, with `F_G = ivp2_ambientTiltLogZ G q`.
+/-- **Centered free energy of a graph.**
+The centered free energy `F_G(t) - F_G(0)`, with `F_G = ivp2_ambientTiltLogZ G q`.
 In the FK range `q > 0`, the ambient non-edge offset cancels in this difference. -/
 noncomputable def cfe_centered (q : ℝ) (t : ℝ) : ℝ :=
   ivp2_ambientTiltLogZ G q t - ivp2_ambientTiltLogZ G q 0
@@ -157,7 +158,7 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 
 /-! ## B. Wired centered free energies -/
 
-/-- The wired centered free energy, obtained by subtracting
+/-- **Wired centered free energy.** The wired centered free energy, obtained by subtracting
 `wpd_wiredAmbientTiltLogZ G bdry q 0` from its value at `t`. In the FK range `q > 0`,
 the ambient non-edge offset cancels. -/
 noncomputable def cfe_wiredCentered (q : ℝ) (t : ℝ) : ℝ :=
@@ -192,7 +193,8 @@ variable {d : ℕ}
 
 /-! ## C. Convergence along boxes -/
 
-/-- The centered free energies of the boxes `Λ_n` converge pointwise to `G`, and `G(0) = 0`. -/
+/-- **Pointwise convergence of box centered free energies.**
+The centered free energies of the boxes `Λ_n` converge pointwise to `G`, and `G(0) = 0`. -/
 def cfe_CenteredConvergence (d : ℕ) (G : ℝ → ℝ) : Prop :=
   (∀ t, Tendsto (fun n => cfe_centered (boxGraph d n) 2 t) atTop (𝓝 (G t))) ∧ G 0 = 0
 

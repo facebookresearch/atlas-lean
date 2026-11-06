@@ -107,7 +107,8 @@ lemma ons_tsum_tupleProd_eq_pow {K : Type*} [RCLike K]
 
 /-! ## B. The list series -/
 
-/-- The term `(∏_{a ∈ l} wt a) / |l|` of the list series, set to `0` on the empty list. -/
+/-- **Term of the list series: product of weights over length.**
+The term `(∏_{a ∈ l} wt a) / |l|` of the list series, set to `0` on the empty list. -/
 noncomputable def ons_listSeriesTerm {alpha : Type*} (wt : alpha → ℂ)
     (l : List alpha) : ℂ :=
   if _h : l = [] then 0 else (l.map wt).prod / (l.length : ℂ)

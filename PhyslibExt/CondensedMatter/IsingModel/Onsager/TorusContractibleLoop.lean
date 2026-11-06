@@ -53,15 +53,18 @@ open StatMech.Onsager.BaseCase StatMech.Onsager.NoDoubleWind
 
 /-! ## A. Lifting to the plane -/
 
-/-- Reduction of a site of `ℤ²` to the torus `ℤ_L × ℤ_L`. -/
+/-- **Reduction of a lattice site to the torus.**
+Reduction of a site of `ℤ²` to the torus `ℤ_L × ℤ_L`. -/
 def ons_reduceSite (L : ℕ) (p : ℤ × ℤ) : ZMod L × ZMod L :=
   ((p.1 : ZMod L), (p.2 : ZMod L))
 
-/-- The direction sequence of a closed torus walk, read in the order of the lift to `ℤ²`. -/
+/-- **Direction sequence of the lift of a closed torus walk.**
+The direction sequence of a closed torus walk, read in the order of the lift to `ℤ²`. -/
 def ons_liftDir {L n : ℕ} [NeZero n] (v : Fin n → ons_Dart L) : Fin n → Fin 4 :=
   fun k => (v (-k)).2
 
-/-- The sites of a closed torus walk, in the order of the lift. -/
+/-- **Sites of a closed torus walk in lift order.**
+The sites of a closed torus walk, in the order of the lift. -/
 def ons_liftSite {L n : ℕ} [NeZero n]
     (v : Fin n → ons_Dart L) : Fin n → ZMod L × ZMod L :=
   fun k => (v (-k)).1

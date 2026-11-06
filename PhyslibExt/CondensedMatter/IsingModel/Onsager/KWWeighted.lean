@@ -52,7 +52,8 @@ open Matrix BigOperators
 
 /-! ## A. The weighted matrix -/
 
-/-- The edge-weighted Kac-Ward matrix: the entry from `d₁` to `d₂` is the weight of the torus edge
+/-- **Edge-weighted Kac-Ward matrix.**
+The edge-weighted Kac-Ward matrix: the entry from `d₁` to `d₂` is the weight of the torus edge
 of `d₁` times the turn weight, when `d₂` starts at the head of `d₁`. -/
 noncomputable def ons_KWmatWeighted (L : ℕ)
     (weight : Sym2 (ZMod L × ZMod L) → ℂ) (omega : ℂ) :
@@ -94,7 +95,8 @@ lemma ons_loopWeight_KWmatWeighted_eq
 
 /-! ## B. Boundary phases -/
 
-/-- The edge-weighted Kac-Ward matrix with each step multiplied by its direction phase. -/
+/-- **Edge-weighted Kac-Ward matrix with direction phases.**
+The edge-weighted Kac-Ward matrix with each step multiplied by its direction phase. -/
 noncomputable def ons_KWmatWeightedPhase (L : ℕ)
     (weight : Sym2 (ZMod L × ZMod L) → ℂ) (omega u v : ℂ) :
     Matrix (ons_Dart L) (ons_Dart L) ℂ :=

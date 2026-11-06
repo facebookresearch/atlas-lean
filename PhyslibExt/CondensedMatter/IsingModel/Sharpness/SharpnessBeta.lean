@@ -57,7 +57,8 @@ variable {d : ℕ}
 
 /-! ## A. The parametrization -/
 
-/-- The bond-percolation edge probability `p(β) = 1 - exp(-βJ)` attached to coupling `J` at inverse
+/-- **Bond probability $p(\beta) = 1 - e^{-\beta J}$.**
+The bond-percolation edge probability `p(β) = 1 - exp(-βJ)` attached to coupling `J` at inverse
 temperature `β`. -/
 noncomputable def pBeta (J β : ℝ) : ℝ := 1 - Real.exp (-β * J)
 
@@ -81,7 +82,8 @@ lemma pBeta_toNNReal_le_one (J β : ℝ) : (pBeta J β).toNNReal ≤ 1 :=
 
 /-! ## B. The critical point -/
 
-/-- The auxiliary critical inverse temperature `β̃_c = -log(1 - p̃_c)/J`, so that `p(β̃_c) = p̃_c`.
+/-- **Auxiliary critical inverse temperature from $\tilde p_c$.**
+The auxiliary critical inverse temperature `β̃_c = -log(1 - p̃_c)/J`, so that `p(β̃_c) = p̃_c`.
 -/
 noncomputable def betaTildeC (d : ℕ) (J : ℝ) : ℝ := -Real.log (1 - (tildePc d : ℝ)) / J
 

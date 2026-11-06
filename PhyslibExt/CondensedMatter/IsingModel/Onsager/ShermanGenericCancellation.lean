@@ -55,12 +55,14 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## A. Valid rooted lists -/
 
-/-- A rooted closed walk at `e` avoiding `r`: a list starting and ending at `e` that never contains
+/-- **Rooted closed walk at a state avoiding another.**
+A rooted closed walk at `e` avoiding `r`: a list starting and ending at `e` that never contains
 `r`. -/
 def ons_validRootedList (e r : E) (w : List E) : Prop :=
   w.head? = some e ∧ w.getLast? = some e ∧ ∀ x ∈ w, x ≠ r
 
-/-- A list of first-return segments at `e`, none of which contains `r`. -/
+/-- **List of first-return segments avoiding a state.**
+A list of first-return segments at `e`, none of which contains `r`. -/
 def ons_validFactorList (e r : E) (ss : List (List E)) : Prop :=
   ∀ s ∈ ss, ons_isFirstReturnSegment e s ∧ ∀ x ∈ s, x ≠ r
 
@@ -145,7 +147,8 @@ lemma firstReturnFactors_valid (e r : E) (w : List E)
 
 /-! ## B. The bijection -/
 
-/-- Rooted closed walks at `e` avoiding `r` are equivalent to lists of first-return segments
+/-- **Rooted closed walks as lists of first-return segments.**
+Rooted closed walks at `e` avoiding `r` are equivalent to lists of first-return segments
 avoiding `r`, by splitting and gluing. -/
 def ons_rootedFactorEquiv (e r : E) (her : e ≠ r) :
     {w : List E // ons_validRootedList e r w} ≃
@@ -178,7 +181,8 @@ def ons_rootedFactorEquiv (e r : E) (her : e ≠ r) :
 
 /-! ## C. Series identity -/
 
-/-- The edge weight of `s` if `s` is a first-return segment at `e` avoiding `r`, and `0` otherwise.
+/-- **Weight of a first-return segment avoiding a state.**
+The edge weight of `s` if `s` is a first-return segment at `e` avoiding `r`, and `0` otherwise.
 -/
 noncomputable def ons_firstReturnWeight (Lambda : Matrix E E ℂ) (e r : E)
     (s : List E) : ℂ := by
@@ -234,7 +238,8 @@ private lemma listSeriesTerm_valid (Lambda : Matrix E E ℂ) (e r : E)
           exact hxs t (by simp [ht])
     exact hprod ss hvalid
 
-/-- The rooted term of a walk: its edge weight divided by its number of first-return factors at `e`.
+/-- **Rooted term: walk weight over its number of first-return factors.**
+The rooted term of a walk: its edge weight divided by its number of first-return factors at `e`.
 -/
 noncomputable def ons_rootedListTerm (Lambda : Matrix E E ℂ) (e : E)
     (w : List E) : ℂ :=

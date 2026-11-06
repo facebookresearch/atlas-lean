@@ -53,12 +53,14 @@ open BigOperators
 
 /-! ## A. The dart loop of a cycle -/
 
-/-- The first-return loop of a rooted decorated cycle without its final repeated dart. -/
+/-- **Dart list of a rooted decorated cycle.**
+The first-return loop of a rooted decorated cycle without its final repeated dart. -/
 def ons_decCycleDartList {L : ℕ} {d : ons_Dart L}
     (q : (ons_decGraph L).Walk d d) : List (ons_Dart L) :=
   (ons_decCycleFirstReturn q).dropLast
 
-/-- The closed walk of darts of a rooted decorated cycle, indexed by `Fin` of its length. -/
+/-- **Closed dart walk of a rooted decorated cycle.**
+The closed walk of darts of a rooted decorated cycle, indexed by `Fin` of its length. -/
 def ons_decCycleDartLoop {L : ℕ} {d : ons_Dart L}
     (q : (ons_decGraph L).Walk d d) :
     Fin (ons_decCycleDartList q).length → ons_Dart L :=

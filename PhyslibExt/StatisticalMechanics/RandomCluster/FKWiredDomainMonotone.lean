@@ -67,7 +67,8 @@ variable {d : ℕ}
 
 /-! ## A. Domain monotonicity of wired box measures -/
 
-/-- For `q = 2` and `N ≤ m`, the wired `Λ_m` measure of an increasing `Λ_N` cylinder event is at
+/-- **Domain monotonicity of wired $q = 2$ box measures.**
+For `q = 2` and `N ≤ m`, the wired `Λ_m` measure of an increasing `Λ_N` cylinder event is at
 most its wired `Λ_N` measure. -/
 lemma fwm_wired_box_domain_monotone (N m : ℕ) (hNm : N ≤ m) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -81,7 +82,8 @@ lemma fwm_wired_box_domain_monotone (N m : ℕ) (hNm : N ≤ m) {p : ℝ}
   have h := hanti (Nat.zero_le k)
   simpa using h
 
-/-- For `q = 2` and `N ≤ m`, the wired `Λ_m` probability that a set of `Λ_N` edges is open is at
+/-- **Domain monotonicity of wired multi-open probabilities.**
+For `q = 2` and `N ≤ m`, the wired `Λ_m` probability that a set of `Λ_N` edges is open is at
 most its wired `Λ_N` probability. -/
 lemma fwm_wired_multiOpen_domain_monotone (N m : ℕ) (hNm : N ≤ m)
     (t : Finset (Sym2 (boxVerts d N))) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -94,7 +96,8 @@ lemma fwm_wired_multiOpen_domain_monotone (N m : ℕ) (hNm : N ≤ m)
   rw [ftb_fmu_eq_cdc_multiOpen, cdc_multiOpenEvent_image_eq_boxRestrict]
   exact fwm_wired_box_domain_monotone N m hNm hp hp1 (cdc_boxMultiOpenEvent_isIncreasing N t)
 
-/-- The same for an edge set of `ℤ^d` given as the image of `Λ_N` edges. -/
+/-- **Domain monotonicity for edge sets realized in a box.**
+The same for an edge set of `ℤ^d` given as the image of `Λ_N` edges. -/
 lemma fwm_wired_domain_monotone_of_realised {N m : ℕ} (hNm : N ≤ m)
     {s : Finset (Sym2 (Site d))} (t : Finset (Sym2 (boxVerts d N)))
     (hst : s = t.image (edgeIncl d N)) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -105,7 +108,8 @@ lemma fwm_wired_domain_monotone_of_realised {N m : ℕ} (hNm : N ≤ m)
   subst hst
   exact fwm_wired_multiOpen_domain_monotone N m hNm t hp hp1
 
-/-- The same for the event "`T` open and `g·T'` open", when `T ∪ g⁻¹·T'` lies in `Λ_N`. -/
+/-- **Domain monotonicity for translated pairs of multi-open events.**
+The same for the event "`T` open and `g·T'` open", when `T ∪ g⁻¹·T'` lies in `Λ_N`. -/
 lemma fwm_wired_cross_le_box_domain {N m : ℕ} (hNm : N ≤ m)
     (g : Multiplicative (Site d)) (T T' : Finset (Sym2 (Site d)))
     {t : Finset (Sym2 (boxVerts d N))}
@@ -126,7 +130,8 @@ lemma fwm_wired_cross_le_box_domain {N m : ℕ} (hNm : N ≤ m)
 
 /-! ## B. The disjoint-box factorization bound -/
 
-/-- The disjoint-box factorization bound for a family of box measures `μbox`: for every finite
+/-- **Disjoint-box factorization bound for box measures.**
+The disjoint-box factorization bound for a family of box measures `μbox`: for every finite
 family `P` of edge sets realized in `Λ_N` there are a translation `g` and `r` such that each
 `T ∪ g⁻¹·T'` lies in `Λ_(N+r)` and `μbox (N+r) (T open, g·T' open) ≤ μbox N (T open) ·
 μbox N (T' open)`. The parameters `p` only index the family. -/
@@ -142,7 +147,8 @@ def fwm_WiredDisjointBoxFactorise {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1)
               ⁻¹' fmu_multiOpen T')
           ≤ (μbox N).real (fmu_multiOpen T) * (μbox N).real (fmu_multiOpen T')
 
-/-- Under the factorization bound for the wired measures, for some translation `g` and all large
+/-- **Finite-box product domination from the factorization bound.**
+Under the factorization bound for the wired measures, for some translation `g` and all large
 `m`, `φ¹_{Λ_m}(T open, g·T' open) ≤ φ¹_{Λ_N}(T open) φ¹_{Λ_N}(T' open)` for all `T, T' ∈ P`. -/
 lemma fwm_finiteBoxDisjointProductDom_conclusion_of_factorise {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hfac : fwm_WiredDisjointBoxFactorise hp hp1
@@ -181,7 +187,8 @@ lemma fwm_finiteBoxDisjointProductDom_conclusion_of_factorise {p : ℝ} (hp : 0 
           * (wiredFiniteMeasure d N hp hp1 (by norm_num : (0 : ℝ) < 2)
               : Measure (ConfigSpace (Sym2 (Site d)))).real (fmu_multiOpen T') := hfacTT'
 
-/-- An edge set realized in `Λ_(N₀)` is realized in every larger box. -/
+/-- **Realized edge sets stay realized in larger boxes.**
+An edge set realized in `Λ_(N₀)` is realized in every larger box. -/
 lemma fwm_realised_box_mono {N₀ N : ℕ} (h : N₀ ≤ N) {s : Finset (Sym2 (Site d))}
     {t : Finset (Sym2 (boxVerts d N₀))} (hst : s = t.image (edgeIncl d N₀)) :
     s = (t.image (innerEdgeLE d h)).image (edgeIncl d N) := by
@@ -190,7 +197,8 @@ lemma fwm_realised_box_mono {N₀ N : ℕ} (h : N₀ ≤ N) {s : Finset (Sym2 (S
   intro e _
   simp only [Function.comp_apply, edgeIncl_innerEdgeLE]
 
-/-- Every finite family of finite edge sets is realized in some box. -/
+/-- **Every finite family of edge sets is realized in some box.**
+Every finite family of finite edge sets is realized in some box. -/
 lemma fwm_exists_realising_box (P : Finset (Finset (Sym2 (Site d)))) :
     ∃ N : ℕ, ∀ T ∈ P, ∃ t : Finset (Sym2 (boxVerts d N)), T = t.image (edgeIncl d N) := by
   classical
@@ -208,7 +216,8 @@ lemma fwm_exists_realising_box (P : Finset (Finset (Sym2 (Site d)))) :
     exact ⟨eb, ⟨heb, he⟩, rfl⟩
   · rintro ⟨eb, ⟨_, hin⟩, rfl⟩; exact hin
 
-/-- For `q = 2`, products of wired box probabilities of open-edge events approximate the wired
+/-- **Wired box products approximate infinite-volume products.**
+For `q = 2`, products of wired box probabilities of open-edge events approximate the wired
 infinite-volume products within `δ`, for some box `Λ_m` with `m ≥ N₀`. -/
 lemma fwm_exists_common_box_ge_wired (P : Finset (Finset (Sym2 (Site d)))) (N₀ : ℕ)
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {δ : ℝ} (hδ : 0 < δ) :
@@ -246,7 +255,8 @@ lemma fwm_exists_common_box_ge_wired (P : Finset (Finset (Sym2 (Site d)))) (N₀
 
 /-! ## C. Upper decorrelation and ergodicity -/
 
-/-- The factorization bound for the wired `q = 2` box measures gives upper decorrelation of the
+/-- **Upper decorrelation of the wired measure from factorization.**
+The factorization bound for the wired `q = 2` box measures gives upper decorrelation of the
 wired infinite-volume measure. -/
 lemma fwm_upperDecay_of_factorise {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hfac : fwm_WiredDisjointBoxFactorise hp hp1
@@ -292,7 +302,8 @@ lemma fwm_upperDecay_of_factorise {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
           * (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2)
               : Measure (ConfigSpace (Sym2 (Site d)))).real (fmu_multiOpen T') + δ := by linarith
 
-/-- If the wired `q = 2` box measures satisfy the factorization bound (hypothesis `hfac`, not proved
+/-- **Wired $q = 2$ measure is ergodic under the factorization bound.**
+If the wired `q = 2` box measures satisfy the factorization bound (hypothesis `hfac`, not proved
 here), the wired infinite-volume measure is ergodic under translations of `ℤ^d`. -/
 lemma fwm_wiredIV_isErgodic_of_factorise {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hfac : fwm_WiredDisjointBoxFactorise hp hp1
@@ -303,7 +314,8 @@ lemma fwm_wiredIV_isErgodic_of_factorise {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
         : Measure (ConfigSpace (Sym2 (Site d)))) :=
   fmu_wiredIV_isErgodic_of_upperDecay hp hp1 (fwm_upperDecay_of_factorise hp hp1 hfac)
 
-/-- The factorization bound is satisfiable: the Dirac mass on the all-open configuration satisfies
+/-- **All-open Dirac mass satisfies the factorization bound.**
+The factorization bound is satisfiable: the Dirac mass on the all-open configuration satisfies
 it. -/
 lemma fwm_wiredDisjointBoxFactorise_dirac {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     [MeasurableSingletonClass (ConfigSpace (Sym2 (Site d)))] :

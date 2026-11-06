@@ -58,7 +58,8 @@ variable {d : ℕ}
 
 /-! ## A. Per-contour circuits -/
 
-/-- Every realised contour of length `ℓ` is decoded from a closed walk of length `ℓ` based at a site
+/-- **Closed-walk decoding of each realised contour from an anchor pool.**
+Every realised contour of length `ℓ` is decoded from a closed walk of length `ℓ` based at a site
 of a common pool of at most `ℓ` anchors. -/
 def PerContourDualCircuit (d n ℓ : ℕ) : Prop :=
   ∃ anchorPool : Finset (Site d), anchorPool.card ≤ ℓ ∧
@@ -93,14 +94,16 @@ lemma realisedContourWalkEncoding_of_perContour {n ℓ : ℕ}
 
 /-! ## B. Circuits anchored on the axis -/
 
-/-- The site `(j, 0, …, 0)` on the first coordinate axis. -/
+/-- **Site $(j, 0, \ldots, 0)$ on the first coordinate axis.**
+The site `(j, 0, …, 0)` on the first coordinate axis. -/
 def axisVertex (d j : ℕ) : Site d := fun i => if i.val = 0 then (j : ℤ) else 0
 
 @[simp] lemma axisVertex_zero_coord (d j : ℕ) (h : 0 < d) :
     axisVertex d j ⟨0, h⟩ = (j : ℤ) := by
   simp only [axisVertex, ite_true]
 
-/-- The axis sites `(j, 0, …, 0)` with `j < ℓ`. -/
+/-- **First $\ell$ sites of the first coordinate axis.**
+The axis sites `(j, 0, …, 0)` with `j < ℓ`. -/
 noncomputable def axisAnchorPool (d ℓ : ℕ) : Finset (Site d) :=
   (Finset.range ℓ).image (fun j => axisVertex d j)
 
@@ -115,7 +118,8 @@ lemma axisVertex_zero_eq_origin :
   simp only [axisVertex, StatMech.Ising.origin, Nat.cast_zero]
   split <;> rfl
 
-/-- Every realised contour of length `ℓ` is decoded from a closed walk of length `ℓ` based at an
+/-- **Closed-walk decoding of each realised contour from an axis site.**
+Every realised contour of length `ℓ` is decoded from a closed walk of length `ℓ` based at an
 axis site `(j, 0, …, 0)` with `j < ℓ`. -/
 def AxisContourDualCircuit (d n ℓ : ℕ) : Prop :=
   ∃ decode : (Σ v : Site d, (hypercubicLattice d).Walk v v) → Finset (Sym2 (Site d)),

@@ -53,7 +53,8 @@ open Matrix BigOperators
 
 /-! ## A. The balanced matrix -/
 
-/-- The augmented matrix with blocks `Λ₀`, `(t λ) U`, `λ⁻¹ V` and `0`. -/
+/-- **Balanced augmented Kac-Ward matrix.**
+The augmented matrix with blocks `Λ₀`, `(t λ) U`, `λ⁻¹ V` and `0`. -/
 noncomputable def ons_decMiddleBalanced
     (L : ℕ) (decWeight : ons_DecEdge L → ℂ)
     (omega t lambda : ℂ) (site : ZMod L × ZMod L) :
@@ -66,14 +67,16 @@ noncomputable def ons_decMiddleBalanced
     (lambda⁻¹ • ons_decMiddleV L decWeight omega 1 1 site)
     0
 
-/-- Row weights of the balanced augmented matrix. -/
+/-- **Row weights of the balanced augmented matrix.**
+Row weights of the balanced augmented matrix. -/
 noncomputable def ons_decMiddleBalancedRowWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ) (lambda : ℂ)
     (site : ZMod L × ZMod L) : ons_Dart L ⊕ Fin 2 → ℂ
   | .inl _ => 1
   | .inr _ => lambda⁻¹ * decWeight (ons_decChainEdge site 1)
 
-/-- Column weights of the balanced augmented matrix. -/
+/-- **Column weights of the balanced augmented matrix.**
+Column weights of the balanced augmented matrix. -/
 noncomputable def ons_decMiddleBalancedColWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ) (t lambda : ℂ) :
     ons_Dart L ⊕ Fin 2 → ℂ

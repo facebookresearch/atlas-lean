@@ -66,7 +66,8 @@ open StatMech.Lattice StatMech.Percolation
 
 /-! ## A. Walks to the exterior of a finite cluster -/
 
-/-- The horizontal lattice walk of `k` steps from `(a, c)` to `(a + k, c)` in `ℤ²`. -/
+/-- **Horizontal lattice walk in $\mathbb{Z}^2$.**
+The horizontal lattice walk of `k` steps from `(a, c)` to `(a + k, c)` in `ℤ²`. -/
 noncomputable def horizWalk (c : ℤ) :
     (k : ℕ) → (a : ℤ) → (hypercubicLattice 2).Walk ![a, c] ![a + (k : ℤ), c]
   | 0, a => by
@@ -79,7 +80,8 @@ noncomputable def horizWalk (c : ℤ) :
       rw [he] at rest
       exact SimpleGraph.Walk.cons step rest
 
-/-- A finite set of `ℤ²` misses some point `(N, c)` with `N ≥ a₀` on every horizontal line. -/
+/-- **Finite subsets of $\mathbb{Z}^2$ miss far points on each row.**
+A finite set of `ℤ²` misses some point `(N, c)` with `N ≥ a₀` on every horizontal line. -/
 lemma exists_far_not_mem (S : Set (Site 2)) (hfin : S.Finite) (c a0 : ℤ) :
     ∃ N : ℤ, a0 ≤ N ∧ (![N, c] : Site 2) ∉ S := by
   by_contra h
@@ -90,7 +92,8 @@ lemma exists_far_not_mem (S : Set (Site 2)) (hfin : S.Finite) (c a0 : ℤ) :
     intro x _ y _ hxy; have := congrFun hxy 0; simpa using this
   exact ((Set.Ici_infinite a0).image hinj) (hfin.subset hsub)
 
-/-- A finite cluster of `o` has a lattice-reachable point outside it. -/
+/-- **Finite cluster in $\mathbb{Z}^2$ has a reachable point outside it.**
+A finite cluster of `o` has a lattice-reachable point outside it. -/
 lemma exists_walk_exterior {ω : ConfigSpace (Sym2 (Site 2))} (o : Site 2)
     (hfin : (cluster 2 ω o).Finite) :
     ∃ z : Site 2, (hypercubicLattice 2).Reachable o z ∧ z ∉ cluster 2 ω o := by
@@ -108,12 +111,14 @@ lemma exists_walk_exterior {ω : ConfigSpace (Sym2 (Site 2))} (o : Site 2)
 
 /-! ## B. Closed circuits around a finite cluster -/
 
-/-- The event that every primal edge crossed by the dual circuit `c` is closed. -/
+/-- **Closed-circuit event of a dual circuit.**
+The event that every primal edge crossed by the dual circuit `c` is closed. -/
 def closedCircuitEvent {u : Site 2} (c : (hypercubicLattice 2).Walk u u) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | ∀ f g : Site 2, s(f, g) ∈ c.edges → ω (sharedPrimalEdge f g) = false}
 
-/-- A finite open cluster of `o` in `ℤ²` is surrounded by a lattice cycle whose crossed primal edges
+/-- **Finite cluster in $\mathbb{Z}^2$ gives a closed lattice circuit.**
+A finite open cluster of `o` in `ℤ²` is surrounded by a lattice cycle whose crossed primal edges
 are all closed. -/
 lemma exists_closed_latticeCircuit_of_finite_cluster
     {ω : ConfigSpace (Sym2 (Site 2))} (o : Site 2) (hfin : (cluster 2 ω o).Finite) :
@@ -132,7 +137,8 @@ lemma exists_closed_latticeCircuit_of_finite_cluster
   rw [bdEdge_mk] at hbd
   exact cluster_edgeBoundary_isClosed o ((mem_edgeBoundary).mpr ⟨hadjpq, hbd⟩)
 
-/-- The closed circuit of `exists_closed_latticeCircuit_of_finite_cluster`, together with a point
+/-- **Finite cluster in $\mathbb{Z}^2$: closed circuit, separated point, odd crossings.**
+The closed circuit of `exists_closed_latticeCircuit_of_finite_cluster`, together with a point
 that the cluster boundary separates from `o` and an odd crossing number for every walk to it. -/
 lemma exists_enclosing_closed_latticeCircuit_of_finite_cluster
     {ω : ConfigSpace (Sym2 (Site 2))} (o : Site 2) (hfin : (cluster 2 ω o).Finite) :
@@ -145,7 +151,8 @@ lemma exists_enclosing_closed_latticeCircuit_of_finite_cluster
   obtain ⟨_, hsep, hwind⟩ := cluster_enclosed_with_winding o hfin w hzout
   exact ⟨z, exists_closed_latticeCircuit_of_finite_cluster o hfin, hsep, hwind⟩
 
-/-- The event that the cluster of `o` is finite is covered by the closed-circuit events. -/
+/-- **Finite-cluster event is covered by closed-circuit events.**
+The event that the cluster of `o` is finite is covered by the closed-circuit events. -/
 lemma finiteCluster_subset_iUnion_closedCircuit (o : Site 2) :
     {ω : ConfigSpace (Sym2 (Site 2)) | (cluster 2 ω o).Finite}
       ⊆ ⋃ (u : Site 2) (c : (hypercubicLattice 2).Walk u u) (_ : c.IsCycle),
@@ -154,7 +161,8 @@ lemma finiteCluster_subset_iUnion_closedCircuit (o : Site 2) :
   obtain ⟨u, c, hcyc, hmem⟩ := exists_closed_latticeCircuit_of_finite_cluster o hω
   exact Set.mem_iUnion.mpr ⟨u, Set.mem_iUnion.mpr ⟨c, Set.mem_iUnion.mpr ⟨hcyc, hmem⟩⟩⟩
 
-/-- No percolation from the origin means the cluster of the origin is finite. -/
+/-- **Non-percolation means the origin's cluster is finite.**
+No percolation from the origin means the cluster of the origin is finite. -/
 lemma compl_percolationEvent_eq_finiteCluster :
     (percolationEvent 2)ᶜ
       = {ω : ConfigSpace (Sym2 (Site 2)) | (cluster 2 ω (origin 2)).Finite} := by
@@ -163,22 +171,25 @@ lemma compl_percolationEvent_eq_finiteCluster :
 
 /-! ## C. The Peierls series -/
 
-/-- The Peierls series `Σ_ℓ ℓ (2d)^ℓ (1 - p)^ℓ` bounding the probability of a finite cluster. -/
+/-- **Peierls series $\sum_\ell \ell\,(2d)^\ell (1-p)^\ell$.**
+The Peierls series `Σ_ℓ ℓ (2d)^ℓ (1 - p)^ℓ` bounding the probability of a finite cluster. -/
 noncomputable def fkPcUpperBound (d : ℕ) (p : ℝ) : ℝ :=
   ∑' ℓ : ℕ, (ℓ : ℝ) * (2 * d : ℝ) ^ ℓ * (1 - p) ^ ℓ
 
-/-- The ratio `2d (1 - p)` of the Peierls series. -/
+/-- **Ratio $2d(1-p)$ of the Peierls series.** The ratio `2d (1 - p)` of the Peierls series. -/
 noncomputable def fkPcRatio (d : ℕ) (p : ℝ) : ℝ := (2 * d : ℝ) * (1 - p)
 
-/-- Unfolding `fkPcRatio`. -/
+/-- **Defining formula for the Peierls ratio.** Unfolding `fkPcRatio`. -/
 @[simp] lemma fkPcRatio_def (d : ℕ) (p : ℝ) : fkPcRatio d p = (2 * d : ℝ) * (1 - p) := rfl
 
-/-- The Peierls summand in terms of `fkPcRatio`. -/
+/-- **Peierls summand as $\ell x^\ell$ with $x = 2d(1-p)$.**
+The Peierls summand in terms of `fkPcRatio`. -/
 lemma fkPcSummand_eq (d : ℕ) (p : ℝ) (ℓ : ℕ) :
     (ℓ : ℝ) * (2 * d : ℝ) ^ ℓ * (1 - p) ^ ℓ = (ℓ : ℝ) * (fkPcRatio d p) ^ ℓ := by
   rw [fkPcRatio_def, mul_assoc, ← mul_pow]
 
-/-- Closed form `x / (1 - x)²` of the Peierls series for `|x| < 1`, where `x = 2d (1 - p)`. -/
+/-- **Closed form $x/(1-x)^2$ of the Peierls series for $|x| < 1$.**
+Closed form `x / (1 - x)²` of the Peierls series for `|x| < 1`, where `x = 2d (1 - p)`. -/
 lemma fkPcUpperBound_eq_closedForm (d : ℕ) (p : ℝ) (hx : ‖fkPcRatio d p‖ < 1) :
     fkPcUpperBound d p = (fkPcRatio d p) / (1 - fkPcRatio d p) ^ 2 := by
   unfold fkPcUpperBound
@@ -186,7 +197,7 @@ lemma fkPcUpperBound_eq_closedForm (d : ℕ) (p : ℝ) (hx : ‖fkPcRatio d p‖
         = (fun ℓ : ℕ => (ℓ : ℝ) * (fkPcRatio d p) ^ ℓ) from funext (fkPcSummand_eq d p)]
   exact tsum_coe_mul_geometric_of_norm_lt_one hx
 
-/-- `2d (1 - p) → 0` as `p → 1`. -/
+/-- **Peierls ratio $2d(1-p)$ tends to $0$ as $p \to 1$.** `2d (1 - p) → 0` as `p → 1`. -/
 lemma fkPcRatio_tendsto_one (d : ℕ) :
     Tendsto (fun p : ℝ => fkPcRatio d p) (nhds 1) (nhds 0) := by
   have h : Tendsto (fun p : ℝ => fkPcRatio d p) (nhds 1) (nhds ((2 * d : ℝ) * (1 - 1))) := by
@@ -194,7 +205,7 @@ lemma fkPcRatio_tendsto_one (d : ℕ) :
     exact (((tendsto_id).const_sub 1).const_mul (2 * d : ℝ))
   simpa using h
 
-/-- `x / (1 - x)² → 0` as `x → 0`. -/
+/-- **$x/(1-x)^2 \to 0$ as $x \to 0$.** `x / (1 - x)² → 0` as `x → 0`. -/
 lemma fkPcClosedForm_tendsto_zero :
     Tendsto (fun x : ℝ => x / (1 - x) ^ 2) (nhds 0) (nhds 0) := by
   have : Tendsto (fun x : ℝ => x / (1 - x) ^ 2) (nhds 0) (nhds (0 / (1 - 0) ^ 2)) := by
@@ -202,7 +213,7 @@ lemma fkPcClosedForm_tendsto_zero :
     norm_num
   simpa using this
 
-/-- The Peierls series tends to `0` as `p → 1`. -/
+/-- **Peierls series tends to $0$ as $p \to 1$.** The Peierls series tends to `0` as `p → 1`. -/
 lemma fkPcUpperBound_tendsto_one (d : ℕ) :
     Tendsto (fun p : ℝ => fkPcUpperBound d p) (nhds 1) (nhds 0) := by
   have hev : (fun p : ℝ => fkPcUpperBound d p) =ᶠ[nhds 1]
@@ -219,7 +230,8 @@ lemma fkPcUpperBound_tendsto_one (d : ℕ) :
   rw [tendsto_congr' hev]
   exact fkPcClosedForm_tendsto_zero.comp (fkPcRatio_tendsto_one d)
 
-/-- The Peierls series is below `1` on an interval `(p₀, 1]`. -/
+/-- **Peierls series is below 1 on an interval $(p_0, 1]$.**
+The Peierls series is below `1` on an interval `(p₀, 1]`. -/
 lemma exists_p_lt_one_fkPcUpperBound_lt_one (d : ℕ) :
     ∃ p₀ : ℝ, p₀ < 1 ∧ ∀ p : ℝ, p₀ < p → p ≤ 1 → fkPcUpperBound d p < 1 := by
   have h : ∀ᶠ p in nhds 1, fkPcUpperBound d p < 1 :=
@@ -230,7 +242,8 @@ lemma exists_p_lt_one_fkPcUpperBound_lt_one (d : ℕ) :
   apply hfn
   rw [Real.dist_eq, abs_lt]; constructor <;> linarith
 
-/-- The Peierls series is nonnegative for `p ≤ 1`. -/
+/-- **Nonnegativity of the Peierls series for $p \le 1$.**
+The Peierls series is nonnegative for `p ≤ 1`. -/
 lemma fkPcUpperBound_nonneg (d : ℕ) {p : ℝ} (hp : p ≤ 1) : 0 ≤ fkPcUpperBound d p := by
   unfold fkPcUpperBound
   apply tsum_nonneg
@@ -240,12 +253,14 @@ lemma fkPcUpperBound_nonneg (d : ℕ) {p : ℝ} (hp : p ≤ 1) : 0 ≤ fkPcUpper
 
 /-! ## D. The critical point is below one -/
 
-/-- The Peierls bound for the wired random-cluster measure on `ℤ²` at `(p, q)`:
+/-- **Peierls bound hypothesis for the wired measure on $\mathbb{Z}^2$.**
+The Peierls bound for the wired random-cluster measure on `ℤ²` at `(p, q)`:
 `1 - θ¹(p, q) ≤ Σ_ℓ ℓ 4^ℓ (1 - p)^ℓ`. It is a hypothesis of `fkPc_lt_one`, not proved here. -/
 def FkNonPercolationBound (q : ℝ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : Prop :=
   1 - fkTheta 2 hp hp1 hq (q := q) ≤ fkPcUpperBound 2 p
 
-/-- The Peierls bound with a series below `1` gives percolation: `0 < θ¹(p, q)`. -/
+/-- **Percolation from a Peierls bound with series below 1.**
+The Peierls bound with a series below `1` gives percolation: `0 < θ¹(p, q)`. -/
 lemma fkTheta_pos_of_nonPercolationBound {q : ℝ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 0 < q) (hBound : FkNonPercolationBound q hp hp1 hq)
     (hsum : fkPcUpperBound 2 p < 1) :
@@ -253,7 +268,8 @@ lemma fkTheta_pos_of_nonPercolationBound {q : ℝ} {p : ℝ} (hp : 0 < p) (hp1 :
   have h : 1 - fkTheta 2 hp hp1 hq (q := q) ≤ fkPcUpperBound 2 p := hBound
   linarith
 
-/-- For `q ≥ 1` the subcritical set on `ℤ²` is nonempty (it contains `1/8`). -/
+/-- **Nonempty subcritical set on $\mathbb{Z}^2$ for $q \ge 1$.**
+For `q ≥ 1` the subcritical set on `ℤ²` is nonempty (it contains `1/8`). -/
 lemma fkSubcriticalSet_nonempty {q : ℝ} (hq : 1 ≤ q) : (fkSubcriticalSet 2 q).Nonempty := by
   set p : ℝ := 1 / (4 * 2) with hp_def
   have hp_pos : 0 < p := by rw [hp_def]; norm_num
@@ -262,7 +278,8 @@ lemma fkSubcriticalSet_nonempty {q : ℝ} (hq : 1 ≤ q) : (fkSubcriticalSet 2 q
   exact ⟨p, hp_pos, hp1, zero_lt_one.trans_le hq,
     fkTheta_eq_zero_of_lt (by norm_num) hp_pos hp1 hq hsmall⟩
 
-/-- A parameter with positive percolation probability is not subcritical. -/
+/-- **Positive percolation probability rules out subcriticality.**
+A parameter with positive percolation probability is not subcritical. -/
 lemma not_mem_fkSubcriticalSet_of_fkTheta_pos {q : ℝ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 0 < q) (hθ : 0 < fkTheta 2 hp hp1 hq (q := q)) : p ∉ fkSubcriticalSet 2 q := by
   intro hmem
@@ -270,7 +287,8 @@ lemma not_mem_fkSubcriticalSet_of_fkTheta_pos {q : ℝ} {p : ℝ} (hp : 0 < p) (
   rw [show hp' = hp from rfl, show hp1' = hp1 from rfl, show hq' = hq from rfl] at hzero
   exact (ne_of_gt hθ) hzero
 
-/-- For `q ≥ 1`, the random-cluster critical point on `ℤ²` satisfies `p_c(q) < 1`, assuming the
+/-- **$p_c(q) < 1$ on $\mathbb{Z}^2$ for $q \ge 1$ under a Peierls bound.**
+For `q ≥ 1`, the random-cluster critical point on `ℤ²` satisfies `p_c(q) < 1`, assuming the
 Peierls bound `FkNonPercolationBound` for all `p` in some interval `(p₀, 1)`. -/
 lemma fkPc_lt_one {q : ℝ} (hq : 1 ≤ q)
     (hGeom : ∃ p₀ : ℝ, p₀ < 1 ∧
@@ -306,7 +324,8 @@ lemma fkPc_lt_one {q : ℝ} (hq : 1 ≤ q)
     _ ≤ s := csSup_le (fkSubcriticalSet_nonempty hq) hub
     _ < 1 := hslt
 
-/-- For `q ≥ 1`, `0 < p_c(q) < 1` on `ℤ²`, assuming the Peierls bound as in `fkPc_lt_one`. -/
+/-- **$0 < p_c(q) < 1$ on $\mathbb{Z}^2$ for $q \ge 1$ under a Peierls bound.**
+For `q ≥ 1`, `0 < p_c(q) < 1` on `ℤ²`, assuming the Peierls bound as in `fkPc_lt_one`. -/
 lemma fkPc_pos_and_lt_one {q : ℝ} (hq : 1 ≤ q)
     (hGeom : ∃ p₀ : ℝ, p₀ < 1 ∧
       ∀ (p : ℝ) (hp : 0 < p) (hp1 : p < 1), p₀ < p →
@@ -314,7 +333,8 @@ lemma fkPc_pos_and_lt_one {q : ℝ} (hq : 1 ≤ q)
     0 < fkPc 2 q ∧ fkPc 2 q < 1 :=
   ⟨fkPc_pos_of_two_le (le_refl 2) hq, fkPc_lt_one hq hGeom⟩
 
-/-- The Peierls series for `d = 2` is the Bernoulli Peierls series
+/-- **Peierls series for $d = 2$ equals the Bernoulli Peierls series.**
+The Peierls series for `d = 2` is the Bernoulli Peierls series
 `StatMech.Percolation.pcUpperBound`. -/
 lemma fkPcUpperBound_two_eq_pcUpperBound (p : ℝ) :
     fkPcUpperBound 2 p = Percolation.pcUpperBound p := by

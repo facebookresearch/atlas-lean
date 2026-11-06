@@ -184,13 +184,15 @@ lemma connFamily_fixedLen_card_le_subsets (n ℓ : ℕ) :
     rw [Finset.mem_coe, Finset.mem_filter] at hK
     exact Finset.mem_coe.mpr hK.1
 
-/-- The contours of length `ℓ` realised by connected clusters in the box `Λ_n`. -/
+/-- **Contours of length $\ell$ realised by connected clusters in a box.**
+The contours of length `ℓ` realised by connected clusters in the box `Λ_n`. -/
 noncomputable def realisedContours (d n ℓ : ℕ) : Finset (Finset (Sym2 (Site d))) :=
   ((connClusterFamily (d := d) n).filter
       (fun K : Finset (Site d) => contourLen (↑K) (bondFinsetTouch d n) = ℓ)).image
     (fun K : Finset (Site d) => crossEdges (↑K : Set (Site d)) (bondFinsetTouch d n))
 
-/-- The Peierls counting bound: at most `ℓ (2d)^ℓ` contours of length `ℓ` are realised by connected
+/-- **Peierls counting bound on realised contours of length $\ell$.**
+The Peierls counting bound: at most `ℓ (2d)^ℓ` contours of length `ℓ` are realised by connected
 clusters in `Λ_n`. -/
 def ContourSubsetCountBound (d n ℓ : ℕ) : Prop :=
   (realisedContours d n ℓ).card ≤ ℓ * (2 * d) ^ ℓ

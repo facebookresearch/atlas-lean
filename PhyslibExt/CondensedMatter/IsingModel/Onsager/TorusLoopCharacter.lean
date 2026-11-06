@@ -57,11 +57,11 @@ open Matrix BigOperators
 
 /-! ## A. Parities and linear characters -/
 
-/-- The parity of an integer as an element of `Fin 2`. -/
+/-- **Parity of an integer as a bit.** The parity of an integer as an element of `Fin 2`. -/
 noncomputable def ons_intParity (m : ℤ) : Fin 2 :=
   if Even m then 0 else 1
 
-/-- The homology class mod 2 of the winding `(m₁, m₂)`. -/
+/-- **Mod 2 homology class of a winding.** The homology class mod 2 of the winding `(m₁, m₂)`. -/
 noncomputable def ons_windingParity (mx my : ℤ) : Fin 2 × Fin 2 :=
   (ons_intParity mx, ons_intParity my)
 
@@ -74,7 +74,8 @@ lemma ons_neg_one_zpow_eq_parity (m : ℤ) :
     rw [hodd.neg_one_zpow]
     simp [ons_intParity, hm]
 
-/-- The linear character `(-1)^{a h₁ + b h₂}` of the boundary phases on homology classes mod 2. -/
+/-- **Linear character of the boundary phases.**
+The linear character `(-1)^{a h₁ + b h₂}` of the boundary phases on homology classes mod 2. -/
 def ons_spinLinearCharacter (a b : Fin 2) (h : Fin 2 × Fin 2) : ℂ :=
   (-1 : ℂ) ^ (a.val * h.1.val + b.val * h.2.val)
 

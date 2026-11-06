@@ -188,7 +188,8 @@ lemma gsi_minusState_le_dlr_open (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h)
 
 /-! ## B. Domination on clopen events -/
 
-/-- `μ ≼c ν`: `μ(A) ≤ ν(A)` for every increasing clopen event `A`. -/
+/-- **Stochastic domination on increasing clopen events.**
+`μ ≼c ν`: `μ(A) ≤ ν(A)` for every increasing clopen event `A`. -/
 def StochasticallyDominatedClopen {E : Type*}
     (μ ν : Measure (ConfigSpace E)) : Prop :=
   ∀ A : Set (ConfigSpace E), IsClopen A → IsUpperSet A → μ.real A ≤ ν.real A
@@ -203,7 +204,8 @@ lemma StochasticallyDominatedClopen.trans {E : Type*} {μ ν ρ : Measure (Confi
     (h₁ : μ ≼c ν) (h₂ : ν ≼c ρ) : μ ≼c ρ :=
   fun A hA hAu => (h₁ A hA hAu).trans (h₂ A hA hAu)
 
-/-- ENNReal stochastic domination gives real-mass clopen domination when the upper measure is
+/-- **Stochastic domination implies clopen domination, upper measure finite.**
+ENNReal stochastic domination gives real-mass clopen domination when the upper measure is
 finite. -/
 lemma StochasticallyDominated.toClopen {E : Type*} [Countable E]
     {μ ν : Measure (ConfigSpace E)} [IsFiniteMeasure ν] (h : μ ≼ ν) : μ ≼c ν :=
@@ -222,7 +224,8 @@ variable {E : Type*}
 
 /-! ## C. Uniqueness -/
 
-/-- The increasing clopen events, a π-system generating the Borel σ-algebra. -/
+/-- **Increasing clopen events.**
+The increasing clopen events, a π-system generating the Borel σ-algebra. -/
 def clopenUpSystem (E : Type*) : Set (Set (ConfigSpace E)) :=
   {A | IsClopen A ∧ IsUpperSet A}
 

@@ -62,7 +62,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 -/
 
-/-- For `q ≥ 1` every random-cluster weight is at most `q ^ |V|`. The case `q = 2` is
+/-- **Random-cluster weight is at most $q^{|V|}$ for $q \ge 1$.**
+For `q ≥ 1` every random-cluster weight is at most `q ^ |V|`. The case `q = 2` is
 `ecz_fkWeight_le`. -/
 lemma fkc_fkWeight_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q)
     (ω : ConfigSpace (Sym2 V)) :
@@ -80,7 +81,8 @@ lemma fkc_fkWeight_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q)
         exact mul_le_mul hep hqk (by positivity) (by positivity)
     _ = q ^ Fintype.card V := by ring
 
-/-- For `q ≥ 1` the edge partition function is at most `2 ^ |E| q ^ |V|`. The case `q = 2` is
+/-- **Edge partition function is at most $2^{|E|} q^{|V|}$ for $q \ge 1$.**
+For `q ≥ 1` the edge partition function is at most `2 ^ |E| q ^ |V|`. The case `q = 2` is
 `ecz_fkZEdge_le`. -/
 lemma fkc_fkZEdge_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq1 : 1 ≤ q) :
     ecz_fkZEdge G p q ≤ (2 : ℝ) ^ G.edgeFinset.card * q ^ Fintype.card V := by
@@ -103,7 +105,8 @@ section FreeEnergy
 
 -/
 
-/-- The edge-normalized free energy of the random-cluster model on the box of side `2n + 1` in
+/-- **Edge-normalized box free energy of the random-cluster model.**
+The edge-normalized free energy of the random-cluster model on the box of side `2n + 1` in
 dimension `d`, in the logit parameter `s`: `log Z^E / |E| + log (1 + eˢ)` with
 `Z^E = ecz_fkZEdge (boxGraph d n) (fsc_logistic s) q`. -/
 noncomputable def fkc_edgeFreeEnergy (d : ℕ) (s q : ℝ) (n : ℕ) : ℝ :=
@@ -115,7 +118,8 @@ lemma fkc_edgeFreeEnergy_eq_ecz (d : ℕ) (s : ℝ) (n : ℕ) :
   unfold fkc_edgeFreeEnergy ecz_edgeFreeEnergy ecz_u
   rw [neg_div, neg_neg]
 
-/-- For `d, n ≥ 1` and `q ≥ 1` the box free energy is at most `log 2 + 2 log q + log (1 + eˢ)`.
+/-- **Uniform upper bound on the box free energy for $d, n, q \ge 1$.**
+For `d, n ≥ 1` and `q ≥ 1` the box free energy is at most `log 2 + 2 log q + log (1 + eˢ)`.
 The case `q = 2` is `ecz_edgeFE_le_const`. -/
 lemma fkc_rq_bdd (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n) (s q : ℝ) (hq1 : 1 ≤ q) :
     fkc_edgeFreeEnergy d s q n ≤ (Real.log 2 + 2 * Real.log q) + Real.log (1 + Real.exp s) := by

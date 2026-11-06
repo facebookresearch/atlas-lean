@@ -54,7 +54,8 @@ namespace FK
 ## A. Domination passes to weak limits
 -/
 
-/-- If free and wired box measures converge weakly to `ν₀` and `ν₁` along a common subsequence and
+/-- **Free limit at most wired limit along a common subsequence, $q \ge 1$.**
+If free and wired box measures converge weakly to `ν₀` and `ν₁` along a common subsequence and
 `q ≥ 1`, then `ν₀(A) ≤ ν₁(A)` for every clopen increasing event `A`. -/
 lemma weakLimit_extremality_of_common_subseq (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -83,7 +84,8 @@ lemma weakLimit_extremality_of_common_subseq (d : ℕ) {p q : ℝ}
 ## B. Existence of ordered limit pairs
 -/
 
-/-- Free and wired box measures have weak limits along a common strictly increasing subsequence. -/
+/-- **Common subsequence with free and wired weak limits.**
+Free and wired box measures have weak limits along a common strictly increasing subsequence. -/
 lemma exists_common_subseq_weak_limits (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∃ (ψ : ℕ → ℕ) (ν₀ ν₁ : ProbabilityMeasure (ConfigSpace (Sym2 (Lattice.Site d)))),
@@ -96,7 +98,8 @@ lemma exists_common_subseq_weak_limits (d : ℕ) {p q : ℝ}
     CompactSpace.tendsto_subseq (fun n => wiredFiniteMeasure d (φ n) hp hp1 hq)
   exact ⟨φ ∘ χ, ν₀, ν₁, hφ.comp hχ, h₀.comp hχ.tendsto_atTop, h₁⟩
 
-/-- For `q ≥ 1` there are a subsequence and weak limits `φ0` (free) and `φ1` (wired) along it with
+/-- **Ordered free and wired subsequential limits exist for $q \ge 1$.**
+For `q ≥ 1` there are a subsequence and weak limits `φ0` (free) and `φ1` (wired) along it with
 `φ0(A) ≤ φ1(A)` for all clopen increasing `A`. -/
 lemma exists_infiniteVolume_extremal (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :

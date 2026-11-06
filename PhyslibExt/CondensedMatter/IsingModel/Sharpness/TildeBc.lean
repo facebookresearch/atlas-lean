@@ -58,7 +58,7 @@ variable {d : ℕ}
 
 /-! ## A. The percolation version -/
 
-/-- The bond parameter `1 - exp(-β)` as an element of `ℝ≥0`. -/
+/-- **Bond parameter $1 - e^{-\beta}$.** The bond parameter `1 - exp(-β)` as an element of `ℝ≥0`. -/
 noncomputable def bondParam (β : ℝ) : ℝ≥0 := Real.toNNReal (1 - Real.exp (-β))
 
 lemma bondParam_le_one (β : ℝ) : bondParam β ≤ 1 := by
@@ -67,7 +67,8 @@ lemma bondParam_le_one (β : ℝ) : bondParam β ≤ 1 := by
   have h1 : (0 : ℝ) < Real.exp (-β) := Real.exp_pos _
   linarith
 
-/-- The percolation quantity `φ_p(S)` at `p = 1 - exp(-β)`. -/
+/-- **Percolation quantity $\varphi_p(S)$ at $p = 1 - e^{-\beta}$.**
+The percolation quantity `φ_p(S)` at `p = 1 - exp(-β)`. -/
 noncomputable def phiBeta (d : ℕ) (β : ℝ) (S : Finset (Site d)) : ℝ :=
   Percolation.phi d (bondParam β) (bondParam_le_one β) S
 
@@ -75,7 +76,8 @@ lemma phiBeta_nonneg (d : ℕ) (β : ℝ) (S : Finset (Site d)) :
     0 ≤ phiBeta d β S :=
   Percolation.phi_nonneg d (bondParam β) (bondParam_le_one β) S
 
-/-- Inverse temperatures `β ≥ 0` with a finite `S ∋ 0` such that `φ_{1-e^{-β}}(S) < 1`. -/
+/-- **Inverse temperatures with a percolation witness $\varphi(S) < 1$.**
+Inverse temperatures `β ≥ 0` with a finite `S ∋ 0` such that `φ_{1-e^{-β}}(S) < 1`. -/
 def tildeBetaCPercoSet (d : ℕ) : Set ℝ :=
   {β : ℝ | 0 ≤ β ∧ ∃ S : Finset (Site d), origin d ∈ S ∧ phiBeta d β S < 1}
 
@@ -85,14 +87,16 @@ lemma mem_tildeBetaCPercoSet {d : ℕ} {β : ℝ} :
       0 ≤ β ∧ ∃ S : Finset (Site d), origin d ∈ S ∧ phiBeta d β S < 1 :=
   Iff.rfl
 
-/-- The percolation auxiliary critical point on the `β` scale, the supremum of `tildeBetaCPercoSet`.
+/-- **Percolation auxiliary critical point on the $\beta$ scale.**
+The percolation auxiliary critical point on the `β` scale, the supremum of `tildeBetaCPercoSet`.
 -/
 noncomputable def tildeBetaCPerco (d : ℕ) : ℝ :=
   sSup (tildeBetaCPercoSet d)
 
 /-! ## B. Free-boundary correlations in a finite set -/
 
-/-- The subgraph of `ℤ^d` induced by a finite set `S`, on the vertex type `S`. -/
+/-- **Induced subgraph of $\mathbb{Z}^d$ on a finite set.**
+The subgraph of `ℤ^d` induced by a finite set `S`, on the vertex type `S`. -/
 noncomputable def graphS (d : ℕ) (S : Finset (Site d)) : SimpleGraph {v // v ∈ S} :=
   (hypercubicLattice d).comap (fun v : {v // v ∈ S} => (v : Site d))
 
@@ -105,7 +109,8 @@ noncomputable instance instDecidableAdjGraphS (d : ℕ) (S : Finset (Site d)) :
   simp only [SimpleGraph.comap_adj]
   infer_instance
 
-/-- The free-boundary zero-field two-point function `⟨σ_aσ_b⟩_S` in the induced graph on `S` (equal
+/-- **Free-boundary zero-field two-point function in a finite set.**
+The free-boundary zero-field two-point function `⟨σ_aσ_b⟩_S` in the induced graph on `S` (equal
 to `1` when `a = b`). -/
 noncomputable def freeCorr (d : ℕ) (β : ℝ) (S : Finset (Site d))
     (a b : {v // v ∈ S}) : ℝ :=
@@ -151,7 +156,8 @@ lemma freeCorr_nonneg (d : ℕ) {β : ℝ} (hβ : 0 ≤ β) (S : Finset (Site d)
   rw [freeCorr, ite_eq_right hab]
   exact gks_first (graphS d S) β 0 hβ le_rfl {a, b}
 
-/-- The function `x ↦ ⟨σ_0σ_x⟩_S`, extended by `0` outside `S` (and identically `0` if `0 ∉ S`). -/
+/-- **Free origin correlation in a set, extended by zero.**
+The function `x ↦ ⟨σ_0σ_x⟩_S`, extended by `0` outside `S` (and identically `0` if `0 ∉ S`). -/
 noncomputable def corrOriginInner (d : ℕ) (β : ℝ) (S : Finset (Site d))
     (x : Site d) : ℝ := by
   classical
@@ -174,7 +180,8 @@ lemma corrOriginInner_nonneg (d : ℕ) {β : ℝ} (hβ : 0 ≤ β) (S : Finset (
 
 /-! ## C. The Ising version of `φ` and `β̃_c` -/
 
-/-- The Duminil-Copin–Tassion quantity `φ_β(S) = tanh β ∑_{(x,y) ∈ ∂S} ⟨σ_0σ_x⟩_S`. -/
+/-- **Duminil-Copin–Tassion quantity $\varphi_\beta(S)$ for the Ising model.**
+The Duminil-Copin–Tassion quantity `φ_β(S) = tanh β ∑_{(x,y) ∈ ∂S} ⟨σ_0σ_x⟩_S`. -/
 noncomputable def phiIsing (d : ℕ) (β : ℝ) (S : Finset (Site d)) : ℝ :=
   Real.tanh β * ∑ e ∈ Percolation.boundaryEdges d S, corrOriginInner d β S e.1
 
@@ -187,7 +194,8 @@ lemma phiIsing_nonneg (d : ℕ) {β : ℝ} (hβ : 0 ≤ β) (S : Finset (Site d)
   · intro e _
     exact corrOriginInner_nonneg d hβ S e.1
 
-/-- Inverse temperatures `β ≥ 0` with a finite `S ∋ 0` such that `φ_β(S) < 1`. -/
+/-- **Inverse temperatures with an Ising witness $\varphi_\beta(S) < 1$.**
+Inverse temperatures `β ≥ 0` with a finite `S ∋ 0` such that `φ_β(S) < 1`. -/
 def tildeBetaCIsingSet (d : ℕ) : Set ℝ :=
   {β : ℝ | 0 ≤ β ∧ ∃ S : Finset (Site d), origin d ∈ S ∧ phiIsing d β S < 1}
 
@@ -197,7 +205,8 @@ lemma mem_tildeBetaCIsingSet {d : ℕ} {β : ℝ} :
       0 ≤ β ∧ ∃ S : Finset (Site d), origin d ∈ S ∧ phiIsing d β S < 1 :=
   Iff.rfl
 
-/-- The auxiliary critical point `β̃_c(d) = sup {β ≥ 0 | ∃ S ∋ 0, φ_β(S) < 1}`. -/
+/-- **Auxiliary critical point $\tilde\beta_c$ of the Ising model.**
+The auxiliary critical point `β̃_c(d) = sup {β ≥ 0 | ∃ S ∋ 0, φ_β(S) < 1}`. -/
 noncomputable def tildeBetaCIsing (d : ℕ) : ℝ :=
   sSup (tildeBetaCIsingSet d)
 

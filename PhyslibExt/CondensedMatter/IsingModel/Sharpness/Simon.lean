@@ -60,7 +60,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Gibbs weights with inhomogeneous couplings -/
 
-/-- The Boltzmann weight `exp(∑_{e ∈ E} J_e σ_e + ∑_x h_x σ_x)`. -/
+/-- **Boltzmann weight with inhomogeneous couplings and site fields.**
+The Boltzmann weight `exp(∑_{e ∈ E} J_e σ_e + ∑_x h_x σ_x)`. -/
 noncomputable def wJ (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ)
     (s : ConfigSpace V) : ℝ :=
   Real.exp ((∑ e ∈ E, J e * bond s e) + ∑ x, hf x * spin s x)
@@ -73,7 +74,8 @@ omit [DecidableEq V] in
 lemma wJ_nonneg (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ) (s : ConfigSpace V) :
     0 ≤ wJ E J hf s := (wJ_pos E J hf s).le
 
-/-- The partition function `∑_σ wJ E J h σ`. -/
+/-- **Partition function with inhomogeneous couplings and site fields.**
+The partition function `∑_σ wJ E J h σ`. -/
 noncomputable def ZJ (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ) : ℝ :=
   ∑ s : ConfigSpace V, wJ E J hf s
 
@@ -81,7 +83,8 @@ lemma ZJ_pos (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ) : 0 < Z
   unfold ZJ
   exact Finset.sum_pos (fun s _ => wJ_pos E J hf s) Finset.univ_nonempty
 
-/-- The Gibbs expectation `⟨f⟩_{E,J,h} = ∑_σ f(σ) w(σ) / Z`. -/
+/-- **Gibbs expectation with inhomogeneous couplings and site fields.**
+The Gibbs expectation `⟨f⟩_{E,J,h} = ∑_σ f(σ) w(σ) / Z`. -/
 noncomputable def expJ (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ)
     (f : ConfigSpace V → ℝ) : ℝ :=
   (∑ s : ConfigSpace V, f s * wJ E J hf s) / ZJ E J hf
@@ -225,7 +228,8 @@ lemma unnorm_gks2_J (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ)
   rw [Fintype.sum_prod_type_right]
   exact Finset.sum_nonneg (fun q _ => inner_q_nonneg_J E J hf hJ hhf A B q)
 
-/-- Griffiths' second inequality for nonnegative couplings and fields: `⟨σ_A⟩⟨σ_B⟩ ≤ ⟨σ_{A ∆ B}⟩`.
+/-- **Griffiths' second inequality for inhomogeneous couplings.**
+Griffiths' second inequality for nonnegative couplings and fields: `⟨σ_A⟩⟨σ_B⟩ ≤ ⟨σ_{A ∆ B}⟩`.
 Reference: R. B. Griffiths, "Correlations in Ising ferromagnets I", J. Math. Phys. 8 (1967) 478–483;
 J. Ginibre, "General formulation of Griffiths' inequalities", Comm. Math. Phys. 16 (1970) 310–328.
 See also `gks_second` (GKS2) for uniform couplings. -/
@@ -353,7 +357,8 @@ lemma griffiths_mono_union (E : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V �
       _ = expJ (insert e₀ D ∪ E) J hf (spinProd A) := by
           rw [Finset.insert_union]
 
-/-- Griffiths monotonicity: adding edges with nonnegative couplings increases every correlation
+/-- **Griffiths monotonicity of correlations in the edge set.**
+Griffiths monotonicity: adding edges with nonnegative couplings increases every correlation
 `⟨σ_A⟩`. Reference: R. B. Griffiths, "Correlations in Ising ferromagnets I", J. Math. Phys. 8 (1967)
 478–483. -/
 theorem griffiths_mono (E₁ E₂ : Finset (Sym2 V)) (J : Sym2 V → ℝ) (hf : V → ℝ)

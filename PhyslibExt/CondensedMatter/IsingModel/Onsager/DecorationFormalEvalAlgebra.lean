@@ -54,7 +54,8 @@ open BigOperators Finset
 
 /-! ## A. Monomials -/
 
-/-- The value `∏_e w_e ^ {m e}` of the monomial with exponent `m` at weights `w`. -/
+/-- **Value of a monomial at weights.**
+The value `∏_e w_e ^ {m e}` of the monomial with exponent `m` at weights `w`. -/
 noncomputable def ons_mvMonomialValue
     {E : Type*} (weight : E → ℂ) (m : E →₀ ℕ) : ℂ :=
   m.prod fun edge n ↦ weight edge ^ n
@@ -78,7 +79,8 @@ lemma ons_mvSeriesEval_eq
         MvPowerSeries.coeff m series * ons_mvMonomialValue weight m := by
   rfl
 
-/-- Absolute summability of `∑_m coeff_m · w^m`. -/
+/-- **Absolute summability of a power series evaluated at weights.**
+Absolute summability of `∑_m coeff_m · w^m`. -/
 def ons_MvSeriesEvalSummable
     {E : Type*} (series : MvPowerSeries E ℂ) (weight : E → ℂ) : Prop :=
   Summable fun m : E →₀ ℕ ↦
@@ -159,7 +161,8 @@ lemma ons_mvSeriesEval_mul
   simp only [F, G]
   ring
 
-/-- The sum `∑_m ‖coeff_m · w^m‖` of absolute values. -/
+/-- **Sum of absolute values of an evaluated power series.**
+The sum `∑_m ‖coeff_m · w^m‖` of absolute values. -/
 noncomputable def ons_mvSeriesEvalNorm
     {E : Type*} (series : MvPowerSeries E ℂ) (weight : E → ℂ) : ℝ :=
   ∑' m : E →₀ ℕ,

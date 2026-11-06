@@ -86,7 +86,7 @@ lemma pcc_contourLen_le_card_mul (K : Finset (Site d)) (n : ℕ) :
 
 /-! ## A. Failure of the origin bound -/
 
-/-- The two-site set `{0, p}`. -/
+/-- **Two-site set $\{0, p\}$.** The two-site set `{0, p}`. -/
 noncomputable def pcc_pairCluster (p : Site d) : Finset (Site d) := {origin d, p}
 
 lemma pcc_pairCluster_card_le (p : Site d) : (pcc_pairCluster p).card ≤ 2 :=
@@ -223,17 +223,20 @@ lemma pcc_originContourCount_hypothesis_false (hd : 1 ≤ d) :
 
 /-! ## B. Connected clusters -/
 
-/-- The nearest-neighbour graph restricted to `K`. -/
+/-- **Nearest-neighbour graph restricted to a set.**
+The nearest-neighbour graph restricted to `K`. -/
 noncomputable def latticeOn (K : Set (Site d)) : SimpleGraph (Site d) where
   Adj x y := (hypercubicLattice d).Adj x y ∧ x ∈ K ∧ y ∈ K
   symm := ⟨fun _ _ ⟨h1, h2, h3⟩ => ⟨h1.symm, h3, h2⟩⟩
   loopless := ⟨fun _ h => (hypercubicLattice d).irrefl h.1⟩
 
-/-- `K` is connected in the nearest-neighbour graph. -/
+/-- **Connected cluster through the origin in the nearest-neighbour graph.**
+`K` is connected in the nearest-neighbour graph. -/
 def IsConnectedCluster (K : Finset (Site d)) : Prop :=
   origin d ∈ K ∧ ∀ x ∈ K, (latticeOn (↑K : Set (Site d))).Reachable (origin d) x
 
-/-- The connected finite sets of sites in `Λ_n` containing the origin. -/
+/-- **Connected clusters in the box containing the origin.**
+The connected finite sets of sites in `Λ_n` containing the origin. -/
 noncomputable def connClusterFamily (n : ℕ) : Finset (Finset (Site d)) :=
   (clusterFamily (d := d) n).filter (fun K => IsConnectedCluster K)
 
@@ -321,7 +324,8 @@ lemma pcc_probOriginMinus_le_sum_exp_conn (n : ℕ) (β : ℝ) :
   have hbound := contour_energy_bound n (↑K) hKbox (plusField d) (bondFinsetTouch d n) β
   exact hbound
 
-/-- The sum of `e^{-2β |∂K|}` over connected clusters is at most the Peierls series. -/
+/-- **Peierls series bound on the connected-cluster contour sum.**
+The sum of `e^{-2β |∂K|}` over connected clusters is at most the Peierls series. -/
 def ConnectedContourCountBound (d n : ℕ) (β : ℝ) : Prop :=
   ∑ K ∈ connClusterFamily (d := d) n,
       Real.exp (-(2 * β) * (contourLen (↑K) (bondFinsetTouch d n) : ℝ))

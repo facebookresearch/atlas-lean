@@ -72,13 +72,14 @@ variable {d : ℕ}
 
 /-! ## A. Conditioning on the configuration outside the inner box -/
 
-/-- Project a configuration on `Λ_(n+1)` to its outer part: edges of `Λ_n` closed, the others
+/-- **Outer part of a configuration on $\Lambda_{n+1}$.**
+Project a configuration on `Λ_(n+1)` to its outer part: edges of `Λ_n` closed, the others
 unchanged. -/
 noncomputable def outProj (d n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     ConfigSpace (Sym2 (boxVerts d (n + 1))) :=
   psiExt d n ρ (fun _ => false)
 
-/-- The projection closes edges of `Λ_n`. -/
+/-- **Outer projection closes the edges of $\Lambda_n$.** The projection closes edges of `Λ_n`. -/
 lemma outProj_eq_false_of_range (n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     {e : Sym2 (boxVerts d (n + 1))} (he : e ∈ Set.range (innerEdge d n)) :
     outProj d n ρ e = false := by
@@ -86,21 +87,23 @@ lemma outProj_eq_false_of_range (n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n
   unfold outProj
   rw [psiExt_innerEdge]
 
-/-- The projection keeps edges outside `Λ_n`. -/
+/-- **Outer projection keeps the edges outside $\Lambda_n$.**
+The projection keeps edges outside `Λ_n`. -/
 lemma outProj_eq_of_not_range (n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     {e : Sym2 (boxVerts d (n + 1))} (he : e ∉ Set.range (innerEdge d n)) :
     outProj d n ρ e = ρ e := by
   unfold outProj
   rw [psiExt_eq_psi_of_not_range _ _ _ _ he]
 
-/-- The projection agrees with the configuration off the edges of `Λ_n`. -/
+/-- **Outer projection agrees with the configuration off $\Lambda_n$.**
+The projection agrees with the configuration off the edges of `Λ_n`. -/
 lemma agreesOff_outProj (n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     AgreesOff (innerEdgeFinset d n) (outProj d n ρ) ρ := by
   intro e he
   rw [mem_innerEdgeFinset] at he
   exact (outProj_eq_of_not_range n ρ he).symm
 
-/-- The projection is idempotent. -/
+/-- **Outer projection is idempotent.** The projection is idempotent. -/
 lemma outProj_idem (n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     outProj d n (outProj d n ρ) = outProj d n ρ := by
   funext e
@@ -108,7 +111,8 @@ lemma outProj_idem (n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
   · rw [outProj_eq_false_of_range n _ hin, outProj_eq_false_of_range n ρ hin]
   · rw [outProj_eq_of_not_range n _ hin]
 
-/-- The configurations with outer part `ψ` form the conditioning fibre of `ψ`. -/
+/-- **Configurations with a given outer part form its conditioning fibre.**
+The configurations with outer part `ψ` form the conditioning fibre of `ψ`. -/
 lemma filter_outProj_eq_condFibre (n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (hψ : outProj d n ψ = ψ) :
     Finset.univ.filter (fun ρ => outProj d n ρ = ψ)
@@ -127,14 +131,16 @@ lemma filter_outProj_eq_condFibre (n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d 
       rw [outProj_eq_of_not_range n ρ hin, outProj_eq_of_not_range n ψ hin, h e he]
   rw [hpr, hψ]
 
-/-- Configurations agreeing off `F` have the same conditioning fibre. -/
+/-- **Configurations agreeing off $F$ have the same conditioning fibre.**
+Configurations agreeing off `F` have the same conditioning fibre. -/
 lemma condFibre_congr_dom {V : Type*} [Fintype V] [DecidableEq V]
     {F : Finset (Sym2 V)} {ψ ψ' : ConfigSpace (Sym2 V)} (h : AgreesOff F ψ ψ') :
     condFibre F ψ = condFibre F ψ' := by
   ext σ
   rw [mem_condFibre, mem_condFibre, agreesOff_congr h]
 
-/-- Configurations agreeing off `F` give the same conditional random-cluster probabilities. -/
+/-- **Configurations agreeing off $F$ have equal conditional probabilities.**
+Configurations agreeing off `F` give the same conditional random-cluster probabilities. -/
 lemma condBcProb_congr_dom {V : Type*} [Fintype V] [DecidableEq V] (G C : SimpleGraph V)
     [DecidableRel G.Adj] [DecidableRel C.Adj]
     (p q : ℝ) (F : Finset (Sym2 V)) (ψ ψ' ω : ConfigSpace (Sym2 V)) (h : AgreesOff F ψ ψ') :
@@ -147,7 +153,8 @@ lemma condBcProb_congr_dom {V : Type*} [Fintype V] [DecidableEq V] (G C : Simple
   · rw [ite_eq_left hω, ite_eq_left (hcond.mp hω)]
   · rw [ite_eq_right hω, ite_eq_right (fun h' => hω (hcond.mpr h'))]
 
-/-- The masses of the conditioning fibres over all outer configurations sum to `1`. -/
+/-- **Masses of the conditioning fibres sum to one.**
+The masses of the conditioning fibres over all outer configurations sum to `1`. -/
 lemma sum_fibreMass_eq_one (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∑ ψ ∈ Finset.univ.filter (fun ψ => outProj d n ψ = ψ),
         (∑ σ ∈ condFibre (innerEdgeFinset d n) ψ,
@@ -168,7 +175,8 @@ lemma sum_fibreMass_eq_one (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq 
     rw [Finset.mem_filter] at hψ
     rw [filter_outProj_eq_condFibre n ψ hψ.2]
 
-/-- Decomposition of the wired measure on `Λ_(n+1)` over the configuration outside `Λ_n`. -/
+/-- **Wired $\Lambda_{n+1}$ measure decomposed over outer configurations.**
+Decomposition of the wired measure on `Λ_(n+1)` over the configuration outside `Λ_n`. -/
 lemma wiredSucc_bcProb_decompose (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (B : Set (ConfigSpace (Sym2 (boxVerts d (n + 1))))) :
     (∑ ρ, B.indicator (fun _ => (1 : ℝ)) ρ
@@ -215,7 +223,8 @@ lemma wiredSucc_bcProb_decompose (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1
 
 /-! ## B. Domination by the smaller wired box -/
 
-/-- For `q ≥ 1`, conditionally on any outer configuration, the wired measure on `Λ_(n+1)` gives an
+/-- **Conditional wired decrease on inner increasing events for $q \ge 1$.**
+For `q ≥ 1`, conditionally on any outer configuration, the wired measure on `Λ_(n+1)` gives an
 increasing event of `Λ_n` at most its wired `Λ_n` probability. -/
 lemma condBcProb_innerRestrict_le (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
@@ -233,7 +242,8 @@ lemma condBcProb_innerRestrict_le (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 
   rw [hpre]
   exact condBcProb_psiExt_dominated_wired d n ψ hp hp1 hq hA₀
 
-/-- For `q ≥ 1`, the wired measure on `Λ_(n+1)` gives an increasing event of `Λ_n` at most its wired
+/-- **Wired box measures decrease on inner increasing events for $q \ge 1$.**
+For `q ≥ 1`, the wired measure on `Λ_(n+1)` gives an increasing event of `Λ_n` at most its wired
 `Λ_n` probability. -/
 lemma wiredSucc_bcProb_innerEvent_le (n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -269,7 +279,8 @@ lemma wiredSucc_bcProb_innerEvent_le (n : ℕ) {p q : ℝ}
             rw [Finset.sum_mul]
     _ = c := by rw [sum_fibreMass_eq_one n hp hp1 hq0, one_mul]
 
-/-- The wired `Λ_(n+1)` measure of a `Λ_n` cylinder event, as a finite sum. -/
+/-- **Wired $\Lambda_{n+1}$ measure of a $\Lambda_n$ cylinder event as a sum.**
+The wired `Λ_(n+1)` measure of a `Λ_n` cylinder event, as a finite sum. -/
 lemma wiredFiniteMeasure_succ_real_innerRestrictEvent (n : ℕ) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
     (S : Set (ConfigSpace (Sym2 (boxVerts d n))))
@@ -293,7 +304,8 @@ lemma wiredFiniteMeasure_succ_real_innerRestrictEvent (n : ℕ) {p : ℝ}
   rw [hw, hpre, wiredFkPMF_toMeasure_toReal d (n + 1) hp hp1 (by norm_num : (0 : ℝ) < 2)]
   exact Finset.sum_congr rfl (fun ρ _ => by rw [bcProb_clique_eq_wiredFkProb])
 
-/-- For `q = 2`, the wired `Λ_(n+1)` measure of an increasing `Λ_n` cylinder event is at most its
+/-- **Wired box measures decrease on increasing cylinder events at $q = 2$.**
+For `q = 2`, the wired `Λ_(n+1)` measure of an increasing `Λ_n` cylinder event is at most its
 wired `Λ_n` probability. -/
 lemma wiredFiniteMeasure_succ_le_smallerBox (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d n)))} (hS : IsIncreasing S)
@@ -307,7 +319,8 @@ lemma wiredFiniteMeasure_succ_le_smallerBox (n : ℕ) {p : ℝ} (hp : 0 < p) (hp
 
 /-! ## C. Box-boundary connection events -/
 
-/-- The event that the origin is connected to the box boundary is increasing. -/
+/-- **Origin-to-boundary connection is an increasing event.**
+The event that the origin is connected to the box boundary is increasing. -/
 lemma isIncreasing_connToBdryEvent (n : ℕ) :
     IsIncreasing {ω : ConfigSpace (Sym2 (boxVerts d n)) |
       ConnToBdry (boxGraph d n) (boxBoundary d n) ω (IsingFK.boxOrigin d n)} := by
@@ -316,7 +329,9 @@ lemma isIncreasing_connToBdryEvent (n : ℕ) :
   obtain ⟨y, hy, hconn⟩ := ha
   exact ⟨y, hy, hconn.mono (openSub_mono _ hab)⟩
 
-/-- For `q = 2`, `φ¹_{Λ_(n+1)}(0 ↔ ∂Λ_n) ≤ φ¹_{Λ_n}(0 ↔ ∂Λ_n)`. -/
+/-- **Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_n$ in $\Lambda_{n+1}$ at most
+in $\Lambda_n$.**
+For `q = 2`, `φ¹_{Λ_(n+1)}(0 ↔ ∂Λ_n) ≤ φ¹_{Λ_n}(0 ↔ ∂Λ_n)`. -/
 lemma wiredFiniteMeasure_succ_le_boxBdryConnEvent (n : ℕ) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     (wiredFiniteMeasure d (n + 1) hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -331,7 +346,8 @@ lemma wiredFiniteMeasure_succ_le_boxBdryConnEvent (n : ℕ) {p : ℝ}
   rw [wiredFiniteMeasure_real_boxBdryConnEvent_sum d n hp hp1]
   exact hdom
 
-/-- An open edge of `Λ_n` is an open edge of `Λ_(n+1)`. -/
+/-- **Open edges of $\Lambda_n$ are open edges of $\Lambda_{n+1}$.**
+An open edge of `Λ_n` is an open edge of `Λ_(n+1)`. -/
 lemma openSub_succ_adj_inner (n : ℕ) (ω : ConfigSpace (Sym2 (Site d))) (x y : boxVerts d n) :
     (openSub (boxGraph d (n + 1)) (boxRestrict d (n + 1) ω)).Adj
         (boxVertIncl d n x) (boxVertIncl d n y)
@@ -345,7 +361,8 @@ lemma openSub_succ_adj_inner (n : ℕ) (ω : ConfigSpace (Sym2 (Site d))) (x y :
     edgeIncl_innerEdge]
   rfl
 
-/-- A vertex of `Λ_n` adjacent to a vertex of `Λ_(n+1) \ Λ_n` lies on `∂Λ_n`. -/
+/-- **Inner vertices next to the annulus lie on $\partial\Lambda_n$.**
+A vertex of `Λ_n` adjacent to a vertex of `Λ_(n+1) \ Λ_n` lies on `∂Λ_n`. -/
 lemma boxBoundary_of_openSub_succ_adj_outer (n : ℕ) (hn : 1 ≤ n)
     (ω : ConfigSpace (Sym2 (Site d)))
     {x : boxVerts d n} {z : boxVerts d (n + 1)} (hz : ¬ IsInnerVert d n z)
@@ -357,12 +374,14 @@ lemma boxBoundary_of_openSub_succ_adj_outer (n : ℕ) (hn : 1 ≤ n)
     have hcp := hadj; rw [boxGraph, SimpleGraph.comap_adj] at hcp; exact hcp
   exact ⟨x.2, notMem_box_pred_of_adj_outer hn x.2 hnn hz⟩
 
-/-- The inclusion `Λ_n → Λ_(n+1)` maps the origin to the origin. -/
+/-- **Box inclusion maps the origin to the origin.**
+The inclusion `Λ_n → Λ_(n+1)` maps the origin to the origin. -/
 lemma boxVertIncl_boxOrigin (n : ℕ) :
     boxVertIncl d n (IsingFK.boxOrigin d n) = IsingFK.boxOrigin d (n + 1) :=
   Subtype.ext rfl
 
-/-- A connection from the origin to `∂Λ_(n+1)` inside `Λ_(n+1)` passes through `∂Λ_n`. -/
+/-- **Paths to $\partial\Lambda_{n+1}$ pass through $\partial\Lambda_n$.**
+A connection from the origin to `∂Λ_(n+1)` inside `Λ_(n+1)` passes through `∂Λ_n`. -/
 lemma connToBdry_succ_of_connToBdry (n : ℕ) (hn : 1 ≤ n) (ω : ConfigSpace (Sym2 (Site d)))
     {v : boxVerts d (n + 1)} (hv : boxBoundary d (n + 1) v)
     (h : (openSub (boxGraph d (n + 1)) (boxRestrict d (n + 1) ω)).Reachable
@@ -396,7 +415,8 @@ lemma connToBdry_succ_of_connToBdry (n : ℕ) (hn : 1 ≤ n) (ω : ConfigSpace (
             hreach.trans ((openSub_succ_adj_inner n ω x x').mp hadj).reachable⟩
         · exact Or.inl ⟨x, boxBoundary_of_openSub_succ_adj_outer n hn ω hw_inner hadj, hreach⟩
 
-/-- The events `0 ↔ ∂Λ_n` decrease in `n`. -/
+/-- **One-step decrease of the events $0 \leftrightarrow \partial\Lambda_n$.**
+The events `0 ↔ ∂Λ_n` decrease in `n`. -/
 lemma boxBdryConnEvent_succ_subset (n : ℕ) (hn : 1 ≤ n) :
     boxBdryConnEvent d (n + 1) ⊆ boxBdryConnEvent d n := by
   intro ω hω
@@ -404,7 +424,9 @@ lemma boxBdryConnEvent_succ_subset (n : ℕ) (hn : 1 ≤ n) :
   obtain ⟨v, hv, hconn⟩ := hω
   exact connToBdry_succ_of_connToBdry n hn ω hv hconn
 
-/-- For `q = 2`, `φ¹_{Λ_(n+1)}(0 ↔ ∂Λ_(n+1)) ≤ φ¹_{Λ_n}(0 ↔ ∂Λ_n)`. -/
+/-- **Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_n$ in $\Lambda_n$ is
+nonincreasing in $n$.**
+For `q = 2`, `φ¹_{Λ_(n+1)}(0 ↔ ∂Λ_(n+1)) ≤ φ¹_{Λ_n}(0 ↔ ∂Λ_n)`. -/
 lemma wiredFiniteMeasure_boxBdryConnEvent_antitone (n : ℕ) (hn : 1 ≤ n) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     (wiredFiniteMeasure d (n + 1) hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -416,27 +438,32 @@ lemma wiredFiniteMeasure_boxBdryConnEvent_antitone (n : ℕ) (hn : 1 ≤ n) {p :
 
 /-! ## D. Restriction between nested boxes -/
 
-/-- The inclusion `Λ_n → Λ_m` for `n ≤ m`. -/
+/-- **Inclusion of $\Lambda_n$ into $\Lambda_m$ for $n \le m$.**
+The inclusion `Λ_n → Λ_m` for `n ≤ m`. -/
 def boxVertInclLE (d : ℕ) {n m : ℕ} (h : n ≤ m) (x : boxVerts d n) : boxVerts d m :=
   ⟨(x : Site d), box_mono d h x.2⟩
 
-/-- The inclusion of edges of `Λ_n` into edges of `Λ_m` for `n ≤ m`. -/
+/-- **Inclusion of edges of $\Lambda_n$ into edges of $\Lambda_m$.**
+The inclusion of edges of `Λ_n` into edges of `Λ_m` for `n ≤ m`. -/
 def innerEdgeLE (d : ℕ) {n m : ℕ} (h : n ≤ m) : Sym2 (boxVerts d n) → Sym2 (boxVerts d m) :=
   Sym2.map (boxVertInclLE d h)
 
-/-- Including an edge into `Λ_m` and then into `ℤ^d` is including it into `ℤ^d`. -/
+/-- **Edge inclusion into $\mathbb{Z}^d$ factors through $\Lambda_m$.**
+Including an edge into `Λ_m` and then into `ℤ^d` is including it into `ℤ^d`. -/
 lemma edgeIncl_innerEdgeLE (d : ℕ) {n m : ℕ} (h : n ≤ m) (e : Sym2 (boxVerts d n)) :
     edgeIncl d m (innerEdgeLE d h e) = edgeIncl d n e := by
   unfold edgeIncl innerEdgeLE boxVertInclLE
   rw [Sym2.map_map]
   rfl
 
-/-- Restrict a configuration on `Λ_m` to `Λ_n` for `n ≤ m`. -/
+/-- **Restriction of a configuration from $\Lambda_m$ to $\Lambda_n$.**
+Restrict a configuration on `Λ_m` to `Λ_n` for `n ≤ m`. -/
 noncomputable def boxRestrictLE (d : ℕ) {n m : ℕ} (h : n ≤ m)
     (η : ConfigSpace (Sym2 (boxVerts d m))) : ConfigSpace (Sym2 (boxVerts d n)) :=
   fun eb => η (innerEdgeLE d h eb)
 
-/-- Restricting to `Λ_m` and then to `Λ_n` is restricting to `Λ_n`. -/
+/-- **Restriction to $\Lambda_n$ factors through $\Lambda_m$.**
+Restricting to `Λ_m` and then to `Λ_n` is restricting to `Λ_n`. -/
 lemma boxRestrictLE_boxRestrict (d : ℕ) {n m : ℕ} (h : n ≤ m)
     (ω : ConfigSpace (Sym2 (Site d))) :
     boxRestrictLE d h (boxRestrict d m ω) = boxRestrict d n ω := by
@@ -444,18 +471,20 @@ lemma boxRestrictLE_boxRestrict (d : ℕ) {n m : ℕ} (h : n ≤ m)
   change ω (edgeIncl d m (innerEdgeLE d h eb)) = ω (edgeIncl d n eb)
   rw [edgeIncl_innerEdgeLE]
 
-/-- Restriction between boxes is monotone. -/
+/-- **Monotonicity of restriction between boxes.** Restriction between boxes is monotone. -/
 lemma boxRestrictLE_monotone (d : ℕ) {n m : ℕ} (h : n ≤ m) :
     Monotone (boxRestrictLE d h) :=
   fun _ _ hab eb => hab (innerEdgeLE d h eb)
 
-/-- The event `0 ↔ ∂Λ_n` inside `Λ_n`, as an event on `Λ_m` for `n ≤ m`. -/
+/-- **Boundary-connection event of $\Lambda_n$ as an event on $\Lambda_m$.**
+The event `0 ↔ ∂Λ_n` inside `Λ_n`, as an event on `Λ_m` for `n ≤ m`. -/
 noncomputable def connToBdryEventLE (d : ℕ) {n m : ℕ} (h : n ≤ m) :
     Set (ConfigSpace (Sym2 (boxVerts d m))) :=
   boxRestrictLE d h ⁻¹' {ω : ConfigSpace (Sym2 (boxVerts d n)) |
     ConnToBdry (boxGraph d n) (boxBoundary d n) ω (IsingFK.boxOrigin d n)}
 
-/-- The event `connToBdryEventLE` is increasing. -/
+/-- **Boundary-connection event of $\Lambda_n$ on $\Lambda_m$ is increasing.**
+The event `connToBdryEventLE` is increasing. -/
 lemma isIncreasing_connToBdryEventLE (d : ℕ) {n m : ℕ} (h : n ≤ m) :
     IsIncreasing (connToBdryEventLE d h) := by
   intro a b hab ha
@@ -463,20 +492,23 @@ lemma isIncreasing_connToBdryEventLE (d : ℕ) {n m : ℕ} (h : n ≤ m) :
   obtain ⟨y, hy, hconn⟩ := ha
   exact ⟨y, hy, hconn.mono (openSub_mono _ (boxRestrictLE_monotone d h hab))⟩
 
-/-- The event `0 ↔ ∂Λ_n` is a `Λ_m` cylinder event for every `m ≥ n`. -/
+/-- **Boundary connection of $\Lambda_n$ is a $\Lambda_m$ cylinder event.**
+The event `0 ↔ ∂Λ_n` is a `Λ_m` cylinder event for every `m ≥ n`. -/
 lemma boxBdryConnEvent_eq_boxRestrict_preimage (d : ℕ) {n m : ℕ} (h : n ≤ m) :
     boxBdryConnEvent d n = boxRestrict d m ⁻¹' (connToBdryEventLE d h) := by
   ext ω
   simp only [boxBdryConnEvent, connToBdryEventLE, Set.mem_preimage, Set.mem_ofPred_eq,
     boxRestrictLE_boxRestrict]
 
-/-- The cylinder form of `0 ↔ ∂Λ_n` is measurable. -/
+/-- **Cylinder form of the $\Lambda_n$ boundary connection is measurable.**
+The cylinder form of `0 ↔ ∂Λ_n` is measurable. -/
 lemma measurableSet_boxRestrict_connToBdryEventLE (d : ℕ) {n m : ℕ} (h : n ≤ m) :
     MeasurableSet (boxRestrict d m ⁻¹' (connToBdryEventLE d h)) := by
   rw [← boxBdryConnEvent_eq_boxRestrict_preimage d h]
   exact measurableSet_boxBdryConnEvent d n
 
-/-- The wired `Λ_m` measure of a `Λ_m` cylinder event, as a finite sum. -/
+/-- **Wired $\Lambda_m$ measure of a $\Lambda_m$ cylinder event as a sum.**
+The wired `Λ_m` measure of a `Λ_m` cylinder event, as a finite sum. -/
 lemma wiredFiniteMeasure_real_boxRestrictEvent (m : ℕ) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (S : Set (ConfigSpace (Sym2 (boxVerts d m))))
     (hmeas : MeasurableSet (boxRestrict d m ⁻¹' S)) :
@@ -498,7 +530,9 @@ lemma wiredFiniteMeasure_real_boxRestrictEvent (m : ℕ) {p : ℝ}
     simp only [Set.mem_preimage, boxRestrict_extendEdge]
   rw [hw, hpre, wiredFkPMF_toMeasure_toReal d m hp hp1 (by norm_num : (0 : ℝ) < 2)]
 
-/-- For `q = 2` and `n ≤ m`, `φ¹_{Λ_(m+1)}(0 ↔ ∂Λ_n) ≤ φ¹_{Λ_m}(0 ↔ ∂Λ_n)`. -/
+/-- **Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_n$ in $\Lambda_{m+1}$ at most
+in $\Lambda_m$, $m \ge n$.**
+For `q = 2` and `n ≤ m`, `φ¹_{Λ_(m+1)}(0 ↔ ∂Λ_n) ≤ φ¹_{Λ_m}(0 ↔ ∂Λ_n)`. -/
 lemma wiredFiniteMeasure_succ_le_boxBdryConnEvent_le (n m : ℕ) (h : n ≤ m) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     (wiredFiniteMeasure d (m + 1) hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -512,7 +546,9 @@ lemma wiredFiniteMeasure_succ_le_boxBdryConnEvent_le (n m : ℕ) (h : n ≤ m) {
     wiredFiniteMeasure_real_boxRestrictEvent m hp hp1 (connToBdryEventLE d h) hmeas]
   exact hstep
 
-/-- For `q = 2`, `φ¹_{Λ_(n+k+1)}(0 ↔ ∂Λ_n) ≤ φ¹_{Λ_(n+k)}(0 ↔ ∂Λ_n)`. -/
+/-- **Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_n$ in $\Lambda_{n+k+1}$ at
+most in $\Lambda_{n+k}$.**
+For `q = 2`, `φ¹_{Λ_(n+k+1)}(0 ↔ ∂Λ_n) ≤ φ¹_{Λ_(n+k)}(0 ↔ ∂Λ_n)`. -/
 lemma wiredFiniteMeasure_boxBdryConnEvent_antitone_radius (n k : ℕ) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1) :
     (wiredFiniteMeasure d (n+k+1) hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -523,7 +559,8 @@ lemma wiredFiniteMeasure_boxBdryConnEvent_antitone_radius (n k : ℕ) {p : ℝ}
 
 /-! ## E. Convergence of box-boundary connection probabilities -/
 
-/-- An open edge of the box is an open edge of `ℤ^d`. -/
+/-- **Open edges of a box are open edges of $\mathbb{Z}^d$.**
+An open edge of the box is an open edge of `ℤ^d`. -/
 lemma openSubgraph_adj_of_boxGraph (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {x y : boxVerts d n} (h : (openSub (boxGraph d n) (boxRestrict d n ω)).Adj x y) :
     (openSubgraph d ω).Adj (x : Site d) (y : Site d) := by
@@ -538,7 +575,8 @@ lemma openSubgraph_adj_of_boxGraph (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
   rw [hev] at hopen
   exact hopen
 
-/-- An open connection inside the box is an open connection in `ℤ^d`. -/
+/-- **Open connections in a box are open connections in $\mathbb{Z}^d$.**
+An open connection inside the box is an open connection in `ℤ^d`. -/
 lemma connected_of_boxConnected (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {x y : boxVerts d n}
     (h : (openSub (boxGraph d n) (boxRestrict d n ω)).Reachable x y) :
@@ -550,7 +588,8 @@ lemma connected_of_boxConnected (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
   | refl => exact Relation.ReflTransGen.refl
   | @tail u w _ hadj ih => exact ih.tail (openSubgraph_adj_of_boxGraph n ω hadj)
 
-/-- A connection from the origin to `∂Λ_n` inside `Λ_n` reaches the complement of `Λ_(n-1)`. -/
+/-- **Boundary connection inside $\Lambda_n$ reaches outside $\Lambda_{n-1}$.**
+A connection from the origin to `∂Λ_n` inside `Λ_n` reaches the complement of `Λ_(n-1)`. -/
 lemma boxBdryConnEvent_subset_crossingEvent (n : ℕ) :
     boxBdryConnEvent d n ⊆ crossingEvent d n := by
   intro ω hω
@@ -561,7 +600,8 @@ lemma boxBdryConnEvent_subset_crossingEvent (n : ℕ) :
   rw [boxBoundary, mem_vertexBoundary] at hv
   exact hv.2
 
-/-- An open edge of `ℤ^d` between box vertices is an open edge of the box. -/
+/-- **Open lattice edges between box vertices are open box edges.**
+An open edge of `ℤ^d` between box vertices is an open edge of the box. -/
 lemma boxGraph_open_of_openSubgraph (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
     {x y : boxVerts d n} (h : (openSubgraph d ω).Adj (x : Site d) (y : Site d)) :
     (openSub (boxGraph d n) (boxRestrict d n ω)).Adj x y := by
@@ -574,7 +614,9 @@ lemma boxGraph_open_of_openSubgraph (n : ℕ) (ω : ConfigSpace (Sym2 (Site d)))
   rw [Sym2.map_mk]
   exact hopen
 
-/-- A connection from the origin to a site outside `Λ_n` gives a connection to `∂Λ_n` inside `Λ_n`.
+/-- **Open path from the origin out of $\Lambda_n$ gives $0 \leftrightarrow \partial\Lambda_n$
+inside $\Lambda_n$.**
+A connection from the origin to a site outside `Λ_n` gives a connection to `∂Λ_n` inside `Λ_n`.
 -/
 lemma boxBdryConn_of_crossing (n : ℕ) (hn : 1 ≤ n) (ω : ConfigSpace (Sym2 (Site d)))
     {v : Site d} (hv : v ∉ box d n)
@@ -606,7 +648,8 @@ lemma boxBdryConn_of_crossing (n : ℕ) (hn : 1 ≤ n) (ω : ConfigSpace (Sym2 (
           have hnn' : StatMech.Lattice.NearestNeighbour d (x : Site d) w := hnn
           exact ⟨x, ⟨x.2, notMem_box_pred_of_adj_outer hn x.2 hnn' hw_box⟩, hreach⟩
 
-/-- Reaching the complement of `Λ_n` implies `0 ↔ ∂Λ_n`. -/
+/-- **Leaving $\Lambda_n$ implies connecting to $\partial\Lambda_n$.**
+Reaching the complement of `Λ_n` implies `0 ↔ ∂Λ_n`. -/
 lemma crossingEvent_succ_subset_boxBdryConnEvent (n : ℕ) (hn : 1 ≤ n) :
     crossingEvent d (n + 1) ⊆ boxBdryConnEvent d n := by
   intro ω hω
@@ -616,7 +659,8 @@ lemma crossingEvent_succ_subset_boxBdryConnEvent (n : ℕ) (hn : 1 ≤ n) :
   simp only [boxBdryConnEvent, Set.mem_preimage, Set.mem_ofPred_eq]
   exact boxBdryConn_of_crossing n hn ω hv hconn
 
-/-- Under the wired infinite-volume measure, `P(0 ↔ ∂Λ_n) → θ¹(p, q)`. -/
+/-- **Wired infinite-volume boundary connection tends to $\theta^1(p, q)$.**
+Under the wired infinite-volume measure, `P(0 ↔ ∂Λ_n) → θ¹(p, q)`. -/
 lemma wiredIv_boxBdryConnEvent_tendsto {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     Tendsto (fun n => ((wiredInfiniteVolume d hp hp1 hq :
@@ -637,7 +681,8 @@ lemma wiredIv_boxBdryConnEvent_tendsto {p q : ℝ}
   · filter_upwards with n
     exact measureReal_mono (boxBdryConnEvent_subset_crossingEvent n)
 
-/-- The events `0 ↔ ∂Λ_n` decrease in `n ≥ 1`. -/
+/-- **Events $0 \leftrightarrow \partial\Lambda_n$ decrease in $n \ge 1$.**
+The events `0 ↔ ∂Λ_n` decrease in `n ≥ 1`. -/
 lemma boxBdryConnEvent_subset_le (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) :
     boxBdryConnEvent d n ⊆ boxBdryConnEvent d k := by
   induction n with
@@ -647,7 +692,9 @@ lemma boxBdryConnEvent_subset_le (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) :
       · exact (boxBdryConnEvent_succ_subset m (by omega)).trans (ih (by omega))
       · rw [show k = m+1 by omega]
 
-/-- For `q = 2`, `j ↦ φ¹_{Λ_(k+j)}(0 ↔ ∂Λ_k)` is antitone. -/
+/-- **Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_k$ in $\Lambda_{k+j}$ is
+nonincreasing in $j$.**
+For `q = 2`, `j ↦ φ¹_{Λ_(k+j)}(0 ↔ ∂Λ_k)` is antitone. -/
 lemma radius_antitone (k : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     Antitone (fun j => (wiredFiniteMeasure d (k+j) hp hp1 (by norm_num : (0 : ℝ) < 2)
         : Measure (ConfigSpace (Sym2 (Site d)))).real (boxBdryConnEvent d k)) := by
@@ -657,7 +704,8 @@ lemma radius_antitone (k : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     (Nat.le_add_right k j) hp hp1
   simpa [Nat.add_assoc] using this
 
-/-- A bounded-below antitone real sequence converges to the limit of any of its subsequences. -/
+/-- **Antitone bounded-below sequences converge to any subsequential limit.**
+A bounded-below antitone real sequence converges to the limit of any of its subsequences. -/
 lemma tendsto_of_antitone_of_subseq {a : ℕ → ℝ} {L : ℝ} {φ : ℕ → ℕ} (hφ : StrictMono φ)
     (hanti : Antitone a) (hbdd : BddBelow (Set.range a))
     (hsub : Tendsto (fun m => a (φ m)) atTop (𝓝 L)) :
@@ -666,7 +714,9 @@ lemma tendsto_of_antitone_of_subseq {a : ℕ → ℝ} {L : ℝ} {φ : ℕ → �
   rw [tendsto_nhds_unique hsub (hinf.comp hφ.tendsto_atTop)]
   exact hinf
 
-/-- For `q = 2`, `φ¹_{Λ_(k+j)}(0 ↔ ∂Λ_k)` converges as `j → ∞` to the wired infinite-volume
+/-- **Infinite-volume limit of the wired $q = 2$ probability of
+$0 \leftrightarrow \partial\Lambda_k$.**
+For `q = 2`, `φ¹_{Λ_(k+j)}(0 ↔ ∂Λ_k)` converges as `j → ∞` to the wired infinite-volume
 probability of `0 ↔ ∂Λ_k`. -/
 lemma wiredFiniteMeasure_radius_tendsto (k : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     Tendsto (fun j => (wiredFiniteMeasure d (k+j) hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -703,7 +753,9 @@ lemma wiredFiniteMeasure_radius_tendsto (k : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : 
     have : k + (φ (m + m₀) - k) = φ (m + m₀) := by omega
     rw [this]
 
-/-- For `q = 2`, `φ¹_{Λ_n}(0 ↔ ∂Λ_n) → θ¹(p, 2)`. -/
+/-- **Wired $q = 2$ percolation probability as the limit of $0 \leftrightarrow \partial\Lambda_n$ in
+$\Lambda_n$.**
+For `q = 2`, `φ¹_{Λ_n}(0 ↔ ∂Λ_n) → θ¹(p, 2)`. -/
 lemma boxBdryConnEvent_diag_tendsto {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     Tendsto (fun n => (wiredFiniteMeasure d n hp hp1 (by norm_num : (0 : ℝ) < 2)
         : Measure (ConfigSpace (Sym2 (Site d)))).real (boxBdryConnEvent d n))
@@ -751,7 +803,8 @@ lemma boxBdryConnEvent_diag_tendsto {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
       rw [hk0]; exact hle
     exact le_of_tendsto_of_tendsto' hbN_tendsto haN_tendsto hbk_le
 
-/-- The box-boundary connection profile of the Ising FK representation converges to `θ¹(p, 2)`. -/
+/-- **Ising FK box-boundary connection profile tends to $\theta^1(p, 2)$.**
+The box-boundary connection profile of the Ising FK representation converges to `θ¹(p, 2)`. -/
 lemma boxBoundaryConnProfile_tendsto {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     Tendsto (fun n => IsingFK.boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) n)
       atTop (𝓝 (fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2))) :=

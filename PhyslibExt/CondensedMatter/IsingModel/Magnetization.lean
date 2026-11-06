@@ -59,14 +59,16 @@ variable {d : ℕ}
 
 /-! ## A. Spin observables -/
 
-/-- The spin at a site is a measurable function of the configuration. -/
+/-- **Measurability of the spin at a site.**
+The spin at a site is a measurable function of the configuration. -/
 lemma measurable_spin (x : Site d) :
     Measurable (fun ω : ConfigSpace (Site d) => spin ω x) := by
   have hmeas : Measurable (fun ω : ConfigSpace (Site d) => ω x) := measurable_pi_apply x
   simp only [spin]
   exact Measurable.ite (hmeas (measurableSet_singleton true)) measurable_const measurable_const
 
-/-- The spin at a site is integrable for every finite measure. -/
+/-- **Integrability of the spin at a site under finite measures.**
+The spin at a site is integrable for every finite measure. -/
 lemma integrable_spin (x : Site d) (μ : Measure (ConfigSpace (Site d)))
     [IsFiniteMeasure μ] :
     Integrable (fun ω : ConfigSpace (Site d) => spin ω x) μ := by
@@ -77,7 +79,8 @@ lemma integrable_spin (x : Site d) (μ : Measure (ConfigSpace (Site d)))
 
 /-! ## B. The magnetization -/
 
-/-- The spontaneous magnetization `m*(β) = ⟨σ_0⟩⁺_β`: the expected spin at the origin under the
+/-- **Spontaneous magnetization of the Ising model.**
+The spontaneous magnetization `m*(β) = ⟨σ_0⟩⁺_β`: the expected spin at the origin under the
 zero-field plus state. -/
 noncomputable def magnetization (d : ℕ) (β : ℝ) : ℝ :=
   ∫ ω, spin ω (origin d) ∂(plusState d β 0 : Measure (ConfigSpace (Site d)))
@@ -101,7 +104,8 @@ lemma neg_one_le_magnetization (d : ℕ) (β : ℝ) : -1 ≤ magnetization d β 
 
 /-! ## C. The critical inverse temperature -/
 
-/-- The set of inverse temperatures `β ≥ 0` at which the spontaneous magnetization is positive. -/
+/-- **Inverse temperatures with positive spontaneous magnetization.**
+The set of inverse temperatures `β ≥ 0` at which the spontaneous magnetization is positive. -/
 def positiveMagnetizationSet (d : ℕ) : Set ℝ :=
   {β : ℝ | 0 ≤ β ∧ 0 < magnetization d β}
 
@@ -110,7 +114,8 @@ lemma mem_positiveMagnetizationSet {d : ℕ} {β : ℝ} :
     β ∈ positiveMagnetizationSet d ↔ 0 ≤ β ∧ 0 < magnetization d β :=
   Iff.rfl
 
-/-- The critical inverse temperature `β_c(d) = inf {β ≥ 0 | m*(β) > 0}` (equal to `0` if the set is
+/-- **Critical inverse temperature from spontaneous magnetization.**
+The critical inverse temperature `β_c(d) = inf {β ≥ 0 | m*(β) > 0}` (equal to `0` if the set is
 empty, by the convention `sInf ∅ = 0`). -/
 noncomputable def betaC (d : ℕ) : ℝ :=
   sInf (positiveMagnetizationSet d)

@@ -148,7 +148,8 @@ lemma shk_edgeOpenEvent_dependsOn (x y : Site d) :
 
 /-! ## C. The BK bound -/
 
-/-- The edges inside `S`, the boundary edges of `S`, and the edges inside the window `Λ`: the
+/-- **Support of the first-exit decomposition events.**
+The edges inside `S`, the boundary edges of `S`, and the edges inside the window `Λ`: the
 support of the events in the first-exit decomposition. -/
 noncomputable def shk_firstExitSupport (S Lam : Finset (Site d)) :
     Finset (Sym2 (Site d)) :=

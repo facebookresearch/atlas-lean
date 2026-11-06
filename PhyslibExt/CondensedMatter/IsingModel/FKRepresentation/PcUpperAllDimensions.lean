@@ -406,7 +406,8 @@ lemma fkPc_le_of_fkTheta_pos_general
     rw [hrzero] at hmono
     linarith
 
-/-- The FK critical point satisfies `p_c(d, q) < 1` for `d ≥ 2` and `q ≥ 1` (Grimmett, *The
+/-- **FK critical point is less than one for $d \ge 2$, $q \ge 1$.**
+The FK critical point satisfies `p_c(d, q) < 1` for `d ≥ 2` and `q ≥ 1` (Grimmett, *The
 Random-Cluster Model*, Theorem 5.5). -/
 theorem fkPc_lt_one_of_two_le {d : ℕ} {q : ℝ} (hd : 2 ≤ d) (hq : 1 ≤ q) :
     fkPc d q < 1 := by
@@ -569,7 +570,8 @@ theorem ising_phase_transition_of_two_le {d : ℕ} (hd : 2 ≤ d) :
       (∀ beta, betaC < beta → 0 < magnetization d beta) :=
   ⟨pToBeta 2 (fkPc d 2), ising_transition_at_fkPc_of_two_le hd⟩
 
-/-- The sup-based critical inverse temperature `IsingFK.betaC (magnetization d)` in dimension
+/-- **Sup-based $\beta_c$ equals $-\tfrac{1}{2}\log(1 - p_c)$ for $d \ge 2$.**
+The sup-based critical inverse temperature `IsingFK.betaC (magnetization d)` in dimension
 `d ≥ 2` is `-(1/2) log (1 - p_c(d, 2))`, the image of the FK critical point. This is the
 supremum of the zero-magnetization inverse temperatures, not yet the public
 `Ising.betaC d` (see `ising_betaC_eq_sup_betaC_of_two_le` for the bridge). -/
@@ -600,7 +602,8 @@ theorem isingFK_betaC_eq_fkPc_of_two_le {d : ℕ} (hd : 2 ≤ d) :
   change sSup S = _
   rw [hs, show betaC0 = pToBeta 2 (fkPc d 2) from rfl, pToBeta_two]
 
-/-- Bridge between the two critical-point definitions: the public
+/-- **Inf-based and sup-based Ising critical points agree for $d \ge 2$.**
+Bridge between the two critical-point definitions: the public
 `Ising.betaC d = sInf {β ≥ 0 | m*(β) > 0}` equals the sup-based
 `IsingFK.betaC (magnetization d) = sSup {β > 0 | m*(β) = 0}` in dimension `d ≥ 2`.
 The `β = 0` case is not covered by the phase-transition statement (which only speaks
@@ -642,7 +645,8 @@ theorem ising_betaC_eq_sup_betaC_of_two_le {d : ℕ} (hd : 2 ≤ d) :
         exact lt_irrefl 0 hβpos
   rw [hbridge, isingFK_betaC_eq_fkPc_of_two_le hd, pToBeta_two]
 
-/-- The public Ising critical inverse temperature `Ising.betaC d` in dimension `d ≥ 2` is
+/-- **Inf-based $\beta_c$ equals $-\tfrac{1}{2}\log(1 - p_c)$ for $d \ge 2$.**
+The public Ising critical inverse temperature `Ising.betaC d` in dimension `d ≥ 2` is
 `-(1/2) log (1 - p_c(d, 2))`, the image of the FK critical point. This is the form
 usable with `ising_sharp_phase_transition`, whose `β_c` is `Ising.betaC d`. -/
 theorem isingBetaC_eq_fkPc_of_two_le {d : ℕ} (hd : 2 ≤ d) :

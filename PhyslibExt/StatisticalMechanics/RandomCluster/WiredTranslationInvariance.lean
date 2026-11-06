@@ -67,7 +67,7 @@ variable {d : ℕ}
 
 /-! ## A. Boxes and their translates -/
 
-/-- The sup-norm `max_i |v_i|` of a site `v`. -/
+/-- **Sup norm of a site of $\mathbb{Z}^d$.** The sup-norm `max_i |v_i|` of a site `v`. -/
 def flc_vrad (v : Site d) : ℕ := Finset.univ.sup (fun i => (v i).natAbs)
 
 lemma flc_vrad_le (v : Site d) (i : Fin d) : (v i).natAbs ≤ flc_vrad v :=
@@ -100,7 +100,8 @@ lemma flc_transBox_subset_box (v : Site d) (m : ℕ) :
     _ = ((y - v) i).natAbs + (v i).natAbs := by rw [hsub]
     _ ≤ m + flc_vrad v := Nat.add_le_add hyi hvi
 
-/-- The inclusion of a subset of sites into a larger one, as a map of subtypes. -/
+/-- **Inclusion of a subset of sites into a larger one.**
+The inclusion of a subset of sites into a larger one, as a map of subtypes. -/
 def flc_incl {Sin Sout : Set (Site d)} (hsub : Sin ⊆ Sout) (x : {y : Site d // y ∈ Sin}) :
     {y : Site d // y ∈ Sout} :=
   ⟨(x : Site d), hsub x.2⟩
@@ -196,7 +197,8 @@ lemma flc_valImage_ocd_innerEdge_image {Sin Sout : Set (Site d)} (hsub : Sin ⊆
   refine Finset.image_congr (fun e _ => ?_)
   exact flc_valMap_ocd_innerEdge hsub e
 
-/-- The edge set `t` of `Λ_N`, included into `Λ_m` and translated by `v`. -/
+/-- **Box edge set included into $\Lambda_m$ and translated by $v$.**
+The edge set `t` of `Λ_N`, included into `Λ_m` and translated by `v`. -/
 noncomputable def flc_transEdges (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     (m : ℕ) (hNm : N ≤ m) : Finset (Sym2 (fvs_transBoxVerts d m v)) :=
   (t.image (innerEdgeLE d hNm)).image (Sym2.map (fvs_transEquiv d m v))
@@ -365,7 +367,8 @@ lemma flc_wiredMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     cdc_wiredMultiHomogeneous hp hp1 g :=
   lmc_wiredMultiHomogeneous hp hp1 g (flc_wiredPlacement hp hp1 g)
 
-/-- The wired `q = 2` infinite-volume random-cluster measure on `ℤ^d` is translation invariant. -/
+/-- **Translation invariance of the wired $q = 2$ infinite-volume measure.**
+The wired `q = 2` infinite-volume random-cluster measure on `ℤ^d` is translation invariant. -/
 theorem flc_wiredIV_isTranslationInvariant {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     ConfigSpace.IsTranslationInvariant (G := Multiplicative (Site d))
       (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2)

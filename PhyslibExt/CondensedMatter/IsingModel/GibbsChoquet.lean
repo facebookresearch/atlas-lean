@@ -62,7 +62,8 @@ variable {E : Type*}
 
 /-! ## A. Increasing events and the stochastic order -/
 
-/-- The measurable increasing events of the configuration space. -/
+/-- **Measurable increasing events of the configuration space.**
+The measurable increasing events of the configuration space. -/
 def upMeasSystem (E : Type*) : Set (Set (ConfigSpace E)) :=
   {A | MeasurableSet A ∧ IsUpperSet A}
 
@@ -144,7 +145,7 @@ lemma gibbs_sandwiched_eq_of_phases_eq {μm μp μ μ' : Measure (ConfigSpace E)
 
 /-! ## B. Mixtures -/
 
-/-- The mixture `a μ⁻ + b μ⁺` of two measures. -/
+/-- **Weighted mixture of two measures.** The mixture `a μ⁻ + b μ⁺` of two measures. -/
 noncomputable def gibbsMix (a b : ℝ≥0∞) (μm μp : Measure (ConfigSpace E)) :
     Measure (ConfigSpace E) :=
   a • μm + b • μp

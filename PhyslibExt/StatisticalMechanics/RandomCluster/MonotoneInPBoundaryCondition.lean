@@ -105,7 +105,8 @@ lemma bcProb_cross_p {p1 p2 q : ℝ} (hp1 : 0 < p1) (hp1' : p1 < 1) (hp2 : 0 < p
     div_le_div_iff_of_pos_right (mul_pos hZ1 hZ2)]
   exact bcWeight_cross_p G C hp1 hp1' hp2 hp2' hle hq a b
 
-/-- For `q ≥ 1`, the random-cluster measure with boundary graph `C` is increasing in `p` on
+/-- **Boundary-graph FK measure increases in $p$ for $q \ge 1$.**
+For `q ≥ 1`, the random-cluster measure with boundary graph `C` is increasing in `p` on
 increasing events.
 -/
 lemma bcProb_monotone_in_p {p1 p2 q : ℝ} (hp1 : 0 < p1) (hp1' : p1 < 1)

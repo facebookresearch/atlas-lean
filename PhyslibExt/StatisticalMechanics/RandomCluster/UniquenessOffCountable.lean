@@ -110,7 +110,7 @@ open StatMech.Lattice
 
 /-! ## B. Edge densities of the infinite-volume measures -/
 
-/-- The event that the edge `e` is open. -/
+/-- **Event that an edge is open.** The event that the edge `e` is open. -/
 def fkEdgeOpenEvent {E : Type*} (e : E) : Set (ConfigSpace E) := {ω | ω e = true}
 
 lemma isIncreasing_fkEdgeOpenEvent {E : Type*} (e : E) :
@@ -121,7 +121,8 @@ lemma isIncreasing_fkEdgeOpenEvent {E : Type*} (e : E) :
   rw [hx] at hle
   exact le_antisymm (by simp) hle
 
-/-- The edge density `φ^1_{p,q}(e open)` of the wired infinite-volume random-cluster measure on
+/-- **Wired infinite-volume edge density.**
+The edge density `φ^1_{p,q}(e open)` of the wired infinite-volume random-cluster measure on
 `ℤ^d`, set to `0` outside `p ∈ (0, 1)`, `q > 0`.
 -/
 noncomputable def wiredEdgeDensity (d : ℕ) (q : ℝ) (e : Sym2 (Site d)) (p : ℝ) : ℝ :=
@@ -130,7 +131,8 @@ noncomputable def wiredEdgeDensity (d : ℕ) (q : ℝ) (e : Sym2 (Site d)) (p : 
       (fkEdgeOpenEvent e)
   else 0
 
-/-- The edge density `φ^0_{p,q}(e open)` of the free infinite-volume random-cluster measure on
+/-- **Free infinite-volume edge density.**
+The edge density `φ^0_{p,q}(e open)` of the free infinite-volume random-cluster measure on
 `ℤ^d`, set to `0` outside `p ∈ (0, 1)`, `q > 0`.
 -/
 noncomputable def freeEdgeDensity (d : ℕ) (q : ℝ) (e : Sym2 (Site d)) (p : ℝ) : ℝ :=

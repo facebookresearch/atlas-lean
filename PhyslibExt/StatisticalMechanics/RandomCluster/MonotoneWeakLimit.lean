@@ -60,7 +60,8 @@ variable {d : ℕ}
 ## A. Monotonicity in the volume
 -/
 
-/-- At `q = 2`, enlarging the wired box from `Λ_m` to `Λ_(m+1)` does not increase the probability of
+/-- **Wired $q = 2$ increasing-event probabilities do not grow with the box.**
+At `q = 2`, enlarging the wired box from `Λ_m` to `Λ_(m+1)` does not increase the probability of
 an increasing cylinder event of `Λ_N`, `N ≤ m`. -/
 lemma fkWiredLimit_succ_le (N m : ℕ) (hNm : N ≤ m) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -93,13 +94,15 @@ lemma fkWiredLimit_antitone (N : ℕ) {p : ℝ}
 ## B. The limit
 -/
 
-/-- The infimum over `k` of `φ¹_(N+k)(S)` for an event `S` of the box `Λ_N`, at `q = 2`. -/
+/-- **Infimum of wired box probabilities of a box event.**
+The infimum over `k` of `φ¹_(N+k)(S)` for an event `S` of the box `Λ_N`, at `q = 2`. -/
 noncomputable def fkWiredLimitValue (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) : ℝ :=
   ⨅ k, (wiredFiniteMeasure d (N + k) hp hp1 (by norm_num : (0 : ℝ) < 2)
       : Measure (ConfigSpace (Sym2 (Site d)))).real (boxRestrict d N ⁻¹' S)
 
-/-- At `q = 2` the wired box probabilities of an increasing cylinder event converge to
+/-- **Wired box probabilities of increasing cylinder events converge.**
+At `q = 2` the wired box probabilities of an increasing cylinder event converge to
 `fkWiredLimitValue`. -/
 lemma fk_wired_limit_exists (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
@@ -130,7 +133,8 @@ lemma fk_wired_limit_le (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) (hp1 
     ⟨0, by rintro x ⟨k, rfl⟩; exact measureReal_nonneg⟩
   exact ciInf_le hbdd k
 
-/-- At `q = 2` the chosen wired infinite-volume measure gives an increasing cylinder event the value
+/-- **Wired infinite-volume probability equals the infimum over boxes.**
+At `q = 2` the chosen wired infinite-volume measure gives an increasing cylinder event the value
 `fkWiredLimitValue`. -/
 lemma fkWiredLimit_wiredInfiniteVolume_eq (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
@@ -143,7 +147,8 @@ lemma fkWiredLimit_wiredInfiniteVolume_eq (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 
   have hsub := (fk_wired_limit_exists N hp hp1 hS).comp hψ.tendsto_atTop
   exact tendsto_nhds_unique hport hsub
 
-/-- Existence of the wired infinite-volume random-cluster measure as the limit of wired box
+/-- **Wired infinite-volume measure as limit on increasing cylinder events.**
+Existence of the wired infinite-volume random-cluster measure as the limit of wired box
 measures, on increasing cylinder events at `q = 2`: `φ¹_m(S) → φ¹(S)` as `m → ∞`. The general
 statement (all `q ≥ 1`, weak convergence) is in Grimmett, *The Random-Cluster Model* (2006), Chapter
 4. -/

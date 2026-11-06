@@ -50,7 +50,8 @@ open Matrix BigOperators
 
 /-! ## A. The column-scaled augmented matrix -/
 
-/-- The augmented matrix with blocks `Λ₀`, `t U`, `V` and `0` (scaling on the column factor). -/
+/-- **Column-scaled augmented Kac-Ward matrix.**
+The augmented matrix with blocks `Λ₀`, `t U`, `V` and `0` (scaling on the column factor). -/
 noncomputable def ons_decMiddleAugmentedCol
     (L : ℕ) (decWeight : ons_DecEdge L → ℂ)
     (omega t : ℂ) (site : ZMod L × ZMod L) :
@@ -63,7 +64,8 @@ noncomputable def ons_decMiddleAugmentedCol
     (ons_decMiddleV L decWeight omega 1 1 site)
     0
 
-/-- Row weights of the column-scaled augmented matrix. -/
+/-- **Row weights of the column-scaled augmented matrix.**
+Row weights of the column-scaled augmented matrix. -/
 noncomputable def ons_decMiddleColRowWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ)
     (site : ZMod L × ZMod L) :
@@ -71,7 +73,8 @@ noncomputable def ons_decMiddleColRowWeight
   | .inl _ => 1
   | .inr _ => decWeight (ons_decChainEdge site 1)
 
-/-- Column weights of the column-scaled augmented matrix. -/
+/-- **Column weights of the column-scaled augmented matrix.**
+Column weights of the column-scaled augmented matrix. -/
 noncomputable def ons_decMiddleColColWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ) (t : ℂ) :
     ons_Dart L ⊕ Fin 2 → ℂ

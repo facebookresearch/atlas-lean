@@ -198,7 +198,7 @@ lemma icb_box_cross_cap {N m : ℕ} (hNm : N ≤ m) (β h : ℝ) (hβ : 0 ≤ β
 
 /-! ## B. Disjoint boxes and the upper bound -/
 
-/-- The vector `R e_{i₀}` of `ℤ^d`. -/
+/-- **Shift vector $R e_{i_0}$.** The vector `R e_{i₀}` of `ℤ^d`. -/
 noncomputable def icb_shiftVec {d : ℕ} (i₀ : Fin d) (R : ℤ) : Site d :=
   fun i => if i = i₀ then R else 0
 

@@ -92,7 +92,8 @@ lemma fec_invariant_decomp {μ : Measure (ConfigSpace E)} [IsFiniteMeasure μ]
 
 /-! ## B. Extreme points are ergodic -/
 
-/-- `μ` is a translation-invariant probability measure that is not a nontrivial convex combination
+/-- **Extreme point of the invariant probability measures.**
+`μ` is a translation-invariant probability measure that is not a nontrivial convex combination
 of
 two distinct translation-invariant probability measures.
 -/
@@ -103,7 +104,8 @@ def IsInvariantExtremePoint (μ : Measure (ConfigSpace E)) : Prop :=
         IsProbabilityMeasure ν₁ → IsProbabilityMeasure ν₂ →
           0 < a → 0 < b → a + b = 1 → μ = a • ν₁ + b • ν₂ → ν₁ = ν₂
 
-/-- An extreme point of the translation-invariant probability measures is ergodic. -/
+/-- **Extreme invariant measures are ergodic.**
+An extreme point of the translation-invariant probability measures is ergodic. -/
 lemma fec_isErgodic_of_invariantExtremePoint {μ : Measure (ConfigSpace E)}
     (hμ : IsInvariantExtremePoint (G := G) μ) :
     IsErgodic (G := G) μ := by

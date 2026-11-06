@@ -128,10 +128,12 @@ lemma ghsL_pair_of_duplicate_cov_nonpos (β h : ℝ) (o x y : V)
 
 /-! ## A. Agreement sets -/
 
-/-- The agreement configuration of `a` and `b`: `true` exactly at the sites where they agree. -/
+/-- **Agreement configuration of two spin configurations.**
+The agreement configuration of `a` and `b`: `true` exactly at the sites where they agree. -/
 def ghsLAgreement (a b : ConfigSpace V) : ConfigSpace V := fun v => decide (a v = b v)
 
-/-- The configuration that agrees with `a` where `q` is `true` and disagrees where `q` is
+/-- **Mate of a configuration over an agreement pattern.**
+The configuration that agrees with `a` where `q` is `true` and disagrees where `q` is
 `false`. -/
 def ghsLMate (q a : ConfigSpace V) : ConfigSpace V := fun v => if q v then a v else !a v
 
@@ -161,7 +163,8 @@ lemma ghsL_tvar_mate (q a : ConfigSpace V) (v : V) :
   unfold tvar ghsLMate spin
   by_cases hq : q v <;> cases ha : a v <;> norm_num [hq, ha]
 
-/-- The set of sites where `q` is `true`. -/
+/-- **Set of sites where an agreement configuration is true.**
+The set of sites where `q` is `true`. -/
 def ghsLAgreeFinset (q : ConfigSpace V) : Finset V :=
   Finset.univ.filter (fun v => q v = true)
 
@@ -242,14 +245,16 @@ lemma ghsL_spinSum_split (q a : ConfigSpace V) :
 
 /-! ## B. Splitting along the agreement set -/
 
-/-- The Boltzmann weight, with couplings `2β` and field `2βh`, of `a` on the subgraph induced by
+/-- **Agreement-set Boltzmann weight with doubled couplings and field.**
+The Boltzmann weight, with couplings `2β` and field `2βh`, of `a` on the subgraph induced by
 the agreement set of `q`. -/
 noncomputable def ghsLTWeight (β h : ℝ) (q a : ConfigSpace V) : ℝ :=
   Real.exp (2 * β *
     ((∑ e ∈ ghsvp_vertexEdges G.edgeFinset (ghsLAgreeFinset q), bond a e)
       + h * ∑ v ∈ ghsLAgreeFinset q, spin a v))
 
-/-- The zero-field Boltzmann weight, with couplings `2β`, of `a` on the subgraph induced by the
+/-- **Zero-field disagreement-set Boltzmann weight.**
+The zero-field Boltzmann weight, with couplings `2β`, of `a` on the subgraph induced by the
 disagreement set of `q`. -/
 noncomputable def ghsLUWeight (β : ℝ) (q a : ConfigSpace V) : ℝ :=
   Real.exp (2 * β *
@@ -278,7 +283,8 @@ lemma ghsL_duplicateWeight_eq_tWeight_mul_uWeight (β h : ℝ)
       rw [hb, hs]
       ring
 
-/-- Configurations split into their restrictions to the agreement and disagreement sets of `q`. -/
+/-- **Splitting a configuration along the agreement set.**
+Configurations split into their restrictions to the agreement and disagreement sets of `q`. -/
 def ghsLSplitEquiv (q : ConfigSpace V) :
     ConfigSpace V ≃
       ((v : {v : V // q v = true}) → Bool) ×
@@ -316,12 +322,14 @@ lemma ghsL_split_cross_product (q : ConfigSpace V)
   simp_rw [ghsL_split_sum_product]
   ring
 
-/-- The configuration with given spins on the agreement set of `q` and `false` elsewhere. -/
+/-- **Completion of agreement-set spins to a full configuration.**
+The configuration with given spins on the agreement set of `q` and `false` elsewhere. -/
 def ghsLTComplete (q : ConfigSpace V)
     (st : (v : {v : V // q v = true}) → Bool) : ConfigSpace V :=
   (ghsLSplitEquiv q).symm (st, fun _ => false)
 
-/-- The configuration with given spins on the disagreement set of `q` and `false` elsewhere. -/
+/-- **Completion of disagreement-set spins to a full configuration.**
+The configuration with given spins on the disagreement set of `q` and `false` elsewhere. -/
 def ghsLUComplete (q : ConfigSpace V)
     (su : (v : {v : V // ¬ q v = true}) → Bool) : ConfigSpace V :=
   (ghsLSplitEquiv q).symm (fun _ => false, su)
@@ -416,7 +424,8 @@ lemma ghsL_uvar_mul_split (q a : ConfigSpace V) (o x : V) :
 
 /-! ## C. Fibres of the agreement map -/
 
-/-- The change of variables `(a, b) ↦ (agreement of a and b, a)` on pairs of configurations. -/
+/-- **Change of variables from replica pairs to agreement and first copy.**
+The change of variables `(a, b) ↦ (agreement of a and b, a)` on pairs of configurations. -/
 def ghsLXnorEquiv :
     (ConfigSpace V × ConfigSpace V) ≃ (ConfigSpace V × ConfigSpace V) where
   toFun p := (ghsLAgreement p.1 p.2, p.1)
@@ -444,26 +453,31 @@ lemma ghsL_sum_pair_xnor (F : ConfigSpace V → ConfigSpace V → ℝ) :
       Fintype.sum_prod_type (fun qa : ConfigSpace V × ConfigSpace V =>
         F qa.2 (ghsLMate qa.1 qa.2))
 
-/-- The two-replica weight of `a` and its mate in the fibre over the agreement configuration `q`. -/
+/-- **Two-replica weight in an agreement fibre.**
+The two-replica weight of `a` and its mate in the fibre over the agreement configuration `q`. -/
 noncomputable def ghsLFibreWeight (β h : ℝ) (q a : ConfigSpace V) : ℝ :=
   isingWeight G β h a * isingWeight G β h (ghsLMate q a)
 
-/-- The total two-replica weight of the fibre over `q`. -/
+/-- **Total two-replica weight of an agreement fibre.**
+The total two-replica weight of the fibre over `q`. -/
 noncomputable def ghsLFibreMass (β h : ℝ) (q : ConfigSpace V) : ℝ :=
   ∑ a : ConfigSpace V, ghsLFibreWeight G β h q a
 
-/-- The two-replica weight of the fibre over `q`, integrated against `F`. -/
+/-- **Fibre weight integrated against an observable.**
+The two-replica weight of the fibre over `q`, integrated against `F`. -/
 noncomputable def ghsLFibreNumerator (β h : ℝ)
     (F : ConfigSpace V → ConfigSpace V → ℝ) (q : ConfigSpace V) : ℝ :=
   ∑ a : ConfigSpace V,
     ghsLFibreWeight G β h q a * F a (ghsLMate q a)
 
-/-- The conditional two-replica expectation of `F` given the agreement configuration `q`. -/
+/-- **Conditional two-replica expectation given the agreement.**
+The conditional two-replica expectation of `F` given the agreement configuration `q`. -/
 noncomputable def ghsLFibreExpectation (β h : ℝ)
     (F : ConfigSpace V → ConfigSpace V → ℝ) (q : ConfigSpace V) : ℝ :=
   ghsLFibreNumerator G β h F q / ghsLFibreMass G β h q
 
-/-- The probability that two independent replicas have agreement configuration `q`. -/
+/-- **Law of the agreement configuration of two replicas.**
+The probability that two independent replicas have agreement configuration `q`. -/
 noncomputable def ghsLAgreementProb (β h : ℝ) (q : ConfigSpace V) : ℝ :=
   ghsLFibreMass G β h q / (isingZ G β h) ^ 2
 
@@ -659,21 +673,25 @@ lemma ghsL_fkg_antitone_monotone {π : ConfigSpace V → ℝ}
 
 /-! ## D. Fibre expectations -/
 
-/-- The conditional expectation `E[u_o u_x | q]` of the rotated variables. -/
+/-- **Conditional expectation of $u_o u_x$ given the agreement.**
+The conditional expectation `E[u_o u_x | q]` of the rotated variables. -/
 noncomputable def ghsLFibreUU (β h : ℝ) (o x : V) (q : ConfigSpace V) : ℝ :=
   ghsLFibreExpectation G β h (fun a b => uvar a b o * uvar a b x) q
 
-/-- The conditional expectation `E[t_y | q]` of the rotated variable. -/
+/-- **Conditional expectation of $t_y$ given the agreement.**
+The conditional expectation `E[t_y | q]` of the rotated variable. -/
 noncomputable def ghsLFibreT (β h : ℝ) (y : V) (q : ConfigSpace V) : ℝ :=
   ghsLFibreExpectation G β h (fun a b => tvar a b y) q
 
-/-- The zero-field expectation on the subgraph induced by the disagreement set of `q`. -/
+/-- **Zero-field expectation on the disagreement set.**
+The zero-field expectation on the subgraph induced by the disagreement set of `q`. -/
 noncomputable def ghsLUExpectation (β : ℝ) (q : ConfigSpace V)
     (F : ConfigSpace V → ℝ) : ℝ :=
   (∑ a : ConfigSpace V, ghsLUWeight G β q a * F a) /
     ∑ a : ConfigSpace V, ghsLUWeight G β q a
 
-/-- The expectation with field on the subgraph induced by the agreement set of `q`. -/
+/-- **Expectation with field on the agreement set.**
+The expectation with field on the subgraph induced by the agreement set of `q`. -/
 noncomputable def ghsLTExpectation (β h : ℝ) (q : ConfigSpace V)
     (F : ConfigSpace V → ℝ) : ℝ :=
   (∑ a : ConfigSpace V, ghsLTWeight G β h q a * F a) /
@@ -833,7 +851,8 @@ lemma ghsLFibreT_eq_tExpectation (β h : ℝ) (y : V) (q : ConfigSpace V) :
 
 /-! ## E. Monotonicity of the fibre expectations -/
 
-/-- The field weight `exp (2βh ∑_{v ∉ q} σ_v(a))` of the disagreement set. -/
+/-- **Field weight of the disagreement set.**
+The field weight `exp (2βh ∑_{v ∉ q} σ_v(a))` of the disagreement set. -/
 noncomputable def ghsLOutFieldWeight (β h : ℝ) (q a : ConfigSpace V) : ℝ :=
   Real.exp (2 * β * h * ∑ v ∈ (ghsLAgreeFinset q)ᶜ, spin a v)
 
@@ -953,7 +972,8 @@ lemma ghsLFibreT_eq_agreementMag (β h : ℝ) (y : V) (q : ConfigSpace V) :
 
 /-! ## F. Factorization and the FKG argument -/
 
-/-- Conditioned on the agreement configuration, `u_o u_x` and `t_y` are uncorrelated. -/
+/-- **Fibre factorization property for $u_o u_x$ and $t_y$.**
+Conditioned on the agreement configuration, `u_o u_x` and `t_y` are uncorrelated. -/
 def GHSLebowitzFibreFactorization (β h : ℝ) (o x y : V) : Prop :=
   ∀ q : ConfigSpace V,
     ghsLFibreExpectation G β h
@@ -1087,7 +1107,8 @@ lemma ghsL_pair_of_vertexPartition (β h c : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h
     (ghsLFibreUU_antitone_of_eq G β h hβ o x huu)
     (ghsLFibreT_monotone_of_eq G β h hβ hh y ht)
 
-/-- The law of the agreement configuration satisfies the FKG lattice condition. -/
+/-- **FKG lattice condition for the agreement law when $\beta, h \ge 0$.**
+The law of the agreement configuration satisfies the FKG lattice condition. -/
 lemma ghsLAgreementProb_fkg (β h : ℝ) (hβ : 0 ≤ β) (hh : 0 ≤ h) :
     FKGLatticeCondition (ghsLAgreementProb G β h) := by
   apply ghsLAgreementProb_fkg_of_subsetMass_scale G β h

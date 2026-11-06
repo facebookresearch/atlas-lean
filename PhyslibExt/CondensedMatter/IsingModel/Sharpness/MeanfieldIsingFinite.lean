@@ -65,7 +65,8 @@ open Ising StatMech.Lattice Percolation FieldGhostDict
 
 /-! ## A. Cut sets in the box -/
 
-/-- The sites of `ℤ^d` underlying a set `T` of sites of `Λ_n`. -/
+/-- **Lattice sites underlying a set of box sites.**
+The sites of `ℤ^d` underlying a set `T` of sites of `Λ_n`. -/
 noncomputable def sctCutSites {d n : ℕ} (T : Finset (sctBox d n)) :
     Finset (Site d) :=
   T.image Subtype.val
@@ -83,7 +84,8 @@ lemma mem_sctCutSites {d n : ℕ} {T : Finset (sctBox d n)} {x : sctBox d n} :
   · intro hx
     exact Finset.mem_image.mpr ⟨x, hx, rfl⟩
 
-/-- The identification of `T` with `sctCutSites T`. -/
+/-- **Identification of a box cut set with its lattice sites.**
+The identification of `T` with `sctCutSites T`. -/
 noncomputable def sctCutVertexEquiv {d n : ℕ} (T : Finset (sctBox d n)) :
     {x : sctBox d n // x ∈ T} ≃ {z : Site d // z ∈ sctCutSites T} :=
   Equiv.ofBijective
@@ -161,13 +163,15 @@ lemma sct_corrOriginInner_origin {d n : ℕ} (beta : ℝ)
 
 /-! ## B. Cut masses and bond terms -/
 
-/-- The cut mass of `T` in `Λ_n` with the field ghost as root. -/
+/-- **Cut mass of a box set rooted at the field ghost.**
+The cut mass of `T` in `Λ_n` with the field ghost as root. -/
 noncomputable def sctCurrentCutMass (d : ℕ) (beta h : ℝ) (n : ℕ)
     (T : Finset (sctBox d n)) : ℝ :=
   isingCutMass (withGhost (sctBoxGraph d n)) beta
     (ghostCoupling h beta (fun _ => 1)) none (T.map someEmb)
 
-/-- The sum over cut sets `T ∋ 0, x` with `y ∉ T` of `⟨σ_0σ_x⟩_T` times the cut mass of `T`. -/
+/-- **Oriented cut mass over cuts $T \ni 0, x$ with $y \notin T$.**
+The sum over cut sets `T ∋ 0, x` with `y ∉ T` of `⟨σ_0σ_x⟩_T` times the cut mass of `T`. -/
 noncomputable def sctOrientedCutMass (d : ℕ) (beta h : ℝ) (n : ℕ)
     (x y : sctBox d n) : ℝ :=
   ∑ T : Finset (sctBox d n),
@@ -403,7 +407,8 @@ lemma sct_incidentBondDelta_bound {d n : ℕ} (beta h : ℝ)
     _ ≤ Zinv * (sctOriginMag d beta h n *
         HcovAssembly.hcaBondDelta K beta h o s(o, y)) := hscaled
 
-/-- The symmetrized cut mass `sctOrientedCutMass x y + sctOrientedCutMass y x` of an edge. -/
+/-- **Symmetrized cut mass of an edge.**
+The symmetrized cut mass `sctOrientedCutMass x y + sctOrientedCutMass y x` of an edge. -/
 noncomputable def sctEdgeCutMass (d : ℕ) (beta h : ℝ) (n : ℕ) :
     Sym2 (sctBox d n) → ℝ :=
   Sym2.lift ⟨fun x y =>
@@ -498,7 +503,8 @@ lemma sct_sum_bondDelta_bound {d n : ℕ} (beta h : ℝ)
 
 /-! ## C. Boundary correlations -/
 
-/-- For an edge crossing the cut `T`, the correlation `⟨σ_0σ_x⟩_T` at its endpoint `x ∈ T`; zero
+/-- **Boundary correlation of an edge crossing a cut.**
+For an edge crossing the cut `T`, the correlation `⟨σ_0σ_x⟩_T` at its endpoint `x ∈ T`; zero
 otherwise. -/
 noncomputable def sctEdgeBoundaryCorr {d n : ℕ} (beta : ℝ)
     (T : Finset (sctBox d n)) : Sym2 (sctBox d n) → ℝ :=
@@ -509,7 +515,8 @@ noncomputable def sctEdgeBoundaryCorr {d n : ℕ} (beta : ℝ)
       intro x y
       by_cases hx : x ∈ T <;> by_cases hy : y ∈ T <;> simp [hx, hy]⟩
 
-/-- The sum of `sctEdgeBoundaryCorr` over the edges of `Λ_n`. -/
+/-- **Internal boundary correlation of a cut in the box.**
+The sum of `sctEdgeBoundaryCorr` over the edges of `Λ_n`. -/
 noncomputable def sctInternalBoundaryCorr (d : ℕ) (beta : ℝ) (n : ℕ)
     (T : Finset (sctBox d n)) : ℝ :=
   ∑ e ∈ (sctBoxGraph d n).edgeFinset, sctEdgeBoundaryCorr beta T e
@@ -562,7 +569,8 @@ lemma sctCutSites_subset_box {d n : ℕ} (T : Finset (sctBox d n)) :
   obtain ⟨x, _, rfl⟩ := hz
   exact x.2
 
-/-- A site of `ℤ^d` as a site of `Λ_n` (the origin if it lies outside). -/
+/-- **Lattice site as a box site, defaulting to the origin.**
+A site of `ℤ^d` as a site of `Λ_n` (the origin if it lies outside). -/
 noncomputable def sctBoxize (d n : ℕ) (z : Site d) : sctBox d n :=
   if hz : z ∈ box d n then ⟨z, hz⟩ else sctBoxOrigin d n
 
@@ -571,7 +579,7 @@ lemma sctBoxize_val {d n : ℕ} {z : Site d} (hz : z ∈ box d n) :
     (sctBoxize d n z).1 = z := by
   simp [sctBoxize, hz]
 
-/-- An edge has exactly one endpoint in `T`. -/
+/-- **Edge with exactly one endpoint in a cut set.** An edge has exactly one endpoint in `T`. -/
 def sctCrossesCut {d n : ℕ} (T : Finset (sctBox d n)) :
     Sym2 (sctBox d n) → Prop :=
   Sym2.lift ⟨fun x y => (x ∈ T ∧ y ∉ T) ∨ (y ∈ T ∧ x ∉ T), by
@@ -694,7 +702,8 @@ lemma sctInternalBoundaryCorr_eq_ambient {d n : ℕ} (beta : ℝ)
       simp [i, sctEdgeBoundaryCorr, hxT, hyT, sctBoxize_val h1box]
   rw [hrestrict, ← hbij]
 
-/-- The sum of `⟨σ_0σ_x⟩_T` over boundary edges `(x, y)` of `T` with `y ∉ Λ_n`. -/
+/-- **External boundary correlation of a cut, over edges leaving the box.**
+The sum of `⟨σ_0σ_x⟩_T` over boundary edges `(x, y)` of `T` with `y ∉ Λ_n`. -/
 noncomputable def sctExternalBoundaryCorr (d : ℕ) (beta : ℝ) (n : ℕ)
     (T : Finset (sctBox d n)) : ℝ :=
   ∑ e ∈ (boundaryEdges d (sctCutSites T)).filter
@@ -759,7 +768,8 @@ lemma sct_sum_currentCutMass {d n : ℕ} (beta h : ℝ) :
   rw [hspin] at hs
   simpa [sctCurrentCutMass, sctOriginMag, sctBoxMag] using hs
 
-/-- The boundary error `∑_{T ∋ 0}` (external boundary correlation of `T`) × (cut mass of `T`). -/
+/-- **Boundary error of the finite-volume mean-field inequality.**
+The boundary error `∑_{T ∋ 0}` (external boundary correlation of `T`) × (cut mass of `T`). -/
 noncomputable def sctCurrentBoundaryError (d : ℕ) (beta h : ℝ) (n : ℕ) : ℝ :=
   ∑ T : Finset (sctBox d n),
     if sctBoxOrigin d n ∈ T then
@@ -852,7 +862,8 @@ lemma sct_internalBoundaryMass_lower {d n : ℕ} (beta h infphi : ℝ)
         ring
       · simp [ho]
 
-/-- The finite-volume mean-field inequality: for `β, h > 0` and `inf_S φ_β(S) ≥ φ₀`, `∂_β
+/-- **Finite-volume mean-field inequality for the Ising model.**
+The finite-volume mean-field inequality: for `β, h > 0` and `inf_S φ_β(S) ≥ φ₀`, `∂_β
 ⟨σ_0⟩²_{Λ_n} ≥ 2 c_n ((φ₀/β)(1 - ⟨σ_0⟩²) - ε_n)`. Reference: H. Duminil-Copin, V. Tassion, "A new
 proof of the sharpness of the phase transition for Bernoulli percolation and the Ising model", Comm.
 Math. Phys. 343 (2016) 725–745. -/
@@ -931,7 +942,8 @@ lemma sct_finite_meanfield_inequality {d n : ℕ} (beta h infphi : ℝ)
 
 /-! ## E. The boundary error -/
 
-/-- Pairs `(x, y)` with `x ∈ Λ_n` and `y` a lattice neighbour of `x` outside `Λ_n`. -/
+/-- **Pairs of a box site and an outside lattice neighbour.**
+Pairs `(x, y)` with `x ∈ Λ_n` and `y` a lattice neighbour of `x` outside `Λ_n`. -/
 noncomputable def sctExternalBoxPairs (d n : ℕ) :
     Finset (sctBox d n × Site d) :=
   (Finset.univ : Finset (sctBox d n)).biUnion fun x =>

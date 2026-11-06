@@ -57,14 +57,16 @@ variable {L : ℕ} [NeZero L]
 
 /-! ## A. Buckets -/
 
-/-- The total Kac-Ward weight of closed walks of length `n + 1` that visit `e` but not its reverse.
+/-- **Kac-Ward bucket: walks through a dart, not its reverse.**
+The total Kac-Ward weight of closed walks of length `n + 1` that visit `e` but not its reverse.
 -/
 noncomputable def ons_bucketE (L : ℕ) [NeZero L] (x ω : ℂ) (e : ons_Dart L) (n : ℕ) : ℂ :=
   ∑ v ∈ Finset.univ.filter (fun v : Fin (n + 1) → ons_Dart L =>
       (∃ i, v i = e) ∧ ¬ (∃ j, v j = ons_dartRev L e)),
     ons_loopWeight (ons_KWmat L x ω) v
 
-/-- The total Kac-Ward weight of closed walks of length `n + 1` that visit neither `e` nor its
+/-- **Kac-Ward bucket: walks avoiding a dart and its reverse.**
+The total Kac-Ward weight of closed walks of length `n + 1` that visit neither `e` nor its
 reverse. -/
 noncomputable def ons_bucketN (L : ℕ) [NeZero L] (x ω : ℂ) (e : ons_Dart L) (n : ℕ) : ℂ :=
   ∑ v ∈ Finset.univ.filter (fun v : Fin (n + 1) → ons_Dart L =>

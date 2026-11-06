@@ -79,10 +79,12 @@ variable {U : Type*} [Fintype U] [DecidableEq U] (K₀ : SimpleGraph U) [Decidab
 
 /-! ## A. Partitioning a graph -/
 
-/-- The graph induced by `K₀` on `{x | P x}`. -/
+/-- **Graph induced on the vertices satisfying a predicate.**
+The graph induced by `K₀` on `{x | P x}`. -/
 abbrev agl_left : SimpleGraph {x // P x} := K₀.comap (Subtype.val)
 
-/-- The graph induced by `K₀` on `{x | ¬ P x}`. -/
+/-- **Graph induced on the vertices failing a predicate.**
+The graph induced by `K₀` on `{x | ¬ P x}`. -/
 abbrev agl_right : SimpleGraph {x // ¬ P x} := K₀.comap (Subtype.val)
 
 /-- Classical decidability of adjacency in `agl_left`. -/
@@ -91,10 +93,12 @@ noncomputable instance : DecidableRel (agl_left K₀ P).Adj := Classical.decRel 
 /-- Classical decidability of adjacency in `agl_right`. -/
 noncomputable instance : DecidableRel (agl_right K₀ P).Adj := Classical.decRel _
 
-/-- The identification `{P} ⊕ {¬P} ≃ U`. -/
+/-- **Vertex set as a disjoint sum of a subset and its complement.**
+The identification `{P} ⊕ {¬P} ≃ U`. -/
 noncomputable def agl_sumEquiv : ({x // P x} ⊕ {x // ¬ P x}) ≃ U := Equiv.sumCompl P
 
-/-- `K₀` transported to `{P} ⊕ {¬P}`. -/
+/-- **Graph transported to the sum of a subset and its complement.**
+`K₀` transported to `{P} ⊕ {¬P}`. -/
 noncomputable def agl_glueGraph : SimpleGraph ({x // P x} ⊕ {x // ¬ P x}) :=
   K₀.comap (agl_sumEquiv P)
 
@@ -133,7 +137,8 @@ lemma agl_partitionCrossInterface :
     rw [agl_glueGraph_adj] at hce
     simpa [agl_right, comap_adj] using hce
 
-/-- `K₀` is isomorphic to its transport `agl_glueGraph`. -/
+/-- **Isomorphism between a graph and its transported copy.**
+`K₀` is isomorphic to its transport `agl_glueGraph`. -/
 noncomputable def agl_iso : K₀ ≃g agl_glueGraph K₀ P where
   toEquiv := (agl_sumEquiv P).symm
   map_rel_iff' := by
@@ -141,7 +146,8 @@ noncomputable def agl_iso : K₀ ≃g agl_glueGraph K₀ P where
     rw [agl_glueGraph_adj]
     simp only [Equiv.apply_symm_apply]
 
-/-- The number of edges of `K₀` joining `{P}` to `{¬P}`. -/
+/-- **Number of edges between a vertex subset and its complement.**
+The number of edges of `K₀` joining `{P}` to `{¬P}`. -/
 noncomputable def agl_interfaceCard : ℕ :=
   (fis_interface (agl_left K₀ P) (agl_right K₀ P) (agl_glueGraph K₀ P)).card
 
@@ -170,7 +176,8 @@ lemma agl_nn_translate (d : ℕ) (v x y : Site d) :
 
 variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 
-/-- Translating vertex embeddings by `v` gives isomorphic induced lattice graphs. -/
+/-- **Isomorphism of translated induced lattice graphs.**
+Translating vertex embeddings by `v` gives isomorphic induced lattice graphs. -/
 noncomputable def agl_transBlockIso (d : ℕ) (v : Site d) (f : V → Site d) (g : W → Site d)
     (φ : V ≃ W) (hfg : ∀ x, g (φ x) = f x + v) :
     (hypercubicLattice d).comap f ≃g (hypercubicLattice d).comap g where
@@ -187,7 +194,8 @@ lemma agl_fkZ_translate (d : ℕ) (v : Site d) (f : V → Site d) (g : W → Sit
     fkZ ((hypercubicLattice d).comap f) p q = fkZ ((hypercubicLattice d).comap g) p q :=
   fsm_fkZ_iso _ _ (agl_transBlockIso d v f g φ hfg) p q
 
-/-- A translated copy of `Λ_m` inside `{P}` induces a graph isomorphic to `Λ_m`. -/
+/-- **Isomorphism of a box with its translated copy in the predicate part.**
+A translated copy of `Λ_m` inside `{P}` induces a graph isomorphic to `Λ_m`. -/
 noncomputable def agl_leftBlockIso {d : ℕ} (N m : ℕ) (P : boxVerts d N → Prop) [DecidablePred P]
     (v : Site d) (φ : boxVerts d m ≃ {x // P x})
     (hφ : ∀ y : boxVerts d m, ((φ y : boxVerts d N) : Site d) = (y : Site d) + v) :
@@ -208,7 +216,8 @@ lemma agl_left_block_fkZ_eq {d : ℕ} (N m : ℕ) (P : boxVerts d N → Prop) [D
   (fsm_fkZ_iso (boxGraph d m) (agl_left (boxGraph d N) P)
     (agl_leftBlockIso N m P v φ hφ) p q).symm
 
-/-- A translated copy of `Λ_m` inside `{¬P}` induces a graph isomorphic to `Λ_m`. -/
+/-- **Isomorphism of a box with its translated copy in the complement part.**
+A translated copy of `Λ_m` inside `{¬P}` induces a graph isomorphic to `Λ_m`. -/
 noncomputable def agl_rightBlockIso {d : ℕ} (N m : ℕ) (P : boxVerts d N → Prop) [DecidablePred P]
     (v : Site d) (φ : boxVerts d m ≃ {x // ¬ P x})
     (hφ : ∀ y : boxVerts d m, ((φ y : boxVerts d N) : Site d) = (y : Site d) + v) :
@@ -271,7 +280,8 @@ lemma agl_perVolume_converges (g : ℕ → ℝ) (K : ℕ → ℕ) (δ osc : ℕ 
   obtain ⟨L, hL⟩ := bpv_almost_mono_converges (fun j => g (K j)) δ hδ hsum hmono hbdd
   exact ⟨L, agl_full_from_subseq g K L hL bj hbj osc hosc hsand⟩
 
-/-- The scales `K_j = 2^{j+1} - 1`, with `K_0 = 1` and `K_{j+1} = 2 K_j + 1`. -/
+/-- **Scales $K_j = 2^{j+1} - 1$.**
+The scales `K_j = 2^{j+1} - 1`, with `K_0 = 1` and `K_{j+1} = 2 K_j + 1`. -/
 def agl_K (j : ℕ) : ℕ := 2 ^ (j + 1) - 1
 
 @[simp] lemma agl_K_zero : agl_K 0 = 1 := rfl
@@ -303,11 +313,12 @@ variable (d : ℕ)
 
 /-! ## D. Box ambient tilted log normalizers along `K_j` -/
 
-/-- The negative log ambient normalizer of `Λ_n`; the same as `bxt_ambientNegLogZ`. -/
+/-- **Negative log ambient normalizer of a box.**
+The negative log ambient normalizer of `Λ_n`; the same as `bxt_ambientNegLogZ`. -/
 noncomputable def agl_ambientNegLogZ (t : ℝ) (n : ℕ) : ℝ :=
   -Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2)
 
-/-- The number of edges of `Λ_n`; the same as `bxt_E`. -/
+/-- **Number of edges of a box.** The number of edges of `Λ_n`; the same as `bxt_E`. -/
 noncomputable def agl_E (n : ℕ) : ℝ := ((boxGraph d n).edgeFinset.card : ℝ)
 
 lemma agl_ambientTiltLogZ_eq (t : ℝ) (n : ℕ) :
@@ -316,7 +327,8 @@ lemma agl_ambientTiltLogZ_eq (t : ℝ) (n : ℕ) :
   unfold ivp2_ambientTiltLogZ agl_ambientNegLogZ agl_E
   ring
 
-/-- Doubling bound along the scales `K_j`: `u(K_{j+1}) ≤ 2^d u(K_j) + I_j (-log(1 - p))` with
+/-- **Additive doubling bound along the scales $K_j$.**
+Doubling bound along the scales `K_j`: `u(K_{j+1}) ≤ 2^d u(K_j) + I_j (-log(1 - p))` with
 `|2^d E(K_j) - E(K_{j+1})| ≤ I_j` and `∑_j I_j / E(K_{j+1}) < ∞`.
 -/
 def agl_AdditiveDoublingBound (t : ℝ) : Prop :=
@@ -428,7 +440,8 @@ lemma agl_rightBlock_recursion_satisfiable (t : ℝ) (K : ℕ) (P : boxVerts d (
     rw [← div_le_iff₀ hclog]; exact hge
   linarith
 
-/-- The doubling bound along `K_j`, a uniform bound on the ambient per-edge values
+/-- **Assumed doubling, boundedness and oscillation data along $K_j$.**
+The doubling bound along `K_j`, a uniform bound on the ambient per-edge values
 `agl_ambientNegLogZ / agl_E` at those scales, and vanishing oscillation of `ivp2_ambientTiltLogZ`
 between `Λ_n` and `Λ_{K_{b(n)}}`. These are assumptions, not a box-convergence result. -/
 def agl_AdditiveBoxFeketeData (t : ℝ) : Prop :=

@@ -66,7 +66,7 @@ lemma poc_cyclesAtLen_card_le_real (ℓ : ℕ) :
 
 /-! ## A. The doubled Peierls series -/
 
-/-- Twice the Peierls series. -/
+/-- **Twice the Peierls series.** Twice the Peierls series. -/
 noncomputable def twoPeierlsBound (d : ℕ) (β : ℝ) : ℝ := 2 * peierlsBound d β
 
 lemma poc_twoPeierlsBound_nonneg (d : ℕ) (β : ℝ) : 0 ≤ twoPeierlsBound d β := by
@@ -118,11 +118,13 @@ lemma poc_probContourCircuit_le (n : ℕ) (K : Set (Site d)) (hK : K ⊆ box d n
 
 /-! ## B. Outer circuits -/
 
-/-- An assignment of a set of sites (its interior) to every closed walk of `ℤ²`. -/
+/-- **Assignment of interiors to closed walks of $\mathbb{Z}^2$.**
+An assignment of a set of sites (its interior) to every closed walk of `ℤ²`. -/
 def InteriorAssignment : Type :=
   (u : Site 2) → (hypercubicLattice 2).Walk u u → Finset (Site 2)
 
-/-- Every cluster through the origin is the interior of one of its closed boundary circuits, for
+/-- **Outer contour map: clusters as interiors of boundary circuits.**
+Every cluster through the origin is the interior of one of its closed boundary circuits, for
 some interior assignment. -/
 def OuterContourMap (n : ℕ) : Prop :=
   ∃ interiorOf : InteriorAssignment,
@@ -137,12 +139,14 @@ def OuterContourMap (n : ℕ) : Prop :=
         u ∈ anchorFinset ℓ ∧ γ.length = ℓ ∧ γ.IsCycle ∧
         ContourEvent (↑(interiorOf u γ)) (bondFinsetTouch 2 n) (glue (plusField 2) τ))
 
-/-- The closed walks of `ℤ²` of length at most `M` based near the origin. -/
+/-- **Cycles of length less than $M$ based near the origin.**
+The closed walks of `ℤ²` of length at most `M` based near the origin. -/
 noncomputable def poc_circuitFamily (M : ℕ) :
     Finset (Σ _ℓ : ℕ, Σ u : Site 2, (hypercubicLattice 2).Walk u u) :=
   (Finset.range M).sigma (fun ℓ => Percolation.cyclesAtLen ℓ)
 
-/-- The Boltzmann weight attached to a closed walk in the circuit sum. -/
+/-- **Boltzmann weight of a closed walk in the circuit sum.**
+The Boltzmann weight attached to a closed walk in the circuit sum. -/
 noncomputable def poc_circuitSummand (n : ℕ) (β : ℝ) (interiorOf : InteriorAssignment)
     (σ : Σ _ℓ : ℕ, Σ u : Site 2, (hypercubicLattice 2).Walk u u) : ℝ :=
   probContour (↑(interiorOf σ.2.1 σ.2.2)) (plusField 2) n (bondFinsetTouch 2 n) β

@@ -130,7 +130,8 @@ lemma ahd_closure_iff_hdom (ends : ι → Sym2 V) (M : Finset (Finset ι))
 
 /-! ## C. A counterexample on the triangle -/
 
-/-- The three edges `{0, 1}`, `{1, 2}`, `{0, 2}` of the triangle on `Fin 3`. -/
+/-- **Edges of the triangle on three vertices.**
+The three edges `{0, 1}`, `{1, 2}`, `{0, 2}` of the triangle on `Fin 3`. -/
 def ahd_triEnds : Fin 3 → Sym2 (Fin 3)
   | 0 => s(0, 1)
   | 1 => s(1, 2)
@@ -161,7 +162,8 @@ lemma ahd_tri_mass_pos :
     rw [Finset.mem_filter, Finset.mem_powerset]
     exact ⟨Finset.Subset.refl _, rfl⟩⟩
 
-/-- The domination condition fails for the single current through all edges of the triangle. -/
+/-- **Domination condition fails on the triangle.**
+The domination condition fails for the single current through all edges of the triangle. -/
 lemma ahd_hdom_refutable :
     ¬ (2 * (∑ m ∈ ({({0, 1, 2} : Finset (Fin 3))} : Finset (Finset (Fin 3))).filter
               (fun m => aie_allConn ahd_triEnds m 0 1 2),

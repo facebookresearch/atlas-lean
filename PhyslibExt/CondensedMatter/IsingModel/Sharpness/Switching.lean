@@ -69,11 +69,12 @@ variable {ι V : Type*} [DecidableEq ι] [DecidableEq V] [Fintype V] [Fintype ι
 
 /-! ## A. Degrees, sources and connectivity -/
 
-/-- The degree of `x` in the multigraph edge set `T`. -/
+/-- **Degree of a vertex in a multigraph edge set.**
+The degree of `x` in the multigraph edge set `T`. -/
 def degK (ends : ι → Sym2 V) (T : Finset ι) (x : V) : ℕ :=
   #(T.filter (fun i => x ∈ ends i))
 
-/-- The odd-degree vertices of the multigraph edge set `T`. -/
+/-- **Sources of a multigraph edge set.** The odd-degree vertices of the multigraph edge set `T`. -/
 def sources (ends : ι → Sym2 V) (T : Finset ι) : Finset V :=
   (Finset.univ : Finset V).filter (fun x => Odd (degK ends T x))
 
@@ -82,11 +83,13 @@ omit [DecidableEq ι] [Fintype ι] in
     x ∈ sources ends T ↔ Odd (degK ends T x) := by
   simp [sources]
 
-/-- `a ≠ b` are the endpoints of an edge of `K`. -/
+/-- **Adjacency through an edge of a multigraph edge set.**
+`a ≠ b` are the endpoints of an edge of `K`. -/
 def adjStep (ends : ι → Sym2 V) (K : Finset ι) (a b : V) : Prop :=
   ∃ i ∈ K, a ∈ ends i ∧ b ∈ ends i ∧ a ≠ b
 
-/-- Connectivity in `K`: the reflexive transitive closure of `adjStep`. -/
+/-- **Connectivity in a multigraph edge set.**
+Connectivity in `K`: the reflexive transitive closure of `adjStep`. -/
 def connK (ends : ι → Sym2 V) (K : Finset ι) : V → V → Prop :=
   Relation.ReflTransGen (adjStep ends K)
 
@@ -104,7 +107,7 @@ lemma connK_symm (ends : ι → Sym2 V) (K : Finset ι) {a b : V} :
   | tail _ hstep ih => exact Relation.ReflTransGen.head (adjStep_symm ends K hstep) ih
 
 open Classical in
-/-- The cluster of `u` in `K`. -/
+/-- **Cluster of a vertex in a multigraph edge set.** The cluster of `u` in `K`. -/
 noncomputable def compOf (ends : ι → Sym2 V) (K : Finset ι) (u : V) : Finset V :=
   (Finset.univ : Finset V).filter (fun x => connK ends K u x)
 
@@ -392,7 +395,8 @@ lemma switching_card (ends : ι → Sym2 V) (m : Finset ι)
     exact hconn hmono
 
 open Classical in
-/-- The switching lemma: for `m` with sources `A` and `u ≠ v`, `∑_{K ⊆ m, ∂K = A ∆ {u, v}} F(m) =
+/-- **Switching lemma for multigraph currents.**
+The switching lemma: for `m` with sources `A` and `u ≠ v`, `∑_{K ⊆ m, ∂K = A ∆ {u, v}} F(m) =
 ∑_{K ⊆ m, ∂K = A} F(m) 1_{u ↔ v in m}`. Reference: M. Aizenman, "Geometric analysis of φ⁴ fields and
 Ising models", Comm. Math. Phys. 86 (1982) 1–48; H. Duminil-Copin, "Random currents expansion of the
 Ising model", lecture notes (2016), arXiv:1607.06933. -/

@@ -56,14 +56,16 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. Spins, connection events, and connection probabilities -/
 
-/-- The Ising spin value of a two-state color: `0 ↦ -1`, `1 ↦ 1`. -/
+/-- **Ising spin value of a two-state color.**
+The Ising spin value of a two-state color: `0 ↦ -1`, `1 ↦ 1`. -/
 def isingSpin : Fin 2 → ℝ := fun a => if a = 0 then 1 else -1
 
 lemma isingSpin_mul (a b : Fin 2) :
     isingSpin a * isingSpin b = 2 * (if a = b then 1 else 0) - 1 := by
   fin_cases a <;> fin_cases b <;> norm_num [isingSpin]
 
-/-- `x` and `y` are joined by a path of open edges of `ω` in `G` (`x ↔ y`). -/
+/-- **Open connection between two vertices.**
+`x` and `y` are joined by a path of open edges of `ω` in `G` (`x ↔ y`). -/
 def Connected (ω : ConfigSpace (Sym2 V)) (x y : V) : Prop :=
   (openSub G ω).Reachable x y
 
@@ -77,14 +79,16 @@ instance instDecidablePredConnected (x y : V) :
     DecidablePred (fun ω : ConfigSpace (Sym2 V) => Connected G ω x y) :=
   fun ω => instDecidableConnected G ω x y
 
-/-- The random-cluster connection probability `φ_{G,p,q}(x ↔ y)`. -/
+/-- **Random-cluster connection probability.**
+The random-cluster connection probability `φ_{G,p,q}(x ↔ y)`. -/
 noncomputable def connProb (p q : ℝ) (x y : V) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => Connected G ω x y),
     fkProb G p q ω
 
 /-! ## B. Counting colorings that agree at two points -/
 
-/-- For `a ≠ b`, functions `C → Fin q` with `f a = f b` correspond to functions on `C \ {b}`. -/
+/-- **Functions equal at two points as functions omitting one point.**
+For `a ≠ b`, functions `C → Fin q` with `f a = f b` correspond to functions on `C \ {b}`. -/
 noncomputable def eqFunEquiv {C : Type*} [Fintype C] [DecidableEq C] (q : ℕ) (a b : C)
     (hab : a ≠ b) :
     {f : C → Fin q // f a = f b} ≃ ({c : C // c ≠ b} → Fin q) where
@@ -120,7 +124,8 @@ lemma card_eqfun_eq {C : Type*} [Fintype C] (q : ℕ) {a b : C} (hab : a = b) :
   rw [h, Nat.card_congr (Equiv.subtypeUnivEquiv (fun _ => trivial)),
     Nat.card_eq_fintype_card, Fintype.card_fun, Fintype.card_fin]
 
-/-- Colorings constant on open clusters with `σ x = σ y` correspond to colorings of the clusters
+/-- **Correspondence for cluster-constant colorings equal at two vertices.**
+Colorings constant on open clusters with `σ x = σ y` correspond to colorings of the clusters
 that agree on the clusters of `x` and `y`.
 -/
 noncomputable def constEqEquiv {q : ℕ} (ω : ConfigSpace (Sym2 V)) (x y : V) :
@@ -224,14 +229,16 @@ lemma spinProd_sum_eq (p : ℝ) (ω : ConfigSpace (Sym2 V)) (x y : V) :
     rw [hpow]
     ring
 
-/-- The Ising two-point function `⟨σ_x σ_y⟩` at bond parameter `p`, computed as the
+/-- **Ising two-point function from the Edwards–Sokal coupling.**
+The Ising two-point function `⟨σ_x σ_y⟩` at bond parameter `p`, computed as the
 Edwards–Sokal spin marginal.
 -/
 noncomputable def esTwoPoint (p : ℝ) (x y : V) : ℝ :=
   (∑ ω : ConfigSpace (Sym2 V), ∑ σ : V → Fin 2,
       esWeight G p σ ω * (isingSpin (σ x) * isingSpin (σ y))) / esZ G 2 p
 
-/-- The Ising two-point function equals the random-cluster connection probability with `q = 2`:
+/-- **Ising two-point function equals the $q = 2$ connection probability.**
+The Ising two-point function equals the random-cluster connection probability with `q = 2`:
 `⟨σ_x σ_y⟩ = φ_{p,2}(x ↔ y)` (Edwards–Sokal 1988; Grimmett, *The Random-Cluster Model*, 2006,
 Theorem 1.16).
 -/

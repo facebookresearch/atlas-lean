@@ -69,7 +69,8 @@ lemma numClusters_congr_openSub {ω ω' : ConfigSpace (Sym2 V)}
   unfold numClusters
   exact Fintype.card_congr (Equiv.cast (by rw [h]))
 
-/-- Off the edges of `G`, flipping `e` does not change the open subgraph. -/
+/-- **Toggling a non-edge leaves the open subgraph unchanged.**
+Off the edges of `G`, flipping `e` does not change the open subgraph. -/
 lemma openSub_setOpen_eq_setClosed_of_notMem {e : Sym2 V} (he : e ∉ G.edgeFinset)
     (ω : ConfigSpace (Sym2 V)) :
     openSub G (setOpen e ω) = openSub G (setClosed e ω) := by
@@ -83,7 +84,8 @@ lemma openSub_setOpen_eq_setClosed_of_notMem {e : Sym2 V} (he : e ∉ G.edgeFins
     have hne : s(a, b) ≠ e := fun h => he (by rw [SimpleGraph.mem_edgeFinset, ← h]; exact hadj)
     exact ⟨hadj, by rw [setOpen_of_ne hne]; rw [setClosed_of_ne hne] at hopen; exact hopen⟩
 
-/-- Opening an edge does not increase the number of clusters. This is a special case of
+/-- **Opening an edge does not increase the cluster count.**
+Opening an edge does not increase the number of clusters. This is a special case of
 Mathlib's `SimpleGraph.ConnectedComponent.card_le_card_of_le`, which proves it. -/
 lemma numClusters_setOpen_le (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) :
     numClusters G (setOpen e ω) ≤ numClusters G (setClosed e ω) := by
@@ -97,7 +99,8 @@ lemma numClusters_setOpen_le (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) :
   rw [hij.2] at hle
   exact le_antisymm (by simp) hle
 
-/-- Opening an edge lowers the number of clusters by at most one. -/
+/-- **Opening an edge lowers the cluster count by at most one.**
+Opening an edge lowers the number of clusters by at most one. -/
 lemma numClusters_setClosed_le_setOpen_succ (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) :
     numClusters G (setClosed e ω) ≤ numClusters G (setOpen e ω) + 1 := by
   by_cases he : e ∈ G.edgeFinset
@@ -172,7 +175,8 @@ lemma numClusters_setClosed_le_setOpen_succ (e : Sym2 V) (ω : ConfigSpace (Sym2
 
 -/
 
-/-- The Bernoulli product over the edges of `G` other than `e`. -/
+/-- **Bernoulli product over the edges other than one edge.**
+The Bernoulli product over the edges of `G` other than `e`. -/
 noncomputable def edgeRest (p : ℝ) (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   ∏ e' ∈ G.edgeFinset \ {e}, (if ω e' then p else 1 - p)
 
@@ -250,7 +254,8 @@ lemma fkWeight_hi {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
 
 -/
 
-/-- The conditional probability under `φ_{G,p,q}` that `e` is open given the states of all
+/-- **Conditional probability that an edge is open given the rest.**
+The conditional probability under `φ_{G,p,q}` that `e` is open given the states of all
 other edges: `φ(setOpen e ω) / (φ(setOpen e ω) + φ(setClosed e ω))`. -/
 noncomputable def condOpen (p q : ℝ) (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   fkProb G p q (setOpen e ω) /
@@ -289,7 +294,8 @@ lemma condOpen_eq_half {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 
 -/
 
-/-- The finite-energy constant `min (p / (p + q (1 - p))) (1 - p)`. -/
+/-- **Finite-energy constant of the random-cluster measure.**
+The finite-energy constant `min (p / (p + q (1 - p))) (1 - p)`. -/
 noncomputable def cFE (p q : ℝ) : ℝ := min (p / (p + q * (1 - p))) (1 - p)
 
 lemma cFE_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) : 0 < cFE p q := by

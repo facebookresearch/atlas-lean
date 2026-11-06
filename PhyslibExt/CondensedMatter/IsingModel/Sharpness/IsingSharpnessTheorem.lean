@@ -123,7 +123,8 @@ lemma tildeBetaCIsingSet_bddAbove (hd : 2 ≤ d) :
   rw [hzero] at hpos
   exact (lt_irrefl 0 hpos).elim
 
-/-- For `d ≥ 2` the auxiliary critical point `β̃_c(d)` is positive: `φ_β({0}) ≤ 2dβ < 1` for small
+/-- **Auxiliary critical point $\tilde\beta_c(d)$ is positive for $d \ge 2$.**
+For `d ≥ 2` the auxiliary critical point `β̃_c(d)` is positive: `φ_β({0}) ≤ 2dβ < 1` for small
 `β`. -/
 lemma tildeBetaCIsing_pos (hd : 2 ≤ d) : 0 < tildeBetaCIsing d := by
   classical
@@ -154,7 +155,8 @@ lemma tildeBetaCIsing_pos (hd : 2 ≤ d) : 0 < tildeBetaCIsing d := by
 
 /-! ## C. The sharpness theorem -/
 
-/-- Sharpness of the phase transition for the Ising model on `ℤ^d`, `d ≥ 2`: for `β ≥ β_c`, `m*(β) ≥
+/-- **Sharpness of the Ising phase transition on $\mathbb{Z}^d$, $d \ge 2$.**
+Sharpness of the phase transition for the Ising model on `ℤ^d`, `d ≥ 2`: for `β ≥ β_c`, `m*(β) ≥
 √(1 - (β_c/β)²)`; for `0 ≤ β < β_c`, the plus-state two-point function `z ↦ ⟨σ_0σ_z⟩^+_β` is
 summable and decays as `exp(-c‖z‖₁)`. Reference: H. Duminil-Copin, V. Tassion, "A new proof of the
 sharpness of the phase transition for Bernoulli percolation and the Ising model", Comm. Math. Phys.

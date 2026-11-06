@@ -58,7 +58,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Sources on the edges of a graph -/
 
-/-- The source set of a current on the edges of `G` is `Sharpness.sources G`. -/
+/-- **Sources on a graph's edge set agree with random-current sources.**
+The source set of a current on the edges of `G` is `Sharpness.sources G`. -/
 lemma sources_edgeFinset_eq (n : Current V) : sources G.edgeFinset n = Sharpness.sources G n := rfl
 
 /-! ## B. Reflection preserves split weights -/
@@ -86,7 +87,8 @@ lemma weight_reflect_split_eq (β : ℝ) (J : Sym2 V → ℝ) (m : Current V) (P
   · simp only [ite_eq_left h]; rw [Nat.choose_symm (hK e)]
   · simp only [ite_eq_right h]
 
-/-- Reflection along `P` as an involutive equivalence of the sub-currents of `m`. -/
+/-- **Reflection as an involution of the sub-currents of a current.**
+Reflection along `P` as an involutive equivalence of the sub-currents of `m`. -/
 noncomputable def reflectEquiv (m : Current V) (P : Finset (Sym2 V)) :
     {K : Current V // ∀ e, K e ≤ m e} ≃ {K : Current V // ∀ e, K e ≤ m e} where
   toFun K := ⟨reflect m P K.1, reflect_le m P K.2⟩
@@ -96,7 +98,8 @@ noncomputable def reflectEquiv (m : Current V) (P : Finset (Sym2 V)) :
 
 /-! ## C. Weighted sums over splittings -/
 
-/-- The weighted sum `F ∑_K w(K) w(m - K)` over sub-currents `K ≤ m` with sources `A`. -/
+/-- **Weighted sum over splittings with prescribed sources.**
+The weighted sum `F ∑_K w(K) w(m - K)` over sub-currents `K ≤ m` with sources `A`. -/
 noncomputable def splitWeightedSum (β : ℝ) (J : Sym2 V → ℝ) (m : Current V) (F : ℝ)
     (A : Finset V) : ℝ :=
   ∑ K : {K : Current V // ∀ e, K e ≤ m e},

@@ -64,10 +64,12 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## A. The double dual of the square lattice -/
 
-/-- The shift `x ↦ x - (1, 1)` identifying the dual of the dual lattice with `ℤ²`. -/
+/-- **Shift by $(-1, -1)$ identifying the double dual with $\mathbb{Z}^2$.**
+The shift `x ↦ x - (1, 1)` identifying the dual of the dual lattice with `ℤ²`. -/
 def phb_doubleDualShift (x : Site 2) : Site 2 := ![x 0 - 1, x 1 - 1]
 
-/-- The shift by `(-1, -1)` as an equivalence of `ℤ²`. -/
+/-- **Shift by $(-1, -1)$ as an equivalence of $\mathbb{Z}^2$.**
+The shift by `(-1, -1)` as an equivalence of `ℤ²`. -/
 def phb_doubleDualEquiv : Site 2 ≃ Site 2 where
   toFun := phb_doubleDualShift
   invFun x := ![x 0 + 1, x 1 + 1]
@@ -132,7 +134,8 @@ lemma phb_flankFaces_mem_faceBoundaryGraph_iff {K : Set (Site 2)} {x y : Site 2}
       exact h
     exact (flankFacesSym_mem_edgeSet hmem).1
 
-/-- The lattice minus the barrier edges of `K` is isomorphic, by the shift by `(-1, -1)`, to the
+/-- **Shift isomorphism: lattice minus barrier edges to face region graph.**
+The lattice minus the barrier edges of `K` is isomorphic, by the shift by `(-1, -1)`, to the
 face region graph of the face-boundary graph of `K`. -/
 noncomputable def phb_doubleDualIso (K : Set (Site 2)) :
     latticeMinusBarrier K ≃g whb_faceRegion (faceBoundaryGraph K) where
@@ -169,7 +172,8 @@ lemma phb_faceBoundaryGraph_support_finite (K : Set (Site 2)) (hK : K.Finite) :
   obtain ⟨T, hT⟩ := exists_finset_support_faceBoundaryGraph K hK
   exact T.finite_toSet.subset hT
 
-/-- The support of the face-boundary graph of a finite set `K`, as a finset. -/
+/-- **Support of the face-boundary graph of a finite set.**
+The support of the face-boundary graph of a finite set `K`, as a finset. -/
 noncomputable def phb_boundarySupport (K : Set (Site 2)) (hK : K.Finite) : Finset (Site 2) :=
   (phb_faceBoundaryGraph_support_finite K hK).toFinset
 
@@ -177,7 +181,8 @@ noncomputable def phb_boundarySupport (K : Set (Site 2)) (hK : K.Finite) : Finse
     f ∈ phb_boundarySupport K hK ↔ f ∈ (faceBoundaryGraph K).support := by
   simp [phb_boundarySupport]
 
-/-- The face-boundary graph of a finite set `K`, as a finite planar subgraph of `ℤ²`. -/
+/-- **Face-boundary graph of a finite set as a planar subgraph.**
+The face-boundary graph of a finite set `K`, as a finite planar subgraph of `ℤ²`. -/
 noncomputable def phb_planarBoundary (K : Set (Site 2)) (hK : K.Finite) :
     PlanarZ2Subgraph where
   V := (faceBoundaryGraph K).support

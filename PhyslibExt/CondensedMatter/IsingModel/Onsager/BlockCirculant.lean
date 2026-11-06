@@ -54,12 +54,14 @@ open Matrix
 
 /-! ## A. Block-circulant matrices and their symbols -/
 
-/-- The block-circulant matrix on `ℤ_n × Fin d` with block `v (p - q)` in position `(p, q)`. -/
+/-- **Block-circulant matrix over ℤ_n.**
+The block-circulant matrix on `ℤ_n × Fin d` with block `v (p - q)` in position `(p, q)`. -/
 def ons_blockCirculant (n d : ℕ) (v : ZMod n → Matrix (Fin d) (Fin d) ℂ) :
     Matrix ((ZMod n) × Fin d) ((ZMod n) × Fin d) ℂ :=
   fun p q => v (p.1 - q.1) p.2 q.2
 
-/-- The Fourier symbol `∑_k ω ^ (k j) • v k` of a block-circulant matrix at frequency `j`. -/
+/-- **Fourier symbol of a block-circulant matrix.**
+The Fourier symbol `∑_k ω ^ (k j) • v k` of a block-circulant matrix at frequency `j`. -/
 noncomputable def ons_blockSymbol (n d : ℕ) [NeZero n] (ω : ℂ)
     (v : ZMod n → Matrix (Fin d) (Fin d) ℂ)
     (j : ZMod n) : Matrix (Fin d) (Fin d) ℂ :=

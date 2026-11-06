@@ -60,7 +60,8 @@ variable {d : ℕ}
 
 /-! ## A. Straddling edges and the edge boundary -/
 
-/-- An edge straddles `K` if exactly one of its endpoints lies in `K`. -/
+/-- **Edge with exactly one endpoint in a set.**
+An edge straddles `K` if exactly one of its endpoints lies in `K`. -/
 def edgeStraddles (K : Set (Site d)) (e : Sym2 (Site d)) : Prop := by
   classical
   exact Sym2.lift ⟨fun x y => (x ∈ K ↔ y ∉ K), by
@@ -77,11 +78,13 @@ lemma edgeStraddles_comm (K : Set (Site d)) (x y : Site d) :
   classical
   by_cases hx : x ∈ K <;> by_cases hy : y ∈ K <;> tauto
 
-/-- The edge boundary `∂K`: the lattice edges that straddle `K`. -/
+/-- **Edge boundary of a set of sites.**
+The edge boundary `∂K`: the lattice edges that straddle `K`. -/
 def boundaryEdgeSet (K : Set (Site d)) : Set (Sym2 (Site d)) :=
   {e | e ∈ (hypercubicLattice d).edgeSet ∧ edgeStraddles K e}
 
-/-- The hypercubic lattice with the edges straddling `K` removed. -/
+/-- **Hypercubic lattice with the edge boundary removed.**
+The hypercubic lattice with the edges straddling `K` removed. -/
 def latticeMinusBoundary (K : Set (Site d)) : SimpleGraph (Site d) where
   Adj x y := (hypercubicLattice d).Adj x y ∧ ¬ edgeStraddles K s(x, y)
   symm := by

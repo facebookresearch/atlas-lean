@@ -111,7 +111,8 @@ lemma fpd_ambientTiltLogZ_deriv_eq_avgDensity (hE : 0 < G.edgeFinset.card) (t : 
   have hbase := ivp2_ambientTiltLogZ_hasDerivAt G 2 (by norm_num) hE t
   rwa [← ivp2_cgfMean_eq_openCount_expect G 2 (by norm_num) t] at hbase
 
-/-- The average edge density `|E|^{-1} E_{φ_{G,p,2}}[#open edges]` at `p = logistic(t)`. -/
+/-- **Average edge density of the $q = 2$ random-cluster measure.**
+The average edge density `|E|^{-1} E_{φ_{G,p,2}}[#open edges]` at `p = logistic(t)`. -/
 noncomputable def fpd_avgDensity (t : ℝ) : ℝ :=
   (1 / (G.edgeFinset.card : ℝ)) * fkExpect G (fsc_logistic t) 2 (fun ω => (openCount G ω : ℝ))
 
@@ -191,7 +192,8 @@ lemma fpd_ambientLogZDeriv_eq_avgDensity_limit
 
 /-! ## D. Densities as one-sided derivatives -/
 
-/-- The average edge densities of the graphs `Gn n` converge to the free infinite-volume `q = 2`
+/-- **Collapse of average edge densities to the free density.**
+The average edge densities of the graphs `Gn n` converge to the free infinite-volume `q = 2`
 density of every edge of `Λ_N`, at every `t`.
 -/
 def fpd_AvgDensityCollapse (d N : ℕ)
@@ -213,7 +215,8 @@ lemma fpd_freeDensity_at_diff_of_collapse (d N : ℕ)
   rw [hdiff]
   exact tendsto_nhds_unique (hcol e' t) hderiv
 
-/-- The wired and free `q = 2` infinite-volume densities of every edge of `Λ_N` at `p =
+/-- **Infinite-volume edge densities as one-sided derivatives.**
+The wired and free `q = 2` infinite-volume densities of every edge of `Λ_N` at `p =
 logistic(t)`
 are the right and left derivatives of `g` at `t`.
 -/

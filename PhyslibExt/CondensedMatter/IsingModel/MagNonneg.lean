@@ -66,7 +66,8 @@ lemma spinObs_le_one (x : Site d) (ω : ConfigSpace (Site d)) :
     ‖spin ω x‖ ≤ 1 := by
   rw [Real.norm_eq_abs]; exact abs_spin_le_one ω x
 
-/-- The spin at `x` as a bounded continuous real function on the configuration space. -/
+/-- **Spin at a site as a bounded continuous function.**
+The spin at `x` as a bounded continuous real function on the configuration space. -/
 noncomputable def spinBCF (x : Site d) : ConfigSpace (Site d) →ᵇ ℝ :=
   ⟨⟨fun ω => spin ω x, continuous_spinObs x⟩,
     ⟨2, fun ω ω' => by

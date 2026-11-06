@@ -173,7 +173,7 @@ lemma card_pair_symmDiff_eq {α : Type*} [DecidableEq α]
 
 /-! ## B. Source pairs and paths -/
 
-/-- The source set `{a} ∆ {b}` (empty when `a = b`). -/
+/-- **Source pair $\{a\} \triangle \{b\}$.** The source set `{a} ∆ {b}` (empty when `a = b`). -/
 def sourcePair (a b : V) : Finset V := ({a} : Finset V) ∆ {b}
 
 @[simp]
@@ -366,7 +366,8 @@ lemma hasOddBoundary_switch_erase_exit
 
 /-! ## C. First exits -/
 
-/-- First-exit data for an edge set `K` with boundary `{o} ∆ {z}` and a set `S ∋ o`, `z ∉ S`: an
+/-- **First-exit data for a high-temperature edge set.**
+First-exit data for an edge set `K` with boundary `{o} ∆ {z}` and a set `S ∋ o`, `z ∉ S`: an
 exit edge `xy` of `K` with `x ∈ S`, `y ∉ S`, and a subset `Q ⊆ K` of edges inside `S` with boundary
 `{o} ∆ {x}` not containing `xy`. -/
 structure HighTempFirstExit (K : Finset (Sym2 V)) (o z : V)
@@ -460,7 +461,7 @@ lemma exists_highTempFirstExit (G : SimpleGraph V) [DecidableRel G.Adj]
     hexitK, hexitQ, ?_⟩⟩
   exact (SimpleGraph.mem_edgeFinset.mp (hK hexitK)).ne
 
-/-- A choice of first-exit data, from `exists_highTempFirstExit`. -/
+/-- **Chosen first-exit data.** A choice of first-exit data, from `exists_highTempFirstExit`. -/
 noncomputable def highTempFirstExit (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : Finset (Sym2 V)) (hK : K ⊆ G.edgeFinset) {o z : V}
     (hbd : HasOddBoundary K (sourcePair o z)) (S : Finset V)

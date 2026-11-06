@@ -52,19 +52,22 @@ open Matrix BigOperators
 
 /-! ## A. Augmented states -/
 
-/-- Reversal on augmented states: reverse darts and swap the two sides. -/
+/-- **Reversal on augmented states.**
+Reversal on augmented states: reverse darts and swap the two sides. -/
 def ons_decMiddleAugRev (L : ℕ) :
     ons_Dart L ⊕ Fin 2 → ons_Dart L ⊕ Fin 2
   | .inl d => .inl (ons_dartRev L d)
   | .inr side => .inr (side + 1)
 
-/-- Directions of augmented states: the direction of a dart, and east or west for the two sides. -/
+/-- **Directions of augmented states.**
+Directions of augmented states: the direction of a dart, and east or west for the two sides. -/
 def ons_decMiddleAugDir {L : ℕ} :
     ons_Dart L ⊕ Fin 2 → Fin 4
   | .inl d => d.2
   | .inr side => ons_decMiddleDir side
 
-/-- Row weights of the augmented matrix: `1` on darts and `t` times the middle weight on side
+/-- **Row weights of the augmented Kac-Ward matrix.**
+Row weights of the augmented matrix: `1` on darts and `t` times the middle weight on side
 states. -/
 noncomputable def ons_decMiddleRowWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ)
@@ -73,14 +76,16 @@ noncomputable def ons_decMiddleRowWeight
   | .inl _ => 1
   | .inr _ => t * decWeight (ons_decChainEdge site 1)
 
-/-- Column weights of the augmented matrix: the external weight on darts and `1` on side states. -/
+/-- **Column weights of the augmented Kac-Ward matrix.**
+Column weights of the augmented matrix: the external weight on darts and `1` on side states. -/
 noncomputable def ons_decMiddleColWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ) :
     ons_Dart L ⊕ Fin 2 → ℂ
   | .inl d => decWeight s(d, ons_dartRev L d)
   | .inr _ => 1
 
-/-- The reversal-invariant internal factor of the augmented matrix. -/
+/-- **Reversal-invariant internal factor of the augmented matrix.**
+The reversal-invariant internal factor of the augmented matrix. -/
 noncomputable def ons_decMiddleInternalFactor
     (L : ℕ) (decWeight : ons_DecEdge L → ℂ)
     (site : ZMod L × ZMod L) :

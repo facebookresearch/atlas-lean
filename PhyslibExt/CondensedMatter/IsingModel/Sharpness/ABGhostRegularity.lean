@@ -135,7 +135,8 @@ lemma abgr_probV_anyOpen (p : E -> Real) (t : Finset E) :
   rw [hcompl, abgr_probV_allClosed] at htotal
   linarith
 
-/-- The configuration equal to `γ` on `s` and to `η` off `s`. -/
+/-- **Merging configurations on and off a set.**
+The configuration equal to `γ` on `s` and to `η` off `s`. -/
 noncomputable def abgrMerge (s : Finset E) (gamma : {e // e ∈ s} -> Bool)
     (eta : {e // e ∉ s} -> Bool) : ConfigSpace E :=
   (Equiv.piEquivPiSubtypeProd (fun e : E => e ∈ s) (fun _ => Bool)).symm (gamma, eta)
@@ -193,13 +194,13 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## B. Ghost edges and the cluster of the origin -/
 
-/-- Close all ghost edges except `{x, ghost}`. -/
+/-- **Closing all ghost edges but one.** Close all ghost edges except `{x, ghost}`. -/
 noncomputable def abgrKeepGhost (x : V) (omega : ConfigSpace (Sym2 (Option V))) :
     ConfigSpace (Sym2 (Option V)) := fun e =>
   if e = s(some x, none) then omega e
   else if e ∈ FieldGhostDict.ghostEdges V then false else omega e
 
-/-- Close all ghost edges. -/
+/-- **Closing all ghost edges.** Close all ghost edges. -/
 noncomputable def abgrCloseGhost (omega : ConfigSpace (Sym2 (Option V))) :
     ConfigSpace (Sym2 (Option V)) := fun e =>
   if e ∈ FieldGhostDict.ghostEdges V then false else omega e
@@ -339,7 +340,8 @@ lemma abgr_connEvent_iff_exists_physical (o : V)
       (hq.trans hstep.reachable).elim fun walk =>
         ⟨walk.induce Set.univ (fun _ _ => Set.mem_univ _)⟩⟩
 
-/-- The sites connected to `o` when all ghost edges are closed. -/
+/-- **Sites connected to $o$ with ghost edges closed.**
+The sites connected to `o` when all ghost edges are closed. -/
 noncomputable def abgrActive (o : V) (omega : ConfigSpace (Sym2 (Option V))) : Finset V :=
   by
     classical
@@ -357,7 +359,7 @@ lemma abgr_connEvent_iff_exists_active (o : V)
 
 /-! ## C. The cluster mixture -/
 
-/-- Sites correspond to ghost edges. -/
+/-- **Correspondence between sites and ghost edges.** Sites correspond to ghost edges. -/
 noncomputable def abgrGhostEdgeEquiv :
     V ≃ {e : Sym2 (Option V) // e ∈ FieldGhostDict.ghostEdges V} :=
   Equiv.ofBijective
@@ -400,7 +402,8 @@ lemma abgrCloseGhost_merge_eq
     rw [abgrMerge_notMem (FieldGhostDict.ghostEdges V) gamma eta ⟨e, he⟩]
     rw [abgrMerge_notMem (FieldGhostDict.ghostEdges V) (fun _ => false) eta ⟨e, he⟩]
 
-/-- The ghost edges at sites of the cluster of `o` in the physical configuration `η`. -/
+/-- **Ghost edges at the physical cluster of $o$.**
+The ghost edges at sites of the cluster of `o` in the physical configuration `η`. -/
 noncomputable def abgrActiveGhost (o : V)
     (eta : {e // e ∉ FieldGhostDict.ghostEdges V} -> Bool) :
     Finset {e // e ∈ FieldGhostDict.ghostEdges V} :=
@@ -473,7 +476,8 @@ lemma abgr_abfaMag_eq_cluster_mixture (J : Sym2 V -> Real) (o : V)
   rw [hset, abgr_probV_anyOpen]
   simp
 
-/-- The probability of the physical configuration `η`. -/
+/-- **Probability of a physical configuration.**
+The probability of the physical configuration `η`. -/
 noncomputable def abgrOffWeight (J : Sym2 V -> Real) (beta : Real)
     (eta : {e // e ∉ FieldGhostDict.ghostEdges V} -> Bool) : Real :=
   ∏ e : {e // e ∉ FieldGhostDict.ghostEdges V},

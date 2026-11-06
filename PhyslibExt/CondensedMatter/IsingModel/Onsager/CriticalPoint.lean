@@ -56,12 +56,14 @@ open Real
 
 /-! ## A. The Onsager integrand -/
 
-/-- The Onsager integrand `cosh² 2β - sinh 2β (cos k₁ + cos k₂)` at inverse temperature `β` and
+/-- **Onsager integrand of the square-lattice Ising model.**
+The Onsager integrand `cosh² 2β - sinh 2β (cos k₁ + cos k₂)` at inverse temperature `β` and
 momentum `(k₁, k₂)`. -/
 noncomputable def ons_gInt (β k₁ k₂ : ℝ) : ℝ :=
   Real.cosh (2*β)^2 - Real.sinh (2*β) * (Real.cos k₁ + Real.cos k₂)
 
-/-- The critical inverse temperature `β_c = ½ log (1 + √2)` of the square-lattice Ising model with
+/-- **Critical inverse temperature ½ log(1 + √2) of the square lattice.**
+The critical inverse temperature `β_c = ½ log (1 + √2)` of the square-lattice Ising model with
 unit couplings. -/
 noncomputable def ons_betaC : ℝ := (1/2) * Real.log (1 + Real.sqrt 2)
 
@@ -121,7 +123,8 @@ lemma ons_betaC_pos : 0 < ons_betaC := by
   have hlog : 0 < Real.log (1 + Real.sqrt 2) := Real.log_pos (by linarith)
   linarith
 
-/-- `β_c` is the unique positive inverse temperature with `sinh 2β = 1`, the self-dual point of the
+/-- **β_c is the unique positive solution of sinh 2β = 1.**
+`β_c` is the unique positive inverse temperature with `sinh 2β = 1`, the self-dual point of the
 Kramers-Wannier duality. -/
 lemma ons_betaC_unique (β : ℝ) (_hβ : 0 < β) :
     Real.sinh (2*β) = 1 ↔ β = ons_betaC := by

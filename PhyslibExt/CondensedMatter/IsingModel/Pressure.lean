@@ -57,7 +57,8 @@ namespace Ising
 
 /-! ## A. Partition functions -/
 
-/-- The partition function `Z(β) = ∑_s e^{-βE(s)}` of a finite system. -/
+/-- **Partition function of a finite system.**
+The partition function `Z(β) = ∑_s e^{-βE(s)}` of a finite system. -/
 noncomputable def Z {Ω : Type*} [Fintype Ω] (β : ℝ) (E : Ω → ℝ) : ℝ :=
   ∑ s : Ω, Real.exp (-β * E s)
 
@@ -75,7 +76,8 @@ lemma Z_prod {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂] (β : ℝ)
 
 /-! ## B. Independent copies -/
 
-/-- The partition function of `n` independent copies of the system. -/
+/-- **Partition function of independent copies.**
+The partition function of `n` independent copies of the system. -/
 noncomputable def Zpow {Ω : Type*} [Fintype Ω] (β : ℝ) (E : Ω → ℝ) (n : ℕ) : ℝ :=
   Z β (fun c : Fin n → Ω => ∑ i, E (c i))
 
@@ -93,7 +95,8 @@ lemma Zpow_pos {Ω : Type*} [Fintype Ω] [Nonempty Ω] (β : ℝ) (E : Ω → �
     0 < Zpow β E n :=
   Z_pos β _
 
-/-- The sequence `log Z_n` for `n` independent copies. -/
+/-- **Log-partition sequence of independent copies.**
+The sequence `log Z_n` for `n` independent copies. -/
 noncomputable def logZSeq {Ω : Type*} [Fintype Ω] (β : ℝ) (E : Ω → ℝ) (n : ℕ) : ℝ :=
   Real.log (Zpow β E n)
 
@@ -125,7 +128,8 @@ lemma logZSeq_bddBelow {Ω : Type*} [Fintype Ω] [Nonempty Ω] (β : ℝ) (E : �
 
 /-! ## C. The pressure -/
 
-/-- The pressure: the limit of `log Z_n / n` for independent copies, obtained from subadditivity. -/
+/-- **Pressure from independent copies.**
+The pressure: the limit of `log Z_n / n` for independent copies, obtained from subadditivity. -/
 noncomputable def pressure {Ω : Type*} [Fintype Ω] [Nonempty Ω] (β : ℝ) (E : Ω → ℝ) : ℝ :=
   (logZSeq_subadditive β E).lim
 

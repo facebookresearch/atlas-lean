@@ -59,13 +59,15 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. The joint weight -/
 
-/-- The Edwards–Sokal factor of an edge `e`: `1 - p` if `e` is closed in `ω`, and `p` times the
+/-- **Edwards–Sokal edge factor.**
+The Edwards–Sokal factor of an edge `e`: `1 - p` if `e` is closed in `ω`, and `p` times the
 indicator that `σ` agrees at the endpoints if `e` is open.
 -/
 def esEdgeFactor {q : ℕ} (p : ℝ) (σ : V → Fin q) (ω : ConfigSpace (Sym2 V)) (e : Sym2 V) : ℝ :=
   if ω e then p * Potts.monoIndicator σ e else 1 - p
 
-/-- The Edwards–Sokal joint weight of a spin configuration `σ` and a bond configuration `ω`: the
+/-- **Edwards–Sokal joint weight.**
+The Edwards–Sokal joint weight of a spin configuration `σ` and a bond configuration `ω`: the
 product of `esEdgeFactor` over the edges of `G`.
 -/
 def esWeight {q : ℕ} (p : ℝ) (σ : V → Fin q) (ω : ConfigSpace (Sym2 V)) : ℝ :=
@@ -83,7 +85,8 @@ lemma esWeight_nonneg {q : ℕ} {p : ℝ} (hp : 0 ≤ p) (hp1 : p ≤ 1)
 
 /-! ## B. Spin marginal: counting colorings constant on clusters -/
 
-/-- `σ` is constant on every open edge of `ω`, i.e. on every open cluster. -/
+/-- **Spin configuration constant on open clusters.**
+`σ` is constant on every open edge of `ω`, i.e. on every open cluster. -/
 def ConstOnOpen {q : ℕ} (ω : ConfigSpace (Sym2 V)) (σ : V → Fin q) : Prop :=
   ∀ x y, (openSub G ω).Adj x y → σ x = σ y
 
@@ -143,7 +146,8 @@ lemma monoProd_eq_indicator {q : ℕ} (σ : V → Fin q) (ω : ConfigSpace (Sym2
     · exact SimpleGraph.mem_edgeFinset.2 hadj.1
     · rw [ite_eq_left hadj.2, Potts.monoIndicator_mk, ite_eq_right hne]
 
-/-- Colorings constant on open clusters correspond to colorings of the connected components of the
+/-- **Cluster-constant colorings as colorings of clusters.**
+Colorings constant on open clusters correspond to colorings of the connected components of the
 open subgraph.
 -/
 noncomputable def constOnOpenEquiv {q : ℕ} (ω : ConfigSpace (Sym2 V)) :
@@ -165,7 +169,8 @@ noncomputable def constOnOpenEquiv {q : ℕ} (ω : ConfigSpace (Sym2 V)) :
     funext v
     rfl
 
-/-- There are `q ^ k(ω)` colorings constant on the open clusters, where `k(ω)` is the number of
+/-- **There are $q^{k(\omega)}$ colorings constant on the open clusters.**
+There are `q ^ k(ω)` colorings constant on the open clusters, where `k(ω)` is the number of
 clusters.
 -/
 lemma card_constOnOpen {q : ℕ} (ω : ConfigSpace (Sym2 V)) :
@@ -175,7 +180,8 @@ lemma card_constOnOpen {q : ℕ} (ω : ConfigSpace (Sym2 V)) :
   rw [Nat.card_eq_fintype_card, Fintype.card_fun, Fintype.card_fin]
   rfl
 
-/-- Spin marginal of the Edwards–Sokal weight: summing over spins gives the random-cluster weight
+/-- **Edwards–Sokal weight summed over spins is the random-cluster weight.**
+Spin marginal of the Edwards–Sokal weight: summing over spins gives the random-cluster weight
 `p^{o(ω)} (1 - p)^{c(ω)} q^{k(ω)}`.
 -/
 lemma esWeight_sum {q : ℕ} (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
@@ -198,7 +204,8 @@ lemma esWeight_sum {q : ℕ} (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
 
 /-! ## C. Bond marginal: the Potts weight -/
 
-/-- The Edwards–Sokal factor of an edge `e` written for an arbitrary pair `(e, b)` with `b` the
+/-- **Edwards–Sokal factor of an arbitrary coordinate and state.**
+The Edwards–Sokal factor of an edge `e` written for an arbitrary pair `(e, b)` with `b` the
 state
 of `e`; edges outside `G` get factor `1`.
 -/
@@ -256,7 +263,8 @@ lemma edge_sum_eq_exp {q : ℕ} (β J : ℝ) (σ : V → Fin q) (e : Sym2 V) :
       simp only [mul_zero, Real.exp_zero, mul_one]
       ring
 
-/-- The normalizing constant `e^{-βJ |E(G)|}` relating the bond marginal to the Potts weight. -/
+/-- **Normalizing constant relating the bond sum to the Potts weight.**
+The normalizing constant `e^{-βJ |E(G)|}` relating the bond marginal to the Potts weight. -/
 noncomputable def esFirstConst (β J : ℝ) : ℝ :=
   2 ^ (Fintype.card (Sym2 V) - G.edgeFinset.card)
     * Real.exp (-(β * J)) ^ G.edgeFinset.card
@@ -266,7 +274,8 @@ lemma esFirstConst_pos (β J : ℝ) : 0 < esFirstConst G β J := by
   unfold esFirstConst
   exact mul_pos (pow_pos (by norm_num) _) (pow_pos (Real.exp_pos _) _)
 
-/-- Bond marginal of the Edwards–Sokal weight: with `p = 1 - e^{-βJ}`, summing over bond
+/-- **Edwards–Sokal bond sum is a multiple of the Potts weight.**
+Bond marginal of the Edwards–Sokal weight: with `p = 1 - e^{-βJ}`, summing over bond
 configurations gives `e^{-βJ |E|}` times the Potts weight of `σ`.
 -/
 lemma esWeight_sum_eq_pottsWeight {q : ℕ} (β J : ℝ) (σ : V → Fin q) :
@@ -309,7 +318,8 @@ lemma esWeight_sum_eq_pottsWeight {q : ℕ} (β J : ℝ) (σ : V → Fin q) :
 
 /-! ## D. Partition functions and marginals -/
 
-/-- The Edwards–Sokal partition function: the total joint weight. -/
+/-- **Edwards–Sokal partition function.**
+The Edwards–Sokal partition function: the total joint weight. -/
 noncomputable def esZ (q : ℕ) (p : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), ∑ σ : V → Fin q, esWeight G p σ ω
 
@@ -332,11 +342,13 @@ lemma esZ_pos {q : ℕ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < (q : ℝ)
   rw [esZ_eq_fkZ]
   exact fkZ_pos G hp hp1 hq
 
-/-- The bond marginal of the normalized Edwards–Sokal measure. -/
+/-- **Bond marginal of the Edwards–Sokal measure.**
+The bond marginal of the normalized Edwards–Sokal measure. -/
 noncomputable def esSecondMarginal (q : ℕ) (p : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   (∑ σ : V → Fin q, esWeight G p σ ω) / esZ G q p
 
-/-- The spin marginal of the normalized Edwards–Sokal measure. -/
+/-- **Spin marginal of the Edwards–Sokal measure.**
+The spin marginal of the normalized Edwards–Sokal measure. -/
 noncomputable def esFirstMarginal (q : ℕ) (p : ℝ) (σ : V → Fin q) : ℝ :=
   (∑ ω : ConfigSpace (Sym2 V), esWeight G p σ ω) / esZ G q p
 
@@ -373,7 +385,8 @@ lemma esFirstMarginal_sum_eq_one {q : ℕ} [NeZero q] (β J : ℝ) :
   rw [Finset.sum_congr rfl fun σ _ => esFirstMarginal_eq_pottsProb G q β J σ]
   exact Potts.pottsProb_sum_eq_one G q β J
 
-/-- The bond marginal of the Edwards–Sokal measure is the random-cluster measure with parameters
+/-- **Edwards–Sokal bond marginal is the random-cluster measure.**
+The bond marginal of the Edwards–Sokal measure is the random-cluster measure with parameters
 `(1 - e^{-βJ}, q)`.
 -/
 lemma edwardsSokal_secondMarginal (q : ℕ) (β J : ℝ) (ω : ConfigSpace (Sym2 V)) :
@@ -381,7 +394,8 @@ lemma edwardsSokal_secondMarginal (q : ℕ) (β J : ℝ) (ω : ConfigSpace (Sym2
       = fkProb G (1 - Real.exp (-(β * J))) (q : ℝ) ω :=
   esSecondMarginal_eq_fkProb G q (1 - Real.exp (-(β * J))) ω
 
-/-- The spin marginal of the Edwards–Sokal measure is the `q`-state Potts measure at inverse
+/-- **Edwards–Sokal spin marginal is the Potts measure.**
+The spin marginal of the Edwards–Sokal measure is the `q`-state Potts measure at inverse
 temperature `β` and coupling `J`.
 -/
 lemma edwardsSokal_firstMarginal (q : ℕ) [NeZero q] (β J : ℝ) (σ : V → Fin q) :

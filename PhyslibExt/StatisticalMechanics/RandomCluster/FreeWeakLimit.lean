@@ -64,7 +64,8 @@ variable {d : ℕ}
 
 /-! ## A. The wiring induced by an outer configuration -/
 
-/-- The boundary wiring on `Λ_n` induced by an outer configuration `ψ` on `Λ_(n+1)`: two distinct
+/-- **Wiring induced on a box by outer open edges.**
+The boundary wiring on `Λ_n` induced by an outer configuration `ψ` on `Λ_(n+1)`: two distinct
 vertices of `Λ_n` are wired when `ψ` connects them by open edges outside `Λ_n`. -/
 noncomputable def inducedWiringFree (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     SimpleGraph (boxVerts d n) where
@@ -80,14 +81,16 @@ noncomputable instance instDecidableRelInducedWiringFree (d n : ℕ)
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : DecidableRel (inducedWiringFree d n ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- Unfolding adjacency in the induced wiring. -/
+/-- **Adjacency criterion for the free induced wiring.**
+Unfolding adjacency in the induced wiring. -/
 lemma inducedWiringFree_adj (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (x y : boxVerts d n) :
     (inducedWiringFree d n ψ).Adj x y
       ↔ x ≠ y ∧ (outsideOpenGraph d n ψ).Reachable (boxVertIncl d n x) (boxVertIncl d n y) :=
   Iff.rfl
 
-/-- The open graph of a glued configuration is the union of the open edges of `Λ_n` and the outer
+/-- **Glued open graph is the union of inner and outer open edges.**
+The open graph of a glued configuration is the union of the open edges of `Λ_n` and the outer
 open edges. -/
 lemma psiFreeGraph_eq_sup (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (ω : ConfigSpace (Sym2 (boxVerts d n))) :
@@ -108,12 +111,14 @@ lemma psiFreeGraph_eq_sup (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1
     · refine ⟨hadj, ?_⟩
       rwa [psiExt_eq_psi_of_not_range d n ψ ω hr]
 
-/-- The open graph on `Λ_(n+1)` of `ω` on `Λ_n` glued into `ψ`. -/
+/-- **Open graph of a glued configuration.**
+The open graph on `Λ_(n+1)` of `ω` on `Λ_n` glued into `ψ`. -/
 noncomputable abbrev fullGraphFree (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : SimpleGraph (boxVerts d (n + 1)) :=
   innerImageGraph d n ω ⊔ outsideOpenGraph d n ψ
 
-/-- The open graph of `ω` on `Λ_n` together with the wiring induced by `ψ`. -/
+/-- **Inner open graph with the free induced wiring.**
+The open graph of `ω` on `Λ_n` together with the wiring induced by `ψ`. -/
 noncomputable abbrev innerGraphFree (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : SimpleGraph (boxVerts d n) :=
   openSub (boxGraph d n) ω ⊔ inducedWiringFree d n ψ
@@ -124,12 +129,14 @@ noncomputable instance instDecidableRelInnerGraphFree (d n : ℕ)
     DecidableRel (innerGraphFree d n ω ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- The outer open graph is contained in the glued open graph. -/
+/-- **Outer open graph lies in the glued open graph.**
+The outer open graph is contained in the glued open graph. -/
 lemma outsideOpenGraph_le_fullGraphFree (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     outsideOpenGraph d n ψ ≤ fullGraphFree d n ω ψ := le_sup_right
 
-/-- Vertices of `Λ_n` connected by outer open edges are connected in `innerGraphFree`. -/
+/-- **Outer open connections give connections in the inner graph.**
+Vertices of `Λ_n` connected by outer open edges are connected in `innerGraphFree`. -/
 lemma innerGraphFree_reachable_of_outsideReachable (d n : ℕ)
     (ω : ConfigSpace (Sym2 (boxVerts d n))) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     {x y : boxVerts d n}
@@ -140,7 +147,8 @@ lemma innerGraphFree_reachable_of_outsideReachable (d n : ℕ)
   · have hadj : (inducedWiringFree d n ψ).Adj x y := ⟨hxy, h⟩
     exact (le_sup_right (a := openSub (boxGraph d n) ω) hadj).reachable
 
-/-- Connections in `innerGraphFree` are connections in the glued open graph. -/
+/-- **Inner-graph connections are glued-graph connections.**
+Connections in `innerGraphFree` are connections in the glued open graph. -/
 lemma fullGraphFree_reachable_of_innerGraphFree (d n : ℕ)
     (ω : ConfigSpace (Sym2 (boxVerts d n))) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     {x y : boxVerts d n} (h : (innerGraphFree d n ω ψ).Reachable x y) :
@@ -156,7 +164,8 @@ lemma fullGraphFree_reachable_of_innerGraphFree (d n : ℕ)
           le_sup_left
       · exact ((hwire.2.mono (outsideOpenGraph_le_fullGraphFree d n ω ψ)))
 
-/-- Connections in the glued open graph between vertices of `Λ_n` are connections in
+/-- **Glued connections between inner vertices are inner-graph connections.**
+Connections in the glued open graph between vertices of `Λ_n` are connections in
 `innerGraphFree`. -/
 lemma innerGraphFree_reachable_of_fullGraphFree (d n : ℕ)
     (ω : ConfigSpace (Sym2 (boxVerts d n))) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
@@ -190,7 +199,8 @@ lemma innerGraphFree_reachable_of_fullGraphFree (d n : ℕ)
         exact ⟨w', hKw', SimpleGraph.Reachable.refl _⟩
       · exact ⟨x₀, hKx₀, hout.trans hoadj.reachable⟩
 
-/-- An edge of the glued open graph at a vertex outside `Λ_n` is an outer open edge. -/
+/-- **Glued open edges at outer vertices are outer edges.**
+An edge of the glued open graph at a vertex outside `Λ_n` is an outer open edge. -/
 lemma fullGraphFree_adj_of_outside (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) {u w : boxVerts d (n + 1)}
     (hu : ¬ IsInnerVert d n u) (h : (fullGraphFree d n ω ψ).Adj u w) :
@@ -202,24 +212,28 @@ lemma fullGraphFree_adj_of_outside (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts
 
 /-! ## B. Clusters of a glued configuration -/
 
-/-- A vertex of `Λ_(n+1)` whose outer open cluster contains no vertex of `Λ_n`. -/
+/-- **Outer vertex whose outer open cluster avoids the inner box.**
+A vertex of `Λ_(n+1)` whose outer open cluster contains no vertex of `Λ_n`. -/
 def OutsideOnlyFree (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (u : boxVerts d (n + 1)) : Prop :=
   ∀ v, (outsideOpenGraph d n ψ).Reachable u v → ¬ IsInnerVert d n v
 
-/-- A vertex whose outer cluster avoids `Λ_n` is not in `Λ_n`. -/
+/-- **A vertex whose outer cluster avoids the inner box lies outside it.**
+A vertex whose outer cluster avoids `Λ_n` is not in `Λ_n`. -/
 lemma outsideOnlyFree_self_not_inner (d n : ℕ)
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) {u : boxVerts d (n + 1)}
     (hu : OutsideOnlyFree d n ψ u) : ¬ IsInnerVert d n u :=
   hu u (SimpleGraph.Reachable.refl u)
 
-/-- Avoiding `Λ_n` is constant on outer open clusters. -/
+/-- **Avoiding the inner box is constant on outer open clusters.**
+Avoiding `Λ_n` is constant on outer open clusters. -/
 lemma outsideOnlyFree_of_reachable (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     {u v : boxVerts d (n + 1)} (hu : OutsideOnlyFree d n ψ u)
     (h : (outsideOpenGraph d n ψ).Reachable u v) : OutsideOnlyFree d n ψ v :=
   fun w hw => hu w (h.trans hw)
 
-/-- From a vertex whose outer cluster avoids `Λ_n`, glued connections are outer connections. -/
+/-- **Glued connections from an avoiding vertex are outer connections.**
+From a vertex whose outer cluster avoids `Λ_n`, glued connections are outer connections. -/
 lemma outsideOpenGraph_reachable_of_fullGraphFree_outsideOnly (d n : ℕ)
     (ω : ConfigSpace (Sym2 (boxVerts d n))) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     {u w : boxVerts d (n + 1)} (hu : OutsideOnlyFree d n ψ u)
@@ -233,21 +247,24 @@ lemma outsideOpenGraph_reachable_of_fullGraphFree_outsideOnly (d n : ℕ)
       have ha_not_inner : ¬ IsInnerVert d n a := hu a ha_out
       exact ha_out.trans (fullGraphFree_adj_of_outside d n ω ψ ha_not_inner hadj).reachable
 
-/-- An outer open cluster that contains no vertex of `Λ_n`. -/
+/-- **Outer open cluster avoiding the inner box.**
+An outer open cluster that contains no vertex of `Λ_n`. -/
 noncomputable def IsOutsideOnlyFree (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     (outsideOpenGraph d n ψ).ConnectedComponent → Prop :=
   ConnectedComponent.lift (OutsideOnlyFree d n ψ)
     (fun _ _ p _ => propext ⟨fun h => outsideOnlyFree_of_reachable d n ψ h p.reachable,
       fun h => outsideOnlyFree_of_reachable d n ψ h p.reachable.symm⟩)
 
-/-- An outer cluster avoids `Λ_n` exactly when its representative vertex does. -/
+/-- **An outer cluster avoids the inner box iff its representative does.**
+An outer cluster avoids `Λ_n` exactly when its representative vertex does. -/
 @[simp] lemma isOutsideOnlyFree_mk (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (v : boxVerts d (n + 1)) :
     IsOutsideOnlyFree d n ψ ((outsideOpenGraph d n ψ).connectedComponentMk v)
       ↔ OutsideOnlyFree d n ψ v :=
   Iff.rfl
 
-/-- The outer open clusters that contain no vertex of `Λ_n`. -/
+/-- **Outer open clusters avoiding the inner box.**
+The outer open clusters that contain no vertex of `Λ_n`. -/
 def OutsideOnlyCompFree (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : Type :=
   {c : (outsideOpenGraph d n ψ).ConnectedComponent // IsOutsideOnlyFree d n ψ c}
 
@@ -257,7 +274,8 @@ noncomputable instance instFintypeOutsideOnlyCompFree (d n : ℕ)
   classical
   unfold OutsideOnlyCompFree; infer_instance
 
-/-- The map from clusters of `innerGraphFree` and outer clusters avoiding `Λ_n` to clusters of the
+/-- **Cluster map into the glued configuration.**
+The map from clusters of `innerGraphFree` and outer clusters avoiding `Λ_n` to clusters of the
 glued configuration. -/
 noncomputable def fullComponentMapFree (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -270,13 +288,14 @@ noncomputable def fullComponentMapFree (d n : ℕ) (ω : ConfigSpace (Sym2 (boxV
       (fun _ _ p _ => ConnectedComponent.sound
         (p.reachable.mono (outsideOpenGraph_le_fullGraphFree d n ω ψ)))
 
-/-- The cluster map on an inner cluster. -/
+/-- **Cluster map on inner clusters.** The cluster map on an inner cluster. -/
 lemma fullComponentMapFree_inl_mk (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) (x : boxVerts d n) :
     fullComponentMapFree d n ω ψ (Sum.inl ((innerGraphFree d n ω ψ).connectedComponentMk x))
       = (fullGraphFree d n ω ψ).connectedComponentMk (boxVertIncl d n x) := rfl
 
-/-- The cluster map on an outer cluster avoiding `Λ_n`. -/
+/-- **Cluster map on avoiding outer clusters.**
+The cluster map on an outer cluster avoiding `Λ_n`. -/
 lemma fullComponentMapFree_inr_mk (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) (v : boxVerts d (n + 1))
     (hv : IsOutsideOnlyFree d n ψ ((outsideOpenGraph d n ψ).connectedComponentMk v)) :
@@ -284,7 +303,7 @@ lemma fullComponentMapFree_inr_mk (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts 
         (Sum.inr ⟨(outsideOpenGraph d n ψ).connectedComponentMk v, hv⟩)
       = (fullGraphFree d n ω ψ).connectedComponentMk v := rfl
 
-/-- The cluster map is injective. -/
+/-- **Injectivity of the free cluster map.** The cluster map is injective. -/
 lemma fullComponentMapFree_injective (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     Function.Injective (fullComponentMapFree d n ω ψ) := by
@@ -322,7 +341,7 @@ lemma fullComponentMapFree_injective (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVer
     refine congrArg Sum.inr (Subtype.ext ?_)
     exact ConnectedComponent.sound hout
 
-/-- The cluster map is surjective. -/
+/-- **Surjectivity of the free cluster map.** The cluster map is surjective. -/
 lemma fullComponentMapFree_surjective (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     Function.Surjective (fullComponentMapFree d n ω ψ) := by
@@ -342,7 +361,8 @@ lemma fullComponentMapFree_surjective (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVe
       (isOutsideOnlyFree_mk d n ψ u).mpr hOut⟩, ?_⟩
     rw [fullComponentMapFree_inr_mk]
 
-/-- Clusters of the glued configuration correspond to clusters of `innerGraphFree` plus outer
+/-- **Cluster decomposition of the glued configuration.**
+Clusters of the glued configuration correspond to clusters of `innerGraphFree` plus outer
 clusters avoiding `Λ_n`. -/
 noncomputable def fullComponentEquivFree (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -351,11 +371,13 @@ noncomputable def fullComponentEquivFree (d n : ℕ) (ω : ConfigSpace (Sym2 (bo
   Equiv.ofBijective (fullComponentMapFree d n ω ψ)
     ⟨fullComponentMapFree_injective d n ω ψ, fullComponentMapFree_surjective d n ω ψ⟩
 
-/-- The number of outer open clusters avoiding `Λ_n`. -/
+/-- **Number of outer open clusters avoiding the inner box.**
+The number of outer open clusters avoiding `Λ_n`. -/
 noncomputable def outsideShiftFree (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) : ℕ :=
   Nat.card (OutsideOnlyCompFree d n ψ)
 
-/-- The cluster count of a glued configuration is the cluster count of `ω` with the induced wiring
+/-- **Cluster count of a glued configuration splits additively.**
+The cluster count of a glued configuration is the cluster count of `ω` with the induced wiring
 plus the number of outer clusters avoiding `Λ_n`. -/
 lemma numClusters_psiExt_free (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -372,18 +394,20 @@ lemma numClusters_psiExt_free (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)
 
 /-! ## C. Domain Markov property for the free measure -/
 
-/-- The factor of the random-cluster weight of a glued configuration contributed by the outer
+/-- **Outer factor of the weight of a glued configuration.**
+The factor of the random-cluster weight of a glued configuration contributed by the outer
 configuration. -/
 noncomputable def psiShiftFree (d n : ℕ) (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (p q : ℝ) : ℝ :=
   psiEdgeFactor d n ψ p * q ^ outsideShiftFree d n ψ
 
-/-- The outer weight factor is positive. -/
+/-- **Positivity of the outer weight factor.** The outer weight factor is positive. -/
 lemma psiShiftFree_pos {d n : ℕ} {ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))} {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : 0 < psiShiftFree d n ψ p q :=
   mul_pos (psiEdgeFactor_pos hp hp1) (pow_pos hq _)
 
-/-- The random-cluster weight of a glued configuration factors as the outer factor times the weight
+/-- **Random-cluster weight of a glued configuration factorizes.**
+The random-cluster weight of a glued configuration factors as the outer factor times the weight
 of `ω` with the induced wiring. -/
 lemma fkWeight_psiExt_free (d n : ℕ) {p q : ℝ} (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (ω : ConfigSpace (Sym2 (boxVerts d n))) :
@@ -392,7 +416,8 @@ lemma fkWeight_psiExt_free (d n : ℕ) {p q : ℝ} (ψ : ConfigSpace (Sym2 (boxV
   rw [fkWeight, numClusters_psiExt_free, edgeProduct_psiExt, bcWeight, psiShiftFree, pow_add]
   ring
 
-/-- The conditional partition function given the outer configuration, in terms of the induced-wiring
+/-- **Conditional partition function in terms of the induced wiring.**
+The conditional partition function given the outer configuration, in terms of the induced-wiring
 partition function. -/
 lemma inducedFkZ_innerEdgeFinset_psi_free (d n : ℕ) {p q : ℝ}
     (ψ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -417,7 +442,8 @@ lemma condFkProb_psiExt_eq_bcProb_free (d n : ℕ) {p q : ℝ}
     fkWeight_psiExt_free, inducedFkZ_innerEdgeFinset_psi_free, bcProb,
     mul_div_mul_right _ _ (psiShiftFree_pos hp hp1 hq).ne']
 
-/-- The masses of the conditioning fibres of the free measure on `Λ_(n+1)` sum to `1`. -/
+/-- **Fibre masses of the free measure sum to one.**
+The masses of the conditioning fibres of the free measure on `Λ_(n+1)` sum to `1`. -/
 lemma sum_fibreMass_eq_one_free (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∑ ψ ∈ Finset.univ.filter (fun ψ => outProj d n ψ = ψ),
         (∑ σ ∈ condFibre (innerEdgeFinset d n) ψ,
@@ -437,7 +463,8 @@ lemma sum_fibreMass_eq_one_free (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     rw [Finset.mem_filter] at hψ
     rw [filter_outProj_eq_condFibre n ψ hψ.2]
 
-/-- A random-cluster probability is its fibre mass times its conditional probability. -/
+/-- **Fibre-mass factorization of random-cluster probabilities.**
+A random-cluster probability is its fibre mass times its conditional probability. -/
 lemma fkProb_eq_fibreMass_mul_condFkProb (n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
@@ -451,7 +478,8 @@ lemma fkProb_eq_fibreMass_mul_condFkProb (n : ℕ) {p q : ℝ}
     Finset.sum_pos (fun ρ _ => fkProb_pos G hp hp1 hq ρ) ⟨ω, self_mem_condFibre F ω⟩
   rw [mul_div_cancel₀ _ hpos.ne']
 
-/-- Configurations agreeing off `F` give the same conditional random-cluster probabilities. -/
+/-- **Conditional free probabilities depend only on the outer configuration.**
+Configurations agreeing off `F` give the same conditional random-cluster probabilities. -/
 lemma condFkProb_congr_dom_free (n : ℕ) {p q : ℝ}
     (ψ ψ' ω : ConfigSpace (Sym2 (boxVerts d (n + 1))))
     (h : AgreesOff (innerEdgeFinset d n) ψ ψ') :
@@ -464,7 +492,8 @@ lemma condFkProb_congr_dom_free (n : ℕ) {p q : ℝ}
 
 /-! ## D. The free measures increase with the box -/
 
-/-- Decomposition of the free measure on `Λ_(n+1)` over the configuration outside `Λ_n`. -/
+/-- **Decomposition of the free measure over the outer configuration.**
+Decomposition of the free measure on `Λ_(n+1)` over the configuration outside `Λ_n`. -/
 lemma freeSucc_fkProb_decompose (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (B : Set (ConfigSpace (Sym2 (boxVerts d (n + 1))))) :
     (∑ ρ, B.indicator (fun _ => (1 : ℝ)) ρ * fkProb (boxGraph d (n + 1)) p q ρ)
@@ -495,7 +524,8 @@ lemma freeSucc_fkProb_decompose (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
   rw [hcc] at hfk
   rw [hfk]; ring
 
-/-- The conditional free measure of an event of `Λ_n` equals its probability under the
+/-- **Conditional free measure as an induced-wiring measure.**
+The conditional free measure of an event of `Λ_n` equals its probability under the
 induced-wiring measure. -/
 lemma condFkProb_psiExt_sum_eq_inducedBox_free (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -521,7 +551,8 @@ lemma condFkProb_psiExt_sum_eq_inducedBox_free (d n : ℕ) {p q : ℝ}
     · rw [Set.indicator_of_notMem hω, Set.indicator_of_notMem (fun h => hω (Set.mem_preimage.mp h))]
   rw [hind]
 
-/-- For `q ≥ 1`, the free measure on `Λ_n` gives an increasing event at most its probability under
+/-- **Free measure is dominated by induced-wiring measures for $q \ge 1$.**
+For `q ≥ 1`, the free measure on `Λ_n` gives an increasing event at most its probability under
 any induced wiring. -/
 lemma fkProb_le_inducedFree (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -543,7 +574,8 @@ lemma fkProb_le_inducedFree (d n : ℕ) {p q : ℝ}
   exact bcProb_mono_bc (boxGraph d n) (⊥ : SimpleGraph (boxVerts d n))
     (inducedWiringFree d n ψ) bot_le hp hp1 hq hA₀
 
-/-- For `q ≥ 1`, conditionally on any outer configuration, the free measure on `Λ_(n+1)` gives an
+/-- **Conditional free measure dominates the smaller free box for $q \ge 1$.**
+For `q ≥ 1`, conditionally on any outer configuration, the free measure on `Λ_(n+1)` gives an
 increasing event of `Λ_n` at least its free `Λ_n` probability. -/
 lemma fkProb_le_condFkProb_innerRestrict_free (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -561,7 +593,8 @@ lemma fkProb_le_condFkProb_innerRestrict_free (d n : ℕ) {p q : ℝ}
   rw [hpre]
   exact fkProb_le_inducedFree d n hp hp1 hq ψ hA₀
 
-/-- For `q ≥ 1`, the free measure on `Λ_(n+1)` gives an increasing event of `Λ_n` at least its free
+/-- **One-step box monotonicity of free measures for $q \ge 1$.**
+For `q ≥ 1`, the free measure on `Λ_(n+1)` gives an increasing event of `Λ_n` at least its free
 `Λ_n` probability. -/
 lemma freeSucc_fkProb_innerEvent_le (n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -590,7 +623,8 @@ lemma freeSucc_fkProb_innerEvent_le (n : ℕ) {p q : ℝ}
             (fkProb_le_condFkProb_innerRestrict_free d n hp hp1 hq ψ hA₀)
           exact Finset.sum_nonneg (fun σ _ => (fkProb_pos (boxGraph d (n + 1)) hp hp1 hq0 σ).le)
 
-/-- The free `Λ_m` measure of a `Λ_m` cylinder event, as a finite sum. -/
+/-- **Free box measure of a cylinder event as a finite sum.**
+The free `Λ_m` measure of a `Λ_m` cylinder event, as a finite sum. -/
 lemma freeFiniteMeasure_real_boxRestrictEvent (m : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (S : Set (ConfigSpace (Sym2 (boxVerts d m))))
     (hmeas : MeasurableSet (boxRestrict d m ⁻¹' S)) :
@@ -609,7 +643,8 @@ lemma freeFiniteMeasure_real_boxRestrictEvent (m : ℕ) {p q : ℝ}
     simp only [Set.mem_preimage, boxRestrict_extendEdge]
   rw [hf, hpre, fkPMF_toMeasure_toReal d m hp hp1 hq]
 
-/-- The free `Λ_(n+1)` measure of a `Λ_n` cylinder event, as a finite sum. -/
+/-- **Next-box free measure of a cylinder event as a finite sum.**
+The free `Λ_(n+1)` measure of a `Λ_n` cylinder event, as a finite sum. -/
 lemma freeFiniteMeasure_succ_real_innerRestrictEvent (n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (S : Set (ConfigSpace (Sym2 (boxVerts d n))))
@@ -630,7 +665,8 @@ lemma freeFiniteMeasure_succ_real_innerRestrictEvent (n : ℕ) {p q : ℝ}
     simp only [Set.mem_preimage, boxRestrict_extendEdge_succ]
   rw [hf, hpre, fkPMF_toMeasure_toReal d (n + 1) hp hp1 hq]
 
-/-- For `q = 2`, the free `Λ_n` probability of an increasing `Λ_n` event is at most its free
+/-- **Increasing box events gain free $q = 2$ probability in the next box.**
+For `q = 2`, the free `Λ_n` probability of an increasing `Λ_n` event is at most its free
 `Λ_(n+1)` measure. -/
 lemma freeFiniteMeasure_smallerBox_le_succ (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d n)))} (hS : IsIncreasing S)
@@ -643,7 +679,8 @@ lemma freeFiniteMeasure_smallerBox_le_succ (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1
 
 /-! ## E. The free infinite-volume limit on increasing cylinder events -/
 
-/-- For `q = 2` and `N ≤ m`, the free `Λ_m` measure of an increasing `Λ_N` cylinder event is at most
+/-- **One-step growth of free $q = 2$ measures of increasing cylinders.**
+For `q = 2` and `N ≤ m`, the free `Λ_m` measure of an increasing `Λ_N` cylinder event is at most
 its free `Λ_(m+1)` measure. -/
 lemma fkFreeLimit_le_succ (N m : ℕ) (hNm : N ≤ m) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -661,7 +698,8 @@ lemma fkFreeLimit_le_succ (N m : ℕ) (hNm : N ≤ m) {p : ℝ}
   rw [heq, freeFiniteMeasure_real_boxRestrictEvent m hp hp1 (by norm_num) T hmeas]
   exact freeFiniteMeasure_smallerBox_le_succ m hp hp1 hTinc hmeas
 
-/-- For `q = 2`, the free box measures of an increasing `Λ_N` cylinder event increase with the box.
+/-- **Free $q = 2$ box measures of increasing cylinders are monotone.**
+For `q = 2`, the free box measures of an increasing `Λ_N` cylinder event increase with the box.
 -/
 lemma fkFreeLimit_monotone (N : ℕ) {p : ℝ}
     (hp : 0 < p) (hp1 : p < 1)
@@ -674,14 +712,15 @@ lemma fkFreeLimit_monotone (N : ℕ) {p : ℝ}
   rw [show N + (k + 1) = (N+k)+1 from by ring]
   exact h
 
-/-- The limit `sup_k φ⁰_{Λ_(N+k)}(S)` of the free `q = 2` box measures of a `Λ_N` cylinder event
+/-- **Limit of free $q = 2$ box measures of a cylinder event.**
+The limit `sup_k φ⁰_{Λ_(N+k)}(S)` of the free `q = 2` box measures of a `Λ_N` cylinder event
 `S`. -/
 noncomputable def fkFreeLimitValue (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) : ℝ :=
   ⨆ k, (freeFiniteMeasure d (N+k) hp hp1 (by norm_num : (0 : ℝ) < 2)
       : Measure (ConfigSpace (Sym2 (Site d)))).real (boxRestrict d N ⁻¹' S)
 
-/-- Free box measures are at most `1`. -/
+/-- **Free box measures are at most one.** Free box measures are at most `1`. -/
 lemma freeFiniteMeasure_real_le_one (m : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (A : Set (ConfigSpace (Sym2 (Site d)))) :
     (freeFiniteMeasure d m hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -689,7 +728,8 @@ lemma freeFiniteMeasure_real_le_one (m : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 
   have := (freeFiniteMeasure d m hp hp1 (by norm_num : (0 : ℝ) < 2)).2
   exact measureReal_le_one
 
-/-- For `q = 2`, the free box measures of an increasing `Λ_N` cylinder event converge to
+/-- **Free $q = 2$ box measures of increasing cylinders converge.**
+For `q = 2`, the free box measures of an increasing `Λ_N` cylinder event converge to
 `fkFreeLimitValue`. -/
 lemma fk_free_limit_exists (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
@@ -708,7 +748,8 @@ lemma fk_free_limit_exists (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     rw [hcomm]; exact hshift
   exact (Filter.tendsto_add_atTop_iff_nat N).mp key
 
-/-- For `q = 2`, every free box measure of a `Λ_N` cylinder event with `N ≤ m` is at most
+/-- **Free $q = 2$ box measures are bounded by the limit value.**
+For `q = 2`, every free box measure of a `Λ_N` cylinder event with `N ≤ m` is at most
 `fkFreeLimitValue`. -/
 lemma fk_free_le_limit (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
@@ -722,7 +763,8 @@ lemma fk_free_le_limit (N m : ℕ) (hNm : N ≤ m) {p : ℝ} (hp : 0 < p) (hp1 :
     ⟨1, by rintro x ⟨k, rfl⟩; exact freeFiniteMeasure_real_le_one (N+k) hp hp1 _⟩
   exact le_ciSup hbdd k
 
-/-- For `q = 2`, the free infinite-volume measure of an increasing cylinder event equals
+/-- **Free $q = 2$ infinite-volume mass of increasing cylinders as a box limit.**
+For `q = 2`, the free infinite-volume measure of an increasing cylinder event equals
 `fkFreeLimitValue`. -/
 lemma fkFreeLimit_freeInfiniteVolume_eq (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
@@ -735,7 +777,8 @@ lemma fkFreeLimit_freeInfiniteVolume_eq (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : 
   have hsub := (fk_free_limit_exists N hp hp1 hS).comp hψ.tendsto_atTop
   exact tendsto_nhds_unique hport hsub
 
-/-- For `q = 2`, the free box measures of an increasing cylinder event converge, along the whole
+/-- **Free $q=2$ box masses of increasing cylinders tend to infinite volume.**
+For `q = 2`, the free box measures of an increasing cylinder event converge, along the whole
 sequence of boxes, to its free infinite-volume measure. -/
 lemma fk_free_infinite_measure (N : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :

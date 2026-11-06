@@ -180,7 +180,8 @@ lemma theta_le_crossProb (p : ℝ≥0) (hp : p ≤ 1) (n : ℕ) :
     theta d p hp ≤ crossProb d p hp n :=
   measureReal_mono (percolationEvent_subset_crossingEvent n)
 
-/-- The mean-field lower bound `θ(p) ≥ (p - p₀)/(p(1 - p₀))` from the differential inequality for
+/-- **Mean-field lower bound for $\theta(p)$ from a differential inequality.**
+The mean-field lower bound `θ(p) ≥ (p - p₀)/(p(1 - p₀))` from the differential inequality for
 crossing probabilities. Reference: H. Duminil-Copin, V. Tassion, "A new proof of the sharpness of
 the phase transition for Bernoulli percolation and the Ising model", Comm. Math. Phys. 343 (2016)
 725–745. -/
@@ -211,7 +212,8 @@ lemma susceptibility_finite (chi Sval phival : ℝ)
   rw [le_div_iff₀ h1mphi]
   nlinarith [hself]
 
-/-- `p_c ≤ p̃_c` when `θ` is positive above `p̃_c`. See also `Percolation.pc_le_tildePc`
+/-- **$p_c \le \tilde p_c$ if $\theta > 0$ above $\tilde p_c$.**
+`p_c ≤ p̃_c` when `θ` is positive above `p̃_c`. See also `Percolation.pc_le_tildePc`
 (MathlibExt), stated with hypotheses on `θ(1)` and on `(p̃_c, 1)`. -/
 lemma pc_le_tildePc
     (hpos : ∀ t : ℝ≥0, tildePc d < t → ∀ ht : t ≤ 1, 0 < theta d t ht) :
@@ -225,7 +227,8 @@ lemma pc_le_tildePc
   rw [htheta] at this
   exact lt_irrefl 0 this
 
-/-- `p̃_c ≤ p_c` when `θ` vanishes on the set defining `p̃_c`. See also `Percolation.tildePc_le_pc`
+/-- **$\tilde p_c \le p_c$ if $\theta = 0$ on the set defining $\tilde p_c$.**
+`p̃_c ≤ p_c` when `θ` vanishes on the set defining `p̃_c`. See also `Percolation.tildePc_le_pc`
 (MathlibExt), stated with exponential decay of crossing probabilities. -/
 lemma tildePc_le_pc
     (hzero : ∀ t ∈ tildePcSet d, ∀ ht : t ≤ 1, theta d t ht = 0) :

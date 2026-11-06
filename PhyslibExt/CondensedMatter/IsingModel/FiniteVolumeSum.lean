@@ -51,7 +51,8 @@ variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 
 /-! ## A. Configurations on a disjoint union -/
 
-/-- The equivalence between configurations on `V ⊕ W` and pairs of configurations on `V` and `W`. -/
+/-- **Configurations on a disjoint union as pairs of configurations.**
+The equivalence between configurations on `V ⊕ W` and pairs of configurations on `V` and `W`. -/
 def isingSumConfigEquiv : ConfigSpace (V ⊕ W) ≃ ConfigSpace V × ConfigSpace W :=
   Equiv.sumPiEquivProdPi (fun _ : V ⊕ W => Bool)
 

@@ -86,7 +86,8 @@ lemma ivt_integral_freeShifted {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < 
 ## B. The integral decay hypothesis
 -/
 
-/-- Along the box sequence `φ`, the wired box integrals of `f` and of `f ∘ θ_g` differ by a
+/-- **Wired integral shift decay along a box sequence.**
+Along the box sequence `φ`, the wired box integrals of `f` and of `f ∘ θ_g` differ by a
 quantity tending to zero, for every bounded continuous `f`. -/
 def ivt_wiredIntegralShiftDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
@@ -97,7 +98,8 @@ def ivt_wiredIntegralShiftDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 <
               ∂((wiredFiniteMeasure d (φ n) hp hp1 hq : ProbabilityMeasure _) : Measure _)))
       atTop (𝓝 0)
 
-/-- Along the box sequence `φ`, the free box integrals of `f` and of `f ∘ θ_g` differ by a
+/-- **Free integral shift decay along a box sequence.**
+Along the box sequence `φ`, the free box integrals of `f` and of `f ∘ θ_g` differ by a
 quantity tending to zero, for every bounded continuous `f`. -/
 def ivt_freeIntegralShiftDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
@@ -177,7 +179,8 @@ lemma ivt_freeIV_map_shift_of_decay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq :
     (fun φ hφ hconv => ivt_freeShifted_weakConverges_of_decay hp hp1 hq g φ hconv
       (hdecay φ hφ hconv))
 
-/-- The wired infinite-volume FK measure is translation invariant if the integral decay
+/-- **Wired translation invariance from integral shift decay.**
+The wired infinite-volume FK measure is translation invariant if the integral decay
 hypothesis holds for every shift and every convergent box subsequence. See also
 `flc_wiredIV_isTranslationInvariant`, which proves invariance for `q = 2` without hypotheses. -/
 lemma ivt_wiredIV_isTranslationInvariant_of_decay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -191,7 +194,8 @@ lemma ivt_wiredIV_isTranslationInvariant_of_decay {p q : ℝ} (hp : 0 < p) (hp1 
   intro g
   exact ⟨measurable_shift g, ivt_wiredIV_map_shift_of_decay hp hp1 hq g (hdecay g)⟩
 
-/-- The free infinite-volume FK measure is translation invariant if the integral decay hypothesis
+/-- **Free translation invariance from integral shift decay.**
+The free infinite-volume FK measure is translation invariant if the integral decay hypothesis
 holds for every shift and every convergent box subsequence. See also
 `bdp_freeIV_isTranslationInvariant`, which proves invariance for `q = 2` without hypotheses. -/
 lemma ivt_freeIV_isTranslationInvariant_of_decay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -209,7 +213,8 @@ lemma ivt_freeIV_isTranslationInvariant_of_decay {p q : ℝ} (hp : 0 < p) (hp1 :
 ## D. The identity shift
 -/
 
-/-- The identity shift satisfies the wired decay hypothesis, so it is not vacuous. -/
+/-- **Identity shift satisfies the wired decay hypothesis.**
+The identity shift satisfies the wired decay hypothesis, so it is not vacuous. -/
 lemma ivt_wiredIntegralShiftDecay_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (φ : ℕ → ℕ) : ivt_wiredIntegralShiftDecay hp hp1 hq (1 : Multiplicative (Site d)) φ := by
   intro f
@@ -223,7 +228,8 @@ lemma ivt_wiredIntegralShiftDecay_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
   rw [hzero]
   exact tendsto_const_nhds
 
-/-- The identity shift satisfies the free decay hypothesis, so it is not vacuous. -/
+/-- **Identity shift satisfies the free decay hypothesis.**
+The identity shift satisfies the free decay hypothesis, so it is not vacuous. -/
 lemma ivt_freeIntegralShiftDecay_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (φ : ℕ → ℕ) : ivt_freeIntegralShiftDecay hp hp1 hq (1 : Multiplicative (Site d)) φ := by
   intro f

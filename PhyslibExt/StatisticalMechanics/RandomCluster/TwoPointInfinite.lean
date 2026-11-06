@@ -75,12 +75,14 @@ lemma bddAbove_range_apply (μ : ℕ → ProbabilityMeasure (ConfigSpace E))
     (A : Set (ConfigSpace E)) : BddAbove (Set.range (fun n => (μ n) A)) :=
   ⟨1, by rintro x ⟨n, rfl⟩; exact MeasureTheory.ProbabilityMeasure.apply_le_one _ _⟩
 
-/-- The supremum over `n` of the masses `μ n A` of an event `A`. -/
+/-- **Supremum of the masses of an event along a measure sequence.**
+The supremum over `n` of the masses `μ n A` of an event `A`. -/
 noncomputable def ivTwoPointSup (μ : ℕ → ProbabilityMeasure (ConfigSpace E))
     (A : Set (ConfigSpace E)) : NNReal :=
   ⨆ n, (μ n) A
 
-/-- The infimum over `n` of the masses `μ n A` of an event `A`. -/
+/-- **Infimum of the masses of an event along a measure sequence.**
+The infimum over `n` of the masses `μ n A` of an event `A`. -/
 noncomputable def ivTwoPointInf (μ : ℕ → ProbabilityMeasure (ConfigSpace E))
     (A : Set (ConfigSpace E)) : NNReal :=
   ⨅ n, (μ n) A
@@ -102,7 +104,8 @@ lemma ivTwoPointInf_pos_of_uniform (μ : ℕ → ProbabilityMeasure (ConfigSpace
     0 < ivTwoPointInf μ A :=
   lt_of_lt_of_le hc (le_ciInf hbound)
 
-/-- Along a stochastically decreasing sequence of measures, the mass of a clopen increasing event
+/-- **Masses of clopen increasing events converge along decreasing measures.**
+Along a stochastically decreasing sequence of measures, the mass of a clopen increasing event
 converges to its infimum. -/
 lemma ivTwoPointInf_isLimit (μ : ℕ → ProbabilityMeasure (ConfigSpace E))
     (hchain : ∀ n, (μ (n + 1) : Measure (ConfigSpace E)) ≼ (μ n : Measure (ConfigSpace E)))
@@ -123,7 +126,8 @@ lemma ivTwoPointInf_isLimit (μ : ℕ → ProbabilityMeasure (ConfigSpace E))
 ## B. Restriction to a box and box connection events
 -/
 
-/-- Restriction of a configuration of `ℤ^d` to the edges of the box `Λ_n`. -/
+/-- **Restriction of a configuration of $\mathbb{Z}^d$ to a box.**
+Restriction of a configuration of `ℤ^d` to the edges of the box `Λ_n`. -/
 def boxRestrict (d n : ℕ) (ω : ConfigSpace (Sym2 (Site d))) :
     ConfigSpace (Sym2 (boxVerts d n)) :=
   fun eb => ω (edgeIncl d n eb)
@@ -134,23 +138,25 @@ lemma continuous_boxRestrict (d n : ℕ) : Continuous (boxRestrict d n) :=
 lemma monotone_boxRestrict (d n : ℕ) : Monotone (boxRestrict d n) :=
   fun _ _ hab eb => hab (edgeIncl d n eb)
 
-/-- Cylinder events of the box `Λ_N` are clopen. -/
+/-- **Cylinder events of a box are clopen.** Cylinder events of the box `Λ_N` are clopen. -/
 lemma isClopen_boxRestrict_preimage {d : ℕ} (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) : IsClopen (boxRestrict d N ⁻¹' S) :=
   IsClopen.preimage ⟨isClosed_discrete _, isOpen_discrete _⟩ (continuous_boxRestrict d N)
 
-/-- Cylinder events of the box `Λ_N` are measurable. -/
+/-- **Cylinder events of a box are measurable.** Cylinder events of the box `Λ_N` are measurable. -/
 lemma measurableSet_boxRestrict_preimage {d : ℕ} (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) : MeasurableSet (boxRestrict d N ⁻¹' S) :=
   (isClopen_boxRestrict_preimage N S).isOpen.measurableSet
 
-/-- The preimage of an increasing event under box restriction is increasing. -/
+/-- **Box restriction pulls increasing events back to increasing events.**
+The preimage of an increasing event under box restriction is increasing. -/
 lemma isIncreasing_boxRestrict_preimage {d : ℕ} (N : ℕ)
     {S : Set (ConfigSpace (Sym2 (boxVerts d N)))} (hS : IsIncreasing S) :
     IsIncreasing (boxRestrict d N ⁻¹' S) :=
   fun _ _ hab ha => hS (monotone_boxRestrict d N hab) ha
 
-/-- The event that `x` and `y` are joined by open edges inside the box `Λ_n`. -/
+/-- **Event that two sites are joined by open edges inside a box.**
+The event that `x` and `y` are joined by open edges inside the box `Λ_n`. -/
 def boxConnEvent (d n : ℕ) (x y : boxVerts d n) : Set (ConfigSpace (Sym2 (Site d))) :=
   boxRestrict d n ⁻¹' (connEvent (boxGraph d n) x y)
 
@@ -184,7 +190,8 @@ lemma extendEdge_preimage_boxConnEvent (d n : ℕ) (x y : boxVerts d n) :
 ## C. Connection probabilities of the box measures
 -/
 
-/-- The free box measure of the connection event in `Λ_n` is the finite-volume two-point function.
+/-- **Free box measure of a box connection event is the two-point function.**
+The free box measure of the connection event in `Λ_n` is the finite-volume two-point function.
 -/
 lemma freeFiniteMeasure_real_boxConnEvent (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (x y : boxVerts d n) :
@@ -202,7 +209,8 @@ lemma freeFiniteMeasure_real_boxConnEvent (d n : ℕ) {p q : ℝ}
   unfold twoPointFun
   exact Finset.sum_congr rfl fun ω _ => mul_comm _ _
 
-/-- Every configuration has positive wired random-cluster probability. -/
+/-- **Wired random-cluster probabilities are positive.**
+Every configuration has positive wired random-cluster probability. -/
 lemma wiredFkProb_pos {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (bdry : V → Prop) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (ω : ConfigSpace (Sym2 V)) :
@@ -256,13 +264,15 @@ lemma wiredFiniteMeasure_apply_boxConnEvent_pos (d n : ℕ) {p q : ℝ}
 ## D. Infinite-volume two-point functions
 -/
 
-/-- The free infinite-volume two-point function in `Λ_N`: the supremum over `n` of `φ⁰_n(x ↔ y in
+/-- **Free infinite-volume two-point function in a box.**
+The free infinite-volume two-point function in `Λ_N`: the supremum over `n` of `φ⁰_n(x ↔ y in
 Λ_N)`. -/
 noncomputable def freeIvTwoPoint (d N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (x y : boxVerts d N) : NNReal :=
   ivTwoPointSup (fun n => freeFiniteMeasure d n hp hp1 hq) (boxConnEvent d N x y)
 
-/-- The wired infinite-volume two-point function in `Λ_N`: the infimum over `n` of `φ¹_n(x ↔ y in
+/-- **Wired infinite-volume two-point function in a box.**
+The wired infinite-volume two-point function in `Λ_N`: the infimum over `n` of `φ¹_n(x ↔ y in
 Λ_N)`. -/
 noncomputable def wiredIvTwoPoint (d N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (x y : boxVerts d N) : NNReal :=
@@ -285,7 +295,8 @@ lemma wiredIvTwoPoint_pos_of_uniform (d N : ℕ) {p q : ℝ}
     0 < wiredIvTwoPoint d N hp hp1 hq x y :=
   ivTwoPointInf_pos_of_uniform _ _ hc hbound
 
-/-- If the free box measures increase stochastically in `n`, then `φ⁰_n(x ↔ y in Λ_N)` converges to
+/-- **Convergence to the free two-point function under stochastic increase.**
+If the free box measures increase stochastically in `n`, then `φ⁰_n(x ↔ y in Λ_N)` converges to
 `freeIvTwoPoint`. -/
 lemma freeIvTwoPoint_isLimit (d N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -297,7 +308,8 @@ lemma freeIvTwoPoint_isLimit (d N : ℕ) {p q : ℝ}
   tendsto_NNReal_of_monotone_isIncreasing hchain (isClopen_boxConnEvent d N x y)
     (isIncreasing_boxConnEvent d N x y)
 
-/-- If the wired box measures decrease stochastically in `n`, then `φ¹_n(x ↔ y in Λ_N)` converges to
+/-- **Convergence to the wired two-point function under stochastic decrease.**
+If the wired box measures decrease stochastically in `n`, then `φ¹_n(x ↔ y in Λ_N)` converges to
 `wiredIvTwoPoint`. -/
 lemma wiredIvTwoPoint_isLimit (d N : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)

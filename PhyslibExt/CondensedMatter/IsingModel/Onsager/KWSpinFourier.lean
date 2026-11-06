@@ -55,7 +55,8 @@ namespace StatMech.Onsager
 
 /-! ## A. Direction phases -/
 
-/-- The phase of a step in direction `μ`: `u, v, u⁻¹, v⁻¹` for east, north, west, south. -/
+/-- **Boundary phase of a step in a direction.**
+The phase of a step in direction `μ`: `u, v, u⁻¹, v⁻¹` for east, north, west, south. -/
 noncomputable def ons_dirPhase (u v : ℂ) (mu : Fin 4) : ℂ :=
   match mu with
   | 0 => u
@@ -63,7 +64,8 @@ noncomputable def ons_dirPhase (u v : ℂ) (mu : Fin 4) : ℂ :=
   | 2 => u⁻¹
   | 3 => v⁻¹
 
-/-- The horizontal displacement `1, 0, -1, 0` of a step in direction `μ`. -/
+/-- **Horizontal displacement of a step in a direction.**
+The horizontal displacement `1, 0, -1, 0` of a step in direction `μ`. -/
 def ons_dirExponentX (mu : Fin 4) : ℤ :=
   match mu with
   | 0 => 1
@@ -71,7 +73,8 @@ def ons_dirExponentX (mu : Fin 4) : ℤ :=
   | 2 => -1
   | 3 => 0
 
-/-- The vertical displacement `0, 1, 0, -1` of a step in direction `μ`. -/
+/-- **Vertical displacement of a step in a direction.**
+The vertical displacement `0, 1, 0, -1` of a step in direction `μ`. -/
 def ons_dirExponentY (mu : Fin 4) : ℤ :=
   match mu with
   | 0 => 0
@@ -107,12 +110,14 @@ lemma prod_ons_dirPhase {alpha : Type*} [Fintype alpha] [DecidableEq alpha]
 
 /-! ## B. The twisted Kac-Ward matrix -/
 
-/-- The Kac-Ward matrix with each step multiplied by its direction phase `ons_dirPhase u v`. -/
+/-- **Twisted Kac-Ward matrix with direction phases.**
+The Kac-Ward matrix with each step multiplied by its direction phase `ons_dirPhase u v`. -/
 noncomputable def ons_KWmatPhase (L : ℕ) (x omega u v : ℂ) :
     Matrix (ons_Dart L) (ons_Dart L) ℂ :=
   fun d2 d1 => ons_dirPhase u v d1.2 * ons_KWmat L x omega d2 d1
 
-/-- The `4 × 4` block of the twisted Kac-Ward matrix between the darts at `g` and at the origin. -/
+/-- **Block of the twisted Kac-Ward matrix between a site and the origin.**
+The `4 × 4` block of the twisted Kac-Ward matrix between the darts at `g` and at the origin. -/
 noncomputable def ons_KWblockPhase (L : ℕ) (x omega u v : ℂ)
     (g : ZMod L × ZMod L) : Matrix (Fin 4) (Fin 4) ℂ :=
   fun a b => ons_KWmatPhase L x omega u v (g, a) (0, b)
@@ -264,7 +269,8 @@ lemma ons_KWmatPhase_det_eq_prod (L : ℕ) [NeZero L] [Fact (1 < L)]
 
 /-! ## C. Spin-structure phases -/
 
-/-- The boundary phase `e^{iπa/L}`, whose `L`-th power is `(-1)^a`. -/
+/-- **Boundary phase $e^{i\pi a/L}$.**
+The boundary phase `e^{iπa/L}`, whose `L`-th power is `(-1)^a`. -/
 noncomputable def ons_spinPhase (L : ℕ) (a : Fin 2) : ℂ :=
   Complex.exp (Complex.I * ((Real.pi * a.val / L : ℝ) : ℂ))
 

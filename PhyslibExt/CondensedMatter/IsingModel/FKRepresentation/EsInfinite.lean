@@ -61,7 +61,8 @@ variable {d : ℕ}
 
 /-! ## A. Finite-volume magnetization -/
 
-/-- The magnetization `⟨σ_0⟩` at the origin under the plus-boundary Ising measure on the box `Λ_n`
+/-- **Finite-volume plus-boundary magnetization at the origin.**
+The magnetization `⟨σ_0⟩` at the origin under the plus-boundary Ising measure on the box `Λ_n`
 at inverse temperature `β` and zero field. -/
 noncomputable def fvMagnetization (d : ℕ) (β : ℝ) (n : ℕ) : ℝ :=
   ∫ ω, spin ω (origin d) ∂(plusMeasure d n β 0 : Measure (ConfigSpace (Site d)))

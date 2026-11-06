@@ -63,20 +63,23 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Gibbs measures with couplings and field -/
 
-/-- The energy `∑_e J_e σ_e + h ∑_x σ_x`. -/
+/-- **Energy with general couplings and a uniform field.** The energy `∑_e J_e σ_e + h ∑_x σ_x`. -/
 noncomputable def weightedEnergy (J : Sym2 V -> ℝ) (h : ℝ) (s : ConfigSpace V) : ℝ :=
   (∑ e ∈ G.edgeFinset, J e * bond s e) + h * ∑ x, spin s x
 
-/-- The Boltzmann weight `exp(β (∑_e J_e σ_e + h ∑_x σ_x))`. -/
+/-- **Boltzmann weight with general couplings and a uniform field.**
+The Boltzmann weight `exp(β (∑_e J_e σ_e + h ∑_x σ_x))`. -/
 noncomputable def weightedWeight (β : ℝ) (J : Sym2 V -> ℝ) (h : ℝ)
     (s : ConfigSpace V) : ℝ :=
   Real.exp (β * weightedEnergy G J h s)
 
-/-- The partition function with couplings `J` and field `h`. -/
+/-- **Partition function with general couplings and a uniform field.**
+The partition function with couplings `J` and field `h`. -/
 noncomputable def weightedZ (β : ℝ) (J : Sym2 V -> ℝ) (h : ℝ) : ℝ :=
   ∑ s : ConfigSpace V, weightedWeight G β J h s
 
-/-- The Gibbs expectation with couplings `J` and field `h`. -/
+/-- **Gibbs expectation with general couplings and a uniform field.**
+The Gibbs expectation with couplings `J` and field `h`. -/
 noncomputable def weightedExpectation (β : ℝ) (J : Sym2 V -> ℝ) (h : ℝ)
     (f : ConfigSpace V -> ℝ) : ℝ :=
   (∑ s : ConfigSpace V, f s * weightedWeight G β J h s) / weightedZ G β J h
@@ -427,13 +430,15 @@ open StatMech.Sharpness.HcovAssembly
 
 /-! ## D. The random-current form -/
 
-/-- The bond term: the ghost-graph disconnection sum for `Cov(σ_o, σ_e)` with couplings `J`. -/
+/-- **Bond term: ghost-graph disconnection sum for a bond covariance.**
+The bond term: the ghost-graph disconnection sum for `Cov(σ_o, σ_e)` with couplings `J`. -/
 noncomputable def weightedBondDelta (β h : ℝ) (J : Sym2 V -> ℝ)
     (o : V) (e : Sym2 V) : ℝ :=
   sourcePairDisconnSum (withGhost G) β (ghostCoupling h β J)
     (hcaBondSource o e) ∅ (some o) none
 
-/-- The field term: the ghost-graph disconnection sum for `Cov(σ_o, σ_z)` with couplings `J`. -/
+/-- **Field term: ghost-graph disconnection sum for a site covariance.**
+The field term: the ghost-graph disconnection sum for `Cov(σ_o, σ_z)` with couplings `J`. -/
 noncomputable def weightedFieldDelta (β h : ℝ) (J : Sym2 V -> ℝ)
     (o z : V) : ℝ :=
   sourcePairDisconnSum (withGhost G) β (ghostCoupling h β J)

@@ -63,18 +63,20 @@ open BigOperators StatMech.Ising
 
 /-! ## A. Edge bits and the intersection number -/
 
-/-- The indicator of `e ∈ F` in `Fin 2`. -/
+/-- **Indicator bit of an edge in an edge set.** The indicator of `e ∈ F` in `Fin 2`. -/
 def ons_edgeBit {V : Type*} [DecidableEq V]
     (F : Finset (Sym2 V)) (e : Sym2 V) : Fin 2 :=
   if e ∈ F then 1 else 0
 
-/-- Whether `F` contains the horizontal edge from `p` eastward. -/
+/-- **Horizontal edge bit of an edge set at a site.**
+Whether `F` contains the horizontal edge from `p` eastward. -/
 def ons_horizontalBit {L : ℕ}
     (F : Finset (Sym2 (ZMod L × ZMod L)))
     (p : ZMod L × ZMod L) : Fin 2 :=
   ons_edgeBit F (ons_portEdge L (p, 0))
 
-/-- Whether `F` contains the vertical edge from `p` northward. -/
+/-- **Vertical edge bit of an edge set at a site.**
+Whether `F` contains the vertical edge from `p` northward. -/
 def ons_verticalBit {L : ℕ}
     (F : Finset (Sym2 (ZMod L × ZMod L)))
     (p : ZMod L × ZMod L) : Fin 2 :=
@@ -130,7 +132,8 @@ lemma ons_edgeBits_divergence_zero
       ons_verticalBit F (p.1, p.2 - 1) = 0 at hsum
   simpa [add_assoc, add_left_comm, add_comm] using hsum
 
-/-- The mod-2 intersection number of edge sets `F` and `G` on the torus. -/
+/-- **Mod 2 intersection number of two torus edge sets.**
+The mod-2 intersection number of edge sets `F` and `G` on the torus. -/
 noncomputable def ons_edgeCycleIntersection
     {L : ℕ} [NeZero L]
     (F G : Finset (Sym2 (ZMod L × ZMod L))) : Fin 2 :=
@@ -210,24 +213,28 @@ lemma ons_edgeCycleIntersection_eq_zero_of_incCount_disjoint
 
 /-! ## B. Fluxes -/
 
-/-- The horizontal edge bit as an element of `ZMod 2`. -/
+/-- **Horizontal edge bit as an element of $\mathbb{Z}/2$.**
+The horizontal edge bit as an element of `ZMod 2`. -/
 def ons_horizontalZBit {L : ℕ}
     (F : Finset (Sym2 (ZMod L × ZMod L)))
     (p : ZMod L × ZMod L) : ZMod 2 :=
   (ons_horizontalBit F p : ZMod 2)
 
-/-- The vertical edge bit as an element of `ZMod 2`. -/
+/-- **Vertical edge bit as an element of $\mathbb{Z}/2$.**
+The vertical edge bit as an element of `ZMod 2`. -/
 def ons_verticalZBit {L : ℕ}
     (F : Finset (Sym2 (ZMod L × ZMod L)))
     (p : ZMod L × ZMod L) : ZMod 2 :=
   (ons_verticalBit F p : ZMod 2)
 
-/-- The number mod 2 of horizontal edges of `F` leaving column `x` eastward. -/
+/-- **Horizontal flux of an edge set through a column.**
+The number mod 2 of horizontal edges of `F` leaving column `x` eastward. -/
 noncomputable def ons_xFlux {L : ℕ} [NeZero L]
     (F : Finset (Sym2 (ZMod L × ZMod L))) (x : ZMod L) : ZMod 2 :=
   ∑ y : ZMod L, ons_horizontalZBit F (x, y)
 
-/-- The number mod 2 of vertical edges of `F` leaving row `y` northward. -/
+/-- **Vertical flux of an edge set through a row.**
+The number mod 2 of vertical edges of `F` leaving row `y` northward. -/
 noncomputable def ons_yFlux {L : ℕ} [NeZero L]
     (F : Finset (Sym2 (ZMod L × ZMod L))) (y : ZMod L) : ZMod 2 :=
   ∑ x : ZMod L, ons_verticalZBit F (x, y)
@@ -327,12 +334,12 @@ lemma ons_yFlux_pred
 
 /-! ## C. Seams and homology -/
 
-/-- The edge of the vertical seam in row `y`. -/
+/-- **Vertical-seam edge in a given row.** The edge of the vertical seam in row `y`. -/
 def ons_xSeamPortEdge (L : ℕ) (y : ZMod L) :
     Sym2 (ZMod L × ZMod L) :=
   ons_portEdge L (((-1 : ZMod L), y), 0)
 
-/-- The edge of the horizontal seam in column `x`. -/
+/-- **Horizontal-seam edge in a given column.** The edge of the horizontal seam in column `x`. -/
 def ons_ySeamPortEdge (L : ℕ) (x : ZMod L) :
     Sym2 (ZMod L × ZMod L) :=
   ons_portEdge L ((x, (-1 : ZMod L)), 1)
@@ -515,7 +522,8 @@ lemma ons_sum_zmod_eq_sum_range
   change i = i % (q + 1)
   exact (Nat.mod_eq_of_lt (Finset.mem_range.mp hi)).symm
 
-/-- The prefix sum `∑_{k < x} f k` along `ZMod L`, using the representatives `0, …, L - 1`. -/
+/-- **Prefix sum of a function on $\mathbb{Z}/L$.**
+The prefix sum `∑_{k < x} f k` along `ZMod L`, using the representatives `0, …, L - 1`. -/
 noncomputable def ons_zmodPrefix
     {A : Type*} [AddCommMonoid A]
     {L : ℕ} [NeZero L] (f : ZMod L → A) (z : ZMod L) : A :=
@@ -651,7 +659,8 @@ lemma ons_zmodPrefix_add_pred_of_sum_zero
 
 /-! ## D. Potentials for zero flux -/
 
-/-- The horizontal part of the potential construction for an edge set of zero flux. -/
+/-- **Horizontal part of the zero-flux potential construction.**
+The horizontal part of the potential construction for an edge set of zero flux. -/
 noncomputable def ons_zeroFluxHorizontal
     {L : ℕ} [NeZero L]
     (F : Finset (Sym2 (ZMod L × ZMod L)))
@@ -659,7 +668,8 @@ noncomputable def ons_zeroFluxHorizontal
   ons_horizontalZBit F p +
     if p.2 = 0 then ons_xFlux F (-1) else 0
 
-/-- The vertical part of the potential construction for an edge set of zero flux. -/
+/-- **Vertical part of the zero-flux potential construction.**
+The vertical part of the potential construction for an edge set of zero flux. -/
 noncomputable def ons_zeroFluxVertical
     {L : ℕ} [NeZero L]
     (F : Finset (Sym2 (ZMod L × ZMod L)))
@@ -716,7 +726,8 @@ lemma ons_zeroFluxVertical_sum_zero
   simp
   exact CharTwo.add_self_eq_zero _
 
-/-- A face potential `P` whose boundary is a given even subgraph of zero homology. -/
+/-- **Face potential of an even subgraph of zero homology.**
+A face potential `P` whose boundary is a given even subgraph of zero homology. -/
 noncomputable def ons_zeroFluxPotential
     {L : ℕ} [NeZero L]
     (F : Finset (Sym2 (ZMod L × ZMod L)))
@@ -937,7 +948,8 @@ lemma ons_zeroFlux_intersection_eq_zero
 
 /-! ## E. Intersection and homology -/
 
-/-- The intersection number of two edge sets, valued in `ZMod 2`. -/
+/-- **Intersection number of torus edge sets in the field $\mathbb{Z}/2$.**
+The intersection number of two edge sets, valued in `ZMod 2`. -/
 noncomputable def ons_edgeCycleZIntersection
     {L : ℕ} [NeZero L]
     (F G : Finset (Sym2 (ZMod L × ZMod L))) : ZMod 2 :=

@@ -61,7 +61,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. Compatible colorings -/
 
-/-- A coloring `σ` is compatible with the bond configuration `ω` if every open edge of `G` joins
+/-- **Compatibility of a coloring with a bond configuration.**
+A coloring `σ` is compatible with the bond configuration `ω` if every open edge of `G` joins
 vertices of the same color. See also `FK.ConstOnOpen` (`compatible_iff_constOnOpen`). -/
 def Compatible {q : ℕ} (σ : V → Fin q) (ω : ConfigSpace (Sym2 V)) : Prop :=
   ∀ x y, G.Adj x y → ω s(x, y) = true → σ x = σ y
@@ -81,7 +82,7 @@ lemma compatible_constant_on_cluster {q : ℕ} (σ : V → Fin q) (ω : ConfigSp
     (h : Compatible G σ ω) {x y : V} (r : (openSub G ω).Reachable x y) : σ x = σ y :=
   constOnOpen_reachable G ω σ ((compatible_iff_constOnOpen G σ ω).1 h) r
 
-/-- Whether an edge is monochromatic under the coloring `σ`. -/
+/-- **Monochromatic edge indicator.** Whether an edge is monochromatic under the coloring `σ`. -/
 def monoBool {q : ℕ} (σ : V → Fin q) : Sym2 V → Bool :=
   Sym2.lift ⟨fun x y => decide (σ x = σ y), by
     intro a b
@@ -99,7 +100,8 @@ lemma monoBool_iff {q : ℕ} (σ : V → Fin q) (x y : V) :
     monoBool σ s(x, y) = true ↔ σ x = σ y := by
   rw [monoBool_mk, decide_eq_true_eq]
 
-/-- The edges of `G` whose endpoints have different colors. -/
+/-- **Edges with differently colored endpoints.**
+The edges of `G` whose endpoints have different colors. -/
 def disagreeEdges {q : ℕ} (σ : V → Fin q) : Finset (Sym2 V) :=
   G.edgeFinset.filter (fun e => ¬ monoBool σ e)
 
@@ -122,7 +124,8 @@ lemma compatible_closed_on_disagree {q : ℕ} (σ : V → Fin q) (ω : ConfigSpa
 
 /-! ## B. Colorings of the open clusters -/
 
-/-- The coloring of the vertices obtained from a coloring `τ` of the open clusters of `ω`. -/
+/-- **Vertex coloring induced by a coloring of open clusters.**
+The coloring of the vertices obtained from a coloring `τ` of the open clusters of `ω`. -/
 def coloring {q : ℕ} (ω : ConfigSpace (Sym2 V))
     (τ : (openSub G ω).ConnectedComponent → Fin q) : V → Fin q :=
   fun v => τ ((openSub G ω).connectedComponentMk v)
@@ -178,7 +181,8 @@ lemma esWeight_eq_of_compatible {q : ℕ} (p : ℝ) (σ : V → Fin q) (ω : Con
   simp only [compatible_iff_constOnOpen]
   split <;> ring
 
-/-- The joint Edwards–Sokal probability of the coloring `σ` and the bond configuration `ω`. -/
+/-- **Edwards–Sokal joint probability.**
+The joint Edwards–Sokal probability of the coloring `σ` and the bond configuration `ω`. -/
 noncomputable def esJointProb (q : ℕ) (p : ℝ) (σ : V → Fin q) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   esWeight G p σ ω / esZ G q p
 

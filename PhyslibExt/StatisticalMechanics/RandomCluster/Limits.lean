@@ -95,7 +95,8 @@ lemma openGraph_sup (a b : ConfigSpace (Sym2 V)) :
 ## B. Mixed supermodularity and Holley's condition
 -/
 
-/-- Mixed supermodularity of cluster counts: `k(a) + k¹(b) ≤ k(a ⊓ b) + k¹(a ⊔ b)`, where `k¹`
+/-- **Mixed supermodularity of free and wired cluster counts.**
+Mixed supermodularity of cluster counts: `k(a) + k¹(b) ≤ k(a ⊓ b) + k¹(a ⊔ b)`, where `k¹`
 counts clusters with the boundary wired. -/
 lemma mixed_supermodular (a b : ConfigSpace (Sym2 V)) :
     numClusters G a + numClustersWired G bdry b
@@ -121,7 +122,8 @@ lemma mixed_supermodular (a b : ConfigSpace (Sym2 V)) :
   rw [e1, e2] at hmarg
   omega
 
-/-- Holley's condition for the free and wired weights when `q ≥ 1`. See also `bcWeight_cross`, which
+/-- **Holley's condition for free and wired weights when $q \ge 1$.**
+Holley's condition for the free and wired weights when `q ≥ 1`. See also `bcWeight_cross`, which
 contains this as the case of boundary wirings `⊥ ≤ clique`. -/
 lemma freeWiredWeight_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (a b : ConfigSpace (Sym2 V)) :
@@ -149,7 +151,8 @@ lemma freeWiredWeight_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q
   rw [hcomm]
   exact mul_le_mul_of_nonneg_left hcluster hpow_nonneg
 
-/-- Holley's condition for the free and wired probabilities when `q ≥ 1`. -/
+/-- **Holley's condition for free and wired probabilities when $q \ge 1$.**
+Holley's condition for the free and wired probabilities when `q ≥ 1`. -/
 lemma freeWiredProb_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (a b : ConfigSpace (Sym2 V)) :
     fkProb G p q a * wiredFkProb G bdry p q b
@@ -166,7 +169,8 @@ lemma freeWiredProb_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
 ## C. Domination on a finite graph
 -/
 
-/-- For `q ≥ 1` the free random-cluster measure gives every increasing event at most the probability
+/-- **Free–wired domination on a finite graph for $q \ge 1$.**
+For `q ≥ 1` the free random-cluster measure gives every increasing event at most the probability
 the wired measure gives it. -/
 lemma fkProb_le_wiredFkProb_increasing {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {A : Set (ConfigSpace (Sym2 V))} (hA : IsIncreasing A) :
@@ -234,7 +238,8 @@ lemma wiredFkPMF_toMeasure_toReal (d n : ℕ) {p q : ℝ}
       exact ENNReal.ofReal_ne_top
     · rw [Set.indicator_of_notMem ha]; simp
 
-/-- For `q ≥ 1` the free box measure is stochastically dominated by the wired box measure on `ℤ^d`:
+/-- **Free box measure dominated by the wired one for $q \ge 1$.**
+For `q ≥ 1` the free box measure is stochastically dominated by the wired box measure on `ℤ^d`:
 `φ⁰_n ≼ φ¹_n`. -/
 lemma freeFiniteMeasure_dominated (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :

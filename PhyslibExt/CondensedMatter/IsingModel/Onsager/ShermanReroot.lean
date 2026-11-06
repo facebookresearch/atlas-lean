@@ -57,7 +57,8 @@ variable {n : ℕ} [NeZero n]
 
 /-! ## A. Rotations -/
 
-/-- Rotation of a cyclic sequence by `k` steps: `(ons_rotate k v) j = v (j + k)`. -/
+/-- **Rotation of a cyclic sequence by $k$ steps.**
+Rotation of a cyclic sequence by `k` steps: `(ons_rotate k v) j = v (j + k)`. -/
 def ons_rotate (k : Fin n) (v : Fin n → E) : Fin n → E :=
   fun j => v (j + k)
 
@@ -70,7 +71,8 @@ omit [Fintype E] [DecidableEq E] in
     ons_rotate k v 0 = v k := by
   simp [ons_rotate]
 
-/-- Rotation by `k` as an equivalence of `Fin n → E`, with inverse the rotation by `-k`. -/
+/-- **Rotation by $k$ as an equivalence of sequences.**
+Rotation by `k` as an equivalence of `Fin n → E`, with inverse the rotation by `-k`. -/
 def ons_rotateEquiv (k : Fin n) : (Fin n → E) ≃ (Fin n → E) where
   toFun := ons_rotate k
   invFun := ons_rotate (-k)
@@ -98,7 +100,7 @@ lemma ons_loopWeight_rotate (Lambda : Matrix E E ℂ) (k : Fin n) (v : Fin n →
 
 /-! ## B. Visit counts -/
 
-/-- The number of positions `k` with `v k = e`. -/
+/-- **Number of visits of a sequence to a state.** The number of positions `k` with `v k = e`. -/
 def ons_visitCount (e : E) (v : Fin n → E) : ℕ :=
   Fintype.card {k : Fin n // v k = e}
 

@@ -413,7 +413,8 @@ lemma ons_cycle_decomposition_edgeSet_injective
 
 /-! ## C. The component series -/
 
-/-- The polynomial `∑_C log-coefficient(C) x^{E(C)}` over the cycles `C` of a fixed decomposition of
+/-- **Log-coefficient polynomial over the cycles of a decomposition.**
+The polynomial `∑_C log-coefficient(C) x^{E(C)}` over the cycles `C` of a fixed decomposition of
 an even subgraph. -/
 noncomputable def ons_decComponentSeries
     (L : ℕ) [Fact (2 < L)] (a b : Fin 2)
@@ -978,7 +979,8 @@ lemma ons_decFormalRoot_coeff_finsetExponent
 
 /-! ## F. Reduction to non-squarefree coefficients -/
 
-/-- An exponent is squarefree if every variable occurs with exponent at most `1`. -/
+/-- **Squarefree exponent.**
+An exponent is squarefree if every variable occurs with exponent at most `1`. -/
 def ons_IsSquarefreeExponent {E : Type*} (m : E →₀ ℕ) : Prop :=
   ∀ edge, m edge ≤ 1
 

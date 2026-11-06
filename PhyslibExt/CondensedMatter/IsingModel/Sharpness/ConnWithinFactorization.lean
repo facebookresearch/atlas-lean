@@ -55,7 +55,7 @@ variable {d : ℕ}
 
 /-! ## A. Internal edges -/
 
-/-- The edges of `ℤ^d` with both endpoints in `S`. -/
+/-- **Edges of $\mathbb{Z}^d$ inside a set.** The edges of `ℤ^d` with both endpoints in `S`. -/
 def internalEdges (S : Set (Site d)) : Set (Sym2 (Site d)) :=
   {e | ∃ x ∈ S, ∃ y ∈ S, e = s(x, y)}
 

@@ -105,7 +105,7 @@ lemma sources_ofEdgeFun_add (m K : ↥G.edgeFinset → ℕ) (hK : K ≤ m) :
 
 /-! ## B. Summability -/
 
-/-- The single-edge weight `(βJ_e)^k / k!`. -/
+/-- **Single-edge current weight $(\beta J_e)^k/k!$.** The single-edge weight `(βJ_e)^k / k!`. -/
 noncomputable def wEdge (β : ℝ) (J : Sym2 V → ℝ) (e : Sym2 V) (k : ℕ) : ℝ :=
   (β * J e) ^ k / k.factorial
 
@@ -138,7 +138,8 @@ lemma summable_norm_currentSum_summand (β : ℝ) (J : Sym2 V → ℝ) (A : Fins
 
 /-! ## C. Double-current sums -/
 
-/-- Pairs `(p, q)` of functions to `ℕ` correspond to a sum `m = p + q` together with `p ≤ m`. -/
+/-- **Reparametrizing pairs of functions by their sum and one summand.**
+Pairs `(p, q)` of functions to `ℕ` correspond to a sum `m = p + q` together with `p ≤ m`. -/
 def pairEquivSigma {E : Type*} :
     ((E → ℕ) × (E → ℕ)) ≃ Σ m : (E → ℕ), {p : E → ℕ // p ≤ m} where
   toFun pq := ⟨fun e => pq.1 e + pq.2 e, ⟨pq.1, fun e => Nat.le_add_right _ _⟩⟩
@@ -156,7 +157,8 @@ noncomputable instance instFintypeLe (m : ↥G.edgeFinset → ℕ) :
     Fintype {p : ↥G.edgeFinset → ℕ // p ≤ m} := by
   classical exact Fintype.ofFinite _
 
-/-- The double-current sum `∑_{∂n₁ = A, ∂n₂ = B} w(n₁) w(n₂)`. -/
+/-- **Double-current sum with prescribed sources.**
+The double-current sum `∑_{∂n₁ = A, ∂n₂ = B} w(n₁) w(n₂)`. -/
 noncomputable def sourcePairSum (β : ℝ) (J : Sym2 V → ℝ) (A B : Finset V) : ℝ :=
   ∑' pq : (↥G.edgeFinset → ℕ) × (↥G.edgeFinset → ℕ),
     (if sources G (ofEdgeFun G pq.1) = A then weight G β J (ofEdgeFun G pq.1) else 0)

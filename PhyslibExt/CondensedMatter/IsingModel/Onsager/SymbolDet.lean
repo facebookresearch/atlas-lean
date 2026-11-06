@@ -51,7 +51,8 @@ namespace StatMech.Onsager
 
 /-! ## A. The symbol -/
 
-/-- The `4 × 4` Fourier symbol of `1 - ons_KWmat` at `zⱼ = e^{i kⱼ}`, rows and columns indexed by
+/-- **Fourier symbol of one minus the Kac-Ward matrix.**
+The `4 × 4` Fourier symbol of `1 - ons_KWmat` at `zⱼ = e^{i kⱼ}`, rows and columns indexed by
 the directions east, north, west, south. -/
 noncomputable def ons_KWsymbolMat (x ω z₁ z₂ : ℂ) : Matrix (Fin 4) (Fin 4) ℂ :=
   !![ 1 - x*z₁,             -x*(-Complex.I*ω)*z₂, 0,                      -x*ω*z₂⁻¹ ;

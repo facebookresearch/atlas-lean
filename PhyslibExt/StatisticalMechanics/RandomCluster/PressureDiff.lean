@@ -70,11 +70,12 @@ variable {g : ℝ → ℝ}
 
 -/
 
-/-- The right derivative `g'₊(x) = derivWithin g (Ioi x) x`, the form used by Mathlib's
+/-- **Right derivative of the pressure.**
+The right derivative `g'₊(x) = derivWithin g (Ioi x) x`, the form used by Mathlib's
 `ConvexOn.monotoneOn_rightDeriv`. -/
 noncomputable def pressureRightDeriv (g : ℝ → ℝ) (x : ℝ) : ℝ := derivWithin g (Ioi x) x
 
-/-- The left derivative `g'₋(x) = derivWithin g (Iio x) x`. -/
+/-- **Left derivative of the pressure.** The left derivative `g'₋(x) = derivWithin g (Iio x) x`. -/
 noncomputable def pressureLeftDeriv (g : ℝ → ℝ) (x : ℝ) : ℝ := derivWithin g (Iio x) x
 
 lemma pressureRightDeriv_monotone (hg : ConvexOn ℝ univ g) :
@@ -91,7 +92,8 @@ lemma pressureLeftDeriv_monotone (hg : ConvexOn ℝ univ g) :
   intro x y hxy
   exact hm (mem_univ x) (mem_univ y) hxy
 
-/-- `g'₋(x) ≤ g'₊(x)`; Mathlib's `ConvexOn.leftDeriv_le_rightDeriv_of_mem_interior` on `univ`. -/
+/-- **Left derivative of a convex function is at most the right one.**
+`g'₋(x) ≤ g'₊(x)`; Mathlib's `ConvexOn.leftDeriv_le_rightDeriv_of_mem_interior` on `univ`. -/
 lemma pressureLeftDeriv_le_rightDeriv (hg : ConvexOn ℝ univ g) (x : ℝ) :
     pressureLeftDeriv g x ≤ pressureRightDeriv g x :=
   hg.leftDeriv_le_rightDeriv_of_mem_interior (x := x) (by rw [interior_univ]; trivial)
@@ -114,7 +116,8 @@ lemma pressureLeftDeriv_eq_rightDeriv_of_continuousAt (hg : ConvexOn ℝ univ g)
   filter_upwards [self_mem_nhdsWithin] with z (hz : z < x)
   exact pressureRightDeriv_le_leftDeriv_of_lt hg hz
 
-/-- A convex function on `ℝ` has equal left and right derivatives off a countable set. -/
+/-- **Convex function has equal one-sided derivatives off a countable set.**
+A convex function on `ℝ` has equal left and right derivatives off a countable set. -/
 lemma countable_leftDeriv_ne_rightDeriv (hg : ConvexOn ℝ univ g) :
     {x : ℝ | pressureLeftDeriv g x ≠ pressureRightDeriv g x}.Countable := by
   refine ((pressureRightDeriv_monotone hg).countable_not_continuousAt).mono ?_
@@ -134,7 +137,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 -/
 
-/-- If two families of edge marginals are the left and right derivatives of a convex `g`, they
+/-- **Derivative marginals of a convex pressure agree off a countable set.**
+If two families of edge marginals are the left and right derivatives of a convex `g`, they
 differ only on a countable set of parameters. -/
 lemma pressure_convex_countable_density_ne
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
@@ -148,7 +152,8 @@ lemma pressure_convex_countable_density_ne
   rw [ha_eq p, hb_eq p] at hp
   exact hp
 
-/-- If `μ p` and `ν p` are monotonically coupled, the edge density of `ν p` at `e` is the right
+/-- **Coupled measures agree off a countable set, given a convex pressure.**
+If `μ p` and `ν p` are monotonically coupled, the edge density of `ν p` at `e` is the right
 derivative of a convex `g`, and all edge marginals agree wherever that density is continuous in
 `p`, then `μ p` and `ν p` agree on every increasing event for `p` off a countable set. -/
 lemma fk_uniqueness_of_pressure_convex
@@ -168,7 +173,8 @@ lemma fk_uniqueness_of_pressure_convex
     rw [this]; exact pressureRightDeriv_monotone hg
   exact phi0_eq_phi1_off_countable μ ν e P hcoup hbmono heq_at_cont
 
-/-- The set of parameters at which `μ p` and `ν p` differ on some increasing event is countable,
+/-- **Set where coupled measures differ is countable under a convex pressure.**
+The set of parameters at which `μ p` and `ν p` differ on some increasing event is countable,
 under the hypotheses of `fk_uniqueness_of_pressure_convex`. -/
 lemma countable_phi_ne_of_pressure_convex
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)

@@ -163,7 +163,8 @@ lemma fpe2_closedFiber_pairMass_eq_sum (μ : ConfigSpace (Sym2 V) → ℝ) (e : 
   rw [hne, Finset.sum_filter_add_sum_filter_not Finset.univ
         (fun ω : ConfigSpace (Sym2 V) => ω e = true) μ]
 
-/-- A coordinate whose toggle preserves a probability mass function is open with probability `1/2`.
+/-- **Toggle-invariant coordinates are open with probability one half.**
+A coordinate whose toggle preserves a probability mass function is open with probability `1/2`.
 -/
 lemma fpe2_edgeMargProb_half_of_toggle_invariant
     (μ : ConfigSpace (Sym2 V) → ℝ) (e : Sym2 V)
@@ -268,21 +269,24 @@ lemma fpe2_halfLin_convex : ConvexOn ℝ univ (fun s : ℝ => (1/2) * s) := by
   exact (convexOn_id convex_univ).smul (by norm_num : (0 : ℝ) ≤ 1/2)
 
 open Classical in
-/-- The per-coordinate free energy on `Λ_N`: `G` on edges of the box graph and `s ↦ s/2` on
+/-- **Per-coordinate free energy on a box.**
+The per-coordinate free energy on `Λ_N`: `G` on edges of the box graph and `s ↦ s/2` on
 non-edges.
 -/
 noncomputable def fpe2_perEdgeG (d N : ℕ) (G : ℝ → ℝ) :
     Sym2 (boxVerts d N) → ℝ → ℝ :=
   fun e' => if e' ∈ (boxGraph d N).edgeFinset then G else (fun s => (1/2) * s)
 
-/-- Every edge of `Λ_N` has free `q = 2` density at `p = logistic(t)` equal to the left derivative
+/-- **Free densities of genuine box edges as left derivatives.**
+Every edge of `Λ_N` has free `q = 2` density at `p = logistic(t)` equal to the left derivative
 `G'₋(t)`.
 -/
 def fpe2_GenuineFreeIsLeftDeriv (d N : ℕ) (G : ℝ → ℝ) : Prop :=
   ∀ e' ∈ (boxGraph d N).edgeFinset, ∀ t : ℝ,
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv G t
 
-/-- Every edge of `Λ_N` has wired `q = 2` density at `p = logistic(t)` equal to the right
+/-- **Wired densities of genuine box edges as right derivatives.**
+Every edge of `Λ_N` has wired `q = 2` density at `p = logistic(t)` equal to the right
 derivative
 `G'₊(t)`.
 -/
@@ -347,7 +351,8 @@ lemma fpe2_hlink (hd : 0 < d) (N : ℕ) (eb : Sym2 (boxVerts d N))
 
 /-! ## D. Uniqueness from derivative data -/
 
-/-- If the free and wired densities of the edges of `Λ_N` are the left and right derivatives of one
+/-- **Countable-exception $q = 2$ uniqueness from one-sided derivative data.**
+If the free and wired densities of the edges of `Λ_N` are the left and right derivatives of one
 convex `G`, the free and wired `q = 2` measures agree on increasing events of `Λ_N` for all but
 countably many `t`.
 -/
@@ -368,7 +373,8 @@ lemma fpe2_fk_uniqueness_of_genuine (hd : 0 < d) (N : ℕ) (eb : Sym2 (boxVerts 
 
 /-! ## E. Uniqueness from free-energy limits and density collapse -/
 
-/-- The average free edge density of `Λ_n` converges to the free infinite-volume density of every
+/-- **Free average edge density collapse on boxes.**
+The average free edge density of `Λ_n` converges to the free infinite-volume density of every
 edge
 of `Λ_N`.
 -/
@@ -377,7 +383,8 @@ def fpe2_GenuineFreeCollapse (d N : ℕ) : Prop :=
     Tendsto (fun n => fpd_avgDensity (boxGraph d n) t) atTop
       (𝓝 (freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)))
 
-/-- The average wired edge density of `Λ_n` converges to the wired infinite-volume density of every
+/-- **Wired average edge density collapse on boxes.**
+The average wired edge density of `Λ_n` converges to the wired infinite-volume density of every
 edge of `Λ_N`.
 -/
 def fpe2_GenuineWiredCollapse (d N : ℕ) : Prop :=

@@ -109,25 +109,29 @@ lemma not_currentConnected_in_S (m : Current V) (S : Finset V) (hn : NoCrossing 
 
 /-! ## B. Splitting edge-indexed currents -/
 
-/-- The coupling `J` restricted to the edges inside `S` (zero on all other edges). -/
+/-- **Coupling restricted to the edges inside a set.**
+The coupling `J` restricted to the edges inside `S` (zero on all other edges). -/
 noncomputable def couplingIn (J : Sym2 V → ℝ) (S : Finset V) : Sym2 V → ℝ :=
   fun e => if edgeInside S e then J e else 0
 
-/-- An edge of `G` lies inside `S`. -/
+/-- **Edge lying inside a set.** An edge of `G` lies inside `S`. -/
 def isIn (S : Finset V) : (↥G.edgeFinset) → Prop := fun i => edgeInside S (i : Sym2 V)
 
 /-- Decidability of `isIn`. -/
 instance (S : Finset V) : DecidablePred (isIn G S) := fun i => by unfold isIn; infer_instance
 
-/-- Extension by zero of a current on the edges inside `S` to all edges of `G`. -/
+/-- **Extension by zero of a current inside a set.**
+Extension by zero of a current on the edges inside `S` to all edges of `G`. -/
 noncomputable def aFull (S : Finset V) (a : {i : ↥G.edgeFinset // isIn G S i} → ℕ) :
     ↥G.edgeFinset → ℕ := fun i => if h : isIn G S i then a ⟨i, h⟩ else 0
 
-/-- Extension by zero of a current on the edges not inside `S` to all edges of `G`. -/
+/-- **Extension by zero of a current outside a set.**
+Extension by zero of a current on the edges not inside `S` to all edges of `G`. -/
 noncomputable def bFull (S : Finset V) (b : {i : ↥G.edgeFinset // ¬ isIn G S i} → ℕ) :
     ↥G.edgeFinset → ℕ := fun i => if h : isIn G S i then 0 else b ⟨i, h⟩
 
-/-- Reassembly of a current from its parts inside and outside `S`. -/
+/-- **Reassembly of a current from its inside and outside parts.**
+Reassembly of a current from its parts inside and outside `S`. -/
 noncomputable def reEdge (S : Finset V)
     (ab : ({i : ↥G.edgeFinset // isIn G S i} → ℕ) × ({i : ↥G.edgeFinset // ¬ isIn G S i} → ℕ)) :
     ↥G.edgeFinset → ℕ := (Equiv.piEquivPiSubtypeProd (isIn G S) (fun _ => ℕ)).symm ab
@@ -390,7 +394,8 @@ lemma summand_factor (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V) (P : Current
   · rw [ite_eq_right hev, ite_eq_right (fun h => hev (hP.mp h))]
     ring
 
-/-- The summand of the outside double-current sum: weights of the outside part and of the second
+/-- **Outside summand of a gated double-current sum.**
+The summand of the outside double-current sum: weights of the outside part and of the second
 current, gated by `P` on their sum. -/
 noncomputable def contextSummand (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V) (P : Current V → Prop)
     [DecidablePred P]
@@ -400,7 +405,8 @@ noncomputable def contextSummand (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V) 
     * (if sources G (ofEdgeFun G bn.2) = ∅ then weight G β J (ofEdgeFun G bn.2) else 0)
     * (if P (fun e => ofEdgeFun G (bFull G S bn.1) e + ofEdgeFun G bn.2 e) then 1 else 0)
 
-/-- The weight of the inside part of a current, restricted to source set `A`. -/
+/-- **Inside weight with prescribed sources.**
+The weight of the inside part of a current, restricted to source set `A`. -/
 noncomputable def factorSummand (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V) (A : Finset V)
     (a : {i : ↥G.edgeFinset // isIn G S i} → ℕ) : ℝ :=
   if sources G (ofEdgeFun G (aFull G S a)) = A then weight G β J (ofEdgeFun G (aFull G S a)) else 0
@@ -541,7 +547,8 @@ lemma claim2_abstract (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V) (P : Curren
 
 /-! ## E. The cluster event -/
 open Classical in
-/-- The set of vertices not connected to `g` by edges carrying positive current. -/
+/-- **Vertices not connected to a vertex by positive current.**
+The set of vertices not connected to `g` by edges carrying positive current. -/
 noncomputable def notConnComp (m : Current V) (g : V) : Finset V :=
   Finset.univ.filter (fun v => ¬ CurrentConnected G m g v)
 

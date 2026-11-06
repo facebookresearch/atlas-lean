@@ -107,7 +107,8 @@ lemma tic_map_diag_restrict {Ω : Type*} {m mΩ : MeasurableSpace Ω}
 
 /-! ## B. Tail events -/
 
-/-- A tail event: measurable with respect to the spins outside `Λ_n`, for every `n`. -/
+/-- **Tail event for lattice spin configurations.**
+A tail event: measurable with respect to the spins outside `Λ_n`, for every `n`. -/
 def IsTailEvent (s : Set (ConfigSpace (Site d))) : Prop :=
   ∀ n : ℕ, @MeasurableSet _ (outsideSigma (box d n)) s
 

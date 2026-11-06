@@ -73,7 +73,8 @@ open StatMech.Percolation (anchorFinset)
 
 attribute [local instance] Classical.propDecidable
 
-/-- The filled-cluster form of the winding hypothesis, with a face-connected boundary. -/
+/-- **Filled-cluster winding hypothesis.**
+The filled-cluster form of the winding hypothesis, with a face-connected boundary. -/
 def OuterContourFill (n : ℕ) : Prop :=
   ∀ τ : {x // x ∈ box 2 n} → Bool, glue (plusField 2) τ (origin 2) = false →
     ∃ K : Finset (Site 2), (↑K : Set (Site 2)) ⊆ box 2 n ∧ IsConnectedCluster K ∧
@@ -84,11 +85,13 @@ def OuterContourFill (n : ℕ) : Prop :=
         j < contourLen (↑K : Set (Site 2)) (bondFinsetTouch 2 n) ∧
         axisVertex 2 j ∈ T
 
-/-- The component of the complement of `S` that contains the outside of `Λ_n`. -/
+/-- **Exterior component of the complement of a set.**
+The component of the complement of `S` that contains the outside of `Λ_n`. -/
 noncomputable def outerExteriorComponent (S : Set (Site 2)) (n : ℕ) : Set (Site 2) :=
   {x | (latticeOn Sᶜ).Reachable (beacon 2 n) x}
 
-/-- The set `S` with its holes filled: the complement of its exterior component. -/
+/-- **Set with its holes filled.**
+The set `S` with its holes filled: the complement of its exterior component. -/
 noncomputable def spinCompatibleFill (S : Set (Site 2)) (n : ℕ) : Set (Site 2) :=
   (outerExteriorComponent S n)ᶜ
 
@@ -249,7 +252,8 @@ lemma spinCompatibleFill_finite {n : ℕ}
   (box_finite 2 n).subset
     (spinCompatibleFill_subset_box (minusCluster_glue_plus_subset_box τ ho))
 
-/-- The filled minus cluster of the origin, as a finset. -/
+/-- **Filled minus cluster of the origin as a finite set.**
+The filled minus cluster of the origin, as a finset. -/
 noncomputable def spinCompatibleFillFinset {n : ℕ}
     (τ : {x // x ∈ box 2 n} → Bool)
     (ho : glue (plusField 2) τ (origin 2) = false) : Finset (Site 2) :=
@@ -451,7 +455,8 @@ lemma peierls_long_range_order_of_outerFill
   peierls_long_range_order_of_outerWinding
     (fun n => outerContourWinding_of_outerContourFill n (hFill n))
 
-/-- Plus and minus box measures on `ℤ²` differ for all `β` beyond some `β₀`. See
+/-- **Plus and minus box measures on $\mathbb{Z}^2$ differ for large $\beta$.**
+Plus and minus box measures on `ℤ²` differ for all `β` beyond some `β₀`. See
 `peierls_probOriginMinus_le_uniform` for the informative uniform bound; the inequality of
 measures itself holds for every `β > 0`. -/
 theorem peierls_long_range_order_spinCompatibleFill :
@@ -491,7 +496,8 @@ lemma singletonOrigin_outerContourFill_data (n : ℕ) :
       rw [Finset.mem_coe, Finset.mem_singleton] at hx; subst hx; exact origin_mem_box n)
       (Finset.mem_singleton_self _)
 
-/-- The configuration on `Λ_n` with only the origin minus. -/
+/-- **Configuration with only the origin minus.**
+The configuration on `Λ_n` with only the origin minus. -/
 noncomputable def isoOriginCompletion (n : ℕ) : {x // x ∈ box 2 n} → Bool :=
   fun x => decide ((x : Site 2) ≠ origin 2)
 
@@ -529,7 +535,8 @@ lemma singletonOrigin_contourEvent_iso (n : ℕ) :
     (isoOriginCompletion_origin_false n)
   rwa [isoOriginCompletion_minusCluster n] at hev
 
-/-- A nonvacuity check: the configuration with only the origin minus satisfies the data of
+/-- **Origin-only minus configuration satisfies the filled-cluster data.**
+A nonvacuity check: the configuration with only the origin minus satisfies the data of
 `OuterContourFill`. -/
 lemma outerContourFill_nonvacuous (n : ℕ) :
     ∃ τ : {x // x ∈ box 2 n} → Bool, glue (plusField 2) τ (origin 2) = false ∧

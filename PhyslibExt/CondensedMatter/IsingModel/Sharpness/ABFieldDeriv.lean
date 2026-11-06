@@ -66,24 +66,28 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## A. Inhomogeneous product measures -/
 
-/-- The probability `p_e` or `1 - p_e` of the state of edge `e` in `ω`. -/
+/-- **Edge weight under an inhomogeneous product measure.**
+The probability `p_e` or `1 - p_e` of the state of edge `e` in `ω`. -/
 noncomputable def edgeWeightV (p : E → ℝ) (ω : ConfigSpace E) (e : E) : ℝ :=
   if ω e then p e else 1 - p e
 
-/-- The product weight `∏_e (p_e or 1 - p_e)` of a configuration. -/
+/-- **Product weight of a configuration.**
+The product weight `∏_e (p_e or 1 - p_e)` of a configuration. -/
 noncomputable def configWeightV (p : E → ℝ) (ω : ConfigSpace E) : ℝ :=
   ∏ e, edgeWeightV p ω e
 
-/-- The product weight of a configuration over all edges other than `e`. -/
+/-- **Product weight of a configuration off one edge.**
+The product weight of a configuration over all edges other than `e`. -/
 noncomputable def weightOffV (p : E → ℝ) (e : E) (ω : ConfigSpace E) : ℝ :=
   ∏ j ∈ univ.erase e, edgeWeightV p ω j
 
-/-- The probability `∑_ω 1_A(ω) ∏_e (p_e or 1 - p_e)` of `A` under the inhomogeneous product
+/-- **Probability under an inhomogeneous product measure.**
+The probability `∑_ω 1_A(ω) ∏_e (p_e or 1 - p_e)` of `A` under the inhomogeneous product
 measure. -/
 noncomputable def probV (p : E → ℝ) (A : Set (ConfigSpace E)) : ℝ :=
   ∑ ω, A.indicator (fun _ => (1 : ℝ)) ω * configWeightV p ω
 
-/-- The probability that `e` is pivotal for `A`. -/
+/-- **Pivotal probability of an edge.** The probability that `e` is pivotal for `A`. -/
 noncomputable def pivotalProbV (p : E → ℝ) (A : Set (ConfigSpace E)) (e : E) : ℝ :=
   ∑ ω, (Set.indicator {ω | IsPivotal e A ω} (fun _ => (1 : ℝ)) ω) * configWeightV p ω
 
@@ -233,7 +237,8 @@ lemma hasDerivAt_probV_single (p : E → ℝ) (A : Set (ConfigSpace E)) (hA : Is
 
 /-! ## C. A common parameter on a subset -/
 
-/-- The parameters `p` with the value `c` on the edges of `s`. -/
+/-- **Edge parameters set to a common value on a subset.**
+The parameters `p` with the value `c` on the edges of `s`. -/
 noncomputable def paramOn (s : Finset E) (c : ℝ) (p : E → ℝ) : E → ℝ :=
   fun e => if e ∈ s then c else p e
 
@@ -359,7 +364,7 @@ lemma pivotalProbV_nonneg (p : E → ℝ) (hp : ∀ e, 0 ≤ p e ∧ p e ≤ 1)
 
 /-! ## D. The field parameter -/
 
-/-- The ghost-edge probability `1 - e^{-h}`. -/
+/-- **Ghost-edge probability $1 - e^{-h}$.** The ghost-edge probability `1 - e^{-h}`. -/
 noncomputable def qField (h : ℝ) : ℝ := 1 - Real.exp (-h)
 
 lemma hasDerivAt_qField (h : ℝ) : HasDerivAt qField (Real.exp (-h)) h := by

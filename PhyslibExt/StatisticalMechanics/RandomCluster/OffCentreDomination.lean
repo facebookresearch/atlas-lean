@@ -91,53 +91,61 @@ variable (ιV : Vin → Vout)
 ### A.1. Inner edges
 -/
 
-/-- A vertex of `G_out` is inner if it lies in the image of `ι`. -/
+/-- **Inner vertex of the outer graph.**
+A vertex of `G_out` is inner if it lies in the image of `ι`. -/
 def ocd_IsInnerVert (v : Vout) : Prop := ∃ x : Vin, ιV x = v
 
-/-- The image in `G_out` of an edge of `G_in` under `ι`. -/
+/-- **Image of an inner-graph edge in the outer graph.**
+The image in `G_out` of an edge of `G_in` under `ι`. -/
 def ocd_innerEdge (e : Sym2 Vin) : Sym2 Vout := Sym2.map ιV e
 
-/-- The edge map `Sym2.map ι` is injective when `ι` is. -/
+/-- **Injectivity of the edge map.** The edge map `Sym2.map ι` is injective when `ι` is. -/
 lemma ocd_innerEdge_injective (hι : Function.Injective ιV) :
     Function.Injective (ocd_innerEdge ιV) :=
   Sym2.map.injective hι
 
-/-- The image of the edge `{x, y}` is `{ι x, ι y}`. -/
+/-- **Edge map sends $\{x, y\}$ to $\{\iota x, \iota y\}$.**
+The image of the edge `{x, y}` is `{ι x, ι y}`. -/
 lemma ocd_innerEdge_mk (x y : Vin) :
     ocd_innerEdge ιV s(x, y) = s(ιV x, ιV y) := by
   rw [ocd_innerEdge, Sym2.map_mk]
 
-/-- The map `ι` matches adjacency: `x ~ y` in `G_in` iff `ι x ~ ι y` in `G_out`. -/
+/-- **Adjacency matching of the inner embedding.**
+The map `ι` matches adjacency: `x ~ y` in `G_in` iff `ι x ~ ι y` in `G_out`. -/
 def ocd_AdjMatch : Prop := ∀ x y, Gin.Adj x y ↔ Gout.Adj (ιV x) (ιV y)
 
 /-!
 ### A.2. Gluing configurations
 -/
 
-/-- The configuration on `G_out` that equals the inner configuration `ω` on inner edges and the
+/-- **Gluing of inner and outer configurations.**
+The configuration on `G_out` that equals the inner configuration `ω` on inner edges and the
 outer configuration `ψ` elsewhere. -/
 noncomputable def ocd_psiExt (ψ : ConfigSpace (Sym2 Vout)) (ω : ConfigSpace (Sym2 Vin)) :
     ConfigSpace (Sym2 Vout) :=
   fun e => if h : e ∈ Set.range (ocd_innerEdge ιV) then ω h.choose else ψ e
 
-/-- The restriction of a configuration on `G_out` to the edges of `G_in`, read through `ι`. -/
+/-- **Restriction of an outer configuration to inner edges.**
+The restriction of a configuration on `G_out` to the edges of `G_in`, read through `ι`. -/
 noncomputable def ocd_innerRestrict (ρ : ConfigSpace (Sym2 Vout)) : ConfigSpace (Sym2 Vin) :=
   fun e => ρ (ocd_innerEdge ιV e)
 
-/-- The finite set of inner edges of `G_out`. -/
+/-- **Finite set of inner edges.** The finite set of inner edges of `G_out`. -/
 noncomputable def ocd_innerEdgeFinset : Finset (Sym2 Vout) :=
   Finset.univ.image (ocd_innerEdge ιV)
 
 variable {Gin Gout ιV}
 
-/-- Membership in the inner edge set is membership in the image of the edge map. -/
+/-- **Inner edge set is the range of the edge map.**
+Membership in the inner edge set is membership in the image of the edge map. -/
 lemma ocd_mem_innerEdgeFinset {e : Sym2 Vout} :
     e ∈ ocd_innerEdgeFinset (Vin := Vin) ιV ↔ e ∈ Set.range (ocd_innerEdge ιV) := by
   unfold ocd_innerEdgeFinset
   rw [Finset.mem_image]
   simp only [Finset.mem_univ, true_and, Set.mem_range]
 
-/-- The glued configuration takes the inner value on inner edges. -/
+/-- **Glued configuration takes the inner value on inner edges.**
+The glued configuration takes the inner value on inner edges. -/
 lemma ocd_psiExt_innerEdge (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout))
     (ω : ConfigSpace (Sym2 Vin)) (e : Sym2 Vin) :
     ocd_psiExt ιV ψ ω (ocd_innerEdge ιV e) = ω e := by
@@ -147,32 +155,37 @@ lemma ocd_psiExt_innerEdge (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym
   congr 1
   exact ocd_innerEdge_injective ιV hι hmem.choose_spec
 
-/-- The glued configuration takes the outer value off the inner edges. -/
+/-- **Glued configuration equals the outer one at each non-inner edge.**
+The glued configuration takes the outer value off the inner edges. -/
 lemma ocd_psiExt_eq_psi_of_not_range (ψ : ConfigSpace (Sym2 Vout))
     (ω : ConfigSpace (Sym2 Vin)) {e : Sym2 Vout}
     (he : e ∉ Set.range (ocd_innerEdge ιV)) : ocd_psiExt ιV ψ ω e = ψ e := by
   unfold ocd_psiExt; rw [dite_eq_right he]
 
-/-- The glued configuration on `{ι x, ι y}` is the inner value on `{x, y}`. -/
+/-- **Glued value on $\{\iota x, \iota y\}$ is the inner value on $\{x, y\}$.**
+The glued configuration on `{ι x, ι y}` is the inner value on `{x, y}`. -/
 lemma ocd_psiExt_innerEdge_pair (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout))
     (ω : ConfigSpace (Sym2 Vin)) (x y : Vin) :
     ocd_psiExt ιV ψ ω s(ιV x, ιV y) = ω s(x, y) := by
   have h : s(ιV x, ιV y) = ocd_innerEdge ιV s(x, y) := (ocd_innerEdge_mk ιV x y).symm
   rw [h, ocd_psiExt_innerEdge hι]
 
-/-- Restricting a glued configuration recovers the inner configuration. -/
+/-- **Restricting a glued configuration recovers the inner one.**
+Restricting a glued configuration recovers the inner configuration. -/
 @[simp] lemma ocd_innerRestrict_psiExt (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout))
     (ω : ConfigSpace (Sym2 Vin)) : ocd_innerRestrict ιV (ocd_psiExt ιV ψ ω) = ω := by
   funext e; rw [ocd_innerRestrict, ocd_psiExt_innerEdge hι]
 
-/-- A glued configuration agrees with the outer configuration off the inner edges. -/
+/-- **Glued configuration agrees with the outer one off the inner edge set.**
+A glued configuration agrees with the outer configuration off the inner edges. -/
 lemma ocd_agreesOff_psiExt (ψ : ConfigSpace (Sym2 Vout)) (ω : ConfigSpace (Sym2 Vin)) :
     AgreesOff (ocd_innerEdgeFinset (Vin := Vin) ιV) ψ (ocd_psiExt ιV ψ ω) := by
   intro e he
   rw [ocd_mem_innerEdgeFinset] at he
   exact ocd_psiExt_eq_psi_of_not_range ψ ω he
 
-/-- A configuration that agrees with `ψ` off the inner edges is the gluing of `ψ` with its own
+/-- **Agreeing configuration is the gluing of its own restriction.**
+A configuration that agrees with `ψ` off the inner edges is the gluing of `ψ` with its own
 restriction. -/
 lemma ocd_psiExt_innerRestrict_of_agreesOff (hι : Function.Injective ιV)
     {ψ ρ : ConfigSpace (Sym2 Vout)}
@@ -188,7 +201,8 @@ lemma ocd_psiExt_innerRestrict_of_agreesOff (hι : Function.Injective ιV)
     have : e ∉ ocd_innerEdgeFinset (Vin := Vin) ιV := by rw [ocd_mem_innerEdgeFinset]; exact hmem
     exact (hρ e this).symm
 
-/-- The configurations agreeing with `ψ` off the inner edges are exactly the gluings of `ψ` with
+/-- **Conditioning fibre is the set of gluings.**
+The configurations agreeing with `ψ` off the inner edges are exactly the gluings of `ψ` with
 inner configurations. -/
 lemma ocd_condFibre_eq_image_psiExt (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout)) :
     condFibre (ocd_innerEdgeFinset (Vin := Vin) ιV) ψ
@@ -212,7 +226,8 @@ variable (bdryOut : Vout → Prop) [DecidablePred bdryOut]
 ### B.1. Definitions
 -/
 
-/-- The graph of `ψ`-open edges of `G_out` that are not inner edges. -/
+/-- **Graph of open non-inner edges.**
+The graph of `ψ`-open edges of `G_out` that are not inner edges. -/
 noncomputable def ocd_outsideOpenGraph (ψ : ConfigSpace (Sym2 Vout)) : SimpleGraph Vout where
   Adj x y := Gout.Adj x y ∧ ψ s(x, y) = true ∧ s(x, y) ∉ Set.range (ocd_innerEdge ιV)
   symm := by
@@ -226,7 +241,8 @@ noncomputable instance (ψ : ConfigSpace (Sym2 Vout)) :
     DecidableRel (ocd_outsideOpenGraph Gout ιV ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- The outside graph: `ψ`-open non-inner edges together with the clique on the wired boundary
+/-- **Outside graph with the wired boundary clique.**
+The outside graph: `ψ`-open non-inner edges together with the clique on the wired boundary
 `∂_out`. -/
 noncomputable def ocd_outsideGraph (ψ : ConfigSpace (Sym2 Vout)) : SimpleGraph Vout :=
   ocd_outsideOpenGraph Gout ιV ψ ⊔ StatMech.Lattice.boundaryCliqueGraph bdryOut
@@ -236,7 +252,8 @@ noncomputable instance {ψ : ConfigSpace (Sym2 Vout)} :
     DecidableRel (ocd_outsideGraph Gout ιV bdryOut ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- Adjacency in the outside graph. -/
+/-- **Outside-graph adjacency: open non-inner edge or boundary pair.**
+Adjacency in the outside graph. -/
 lemma ocd_outsideGraph_adj (ψ : ConfigSpace (Sym2 Vout)) (x y : Vout) :
     (ocd_outsideGraph Gout ιV bdryOut ψ).Adj x y
       ↔ (Gout.Adj x y ∧ ψ s(x, y) = true ∧ s(x, y) ∉ Set.range (ocd_innerEdge ιV))
@@ -244,7 +261,8 @@ lemma ocd_outsideGraph_adj (ψ : ConfigSpace (Sym2 Vout)) (x y : Vout) :
   rw [ocd_outsideGraph, SimpleGraph.sup_adj, StatMech.Lattice.boundaryCliqueGraph_adj]
   exact Iff.rfl
 
-/-- The wiring induced on `G_in` by `ψ`: distinct inner vertices are adjacent when their images
+/-- **Wiring induced on the inner graph.**
+The wiring induced on `G_in` by `ψ`: distinct inner vertices are adjacent when their images
 are joined in the outside graph. -/
 noncomputable def ocd_inducedWiring (ψ : ConfigSpace (Sym2 Vout)) : SimpleGraph Vin where
   Adj x y := x ≠ y ∧ (ocd_outsideGraph Gout ιV bdryOut ψ).Reachable (ιV x) (ιV y)
@@ -259,13 +277,15 @@ noncomputable instance {ψ : ConfigSpace (Sym2 Vout)} :
     DecidableRel (ocd_inducedWiring Gout ιV bdryOut ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- Adjacency in the induced wiring. -/
+/-- **Induced-wiring adjacency: distinct and joined in the outside graph.**
+Adjacency in the induced wiring. -/
 lemma ocd_inducedWiring_adj (ψ : ConfigSpace (Sym2 Vout)) (x y : Vin) :
     (ocd_inducedWiring Gout ιV bdryOut ψ).Adj x y
       ↔ x ≠ y ∧ (ocd_outsideGraph Gout ιV bdryOut ψ).Reachable (ιV x) (ιV y) :=
   Iff.rfl
 
-/-- The image in `G_out` of the open subgraph of an inner configuration `ω`. -/
+/-- **Image of the inner open subgraph in the outer graph.**
+The image in `G_out` of the open subgraph of an inner configuration `ω`. -/
 noncomputable def ocd_innerImageGraph (ω : ConfigSpace (Sym2 Vin)) : SimpleGraph Vout where
   Adj x y := Gout.Adj x y ∧ ocd_psiExt ιV (fun _ => false) ω s(x, y) = true
     ∧ s(x, y) ∈ Set.range (ocd_innerEdge ιV)
@@ -280,7 +300,8 @@ noncomputable instance {ω : ConfigSpace (Sym2 Vin)} :
     DecidableRel (ocd_innerImageGraph Gout ιV ω).Adj :=
   fun _ _ => Classical.dec _
 
-/-- The inner cluster graph: open edges of `ω` together with the induced wiring. -/
+/-- **Inner cluster graph with the induced wiring.**
+The inner cluster graph: open edges of `ω` together with the induced wiring. -/
 noncomputable def ocd_innerGraph (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
     SimpleGraph Vin :=
   openSub Gin ω ⊔ ocd_inducedWiring Gout ιV bdryOut ψ
@@ -290,7 +311,8 @@ noncomputable instance {ψ : ConfigSpace (Sym2 Vout)} {ω : ConfigSpace (Sym2 Vi
     DecidableRel (ocd_innerGraph Gin Gout ιV bdryOut ω ψ).Adj :=
   fun _ _ => Classical.dec _
 
-/-- The cluster graph of the glued configuration on `G_out` with the wired boundary clique. -/
+/-- **Cluster graph of a glued configuration.**
+The cluster graph of the glued configuration on `G_out` with the wired boundary clique. -/
 noncomputable def ocd_fullGraph (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
     SimpleGraph Vout :=
   openSub Gout (ocd_psiExt ιV ψ ω) ⊔ StatMech.Lattice.boundaryCliqueGraph bdryOut
@@ -306,7 +328,8 @@ variable {Gin Gout ιV bdryOut}
 ### B.2. Reachability
 -/
 
-/-- The outside graph is a subgraph of the full cluster graph. -/
+/-- **Outside graph is a subgraph of the full cluster graph.**
+The outside graph is a subgraph of the full cluster graph. -/
 lemma ocd_outsideGraph_le_fullGraph (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
     ocd_outsideGraph Gout ιV bdryOut ψ ≤ ocd_fullGraph Gout ιV bdryOut ω ψ := by
   intro x y h
@@ -318,14 +341,16 @@ lemma ocd_outsideGraph_le_fullGraph (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSp
     exact ⟨hadj, by rw [ocd_psiExt_eq_psi_of_not_range ψ ω hr]; exact hopen⟩
   · exact Or.inr hclique
 
-/-- On inner edges the glued configuration does not depend on the outer configuration. -/
+/-- **Glued configuration on inner edges ignores the outer configuration.**
+On inner edges the glued configuration does not depend on the outer configuration. -/
 lemma ocd_psiExt_eq_false_of_range (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout))
     (ω : ConfigSpace (Sym2 Vin)) {e : Sym2 Vout} (he : e ∈ Set.range (ocd_innerEdge ιV)) :
     ocd_psiExt ιV ψ ω e = ocd_psiExt ιV (fun _ => false) ω e := by
   obtain ⟨e', rfl⟩ := he
   rw [ocd_psiExt_innerEdge hι, ocd_psiExt_innerEdge hι]
 
-/-- The full cluster graph is the union of the inner image graph and the outside graph. -/
+/-- **Full cluster graph as the union of inner image and outside graphs.**
+The full cluster graph is the union of the inner image graph and the outside graph. -/
 lemma ocd_psiWiredGraph_eq_sup (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout))
     (ω : ConfigSpace (Sym2 Vin)) :
     ocd_fullGraph Gout ιV bdryOut ω ψ
@@ -348,7 +373,8 @@ lemma ocd_psiWiredGraph_eq_sup (hι : Function.Injective ιV) (ψ : ConfigSpace 
       rwa [ocd_psiExt_eq_psi_of_not_range ψ ω hr]
     · exact Or.inr hclique
 
-/-- Both endpoints of an inner image edge are inner vertices. -/
+/-- **Endpoints of inner image edges are inner vertices.**
+Both endpoints of an inner image edge are inner vertices. -/
 lemma ocd_innerImageGraph_adj_inner (hι : Function.Injective ιV) (ω : ConfigSpace (Sym2 Vin))
     {u v : Vout} (h : (ocd_innerImageGraph Gout ιV ω).Adj u v) :
     ocd_IsInnerVert ιV u ∧ ocd_IsInnerVert ιV v := by
@@ -360,7 +386,8 @@ lemma ocd_innerImageGraph_adj_inner (hι : Function.Injective ιV) (ω : ConfigS
   · exact ⟨⟨a, h1⟩, ⟨b, h2⟩⟩
   · exact ⟨⟨b, h2⟩, ⟨a, h1⟩⟩
 
-/-- The inner image graph on images of `ι` is the open subgraph of `ω`. -/
+/-- **Inner image graph on embedded vertices is the open subgraph.**
+The inner image graph on images of `ι` is the open subgraph of `ω`. -/
 lemma ocd_innerImageGraph_adj_ιV (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin)) (x y : Vin) :
     (ocd_innerImageGraph Gout ιV ω).Adj (ιV x) (ιV y) ↔ (openSub Gin ω).Adj x y := by
@@ -373,7 +400,8 @@ lemma ocd_innerImageGraph_adj_ιV (hι : Function.Injective ιV)
     refine ⟨(hadjm x y).mp hadj, ?_, ⟨s(x, y), he.symm⟩⟩
     rw [he, ocd_psiExt_innerEdge hι]; exact hopen
 
-/-- Inner vertices whose images are joined in the outside graph are joined in the inner cluster
+/-- **Outside reachability gives inner cluster reachability.**
+Inner vertices whose images are joined in the outside graph are joined in the inner cluster
 graph. -/
 lemma ocd_innerGraph_reachable_of_outsideReachable (ω : ConfigSpace (Sym2 Vin))
     (ψ : ConfigSpace (Sym2 Vout)) {x y : Vin}
@@ -384,7 +412,8 @@ lemma ocd_innerGraph_reachable_of_outsideReachable (ω : ConfigSpace (Sym2 Vin))
   · have hadj : (ocd_inducedWiring Gout ιV bdryOut ψ).Adj x y := ⟨hxy, h⟩
     exact (le_sup_right (a := openSub Gin ω) hadj).reachable
 
-/-- Reachability in the inner cluster graph gives reachability of the images in the full cluster
+/-- **Inner cluster reachability gives full-graph reachability of images.**
+Reachability in the inner cluster graph gives reachability of the images in the full cluster
 graph. -/
 lemma ocd_fullGraph_reachable_of_innerGraph (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin))
@@ -404,7 +433,8 @@ lemma ocd_fullGraph_reachable_of_innerGraph (hι : Function.Injective ιV)
         intro a b hab
         rw [SimpleGraph.sup_adj]; right; exact hab
 
-/-- Reachability of images in the full cluster graph gives reachability in the inner cluster
+/-- **Full-graph reachability of images gives inner cluster reachability.**
+Reachability of images in the full cluster graph gives reachability in the inner cluster
 graph. -/
 lemma ocd_innerGraph_reachable_of_fullGraph (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin))
@@ -440,7 +470,8 @@ lemma ocd_innerGraph_reachable_of_fullGraph (hι : Function.Injective ιV)
         exact ⟨w', hKw', SimpleGraph.Reachable.refl _⟩
       · exact ⟨x₀, hKx₀, hout.trans hoadj.reachable⟩
 
-/-- Images of inner vertices are joined in the full cluster graph iff the vertices are joined in
+/-- **Full-graph and inner cluster reachability agree on embedded vertices.**
+Images of inner vertices are joined in the full cluster graph iff the vertices are joined in
 the inner cluster graph. -/
 lemma ocd_fullGraph_reachable_ιV (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin))
@@ -450,7 +481,8 @@ lemma ocd_fullGraph_reachable_ιV (hι : Function.Injective ιV)
   ⟨ocd_innerGraph_reachable_of_fullGraph hι hadjm ω ψ,
     ocd_fullGraph_reachable_of_innerGraph hι hadjm ω ψ⟩
 
-/-- A full cluster graph edge at a non-inner vertex is an outside graph edge. -/
+/-- **Full-graph edges at non-inner vertices are outside-graph edges.**
+A full cluster graph edge at a non-inner vertex is an outside graph edge. -/
 lemma ocd_fullGraph_adj_of_outside (hι : Function.Injective ιV) (ω : ConfigSpace (Sym2 Vin))
     (ψ : ConfigSpace (Sym2 Vout)) {u w : Vout}
     (hu : ¬ ocd_IsInnerVert ιV u) (h : (ocd_fullGraph Gout ιV bdryOut ω ψ).Adj u w) :
@@ -466,25 +498,28 @@ variable (Gin Gout ιV bdryOut)
 ### B.3. Clusters of a glued configuration
 -/
 
-/-- A vertex is outside-only if its outside cluster contains no inner vertex. -/
+/-- **Outside-only vertex.**
+A vertex is outside-only if its outside cluster contains no inner vertex. -/
 def ocd_OutsideOnly (ψ : ConfigSpace (Sym2 Vout)) (u : Vout) : Prop :=
   ∀ v, (ocd_outsideGraph Gout ιV bdryOut ψ).Reachable u v → ¬ ocd_IsInnerVert ιV v
 
 variable {Gin Gout ιV bdryOut}
 
-/-- An outside-only vertex is not inner. -/
+/-- **Outside-only vertices are not inner.** An outside-only vertex is not inner. -/
 lemma ocd_outsideOnly_self_not_inner (ψ : ConfigSpace (Sym2 Vout)) {u : Vout}
     (hu : ocd_OutsideOnly Gout ιV bdryOut ψ u) : ¬ ocd_IsInnerVert ιV u :=
   hu u (SimpleGraph.Reachable.refl u)
 
-/-- Being outside-only is constant on outside clusters. -/
+/-- **Outside-only property is constant on outside clusters.**
+Being outside-only is constant on outside clusters. -/
 lemma ocd_outsideOnly_of_reachable (ψ : ConfigSpace (Sym2 Vout)) {u v : Vout}
     (hu : ocd_OutsideOnly Gout ιV bdryOut ψ u)
     (h : (ocd_outsideGraph Gout ιV bdryOut ψ).Reachable u v) :
     ocd_OutsideOnly Gout ιV bdryOut ψ v :=
   fun w hw => hu w (h.trans hw)
 
-/-- From an outside-only vertex, reachability in the full cluster graph stays in the outside
+/-- **Full-graph reachability from an outside-only vertex stays outside.**
+From an outside-only vertex, reachability in the full cluster graph stays in the outside
 graph. -/
 lemma ocd_outsideGraph_reachable_of_fullGraph_outsideOnly (hι : Function.Injective ιV)
     (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) {u w : Vout}
@@ -501,7 +536,8 @@ lemma ocd_outsideGraph_reachable_of_fullGraph_outsideOnly (hι : Function.Inject
 
 variable (Gin Gout ιV bdryOut)
 
-/-- The outside-only property of a cluster of the outside graph. -/
+/-- **Outside-only property of an outside cluster.**
+The outside-only property of a cluster of the outside graph. -/
 noncomputable def ocd_IsOutsideOnly (ψ : ConfigSpace (Sym2 Vout)) :
     (ocd_outsideGraph Gout ιV bdryOut ψ).ConnectedComponent → Prop :=
   ConnectedComponent.lift (ocd_OutsideOnly Gout ιV bdryOut ψ)
@@ -510,7 +546,8 @@ noncomputable def ocd_IsOutsideOnly (ψ : ConfigSpace (Sym2 Vout)) :
 
 variable {Gin Gout ιV bdryOut}
 
-/-- The cluster of `v` is outside-only iff `v` is. -/
+/-- **Cluster of a vertex is outside-only iff the vertex is.**
+The cluster of `v` is outside-only iff `v` is. -/
 @[simp] lemma ocd_isOutsideOnly_mk (ψ : ConfigSpace (Sym2 Vout)) (v : Vout) :
     ocd_IsOutsideOnly Gout ιV bdryOut ψ
         ((ocd_outsideGraph Gout ιV bdryOut ψ).connectedComponentMk v)
@@ -519,7 +556,7 @@ variable {Gin Gout ιV bdryOut}
 
 variable (Gin Gout ιV bdryOut)
 
-/-- The outside clusters that contain no inner vertex. -/
+/-- **Outside-only clusters.** The outside clusters that contain no inner vertex. -/
 def ocd_OutsideOnlyComp (ψ : ConfigSpace (Sym2 Vout)) : Type _ :=
   {c : (ocd_outsideGraph Gout ιV bdryOut ψ).ConnectedComponent //
     ocd_IsOutsideOnly Gout ιV bdryOut ψ c}
@@ -530,7 +567,8 @@ noncomputable instance ocd_instFintypeOutsideOnlyComp (ψ : ConfigSpace (Sym2 Vo
   classical
   unfold ocd_OutsideOnlyComp; infer_instance
 
-/-- The map from inner clusters and outside-only clusters to the clusters of the glued
+/-- **Cluster map into the clusters of a glued configuration.**
+The map from inner clusters and outside-only clusters to the clusters of the glued
 configuration. -/
 noncomputable def ocd_fullComponentMap (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
@@ -546,14 +584,16 @@ noncomputable def ocd_fullComponentMap (hι : Function.Injective ιV)
 
 variable {Gin Gout ιV bdryOut}
 
-/-- The cluster map sends the inner cluster of `x` to the full cluster of `ι x`. -/
+/-- **Cluster map sends the inner cluster of $x$ to that of $\iota x$.**
+The cluster map sends the inner cluster of `x` to the full cluster of `ι x`. -/
 lemma ocd_fullComponentMap_inl_mk (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gin Gout ιV)
     (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) (x : Vin) :
     ocd_fullComponentMap Gin Gout ιV bdryOut hι hadjm ω ψ
         (Sum.inl ((ocd_innerGraph Gin Gout ιV bdryOut ω ψ).connectedComponentMk x))
       = (ocd_fullGraph Gout ιV bdryOut ω ψ).connectedComponentMk (ιV x) := rfl
 
-/-- The cluster map sends an outside-only cluster of `v` to the full cluster of `v`. -/
+/-- **Cluster map sends an outside-only cluster of $v$ to that of $v$.**
+The cluster map sends an outside-only cluster of `v` to the full cluster of `v`. -/
 lemma ocd_fullComponentMap_inr_mk (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gin Gout ιV)
     (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) (v : Vout)
     (hv : ocd_IsOutsideOnly Gout ιV bdryOut ψ
@@ -562,7 +602,7 @@ lemma ocd_fullComponentMap_inr_mk (hι : Function.Injective ιV) (hadjm : ocd_Ad
         (Sum.inr ⟨(ocd_outsideGraph Gout ιV bdryOut ψ).connectedComponentMk v, hv⟩)
       = (ocd_fullGraph Gout ιV bdryOut ω ψ).connectedComponentMk v := rfl
 
-/-- The cluster map is injective. -/
+/-- **Injectivity of the cluster map.** The cluster map is injective. -/
 lemma ocd_fullComponentMap_injective (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
     Function.Injective (ocd_fullComponentMap Gin Gout ιV bdryOut hι hadjm ω ψ) := by
@@ -600,7 +640,7 @@ lemma ocd_fullComponentMap_injective (hι : Function.Injective ιV)
     refine congrArg Sum.inr (Subtype.ext ?_)
     exact ConnectedComponent.sound hout
 
-/-- The cluster map is surjective. -/
+/-- **Surjectivity of the cluster map.** The cluster map is surjective. -/
 lemma ocd_fullComponentMap_surjective (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
     Function.Surjective (ocd_fullComponentMap Gin Gout ιV bdryOut hι hadjm ω ψ) := by
@@ -620,7 +660,8 @@ lemma ocd_fullComponentMap_surjective (hι : Function.Injective ιV)
       (ocd_isOutsideOnly_mk ψ u).mpr hOut⟩, ?_⟩
     rw [ocd_fullComponentMap_inr_mk]
 
-/-- The clusters of the glued configuration are in bijection with the inner clusters plus the
+/-- **Cluster bijection for a glued configuration.**
+The clusters of the glued configuration are in bijection with the inner clusters plus the
 outside-only clusters. -/
 noncomputable def ocd_fullComponentEquiv (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
@@ -630,13 +671,14 @@ noncomputable def ocd_fullComponentEquiv (hι : Function.Injective ιV)
   Equiv.ofBijective (ocd_fullComponentMap Gin Gout ιV bdryOut hι hadjm ω ψ)
     ⟨ocd_fullComponentMap_injective hι hadjm ω ψ, ocd_fullComponentMap_surjective hι hadjm ω ψ⟩
 
-/-- The number of outside-only clusters of `ψ`. -/
+/-- **Number of outside-only clusters.** The number of outside-only clusters of `ψ`. -/
 noncomputable def ocd_outsideShift (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
     (ιV : Vin → Vout) (bdryOut : Vout → Prop) [DecidablePred bdryOut]
     (ψ : ConfigSpace (Sym2 Vout)) : ℕ :=
   Nat.card (ocd_OutsideOnlyComp Gout ιV bdryOut ψ)
 
-/-- The wired cluster count of a glued configuration is the induced-wiring cluster count of the
+/-- **Glued cluster count is induced-wiring count plus outside-only clusters.**
+The wired cluster count of a glued configuration is the induced-wiring cluster count of the
 inner configuration plus the number of outside-only clusters. -/
 lemma ocd_numClustersBC_psiExt (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gin Gout ιV)
     (ω : ConfigSpace (Sym2 Vin)) (ψ : ConfigSpace (Sym2 Vout)) :
@@ -656,7 +698,8 @@ lemma ocd_numClustersBC_psiExt (hι : Function.Injective ιV) (hadjm : ocd_AdjMa
 ## C. Weights of glued configurations
 -/
 
-/-- The image of the edges of `G_in` is the set of inner edges of `G_out`. -/
+/-- **Edges of the inner graph map onto the inner edges of the outer graph.**
+The image of the edges of `G_in` is the set of inner edges of `G_out`. -/
 lemma ocd_innerEdge_image_edgeFinset (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) :
     Gin.edgeFinset.image (ocd_innerEdge ιV)
@@ -677,13 +720,14 @@ lemma ocd_innerEdge_image_edgeFinset (hι : Function.Injective ιV)
     rw [SimpleGraph.mem_edgeSet, hadjm]
     exact hmem
 
-/-- The Bernoulli edge weight of `ψ` on the non-inner edges of `G_out`. -/
+/-- **Outer Bernoulli edge weight of a configuration.**
+The Bernoulli edge weight of `ψ` on the non-inner edges of `G_out`. -/
 noncomputable def ocd_psiEdgeFactor (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
     (ιV : Vin → Vout) (ψ : ConfigSpace (Sym2 Vout)) (p : ℝ) : ℝ :=
   ∏ e ∈ Gout.edgeFinset.filter (fun e => e ∉ Set.range (ocd_innerEdge ιV)),
     (if ψ e then p else 1 - p)
 
-/-- The outer edge weight is positive for `p ∈ (0, 1)`. -/
+/-- **Positivity of the outer edge weight.** The outer edge weight is positive for `p ∈ (0, 1)`. -/
 lemma ocd_psiEdgeFactor_pos {ψ : ConfigSpace (Sym2 Vout)} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     0 < ocd_psiEdgeFactor Gout ιV ψ p := by
   unfold ocd_psiEdgeFactor
@@ -693,7 +737,8 @@ lemma ocd_psiEdgeFactor_pos {ψ : ConfigSpace (Sym2 Vout)} {p : ℝ} (hp : 0 < p
   · exact hp
   · linarith
 
-/-- The edge weight of a glued configuration factors into the inner edge weight and the outer edge
+/-- **Factorization of the edge weight of a glued configuration.**
+The edge weight of a glued configuration factors into the inner edge weight and the outer edge
 weight. -/
 lemma ocd_edgeProduct_psiExt (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gin Gout ιV)
     {p : ℝ} (ψ : ConfigSpace (Sym2 Vout)) (ω : ConfigSpace (Sym2 Vin)) :
@@ -712,20 +757,23 @@ lemma ocd_edgeProduct_psiExt (hι : Function.Injective ιV) (hadjm : ocd_AdjMatc
     rw [Finset.mem_filter] at he
     rw [ocd_psiExt_eq_psi_of_not_range ψ ω he.2]
 
-/-- The factor `ψ` contributes to the FK weight of a glued configuration: its outer edge weight
+/-- **Outer factor of the FK weight of a glued configuration.**
+The factor `ψ` contributes to the FK weight of a glued configuration: its outer edge weight
 times `q` to the number of outside-only clusters. -/
 noncomputable def ocd_psiShift (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
     (ιV : Vin → Vout) (bdryOut : Vout → Prop) [DecidablePred bdryOut]
     (ψ : ConfigSpace (Sym2 Vout)) (p q : ℝ) : ℝ :=
   ocd_psiEdgeFactor Gout ιV ψ p * q ^ ocd_outsideShift Gout ιV bdryOut ψ
 
-/-- The outer factor is positive for `p ∈ (0, 1)` and `q > 0`. -/
+/-- **Positivity of the outer factor.**
+The outer factor is positive for `p ∈ (0, 1)` and `q > 0`. -/
 lemma ocd_psiShift_pos {ψ : ConfigSpace (Sym2 Vout)} {q : ℝ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 0 < q) :
     0 < ocd_psiShift Gout ιV bdryOut ψ p q :=
   mul_pos (ocd_psiEdgeFactor_pos hp hp1) (pow_pos hq _)
 
-/-- The wired FK weight of a glued configuration is the induced-wiring FK weight of the inner
+/-- **Factorization of the wired FK weight of a glued configuration.**
+The wired FK weight of a glued configuration is the induced-wiring FK weight of the inner
 configuration times the outer factor. -/
 lemma ocd_bcWeight_psiExt (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gin Gout ιV)
     {p q : ℝ} (ψ : ConfigSpace (Sym2 Vout)) (ω : ConfigSpace (Sym2 Vin)) :
@@ -740,7 +788,8 @@ lemma ocd_bcWeight_psiExt (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch G
 ## D. The conditional measure on the inner graph
 -/
 
-/-- The partition function of the outer measure conditioned on `ψ` is the induced-wiring partition
+/-- **Factorization of the conditioned outer partition function.**
+The partition function of the outer measure conditioned on `ψ` is the induced-wiring partition
 function times the outer factor. -/
 lemma ocd_inducedBcZ_psi (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gin Gout ιV)
     {p q : ℝ} (ψ : ConfigSpace (Sym2 Vout)) :
@@ -755,7 +804,8 @@ lemma ocd_inducedBcZ_psi (hι : Function.Injective ιV) (hadjm : ocd_AdjMatch Gi
     bcZ, Finset.sum_mul]
   exact Finset.sum_congr rfl (fun ω _ => ocd_bcWeight_psiExt hι hadjm ψ ω)
 
-/-- Conditioned on `ψ` off the inner edges, the outer wired measure of a glued configuration is
+/-- **Conditional outer measure is the induced-wiring FK measure.**
+Conditioned on `ψ` off the inner edges, the outer wired measure of a glued configuration is
 the induced-wiring FK measure of the inner configuration. -/
 lemma ocd_condBcProb_psiExt_eq_bcProb (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV)
@@ -768,7 +818,8 @@ lemma ocd_condBcProb_psiExt_eq_bcProb (hι : Function.Injective ιV)
     ocd_inducedBcZ_psi hι hadjm, bcProb,
     mul_div_mul_right _ _ (ocd_psiShift_pos hp hp1 hq).ne']
 
-/-- The conditional outer probability of an event is the induced-wiring probability of its
+/-- **Conditional outer probability as an induced-wiring probability.**
+The conditional outer probability of an event is the induced-wiring probability of its
 pullback under gluing. -/
 lemma ocd_condBcProb_psiExt_sum_eq_inducedBox (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
@@ -804,7 +855,8 @@ lemma ocd_condBcProb_psiExt_sum_eq_inducedBox (hι : Function.Injective ιV)
     · rw [Set.indicator_of_notMem hω, Set.indicator_of_notMem (fun h => hω (Set.mem_preimage.mp h))]
   rw [hind]
 
-/-- If the induced wiring is coarser than the clique on `∂_in`, the induced-wiring measure is
+/-- **Domination by the inner wired measure under a coarser induced wiring.**
+If the induced wiring is coarser than the clique on `∂_in`, the induced-wiring measure is
 dominated by the wired measure on `G_in` (for `q ≥ 1`). -/
 lemma ocd_condBcProb_psiExt_dominated (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (bdryIn : Vin → Prop) [DecidablePred bdryIn]
@@ -820,7 +872,8 @@ lemma ocd_condBcProb_psiExt_dominated (hι : Function.Injective ιV)
     (StatMech.Lattice.boundaryCliqueGraph bdryIn) hwire hp hp1 hq hA).trans_eq ?_
   exact Finset.sum_congr rfl (fun ω _ => by rw [bcProb_clique_eq_wiredFkProb])
 
-/-- The free FK measure on `G_in` is dominated by every induced-wiring measure (for `q ≥ 1`). -/
+/-- **Free inner measure is dominated by every induced-wiring measure.**
+The free FK measure on `G_in` is dominated by every induced-wiring measure (for `q ≥ 1`). -/
 lemma ocd_free_le_inducedBcProb (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -833,7 +886,8 @@ lemma ocd_free_le_inducedBcProb (hι : Function.Injective ιV)
     (ocd_inducedWiring Gout ιV bdryOut ψ) bot_le hp hp1 hq hA
   simpa only [bcProb_bot_eq_fkProb] using hmono
 
-/-- The free FK measure on `G_in` is dominated by the restricted conditional outer measure (for `q
+/-- **Free inner measure is dominated by the conditional outer measure.**
+The free FK measure on `G_in` is dominated by the restricted conditional outer measure (for `q
 ≥ 1`). -/
 lemma ocd_free_le_condBcProb_innerRestrict
     (hι : Function.Injective ιV)
@@ -860,12 +914,13 @@ lemma ocd_free_le_condBcProb_innerRestrict
 ## E. Averaging over outside configurations
 -/
 
-/-- The projection of a configuration on `G_out` that closes every inner edge. -/
+/-- **Projection closing every inner edge.**
+The projection of a configuration on `G_out` that closes every inner edge. -/
 noncomputable def ocd_outProj (ιV : Vin → Vout) (ρ : ConfigSpace (Sym2 Vout)) :
     ConfigSpace (Sym2 Vout) :=
   ocd_psiExt ιV ρ (fun _ => false)
 
-/-- The projection closes inner edges. -/
+/-- **Projected configuration is closed on inner edges.** The projection closes inner edges. -/
 lemma ocd_outProj_eq_false_of_range (hι : Function.Injective ιV) (ρ : ConfigSpace (Sym2 Vout))
     {e : Sym2 Vout} (he : e ∈ Set.range (ocd_innerEdge ιV)) :
     ocd_outProj ιV ρ e = false := by
@@ -873,14 +928,14 @@ lemma ocd_outProj_eq_false_of_range (hι : Function.Injective ιV) (ρ : ConfigS
   unfold ocd_outProj
   rw [ocd_psiExt_innerEdge hι]
 
-/-- The projection keeps non-inner edges. -/
+/-- **Projection keeps non-inner edges.** The projection keeps non-inner edges. -/
 lemma ocd_outProj_eq_of_not_range (ρ : ConfigSpace (Sym2 Vout))
     {e : Sym2 Vout} (he : e ∉ Set.range (ocd_innerEdge ιV)) :
     ocd_outProj ιV ρ e = ρ e := by
   unfold ocd_outProj
   rw [ocd_psiExt_eq_psi_of_not_range _ _ he]
 
-/-- The projection is idempotent. -/
+/-- **Idempotence of the inner-edge projection.** The projection is idempotent. -/
 lemma ocd_outProj_idem (hι : Function.Injective ιV) (ρ : ConfigSpace (Sym2 Vout)) :
     ocd_outProj ιV (ocd_outProj ιV ρ) = ocd_outProj ιV ρ := by
   funext e
@@ -888,7 +943,8 @@ lemma ocd_outProj_idem (hι : Function.Injective ιV) (ρ : ConfigSpace (Sym2 Vo
   · rw [ocd_outProj_eq_false_of_range hι _ hin, ocd_outProj_eq_false_of_range hι ρ hin]
   · rw [ocd_outProj_eq_of_not_range _ hin]
 
-/-- The fibre of the projection over a projected configuration is its conditioning fibre. -/
+/-- **Projection fibres are conditioning fibres.**
+The fibre of the projection over a projected configuration is its conditioning fibre. -/
 lemma ocd_filter_outProj_eq_condFibre (hι : Function.Injective ιV) (ψ : ConfigSpace (Sym2 Vout))
     (hψ : ocd_outProj ιV ψ = ψ) :
     Finset.univ.filter (fun ρ => ocd_outProj ιV ρ = ψ)
@@ -908,7 +964,8 @@ lemma ocd_filter_outProj_eq_condFibre (hι : Function.Injective ιV) (ψ : Confi
       rw [ocd_outProj_eq_of_not_range ρ hin, ocd_outProj_eq_of_not_range ψ hin, h e he]
   rw [hpr, hψ]
 
-/-- The outer wired masses of the fibres over projected configurations sum to one. -/
+/-- **Outer wired fibre masses sum to one.**
+The outer wired masses of the fibres over projected configurations sum to one. -/
 lemma ocd_sum_fibreMass_eq_one (hι : Function.Injective ιV) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∑ ψ ∈ Finset.univ.filter (fun ψ => ocd_outProj ιV ψ = ψ),
@@ -929,7 +986,8 @@ lemma ocd_sum_fibreMass_eq_one (hι : Function.Injective ιV) {p q : ℝ}
     rw [Finset.mem_filter] at hψ
     rw [ocd_filter_outProj_eq_condFibre hι ψ hψ.2]
 
-/-- Law of total probability for the outer wired measure over the configuration off the inner
+/-- **Law of total probability over outside configurations.**
+Law of total probability for the outer wired measure over the configuration off the inner
 edges. See also `bcProb_fibre_decompose` in `FKDisjointBoxDomainMarkov` for a general
 conditioned edge set. -/
 lemma ocd_bcProb_decompose (hι : Function.Injective ιV) {p q : ℝ}
@@ -975,7 +1033,8 @@ lemma ocd_bcProb_decompose (hι : Function.Injective ιV) {p q : ℝ}
   rw [hbc]
   ring
 
-/-- Conditioned on `ψ`, the restricted outer wired probability of an increasing event is at most
+/-- **Conditional outer wired probability at most the inner wired one, $q \ge 1$.**
+Conditioned on `ψ`, the restricted outer wired probability of an increasing event is at most
 its wired probability on `G_in`, if the induced wiring is coarser than the clique on `∂_in`. -/
 lemma ocd_condBcProb_innerRestrict_le (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (bdryIn : Vin → Prop) [DecidablePred bdryIn]
@@ -995,7 +1054,8 @@ lemma ocd_condBcProb_innerRestrict_le (hι : Function.Injective ιV)
   rw [hpre]
   exact ocd_condBcProb_psiExt_dominated hι hadjm bdryIn hp hp1 hq ψ hwire hA
 
-/-- Domination of the restricted outer wired measure by the inner wired measure on increasing
+/-- **Inner wired domination of the restricted outer wired measure.**
+Domination of the restricted outer wired measure by the inner wired measure on increasing
 events, when every induced wiring is coarser than the clique on `∂_in` (for `q ≥ 1`). -/
 lemma ocd_wired_inner_dominated_bcProb (hι : Function.Injective ιV)
     (hadjm : ocd_AdjMatch Gin Gout ιV) (bdryIn : Vin → Prop) [DecidablePred bdryIn]
@@ -1036,7 +1096,8 @@ variable {d : ℕ}
 ## F. Sub-boxes of the hypercubic lattice
 -/
 
-/-- The inclusion of a vertex set of `ℤ^d` into a larger one matches the induced hypercubic
+/-- **Lattice inclusion matches induced adjacency.**
+The inclusion of a vertex set of `ℤ^d` into a larger one matches the induced hypercubic
 adjacency. -/
 lemma ocd_latticeAdjMatch {Sin Sout : Set (Site d)} [Fintype Sin] [Fintype Sout]
     (ιV : {y : Site d // y ∈ Sin} → {y : Site d // y ∈ Sout})
@@ -1054,7 +1115,8 @@ noncomputable instance ocd_instDecRelLatticeComap {S : Set (Site d)} :
       SimpleGraph {y : Site d // y ∈ S}).Adj :=
   Classical.decRel _
 
-/-- An inner vertex joined to a non-inner vertex in the outside graph lies on the inner boundary. -/
+/-- **Inner vertex with an outside-graph edge lies on the inner boundary.**
+An inner vertex joined to a non-inner vertex in the outside graph lies on the inner boundary. -/
 lemma ocd_bdryIn_of_outsideGraph_adj [Fintype Sin] [Fintype Sout]
     (ιV : {y : Site d // y ∈ Sin} → {y : Site d // y ∈ Sout})
     (hιval : ∀ x, (ιV x : Site d) = (x : Site d))
@@ -1084,7 +1146,8 @@ lemma ocd_bdryIn_of_outsideGraph_adj [Fintype Sin] [Fintype Sout]
     exact hbdryIn x (z : Site d) hnn hznot
   · exact absurd hb1 (hmargin x)
 
-/-- For sub-boxes of `ℤ^d` avoiding the outer boundary, every induced wiring is coarser than the
+/-- **Lattice induced wirings are coarser than the inner boundary clique.**
+For sub-boxes of `ℤ^d` avoiding the outer boundary, every induced wiring is coarser than the
 clique on the inner boundary. -/
 lemma ocd_latticeInducedWiring_le [Fintype Sin] [Fintype Sout]
     (ιV : {y : Site d // y ∈ Sin} → {y : Site d // y ∈ Sout})
@@ -1115,7 +1178,8 @@ lemma ocd_latticeInducedWiring_le [Fintype Sin] [Fintype Sout]
     · exact absurd heq hne'
     · exact ocd_bdryIn_of_outsideGraph_adj ιV hιval bdryOut bdryIn hmargin hbdryIn ψ hadj
 
-/-- For a vertex set of `ℤ^d` inside a larger one and avoiding its wired boundary, the restricted
+/-- **Inner wired domination for vertex sets of $\mathbb{Z}^d$.**
+For a vertex set of `ℤ^d` inside a larger one and avoiding its wired boundary, the restricted
 outer wired FK measure is dominated by the inner wired FK measure on increasing events (for `q
 ≥ 1`). -/
 lemma ocd_latticeWired_inner_dominated [Fintype Sin] [Fintype Sout]
@@ -1140,7 +1204,8 @@ lemma ocd_latticeWired_inner_dominated [Fintype Sin] [Fintype Sout]
   refine Finset.sum_congr rfl (fun ρ _ => ?_)
   rw [bcProb_clique_eq_wiredFkProb]
 
-/-- The pullback of "all edges of `t` are open" under restriction is "all edges of `ι(t)` are
+/-- **Restriction pulls back all-open events to their images.**
+The pullback of "all edges of `t` are open" under restriction is "all edges of `ι(t)` are
 open". -/
 lemma ocd_innerRestrict_preimage_multiOpenEvent (hι : Function.Injective ιV)
     (t : Finset (Sym2 Vin)) :
@@ -1150,7 +1215,8 @@ lemma ocd_innerRestrict_preimage_multiOpenEvent (hι : Function.Injective ιV)
   simp only [Set.mem_preimage, med_genericMultiOpenEvent, Set.mem_ofPred_eq, ocd_innerRestrict,
     Finset.forall_mem_image]
 
-/-- For a vertex set of `ℤ^d` inside a larger one and avoiding its wired boundary, the outer wired
+/-- **Outer wired all-open probability at most the inner wired one.**
+For a vertex set of `ℤ^d` inside a larger one and avoiding its wired boundary, the outer wired
 probability that all edges of `ι(t)` are open is at most the inner wired probability that all
 edges of `t` are open (for `q ≥ 1`). -/
 lemma ocd_latticeWired_multiMass_dominated [Fintype Sin] [Fintype Sout]

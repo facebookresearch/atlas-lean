@@ -50,7 +50,8 @@ open Matrix BigOperators StatMech.Ising
 
 /-! ## A. Restricted weights -/
 
-/-- The edge weights restricted to `S`: equal to `weight` on `S` and `0` elsewhere. -/
+/-- **Edge weights restricted to a set of edges.**
+The edge weights restricted to `S`: equal to `weight` on `S` and `0` elsewhere. -/
 def ons_restrictEdgeWeight
     {L : ℕ} (weight : Sym2 (ZMod L × ZMod L) → ℂ)
     (S : Finset (Sym2 (ZMod L × ZMod L))) :
@@ -118,7 +119,8 @@ lemma ons_weightedSpinCharacterSum_restrict_edgeFinset
 
 /-! ## B. The induction -/
 
-/-- The edge coefficient identity on the `L × L` torus: for small weights, the part of the
+/-- **Edge coefficient identity on the $L \times L$ torus.**
+The edge coefficient identity on the `L × L` torus: for small weights, the part of the
 edge-weighted character sum from even subgraphs through the edge of `e` equals minus the Kac-Ward
 root with `e` and its reverse masked, times the total first-return weight at `e`. -/
 def ons_weightedEdgeCoefficientIdentity (L : ℕ) [Fact (2 < L)] : Prop :=

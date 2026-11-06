@@ -65,7 +65,8 @@ variable {V : Type*} (Gp : SimpleGraph V) (s : ConfigSpace V)
 
 /-! ## A. Disagreements along walks -/
 
-/-- The number of steps of a walk whose endpoints have different spins in `s`. -/
+/-- **Number of disagreeing steps along a walk.**
+The number of steps of a walk whose endpoints have different spins in `s`. -/
 def walkDis : {x y : V} → Gp.Walk x y → ℕ
   | _, _, .nil => 0
   | _, _, .cons (u := u) (v := v) _ p => (if s u ≠ s v then 1 else 0) + walkDis p
@@ -100,7 +101,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## B. Edge crossings and duality -/
 
-/-- An edge bijection `ψ` from `Gp` to `Gd` carrying edges to edges, cuts to even subgraphs, and
+/-- **Edge crossing between a graph and its dual.**
+An edge bijection `ψ` from `Gp` to `Gd` carrying edges to edges, cuts to even subgraphs, and
 even subgraphs back to cuts. -/
 structure EdgeCrossing where
 
@@ -219,24 +221,26 @@ section K4Recovery
 
 /-! ## D. The edge crossing of K₄ -/
 
-/-- The two vertices of `Fin 4` other than `a` and `b`. -/
+/-- **Vertices of K₄ outside a given pair.** The two vertices of `Fin 4` other than `a` and `b`. -/
 def k4Missing (a b : Fin 4) : List (Fin 4) :=
   ([0, 1, 2, 3] : List (Fin 4)).filter (fun k => k ≠ a ∧ k ≠ b)
 
-/-- The edge of `K₄` complementary to `{a, b}`. -/
+/-- **Complementary edge of a pair in K₄.** The edge of `K₄` complementary to `{a, b}`. -/
 def k4CompPair (a b : Fin 4) : Sym2 (Fin 4) :=
   match k4Missing a b with
   | [c, d] => s(c, d)
   | _ => s(a, b)
 
-/-- The complementary edge of `K₄`, as a function on `Sym2 (Fin 4)`. -/
+/-- **Complementary-edge map of K₄ on unordered pairs.**
+The complementary edge of `K₄`, as a function on `Sym2 (Fin 4)`. -/
 def k4Comp (e : Sym2 (Fin 4)) : Sym2 (Fin 4) :=
   Sym2.lift ⟨k4CompPair, by decide⟩ e
 
 lemma k4Comp_involutive (e : Sym2 (Fin 4)) : k4Comp (k4Comp e) = e := by
   revert e; decide
 
-/-- Complementation of edges of `K₄` as an involutive equivalence. -/
+/-- **Edge complementation of K₄ as an involutive equivalence.**
+Complementation of edges of `K₄` as an involutive equivalence. -/
 def k4CompEquiv : Sym2 (Fin 4) ≃ Sym2 (Fin 4) :=
   Function.Involutive.toPerm k4Comp k4Comp_involutive
 
@@ -262,7 +266,8 @@ set_option maxRecDepth 10000 in
 lemma k4Comp_even_to_cut :
     ∀ F ∈ evenSubgraphsB (K4), (F.image k4Comp) ∈ cutSpaceB (K4) := by decide
 
-/-- The edge crossing of the self-dual graph `K₄` given by complementary edges. -/
+/-- **Self-dual edge crossing of K₄ by complementary edges.**
+The edge crossing of the self-dual graph `K₄` given by complementary edges. -/
 noncomputable def k4EdgeCrossing : EdgeCrossing (K4) (K4) where
   ψ := k4CompEquiv
   edge_mem := by

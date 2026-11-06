@@ -78,7 +78,8 @@ lemma bk_triple [Fintype E] [DecidableEq E] {p : ℝ≥0} (hp : p ≤ 1)
         mul_le_mul_of_nonneg_left (bk_inequality hp hQ hR) measureReal_nonneg
     _ = μ.real P * μ.real Q * μ.real R := by ring
 
-/-- The BK criterion: if `C ⊆ ⋃_i P_i ∘ Q_i ∘ R_i` with increasing events, then `P_p(C) ≤ ∑_i
+/-- **BK criterion for Bernoulli product measures.**
+The BK criterion: if `C ⊆ ⋃_i P_i ∘ Q_i ∘ R_i` with increasing events, then `P_p(C) ≤ ∑_i
 P_p(P_i) P_p(Q_i) P_p(R_i)` for the Bernoulli product measure. Reference: J. van den Berg, H.
 Kesten, "Inequalities with applications to percolation and reliability", J. Appl. Probab. 22 (1985)
 556–569. -/
@@ -105,7 +106,8 @@ variable {V : Type*}
 
 /-! ## B. Connection events -/
 
-/-- The subgraph of `G` of edges open in the configuration `ω`. -/
+/-- **Open subgraph of a configuration.**
+The subgraph of `G` of edges open in the configuration `ω`. -/
 def openSub (G : SimpleGraph V) (ω : ConfigSpace (Sym2 V)) : SimpleGraph V where
   Adj x y := G.Adj x y ∧ ω s(x, y) = true
   symm := by
@@ -122,7 +124,8 @@ lemma openSub_mono (G : SimpleGraph V) {ω ω' : ConfigSpace (Sym2 V)} (h : ω �
   rw [hopen] at hb
   exact le_antisymm le_top hb
 
-/-- `x` and `y` are joined by an open path staying in `A`. -/
+/-- **Open connection between two vertices inside a set.**
+`x` and `y` are joined by an open path staying in `A`. -/
 def ConnWithin (G : SimpleGraph V) (ω : ConfigSpace (Sym2 V)) (A : Set V) (x y : A) : Prop :=
   ((openSub G ω).induce A).Reachable x y
 
@@ -130,16 +133,18 @@ lemma ConnWithin.mono_config (G : SimpleGraph V) {ω ω' : ConfigSpace (Sym2 V)}
     {A : Set V} {x y : A} (hc : ConnWithin G ω A x y) : ConnWithin G ω' A x y :=
   hc.mono (fun _ _ hab => openSub_mono G h hab)
 
-/-- `u ∈ A` is joined by an open path in `A` to some vertex of `A ∩ B`. -/
+/-- **Open connection inside a set to a target set.**
+`u ∈ A` is joined by an open path in `A` to some vertex of `A ∩ B`. -/
 def ConnToSet (G : SimpleGraph V) (ω : ConfigSpace (Sym2 V)) (A : Set V)
     (u : V) (B : Set V) : Prop :=
   ∃ (hu : u ∈ A) (b : V) (hb : b ∈ A), b ∈ B ∧ ConnWithin G ω A ⟨u, hu⟩ ⟨b, hb⟩
 
-/-- The event that `u` is connected to `B` by an open path inside `A`. -/
+/-- **Connection event inside a set.**
+The event that `u` is connected to `B` by an open path inside `A`. -/
 def connEvent (G : SimpleGraph V) (A : Set V) (u : V) (B : Set V) :
     Set (ConfigSpace (Sym2 V)) := {ω | ConnToSet G ω A u B}
 
-/-- The event that the edge `{x, y}` is open. -/
+/-- **Event that an edge is open.** The event that the edge `{x, y}` is open. -/
 def edgeOpenEvent (x y : V) : Set (ConfigSpace (Sym2 V)) := {ω | ω s(x, y) = true}
 
 lemma isIncreasing_connEvent (G : SimpleGraph V) (A : Set V) (u : V) (B : Set V) :

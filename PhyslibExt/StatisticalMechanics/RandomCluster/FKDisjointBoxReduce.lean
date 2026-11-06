@@ -77,7 +77,8 @@ lemma fdb_boxMass_eq_bcProb_sum (m : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
 
 /-! ## B. The conditional product cap -/
 
-/-- For every finite family of finite edge sets and box index `N`, some translation `g` satisfies,
+/-- **Conditional product cap for multi-open events in boxes.**
+For every finite family of finite edge sets and box index `N`, some translation `g` satisfies,
 for
 all large `m`: each `O_T ∩ g⁻¹O_{T'}` is `A ∩ B` on `Λ_m` with `A` increasing and `B` depending
 only

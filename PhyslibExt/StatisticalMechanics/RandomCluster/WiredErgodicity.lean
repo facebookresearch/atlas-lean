@@ -127,7 +127,8 @@ lemma cbk_innerRestrict_preimage {N m : ℕ} (h : N ≤ m) (t : Finset (Sym2 (bo
 
 /-! ## B. Shifted boxes -/
 
-/-- The vector `(2N + 1) e_{i₀}`, which translates `Λ_N` to a disjoint box. -/
+/-- **Shift vector moving $\Lambda_N$ to a disjoint box.**
+The vector `(2N + 1) e_{i₀}`, which translates `Λ_N` to a disjoint box. -/
 noncomputable def cbk_shiftVec {d : ℕ} (i₀ : Fin d) (N : ℕ) : Site d :=
   fun i => if i = i₀ then (2 * N + 1 : ℤ) else 0
 
@@ -162,7 +163,8 @@ lemma cbk_box_disjoint_transBox {d : ℕ} (i₀ : Fin d) (N : ℕ) {y : Site d}
   rw [abs_le] at ha hb
   omega
 
-/-- The vertex of `Λ_{N+r}` obtained by translating a vertex of `Λ_N` by `v` with `‖v‖_∞ ≤ r`. -/
+/-- **Translate of a vertex of $\Lambda_N$ as a vertex of $\Lambda_{N+r}$.**
+The vertex of `Λ_{N+r}` obtained by translating a vertex of `Λ_N` by `v` with `‖v‖_∞ ≤ r`. -/
 noncomputable def cbk_shiftBoxVert {N r : ℕ} (v : Site d) (hv : flc_vrad v ≤ r)
     (a : boxVerts d N) : boxVerts d (N + r) :=
   ⟨v + (a : Site d), by
@@ -176,7 +178,8 @@ noncomputable def cbk_shiftBoxVert {N r : ℕ} (v : Site d) (hv : flc_vrad v ≤
       _ ≤ flc_vrad v + N := Nat.add_le_add hvi ha
       _ ≤ N + r := by omega⟩
 
-/-- The edge of `Λ_{N+r}` obtained by translating an edge of `Λ_N` by `v` with `‖v‖_∞ ≤ r`. -/
+/-- **Translate of an edge of $\Lambda_N$ as an edge of $\Lambda_{N+r}$.**
+The edge of `Λ_{N+r}` obtained by translating an edge of `Λ_N` by `v` with `‖v‖_∞ ≤ r`. -/
 noncomputable def cbk_shiftEdge {N r : ℕ} (v : Site d) (hv : flc_vrad v ≤ r) :
     Sym2 (boxVerts d N) → Sym2 (boxVerts d (N + r)) :=
   Sym2.map (cbk_shiftBoxVert v hv)

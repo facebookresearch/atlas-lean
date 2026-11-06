@@ -67,14 +67,16 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Spin monomials -/
 
-/-- The spin value `±1` of a Boolean: `1` for `true`, `-1` for `false`. See also
+/-- **Spin value of a Boolean.**
+The spin value `±1` of a Boolean: `1` for `true`, `-1` for `false`. See also
 `CondensedMatter.IsingModel.spin` and `StatMech.Ising.spinB_eq_isingModelSpin`. -/
 def spinB (b : Bool) : ℝ := if b then 1 else -1
 
 omit [Fintype V] [DecidableEq V] in
 lemma spin_eq_spinB (s : ConfigSpace V) (x : V) : spin s x = spinB (s x) := rfl
 
-/-- The spin monomial `∏_x σ_x^{m_x}` with exponents `m : V → ℕ`. -/
+/-- **Spin monomial with given exponents.**
+The spin monomial `∏_x σ_x^{m_x}` with exponents `m : V → ℕ`. -/
 def monomial (m : V → ℕ) (s : ConfigSpace V) : ℝ := ∏ x : V, (spin s x) ^ (m x)
 
 omit [DecidableEq V] in
@@ -88,7 +90,8 @@ lemma monomial_add (m₁ m₂ : V → ℕ) (s : ConfigSpace V) :
   rw [← Finset.prod_mul_distrib]
   exact Finset.prod_congr rfl (fun x _ => by rw [Pi.add_apply, pow_add])
 
-/-- The sum of a spin monomial over all configurations is nonnegative. -/
+/-- **Configuration sum of a spin monomial is nonnegative.**
+The sum of a spin monomial over all configurations is nonnegative. -/
 lemma sum_monomial_nonneg (m : V → ℕ) : 0 ≤ ∑ s : ConfigSpace V, monomial m s := by
   have key : (∑ s : ConfigSpace V, monomial m s)
       = ∏ x : V, ∑ b : Bool, (spinB b) ^ (m x) := by
@@ -106,7 +109,7 @@ lemma sum_monomial_nonneg (m : V → ℕ) : 0 ≤ ∑ s : ConfigSpace V, monomia
   · rw [he.neg_one_pow]; norm_num
   · rw [ho.neg_one_pow]; norm_num
 
-/-- `f` is a spin monomial `∏_x σ_x^{m_x}` for some exponents `m`. -/
+/-- **Being a spin monomial.** `f` is a spin monomial `∏_x σ_x^{m_x}` for some exponents `m`. -/
 def IsSpinMonomial (f : ConfigSpace V → ℝ) : Prop :=
   ∃ m : V → ℕ, ∀ s, f s = monomial m s
 
@@ -148,7 +151,8 @@ lemma isSpinMonomial_bond (e : Sym2 V) : IsSpinMonomial (fun s => bond s e) := b
 
 /-! ## B. The positivity kernel -/
 
-/-- The positivity kernel of the GKS inequalities: for nonnegative `c_i, d_i` and spin monomials
+/-- **Nonnegativity of the GKS positivity kernel.**
+The positivity kernel of the GKS inequalities: for nonnegative `c_i, d_i` and spin monomials
 `fac i`, `obs`, the configuration sum of `obs · ∏_i (c_i + d_i · fac_i)` is nonnegative. -/
 lemma gks_kernel {ι : Type*} (I : Finset ι) (c d : ι → ℝ)
     (hc : ∀ i ∈ I, 0 ≤ c i) (hd : ∀ i ∈ I, 0 ≤ d i)
@@ -182,7 +186,7 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## C. Spin products and expectations -/
 
-/-- The spin product `σ_A = ∏_{x ∈ A} σ_x`. -/
+/-- **Spin product over a vertex set.** The spin product `σ_A = ∏_{x ∈ A} σ_x`. -/
 def spinProd (A : Finset V) (s : ConfigSpace V) : ℝ := ∏ x ∈ A, spin s x
 
 omit [Fintype V] [DecidableEq V] in
@@ -204,7 +208,8 @@ lemma isSpinMonomial_spinProd (A : Finset V) : IsSpinMonomial (spinProd A) := by
       rw [Finset.mem_filter] at hx; rw [ite_eq_right hx.2, pow_zero])
   rw [h1, h2, mul_one]
 
-/-- The finite-volume Ising expectation `⟨f⟩ = ∑_s P(s) f(s)` of an observable `f`. -/
+/-- **Finite-volume Ising expectation.**
+The finite-volume Ising expectation `⟨f⟩ = ∑_s P(s) f(s)` of an observable `f`. -/
 noncomputable def isingExpectation (β h : ℝ) (f : ConfigSpace V → ℝ) : ℝ :=
   ∑ s : ConfigSpace V, isingProb G β h s * f s
 
@@ -223,7 +228,8 @@ lemma exp_mul_pm (c t : ℝ) (ht : t = 1 ∨ t = -1) :
   · rw [mul_neg_one]; ring
 
 omit [DecidableEq V] in
-/-- The Boltzmann weight factorizes as a product over edges and vertices of `cosh + sinh · σ`
+/-- **Boltzmann weight as a product of cosh-plus-sinh factors.**
+The Boltzmann weight factorizes as a product over edges and vertices of `cosh + sinh · σ`
 terms. -/
 lemma isingWeight_factor (β h : ℝ) (s : ConfigSpace V) :
     isingWeight G β h s

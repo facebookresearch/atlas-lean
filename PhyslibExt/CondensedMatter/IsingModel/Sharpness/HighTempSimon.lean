@@ -63,7 +63,7 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Switching inputs and outputs -/
 
-/-- The edges of `G` inside `S`. -/
+/-- **Edges of a graph inside a set.** The edges of `G` inside `S`. -/
 def highTempInternalEdges (S : Finset V) : Finset (Sym2 V) :=
   G.edgeFinset.filter (edgeInside S)
 
@@ -72,7 +72,8 @@ def highTempInternalEdges (S : Finset V) : Finset (Sym2 V) :=
       e ∈ G.edgeFinset ∧ edgeInside S e := by
   simp [highTempInternalEdges]
 
-/-- A pair of edge sets `(F, H)`, the input of the switching. -/
+/-- **Input pair of the high-temperature switching.**
+A pair of edge sets `(F, H)`, the input of the switching. -/
 structure HighTempSwitchInput where
   /-- The edge set with boundary `{o} ∆ {z}`. -/
   F : Finset (Sym2 V)
@@ -80,7 +81,8 @@ structure HighTempSwitchInput where
   H : Finset (Sym2 V)
 deriving DecidableEq, Fintype
 
-/-- A tuple `(x, y, A, B)` of an exit edge and two edge sets, the output of the switching. -/
+/-- **Output tuple of the high-temperature switching.**
+A tuple `(x, y, A, B)` of an exit edge and two edge sets, the output of the switching. -/
 structure HighTempSwitchOutput where
   /-- The inner endpoint of the exit edge. -/
   x : V
@@ -92,7 +94,8 @@ structure HighTempSwitchOutput where
   B : Finset (Sym2 V)
 deriving DecidableEq, Fintype
 
-/-- Valid inputs: `F ⊆ E(G)` with boundary `{o} ∆ {z}` and `H` inside `S` with empty boundary. -/
+/-- **Valid switching inputs.**
+Valid inputs: `F ⊆ E(G)` with boundary `{o} ∆ {z}` and `H` inside `S` with empty boundary. -/
 def HighTempSwitchInput.Valid (S : Finset V) (o z : V)
     (p : HighTempSwitchInput (V := V)) : Prop :=
   p.F ⊆ G.edgeFinset ∧
@@ -105,7 +108,8 @@ noncomputable instance (S : Finset V) (o z : V) :
     DecidablePred (HighTempSwitchInput.Valid G S o z) :=
   fun _ => Classical.propDecidable _
 
-/-- Valid outputs: `x ∈ S`, `y ∉ S`, `A` inside `S` with boundary `{o} ∆ {x}`, and `B ⊆ E(G)` with
+/-- **Valid switching outputs.**
+Valid outputs: `x ∈ S`, `y ∉ S`, `A` inside `S` with boundary `{o} ∆ {x}`, and `B ⊆ E(G)` with
 boundary `{y} ∆ {z}`. -/
 def HighTempSwitchOutput.Valid (S : Finset V) (o z : V)
     (r : HighTempSwitchOutput (V := V)) : Prop :=
@@ -120,12 +124,12 @@ noncomputable instance (S : Finset V) (o z : V) :
     DecidablePred (HighTempSwitchOutput.Valid G S o z) :=
   fun _ => Classical.propDecidable _
 
-/-- The finite set of valid inputs. -/
+/-- **Finite set of valid switching inputs.** The finite set of valid inputs. -/
 noncomputable def highTempSwitchInputs (S : Finset V) (o z : V) :
     Finset (HighTempSwitchInput (V := V)) :=
   Finset.univ.filter (HighTempSwitchInput.Valid G S o z)
 
-/-- The finite set of valid outputs. -/
+/-- **Finite set of valid switching outputs.** The finite set of valid outputs. -/
 noncomputable def highTempSwitchOutputs (S : Finset V) (o z : V) :
     Finset (HighTempSwitchOutput (V := V)) :=
   Finset.univ.filter (HighTempSwitchOutput.Valid G S o z)
@@ -150,7 +154,8 @@ lemma highTempInput_symmDiff_sources {S : Finset V} {o z : V}
 
 /-! ## B. The switching map -/
 
-/-- The switching map: cut `F ∆ H` at its first exit from `S` and redistribute the pieces. -/
+/-- **High-temperature switching map.**
+The switching map: cut `F ∆ H` at its first exit from `S` and redistribute the pieces. -/
 noncomputable def highTempSwitch (S : Finset V) (o z : V)
     (ho : o ∈ S) (hz : z ∉ S) (p : HighTempSwitchInput (V := V))
     (hp : p.Valid G S o z) : HighTempSwitchOutput (V := V) := by
@@ -237,7 +242,8 @@ lemma highTempSwitch_recover_H (H Q : Finset (Sym2 V)) :
   simp only [Finset.mem_symmDiff]
   tauto
 
-/-- The switching as a map between the finite sets of valid inputs and outputs. -/
+/-- **Switching map between valid inputs and outputs.**
+The switching as a map between the finite sets of valid inputs and outputs. -/
 noncomputable def highTempSwitchMap (S : Finset V) (o z : V)
     (ho : o ∈ S) (hz : z ∉ S) :
     ↥(highTempSwitchInputs G S o z) → ↥(highTempSwitchOutputs G S o z) :=
@@ -340,12 +346,13 @@ lemma highTempSwitchMap_injective (S : Finset V) (o z : V)
 
 /-! ## C. Weights -/
 
-/-- The weight `∏_{e ∈ F} t_e ∏_{e ∈ H} t_e` of an input. -/
+/-- **Weight of a switching input.** The weight `∏_{e ∈ F} t_e ∏_{e ∈ H} t_e` of an input. -/
 noncomputable def highTempSwitchInputWeight (t : Sym2 V → ℝ)
     (p : HighTempSwitchInput (V := V)) : ℝ :=
   (∏ e ∈ p.F, t e) * ∏ e ∈ p.H, t e
 
-/-- The weight `∏_{e ∈ A} t_e · t_{xy} · ∏_{e ∈ B} t_e` of an output. -/
+/-- **Weight of a switching output.**
+The weight `∏_{e ∈ A} t_e · t_{xy} · ∏_{e ∈ B} t_e` of an output. -/
 noncomputable def highTempSwitchOutputWeight (t : Sym2 V → ℝ)
     (r : HighTempSwitchOutput (V := V)) : ℝ :=
   (∏ e ∈ r.A, t e) * t s(r.x, r.y) * ∏ e ∈ r.B, t e
@@ -416,12 +423,13 @@ lemma highTempSwitch_sum_le (t : Sym2 V → ℝ) (ht : ∀ e, 0 ≤ t e)
 
 /-! ## D. High-temperature source sums -/
 
-/-- The edge sets `F ⊆ E` with boundary `A`. -/
+/-- **Edge sets with a given boundary.** The edge sets `F ⊆ E` with boundary `A`. -/
 noncomputable def highTempSourceSubgraphs (E : Finset (Sym2 V))
     (A : Finset V) : Finset (Finset (Sym2 V)) :=
   E.powerset.filter (fun F => HasOddBoundary F A)
 
-/-- The high-temperature source sum `∑_{F ⊆ E, ∂F = A} ∏_{e ∈ F} t_e`. -/
+/-- **High-temperature source sum.**
+The high-temperature source sum `∑_{F ⊆ E, ∂F = A} ∏_{e ∈ F} t_e`. -/
 noncomputable def highTempSourceSum (E : Finset (Sym2 V))
     (t : Sym2 V → ℝ) (A : Finset V) : ℝ :=
   ∑ F ∈ highTempSourceSubgraphs E A, ∏ e ∈ F, t e
@@ -738,7 +746,8 @@ lemma highTempSourceSum_couplingIn (beta : ℝ) (J : Sym2 V → ℝ)
 
 /-! ## E. The Simon–Lieb inequality -/
 
-/-- The two-point function `⟨σ_aσ_b⟩_{β,J}` (equal to `1` when `a = b`). -/
+/-- **Two-point function with couplings.**
+The two-point function `⟨σ_aσ_b⟩_{β,J}` (equal to `1` when `a = b`). -/
 noncomputable def twoPointJ (beta : ℝ) (J : Sym2 V → ℝ)
     (a b : V) : ℝ :=
   expectationJ G beta J (sourcePair a b)
@@ -803,7 +812,8 @@ lemma twoPointJ_couplingIn_high_temp_ratio (beta : ℝ)
   rw [highTempSourceSum_couplingIn G beta J S (sourcePair a b),
     highTempSourceSum_couplingIn G beta J S ∅]
 
-/-- The Simon–Lieb inequality: for `β, J ≥ 0`, `o ∈ S` and `z ∉ S`, `⟨σ_oσ_z⟩ ≤ ∑_{x ∈ S} ∑_{y ∉ S}
+/-- **Simon–Lieb inequality on a finite graph.**
+The Simon–Lieb inequality: for `β, J ≥ 0`, `o ∈ S` and `z ∉ S`, `⟨σ_oσ_z⟩ ≤ ∑_{x ∈ S} ∑_{y ∉ S}
 tanh(βJ_{xy}) ⟨σ_oσ_x⟩_{J|S} ⟨σ_yσ_z⟩`. Reference: B. Simon, "Correlation inequalities and the decay
 of correlations in ferromagnets", Comm. Math. Phys. 77 (1980) 111–126; E. H. Lieb, "A refinement of
 Simon's correlation inequality", Comm. Math. Phys. 77 (1980) 127–135. -/
@@ -897,7 +907,7 @@ lemma twoPointJ_nonneg (beta : ℝ) (J : Sym2 V → ℝ)
     (Finset.sum_nonneg (fun F _ => Finset.prod_nonneg (fun e _ => ht e)))
     (highTempSourceSum_empty_pos G.edgeFinset t (fun e _ => ht e)).le
 
-/-- The Simon–Lieb weight `tanh(βJ_{xy}) ⟨σ_oσ_x⟩_{J|S}`. -/
+/-- **Simon–Lieb weight.** The Simon–Lieb weight `tanh(βJ_{xy}) ⟨σ_oσ_x⟩_{J|S}`. -/
 noncomputable def simonWeightPair (beta : ℝ) (J : Sym2 V → ℝ)
     (S : Finset V) (o x y : V) : ℝ :=
   Real.tanh (beta * J s(x, y)) *

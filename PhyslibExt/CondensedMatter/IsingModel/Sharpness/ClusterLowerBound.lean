@@ -108,7 +108,8 @@ lemma sources_reEdge_eq_symmDiff_iff (S A B : Finset V)
 
 /-! ## B. Factorization along a set -/
 
-/-- The outside part of a double-current summand: weights of the two outside currents with sources
+/-- **Outside part of a gated double-current summand.**
+The outside part of a double-current summand: weights of the two outside currents with sources
 `B` and `D`, gated by `P`. -/
 noncomputable def claim1Context (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V)
     (P : Current V → Prop) [DecidablePred P] (B D : Finset V)
@@ -121,7 +122,8 @@ noncomputable def claim1Context (β : ℝ) (J : Sym2 V → ℝ) (S : Finset V)
     (if P (fun e => ofEdgeFun G (bFull G S bd.1) e +
         ofEdgeFun G (bFull G S bd.2) e) then 1 else 0)
 
-/-- Regrouping a pair of currents split along `S` into the pair of inside parts and the pair of
+/-- **Regrouping a split pair of currents.**
+Regrouping a pair of currents split along `S` into the pair of inside parts and the pair of
 outside parts. -/
 noncomputable def pairCutEquiv (S : Finset V) :
     ((({i : ↥G.edgeFinset // isIn G S i} → ℕ) ×
@@ -320,7 +322,8 @@ open FluxEdgeCopy
 
 /-! ## C. Gated double-current sums and switching -/
 
-/-- The gated double-current sum `∑_{∂n₁ = A, ∂n₂ = B} w(n₁) w(n₂) 1_{P(n₁ + n₂)}` over edge-indexed
+/-- **Gated double-current sum over edge-indexed currents.**
+The gated double-current sum `∑_{∂n₁ = A, ∂n₂ = B} w(n₁) w(n₂) 1_{P(n₁ + n₂)}` over edge-indexed
 currents. -/
 noncomputable def gatedSourcePairSum (β : ℝ) (J : Sym2 V → ℝ)
     (A B : Finset V) (P : Current V → Prop) [DecidablePred P] : ℝ :=
@@ -487,7 +490,7 @@ lemma gatedSourcePairSum_switching (β : ℝ) (J : Sym2 V → ℝ)
 
 /-! ## D. Comparison of correlations -/
 
-/-- The edges of `G` inside `S`. -/
+/-- **Edges of a graph inside a set.** The edges of `G` inside `S`. -/
 def edgesIn (S : Finset V) : Finset (Sym2 V) :=
   G.edgeFinset.filter (edgeInside S)
 
@@ -750,7 +753,8 @@ lemma claim1_ising_self_cleared (β : ℝ) (J : Sym2 V → ℝ)
   simpa only [mul_assoc] using hmul
 
 open Classical in
-/-- The cluster lower bound: for `β, J ≥ 0`, `o, x ∉ S`, `y, g ∈ S`, `y ≠ g` and `⟨σ_yσ_g⟩ > 0`, the
+/-- **Cluster lower bound for double-current sums.**
+The cluster lower bound: for `β, J ≥ 0`, `o, x ∉ S`, `y, g ∈ S`, `y ≠ g` and `⟨σ_yσ_g⟩ > 0`, the
 double-current sum with sources `{y, g} ∆ {o, x}` and `∅` on the event that the vertices not
 connected to `o` form `S` is at least `⟨σ_yσ_g⟩⁻¹` times the sum with sources `{o, x}` and `∅` on
 the same event and `y ↔ g`. Reference: M. Aizenman, D. J. Barsky, R. Fernández, "The phase

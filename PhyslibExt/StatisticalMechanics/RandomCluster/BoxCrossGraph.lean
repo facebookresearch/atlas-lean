@@ -63,7 +63,8 @@ open StatMech.Lattice
 
 /-! ## A. Including `Λ_n` into `Λ_{n+1}` -/
 
-/-- The inclusion of the vertices of `Λ_n` into `Λ_{n+1}`. The case `m = n + 1` of `boxVertInclLE`.
+/-- **Inclusion of box vertices into the next box.**
+The inclusion of the vertices of `Λ_n` into `Λ_{n+1}`. The case `m = n + 1` of `boxVertInclLE`.
 -/
 def boxVertIncl (d n : ℕ) (x : boxVerts d n) : boxVerts d (n + 1) :=
   ⟨(x : Site d), box_subset_succ d n x.2⟩
@@ -88,12 +89,13 @@ lemma boxGraph_eq_comap (d n : ℕ) :
   ext x y
   rw [SimpleGraph.comap_adj, boxGraph_adj_boxVertIncl]
 
-/-- `Λ_n` as an induced subgraph of `Λ_{n+1}`. -/
+/-- **Box as an induced subgraph of the next box.** `Λ_n` as an induced subgraph of `Λ_{n+1}`. -/
 def boxGraphEmb (d n : ℕ) : boxGraph d n ↪g boxGraph d (n + 1) :=
   (boxGraph_eq_comap d n) ▸
     SimpleGraph.Embedding.comap ⟨boxVertIncl d n, boxVertIncl_injective d n⟩ (boxGraph d (n + 1))
 
-/-- The inclusion of edges (unordered pairs) of `Λ_n` into `Λ_{n+1}`. -/
+/-- **Inclusion of box edges into the next box.**
+The inclusion of edges (unordered pairs) of `Λ_n` into `Λ_{n+1}`. -/
 def innerEdge (d n : ℕ) : Sym2 (boxVerts d n) → Sym2 (boxVerts d (n + 1)) :=
   Sym2.map (boxVertIncl d n)
 
@@ -106,7 +108,7 @@ lemma edgeIncl_innerEdge (d n : ℕ) (e : Sym2 (boxVerts d n)) :
   rw [Sym2.map_map]
   rfl
 
-/-- A vertex of `Λ_{n+1}` lies in `Λ_n`. -/
+/-- **Vertex of the next box lying in the inner box.** A vertex of `Λ_{n+1}` lies in `Λ_n`. -/
 def IsInnerVert (d n : ℕ) (v : boxVerts d (n + 1)) : Prop := (v : Site d) ∈ box d n
 
 /-- Classical decidability of `IsInnerVert`. -/
@@ -127,7 +129,8 @@ lemma isInnerVert_boxVertIncl (d n : ℕ) (x : boxVerts d n) :
 
 /-! ## B. Extension by closed annulus edges and wiring the inner boundary -/
 
-/-- The extension of a configuration of `Λ_n` to `Λ_{n+1}` that closes every edge not coming from
+/-- **Extension of a configuration closing the annulus edges.**
+The extension of a configuration of `Λ_n` to `Λ_{n+1}` that closes every edge not coming from
 `Λ_n`.
 -/
 noncomputable def crossExt (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
@@ -142,7 +145,8 @@ lemma crossExt_innerEdge (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
   congr 1
   exact innerEdge_injective d n hmem.choose_spec
 
-/-- A vertex of `Λ_{n+1}` on the vertex boundary of `Λ_n`. -/
+/-- **Vertex on the boundary of the inner box.**
+A vertex of `Λ_{n+1}` on the vertex boundary of `Λ_n`. -/
 def innerBdry (d n : ℕ) (v : boxVerts d (n + 1)) : Prop :=
   IsInnerVert d n v ∧ (v : Site d) ∈ vertexBoundary d n
 
@@ -159,7 +163,8 @@ lemma innerBdry_boxVertIncl (d n : ℕ) (x : boxVerts d n) :
 lemma innerBdry_isInnerVert (d n : ℕ) {v : boxVerts d (n + 1)} (h : innerBdry d n v) :
     IsInnerVert d n v := h.1
 
-/-- The open subgraph of `crossExt ω` in `Λ_{n+1}` with the boundary of `Λ_n` wired. -/
+/-- **Extended open graph with the inner box boundary wired.**
+The open subgraph of `crossExt ω` in `Λ_{n+1}` with the boundary of `Λ_n` wired. -/
 noncomputable def crossWiredGraph (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     SimpleGraph (boxVerts d (n + 1)) :=
   wiredGraph (boxGraph d (n + 1)) (innerBdry d n) (crossExt d n ω)
@@ -280,18 +285,21 @@ lemma inner_reachable_of_crossWiredGraph (d n : ℕ)
 
 /-! ## C. Clusters of the extended configuration -/
 
-/-- The open subgraph of `ω` in `Λ_n` with the boundary of `Λ_n` wired. -/
+/-- **Open graph of a box configuration with the box boundary wired.**
+The open subgraph of `ω` in `Λ_n` with the boundary of `Λ_n` wired. -/
 noncomputable abbrev innerWiredGraph (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     SimpleGraph (boxVerts d n) :=
   wiredGraph (boxGraph d n) (boxBoundary d n) ω
 
-/-- The inclusion of the wired open graph of `Λ_n` into `crossWiredGraph`. -/
+/-- **Inclusion of the wired inner graph into the extended wired graph.**
+The inclusion of the wired open graph of `Λ_n` into `crossWiredGraph`. -/
 def innerWiredHom (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     (innerWiredGraph d n ω) →g (crossWiredGraph d n ω) where
   toFun := boxVertIncl d n
   map_rel' := fun {a b} hab => (crossWiredGraph_adj_boxVertIncl d n ω a b).mpr hab
 
-/-- Components of `crossWiredGraph` from wired components of `ω` in `Λ_n` and annulus vertices. -/
+/-- **Map from inner wired components and annulus vertices to components.**
+Components of `crossWiredGraph` from wired components of `ω` in `Λ_n` and annulus vertices. -/
 noncomputable def crossComponentEquivFun (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     (innerWiredGraph d n ω).ConnectedComponent ⊕
       {v : boxVerts d (n + 1) // ¬ IsInnerVert d n v} →
@@ -350,7 +358,8 @@ lemma crossComponentEquivFun_surjective (d n : ℕ) (ω : ConfigSpace (Sym2 (box
     rw [this]
   · exact ⟨Sum.inr ⟨u, hu⟩, rfl⟩
 
-/-- Components of `crossWiredGraph` are the wired components of `ω` in `Λ_n` plus one singleton per
+/-- **Extended-graph components as inner components plus annulus vertices.**
+Components of `crossWiredGraph` are the wired components of `ω` in `Λ_n` plus one singleton per
 annulus vertex.
 -/
 noncomputable def crossComponentEquiv (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
@@ -360,7 +369,8 @@ noncomputable def crossComponentEquiv (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVe
   Equiv.ofBijective (crossComponentEquivFun d n ω)
     ⟨crossComponentEquivFun_injective d n ω, crossComponentEquivFun_surjective d n ω⟩
 
-/-- The number of vertices of the annulus `Λ_{n+1} \ Λ_n`. -/
+/-- **Number of annulus vertices between consecutive boxes.**
+The number of vertices of the annulus `Λ_{n+1} \ Λ_n`. -/
 noncomputable def annulusCard (d n : ℕ) : ℕ :=
   Nat.card {v : boxVerts d (n + 1) // ¬ IsInnerVert d n v}
 
@@ -391,7 +401,8 @@ lemma innerEdge_image_edgeFinset (d n : ℕ) :
   · rintro ⟨hmem, a, rfl⟩
     exact ⟨a, (innerEdge_mem_edgeSet_iff d n a).mp hmem, rfl⟩
 
-/-- The number of edges of `Λ_{n+1}` not coming from `Λ_n`. -/
+/-- **Number of next-box edges not coming from the inner box.**
+The number of edges of `Λ_{n+1}` not coming from `Λ_n`. -/
 noncomputable def nonInnerEdgeCard (d n : ℕ) : ℕ :=
   ((boxGraph d (n + 1)).edgeFinset.filter (fun e => e ∉ Set.range (innerEdge d n))).card
 
@@ -417,7 +428,8 @@ lemma edgeProduct_crossExt (d n : ℕ) {p : ℝ} (ω : ConfigSpace (Sym2 (boxVer
     rw [crossExt_eq_false_of_not_range d n ω he.2]
     rfl
 
-/-- The constant `(1 - p)^{#annulus edges} q^{#annulus vertices}` relating the extended weight to
+/-- **Annulus constant linking the extended and wired inner weights.**
+The constant `(1 - p)^{#annulus edges} q^{#annulus vertices}` relating the extended weight to
 the
 wired weight on `Λ_n`.
 -/
@@ -436,7 +448,8 @@ lemma bcWeight_crossExt (d n : ℕ) {p q : ℝ} (ω : ConfigSpace (Sym2 (boxVert
     edgeProduct_crossExt, wiredFkWeight, crossShift, pow_add]
   ring
 
-/-- The edges of `Λ_{n+1}` coming from `Λ_n`. -/
+/-- **Edges of the next box coming from the inner box.**
+The edges of `Λ_{n+1}` coming from `Λ_n`. -/
 noncomputable def innerEdgeFinset (d n : ℕ) : Finset (Sym2 (boxVerts d (n + 1))) :=
   Finset.univ.image (innerEdge d n)
 
@@ -444,7 +457,8 @@ lemma mem_innerEdgeFinset (d n : ℕ) (e : Sym2 (boxVerts d (n + 1))) :
     e ∈ innerEdgeFinset d n ↔ e ∈ Set.range (innerEdge d n) := by
   simp only [innerEdgeFinset, Finset.mem_image, Finset.mem_univ, true_and, Set.mem_range]
 
-/-- The restriction of a configuration of `Λ_{n+1}` to the edges of `Λ_n`. -/
+/-- **Restriction of a next-box configuration to the inner edges.**
+The restriction of a configuration of `Λ_{n+1}` to the edges of `Λ_n`. -/
 noncomputable def innerRestrict (d n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts d (n + 1)))) :
     ConfigSpace (Sym2 (boxVerts d n)) :=
   fun e => ρ (innerEdge d n e)
@@ -473,7 +487,8 @@ lemma agreesOff_crossExt (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
   rw [mem_innerEdgeFinset] at he
   exact crossExt_eq_false_of_not_range d n ω he
 
-/-- Configurations of `Λ_{n+1}` closed off the inner edges correspond to configurations of `Λ_n`.
+/-- **Configurations closed off the inner edges as inner-box configurations.**
+Configurations of `Λ_{n+1}` closed off the inner edges correspond to configurations of `Λ_n`.
 -/
 noncomputable def innerFibreEquiv (d n : ℕ) :
     {ρ : ConfigSpace (Sym2 (boxVerts d (n + 1))) //
@@ -534,7 +549,8 @@ lemma boxBoundary_succ_iff_not_inner (d n : ℕ) (v : boxVerts d (n + 1)) :
 
 /-! ## E. Additional wiring in the annulus -/
 
-/-- Every edge of `D` joins vertices of the annulus `Λ_{n+1} \ Λ_n`. -/
+/-- **Wiring with every edge inside the annulus.**
+Every edge of `D` joins vertices of the annulus `Λ_{n+1} \ Λ_n`. -/
 def IsAnnulusWiring (d n : ℕ) (D : SimpleGraph (boxVerts d (n + 1))) : Prop :=
   ∀ ⦃u v⦄, D.Adj u v → ¬ IsInnerVert d n u
 
@@ -545,7 +561,8 @@ lemma isAnnulusWiring_boxBoundary_succ (d n : ℕ) :
   rw [StatMech.Lattice.boundaryCliqueGraph_adj] at hadj
   exact (boxBoundary_succ_iff_not_inner d n u).mp hadj.2.1
 
-/-- `crossWiredGraph` with the extra wiring `D` added. -/
+/-- **Extended wired graph with an extra wiring added.**
+`crossWiredGraph` with the extra wiring `D` added. -/
 noncomputable def crossWiredGraphAdd (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (D : SimpleGraph (boxVerts d (n + 1))) : SimpleGraph (boxVerts d (n + 1)) :=
   crossWiredGraph d n ω ⊔ D
@@ -593,10 +610,12 @@ lemma crossWiredGraphAdd_reachable_annulus (d n : ℕ)
   intro hw
   exact hu (crossWiredGraphAdd_reachable_inner d n ω hD hw h.symm)
 
-/-- The vertices of the annulus `Λ_{n+1} \ Λ_n`. -/
+/-- **Vertices of the annulus between consecutive boxes.**
+The vertices of the annulus `Λ_{n+1} \ Λ_n`. -/
 abbrev AnnulusVert (d n : ℕ) : Type := {v : boxVerts d (n + 1) // ¬ IsInnerVert d n v}
 
-/-- The restriction of `D` to the annulus vertices. -/
+/-- **Restriction of a wiring to the annulus vertices.**
+The restriction of `D` to the annulus vertices. -/
 noncomputable def annulusSubgraph (d n : ℕ) (D : SimpleGraph (boxVerts d (n + 1))) :
     SimpleGraph (AnnulusVert d n) :=
   SimpleGraph.comap (Subtype.val) D
@@ -690,21 +709,24 @@ lemma annulus_reachable_of_crossWiredGraphAdd (d n : ℕ)
         ⟨u, huannulus⟩ ⟨w, hwannulus⟩).mp hadj
       exact ihu.trans hstep.reachable
 
-/-- The inclusion of the wired open graph of `Λ_n` into `crossWiredGraphAdd`. -/
+/-- **Inclusion of the wired inner graph into the extra-wired graph.**
+The inclusion of the wired open graph of `Λ_n` into `crossWiredGraphAdd`. -/
 def innerWiredHomAdd (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     {D : SimpleGraph (boxVerts d (n + 1))} (hD : IsAnnulusWiring d n D) :
     (innerWiredGraph d n ω) →g (crossWiredGraphAdd d n ω D) where
   toFun := boxVertIncl d n
   map_rel' := fun {a b} hab => (crossWiredGraphAdd_adj_boxVertIncl d n ω hD a b).mpr hab
 
-/-- The inclusion of the annulus wiring into `crossWiredGraphAdd`. -/
+/-- **Inclusion of the annulus wiring into the extra-wired graph.**
+The inclusion of the annulus wiring into `crossWiredGraphAdd`. -/
 def annulusHomAdd (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (D : SimpleGraph (boxVerts d (n + 1))) :
     (annulusSubgraph d n D) →g (crossWiredGraphAdd d n ω D) where
   toFun := Subtype.val
   map_rel' := fun {a b} hab => (crossWiredGraphAdd_adj_annulus d n ω D a b).mpr hab
 
-/-- Components of `crossWiredGraphAdd` from wired components of `ω` in `Λ_n` and components of the
+/-- **Map from inner and annulus-wiring components to extra-wired ones.**
+Components of `crossWiredGraphAdd` from wired components of `ω` in `Λ_n` and components of the
 annulus wiring.
 -/
 noncomputable def crossComponentEquivAddFun (d n : ℕ)
@@ -776,7 +798,8 @@ lemma crossComponentEquivAddFun_surjective (d n : ℕ)
     rw [this]
   · exact ⟨Sum.inr ((annulusSubgraph d n D).connectedComponentMk ⟨u, hu⟩), rfl⟩
 
-/-- Components of `crossWiredGraphAdd` are the wired components of `ω` in `Λ_n` plus the components
+/-- **Extra-wired components as inner plus annulus-wiring components.**
+Components of `crossWiredGraphAdd` are the wired components of `ω` in `Λ_n` plus the components
 of
 the annulus wiring.
 -/
@@ -804,7 +827,8 @@ lemma numClustersBC_crossExt_add (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d
   rw [← Nat.card_eq_fintype_card, ← Nat.card_sum,
     Nat.card_congr (crossComponentEquivAdd d n ω hD).symm]
 
-/-- The constant `(1 - p)^{#annulus edges} q^{#components of the annulus wiring}`. -/
+/-- **Annulus constant counting the components of an extra wiring.**
+The constant `(1 - p)^{#annulus edges} q^{#components of the annulus wiring}`. -/
 noncomputable def crossShiftAdd (d n : ℕ) (p q : ℝ)
     (D : SimpleGraph (boxVerts d (n + 1))) : ℝ :=
   (1 - p) ^ nonInnerEdgeCard d n * q ^ Nat.card (annulusSubgraph d n D).ConnectedComponent

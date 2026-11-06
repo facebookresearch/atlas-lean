@@ -72,11 +72,13 @@ local instance canonicalEdgeFintype (G : SimpleGraph V) [DecidableRel G.Adj] :
 
 -/
 
-/-- The edge parameters `p_e(β) = 1 - exp (-β J_e)`. -/
+/-- **Edge parameters $p_e(\beta) = 1 - e^{-\beta J_e}$.**
+The edge parameters `p_e(β) = 1 - exp (-β J_e)`. -/
 noncomputable def betaParams (J : Sym2 V → ℝ) (β : ℝ) : Sym2 V → ℝ :=
   fun e => 1 - Real.exp (-(β * J e))
 
-/-- The logarithmic `β`-derivative of the random-cluster weight under `betaParams`:
+/-- **Logarithmic $\beta$-derivative of the random-cluster weight.**
+The logarithmic `β`-derivative of the random-cluster weight under `betaParams`:
 `∑_{e ∈ E(G)} (J_e / p_e) (𝟙[e open] - p_e)`. -/
 noncomputable def betaScore (G : SimpleGraph V) [DecidableRel G.Adj]
     (J : Sym2 V → ℝ) (β : ℝ)

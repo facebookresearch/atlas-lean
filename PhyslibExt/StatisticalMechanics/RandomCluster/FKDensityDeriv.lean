@@ -228,7 +228,8 @@ lemma fdd_free_is_leftDeriv_of_leftContinuous (N : ℕ)
 
 /-! ## D. Densities as one-sided derivatives and uniqueness -/
 
-/-- The free `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the left derivative of
+/-- **Free edge densities on a box as left derivatives.**
+The free `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the left derivative of
 `g`
 at `t`.
 -/
@@ -236,7 +237,8 @@ def fdd_FreeDensityIsLeftDeriv (N : ℕ) (g : ℝ → ℝ) : Prop :=
   ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t
 
-/-- The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the right derivative
+/-- **Wired edge densities on a box as right derivatives.**
+The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the right derivative
 of
 `g` at `t`.
 -/
@@ -244,7 +246,8 @@ def fdd_WiredDensityIsRightDeriv (N : ℕ) (g : ℝ → ℝ) : Prop :=
   ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
     wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureRightDeriv g t
 
-/-- The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is at most the right
+/-- **Wired edge densities on a box bounded by right derivatives.**
+The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is at most the right
 derivative of `g` at `t`.
 -/
 def fdd_WiredDensityUpperBound (N : ℕ) (g : ℝ → ℝ) : Prop :=

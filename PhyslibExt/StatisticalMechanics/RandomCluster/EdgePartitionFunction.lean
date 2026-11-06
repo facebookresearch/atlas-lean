@@ -134,7 +134,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## B. The edge partition function -/
 
-/-- Configurations closed on every coordinate that is not an edge of `G`. -/
+/-- **Configurations closed off the edges of a graph.**
+Configurations closed on every coordinate that is not an edge of `G`. -/
 def ecz_ClosedOff : Type _ :=
   {ω : ConfigSpace (Sym2 V) // ∀ e, e ∉ G.edgeFinset → ω e = false}
 
@@ -146,11 +147,13 @@ noncomputable instance ecz_instFintype : Fintype (ecz_ClosedOff G) := by
 instance ecz_instNonempty : Nonempty (ecz_ClosedOff G) :=
   ⟨⟨fun _ => false, fun _ _ => rfl⟩⟩
 
-/-- The edge partition function: the sum of FK weights over configurations closed off `E(G)`. -/
+/-- **Edge partition function of the random-cluster model.**
+The edge partition function: the sum of FK weights over configurations closed off `E(G)`. -/
 noncomputable def ecz_fkZEdge (p q : ℝ) : ℝ :=
   ∑ ω : ecz_ClosedOff G, fkWeight G p q ω.val
 
-/-- The number of coordinates `Sym2 V` that are not edges of `G`. -/
+/-- **Number of non-edge coordinates of a graph.**
+The number of coordinates `Sym2 V` that are not edges of `G`. -/
 noncomputable def ecz_NE : ℕ :=
   (Finset.univ.filter (fun e : Sym2 V => e ∉ G.edgeFinset)).card
 
@@ -168,7 +171,8 @@ lemma ecz_fkZEdge_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ecz_fkZEdge G p q ≠ 0 :=
   (ecz_fkZEdge_pos G hp hp1 hq).ne'
 
-/-- `fkZ G p q = 2^{#non-edges} · ecz_fkZEdge G p q`: each non-edge coordinate contributes a free
+/-- **Each non-edge contributes a factor 2 to the partition function.**
+`fkZ G p q = 2^{#non-edges} · ecz_fkZEdge G p q`: each non-edge coordinate contributes a free
 factor
 `2`.
 -/
@@ -307,7 +311,8 @@ lemma ecz_fkZEdge_interface_ge (hci : fis_CrossInterface G H K) {p q : ℝ}
   intro ω _ _
   exact fkWeight_nonneg K hp hp1 hq ω.val
 
-/-- `-log ecz_fkZEdge` is subadditive across an interface up to `|interface| · (-log(1 - p))`;
+/-- **Interface subadditivity of $-\log$ of the edge partition function.**
+`-log ecz_fkZEdge` is subadditive across an interface up to `|interface| · (-log(1 - p))`;
 compare
 `fis_neglog_interface_le` for `fkZ`.
 -/
@@ -386,7 +391,7 @@ lemma ecz_neglog_partition_le (P : U → Prop) [DecidablePred P] {p q : ℝ}
   rw [hiso]
   exact ecz_neglog_interface_le (agl_partitionCrossInterface K₀ P) hp hp1 hq
 
-/-- `-log ecz_fkZEdge G p q`. -/
+/-- **Negative log edge partition function of a graph.** `-log ecz_fkZEdge G p q`. -/
 noncomputable def ecz_uu {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (p q : ℝ) : ℝ := -Real.log (ecz_fkZEdge G p q)
 
@@ -515,7 +520,8 @@ section BoxDoubling
 
 /-! ## G. Box doubling -/
 
-/-- `-log ecz_fkZEdge` of the box `Λ_n` at `p = logistic(t)`, `q = 2`. -/
+/-- **Negative log edge partition function of a box.**
+`-log ecz_fkZEdge` of the box `Λ_n` at `p = logistic(t)`, `q = 2`. -/
 noncomputable def ecz_u (d : ℕ) (t : ℝ) (n : ℕ) : ℝ :=
   -Real.log (ecz_fkZEdge (boxGraph d n) (fsc_logistic t) 2)
 
@@ -603,7 +609,8 @@ variable {d : ℕ}
 
 /-! ## H. Edge free energy -/
 
-/-- The per-edge free energy of `Λ_n` in the tilt variable, computed from `ecz_fkZEdge`. -/
+/-- **Per-edge free energy of a box in the tilt variable.**
+The per-edge free energy of `Λ_n` in the tilt variable, computed from `ecz_fkZEdge`. -/
 noncomputable def ecz_edgeFreeEnergy (d : ℕ) (t : ℝ) (n : ℕ) : ℝ :=
   -(ecz_u d t n / ((boxGraph d n).edgeFinset.card : ℝ)) + Real.log (1 + Real.exp t)
 
@@ -642,7 +649,8 @@ variable {d : ℕ}
 
 /-! ## I. The additive doubling bound -/
 
-/-- The doubling bound `agl_AdditiveDoublingBound` with `-log fkZ` replaced by `ecz_u`. -/
+/-- **Additive doubling bound for the edge partition function.**
+The doubling bound `agl_AdditiveDoublingBound` with `-log fkZ` replaced by `ecz_u`. -/
 def ecz_AdditiveDoublingBound (d : ℕ) (t : ℝ) : Prop :=
   ∃ (I : ℕ → ℝ),
     (∀ j, 0 ≤ I j)
@@ -651,7 +659,8 @@ def ecz_AdditiveDoublingBound (d : ℕ) (t : ℝ) : Prop :=
         ≤ (2 : ℝ) ^ d * ecz_u d t (agl_K j) + I j * (-Real.log (1 - fsc_logistic t)))
     ∧ (∀ j, |(2 : ℝ) ^ d * agl_E d (agl_K j) - agl_E d (agl_K (j + 1))| ≤ I j)
 
-/-- For `d ≥ 1`, `ecz_u` satisfies the doubling bound along the scales `K_j = 2^{j+1} - 1`. -/
+/-- **Boxes satisfy the additive doubling bound for $d \ge 1$.**
+For `d ≥ 1`, `ecz_u` satisfies the doubling bound along the scales `K_j = 2^{j+1} - 1`. -/
 lemma ecz_additiveDoublingBound (d : ℕ) (hd : 1 ≤ d) (t : ℝ) :
     ecz_AdditiveDoublingBound d t := by
   set c := -Real.log (1 - fsc_logistic t) with hc
@@ -843,14 +852,15 @@ variable {d : ℕ}
 
 /-! ## L. Nesting of boxes -/
 
-/-- A vertex of `Λ_n` lies in the sub-box `Λ_a`. -/
+/-- **Membership of a box vertex in a sub-box.** A vertex of `Λ_n` lies in the sub-box `Λ_a`. -/
 def ecz_subBoxPred (d a n : ℕ) : boxVerts d n → Prop := fun x => (x : Site d) ∈ box d a
 
 /-- Decidability of `ecz_subBoxPred`. -/
 instance ecz_subBoxPred_decidable (d a n : ℕ) : DecidablePred (ecz_subBoxPred d a n) := by
   intro x; unfold ecz_subBoxPred box; infer_instance
 
-/-- `Λ_a` is isomorphic to the subgraph of `Λ_n` induced on `Λ_a`. -/
+/-- **Sub-box as an induced subgraph of a larger box.**
+`Λ_a` is isomorphic to the subgraph of `Λ_n` induced on `Λ_a`. -/
 noncomputable def ecz_subBoxIso (a n : ℕ) (hle : a ≤ n) :
     boxGraph d a ≃g agl_left (boxGraph d n) (ecz_subBoxPred d a n) := by
   classical
@@ -1121,7 +1131,8 @@ lemma ecz_box_nesting_sandwich' (a n b : ℕ) (han : a ≤ n) (hnb : n ≤ b) (t
   have ha := ecz_box_nesting_le' (d := d) a n han t
   exact ⟨by linarith [hb], ha⟩
 
-/-- The per-edge free energy `ecz_u d s n / |E(Λ_n)|` converges as `n → ∞`. -/
+/-- **Convergence of the per-edge free energy of boxes.**
+The per-edge free energy `ecz_u d s n / |E(Λ_n)|` converges as `n → ∞`. -/
 def ecz_PerEdgeDensityConverges (d : ℕ) (s : ℝ) : Prop :=
   ∃ ρ : ℝ, Tendsto (fun n => ecz_u d s n / ((boxGraph d n).edgeFinset.card : ℝ)) atTop (𝓝 ρ)
 
@@ -1130,13 +1141,15 @@ variable {d : ℕ}
 
 /-! ## N. Van Hove tiling and convergence of the per-edge free energy -/
 
-/-- The number `⌊(2n + 1)/(2m + 1)⌋` of translates of `Λ_m` that fit along one side of `Λ_n`. -/
+/-- **Number of sub-box translates along a side of a box.**
+The number `⌊(2n + 1)/(2m + 1)⌋` of translates of `Λ_m` that fit along one side of `Λ_n`. -/
 def ecz_T (m n : ℕ) : ℕ := (2 * n + 1) / (2 * m + 1)
 
 lemma ecz_T_mul_le (m n : ℕ) : ecz_T m n * (2 * m + 1) ≤ 2 * n + 1 :=
   Nat.div_mul_le_self _ _
 
-/-- The center of the cell indexed by `c` in the tiling of `Λ_n` by translates of `Λ_m`. -/
+/-- **Center of a cell in the tiling of a box by sub-boxes.**
+The center of the cell indexed by `c` in the tiling of `Λ_n` by translates of `Λ_m`. -/
 def ecz_center (m n : ℕ) (c : Fin d → Fin (ecz_T m n)) : Site d :=
   fun i => (c i : ℤ) * (2 * m + 1) + (m : ℤ) - (n : ℤ)
 
@@ -1160,10 +1173,12 @@ lemma ecz_center_mem_box (m n : ℕ) (c : Fin d → Fin (ecz_T m n)) (y : Site d
   · nlinarith [hyi.1, hc0]
   · nlinarith [hyi.2, hcT]
 
-/-- The index along coordinate `i` of the tiling cell containing `x`. -/
+/-- **Coordinate index of the tiling cell containing a site.**
+The index along coordinate `i` of the tiling cell containing `x`. -/
 def ecz_cellIdx (m n : ℕ) (x : Site d) (i : Fin d) : ℕ := ((x i + n).toNat) / (2 * m + 1)
 
-/-- The tiling cell containing a vertex of `Λ_n`, or `none` if it lies in the leftover strip. -/
+/-- **Tiling cell of a box vertex.**
+The tiling cell containing a vertex of `Λ_n`, or `none` if it lies in the leftover strip. -/
 noncomputable def ecz_vanHoveTag (m n : ℕ) (x : boxVerts d n) :
     Option (Fin d → Fin (ecz_T m n)) :=
   if h : ∀ i, ecz_cellIdx m n (x : Site d) i < ecz_T m n then
@@ -1235,7 +1250,8 @@ lemma ecz_vanHoveTag_eq_some_iff (m n : ℕ) (x : boxVerts d n) (c : Fin d → F
     congr 1
     funext i; apply Fin.ext; simpa using hidx i
 
-/-- The vertices of `Λ_m` correspond to the vertices of the cell `c` by translation. -/
+/-- **Translation between a sub-box and a tiling cell.**
+The vertices of `Λ_m` correspond to the vertices of the cell `c` by translation. -/
 noncomputable def ecz_cellEquiv (m n : ℕ) (c : Fin d → Fin (ecz_T m n)) :
     boxVerts d m ≃ {x : boxVerts d n // ecz_vanHoveTag m n x = some c} where
   toFun y := ⟨⟨fun i => (y : Site d) i + ecz_center m n c i,
@@ -1249,7 +1265,8 @@ noncomputable def ecz_cellEquiv (m n : ℕ) (c : Fin d → Fin (ecz_T m n)) :
   right_inv x := by
     apply Subtype.ext; apply Subtype.ext; funext i; simp
 
-/-- Each tiling cell induces a graph isomorphic to `Λ_m`. -/
+/-- **Graph isomorphism between a sub-box and a tiling cell.**
+Each tiling cell induces a graph isomorphic to `Λ_m`. -/
 noncomputable def ecz_cellBlockIso (m n : ℕ) (c : Fin d → Fin (ecz_T m n)) :
     boxGraph d m ≃g qp_blkG (boxGraph d n) (ecz_vanHoveTag m n) (some c) where
   toEquiv := ecz_cellEquiv m n c
@@ -1278,13 +1295,14 @@ lemma ecz_cellBlock_edge_card (m n : ℕ) (c : Fin d → Fin (ecz_T m n)) :
 lemma ecz_cell_card (m n : ℕ) : Fintype.card (Fin d → Fin (ecz_T m n)) = (ecz_T m n) ^ d := by
   rw [Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
 
-/-- Restricting `Λ_n` to all tags gives back `Λ_n`. -/
+/-- **Restriction of a box to all tiling tags.** Restricting `Λ_n` to all tags gives back `Λ_n`. -/
 noncomputable def ecz_restUnivIso (m n : ℕ) :
     qp_restG (boxGraph d n) (ecz_vanHoveTag m n) Finset.univ ≃g boxGraph d n where
   toEquiv := Equiv.subtypeUnivEquiv (fun x => Finset.mem_univ (ecz_vanHoveTag m n x))
   map_rel_iff' := by intro a b; rfl
 
-/-- Van Hove bound: `ecz_u d t n` is at most `T^d · ecz_u d t m` plus the cost of the leftover
+/-- **Van Hove tiling bound for the edge partition function.**
+Van Hove bound: `ecz_u d t n` is at most `T^d · ecz_u d t m` plus the cost of the leftover
 strip
 and of the interfaces between cells, where `T = ⌊(2n + 1)/(2m + 1)⌋`.
 -/
@@ -1430,7 +1448,8 @@ lemma ecz_bulkFraction_tendsto (hd : 1 ≤ d) (m : ℕ) (hm : 1 ≤ m) :
   have hepos : (0 : ℝ) < (e : ℝ) + 1 := by positivity
   field_simp
 
-/-- The per-edge free energy `ecz_u d s n / |E(Λ_n)|`. -/
+/-- **Per-edge negative log edge partition function of a box.**
+The per-edge free energy `ecz_u d s n / |E(Λ_n)|`. -/
 noncomputable def ecz_f (d : ℕ) (s : ℝ) (n : ℕ) : ℝ :=
   ecz_u d s n / ((boxGraph d n).edgeFinset.card : ℝ)
 
@@ -1596,7 +1615,8 @@ lemma ecz_f_lower (hd : 1 ≤ d) (s : ℝ) (n : ℕ) (hn : 1 ≤ n)
   rw [hsimp] at hfn
   linarith [hfn]
 
-/-- An upper envelope for `ecz_f` combining the per-edge value at scale `m` with the all-closed
+/-- **Upper envelope for the per-edge free energy.**
+An upper envelope for `ecz_f` combining the per-edge value at scale `m` with the all-closed
 bound.
 -/
 noncomputable def ecz_g (d : ℕ) (s : ℝ) (m : ℕ) : ℝ :=
@@ -1645,7 +1665,8 @@ lemma ecz_upperSeq_tendsto (hd : 1 ≤ d) (s : ℝ) (m : ℕ) (hm : 1 ≤ m) :
     (((tendsto_const_nhds (x := (1 : ℝ))).sub hr).mul
       (tendsto_const_nhds (x := -Real.log (1 - fsc_logistic s)))))
 
-/-- For `d ≥ 1`, the per-edge free energy `ecz_u d s n / |E(Λ_n)|` converges. -/
+/-- **Per-edge free energy of boxes converges for $d \ge 1$.**
+For `d ≥ 1`, the per-edge free energy `ecz_u d s n / |E(Λ_n)|` converges. -/
 lemma ecz_perEdgeDensityConverges (hd : 1 ≤ d) (s : ℝ)
     (hbox : ∀ n, 1 ≤ n → 0 < (boxGraph d n).edgeFinset.card) :
     ecz_PerEdgeDensityConverges d s := by
@@ -1938,7 +1959,8 @@ variable {d : ℕ}
 
 /-! ## P. Convergence and uniqueness -/
 
-/-- The edge free energy of `Λ_n` differs from that of `Λ_{K_{b(n)}}` by a vanishing oscillation.
+/-- **Vanishing block oscillation of the edge free energy.**
+The edge free energy of `Λ_n` differs from that of `Λ_{K_{b(n)}}` by a vanishing oscillation.
 -/
 def ecz_BlockOscillation (d : ℕ) (s : ℝ) : Prop :=
   ∃ (bj : ℕ → ℕ) (osc : ℕ → ℝ), Tendsto bj atTop atTop ∧ Tendsto osc atTop (𝓝 0)
@@ -2105,7 +2127,8 @@ lemma ecz_fk_uniqueness_of_perEdgeDensity (hd : 1 ≤ d) (N : ℕ) (eb : Sym2 (b
   ecz_fk_uniqueness_of_blockOscillation hd N eb heb hEbox
     (fun s => ecz_blockOscillation_of_perEdgeDensity s (hρ s))
 
-/-- For `d ≥ 1`, a fixed box `Λ_N` with an edge witness, the free and wired `q = 2` measures
+/-- **Per-box $q = 2$ uniqueness off a countable set of tilts.**
+For `d ≥ 1`, a fixed box `Λ_N` with an edge witness, the free and wired `q = 2` measures
 agree on every increasing event of `Λ_N` for all `t = logit(p)` outside a countable set in `t`.
 This is the per-box `q = 2` case of `fkgq_countable_free_wired_disagreement`.
 -/

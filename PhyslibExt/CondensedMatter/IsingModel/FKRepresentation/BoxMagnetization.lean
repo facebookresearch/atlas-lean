@@ -180,7 +180,7 @@ lemma hbx_edge_energy (d n : ℕ) (τ : {x // x ∈ box d n} → Bool) :
 
 /-! ## B. The encoding of configurations -/
 
-/-- The Boolean spin of a two-state color: `0 ↦ true`. -/
+/-- **Boolean spin of a two-state color.** The Boolean spin of a two-state color: `0 ↦ true`. -/
 def fToB (a : Fin 2) : Bool := a = 0
 
 @[simp] lemma hbx_fToB_bToF (b : Bool) : fToB (bToF b) = b := by
@@ -194,12 +194,14 @@ lemma hbx_boxBoundary_succ_iff (d n : ℕ) (v : boxVerts d (n + 1)) :
   rw [boxBoundary, mem_vertexBoundary]; simp only [Nat.add_sub_cancel]
   exact ⟨fun h => h.2, fun h => ⟨v.2, h⟩⟩
 
-/-- The configuration in `Λ_n` obtained by restricting a two-state coloring of `Λ_{n+1}`. -/
+/-- **Restriction of a box coloring to the inner box.**
+The configuration in `Λ_n` obtained by restricting a two-state coloring of `Λ_{n+1}`. -/
 noncomputable def boxToLat (d n : ℕ) (σ : boxVerts d (n + 1) → Fin 2) :
     {x // x ∈ box d n} → Bool :=
   fun x => fToB (σ ⟨x.1, box_subset_succ d n x.2⟩)
 
-/-- Configurations in `Λ_n` correspond to two-state colorings of `Λ_{n+1}` with boundary color
+/-- **Box configurations as box-graph colorings with boundary color $0$.**
+Configurations in `Λ_n` correspond to two-state colorings of `Λ_{n+1}` with boundary color
 `0`. -/
 noncomputable def hbx_latBoxEquiv (d n : ℕ) :
     ({x // x ∈ box d n} → Bool) ≃

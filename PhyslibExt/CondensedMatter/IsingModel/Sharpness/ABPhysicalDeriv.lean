@@ -119,7 +119,8 @@ lemma abpd_hasDerivAt_probV_profile
 
 /-! ## B. The β-dependence -/
 
-/-- Edge parameters `1 - e^{-βJ_e}` off `s` and `q` on `s`. -/
+/-- **Edge parameters with a field value on a subset.**
+Edge parameters `1 - e^{-βJ_e}` off `s` and `q` on `s`. -/
 noncomputable def abpdBetaFieldParams (s : Finset E) (q : ℝ) (J : E → ℝ)
     (beta : ℝ) : E → ℝ :=
   paramOn s q (fun e => pBeta (J e) beta)

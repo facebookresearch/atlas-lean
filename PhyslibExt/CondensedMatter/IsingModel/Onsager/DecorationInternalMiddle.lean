@@ -55,11 +55,13 @@ open Matrix BigOperators
 
 /-! ## A. Sides and factors -/
 
-/-- The side of a direction at a site: `0` for east and north, `1` for west and south. -/
+/-- **Side of a direction at a site.**
+The side of a direction at a site: `0` for east and north, `1` for west and south. -/
 def ons_decMiddleSide (mu : Fin 4) : Fin 2 :=
   if mu.val < 2 then 0 else 1
 
-/-- The representative direction of a side: east for side `0`, west for side `1`. -/
+/-- **Representative direction of a side.**
+The representative direction of a side: east for side `0`, west for side `1`. -/
 def ons_decMiddleDir (side : Fin 2) : Fin 4 :=
   if side = 0 then 0 else 2
 
@@ -67,7 +69,8 @@ def ons_decMiddleDir (side : Fin 2) : Fin 4 :=
     (Finset.univ : Finset (Fin 3)) = {0, 1, 2} := by
   decide
 
-/-- The weight of the internal edges between the middle edge and the port of direction `μ`, on the
+/-- **Destination-side internal weight to a port.**
+The weight of the internal edges between the middle edge and the port of direction `μ`, on the
 destination side. -/
 noncomputable def ons_decMiddleDestFactor
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ)
@@ -78,7 +81,8 @@ noncomputable def ons_decMiddleDestFactor
   | 2 => 1
   | 3 => decWeight (ons_decChainEdge site 2)
 
-/-- The weight of the internal edges between the port of direction `μ` and the middle edge, on the
+/-- **Source-side internal weight from a port.**
+The weight of the internal edges between the port of direction `μ` and the middle edge, on the
 source side. -/
 noncomputable def ons_decMiddleSourceFactor
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ)
@@ -89,7 +93,8 @@ noncomputable def ons_decMiddleSourceFactor
   | 2 => decWeight (ons_decChainEdge site 0)
   | 3 => 1
 
-/-- The column factor of the rank-two term: from a side of `site` to the darts leaving `site` on
+/-- **Column factor of the rank-two middle-edge term.**
+The column factor of the rank-two term: from a side of `site` to the darts leaving `site` on
 that side. -/
 noncomputable def ons_decMiddleU
     (L : ℕ) (decWeight : ons_DecEdge L → ℂ)
@@ -101,7 +106,8 @@ noncomputable def ons_decMiddleU
         ons_turnW omega (ons_decMiddleDir side) d.2
     else 0
 
-/-- The row factor of the rank-two term: from the darts entering `site` to the side on which they
+/-- **Row factor of the rank-two middle-edge term.**
+The row factor of the rank-two term: from the darts entering `site` to the side on which they
 arrive. -/
 noncomputable def ons_decMiddleV
     (L : ℕ) (decWeight : ons_DecEdge L → ℂ)
@@ -327,7 +333,8 @@ lemma ons_KWmatDecorationWeightedPhase_scaleMiddle_rankTwo
 
 /-! ## C. The augmented matrix -/
 
-/-- The augmented Kac-Ward matrix on darts and the two sides of `site`, with blocks `Λ₀`, `U`, `t V`
+/-- **Augmented Kac-Ward matrix with two side states.**
+The augmented Kac-Ward matrix on darts and the two sides of `site`, with blocks `Λ₀`, `U`, `t V`
 and `0`. -/
 noncomputable def ons_decMiddleAugmented
     (L : ℕ) (decWeight : ons_DecEdge L → ℂ)

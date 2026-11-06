@@ -82,7 +82,8 @@ lemma ons_X_pos (x : ℝ) (hx : 0 ≤ x) : 0 < ons_X G x := by
 
 /-! ## B. The finite-volume pressure -/
 
-/-- The finite-volume pressure `log Z_G(β) / |V|` (the negative of `β` times the free energy per
+/-- **Finite-volume pressure.**
+The finite-volume pressure `log Z_G(β) / |V|` (the negative of `β` times the free energy per
 site). -/
 noncomputable def ons_pressureFinite (β : ℝ) : ℝ :=
   Real.log (ons_Z G β) / (Fintype.card V : ℝ)

@@ -52,7 +52,8 @@ open Matrix BigOperators
 
 /-! ## A. Buckets -/
 
-/-- The total weight of closed walks of length `n + 1` of `M` that visit `e` but not `r`. -/
+/-- **Matrix bucket: walks through one state avoiding another.**
+The total weight of closed walks of length `n + 1` of `M` that visit `e` but not `r`. -/
 noncomputable def ons_matrixBucketE
     {E : Type*} [Fintype E] [DecidableEq E]
     (M : Matrix E E ℂ) (e r : E) (n : ℕ) : ℂ :=
@@ -61,7 +62,8 @@ noncomputable def ons_matrixBucketE
         (∃ i, loop i = e) ∧ ¬ ∃ j, loop j = r),
     ons_loopWeight M loop
 
-/-- The total weight of closed walks of length `n + 1` of `M` that visit neither `e` nor `r`. -/
+/-- **Matrix bucket: walks avoiding two given states.**
+The total weight of closed walks of length `n + 1` of `M` that visit neither `e` nor `r`. -/
 noncomputable def ons_matrixBucketN
     {E : Type*} [Fintype E] [DecidableEq E]
     (M : Matrix E E ℂ) (e r : E) (n : ℕ) : ℂ :=

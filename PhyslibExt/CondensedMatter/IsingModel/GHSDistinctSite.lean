@@ -57,7 +57,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. The three-site factor -/
 
-/-- The three-site duplicated-variable factor `1 - σ_x σ_y - σ_o σ_y - σ_o σ_x` of the configuration
+/-- **Three-site duplicated-variable factor.**
+The three-site duplicated-variable factor `1 - σ_x σ_y - σ_o σ_y - σ_o σ_x` of the configuration
 `q`. -/
 noncomputable def ghsQFactor (q : ConfigSpace V) (o x y : V) : ℝ :=
   1 - spin q x * spin q y - spin q o * spin q y - spin q o * spin q x

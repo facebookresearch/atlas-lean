@@ -229,13 +229,15 @@ lemma ons_squarefree_valid_loop_eq_of_zero_eq
 
 /-! ## B. External and internal exponents -/
 
-/-- The external part of a loop exponent: one for the external edge at each dart of the loop. -/
+/-- **External part of a loop exponent.**
+The external part of a loop exponent: one for the external edge at each dart of the loop. -/
 noncomputable def ons_decLoopExternalExponent
     (L : ℕ) {n : ℕ} [NeZero n] (d : Fin n → ons_Dart L) :
     ons_DecEdge L →₀ ℕ :=
   ∑ k, Finsupp.single s(d k, ons_dartRev L (d k)) 1
 
-/-- The internal part of a loop exponent: the internal edges on the paths between consecutive ports.
+/-- **Internal part of a loop exponent.**
+The internal part of a loop exponent: the internal edges on the paths between consecutive ports.
 -/
 noncomputable def ons_decLoopInternalExponent
     (L : ℕ) {n : ℕ} [NeZero n] (d : Fin n → ons_Dart L) :
@@ -371,7 +373,8 @@ lemma ons_decLoopScalar_loopRev_spin
 
 /-! ## D. Counting squarefree loops -/
 
-/-- The closed Kac-Ward walks of length `n` with exponent the squarefree exponent of `S` and nonzero
+/-- **Kac-Ward loops with a given squarefree exponent and nonzero scalar.**
+The closed Kac-Ward walks of length `n` with exponent the squarefree exponent of `S` and nonzero
 scalar. -/
 noncomputable def ons_decSquarefreeLoopFinset
     (L : ℕ) [Fact (2 < L)] (a b : Fin 2)
@@ -453,7 +456,7 @@ lemma ons_decLoop_dart_ne_rev_of_squarefree
   subst j
   exact ons_dartRev_ne_self L (d i) hij.symm
 
-/-- The darts of a loop together with their reverses. -/
+/-- **Darts of a loop with their reverses.** The darts of a loop together with their reverses. -/
 noncomputable def ons_decLoopRootFinset
     (L : ℕ) {n : ℕ} [NeZero n] (d : Fin n → ons_Dart L) :
     Finset (ons_Dart L) :=
@@ -569,7 +572,8 @@ lemma ons_external_root_mem_decLoopRootFinset
       _ = root := by
         rw [heq, ons_dartRev_involutive]
 
-/-- The `2n` rotations of a loop and of its reversal, indexed by `Fin n ⊕ Fin n`. -/
+/-- **Rotations of a loop and of its reversal.**
+The `2n` rotations of a loop and of its reversal, indexed by `Fin n ⊕ Fin n`. -/
 def ons_decLoopOrientation
     (L : ℕ) {n : ℕ} [NeZero n] (d : Fin n → ons_Dart L) :
     Fin n ⊕ Fin n → (Fin n → ons_Dart L)

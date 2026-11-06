@@ -64,7 +64,8 @@ open StatMech
 
 /-! ## A. Open-edge counts and cluster counts -/
 
-/-- The number of open edges of `G` in `ω`. Same as `openCount` in `Tilt`. -/
+/-- **Number of open edges of a configuration.**
+The number of open edges of `G` in `ω`. Same as `openCount` in `Tilt`. -/
 noncomputable def chOpenCount (ω : ConfigSpace (Sym2 V)) : ℕ :=
   (G.edgeFinset.filter (fun e => ω e = true)).card
 
@@ -119,7 +120,8 @@ lemma openCount_setOpen_of_closed {ω : ConfigSpace (Sym2 V)} {e : Sym2 V}
   rw [hclosed] at hval
   exact Bool.noConfusion hval
 
-/-- The edges of `G` closed in `b` and open in `c`. -/
+/-- **Edges closed in one configuration and open in another.**
+The edges of `G` closed in `b` and open in `c`. -/
 noncomputable def diffSet (b c : ConfigSpace (Sym2 V)) : Finset (Sym2 V) :=
   G.edgeFinset.filter (fun e => b e = false ∧ c e = true)
 
@@ -168,7 +170,8 @@ lemma diffSet_setOpen {b c : ConfigSpace (Sym2 V)} {e : Sym2 V}
     rw [setOpen_of_ne hne]
     exact ⟨hG, hclosed, hopen⟩
 
-/-- For `b ≤ c`, `k(b) + o(b) ≤ k(c) + o(c)`: opening an edge lowers the cluster count by at most
+/-- **Cluster count plus open-edge count is monotone.**
+For `b ≤ c`, `k(b) + o(b) ≤ k(c) + o(c)`: opening an edge lowers the cluster count by at most
 one.
 -/
 lemma numClusters_add_openCount_mono : ∀ (n : ℕ) (b c : ConfigSpace (Sym2 V)),
@@ -243,7 +246,8 @@ lemma fkWeight_cross_bernoulli_upper {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq 
         mul_le_mul_of_nonneg_left hclust hep_nonneg
     _ = edgeProduct G p (a ⊓ b) * q ^ numClusters G (a ⊓ b) * edgeProduct G p (a ⊔ b) := by ring
 
-/-- The reduced density `p / (p + q(1 - p))`: the Bernoulli parameter dominated by `φ_{p,q}`. -/
+/-- **Reduced density $p/(p + q(1-p))$.**
+The reduced density `p / (p + q(1 - p))`: the Bernoulli parameter dominated by `φ_{p,q}`. -/
 noncomputable def reducedDensity (p q : ℝ) : ℝ := p / (p + q * (1 - p))
 
 lemma reducedDensity_mem_Ioo {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -396,7 +400,8 @@ lemma fkProb_cross_bernoulli_lower {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 
 
 /-! ## C. Stochastic domination -/
 
-/-- For `q ≥ 1` the random-cluster measure is stochastically increasing in `p`. -/
+/-- **Random-cluster measure increases stochastically in $p$ when $q \ge 1$.**
+For `q ≥ 1` the random-cluster measure is stochastically increasing in `p`. -/
 lemma fk_monotone_in_p {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁) (hp₁' : p₁ < 1) (hp₂ : 0 < p₂)
     (hp₂' : p₂ < 1) (hle : p₁ ≤ p₂) (hq : 1 ≤ q) :
     measOfMass (fkProb G p₁ q) ≼ measOfMass (fkProb G p₂ q) := by

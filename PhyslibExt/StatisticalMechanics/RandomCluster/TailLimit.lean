@@ -54,7 +54,8 @@ variable {d : ℕ}
 ## A. Crossing events
 -/
 
-/-- The crossing events intersect to the percolation event. See also
+/-- **Crossing events intersect to the percolation event.**
+The crossing events intersect to the percolation event. See also
 `Percolation.percolationEvent_eq_iInter` (`Sharpness`), the same fact indexed from `n + 1`. -/
 lemma iInter_crossingEvent_eq_percolationEvent :
     (⋂ n : ℕ, crossingEvent d n) = percolationEvent d := by
@@ -73,14 +74,16 @@ lemma iInter_crossingEvent_eq_percolationEvent :
 ## B. The limit
 -/
 
-/-- The probability, under the chosen wired infinite-volume measure, that the origin is connected to
+/-- **Wired probability that the origin connects to the outside of a box.**
+The probability, under the chosen wired infinite-volume measure, that the origin is connected to
 the complement of `Λ_(n-1)`. -/
 noncomputable def fkBoundaryConnReal (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (n : ℕ) : ℝ :=
   ((wiredInfiniteVolume d hp hp1 hq : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) :
       Measure (ConfigSpace (Sym2 (Site d)))).real (crossingEvent d n)
 
-/-- The crossing probabilities of the wired infinite-volume measure converge to the percolation
+/-- **Wired crossing probabilities converge to the percolation probability.**
+The crossing probabilities of the wired infinite-volume measure converge to the percolation
 probability `fkTheta`. -/
 lemma fkBoundaryConnReal_tendsto_fkTheta {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :

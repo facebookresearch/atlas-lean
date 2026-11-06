@@ -150,7 +150,8 @@ lemma ibs_minus_coord_decay_of_density_eq (β h : ℝ) (φ : ℕ → ℕ) (g : M
 
 /-! ## B. The boundary fraction -/
 
-/-- The number of bonds touching but not inside `Λ_n`, divided by the number of sites of `Λ_n`. -/
+/-- **Boundary bond fraction of a box.**
+The number of bonds touching but not inside `Λ_n`, divided by the number of sites of `Λ_n`. -/
 noncomputable def ibs_boundaryFraction (d n : ℕ) : ℝ :=
   ((bondFinsetTouch d n \ bondFinsetInternal d n).card : ℝ) / ((boxFinset d n).card : ℝ)
 
@@ -177,14 +178,16 @@ lemma ibs_decay_of_boundaryBound (μ : ℕ → ProbabilityMeasure (ConfigSpace (
 
 /-! ## C. Boundary influence -/
 
-/-- Shift differences of cylinder-function integrals against the plus box measures are
+/-- **Boundary influence bound for the plus box measures.**
+Shift differences of cylinder-function integrals against the plus box measures are
 `O(boundary fraction)`. -/
 def ibs_PlusBoundaryInfluence (β h : ℝ) (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
   ∀ f ∈ pstc_cylinderBcfSet d, ∃ C : ℝ, ∀ n,
     |pstc_decayFun (fun n => plusMeasure d (φ n) β h) g f n|
       ≤ C * ibs_boundaryFraction d (φ n)
 
-/-- Shift differences of cylinder-function integrals against the minus box measures are
+/-- **Boundary influence bound for the minus box measures.**
+Shift differences of cylinder-function integrals against the minus box measures are
 `O(boundary fraction)`. -/
 def ibs_MinusBoundaryInfluence (β h : ℝ) (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
   ∀ f ∈ pstc_cylinderBcfSet d, ∃ C : ℝ, ∀ n,

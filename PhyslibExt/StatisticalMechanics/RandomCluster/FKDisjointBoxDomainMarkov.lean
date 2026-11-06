@@ -70,7 +70,8 @@ variable (C : SimpleGraph V) [DecidableRel C.Adj]
 
 /-! ## A. Projections and fibres -/
 
-/-- The configuration that closes every edge of `F` and agrees with `ψ` elsewhere. -/
+/-- **Closing the edges of a set in a configuration.**
+The configuration that closes every edge of `F` and agrees with `ψ` elsewhere. -/
 noncomputable def projOff (F : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 V) :=
   fun e => if e ∈ F then false else ψ e
@@ -123,7 +124,8 @@ lemma condBcProb_congr_dom' (p q : ℝ) (F : Finset (Sym2 V))
 
 /-! ## B. Fibre decomposition -/
 
-/-- Representatives of the fibres of `F`: configurations with every edge of `F` closed. -/
+/-- **Fibre representatives with every edge of a set closed.**
+Representatives of the fibres of `F`: configurations with every edge of `F` closed. -/
 noncomputable def fibreReps (F : Finset (Sym2 V)) : Finset (ConfigSpace (Sym2 V)) :=
   Finset.univ.filter (fun ψ => projOff F ψ = ψ)
 
@@ -164,7 +166,8 @@ lemma bcProb_fibre_decompose {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 
 /-! ## C. Events depending on edges outside `F` -/
 
-/-- Membership in `B` depends only on the states of edges outside `F`. -/
+/-- **Event depending only on edges outside a set.**
+Membership in `B` depends only on the states of edges outside `F`. -/
 def DependsOnOutside (F : Finset (Sym2 V)) (B : Set (ConfigSpace (Sym2 V))) : Prop :=
   ∀ ψ ρ, AgreesOff F ψ ρ → (ψ ∈ B ↔ ρ ∈ B)
 

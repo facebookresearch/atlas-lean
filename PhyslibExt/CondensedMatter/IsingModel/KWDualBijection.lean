@@ -99,7 +99,8 @@ lemma sym2map_injective (e : V ≃ W) : Function.Injective (Sym2.map e) := by
 
 /-! ## B. Transport along isomorphisms -/
 
-/-- The image of an edge set under a vertex equivalence `V ≃ W`. -/
+/-- **Image of an edge set under a vertex bijection.**
+The image of an edge set under a vertex equivalence `V ≃ W`. -/
 def transportEdges (e : V ≃ W) (F : Finset (Sym2 V)) : Finset (Sym2 W) :=
   F.image (Sym2.map e)
 

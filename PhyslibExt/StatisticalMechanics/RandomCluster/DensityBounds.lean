@@ -50,7 +50,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. The edge marginal and the closed fibre -/
 
-/-- The probability `φ_{G,p,q}(e open)` that the edge `e` is open. -/
+/-- **Probability that an edge is open under the random-cluster measure.**
+The probability `φ_{G,p,q}(e open)` that the edge `e` is open. -/
 noncomputable def edgeMarginalOpen (p q : ℝ) (e : Sym2 V) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => ω e = true), fkProb G p q ω
 
@@ -171,7 +172,8 @@ lemma edge_density_finiteEnergy {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 �
     (fun ψ => (finite_energy G hp hp1 hq e ψ).1)
     (fun ψ => (finite_energy G hp hp1 hq e ψ).2)
 
-/-- For `q ≥ 1`, every edge of `G` is open with probability between `p / (p + q(1 - p))` and `p`.
+/-- **Edge density lies between $p/(p+q(1-p))$ and $p$ for $q \ge 1$.**
+For `q ≥ 1`, every edge of `G` is open with probability between `p / (p + q(1 - p))` and `p`.
 -/
 lemma edge_density_bounds {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {e : Sym2 V} (he : e ∈ G.edgeFinset) :

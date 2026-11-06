@@ -66,7 +66,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 ## A. Agreement from equal edge marginals
 -/
 
-/-- Two monotonically coupled probability vectors with equal edge marginals agree on increasing
+/-- **Monotone-coupled laws with equal edge marginals agree on up-sets.**
+Two monotonically coupled probability vectors with equal edge marginals agree on increasing
 events. Restatement of `eventMass_eq_of_edgeMarg_eq` (`EdgeMarginal`), kept because other modules
 use this name. -/
 lemma fk_unique_of_edgeMarg_eq {P : ConfigSpace E × ConfigSpace E → ℝ}
@@ -84,7 +85,8 @@ section Densities
 
 variable {a b : ℝ → ℝ}
 
-/-- If `a` agrees with a monotone `b` at every continuity point of `b`, then `{p | a p ≠ b p}` is
+/-- **Agreement with a monotone map at continuity points fails countably.**
+If `a` agrees with a monotone `b` at every continuity point of `b`, then `{p | a p ≠ b p}` is
 countable. -/
 lemma countable_edgeMarg_ne (hb : Monotone b)
     (heq_at_cont : ∀ p : ℝ, ContinuousAt b p → a p = b p) :
@@ -96,7 +98,8 @@ lemma countable_edgeMarg_ne (hb : Monotone b)
 
 end Densities
 
-/-- Parametric agreement: if for each `p` there is a monotone coupling of `μ p` and `ν p`, and edge
+/-- **Parametric agreement on increasing events off a countable set.**
+Parametric agreement: if for each `p` there is a monotone coupling of `μ p` and `ν p`, and edge
 marginals agree at every continuity point of the monotone map `p ↦ ν_p(ω(e) = 1)`, then `μ p` and `ν
 p` agree on increasing events for all `p` outside a countable set. -/
 lemma phi0_eq_phi1_off_countable
@@ -115,7 +118,8 @@ lemma phi0_eq_phi1_off_countable
   simp only [mem_ofPred_eq, not_not] at hp
   exact fk_unique_of_edgeMarg_eq (hcoup p) (heq_at_cont p hp) hA
 
-/-- Under the hypotheses of `phi0_eq_phi1_off_countable`, the set of `p` for which some increasing
+/-- **Countably many parameters admit a separating increasing event.**
+Under the hypotheses of `phi0_eq_phi1_off_countable`, the set of `p` for which some increasing
 event separates `μ p` and `ν p` is countable. -/
 lemma countable_phi_ne
     (μ ν : ℝ → ConfigSpace E → ℝ) (e : E)

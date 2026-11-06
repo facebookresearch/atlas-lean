@@ -79,7 +79,8 @@ open StatMech.Lattice StatMech.IsingFK ConfigSpace
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- The configuration `ω ∘ σ` on edges: the edge `e` is open in `reCfg σ ω` iff `σ e` is open in
+/-- **Relabelling of an edge configuration by a vertex permutation.**
+The configuration `ω ∘ σ` on edges: the edge `e` is open in `reCfg σ ω` iff `σ e` is open in
 `ω`. See also `reCfgIso`, the same relabelling along an equivalence `V ≃ W`. -/
 noncomputable def reCfg (σ : V ≃ V) (ω : ConfigSpace (Sym2 V)) : ConfigSpace (Sym2 V) :=
   fun e => ω (Sym2.map σ e)
@@ -95,7 +96,8 @@ lemma fkTI_reCfg_reCfg' (σ : V ≃ V) (ω : ConfigSpace (Sym2 V)) :
     reCfg σ (reCfg σ.symm ω) = ω := by
   funext e; unfold reCfg; rw [Sym2.map_map]; simp
 
-/-- Relabelling by `σ` as a permutation of the configuration space, with inverse relabelling
+/-- **Relabelling as a permutation of the configuration space.**
+Relabelling by `σ` as a permutation of the configuration space, with inverse relabelling
 by `σ⁻¹`. -/
 noncomputable def reCfgEquiv (σ : V ≃ V) :
     ConfigSpace (Sym2 V) ≃ ConfigSpace (Sym2 V) where
@@ -110,7 +112,8 @@ noncomputable def reCfgEquiv (σ : V ≃ V) :
 
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- An automorphism `σ` of `G` is a graph isomorphism from the open subgraph of the relabelled
+/-- **Automorphism as an isomorphism of open subgraphs.**
+An automorphism `σ` of `G` is a graph isomorphism from the open subgraph of the relabelled
 configuration `reCfg σ ω` to the open subgraph of `ω`. -/
 noncomputable def fkTI_openSubIso (σ : V ≃ V)
     (hσ : ∀ x y, G.Adj (σ x) (σ y) ↔ G.Adj x y) (ω : ConfigSpace (Sym2 V)) :
@@ -168,7 +171,8 @@ lemma fkTI_fkZ_reCfg (σ : V ≃ V)
   unfold fkZ
   exact Finset.sum_congr rfl fun ω _ => (fkTI_fkWeight_reCfg G σ hσ p q ω).symm
 
-/-- Graph automorphisms preserve the free FK probability. See also `fvs_fkProb_reCfgIso` for
+/-- **Graph automorphisms preserve the free FK probability.**
+Graph automorphisms preserve the free FK probability. See also `fvs_fkProb_reCfgIso` for
 isomorphisms between two graphs. -/
 lemma fkTI_fkProb_reCfg (σ : V ≃ V)
     (hσ : ∀ x y, G.Adj (σ x) (σ y) ↔ G.Adj x y) (p q : ℝ) (ω : ConfigSpace (Sym2 V)) :
@@ -182,7 +186,8 @@ lemma fkTI_fkProb_reCfg (σ : V ≃ V)
 
 variable (bdry : V → Prop) [DecidablePred bdry]
 
-/-- An automorphism `σ` of `G` preserving the boundary set is a graph isomorphism between the
+/-- **Boundary-preserving automorphism as an isomorphism of wired graphs.**
+An automorphism `σ` of `G` preserving the boundary set is a graph isomorphism between the
 wired graphs (open edges plus all boundary pairs) of `reCfg σ ω` and `ω`. -/
 noncomputable def fkTI_wiredGraphIso (σ : V ≃ V)
     (hσ : ∀ x y, G.Adj (σ x) (σ y) ↔ G.Adj x y) (hbdry : ∀ x, bdry (σ x) ↔ bdry x)
@@ -217,7 +222,8 @@ lemma fkTI_wiredFkWeight_reCfg (σ : V ≃ V)
   unfold wiredFkWeight
   rw [fkTI_edgeProduct_reCfg G σ hσ p ω, fkTI_numClustersWired_reCfg G bdry σ hσ hbdry ω]
 
-/-- Graph automorphisms preserving the boundary preserve the wired FK probability. -/
+/-- **Boundary-preserving automorphisms preserve the wired FK probability.**
+Graph automorphisms preserving the boundary preserve the wired FK probability. -/
 lemma fkTI_wiredFkProb_reCfg (σ : V ≃ V)
     (hσ : ∀ x y, G.Adj (σ x) (σ y) ↔ G.Adj x y) (hbdry : ∀ x, bdry (σ x) ↔ bdry x)
     (p q : ℝ) (ω : ConfigSpace (Sym2 V)) :
@@ -242,7 +248,8 @@ lemma fkTI_edgeMargProb_reCfg_inv (σ : V ≃ V) (μ : ConfigSpace (Sym2 V) → 
     unfold reCfg; rw [Sym2.map_map]; simp
   rw [h1, hμ ω]
 
-/-- Under the free FK measure, the edges `e` and `σ e` are open with the same probability. -/
+/-- **Graph automorphisms preserve free FK edge marginals.**
+Under the free FK measure, the edges `e` and `σ e` are open with the same probability. -/
 lemma fkTI_edgeMargProb_fkProb_reCfg (σ : V ≃ V)
     (hσ : ∀ x y, G.Adj (σ x) (σ y) ↔ G.Adj x y) (p q : ℝ) (e : Sym2 V) :
     edgeMargProb (fkProb G p q) (Sym2.map σ e) = edgeMargProb (fkProb G p q) e := by
@@ -250,7 +257,8 @@ lemma fkTI_edgeMargProb_fkProb_reCfg (σ : V ≃ V)
   exact fkTI_fkProb_reCfg G σ.symm (fun x y => by
     rw [← hσ (σ.symm x) (σ.symm y)]; simp) p q ω
 
-/-- Under the wired FK measure, the edges `e` and `σ e` are open with the same probability. -/
+/-- **Boundary-preserving automorphisms preserve wired FK edge marginals.**
+Under the wired FK measure, the edges `e` and `σ e` are open with the same probability. -/
 lemma fkTI_edgeMargProb_wiredFkProb_reCfg (σ : V ≃ V)
     (hσ : ∀ x y, G.Adj (σ x) (σ y) ↔ G.Adj x y) (hbdry : ∀ x, bdry (σ x) ↔ bdry x)
     (p q : ℝ) (e : Sym2 V) :
@@ -272,7 +280,8 @@ open StatMech.Lattice
 
 variable {d : ℕ}
 
-/-- A symmetry of `ℤ^d` that preserves nearest-neighbour adjacency and every centered box
+/-- **Box symmetry of $\mathbb{Z}^d$.**
+A symmetry of `ℤ^d` that preserves nearest-neighbour adjacency and every centered box
 `Λ_n = [-n, n]^d`, such as a coordinate reflection or a coordinate permutation. -/
 structure BoxSym (d : ℕ) where
   /-- The underlying permutation of the sites. -/
@@ -286,7 +295,8 @@ structure BoxSym (d : ℕ) where
 ### E.1. Lifting to the box graphs
 -/
 
-/-- The restriction of a box symmetry to a permutation of the vertices of the box `Λ_n`. -/
+/-- **Restriction of a box symmetry to a box.**
+The restriction of a box symmetry to a permutation of the vertices of the box `Λ_n`. -/
 def BoxSym.lift (S : BoxSym d) (n : ℕ) : boxVerts d n ≃ boxVerts d n where
   toFun := fun x => ⟨S.τ x.val, (S.box_mem n x.val).mpr x.property⟩
   invFun := fun x => ⟨S.τ.symm x.val, by
@@ -337,7 +347,8 @@ lemma fkTI_box_free_edgeMarg_inv (S : BoxSym d) (m : ℕ) {p : ℝ} (e : Sym2 (b
       = edgeMargProb (fkProb (boxGraph d m) p 2) e :=
   fkTI_edgeMargProb_fkProb_reCfg (boxGraph d m) (S.lift m) (S.lift_adj m) p 2 e
 
-/-- Box symmetries preserve the wired `q = 2` infinite-volume edge density. See also
+/-- **Box symmetries preserve the wired $q = 2$ density of box edges.**
+Box symmetries preserve the wired `q = 2` infinite-volume edge density. See also
 `rot_wired_density_boxSym` for the statement on edges of `ℤ^d`. -/
 lemma fkTI_wired_density_shift_inv (S : BoxSym d) (N : ℕ) (eb : Sym2 (boxVerts d N))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -350,7 +361,8 @@ lemma fkTI_wired_density_shift_inv (S : BoxSym d) (N : ℕ) (eb : Sym2 (boxVerts
   rw [← S.lift_innerEdgeLE (Nat.le_add_right N k) eb,
     fkTI_box_wired_edgeMarg_inv S (N + k) (innerEdgeLE d (Nat.le_add_right N k) eb)]
 
-/-- Box symmetries preserve the free `q = 2` infinite-volume edge density. See also
+/-- **Box symmetries preserve the free $q = 2$ density of box edges.**
+Box symmetries preserve the free `q = 2` infinite-volume edge density. See also
 `rot_free_density_boxSym` for the statement on edges of `ℤ^d`. -/
 lemma fkTI_free_density_shift_inv (S : BoxSym d) (N : ℕ) (eb : Sym2 (boxVerts d N))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -367,14 +379,16 @@ lemma fkTI_free_density_shift_inv (S : BoxSym d) (N : ℕ) (eb : Sym2 (boxVerts 
 ### E.3. Coordinate reflections
 -/
 
-/-- The reflection `x ↦ x` with the `j`-th coordinate negated. -/
+/-- **Reflection of $\mathbb{Z}^d$ in one coordinate.**
+The reflection `x ↦ x` with the `j`-th coordinate negated. -/
 def fkTI_signFlipEquiv (d : ℕ) (j : Fin d) : Site d ≃ Site d where
   toFun := fun x i => if i = j then -(x i) else x i
   invFun := fun x i => if i = j then -(x i) else x i
   left_inv := by intro x; funext i; by_cases h : i = j <;> simp [h]
   right_inv := by intro x; funext i; by_cases h : i = j <;> simp [h]
 
-/-- The reflection in the `j`-th coordinate as a box symmetry. -/
+/-- **Coordinate reflection as a box symmetry.**
+The reflection in the `j`-th coordinate as a box symmetry. -/
 def fkTI_signFlip (d : ℕ) (j : Fin d) : BoxSym d where
   τ := fkTI_signFlipEquiv d j
   adj := by

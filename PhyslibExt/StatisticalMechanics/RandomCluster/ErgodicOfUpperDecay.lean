@@ -64,15 +64,18 @@ variable {E : Type*} {G : Type*} [Group G] [MulAction G E]
 
 /-! ## A. Multi-open events -/
 
-/-- The event `O_T` that every coordinate in `T` is open. See also `cdc_multiOpenEvent` and
+/-- **Event that every coordinate of a finite set is open.**
+The event `O_T` that every coordinate in `T` is open. See also `cdc_multiOpenEvent` and
 `med_genericMultiOpenEvent`.
 -/
 def fmu_multiOpen (T : Finset E) : Set (ConfigSpace E) := {ω | ∀ e ∈ T, ω e = true}
 
-/-- The state of coordinate `e` as a real number in `{0, 1}`. -/
+/-- **Coordinate state as a real number.**
+The state of coordinate `e` as a real number in `{0, 1}`. -/
 noncomputable def fmu_xR (ω : ConfigSpace E) (e : E) : ℝ := if ω e then 1 else 0
 
-/-- The indicator of `O_T` as the product `∏_{e ∈ T} ω(e)`. -/
+/-- **Product indicator of a multi-open event.**
+The indicator of `O_T` as the product `∏_{e ∈ T} ω(e)`. -/
 noncomputable def fmu_moInd (T : Finset E) (ω : ConfigSpace E) : ℝ := ∏ e ∈ T, fmu_xR ω e
 
 lemma fmu_moInd_eq_indicator (T : Finset E) (ω : ConfigSpace E) :
@@ -144,11 +147,13 @@ lemma fmu_integral_moInd [Countable E] (T : Finset E) :
 
 /-! ## B. Expanding cylinder events -/
 
-/-- The indicator that `ω` agrees with `τ` on `F`. -/
+/-- **Indicator of agreeing with a pattern on a finite set.**
+The indicator that `ω` agrees with `τ` on `F`. -/
 noncomputable def fmu_traceInd (F : Finset E) (τ : E → Bool) (ω : ConfigSpace E) : ℝ :=
   if (∀ e ∈ F, ω e = τ e) then 1 else 0
 
-/-- The inclusion–exclusion coefficient of `O_T` in the expansion of the trace indicator of `τ` on
+/-- **Inclusion–exclusion coefficient of a multi-open event.**
+The inclusion–exclusion coefficient of `O_T` in the expansion of the trace indicator of `τ` on
 `F`.
 -/
 noncomputable def fmu_traceCoef [DecidableEq E] (F : Finset E) (τ : E → Bool) (T : Finset E) : ℝ :=
@@ -297,7 +302,8 @@ lemma fmu_real_inter_shift_eq_sum [Countable E] (g : G) {C : Set (ConfigSpace E)
 
 /-! ## C. Pair mixing and ergodicity -/
 
-/-- For every finite family of finite sets `T` and `δ > 0` there is one translation `g` with
+/-- **Pair mixing of multi-open events.**
+For every finite family of finite sets `T` and `δ > 0` there is one translation `g` with
 `|μ(O_T ∩ g⁻¹O_{T'}) - μ(O_T) μ(O_{T'})| < δ` for all `T, T'` in the family.
 -/
 def fmu_PairMixing (μ : Measure (ConfigSpace E)) : Prop :=
@@ -425,7 +431,8 @@ lemma fmu_multiOpen_mem_measurableCylinders (T : Finset E) :
   simp only [fmu_multiOpen, Set.mem_ofPred_eq, mem_cylinder, Finset.restrict_def]
   exact ⟨fun h e => h e.1 e.2, fun h e he => h ⟨e, he⟩⟩
 
-/-- The analogue of `fmu_PairMixing` for finite families of cylinder events. -/
+/-- **Mixing for finite families of cylinder events.**
+The analogue of `fmu_PairMixing` for finite families of cylinder events. -/
 def fmu_GenMixing (μ : Measure (ConfigSpace E)) : Prop :=
   ∀ (𝒜 : Finset (Set (ConfigSpace E))),
     (∀ A ∈ 𝒜, A ∈ measurableCylinders (fun _ : E => Bool)) →
@@ -448,7 +455,8 @@ lemma fmu_pairMixing_of_genMixing (h : fmu_GenMixing (G := G) μ) :
 
 /-! ## D. Upper decay and FKG -/
 
-/-- The one-sided form of `fmu_PairMixing`: `μ(O_T ∩ g⁻¹O_{T'}) ≤ μ(O_T) μ(O_{T'}) + δ`. -/
+/-- **Upper decay of correlations of multi-open events.**
+The one-sided form of `fmu_PairMixing`: `μ(O_T ∩ g⁻¹O_{T'}) ≤ μ(O_T) μ(O_{T'}) + δ`. -/
 def fmu_UpperDecay (μ : Measure (ConfigSpace E)) : Prop :=
   ∀ (P : Finset (Finset E)) (δ : ℝ), 0 < δ →
     ∃ g : G, ∀ T ∈ P, ∀ T' ∈ P,

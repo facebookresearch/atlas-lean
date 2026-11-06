@@ -130,7 +130,8 @@ end Reach
 section CC
 variable {V W : Type*} (G : SimpleGraph V) (H : SimpleGraph W)
 
-/-- The map sending a component of `G ⊕g H` to the corresponding component of `G` or `H`. -/
+/-- **Components of a disjoint union sent to components of the summands.**
+The map sending a component of `G ⊕g H` to the corresponding component of `G` or `H`. -/
 noncomputable def fsm_ccToSum :
     (G ⊕g H).ConnectedComponent → G.ConnectedComponent ⊕ H.ConnectedComponent :=
   Quot.lift
@@ -148,13 +149,15 @@ noncomputable def fsm_ccToSum :
       | Sum.inl a, Sum.inr b, hxy => exact absurd hxy (not_reachable_sum_inl_inr a b)
       | Sum.inr a, Sum.inl b, hxy => exact absurd hxy.symm (not_reachable_sum_inl_inr b a))
 
-/-- The inclusion of the components of `G` and of `H` into those of `G ⊕g H`. -/
+/-- **Inclusion of summand components into a disjoint union.**
+The inclusion of the components of `G` and of `H` into those of `G ⊕g H`. -/
 noncomputable def fsm_sumToCC :
     G.ConnectedComponent ⊕ H.ConnectedComponent → (G ⊕g H).ConnectedComponent :=
   Sum.elim (ConnectedComponent.map Embedding.sumInl.toHom)
            (ConnectedComponent.map Embedding.sumInr.toHom)
 
-/-- The connected components of `G ⊕g H` are those of `G` and those of `H`. -/
+/-- **Connected components of a disjoint union of graphs.**
+The connected components of `G ⊕g H` are those of `G` and those of `H`. -/
 noncomputable def fsm_ccSumEquiv :
     (G ⊕g H).ConnectedComponent ≃ G.ConnectedComponent ⊕ H.ConnectedComponent where
   toFun := fsm_ccToSum G H
@@ -283,7 +286,8 @@ variable {V W : Type*}
 
 -/
 
-/-- Gluing edge configurations: `σ` on edges inside `V`, `τ` on edges inside `W`, and closed on
+/-- **Gluing edge configurations on a disjoint union.**
+Gluing edge configurations: `σ` on edges inside `V`, `τ` on edges inside `W`, and closed on
 pairs joining `V` to `W`. -/
 noncomputable def fsm_combine (σ : Sym2 V → Bool) (τ : Sym2 W → Bool) :
     Sym2 (V ⊕ W) → Bool :=
@@ -377,7 +381,8 @@ section Super
 variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
   (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
 
-/-- The ambient FK normalizer is supermultiplicative under disjoint union:
+/-- **Ambient FK normalizer is supermultiplicative under disjoint union.**
+The ambient FK normalizer is supermultiplicative under disjoint union:
 `Z_G Z_H ≤ Z_{G ⊕g H}`. Each `Z` sums over all `Sym2` configurations. -/
 lemma fsm_fkZ_sum_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     fkZ G p q * fkZ H p q ≤ fkZ (G ⊕g H) p q := by
@@ -426,14 +431,16 @@ variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 
 -/
 
-/-- The equivalence `Sym2 V ≃ Sym2 W` induced by `V ≃ W`. -/
+/-- **Bijection of unordered pairs induced by a bijection.**
+The equivalence `Sym2 V ≃ Sym2 W` induced by `V ≃ W`. -/
 def fsm_sym2Congr (φ : V ≃ W) : Sym2 V ≃ Sym2 W where
   toFun := Sym2.map φ
   invFun := Sym2.map φ.symm
   left_inv z := by induction z using Sym2.ind with | _ a b => simp [Sym2.map_mk]
   right_inv z := by induction z using Sym2.ind with | _ a b => simp [Sym2.map_mk]
 
-/-- A graph isomorphism `G ≃g H` restricts to an isomorphism of open subgraphs, with the
+/-- **Graph isomorphism restricted to open subgraphs.**
+A graph isomorphism `G ≃g H` restricts to an isomorphism of open subgraphs, with the
 configuration on `G` pulled back from `H`. -/
 noncomputable def fsm_openSubIso (φ : G ≃g H) (ω : Sym2 W → Bool) :
     openSub G (fun e => ω (Sym2.map φ.toEquiv e)) ≃g openSub H ω where
@@ -479,7 +486,8 @@ lemma fsm_edgeProduct_iso (φ : G ≃g H) (p : ℝ) (ω : Sym2 W → Bool) :
           (fun x _ y _ h => Sym2.map.injective φ.toEquiv.injective h)]
     _ = ∏ e ∈ H.edgeFinset, (if ω e then p else 1 - p) := by rw [himg]
 
-/-- The ambient FK normalizer is invariant under graph isomorphism. -/
+/-- **Isomorphism invariance of the ambient FK normalizer.**
+The ambient FK normalizer is invariant under graph isomorphism. -/
 lemma fsm_fkZ_iso (φ : G ≃g H) (p q : ℝ) :
     fkZ G p q = fkZ H p q := by
   classical
@@ -511,7 +519,8 @@ variable {V : ℕ → Type*} [∀ n, Fintype (V n)] [∀ n, DecidableEq (V n)]
 
 -/
 
-/-- Along a sequence with `G_{m+n} ≅ G_m ⊕g G_n`, the sequence `-log Z_{G_n}` is subadditive. -/
+/-- **Subadditivity of $-\log Z$ along a juxtaposition sequence.**
+Along a sequence with `G_{m+n} ≅ G_m ⊕g G_n`, the sequence `-log Z_{G_n}` is subadditive. -/
 lemma fsm_subadditive_neglog_fkZ {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hjux : ∀ m n, Gn (m + n) ≃g Gn m ⊕g Gn n) :
     Subadditive (fun n => -Real.log (fkZ (Gn n) p q)) := by
@@ -522,7 +531,8 @@ lemma fsm_subadditive_neglog_fkZ {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 
 
 end Fekete
 
-/-- Edgeless graphs on `Fin n` satisfy the juxtaposition hypothesis `G_{m+n} ≅ G_m ⊕g G_n`. -/
+/-- **Edgeless graphs satisfy the juxtaposition hypothesis.**
+Edgeless graphs on `Fin n` satisfy the juxtaposition hypothesis `G_{m+n} ≅ G_m ⊕g G_n`. -/
 lemma fsm_juxtaposition_satisfiable (m n : ℕ) :
     Nonempty ((⊥ : SimpleGraph (Fin (m + n))) ≃g
       (⊥ : SimpleGraph (Fin m)) ⊕g (⊥ : SimpleGraph (Fin n))) := by

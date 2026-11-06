@@ -60,13 +60,14 @@ open BigOperators
 
 /-! ## A. The gauge and seam signs -/
 
-/-- The gauge `u^{s₁} v^{s₂}` at site `s`, with `u, v` the spin boundary phases. -/
+/-- **Spin boundary-phase gauge at a site.**
+The gauge `u^{s₁} v^{s₂}` at site `s`, with `u, v` the spin boundary phases. -/
 noncomputable def ons_spinVertexGauge
     (L : ℕ) (a b : Fin 2) (site : ZMod L × ZMod L) : ℂ :=
   ons_spinPhase L a ^ (site.1.val : ℤ) *
     ons_spinPhase L b ^ (site.2.val : ℤ)
 
-/-- The seam sign
+/-- **Seam sign of a dart.** The seam sign
 `(-1)^{a · (signed vertical seam crossing) + b · (signed horizontal seam crossing)}` of a dart. -/
 noncomputable def ons_spinDartSeamSign
     {L : ℕ} (a b : Fin 2) (d : ons_Dart L) : ℂ :=
@@ -234,7 +235,8 @@ lemma ons_spinDartSeamSign_rev
 
 /-! ## B. Seam-signed weights -/
 
-/-- Decorated weights with every external edge multiplied by the seam sign of its dart. -/
+/-- **Decorated weights twisted by seam signs.**
+Decorated weights with every external edge multiplied by the seam sign of its dart. -/
 noncomputable def ons_spinSeamDecWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ)
     (a b : Fin 2) (edge : ons_DecEdge L) : ℂ := by
@@ -277,7 +279,8 @@ noncomputable def ons_spinSeamDecWeight
 
 /-! ## C. Diagonal gauge transformations -/
 
-/-- Diagonal conjugation `gauge i * M i j * (gauge j)⁻¹`. -/
+/-- **Diagonal gauge conjugation of a matrix.**
+Diagonal conjugation `gauge i * M i j * (gauge j)⁻¹`. -/
 noncomputable def ons_diagonalGaugeMatrix
     {E : Type*} (gauge : E → ℂ) (M : Matrix E E ℂ) :
     Matrix E E ℂ :=
@@ -431,7 +434,8 @@ lemma ons_spinSeamDecWeight_scale_chain_one
 
 /-! ## D. The augmented matrix -/
 
-/-- The gauge on the states of the augmented matrix: the site gauge on darts, and the gauge of
+/-- **Gauge on the states of the augmented matrix.**
+The gauge on the states of the augmented matrix: the site gauge on darts, and the gauge of
 `site` on the two side states. -/
 noncomputable def ons_decMiddleStateGauge
     (L : ℕ) (a b : Fin 2) (site : ZMod L × ZMod L) :

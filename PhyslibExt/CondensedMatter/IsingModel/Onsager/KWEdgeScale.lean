@@ -47,7 +47,8 @@ open Matrix BigOperators
 
 /-! ## A. Edge scaling -/
 
-/-- The edge weight function with the weight of `edge` multiplied by `t`. -/
+/-- **Edge weight function with one weight scaled by t.**
+The edge weight function with the weight of `edge` multiplied by `t`. -/
 def ons_scaleEdgeWeight
     {L : ℕ} (weight : Sym2 (ZMod L × ZMod L) → ℂ)
     (edge : Sym2 (ZMod L × ZMod L)) (t : ℂ) :

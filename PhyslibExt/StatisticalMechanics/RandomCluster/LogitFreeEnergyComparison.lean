@@ -71,14 +71,16 @@ open ConfigSpace StatMech.Lattice
 
 -/
 
-/-- The logistic map `t ↦ eᵗ / (1 + eᵗ)`, equal to Mathlib's `Real.sigmoid`
+/-- **Logistic function $e^t/(1+e^t)$.**
+The logistic map `t ↦ eᵗ / (1 + eᵗ)`, equal to Mathlib's `Real.sigmoid`
 (`fsc_logistic_eq_sigmoid`). -/
 noncomputable def fsc_logistic (t : ℝ) : ℝ := Real.exp t / (1 + Real.exp t)
 
-/-- The logit `p ↦ log (p / (1 - p))`, inverse to `fsc_logistic` on `(0, 1)`. -/
+/-- **Logit function $\log(p/(1-p))$.**
+The logit `p ↦ log (p / (1 - p))`, inverse to `fsc_logistic` on `(0, 1)`. -/
 noncomputable def fsc_logit (p : ℝ) : ℝ := Real.log (p / (1 - p))
 
-/-- The logistic map is Mathlib's `Real.sigmoid`. -/
+/-- **Logistic function equals the sigmoid.** The logistic map is Mathlib's `Real.sigmoid`. -/
 lemma fsc_logistic_eq_sigmoid : fsc_logistic = Real.sigmoid := by
   funext t
   rw [fsc_logistic, Real.sigmoid_def, Real.exp_neg]
@@ -119,7 +121,8 @@ lemma fsc_logistic_logit {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
 
 -/
 
-/-- The convex free-energy hypothesis for the box edge `eb` at `q = 2`: some convex `g` has
+/-- **Convex free-energy hypothesis for a box edge at $q = 2$.**
+The convex free-energy hypothesis for the box edge `eb` at `q = 2`: some convex `g` has
 right derivative `t ↦ θ^w(fsc_logistic t)` and left derivative `t ↦ θ^f(fsc_logistic t)`, the wired
 and free infinite-volume densities of the edge. -/
 def fsc_FreeEnergyData (d N : ℕ) (eb : Sym2 (boxVerts d N)) : Prop :=
@@ -127,7 +130,8 @@ def fsc_FreeEnergyData (d N : ℕ) (eb : Sym2 (boxVerts d N)) : Prop :=
     ∧ (∀ t, wiredEdgeDensity d 2 (edgeIncl d N eb) (fsc_logistic t) = pressureRightDeriv g t)
     ∧ (∀ t, freeEdgeDensity d 2 (edgeIncl d N eb) (fsc_logistic t) = pressureLeftDeriv g t)
 
-/-- Under `fsc_FreeEnergyData`, the wired edge density at `p'` is at most the free edge density
+/-- **Convex free energy gives wired density at $p'$ at most free at $p > p'$.**
+Under `fsc_FreeEnergyData`, the wired edge density at `p'` is at most the free edge density
 at `p` whenever `p' < p`. -/
 lemma fsc_secant (d N : ℕ) (eb : Sym2 (boxVerts d N))
     (hdata : fsc_FreeEnergyData d N eb) :
@@ -161,7 +165,7 @@ lemma fsc_secant (d N : ℕ) (eb : Sym2 (boxVerts d N))
 
 -/
 
-/-- The softplus function `t ↦ log (1 + eᵗ)`. -/
+/-- **Softplus function $\log(1+e^t)$.** The softplus function `t ↦ log (1 + eᵗ)`. -/
 noncomputable def fsc_softplus (t : ℝ) : ℝ := Real.log (1 + Real.exp t)
 
 lemma fsc_softplus_hasDerivAt (t : ℝ) :
@@ -196,7 +200,8 @@ lemma fsc_softplus_pressureLeftDeriv (t : ℝ) :
   unfold pressureLeftDeriv
   rw [(fsc_softplus_hasDerivAt t).hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Iio t)]
 
-/-- Softplus is a convex function whose one-sided derivatives are both `fsc_logistic`, so the
+/-- **Softplus is convex with both one-sided derivatives logistic.**
+Softplus is a convex function whose one-sided derivatives are both `fsc_logistic`, so the
 derivative conditions in `fsc_FreeEnergyData` can hold for some convex function. -/
 lemma fsc_freeEnergyData_satisfiable :
     ∃ g : ℝ → ℝ, ConvexOn ℝ univ g
@@ -206,7 +211,8 @@ lemma fsc_freeEnergyData_satisfiable :
     fun t => (fsc_softplus_pressureRightDeriv t).symm,
     fun t => (fsc_softplus_pressureLeftDeriv t).symm⟩
 
-/-- Under `fsc_FreeEnergyData`, at `q = 2` there is a countable set `S` of parameters off which
+/-- **Edge-marginal uniqueness off a countable set from convex free energy.**
+Under `fsc_FreeEnergyData`, at `q = 2` there is a countable set `S` of parameters off which
 every measure `φ` whose box-edge marginal lies between the free and wired ones has the same
 marginal as both. -/
 lemma fk_uniqueness_q2_secant_from_freeEnergyData (d N : ℕ) (eb : Sym2 (boxVerts d N))

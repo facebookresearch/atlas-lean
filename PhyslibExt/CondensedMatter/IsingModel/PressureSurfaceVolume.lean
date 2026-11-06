@@ -126,7 +126,7 @@ lemma psv_volume_card_real (d n : ℕ) :
     ((boxFinset d n).card : ℝ) = (2 * (n : ℝ) + 1) ^ d := by
   rw [psv_volume_card]; push_cast; ring
 
-/-- The outer vertex boundary `Λ_{n+1} ∖ Λ_n` of the box. -/
+/-- **Outer vertex boundary of a box.** The outer vertex boundary `Λ_{n+1} ∖ Λ_n` of the box. -/
 noncomputable def psv_Bdry (d n : ℕ) : Finset (Site d) :=
   (vertexBoundary_finite d (n + 1)).toFinset
 

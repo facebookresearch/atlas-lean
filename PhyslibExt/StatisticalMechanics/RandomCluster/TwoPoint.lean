@@ -57,7 +57,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 -/
 
 omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
-/-- The open subgraph is monotone in the configuration. The same statement is
+/-- **Monotonicity of the open subgraph in the configuration.**
+The open subgraph is monotone in the configuration. The same statement is
 `StatMech.Sharpness.openSub_mono` in `BkCriterion`. -/
 lemma openSub_mono {a b : ConfigSpace (Sym2 V)} (hab : a ≤ b) :
     openSub G a ≤ openSub G b := by
@@ -67,7 +68,8 @@ lemma openSub_mono {a b : ConfigSpace (Sym2 V)} (hab : a ≤ b) :
   rw [h.2] at hle
   exact le_antisymm (Bool.le_true _) hle
 
-/-- The event that `x` and `y` are joined by a path of open edges of `G`. -/
+/-- **Event that two vertices are joined by open edges.**
+The event that `x` and `y` are joined by a path of open edges of `G`. -/
 def connEvent (x y : V) : Set (ConfigSpace (Sym2 V)) :=
   {ω | (openSub G ω).Reachable x y}
 
@@ -107,7 +109,8 @@ lemma allOpen_mem_connEvent {x y : V} (h : G.Reachable x y) :
 ## B. The two-point function
 -/
 
-/-- The two-point function of the free random-cluster measure on a finite graph: the probability
+/-- **Two-point function of the free random-cluster measure.**
+The two-point function of the free random-cluster measure on a finite graph: the probability
 `φ(x ↔ y)` that `x` and `y` are connected by open edges. -/
 noncomputable def twoPointFun (p q : ℝ) (x y : V) : ℝ :=
   ∑ ω, fkProb G p q ω * (connEvent G x y).indicator (fun _ => (1 : ℝ)) ω
@@ -162,7 +165,8 @@ lemma twoPointFun_self_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (x : V) : 0 < twoPointFun G p q x x :=
   twoPointFun_pos_of_reachable G hp hp1 hq (SimpleGraph.Reachable.refl x)
 
-/-- FKG for connection events: for `q ≥ 1`, `φ(x ↔ y) φ(u ↔ v) ≤ φ(x ↔ y, u ↔ v)`. -/
+/-- **FKG inequality for connection events for $q \ge 1$.**
+FKG for connection events: for `q ≥ 1`, `φ(x ↔ y) φ(u ↔ v) ≤ φ(x ↔ y, u ↔ v)`. -/
 lemma twoPointFun_fkg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (x y u v : V) :
     twoPointFun G p q x y * twoPointFun G p q u v

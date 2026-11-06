@@ -57,7 +57,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## A. Closed pivotal edges -/
 
-/-- Configurations in which `e` is closed and pivotal for `A`. -/
+/-- **Configurations with an edge closed and pivotal.**
+Configurations in which `e` is closed and pivotal for `A`. -/
 def abgiClosedPivotal (e : E) (A : Set (ConfigSpace E)) : Set (ConfigSpace E) :=
   {omega | IsPivotal e A omega ∧ omega e = false}
 

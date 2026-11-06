@@ -62,7 +62,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Edge sets with prescribed boundary -/
 
-/-- The set of vertices of odd degree in the edge set `F` is exactly `A`. -/
+/-- **Edge set with prescribed odd-degree vertices.**
+The set of vertices of odd degree in the edge set `F` is exactly `A`. -/
 def HasOddBoundary (F : Finset (Sym2 V)) (A : Finset V) : Prop :=
   ∀ v : V, Odd (incCount F v) ↔ v ∈ A
 
@@ -212,7 +213,8 @@ lemma expectation_spinProd_high_temp_ratio (beta : ℝ) (A : Finset V) :
 
 /-! ## B. General couplings -/
 
-/-- The high-temperature weight `∏_{e ∈ F} tanh(βJ_e)` of an edge set. -/
+/-- **High-temperature weight of an edge set.**
+The high-temperature weight `∏_{e ∈ F} tanh(βJ_e)` of an edge set. -/
 noncomputable def highTempSubgraphWeight (beta : ℝ) (J : Sym2 V → ℝ)
     (F : Finset (Sym2 V)) : ℝ :=
   ∏ e ∈ F, Real.tanh (beta * J e)
@@ -340,7 +342,8 @@ lemma expectationJ_high_temp_ratio (beta : ℝ) (J : Sym2 V → ℝ)
 
 /-! ## C. Edge sets as currents -/
 
-/-- The current equal to `1` on the edges of `F` and `0` elsewhere. -/
+/-- **Indicator current of an edge set.**
+The current equal to `1` on the edges of `F` and `0` elsewhere. -/
 noncomputable def edgeIndicatorCurrent (F : Finset (Sym2 V)) : Current V :=
   fun e => if e ∈ F then 1 else 0
 

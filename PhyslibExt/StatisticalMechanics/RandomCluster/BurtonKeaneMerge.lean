@@ -59,7 +59,8 @@ variable {d : ℕ}
 
 /-! ## A. Opening a finite set of edges -/
 
-/-- The configuration obtained from `ω` by opening every edge of `F`. -/
+/-- **Configuration with a finite edge set forced open.**
+The configuration obtained from `ω` by opening every edge of `F`. -/
 noncomputable def forceOpenFinset (F : Finset (Sym2 (Site d)))
     (ω : ConfigSpace (Sym2 (Site d))) : ConfigSpace (Sym2 (Site d)) :=
   fun e => if e ∈ F then true else ω e
@@ -108,7 +109,7 @@ lemma encard_image_lt_of_not_injOn {α β : Type*} {s : Set α} {f : α → β}
 
 /-! ## B. Merging infinite clusters -/
 
-/-- The endpoints of the edges of `F`. -/
+/-- **Endpoints of a finite edge set.** The endpoints of the edges of `F`. -/
 def anchorSites (F : Finset (Sym2 (Site d))) : Set (Site d) :=
   {a | ∃ e ∈ F, a ∈ e}
 
@@ -240,7 +241,8 @@ lemma numInfiniteClusters_lt_of_merge
   rw [hlhs, numInfiniteClusters_eq_repSet_encard ω]
   exact encard_image_lt_of_not_injOn hrepfin hni
 
-/-- Configurations with exactly `k` infinite clusters in which opening `F` connects two distinct
+/-- **Configurations with $k$ infinite clusters, two merged by opening $F$.**
+Configurations with exactly `k` infinite clusters in which opening `F` connects two distinct
 infinite clusters.
 -/
 def MergeWitness (d : ℕ) (F : Finset (Sym2 (Site d))) (k : ℕ∞) :
@@ -277,7 +279,8 @@ lemma numInfiniteClusters_lt_null
     le_antisymm prob_le_one (hk ▸ measure_mono hdisj)
   exact (prob_compl_eq_one_iff (measurableSet_numInfiniteClusters_lt k)).mp hfull
 
-/-- Finite energy for opening edges: for every finite edge set `F`, the law of
+/-- **Finite energy for opening finite edge sets.**
+Finite energy for opening edges: for every finite edge set `F`, the law of
 `forceOpenFinset F ω` is absolutely continuous with respect to `μ`.
 -/
 def HasFiniteEnergyMerge (μ : Measure (ConfigSpace (Sym2 (Site d)))) : Prop :=

@@ -132,7 +132,8 @@ lemma ons_torusPressure_lipschitz (L : ℕ) [Fact (2 < L)]
       |beta - gamma| * (2 * (L : ℝ) ^ 2) := h
     _ = 2 * |beta - gamma| * (L : ℝ) ^ 2 := by ring
 
-/-- The pressure `log Z_L(β) / L²` of the zero-field Ising model on the `L × L` torus, as a sequence
+/-- **Torus pressure sequence of the zero-field Ising model.**
+The pressure `log Z_L(β) / L²` of the zero-field Ising model on the `L × L` torus, as a sequence
 in `L` (set to `0` for `L ≤ 2`, where the torus graph is not defined). -/
 noncomputable def ons_torusPressureSeq (beta : ℝ) (L : ℕ) : ℝ :=
   if h : 2 < L then

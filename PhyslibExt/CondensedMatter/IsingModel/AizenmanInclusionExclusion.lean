@@ -80,11 +80,13 @@ lemma aie_conn_trans_oy (ends : ι → Sym2 V) (m : Finset ι) {o x y : V}
 
 /-! ## A. Connectivity of three sites -/
 
-/-- The current `m` connects each of the pairs `{x, y}`, `{o, y}`, `{o, x}`. -/
+/-- **Current connecting all three site pairs.**
+The current `m` connects each of the pairs `{x, y}`, `{o, y}`, `{o, x}`. -/
 def aie_allConn (ends : ι → Sym2 V) (m : Finset ι) (o x y : V) : Prop :=
   connK ends m x y ∧ connK ends m o y ∧ connK ends m o x
 
-/-- The current `m` connects none of the pairs `{x, y}`, `{o, y}`, `{o, x}`. -/
+/-- **Current connecting none of the three site pairs.**
+The current `m` connects none of the pairs `{x, y}`, `{o, y}`, `{o, x}`. -/
 def aie_noneConn (ends : ι → Sym2 V) (m : Finset ι) (o x y : V) : Prop :=
   ¬ connK ends m x y ∧ ¬ connK ends m o y ∧ ¬ connK ends m o x
 
@@ -143,12 +145,14 @@ lemma aie_backbone_factor_nonneg_not_all (ends : ι → Sym2 V) (m : Finset ι) 
 
 /-! ## B. Masses and the GHS gap -/
 
-/-- The total weight `∑ φ(K)` of the sub-currents `K ⊆ m` with source set `S`. -/
+/-- **Mass of sub-currents with a given source set.**
+The total weight `∑ φ(K)` of the sub-currents `K ⊆ m` with source set `S`. -/
 noncomputable def aie_mass (ends : ι → Sym2 V) (m : Finset ι) (φ : Finset ι → ℝ) (S : Finset V) :
     ℝ :=
   ∑ K ∈ m.powerset.filter (fun K => sources ends K = S), φ K
 
-/-- The GHS gap `mass(A) - mass(A ∆ {x, y}) - mass(A ∆ {o, y}) - mass(A ∆ {o, x})`. -/
+/-- **GHS gap of a sourced current.**
+The GHS gap `mass(A) - mass(A ∆ {x, y}) - mass(A ∆ {o, y}) - mass(A ∆ {o, x})`. -/
 noncomputable def aie_gap (ends : ι → Sym2 V) (m : Finset ι) (φ : Finset ι → ℝ) (A : Finset V)
     (o x y : V) : ℝ :=
   aie_mass ends m φ A - aie_mass ends m φ (A ∆ {x, y})

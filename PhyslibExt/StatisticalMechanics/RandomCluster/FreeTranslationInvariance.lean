@@ -73,7 +73,7 @@ variable {ιV : Vin → Vout}
 
 /-! ## A. Free domination for subgraphs -/
 
-/-- The empty boundary predicate. -/
+/-- **Empty boundary predicate.** The empty boundary predicate. -/
 def bdp_noBdry (_v : Vout) : Prop := False
 
 /-- The empty boundary predicate is decidable. -/
@@ -318,7 +318,8 @@ lemma bdp_freeMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     cdc_freeMultiHomogeneous hp hp1 g :=
   lmc_freeMultiHomogeneous hp hp1 g (bdp_freePlacement hp hp1 g)
 
-/-- The free `q = 2` infinite-volume random-cluster measure on `ℤ^d` is translation invariant. -/
+/-- **Translation invariance of the free $q = 2$ infinite-volume measure.**
+The free `q = 2` infinite-volume random-cluster measure on `ℤ^d` is translation invariant. -/
 theorem bdp_freeIV_isTranslationInvariant {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     ConfigSpace.IsTranslationInvariant (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2)
@@ -399,7 +400,8 @@ lemma bdp_innerEdgeLE_refl (n : ℕ) (e : Sym2 (boxVerts d n)) :
   unfold innerEdgeLE
   rw [hfun, Sym2.map_id, id]
 
-/-- Edge marginals of the free box measure are at most the free infinite-volume density (the case
+/-- **Free $q = 2$ box edge marginals are at most the free density.**
+Edge marginals of the free box measure are at most the free infinite-volume density (the case
 `N = n` of `dfi_free_per_edge_le`).
 -/
 lemma bdp_free_per_edge_upper (n : ℕ) (e : Sym2 (boxVerts d n)) {p : ℝ}
@@ -409,7 +411,8 @@ lemma bdp_free_per_edge_upper (n : ℕ) (e : Sym2 (boxVerts d n)) {p : ℝ}
   have h := dfi_free_per_edge_le n n (le_refl n) e hp hp1
   rwa [bdp_innerEdgeLE_refl n e] at h
 
-/-- Edge marginals of the wired box measure are at least the wired infinite-volume density (the
+/-- **Wired $q = 2$ box edge marginals are at least the wired density.**
+Edge marginals of the wired box measure are at least the wired infinite-volume density (the
 case
 `N = n` of `dfi_wired_per_edge_ge`).
 -/
@@ -422,7 +425,8 @@ lemma bdp_wired_per_edge_lower (n : ℕ) (e : Sym2 (boxVerts d n)) {p : ℝ}
 
 /-! ## D. Off-centre sandwiches and bulk deviation -/
 
-/-- For every edge `e'` of `Λ_N` and every `t`, there are interior edge sets `I_n` of `Λ_n`
+/-- **Free off-centre sandwich hypothesis.**
+For every edge `e'` of `Λ_N` and every `t`, there are interior edge sets `I_n` of `Λ_n`
 carrying
 asymptotically all edges on which the free density equals that of `e'` and the free box
 marginals
@@ -443,7 +447,8 @@ def bdp_FreeOffCentreSandwich (N : ℕ) : Prop :=
         (((boxGraph d n).edgeFinset.card - (In n).card : ℝ)) / (boxGraph d n).edgeFinset.card)
         atTop (𝓝 0)
 
-/-- For every edge `e'` of `Λ_N` and every `t`, there are interior edge sets `I_n` of `Λ_n`
+/-- **Wired off-centre sandwich hypothesis.**
+For every edge `e'` of `Λ_N` and every `t`, there are interior edge sets `I_n` of `Λ_n`
 carrying
 asymptotically all edges on which the wired density equals that of `e'` and the wired box
 marginals

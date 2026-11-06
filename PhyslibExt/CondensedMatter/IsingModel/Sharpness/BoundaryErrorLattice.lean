@@ -60,36 +60,42 @@ open Ising StatMech.Lattice
 
 /-! ## A. Box covariances and the boundary error -/
 
-/-- The covariance `⟨σ_0σ_x⟩_{Λ_n} - ⟨σ_0⟩_{Λ_n}⟨σ_x⟩_{Λ_n}` in the box at `(β, h)`. -/
+/-- **Origin–site covariance in a box.**
+The covariance `⟨σ_0σ_x⟩_{Λ_n} - ⟨σ_0⟩_{Λ_n}⟨σ_x⟩_{Λ_n}` in the box at `(β, h)`. -/
 noncomputable def sctBoxCovariance (d : ℕ) (beta h : ℝ) (n : ℕ)
     (x : sctBox d n) : ℝ :=
   isingExpectation (sctBoxGraph d n) beta h
       (fun s => spin s (sctBoxOrigin d n) * spin s x) -
     sctOriginMag d beta h n * sctBoxMag d beta h n x
 
-/-- The lattice neighbours of `x` outside `Λ_n`. -/
+/-- **Exterior neighbours of a site.** The lattice neighbours of `x` outside `Λ_n`. -/
 noncomputable def sctExteriorNeighbours (d n : ℕ) (x : Site d) : Finset (Site d) :=
   ((hypercubicLattice d).neighborFinset x).filter (fun y => y ∉ box d n)
 
-/-- The boundary error `∑_{x ∈ Λ_n} #(exterior neighbours of x) · Cov(σ_0, σ_x)`. -/
+/-- **Boundary covariance error.**
+The boundary error `∑_{x ∈ Λ_n} #(exterior neighbours of x) · Cov(σ_0, σ_x)`. -/
 noncomputable def sctBoundaryCovarianceError (d : ℕ) (beta h : ℝ) (n : ℕ) : ℝ :=
   ∑ x : sctBox d n,
     ((sctExteriorNeighbours d n x.1).card : ℝ) * sctBoxCovariance d beta h n x
 
-/-- The sum of `Cov(σ_0, σ_x)` over the outer layer `Λ_n \ Λ_{n-1}`. -/
+/-- **Covariance sum over the outer layer.**
+The sum of `Cov(σ_0, σ_x)` over the outer layer `Λ_n \ Λ_{n-1}`. -/
 noncomputable def sctOuterCovarianceSum (d : ℕ) (beta h : ℝ) (n : ℕ) : ℝ :=
   ∑ x : sctBox d n,
     if x.1 ∈ box d (n - 1) then 0 else sctBoxCovariance d beta h n x
 
-/-- The site field equal to `βh` on `Λ_{n-1}` and `0` on the outer layer. -/
+/-- **Field switched off on the outer layer.**
+The site field equal to `βh` on `Λ_{n-1}` and `0` on the outer layer. -/
 def sctInnerField (d : ℕ) (beta h : ℝ) (n : ℕ) (x : sctBox d n) : ℝ :=
   if x.1 ∈ box d (n - 1) then beta * h else 0
 
-/-- The indicator of the outer layer `Λ_n \ Λ_{n-1}`, used as a field direction. -/
+/-- **Outer-layer indicator as a field direction.**
+The indicator of the outer layer `Λ_n \ Λ_{n-1}`, used as a field direction. -/
 def sctOuterDirection (d n : ℕ) (x : sctBox d n) : ℝ :=
   if x.1 ∈ box d (n - 1) then 0 else 1
 
-/-- The origin magnetization in `Λ_n` with the field switched off on the outer layer. -/
+/-- **Origin magnetization with the outer-layer field switched off.**
+The origin magnetization in `Λ_n` with the field switched off on the outer layer. -/
 noncomputable def sctInnerFieldMag (d : ℕ) (beta h : ℝ) (n : ℕ) : ℝ :=
   expJ (sctBoxGraph d n).edgeFinset (fun _ => beta)
     (sctInnerField d beta h n) (fun s => spin s (sctBoxOrigin d n))

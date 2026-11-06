@@ -51,7 +51,8 @@ namespace FK
 
 /-! ## A. Fekete's lemma with a general normalization -/
 
-/-- Fekete's lemma normalized by `e n` instead of `n`: if `u` is subadditive with `u n / n`
+/-- **Fekete's lemma with a general normalization.**
+Fekete's lemma normalized by `e n` instead of `n`: if `u` is subadditive with `u n / n`
 bounded below and `e n / n → c ≠ 0`, then `u n / e n → lim / c`. Built on Mathlib's
 `Subadditive.tendsto_lim`. -/
 lemma fkl_tendsto_div_of_subadditive (u : ℕ → ℝ) (hsub : Subadditive u)
@@ -72,7 +73,8 @@ lemma fkl_tendsto_div_of_subadditive (u : ℕ → ℝ) (hsub : Subadditive u)
 lemma fkl_subadditive_zero : Subadditive (fun _ : ℕ => (0:ℝ)) := by
   intro m n; simp
 
-/-- The hypotheses of `fkl_tendsto_div_of_subadditive` hold together for `u = 0`, `e n = n`. -/
+/-- **Hypotheses of the normalized Fekete lemma are satisfiable.**
+The hypotheses of `fkl_tendsto_div_of_subadditive` hold together for `u = 0`, `e n = n`. -/
 lemma fkl_superMultiplicative_satisfiable :
     ∃ (u : ℕ → ℝ) (hsub : Subadditive u) (e : ℕ → ℝ) (c : ℝ),
       c ≠ 0 ∧ BddBelow (Set.range fun n => u n / n)

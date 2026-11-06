@@ -81,7 +81,8 @@ lemma sum_eval_factor {A B : Type*} [Fintype A] [DecidableEq A] [Fintype B]
   simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   rw [Finset.mul_sum]
 
-/-- Colorings constant on wired clusters with boundary color `b` correspond to colorings of the
+/-- **Wired colorings as cluster colorings with a pinned boundary cluster.**
+Colorings constant on wired clusters with boundary color `b` correspond to colorings of the
 clusters of `wiredSub` with the boundary cluster colored `b`. -/
 noncomputable def wiredColourEquiv {q : ℕ} (b : Fin q) (ω : ConfigSpace (Sym2 V))
     (v₀ : V) (hv₀ : bdry v₀) :
@@ -111,7 +112,8 @@ lemma sum_isingSpin : (∑ b : Fin 2, isingSpin b) = 0 := by
 
 /-! ## B. Connection to the boundary -/
 
-/-- The vertex `x` is joined by an open path of `ω` to a boundary vertex. -/
+/-- **Open connection of a vertex to the boundary.**
+The vertex `x` is joined by an open path of `ω` to a boundary vertex. -/
 def ConnToBdry (ω : ConfigSpace (Sym2 V)) (x : V) : Prop :=
   ∃ y, bdry y ∧ Connected G ω x y
 
@@ -299,13 +301,15 @@ lemma edgeProduct_pow_eq_bcWeight_half (p : ℝ) (ω : ConfigSpace (Sym2 V)) (v�
 
 /-! ## D. The one-point function -/
 
-/-- The one-point function `⟨σ_x⟩` of the wired Edwards–Sokal measure with boundary color `b` and `q
+/-- **Wired Edwards–Sokal one-point function.**
+The one-point function `⟨σ_x⟩` of the wired Edwards–Sokal measure with boundary color `b` and `q
 = 2`. -/
 noncomputable def esWiredOnePoint (b : Fin 2) (p : ℝ) (x : V) : ℝ :=
   (∑ ω : ConfigSpace (Sym2 V), ∑ σ : V → Fin 2,
       esWeightWired G bdry b p σ ω * isingSpin (σ x)) / esZWired G bdry 2 b p
 
-/-- The probability `φ^w(x ↔ ∂)` that `x` is connected to the boundary under the wired
+/-- **Wired random-cluster probability of connecting to the boundary.**
+The probability `φ^w(x ↔ ∂)` that `x` is connected to the boundary under the wired
 random-cluster measure with `q = 2`. -/
 noncomputable def wiredConnToBdryProb (p : ℝ) (x : V) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => ConnToBdry G bdry ω x),

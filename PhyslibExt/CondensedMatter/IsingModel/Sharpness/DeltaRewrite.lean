@@ -62,7 +62,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. The β-derivative of Gibbs expectations -/
 
-/-- The bond energy `∑_{e ∈ E(G)} σ_e` of a configuration, where `σ_{xy} = σ_x σ_y`. -/
+/-- **Bond energy of a configuration.**
+The bond energy `∑_{e ∈ E(G)} σ_e` of a configuration, where `σ_{xy} = σ_x σ_y`. -/
 noncomputable def sdrBondEnergy (s : ConfigSpace V) : ℝ := ∑ e ∈ G.edgeFinset, bond s e
 
 omit [DecidableEq V] in

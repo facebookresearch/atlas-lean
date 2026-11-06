@@ -71,7 +71,8 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## A. Cut masses -/
 
-/-- The cut mass `Z⁻² Z(∂n₁ = ∂n₂ = ∅; {v : v ↮ g in n₁ + n₂} = S)`, with `Z` the sourceless current
+/-- **Random-current cut mass of a vertex set.**
+The cut mass `Z⁻² Z(∂n₁ = ∂n₂ = ∅; {v : v ↮ g in n₁ + n₂} = S)`, with `Z` the sourceless current
 sum. -/
 noncomputable def isingCutMass (beta : ℝ) (J : Sym2 V → ℝ)
     (g : V) (S : Finset V) : ℝ :=
@@ -430,7 +431,8 @@ lemma localCorr_fieldGhost_map_some (beta h : ℝ) (T : Finset V)
   rw [current_representation, ← hratio,
     weightedExpectation_zero_eq_expectationJ G beta]
 
-/-- Subsets of `V` correspond to subsets of `V ⊔ {ghost}` not containing the ghost. -/
+/-- **Vertex subsets as ghost-free subsets of the extended vertex set.**
+Subsets of `V` correspond to subsets of `V ⊔ {ghost}` not containing the ghost. -/
 noncomputable def ghostFreeFinsetEquiv :
     Finset V ≃ {S : Finset (Option V) // none ∉ S} :=
   Equiv.ofBijective
@@ -701,7 +703,7 @@ lemma normalizedDeltaSelfLowerMass_fieldGhost (beta h : ℝ) (o y : V) :
 
 /-! ## D. Localized correlations -/
 
-/-- The subgraph of `G` with the edges inside `T`. -/
+/-- **Subgraph of edges inside a vertex set.** The subgraph of `G` with the edges inside `T`. -/
 def localizedGraph (T : Finset V) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet (↑(edgesIn G T) : Set (Sym2 V))
 

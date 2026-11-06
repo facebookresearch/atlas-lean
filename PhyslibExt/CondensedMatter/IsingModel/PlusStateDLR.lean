@@ -60,7 +60,8 @@ variable {d : ℕ}
 
 /-! ## A. The specification on functions -/
 
-/-- The specification applied to `f`: `η ↦ ∫ f d(fvMeasure η n B β h)`. -/
+/-- **Specification applied to a function.**
+The specification applied to `f`: `η ↦ ∫ f d(fvMeasure η n B β h)`. -/
 noncomputable def specApply (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
     (f : ConfigSpace (Site d) → ℝ) (ω : ConfigSpace (Site d)) : ℝ :=
   ∫ y, f y ∂(fvMeasure ω n B β h)
@@ -132,7 +133,8 @@ lemma specApply_continuous (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
   exact continuous_finsetSum _
     (fun τ _ => (continuous_fvProb n B β h τ).mul (hf.comp (continuous_glue n τ)))
 
-/-- The specification applied to a bounded continuous function, as a bounded continuous function. -/
+/-- **Specification applied to a bounded continuous function.**
+The specification applied to a bounded continuous function, as a bounded continuous function. -/
 noncomputable def specApply_bcf (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
     (f : ConfigSpace (Site d) →ᵇ ℝ) : ConfigSpace (Site d) →ᵇ ℝ :=
   BoundedContinuousFunction.mkOfCompact
@@ -144,7 +146,8 @@ noncomputable def specApply_bcf (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : �
 
 /-! ## B. Finite-volume consistency -/
 
-/-- The plus measures in `Λ_m` are invariant under the specification in every `Λ_n ⊆ Λ_m`. -/
+/-- **Consistency of the plus measures under the specification.**
+The plus measures in `Λ_m` are invariant under the specification in every `Λ_n ⊆ Λ_m`. -/
 def FVConsistency (d : ℕ) (β h : ℝ) : Prop :=
   ∀ (n m : ℕ), n ≤ m → ∀ f : ConfigSpace (Site d) →ᵇ ℝ,
     ∫ ω, specApply n (bondFinsetTouch d n) β h (f : ConfigSpace (Site d) → ℝ) ω
@@ -185,7 +188,8 @@ lemma psdlr_specApply_integral_eq (β h : ℝ) (hcons : FVConsistency d β h)
 
 /-! ## C. The specification as a kernel -/
 
-/-- The Ising specification in `Λ_n` as a Markov kernel on the full σ-algebra. -/
+/-- **Ising specification as a Markov kernel.**
+The Ising specification in `Λ_n` as a Markov kernel on the full σ-algebra. -/
 noncomputable def isingSpecFull (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ) :
     Kernel (ConfigSpace (Site d)) (ConfigSpace (Site d)) :=
   Kernel.mk (fun η => fvMeasure η n B β h)
@@ -241,7 +245,8 @@ lemma psdlr_bind_eq (β h : ℝ) (hcons : FVConsistency d β h) (n : ℕ) :
 
 /-! ## D. The DLR property in the limit -/
 
-/-- The σ-algebra of events determined by the spins outside `Λ`. -/
+/-- **$\sigma$-algebra of events determined outside a region.**
+The σ-algebra of events determined by the spins outside `Λ`. -/
 @[reducible] def outsideInvariantMS {E : Type*} (Λ : Set E) : MeasurableSpace (ConfigSpace E) where
   MeasurableSet' s := ∀ ω ω' : ConfigSpace E, (∀ x ∉ Λ, ω x = ω' x) → (ω ∈ s ↔ ω' ∈ s)
   measurableSet_empty := by simp

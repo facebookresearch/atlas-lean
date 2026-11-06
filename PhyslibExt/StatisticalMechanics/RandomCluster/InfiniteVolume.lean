@@ -76,7 +76,8 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 ## A. The wired random-cluster measure on a finite graph
 -/
 
-/-- The unnormalized wired random-cluster weight `edgeProduct G p ω · q ^ k¹(ω)`, where `k¹` counts
+/-- **Wired random-cluster weight.**
+The unnormalized wired random-cluster weight `edgeProduct G p ω · q ^ k¹(ω)`, where `k¹` counts
 clusters after wiring all boundary vertices together. -/
 noncomputable def wiredFkWeight (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   edgeProduct G p ω * q ^ numClustersWired G bdry ω
@@ -89,7 +90,8 @@ lemma wiredFkWeight_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 V)) : 0 ≤ wiredFkWeight G bdry p q ω :=
   (wiredFkWeight_pos G bdry hp hp1 hq ω).le
 
-/-- The wired partition function: the sum of `wiredFkWeight` over all configurations. -/
+/-- **Wired random-cluster partition function.**
+The wired partition function: the sum of `wiredFkWeight` over all configurations. -/
 noncomputable def wiredFkZ (p q : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), wiredFkWeight G bdry p q ω
 
@@ -101,7 +103,8 @@ lemma wiredFkZ_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     wiredFkZ G bdry p q ≠ 0 :=
   (wiredFkZ_pos G bdry hp hp1 hq).ne'
 
-/-- The wired random-cluster probability of a configuration, `wiredFkWeight / wiredFkZ`. -/
+/-- **Wired random-cluster probability of a configuration.**
+The wired random-cluster probability of a configuration, `wiredFkWeight / wiredFkZ`. -/
 noncomputable def wiredFkProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   wiredFkWeight G bdry p q ω / wiredFkZ G bdry p q
 
@@ -115,7 +118,8 @@ lemma wiredFkProb_sum_eq_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
   rw [← Finset.sum_div]
   exact div_self (wiredFkZ_ne_zero G bdry hp hp1 hq)
 
-/-- The wired random-cluster measure on a finite graph, as a probability mass function. -/
+/-- **Wired random-cluster measure as a probability mass function.**
+The wired random-cluster measure on a finite graph, as a probability mass function. -/
 noncomputable def wiredFkPMF {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     PMF (ConfigSpace (Sym2 V)) :=
   PMF.ofFintype (fun ω => ENNReal.ofReal (wiredFkProb G bdry p q ω)) <| by
@@ -127,7 +131,8 @@ noncomputable def wiredFkPMF {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 ## B. Boxes of `ℤ^d`
 -/
 
-/-- The vertices of the box `Λ_n = [-n, n]^d ⊆ ℤ^d`, as a subtype. -/
+/-- **Vertices of the box $[-n, n]^d$.**
+The vertices of the box `Λ_n = [-n, n]^d ⊆ ℤ^d`, as a subtype. -/
 abbrev boxVerts (d n : ℕ) : Type := {x : Site d // x ∈ box d n}
 
 /-- The box `Λ_n` is finite. -/
@@ -138,7 +143,8 @@ noncomputable instance instFintypeBoxVerts (d n : ℕ) : Fintype (boxVerts d n) 
 instance instDecidableEqBoxVerts (d n : ℕ) : DecidableEq (boxVerts d n) :=
   Subtype.instDecidableEq
 
-/-- The nearest-neighbour graph on the box `Λ_n`, induced from the hypercubic lattice. -/
+/-- **Nearest-neighbour graph on a box.**
+The nearest-neighbour graph on the box `Λ_n`, induced from the hypercubic lattice. -/
 def boxGraph (d n : ℕ) : SimpleGraph (boxVerts d n) :=
   SimpleGraph.comap Subtype.val (hypercubicLattice d)
 
@@ -147,7 +153,8 @@ noncomputable instance instDecidableRelBoxGraph (d n : ℕ) :
     DecidableRel (boxGraph d n).Adj :=
   Classical.decRel _
 
-/-- The vertex boundary of the box: sites of `Λ_n` that are not in `Λ_(n-1)`. -/
+/-- **Vertex boundary of a box.**
+The vertex boundary of the box: sites of `Λ_n` that are not in `Λ_(n-1)`. -/
 def boxBoundary (d n : ℕ) (x : boxVerts d n) : Prop := (x : Site d) ∈ vertexBoundary d n
 
 /-- Membership in the box boundary is decidable (classically). -/
@@ -159,14 +166,16 @@ noncomputable instance instDecidablePredBoxBoundary (d n : ℕ) :
 ## C. Box measures on the configuration space of `ℤ^d`
 -/
 
-/-- The inclusion of edges of the box into edges of `ℤ^d`. -/
+/-- **Inclusion of box edges into $\mathbb{Z}^d$.**
+The inclusion of edges of the box into edges of `ℤ^d`. -/
 def edgeIncl (d n : ℕ) : Sym2 (boxVerts d n) → Sym2 (Site d) :=
   Sym2.map (Subtype.val : boxVerts d n → Site d)
 
 lemma edgeIncl_injective (d n : ℕ) : Function.Injective (edgeIncl d n) :=
   Sym2.map.injective Subtype.val_injective
 
-/-- Extend a configuration on the box to `ℤ^d` by declaring every edge outside the box closed. -/
+/-- **Extension of a box configuration by closed edges.**
+Extend a configuration on the box to `ℤ^d` by declaring every edge outside the box closed. -/
 noncomputable def extendEdge (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     ConfigSpace (Sym2 (Site d)) :=
   fun e => if h : e ∈ Set.range (edgeIncl d n) then ω h.choose else false
@@ -174,7 +183,8 @@ noncomputable def extendEdge (d n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n))
 lemma measurable_extendEdge (d n : ℕ) : Measurable (extendEdge d n) :=
   Measurable.of_discrete
 
-/-- The free random-cluster measure `φ⁰_n` on the box `Λ_n`, pushed to the configuration space of
+/-- **Free random-cluster measure on a box.**
+The free random-cluster measure `φ⁰_n` on the box `Λ_n`, pushed to the configuration space of
 `ℤ^d` by `extendEdge`. -/
 noncomputable def freeFiniteMeasure (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -182,7 +192,8 @@ noncomputable def freeFiniteMeasure (d n : ℕ) {p q : ℝ}
   ⟨((fkPMF (boxGraph d n) hp hp1 hq).toMeasure).map (extendEdge d n),
     inferInstance⟩
 
-/-- The wired random-cluster measure `φ¹_n` on the box `Λ_n` (boundary vertices wired), pushed to
+/-- **Wired random-cluster measure on a box.**
+The wired random-cluster measure `φ¹_n` on the box `Λ_n` (boundary vertices wired), pushed to
 the configuration space of `ℤ^d` by `extendEdge`. -/
 noncomputable def wiredFiniteMeasure (d n : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -194,14 +205,16 @@ noncomputable def wiredFiniteMeasure (d n : ℕ) {p q : ℝ}
 ## D. Infinite-volume measures
 -/
 
-/-- A free infinite-volume random-cluster measure on `ℤ^d`: a weak limit of a subsequence of
+/-- **Free infinite-volume random-cluster measure.**
+A free infinite-volume random-cluster measure on `ℤ^d`: a weak limit of a subsequence of
 `freeFiniteMeasure d n`, chosen by Prokhorov compactness. -/
 noncomputable def freeInfiniteVolume (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ProbabilityMeasure (ConfigSpace (Sym2 (Site d))) :=
   (CompactSpace.tendsto_subseq (fun n => freeFiniteMeasure d n hp hp1 hq)).choose
 
-/-- `freeInfiniteVolume` is the weak limit of `freeFiniteMeasure` along some strictly increasing
+/-- **Free infinite-volume measure is a subsequential weak limit.**
+`freeInfiniteVolume` is the weak limit of `freeFiniteMeasure` along some strictly increasing
 sequence of box sizes. -/
 lemma freeInfiniteVolume_isLimit (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
@@ -212,14 +225,16 @@ lemma freeInfiniteVolume_isLimit (d : ℕ) {p q : ℝ}
     (CompactSpace.tendsto_subseq (fun n => freeFiniteMeasure d n hp hp1 hq)).choose_spec
   exact ⟨φ, hφ, htends⟩
 
-/-- A wired infinite-volume random-cluster measure on `ℤ^d`: a weak limit of a subsequence of
+/-- **Wired infinite-volume random-cluster measure.**
+A wired infinite-volume random-cluster measure on `ℤ^d`: a weak limit of a subsequence of
 `wiredFiniteMeasure d n`, chosen by Prokhorov compactness. -/
 noncomputable def wiredInfiniteVolume (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ProbabilityMeasure (ConfigSpace (Sym2 (Site d))) :=
   (CompactSpace.tendsto_subseq (fun n => wiredFiniteMeasure d n hp hp1 hq)).choose
 
-/-- `wiredInfiniteVolume` is the weak limit of `wiredFiniteMeasure` along some strictly increasing
+/-- **Wired infinite-volume measure is a subsequential weak limit.**
+`wiredInfiniteVolume` is the weak limit of `wiredFiniteMeasure` along some strictly increasing
 sequence of box sizes. -/
 lemma wiredInfiniteVolume_isLimit (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :

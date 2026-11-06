@@ -110,7 +110,8 @@ lemma atip2_minusState_ae_const (β h : ℝ) (hd : 1 ≤ d) (hβ : 0 ≤ β) (hh
 
 /-! ## B. Extreme DLR states -/
 
-/-- `μ` is an extreme point of the DLR states: a proper convex decomposition into DLR probability
+/-- **Extreme point of the DLR states.**
+`μ` is an extreme point of the DLR states: a proper convex decomposition into DLR probability
 measures is trivial. -/
 def IsDLRExtremePoint (β h : ℝ) (μ : Measure (ConfigSpace (Site d))) : Prop :=
   ∀ (ν₁ ν₂ : Measure (ConfigSpace (Site d))) [IsProbabilityMeasure ν₁] [IsProbabilityMeasure ν₂],
@@ -158,7 +159,8 @@ lemma atip2_dirac_const_isErgodic :
   · right; simp [Set.indicator_of_mem hmem]
   · left; simp [Set.indicator_of_notMem hmem]
 
-/-- A nonvacuity check: the Dirac mass at the all-plus configuration gives the all-plus event
+/-- **All-plus Dirac mass gives the all-plus event probability one.**
+A nonvacuity check: the Dirac mass at the all-plus configuration gives the all-plus event
 probability one. -/
 lemma atip2_ergodic_zeroOne_nonvacuous :
     (Measure.dirac (fun _ => true) : Measure (ConfigSpace (Site 1)))

@@ -72,7 +72,8 @@ lemma ons_KWmat_dartRev (L : ℕ) (x ω : ℂ) (d₁ d₂ : ons_Dart L) :
 
 /-! ## B. Loop reversal -/
 
-/-- The reverse of a closed walk: position `k` carries the reverse of the dart at position `-k`. -/
+/-- **Reverse of a closed walk.**
+The reverse of a closed walk: position `k` carries the reverse of the dart at position `-k`. -/
 def ons_loopRev (L : ℕ) {n : ℕ} [NeZero n] (v : Fin n → ons_Dart L) : Fin n → ons_Dart L :=
   fun k => ons_dartRev L (v (-k))
 

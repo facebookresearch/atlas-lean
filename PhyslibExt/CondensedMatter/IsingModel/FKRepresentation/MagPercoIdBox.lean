@@ -62,12 +62,13 @@ variable {d : ℕ}
 
 /-! ## A. Box graphs and the boundary connection profile -/
 
-/-- The origin lies in every box. Same statement as `Ising.origin_mem_box`, which this module does
+/-- **Origin lies in every box.**
+The origin lies in every box. Same statement as `Ising.origin_mem_box`, which this module does
 not import. -/
 lemma origin_mem_box_boxVerts (d n : ℕ) : origin d ∈ box d n := fun i => by
   simp [origin]
 
-/-- The origin as a vertex of the box graph. -/
+/-- **Origin as a vertex of the box graph.** The origin as a vertex of the box graph. -/
 def boxOrigin (d n : ℕ) : boxVerts d n := ⟨origin d, origin_mem_box_boxVerts d n⟩
 
 lemma boxBoundary_nonempty (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n) :
@@ -89,7 +90,8 @@ lemma boxBoundary_nonempty (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n) :
     omega
   exact ⟨⟨w, hwbox⟩, by rw [boxBoundary]; exact ⟨hwbox, hwnotbox⟩⟩
 
-/-- The probability `φ^w_n(0 ↔ ∂Λ_n)` that the origin is connected to the boundary of the box graph
+/-- **Wired probability that the origin reaches the box boundary.**
+The probability `φ^w_n(0 ↔ ∂Λ_n)` that the origin is connected to the boundary of the box graph
 of `Λ_n` under the wired FK measure with `q = 2`. -/
 noncomputable def boxBoundaryConnProfile (d : ℕ) {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1)
     (_hq : (0 : ℝ) < 2) (n : ℕ) : ℝ :=

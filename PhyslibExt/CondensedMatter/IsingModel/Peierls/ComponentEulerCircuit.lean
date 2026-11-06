@@ -69,7 +69,8 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## A. The component graph of a face -/
 
-/-- The faces of `T` reachable from `f` in the face-boundary graph of `K`. -/
+/-- **Faces of a set reachable from a face in the face-boundary graph.**
+The faces of `T` reachable from `f` in the face-boundary graph of `K`. -/
 noncomputable def componentSupport (K : Set (Site 2)) (T : Finset (Site 2)) (f : Site 2) :
     Finset (Site 2) :=
   T.filter (fun g => (faceBoundaryGraph K).Reachable f g)
@@ -105,7 +106,8 @@ lemma componentSupport_walk_subset {K : Set (Site 2)} {T : Finset (Site 2)}
     | nil => exact absurd rfl hvf
     | @cons _ c _ hadj2 _ => exact hsupp hadj2.mem_support_left
 
-/-- The connected component of the face `f` in the face-boundary graph of `K`, as a graph on all
+/-- **Component of a face in the face-boundary graph.**
+The connected component of the face `f` in the face-boundary graph of `K`, as a graph on all
 faces. -/
 def componentGraph (K : Set (Site 2)) (f : Site 2) : SimpleGraph (Site 2) where
   Adj a b := (faceBoundaryGraph K).Adj a b ∧ (faceBoundaryGraph K).Reachable f a ∧
@@ -262,7 +264,8 @@ lemma dualCircuit_of_componentCovers {K : Set (Site 2)} {T : Finset (Site 2)}
 
 /-! ## C. Tight circuit data and the Peierls count -/
 
-/-- Every realised contour of length `ℓ` in `Λ_n ⊆ ℤ²` is the contour of a cluster whose
+/-- **Tight axis circuit data: contour edges in one axis-face component.**
+Every realised contour of length `ℓ` in `Λ_n ⊆ ℤ²` is the contour of a cluster whose
 face-boundary graph has all its edges in the component of an axis face `(j, 0)` with `j < ℓ`. -/
 def TightAxisCircuitData (n ℓ : ℕ) : Prop :=
   ∀ F ∈ realisedContours 2 n ℓ,

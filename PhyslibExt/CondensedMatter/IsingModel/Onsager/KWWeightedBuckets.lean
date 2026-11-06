@@ -48,7 +48,8 @@ open Matrix BigOperators
 
 /-! ## A. Buckets -/
 
-/-- The total edge-weighted twisted Kac-Ward weight of closed walks of length `n + 1` visiting `e`
+/-- **Edge-weighted twisted bucket: walks through a dart, not its reverse.**
+The total edge-weighted twisted Kac-Ward weight of closed walks of length `n + 1` visiting `e`
 but not its reverse. -/
 noncomputable def ons_weightedPhaseBucketE
     (L : ℕ) [NeZero L]
@@ -60,7 +61,8 @@ noncomputable def ons_weightedPhaseBucketE
     ons_loopWeight (ons_KWmatWeightedPhase L weight omega
       (ons_spinPhase L a) (ons_spinPhase L b)) d
 
-/-- The total edge-weighted twisted Kac-Ward weight of closed walks of length `n + 1` visiting
+/-- **Edge-weighted twisted bucket: walks avoiding a dart and its reverse.**
+The total edge-weighted twisted Kac-Ward weight of closed walks of length `n + 1` visiting
 neither `e` nor its reverse. -/
 noncomputable def ons_weightedPhaseBucketN
     (L : ℕ) [NeZero L]
@@ -72,7 +74,8 @@ noncomputable def ons_weightedPhaseBucketN
     ons_loopWeight (ons_KWmatWeightedPhase L weight omega
       (ons_spinPhase L a) (ons_spinPhase L b)) d
 
-/-- As `ons_weightedPhaseBucketE`, with the darts of `forbidden` masked. -/
+/-- **Masked edge-weighted bucket: walks through a dart, not its reverse.**
+As `ons_weightedPhaseBucketE`, with the darts of `forbidden` masked. -/
 noncomputable def ons_maskWeightedPhaseBucketE
     (L : ℕ) [NeZero L]
     (weight : Sym2 (ZMod L × ZMod L) → ℂ)
@@ -84,7 +87,8 @@ noncomputable def ons_maskWeightedPhaseBucketE
       (ons_maskMatrix forbidden (ons_KWmatWeightedPhase L weight omega
         (ons_spinPhase L a) (ons_spinPhase L b))) d
 
-/-- As `ons_weightedPhaseBucketN`, with the darts of `forbidden` masked. -/
+/-- **Masked edge-weighted bucket: walks avoiding a dart and its reverse.**
+As `ons_weightedPhaseBucketN`, with the darts of `forbidden` masked. -/
 noncomputable def ons_maskWeightedPhaseBucketN
     (L : ℕ) [NeZero L]
     (weight : Sym2 (ZMod L × ZMod L) → ℂ)

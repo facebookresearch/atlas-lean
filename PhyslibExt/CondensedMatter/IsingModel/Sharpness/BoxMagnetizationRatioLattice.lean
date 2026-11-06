@@ -57,14 +57,14 @@ open Ising StatMech.Lattice
 
 /-! ## A. Boxes and inclusions -/
 
-/-- The box `Λ_n = [-n, n]^d ⊆ ℤ^d` as a type. -/
+/-- **Box $\Lambda_n$ as a type.** The box `Λ_n = [-n, n]^d ⊆ ℤ^d` as a type. -/
 abbrev sctBox (d n : ℕ) := {x : Site d // x ∈ box d n}
 
 /-- `Λ_n` is finite. -/
 noncomputable instance sctBoxFintype (d n : ℕ) : Fintype (sctBox d n) :=
   (box_finite d n).fintype
 
-/-- The nearest-neighbour graph induced on `Λ_n`. -/
+/-- **Nearest-neighbour graph on a box.** The nearest-neighbour graph induced on `Λ_n`. -/
 def sctBoxGraph (d n : ℕ) : SimpleGraph (sctBox d n) :=
   (hypercubicLattice d).induce (box d n)
 
@@ -72,14 +72,15 @@ def sctBoxGraph (d n : ℕ) : SimpleGraph (sctBox d n) :=
 noncomputable instance sctBoxGraphDecidableAdj (d n : ℕ) :
     DecidableRel (sctBoxGraph d n).Adj := Classical.decRel _
 
-/-- A site of `Λ_m` lies in `Λ_n`. -/
+/-- **Membership of a larger-box site in a smaller box.** A site of `Λ_m` lies in `Λ_n`. -/
 def sctBoxInLarger (d n m : ℕ) (z : sctBox d m) : Prop := z.1 ∈ box d n
 
 /-- Decidability of `sctBoxInLarger` (classical). -/
 noncomputable instance sctBoxInLargerDecidable (d n m : ℕ) :
     DecidablePred (sctBoxInLarger d n m) := Classical.decPred _
 
-/-- For `n ≤ m`, `Λ_n` is equivalent to the subtype of `Λ_m` of sites lying in `Λ_n`. -/
+/-- **Smaller box as a subtype of a larger box.**
+For `n ≤ m`, `Λ_n` is equivalent to the subtype of `Λ_m` of sites lying in `Λ_n`. -/
 noncomputable def sctBoxInclusionEquiv (d : ℕ) {n m : ℕ} (hnm : n ≤ m) :
     sctBox d n ≃ {z : sctBox d m // sctBoxInLarger d n m z} where
   toFun z := ⟨⟨z.1, fun i => le_trans (z.2 i) hnm⟩, z.2⟩
@@ -95,17 +96,17 @@ lemma sctBoxInclusionEquiv_adj (d : ℕ) {n m : ℕ} (hnm : n ≤ m)
         (sctBoxInclusionEquiv d hnm a) (sctBoxInclusionEquiv d hnm b) := by
   simp [sctBoxGraph, sctBoxInclusionEquiv, SimpleGraph.comap_adj]
 
-/-- The origin as a site of `Λ_n`. -/
+/-- **Origin as a site of a box.** The origin as a site of `Λ_n`. -/
 def sctBoxOrigin (d n : ℕ) : sctBox d n :=
   ⟨fun _ => 0, by intro i; simp⟩
 
 /-! ## B. Translated boxes -/
 
-/-- The translate `Λ_n - y`. -/
+/-- **Translated box $\Lambda_n - y$.** The translate `Λ_n - y`. -/
 def sctTranslatedBox (d n : ℕ) (y : Site d) : Set (Site d) :=
   (fun z : Site d => z - y) '' box d n
 
-/-- Translation by `-y` as an equivalence `Λ_n ≃ Λ_n - y`. -/
+/-- **Translation onto a translated box.** Translation by `-y` as an equivalence `Λ_n ≃ Λ_n - y`. -/
 noncomputable def sctTranslateEquiv (d n : ℕ) (y : Site d) :
     sctBox d n ≃ {z : Site d // z ∈ sctTranslatedBox d n y} where
   toFun z := ⟨z.1 - y, ⟨z.1, z.2, rfl⟩⟩
@@ -120,7 +121,8 @@ noncomputable def sctTranslateEquiv (d n : ℕ) (y : Site d) :
   left_inv z := by ext i; simp
   right_inv w := by ext i; simp
 
-/-- The nearest-neighbour graph induced on `Λ_n - y`. -/
+/-- **Nearest-neighbour graph on a translated box.**
+The nearest-neighbour graph induced on `Λ_n - y`. -/
 def sctTranslatedBoxGraph (d n : ℕ) (y : Site d) :
     SimpleGraph {z : Site d // z ∈ sctTranslatedBox d n y} :=
   (hypercubicLattice d).induce (sctTranslatedBox d n y)
@@ -134,7 +136,8 @@ noncomputable instance sctTranslatedBoxFintype (d n : ℕ) (y : Site d) :
 noncomputable instance sctTranslatedBoxGraphDecidableAdj (d n : ℕ) (y : Site d) :
     DecidableRel (sctTranslatedBoxGraph d n y).Adj := Classical.decRel _
 
-/-- A site of `Λ_{2n}` lies in `Λ_n - y`. -/
+/-- **Membership of a doubled-box site in a translated box.**
+A site of `Λ_{2n}` lies in `Λ_n - y`. -/
 def sctTranslatedInDouble (d n : ℕ) (y : sctBox d n) (z : sctBox d (2 * n)) : Prop :=
   z.1 ∈ sctTranslatedBox d n y.1
 
@@ -142,7 +145,8 @@ def sctTranslatedInDouble (d n : ℕ) (y : sctBox d n) (z : sctBox d (2 * n)) : 
 noncomputable instance sctTranslatedInDoubleDecidable (d n : ℕ) (y : sctBox d n) :
     DecidablePred (sctTranslatedInDouble d n y) := Classical.decPred _
 
-/-- For `y ∈ Λ_n`, `Λ_n - y` is equivalent to the subtype of `Λ_{2n}` of sites lying in it. -/
+/-- **Translated box as a subtype of the doubled box.**
+For `y ∈ Λ_n`, `Λ_n - y` is equivalent to the subtype of `Λ_{2n}` of sites lying in it. -/
 noncomputable def sctTranslatedInDoubleEquiv (d n : ℕ) (y : sctBox d n) :
     {z : Site d // z ∈ sctTranslatedBox d n y.1} ≃
       {z : sctBox d (2 * n) // sctTranslatedInDouble d n y z} where
@@ -180,21 +184,23 @@ lemma sctTranslateEquiv_adj (d n : ℕ) (y : Site d) (a b : sctBox d n) :
 
 /-! ## C. Box magnetizations -/
 
-/-- The free-boundary magnetization `⟨σ_x⟩_{Λ_n, β, h}` at a site `x ∈ Λ_n`. -/
+/-- **Free-boundary site magnetization in a box.**
+The free-boundary magnetization `⟨σ_x⟩_{Λ_n, β, h}` at a site `x ∈ Λ_n`. -/
 noncomputable def sctBoxMag (d : ℕ) (β h : ℝ) (n : ℕ) (x : sctBox d n) : ℝ :=
   isingExpectation (sctBoxGraph d n) β h (fun s => spin s x)
 
-/-- The origin magnetization `⟨σ_0⟩_{Λ_n, β, h}`. -/
+/-- **Origin magnetization in a box.** The origin magnetization `⟨σ_0⟩_{Λ_n, β, h}`. -/
 noncomputable def sctOriginMag (d : ℕ) (β h : ℝ) (n : ℕ) : ℝ :=
   sctBoxMag d β h n (sctBoxOrigin d n)
 
-/-- All sites of `Λ_n`. -/
+/-- **All sites of a box.** All sites of `Λ_n`. -/
 noncomputable def sctBoxSites (d n : ℕ) : Finset (sctBox d n) := Finset.univ
 
 lemma sctBoxSites_nonempty (d n : ℕ) : (sctBoxSites d n).Nonempty := by
   exact ⟨sctBoxOrigin d n, Finset.mem_univ _⟩
 
-/-- The minimal ratio `min_{x ∈ Λ_n} ⟨σ_0⟩_{Λ_n}/⟨σ_x⟩_{Λ_n}`. -/
+/-- **Minimal origin-to-site magnetization ratio in a box.**
+The minimal ratio `min_{x ∈ Λ_n} ⟨σ_0⟩_{Λ_n}/⟨σ_x⟩_{Λ_n}`. -/
 noncomputable def sctLatticeC (d : ℕ) (β h : ℝ) (n : ℕ) : ℝ :=
   sct_cInfDep (sctBox d) (sctOriginMag d β h) (sctBoxSites d)
     (sctBoxMag d β h) (sctBoxSites_nonempty d) n

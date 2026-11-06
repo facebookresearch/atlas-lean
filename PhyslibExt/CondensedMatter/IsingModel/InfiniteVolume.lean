@@ -84,7 +84,8 @@ instance instDecidableAdj (d : ℕ) (x y : Site d) :
     Decidable ((hypercubicLattice d).Adj x y) := by
   rw [hypercubicLattice_adj]; infer_instance
 
-/-- The box `Λ_n = [-n, n]^d` as a finite set of sites. -/
+/-- **Box $[-n, n]^d$ as a finite set of sites.**
+The box `Λ_n = [-n, n]^d` as a finite set of sites. -/
 noncomputable def boxFinset (d n : ℕ) : Finset (Site d) :=
   (box_finite d n).toFinset
 
@@ -100,27 +101,32 @@ noncomputable instance instFintypeBox (d n : ℕ) : Fintype {x // x ∈ box d n}
 noncomputable instance instFintypeBoxAssign (d n : ℕ) :
     Fintype ({x // x ∈ box d n} → Bool) := inferInstance
 
-/-- Ordered nearest-neighbour pairs with at least one endpoint in `Λ_n`. -/
+/-- **Ordered nearest-neighbour pairs touching the box.**
+Ordered nearest-neighbour pairs with at least one endpoint in `Λ_n`. -/
 noncomputable def bondPairsTouch (d n : ℕ) : Finset (Site d × Site d) :=
   ((boxFinset d (n + 1)) ×ˢ (boxFinset d (n + 1))).filter
     (fun p => (hypercubicLattice d).Adj p.1 p.2 ∧ (p.1 ∈ box d n ∨ p.2 ∈ box d n))
 
-/-- Ordered nearest-neighbour pairs with both endpoints in `Λ_n`. -/
+/-- **Ordered nearest-neighbour pairs inside the box.**
+Ordered nearest-neighbour pairs with both endpoints in `Λ_n`. -/
 noncomputable def bondPairsInternal (d n : ℕ) : Finset (Site d × Site d) :=
   ((boxFinset d n) ×ˢ (boxFinset d n)).filter
     (fun p => (hypercubicLattice d).Adj p.1 p.2)
 
-/-- The bonds with at least one endpoint in `Λ_n` (used for plus and minus boundary conditions). -/
+/-- **Bonds touching the box.**
+The bonds with at least one endpoint in `Λ_n` (used for plus and minus boundary conditions). -/
 noncomputable def bondFinsetTouch (d n : ℕ) : Finset (Sym2 (Site d)) :=
   (bondPairsTouch d n).image (fun p => s(p.1, p.2))
 
-/-- The bonds with both endpoints in `Λ_n` (used for the free boundary condition). -/
+/-- **Bonds inside the box.**
+The bonds with both endpoints in `Λ_n` (used for the free boundary condition). -/
 noncomputable def bondFinsetInternal (d n : ℕ) : Finset (Sym2 (Site d)) :=
   (bondPairsInternal d n).image (fun p => s(p.1, p.2))
 
 /-! ## B. Boundary conditions -/
 
-/-- The configuration equal to `τ` inside the box `Λ_n` and to the boundary condition `η`
+/-- **Configuration glued from inside spins and a boundary condition.**
+The configuration equal to `τ` inside the box `Λ_n` and to the boundary condition `η`
 outside. -/
 noncomputable def glue (η : ConfigSpace (Site d)) {n : ℕ}
     (τ : {x // x ∈ box d n} → Bool) : ConfigSpace (Site d) :=
@@ -138,12 +144,14 @@ noncomputable def glue (η : ConfigSpace (Site d)) {n : ℕ}
 
 /-! ## C. Finite-volume Gibbs measures -/
 
-/-- The box energy `-∑_{e ∈ B} σ_e - h ∑_{x ∈ Λ_n} σ_x` of the configuration `glue η τ`. -/
+/-- **Box energy with a boundary condition.**
+The box energy `-∑_{e ∈ B} σ_e - h ∑_{x ∈ Λ_n} σ_x` of the configuration `glue η τ`. -/
 noncomputable def fvEnergy (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (h : ℝ) (τ : {x // x ∈ box d n} → Bool) : ℝ :=
   - (∑ e ∈ B, bond (glue η τ) e) - h * ∑ x ∈ boxFinset d n, spin (glue η τ) x
 
-/-- The Boltzmann weight `exp (-β H)` of an inside configuration `τ` with boundary condition `η`. -/
+/-- **Finite-volume Boltzmann weight with a boundary condition.**
+The Boltzmann weight `exp (-β H)` of an inside configuration `τ` with boundary condition `η`. -/
 noncomputable def fvWeight (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) (τ : {x // x ∈ box d n} → Bool) : ℝ :=
   Real.exp (-β * fvEnergy η n B h τ)
@@ -156,7 +164,8 @@ lemma fvWeight_nonneg (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) (τ : {x // x ∈ box d n} → Bool) :
     0 ≤ fvWeight η n B β h τ := (fvWeight_pos η n B β h τ).le
 
-/-- The finite-volume partition function with boundary condition `η`. -/
+/-- **Finite-volume partition function with a boundary condition.**
+The finite-volume partition function with boundary condition `η`. -/
 noncomputable def fvZ (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) : ℝ :=
   ∑ τ : {x // x ∈ box d n} → Bool, fvWeight η n B β h τ
@@ -172,7 +181,8 @@ lemma fvZ_ne_zero (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) : fvZ η n B β h ≠ 0 :=
   (fvZ_pos η n B β h).ne'
 
-/-- The finite-volume Gibbs probability of an inside configuration `τ` with boundary condition
+/-- **Finite-volume Gibbs probability with a boundary condition.**
+The finite-volume Gibbs probability of an inside configuration `τ` with boundary condition
 `η`. -/
 noncomputable def fvProb (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) (τ : {x // x ∈ box d n} → Bool) : ℝ :=
@@ -190,7 +200,8 @@ lemma fvProb_sum_eq_one (η : ConfigSpace (Site d)) (n : ℕ)
   rw [← Finset.sum_div, div_eq_one_iff_eq (fvZ_ne_zero η n B β h)]
   rfl
 
-/-- The finite-volume Gibbs measure in `Λ_n` with boundary condition `η` and bond set `B`, as a
+/-- **Finite-volume Gibbs measure on configurations of $\mathbb{Z}^d$.**
+The finite-volume Gibbs measure in `Λ_n` with boundary condition `η` and bond set `B`, as a
 measure on configurations of `ℤ^d`. -/
 noncomputable def fvMeasure (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) :
@@ -214,7 +225,8 @@ instance fvMeasure_isProbabilityMeasure (η : ConfigSpace (Site d)) (n : ℕ)
     IsProbabilityMeasure (fvMeasure η n B β h) :=
   ⟨fvMeasure_univ η n B β h⟩
 
-/-- The finite-volume Gibbs measure as a `ProbabilityMeasure`. -/
+/-- **Finite-volume Gibbs measure as a probability measure.**
+The finite-volume Gibbs measure as a `ProbabilityMeasure`. -/
 noncomputable def fvProbabilityMeasure (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
@@ -222,36 +234,41 @@ noncomputable def fvProbabilityMeasure (η : ConfigSpace (Site d)) (n : ℕ)
 
 /-! ## D. Plus, minus and free measures -/
 
-/-- The all-plus configuration. -/
+/-- **All-plus configuration.** The all-plus configuration. -/
 def plusField (d : ℕ) : ConfigSpace (Site d) := fun _ => true
 
-/-- The all-minus configuration. -/
+/-- **All-minus configuration.** The all-minus configuration. -/
 def minusField (d : ℕ) : ConfigSpace (Site d) := fun _ => false
 
-/-- The Ising measure in `Λ_n` with plus boundary condition. -/
+/-- **Plus-boundary Ising measure in a box.**
+The Ising measure in `Λ_n` with plus boundary condition. -/
 noncomputable def plusMeasure (d n : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   fvProbabilityMeasure (plusField d) n (bondFinsetTouch d n) β h
 
-/-- The Ising measure in `Λ_n` with minus boundary condition. -/
+/-- **Minus-boundary Ising measure in a box.**
+The Ising measure in `Λ_n` with minus boundary condition. -/
 noncomputable def minusMeasure (d n : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   fvProbabilityMeasure (minusField d) n (bondFinsetTouch d n) β h
 
-/-- The Ising measure in `Λ_n` with free boundary condition (internal bonds only). -/
+/-- **Free-boundary Ising measure in a box.**
+The Ising measure in `Λ_n` with free boundary condition (internal bonds only). -/
 noncomputable def freeMeasure (d n : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   fvProbabilityMeasure (minusField d) n (bondFinsetInternal d n) β h
 
 /-! ## E. Infinite-volume states -/
 
-/-- `μ` is an infinite-volume state of the sequence `ρ`: some subsequence of `ρ` converges weakly to
+/-- **Infinite-volume state of a sequence of measures.**
+`μ` is an infinite-volume state of the sequence `ρ`: some subsequence of `ρ` converges weakly to
 `μ`. -/
 def InfiniteVolumeState (ρ : ℕ → ProbabilityMeasure (ConfigSpace (Site d)))
     (μ : ProbabilityMeasure (ConfigSpace (Site d))) : Prop :=
   ∃ φ : ℕ → ℕ, StrictMono φ ∧ WeakConvergesTo (ρ ∘ φ) μ
 
-/-- Every sequence of probability measures on configurations has an infinite-volume state, by
+/-- **Existence of infinite-volume states.**
+Every sequence of probability measures on configurations has an infinite-volume state, by
 Prokhorov compactness. -/
 lemma exists_infiniteVolumeState
     (ρ : ℕ → ProbabilityMeasure (ConfigSpace (Site d))) :
@@ -259,7 +276,8 @@ lemma exists_infiniteVolumeState
   obtain ⟨ν, φ, hφ, htends⟩ := CompactSpace.tendsto_subseq ρ
   exact ⟨ν, φ, hφ, htends⟩
 
-/-- A subsequential weak limit of `ρ`, chosen by `exists_infiniteVolumeState`. -/
+/-- **Chosen subsequential weak limit of a sequence of measures.**
+A subsequential weak limit of `ρ`, chosen by `exists_infiniteVolumeState`. -/
 noncomputable def limitState (ρ : ℕ → ProbabilityMeasure (ConfigSpace (Site d))) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   (exists_infiniteVolumeState ρ).choose
@@ -269,19 +287,22 @@ lemma limitState_isInfiniteVolumeState
     InfiniteVolumeState ρ (limitState ρ) :=
   (exists_infiniteVolumeState ρ).choose_spec
 
-/-- The plus state: a weak subsequential limit of the plus-boundary box measures.
+/-- **Infinite-volume plus state as a subsequential weak limit.**
+The plus state: a weak subsequential limit of the plus-boundary box measures.
 Full-sequence convergence is not claimed here: the library only provides this state as a
 chosen subsequential limit (see `plusState_isInfiniteVolumeState`). -/
 noncomputable def plusState (d : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   limitState (fun n => plusMeasure d n β h)
 
-/-- The minus state: a weak subsequential limit of the minus-boundary box measures. -/
+/-- **Infinite-volume minus state as a subsequential weak limit.**
+The minus state: a weak subsequential limit of the minus-boundary box measures. -/
 noncomputable def minusState (d : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   limitState (fun n => minusMeasure d n β h)
 
-/-- The free state: a weak subsequential limit of the free-boundary box measures. -/
+/-- **Infinite-volume free state as a subsequential weak limit.**
+The free state: a weak subsequential limit of the free-boundary box measures. -/
 noncomputable def freeState (d : ℕ) (β h : ℝ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   limitState (fun n => freeMeasure d n β h)

@@ -70,7 +70,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 ## A. Cluster counts with a boundary wiring
 -/
 
-/-- The number of clusters of `ω` under the boundary wiring `C`: connected components of the open
+/-- **Number of clusters under a boundary wiring.**
+The number of clusters of `ω` under the boundary wiring `C`: connected components of the open
 subgraph of `ω` joined with `C`. -/
 noncomputable def numClustersBC (C : SimpleGraph V) [DecidableRel C.Adj]
     (ω : ConfigSpace (Sym2 V)) : ℕ :=
@@ -88,7 +89,8 @@ lemma numClustersBC_boundaryClique (ω : ConfigSpace (Sym2 V)) :
   rw [numClustersBC, StatMech.Lattice.numClustersWired, StatMech.Lattice.wiredGraph,
     openSub_eq_openGraph]
 
-/-- Mixed supermodularity of cluster counts for nested wirings `C ≤ C'`: `k_C(a) + k_C'(b) ≤ k_C(a ⊓
+/-- **Mixed supermodularity of cluster counts for nested wirings.**
+Mixed supermodularity of cluster counts for nested wirings `C ≤ C'`: `k_C(a) + k_C'(b) ≤ k_C(a ⊓
 b) + k_C'(a ⊔ b)`. -/
 lemma mixed_supermodular_bc (C C' : SimpleGraph V) [DecidableRel C.Adj]
     [DecidableRel C'.Adj] (hCC' : C ≤ C') (a b : ConfigSpace (Sym2 V)) :
@@ -123,7 +125,8 @@ variable (C : SimpleGraph V) [DecidableRel C.Adj]
 ## B. The measure with a boundary wiring
 -/
 
-/-- The unnormalized random-cluster weight with boundary wiring `C`: `edgeProduct G p ω · q ^
+/-- **Random-cluster weight with a boundary wiring.**
+The unnormalized random-cluster weight with boundary wiring `C`: `edgeProduct G p ω · q ^
 numClustersBC G C ω`. -/
 noncomputable def bcWeight (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   edgeProduct G p ω * q ^ numClustersBC G C ω
@@ -136,7 +139,8 @@ lemma bcWeight_nonneg {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (ω : ConfigSpace (Sym2 V)) : 0 ≤ bcWeight G C p q ω :=
   (bcWeight_pos G C hp hp1 hq ω).le
 
-/-- The partition function with boundary wiring `C`. -/
+/-- **Partition function with a boundary wiring.**
+The partition function with boundary wiring `C`. -/
 noncomputable def bcZ (p q : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), bcWeight G C p q ω
 
@@ -148,7 +152,8 @@ lemma bcZ_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     bcZ G C p q ≠ 0 :=
   (bcZ_pos G C hp hp1 hq).ne'
 
-/-- The random-cluster probability with boundary wiring `C`, `bcWeight / bcZ`. -/
+/-- **Random-cluster probability with a boundary wiring.**
+The random-cluster probability with boundary wiring `C`, `bcWeight / bcZ`. -/
 noncomputable def bcProb (p q : ℝ) (ω : ConfigSpace (Sym2 V)) : ℝ :=
   bcWeight G C p q ω / bcZ G C p q
 
@@ -166,7 +171,8 @@ lemma bcProb_sum_eq_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
 ## C. Holley's condition and the FKG inequality
 -/
 
-/-- Holley's condition for the weights with nested wirings `C ≤ C'` and `q ≥ 1`. -/
+/-- **Holley's condition for weights with nested wirings, $q \ge 1$.**
+Holley's condition for the weights with nested wirings `C ≤ C'` and `q ≥ 1`. -/
 lemma bcWeight_cross (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ C')
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) (a b : ConfigSpace (Sym2 V)) :
     bcWeight G C p q a * bcWeight G C' p q b
@@ -193,7 +199,8 @@ lemma bcWeight_cross (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ C'
   rw [hcomm]
   exact mul_le_mul_of_nonneg_left hcluster hpow_nonneg
 
-/-- Holley's condition for the probabilities with nested wirings `C ≤ C'` and `q ≥ 1`. -/
+/-- **Holley's condition for probabilities with nested wirings, $q \ge 1$.**
+Holley's condition for the probabilities with nested wirings `C ≤ C'` and `q ≥ 1`. -/
 lemma bcProb_cross (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ C')
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) (a b : ConfigSpace (Sym2 V)) :
     bcProb G C p q a * bcProb G C' p q b
@@ -211,7 +218,8 @@ lemma bcProb_FKGLatticeCondition {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
   intro a b
   simpa only [mul_comm] using bcProb_cross G C C le_rfl hp hp1 hq a b
 
-/-- FKG inequality for the random-cluster measure (Fortuin, Kasteleyn and Ginibre, 1971): for `q ≥
+/-- **FKG inequality for the random-cluster measure, $q \ge 1$.**
+FKG inequality for the random-cluster measure (Fortuin, Kasteleyn and Ginibre, 1971): for `q ≥
 1` and any boundary wiring `C`, increasing functions are positively correlated under `φ_C`. See
 Grimmett, *The Random-Cluster Model* (2006), Chapter 3. -/
 theorem bcProb_positively_associated {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -241,7 +249,8 @@ lemma bcProb_positively_associated_events {p q : ℝ} (hp : 0 < p)
 ## D. Monotonicity in the boundary condition
 -/
 
-/-- Comparison of boundary conditions for the random-cluster measure: for `q ≥ 1` and wirings `C ≤
+/-- **Random-cluster comparison of boundary conditions for $q \ge 1$.**
+Comparison of boundary conditions for the random-cluster measure: for `q ≥ 1` and wirings `C ≤
 C'`, `φ_C(A) ≤ φ_C'(A)` for every increasing event `A`. This follows from Holley's inequality
 (Holley, 1974); see Grimmett, *The Random-Cluster Model* (2006), Chapter 4. -/
 theorem bcProb_mono_bc (C' : SimpleGraph V) [DecidableRel C'.Adj] (hCC' : C ≤ C')

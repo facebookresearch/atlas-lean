@@ -72,7 +72,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Closed trails and splicing -/
 
-/-- The degree of a vertex is the number of edges containing it. See also
+/-- **Degree of a vertex equals the number of edges containing it.**
+The degree of a vertex is the number of edges containing it. See also
 `SimpleGraph.card_incidenceFinset_eq_degree`. -/
 lemma degree_eq_card_filter_edges (G : SimpleGraph V) [DecidableRel G.Adj] (x : V) :
     G.degree x = (G.edgeFinset.filter (fun e => x ∈ e)).card := by
@@ -131,7 +132,8 @@ lemma exists_maximal_closed_trail (G : SimpleGraph V) (u : V) :
   rw [hplen]
   exact Nat.le_findGreatest hqlen hqP
 
-/-- Splice a closed walk `c` at a vertex `w` of the closed walk `p` into `p`. -/
+/-- **Splicing a closed walk into another at a shared vertex.**
+Splice a closed walk `c` at a vertex `w` of the closed walk `p` into `p`. -/
 noncomputable def spliceWalk (G : SimpleGraph V) {u w : V} (p : G.Walk u u)
     (hw : w ∈ p.support) (c : G.Walk w w) : G.Walk u u :=
   (p.takeUntil w hw).append (c.append (p.dropUntil w hw))
@@ -299,7 +301,8 @@ lemma exists_closed_eulerian_length (G : SimpleGraph V) [DecidableRel G.Adj]
   exact ⟨p, hp, hcov, closed_eulerian_length_eq_edgeFinset_card G hp hcov⟩
 
 
-/-- The closed trail of `exists_closed_eulerian` is an Eulerian circuit in Mathlib's sense, based
+/-- **Eulerian circuit at any vertex of a finite connected even graph.**
+The closed trail of `exists_closed_eulerian` is an Eulerian circuit in Mathlib's sense, based
 at any prescribed vertex. See also `SimpleGraph.Connected.exists_isEulerian`. -/
 lemma exists_closed_isEulerian (G : SimpleGraph V) [DecidableRel G.Adj]
     (hconn : G.Connected) (heven : ∀ x, Even (G.degree x)) (u : V) :
@@ -314,7 +317,8 @@ variable {V : Type*} [DecidableEq V] (G : SimpleGraph V) [LocallyFinite G]
 
 omit [DecidableEq V] in
 open scoped Classical in
-/-- Euler's theorem for a locally finite graph whose support lies in a finite set `T` on which the
+/-- **Euler's theorem for a graph supported on a finite connected set.**
+Euler's theorem for a locally finite graph whose support lies in a finite set `T` on which the
 induced graph is connected. See also `SimpleGraph.ConnectedSupport.exists_isEulerian` in
 `MathlibExt`. -/
 lemma exists_closed_eulerian_of_finite_support
@@ -362,7 +366,8 @@ end EulerianExistence
 
 /-! ## C. Single dual circuits for planar contours -/
 
-/-- The face-boundary graph of `K` is connected on the finite set of faces `T`. -/
+/-- **Connectedness of the face-boundary graph on a face set.**
+The face-boundary graph of `K` is connected on the finite set of faces `T`. -/
 def FaceBoundaryConnected (K : Set (Site 2)) (T : Finset (Site 2)) : Prop :=
   ((faceBoundaryGraph K).induce (T : Set (Site 2))).Connected
 
@@ -375,7 +380,8 @@ lemma faceBoundaryGraph_single_dualCircuit {K : Set (Site 2)} {T : Finset (Site 
   EulerianExistence.exists_closed_eulerian_of_finite_support (faceBoundaryGraph K) T hsupp hconn
     (degree_faceBoundaryGraph_even K) hf₀
 
-/-- A finite set of faces containing the support of the face-boundary graph of a finite set `K`. -/
+/-- **Finite face set containing the face-boundary support.**
+A finite set of faces containing the support of the face-boundary graph of a finite set `K`. -/
 noncomputable def boundarySupport {K : Set (Site 2)} (hK : K.Finite) : Finset (Site 2) :=
   (exists_finset_support_faceBoundaryGraph K hK).choose
 

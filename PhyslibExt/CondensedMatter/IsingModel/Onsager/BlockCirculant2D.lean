@@ -50,13 +50,15 @@ open Matrix
 
 /-! ## A. Block-circulant matrices on the torus -/
 
-/-- The block-circulant matrix on `(ℤ_L × ℤ_L) × Fin d` with block `v (p - q)` in position `(p, q)`.
+/-- **Two-dimensional block-circulant matrix on the torus.**
+The block-circulant matrix on `(ℤ_L × ℤ_L) × Fin d` with block `v (p - q)` in position `(p, q)`.
 -/
 def ons_blockCirculant2D (L d : ℕ) (v : (ZMod L × ZMod L) → Matrix (Fin d) (Fin d) ℂ) :
     Matrix ((ZMod L × ZMod L) × Fin d) ((ZMod L × ZMod L) × Fin d) ℂ :=
   fun p q => v (p.1.1 - q.1.1, p.1.2 - q.1.2) p.2 q.2
 
-/-- The Fourier symbol `∑_k ω ^ (k₁ j₁ + k₂ j₂) • v k` at frequency `j`. -/
+/-- **Fourier symbol of a two-dimensional block-circulant matrix.**
+The Fourier symbol `∑_k ω ^ (k₁ j₁ + k₂ j₂) • v k` at frequency `j`. -/
 noncomputable def ons_blockSymbol2D (L d : ℕ) [NeZero L] (ω : ℂ)
     (v : (ZMod L × ZMod L) → Matrix (Fin d) (Fin d) ℂ) (j : ZMod L × ZMod L) :
     Matrix (Fin d) (Fin d) ℂ :=

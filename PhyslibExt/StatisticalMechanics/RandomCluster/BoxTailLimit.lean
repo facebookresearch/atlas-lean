@@ -60,7 +60,8 @@ variable {d : ℕ}
 
 /-! ## A. The box-boundary connection event -/
 
-/-- The event that the origin of the box `Λ_n` is connected to the boundary `∂Λ_n` by open edges of
+/-- **Event that the box origin connects to the box boundary.**
+The event that the origin of the box `Λ_n` is connected to the boundary `∂Λ_n` by open edges of
 `Λ_n`.
 -/
 def boxBdryConnEvent (d n : ℕ) : Set (ConfigSpace (Sym2 (Site d))) :=
@@ -137,7 +138,8 @@ lemma boxBoundaryConnProfile_eq_wiredFiniteMeasure_real (d n : ℕ) {p : ℝ}
           : Measure (ConfigSpace (Sym2 (Site d)))).real (boxBdryConnEvent d n) := by
   rw [IsingFK.boxBoundaryConnProfile, wiredFiniteMeasure_real_boxBdryConnEvent d n hp hp1]
 
-/-- If the wired `q = 2` probabilities of `{0 ↔ ∂Λ_n}` converge to `θ(p, 2)`, then so does the
+/-- **Box-boundary profile tends to $\theta(p,2)$ if wired probabilities do.**
+If the wired `q = 2` probabilities of `{0 ↔ ∂Λ_n}` converge to `θ(p, 2)`, then so does the
 Ising
 box-boundary connection profile.
 -/

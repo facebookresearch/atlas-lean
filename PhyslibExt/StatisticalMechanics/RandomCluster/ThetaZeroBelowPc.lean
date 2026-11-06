@@ -61,7 +61,8 @@ variable {d : ℕ}
 
 /-! ## A. Monotonicity of the percolation probability in `p` -/
 
-/-- For `q = 2`, the wired infinite-volume probability that the origin is connected to the boundary
+/-- **Wired box-boundary connection probability is monotone in $p$ at $q = 2$.**
+For `q = 2`, the wired infinite-volume probability that the origin is connected to the boundary
 of the box of radius `n` is monotone in `p`. -/
 lemma tzp_fkTheta_iv_monotone_boxBdry (n : ℕ) {p₁ p₂ : ℝ}
     (hp₁ : 0 < p₁) (hp₁' : p₁ < 1) (hp₂ : 0 < p₂) (hp₂' : p₂ < 1) (hle : p₁ ≤ p₂) :
@@ -86,7 +87,8 @@ lemma tzp_fkTheta_iv_monotone_boxBdry (n : ℕ) {p₁ p₂ : ℝ}
   rw [hEvent]
   exact le_of_tendsto_of_tendsto htend₁ htend₂ hmono
 
-/-- For `q = 2`, the wired percolation probability `θ¹(p, 2)` is monotone in `p`. -/
+/-- **Monotonicity of $\theta^1(p, 2)$ in $p$.**
+For `q = 2`, the wired percolation probability `θ¹(p, 2)` is monotone in `p`. -/
 lemma tzp_fkTheta_monotone_in_p {p₁ p₂ : ℝ}
     (hp₁ : 0 < p₁) (hp₁' : p₁ < 1) (hp₂ : 0 < p₂) (hp₂' : p₂ < 1) (hle : p₁ ≤ p₂) :
     fkTheta d hp₁ hp₁' (by norm_num : (0 : ℝ) < 2) (q := 2)
@@ -104,7 +106,8 @@ lemma tzp_fkTheta_monotone_in_p {p₁ p₂ : ℝ}
 
 /-! ## B. No percolation below the critical point -/
 
-/-- For `q = 2`, there is no percolation below the critical point: `θ¹(p, 2) = 0` for `p < p_c(2,
+/-- **No percolation below the critical point at $q = 2$.**
+For `q = 2`, there is no percolation below the critical point: `θ¹(p, 2) = 0` for `p < p_c(2,
 d)`. -/
 lemma tzp_fkTheta_eq_zero_of_lt_pc {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hpc : p < FK.fkPc d 2) :
@@ -123,7 +126,8 @@ lemma tzp_fkTheta_eq_zero_of_lt_pc {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
       ≤ FK.fkTheta d hp'0 hp'1 (by norm_num : (0 : ℝ) < 2) (q := 2) := hmono
     _ = 0 := hθ'
 
-/-- For `q = 2`, if `θ¹(p_c, 2) = 0` (hypothesis `hθpc`, not proved here), then `θ¹(p, 2) = 0` for
+/-- **No percolation for $p \le p_c$ at $q = 2$, given $\theta^1(p_c, 2) = 0$.**
+For `q = 2`, if `θ¹(p_c, 2) = 0` (hypothesis `hθpc`, not proved here), then `θ¹(p, 2) = 0` for
 every `p ≤ p_c(2, d)`. -/
 lemma tzp_fkTheta_eq_zero_of_le_pc_of_pc
     (hθpc : ∀ (hp : 0 < FK.fkPc d 2) (hp1 : FK.fkPc d 2 < 1),

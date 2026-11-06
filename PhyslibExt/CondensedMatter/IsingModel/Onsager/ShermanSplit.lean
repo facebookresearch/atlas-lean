@@ -62,7 +62,8 @@ variable {E : Type*}
 
 /-! ## A. Edge weights of lists -/
 
-/-- The edge weight `Λ e₀ e₁ * Λ e₁ e₂ * ⋯ * Λ eₖ₋₁ eₖ` of a walk `[e₀, …, eₖ]`; walks with at most
+/-- **Edge weight of a walk.**
+The edge weight `Λ e₀ e₁ * Λ e₁ e₂ * ⋯ * Λ eₖ₋₁ eₖ` of a walk `[e₀, …, eₖ]`; walks with at most
 one entry have weight `1`. -/
 noncomputable def ons_edgeWeight (Λ : Matrix E E ℂ) : List E → ℂ
   | [] => 1
@@ -106,7 +107,8 @@ variable {E : Type*}
 
 /-! ## B. Gluing segments -/
 
-/-- Concatenation of walk segments sharing their end points at `e`: each segment except the last
+/-- **Gluing of walk segments at a root.**
+Concatenation of walk segments sharing their end points at `e`: each segment except the last
 loses its final entry, and the result ends in `e`. -/
 def ons_glue (e : E) (ss : List (List E)) : List E :=
   ss.foldr (fun s acc => s.dropLast ++ acc) [e]
@@ -163,7 +165,8 @@ variable {E : Type*} [DecidableEq E]
 
 /-! ## C. Splitting at first returns -/
 
-/-- Splitting of a list at the occurrences of `e`: each piece runs from one occurrence of `e` to the
+/-- **Splitting a list at the occurrences of a root.**
+Splitting of a list at the occurrences of `e`: each piece runs from one occurrence of `e` to the
 next. -/
 def ons_firstReturnSplit (e : E) : List E → List (List E)
   | [] => []
@@ -237,7 +240,8 @@ lemma ons_glue_firstReturnSplit (e : E) (w : List E) (hw : w.getLast? = some e) 
           rw [← hpost, List.takeWhile_append_dropWhile]
   exact key w.length w le_rfl hw
 
-/-- A first-return segment at `e`: a list `e :: interior ++ [e]` whose interior avoids `e`. -/
+/-- **First-return segment at a state.**
+A first-return segment at `e`: a list `e :: interior ++ [e]` whose interior avoids `e`. -/
 def ons_isFirstReturnSegment (e : E) (s : List E) : Prop :=
   ∃ interior : List E,
     s = e :: interior ++ [e] ∧ ∀ x ∈ interior, x ≠ e
@@ -456,7 +460,8 @@ lemma ons_count_glue_firstReturn (e : E) (ss : List (List E))
       simp
       omega
 
-/-- The first-return segments of a closed walk at `e`, without the trailing one-element piece `[e]`.
+/-- **First-return segments of a closed walk.**
+The first-return segments of a closed walk at `e`, without the trailing one-element piece `[e]`.
 -/
 def ons_firstReturnFactors (e : E) (w : List E) : List (List E) :=
   (ons_firstReturnSplit e w).dropLast

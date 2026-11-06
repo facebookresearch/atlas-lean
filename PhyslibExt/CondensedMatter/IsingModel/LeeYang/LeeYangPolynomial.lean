@@ -57,22 +57,26 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Definitions -/
 
-/-- The number of minus spins (sites with value `false`) of a configuration. -/
+/-- **Number of minus spins of a configuration.**
+The number of minus spins (sites with value `false`) of a configuration. -/
 def minusSpinCount (s : ConfigSpace V) : ℕ :=
   (Finset.univ.filter fun x => s x = false).card
 
-/-- The zero-field Boltzmann weight `exp (β ∑_{e ∈ E(G)} σ_x σ_y)` of a configuration. -/
+/-- **Zero-field Boltzmann weight of a configuration.**
+The zero-field Boltzmann weight `exp (β ∑_{e ∈ E(G)} σ_x σ_y)` of a configuration. -/
 noncomputable def zeroFieldInteractionWeight (β : ℝ) (s : ConfigSpace V) : ℝ :=
   Real.exp (β * ∑ e ∈ G.edgeFinset, bond s e)
 
-/-- The Lee–Yang polynomial `∑_σ exp (β ∑_e σ_x σ_y) X^k(σ)` of the Ising model on `G`, where `k(σ)`
+/-- **Lee–Yang polynomial of a finite Ising model.**
+The Lee–Yang polynomial `∑_σ exp (β ∑_e σ_x σ_y) X^k(σ)` of the Ising model on `G`, where `k(σ)`
 is the number of minus spins; its variable is the fugacity `exp (-2βh)`. -/
 noncomputable def leeYangPolynomial (β : ℝ) : ℝ[X] :=
   ∑ s : ConfigSpace V,
     Polynomial.C (zeroFieldInteractionWeight G β s) *
       Polynomial.X ^ minusSpinCount s
 
-/-- The Lee–Yang polynomial with complex coefficients, whose zeros the Lee–Yang circle theorem
+/-- **Lee–Yang polynomial with complex coefficients.**
+The Lee–Yang polynomial with complex coefficients, whose zeros the Lee–Yang circle theorem
 locates. -/
 noncomputable def leeYangComplexPolynomial (β : ℝ) : ℂ[X] :=
   (leeYangPolynomial G β).map (algebraMap ℝ ℂ)

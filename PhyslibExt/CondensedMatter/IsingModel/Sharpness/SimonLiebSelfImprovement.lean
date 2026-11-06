@@ -95,7 +95,8 @@ variable {V : Type*}
 
 /-! ## B. The Simon–Lieb inequality and the susceptibility -/
 
-/-- A Simon–Lieb type inequality for a nonnegative two-point function `τ`, root `o`, set `S`,
+/-- **Simon–Lieb type inequality for a nonnegative two-point function.**
+A Simon–Lieb type inequality for a nonnegative two-point function `τ`, root `o`, set `S`,
 weights `w` and boundary targets `B`: `τ(o, z) ≤ ∑_{x ∈ S} ∑_{y ∈ B} w(x, y) τ(y, z)` for every `z ∉
 S`. -/
 structure SimonLieb (τ : V → V → ℝ) (o : V) (S : Finset V)
@@ -108,7 +109,8 @@ structure SimonLieb (τ : V → V → ℝ) (o : V) (S : Finset V)
   simon : ∀ z, z ∉ S →
     τ o z ≤ ∑ x ∈ S, ∑ y ∈ boundaryTargets, simWeight x y * τ y z
 
-/-- The Simon constant `φ = ∑_{x ∈ S} ∑_{y ∈ B} w(x, y)`. -/
+/-- **Simon constant of a weight function.**
+The Simon constant `φ = ∑_{x ∈ S} ∑_{y ∈ B} w(x, y)`. -/
 noncomputable def simonConst (S : Finset V) (simWeight : V → V → ℝ) (boundaryTargets : Finset V) :
     ℝ := ∑ x ∈ S, ∑ y ∈ boundaryTargets, simWeight x y
 

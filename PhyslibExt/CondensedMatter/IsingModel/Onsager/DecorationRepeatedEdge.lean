@@ -50,7 +50,8 @@ namespace StatMech.Onsager
 
 /-! ## A. Repeated-edge vanishing and its consequences -/
 
-/-- On every `L × L` torus with `L > 2` and for every spin structure, the coefficient of the formal
+/-- **Vanishing of repeated-edge coefficients of the formal Kac-Ward root.**
+On every `L × L` torus with `L > 2` and for every spin structure, the coefficient of the formal
 Kac-Ward root at any exponent that uses some decorated edge at least twice is zero. -/
 def ons_DecFormalRepeatedEdgeVanishes : Prop :=
   ∀ (L : ℕ) (hL : 2 < L),

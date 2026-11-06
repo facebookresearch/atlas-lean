@@ -278,7 +278,8 @@ lemma fkgq_centered_eq_edgeFE (d n : ℕ) (s q : ℝ) (hq : 0 < q)
   rw [fkgq_ivp_eq_edgeFE d n s q hq hE, fkgq_ivp_eq_edgeFE d n 0 q hq hE]
   ring
 
-/-- For `d ≥ 1` and `q ≥ 1`, the centered tilt free energies of the boxes `Λ_n` converge pointwise
+/-- **Convex limit of centered tilt free energies of boxes for $d, q \ge 1$.**
+For `d ≥ 1` and `q ≥ 1`, the centered tilt free energies of the boxes `Λ_n` converge pointwise
 to
 a convex function `G` with `G(0) = 0`.
 -/
@@ -328,7 +329,8 @@ lemma fkgq_centeredConvergence (d : ℕ) (hd : 1 ≤ d) (q : ℝ) (hq : 1 ≤ q)
 
 /-! ## C. Bulk collapse of average densities -/
 
-/-- The average edge density `|E|^{-1} E_{φ_{G,p,q}}[#open edges]` at `p = logistic(s)`. -/
+/-- **Average edge density of a random-cluster measure.**
+The average edge density `|E|^{-1} E_{φ_{G,p,q}}[#open edges]` at `p = logistic(s)`. -/
 noncomputable def fkgq_avgDensity {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (q s : ℝ) : ℝ :=
   (1 / (G.edgeFinset.card : ℝ))
@@ -489,7 +491,8 @@ lemma fkgq_wiredCentered_tendsto (d : ℕ) (hd : 1 ≤ d) (q : ℝ) (hq : 1 ≤ 
 
 /-! ## D. Box restrictions of the infinite-volume measures -/
 
-/-- The mass function on configurations of `Λ_N` of the free infinite-volume measure at
+/-- **Free infinite-volume mass function on a box for $q \ge 1$.**
+The mass function on configurations of `Λ_N` of the free infinite-volume measure at
 `p = logistic(s)`.
 -/
 noncomputable def fkgq_freeMass (d N : ℕ) (q : ℝ) (hq : 1 ≤ q) (s : ℝ) :
@@ -498,7 +501,8 @@ noncomputable def fkgq_freeMass (d N : ℕ) (q : ℝ) (hq : 1 ≤ q) (s : ℝ) :
       (zero_lt_one.trans_le hq) : Measure (ConfigSpace (Sym2 (Site d)))).real
     (boxRestrict d N ⁻¹' {ω})
 
-/-- The mass function on configurations of `Λ_N` of the wired infinite-volume measure at
+/-- **Wired infinite-volume mass function on a box for $q \ge 1$.**
+The mass function on configurations of `Λ_N` of the wired infinite-volume measure at
 `p = logistic(s)`.
 -/
 noncomputable def fkgq_wiredMass (d N : ℕ) (q : ℝ) (hq : 1 ≤ q) (s : ℝ) :
@@ -1178,7 +1182,8 @@ lemma fkgq_avgDensity_eq_sum {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## H. Unit-edge marginals and bulk deviation -/
 
-/-- The free marginal on `Λ_{⌊√n⌋}` of the unit edge at the origin in direction `dir`, at
+/-- **Free unit-edge marginal at $0$ on $\Lambda_{\lfloor\sqrt n\rfloor}$.**
+The free marginal on `Λ_{⌊√n⌋}` of the unit edge at the origin in direction `dir`, at
 `p = logistic(t)`.
 -/
 noncomputable def fkgq_unitMarg (d : ℕ) (q : ℝ) (n : ℕ)
@@ -1188,7 +1193,8 @@ noncomputable def fkgq_unitMarg (d : ℕ) (q : ℝ) (n : ℕ)
       (ocs_unitEdge d (Nat.sqrt n) hR dir)
   else 0
 
-/-- The wired marginal on `Λ_{⌊√n⌋}` of the unit edge at the origin in direction `dir`, at
+/-- **Wired unit-edge marginal at $0$ on $\Lambda_{\lfloor\sqrt n\rfloor}$.**
+The wired marginal on `Λ_{⌊√n⌋}` of the unit edge at the origin in direction `dir`, at
 `p = logistic(t)`.
 -/
 noncomputable def fkgq_unitWiredMarg (d : ℕ) (q : ℝ) (n : ℕ)
@@ -1256,7 +1262,8 @@ lemma fkgq_unitWiredMarg_tendsto (q : ℝ) (hq : 1 ≤ q) (dir : Fin d × Bool) 
     (show (⟨1 + (Nat.sqrt n - 1), Nat.le_add_right 1 _⟩ : {z : ℕ // 1 ≤ z})
         = ⟨Nat.sqrt n, hR⟩ from Subtype.ext hrr)
 
-/-- The total deviation between the free density of `e` and the free unit-edge marginals on
+/-- **Total deviation of free unit-edge marginals from a free density.**
+The total deviation between the free density of `e` and the free unit-edge marginals on
 `Λ_{⌊√n⌋}`, summed over directions.
 -/
 noncomputable def fkgq_freeDelta (N : ℕ) (e : Sym2 (boxVerts d N))
@@ -1264,7 +1271,8 @@ noncomputable def fkgq_freeDelta (N : ℕ) (e : Sym2 (boxVerts d N))
   ∑ dir : Fin d × Bool,
     |freeEdgeDensity d q (edgeIncl d N e) (fsc_logistic t) - fkgq_unitMarg d q n dir t|
 
-/-- The total deviation between the wired unit-edge marginals on `Λ_{⌊√n⌋}` and the wired density
+/-- **Total deviation of wired unit-edge marginals from a wired density.**
+The total deviation between the wired unit-edge marginals on `Λ_{⌊√n⌋}` and the wired density
 of
 `e`, summed over directions.
 -/

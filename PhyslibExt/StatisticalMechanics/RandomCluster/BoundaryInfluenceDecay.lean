@@ -266,7 +266,8 @@ lemma fbd_wired_density_translation_inv (v x y : Site d) {p : ℝ} (hp : 0 < p) 
       = wiredEdgeDensity d 2 s(fktc_translate v x, fktc_translate v y) p :=
   fktc_wired_density_translation_inv v x y hp hp1 ⟨N, hx, hy, hx', hy', hdecay⟩
 
-/-- The difference between the wired marginal of `eb'` on `Λ_{N+k}` and on the translate of
+/-- **Wired-marginal difference between a box and its translate.**
+The difference between the wired marginal of `eb'` on `Λ_{N+k}` and on the translate of
 `Λ_{N+k}` by `v`, evaluated at the translated edge.
 -/
 noncomputable def fbd_offCentreCarrier (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N))

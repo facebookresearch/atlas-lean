@@ -128,7 +128,8 @@ lemma measurable_cfgEquiv {E F : Type*} (sigma : E ≃ F) :
 
 /-! ## B. The percolation measure with ghost field -/
 
-/-- The real edge parameters: `1 - e^{-βJ_e}` on physical edges and `1 - e^{-h}` on ghost edges. -/
+/-- **Real edge parameters with a ghost field.**
+The real edge parameters: `1 - e^{-βJ_e}` on physical edges and `1 - e^{-h}` on ghost edges. -/
 noncomputable def abigRealParam (J : Sym2 V -> Real) (beta h : Real) :
     Sym2 (Option V) -> Real :=
   FieldGhostDict.ghostCoupling (qField h) 1
@@ -160,7 +161,7 @@ lemma abigRealParam_mem (J : Sym2 V -> Real) (beta h : Real)
             pBeta_nonneg (mul_nonneg hbeta (hJ s(x, y)))
         · exact (pBeta_lt_one (J s(x, y)) beta).le
 
-/-- The edge parameters as elements of `ℝ≥0`. -/
+/-- **Edge parameters as nonnegative reals.** The edge parameters as elements of `ℝ≥0`. -/
 noncomputable def abigParam (J : Sym2 V -> Real) (beta h : Real) :
     Sym2 (Option V) -> NNReal :=
   fun e => (abigRealParam J beta h e).toNNReal
@@ -214,7 +215,8 @@ lemma abigParam_invariant (J : Sym2 V -> Real) (beta h : Real)
       · simp [abigRealParam, FieldGhostDict.ghostCoupling,
           abfsEdgeEquiv_mk, hJ]
 
-/-- Independent bond percolation on the ghost graph with parameters `abigParam`. -/
+/-- **Bond percolation measure on the ghost graph.**
+Independent bond percolation on the ghost graph with parameters `abigParam`. -/
 noncomputable def abigMeasure (J : Sym2 V -> Real) (beta h : Real) :
     Measure (ConfigSpace (Sym2 (Option V))) :=
   inhomBernoulliProductMeasure (abigParam J beta h)
@@ -236,7 +238,8 @@ lemma abig_map_cfgEquiv (J : Sym2 V -> Real) (beta h : Real)
     (abigParam_le_one J beta h) (abfsEdgeEquiv sigma)
     (abigParam_invariant J beta h sigma hJ)
 
-/-- The percolation magnetization `M(β, h) = P(o ↔ ghost)`. -/
+/-- **Infinite-volume percolation magnetization.**
+The percolation magnetization `M(β, h) = P(o ↔ ghost)`. -/
 noncomputable def abigMag (G : SimpleGraph V) (J : Sym2 V -> Real) (o : V)
     (beta h : Real) : Real :=
   (abigMeasure J beta h).real
@@ -288,7 +291,7 @@ variable {W : Type*}
 
 /-! ## C. Finite windows -/
 
-/-- The unordered pairs with both endpoints in `T`. -/
+/-- **Internal edges of a finite set.** The unordered pairs with both endpoints in `T`. -/
 noncomputable def abigInternalEdges [DecidableEq W] (T : Finset W) :
     Finset (Sym2 W) :=
   (T ×ˢ T).image (fun p => s(p.1, p.2))
@@ -303,7 +306,8 @@ lemma mem_abigInternalEdges [DecidableEq W] {T : Finset W} {e : Sym2 W} :
   · rintro ⟨x, hx, y, hy, rfl⟩
     exact ⟨(x, y), ⟨hx, hy⟩, rfl⟩
 
-/-- Unordered pairs of `T` correspond to `abigInternalEdges T`. -/
+/-- **Unordered pairs of a set as its internal edges.**
+Unordered pairs of `T` correspond to `abigInternalEdges T`. -/
 noncomputable def abigInternalEdgeEquiv [DecidableEq W] (T : Finset W) :
     Sym2 T ≃ abigInternalEdges T :=
   Equiv.ofBijective
@@ -331,12 +335,13 @@ noncomputable def abigInternalEdgeEquiv [DecidableEq W] (T : Finset W) :
     (abigInternalEdgeEquiv T s(x, y) : Sym2 W) = s((x : W), (y : W)) := by
   exact Sym2.map_mk _ _ _
 
-/-- The window `S ∪ {ghost}` in the ghost graph. -/
+/-- **Ghost window of a finite set.** The window `S ∪ {ghost}` in the ghost graph. -/
 noncomputable def abigGhostWindow [DecidableEq V] (S : Finset V) :
     Finset (Option V) :=
   S.image some ∪ {none}
 
-/-- `Option S` corresponds to the window `S ∪ {ghost}`. -/
+/-- **Ghost window as a set with one added point.**
+`Option S` corresponds to the window `S ∪ {ghost}`. -/
 noncomputable def abigGhostWindowEquiv [DecidableEq V] (S : Finset V) :
     Option S ≃ abigGhostWindow S :=
   Equiv.ofBijective
@@ -360,7 +365,8 @@ noncomputable def abigGhostWindowEquiv [DecidableEq V] (S : Finset V) :
     (x : S) :
     (abigGhostWindowEquiv S (some x) : Option V) = some (x : V) := rfl
 
-/-- Unordered pairs of `Option S` correspond to the internal edges of the window. -/
+/-- **Unordered pairs of the extended set as window edges.**
+Unordered pairs of `Option S` correspond to the internal edges of the window. -/
 noncomputable def abigWindowEdgeEquiv [DecidableEq V] (S : Finset V) :
     Sym2 (Option S) ≃ abigInternalEdges (abigGhostWindow S) :=
   (StatMech.Lattice.sym2Congr (abigGhostWindowEquiv S)).trans
@@ -373,7 +379,7 @@ noncomputable def abigWindowEdgeEquiv [DecidableEq V] (S : Finset V) :
         (abigGhostWindowEquiv S b : Option V)) := by
   simp [abigWindowEdgeEquiv, StatMech.Lattice.sym2Congr_mk]
 
-/-- The subgraph of `G` induced on `S`. -/
+/-- **Subgraph induced on a window.** The subgraph of `G` induced on `S`. -/
 def abigWindowGraph (G : SimpleGraph V) (S : Finset V) : SimpleGraph S :=
   G.induce (S : Set V)
 
@@ -384,7 +390,7 @@ instance abigWindowGraph_decidableAdj {G : SimpleGraph V} [DecidableRel G.Adj]
   change Decidable (G.Adj x y)
   exact inferInstance
 
-/-- The coupling restricted to the window. -/
+/-- **Coupling restricted to a window.** The coupling restricted to the window. -/
 noncomputable def abigWindowCoupling (J : Sym2 V -> Real) (S : Finset V) :
     Sym2 S -> Real :=
   fun e => J (Sym2.map (Subtype.val : S -> V) e)
@@ -394,7 +400,8 @@ noncomputable def abigWindowCoupling (J : Sym2 V -> Real) (S : Finset V) :
     abigWindowCoupling J S s(x, y) = J s((x : V), (y : V)) := by
   simp [abigWindowCoupling, Sym2.map_mk]
 
-/-- Darts starting at `x` correspond to neighbours of `x`. -/
+/-- **Darts at a vertex as its neighbours.**
+Darts starting at `x` correspond to neighbours of `x`. -/
 def abigDartFiberEquivNeighbor {W : Type*} (H : SimpleGraph W) (x : W) :
     {d : H.Dart // d.fst = x} ≃ H.neighborSet x where
   toFun d := ⟨d.1.snd, by simpa only [d.2, SimpleGraph.mem_neighborSet] using d.1.adj⟩
@@ -434,7 +441,8 @@ lemma abigWindow_incidentCoupling_eq_sum [DecidableEq V]
       rw [Finset.sum_filter]
       rfl
 
-/-- All row sums of `J` in all finite windows are at most `J₀`. -/
+/-- **Uniform row-sum bound in finite windows.**
+All row sums of `J` in all finite windows are at most `J₀`. -/
 def abigUniformFiniteRowBound (G : SimpleGraph V) [DecidableRel G.Adj]
     (J : Sym2 V -> Real) (J0 : Real) : Prop :=
   forall (S : Finset V) (x : S),
@@ -856,7 +864,7 @@ lemma abig_abfaMag_eq_finiteConn [DecidableEq V]
   exact (abig_finite_conn_prob_eq_probV G J (o : V) beta h
     hbeta hh hJ (abigGhostWindow S)).symm
 
-/-- The largest site magnetization in the window. -/
+/-- **Largest site magnetization in a window.** The largest site magnetization in the window. -/
 noncomputable def abigWindowEnvelope [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (J : Sym2 V -> Real) (S : Finset V) (o : S) (beta h : Real) : Real :=
@@ -1626,7 +1634,8 @@ lemma abig_aizenmanBarskyPhysical_of_tsum_transitive_fieldRegular
   · exact hcontLimit
   · exact hfieldDiffLimit
 
-/-- The Aizenman–Barsky inequality on infinite vertex-transitive graphs with translation-invariant
+/-- **Aizenman–Barsky inequality on infinite vertex-transitive graphs.**
+The Aizenman–Barsky inequality on infinite vertex-transitive graphs with translation-invariant
 couplings supported on edges and row sums at most `J₀`: `∂_β M ≤ J₀ M ∂_h M` for `β ≥ 0`, `h > 0`.
 Reference: M. Aizenman, D. J. Barsky, "Sharpness of the phase transition in percolation models",
 Comm. Math. Phys. 108 (1987) 489–526. -/

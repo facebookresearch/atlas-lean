@@ -81,13 +81,15 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 ### A.1. Cumulant generating function form
 -/
 
-/-- The wired per-edge ambient tilted log normalizer `|E|⁻¹ log Z^w(p, q) + log(1 + e^t)` at `p =
+/-- **Wired per-edge ambient tilted log normalizer.**
+The wired per-edge ambient tilted log normalizer `|E|⁻¹ log Z^w(p, q) + log(1 + e^t)` at `p =
   e^t / (1 + e^t)`. -/
 noncomputable def wpd_wiredAmbientTiltLogZ (q : ℝ) (t : ℝ) : ℝ :=
   (1 / (G.edgeFinset.card : ℝ)) * Real.log (wiredFkZ G bdry (fsc_logistic t) q)
     + Real.log (1 + Real.exp t)
 
-/-- The wired partition function at `p = e^t / (1 + e^t)` as a tilted sum over configurations
+/-- **Wired partition function at logistic $p$ as a tilted sum.**
+The wired partition function at `p = e^t / (1 + e^t)` as a tilted sum over configurations
 divided by `(1 + e^t)^{|E|}`. -/
 lemma wpd_wiredFkZ_logistic (t q : ℝ) :
     wiredFkZ G bdry (fsc_logistic t) q
@@ -101,7 +103,8 @@ lemma wpd_wiredFkZ_logistic (t q : ℝ) :
   rw [ivp2_edgeProduct_logistic G t ω]
   ring
 
-/-- The wired ambient tilted log normalizer is `|E|⁻¹` times the cumulant generating function of the
+/-- **Wired tilted log normalizer as a cumulant generating function.**
+The wired ambient tilted log normalizer is `|E|⁻¹` times the cumulant generating function of the
   number of open
 edges under the weight `q^{k^w}`. -/
 lemma wpd_wiredAmbientTiltLogZ_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
@@ -124,7 +127,8 @@ lemma wpd_wiredAmbientTiltLogZ_eq_Kcgf (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFi
   field_simp
   ring
 
-/-- The wired ambient tilted log normalizer is convex in `t`. -/
+/-- **Convexity of the wired tilted log normalizer.**
+The wired ambient tilted log normalizer is convex in `t`. -/
 lemma wpd_wiredAmbientTiltLogZ_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card) :
     ConvexOn ℝ univ (wpd_wiredAmbientTiltLogZ G bdry q) := by
   set w : ConfigSpace (Sym2 V) → ℝ := fun ω => q ^ numClustersWired G bdry ω with hw
@@ -143,11 +147,13 @@ lemma wpd_wiredAmbientTiltLogZ_convexOn (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeF
 ### A.2. Derivative and average wired density
 -/
 
-/-- The expectation of an observable under the wired FK measure. -/
+/-- **Expectation under the wired FK measure.**
+The expectation of an observable under the wired FK measure. -/
 noncomputable def wpd_wiredFkExpect (p q : ℝ) (X : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), wiredFkProb G bdry p q ω * X ω
 
-/-- The tilted mean of the number of open edges is its wired FK expectation. -/
+/-- **Tilted mean of open edges equals the wired FK expectation.**
+The tilted mean of the number of open edges is its wired FK expectation. -/
 lemma wpd_wiredCgfMean_eq_openCount_expect (q : ℝ) (hq : 0 < q) (t : ℝ) :
     wpd_wiredFkExpect G bdry (fsc_logistic t) q (fun ω => (openCount G ω : ℝ))
       = ivp2_S1 (fun ω => q ^ numClustersWired G bdry ω) (fun ω => (openCount G ω : ℝ)) t
@@ -168,7 +174,8 @@ lemma wpd_wiredCgfMean_eq_openCount_expect (q : ℝ) (hq : 0 < q) (t : ℝ) :
   rw [eq_div_iff hSpos.ne']
   field_simp
 
-/-- The derivative in `t` of the wired ambient tilted log normalizer is `|E|⁻¹` times the expected
+/-- **Wired tilted log normalizer has derivative the mean open fraction.**
+The derivative in `t` of the wired ambient tilted log normalizer is `|E|⁻¹` times the expected
   number of open
 edges under the wired FK measure. -/
 lemma wpd_wiredAmbientTiltLogZ_hasDerivAt (q : ℝ) (hq : 0 < q) (hE : 0 < G.edgeFinset.card)
@@ -186,12 +193,14 @@ lemma wpd_wiredAmbientTiltLogZ_hasDerivAt (q : ℝ) (hq : 0 < q) (hE : 0 < G.edg
   rw [heq, wpd_wiredCgfMean_eq_openCount_expect G bdry q hq t]
   exact (ivp2_Kcgf_hasDerivAt w a hwnn hwpos t).const_mul _
 
-/-- The average wired edge density `|E|⁻¹ E^w[|ω|]` at `p = e^t / (1 + e^t)`. -/
+/-- **Average wired edge density.**
+The average wired edge density `|E|⁻¹ E^w[|ω|]` at `p = e^t / (1 + e^t)`. -/
 noncomputable def wpd_avgWiredDensity (q : ℝ) (t : ℝ) : ℝ :=
   (1 / (G.edgeFinset.card : ℝ))
     * wpd_wiredFkExpect G bdry (fsc_logistic t) q (fun ω => (openCount G ω : ℝ))
 
-/-- The expected number of open edges is the sum of the edge marginals. -/
+/-- **Expected wired open-edge count is the sum of edge marginals.**
+The expected number of open edges is the sum of the edge marginals. -/
 lemma wpd_wiredFkExpect_openCount_eq_sum (p q : ℝ) :
     wpd_wiredFkExpect G bdry p q (fun ω => (openCount G ω : ℝ))
       = ∑ e ∈ G.edgeFinset, edgeMargProb (wiredFkProb G bdry p q) e := by
@@ -201,7 +210,8 @@ lemma wpd_wiredFkExpect_openCount_eq_sum (p q : ℝ) :
   · exact dfi_openEdgeCount_expect G.edgeFinset (wiredFkProb G bdry p q)
   · funext ω; rw [adc_openCount_eq_sum]; ring
 
-/-- The average wired edge density is the mean of the wired edge marginals. -/
+/-- **Average wired edge density as the mean of edge marginals.**
+The average wired edge density is the mean of the wired edge marginals. -/
 lemma wpd_avgWiredDensity_eq_sum_edgeMarg (q : ℝ) (t : ℝ) :
     wpd_avgWiredDensity G bdry q t
       = (1 / (G.edgeFinset.card : ℝ))
@@ -213,7 +223,8 @@ lemma wpd_avgWiredDensity_eq_sum_edgeMarg (q : ℝ) (t : ℝ) :
 ## B. Comparison with the free ambient tilted log normalizer
 -/
 
-/-- For `q ≥ 1`, the wired FK weight is at most the free one, and the free one is at most
+/-- **Wired and free FK weights within a factor $q^{|\partial|}$, $q \ge 1$.**
+For `q ≥ 1`, the wired FK weight is at most the free one, and the free one is at most
 `q^{|∂|}` times the wired one. -/
 lemma wpd_wiredFkWeight_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (ω : ConfigSpace (Sym2 V)) :
@@ -235,7 +246,8 @@ lemma wpd_wiredFkWeight_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     refine pow_le_pow_right₀ hq ?_
     rw [numClusters_eq_numClustersFree]; exact hsand.2
 
-/-- For `q ≥ 1`, `Z^w ≤ Z ≤ q^{|∂|} Z^w`. -/
+/-- **Sandwich $Z^w \le Z \le q^{|\partial|} Z^w$ for $q \ge 1$.**
+For `q ≥ 1`, `Z^w ≤ Z ≤ q^{|∂|} Z^w`. -/
 lemma wpd_wiredFkZ_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     wiredFkZ G bdry p q ≤ fkZ G p q
       ∧ fkZ G p q ≤ q ^ (Finset.univ.filter bdry).card * wiredFkZ G bdry p q := by
@@ -246,7 +258,8 @@ lemma wpd_wiredFkZ_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     rw [Finset.mul_sum]
     exact Finset.sum_le_sum (fun ω _ => (wpd_wiredFkWeight_le G bdry hp hp1 hq ω).2)
 
-/-- For `q ≥ 1`, the free and wired per-edge ambient tilted log normalizers differ by at most `|∂|
+/-- **Free-wired log-normalizer gap $\le |\partial|\log q/|E|$ for $q \ge 1$.**
+For `q ≥ 1`, the free and wired per-edge ambient tilted log normalizers differ by at most `|∂|
   log q / |E|`. -/
 lemma wpd_ambientTiltLogZ_sub_le {q : ℝ} (hq : 1 ≤ q) (hE : 0 < G.edgeFinset.card) (t : ℝ) :
     |ivp2_ambientTiltLogZ G q t - wpd_wiredAmbientTiltLogZ G bdry q t|
@@ -291,7 +304,8 @@ variable {d : ℕ}
 ## C. Box density-collapse hypothesis
 -/
 
-/-- Average wired density collapse: for every edge `e'` of `Λ_N` and every `t`, the average wired
+/-- **Average wired density collapse at $q = 2$.**
+Average wired density collapse: for every edge `e'` of `Λ_N` and every `t`, the average wired
 edge density of `Λ_n` converges to the wired infinite-volume density of `e'`. -/
 def wpd_AvgWiredDensityCollapse (N : ℕ) : Prop :=
   ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),

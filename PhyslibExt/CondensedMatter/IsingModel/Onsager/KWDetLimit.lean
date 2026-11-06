@@ -55,10 +55,12 @@ namespace StatMech.Onsager
 
 /-! ## A. Roots of unity -/
 
-/-- The turning phase `ω = e^{iπ/4}`, so a turn by `±π/2` contributes `ω^{±1}` and `ω² = i`. -/
+/-- **Turning phase $\omega = e^{i\pi/4}$.**
+The turning phase `ω = e^{iπ/4}`, so a turn by `±π/2` contributes `ω^{±1}` and `ω² = i`. -/
 noncomputable def ons_turnRoot : ℂ := Complex.exp (Complex.I * (Real.pi / 4))
 
-/-- The primitive `L`-th root of unity `e^{2πi/L}`. -/
+/-- **Primitive L-th root of unity $e^{2\pi i/L}$.**
+The primitive `L`-th root of unity `e^{2πi/L}`. -/
 noncomputable def ons_spaceRoot (L : ℕ) : ℂ :=
   Complex.exp (2 * Real.pi * Complex.I / L)
 
@@ -182,7 +184,8 @@ lemma ons_KWdet_density_tendsto (β : ℝ) (hβ : 0 ≤ β) (hcrit : β ≠ ons_
 
 /-! ## C. Sector determinants -/
 
-/-- The sector determinant: the product of `ons_symbolDispersion β` over the momenta
+/-- **Sector determinant with boundary phases.**
+The sector determinant: the product of `ons_symbolDispersion β` over the momenta
 `(2π(i + a/2) / L, 2π(j + b/2) / L)`, `i, j < L`, for boundary phases `a, b ∈ {0, 1}`. -/
 noncomputable def ons_spinDet (L : ℕ) (β : ℝ) (a b : Fin 2) : ℝ :=
   ∏ i ∈ Finset.range L, ∏ j ∈ Finset.range L,

@@ -68,7 +68,8 @@ variable {d : ℕ}
 ## A. Translated wired marginals
 -/
 
-/-- The wired marginals of the translated edge `e + v` in `v + Λ_{N+k}` converge to the wired
+/-- **Translated wired marginals converge to the wired density.**
+The wired marginals of the translated edge `e + v` in `v + Λ_{N+k}` converge to the wired
 `q = 2` density of `e`. -/
 lemma occ_translated_tendsto_wiredDensity (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -80,7 +81,8 @@ lemma occ_translated_tendsto_wiredDensity (N : ℕ) (v : Site d) (eb' : Sym2 (bo
   refine (dfi_wired_density_eq_limit N eb' hp hp1).congr (fun k => ?_)
   exact fbd_centred_eq_translated_wired (N + k) v (innerEdgeLE d (Nat.le_add_right N k) eb')
 
-/-- The free `q = 2` density of `e` is at most the wired marginal of `e + v` in `v + Λ_{N+k}`. -/
+/-- **Free density is at most each translated wired marginal.**
+The free `q = 2` density of `e` is at most the wired marginal of `e + v` in `v + Λ_{N+k}`. -/
 lemma occ_translated_between_iv (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (k : ℕ) :
     freeEdgeDensity d 2 (edgeIncl d N eb') p
@@ -99,7 +101,8 @@ lemma occ_translated_between_iv (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N
 ## B. Free and wired densities
 -/
 
-/-- Under the secant comparison `wired(p') ≤ free(p)` for `p' < p`, the free and wired densities
+/-- **Secant bound gives free–wired density agreement off a countable set.**
+Under the secant comparison `wired(p') ≤ free(p)` for `p' < p`, the free and wired densities
 of a box edge agree for all `p ∈ (0, 1)` outside a countable set, namely the discontinuities of
 the monotone wired density. -/
 lemma occ_free_eq_wired_off_countable (N : ℕ) (eb' : Sym2 (boxVerts d N))
@@ -119,7 +122,8 @@ lemma occ_free_eq_wired_off_countable (N : ℕ) (eb' : Sym2 (boxVerts d N))
 ## C. The off-centre carrier
 -/
 
-/-- The off-centre carrier vanishes for every `k`, by translation covariance of the wired box
+/-- **Off-centre carrier vanishes by translation covariance.**
+The off-centre carrier vanishes for every `k`, by translation covariance of the wired box
 measures. -/
 lemma occ_offCentreCarrier_eq_zero (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N))
     (p q : ℝ) (k : ℕ) :
@@ -128,7 +132,7 @@ lemma occ_offCentreCarrier_eq_zero (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts 
   rw [← fbd_centred_eq_translated_wired (N + k) v (innerEdgeLE d (Nat.le_add_right N k) eb'),
     sub_self]
 
-/-- The off-centre carrier tends to zero, for every `p`. -/
+/-- **Off-centre carrier tends to zero.** The off-centre carrier tends to zero, for every `p`. -/
 lemma occ_offCentreCarrier (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N)) (p : ℝ) :
     Tendsto (fbd_offCentreCarrier N v eb' p 2) atTop (𝓝 0) := by
   have hzero : fbd_offCentreCarrier N v eb' p 2 = fun _ => (0 : ℝ) := by
@@ -136,7 +140,8 @@ lemma occ_offCentreCarrier (N : ℕ) (v : Site d) (eb' : Sym2 (boxVerts d N)) (p
   rw [hzero]
   exact tendsto_const_nhds
 
-/-- If for every `k` the wired marginal of `e' + v` in `v + Λ_{N+k}` equals the wired marginal of
+/-- **Equal wired densities from equal translated marginals.**
+If for every `k` the wired marginal of `e' + v` in `v + Λ_{N+k}` equals the wired marginal of
 `e` in `Λ_{N+k}`, then `e` and `e'` have the same wired density. -/
 lemma occ_wired_density_eq_of_translation_cofinal (N : ℕ) (v : Site d)
     (eb eb' : Sym2 (boxVerts d N)) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)

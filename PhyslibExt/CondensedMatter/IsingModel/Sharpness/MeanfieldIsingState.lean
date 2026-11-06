@@ -300,11 +300,12 @@ lemma sctInfiniteFieldMag_le_one (d : ℕ) (beta h : ℝ) :
   unfold sctInfiniteFieldMag
   exact ciSup_le (fun n => sctOriginMag_le_one d beta h n)
 
-/-- The field sequence `h_k = 1/(k + 1)`. -/
+/-- **Field sequence $h_k = 1/(k + 1)$.** The field sequence `h_k = 1/(k + 1)`. -/
 noncomputable def sctFieldToZero (n : ℕ) : ℝ :=
   1 / ((n : ℝ) + 1)
 
-/-- The zero-field limit `m⁺(β) = inf_k m(β, h_k)` of the infinite-volume magnetization in positive
+/-- **Zero-field limit of the positive-field magnetization.**
+The zero-field limit `m⁺(β) = inf_k m(β, h_k)` of the infinite-volume magnetization in positive
 field. -/
 noncomputable def sctZeroPlusMag (d : ℕ) (beta : ℝ) : ℝ :=
   ⨅ n : ℕ, sctInfiniteFieldMag d beta (sctFieldToZero n)

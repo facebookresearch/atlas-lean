@@ -59,7 +59,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. Clusters and the graph Laplacian -/
 
-/-- The kernel of the Laplacian of the open subgraph of `ω`, a subspace of `V → ℝ`. -/
+/-- **Kernel of the Laplacian of the open subgraph.**
+The kernel of the Laplacian of the open subgraph of `ω`, a subspace of `V → ℝ`. -/
 noncomputable def kerLap (ω : ConfigSpace (Sym2 V)) : Submodule ℝ (V → ℝ) :=
   LinearMap.ker (Matrix.toLin' ((openSub G ω).lapMatrix ℝ))
 
@@ -69,7 +70,8 @@ lemma mem_kerLap (ω : ConfigSpace (Sym2 V)) (x : V → ℝ) :
   rw [LinearMap.mem_ker, Matrix.toLin'_apply]
   exact SimpleGraph.lapMatrix_mulVec_eq_zero_iff_forall_adj (openSub G ω)
 
-/-- The number of open clusters equals the dimension of the kernel of the Laplacian of the open
+/-- **Number of open clusters equals the dimension of the Laplacian kernel.**
+The number of open clusters equals the dimension of the kernel of the Laplacian of the open
 subgraph.
 -/
 lemma numClusters_eq_finrank (ω : ConfigSpace (Sym2 V)) :
@@ -190,7 +192,8 @@ lemma fkWeight_cross {p1 p2 q : ℝ} (hp1 : 0 < p1) (hp1' : p1 < 1) (hp2 : 0 < p
   rw [e1, e2]
   exact mul_le_mul hedge hclust (mul_nonneg hqa hqb) (mul_nonneg hA2n hB2n)
 
-/-- Holley's cross inequality for two random-cluster measures with `p₁ ≤ p₂` and the same `q ≥ 1`.
+/-- **Holley's cross inequality for FK measures, $p_1 \le p_2$, $q \ge 1$.**
+Holley's cross inequality for two random-cluster measures with `p₁ ≤ p₂` and the same `q ≥ 1`.
 -/
 lemma fkProb_cross {p1 p2 q : ℝ} (hp1 : 0 < p1) (hp1' : p1 < 1) (hp2 : 0 < p2)
     (hp2' : p2 < 1) (hle : p1 ≤ p2) (hq : 1 ≤ q) (a b : ConfigSpace (Sym2 V)) :

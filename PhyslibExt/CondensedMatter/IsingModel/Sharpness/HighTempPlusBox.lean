@@ -65,12 +65,13 @@ variable {d : ℕ}
 /-! ## A. The plus boundary as a field -/
 
 open Classical in
-/-- The edges touching `Λ` that are not inside `Λ`. -/
+/-- **Boundary edges of a finite volume.** The edges touching `Λ` that are not inside `Λ`. -/
 noncomputable def plusBoundaryEdges (Lambda : Finset (Site d)) :
     Finset (Sym2 (Site d)) :=
   (gvBondTouch Lambda).filter (fun e ↦ ¬ edgeInside Lambda e)
 
-/-- The field on `x ∈ Λ` induced by the plus boundary condition: the number of edges from `x` to
+/-- **Field induced by the plus boundary condition.**
+The field on `x ∈ Λ` induced by the plus boundary condition: the number of edges from `x` to
 sites outside `Λ`. -/
 noncomputable def plusBoundaryField (Lambda : Finset (Site d))
     (x : {v // v ∈ Lambda}) : ℝ :=
@@ -239,7 +240,8 @@ lemma plusTouch_bondSum (Lambda : Finset (Site d))
 /-! ## B. Plus measures as field models -/
 
 open Classical in
-/-- The coupling equal to `1` on the edges of `G` and `0` elsewhere. -/
+/-- **Unit coupling on the edges of a graph.**
+The coupling equal to `1` on the edges of `G` and `0` elsewhere. -/
 noncomputable def unitEdgeCoupling {V : Type*} (G : SimpleGraph V)
     (e : Sym2 V) : ℝ :=
   if e ∈ G.edgeSet then 1 else 0
@@ -373,7 +375,8 @@ lemma twoPointJ_couplingIn_unitEdge (Lambda : Finset (Site d))
   · rw [unitEdgeCoupling_edgeFinset (graphS d Lambda) he]
   · rfl
 
-/-- The sites of `ℤ^d` underlying a set `T` of sites of `Λ`. -/
+/-- **Underlying lattice sites of a subset of a volume.**
+The sites of `ℤ^d` underlying a set `T` of sites of `Λ`. -/
 noncomputable def plusCutSites {Lambda : Finset (Site d)}
     (T : Finset {v // v ∈ Lambda}) : Finset (Site d) :=
   T.image Subtype.val
@@ -390,7 +393,8 @@ noncomputable def plusCutSites {Lambda : Finset (Site d)}
     exact hy
   · exact fun hx ↦ Finset.mem_image.mpr ⟨x, hx, rfl⟩
 
-/-- The identification of `T` (as sites of `Λ`) with `plusCutSites T` (as sites of `ℤ^d`). -/
+/-- **Identification of volume sites with lattice sites.**
+The identification of `T` (as sites of `Λ`) with `plusCutSites T` (as sites of `ℤ^d`). -/
 noncomputable def plusCutVertexEquiv {Lambda : Finset (Site d)}
     (T : Finset {v // v ∈ Lambda}) :
     {x : {v // v ∈ Lambda} // x ∈ T} ≃
@@ -485,7 +489,7 @@ lemma plus_localCorr_eq_corrOriginInner
 
 /-! ## D. The Simon–Lieb inequality in boxes -/
 
-/-- The sites of `Λ` that lie in `T`. -/
+/-- **Sites of a volume lying in a set.** The sites of `Λ` that lie in `T`. -/
 noncomputable def sitesInVolume (Lambda T : Finset (Site d)) :
     Finset {v // v ∈ Lambda} :=
   Finset.univ.filter (fun x ↦ x.1 ∈ T)
@@ -703,7 +707,8 @@ lemma plusMeasure_simon_eventually
   · exact hU z (Finset.mem_insert_self z _)
   · exact hzT
 
-/-- The Simon–Lieb inequality in the infinite-volume plus state: for `β ≥ 0`, a finite `T ∋ 0` and
+/-- **Simon–Lieb inequality in the infinite-volume plus state.**
+The Simon–Lieb inequality in the infinite-volume plus state: for `β ≥ 0`, a finite `T ∋ 0` and
 `z ∉ T`, `⟨σ_0σ_z⟩^+_β ≤ ∑_{(x,y) ∈ ∂T} tanh β ⟨σ_0σ_x⟩_T ⟨σ_yσ_z⟩^+_β`. Reference: B. Simon,
 "Correlation inequalities and the decay of correlations in ferromagnets", Comm. Math. Phys. 77
 (1980) 111–126; E. H. Lieb, "A refinement of Simon's correlation inequality", Comm. Math. Phys. 77

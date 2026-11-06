@@ -56,7 +56,8 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## A. Majorants -/
 
-/-- The majorant `q^{|s| - 1}` for the weight of a walk `s` with at least two states, and `0` for
+/-- **Majorant $q^{|s|-1}$ for the weight of a walk.**
+The majorant `q^{|s| - 1}` for the weight of a walk `s` with at least two states, and `0` for
 shorter lists. -/
 def ons_factorMajorant (q : ℝ) (s : List E) : ℝ :=
   if s.length < 2 then 0 else q ^ (s.length - 1)
@@ -274,7 +275,8 @@ lemma norm_ons_KWmat_turnRoot_entry_le (L : ℕ) (x : ℝ)
       (norm_ons_turnW_turnRoot_le_one d1.2 d2.2)
   · simp
 
-/-- The radius `1 / (2 (number of darts)²)` below which Sherman's first-return series for the torus
+/-- **Sherman's convergence radius for the torus Kac-Ward matrix.**
+The radius `1 / (2 (number of darts)²)` below which Sherman's first-return series for the torus
 Kac-Ward matrix converges with total weight below `1`. -/
 noncomputable def ons_ShermanRadius (L : ℕ) [NeZero L] : ℝ :=
   (2 * (Fintype.card (ons_Dart L) : ℝ) ^ 2)⁻¹

@@ -76,12 +76,14 @@ variable {d : ℕ}
 ## A. Translated box edges
 -/
 
-/-- The inclusion of edges of the translated box `v + Λ_m` into the edges of `ℤ^d`. -/
+/-- **Edge inclusion of a translated box into $\mathbb{Z}^d$.**
+The inclusion of edges of the translated box `v + Λ_m` into the edges of `ℤ^d`. -/
 noncomputable def lmc_transEdgeIncl (d m : ℕ) (v : Site d) :
     Sym2 (fvs_transBoxVerts d m v) → Sym2 (Site d) :=
   Sym2.map (Subtype.val : fvs_transBoxVerts d m v → Site d)
 
-/-- Including a translated box edge equals shifting the included centered box edge by `v`. -/
+/-- **Translated box edges are shifted centered box edges.**
+Including a translated box edge equals shifting the included centered box edge by `v`. -/
 lemma lmc_transEdgeIncl_sigma_eq_smul (d m : ℕ) (v : Site d) (eb : Sym2 (boxVerts d m)) :
     lmc_transEdgeIncl d m v (Sym2.map (fvs_transEquiv d m v) eb)
       = (Multiplicative.ofAdd v) • (edgeIncl d m eb) := by
@@ -95,7 +97,8 @@ lemma lmc_transEdgeIncl_sigma_eq_smul (d m : ℕ) (v : Site d) (eb : Sym2 (boxVe
   change (x : Site d) + v = v + (x : Site d)
   rw [add_comm]
 
-/-- The image of a translated edge set in `ℤ^d` is the shift by `v` of the image of the centered
+/-- **Images of translated edge sets are shifted images.**
+The image of a translated edge set in `ℤ^d` is the shift by `v` of the image of the centered
 set. -/
 lemma lmc_transImage_eq_smulImage (d m : ℕ) (v : Site d) (t : Finset (Sym2 (boxVerts d m))) :
     (t.image (Sym2.map (fvs_transEquiv d m v))).image (lmc_transEdgeIncl d m v)
@@ -111,7 +114,8 @@ lemma lmc_transImage_eq_smulImage (d m : ℕ) (v : Site d) (t : Finset (Sym2 (bo
 ### B.1. Translated box masses
 -/
 
-/-- The probability, under the wired `q = 2` FK measure on the translated box `v + Λ_m`, that all
+/-- **Wired all-open probability on a translated box.**
+The probability, under the wired `q = 2` FK measure on the translated box `v + Λ_m`, that all
 edges of the translated copy of `t ⊆ E(Λ_N)` are open. -/
 noncomputable def lmc_transBoxMass (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     (p : ℝ) (m : ℕ) (hNm : N ≤ m) : ℝ :=
@@ -119,7 +123,8 @@ noncomputable def lmc_transBoxMass (v : Site d) (N : ℕ) (t : Finset (Sym2 (box
     (wiredFkProb (fvs_transBoxGraph d m v) (fvs_transBoxBoundary d m v) p 2)
     ((t.image (innerEdgeLE d hNm)).image (Sym2.map (fvs_transEquiv d m v)))
 
-/-- The translated wired box mass equals the probability of the unshifted event under the wired
+/-- **Translated wired box mass equals the centered box mass.**
+The translated wired box mass equals the probability of the unshifted event under the wired
 finite-volume measure on the centered box `Λ_m`. -/
 lemma lmc_transBoxMass_eq_centred (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (m : ℕ) (hNm : N ≤ m) :
@@ -130,7 +135,8 @@ lemma lmc_transBoxMass_eq_centred (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxV
   rw [lmc_transBoxMass, med_centred_mass_lift N m hNm t hp hp1,
     ← med_centred_eq_translated_wired m v (t.image (innerEdgeLE d hNm))]
 
-/-- The translated wired box masses converge to the wired infinite-volume probability that all
+/-- **Translated wired box masses converge to the infinite-volume mass.**
+The translated wired box masses converge to the wired infinite-volume probability that all
 edges of `t` are open. -/
 lemma lmc_transBoxMass_tendsto_centred_iv (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -144,7 +150,8 @@ lemma lmc_transBoxMass_tendsto_centred_iv (v : Site d) (N : ℕ)
   rw [show m + N = N + m from Nat.add_comm m N]
   exact (lmc_transBoxMass_eq_centred v N t hp hp1 (N + m) (Nat.le_add_right N m)).symm
 
-/-- If the translated wired box masses also converge to the wired infinite-volume probability of
+/-- **Wired shift invariance of an all-open event from matching limits.**
+If the translated wired box masses also converge to the wired infinite-volume probability of
 the shifted set `v + t`, the wired infinite-volume measure gives `t` and `v + t` the same
 probability. -/
 lemma lmc_wiredMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
@@ -164,7 +171,8 @@ lemma lmc_wiredMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
               ((t.image (edgeIncl d N)).image (fun e => (Multiplicative.ofAdd v) • e))) :=
   tendsto_nhds_unique (lmc_transBoxMass_tendsto_centred_iv v N t hp hp1) hcofinal
 
-/-- If the translated wired box masses differ from the centered box masses of a set `t'` with `v +
+/-- **Wired shift invariance of an all-open event from decaying differences.**
+If the translated wired box masses differ from the centered box masses of a set `t'` with `v +
 t = t'` by a sequence tending to zero, the wired infinite-volume measure gives `t` and `v + t`
 the same probability. -/
 lemma lmc_wiredMultiHomogeneous_of_decay (v : Site d) (N N' : ℕ)
@@ -202,7 +210,8 @@ lemma lmc_wiredMultiHomogeneous_of_decay (v : Site d) (N N' : ℕ)
 ### B.2. Homogeneity from placement
 -/
 
-/-- The placement hypothesis for the shift `g`: every finite edge set lies in a box whose
+/-- **Wired placement hypothesis for a shift.**
+The placement hypothesis for the shift `g`: every finite edge set lies in a box whose
 translated wired box masses converge to the wired infinite-volume probability of the set
 shifted by `g⁻¹`. -/
 def lmc_wiredPlacement {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (g : Multiplicative (Site d)) : Prop :=
@@ -216,7 +225,8 @@ def lmc_wiredPlacement {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (g : Multiplicative 
                 : Measure (ConfigSpace (Sym2 (Site d)))).real
                   (cdc_multiOpenEvent (s.image (fun e => g⁻¹ • e)))))
 
-/-- The placement hypothesis for `g` gives `g`-homogeneity of the wired infinite-volume measure on
+/-- **Wired placement gives shift homogeneity on all-open events.**
+The placement hypothesis for `g` gives `g`-homogeneity of the wired infinite-volume measure on
 all events "every edge of `s` is open". -/
 lemma lmc_wiredMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (g : Multiplicative (Site d)) (hplace : lmc_wiredPlacement hp hp1 g) :
@@ -226,7 +236,8 @@ lemma lmc_wiredMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   subst hst
   exact lmc_wiredMultiHomogeneous_of_cofinal (Multiplicative.toAdd g⁻¹) N t hp hp1 hcofinal
 
-/-- The identity shift satisfies the wired placement hypothesis. -/
+/-- **Identity shift satisfies the wired placement hypothesis.**
+The identity shift satisfies the wired placement hypothesis. -/
 lemma lmc_wiredPlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     lmc_wiredPlacement hp hp1 (1 : Multiplicative (Site d)) := by
   intro s
@@ -240,12 +251,14 @@ lemma lmc_wiredPlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
   exact lmc_transBoxMass_tendsto_centred_iv (Multiplicative.toAdd (1 : Multiplicative (Site d))⁻¹)
     N t hp hp1
 
-/-- The wired infinite-volume measure is homogeneous under the identity shift. -/
+/-- **Wired infinite-volume measure is homogeneous under the identity shift.**
+The wired infinite-volume measure is homogeneous under the identity shift. -/
 lemma lmc_wiredMultiHomogeneous_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     cdc_wiredMultiHomogeneous hp hp1 (1 : Multiplicative (Site d)) :=
   lmc_wiredMultiHomogeneous hp hp1 (1 : Multiplicative (Site d)) (lmc_wiredPlacement_one hp hp1)
 
-/-- The wired `q = 2` infinite-volume FK measure on `ℤ^d` is translation invariant if every shift
+/-- **Wired translation invariance from the placement hypothesis.**
+The wired `q = 2` infinite-volume FK measure on `ℤ^d` is translation invariant if every shift
 satisfies the wired placement hypothesis. -/
 lemma lmc_wiredIV_isTranslationInvariant_of_placement {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hplace : ∀ g : Multiplicative (Site d), lmc_wiredPlacement hp hp1 g) :
@@ -259,14 +272,16 @@ lemma lmc_wiredIV_isTranslationInvariant_of_placement {p : ℝ} (hp : 0 < p) (hp
 ## C. Free boundary condition
 -/
 
-/-- The probability, under the free `q = 2` FK measure on the translated box `v + Λ_m`, that all
+/-- **Translated free box mass of an edge set.**
+The probability, under the free `q = 2` FK measure on the translated box `v + Λ_m`, that all
 edges of the translated copy of `t ⊆ E(Λ_N)` are open. -/
 noncomputable def lmc_transBoxMassFree (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     (p : ℝ) (m : ℕ) (hNm : N ≤ m) : ℝ :=
   med_multiMassProb (fkProb (fvs_transBoxGraph d m v) p 2)
     ((t.image (innerEdgeLE d hNm)).image (Sym2.map (fvs_transEquiv d m v)))
 
-/-- The translated free box mass equals the probability of the unshifted event under the free
+/-- **Translated free box mass equals the centred box probability.**
+The translated free box mass equals the probability of the unshifted event under the free
 finite-volume measure on the centered box `Λ_m`. -/
 lemma lmc_transBoxMassFree_eq_centred (v : Site d) (N : ℕ) (t : Finset (Sym2 (boxVerts d N)))
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (m : ℕ) (hNm : N ≤ m) :
@@ -278,7 +293,8 @@ lemma lmc_transBoxMassFree_eq_centred (v : Site d) (N : ℕ) (t : Finset (Sym2 (
     med_free_centred_mass_eq m (t.image (innerEdgeLE d hNm)) hp hp1,
     ← med_centred_eq_translated_free m v (t.image (innerEdgeLE d hNm))]
 
-/-- The translated free box masses converge to the free infinite-volume probability that all edges
+/-- **Translated free box masses converge to the free infinite-volume value.**
+The translated free box masses converge to the free infinite-volume probability that all edges
 of `t` are open. -/
 lemma lmc_transBoxMassFree_tendsto_centred_iv (v : Site d) (N : ℕ)
     (t : Finset (Sym2 (boxVerts d N))) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -292,7 +308,8 @@ lemma lmc_transBoxMassFree_tendsto_centred_iv (v : Site d) (N : ℕ)
   rw [show m + N = N + m from Nat.add_comm m N]
   exact (lmc_transBoxMassFree_eq_centred v N t hp hp1 (N + m) (Nat.le_add_right N m)).symm
 
-/-- If the translated free box masses also converge to the free infinite-volume probability of the
+/-- **Equal free probabilities for $t$ and $v + t$ from matching box limits.**
+If the translated free box masses also converge to the free infinite-volume probability of the
 shifted set `v + t`, the free infinite-volume measure gives `t` and `v + t` the same
 probability. -/
 lemma lmc_freeMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
@@ -312,7 +329,8 @@ lemma lmc_freeMultiHomogeneous_of_cofinal (v : Site d) (N : ℕ)
               ((t.image (edgeIncl d N)).image (fun e => (Multiplicative.ofAdd v) • e))) :=
   tendsto_nhds_unique (lmc_transBoxMassFree_tendsto_centred_iv v N t hp hp1) hcofinal
 
-/-- The placement hypothesis for the shift `g` and the free measure: every finite edge set lies in
+/-- **Free placement hypothesis for a shift via box-mass limits.**
+The placement hypothesis for the shift `g` and the free measure: every finite edge set lies in
 a box whose translated free box masses converge to the free infinite-volume probability of the
 set shifted by `g⁻¹`. -/
 def lmc_freePlacement {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (g : Multiplicative (Site d)) : Prop :=
@@ -326,7 +344,8 @@ def lmc_freePlacement {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (g : Multiplicative (
                 : Measure (ConfigSpace (Sym2 (Site d)))).real
                   (cdc_multiOpenEvent (s.image (fun e => g⁻¹ • e)))))
 
-/-- The free placement hypothesis for `g` gives `g`-homogeneity of the free infinite-volume
+/-- **Free placement gives shift homogeneity on all-open events.**
+The free placement hypothesis for `g` gives `g`-homogeneity of the free infinite-volume
 measure on all events "every edge of `s` is open". -/
 lemma lmc_freeMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (g : Multiplicative (Site d)) (hplace : lmc_freePlacement hp hp1 g) :
@@ -336,7 +355,8 @@ lemma lmc_freeMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   subst hst
   exact lmc_freeMultiHomogeneous_of_cofinal (Multiplicative.toAdd g⁻¹) N t hp hp1 hcofinal
 
-/-- The identity shift satisfies the free placement hypothesis. -/
+/-- **Identity shift satisfies the free placement hypothesis.**
+The identity shift satisfies the free placement hypothesis. -/
 lemma lmc_freePlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     lmc_freePlacement hp hp1 (1 : Multiplicative (Site d)) := by
   intro s
@@ -350,12 +370,14 @@ lemma lmc_freePlacement_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
   exact lmc_transBoxMassFree_tendsto_centred_iv
     (Multiplicative.toAdd (1 : Multiplicative (Site d))⁻¹) N t hp hp1
 
-/-- The free infinite-volume measure is homogeneous under the identity shift. -/
+/-- **Free infinite-volume measure is homogeneous under the identity shift.**
+The free infinite-volume measure is homogeneous under the identity shift. -/
 lemma lmc_freeMultiHomogeneous_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     cdc_freeMultiHomogeneous hp hp1 (1 : Multiplicative (Site d)) :=
   lmc_freeMultiHomogeneous hp hp1 (1 : Multiplicative (Site d)) (lmc_freePlacement_one hp hp1)
 
-/-- The free `q = 2` infinite-volume FK measure on `ℤ^d` is translation invariant if every shift
+/-- **Free translation invariance from the placement hypothesis.**
+The free `q = 2` infinite-volume FK measure on `ℤ^d` is translation invariant if every shift
 satisfies the free placement hypothesis. -/
 lemma lmc_freeIV_isTranslationInvariant_of_placement {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hplace : ∀ g : Multiplicative (Site d), lmc_freePlacement hp hp1 g) :

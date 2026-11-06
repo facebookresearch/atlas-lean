@@ -59,11 +59,11 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 -/
 
-/-- The number `o(ω)` of open edges of `G` in `ω`. -/
+/-- **Number of open edges.** The number `o(ω)` of open edges of `G` in `ω`. -/
 def openCount (ω : ConfigSpace (Sym2 V)) : ℕ :=
   (G.edgeFinset.filter (fun e => ω e = true)).card
 
-/-- The number `c(ω)` of closed edges of `G` in `ω`. -/
+/-- **Number of closed edges.** The number `c(ω)` of closed edges of `G` in `ω`. -/
 def closedCount (ω : ConfigSpace (Sym2 V)) : ℕ :=
   (G.edgeFinset.filter (fun e => ω e = false)).card
 
@@ -96,7 +96,8 @@ lemma edgeProduct_eq_pow (p : ℝ) (ω : ConfigSpace (Sym2 V)) :
 
 -/
 
-/-- The tilt factor `λ = p₂ (1 - p₁) / ((1 - p₂) p₁)`, the ratio of the odds of an open edge
+/-- **Tilt factor between two edge parameters.**
+The tilt factor `λ = p₂ (1 - p₁) / ((1 - p₂) p₁)`, the ratio of the odds of an open edge
 at `p₂` and at `p₁`. -/
 noncomputable def tiltFactor (p1 p2 : ℝ) : ℝ := p2 * (1 - p1) / ((1 - p2) * p1)
 
@@ -143,7 +144,8 @@ lemma fkWeight_tilt {p1 p2 q : ℝ} (hp1 : 0 < p1) (hp1' : p1 < 1)
     pow_tilt_aux hp1 hp1' hp2 hp2' (openCount G ω) (closedCount G ω)]
   ring
 
-/-- The expectation `φ_{G,p,q}[X] = ∑_ω φ_{G,p,q}(ω) X(ω)` of an observable `X`. -/
+/-- **Random-cluster expectation of an observable.**
+The expectation `φ_{G,p,q}[X] = ∑_ω φ_{G,p,q}(ω) X(ω)` of an observable `X`. -/
 noncomputable def fkExpect (p q : ℝ) (X : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), fkProb G p q ω * X ω
 

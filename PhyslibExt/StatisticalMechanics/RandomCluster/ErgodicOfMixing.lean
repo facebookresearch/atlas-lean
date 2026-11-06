@@ -61,7 +61,8 @@ variable {E : Type*} {G : Type*} [Group G] [MulAction G E]
 
 /-! ## A. Self-mixing and ergodicity -/
 
-/-- For every cylinder event `A` and `ε > 0` there is a translation `g` with
+/-- **Self-mixing on cylinder events.**
+For every cylinder event `A` and `ε > 0` there is a translation `g` with
 `|μ(A ∩ g⁻¹A) - μ(A)²| < ε`.
 -/
 def fmc_SelfMixing [Countable E] (μ : Measure (ConfigSpace E)) : Prop :=
@@ -69,7 +70,8 @@ def fmc_SelfMixing [Countable E] (μ : Measure (ConfigSpace E)) : Prop :=
     ∃ g : G, |μ.real (A ∩ (shift g : ConfigSpace E → ConfigSpace E) ⁻¹' A)
       - (μ.real A) ^ 2| < ε
 
-/-- Every measurable event is approximated by a cylinder event in symmetric difference; the general
+/-- **Cylinder approximation of events under a finite measure.**
+Every measurable event is approximated by a cylinder event in symmetric difference; the general
 form of `exists_cylinder_symmDiff_lt` (`Ergodicity`).
 -/
 lemma fmc_exists_cylinder_symmDiff_lt [Countable E] (μ : Measure (ConfigSpace E))
@@ -179,7 +181,8 @@ lemma fmc_real_zero_or_one {μ : Measure (ConfigSpace E)} [IsProbabilityMeasure 
     have : μ s = ENNReal.ofReal (μ.real s) := (ENNReal.ofReal_toReal (measure_ne_top μ s)).symm
     rw [this, h1, ENNReal.ofReal_one]
 
-/-- A translation-invariant self-mixing probability measure is ergodic. -/
+/-- **Translation-invariant self-mixing measures are ergodic.**
+A translation-invariant self-mixing probability measure is ergodic. -/
 lemma fmc_isErgodic_of_selfMixing [Countable E] {μ : Measure (ConfigSpace E)}
     [IsProbabilityMeasure μ] (hμ : IsTranslationInvariant (G := G) μ)
     (hmix : fmc_SelfMixing (G := G) μ) :

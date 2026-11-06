@@ -76,7 +76,8 @@ lemma itb_plus_multiOpen_full_tendsto {β : ℝ} (hβ : 0 ≤ β) {h : ℝ} (hh 
 
 /-! ## A. Boundary decay -/
 
-/-- Along `φ`, the plus box measures give the all-plus events on `T` and on `g⁻¹ T`
+/-- **Asymptotic shift homogeneity of all-plus events in plus boxes.**
+Along `φ`, the plus box measures give the all-plus events on `T` and on `g⁻¹ T`
 asymptotically equal probabilities. -/
 def itb_PlusMultiBoundaryDecay (β h : ℝ) (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
   ∀ T : Finset (Site d),
@@ -119,7 +120,8 @@ lemma itb_plusMultiBoundaryDecay_one (β h : ℝ) (φ : ℕ → ℕ) :
 
 /-! ## B. Off-centre domination -/
 
-/-- For every finite `T` there is `c` such that plus measures on boxes of sizes `m + c` and `m`
+/-- **Off-centre domination of all-plus events.**
+For every finite `T` there is `c` such that plus measures on boxes of sizes `m + c` and `m`
 compare the all-plus events on `T` and `g⁻¹ T` in both directions. -/
 def itb_OffCentreDomination (β h : ℝ) (g : Multiplicative (Site d)) : Prop :=
   ∀ T : Finset (Site d), ∃ c : ℕ, ∀ m : ℕ,

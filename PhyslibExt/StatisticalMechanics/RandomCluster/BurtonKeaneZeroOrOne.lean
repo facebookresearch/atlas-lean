@@ -84,7 +84,8 @@ lemma numInfiniteClusters_zero_or_one_of_const
   · left; rwa [hk0] at hk
   · right; rwa [hk1] at hk
 
-/-- For an ergodic measure with `μ(N ≥ 2) = 0`, either a.s. `N = 0` or a.s. `N = 1`. -/
+/-- **Zero or one infinite cluster, given ergodicity and $\mu(N \ge 2) = 0$.**
+For an ergodic measure with `μ(N ≥ 2) = 0`, either a.s. `N = 0` or a.s. `N = 1`. -/
 lemma numInfiniteClusters_zero_or_one
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (herg : IsErgodic (G := Multiplicative (Site d)) μ)

@@ -70,14 +70,16 @@ lemma ons_mvMonomialValue_smul
       simp [ons_mvMonomialValue]
       ring
 
-/-- The sum of the terms of total degree `n` of a series evaluated at `w`. -/
+/-- **Degree-$n$ part of a power series evaluated at a point.**
+The sum of the terms of total degree `n` of a series evaluated at `w`. -/
 noncomputable def ons_degreeFiberCoeff
     {E : Type*} (series : MvPowerSeries E ℂ)
     (weight : E → ℂ) (n : ℕ) : ℂ :=
   ∑' m : {m : E →₀ ℕ // Finsupp.degree m = n},
     MvPowerSeries.coeff m.1 series * ons_mvMonomialValue weight m.1
 
-/-- The sum of the absolute values of the terms of total degree `n` evaluated at `w`. -/
+/-- **Sum of absolute values of the degree-$n$ terms at a point.**
+The sum of the absolute values of the terms of total degree `n` evaluated at `w`. -/
 noncomputable def ons_degreeFiberNorm
     {E : Type*} (series : MvPowerSeries E ℂ)
     (weight : E → ℂ) (n : ℕ) : ℝ :=
@@ -209,7 +211,8 @@ lemma ons_degreeFiberCoeff_eq_zero_of_eval_smul_eventually_zero
 
 /-! ## C. Coefficients -/
 
-/-- The homogeneous degree-`n` part of a series as a polynomial (finitely many variables). -/
+/-- **Homogeneous degree-$n$ part of a power series as a polynomial.**
+The homogeneous degree-`n` part of a series as a polynomial (finitely many variables). -/
 noncomputable def ons_degreeFiberPolynomial
     {E : Type*} [Fintype E] [DecidableEq E]
     (series : MvPowerSeries E ℂ) (n : ℕ) : MvPolynomial E ℂ :=

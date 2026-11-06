@@ -52,7 +52,8 @@ namespace StatMech.Onsager
 
 /-! ## A. The torus graph -/
 
-/-- Nearest-neighbor adjacency on `ℤ_L × ℤ_L`: the two sites differ by `±1` in exactly one
+/-- **Nearest-neighbor adjacency on the discrete torus.**
+Nearest-neighbor adjacency on `ℤ_L × ℤ_L`: the two sites differ by `±1` in exactly one
 coordinate. -/
 def onsTorusAdj (L : ℕ) (u v : ZMod L × ZMod L) : Prop :=
   (u.1 = v.1 ∧ (u.2 = v.2 + 1 ∨ u.2 = v.2 - 1)) ∨ (u.2 = v.2 ∧ (u.1 = v.1 + 1 ∨ u.1 = v.1 - 1))
@@ -61,7 +62,8 @@ def onsTorusAdj (L : ℕ) (u v : ZMod L × ZMod L) : Prop :=
 instance (L : ℕ) : DecidableRel (onsTorusAdj L) := by
   intro u v; unfold onsTorusAdj; infer_instance
 
-/-- The `L × L` square-lattice torus as a simple graph on `ℤ_L × ℤ_L`, for `L > 2`. -/
+/-- **The $L \times L$ square-lattice torus graph.**
+The `L × L` square-lattice torus as a simple graph on `ℤ_L × ℤ_L`, for `L > 2`. -/
 def onsTorusGraph (L : ℕ) [Fact (2 < L)] : SimpleGraph (ZMod L × ZMod L) where
   Adj := onsTorusAdj L
   symm := by
@@ -161,7 +163,8 @@ lemma onsTorus_card_edges (L : ℕ) [Fact (2 < L)] :
 
 /-! ## C. Comparison with circulant graphs -/
 
-/-- The torus graph is the circulant graph of `ℤ_L × ℤ_L` with jumps `(1, 0)` and `(0, 1)`. -/
+/-- **The torus graph is a circulant graph with jumps $(1,0)$ and $(0,1)$.**
+The torus graph is the circulant graph of `ℤ_L × ℤ_L` with jumps `(1, 0)` and `(0, 1)`. -/
 lemma onsTorusGraph_eq_circulantGraph (L : ℕ) [Fact (2 < L)] :
     onsTorusGraph L = SimpleGraph.circulantGraph {((1 : ZMod L), (0 : ZMod L)), (0, 1)} := by
   ext u v

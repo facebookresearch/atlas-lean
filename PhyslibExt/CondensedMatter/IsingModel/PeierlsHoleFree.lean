@@ -66,7 +66,8 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## A. The winding hypothesis -/
 
-/-- Every plus-boundary configuration on `Λ_n` with the origin minus has a connected contour
+/-- **Winding hypothesis for outer contours on $\mathbb{Z}^2$.**
+Every plus-boundary configuration on `Λ_n` with the origin minus has a connected contour
 event through the origin whose boundary meets the positive axis within the contour length. -/
 def OuterContourWinding (n : ℕ) : Prop :=
   ∀ τ : {x // x ∈ box 2 n} → Bool, glue (plusField 2) τ (origin 2) = false →
@@ -81,7 +82,8 @@ def OuterContourWinding (n : ℕ) : Prop :=
 
 /-! ## B. Hole-free clusters -/
 
-/-- `K` is a connected cluster in `Λ_n` through the origin without holes. -/
+/-- **Hole-free connected cluster through the origin.**
+`K` is a connected cluster in `Λ_n` through the origin without holes. -/
 def IsHoleFreeBoxCluster (n : ℕ) (K : Finset (Site 2)) : Prop :=
   IsConnectedCluster K ∧
     ∃ (T : Finset (Site 2)) (j : ℕ),
@@ -91,7 +93,8 @@ def IsHoleFreeBoxCluster (n : ℕ) (K : Finset (Site 2)) : Prop :=
       (∀ e ∈ (faceBoundaryGraph (↑K : Set (Site 2))).edgeSet,
         e ∈ (componentGraph (↑K : Set (Site 2)) (axisVertex 2 j)).edgeSet)
 
-/-- The hole-free clusters in `Λ_n` through the origin. -/
+/-- **Hole-free clusters in the box through the origin.**
+The hole-free clusters in `Λ_n` through the origin. -/
 noncomputable def holeFreeClusterFamily (n : ℕ) : Finset (Finset (Site 2)) :=
   (clusterFamily (d := 2) n).filter (fun K => IsHoleFreeBoxCluster n K)
 
@@ -151,7 +154,8 @@ lemma outerUnionBound_le_sum_exp (n : ℕ) (β : ℝ) (hWind : OuterContourWindi
 
 /-! ## C. Counting by contour length -/
 
-/-- The hole-free clusters in `Λ_n` through the origin with contour length `ℓ`. -/
+/-- **Hole-free clusters with contour length $\ell$.**
+The hole-free clusters in `Λ_n` through the origin with contour length `ℓ`. -/
 noncomputable def holeFreeAtLen (n ℓ : ℕ) : Finset (Finset (Site 2)) :=
   (holeFreeClusterFamily n).filter
     (fun K => contourLen (↑K : Set (Site 2)) (bondFinsetTouch 2 n) = ℓ)

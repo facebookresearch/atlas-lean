@@ -77,13 +77,15 @@ variable {d : ℕ}
 
 /-! ## B. Shifted finite-volume measures -/
 
-/-- The wired finite-volume random-cluster measure on `Λ_n` translated by `g`. -/
+/-- **Translated wired box measure.**
+The wired finite-volume random-cluster measure on `Λ_n` translated by `g`. -/
 noncomputable def erg_wiredShiftedFinite {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (g : Multiplicative (Site d)) (n : ℕ) :
     ProbabilityMeasure (ConfigSpace (Sym2 (Site d))) :=
   (wiredFiniteMeasure d n hp hp1 hq).map (shift g)
 
-/-- The free finite-volume random-cluster measure on `Λ_n` translated by `g`. -/
+/-- **Translated free box measure.**
+The free finite-volume random-cluster measure on `Λ_n` translated by `g`. -/
 noncomputable def erg_freeShiftedFinite {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (g : Multiplicative (Site d)) (n : ℕ) :
     ProbabilityMeasure (ConfigSpace (Sym2 (Site d))) :=

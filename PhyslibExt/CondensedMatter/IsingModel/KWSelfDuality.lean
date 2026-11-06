@@ -97,7 +97,8 @@ lemma prod_exp_bond_eq (β : ℝ) (s : ConfigSpace V) :
 
 /-! ## B. Even subgraphs -/
 
-/-- The number of edges of `F` incident to `v`. -/
+/-- **Number of edges of an edge set incident to a vertex.**
+The number of edges of `F` incident to `v`. -/
 def incCount (F : Finset (Sym2 V)) (v : V) : ℕ :=
   (F.filter (fun e => v ∈ e)).card
 
@@ -110,7 +111,7 @@ lemma incCount_insert (e : Sym2 V) (F : Finset (Sym2 V)) (he : e ∉ F) (v : V) 
   · rw [ite_eq_left hv, Finset.card_insert_of_notMem (by simp [he]), ite_eq_left hv]
   · rw [ite_eq_right hv, ite_eq_right hv, add_zero]
 
-/-- Every vertex has even degree in the edge set `F`. -/
+/-- **Even subgraph condition on an edge set.** Every vertex has even degree in the edge set `F`. -/
 def IsEvenSubgraph (F : Finset (Sym2 V)) : Prop := ∀ v : V, Even (incCount F v)
 
 /-- Being an even subgraph is decidable. -/
@@ -269,7 +270,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## D. Duality from a contour matching -/
 
-/-- `tanh β* = exp (-2β)` and the high-temperature expansion of `Gd` at `β*` equals `c` times
+/-- **Dual high-temperature expansion proportional to the partition function.**
+`tanh β* = exp (-2β)` and the high-temperature expansion of `Gd` at `β*` equals `c` times
 `Z_{Gp}(β)`. -/
 def DualContourMatching (β βstar c : ℝ) : Prop :=
   Real.tanh βstar = Real.exp (-2 * β) ∧

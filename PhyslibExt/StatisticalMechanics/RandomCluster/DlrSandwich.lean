@@ -74,7 +74,8 @@ lemma bcProb_bc_le_wired (C : SimpleGraph V) [DecidableRel C.Adj]
           * bcProb G (StatMech.Lattice.boundaryCliqueGraph bdry) p q ω :=
   bcProb_mono_bc G C (StatMech.Lattice.boundaryCliqueGraph bdry) hC hp hp1 hq hA
 
-/-- For `q ≥ 1` and `C` inside the boundary clique, `φ^0(A) ≤ φ^C(A) ≤ φ^1(A)` for every increasing
+/-- **Free–wired sandwich for boundary graphs inside the boundary clique.**
+For `q ≥ 1` and `C` inside the boundary clique, `φ^0(A) ≤ φ^C(A) ≤ φ^1(A)` for every increasing
 event `A`.
 -/
 lemma bcProb_dlr_sandwich (C : SimpleGraph V) [DecidableRel C.Adj]
@@ -89,7 +90,8 @@ lemma bcProb_dlr_sandwich (C : SimpleGraph V) [DecidableRel C.Adj]
   ⟨bcProb_free_le_bc G C hp hp1 hq hA,
    bcProb_bc_le_wired G bdry C hC hp hp1 hq hA⟩
 
-/-- The free lower bound together with the bound by the boundary condition `⊤` (all vertices
+/-- **Sandwich between the free and all-wired boundary conditions.**
+The free lower bound together with the bound by the boundary condition `⊤` (all vertices
 wired).
 -/
 lemma bcProb_dlr_sandwich_top (C : SimpleGraph V) [DecidableRel C.Adj]

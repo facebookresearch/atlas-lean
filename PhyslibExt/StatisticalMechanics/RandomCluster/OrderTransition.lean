@@ -62,18 +62,19 @@ open StatMech.Lattice StatMech.Percolation
 
 /-! ## A. The free percolation probability -/
 
-/-- The free percolation probability `θ⁰(p, q)`: the free infinite-volume measure of the event that
+/-- **Free percolation probability.**
+The free percolation probability `θ⁰(p, q)`: the free infinite-volume measure of the event that
 the origin lies in an infinite open cluster. -/
 noncomputable def fkThetaFree (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : ℝ :=
   ((freeInfiniteVolume d hp hp1 hq : ProbabilityMeasure (ConfigSpace (Sym2 (Site d)))) :
       Measure (ConfigSpace (Sym2 (Site d)))).real (percolationEvent d)
 
-/-- `θ⁰(p, q) ≥ 0`. -/
+/-- **Nonnegativity of the free percolation probability.** `θ⁰(p, q) ≥ 0`. -/
 lemma fkThetaFree_nonneg (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     0 ≤ fkThetaFree d hp hp1 hq (q := q) :=
   ENNReal.toReal_nonneg
 
-/-- `θ⁰(p, q) ≤ 1`. -/
+/-- **Free percolation probability is at most one.** `θ⁰(p, q) ≤ 1`. -/
 lemma fkThetaFree_le_one (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     fkThetaFree d hp hp1 hq (q := q) ≤ 1 := by
   unfold fkThetaFree
@@ -84,12 +85,14 @@ lemma fkThetaFree_le_one (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 
 
 /-! ## B. First-order transitions -/
 
-/-- A first-order transition at `(p, q)`: the free measure does not percolate, `θ⁰(p, q) = 0`, while
+/-- **First-order transition of the random-cluster model.**
+A first-order transition at `(p, q)`: the free measure does not percolate, `θ⁰(p, q) = 0`, while
 the wired one does, `θ¹(p, q) > 0`. -/
 def IsFirstOrderTransition (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : Prop :=
   fkThetaFree d hp hp1 hq (q := q) = 0 ∧ 0 < fkTheta d hp hp1 hq (q := q)
 
-/-- Introduction rule for `IsFirstOrderTransition`. -/
+/-- **First-order transition from $\theta^0 = 0$ and $\theta^1 > 0$.**
+Introduction rule for `IsFirstOrderTransition`. -/
 lemma firstOrderTransition_of_contour (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hFree : fkThetaFree d hp hp1 hq (q := q) = 0)
@@ -97,7 +100,8 @@ lemma firstOrderTransition_of_contour (d : ℕ) {p q : ℝ}
     IsFirstOrderTransition d hp hp1 hq :=
   ⟨hFree, hWired⟩
 
-/-- At a first-order transition, `θ⁰(p, q) ≠ θ¹(p, q)`. -/
+/-- **$\theta^0 \ne \theta^1$ at a first-order transition.**
+At a first-order transition, `θ⁰(p, q) ≠ θ¹(p, q)`. -/
 lemma fkThetaFree_ne_fkTheta_of_firstOrder (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (h : IsFirstOrderTransition d hp hp1 hq) :
@@ -106,7 +110,8 @@ lemma fkThetaFree_ne_fkTheta_of_firstOrder (d : ℕ) {p q : ℝ}
   rw [hFree]
   exact ne_of_lt hWired
 
-/-- At a first-order transition, the free and wired infinite-volume measures differ. -/
+/-- **Free and wired measures differ at a first-order transition.**
+At a first-order transition, the free and wired infinite-volume measures differ. -/
 lemma freeInfiniteVolume_ne_wiredInfiniteVolume_of_firstOrder (d : ℕ) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (h : IsFirstOrderTransition d hp hp1 hq) :
@@ -116,7 +121,8 @@ lemma freeInfiniteVolume_ne_wiredInfiniteVolume_of_firstOrder (d : ℕ) {p q : �
   unfold fkThetaFree fkTheta
   rw [heq]
 
-/-- At a point `p ∈ (0, 1)` given as the self-dual point on `ℤ²`, the hypotheses `θ⁰ = 0`
+/-- **Free and wired measures differ at self-dual $p$ for $q > 4$ if first order.**
+At a point `p ∈ (0, 1)` given as the self-dual point on `ℤ²`, the hypotheses `θ⁰ = 0`
 and `θ¹ > 0` give a first-order transition with distinct free and wired measures. The
 first-order property for `q > 4` (Duminil-Copin et al., 2021) is assumed, not proved;
 `4 < q` is only used to get `q > 0`. -/
@@ -132,7 +138,8 @@ lemma order_transition_q_large {q : ℝ} (hq : 4 < q)
     firstOrderTransition_of_contour 2 hpos hlt _ hFree hWired
   exact ⟨hfo, freeInfiniteVolume_ne_wiredInfiniteVolume_of_firstOrder 2 hpos hlt _ hfo⟩
 
-/-- `order_transition_q_large` at the self-dual point `p_sd(q) = √q / (1 + √q)` of `ℤ²`, with
+/-- **Free and wired measures differ at $\sqrt{q}/(1+\sqrt{q})$ for $q > 4$ if first order.**
+`order_transition_q_large` at the self-dual point `p_sd(q) = √q / (1 + √q)` of `ℤ²`, with
 `θ⁰(p_sd, q) = 0` and `θ¹(p_sd, q) > 0` assumed. -/
 lemma order_transition_q_large_selfDual {q : ℝ} (hq : 4 < q)
     (hFree : fkThetaFree 2 (BeffaraDC.selfDualPoint_mem_Ioo (by linarith : (0 : ℝ) < q)).1

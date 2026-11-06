@@ -54,7 +54,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. Configurations agreeing off a set -/
 
-/-- `ω` agrees with `ψ` on every edge outside `F`. -/
+/-- **Agreement of configurations off an edge set.**
+`ω` agrees with `ψ` on every edge outside `F`. -/
 def AgreesOff (F : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     ConfigSpace (Sym2 V) → Prop :=
   fun ω => ∀ e, e ∉ F → ω e = ψ e
@@ -81,7 +82,8 @@ lemma agreesOff_congr {F : Finset (Sym2 V)} {ψ ω : ConfigSpace (Sym2 V)}
   · intro hρ e he; rw [hρ e he, h e he]
   · intro hρ e he; rw [hρ e he, ← h e he]
 
-/-- The fibre of configurations agreeing with `ψ` off `F`. -/
+/-- **Fibre of configurations agreeing off an edge set.**
+The fibre of configurations agreeing with `ψ` off `F`. -/
 noncomputable def condFibre (F : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     Finset (ConfigSpace (Sym2 V)) :=
   Finset.univ.filter (AgreesOff F ψ)
@@ -97,7 +99,7 @@ lemma self_mem_condFibre (F : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
 
 /-! ## B. The induced measure on a fibre -/
 
-/-- The total FK weight of the fibre `condFibre F ψ`. -/
+/-- **Total FK weight of a fibre.** The total FK weight of the fibre `condFibre F ψ`. -/
 noncomputable def inducedFkZ (p q : ℝ) (F : Finset (Sym2 V))
     (ψ : ConfigSpace (Sym2 V)) : ℝ :=
   ∑ ρ ∈ condFibre F ψ, fkWeight G p q ρ
@@ -114,7 +116,8 @@ lemma inducedFkZ_ne_zero {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     inducedFkZ G p q F ψ ≠ 0 :=
   (inducedFkZ_pos G hp hp1 hq F ψ).ne'
 
-/-- The FK measure induced on the fibre `condFibre F ψ`: FK weight divided by the fibre's total
+/-- **FK measure induced on a fibre.**
+The FK measure induced on the fibre `condFibre F ψ`: FK weight divided by the fibre's total
 weight.
 -/
 noncomputable def inducedFkProb (p q : ℝ) (F : Finset (Sym2 V))
@@ -140,7 +143,8 @@ lemma inducedFkProb_sum_eq_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < 
 
 /-! ## C. Conditional probabilities -/
 
-/-- The random-cluster measure conditioned on agreeing with `ψ` off `F`. -/
+/-- **Random-cluster measure conditioned on the edges off a set.**
+The random-cluster measure conditioned on agreeing with `ψ` off `F`. -/
 noncomputable def condFkProb (p q : ℝ) (F : Finset (Sym2 V))
     (ψ ω : ConfigSpace (Sym2 V)) : ℝ :=
   fkProb G p q ω / ∑ ρ ∈ condFibre F ψ, fkProb G p q ρ

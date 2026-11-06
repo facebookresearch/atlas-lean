@@ -345,7 +345,8 @@ lemma middleEvent_notConnCompO_iff {o x y g : V} (hox : o ≠ x)
 /-! ## C. The pattern sums -/
 
 open Classical in
-/-- The double-current sum with sources `{o, g} ∆ {x, y}` and `∅` restricted to `o ↔ x`, `y ↔ g` and
+/-- **Four-source double-current sum with a connection pattern.**
+The double-current sum with sources `{o, g} ∆ {x, y}` and `∅` restricted to `o ↔ x`, `y ↔ g` and
 `o ↮ g` in the summed current. -/
 noncomputable def isingDeltaPairSum (β : ℝ) (J : Sym2 V → ℝ)
     (o x y g : V) : ℝ :=
@@ -353,7 +354,8 @@ noncomputable def isingDeltaPairSum (β : ℝ) (J : Sym2 V → ℝ)
     (fun m => CurrentConnected G m o x ∧ CurrentConnected G m y g ∧
       ¬ CurrentConnected G m o g)
 
-/-- The lower mass `∑_S ⟨σ_oσ_x⟩_{J|S} · Z(∂ = ∅, C(g)ᶜ = S)` over sets `S` containing `o, x` and
+/-- **Lower mass of the four-source bound.**
+The lower mass `∑_S ⟨σ_oσ_x⟩_{J|S} · Z(∂ = ∅, C(g)ᶜ = S)` over sets `S` containing `o, x` and
 not `y, g`, where `C(g)ᶜ` is the set of vertices not connected to `g`. -/
 noncomputable def isingDeltaLowerMass (β : ℝ) (J : Sym2 V → ℝ)
     (o x y g : V) : ℝ :=
@@ -363,7 +365,8 @@ noncomputable def isingDeltaLowerMass (β : ℝ) (J : Sym2 V → ℝ)
         gatedSourcePairSum G β J ∅ ∅ (fun m => notConnComp G m g = S)
     else 0
 
-/-- The lower mass in the degenerate case `x = o`: `∑_S Z(∂ = ∅, C(g)ᶜ = S)` over `S ∋ o` with `y, g
+/-- **Lower mass in the degenerate case $x = o$.**
+The lower mass in the degenerate case `x = o`: `∑_S Z(∂ = ∅, C(g)ᶜ = S)` over `S ∋ o` with `y, g
 ∉ S`. -/
 noncomputable def isingDeltaSelfLowerMass (β : ℝ) (J : Sym2 V → ℝ)
     (o y g : V) : ℝ :=
@@ -809,7 +812,8 @@ lemma ising_delta_bound_cleared (β : ℝ) (J : Sym2 V → ℝ)
     _ = isingDeltaLowerMass G β J o x y g := hclaim2
 
 open Classical in
-/-- The four-source lower bound: for `β ≥ 0`, `J ≥ 0`, distinct `o, x, y, g` and `⟨σ_yσ_g⟩ > 0`, the
+/-- **Four-source lower bound for the pattern sum.**
+The four-source lower bound: for `β ≥ 0`, `J ≥ 0`, distinct `o, x, y, g` and `⟨σ_yσ_g⟩ > 0`, the
 pattern sum `Δ(o, x, y, g)` is at least `⟨σ_yσ_g⟩⁻¹` times the lower mass. Reference: M. Aizenman,
 D. J. Barsky, R. Fernández, "The phase transition in a general class of Ising-type models is sharp",
 J. Stat. Phys. 47 (1987) 343–374. -/

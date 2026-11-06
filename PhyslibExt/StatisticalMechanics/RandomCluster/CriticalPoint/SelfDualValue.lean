@@ -51,12 +51,14 @@ namespace BeffaraDC
 
 /-! ## A. The duality map -/
 
-/-- The planar dual parameter `p* = (1 - p) q / ((1 - p) q + p)`, characterized by
+/-- **Planar dual parameter $p^{\ast}$.**
+The planar dual parameter `p* = (1 - p) q / ((1 - p) q + p)`, characterized by
 `p* p / ((1 - p*)(1 - p)) = q`.
 -/
 noncomputable def dualParam (p q : ℝ) : ℝ := (1 - p) * q / ((1 - p) * q + p)
 
-/-- The self-dual point `p_sd(q) = √q / (1 + √q)`. -/
+/-- **Self-dual point $p_{sd}(q) = \sqrt q/(1 + \sqrt q)$.**
+The self-dual point `p_sd(q) = √q / (1 + √q)`. -/
 noncomputable def selfDualPoint (q : ℝ) : ℝ := Real.sqrt q / (1 + Real.sqrt q)
 
 lemma dualDen_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :

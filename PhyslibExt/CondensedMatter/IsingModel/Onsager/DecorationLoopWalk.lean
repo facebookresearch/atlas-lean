@@ -198,11 +198,12 @@ lemma ons_decTransitionWalk_externalDarts
     exact hnil dart hdart hdartExt
   · rfl
 
-/-- Dart `target` starts at the head of dart `source`. -/
+/-- **Head-to-tail relation between darts.** Dart `target` starts at the head of dart `source`. -/
 def ons_decGeometricStep (L : ℕ) (source target : ons_Dart L) : Prop :=
   target.1 = ons_dirStep L source.2 source.1
 
-/-- The multiset of edges of a decorated walk, as an exponent. -/
+/-- **Edge multiset of a decorated walk as an exponent.**
+The multiset of edges of a decorated walk, as an exponent. -/
 noncomputable def ons_decWalkEdgeCount
     {L : ℕ} {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) : ons_DecEdge L →₀ ℕ := by
@@ -234,7 +235,8 @@ lemma ons_decTransitionExponent_eq_edgeCount
     ((SimpleGraph.Walk.isTrail_def _).mp
       (ons_decTransitionWalk_isTrail L d₂ d₁ hstep))
 
-/-- The sum of the transition exponents along a chain of darts starting at `start`. -/
+/-- **Transition exponent sum along a dart chain.**
+The sum of the transition exponents along a chain of darts starting at `start`. -/
 noncomputable def ons_decKWChainExponent
     (L : ℕ) (start : ons_Dart L) :
     List (ons_Dart L) → ons_DecEdge L →₀ ℕ
@@ -283,7 +285,7 @@ lemma ons_isChain_closed_ofFn_mk
     subst y
     simpa using hstep (Fin.last m)
 
-/-- The last dart of a chain starting at `start`. -/
+/-- **Last dart of a dart chain.** The last dart of a chain starting at `start`. -/
 def ons_decKWChainLast {L : ℕ} (start : ons_Dart L) :
     List (ons_Dart L) → ons_Dart L
   | [] => start
@@ -296,7 +298,8 @@ def ons_decKWChainLast {L : ℕ} (start : ons_Dart L) :
   | nil => rfl
   | cons target rest ih => exact ih target
 
-/-- The decorated walk obtained by concatenating the trails of the transitions along a chain of
+/-- **Decorated walk of a chain of darts.**
+The decorated walk obtained by concatenating the trails of the transitions along a chain of
 darts. -/
 noncomputable def ons_decWalkOfKWChain
     (L : ℕ) (start : ons_Dart L) :
@@ -453,7 +456,8 @@ lemma ons_decKWChainExponent_closed_eq_sum
 
 /-! ## C. The walk of a closed loop -/
 
-/-- The darts of a Kac-Ward loop in walking order (reversed indexing). -/
+/-- **Darts of a Kac-Ward loop in walking order.**
+The darts of a Kac-Ward loop in walking order (reversed indexing). -/
 def ons_decGeometricLoopStates
     {L n : ℕ} (d : Fin n → ons_Dart L) : Fin n → ons_Dart L :=
   fun k ↦ d (-k)
@@ -525,7 +529,8 @@ lemma ons_decGeometricLoopStates_tail_reverse
   simp only [Fin.val_succ, Fin.val_rev]
   omega
 
-/-- The closed decorated walk of a valid closed Kac-Ward walk, rooted at its first dart. -/
+/-- **Closed decorated walk of a valid Kac-Ward loop.**
+The closed decorated walk of a valid closed Kac-Ward walk, rooted at its first dart. -/
 noncomputable def ons_decLoopWalk
     (L : ℕ) {n : ℕ} [NeZero n] (d : Fin n → ons_Dart L)
     (hvalid : ∀ k : Fin n,

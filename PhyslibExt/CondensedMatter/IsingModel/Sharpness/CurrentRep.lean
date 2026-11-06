@@ -311,7 +311,8 @@ lemma spinSum_monomial_eq (A : Finset V) (n : Current V) :
 
 /-! ## C. Current sums -/
 
-/-- Extension of a function on the edges of `G` to a current, zero off `E(G)`. -/
+/-- **Extension of an edge function to a current.**
+Extension of a function on the edges of `G` to a current, zero off `E(G)`. -/
 noncomputable def ofEdgeFun (m : ↥G.edgeFinset → ℕ) : Current V :=
   fun e => if h : e ∈ G.edgeFinset then m ⟨e, h⟩ else 0
 
@@ -331,12 +332,14 @@ lemma prod_bond_pow_ofEdgeFun (s : ConfigSpace V) (m : ↥G.edgeFinset → ℕ) 
   refine Finset.prod_congr rfl (fun e _ => ?_)
   unfold ofEdgeFun; rw [dite_eq_left e.2]
 
-/-- The current sum `Z(∂ = A) = ∑_{∂n = A} w(n)` over currents on the edges of `G`. -/
+/-- **Current sum with prescribed sources.**
+The current sum `Z(∂ = A) = ∑_{∂n = A} w(n)` over currents on the edges of `G`. -/
 noncomputable def currentSum (β : ℝ) (J : Sym2 V → ℝ) (A : Finset V) : ℝ :=
   ∑' m : ↥G.edgeFinset → ℕ,
     if sources G (ofEdgeFun G m) = A then weight G β J (ofEdgeFun G m) else 0
 
-/-- The `k`-th term `(βJ_e σ_e)^k / k!` of the expansion of `exp(βJ_e σ_e)`. -/
+/-- **Term of the exponential expansion of an edge weight.**
+The `k`-th term `(βJ_e σ_e)^k / k!` of the expansion of `exp(βJ_e σ_e)`. -/
 noncomputable def gEdge (β : ℝ) (J : Sym2 V → ℝ) (s : ConfigSpace V)
     (e : Sym2 V) (k : ℕ) : ℝ := (β * J e) ^ k * (bond s e) ^ k / k.factorial
 
@@ -375,7 +378,8 @@ lemma prod_gEdge (β : ℝ) (J : Sym2 V → ℝ) (s : ConfigSpace V) (m : ↥G.e
 
 /-! ## D. The representation -/
 
-/-- The Boltzmann weight `exp(β ∑_e J_e σ_e)` with couplings `J`. -/
+/-- **Boltzmann weight with couplings.**
+The Boltzmann weight `exp(β ∑_e J_e σ_e)` with couplings `J`. -/
 noncomputable def boltzmannJ (β : ℝ) (J : Sym2 V → ℝ) (s : ConfigSpace V) : ℝ :=
   Real.exp (β * ∑ e ∈ G.edgeFinset, J e * bond s e)
 
@@ -446,11 +450,11 @@ lemma spinSum_eq_currentSum (β : ℝ) (J : Sym2 V → ℝ) (A : Finset V) :
   refine tsum_congr (fun m => ?_)
   by_cases h : sources G (ofEdgeFun G m) = A <;> simp [h]
 
-/-- The partition function with couplings `J`. -/
+/-- **Partition function with couplings.** The partition function with couplings `J`. -/
 noncomputable def partitionJ (β : ℝ) (J : Sym2 V → ℝ) : ℝ :=
   ∑ s : ConfigSpace V, boltzmannJ G β J s
 
-/-- The correlation `⟨σ_A⟩_{β,J}` with couplings `J`. -/
+/-- **Correlation function with couplings.** The correlation `⟨σ_A⟩_{β,J}` with couplings `J`. -/
 noncomputable def expectationJ (β : ℝ) (J : Sym2 V → ℝ) (A : Finset V) : ℝ :=
   (∑ s : ConfigSpace V, spinProd A s * boltzmannJ G β J s) / partitionJ G β J
 
@@ -469,7 +473,8 @@ lemma partitionJ_eq_currentSum (β : ℝ) (J : Sym2 V → ℝ) :
       Finset.sum_congr rfl (fun s _ => by rw [spinProd_empty, one_mul])]
   exact spinSum_eq_currentSum G β J ∅
 
-/-- The random-current representation: `⟨σ_A⟩_{β,J} = Z(∂ = A)/Z(∂ = ∅)`. Reference: M. Aizenman,
+/-- **Random-current representation.**
+The random-current representation: `⟨σ_A⟩_{β,J} = Z(∂ = A)/Z(∂ = ∅)`. Reference: M. Aizenman,
 "Geometric analysis of φ⁴ fields and Ising models", Comm. Math. Phys. 86 (1982) 1–48; J. Ginibre
 (1970); H. Duminil-Copin, "Random currents expansion of the Ising model", lecture notes (2016),
 arXiv:1607.06933. -/

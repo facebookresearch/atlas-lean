@@ -61,7 +61,8 @@ variable {d : ℕ}
 ## A. The decay functional
 -/
 
-/-- The difference `∫ f dμ_n - ∫ f ∘ θ_g dμ_n` between the integrals of `f` and of its shift by
+/-- **Shift-decay functional of a sequence of measures.**
+The difference `∫ f dμ_n - ∫ f ∘ θ_g dμ_n` between the integrals of `f` and of its shift by
 `g` against the `n`-th measure. -/
 noncomputable def isd_decayFun (μ : ℕ → ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
     (g : Multiplicative (Site d)) (f : (ConfigSpace (Sym2 (Site d))) →ᵇ ℝ) (n : ℕ) : ℝ :=
@@ -125,7 +126,8 @@ lemma isd_abs_decay_le (μ : ℕ → ProbabilityMeasure (ConfigSpace (Sym2 (Site
 ## B. Extension from a dense set
 -/
 
-/-- If `D_n(f') → 0` for all `f'` in a dense set of bounded continuous functions, then
+/-- **Shift decay extends from a dense set of test functions.**
+If `D_n(f') → 0` for all `f'` in a dense set of bounded continuous functions, then
 `D_n(f) → 0` for every bounded continuous `f`. This is the equicontinuity argument of
 `EquicontinuousAt.tendsto_of_mem_closure`, specialized to the uniformly Lipschitz family
 `f ↦ D_n(f)`. -/
@@ -158,7 +160,8 @@ lemma isd_tendsto_decay_of_dense (μ : ℕ → ProbabilityMeasure (ConfigSpace (
 ## C. Box measures
 -/
 
-/-- Decay of `D_n` along the wired box measures `φ^1_{Λ_{φ(n)}}` on some dense set of bounded
+/-- **Wired shift decay on a dense set of test functions.**
+Decay of `D_n` along the wired box measures `φ^1_{Λ_{φ(n)}}` on some dense set of bounded
 continuous functions. -/
 def isd_wiredDenseDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
@@ -167,7 +170,8 @@ def isd_wiredDenseDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
       Tendsto (isd_decayFun (fun n => wiredFiniteMeasure d (φ n) hp hp1 hq) g f')
         atTop (𝓝 0)
 
-/-- Decay of `D_n` along the free box measures `φ^0_{Λ_{φ(n)}}` on some dense set of bounded
+/-- **Free shift decay on a dense set of test functions.**
+Decay of `D_n` along the free box measures `φ^0_{Λ_{φ(n)}}` on some dense set of bounded
 continuous functions. -/
 def isd_freeDenseDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
@@ -226,7 +230,8 @@ lemma isd_freeDenseDecay_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 ## E. Translation invariance
 -/
 
-/-- The wired infinite-volume FK measure is translation invariant if, for every shift and every
+/-- **Wired translation invariance from decay on a dense set.**
+The wired infinite-volume FK measure is translation invariant if, for every shift and every
 convergent box subsequence, `D_n` decays on a dense set. See also
 `flc_wiredIV_isTranslationInvariant` (unconditional for `q = 2`). -/
 lemma isd_wiredIV_isTranslationInvariant_of_denseDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -241,7 +246,8 @@ lemma isd_wiredIV_isTranslationInvariant_of_denseDecay {p q : ℝ} (hp : 0 < p) 
     (fun g φ hφ hconv => isd_wiredIntegralShiftDecay_of_dense hp hp1 hq g φ
       (hdense g φ hφ hconv))
 
-/-- The free infinite-volume FK measure is translation invariant if, for every shift and every
+/-- **Free translation invariance from decay on a dense set.**
+The free infinite-volume FK measure is translation invariant if, for every shift and every
 convergent box subsequence, `D_n` decays on a dense set. See also
 `bdp_freeIV_isTranslationInvariant` (unconditional for `q = 2`). -/
 lemma isd_freeIV_isTranslationInvariant_of_denseDecay {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)

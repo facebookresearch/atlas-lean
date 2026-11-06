@@ -53,7 +53,8 @@ namespace StatMech.Onsager
 
 /-! ## A. Micro darts of decorated edges -/
 
-/-- The four darts of the finer torus along the route of the decorated edge from `d` to `e`. -/
+/-- **Four finer-torus darts along the route of a decorated edge.**
+The four darts of the finer torus along the route of the decorated edge from `d` to `e`. -/
 def ons_decEdgeMicroDarts (L : ℕ) (d e : ons_Dart L) :
     List (ons_Dart (8 * L)) :=
   let r := ons_decEdgeRouteDirs L d e
@@ -158,7 +159,8 @@ lemma ons_decEdgeMicroDarts_sum_exponentY_internal
 
 /-! ## B. Expanded dart lists -/
 
-/-- The darts of the finer torus along the image of a decorated walk. -/
+/-- **Expanded dart list of a decorated walk in the finer torus.**
+The darts of the finer torus along the image of a decorated walk. -/
 def ons_decExpandedDartList
     (L : ℕ) [Fact (2 < L)] {u v : ons_Dart L}
     (p : (ons_decGraph L).Walk u v) : List (ons_Dart (8 * L)) :=
@@ -401,7 +403,8 @@ lemma ons_decExpandedDartList_last_step
 
 /-! ## C. The expanded loop -/
 
-/-- The first dart of the expanded dart list of a decorated cycle. -/
+/-- **First dart of the expanded dart list of a decorated cycle.**
+The first dart of the expanded dart list of a decorated cycle. -/
 def ons_decExpandedRoot
     (L : ℕ) [Fact (2 < L)] {d : ons_Dart L}
     (q : (ons_decGraph L).Walk d d) : ons_Dart (8 * L) :=
@@ -452,7 +455,8 @@ lemma ons_decExpandedDartList_length_pos
     SimpleGraph.Walk.not_nil_iff_lt_length.mp hq.not_nil
   omega
 
-/-- The expanded dart list of a decorated cycle as a cyclic sequence, in walking order. -/
+/-- **Expanded loop of a decorated cycle in walking order.**
+The expanded dart list of a decorated cycle as a cyclic sequence, in walking order. -/
 def ons_decExpandedGeometricLoop
     (L : ℕ) [Fact (2 < L)] {d : ons_Dart L}
     (q : (ons_decGraph L).Walk d d) :
@@ -570,7 +574,8 @@ lemma ons_decExpandedGeometricLoop_site_injective
   exact List.nodup_iff_injective_get.mp
     (hsites.of_map (fun a => a.1)) hget
 
-/-- The expanded dart list of a decorated cycle as a cyclic sequence in Kac-Ward order (reversed
+/-- **Expanded loop of a decorated cycle in Kac-Ward order.**
+The expanded dart list of a decorated cycle as a cyclic sequence in Kac-Ward order (reversed
 indexing). -/
 def ons_decExpandedKWLoop
     (L : ℕ) [Fact (2 < L)] {d : ons_Dart L}

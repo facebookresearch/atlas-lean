@@ -53,28 +53,33 @@ open StatMech.Ising Polynomial
 
 /-! ## A. Sector polynomials -/
 
-/-- The sector weight of the homology class `h` as a real polynomial in `x`. -/
+/-- **Sector weight of a homology class as a polynomial.**
+The sector weight of the homology class `h` as a real polynomial in `x`. -/
 noncomputable def ons_sectorPoly (L : ℕ) [Fact (2 < L)]
     (h : Fin 2 × Fin 2) : Polynomial ℝ :=
   ∑ F ∈ evenSubgraphs (onsTorusGraph L) with ons_evenHomology L F = h,
     X ^ F.card
 
-/-- The signed sector sum `ons_spin00` as a polynomial. -/
+/-- **Signed sector polynomial with the $(1,1)$ sector negated.**
+The signed sector sum `ons_spin00` as a polynomial. -/
 noncomputable def ons_spinPoly00 (L : ℕ) [Fact (2 < L)] : Polynomial ℝ :=
   ons_sectorPoly L (0, 0) + ons_sectorPoly L (1, 0) +
     ons_sectorPoly L (0, 1) - ons_sectorPoly L (1, 1)
 
-/-- The signed sector sum `ons_spin10` as a polynomial. -/
+/-- **Signed sector polynomial with the $(1,0)$ sector negated.**
+The signed sector sum `ons_spin10` as a polynomial. -/
 noncomputable def ons_spinPoly10 (L : ℕ) [Fact (2 < L)] : Polynomial ℝ :=
   ons_sectorPoly L (0, 0) - ons_sectorPoly L (1, 0) +
     ons_sectorPoly L (0, 1) + ons_sectorPoly L (1, 1)
 
-/-- The signed sector sum `ons_spin01` as a polynomial. -/
+/-- **Signed sector polynomial with the $(0,1)$ sector negated.**
+The signed sector sum `ons_spin01` as a polynomial. -/
 noncomputable def ons_spinPoly01 (L : ℕ) [Fact (2 < L)] : Polynomial ℝ :=
   ons_sectorPoly L (0, 0) + ons_sectorPoly L (1, 0) -
     ons_sectorPoly L (0, 1) + ons_sectorPoly L (1, 1)
 
-/-- The signed sector sum `ons_spin11` as a polynomial. -/
+/-- **Signed sector polynomial with only the $(0,0)$ sector positive.**
+The signed sector sum `ons_spin11` as a polynomial. -/
 noncomputable def ons_spinPoly11 (L : ℕ) [Fact (2 < L)] : Polynomial ℝ :=
   ons_sectorPoly L (0, 0) - ons_sectorPoly L (1, 0) -
     ons_sectorPoly L (0, 1) - ons_sectorPoly L (1, 1)
@@ -106,7 +111,8 @@ lemma eval_ons_spinPoly11 (L : ℕ) [Fact (2 < L)] (x : ℝ) :
 
 /-! ## B. Sector determinants -/
 
-/-- The sector determinant as a function of `x`: the product over shifted momenta of
+/-- **Sector determinant as a function of $x$.**
+The sector determinant as a function of `x`: the product over shifted momenta of
 `(1 + x²)² - 2x(1 - x²)(cos k₁ + cos k₂)`. -/
 noncomputable def ons_spinDetX (L : ℕ) (x : ℝ) (a b : Fin 2) : ℝ :=
   ∏ i ∈ Finset.range L, ∏ j ∈ Finset.range L,
@@ -119,7 +125,8 @@ lemma ons_spinDet_eq_spinDetX (L : ℕ) (beta : ℝ) (a b : Fin 2) :
   unfold ons_spinDet ons_spinDetX ons_symbolDispersion
   rfl
 
-/-- The sector determinant as a real polynomial in `x`. -/
+/-- **Sector determinant as a real polynomial.**
+The sector determinant as a real polynomial in `x`. -/
 noncomputable def ons_spinDetPoly (L : ℕ) (a b : Fin 2) : Polynomial ℝ :=
   ∏ i ∈ Finset.range L, ∏ j ∈ Finset.range L,
     ((1 + X ^ 2) ^ 2 -
@@ -140,7 +147,8 @@ lemma eval_ons_spinDetPoly (L : ℕ) (x : ℝ) (a b : Fin 2) :
 
 /-! ## C. Extension from small x -/
 
-/-- The four spin Kac-Ward identities `spin_{ab}(x)² = det_{ab}(x)` on the `L × L` torus at activity
+/-- **Four spin Kac-Ward identities on the torus at activity $x$.**
+The four spin Kac-Ward identities `spin_{ab}(x)² = det_{ab}(x)` on the `L × L` torus at activity
 `x`. -/
 def ons_spinKacWardAt (L : ℕ) [Fact (2 < L)] (x : ℝ) : Prop :=
   ons_spin11 L x ^ 2 = ons_spinDetX L x 0 0 ∧

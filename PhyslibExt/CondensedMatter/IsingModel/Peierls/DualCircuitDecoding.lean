@@ -70,7 +70,8 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## A. Primal and dual edges -/
 
-/-- The primal edge of `ℤ²` crossed by the dual edge between the faces `f` and `g`, defined
+/-- **Primal edge crossed by a dual edge.**
+The primal edge of `ℤ²` crossed by the dual edge between the faces `f` and `g`, defined
 symmetrically in `f` and `g`. See also `sharedPrimalEdge`, with which it agrees on adjacent
 faces (`symPrimal_eq_shared`). -/
 noncomputable def symPrimal (f g : Site 2) : Sym2 (Site 2) := by
@@ -104,13 +105,15 @@ lemma symPrimal_eq_shared {f g : Site 2} (h : (hypercubicLattice 2).Adj f g) :
       omega
     rw [h1, min_self]
 
-/-- `symPrimal` on unordered pairs of faces. -/
+/-- **Primal edge crossed by an unordered pair of faces.**
+`symPrimal` on unordered pairs of faces. -/
 noncomputable def symPrimalSym : Sym2 (Site 2) → Sym2 (Site 2) :=
   Sym2.lift ⟨symPrimal, symPrimal_comm⟩
 
 @[simp] lemma symPrimalSym_mk (f g : Site 2) : symPrimalSym s(f, g) = symPrimal f g := rfl
 
-/-- The two faces of `ℤ²` flanking the primal edge `{p, q}`. -/
+/-- **Two faces flanking a primal edge.**
+The two faces of `ℤ²` flanking the primal edge `{p, q}`. -/
 noncomputable def flankFaces (p q : Site 2) : Sym2 (Site 2) := by
   classical
   exact if p 0 = q 0 then
@@ -125,7 +128,7 @@ lemma flankFaces_comm (p q : Site 2) : flankFaces p q = flankFaces q p := by
   · rw [ite_eq_left h0, ite_eq_left h0.symm, h0, min_comm]
   · rw [ite_eq_right h0, ite_eq_right (fun hc => h0 hc.symm), min_comm (p 0), min_comm (p 1)]
 
-/-- `flankFaces` on unordered pairs of sites. -/
+/-- **Two faces flanking an unordered pair of sites.** `flankFaces` on unordered pairs of sites. -/
 noncomputable def flankFacesSym : Sym2 (Site 2) → Sym2 (Site 2) :=
   Sym2.lift ⟨flankFaces, flankFaces_comm⟩
 
@@ -268,7 +271,8 @@ lemma symPrimalSym_injOn_edges (K : Set (Site 2)) :
 
 /-! ## B. Decoding dual circuits -/
 
-/-- The set of primal edges crossed by a closed dual walk. -/
+/-- **Primal edges crossed by a closed dual walk.**
+The set of primal edges crossed by a closed dual walk. -/
 noncomputable def dualWalkContour (W : Σ v : Site 2, (hypercubicLattice 2).Walk v v) :
     Finset (Sym2 (Site 2)) :=
   (W.2.edges.map symPrimalSym).toFinset
@@ -327,7 +331,8 @@ lemma circuit_length_eq_contourLen {K : Finset (Site 2)} {n : ℕ}
 
 /-! ## C. Circuit data and the Peierls count -/
 
-/-- Every realised contour of length `ℓ` in `Λ_n ⊆ ℤ²` is the contour of a finite cluster whose
+/-- **Connected face-boundary graphs at the axis for all realised contours.**
+Every realised contour of length `ℓ` in `Λ_n ⊆ ℤ²` is the contour of a finite cluster whose
 face-boundary graph is connected on `boundarySupport` and meets an axis face `(j, 0)` with `j <
 ℓ`. The condition refers to the face set `boundarySupport`, which is chosen by
 `Classical.choose`. -/
@@ -380,7 +385,8 @@ lemma realisedContour_has_cluster {n ℓ : ℕ} {F : Finset (Sym2 (Site 2))}
   exact ⟨K, StatMech.Ising.pcc_mem_connClusterFamily.mpr hKmem.1,
     StatMech.Ising.clusterFamily_subset_box hKmem.1.1, hKeq, hKmem.2⟩
 
-/-- Every connected cluster in `Λ_n ⊆ ℤ²` with contour length `ℓ` is finite, has face-boundary graph
+/-- **Connected face-boundary graphs at the axis for all connected clusters.**
+Every connected cluster in `Λ_n ⊆ ℤ²` with contour length `ℓ` is finite, has face-boundary graph
 connected on `boundarySupport`, and meets an axis face `(j, 0)` with `j < ℓ`. The condition
 refers to the face set `boundarySupport`, which is chosen by `Classical.choose`;
 `TightAxisCircuitData` avoids this choice. -/

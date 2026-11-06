@@ -51,7 +51,8 @@ open StatMech.Lattice StatMech.Percolation
 
 /-! ## A. The percolation probability -/
 
-/-- The percolation probability `θ(p, q) = φ^1_{p,q}(0 ↔ ∞)` of the wired infinite-volume
+/-- **Wired random-cluster percolation probability $\theta(p, q)$.**
+The percolation probability `θ(p, q) = φ^1_{p,q}(0 ↔ ∞)` of the wired infinite-volume
 random-cluster measure on `ℤ^d`.
 -/
 noncomputable def fkTheta (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) : ℝ :=
@@ -72,7 +73,8 @@ lemma fkTheta_le_one (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < 
 
 /-! ## B. The critical parameter -/
 
-/-- The parameters `p ∈ (0, 1)` at which the wired measure does not percolate (`θ(p, q) = 0`). -/
+/-- **Non-percolating parameters of the wired random-cluster measure.**
+The parameters `p ∈ (0, 1)` at which the wired measure does not percolate (`θ(p, q) = 0`). -/
 def fkSubcriticalSet (d : ℕ) (q : ℝ) : Set ℝ :=
   {p : ℝ | ∃ (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q), fkTheta d hp hp1 hq (q := q) = 0}
 
@@ -82,7 +84,8 @@ lemma mem_fkSubcriticalSet {d : ℕ} {q : ℝ} {p : ℝ} :
       ∃ (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q), fkTheta d hp hp1 hq (q := q) = 0 :=
   Iff.rfl
 
-/-- The critical parameter `p_c(q) = sup {p ∈ (0, 1) : θ(p, q) = 0}` of the random-cluster model on
+/-- **Critical parameter $p_c(q)$ of the random-cluster model.**
+The critical parameter `p_c(q) = sup {p ∈ (0, 1) : θ(p, q) = 0}` of the random-cluster model on
 `ℤ^d` (equal to `0` when the set is empty, e.g. for `q ≤ 0`).
 -/
 noncomputable def fkPc (d : ℕ) (q : ℝ) : ℝ :=

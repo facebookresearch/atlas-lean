@@ -50,7 +50,8 @@ variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 
 /-! ## A. Configurations under relabeling -/
 
-/-- The equivalence of configuration spaces induced by a vertex equivalence `σ : V ≃ W`: `ω ↦ ω ∘
+/-- **Configuration equivalence induced by a vertex relabeling.**
+The equivalence of configuration spaces induced by a vertex equivalence `σ : V ≃ W`: `ω ↦ ω ∘
 σ`. -/
 def isingCfgEquiv (σ : V ≃ W) : ConfigSpace W ≃ ConfigSpace V where
   toFun ω := fun x => ω (σ x)

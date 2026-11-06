@@ -128,7 +128,8 @@ lemma shk_wprob_biUnion_le [Fintype E] [DecidableEq E]
 
 /-! ## B. The BK bound -/
 
-/-- The edge law of inhomogeneous bond percolation: open with probability `1 - exp(-βJ_e)`, closed
+/-- **Edge law of inhomogeneous bond percolation.**
+The edge law of inhomogeneous bond percolation: open with probability `1 - exp(-βJ_e)`, closed
 with probability `exp(-βJ_e)`. -/
 noncomputable def shk_edgeLaw (beta : ℝ) (J : E → ℝ) (e : E) (b : Bool) : ℝ :=
   if b then 1 - Real.exp (-beta * J e) else Real.exp (-beta * J e)

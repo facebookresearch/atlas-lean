@@ -86,7 +86,8 @@ lemma cdc_eventMassProb_reCfgIso_inv (σ : V ≃ W)
         Set.indicator_of_notMem h]
   rw [hind]
 
-/-- The event that every edge of `s` is open. Equal to `fmu_multiOpen` (see
+/-- **Event that every edge of a finite set is open.**
+The event that every edge of `s` is open. Equal to `fmu_multiOpen` (see
 `ftb_fmu_eq_cdc_multiOpen`).
 -/
 def cdc_multiOpenEvent (s : Finset (Sym2 (Site d))) :
@@ -121,12 +122,14 @@ lemma cdc_multiOpenEvent_measurable (s : Finset (Sym2 (Site d))) :
   rw [this]
   exact MeasurableSet.biInter s.countable_toSet (fun e _ => idc_openEdgeEvent_measurable e)
 
-/-- The continuous function `ω ↦ ∏_{e ∈ s} ω(e)`, the indicator of `cdc_multiOpenEvent s`. -/
+/-- **Continuous monomial indicator that every edge of a set is open.**
+The continuous function `ω ↦ ∏_{e ∈ s} ω(e)`, the indicator of `cdc_multiOpenEvent s`. -/
 noncomputable def cdc_monomialCM (s : Finset (Sym2 (Site d))) :
     C(ConfigSpace (Sym2 (Site d)), ℝ) :=
   ∏ e ∈ s, idc_coordCM e
 
-/-- `cdc_monomialCM s` as a bounded continuous function. -/
+/-- **Monomial indicator as a bounded continuous function.**
+`cdc_monomialCM s` as a bounded continuous function. -/
 noncomputable def cdc_monomialBcf (s : Finset (Sym2 (Site d))) :
     ConfigSpace (Sym2 (Site d)) →ᵇ ℝ :=
   BoundedContinuousFunction.mkOfCompact (cdc_monomialCM s)
@@ -185,7 +188,8 @@ lemma cdc_decayFun_monomial (μ : ℕ → ProbabilityMeasure (ConfigSpace (Sym2 
 
 /-! ## B. Box events and finite-volume limits -/
 
-/-- The event that every edge of `t ⊆ E(Λ_N)` is open, on configurations of `Λ_N`. -/
+/-- **Event that every edge of a set of box edges is open, on a box.**
+The event that every edge of `t ⊆ E(Λ_N)` is open, on configurations of `Λ_N`. -/
 def cdc_boxMultiOpenEvent (N : ℕ) (t : Finset (Sym2 (boxVerts d N))) :
     Set (ConfigSpace (Sym2 (boxVerts d N))) :=
   {σ | ∀ eb ∈ t, σ eb = true}
@@ -267,7 +271,8 @@ lemma cdc_finset_in_box (s : Finset (Sym2 (Site d))) :
 
 /-! ## C. Multi-edge homogeneity -/
 
-/-- The wired `q = 2` infinite-volume measure gives every multi-open event the same mass as its
+/-- **Wired $q = 2$ multi-edge homogeneity under a translation.**
+The wired `q = 2` infinite-volume measure gives every multi-open event the same mass as its
 translate by `g⁻¹`.
 -/
 def cdc_wiredMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -279,7 +284,8 @@ def cdc_wiredMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
           : Measure (ConfigSpace (Sym2 (Site d)))).real
             (cdc_multiOpenEvent (s.image (fun e => g⁻¹ • e)))
 
-/-- The free `q = 2` infinite-volume measure gives every multi-open event the same mass as its
+/-- **Free $q = 2$ multi-edge homogeneity under a translation.**
+The free `q = 2` infinite-volume measure gives every multi-open event the same mass as its
 translate by `g⁻¹`.
 -/
 def cdc_freeMultiHomogeneous {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -416,7 +422,8 @@ lemma cdc_decayFun_zero (μ : ℕ → ProbabilityMeasure (ConfigSpace (Sym2 (Sit
   simp only [isd_decayFun, BoundedContinuousFunction.coe_zero, Pi.zero_apply, integral_zero,
     sub_zero]
 
-/-- The continuous functions whose shift-decay functional along the wired box measures (on the
+/-- **Submodule of functions with vanishing wired shift decay.**
+The continuous functions whose shift-decay functional along the wired box measures (on the
 subsequence `φ`) tends to `0`, as a submodule.
 -/
 noncomputable def cdc_wiredDecaySet {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
@@ -449,7 +456,8 @@ noncomputable def cdc_wiredDecaySet {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
         = c • BoundedContinuousFunction.mkOfCompact h := rfl
     rw [hms, cdc_decayFun_smul]
 
-/-- The continuous functions whose shift-decay functional along the free box measures (on the
+/-- **Submodule of functions with vanishing free shift decay.**
+The continuous functions whose shift-decay functional along the free box measures (on the
 subsequence `φ`) tends to `0`, as a submodule.
 -/
 noncomputable def cdc_freeDecaySet {p : ℝ} (hp : 0 < p) (hp1 : p < 1)

@@ -89,7 +89,8 @@ lemma ccb_boundary_step_mem_crossEdges {K : Finset (Site d)} {n : ℕ} {a b : Si
     · rw [mem_boxFinset]; exact ccb_adj_mem_box_succ hadj hab
   · rw [crosses_mk]; exact ⟨fun _ => hbK, fun _ => haK⟩
 
-/-- The set of sites reachable from the origin in the hypercubic lattice after deleting the edges in
+/-- **Sites reachable from the origin after deleting edges.**
+The set of sites reachable from the origin in the hypercubic lattice after deleting the edges in
 `F`. -/
 noncomputable def regionDel (d : ℕ) (F : Set (Sym2 (Site d))) : Set (Site d) :=
   {x | ((hypercubicLattice d).deleteEdges F).Reachable (origin d) x}
@@ -145,7 +146,8 @@ lemma ccb_crossEdges_injOn {n : ℕ} :
 
 /-! ## B. Closed-walk encodings and the Peierls count -/
 
-/-- The connected clusters in the box `Λ_n` whose contour has exactly `ℓ` bonds. -/
+/-- **Connected clusters in a box with contour length $\ell$.**
+The connected clusters in the box `Λ_n` whose contour has exactly `ℓ` bonds. -/
 noncomputable def ccb_contourFiber (d n ℓ : ℕ) : Finset (Finset (Site d)) :=
   (connClusterFamily (d := d) n).filter
     (fun (K : Finset (Site d)) => contourLen (↑K) (bondFinsetTouch d n) = ℓ)
@@ -156,7 +158,8 @@ lemma ccb_connClusterFamily_props {n : ℕ} {K : Finset (Site d)}
   rw [pcc_mem_connClusterFamily] at hK
   exact ⟨hK.2, clusterFamily_subset_box hK.1⟩
 
-/-- The clusters with contour length `ℓ` admit an injective encoding by closed lattice walks of
+/-- **Injective closed-walk encoding of clusters of contour length $\ell$.**
+The clusters with contour length `ℓ` admit an injective encoding by closed lattice walks of
 length `ℓ` based at one of at most `ℓ` anchor sites. -/
 def ccb_ContourEncodingExists (d n ℓ : ℕ) : Prop :=
   ∃ anchors : Finset (Site d),

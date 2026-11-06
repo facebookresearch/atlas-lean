@@ -67,11 +67,12 @@ variable {d : ℕ}
 
 /-! ## A. The Peierls series -/
 
-/-- The Peierls series `∑_ℓ ℓ (2d)^ℓ e^{-2βℓ}`. -/
+/-- **Peierls series.** The Peierls series `∑_ℓ ℓ (2d)^ℓ e^{-2βℓ}`. -/
 noncomputable def peierlsBound (d : ℕ) (β : ℝ) : ℝ :=
   ∑' ℓ : ℕ, (ℓ : ℝ) * (2 * d : ℝ) ^ ℓ * Real.exp (-(2 * β) * ℓ)
 
-/-- The ratio `2d e^{-2β}` of the Peierls series. -/
+/-- **Ratio $2d e^{-2\beta}$ of the Peierls series.**
+The ratio `2d e^{-2β}` of the Peierls series. -/
 noncomputable def peierlsRatio (d : ℕ) (β : ℝ) : ℝ := (2 * d : ℝ) * Real.exp (-(2 * β))
 
 @[simp] lemma peierlsRatio_def (d : ℕ) (β : ℝ) :
@@ -162,7 +163,8 @@ lemma contour_card_le_peierlsSummand (d : ℕ) (β : ℝ) (B : Finset (Site d)) 
 
 /-! ## B. The origin spin -/
 
-/-- The probability that the origin spin is minus under the box measure with boundary condition
+/-- **Probability that the origin spin is minus.**
+The probability that the origin spin is minus under the box measure with boundary condition
 `η`. -/
 noncomputable def probOriginMinus (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) : ℝ :=
@@ -197,7 +199,8 @@ lemma fvMagOrigin_pos_of_probOriginMinus_lt_half (η : ConfigSpace (Site d)) (n 
 
 /-! ## C. Long-range order from a contour bound -/
 
-/-- Under the plus box measure on `Λ_n`, the origin is minus with probability at most
+/-- **Peierls bound on the probability that the origin is minus.**
+Under the plus box measure on `Λ_n`, the origin is minus with probability at most
 `peierlsBound d β`. -/
 def PeierlsContourBound (d n : ℕ) (β : ℝ) : Prop :=
   probOriginMinus (plusField d) n (bondFinsetTouch d n) β 0 ≤ peierlsBound d β

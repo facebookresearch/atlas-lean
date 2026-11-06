@@ -62,7 +62,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 -/
 
-/-- The indicator of a monochromatic edge: `𝟙[σ x = σ y]` on the unordered pair `s(x, y)`. -/
+/-- **Monochromatic-edge indicator.**
+The indicator of a monochromatic edge: `𝟙[σ x = σ y]` on the unordered pair `s(x, y)`. -/
 def monoIndicator {q : ℕ} (σ : V → Fin q) : Sym2 V → ℝ :=
   Sym2.lift ⟨fun x y => if σ x = σ y then (1 : ℝ) else 0, by
     intro a b
@@ -83,7 +84,8 @@ lemma monoIndicator_nonneg {q : ℕ} (σ : V → Fin q) (e : Sym2 V) :
   induction e with
   | _ x y => rw [monoIndicator_mk]; split <;> norm_num
 
-/-- The agreement count: the number of edges of `G` whose endpoints carry the same spin. -/
+/-- **Agreement count of a spin configuration.**
+The agreement count: the number of edges of `G` whose endpoints carry the same spin. -/
 def agreement {q : ℕ} (σ : V → Fin q) : ℝ :=
   ∑ e ∈ G.edgeFinset, monoIndicator σ e
 
@@ -97,7 +99,7 @@ lemma agreement_nonneg {q : ℕ} (σ : V → Fin q) : 0 ≤ agreement G σ :=
 
 -/
 
-/-- The Potts Boltzmann weight `exp (β J · agreement G σ)`. -/
+/-- **Potts Boltzmann weight.** The Potts Boltzmann weight `exp (β J · agreement G σ)`. -/
 noncomputable def pottsWeight {q : ℕ} (β J : ℝ) (σ : V → Fin q) : ℝ :=
   Real.exp (β * J * agreement G σ)
 
@@ -109,7 +111,8 @@ omit [DecidableEq V] in
 lemma pottsWeight_nonneg {q : ℕ} (β J : ℝ) (σ : V → Fin q) : 0 ≤ pottsWeight G β J σ :=
   (pottsWeight_pos G β J σ).le
 
-/-- The Potts partition function `Z = ∑_σ exp (β J · agreement G σ)`. -/
+/-- **Potts partition function.**
+The Potts partition function `Z = ∑_σ exp (β J · agreement G σ)`. -/
 noncomputable def pottsZ (q : ℕ) (β J : ℝ) : ℝ :=
   ∑ σ : V → Fin q, pottsWeight G β J σ
 
@@ -125,7 +128,8 @@ lemma pottsZ_ne_zero (q : ℕ) [NeZero q] (β J : ℝ) : pottsZ G q β J ≠ 0 :
 
 -/
 
-/-- The Potts probability of the spin configuration `σ`. -/
+/-- **Potts probability of a spin configuration.**
+The Potts probability of the spin configuration `σ`. -/
 noncomputable def pottsProb (q : ℕ) (β J : ℝ) (σ : V → Fin q) : ℝ :=
   pottsWeight G β J σ / pottsZ G q β J
 
@@ -143,7 +147,8 @@ lemma pottsProb_sum_eq_one (q : ℕ) [NeZero q] (β J : ℝ) :
   rw [← Finset.sum_div]
   exact div_self (pottsZ_ne_zero G q β J)
 
-/-- The Potts Gibbs measure on `V → Fin q` as a probability mass function. -/
+/-- **Potts Gibbs measure as a probability mass function.**
+The Potts Gibbs measure on `V → Fin q` as a probability mass function. -/
 noncomputable def pottsPMF (q : ℕ) [NeZero q] (β J : ℝ) : PMF (V → Fin q) :=
   PMF.ofFintype (fun σ => ENNReal.ofReal (pottsProb G q β J σ)) <| by
     rw [← ENNReal.ofReal_sum_of_nonneg fun σ _ => pottsProb_nonneg G q β J σ,

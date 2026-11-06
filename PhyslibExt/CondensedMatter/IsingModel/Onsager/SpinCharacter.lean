@@ -55,13 +55,15 @@ open BigOperators StatMech.Ising
 
 /-! ## A. Characters and the intersection form -/
 
-/-- The spin-structure character `(-1)^{(1 + a) h₁ + (1 + b) h₂ + h₁ h₂}` of a homology class `h`
+/-- **Spin-structure character of a mod 2 homology class.**
+The spin-structure character `(-1)^{(1 + a) h₁ + (1 + b) h₂ + h₁ h₂}` of a homology class `h`
 mod 2, for boundary phases `a, b`. -/
 def ons_spinCharacter (a b : Fin 2) (h : Fin 2 × Fin 2) : ℝ :=
   (-1 : ℝ) ^ ((1 + a.val) * h.1.val + (1 + b.val) * h.2.val +
     h.1.val * h.2.val)
 
-/-- The intersection form `h₁ k₂ + h₂ k₁` on `H₁(T², ℤ/2) = (ℤ/2)²`. -/
+/-- **Intersection form on the mod 2 homology of the torus.**
+The intersection form `h₁ k₂ + h₂ k₁` on `H₁(T², ℤ/2) = (ℤ/2)²`. -/
 def ons_homologyIntersection (h k : Fin 2 × Fin 2) : Fin 2 :=
   h.1 * k.2 + h.2 * k.1
 
@@ -135,7 +137,8 @@ lemma ons_spinCharacter_sum_of_pairwise_intersection_zero
 
 /-! ## B. Character-weighted even-subgraph sums -/
 
-/-- The even-subgraph sum of the torus with each subgraph weighted by the spin character of its
+/-- **Spin-character sum over even subgraphs of the torus.**
+The even-subgraph sum of the torus with each subgraph weighted by the spin character of its
 homology class. -/
 noncomputable def ons_spinCharacterSum (L : ℕ) [Fact (2 < L)]
     (x : ℝ) (a b : Fin 2) : ℝ :=

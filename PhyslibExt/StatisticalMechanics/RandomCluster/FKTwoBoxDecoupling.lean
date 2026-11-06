@@ -245,7 +245,8 @@ lemma ftb_exists_common_box_free (P : Finset (Finset (Sym2 (Site d))))
 
 /-! ## C. Far-box product domination -/
 
-/-- For every finite family of finite edge sets, box index `m`, and `δ > 0`, some translation `g`
+/-- **Far-box product domination of multi-open events.**
+For every finite family of finite edge sets, box index `m`, and `δ > 0`, some translation `g`
 satisfies `μ(O_T ∩ g⁻¹O_{T'}) ≤ μ_m(O_T) μ_m(O_{T'}) + δ` for all `T, T'` in the family.
 -/
 def ftb_FarBoxProductDom {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1)
@@ -258,7 +259,8 @@ def ftb_FarBoxProductDom {p : ℝ} (_hp : 0 < p) (_hp1 : p < 1)
             ⁻¹' fmu_multiOpen T')
         ≤ (μbox m).real (fmu_multiOpen T) * (μbox m).real (fmu_multiOpen T') + δ
 
-/-- For every finite family of finite edge sets and box index `N`, some translation `g` satisfies,
+/-- **Finite-box disjoint product domination of multi-open events.**
+For every finite family of finite edge sets and box index `N`, some translation `g` satisfies,
 for
 all large `m`, `μ_m(O_T ∩ g⁻¹O_{T'}) ≤ μ_N(O_T) μ_N(O_{T'})` for all `T, T'` in the family.
 -/

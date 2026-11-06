@@ -77,10 +77,12 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-! ## B. Automorphisms of the ghost graph -/
 
-/-- The extension of a vertex permutation to the ghost graph fixing the ghost. -/
+/-- **Extension of a vertex permutation to the ghost graph.**
+The extension of a vertex permutation to the ghost graph fixing the ghost. -/
 def abfsOptionEquiv (sigma : V ≃ V) : Option V ≃ Option V := sigma.optionCongr
 
-/-- The induced permutation of unordered pairs of the ghost graph. -/
+/-- **Induced permutation of ghost-graph edges.**
+The induced permutation of unordered pairs of the ghost graph. -/
 def abfsEdgeEquiv (sigma : V ≃ V) :
     Sym2 (Option V) ≃ Sym2 (Option V) :=
   StatMech.Lattice.sym2Congr (abfsOptionEquiv sigma)

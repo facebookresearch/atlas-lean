@@ -69,7 +69,7 @@ variable (bdry : V → Prop) [DecidablePred bdry]
 
 /-! ## A. Domination of the wired measure by Bernoulli percolation -/
 
-/-- The open subgraph is monotone in the configuration. -/
+/-- **Monotonicity of the open subgraph.** The open subgraph is monotone in the configuration. -/
 lemma openGraph_mono {a b : ConfigSpace (Sym2 V)} (h : a ≤ b) :
     openGraph G a ≤ openGraph G b := by
   intro x y hxy
@@ -80,21 +80,23 @@ lemma openGraph_mono {a b : ConfigSpace (Sym2 V)} (h : a ≤ b) :
   exact le_antisymm le_top this
 
 omit [DecidablePred bdry] in
-/-- The wired graph (open edges plus the boundary clique) is monotone in the configuration. -/
+/-- **Monotonicity of the wired graph.**
+The wired graph (open edges plus the boundary clique) is monotone in the configuration. -/
 lemma wiredGraph_mono {a b : ConfigSpace (Sym2 V)} (h : a ≤ b) :
     wiredGraph G bdry a ≤ wiredGraph G bdry b := by
   unfold wiredGraph
   exact sup_le_sup_right (openGraph_mono G h) _
 
 omit [DecidablePred bdry] in
-/-- The wired cluster count `k¹(ω)` is antitone in `ω`. -/
+/-- **Wired cluster count is antitone.** The wired cluster count `k¹(ω)` is antitone in `ω`. -/
 lemma numClustersWired_antitone {a b : ConfigSpace (Sym2 V)} (h : a ≤ b) :
     numClustersWired G bdry b ≤ numClustersWired G bdry a := by
   unfold numClustersWired
   exact SimpleGraph.ConnectedComponent.card_le_card_of_le (wiredGraph_mono G bdry h)
 
 omit [DecidablePred bdry] in
-/-- Holley cross inequality between the wired random-cluster weight and the Bernoulli product
+/-- **Holley cross inequality for wired and Bernoulli weights, $q \ge 1$.**
+Holley cross inequality between the wired random-cluster weight and the Bernoulli product
 weight, for `q ≥ 1`. -/
 lemma wiredFkWeight_edgeProduct_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (a b : ConfigSpace (Sym2 V)) :
@@ -126,7 +128,8 @@ lemma wiredFkWeight_edgeProduct_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
           ring
 
 omit [DecidablePred bdry] in
-/-- Holley cross inequality between the ambient wired probability and the ambient `q = 1`
+/-- **Holley cross inequality for wired and $q = 1$ laws, $q \ge 1$.**
+Holley cross inequality between the ambient wired probability and the ambient `q = 1`
 law, for `q ≥ 1`. The latter is Bernoulli-`p` only on the graph-edge marginal. -/
 lemma wiredFkProb_fkProbOne_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (a b : ConfigSpace (Sym2 V)) :
@@ -142,7 +145,8 @@ lemma wiredFkProb_fkProbOne_cross {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1
   exact wiredFkWeight_edgeProduct_cross G bdry hp hp1 hq a b
 
 omit [DecidablePred bdry] in
-/-- For `q ≥ 1`, the ambient wired law is dominated by `fkProb G p 1` on increasing events.
+/-- **Wired law at most the $q = 1$ law on increasing events, $q \ge 1$.**
+For `q ≥ 1`, the ambient wired law is dominated by `fkProb G p 1` on increasing events.
 The latter is Bernoulli-`p` on graph edges and uniform on loops and nonedges; the comparison
 with ordinary Bernoulli percolation therefore applies to graph-edge events. -/
 lemma wiredFkProb_le_fkProbOne_increasing {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -159,7 +163,8 @@ lemma wiredFkProb_le_fkProbOne_increasing {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
 
 /-! ## B. Bernoulli cylinder probabilities -/
 
-/-- Summing a product of single-coordinate factors over all Boolean configurations: coordinates
+/-- **Boolean-configuration sum of a coordinatewise product factorizes.**
+Summing a product of single-coordinate factors over all Boolean configurations: coordinates
 outside `s` contribute a factor `2` each. -/
 lemma sum_prod_factor {ι : Type*} [Fintype ι] [DecidableEq ι] (s : Finset ι)
     (h : ι → Bool → ℝ) :
@@ -182,7 +187,8 @@ lemma sum_prod_factor {ι : Type*} [Fintype ι] [DecidableEq ι] (s : Finset ι)
     intro e he; simp only [hhbar, ite_eq_left he]
   rw [Finset.prod_congr rfl h3]; ring
 
-/-- Under Bernoulli percolation on a finite graph, a set `F` of edges is open with probability
+/-- **Bernoulli probability that edges $F$ are all open is $p^{|F|}$.**
+Under Bernoulli percolation on a finite graph, a set `F` of edges is open with probability
 `p^|F|`. -/
 lemma fkProbOne_cylinder {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (F : Finset (Sym2 V))
     (hF : F ⊆ G.edgeFinset) :
@@ -249,22 +255,24 @@ variable {d : ℕ}
 
 /-! ## C. Open self-avoiding walks -/
 
-/-- Extend a word of `m` lattice steps to an infinite word by a fixed padding step. -/
+/-- **Padding a finite lattice word to an infinite word.**
+Extend a word of `m` lattice steps to an infinite word by a fixed padding step. -/
 def fkExtWord (m : ℕ) (hd : 0 < d) (w : Fin m → Fin d × Bool) : ℕ → Fin d × Bool :=
   fun k => if hk : k < m then w ⟨k, hk⟩ else (⟨0, hd⟩, false)
 
-/-- The event that some self-avoiding walk of `m` steps from the origin is open. -/
+/-- **Event of an open self-avoiding walk of $m$ steps.**
+The event that some self-avoiding walk of `m` steps from the origin is open. -/
 def fkExistsOpenWalk (d m : ℕ) (hd : 0 < d) : Set (ConfigSpace (Sym2 (Site d))) :=
   ⋃ (w : Fin m → Fin d × Bool) (_ : goodWord (fkExtWord m hd w) m), wordEvent (fkExtWord m hd w) m
 
-/-- The event that a given edge is open is clopen. -/
+/-- **Single-edge open event is clopen.** The event that a given edge is open is clopen. -/
 lemma isClopen_singleOpen (e : Sym2 (Site d)) :
     IsClopen {ω : ConfigSpace (Sym2 (Site d)) | ω e = true} := by
   have h : {ω : ConfigSpace (Sym2 (Site d)) | ω e = true} = (fun ω => ω e) ⁻¹' {true} := rfl
   rw [h]
   exact IsClopen.preimage (isClopen_discrete _) (continuous_apply e)
 
-/-- The event that a given walk is open is clopen. -/
+/-- **Event that a given walk is open is clopen.** The event that a given walk is open is clopen. -/
 lemma isClopen_wordEvent (g : ℕ → Fin d × Bool) (m : ℕ) : IsClopen (wordEvent g m) := by
   have heq : wordEvent g m
       = ⋂ k ∈ (Finset.range m : Set ℕ),
@@ -277,14 +285,15 @@ lemma isClopen_wordEvent (g : ℕ → Fin d × Bool) (m : ℕ) : IsClopen (wordE
   rw [heq]
   exact Set.Finite.isClopen_biInter (Finset.finite_toSet _) (fun k _ => isClopen_singleOpen _)
 
-/-- The event that a given walk is open is increasing. -/
+/-- **Event that a given walk is open is increasing.**
+The event that a given walk is open is increasing. -/
 lemma isIncreasing_wordEvent (g : ℕ → Fin d × Bool) (m : ℕ) : IsIncreasing (wordEvent g m) := by
   intro x y hxy hx k hk
   have := hxy (edgeOf g k)
   rw [hx k hk] at this
   exact le_antisymm le_top this
 
-/-- The open-walk event is clopen. -/
+/-- **Event of some open self-avoiding walk is clopen.** The open-walk event is clopen. -/
 lemma isClopen_fkExistsOpenWalk (m : ℕ) (hd : 0 < d) : IsClopen (fkExistsOpenWalk d m hd) := by
   classical
   rw [fkExistsOpenWalk]
@@ -294,14 +303,15 @@ lemma isClopen_fkExistsOpenWalk (m : ℕ) (hd : 0 < d) : IsClopen (fkExistsOpenW
   · rw [Set.iUnion_eq_if, ite_eq_left hgw]; exact isClopen_wordEvent _ _
   · rw [Set.iUnion_eq_if, ite_eq_right hgw]; exact isClopen_empty
 
-/-- The open-walk event is increasing. -/
+/-- **Event of some open self-avoiding walk is increasing.** The open-walk event is increasing. -/
 lemma isIncreasing_fkExistsOpenWalk (m : ℕ) (hd : 0 < d) :
     IsIncreasing (fkExistsOpenWalk d m hd) := by
   apply isUpperSet_iUnion₂
   intro w _
   exact isIncreasing_wordEvent _ _
 
-/-- Percolation from the origin implies an open self-avoiding walk of every length `m`. -/
+/-- **Percolation gives open self-avoiding walks of every length.**
+Percolation from the origin implies an open self-avoiding walk of every length `m`. -/
 lemma percolationEvent_subset_fkExistsOpenWalk (hd : 0 < d) (m : ℕ) :
     percolationEvent d ⊆ fkExistsOpenWalk d m hd := by
   refine (percolationEvent_subset_iUnion_wordEvent hd m).trans ?_
@@ -334,7 +344,8 @@ lemma percolationEvent_subset_fkExistsOpenWalk (hd : 0 < d) (m : ℕ) :
 
 /-! ## D. Bounds on the wired measure of a walk event -/
 
-/-- Extending a box configuration to `ℤ^d` keeps the state of box edges. -/
+/-- **Extended box configuration keeps box edge states.**
+Extending a box configuration to `ℤ^d` keeps the state of box edges. -/
 lemma extendEdge_eq_of_range (n : ℕ) (be : Sym2 (boxVerts d n))
     (ω : ConfigSpace (Sym2 (boxVerts d n))) :
     extendEdge d n ω (edgeIncl d n be) = ω be := by
@@ -342,12 +353,14 @@ lemma extendEdge_eq_of_range (n : ℕ) (be : Sym2 (boxVerts d n))
   have hmem : edgeIncl d n be ∈ Set.range (edgeIncl d n) := ⟨be, rfl⟩
   rw [dite_eq_left hmem, edgeIncl_injective d n hmem.choose_spec]
 
-/-- An edge that is open in an extended box configuration is a box edge. -/
+/-- **Open edges of an extended box configuration are box edges.**
+An edge that is open in an extended box configuration is a box edge. -/
 lemma range_of_extendEdge_true (n : ℕ) (ω : ConfigSpace (Sym2 (boxVerts d n)))
     (e : Sym2 (Site d)) (h : extendEdge d n ω e = true) : e ∈ Set.range (edgeIncl d n) := by
   by_contra hc; unfold extendEdge at h; rw [dite_eq_right hc] at h; exact absurd h (by simp)
 
-/-- A box edge whose image is a lattice edge is an edge of the box graph. -/
+/-- **Box edge with a lattice-edge image is a box-graph edge.**
+A box edge whose image is a lattice edge is an edge of the box graph. -/
 lemma boxEdge_mem (n : ℕ) (be : Sym2 (boxVerts d n)) (x y : Site d)
     (hadj : (hypercubicLattice d).Adj x y) (heq : edgeIncl d n be = s(x, y)) :
     be ∈ (boxGraph d n).edgeFinset := by
@@ -360,7 +373,8 @@ lemma boxEdge_mem (n : ℕ) (be : Sym2 (boxVerts d n)) (x y : Site d)
     · show (hypercubicLattice d).Adj (u : Site d) (v : Site d); rw [h1, h2]; exact hadj
     · show (hypercubicLattice d).Adj (u : Site d) (v : Site d); rw [h1, h2]; exact hadj.symm
 
-/-- An open self-avoiding walk of `m` steps that lies in the box gives `m` distinct box edges that
+/-- **Open self-avoiding walk in a box gives $m$ distinct open box edges.**
+An open self-avoiding walk of `m` steps that lies in the box gives `m` distinct box edges that
 are all open. -/
 lemma exists_boxF (n m : ℕ) (g : ℕ → Fin d × Bool) (hg : goodWord g m)
     (hrange : ∀ k ∈ Finset.range m, edgeOf g k ∈ Set.range (edgeIncl d n)) :
@@ -394,7 +408,8 @@ lemma exists_boxF (n m : ℕ) (g : ℕ → Fin d × Bool) (hg : goodWord g m)
     rw [extendEdge_eq_of_range] at htrue
     exact htrue
 
-/-- Under Bernoulli percolation on the box, a fixed self-avoiding walk of `m` steps is open with
+/-- **Bernoulli bound $p^m$ for a fixed self-avoiding walk in the box.**
+Under Bernoulli percolation on the box, a fixed self-avoiding walk of `m` steps is open with
 probability at most `p^m`. -/
 lemma perWord_box_bound (n m : ℕ) (g : ℕ → Fin d × Bool) (hg : goodWord g m)
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
@@ -428,7 +443,8 @@ lemma perWord_box_bound (n m : ℕ) (g : ℕ → Fin d × Bool) (hg : goodWord g
       _ = p ^ F.card := fkProbOne_cylinder (boxGraph d n) hp hp1 F hFsub
       _ = p ^ m := by rw [hFcard]
 
-/-- The wired box measure of an event, as a finite sum over box configurations. -/
+/-- **Wired box measure as a finite sum over box configurations.**
+The wired box measure of an event, as a finite sum over box configurations. -/
 lemma wiredFiniteMeasure_real_eq (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 (Site d)))) (hA : MeasurableSet A) :
     (wiredFiniteMeasure d n hp hp1 hq : Measure (ConfigSpace (Sym2 (Site d)))).real A
@@ -443,7 +459,8 @@ lemma wiredFiniteMeasure_real_eq (n : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1
     rw [Measure.map_apply (measurable_extendEdge d n) hA]
   rw [hw, wiredFkPMF_toMeasure_toReal]
 
-/-- For `q ≥ 1`, the wired box measure of the open-walk event is at most `(2dp)^m`. -/
+/-- **Wired box bound $(2dp)^m$ on the open-walk event for $q \ge 1$.**
+For `q ≥ 1`, the wired box measure of the open-walk event is at most `(2dp)^m`. -/
 lemma wiredFiniteMeasure_fkExistsOpenWalk_le (n m : ℕ) (hd : 0 < d) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     (wiredFiniteMeasure d n hp hp1 (zero_lt_one.trans_le hq)
@@ -517,7 +534,8 @@ lemma wiredFiniteMeasure_fkExistsOpenWalk_le (n m : ℕ) (hd : 0 < d) {p q : ℝ
 
 /-! ## E. Positivity of the critical point -/
 
-/-- For `q ≥ 1`, the wired percolation probability satisfies `θ¹(p, q) ≤ (2dp)^m` for every `m`. -/
+/-- **Wired percolation bound $\theta^1(p, q) \le (2dp)^m$ for $q \ge 1$.**
+For `q ≥ 1`, the wired percolation probability satisfies `θ¹(p, q) ≤ (2dp)^m` for every `m`. -/
 lemma fkTheta_le_pow (hd : 0 < d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) (m : ℕ) :
     fkTheta d hp hp1 (zero_lt_one.trans_le hq) (q := q) ≤ ((2 * d : ℝ) * p) ^ m := by
   have hq0 : 0 < q := zero_lt_one.trans_le hq
@@ -535,7 +553,8 @@ lemma fkTheta_le_pow (hd : 0 < d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1
         (fun n => wiredFiniteMeasure_fkExistsOpenWalk_le (φ n) m hd hp hp1 hq))
   exact hmono.trans hlim
 
-/-- For `q ≥ 1` and `2dp < 1`, there is no percolation in the wired measure: `θ¹(p, q) = 0`. -/
+/-- **No wired percolation for $2dp < 1$ and $q \ge 1$.**
+For `q ≥ 1` and `2dp < 1`, there is no percolation in the wired measure: `θ¹(p, q) = 0`. -/
 lemma fkTheta_eq_zero_of_lt (hd : 0 < d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (hsmall : (2 * d : ℝ) * p < 1) :
     fkTheta d hp hp1 (zero_lt_one.trans_le hq) (q := q) = 0 := by
@@ -547,13 +566,15 @@ lemma fkTheta_eq_zero_of_lt (hd : 0 < d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) 
     ge_of_tendsto htend (Filter.Eventually.of_forall (fun m => fkTheta_le_pow hd hp hp1 hq m))
   exact le_antisymm hle (fkTheta_nonneg d hp hp1 hq0 (q := q))
 
-/-- The set of `p` with `θ¹(p, q) = 0` is bounded above by `1`. -/
+/-- **Subcritical set is bounded above by one.**
+The set of `p` with `θ¹(p, q) = 0` is bounded above by `1`. -/
 lemma fkSubcriticalSet_bddAbove (d : ℕ) (q : ℝ) : BddAbove (fkSubcriticalSet d q) := by
   refine ⟨1, fun x hx => ?_⟩
   obtain ⟨hp, hp1, hq, _⟩ := hx
   exact hp1.le
 
-/-- Every subcritical `p` is at most `p_c(q, d)`. -/
+/-- **Subcritical parameters are at most the critical point.**
+Every subcritical `p` is at most `p_c(q, d)`. -/
 lemma le_fkPc_of_mem {d : ℕ} {q p : ℝ} (hp : p ∈ fkSubcriticalSet d q) : p ≤ fkPc d q :=
   le_csSup (fkSubcriticalSet_bddAbove d q) hp
 
@@ -574,7 +595,7 @@ theorem fkPc_pos (hd : 0 < d) {q : ℝ} (hq : 1 ≤ q) : 0 < fkPc d q := by
     ⟨hp_pos, hp1, zero_lt_one.trans_le hq, fkTheta_eq_zero_of_lt hd hp_pos hp1 hq hsmall⟩
   exact lt_of_lt_of_le hp_pos (le_fkPc_of_mem hmem)
 
-/-- `fkPc_pos` for `d ≥ 2`. -/
+/-- **Positive random-cluster critical point for $d \ge 2$, $q \ge 1$.** `fkPc_pos` for `d ≥ 2`. -/
 lemma fkPc_pos_of_two_le (hd : 2 ≤ d) {q : ℝ} (hq : 1 ≤ q) : 0 < fkPc d q :=
   fkPc_pos (by omega) hq
 

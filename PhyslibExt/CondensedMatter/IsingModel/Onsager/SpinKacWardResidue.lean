@@ -55,7 +55,8 @@ open StatMech.Ising
 
 /-! ## A. The spin Kac-Ward identities -/
 
-/-- The spin Kac-Ward identities at inverse temperature `β`: on every `L × L` torus with `L > 2`,
+/-- **Spin Kac-Ward identities at inverse temperature $\beta$.**
+The spin Kac-Ward identities at inverse temperature `β`: on every `L × L` torus with `L > 2`,
 each signed sector sum at `tanh β` squares to the corresponding sector determinant. -/
 def ons_spinKacWardIdentities (beta : ℝ) : Prop :=
   ∀ (L : ℕ) (hL : 2 < L),
@@ -65,7 +66,8 @@ def ons_spinKacWardIdentities (beta : ℝ) : Prop :=
     ons_spin10 L (Real.tanh beta) ^ 2 = ons_spinDet L beta 0 1 ∧
     ons_spin00 L (Real.tanh beta) ^ 2 = ons_spinDet L beta 1 1
 
-/-- The spin Kac-Ward identities written with the twisted Kac-Ward determinants `det (1 - Λ_{ab})`
+/-- **Spin Kac-Ward identities via twisted Kac-Ward determinants.**
+The spin Kac-Ward identities written with the twisted Kac-Ward determinants `det (1 - Λ_{ab})`
 at `x = tanh β`. -/
 def ons_spinKacWardMatrixIdentities (beta : ℝ) : Prop :=
   ∀ (L : ℕ) (hL : 2 < L),

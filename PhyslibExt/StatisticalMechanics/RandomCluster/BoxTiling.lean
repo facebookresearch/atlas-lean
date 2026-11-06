@@ -71,11 +71,12 @@ variable {d : ℕ}
 
 /-! ## A. Box ambient tilted log normalizers and edge counts -/
 
-/-- The negative log ambient normalizer `-log (fkZ Λ_n (logistic t) 2)` of the box `Λ_n`. -/
+/-- **Negative log ambient normalizer of the box $\Lambda_n$.**
+The negative log ambient normalizer `-log (fkZ Λ_n (logistic t) 2)` of the box `Λ_n`. -/
 noncomputable def bxt_ambientNegLogZ (d : ℕ) (t : ℝ) (n : ℕ) : ℝ :=
   - Real.log (fkZ (boxGraph d n) (fsc_logistic t) 2)
 
-/-- The number of edges of the box `Λ_n`. -/
+/-- **Edge count of the box $\Lambda_n$.** The number of edges of the box `Λ_n`. -/
 noncomputable def bxt_E (d n : ℕ) : ℝ := ((boxGraph d n).edgeFinset.card : ℝ)
 
 lemma bxt_ambientTiltLogZ_eq (d : ℕ) (t : ℝ) (n : ℕ) :
@@ -110,7 +111,8 @@ lemma bxt_perVolume_doubling_step
       _ = (|a| / e + c) * (i / E) := by ring
   linarith
 
-/-- Doubling bound at the dyadic scales: `u(2^{j+1}) ≤ 2^d u(2^j) + I_j (-log(1 - p))` with
+/-- **Doubling bound at the dyadic scales $2^j$.**
+Doubling bound at the dyadic scales: `u(2^{j+1}) ≤ 2^d u(2^j) + I_j (-log(1 - p))` with
 `|2^d E(2^j) - E(2^{j+1})| ≤ I_j` and `∑_j I_j / E(2^{j+1}) < ∞`.
 -/
 def bxt_NegLogDoublingBound (d : ℕ) (t : ℝ) : Prop :=

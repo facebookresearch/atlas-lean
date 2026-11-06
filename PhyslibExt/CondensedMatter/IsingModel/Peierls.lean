@@ -67,10 +67,11 @@ variable {d : ℕ}
 
 /-! ## A. The global spin flip -/
 
-/-- The global spin flip `σ ↦ -σ` of an infinite-volume configuration. -/
+/-- **Global spin flip of a configuration.**
+The global spin flip `σ ↦ -σ` of an infinite-volume configuration. -/
 def flipConfig (s : ConfigSpace (Site d)) : ConfigSpace (Site d) := fun y => !(s y)
 
-/-- The spin flip of a configuration inside the box `Λ_n`. -/
+/-- **Spin flip inside the box.** The spin flip of a configuration inside the box `Λ_n`. -/
 def flipInterior {n : ℕ} (τ : {x // x ∈ box d n} → Bool) : {x // x ∈ box d n} → Bool :=
   fun x => !(τ x)
 
@@ -83,7 +84,8 @@ def flipInterior {n : ℕ} (τ : {x // x ∈ box d n} → Bool) : {x // x ∈ bo
 lemma flipInterior_involutive {n : ℕ} (τ : {x // x ∈ box d n} → Bool) :
     flipInterior (flipInterior τ) = τ := by funext x; simp [flipInterior]
 
-/-- The spin flip inside the box as an involutive equivalence. -/
+/-- **Spin flip inside the box as an involutive equivalence.**
+The spin flip inside the box as an involutive equivalence. -/
 def flipInteriorEquiv {n : ℕ} :
     ({x // x ∈ box d n} → Bool) ≃ ({x // x ∈ box d n} → Bool) where
   toFun := flipInterior
@@ -191,7 +193,7 @@ lemma map_minusMeasure_eq_plusMeasure (n : ℕ) (β : ℝ) :
 
 /-! ## C. Magnetization at the origin -/
 
-/-- The origin of `ℤ^d`. -/
+/-- **Origin of $\mathbb{Z}^d$.** The origin of `ℤ^d`. -/
 def origin (d : ℕ) : Site d := fun _ => 0
 
 lemma origin_mem_box (n : ℕ) : origin d ∈ box d n := fun i => by simp [origin]
@@ -201,7 +203,8 @@ lemma continuous_spin_apply (x : Site d) :
   (continuous_of_discreteTopology (f := fun b : Bool => if b then (1 : ℝ) else -1)).comp
     (continuous_apply x)
 
-/-- The magnetization `⟨σ_0⟩` at the origin in the finite-volume Ising measure on `Λ_n` with
+/-- **Finite-volume magnetization at the origin.**
+The magnetization `⟨σ_0⟩` at the origin in the finite-volume Ising measure on `Λ_n` with
 boundary condition `η`, bond set `B`, inverse temperature `β` and field `h`. -/
 noncomputable def fvMagOrigin (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) : ℝ :=

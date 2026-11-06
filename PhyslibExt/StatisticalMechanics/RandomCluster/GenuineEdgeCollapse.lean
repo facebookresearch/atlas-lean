@@ -64,7 +64,8 @@ variable {d : ℕ}
 ## A. Bulk sandwich from rotation invariance
 -/
 
-/-- If every free `q = 2` edge density equals that of `e'`, then each box `Λ_n` has a bulk set of
+/-- **Free $q = 2$ bulk sandwich from equal free edge densities.**
+If every free `q = 2` edge density equals that of `e'`, then each box `Λ_n` has a bulk set of
 edges with that density whose free marginals are at least the density minus `δ_n → 0`, and the
 non-bulk edge fraction tends to zero. -/
 lemma gec_freeSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
@@ -126,7 +127,8 @@ lemma gec_freeSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ) (e' : Sym2 (boxVerts
       (fun n => Nat.sub_le n _) ocs_gap_sub_tendsto_zero).congr (fun n => ?_)
     rw [hcard n]
 
-/-- If every wired `q = 2` edge density equals that of `e'`, then each box `Λ_n` has a bulk set of
+/-- **Wired $q = 2$ bulk sandwich from equal wired edge densities.**
+If every wired `q = 2` edge density equals that of `e'`, then each box `Λ_n` has a bulk set of
 edges with that density whose wired marginals are at most the density plus `δ_n → 0`, and the
 non-bulk edge fraction tends to zero. -/
 lemma gec_wiredSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
@@ -195,7 +197,8 @@ lemma gec_wiredSandwich_of_rotation (hd : 1 ≤ d) (N : ℕ) (e' : Sym2 (boxVert
 ## B. From the sandwich to bulk homogeneity
 -/
 
-/-- The free sandwich gives two-sided bulk bounds: free marginals within `δ_n` of the density,
+/-- **Two-sided free $q = 2$ bulk bounds from the free sandwich.**
+The free sandwich gives two-sided bulk bounds: free marginals within `δ_n` of the density,
 since free marginals increase to the density. -/
 lemma gec_freeBulk_of_sandwich (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
     (hsand : ∃ (In : (n : ℕ) → Finset (Sym2 (boxVerts d n))) (δ : ℕ → ℝ),
@@ -230,7 +233,8 @@ lemma gec_freeBulk_of_sandwich (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
   rw [abs_le]
   exact ⟨by linarith, by linarith⟩
 
-/-- The wired sandwich gives two-sided bulk bounds: wired marginals within `δ_n` of the density,
+/-- **Two-sided wired $q = 2$ bulk bounds from the wired sandwich.**
+The wired sandwich gives two-sided bulk bounds: wired marginals within `δ_n` of the density,
 since wired marginals decrease to the density. -/
 lemma gec_wiredBulk_of_sandwich (N : ℕ) (e' : Sym2 (boxVerts d N)) (t : ℝ)
     (hsand : ∃ (In : (n : ℕ) → Finset (Sym2 (boxVerts d n))) (δ : ℕ → ℝ),

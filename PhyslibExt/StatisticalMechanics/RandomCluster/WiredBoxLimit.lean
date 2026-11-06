@@ -101,7 +101,8 @@ lemma boxRestrict_extendEdge_succ (d n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts 
 ## B. Boundary-connection events
 -/
 
-/-- The event on `Λ_(n+1)` that the origin is connected to `∂Λ_n` by open edges of `Λ_n`. -/
+/-- **Origin-to-$\partial\Lambda_n$ event as an event on $\Lambda_{n+1}$.**
+The event on `Λ_(n+1)` that the origin is connected to `∂Λ_n` by open edges of `Λ_n`. -/
 def innerBdryFinEvent (d n : ℕ) : Set (ConfigSpace (Sym2 (boxVerts d (n + 1)))) :=
   innerRestrict d n ⁻¹'
     {ω : ConfigSpace (Sym2 (boxVerts d n)) |
@@ -176,7 +177,8 @@ lemma wiredFiniteMeasure_real_boxBdryConnEvent_sum (d n : ℕ) {p : ℝ}
 ## D. The conditional comparison
 -/
 
-/-- With all annulus edges closed and a wiring made of the inner-boundary clique and an annulus
+/-- **Closed annulus plus inner-boundary wiring gives wired $\Lambda_n$ law.**
+With all annulus edges closed and a wiring made of the inner-boundary clique and an annulus
 wiring `D`, the conditional measure on `Λ_(n+1)` equals the wired measure on `Λ_n`, on any event
 pulled back by `crossExt`. -/
 lemma condBcProb_add_sum_eq_smallerBox (d n : ℕ) {p q : ℝ}
@@ -216,7 +218,8 @@ lemma condBcProb_add_sum_eq_smallerBox (d n : ℕ) {p q : ℝ}
     · rw [Set.indicator_of_notMem hω, Set.indicator_of_notMem (fun h => hω (Set.mem_preimage.mp h))]
   rw [hind]
 
-/-- At `q = 2`, the wired measure on `Λ_(n+1)` conditioned on all annulus edges closed gives `{0 ↔
+/-- **Closed-annulus wired bound on origin-to-$\partial\Lambda_n$, $q = 2$.**
+At `q = 2`, the wired measure on `Λ_(n+1)` conditioned on all annulus edges closed gives `{0 ↔
 ∂Λ_n}` at most `φ¹_n(0 ↔ ∂Λ_n)`. -/
 lemma condWiredSucc_le_smallerBox (d n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     (∑ ρ, (innerBdryFinEvent d n).indicator (fun _ => (1 : ℝ)) ρ *

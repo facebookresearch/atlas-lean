@@ -53,7 +53,7 @@ variable {ι V : Type*} [DecidableEq ι] [DecidableEq V] [Fintype V] [Fintype ι
 
 /-! ## A. Odd vertices of a cluster -/
 
-/-- The odd-degree vertices of `m` in the cluster of `u`. -/
+/-- **Odd-degree vertices in a cluster.** The odd-degree vertices of `m` in the cluster of `u`. -/
 noncomputable def compOddVertices (ends : ι → Sym2 V) (m : Finset ι) (u : V) : Finset V :=
   (compOf ends m u).filter (fun x => Odd (degK ends m x))
 
@@ -295,12 +295,13 @@ lemma connK_yg_of_disconnected (ends : ι → Sym2 V) (m : Finset ι)
 
 /-! ## C. A witness -/
 
-/-- A multigraph on `Fin 4` with the two edges `{0, 1}` and `{2, 3}`. -/
+/-- **Four-vertex multigraph with edges $\{0, 1\}$ and $\{2, 3\}$.**
+A multigraph on `Fin 4` with the two edges `{0, 1}` and `{2, 3}`. -/
 def witEnds : Fin 2 → Sym2 (Fin 4)
   | 0 => s(0, 1)
   | 1 => s(2, 3)
 
-/-- All edges of `witEnds`. -/
+/-- **Full edge set of the four-vertex multigraph.** All edges of `witEnds`. -/
 def witM : Finset (Fin 2) := Finset.univ
 
 lemma witEnds_not_diag : ∀ i ∈ witM, ¬ (witEnds i).IsDiag := by decide

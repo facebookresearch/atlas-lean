@@ -68,7 +68,8 @@ lemma ons_gInt_betaC (k1 k2 : ℝ) :
   rw [ons_gInt_decompose, ons_betaC_sinh]
   ring
 
-/-- The dominating function `log 9 + log 2 + |log (1 - cos y)|` for `log g` near `β_c`. -/
+/-- **Integrable dominating function for log g near the critical point.**
+The dominating function `log 9 + log 2 + |log (1 - cos y)|` for `log g` near `β_c`. -/
 noncomputable def ons_criticalLogBound (y : ℝ) : ℝ :=
   Real.log 9 + Real.log 2 + |Real.log (1 - Real.cos y)|
 
@@ -292,7 +293,8 @@ lemma ons_inner_integral_continuous_near_betaC (beta : ℝ)
       fun_prop
     exact (hc.log hgpos.ne').tendsto
 
-/-- A uniform bound for the inner integrals `∫ log g dk₂` near `β_c`. -/
+/-- **Uniform bound constant for the inner integrals near β_c.**
+A uniform bound for the inner integrals `∫ log g dk₂` near `β_c`. -/
 noncomputable def ons_criticalInnerBound : ℝ :=
   |∫ k2 in (-Real.pi)..Real.pi, ons_criticalLogBound k2|
 

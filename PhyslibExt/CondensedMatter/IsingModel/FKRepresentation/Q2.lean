@@ -60,7 +60,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## A. Ising configurations as two-state Potts colorings -/
 
-/-- The Ising configuration of a two-state Potts coloring, via `Fin 2 ≃ Bool`. -/
+/-- **Ising configuration of a two-state Potts coloring.**
+The Ising configuration of a two-state Potts coloring, via `Fin 2 ≃ Bool`. -/
 noncomputable def toIsing (σ : V → Fin 2) : ConfigSpace V := fun x => finTwoEquiv (σ x)
 
 omit [Fintype V] [DecidableEq V] in
@@ -138,11 +139,13 @@ lemma isingProb_eq_pottsProb' (βI βP J : ℝ) (h : βP * J = 2 * βI) (s : Con
 
 /-! ## C. The FK edge parameter -/
 
-/-- The Ising inverse temperature `-(1/2) log (1 - p)` corresponding to the FK edge parameter `p`.
+/-- **Ising inverse temperature of an FK edge parameter.**
+The Ising inverse temperature `-(1/2) log (1 - p)` corresponding to the FK edge parameter `p`.
 See also `pToBeta` for general `q` (`pToBeta_two_eq_betaOfP`). -/
 noncomputable def betaOfP (p : ℝ) : ℝ := -(1 / 2) * Real.log (1 - p)
 
-/-- The FK edge parameter `p = 1 - e^{-2β}` of the Ising model at inverse temperature `β`. See also
+/-- **FK edge parameter of an Ising inverse temperature.**
+The FK edge parameter `p = 1 - e^{-2β}` of the Ising model at inverse temperature `β`. See also
 `betaToP` for general `q` (`betaToP_two_eq_pOfBeta`). -/
 noncomputable def pOfBeta (β : ℝ) : ℝ := 1 - Real.exp (-2 * β)
 

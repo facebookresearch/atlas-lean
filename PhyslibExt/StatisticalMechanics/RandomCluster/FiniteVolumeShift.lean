@@ -75,7 +75,8 @@ open StatMech.Lattice StatMech.IsingFK ConfigSpace
 -/
 variable {V W : Type*} [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
 
-/-- The pull-back of a configuration `ω` on the edges of `W` along `σ : V ≃ W`: the edge `e` is
+/-- **Pull-back of an edge configuration along a vertex bijection.**
+The pull-back of a configuration `ω` on the edges of `W` along `σ : V ≃ W`: the edge `e` is
 open in `reCfgIso σ ω` iff `σ e` is open in `ω`. For `V = W` it is `reCfg`
 (`fvs_reCfgIso_eq_reCfg`). -/
 noncomputable def reCfgIso (σ : V ≃ W) (ω : ConfigSpace (Sym2 W)) : ConfigSpace (Sym2 V) :=
@@ -92,7 +93,8 @@ lemma fvs_reCfgIso_reCfgIso' (σ : V ≃ W) (ω : ConfigSpace (Sym2 V)) :
     reCfgIso σ (reCfgIso σ.symm ω) = ω := by
   funext e; unfold reCfgIso; rw [Sym2.map_map]; simp
 
-/-- Pull-back along `σ` as an equivalence of configuration spaces, with inverse the pull-back
+/-- **Pull-back of configurations as an equivalence.**
+Pull-back along `σ` as an equivalence of configuration spaces, with inverse the pull-back
 along `σ⁻¹`. -/
 noncomputable def reCfgIsoEquiv (σ : V ≃ W) :
     ConfigSpace (Sym2 W) ≃ ConfigSpace (Sym2 V) where
@@ -101,7 +103,8 @@ noncomputable def reCfgIsoEquiv (σ : V ≃ W) :
   left_inv := fvs_reCfgIso_reCfgIso σ
   right_inv := fvs_reCfgIso_reCfgIso' σ
 
-/-- For a permutation `σ` of `V`, pulling back along `σ` is the relabelling `reCfg σ`. -/
+/-- **Pull-back along a permutation is relabelling.**
+For a permutation `σ` of `V`, pulling back along `σ` is the relabelling `reCfg σ`. -/
 lemma fvs_reCfgIso_eq_reCfg (σ : V ≃ V) (ω : ConfigSpace (Sym2 V)) :
     reCfgIso σ ω = reCfg σ ω := rfl
 
@@ -110,7 +113,8 @@ lemma fvs_reCfgIso_eq_reCfg (σ : V ≃ V) (ω : ConfigSpace (Sym2 V)) :
 -/
 variable (G : SimpleGraph V) [DecidableRel G.Adj] (H : SimpleGraph W) [DecidableRel H.Adj]
 
-/-- An isomorphism `σ : G ≃ H` is a graph isomorphism from the open subgraph of the pulled-back
+/-- **Open-subgraph isomorphism for a pulled-back configuration.**
+An isomorphism `σ : G ≃ H` is a graph isomorphism from the open subgraph of the pulled-back
 configuration `reCfgIso σ ω` to the open subgraph of `ω`. -/
 noncomputable def fvs_openSubIso (σ : V ≃ W)
     (hσ : ∀ x y, G.Adj x y ↔ H.Adj (σ x) (σ y)) (ω : ConfigSpace (Sym2 W)) :
@@ -170,7 +174,8 @@ lemma fvs_fkZ_reCfgIso (σ : V ≃ W)
   rw [← Equiv.sum_comp (reCfgIsoEquiv σ) (fun ω => fkWeight G p q ω)]
   exact Finset.sum_congr rfl fun ω _ => fvs_fkWeight_reCfgIso G H σ hσ p q ω
 
-/-- Isomorphic graphs have the same free FK probability, up to relabelling by the isomorphism.
+/-- **Isomorphic graphs have equal free FK probabilities after relabelling.**
+Isomorphic graphs have the same free FK probability, up to relabelling by the isomorphism.
 See also `fkTI_fkProb_reCfg`, the special case of an automorphism. -/
 lemma fvs_fkProb_reCfgIso (σ : V ≃ W)
     (hσ : ∀ x y, G.Adj x y ↔ H.Adj (σ x) (σ y)) (p q : ℝ) (ω : ConfigSpace (Sym2 W)) :
@@ -183,7 +188,8 @@ lemma fvs_fkProb_reCfgIso (σ : V ≃ W)
 -/
 variable (bdryV : V → Prop) [DecidablePred bdryV] (bdryW : W → Prop) [DecidablePred bdryW]
 
-/-- An isomorphism `σ : G ≃ H` matching the boundary sets is a graph isomorphism between the
+/-- **Wired-graph isomorphism for a pulled-back configuration.**
+An isomorphism `σ : G ≃ H` matching the boundary sets is a graph isomorphism between the
 wired graphs of `reCfgIso σ ω` and `ω`. -/
 noncomputable def fvs_wiredGraphIso (σ : V ≃ W)
     (hσ : ∀ x y, G.Adj x y ↔ H.Adj (σ x) (σ y)) (hbdry : ∀ x, bdryV x ↔ bdryW (σ x))
@@ -228,7 +234,8 @@ lemma fvs_wiredFkZ_reCfgIso (σ : V ≃ W)
   rw [← Equiv.sum_comp (reCfgIsoEquiv σ) (fun ω => wiredFkWeight G bdryV p q ω)]
   exact Finset.sum_congr rfl fun ω _ => fvs_wiredFkWeight_reCfgIso G H bdryV bdryW σ hσ hbdry p q ω
 
-/-- Isomorphic graphs with matching boundary sets have the same wired FK probability, up to
+/-- **Boundary-matching isomorphisms preserve wired FK probabilities.**
+Isomorphic graphs with matching boundary sets have the same wired FK probability, up to
 relabelling. See also `fkTI_wiredFkProb_reCfg`. -/
 lemma fvs_wiredFkProb_reCfgIso (σ : V ≃ W)
     (hσ : ∀ x y, G.Adj x y ↔ H.Adj (σ x) (σ y)) (hbdry : ∀ x, bdryV x ↔ bdryW (σ x))
@@ -275,7 +282,8 @@ lemma fvs_edgeMargProb_wiredFkProb_reCfgIso (σ : V ≃ W)
   fvs_edgeMargProb_reCfgIso_inv σ (wiredFkProb G bdryV p q) (wiredFkProb H bdryW p q)
     (fun ω => fvs_wiredFkProb_reCfgIso G H bdryV bdryW σ hσ hbdry p q ω) e
 
-/-- Graph isomorphisms transport the wired and the free FK edge marginals: `σ e` is open in `H`
+/-- **Boundary-matching isomorphisms transport FK edge marginals.**
+Graph isomorphisms transport the wired and the free FK edge marginals: `σ e` is open in `H`
 with the same probability as `e` in `G`. -/
 lemma fvs_finiteVolume_shift_invariant (σ : V ≃ W)
     (hσ : ∀ x y, G.Adj x y ↔ H.Adj (σ x) (σ y)) (hbdry : ∀ x, bdryV x ↔ bdryW (σ x))
@@ -300,14 +308,17 @@ variable {d : ℕ}
 ### E.1. The translated box graph
 -/
 
-/-- The translated box `v + Λ_m = {y ∈ ℤ^d : ‖y - v‖_∞ ≤ m}`. -/
+/-- **Translated box in $\mathbb{Z}^d$.**
+The translated box `v + Λ_m = {y ∈ ℤ^d : ‖y - v‖_∞ ≤ m}`. -/
 def fvs_transBox (d m : ℕ) (v : Site d) : Set (Site d) := {y | (y - v) ∈ box d m}
 
-/-- The vertices of the translated box `v + Λ_m`, as a subtype of `ℤ^d`. -/
+/-- **Vertex type of a translated box.**
+The vertices of the translated box `v + Λ_m`, as a subtype of `ℤ^d`. -/
 abbrev fvs_transBoxVerts (d m : ℕ) (v : Site d) : Type :=
   {y : Site d // y ∈ fvs_transBox d m v}
 
-/-- The translation `x ↦ x + v` from the centered box `Λ_m` onto `v + Λ_m`. -/
+/-- **Translation from the centered box onto a translated box.**
+The translation `x ↦ x + v` from the centered box `Λ_m` onto `v + Λ_m`. -/
 noncomputable def fvs_transEquiv (d m : ℕ) (v : Site d) :
     boxVerts d m ≃ fvs_transBoxVerts d m v where
   toFun := fun x => ⟨(x : Site d) + v, by
@@ -330,7 +341,8 @@ instance fvs_instDecidableEqTransBoxVerts (d m : ℕ) (v : Site d) :
     DecidableEq (fvs_transBoxVerts d m v) :=
   Subtype.instDecidableEq
 
-/-- The nearest-neighbour graph of `ℤ^d` restricted to `v + Λ_m`. -/
+/-- **Nearest-neighbour graph on a translated box.**
+The nearest-neighbour graph of `ℤ^d` restricted to `v + Λ_m`. -/
 def fvs_transBoxGraph (d m : ℕ) (v : Site d) : SimpleGraph (fvs_transBoxVerts d m v) :=
   SimpleGraph.comap Subtype.val (hypercubicLattice d)
 
@@ -339,7 +351,8 @@ noncomputable instance fvs_instDecidableRelTransBoxGraph (d m : ℕ) (v : Site d
     DecidableRel (fvs_transBoxGraph d m v).Adj :=
   Classical.decRel _
 
-/-- The vertex boundary of `v + Λ_m`: the translate of the vertex boundary of `Λ_m`. -/
+/-- **Vertex boundary of a translated box.**
+The vertex boundary of `v + Λ_m`: the translate of the vertex boundary of `Λ_m`. -/
 def fvs_transBoxBoundary (d m : ℕ) (v : Site d) (y : fvs_transBoxVerts d m v) : Prop :=
   ((y : Site d) - v) ∈ vertexBoundary d m
 
@@ -368,7 +381,8 @@ lemma fvs_transEquiv_boundary (d m : ℕ) (v : Site d) (x : boxVerts d m) :
 ### E.2. Translation covariance of edge marginals
 -/
 
-/-- The wired and free FK edge marginals on the translated box `v + Λ_m` are the marginals on the
+/-- **Translation covariance of FK edge marginals on boxes.**
+The wired and free FK edge marginals on the translated box `v + Λ_m` are the marginals on the
 centered box `Λ_m`, transported by `x ↦ x + v`. -/
 lemma fvs_box_translation_edgeMarg (d m : ℕ) (v : Site d) (eb : Sym2 (boxVerts d m))
     {p q : ℝ} :
@@ -381,7 +395,8 @@ lemma fvs_box_translation_edgeMarg (d m : ℕ) (v : Site d) (eb : Sym2 (boxVerts
     (boxBoundary d m) (fvs_transBoxBoundary d m v) (fvs_transEquiv d m v)
     (fvs_transEquiv_adj d m v) (fvs_transEquiv_boundary d m v) p q eb
 
-/-- For `d ≥ 1`, some translated box `v + Λ_m` is not contained in `Λ_m`, so translation is not a
+/-- **Some translated box leaves the centered box for $d \ge 1$.**
+For `d ≥ 1`, some translated box `v + Λ_m` is not contained in `Λ_m`, so translation is not a
 box symmetry in the sense of `BoxSym`. -/
 lemma fvs_transBox_ne_box (d m : ℕ) (hd : 0 < d) :
     ∃ (v y : Site d), y ∈ fvs_transBox d m v ∧ y ∉ box d m := by

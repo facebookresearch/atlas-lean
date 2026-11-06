@@ -57,16 +57,19 @@ open BigOperators Finset SimpleGraph StatMech.Ising
 
 /-! ## A. Internal paths -/
 
-/-- The `i`-th internal edge `(s, i) - (s, i + 1)` of the path at a site. -/
+/-- **Internal edge of the path at a site.**
+The `i`-th internal edge `(s, i) - (s, i + 1)` of the path at a site. -/
 def ons_decChainEdge {L : ℕ}
     (site : ZMod L × ZMod L) (i : Fin 3) : Sym2 (ons_Dart L) :=
   s((site, ⟨i.val, by omega⟩), (site, ⟨i.val + 1, by omega⟩))
 
-/-- The indices of the internal edges on the path between ports `a` and `b` at one site. -/
+/-- **Indices of internal edges between two ports.**
+The indices of the internal edges on the path between ports `a` and `b` at one site. -/
 def ons_decChainPathIndices (a b : Fin 4) : Finset (Fin 3) :=
   Finset.univ.filter fun i ↦ (i.val < a.val) ≠ (i.val < b.val)
 
-/-- The internal edges on the path between ports `a` and `b` at a site. -/
+/-- **Internal edges between two ports at a site.**
+The internal edges on the path between ports `a` and `b` at a site. -/
 def ons_decChainPathEdges {L : ℕ}
     (site : ZMod L × ZMod L) (a b : Fin 4) :
     Finset (Sym2 (ons_Dart L)) :=
@@ -74,7 +77,8 @@ def ons_decChainPathEdges {L : ℕ}
 
 /-! ## B. Decorated transition weights -/
 
-/-- The decorated weight of the Kac-Ward transition from `d₁` to `d₂`: the weight of the external
+/-- **Decorated weight of a Kac-Ward transition.**
+The decorated weight of the Kac-Ward transition from `d₁` to `d₂`: the weight of the external
 edge at `d₁` times the weights of the internal edges from the port of `d₁ + 2` to the port of `d₂`.
 -/
 def ons_decTransitionWeight
@@ -84,7 +88,8 @@ def ons_decTransitionWeight
     ∏ i ∈ ons_decChainPathIndices (d₁.2 + 2) d₂.2,
       decWeight (ons_decChainEdge d₂.1 i)
 
-/-- The twisted Kac-Ward matrix with decorated transition weights. -/
+/-- **Twisted Kac-Ward matrix with decorated transition weights.**
+The twisted Kac-Ward matrix with decorated transition weights. -/
 noncomputable def ons_KWmatDecorationWeightedPhase
     (L : ℕ) (decWeight : Sym2 (ons_Dart L) → ℂ)
     (omega u v : ℂ) : Matrix (ons_Dart L) (ons_Dart L) ℂ :=
@@ -97,7 +102,8 @@ noncomputable def ons_KWmatDecorationWeightedPhase
 
 /-! ## C. Specialization and interpolation -/
 
-/-- Decorated weights induced by torus edge weights: external edges get the weight of their torus
+/-- **Decorated weights induced by torus edge weights.**
+Decorated weights induced by torus edge weights: external edges get the weight of their torus
 edge, internal edges get `1`. -/
 noncomputable def ons_decSpecializedWeight
     {L : ℕ} (weight : Sym2 (ZMod L × ZMod L) → ℂ)
@@ -107,7 +113,8 @@ noncomputable def ons_decSpecializedWeight
       weight (ons_decEdgeProjection edge)
     else 1
 
-/-- Decorated weights with external edges weighted by their torus edge and internal edges by `t`. -/
+/-- **Decorated weights with internal edges weighted by t.**
+Decorated weights with external edges weighted by their torus edge and internal edges by `t`. -/
 noncomputable def ons_decInterpolatedWeight
     {L : ℕ} (weight : Sym2 (ZMod L × ZMod L) → ℂ) (t : ℂ)
     (edge : Sym2 (ons_Dart L)) : ℂ := by
@@ -298,7 +305,8 @@ lemma ons_KWmatDecorationWeightedPhase_detWalkRoot_sq
 
 /-! ## E. Decorated character sums -/
 
-/-- The decorated character sum `∑_D χ_{a,b}(hom D) ∏_{e ∈ D} w_e` with a weight on every decorated
+/-- **Decorated character sum with weights on all edges.**
+The decorated character sum `∑_D χ_{a,b}(hom D) ∏_{e ∈ D} w_e` with a weight on every decorated
 edge. -/
 noncomputable def ons_decoratedFullWeightedSpinSum
     (L : ℕ) [Fact (2 < L)]

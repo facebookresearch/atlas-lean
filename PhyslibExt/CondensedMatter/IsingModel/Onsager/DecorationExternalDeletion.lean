@@ -53,7 +53,8 @@ open Matrix BigOperators
 
 /-! ## A. Buckets -/
 
-/-- The total decorated-weight Kac-Ward weight of closed walks of length `n + 1` visiting `e` but
+/-- **Closed-walk weight through a dart but not its reverse.**
+The total decorated-weight Kac-Ward weight of closed walks of length `n + 1` visiting `e` but
 not its reverse. -/
 noncomputable def ons_decPhaseBucketE
     (L : ℕ) [NeZero L] (decWeight : ons_DecEdge L → ℂ)
@@ -66,7 +67,8 @@ noncomputable def ons_decPhaseBucketE
       (ons_KWmatDecorationWeightedPhase L decWeight ons_turnRoot
         (ons_spinPhase L a) (ons_spinPhase L b)) loop
 
-/-- The total decorated-weight Kac-Ward weight of closed walks of length `n + 1` visiting neither
+/-- **Closed-walk weight avoiding a dart and its reverse.**
+The total decorated-weight Kac-Ward weight of closed walks of length `n + 1` visiting neither
 `e` nor its reverse. -/
 noncomputable def ons_decPhaseBucketN
     (L : ℕ) [NeZero L] (decWeight : ons_DecEdge L → ℂ)
@@ -79,7 +81,8 @@ noncomputable def ons_decPhaseBucketN
       (ons_KWmatDecorationWeightedPhase L decWeight ons_turnRoot
         (ons_spinPhase L a) (ons_spinPhase L b)) loop
 
-/-- As `ons_decPhaseBucketE`, with the darts of `forbidden` masked. -/
+/-- **Masked closed-walk weight through a dart but not its reverse.**
+As `ons_decPhaseBucketE`, with the darts of `forbidden` masked. -/
 noncomputable def ons_decMaskPhaseBucketE
     (L : ℕ) [NeZero L] (decWeight : ons_DecEdge L → ℂ)
     (a b : Fin 2) (forbidden : Finset (ons_Dart L))
@@ -93,7 +96,8 @@ noncomputable def ons_decMaskPhaseBucketE
         (ons_KWmatDecorationWeightedPhase L decWeight ons_turnRoot
           (ons_spinPhase L a) (ons_spinPhase L b))) loop
 
-/-- As `ons_decPhaseBucketN`, with the darts of `forbidden` masked. -/
+/-- **Masked closed-walk weight avoiding a dart and its reverse.**
+As `ons_decPhaseBucketN`, with the darts of `forbidden` masked. -/
 noncomputable def ons_decMaskPhaseBucketN
     (L : ℕ) [NeZero L] (decWeight : ons_DecEdge L → ℂ)
     (a b : Fin 2) (forbidden : Finset (ons_Dart L))
@@ -109,7 +113,8 @@ noncomputable def ons_decMaskPhaseBucketN
 
 /-! ## B. Scaling an external weight -/
 
-/-- Decorated weights with the weight of `edge` multiplied by `t`. -/
+/-- **Decorated weights with one edge weight scaled by t.**
+Decorated weights with the weight of `edge` multiplied by `t`. -/
 def ons_scaleDecEdgeWeight
     {L : ℕ} (decWeight : ons_DecEdge L → ℂ)
     (edge : ons_DecEdge L) (t : ℂ) : ons_DecEdge L → ℂ :=

@@ -90,7 +90,8 @@ lemma mem_singletonOrigin (p q : ℤ) :
     (![p, q] : Site 2) ∈ (↑({origin 2} : Finset (Site 2)) : Set (Site 2)) ↔ p = 0 ∧ q = 0 := by
   rw [Finset.mem_coe, Finset.mem_singleton, origin_eq_zerozero, site2_eq]
 
-/-- The four faces meeting the origin, which support the contour of `{0}`. -/
+/-- **Four faces meeting the origin.**
+The four faces meeting the origin, which support the contour of `{0}`. -/
 noncomputable def singletonBoundarySupport : Finset (Site 2) :=
   {![(0:ℤ), 0], ![(-1:ℤ), 0], ![(-1:ℤ), -1], ![(0:ℤ), -1]}
 
@@ -261,7 +262,8 @@ lemma singletonOrigin_single_dualCircuit :
 
 ### C.1. The rectangle is a connected cluster -/
 
-/-- The rectangle `[0, m] × [0, n]` of sites in `ℤ²`. -/
+/-- **Rectangle $[0, m] \times [0, n]$ of sites.**
+The rectangle `[0, m] × [0, n]` of sites in `ℤ²`. -/
 noncomputable def boxCluster (m n : ℕ) : Finset (Site 2) :=
   (Finset.Icc (0 : ℤ) m ×ˢ Finset.Icc (0 : ℤ) n).image (fun p => ![p.1, p.2])
 
@@ -339,7 +341,8 @@ lemma boxCluster_isConnectedCluster (m n : ℕ) : IsConnectedCluster (boxCluster
 
 /-! ### C.2. The surrounding frame of faces -/
 
-/-- The frame of faces just outside the rectangle `[0, m] × [0, n]`, which supports its contour. -/
+/-- **Frame of faces around a rectangle.**
+The frame of faces just outside the rectangle `[0, m] × [0, n]`, which supports its contour. -/
 noncomputable def boxFrame (m n : ℕ) : Finset (Site 2) :=
   ((Finset.Icc (-1 : ℤ) m).image (fun a => (![a, -1] : Site 2)))
   ∪ ((Finset.Icc (-1 : ℤ) m).image (fun a => (![a, (n:ℤ)] : Site 2)))

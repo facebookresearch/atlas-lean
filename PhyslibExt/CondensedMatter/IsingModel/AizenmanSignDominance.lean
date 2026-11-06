@@ -201,7 +201,8 @@ lemma asd_ghsSigned_eq (ends : ι → Sym2 V) (m : Finset ι)
 
 /-! ## B. The GHS backbone factor -/
 
-/-- The three-site backbone factor: `1`, `0` or `-2` according to how many of the pairs `{x, y},
+/-- **Three-site backbone factor.**
+The three-site backbone factor: `1`, `0` or `-2` according to how many of the pairs `{x, y},
 {o, y}, {o, x}` the current connects. -/
 noncomputable def asd_ghsBackboneFactor (ends : ι → Sym2 V) (m : Finset ι) (o x y : V) : ℝ :=
   1 - (if connK ends m x y then 1 else 0)

@@ -55,7 +55,7 @@ open StatMech.Ising StatMech.LeeYang
 
 /-! ## A. The single edge -/
 
-/-- The graph on two vertices joined by one edge. -/
+/-- **Single-edge graph on two vertices.** The graph on two vertices joined by one edge. -/
 def twoVertexEdge : SimpleGraph (Fin 2) := ⊤
 
 /-- Adjacency in the single-edge graph is decidable. -/
@@ -178,7 +178,8 @@ lemma leeYang_twoVertexEdge_root_norm {beta : ℝ} (hbeta : 0 ≤ beta) {z : ℂ
 
 /-! ## B. The Lee–Yang circle property -/
 
-/-- The Lee–Yang circle property: every complex zero of the Lee–Yang polynomial of `G` at inverse
+/-- **Lee–Yang circle property of a graph.**
+The Lee–Yang circle property: every complex zero of the Lee–Yang polynomial of `G` at inverse
 temperature `β` has modulus one. -/
 def HasLeeYangCircle {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (beta : ℝ) : Prop :=
@@ -203,7 +204,8 @@ lemma hasLeeYangCircle_twoVertexEdge {beta : ℝ} (hbeta : 0 ≤ beta) :
 
 /-! ## C. Finite matchings -/
 
-/-- The vertex type of the perfect matching with `n` edges: `n` disjoint copies of `Fin 2`. -/
+/-- **Vertex type of the perfect matching with n edges.**
+The vertex type of the perfect matching with `n` edges: `n` disjoint copies of `Fin 2`. -/
 def MatchingVertex : ℕ → Type
   | 0 => Empty
   | n + 1 => Fin 2 ⊕ MatchingVertex n
@@ -230,7 +232,8 @@ instance matchingVertexDecidableEq (n : ℕ) : DecidableEq (MatchingVertex n) :=
       letI : DecidableEq (MatchingVertex n) := ih
       infer_instance
 
-/-- The perfect matching with `n` edges, the disjoint union of `n` single edges. -/
+/-- **Perfect matching with n edges.**
+The perfect matching with `n` edges, the disjoint union of `n` single edges. -/
 def finiteMatching : (n : ℕ) → SimpleGraph (MatchingVertex n)
   | 0 => ⊥
   | n + 1 => twoVertexEdge ⊕g finiteMatching n

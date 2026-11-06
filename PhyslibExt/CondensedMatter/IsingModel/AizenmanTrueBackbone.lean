@@ -63,7 +63,8 @@ variable {ι V : Type*} [DecidableEq ι] [DecidableEq V] [Fintype V] [Fintype ι
 
 /-! ## A. The backbone of a current -/
 
-/-- The cluster of `o` in the current `m`: the sites connected to `o` by edges of `m`. -/
+/-- **Backbone cluster of a site in a current.**
+The cluster of `o` in the current `m`: the sites connected to `o` by edges of `m`. -/
 noncomputable def atb_backbone (ends : ι → Sym2 V) (m : Finset ι) (o : V) : Finset V :=
   compK ends m o
 
@@ -134,7 +135,8 @@ lemma atb_conditioned_decomp (ends : ι → Sym2 V) (M : Finset (Finset ι))
 
 /-! ## C. The conditioned domination condition -/
 
-/-- The domination condition `2 · mass(all connected) ≤ mass(none connected)`, summed over
+/-- **Conditioned domination condition over a set of currents.**
+The domination condition `2 · mass(all connected) ≤ mass(none connected)`, summed over
 currents in `M`. -/
 def atb_conditionedDom (ends : ι → Sym2 V) (M : Finset (Finset ι)) (A : Finset V)
     (o x y : V) (Φ : Finset ι → Finset ι → ℝ) : Prop :=

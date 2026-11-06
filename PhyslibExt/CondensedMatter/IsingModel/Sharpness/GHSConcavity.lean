@@ -56,7 +56,8 @@ open StatMech.Ising
 
 /-! ## A. Concave functions on the half-line -/
 
-/-- The derivative of a concave function on `[0, ∞)` at `b` is at most the secant slope over `[a,
+/-- **Derivative of a concave function is at most a secant slope.**
+The derivative of a concave function on `[0, ∞)` at `b` is at most the secant slope over `[a,
 b]`. This is Mathlib's `ConcaveOn.deriv_le_slope` with the slope unfolded. -/
 lemma shg_concaveOn_deriv_le_slope (φ : ℝ → ℝ) (hconc : ConcaveOn ℝ (Ici 0) φ)
     {a b : ℝ} (ha : a ∈ Ici (0 : ℝ)) (hb : b ∈ Ici (0 : ℝ)) (hab : a < b)
@@ -65,7 +66,8 @@ lemma shg_concaveOn_deriv_le_slope (φ : ℝ → ℝ) (hconc : ConcaveOn ℝ (Ic
   have h := hconc.deriv_le_slope ha hb hab hd
   rwa [slope_def_field] at h
 
-/-- A continuous function on `[0, ∞)`, twice differentiable on the interior with nonpositive second
+/-- **Concavity from a nonpositive second derivative on $[0, \infty)$.**
+A continuous function on `[0, ∞)`, twice differentiable on the interior with nonpositive second
 derivative, is concave. This is Mathlib's `concaveOn_of_deriv2_nonpos` specialized to `Ici 0`. -/
 lemma shg_concaveOn_of_deriv2_nonpos (φ : ℝ → ℝ)
     (hcont : ContinuousOn φ (Ici 0))
@@ -106,7 +108,8 @@ lemma shg_magnetization_slope_anti (β : ℝ) (o : V)
       ((Ici 0) \ {x}) :=
   hconc.slope_anti hx
 
-/-- If the magnetization is concave in the field on `[0, ∞)`, then for `h > 0` the susceptibility
+/-- **Susceptibility bound $\chi(h) \le m(h)/h$ from concavity.**
+If the magnetization is concave in the field on `[0, ∞)`, then for `h > 0` the susceptibility
 satisfies `χ(h) ≤ m(h)/h`, using `m(0) = 0`. -/
 lemma shg_magnetization_susceptibility_bound (β h : ℝ) (hh : 0 < h) (o : V)
     (hconc : ConcaveOn ℝ (Ici 0) (fun h => isingExpectation G β h (fun s => spin s o))) :

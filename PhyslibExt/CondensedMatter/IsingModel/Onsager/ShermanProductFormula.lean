@@ -57,7 +57,8 @@ open Matrix BigOperators
 
 /-! ## A. Buckets -/
 
-/-- The total twisted Kac-Ward weight of closed walks of length `n + 1` visiting `e` but not its
+/-- **Twisted bucket: walks through a dart, not its reverse.**
+The total twisted Kac-Ward weight of closed walks of length `n + 1` visiting `e` but not its
 reverse. -/
 noncomputable def ons_phaseBucketE
     (L : ℕ) [NeZero L] (x omega : ℂ) (a b : Fin 2)
@@ -67,7 +68,8 @@ noncomputable def ons_phaseBucketE
     ons_loopWeight (ons_KWmatPhase L x omega
       (ons_spinPhase L a) (ons_spinPhase L b)) d
 
-/-- The total twisted Kac-Ward weight of closed walks of length `n + 1` visiting neither `e` nor its
+/-- **Twisted bucket: walks avoiding a dart and its reverse.**
+The total twisted Kac-Ward weight of closed walks of length `n + 1` visiting neither `e` nor its
 reverse. -/
 noncomputable def ons_phaseBucketN
     (L : ℕ) [NeZero L] (x omega : ℂ) (a b : Fin 2)
@@ -77,7 +79,8 @@ noncomputable def ons_phaseBucketN
     ons_loopWeight (ons_KWmatPhase L x omega
       (ons_spinPhase L a) (ons_spinPhase L b)) d
 
-/-- As `ons_phaseBucketE`, for the twisted matrix with the darts of `forbidden` masked. -/
+/-- **Masked twisted bucket: walks through a dart, not its reverse.**
+As `ons_phaseBucketE`, for the twisted matrix with the darts of `forbidden` masked. -/
 noncomputable def ons_maskPhaseBucketE
     (L : ℕ) [NeZero L] (x omega : ℂ) (a b : Fin 2)
     (forbidden : Finset (ons_Dart L)) (e : ons_Dart L) (n : ℕ) : ℂ :=
@@ -87,7 +90,8 @@ noncomputable def ons_maskPhaseBucketE
       (ons_maskMatrix forbidden (ons_KWmatPhase L x omega
         (ons_spinPhase L a) (ons_spinPhase L b))) d
 
-/-- As `ons_phaseBucketN`, for the twisted matrix with the darts of `forbidden` masked. -/
+/-- **Masked twisted bucket: walks avoiding a dart and its reverse.**
+As `ons_phaseBucketN`, for the twisted matrix with the darts of `forbidden` masked. -/
 noncomputable def ons_maskPhaseBucketN
     (L : ℕ) [NeZero L] (x omega : ℂ) (a b : Fin 2)
     (forbidden : Finset (ons_Dart L)) (e : ons_Dart L) (n : ℕ) : ℂ :=
@@ -309,7 +313,8 @@ lemma ons_KWmatPhase_spectral_Sherman_small
 
 /-! ## C. Square roots -/
 
-/-- The walk-series square root of the twisted Kac-Ward determinant with boundary phases `a, b` at
+/-- **Walk-series square root of the twisted Kac-Ward determinant.**
+The walk-series square root of the twisted Kac-Ward determinant with boundary phases `a, b` at
 activity `x`. -/
 noncomputable def ons_spinWalkRoot
     (L : ℕ) [NeZero L] (x : ℝ) (a b : Fin 2) : ℂ :=
@@ -326,7 +331,8 @@ lemma ons_spinWalkRoot_sq
   exact ons_detWalkRoot_sq _
     (ons_KWmatPhase_spectral_Sherman_small L hx a b)
 
-/-- The exponential of minus one half of the series of closed walks avoiding `e` and its reverse. -/
+/-- **Exponential of minus half the series avoiding a dart and its reverse.**
+The exponential of minus one half of the series of closed walks avoiding `e` and its reverse. -/
 noncomputable def ons_phaseAvoidRoot
     (L : ℕ) [NeZero L] (x : ℝ) (a b : Fin 2)
     (e : ons_Dart L) : ℂ :=
@@ -613,7 +619,8 @@ lemma ons_detWalkRoot_mask_delete_pair
 
 /-! ## D. Elimination of darts -/
 
-/-- Add a dart and its reverse to a set of masked darts. -/
+/-- **Adding a dart and its reverse to the masked set.**
+Add a dart and its reverse to a set of masked darts. -/
 def ons_addDartPair (L : ℕ) (forbidden : Finset (ons_Dart L))
     (e : ons_Dart L) : Finset (ons_Dart L) :=
   ({e, ons_dartRev L e} : Finset (ons_Dart L)) ∪ forbidden
@@ -644,13 +651,15 @@ lemma ons_addDartPair_rev_closed (L : ℕ)
   rw [h1, h2, hforbidden d]
   tauto
 
-/-- The set of masked darts after eliminating the darts of a list, pair by pair. -/
+/-- **Masked darts after pairwise elimination along a list.**
+The set of masked darts after eliminating the darts of a list, pair by pair. -/
 def ons_maskAfter (L : ℕ) (forbidden : Finset (ons_Dart L)) :
     List (ons_Dart L) → Finset (ons_Dart L)
   | [] => forbidden
   | e :: es => ons_maskAfter L (ons_addDartPair L forbidden e) es
 
-/-- The product of the factors `1 - λ_e` along a list of darts, each first-return weight `λ_e`
+/-- **Product of first-return factors along a dart elimination.**
+The product of the factors `1 - λ_e` along a list of darts, each first-return weight `λ_e`
 computed with the previously eliminated darts masked. -/
 noncomputable def ons_maskEliminationProduct
     (L : ℕ) [NeZero L] (x : ℝ) (a b : Fin 2)

@@ -163,12 +163,13 @@ lemma plusCorr_eq_origin_translate (beta : ℝ) (hbeta : 0 ≤ beta)
 
 /-! ## B. Window sums -/
 
-/-- The window sum `∑_{z ∈ L} ⟨σ_0σ_z⟩^+_β`. -/
+/-- **Window sum of plus-state correlations.** The window sum `∑_{z ∈ L} ⟨σ_0σ_z⟩^+_β`. -/
 noncomputable def plusCorrWindowSum (d : ℕ) (beta : ℝ)
     (L : Finset (Site d)) : ℝ :=
   ∑ z ∈ L, plusCorr d beta (Percolation.origin d) z
 
-/-- The supremum of the window sums over windows with at most `n` sites. -/
+/-- **Supremum of plus-state window sums over windows of at most $n$ sites.**
+The supremum of the window sums over windows with at most `n` sites. -/
 noncomputable def plusCorrWindowSup (d : ℕ) (beta : ℝ) (n : ℕ) : ℝ :=
   sSup {r : ℝ | ∃ L : Finset (Site d), L.card ≤ n ∧
     r = plusCorrWindowSum d beta L}

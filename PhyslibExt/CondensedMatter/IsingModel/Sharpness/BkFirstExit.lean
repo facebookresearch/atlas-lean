@@ -265,7 +265,8 @@ lemma shk_firstExit_triple [DecidableEq V] (G : SimpleGraph V) (ω : ConfigSpace
   exact ⟨{e : Sym2 V | e ∈ ppre.edges}, {s(x, y)} ∪ {e : Sym2 V | e ∈ psuf.edges},
     hdisjK1K23, hK1, hinner⟩
 
-/-- The ordered pairs `(x, y)` with `x ∈ S`, `y ∉ S` adjacent in `G`. -/
+/-- **Ordered boundary pairs of a set.**
+The ordered pairs `(x, y)` with `x ∈ S`, `y ∉ S` adjacent in `G`. -/
 def shk_boundaryPairs [Fintype V] [DecidableEq V] (G : SimpleGraph V) (S : Finset V)
     [DecidableRel G.Adj] : Finset (V × V) :=
   Finset.univ.filter (fun q => q.1 ∈ S ∧ q.2 ∉ S ∧ G.Adj q.1 q.2)

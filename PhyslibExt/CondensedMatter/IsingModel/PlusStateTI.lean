@@ -58,12 +58,14 @@ variable {d : ℕ}
 
 /-! ## A. Shifted box measures -/
 
-/-- The plus-boundary box measure on `Λ_n` pushed forward by the shift `g`. -/
+/-- **Shifted plus-boundary box measure.**
+The plus-boundary box measure on `Λ_n` pushed forward by the shift `g`. -/
 noncomputable def pst_plusShiftedFinite (β h : ℝ) (g : Multiplicative (Site d)) (n : ℕ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   (plusMeasure d n β h).map (shift g)
 
-/-- The minus-boundary box measure on `Λ_n` pushed forward by the shift `g`. -/
+/-- **Shifted minus-boundary box measure.**
+The minus-boundary box measure on `Λ_n` pushed forward by the shift `g`. -/
 noncomputable def pst_minusShiftedFinite (β h : ℝ) (g : Multiplicative (Site d)) (n : ℕ) :
     ProbabilityMeasure (ConfigSpace (Site d)) :=
   (minusMeasure d n β h).map (shift g)
@@ -90,7 +92,8 @@ lemma pst_integral_minusShifted (β h : ℝ) (g : Multiplicative (Site d)) (n : 
 
 /-! ## B. Decay of shifted integrals -/
 
-/-- Along `φ`, integrals of bounded continuous functions against the plus box measures and their
+/-- **Decay of shifted integrals for plus box measures.**
+Along `φ`, integrals of bounded continuous functions against the plus box measures and their
 shifts by `g` become equal. -/
 def pst_PlusIntegralShiftDecay (β h : ℝ) (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
   ∀ f : ConfigSpace (Site d) →ᵇ ℝ,
@@ -100,7 +103,8 @@ def pst_PlusIntegralShiftDecay (β h : ℝ) (g : Multiplicative (Site d)) (φ : 
               ∂((plusMeasure d (φ n) β h : ProbabilityMeasure _) : Measure _)))
       atTop (𝓝 0)
 
-/-- Along `φ`, integrals of bounded continuous functions against the minus box measures and their
+/-- **Decay of shifted integrals for minus box measures.**
+Along `φ`, integrals of bounded continuous functions against the minus box measures and their
 shifts by `g` become equal. -/
 def pst_MinusIntegralShiftDecay (β h : ℝ) (g : Multiplicative (Site d)) (φ : ℕ → ℕ) : Prop :=
   ∀ f : ConfigSpace (Site d) →ᵇ ℝ,

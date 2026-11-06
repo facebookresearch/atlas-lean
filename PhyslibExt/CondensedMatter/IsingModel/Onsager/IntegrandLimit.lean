@@ -156,7 +156,8 @@ lemma ons_log_gInt_density_tendsto (β : ℝ) (hβ : 0 ≤ β) (hcrit : β ≠ o
 
 /-! ## C. The Kac-Ward dispersion -/
 
-/-- The Kac-Ward symbol determinant `(1 + t²)² - 2t(1 - t²)(cos k₁ + cos k₂)` at `t = tanh β`. -/
+/-- **Kac-Ward symbol determinant at t = tanh β.**
+The Kac-Ward symbol determinant `(1 + t²)² - 2t(1 - t²)(cos k₁ + cos k₂)` at `t = tanh β`. -/
 noncomputable def ons_symbolDispersion (β k₁ k₂ : ℝ) : ℝ :=
   (1 + Real.tanh β ^ 2) ^ 2 -
     2 * Real.tanh β * (1 - Real.tanh β ^ 2) * (Real.cos k₁ + Real.cos k₂)
