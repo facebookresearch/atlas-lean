@@ -53,26 +53,33 @@ private theorem Connected.of_surjective_map_or_eq {V W : Type*} {G : SimpleGraph
   · rw [heq]
   · exact Relation.ReflTransGen.single h
 
-/-- Send vertices in `D` to their subtype copy and every other vertex to `none`. -/
+/-- **Collapsing the complement of a set.** For a set $D \subseteq V$, the collapse map sends $V$
+to $D$ together with one new vertex, the contraction vertex: each $v \in D$ is sent to itself,
+and each $v \notin D$ is sent to the contraction vertex. -/
 public noncomputable def collapseOutside {V : Type*} (D : Set V) : V → Option D := by
   classical
   exact fun v ↦ if hv : v ∈ D then some ⟨v, hv⟩ else none
 
-/-- A vertex in `D` survives contraction as its subtype copy. -/
+/-- **The collapse map fixes the retained set.** For a set $D \subseteq V$, the collapse map from
+$V$ to $D$ together with the contraction vertex sends each $v \in D$ to $v$ itself. -/
 @[simp]
 public theorem collapseOutside_of_mem {V : Type*} (D : Set V) {v : V} (hv : v ∈ D) :
     collapseOutside D v = some ⟨v, hv⟩ := by
   classical
   simp [collapseOutside, hv]
 
-/-- A vertex outside `D` is sent to the contraction vertex. -/
+/-- **The collapse map sends the complement to the contraction vertex.** For a set
+$D \subseteq V$, the collapse map from $V$ to $D$ together with the contraction vertex sends each
+vertex $v \notin D$ to the contraction vertex. -/
 @[simp]
 public theorem collapseOutside_of_notMem {V : Type*} (D : Set V) {v : V} (hv : v ∉ D) :
     collapseOutside D v = none := by
   classical
   simp [collapseOutside, hv]
 
-/-- Characterization of the vertices that map to a surviving subtype vertex. -/
+/-- **Preimages of retained vertices under the collapse map.** For a set $D \subseteq V$, a vertex
+$v \in V$ and an element $a \in D$, the collapse map from $V$ to $D$ together with the
+contraction vertex sends $v$ to $a$ if and only if $v = a$. -/
 @[simp]
 public theorem collapseOutside_eq_some_iff {V : Type*} (D : Set V) (v : V) (a : D) :
     collapseOutside D v = some a ↔ v = a := by
@@ -95,7 +102,9 @@ public theorem collapseOutside_eq_some_iff {V : Type*} (D : Set V) (v : V) (a : 
       rw [h]
       exact a.property
 
-/-- Characterization of the vertices sent to the contraction vertex. -/
+/-- **Preimage of the contraction vertex under the collapse map.** For a set $D \subseteq V$ and a
+vertex $v \in V$, the collapse map from $V$ to $D$ together with the contraction vertex sends $v$
+to the contraction vertex if and only if $v \notin D$. -/
 @[simp]
 public theorem collapseOutside_eq_none_iff {V : Type*} (D : Set V) (v : V) :
     collapseOutside D v = none ↔ v ∉ D := by
@@ -106,7 +115,9 @@ public theorem collapseOutside_eq_none_iff {V : Type*} (D : Set V) (v : V) :
   · rw [collapseOutside_of_notMem D hv]
     simp [hv]
 
-/-- The collapse map is onto when there is a vertex outside the retained set. -/
+/-- **The collapse map is surjective.** For a set $D \subseteq V$ whose complement $V \setminus D$
+is nonempty, the collapse map from $V$ to $D$ together with the contraction vertex is
+surjective. -/
 public theorem collapseOutside_surjective {V : Type*} {D : Set V} (hD : Dᶜ.Nonempty) :
     Function.Surjective (collapseOutside D) := by
   obtain ⟨w, hw⟩ := hD
@@ -117,12 +128,19 @@ public theorem collapseOutside_surjective {V : Type*} {D : Set V} (hD : Dᶜ.Non
   | some a =>
       exact ⟨a, collapseOutside_of_mem D a.property⟩
 
-/-- Contract the complement of `D` to one vertex. -/
+/-- **Contracting the complement of a vertex set.** Let $G$ be a simple graph on a vertex set $V$
+and let $D \subseteq V$. Contracting the complement of $D$ to a single vertex gives the simple
+graph whose vertices are the elements of $D$ together with one new vertex $\ast$, in which two
+vertices $a, b \in D$ are adjacent exactly when they are adjacent in $G$, and a vertex $a \in D$
+is adjacent to $\ast$ exactly when $a$ has a neighbour in $G$ outside $D$. The new vertex $\ast$
+is present even when $D = V$, and is then isolated. -/
 public noncomputable def contractOutside {V : Type*} (G : SimpleGraph V) (D : Set V) :
     SimpleGraph (Option D) :=
   G.map (collapseOutside D)
 
-/-- Adjacency between surviving vertices is unchanged by contraction. -/
+/-- **Contraction preserves adjacency among retained vertices.** Let $G$ be a graph on $V$, let
+$D \subseteq V$, and contract $V \setminus D$ to a single vertex. Two vertices $a, b \in D$ are
+adjacent in the contracted graph if and only if they are adjacent in $G$. -/
 @[simp]
 public theorem contractOutside_adj_some {V : Type*} (G : SimpleGraph V) (D : Set V)
     (a b : D) :
@@ -140,8 +158,10 @@ public theorem contractOutside_adj_some {V : Type*} (G : SimpleGraph V) (D : Set
     · exact collapseOutside_of_mem D a.property
     · exact collapseOutside_of_mem D b.property
 
-/-- A surviving vertex is adjacent to the contraction vertex exactly when it had a neighbor
-outside the contracted set. -/
+/-- **Neighbors of the contraction vertex.** Let $G$ be a graph on $V$, let $D \subseteq V$, and
+contract $V \setminus D$ to a single vertex. A vertex $a \in D$ is adjacent to the contraction
+vertex in the contracted graph if and only if $a$ is adjacent in $G$ to some vertex
+$v \notin D$. -/
 @[simp]
 public theorem contractOutside_adj_none {V : Type*} (G : SimpleGraph V) (D : Set V)
     (a : D) :
@@ -229,8 +249,11 @@ private theorem IsVertexConnected.contractOutside_delete_some {V : Type*} [Finty
   · right
     exact map_adj_apply' (induce_adj.mp hab) heq
 
-/-- Contracting the complement of a connected set with at least two vertices in a
-2-vertex-connected graph produces another 2-vertex-connected graph. -/
+/-- **Contracting the complement preserves 2-connectivity.** Let $G$ be a 2-vertex-connected
+graph on a finite vertex set $V$, and let $D \subseteq V$ be a set with at least two elements
+that induces a connected subgraph of $G$ and whose complement $V \setminus D$ is nonempty. Then
+the graph obtained from $G$ by contracting $V \setminus D$ to a single vertex is
+2-vertex-connected. -/
 public theorem IsVertexConnected.contractOutside {V : Type*} [Fintype V]
     {G : SimpleGraph V} {D : Set V} [Fintype D] (hG : G.IsVertexConnected 2)
     (hDcard : 1 < Fintype.card D) (hDconn : (G.induce D).Connected)
@@ -245,7 +268,12 @@ public theorem IsVertexConnected.contractOutside {V : Type*} [Fintype V]
     | none => exact hDconn.contractOutside_delete_none
     | some d => exact hG.contractOutside_delete_some hDout d
 
-/-- If at least two vertices are contracted, the contraction has strictly fewer vertices. -/
+/-- **Cardinality bound for contracting the complement.** Let $V$ be a finite set and
+$D \subseteq V$. If the complement $V \setminus D$ has at least two elements, then $D$ together
+with one new vertex has fewer elements than $V$, that is, $|D| + 1 < |V|$.
+
+This counts the vertices of the graph obtained by contracting $V \setminus D$ to a single
+vertex. -/
 public theorem card_contractOutside_lt {V : Type*} [Fintype V] (D : Set V)
     [Fintype D] [Fintype ↥(Dᶜ : Set V)] (hD : 2 ≤ Fintype.card ↥(Dᶜ : Set V)) :
     Fintype.card (Option D) < Fintype.card V := by

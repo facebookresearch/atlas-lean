@@ -26,26 +26,36 @@ monotone-subsequence bound is proved on p. 468.
 NUMDAM record: https://www.numdam.org/item/CM_1935__2__463_0/.
 -/
 
-/-- `k - 1 < k` for positive `k`. -/
+/-- **A positive natural number exceeds its predecessor.** For every natural number $k > 0$,
+$k - 1 < k$. -/
 theorem sub_one_lt_of_pos {k : ℕ} (hk : 0 < k) : k - 1 < k := by omega
 
-/-- An increasing subsequence of `f` of length `k`: index- and value-strict. -/
+/-- **Increasing subsequence.** For $f : \{0, \dots, N-1\} \to \mathbb{R}$ and $k \in \mathbb{N}$,
+a map $\varphi : \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ is an increasing subsequence of $f$ of
+length $k$ when $\varphi(i) < \varphi(j)$ and $f(\varphi(i)) < f(\varphi(j))$ for all $i < j$. -/
 def IsIncrSubseq {N : ℕ} (f : Fin N → ℝ) (k : ℕ) (φ : Fin k → Fin N) : Prop :=
   (∀ i j : Fin k, i < j → φ i < φ j) ∧
   (∀ i j : Fin k, i < j → f (φ i) < f (φ j))
 
-/-- A decreasing subsequence of `f` of length `k`: index-strict, values strictly
-decrease. -/
+/-- **Decreasing subsequence.** For $f : \{0, \dots, N-1\} \to \mathbb{R}$ and $k \in \mathbb{N}$,
+a map $\varphi : \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ is a decreasing subsequence of $f$ of
+length $k$ when $\varphi(i) < \varphi(j)$ and $f(\varphi(j)) < f(\varphi(i))$ for all $i < j$. -/
 def IsDecrSubseq {N : ℕ} (f : Fin N → ℝ) (k : ℕ) (φ : Fin k → Fin N) : Prop :=
   (∀ i j : Fin k, i < j → φ i < φ j) ∧
   (∀ i j : Fin k, i < j → f (φ j) < f (φ i))
 
-/-- There is an increasing subsequence of length `k` ending exactly at `p`. -/
+/-- **Increasing subsequence ending at a position.** For $f : \{0, \dots, N-1\} \to \mathbb{R}$,
+a position $p$ and $k \in \mathbb{N}$, this is the statement that $k \ge 1$ and $f$ has an
+increasing subsequence $\varphi$ of length $k$ (indices and values strictly increasing) ending at
+$p$, that is, with $\varphi(k-1) = p$. -/
 def IsIncrEnd {N : ℕ} (f : Fin N → ℝ) (p : Fin N) (k : ℕ) : Prop :=
   ∃ (hk : 0 < k) (φ : Fin k → Fin N),
     IsIncrSubseq f k φ ∧ φ ⟨k - 1, sub_one_lt_of_pos hk⟩ = p
 
-/-- There is a decreasing subsequence of length `k` ending exactly at `p`. -/
+/-- **Decreasing subsequence ending at a position.** For $f : \{0, \dots, N-1\} \to \mathbb{R}$,
+a position $p$ and $k \in \mathbb{N}$, this is the statement that $k \ge 1$ and $f$ has a
+decreasing subsequence $\varphi$ of length $k$ (indices strictly increasing and values strictly
+decreasing) ending at $p$, that is, with $\varphi(k-1) = p$. -/
 def IsDecrEnd {N : ℕ} (f : Fin N → ℝ) (p : Fin N) (k : ℕ) : Prop :=
   ∃ (hk : 0 < k) (φ : Fin k → Fin N),
     IsDecrSubseq f k φ ∧ φ ⟨k - 1, sub_one_lt_of_pos hk⟩ = p
@@ -60,26 +70,33 @@ noncomputable instance decDecrEnd (N : ℕ) (f : Fin N → ℝ) (p : Fin N) :
     DecidablePred (IsDecrEnd f p) :=
   fun _ => Classical.propDecidable _
 
-/-- No strict pair exists in `Fin 1`. -/
+/-- **No strict pair in a one-element set.** There are no $i, j \in \{0\}$ with $i < j$. -/
 theorem fin1_false {i j : Fin 1} (hij : i < j) : False := by
   have hiv : i.val < j.val := Fin.lt_def.mp hij
   have h1 := i.isLt
   have h2 := j.isLt
   omega
 
-/-- Singletons are increasing subsequences. -/
+/-- **One-term subsequences are increasing.** For every real sequence $f$ indexed by
+$\{0, \dots, N-1\}$ and every position $p$, the subsequence of length $1$ consisting of the term
+at position $p$ is a strictly increasing subsequence of $f$. -/
 theorem singleton_incr {N : ℕ} (f : Fin N → ℝ) (p : Fin N) :
     IsIncrSubseq f 1 (fun _ => p) :=
   ⟨fun _ _ hij => False.elim (fin1_false hij),
     fun _ _ hij => False.elim (fin1_false hij)⟩
 
-/-- Singletons are decreasing subsequences. -/
+/-- **One-term subsequences are decreasing.** For every real sequence $f$ indexed by
+$\{0, \dots, N-1\}$ and every position $p$, the subsequence of length $1$ consisting of the term
+at position $p$ is a strictly decreasing subsequence of $f$. -/
 theorem singleton_decr {N : ℕ} (f : Fin N → ℝ) (p : Fin N) :
     IsDecrSubseq f 1 (fun _ => p) :=
   ⟨fun _ _ hij => False.elim (fin1_false hij),
     fun _ _ hij => False.elim (fin1_false hij)⟩
 
-/-- Length of the longest increasing subsequence ending at `p`. -/
+/-- **Length of the longest increasing subsequence ending at a position.** For
+$f : \{0, \dots, N-1\} \to \mathbb{R}$ and a position $p$, this is the largest $k \le N$ such that
+$f$ has an increasing subsequence of length $k$ ending at $p$, where indices and values both
+increase strictly. -/
 noncomputable def incrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) : ℕ :=
   ((Finset.range (N + 1)).filter (IsIncrEnd f p)).max'
     ⟨1, by
@@ -89,7 +106,11 @@ noncomputable def incrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) : ℕ :=
       rw [Finset.mem_filter, Finset.mem_range]
       exact ⟨by omega, by omega, fun _ => p, singleton_incr f p, rfl⟩⟩
 
-/-- Length of the longest decreasing subsequence ending at `p`. -/
+/-- **Length of the longest decreasing subsequence ending at a point.** For a real sequence $f$
+indexed by $\{0, \dots, N-1\}$ and an index $p$, this is the largest $k$ such that $f$ has a
+strictly decreasing subsequence of length $k$ ending at $p$, that is, indices
+$i_1 < \dots < i_k = p$ with $f(i_1) > \dots > f(i_k)$. The maximum exists: $k = 1$ qualifies, and
+every such $k$ is at most $N$. -/
 noncomputable def decrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) : ℕ :=
   ((Finset.range (N + 1)).filter (IsDecrEnd f p)).max'
     ⟨1, by
@@ -99,7 +120,9 @@ noncomputable def decrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) : ℕ :=
       rw [Finset.mem_filter, Finset.mem_range]
       exact ⟨by omega, by omega, fun _ => p, singleton_decr f p, rfl⟩⟩
 
-/-- An index-strict map into `Fin N` has domain length at most `N`. -/
+/-- **Subsequences are no longer than the sequence.** If
+$\varphi \colon \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ is strictly increasing, that is
+$\varphi(i) < \varphi(j)$ whenever $i < j$, then $k \le N$. -/
 theorem subseqLen_le {N k : ℕ} {φ : Fin k → Fin N}
     (hidx : ∀ i j : Fin k, i < j → φ i < φ j) : k ≤ N := by
   have hinj : Function.Injective φ := by
@@ -113,17 +136,26 @@ theorem subseqLen_le {N k : ℕ} {φ : Fin k → Fin N}
   simp only [Fintype.card_fin] at hcard
   exact hcard
 
-/-- Witness for `incrLen`: a subsequence of that length ends at `p`. -/
+/-- **The longest increasing subsequence ending at a position is attained.** For every
+$f : \{0, \dots, N-1\} \to \mathbb{R}$ and every position $p$, $f$ has an increasing subsequence
+ending at $p$ whose length equals the length of the longest increasing subsequence of $f$ ending
+at $p$. -/
 theorem incrLen_isEnd {N : ℕ} (f : Fin N → ℝ) (p : Fin N) :
     IsIncrEnd f p (incrLen f p) :=
   (Finset.mem_filter.mp (Finset.max'_mem _ _)).2
 
-/-- Witness for `decrLen`: a subsequence of that length ends at `p`. -/
+/-- **The longest decreasing subsequence ending at a point is attained.** For every real sequence
+$f$ indexed by $\{0, \dots, N-1\}$ and every index $p$, $f$ has a strictly decreasing subsequence
+ending at $p$ whose length equals the length of the longest strictly decreasing subsequence of $f$
+ending at $p$. -/
 theorem decrLen_isEnd {N : ℕ} (f : Fin N → ℝ) (p : Fin N) :
     IsDecrEnd f p (decrLen f p) :=
   (Finset.mem_filter.mp (Finset.max'_mem _ _)).2
 
-/-- `incrLen` is an upper bound on lengths ending at `p`. -/
+/-- **Bound by the longest increasing subsequence ending at a position.** Let $f$ be a real
+sequence indexed by $\{0, \dots, N-1\}$ and let $p$ be a position. If $f$ has a strictly
+increasing subsequence of length $k$ ending exactly at $p$, then $k$ is at most the length of the
+longest strictly increasing subsequence of $f$ ending at $p$. -/
 theorem le_incrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) (k : ℕ)
     (h : IsIncrEnd f p k) : k ≤ incrLen f p := by
   obtain ⟨hk, φ, hsub, hlast⟩ := h
@@ -132,7 +164,10 @@ theorem le_incrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) (k : ℕ)
     Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by omega), hk, φ, hsub, hlast⟩
   exact Finset.le_max' _ k hmem
 
-/-- `decrLen` is an upper bound on lengths ending at `p`. -/
+/-- **Bound by the longest decreasing subsequence ending at a position.** Let $f$ be a real
+sequence indexed by $\{0, \dots, N-1\}$ and let $p$ be a position. If $f$ has a strictly
+decreasing subsequence of length $k$ ending exactly at $p$, then $k$ is at most the length of the
+longest strictly decreasing subsequence of $f$ ending at $p$. -/
 theorem le_decrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) (k : ℕ)
     (h : IsDecrEnd f p k) : k ≤ decrLen f p := by
   obtain ⟨hk, φ, hsub, hlast⟩ := h
@@ -141,21 +176,29 @@ theorem le_decrLen {N : ℕ} (f : Fin N → ℝ) (p : Fin N) (k : ℕ)
     Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by omega), hk, φ, hsub, hlast⟩
   exact Finset.le_max' _ k hmem
 
-/-- Lengths are positive. -/
+/-- **Longest increasing subsequences ending at a position have length at least one.** For every
+$f : \{0, \dots, N-1\} \to \mathbb{R}$ and every position $p$, the length of the longest
+increasing subsequence of $f$ ending at $p$ is at least $1$. -/
 theorem incrLen_ge_one {N : ℕ} (f : Fin N → ℝ) (p : Fin N) :
     1 ≤ incrLen f p :=
   le_incrLen f p 1 ⟨by omega, fun _ => p, singleton_incr f p, rfl⟩
 
-/-- Lengths are positive. -/
+/-- **The longest decreasing subsequence ending at a point has length at least one.** For every
+real sequence $f$ indexed by $\{0, \dots, N-1\}$ and every index $p$, the length of the longest
+strictly decreasing subsequence of $f$ ending at $p$ is at least $1$. -/
 theorem decrLen_ge_one {N : ℕ} (f : Fin N → ℝ) (p : Fin N) :
     1 ≤ decrLen f p :=
   le_decrLen f p 1 ⟨by omega, fun _ => p, singleton_decr f p, rfl⟩
 
-/-- Append `p` to a length-`k` map, yielding a length-`k+1` map. -/
+/-- **Appending an entry to a map of indices.** Given
+$\varphi : \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ and $p \in \{0, \dots, N-1\}$, the appended map
+on $\{0, \dots, k\}$ sends each $i < k$ to $\varphi(i)$ and sends $k$ to $p$. -/
 def extendMap {N k : ℕ} (φ : Fin k → Fin N) (p : Fin N) : Fin (k + 1) → Fin N :=
   fun i => if h : i.val < k then φ ⟨i.val, h⟩ else p
 
-/-- Entries strictly before the end sit weakly below the end position. -/
+/-- **Entries of a strictly increasing index map lie at or below its last entry.** Let $k \ge 1$
+and let $\varphi : \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ be strictly increasing with
+$\varphi(k-1) = q$. Then $\varphi(i) \le q$ for every $i < k$. -/
 theorem idx_le_last {N k : ℕ} {q : Fin N} {φ : Fin k → Fin N}
     (hk : 0 < k) (hidx : ∀ i j : Fin k, i < j → φ i < φ j)
     (hlast : φ ⟨k - 1, sub_one_lt_of_pos hk⟩ = q)
@@ -170,8 +213,10 @@ theorem idx_le_last {N k : ℕ} {q : Fin N} {φ : Fin k → Fin N}
     exact le_of_lt hlt
   · rw [h, hlast]
 
-/-- Entries strictly before the end sit weakly below the end value along an
-increasing subsequence. -/
+/-- **The last value is the largest along a strictly increasing selection.** Let $f$ be a real
+sequence indexed by $\{0, \dots, N-1\}$, let $k \ge 1$, and let $\varphi$ map
+$\{0, \dots, k-1\}$ to $\{0, \dots, N-1\}$ so that $f(\varphi(i)) < f(\varphi(j))$ whenever
+$i < j < k$. If $\varphi(k-1) = q$, then $f(\varphi(i)) \le f(q)$ for every $i < k$. -/
 theorem val_le_last_incr {N k : ℕ} {f : Fin N → ℝ} {q : Fin N}
     {φ : Fin k → Fin N} (hk : 0 < k)
     (hval : ∀ i j : Fin k, i < j → f (φ i) < f (φ j))
@@ -187,8 +232,10 @@ theorem val_le_last_incr {N k : ℕ} {f : Fin N → ℝ} {q : Fin N}
     exact le_of_lt hlt
   · rw [h, hlast]
 
-/-- The end value sits weakly below later entries along a decreasing
-subsequence. -/
+/-- **The last value is the smallest along a strictly decreasing selection.** Let $f$ be a real
+sequence indexed by $\{0, \dots, N-1\}$, let $k \ge 1$, and let $\varphi$ map
+$\{0, \dots, k-1\}$ to $\{0, \dots, N-1\}$ so that $f(\varphi(j)) < f(\varphi(i))$ whenever
+$i < j < k$. If $\varphi(k-1) = q$, then $f(q) \le f(\varphi(i))$ for every $i < k$. -/
 theorem last_le_val_decr {N k : ℕ} {f : Fin N → ℝ} {q : Fin N}
     {φ : Fin k → Fin N} (hk : 0 < k)
     (hval : ∀ i j : Fin k, i < j → f (φ j) < f (φ i))
@@ -204,7 +251,11 @@ theorem last_le_val_decr {N k : ℕ} {f : Fin N → ℝ} {q : Fin N}
     exact le_of_lt hlt
   · rw [h, ← hlast]
 
-/-- The appended map is index-strict. -/
+/-- **Appending a later index keeps indices increasing.** Let $k \ge 1$ and let
+$\varphi : \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ be strictly increasing with last value
+$\varphi(k-1) = q$. If $p$ is an index with $q < p$, then the map on $\{0, \dots, k\}$ obtained by
+appending $p$ to $\varphi$, which sends each $i < k$ to $\varphi(i)$ and sends $k$ to $p$, is
+strictly increasing. -/
 theorem extend_idx {N k : ℕ} {q p : Fin N} {φ : Fin k → Fin N}
     (hk : 0 < k) (hidx : ∀ i j : Fin k, i < j → φ i < φ j)
     (hlast : φ ⟨k - 1, sub_one_lt_of_pos hk⟩ = q) (hqp : q < p)
@@ -220,7 +271,9 @@ theorem extend_idx {N k : ℕ} {q p : Fin N} {φ : Fin k → Fin N}
   · rw [dite_eq_left hik, dite_eq_right hjk]
     exact lt_of_le_of_lt (idx_le_last hk hidx hlast hik) hqp
 
-/-- The last element of the appended map is `p`. -/
+/-- **The last entry of an appended map.** For every map
+$\varphi : \{0, \dots, k-1\} \to \{0, \dots, N-1\}$ and every $p \in \{0, \dots, N-1\}$, the map
+obtained by appending $p$ to $\varphi$ takes the value $p$ at its last index $k$. -/
 theorem extend_last {N k : ℕ} (φ : Fin k → Fin N) {p : Fin N}
     (hk1 : 0 < k + 1) :
     extendMap φ p ⟨k + 1 - 1, sub_one_lt_of_pos hk1⟩ = p := by
@@ -231,7 +284,11 @@ theorem extend_last {N k : ℕ} (φ : Fin k → Fin N) {p : Fin N}
   unfold extendMap
   exact dite_eq_right hneg
 
-/-- Extend an increasing subsequence ending at `q` by appending `p` after it. -/
+/-- **Extending an increasing subsequence.** Let $f : \{0, \dots, N-1\} \to \mathbb{R}$, let
+$k \ge 1$, and let $\varphi$ be an increasing subsequence of $f$ of length $k$ (indices and values
+strictly increasing) with last index $\varphi(k-1) = q$. If $p \in \{0, \dots, N-1\}$ satisfies
+$q < p$ and $f(q) < f(p)$, then $f$ has an increasing subsequence of length $k + 1$ ending at
+$p$. -/
 theorem incrExtend {N k : ℕ} {f : Fin N → ℝ} {q p : Fin N} {φ : Fin k → Fin N}
     (hk : 0 < k) (hsub : IsIncrSubseq f k φ)
     (hlast : φ ⟨k - 1, sub_one_lt_of_pos hk⟩ = q)
@@ -258,7 +315,12 @@ theorem incrExtend {N k : ℕ} {f : Fin N → ℝ} {q p : Fin N} {φ : Fin k →
     · rw [dite_eq_left hik, dite_eq_right hjk]
       exact lt_of_le_of_lt (val_le_last_incr hk hsub.2 hlast hik) hval
 
-/-- Extend a decreasing subsequence ending at `q` by appending `p` after it. -/
+/-- **Extending a decreasing subsequence.** Let $f$ be a real sequence indexed by
+$\{0, \dots, N-1\}$, let $k \ge 1$, and let $\varphi$ be a decreasing subsequence of $f$ of length
+$k$, that is, indices $\varphi(0) < \dots < \varphi(k-1)$ with
+$f(\varphi(0)) > \dots > f(\varphi(k-1))$, whose last index is $\varphi(k-1) = q$. If $p$ is an
+index with $q < p$ and $f(p) < f(q)$, then $f$ has a decreasing subsequence of length $k + 1$ that
+ends at $p$. -/
 theorem decrExtend {N k : ℕ} {f : Fin N → ℝ} {q p : Fin N} {φ : Fin k → Fin N}
     (hk : 0 < k) (hsub : IsDecrSubseq f k φ)
     (hlast : φ ⟨k - 1, sub_one_lt_of_pos hk⟩ = q)
@@ -277,7 +339,10 @@ theorem decrExtend {N k : ℕ} {f : Fin N → ℝ} {q p : Fin N} {φ : Fin k →
     · rw [dite_eq_left hik, dite_eq_right hjk]
       exact lt_of_lt_of_le hval (last_le_val_decr hk hsub.2 hlast hik)
 
-/-- `incrLen` grows along index- and value-increases. -/
+/-- **Longest increasing subsequence lengths increase strictly along increasing pairs.** Let
+$f : \{0, \dots, N-1\} \to \mathbb{R}$ and let $q < p$ be positions with $f(q) < f(p)$. Then the
+length of the longest increasing subsequence of $f$ ending at $q$ is strictly less than the
+length of the longest increasing subsequence of $f$ ending at $p$. -/
 theorem incrMono {N : ℕ} (f : Fin N → ℝ) {q p : Fin N}
     (hqp : q < p) (hval : f q < f p) : incrLen f q < incrLen f p := by
   obtain ⟨hk, φ, hsub, hlast⟩ := incrLen_isEnd f q
@@ -285,7 +350,10 @@ theorem incrMono {N : ℕ} (f : Fin N → ℝ) {q p : Fin N}
     le_incrLen f p _ (incrExtend hk hsub hlast hqp hval)
   omega
 
-/-- `decrLen` grows along index-increases and value-decreases. -/
+/-- **Longest decreasing subsequence lengths grow along a descent.** Let $f$ be a real sequence
+indexed by $\{0, \dots, N-1\}$, and let $q < p$ be indices with $f(p) < f(q)$. Then the length of
+the longest strictly decreasing subsequence of $f$ ending at $q$ is strictly less than the length
+of the longest strictly decreasing subsequence of $f$ ending at $p$. -/
 theorem decrMono {N : ℕ} (f : Fin N → ℝ) {q p : Fin N}
     (hqp : q < p) (hval : f p < f q) : decrLen f q < decrLen f p := by
   obtain ⟨hk, φ, hsub, hlast⟩ := decrLen_isEnd f q
@@ -293,23 +361,29 @@ theorem decrMono {N : ℕ} (f : Fin N → ℝ) {q p : Fin N}
     le_decrLen f p _ (decrExtend hk hsub hlast hqp hval)
   omega
 
-/-- An increasing subsequence truncates to any shorter length. -/
+/-- **Increasing subsequences of every smaller length.** Let $f$ be a real sequence indexed by
+$\{0, \dots, N-1\}$. If $f$ has a strictly increasing subsequence of length $k$, then for every
+$r \le k$ it has a strictly increasing subsequence of length $r$. -/
 theorem truncIncr {N k r : ℕ} {f : Fin N → ℝ} {φ : Fin k → Fin N}
     (hsub : IsIncrSubseq f k φ) (hrk : r ≤ k) :
     ∃ φ' : Fin r → Fin N, IsIncrSubseq f r φ' :=
   ⟨fun i => φ (Fin.castLE hrk i), fun _ _ hij => hsub.1 _ _ hij,
     fun _ _ hij => hsub.2 _ _ hij⟩
 
-/-- A decreasing subsequence truncates to any shorter length. -/
+/-- **Decreasing subsequences of every smaller length.** Let $f$ be a real sequence indexed by
+$\{0, \dots, N-1\}$. If $f$ has a strictly decreasing subsequence of length $k$, then for every
+$s \le k$ it has a strictly decreasing subsequence of length $s$. -/
 theorem truncDecr {N k s : ℕ} {f : Fin N → ℝ} {φ : Fin k → Fin N}
     (hsub : IsDecrSubseq f k φ) (hsk : s ≤ k) :
     ∃ ψ : Fin s → Fin N, IsDecrSubseq f s ψ :=
   ⟨fun i => φ (Fin.castLE hsk i), fun _ _ hij => hsub.1 _ _ hij,
     fun _ _ hij => hsub.2 _ _ hij⟩
 
-/-- **Erdős–Szekeres**: every injective real sequence of length
-`(r - 1) * (s - 1) + 1` contains an increasing subsequence of length `r` or a
-decreasing subsequence of length `s`. -/
+/-- **Erdős–Szekeres theorem.** Let $r, s \ge 1$ be natural numbers, let $N = (r - 1)(s - 1) + 1$,
+and let $f$ be an injective real sequence indexed by $\{0, \dots, N-1\}$. Then $f$ has a strictly
+increasing subsequence of length $r$, that is, indices $i_1 < \dots < i_r$ with
+$f(i_1) < \dots < f(i_r)$, or a strictly decreasing subsequence of length $s$, that is, indices
+$j_1 < \dots < j_s$ with $f(j_1) > \dots > f(j_s)$. -/
 public theorem erdos_szekeres {r s : ℕ} (hr : 0 < r) (hs : 0 < s)
     (f : Fin ((r - 1) * (s - 1) + 1) → ℝ) (hinj : Function.Injective f) :
     (∃ φ : Fin r → Fin ((r - 1) * (s - 1) + 1),

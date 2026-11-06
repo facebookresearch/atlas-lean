@@ -24,28 +24,38 @@ namespace MathlibExt.Combinatorics.SimpleGraph.MatrixTreeWanted
 Records Kirchhoff's matrix-tree theorem and Cayley's formula.
 -/
 
-/-- Integer graph Laplacian: diagonal is degree, off-diagonal is `-1` on
-edges. -/
+/-- **Integer Laplacian of a graph.** For a simple graph $G$ on a finite vertex set $V$, the integer
+Laplacian of $G$ is the $V \times V$ integer matrix $L$ with $L_{uu} = \deg u$ for every vertex
+$u$, $L_{uv} = -1$ when $u \ne v$ are adjacent, and $L_{uv} = 0$ when $u \ne v$ are not adjacent.
+-/
 def laplacianInt {V : Type*} [Fintype V] [DecidableEq V] (G : _root_.SimpleGraph V)
     [DecidableRel G.Adj] : Matrix V V ℤ :=
   Matrix.of fun u v => if u = v then (G.degree u : ℤ) else if G.Adj u v then -1 else 0
 
-/-- Reduced Laplacian after deleting a chosen root vertex. -/
+/-- **Reduced Laplacian.** For a simple graph $G$ on a finite vertex set $V$ and a vertex
+$r \in V$, the reduced Laplacian of $G$ at $r$ is the integer Laplacian of $G$ with the row and
+the column of $r$ deleted, a matrix indexed by the vertices of $G$ other than $r$. -/
 def reducedLaplacian {V : Type*} [Fintype V] [DecidableEq V] (G : _root_.SimpleGraph V)
     [DecidableRel G.Adj] (root : V) :
     Matrix { v : V // v ≠ root } { v : V // v ≠ root } ℤ :=
   Matrix.of fun ⟨u, _⟩ ⟨v, _⟩ => laplacianInt G u v
 
-/-- Spanning-tree predicate requiring both spanning and tree. -/
+/-- **Spanning tree.** A subgraph $T$ of a simple graph $G$ is a spanning tree of $G$ if it contains
+every vertex of $G$ and, regarded as a graph on its own vertex set, it is a tree (connected and
+acyclic). -/
 def IsSpanningTree {V : Type*} {G : _root_.SimpleGraph V} (T : G.Subgraph) : Prop :=
   T.IsSpanning ∧ T.coe.IsTree
 
-/-- Finite number of spanning trees using subgraph and `IsTree`. -/
+/-- **Number of spanning trees.** For a simple graph $G$ on a finite vertex set, the number of
+spanning trees of $G$ is the number of subgraphs of $G$ that are spanning trees, that is,
+subgraphs that contain every vertex of $G$ and are trees. -/
 noncomputable def numSpanningTrees {V : Type*} (G : _root_.SimpleGraph V) [Fintype V]
     [DecidableRel G.Adj] : ℕ :=
   Nat.card { T : G.Subgraph // IsSpanningTree T }
 
-/-- The integer Laplacian agrees with Mathlib's `SimpleGraph.lapMatrix` at `ℤ`. -/
+/-- **The integer Laplacian is degree minus adjacency.** For a simple graph $G$ on a finite vertex
+set, the integer Laplacian of $G$ equals $D - A$, where $D$ is the diagonal matrix of vertex
+degrees and $A$ is the adjacency matrix of $G$, both with integer entries. -/
 theorem laplacianInt_eq_lapMatrix {V : Type*} [Fintype V] [DecidableEq V]
     (G : _root_.SimpleGraph V) [DecidableRel G.Adj] :
     laplacianInt G = G.lapMatrix ℤ := by
@@ -59,8 +69,11 @@ theorem laplacianInt_eq_lapMatrix {V : Type*} [Fintype V] [DecidableEq V]
   · simp only [huv, ite_false]
     by_cases hadj : G.Adj u v <;> simp [hadj]
 
-/-- The reduced Laplacian is the principal submatrix of Mathlib's `lapMatrix`
-deleting `root`. -/
+/-- **The reduced Laplacian is a principal submatrix.** Let $G$ be a simple graph on a finite vertex
+set $V$ and let $L = D - A$ be its Laplacian matrix over $\mathbb{Z}$, where $D$ is the diagonal
+matrix of vertex degrees and $A$ is the adjacency matrix of $G$. For every vertex $r \in V$, the
+reduced Laplacian of $G$ at $r$ equals the submatrix of $L$ obtained by deleting the row and the
+column of $r$. -/
 theorem reducedLaplacian_eq_lapMatrix_submatrix {V : Type*} [Fintype V] [DecidableEq V]
     (G : _root_.SimpleGraph V) [DecidableRel G.Adj] (root : V) :
     reducedLaplacian G root =
@@ -759,8 +772,11 @@ private theorem card_rooted_eq_card_trees_le {V : Type*} [Fintype V] [DecidableE
       rw [hpar]
       exact hHeq
 
-/-- Public equivalence between spanning subgraphs that are trees and trees below `G`
-on the same vertex type. -/
+/-- **Spanning trees as trees contained in the graph.** For a simple graph $G$ on a vertex set $V$,
+there is an equivalence between the spanning trees of $G$ (subgraphs of $G$ that contain every
+vertex and are trees) and the simple graphs $H$ on $V$ that are trees with $H \le G$, that is,
+every edge of $H$ is an edge of $G$. It sends a spanning tree to the graph on $V$ with the same
+edges. -/
 def spanningTreeSubgraphEquiv {V : Type*} (G : SimpleGraph V) :
     {T : G.Subgraph // IsSpanningTree T} ≃ {H : SimpleGraph V // H ≤ G ∧ H.IsTree} := by
   classical
@@ -811,8 +827,9 @@ private theorem numSpanningTrees_eq_card_trees_le {V : Type*} [Fintype V] [Decid
   rw [show numSpanningTrees G = Nat.card {T : G.Subgraph // IsSpanningTree T} from rfl,
     hcard, Nat.card_eq_fintype_card, Fintype.card_subtype]
 
-/-- The spanning-tree count equals the number of trees below `G` on the same vertex
-type, matching `OpenConjectures.Combinatorics.MinimalSpanningTreeOrder.spanningTreeCount`. -/
+/-- **Spanning trees as trees on the whole vertex set.** For a simple graph $G$ on a finite vertex
+set $V$, the number of spanning trees of $G$ equals the number of simple graphs $H$ on $V$ such
+that every edge of $H$ is an edge of $G$ and $H$ is a tree. -/
 theorem numSpanningTrees_eq_card_trees {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     numSpanningTrees G = Nat.card {H : SimpleGraph V // H ≤ G ∧ H.IsTree} := by
@@ -820,8 +837,12 @@ theorem numSpanningTrees_eq_card_trees {V : Type*} [Fintype V]
   exact Nat.card_congr (spanningTreeSubgraphEquiv G)
 
 /--
-Kirchhoff's matrix-tree theorem without the `Nonempty` hypothesis: the root vertex
-already witnesses nonemptiness.
+**Matrix-tree theorem for a chosen root.** Let $G$ be a simple graph on a finite vertex set $V$
+and let $r \in V$. Then the determinant of the reduced Laplacian of $G$ at $r$, that is, the
+integer Laplacian of $G$ with the row and the column of $r$ deleted, equals the number of spanning
+trees of $G$.
+
+No separate nonemptiness hypothesis on $V$ is needed, since $r$ is a vertex.
 -/
 theorem kirchhoff_matrix_tree_of_root :
     ∀ {V : Type*} (G : _root_.SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
@@ -831,8 +852,11 @@ theorem kirchhoff_matrix_tree_of_root :
   rw [det_reducedLaplacian_eq_card_rooted, card_rooted_eq_card_trees_le,
     numSpanningTrees_eq_card_trees_le]
 
-/-- Kirchhoff's matrix-tree theorem stated against Mathlib's `lapMatrix` API: the
-determinant of the principal submatrix deleting `root` counts spanning trees. -/
+/-- **Matrix-tree theorem for principal minors of the Laplacian.** Let $G$ be a simple graph on a
+finite vertex set $V$, let $L = D - A$ be its Laplacian matrix over $\mathbb{Z}$, where $D$ is the
+diagonal matrix of vertex degrees and $A$ is the adjacency matrix of $G$, and let $r \in V$. Then
+the determinant of the submatrix of $L$ obtained by deleting the row and the column of $r$ equals
+the number of spanning trees of $G$. -/
 theorem kirchhoff_matrix_tree_lapMatrix :
     ∀ {V : Type*} (G : _root_.SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
       (root : V),
@@ -844,13 +868,18 @@ theorem kirchhoff_matrix_tree_lapMatrix :
   exact kirchhoff_matrix_tree_of_root G root
 
 /--
-Kirchhoff's matrix-tree theorem: for finite nonempty simple graph, the determinant of any reduced
-Laplacian equals the number of spanning trees as an integer; zero for disconnected.
+**Kirchhoff's matrix-tree theorem.** Let $G$ be a simple graph on a finite nonempty vertex set $V$
+and let $r \in V$. Then the determinant of the reduced Laplacian of $G$ at $r$, that is, the
+integer Laplacian of $G$ with the row and the column of $r$ deleted, equals the number of spanning
+trees of $G$.
+
+In particular, this determinant is $0$ when $G$ is disconnected.
+
+Proves `Wanted` entry `kirchhoff_matrix_tree`.
+
 Source: G. Kirchhoff, "Über die Auflösung der Gleichungen, auf welche man bei der Untersuchung der
 linearen Verteilung galvanischer Ströme geführt wird", Annalen der Physik und Chemie 72 (1847),
 497–508, DOI 10.1002/andp.18471481202
-
-Proves `Wanted` entry `kirchhoff_matrix_tree`.
 -/
 theorem kirchhoff_matrix_tree :
     ∀ {V : Type*} (G : _root_.SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel G.Adj]

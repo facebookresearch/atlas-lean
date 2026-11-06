@@ -39,18 +39,27 @@ file SHA-256
 section
 namespace MetaMathlibExt
 
-/-- Least-significant-digit-first value of a base-`k` digit word.
+/-- **Value of a base-$k$ digit word, least significant digit first.** For a natural number $k$,
+the value of a finite word $d_0 d_1 \cdots d_{m-1}$ of digits $d_i \in \{0, 1, \dots, k-1\}$ is
+the natural number $\sum_{i < m} d_i k^i$, so the first digit is the least significant one; the
+empty word has value $0$.
 
-Sunic selects least-significant-digit reading with tolerance of trailing
+Source: Sunic selects least-significant-digit reading with tolerance of trailing
 high-order zeros: lines 562-567 of `cubefree.tex`, span SHA-256
 `e7c8c89ab0663ef3fe4e59fcb7a16bcf952104852337ffbdab1ed42fc6c20921`. -/
 def baseWordValueLSD {k : Nat} (ds : List (Fin k)) : Nat :=
   ds.foldr (fun d acc => d.val + k * acc) 0
 
-/-- A sequence is `k`-automatic when a finite output automaton computes each
-term from every base-`k` expansion of its index.
+/-- **Automatic sequences via finite automata.** Let $k$ be a natural number and $B$ a finite
+alphabet. A sequence $w : \mathbb{N} \to B$ is $k$-automatic when $k \ge 2$ and there is a
+deterministic finite automaton with output, consisting of a nonempty finite set of states $Q$, an
+initial state $s \in Q$, a transition map $\delta : Q \times \{0, 1, \dots, k-1\} \to Q$ and an
+output map $\tau : Q \to B$, such that for every $n \in \mathbb{N}$ and every finite word
+$d_0 d_1 \cdots d_{m-1}$ of digits in $\{0, 1, \dots, k-1\}$ with $\sum_{i < m} d_i k^i = n$, the
+automaton started in $s$ and reading $d_0, d_1, \dots, d_{m-1}$ in this order (least significant
+digit first) stops in a state $t$ with $\tau(t) = w(n)$.
 
-Sunic Definition 3, lines 556-560 of `cubefree.tex`, span SHA-256
+Source: Sunic Definition 3, lines 556-560 of `cubefree.tex`, span SHA-256
 `fd6739cecadd7bfc1b66a49c39db59b2a267e85abb0abf5556bac6b533f3330b`.
 The universal clause over all representing words enforces tolerance of
 trailing high-order zeros. -/
@@ -63,11 +72,17 @@ def IsKAutomaticSequence {B : Type} [Fintype B] (k : Nat) (w : Nat → B) : Prop
             ∀ n : Nat, ∀ ds : List (Fin k),
               baseWordValueLSD ds = n → out (ds.foldl trans start) = w n
 
-/-- A sequence is a coding of a prolongable `k`-uniform fixed point: all
-letter images have length `k`, the start letter's image begins with itself,
-`u` satisfies the block law, and `g` codes `u` to `w` pointwise.
+/-- **Codings of prolongable uniform fixed points.** Let $k$ be a natural number and $B$ a finite
+alphabet. A sequence $w : \mathbb{N} \to B$ is a coding of a prolongable $k$-uniform fixed point
+when $k \ge 2$ and there are a nonempty finite alphabet $A$, a map $f$ sending each letter of $A$
+to a word of length exactly $k$ over $A$, a letter $a \in A$ with $f(a) = a\alpha$ for some
+nonempty word $\alpha$ over $A$, a sequence $u : \mathbb{N} \to A$ and a map $g : A \to B$ such
+that $u(0) = a$, the letter of $f(u(n))$ at position $j$ (counted from $0$) is $u(kn + j)$ for
+all $n \in \mathbb{N}$ and $j < k$, and $w(n) = g(u(n))$ for all $n \in \mathbb{N}$.
 
-Sunic lines 569-584 state the equivalence and define prolongability and
+The conditions on $u$ say that $u$ begins with $a$ and is fixed by $f$ applied letter by letter.
+
+Source: Sunic lines 569-584 state the equivalence and define prolongability and
 uniformity (`cubefree.tex`, span SHA-256
 `f618b2151d7a9680b94b6865bd471b1375fb23b387579b274c1e3174b9591763`);
 Stipulanti lines 164-174 define morphism, coding, prolongability, and fixed
@@ -365,15 +380,16 @@ private theorem morphic_of_auto {B : Type} [Fintype B] {k : Nat} (w : Nat → B)
       exact (hauto n (repList hk n) (repVal hk n)).symm
 
 set_option linter.unusedVariables false in
-/-- Cobham's one-base characterization: `k`-automatic sequences are exactly
-the codings of prolongable `k`-uniform fixed points.
+/-- **Cobham's characterization of automatic sequences.** Let $k \ge 2$ and let $B$ be a finite
+alphabet. A sequence $w : \mathbb{N} \to B$ is $k$-automatic if and only if it is a coding of a
+prolongable $k$-uniform fixed point.
 
-Stipulanti lines 212-217 state the exact theorem (`stip8.tex`, span SHA-256
+Proves `Wanted` entry `cobham_automatic_iff_uniform_morphic`.
+
+Source: Stipulanti lines 212-217 state the exact theorem (`stip8.tex`, span SHA-256
 `f70b1a34e9a990c0d579ca451a899f834f58c1aecf4c2d30533e373da6b88854`); its
 Cobham72 bibliography entry is line 1275, span SHA-256
 `dbdcb42ca999b63fd976e953cd494b5d7a7e438a6bb245e621f52c5ebfac7636`.
-
-Proves `Wanted` entry `cobham_automatic_iff_uniform_morphic`.
 -/
 theorem cobham_automatic_iff_uniform_morphic {B : Type} [Fintype B]
     {k : Nat} (w : Nat → B) (hk : 2 ≤ k) :
@@ -416,9 +432,12 @@ private theorem flatMap_map_range {q k : Nat} {f : Fin q → List (Fin q)} {a : 
       List.map_append, List.map_map]
     simp [hfu, Function.comp_def]
 
-/-- The block-law representation of a coding of a prolongable `k`-uniform fixed point is the
-`IsPrefixPreserving` / `IsOmegaLimit` representation of `PureMorphicWord`, for a morphism whose
-letter images all have length `k`. -/
+/-- **Uniform fixed-point codings via iterates of a uniform map.** Let $k \ge 2$ and let $B$
+be a finite alphabet. A sequence $w : \mathbb{N} \to B$ is a coding of a prolongable $k$-uniform
+fixed point if and only if there are a natural number $q$, a map $f$ sending each letter of the
+alphabet $A = \{0, 1, \dots, q-1\}$ to a word of length exactly $k$ over $A$, a letter $a \in A$,
+an infinite word $u$ over $A$ and a map $g : A \to B$ such that $f$ is prolongable at $a$, $u$ is
+the limit of the iterates of $f$ at $a$, and $w(n) = g(u(n))$ for every $n \in \mathbb{N}$. -/
 theorem isCodingOfProlongableKUniformFixedPoint_iff {B : Type} [Fintype B] {k : Nat}
     (w : Nat → B) (hk : 2 ≤ k) :
     IsCodingOfProlongableKUniformFixedPoint k w ↔
@@ -461,7 +480,11 @@ theorem isCodingOfProlongableKUniformFixedPoint_iff {B : Type} [Fintype B] {k : 
       rw [List.getD_eq_getElem?_getD, hj']
       rfl
 
-/-- Every coding of a prolongable `k`-uniform fixed point is a morphic word. -/
+/-- **Uniform fixed-point codings are morphic.** Let $k$ be a natural number and $B$ a finite
+alphabet. If a sequence $w : \mathbb{N} \to B$ is a coding of a prolongable $k$-uniform fixed
+point, then there are a natural number $q$, an infinite word $u$ over the alphabet
+$A = \{0, 1, \dots, q-1\}$ and a map $g : A \to B$ such that $w$ is morphic with generator $u$
+and coding $g$. -/
 theorem IsCodingOfProlongableKUniformFixedPoint.exists_isMorphic {B : Type} [Fintype B]
     {k : Nat} {w : Nat → B} (h : IsCodingOfProlongableKUniformFixedPoint k w) :
     ∃ q : Nat, ∃ u : Nat → Fin q, ∃ g : Fin q → B, IsMorphic u g w := by
@@ -469,7 +492,10 @@ theorem IsCodingOfProlongableKUniformFixedPoint.exists_isMorphic {B : Type} [Fin
     (isCodingOfProlongableKUniformFixedPoint_iff w h.1).1 h
   exact ⟨q, u, g, ⟨f, a, hpre, hlim⟩, hg⟩
 
-/-- Every `k`-automatic sequence is a morphic word. -/
+/-- **Automatic sequences are morphic.** Let $k$ be a natural number and $B$ a finite alphabet.
+If a sequence $w : \mathbb{N} \to B$ is $k$-automatic, then there are a natural number $q$, an
+infinite word $u$ over the alphabet $A = \{0, 1, \dots, q-1\}$ and a map $g : A \to B$ such that
+$w$ is morphic with generator $u$ and coding $g$. -/
 theorem IsKAutomaticSequence.exists_isMorphic {B : Type} [Fintype B] {k : Nat} {w : Nat → B}
     (h : IsKAutomaticSequence k w) :
     ∃ q : Nat, ∃ u : Nat → Fin q, ∃ g : Fin q → B, IsMorphic u g w :=

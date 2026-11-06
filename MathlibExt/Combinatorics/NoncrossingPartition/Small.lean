@@ -34,7 +34,8 @@ open Finpartition Finset
 
 namespace NoncrossingPartition
 
-/-- Every noncrossing partition of `Fin 1` equals the indiscrete one. -/
+/-- **Noncrossing partitions of one point are indiscrete.** Every noncrossing partition of the
+one-point set $\{0\}$ equals the indiscrete noncrossing partition of $\{0\}$. -/
 theorem eq_indiscrete_one (P : NoncrossingPartition 1) : P = indiscrete 1 := by
   rw [eq_indiscrete_iff_val_eq_top]
   have hs : (Finset.univ : Finset (Fin 1)).Nonempty := ⟨⟨0, by decide⟩, mem_univ _⟩
@@ -47,7 +48,9 @@ theorem eq_indiscrete_one (P : NoncrossingPartition 1) : P = indiscrete 1 := by
     omega
   omega
 
-/-- Discrete and indiscrete partitions of `Fin 2` are distinct. -/
+/-- **The discrete and indiscrete partitions of a two-element set differ.** The discrete
+noncrossing partition of $\{0, 1\}$ is not equal to the indiscrete noncrossing partition of
+$\{0, 1\}$. -/
 theorem discrete_two_ne_indiscrete_two : discrete 2 ≠ indiscrete 2 := by
   intro h
   have h_discrete : (discrete 2).val.parts.card = 2 := by
@@ -61,7 +64,8 @@ theorem discrete_two_ne_indiscrete_two : discrete 2 ≠ indiscrete 2 := by
   rw [h_discrete, h_indiscrete] at h_eq
   exact absurd h_eq (by decide)
 
-/-- Classification at arity two: a noncrossing partition is discrete or indiscrete. -/
+/-- **Classification of noncrossing partitions of a two-element set.** Every noncrossing partition
+of $\{0, 1\}$ is either the discrete or the indiscrete noncrossing partition of $\{0, 1\}$. -/
 theorem eq_discrete_or_indiscrete_two (P : NoncrossingPartition 2) :
     P = discrete 2 ∨ P = indiscrete 2 := by
   have hs : (Finset.univ : Finset (Fin 2)).Nonempty := ⟨⟨0, by decide⟩, mem_univ _⟩
@@ -86,12 +90,14 @@ instance : Unique (NoncrossingPartition 1) where
   default := indiscrete 1
   uniq P := eq_indiscrete_one P
 
-/-- `NoncrossingPartition 0` has exactly one element. -/
+/-- **Noncrossing partitions of the empty set.** There is exactly one noncrossing partition of the
+empty set, that is, of $\{0, \dots, n-1\}$ for $n = 0$. -/
 @[simp]
 theorem card_zero : Fintype.card (NoncrossingPartition 0) = 1 :=
   Fintype.card_unique
 
-/-- `NoncrossingPartition 1` has exactly one element. -/
+/-- **Noncrossing partitions of a one-element set.** There is exactly one noncrossing partition
+of $\{0\}$. -/
 @[simp]
 theorem card_one : Fintype.card (NoncrossingPartition 1) = 1 :=
   Fintype.card_unique
@@ -119,7 +125,8 @@ def twoEquiv : NoncrossingPartition 2 ≃ Fin 2 where
       have h_ne : ¬ indiscrete 2 = discrete 2 := fun h => discrete_two_ne_indiscrete_two h.symm
       simp [h_ne]
 
-/-- `NoncrossingPartition 2` has exactly two elements. -/
+/-- **Noncrossing partitions of a two-element set.** There are exactly two noncrossing partitions
+of $\{0, 1\}$. -/
 @[simp]
 theorem card_two : Fintype.card (NoncrossingPartition 2) = 2 := by
   rw [Fintype.card_congr twoEquiv]
@@ -140,7 +147,10 @@ theorem twoEquiv_symm_apply_zero : (twoEquiv.symm 0) = discrete 2 := rfl
 @[simp]
 theorem twoEquiv_symm_apply_one : (twoEquiv.symm 1) = indiscrete 2 := rfl
 
-/-- The proper noncrossing partitions of `Fin 2` are equivalent to `Unit`. -/
+/-- **The proper noncrossing partition of two points.** Call a noncrossing partition of $\{0, 1\}$
+proper if it is not the indiscrete one. This is the bijection from a one-element set onto the set
+of proper noncrossing partitions of $\{0, 1\}$, sending its element to the discrete noncrossing
+partition; in particular the discrete partition is the only proper one. -/
 def properTwoEquiv : Unit ≃ { P : NoncrossingPartition 2 // P ≠ indiscrete 2 } where
   toFun _ := ⟨discrete 2, discrete_two_ne_indiscrete_two⟩
   invFun _ := ()
@@ -219,8 +229,8 @@ private lemma card_twoBlockParts (a : Fin 3) :
       insert {a} {Finset.univ.erase a} := rfl
   rw [h_eq, card_insert_of_notMem h_notMem, card_singleton]
 
-/-- Two-block noncrossing partition of `Fin 3` indexed by its singleton block.
-Built from `Finpartition.atomise` along the singleton cut `{a}`. -/
+/-- **Two-block partition of three points.** For $a \in \{0, 1, 2\}$, this is the noncrossing
+partition of $\{0, 1, 2\}$ whose blocks are $\{a\}$ and $\{0, 1, 2\} \setminus \{a\}$. -/
 def twoBlockPartition (a : Fin 3) : NoncrossingPartition 3 :=
   ⟨Finpartition.atomise Finset.univ ({ {a} } : Finset (Finset (Fin 3))),
     isNoncrossing_of_le_three (by decide) _⟩
@@ -438,7 +448,8 @@ private lemma twoBlockPartition_surjective_on_two_blocks (P : NoncrossingPartiti
             tauto
     exact ⟨a, parts_eq_twoBlock_imp_eq_twoBlock P a h_parts_eq⟩
 
-/-- Every noncrossing partition of `Fin 3` has one, two, or three blocks. -/
+/-- **Noncrossing partitions of three points have one, two or three blocks.** Every noncrossing
+partition of $\{0, 1, 2\}$ has one, two, or three blocks. -/
 theorem three_card_one_two_three (P : NoncrossingPartition 3) :
     P.val.parts.card = 1 ∨ P.val.parts.card = 2 ∨ P.val.parts.card = 3 := by
   have h_le : P.val.parts.card ≤ 3 := by
@@ -450,7 +461,9 @@ theorem three_card_one_two_three (P : NoncrossingPartition 3) :
     Finpartition.one_le_card_parts_of_nonempty P.val hs
   omega
 
-/-- If a noncrossing partition of `Fin 3` has one block it is indiscrete. -/
+/-- **A noncrossing partition of three points with one block is indiscrete.** If a noncrossing
+partition $P$ of $\{0, 1, 2\}$ has exactly one block, then $P$ is the indiscrete noncrossing
+partition of $\{0, 1, 2\}$. -/
 theorem eq_indiscrete_of_card_one_three (P : NoncrossingPartition 3)
     (h_card : P.val.parts.card = 1) : P = indiscrete 3 := by
   rw [eq_indiscrete_iff_val_eq_top]
@@ -458,14 +471,19 @@ theorem eq_indiscrete_of_card_one_three (P : NoncrossingPartition 3)
   rw [Finpartition.eq_top_iff_card_parts_eq_one P.val hs]
   exact h_card
 
-/-- If a noncrossing partition of `Fin 3` has three blocks it is discrete. -/
+/-- **A noncrossing partition of three points with three blocks is discrete.** If a noncrossing
+partition $P$ of $\{0, 1, 2\}$ has exactly three blocks, then $P$ is the discrete noncrossing
+partition of $\{0, 1, 2\}$. -/
 theorem eq_discrete_of_card_three_three (P : NoncrossingPartition 3)
     (h_card : P.val.parts.card = 3) : P = discrete 3 := by
   rw [eq_discrete_iff_val_eq_bot, eq_bot_iff_card_parts_eq_card]
   have h_univ : (Finset.univ : Finset (Fin 3)).card = 3 := card_univ_fin_three
   omega
 
-/-- Canonical classification at arity three. -/
+/-- **Classification of noncrossing partitions of a three-element set.** Every noncrossing
+partition $P$ of $\{0, 1, 2\}$ is the discrete noncrossing partition of $\{0, 1, 2\}$, the
+indiscrete noncrossing partition of $\{0, 1, 2\}$, or, for some $a \in \{0, 1, 2\}$, the
+two-block noncrossing partition whose blocks are $\{a\}$ and $\{0, 1, 2\} \setminus \{a\}$. -/
 theorem eq_discrete_or_indiscrete_or_twoBlock_three (P : NoncrossingPartition 3) :
     P = discrete 3 ∨ P = indiscrete 3 ∨ ∃ a : Fin 3, P = twoBlockPartition a := by
   have h_card := three_card_one_two_three P
@@ -475,7 +493,9 @@ theorem eq_discrete_or_indiscrete_or_twoBlock_three (P : NoncrossingPartition 3)
     exact Or.inr (Or.inr h_exists)
   · exact Or.inl (eq_discrete_of_card_three_three P h3)
 
-/-- Discrete and indiscrete partitions of `Fin 3` are distinct. -/
+/-- **The discrete and indiscrete partitions of a three-element set differ.** The discrete
+noncrossing partition of $\{0, 1, 2\}$ is not equal to the indiscrete noncrossing partition of
+$\{0, 1, 2\}$. -/
 theorem discrete_three_ne_indiscrete_three :
     discrete 3 ≠ indiscrete 3 := by
   intro h
@@ -489,7 +509,10 @@ theorem discrete_three_ne_indiscrete_three :
     rw [h]
   omega
 
-/-- Two-block and indiscrete partitions of `Fin 3` are distinct. -/
+/-- **The two-block partitions of three points are not indiscrete.** For every
+$a \in \{0, 1, 2\}$, the noncrossing partition of $\{0, 1, 2\}$ with blocks $\{a\}$ and
+$\{0, 1, 2\} \setminus \{a\}$ is different from the indiscrete noncrossing partition of
+$\{0, 1, 2\}$. -/
 theorem twoBlockPartition_ne_indiscrete_three (a : Fin 3) :
     twoBlockPartition a ≠ indiscrete 3 := by
   intro h
@@ -501,7 +524,10 @@ theorem twoBlockPartition_ne_indiscrete_three (a : Fin 3) :
   rw [twoBlockPartition_parts_card, h_indiscrete] at h_card
   exact absurd h_card (by decide)
 
-/-- Bundled equivalence for the two-block stratum at arity three. -/
+/-- **Enumerating the two-block noncrossing partitions of three points.** The map sending
+$a \in \{0, 1, 2\}$ to the partition of $\{0, 1, 2\}$ with blocks $\{a\}$ and
+$\{0, 1, 2\} \setminus \{a\}$ is a bijection from $\{0, 1, 2\}$ onto the set of noncrossing
+partitions of $\{0, 1, 2\}$ with exactly two blocks. -/
 noncomputable def twoBlockEquiv :
     Fin 3 ≃ { P : NoncrossingPartition 3 // P.val.parts.card = 2 } :=
   Equiv.ofBijective
@@ -527,7 +553,12 @@ theorem twoBlockEquiv_apply_parts_card (a : Fin 3) :
     (twoBlockEquiv a).val.val.parts.card = 2 :=
   twoBlockPartition_parts_card a
 
-/-- Proper noncrossing partitions of `Fin 3`, indexed by the discrete case or a singleton block. -/
+/-- **Enumerating the proper noncrossing partitions of three points.** Call a noncrossing
+partition of $\{0, 1, 2\}$ proper if it is not the indiscrete one. Adjoin an extra element $\ast$
+to $\{0, 1, 2\}$; this is the bijection from $\{\ast, 0, 1, 2\}$ onto the set of proper
+noncrossing partitions of $\{0, 1, 2\}$ that sends $\ast$ to the discrete noncrossing partition
+and each $a \in \{0, 1, 2\}$ to the noncrossing partition with blocks $\{a\}$ and
+$\{0, 1, 2\} \setminus \{a\}$. -/
 noncomputable def properThreeEquiv :
     Option (Fin 3) ≃ { P : NoncrossingPartition 3 // P ≠ indiscrete 3 } := by
   classical
@@ -638,7 +669,8 @@ theorem properThreeEquiv_symm_twoBlock (a : Fin 3) :
     rw [h_apply, h_some]
   exact properThreeEquiv.injective h_eq
 
-/-- `NoncrossingPartition 3` has five elements. -/
+/-- **Noncrossing partitions of a three-element set.** There are exactly five noncrossing
+partitions of $\{0, 1, 2\}$. -/
 @[simp]
 theorem card_three : Fintype.card (NoncrossingPartition 3) = 5 := by
   classical

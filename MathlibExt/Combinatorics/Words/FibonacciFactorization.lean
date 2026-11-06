@@ -18,8 +18,9 @@ import Mathlib.Order.RelClasses
 
 namespace MetaMathlibExt
 
-/-- The finite Fibonacci words satisfy the concatenation recurrence
-`fibWord (n + 2) = fibWord (n + 1) ++ fibWord n`. -/
+/-- **Recurrence for the finite Fibonacci words.** Let $f_0, f_1, f_2, \ldots$ be the finite
+Fibonacci words. For every natural number $n$, $f_{n+2} = f_{n+1} f_n$, where juxtaposition
+denotes concatenation. -/
 theorem fibWord_add_two (n : ℕ) : fibWord (n + 2) = fibWord (n + 1) ++ fibWord n := by
   induction n with
   | zero => rfl
@@ -27,8 +28,10 @@ theorem fibWord_add_two (n : ℕ) : fibWord (n + 2) = fibWord (n + 1) ++ fibWord
     change fibMorph (fibWord (n + 2)) = fibMorph (fibWord (n + 1)) ++ fibMorph (fibWord n)
     rw [ih, fibMorph_append]
 
-/-- Prepending `01` to the concatenation `fibWord 0 ++ ⋯ ++ fibWord (N - 1)` gives
-`fibWord (N + 1)`. -/
+/-- **Concatenating the finite Fibonacci words.** For every natural number $N$, prepending the
+letters $0$ and $1$ to the concatenation $f_0 f_1 \cdots f_{N-1}$ of the first $N$ finite Fibonacci
+words gives $f_{N+1}$: that is, $0\,1\,f_0 f_1 \cdots f_{N-1} = f_{N+1}$, where the concatenation
+is empty when $N = 0$. -/
 theorem fibWord_factorization (N : ℕ) :
     false :: true :: (List.range N).flatMap fibWord = fibWord (N + 1) := by
   induction N with
@@ -37,7 +40,9 @@ theorem fibWord_factorization (N : ℕ) :
     rw [List.range_succ, List.flatMap_append, List.flatMap_singleton, ← List.cons_append,
       ← List.cons_append, ih, fibWord_add_two]
 
-/-- Every finite Fibonacci word lists the first letters of the infinite Fibonacci word. -/
+/-- **Finite Fibonacci words are prefixes of the infinite Fibonacci word.** For every natural
+number $n$, the finite Fibonacci word $f_n$ is the word formed by the first $|f_n|$ letters of the
+infinite Fibonacci word. -/
 theorem fibWord_eq_ofFn_fibInf (n : ℕ) :
     fibWord n = List.ofFn (fun i : Fin (fibWord n).length => fibInf i) := by
   refine List.ext_getElem (by simp) fun i h _ => ?_
@@ -49,8 +54,13 @@ private lemma ofFn_prefix_of_le {α : Type*} (g : ℕ → α) {k m : ℕ} (hkm :
   rw [List.prefix_iff_getElem]
   exact ⟨by simpa using hkm, fun i hi => by simp⟩
 
-/-- Factorization of the infinite Fibonacci word as `0 · 1 · fibWord 0 · fibWord 1 ⋯`: each
-partial product is a prefix of `fibInf`, and every prefix of `fibInf` lies in one of them.
+/-- **Factorization of the infinite Fibonacci word into finite Fibonacci words.** Let $f$ be the
+infinite Fibonacci word and let $f_0, f_1, f_2, \ldots$ be the finite Fibonacci words. For every
+natural number $N$, the finite word $w_N = 0\,1\,f_0 f_1 \cdots f_{N-1}$ (so $w_0 = 01$) consists of
+the first $|w_N|$ letters of $f$, and for every natural number $k$ the first $k$ letters of $f$
+form a prefix of $w_N$ for some $N$. In this sense
+$f = 0 \cdot 1 \cdot f_0 \cdot f_1 \cdot f_2 \cdots$.
+
 Source: Gabriele Fici, "Factorizations of the Fibonacci Infinite Word", Journal of Integer
 Sequences 18 (2015), Article 15.9.3, equation `fibo`. -/
 theorem fibInf_factorization :
@@ -93,12 +103,19 @@ private lemma fibWord_concat_eq (F : ℕ → List (Fin 2))
     simp [hb, h_one, List.map_flatMap]
 
 /--
-The Fibonacci infinite word is obtained by concatenating `0` with the finite Fibonacci words.
+**The infinite Fibonacci word as $0$ followed by the finite Fibonacci words.** Let $f$ be an
+infinite word over $\{0, 1\}$ and let $f_1, f_2, f_3, \ldots$ be finite words over $\{0, 1\}$ with
+$f_1 = 1$, $f_2 = 0$ and $f_{n+3} = f_{n+2} f_{n+1}$ for every natural number $n$, such that for
+every natural number $n$ the word $f_{n+2}$ consists of the first $|f_{n+2}|$ letters of $f$.
+Then for every natural number $N$ the word $w_N = 0\,f_1 f_2 \cdots f_N$ (so $w_0 = 0$) consists of
+the first $|w_N|$ letters of $f$, and for every natural number $k$ the first $k$ letters of $f$
+form a prefix of $w_N$ for some $N$. In this sense $f = 0 \cdot f_1 \cdot f_2 \cdot f_3 \cdots$.
+
+Proves `Wanted` entry `fibonacci_infinite_word_factorization`.
+
 Source: Gabriele Fici, "Factorizations of the Fibonacci Infinite Word", Journal of Integer
 Sequences 18 (2015), Article 15.9.3, Proposition lines 188-195 (equation `fibo`),
 <https://cs.uwaterloo.ca/journals/JIS/VOL18/Fici/fici5.tex>.
-
-Proves `Wanted` entry `fibonacci_infinite_word_factorization`.
 -/
 theorem fibonacci_infinite_word_factorization
     (f : ℕ → Fin 2)

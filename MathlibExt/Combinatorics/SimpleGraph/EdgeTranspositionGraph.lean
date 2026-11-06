@@ -34,8 +34,11 @@ namespace MetaMathlibExt
 
 -- Combinatorics 432: Edge-transposition graph
 
-/-- Given a set of transpositions T of the symmetric group Sₙ, the *edge-transposition graph* is the
-graph X whose vertex set is {1,…,n}, and for which (i,j) ∈ E(X) if and only if (ij) ∈ T.
+/-- **Edge-transposition graph.** Let $n$ be a natural number and let $T$ be a set of permutations
+of $\{0, 1, \dots, n - 1\}$, typically a set of transpositions in the symmetric group $S_n$. The
+edge-transposition graph of $T$ is the simple graph with vertex set $\{0, 1, \dots, n - 1\}$ in
+which two distinct vertices $i$ and $j$ are adjacent if and only if the transposition swapping $i$
+and $j$ belongs to $T$.
 -/
 def edgeTranspositionGraph {n : ℕ} (T : Set (Equiv.Perm (Fin n))) :
     SimpleGraph (Fin n) :=

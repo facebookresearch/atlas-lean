@@ -24,19 +24,24 @@ In a finite partial order, the largest antichain has as many elements as the few
 covering the order: `maxAntichainSize α = minChainCoverSize α`.
 -/
 
-/-- `C` is a finite family of chains whose union is the whole type. -/
+/-- **Chain cover.** Let $\alpha$ be a partially ordered set. A finite set $C$ of finite subsets of
+$\alpha$ is a chain cover of $\alpha$ when every member of $C$ is a chain and every element of
+$\alpha$ lies in some member of $C$. -/
 def IsChainCoverFin {α : Type*} [PartialOrder α] (C : Finset (Finset α)) : Prop :=
   (∀ s ∈ C, IsChain (· ≤ ·) (s : Set α)) ∧ ∀ a : α, ∃ s ∈ C, a ∈ s
 
 open Classical in
-/-- The largest cardinality of an antichain in the finite partial order `α`. -/
+/-- **Maximum antichain size.** For a finite partially ordered set $\alpha$, the maximum antichain
+size of $\alpha$ (its width) is the largest number of elements of an antichain in $\alpha$. -/
 noncomputable def maxAntichainSize
     (α : Type*) [Fintype α] [PartialOrder α] : ℕ :=
   ((Finset.univ : Finset α).powerset).sup fun s =>
     if IsAntichain (· ≤ ·) (s : Set α) then s.card else 0
 
 open Classical in
-/-- The smallest number of chains covering the finite partial order `α`. -/
+/-- **Minimum chain cover size.** For a finite partially ordered set $\alpha$, the minimum chain
+cover size of $\alpha$ is the smallest number of chains in a chain cover of $\alpha$, that is, in
+a finite set of chains of $\alpha$ whose union is $\alpha$. -/
 noncomputable def minChainCoverSize
     (α : Type*) [Fintype α] [PartialOrder α] : ℕ :=
   let all : Finset (Finset (Finset α)) := (Finset.univ.powerset).powerset
@@ -151,7 +156,9 @@ private theorem card_le_widthFin {α : Type*} [Fintype α] [PartialOrder α]
   rw [ite_eq_left hA] at hle2
   exact hle2
 
-/-- An antichain has at most `maxAntichainSize α` elements. -/
+/-- **Antichains are no larger than the maximum antichain size.** Let $\alpha$ be a finite
+partially ordered set. Every antichain $A$ in $\alpha$ has at most as many elements as the
+maximum antichain size of $\alpha$. -/
 theorem card_le_maxAntichainSize {α : Type*} [Fintype α] [PartialOrder α]
     {A : Finset α} (hA : IsAntichain (· ≤ ·) (A : Set α)) : A.card ≤ maxAntichainSize α :=
   card_le_widthFin (Finset.mem_powerset.mpr (Finset.subset_univ A)) hA
@@ -832,7 +839,10 @@ private theorem exists_cover_card_le_width {α : Type*} [Fintype α] [PartialOrd
       · have hle := Finset.card_insert_le {x, y} C'
         omega
 
-/-- A chain cover bounds `minChainCoverSize` from above. -/
+/-- **Chain covers bound the minimum chain cover size.** Let $\alpha$ be a finite partially
+ordered set. If $C$ is a chain cover of $\alpha$, that is, a finite set of chains of $\alpha$ whose
+union is $\alpha$, then the minimum chain cover size of $\alpha$ is at most the number of chains
+in $C$. -/
 theorem minChainCoverSize_le_card {α : Type*} [Fintype α] [PartialOrder α]
     {C : Finset (Finset α)} (hC : IsChainCoverFin (α := α) C) :
     minChainCoverSize α ≤ C.card := by
@@ -870,12 +880,14 @@ private theorem exists_valid_cover {α : Type*} [Fintype α] [PartialOrder α] :
     exact Finset.subset_univ _
 
 /--
-Dilworth's theorem: in a finite poset the maximum size of an antichain equals the minimum number of
-chains in a partition/cover.
-Source: R. P. Dilworth, A decomposition theorem for partially ordered sets, Annals of Mathematics 51
-(1950), 161-166, DOI 10.2307/1969503.
+**Dilworth's theorem.** Let $\alpha$ be a finite partially ordered set. The maximum antichain
+size of $\alpha$ equals its minimum chain cover size: the largest number of elements of an
+antichain in $\alpha$ equals the smallest number of chains whose union is $\alpha$.
 
 Proves `Wanted` entry `dilworth_decomposition`.
+
+Source: R. P. Dilworth, A decomposition theorem for partially ordered sets, Annals of Mathematics 51
+(1950), 161-166, DOI 10.2307/1969503.
 -/
 theorem dilworth_decomposition
     {α : Type*} [Fintype α] [PartialOrder α] :
@@ -926,14 +938,18 @@ theorem dilworth_decomposition
     exact hgoal2
   exact le_antisymm hle2 hle1
 
-/-- Some antichain has exactly `maxAntichainSize α` elements. -/
+/-- **The maximum antichain size is attained.** Let $\alpha$ be a finite partially ordered set.
+Some antichain in $\alpha$ has exactly as many elements as the maximum antichain size of
+$\alpha$. -/
 theorem exists_isAntichain_card_eq_maxAntichainSize {α : Type*} [Fintype α]
     [PartialOrder α] :
     ∃ A : Finset α, IsAntichain (· ≤ ·) (A : Set α) ∧ A.card = maxAntichainSize α := by
   obtain ⟨A, -, hA, hcard⟩ := exists_antichain_card_widthFin (Finset.univ : Finset α)
   exact ⟨A, hA, hcard⟩
 
-/-- Some chain cover has exactly `minChainCoverSize α` chains. -/
+/-- **The minimum chain cover size is attained.** Let $\alpha$ be a finite partially ordered set.
+Some chain cover $C$ of $\alpha$, a finite set of chains of $\alpha$ whose union is $\alpha$,
+consists of exactly as many chains as the minimum chain cover size of $\alpha$. -/
 theorem exists_isChainCoverFin_card_eq_minChainCoverSize {α : Type*} [Fintype α]
     [PartialOrder α] :
     ∃ C : Finset (Finset α), IsChainCoverFin C ∧ C.card = minChainCoverSize α := by

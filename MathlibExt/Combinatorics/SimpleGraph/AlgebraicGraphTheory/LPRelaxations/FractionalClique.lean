@@ -46,10 +46,11 @@ def FracClique.weight {V : Type*} [Fintype V] {G : SimpleGraph V}
     (c : FracClique G) : ℝ :=
   ∑ v ∈ Finset.univ, c.w v
 
-/-- A *fractional clique* of a graph X is a nonnegative real-valued function on V(X) such that the
-sum of the values of the function of any independent set is at most one. The *weight* of a
-fractional clique is the sum of its values. The *fractional clique number* of X is the maximum
-possible weight of a fractional clique, and is denoted by ω^*(X).
+/-- **Fractional clique number.** Let $X$ be a graph with finite vertex set $V(X)$. A
+*fractional clique* of $X$ is a function $f \colon V(X) \to \mathbb{R}$ with $f(v) \ge 0$ for
+every vertex $v$, such that $\sum_{v \in S} f(v) \le 1$ for every independent set $S$ of $X$. The
+*weight* of $f$ is $\sum_{v \in V(X)} f(v)$. The *fractional clique number* $\omega^*(X)$ of $X$
+is the supremum of the weights of all fractional cliques of $X$.
 -/
 noncomputable def _root_.SimpleGraph.fracCliqueNumber {V : Type*} [Fintype V]
     (G : SimpleGraph V) : ℝ :=
