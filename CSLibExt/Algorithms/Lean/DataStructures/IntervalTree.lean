@@ -33,7 +33,10 @@ local instance : DecidableLE Int := Int.decLe
 local instance : DecidableLT Int := Int.decLt
 local instance : DecidableEq Int := Int.decEq
 
-/-- A closed interval.  Public updates accept it only when `low ≤ high`. -/
+/-- **Interval.** An interval is a pair of integers, its low endpoint and its high endpoint, read as
+the closed interval from the low to the high endpoint. The structure itself imposes no order on the
+endpoints; the public update operations accept an interval only when its low endpoint is at most
+its high endpoint. -/
 structure Interval where
   low : Int
   high : Int
@@ -41,20 +44,27 @@ deriving Repr, DecidableEq
 
 namespace Interval
 
-/-- The endpoints of an interval are ordered. -/
+/-- **Valid interval.** A closed interval with integer endpoints $a$ (low) and $b$ (high) is
+valid when its low endpoint is at most its high endpoint, $a \le b$. -/
 def Valid (interval : Interval) : Prop :=
   interval.low ≤ interval.high
 
-/-- Boolean validity check used by the executable update interface. -/
+/-- **Boolean interval validity test.** For an interval $[a, b]$ with integer endpoints, the
+Boolean validity test returns true exactly when $a \le b$. -/
 def valid (interval : Interval) : Bool :=
   letI : Decidable interval.Valid := Int.decLe _ _
   decide interval.Valid
 
-/-- Closed-interval overlap; in particular, touching endpoints overlap. -/
+/-- **Overlapping closed intervals.** An interval $I$ with low endpoint $a$ and high endpoint $b$
+overlaps an interval $J$ with low endpoint $c$ and high endpoint $d$ when $a \le d$ and $c \le b$;
+in particular, intervals that share only an endpoint overlap. -/
 def Overlaps (left right : Interval) : Prop :=
   left.low ≤ right.high ∧ right.low ≤ left.high
 
-/-- Executable closed-interval overlap. -/
+/-- **Overlap test for closed intervals.** For an interval $I$ with low endpoint $a$ and high
+endpoint $b$ and an interval $J$ with low endpoint $c$ and high endpoint $d$, the overlap test of
+$I$ against $J$ returns true exactly when $a \le d$ and $c \le b$; it compares $a$ with $d$ first
+and returns false without the second comparison when $a > d$. -/
 def overlaps (left right : Interval) : Bool :=
   match Int.decLe left.low right.high with
   | .isFalse _ => false
@@ -63,7 +73,11 @@ def overlaps (left right : Interval) : Bool :=
       | .isFalse _ => false
       | .isTrue _ => true
 
-/-- Executable overlap together with the number of endpoint relations evaluated. -/
+/-- **Overlap test with comparison count.** For an interval $I$ with low endpoint $a$ and high
+endpoint $b$ and an interval $J$ with low endpoint $c$ and high endpoint $d$, the instrumented
+overlap test of $I$ against $J$ returns the pair (false, $1$) when $a > d$, the pair (false, $2$)
+when $a \le d$ and $c > b$, and the pair (true, $2$) when $a \le d$ and $c \le b$; the number
+is the count of endpoint comparisons evaluated. -/
 def overlapsWithCost (left right : Interval) : Bool × Nat :=
   match Int.decLe left.low right.high with
   | .isFalse _ => (false, 1)
@@ -72,7 +86,9 @@ def overlapsWithCost (left right : Interval) : Bool × Nat :=
       | .isFalse _ => (false, 2)
       | .isTrue _ => (true, 2)
 
-/-- Instrumentation preserves the executable overlap result. -/
+/-- **The instrumented overlap test returns the plain result.** For intervals $I$ and $J$, the
+Boolean component of the instrumented overlap test of $I$ against $J$ equals the overlap test of
+$I$ against $J$. -/
 @[simp] theorem overlapsWithCost_fst (left right : Interval) :
     (left.overlapsWithCost right).1 = left.overlaps right := by
   unfold overlapsWithCost overlaps
@@ -81,7 +97,9 @@ def overlapsWithCost (left right : Interval) : Bool × Nat :=
   | isTrue _ =>
       cases h₂ : Int.decLe right.low left.high <;> rfl
 
-/-- Exactly one endpoint relation is skipped when the first relation is false. -/
+/-- **Comparison count of the overlap test.** For intervals $I$ and $J$, the instrumented overlap
+test of $I$ against $J$ reports $2$ endpoint comparisons when the low endpoint of $I$ is at most
+the high endpoint of $J$, and $1$ comparison otherwise. -/
 theorem overlapsWithCost_snd (left right : Interval) :
     (left.overlapsWithCost right).2 = if left.low ≤ right.high then 2 else 1 := by
   unfold overlapsWithCost
@@ -110,7 +128,11 @@ theorem overlaps_comm (left right : Interval) :
 
 end Interval
 
-/-- One stored interval occurrence.  Identifiers, rather than endpoints, are unique. -/
+/-- **Interval tree entry.** An entry of the interval tree consists of an identifier, which is a
+natural number, and an interval with integer low and high endpoints.
+
+Identifiers, rather than endpoints, are meant to be unique among stored entries; this is required
+by the indexed tree's representation invariant, not by the entry itself. -/
 structure Entry where
   id : Nat
   interval : Interval
@@ -118,13 +140,18 @@ deriving Repr, DecidableEq
 
 namespace Entry
 
-/-- Deterministic BST key: low endpoint first, stable identifier second. -/
+/-- **Search key of an interval entry.** The key of an entry is the pair
+$(\ell, i) \in \mathbb{Z} \times \mathbb{N}$, where $\ell$ is the low endpoint of the entry's
+interval and $i$ is the entry's identifier. -/
 def key (entry : Entry) : Int × Nat :=
   (entry.interval.low, entry.id)
 
 end Entry
 
-/-- Compare low endpoints first, then occurrence identifiers. -/
+/-- **Lexicographic comparison of keys.** For keys $(a, i)$ and $(b, j)$ in
+$\mathbb{Z} \times \mathbb{N}$ (a low endpoint and an occurrence identifier), the comparison
+returns less-than if $a < b$, or if $a = b$ and $i < j$; greater-than if $a > b$, or if $a = b$
+and $i > j$; and equal if $a = b$ and $i = j$. -/
 def compareKey (left right : Int × Nat) : Ordering :=
   if left.1 < right.1 then .lt
   else if right.1 < left.1 then .gt
@@ -132,16 +159,15 @@ def compareKey (left right : Int × Nat) : Ordering :=
   else if right.2 < left.2 then .gt
   else .eq
 
-/-- Counts performed by the executable branches of an operation.
+/-- **Operation cost counters for interval trees.** A cost record for the interval tree consists
+of seven natural-number counters, each defaulting to $0$: node visits, key comparisons, endpoint
+comparisons, cached-maximum reads, cache writes, rotations, and identifier-index operations.
 
-The `maxCacheReads` field is deliberately narrow: it counts only the
-cached-maximum reads performed by search pruning in `searchWithCost`, one
-per visited node where the left subtree's cached maximum decides the
-descent. Maintenance paths (`mkNode`, `rebalanceWithCost`, and the
-rotations) read cached heights, sizes, and maxima through constructor
-patterns while rebuilding nodes; those field projections are not
-separately instrumented, and maintenance work is reported through
-`cacheWrites`, `rotations`, and the remaining counters instead. -/
+The cached-maximum counter is deliberately narrow: it counts only the reads made by search
+pruning, one per visited node where the left subtree's cached maximum decides the descent. Node
+construction, rebalancing and the rotations read cached heights, sizes and maxima while rebuilding
+nodes; those reads are not counted separately, and maintenance work is reported through the cache
+write, rotation and remaining counters instead. -/
 structure Cost where
   nodeVisits : Nat := 0
   keyComparisons : Nat := 0
@@ -168,7 +194,10 @@ instance : Add Cost := ⟨Cost.add⟩
 
 end Cost
 
-/-- An AVL carrier with constant-time metadata fields at every nonempty node. -/
+/-- **Interval tree.** An interval tree is either empty or a node consisting of a left subtree,
+an entry, a right subtree and three cached fields: a height and a size (natural numbers) and a
+maximum high endpoint (an integer). The type imposes no balance or consistency condition on
+these fields; it is the carrier on which the AVL interval-tree operations act. -/
 inductive Tree where
   | empty
   | node
@@ -190,21 +219,38 @@ def size : Tree → Nat
   | .empty => 0
   | .node _ size _ _ _ _ => size
 
-/-- A constant-time read of the cached maximum high endpoint. -/
+/-- **Cached maximum of an interval tree.** The cached maximum of an interval tree is no value
+when the tree is empty, and when the tree is a node it is the integer stored in the node's cached
+maximum-high-endpoint field.
+
+It is read in constant time. The tree type itself does not require this field to equal the
+largest high endpoint of an interval in the subtree. -/
 def cachedMax? : Tree → Option Int
   | .empty => none
   | .node _ _ maxHigh _ _ _ => some maxHigh
 
-/-- Include an optional subtree maximum without using a sentinel value. -/
+/-- **Maximum with an optional value.** For an integer $a$ and an optional integer $v$, the value
+is $a$ when $v$ is absent and $\max(a, v)$ when $v$ is present. It combines a value with an
+optional subtree maximum without using a sentinel value. -/
 def maxWith (fallback : Int) : Option Int → Int
   | none => fallback
   | some value => max fallback value
 
-/-- Combine both cached child maxima with the root interval's high endpoint. -/
+/-- **Maximum high endpoint at a node.** For subtrees $L$ and $R$ and an entry $e$, the node
+maximum is the largest of the high endpoint of the interval of $e$, the cached maximum high
+endpoint stored at the root of $L$, and the one stored at the root of $R$, where an empty subtree
+stores no cached maximum and contributes nothing. -/
 def nodeMax (left : Tree) (entry : Entry) (right : Tree) : Int :=
   maxWith (maxWith entry.interval.high left.cachedMax?) right.cachedMax?
 
-/-- The sole ordinary node constructor; it repairs all metadata fields. -/
+/-- **Node construction with repaired metadata.** For an interval tree $T$ write $h(T)$ and $|T|$
+for its cached height and size, both $0$ for the empty tree. Given interval trees $L$ and $R$ and
+an entry $e$, this builds the node with left subtree $L$, entry $e$ and right subtree $R$ whose
+cached height is $\max(h(L), h(R)) + 1$, whose cached size is $|L| + |R| + 1$, and whose cached
+maximum high endpoint is the largest of the high endpoint of $e$ and the cached maxima of the
+nonempty subtrees among $L$ and $R$.
+
+It is the sole ordinary node constructor. -/
 def mkNode (left : Tree) (entry : Entry) (right : Tree) : Tree :=
   .node (max left.height right.height + 1) (left.size + right.size + 1)
     (nodeMax left entry right) left entry right
@@ -216,10 +262,14 @@ def entries : Tree → List (Entry)
   | .empty => []
   | .node _ _ _ left entry right => left.entries ++ entry :: right.entries
 
-/-- Every cached field is exact, recursively: the cached maximum is an
-attained upper bound, and the stored height and size equal the recursive
-height (`max` of the child heights plus one) and size (sum of the child
-sizes plus one) of the subtree. -/
+/-- **Cache invariant of an interval tree.** An interval tree satisfies the cache invariant when
+every cached field is exact, recursively. The empty tree satisfies it. A node with stored height
+$h$, stored size $s$, stored maximum $m$, left subtree $L$, entry $e$ and right subtree $R$
+satisfies it when $L$ and $R$ satisfy it, $m$ is at least the high endpoint of every entry of
+$L$, of $e$ and of every entry of $R$, $m$ equals the high endpoint of one of these entries,
+$h = \max(\operatorname{height} L, \operatorname{height} R) + 1$ and
+$s = \operatorname{size} L + \operatorname{size} R + 1$. Here the height and size of a subtree
+are its stored fields, and the empty tree has height and size $0$. -/
 def CacheInvariant : Tree → Prop
   | .empty => True
   | .node storedHeight storedSize maxHigh left entry right =>
@@ -231,7 +281,10 @@ def CacheInvariant : Tree → Prop
       storedHeight = max left.height right.height + 1 ∧
       storedSize = left.size + right.size + 1
 
-/-- Low endpoints respect the BST split at every node. -/
+/-- **Low-endpoint ordered interval tree.** The empty tree is low-endpoint ordered, and a node is
+low-endpoint ordered when both of its subtrees are low-endpoint ordered, every interval in the
+left subtree has low endpoint at most the low endpoint of the node's interval, and the node's
+low endpoint is at most the low endpoint of every interval in the right subtree. -/
 def LowOrdered : Tree → Prop
   | .empty => True
   | .node _ _ _ left entry right =>
@@ -239,7 +292,10 @@ def LowOrdered : Tree → Prop
       (∀ stored ∈ left.entries, stored.interval.low ≤ entry.interval.low) ∧
       (∀ stored ∈ right.entries, entry.interval.low ≤ stored.interval.low)
 
-/-- Every stored interval has ordered endpoints. -/
+/-- **Validity invariant of an interval tree.** A tree satisfies the validity invariant when
+every interval stored in it is valid, that is, its low endpoint is at most its high endpoint.
+Recursively, the empty tree satisfies it, and a node satisfies it when its left subtree does,
+the interval of its entry is valid, and its right subtree does. -/
 def ValidInvariant : Tree → Prop
   | .empty => True
   | .node _ _ _ left entry right =>
@@ -250,31 +306,58 @@ def computedMax? : Tree → Option Int
   | .node _ _ _ left entry right =>
       some (maxWith (maxWith entry.interval.high left.computedMax?) right.computedMax?)
 
-/-- A right rotation repairs the two affected nodes' metadata. -/
+/-- **Right rotation.** Write $\langle L, x, R\rangle$ for a node with left subtree $L$, entry $x$
+and right subtree $R$. The right rotation sends $\langle\langle a, x, b\rangle, y, c\rangle$ to
+$\langle a, x, \langle b, y, c\rangle\rangle$, where both nodes of the result get freshly
+recomputed height, size and maximum high endpoint. Every tree not of this shape is returned
+unchanged. -/
 def rotateRight : Tree → Tree
   | .node _ _ _ (.node _ _ _ a x b) y c =>
       mkNode a x (mkNode b y c)
   | tree => tree
 
-/-- A left rotation repairs the two affected nodes' metadata. -/
+/-- **Left rotation.** Write $\langle L, x, R\rangle$ for a node with left subtree $L$, entry $x$
+and right subtree $R$. The left rotation sends $\langle a, x, \langle b, y, c\rangle\rangle$ to
+$\langle\langle a, x, b\rangle, y, c\rangle$, where both nodes of the result get freshly
+recomputed height, size and maximum high endpoint. Every tree not of this shape is returned
+unchanged. -/
 def rotateLeft : Tree → Tree
   | .node _ _ _ a x (.node _ _ _ b y c) =>
       mkNode (mkNode a x b) y c
   | tree => tree
 
-/-- A left-right rotation repairs the three affected nodes' metadata. -/
+/-- **Left-right double rotation.** Write $\langle L, x, R\rangle$ for a node with left subtree
+$L$, entry $x$ and right subtree $R$. The left-right rotation sends
+$\langle\langle a, x, \langle b, y, c\rangle\rangle, z, d\rangle$ to
+$\langle\langle a, x, b\rangle, y, \langle c, z, d\rangle\rangle$, where all three nodes of the
+result get freshly recomputed height, size and maximum high endpoint. Every tree not of this
+shape is returned unchanged. -/
 def rotateLeftRight : Tree → Tree
   | .node _ _ _ (.node _ _ _ a x (.node _ _ _ b y c)) z d =>
       mkNode (mkNode a x b) y (mkNode c z d)
   | tree => tree
 
-/-- A right-left rotation repairs the three affected nodes' metadata. -/
+/-- **Right-left double rotation.** Write $\langle L, x, R\rangle$ for a node with left subtree
+$L$, entry $x$ and right subtree $R$. The right-left rotation sends
+$\langle a, x, \langle\langle b, y, c\rangle, z, d\rangle\rangle$ to
+$\langle\langle a, x, b\rangle, y, \langle c, z, d\rangle\rangle$, where all three nodes of the
+result get freshly recomputed height, size and maximum high endpoint. Every tree not of this
+shape is returned unchanged. -/
 def rotateRightLeft : Tree → Tree
   | .node _ _ _ a x (.node _ _ _ (.node _ _ _ b y c) z d) =>
       mkNode (mkNode a x b) y (mkNode c z d)
   | tree => tree
 
-/-- Rebalance one node and report the cache writes and rotations it performs. -/
+/-- **AVL rebalancing step with cost.** Rebalancing a tree $T$ returns a tree and a cost, where
+heights are the stored heights. If $T$ is empty, or neither subtree of its root is more than one
+taller than the other, it returns $T$ unchanged with zero cost. If the left subtree $L$ is more
+than one taller than the right subtree, it applies a right rotation, costing $2$ cache writes and
+one rotation, when the left child of $L$ is at least as tall as the right child of $L$, and
+otherwise a left-right double rotation, costing $3$ cache writes and two rotations. If the right
+subtree $R$ is more than one taller than the left subtree, it applies a left rotation, costing
+$2$ cache writes and one rotation, when the right child of $R$ is at least as tall as the left
+child of $R$, and otherwise a right-left double rotation, costing $3$ cache writes and two
+rotations. All other cost counters are zero. -/
 def rebalanceWithCost (tree : Tree) : Tree × Cost :=
   match tree with
   | .empty => (.empty, {})
@@ -301,7 +384,15 @@ def rebalanceWithCost (tree : Tree) : Tree × Cost :=
 private def rebalance (tree : Tree) : Tree :=
   (rebalanceWithCost tree).1
 
-/-- Keyed insertion or replacement, instrumented on its real execution path. -/
+/-- **Keyed insertion with cost.** Inserting an entry $x$ into a tree returns a new tree together
+with an operation cost; keys (low endpoint, then identifier) are compared lexicographically. Into
+the empty tree, $x$ is inserted as a single node, at a cost of one node visit and one cache write.
+At a node with entry $y$: if the key of $x$ equals the key of $y$, then $y$ is replaced by $x$, at a
+cost of one node visit, one key comparison and one cache write; if the key of $x$ is smaller
+(respectively larger), then $x$ is inserted recursively into the left (respectively right)
+subtree, the node is rebuilt with recomputed metadata and rebalanced, and the cost is the cost of
+the recursive insertion, plus one node visit, one key comparison and one cache write, plus the
+cost of rebalancing. -/
 def insertKeyWithCost (newEntry : Entry) : Tree → Tree × Cost
   | .empty =>
       (singleton newEntry, { nodeVisits := 1, cacheWrites := 1 })
@@ -326,7 +417,13 @@ def insertKeyWithCost (newEntry : Entry) : Tree → Tree × Cost
 def insertKey (tree : Tree) (entry : Entry) : Tree :=
   (tree.insertKeyWithCost entry).1
 
-/-- Remove the leftmost entry, rebuilding and rebalancing its ancestor path. -/
+/-- **Removing the leftmost entry, with its cost.** Removing the leftmost entry of an interval
+tree $T$ returns nothing when $T$ is empty. When the root's left subtree is empty, it returns the
+root entry, the right subtree, and a cost of one node visit. Otherwise it removes the leftmost
+entry $m$ of the left subtree recursively (returning nothing if that fails), rebuilds the root
+node over the new left subtree with recomputed height, size and maximum high endpoint, and
+rebalances that node; it returns $m$, the rebalanced tree, and the cost of the recursive call plus
+one node visit and one cache write plus the cost of rebalancing. -/
 def removeMinWithCost :
     Tree → Option (Entry × Tree × Cost)
   | .empty => none
@@ -340,7 +437,18 @@ def removeMinWithCost :
           some (minimum, result,
             childCost + { nodeVisits := 1, cacheWrites := 1 } + balanceCost)
 
-/-- Keyed deletion, instrumented on its real execution path. -/
+/-- **Keyed erasure with cost.** Erasing a key $k \in \mathbb{Z} \times \mathbb{N}$ from an
+interval tree returns a new tree together with its cost; the key of an entry is the pair of its low
+endpoint and identifier, and keys are compared lexicographically. The empty tree is returned
+unchanged at a cost of one node visit. At a node with entry $x$, the key $k$ is compared with the
+key of $x$. If $k$ is smaller, $k$ is erased from the left subtree; if it is larger, from the right
+subtree; in both cases the node is rebuilt with the new subtree and rebalanced, and the cost is the
+subtree's cost plus one node visit, one key comparison, one cache write and the rebalancing cost.
+If $k$ equals the key of $x$ and the right subtree is empty (so it has no leftmost entry to
+remove), the result is the left subtree at a cost of one node visit and one key comparison.
+Otherwise the leftmost entry of the right subtree is removed and takes the place of $x$, the node
+is rebuilt and rebalanced, and the cost is the removal's cost plus one node visit, one key
+comparison, one cache write and the rebalancing cost. -/
 def eraseKeyWithCost (key : Int × Nat) : Tree → Tree × Cost
   | .empty => (.empty, { nodeVisits := 1 })
   | .node _ _ _ left entry right =>
@@ -431,7 +539,17 @@ theorem entries_rebalanceWithCost (tree : Tree) :
           entries_rotateLeftRight, entries_rotateRightLeft]
 
 
-/-- Cache-pruned overlap search and its faithful primitive trace. -/
+/-- **Instrumented overlap search.** Given a query interval $q = [c, d]$ and an interval tree
+$T$, the instrumented overlap search returns an optional entry together with a cost record,
+defined by recursion on $T$. On the empty tree it returns no entry and records one node visit.
+At a node with left subtree $L$, entry $e$ with interval $[a, b]$ and right subtree $R$, it
+first tests overlap by evaluating $a \le d$ and, only if that holds, $c \le b$; let
+$k \in \{1, 2\}$ be the number of relations evaluated. If both hold, it returns $e$ and records
+one node visit and $k$ endpoint comparisons. Otherwise, if $L$ is empty, it returns the result of
+searching $R$, adding one node visit and $k$ endpoint comparisons to that search's cost. If $L$
+is nonempty with cached maximum high endpoint $m$, it returns the result of searching $L$ when
+$c \le m$ and of searching $R$ otherwise, adding one node visit, $k + 1$ endpoint comparisons and
+one cached-maximum read to that search's cost. No other counter is ever incremented. -/
 def searchWithCost (query : Interval) : Tree → Option Entry × Cost
   | .empty => (none, { nodeVisits := 1 })
   | .node _ _ _ left entry right =>
@@ -453,11 +571,21 @@ def searchWithCost (query : Interval) : Tree → Option Entry × Cost
               (answer, childCost +
                 { nodeVisits := 1, endpointComparisons := endpointCost + 1, maxCacheReads := 1 })
 
-/-- An empty search performs its terminal visit and no endpoint comparisons. -/
+/-- **Instrumented search in the empty tree.** For every query interval $q$, the instrumented
+overlap search of $q$ in the empty interval tree returns no entry, and its cost record counts
+one node visit and zero for every other counter (key comparisons, endpoint comparisons,
+cached-maximum reads, cache writes, rotations and index operations). -/
 @[simp] theorem searchWithCost_empty (query : Interval) :
     searchWithCost query .empty = (none, { nodeVisits := 1 }) := rfl
 
-/-- A singleton search records its short-circuit endpoint count and any empty visit. -/
+/-- **Instrumented search in a one-entry tree.** Let $e$ be an entry whose interval is $[a, b]$,
+let $q = [c, d]$ be a query interval, and let $k = 2$ if $a \le d$ and $k = 1$ otherwise.
+Consider the single-node tree built from $e$ with empty subtrees and exact cached fields. If
+$[a, b]$ and $[c, d]$ overlap (that is, $a \le d$ and $c \le b$), the instrumented overlap search
+of $q$ in this tree returns $e$ with a cost record of one node visit and $k$ endpoint
+comparisons. Otherwise it returns no entry with a cost record of two node visits (the root and
+its empty right subtree) and $k$ endpoint comparisons. All other counters are zero in both
+cases. -/
 theorem searchWithCost_singleton (entry : Entry) (query : Interval) :
     searchWithCost query (singleton entry) =
       if entry.interval.overlaps query then
@@ -478,11 +606,17 @@ theorem searchWithCost_singleton (entry : Entry) (query : Interval) :
         endpointComparisons := if entry.interval.low ≤ query.high then 2 else 1 }) = _
     simp [Cost.add]
 
-/-- Production overlap search; definitionally the answer from `searchWithCost`. -/
+/-- **Interval-tree overlap search.** The overlap search of a query interval $q$ in an interval
+tree $T$ returns the optional entry produced by the instrumented overlap search of $q$ in $T$,
+discarding its cost record. -/
 def search (tree : Tree) (query : Interval) : Option Entry :=
   (tree.searchWithCost query).1
 
-/-- A separate full-traversal oracle used only by specifications and tests. -/
+/-- **Linear-scan overlap search.** For a tree $T$ and a query interval $q$, the oracle search
+returns the first entry, in the in-order list of entries of $T$, whose interval overlaps $q$ as
+closed intervals, and returns nothing when no entry's interval overlaps $q$.
+
+It is a separate full-traversal oracle used only by specifications and tests. -/
 def oracleSearch (tree : Tree) (query : Interval) : Option Entry :=
   tree.entries.find? fun entry => entry.interval.overlaps query
 
@@ -504,7 +638,12 @@ theorem search_sound {tree : Tree} {query : Interval}
           · exact ⟨by simp [entries, (leftIH found).1], (leftIH found).2⟩
           · exact ⟨by simp [entries, (rightIH found).1], (rightIH found).2⟩
 
-/-- Under the structural cache/order invariants, every overlap is found. -/
+/-- **Completeness of interval-tree search.** Let $T$ be an interval tree whose cached height, size
+and maximum high endpoint are exact at every node, and whose low endpoints respect the search
+order (at every node, low endpoints in the left subtree are at most the node's, and those in the
+right subtree at least the node's). If some entry stored in $T$ has an interval that overlaps the
+query interval $Q$ (each interval's low endpoint is at most the other's high endpoint), then
+searching $T$ for $Q$ returns some entry. -/
 theorem search_complete {tree : Tree} {query : Interval} {witness : Entry}
     (cache : tree.CacheInvariant) (ordered : tree.LowOrdered)
     (member : witness ∈ tree.entries)
@@ -584,7 +723,12 @@ theorem search_complete {tree : Tree} {query : Interval} {witness : Entry}
                 simpa [search, searchWithCost, rootMatches, cachedMax?, inspectLeft]
                   using foundCost⟩
 
-/-- Failure is equivalent to the absence of an overlapping stored occurrence. -/
+/-- **Interval-tree search fails exactly when nothing overlaps.** Let $T$ be an interval tree
+whose cached height, size and maximum high endpoint are exact at every node, and whose low
+endpoints respect the search order (at every node, low endpoints in the left subtree are at most
+the node's, and those in the right subtree at least the node's). Then searching $T$ for a query
+interval $Q$ returns nothing if and only if no entry stored in $T$ has an interval that overlaps
+$Q$ (each interval's low endpoint is at most the other's high endpoint). -/
 theorem search_eq_none_iff {tree : Tree} {query : Interval}
     (cache : tree.CacheInvariant) (ordered : tree.LowOrdered) :
     tree.search query = none ↔
@@ -602,7 +746,16 @@ theorem search_eq_none_iff {tree : Tree} {query : Interval}
         exact (noOverlap entry sound.1
           (Interval.overlaps_eq_true.mp sound.2)).elim
 
-/-- Recomputing all caches, used by the executable invariant checker only. -/
+/-- **Executable cache check for interval trees.** The Boolean cache check returns true on the
+empty tree. On a node with stored height $h$, stored size $s$, stored maximum $m$, left subtree
+$L$, entry $e$ and right subtree $R$ it returns true exactly when
+$h = \max(\operatorname{height} L, \operatorname{height} R) + 1$,
+$s = \operatorname{size} L + \operatorname{size} R + 1$, $m$ is the largest of the high endpoint
+of $e$ and the cached maxima of those of $L$ and $R$ that are nonempty, and the check returns
+true on both $L$ and $R$. Here the height and size of a subtree are its stored fields, and the
+empty tree has height and size $0$.
+
+It is used only by the executable invariant checker. -/
 def cacheOK : Tree → Bool
   | .empty => true
   | .node storedHeight storedSize storedMax left entry right =>
@@ -611,13 +764,22 @@ def cacheOK : Tree → Bool
       storedMax == nodeMax left entry right &&
       left.cacheOK && right.cacheOK
 
-/-- Check strict lower and upper key bounds when either bound is present. -/
+/-- **Key between optional bounds.** Given an optional lower bound, an optional upper bound and a
+key $k$ (a pair of an integer and a natural number), this test returns true exactly when the lower
+bound is absent or strictly below $k$, and the upper bound is absent or strictly above $k$. Keys
+are compared lexicographically: first by the integer, then by the natural number. -/
 def keyBetween
     (lower upper : Option (Int × Nat)) (key : Int × Nat) : Bool :=
   lower.all (fun value => compareKey value key == .lt) &&
     upper.all (fun value => compareKey key value == .lt)
 
-/-- Check strict deterministic key ordering and interval validity. -/
+/-- **Ordered-and-valid check for interval trees.** Keys of entries are pairs (low endpoint,
+identifier), ordered lexicographically. Given optional lower and upper key bounds $\ell$ and $u$,
+the check accepts the empty tree, and accepts a node with left subtree $L$, entry $e$ and right
+subtree $R$ exactly when the key $k$ of $e$ is strictly greater than $\ell$ if $\ell$ is present
+and strictly less than $u$ if $u$ is present, the interval of $e$ has low endpoint at most its
+high endpoint, $L$ is accepted with bounds $\ell$ and $k$, and $R$ is accepted with bounds $k$
+and $u$. -/
 def orderedValid :
     Option (Int × Nat) → Option (Int × Nat) → Tree → Bool
   | _, _, .empty => true
@@ -626,7 +788,11 @@ def orderedValid :
       orderedValid lower (some entry.key) left &&
       orderedValid (some entry.key) upper right
 
-/-- Check AVL balance and exact height metadata. -/
+/-- **Boolean AVL balance check for interval trees.** The balance check returns true on the empty
+tree. On a node whose left and right subtrees have stored heights $h_L$ and $h_R$ (the empty tree
+has height $0$), it returns true exactly when the node's stored height equals
+$\max(h_L, h_R) + 1$, $h_L \le h_R + 1$, $h_R \le h_L + 1$, and the check returns true on both
+subtrees. -/
 def balanced : Tree → Bool
   | .empty => true
   | .node storedHeight _ _ left _ right =>
@@ -637,7 +803,11 @@ def balanced : Tree → Bool
 def uniqueIds (tree : Tree) : Bool :=
   decide (tree.entries.map (·.id)).Nodup
 
-/-- Propositional AVL balance with exact height metadata. -/
+/-- **AVL balance of an interval tree.** An interval tree is AVL balanced with exact stored heights
+when it is empty, or when it is a node such that, writing $h_L$ and $h_R$ for the stored heights
+of its left and right subtrees (the empty tree has height $0$), the node's stored height equals
+$\max(h_L, h_R) + 1$, $h_L \le h_R + 1$, $h_R \le h_L + 1$, and both subtrees are again AVL
+balanced with exact stored heights. -/
 def BalancedProp : Tree → Prop
   | .empty => True
   | .node storedHeight _ _ left _ right =>
@@ -668,8 +838,11 @@ theorem compareKey_lt_iff {a b : Int × Nat} :
   unfold compareKey
   split_ifs <;> simp_all <;> omega
 
-/-- Full key ordering: every left-subtree key is below the node key and
-every right-subtree key is above it. -/
+/-- **Key-ordered interval tree.** The empty tree is key-ordered, and a node is key-ordered when
+both of its subtrees are key-ordered, the key of every entry in the left subtree is strictly less
+than the key of the node's entry, and the key of the node's entry is strictly less than the key of
+every entry in the right subtree. Keys are compared lexicographically: low endpoint first, then
+identifier. -/
 def KeyOrdered : Tree → Prop
   | .empty => True
   | .node _ _ _ left entry right =>
@@ -696,8 +869,12 @@ theorem keyOrdered_lowOrdered {tree : Tree} (h : tree.KeyOrdered) :
         fun e he => compareKey_lt_low (h.2.2.1 e he),
         fun e he => compareKey_lt_low (h.2.2.2 e he)⟩
 
-/-- The executable ordering check implies key ordering, with the
-bound constraints threaded to every stored entry. -/
+/-- **The executable ordering check implies key ordering.** Let $t$ be an interval tree and let
+$\ell$ and $u$ be optional keys in $\mathbb{Z} \times \mathbb{N}$. If the executable ordering check
+of $t$ with lower bound $\ell$ and upper bound $u$ succeeds, then $t$ is key-ordered, and every
+entry $e$ stored in $t$ satisfies $\ell < \operatorname{key}(e)$ when $\ell$ is present and
+$\operatorname{key}(e) < u$ when $u$ is present, where $<$ is the lexicographic order on keys
+(low endpoint first, then identifier). -/
 theorem keyOrdered_of_orderedValid {lower upper : Option (Int × Nat)}
     {tree : Tree} (h : tree.orderedValid lower upper = true) :
     tree.KeyOrdered ∧
@@ -748,8 +925,12 @@ theorem keyOrdered_of_orderedValid {lower upper : Option (Int × Nat)}
           exact ⟨fun v hv =>
             compareKey_lt_trans (hentry.1 v hv) (hlo entry.key (by simp)), hhi⟩
 
-/-- The executable ordering check implies low-endpoint ordering, with the
-bound constraints threaded to every stored entry. -/
+/-- **The executable ordering check implies low-endpoint ordering.** Let $t$ be an interval tree
+and let $\ell$ and $u$ be optional keys in $\mathbb{Z} \times \mathbb{N}$. If the executable
+ordering check of $t$ with lower bound $\ell$ and upper bound $u$ succeeds, then $t$ is
+low-endpoint ordered, and every entry $e$ stored in $t$ satisfies $\ell < \operatorname{key}(e)$
+when $\ell$ is present and $\operatorname{key}(e) < u$ when $u$ is present, where $<$ is the
+lexicographic order on keys (low endpoint first, then identifier). -/
 theorem lowOrdered_of_orderedValid {lower upper : Option (Int × Nat)}
     {tree : Tree} (h : tree.orderedValid lower upper = true) :
     tree.LowOrdered ∧
@@ -760,7 +941,11 @@ theorem lowOrdered_of_orderedValid {lower upper : Option (Int × Nat)}
     (keyOrdered_of_orderedValid h).2⟩
 
 
-/-- The executable ordering check also validates every stored interval. -/
+/-- **The ordering check implies interval validity.** Let $T$ be an interval tree and let
+$\ell$ and $u$ be optional lower and upper key bounds. If the executable check of $T$ with
+bounds $\ell$ and $u$, which tests that every key lies strictly between its bounds and that every
+stored interval passes the Boolean validity test, returns true, then every interval stored in
+$T$ is valid, that is, its low endpoint is at most its high endpoint. -/
 theorem validInvariant_of_orderedValid {lower upper : Option (Int × Nat)}
     {tree : Tree} (h : tree.orderedValid lower upper = true) :
     tree.ValidInvariant := by
@@ -1402,8 +1587,9 @@ theorem mem_eraseKeyWithCost (key : Int × Nat) (e : Entry) {tree : Tree}
               · subst hsucc; exact Or.inr (Or.inl rfl)
               · exact Or.inr (Or.inr ((hspec.2 e).mpr ⟨he, hsucc⟩))
 
-/-- Removing the minimum permutes the entry list by deleting exactly
-that entry from the front of the remaining entries. -/
+/-- **Removing the minimum preserves the other entries.** If removing the leftmost entry of a tree
+$T$ returns an entry $m$, a tree $T'$ and a cost, then the list consisting of $m$ followed by the
+in-order entries of $T'$ is a permutation of the in-order entries of $T$. -/
 theorem removeMinWithCost_entries_perm {tree : Tree} {minimum : Entry}
     {rest : Tree} {cost : Cost}
     (h : tree.removeMinWithCost = some (minimum, rest, cost)) :
@@ -1427,8 +1613,10 @@ theorem removeMinWithCost_entries_perm {tree : Tree} {minimum : Entry}
             simp only [entries] at ih ⊢
             exact List.Perm.append_right _ ih
 
-/-- Insertion permutes the entry list by consing the new entry onto the
-old entries with any same-key entry filtered out. -/
+/-- **Entries after keyed insertion.** Let $t$ be a tree whose entries are strictly ordered by key,
+and let $x$ be an entry. The in-order list of entries of the tree obtained by inserting $x$ into $t$
+by key is a permutation of the list consisting of $x$ followed by those entries of $t$ whose key
+differs from the key of $x$. -/
 theorem insertKeyWithCost_entries_perm (newEntry : Entry) {tree : Tree}
     (hord : tree.KeyOrdered) :
     ((tree.insertKeyWithCost newEntry).1.entries).Perm
@@ -1495,7 +1683,13 @@ theorem insertKeyWithCost_entries_perm (newEntry : Entry) {tree : Tree}
             (List.perm_middle.trans
               (by simp only [entries, hfilter]; exact List.Perm.refl _)))
 
-/-- Erasure permutes the entry list by filtering out the erased key. -/
+/-- **Keyed erasure removes exactly the entries with that key.** The key of an entry is the pair
+$(\ell, i) \in \mathbb{Z} \times \mathbb{N}$ of its low endpoint $\ell$ and identifier $i$; keys are
+compared lexicographically. Let $T$ be an interval tree whose keys are strictly ordered (every key
+in a left subtree is lexicographically below its node's key and every key in a right subtree is
+above it), and let $k \in \mathbb{Z} \times \mathbb{N}$ be a key. Then the in-order list of entries
+of the tree obtained by erasing $k$ from $T$ is a permutation of the in-order list of entries of $T$
+with every entry of key $k$ removed. -/
 theorem eraseKeyWithCost_entries_perm (key : Int × Nat) {tree : Tree}
     (hord : tree.KeyOrdered) :
     ((tree.eraseKeyWithCost key).1.entries).Perm
@@ -1596,7 +1790,8 @@ theorem eraseKeyWithCost_entries_perm (key : Int × Nat) {tree : Tree}
           exact (List.Perm.append_left _ hpermR.symm).trans
             (by simp only [entries, hfilter]; exact List.Perm.refl _)
 
-/-- Strict key ordering implies the stored keys are duplicate-free. -/
+/-- **Strictly key-ordered trees have distinct keys.** If a tree is strictly ordered by key, then
+the keys of its stored entries are pairwise distinct. -/
 theorem keyNodup_of_keyOrdered {tree : Tree} (hord : tree.KeyOrdered) :
     (tree.entries.map Entry.key).Nodup := by
   induction tree with
@@ -1623,8 +1818,12 @@ theorem keyNodup_of_keyOrdered {tree : Tree} (hord : tree.KeyOrdered) :
           exact compareKey_ne_of_lt
             (compareKey_lt_trans (hbl x hx) (hbr y hy)) hab
 
-/-- The entry removed by `removeMinWithCost` is below every other stored
-entry in a key-ordered tree. -/
+/-- **The removed minimum has the least key.** Let $T$ be a key-ordered interval tree: at every
+node, the keys in the left subtree are strictly smaller and those in the right subtree strictly
+larger than the node's key, where the key of an entry is the pair (low endpoint, identifier)
+compared lexicographically. If removing the leftmost entry of $T$ returns the entry $m$ (together
+with the remaining tree and a cost record), then every entry $e$ stored in $T$ is either $m$
+itself or has a key strictly larger than the key of $m$. -/
 theorem removeMinWithCost_min_le {tree : Tree} {minimum : Entry}
     {rest : Tree} {cost : Cost}
     (h : tree.removeMinWithCost = some (minimum, rest, cost))
@@ -1663,7 +1862,10 @@ theorem removeMinWithCost_min_le {tree : Tree} {minimum : Entry}
                 hord.2.2.1 minimum hminmem
               exact Or.inr (compareKey_lt_trans h1 (hord.2.2.2 e he))
 
-/-- Insertion preserves strict key ordering. -/
+/-- **Insertion into an interval tree preserves key ordering.** Let $t$ be a key-ordered interval
+tree and let $e$ be an entry. Then the tree returned by the cost-instrumented keyed insertion of
+$e$ into $t$ (which replaces the entry with the same key, if there is one; the reported cost is
+discarded) is again key-ordered. -/
 theorem keyOrdered_insertKeyWithCost (newEntry : Entry) {tree : Tree}
     (hord : tree.KeyOrdered) :
     (tree.insertKeyWithCost newEntry).1.KeyOrdered := by
@@ -1702,7 +1904,9 @@ theorem keyOrdered_insertKeyWithCost (newEntry : Entry) {tree : Tree}
           · exact compareKey_gt hgt
           · exact hbr e he
 
-/-- Removing the minimum preserves strict key ordering. -/
+/-- **Removing the minimum from an interval tree preserves key ordering.** Let $t$ be a
+key-ordered interval tree. If the cost-instrumented removal of the leftmost entry of $t$ succeeds,
+returning that entry, a remaining tree $t'$ and a cost, then $t'$ is key-ordered. -/
 theorem keyOrdered_removeMinWithCost {tree : Tree} {minimum : Entry}
     {rest : Tree} {cost : Cost}
     (h : tree.removeMinWithCost = some (minimum, rest, cost))
@@ -1727,7 +1931,10 @@ theorem keyOrdered_removeMinWithCost {tree : Tree} {minimum : Entry}
               exact hord.2.2.1 e (mem_removeMinWithCost_of_mem hev e he)
             · exact hord.2.2.2
 
-/-- Erasure preserves strict key ordering. -/
+/-- **Deletion from an interval tree preserves key ordering.** Let $t$ be a key-ordered interval
+tree and let $k \in \mathbb{Z} \times \mathbb{N}$ be a key. Then the tree returned by the
+cost-instrumented keyed deletion of $k$ from $t$ (the reported cost is discarded) is again
+key-ordered. -/
 theorem keyOrdered_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
     (hord : tree.KeyOrdered) :
     (tree.eraseKeyWithCost key).1.KeyOrdered := by
@@ -1782,9 +1989,14 @@ theorem keyOrdered_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
 theorem height_mkNode (l r : Tree) (e : Entry) :
     (mkNode l e r).height = max l.height r.height + 1 := rfl
 
-/-- Rebalancing a node whose children are balanced and whose child
-heights differ by at most two restores AVL balance; the resulting height
-is the unrebalanced height or one less. -/
+/-- **Rebalancing an interval-tree node with exact stored height restores AVL balance.** Let $L$
+and $R$ be interval trees that are AVL balanced with exact stored heights, with heights $h_L$ and
+$h_R$ satisfying $h_L \le h_R + 2$ and $h_R \le h_L + 2$. Let $N$ be a node with left subtree $L$,
+entry $e$ and right subtree $R$ whose stored height is $\max(h_L, h_R) + 1$ (its stored size and
+stored maximum are arbitrary), and let $B$ be the tree obtained by rebalancing $N$ (the tree
+component of the result; the cost is ignored). Then $B$ is AVL balanced with exact stored heights,
+the height of $B$ is $\max(h_L, h_R) + 1$ or $\max(h_L, h_R)$, and it is $\max(h_L, h_R)$ only if
+$h_L = h_R + 2$ or $h_R = h_L + 2$. -/
 theorem balancedProp_rebalance_node {sh ss : Nat} {mm : Int}
     {l : Tree} {e : Entry} {r : Tree}
     (hstored : sh = max l.height r.height + 1)
@@ -1895,8 +2107,13 @@ theorem balancedProp_rebalance_node {sh ss : Nat} {mm : Int}
       refine ⟨⟨hstored, by omega, by omega, hl, hr⟩, Or.inl hstored,
         fun hdrop => by omega⟩
 
-/-- Rebalancing an `mkNode` whose children are balanced and whose child
-heights differ by at most two restores AVL balance. -/
+/-- **Rebalancing a rebuilt interval-tree node restores AVL balance.** Let $L$ and $R$ be interval
+trees that are AVL balanced with exact stored heights, with heights $h_L$ and $h_R$ satisfying
+$h_L \le h_R + 2$ and $h_R \le h_L + 2$, and let $e$ be an entry. Let $B$ be the tree obtained by
+rebalancing the node that the smart constructor builds from $L$, $e$ and $R$ (the tree component
+of the result; the cost is ignored). Then $B$ is AVL balanced with exact stored heights, the
+height of $B$ is $\max(h_L, h_R) + 1$ or $\max(h_L, h_R)$, and it is $\max(h_L, h_R)$ only if
+$h_L = h_R + 2$ or $h_R = h_L + 2$. -/
 theorem balancedProp_rebalance_mkNode {l : Tree} {e : Entry} {r : Tree}
     (hl : l.BalancedProp) (hr : r.BalancedProp)
     (hbal : l.height ≤ r.height + 2 ∧ r.height ≤ l.height + 2) :
@@ -1910,7 +2127,11 @@ theorem balancedProp_rebalance_mkNode {l : Tree} {e : Entry} {r : Tree}
         l.height = r.height + 2 ∨ r.height = l.height + 2) :=
   balancedProp_rebalance_node rfl hl hr hbal
 
-/-- Insertion preserves AVL balance; the height grows by at most one. -/
+/-- **Keyed insertion preserves AVL balance in an interval tree.** Let $T$ be an interval tree that
+is AVL balanced with exact stored heights, and let $e$ be an entry. The tree $T'$ returned by keyed
+insertion of $e$ into $T$ (which replaces an entry with the same key, if there is one; we take the
+tree component of the result and ignore the cost) is again AVL balanced with exact stored heights,
+and the height of $T'$ is either the height of $T$ or one more. -/
 theorem balancedProp_insertKeyWithCost (newEntry : Entry) {tree : Tree}
     (hb : tree.BalancedProp) :
     (tree.insertKeyWithCost newEntry).1.BalancedProp ∧
@@ -1957,8 +2178,10 @@ theorem balancedProp_insertKeyWithCost (newEntry : Entry) {tree : Tree}
         · have hvy := hres.2.2 h
           rcases ihH with ih | ih <;> rcases hvy with hv | hv <;> omega
 
-/-- Removing the minimum preserves AVL balance; the height drops by at
-most one. -/
+/-- **Removing the minimum preserves AVL balance in an interval tree.** Let $T$ be an interval tree
+that is AVL balanced with exact stored heights. If removing the leftmost entry of $T$ succeeds and
+returns an entry $m$, a remaining tree $R$ and a cost $c$, then $R$ is AVL balanced with exact
+stored heights, and the height of $R$ is either the height of $T$ or one less. -/
 theorem balancedProp_removeMinWithCost {tree : Tree} {minimum : Entry}
     {rest : Tree} {cost : Cost}
     (h : tree.removeMinWithCost = some (minimum, rest, cost))
@@ -1993,7 +2216,11 @@ theorem balancedProp_removeMinWithCost {tree : Tree} {minimum : Entry}
             · have hvy := hres.2.2 hh
               rcases ihH with ih | ih <;> rcases hvy with hv | hv <;> omega
 
-/-- Erasure preserves AVL balance; the height drops by at most one. -/
+/-- **Keyed deletion preserves AVL balance in an interval tree.** Let $T$ be an interval tree that
+is AVL balanced with exact stored heights, and let $k$ be a key (a pair of an integer low endpoint
+and a natural-number identifier). The tree $T'$ returned by keyed deletion of $k$ from $T$ (the
+tree component of the result; the cost is ignored) is again AVL balanced with exact stored
+heights, and the height of $T'$ is either the height of $T$ or one less. -/
 theorem balancedProp_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
     (hb : tree.BalancedProp) :
     (tree.eraseKeyWithCost key).1.BalancedProp ∧
@@ -2062,7 +2289,10 @@ theorem balancedProp_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
           · have hvy := hres.2.2 h
             rcases rmH with ih | ih <;> rcases hvy with hv | hv <;> omega
 
-/-- A node built by `mkNode` inherits stored-interval validity. -/
+/-- **Node construction preserves interval validity.** If $L$ and $R$ are interval trees
+satisfying the validity invariant and $e$ is an entry whose interval $[a, b]$ satisfies
+$a \le b$, then the node with left subtree $L$, entry $e$ and right subtree $R$, built by the
+node constructor that recomputes the cached fields, satisfies the validity invariant. -/
 theorem validInvariant_mkNode {left right : Tree} {entry : Entry}
     (hl : left.ValidInvariant) (he : entry.interval.Valid)
     (hr : right.ValidInvariant) :
@@ -2137,7 +2367,8 @@ theorem validInvariant_rebalanceWithCost {tree : Tree}
       | exact validInvariant_rotateLeftRight hv
       | exact validInvariant_rotateRightLeft hv
 
-/-- Every stored entry of a validity-invariant tree is valid. -/
+/-- **Stored intervals of a valid tree are valid.** If an interval tree $T$ satisfies the validity
+invariant, then every entry stored in $T$ has an interval $[a, b]$ with $a \le b$. -/
 theorem validInvariant_mem {tree : Tree} (hv : tree.ValidInvariant)
     (e : Entry) (he : e ∈ tree.entries) : e.interval.Valid := by
   induction tree with
@@ -2150,7 +2381,10 @@ theorem validInvariant_mem {tree : Tree} (hv : tree.ValidInvariant)
       · exact hen
       · exact rIH hr he
 
-/-- Insertion of a valid entry preserves stored-interval validity. -/
+/-- **Keyed insertion preserves interval validity.** Let $T$ be an interval tree in which every
+stored interval $[a, b]$ satisfies $a \le b$, and let $e$ be an entry whose interval $[a, b]$
+satisfies $a \le b$. Then the tree returned by keyed insertion of $e$ into $T$ also has every
+stored interval $[a, b]$ satisfying $a \le b$. -/
 theorem validInvariant_insertKeyWithCost (newEntry : Entry)
     (hnew : newEntry.interval.Valid) {tree : Tree}
     (hv : tree.ValidInvariant) :
@@ -2167,7 +2401,10 @@ theorem validInvariant_insertKeyWithCost (newEntry : Entry)
       · exact validInvariant_rebalanceWithCost
           (validInvariant_mkNode hl he (rightIH hr))
 
-/-- Removing the minimum preserves stored-interval validity. -/
+/-- **Removing the minimum preserves interval validity.** Let $T$ be an interval tree in which
+every stored interval is valid (its low endpoint is at most its high endpoint). If the
+instrumented removal of the leftmost entry of $T$ succeeds, returning that entry $m$, the
+remaining tree $T'$ and a cost record $c$, then every interval stored in $T'$ is valid. -/
 theorem validInvariant_removeMinWithCost {tree : Tree} {minimum : Entry}
     {rest : Tree} {cost : Cost}
     (h : tree.removeMinWithCost = some (minimum, rest, cost))
@@ -2189,7 +2426,10 @@ theorem validInvariant_removeMinWithCost {tree : Tree} {minimum : Entry}
             exact validInvariant_rebalanceWithCost
               (validInvariant_mkNode (leftIH hev hv.1) hv.2.1 hv.2.2)
 
-/-- Erasure preserves stored-interval validity. -/
+/-- **Keyed erasure preserves interval validity.** Let $T$ be an interval tree in which every
+stored interval $[a, b]$ satisfies $a \le b$. Then for every key $(\ell, i)$ with $\ell$ an
+integer and $i$ a natural number, the tree returned by keyed erasure of $(\ell, i)$ from $T$ also
+has every stored interval $[a, b]$ satisfying $a \le b$. -/
 theorem validInvariant_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
     (hv : tree.ValidInvariant) :
     (tree.eraseKeyWithCost key).1.ValidInvariant := by
@@ -2223,7 +2463,9 @@ theorem validInvariant_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
               (validInvariant_removeMinWithCost hsome hr))
 
 end Tree
-/-- The interval tree plus its balanced ID-to-low-endpoint index. -/
+/-- **Indexed interval tree.** An indexed interval tree consists of a root interval tree together
+with an identifier index: a finite map, implemented as a balanced search tree, from natural-number
+identifiers to integer low endpoints. -/
 structure IndexedIntervalTree where
   root : Tree
   idIndex : Std.TreeMap Nat Int
@@ -2235,7 +2477,15 @@ namespace IndexedIntervalTree
 def empty : IndexedIntervalTree :=
   ⟨.empty, .empty⟩
 
-/-- Insert a new occurrence or replace the occurrence with the same identifier. -/
+/-- **Insertion by identifier with cost.** Let $T$ be an indexed interval tree and let $e$ be an
+entry with identifier $i$ and interval $[a, b]$. Inserting $e$ into $T$ first tests $a \le b$. If
+$a > b$, it returns no tree, at a cost of one endpoint comparison. Otherwise, if the identifier
+index of $T$ maps $i$ to a low endpoint $\ell$, the entry with key $(\ell, i)$ is erased from the
+root tree of $T$ by keyed erasure; if $i$ is not in the index, the root tree is kept, at zero
+cost. Then $e$ is inserted into the resulting tree by keyed insertion. The result is the indexed
+interval tree with this new root tree and with the index updated to map $i$ to $a$, and the cost
+is the cost of the erasure plus the cost of the insertion plus one endpoint comparison and two
+index operations. -/
 def insertWithCost
     (tree : IndexedIntervalTree) (entry : Entry) : Option IndexedIntervalTree × Cost :=
   if entry.interval.valid then
@@ -2253,7 +2503,14 @@ def insertWithCost
 def insert (tree : IndexedIntervalTree) (entry : Entry) : Option IndexedIntervalTree :=
   (tree.insertWithCost entry).1
 
-/-- Delete exactly the occurrence with this identifier; absent IDs are unchanged. -/
+/-- **Erasure by identifier with cost.** To erase identifier $i$ from an indexed interval tree,
+look $i$ up in the identifier index. If it is absent, the tree is returned unchanged at a cost of
+one index operation. If the index maps $i$ to a low endpoint $\ell$, the entry with key
+$(\ell, i)$ is erased from the underlying interval tree, $i$ is removed from the index, and the
+cost is the cost of the keyed erasure plus two index operations.
+
+When the representation invariant holds, this deletes exactly the stored entry with identifier
+$i$. -/
 def eraseWithCost (tree : IndexedIntervalTree) (id : Nat) : IndexedIntervalTree × Cost :=
   match tree.idIndex.get? id with
   | none => (tree, { indexOperations := 1 })
@@ -2278,28 +2535,45 @@ def search (tree : IndexedIntervalTree) (query : Interval) : Option Entry :=
 def oracleSearch (tree : IndexedIntervalTree) (query : Interval) : Option Entry :=
   if query.valid then tree.root.oracleSearch query else none
 
-/-- Every stored occurrence agrees with its identifier-index entry. -/
+/-- **Forward identifier-index check.** For an indexed interval tree, the forward index check
+returns true exactly when the identifier index maps the identifier of every stored entry to the low
+endpoint of that entry's interval. -/
 def indexForwardOK (tree : IndexedIntervalTree) : Bool :=
   tree.root.entries.all fun entry =>
     tree.idIndex.get? entry.id == some entry.interval.low
 
-/-- Every identifier-index entry is represented by a stored occurrence. -/
+/-- **Backward identifier-index check.** For an indexed interval tree, the backward index check
+returns true exactly when, for every identifier $i$ that the identifier index maps to a low endpoint
+$\ell$, some stored entry has identifier $i$ and an interval with low endpoint $\ell$. -/
 def indexBackwardOK (tree : IndexedIntervalTree) : Bool :=
   tree.idIndex.toList.all fun pair =>
     tree.root.entries.any fun entry =>
       entry.id == pair.1 && entry.interval.low == pair.2
 
-/-- Executable representation checker, including cache/index correspondence. -/
+/-- **Representation check for the indexed interval tree.** For an indexed interval tree, the
+check returns true exactly when all of the following hold: at every node the cached height and size
+agree with the values recomputed from its children's cached heights and sizes, and the cached
+maximum high endpoint equals the largest of the node's own high endpoint and its children's cached
+maxima; the tree is AVL-balanced (sibling heights differ by at most one) with exact stored heights;
+the entry keys (low endpoint, identifier), ordered lexicographically, are strictly ordered as a
+binary search tree and every stored interval has low endpoint at most its high endpoint; the
+identifiers of the stored entries are pairwise distinct; the identifier index maps the identifier of
+every stored entry to that entry's low endpoint; and every identifier and low endpoint paired by the
+index belong to some stored entry. -/
 def check (tree : IndexedIntervalTree) : Bool :=
   tree.root.cacheOK && tree.root.balanced &&
     tree.root.orderedValid none none && tree.root.uniqueIds &&
     tree.indexForwardOK && tree.indexBackwardOK
 
-/-- Bundled representation invariant for the public indexed tree: exact
-caches, strict composite-key BST ordering, stored-interval validity, AVL
-balance, unique identifiers, and two-way identifier-index correspondence.
-Low-endpoint ordering used by search is derived from the strict key
-ordering via `Tree.keyOrdered_lowOrdered`. -/
+/-- **Representation invariant of an indexed interval tree.** An indexed interval tree $T$
+satisfies the representation invariant when its root tree has exact cached metadata (heights,
+sizes, and attained maximum high endpoints), is strictly ordered by the composite key (low
+endpoint, then identifier), is AVL balanced with exact stored heights, and stores only valid
+intervals; the identifiers of the stored entries are pairwise distinct; the identifier index maps
+the identifier of every stored entry to that entry's low endpoint; and every pair $(i, \ell)$ in
+the identifier index is the identifier and low endpoint of some stored entry.
+
+The ordering of low endpoints used by search follows from the strict key ordering. -/
 def Invariant (tree : IndexedIntervalTree) : Prop :=
   tree.root.CacheInvariant ∧ tree.root.KeyOrdered ∧ tree.root.BalancedProp ∧
     tree.root.ValidInvariant ∧
@@ -2341,7 +2615,10 @@ private theorem maxWith_attained {tree : Tree} (cache : tree.CacheInvariant)
           simpa only [cachedMax?, maxWith, max_eq_right (le_of_not_ge bounded)] using
             attained⟩
 
-/-- The smart constructor preserves recursively attained maximum caches. -/
+/-- **The interval-tree smart constructor preserves the cache invariant.** If interval trees $L$
+and $R$ satisfy the cache invariant (every cached maximum high endpoint, height and size is
+exact), then for every entry $e$ the node that the smart constructor builds from $L$, $e$ and $R$
+also satisfies the cache invariant. -/
 theorem cacheInvariant_mkNode {left right : Tree} (entry : Entry)
     (leftCache : left.CacheInvariant) (rightCache : right.CacheInvariant) :
     (mkNode left entry right).CacheInvariant := by
@@ -2362,7 +2639,8 @@ theorem cacheInvariant_mkNode {left right : Tree} (entry : Entry)
       · exact ⟨stored, by simp [member], attained.trans rootOrLeft.symm⟩
     · exact ⟨stored, by simp [member], attained⟩
 
-/-- A successful executable metadata check supplies the recursive cache invariant. -/
+/-- **The executable cache check implies the cache invariant.** If the executable cache check
+returns true on an interval tree $t$, then $t$ satisfies the cache invariant. -/
 theorem cacheInvariant_of_cacheOK {tree : Tree} (checked : tree.cacheOK = true) :
     tree.CacheInvariant := by
   induction tree with
@@ -2377,7 +2655,9 @@ theorem cacheInvariant_of_cacheOK {tree : Tree} (checked : tree.cacheOK = true) 
       have rebuilt := cacheInvariant_mkNode entry (leftIH leftOK) (rightIH rightOK)
       simpa only [mkNode, CacheInvariant, maximum, ← heightEq, ← sizeEq] using rebuilt
 
-/-- A right rotation preserves attained maximum caches. -/
+/-- **Right rotation preserves the interval-tree cache invariant.** If an interval tree $t$
+satisfies the cache invariant, then so does the right rotation of $t$, which leaves $t$ unchanged
+when $t$ is empty or has an empty left subtree. -/
 theorem cacheInvariant_rotateRight {tree : Tree} (cache : tree.CacheInvariant) :
     tree.rotateRight.CacheInvariant := by
   cases tree with
@@ -2389,7 +2669,9 @@ theorem cacheInvariant_rotateRight {tree : Tree} (cache : tree.CacheInvariant) :
           exact cacheInvariant_mkNode x cache.1.1
             (cacheInvariant_mkNode entry cache.1.2.1 cache.2.1)
 
-/-- A left rotation preserves attained maximum caches. -/
+/-- **Left rotation preserves the interval-tree cache invariant.** If an interval tree $t$
+satisfies the cache invariant, then so does the left rotation of $t$, which leaves $t$ unchanged
+when $t$ is empty or has an empty right subtree. -/
 theorem cacheInvariant_rotateLeft {tree : Tree} (cache : tree.CacheInvariant) :
     tree.rotateLeft.CacheInvariant := by
   cases tree with
@@ -2401,7 +2683,9 @@ theorem cacheInvariant_rotateLeft {tree : Tree} (cache : tree.CacheInvariant) :
           exact cacheInvariant_mkNode y
             (cacheInvariant_mkNode entry cache.1 cache.2.1.1) cache.2.1.2.1
 
-/-- A left-right rotation preserves attained maximum caches. -/
+/-- **Left-right rotation preserves the interval-tree cache invariant.** If an interval tree $t$
+satisfies the cache invariant, then so does the left-right double rotation of $t$, which leaves
+$t$ unchanged unless $t$ has a nonempty left subtree whose right subtree is nonempty. -/
 theorem cacheInvariant_rotateLeftRight {tree : Tree} (cache : tree.CacheInvariant) :
     tree.rotateLeftRight.CacheInvariant := by
   cases tree with
@@ -2417,7 +2701,9 @@ theorem cacheInvariant_rotateLeftRight {tree : Tree} (cache : tree.CacheInvarian
                 (cacheInvariant_mkNode x cache.1.1 cache.1.2.1.1)
                 (cacheInvariant_mkNode entry cache.1.2.1.2.1 cache.2.1)
 
-/-- A right-left rotation preserves attained maximum caches. -/
+/-- **Right-left rotation preserves the interval-tree cache invariant.** If an interval tree $t$
+satisfies the cache invariant, then so does the right-left double rotation of $t$, which leaves
+$t$ unchanged unless $t$ has a nonempty right subtree whose left subtree is nonempty. -/
 theorem cacheInvariant_rotateRightLeft {tree : Tree} (cache : tree.CacheInvariant) :
     tree.rotateRightLeft.CacheInvariant := by
   cases tree with
@@ -2433,7 +2719,9 @@ theorem cacheInvariant_rotateRightLeft {tree : Tree} (cache : tree.CacheInvarian
                 (cacheInvariant_mkNode entry cache.1 cache.2.1.1.1)
                 (cacheInvariant_mkNode z cache.2.1.1.2.1 cache.2.1.2.1)
 
-/-- Rebalancing preserves attained maximum caches on every selected branch. -/
+/-- **Rebalancing preserves the interval-tree cache invariant.** If an interval tree $t$
+satisfies the cache invariant, then the tree returned by the rebalancing step at the root of $t$
+also satisfies the cache invariant. -/
 theorem cacheInvariant_rebalanceWithCost {tree : Tree} (cache : tree.CacheInvariant) :
     tree.rebalanceWithCost.1.CacheInvariant := by
   cases tree with
@@ -2460,7 +2748,11 @@ theorem cacheInvariant_rebalanceWithCost {tree : Tree} (cache : tree.CacheInvari
               · exact cacheInvariant_rotateRightLeft cache
         · simpa only [ite_eq_right rightHeavy] using cache
 
-/-- Key insertion preserves attained maximum caches, including replacement. -/
+/-- **Keyed insertion preserves the interval-tree cache invariant.** Let $T$ be an interval tree
+satisfying the cache invariant (every cached maximum high endpoint, height and size is exact), and
+let $e$ be an entry. The tree returned by keyed insertion of $e$ into $T$ (the tree component of
+the result; the cost is ignored) also satisfies the cache invariant. This includes the case where
+an entry with the same key is replaced. -/
 theorem cacheInvariant_insertKeyWithCost (newEntry : Entry) {tree : Tree}
     (cache : tree.CacheInvariant) :
     (tree.insertKeyWithCost newEntry).1.CacheInvariant := by
@@ -2475,7 +2767,9 @@ theorem cacheInvariant_insertKeyWithCost (newEntry : Entry) {tree : Tree}
       · exact cacheInvariant_rebalanceWithCost
           (cacheInvariant_mkNode entry cache.1 (rightIH cache.2.1))
 
-/-- Removing the minimum preserves attained maximum caches in the returned tree. -/
+/-- **Removing the minimum preserves the interval-tree cache invariant.** Let $t$ be an interval
+tree that satisfies the cache invariant. If removing the leftmost entry of $t$ succeeds and
+returns an entry, a tree $t'$ and an operation cost, then $t'$ satisfies the cache invariant. -/
 theorem cacheInvariant_removeMinWithCost {tree : Tree} (cache : tree.CacheInvariant) :
     ∀ {minimum : Entry} {result : Tree} {cost : Cost},
       tree.removeMinWithCost = some (minimum, result, cost) → result.CacheInvariant := by
@@ -2500,7 +2794,11 @@ theorem cacheInvariant_removeMinWithCost {tree : Tree} (cache : tree.CacheInvari
             exact cacheInvariant_rebalanceWithCost
               (cacheInvariant_mkNode entry (leftIH cache.1 recursive) cache.2.1)
 
-/-- Key deletion preserves attained maximum caches, including absent keys. -/
+/-- **Keyed deletion preserves the interval-tree cache invariant.** Let $T$ be an interval tree
+satisfying the cache invariant (every cached maximum high endpoint, height and size is exact), and
+let $k$ be a key (a pair of an integer low endpoint and a natural-number identifier). The tree
+returned by keyed deletion of $k$ from $T$ (the tree component of the result; the cost is
+ignored) also satisfies the cache invariant. This includes keys that do not occur in $T$. -/
 theorem cacheInvariant_eraseKeyWithCost (key : Int × Nat) {tree : Tree}
     (cache : tree.CacheInvariant) : (tree.eraseKeyWithCost key).1.CacheInvariant := by
   induction tree with
@@ -2523,7 +2821,8 @@ end Cslib.Algorithms.Lean.IntervalTree.Tree
 
 namespace Cslib.Algorithms.Lean.IntervalTree.IndexedIntervalTree
 
-/-- The executable checker is sound for the bundled invariant. -/
+/-- **Soundness of the invariant checker.** If the executable checker returns true on an indexed
+interval tree $T$, then $T$ satisfies the representation invariant. -/
 theorem invariant_of_check {tree : IndexedIntervalTree}
     (h : tree.check = true) : tree.Invariant := by
   simp only [check, Bool.and_eq_true] at h
@@ -2557,8 +2856,13 @@ theorem empty_invariant : Invariant empty := by
     change p ∈ ([] : List (Nat × Int)) at hp
     cases hp
 
-/-- Public search soundness.  This holds for every indexed tree: the
-bundled invariant is not needed, only the successful search equation. -/
+/-- **Soundness of indexed interval-tree search.** The search of an indexed interval tree $T$ for
+a query interval $q = [c, d]$ returns nothing when $c > d$, and otherwise returns the entry, if
+any, found by the instrumented overlap search of $q$ in the root tree of $T$. For every indexed
+interval tree $T$, every query interval $q$ and every entry $e$, if this search returns $e$, then
+$e$ is one of the entries stored in the root tree of $T$ and the interval of $e$ overlaps $q$.
+
+The representation invariant of $T$ is not needed. -/
 theorem search_sound {tree : IndexedIntervalTree}
     {query : Interval} {found : Entry}
     (h : tree.search query = some found) :
@@ -2572,8 +2876,10 @@ theorem search_sound {tree : IndexedIntervalTree}
   have hsound := Tree.search_sound hroot
   exact ⟨hsound.1, Interval.overlaps_eq_true.mp hsound.2⟩
 
-/-- Public search completeness from the bundled invariant, for valid
-queries: every overlapping stored occurrence is found. -/
+/-- **Completeness of indexed interval search.** Let $T$ be an indexed interval tree satisfying
+its representation invariant, and let $Q$ be a valid query interval (low endpoint at most high
+endpoint). If some entry stored in $T$ has an interval that overlaps $Q$ (each interval's low
+endpoint is at most the other's high endpoint), then searching $T$ for $Q$ returns some entry. -/
 theorem search_complete_of_invariant {tree : IndexedIntervalTree}
     (inv : tree.Invariant) {query : Interval} (hvalid : query.valid = true)
     {witness : Entry} (member : witness ∈ tree.root.entries)
@@ -2689,9 +2995,12 @@ private theorem insert_stage {root : Tree} {index : Std.TreeMap Nat Int}
       · apply (hmem e).mpr
         exact Or.inr ⟨hem, fun hk => hidne (congrArg Prod.snd hk)⟩
 
-/-- Successful public insertion preserves the bundled invariant, stores
-the new entry, and otherwise retains exactly the previously stored
-entries (an existing entry with the same identifier is replaced). -/
+/-- **Correctness of insertion into an indexed interval tree.** Let $T$ be an indexed interval tree
+satisfying the representation invariant, and let $x$ be an entry whose interval is valid (its low
+endpoint is at most its high endpoint). If inserting $x$ into $T$ succeeds with result $T'$, then
+$T'$ satisfies the representation invariant, $x$ is stored in the root tree of $T'$, and an entry
+$e$ is stored in the root tree of $T'$ if and only if either $e = x$, or $e$ is stored in the root
+tree of $T$ and the identifier of $e$ differs from the identifier of $x$. -/
 theorem insert_spec {tree : IndexedIntervalTree} (inv : tree.Invariant)
     {entry : Entry} (hvalid : entry.interval.valid = true)
     {result : IndexedIntervalTree} (hres : tree.insert entry = some result) :
@@ -2786,9 +3095,12 @@ theorem insert_spec {tree : IndexedIntervalTree} (inv : tree.Invariant)
         · exact Or.inr ⟨(hmemW e).mpr
             ⟨heT, fun hk => hidne (congrArg Prod.snd hk)⟩, hidne⟩
 
-/-- Public erasure preserves the bundled invariant and deletes exactly
-the occurrence with the given identifier; absent identifiers leave the
-stored entries unchanged. -/
+/-- **Correctness of erasure from the indexed interval tree.** Let $T$ be an indexed interval tree
+satisfying the representation invariant, and let $i$ be a natural number. Then the tree obtained by
+erasing identifier $i$ from $T$ again satisfies the invariant, and an entry is stored in it if and
+only if it is stored in $T$ and its identifier differs from $i$.
+
+In particular, if no stored entry has identifier $i$, the stored entries are unchanged. -/
 theorem erase_spec {tree : IndexedIntervalTree} (inv : tree.Invariant)
     (id : Nat) :
     (tree.erase id).Invariant ∧

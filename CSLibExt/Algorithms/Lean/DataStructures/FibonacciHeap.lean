@@ -39,8 +39,12 @@ namespace Cslib.Algorithms.Lean
 
 universe u
 
-/-- A heap-ordered rose tree used by a Fibonacci heap. The stored degree is the number of
-children. -/
+/-- **Fibonacci tree.** A Fibonacci tree over a type $\alpha$ is a rose tree: a node carrying a
+stored degree $d \in \mathbb{N}$, a root value in $\alpha$, and a finite list of child Fibonacci
+trees.
+
+Heap order and the equality of the stored degree with the number of children are not part of
+the type; they are imposed by the validity predicate on trees. -/
 public inductive FibonacciTree (α : Type u) where
   | node (degree : Nat) (root : α) (children : List (FibonacciTree α))
 deriving Repr
@@ -49,34 +53,44 @@ namespace FibonacciTree
 
 variable {α : Type u}
 
-/-- The stored degree of a Fibonacci tree. -/
+/-- **Degree of a Fibonacci tree.** The degree of the Fibonacci tree with stored degree $d$,
+root value $r$ and list of children $c$ is the stored natural number $d$; it is not computed
+from the children. -/
 @[expose] public def degree : FibonacciTree α → Nat
   | .node degree _ _ => degree
 
-/-- The root value of a Fibonacci tree. -/
+/-- **Root of a Fibonacci tree.** The root of a Fibonacci tree is the value stored at its top
+node. -/
 @[expose] public def root : FibonacciTree α → α
   | .node _ root _ => root
 
-/-- The children of a Fibonacci tree. -/
+/-- **Children of a Fibonacci tree.** The children of the Fibonacci tree with stored degree $d$,
+root value $r$ and list of subtrees $c$ are the trees of the list $c$, in order. -/
 @[expose] public def children : FibonacciTree α → List (FibonacciTree α)
   | .node _ _ children => children
 
-/-- The multiset represented by a Fibonacci tree. -/
+/-- **Multiset of a Fibonacci tree.** The multiset $M(t)$ of values stored in a Fibonacci tree $t$,
+defined recursively: if $t$ has root value $r$ and children $t_1, \dots, t_k$, then
+$M(t) = \{r\} + M(t_1) + \cdots + M(t_k)$. The stored degree plays no role. -/
 @[expose] public def elements : FibonacciTree α → Multiset α
   | .node _ root children => root ::ₘ (children.map elements).sum
 
-/-- A tree's root occurs in its represented multiset. -/
+/-- **The root of a Fibonacci tree is one of its elements.** For every Fibonacci tree, its root
+value belongs to the multiset of elements the tree represents. -/
 public theorem root_mem_elements (tree : FibonacciTree α) : tree.root ∈ tree.elements := by
   cases tree
   simp [root, elements]
 
-/-- Every Fibonacci tree represents at least one element. -/
+/-- **Fibonacci trees are nonempty.** Every Fibonacci tree represents at least one element: the
+multiset of elements of any Fibonacci tree has positive size. -/
 public theorem card_elements_pos (tree : FibonacciTree α) : 0 < tree.elements.card := by
   cases tree
   simp [elements]
 
-/-- A Fibonacci tree has recursively valid children, stored degree equal to the number of
-children, and a globally minimal root. -/
+/-- **Valid Fibonacci trees.** Let $\alpha$ carry a relation $\le$. A Fibonacci tree with
+stored degree $d$, root $r \in \alpha$ and list of children $c$ is valid when every tree in $c$ is
+valid, $d$ equals the length of $c$, and $r \le x$ for every element $x$ of the multiset
+represented by the tree (the root together with the elements of all children). -/
 public inductive Valid {α : Type u} [LE α] : FibonacciTree α → Prop
   | node {degree : Nat} {root : α} {children : List (FibonacciTree α)}
       (children_valid : ∀ child ∈ children, Valid child)
@@ -84,12 +98,17 @@ public inductive Valid {α : Type u} [LE α] : FibonacciTree α → Prop
       (root_le : ∀ value ∈ elements (.node degree root children), root ≤ value) :
       Valid (.node degree root children)
 
-/-- A degree-zero tree containing one value. -/
+/-- **One-element Fibonacci heap.** For a value $x$ of a linearly ordered type, the one-element
+Fibonacci heap on $x$ has as its only tree the single-node tree with root $x$, and its cached
+minimum is $x$. -/
 @[expose] public def singleton (value : α) : FibonacciTree α :=
   .node 0 value []
 
-/-- Link two trees by making the tree with the larger root a child of the other, retaining
-the left root when the roots compare equal. -/
+/-- **Linking two Fibonacci trees.** Let $s$ and $t$ be Fibonacci trees over a linearly ordered
+type. If the root of $s$ is at most the root of $t$, the link of $s$ and $t$ is the tree with the
+root of $s$, stored degree one more than that of $s$, and children $t$ followed by the children
+of $s$. Otherwise it is the tree with the root of $t$, stored degree one more than that of $t$,
+and children $s$ followed by the children of $t$. -/
 @[expose] public def link [LinearOrder α] (left right : FibonacciTree α) : FibonacciTree α :=
   if left.root ≤ right.root then
     .node (left.degree + 1) left.root (right :: left.children)
@@ -110,7 +129,8 @@ the left root when the roots compare equal. -/
     (singleton value).elements = {value} := by
   simp [singleton, elements]
 
-/-- Linking trees of equal degree increments that degree. -/
+/-- **Degree of the link of two trees of equal degree.** If two Fibonacci trees $s$ and $t$
+over a linearly ordered type have the same degree $d$, then their link has degree $d + 1$. -/
 public theorem degree_link_of_eq [LinearOrder α] {left right : FibonacciTree α}
     (degrees : left.degree = right.degree) :
     (link left right).degree = left.degree + 1 := by
@@ -120,7 +140,9 @@ public theorem degree_link_of_eq [LinearOrder α] {left right : FibonacciTree α
   · show right.degree + 1 = left.degree + 1
     rw [degrees]
 
-/-- Linking preserves the disjoint multiset union of both input trees. -/
+/-- **Linking adds the elements.** For any two Fibonacci trees $S$ and $T$ over a linearly ordered
+type, the tree obtained by linking $S$ and $T$ represents the sum of the multisets represented by
+$S$ and by $T$. -/
 public theorem elements_link [LinearOrder α] (left right : FibonacciTree α) :
     (link left right).elements = left.elements + right.elements := by
   rw [link]
@@ -136,26 +158,30 @@ public theorem elements_link [LinearOrder α] (left right : FibonacciTree α) :
     rw [Multiset.cons_add, Multiset.add_cons]
     simp only [Multiset.cons_add, Multiset.cons_swap]
 
-/-- A singleton tree satisfies every Fibonacci-tree invariant. -/
+/-- **Singleton Fibonacci trees are valid.** Let $\alpha$ be a linearly ordered type. For every
+$v \in \alpha$, the Fibonacci tree of degree $0$ with root $v$ and no children is valid. -/
 public theorem valid_singleton [LinearOrder α] (value : α) : Valid (singleton value) := by
   constructor
   · simp
   · rfl
   · simp [elements]
 
-/-- Every child of a valid tree is valid. -/
+/-- **Children of a valid Fibonacci tree are valid.** Every child of a valid Fibonacci tree is
+itself a valid Fibonacci tree. -/
 public theorem Valid.child_valid [LE α] {tree child : FibonacciTree α}
     (valid : Valid tree) (member : child ∈ tree.children) : Valid child := by
   cases valid with
   | node children_valid _ _ => exact children_valid child member
 
-/-- The stored degree of a valid tree is its number of children. -/
+/-- **The degree of a valid Fibonacci tree is its number of children.** For every valid Fibonacci
+tree, its stored degree equals the number of its children. -/
 public theorem Valid.degree_eq [LE α] {tree : FibonacciTree α} (valid : Valid tree) :
     tree.degree = tree.children.length := by
   cases valid with
   | node _ degree_eq _ => exact degree_eq
 
-/-- The root of a valid tree is no greater than every represented element. -/
+/-- **Roots of valid Fibonacci trees are lower bounds.** The root of a valid Fibonacci tree is no
+greater than every element of the multiset the tree represents. -/
 public theorem Valid.root_le [LE α] {tree : FibonacciTree α} (valid : Valid tree)
     {value : α} (member : value ∈ tree.elements) : tree.root ≤ value := by
   cases valid with
@@ -170,8 +196,10 @@ private lemma length_le_card_sum (trees : List (FibonacciTree α)) :
       have pos := card_elements_pos tree
       omega
 
-/-- The degree of a valid tree is smaller than its element count, since every child
-contributes at least one element. -/
+/-- **The degree of a valid Fibonacci tree is less than its size.** For every valid Fibonacci
+tree over a type with a relation $\le$, the degree of the tree is strictly less than the
+number of elements, counted with multiplicity, of the multiset the tree represents, since
+every child contributes at least one element. -/
 public theorem Valid.degree_lt_card [LE α] {tree : FibonacciTree α} (valid : Valid tree) :
     tree.degree < tree.elements.card := by
   cases tree with
@@ -182,7 +210,8 @@ public theorem Valid.degree_lt_card [LE α] {tree : FibonacciTree α} (valid : V
       simp only [FibonacciTree.degree, FibonacciTree.elements, Multiset.card_cons]
       omega
 
-/-- Linking valid trees preserves all tree invariants. -/
+/-- **Linking preserves validity of Fibonacci trees.** If $s$ and $t$ are valid Fibonacci trees
+over a linearly ordered type, then the link of $s$ and $t$ is a valid Fibonacci tree. -/
 public theorem Valid.link [LinearOrder α] {left right : FibonacciTree α}
     (left_valid : Valid left) (right_valid : Valid right) : Valid (link left right) := by
   rw [FibonacciTree.link]
@@ -223,8 +252,11 @@ public theorem Valid.link [LinearOrder α] {left right : FibonacciTree α}
 
 end FibonacciTree
 
-/-- A Fibonacci forest is valid when every tree in it is valid. Root degrees may repeat;
-consolidation below is what makes them distinct. -/
+/-- **Valid Fibonacci forests.** Let $\alpha$ carry a relation $\le$. A Fibonacci forest,
+a list of Fibonacci trees with values in $\alpha$, is valid when every tree in it is a valid
+Fibonacci tree.
+
+Root degrees may repeat; consolidation is what makes them distinct. -/
 @[expose] public def FibonacciForest.Valid {α : Type u} [LE α]
     (trees : List (FibonacciTree α)) : Prop :=
   ∀ tree ∈ trees, tree.Valid
@@ -233,11 +265,16 @@ namespace FibonacciForest
 
 variable {α : Type u}
 
-/-- The multiset represented by a forest. -/
+/-- **Multiset of a Fibonacci forest.** Write $M(t)$ for the multiset of values stored in a
+Fibonacci tree $t$. The multiset represented by a Fibonacci forest, a list of Fibonacci trees
+$t_1, \dots, t_k$, is the sum $M(t_1) + \cdots + M(t_k)$; the empty forest represents the empty
+multiset. -/
 @[expose] public def elements (trees : List (FibonacciTree α)) : Multiset α :=
   (trees.map FibonacciTree.elements).sum
 
-/-- The trees of a forest have strictly increasing degrees. -/
+/-- **Forests with strictly increasing degrees.** A Fibonacci forest, a list of Fibonacci trees
+$t_1, \dots, t_k$, has sorted degrees when the stored degrees of its trees strictly increase along
+the list: $\deg t_i < \deg t_j$ whenever $i < j$. -/
 @[expose] public def SortedDegrees (trees : List (FibonacciTree α)) : Prop :=
   trees.Pairwise fun a b => a.degree < b.degree
 
@@ -263,12 +300,15 @@ private theorem mem_elements_iff {trees : List (FibonacciTree α)} {value : α} 
       rw [Multiset.mem_add, ih]
       simp
 
-/-- The empty forest is valid. -/
+/-- **The empty Fibonacci forest is valid.** Let $\alpha$ carry a relation $\le$. The empty
+forest, containing no Fibonacci trees with values in $\alpha$, is valid. -/
 public theorem valid_nil [LE α] : Valid ([] : List (FibonacciTree α)) := by
   intro tree member
   simp at member
 
-/-- The concatenation of valid forests is valid. -/
+/-- **Concatenation preserves validity of Fibonacci forests.** Let $\alpha$ carry a relation
+$\le$. If $F$ and $G$ are valid Fibonacci forests with values in $\alpha$, then the forest
+consisting of the trees of $F$ followed by the trees of $G$ is valid. -/
 public theorem valid_append [LE α] {left right : List (FibonacciTree α)}
     (left_valid : Valid left) (right_valid : Valid right) : Valid (left ++ right) := by
   intro tree member
@@ -277,7 +317,8 @@ public theorem valid_append [LE α] {left right : List (FibonacciTree α)}
   · exact left_valid tree member
   · exact right_valid tree member
 
-/-- Forest validity is preserved by sublists. -/
+/-- **Sublists of valid Fibonacci forests are valid.** If a list of Fibonacci trees is a valid
+forest, then every sublist of it (a subsequence, not necessarily contiguous) is a valid forest. -/
 public theorem Valid.sublist [LE α] {left right : List (FibonacciTree α)}
     (sublist : left.Sublist right) (valid : Valid right) : Valid left := by
   intro tree member
@@ -291,13 +332,17 @@ private theorem sum_append (left right : List (Multiset α)) :
       simp only [List.cons_append, List.sum_cons]
       rw [ih, Multiset.add_assoc]
 
-/-- The elements of a concatenated forest are the sum of the elements of its parts. -/
+/-- **Elements of a concatenated forest.** For any two lists $L$ and $R$ of Fibonacci trees, the
+forest made of the trees of $L$ followed by the trees of $R$ represents the sum of the multisets
+represented by $L$ and by $R$. -/
 public theorem elements_append (left right : List (FibonacciTree α)) :
     elements (left ++ right) = elements left + elements right := by
   simp only [elements, List.map_append]
   rw [sum_append]
 
-/-- The minimum root value in a forest, or `none` for the empty forest. -/
+/-- **Minimum root of a forest.** The minimum root of a forest of Fibonacci trees over a linearly
+ordered type is an optional value: it is absent for the empty forest, and for a nonempty forest
+it is the least of the roots of its trees. -/
 @[expose] public def minRoot [LinearOrder α] : List (FibonacciTree α) → Option α
   | [] => none
   | tree :: trees =>
@@ -305,7 +350,10 @@ public theorem elements_append (left right : List (FibonacciTree α)) :
       | none => some tree.root
       | some minimum => some (min tree.root minimum)
 
-/-- Combine two optional minima. -/
+/-- **Minimum of two optional values.** For optional values $x$ and $y$ of a linearly ordered
+type, their combined minimum is defined as follows: if $x$ and $y$ are both present, with values
+$a$ and $b$, it is $\min(a, b)$; if exactly one of $x$ and $y$ is present, it is that value; and
+if both are absent, it is absent. -/
 @[expose] public def minOption [LinearOrder α] (left right : Option α) : Option α :=
   match left, right with
   | some a, some b => some (min a b)
@@ -313,7 +361,8 @@ public theorem elements_append (left right : List (FibonacciTree α)) :
   | none, some b => some b
   | none, none => none
 
-/-- A forest has no minimum root exactly when it is empty. -/
+/-- **Only the empty forest has no minimum root.** A forest of Fibonacci trees over a linearly
+ordered type has no minimum root exactly when it is empty. -/
 public theorem minRoot_eq_none_iff [LinearOrder α] (trees : List (FibonacciTree α)) :
     minRoot trees = none ↔ trees = [] := by
   cases trees with
@@ -323,8 +372,9 @@ public theorem minRoot_eq_none_iff [LinearOrder α] (trees : List (FibonacciTree
       | none => simp [minRoot, found]
       | some minimum => simp [minRoot, found]
 
-/-- The minimum root is the root of some tree in the forest and is no greater than
-every root in the forest. -/
+/-- **The minimum root is a least root.** If a forest $F$ of Fibonacci trees over a linearly
+ordered type has minimum root $m$, then $m$ is the root of some tree of $F$ and $m$ is at most
+the root of every tree of $F$. -/
 public theorem minRoot_spec [LinearOrder α] {trees : List (FibonacciTree α)} {minimum : α}
     (result : minRoot trees = some minimum) :
     (∃ tree ∈ trees, tree.root = minimum) ∧ ∀ tree ∈ trees, minimum ≤ tree.root := by
@@ -364,7 +414,10 @@ public theorem minRoot_spec [LinearOrder α] {trees : List (FibonacciTree α)} {
             · exact head_le
             · exact tail_le.trans (tail_spec.2 current member)
 
-/-- The minimum root of a concatenated forest combines the minima of its parts. -/
+/-- **Minimum root of a concatenated forest.** For forests $F$ and $G$ of Fibonacci trees over a
+linearly ordered type, the minimum root of $F$ followed by $G$ is the combined minimum of the
+optional minimum roots of $F$ and of $G$: their minimum if both exist, the one that exists if
+only one does, and absent if neither does. -/
 public theorem minRoot_append [LinearOrder α] (left right : List (FibonacciTree α)) :
     minRoot (left ++ right) = minOption (minRoot left) (minRoot right) := by
   induction left with
@@ -374,8 +427,15 @@ public theorem minRoot_append [LinearOrder α] (left right : List (FibonacciTree
       cases left_found : minRoot left <;> cases right_found : minRoot right <;>
         simp [minRoot, minOption, left_found, right_found, ih, min_assoc]
 
-/-- Insert a tree into a degree-sorted forest, linking it with any tree of equal degree
-and carrying the link forward, as in binary addition. -/
+/-- **Inserting a tree into a forest.** Given a Fibonacci tree $t$ and a list of Fibonacci
+trees, the insertion of $t$ into the list is defined recursively. Inserting $t$ into the empty
+list gives the one-tree list $[t]$. For a list with first tree $s$ and remaining list $L$: if
+the stored degree of $t$ is less than the stored degree of $s$, the result is $t$ followed by
+$s$ and then $L$; if the two stored degrees are equal, the result is the insertion of the link
+of $t$ and $s$ into $L$; otherwise the result is $s$ followed by the insertion of $t$ into $L$.
+
+On a list whose stored degrees strictly increase, this links $t$ with any tree of equal degree
+and carries the linked tree forward, as in binary addition. -/
 @[expose] public def addTree [LinearOrder α] (tree : FibonacciTree α) :
     List (FibonacciTree α) → List (FibonacciTree α)
   | [] => [tree]
@@ -494,14 +554,20 @@ private theorem sorted_addTree [LinearOrder α] {tree : FibonacciTree α}
           · exact head_lt current member
           · exact degree_gt.trans_le degree_le
 
-/-- Consolidate a forest by linking trees of equal degree until all root degrees are
-distinct, as in the `consolidate` step of CLRS. The result is sorted by degree. -/
+/-- **Consolidation of a forest.** The consolidation of a list of Fibonacci trees is defined
+recursively: the consolidation of the empty list is the empty list, and the consolidation of a
+list with first tree $t$ and remaining list $L$ is the insertion of $t$ into the consolidation
+of $L$.
+
+Each insertion links trees of equal stored degree as in binary addition, so the result has
+strictly increasing, hence distinct, stored root degrees, as in the consolidate step of CLRS. -/
 @[expose] public def consolidate [LinearOrder α] :
     List (FibonacciTree α) → List (FibonacciTree α)
   | [] => []
   | tree :: trees => addTree tree (consolidate trees)
 
-/-- Consolidation preserves every occurrence in the forest. -/
+/-- **Consolidation preserves the elements.** For every list of Fibonacci trees over a linearly
+ordered type, its consolidation represents the same multiset as the original list. -/
 public theorem elements_consolidate [LinearOrder α] (trees : List (FibonacciTree α)) :
     elements (consolidate trees) = elements trees := by
   induction trees with
@@ -510,7 +576,8 @@ public theorem elements_consolidate [LinearOrder α] (trees : List (FibonacciTre
       rw [consolidate, elements_addTree, ih]
       rfl
 
-/-- Consolidation preserves forest validity. -/
+/-- **Consolidation preserves validity.** Let $\alpha$ be a linearly ordered type. If a
+Fibonacci forest with values in $\alpha$ is valid, then its consolidation is valid. -/
 public theorem valid_consolidate [LinearOrder α] {trees : List (FibonacciTree α)}
     (valid : Valid trees) : Valid (consolidate trees) := by
   induction trees with
@@ -520,7 +587,8 @@ public theorem valid_consolidate [LinearOrder α] {trees : List (FibonacciTree �
       exact valid_addTree (valid tree (by simp))
         (ih (fun current member => valid current (List.mem_cons_of_mem tree member)))
 
-/-- A consolidated forest has strictly increasing root degrees. -/
+/-- **Consolidation sorts root degrees.** For every list of Fibonacci trees, the stored degrees
+of the trees in its consolidation are strictly increasing in list order. -/
 public theorem consolidate_sorted [LinearOrder α] (trees : List (FibonacciTree α)) :
     SortedDegrees (consolidate trees) := by
   induction trees with
@@ -529,14 +597,18 @@ public theorem consolidate_sorted [LinearOrder α] (trees : List (FibonacciTree 
       rw [consolidate]
       exact sorted_addTree ih
 
-/-- A consolidated forest has distinct root degrees. -/
+/-- **Consolidation yields distinct root degrees.** For every list of Fibonacci trees, the trees
+in its consolidation have pairwise distinct stored degrees. -/
 public theorem consolidate_degrees_nodup [LinearOrder α]
     (trees : List (FibonacciTree α)) :
     ((consolidate trees).map FibonacciTree.degree).Nodup :=
   (List.pairwise_map.mpr (consolidate_sorted trees)).nodup
 
-/-- A valid forest with distinct degrees has at most as many roots as elements, since
-every degree is smaller than the total count. -/
+/-- **Degree-sorted forests have at most as many trees as elements.** Let $F$ be a valid forest
+of Fibonacci trees whose degrees are strictly increasing along the list. Then the number of
+trees in $F$ is at most the number of elements, counted with multiplicity, that $F$ represents.
+
+Every degree is smaller than the total element count and the degrees are distinct. -/
 public theorem length_le_card_of_sorted [LE α] {trees : List (FibonacciTree α)}
     (valid : Valid trees) (sorted : SortedDegrees trees) :
     trees.length ≤ (elements trees).card := by
@@ -550,7 +622,10 @@ public theorem length_le_card_of_sorted [LE α] {trees : List (FibonacciTree α)
     simpa using degree_lt
   simpa using nodup.length_le_of_subset subset
 
-/-- Remove the first tree whose root is minimal, preferring earlier trees on ties. -/
+/-- **Removing a minimum tree from a Fibonacci forest.** For a list of Fibonacci trees over a
+linearly ordered type, this returns nothing on the empty list. Otherwise it returns the first tree
+whose root is minimal among all roots in the list, so earlier trees win ties, together with the list
+of the remaining trees in their original order. -/
 @[expose] public def removeMinTree [LinearOrder α] :
     List (FibonacciTree α) → Option (FibonacciTree α × List (FibonacciTree α))
   | [] => none
@@ -575,7 +650,11 @@ theorem removeMinTree_eq_none_iff [LinearOrder α]
           by_cases less : minimum.root < tree.root <;>
             simp [removeMinTree, found, less]
 
-/-- Removing a minimum tree partitions the forest and returns a globally minimal root. -/
+/-- **Minimum-tree removal in a Fibonacci forest.** Let $T$ be a list of Fibonacci trees over a
+linearly ordered type. If removing a minimum tree from $T$ returns a tree $m$ and a list $R$, then
+the multiset of elements of $m$ plus the multiset of elements of $R$ equals the multiset of elements
+of $T$, the tree $m$ belongs to $T$, the list $R$ is a sublist of $T$, and the root of $m$ is at
+most the root of every tree in $T$. -/
 public theorem removeMinTree_spec [LinearOrder α]
     {trees : List (FibonacciTree α)} {minimum : FibonacciTree α}
     {rest : List (FibonacciTree α)} (result : removeMinTree trees = some (minimum, rest)) :
@@ -640,7 +719,10 @@ theorem root_cons_elements_children (tree : FibonacciTree α) :
 
 end FibonacciForest
 
-/-- A Fibonacci min-heap: a valid forest together with a cached minimum root value. -/
+/-- **Fibonacci heap.** A Fibonacci min-heap over a linearly ordered type consists of a list of
+Fibonacci trees, each valid (heap-ordered, and at every node the stored degree equals the number
+of children), together with a cached minimum equal to the least root value of these trees,
+absent when the list is empty. -/
 public structure FibonacciHeap (α : Type u) [LinearOrder α] where
   /-- The heap-ordered trees; root degrees may repeat between deletions. -/
   trees : List (FibonacciTree α)
@@ -653,15 +735,20 @@ namespace FibonacciHeap
 
 variable {α : Type u}
 
-/-- The multiset represented by a Fibonacci heap. -/
+/-- **Multiset of a Fibonacci heap.** The multiset represented by a Fibonacci heap over a linearly
+ordered type is the multiset of its list of trees: the sum, over the trees in the list, of the
+multisets of values stored in them. The cached minimum plays no role. -/
 @[expose] public def elements [LinearOrder α] (heap : FibonacciHeap α) : Multiset α :=
   FibonacciForest.elements heap.trees
 
-/-- The empty Fibonacci heap. -/
+/-- **Empty Fibonacci heap.** The Fibonacci heap over a linearly ordered type whose list of trees
+is empty and whose cached minimum is absent. -/
 @[expose] public def empty [LinearOrder α] : FibonacciHeap α :=
   ⟨[], none, FibonacciForest.valid_nil, rfl⟩
 
-/-- A one-element Fibonacci heap. -/
+/-- **Singleton Fibonacci heap.** For a value $x$ of a linearly ordered type, the singleton
+Fibonacci heap on $x$ has as its only tree the single-node tree with root $x$, stored degree $0$
+and no children, and its cached minimum is $x$. -/
 @[expose] public def singleton [LinearOrder α] (value : α) : FibonacciHeap α :=
   ⟨[FibonacciTree.singleton value], some value, by
     intro tree member
@@ -670,29 +757,46 @@ variable {α : Type u}
     exact FibonacciTree.valid_singleton value, by
     simp [FibonacciForest.minRoot, FibonacciTree.singleton, FibonacciTree.root]⟩
 
-/-- Meld two Fibonacci heaps: concatenate the root lists and keep the smaller cached
-minimum. No linking happens until the next minimum deletion. -/
+/-- **Melding Fibonacci heaps.** The meld of Fibonacci heaps $H_1$ and $H_2$ is the Fibonacci heap
+whose root list is the root list of $H_1$ followed by that of $H_2$, and whose cached minimum is
+the smaller of the two cached minima when both heaps have one, and otherwise the cached minimum
+of whichever heap has one (none if neither does).
+
+No linking happens until the next minimum deletion. -/
 @[expose] public def meld [LinearOrder α] (left right : FibonacciHeap α) : FibonacciHeap α :=
   ⟨left.trees ++ right.trees,
     FibonacciForest.minOption left.cachedMin right.cachedMin,
     FibonacciForest.valid_append left.valid right.valid,
     by rw [FibonacciForest.minRoot_append, left.min_eq, right.min_eq]⟩
 
-/-- `union` is the CLRS name for `meld`. -/
+/-- **Union of Fibonacci heaps.** The union of Fibonacci heaps $H_1$ and $H_2$ is their meld: the
+heap whose trees are those of $H_1$ followed by those of $H_2$, and whose cached minimum is the
+smaller of the two cached minima (the one that exists if a heap is empty, none if both are).
+
+CLRS calls this operation union. -/
 @[expose] public def union [LinearOrder α] (left right : FibonacciHeap α) : FibonacciHeap α :=
   left.meld right
 
-/-- Insert one value into a Fibonacci heap by melding with a one-element heap. -/
+/-- **Insertion into a Fibonacci heap.** Inserting a value $x$ into a Fibonacci heap $H$ gives
+the meld of the one-element Fibonacci heap containing $x$ with $H$, the one-element heap coming
+first. -/
 @[expose] public def insert [LinearOrder α] (heap : FibonacciHeap α) (value : α) :
     FibonacciHeap α :=
   (singleton value).meld heap
 
-/-- Inspect the minimum value (the cached minimum) without removing it. -/
+/-- **Find-min for Fibonacci heaps.** Find-min on a Fibonacci heap returns its cached minimum
+without modifying the heap: the least root value of its trees, or no value when the heap has no
+trees. -/
 @[expose] public def findMin [LinearOrder α] (heap : FibonacciHeap α) : Option α :=
   heap.cachedMin
 
-/-- The computational forest projection of minimum deletion: remove a minimum tree,
-promote its children, and consolidate. -/
+/-- **Minimum deletion on a forest.** Given a list of Fibonacci trees over a linearly ordered type,
+the result is nothing if the list is empty. Otherwise the first tree whose root is minimal is
+removed, and the result is its root value together with the consolidation of the forest made of
+the removed tree's children followed by the remaining trees.
+
+This is the forest-level computation behind deleting the minimum of a Fibonacci heap, without the
+validity proofs. -/
 @[expose] public def deleteMinTrees [LinearOrder α]
     (trees : List (FibonacciTree α)) : Option (α × List (FibonacciTree α)) :=
   match FibonacciForest.removeMinTree trees with
@@ -700,9 +804,11 @@ promote its children, and consolidate. -/
   | some (minimum, rest) =>
       some (minimum.root, FibonacciForest.consolidate (minimum.children ++ rest))
 
-/-- Remove and return the minimum value. The children of the minimum tree become roots
-and the root list is consolidated; the new cached minimum is the minimum root of the
-consolidated forest. -/
+/-- **Deleting the minimum of a Fibonacci heap.** If the root list of the heap is empty, the result
+is nothing. Otherwise the first tree of the root list whose root is minimal is removed, and the
+result is its root value together with the heap whose root list is the consolidation of the
+removed tree's children followed by the remaining trees, and whose cached minimum is the minimum
+root of this consolidated forest. -/
 public def deleteMin [LinearOrder α]
     (heap : FibonacciHeap α) : Option (α × FibonacciHeap α) :=
   match found : FibonacciForest.removeMinTree heap.trees with
@@ -720,57 +826,77 @@ public def deleteMin [LinearOrder α]
         FibonacciForest.valid_consolidate combined_valid
       some (minimum.root, ⟨trees, FibonacciForest.minRoot trees, trees_valid, rfl⟩)
 
-/-- Projecting away the validity proofs from deletion gives `deleteMinTrees`. -/
+/-- **Fibonacci heap minimum deletion agrees with its root-list version.** For every Fibonacci
+heap $H$, deleting the minimum of $H$ and keeping only the returned value and the root list
+of the resulting heap gives the same result as the root-list minimum deletion applied to the
+root list of $H$: either both fail, or both return the same value and the same list of
+trees. -/
 public theorem deleteMin_trees [LinearOrder α] (heap : FibonacciHeap α) :
     heap.deleteMin.map (fun result => (result.1, result.2.trees)) =
       deleteMinTrees heap.trees := by
   unfold deleteMin deleteMinTrees
   split <;> rename_i found <;> simp only [found] <;> rfl
 
-/-- The empty heap represents the empty multiset. -/
+/-- **The empty Fibonacci heap has no elements.** The empty Fibonacci heap represents the empty
+multiset. -/
 public theorem elements_empty [LinearOrder α] : (empty : FibonacciHeap α).elements = 0 := by
   simp [empty, elements, FibonacciForest.elements]
 
-/-- A singleton heap represents a singleton multiset. -/
+/-- **Multiset of a singleton Fibonacci heap.** For every value $x$ of a linearly ordered type, the
+singleton Fibonacci heap on $x$, whose only tree is the single-node tree with root $x$, represents
+the multiset $\{x\}$. -/
 public theorem elements_singleton [LinearOrder α] (value : α) :
     (singleton value).elements = {value} := by
   simp [singleton, elements, FibonacciForest.elements]
 
-/-- Meld preserves every occurrence from both heaps. -/
+/-- **Melding adds the elements.** For any two Fibonacci heaps $H_1$ and $H_2$ over a linearly
+ordered type, the meld of $H_1$ and $H_2$ represents the sum of the multisets represented by
+$H_1$ and by $H_2$. -/
 public theorem elements_meld [LinearOrder α] (left right : FibonacciHeap α) :
     (left.meld right).elements = left.elements + right.elements := by
   simpa [meld, elements] using
     (FibonacciForest.elements_append left.trees right.trees)
 
-/-- Union preserves every occurrence from both heaps. -/
+/-- **The union of Fibonacci heaps adds their multisets.** For Fibonacci heaps $H_1$ and $H_2$ over
+a linearly ordered type, the multiset represented by the union of $H_1$ and $H_2$ is the sum of
+the multisets represented by $H_1$ and by $H_2$. -/
 public theorem elements_union [LinearOrder α] (left right : FibonacciHeap α) :
     (left.union right).elements = left.elements + right.elements :=
   elements_meld left right
 
-/-- Insertion adds exactly one occurrence. -/
+/-- **Insertion adds one occurrence.** For every Fibonacci heap $H$ over a linearly ordered type
+and every value $x$, the heap obtained by inserting $x$ into $H$ represents the multiset of $H$
+with one more occurrence of $x$. -/
 public theorem elements_insert [LinearOrder α] (heap : FibonacciHeap α) (value : α) :
     (heap.insert value).elements = value ::ₘ heap.elements := by
   rw [insert, elements_meld]
   simp [singleton, elements, FibonacciForest.elements]
 
-/-- Meld adds the element counts of both heaps. -/
+/-- **Melding adds the sizes of Fibonacci heaps.** For Fibonacci heaps $H_1$ and $H_2$, the number
+of elements of the meld of $H_1$ and $H_2$, counted with multiplicity, is the number of
+elements of $H_1$ plus the number of elements of $H_2$. -/
 public theorem card_elements_meld [LinearOrder α] (left right : FibonacciHeap α) :
     (left.meld right).elements.card = left.elements.card + right.elements.card := by
   rw [elements_meld, Multiset.card_add]
 
-/-- Insertion increments the element count. -/
+/-- **Insertion increases the size of a Fibonacci heap by one.** For every Fibonacci heap $H$
+and every value $x$, the number of elements of the heap obtained by inserting $x$ into $H$,
+counted with multiplicity, is the number of elements of $H$ plus one. -/
 public theorem card_elements_insert [LinearOrder α] (heap : FibonacciHeap α) (value : α) :
     (heap.insert value).elements.card = heap.elements.card + 1 := by
   rw [elements_insert, Multiset.card_cons]
 
-/-- Minimum inspection fails exactly for the empty heap. -/
+/-- **Find-min fails exactly on the empty Fibonacci heap.** For a Fibonacci heap $H$ over a
+linearly ordered type, find-min on $H$ returns no value if and only if $H$ has no trees. -/
 public theorem findMin_eq_none_iff [LinearOrder α] (heap : FibonacciHeap α) :
     heap.findMin = none ↔ heap.trees = [] := by
   show heap.cachedMin = none ↔ heap.trees = []
   rw [heap.min_eq]
   exact FibonacciForest.minRoot_eq_none_iff heap.trees
 
-/-- Minimum inspection returns a represented element. -/
+/-- **Find-min returns an element of the Fibonacci heap.** Let $H$ be a Fibonacci heap over a
+linearly ordered type. If find-min on $H$ returns $m$, then $m$ belongs to the multiset
+represented by $H$. -/
 public theorem findMin_mem [LinearOrder α] {heap : FibonacciHeap α} {minimum : α}
     (result : heap.findMin = some minimum) : minimum ∈ heap.elements := by
   have min_root : FibonacciForest.minRoot heap.trees = some minimum := by
@@ -783,7 +909,9 @@ public theorem findMin_mem [LinearOrder α] {heap : FibonacciHeap α} {minimum :
     rw [← root_eq]
     exact FibonacciTree.root_mem_elements tree⟩
 
-/-- Minimum inspection returns a value no greater than every represented value. -/
+/-- **Find-min returns a lower bound of the Fibonacci heap.** Let $H$ be a Fibonacci heap over a
+linearly ordered type. If find-min on $H$ returns $m$, then $m \le v$ for every value $v$ in the
+multiset represented by $H$. -/
 public theorem findMin_le [LinearOrder α] {heap : FibonacciHeap α} {minimum value : α}
     (result : heap.findMin = some minimum) (member : value ∈ heap.elements) :
     minimum ≤ value := by
@@ -812,7 +940,8 @@ theorem deleteMin_partition [LinearOrder α] {heap : FibonacciHeap α} {minimum 
     rw [FibonacciForest.elements_consolidate, FibonacciForest.elements_append,
       ← Multiset.cons_add, FibonacciForest.root_cons_elements_children, spec.1]
 
-/-- Deletion fails exactly for the empty heap. -/
+/-- **Fibonacci heap minimum deletion fails exactly on the empty heap.** Deleting the minimum
+of a Fibonacci heap fails if and only if the heap's list of root trees is empty. -/
 public theorem deleteMin_eq_none_iff [LinearOrder α] (heap : FibonacciHeap α) :
     heap.deleteMin = none ↔ heap.trees = [] := by
   unfold deleteMin
@@ -830,20 +959,27 @@ public theorem deleteMin_eq_none_iff [LinearOrder α] (heap : FibonacciHeap α) 
       rw [none_found] at found
       contradiction
 
-/-- Successful deletion erases exactly one occurrence of the returned minimum. -/
+/-- **Fibonacci heap minimum deletion removes one copy of the minimum.** If deleting the
+minimum of a Fibonacci heap $H$ succeeds and returns the value $m$ and the heap $H'$, then the
+multiset of elements of $H'$ is the multiset of elements of $H$ with one occurrence of $m$
+removed. -/
 public theorem deleteMin_elements [LinearOrder α] {heap : FibonacciHeap α} {minimum : α}
     {rest : FibonacciHeap α} (result : heap.deleteMin = some (minimum, rest)) :
     rest.elements = heap.elements.erase minimum := by
   rw [← deleteMin_partition result, Multiset.erase_cons_head]
 
-/-- Successful deletion partitions the original multiset into its minimum and remainder. -/
+/-- **Fibonacci heap minimum deletion splits off the minimum.** If deleting the minimum of a
+Fibonacci heap $H$ succeeds and returns the value $m$ and the heap $H'$, then the multiset of
+elements of $H$ is the multiset of elements of $H'$ with one copy of $m$ added. -/
 public theorem deleteMin_cons_elements [LinearOrder α] {heap : FibonacciHeap α}
     {minimum : α} {rest : FibonacciHeap α}
     (result : heap.deleteMin = some (minimum, rest)) :
     minimum ::ₘ rest.elements = heap.elements :=
   deleteMin_partition result
 
-/-- Successful deletion returns a represented globally minimal value. -/
+/-- **Fibonacci heap minimum deletion returns a lower bound.** If deleting the minimum of a
+Fibonacci heap $H$ succeeds and returns the value $m$, then $m \le v$ for every element $v$
+of $H$. -/
 public theorem deleteMin_le [LinearOrder α] {heap : FibonacciHeap α} {minimum value : α}
     {rest : FibonacciHeap α} (result : heap.deleteMin = some (minimum, rest))
     (member : value ∈ heap.elements) : minimum ≤ value := by
@@ -855,8 +991,10 @@ public theorem deleteMin_le [LinearOrder α] {heap : FibonacciHeap α} {minimum 
     rcases result with ⟨rfl, rfl⟩
     exact FibonacciForest.removeMinTree_root_le heap.valid found member
 
-/-- After a successful deletion, consolidation has made the root degrees strictly
-increasing. -/
+/-- **Minimum deletion leaves a Fibonacci heap with strictly increasing root degrees.** If
+deleting the minimum of a Fibonacci heap succeeds and returns the heap $H'$, then the degrees
+of the root trees of $H'$, in list order, are strictly increasing; consolidation is what
+makes them so. -/
 public theorem deleteMin_sortedDegrees [LinearOrder α] {heap : FibonacciHeap α}
     {minimum : α} {rest : FibonacciHeap α}
     (result : heap.deleteMin = some (minimum, rest)) :
@@ -869,7 +1007,9 @@ public theorem deleteMin_sortedDegrees [LinearOrder α] {heap : FibonacciHeap α
     rcases result with ⟨rfl, rfl⟩
     exact FibonacciForest.consolidate_sorted _
 
-/-- After a successful deletion, the heap has at most as many roots as elements. -/
+/-- **After minimum deletion a Fibonacci heap has at most as many roots as elements.** If
+deleting the minimum of a Fibonacci heap succeeds and returns the heap $H'$, then the number
+of root trees of $H'$ is at most the number of elements of $H'$, counted with multiplicity. -/
 public theorem deleteMin_length_le_card [LinearOrder α] {heap : FibonacciHeap α}
     {minimum : α} {rest : FibonacciHeap α}
     (result : heap.deleteMin = some (minimum, rest)) :

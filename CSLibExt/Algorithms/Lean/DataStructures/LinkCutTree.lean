@@ -198,10 +198,9 @@ private theorem vertices_ne_nil (t : Tree V) : Tree.vertices t ≠ [] := by
   rw [h] at hmem
   exact (List.not_mem_nil hmem).elim
 
-/-- The chain `r → c₁ → c₂ → ⋯` as a rooted tree: each vertex has the next as
-its only child. A convenience constructor for building represented trees
-from vertex lists; the structural operations do not use it (they perform
-adjacency-preserving surgery instead). -/
+/-- **Path tree on a vertex list.** For a vertex $r$ and a list of vertices $c_1, \dots, c_k$, the
+spine is the rooted tree $r \to c_1 \to \cdots \to c_k$: its root is $r$, each vertex has the next
+one in the list as its only child, and the last vertex ($c_k$, or $r$ when $k = 0$) is a leaf. -/
 public def spine : V → List V → Tree V
   | r, [] => .node r []
   | r, c :: cs => .node r [spine c cs]
@@ -220,8 +219,10 @@ public theorem root_spine (r : V) (xs : List V) : (spine r xs).root = r := by
   | nil => rfl
   | cons c cs => rfl
 
-/-- The spine over a vertex list, as a one-element forest, or the empty forest
-for the empty list. -/
+/-- **Forest from a vertex list.** The forest built from the empty list is empty; the forest
+built from a list $r, c_1, \dots, c_k$ consists of the single spine
+$r \to c_1 \to \cdots \to c_k$, the rooted tree in which each vertex has the next one as
+its only child. -/
 public def ofVertexList : List V → List (Tree V)
   | [] => []
   | r :: rs => [spine r rs]
@@ -243,7 +244,8 @@ public theorem exists_mem_ofVertexList {l : List V} (hl : l ≠ []) :
   | nil => exact absurd rfl hl
   | cons r rs => exact ⟨spine r rs, by simp [ofVertexList], vertices_spine r rs⟩
 
-/-- The first tree of a forest whose vertices contain `x`, if any. -/
+/-- **Tree of a forest containing a vertex.** For a vertex $x$ and a forest given as a list of
+trees, the first tree whose vertices contain $x$, or nothing when no tree contains $x$. -/
 public def findTree (x : V) : List (Tree V) → Option (Tree V)
   | [] => none
   | t :: ts => if x ∈ Tree.vertices t then some t else findTree x ts
@@ -289,7 +291,9 @@ public theorem findTree_eq_some_of_exists {x : V} :
         obtain ⟨t', hfind, hmem', hx'⟩ := ih htail
         exact ⟨t', by simp [findTree, hs, hfind], List.mem_cons_of_mem s hmem', hx'⟩
 
-/-- The forest obtained by removing every tree whose vertices contain `x`. -/
+/-- **Removing the trees that contain a vertex.** Given a vertex $x$ and a forest, given as a list
+of rooted ordered trees, removing the trees containing $x$ deletes from the list every tree that
+has $x$ among its vertices and keeps the remaining trees in their original order. -/
 public def removeTree (x : V) : List (Tree V) → List (Tree V)
   | [] => []
   | t :: ts => if x ∈ Tree.vertices t then removeTree x ts else t :: removeTree x ts
@@ -337,9 +341,11 @@ public theorem removeTree_eq_self_of_forall_not_mem {x : V} :
         ih (fun s hs => h s (List.mem_cons_of_mem t hs))
       simp [removeTree, ht, hrest]
 
-/-- Removing the (unique, by duplicate-freeness) tree containing `x` from a
-forest splits its flat vertex list into the remainder plus that tree, up
-to permutation. -/
+/-- **Removing the tree containing a vertex splits the forest's vertices.** Let $f$ be a forest of
+rooted ordered trees whose concatenated vertex lists have no duplicates, let $x$ be a vertex, and
+let $t$ be the first tree of $f$ containing $x$. Then the concatenated vertex list of the forest
+obtained from $f$ by removing every tree containing $x$, followed by the vertex list of $t$, is a
+permutation of the concatenated vertex list of $f$. -/
 public theorem perm_flatMap_removeTree {x : V} :
     ∀ {f : List (Tree V)} {t : Tree V},
       (f.flatMap Tree.vertices).Nodup → findTree x f = some t →
@@ -390,8 +396,8 @@ public theorem perm_flatMap_removeTree {x : V} :
           (hrest.append_left _)
 
 
-/-- The subtree rooted at `x`, if `x` occurs in the tree: the first such
-subtree in preorder. -/
+/-- **Subtree rooted at a vertex.** For a vertex $x$ and a tree $T$, the subtree of $T$ rooted at
+the first occurrence of $x$ in preorder, or nothing when $x$ does not occur in $T$. -/
 public def findSubtree (x : V) : Tree V → Option (Tree V)
   | .node r cs => if r = x then some (.node r cs) else findSubtreeList x cs
 where
@@ -595,10 +601,12 @@ private theorem findSubtree_eq_child_of_root_eq {y r : V}
   rw [heq]
   exact findSubtreeList_eq_some_of_unique hc₀ hfind₀ hnone
 
-/-- Undirected adjacency in a represented tree: `a` and `b` are joined by a
-parent-child edge (in either direction) somewhere in the tree. This is the
-edge relation the structural operations preserve (`adjacent_graftAt`,
-`adjacent_rerootAt`). -/
+/-- **Adjacency in a rooted tree.** Two vertices $a$ and $b$ are adjacent in a rooted tree $t$
+when they are joined by a parent-child edge of $t$ in either direction: some node of $t$
+labelled $a$ has a child labelled $b$, or some node of $t$ labelled $b$ has a child labelled $a$.
+
+This is the undirected edge relation that the structural operations of the link-cut tree are
+specified against. -/
 public def Adjacent (a b : V) : Tree V → Prop
   | .node r cs =>
       (r = a ∧ ∃ c ∈ cs, c.root = b) ∨ (r = b ∧ ∃ c ∈ cs, c.root = a) ∨
@@ -638,7 +646,9 @@ public theorem adjacentList_iff {a b : V} :
         · exact Or.inr ⟨d, hd, hadj⟩
 
 omit [DecidableEq V] in
-/-- The endpoints of an edge of a tree are vertices of the tree. -/
+/-- **The first endpoint of a tree edge is a vertex.** If $a$ and $b$ are adjacent in a tree
+$t$, that is, joined by a parent-child edge in either direction, then $a$ is a vertex of
+$t$. -/
 public theorem Adjacent.mem_left {a b : V} :
     ∀ {t : Tree V}, Adjacent a b t → a ∈ Tree.vertices t := by
   intro t
@@ -657,7 +667,9 @@ public theorem Adjacent.mem_left {a b : V} :
         exact mem_vertices_node.mpr (Or.inr ⟨c, hc, ih c hc hadj⟩)
 
 omit [DecidableEq V] in
-/-- Adjacency is symmetric. -/
+/-- **Adjacency in a tree is symmetric.** For every rooted ordered tree $T$ and vertices $a$ and
+$b$, if $a$ and $b$ are adjacent in $T$ (joined by a parent-child edge in either direction), then
+$b$ and $a$ are adjacent in $T$. -/
 public theorem Adjacent.symm {a b : V} :
     ∀ {t : Tree V}, Adjacent a b t → Adjacent b a t := by
   intro t
@@ -673,7 +685,9 @@ public theorem Adjacent.symm {a b : V} :
         exact Or.inr (Or.inr ⟨c, hc, ih c hc hadj⟩)
 
 omit [DecidableEq V] in
-/-- The right endpoint of an edge is a vertex of the tree. -/
+/-- **The second endpoint of a tree edge is a vertex.** If $a$ and $b$ are adjacent in a tree
+$t$, that is, joined by a parent-child edge in either direction, then $b$ is a vertex of
+$t$. -/
 public theorem Adjacent.mem_right {a b : V} {t : Tree V}
     (h : Adjacent a b t) : b ∈ Tree.vertices t :=
   h.symm.mem_left
@@ -711,9 +725,13 @@ private theorem not_adjacent_self_of_nodup {a : V} :
         obtain ⟨c, hc, hadj⟩ := h
         exact ih c hc (hnodupC c hc) hadj
 
-/-- Computable adjacency test: `adjacentB a b t = true` exactly when
-`Adjacent a b t` (`adjacentB_eq_true_iff`). This is the guard evaluated by
-`State.cutEdge` before it cuts. -/
+/-- **Adjacency test.** For vertices $a$, $b$ and a rooted tree $t$ with root $r$ and child
+subtrees $c_1, \dots, c_k$, the adjacency test of $a$ and $b$ in $t$ returns true exactly when
+$r = a$ and some $c_i$ has root $b$, or $r = b$ and some $c_i$ has root $a$, or the adjacency test
+of $a$ and $b$ returns true in some $c_i$.
+
+It returns true exactly when $a$ and $b$ are adjacent in $t$, and it is the guard checked by the
+edge cut before it cuts. -/
 public def adjacentB (a b : V) : Tree V → Bool
   | .node r cs =>
       (decide (r = a) && cs.any (fun c => decide (c.root = b))) ||
@@ -845,10 +863,10 @@ private theorem adjacent_node_crossing {a b r : V} {cs : List (Tree V)}
     subst hcc₀
     exact hb hadj.mem_right
 
-/-- Attach `newChild` as a new last child of the node labelled `y`, keeping
-every existing node and edge. Returns `none` when `y` does not occur. This
-is the tree surgery behind `State.link`: it adds exactly the edge from `y`
-to the root of `newChild`. -/
+/-- **Grafting a tree below a vertex.** For a vertex $y$ and trees $N$ and $T$, grafting $N$ at
+$y$ in $T$ attaches $N$ as a new last child of the first node of $T$ labelled $y$ in preorder,
+keeping every existing node and edge; it returns nothing when $y$ does not occur in $T$. This is
+the tree surgery behind linking two trees: it adds exactly the edge from $y$ to the root of $N$. -/
 public def graftAt (y : V) (newChild : Tree V) : Tree V → Option (Tree V)
   | .node r cs =>
       if r = y then some (.node r (cs ++ [newChild]))
@@ -958,8 +976,10 @@ private theorem mem_flatMap_graftAtList {y v : V} {newChild : Tree V} :
             · exact Or.inr (hrest.mpr (Or.inl hv))
             · exact Or.inr (hrest.mpr (Or.inr hv))
 
-/-- Grafting keeps every old vertex and adds exactly the vertices of the
-new child. -/
+/-- **Vertices after grafting.** Let $t$ and $C$ be trees and $y$ a vertex. If grafting $C$ at
+$y$ in $t$, that is, attaching $C$ as a new last child of a node labelled $y$, produces the
+tree $t'$, then for every $v$, $v$ is a vertex of $t'$ if and only if $v$ is a vertex of $t$ or
+a vertex of $C$. -/
 public theorem mem_vertices_graftAt {y v : V} {newChild : Tree V} :
     ∀ {t t' : Tree V}, graftAt y newChild t = some t' →
       (v ∈ Tree.vertices t' ↔ v ∈ Tree.vertices t ∨ v ∈ Tree.vertices newChild) := by
@@ -1002,7 +1022,9 @@ public theorem mem_vertices_graftAt {y v : V} {newChild : Tree V} :
           · exact Or.inr (hflat.mpr (Or.inl hv))
           · exact Or.inr (hflat.mpr (Or.inr hv))
 
-/-- Grafting does not change the root. -/
+/-- **Grafting keeps the root.** Let $T$ and $N$ be rooted ordered trees and $y$ a vertex. If
+grafting $N$ into $T$ at $y$ is defined and yields the tree $T'$, then the root of $T'$ equals the
+root of $T$. -/
 public theorem root_graftAt {y : V} {newChild : Tree V} :
     ∀ {t t' : Tree V}, graftAt y newChild t = some t' → t'.root = t.root := by
   intro t
@@ -1154,8 +1176,11 @@ private theorem exists_root_graftAtList {y b : V} {newChild : Tree V} :
             · obtain ⟨e, he, heroot⟩ := hrest.mpr ⟨d, hd, hdroot⟩
               exact ⟨e, List.mem_cons_of_mem c he, heroot⟩
 
-/-- Grafting keeps every old edge and every edge of the new child, and adds
-exactly the edge from `y` to the root of `newChild`. -/
+/-- **Edges after grafting.** Let $t$ and $u$ be rooted trees and $y$ a vertex, and suppose that
+grafting $u$ as a new child under $y$ in $t$ succeeds and yields the tree $t'$. Then for all
+vertices $a$ and $b$, the vertices $a$ and $b$ are adjacent in $t'$ if and only if they are
+adjacent in $t$, or adjacent in $u$, or $a = y$ and $b$ is the root of $u$, or $a$ is the root of
+$u$ and $b = y$. -/
 public theorem adjacent_graftAt {y a b : V} {newChild : Tree V} :
     ∀ {t t' : Tree V}, graftAt y newChild t = some t' →
       (Adjacent a b t' ↔ Adjacent a b t ∨ Adjacent a b newChild ∨
@@ -1298,8 +1323,10 @@ private theorem perm_flatMap_graftAtList {y : V} {newChild : Tree V} :
           exact (hrest.append_left (Tree.vertices c)).trans
             (List.Perm.of_eq (List.append_assoc _ _ _).symm)
 
-/-- The vertex list of a grafted tree is the old vertex list followed by
-the new child's, up to permutation. -/
+/-- **Grafting adds the new subtree's vertices.** Let $t$ and $s$ be rooted ordered trees and $y$
+a vertex. If grafting $s$ as a new child at $y$ in $t$ succeeds and yields the tree $t'$, then the
+vertex list of $t'$ is a permutation of the vertex list of $t$ followed by the vertex list of
+$s$. -/
 public theorem perm_vertices_graftAt {y : V} {newChild : Tree V} :
     ∀ {t t' : Tree V}, graftAt y newChild t = some t' →
       (Tree.vertices t').Perm (Tree.vertices t ++ Tree.vertices newChild) := by
@@ -1332,17 +1359,17 @@ public theorem perm_vertices_graftAt {y : V} {newChild : Tree V} :
           (List.Perm.of_eq List.cons_append.symm)
 
 
-/-- Reroot a tree at `x`, reversing the edges on the path from the old root
-to `x` and keeping every other edge: the undirected tree is unchanged, only
-the choice of root changes. Returns `none` when `x` does not occur. This is
-the tree surgery behind `State.makeRoot`.
+/-- **Rerooting a tree at a vertex.** For a vertex $x$ and a rooted ordered tree $T$ with root $r$,
+rerooting $T$ at $x$ is defined recursively. If $r = x$, the result is $T$ itself. Otherwise let
+$C$ be the first child subtree of $r$ that contains $x$, let $p$ be the root of $C$, and let $C'$
+be $C$ rerooted at $x$. The result is $C'$ with the tree formed by $r$ and its remaining
+children (in their original order) attached as a new last child of the first node of $C'$, in
+preorder, labelled $p$. If no child subtree of $r$ contains $x$, rerooting is undefined; thus
+rerooting is defined exactly when $x$ is a vertex of $T$.
 
-The recursion reroots the child subtree `c` on the root-to-`x` path first,
-then grafts the remainder of the current node (the old root `r` together
-with the sibling subtrees off the path) back under the root of `c`, which
-is the next vertex on the reversed path. Attaching the remainder under
-that path vertex, rather than directly under `x`, is what keeps every
-path edge intact at depth greater than one. -/
+When the vertices of $T$ are distinct, this reverses the edges on the path from $r$ to $x$ and
+keeps every other edge, so the undirected tree is unchanged and only the root moves to $x$. This
+is the tree surgery behind making $x$ the root in a link-cut tree. -/
 public def rerootAt (x : V) : Tree V → Option (Tree V)
   | .node r cs =>
       if r = x then some (.node r cs)
@@ -1435,7 +1462,8 @@ private theorem rerootAtList_eq_some_spec {x : V} :
             · exact Or.inl h
             · exact Or.inr (Or.inr h)
 
-/-- Rerooting at a vertex that does not occur fails. -/
+/-- **Rerooting fails at an absent vertex.** For every rooted ordered tree $T$ and every vertex $x$
+that is not a vertex of $T$, rerooting $T$ at $x$ is undefined (it returns no tree). -/
 public theorem rerootAt_eq_none_of_not_mem {x : V} :
     ∀ {t : Tree V}, x ∉ Tree.vertices t → rerootAt x t = none := by
   intro t
@@ -1598,7 +1626,9 @@ public theorem root_rerootAt {x : V} :
   rw [← hst]
   exact ht''root
 
-/-- Rerooting keeps exactly the same vertex set. -/
+/-- **Rerooting preserves the vertex set.** Let $t$ be a rooted tree and $x$ a vertex. If
+rerooting $t$ at $x$ yields the tree $t'$, then a vertex lies in $t'$ if and only if it
+lies in $t$. -/
 public theorem mem_vertices_rerootAt {x v : V} :
     ∀ {t t' : Tree V}, rerootAt x t = some t' →
       (v ∈ Tree.vertices t' ↔ v ∈ Tree.vertices t) := by
@@ -1613,8 +1643,9 @@ public theorem mem_vertices_rerootAt {x v : V} :
   rw [← hst]
   exact ht''mem v
 
-/-- Rerooting a duplicate-free tree keeps every undirected edge: the
-rerooted tree has exactly the same adjacency relation as the original. -/
+/-- **Rerooting keeps every edge.** Let $t$ be a rooted tree with no repeated vertex, and suppose
+that rerooting $t$ at a vertex $x$ yields the tree $t'$. Then for all vertices $a$ and $b$, the
+vertices $a$ and $b$ are adjacent in $t'$ if and only if they are adjacent in $t$. -/
 public theorem adjacent_rerootAt {x a b : V} :
     ∀ {t t' : Tree V}, (Tree.vertices t).Nodup → rerootAt x t = some t' →
       (Adjacent a b t' ↔ Adjacent a b t) := by
@@ -1754,7 +1785,9 @@ private theorem perm_rerootAtList {x : V} :
               (List.Perm.of_eq (List.append_assoc _ _ _)))).trans
             (hrest.append_left _)
 
-/-- Rerooting permutes the vertex list: same vertices, new preorder. -/
+/-- **Rerooting preserves the vertices.** Let $t$ be a rooted ordered tree and $x$ a vertex. If
+rerooting $t$ at $x$ yields the tree $t'$, then the vertex list of $t'$ is a permutation of the
+vertex list of $t$. -/
 public theorem perm_vertices_rerootAt {x : V} :
     ∀ {t t' : Tree V}, rerootAt x t = some t' →
       (Tree.vertices t').Perm (Tree.vertices t) := by
@@ -1793,10 +1826,13 @@ public theorem perm_vertices_rerootAt {x : V} :
             exact hgraft.trans (List.perm_middle.trans (hflat.cons r))
 
 
-/-- Remove every subtree rooted at `x`, keeping every other node and edge:
-the original tree with the `x` subtrees pruned off. Returns `none` exactly
-when the root itself is `x` (nothing remains). This is the tree surgery
-behind the remainder side of `State.cut`. -/
+/-- **Pruning the subtrees rooted at a vertex.** For a vertex $x$ and a rooted ordered tree $T$,
+pruning $T$ at $x$ removes every subtree of $T$ whose root is labelled $x$, keeping every other
+node and edge and the order of children. If the root of $T$ is $x$, nothing remains and pruning
+is undefined. Otherwise the result is the tree with the same root whose children are, in their
+original order, the pruned children of the root, with the children labelled $x$ dropped.
+
+This is the tree surgery behind the remainder side of the cut operation of a link-cut tree. -/
 public def pruneAt (x : V) : Tree V → Option (Tree V)
   | .node r cs => if r = x then none else some (.node r (pruneList x cs))
 where
@@ -1807,7 +1843,9 @@ where
         | some c' => c' :: pruneList x cs
         | none => pruneList x cs
 
-/-- Pruning at a vertex that does not occur is the identity. -/
+/-- **Pruning at an absent vertex changes nothing.** Let $t$ be a rooted ordered tree and $x$ a
+vertex that does not occur in $t$. Then pruning the subtrees rooted at $x$ from $t$ succeeds and
+returns $t$ itself. -/
 public theorem pruneAt_eq_self_of_not_mem {x : V} :
     ∀ {t : Tree V}, x ∉ Tree.vertices t → pruneAt x t = some t := by
   intro t
@@ -1875,8 +1913,9 @@ private theorem mem_flatMap_pruneList {x v : V} :
           rw [List.flatMap_cons, List.mem_append]
           exact Or.inr hrest.1
 
-/-- Every vertex of the pruned tree was already a vertex of the original
-tree, and `x` itself is gone. -/
+/-- **Vertices of a pruned tree.** Let $t$ be a rooted tree and $x$ a vertex. If pruning
+$t$ at $x$ leaves the tree $t'$, then every vertex of $t'$ is a vertex of $t$ and is
+different from $x$. -/
 public theorem mem_vertices_pruneAt {x v : V} :
     ∀ {t t' : Tree V}, pruneAt x t = some t' → v ∈ Tree.vertices t' →
       v ∈ Tree.vertices t ∧ v ≠ x := by
@@ -1936,11 +1975,10 @@ private theorem mem_pruneList_of_pruneAt_some {x : V} :
             cases hc
           · exact ih hc hmem
 
-/-- The vertices on the other side of a prune survive: in a duplicate-free
-(valid) tree, every vertex outside the detached subtree at `x` is a vertex
-of the pruned remainder. Together with `mem_vertices_pruneAt` this says
-pruning partitions the vertex set of a valid tree into the detached
-subtree and the remainder, keeping all remaining edges. -/
+/-- **Pruning keeps the vertices outside the detached subtree.** Let $t$ be a rooted tree
+whose preorder vertex list has no repeated vertex, and let $x$ be a vertex. Suppose the
+subtree search finds the subtree $s$ of $t$ rooted at $x$, and pruning $t$ at $x$ leaves
+the tree $t'$. Then every vertex of $t$ that is not a vertex of $s$ is a vertex of $t'$. -/
 public theorem mem_vertices_pruneAt_of_mem_not_mem {x v : V} :
     ∀ {t sub t' : Tree V}, (Tree.vertices t).Nodup →
       findSubtree x t = some sub → pruneAt x t = some t' →
@@ -2145,8 +2183,11 @@ private theorem perm_flatMap_pruneList {x : V} :
           exact (hrest.append_left _).trans
             (List.Perm.of_eq (List.append_assoc _ _ _).symm)
 
-/-- In a duplicate-free tree, pruning at `x` partitions the vertex list
-into the remainder and the detached subtree, up to permutation. -/
+/-- **Pruning a subtree splits the vertex list.** Let $t$ be a rooted ordered tree whose vertex
+list has no duplicates and let $x$ be a vertex. If $x$ occurs in $t$, with $s$ the subtree of $t$
+rooted at $x$, and pruning at $x$ leaves a tree $t'$ (that is, $x$ is not the root of $t$), then
+the vertex list of $t$ is a permutation of the vertex list of $t'$ followed by the vertex list
+of $s$. -/
 public theorem perm_vertices_pruneAt {x : V} :
     ∀ {t sub t' : Tree V}, (Tree.vertices t).Nodup →
       findSubtree x t = some sub → pruneAt x t = some t' →
@@ -2182,7 +2223,9 @@ public theorem perm_vertices_pruneAt {x : V} :
       exact (hflat.cons r).trans (List.Perm.of_eq List.cons_append.symm)
 
 
-/-- Pruning keeps the root of the tree. -/
+/-- **Pruning keeps the root.** Let $T$ be a rooted ordered tree and $x$ a vertex. If pruning $T$ at
+$x$ yields a tree $T'$ (that is, the root of $T$ is not $x$), then the root of $T'$ equals the root
+of $T$. -/
 public theorem root_pruneAt {x : V} {t t' : Tree V}
     (h : pruneAt x t = some t') : t'.root = t.root := by
   cases t with
@@ -2234,11 +2277,13 @@ private theorem mem_pruneList_spec {x : V} :
           obtain ⟨c, hc, hpc⟩ := ih h
           exact ⟨c, List.mem_cons_of_mem d hc, hpc⟩
 
-/-- Pruning keeps every edge whose endpoints survive: in a duplicate-free
-tree, an edge of the original tree with both endpoints in the pruned
-remainder is an edge of the remainder. Together with
-`mem_vertices_pruneAt` (which gives the converse inclusion of vertices)
-this specifies `pruneAt` at edge level on the surviving vertices. -/
+/-- **Pruning keeps surviving edges.** Let $t$ be a rooted tree with no repeated vertex and $x$ a
+vertex, and suppose that removing every subtree rooted at $x$ from $t$ leaves the tree $t'$ (that
+is, the root of $t$ is not $x$). If $a$ and $b$ are adjacent in $t$ and both are vertices of
+$t'$, then $a$ and $b$ are adjacent in $t'$.
+
+Together with the fact that every vertex of $t'$ is a vertex of $t$ other than $x$, this
+specifies pruning at the level of edges on the surviving vertices. -/
 public theorem adjacent_pruneAt_of_mem_mem {a b x : V} :
     ∀ {t t' : Tree V}, (Tree.vertices t).Nodup →
       pruneAt x t = some t' → Adjacent a b t →
@@ -2307,8 +2352,12 @@ public theorem adjacent_pruneAt_of_mem_mem {a b x : V} :
         exact Or.inr (Or.inr ⟨c₁', hc₁'m,
           ih c hc (hnodupC c hc) hpc₁ hadj hac₁' hbc₂'⟩)
 
-/-- The path from the root of a tree down to `x`, root first, if `x` occurs in
-the tree. This is the preferred path installed by `access x`. -/
+/-- **Root-to-vertex path.** For a vertex $x$ and a rooted ordered tree $T$, the root path of $x$ is
+defined exactly when $x$ is a vertex of $T$. It is then the list of vertices on the path from the
+root of $T$ down to $x$, root first and ending with $x$; if $x$ occurs more than once, the path
+leads to its first occurrence in preorder.
+
+This is the preferred path installed by the access operation of a link-cut tree. -/
 public def rootPath (x : V) : Tree V → Option (List V)
   | .node r cs =>
       if r = x then some [r] else (rootPathList x cs).map (fun p => r :: p)
@@ -2399,7 +2448,8 @@ private theorem rootPath_node_cases {x r : V} {cs : List (Tree V)} {p : List V}
     obtain ⟨c, hc, hfind⟩ := rootPathList_eq_some_spec hp'
     exact Or.inr ⟨hr, c, hc, p', hfind, hp.symm⟩
 
-/-- The deepest vertex of a root path (its last entry) is the target vertex. -/
+/-- **A root path ends at its target.** If $p$ is the path from the root of a tree $T$ down to a
+vertex $x$ of $T$, then $p$ is nonempty and its last (deepest) vertex is $x$. -/
 public theorem getLast?_rootPath {x : V} {t : Tree V} {p : List V}
     (h : rootPath x t = some p) : p.getLast? = some x := by
   revert h
@@ -2412,7 +2462,9 @@ public theorem getLast?_rootPath {x : V} {t : Tree V} {p : List V}
       · rw [hp]
         exact getLast?_cons_of_getLast?_eq_some (ih c hc hfind)
 
-/-- The first vertex of a root path is the root of the tree. -/
+/-- **The root path starts at the root.** Let $t$ be a tree and $x$ a vertex. If the root path
+of $x$ in $t$ (the path from the root of $t$ down to $x$) is defined and equals $p$, then $p$ is
+nonempty and its first vertex is the root of $t$. -/
 public theorem head?_rootPath {x : V} {t : Tree V} {p : List V}
     (h : rootPath x t = some p) : p.head? = some t.root := by
   cases t with
@@ -2421,7 +2473,8 @@ public theorem head?_rootPath {x : V} {t : Tree V} {p : List V}
       · rfl
       · rfl
 
-/-- Every vertex on a root path is a vertex of the tree. -/
+/-- **Root paths stay inside the tree.** If $p$ is the path in a tree $t$ from the root down to
+a vertex $x$, then every vertex of $p$ is a vertex of $t$. -/
 public theorem mem_rootPath {x v : V} {t : Tree V} {p : List V}
     (h : rootPath x t = some p) (hv : v ∈ p) : v ∈ Tree.vertices t := by
   revert h hv
@@ -2445,7 +2498,9 @@ public theorem rootPath_ne_nil {x : V} {t : Tree V} {p : List V}
   rw [hp] at hlast
   simp at hlast
 
-/-- A root path in a duplicate-free tree has distinct vertices. -/
+/-- **Root paths have distinct vertices.** If the preorder vertex list of a rooted tree $t$
+has no repeated vertex and $p$ is the path from the root of $t$ down to a vertex $x$, then
+$p$ has no repeated vertex. -/
 public theorem nodup_rootPath {x : V} :
     ∀ {t : Tree V} {p : List V}, (Tree.vertices t).Nodup →
       rootPath x t = some p → p.Nodup := by
@@ -2466,8 +2521,10 @@ public theorem nodup_rootPath {x : V} :
         exact root_not_mem_flatMap_children hnodup
           (List.mem_flatMap.mpr ⟨c, hc, hrc⟩)
 
-/-- Consecutive vertices of a root path are joined by a parent-child edge
-of the tree. -/
+/-- **Consecutive vertices of a root path are adjacent.** Let $t$ be a tree and $x$ a vertex. If
+the root path of $x$ in $t$ is defined and equals $p = (p_0, \dots, p_k)$, then for every
+$i < k$ the vertices $p_i$ and $p_{i+1}$ are adjacent in $t$, that is, joined by a parent-child
+edge of $t$ in one direction or the other. -/
 public theorem isChain_adjacent_rootPath {x : V} :
     ∀ {t : Tree V} {p : List V}, rootPath x t = some p →
       p.IsChain (fun a b => Adjacent a b t) := by
@@ -2493,9 +2550,10 @@ public theorem isChain_adjacent_rootPath {x : V} :
         rw [adjacent_node]
         exact Or.inl ⟨rfl, c, hc, rfl⟩
 
-/-- Directed parent-child adjacency in a represented tree: `a` is the parent
-of `b` somewhere in the tree. Preferred edges are directed this way, from a
-node to its preferred child. -/
+/-- **Parent-child relation in a rooted tree.** For vertices $a$ and $b$ and a rooted ordered
+tree $t$, $a$ is a parent of $b$ in $t$ when some node of $t$ labelled $a$ has a child subtree
+whose root is $b$. Preferred edges of a link-cut tree are directed this way, from a node to its
+preferred child. -/
 public def ParentChild (a b : V) : Tree V → Prop
   | .node r cs => (r = a ∧ ∃ c ∈ cs, c.root = b) ∨ ParentChildList a b cs
 where
@@ -2532,7 +2590,8 @@ public theorem parentChildList_iff {a b : V} :
         · exact Or.inr ⟨d, hd, hadj⟩
 
 omit [DecidableEq V] in
-/-- A directed parent-child edge is an undirected edge. -/
+/-- **Parent-child edges are edges.** For every rooted tree $t$ and all vertices $a$ and $b$, if
+$a$ is the parent of $b$ somewhere in $t$, then $a$ and $b$ are adjacent in $t$. -/
 public theorem ParentChild.adjacent {a b : V} :
     ∀ {t : Tree V}, ParentChild a b t → Adjacent a b t := by
   intro t
@@ -2548,19 +2607,22 @@ public theorem ParentChild.adjacent {a b : V} :
         exact Or.inr (Or.inr (adjacentList_iff.mpr ⟨c, hc, ih c hc hadj⟩))
 
 omit [DecidableEq V] in
-/-- The endpoints of a directed parent-child edge are vertices of the tree. -/
+/-- **The parent endpoint of a tree edge is a vertex.** If $a$ is the parent of $b$ somewhere
+in a tree $t$, then $a$ is a vertex of $t$. -/
 public theorem ParentChild.mem_left {a b : V} {t : Tree V}
     (h : ParentChild a b t) : a ∈ Tree.vertices t :=
   h.adjacent.mem_left
 
 omit [DecidableEq V] in
-/-- The child endpoint of a directed edge is a vertex of the tree. -/
+/-- **The child endpoint of a tree edge is a vertex.** If $a$ is the parent of $b$ somewhere in
+a tree $t$, then $b$ is a vertex of $t$. -/
 public theorem ParentChild.mem_right {a b : V} {t : Tree V}
     (h : ParentChild a b t) : b ∈ Tree.vertices t :=
   h.adjacent.mem_right
 
-/-- Consecutive vertices of a root path are joined by a directed
-parent-child edge of the tree, from parent to child. -/
+/-- **A root path follows parent-child edges downward.** Let $t$ be a tree and $x$ a vertex. If
+the root path of $x$ in $t$ is defined and equals $p = (p_0, \dots, p_k)$, then for every
+$i < k$ the vertex $p_i$ is the parent of $p_{i+1}$ somewhere in $t$. -/
 public theorem isChain_parentChild_rootPath {x : V} :
     ∀ {t : Tree V} {p : List V}, rootPath x t = some p →
       p.IsChain (fun a b => ParentChild a b t) := by
@@ -2586,9 +2648,11 @@ public theorem isChain_parentChild_rootPath {x : V} :
         rw [parentChild_node]
         exact Or.inl ⟨rfl, c, hc, rfl⟩
 
-/-- The directed edges of a vertex path: consecutive pairs, parent first.
-The preferred edges installed by `access x` are `pathEdges` of the
-root-to-`x` path. -/
+/-- **Consecutive edges of a vertex path.** For a list of vertices $v_0, v_1, \dots, v_n$, its
+path edges are the ordered pairs $(v_0, v_1), (v_1, v_2), \dots, (v_{n-1}, v_n)$ of consecutive
+vertices, in this order; a list with at most one vertex has no path edges. For a path listed from
+the root downward each pair is (parent, child), and the preferred edges installed by an access to
+a vertex $x$ are the path edges of the root-to-$x$ path. -/
 public def pathEdges : List V → List (V × V)
   | [] => []
   | [_] => []
@@ -2716,14 +2780,13 @@ private theorem mem_pathEdges_of_mem_cons {a : V} {p : List V} {e : V × V}
         exact h h1
       · exact hmem
 
-/-- The preferred-path decomposition of one represented tree, given a list
-of preferred (solid) edges `edges` directed from parent to preferred child.
-Returns `(down, rest)`: `down` is the preferred path starting at the root of
-the tree and following preferred edges downward, and `rest` is the list of
-all other preferred paths of the tree. When a node has several preferred
-children in `edges` (excluded in valid states by the at-most-one condition),
-the first one in child order extends the downward path and the others head
-their own paths in `rest`. -/
+/-- **Preferred-path decomposition of a tree.** Given a list $E$ of preferred edges, each a pair
+(parent, preferred child), the decomposition of a tree $T$ is a pair (down, rest): down is the
+preferred path that starts at the root of $T$ and follows edges of $E$ downward, and rest is the
+list of all other preferred paths of $T$. When a node has several children joined to it by edges
+of $E$ (excluded in valid states, where each vertex has at most one preferred child), the first
+one in child order continues the path through that node and each of the others starts its own
+path in rest. -/
 public def decomp (edges : List (V × V)) : Tree V → List V × List (List V)
   | .node r cs =>
       match decompList edges r cs with
@@ -2743,12 +2806,17 @@ where
             else
               (ext, (cdown :: crest) ++ rest)
 
-/-- All preferred paths of one represented tree under the preferred-edge
-list `edges`: the downward path from the root, then every other path. -/
+/-- **Preferred paths of a tree.** Let $t$ be a rooted ordered tree and let $E$ be a list of
+preferred edges, each a pair (parent, child). The preferred paths of $t$ under $E$ are listed
+as follows: first the downward path of the preferred-path decomposition of $t$ under $E$, which
+starts at the root of $t$ and follows preferred edges downward, and then all other paths of
+that decomposition, in the order the decomposition returns them. -/
 public def treePaths (edges : List (V × V)) (t : Tree V) : List (List V) :=
   (decomp edges t).1 :: (decomp edges t).2
 
-/-- The downward preferred path of a tree starts at the root of the tree. -/
+/-- **The downward preferred path starts at the root.** For every list of preferred edges, the
+downward preferred path in the preferred-path decomposition of a tree is nonempty and its first
+vertex is the root of the tree. -/
 public theorem decomp_fst_head? (edges : List (V × V)) (t : Tree V) :
     (decomp edges t).1.head? = some t.root := by
   cases t with
@@ -2972,8 +3040,9 @@ private theorem decompList_perm {edges : List (V × V)} {r : V} :
           ((List.Perm.of_eq (List.append_assoc _ _ _)).trans
             (hcperm.append hcsperm))
 
-/-- The decomposition of a tree partitions its vertices: the flattened
-paths are a permutation of the vertex list, for every preferred-edge list. -/
+/-- **Preferred paths permute the vertex list.** For every list of preferred edges, the downward
+preferred path of a tree followed by the concatenation of the other paths of its preferred-path
+decomposition is a permutation of the vertex list of the tree. -/
 public theorem decomp_perm (edges : List (V × V)) (t : Tree V) :
     ((decomp edges t).1 ++ (decomp edges t).2.flatMap id).Perm
       (Tree.vertices t) := by
@@ -2993,7 +3062,9 @@ public theorem decomp_perm (edges : List (V × V)) (t : Tree V) :
         (r :: cs.flatMap Tree.vertices)
       exact List.Perm.cons r hlist
 
-/-- The preferred paths of a tree partition its vertex set. -/
+/-- **The preferred paths of a tree rearrange its vertex list.** For every list $E$ of directed
+edges and every rooted ordered tree $t$, the concatenation of the preferred paths of $t$ under
+$E$ is a permutation of the preorder vertex list of $t$. -/
 public theorem perm_treePaths_flatMap (edges : List (V × V)) (t : Tree V) :
     ((treePaths edges t).flatMap id).Perm (Tree.vertices t) := by
   change (((decomp edges t).1 :: (decomp edges t).2).flatMap id).Perm _
@@ -3007,8 +3078,10 @@ private theorem adjacent_node_of_mem {a b r : V} {cs : List (Tree V)}
   rw [adjacent_node]
   exact Or.inr (Or.inr (adjacentList_iff.mpr ⟨c, hc, h⟩))
 
-/-- Every path in the decomposition of a tree is a genuine path of the
-tree: consecutive vertices are joined by a parent-child edge. -/
+/-- **Decomposition paths are paths of the tree.** For every list of preferred edges, in the
+preferred-path decomposition of a tree $T$, the downward preferred path and every other path are
+paths of $T$: any two consecutive vertices are joined by a parent-child edge of $T$, in either
+direction. -/
 public theorem decomp_isChain (edges : List (V × V)) (t : Tree V) :
     (decomp edges t).1.IsChain (fun a b => Adjacent a b t) ∧
       ∀ p ∈ (decomp edges t).2, p.IsChain (fun a b => Adjacent a b t) := by
@@ -3059,7 +3132,11 @@ public theorem decomp_isChain (edges : List (V × V)) (t : Tree V) :
         exact hchainc.imp_of_mem_imp
           (fun a b _ _ hadj => adjacent_node_of_mem hc hadj)
 
-/-- Every preferred path of a tree is a genuine path of the tree. -/
+/-- **Preferred paths of a tree follow tree edges.** Let $t$ be a tree and $E$ any list of pairs
+of vertices, read as preferred (parent, child) edges. For every path $p = (p_0, \dots, p_k)$ in
+the preferred-path decomposition of $t$ under $E$ and every $i < k$, the vertices $p_i$ and
+$p_{i+1}$ are adjacent in $t$, that is, joined by a parent-child edge of $t$ in one direction
+or the other. -/
 public theorem isChain_of_mem_treePaths {edges : List (V × V)} {t : Tree V}
     {p : List V} (hp : p ∈ treePaths edges t) :
     p.IsChain (fun a b => Adjacent a b t) := by
@@ -3069,10 +3146,12 @@ public theorem isChain_of_mem_treePaths {edges : List (V × V)} {t : Tree V}
   · exact (decomp_isChain edges t).1
   · exact (decomp_isChain edges t).2 p hp
 
-/-- The downward path installed by the access edge update: when the edge
-list `E` contains exactly the edges of the root-to-`x` path at vertices of
-that path, the decomposition of the tree has that whole root path as its
-downward preferred path. -/
+/-- **Access edges make the root path the downward preferred path.** Let $T$ be a tree whose
+vertex list is duplicate-free, let $x$ be a vertex of $T$ with root path $p$ (the path from the
+root of $T$ down to $x$), and let $E$ be a list of directed edges such that every consecutive
+pair of $p$, parent first, lies in $E$, and every edge of $E$ whose first vertex lies on $p$ is
+such a consecutive pair. Then the downward preferred path of the preferred-path decomposition of
+$T$ under $E$ is $p$. -/
 public theorem decomp_fst_eq_rootPath {x : V} {E : List (V × V)} :
     ∀ {t : Tree V} {p : List V}, (Tree.vertices t).Nodup →
       rootPath x t = some p →
@@ -3156,12 +3235,13 @@ public theorem decomp_fst_eq_rootPath {x : V} {E : List (V × V)} :
               ih c₀ hc₀ hnodupC hrp' hsub' hmin'
             rw [heq, hextEq, hdown0]
 
-/-- A link-cut tree state: the represented forest, together with the current
-preferred (solid) edges. Each preferred edge is directed from a node to its
-preferred child in the represented forest; the preferred-path decomposition
-`paths` is derived from the edge list as the maximal solid chains in each
-represented tree (`treePaths`). `preferred = []` means every edge is dashed,
-so every vertex is its own singleton path. -/
+/-- **Link-cut tree state.** A state of a link-cut tree over a vertex type $V$ consists of the
+represented forest, a list of rooted ordered trees with vertices in $V$, and a list of preferred
+(solid) edges, each a pair $(u, v)$ of vertices meant as the edge from a node $u$ to its preferred
+child $v$ in the represented forest; the structure itself does not require these pairs to be
+edges of the forest. The preferred-path decomposition is derived from the preferred edges as the
+maximal solid chains in each represented tree. With no preferred edges, every edge is dashed
+and every vertex is its own singleton path. -/
 public structure State (V : Type u) where
   /-- The represented forest. -/
   forest : List (Tree V)
@@ -3172,12 +3252,16 @@ namespace State
 
 variable {s : State V}
 
-/-- `x` is a vertex of the represented forest. -/
+/-- **Vertex of a link-cut tree state.** A vertex $x$ belongs to a link-cut tree state $s$
+when $x$ is a vertex of some tree of the represented forest of $s$. -/
 public def Mem (s : State V) (x : V) : Prop :=
   ∃ t ∈ s.forest, x ∈ Tree.vertices t
 
-/-- Undirected connectivity in the represented forest: some represented tree
-contains both vertices. This is the abstraction of the structure. -/
+/-- **Connectivity in a link-cut tree state.** Two vertices $x$ and $y$ are connected in a
+link-cut tree state $s$ when some tree of the represented forest of $s$ has both $x$ and $y$
+among its vertices.
+
+Connectivity is the abstraction against which the link-cut tree operations are specified. -/
 public def Connected (s : State V) (x y : V) : Prop :=
   ∃ t ∈ s.forest, x ∈ Tree.vertices t ∧ y ∈ Tree.vertices t
 
@@ -3201,19 +3285,22 @@ public theorem Connected.mem_right {x y : V} (h : s.Connected x y) : s.Mem y :=
   h.symm.mem_left
 
 omit [DecidableEq V] in
-/-- Connectivity can equally be read off the Euler tours of the represented
-trees. -/
+/-- **Connectivity via Euler tours.** For a link-cut tree state $s$ and vertices $x$ and $y$,
+$x$ and $y$ are connected in $s$ if and only if some tree of the represented forest of $s$
+contains both $x$ and $y$ in its Euler tour. -/
 public theorem connected_iff_tour {x y : V} :
     s.Connected x y ↔ ∃ t ∈ s.forest, x ∈ Tree.tour t ∧ y ∈ Tree.tour t := by
   simp only [Connected, Tree.mem_tour_iff]
 
-/-- The state invariant bundle used below: the vertex lists of the represented
-trees are collectively duplicate-free (so the trees are vertex-disjoint), and
-the preferred edges are a functional set of represented directed edges: no
-duplicates, every preferred edge is a parent-child edge of some represented
-tree, and each vertex has at most one preferred child. The duplicate-free
-vertex condition also pins down the parent of each vertex, so the maximal
-solid chains (`treePaths`) are genuine disjoint paths. -/
+/-- **Valid link-cut tree states.** A link-cut tree state $s$ is valid when four conditions
+hold: the concatenation of the vertex lists of the trees of its represented forest has no
+duplicates (so the trees are vertex-disjoint); its list of preferred edges has no duplicates;
+every preferred edge $(a, b)$ is a parent-child edge of some tree of the represented forest,
+with $a$ the parent of $b$; and any two preferred edges with the same parent are equal, so each
+vertex has at most one preferred child.
+
+The duplicate-free vertex condition also pins down the parent of each vertex, so the maximal
+chains of preferred edges in each tree are genuine disjoint paths. -/
 public def Valid (s : State V) : Prop :=
   (s.forest.flatMap Tree.vertices).Nodup ∧
     s.preferred.Nodup ∧
@@ -3221,9 +3308,11 @@ public def Valid (s : State V) : Prop :=
     (∀ e₁ ∈ s.preferred, ∀ e₂ ∈ s.preferred, e₁.1 = e₂.1 → e₁ = e₂)
 
 omit [DecidableEq V] in
-/-- A state with no preferred edges is valid exactly when its forest is
-duplicate-free. This is the invariant after every structural operation,
-which resets all edges to dashed. -/
+/-- **Validity of states with no preferred edges.** Let $s$ be a link-cut tree state whose list
+of preferred edges is empty. If the concatenation of the vertex lists of the trees of the
+represented forest of $s$ has no duplicates, then $s$ is valid.
+
+This is the situation after every structural operation, which resets all edges to dashed. -/
 public theorem valid_of_preferred_nil (hpre : s.preferred = [])
     (h : (s.forest.flatMap Tree.vertices).Nodup) : s.Valid := by
   refine ⟨h, ?_, ?_, ?_⟩ <;> simp [hpre]
@@ -3256,12 +3345,15 @@ private theorem tree_eq_of_mem_mem_of_nodup :
         exact hcross v hv₂ v hvf rfl
       · exact ih htail h₁ h₂ hv₁ hv₂
 
-/-- The preferred-path decomposition of a state: in each represented tree,
-the maximal chains of preferred edges (`treePaths`), deepest continuation
-last within each path. Vertices incident to no preferred edge are singleton
-paths. Unlike a single distinguished path, this retains the preferred paths
-of every subtree: only edges incident to the latest accessed root path
-change under `access`. -/
+/-- **Preferred-path decomposition of a link-cut tree state.** For a link-cut tree state $s$, its
+preferred paths are obtained by taking, for each represented tree of $s$ in forest order, the
+preferred paths of that tree under the preferred edges of $s$, and concatenating these lists.
+Within a tree these are its maximal chains of preferred edges when each vertex has at most one
+preferred child, each listed from its shallowest to its deepest vertex; a vertex incident to no
+preferred edge forms a singleton path.
+
+The decomposition keeps the preferred paths of every subtree, not one distinguished path, so an
+access changes only the preferred edges leaving vertices of the accessed root path. -/
 public def paths (s : State V) : List (List V) :=
   s.forest.flatMap (treePaths s.preferred)
 
@@ -3280,9 +3372,10 @@ private theorem perm_paths_flatMap (s : State V) :
     ((paths s).flatMap id).Perm (s.forest.flatMap Tree.vertices) :=
   perm_flatMap_treePaths s.forest
 
-/-- The decomposition partitions the vertex set of the represented forest:
-a vertex lies on some preferred path exactly when it is in the forest. This
-holds for every state, with no validity hypothesis. -/
+/-- **Preferred paths cover exactly the vertices of the forest.** For every link-cut tree state
+$s$ and every vertex $v$, $v$ lies on some path of the preferred-path decomposition of $s$ if
+and only if $v$ is a vertex of some tree of the represented forest of $s$. No validity
+hypothesis on $s$ is needed. -/
 public theorem mem_paths_flatMap {v : V} :
     v ∈ (paths s).flatMap id ↔ v ∈ s.forest.flatMap Tree.vertices := by
   constructor
@@ -3291,14 +3384,19 @@ public theorem mem_paths_flatMap {v : V} :
   · intro hv
     exact (perm_paths_flatMap s).symm.subset hv
 
-/-- The flattened decomposition is duplicate-free: every vertex of a valid
-state lies on exactly one preferred path. With `mem_paths_flatMap`, the
-paths partition the vertex set. -/
+/-- **Preferred paths cover each vertex at most once.** In a valid link-cut tree state, the
+concatenation of all preferred paths of the decomposition has no repeated vertex: no vertex
+occurs twice on one path or on two different paths.
+
+Together with the fact that every vertex of the represented forest lies on some preferred
+path, the preferred paths partition the vertex set. -/
 public theorem nodup_paths_flatMap (hs : s.Valid) :
     ((paths s).flatMap id).Nodup :=
   (perm_paths_flatMap s).nodup_iff.mpr hs.1
 
-/-- Distinct preferred paths of a valid state are vertex-disjoint. -/
+/-- **Preferred paths are pairwise vertex-disjoint.** In a valid link-cut tree state, any two
+preferred paths at different positions of the preferred-path decomposition have no vertex in
+common. -/
 public theorem pairwise_disjoint_paths (hs : s.Valid) :
     (paths s).Pairwise List.Disjoint :=
   (List.nodup_flatMap.mp (nodup_paths_flatMap hs)).2
@@ -3308,10 +3406,12 @@ public theorem nodup_of_mem_paths {p : List V} (hs : s.Valid)
     (hp : p ∈ paths s) : p.Nodup :=
   (List.nodup_flatMap.mp (nodup_paths_flatMap hs)).1 p hp
 
-/-- Every preferred path is a genuine path of the represented forest:
-consecutive vertices are joined by a parent-child edge of one represented
-tree (`isChain_of_mem_treePaths`). This holds for every state, with no
-validity hypothesis. -/
+/-- **Preferred paths of a link-cut tree state follow represented edges.** Let $s$ be a link-cut
+tree state. For every path $p = (p_0, \dots, p_k)$ in the preferred-path decomposition of $s$
+and every $i < k$, some represented tree of $s$ has $p_i$ and $p_{i+1}$ adjacent, that is,
+joined by a parent-child edge in one direction or the other.
+
+This holds for every state, with no validity hypothesis. -/
 public theorem isChain_of_mem_paths {p : List V} (hp : p ∈ paths s) :
     p.IsChain (fun a b => ∃ t ∈ s.forest, Adjacent a b t) := by
   obtain ⟨t, ht, hpt⟩ : ∃ t ∈ s.forest, p ∈ treePaths s.preferred t := by
@@ -3320,16 +3420,18 @@ public theorem isChain_of_mem_paths {p : List V} (hp : p ∈ paths s) :
   exact (isChain_of_mem_treePaths hpt).imp_of_mem_imp
     (fun a b _ _ hadj => ⟨t, ht, hadj⟩)
 
-/-- Make the path from the represented root to `x` preferred, as in the
-textbook `access`. Every edge of the root-to-`x` path becomes solid, the
-previously preferred child edge of each vertex on that path is dropped
-(made dashed), and every preferred edge whose parent endpoint lies off the
-path is retained: this is what keeps off-path preferred paths alive across
-accesses (for example, with root `1`, children `2 → 4` and `3 → 5`,
-`access 5` after `access 4` keeps the preferred path `[2, 4]`, since the
-edge `2`-`4` has parent endpoint off the `1`-`3`-`5` path; see the
-regression tests in `LinkCutTreeTests`). The represented forest is
-unchanged. On a vertex outside the forest this is the identity. -/
+/-- **Access in a link-cut tree.** Let $s$ be a link-cut tree state and $x$ a vertex. If $x$ is a
+vertex of some tree of the represented forest of $s$, let $T$ be the first such tree and let $p$
+be the path in $T$ from its root down to $x$. Accessing $x$ keeps the represented forest and
+replaces the preferred edges by those preferred edges of $s$ whose parent endpoint is not on $p$,
+followed by the edges of $p$, each directed from parent to child. If $x$ is not a vertex of the
+represented forest, accessing $x$ leaves $s$ unchanged.
+
+Thus every edge of the root-to-$x$ path becomes preferred, the previously preferred child edges
+of the vertices on that path are dropped, and preferred edges hanging off the path survive: in
+the tree with root $1$, whose children are $2$ and $3$, where $4$ is a child of $2$ and $5$ a
+child of $3$, accessing $5$ after accessing $4$ keeps the preferred path $[2, 4]$, since the edge
+from $2$ to $4$ has its parent endpoint off the path $1, 3, 5$. -/
 public def access (x : V) (s : State V) : State V :=
   match findTree x s.forest with
   | some t =>
@@ -3346,9 +3448,14 @@ public theorem access_eq_of_findTree_rootPath {x : V} {t : Tree V} {p : List V}
       ⟨s.forest, (s.preferred.filter (fun e => e.1 ∉ p)) ++ pathEdges p⟩ := by
   simp [access, hft, hrp]
 
-/-- An off-path preferred edge survives `access x`: an edge whose parent
-endpoint does not lie on the root-to-`x` path is retained. This is the
-edge-level statement behind retaining off-path preferred paths. -/
+/-- **Access keeps off-path preferred edges.** Let $s$ be a link-cut tree state, $x$ a vertex,
+and $(u, w)$ a preferred edge of $s$, directed from the parent $u$ to the child $w$. Suppose
+that, if some tree of the represented forest of $s$ contains $x$, then $u$ does not lie on the
+path in the first such tree from its root down to the first occurrence of $x$ in preorder. Then
+$(u, w)$ is still a preferred edge after accessing $x$.
+
+This is the edge-level fact behind the persistence of off-path preferred paths across
+accesses. -/
 public theorem mem_preferred_access {x : V} {e : V × V}
     (he : e ∈ s.preferred)
     (h : ∀ t p, findTree x s.forest = some t → rootPath x t = some p →
@@ -3370,7 +3477,11 @@ public theorem mem_preferred_access {x : V} {e : V × V}
           exact List.mem_append_left _
             (List.mem_filter.mpr ⟨he, by simp [h t p hft hrp]⟩)
 
-/-- Every edge of the accessed root path is preferred after `access x`. -/
+/-- **Access makes the root path preferred.** Let $s$ be a link-cut tree state and $x$ a
+vertex, let $t$ be the first tree of the represented forest of $s$ that contains $x$, and let
+$p$ be the path in $t$ from the root down to the first occurrence of $x$ in preorder. Then every
+edge of $p$, taken as the pair (parent, child) of consecutive vertices of $p$, is a preferred
+edge of the state obtained from $s$ by accessing $x$. -/
 public theorem mem_preferred_access_of_mem_pathEdges {x : V} {t : Tree V}
     {p : List V} {e : V × V} (hft : findTree x s.forest = some t)
     (hrp : rootPath x t = some p) (he : e ∈ pathEdges p) :
@@ -3378,7 +3489,9 @@ public theorem mem_preferred_access_of_mem_pathEdges {x : V} {t : Tree V}
   rw [access_eq_of_findTree_rootPath hft hrp]
   exact List.mem_append_right _ he
 
-/-- Access changes only the preferred edges, never the represented forest. -/
+/-- **Access leaves the represented forest unchanged.** For every link-cut tree state $s$ and
+every vertex $x$, accessing $x$ changes only the preferred edges: the represented forest of the
+resulting state equals the represented forest of $s$. -/
 public theorem access_forest (x : V) : (access x s).forest = s.forest := by
   cases hft : findTree x s.forest with
   | none => simp [access, hft]
@@ -3401,12 +3514,13 @@ private theorem findTree_some_of_mem {x : V} (hx : s.Mem x) :
   obtain ⟨t, ht, hxt⟩ := hx
   exact findTree_eq_some_of_exists ⟨t, ht, hxt⟩
 
-/-- After `access x` in a valid state, the root-to-`x` path of the tree
-containing `x` is one of the preferred paths of the decomposition, and
-`x` is its last (deepest) vertex: `p.getLast? = some x`. No auxiliary
-splay tree is modeled, so no claim is made about a splay-tree root. This
-is only the endpoint property of the accessed preferred path. Other
-preferred paths off that root path are retained (`mem_preferred_access`). -/
+/-- **After access, the accessed vertex ends its preferred path.** Let $s$ be a valid link-cut
+tree state and let $x$ be a vertex of its represented forest. Then, after accessing $x$, the
+preferred-path decomposition of the new state contains a path $p$ whose last vertex is $x$, and
+$p$ is the path from the root down to $x$ in some tree of the represented forest of $s$.
+
+Paths are listed from the root downward, so $x$ is the deepest vertex of $p$. No auxiliary splay
+tree is modeled, so this is only the endpoint property of the accessed preferred path. -/
 public theorem access_last {x : V} (hs : s.Valid) (hx : s.Mem x) :
     ∃ p ∈ paths (access x s), p.getLast? = some x ∧
       ∃ t ∈ s.forest, rootPath x t = some p := by
@@ -3453,9 +3567,11 @@ structure is the list-level statement `access_last` (`x` is the last
 vertex of its preferred path).
 -/
 
-/-- Access preserves the state invariant: the new preferred edges are the
-retained off-path edges together with the edges of the accessed root path;
-the two groups have disjoint parent endpoints (off versus on the path), so
+/-- **Access preserves validity.** If a link-cut tree state $s$ is valid, then for every vertex
+$x$ the state obtained from $s$ by accessing $x$ is again valid.
+
+The new preferred edges are the retained off-path edges together with the edges of the accessed
+root path; the two groups have disjoint parent endpoints (off versus on the path), so
 duplicate-freeness and the at-most-one-preferred-child condition carry over. -/
 public theorem Valid.access {x : V} (hs : s.Valid) : (State.access x s).Valid := by
   cases hft : findTree x s.forest with
@@ -3520,11 +3636,13 @@ public theorem Valid.access {x : V} (hs : s.Valid) : (State.access x s).Valid :=
               exact hf3 h3
             · exact eq_of_mem_pathEdges hpNodup h1 h2 hf
 
-/-- Reroot the represented tree containing `x` at `x` (`rerootAt`): the
-edges on the path from the old root to `x` are reversed and every other
-edge is kept, so the undirected represented tree is unchanged. Preferred
-edges are reset (all dashed). On a vertex outside the forest this only
-resets the preferred edges. -/
+/-- **Making a vertex the root in a link-cut tree state.** Given a vertex $x$ and a state $s$,
+the state $\operatorname{makeRoot}(x, s)$ has no preferred edges (all edges dashed), and its
+forest is defined as follows. If $x$ is not a vertex of the forest, the forest is unchanged.
+Otherwise the first represented tree containing $x$ is rerooted at $x$: the edges on the path
+from its old root to $x$ are reversed, and when the tree has distinct vertices every undirected
+edge is kept. The rerooted tree replaces every tree containing $x$ and is placed at the end of
+the forest. -/
 public def makeRoot (x : V) (s : State V) : State V :=
   { s with
     preferred := []
@@ -3544,8 +3662,11 @@ public theorem makeRoot_forest_eq {x : V} {t t' : Tree V}
     (makeRoot x s).forest = removeTree x s.forest ++ [t'] := by
   simp [makeRoot, hft, hreroot]
 
-/-- After `makeRoot x`, some represented tree is rooted at `x` and has `x`
-as a vertex: the rerooted old tree of `x`. -/
+/-- **Making a vertex the root installs a tree rooted there.** Let $s$ be a link-cut tree state
+and $x$ a vertex of its represented forest. After making $x$ the root, some represented tree
+has root $x$ and contains $x$ as a vertex.
+
+That tree is the rerooted old tree of $x$. -/
 public theorem makeRoot_root {x : V} (hx : s.Mem x) :
     ∃ t ∈ (makeRoot x s).forest, t.root = x ∧ x ∈ Tree.vertices t := by
   obtain ⟨t, hft, -, hxt⟩ := findTree_some_of_mem hx
@@ -3555,10 +3676,12 @@ public theorem makeRoot_root {x : V} (hx : s.Mem x) :
   exact ⟨t', by rw [hfor]; exact List.mem_append_right _ (by simp), ht'root,
     (mem_vertices_rerootAt ht'eq).mpr hxt⟩
 
-/-- `makeRoot x` keeps `x` connected to exactly the vertices it was
-connected to: rerooting spans the same vertex set as the old tree (and,
-by `rerootAt`, the same undirected edges). Vertex disjointness is the
-side condition that pins down which tree that is. -/
+/-- **Making a vertex the root keeps its connections.** Let $s$ be a valid link-cut tree state
+and let $x$ and $y$ be connected in $s$. Then $x$ and $y$ are still connected in the state
+obtained from $s$ by making $x$ the root of its represented tree.
+
+Rerooting spans the same vertex set as the old tree and keeps every undirected edge; vertex
+disjointness of the represented trees pins down which tree contains $x$. -/
 public theorem connected_makeRoot {x y : V} (hs : s.Valid)
     (h : s.Connected x y) : (makeRoot x s).Connected x y := by
   obtain ⟨t₀, ht₀, hx₀, hy₀⟩ := h
@@ -3575,8 +3698,11 @@ public theorem connected_makeRoot {x y : V} (hs : s.Valid)
   exact ⟨t', hmem, (mem_vertices_rerootAt ht'eq).mpr hxt,
     (mem_vertices_rerootAt ht'eq).mpr hyt⟩
 
-/-- Rerooting preserves the state invariant: the new forest has the same
-flat vertex list as the old one up to permutation (the rerooted tree
+/-- **Rerooting a link-cut tree state preserves validity.** For every valid link-cut tree state
+$s$ and every vertex $x$, the state obtained from $s$ by making $x$ the root of its represented
+tree is valid.
+
+The new forest has the same flat vertex list as the old one up to permutation (the rerooted tree
 replaces its original), and the preferred edges are reset. -/
 public theorem Valid.makeRoot {x : V} (hs : s.Valid) :
     (State.makeRoot x s).Valid := by
@@ -3609,13 +3735,15 @@ public theorem Valid.makeRoot {x : V} (hs : s.Valid) :
           exact hperm.nodup_iff.mpr hs.1
 
 
-/-- Link the represented trees of `x` and `y` with the new edge `x`-`y`,
-as in the textbook operation: the tree of `x` is first rerooted at `x`
-(`rerootAt`, so `x` becomes its root with every old edge kept) and then
-grafted as a new child subtree of `y` (`graftAt`), adding exactly the edge
-from `y` to `x`. Linking two vertices of the same tree, or a vertex
-outside the forest, leaves the forest unchanged. Preferred edges are
-reset. -/
+/-- **Linking two trees of a link-cut tree state.** Given vertices $x$ and $y$ and a state $s$,
+the state $\operatorname{link}(x, y, s)$ has no preferred edges (all edges dashed), and its
+forest is defined as follows. If $x$ or $y$ is not a vertex of the forest, the forest is
+unchanged. Otherwise let $t_x$ and $t_y$ be the first represented trees containing $x$ and $y$.
+If $x$ is a vertex of $t_y$, the forest is unchanged. Otherwise $t_x$ is rerooted at $x$ (the
+edges on its old root-to-$x$ path are reversed, so $x$ becomes its root), the result is
+attached as a new last child subtree of the first node labelled $y$ in $t_y$, which adds the
+edge from $y$ to $x$, and this joined tree replaces every tree containing $x$ or $y$, placed at
+the end of the forest. -/
 public def link (x y : V) (s : State V) : State V :=
   { s with
     preferred := []
@@ -3644,8 +3772,10 @@ public theorem link_forest_eq {x y : V} {tx ty tx' tj : Tree V}
     (link x y s).forest = removeTree x (removeTree y s.forest) ++ [tj] := by
   simp [link, hftx, hfty, hxy, hreroot, hgraft]
 
-/-- A link connects its endpoints: after `link x y`, `x` and `y` lie in one
-represented tree. No invariant on the state is needed. -/
+/-- **Linking connects the endpoints.** Let $s$ be a link-cut tree state and let $x$ and $y$ be
+vertices of its represented forest. Then in the state obtained from $s$ by linking $x$ to $y$,
+the vertices $x$ and $y$ are connected, that is, some represented tree contains both. No
+invariant on the state is needed. -/
 public theorem connected_link {x y : V} (hx : s.Mem x) (hy : s.Mem y) :
     (link x y s).Connected x y := by
   obtain ⟨tx, hftx, -, hxtx⟩ := findTree_some_of_mem hx
@@ -3667,9 +3797,11 @@ public theorem connected_link {x y : V} (hx : s.Mem x) (hy : s.Mem y) :
     exact ⟨tj, htjfor, (mem_vertices_graftAt htj).mpr (Or.inr hxtx'),
       (mem_vertices_graftAt htj).mpr (Or.inl hyty)⟩
 
-/-- Linking preserves the state invariant: the joined tree has the union
-of the two old vertex lists up to permutation (rerooting and grafting both
-permute), the rest of the forest is untouched, and the preferred path is
+/-- **Linking in a link-cut tree preserves validity.** For every valid link-cut tree state $s$
+and all vertices $x$ and $y$, the state obtained from $s$ by linking $x$ and $y$ is valid.
+
+The joined tree has the union of the two old vertex lists up to permutation (rerooting and
+grafting both permute), the rest of the forest is untouched, and the preferred edges are
 reset. -/
 public theorem Valid.link {x y : V} (hs : s.Valid) :
     (State.link x y s).Valid := by
@@ -3760,12 +3892,13 @@ public theorem Valid.link {x y : V} (hs : s.Valid) :
                     exact hperm.nodup_iff.mpr hs.1
 
 
-/-- Detach the subtree rooted at `x` from its represented tree (the rooted
-`cut`): the result contains the detached subtree itself, rooted at `x`,
-and the remainder of the old tree with that subtree pruned off
-(`pruneAt`), keeping every remaining edge. When `x` is the root of its
-tree the remainder is empty and only the detached tree remains. Preferred
-edges are reset. -/
+/-- **Cutting off the subtree at a vertex.** Cutting at a vertex $x$ resets the preferred edges
+of the state to the empty list and changes its forest as follows. If no tree of the forest
+contains $x$, the forest is unchanged. Otherwise let $T$ be the first tree containing $x$ and
+$S$ the first subtree of $T$ rooted at $x$ in preorder. Every tree containing $x$ is removed from
+the forest, and two trees are appended at the end: first the remainder of $T$ with every subtree
+rooted at $x$ pruned off, then $S$. When $x$ is the root of $T$ nothing remains, and only $S$ is
+appended. -/
 public def cut (x : V) (s : State V) : State V :=
   { s with
     preferred := []
@@ -3795,10 +3928,13 @@ public theorem cut_forest_eq_none {x : V} {t sub : Tree V}
     (cut x s).forest = removeTree x s.forest ++ [sub] := by
   simp [cut, hft, hsub, hprune]
 
-/-- A cut separates: after `cut x`, `x` is no longer connected to any
-vertex of its old tree that lies outside the subtree rooted at `x`. No
-invariant on the state is needed: `x` cannot occur in the pruned
-remainder (`mem_vertices_pruneAt`). -/
+/-- **A cut disconnects a vertex from everything outside its subtree.** Let $s$ be a
+link-cut tree state, let $t$ be the first tree of its represented forest containing the
+vertex $x$, and let $u$ be the first subtree of $t$ in preorder whose root is $x$. After
+cutting $s$ at $x$, the vertex $x$ is not connected to any vertex $y$ that is not a vertex
+of $u$.
+
+No invariant on the state is needed. -/
 public theorem not_connected_cut {x y : V} {t sub : Tree V}
     (hft : findTree x s.forest = some t) (hsub : findSubtree x t = some sub)
     (hy : y ∉ Tree.vertices sub) :
@@ -3828,11 +3964,11 @@ public theorem not_connected_cut {x y : V} {t sub : Tree V}
       · rw [hs₀] at hys₀
         exact hy hys₀
 
-/-- After `cut x`, the detached subtree occurs in the forest with root
-`x`, so `x` itself remains a vertex, as does every vertex of its old tree
-on the other side of the cut. The duplicate-free hypothesis is the
-validity side condition under which pruning partitions the vertex set
-(`mem_vertices_pruneAt_of_mem_not_mem`). -/
+/-- **Both sides of a cut remain in the forest.** Let $s$ be a link-cut tree state, let $x$ and
+$y$ be vertices, and let $t$ be the first tree of the represented forest of $s$ that contains
+$x$. Suppose no vertex occurs twice in $t$, and let $T_x$ be the subtree of $t$ rooted at $x$.
+If $y$ is a vertex of $t$ but not of $T_x$, then after cutting $s$ at $x$ both $x$ and $y$ are
+vertices of the represented forest. -/
 public theorem mem_cut {x y : V} {t sub : Tree V}
     (hnodup : (Tree.vertices t).Nodup)
     (hft : findTree x s.forest = some t) (hsub : findSubtree x t = some sub)
@@ -3876,10 +4012,11 @@ public theorem mem_cut {x y : V} {t sub : Tree V}
         mem_vertices_pruneAt_of_mem_not_mem hnodup hsub hprune hy hy'
       exact ⟨⟨sub, hsubmem, hxsub⟩, ⟨rem, hremmem, hyrem⟩⟩
 
-/-- Cutting preserves the state invariant: pruning partitions the cut
-tree's vertex list into remainder plus detached subtree up to permutation
-(`perm_vertices_pruneAt`), the rest of the forest is untouched, and the
-preferred edges are reset. -/
+/-- **Cutting preserves validity.** If $s$ is a valid link-cut tree state, then for every vertex
+$x$ the state obtained from $s$ by cutting off the subtree rooted at $x$ is again valid.
+
+Pruning splits the vertices of the cut tree into those of the remainder and those of the
+detached subtree, the rest of the forest is untouched, and the preferred edges are reset. -/
 public theorem Valid.cut {x : V} (hs : s.Valid) : (State.cut x s).Valid := by
   refine valid_of_preferred_nil (cut_preferred x) ?_
   cases hft : findTree x s.forest with
@@ -3943,24 +4080,19 @@ public theorem Valid.cut {x : V} (hs : s.Valid) : (State.cut x s).Valid := by
               exact hperm.nodup_iff.mpr hs.1
 
 
-/-- Undirected edge cut, the textbook composite: reroot at `x`
-(`makeRoot x`, which reverses only the root-to-`x` path and keeps every
-undirected edge), then detach the subtree rooted at `y`. When `x` and `y`
-are joined by an edge of a valid represented tree, the rerooting makes
-`y` the root of a child subtree of `x`, so the rooted `cut y` splits the
-component into the two sides of the edge `x`-`y`
-(`not_connected_cutEdge`), and every other edge is retained
-(`adjacent_cutEdge`); the branched-tree tests in `LinkCutTreeTests`
-exhibit this on concrete forests.
+/-- **Cutting an edge of a link-cut tree.** For vertices $x$ and $y$ and a link-cut tree state
+$s$, cutting the edge between $x$ and $y$ works as follows. If $x$ and $y$ are adjacent in some
+tree of the represented forest of $s$, the result is obtained from $s$ by first making $x$ the
+root of its represented tree and then cutting off the subtree rooted at $y$. Otherwise the
+represented forest is left unchanged. In both cases the list of preferred edges becomes empty.
 
-The adjacency precondition is checked, not assumed: the composite runs
-only when some represented tree has `x` and `y` adjacent
-(`adjacentB_eq_true_iff`). Without that guard the bare composite would
-cut at `y` regardless of `x` (for instance `cutEdge 99 2` on the chain
-`1 → 2` would detach `2` although there is no `99`-`2` edge). When no
-represented tree has the edge, `cutEdge x y` leaves the forest unchanged
-(`cutEdge_eq_of_not_adjacent`); as with the other structural operations,
-the preferred edges are reset either way. -/
+When $x$ and $y$ are joined by an edge of a valid state, making $x$ the root turns $y$ into the
+root of a child subtree of $x$, so the cut separates the two sides of the edge between $x$ and
+$y$ and keeps every other edge.
+
+The adjacency test is necessary: without it the composite would cut at $y$ regardless of $x$.
+For instance, on the chain $1 \to 2$ it would detach $2$ when asked to cut the edge between
+$99$ and $2$, although there is no such edge. -/
 public def cutEdge (x y : V) (s : State V) : State V :=
   if s.forest.any (adjacentB x y) then cut y (makeRoot x s)
   else { s with preferred := [] }
@@ -3982,17 +4114,21 @@ private theorem forest_any_adjacentB {x y : V} :
   · rintro ⟨t, ht, h⟩
     exact ⟨t, ht, adjacentB_eq_true_iff.mpr h⟩
 
-/-- On an adjacent pair, `cutEdge` is the textbook composite `cut y`
-after `makeRoot x`. -/
+/-- **Edge cut on an adjacent pair.** Let $s$ be a link-cut tree state and let $x$ and $y$ be
+adjacent in some tree of the represented forest of $s$. Then cutting the edge between $x$ and
+$y$ in $s$ gives the same state as first making $x$ the root of its represented tree and then
+cutting off the subtree rooted at $y$. -/
 public theorem cutEdge_eq_cut_makeRoot_of_adjacent {x y : V}
     (hadj : ∃ t ∈ s.forest, Adjacent x y t) :
     cutEdge x y s = cut y (makeRoot x s) := by
   unfold cutEdge
   rw [ite_eq_left (forest_any_adjacentB.mpr hadj)]
 
-/-- On a non-adjacent pair, `cutEdge` does not touch the forest: there is
-no `x`-`y` edge to remove, and in particular no other edge at `y` is cut.
-Only the preferred edges are reset, as for every structural operation. -/
+/-- **Edge cut on a non-adjacent pair.** Let $s$ be a link-cut tree state and let $x$ and $y$ be
+adjacent in no tree of the represented forest of $s$. Then cutting the edge between $x$ and $y$
+in $s$ leaves the represented forest unchanged and makes the list of preferred edges empty.
+
+In particular, no other edge at $y$ is cut. -/
 public theorem cutEdge_eq_of_not_adjacent {x y : V}
     (hadj : ¬ ∃ t ∈ s.forest, Adjacent x y t) :
     cutEdge x y s = { s with preferred := [] } := by
@@ -4001,9 +4137,12 @@ public theorem cutEdge_eq_of_not_adjacent {x y : V}
   unfold cutEdge
   rw [ite_eq_right hfalse]
 
-/-- Edge cutting preserves the state invariant: on an adjacent pair it is
-the composite of `makeRoot` and `cut`, and otherwise it only resets the
-preferred path. -/
+/-- **Edge cutting preserves validity.** If $s$ is a valid link-cut tree state, then for all
+vertices $x$ and $y$ the state obtained from $s$ by cutting the edge between $x$ and $y$ is
+again valid.
+
+On an adjacent pair the edge cut makes $x$ the root of its tree and then cuts off the subtree
+rooted at $y$; otherwise it only resets the preferred edges. -/
 public theorem Valid.cutEdge {x y : V} (hs : s.Valid) :
     (State.cutEdge x y s).Valid := by
   unfold State.cutEdge
@@ -4034,11 +4173,10 @@ private theorem exists_child_root_eq_of_adjacent_root {x y : V} {t : Tree V}
         rw [hr] at hnot
         exact hnot (List.mem_flatMap.mpr ⟨c, hc, hadj.mem_left⟩)
 
-/-- An edge cut separates its endpoints: in a valid state, after
-`cutEdge x y` on an adjacent pair, `x` and `y` lie in different
-represented trees. Rerooting at `x` keeps the edge (`adjacent_rerootAt`)
-and makes the subtree at `y` root-free of `x`, so the rooted separation
-theorem `not_connected_cut` applies. -/
+/-- **Cutting an edge separates its endpoints.** Let $s$ be a valid link-cut tree state and
+let $x$ and $y$ be adjacent in some tree of the represented forest of $s$. After the edge
+cut of $x$ and $y$ in $s$, the vertices $x$ and $y$ are not connected: no represented tree
+contains both. -/
 public theorem not_connected_cutEdge {x y : V} (hs : s.Valid)
     (hadj : ∃ t ∈ s.forest, Adjacent x y t) :
     ¬ (cutEdge x y s).Connected x y := by
@@ -4079,14 +4217,15 @@ public theorem not_connected_cutEdge {x y : V} (hs : s.Valid)
   intro hcon
   exact hnot hcon.symm
 
-/-- An edge cut retains every other edge: in a valid state, after
-`cutEdge x y` on an adjacent pair, every represented edge other than
-`x`-`y` itself is still an edge of some represented tree. Edges of other
-trees pass through untouched; edges of the cut tree survive the
-rerooting (`adjacent_rerootAt`) and then lie on one side of the prune,
-where they are kept by `adjacent_pruneAt_of_mem_mem` (remainder side) or
-`adjacent_findSubtree_of_mem_mem` (detached side); the only edge
-crossing the prune is `x`-`y` (`adjacent_node_crossing`). -/
+/-- **An edge cut keeps every other edge.** Let $s$ be a valid link-cut tree state and let $x$ and
+$y$ be adjacent in some tree of its represented forest. If $a$ and $b$ are adjacent in some tree
+of the represented forest of $s$, and neither $a = x$ and $b = y$ nor $a = y$ and $b = x$, then
+$a$ and $b$ are adjacent in some tree of the represented forest obtained from $s$ by cutting the
+edge between $x$ and $y$.
+
+Edges of other trees pass through untouched; edges of the cut tree survive the rerooting at $x$
+and then lie on one side of the prune at $y$, and the only edge crossing the prune is the edge
+between $x$ and $y$. -/
 public theorem adjacent_cutEdge {x y a b : V} (hs : s.Valid)
     (hadj : ∃ t ∈ s.forest, Adjacent x y t)
     (hab : ∃ t ∈ s.forest, Adjacent a b t)

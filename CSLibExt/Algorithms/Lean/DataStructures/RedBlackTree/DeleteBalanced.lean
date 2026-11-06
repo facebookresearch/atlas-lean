@@ -64,52 +64,74 @@ namespace Cslib.Algorithms.Lean
 namespace RedBlackTree
 namespace DeleteBalanced
 
-/-- Root colors of a `BBTree`: the colors of the parent module plus a
-double-black color counting as two black nodes. -/
+/-- **Extended root colors.** An extended color is one of three values: red, black or double
+black.
+
+Double black marks the root of a tree after a deletion and counts as two black nodes in its black
+height. -/
 public inductive BColor where
   | red
   | black
   | doubleBlack
   deriving DecidableEq
 
-/-- A red-black tree whose root may be double black. The `.nodeBB` case is a
-double-black node; its children are genuine trees of the parent module, so a
-double black occurs only at the root. -/
+/-- **Trees with a possibly double-black root.** A tree with a possibly double-black root over a
+type $\alpha$ is one of the following: a genuine red-black tree over $\alpha$; the double-black
+empty tree; or a double-black node consisting of a left subtree, a key in $\alpha$ and a right
+subtree, where both subtrees are genuine red-black trees. Hence a double black can occur only at
+the root. -/
 public inductive BBTree (α : Type u) where
   | regular (tree : Tree α)
   | emptyBB
   | nodeBB (left : Tree α) (key : α) (right : Tree α)
 
-/-- The inorder traversal of a `BBTree`, ignoring the double-black mark. -/
+/-- **Inorder traversal of a possibly double-black tree.** The inorder traversal of a red-black
+tree whose root may be double black ignores the double-black mark: a genuine tree gives its
+inorder traversal, the double-black empty tree gives the empty list, and a double-black node with
+left child $l$, key $k$ and right child $r$ gives the inorder traversal of $l$, followed by $k$,
+followed by the inorder traversal of $r$. -/
 public def inorderBB {α : Type u} : BBTree α → List α
   | .regular tree => inorder tree
   | .emptyBB => []
   | .nodeBB left key right => inorder left ++ key :: inorder right
 
-/-- The black height of a `BBTree`: a double-black root counts as two black
-nodes, so `bhBB` of a deletion result equals `blackHeight` of the original
-tree. -/
+/-- **Black height of a possibly double-black tree.** The black height of a genuine red-black tree
+is its usual black height. The double-black empty tree has black height $2$, and a double-black
+node with left subtree $L$ has black height $h(L) + 2$, where $h(L)$ is the usual black height of
+$L$. Thus a double-black root counts as two black nodes, where the usual black height counts the
+empty tree as one.
+
+For an ordered, balanced red-black tree satisfying the red invariant, deleting any key by the
+double-black descent, before the root is blackened, yields a tree whose black height in this sense
+equals the black height of the original tree. -/
 public def bhBB {α : Type u} : BBTree α → Nat
   | .regular tree => blackHeight tree
   | .emptyBB => 2
   | .nodeBB left _ _ => blackHeight left + 2
 
-/-- Black-height balance for a `BBTree`: the parent module's `Balanced` for
-a genuine tree, and balance of the two children for a double-black node. -/
+/-- **Black-height balance of a possibly double-black tree.** A tree whose root may be double
+black is balanced when it is a genuine red-black tree that is balanced, when it is the
+double-black empty tree, or when it is a double-black node whose left and right subtrees are both
+balanced and have the same black height. -/
 public def BalancedBB {α : Type u} : BBTree α → Prop
   | .regular tree => Balanced tree
   | .emptyBB => True
   | .nodeBB left _ right =>
       Balanced left ∧ Balanced right ∧ blackHeight left = blackHeight right
 
-/-- The red invariant for a `BBTree`: the parent module's `RedOk` for a
-genuine tree, and `RedOk` of both children for a double-black node. -/
+/-- **Red invariant for trees with a possibly double-black root.** A tree whose root may be
+double black satisfies the red invariant in the following cases: a genuine red-black tree
+satisfies it when it satisfies the usual red invariant (no red node has a red child); the
+double-black empty tree always satisfies it; and a double-black node with left subtree $l$ and
+right subtree $r$ satisfies it when both $l$ and $r$ satisfy the usual red invariant. -/
 public def RedOkBB {α : Type u} : BBTree α → Prop
   | .regular tree => RedOk tree
   | .emptyBB => True
   | .nodeBB left _ right => RedOk left ∧ RedOk right
 
-/-- The extended color of the root of a `BBTree`. -/
+/-- **Extended root color.** The extended color of a tree whose root may be double black is the
+color of its root, red or black, when it is a genuine red-black tree, where the empty tree counts
+as black; it is double black for the double-black empty tree and for every double-black node. -/
 public def colorBB {α : Type u} : BBTree α → BColor
   | .regular tree =>
       match colorOf tree with
@@ -118,28 +140,38 @@ public def colorBB {α : Type u} : BBTree α → BColor
   | .emptyBB => .doubleBlack
   | .nodeBB _ _ _ => .doubleBlack
 
-/-- Add one black node to the root of a genuine tree: the empty tree becomes
-double-black empty, a red root becomes black, and a black root becomes
-double black. -/
+/-- **Adding a black to the root.** Add one black to the root of a red-black tree, producing a
+tree whose root may be double black: the empty tree becomes the double-black empty tree, a red
+root becomes black, and a black root becomes double black. -/
 public def incrBlack {α : Type u} : Tree α → BBTree α
   | .empty => .emptyBB
   | .node .red left key right => .regular (.node .black left key right)
   | .node .black left key right => .nodeBB left key right
 
-/-- Recolor the root of a genuine tree black. -/
+/-- **Recoloring the root black.** For a red-black tree $t$, this is the tree obtained from $t$
+by coloring its root black: the empty tree stays empty, and a node with left subtree $l$, key
+$k$ and right subtree $r$, of either color, becomes the black node with left subtree $l$, key
+$k$ and right subtree $r$. -/
 public def rootBlack {α : Type u} : Tree α → Tree α
   | .empty => .empty
   | .node _ left key right => .node .black left key right
 
-/-- Absorb a double black at the root and recolor the root black, producing
-a genuine tree. This touches only the root. -/
+/-- **Absorbing a double-black root.** Blackening sends a tree whose root may be double black to
+a genuine red-black tree by changing only its root: a genuine tree has its root recolored black
+(the empty tree stays empty), the double-black empty tree becomes the empty tree, and a
+double-black node becomes the black node with the same subtrees and key. -/
 public def blacken {α : Type u} : BBTree α → Tree α
   | .regular tree => rootBlack tree
   | .emptyBB => .empty
   | .nodeBB left key right => .node .black left key right
 
-/-- The leftmost key of a tree, if any: its minimum under the search-tree
-invariant. -/
+/-- **Leftmost key of a red-black tree.** For a red-black tree $t$ over a type $\alpha$, the
+leftmost key of $t$ is either a key in $\alpha$ or undefined. It is undefined when $t$ is empty.
+When $t$ is a node, of either color, with left subtree $l$ and key $k$, it is the leftmost key of
+$l$ if that is defined, and $k$ otherwise. Hence the leftmost key is defined exactly when $t$ is
+nonempty.
+
+Under the search-tree invariant the leftmost key is the minimum key of the tree. -/
 def minKey {α : Type u} : Tree α → Option α
   | .empty => none
   | .node _ left key _ =>
@@ -147,15 +179,25 @@ def minKey {α : Type u} : Tree α → Option α
       | some s => some s
       | none => some key
 
-/-- Repair a black-height deficit in the left child. Here `left` is the
-deficient subtree with its double black already absorbed, so
-`blackHeight left + 1 = blackHeight right`; `color` and `key` are the parent
-color and key. The cases, in order: a black sibling with a red far (right)
-nephew (single rotation), a black sibling with a red near (left) nephew
-(double rotation), a black sibling with two black nephews (redden the
-sibling and bubble the double black into the parent), and a red sibling
-(rotate it up and solve the black-sibling problem under the resulting red
-parent; the three subcases mirror the black-sibling cases). -/
+/-- **Left repair after double-black deletion.** Write $\mathrm{R}$ and $\mathrm{B}$ for red and
+black, and $N(c, T, y, T')$ for the node of color $c$ with left subtree $T$, key $y$ and right
+subtree $T'$. Given a color $c$, a tree $D$, a key $k$ and a tree $S$, the left repair returns a
+tree whose root may be double black, by the first case that applies. If
+$S = N(\mathrm{B}, T_1, y, N(\mathrm{R}, T_2, z, T_3))$ or, failing that,
+$S = N(\mathrm{B}, N(\mathrm{R}, T_1, y, T_2), z, T_3)$, it returns
+$N(c, N(\mathrm{B}, D, k, T_1), y, N(\mathrm{B}, T_2, z, T_3))$. Otherwise, if
+$S = N(\mathrm{B}, T_1, y, T_2)$, it returns $N(\mathrm{B}, D, k, N(\mathrm{R}, T_1, y, T_2))$ when
+$c$ is red, and the double-black node with left child $D$, key $k$ and right child
+$N(\mathrm{R}, T_1, y, T_2)$ when $c$ is black. In the next three cases $c$ is not used. If
+$S = N(\mathrm{R}, N(\mathrm{B}, T_1, y, N(\mathrm{R}, T_2, z, T_3)), w, T_4)$ or, failing that,
+$S = N(\mathrm{R}, N(\mathrm{B}, N(\mathrm{R}, T_1, y, T_2), z, T_3), w, T_4)$, it returns
+$N(\mathrm{B}, N(\mathrm{R}, N(\mathrm{B}, D, k, T_1), y, N(\mathrm{B}, T_2, z, T_3)), w, T_4)$.
+Otherwise, if $S = N(\mathrm{R}, N(\mathrm{B}, T_1, y, T_2), w, T_3)$, it returns
+$N(\mathrm{B}, N(\mathrm{B}, D, k, N(\mathrm{R}, T_1, y, T_2)), w, T_3)$. In every remaining case
+it returns $N(c, D, k, S)$.
+
+The repair is meant for a deficient left subtree $D$ whose double black has been absorbed, so
+that $D$ has one black node fewer than its sibling $S$ on every root-to-leaf path. -/
 def fixLeft {α : Type u} : Color → Tree α → α → Tree α → BBTree α
   | color, left, key, .node .black rl rk (.node .red rrl rrk rrr) =>
       .regular (.node color (.node .black left key rl) rk
@@ -180,9 +222,26 @@ def fixLeft {α : Type u} : Color → Tree α → α → Tree α → BBTree α
         (.node .black left key (.node .red rll rlk rlr)) rk rr)
   | color, left, key, right => .regular (.node color left key right)
 
-/-- Repair a black-height deficit in the right child; the mirror image of
-`fixLeft`. Here `right` is the deficient subtree with its double black
-absorbed, so `blackHeight right + 1 = blackHeight left`. -/
+/-- **Right repair after double-black deletion.** Write $\mathrm{R}$ and $\mathrm{B}$ for red and
+black, and $N(c, T, y, T')$ for the node of color $c$ with left subtree $T$, key $y$ and right
+subtree $T'$. Given a color $c$, a tree $S$, a key $k$ and a tree $D$, the right repair returns a
+tree whose root may be double black, by the first case that applies. If
+$S = N(\mathrm{B}, N(\mathrm{R}, T_1, y, T_2), z, T_3)$ or, failing that,
+$S = N(\mathrm{B}, T_1, y, N(\mathrm{R}, T_2, z, T_3))$, it returns
+$N(c, N(\mathrm{B}, T_1, y, T_2), z, N(\mathrm{B}, T_3, k, D))$. Otherwise, if
+$S = N(\mathrm{B}, T_1, y, T_2)$, it returns $N(\mathrm{B}, N(\mathrm{R}, T_1, y, T_2), k, D)$ when
+$c$ is red, and the double-black node with left child $N(\mathrm{R}, T_1, y, T_2)$, key $k$ and
+right child $D$ when $c$ is black. In the next three cases $c$ is not used. If
+$S = N(\mathrm{R}, T_1, y, N(\mathrm{B}, N(\mathrm{R}, T_2, z, T_3), w, T_4))$ or, failing that,
+$S = N(\mathrm{R}, T_1, y, N(\mathrm{B}, T_2, z, N(\mathrm{R}, T_3, w, T_4)))$, it returns
+$N(\mathrm{B}, T_1, y, N(\mathrm{R}, N(\mathrm{B}, T_2, z, T_3), w, N(\mathrm{B}, T_4, k, D)))$.
+Otherwise, if $S = N(\mathrm{R}, T_1, y, N(\mathrm{B}, T_2, z, T_3))$, it returns
+$N(\mathrm{B}, T_1, y, N(\mathrm{B}, N(\mathrm{R}, T_2, z, T_3), k, D))$. In every remaining case
+it returns $N(c, S, k, D)$.
+
+The repair is the mirror image of the left repair, meant for a deficient right subtree $D$ whose
+double black has been absorbed, so that $D$ has one black node fewer than its sibling $S$ on
+every root-to-leaf path. -/
 def fixRight {α : Type u} : Color → Tree α → α → Tree α → BBTree α
   | color, .node .black (.node .red lrl lrk lrr) lk lr, key, right =>
       .regular (.node color (.node .black lrl lrk lrr) lk
@@ -205,9 +264,13 @@ def fixRight {α : Type u} : Color → Tree α → α → Tree α → BBTree α
         (.node .black (.node .red ml mk mr) key right))
   | color, left, key, right => .regular (.node color left key right)
 
-/-- Reassemble a node whose left subtree was deleted from: if the result is
-genuine, rebuild the node; if it is double black, repair the deficit against
-the right sibling with `fixLeft`. -/
+/-- **Rebalancing after deletion from the left subtree.** Let $c$ be a color, $L$ a tree whose
+root may be double black, $k$ a key and $R$ a red-black tree. If $L$ is a genuine red-black tree,
+the result is the genuine node with color $c$, left subtree $L$, key $k$ and right subtree $R$.
+Otherwise the double black of $L$ is absorbed first: a double-black empty tree becomes the empty
+tree, and a double-black node becomes the black node with the same children and key. The result is
+then the left-deficit repair (Fix Left) applied to the color $c$, the absorbed tree, the key $k$
+and the sibling $R$; it may again have a double-black root. -/
 def balLeft {α : Type u} (color : Color) (left : BBTree α) (key : α)
     (right : Tree α) : BBTree α :=
   match left with
@@ -215,8 +278,13 @@ def balLeft {α : Type u} (color : Color) (left : BBTree α) (key : α)
   | .emptyBB => fixLeft color .empty key right
   | .nodeBB l k r => fixLeft color (.node .black l k r) key right
 
-/-- Reassemble a node whose right subtree was deleted from; the mirror image
-of `balLeft`. -/
+/-- **Rebalancing after deletion from the right subtree.** Let $c$ be a color, $L$ a red-black
+tree, $k$ a key and $R$ a tree whose root may be double black. If $R$ is a genuine red-black
+tree, the result is the genuine node with color $c$, left subtree $L$, key $k$ and right subtree
+$R$. Otherwise the double black of $R$ is absorbed first: a double-black empty tree becomes the
+empty tree, and a double-black node becomes the black node with the same children and key. The
+result is then the right-deficit repair (Fix Right) applied to the color $c$, the sibling $L$, the
+key $k$ and the absorbed tree; it may again have a double-black root. -/
 def balRight {α : Type u} (color : Color) (left : Tree α) (key : α)
     (right : BBTree α) : BBTree α :=
   match right with
@@ -224,9 +292,18 @@ def balRight {α : Type u} (color : Color) (left : Tree α) (key : α)
   | .emptyBB => fixRight color left key .empty
   | .nodeBB l k r => fixRight color left key (.node .black l k r)
 
-/-- Delete a key from a genuine tree, returning a tree whose root may be
-double black. A node with two children is deleted by promoting its
-successor, the minimum key of its right subtree. -/
+/-- **Double-black deletion.** For a key $x$ of a linearly ordered type, deleting $x$ from a
+red-black tree returns a tree whose root may be double black, by recursion on the tree. The
+empty tree gives the empty tree. At a node of color $c$ with left subtree $l$, key $k$ and right
+subtree $r$: if $x < k$, the result is the left reassembly of color $c$, the deletion of $x$
+from $l$, key $k$ and $r$; if $k < x$, it is the right reassembly of color $c$, $l$, key $k$ and
+the deletion of $x$ from $r$. A reassembly rebuilds the node when the recursive result is a
+genuine tree, and otherwise repairs the double-black child against its sibling. If $x = k$ and
+$l$ is empty, the result is $r$ when $c$ is red and $r$ with one black added at its root when
+$c$ is black; otherwise, if $r$ is empty, the same with $l$ in place of $r$. If $x = k$ and both
+subtrees are nonempty, let $s$ be the leftmost key of $r$; the result is the right reassembly of
+color $c$, $l$, key $s$ and the deletion of $s$ from $r$. Thus a node with two children is
+deleted by promoting its successor, the minimum key of its right subtree. -/
 def del {α : Type u} [LinearOrder α] (x : α) : Tree α → BBTree α
   | .empty => .regular .empty
   | .node color left key right =>
@@ -246,12 +323,14 @@ def del {α : Type u} [LinearOrder α] (x : α) : Tree α → BBTree α
             | some s => balRight color left s (del s right)
             | none => .regular left
 
-/-- Delete a key by the double-black method. The result is again valid
-when the input satisfies the three structural invariants `Ordered`,
-`RedOk`, and `Balanced` (`valid_deleteBal_of_invariants`); in
-particular `valid_deleteBal` covers `Valid tree`. The traversal
-specifications `inorder_deleteBal` and `mem_deleteBal` require only
-`Ordered tree`. -/
+/-- **Red-black tree deletion by the double-black method.** For a key $x$ of a linearly ordered
+type and a red-black tree $t$, deleting $x$ from $t$ runs the double-black deletion of $x$ from
+$t$, which returns a tree whose root may be double black, and then absorbs a remaining double
+black at the root and recolors the root black.
+
+When $t$ is ordered, has no red node with a red child and has the same number of black nodes on
+every root-to-leaf path, the result is a valid red-black tree; when $t$ is only ordered, the
+inorder traversal of the result is that of $t$ with $x$ erased. -/
 public def deleteBal {α : Type u} [LinearOrder α] (x : α) (tree : Tree α) :
     Tree α :=
   blacken (del x tree)
@@ -1209,14 +1288,19 @@ private theorem ordered_of_pairwise_inorder_bal {α : Type u} [LinearOrder α]
         hCross y (mem_inorder.mpr hy) key (by simp)
     · exact all_iff_forall_mem.mpr fun y hy => hCons.1 y (mem_inorder.mpr hy)
 
-/-- Deleting a key erases it from the inorder traversal of an ordered tree. -/
+/-- **Double-black deletion erases the key from the inorder traversal.** For a key $x$ of a
+linearly ordered type and an ordered red-black tree $t$, the inorder traversal of the tree
+obtained by deleting $x$ from $t$ by the double-black method is the inorder traversal of $t$
+with the first occurrence of $x$ removed (unchanged if $x$ does not occur). -/
 public theorem inorder_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) :
     inorder (deleteBal x tree) = (inorder tree).erase x := by
   change inorder (blacken (del x tree)) = (inorder tree).erase x
   rw [inorder_blacken, inorderBB_del tree hTree x]
 
-/-- Deletion from an ordered tree removes exactly the deleted key. -/
+/-- **Keys after double-black deletion.** For keys $x$ and $y$ of a linearly ordered type and an
+ordered red-black tree $t$, $y$ is a key of the tree obtained by deleting $x$ from $t$ by the
+double-black method if and only if $y$ is a key of $t$ and $y \ne x$. -/
 public theorem mem_deleteBal {α : Type u} [LinearOrder α] {x y : α}
     {tree : Tree α} (hTree : Ordered tree) :
     y ∈ deleteBal x tree ↔ y ∈ tree ∧ y ≠ x := by
@@ -1229,21 +1313,33 @@ public theorem mem_deleteBal {α : Type u} [LinearOrder α] {x y : α}
   · rintro ⟨hy, hxy⟩
     exact (List.mem_erase_of_ne hxy).mpr hy
 
-/-- The deleted key is absent after deletion from an ordered tree. -/
+/-- **The deleted key is absent after double-black deletion.** Let $\alpha$ be a linearly
+ordered type and $t$ a red-black tree with keys in $\alpha$ that is ordered, that is, at every
+node all keys of the left subtree are strictly smaller and all keys of the right subtree are
+strictly larger than the node's key. Then for every $x \in \alpha$, the key $x$ does not occur in
+the tree obtained by deleting $x$ from $t$ by the double-black method. -/
 public theorem not_mem_deleteBal_self {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) : x ∉ deleteBal x tree :=
   fun hx => ((mem_deleteBal hTree).mp hx).2 rfl
 
-/-- Deletion preserves the strict search-tree invariant. -/
+/-- **Double-black deletion preserves the search-tree order.** Let $\alpha$ be a linearly
+ordered type and $t$ a red-black tree with keys in $\alpha$ that is ordered, that is, at every
+node all keys of the left subtree are strictly smaller and all keys of the right subtree are
+strictly larger than the node's key. Then for every $x \in \alpha$, the tree obtained by deleting
+$x$ from $t$ by the double-black method is again ordered. -/
 public theorem ordered_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) : Ordered (deleteBal x tree) := by
   apply ordered_of_pairwise_inorder_bal
   rw [inorder_deleteBal hTree]
   exact (ordered_inorder hTree).sublist List.erase_sublist
 
-/-- Deletion yields a valid tree from the three structural invariants
-`Ordered`, `RedOk`, and `Balanced`; the input root need not be black,
-since `deleteBal` blackens the root. -/
+/-- **Double-black deletion yields a valid tree from the structural invariants.** Let $\alpha$
+be a linearly ordered type and $t$ a red-black tree with keys in $\alpha$ that is ordered,
+satisfies the red invariant (no red node has a red child), and is black-height balanced (all
+root-to-leaf paths contain the same number of black nodes). Then for every $x \in \alpha$, the
+tree obtained by deleting $x$ from $t$ by the double-black method is a valid red-black tree.
+
+The root of $t$ need not be black, since the deletion recolors the root of its result black. -/
 public theorem valid_deleteBal_of_invariants {α : Type u} [LinearOrder α]
     {x : α} {tree : Tree α} (hOrdered : Ordered tree) (hRedOk : RedOk tree)
     (hBalanced : Balanced tree) : Valid (deleteBal x tree) := by
@@ -1252,30 +1348,45 @@ public theorem valid_deleteBal_of_invariants {α : Type u} [LinearOrder α]
   exact ⟨ordered_deleteBal hOrdered, redOk_blacken hRedBB,
     balanced_blacken hBalBB, colorOf_blacken⟩
 
-/-- Deletion from a valid red-black tree leaves a valid tree. Only the
-three structural invariants of `Valid` are used; see
-`valid_deleteBal_of_invariants`. -/
+/-- **Double-black deletion preserves validity.** Let $\alpha$ be a linearly ordered type and
+$t$ a valid red-black tree with keys in $\alpha$: it is ordered, satisfies the red invariant, is
+black-height balanced, and has a black root. Then for every $x \in \alpha$, the tree obtained by
+deleting $x$ from $t$ by the double-black method is again a valid red-black tree.
+
+The proof uses only that $t$ is ordered, satisfies the red invariant and is balanced. -/
 public theorem valid_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Valid tree) : Valid (deleteBal x tree) :=
   valid_deleteBal_of_invariants hTree.1 hTree.2.1 hTree.2.2.1
 
-/-- Deletion preserves the red invariant. -/
+/-- **Double-black deletion from a valid tree keeps the red invariant.** Let $\alpha$ be a
+linearly ordered type and $t$ a valid red-black tree with keys in $\alpha$: it is ordered,
+satisfies the red invariant, is black-height balanced, and has a black root. Then for every
+$x \in \alpha$, the tree obtained by deleting $x$ from $t$ by the double-black method satisfies
+the red invariant: no red node has a red child. -/
 public theorem redOk_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Valid tree) : RedOk (deleteBal x tree) :=
   (valid_deleteBal hTree).2.1
 
-/-- Deletion preserves black-height balance. -/
+/-- **Double-black deletion keeps a valid tree balanced.** Let $\alpha$ be a linearly ordered
+type, $x \in \alpha$, and $T$ a valid red-black tree over $\alpha$. Then the tree obtained from
+$T$ by double-black deletion of $x$ is balanced. -/
 public theorem balanced_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Valid tree) : Balanced (deleteBal x tree) :=
   (valid_deleteBal hTree).2.2.1
 
-/-- The tree produced by deletion has a black root. -/
+/-- **Double-black deletion leaves a black root.** For every key $x$ of a linearly ordered type
+and every red-black tree $t$, valid or not, the root of the tree obtained by deleting $x$ from $t$
+by the double-black method is black, where the empty tree counts as black. -/
 public theorem colorOf_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} : colorOf (deleteBal x tree) = .black :=
   colorOf_blacken
 
-/-- Deletion from a valid tree keeps the black height or lowers it by one,
-when a double-black bubble is absorbed at the root. -/
+/-- **Black height after double-black deletion.** Let $\alpha$ be a linearly ordered type,
+$x \in \alpha$, $T$ a valid red-black tree over $\alpha$, and $T'$ the tree obtained from $T$ by
+double-black deletion of $x$. Then the black height of $T'$ either equals the black height of $T$
+or is one less than it.
+
+The black height drops by one when a double black left by the deletion is absorbed at the root. -/
 public theorem blackHeight_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Valid tree) :
     blackHeight (deleteBal x tree) = blackHeight tree ∨

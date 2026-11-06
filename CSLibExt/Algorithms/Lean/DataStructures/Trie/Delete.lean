@@ -34,13 +34,14 @@ universe u v
 
 namespace Trie
 
-/-- Whether a trie node carries no value and no children, so its parent
-may prune it. -/
+/-- **Empty trie nodes.** The empty-node test is true on a trie node exactly when the node
+carries no value and has no children; when deletion leaves a child in this state, the child is
+removed from its parent. -/
 def isEmptyNode {α : Type u} {β : Type v} : Trie α β → Bool
   | .node value children => value.isNone && children.isEmpty
 
-/-- A trie is a childless non-terminal node exactly when it is the empty
-node. -/
+/-- **Characterization of empty nodes.** The empty-node test is true on a trie $t$ exactly when
+$t$ is the node with no value and no children, that is, the empty trie. -/
 theorem isEmptyNode_eq_true_iff {α : Type u} {β : Type v}
     {t : Trie α β} : isEmptyNode t = true ↔ t = .node none [] := by
   cases t with
@@ -95,15 +96,18 @@ private theorem lookup_filter_of_ne {α : Type u} {β : Type v}
           simp [List.filter, List.lookup, hb, hb2, ih]
 
 /--
-Replace the child stored at `key` by `child`, dropping the entry entirely
-when `child` is a childless non-terminal node. The first entry at `key` is
-replaced in place (or dropped, when pruning) and any later entries at `key`
-are removed, so the order of the surviving entries is preserved and at
-most one entry for `key` remains even in a trie that does not satisfy
-`Valid`. In `delete`, `key` is always present; for an absent key a
-non-empty child is appended at the end. Its public specification is
-`lookup_setChild_self`, `lookup_setChild_of_ne`, and `setChild_valid`
-below.
+**Setting a child in a trie's child list.** Let $L$ be a list of pairs $(k, c)$ of a key $k$
+in $\alpha$ and a trie $c$ (the children of a trie node), let $a$ be a key and $t$ a trie, and
+call $t$ empty when it carries no value and has no children. Setting the child at $a$ to $t$
+in $L$ gives the following list. If no entry of $L$ has key $a$, the result is $L$ itself when
+$t$ is empty, and $L$ with $(a, t)$ appended at the end otherwise. If some entry of $L$ has key
+$a$, the entries before the first such entry are kept; that entry is replaced in place by
+$(a, t)$, or removed when $t$ is empty; and every later entry with key $a$ is removed, while
+later entries with other keys are kept in their order.
+
+Thus the order of the surviving entries is preserved and at most one entry with key $a$
+remains, even when $L$ has repeated keys. Deletion from a trie uses this operation to prune
+empty nodes.
 -/
 def setChild {α : Type u} {β : Type v} [DecidableEq α] (key : α)
     (child : Trie α β) :
@@ -115,8 +119,10 @@ def setChild {α : Type u} {β : Type v} [DecidableEq α] (key : α)
         else (key, child) :: rest.filter (fun entry => entry.1 != key)
       else (k, c) :: setChild key child rest
 
-/-- Lookup at the updated key after `setChild`: the new child, or `none`
-when the child was pruned as an empty node. -/
+/-- **Looking up a child just set.** Let $L$ be a list of letter–trie pairs, $a$ a letter and
+$c$ a trie, and let $L'$ be obtained from $L$ by setting the child at $a$ to $c$ (removing the
+entries at $a$ instead when $c$ has neither value nor children). Looking up $a$ in $L'$ finds
+nothing when $c$ has neither value nor children, and finds $c$ otherwise. -/
 theorem lookup_setChild_self {α : Type u} {β : Type v}
     [DecidableEq α] (key : α) (child : Trie α β)
     (children : List (α × Trie α β)) :
@@ -136,7 +142,10 @@ theorem lookup_setChild_self {α : Type u} {β : Type v}
           simp [show key ≠ k' from fun hh => h hh.symm]
         simp [setChild, h, List.lookup, hb, ih]
 
-/-- Lookup at any other key is unchanged by `setChild`. -/
+/-- **Setting a child leaves the other children unchanged.** Let $L$ be a list of letter–trie
+pairs, $c$ a trie and $a \ne b$ letters, and let $L'$ be obtained from $L$ by setting the child
+at $b$ to $c$ (removing the entries at $b$ instead when $c$ has neither value nor children).
+Then looking up $a$ in $L'$ gives the same result as looking up $a$ in $L$. -/
 theorem lookup_setChild_of_ne {α : Type u} {β : Type v}
     [DecidableEq α] {k key : α} (hk : k ≠ key) (child : Trie α β)
     (children : List (α × Trie α β)) :
@@ -273,8 +282,11 @@ private theorem nodup_fst_setChild {α : Type u} {β : Type v}
         · exact h h1
         · exact hnot h1
 
-/-- `setChild` preserves the child-list half of trie validity: the child
-keys stay duplicate-free and every surviving child stays valid. -/
+/-- **Setting a child preserves the child-list part of validity.** Let $L$ be a list of
+letter–trie pairs whose letters are pairwise distinct and whose tries are all valid, let $c$
+be a valid trie and $a$ a letter. Then the list obtained from $L$ by setting the child at $a$
+to $c$ (removing the entries at $a$ instead when $c$ has neither value nor children) again has
+pairwise distinct letters, and every trie in it is valid. -/
 theorem setChild_valid {α : Type u} {β : Type v}
     [DecidableEq α] {key : α} {child : Trie α β}
     {children : List (α × Trie α β)}
@@ -289,8 +301,10 @@ theorem setChild_valid {α : Type u} {β : Type v}
   · exact hchild
   · exact hchildren entry he
 
-/-- Replacing a child of a valid node by a valid child with `setChild`
-keeps the node valid. -/
+/-- **Setting a child preserves validity.** Let a trie node with value $v$ and child list $L$ be
+valid, let $c$ be a valid trie and $a$ a letter. Then the node with value $v$ whose child list
+is obtained from $L$ by setting the child at $a$ to $c$ (removing the entries at $a$ instead
+when $c$ has neither value nor children) is valid. -/
 theorem Valid.setChild {α : Type u} {β : Type v}
     [DecidableEq α] {value : Option β} {children : List (α × Trie α β)}
     (h : Valid (.node value children)) {key : α} {child : Trie α β}
@@ -302,9 +316,15 @@ theorem Valid.setChild {α : Type u} {β : Type v}
       exact .node hset.1 hset.2
 
 /--
-Delete the value at a list key. The terminal node is unmarked, and on the
-way back up any child that became a childless non-terminal node is pruned
-from its parent. Deleting an absent key leaves every lookup unchanged.
+**Deletion from a trie.** Deleting a key $k$ (a list of letters) from a trie $t$ works by
+recursion on $k$. If $k$ is empty, the root of $t$ loses its value and keeps its children. If
+$k$ consists of a first letter $a$ followed by a key $k'$ and the root of $t$ has no child at
+$a$, then $t$ is unchanged. Otherwise $k'$ is deleted from the first child at $a$. If the
+result has neither value nor children, every entry at $a$ is removed from the root's child
+list; if not, the first entry at $a$ is replaced by the result and any later entries at $a$
+are removed. The root's value and the other children, in their order, are kept.
+
+Deleting an absent key leaves every lookup unchanged.
 -/
 def delete {α : Type u} {β : Type v} [DecidableEq α] (trie : Trie α β) :
     List α → Trie α β
@@ -319,7 +339,8 @@ def delete {α : Type u} {β : Type v} [DecidableEq α] (trie : Trie α β) :
           | some child =>
               .node current (setChild key (delete child keys) children)
 
-/-- Looking up a deleted key fails. -/
+/-- **A deleted key is absent.** For every trie $t$ and every key $k$, looking up $k$ in the
+trie obtained from $t$ by deleting $k$ finds no value. -/
 @[simp]
 theorem lookup_delete_self {α : Type u} {β : Type v} [DecidableEq α]
     (trie : Trie α β) (keys : List α) :
@@ -340,8 +361,9 @@ theorem lookup_delete_self {α : Type u} {β : Type v} [DecidableEq α]
               · simp [he]
               · simp [he, ih child]
 
-/-- Deleting one key does not change the lookup result for a distinct
-key. -/
+/-- **Deletion does not affect other keys.** For every trie $t$ and all keys $k \ne k'$, looking
+up $k$ in the trie obtained from $t$ by deleting $k'$ gives the same result as looking up $k$
+in $t$. -/
 @[simp]
 theorem lookup_delete_of_ne {α : Type u} {β : Type v} [DecidableEq α]
     (trie : Trie α β) {deletedKeys keys : List α}
@@ -388,7 +410,9 @@ theorem lookup_delete_of_ne {α : Type u} {β : Type v} [DecidableEq α]
                     simp only [delete, hlookup, lookup]
                     rw [lookup_setChild_of_ne hk]
 
-/-- Deletion preserves the trie invariant. -/
+/-- **Deletion preserves trie validity.** If a trie $t$ is valid, that is, every node has distinct
+child keys and valid child tries, then for every key $k$ the trie obtained from $t$ by deleting
+$k$ is valid. -/
 theorem Valid.delete {α : Type u} {β : Type v} [DecidableEq α]
     {trie : Trie α β} (h : Valid trie) (keys : List α) :
     Valid (trie.delete keys) := by

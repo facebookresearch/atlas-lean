@@ -38,17 +38,30 @@ namespace Cslib.Algorithms.Lean
 
 universe u v
 
-/-- A radix trie from list keys over `α` to values in `β`, with list-labelled edges. -/
+/-- **Radix trie.** For types $\alpha$ and $\beta$, a radix trie with keys that are lists over
+$\alpha$ and values in $\beta$ is a node made of an optional value in $\beta$ and a finite list of
+child edges, each a pair of a label, which is a list over $\alpha$, and a radix trie (the
+subtree at the end of the edge).
+
+No invariant is built into the type: labels may be empty and sibling labels may share first
+symbols. The radix-trie invariant is imposed separately. -/
 inductive RadixTrie (α : Type u) (β : Type v) where
   | node : Option β → List (List α × RadixTrie α β) → RadixTrie α β
 
 namespace RadixTrie
 
-/-- The trie containing no key-value entries. -/
+/-- **Empty radix trie.** The empty radix trie is the single node that stores no value and has no
+child edges; it contains no key-value entries. -/
 def empty {α : Type u} {β : Type v} : RadixTrie α β :=
   .node none []
 
-/-- The longest common prefix of two lists. -/
+/--
+**Longest common prefix.** For lists $s$ and $t$ over a type with decidable equality, the
+longest common prefix of $s$ and $t$ is defined by recursion: it is empty if $s$ or $t$ is
+empty; if $s$ has first element $a$ and rest $s'$, and $t$ has first element $b$ and rest $t'$,
+it is $a$ followed by the longest common prefix of $s'$ and $t'$ when $a = b$, and empty when
+$a \ne b$.
+-/
 def commonPrefix {α : Type u} [DecidableEq α] : List α → List α → List α
   | [], _ => []
   | _, [] => []
@@ -68,14 +81,22 @@ theorem commonPrefix_cons_cons {α : Type u} [DecidableEq α] (a : α) (xs : Lis
       if a = b then a :: commonPrefix xs ys else [] :=
   rfl
 
-/-- The longest common prefix of a list with itself is the list. -/
+/--
+**Longest common prefix of a list with itself.** For every list $s$ over a type with decidable
+equality, the longest common prefix of $s$ and $s$ is $s$.
+-/
 theorem commonPrefix_self {α : Type u} [DecidableEq α] (xs : List α) :
     commonPrefix xs xs = xs := by
   induction xs with
   | nil => rfl
   | cons x xs ih => simp [commonPrefix, ih]
 
-/-- A shared prefix factors out of the longest common prefix. -/
+/--
+**A shared prefix factors out of the longest common prefix.** Write $uv$ for the list $u$
+followed by the list $v$. For lists $p$, $s$ and $t$ over a type with decidable equality, the
+longest common prefix of $ps$ and $pt$ is $p$ followed by the longest common prefix of $s$ and
+$t$.
+-/
 theorem commonPrefix_append_append {α : Type u} [DecidableEq α]
     (P xs ys : List α) :
     commonPrefix (P ++ xs) (P ++ ys) = P ++ commonPrefix xs ys := by
@@ -87,8 +108,10 @@ theorem commonPrefix_append_append {α : Type u} [DecidableEq α]
       rw [commonPrefix_cons_cons, ite_eq_left rfl, ih]
 
 /--
-Both lists extend their longest common prefix, and the remainders are the reason the
-prefix is longest: one is empty, or their heads differ.
+**Characterization of the longest common prefix.** Let $s$ and $t$ be lists over a type with
+decidable equality, with longest common prefix $p$. Then there are lists $s'$ and $t'$ such that
+$s$ is $p$ followed by $s'$, $t$ is $p$ followed by $t'$, and either $s'$ is empty, or $t'$ is
+empty, or $s'$ and $t'$ are both nonempty with different first elements.
 -/
 theorem commonPrefix_spec {α : Type u} [DecidableEq α] (xs ys : List α) :
     ∃ xs' ys', xs = commonPrefix xs ys ++ xs' ∧ ys = commonPrefix xs ys ++ ys' ∧
@@ -113,7 +136,12 @@ theorem commonPrefix_spec {α : Type u} [DecidableEq α] (xs ys : List α) :
               by rw [commonPrefix_cons_cons, ite_eq_right h, List.nil_append],
               Or.inr (Or.inr ⟨x, xs, y, ys, rfl, rfl, h⟩)⟩
 
-/-- A list is its longest common prefix with another list, followed by the drop remainder. -/
+/--
+**A list is its common prefix with another list followed by the rest.** Let $s$ and $t$ be
+lists over a type with decidable equality, and let $p$ be the longest common prefix of $s$ and
+$t$. Then $s$ is $p$ followed by the list obtained by dropping the first $|p|$ elements of $s$,
+where $|p|$ is the length of $p$.
+-/
 theorem append_drop_commonPrefix_left {α : Type u} [DecidableEq α]
     (xs ys : List α) :
     xs = commonPrefix xs ys ++ xs.drop (commonPrefix xs ys).length := by
@@ -122,7 +150,13 @@ theorem append_drop_commonPrefix_left {α : Type u} [DecidableEq α]
   rw [hP] at hxs
   rw [hxs, List.drop_append_length]
 
-/-- The longest-common-prefix decomposition, stated with the drop remainders. -/
+/--
+**Longest common prefix in terms of dropped remainders.** Let $s$ and $t$ be lists over a type
+with decidable equality, let $p$ be their longest common prefix, of length $n$, and let $s'$ and
+$t'$ be the lists obtained from $s$ and $t$ by dropping their first $n$ elements. Then $s$ is $p$
+followed by $s'$, $t$ is $p$ followed by $t'$, and either $s'$ is empty, or $t'$ is empty, or
+$s'$ and $t'$ are both nonempty with different first elements.
+-/
 theorem commonPrefix_drop_spec {α : Type u} [DecidableEq α] (xs ys : List α) :
     xs = commonPrefix xs ys ++ xs.drop (commonPrefix xs ys).length ∧
       ys = commonPrefix xs ys ++ ys.drop (commonPrefix xs ys).length ∧
@@ -140,14 +174,23 @@ theorem commonPrefix_drop_spec {α : Type u} [DecidableEq α] (xs ys : List α) 
   rw [hdx, hdy]
   exact ⟨hxs, hys, hdiv⟩
 
-/-- If the longest common prefix is the whole second list, the first extends it. -/
+/--
+**When the common prefix is the second list, the first list extends it.** Let $s$ and $t$ be
+lists over a type with decidable equality. If the longest common prefix of $s$ and $t$ is $t$,
+then $s$ is $t$ followed by the list obtained by dropping the first $|t|$ elements of $s$, where
+$|t|$ is the length of $t$.
+-/
 theorem append_of_commonPrefix_eq {α : Type u} [DecidableEq α] {xs ys : List α}
     (h : commonPrefix xs ys = ys) : xs = ys ++ xs.drop ys.length := by
   have h1 := append_drop_commonPrefix_left xs ys
   rw [h] at h1
   exact h1
 
-/-- If the first list extends the second, the longest common prefix is the second. -/
+/--
+**The longest common prefix of a list and its prefix.** Let $s$, $t$ and $u$ be lists over a
+type with decidable equality. If $s$ is $t$ followed by $u$, then the longest common prefix of
+$s$ and $t$ is $t$.
+-/
 theorem commonPrefix_eq_of_append {α : Type u} [DecidableEq α] {xs ys t : List α}
     (h : xs = ys ++ t) : commonPrefix xs ys = ys := by
   have h2 := commonPrefix_append_append ys t ([] : List α)
@@ -155,7 +198,9 @@ theorem commonPrefix_eq_of_append {α : Type u} [DecidableEq α] {xs ys t : List
   rw [h]
   exact h2
 
-/-- Returns the first child edge whose label starts with `c`, if any. -/
+/-- **Edge search by first symbol.** Given a symbol $c$ and a list of edges, each a pair of a
+label (a list of symbols) and a subtree, this returns the first edge in the list whose label
+starts with $c$, or nothing if no label starts with $c$. -/
 def findEdge {α : Type u} {β : Type v} [DecidableEq α] (c : α) :
     List (List α × RadixTrie α β) → Option (List α × RadixTrie α β)
   | [] => none
@@ -224,8 +269,10 @@ theorem findEdge_eq_none_imp {α : Type u} {β : Type v} [DecidableEq α] {c : �
         · exact ih h e he
 
 /--
-Replaces the first child edge whose label starts with `c` by `newEdge`, appending
-`newEdge` at the end when there is no such edge.
+**Replacing the child edge for a symbol.** Given a symbol $c$, an edge $e$ (a pair of a label
+and a radix trie) and a list of child edges, this operation replaces the first edge of the list
+whose label starts with $c$ by $e$ and keeps all other edges in order. If no label in the list
+starts with $c$, it appends $e$ at the end of the list.
 -/
 def replaceEdge {α : Type u} {β : Type v} [DecidableEq α] (c : α)
     (newEdge : List α × RadixTrie α β) :
@@ -300,7 +347,12 @@ private theorem exists_cons_of_head?_eq_some {α : Type u} {label : List α} {c 
         exact h2
       exact ⟨xs, by rw [hx]⟩
 
-/-- Looks up a list key in a radix trie. -/
+/-- **Radix trie lookup.** Looking up a key, a list over $\alpha$, in a radix trie returns an
+optional value. At a node, the empty key returns the value stored at the node, if any. A
+nonempty key $k$ with first symbol $c$ goes to the first child edge whose label starts with $c$.
+If there is no such edge, or its label $\ell$ is not a prefix of $k$, the lookup returns no
+value; otherwise it continues in the subtree of that edge with $k$ minus its first $|\ell|$
+symbols. -/
 def lookup {α : Type u} {β : Type v} [DecidableEq α] :
     RadixTrie α β → List α → Option β
   | .node value _, [] => value
@@ -341,8 +393,12 @@ private theorem lookupChildren_eq_findEdge {α : Type u} {β : Type v}
       · simp [lookup.lookupChildren, findEdge, hh, ih]
 
 /--
-Lookup of a nonempty key follows the first edge whose label starts with the key's
-head, and continues below it only when the whole label prefixes the key.
+**Radix trie lookup of a nonempty key at a node.** Let $k$ be a nonempty key with first symbol
+$c$, and consider a node with children $C$ (a list of edges, each a label with a subtree),
+whatever value the node stores. If no edge of $C$ has a label starting with $c$, looking up $k$
+at the node returns no value. Otherwise let $(\ell, T')$ be the first such edge of $C$: if the
+longest common prefix of $k$ and $\ell$ is $\ell$, the lookup returns the lookup in $T'$ of the
+key obtained from $k$ by dropping its first $|\ell|$ symbols, and otherwise it returns no value.
 -/
 theorem lookup_node_cons {α : Type u} {β : Type v} [DecidableEq α]
     (value : Option β) (children : List (List α × RadixTrie α β)) (c : α)
@@ -356,7 +412,8 @@ theorem lookup_node_cons {α : Type u} {β : Type v} [DecidableEq α]
           else none :=
   lookupChildren_eq_findEdge children c ks
 
-/-- Every lookup in the empty trie fails. -/
+/-- **Lookup in the empty radix trie.** For every key $k$, looking up $k$ in the empty radix
+trie returns no value. -/
 @[simp]
 theorem lookup_empty {α : Type u} {β : Type v} [DecidableEq α]
     (keys : List α) : (empty : RadixTrie α β).lookup keys = none := by
@@ -369,11 +426,18 @@ private theorem lookup_leaf {α : Type u} {β : Type v} [DecidableEq α] (v : β
   cases keys <;> simp [lookup_node_cons, findEdge]
 
 /--
-Inserts or replaces the value at a list key. At a node, insertion finds the child edge
-whose label shares the key's first symbol and splits it at the longest common prefix of
-key and label: an exhausted key ends at a new internal node above the old subtree, an
-exhausted label continues into the subtree, and two nonempty remainders branch at a new
-internal node with no value.
+**Insertion into a radix trie.** Inserting a value $v$ at a key $k$ (a list of symbols) into a
+radix trie works as follows. If $k$ is empty, the root's value becomes $v$. Otherwise let $c$ be
+the first symbol of $k$. If no child edge of the root has a label starting with $c$, a new edge
+labelled $k$ leading to a leaf storing $v$ is added after the existing edges. Otherwise take the
+first such edge, with label $\ell$ and subtree $s$, let $q$ be the longest common prefix of $k$
+and $\ell$, and replace that edge in place. If $k = \ell = q$, the edge keeps label $\ell$ and
+leads to $s$ with its root value set to $v$. If $k = q$ but $\ell$ is longer, the edge is
+labelled $q$ and leads to a new node storing $v$ whose only edge is the rest of $\ell$ leading
+to $s$. If $\ell = q$ but $k$ is longer, the edge keeps label $\ell$ and leads to $s$ with $v$
+inserted at the rest of $k$. If both are longer than $q$, the edge is labelled $q$ and leads to
+a new node with no value and two edges: the rest of $\ell$ leading to $s$, then the rest of $k$
+leading to a leaf storing $v$.
 -/
 def insert {α : Type u} {β : Type v} [DecidableEq α]
     (trie : RadixTrie α β) (key : List α) (value : β) : RadixTrie α β :=
@@ -494,7 +558,8 @@ theorem insert_cons_some_cons_cons {α : Type u} {β : Type v} [DecidableEq α]
   dsimp only
   rw [ite_eq_right hk, ite_eq_right hl]
 
-/-- Looking up an inserted key returns its new value. -/
+/-- **Lookup of a key just inserted into a radix trie.** For every radix trie $T$, key $k$ and
+value $v$, looking up $k$ in the trie obtained from $T$ by inserting $v$ at $k$ returns $v$. -/
 @[simp]
 theorem lookup_insert_same {α : Type u} {β : Type v} [DecidableEq α]
     (trie : RadixTrie α β) (keys : List α) (value : β) :
@@ -709,7 +774,9 @@ private theorem lookup_nil_insert_cons {α : Type u} {β : Type v}
         · rw [insert_cons_some_cons_nil _ _ _ _ _ _ _ hfind hk hl, lookup_nil]
         · rw [insert_cons_some_cons_cons _ _ _ _ _ _ _ hfind hk hl, lookup_nil]
 
-/-- Inserting one key does not change the lookup result for a distinct key. -/
+/-- **Insertion into a radix trie leaves lookups of other keys unchanged.** For every radix
+trie $T$, all keys $k \ne k'$ and every value $v$, looking up $k$ in the trie obtained from $T$
+by inserting $v$ at $k'$ gives the same result as looking up $k$ in $T$. -/
 @[simp]
 theorem lookup_insert_of_ne {α : Type u} {β : Type v} [DecidableEq α]
     (trie : RadixTrie α β) {insertedKeys keys : List α} (value : β)
@@ -1307,10 +1374,12 @@ private theorem length_le_replaceEdge {α : Type u} {β : Type v} [DecidableEq �
         omega
 
 /--
-Path compression at a single node: a node reached by an edge either ends a key (it
-stores a value) or genuinely branches (it has at least two children). A value-free node
-with at most one child could be merged into its parent edge, which is exactly what a
-radix trie rules out. The root is exempt, since it has no incoming edge.
+**Path-compressed root.** A radix trie is path-compressed at its root when its root node stores
+a value or has at least two child edges.
+
+A value-free node with at most one child could be merged into the edge above it, which a radix
+trie rules out for every node reached by an edge; the root of the whole trie has no incoming edge
+and is exempt.
 -/
 def RootCompact {α : Type u} {β : Type v} : RadixTrie α β → Prop
   | .node cv cc => cv ≠ none ∨ 2 ≤ cc.length
@@ -1358,10 +1427,13 @@ theorem rootCompact_insert_cons {α : Type u} {β : Type v} [DecidableEq α]
   · exact Or.inr (by omega)
 
 /--
-The radix-trie invariant: at every node, edge labels are nonempty, their first symbols
-are distinct, every subtree is valid, and every subtree is path-compressed at its root
-(`RootCompact`): a value-free non-root node has at least two children, so no unary
-value-free node remains to be merged into its parent edge.
+**Valid radix trie.** Validity of radix tries is defined inductively: a node is valid when every
+label of its child edges is nonempty, the first symbols of the labels of its child edges are
+pairwise distinct, and for each child edge the subtree at its end is valid and path-compressed at
+its root (its root stores a value or has at least two child edges).
+
+Thus every value-free node other than the root has at least two children, so no unary value-free
+node remains to be merged into its parent edge.
 -/
 inductive Valid {α : Type u} {β : Type v} : RadixTrie α β → Prop where
   | node {value : Option β} {children : List (List α × RadixTrie α β)}
@@ -1371,11 +1443,16 @@ inductive Valid {α : Type u} {β : Type v} : RadixTrie α β → Prop where
       (compact : ∀ e ∈ children, RootCompact e.2) :
       Valid (.node value children)
 
-/-- The empty trie is valid. -/
+/--
+**The empty radix trie is valid.** For all types $\alpha$ and $\beta$, the empty radix trie whose
+keys are lists over $\alpha$ and whose values lie in $\beta$ is valid.
+-/
 theorem Valid.empty {α : Type u} {β : Type v} : Valid (empty : RadixTrie α β) :=
   .node (by simp) (by simp) (by simp) (by simp)
 
-/-- A valid node has no duplicate edge first symbols. -/
+/-- **Sibling edge labels start with distinct symbols.** If a radix-trie node with child edges
+$(\ell_1, t_1), \dots, (\ell_n, t_n)$ is valid, then the first symbols of the labels
+$\ell_1, \dots, \ell_n$ are pairwise distinct. -/
 theorem Valid.nodup_child_heads {α : Type u} {β : Type v} {value : Option β}
     {children : List (List α × RadixTrie α β)}
     (h : Valid (.node value children)) :
@@ -1383,7 +1460,9 @@ theorem Valid.nodup_child_heads {α : Type u} {β : Type v} {value : Option β}
   cases h with
   | node _ distinct _ _ => exact distinct
 
-/-- Every child subtree of a valid node is path-compressed at its root. -/
+/-- **Children of a valid node are path-compressed.** If a radix-trie node is valid, then for each
+of its child edges, the subtree at the end of that edge is path-compressed at its root: its root
+stores a value or has at least two child edges. -/
 theorem Valid.rootCompact_child {α : Type u} {β : Type v} {value : Option β}
     {children : List (List α × RadixTrie α β)}
     (h : Valid (.node value children)) {e : List α × RadixTrie α β}
@@ -1478,7 +1557,8 @@ private theorem replaceEdge_valid_children {α : Type u} {β : Type v}
           · exact hhead_old
           · exact hi.2 e he
 
-/-- Insertion preserves the radix-trie invariant. -/
+/-- **Insertion preserves validity of radix tries.** If $t$ is a valid radix trie, then for every
+key $k$ and value $v$, the trie obtained by inserting $v$ at $k$ in $t$ is valid. -/
 theorem Valid.insert {α : Type u} {β : Type v} [DecidableEq α]
     {trie : RadixTrie α β} (h : Valid trie) (keys : List α) (value : β) :
     Valid (trie.insert keys value) := by
@@ -1675,7 +1755,11 @@ theorem Valid.insert {α : Type u} {β : Type v} [DecidableEq α]
                       exact .node (fun e he => (hr.2 e he).1) hr.1
                         (fun e he => (hr.2 e he).2.1) (fun e he => (hr.2 e he).2.2)
 
-/-- Enumerates the key-value entries of a radix trie in stored sibling order. -/
+/-- **Entries of a radix trie.** The entries of a radix trie are its key-value pairs, listed
+recursively. For a node with child edges $(\ell_1, t_1), \dots, (\ell_n, t_n)$ in stored order,
+the list starts with the pair $(\varepsilon, v)$, where $\varepsilon$ is the empty key, if the
+node stores a value $v$; it continues with the entries of $t_1$ with $\ell_1$ prepended to
+every key, then the entries of $t_2$ with $\ell_2$ prepended, and so on up to $t_n$. -/
 def entries {α : Type u} {β : Type v} : RadixTrie α β → List (List α × β)
   | .node value children =>
       (match value with
@@ -1688,7 +1772,8 @@ where
         child.entries.map (fun (keys, result) => (label ++ keys, result)) ++
           childEntries children
 
-/-- The stored keys of a radix trie, in stored sibling order. -/
+/-- **Stored keys of a radix trie.** The stored keys of a radix trie form the list of the keys of
+its entries, in the same order. -/
 def keys {α : Type u} {β : Type v} (trie : RadixTrie α β) : List (List α) :=
   trie.entries.map Prod.fst
 
@@ -1771,7 +1856,9 @@ private theorem head?_eq_of_append {α : Type u} {c : α} {ks label keys : List 
       have hx : c = x := (List.cons.inj h2).1
       rw [List.head?_cons, hx]
 
-/-- Lookup succeeds exactly when the pair occurs in `entries`, for valid tries. -/
+/-- **Lookup agrees with the entries of a valid radix trie.** For a valid radix trie $T$, every
+key $k$ and every value $v$, looking up $k$ in $T$ returns $v$ if and only if the pair $(k, v)$
+occurs in the list of entries of $T$. -/
 theorem lookup_eq_some_iff_mem_entries {α : Type u} {β : Type v}
     [DecidableEq α] {trie : RadixTrie α β} (h : Valid trie) (keys : List α)
     (value : β) :
@@ -1889,7 +1976,9 @@ theorem lookup_eq_some_iff_mem_entries {α : Type u} {β : Type v}
                           exact (hcond
                             (commonPrefix_eq_of_append hpath)).elim
 
-/-- A key is stored exactly when its lookup succeeds, for valid tries. -/
+/-- **Stored keys of a valid radix trie are the keys with a successful lookup.** For a valid
+radix trie $T$ and every key $k$, $k$ is a stored key of $T$ if and only if looking up $k$ in
+$T$ returns some value. -/
 theorem mem_keys_iff {α : Type u} {β : Type v} [DecidableEq α]
     {trie : RadixTrie α β} (h : Valid trie) (key : List α) :
     key ∈ trie.keys ↔ ∃ value, trie.lookup key = some value := by
@@ -2119,7 +2208,8 @@ private theorem nodup_childKeys {γ : Type u} {β : Type v}
         rw [← h1, h2]
         exact List.mem_map.mpr ⟨(label', child'), hmem', rfl⟩)
 
-/-- The stored keys of a valid radix trie are duplicate-free. -/
+/-- **Stored keys of a valid radix trie are distinct.** If $t$ is a valid radix trie, then its
+list of stored keys has no duplicates. -/
 theorem Valid.keys_nodup {γ : Type u} {β : Type v} {t : RadixTrie γ β} (h : Valid t) :
     t.keys.Nodup := by
   induction h with
@@ -2142,9 +2232,15 @@ theorem Valid.keys_nodup {γ : Type u} {β : Type v} {t : RadixTrie γ β} (h : 
           exact List.nodup_cons.mpr ⟨hnotmem, hchild⟩
 
 /--
-Whether some key stored in the trie extends `p`. The walk follows the edge whose label
-starts with the pattern's head symbol; it succeeds when the pattern ends inside that
-edge (with a stored key below) or at a node reached by consuming whole edges.
+**Prefix search in a radix trie.** For a radix trie $t$ and a pattern $p$ (a list of symbols),
+prefix search returns a boolean computed as follows. If $p$ is empty, it is true exactly when
+$t$ stores at least one key. Otherwise let $c$ be the first symbol of $p$ and take the first
+child edge of the root whose label starts with $c$; if there is none, the answer is false. If
+that edge has label $\ell$ and subtree $s$, then: when $p$ is a prefix of $\ell$, the answer is
+whether $s$ stores at least one key; otherwise, when $\ell$ is a prefix of $p$, the search
+continues in $s$ with $p$ minus its first $|\ell|$ symbols; otherwise the answer is false.
+
+On valid radix tries this decides whether some stored key has $p$ as a prefix.
 -/
 def hasPrefix {γ : Type u} {β : Type v} [DecidableEq γ] (t : RadixTrie γ β)
     (p : List γ) : Bool :=
@@ -2200,7 +2296,9 @@ private theorem keys_nonempty_of_mem {γ : Type u} {β : Type v} {t : RadixTrie 
   | nil => simp [hk] at h
   | cons a as => rfl
 
-/-- Prefix search succeeds exactly when some stored key extends the pattern. -/
+/-- **Prefix search is correct on valid radix tries.** For a valid radix trie $t$ and a list $p$
+of symbols, prefix search for $p$ in $t$ succeeds if and only if some stored key $k$ of $t$ has
+$p$ as a prefix. -/
 theorem hasPrefix_eq_true_iff {γ : Type u} {β : Type v} [DecidableEq γ]
     {t : RadixTrie γ β} (h : Valid t) (p : List γ) :
     t.hasPrefix p = true ↔ ∃ k ∈ t.keys, p <+: k := by
@@ -2309,8 +2407,10 @@ theorem hasPrefix_eq_true_iff {γ : Type u} {β : Type v} [DecidableEq γ]
                           · exact hcp2 hcp
 
 /--
-The trie built from a list of key-value pairs by inserting the head pair last. Later
-pairs in the list are inserted first, so on duplicate keys the head-most value wins.
+**Radix trie built from a list of key-value pairs.** The trie built from the empty list is the
+empty trie, and the trie built from a list with head $(k, v)$ and tail $L$ is the trie built from
+$L$ with the value $v$ inserted at the key $k$. Later pairs in the list are thus inserted first,
+so on duplicate keys the head-most value wins.
 -/
 def buildFrom {γ : Type u} {β : Type v} [DecidableEq γ] :
     List (List γ × β) → RadixTrie γ β
@@ -2325,7 +2425,9 @@ theorem Valid.buildFrom {γ : Type u} {β : Type v} [DecidableEq γ]
       rcases kv with ⟨k, v⟩
       exact ih.insert k v
 
-/-- Every listed key is found by lookup in the built trie, under some value. -/
+/-- **Every listed key is present in the built radix trie.** For a list $L$ of key-value pairs, if
+$(k, v)$ belongs to $L$, then looking up $k$ in the radix trie built from $L$ returns some
+value. -/
 theorem lookup_buildFrom_exists_of_mem {γ : Type u} {β : Type v} [DecidableEq γ]
     {L : List (List γ × β)} {k : List γ} {v : β} (h : (k, v) ∈ L) :
     ∃ v', (buildFrom L).lookup k = some v' := by
@@ -2343,7 +2445,9 @@ theorem lookup_buildFrom_exists_of_mem {γ : Type u} {β : Type v} [DecidableEq 
         · obtain ⟨v', hv'⟩ := ih hmem
           exact ⟨v', by rw [lookup_insert_of_ne _ _ hk]; exact hv'⟩
 
-/-- Every key found by lookup in the built trie comes from the list, with its value. -/
+/-- **Lookups in a radix trie built from a list come from the list.** For every list $L$ of
+key-value pairs, if looking up a key $k$ in the radix trie built from $L$ returns a value $v$,
+then the pair $(k, v)$ occurs in $L$. -/
 theorem mem_of_lookup_buildFrom {γ : Type u} {β : Type v} [DecidableEq γ]
     {L : List (List γ × β)} {k : List γ} {v : β}
     (h : (buildFrom L).lookup k = some v) : (k, v) ∈ L := by
@@ -2361,7 +2465,9 @@ theorem mem_of_lookup_buildFrom {γ : Type u} {β : Type v} [DecidableEq γ]
       · rw [lookup_insert_of_ne _ _ hk] at h
         exact List.mem_cons_of_mem _ (ih h)
 
-/-- The stored keys of the built trie are exactly the listed keys. -/
+/-- **Keys of a radix trie built from a list.** For every list $L$ of key-value pairs and every
+key $k$, $k$ is a stored key of the radix trie built from $L$ if and only if the pair $(k, v)$
+occurs in $L$ for some value $v$. -/
 theorem mem_keys_buildFrom {γ : Type u} {β : Type v} [DecidableEq γ]
     {L : List (List γ × β)} {k : List γ} :
     k ∈ (buildFrom L).keys ↔ ∃ v, (k, v) ∈ L := by
@@ -2372,7 +2478,9 @@ theorem mem_keys_buildFrom {γ : Type u} {β : Type v} [DecidableEq γ]
   · rintro ⟨v, hv⟩
     exact lookup_buildFrom_exists_of_mem hv
 
-/-- With duplicate-free keys, lookup in the built trie returns the listed value. -/
+/-- **Lookup in a radix trie built from a list with distinct keys.** Let $L$ be a list of
+key-value pairs, whose keys are lists over $\gamma$, in which no key occurs twice. If the pair
+$(k, v)$ occurs in $L$, then looking up $k$ in the radix trie built from $L$ returns $v$. -/
 theorem lookup_buildFrom_of_mem {γ : Type u} {β : Type v} [DecidableEq γ]
     {L : List (List γ × β)} (hnd : (L.map Prod.fst).Nodup) {k : List γ} {v : β}
     (h : (k, v) ∈ L) : (buildFrom L).lookup k = some v := by

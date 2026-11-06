@@ -27,48 +27,73 @@ namespace OrderStatisticTree
 
 universe u
 
-/-- The key and cached number of nodes in the subtree rooted at a node. -/
+/-- **Order-statistic tree node entry.** A node entry of an order-statistic tree over a type
+$\alpha$ consists of a key in $\alpha$ and a natural number, the cached number of nodes in the
+subtree rooted at that node. -/
 public structure Entry (α : Type u) where
   key : α
   subtreeSize : Nat
 deriving DecidableEq, Repr
 
-/-- An order-statistic tree uses Mathlib's canonical binary-tree carrier. -/
+/-- **Order-statistic tree.** An order-statistic tree with keys in a type $\alpha$ is a binary
+tree, possibly empty, each of whose nodes carries a key in $\alpha$ together with a natural
+number, meant as the cached number of nodes in the subtree rooted at that node. That these
+caches are correct is a separate condition. -/
 public abbrev Tree (α : Type u) := BinaryTree (Entry α)
 
-/-- The cached size at the root, or zero for an empty tree. -/
+/-- **Cached root size.** The cached root size of an order-statistic tree is the subtree size
+stored in the entry of its root node, and is $0$ for the empty tree. -/
 public def cachedSize {α : Type u} : Tree α → Nat
   | .nil => 0
   | .node entry _ _ => entry.subtreeSize
 
-/-- Remove cached sizes, yielding the underlying binary search tree. -/
+/-- **Erasing the size caches of an order-statistic tree.** The erasure of an order-statistic
+tree is the binary tree of the same shape whose node keys are the keys of the original nodes:
+the empty tree is sent to the empty tree, and a node is sent to the node with the same key
+whose left and right subtrees are the erasures of the original left and right subtrees, so
+every cached subtree size is dropped. -/
 public def erase {α : Type u} : Tree α → BinaryTree α
   | .nil => .nil
   | .node entry left right => .node entry.key (erase left) (erase right)
 
-/-- Cached sizes are correct at every node. -/
+/-- **Correct size caches.** An order-statistic tree has correct size caches when, at every
+node, the cached subtree size equals the number of nodes of the left subtree plus the number of
+nodes of the right subtree plus one, that is, the number of nodes of the subtree rooted at that
+node. The empty tree has correct size caches. -/
 public def CacheCorrect {α : Type u} : Tree α → Prop
   | .nil => True
   | .node entry left right =>
       CacheCorrect left ∧ CacheCorrect right ∧
         entry.subtreeSize = left.numNodes + right.numNodes + 1
 
-/-- The ordering invariant is the prerequisite BST invariant after erasing caches. -/
+/-- **Ordered order-statistic tree.** An order-statistic tree over a type equipped with a
+relation $<$ is ordered when the binary tree obtained by erasing its cached sizes is an ordered
+binary search tree: at every node, each key of the left subtree is $<$ the node's key, the
+node's key is $<$ each key of the right subtree, and both subtrees are ordered. -/
 public def Ordered {α : Type u} [LT α] (tree : Tree α) : Prop :=
   BinarySearchTree.Ordered (erase tree)
 
-/-- Inorder traversal is inherited from the prerequisite BST. -/
+/-- **Inorder traversal of an order-statistic tree.** The inorder traversal of an
+order-statistic tree is the inorder traversal of the binary tree obtained by erasing its cached
+subtree sizes: the traversal of the left subtree, then the root key, then the traversal of the
+right subtree, and the empty list for the empty tree. -/
 public def inorder {α : Type u} (tree : Tree α) : List α :=
   BinarySearchTree.inorder (erase tree)
 
 instance {α : Type u} : Membership α (Tree α) where
   mem tree key := key ∈ erase tree
 
-/-- Construct a node whose cache is computed from its children. -/
+/-- **Order-statistic tree node with computed cache.** Given a key $k$ and order-statistic
+trees $L$ and $R$, the node built from them has key $k$, left subtree $L$, right subtree $R$,
+and cached subtree size equal to the cached root size of $L$ plus the cached root size of $R$
+plus one, where the empty tree has cached root size zero. -/
 public def node {α : Type u} (key : α) (left right : Tree α) : Tree α :=
   .node { key, subtreeSize := cachedSize left + cachedSize right + 1 } left right
 
-/-- Comparison search navigates one branch. -/
+/-- **Search in an order-statistic tree.** Let $\alpha$ be a linearly ordered type and
+$q \in \alpha$. Searching for $q$ in the empty tree returns false. At a node with key $k$, the
+search continues in the left subtree if $q < k$, continues in the right subtree if $k < q$, and
+returns true otherwise. -/
 public def contains {α : Type u} [LinearOrder α] (query : α) : Tree α → Bool
   | .nil => false
   | .node entry left right =>
@@ -76,7 +101,12 @@ public def contains {α : Type u} [LinearOrder α] (query : α) : Tree α → Bo
       else if entry.key < query then contains query right
       else true
 
-/-- Insert a key, ignoring a duplicate and repairing every cache on the search path. -/
+/-- **Insertion into an order-statistic tree.** Inserting a key $k$ of a linearly ordered type
+into the empty tree gives a single node with key $k$ and cached size $1$. For a nonempty tree
+with root key $r$: if $k < r$, the key is inserted into the left subtree; if $r < k$, it is
+inserted into the right subtree; in both cases the root is rebuilt with key $r$ and cached size
+equal to the cached root sizes of its two subtrees plus one (an empty subtree counts as zero).
+Otherwise $k = r$ and the tree is returned unchanged. -/
 public def insert {α : Type u} [LinearOrder α] (key : α) : Tree α → Tree α
   | .nil => node key .nil .nil
   | tree@(.node entry left right) =>
@@ -84,12 +114,22 @@ public def insert {α : Type u} [LinearOrder α] (key : α) : Tree α → Tree �
       else if entry.key < key then node entry.key left (insert key right)
       else tree
 
-/-- Build a tree by inserting keys from right to left. -/
+/-- **Order-statistic tree built from a list.** For a linearly ordered key type, the
+order-statistic tree built from a list of keys is obtained by inserting the keys into the empty
+tree from right to left: the empty list gives the empty tree, and a list with head $k$ and
+tail $l$ gives the insertion of $k$ into the tree built from $l$. -/
 public def fromList {α : Type u} [LinearOrder α] : List α → Tree α
   | [] => .nil
   | key :: keys => insert key (fromList keys)
 
-/-- The number of keys strictly smaller than a query, using cached left sizes. -/
+/-- **Rank in an order-statistic tree.** For a key $q$ of a linearly ordered type, the rank of
+$q$ in an order-statistic tree is computed by descending from the root. It is $0$ for the empty
+tree. At a node with key $k$, left subtree $L$ and right subtree $R$, it is the rank of $q$ in
+$L$ if $q < k$; it is $s(L) + 1$ plus the rank of $q$ in $R$ if $k < q$; and it is $s(L)$ if
+$q = k$. Here $s(L)$ is the subtree size cached at the root of $L$, and $0$ if $L$ is empty.
+
+When the cached sizes are correct and the tree is ordered, this is the number of keys in the
+tree strictly smaller than $q$. -/
 public def rank {α : Type u} [LinearOrder α] (query : α) : Tree α → Nat
   | .nil => 0
   | .node entry left right =>
@@ -97,7 +137,15 @@ public def rank {α : Type u} [LinearOrder α] (query : α) : Tree α → Nat
       else if entry.key < query then cachedSize left + 1 + rank query right
       else cachedSize left
 
-/-- The zero-based selected key, using cached left sizes to navigate one branch. -/
+/-- **Select in an order-statistic tree.** For an order-statistic tree $T$ and a natural number
+$i$, select at index $i$ in $T$ is computed by descending from the root. It returns nothing for
+the empty tree. At a node with key $k$, left subtree $L$ and right subtree $R$, it is select at
+index $i$ in $L$ if $i < s(L)$; it returns $k$ if $i = s(L)$; and it is select at index
+$i - s(L) - 1$ in $R$ if $i > s(L)$. Here $s(L)$ is the subtree size cached at the root of $L$,
+and $0$ if $L$ is empty.
+
+When the cached sizes are correct, this returns the key at zero-based position $i$ of the
+inorder traversal, and nothing if $T$ has at most $i$ nodes. -/
 public def select {α : Type u} : Tree α → Nat → Option α
   | .nil, _ => none
   | .node entry left right, index =>
@@ -105,7 +153,9 @@ public def select {α : Type u} : Tree α → Nat → Option α
       else if index = cachedSize left then some entry.key
       else select right (index - cachedSize left - 1)
 
-/-- A correct root cache equals the canonical number of nodes. -/
+/-- **Correct caches give the tree size.** If an order-statistic tree $T$ has correct cached
+subtree sizes at every node, then the cached root size of $T$ (zero for the empty tree) equals
+the number of nodes of $T$. -/
 public theorem cachedSize_eq_numNodes {α : Type u} {tree : Tree α}
     (hTree : CacheCorrect tree) : cachedSize tree = tree.numNodes := by
   cases tree with
@@ -120,7 +170,11 @@ private theorem erase_numNodes {α : Type u} (tree : Tree α) :
   | node entry left right ihLeft ihRight =>
     simp [erase, ihLeft, ihRight]
 
-/-- The public node constructor preserves correct subtree-size caches. -/
+/-- **The cache-computing node constructor preserves correct size caches.** Let $k$ be a key and
+let $L$ and $R$ be order-statistic trees whose cached subtree sizes are correct at every node.
+Then the node with key $k$, left subtree $L$ and right subtree $R$, whose root cache is the
+cached root size of $L$ plus the cached root size of $R$ plus one, also has correct cached
+subtree sizes at every node. -/
 public theorem cacheCorrect_node {α : Type u} {key : α} {left right : Tree α}
     (hLeft : CacheCorrect left) (hRight : CacheCorrect right) :
     CacheCorrect (node key left right) := by
@@ -131,7 +185,10 @@ private theorem erase_node {α : Type u} (key : α) (left right : Tree α) :
     erase (node key left right) = .node key (erase left) (erase right) :=
   rfl
 
-/-- Erasing after insertion agrees with insertion in the underlying binary search tree. -/
+/-- **Insertion commutes with forgetting the size caches.** Let $\alpha$ be a linearly ordered
+type, $k \in \alpha$ and $T$ an order-statistic tree over $\alpha$. Forgetting the cached sizes
+of the tree obtained by inserting $k$ into $T$ gives the same binary tree as inserting $k$, by
+ordinary binary-search-tree insertion, into $T$ with its cached sizes forgotten. -/
 public theorem erase_insert {α : Type u} [LinearOrder α] (key : α) (tree : Tree α) :
     erase (insert key tree) = BinarySearchTree.insert key (erase tree) := by
   induction tree with
@@ -144,7 +201,10 @@ public theorem erase_insert {α : Type u} [LinearOrder α] (key : α) (tree : Tr
       · simp [hLeft, hRight, erase_node, ihRight]
       · simp [hLeft, hRight, erase]
 
-/-- Insertion preserves correct caches. -/
+/-- **Insertion preserves correct size caches.** Let $\alpha$ be a linearly ordered type, let
+$k \in \alpha$, and let $T$ be an order-statistic tree over $\alpha$ whose cached subtree sizes
+are correct at every node. Then the tree obtained by inserting $k$ into $T$ also has correct
+cached subtree sizes at every node. -/
 public theorem cacheCorrect_insert {α : Type u} [LinearOrder α] {key : α}
     {tree : Tree α} (hTree : CacheCorrect tree) : CacheCorrect (insert key tree) := by
   induction tree with
@@ -158,20 +218,30 @@ public theorem cacheCorrect_insert {α : Type u} [LinearOrder α] {key : α}
       · simpa [insert, hKeyLeft, hKeyRight, CacheCorrect] using
           And.intro hLeft (And.intro hRight hSize)
 
-/-- Insertion preserves the prerequisite BST ordering invariant. -/
+/-- **Insertion preserves ordering of order-statistic trees.** Let $T$ be an order-statistic
+tree over a linearly ordered key type that is ordered, meaning that after its cached sizes are
+erased, at every node each key of the left subtree is strictly smaller than the node's key and
+each key of the right subtree is strictly larger. Then for every key $k$, the tree obtained by
+inserting $k$ into $T$ is again ordered. -/
 public theorem ordered_insert {α : Type u} [LinearOrder α] {key : α}
     {tree : Tree α} (hTree : Ordered tree) : Ordered (insert key tree) := by
   rw [Ordered, erase_insert]
   exact BinarySearchTree.ordered_insert hTree
 
-/-- Trees built by insertion have correct caches. -/
+/-- **Order-statistic trees built from a list have correct size caches.** Let $\alpha$ be a
+linearly ordered type. For every list $\ell$ of elements of $\alpha$, the order-statistic tree
+obtained by inserting the elements of $\ell$ into the empty tree, from right to left, has correct
+cached subtree sizes at every node. -/
 public theorem cacheCorrect_fromList {α : Type u} [LinearOrder α] {keys : List α} :
     CacheCorrect (fromList keys) := by
   induction keys with
   | nil => trivial
   | cons key keys ih => exact cacheCorrect_insert ih
 
-/-- Trees built by insertion satisfy the prerequisite BST ordering invariant. -/
+/-- **Order-statistic trees built from lists are ordered.** For every list $l$ of keys from a
+linearly ordered type, the order-statistic tree built from $l$ by successive insertion is
+ordered: after its cached sizes are erased, at every node each key of the left subtree is
+strictly smaller than the node's key and each key of the right subtree is strictly larger. -/
 public theorem ordered_fromList {α : Type u} [LinearOrder α] {keys : List α} :
     Ordered (fromList keys) := by
   induction keys with
@@ -184,7 +254,9 @@ private theorem erase_fromList {α : Type u} [LinearOrder α] (keys : List α) :
   | nil => rfl
   | cons key keys ih => simp [fromList, erase_insert, ih, BinarySearchTree.fromList]
 
-/-- Membership in a tree built from a list is list membership. -/
+/-- **Keys of an order-statistic tree built from a list.** For a linearly ordered key type, a
+key $k$ and a list $l$ of keys, $k$ is a key of some node of the order-statistic tree built
+from $l$ by successive insertion if and only if $k$ occurs in $l$. -/
 public theorem mem_fromList {α : Type u} [LinearOrder α] {key : α} {keys : List α} :
     key ∈ fromList keys ↔ key ∈ keys := by
   change key ∈ erase (fromList keys) ↔ key ∈ keys
@@ -204,7 +276,11 @@ private theorem contains_eq_bstContains {α : Type u} [LinearOrder α]
       · simp [hLeft, hRight, ihRight]
       · simp [hLeft, hRight]
 
-/-- Comparison search returns true exactly for structural membership in an ordered tree. -/
+/-- **Search in an ordered order-statistic tree is correct.** Let $\alpha$ be a linearly ordered
+type and $T$ an order-statistic tree over $\alpha$ that is ordered: after forgetting the cached
+sizes, at every node all keys in the left subtree are smaller than the node's key and all keys in
+the right subtree are larger. Then for every $q \in \alpha$, comparison search for $q$ in $T$
+returns true if and only if $q$ is the key of some node of $T$. -/
 public theorem contains_eq_true_iff {α : Type u} [LinearOrder α] {query : α}
     {tree : Tree α} (hTree : Ordered tree) : contains query tree = true ↔ query ∈ tree := by
   rw [contains_eq_bstContains]
@@ -234,7 +310,11 @@ private theorem filter_lt_eq_self_of_forall_lt {α : Type u} [LinearOrder α]
       exact h y (by simp [hy])
     simp [hx, ih hxs]
 
-/-- Cached navigation rank refines the prerequisite traversal-based rank. -/
+/-- **Cached rank agrees with traversal rank.** Let $T$ be an order-statistic tree over a
+linearly ordered key type whose cached subtree sizes are correct at every node and which is
+ordered. Then for every query $q$, the rank of $q$ computed by descending $T$ with cached
+left-subtree sizes equals the number of entries strictly smaller than $q$ in the inorder
+traversal of the binary tree obtained by erasing the caches of $T$. -/
 public theorem rank_eq_bstRank {α : Type u} [LinearOrder α] {query : α}
     {tree : Tree α} (hCache : CacheCorrect tree) (hTree : Ordered tree) :
     rank query tree = BinarySearchTree.rank query (erase tree) := by
@@ -296,7 +376,11 @@ public theorem rank_eq_bstRank {α : Type u} [LinearOrder α] {query : α}
         simp [rank, hQueryLeft, BinarySearchTree.rank,
           BinarySearchTree.inorder_node, erase, hLeftAll, hRightNone, hLeftLength]
 
-/-- Cached navigation select refines the prerequisite traversal-based select. -/
+/-- **Cached select agrees with inorder select.** For every order-statistic tree $T$ whose
+cached subtree sizes are correct and every natural number $i$, select at index $i$ in $T$
+(descending with the cached sizes) returns the same result as taking the element at zero-based
+position $i$ of the inorder traversal of the binary tree obtained from $T$ by erasing the cached
+sizes; in particular both return nothing when that position does not exist. -/
 public theorem select_eq_bstSelect {α : Type u} {tree : Tree α}
     (hCache : CacheCorrect tree) (index : Nat) :
     select tree index = BinarySearchTree.select (erase tree) index := by
@@ -327,14 +411,20 @@ public theorem select_eq_bstSelect {α : Type u} {tree : Tree α}
         rw [← hLeftLength, hDrop]
         rfl
 
-/-- Selecting the rank of a present key returns that key. -/
+/-- **Select inverts rank in an order-statistic tree.** Let $T$ be an order-statistic tree over
+a linearly ordered type whose cached subtree sizes are correct and which satisfies the
+binary-search-tree ordering. For every key $k$ in $T$, select in $T$ at the index equal to the
+rank of $k$ in $T$ returns $k$. -/
 public theorem select_rank {α : Type u} [LinearOrder α] {key : α} {tree : Tree α}
     (hCache : CacheCorrect tree) (hTree : Ordered tree) (hKey : key ∈ tree) :
     select tree (rank key tree) = some key := by
   rw [select_eq_bstSelect hCache, rank_eq_bstRank hCache hTree]
   exact BinarySearchTree.select_rank hTree hKey
 
-/-- A successfully selected key has rank equal to its selected index. -/
+/-- **Rank inverts select in an order-statistic tree.** Let $T$ be an order-statistic tree
+over a linearly ordered type whose cached subtree sizes are correct and which satisfies the
+binary-search-tree ordering. If select at zero-based index $i$ in $T$ returns a key $k$, then
+the rank of $k$ in $T$ equals $i$. -/
 public theorem rank_select {α : Type u} [LinearOrder α] {tree : Tree α}
     (hCache : CacheCorrect tree) (hTree : Ordered tree) {index : Nat} {key : α}
     (hSelect : select tree index = some key) : rank key tree = index := by

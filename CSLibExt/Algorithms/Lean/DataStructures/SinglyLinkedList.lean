@@ -46,7 +46,9 @@ namespace Cslib.Algorithms.Lean.SinglyLinkedList
 
 universe u v
 
-/-- A node payload with a next identity; `none` denotes NIL. -/
+/-- **Singly linked list node.** A singly linked list node with payloads in $\alpha$ and identities
+in $\iota$ consists of a payload in $\alpha$ (the key together with any satellite data) and a next
+pointer, which is either an identity in $\iota$ or NIL. -/
 structure Node (α : Type u) (ι : Type v) where
   /-- The full payload, including any key and satellite data. -/
   payload : α
@@ -54,7 +56,12 @@ structure Node (α : Type u) (ι : Type v) where
   next : Option ι
 deriving DecidableEq, Repr
 
-/-- An allocated singly-linked list with exactly the distinct identities `ids`. -/
+/-- **Store representing a singly linked list.** Fix a capacity $n$, let a store assign to each
+identity below $n$ either nothing or a singly linked list node whose next pointer is an identity
+below $n$ or NIL, and let the head be an identity below $n$ or NIL. The store and head represent
+the list of identities $i_0, \dots, i_{k-1}$ when these identities are pairwise distinct, the head
+is $i_0$ (and NIL when $k = 0$), and for each $j < k$ the store entry at $i_j$ is a node whose next
+pointer is $i_{j+1}$ if $j + 1 < k$ and NIL otherwise. -/
 def Represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (ids : List (Fin capacity)) : Prop :=
@@ -63,7 +70,9 @@ def Represents {α : Type u} {capacity : Nat}
       store.get ids[i] = some node ∧
       node.next = ids[i + 1]?
 
-/-- The empty identity list is represented by any pool with header NIL. -/
+/-- **Representation of the empty singly linked list.** Fix a capacity $n$ and let $s$ be any store
+assigning to each identity below $n$ either nothing or a singly linked list node. Then $s$ with
+head NIL represents the empty list of identities. -/
 theorem represents_nil {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity) :
     Represents store none ([] : List (Fin capacity)) := by
@@ -71,7 +80,11 @@ theorem represents_nil {α : Type u} {capacity : Nat}
   intro i hi
   simp at hi
 
-/-- Every represented identity is allocated. -/
+/-- **Represented identities hold nodes.** Fix a capacity $n$, let $s$ be a store assigning to
+each identity below $n$ either nothing or a singly linked list node, and let $\mathrm{head}$ be an
+identity below $n$ or NIL. If $s$ and $\mathrm{head}$ represent the list of identities
+$i_0, \dots, i_{k-1}$, then for every identity $i$ in this list the store entry $s(i)$ is a
+node. -/
 theorem represents_allocated {α : Type u} {capacity : Nat}
     {store : Vector (Option (Node α (Fin capacity))) capacity}
     {head : Option (Fin capacity)} {ids : List (Fin capacity)}
@@ -134,13 +147,20 @@ private lemma map_eraseIdx {α β : Type*} (f : α → β) (l : List α) (i : Na
     | zero => rfl
     | succ i => exact congrArg (List.cons (f b)) (ih (i := i))
 
-/-- Payloads stored at `ids`, in order; `none` marks an unallocated cell. -/
+/-- **Payload list of a singly linked list store.** Fix a capacity $n$ and let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node (a payload
+together with a next pointer that is an identity below $n$ or NIL). For a list of identities
+$i_0, \dots, i_{m-1}$ below $n$, the contents of $s$ at this list are the list
+$c_0, \dots, c_{m-1}$, where $c_j$ is the payload of $s(i_j)$ when $s(i_j)$ is a node and $c_j$ is
+nothing (marking an unallocated cell) when $s(i_j)$ is nothing. -/
 def contents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (ids : List (Fin capacity)) : List (Option α) :=
   ids.map fun i => (store.get i).map Node.payload
 
-/-- Contents have one entry per identity. -/
+/-- **The payload list has one entry per identity.** Fix a capacity $n$ and let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node. For every list
+$L$ of identities below $n$, the contents of $s$ at $L$ have the same length as $L$. -/
 @[simp]
 theorem contents_length {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
@@ -148,7 +168,10 @@ theorem contents_length {α : Type u} {capacity : Nat}
     (contents store ids).length = ids.length :=
   List.length_map _
 
-/-- Contents depend only on the cells at the listed identities. -/
+/-- **The payload list depends only on the listed cells.** Fix a capacity $n$ and let $s$ and $s'$
+be stores assigning to each identity below $n$ either nothing or a singly linked list node. If $L$
+is a list of identities below $n$ and $s'(i) = s(i)$ for every $i$ in $L$, then the contents of
+$s'$ at $L$ equal the contents of $s$ at $L$. -/
 theorem contents_congr {α : Type u} {capacity : Nat}
     {store store' : Vector (Option (Node α (Fin capacity))) capacity}
     {ids : List (Fin capacity)}
@@ -157,7 +180,11 @@ theorem contents_congr {α : Type u} {capacity : Nat}
   unfold contents
   exact List.map_congr_left fun i hi => by rw [h i hi]
 
-/-- In a represented list every content entry is present. -/
+/-- **Represented lists have no missing contents.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node, and let
+$\mathrm{head}$ be an identity below $n$ or NIL. If $s$ and $\mathrm{head}$ represent the list of
+identities $i_0, \dots, i_{k-1}$, then every entry of the contents of $s$ at $i_0, \dots, i_{k-1}$
+is a payload rather than nothing. -/
 theorem represents_contents_isSome {α : Type u} {capacity : Nat}
     {store : Vector (Option (Node α (Fin capacity))) capacity}
     {head : Option (Fin capacity)} {ids : List (Fin capacity)}
@@ -168,7 +195,11 @@ theorem represents_contents_isSome {α : Type u} {capacity : Nat}
   rw [Option.isSome_map]
   exact represents_allocated rep hi
 
-/-- Prepend an already allocated node: point it at the old head and make it the head. -/
+/-- **Prepending a node to a singly linked list.** Fix a capacity $n$, let a store assign to each
+identity below $n$ either nothing or a singly linked list node, let the head be an identity below
+$n$ or NIL, and let $x$ be an identity whose store entry is a node. Prepending $x$ replaces the
+store entry at $x$ by the same node with its next pointer set to the head, leaves every other entry
+unchanged, and returns the updated store together with the new head $x$. -/
 def prepend {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -176,7 +207,10 @@ def prepend {α : Type u} {capacity : Nat}
     Vector (Option (Node α (Fin capacity))) capacity × Option (Fin capacity) :=
   (store.set x.val (some { (store.get x).get hx with next := head }) x.isLt, some x)
 
-/-- The prepended node is always the new head. -/
+/-- **Prepending makes the node the head.** Fix a capacity $n$, let $s$ be a store assigning to
+each identity below $n$ either nothing or a singly linked list node, let $\mathrm{head}$ be an
+identity below $n$ or NIL, and let $x$ be an identity such that $s(x)$ is a node. Then the head
+returned by Prepend on $s$, $\mathrm{head}$ and $x$ is $x$. -/
 theorem prepend_head {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -184,7 +218,12 @@ theorem prepend_head {α : Type u} {capacity : Nat}
     (prepend store head x hx).2 = some x :=
   rfl
 
-/-- Pointwise effect of prepending: only the cell at `x` changes. -/
+/-- **Store after prepending to a singly linked list.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node, let
+$\mathrm{head}$ be an identity below $n$ or NIL, and let $x$ be an identity such that $s(x)$ is a
+node. Then for every identity $z$ below $n$, the entry at $z$ of the store returned by Prepend on
+$s$, $\mathrm{head}$ and $x$ is the node $s(x)$ with its next pointer replaced by $\mathrm{head}$
+when $z = x$, and is $s(z)$ when $z \ne x$. -/
 theorem prepend_get {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -193,7 +232,11 @@ theorem prepend_get {α : Type u} {capacity : Nat}
       if x = z then some { (store.get x).get hx with next := head } else store.get z := by
   exact vector_get_set store x z _
 
-/-- Cells other than the prepended node are unchanged. -/
+/-- **Frame property of prepending to a singly linked list.** Let $S$ be a store assigning to
+each identity below $n$ either nothing or a singly linked list node, let $h$ be an identity below
+$n$ or NIL, and let $x$ be an identity whose store entry is a node. For every identity
+$z \ne x$, cell $z$ of the store obtained by prepending $x$ to the list with head $h$ equals
+cell $z$ of $S$. -/
 theorem prepend_frame {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -201,7 +244,11 @@ theorem prepend_frame {α : Type u} {capacity : Nat}
     (prepend store head x hx).1.get z = store.get z := by
   rw [prepend_get, ite_eq_right hz]
 
-/-- The prepended cell keeps its payload and points at the old head. -/
+/-- **The prepended node points at the old head.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node, let
+$\mathrm{head}$ be an identity below $n$ or NIL, and let $x$ be an identity such that $s(x)$ is a
+node. Then the entry at $x$ of the store returned by Prepend on $s$, $\mathrm{head}$ and $x$ is the
+node $s(x)$ with its payload kept and its next pointer replaced by $\mathrm{head}$. -/
 theorem prepend_node {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -210,7 +257,12 @@ theorem prepend_node {α : Type u} {capacity : Nat}
       some { (store.get x).get hx with next := head } := by
   rw [prepend_get, ite_eq_left rfl]
 
-/-- Prepending a fresh allocated identity conses it onto the represented list. -/
+/-- **Prepending conses onto the represented list.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node, let
+$\mathrm{head}$ be an identity below $n$ or NIL, and let $x$ be an identity such that $s(x)$ is a
+node. If $s$ and $\mathrm{head}$ represent the list of identities $i_0, \dots, i_{k-1}$ and $x$ is
+none of $i_0, \dots, i_{k-1}$, then the store and head returned by Prepend on $s$, $\mathrm{head}$
+and $x$ represent the list $x, i_0, \dots, i_{k-1}$. -/
 theorem prepend_represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -238,7 +290,13 @@ theorem prepend_represents {α : Type u} {capacity : Nat}
       simpa using hcell
     · simpa using hnext
 
-/-- Prepending conses the new payload onto the contents. -/
+/-- **Contents after prepending to a singly linked list.** Let $S$ be a store assigning to each
+identity below $n$ either nothing or a singly linked list node, let $h$ be an identity below $n$
+or NIL, let $x$ be an identity whose store entry is a node with payload $a$, and let
+$(i_0, \dots, i_{m-1})$ be a list of identities below $n$ not containing $x$. Then the contents,
+at the list $(x, i_0, \dots, i_{m-1})$, of the store obtained by prepending $x$ to the list with
+head $h$ are the present payload $a$ followed by the contents of $S$ at the list
+$(i_0, \dots, i_{m-1})$. -/
 theorem prepend_contents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -254,7 +312,12 @@ theorem prepend_contents {α : Type u} {capacity : Nat}
   rw [prepend_node, htail]
   rfl
 
-/-- Insert an already allocated node `x` after the allocated node `y`. -/
+/-- **Inserting a node after another in a singly linked list.** Let a store $S$ assign to each
+identity below $n$ either nothing or a singly linked list node whose next pointer is an identity
+below $n$ or NIL, and let $x$ and $y$ be identities whose store entries are nodes. Inserting $x$
+after $y$ first replaces cell $x$ by the node of $x$ with next pointer replaced by the next
+pointer of $y$ in $S$, then, in the store so obtained, replaces the next pointer of the node in
+cell $y$ by $x$, and returns the resulting store. -/
 def insertAfter {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y x : Fin capacity)
@@ -264,7 +327,14 @@ def insertAfter {α : Type u} {capacity : Nat}
     (some { (store.get x).get hx with next := ((store.get y).get hy).next }) x.isLt
   store₁.set y.val ((store₁.get y).map fun node => { node with next := some x }) y.isLt
 
-/-- Pointwise effect of insertion: `x` is written first, then `y` is relinked. -/
+/-- **Cells after singly-linked-list insertion.** Let $S$ be a store assigning to each identity
+below $n$ either nothing or a singly linked list node, let $x$ and $y$ be identities whose store
+entries are nodes, and let $z$ be any identity. Let $c$ be the node of $x$ in $S$ with next
+pointer replaced by the next pointer of $y$ in $S$ if $z = x$, and the content of cell $z$ in $S$
+otherwise. Then cell $z$ of the store obtained by inserting $x$ after $y$ is $c$ with next pointer
+replaced by $x$ if $z = y$, and $c$ otherwise.
+
+No distinctness of $x$ and $y$ is assumed. -/
 theorem insertAfter_get {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y x : Fin capacity)
@@ -280,7 +350,10 @@ theorem insertAfter_get {α : Type u} {capacity : Nat}
   by_cases hyz : y = z <;> by_cases hxz : x = z <;>
     subst_vars <;> simp_all [insertAfter, vector_get_set]
 
-/-- Cells other than the inserted node and its predecessor are unchanged. -/
+/-- **Frame property of singly-linked-list insertion.** Let $S$ be a store assigning to each
+identity below $n$ either nothing or a singly linked list node, and let $x$ and $y$ be identities
+whose store entries are nodes. For every identity $z$ with $z \ne y$ and $z \ne x$, cell $z$ of
+the store obtained by inserting $x$ after $y$ equals cell $z$ of $S$. -/
 theorem insertAfter_frame {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y x : Fin capacity)
@@ -289,7 +362,11 @@ theorem insertAfter_frame {α : Type u} {capacity : Nat}
     (insertAfter store y x hy hx).get z = store.get z := by
   rw [insertAfter_get, ite_eq_right hyz, ite_eq_right hxz]
 
-/-- Insertion preserves every payload. -/
+/-- **Singly-linked-list insertion preserves payloads.** Let $S$ be a store assigning to each
+identity below $n$ either nothing or a singly linked list node, and let $x$ and $y$ be identities
+whose store entries are nodes. For every identity $z$, cell $z$ of the store obtained by inserting
+$x$ after $y$ is empty exactly when cell $z$ of $S$ is empty, and otherwise holds a node with the
+same payload as the node in cell $z$ of $S$. -/
 theorem insertAfter_payload {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y x : Fin capacity)
@@ -398,8 +475,11 @@ private lemma insertAfter_suffix {α : Type u} {capacity : Nat}
   rw [hnext, List.getElem?_insertIdx_of_gt (by omega)]
   simp only [show i - 1 + 1 = i by omega, show i + 1 - 1 = i by omega]
 
-/-- Inserting a fresh allocated node after position `k` inserts its identity at
-position `k + 1` of the represented list; the header is unchanged. -/
+/-- **Insertion into a represented singly linked list.** Suppose the store $S$ with head $h$
+represents the list of distinct identities $(i_0, \dots, i_{m-1})$. Let $k < m$, assume that the
+store entry of $i_k$ is a node, and let $x$ be an identity whose store entry is a node and which
+is not among $i_0, \dots, i_{m-1}$. Then the store obtained by inserting $x$ after $i_k$, with
+the same head $h$, represents the list $(i_0, \dots, i_k, x, i_{k+1}, \dots, i_{m-1})$. -/
 theorem insertAfter_represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity) (x : Fin capacity)
     (head : Option (Fin capacity)) (ids : List (Fin capacity))
@@ -418,7 +498,15 @@ theorem insertAfter_represents {α : Type u} {capacity : Nat}
       exact insertAfter_inserted store x rep fresh k hk hy hx hi
     · exact insertAfter_suffix store x rep fresh k hk hy hx i (by omega) hi
 
-/-- Insertion inserts the new payload at the same position of the contents. -/
+/-- **Contents after singly-linked-list insertion.** Let $S$ be a store assigning to each identity
+below $n$ either nothing or a singly linked list node, let $(i_0, \dots, i_{m-1})$ be a list of
+identities below $n$, let $k < m$, and let $x$ be an identity such that the store entries of $x$
+and $i_k$ are nodes, the node of $x$ having payload $a$. Then the contents of the store obtained
+by inserting $x$ after $i_k$ at the list $(i_0, \dots, i_k, x, i_{k+1}, \dots, i_{m-1})$ equal
+the contents of $S$ at $(i_0, \dots, i_{m-1})$ with the present payload $a$ inserted as entry
+$k + 1$ (counting from $0$).
+
+No representation or distinctness hypothesis is assumed. -/
 theorem insertAfter_contents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity) (x : Fin capacity)
     (ids : List (Fin capacity)) (k : Nat) (hk : k < ids.length)
@@ -441,14 +529,23 @@ theorem insertAfter_contents {α : Type u} {capacity : Nat}
   rw [hpayload]
   rfl
 
-/-- Delete the head node: the pool is unchanged and the header follows its next pointer. -/
+/-- **Deleting the head of a singly linked list.** Let a store assign to each identity below $n$
+either nothing or a singly linked list node whose next pointer is an identity below $n$ or NIL,
+and let the head be an identity below $n$ or NIL. Deleting the head returns the store unchanged
+together with a new head: NIL if the head is NIL or the store entry at the head is empty, and
+otherwise the next pointer of the node stored at the head. -/
 def deleteHead {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) :
     Vector (Option (Node α (Fin capacity))) capacity × Option (Fin capacity) :=
   (store, head.bind fun h => (store.get h).bind fun node => node.next)
 
-/-- Deleting the head drops the first represented identity. -/
+/-- **Deleting the head removes the first identity.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node, and suppose that
+$s$ with head $h$ represents the list of identities $L$, where $h$ is an identity below $n$ or NIL.
+Let $(s', h')$ be the store and head returned by deleting the head of $s$ with head $h$. Then $s'$
+with head $h'$ represents $L$ with its first entry removed, which is the empty list when $L$ is
+empty. -/
 theorem deleteHead_represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (ids : List (Fin capacity))
@@ -470,8 +567,14 @@ theorem deleteHead_represents {α : Type u} {capacity : Nat}
     rw [hhead]
     exact htail
 
-/-- Delete the successor of the allocated node `y` by splicing `y` past it.
-The removed node stays allocated; at the tail this is a no-op on links. -/
+/-- **Deleting the successor in a singly linked list.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node whose next
+pointer is an identity below $n$ or NIL, and let $y$ be an identity such that $s(y)$ is a node.
+Deleting after $y$ returns the store that agrees with $s$ except at $y$, where it holds the node
+$s(y)$ with its next pointer replaced as follows: if the next pointer of $s(y)$ is an identity $m$
+and $s(m)$ is a node, the new next pointer is the next pointer of $s(m)$; otherwise it is NIL.
+
+The removed node stays allocated in the store; at the tail the links are unchanged. -/
 def deleteAfter {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y : Fin capacity) (hy : (store.get y).isSome) :
@@ -480,7 +583,12 @@ def deleteAfter {α : Type u} {capacity : Nat}
     next := ((store.get y).get hy).next.bind
       fun n => (store.get n).bind fun node => node.next }) y.isLt
 
-/-- Pointwise effect of deleting a successor: only the cell at `y` changes. -/
+/-- **Cells after deleting a successor.** Fix a capacity $n$, let $s$ be a store assigning to each
+identity below $n$ either nothing or a singly linked list node, let $y$ be an identity such that
+$s(y)$ is a node, and let $s'$ be the store obtained from $s$ by deleting the successor of $y$.
+Let $c$ be the node $s(y)$ with its next pointer replaced by the next pointer of $s(m)$ if the
+next pointer of $s(y)$ is an identity $m$ such that $s(m)$ is a node, and by NIL otherwise. Then
+for every identity $z$, $s'(z)$ is the node $c$ if $z = y$, and $s'(z) = s(z)$ if $z \ne y$. -/
 theorem deleteAfter_get {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y : Fin capacity) (hy : (store.get y).isSome) (z : Fin capacity) :
@@ -492,7 +600,10 @@ theorem deleteAfter_get {α : Type u} {capacity : Nat}
       else store.get z := by
   exact vector_get_set store y z _
 
-/-- Cells other than the predecessor of the deleted node are unchanged. -/
+/-- **Deleting a successor leaves other cells unchanged.** Fix a capacity $n$, let $s$ be a store
+assigning to each identity below $n$ either nothing or a singly linked list node, let $y$ be an
+identity such that $s(y)$ is a node, and let $s'$ be the store obtained from $s$ by deleting the
+successor of $y$. Then $s'(z) = s(z)$ for every identity $z \ne y$. -/
 theorem deleteAfter_frame {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y : Fin capacity) (hy : (store.get y).isSome) (z : Fin capacity)
@@ -500,7 +611,11 @@ theorem deleteAfter_frame {α : Type u} {capacity : Nat}
     (deleteAfter store y hy).get z = store.get z := by
   rw [deleteAfter_get, ite_eq_right hyz]
 
-/-- Deleting a successor preserves every payload. -/
+/-- **Deleting a successor preserves payloads.** Fix a capacity $n$, let $s$ be a store assigning
+to each identity below $n$ either nothing or a singly linked list node, let $y$ be an identity
+such that $s(y)$ is a node, and let $s'$ be the store obtained from $s$ by deleting the successor
+of $y$. Then for every identity $z$, either $s(z)$ and $s'(z)$ are both nothing, or both are nodes
+with the same payload. -/
 theorem deleteAfter_payload {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (y : Fin capacity) (hy : (store.get y).isSome) (z : Fin capacity) :
@@ -560,8 +675,13 @@ private lemma deleteAfter_old_cell {α : Type u} {capacity : Nat}
       fun he => hjk (rep.1.getElem_inj_iff.mp he).symm
     simp [deleteAfter_frame store ids[k] hy ids[j] hne, hn, hjk]
 
-/-- Deleting the successor of position `k` erases position `k + 1` of the
-represented list (a no-op at the tail); the header is unchanged. -/
+/-- **Deleting a successor removes it from the represented list.** Fix a capacity $n$, let $s$ be a
+store assigning to each identity below $n$ either nothing or a singly linked list node, and
+suppose that $s$ with head $h$ represents the list of identities $L = (i_0, \dots, i_{m-1})$. Let
+$k < m$ be such that $s(i_k)$ is a node, and let $s'$ be the store obtained from $s$ by deleting
+the successor of $i_k$. Then $s'$ with the same head $h$ represents the list obtained from $L$ by
+removing the entry at position $k + 1$. Positions count from $0$, and at the tail ($k + 1 = m$)
+the list is unchanged. -/
 theorem deleteAfter_represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (ids : List (Fin capacity))
@@ -605,7 +725,13 @@ theorem deleteAfter_represents {α : Type u} {capacity : Nat}
       rw [herase] at hi
       omega
 
-/-- Deleting a successor erases the corresponding content entry. -/
+/-- **Contents after deleting a successor.** Fix a capacity $n$, let $s$ be a store assigning to
+each identity below $n$ either nothing or a singly linked list node, let
+$L = (i_0, \dots, i_{m-1})$ be a list of identities below $n$, and let $k < m$ be such that
+$s(i_k)$ is a node. Let $s'$ be the store obtained from $s$ by deleting the successor of $i_k$.
+Then the contents of $s'$ at the list obtained from $L$ by removing the entry at position $k + 1$
+equal the list obtained from the contents of $s$ at $L$ by removing the entry at position $k + 1$.
+Positions count from $0$, and nothing is removed when $k + 1 = m$. -/
 theorem deleteAfter_contents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (ids : List (Fin capacity)) (k : Nat) (hk : k < ids.length)
@@ -620,8 +746,12 @@ theorem deleteAfter_contents {α : Type u} {capacity : Nat}
   rw [map_eraseIdx]
   rfl
 
-/-- Fuel-bounded search following next pointers: the first visited identity
-whose payload equals `target`, if reached within `fuel` steps. -/
+/-- **Fuel-bounded search in a singly-linked list.** Given a node pool with $n$ cells, a target
+payload $t$, a fuel $f \in \mathbb{N}$ and a start $h$ that is either an identity in
+$\{0, \dots, n-1\}$ or NIL, fuel-bounded search for $t$ from $h$ with fuel $f$ returns nothing
+if $f = 0$ or $h$ is NIL. Otherwise $h$ is an identity $i$: the search returns nothing if cell
+$i$ is unallocated, returns $i$ if the node in cell $i$ has payload $t$, and otherwise continues
+from the next pointer of that node with fuel $f - 1$. -/
 def searchAux {α : Type u} {capacity : Nat} [DecidableEq α]
     (store : Vector (Option (Node α (Fin capacity))) capacity) (target : α) :
     Nat → Option (Fin capacity) → Option (Fin capacity)
@@ -634,15 +764,21 @@ def searchAux {α : Type u} {capacity : Nat} [DecidableEq α]
       if node.payload = target then some i
       else searchAux store target fuel node.next
 
-/-- Search a list for the first identity whose payload equals `target`,
-following next pointers from the head; the fuel is the pool capacity. -/
+/-- **Search in a singly-linked list.** Given a node pool with $n$ cells, a head $h$ that is
+either an identity in $\{0, \dots, n-1\}$ or NIL, and a target payload $t$, the search for $t$
+from $h$ is fuel-bounded search for $t$ from $h$ with fuel $n$. It follows next pointers from
+$h$ and returns the first visited identity whose node has payload $t$, returning nothing if it
+reaches NIL or an unallocated cell first, or if $n$ steps run out. -/
 def search {α : Type u} {capacity : Nat} [DecidableEq α]
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (target : α) : Option (Fin capacity) :=
   searchAux store target capacity head
 
-/-- With at least as much fuel as the represented length, fuel-bounded search
-is `List.find?` over the represented identities. -/
+/-- **Fuel-bounded search finds the first matching represented identity.** Suppose a node pool
+represents, from the head $h$, the list of distinct identities $\ell$. Then for every target
+payload $t$ and every fuel $f$ with $f \ge |\ell|$, fuel-bounded search for $t$ from $h$ with
+fuel $f$ returns the first identity in $\ell$ whose cell holds a node with payload $t$, and
+returns nothing if no identity in $\ell$ has this property. -/
 theorem searchAux_eq_find? {α : Type u} {capacity : Nat} [DecidableEq α]
     (store : Vector (Option (Node α (Fin capacity))) capacity) (target : α)
     (fuel : Nat) (head : Option (Fin capacity)) (ids : List (Fin capacity))
@@ -684,8 +820,12 @@ theorem searchAux_eq_find? {α : Type u} {capacity : Nat} [DecidableEq α]
       rw [hL, hR]
       by_cases hp : node.payload = target <;> simp [hp, ih']
 
-/-- A represented identity list is no longer than the pool capacity: its
-identities are distinct elements of `Fin capacity`. -/
+/-- **Represented lists fit in the store.** Fix a capacity $n$, let $s$ be a store assigning to
+each identity below $n$ either nothing or a singly linked list node, and let $\mathrm{head}$ be an
+identity below $n$ or NIL. If $s$ and $\mathrm{head}$ represent the list of identities
+$i_0, \dots, i_{k-1}$, then $k \le n$.
+
+The identities are pairwise distinct and there are only $n$ of them. -/
 theorem represents_length_le_capacity {α : Type u} {capacity : Nat}
     {store : Vector (Option (Node α (Fin capacity))) capacity}
     {head : Option (Fin capacity)} {ids : List (Fin capacity)}
@@ -694,7 +834,10 @@ theorem represents_length_le_capacity {α : Type u} {capacity : Nat}
   have h := List.Nodup.length_le_card rep.1
   rwa [Fintype.card_fin] at h
 
-/-- Search agrees with `List.find?` over the represented identities. -/
+/-- **Search finds the first matching represented identity.** If a node pool represents, from the
+head $h$, the list of distinct identities $\ell$, then for every target payload $t$ the search
+for $t$ from $h$ returns the first identity in $\ell$ whose cell holds a node with payload $t$,
+and returns nothing if no identity in $\ell$ has this property. -/
 theorem search_eq_find? {α : Type u} {capacity : Nat} [DecidableEq α]
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (target : α) (ids : List (Fin capacity))
@@ -704,7 +847,10 @@ theorem search_eq_find? {α : Type u} {capacity : Nat} [DecidableEq α]
   searchAux_eq_find? store target capacity head ids rep
     (represents_length_le_capacity rep)
 
-/-- A successful search returns a represented identity carrying the target payload. -/
+/-- **A successful search returns a matching represented identity.** If a node pool represents,
+from the head $h$, the list of distinct identities $\ell$, and the search for a target payload
+$t$ from $h$ returns an identity $x$, then $x$ belongs to $\ell$ and cell $x$ holds a node with
+payload $t$. -/
 theorem search_eq_some {α : Type u} {capacity : Nat} [DecidableEq α]
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (target : α) (ids : List (Fin capacity))
@@ -716,7 +862,10 @@ theorem search_eq_some {α : Type u} {capacity : Nat} [DecidableEq α]
     have hp := List.find?_some h
     simpa using hp⟩
 
-/-- Search fails exactly when no represented payload equals the target. -/
+/-- **Search fails exactly when no represented node has the target payload.** If a node pool
+represents, from the head $h$, the list of distinct identities $\ell$, then for every target
+payload $t$ the search for $t$ from $h$ returns nothing if and only if no identity in $\ell$ has
+a cell holding a node with payload $t$. -/
 theorem search_eq_none_iff {α : Type u} {capacity : Nat} [DecidableEq α]
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (target : α) (ids : List (Fin capacity))

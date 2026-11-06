@@ -45,10 +45,12 @@ namespace Cslib.Algorithms.Lean
 namespace RedBlackTree
 
 /--
-Splice two trees end to end, keeping every key of the first tree before every
-key of the second in the inorder traversal and keeping the existing colors.
-`ordered_join` gives the side condition under which the splice of two ordered
-trees stays ordered.
+**Splicing two red-black trees.** The splice of a red-black tree $t$ with a red-black tree $s$ is
+defined by recursion on $t$. The splice of the empty tree with $s$ is $s$. The splice of the node
+with color $c$, left subtree $l$, key $k$ and right subtree $r$ with $s$ is the node with color
+$c$, left subtree $l$, key $k$ and right subtree the splice of $r$ with $s$.
+
+So $s$ becomes the right subtree of the rightmost node of $t$, and all existing colors are kept.
 -/
 public def join {α : Type u} : Tree α → Tree α → Tree α
   | .empty, right => right
@@ -56,9 +58,15 @@ public def join {α : Type u} : Tree α → Tree α → Tree α
       .node color left key (join right other)
 
 /--
-Unbalanced deletion: delete a key by comparisons, splicing the subtrees of a
-deleted node together with `join`. Colors are kept, but `RedOk` and
-`Balanced` need not hold of the result; `delete` repairs them.
+**Unbalanced red-black tree deletion.** For a key $x$ of a linearly ordered type, unbalanced
+deletion of $x$ from a red-black tree is defined by recursion on the tree. The empty tree stays
+empty. At a node with color $c$, left subtree $l$, key $k$ and right subtree $r$: if $x < k$, the
+result is the node with color $c$, left subtree the unbalanced deletion of $x$ from $l$, key $k$
+and right subtree $r$; if $k < x$, it is the node with color $c$, left subtree $l$, key $k$ and
+right subtree the unbalanced deletion of $x$ from $r$; otherwise (so $x = k$) it is the splice of
+$l$ with $r$.
+
+Colors are kept, so the result need not satisfy the red invariant or be black-height balanced.
 -/
 def del {α : Type u} [LinearOrder α] (x : α) : Tree α → Tree α
   | .empty => .empty
@@ -67,11 +75,18 @@ def del {α : Type u} [LinearOrder α] (x : α) : Tree α → Tree α
       else if key < x then .node color left key (del x right)
       else join left right
 
-/-- Rebuild a valid red-black tree holding exactly the keys of a tree. -/
+/-- **Rebuilding a red-black tree from its keys.** For a linearly ordered key type, the rebuild of
+a red-black tree $t$ is the tree obtained from the empty tree by inserting the keys of the inorder
+traversal of $t$ one at a time with Okasaki insertion, starting from the last key.
+
+The result is a valid red-black tree whose keys are exactly the keys of $t$. -/
 def rebalance {α : Type u} [LinearOrder α] (tree : Tree α) : Tree α :=
   fromList (inorder tree)
 
-/-- Delete a key, leaving a valid red-black tree. -/
+/-- **Red-black tree deletion by rebuilding.** For a key $x$ of a linearly ordered type and a
+red-black tree $t$, deleting $x$ from $t$ by rebuilding first forms the unbalanced deletion of
+$x$ from $t$, then rebalances it: starting from the empty tree, it inserts the keys of the inorder
+traversal of that tree one at a time, from the last key to the first. -/
 public def delete {α : Type u} [LinearOrder α] (x : α) (tree : Tree α) :
     Tree α :=
   rebalance (del x tree)
@@ -85,7 +100,8 @@ public def delete {α : Type u} [LinearOrder α] (x : α) (tree : Tree α) :
     x ∈ Tree.node color left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
 
-/-- A key is in a splice exactly when it is in one of the two parts. -/
+/-- **Membership in a splice.** For red-black trees $t$ and $s$ with keys of any type, a key $x$
+belongs to the splice of $t$ with $s$ if and only if $x$ belongs to $t$ or $x$ belongs to $s$. -/
 public theorem mem_join {α : Type u} {x : α} {left right : Tree α} :
     x ∈ join left right ↔ x ∈ left ∨ x ∈ right := by
   induction left with
@@ -104,7 +120,9 @@ public theorem mem_join {α : Type u} {x : α} {left right : Tree α} :
       · exact Or.inr (Or.inr (Or.inl hx))
       · exact Or.inr (Or.inr (Or.inr hx))
 
-/-- The inorder traversal of a splice appends the two traversals. -/
+/-- **Inorder traversal of a splice.** For red-black trees $t$ and $s$ with keys of any type,
+the inorder traversal of the splice of $t$ with $s$ is the inorder traversal of $t$ followed by the
+inorder traversal of $s$. -/
 public theorem inorder_join {α : Type u} {left right : Tree α} :
     inorder (join left right) = inorder left ++ inorder right := by
   induction left with
@@ -122,8 +140,11 @@ private theorem all_join {α : Type u} {p : α → Prop} {left right : Tree α}
   · exact (all_iff_forall_mem.mp hRight) x hx
 
 /--
-Splicing two ordered trees stays ordered when every key of the left tree is
-smaller than every key of the right tree.
+**Joining separated ordered trees preserves order.** Let $<$ be a relation on the keys, and let
+$L$ and $R$ be red-black trees that are ordered for $<$ such that $a < b$ for every key $a$ of $L$
+and every key $b$ of $R$. Then the join of $L$ and $R$, obtained by putting $R$ in place of the
+empty right subtree of the rightmost node of $L$ (or $R$ itself if $L$ is empty) and keeping all
+colors, is ordered.
 -/
 public theorem ordered_join {α : Type u} [LT α] {left right : Tree α}
     (hLeft : Ordered left) (hRight : Ordered right)
@@ -325,51 +346,70 @@ private theorem valid_rebalance {α : Type u} [LinearOrder α] {tree : Tree α} 
     Valid (rebalance tree) :=
   valid_fromList
 
-/-- Deletion from an ordered tree removes exactly the deleted key. -/
+/-- **Membership after deletion by rebuilding.** Let $x$ and $y$ be keys of a linearly ordered
+type and let $t$ be an ordered red-black tree. Then $y$ belongs to the tree obtained from $t$ by
+deleting $x$ by rebuilding if and only if $y$ belongs to $t$ and $y \ne x$. -/
 public theorem mem_delete {α : Type u} [LinearOrder α] {x y : α}
     {tree : Tree α} (hTree : Ordered tree) :
     y ∈ delete x tree ↔ y ∈ tree ∧ y ≠ x := by
   show y ∈ rebalance (del x tree) ↔ y ∈ tree ∧ y ≠ x
   rw [mem_rebalance, mem_del hTree]
 
-/-- The deleted key is absent after deletion from an ordered tree. -/
+/-- **The deleted key is absent after deletion by rebuilding.** Let $x$ be a key of a linearly
+ordered type and let $t$ be an ordered red-black tree. Then $x$ does not belong to the tree
+obtained from $t$ by deleting $x$ by rebuilding. -/
 public theorem not_mem_delete_self {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) : x ∉ delete x tree :=
   fun hx => ((mem_delete hTree).mp hx).2 rfl
 
-/-- Deleting a key erases it from the inorder traversal of an ordered tree. -/
+/-- **Inorder traversal after deletion by rebuilding.** Let $x$ be a key of a linearly ordered
+type and let $t$ be an ordered red-black tree. Then the inorder traversal of the tree obtained from
+$t$ by deleting $x$ by rebuilding is the inorder traversal of $t$ with the first occurrence of $x$
+removed (it is unchanged if $x$ does not occur). -/
 public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) :
     inorder (delete x tree) = (inorder tree).erase x := by
   show inorder (rebalance (del x tree)) = (inorder tree).erase x
   rw [inorder_rebalance (ordered_del hTree), inorder_del hTree]
 
-/-- Deletion always produces a valid red-black tree, with no hypothesis on
-the input: the result is rebuilt by `fromList`, which is unconditionally
-valid. -/
+/-- **Red-black deletion yields a valid red-black tree.** For every linearly ordered key type,
+every key $x$ and every red-black tree $t$, the tree obtained by deleting $x$ from $t$ is a valid
+red-black tree: it is ordered, no red node has a red child, every root-to-leaf path contains the
+same number of black nodes, and its root is black (the empty tree counts as black). No hypothesis
+on $t$ is needed.
+
+The result is valid because deletion rebuilds the tree by repeated insertion, which always
+produces a valid red-black tree. -/
 public theorem valid_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} : Valid (delete x tree) :=
   valid_rebalance
 
-/-- Deletion always produces an ordered tree (unconditional; see
-`valid_delete`). -/
+/-- **Red-black deletion yields an ordered tree.** For every linearly ordered key type, every key
+$x$ and every red-black tree $t$, the tree obtained by deleting $x$ from $t$ is ordered: at every
+node, all keys in the left subtree are strictly smaller than the node's key and all keys in the
+right subtree are strictly larger. No hypothesis on $t$ is needed. -/
 public theorem ordered_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} : Ordered (delete x tree) :=
   valid_rebalance.1
 
-/-- Deletion always produces a tree satisfying the red invariant
-(unconditional; see `valid_delete`). -/
+/-- **Red-black deletion yields a tree with no red-red edge.** For every linearly ordered key
+type, every key $x$ and every red-black tree $t$, the tree obtained by deleting $x$ from $t$
+satisfies the red invariant: no red node has a red child. No hypothesis on $t$ is needed. -/
 public theorem redOk_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} : RedOk (delete x tree) :=
   valid_rebalance.2.1
 
-/-- Deletion always produces a black-height-balanced tree (unconditional;
-see `valid_delete`). -/
+/-- **Deletion by rebuilding is black-height balanced.** For every linearly ordered type of
+keys, every key $x$ and every red-black tree $t$, with no hypothesis on $t$, the tree obtained
+from $t$ by deleting $x$ by rebuilding is black-height balanced. -/
 public theorem balanced_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} : Balanced (delete x tree) :=
   valid_rebalance.2.2.1
 
-/-- The tree produced by deletion has a black root. -/
+/-- **Deletion by rebuilding gives a black root.** For every linearly ordered type of keys,
+every key $x$ and every red-black tree $t$, with no hypothesis on $t$, the root of the tree
+obtained from $t$ by deleting $x$ by rebuilding is black, where the empty tree counts as having
+a black root. -/
 public theorem colorOf_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} : colorOf (delete x tree) = .black :=
   valid_rebalance.2.2.2
