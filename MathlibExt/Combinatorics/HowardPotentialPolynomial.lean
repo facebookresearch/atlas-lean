@@ -833,8 +833,19 @@ namespace MetaMathlibExt
 
 section
 
-/-- Howard formula specialization at r=2 with Bell input (0,1,1,...).
+/-- **Howard's formula for the series $\sum_{k \ge 0} 2x^k/(k+2)!$.** Let $n$ be a natural
+number, let
+$$h(x) = \sum_{k \ge 0} \frac{2}{(k+2)!}\, x^k \in \mathbb{Q}[[x]],$$
+let $h^{-1}$ be its inverse in $\mathbb{Q}[[x]]$, and write $[x^n]\, f$ for the coefficient of
+$x^n$ in a power series $f$. Let $G_n \in \mathbb{Q}[X]$ be a polynomial of degree at most $n$
+such that $G_n(m) = n!\, [x^n]\, (h^{-1})^m$ for every natural number $m \le n$. Then
+$$G_n(X) = \sum_{i=0}^{n} (-1)^i\, 2^i\, \frac{n!\, i!}{(n+2i)!} \cdot
+\frac{X(X+1)\cdots(X+i-1)}{i!} \cdot \frac{(X+n)(X+n-1)\cdots(X+i+1)}{(n-i)!} \cdot
+B_{n+2i,\,i}(0, 1, 1, \dots),$$
+where empty products equal $1$ and $B_{n+2i,\,i}(0, 1, 1, \dots)$ is the partial Bell
+polynomial evaluated at the sequence whose first term is $0$ and whose other terms are all $1$.
 
+Source: G. Nemes, Journal of Integer Sequences 13 (2010).
 Source URL: https://cs.uwaterloo.ca/journals/JIS/VOL13/Nemes/nemes2.tex
 Generic span: lines 120-133; specialization span: lines 166-173.
 File SHA256: f3556d7fdb4d3f9366c3505d2cd20564f431d71a337e9f3a4fc7c24431df2daf
@@ -1876,8 +1887,20 @@ private theorem natDegree_C_mul4_le {R : Type*} [Semiring R]
     _ ≤ (m1 + m2) + m3 := Nat.add_le_add
         (natDegree_C_mul_mul_le a p q m1 m2 hp hq) hr
 
-/-- Howard formula for potential polynomials, generic finite-sum form.
+/-- **Howard's formula for potential polynomials.** Let $K$ be a field of characteristic zero,
+let $r \ge 1$ and $n$ be natural numbers, and let $a_0, a_1, a_2, \dots$ be a sequence in $K$
+with $a_r \ne 0$. Let $g$ be the formal power series
+$$g(x) = \sum_{k \ge 0} \frac{r!\, a_{r+k}}{a_r\, (r+k)!}\, x^k,$$
+let $g^{-1}$ be its inverse in $K[[x]]$, and write $[x^n]\, f$ for the coefficient of $x^n$ in a
+power series $f$. Let $P \in K[X]$ be a polynomial of degree at most $n$ such that
+$P(m) = n!\, [x^n]\, (g^{-1})^m$ for every natural number $m \le n$. Then
+$$P(X) = \sum_{i=0}^{n} (-1)^i \left(\frac{r!}{a_r}\right)^i \frac{n!\, i!}{(n+ri)!} \cdot
+\frac{X(X+1)\cdots(X+i-1)}{i!} \cdot \frac{(X+n)(X+n-1)\cdots(X+i+1)}{(n-i)!} \cdot
+B_{n+ri,\,i}(\tilde a),$$
+where empty products equal $1$, $B_{n+ri,\,i}$ is the partial Bell polynomial, and $\tilde a$
+is the sequence with $\tilde a_j = a_j$ for $j \ge r$ and $\tilde a_j = 0$ for $j < r$.
 
+Source: G. Nemes, Journal of Integer Sequences 13 (2010).
 Source URL: https://cs.uwaterloo.ca/journals/JIS/VOL13/Nemes/nemes2.tex
 Generic span: lines 120-133; specialization span: lines 166-173.
 File SHA256: f3556d7fdb4d3f9366c3505d2cd20564f431d71a337e9f3a4fc7c24431df2daf

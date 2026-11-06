@@ -23,7 +23,10 @@ prescribed number of cycles, counting fixed points as cycles.
 
 namespace MetaMathlibExt
 
-/-- The number of cycles of a finite permutation, including fixed points as one-cycles. -/
+/-- **Number of cycles of a permutation.** For a permutation $\sigma$ of a finite type $\alpha$,
+the number of cycles of $\sigma$, counting each fixed point as a cycle of length one, is the
+number of equivalence classes of $\alpha$ under the relation that holds between $x$ and $y$ when
+$\sigma^i(x) = y$ for some integer $i$. -/
 public noncomputable def cycleQuotientCount {α : Type*} [Fintype α]
     (σ : Equiv.Perm α) : ℕ :=
   Nat.card (Quotient (Equiv.Perm.SameCycle.setoid σ))
@@ -81,7 +84,10 @@ private noncomputable def cycleQuotientEquiv {α : Type*} [Fintype α] [Decidabl
       apply Subtype.ext
       exact (Equiv.Perm.cycle_is_cycleOf hxc c.property).symm
 
-/-- The quotient cycle count is the number of nontrivial cycles plus fixed points. -/
+/-- **Counting cycles via the cycle type.** For a permutation $\sigma$ of a finite type, the
+number of cycles of $\sigma$, counting each fixed point as a cycle of length one, equals the
+number of cycles of $\sigma$ of length at least $2$ (the length of its cycle type) plus the
+number of fixed points of $\sigma$. -/
 public theorem cycleQuotientCount_eq {α : Type*} [Fintype α] [DecidableEq α]
     (σ : Equiv.Perm α) :
     cycleQuotientCount σ =
@@ -372,8 +378,12 @@ private theorem card_perm_qcycle_eq_stirlingFirst (n k : ℕ) :
       | succ k =>
           rw [card_perm_qcycle_succ_succ, ih, ih, Nat.stirlingFirst_succ_succ]
 
-/-- The unsigned Stirling number of the first kind counts permutations with the given number
-of cycles, where fixed points are included as one-cycles. -/
+/-- **Stirling numbers of the first kind count permutations by cycles.** For all natural
+numbers $n$ and $k$, the number of permutations $\sigma$ of $\{0, \dots, n-1\}$ such that the
+number of cycles of $\sigma$ of length at least $2$ plus the number of fixed points of $\sigma$
+equals $k$ is the unsigned Stirling number of the first kind $c(n, k)$. In other words,
+$c(n, k)$ counts the permutations of an $n$-element set with exactly $k$ cycles, each fixed
+point counted as a cycle of length one. -/
 public theorem card_perm_cycleCount_eq_stirlingFirst (n k : ℕ) :
     Fintype.card {σ : Equiv.Perm (Fin n) //
       Multiset.card σ.cycleType + Fintype.card (Function.fixedPoints σ) = k} =

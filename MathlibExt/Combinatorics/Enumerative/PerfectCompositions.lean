@@ -582,10 +582,15 @@ private lemma pairwise_lt_nodup (L : List ℕ) (h : L.Pairwise (· < ·)) : L.No
     exact absurd (h.1 _ hmem) (lt_irrefl _)
 
 /--
-A composition of `n` is perfect iff its symbolic parts permute those of a perfect partition
-of `n` (written with strictly increasing part sizes). Unlike
-`perfect_composition_iff_symbolic_parts_perm_perfect_partition`, this needs no positivity
-hypothesis on `n`.
+**Perfect compositions are permuted perfect partitions.** Call a list $L$ of positive integers
+perfect for $n$ if for every integer $m$ with $0 < m < n$ there is exactly one list of integers
+that is a sublist of $L$ (its entries taken in order, not necessarily contiguous) and has sum
+$m$. A symbolic part $(a, u)$ with $a, u > 0$ stands for a run of $u$ copies of $a$, and the
+expansion of a list of symbolic parts is the concatenation of their runs. Let $n$ be a natural
+number and let $C$ be a list of symbolic parts, any two adjacent ones having different values
+$a$, whose expansion has sum $n$. Then the expansion of $C$ is perfect for $n$ if and only if
+$C$ is a permutation of a list $P$ of symbolic parts $(a, u)$ with $a, u > 0$ and strictly
+increasing values $a$ whose expansion has sum $n$ and is perfect for $n$.
 -/
 theorem perfect_composition_iff_symbolic_parts_perm_perfect_partition_general
     (n : ℕ)
@@ -679,18 +684,21 @@ theorem perfect_composition_iff_symbolic_parts_perm_perfect_partition_general
 
 set_option linter.unusedVariables false in
 /--
-A symbolic part `(a, u)` denotes a run of `u` copies of the positive part `a`.
+**Munagi's theorem on perfect compositions.** Call a list $L$ of positive integers perfect for
+$n$ if for every integer $m$ with $0 < m < n$ there is exactly one list of integers that is a
+sublist of $L$ (its entries taken in order, not necessarily contiguous) and has sum $m$. A
+symbolic part $(a, u)$ with $a, u > 0$ stands for a run of $u$ copies of $a$, and the expansion
+of a list of symbolic parts is the concatenation of their runs. Let $n > 0$ and let $C$ be a list
+of symbolic parts, any two adjacent ones having different values $a$, whose expansion has sum
+$n$. Then the expansion of $C$ is perfect for $n$ if and only if $C$ is a permutation of a list
+$P$ of symbolic parts $(a, u)$ with $a, u > 0$ and strictly increasing values $a$ whose
+expansion has sum $n$ and is perfect for $n$.
+
+Proves `Wanted` entry `perfect_composition_iff_symbolic_parts_perm_perfect_partition`.
 
 Source: Augustine O. Munagi, "Perfect Compositions of Numbers," Journal of Integer
 Sequences 23 (2020), Article 20.5.1, Theorem 1 (label `thm1`), lines 138–140,
 <https://cs.uwaterloo.ca/journals/JIS/VOL23/Munagi/munagi13.tex>.
-
-A composition is perfect when its parts contain exactly one composition (sublist) of
-every smaller positive integer. The theorem says a composition of `n` is perfect iff
-its symbolic parts permute those of a perfect partition of `n` (written with strictly
-increasing part sizes).
-
-Proves `Wanted` entry `perfect_composition_iff_symbolic_parts_perm_perfect_partition`.
 -/
 @[nolint unusedArguments]
 theorem perfect_composition_iff_symbolic_parts_perm_perfect_partition

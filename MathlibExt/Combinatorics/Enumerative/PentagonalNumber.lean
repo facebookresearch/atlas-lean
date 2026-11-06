@@ -24,19 +24,22 @@ open scoped PowerSeries.WithPiTopology
 
 namespace MetaMathlibExt
 
-/-- Integer partition function `p(n)`, the number of partitions of `n`,
-via `Mathlib` partition card. Stable source:
-https://en.wikipedia.org/wiki/Pentagonal_number_theorem
+/-- **The partition function.** For a natural number $n$, $p(n)$ is the number of partitions of
+$n$, that is, of ways of writing $n$ as a sum of positive integers, disregarding order.
+
+Source: https://en.wikipedia.org/wiki/Pentagonal_number_theorem
 ("Pentagonal number theorem", statement `pentagonal-s1`). -/
 def partitionFunction (n : ℕ) : ℕ :=
   Fintype.card (Nat.Partition n)
 
-/-- There is one partition of `0`, the empty one. -/
+/-- **The partition number of zero.** Let $p(n)$ be the number of partitions of $n$. Then
+$p(0) = 1$: the only partition of $0$ is the empty one. -/
 @[simp]
 theorem partitionFunction_zero : partitionFunction 0 = 1 :=
   Fintype.card_unique
 
-/-- There is one partition of `1`. -/
+/-- **The partition number of one.** Let $p(n)$ be the number of partitions of $n$. Then
+$p(1) = 1$: the only partition of $1$ is $1$ itself. -/
 @[simp]
 theorem partitionFunction_one : partitionFunction 1 = 1 :=
   Fintype.card_unique
@@ -51,8 +54,11 @@ private theorem genFun_one_coeff (n : ℕ) :
   rw [Finset.sum_const, Finset.card_univ]
   simp
 
-/-- The generating function of `partitionFunction` is Mathlib's partition generating function
-`Nat.Partition.genFun` with all weights `1`. -/
+/-- **Partition generating function with unit weights.** Let $p(n)$ be the number of partitions
+of $n$. Over the integers, $\sum_{n \ge 0} p(n)\, x^n$ equals the weighted partition generating
+function $\sum_{n \ge 0} \sum_{\lambda} \prod_{i} f(i, c_i(\lambda))\, x^n$ with all weights
+$f(i, c) = 1$, where $\lambda$ runs over the partitions of $n$, $i$ over the distinct parts of
+$\lambda$, and $c_i(\lambda)$ is the number of times $i$ occurs in $\lambda$. -/
 theorem mk_partitionFunction_eq_genFun :
     PowerSeries.mk (fun n => ((partitionFunction n : ℕ) : ℤ))
       = Nat.Partition.genFun (fun _ _ => (1 : ℤ)) := by
@@ -86,8 +92,10 @@ private theorem factor_mul (i : ℕ) :
     simp
   simpa [pow_mul] using h
 
-/-- Euler: the partition generating function times `PowerSeries.pentagonalSeries ℤ`,
-which is `∏ (1 - X ^ (i + 1))`, is `1`. -/
+/-- **Euler's identity for the partition generating function.** Let $p(n)$ be the number of
+partitions of $n$. Over the integers,
+$\left(\sum_{n \ge 0} p(n)\, x^n\right) \cdot \sum_{k \in \mathbb{Z}} (-1)^k x^{k(3k-1)/2} = 1$.
+By the pentagonal number theorem the second factor equals $\prod_{i \ge 1} (1 - x^i)$. -/
 theorem mk_partitionFunction_mul_pentagonalSeries :
     PowerSeries.mk (fun n => ((partitionFunction n : ℕ) : ℤ)) *
       PowerSeries.pentagonalSeries ℤ = 1 := by
@@ -334,14 +342,16 @@ private theorem negOnePow_neg_coe (m : ℕ) :
     ((-(m : ℤ)).negOnePow : ℤ) = ((m : ℤ).negOnePow : ℤ) := by
   rw [Int.negOnePow_neg]
 
-/-- Euler's recurrence from the pentagonal number theorem: for `n ≥ 1`,
-`p(n)` equals the finite alternating sum over nonzero `k` of
-`(-1) ^ (k + 1) * p (n - g k)`, where `g k` are the generalized
-pentagonal numbers. Stable source:
-https://en.wikipedia.org/wiki/Pentagonal_number_theorem
-("Pentagonal number theorem", statement `pentagonal-s1`).
+/-- **Euler's pentagonal recurrence for the partition function.** Let $p(n)$ be the number of
+partitions of $n$, and for an integer $k$ let $g(k) = k(3k - 1)/2$ be the generalized pentagonal
+number of $k$. For every natural number $n \ge 1$,
+$p(n) = \sum_{k} (-1)^{k+1}\, p(n - g(k))$, where the sum runs over the nonzero integers $k$
+with $g(k) \le n$.
 
-Proves `Wanted` entry `pentagonal_number_theorem`. -/
+Proves `Wanted` entry `pentagonal_number_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Pentagonal_number_theorem
+("Pentagonal number theorem", statement `pentagonal-s1`). -/
 theorem pentagonal_number_theorem (n : ℕ) (hn : 1 ≤ n) :
     (partitionFunction n : ℤ) =
       ∑ m ∈ Finset.filter (fun m : ℕ => 1 ≤ m) (Finset.range (n + 1)),

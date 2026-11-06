@@ -1468,19 +1468,18 @@ private noncomputable def bwe_validPermEquivFinpartition (n : ℕ) :
   right_inv P := toPart_ofPartPerm P
 
 /--
-The number of permutations in `𝔖 n` having increasing subword of weak excedance
-letters is the `n`th Bell number `B n`.
+**Bell numbers count permutations with increasing weak excedance letters.** A position $i$ is a
+weak excedance of a permutation $\sigma$ when $i \le \sigma(i)$. For every $n$, the number of
+permutations $\sigma$ of $\{0, 1, \dots, n-1\}$ such that $\sigma(i) < \sigma(j)$ whenever
+$i < j$ are both weak excedances of $\sigma$ is the Bell number $B_n$.
+
+Proves `Wanted` entry `bell_count_perm_increasing_weakExcedance_letters`.
 
 Source: Fufa Beyene, Jörgen Backelin, Roberto Mantaci, and Samuel A.
 Fufa, "Set Partitions and Other Bell Number Enumerated Objects,"
 Journal of Integer Sequences 26 (2023), Article 23.1.8, Theorem,
 lines 434–436,
 https://cs.uwaterloo.ca/journals/JIS/VOL26/Beyene/beyene13.tex
-
-A position `i` is a weak excedance when `i ≤ σ i`; the hypothesis says
-the values at weak-excedance positions are strictly increasing.
-
-Proves `Wanted` entry `bell_count_perm_increasing_weakExcedance_letters`.
 -/
 public theorem bell_count_perm_increasing_weakExcedance_letters (n : ℕ) :
     Fintype.card { σ : Equiv.Perm (Fin n) //

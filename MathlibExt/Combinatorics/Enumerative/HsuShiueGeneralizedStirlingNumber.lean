@@ -24,22 +24,30 @@ public section
 
 variable {K : Type*} [RCLike K]
 
-/-- Generalized factorial with increment `alpha`: `(z | alpha) 0 = 1` and
-for `n >= 1`, `(z | alpha) n = z (z - alpha) ... (z - n * alpha + alpha)`,
-via the recursion `F (n + 1) = F n * (z - n * alpha)`
-(source statement jis_7e7402faeeffb59e829d97bc). -/
+/-- **Generalized falling factorial.** Let $K$ be $\mathbb{R}$ or $\mathbb{C}$. For
+$z, \alpha \in K$ the generalized falling factorial with increment $\alpha$ is the sequence
+defined by $(z \mid \alpha)_0 = 1$ and $(z \mid \alpha)_{n+1} = (z \mid \alpha)_n \, (z - n\alpha)$
+for $n \ge 0$, so that $(z \mid \alpha)_n = z (z - \alpha) \cdots (z - (n-1)\alpha)$ for $n \ge 1$.
+
+Source: source statement jis_7e7402faeeffb59e829d97bc. -/
 public noncomputable def generalizedFallingFactorial (z alpha : K) : Nat → K
   | 0 => 1
   | n + 1 => generalizedFallingFactorial z alpha n * (z - (n : K) * alpha)
 
-/-- Characterization of the Hsu-Shiue family `S(n, k; alpha, beta, r)`:
-the parameters `alpha, beta, r` (real or complex, via `RCLike`) are not all
-zero; the initial column is `S n 0 = (r | alpha) n`; and the recurrence
-`S (n + 1) (k + 1) = S n k + ((k + 1) * beta - n * alpha + r) * S n (k + 1)`
-holds, which is the source recurrence stated at indices where `k - 1`
-is defined. The triangular-support condition `S n k = 0` for `n < k`
-fixes the otherwise unconstrained initial row (source statement
-`jis_7e7402faeeffb59e829d97bc`). -/
+/-- **Characterization of the Hsu–Shiue generalized Stirling numbers.** Let $K$ be $\mathbb{R}$ or
+$\mathbb{C}$ and let $\alpha, \beta, r \in K$. For $z \in K$ write $(z \mid \alpha)_0 = 1$ and
+$(z \mid \alpha)_n = z (z - \alpha) \cdots (z - (n-1)\alpha)$ for $n \ge 1$ (the generalized
+falling factorial). An array $(S(n,k))_{n, k \ge 0}$ in $K$ is a Hsu–Shiue family with
+parameters $(\alpha, \beta, r)$ when $\alpha$, $\beta$ and $r$ are not all zero,
+$S(n, 0) = (r \mid \alpha)_n$ for every $n \ge 0$, $S(n, k) = 0$ whenever $n < k$, and
+$$S(n+1, k+1) = S(n, k) + \bigl((k+1)\beta - n\alpha + r\bigr) S(n, k+1)$$
+for all $n, k \ge 0$.
+
+The last condition is the source recurrence
+$S(n+1, k) = S(n, k-1) + (k\beta - n\alpha + r) S(n, k)$ at the indices $k \ge 1$; the initial
+column and the triangular support fix the remaining values.
+
+Source: source statement `jis_7e7402faeeffb59e829d97bc`. -/
 public def IsHsuShiueFamily (S : Nat → Nat → K) (alpha beta r : K) : Prop :=
   ¬ (alpha = 0 ∧ beta = 0 ∧ r = 0) ∧
     (∀ n, S n 0 = generalizedFallingFactorial r alpha n) ∧

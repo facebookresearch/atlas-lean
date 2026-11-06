@@ -1285,25 +1285,23 @@ private theorem card_circle_fibers (s t : ℕ) (hst : s ≤ t) :
   rw [hsum, Finset.sum_const, Finset.card_univ, ZMod.card, smul_eq_mul]
 
 
-/-- Pollak's circle trick for partial parking functions: for positive `s ≤ t`,
-the number of preference lists `f : Fin s → Fin t` satisfying the standard
-successful-parking threshold characterization (for every zero-based spot `k`,
-at most `t - k` cars prefer a spot at or after `k`) is
-`(t + 1 - s) * (t + 1) ^ (s - 1)`.
+/-- **Number of partial parking functions.** Let $s$ and $t$ be natural numbers with
+$0 < s \le t$. A partial parking function with $s$ cars and $t$ spots is a map
+$f : \{0, \dots, s - 1\} \to \{0, \dots, t - 1\}$ such that for every spot
+$k \in \{0, \dots, t - 1\}$ at most $t - k$ cars $i$ have $f(i) \ge k$. The number of partial
+parking functions with $s$ cars and $t$ spots is $(t + 1 - s)(t + 1)^{s - 1}$.
 
-Provenance (independently verified):
-
-- Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and
-  Marshall Moats, “Lucky Cars and Lucky Spots in Parking Functions”,
-  Journal of Integer Sequences 29 (2026), Article 26.1.1.
-- Source URL: https://cs.uwaterloo.ca/journals/JIS/VOL29/Hadaway/had3.tex
-- Proposition at source lines 330–332.
-- Full source SHA-256:
-  d166e7759bfd986aebf8bd5632479d9f5e4f11b28f5250ed1e5290851a8d6139
-- Normalized no-final-newline proposition-span SHA-256:
-  58e90130ad683625acf4a657d5bbbf145f2700065e2991cfd7084425783cc1fe
+The proof is Pollak's circle argument.
 
 Proves `Wanted` entry `pollak_partial_parking_functions_card`.
+
+Source: Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+“Lucky Cars and Lucky Spots in Parking Functions”, Journal of Integer Sequences 29 (2026),
+Article 26.1.1, proposition at lines 330–332 of
+https://cs.uwaterloo.ca/journals/JIS/VOL29/Hadaway/had3.tex (independently verified; full source
+SHA-256 d166e7759bfd986aebf8bd5632479d9f5e4f11b28f5250ed1e5290851a8d6139, normalized
+no-final-newline proposition-span SHA-256
+58e90130ad683625acf4a657d5bbbf145f2700065e2991cfd7084425783cc1fe).
 -/
 theorem pollak_partial_parking_functions_card
     (s t : ℕ) (hs : 0 < s) (hst : s ≤ t) :

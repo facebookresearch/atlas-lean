@@ -28,19 +28,27 @@ namespace MetaMathlibExt
 
 namespace ULDMotzkin
 
-/-- Admissible steps of rank `r`: up-steps `U_j` with `u j` colors,
-level-steps with `l` colors, down-steps `D_j` with `d j` colors.
-Colors are intrinsic (`Fin (u j)`, `Fin l`, `Fin (d j)`), so a zero
-count yields no steps of that color. Jump sizes use `j.val + 1`, hence
-never zero. Concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **Colored Motzkin steps of a given rank.** Let $r$ and $l$ be natural numbers and let
+$u, d \colon \{0, \dots, r - 1\} \to \mathbb{N}$. The admissible steps of rank $r$ are the
+up-steps $U_j$ with $0 \le j < r$ in one of $u(j)$ colors, the level steps in one of $l$ colors,
+and the down-steps $D_j$ with $0 \le j < r$ in one of $d(j)$ colors: the disjoint union of the
+sets $\{j\} \times \{0, \dots, u(j) - 1\}$ for $j < r$, the set $\{0, \dots, l - 1\}$, and the
+sets $\{j\} \times \{0, \dots, d(j) - 1\}$ for $j < r$.
+
+A step kind with zero colors contributes no steps. The steps $U_j$ and $D_j$ have jump size
+$j + 1$, so no up- or down-step has jump size zero.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `admissible_steps`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 abbrev ULDMotzkinStep (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ) : Type :=
   (Σ _j : Fin r, Fin (u _j)) ⊕ Fin l ⊕ (Σ _j : Fin r, Fin (d _j))
 
-/-- Height displacement of one admissible step: `+(j+1)` for an up-step,
-`0` for a level-step, `-(j+1)` for a down-step. Concept
-`jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **Height change of a colored Motzkin step.** The height change of an admissible step of
+rank $r$ is the integer $j + 1$ for an up-step $U_j$ with $0 \le j < r$, $0$ for a level step,
+and $-(j + 1)$ for a down-step $D_j$ with $0 \le j < r$, whatever its color.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `admissible_steps`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 def stepHeight (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ)
@@ -50,9 +58,12 @@ def stepHeight (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ)
   | Sum.inr (Sum.inl _) => 0
   | Sum.inr (Sum.inr ⟨j, _⟩) => -((j.val + 1 : ℕ) : ℤ)
 
-/-- Height after the first `k` steps of a length-`n` step sequence,
-summing displacements over `Finset.range k`. Concept
-`jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **Height of a colored step sequence after k steps.** For a sequence
+$p = (p_0, \dots, p_{n-1})$ of $n$ admissible steps of rank $r$ and a natural number $k$, the
+height of $p$ after $k$ steps is the integer $\sum_{i < \min(k, n)} h(p_i)$, where $h$ is the
+height change of a step. For $k \ge n$ it is the height of the whole sequence.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `paths`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 def pathHeight (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ) (n : ℕ)
@@ -60,11 +71,12 @@ def pathHeight (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ) (n : 
   Finset.sum (Finset.range k)
     (fun i => if h : i < n then stepHeight r u l d (p ⟨i, h⟩) else 0)
 
-/-- A sequence of exactly `n` admissible steps is a Motzkin path when every
-prefix height (computed from the actual steps by `pathHeight`) is
-nonnegative and the final height is zero. Requires the source rank
-hypothesis `1 ≤ r`. Concept
-`jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **Colored Motzkin path condition.** Let $r \ge 1$. A sequence
+$p = (p_0, \dots, p_{n-1})$ of $n$ admissible steps of rank $r$ is a Motzkin path when its
+height after $k$ steps is nonnegative for every $k$ with $0 \le k \le n$ and its height after
+$n$ steps is $0$.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `paths`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 def IsMotzkinPath (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ) (_hr : 1 ≤ r)
@@ -72,10 +84,13 @@ def IsMotzkinPath (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ) (_
   (∀ k ∈ Finset.range (n + 1), 0 ≤ pathHeight r u l d n p k) ∧
     pathHeight r u l d n p n = 0
 
-/-- Type of colored Motzkin paths of rank `r` and length `n`: sequences of
-exactly `n` admissible steps satisfying `IsMotzkinPath`. Requires the
-source rank hypothesis `1 ≤ r`. Concept
-`jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **Colored Motzkin paths of rank r and length n.** For $r \ge 1$ and a natural number $n$,
+the colored Motzkin paths of rank $r$ and length $n$ are the sequences
+$(p_0, \dots, p_{n-1})$ of $n$ admissible steps of rank $r$ that satisfy the Motzkin path
+condition: the height after $k$ steps is nonnegative for every $k \le n$, and the height after
+$n$ steps is $0$.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `paths`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 def ULDMotzkinPath (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ) (hr : 1 ≤ r)
@@ -101,17 +116,28 @@ instance uldMotzkinPathFintype (r : ℕ) (u : Fin r → ℕ) (l : ℕ)
     Fintype (ULDMotzkinPath r u l d hr n) :=
   Subtype.fintype _
 
-/-- The `(u,l,d)`-Motzkin number of rank `r` and length `n`: the finite
-cardinality of the path type. Requires the source rank hypothesis
-`1 ≤ r`. Concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **(u,l,d)-Motzkin numbers of rank r.** Let $r \ge 1$ and $l$ be natural numbers and let
+$u, d \colon \{0, \dots, r - 1\} \to \mathbb{N}$. For a natural number $n$, the
+$(u,l,d)$-Motzkin number of rank $r$ and length $n$ is the number of colored Motzkin paths of
+rank $r$ and length $n$ whose up-steps $U_j$ come in $u(j)$ colors, whose level steps come in
+$l$ colors, and whose down-steps $D_j$ come in $d(j)$ colors.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `number`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 def uldMotzkinNumber (r : ℕ) (u : Fin r → ℕ) (l : ℕ) (d : Fin r → ℕ)
     (hr : 1 ≤ r) (n : ℕ) : ℕ :=
   Fintype.card (ULDMotzkinPath r u l d hr n)
 
-/-- Definitional cardinality equation for the Motzkin number. Concept
-`jis_sem_cc3b9e9ca9863189c52ced84`, source
+/-- **The (u,l,d)-Motzkin number counts Motzkin step sequences.** Let $r \ge 1$ and $l$ be
+natural numbers and let $u, d \colon \{0, \dots, r - 1\} \to \mathbb{N}$. For every natural
+number $n$, the $(u,l,d)$-Motzkin number of rank $r$ and length $n$ equals the number of
+sequences of $n$ admissible steps of rank $r$ with these color counts that satisfy the Motzkin
+path condition.
+
+This holds by definition.
+
+Source: concept `jis_sem_cc3b9e9ca9863189c52ced84`, source
 `jis_source_ed70e97a9239ad812ad2e1c8`, clause `number`,
 statement `jis_a4c8498023ac94f370aead45`. -/
 theorem uldMotzkinNumber_eq_card (r : ℕ) (u : Fin r → ℕ) (l : ℕ)
