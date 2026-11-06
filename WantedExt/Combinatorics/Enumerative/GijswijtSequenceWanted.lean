@@ -37,8 +37,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The curling number `𝒞(S)`: the largest `k` such that `S = X Y^k` for strings `X`, `Y` with
-`Y` nonempty, with `𝒞(ε) = 1`. Here `Y` is the suffix of `S` of length `l`.
+/-- **Curling number.** The curling number $\mathcal{C}(S)$ of a finite string $S$ of natural
+numbers is the largest integer $k$ such that $S = X Y^k$ for some strings $X$ and $Y$ with $Y$
+nonempty; for the empty string $\varepsilon$ it is $\mathcal{C}(\varepsilon) = 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 1 (curling number) and Section 1.2 (`𝒞(ε) := 1`). -/
@@ -47,14 +48,16 @@ public def curlingNumber (S : List ℕ) : ℕ :=
       k * l ≤ S.length ∧
         S.drop (S.length - k * l) = (List.replicate k (S.drop (S.length - l))).flatten).sup id ⊔ 1
 
-/-- `𝒞(112112223) = 1` (example in Section 1).
+/-- **Curling number of $112112223$.** The string $112112223$ has curling number
+$\mathcal{C}(112112223) = 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 1 (curling number examples). -/
 public theorem curlingNumber_example_one : curlingNumber [1, 1, 2, 1, 1, 2, 2, 2, 3] = 1 := by
   decide
 
-/-- `𝒞(222322232223) = 3` (example in Section 1).
+/-- **Curling number of $222322232223$.** The string $222322232223$ has curling number
+$\mathcal{C}(222322232223) = 3$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 1 (curling number examples). -/
@@ -62,15 +65,20 @@ public theorem curlingNumber_example_three :
     curlingNumber [2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 2, 3] = 3 := by
   decide
 
-/-- `𝒞(ε) = 1`.
+/-- **Curling number of the empty string.** The empty string $\varepsilon$ has curling number
+$\mathcal{C}(\varepsilon) = 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 1.2 (`𝒞(ε) := 1`). -/
 public theorem curlingNumber_nil : curlingNumber [] = 1 := by
   decide
 
-/-- The first `n` terms of the `m`th order sequence `A^{(m)}`: each new term is
-`max(m, 𝒞(current prefix))` (for `m ≥ 1` this gives `A^{(m)}(1) = m`); `m = 1` is Gijswijt's
+/-- **Prefixes of the $m$th order Gijswijt sequence.** Let $m$ and $n$ be natural numbers. The
+list of the first $n$ terms of the $m$th order sequence $A^{(m)}$ is defined by recursion on $n$:
+for $n = 0$ it is the empty list, and the list for $n + 1$ is the list $P$ for $n$ followed by
+the term $\max(m, \mathcal{C}(P))$, where $\mathcal{C}(P)$ is the curling number of $P$ (the
+largest $k$ with $P = XY^k$ for strings $X$, $Y$ with $Y$ nonempty, and $1$ for the empty string).
+For $m \ge 1$ the first term is therefore $A^{(m)}(1) = m$; the case $m = 1$ is Gijswijt's
 sequence.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
@@ -79,14 +87,17 @@ public def gijswijtPrefix (m : ℕ) : ℕ → List ℕ
   | 0 => []
   | n + 1 => gijswijtPrefix m n ++ [max m (curlingNumber (gijswijtPrefix m n))]
 
-/-- `A^{(m)}(k)`, the `k`th term (`k ≥ 1`) of the `m`th order sequence.
+/-- **Terms of the $m$th order Gijswijt sequence.** For $k \ge 1$, $A^{(m)}(k)$ is the $k$th
+term of the $m$th order sequence $A^{(m)}$, that is, the last entry of the list of its first $k$
+terms. For $k = 0$ the value is $0$ by convention.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (definition of `A^{(m)}`). -/
 public def gijswijtTerm (m k : ℕ) : ℕ :=
   (gijswijtPrefix m k).getLastD 0
 
-/-- Gijswijt's sequence starts `1, 1, 2, 1, 1, 2, 2, 2, 3`.
+/-- **First terms of Gijswijt's sequence.** The first nine terms of Gijswijt's sequence $A^{(1)}$
+are $1, 1, 2, 1, 1, 2, 2, 2, 3$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 1 (initial terms of `A`). -/
@@ -94,7 +105,8 @@ public theorem gijswijtPrefix_one_nine :
     gijswijtPrefix 1 9 = [1, 1, 2, 1, 1, 2, 2, 2, 3] := by
   decide
 
-/-- `A^{(2)}` starts `2, 2, 2, 3, 2, 2, 2, 3`.
+/-- **Initial terms of the second-order Gijswijt sequence.** The first eight terms of the
+second-order sequence $A^{(2)}$ are $2, 2, 2, 3, 2, 2, 2, 3$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (initial terms of `A^{(2)}`). -/
@@ -102,7 +114,9 @@ public theorem gijswijtPrefix_two_eight :
     gijswijtPrefix 2 8 = [2, 2, 2, 3, 2, 2, 2, 3] := by
   decide
 
-/-- The position of the first occurrence of `n` in `A^{(m)}` (`0` if `n` does not occur).
+/-- **First occurrence of a value in a Gijswijt sequence.** For natural numbers $m$ and $n$, the
+first occurrence of $n$ in the $m$th order Gijswijt sequence $A^{(m)}$ is the least position
+$k \ge 1$ with $A^{(m)}(k) = n$, and it is $0$ if $n$ does not occur in $A^{(m)}$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 1 (first occurrence) and Section 3 (definition of
@@ -110,8 +124,13 @@ Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of In
 public noncomputable def gijswijtFirstOccurrence (m n : ℕ) : ℕ :=
   sInf {k | 1 ≤ k ∧ gijswijtTerm m k = n}
 
-/-- The block lengths `β^{(m)}(t)`: `β(1) = 1`, and `β(t+1)` is the least `k > (m+1) β(t)` with
-`A^{(m)}(k+1) = m`, so that `B_{t+1} = (B_t)^{m+1} S_t` with `S_t` the run before the next `m`.
+/-- **Block lengths of the higher-order Gijswijt sequences.** For a natural number $m$, write
+$A^{(m)}(k)$ for the $k$th term of the $m$th order sequence. The block lengths $\beta^{(m)}(t)$
+are defined by $\beta^{(m)}(0) = 0$, $\beta^{(m)}(1) = 1$ and, for $t \ge 1$, $\beta^{(m)}(t+1)$
+is the least $k > (m+1)\,\beta^{(m)}(t)$ with $A^{(m)}(k+1) = m$, or $0$ if there is no such $k$.
+
+This matches the paper's recursion $B_{t+1} = (B_t)^{m+1} S_t$ for the blocks $B_t$: the glue
+string $S_t$ is the run of terms after position $(m+1)\,\beta^{(m)}(t)$ up to the next $m$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (blocks `B_t^{(m)}`, glue strings `S_t^{(m)}`, and their
@@ -121,37 +140,50 @@ public noncomputable def gijswijtBlockLength (m : ℕ) : ℕ → ℕ
   | 1 => 1
   | t + 2 => sInf {k | (m + 1) * gijswijtBlockLength m (t + 1) < k ∧ gijswijtTerm m (k + 1) = m}
 
-/-- The block `B_t^{(m)}`, the prefix of `A^{(m)}` of length `β^{(m)}(t)`.
+/-- **Gijswijt blocks.** For natural numbers $m$ and $t$, the block $B_t^{(m)}$ is the prefix of
+length $\beta^{(m)}(t)$ of the $m$th order Gijswijt sequence $A^{(m)}$, where $\beta^{(m)}(t)$ is
+the $t$th block length.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (blocks `B_t^{(m)}`). -/
 public noncomputable def gijswijtBlock (m t : ℕ) : List ℕ :=
   gijswijtPrefix m (gijswijtBlockLength m t)
 
-/-- The glue string `S_t^{(m)}`: `B_{t+1}^{(m)}` with its first `(m+1) β^{(m)}(t)` elements removed.
+/-- **Glue strings of a Gijswijt sequence.** For natural numbers $m$ and $t$, the glue string
+$S^{(m)}_t$ is the block $B^{(m)}_{t+1}$ of the $m$th order Gijswijt sequence with its first
+$(m+1)\,\beta^{(m)}(t)$ elements removed, where $\beta^{(m)}(t)$ is the length of the block
+$B^{(m)}_t$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (glue strings `S_t^{(m)}`). -/
 public noncomputable def gijswijtGlue (m t : ℕ) : List ℕ :=
   (gijswijtBlock m (t + 1)).drop ((m + 1) * gijswijtBlockLength m t)
 
-/-- `T_t^{(m)} = S_1^{(m)} S_2^{(m)} ⋯ S_{t-1}^{(m)}`.
+/-- **Concatenated glue strings of a Gijswijt sequence.** For natural numbers $m$ and $t$, the
+string $T^{(m)}_t$ is the concatenation $S^{(m)}_1 S^{(m)}_2 \cdots S^{(m)}_{t-1}$ of the glue
+strings of the $m$th order Gijswijt sequence; it is empty when $t \le 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (strings `T_t^{(m)}`). -/
 public noncomputable def gijswijtGlueConcat (m t : ℕ) : List ℕ :=
   ((List.range (t - 1)).map fun i => gijswijtGlue m (i + 1)).flatten
 
-/-- `t(m, n)`: the index `t` such that the first `n` in `A^{(m)}` is the last element of
-`B_t^{(m)}`.
+/-- **Block index of the first occurrence.** For natural numbers $m$ and $n$, let $p$ be the
+position of the first occurrence of $n$ in the $m$th order Gijswijt sequence $A^{(m)}$, with
+$p = 0$ if $n$ does not occur. Then $t(m, n)$ is the least $t \ge 1$ such that the block length
+$\beta^{(m)}(t)$ equals $p$, so that when $n$ occurs, this first $n$ is the last element of the
+block $B_t^{(m)}$; if there is no such $t$, then $t(m, n) = 0$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 3 (definition of `t(m, n)`). -/
 public noncomputable def gijswijtBlockIndex (m n : ℕ) : ℕ :=
   sInf {t | 1 ≤ t ∧ gijswijtBlockLength m t = gijswijtFirstOccurrence m n}
 
-/-- `B_{u-1}^{a_{u-1}} ⋯ B_2^{a_2} B_1^{a_1}` for exponents `a_1, …, a_{u-1}` (only `a i` with
-`1 ≤ i < u` are used).
+/-- **Block words.** For natural numbers $m$ and $u$ and exponents $a_1, a_2, \ldots$, the block
+word of order $m$ is the concatenation $B_{u-1}^{a_{u-1}} \cdots B_2^{a_2} B_1^{a_1}$, where
+$B_i = B_i^{(m)}$ is the $i$th block of the $m$th order Gijswijt sequence and $B_i^{a_i}$ is
+$a_i$ copies of $B_i$ in a row. Only $a_1, \ldots, a_{u-1}$ are used, and the word is empty when
+$u \le 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 4, Expression (1) in Lemma 11. -/
@@ -159,13 +191,15 @@ public noncomputable def gijswijtBlockWord (m u : ℕ) (a : ℕ → ℕ) : List 
   ((List.range (u - 1)).reverse.map fun i =>
     (List.replicate (a (i + 1)) (gijswijtBlock m (i + 1))).flatten).flatten
 
-/-- `β^{(m)}(1) = 1`.
+/-- **The first block has length one.** For every natural number $m$, the first block length
+$\beta^{(m)}(1)$ of the $m$th order Gijswijt sequence equals $1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (`B_1^{(m)} = m`). -/
 public theorem gijswijtBlockLength_one (m : ℕ) : gijswijtBlockLength m 1 = 1 := rfl
 
-/-- `B_1^{(m)} = m`.
+/-- **The first block.** For every $m \ge 1$, the first block $B_1^{(m)}$ of the $m$th order
+Gijswijt sequence is the one-term string $m$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (`B_1^{(m)} = m`, Table 1). -/
@@ -173,23 +207,29 @@ public theorem gijswijtBlock_one {m : ℕ} (hm : 1 ≤ m) : gijswijtBlock m 1 = 
   simp [gijswijtBlock, gijswijtBlockLength_one, gijswijtPrefix, curlingNumber_nil,
     Nat.max_eq_left hm]
 
-/-- `T_1^{(m)} = ε`.
+/-- **The first concatenated glue string is empty.** For every natural number $m$, the
+concatenated glue string $T^{(m)}_1$ is the empty string.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Section 2 (Table 1). -/
 public theorem gijswijtGlueConcat_one (m : ℕ) : gijswijtGlueConcat m 1 = [] := by
   simp [gijswijtGlueConcat]
 
-/-- The empty exponent word: `gijswijtBlockWord m 1 a = ε`.
+/-- **The empty block word.** For every natural number $m$ and every sequence of exponents
+$a_1, a_2, \ldots$, the block word $B_{u-1}^{a_{u-1}} \cdots B_1^{a_1}$ of order $m$ with $u = 1$,
+where $B_i$ is the $i$th block of the $m$th order Gijswijt sequence, is a product of no blocks
+and hence the empty string.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, proof of Lemma 11 (case `u = 1`). -/
 public theorem gijswijtBlockWord_one (m : ℕ) (a : ℕ → ℕ) : gijswijtBlockWord m 1 a = [] := by
   simp [gijswijtBlockWord]
 
-/-- For all `n ≥ 4`, the first occurrence of `n` in Gijswijt's sequence is at position
-`2^{2^{3^{4^{⋰^{(n-2)^α}}}}}` for some real `α ∈ (n-2, n-1)`: the tower has bases
-`2, 2, 3, …, n-2`, written as `2 ^ (foldr (b ↦ x ↦ b^x) α [2, …, n-2])`.
+/-- **Van de Pol's tower formula for first occurrences.** For every $n \ge 4$ there is a real
+number $\alpha$ with $n - 2 < \alpha < n - 1$ such that the first occurrence of $n$ in Gijswijt's
+sequence is at position $2^{2^{3^{\cdot^{\cdot^{(n-2)^{\alpha}}}}}}$, a power tower whose bases
+are $2, 2, 3, \ldots, n-2$ from the bottom up and whose top exponent is $\alpha$; for $n = 4$ it
+is $2^{2^{\alpha}}$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Theorem 1 (`jis-2025-25.4.6-thm-1`). -/
@@ -198,15 +238,18 @@ public theorem_wanted gijswijtFirstOccurrence_tower {n : ℕ} (hn : 4 ≤ n) :
       (gijswijtFirstOccurrence 1 n : ℝ) =
         2 ^ (List.range' 2 (n - 3)).foldr (fun b x => (b : ℝ) ^ x) α
 
-/-- If `T` is a suffix of `S`, then `𝒞(S) ≥ 𝒞(T)`.
+/-- **The curling number is monotone under suffixes.** For strings $S$ and $T$ of natural numbers,
+if $T$ is a suffix of $S$, then $\mathcal{C}(T) \le \mathcal{C}(S)$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 3 (`jis-2025-25.4.6-lem-3`). -/
 public theorem_wanted curlingNumber_le_of_suffix {S T : List ℕ} (h : T <:+ S) :
     curlingNumber T ≤ curlingNumber S
 
-/-- For `m ≥ 1` and `t ≥ 2`, `m T_t^{(m)}` is a suffix of `B_t^{(m)}`, and this is the only
-occurrence of `T_t^{(m)}` as a substring of `B_t^{(m)}`.
+/-- **Concatenated glue strings occur in a block only at its end.** Let $m \ge 1$ and $t \ge 2$.
+The element $m$ followed by the concatenated glue string $T^{(m)}_t$ is a suffix of the block
+$B^{(m)}_t$, and whenever $B^{(m)}_t = X\,T^{(m)}_t\,Y$ for strings $X$ and $Y$, the string $Y$ is
+empty; that is, $T^{(m)}_t$ occurs in $B^{(m)}_t$ only as a suffix.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 4 (`jis-2025-25.4.6-lem-4`). -/
@@ -214,8 +257,10 @@ public theorem_wanted gijswijtGlueConcat_suffix_block {m t : ℕ} (hm : 1 ≤ m)
     m :: gijswijtGlueConcat m t <:+ gijswijtBlock m t ∧
       ∀ X Y : List ℕ, gijswijtBlock m t = X ++ gijswijtGlueConcat m t ++ Y → Y = []
 
-/-- For `m ≥ 1`, the strings `T_t^{(m)}` (`t ≥ 1`) are exactly the prefixes of `A^{(m+1)}` with
-curling number at most `m`.
+/-- **Concatenated glue strings are the next-order prefixes with small curling number.** Let
+$m \ge 1$. A finite string $P$ of natural numbers is a prefix of the $(m+1)$th order Gijswijt
+sequence $A^{(m+1)}$ with curling number $\mathcal{C}(P) \le m$ if and only if $P = T^{(m)}_t$ for
+some $t \ge 1$, where $T^{(m)}_t$ is the concatenated glue string.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 5 (`jis-2025-25.4.6-lem-5`). -/
@@ -223,8 +268,10 @@ public theorem_wanted gijswijtGlueConcat_iff_prefix {m : ℕ} (hm : 1 ≤ m) (P 
     (P = gijswijtPrefix (m + 1) P.length ∧ curlingNumber P ≤ m) ↔
       ∃ t, 1 ≤ t ∧ P = gijswijtGlueConcat m t
 
-/-- For `m ≥ 1` and `t ≥ 2`, the elements `m` of `B_t^{(m)}` occur in maximal runs of exactly
-`m + 1` consecutive `m`'s, each followed by an element `m + 1`.
+/-- **Runs of the smallest term in a block.** Let $m \ge 1$ and $t \ge 2$, and consider the block
+$B_t^{(m)}$ of the $m$th order Gijswijt sequence. Every maximal run of consecutive terms equal to
+$m$ in $B_t^{(m)}$ has length exactly $m + 1$, and the term right after the run exists and equals
+$m + 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 6 (`jis-2025-25.4.6-lem-6`). -/
@@ -234,8 +281,11 @@ public theorem_wanted gijswijtBlock_runs {m t : ℕ} (hm : 1 ≤ m) (ht : 2 ≤ 
     (hright : (gijswijtBlock m t)[j + r]? ≠ some m) :
     r = m + 1 ∧ (gijswijtBlock m t)[j + r]? = some (m + 1)
 
-/-- For `n ≥ m ≥ 1`, the first occurrence of `n` in `A^{(m)}` is the last element of a prefix
-block `B_t^{(m)}` for some `t ≥ 1`.
+/-- **First occurrences end blocks.** Let $1 \le m \le n$, and write $\beta^{(m)}(t)$ for the
+length of the block $B_t^{(m)}$ of the $m$th order Gijswijt sequence $A^{(m)}$. Then there is a
+$t \ge 1$ such that $A^{(m)}(\beta^{(m)}(t)) = n$ and $\beta^{(m)}(t)$ is the position of the
+first occurrence of $n$ in $A^{(m)}$; that is, the first $n$ in $A^{(m)}$ is the last term of the
+block $B_t^{(m)}$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 7 (`jis-2025-25.4.6-lem-7`). -/
@@ -244,7 +294,12 @@ public theorem_wanted gijswijtFirstOccurrence_eq_blockLength {m n : ℕ} (hm : 1
     ∃ t, 1 ≤ t ∧ gijswijtTerm m (gijswijtBlockLength m t) = n ∧
       gijswijtBlockLength m t = gijswijtFirstOccurrence m n
 
-/-- For `m ≥ 1` and `n ≥ m + 1`, `T^{(m)}_{t(m,n)} = B^{(m+1)}_{t(m+1,n)}`.
+/-- **Concatenated glue strings at first occurrences are blocks of the next order.** Let $m \ge 1$
+and $n \ge m + 1$. For $j \ge 1$ let $t(j, n)$ be the least $t \ge 1$ such that the block
+$B^{(j)}_t$ of the $j$th order Gijswijt sequence has length equal to the position of the first
+occurrence of $n$ in that sequence (this position is taken to be $0$ if $n$ does not occur), and
+$t(j, n) = 0$ if there is no such $t$. Then the concatenated glue string $T^{(m)}_{t(m,n)}$
+equals the block $B^{(m+1)}_{t(m+1,n)}$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 9 (`jis-2025-25.4.6-lem-9`). -/
@@ -252,9 +307,12 @@ public theorem_wanted gijswijtGlueConcat_blockIndex {m n : ℕ} (hm : 1 ≤ m) (
     gijswijtGlueConcat m (gijswijtBlockIndex m n) =
       gijswijtBlock (m + 1) (gijswijtBlockIndex (m + 1) n)
 
-/-- For `m, u ≥ 1`, the proper prefixes `P` of `B_u^{(m+1)}` with `𝒞(P) ≤ m + 1` are exactly
-the strings `B_{u-1}^{a_{u-1}} ⋯ B_1^{a_1}` (blocks of order `m + 1`) with
-`a_1, …, a_{u-1} ∈ {0, …, m+1}`.
+/-- **Proper prefixes of a block with curling number at most $m + 1$.** Let $m \ge 1$ and
+$u \ge 1$, and write $B_t$ for the block $B_t^{(m+1)}$ of the $(m+1)$th order Gijswijt sequence.
+A string $P$ is a proper prefix of $B_u$ (a prefix strictly shorter than $B_u$) with curling
+number $\mathcal{C}(P) \le m + 1$ if and only if $P = B_{u-1}^{a_{u-1}} \cdots B_2^{a_2} B_1^{a_1}$
+for some natural numbers $a_1, \dots, a_{u-1} \le m + 1$, where $B_t^{a}$ denotes $a$ copies of
+$B_t$ concatenated.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 11 (`jis-2025-25.4.6-lem-11`). -/
@@ -264,8 +322,11 @@ public theorem_wanted gijswijtProperPrefix_curling_iff {m u : ℕ} (hm : 1 ≤ m
         curlingNumber P ≤ m + 1) ↔
       ∃ a : ℕ → ℕ, (∀ i, 1 ≤ i → i < u → a i ≤ m + 1) ∧ P = gijswijtBlockWord (m + 1) u a
 
-/-- For `m, u ≥ 1` and `a_1, …, a_{u-1} ∈ {0, …, m+1}` with some `a_i = m + 1`, the prefix
-`P = B_{u-1}^{a_{u-1}} ⋯ B_1^{a_1}` of `B_u^{(m+1)}` has `𝒞(P) = m + 1`.
+/-- **Curling number of block words with a maximal exponent.** Let $m \ge 1$ and $u \ge 1$, and
+let $a_1, \dots, a_{u-1} \in \{0, \dots, m+1\}$ with $a_i = m + 1$ for some $1 \le i \le u - 1$.
+Writing $B_t = B_t^{(m+1)}$ for the blocks of the $(m+1)$th order Gijswijt sequence $A^{(m+1)}$,
+the string $P = B_{u-1}^{a_{u-1}} \cdots B_2^{a_2} B_1^{a_1}$ has curling number
+$\mathcal{C}(P) = m + 1$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 12 (`jis-2025-25.4.6-lem-12`). -/
@@ -274,8 +335,10 @@ public theorem_wanted curlingNumber_blockWord_of_max {m u : ℕ} (hm : 1 ≤ m) 
     (hmax : ∃ i, 1 ≤ i ∧ i < u ∧ a i = m + 1) :
     curlingNumber (gijswijtBlockWord (m + 1) u a) = m + 1
 
-/-- For `m ≥ 1`, `u ≥ 2`, and `a_1, …, a_{u-1} ∈ {0, …, m}` with `a_1 ≠ 0`, the prefix
-`P = B_{u-1}^{a_{u-1}} ⋯ B_1^{a_1}` of `B_u^{(m+1)}` has `𝒞(P) ≤ m`.
+/-- **Curling number of block words with small exponents.** Let $m \ge 1$ and $u \ge 2$, and let
+$a_1, \dots, a_{u-1} \in \{0, \dots, m\}$ with $a_1 \ne 0$. Writing $B_t = B_t^{(m+1)}$ for the
+blocks of the $(m+1)$th order Gijswijt sequence $A^{(m+1)}$, the string
+$P = B_{u-1}^{a_{u-1}} \cdots B_2^{a_2} B_1^{a_1}$ has curling number $\mathcal{C}(P) \le m$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 13 (`jis-2025-25.4.6-lem-13`). -/
@@ -283,10 +346,14 @@ public theorem_wanted curlingNumber_blockWord_le {m u : ℕ} (hm : 1 ≤ m) (hu 
     (a : ℕ → ℕ) (ha : ∀ i, 1 ≤ i → i < u → a i ≤ m) (ha1 : a 1 ≠ 0) :
     curlingNumber (gijswijtBlockWord (m + 1) u a) ≤ m
 
-/-- Let `m ≥ 1` and `u ≥ 2`. (a) Each proper prefix `T_t^{(m)}` of `B_u^{(m+1)}` equals
-`B_{u-1}^{a_{u-1}} ⋯ B_1^{a_1}` for some `a_1, …, a_{u-1} ∈ {0, …, m}`. (b) For all
-`a_1, …, a_{u-1} ∈ {0, …, m}` with `a_1 ≠ 0`, `B_{u-1}^{a_{u-1}} ⋯ B_1^{a_1} = T_t^{(m)}` for some
-proper prefix `T_t^{(m)}` of `B_u^{(m+1)}`.
+/-- **Concatenated glue strings inside a block of the next order.** Let $m \ge 1$ and $u \ge 2$,
+and for exponents $a_1, \ldots, a_{u-1}$ let
+$W(a) = (B^{(m+1)}_{u-1})^{a_{u-1}} \cdots (B^{(m+1)}_1)^{a_1}$ be the word in the blocks of the
+$(m+1)$th order Gijswijt sequence. (a) If $t \ge 1$ and the concatenated glue string $T^{(m)}_t$
+is a proper prefix of $B^{(m+1)}_u$, then $T^{(m)}_t = W(a)$ for some
+$a_1, \ldots, a_{u-1} \in \{0, \ldots, m\}$. (b) For all $a_1, \ldots, a_{u-1} \in \{0, \ldots, m\}$
+with $a_1 \ne 0$, there is $t \ge 1$ such that $T^{(m)}_t$ is a proper prefix of $B^{(m+1)}_u$ and
+$W(a) = T^{(m)}_t$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 16 (`jis-2025-25.4.6-lem-16`). -/
@@ -300,9 +367,12 @@ public theorem_wanted gijswijtGlueConcat_blockWord {m u : ℕ} (hm : 1 ≤ m) (h
         (gijswijtGlueConcat m t).length < (gijswijtBlock (m + 1) u).length ∧
         gijswijtBlockWord (m + 1) u a = gijswijtGlueConcat m t)
 
-/-- For `m ≥ 1` and `u ≥ 2`,
-`τ^{(m)}(m (m+1)^{u-2}) ≤ β^{(m+1)}(u) ≤ τ^{(m)}((m+1)^{u-1} + 1)`, and the second inequality
-is strict when `u = m + 3`.
+/-- **Bounds on the block lengths of order $m+1$.** Let $m \ge 1$ and $u \ge 2$. Write
+$\beta^{(m+1)}(u)$ for the length of the block $B_u^{(m+1)}$ of the $(m+1)$th order Gijswijt
+sequence, and $\tau^{(m)}(t)$ for the length of $T_t^{(m)} = S_1^{(m)} \cdots S_{t-1}^{(m)}$, the
+concatenation of the first $t - 1$ glue strings of order $m$. Then
+$\tau^{(m)}(m (m+1)^{u-2}) \le \beta^{(m+1)}(u) \le \tau^{(m)}((m+1)^{u-1} + 1)$, and the second
+inequality is strict when $u = m + 3$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 17 (`jis-2025-25.4.6-lem-17`). -/
@@ -312,9 +382,11 @@ public theorem_wanted gijswijtBlockLength_estimates {m u : ℕ} (hm : 1 ≤ m) (
       (u = m + 3 →
         gijswijtBlockLength (m + 1) u < (gijswijtGlueConcat m ((m + 1) ^ (u - 1) + 1)).length)
 
-/-- For `m ≥ 1` and `t ≥ 2`,
-`β^{(m+1)}(⌈log_{m+1} t⌉) ≤ τ^{(m)}(t) ≤ β^{(m+1)}(⌈log_{m+1} t⌉ + 2)`, with
-`⌈log_{m+1} t⌉ = Nat.clog (m + 1) t`.
+/-- **Length estimates for concatenated glue strings.** Let $m \ge 1$ and $t \ge 2$, write
+$\tau^{(m)}(t)$ for the length of the concatenated glue string $T^{(m)}_t$ and $\beta^{(m+1)}$ for
+the block lengths of the $(m+1)$th order Gijswijt sequence, and let $c$ be the least natural
+number with $t \le (m+1)^c$, that is, $c = \lceil \log_{m+1} t \rceil$. Then
+$\beta^{(m+1)}(c) \le \tau^{(m)}(t) \le \beta^{(m+1)}(c + 2)$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Proposition 18 (`jis-2025-25.4.6-prop-18`). -/
@@ -322,9 +394,11 @@ public theorem_wanted gijswijtGlueConcat_length_estimates {m t : ℕ} (hm : 1 �
     gijswijtBlockLength (m + 1) (Nat.clog (m + 1) t) ≤ (gijswijtGlueConcat m t).length ∧
       (gijswijtGlueConcat m t).length ≤ gijswijtBlockLength (m + 1) (Nat.clog (m + 1) t + 2)
 
-/-- For `m ≥ 1` and `n ≥ m + 3`,
-`m (m+1)^{t(m+1,n) - 2} ≤ t(m, n) ≤ (m+1)^{t(m+1,n) - 1} + 1`, and the second inequality is
-strict when `n = m + 3`.
+/-- **Recursive estimate for the block index.** Let $m \ge 1$ and $n \ge m + 3$, and for $k \ge 1$
+let $t(k, n)$ be the index $t$ such that the first occurrence of $n$ in the $k$th order Gijswijt
+sequence $A^{(k)}$ is the last element of the block $B_t^{(k)}$ of $A^{(k)}$. Then
+$m (m+1)^{t(m+1,n) - 2} \le t(m, n) \le (m+1)^{t(m+1,n) - 1} + 1$, and the second inequality is
+strict when $n = m + 3$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Proposition 19 (`jis-2025-25.4.6-prop-19`). -/
@@ -333,8 +407,9 @@ public theorem_wanted gijswijtBlockIndex_estimates {m n : ℕ} (hm : 1 ≤ m) (h
       gijswijtBlockIndex m n ≤ (m + 1) ^ (gijswijtBlockIndex (m + 1) n - 1) + 1 ∧
       (n = m + 3 → gijswijtBlockIndex m n < (m + 1) ^ (gijswijtBlockIndex (m + 1) n - 1) + 1)
 
-/-- With `M_7 = 4` and `M_{k+1} = M_k (1 + 9 (k+1)^{1.59} / 2^k)` for `k ≥ 7`,
-`β^{(m)}(u) / (m+1)^{u-1} < M_u` for all `m ≥ 1` and `u ≥ 7`.
+/-- **Upper bound on block lengths.** Let $M_7 = 4$ and $M_{k+1} = M_k (1 + 9 (k+1)^{1.59} / 2^k)$
+for $k \ge 7$. Then for all $m \ge 1$ and $u \ge 7$, the block lengths $\beta^{(m)}(u)$ of the
+$m$th order Gijswijt sequence $A^{(m)}$ satisfy $\beta^{(m)}(u) / (m+1)^{u-1} < M_u$.
 
 Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
 28 (2025), Article 25.4.6, Lemma 20 (`jis-2025-25.4.6-lem-20`). -/
