@@ -36,13 +36,13 @@ The heavy lifting is `Nat.fermatNumber_mod_prime_exact_preperiod_period`
 preperiod is `v` and the primitive period is `ord_w(2)`. Around it:
 
 * Lemmas 2 and 4 follow from pigeonhole and the recurrence
-  `F_{n+1} - 1 = (F_n - 1)^2` (`cast_fermatNumber_succ`).
+  `F_{n+1} - 1 = (F_n - 1)^2` (`Nat.cast_fermatNumber_succ`).
 * Lemma 6 and Proposition 18 move a period of a later tail down to an earlier
-  periodic tail (`periodic_tail_of_periodic_tail_of_le`).
+  periodic tail (`Function.Periodic.tail_of_periodic_tail_of_le`).
 * Lemma 8 is `IsOfFinOrder.orderOf_pow`. Proposition 11 replaces a primitive
   root `h` by `h ^ c`, with `c` chosen by Lemma 10. Corollary 14 rests on
   Proposition 13 and on the uniqueness of the decomposition `2^s t` with `t`
-  odd (`two_pow_mul_odd_inj`). Theorem 15 uses Proposition 13 to get
+  odd (`Nat.two_pow_mul_odd_inj`). Theorem 15 uses Proposition 13 to get
   `ord_p(2) = 2^(r-s) (u/t)` and then applies Aigner's theorem.
 * Theorem 22 combines Euler's criterion (`ZMod.euler_criterion`) with the
   second supplement to quadratic reciprocity (`ZMod.exists_sq_eq_two_iff`).
@@ -87,8 +87,8 @@ namespace MetaMathlibExt
 
 /-- Starting a tail later keeps its periods: if `n ↦ f (h + n)` has period `c`
 and `h ≤ i`, then `n ↦ f (i + n)` has period `c`. -/
-theorem periodic_tail_of_le {α : Type*} {f : ℕ → α} {h i c : ℕ} (hhi : h ≤ i)
-    (hf : Function.Periodic (fun n => f (h + n)) c) :
+theorem Function.Periodic.tail_of_le {α : Type*} {f : ℕ → α} {h i c : ℕ}
+    (hhi : h ≤ i) (hf : Function.Periodic (fun n => f (h + n)) c) :
     Function.Periodic (fun n => f (i + n)) c := by
   intro n
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hhi
@@ -97,7 +97,7 @@ theorem periodic_tail_of_le {α : Type*} {f : ℕ → α} {h i c : ℕ} (hhi : h
 /-- Shifting a period down to an earlier periodic tail: if `n ↦ f (h + n)` has
 a positive period `k` and `n ↦ f (i + n)` has period `t` for some `i ≥ h`, then
 `t` is also a period of `n ↦ f (h + n)`. -/
-theorem periodic_tail_of_periodic_tail_of_le {α : Type*} {f : ℕ → α}
+theorem Function.Periodic.tail_of_periodic_tail_of_le {α : Type*} {f : ℕ → α}
     {h i k t : ℕ} (hhi : h ≤ i) (hk : 0 < k)
     (hfk : Function.Periodic (fun n => f (h + n)) k)
     (hft : Function.Periodic (fun n => f (i + n)) t) :
@@ -122,7 +122,7 @@ theorem periodic_tail_of_periodic_tail_of_le {α : Type*} {f : ℕ → α}
 
 /-- The recurrence `F_{n+1} = (F_n - 1)^2 + 1`, cast to any commutative
 ring. -/
-theorem cast_fermatNumber_succ {R : Type*} [CommRing R] (n : ℕ) :
+theorem Nat.cast_fermatNumber_succ {R : Type*} [CommRing R] (n : ℕ) :
     (Nat.fermatNumber (n + 1) : R) =
       ((Nat.fermatNumber n : R) - 1) ^ 2 + 1 := by
   simp only [Nat.fermatNumber, Nat.cast_add, Nat.cast_pow, Nat.cast_ofNat,
@@ -130,7 +130,7 @@ theorem cast_fermatNumber_succ {R : Type*} [CommRing R] (n : ℕ) :
   rw [add_sub_cancel_right, ← pow_mul, ← pow_succ]
 
 /-- The decomposition `2 ^ s * a` with `a` odd is unique. -/
-theorem two_pow_mul_odd_inj {s t a b : ℕ} (ha : Odd a) (hb : Odd b) :
+theorem Nat.two_pow_mul_odd_inj {s t a b : ℕ} (ha : Odd a) (hb : Odd b) :
     2 ^ s * a = 2 ^ t * b ↔ s = t ∧ a = b := by
   refine ⟨fun h => ?_, fun ⟨hst, hab⟩ => hst ▸ hab ▸ rfl⟩
   have hst : s = t := by
@@ -147,7 +147,7 @@ theorem two_pow_mul_odd_inj {s t a b : ℕ} (ha : Odd a) (hb : Odd b) :
 
 /-- If `d ∣ q ^ (e + 1) * m` for a prime `q` but `q ^ (e + 1) ∤ d`, then
 `d ∣ q ^ e * m`. -/
-theorem dvd_pow_mul_of_dvd_pow_succ_mul {q d e m : ℕ} (hq : q.Prime)
+theorem Nat.dvd_pow_mul_of_dvd_pow_succ_mul {q d e m : ℕ} (hq : q.Prime)
     (hd : d ∣ q ^ (e + 1) * m) (h : ¬ q ^ (e + 1) ∣ d) : d ∣ q ^ e * m := by
   have hg : Nat.gcd d (q ^ (e + 1)) ∣ q ^ e := by
     obtain ⟨j, hj, hj'⟩ :=
@@ -160,7 +160,7 @@ theorem dvd_pow_mul_of_dvd_pow_succ_mul {q d e m : ℕ} (hq : q.Prime)
   exact (Nat.dvd_gcd_mul_iff_dvd_mul.mpr hd).trans (Nat.mul_dvd_mul_right hg m)
 
 /-- `2` is nonzero modulo an odd prime. -/
-theorem two_ne_zero_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
+private theorem two_ne_zero_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
     (2 : ZMod p) ≠ 0 := by
   intro h
   have h' : ((2 : ℕ) : ZMod p) = 0 := by exact_mod_cast h
@@ -168,14 +168,14 @@ theorem two_ne_zero_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
   exact hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp h')
 
 /-- `2` has order `1` modulo `n` exactly when `n = 1`. -/
-theorem orderOf_two_zmod_eq_one_iff {n : ℕ} :
+private theorem orderOf_two_zmod_eq_one_iff {n : ℕ} :
     orderOf (2 : ZMod n) = 1 ↔ n = 1 := by
   rw [orderOf_eq_one_iff, ← sub_eq_zero,
     show (2 : ZMod n) - 1 = ((1 : ℕ) : ZMod n) by norm_num,
     ZMod.natCast_eq_zero_iff, Nat.dvd_one]
 
 /-- `2` has positive order modulo an odd number. -/
-theorem orderOf_two_zmod_pos {w : ℕ} (hw : Odd w) :
+private theorem orderOf_two_zmod_pos {w : ℕ} (hw : Odd w) :
     0 < orderOf (2 : ZMod w) := by
   have : NeZero w := ⟨hw.pos.ne'⟩
   have h := (ZMod.isUnit_iff_coprime 2 w).mpr hw.coprime_two_left
@@ -217,8 +217,8 @@ theorem fermatNumber_modEq_add (m i j : ℕ)
   | zero => exact h
   | succ t ih =>
     rw [← ZMod.natCast_eq_natCast_iff] at ih ⊢
-    rw [← add_assoc, ← add_assoc, cast_fermatNumber_succ,
-      cast_fermatNumber_succ, ih]
+    rw [← add_assoc, ← add_assoc, Nat.cast_fermatNumber_succ,
+      Nat.cast_fermatNumber_succ, ih]
 
 /-- If `F_j ≢ F_{j+t} (mod m)` for every `t ≥ 1` and `i ≤ j`, then
 `F_i ≢ F_{i+t} (mod m)` for every `t ≥ 1`; stated for every modulus and
@@ -273,7 +273,7 @@ theorem fermatNumber_modEq_iff_preperiod_period (p : ℕ) (hp : p.Prime)
     have hhi : h ≤ i :=
       not_lt.mp fun hlt => hpre i hlt ⟨j - i, by omega, hti⟩
     refine ⟨hhi, (Nat.modEq_iff_dvd' hij.le).mpr (hmin _ (by omega) ?_)⟩
-    exact periodic_tail_of_periodic_tail_of_le
+    exact Function.Periodic.tail_of_periodic_tail_of_le
       (f := fun n => (Nat.fermatNumber n : ZMod p)) hhi hk hper hti
   · rintro ⟨hhi, hijk⟩
     obtain ⟨q, hq⟩ := (Nat.modEq_iff_dvd' hij.le).mp hijk
@@ -421,7 +421,7 @@ theorem existsUnique_twoAdic_index_of_two (p : ℕ) (hp : p.Prime)
   have e := (exponent_dvd_card_sub_one_iff p hp g' 2 hg' _ hg2').mp
     (hpu ▸ Nat.mul_dvd_mul (Nat.pow_dvd_pow 2 hs') ht')
   obtain ⟨rfl, rfl⟩ :=
-    (two_pow_mul_odd_inj (hu.of_dvd_nat ht') (hu.of_dvd_nat ht)).mp
+    (Nat.two_pow_mul_odd_inj (hu.of_dvd_nat ht') (hu.of_dvd_nat ht)).mp
       (e.trans hat.symm)
   rfl
 
@@ -528,16 +528,17 @@ theorem exists_prime_dvd_fermatNumber_iff_period_eq_one (p : ℕ)
   have hvh : v ≤ h := not_lt.mp fun hlt => hprev h hlt ⟨k, hk, hper⟩
   have hK := orderOf_two_zmod_pos hw
   have hkK : k = orderOf (2 : ZMod w) := Nat.dvd_antisymm
-    (hmin _ hK (periodic_tail_of_le
+    (hmin _ hK (Function.Periodic.tail_of_le
       (f := fun n => (Nat.fermatNumber n : ZMod p)) hvh hpv))
-    (hminv _ hk (periodic_tail_of_periodic_tail_of_le
+    (hminv _ hk (Function.Periodic.tail_of_periodic_tail_of_le
       (f := fun n => (Nat.fermatNumber n : ZMod p)) hvh hK hpv hper))
   rw [hkK, orderOf_two_zmod_eq_one_iff,
     exists_congr fun n => prime_dvd_fermatNumber_iff_orderOf_two n p hp hp2,
     hord]
   constructor
   · rintro ⟨n, hn⟩
-    exact ((two_pow_mul_odd_inj hw odd_one).mp (hn.trans (mul_one _).symm)).2
+    exact ((Nat.two_pow_mul_odd_inj hw odd_one).mp
+      (hn.trans (mul_one _).symm)).2
   · rintro rfl
     -- `v ≠ 0`, since `ord_p(2) ≠ 1`.
     have hv : v ≠ 0 := by
@@ -583,7 +584,7 @@ theorem orderOf_two_twoAdic_of_mod_eight (p : ℕ) (hp : p.Prime) :
       omega
     refine ⟨by_contra fun hn => hne (orderOf_dvd_iff_pow_eq_one.mp ?_),
       fun h4 => ?_⟩
-    · have := dvd_pow_mul_of_dvd_pow_succ_mul (d := orderOf (2 : ZMod p))
+    · have := Nat.dvd_pow_mul_of_dvd_pow_succ_mul (d := orderOf (2 : ZMod p))
         (e := 0) (m := p / 2) Nat.prime_two
         (by rw [show 2 ^ (0 + 1) * (p / 2) = p - 1 by omega]; exact hdvd hp2)
         (by simpa using hn)
@@ -596,7 +597,7 @@ theorem orderOf_two_twoAdic_of_mod_eight (p : ℕ) (hp : p.Prime) :
       omega
     refine ⟨by_contra fun hn => hne (orderOf_dvd_iff_pow_eq_one.mp ?_),
       fun h8 => ?_⟩
-    · have := dvd_pow_mul_of_dvd_pow_succ_mul (d := orderOf (2 : ZMod p))
+    · have := Nat.dvd_pow_mul_of_dvd_pow_succ_mul (d := orderOf (2 : ZMod p))
         (e := 1) (m := p / 4) Nat.prime_two
         (by rw [show 2 ^ (1 + 1) * (p / 4) = p - 1 by omega]; exact hdvd hp2)
         (by simpa using hn)

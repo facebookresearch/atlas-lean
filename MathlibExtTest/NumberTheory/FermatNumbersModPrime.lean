@@ -16,7 +16,7 @@ import MathlibExt.NumberTheory.FermatResiduePeriod
 # Tests for Fermat numbers modulo a prime
 
 * `p = 7`: `ord_7(2) = 3`, so the residues `3, 5, 3, 5, …` of `F_n` have
-  preperiod `0` and period `ord_3(2) = 2`. Lemmas 2, 4 and 6 give
+  preperiod `0` and period `ord_3(2) = 2`. Lemma 6 gives
   `F_1 ≡ F_7 (mod 7)` without computing `F_7`, and Proposition 18 shows that
   `7` divides no Fermat number.
 * `p = 7`, `g = 3`: `3 ^ 2 = 2`, so `ind_3(2) = 2 = 2^1 · 1`; this checks
@@ -177,7 +177,7 @@ example : (∀ n, (Nat.fermatNumber (3 + n) : ZMod 17) = Nat.fermatNumber 3) ∧
     17 (by norm_num) (by norm_num) 4 1 (by decide) (by norm_num) 1 1
     (by norm_num) (one_dvd 1) 6 isPrimitiveRoot_six_seventeen (by decide)
   have h1 : orderOf (2 : ZMod (1 / 1)) = 1 :=
-    orderOf_two_zmod_eq_one_iff.mpr rfl
+    orderOf_eq_one_iff.mpr (by decide)
   rw [h1] at hper
   refine ⟨fun n => ?_, hpre 2 (by norm_num)⟩
   induction n with
@@ -244,26 +244,19 @@ example (v : ℕ) : ∃ p : ℕ, p.Prime ∧ p % 8 = 1 ∧
 
 example (n : ℕ) : (Nat.fermatNumber (n + 1) : ℤ) =
     ((Nat.fermatNumber n : ℤ) - 1) ^ 2 + 1 :=
-  cast_fermatNumber_succ n
+  Nat.cast_fermatNumber_succ n
 
-/-- The oddness hypotheses of `two_pow_mul_odd_inj` are needed. -/
+/-- The oddness hypotheses of `Nat.two_pow_mul_odd_inj` are needed. -/
 example : 2 ^ 3 * 5 = 2 ^ 1 * 20 ∧ ¬ (3 = 1 ∧ 5 = 20) := by decide
 
 example : 2 ^ 3 * 5 ≠ 2 ^ 2 * 7 := fun h =>
-  absurd ((two_pow_mul_odd_inj (by decide) (by decide)).mp h).1 (by decide)
+  absurd ((Nat.two_pow_mul_odd_inj (by decide) (by decide)).mp h).1 (by decide)
 
 /-- `6 ∣ 2^2 · 3` and `4 ∤ 6` give `6 ∣ 2 · 3`. -/
 example : 6 ∣ 2 ^ 1 * 3 :=
-  dvd_pow_mul_of_dvd_pow_succ_mul Nat.prime_two (by decide) (by decide)
+  Nat.dvd_pow_mul_of_dvd_pow_succ_mul Nat.prime_two (by decide) (by decide)
 
-example : (2 : ZMod 13) ≠ 0 := two_ne_zero_zmod (by norm_num) (by norm_num)
-
-example : orderOf (2 : ZMod 1) = 1 := orderOf_two_zmod_eq_one_iff.mpr rfl
-
-example : orderOf (2 : ZMod 9) ≠ 1 := fun h =>
-  absurd (orderOf_two_zmod_eq_one_iff.mp h) (by norm_num)
-
-example : 0 < orderOf (2 : ZMod 9) := orderOf_two_zmod_pos (by decide)
+example : (2 : ZMod 13) ≠ 0 := by decide
 
 /-- `n ↦ n % 2` has period `2` from `0`, so period `4` from `5`; that
 period moves back down to the tail from `0`. -/
@@ -271,21 +264,18 @@ example : Function.Periodic (fun n => (fun m => m % 2) (0 + n)) 4 := by
   have h0 : Function.Periodic (fun n => (fun m => m % 2) (0 + n)) 2 :=
     fun n => by simp
   have h5 : Function.Periodic (fun n => (fun m => m % 2) (5 + n)) 4 :=
-    periodic_tail_of_le (f := fun m => m % 2) (h := 0) (by norm_num)
+    Function.Periodic.tail_of_le (f := fun m => m % 2) (h := 0) (by norm_num)
       (by simpa using h0.nat_mul 2)
-  exact periodic_tail_of_periodic_tail_of_le (f := fun m => m % 2)
+  exact Function.Periodic.tail_of_periodic_tail_of_le (f := fun m => m % 2)
     (Nat.zero_le 5) two_pos h0 h5
 
 /-! ### Axioms -/
 
-#print axioms periodic_tail_of_le
-#print axioms periodic_tail_of_periodic_tail_of_le
-#print axioms cast_fermatNumber_succ
-#print axioms two_pow_mul_odd_inj
-#print axioms dvd_pow_mul_of_dvd_pow_succ_mul
-#print axioms two_ne_zero_zmod
-#print axioms orderOf_two_zmod_eq_one_iff
-#print axioms orderOf_two_zmod_pos
+#print axioms Function.Periodic.tail_of_le
+#print axioms Function.Periodic.tail_of_periodic_tail_of_le
+#print axioms Nat.cast_fermatNumber_succ
+#print axioms Nat.two_pow_mul_odd_inj
+#print axioms Nat.dvd_pow_mul_of_dvd_pow_succ_mul
 #print axioms fermatNumber_modEq_exists_repeat
 #print axioms fermatNumber_modEq_add
 #print axioms fermatNumber_not_modEq_add_of_le
