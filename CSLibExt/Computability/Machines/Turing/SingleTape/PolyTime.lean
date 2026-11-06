@@ -63,27 +63,35 @@ open Turing MetaMathlibExt MetaMathlibExt.TM2Program
 
 namespace Cslib.Turing.RevTail
 
-/-- Stacks of the reversal component: the input `X` and the output `O`. -/
+/-- **Stacks of the reversal component.** The two stack indices of the reversal component: the
+input stack $X$ and the output stack $O$. -/
 inductive K | X | O
   deriving DecidableEq
 
 /-- The two stacks. -/
 instance K.instFintype : Fintype K := ⟨{.X, .O}, fun k ↦ by cases k <;> simp⟩
 
-/-- Labels of the reversal component: move the input onto the output, drop one symbol, done. -/
+/-- **Labels of the reversal component.** The three labels of the reversal component: mv (move
+the input onto the output), drop (drop one symbol) and done. -/
 inductive L | mv | drop | done
   deriving DecidableEq
 
 /-- The three labels. -/
 instance L.instFintype : Fintype L := ⟨{.mv, .drop, .done}, fun l ↦ by cases l <;> simp⟩
 
-/-- Move the bits of `X` onto `O` (reversing them), pop `O` once, halt. -/
+/-- **Program of the reversal component.** The multi-stack program over the stacks $X$ and $O$,
+both with alphabet $\mathrm{Bool}$, with a Boolean internal state: at label mv it moves the bits
+of $X$ one at a time onto $O$ (reversing them) and then goes to drop; at drop it pops $O$ once
+and goes to done; at done it halts. -/
 def prog : L → TM2.Stmt (fun _ : K ↦ Bool) L Bool
   | .mv => moveB .X .O some id .mv .drop
   | .drop => .pop .O (fun s _ ↦ s) (.goto fun _ ↦ .done)
   | .done => .halt
 
-/-- The reversal component. -/
+/-- **The reversal component.** The component machine with two stacks, the input stack $X$ and
+the output stack $O$, both over the alphabet $\mathrm{Bool}$; the three labels mv, drop and done;
+the program that moves the bits of $X$ onto $O$ (reversing them), pops $O$ once and halts; and
+the stack list $[X, O]$. -/
 noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   K := K
   Γ := fun _ ↦ Bool
@@ -93,7 +101,11 @@ noncomputable abbrev comp : Cslib.Complexity.Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- The reversal component turns `x` into `x.reverse.tail` in `|x| + 2` steps. -/
+/-- **Running the reversal component.** For every bit list $x$, the program of the reversal
+component, started at label mv with internal state false, with the bits of $x$ on the input stack
+$X$ and every other stack empty, reaches label done within at most $|x| + 2$ steps, with some
+internal state and some stacks whose output stack $O$ holds the reversal of $x$ with its first
+entry removed. -/
 theorem run (x : List Bool) : ∃ v S', RunLe comp.prog (x.length + 2)
     ⟨some L.mv, false, Function.update (fun _ ↦ []) K.X (x.map id)⟩ ⟨some L.done, v, S'⟩ ∧
       S' K.O = x.reverse.tail.map (Equiv.refl Bool).symm := by
@@ -106,7 +118,11 @@ theorem run (x : List Bool) : ∃ v S', RunLe comp.prog (x.length + 2)
     simp only [comp, prog, TM2.stepAux]
   · simp [h₁b, List.tail_reverse]
 
-/-- **Reversing and dropping the first bit is polynomial-time** on raw bit lists. -/
+/-- **Reversing and dropping the first bit is polynomial-time.** A finite multi-stack Turing
+machine whose input and output alphabets are both identified with the bits, together with a
+polynomial $p$ with natural-number coefficients, such that for every bit list $x$, given bit by
+bit as its own encoding, the machine outputs the reversal of $x$ with its first entry removed
+(that is, $x$ without its last bit, in reverse order) within $p(|x|)$ steps. -/
 noncomputable def computable :
     TM2ComputableInPolyTime (fun l : List Bool ↦ l) (fun l : List Bool ↦ l)
       (fun x : List Bool ↦ x.reverse.tail) :=
@@ -127,15 +143,25 @@ variable (tm : FinTM2) [∀ k, Fintype (tm.Γ k)] (e : tm.Γ tm.k₀ ≃ Bool) (
 
 attribute [local instance] FinTM2.kFin FinTM2.ΛFin FinTM2.σFin
 
-/-- `answerTM` turns a one-cell tape into the answer bit of that cell in one step. -/
+/-- **The answer machine runs in one step.** Let $M$ be a finite multi-stack machine with finite
+stack alphabets, whose input alphabet is identified with the bits by $e$ and whose output alphabet
+by $e_1$. For every non-blank cell $x$ of the single-tape emulation alphabet of $M$, the answer
+machine of $M$, started on the one-cell tape $x$, halts within at most one step on the one-cell
+tape holding the input-bit cell of the answer of $x$ (the bit telling whether $x$ holds
+$e_1^{-1}(\mathrm{true})$ on the output stack). -/
 theorem answerTM_outputsWithinTime (x : NonBlank (TM2to1.Γ' tm.K tm.Γ)) :
     (answerTM tm e e₁).OutputsWithinTime [x] [inCell tm e (cellAnswer tm e₁ x)] 1 :=
   RelatesWithinSteps.single rfl
 
-/-- **The decider within time.** If `tm` halts after `t` steps on the input stack
-`w.reverse ++ [true]` with the single output symbol for the bit `b`, the decider outputs, on the
-input word `w`, the input-bit cell for `b`, within `C t (|w| + 1 + C t + 1) + 4` steps, where
-`C = emulationConstant tm`. -/
+/-- **The decider within time.** Let $M$ be a finite multi-stack machine with finite stack
+alphabets, whose input alphabet is identified with the bits by $e$ and whose output alphabet by
+$e_1$, and let $C$ be the emulation constant of $M$. Let $w$ be a bit list, $b$ a bit and $t$ a
+natural number. Suppose $M$, started with its input stack holding the bits of $w$ in reverse order
+followed by $\mathrm{true}$ (read through $e^{-1}$), is after exactly $t$ steps in the halting
+configuration whose output stack holds just $e_1^{-1}(b)$, whose other stacks are empty and whose
+internal state is the initial one. Then the single-tape decider of $M$, started on the tape of
+input-bit cells of $w$, halts on the one-cell tape holding the input-bit cell of $b$ within
+$C t (|w| + 1 + C t + 1) + 4$ steps. -/
 theorem deciderTM_outputsWithinTime {w : List Bool} (b : Bool) {t : ℕ}
     (h : (flip bind tm.step)^[t] (some (initList tm ((w.reverse ++ [true]).map e.symm))) =
       some (haltList tm [e₁.symm b])) :
@@ -448,18 +474,23 @@ open scoped Cslib.Turing.SingleTapeTM.OfTM2
 
 attribute [local instance] FinTM2.kFin
 
-/-- **Polynomial time on single-tape machines.** A decision problem `L` is in `SingleTapeP` when a
-CSLib single-tape machine over a finite alphabet, reading the input word `w` through an injective
-copy `ι` of the bits, halts on the one-cell tape `ι (L w)` within `p |w|` steps, for a polynomial
-`p`. -/
+/-- **Polynomial time on single-tape machines.** The class of decision problems $L$ for which
+there are a finite alphabet $\Sigma$ with a designated default element, an injective map $\iota$
+from the bits to $\Sigma$, a single-tape Turing machine $M$ over $\Sigma$ and a polynomial $p$
+with natural-number coefficients such that, for every bit list $w$, the machine $M$ started on the
+word $\iota(w)$ (the bits of $w$ mapped by $\iota$) halts on the one-cell tape $\iota(L(w))$
+within $p(|w|)$ steps. -/
 def SingleTapeP : DecisionComplexityClass :=
   {L | ∃ (Symbol : Type) (_ : Inhabited Symbol) (_ : Fintype Symbol) (ι : Bool → Symbol),
     Function.Injective ι ∧ ∃ (tm : SingleTapeTM Symbol) (p : Polynomial ℕ),
       ∀ w : List Bool, tm.OutputsWithinTime (w.map ι) [ι (L w)] (p.eval w.length)}
 
-/-- **Problems in `P` are decided in polynomial time by single-tape machines**: the multi-stack
-machine of `P`, after the input reversal and restricted to finite alphabets, is emulated within
-quadratic overhead. -/
+/-- **Problems in P are decided in polynomial time by single-tape machines.** Every decision
+problem in the class $\mathrm{P}$ (defined with multi-stack machines) belongs to the class of
+decision problems decided in polynomial time by single-tape machines.
+
+The proof reverses the input, restricts the multi-stack machine to finite alphabets and emulates
+it on a single tape within quadratic overhead. -/
 theorem P_subset_singleTapeP : P ⊆ SingleTapeP := by
   intro L hL
   obtain ⟨T₀⟩ := hL

@@ -35,7 +35,11 @@ namespace Cslib.Language
 
 variable {α : Type*}
 
-/-- `IsShuffle u v w`: the word `w` interleaves `u` and `v`. -/
+/-- **Shuffle of two words.** The relation "$w$ is a shuffle of $u$ and $v$" on words over $\alpha$
+is defined inductively: the empty word is a shuffle of the empty word and the empty word, and if
+$w$ is a shuffle of $u$ and $v$, then for every letter $a$ the word $aw$ is a shuffle of $au$ and
+$v$, and a shuffle of $u$ and $av$. Thus $w$ interleaves the letters of $u$ and of $v$, keeping
+their order within each word. -/
 inductive IsShuffle : List α → List α → List α → Prop
   | nil : IsShuffle [] [] []
   | left {u v w : List α} (a : α) : IsShuffle u v w → IsShuffle (a :: u) v (a :: w)
@@ -58,7 +62,9 @@ theorem isShuffle_cons_iff {u v w : List α} {a : α} :
   · rintro (⟨u', rfl, h⟩ | ⟨v', rfl, h⟩)
     exacts [.left a h, .right a h]
 
-/-- The shuffle of two languages: all interleavings of a word of `L` with a word of `M`. -/
+/-- **Shuffle of two languages.** For languages $L$ and $M$ over $\alpha$, the shuffle of $L$ and
+$M$ is the language of all words $w$ over $\alpha$ such that $w$ is a shuffle of some word $u \in L$
+and some word $v \in M$, that is, $w$ interleaves $u$ and $v$. -/
 def shuffle (L M : Language α) : Language α :=
   {w | ∃ u ∈ L, ∃ v ∈ M, IsShuffle u v w}
 
@@ -67,7 +73,9 @@ theorem mem_shuffle {L M : Language α} {w : List α} :
     w ∈ shuffle L M ↔ ∃ u ∈ L, ∃ v ∈ M, IsShuffle u v w :=
   Iff.rfl
 
-/-- The cyclic shifts of the words of `L`. -/
+/-- **Cyclic shift of a language.** For a language $L$ over $\alpha$, the cyclic shift of $L$ is
+the language of all words $yx$ over $\alpha$ such that $xy \in L$ for some words $x$ and $y$; that
+is, the language of all rotations of the words of $L$. -/
 def cyclicShift (L : Language α) : Language α :=
   {w | ∃ x y, x ++ y ∈ L ∧ w = y ++ x}
 
@@ -80,7 +88,12 @@ namespace RegularShuffle
 
 variable {σ τ : Type*} (M : DFA α σ) (N : DFA α τ)
 
-/-- At each letter, advance `M` or `N`. -/
+/-- **Shuffle automaton of two DFAs.** Let $M$ and $N$ be DFAs over $\alpha$ with state types
+$\sigma$ and $\tau$, start states $s_M$ and $s_N$, sets of accepting states $F_M$ and $F_N$, and
+transition functions $\delta_M$ and $\delta_N$. Their shuffle automaton is the NFA over $\alpha$
+with state type $\sigma \times \tau$, the single start state $(s_M, s_N)$ and accepting states
+$F_M \times F_N$, which on a letter $a$ moves from a state $(p, q)$ to the two states
+$(\delta_M(p, a), q)$ and $(p, \delta_N(q, a))$. -/
 def shuffleNFA : NFA α (σ × τ) where
   step s a := {(M.step s.1 a, s.2), (s.1, N.step s.2 a)}
   start := {(M.start, N.start)}
@@ -125,7 +138,10 @@ theorem shuffleNFA_accepts : (shuffleNFA M N).accepts = shuffle M.accepts N.acce
     exact ⟨(M.eval u, N.eval v), ⟨hu, hv⟩,
       (mem_shuffleNFA_evalFrom M N w _ _).2 ⟨_, rfl, u, v, h, rfl⟩⟩
 
-/-- The words leading `M` from `p` into `S`. -/
+/-- **Words leading a DFA from a state into a set of states.** For a DFA $M$ over $\alpha$ with
+state type $\sigma$, a state $p \in \sigma$ and a set $S \subseteq \sigma$ of states, this is the
+language of all words $w$ over $\alpha$ such that the run of $M$ started in $p$ on $w$ ends in a
+state of $S$. -/
 def fromTo (p : σ) (S : Set σ) : Language α :=
   {w | M.evalFrom p w ∈ S}
 
