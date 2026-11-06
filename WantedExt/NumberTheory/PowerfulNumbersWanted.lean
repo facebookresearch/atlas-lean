@@ -14,8 +14,11 @@ Numbers", *INTEGERS* 25 (2025), Paper A7, DOI 10.5281/zenodo.14679327
 (<https://math.colgate.edu/~integers/z7/z7.pdf>).
 
 All variables are integers unless positivity is stated explicitly.
-The paper's exact-divisibility notation `3 ∥ N` is spelled out as
-`3 ∣ N ∧ ¬ 9 ∣ N`.
+
+Proved in `MathlibExt.NumberTheory.PowerfulNumbers`: Lemmas 1–3
+(`MetaMathlibExt.int_sq_sub_int_sq_ne_two`,
+`MetaMathlibExt.three_exact_dvd_sq_add_self_add_one`, and
+`MetaMathlibExt.three_exact_dvd_sq_sub_self_add_one`).
 
 Lemma 4 is encoded with a nonzero `X` in the resulting elliptic-curve
 solution.  This is the conclusion produced by the paper's proof
@@ -32,40 +35,13 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Zsqrtd.Basic
+public import MathlibExt.NumberTheory.PowerfulNumbers
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PowerfulNumbersWanted
-
-/-- **Lemma 1**: the difference of two integer squares is never `2`.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 1. -/
-theorem_wanted int_sq_sub_int_sq_ne_two
-    (a b : ℤ) :
-    a ^ 2 - b ^ 2 ≠ 2
-
-/-- **Lemma 2**: if `x ≡ 1 (mod 3)`, then `3` exactly divides
-`x^2 + x + 1`, in the sense `3 ∣ x^2 + x + 1` but
-`¬ 9 ∣ x^2 + x + 1`.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 2. -/
-theorem_wanted three_exact_dvd_sq_add_self_add_one
-    (x : ℤ) (hx : x % 3 = 1) :
-    3 ∣ x ^ 2 + x + 1 ∧ ¬ 9 ∣ x ^ 2 + x + 1
-
-/-- **Lemma 3**: if `x ≡ 2 (mod 3)`, then `3` exactly divides
-`x^2 - x + 1`, in the sense `3 ∣ x^2 - x + 1` but
-`¬ 9 ∣ x^2 - x + 1`.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 3. -/
-theorem_wanted three_exact_dvd_sq_sub_self_add_one
-    (x : ℤ) (hx : x % 3 = 2) :
-    3 ∣ x ^ 2 - x + 1 ∧ ¬ 9 ∣ x ^ 2 - x + 1
 
 /-- **Lemma 4**: a nonzero-`x` integer point on
 `y^2 = a*x^4 + c*x^2 + e` yields an integer point with nonzero
