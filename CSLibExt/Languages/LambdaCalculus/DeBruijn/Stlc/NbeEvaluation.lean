@@ -38,7 +38,17 @@ variable {Base : Type u}
 variable {A B : Ty Base}
 variable {Γ Δ Θ : List (Ty Base)}
 
-/-- Evaluate a term in a Kripke semantic environment. -/
+/-- **Evaluation into the Kripke semantic domain.** Let $t$ be a term of type $T$ in context
+$\Gamma$ and let $\eta$ be a semantic environment interpreting every variable of $\Gamma$ as a
+semantic value in context $\Delta$. The evaluation $\operatorname{ev}(t, \eta)$ is the semantic
+value of type $T$ in context $\Delta$ defined by recursion on $t$: a variable $x$ evaluates to
+$\eta(x)$; an application $f\,a$ evaluates to the semantic function $\operatorname{ev}(f, \eta)$
+applied, along the identity renaming of $\Delta$, to $\operatorname{ev}(a, \eta)$; and an
+abstraction $\lambda b$ of type $A \to B$, whose body $b$ lies in the context $\Gamma$ extended
+by $A$, evaluates to the semantic function that sends a renaming $\rho$ from $\Delta$ to a context
+$\Theta$ and a semantic value $a$ of type $A$ in $\Theta$ to $\operatorname{ev}(b, \eta')$, where
+$\eta'$ sends the new variable to $a$ and each variable $x$ of $\Gamma$ to $\eta(x)$ renamed along
+$\rho$. -/
 def nbeEval : {Γ Δ : List (Ty Base)} → {A : Ty Base} →
     Tm Γ A → SemEnv Δ Γ → Sem Δ A
   | _, _, _, .var x, η => η x
@@ -57,10 +67,15 @@ def nbeEval : {Γ Δ : List (Ty Base)} → {A : Ty Base} →
     nbeEval (.lam body) η ρ a =
       nbeEval body (SemEnv.cons a (SemEnv.rename ρ η)) := rfl
 
-/-- Reify evaluation in the identity semantic environment. -/
+/-- **Normalization by evaluation.** For a term $t$ of type $A$ in context $\Gamma$, its normal
+form is the beta-normal, eta-long term of type $A$ in context $\Gamma$ obtained by reifying, at
+type $A$, the evaluation of $t$ in the identity semantic environment of $\Gamma$, which interprets
+each variable as the reflection of that variable. -/
 def normalizeNf (t : Tm Γ A) : Nf Γ A := quote A (nbeEval t SemEnv.identity)
 
-/-- The underlying term of the reified normal form. -/
+/-- **Normalization of terms.** For a term $t$ of type $A$ in context $\Gamma$, its normalized term
+is the term of type $A$ in context $\Gamma$ underlying the beta-normal, eta-long normal form of $t$
+computed by normalization by evaluation. -/
 def normalizeTm (t : Tm Γ A) : Tm Γ A := (normalizeNf t).toTm
 
 @[simp] theorem normalizeTm_eq (t : Tm Γ A) :

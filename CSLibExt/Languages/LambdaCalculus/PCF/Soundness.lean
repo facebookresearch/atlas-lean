@@ -31,7 +31,10 @@ open OmegaCompletePartialOrder
 
 namespace Tm
 
-/-- Soundness: evaluation preserves denotation. -/
+/-- **Soundness of the PCF denotational semantics.** Let $A$ be a PCF type and let $t$ and $v$
+be closed terms of type $A$. If $t$ evaluates to $v$ under big-step call-by-name evaluation,
+then for every environment $\eta$ of the empty context, the denotations of $t$ and $v$ at
+$\eta$ are equal. -/
 theorem Eval.denote_eq {A : Ty} {t v : Tm [] A} (h : Eval t v) (η : Env []) :
     denote t η = denote v η := by
   induction h with
@@ -55,8 +58,10 @@ theorem Eval.denote_eq {A : Ty} {t v : Tm [] A} (h : Eval t v) (η : Env []) :
       rw [denote_fix_unfold]
       exact ih
 
-/-- A closed term of ground type that evaluates to the numeral `n` denotes
-`n`. -/
+/-- **Closed PCF terms that evaluate to a numeral denote its value.** Let $t$ be a closed PCF
+term of the ground type of natural numbers and let $n$ be a natural number. If $t$ evaluates
+to the numeral for $n$, then for every environment $\eta$ of the empty context, the denotation
+of $t$ at $\eta$ is the defined element $n$ of the flat domain of partial natural numbers. -/
 theorem Eval.denote_numeral {t : Tm [] .nat} {n : Nat} (h : Eval t (Tm.numeral n)) (η : Env []) :
     denote t η = Part.some n :=
   (h.denote_eq η).trans (Tm.denote_numeral η n)

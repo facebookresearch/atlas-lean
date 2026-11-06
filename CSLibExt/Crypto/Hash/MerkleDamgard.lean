@@ -46,13 +46,18 @@ namespace Cslib.Crypto.MerkleDamgard
 
 variable {S B : Type*} (h : S × B → S) (iv : S)
 
-/-- The chaining value after processing a list of blocks given **last block first**:
-`chainRev [] = iv` and `chainRev (x :: xs) = h (chainRev xs, x)`. -/
+/-- **Chaining value of a reversed block list.** Let $h : S \times B \to S$ be a compression
+function and $iv \in S$ an initial value. The chaining value of a list of blocks given last block
+first is defined recursively: the empty list has chaining value $iv$, and a list with first entry
+$x$ followed by a list $xs$ has chaining value $h(c, x)$, where $c$ is the chaining value of
+$xs$. -/
 def chainRev : List B → S
   | [] => iv
   | x :: xs => h (chainRev xs, x)
 
-/-- The chaining value `z_L` after processing the blocks of `M` in order. -/
+/-- **Merkle–Damgård chaining value.** Let $h : S \times B \to S$ be a compression function and
+$iv \in S$ an initial value. The chaining value of a list of blocks $M = (x_1, \dots, x_L)$ is
+$z_L$, where $z_0 = iv$ and $z_i = h(z_{i-1}, x_i)$ for $1 \le i \le L$. -/
 def chain (M : List B) : S := chainRev h iv M.reverse
 
 theorem chain_eq_foldl (M : List B) : chain h iv M = M.foldl (fun z x => h (z, x)) iv := by
@@ -63,20 +68,29 @@ theorem chain_eq_foldl (M : List B) : chain h iv M = M.foldl (fun z x => h (z, x
 
 variable (lenBlock : ℕ → B)
 
-/-- The Merkle–Damgård hash with length strengthening: `h (z_L, lenBlock L)`. -/
+/-- **Merkle–Damgård hash with length strengthening.** Let $h : S \times B \to S$ be a compression
+function, $iv \in S$ an initial value and $\ell : \mathbb{N} \to B$ a length encoding. The hash of
+a list of blocks $M = (x_1, \dots, x_L)$ is $h(z_L, \ell(L))$, where $z_0 = iv$ and
+$z_i = h(z_{i-1}, x_i)$ for $1 \le i \le L$. -/
 def hash (M : List B) : S := h (chain h iv M, lenBlock M.length)
 
 variable [DecidableEq S] [DecidableEq B]
 
-/-- Walk back through two chains given last block first, returning the first pair of distinct
-compression inputs. -/
+/-- **Backward search for a compression collision.** Let $h : S \times B \to S$ be a compression
+function with initial value $iv$, and for a list of blocks written last block first let $z(xs)$
+be its chaining value: $z([\,]) = iv$ and $z(x :: xs) = h(z(xs), x)$. Given two such lists, the
+search compares their leading compression inputs: on $x :: xs$ and $y :: ys$, if
+$(z(xs), x) = (z(ys), y)$ it continues with $xs$ and $ys$, and otherwise it returns the pair
+$((z(xs), x), (z(ys), y))$. When either list is empty it returns no pair. -/
 def search : List B → List B → Option ((S × B) × (S × B))
   | x :: xs, y :: ys =>
     if (chainRev h iv xs, x) = (chainRev h iv ys, y) then search xs ys
     else some ((chainRev h iv xs, x), (chainRev h iv ys, y))
   | _, _ => none
 
-/-- A pair of compression inputs that collide. -/
+/-- **Collision of a compression function.** Let $h : S \times B \to S$ be a compression function.
+A pair $(p_1, p_2)$ of compression inputs in $S \times B$ is a collision of $h$ when $p_1 \ne p_2$
+and $h(p_1) = h(p_2)$. -/
 def IsCollision (p : (S × B) × (S × B)) : Prop := p.1 ≠ p.2 ∧ h p.1 = h p.2
 
 instance (p : (S × B) × (S × B)) : Decidable (IsCollision h p) :=
@@ -94,16 +108,29 @@ theorem search_spec : ∀ {xs ys : List B}, xs.length = ys.length → xs ≠ ys 
       exact search_spec (by simpa using hlen) (fun h => hne (h ▸ rfl)) h1
     · exact ⟨_, rfl, hin, heq⟩
 
-/-- Find a compression collision behind a hash collision: compare the final compression inputs,
-and if they agree, walk back through the two chains. -/
+/-- **Extracting a compression collision from a Merkle–Damgård collision.** Let
+$h : S \times B \to S$ be a compression function, $iv \in S$ an initial value and
+$\ell : \mathbb{N} \to B$ a length encoding. Let $M = (x_1, \dots, x_L)$ and
+$M' = (x'_1, \dots, x'_{L'})$ be lists of blocks with chaining values $z_0 = z'_0 = iv$,
+$z_i = h(z_{i-1}, x_i)$ and $z'_j = h(z'_{j-1}, x'_j)$. The procedure compares the final
+compression inputs $(z_L, \ell(L))$ and $(z'_{L'}, \ell(L'))$ and returns this pair if they
+differ. Otherwise, for $k = 1, 2, \dots, \min(L, L')$ in turn, it compares
+$(z_{L-k}, x_{L-k+1})$ with $(z'_{L'-k}, x'_{L'-k+1})$ and returns the first such pair that
+differs; if there is none, it returns no output. -/
 def findCollision (M M' : List B) : Option ((S × B) × (S × B)) :=
   if (chain h iv M, lenBlock M.length) = (chain h iv M', lenBlock M'.length) then
     search h iv M.reverse M'.reverse
   else some ((chain h iv M, lenBlock M.length), (chain h iv M', lenBlock M'.length))
 
-/-- **Merkle–Damgård** (block-level form of Katz and Lindell, Theorem 5.4): from distinct
-messages with equal hashes whose lengths the length block separates, `findCollision` extracts a
-collision of `h`. -/
+/-- **A Merkle–Damgård hash collision yields a compression collision.** Let
+$h : S \times B \to S$ be a compression function, $iv \in S$ an initial value and
+$\ell : \mathbb{N} \to B$ a length encoding, and let $H$ be the Merkle–Damgård hash with length
+strengthening they define. Write $|M|$ for the number of blocks of a list of blocks $M$. If $M$
+and $M'$ are distinct lists of blocks with $H(M) = H(M')$, and $\ell(|M|) = \ell(|M'|)$ implies
+$|M| = |M'|$, then the collision-finding procedure applied to $M$ and $M'$ returns a pair
+$(p_1, p_2)$ of compression inputs with $p_1 \ne p_2$ and $h(p_1) = h(p_2)$.
+
+This is a block-level form of Katz and Lindell, Theorem 5.4. -/
 theorem findCollision_spec {M M' : List B} (hne : M ≠ M')
     (heq : hash h iv lenBlock M = hash h iv lenBlock M')
     (hlen : lenBlock M.length = lenBlock M'.length → M.length = M'.length) :
@@ -118,22 +145,36 @@ theorem findCollision_spec {M M' : List B} (hne : M ≠ M')
 
 variable {R : Type*} [Fintype R] [Nonempty R] (maxLen : ℕ)
 
-/-- Collision finding for the hash: the adversary's coins are uniform, and it wins with two
-distinct messages of fewer than `maxLen` blocks with the same hash. -/
+/-- **Hash collision game for Merkle–Damgård.** Let $H$ be the Merkle–Damgård hash with length
+strengthening defined by a compression function $h : S \times B \to S$, an initial value
+$iv \in S$ and a length encoding $\ell : \mathbb{N} \to B$, and let $N$ be a natural number. An
+adversary $A$ maps random coins $r$ from a finite nonempty type $R$ to a pair of lists of blocks.
+The game is the distribution of the Boolean outcome when $r$ is drawn uniformly from $R$: the
+adversary wins (outcome true) exactly when $A(r) = (M, M')$ with $M \ne M'$, both $M$ and $M'$
+have fewer than $N$ blocks, and $H(M) = H(M')$. -/
 noncomputable def hashCollisionGame (A : R → List B × List B) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype R).map fun r =>
     decide ((A r).1 ≠ (A r).2 ∧ (A r).1.length < maxLen ∧ (A r).2.length < maxLen ∧
       hash h iv lenBlock (A r).1 = hash h iv lenBlock (A r).2)
 
-/-- Collision finding for the compression function: the adversary wins when it outputs a
-collision of `h`. -/
+/-- **Compression-function collision game.** Let $h : S \times B \to S$ be a compression function
+and let $A$ be an adversary that maps random coins $r$ from a finite nonempty type $R$ either to a
+pair $(p_1, p_2)$ of compression inputs in $S \times B$ or to no output. The game is the
+distribution of the Boolean outcome when $r$ is drawn uniformly from $R$: the adversary wins
+(outcome true) exactly when $A(r)$ is a pair $(p_1, p_2)$ with $p_1 \ne p_2$ and
+$h(p_1) = h(p_2)$, and loses when $A(r)$ is no output. -/
 noncomputable def compressionCollisionGame (A : R → Option ((S × B) × (S × B))) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype R).map fun r =>
     match A r with
     | some p => decide (IsCollision h p)
     | none => false
 
-/-- The compression-collision finder built from a hash-collision finder. -/
+/-- **Merkle–Damgård collision reduction.** Let $h : S \times B \to S$ be a compression function,
+$iv \in S$ an initial value, $\ell : \mathbb{N} \to B$ a length encoding and $A$ an adversary that
+maps random coins $r$ from a finite nonempty type $R$ to a pair $(M, M')$ of lists of blocks. The
+reduction is the adversary that, on coins $r$, outputs the result of the Merkle–Damgård
+collision-finding procedure applied to the pair $(M, M') = A(r)$: a pair of compression inputs,
+or no output. -/
 def reduction (A : R → List B × List B) : R → Option ((S × B) × (S × B)) :=
   fun r => findCollision h iv lenBlock (A r).1 (A r).2
 
@@ -149,9 +190,13 @@ private theorem map_uniform_le {Ω : Type*} [Fintype Ω] [Nonempty Ω] {f g : Ω
   · simp only [eq_comm (a := true), hf]
     exact zero_le
 
-/-- **The Merkle–Damgård transform preserves collision resistance**: if `lenBlock` is injective
-on lengths below `maxLen`, the reduction finds a compression collision with at least the
-probability that `A` finds a hash collision. -/
+/-- **The Merkle–Damgård transform preserves collision resistance.** Let $h : S \times B \to S$
+be a compression function, $iv \in S$ an initial value, $\ell : \mathbb{N} \to B$ a length
+encoding and $N$ a natural number such that $\ell$ is injective on $\{0, 1, \dots, N - 1\}$. Then
+for every adversary $A$ that maps random coins from a finite nonempty type $R$ to a pair of lists
+of blocks, the probability that the reduction built from $A$ wins the compression-function
+collision game for $h$ is at least the probability that $A$ wins the hash collision game for the
+Merkle–Damgård hash defined by $h$, $iv$ and $\ell$ with messages of fewer than $N$ blocks. -/
 theorem hashCollisionGame_le (hinj : ∀ L L', L < maxLen → L' < maxLen → lenBlock L = lenBlock L' →
     L = L') (A : R → List B × List B) :
     hashCollisionGame h iv lenBlock maxLen A true ≤

@@ -58,18 +58,34 @@ section Scheme
 
 variable {G : Type*} [CommGroup G] {q : ℕ} (g : G)
 
-/-- The public key `h = g ^ x` of the secret key `x`. -/
+/-- **ElGamal public key.** Let $G$ be a commutative group with a fixed element $g$ and let $q$ be
+a natural number. The public key of a secret key $x \in \mathbb{Z}/q$ is $h = g^{v(x)} \in G$,
+where $v(x) \in \{0, \dots, q - 1\}$ is the least nonnegative representative of $x$ if $q \ge 1$,
+and $v(x) = |x|$ if $q = 0$ (when $\mathbb{Z}/0 = \mathbb{Z}$). -/
 def publicKey (x : ZMod q) : G := gpow g x
 
-/-- ElGamal encryption of `m` under the public key `h` with randomness `y`:
-`(g ^ y, h ^ y * m)`. -/
+/-- **ElGamal encryption.** Let $G$ be a commutative group with a fixed element $g$ and let $q$ be
+a natural number. The ElGamal encryption of a message $m \in G$ under the public key $h \in G$
+with randomness $y \in \mathbb{Z}/q$ is the pair $(g^y, h^y m) \in G \times G$. Here a power
+$k^a$ with $k \in G$ and $a \in \mathbb{Z}/q$ means $k^{v(a)}$, where $v(a) \in \{0, \dots, q - 1\}$
+is the least nonnegative representative of $a$ if $q \ge 1$, and $v(a) = |a|$ if $q = 0$ (when
+$\mathbb{Z}/0 = \mathbb{Z}$). -/
 def encrypt (h m : G) (y : ZMod q) : G × G := (gpow g y, gpow h y * m)
 
-/-- ElGamal decryption with the secret key `x`: `c₂ / c₁ ^ x`. -/
+/-- **ElGamal decryption.** Let $G$ be a commutative group and $q$ a natural number. For
+$a \in \mathbb{Z}/q\mathbb{Z}$ and $c \in G$ write $c^a$ for $c^{\operatorname{val}(a)}$, where
+$\operatorname{val}(a) \in \mathbb{N}$ is the representative of $a$ in $\{0, \dots, q-1\}$ if
+$q \ge 1$ and $|a|$ if $q = 0$. Decrypting a ciphertext $(c_1, c_2) \in G \times G$ with the
+secret key $x \in \mathbb{Z}/q\mathbb{Z}$ gives $c_2 \cdot (c_1^x)^{-1}$. -/
 def decrypt (x : ZMod q) (c : G × G) : G := c.2 * (gpow c.1 x)⁻¹
 
-/-- **Correctness of ElGamal**: decryption inverts encryption for every secret key, every
-message and all encryption randomness. -/
+/-- **Correctness of ElGamal.** Let $G$ be a commutative group, $g \in G$ and $q$ a natural
+number. For $a \in \mathbb{Z}/q\mathbb{Z}$ and $c \in G$ write $c^a$ for
+$c^{\operatorname{val}(a)}$, where $\operatorname{val}(a) \in \mathbb{N}$ is the representative
+of $a$ in $\{0, \dots, q-1\}$ if $q \ge 1$ and $|a|$ if $q = 0$. For every secret key
+$x \in \mathbb{Z}/q\mathbb{Z}$, every message $m \in G$ and every encryption randomness
+$y \in \mathbb{Z}/q\mathbb{Z}$, decrypting with $x$ the ElGamal encryption of $m$ under the
+public key $g^x$ with randomness $y$ returns $m$. -/
 theorem decrypt_encrypt (x y : ZMod q) (m : G) :
     decrypt x (encrypt g (publicKey g x) m y) = m := by
   simp only [decrypt, encrypt, publicKey]
@@ -84,12 +100,15 @@ section Security
 variable {G : Type*} [CommGroup G] [Fintype G] {q : ℕ} [NeZero q] (g : G)
   {R : Type*} [Fintype R] [Nonempty R]
 
-/-- The message selected by the challenge bit: `m.2` for `true`, `m.1` for `false`. -/
+/-- **Message selected by the challenge bit.** Let $G$ be a finite commutative group. For a pair
+of messages $(m_0, m_1) \in G \times G$ and a bit $b$, the selected message is $m_1$ if $b$ is
+true and $m_0$ if $b$ is false. -/
 def pick (m : G × G) (b : Bool) : G := if b then m.2 else m.1
 
-/-- An eavesdropping adversary with random coins in `R`: from the public key it chooses two
-messages, and from the public key and the challenge ciphertext it guesses which one was
-encrypted. -/
+/-- **ElGamal eavesdropping adversary.** Given a type $G$ of public keys and messages and a type
+$R$ of random coins, an eavesdropping adversary consists of a choice function, which maps a public
+key $h \in G$ and coins $r \in R$ to a pair of messages in $G \times G$, and a guessing function,
+which maps a public key $h \in G$, a ciphertext in $G \times G$ and coins $r \in R$ to a bit. -/
 structure Adversary (G R : Type*) where
   /-- The two challenge messages, as a function of the public key and the coins. -/
   choose : G → R → G × G
@@ -97,9 +116,13 @@ structure Adversary (G R : Type*) where
   guess : G → G × G → R → Bool
 
 variable (q) in
-/-- The eavesdropping experiment `PubK^eav` for ElGamal: secret key `x`, encryption randomness
-`y`, coins `r` and challenge bit `b` are uniform; the game outputs whether the guess equals
-`b`. -/
+/-- **ElGamal eavesdropping experiment.** Let $G$ be a commutative group, $g \in G$ and $q \ge 1$.
+For an eavesdropping adversary $A$ with coins in a finite nonempty type $R$, the experiment draws
+$x, y \in \mathbb{Z}/q$, coins $r \in R$ and a bit $b$ independently and uniformly. It sets the
+public key $h = g^x$, lets $A$ choose messages $(m_0, m_1)$ from $h$ and $r$, and gives $A$ the
+key $h$, the ElGamal ciphertext $(g^y, h^y m_b)$ and the coins $r$, where $m_b$ is $m_1$ if $b$
+is true and $m_0$ otherwise; powers use the value of the exponent in $\{0, \dots, q - 1\}$. The
+experiment outputs the distribution of the bit "the guess of $A$ equals $b$". -/
 noncomputable def eavGame (A : Adversary G R) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (ZMod q × ZMod q × R × Bool)).map fun ω =>
     A.guess (publicKey g ω.1)
@@ -107,39 +130,65 @@ noncomputable def eavGame (A : Adversary G R) : PMF Bool :=
       ω.2.2.1 == ω.2.2.2
 
 variable (q) in
-/-- The advantage `|Pr[A wins] - 1/2|` of an eavesdropper. -/
+/-- **Eavesdropping advantage against ElGamal.** Let $G$ be a finite commutative group, $g \in G$
+and $q \ge 1$. The eavesdropping advantage of an adversary $A$ with random coins in a finite
+nonempty type $R$ is the real number $|p - 1/2|$, where $p$ is the probability that $A$ wins the
+ElGamal eavesdropping experiment for $g$ with exponents in $\mathbb{Z}/q\mathbb{Z}$, that is,
+guesses the challenge bit correctly. -/
 noncomputable def eavAdvantage (A : Adversary G R) : ℝ :=
   |(eavGame q g A true).toReal - 1 / 2|
 
 variable {S : Type*} [Fintype S] [Nonempty S]
 
 variable (q) in
-/-- The real DDH experiment: `D` sees `(g ^ x, g ^ y, g ^ (x y))` for uniform `x`, `y`, and
-coins `s`. -/
+/-- **Real DDH experiment.** Let $G$ be a finite commutative group, $g \in G$ and $q \ge 1$ a
+natural number, and let $D$ be a distinguisher that maps three elements of $G$ and coins in a
+finite nonempty type $S$ to a bit. The real DDH experiment draws $x, y \in \mathbb{Z}/q$ and coins
+$s \in S$ independently and uniformly and outputs the distribution of the bit
+$D(g^x, g^y, g^{xy}, s)$, where $xy$ is the product in $\mathbb{Z}/q$ and a power $g^a$ with
+$a \in \mathbb{Z}/q$ means $g^{v(a)}$ for the representative $v(a) \in \{0, \dots, q - 1\}$
+of $a$. -/
 noncomputable def ddhReal (D : G → G → G → S → Bool) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (ZMod q × ZMod q × S)).map fun ω =>
     D (gpow g ω.1) (gpow g ω.2.1) (gpow g (ω.1 * ω.2.1)) ω.2.2
 
 variable (q) in
-/-- The random DDH experiment: `D` sees `(g ^ x, g ^ y, g ^ z)` for uniform `x`, `y`, `z`, and
-coins `s`. -/
+/-- **Random DDH experiment.** Let $G$ be a finite commutative group, $g \in G$ and $q \ge 1$ a
+natural number, and let $D$ be a distinguisher that maps three elements of $G$ and coins in a
+finite nonempty type $S$ to a bit. The random DDH experiment draws $x, y, z \in \mathbb{Z}/q$ and
+coins $s \in S$ independently and uniformly and outputs the distribution of the bit
+$D(g^x, g^y, g^z, s)$, where a power $g^a$ with $a \in \mathbb{Z}/q$ means $g^{v(a)}$ for the
+representative $v(a) \in \{0, \dots, q - 1\}$ of $a$. -/
 noncomputable def ddhRand (D : G → G → G → S → Bool) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (ZMod q × ZMod q × ZMod q × S)).map fun ω =>
     D (gpow g ω.1) (gpow g ω.2.1) (gpow g ω.2.2.1) ω.2.2.2
 
 variable (q) in
-/-- The DDH advantage `|Pr[D = 1 | real] - Pr[D = 1 | random]|`. -/
+/-- **Advantage of a DDH distinguisher.** Let $G$ be a finite commutative group, $g \in G$ and
+$q \ge 1$, and let $D$ be a distinguisher that maps three elements of $G$ and coins in a finite
+nonempty type $S$ to a bit. The DDH advantage of $D$ is the real number
+$|p_{\mathrm{real}} - p_{\mathrm{rand}}|$, where $p_{\mathrm{real}}$ and $p_{\mathrm{rand}}$ are
+the probabilities that $D$ outputs true in the real and in the random DDH experiment for $g$ with
+exponents in $\mathbb{Z}/q\mathbb{Z}$. -/
 noncomputable def ddhAdvantage (D : G → G → G → S → Bool) : ℝ :=
   |(ddhReal q g D true).toReal - (ddhRand q g D true).toReal|
 
-/-- The DDH distinguisher built from an eavesdropper: on `(X, Y, Z)` it runs `A` with public key
-`X` and challenge ciphertext `(Y, Z * m_b)` for its own uniform bit `b`, and outputs whether `A`
-guessed `b`. -/
+/-- **DDH distinguisher from an ElGamal eavesdropper.** Let $G$ be a finite commutative group and
+let $A$ be an eavesdropping adversary with coins in a finite nonempty type $R$. The distinguisher
+built from $A$ takes three elements $X, Y, Z \in G$ and coins consisting of $r \in R$ and a bit
+$b$. It lets $A$ choose messages $(m_0, m_1)$ from the public key $X$ and the coins $r$, gives $A$
+the public key $X$, the ciphertext $(Y, Z m_b)$ and the coins $r$, where $m_b$ is $m_1$ if $b$ is
+true and $m_0$ otherwise, and outputs true exactly when the guess of $A$ equals $b$. -/
 def reduction (A : Adversary G R) : G → G → G → R × Bool → Bool :=
   fun X Y Z s => A.guess X (Y, Z * pick (A.choose X s.1) s.2) s.1 == s.2
 
 omit [Fintype G] in
-/-- With a real DDH triple, the reduction runs the eavesdropping game exactly. -/
+/-- **ElGamal eavesdropping game equals the real DDH experiment of the reduction.** Let $G$ be a
+commutative group, $q \ge 1$ a natural number and $g \in G$ with $g^q = 1$. For every
+eavesdropping adversary $A$ with coins in a finite nonempty type $R$, the output distribution of
+the ElGamal eavesdropping experiment for $A$ (exponents in $\mathbb{Z}/q$) equals the output
+distribution of the real DDH experiment run with the distinguisher built from $A$ by the
+reduction. -/
 theorem eavGame_eq_ddhReal (hg : g ^ q = 1) (A : Adversary G R) :
     eavGame q g A = ddhReal q g (reduction A) := by
   simp only [eavGame, ddhReal, reduction, encrypt, publicKey, gpow_mul hg]
@@ -182,8 +231,13 @@ private theorem map_uniform_true_eq_half {Ω : Type*} [Fintype Ω] [Nonempty Ω]
   rw [← hsum, Nat.cast_add, ← two_mul, ENNReal.mul_inv (by simp) (by simp), one_div,
     mul_comm (2 : ENNReal)⁻¹, ← mul_assoc, ENNReal.mul_inv_cancel hc0 (by simp), one_mul]
 
-/-- With a random DDH triple, the mask `g ^ z` is a group one-time pad on the challenge message,
-so the reduction outputs `true` with probability exactly `1/2`. -/
+/-- **The reduction is a fair coin on random DDH triples.** Let $G$ be a finite commutative group
+of order $q$ generated by $g$. For every eavesdropping adversary $A$ with random coins in a finite
+nonempty type $R$, the DDH distinguisher obtained from $A$ by the reduction outputs true with
+probability exactly $1/2$ in the random DDH experiment for $g$.
+
+In that experiment the third input $g^z$, with $z$ uniform in $\mathbb{Z}/q\mathbb{Z}$, is a group
+one-time pad on the challenge message. -/
 theorem ddhRand_reduction_true (hgen : ∀ x : G, x ∈ Subgroup.zpowers g)
     (hcard : Fintype.card G = q) (A : Adversary G R) :
     ddhRand q g (reduction A) true = 1 / 2 := by
@@ -207,9 +261,13 @@ theorem ddhRand_reduction_true (hgen : ∀ x : G, x ∈ Subgroup.zpowers g)
     cases A.guess (gpow g x) (gpow g y, gpow g z * pick (A.choose (gpow g x) r) b) r <;>
       cases b <;> rfl
 
-/-- **ElGamal is eavesdropping-secure if DDH is hard** (the eavesdropping part of Katz and
-Lindell, Theorem 11.18), as an exact equality: the eavesdropping advantage of `A` equals the
-DDH advantage of `reduction A`. -/
+/-- **ElGamal eavesdropping advantage equals a DDH advantage.** Let $G$ be a finite commutative
+group of order $q$ generated by $g$. For every eavesdropping adversary $A$ with random coins in a
+finite nonempty type $R$, the eavesdropping advantage of $A$ against ElGamal equals the DDH
+advantage of the distinguisher obtained from $A$ by the reduction.
+
+This is the eavesdropping part of Katz and Lindell, Theorem 11.18 (ElGamal is secure if DDH is
+hard), in exact, non-asymptotic form. -/
 theorem eavAdvantage_eq_ddhAdvantage (hgen : ∀ x : G, x ∈ Subgroup.zpowers g)
     (hcard : Fintype.card G = q) (A : Adversary G R) :
     eavAdvantage q g A = ddhAdvantage q g (reduction A) := by
@@ -217,8 +275,11 @@ theorem eavAdvantage_eq_ddhAdvantage (hgen : ∀ x : G, x ∈ Subgroup.zpowers g
     ddhRand_reduction_true g hgen hcard]
   norm_num
 
-/-- Any bound on the DDH advantage of the reduction bounds the eavesdropping advantage of
-ElGamal. -/
+/-- **DDH bounds transfer to ElGamal.** Let $G$ be a finite commutative group of order $q$
+generated by $g$, and let $A$ be an eavesdropping adversary with random coins in a finite nonempty
+type $R$. For every real number $\varepsilon$, if the DDH advantage of the distinguisher obtained
+from $A$ by the reduction is at most $\varepsilon$, then the eavesdropping advantage of $A$
+against ElGamal is at most $\varepsilon$. -/
 theorem eavAdvantage_le (hgen : ∀ x : G, x ∈ Subgroup.zpowers g) (hcard : Fintype.card G = q)
     (A : Adversary G R) {ε : ℝ} (hε : ddhAdvantage q g (reduction A) ≤ ε) :
     eavAdvantage q g A ≤ ε :=

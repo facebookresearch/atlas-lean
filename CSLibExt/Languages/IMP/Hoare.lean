@@ -31,12 +31,14 @@ and a semantic weakest-liberal-precondition calculus.
 
 namespace Cslib.IMP
 
-/-- State assertions used as Hoare preconditions and postconditions. -/
+/-- **Assertion.** An assertion is a predicate on program states: it assigns a proposition to
+each state. Assertions serve as the preconditions and postconditions of Hoare triples. -/
 abbrev Assertion := State → Prop
 
 namespace Assertion
 
-/-- Pointwise implication between assertions. -/
+/-- **Entailment of assertions.** An assertion $P$ entails an assertion $Q$ when every state
+that satisfies $P$ also satisfies $Q$. -/
 def Entails (left right : Assertion) : Prop :=
   ∀ ⦃state⦄, left state → right state
 
@@ -47,13 +49,18 @@ theorem Entails.trans {first second third : Assertion}
     (hfirst : first.Entails second) (hsecond : second.Entails third) :
     first.Entails third := fun _ h => hsecond (hfirst h)
 
-/-- Substitute an arithmetic expression for a variable in an assertion. -/
+/-- **Substitution in an assertion.** Let $P$ be an assertion, $x$ a variable and $e$ an
+arithmetic expression. The assertion $P[e/x]$ holds in a state $s$ exactly when $P$ holds in
+the state obtained from $s$ by setting the value of $x$ to the value of $e$ in $s$. -/
 def subst (post : Assertion) (name : Nat) (value : AExp) : Assertion :=
   fun state => post (Function.update state name (value.eval state))
 
 end Assertion
 
-/-- Semantic validity of a partial-correctness Hoare triple. -/
+/-- **Validity of a Hoare triple.** For assertions $P$ and $Q$ and a command $c$, the
+partial-correctness Hoare triple $\lbrace P \rbrace\ c\ \lbrace Q \rbrace$ is valid when, for all
+states $s$ and $t$, if $s$ satisfies $P$ and executing $c$ from $s$ terminates in $t$ under the
+big-step semantics, then $t$ satisfies $Q$. -/
 def Valid (pre : Assertion) (command : Cmd) (post : Assertion) : Prop :=
   ∀ ⦃initial final⦄, pre initial → BigStep command initial final → post final
 
@@ -95,7 +102,12 @@ theorem ite {pre post : Assertion} {guard : BExp} {thenBranch elseBranch : Cmd}
   · exact hthen ⟨hpre, hguard⟩ hbranch
   · exact helse ⟨hpre, hguard⟩ hbranch
 
-/-- The standard invariant rule for partial correctness of while loops. -/
+/-- **Invariant rule for while loops.** Let $I$ be an assertion, $b$ a Boolean expression and
+$c$ a command. Write $I \wedge b$ for the assertion that $I$ holds and $b$ evaluates to true,
+and $I \wedge \neg b$ for the assertion that $I$ holds and $b$ evaluates to false. If the
+partial-correctness Hoare triple $\lbrace I \wedge b \rbrace\ c\ \lbrace I \rbrace$ is valid,
+then so is the triple
+$\lbrace I \rbrace\ \mathtt{while}\ b\ \mathtt{do}\ c\ \lbrace I \wedge \neg b \rbrace$. -/
 theorem whileLoop {invariant : Assertion} {guard : BExp} {body : Cmd}
     (hbody : Valid (fun state => invariant state ∧ guard.eval state = true)
       body invariant) :
@@ -119,9 +131,13 @@ theorem whileLoop {invariant : Assertion} {guard : BExp} {body : Cmd}
 
 end Valid
 
-/-- Semantic weakest liberal precondition. It is liberal because no termination
-claim is made: every final state of any terminating execution must satisfy the
-postcondition. -/
+/-- **Weakest liberal precondition.** For a command $c$ and an assertion $Q$, the weakest
+liberal precondition of $c$ with respect to $Q$ is the assertion that holds in a state $s$
+exactly when every state $t$ in which an execution of $c$ from $s$ terminates, under the
+big-step semantics, satisfies $Q$.
+
+It is liberal because no termination claim is made: a state from which $c$ has no terminating
+execution satisfies it for every $Q$. -/
 def wlp (command : Cmd) (post : Assertion) : Assertion :=
   fun initial => ∀ ⦃final⦄, BigStep command initial final → post final
 
@@ -194,8 +210,13 @@ theorem ite (guard : BExp) (thenBranch elseBranch : Cmd) (post : Assertion) :
     · exact hthen hguard hbranch
     · exact helse hguard hbranch
 
-/-- Weakest liberal preconditions unfold a while loop into its exit case and
-one guarded body iteration followed by the loop again. -/
+/-- **Weakest liberal precondition unfolding of a while loop.** Let $b$ be a Boolean expression,
+$c$ a command and $Q$ an assertion. Write $\mathrm{wlp}(d, R)$ for the weakest liberal
+precondition of a command $d$ with respect to an assertion $R$, and let $W$ be the loop
+$\mathbf{while}\ b\ \mathbf{do}\ c$. Then $\mathrm{wlp}(W, Q)$ is the assertion that holds in a
+state $s$ exactly when both of the following hold: if $b$ evaluates to false in $s$, then $Q$
+holds in $s$; and if $b$ evaluates to true in $s$, then $\mathrm{wlp}(c, \mathrm{wlp}(W, Q))$
+holds in $s$. -/
 theorem whileLoop (guard : BExp) (body : Cmd) (post : Assertion) :
     wlp (.while guard body) post = fun state =>
       (guard.eval state = false → post state) ∧
@@ -232,7 +253,12 @@ theorem conjunction (command : Cmd) (firstPost secondPost : Assertion) :
   · rintro ⟨hfirst, hsecond⟩ final hstep
     exact ⟨hfirst hstep, hsecond hstep⟩
 
-/-- An invariant is a post-fixed point of the semantic while transformer. -/
+/-- **Loop invariants entail the weakest liberal precondition of the loop.** Let $I$ and $Q$
+be assertions, $b$ a Boolean expression and $c$ a command. Suppose that every state satisfying
+$I$ in which $b$ evaluates to true satisfies the weakest liberal precondition of $c$ with
+respect to $I$, and that every state satisfying $I$ in which $b$ evaluates to false satisfies
+$Q$. Then $I$ entails the weakest liberal precondition of the loop
+$\mathtt{while}\ b\ \mathtt{do}\ c$ with respect to $Q$. -/
 theorem invariant_le_while {invariant post : Assertion} {guard : BExp} {body : Cmd}
     (hbody : Assertion.Entails
       (fun state => invariant state ∧ guard.eval state = true) (wlp body invariant))

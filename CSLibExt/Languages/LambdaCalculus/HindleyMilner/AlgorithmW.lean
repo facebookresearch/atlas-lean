@@ -85,9 +85,13 @@ theorem Ctx.subst_subst (s t : Subst B) (Γ : Ctx B) :
     (Γ.subst s).subst t = Γ.subst (s ≫ t) := by
   simp [Ctx.subst, Scheme.substTy_substTy]
 
-/-- The `let` rule after a substitution: if `e₁ : τ₁` in `Γ`, and `e₂` has type `τ₂` once `x`
-is bound to the substituted generalization of `τ₁` in `s Γ`, then `let x = e₁ in e₂ : τ₂` in
-`s Γ`. -/
+/-- **The let rule under a type substitution.** Let $\Gamma$ be a typing context, $s$ a type
+substitution, $x$ a variable name, $e_1, e_2$ expressions and $\tau_1, \tau_2$ monotypes, and
+write $s\Gamma$ for the context obtained by applying $s$ to every type scheme of $\Gamma$.
+Suppose $e_1$ has type $\tau_1$ in $\Gamma$, and $e_2$ has type $\tau_2$ in the context
+obtained from $s\Gamma$ by binding $x$, in front, to the type scheme that results from
+applying $s$ to the generalization of $\tau_1$ in $\Gamma$. Then
+$\mathtt{let}\ x = e_1\ \mathtt{in}\ e_2$ has type $\tau_2$ in $s\Gamma$. -/
 theorem HasType.let_substTy {Γ : Ctx B} {x : String} {e₁ e₂ : Expr} {τ₁ τ₂ : Ty B}
     (s : Subst B) (h₁ : HasType Γ e₁ τ₁)
     (h₂ : HasType ((x, (gen Γ τ₁).substTy s) :: Γ.subst s) e₂ τ₂) :
@@ -103,7 +107,9 @@ theorem HasType.let_substTy {Γ : Ctx B} {x : String} {e₁ e₂ : Expr} {τ₁ 
 
 /-! ### The algorithm -/
 
-/-- One more than the largest bound-variable index of a scheme (`0` if it has none). -/
+/-- **Bound-variable supremum of a type scheme.** The bound-variable supremum of a type scheme
+$\sigma$ is one more than the largest index $i$ of a bound variable occurring in $\sigma$, and
+$0$ if no bound variable occurs in $\sigma$. -/
 def Scheme.boundSup : Scheme B → ℕ
   | Term.var _ => 0
   | Term.const (Sum.inl _) => 0
@@ -112,9 +118,30 @@ def Scheme.boundSup : Scheme B → ℕ
 
 variable [DecidableEq B]
 
-/-- Algorithm W. `W Γ e n` returns a substitution `s`, a type `τ`, and the next fresh
-variable, or `none` when unification fails or a variable is unbound. Type variables
-`var m` with `m ≥ n` are used as fresh. -/
+/-- **Algorithm W.** Given a typing context $\Gamma$, an expression $e$ and a counter $n$,
+Algorithm W either fails or returns a substitution, a monotype and a new counter; type variables
+$\alpha_m$ with $m \ge n$ serve as fresh. Write $\tau_1 \to \tau_2$ for the arrow type, $s\Gamma$
+for $\Gamma$ with the substitution $s$ applied to every type scheme, and $s(\tau)$ for $s$
+applied to a monotype $\tau$. Algorithm W is defined by recursion on $e$, and fails as soon
+as a recursive call or a unification fails:
+
+- For a variable $x$: if $x$ is unbound in $\Gamma$, W fails; otherwise, with $\sigma$ the
+  visible type scheme of $x$, W returns the identity substitution, the instance of $\sigma$
+  that replaces each bound variable $i$ by $\alpha_{n+i}$, and the counter $n + k$, where $k$
+  is one more than the largest bound-variable index of $\sigma$ ($0$ if it has none).
+- For $\lambda x.\, e'$: W runs on the context $\Gamma$ with $x$ bound in front to the
+  monotype $\alpha_n$, the body $e'$ and the counter $n + 1$; if this returns
+  $(s, \tau, n')$, W returns $(s, s(\alpha_n) \to \tau, n')$.
+- For an application $e_1\, e_2$: W runs on $\Gamma$, $e_1$, $n$, giving
+  $(s_1, \tau_1, n_1)$, then on $s_1\Gamma$, $e_2$, $n_1$, giving $(s_2, \tau_2, n_2)$, then
+  runs unification on the single equation $s_2(\tau_1) = \tau_2 \to \alpha_{n_2}$, giving
+  $s_3$; it returns the composite substitution applying $s_1$, then $s_2$, then $s_3$, the
+  type $s_3(\alpha_{n_2})$ and the counter $n_2 + 1$.
+- For $\mathtt{let}\ x = e_1\ \mathtt{in}\ e_2$: W runs on $\Gamma$, $e_1$, $n$, giving
+  $(s_1, \tau_1, n_1)$, then on the context $s_1\Gamma$ with $x$ bound in front to the
+  generalization of $\tau_1$ in $s_1\Gamma$, $e_2$ and $n_1$, giving $(s_2, \tau_2, n_2)$;
+  it returns the composite substitution applying $s_1$ then $s_2$, the type $\tau_2$ and the
+  counter $n_2$. -/
 def W (Γ : Ctx B) : Expr → ℕ → Option (Subst B × Ty B × ℕ)
   | .var x, n =>
     (Γ.lookup x).map fun σ ↦ (Term.var, σ.inst (fun i ↦ Term.var (n + i)), n + σ.boundSup)
@@ -132,13 +159,19 @@ def W (Γ : Ctx B) : Expr → ℕ → Option (Subst B × Ty B × ℕ)
     return (s₁ ≫ s₂, τ₂, n₂)
 termination_by e => sizeOf e
 
-/-- Type inference for closed expressions. -/
+/-- **Type inference for closed expressions.** Type inference on an expression $e$ runs
+Algorithm W on $e$ in the empty context with fresh-variable counter $0$. If W succeeds with a
+substitution $s$, a monotype $\tau$ and a counter $n'$, the inferred type of $e$ is $\tau$;
+if W fails, $e$ has no inferred type. -/
 def infer (e : Expr) : Option (Ty B) := (W [] e 0).map fun r ↦ r.2.1
 
 /-! ### Soundness -/
 
-/-- **Soundness of Algorithm W**: a returned substitution `s` and type `τ` satisfy
-`s Γ ⊢ e : τ`. -/
+/-- **Soundness of Algorithm W.** Let $\Gamma$ be a typing context, $e$ an expression and $n$ a
+natural number. If Algorithm W, run on $\Gamma$ and $e$ with fresh-variable counter $n$,
+succeeds and returns a substitution $s$, a monotype $\tau$ and a counter $n'$, then $e$ has
+type $\tau$ in the context $s\Gamma$ obtained by applying $s$ to every type scheme of
+$\Gamma$. -/
 theorem hasType_of_W_eq_some {e : Expr} :
     ∀ {Γ : Ctx B} {n : ℕ} {s : Subst B} {τ : Ty B} {n' : ℕ},
       W Γ e n = some (s, τ, n') → HasType (Γ.subst s) e τ := by
@@ -188,7 +221,9 @@ theorem hasType_of_W_eq_some {e : Expr} :
     rw [← Ctx.subst_subst]
     exact HasType.let_substTy s₂ (ih₁ h₁) t₂
 
-/-- A type inferred for a closed expression is a type of it. -/
+/-- **Soundness of type inference for closed expressions.** For every expression $e$ and
+monotype $\tau$, if type inference for closed expressions returns $\tau$ on $e$, then $e$ has
+type $\tau$ in the empty context. -/
 theorem hasType_of_infer_eq_some {e : Expr} {τ : Ty B} (h : infer e = some τ) :
     HasType [] e τ := by
   obtain ⟨⟨s, τ', n'⟩, hW, rfl⟩ := Option.map_eq_some_iff.mp h

@@ -76,12 +76,15 @@ open Finset
 
 universe u v w
 
-/-- The polynomial functor of one oracle: an operation is a query `x : X`, answered by `y : Y`. -/
+/-- **The signature of one oracle.** For types $X$ and $Y$, this is the polynomial functor whose
+operations are the queries $x \in X$, each answered by an element of $Y$. -/
 abbrev OracleSig (X : Type u) (Y : Type v) : PFunctor.{u, v} := ⟨X, fun _ => Y⟩
 
-/-- An adaptive deterministic oracle algorithm: a computation in CSLib's free monad over one oracle;
-it either stops with an output in `α`, or asks a query in `X` and continues depending on the
-answer in `Y`. -/
+/-- **Adaptive oracle algorithms.** For a type $X$ of queries, a type $Y$ of answers and a type
+$\alpha$ of outputs, an adaptive deterministic oracle algorithm is an element of CSLib's free
+monad over the polynomial functor of one oracle with queries $X$ and answers $Y$. It is built
+inductively: it either stops with an output in $\alpha$, or asks a query $x \in X$ and continues
+with an algorithm that depends on the answer $y \in Y$. -/
 abbrev OracleComp (X : Type u) (Y : Type v) (α : Type w) : Type (max u v w) :=
   (OracleSig X Y).FreeM α
 
@@ -89,23 +92,35 @@ namespace OracleComp
 
 variable {X : Type u} {Y : Type v} {α : Type w}
 
-/-- Stop with output `a`. -/
+/-- **The oracle algorithm that stops at once.** For an output $a \in \alpha$, this is the
+adaptive oracle algorithm with queries in $X$ and answers in $Y$ that asks no query and stops
+with output $a$. -/
 abbrev done (a : α) : OracleComp X Y α := .pure a
 
-/-- Query `x` and continue with the answer. -/
+/-- **Query step.** For a point $x \in X$ and a continuation $k$ assigning an oracle algorithm to
+each answer $y \in Y$, the oracle algorithm that first queries $x$ and then continues with
+$k(y)$, where $y$ is the answer. -/
 abbrev query (x : X) (k : Y → OracleComp X Y α) : OracleComp X Y α := .liftBind x k
 
-/-- The output of the algorithm when the oracle is the function `O`. -/
+/-- **Running an oracle algorithm.** Given a function $O : X \to Y$, the run of an oracle
+algorithm with queries in $X$, answers in $Y$ and outputs in $\alpha$ is its output when every
+query $x$ is answered by $O(x)$: an algorithm that stops with output $a$ runs to $a$, and one
+that queries $x$ and continues with $k(y)$ on answer $y$ runs to the run of $k(O(x))$. -/
 def run (O : X → Y) : OracleComp X Y α → α
   | .pure a => a
   | .liftBind x k => run O (k (O x))
 
-/-- The queries the algorithm asks when the oracle is the function `O`, in order. -/
+/-- **Queries of an oracle algorithm.** For an oracle algorithm $c$ and a function
+$O : X \to Y$, the queries of $c$ against $O$ are the list of the points of $X$ that $c$ asks,
+in order, when every query $x$ is answered by $O(x)$: the empty list if $c$ stops, and otherwise
+the first query $x$ followed by the queries of the continuation on the answer $O(x)$. -/
 def queries (O : X → Y) : OracleComp X Y α → List X
   | .pure _ => []
   | .liftBind x k => x :: queries O (k (O x))
 
-/-- **Locality**: the run only depends on the oracle at the queried points. -/
+/-- **Locality of oracle runs.** Let $c$ be an oracle algorithm and let $O, O' : X \to Y$ agree
+at every query of $c$ against $O$. Then $c$ has the same output against $O$ as against $O'$, and
+the same list of queries against $O$ as against $O'$. -/
 theorem run_congr {O O' : X → Y} :
     ∀ (c : OracleComp X Y α), (∀ x ∈ c.queries O, O x = O' x) →
       c.run O = c.run O' ∧ c.queries O = c.queries O'
@@ -116,7 +131,11 @@ theorem run_congr {O O' : X → Y} :
     simp only [run, queries, ← hx]
     exact ⟨ih.1, by rw [ih.2]⟩
 
-/-- Running a sequential composition (CSLib's `PFunctor.FreeM.bind`). -/
+/-- **Running a sequential composition.** Let $c$ be an oracle algorithm with outputs in $\alpha$,
+let $g$ map each $a \in \alpha$ to an oracle algorithm with outputs in $\beta$, and let
+$O : X \to Y$. Running against $O$ the composition that first runs $c$ and then continues with
+$g$ applied to its output gives the output of $g(a)$ run against $O$, where $a$ is the output
+of $c$ run against $O$. -/
 theorem run_bind {β : Type*} (O : X → Y) (g : α → OracleComp X Y β) :
     ∀ c : OracleComp X Y α, run O (PFunctor.FreeM.bind c g) = (g (c.run O)).run O
   | .pure _ => rfl
@@ -141,15 +160,29 @@ section PRFGame
 variable {K X Y S : Type*} [Fintype K] [Nonempty K] [Fintype X] [DecidableEq X] [Fintype Y]
   [Nonempty Y] [Fintype S] [Nonempty S]
 
-/-- The real world: the distinguisher with uniform coins `s` queries `F k` for a uniform key. -/
+/-- **Real world of the PRF experiment.** Let $K$, $X$, $Y$ and $S$ be finite sets with $K$, $Y$
+and $S$ nonempty, let $F : K \to X \to Y$ be a keyed function and let $D$ be a distinguisher: an
+oracle algorithm with coins in $S$ that queries a function $X \to Y$ and outputs a bit. The real
+world is the distribution of the output of $D$ with coins $s$ and oracle $F(k, \cdot)$, where the
+pair $(k, s)$ is uniform on $K \times S$. -/
 noncomputable def prfReal (F : K → X → Y) (D : S → OracleComp X Y Bool) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (K × S)).map fun ω => (D ω.2).run (F ω.1)
 
-/-- The random world: the distinguisher queries a uniformly random function `X → Y`. -/
+/-- **Random world of the PRF experiment.** Let $X$, $Y$ and $S$ be finite sets with $Y$ and $S$
+nonempty, and let $D$ be a distinguisher: an oracle algorithm with coins in $S$ that queries a
+function $X \to Y$ and outputs a bit. The random world is the distribution of the output of $D$
+with coins $s$ and oracle $f$, where the pair $(f, s)$ is uniform on $(X \to Y) \times S$. -/
 noncomputable def prfRand (D : S → OracleComp X Y Bool) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype ((X → Y) × S)).map fun ω => (D ω.2).run ω.1
 
-/-- The PRF advantage `|Pr[D = 1 | F k] - Pr[D = 1 | random function]|`. -/
+/-- **PRF advantage.** Let $K$, $X$, $Y$ and $S$ be finite sets with $K$, $Y$ and $S$ nonempty,
+let $F : K \to X \to Y$ be a keyed function and let $D$ be a distinguisher: an oracle algorithm
+with coins in $S$ that queries a function $X \to Y$ and outputs a bit. The PRF advantage of $D$
+against $F$ is the real number $|p_{\mathrm{real}} - p_{\mathrm{rand}}|$, where
+$p_{\mathrm{real}}$ is the probability that $D$ outputs $1$ in the real world (uniform coins
+$s \in S$, oracle $F(k, \cdot)$ for a uniform key $k \in K$) and $p_{\mathrm{rand}}$ is the
+probability that $D$ outputs $1$ in the random world (uniform coins, oracle a uniformly random
+function $X \to Y$). -/
 noncomputable def prfAdvantage (F : K → X → Y) (D : S → OracleComp X Y Bool) : ℝ :=
   |(prfReal F D true).toReal - (prfRand D true).toReal|
 
@@ -162,21 +195,36 @@ section MAC
 variable {K M T R : Type*} [Fintype K] [Nonempty K] [Fintype M] [DecidableEq M] [Fintype T]
   [Nonempty T] [DecidableEq T] [Fintype R] [Nonempty R]
 
-/-- The forger, run with tagging oracle `O`, outputs a valid tag on a message it never
-queried. -/
+/-- **Winning the forgery game.** A forger $c$, an adaptive oracle algorithm with queries in $M$,
+answers in $T$ and output in $M \times T$, wins against the tagging oracle $O \colon M \to T$
+when, run with oracle $O$, it outputs a pair $(m, t)$ with $O(m) = t$ and $m$ is not among the
+queries it asks in that run. -/
 def MacWins (O : M → T) (c : OracleComp M T (M × T)) : Prop :=
   O (c.run O).1 = (c.run O).2 ∧ (c.run O).1 ∉ c.queries O
 
 instance (O : M → T) (c : OracleComp M T (M × T)) : Decidable (MacWins O c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The existential-forgery experiment under an adaptive chosen-message attack for the MAC
-`Mac_k(m) = F k m`: the key and the forger's coins are uniform. -/
+/-- **The MAC forgery experiment.** Let $K$ and $R$ be finite nonempty types, let
+$F \colon K \to M \to T$ be a keyed function, and let $A$ be a forger: for coins $r \in R$,
+$A(r)$ is an adaptive oracle algorithm with queries in $M$, answers in $T$ and output in
+$M \times T$. The existential-forgery experiment under an adaptive chosen-message attack for the
+MAC $\mathrm{Mac}_k(m) = F(k, m)$ draws $(k, r)$ uniformly from $K \times R$, runs $A(r)$ with
+the tagging oracle $F(k, \cdot)$, and outputs true exactly when $A(r)$ wins against that oracle,
+that is, outputs a pair $(m, t)$ with $F(k, m) = t$ where $m$ is not among its queries. -/
 noncomputable def macGame (F : K → M → T) (A : R → OracleComp M T (M × T)) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (K × R)).map fun ω => decide (MacWins (F ω.1) (A ω.2))
 
-/-- The distinguisher built from a forger: run it, logging its queries, then query the forged
-message and accept when the answer is the forged tag and the message is fresh. -/
+/-- **The distinguisher built from a forger.** For a list $L$ of messages in $M$ and a forger $c$,
+an adaptive oracle algorithm with queries in $M$, answers in $T$ and output in $M \times T$, the
+MAC reduction is the oracle algorithm with the same queries and answers and a Boolean output,
+defined by recursion on $c$. If $c$ stops with output $(m, t)$, it queries $m$ and, on answer
+$t'$, stops with output true exactly when $t' = t$ and $m \notin L$. If $c$ queries $x$ and
+continues with $c_y$ on answer $y$, it queries $x$ and, on answer $y$, continues as the MAC
+reduction of $c_y$ with $x$ added to $L$.
+
+Started with the empty list, it runs the forger, logging its queries, then queries the forged
+message and accepts when the answer is the forged tag and the message is fresh. -/
 def macReduction (log : List M) : OracleComp M T (M × T) → OracleComp M T Bool
   | .pure p => query p.1 fun t => done (decide (t = p.2 ∧ p.1 ∉ log))
   | .liftBind x k => query x fun y => macReduction (x :: log) (k y)
@@ -196,7 +244,13 @@ theorem run_macReduction (O : M → T) :
     exact propext (by tauto)
 
 omit [Fintype M] [Fintype T] [Nonempty T] in
-/-- With the oracle `F k`, the reduction runs the forgery experiment exactly. -/
+/-- **The MAC reduction in the real PRF world.** Let $K$ and $R$ be finite nonempty types, let
+$F \colon K \to M \to T$ be a keyed function, and let $A$ be a forger: for coins $r \in R$,
+$A(r)$ is an adaptive oracle algorithm with queries in $M$, answers in $T$ and output in
+$M \times T$. Then the output distribution of the existential-forgery experiment for $F$ and $A$
+equals the output distribution of the real world of the PRF experiment for $F$ with the
+distinguisher that, on coins $r$, runs the MAC reduction on $A(r)$ starting from the empty query
+log. -/
 theorem macGame_eq_prfReal (F : K → M → T) (A : R → OracleComp M T (M × T)) :
     macGame F A = prfReal F (fun r => macReduction [] (A r)) := by
   unfold macGame prfReal
@@ -206,9 +260,14 @@ theorem macGame_eq_prfReal (F : K → M → T) (A : R → OracleComp M T (M × T
   exact decide_eq_decide.mpr Iff.rfl
 
 omit [Nonempty T] in
-/-- **Counting forgeries against a random function**: the functions against which the forger
-wins number at most `|T|^|M| / |T|`, since changing the tag of the fresh forged message (which the
-run never queries) gives `|T|` functions with the same run, of which exactly one is a win. -/
+/-- **Counting forgeries against a random function.** Let $M$ and $T$ be finite sets and let $c$ be
+an adaptive oracle algorithm that queries messages in $M$, receives tags in $T$ and outputs a pair
+in $M \times T$. Call a function $f \colon M \to T$ a win for $c$ when the run of $c$ with oracle
+$f$ outputs a pair $(m, t)$ with $f(m) = t$ and $m$ not among the messages queried in that run.
+If $W$ is the set of functions $M \to T$ that are wins for $c$, then $|W| \cdot |T| \le |T|^{|M|}$.
+
+Changing the tag of the fresh forged message, which the run never queries, gives $|T|$ functions
+with the same run, of which exactly one is a win. -/
 theorem card_macWins_mul_le (c : OracleComp M T (M × T)) :
     (univ.filter fun f : M → T => MacWins f c).card * Fintype.card T ≤ Fintype.card (M → T) := by
   rw [← card_univ (α := T), ← card_product, ← card_univ (α := M → T)]
@@ -240,7 +299,12 @@ theorem card_macWins_mul_le (c : OracleComp M T (M × T)) :
   refine ⟨?_, rfl⟩
   rw [hf_eq, hf'_eq, heq, hrun]
 
-/-- With a random function, the forgery succeeds with probability at most `1 / |T|`. -/
+/-- **Forging against a random function.** Let $M$ and $T$ be finite sets with $T$ nonempty, and
+let $A$ be a forger: an oracle algorithm with coins in a finite nonempty set that queries tags
+in $T$ of messages in $M$ and outputs a message together with a tag. When the tagging oracle is
+a uniformly random function $M \to T$ and the coins are uniform, the MAC reduction built from
+$A$ accepts (that is, $A$ outputs the correct tag of a message it never queried) with
+probability at most $1/|T|$. -/
 theorem prfRand_macReduction_le (A : R → OracleComp M T (M × T)) :
     (prfRand (fun r => macReduction [] (A r)) true).toReal ≤ 1 / Fintype.card T := by
   classical
@@ -266,9 +330,15 @@ theorem prfRand_macReduction_le (A : R → OracleComp M T (M × T)) :
         rw [sum_const, card_univ, nsmul_eq_mul]
         field_simp
 
-/-- **The MAC from a PRF, concrete security** (the reduction of Katz and Lindell, Theorem 4.6):
-the forgery probability of any adaptive chosen-message forger is at most the PRF advantage of the
-reduction plus `1 / |T|`. -/
+/-- **The MAC from a PRF, concrete security.** Let $K$, $M$, $T$ and $R$ be finite types with
+$K$, $T$ and $R$ nonempty, let $F \colon K \to M \to T$ be a keyed function, and let $A$ be an
+adaptive chosen-message forger: for coins $r \in R$, $A(r)$ is an adaptive oracle algorithm
+with queries in $M$, answers in $T$ and output in $M \times T$. Then the probability that $A$
+wins the existential-forgery experiment for the MAC $\mathrm{Mac}_k(m) = F(k, m)$ is at most
+the PRF advantage against $F$ of the distinguisher that, on coins $r$, runs the MAC reduction
+on $A(r)$ starting from the empty query log, plus $1 / |T|$.
+
+This is the reduction of Katz and Lindell, Theorem 4.6, stated as a concrete inequality. -/
 theorem macGame_le (F : K → M → T) (A : R → OracleComp M T (M × T)) :
     (macGame F A true).toReal ≤
       prfAdvantage F (fun r => macReduction [] (A r)) + 1 / Fintype.card T := by
@@ -287,59 +357,103 @@ section CPA
 variable {K X Y R : Type*} [Fintype K] [Nonempty K] [Fintype X] [Nonempty X] [DecidableEq X]
   [Fintype Y] [AddCommGroup Y] [Fintype R] [Nonempty R] {q : ℕ}
 
-/-- Encryption with the keyed function `F k` (Katz and Lindell, Construction 3.30, over an
-additive group of messages): with randomness `r`, `Enc(m) = (r, F k r + m)`. -/
+/-- **Encryption from a keyed function.** Let $Y$ be an additive commutative group of messages
+and let $f \colon X \to Y$ be a function (in the scheme, $f = F_k$ for a key $k$). The
+encryption of a message $m \in Y$ with randomness $r \in X$ is the pair
+$(r, f(r) + m) \in X \times Y$.
+
+This is Construction 3.30 of Katz and Lindell, with XOR replaced by the addition of the
+message group. -/
 def encrypt (Fk : X → Y) (m : Y) (r : X) : X × Y := (r, Fk r + m)
 
-/-- Decryption: `Dec(r, c) = c - F k r`. -/
+/-- **Decryption with a keyed function.** For a function $F_k \colon X \to Y$ into an additive
+commutative group $Y$, the decryption of a ciphertext $(r, c) \in X \times Y$ is
+$\mathrm{Dec}(r, c) = c - F_k(r)$. -/
 def decrypt (Fk : X → Y) (c : X × Y) : Y := c.2 - Fk c.1
 
 omit [Fintype X] [Nonempty X] [DecidableEq X] [Fintype Y] in
-/-- **Correctness**: decryption inverts encryption. -/
+/-- **Correctness of encryption with a keyed function.** Let $Y$ be an additive commutative group
+and $F_k \colon X \to Y$ a function. For every message $m \in Y$ and every randomness $r \in X$,
+decrypting the ciphertext $\mathrm{Enc}(m) = (r, F_k(r) + m)$ gives back $m$, that is,
+$\mathrm{Dec}(\mathrm{Enc}(m)) = m$ where $\mathrm{Dec}(r, c) = c - F_k(r)$. -/
 theorem decrypt_encrypt (Fk : X → Y) (m : Y) (r : X) : decrypt Fk (encrypt Fk m r) = m := by
   simp [decrypt, encrypt]
 
-/-- The message selected by the challenge bit: `m.2` for `true`, `m.1` for `false`. -/
+/-- **Selecting the challenge message by a bit.** Given a pair of messages
+$(m_0, m_1) \in Y \times Y$ and a challenge bit $b$, the selected message is $m_1$ when $b$ is
+true and $m_0$ when $b$ is false. -/
 def pick (m : Y × Y) (b : Bool) : Y := if b then m.2 else m.1
 
-/-- Run an algorithm against the encryption oracle `m ↦ (ρ i, f (ρ i) + m)`, where `ρ i` is the
-encryption randomness of the `i`-th query, starting at query index `i`. The oracle answers at
-most `q` queries; the run returns `none` if the algorithm asks for more, and otherwise its output
-together with the next query index. -/
+/-- **Running an algorithm against the bounded encryption oracle.** Let $X$ be a set, $Y$ an
+abelian group written additively, $f : X \to Y$ a function, $q \in \mathbb{N}$ and
+$\rho : \{0, \dots, q - 1\} \to X$ the encryption randomness of the queries. Run from query index
+$i \in \mathbb{N}$, an oracle algorithm with messages in $Y$ as queries, answers in $X \times Y$
+and outputs in $\beta$ either fails or yields its output together with the next query index: if
+it stops with output $a$, the result is $(a, i)$; if it queries a message $m$ and $i < q$, the
+oracle answers $(\rho(i), f(\rho(i)) + m)$ and the run continues from index $i + 1$; if it
+queries a message and $i \ge q$, the run fails. -/
 def runEnc {β : Type*} (f : X → Y) (ρ : Fin q → X) : OracleComp Y (X × Y) β → ℕ → Option (β × ℕ)
   | .pure a, i => some (a, i)
   | .liftBind m k, i =>
     if h : i < q then runEnc f ρ (k (encrypt f m (ρ ⟨i, h⟩))) (i + 1) else none
 
-/-- A CPA adversary with coins `r`: an algorithm with access to the encryption oracle that
-outputs two challenge messages together with the algorithm (again with oracle access) it runs on
-the challenge ciphertext to guess the challenge bit. -/
+/-- **CPA adversary.** A CPA adversary with coins in $R$, against an encryption oracle that takes
+messages in $Y$ and returns ciphertexts in $X \times Y$, assigns to each $r \in R$ an adaptive
+oracle algorithm with access to the encryption oracle that outputs two challenge messages
+$(m_0, m_1) \in Y \times Y$ together with a second adaptive oracle algorithm, again with access to
+the encryption oracle, which takes the challenge ciphertext in $X \times Y$ and outputs a guess
+for the challenge bit. -/
 abbrev CPAAdversary (X Y R : Type*) :=
   R → OracleComp Y (X × Y) ((Y × Y) × (X × Y → OracleComp Y (X × Y) Bool))
 
-/-- The adversary's guess in the CPA experiment with keyed function `f`, encryption randomness
-`ρ` for its oracle queries, challenge randomness `rs` and challenge bit `b`. An adversary that
-asks more than `q` encryption queries is stopped and guesses `false`. -/
+/-- **The adversary's guess in the CPA experiment.** Let $Y$ be an additive commutative group,
+$f \colon X \to Y$ a function, $q$ a natural number, $\rho \colon \{0, \dots, q - 1\} \to X$ the
+encryption randomness, $r_s \in X$ the challenge randomness and $b$ a bit. Let $c$ be an oracle
+algorithm for the encryption oracle that outputs two messages $(m_0, m_1) \in Y \times Y$ and a
+second-phase algorithm. The encryption query with index $i$, counting from $0$ across both
+phases, is answered for a message $m$ by $(\rho_i, f(\rho_i) + m)$. Run $c$; when it outputs
+$(m_0, m_1)$, run its second phase on the challenge ciphertext $(r_s, f(r_s) + m_b)$, where $m_b$
+is $m_1$ if $b$ is true and $m_0$ otherwise. The guess is the output of the second phase. If the
+two phases together ask more than $q$ encryption queries, the adversary is stopped and the guess
+is false. -/
 def cpaGuess (f : X → Y) (ρ : Fin q → X) (rs : X) (b : Bool)
     (c : OracleComp Y (X × Y) ((Y × Y) × (X × Y → OracleComp Y (X × Y) Bool))) : Bool :=
   ((runEnc f ρ c 0).bind fun p =>
     (runEnc f ρ (p.1.2 (encrypt f (pick p.1.1 b) rs)) p.2).map Prod.fst).getD false
 
 variable (q) in
-/-- The CPA indistinguishability experiment `PrivK^cpa` for the scheme `Enc_k(m) = (r, F k r + m)`
-against adversaries making at most `q` encryption queries: the key `k`, the encryption
-randomness of the queries, the challenge randomness, the challenge bit `b` and the coins are
-uniform; the game outputs whether the guess equals `b`. -/
+/-- **The CPA experiment.** Let $K$, $X$ and $R$ be nonempty finite sets, $Y$ an additive
+commutative group, $q$ a natural number, $F \colon K \to X \to Y$ a keyed function and $A$ a CPA
+adversary with coins in $R$. The CPA indistinguishability experiment $\mathrm{PrivK}^{\mathrm{cpa}}$
+for the scheme $\mathrm{Enc}_k(m) = (r, F_k(r) + m)$ draws, uniformly and independently, a key
+$k \in K$, encryption randomness $\rho \colon \{0, \dots, q - 1\} \to X$ for the encryption
+queries, challenge randomness $r_s \in X$, a challenge bit $b$ and coins $r \in R$. It outputs true
+exactly when the adversary's guess, with keyed function $F_k$, encryption randomness $\rho$,
+challenge randomness $r_s$, challenge bit $b$ and the algorithm that $A$ assigns to $r$, equals $b$.
+An adversary that asks more than $q$ encryption queries is stopped and guesses false. -/
 noncomputable def cpaGame (F : K → X → Y) (A : CPAAdversary X Y R) : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (K × (Fin q → X) × X × Bool × R)).map fun ω =>
     cpaGuess (F ω.1) ω.2.1 ω.2.2.1 ω.2.2.2.1 (A ω.2.2.2.2) == ω.2.2.2.1
 
 variable (q) in
-/-- The CPA advantage `|Pr[A guesses b] - 1/2|`. -/
+/-- **CPA advantage.** Let $K$, $X$ and $R$ be nonempty finite sets, $Y$ an additive commutative
+group, $q$ a natural number, $F \colon K \to X \to Y$ a keyed function and $A$ a CPA adversary
+with coins in $R$. The CPA advantage of $A$ is the real number $|p - 1/2|$, where $p$ is the
+probability that the CPA experiment for $F$ and $A$ with at most $q$ encryption queries outputs
+true, that is, that $A$ guesses the challenge bit. -/
 noncomputable def cpaAdvantage (F : K → X → Y) (A : CPAAdversary X Y R) : ℝ :=
   |(cpaGame q F A true).toReal - 1 / 2|
 
-/-- Simulate the encryption oracle with queries to an oracle for the keyed function. -/
+/-- **Simulating the encryption oracle with a function oracle.** Let $X$ be a set, $Y$ an abelian
+group written additively, $q \in \mathbb{N}$ and $\rho : \{0, \dots, q - 1\} \to X$ the
+encryption randomness of the queries. Started at query index $i \in \mathbb{N}$, the simulation
+turns an oracle algorithm with messages in $Y$ as queries, answers in $X \times Y$ and outputs in
+$\beta$ into an oracle algorithm with queries in $X$ and answers in $Y$ that either fails or
+outputs the original output together with the next query index: if the original algorithm stops
+with output $a$, the simulation stops with $(a, i)$; if it queries a message $m$ and $i < q$, the
+simulation queries $\rho(i)$ and, on answer $y$, continues by simulating the original algorithm
+on the answer $(\rho(i), y + m)$ from index $i + 1$; if it queries a message and $i \ge q$, the
+simulation stops with failure. -/
 def simEnc {β : Type*} (ρ : Fin q → X) :
     OracleComp Y (X × Y) β → ℕ → OracleComp X Y (Option (β × ℕ))
   | .pure a, i => done (some (a, i))
@@ -358,9 +472,18 @@ theorem run_simEnc {β : Type*} (f : X → Y) (ρ : Fin q → X) :
     · rfl
 
 variable (q) in
-/-- The PRF distinguisher built from a CPA adversary: with its own coins `(ρ, rs, b, r)` it runs
-the adversary, answering encryption queries and the challenge with its oracle, and outputs
-whether the adversary guessed `b`. -/
+/-- **The PRF distinguisher built from a CPA adversary.** Let $X$ and $R$ be sets, $Y$ an additive
+commutative group, $q$ a natural number and $A$ a CPA adversary with coins in $R$ against an
+encryption oracle that takes messages in $Y$ and returns ciphertexts in $X \times Y$. With its own
+coins $(\rho, r_s, b, r)$, where $\rho \colon \{0, \dots, q - 1\} \to X$, $r_s \in X$, $b$ is a bit
+and $r \in R$, and with oracle access to a function $O \colon X \to Y$, the distinguisher runs the
+algorithm $A$ assigns to $r$. It answers the encryption query with index $i$, counting from $0$
+across both phases, for a message $m$ by querying $O$ at $\rho_i$ and returning
+$(\rho_i, O(\rho_i) + m)$. When the first phase outputs messages $(m_0, m_1)$, it queries $O$ at
+$r_s$ and gives the second phase the challenge ciphertext $(r_s, O(r_s) + m_b)$, where $m_b$ is
+$m_1$ if $b$ is true and $m_0$ otherwise. It outputs true exactly when the adversary's guess
+equals $b$, where an adversary that asks more than $q$ encryption queries is stopped and guesses
+false. -/
 def cpaReduction (A : CPAAdversary X Y R) (s : (Fin q → X) × X × Bool × R) :
     OracleComp X Y Bool :=
   PFunctor.FreeM.bind (simEnc s.1 (A s.2.2.2) 0) fun o =>
@@ -381,7 +504,12 @@ theorem run_cpaReduction (A : CPAAdversary X Y R) (f : X → Y)
   · simp only [run, run_bind, run_simEnc, Option.bind_some, encrypt]
 
 omit [DecidableEq X] [Fintype Y] in
-/-- With the oracle `F k`, the reduction runs the CPA experiment exactly. -/
+/-- **The CPA reduction is exact with the real oracle.** Let $K$, $X$ and $R$ be nonempty finite
+sets, $Y$ an additive commutative group, $q$ a natural number and $F \colon K \to X \to Y$ a keyed
+function. For every CPA adversary $A$ with coins in $R$, the CPA experiment for $F$ and $A$ with
+at most $q$ encryption queries has the same output distribution as the real world of the PRF
+experiment for $F$ run with the distinguisher built from $A$ for $q$ queries: with the oracle $F_k$
+for a uniform key $k$, the reduction runs the CPA experiment exactly. -/
 theorem cpaGame_eq_prfReal (F : K → X → Y) (A : CPAAdversary X Y R) :
     cpaGame q F A = prfReal F (cpaReduction q A) := by
   unfold cpaGame prfReal
@@ -390,7 +518,13 @@ theorem cpaGame_eq_prfReal (F : K → X → Y) (A : CPAAdversary X Y R) :
   rw [run_cpaReduction]
 
 omit [Fintype X] [Nonempty X] [DecidableEq X] [Fintype Y] in
-/-- The encryption oracle only evaluates the keyed function at the encryption randomness. -/
+/-- **The encryption oracle depends only on the encryption randomness.** Let $Y$ be an additive
+commutative group, let $\rho_0, \dots, \rho_{q-1} \in X$ be encryption randomness and let
+$f, f' : X \to Y$ satisfy $f(\rho_j) = f'(\rho_j)$ for every $j < q$. Then for every oracle
+algorithm $c$ and every natural number $i$, running $c$ against the encryption oracle built from
+$f$, with query indices starting at $i$, gives the same result as running it against the one
+built from $f'$. Here the encryption oracle built from $f$ answers a query $m$ with index $n < q$
+by $(\rho_n, f(\rho_n) + m)$, and the run fails at a query with index $n \ge q$. -/
 theorem runEnc_congr {β : Type*} {f f' : X → Y} {ρ : Fin q → X} (h : ∀ j, f (ρ j) = f' (ρ j)) :
     ∀ (c : OracleComp Y (X × Y) β) (i : ℕ), runEnc f ρ c i = runEnc f' ρ c i
   | .pure _, _ => rfl
@@ -480,9 +614,15 @@ private theorem two_mul_card_wins {ρ : Fin q → X} {rs : X} (hrs : ∀ j, ρ j
     rw [cpaGuess_flip hrs b c]
     cases cpaGuess f ρ rs b c <;> cases b <;> rfl
 
-/-- **The random world**: with a random function, the adversary's success probability is within
-`q / (2 |X|)` of `1/2`: it is exactly `1/2` unless the challenge randomness repeats the
-randomness of one of the at most `q` encryption queries. -/
+/-- **The CPA reduction against a random function.** Let $X$ be a finite nonempty set, $Y$ a
+finite additive commutative group, $q$ a natural number and $A$ a CPA adversary with coins in a
+finite nonempty set. Let $p$ be the probability that the CPA reduction built from $A$ (whose
+encryption oracle answers at most $q$ queries) outputs $1$, that is, that $A$ guesses the
+challenge bit, when its oracle is a uniformly random function $X \to Y$ and its coins are
+uniform. Then $|p - 1/2| \le q / (2|X|)$.
+
+The success probability is exactly $1/2$ unless the challenge randomness repeats the randomness
+of one of the at most $q$ encryption queries. -/
 theorem prfRand_cpaReduction (A : CPAAdversary X Y R) :
     |(prfRand (cpaReduction q A) true).toReal - 1 / 2| ≤ q / (2 * Fintype.card X) := by
   classical
@@ -590,9 +730,15 @@ theorem prfRand_cpaReduction (A : CPAAdversary X Y R) :
           (2 * Fintype.card X) := mul_le_mul_of_nonneg_right hbad (by positivity)
     _ = q * N := by rw [hNval]; ring
 
-/-- **CPA encryption from a PRF, concrete security** (the reduction of Katz and Lindell,
-Theorem 3.31): in the CPA experiment whose encryption oracle answers at most `q` queries, the
-advantage of any adversary is at most the PRF advantage of the reduction plus `q / (2 |X|)`. -/
+/-- **CPA encryption from a PRF, concrete security.** Let $K$, $X$ and $R$ be nonempty finite sets,
+$Y$ a finite additive commutative group, $q$ a natural number and $F \colon K \to X \to Y$ a keyed
+function, used in the scheme $\mathrm{Enc}_k(m) = (r, F_k(r) + m)$ with uniform randomness
+$r \in X$. For every CPA adversary $A$ with coins in $R$, the CPA advantage of $A$ in the
+experiment whose encryption oracle answers at most $q$ queries is at most the PRF advantage of $F$
+against the distinguisher built from $A$ plus $q / (2 |X|)$.
+
+This is the reduction of Katz and Lindell, Theorem 3.31, with the sharper statistical term
+$q / (2 |X|)$ in place of $q / |X|$. -/
 theorem cpaAdvantage_le (F : K → X → Y) (A : CPAAdversary X Y R) :
     cpaAdvantage q F A ≤ prfAdvantage F (cpaReduction q A) + q / (2 * Fintype.card X) := by
   rw [cpaAdvantage, cpaGame_eq_prfReal, prfAdvantage]

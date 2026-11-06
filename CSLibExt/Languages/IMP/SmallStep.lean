@@ -28,10 +28,21 @@ command.
 
 namespace Cslib.IMP
 
-/-- A configuration pairs a command with a state. -/
+/-- **IMP configuration.** A configuration of IMP is a pair $(c, \sigma)$ of a command $c$ and a
+state $\sigma$. -/
 abbrev Config := Cmd × State
 
-/-- Single small-step transitions between IMP configurations. -/
+/-- **IMP small-step relation.** The single-step relation $\to$ on IMP configurations is the
+smallest relation satisfying the following rules, for all variables $x$, arithmetic expressions
+$a$, Boolean expressions $b$, commands $c, c_1, c_1', c_2$ and states $\sigma, \sigma'$.
+Assignment: $(x := a, \sigma) \to (\mathtt{skip}, \sigma[x \mapsto v])$, where $v$ is the value
+of $a$ in $\sigma$. Sequencing: $(\mathtt{skip}; c_2, \sigma) \to (c_2, \sigma)$, and if
+$(c_1, \sigma) \to (c_1', \sigma')$ then $(c_1; c_2, \sigma) \to (c_1'; c_2, \sigma')$.
+Conditional: $(\mathtt{if}\ b\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2, \sigma)$ steps to
+$(c_1, \sigma)$ if $b$ evaluates to true in $\sigma$ and to $(c_2, \sigma)$ if it evaluates to
+false. Loop: $(\mathtt{while}\ b\ \mathtt{do}\ c, \sigma)$ steps to $(W, \sigma)$, where $W$ is
+the command $\mathtt{if}\ b\ \mathtt{then}\ (c; \mathtt{while}\ b\ \mathtt{do}\ c)$
+$\mathtt{else}\ \mathtt{skip}$. -/
 inductive Step : Config → Config → Prop
   | assign (state) (name) (value) :
       Step (.assign name value, state)
@@ -51,10 +62,14 @@ inductive Step : Config → Config → Prop
       Step (.while guard body, state)
         (.ite guard (.seq body (.while guard body)) .skip, state)
 
-/-- Finite sequences of small steps. -/
+/-- **IMP multi-step relation.** The relation $\to^*$ on IMP configurations is the reflexive,
+transitive closure of the small-step relation: $x \to^* y$ when $y$ is reached from $x$ by a
+finite sequence of zero or more small steps. -/
 abbrev Steps : Config → Config → Prop := Relation.ReflTransGen Step
 
-/-- A command terminates by reaching `skip` in a final state. -/
+/-- **Termination of an IMP command.** A command $c$ terminates from an initial state $\sigma$
+in a final state $\tau$ when the configuration $(c, \sigma)$ reaches $(\mathtt{skip}, \tau)$ in
+finitely many small steps. -/
 def Terminates (command : Cmd) (initial final : State) : Prop :=
   Steps (command, initial) (.skip, final)
 
@@ -114,7 +129,8 @@ theorem while_iff {guard : BExp} {body : Cmd} {state : State} {next : Config} :
   · rintro rfl
     exact .whileStep guard body state
 
-/-- The small-step relation is deterministic. -/
+/-- **Determinism of IMP small-step semantics.** For all IMP configurations $x$, $y$, $z$, if
+$x$ steps to $y$ and $x$ steps to $z$ in one small step, then $y = z$. -/
 theorem deterministic {x y z : Config} (h1 : Step x y) (h2 : Step x z) : y = z := by
   induction h1 generalizing z with
   | assign =>

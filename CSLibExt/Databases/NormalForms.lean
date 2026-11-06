@@ -118,8 +118,9 @@ theorem join_project_eq_of_holdsIn {R₁ R₂ : Finset A} {r : Finset (Tuple A D
   · intro ht
     exact ⟨hr t ht, mem_project.mpr ⟨t, ht, rfl⟩, mem_project.mpr ⟨t, ht, rfl⟩⟩
 
-/-- `r` satisfies, within the scheme `S`, every dependency derivable from `F` between attributes of
-`S`. -/
+/-- **Satisfying a set of dependencies on a scheme.** A relation $r$ satisfies a finite set $F$ of
+functional dependencies on a set $S$ of attributes when every dependency $X \to Y$ with
+$X, Y \subseteq S$ that is derivable from $F$ by Armstrong's axioms holds in $r$. -/
 def SatisfiesOn (F : Finset (FD A)) (S : Finset A) (r : Finset (Tuple A D)) : Prop :=
   ∀ X ⊆ S, ∀ Y ⊆ S, Derives F ⟨X, Y⟩ → FD.HoldsIn ⟨X, Y⟩ (↑r : Set (Tuple A D))
 
@@ -144,15 +145,21 @@ theorem SatisfiesOn.project {F : Finset (FD A)} {S T : Finset A} {r : Finset (Tu
   simpa [hYT ha] using h X (hXT.trans hTS) Y (hYT.trans hTS) hXY t' ht' u' hu' hagree' a ha
 
 variable (D) in
-/-- The decomposition of `R₁ ∪ R₂` into `R₁` and `R₂` is lossless for `F`: every relation over
-`R₁ ∪ R₂` with values in `D` that satisfies the dependencies derivable from `F` between attributes
-of `R₁ ∪ R₂` is the join of its two projections. -/
+/-- **Lossless decomposition into two schemes.** Let $F$ be a finite set of functional
+dependencies, let $R_1$ and $R_2$ be finite sets of attributes, and let $D$ be a type of values.
+The decomposition of $R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$
+when every relation $r$ over $R_1 \cup R_2$ with values in $D$ that satisfies $F$ on
+$R_1 \cup R_2$ (every dependency $X \to Y$ with $X, Y \subseteq R_1 \cup R_2$ that is derivable
+from $F$ by Armstrong's axioms holds in $r$) is the natural join of its projections:
+$\pi_{R_1}(r) \bowtie \pi_{R_2}(r) = r$. -/
 def LosslessJoin (F : Finset (FD A)) (R₁ R₂ : Finset A) : Prop :=
   ∀ r : Finset (Tuple A D), IsOver (R₁ ∪ R₂) r → SatisfiesOn F (R₁ ∪ R₂) r →
     join (project R₁ r) (project R₂ r) = r
 
-/-- A binary decomposition is lossless when the common attributes determine one of the two
-schemes. -/
+/-- **Lossless binary decompositions from derivable dependencies.** Let $F$ be a finite set of
+functional dependencies and let $R_1$, $R_2$ be sets of attributes. If $R_1 \cap R_2 \to R_1$ or
+$R_1 \cap R_2 \to R_2$ is derivable from $F$ by Armstrong's axioms, then for every value type $D$
+the decomposition of $R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$. -/
 theorem losslessJoin_of_derives {F : Finset (FD A)} {R₁ R₂ : Finset A}
     (h : Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩) : LosslessJoin D F R₁ R₂ := by
   intro r hr hF
@@ -165,8 +172,11 @@ theorem losslessJoin_of_derives {F : Finset (FD A)} {R₁ R₂ : Finset A}
     rw [Finset.inter_comm] at h'
     exact join_project_eq_of_holdsIn hr h'
 
-/-- Conversely, a lossless decomposition of all attributes into two schemes has common attributes
-that determine one of the schemes (for values with two distinct elements). -/
+/-- **Converse of the lossless-join test for two schemes.** Let $F$ be a set of functional
+dependencies, let $R_1$ and $R_2$ be schemes whose union is the set of all attributes, and let
+$D$ be a value type containing at least two distinct elements. If the decomposition of
+$R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$, then $F$ derives
+$R_1 \cap R_2 \to R_1$ or $R_1 \cap R_2 \to R_2$. -/
 theorem derives_of_losslessJoin {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀ d₁ : D}
     (hd : d₀ ≠ d₁) (hR : R₁ ∪ R₂ = Finset.univ) (h : LosslessJoin D F R₁ R₂) :
     Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩ := by
@@ -226,8 +236,11 @@ theorem derives_of_losslessJoin {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀
       Decidable.not_not, m, t₁] at this
     exact hcC this
 
-/-- **Lossless binary decompositions**: a decomposition of all attributes into `R₁` and `R₂` is
-lossless exactly when `R₁ ∩ R₂ → R₁` or `R₁ ∩ R₂ → R₂` is derivable. -/
+/-- **Lossless binary decompositions.** Let $F$ be a finite set of functional dependencies, let
+$R_1$ and $R_2$ be sets of attributes whose union is the set of all attributes, and suppose that
+the value type $D$ has two distinct elements. Then the decomposition into $R_1$ and $R_2$ is
+lossless for $F$ with values in $D$ if and only if $R_1 \cap R_2 \to R_1$ or
+$R_1 \cap R_2 \to R_2$ is derivable from $F$ by Armstrong's axioms. -/
 theorem losslessJoin_iff {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀ d₁ : D} (hd : d₀ ≠ d₁)
     (hR : R₁ ∪ R₂ = Finset.univ) :
     LosslessJoin D F R₁ R₂ ↔ Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩ :=
@@ -256,7 +269,11 @@ theorem join_joinUnit (r : Finset (Tuple A D)) : join r (joinUnit D) = r := by
     simp only [merge]
     cases t a <;> rfl
 
-/-- The natural join of the projections of `r` onto the schemes of `l`. -/
+/-- **Join of the projections of a relation.** For a relation $r$ (a finite set of tuples) and a
+list of schemes $S_1, \dots, S_n$, this is the natural join of the projections
+$\pi_{S_1} r, \dots, \pi_{S_n} r$, computed as
+$\pi_{S_1} r \bowtie (\pi_{S_2} r \bowtie (\cdots \bowtie (\pi_{S_n} r \bowtie U)))$, where $U$ is
+the relation containing only the empty tuple; for the empty list it is $U$. -/
 def joinProjections (l : List (Finset A)) (r : Finset (Tuple A D)) : Finset (Tuple A D) :=
   l.foldr (fun S acc => join (project S r) acc) (joinUnit D)
 
@@ -284,7 +301,8 @@ theorem joinProjections_congr {R : Finset A} (l : List (Finset A)) (hl : ∀ S �
     rw [ih fun T hT => hl T (List.mem_cons_of_mem _ hT),
       project_project_of_subset (hl S List.mem_cons_self)]
 
-/-- The union of a list of schemes. -/
+/-- **Union of a list of schemes.** For a list $S_1, \dots, S_n$ of schemes (finite sets of
+attributes), this is the union $S_1 \cup \dots \cup S_n$; for the empty list it is the empty set. -/
 def schemaUnion (l : List (Finset A)) : Finset A := l.foldr (· ∪ ·) ∅
 
 omit [Fintype A] in
@@ -312,8 +330,11 @@ theorem isOver_joinProjections {r : Finset (Tuple A D)} {R : Finset A} (hr : IsO
   | S :: l, hl => isOver_join (isOver_project hr (hl S List.mem_cons_self))
       (isOver_joinProjections hr l fun T hT => hl T (List.mem_cons_of_mem _ hT))
 
-/-- **Membership in a join of projections**: a tuple over the union of the schemes is in the join
-exactly when each of its restrictions is in the corresponding projection. -/
+/-- **Membership in a join of projections.** Let $r$ be a relation over a schema $R$ and let
+$S_1, \dots, S_n$ be a list of schemes, each contained in $R$. A tuple $t$ belongs to the natural
+join of the projections $\pi_{S_1} r, \dots, \pi_{S_n} r$ if and only if $t$ is a tuple over
+$S_1 \cup \dots \cup S_n$ and, for every $i$, the restriction of $t$ to $S_i$ belongs to
+$\pi_{S_i} r$. -/
 theorem mem_joinProjections {r : Finset (Tuple A D)} {R : Finset A} (hr : IsOver R r) :
     ∀ (l : List (Finset A)), (∀ S ∈ l, S ⊆ R) → ∀ {t : Tuple A D},
       t ∈ joinProjections l r ↔ t.IsOver (schemaUnion l) ∧ ∀ S ∈ l, t.restrict S ∈ project S r
@@ -350,12 +371,17 @@ theorem mem_joinProjections {r : Finset (Tuple A D)} {R : Finset A} (hr : IsOver
 
 /-! ### Boyce–Codd normal form -/
 
-/-- The scheme `S` is in **Boyce–Codd normal form** for `F`: for every dependency `X → Y`
-derivable from `F` with `X, Y ⊆ S`, either `Y ⊆ X` or `X` is a superkey of `S`. -/
+/-- **Boyce–Codd normal form.** A scheme $S$ is in Boyce–Codd normal form for a set $F$ of
+functional dependencies when, for every dependency $X \to Y$ derivable from $F$ with
+$X, Y \subseteq S$, either $Y \subseteq X$ or $F$ derives $X \to S$ (that is, $X$ is a superkey of
+$S$). -/
 def IsBCNF (F : Finset (FD A)) (S : Finset A) : Prop :=
   ∀ X ⊆ S, ∀ Y ⊆ S, Derives F ⟨X, Y⟩ → Y ⊆ X ∨ Derives F ⟨X, S⟩
 
-/-- `X ⊆ S` violates BCNF in `S`: its closure within `S` is neither `X` itself nor all of `S`. -/
+/-- **BCNF violations.** Let $F$ be a set of functional dependencies and $S$ a scheme, and write
+$X^+$ for the attribute closure of a set $X$ of attributes under $F$. A set $X \subseteq S$
+violates BCNF in $S$ when $S \not\subseteq X^+$ and $X^+ \cap S \not\subseteq X$, that is, when
+the closure $X^+ \cap S$ of $X$ within $S$ is neither $X$ nor $S$. -/
 def IsBCNFViolation (F : Finset (FD A)) (S X : Finset A) : Prop :=
   X ⊆ S ∧ ¬ S ⊆ attrClosure F X ∧ ¬ attrClosure F X ∩ S ⊆ X
 
@@ -382,14 +408,20 @@ theorem isBCNF_iff {F : Finset (FD A)} {S : Finset A} :
 instance (F : Finset (FD A)) (S : Finset A) : Decidable (IsBCNF F S) :=
   decidable_of_iff _ isBCNF_iff.symm
 
-/-- The candidate violations of BCNF in `S`: the subsets of the attributes of `l` lying in `S`
-(duplicates in `l` are removed first, so there are `2 ^ k` candidates for `k` distinct
-attributes). -/
+/-- **Candidate BCNF violations.** Given a list $l$ of attributes and a set $S$ of attributes, the
+candidate violations of BCNF in $S$ are all subsets of the set of attributes that occur in $l$ and
+lie in $S$, listed once each. Duplicates in $l$ are removed first, so there are $2^k$ candidates
+when $k$ distinct attributes of $l$ lie in $S$. -/
 def bcnfCandidates (l : List A) (S : Finset A) : List (Finset A) :=
   ((l.filter (· ∈ S)).dedup.sublists).map List.toFinset
 
-/-- The BCNF decomposition algorithm with at most `n` rounds of splitting: find a violation `X` of
-BCNF in `S` and split `S` into `X⁺ ∩ S` and `S \ (X⁺ \ X)`. -/
+/-- **BCNF decomposition with bounded depth.** Let $F$ be a set of functional dependencies, $l$ a
+list of attributes, $n$ a natural number and $S$ a scheme. For $n = 0$ the result is the list $[S]$.
+For $n > 0$, the candidate violations of BCNF in $S$ built from $l$ are searched in order for the
+first $X$ that violates BCNF in $S$ for $F$. If there is none, the result is $[S]$. Otherwise, with
+$X^+$ the attribute closure of $X$ under $F$, the result is the decomposition of $X^+ \cap S$
+followed by the decomposition of $S \setminus (X^+ \setminus X)$, both computed with depth bound
+$n - 1$. -/
 def bcnfDecompose (F : Finset (FD A)) (l : List A) : ℕ → Finset A → List (Finset A)
   | 0, S => [S]
   | n + 1, S =>
@@ -398,7 +430,13 @@ def bcnfDecompose (F : Finset (FD A)) (l : List A) : ℕ → Finset A → List (
     | some X => bcnfDecompose F l n (attrClosure F X ∩ S) ++
         bcnfDecompose F l n (S \ (attrClosure F X \ X))
 
-/-- The **BCNF decomposition** of `S`; `l` lists the attributes to try in violations. -/
+/-- **BCNF decomposition.** Let $F$ be a set of functional dependencies, $l$ a list of attributes
+and $S$ a scheme. The BCNF decomposition of $S$ for $F$ and $l$ is the BCNF decomposition with
+bounded depth run on $S$ with depth bound $|S|$. At each step, if some candidate violation of BCNF
+in the current scheme $T$ built from $l$ violates BCNF in $T$ for $F$, the first such $X$ is used:
+with $X^+$ the attribute closure of $X$ under $F$, $T$ is replaced by the decomposition of
+$X^+ \cap T$ followed by the decomposition of $T \setminus (X^+ \setminus X)$. Otherwise, or once
+the depth bound is reached, $T$ is kept as it is. -/
 def bcnfDecomposition (F : Finset (FD A)) (l : List A) (S : Finset A) : List (Finset A) :=
   bcnfDecompose F l S.card S
 
@@ -475,9 +513,10 @@ private theorem joinProjections_bcnfDecompose (F : Finset (FD A)) (l : List A) :
       rw [hinter]
       exact hF X hv.1 R₁ hR₁ ((derives_attrClosure F X).decompose Finset.inter_subset_left)
 
-/-- **The BCNF decomposition is lossless**: every relation over `S` satisfying the dependencies
-derivable from `F` between attributes of `S` is the join of its projections onto the output
-schemes. -/
+/-- **The BCNF decomposition is lossless.** Let $F$ be a set of functional dependencies, $l$ a list
+of attributes and $S$ a set of attributes, and let $r$ be a relation over $S$ that satisfies every
+dependency $X \to Y$ derivable from $F$ with $X, Y \subseteq S$. Then $r$ is the natural join of
+its projections onto the schemes of the BCNF decomposition of $S$ for $F$ and $l$. -/
 theorem bcnfDecomposition_lossless (F : Finset (FD A)) (l : List A) {S : Finset A}
     {r : Finset (Tuple A D)} (hr : IsOver S r) (hF : SatisfiesOn F S r) :
     joinProjections (bcnfDecomposition F l S) r = r :=
@@ -518,27 +557,34 @@ private theorem isBCNF_of_mem_bcnfDecompose (F : Finset (FD A)) {l : List A} (hl
       · exact isBCNF_of_mem_bcnfDecompose F hl n _ T (by omega) h
       · exact isBCNF_of_mem_bcnfDecompose F hl n _ T (by omega) h
 
-/-- **The BCNF decomposition produces BCNF schemes** when `l` lists every attribute. -/
+/-- **The BCNF decomposition produces BCNF schemes.** Let $F$ be a set of functional dependencies
+and $l$ a list containing every attribute. Then for every scheme $S$, every scheme in the BCNF
+decomposition of $S$ for $F$ and $l$ is in Boyce–Codd normal form for $F$. -/
 theorem isBCNF_of_mem_bcnfDecomposition (F : Finset (FD A)) {l : List A} (hl : ∀ a, a ∈ l)
     {S T : Finset A} (hT : T ∈ bcnfDecomposition F l S) : IsBCNF F T :=
   isBCNF_of_mem_bcnfDecompose F hl _ S T le_rfl hT
 
 /-! ### Synthesis -/
 
-/-- `F` and `G` are equivalent: each derives every dependency of the other. -/
+/-- **Equivalent sets of functional dependencies.** Two sets $F$ and $G$ of functional dependencies
+are equivalent when $F$ derives every dependency of $G$ and $G$ derives every dependency of $F$. -/
 def Equivalent (F G : Finset (FD A)) : Prop := (∀ g ∈ G, Derives F g) ∧ ∀ f ∈ F, Derives G f
 
 instance (F G : Finset (FD A)) : Decidable (Equivalent F G) := by
   unfold Equivalent
   infer_instance
 
-/-- The dependencies derivable from `F` between attributes of `S` (the projection of `F⁺` onto
-`S`). -/
+/-- **Projection of the dependency closure onto a scheme.** For a finite set $F$ of functional
+dependencies and a set $S$ of attributes, this is the finite set of all dependencies $X \to Y$
+with $X, Y \subseteq S$ that are derivable from $F$ by Armstrong's axioms, that is, the projection
+onto $S$ of the closure $F^+$ of $F$. -/
 def projectFDs (F : Finset (FD A)) (S : Finset A) : Finset (FD A) :=
   ((S.powerset ×ˢ S.powerset).filter fun p => Derives F ⟨p.1, p.2⟩).image fun p => ⟨p.1, p.2⟩
 
-/-- A decomposition is **dependency-preserving** for `F`: every dependency of `F` is derivable
-from the union of the projections of `F⁺` onto the schemes. -/
+/-- **Dependency-preserving decompositions.** A list $l$ of schemes is dependency-preserving for a
+set $F$ of functional dependencies when every dependency of $F$ is derivable from the union, over
+the schemes $S$ of $l$, of the sets of dependencies $X \to Y$ derivable from $F$ with
+$X, Y \subseteq S$. -/
 def DependencyPreserving (F : Finset (FD A)) (l : List (Finset A)) : Prop :=
   ∀ f ∈ F, Derives ((l.map (projectFDs F)).foldr (· ∪ ·) ∅) f
 
@@ -546,7 +592,9 @@ instance (F : Finset (FD A)) (l : List (Finset A)) : Decidable (DependencyPreser
   unfold DependencyPreserving
   infer_instance
 
-/-- **Synthesis**: one scheme `lhs ∪ rhs` for each dependency of `G`, plus the key `K`. -/
+/-- **Synthesis.** Given a list $G$ of functional dependencies and a set of attributes $K$, the
+synthesized decomposition is the list of schemes consisting of $K$ followed by, for each
+dependency $X \to Y$ of $G$ in order, the scheme $X \cup Y$. -/
 def synthesize (G : List (FD A)) (K : Finset A) : List (Finset A) :=
   K :: G.map fun g => g.lhs ∪ g.rhs
 
@@ -580,7 +628,11 @@ private theorem attrClosure_subset_of_closed {F : Finset (FD A)} {X C : Finset A
     (fun b hb => by simpa [t₀, t₁] using hX hb) a ha
   simpa [t₀, t₁] using this
 
-/-- **Synthesis is dependency-preserving** for any cover `G` of `F`. -/
+/-- **Synthesis is dependency-preserving.** Let $F$ be a finite set of functional dependencies and
+$G$ a list of functional dependencies equivalent to $F$ (each derives every dependency of the
+other). Then for every set of attributes $K$, the decomposition synthesized from $G$ and $K$,
+with one scheme $X \cup Y$ for each dependency $X \to Y$ of $G$ together with the scheme $K$, is
+dependency-preserving for $F$. -/
 theorem synthesize_dependencyPreserving {F : Finset (FD A)} {G : List (FD A)}
     (hG : Equivalent F G.toFinset) (K : Finset A) : DependencyPreserving F (synthesize G K) := by
   intro f hf

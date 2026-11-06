@@ -43,7 +43,11 @@ variable {Base : Type u}
 
 namespace HasType
 
-/-- Typing is preserved by renamings that respect the variable contexts. -/
+/-- **Renaming preserves typing.** Let $\Gamma$ and $\Delta$ be variable contexts, $S$ a store
+typing, and $\rho : \mathbb{N} \to \mathbb{N}$ a renaming of variable indices such that whenever
+$\Gamma$ assigns type $A$ to variable $x$, $\Delta$ assigns type $A$ to variable $\rho(x)$. If a
+term $t$ has type $T$ under $\Gamma$ and $S$, then the term obtained from $t$ by renaming its
+variables by $\rho$ has type $T$ under $\Delta$ and $S$. -/
 theorem rename {Γ Δ S : List (Ty Base)} {t : Term Base} {T : Ty Base}
     (h : HasType Γ S t T) {ρ : Nat → Nat}
     (hρ : ∀ x A, Γ[x]? = some A → Δ[ρ x]? = some A) :
@@ -63,13 +67,19 @@ theorem rename {Γ Δ S : List (Ty Base)} {t : Term Base} {T : Ty Base}
   | deref _ ih => exact .deref (ih hρ)
   | assign _ _ ih₁ ih₂ => exact .assign (ih₁ hρ) (ih₂ hρ)
 
-/-- Weakening by one variable type at the front of the context. -/
+/-- **Weakening of typing.** If a term $t$ has type $T$ in a variable context $\Gamma$ under a
+store typing $S$, then for every type $A$, the term obtained from $t$ by shifting each free de
+Bruijn variable up by one has type $T$ under $S$ in the context obtained from $\Gamma$ by adding
+$A$ in front as variable $0$. -/
 theorem weaken {Γ S : List (Ty Base)} {t : Term Base} {T : Ty Base} (A : Ty Base)
     (h : HasType Γ S t T) : HasType (A :: Γ) S (t.rename Nat.succ) T :=
   h.rename fun _ _ hx => hx
 
-/-- Typing is preserved by substitutions that send each variable to a term of
-its type. -/
+/-- **Parallel substitution preserves typing.** Let $\Gamma$ and $\Delta$ be variable contexts,
+$S$ a store typing, and $\sigma$ a substitution sending each variable index to a term, such
+that whenever $\Gamma$ assigns type $A$ to variable $x$, the term $\sigma(x)$ has type $A$ under
+$\Delta$ and $S$. If a term $t$ has type $T$ under $\Gamma$ and $S$, then the term obtained from
+$t$ by applying $\sigma$ has type $T$ under $\Delta$ and $S$. -/
 theorem subst {Γ Δ S : List (Ty Base)} {t : Term Base} {T : Ty Base}
     (h : HasType Γ S t T) {σ : Nat → Term Base}
     (hσ : ∀ x A, Γ[x]? = some A → HasType Δ S (σ x) A) :
@@ -89,7 +99,13 @@ theorem subst {Γ Δ S : List (Ty Base)} {t : Term Base} {T : Ty Base}
   | deref _ ih => exact .deref (ih hσ)
   | assign _ _ ih₁ ih₂ => exact .assign (ih₁ hσ) (ih₂ hσ)
 
-/-- Substitution for the innermost variable (TAPL Lemma 13.5.4). -/
+/-- **Substitution lemma for the lambda calculus with references.** Let $\Gamma$ be a variable
+context and $S$ a store typing. If a term $t$ has type $T$ under $S$ and the context that extends
+$\Gamma$ by a new innermost variable (index $0$) of type $A$, and a term $s$ has type $A$ under
+$\Gamma$ and $S$, then substituting $s$ for variable $0$ in $t$ (and lowering every other variable
+by one) gives a term of type $T$ under $\Gamma$ and $S$.
+
+This is TAPL Lemma 13.5.4 in de Bruijn form. -/
 theorem instantiate {Γ S : List (Ty Base)} {body s : Term Base} {A T : Ty Base}
     (hbody : HasType (A :: Γ) S body T) (hs : HasType Γ S s A) :
     HasType Γ S (body.instantiate s) T := by
@@ -101,7 +117,12 @@ theorem instantiate {Γ S : List (Ty Base)} {body s : Term Base} {A T : Ty Base}
       exact hs
   | succ x => exact .var hx
 
-/-- Typing is preserved by extending the store typing (TAPL Lemma 13.5.6). -/
+/-- **Store-typing weakening.** Let $\Gamma$ be a variable context and let $S$ and $S'$ be store
+typings such that $S$ is a prefix of $S'$. If a term $t$ has type $T$ under $\Gamma$ and $S$,
+then $t$ has type $T$ under $\Gamma$ and $S'$.
+
+This is TAPL Lemma 13.5.6, with the extension of store typings taken as the prefix order on
+lists. -/
 theorem extendStore {Γ S S' : List (Ty Base)} {t : Term Base} {T : Ty Base}
     (h : HasType Γ S t T) (hS : S <+: S') : HasType Γ S' t T := by
   induction h with
@@ -124,21 +145,30 @@ namespace StoreTyped
 
 variable {Γ S : List (Ty Base)} {μ : Store Base}
 
-/-- A well-typed store remains well typed when its entries are retyped under
-an extended store typing. -/
+/-- **Retyping a well-typed store under an extended store typing.** Let $\Gamma$ be a variable
+context, let $S$ and $S'$ be store typings such that $S$ is a prefix of $S'$, and let $\mu$ be a
+store that is well typed under $\Gamma$ and $S$. Then $\mu$ and $S$ have the same length, and for
+every location $l$ less than this length, the entry of $\mu$ at $l$ is a value that has, under
+$\Gamma$ and $S'$, the type that $S$ assigns to $l$. -/
 theorem extendStore {S' : List (Ty Base)} (h : StoreTyped Γ S μ) (hS : S <+: S') :
     List.Forall₂ (fun v T => v.Value ∧ HasType Γ S' v T) μ S :=
   h.imp fun _ _ hv => ⟨hv.1, hv.2.extendStore hS⟩
 
-/-- Allocation: appending a value of type `T` to a well-typed store gives a
-store that is well typed under the store typing extended by `T`. -/
+/-- **Allocation preserves store typing.** Let $\Gamma$ be a variable context, $S$ a store
+typing and $\mu$ a store that is well typed under $\Gamma$ and $S$. If $v$ is a value of type
+$T$ under $\Gamma$ and $S$, then the store obtained by appending $v$ at the end of $\mu$ is well
+typed under $\Gamma$ and the store typing obtained by appending $T$ at the end of $S$. -/
 theorem append {v : Term Base} {T : Ty Base} (h : StoreTyped Γ S μ) (hval : v.Value)
     (hv : HasType Γ S v T) : StoreTyped Γ (S ++ [T]) (μ ++ [v]) :=
   List.rel_append (h.extendStore (List.prefix_append S [T]))
     (.cons ⟨hval, hv.extendStore (List.prefix_append S [T])⟩ .nil)
 
-/-- Assignment: overwriting a location with a value of the type the store
-typing assigns to it keeps the store well typed (TAPL Lemma 13.5.5). -/
+/-- **Assignment preserves store typing.** Let the store $\mu$ be well typed under the variable
+context $\Gamma$ and the store typing $S$, and let $l$ be a location to which $S$ assigns the
+type $T$. If $v$ is a value of type $T$ under $\Gamma$ and $S$, then the store obtained from
+$\mu$ by overwriting the entry at $l$ with $v$ is well typed under $\Gamma$ and $S$.
+
+This is TAPL Lemma 13.5.5. -/
 theorem set {l : Nat} {v : Term Base} {T : Ty Base} (h : StoreTyped Γ S μ)
     (hl : S[l]? = some T) (hval : v.Value) (hv : HasType Γ S v T) :
     StoreTyped Γ S (μ.set l v) := by
@@ -158,9 +188,14 @@ theorem set {l : Nat} {v : Term Base} {T : Ty Base} (h : StoreTyped Γ S μ)
 
 end StoreTyped
 
-/-- Preservation (TAPL Theorem 13.5.3): a step from a well-typed configuration
-leads to a configuration that is well typed, with the same type, under an
-extension of the store typing. -/
+/-- **Preservation for the lambda calculus with references.** Let $\Gamma$ be a variable context
+and $S$ a store typing. If a term $t$ has type $T$ under $\Gamma$ and $S$, the store $\mu$ is
+well typed under $\Gamma$ and $S$, and $t$ with store $\mu$ takes one evaluation step to $t'$
+with store $\mu'$, then there is a store typing $S'$ having $S$ as a prefix such that $t'$ has
+type $T$ under $\Gamma$ and $S'$ and $\mu'$ is well typed under $\Gamma$ and $S'$.
+
+This is TAPL Theorem 13.5.3, with the extension of store typings taken as the prefix order on
+lists. -/
 theorem preservation {Γ S : List (Ty Base)} {t t' : Term Base} {μ μ' : Store Base}
     {T : Ty Base} (ht : HasType Γ S t T) (hμ : StoreTyped Γ S μ) (hstep : Step t μ t' μ') :
     ∃ S', S <+: S' ∧ HasType Γ S' t' T ∧ StoreTyped Γ S' μ' := by
@@ -221,7 +256,11 @@ theorem preservation {Γ S : List (Ty Base)} {t t' : Term Base} {μ μ' : Store 
           cases ht₁ with
           | loc hlS => exact ⟨S, List.prefix_refl S, .unit, hμ.set hlS hval ht₂⟩
 
-/-- Preservation along any number of evaluation steps. -/
+/-- **Preservation for multi-step evaluation.** Let $\Gamma$ be a variable context and $S$ a
+store typing. If a term $t$ has type $T$ under $\Gamma$ and $S$, the store $\mu$ is well typed
+under $\Gamma$ and $S$, and $t$ with store $\mu$ evaluates in zero or more steps to $t'$ with
+store $\mu'$, then there is a store typing $S'$ having $S$ as a prefix such that $t'$ has type
+$T$ under $\Gamma$ and $S'$ and $\mu'$ is well typed under $\Gamma$ and $S'$. -/
 theorem Steps.preservation {Γ S : List (Ty Base)} {t t' : Term Base}
     {μ μ' : Store Base} {T : Ty Base} (h : Steps t μ t' μ')
     (ht : HasType Γ S t T) (hμ : StoreTyped Γ S μ) :
@@ -238,17 +277,20 @@ theorem Steps.preservation {Γ S : List (Ty Base)} {t t' : Term Base}
       obtain ⟨S₂, hS₂, ht₂, hμ₂⟩ := References.preservation ht₁ hμ₁ hstep
       exact ⟨S₂, hS₁.trans hS₂, ht₂, hμ₂⟩
 
-/-- Type safety: a closed term that is well typed in a well-typed store never
-evaluates to a stuck configuration; every reachable term is a value or can
-step. -/
+/-- **Type safety.** Let $S$ be a store typing, $T$ a type, $t$ a term of type $T$ in the
+empty variable context under $S$, and $\mu$ a store that is well typed under $S$ in the empty
+context. If the configuration $(t, \mu)$ evaluates in zero or more steps to $(t', \mu')$, then
+$t'$ is a value or $(t', \mu')$ takes a step to some configuration $(t'', \mu'')$. So a closed
+term that is well typed in a well-typed store never reaches a stuck configuration. -/
 theorem typeSafety {S : List (Ty Base)} {t t' : Term Base} {μ μ' : Store Base}
     {T : Ty Base} (ht : HasType [] S t T) (hμ : StoreTyped [] S μ)
     (h : Steps t μ t' μ') : t'.Value ∨ ∃ t'' μ'', Step t' μ' t'' μ'' := by
   obtain ⟨S', _, ht', hμ'⟩ := h.preservation ht hμ
   exact progress ht' hμ'
 
-/-- Type safety for programs: a closed term typed under the empty store typing,
-run from the empty store, never gets stuck. -/
+/-- **Type safety from the empty store.** A closed term typed under the empty store typing, run
+from the empty store, never gets stuck: every term it reaches in zero or more steps, together
+with the store reached alongside it, is a value or can take a further step. -/
 theorem typeSafety_empty {t t' : Term Base} {μ' : Store Base} {T : Ty Base}
     (ht : HasType [] [] t T) (h : Steps t [] t' μ') :
     t'.Value ∨ ∃ t'' μ'', Step t' μ' t'' μ'' :=

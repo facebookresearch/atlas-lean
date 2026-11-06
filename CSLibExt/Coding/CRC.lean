@@ -55,22 +55,30 @@ open Polynomial
 
 variable {F : Type*} [Field F]
 
-/-- The **CRC encoder** for the generator `g`: shift the message up by `deg g` and subtract its
-remainder modulo `g`. -/
+/-- **CRC encoder.** Let $F$ be a field, let $g$ be a polynomial over $F$ (the generator), and let
+$r$ be the degree of $g$ (with $r = 0$ when $g = 0$). The CRC encoding of a polynomial $m$ over
+$F$ (the message) is $m X^r - (m X^r \bmod g)$: the message shifted up by $r$ positions, minus the
+remainder of the shifted message modulo $g$. -/
 noncomputable def encode (g m : F[X]) : F[X] := m * X ^ g.natDegree - m * X ^ g.natDegree % g
 
-/-- In characteristic 2 (e.g. over `F₂`) the encoder appends the remainder. -/
+/-- **CRC encoding in characteristic 2.** Let $F$ be a field of characteristic 2 (for example
+$\mathbb{F}_2$), let $g$ and $m$ be polynomials over $F$, and let $r$ be the degree of $g$ (with
+$r = 0$ when $g = 0$). Then the CRC encoding of $m$ with generator $g$ equals
+$m X^r + (m X^r \bmod g)$: the encoder appends the remainder to the shifted message. -/
 theorem encode_eq_add [CharP F 2] (g m : F[X]) :
     encode g m = m * X ^ g.natDegree + m * X ^ g.natDegree % g := by
   rw [encode, CharTwo.sub_eq_add]
 
-/-- Every codeword is a multiple of the generator. -/
+/-- **CRC codewords are multiples of the generator.** Let $F$ be a field. For all polynomials $g$
+and $m$ over $F$, the polynomial $g$ divides the CRC encoding of $m$ with generator $g$. -/
 theorem dvd_encode (g m : F[X]) : g ∣ encode g m := by
   rw [encode, EuclideanDomain.mod_eq_sub_mul_div, sub_sub_cancel]
   exact dvd_mul_right g _
 
-/-- The encoding is **systematic**: coefficients `deg g, deg g + 1, …` of the codeword are the
-message. -/
+/-- **CRC encoding is systematic.** Let $F$ be a field and $g \ne 0$ a polynomial over $F$ of
+degree $r$. For every message polynomial $m$ over $F$ and every natural number $i$, the
+coefficient of $X^{i+r}$ in the CRC encoding of $m$ with generator $g$ equals the coefficient of
+$X^i$ in $m$. -/
 theorem coeff_encode_add {g : F[X]} (hg : g ≠ 0) (m : F[X]) (i : ℕ) :
     (encode g m).coeff (i + g.natDegree) = m.coeff i := by
   have hrem : (m * X ^ g.natDegree % g).coeff (i + g.natDegree) = 0 := by
@@ -80,12 +88,19 @@ theorem coeff_encode_add {g : F[X]} (hg : g ≠ 0) (m : F[X]) (i : ℕ) :
       _ ≤ (i + g.natDegree : ℕ) := by exact_mod_cast Nat.le_add_left _ _
   rw [encode, coeff_sub, hrem, sub_zero, coeff_mul_X_pow]
 
-/-- **Detection**: a codeword plus an error pattern passes the check iff `g` divides the error. -/
+/-- **CRC detection criterion.** Let $F$ be a field, let $g$, $m$ and $e$ be polynomials over
+$F$, and let $c$ be the CRC encoding of $m$ with generator $g$. Then $g$ divides $c + e$ if and
+only if $g$ divides $e$: a codeword plus an error pattern passes the check exactly when $g$
+divides the error. -/
 theorem dvd_encode_add_iff (g m e : F[X]) : g ∣ encode g m + e ↔ g ∣ e :=
   dvd_add_right (dvd_encode g m)
 
-/-- **Single-symbol errors are detected** when the generator has at least two terms: `g` never
-divides `a·X^i` with `a ≠ 0`. (The divisors of `X^i` are the monomials `c·X^j`.) -/
+/-- **Single-symbol errors are detected.** Let $F$ be a field and $g$ a polynomial over $F$ with
+at least two nonzero coefficients. Then $g$ does not divide $a X^i$ for any nonzero $a \in F$ and
+any natural number $i$.
+
+The divisors of $X^i$ are the monomials $c X^j$ with $c \in F$ nonzero and $j \le i$, each of
+which has only one nonzero coefficient. -/
 theorem not_dvd_C_mul_X_pow {g : F[X]} (hg : 2 ≤ g.support.card) {a : F} (ha : a ≠ 0) (i : ℕ) :
     ¬g ∣ C a * X ^ i := by
   intro h
@@ -97,13 +112,16 @@ theorem not_dvd_C_mul_X_pow {g : F[X]} (hg : 2 ≤ g.support.card) {a : F} (ha :
   rw [← hu, support_C_mul_X_pow j hc.ne_zero, Finset.card_singleton] at hg
   omega
 
-/-- `e` is a **burst of length at most `L`**: `e = X^i·b` with `b(0) ≠ 0` and `deg b < L`, so its
-nonzero symbols lie in positions `i, …, i + L - 1`, the first one nonzero. -/
+/-- **Burst errors.** Let $F$ be a field and $L$ a natural number. A polynomial $e$ over $F$ is a
+burst of length at most $L$ when $e = X^i b$ for some natural number $i$ and some polynomial $b$
+over $F$ with $b(0) \ne 0$ and $\deg b < L$. Then the nonzero coefficients of $e$ lie in
+positions $i, \dots, i + L - 1$, the first one nonzero. -/
 def IsBurstLE (e : F[X]) (L : ℕ) : Prop :=
   ∃ i : ℕ, ∃ b : F[X], e = X ^ i * b ∧ b.coeff 0 ≠ 0 ∧ b.natDegree < L
 
-/-- A nonzero error whose nonzero symbols all lie in `L` consecutive positions `i, …, i + L - 1`
-is a burst of length at most `L`. -/
+/-- **Errors confined to a window are bursts.** Let $F$ be a field, let $e \ne 0$ be a polynomial
+over $F$, and let $i$ and $L$ be natural numbers. If every $j$ for which the coefficient of $X^j$
+in $e$ is nonzero satisfies $i \le j < i + L$, then $e$ is a burst of length at most $L$. -/
 theorem isBurstLE_of_support {e : F[X]} (he : e ≠ 0) {i L : ℕ}
     (h : ∀ j ∈ e.support, i ≤ j ∧ j < i + L) : IsBurstLE e L := by
   set t := e.natTrailingDegree
@@ -127,8 +145,12 @@ theorem isBurstLE_of_support {e : F[X]} (he : e ≠ 0) {i L : ℕ}
     have h2 := h _ (natTrailingDegree_mem_support_of_nonzero he)
     omega
 
-/-- **Bursts of length at most `deg g` are detected** when `X ∤ g`: then `g` is coprime to `X^i`,
-so `g ∣ X^i·b` would force `g ∣ b`, impossible for a nonzero `b` of smaller degree. -/
+/-- **Short bursts are detected.** Let $F$ be a field, let $g$ be a polynomial over $F$ that is
+not divisible by $X$, and let $L$ be a natural number with $L \le \deg g$. If a polynomial $e$
+over $F$ is a burst of length at most $L$, then $g$ does not divide $e$.
+
+Write $e = X^i b$ with $b(0) \ne 0$ and $\deg b < L$. Since $X \nmid g$, $g$ is coprime to
+$X^i$, so $g \mid X^i b$ would force $g \mid b$, impossible for a nonzero $b$ of smaller degree. -/
 theorem not_dvd_of_isBurstLE {g e : F[X]} (hX : ¬X ∣ g) {L : ℕ} (he : IsBurstLE e L)
     (hL : L ≤ g.natDegree) : ¬g ∣ e := by
   obtain ⟨i, b, rfl, hb0, hbL⟩ := he
@@ -140,10 +162,15 @@ theorem not_dvd_of_isBurstLE {g e : F[X]} (hX : ¬X ∣ g) {L : ℕ} (he : IsBur
   have := natDegree_le_of_dvd hgb hb
   omega
 
-/-- A CRC whose generator has at least two terms and is not divisible by `X` **detects every
-single-symbol error and every burst of length at most `deg g`** in every codeword. (Given
-`X ∤ g`, having at least two terms is the same as `deg g ≥ 1`, and a single-symbol error is a
-burst of length 1.) -/
+/-- **CRC error-detection guarantee.** Let $F$ be a field, let $g$ be a polynomial over $F$ with
+at least two nonzero coefficients that is not divisible by $X$, let $m$ be a polynomial over $F$,
+and let $c$ be the CRC encoding of $m$ with generator $g$. Then $g$ does not divide $c + aX^i$ for
+any nonzero $a \in F$ and any natural number $i$, and $g$ does not divide $c + e$ for any
+polynomial $e$ over $F$ that is a burst of length at most $\deg g$. That is, the check detects
+every single-symbol error and every burst of length at most $\deg g$ in every codeword.
+
+Given $X \nmid g$, having at least two terms is the same as $\deg g \ge 1$, and a single-symbol
+error is a burst of length 1. -/
 theorem detects {g : F[X]} (hg : 2 ≤ g.support.card) (hX : ¬X ∣ g) (m : F[X]) :
     (∀ a : F, a ≠ 0 → ∀ i, ¬g ∣ encode g m + C a * X ^ i) ∧
       ∀ e, IsBurstLE e g.natDegree → ¬g ∣ encode g m + e :=

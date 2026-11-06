@@ -30,10 +30,15 @@ numbers. Arithmetic and Boolean expressions are total and executable.
 
 namespace Cslib.IMP
 
-/-- A program store maps variable identifiers to natural-number values. -/
+/-- **IMP program states.** A state of an IMP program is a function
+$\sigma : \mathbb{N} \to \mathbb{N}$ assigning a natural-number value $\sigma(i)$ to each variable,
+where variables are identified by natural numbers $i$. -/
 abbrev State := Nat → Nat
 
-/-- Arithmetic expressions. -/
+/-- **Arithmetic expressions of IMP.** The arithmetic expressions of IMP are built inductively
+from the constants $n$, one for each natural number $n$, and the variables $x_i$, one for each
+natural number $i$: if $a_1$ and $a_2$ are arithmetic expressions, then so are $a_1 + a_2$,
+$a_1 - a_2$ and $a_1 \cdot a_2$. -/
 inductive AExp where
   | const (value : Nat)
   | var (name : Nat)
@@ -42,7 +47,10 @@ inductive AExp where
   | mul (left right : AExp)
   deriving DecidableEq, Repr
 
-/-- Boolean expressions. -/
+/-- **Boolean expressions of IMP.** The Boolean expressions of IMP are built inductively from the
+constants true and false and the comparisons $a_1 = a_2$ and $a_1 \le a_2$ of arithmetic
+expressions $a_1, a_2$: if $b$, $b_1$ and $b_2$ are Boolean expressions, then so are the negation
+$\neg b$ and the conjunction $b_1 \wedge b_2$. -/
 inductive BExp where
   | truth (value : Bool)
   | eq (left right : AExp)
@@ -51,7 +59,11 @@ inductive BExp where
   | and (left right : BExp)
   deriving DecidableEq, Repr
 
-/-- Commands in the deterministic while-language IMP. -/
+/-- **Commands of IMP.** The commands of the while-language IMP are built inductively from skip
+and the assignments $x_i := a$ of an arithmetic expression $a$ to the variable $x_i$ with index
+$i \in \mathbb{N}$: if $c$, $c_1$ and $c_2$ are commands and $b$ is a Boolean expression, then so
+are the sequential composition $c_1 ; c_2$, the conditional if $b$ then $c_1$ else $c_2$, and the
+loop while $b$ do $c$. -/
 inductive Cmd where
   | skip
   | assign (name : Nat) (value : AExp)
@@ -62,7 +74,12 @@ inductive Cmd where
 
 namespace AExp
 
-/-- Evaluate an arithmetic expression in a state. -/
+/-- **Evaluation of IMP arithmetic expressions.** The value of an arithmetic expression in a state
+$\sigma : \mathbb{N} \to \mathbb{N}$ is the natural number defined by recursion on the expression:
+a constant $n$ has value $n$, the variable $x_i$ with index $i$ has value $\sigma(i)$, and for
+arithmetic expressions $a_1$ and $a_2$, the expressions $a_1 + a_2$, $a_1 - a_2$ and
+$a_1 \cdot a_2$ have as value the sum, the truncated difference and the product of the values of
+$a_1$ and $a_2$. The truncated difference of natural numbers $m$ and $n$ is $\max(m - n, 0)$. -/
 def eval : AExp → State → Nat
   | .const value, _ => value
   | .var name, state => state name
@@ -89,7 +106,13 @@ end AExp
 
 namespace BExp
 
-/-- Evaluate a Boolean expression in a state. -/
+/-- **Evaluation of IMP Boolean expressions.** The truth value of a Boolean expression in a
+state $\sigma : \mathbb{N} \to \mathbb{N}$ is defined by recursion on the expression: the
+constants true and false have values true and false; for arithmetic expressions $a_1$ and $a_2$,
+the comparison $a_1 = a_2$ is true exactly when the values of $a_1$ and $a_2$ in $\sigma$ are
+equal, and $a_1 \le a_2$ is true exactly when the value of $a_1$ is at most the value of $a_2$;
+for Boolean expressions $b$, $b_1$ and $b_2$, the negation $\neg b$ is true exactly when $b$ is
+false, and the conjunction $b_1 \wedge b_2$ is true exactly when both $b_1$ and $b_2$ are true. -/
 def eval : BExp → State → Bool
   | .truth value, _ => value
   | .eq left right, state => decide (left.eval state = right.eval state)
