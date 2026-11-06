@@ -548,7 +548,13 @@ private theorem eventually_norm_le_of_normal_roots
   obtain ⟨j, hj1, hj2⟩ := (hge.and hlt).exists
   linarith
 
-/-- Jentzsch theorem on zeros of power-series sections (concept `jis_dep_a80afb88f0e7413eb0583f90`).
+/-- **Jentzsch's theorem.** Let $(a_k)_{k \ge 0}$ be complex numbers such that the power series
+$\sum_{k \ge 0} a_k z^k$ has radius of convergence $1$, and for $n \ge 0$ let
+$s_n(z) = \sum_{k=0}^{n} a_k z^k$ be its $n$-th partial sum. Then for every complex $z$ with
+$|z| = 1$, every real $\varepsilon > 0$ and every natural number $N$, there are $n \ge N$ and a
+root $w$ of the polynomial $s_n$ with $|w - z| < \varepsilon$.
+
+Proves `Wanted` entry `jentzsch_zeros_of_power_series_sections`.
 
     Source: Dilcher-Ericksen, "Polynomials Whose Coefficients Are Stern Numbers",
     Theorem 4.3 (Jentzsch).
@@ -556,12 +562,6 @@ private theorem eventually_norm_le_of_normal_roots
     Source lines: 381-388.
     Source text SHA-256: 92c23eed1f7e91f8e2c85193cae27e57042c1e1ebe579e2be8eeb0329726fc58.
     Source object SHA-256: 72f3e8444cd0fd6b5f55e89d6427f130b294841131d89c994fe3bb2971dbb19e.
-
-    Truncation convention: the nth partial sum `∑ k = 0 ^ n, a k * z ^ k` is
-    `PowerSeries.trunc (n + 1) (PowerSeries.mk a)`, since `trunc m` retains
-    coefficients of degree strictly below `m`, so section `n` includes `a n`.
-
-Proves `Wanted` entry `jentzsch_zeros_of_power_series_sections`.
 -/
 theorem jentzsch_zeros_of_power_series_sections (a : Nat -> Complex)
     (hradius : (FormalMultilinearSeries.ofScalars Complex a).radius = 1) :

@@ -365,7 +365,13 @@ private theorem boundary_all (f : ℂ → ℂ)
     have hw' : w.im ≤ 0 := le_of_not_ge hw
     exact boundary_lower f hf1 hf2 h3 z w hz' hw'
 
-/-- Schwarz reflection principle (source: https://en.wikipedia.org/wiki/Schwarz_reflection_principle, statement `schwarz-refl-s1`): a function holomorphic on the upper half-plane extending continuously to the real diameter with real values there extends holomorphically across via `f (conj z) = conj (f z)`.
+/-- **Schwarz reflection principle.** Let $f : \mathbb{C} \to \mathbb{C}$ be holomorphic on the
+open upper half-plane $\{z : \operatorname{Im} z > 0\}$, continuous on the closed upper half-plane
+$\{z : \operatorname{Im} z \ge 0\}$, and real-valued on the real axis. Then there is an entire
+function $g$ that agrees with $f$ on the closed upper half-plane and satisfies
+$g(\bar z) = \overline{g(z)}$ for every $z \in \mathbb{C}$.
+
+Source: https://en.wikipedia.org/wiki/Schwarz_reflection_principle, statement `schwarz-refl-s1`.
 
 Proves `Wanted` entry `schwarz_reflection`.
 -/
