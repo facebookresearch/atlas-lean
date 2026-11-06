@@ -14,7 +14,11 @@ import Batteries.Util.ProofWanted
 
 @[expose] public section
 
-/-- Pierre Dusart, arXiv:1002.0442v1, Proposition at source lines 549--552;
+/-- **Dusart's primes in short intervals.** For every real number $x \ge 396738$ there is a
+prime $p$ with $x < p \le x \bigl(1 + \frac{1}{25 (\log x)^2}\bigr)$, where $\log$ is the natural
+logarithm.
+
+Source: Pierre Dusart, arXiv:1002.0442v1, Proposition at source lines 549--552;
 stable ID `lead:dusart-2010-prime-interval:aee139bd68`. -/
 theorem_wanted dusart_2010_prime_interval_bound :
     ∀ (x : ℝ), 396738 ≤ x →
@@ -37,12 +41,22 @@ revision `a5154676af9aa3095150ee410cdda80555aa0642`; source-span SHA-256
 `8b6cb3655e067df7fbf79fd6644be6780948bc144a1abb471cdfa7204322c4d6`.
 -/
 
-/-- Dusart's explicit upper bound for the prime-counting function, Corollary 5.2(d). -/
+/-- **Dusart's upper bound for $\pi(x)$ for all $x > 1$.** Let $\pi(x)$ be the number of primes
+$p \le x$ and $\log$ the natural logarithm. For every real number $x > 1$,
+$\pi(x) \le \frac{x}{\log x} \bigl(1 + \frac{1.2762}{\log x}\bigr)$.
+
+Source: Pierre Dusart, "Explicit estimates of some functions over primes,"
+*The Ramanujan Journal* 45 (2018), 227-251, Corollary 5.2(d). -/
 public theorem_wanted dusart_pi_upper : ∀ x : ℝ, 1 < x →
     (Nat.primeCounting ⌊x⌋₊ : ℝ) ≤
       x / Real.log x * (1 + 1.2762 / Real.log x)
 
-/-- Dusart's explicit lower bound for the prime-counting function, Corollary 5.2(c). -/
+/-- **Dusart's lower bound for $\pi(x)$ for $x \ge 599$.** Let $\pi(x)$ be the number of primes
+$p \le x$ and $\log$ the natural logarithm. For every real number $x \ge 599$,
+$\frac{x}{\log x} \bigl(1 + \frac{1}{\log x}\bigr) \le \pi(x)$.
+
+Source: Pierre Dusart, "Explicit estimates of some functions over primes,"
+*The Ramanujan Journal* 45 (2018), 227-251, Corollary 5.2(c). -/
 public theorem_wanted dusart_pi_lower : ∀ x : ℝ, 599 ≤ x →
     x / Real.log x * (1 + 1 / Real.log x) ≤
       (Nat.primeCounting ⌊x⌋₊ : ℝ)

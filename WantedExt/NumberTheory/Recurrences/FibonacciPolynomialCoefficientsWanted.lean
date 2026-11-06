@@ -37,11 +37,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The rational sequence `w_n = (a n + b) F_n + (c n + d) F_{n-1}` is an integer
-sequence if and only if `d` is an integer and
-`a = (-z₁ - 3 z₂ + 2 z₃) / 5`, `b = (6 z₁ + 3 z₂ - 2 z₃) / 5`,
-`c = (-2 z₁ + 4 z₂ - z₃) / 5` for some integers `z₁, z₂, z₃` (then `z₁ = w₁`,
-`z₂ = w₂ - d`, `z₃ = w₃ - d`). Here `F_{n-1}` is written as `F_{n+1} - F_n`.
+/-- **Integer sequences with linear Fibonacci coefficients.** Let $F_n$ be the $n$-th Fibonacci
+number and put $F_{-1} = 1$, so that $F_{n-1} = F_{n+1} - F_n$ for every $n \ge 0$. For rational
+numbers $a, b, c, d$, the number $w_n = (an + b)F_n + (cn + d)F_{n-1}$ is an integer for every
+natural number $n$ if and only if $d$ is an integer and there are integers $z_1, z_2, z_3$ with
+$a = (-z_1 - 3z_2 + 2z_3)/5$, $b = (6z_1 + 3z_2 - 2z_3)/5$ and $c = (-2z_1 + 4z_2 - z_3)/5$.
+
+The integers $z_i$ are then determined by the sequence: $z_1 = w_1$, $z_2 = w_2 - d$ and
+$z_3 = w_3 - d$.
 
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
@@ -54,16 +57,19 @@ public theorem_wanted fib_linear_coeff_isInt_iff (a b c d : ℚ) :
       b = ((6 * z₁ + 3 * z₂ - 2 * z₃ : ℤ) : ℚ) / 5 ∧
       c = ((-2 * z₁ + 4 * z₂ - z₃ : ℤ) : ℚ) / 5
 
-/-- The rational sequence `w_n = (a n² + b n + c) F_n + (d n² + e n + f) F_{n-1}` is
-an integer sequence if and only if `f` is an integer and, for some integers
-`z₁, …, z₅` (then `z₁ = w₁`, `z₂ = w₂ - f`, `z₃ = w₃ - f`, `z₄ = w₄ - 2f`,
-`z₅ = w₅ - 3f`), the coefficients are given by formula (2.10):
-`a = (-z₁ + 3z₂ + z₃ - 3z₄ + z₅) / 10`,
-`b = (-5z₁ - 75z₂ + 15z₃ + 45z₄ - 17z₅) / 50`,
-`c = (30z₁ + 30z₂ - 10z₃ - 15z₄ + 6z₅) / 25`,
-`d = (3z₁ - 4z₂ - 3z₃ + 4z₄ - z₅) / 10`,
-`e = (-45z₁ + 80z₂ + 15z₃ - 40z₄ + 11z₅) / 50`.
-Here `F_{n-1}` is written as `F_{n+1} - F_n`.
+/-- **Integer sequences with quadratic Fibonacci coefficients.** Let $F_n$ be the $n$-th Fibonacci
+number and put $F_{-1} = 1$, so that $F_{n-1} = F_{n+1} - F_n$ for every $n \ge 0$. For rational
+numbers $a, b, c, d, e, f$, the number
+$w_n = (an^2 + bn + c)F_n + (dn^2 + en + f)F_{n-1}$ is an integer for every natural number $n$
+if and only if $f$ is an integer and there are integers $z_1, \dots, z_5$ with
+$a = (-z_1 + 3z_2 + z_3 - 3z_4 + z_5)/10$,
+$b = (-5z_1 - 75z_2 + 15z_3 + 45z_4 - 17z_5)/50$,
+$c = (30z_1 + 30z_2 - 10z_3 - 15z_4 + 6z_5)/25$,
+$d = (3z_1 - 4z_2 - 3z_3 + 4z_4 - z_5)/10$ and
+$e = (-45z_1 + 80z_2 + 15z_3 - 40z_4 + 11z_5)/50$.
+
+The integers $z_i$ are then determined by the sequence: $z_1 = w_1$, $z_2 = w_2 - f$,
+$z_3 = w_3 - f$, $z_4 = w_4 - 2f$ and $z_5 = w_5 - 3f$.
 
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
@@ -79,13 +85,16 @@ public theorem_wanted fib_quadratic_coeff_isInt_iff (a b c d e f : ℚ) :
       d = ((3 * z₁ - 4 * z₂ - 3 * z₃ + 4 * z₄ - z₅ : ℤ) : ℚ) / 10 ∧
       e = ((-45 * z₁ + 80 * z₂ + 15 * z₃ - 40 * z₄ + 11 * z₅ : ℤ) : ℚ) / 50
 
-/-- The rational sequence `w_n = (a n² + b n + c) F_n + (d n + e) F_{n-1}` is an
-integer sequence if and only if `e` is an integer and, for some integers
-`z₁, …, z₄` (then `z₁ = w₁`, `z₂ = w₂ - e`, `z₃ = w₃ - e`, `z₄ = w₄ - 2e`), the
-coefficients are given by formula (2.15):
-`a = (2z₁ - z₂ - 2z₃ + z₄) / 10`, `b = (-56z₁ - 7z₂ + 66z₃ - 23z₄) / 50`,
-`c = (48z₁ + 6z₂ - 28z₃ + 9z₄) / 25`, `d = (-6z₁ + 18z₂ - 9z₃ + 2z₄) / 25`.
-Here `F_{n-1}` is written as `F_{n+1} - F_n`.
+/-- **Integer sequences with quadratic and linear Fibonacci coefficients.** Let $F_n$ be the
+$n$-th Fibonacci number and put $F_{-1} = 1$, so that $F_{n-1} = F_{n+1} - F_n$ for every
+$n \ge 0$. For rational numbers $a, b, c, d, e$, the number
+$w_n = (an^2 + bn + c)F_n + (dn + e)F_{n-1}$ is an integer for every natural number $n$ if and
+only if $e$ is an integer and there are integers $z_1, z_2, z_3, z_4$ with
+$a = (2z_1 - z_2 - 2z_3 + z_4)/10$, $b = (-56z_1 - 7z_2 + 66z_3 - 23z_4)/50$,
+$c = (48z_1 + 6z_2 - 28z_3 + 9z_4)/25$ and $d = (-6z_1 + 18z_2 - 9z_3 + 2z_4)/25$.
+
+The integers $z_i$ are then determined by the sequence: $z_1 = w_1$, $z_2 = w_2 - e$,
+$z_3 = w_3 - e$ and $z_4 = w_4 - 2e$.
 
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
@@ -100,18 +109,19 @@ public theorem_wanted fib_quadratic_linear_coeff_isInt_iff (a b c d e : ℚ) :
       c = ((48 * z₁ + 6 * z₂ - 28 * z₃ + 9 * z₄ : ℤ) : ℚ) / 25 ∧
       d = ((-6 * z₁ + 18 * z₂ - 9 * z₃ + 2 * z₄ : ℤ) : ℚ) / 25
 
-/-- The rational sequence `w_n = (a n + b) F_n + (c n + d) F_{n-1} + e + f (-1)^n` is
-an integer sequence if and only if there are integers `w₀, …, w₅` (its initial
-values) with
-`a = (3w₀ + 2w₁ - 7w₂ - w₃ + 4w₄ - w₅) / 5`,
-`b = (-3w₀ - 2w₁ - 3w₂ + 6w₃ + 6w₄ - 4w₅) / 5`,
-`c = (-4w₀ - w₁ + 11w₂ - 2w₃ - 7w₄ + 3w₅) / 5`,
-`d = -2w₁ + w₂ + 2w₃ - w₄`,
-`e = (w₀ + 3w₁ + w₂ - 3w₃ - w₄ + w₅) / 2`,
-`f = (w₀ + w₁ - 3w₂ - w₃ + 3w₄ - w₅) / 2`.
-The extracted text prints `-3w₅` in `c` and `2w₁` in `d`; those versions contradict
-the paper's example `w = (0, 1, 2, 6, 12, 26)`, `c = 3/5`, `d = 0`. Here `F_{n-1}`
-is written as `F_{n+1} - F_n`.
+/-- **Integer sequences with linear Fibonacci coefficients and an alternating term.** Let $F_n$
+be the $n$-th Fibonacci number and put $F_{-1} = 1$, so that $F_{n-1} = F_{n+1} - F_n$ for every
+$n \ge 0$. For rational numbers $a, b, c, d, e, f$, the number
+$w_n = (an + b)F_n + (cn + d)F_{n-1} + e + f(-1)^n$ is an integer for every natural number $n$
+if and only if there are integers $v_0, \dots, v_5$ with
+$a = (3v_0 + 2v_1 - 7v_2 - v_3 + 4v_4 - v_5)/5$,
+$b = (-3v_0 - 2v_1 - 3v_2 + 6v_3 + 6v_4 - 4v_5)/5$,
+$c = (-4v_0 - v_1 + 11v_2 - 2v_3 - 7v_4 + 3v_5)/5$,
+$d = -2v_1 + v_2 + 2v_3 - v_4$,
+$e = (v_0 + 3v_1 + v_2 - 3v_3 - v_4 + v_5)/2$ and
+$f = (v_0 + v_1 - 3v_2 - v_3 + 3v_4 - v_5)/2$.
+
+These integers are then the initial values of the sequence: $v_i = w_i$ for $0 \le i \le 5$.
 
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,

@@ -35,7 +35,9 @@ argument and zero-counting function of the Riemann zeta-function*
 Math. Comp.), Theorem 1.1, <https://arxiv.org/html/2412.15470v2>.
 -/
 
-/-- Zero-counting function: zeros in the strip with `0 < γ ≤ T`, with multiplicity. -/
+/-- **Zero-counting function of the Riemann zeta function.** For a real number $T$, $N(T)$ is
+the number of zeros $\rho = \beta + i\gamma$ of the Riemann zeta function with $0 < \beta < 1$
+and $0 < \gamma \le T$, each counted with its multiplicity as a zero. -/
 noncomputable def zetaZeroCount (T : ℝ) : ℕ :=
   have hfin : (riemannZetaZeros ∩ {s : ℂ | 0 < s.re ∧ s.re < 1 ∧ 0 < s.im ∧ s.im ≤ T}).Finite := by
     have hsub : (riemannZetaZeros ∩ {s : ℂ | 0 < s.re ∧ s.re < 1 ∧ 0 < s.im ∧ s.im ≤ T})
@@ -61,12 +63,26 @@ noncomputable def zetaZeroCount (T : ℝ) : ℕ :=
   Finset.sum hfin.toFinset
     (fun ρ => (WithTop.untopD 0 (meromorphicOrderAt riemannZeta ρ)).toNat)
 
-/-- Bellotti–Wong first estimate (upper half), sharper for `T ≥ exp 447.981`. -/
+/-- **First Bellotti–Wong bound on the zero-counting function.** For every real number
+$T \ge e$, the number $N(T)$ of zeros $\rho = \beta + i\gamma$ of the Riemann zeta function with
+$0 < \beta < 1$ and $0 < \gamma \le T$, counted with multiplicity, satisfies
+$$
+N(T) \le \frac{T}{2\pi} \log \frac{T}{2\pi e} + 0.10076 \log T + 0.24460 \log \log T + 8.08344.
+$$
+
+This bound is sharper than the second Bellotti–Wong bound for $T$ above about $e^{447.981}$. -/
 public theorem_wanted bellotti_wong_zero_count_bound (T : ℝ) (hT : Real.exp 1 ≤ T) :
     (zetaZeroCount T : ℝ) ≤ T / (2 * Real.pi) * Real.log (T / (2 * Real.pi * Real.exp 1))
       + 0.10076 * Real.log T + 0.24460 * Real.log (Real.log T) + 8.08344
 
-/-- Bellotti–Wong second estimate (upper half), sharper for smaller `T`. -/
+/-- **Second Bellotti–Wong bound on the zero-counting function.** For every real number
+$T \ge e$, the number $N(T)$ of zeros $\rho = \beta + i\gamma$ of the Riemann zeta function with
+$0 < \beta < 1$ and $0 < \gamma \le T$, counted with multiplicity, satisfies
+$$
+N(T) \le \frac{T}{2\pi} \log \frac{T}{2\pi e} + 0.11200 \log T + 0.12567 \log \log T + 3.77417.
+$$
+
+This bound is sharper than the first Bellotti–Wong bound for $T$ below about $e^{447.981}$. -/
 public theorem_wanted bellotti_wong_zero_count_bound_small (T : ℝ) (hT : Real.exp 1 ≤ T) :
     (zetaZeroCount T : ℝ) ≤ T / (2 * Real.pi) * Real.log (T / (2 * Real.pi * Real.exp 1))
       + 0.11200 * Real.log T + 0.12567 * Real.log (Real.log T) + 3.77417

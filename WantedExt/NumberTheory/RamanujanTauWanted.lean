@@ -60,16 +60,23 @@ bound is on the complex norm `‖τ p‖`.
 
 open ModularForm UpperHalfPlane
 
-/-- The Ramanujan τ-function: the `n`-th `q`-expansion coefficient of the
-modular discriminant `Δ = η²⁴`. -/
+/-- **Ramanujan τ-function.** For a natural number $n$, $\tau(n)$ is the complex number given by
+the coefficient of $q^n$ in the $q$-expansion of the modular discriminant $\Delta = \eta^{24}$,
+where $\eta$ is the Dedekind eta function and $q = e^{2\pi i z}$. -/
 noncomputable def τ (n : ℕ) : ℂ := (qExpansion 1 discriminant).coeff n
 
-/-- Normalisation check: `τ 1 = 1`. -/
+/-- **Normalisation of the Ramanujan τ-function.** The Ramanujan τ-function satisfies
+$\tau(1) = 1$: the coefficient of $q$ in the $q$-expansion of the modular discriminant $\Delta$
+is $1$. -/
 theorem τ_one : τ 1 = 1 := discriminant_qExpansion_coeff_one
 
 /- **The Ramanujan–Petersson conjecture for `τ`** (Ramanujan 1916; proved by
 Deligne in 1974). For every prime `p`, `|τ(p)| ≤ 2 p^(11/2)`. -/
-/-- Source: S. Ramanujan, 'On certain arithmetical functions', Trans. Cambridge Philos. Soc. 22 (1916) 159–184. H. Petersson, 'Theorie der automorphen Formen beliebiger reeller Dimension und ihre Darstellung durch eine neue Art Poincaréscher Reihen', Math. Ann. 103 (1930) 369–436. P. Deligne, 'Formes modulaires et représentations ℓ-adiques', Séminaire Bourbaki 1968/69: Exposés 347–363, Lecture Notes in Math. 179, Springer (1971). P. Deligne, 'La conjecture de Weil. I', Publ. Math. IHÉS 43 (1974) 273–307. Background: https://en.wikipedia.org/wiki/Ramanujan%E2%80%93Petersson_conjecture Via leanprover/lean-eval@38361be, problem `ramanujan_petersson`. -/
+/-- **Ramanujan–Petersson conjecture for τ (Deligne's theorem).** For every prime $p$, the
+Ramanujan τ-function satisfies $|\tau(p)| \le 2p^{11/2}$, where $|\cdot|$ is the absolute value
+of a complex number.
+
+Source: S. Ramanujan, 'On certain arithmetical functions', Trans. Cambridge Philos. Soc. 22 (1916) 159–184. H. Petersson, 'Theorie der automorphen Formen beliebiger reeller Dimension und ihre Darstellung durch eine neue Art Poincaréscher Reihen', Math. Ann. 103 (1930) 369–436. P. Deligne, 'Formes modulaires et représentations ℓ-adiques', Séminaire Bourbaki 1968/69: Exposés 347–363, Lecture Notes in Math. 179, Springer (1971). P. Deligne, 'La conjecture de Weil. I', Publ. Math. IHÉS 43 (1974) 273–307. Background: https://en.wikipedia.org/wiki/Ramanujan%E2%80%93Petersson_conjecture Via leanprover/lean-eval@38361be, problem `ramanujan_petersson`. -/
 public theorem_wanted ramanujan_petersson :
     ∀ p : ℕ, Prime p → ‖τ p‖ ≤ 2 * (p : ℝ) ^ ((11 : ℝ) / 2)
 
