@@ -635,14 +635,17 @@ private theorem asymptoticCenter_fixedPoint
       linarith
 
 /--
-In a complete uniformly convex real normed space, every nonexpansive self-map `f : E → E` with
-`MapsTo f K K` and `LipschitzOnWith 1 f K` of a nonempty closed bounded convex set `K` has a fixed
-point in `K`, i.e. `∃ y ∈ K, f y = y`. Source: F. Browder, Proc. Nat. Acad. Sci. USA 1965, D.
+**Browder–Göhde–Kirk fixed point theorem.** Let $E$ be a uniformly convex real Banach space and
+let $K \subseteq E$ be a nonempty, closed, bounded, convex set. If a map $f : E \to E$ sends $K$
+into $K$ and is nonexpansive on $K$, that is, $\|f(x) - f(y)\| \le \|x - y\|$ for all
+$x, y \in K$, then $f$ has a fixed point in $K$: there is $y \in K$ with $f(y) = y$.
+
+Proves `Wanted` entry `browderGoehdeKirk_fixedPoint`.
+
+Source: F. Browder, Proc. Nat. Acad. Sci. USA 1965, D.
 Göhde, Math. Ann. 1965, and W. Kirk, Amer. Math. Monthly 1965-66, fixed-point theorem for
 nonexpansive mappings in uniformly convex Banach spaces; textbook Goebel and Kirk, 1990; Lean
 states complete uniformly convex real case with `Bornology.IsBounded` convex set.
-
-Proves `Wanted` entry `browderGoehdeKirk_fixedPoint`.
 -/
 theorem browderGoehdeKirk_fixedPoint
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [UniformConvexSpace E] [CompleteSpace E]

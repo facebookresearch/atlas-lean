@@ -21,8 +21,11 @@ namespace Real
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
-/-- Fourier transform of a dilated function: scaling `x ↦ f (a * x)` by
-`a ≠ 0` scales the transform by `|a|⁻¹` and dilates frequencies by `a⁻¹`.
+/-- **Fourier transform of a dilation.** Let $E$ be a complex normed space, and write
+$\hat g(y) = \int_{\mathbb{R}} e^{-2\pi i x y} g(x)\,dx$ for the Fourier transform of a
+function $g : \mathbb{R} \to E$. For every $f : \mathbb{R} \to E$, every real $a \ne 0$ and
+every real $y$, the Fourier transform of $x \mapsto f(ax)$ at $y$ equals $|a|^{-1} \hat f(y/a)$.
+
 No integrability hypothesis is needed because Mathlib's Bochner integral is
 totalized, so the identity also uses that convention for nonintegrable
 functions. -/
@@ -39,8 +42,15 @@ theorem fourier_comp_mul_left (f : ℝ → E) {a : ℝ} (ha : a ≠ 0) (y : ℝ)
   simp_rw [← hg]
   rw [Measure.integral_comp_mul_left g a, abs_inv]
 
-/-- Dilation by a positive factor, with the real scalar `a⁻¹` written as a
-complex scalar `(a : ℂ)⁻¹`. -/
+/-- **Fourier transform of a dilation by a positive factor.** Write
+$\hat g(y) = \int_{\mathbb{R}} e^{-2\pi i x y} g(x)\,dx$ for the Fourier transform of a
+function $g : \mathbb{R} \to \mathbb{C}$. For every $f : \mathbb{R} \to \mathbb{C}$, every real
+$a > 0$ and every real $y$, the Fourier transform of $x \mapsto f(ax)$ at $y$ equals
+$a^{-1} \hat f(y/a)$.
+
+No integrability hypothesis is needed because Mathlib's Bochner integral is
+totalized, so the identity also uses that convention for nonintegrable
+functions. -/
 theorem fourier_comp_mul_left_of_pos (f : ℝ → ℂ) {a : ℝ} (ha : 0 < a) (y : ℝ) :
     𝓕 (fun x => f (a * x)) y = ((a : ℂ)⁻¹) • 𝓕 f (y / a) := by
   rw [fourier_comp_mul_left f (ne_of_gt ha) y, abs_of_pos ha]
@@ -51,7 +61,11 @@ end Real
 
 namespace SchwartzMap
 
-/-- Dilation of a Schwartz function by a positive factor, as coerced functions. -/
+/-- **Fourier transform of a dilated Schwartz function.** Write
+$\hat g(y) = \int_{\mathbb{R}} e^{-2\pi i x y} g(x)\,dx$ for the Fourier transform of a
+function $g : \mathbb{R} \to \mathbb{C}$. For every Schwartz function
+$f : \mathbb{R} \to \mathbb{C}$, every real $a > 0$ and every real $y$, the Fourier transform of
+$x \mapsto f(ax)$ at $y$ equals $a^{-1} \hat f(y/a)$. -/
 theorem fourier_coe_comp_mul_left_of_pos (f : SchwartzMap ℝ ℂ) {a : ℝ} (ha : 0 < a)
     (y : ℝ) :
     𝓕 (fun x => (f : ℝ → ℂ) (a * x)) y

@@ -17,12 +17,13 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 
 open scoped BigOperators
 
-/-- A generic nonnegative discrete spectrum: a zero-based eigenvalue sequence,
-counted with multiplicity by index, diverging to `+∞`.
+/-- **Nonnegative discrete spectrum.** A nonnegative discrete spectrum is a sequence of real
+numbers $E_0, E_1, E_2, \ldots$, the eigenvalues listed with multiplicity, such that
+$E_j \ge 0$ for every $j$, $E_i \le E_j$ whenever $i \le j$, and $E_j \to +\infty$ as
+$j \to \infty$.
 
-This is a transform layer only. It does not claim that an arbitrary sequence
-is a Dirichlet or Neumann Laplacian spectrum; connecting a sequence to an
-operator is left to a later domain-specific construction. -/
+The sequence is not required to be the spectrum of any particular operator, such as a
+Dirichlet or Neumann Laplacian. -/
 structure NonnegativeDiscreteSpectrum where
   eigenvalue : ℕ → ℝ
   nonnegative_eigenvalue : ∀ j, 0 ≤ eigenvalue j
@@ -35,8 +36,9 @@ namespace NonnegativeDiscreteSpectrum
 instance : CoeFun NonnegativeDiscreteSpectrum (fun _ => ℕ → ℝ) :=
   ⟨NonnegativeDiscreteSpectrum.eigenvalue⟩
 
-/-- Pointwise extensionality: spectra with equal eigenvalue functions are equal;
-proof fields are irrelevant. -/
+/-- **A nonnegative discrete spectrum is determined by its eigenvalues.** If two nonnegative
+discrete spectra $S$ and $T$ have the same $j$-th eigenvalue for every index $j \in \mathbb{N}$,
+then $S = T$. -/
 @[ext] theorem ext {S T : NonnegativeDiscreteSpectrum} (h : ∀ j, S j = T j) :
     S = T := by
   obtain ⟨eS, h1S, h2S, h3S⟩ := S
@@ -45,14 +47,21 @@ proof fields are irrelevant. -/
   subst he
   rfl
 
-/-- Strict sublevel set: indices with eigenvalue strictly below the cutoff.
-The strict inequality encodes the standard convention `(Λ - E_j)_+^0 = 1`
-only when `E_j < Λ`, avoiding `0 ^ 0 = 1` at the cutoff. -/
+/-- **Strict sublevel set.** For a nonnegative discrete spectrum with eigenvalues
+$E_0 \le E_1 \le \cdots$ and a real number $\Lambda$, the strict sublevel set at $\Lambda$ is the
+set of indices $\{j \in \mathbb{N} : E_j < \Lambda\}$.
+
+The strict inequality matches the convention that $(\Lambda - E_j)_+^0$ equals $1$ only when
+$E_j < \Lambda$, avoiding $0^0 = 1$ at the cutoff. -/
 def sublevelSet (S : NonnegativeDiscreteSpectrum) (Λ : ℝ) : Set ℕ :=
   {j | S j < Λ}
 
-/-- The strict sublevel set is finite: monotonicity plus divergence to `+∞`
-bounds it by an initial segment. -/
+/-- **Strict sublevel sets are finite.** For a nonnegative discrete spectrum with eigenvalues
+$E_0 \le E_1 \le \cdots$ and every real number $\Lambda$, the strict sublevel set
+$\{j \in \mathbb{N} : E_j < \Lambda\}$ is finite.
+
+Since $E_j \to +\infty$, there is $N$ with $E_j \ge \Lambda$ for all $j \ge N$, so the set is
+contained in $\{0, 1, \ldots, N - 1\}$. -/
 theorem sublevelSet_finite
     (S : NonnegativeDiscreteSpectrum) (Λ : ℝ) :
     (S.sublevelSet Λ).Finite := by
@@ -64,30 +73,45 @@ theorem sublevelSet_finite
   have hle : N ≤ j := not_lt.mp h
   exact (not_le.mpr hj) (hN j hle)
 
-/-- The strict sublevel set as a finset. -/
+/-- **Finite strict sublevel set.** For a nonnegative discrete spectrum with eigenvalues
+$E_0 \le E_1 \le \cdots$ and a real number $\Lambda$, the finite strict sublevel set at $\Lambda$ is
+the strict sublevel set $\{j \in \mathbb{N} : E_j < \Lambda\}$, regarded as a finite set of
+indices; it is finite because $E_j \to +\infty$. -/
 noncomputable def sublevelFinset
     (S : NonnegativeDiscreteSpectrum) (Λ : ℝ) : Finset ℕ :=
   (S.sublevelSet_finite Λ).toFinset
 
-/-- Exact membership for the sublevel finset. -/
+/-- **Membership in the finite strict sublevel set.** For a nonnegative discrete spectrum with
+eigenvalues $E_0 \le E_1 \le \cdots$, a real number $\Lambda$ and an index $j \in \mathbb{N}$, the
+index $j$ lies in the finite strict sublevel set at $\Lambda$ if and only if $E_j < \Lambda$. -/
 @[simp] theorem mem_sublevelFinset
     (S : NonnegativeDiscreteSpectrum) (Λ : ℝ) (j : ℕ) :
     j ∈ S.sublevelFinset Λ ↔ S j < Λ := by
   rw [sublevelFinset, Set.Finite.mem_toFinset]
   rfl
 
-/-- Strict counting function `N(Λ) = #{j | E_j < Λ}`, with multiplicity. -/
+/-- **Eigenvalue counting function.** For a nonnegative discrete spectrum with eigenvalues
+$E_0 \le E_1 \le \cdots$ and a real number $\Lambda$, the counting function $N(\Lambda)$ is the
+number of indices $j \in \mathbb{N}$ with $E_j < \Lambda$, so eigenvalues are counted with
+multiplicity. -/
 noncomputable def countingFunction
     (S : NonnegativeDiscreteSpectrum) (Λ : ℝ) : ℕ :=
   (S.sublevelFinset Λ).card
 
-/-- Finite Riesz mean `R_σ(Λ) = ∑_{E_j < Λ} (Λ - E_j)^σ` via `Real.rpow`. -/
+/-- **Riesz mean.** For a nonnegative discrete spectrum with eigenvalues $E_0 \le E_1 \le \cdots$
+and real numbers $\sigma$ and $\Lambda$, the Riesz mean of order $\sigma$ at $\Lambda$ is the
+finite sum $R_\sigma(\Lambda) = \sum_{j \in \mathbb{N},\, E_j < \Lambda} (\Lambda - E_j)^\sigma$
+over indices, where $x^\sigma$ is the real power. -/
 noncomputable def rieszMean
     (S : NonnegativeDiscreteSpectrum) (σ Λ : ℝ) : ℝ :=
   ∑ j ∈ S.sublevelFinset Λ, Real.rpow (Λ - S j) σ
 
-/-- The `σ = 0` endpoint recovers the counting function, since every
-summand has strictly positive base. -/
+/-- **The Riesz mean of order zero is the counting function.** For a nonnegative discrete
+spectrum with eigenvalues $E_0 \le E_1 \le \cdots$ and every real number $\Lambda$, the Riesz
+mean of order $0$ at $\Lambda$ equals the counting function at $\Lambda$, viewed as a real
+number: $R_0(\Lambda) = N(\Lambda)$.
+
+Every summand $(\Lambda - E_j)^0$ has strictly positive base $\Lambda - E_j$, so it equals $1$. -/
 @[simp] theorem rieszMean_zero
     (S : NonnegativeDiscreteSpectrum) (Λ : ℝ) :
     S.rieszMean 0 Λ = S.countingFunction Λ := by

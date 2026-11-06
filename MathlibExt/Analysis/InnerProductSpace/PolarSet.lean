@@ -47,25 +47,31 @@ namespace MetaMathlibExt
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-/-- The polar of a set `A` in a real inner-product space:
-`polarSet A = {y | ∀ x ∈ A, ⟪x, y⟫_ℝ ≤ 1}`, using the one-sided real
-inner-product convention `⟪x, y⟫_ℝ ≤ 1`. -/
+/-- **Polar of a set.** Let $E$ be a real inner product space. The polar of a set $A \subseteq E$
+is the set $A^\circ = \{y \in E : \langle x, y \rangle \le 1 \text{ for all } x \in A\}$. This
+uses the one-sided bound $\langle x, y \rangle \le 1$, not $|\langle x, y \rangle| \le 1$. -/
 def polarSet (A : Set E) : Set E := {y | ∀ x ∈ A, inner ℝ x y ≤ 1}
 
-/-- Membership characterization of `polarSet`. -/
+/-- **Membership in the polar.** Let $E$ be a real inner product space, $A \subseteq E$ and
+$y \in E$. Then $y$ lies in the polar $A^\circ$ of $A$ if and only if $\langle x, y \rangle \le 1$
+for every $x \in A$. -/
 theorem mem_polarSet {A : Set E} {y : E} :
     y ∈ polarSet A ↔ ∀ x ∈ A, inner ℝ x y ≤ 1 := Iff.rfl
 
-/-- The polar of the empty set is everything (the condition is vacuous). -/
+/-- **Polar of the empty set.** In a real inner product space $E$, the polar of the empty
+set is all of $E$, since the defining condition is vacuous. -/
 @[simp] theorem polarSet_empty : polarSet (∅ : Set E) = Set.univ := by
   simp [polarSet]
 
-/-- The origin lies in every polar set, since `⟪x, 0⟫_ℝ = 0 ≤ 1`. -/
+/-- **The origin lies in every polar.** In a real inner product space $E$, for every set
+$A \subseteq E$ the origin $0$ lies in the polar $A^\circ$ of $A$, since
+$\langle x, 0 \rangle = 0 \le 1$ for every $x \in A$. -/
 @[simp] theorem zero_mem_polarSet (A : Set E) : (0 : E) ∈ polarSet A := by
   intro x _
   simp
 
-/-- The polar is antitone: a larger set has a smaller polar. -/
+/-- **The polar reverses inclusion.** Let $A$ and $B$ be subsets of a real inner product space.
+If $A \subseteq B$, then the polar $B^\circ$ of $B$ is contained in the polar $A^\circ$ of $A$. -/
 theorem polarSet_subset_polarSet {A B : Set E} (h : A ⊆ B) :
     polarSet B ⊆ polarSet A := fun _ hy x hx => hy x (h hx)
 
@@ -75,7 +81,8 @@ namespace MetaMathlibExt
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-/-- The one-sided real inner-product polar of the closed unit ball is itself. -/
+/-- **The closed unit ball is self-polar.** In a real inner product space $E$, the polar of the
+closed unit ball $\{x \in E : \|x\| \le 1\}$ is the closed unit ball itself. -/
 theorem polarSet_closedUnitBall :
     polarSet (Metric.closedBall (0 : E) 1) = Metric.closedBall 0 1 := by
   ext y

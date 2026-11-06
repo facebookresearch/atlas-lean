@@ -35,7 +35,14 @@ abelian group" (empty); A. Terras, Fourier Analysis on Finite Groups and
 Applications, Ch. 2–3 (Fourier transform on finite abelian groups).
 -/
 
-/-- The discrete Fourier transform, as a function on the dual group. -/
+/--
+**Discrete Fourier transform on a finite abelian group.** Let $G$ be a finite abelian group and
+$f : G \to \mathbb{C}$. The discrete Fourier transform of $f$ is the function on the additive
+characters $\psi$ of $G$ with values in $\mathbb{C}$ (maps with $\psi(0) = 1$ and
+$\psi(a + b) = \psi(a)\psi(b)$) given by $\hat f(\psi) = \sum_{x \in G} \psi(x) f(x)$.
+
+No complex conjugate is applied to the character.
+-/
 def dftFun {G : Type*} [AddCommGroup G] [Fintype G] (f : G → ℂ) :
     AddChar G ℂ → ℂ :=
   fun ψ => ∑ x : G, ψ x * f x
@@ -85,19 +92,24 @@ private theorem dft_star_dftFun {G : Type*} [AddCommGroup G] [Fintype G]
   exact mul_comm _ _
 
 /--
-Fourier inversion on a finite abelian group.
+**Fourier inversion on a finite abelian group.** Let $G$ be a finite abelian group with $|G|$
+elements, let $f : G \to \mathbb{C}$, and write $\hat f(\psi) = \sum_{y \in G} \psi(y) f(y)$ for
+the discrete Fourier transform of $f$ at an additive character $\psi$ of $G$ with values in
+$\mathbb{C}$. Then for every $x \in G$,
+$f(x) = \frac{1}{|G|} \sum_{\psi} \overline{\psi(x)} \, \hat f(\psi)$, where $\psi$ runs over
+all additive characters of $G$ with values in $\mathbb{C}$.
+
+Proof: expand the transform and collapse the inner sum with the orthogonality of characters.
+This is the Fourier inversion formula (4.4) of K. Conrad, Characters of finite abelian groups,
+Section 4, https://kconrad.math.uconn.edu/blurbs/grouptheory/charthy.pdf, up to reindexing
+$\psi \mapsto \psi^{-1}$ (Conrad conjugates the character in the transform rather than in the
+inversion sum).
+
+Proves `Wanted` entry `dft_inversion`.
 
 Sources: `undergrad.yaml`, section "Fourier transform", entry "discrete
 Fourier transform on a finite abelian group"; A. Terras, Fourier Analysis on
 Finite Groups and Applications, Ch. 2, Fourier inversion theorem.
-
-Proves `Wanted` entry `dft_inversion`.
-
-Proof: expand the transform and collapse the inner sum with the orthogonality of characters
-from Mathlib's Pontryagin duality. This is the Fourier inversion formula (4.4) of K. Conrad,
-Characters of finite abelian groups, Section 4,
-https://kconrad.math.uconn.edu/blurbs/grouptheory/charthy.pdf, up to reindexing `ψ ↦ ψ⁻¹`
-(Conrad conjugates the character in the transform rather than in the inversion sum).
 -/
 public theorem dft_inversion {G : Type*} [AddCommGroup G] [Fintype G]
     (f : G → ℂ) (x : G) :
@@ -107,17 +119,22 @@ public theorem dft_inversion {G : Type*} [AddCommGroup G] [Fintype G]
   exact (inv_mul_cancel_left₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero) (f x)).symm
 
 /--
-Plancherel formula on a finite abelian group.
+**Plancherel formula on a finite abelian group.** Let $G$ be a finite abelian group with $|G|$
+elements, let $f, g : G \to \mathbb{C}$, and write $\hat h(\psi) = \sum_{x \in G} \psi(x) h(x)$
+for the discrete Fourier transform of $h : G \to \mathbb{C}$ at an additive character $\psi$ of
+$G$ with values in $\mathbb{C}$. Then $\sum_{x \in G} \overline{f(x)} \, g(x)$ equals
+$\frac{1}{|G|} \sum_{\psi} \overline{\hat f(\psi)} \, \hat g(\psi)$, where $\psi$ runs over all
+additive characters of $G$ with values in $\mathbb{C}$.
+
+Proof: apply Fourier inversion to $g$, exchange the finite sums, and identify the conjugated
+inner sum with $\overline{\hat f(\psi)}$. K. Conrad, Characters of finite abelian groups,
+Section 4, proves the same identity by checking it on characters.
+
+Proves `Wanted` entry `dft_plancherel`.
 
 Sources: `undergrad.yaml`, section "Fourier transform", entry "discrete
 Fourier transform on a finite abelian group"; A. Terras, Fourier Analysis on
 Finite Groups and Applications, Ch. 2, Plancherel formula.
-
-Proves `Wanted` entry `dft_plancherel`.
-
-Proof: apply Fourier inversion to `g`, exchange the finite sums, and identify the conjugated
-inner sum with `star (dftFun f ψ)`. Conrad (Section 4, cited above) proves the same identity by
-checking it on characters.
 -/
 public theorem dft_plancherel {G : Type*} [AddCommGroup G] [Fintype G]
     (f g : G → ℂ) :
@@ -156,15 +173,19 @@ public theorem dft_plancherel {G : Type*} [AddCommGroup G] [Fintype G]
       simp_rw [dft_star_dftFun]
 
 /--
-Translation of the input modulates the Fourier transform by the character.
+**Translation modulates the discrete Fourier transform.** Let $G$ be a finite abelian group,
+$f : G \to \mathbb{C}$, $t \in G$, and $\psi$ an additive character of $G$ with values in
+$\mathbb{C}$, and write $\hat h(\psi) = \sum_{x \in G} \psi(x) h(x)$ for the discrete Fourier
+transform of $h : G \to \mathbb{C}$. If $g(x) = f(x - t)$ for all $x \in G$, then
+$\hat g(\psi) = \psi(t) \hat f(\psi)$.
+
+Proof: reindex the finite sum by $x \mapsto x + t$ and use $\psi(x + t) = \psi(x) \psi(t)$.
+
+Proves `Wanted` entry `dftFun_translate`.
 
 Sources: `undergrad.yaml`, section "Fourier transform", entry "discrete
 Fourier transform on a finite abelian group"; A. Terras, Fourier Analysis on
 Finite Groups and Applications, Ch. 2 (translation and modulation).
-
-Proves `Wanted` entry `dftFun_translate`.
-
-Proof: reindex the finite sum by `x ↦ x + t` and use character additivity.
 -/
 public theorem dftFun_translate {G : Type*} [AddCommGroup G] [Fintype G]
     (f : G → ℂ) (t : G) (ψ : AddChar G ℂ) :
