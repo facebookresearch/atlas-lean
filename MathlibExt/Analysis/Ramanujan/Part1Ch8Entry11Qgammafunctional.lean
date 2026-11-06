@@ -86,7 +86,11 @@ def chapter8PhiTerm (x : ℂ) (j : ℕ) : ℂ :=
 def chapter8Phi (x : ℂ) : ℂ :=
   1 + ∑' j : ℕ, chapter8PhiTerm x j
 
-/-- The wishlist digamma is the canonical `Complex.digamma`. -/
+/-- **Digamma as the logarithmic derivative of Gamma (used for Chapter 8, Entry 11).** For every
+complex number $z$, $\Gamma'(z)/\Gamma(z) = \psi(z)$, where $\psi$ is the digamma function.
+
+At the poles $z = 0, -1, -2, \dots$ the conventions $\Gamma(z) = 0$ and division by zero giving
+$0$ make both sides $0$, so the identity holds for every $z$. -/
 theorem chapter8Digamma_eq_digamma (z : ℂ) :
     chapter8Digamma z = Complex.digamma z := by
   unfold chapter8Digamma
@@ -100,7 +104,12 @@ theorem chapter8PhiTerm_eq_entry12Qgammaintegers (x : ℂ) (j : ℕ) :
     MathlibExt.Analysis.Ramanujan.Part1Ch8.Entry12Qgammaintegers.chapter8PhiTerm
   rfl
 
-/-- Entry 11's `chapter8Phi` agrees with Entry 12's version. -/
+/-- **The Entry 11 and Entry 12 definitions of $\varphi$ agree.** For every complex number $x$,
+the function $\varphi(x) = 1 + \sum_{k \ge 1} \frac{2}{(kx)^3 - kx}$ as defined for Entry 11
+equals the function given by the same formula for Entry 12.
+
+In both definitions the sum is the unconditional sum, taken to be $0$ when it does not converge,
+and a term with zero denominator is $0$. -/
 theorem chapter8Phi_eq_entry12Qgammaintegers (x : ℂ) :
     chapter8Phi x =
       MathlibExt.Analysis.Ramanujan.Part1Ch8.Entry12Qgammaintegers.chapter8Phi x := by

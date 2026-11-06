@@ -188,8 +188,12 @@ private theorem entry16_aux_identity {K : Type*} [Field K] (a r x : K) : ∀ (m 
     rw [hL, hM, ih', hR, hS, hfin, hfin2]
     abel
 
-/-- `ramanujan_part1_ch6_entry16_finite_sum` over any field and without the hypothesis
-  `0 < n`; the statement also holds at `n = 0`. -/
+/-- **A finite identity for $\sum_k r^k/(1-ax^k)$ over a field.** Let $K$ be a field, let
+$a, r, x \in K$ and let $n \ge 0$ be an integer. Suppose that $1 - a x^k \ne 0$ and
+$1 - r x^{k-1} \ne 0$ for every integer $k$ with $1 \le k \le n$. Then
+$\sum_{k=1}^{n} \frac{r^k}{1 - a x^k} = \sum_{k=1}^{n} \frac{(a r x^k)^k}{1 - a x^k} +
+\sum_{k=1}^{n} \frac{a^{k-1} \left( (r x^{k-1})^k - (r x^{k-1})^{n+1} \right)}{1 - r x^{k-1}}$.
+For $n = 0$ all three sums are empty. -/
 theorem ramanujan_part1_ch6_entry16_finite_sum_general
     {K : Type*} [Field K] (a r x : K) (n : ℕ)
     (hax : ∀ k ∈ Icc 1 n, 1 - a * x ^ k ≠ 0)
@@ -204,7 +208,13 @@ theorem ramanujan_part1_ch6_entry16_finite_sum_general
   exact entry16_aux_identity a r x n hax hrx
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
+/-- **Ramanujan's finite identity for $\sum_k r^k/(1-ax^k)$.** Let $a, r, x$ be real numbers
+and let $n$ be a positive integer. Suppose that $1 - a x^k \ne 0$ and $1 - r x^{k-1} \ne 0$ for
+every integer $k$ with $1 \le k \le n$. Then
+$\sum_{k=1}^{n} \frac{r^k}{1 - a x^k} = \sum_{k=1}^{n} \frac{(a r x^k)^k}{1 - a x^k} +
+\sum_{k=1}^{n} \frac{a^{k-1} \left( (r x^{k-1})^k - (r x^{k-1})^{n+1} \right)}{1 - r x^{k-1}}$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
 It follows from `ramanujan_part1_ch6_entry16_finite_sum_general` with `K := ℝ`; the
 hypothesis `hn` is unused and keeps the source's shape.
 Proves `Wanted` entry `ramanujan_part1_ch6_entry16_harmonicasymptotic`.
