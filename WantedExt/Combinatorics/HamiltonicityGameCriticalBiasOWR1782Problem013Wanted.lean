@@ -45,20 +45,28 @@ positive integer) and loses for every `b ≥ (1 + ε) n / ln n`.
 
 open Filter
 
-/-- The board of the game: the edges of the complete graph on `Fin n`. -/
+/-- **Edges of the complete graph $K_n$.** For a natural number $n$, the complete board is the
+finite set of edges of the complete graph $K_n$ on the vertex set $\{0, 1, \dots, n - 1\}$, that is,
+the set of all unordered pairs $\{i, j\}$ of distinct vertices $i \ne j$. -/
 def completeBoard (n : ℕ) : Finset (Sym2 (Fin n)) :=
   (⊤ : SimpleGraph (Fin n)).edgeFinset
 
-/-- The elements of the board claimed by neither player. -/
+/-- **Free elements of a position.** For finite sets $X$ (the board), $M$ (the elements claimed
+by Maker) and $R$ (the elements claimed by Breaker), the free elements are the elements of $X$
+claimed by neither player, that is, the set $X \setminus (M \cup R)$. -/
 def freeElems {α : Type*} [DecidableEq α] (board maker breaker : Finset α) : Finset α :=
   board \ (maker ∪ breaker)
 
-/-- Maker, to move at the position `(maker, breaker)` of the `(1 : b)` Maker-Breaker game on
-`board`, can force a win: Maker claims one free element, then Breaker claims `min b r` of the `r`
-elements still free, and so on; play ends when the board is exhausted, and Maker wins if his claimed
-set satisfies `target`. This is the backward-induction semantics `MakerCanForce` of the
-OpenConjectures entry `EqualitiesAmongCriticalBiasesInPositionalGames`, copied here because
-WantedExt cannot import OpenConjectures. -/
+/-- **Maker can force a win in the biased Maker-Breaker game.** Fix a finite board $X$, a bias
+$b \in \mathbb{N}$ and a property of finite sets, Maker's target. At a position $(M, R)$, where
+$M$ and $R$ are the sets claimed so far by Maker and by Breaker, an element of $X$ is free if it
+lies in neither $M$ nor $R$. The relation "Maker, to move at $(M, R)$, can force a win" is the
+least one satisfying two rules: it holds when no element of $X$ is free and $M$ satisfies the
+target; and it holds when there is a free element $e$ such that, for every set $R'$ of exactly
+$\min(b, r)$ of the $r$ elements that are free after $e$ is claimed, Maker can force a win at
+$(M \cup \{e\}, R \cup R')$. Thus Maker claims one free element per turn, Breaker answers with
+$b$ of them (all remaining ones if fewer are free), play ends when the board is exhausted, and
+Maker wins if his set satisfies the target. -/
 inductive MakerCanForce {α : Type*} [DecidableEq α] (board : Finset α) (b : ℕ)
     (target : Finset α → Prop) : Finset α → Finset α → Prop where
   | terminal (maker breaker : Finset α) (exhausted : freeElems board maker breaker = ∅)
@@ -70,22 +78,35 @@ inductive MakerCanForce {α : Type*} [DecidableEq α] (board : Finset α) (b : �
         MakerCanForce board b target (insert e maker) (breaker ∪ response)) :
       MakerCanForce board b target maker breaker
 
-/-- Maker has a winning strategy in the `(1 : b)` game on `board` in which Breaker moves first, the
-convention of both sources (Krivelevich, Section 1: "We assume that Breaker moves first";
-Chvátal-Erdős, Section 1: "with the Breaker going first"): whichever `min b |board|` elements
-Breaker claims in his first move, Maker can force a win from the resulting position. -/
+/-- **Maker wins the biased game with Breaker moving first.** For a finite board $X$, a bias
+$b \in \mathbb{N}$ and a target property of Maker's claimed set, Maker wins the $(1 : b)$
+Maker-Breaker game on $X$ in which Breaker moves first when, for every set $F \subseteq X$ of
+exactly $\min(b, |X|)$ elements that Breaker may claim in his first move, Maker can force a win
+when it is his turn at the position where he has claimed nothing and Breaker has claimed $F$.
+
+Breaker moving first is the convention of both sources (Krivelevich, Section 1: "We assume that
+Breaker moves first"; Chvátal-Erdős, Section 1: "with the Breaker going first"). -/
 def MakerWinsBreakerFirst {α : Type*} [DecidableEq α] (board : Finset α) (b : ℕ)
     (target : Finset α → Prop) : Prop :=
   ∀ first : Finset α, first ⊆ board → first.card = min b board.card →
     MakerCanForce board b target ∅ first
 
-/-- Maker's goal in the Hamiltonicity game: his graph contains a Hamilton cycle. -/
+/-- **Maker's Hamiltonicity target.** For a natural number $n$, a set $C$ of unordered pairs of
+vertices from $\{0, 1, \dots, n - 1\}$ meets the Hamiltonicity target when the simple graph on
+these $n$ vertices whose edges are the pairs of distinct vertices in $C$ is Hamiltonian: it has a
+cycle passing through every vertex exactly once, with the convention that the one-vertex graph is
+Hamiltonian. -/
 def HamiltonianTarget (n : ℕ) (claimed : Finset (Sym2 (Fin n))) : Prop :=
   (SimpleGraph.fromEdgeSet (claimed : Set (Sym2 (Fin n)))).IsHamiltonian
 
-/-- The critical bias of the `(1 : b)` Hamiltonicity game on `Kₙ` (Breaker moving first) is
-`(1 + o(1)) n / ln n`: for every `ε > 0` and all large `n`, Maker wins against every positive bias
-`b ≤ (1 - ε) n / ln n` and Breaker wins against every bias `b ≥ (1 + ε) n / ln n`. -/
+/-- **The Hamiltonicity critical-bias property.** This is the statement that the critical bias of
+the Hamiltonicity game is $(1 + o(1))\, n / \ln n$. In the $(1 : b)$ Maker-Breaker game on the
+edges of the complete graph $K_n$ with Breaker moving first, Breaker claims $b$ free edges per
+turn (all remaining free edges if fewer than $b$ are left), Maker claims one free edge per turn,
+and Maker wins if, once every edge is claimed, his edges contain a Hamilton cycle. The property
+says that for every real $\varepsilon > 0$ there is $n_0$ such that for every $n \ge n_0$, Maker
+has a winning strategy for every natural number $b$ with $0 < b \le (1 - \varepsilon)\, n / \ln n$,
+and Maker has no winning strategy for any natural number $b \ge (1 + \varepsilon)\, n / \ln n$. -/
 def hamiltonicityCriticalBias : Prop :=
   ∀ ε : ℝ, 0 < ε → ∀ᶠ n : ℕ in atTop,
     (∀ b : ℕ, 0 < b → (b : ℝ) ≤ (1 - ε) * n / Real.log n →
@@ -94,15 +115,21 @@ def hamiltonicityCriticalBias : Prop :=
       ¬ MakerWinsBreakerFirst (completeBoard n) b (HamiltonianTarget n))
 
 /--
-Resolved true: Krivelevich, Theorem 1: Maker has a strategy to win the `(1 : b)` Hamiltonicity game
-on `Kₙ` (Breaker moving first, his Section 1) in at most `14n` moves for every `b ≤ (1 - 30 /
-ln^{1/4} n) n / ln n`, for all large enough `n`; given `ε > 0`, every `b ≤ (1 - ε) n / ln n` is such
-a bias once `30 / ln^{1/4} n ≤ ε`. Chvátal and Erdős, Theorem 3.1: if `ε > 0`, `n > n₀(ε)` and `b >
-(1 + ε) n / log n`, then Breaker (moving first, their Section 1) has a winning strategy in the
-spanning-tree game `T(n, b)`; the strategy in their proof claims every edge at some vertex, and the
-report notes that the Hamiltonicity game is harder for Maker to win than the connectivity game, so
-Breaker wins it for every `b ≥ (1 + ε) n / ln n` (apply Theorem 3.1 with `ε / 2`). Krivelevich's
-title states the resulting critical bias `(1 + o(1)) n / ln n`. Source: T. Szabó (joint with H.
+**The critical bias of the Hamiltonicity game is $(1 + o(1))\, n / \ln n$.** Consider the
+$(1 : b)$ Maker-Breaker game on the edges of the complete graph $K_n$ in which Breaker moves
+first: Breaker claims $b$ free edges per turn (all remaining free edges if fewer than $b$ are
+left), Maker claims one free edge per turn, and Maker wins if, once every edge is claimed, his
+edges contain a Hamilton cycle. For every real $\varepsilon > 0$ there is $n_0$ such that for
+every $n \ge n_0$, Maker has a winning strategy for every natural number $b$ with
+$0 < b \le (1 - \varepsilon)\, n / \ln n$, and Maker has no winning strategy for any natural
+number $b \ge (1 + \varepsilon)\, n / \ln n$.
+
+Maker's side is Krivelevich's Theorem 1, which gives Maker a win for every
+$b \le (1 - 30 / \ln^{1/4} n)\, n / \ln n$ once $n$ is large. Breaker's side follows from the
+Chvátal-Erdős Theorem 3.1, whose Breaker strategy claims every edge at some vertex for every
+$b > (1 + \varepsilon / 2)\, n / \ln n$ once $n$ is large.
+
+Source: T. Szabó (joint with H.
 Gebauer and M. Krivelevich), Thresholds for positional games, in Combinatorics, Oberwolfach Reports
 5 (2008), no. 1, pp. 56-59, DOI 10.4171/OWR/2008/01; resolution: M. Krivelevich, The critical bias
 for the Hamiltonicity game is (1 + o(1)) n / ln n, J. Amer. Math. Soc. 24 (2011), 125-131, DOI

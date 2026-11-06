@@ -44,10 +44,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Infinitary Hales–Jewett theorem. For a finite alphabet `A` and any finite coloring of the
-words over `A`, there is a sequence `(w_n)` of variable words over `A` such that all words
-`w_{m₁}(a₁) w_{m₂}(a₂) ⋯ w_{m_l}(a_l)` with `l ≥ 1`, `m₁ < ⋯ < m_l` and `a_i ∈ A` have the same
-color.
+/-- **Infinitary Hales–Jewett theorem.** Let $A$ be a finite alphabet, and color the finite words
+over $A$ with finitely many colors. A variable word over $A$ is a finite word over $A \cup \{v\}$,
+for a variable $v \notin A$, in which $v$ occurs, and $w(a)$ is the word obtained from $w$ by
+replacing every occurrence of $v$ by the letter $a$. Then there are a sequence $w_0, w_1, \dots$ of
+variable words over $A$ and a color $k$ such that the word
+$w_{m_1}(a_1) w_{m_2}(a_2) \cdots w_{m_l}(a_l)$ has color $k$ for all $l \ge 1$, all
+$m_1 < m_2 < \cdots < m_l$ in $\mathbb{N}$ and all $a_1, \dots, a_l \in A$.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Theorem 1.2 (Bergelson, Blass and Hindman). -/
@@ -57,12 +60,14 @@ public theorem_wanted infinitary_halesJewett {A κ : Type*} [Finite A] [Finite �
       ∀ (l : ℕ) (m : Fin l → ℕ) (a : Fin l → A), 1 ≤ l → StrictMono m →
         c (List.ofFn fun i => (w (m i)).map fun o => o.getD (a i)).flatten = k
 
-/-- Karagiannis's infinitary Hales–Jewett theorem for an increasing sequence of finite alphabets
-`A_0 ⊆ A_1 ⊆ ⋯` with union `A`. For any finite coloring of the words over `A`, there is a
-sequence `(w_n)` of variable words over `A` such that all words
-`w_{m₁}(a₁) w_{m₂}(a₂) ⋯ w_{m_l}(a_l)` with `l ≥ 1`, `m₁ < ⋯ < m_l` and `a_i ∈ A_{m_i}` have the
-same color. The coloring is given on all lists over the ambient type; only words over `A` are
-evaluated.
+/-- **Karagiannis's infinitary Hales–Jewett theorem for increasing alphabets.** Let $X$ be a set,
+let $A_0 \subseteq A_1 \subseteq \cdots$ be finite subsets of $X$ with union $A$, and color the
+finite words over $X$ with finitely many colors. A variable word over $A$ is a finite word over
+$A \cup \{v\}$, for a variable $v \notin X$, in which $v$ occurs, and $w(a)$ is the word obtained
+from $w$ by replacing every occurrence of $v$ by the letter $a$. Then there are a sequence
+$w_0, w_1, \dots$ of variable words over $A$ and a color $k$ such that the word
+$w_{m_1}(a_1) w_{m_2}(a_2) \cdots w_{m_l}(a_l)$ has color $k$ for all $l \ge 1$, all
+$m_1 < m_2 < \cdots < m_l$ in $\mathbb{N}$ and all $a_i \in A_{m_i}$, $i = 1, \dots, l$.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Theorem 1.8 (Karagiannis). -/
@@ -74,11 +79,16 @@ public theorem_wanted infinitary_halesJewett_increasing_alphabets {α κ : Type*
         (∀ i, a i ∈ A (m i)) →
         c (List.ofFn fun i => (w (m i)).map fun o => o.getD (a i)).flatten = k
 
-/-- A version of the Hales–Jewett theorem. Let `A_0 ⊆ A_1 ⊆ ⋯` be finite alphabets with union
-`A`, and let `D ⊆ S_0` be piecewise syndetic in the semigroup `S_0` of words over `A`. For all
-`m, n` there is an `n`-variable word `w` over `A` with `w(a⃗) ∈ D` for every `a⃗ ∈ A_m^n`. The
-paper's family `F = {h_a⃗}` of substitution homomorphisms carries no extra hypothesis and is
-omitted; `n = 0` is admitted (then the claim is `D ≠ ∅`).
+/-- **Piecewise syndetic sets contain Hales–Jewett configurations.** Let
+$A_0 \subseteq A_1 \subseteq \cdots$ be finite sets with union $A$, and let $S_0$ be the semigroup
+of nonempty finite words over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable
+word over $A$ is a nonempty finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct
+variables $v_i \notin A$, in which every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in
+$A^n$, the word $w(\vec a) \in S_0$ is obtained from $w$ by replacing each $v_i$ by $a_i$. If
+$D \subseteq S_0$ is piecewise syndetic, then for all $m, n \in \mathbb{N}$ there is an
+$n$-variable word $w$ over $A$ with $w(\vec a) \in D$ for every $\vec a \in A_m^n$.
+
+For $n = 0$ the claim is that $D$ is nonempty.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Lemma 3.3. -/
@@ -88,11 +98,17 @@ public theorem_wanted exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic {�
     ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ w.head :: w.tail) ∧
       ∀ a : Fin n → α, (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) w ∈ D
 
-/-- The `J`-set version of Lemma 3.3: with `A_0 ⊆ A_1 ⊆ ⋯` and `S_0` as there, if `D ⊆ S_0` is a
-`J`-set then for all `m, n` there is an `n`-variable word `w` over `A` with `w(a⃗) ∈ D` for every
-`a⃗ ∈ A_m^n`. The family `F = {h_a⃗}` is omitted as in Lemma 3.3; `n = 0` is admitted. The
-alphabet is assumed nonempty (`[Nonempty α]`): over the empty alphabet `S_0` is empty, every subset
-is vacuously a `J`-set, and no word exists.
+/-- **J-sets contain Hales–Jewett configurations.** Let $A_0 \subseteq A_1 \subseteq \cdots$ be
+finite sets whose union $A$ is nonempty, and let $S_0$ be the semigroup of nonempty finite words
+over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable word over $A$ is a nonempty
+finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct variables $v_i \notin A$, in which
+every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in $A^n$, the word $w(\vec a) \in S_0$
+is obtained from $w$ by replacing each $v_i$ by $a_i$. If $D \subseteq S_0$ is a $J$-set, then
+for all $m, n \in \mathbb{N}$ there is an $n$-variable word $w$ over $A$ with $w(\vec a) \in D$
+for every $\vec a \in A_m^n$.
+
+The alphabet must be nonempty: over the empty alphabet every subset of $S_0 = \emptyset$ is
+vacuously a $J$-set, and there is no $0$-variable word.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Lemma 3.4. -/
@@ -102,11 +118,17 @@ public theorem_wanted exists_variableWord_subst_mem_of_isMulJSet {α : Type*} [N
     ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ w.head :: w.tail) ∧
       ∀ a : Fin n → α, (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) w ∈ D
 
-/-- Infinitary Hales–Jewett configurations in central sets. With `A_0 ⊆ A_1 ⊆ ⋯` and `S_0` as in
-Lemma 3.3, if `D ⊆ S_0` is central then for each `n` there is a sequence `(w_i)` of `n`-variable
-words over `A` such that `w_{m_0}(a⃗_0) w_{m_1}(a⃗_1) ⋯ w_{m_l}(a⃗_l) ∈ D` whenever
-`m_0 < m_1 < ⋯ < m_l` and `a⃗_j ∈ A_{m_j}^n`. The statement's duplicate binder `l` is read once;
-`n` (free in the statement, fixed in the proof) is universally quantified, `n = 0` admitted.
+/-- **Infinitary Hales–Jewett configurations in central sets.** Let
+$A_0 \subseteq A_1 \subseteq \cdots$ be finite sets with union $A$, and let $S_0$ be the semigroup
+of nonempty finite words over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable
+word over $A$ is a nonempty finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct
+variables $v_i \notin A$, in which every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in
+$A^n$, the word $w(\vec a) \in S_0$ is obtained from $w$ by replacing each $v_i$ by $a_i$. If
+$D \subseteq S_0$ is central, then for every $n \in \mathbb{N}$ there is a sequence
+$w_0, w_1, \dots$ of $n$-variable words over $A$ such that
+$w_{m_0}(\vec a_0) w_{m_1}(\vec a_1) \cdots w_{m_l}(\vec a_l) \in D$ for all $l \in \mathbb{N}$,
+all $m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ and all $\vec a_j \in A_{m_j}^n$,
+$j = 0, \dots, l$.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.5. -/
@@ -119,9 +141,17 @@ public theorem_wanted exists_variableWords_prod_mem_of_isCentralSet {α : Type*}
         (List.ofFn fun j : Fin l => FreeSemigroup.map (Sum.elim id (a j.succ)) (w (m j.succ))).foldl
           (· * ·) (FreeSemigroup.map (Sum.elim id (a 0)) (w (m 0))) ∈ D
 
-/-- The `C`-set version of Theorem 3.5: if `D ⊆ S_0` is a `C`-set then for each `n` there is a
-sequence `(w_i)` of `n`-variable words over `A` with
-`w_{m_0}(a⃗_0) ⋯ w_{m_l}(a⃗_l) ∈ D` whenever `m_0 < ⋯ < m_l` and `a⃗_j ∈ A_{m_j}^n`.
+/-- **Infinitary Hales–Jewett configurations in C-sets.** Let
+$A_0 \subseteq A_1 \subseteq \cdots$ be finite sets with union $A$, and let $S_0$ be the semigroup
+of nonempty finite words over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable
+word over $A$ is a nonempty finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct
+variables $v_i \notin A$, in which every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in
+$A^n$, the word $w(\vec a) \in S_0$ is obtained from $w$ by replacing each $v_i$ by $a_i$. If
+$D \subseteq S_0$ is a $C$-set, then for every $n \in \mathbb{N}$ there is a sequence
+$w_0, w_1, \dots$ of $n$-variable words over $A$ such that
+$w_{m_0}(\vec a_0) w_{m_1}(\vec a_1) \cdots w_{m_l}(\vec a_l) \in D$ for all $l \in \mathbb{N}$,
+all $m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ and all $\vec a_j \in A_{m_j}^n$,
+$j = 0, \dots, l$.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Corollary 3.6. -/
@@ -134,12 +164,16 @@ public theorem_wanted exists_variableWords_prod_mem_of_isCSet {α : Type*}
         (List.ofFn fun j : Fin l => FreeSemigroup.map (Sum.elim id (a j.succ)) (w (m j.succ))).foldl
           (· * ·) (FreeSemigroup.map (Sum.elim id (a 0)) (w (m 0))) ∈ D
 
-/-- Variable-count sums in `J`-sets. With `A_0 ⊆ A_1 ⊆ ⋯` and `S_0` as in Lemma 3.3, let `D ⊆ S_0`
-be a `J`-set and `(x_j)` a sequence of positive integers. There is a sequence `(w_k)` of variable
-words over `A` (the variable is `Sum.inr 0`) with `w_k(a) ∈ D` for all `k` and `a ∈ A_k`, and with
-`∑_{k ∈ G} τ(w_k) ∈ FS(⟨x_j⟩)` for every nonempty finite `G`, where `τ(w) = |w|_v` counts the
-occurrences of the variable and `FS(⟨x_j⟩)` is the set of sums of `x_j` over nonempty finite index
-sets.
+/-- **Variable-count sums of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
+variable $v \notin A$, in which $v$ occurs; for $a \in A$, the word $w(a) \in S_0$ is obtained from
+$w$ by replacing each occurrence of $v$ by $a$, and $|w|_v$ is the number of occurrences of $v$ in
+$w$. If $D \subseteq S_0$ is a $J$-set and $x_0, x_1, \dots$ are positive integers, then there is
+a sequence $w_0, w_1, \dots$ of variable words over $A$ such that $w_k(a) \in D$ for all
+$k \in \mathbb{N}$ and $a \in A_k$, and such that for every nonempty finite $G \subseteq \mathbb{N}$
+there is a nonempty finite $H \subseteq \mathbb{N}$ with
+$\sum_{k \in G} |w_k|_v = \sum_{j \in H} x_j$.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.7. -/
@@ -151,11 +185,17 @@ public theorem_wanted exists_variableWords_subst_mem_sum_count_mem_finiteSums_of
       ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
         ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j
 
-/-- The `C`-set version of Theorem 3.7: if `D ⊆ S_0` is a `C`-set and `(x_j)` is a sequence of
-positive integers, there is a sequence `(w_k)` of variable words over `A` with
-`w_{n_0}(a_0) ⋯ w_{n_l}(a_l) ∈ D` whenever `n_0 < ⋯ < n_l` and `a_j ∈ A_{n_j}`, and with
-`∑_{k ∈ G} τ(w_k) ∈ FS(⟨x_j⟩)` for every nonempty finite `G`, `τ(w) = |w|_v`. The product over
-`G = {n_1, …, n_l}` is taken in increasing order of the indices.
+/-- **Variable-count sums of variable words in C-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
+variable $v \notin A$, in which $v$ occurs; for $a \in A$, the word $w(a) \in S_0$ is obtained from
+$w$ by replacing each occurrence of $v$ by $a$, and $|w|_v$ is the number of occurrences of $v$ in
+$w$. If $D \subseteq S_0$ is a $C$-set and $x_0, x_1, \dots$ are positive integers, then there is
+a sequence $w_0, w_1, \dots$ of variable words over $A$ such that
+$w_{m_0}(a_0) w_{m_1}(a_1) \cdots w_{m_l}(a_l) \in D$ for all $l \in \mathbb{N}$, all
+$m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ and all $a_j \in A_{m_j}$, $j = 0, \dots, l$, and such
+that for every nonempty finite $G \subseteq \mathbb{N}$ there is a nonempty finite
+$H \subseteq \mathbb{N}$ with $\sum_{k \in G} |w_k|_v = \sum_{j \in H} x_j$.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Corollary 3.8. -/
@@ -171,13 +211,21 @@ public theorem_wanted exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_
       ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
         ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j
 
-/-- Variable patterns in `J`-sets. With `A_0 ⊆ A_1 ⊆ ⋯` and `S_0` as in Lemma 3.3, let
-`1 ≤ k < n`, let `T` be the semigroup of words over `{v_1, …, v_k}` (here `Fin k`, words as
-lists, product = concatenation) in which every `v_i` occurs, and for an `n`-variable word `w` let
-`τ(w)` delete the letters of `A` and the variables `v_i`, `i > k`. For a sequence `(y_t)` in `T`
-and a `J`-set `D ⊆ S_0` there is a sequence `(w_m)` of `n`-variable words over `A` with
-`w_m(a⃗) ∈ D` for all `m` and `a⃗ ∈ A_m^n`, and with `τ(w_{m_0}) ⋯ τ(w_{m_l}) ∈ FP(⟨y_t⟩)` for all
-`m_0 < ⋯ < m_l`, where `FP(⟨y_t⟩)` is the set of products `y_{t_0} ⋯ y_{t_r}`, `t_0 < ⋯ < t_r`.
+/-- **Variable patterns of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. Let $1 \le k < n$. An $n$-variable word over $A$ is a nonempty finite word
+over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct variables $v_i \notin A$, in which every $v_i$
+occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in $A^n$, the word $w(\vec a) \in S_0$ is obtained
+from $w$ by replacing each $v_i$ by $a_i$, and $\tau(w)$ is the word over
+$\{v_0, \dots, v_{k-1}\}$ obtained from $w$ by deleting the letters of $A$ and the variables $v_i$
+with $i \ge k$. Let $y_0, y_1, \dots$ be finite words over $\{v_0, \dots, v_{k-1}\}$ in each of
+which every $v_i$ with $i < k$ occurs. If $D \subseteq S_0$ is a $J$-set, then there is a
+sequence $w_0, w_1, \dots$ of $n$-variable words over $A$ such that $w_m(\vec a) \in D$ for all
+$m \in \mathbb{N}$ and $\vec a \in A_m^n$, and such that for all $l \in \mathbb{N}$ and
+$m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ there are $r \in \mathbb{N}$ and
+$t_0 < t_1 < \cdots < t_r$ in $\mathbb{N}$ with
+$\tau(w_{m_0}) \tau(w_{m_1}) \cdots \tau(w_{m_l}) = y_{t_0} y_{t_1} \cdots y_{t_r}$, where
+juxtaposition is concatenation of words.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.9. -/
@@ -194,10 +242,22 @@ public theorem_wanted exists_variableWords_subst_mem_prod_pattern_mem_finiteProd
                 if h : (i : ℕ) < k then some ⟨i, h⟩ else none)).flatten =
             (List.ofFn fun j => y (t j)).flatten
 
-/-- The `C`-set version of Theorem 3.9: with `k, n, T, τ, (y_t)` as there and a `C`-set
-`C ⊆ S_0`, there is a sequence `(w_m)` of `n`-variable words over `A` such that for all
-`m_0 < ⋯ < m_l`, `w_{m_0}(a⃗_0) ⋯ w_{m_l}(a⃗_l) ∈ C` for all `a⃗_j ∈ A_{m_j}^n`, and
-`τ(w_{m_0}) ⋯ τ(w_{m_l}) ∈ FP(⟨y_t⟩)`.
+/-- **Variable patterns of variable words in C-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. Let $1 \le k < n$. An $n$-variable word over $A$ is a nonempty finite word
+over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct variables $v_i \notin A$, in which every $v_i$
+occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in $A^n$, the word $w(\vec a) \in S_0$ is obtained
+from $w$ by replacing each $v_i$ by $a_i$, and $\tau(w)$ is the word over
+$\{v_0, \dots, v_{k-1}\}$ obtained from $w$ by deleting the letters of $A$ and the variables $v_i$
+with $i \ge k$. Let $y_0, y_1, \dots$ be finite words over $\{v_0, \dots, v_{k-1}\}$ in each of
+which every $v_i$ with $i < k$ occurs. If $C \subseteq S_0$ is a $C$-set, then there is a
+sequence $w_0, w_1, \dots$ of $n$-variable words over $A$ such that for all $l \in \mathbb{N}$ and
+$m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$, the word
+$w_{m_0}(\vec a_0) w_{m_1}(\vec a_1) \cdots w_{m_l}(\vec a_l)$ lies in $C$ for all
+$\vec a_j \in A_{m_j}^n$, $j = 0, \dots, l$, and there are $r \in \mathbb{N}$ and
+$t_0 < t_1 < \cdots < t_r$ in $\mathbb{N}$ with
+$\tau(w_{m_0}) \tau(w_{m_1}) \cdots \tau(w_{m_l}) = y_{t_0} y_{t_1} \cdots y_{t_r}$, where
+juxtaposition is concatenation of words.
 
 Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
 Theorem*, INTEGERS 24 (2024), Article A74, Corollary 3.10. -/

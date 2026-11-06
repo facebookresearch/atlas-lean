@@ -32,23 +32,34 @@ one distance `r(x) > 0` from `x`. The bound is stated for every nonempty `A` and
 so it bounds the maximum `f(n)` (for empty `A` every `f` would qualify vacuously).
 -/
 
-/-- Erdős Problem 754: `f(n) ≤ n / 2 + O(1)`, where `f(n)` is the largest `f` such that some set
-`A` of `n ≥ 1` points of `ℝ⁴` has, for every `x ∈ A`, at least `f` points of `A` at one common
-distance `r(x) > 0` from `x`. -/
+/-- **Statement of Erdős Problem 754.** This is the statement that there is a real constant $C$
+such that for every nonempty finite set $A$ of points of the Euclidean space $\mathbb{R}^4$ and
+every natural number $f$, if for every $x \in A$ there is a real number $r > 0$ such that at least
+$f$ points of $A$ lie at distance $r$ from $x$, then $f \le |A|/2 + C$. Equivalently,
+$f(n) \le n/2 + O(1)$, where $f(n)$ is the largest $f$ such that some set $A$ of $n \ge 1$ points of
+$\mathbb{R}^4$ has, for every $x \in A$, at least $f$ points of $A$ at one common distance
+$r(x) > 0$ from $x$. -/
 def favouriteDistanceCountHalfPlusConstant : Prop :=
   ∃ C : ℝ, ∀ (A : Finset (EuclideanSpace ℝ (Fin 4))) (f : ℕ), A.Nonempty →
     (∀ x ∈ A, ∃ r : ℝ, 0 < r ∧ f ≤ {y | y ∈ A ∧ dist x y = r}.ncard) →
       (f : ℝ) ≤ A.card / 2 + C
 
 /--
-Resolved true: Swanepoel proved that for any finite `A ⊂ ℝ⁴` with `|A| = n` and any choice of
-distances `r(x) > 0`, `∑_{x ∈ A} #{y ∈ A : |x - y| = r(x)} ≤ n²/2 + O(n)`, which gives `f(n) ≤ n / 2
-+ O(1)`; erdosproblems.com/754 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
-Problem #754, https://www.erdosproblems.com/754 (status PROVED (LEAN)); resolution: K. J. Swanepoel,
-Favourite distances in high dimensions, Thirty Essays on Geometric Graph Theory (2013), 499-519,
-abstract of arXiv:1108.4817: f_d(n) = max ∑_{x ∈ S} e_r(x, S) = (1 - 1/⌊d/2⌋) n² + Θ(n) for even d
-(n²/2 + O(n) for d = 4); erdosproblems.com/754: proved by Swanepoel (Avis, Erdős and Pach had n/2 +
-2 ≤ f(n) ≤ (1 + o(1)) n/2), https://arxiv.org/abs/1108.4817.
+**Erdős Problem 754: favourite distances in $\mathbb{R}^4$.** There is a real constant $C$ such
+that for every nonempty finite set $A$ of points of the Euclidean space $\mathbb{R}^4$ and every
+natural number $f$, if for every $x \in A$ there is a real number $r > 0$ such that at least $f$
+points of $A$ lie at distance $r$ from $x$, then $f \le |A|/2 + C$.
+
+Swanepoel proved that for every finite $A \subseteq \mathbb{R}^4$ with $|A| = n$ and every choice
+of distances $r(x) > 0$, the number of pairs $(x, y)$ of points of $A$ with $|x - y| = r(x)$ is at
+most $n^2/2 + O(n)$, which gives this bound.
+
+Source: T. F. Bloom, Erdős Problems, Problem #754, https://www.erdosproblems.com/754 (status PROVED
+(LEAN)); resolution: K. J. Swanepoel, Favourite distances in high dimensions, Thirty Essays on
+Geometric Graph Theory (2013), 499-519, abstract of arXiv:1108.4817: f_d(n) = max ∑_{x ∈ S} e_r(x,
+S) = (1 - 1/⌊d/2⌋) n² + Θ(n) for even d (n²/2 + O(n) for d = 4); erdosproblems.com/754: proved by
+Swanepoel (Avis, Erdős and Pach had n/2 + 2 ≤ f(n) ≤ (1 + o(1)) n/2),
+https://arxiv.org/abs/1108.4817.
 -/
 public theorem_wanted favouriteDistanceCountHalfPlusConstant_holds :
     favouriteDistanceCountHalfPlusConstant

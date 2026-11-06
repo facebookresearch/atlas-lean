@@ -44,9 +44,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Zero-based preferences of the word `w`: car `i + 1` prefers the zero-based
-spot `w i - 1` (reduced modulo `2n`, which changes nothing for Stirling
-permutations, whose values lie in `{1, …, n}`).
+/-- **Zero-based preferences of a word.** Let $w = w_1 \cdots w_{2n}$ be a word of natural
+numbers, read as the preferences of $2n$ cars for spots numbered $0, \dots, 2n - 1$. Car
+$i \in \{1, \dots, 2n\}$ prefers the spot $(w_i - 1) \bmod 2n$, where $w_i - 1$ is truncated at
+$0$. When every $w_i$ lies in $\{1, \dots, 2n\}$, for example when $w$ is a Stirling permutation
+of order $n$, this is the spot $w_i - 1$, which is spot $w_i$ in the one-based numbering.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -54,7 +56,11 @@ Section 1 (Stirling permutations read as parking functions of length `2n`). -/
 public def stirlingPref {n : ℕ} (w : Fin (2 * n) → ℕ) (i : Fin (2 * n)) : Fin (2 * n) :=
   ⟨(w i - 1) % (2 * n), Nat.mod_lt _ i.pos⟩
 
-/-- The one-based spot `p(i + 1)` in which car `i + 1` parks.
+/-- **Parking spot of a car.** Let $w = w_1 \cdots w_{2n}$ be a word of natural numbers. Car $i$
+prefers spot $q_i = ((w_i - 1) \bmod 2n) + 1$, where $w_i - 1$ is truncated at $0$; when every
+$w_i$ lies in $\{1, \dots, 2n\}$, this is $q_i = w_i$. Cars $1, \dots, 2n$ arrive in order, and
+car $i$ parks in the least spot $p(i) \in \{q_i, \dots, 2n\}$ not taken by an earlier car, or in
+$p(i) = q_i$ if there is no such spot. The parking spot of car $i \in \{1, \dots, 2n\}$ is $p(i)$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -62,7 +68,13 @@ Definition 5.1. -/
 public def stirlingParkSpot {n : ℕ} (w : Fin (2 * n) → ℕ) (i : Fin (2 * n)) : ℕ :=
   (parkSpots (stirlingPref w) i).val + 1
 
-/-- `Lucky(w)`: the set of (one-based) cars that park in their preferred spot.
+/-- **The lucky set of a word.** Let $w = w_1 \cdots w_{2n}$ be a word of natural numbers. Car
+$i$ prefers spot $q_i = ((w_i - 1) \bmod 2n) + 1$, where $w_i - 1$ is truncated at $0$; when
+every $w_i$ lies in $\{1, \dots, 2n\}$, this is $q_i = w_i$. Cars $1, \dots, 2n$ arrive in
+order, and car $i$ parks in the least spot $p(i) \in \{q_i, \dots, 2n\}$ not taken by an
+earlier car, or in $p(i) = q_i$ if there is no such spot. The lucky set $\mathrm{Lucky}(w)$
+is the set of cars $i \in \{1, \dots, 2n\}$ with $p(i) = w_i$; when every $w_i$ lies in
+$\{1, \dots, 2n\}$, these are the cars that park in their preferred spot.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -70,7 +82,12 @@ Definition 1.2. -/
 public def stirlingLuckySet {n : ℕ} (w : Fin (2 * n) → ℕ) : Finset ℕ :=
   (Finset.univ.filter fun i => stirlingParkSpot w i = w i).image fun i => i.val + 1
 
-/-- The displacement `d(i + 1) = p(i + 1) - w(i + 1)` of car `i + 1`.
+/-- **Displacement of a car.** Let $w = w_1 \cdots w_{2n}$ be a word of natural numbers. Car
+$i$ prefers spot $q_i = ((w_i - 1) \bmod 2n) + 1$, where $w_i - 1$ is truncated at $0$; when
+every $w_i$ lies in $\{1, \dots, 2n\}$, this is $q_i = w_i$. Cars $1, \dots, 2n$ arrive in
+order, and car $i$ parks in the least spot $p(i) \in \{q_i, \dots, 2n\}$ not taken by an
+earlier car, or in $p(i) = q_i$ if there is no such spot. The displacement of car $i$ is
+$d(i) = p(i) - w_i$, where the subtraction is truncated at $0$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -79,7 +96,9 @@ Definition 5.1; the tuple `i ↦ d(i + 1)` is the displacement composition
 public def stirlingDisplacement {n : ℕ} (w : Fin (2 * n) → ℕ) (i : Fin (2 * n)) : ℕ :=
   stirlingParkSpot w i - w i
 
-/-- The total displacement `d(w) = ∑_i d(i)`.
+/-- **Total displacement of a word.** Let $w = w_1 \cdots w_{2n}$ be a word of natural numbers,
+and for $i \in \{1, \dots, 2n\}$ let $d(i)$ be the displacement of car $i$ in $w$. The total
+displacement of $w$ is $d(w) = \sum_{i=1}^{2n} d(i)$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -87,7 +106,9 @@ Definition 5.1. -/
 public def stirlingTotalDisplacement {n : ℕ} (w : Fin (2 * n) → ℕ) : ℕ :=
   ∑ i, stirlingDisplacement w i
 
-/-- `S` is an `n`-admissible lucky set: `S = Lucky(w)` for some `w ∈ Q_n`.
+/-- **Admissible lucky sets.** Let $n$ be a natural number. A finite set $S$ of natural numbers
+is an $n$-admissible lucky set if $S = \mathrm{Lucky}(w)$ for some Stirling permutation $w$ of
+order $n$, where $\mathrm{Lucky}(w)$ is the set of lucky cars of $w$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -95,7 +116,9 @@ Definition 3.1. -/
 public def IsAdmissibleLuckySet (n : ℕ) (S : Finset ℕ) : Prop :=
   ∃ w : Fin (2 * n) → ℕ, IsStirlingPermutation n w ∧ stirlingLuckySet w = S
 
-/-- Characteristic values: `Lucky(1122) = {1}` and `Lucky(1221) = {1, 2}`.
+/-- **Lucky sets of 1122 and 1221.** Read as parking functions of length $4$, the Stirling
+permutation $1122$ has car $1$ as its only lucky car, and $1221$ has exactly cars $1$ and $2$
+lucky: $\mathrm{Lucky}(1122) = \{1\}$ and $\mathrm{Lucky}(1221) = \{1, 2\}$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -105,8 +128,11 @@ public theorem stirlingLuckySet_small :
       stirlingLuckySet (n := 2) ![1, 2, 2, 1] = {1, 2} := by
   decide
 
-/-- Characteristic values: `dis(1122) = (0, 1, 1, 2)` and `dis(11244233) =
-(0, 1, 1, 0, 1, 4, 4, 5)` (the paper's Example 5.5).
+/-- **Displacement compositions of 1122 and 11244233.** The displacement composition of a word
+$w = w_1 \cdots w_{2n}$ is $\mathrm{dis}(w) = (d(1), \dots, d(2n))$, where $d(i)$ is the
+displacement of car $i$. For the Stirling permutations $1122$ of order $2$ and $11244233$ of
+order $4$, $\mathrm{dis}(1122) = (0, 1, 1, 2)$ and
+$\mathrm{dis}(11244233) = (0, 1, 1, 0, 1, 4, 4, 5)$ (the paper's Example 5.5).
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -117,9 +143,13 @@ public theorem stirlingDisplacement_small :
         ![0, 1, 1, 0, 1, 4, 4, 5] := by
   decide
 
-/-- For `w ∈ Q_n` (`n ≥ 1`): (a) car `1` is lucky; (b) the first car `i` with
-`w(i) = 1` is lucky; (c) `1 ≤ lucky(w) ≤ n`. (`n ≥ 1` is added: `Q_0` has only
-the empty word, with no cars.)
+/-- **Basic properties of lucky cars.** Let $n \ge 1$ and let $w$ be a Stirling permutation of
+order $n$, read as a parking function of length $2n$. Then (a) car $1$ is lucky; (b) the first
+car $i$ with $w_i = 1$ is lucky; (c) the number of lucky cars of $w$ is at least $1$ and at
+most $n$.
+
+The hypothesis $n \ge 1$ is added: the only Stirling permutation of order $0$ is the empty
+word, which has no cars.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -130,9 +160,13 @@ public theorem_wanted stirlingLuckySet_basic (n : ℕ) (hn : 1 ≤ n) (w : Fin (
       (∀ i : Fin (2 * n), w i = 1 → (∀ j < i, w j ≠ 1) → i.val + 1 ∈ stirlingLuckySet w) ∧
       1 ≤ (stirlingLuckySet w).card ∧ (stirlingLuckySet w).card ≤ n
 
-/-- For `n ≥ 1`, `w ∈ Q_n` is extremely unlucky (`Lucky(w) = {1}`) if and only if
-for every `x ∈ [2, n]`, `w(i) < x` for all `i ≤ x`. (`n ≥ 1` is added: the empty
-word of `Q_0` has no lucky cars, while the right-hand side holds vacuously.)
+/-- **Characterization of extremely unlucky Stirling permutations.** Let $n \ge 1$ and let $w$
+be a Stirling permutation of order $n$, read as a parking function of length $2n$. Then car $1$
+is the only lucky car of $w$ if and only if for every $x \in \{2, \dots, n\}$ and every
+position $i \le x$, we have $w_i < x$.
+
+The hypothesis $n \ge 1$ is added: the empty word, the only Stirling permutation of order $0$,
+has no lucky cars, while the right-hand side holds vacuously.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -142,8 +176,9 @@ public theorem_wanted stirlingLuckySet_eq_singleton_iff (n : ℕ) (hn : 1 ≤ n)
     stirlingLuckySet w = {1} ↔
       ∀ x ∈ Finset.Icc 2 n, ∀ i : Fin (2 * n), i.val + 1 ≤ x → w i < x
 
-/-- For `n ≥ 1` there are `(n - 1)!` extremely unlucky Stirling permutations of
-order `n`.
+/-- **Counting extremely unlucky Stirling permutations.** For every integer $n \ge 1$, the number
+of Stirling permutations $w$ of order $n$ that are extremely unlucky, that is, whose only lucky
+car is car $1$ ($\mathrm{Lucky}(w) = \{1\}$), is $(n - 1)!$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -152,9 +187,11 @@ public theorem_wanted card_extremely_unlucky_stirling (n : ℕ) (hn : 1 ≤ n) :
     Nat.card {w : Fin (2 * n) → ℕ // IsStirlingPermutation n w ∧ stirlingLuckySet w = {1}} =
       (n - 1).factorial
 
-/-- `w ∈ Q_n` is extremely lucky (`lucky(w) = n`) if and only if the second
-appearances of the values occur in decreasing order (the subword of second
-appearances is `n ⋯ 2 1`).
+/-- **Characterization of extremely lucky Stirling permutations.** Let $w$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. Then $w$ has exactly $n$
+lucky cars if and only if the second occurrences of the letters of $w$ appear in decreasing
+order: for all positions $a < b$ such that $w_a$ also occurs before position $a$ and $w_b$ also
+occurs before position $b$, we have $w_b < w_a$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -164,9 +201,10 @@ public theorem_wanted stirlingLuckySet_card_eq_iff (n : ℕ) (w : Fin (2 * n) �
     (stirlingLuckySet w).card = n ↔
       ∀ a b : Fin (2 * n), (∃ c < a, w c = w a) → (∃ c < b, w c = w b) → a < b → w b < w a
 
-/-- Extremely lucky Stirling permutations of order `n` are in bijection with
-valid parenthesizations of `n` pairs of parentheses (Dyck words of semilength
-`n`).
+/-- **Extremely lucky Stirling permutations and Dyck words.** For every natural number $n$, there
+is a bijection between the Stirling permutations $w$ of order $n$ that are extremely lucky, that
+is, whose set $\mathrm{Lucky}(w)$ of lucky cars has exactly $n$ elements, and the Dyck words of
+semilength $n$ (valid parenthesizations of $n$ pairs of parentheses).
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -175,8 +213,10 @@ public theorem_wanted extremely_lucky_stirling_equiv_dyckWord (n : ℕ) :
     Nonempty ({w : Fin (2 * n) → ℕ // IsStirlingPermutation n w ∧ (stirlingLuckySet w).card = n} ≃
       {p : DyckWord // p.semilength = n})
 
-/-- For every positive integer `n`, the number of extremely lucky Stirling
-permutations of order `n` is the Catalan number `C_n`.
+/-- **Extremely lucky Stirling permutations are counted by the Catalan numbers.** For every
+positive integer $n$, the number of Stirling permutations $w$ of order $n$ that are extremely
+lucky, that is, whose set $\mathrm{Lucky}(w)$ of lucky cars has exactly $n$ elements, is the
+Catalan number $C_n$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -185,9 +225,10 @@ public theorem_wanted card_extremely_lucky_stirling (n : ℕ) (hn : 1 ≤ n) :
     Nat.card {w : Fin (2 * n) → ℕ // IsStirlingPermutation n w ∧ (stirlingLuckySet w).card = n} =
       catalan n
 
-/-- If `S` is `n`-admissible (`n ≥ 1`), then `S` and `S ∪ {2n + 1}` are both
-`(n + 1)`-admissible. (`n ≥ 1` is added: the empty set is `0`-admissible but not
-`1`-admissible.)
+/-- **Extending admissible lucky sets.** Let $n \ge 1$. If $S$ is an $n$-admissible lucky set,
+then both $S$ and $S \cup \{2n + 1\}$ are $(n + 1)$-admissible lucky sets.
+
+The hypothesis $n \ge 1$ is added: the empty set is $0$-admissible but not $1$-admissible.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -196,7 +237,8 @@ public theorem_wanted IsAdmissibleLuckySet.succ (n : ℕ) (hn : 1 ≤ n) (S : Fi
     (hS : IsAdmissibleLuckySet n S) :
     IsAdmissibleLuckySet (n + 1) S ∧ IsAdmissibleLuckySet (n + 1) (insert (2 * n + 1) S)
 
-/-- If `S` is `n`-admissible (`n ≥ 1`), then `1 ∈ S` and `2n ∉ S`.
+/-- **Necessary conditions for admissible lucky sets.** Let $n \ge 1$. If $S$ is an
+$n$-admissible lucky set, then $1 \in S$ and $2n \notin S$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -204,10 +246,11 @@ Corollary 3.4 (`jis-2024-24.6.7-cor-24`). -/
 public theorem_wanted IsAdmissibleLuckySet.one_mem_and_two_mul_not_mem (n : ℕ) (hn : 1 ≤ n)
     (S : Finset ℕ) (hS : IsAdmissibleLuckySet n S) : 1 ∈ S ∧ 2 * n ∉ S
 
-/-- Let `w ∈ Q_n` with `lucky(w) ≥ 2` and let `x` be the second-smallest element
-of `Lucky(w)` (written: `x ∈ Lucky(w)` with exactly one smaller lucky car). Then
-cars `2, …, x - 1` park, in order, in spots `w(1) + 1, …, w(1) + x - 2`: car
-`c = i + 1` parks in spot `w(1) + c - 1 = w(1) + i`.
+/-- **Parking before the second lucky car.** Let $w = w_1 \cdots w_{2n}$ be a Stirling permutation
+of order $n$, read as a parking function of length $2n$, and let $x$ be a lucky car of $w$ such
+that exactly one lucky car of $w$ is smaller than $x$, so that $x$ is the second-smallest element
+of the lucky set $\mathrm{Lucky}(w)$. Then every car $c$ with $2 \le c \le x - 1$ parks in spot
+$w_1 + c - 1$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -218,10 +261,12 @@ public theorem_wanted stirlingParkSpot_before_second_lucky (n : ℕ) (w : Fin (2
     (hi : 2 ≤ i.val + 1) (hix : i.val + 1 ≤ x - 1) :
     stirlingParkSpot w i = w ⟨0, i.pos⟩ + i.val
 
-/-- Let `w ∈ Q_n` and let `j` be the first car preferring spot `k = w(j)`. If
-`w(i) > w(j)` for all `i < j`, then `j` is odd (one-based). The hypothesis
-`w(i) > w(j)` for `i < j` already makes `j` the first car preferring `w(j)`, and
-`k ∈ [1, n]` holds automatically, so neither is restated.
+/-- **Left-to-right minima of a Stirling permutation sit at odd positions.** Let
+$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $j \in \{1, \dots, 2n\}$.
+If $w_j < w_i$ for every $i < j$, then $j$ is odd.
+
+In the paper, $j$ is the first car preferring spot $w_j$; the hypothesis $w_j < w_i$ for all
+$i < j$ already implies this, and $w_j \in \{1, \dots, n\}$ holds for every Stirling permutation.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -230,8 +275,10 @@ public theorem_wanted stirling_odd_of_lt_all_before (n : ℕ) (w : Fin (2 * n) �
     (hw : IsStirlingPermutation n w) (j : Fin (2 * n)) (hj : ∀ i < j, w j < w i) :
     Odd (j.val + 1)
 
-/-- Let `w ∈ Q_n` with `lucky(w) ≥ 2` and `x` the second-smallest element of
-`Lucky(w)`. If `x > n`, then `x` is odd.
+/-- **A second lucky car beyond $n$ is odd.** Let $w = w_1 \cdots w_{2n}$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$, and let $x$ be a lucky car
+of $w$ such that exactly one lucky car of $w$ is smaller than $x$, so that $x$ is the
+second-smallest element of the lucky set $\mathrm{Lucky}(w)$. If $x > n$, then $x$ is odd.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -240,8 +287,10 @@ public theorem_wanted stirling_second_lucky_odd (n : ℕ) (w : Fin (2 * n) → �
     (hw : IsStirlingPermutation n w) (x : ℕ) (hx : x ∈ stirlingLuckySet w)
     (hx2 : ((stirlingLuckySet w).filter (· < x)).card = 1) (hxn : n < x) : Odd x
 
-/-- Let `w ∈ Q_n` with `lucky(w) ≥ 2` and `x` the second-smallest element of
-`Lucky(w)`. If `w(1) = 1`, then `x ≤ w(x) ≤ n`.
+/-- **Preference of the second lucky car.** Let $w = w_1 \cdots w_{2n}$ be a Stirling permutation
+of order $n$, read as a parking function of length $2n$, and let $x$ be a lucky car of $w$ such
+that exactly one lucky car of $w$ is smaller than $x$, so that $x$ is the second-smallest element
+of the lucky set $\mathrm{Lucky}(w)$. If $w_1 = 1$, then $x \le w_x \le n$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -251,9 +300,10 @@ public theorem_wanted stirling_second_lucky_pref (n : ℕ) (w : Fin (2 * n) → 
     (hx2 : ((stirlingLuckySet w).filter (· < x)).card = 1) (i : Fin (2 * n))
     (hi : i.val + 1 = x) (hw1 : w ⟨0, i.pos⟩ = 1) : x ≤ w i ∧ w i ≤ n
 
-/-- Let `w ∈ Q_n` with `lucky(w) ≥ 3` and `x` the second-smallest element of
-`Lucky(w)`. If `x ≥ n`, then `w(1) ≥ lucky(w)`, and every lucky car parks in one
-of the first `w(1)` spots.
+/-- **The first preference bounds the lucky cars.** Let $w$ be a Stirling permutation of
+order $n$, read as a parking function of length $2n$, with at least $3$ lucky cars, and let $x$
+be the second-smallest lucky car of $w$. If $x \ge n$, then the number of lucky cars of $w$ is
+at most $w_1$, and every lucky car parks in one of the spots $1, \dots, w_1$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -265,7 +315,9 @@ public theorem_wanted stirling_first_pref_ge_lucky (n : ℕ) (w : Fin (2 * n) �
     (stirlingLuckySet w).card ≤ w i₀ ∧
       ∀ i : Fin (2 * n), i.val + 1 ∈ stirlingLuckySet w → stirlingParkSpot w i ≤ w i₀
 
-/-- For `w ∈ Q_n`, car `2n - 1` is lucky if and only if `w(2n - 1) = 1`.
+/-- **When the penultimate car is lucky.** Let $n \ge 1$ and let $w = w_1 \cdots w_{2n}$ be a
+Stirling permutation of order $n$, read as a parking function of length $2n$. Then car $2n - 1$
+is lucky, that is, belongs to the lucky set $\mathrm{Lucky}(w)$, if and only if $w_{2n-1} = 1$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -274,10 +326,12 @@ public theorem_wanted stirling_penultimate_lucky_iff (n : ℕ) (w : Fin (2 * n) 
     (hw : IsStirlingPermutation n w) (i : Fin (2 * n)) (hi : i.val + 1 = 2 * n - 1) :
     2 * n - 1 ∈ stirlingLuckySet w ↔ w i = 1
 
-/-- A two-element set `{h, i}` with `h < i ≤ 2n` is `n`-admissible if and only if
-`h = 1` and either `i > n` with `i` odd, or `i ≤ n`. The bound `i ≤ 2n` is the
-paper's standing `S ⊆ [2n]` (without it `{1, 2n + 1}` would satisfy the right
-side).
+/-- **Admissible lucky sets with two elements.** Let $n$, $h$ and $i$ be natural numbers with
+$h < i \le 2n$. The set $\{h, i\}$ is an $n$-admissible lucky set if and only if $h = 1$ and
+either $i > n$ and $i$ is odd, or $i \le n$.
+
+The bound $i \le 2n$ is the paper's standing assumption that lucky sets lie in
+$\{1, \dots, 2n\}$; without it $\{1, 2n + 1\}$ would satisfy the right-hand side.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -285,8 +339,8 @@ Theorem 4.1 (`jis-2024-24.6.7-thm-32`). -/
 public theorem_wanted isAdmissibleLuckySet_pair_iff (n h i : ℕ) (hhi : h < i) (hi : i ≤ 2 * n) :
     IsAdmissibleLuckySet n {h, i} ↔ h = 1 ∧ (n < i ∧ Odd i ∨ i ≤ n)
 
-/-- For `n ≥ 1` there are `n - 1 + ⌈(n - 1)/2⌉` `n`-admissible lucky sets of
-size two.
+/-- **Counting admissible lucky sets with two elements.** For every integer $n \ge 1$, the number
+of $n$-admissible lucky sets with exactly two elements is $n - 1 + \lceil (n - 1)/2 \rceil$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -295,10 +349,15 @@ public theorem_wanted ncard_admissibleLuckySet_card_two (n : ℕ) (hn : 1 ≤ n)
     {S : Finset ℕ | IsAdmissibleLuckySet n S ∧ S.card = 2}.ncard =
       n - 1 + ⌈((n - 1 : ℕ) : ℚ) / 2⌉₊
 
-/-- Let `w ∈ Q_n` with `S = Lucky(w)` whose second-smallest element is `n`.
-(a) If `n` is even, then `w(1) = 1`, `w(n) = n` and `|S| = 2`. (b) If `n` is odd
-and `w(1) = 1`, then `w(n) = n` and `|S| = 2`. The paper's `w` is the witness of
-admissibility; the statement quantifies over every such witness.
+/-- **Stirling permutations whose second lucky car is $n$.** Let $w = w_1 \cdots w_{2n}$ be a
+Stirling permutation of order $n$, read as a parking function of length $2n$, such that car $n$
+is lucky and exactly one lucky car of $w$ is smaller than $n$, so that $n$ is the second-smallest
+element of the lucky set $\mathrm{Lucky}(w)$. (a) If $n$ is even, then $w_1 = 1$, $w_n = n$ and
+$\mathrm{Lucky}(w)$ has exactly $2$ elements. (b) If $n$ is odd and $w_1 = 1$, then $w_n = n$ and
+$\mathrm{Lucky}(w)$ has exactly $2$ elements.
+
+The paper states this for an admissible lucky set $S$ and a Stirling permutation $w$ with
+$\mathrm{Lucky}(w) = S$; here it holds for every such $w$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -310,10 +369,12 @@ public theorem_wanted stirling_second_lucky_eq_n (n : ℕ) (w : Fin (2 * n) → 
     (Even n → w i₀ = 1 ∧ w iN = n ∧ (stirlingLuckySet w).card = 2) ∧
       (Odd n → w i₀ = 1 → w iN = n ∧ (stirlingLuckySet w).card = 2)
 
-/-- The set `{1, n - 1, 2n - 2}` is `n`-admissible if and only if `n` is even,
-for `n ≥ 4`. As printed the claim covers all `n`, but it fails at `n = 3`:
-`w = 133221 ∈ Q_3` has `Lucky(w) = {1, 2, 4} = {1, n - 1, 2n - 2}` (spots
-`1, 3, 4, 2, 5, 6`). The paper's proof assumes `n > 3`.
+/-- **When $\{1, n - 1, 2n - 2\}$ is an admissible lucky set.** For every integer $n \ge 4$, the
+set $\{1, n - 1, 2n - 2\}$ is an $n$-admissible lucky set if and only if $n$ is even.
+
+As printed the claim covers all $n$, but it fails at $n = 3$: $w = 133221$ is a Stirling
+permutation of order $3$ with $\mathrm{Lucky}(w) = \{1, 2, 4\} = \{1, n - 1, 2n - 2\}$ (its cars
+park in spots $1, 3, 4, 2, 5, 6$). The paper's proof assumes $n > 3$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -321,9 +382,13 @@ Proposition 4.4 (`jis-2024-24.6.7-prop-35`). -/
 public theorem_wanted isAdmissibleLuckySet_one_pred_two_mul_sub_two_iff (n : ℕ) (hn : 4 ≤ n) :
     IsAdmissibleLuckySet n {1, n - 1, 2 * n - 2} ↔ Even n
 
-/-- The total displacement of `w ∈ Q_n` is invariant under permuting the entries
-of `w`: `d(w ∘ σ) = d(w)` for every permutation `σ` of the positions (the
-permuted word need not be a Stirling permutation).
+/-- **Total displacement of a Stirling permutation is invariant under rearrangement.** Let
+$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $\sigma$ be a permutation
+of $\{1, \dots, 2n\}$. Read words of length $2n$ as parking functions, and let $d(v)$ denote the
+total displacement of a word $v$, the sum of the displacements of its cars. Then the rearranged
+word $w \circ \sigma = w_{\sigma(1)} \cdots w_{\sigma(2n)}$ satisfies $d(w \circ \sigma) = d(w)$.
+
+The rearranged word $w \circ \sigma$ need not be a Stirling permutation.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -333,7 +398,9 @@ public theorem_wanted stirlingTotalDisplacement_comp_perm (n : ℕ) (w : Fin (2 
     (hw : IsStirlingPermutation n w) (σ : Equiv.Perm (Fin (2 * n))) :
     stirlingTotalDisplacement (w ∘ σ) = stirlingTotalDisplacement w
 
-/-- For `w ∈ Q_n`, `d(w) = n²`.
+/-- **Total displacement of a Stirling permutation.** Let $w = w_1 \cdots w_{2n}$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. Then the total displacement
+of $w$, the sum $d(1) + \dots + d(2n)$ of the displacements of its cars, is $n^2$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -341,7 +408,9 @@ Corollary 5.3 (`jis-2024-24.6.7-cor-38`). -/
 public theorem_wanted stirlingTotalDisplacement_eq (n : ℕ) (w : Fin (2 * n) → ℕ)
     (hw : IsStirlingPermutation n w) : stirlingTotalDisplacement w = n ^ 2
 
-/-- For `w ∈ Q_n` (`n ≥ 1`), `1 ≤ |{i ∈ [2n] : d(i) = 0}| ≤ n`.
+/-- **Number of cars with zero displacement.** Let $n \ge 1$ and let $w$ be a Stirling
+permutation of order $n$, read as a parking function of length $2n$. The number of cars
+$i \in \{1, \dots, 2n\}$ with displacement $d(i) = 0$ is at least $1$ and at most $n$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -351,9 +420,11 @@ public theorem_wanted stirling_card_zero_displacement (n : ℕ) (hn : 1 ≤ n) (
     1 ≤ (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ∧
       (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ≤ n
 
-/-- Let `w ∈ Q_n` be extremely lucky. For `i ∈ [n]`, the `i`-th unlucky car `j`
-(the unlucky car with exactly `i - 1` unlucky cars before it) (a) prefers spot
-`n - i + 1` and (b) has displacement `2i - 1`.
+/-- **Unlucky cars of an extremely lucky Stirling permutation.** Let $w = w_1 \cdots w_{2n}$ be a
+Stirling permutation of order $n$ that is extremely lucky, that is, its set $\mathrm{Lucky}(w)$
+of lucky cars has exactly $n$ elements, and let $1 \le i \le n$. If car $j$ is unlucky and
+exactly $i - 1$ of the cars $1, \dots, j - 1$ are unlucky, then car $j$ prefers spot
+$w_j = n - i + 1$ and has displacement $d(j) = 2i - 1$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -365,8 +436,10 @@ public theorem_wanted extremely_lucky_unlucky_car (n : ℕ) (w : Fin (2 * n) →
       k < j ∧ k.val + 1 ∉ stirlingLuckySet w).card = i - 1) :
     w j = n - i + 1 ∧ stirlingDisplacement w j = 2 * i - 1
 
-/-- An extremely lucky `w ∈ Q_n` is determined by its displacement composition:
-if `w' ∈ Q_n` has `dis(w') = dis(w)`, then `w' = w`.
+/-- **Extremely lucky Stirling permutations are determined by their displacements.** Let $w$ and
+$w'$ be Stirling permutations of order $n$, and suppose that $w$ is extremely lucky, that is, its
+set $\mathrm{Lucky}(w)$ of lucky cars has exactly $n$ elements. If every car has the same
+displacement in $w'$ as in $w$ (that is, $\mathrm{dis}(w') = \mathrm{dis}(w)$), then $w' = w$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
@@ -376,8 +449,10 @@ public theorem_wanted extremely_lucky_eq_of_displacement_eq (n : ℕ) (w w' : Fi
     (hl : (stirlingLuckySet w).card = n)
     (hd : ∀ i, stirlingDisplacement w' i = stirlingDisplacement w i) : w' = w
 
-/-- The number of Stirling permutations of order `n` whose displacement
-composition has exactly `n` nonzero parts is the Catalan number `C_n`.
+/-- **Stirling permutations with $n$ nonzero displacements.** For every natural number $n$, the
+number of Stirling permutations $w$ of order $n$ in which exactly $n$ cars have nonzero
+displacement (equivalently, whose displacement composition $\mathrm{dis}(w)$ has exactly $n$
+nonzero parts) is the Catalan number $C_n$.
 
 Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
 Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,

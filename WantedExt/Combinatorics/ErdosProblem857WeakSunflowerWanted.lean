@@ -26,22 +26,27 @@ public import Batteries.Util.ProofWanted
 
 namespace MathlibExt.Combinatorics.ErdosProblem857WeakSunflowerWanted
 
-/-- `F` contains a `k`-sunflower: `k` members whose pairwise intersections are all equal (the same
-definition as in `SunflowerFreeFamilyExponentialBound`). -/
+/-- **Families containing a sunflower.** Let $n$ and $k$ be natural numbers. A family $F$ of
+subsets of $\{0, \dots, n-1\}$ contains a $k$-sunflower if some subfamily $T \subseteq F$ with
+exactly $k$ members satisfies $A \cap B = C \cap D$ for all $A, B, C, D \in T$ with $A \ne B$ and
+$C \ne D$, that is, all pairwise intersections of distinct members of $T$ are equal. -/
 def ContainsKSunflower {n : ℕ} (k : ℕ) (F : Finset (Finset (Fin n))) : Prop :=
   ∃ (T : Finset (Finset (Fin n))), T ⊆ F ∧ T.card = k ∧
     ∀ ⦃a⦄, a ∈ T → ∀ ⦃b⦄, b ∈ T → a ≠ b → ∀ ⦃c⦄, c ∈ T → ∀ ⦃d⦄, d ∈ T → c ≠ d → a ∩ b = c ∩ d
 
-/-- `F` contains no `k`-sunflower. -/
+/-- **Sunflower-free families.** Let $n$ and $k$ be natural numbers. A family $F$ of subsets of
+$\{0, \dots, n-1\}$ is $k$-sunflower-free if it does not contain a $k$-sunflower. -/
 def IsKSunflowerFree {n : ℕ} (k : ℕ) (F : Finset (Finset (Fin n))) : Prop :=
   ¬ ContainsKSunflower (n := n) k F
 
-/-- The Erdős–Szemerédi weak sunflower conjecture for `k ≥ 4`: every fixed
-`k ≥ 4` admits a base `c < 2`, depending only on `k`, such that every
-`k`-sunflower-free family of arbitrary subsets of an `n`-element universe has
-at most `c ^ n` members for all sufficiently large `n`. The bound is eventual
-because for `2 ^ n < k` the full powerset is `k`-sunflower-free. The case
-`k = 3` was proved by Naslund–Sawin and is omitted. -/
+/-- **Erdős–Szemerédi sunflower conjecture for $k \ge 4$.** The proposition asserts that for every
+natural number $k \ge 4$ there is a real number $c$ with $0 < c < 2$ such that, for all
+sufficiently large $n$, every $k$-sunflower-free family of subsets of $\{0, \dots, n-1\}$ has at
+most $c^n$ members.
+
+The bound is required only for large $n$ because for $2^n < k$ the family of all subsets of
+$\{0, \dots, n-1\}$ is $k$-sunflower-free. The case $k = 3$, proved by Naslund and Sawin, is
+omitted. -/
 def conjecture : Prop :=
   ∀ k : ℕ, 4 ≤ k →
     ∃ c : ℝ, 0 < c ∧ c < 2 ∧
@@ -51,6 +56,12 @@ def conjecture : Prop :=
             (F.card : ℝ) ≤ c ^ n
 
 /--
+**The Erdős–Szemerédi sunflower bound for $k \ge 4$.** For every natural number $k \ge 4$ there
+is a real number $c$ with $0 < c < 2$ such that, for all sufficiently large $n$, every family of
+subsets of $\{0, \dots, n-1\}$ that contains no $k$-sunflower has at most $c^n$ members. Here a
+$k$-sunflower in a family is a choice of $k$ distinct members whose pairwise intersections are
+all equal.
+
 Resolved true: Proved: Bucić, He and Lee (arXiv:2610.26686, 2026, Theorem 1) show that for every
 k >= 3 and n >= 1 a family of subsets of [n] with no k-sunflower has at most 3(2 - 1/(16k^3))^n
 members, which gives the formalized bound c^n with c < 2 for each k >= 4 and all large n.

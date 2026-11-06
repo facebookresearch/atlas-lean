@@ -35,8 +35,11 @@ namespace MathlibExt.Combinatorics.ErdosProblem751Wanted
 The two original arbitrarily-large-gap propositions are preserved without
 their `answer(False)` wrappers. Status: resolved false by Bondy--Vince. -/
 
-/-- Chromatic-number-four graphs with arbitrarily large cycle-length gaps,
-with and without a prescribed girth lower bound. -/
+/-- **Erdős Problem 751.** The statement that both of the following hold:
+(i) for every natural number $k$ there is a simple graph $G$ with chromatic number $4$ in
+which any two distinct cycle lengths of $G$ differ by at least $k$; (ii) for all natural numbers
+$k$ and $g$ there is a simple graph $G$ with chromatic number $4$ and girth at least $g$ in which
+any two distinct cycle lengths of $G$ differ by at least $k$. -/
 def conjecture : Prop :=
   (∀ k : ℕ, ∃ (V : Type) (G : SimpleGraph V), G.chromaticNumber = 4 ∧
     ∀ m ∈ G.cycleLengths, ∀ m' ∈ G.cycleLengths, m < m' → m + k ≤ m') ∧
@@ -45,7 +48,13 @@ def conjecture : Prop :=
     ∀ m ∈ G.cycleLengths, ∀ m' ∈ G.cycleLengths, m < m' → m + k ≤ m')
 
 /--
-Resolved false: Resolved false by Bondy and Vince; formalized in Lean where indicated. Source:
+**Erdős Problem 751 is false.** It is not the case that both of the following hold:
+(i) for every natural number $k$ there is a simple graph $G$ with chromatic number $4$ in
+which any two distinct cycle lengths of $G$ differ by at least $k$; (ii) for all natural numbers
+$k$ and $g$ there is a simple graph $G$ with chromatic number $4$ and girth at least $g$ in which
+any two distinct cycle lengths of $G$ differ by at least $k$.
+
+Source:
 J. A. Bondy and A. Vince, Cycles in a graph whose lengths differ by one or two, Journal of Graph
 Theory 27 (1998), 11-15,
 https://doi.org/10.1002/(SICI)1097-0118(199801)27:1%3C11::AID-JGT3%3E3.0.CO;2-J; Jun Gao, Qingyi
