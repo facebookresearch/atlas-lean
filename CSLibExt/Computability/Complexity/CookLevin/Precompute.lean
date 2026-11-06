@@ -78,7 +78,8 @@ theorem decS_zero {self ifZero ifPos : Λ} {x : C} (hp : M self = decr (.c x) if
     Run M 1 ⟨some self, v, st F o⟩ ⟨some ifZero, false, st F o⟩ :=
   decr_run_zero hp v (by simp [hx])
 
-/-- Unit targets of a multi-target transfer. -/
+/-- **Unit targets of a multi-target transfer.** For a list $y_1, \dots, y_j$ of counters, the list
+of transfer targets that pushes one unit on each counter $y_i$, in the same order. -/
 def tg (ys : List C) : List (Σ k, SΓ C k) := ys.map fun y => ⟨.c y, ()⟩
 
 omit [DecidableEq C] in
@@ -104,11 +105,23 @@ theorem dlookup_tg (ys : List C) (z : C) :
 theorem dlookup_tg_out (ys : List C) : List.dlookup (SK.out) (tg ys) = none := by
   rw [List.dlookup_eq_none, tg_keys]; simp
 
-/-- Counter function after `xfer x → ys`. -/
+/-- **Counters after a multi-target transfer.** Given counter values $F : C \to \mathbb{N}$, a
+counter $x \in C$ and a list $Y$ of counters, the counter values after transferring $x$ to $Y$
+form the function that sends $x$ to $0$, sends every $z \ne x$ occurring in $Y$ to
+$F(z) + F(x)$, and sends every other $z$ to $F(z)$. -/
 def xf (F : C → ℕ) (x : C) (ys : List C) : C → ℕ :=
   fun z => if z = x then 0 else if z ∈ ys then F z + F x else F z
 
-/-- **Multi-target transfer** in the counter view: drain `x`, adding its value to every `y ∈ ys`. -/
+/-- **Multi-target transfer.** Let $M$ be a counter machine with counters indexed by $C$, a
+Boolean output stack and a Boolean state, let $x \in C$, and let $Y$ be a list of distinct
+counters not containing $x$. Suppose the instruction at label $\ell$ is the transfer loop that
+pops counter $x$ and pushes one unit on every counter of $Y$, returning to $\ell$ while $x$ is
+nonempty and continuing at label $\ell'$ once it is empty. Then for all counter values
+$F : C \to \mathbb{N}$, every state bit $v$ and every output stack $o$, the machine runs in
+exactly $F(x) + 1$ steps from label $\ell$ with state $v$, counter values $F$ and output stack $o$
+to label $\ell'$ with state false, output stack $o$ and the counter values after transferring
+$x$ to $Y$: counter $x$ becomes $0$, each counter of $Y$ gains $F(x)$, and every other counter
+keeps its value. -/
 theorem xferS {self next : Λ} {x : C} {ys : List C} (hp : M self = xfer (.c x) (tg ys) self next)
     (hnd : ys.Nodup) (hx : x ∉ ys) (F : C → ℕ) (v : Bool) (o : List Bool) :
     Run M (F x + 1) ⟨some self, v, st F o⟩ ⟨some next, false, st (xf F x ys) o⟩ := by
@@ -127,7 +140,9 @@ theorem xferS {self next : Λ} {x : C} {ys : List C} (hp : M self = xfer (.c x) 
   rw [e] at this
   exact this
 
-/-- Power-loop stages. -/
+/-- **Stages of the power loop.** The labels of one power-loop site: a head stage, a
+multiplication stage $\mathrm{mul}(s)$ for each stage $s$ of a multiplication site, a drain stage
+and a move stage. -/
 inductive PW
   | hd
   | mul (s : MS)
@@ -135,17 +150,36 @@ inductive PW
   | mv
   deriving DecidableEq, Fintype
 
-/-- `p ← p · b^kc`: decrement `kc`; `q += p·b`; drain `p`; move `q` to `p`; repeat. -/
+/-- **Power-loop program.** Given six counters $b$, $k$, $p$, $q$, $a$, $t$, a label for each
+power-loop stage and an exit label, the power loop is the following program on the stages. At
+the head stage it pops one unit from $k$; if $k$ was empty it goes to the exit label, otherwise
+to the first multiplication stage. The multiplication stages add $p \cdot b$ to $q$ (a
+multiplication site with index counter $a$ and scratch counter $t$) and then go to the drain
+stage. The drain stage empties $p$ and goes to the move stage. The move stage moves the contents
+of $q$ onto $p$ and returns to the head stage.
+
+When the six counters are distinct and $q = a = t = 0$ at the start, each round multiplies $p$ by
+$b$, so the loop replaces $p$ by $p \cdot b^k$ and ends with $k = 0$. -/
 def powS (b kc p q ad t : C) (mk : PW → Λ) (exit : Λ) : PW → TM2.Stmt (SΓ C) Λ Bool
   | .hd => decr (.c kc) exit (mk (.mul .head))
   | .mul s => mulS p ad b q t (fun s => mk (.mul s)) (mk .drn) s
   | .drn => xfer (.c p) [] (mk .drn) (mk .mv)
   | .mv => xfer (.c q) (tg [p]) (mk .mv) (mk .hd)
 
-/-- Step budget of the power loop (`j` rounds, start value `p`, base `b`). -/
+/-- **Step budget of the power loop.** For natural numbers $j$ (the number of rounds), $p$ (the
+start value) and $b$ (the base), the step budget of the power loop is
+$j \, (p \, (b + 1)^j \, (3 b + 5) + 5) + 1$. -/
 def powB (j p b : ℕ) : ℕ := j * (p * (b + 1) ^ j * (3 * b + 5) + 5) + 1
 
-/-- **The power loop.** From `kc = j`, `q = ad = t = 0`: ends with `p ← p · b^j`, `kc = 0`. -/
+/-- **The power loop.** Let $b, k, p, q, a, t$ be pairwise distinct counters of a counter machine
+$M$, let $\mu$ assign a label to each power-loop stage and let $\nu$ be a label. Suppose that for
+every power-loop stage $s$ the label $\mu(s)$ runs the power-loop program for $b, k, p, q, a, t$
+with stage labels $\mu$ and exit label $\nu$ at stage $s$. Let $j \in \mathbb{N}$, let $F$ be
+counter values with $F(k) = j$ and $F(q) = F(a) = F(t) = 0$, let $v$ be a flag and $o$ an
+output. Then $M$ runs from the head stage $\mu(\mathrm{hd})$ with flag $v$, counters $F$ and
+output $o$ to the label $\nu$ with flag false, output $o$, and counters $F$ except that $p$ holds
+$F(p) \cdot F(b)^j$ and $k$ holds $0$, within $j\,(F(p)\,(F(b) + 1)^j\,(3F(b) + 5) + 5) + 1$
+steps, the step budget of the power loop for $j$ rounds, start value $F(p)$ and base $F(b)$. -/
 theorem pow_run {b kc p q ad t : C} {mk : PW → Λ} {exit : Λ}
     (hp : ∀ s, M (mk s) = powS b kc p q ad t mk exit s)
     (hnd : [b, kc, p, q, ad, t].Nodup) :
@@ -243,7 +277,10 @@ theorem pow_run {b kc p q ad t : C} {mk : PW → Λ} {exit : Λ}
 Not in the source repository: it computes `m = n + 1 + p(n)` for formal-math's arbitrary
 polynomial certificate bound `p`, where the source computed `n + 1 + n ^ k`. -/
 
-/-- Horner-round stages. -/
+/-- **Stages of a Horner round.** The Horner-round stages are $\mathsf{mul}(s)$, one for each
+stage $s$ of a multiplication site, and the three stages $\mathsf{drn}$, $\mathsf{mv}$ and
+$\mathsf{add}$. In a Horner round they label the multiplication, draining the accumulator,
+moving the product into the accumulator, and adding the coefficient. -/
 inductive HW
   | mul (s : MS)
   | drn
@@ -251,18 +288,33 @@ inductive HW
   | add
   deriving DecidableEq, Fintype
 
-/-- One Horner round `acc ← acc · b + a`: `q += acc · b`; drain `acc`; move `q` to `acc`; add
-`a` units; continue at `next`. -/
+/-- **The statements of one Horner round.** For counters $b, \mathit{acc}, q, d, t$, a number
+$a \in \mathbb{N}$, stage labels $\mu$ and an exit label $\nu$: the statements performing
+$\mathit{acc} \leftarrow \mathit{acc} \cdot b + a$ in four stages, each stage reaching the next
+through $\mu$. The multiplication stages add $\mathit{acc} \cdot b$ to $q$ (with index counter $d$
+and scratch counter $t$), then the drain stage empties $\mathit{acc}$, the move stage transfers
+$q$ into $\mathit{acc}$, and the add stage pushes $a$ units onto $\mathit{acc}$ and continues at
+$\nu$. -/
 def hornS (b acc q ad t : C) (a : ℕ) (mk : HW → Λ) (next : Λ) : HW → TM2.Stmt (SΓ C) Λ Bool
   | .mul s => mulS acc ad b q t (fun s => mk (.mul s)) (mk .drn) s
   | .drn => xfer (.c acc) [] (mk .drn) (mk .mv)
   | .mv => xfer (.c q) (tg [acc]) (mk .mv) (mk .add)
   | .add => emitR (.c acc) (List.replicate a ()) next
 
-/-- Exact step count of one Horner round from `acc = A` with base `b`. -/
+/-- **Step count of one Horner round.** For an accumulator value $A$ and a base $b$, the number
+$A(2b + 3) + A + 2 + (A + 1) + (Ab + 1) + 1$: the exact number of steps one Horner round takes
+from $\mathit{acc} = A$ with base $b$. -/
 def hornStep (A b : ℕ) : ℕ := A * (2 * b + 3) + A + 2 + (A + 1) + (A * b + 1) + 1
 
-/-- **One Horner round.** From `q = ad = t = 0`: `acc ← acc · b + a`, everything else kept. -/
+/-- **One Horner round.** Let $b, \mathit{acc}, q, d, t$ be pairwise distinct counters of a
+counter machine $M$, let $a \in \mathbb{N}$, let $\mu$ assign a label to each Horner-round stage
+and let $\nu$ be a label. Suppose that for every Horner-round stage $s$ the label $\mu(s)$ runs
+the Horner-round statement for $b, \mathit{acc}, q, d, t, a$ with stage labels $\mu$ and exit
+label $\nu$ at stage $s$. Let $F$ be counter values with $F(q) = F(d) = F(t) = 0$, let $v$ be a
+flag and $o$ an output, and let $h$ be the step count of one Horner round. Then $M$ runs from the
+first multiplication stage $\mu(\mathrm{mul\ head})$ with flag $v$, counters $F$ and output $o$
+in exactly $h(F(\mathit{acc}), F(b))$ steps to the label $\nu$ with flag false, output $o$, and
+counters $F$ except that $\mathit{acc}$ holds $F(\mathit{acc}) \cdot F(b) + a$. -/
 theorem horn_round {b acc q ad t : C} {a : ℕ} {mk : HW → Λ} {next : Λ}
     (hp : ∀ s, M (mk s) = hornS b acc q ad t a mk next s)
     (hnd : [b, acc, q, ad, t].Nodup) (F : C → ℕ) (hq : F q = 0) (had : F ad = 0)
@@ -303,16 +355,34 @@ theorem horn_round {b acc q ad t : C} {a : ℕ} {mk : HW → Λ} {next : Λ}
   rw [hF2q] at r3
   exact (r1.trans (r2.trans (r3.trans r4))).of_eq (by unfold hornStep; ring)
 
-/-- The value after Horner rounds with coefficients `cs` from accumulator `A`. -/
+/-- **Horner value.** For a list $c_1, \dots, c_\ell$ of natural numbers and natural numbers $b$
+and $A$, the Horner value of $c_1, \dots, c_\ell$ with base $b$ from accumulator $A$ is the number
+obtained from the starting value $x = A$ by replacing $x$ by $x b + c_i$ for $i = 1, \dots, \ell$
+in turn; for the empty list it is $A$. -/
 def hornVal (cs : List ℕ) (b A : ℕ) : ℕ := cs.foldl (fun A a => A * b + a) A
 
-/-- Exact step count of Horner rounds with coefficients `cs` from accumulator `A`. -/
+/-- **Step count of the Horner rounds.** For a list $cs$ of coefficients, a base $b$ and an
+accumulator value $A$: $0$ if $cs$ is empty, and if $cs$ is $a$ followed by $cs'$, the step count
+$h(A, b)$ of one Horner round from $A$ with base $b$ plus the step count of $cs'$ with base $b$
+from accumulator $A b + a$. This is the exact number of steps of the Horner rounds. -/
 def hornT : List ℕ → ℕ → ℕ → ℕ
   | [], _, _ => 0
   | a :: cs, b, A => hornStep A b + hornT cs b (A * b + a)
 
-/-- **Horner rounds.** Round `i` occupies labels `mk i`; after the last round the machine is at
-`exit`. From `acc = A`, `q = ad = t = 0`: `acc ← hornVal cs b A`. -/
+/-- **Horner rounds.** Let $b, \mathit{acc}, q, d, t$ be pairwise distinct counters of a counter
+machine $M$, let $c_0, \dots, c_{\ell-1}$ be natural numbers, let $\mu$ assign a label
+$\mu(i, s)$ to each $i \in \mathbb{N}$ and each Horner-round stage $s$, and let $\nu$ be a label.
+Suppose that for every $i < \ell$ and every stage $s$ the label $\mu(i, s)$ runs, at stage $s$,
+the statement of one Horner round for $b, \mathit{acc}, q, d, t$ and the number $c_i$, with
+stage labels $\mu(i, \cdot)$ and exit label $\mu(i + 1, \mathrm{mul\ head})$ if $i + 1 < \ell$
+and $\nu$ otherwise. Then for all $i, j \in \mathbb{N}$ with $i + j = \ell$, all counter values
+$F$ with $F(q) = F(d) = F(t) = 0$, every flag $v$ and every output $o$, there is a flag $v'$ such
+that $M$ runs in exactly $h$ steps from the label $\mu(i, \mathrm{mul\ head})$ if $i < \ell$ and
+$\nu$ otherwise, with flag $v$, counters $F$ and output $o$, to the label $\nu$ with flag $v'$,
+output $o$, and counters $F$ except that $\mathit{acc}$ holds the Horner value of
+$c_i, \dots, c_{\ell-1}$ with base $F(b)$ from accumulator $F(\mathit{acc})$. Here $h$ is the
+step count of the Horner rounds over $c_i, \dots, c_{\ell-1}$ with base $F(b)$ from accumulator
+$F(\mathit{acc})$. -/
 theorem horner_run {b acc q ad t : C} (cs : List ℕ) {mk : ℕ → HW → Λ} {exit : Λ}
     (hp : ∀ i (hi : i < cs.length) s, M (mk i s) = hornS b acc q ad t cs[i] (mk i)
       (if i + 1 < cs.length then mk (i + 1) (.mul .head) else exit) s)
@@ -355,7 +425,11 @@ theorem horner_run {b acc q ad t : C} (cs : List ℕ) {mk : ℕ → HW → Λ} {
       rw [ite_eq_left hlt, hd]
       exact r1.trans r2
 
-/-- Horner's rule: `hornVal` of a coefficient list, from accumulator `A`. -/
+/-- **Splitting off the starting accumulator in Horner evaluation.** For a list
+$c_1, \dots, c_\ell$ of natural numbers and natural numbers $b$ and $A$, write $h(x)$ for the
+Horner value of $c_1, \dots, c_\ell$ with base $b$ from accumulator $x$: the number obtained
+from the starting value $x$ by replacing the current value $y$ by $y b + c_i$ for
+$i = 1, \dots, \ell$ in turn. Then $h(A) = A b^{\ell} + h(0)$. -/
 theorem hornVal_eq (cs : List ℕ) (b A : ℕ) :
     hornVal cs b A = A * b ^ cs.length + hornVal cs b 0 := by
   induction cs generalizing A with
@@ -365,7 +439,9 @@ theorem hornVal_eq (cs : List ℕ) (b A : ℕ) :
       rw [ih (A * b + a), ih (0 * b + a)]
       ring
 
-/-- The coefficients of `p`, highest degree first. -/
+/-- **Coefficient list of a polynomial.** For a polynomial $p$ with natural-number coefficients
+and natural degree $d$ (where $d = 0$ when $p = 0$), the coefficient list of $p$ is
+$[p_d, p_{d-1}, \dots, p_1, p_0]$, where $p_i$ is the coefficient of $X^i$ in $p$. -/
 noncomputable def coeffs (p : Polynomial ℕ) : List ℕ :=
   (List.range (p.natDegree + 1)).reverse.map p.coeff
 
@@ -382,7 +458,9 @@ theorem hornVal_range (f : ℕ → ℕ) (b D : ℕ) :
       rw [this, ih]
       ring
 
-/-- **Horner's rule** for `Polynomial ℕ`. -/
+/-- **Horner's rule.** For every polynomial $p$ with natural coefficients and every
+$b \in \mathbb{N}$, running Horner rounds with base $b$ on the coefficients of $p$ (highest degree
+first), starting from accumulator $0$, yields $p(b)$. -/
 theorem hornVal_coeffs (p : Polynomial ℕ) (b : ℕ) : hornVal (coeffs p) b 0 = p.eval b := by
   rw [coeffs, hornVal_range, Polynomial.eval_eq_sum_range]
 
@@ -391,7 +469,9 @@ end CLib
 
 /-! ## [CNT] The precomputation's counter program -/
 
-/-- Scratch counters. -/
+/-- **Scratch counters of the counter program.** The type of the twelve private counters of the
+precomputation's counter program, with constructors $N$, $P$, $Q$, $AD$, $TMP$, $KC$, $Mc$, $B$,
+$Tc$, $Fx$, $Dd$, $Hc$. -/
 inductive PS
   | N | P | Q | AD | TMP | KC | Mc | B | Tc | Fx | Dd | Hc
   deriving DecidableEq
@@ -400,7 +480,11 @@ instance PS.instFintypeEnumFix : Fintype PS where
       by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Target counters (the twelve preloads of `Assembly.real_run`). -/
+/-- **Target counters of the counter program.** The type of the twelve counters that the
+precomputation's counter program loads for the host, with constructors $uT$, $uH$, $sT$, $sH$,
+$hT$, $hH$, $aT$, $aH$, $iT$, $iX$, $iE$, $iF$.
+
+They hold the twelve preloads of the assembled generator's run. -/
 inductive PT
   | uT | uH | sT | sH | hT | hH | aT | aH | iT | iX | iE | iF
   deriving DecidableEq
@@ -409,24 +493,52 @@ instance PT.instFintypeEnumFix : Fintype PT where
       by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- All counters of the counter program. -/
+/-- **Counters of the counter program.** A counter of the counter program is either a scratch
+counter $s(x)$, for one of the twelve scratch counter names $x$, or a target counter $t(y)$, for
+one of the twelve target counter names $y$: the counters are the disjoint union of the scratch
+counters and the target counters. -/
 inductive CC
   | s (x : PS)
   | t (y : PT)
   deriving DecidableEq, Fintype
 
-/-- Labels of the counter program; `D` is the number of Horner rounds. -/
+/-- **Labels of the counter program.** For $D \in \mathbb{N}$, the number of Horner rounds, the
+labels of the counter program are $p_1$; a label $\mathrm{hr}(i, s)$ for each round $i < D$ and
+each Horner-round stage $s$; the labels $x_1, x_2, x_3, x_4, c_1, c_2, x_6, x_7, x_8$; a label
+$w_2(s)$ for each power-loop stage $s$; $x_9$; a label $\mathrm{ml}(s)$ for each stage $s$ of a
+multiplication site; the labels $x_{10}, x_{11}, x_{12}, x_{13}, x_{14}$; and
+$\mathrm{done}$. -/
 inductive PL (D : ℕ)
   | p1 | hr (i : Fin D) (s : HW) | x1 | x2 | x3 | x4 | c1 | c2 | x6 | x7 | x8 | w2 (s : PW) | x9
   | ml (s : MS) | x10 | x11 | x12 | x13 | x14 | done
   deriving DecidableEq, Fintype
 
-/-- Horner-round labels indexed by `ℕ` (indices `≥ D` are never reached). -/
+/-- **Horner-round labels indexed by natural numbers.** For a number $D$ of Horner rounds,
+$i \in \mathbb{N}$ and a Horner-round stage $s$: the counter-program label for stage $s$ of
+Horner round $i$ if $i < D$, and otherwise the label $x_1$ that follows the Horner rounds.
+
+Indices $i \ge D$ are never reached. -/
 def hlab {D : ℕ} (i : ℕ) (s : HW) : PL D := if h : i < D then .hr ⟨i, h⟩ s else .x1
 
 open CC PS PT in
-/-- **The counter program**: `P = k(n)` by Horner's rule, `m = n + 1 + P`, `T = (m + c)^e`,
-`F = d·T + d + 1`, `H = m + F`, then the twelve loads. -/
+/-- **The counter program.** For a polynomial $k$ with natural-number coefficients, whose
+coefficient list $\kappa_0, \dots, \kappa_{D-1}$ has length $D$, and $c, e, d \in \mathbb{N}$,
+the counter program is the program with the labels of the counter program for $D$ Horner rounds
+that acts on a Boolean output stack and on the scratch and target counters of the counter
+program as follows. It runs $D$ Horner rounds, round $i$ with coefficient $\kappa_i$, base $N$,
+accumulator $P$, product counter $Q$, index counter $AD$ and scratch counter $TMP$. It moves $P$
+onto both $Mc$ and the target $iE$, moves $N$ onto both $Mc$ and the target $iX$, and adds one
+unit to each of $Mc$ and $iX$. It adds $Mc$ to $B$, restoring $Mc$ through $TMP$, adds $c$ units
+to $B$, $e$ units to $KC$ and one unit to $Tc$, and runs the power loop with base $B$, round
+counter $KC$, accumulator $Tc$, product counter $Q$, index counter $AD$ and scratch counter
+$TMP$. It adds $d$ units to $Dd$, adds $Dd \cdot Tc$ to $Fx$ (index counter $AD$, scratch
+counter $TMP$) and adds $d + 1$ more units to $Fx$. It moves $Fx$ onto both $Hc$ and the target
+$iF$ and moves $Mc$ onto $Hc$. Finally it moves $Tc$ onto each of the targets
+$uT, sT, hT, aT, iT$, moves $Hc$ onto each of the targets $uH, sH, hH, aH$, and halts.
+
+Started with $n$ on $N$ and every other counter empty, the program computes $P = k(n)$ by
+Horner's rule, $m = n + 1 + k(n)$ on $Mc$, $T = (m + c)^e$ on $Tc$, $dT + d + 1$ on $Fx$ and
+$m + dT + d + 1$ on $Hc$, and so loads the twelve target counters. -/
 noncomputable def cprog (k : Polynomial ℕ) (c e d : ℕ) :
     PL (coeffs k).length → TM2.Stmt (SΓ CC) (PL (coeffs k).length) Bool
   | .p1 => emitR (.c (s P)) (List.replicate 0 ()) (if 0 < (coeffs k).length then hlab 0 (.mul .head) else .x1)
@@ -451,24 +563,40 @@ noncomputable def cprog (k : Polynomial ℕ) (c e d : ℕ) :
   | .x14 => xfer (.c (s Hc)) (tg [t uH, t sH, t hH, t aH]) .x14 .done
   | .done => .halt
 
-/-- `m = n + 1 + k(n)` (so `|x ++ y| ≤ m ↔ |y| ≤ k(n)` for `|x| = n + 1`). -/
+/-- **Total length bound.** For a polynomial $k$ with natural-number coefficients and
+$n \in \mathbb{N}$, the total length bound is $m = n + 1 + k(n)$.
+
+So a word $x$ of length $n + 1$ followed by a word $y$ has length at most $m$ exactly when $y$
+has length at most $k(n)$. -/
 def mOf (k : Polynomial ℕ) (n : ℕ) : ℕ := n + 1 + k.eval n
 
-/-- `T = (m + c)^e`. -/
+/-- **The precomputed time bound.** For a polynomial $k$ with natural coefficients and
+$c, e, n \in \mathbb{N}$, the time bound is $T = (m + c)^e$, where $m = n + 1 + k(n)$. -/
 def TOf (k : Polynomial ℕ) (c e n : ℕ) : ℕ := (mOf k n + c) ^ e
 
-/-- Start: `N = n`. -/
+/-- **Start counter values.** For a natural number $n$, the start counter values of the counter
+program give the scratch counter $N$ the value $n$ and every other counter the value $0$. -/
 def F0 (n : ℕ) : CC → ℕ
   | .s .N => n
   | _ => 0
 
-/-- After the first power loop. -/
+/-- **Counter values after the Horner loop.** For a polynomial $k$ with natural-number
+coefficients and $n \in \mathbb{N}$, this is the assignment of values to the counters of the
+counter program that gives the scratch counter $N$ the value $n$, the scratch counter $P$ the
+value $k(n)$, and every other counter the value $0$.
+
+The counter program reaches these values after its Horner loop has evaluated $k(n)$. -/
 def F1 (k : Polynomial ℕ) (n : ℕ) : CC → ℕ
   | .s .N => n
   | .s .P => k.eval n
   | _ => 0
 
-/-- Before the second power loop. -/
+/-- **Counter values before the power loop.** For a polynomial $k$ with natural-number
+coefficients and $c, e, n \in \mathbb{N}$, write $m = n + 1 + k(n)$. This is the assignment of
+values to the counters of the counter program that gives the scratch counters $\mathit{Mc}$,
+$B$, $\mathit{KC}$ and $\mathit{Tc}$ the values $m$, $m + c$, $e$ and $1$, the target counters
+$\mathit{iX}$ and $\mathit{iE}$ the values $n + 1$ and $k(n)$, and every other counter the value
+$0$. -/
 def F2 (k : Polynomial ℕ) (c e n : ℕ) : CC → ℕ
   | .s .Mc => mOf k n
   | .s .B => mOf k n + c
@@ -478,7 +606,11 @@ def F2 (k : Polynomial ℕ) (c e n : ℕ) : CC → ℕ
   | .t .iE => k.eval n
   | _ => 0
 
-/-- After the second power loop. -/
+/-- **Counter values after the power loop.** For a polynomial $k$ with natural-number
+coefficients and $c, e, n \in \mathbb{N}$, write $m = n + 1 + k(n)$. This is the assignment of
+values to the counters of the counter program that gives the scratch counters $\mathit{Mc}$,
+$B$ and $\mathit{Tc}$ the values $m$, $m + c$ and $(m + c)^e$, the target counters $\mathit{iX}$
+and $\mathit{iE}$ the values $n + 1$ and $k(n)$, and every other counter the value $0$. -/
 def F3 (k : Polynomial ℕ) (c e n : ℕ) : CC → ℕ
   | .s .Mc => mOf k n
   | .s .B => mOf k n + c
@@ -487,7 +619,13 @@ def F3 (k : Polynomial ℕ) (c e n : ℕ) : CC → ℕ
   | .t .iE => k.eval n
   | _ => 0
 
-/-- Target values (`Fx = d·T + d + 1 = H - m`, `H = capH m T d`). -/
+/-- **Target counter values.** For a polynomial $k$ with natural-number coefficients and natural
+numbers $c, e, d, n$, let $m = n + 1 + k(n)$, $T = (m + c)^e$ and let $H = m + (T + 1)d + 1$ be
+the stack cap. The target values on the twelve target counters assign $T$ to each of
+$u_T, s_T, h_T, a_T, i_T$, assign $H$ to each of $u_H, s_H, h_H, a_H$, and assign $n + 1$ to
+$i_X$, $k(n)$ to $i_E$ and $(T + 1)d + 1$ to $i_F$.
+
+In particular the value at $i_F$ is $H - m$. -/
 def tv (k : Polynomial ℕ) (c e d n : ℕ) : PT → ℕ
   | .uT | .sT | .hT | .aT | .iT => TOf k c e n
   | .uH | .sH | .hH | .aH => Situation.capH (mOf k n) (TOf k c e n) d
@@ -495,21 +633,45 @@ def tv (k : Polynomial ℕ) (c e d n : ℕ) : PT → ℕ
   | .iE => k.eval n
   | .iF => (TOf k c e n + 1) * d + 1
 
-/-- End: targets loaded; leftovers `B = m + c`, `Dd = d`. -/
+/-- **Counter values at the end of the counter program.** For a polynomial $k$ with
+natural-number coefficients and $c, e, d, n \in \mathbb{N}$, write $m = n + 1 + k(n)$ and
+$T = (m + c)^e$. This is the assignment of values to the counters of the counter program that
+gives the scratch counters $B$ and $\mathit{Dd}$ the values $m + c$ and $d$, gives each target
+counter its target value ($T$ for $\mathit{uT}$, $\mathit{sT}$, $\mathit{hT}$, $\mathit{aT}$ and
+$\mathit{iT}$; $m + (T + 1)d + 1$ for $\mathit{uH}$, $\mathit{sH}$, $\mathit{hH}$ and
+$\mathit{aH}$; $n + 1$ for $\mathit{iX}$; $k(n)$ for $\mathit{iE}$; $(T + 1)d + 1$ for
+$\mathit{iF}$), and gives every other scratch counter the value $0$. -/
 def F4 (k : Polynomial ℕ) (c e d n : ℕ) : CC → ℕ
   | .s .B => mOf k n + c
   | .s .Dd => d
   | .t y => tv k c e d n y
   | _ => 0
 
-/-- Step budget of the counter program. -/
+/-- **Step budget of the counter program.** For a polynomial $k$ with natural-number coefficients
+and natural numbers $c, e, d, n$, let $m = n + 1 + k(n)$, $T = (m + c)^e$ and
+$H = m + (T + 1)d + 1$. The step budget of the counter program at $(k, c, e, d, n)$ is
+$$
+1 + h + (k(n) + 1) + (n + 1) + 2 + (2m + 2) + 3 + p + 1 + (d(2T + 3) + d + 2) + 1 +
+(dT + d + 2) + (m + 1) + (T + 1) + (H + 1),
+$$
+where $h$ is the exact step count of the Horner rounds over the coefficient list of $k$ with
+base $n$ from accumulator $0$, and $p = e\left((m + c + 1)^e (3(m + c) + 5) + 5\right) + 1$ is
+the step budget of the power loop with $e$ rounds, start value $1$ and base $m + c$. -/
 noncomputable def cB (k : Polynomial ℕ) (c e d n : ℕ) : ℕ :=
   1 + hornT (coeffs k) n 0 + (k.eval n + 1) + (n + 1) + 2 + (2 * mOf k n + 2) + 3 + powB e 1 (mOf k n + c) +
     1 + (d * (2 * TOf k c e n + 3) + d + 2) + 1 + (d * TOf k c e n + d + 2) + (mOf k n + 1) +
     (TOf k c e n + 1) + (Situation.capH (mOf k n) (TOf k c e n) d + 1)
 
 open CC PS PT in
-/-- **The counter program's run**: from `N = n` to the twelve loaded targets. -/
+/-- **The counter program's run.** Let $k$ be a polynomial with natural-number coefficients, let
+$c, e, d, n$ be natural numbers, and put $m = n + 1 + k(n)$ and $T = (m + c)^e$. Start the
+counter program for $k, c, e, d$ at its first label with any flag, any output stack $o$, the
+scratch counter $N$ equal to $n$ and every other counter equal to $0$. Then, in a number of
+steps at most the step budget of the counter program at $(k, c, e, d, n)$, it reaches its label
+$\mathrm{done}$ with flag false, output stack $o$, and counter values $T$ on the targets
+$uT, sT, hT, aT, iT$; $m + (T + 1)d + 1$ on the targets $uH, sH, hH, aH$; $n + 1$ on $iX$;
+$k(n)$ on $iE$; $(T + 1)d + 1$ on $iF$; $m + c$ on the scratch counter $B$; $d$ on the scratch
+counter $Dd$; and $0$ on every other counter. -/
 theorem cprog_run (k : Polynomial ℕ) (c e d n : ℕ) (v : Bool) (o : List Bool) :
     RunLe (cprog k c e d) (cB k c e d n) ⟨some .p1, v, st (F0 n) o⟩
       ⟨some .done, false, st (F4 k c e d n) o⟩ := by
@@ -565,27 +727,37 @@ theorem cprog_run (k : Polynomial ℕ) (c e d n : ℕ) (v : Bool) (o : List Bool
 
 open Cslib.Complexity.CookLevin.Assembly
 
-/-- Full stacks: the host's, the raw input, the private scratch counters. -/
+/-- **Stacks of the full machine.** The full machine has one stack for each host stack, one
+stack for the raw input, and one stack for each scratch counter of the counter program. -/
 inductive FK
   | h (k : HK)
   | raw
   | pc (x : PS)
   deriving DecidableEq, Fintype
 
-/-- Alphabets of the full machine: raw input `Fin r`, host alphabets, unit counters. -/
+/-- **Alphabets of the full machine.** For natural numbers $g, r$, the alphabet of a stack of the
+full machine is the host's alphabet with $g$ input codes on each host stack,
+$\{0, 1, \dots, r - 1\}$ on the raw input stack, and the one-point type on each private
+counter. -/
 abbrev FΓ (g r : ℕ) : FK → Type
   | .h k => HΓ g k
   | .raw => Fin r
   | .pc _ => Unit
 
-/-- Full labels: the read loop, the counter program, the host. -/
+/-- **Labels of the full machine.** For $D \in \mathbb{N}$ and a type $\Lambda$ of host labels,
+the labels of the full machine are the read-loop label, one label for each label of the counter
+program with $D$ Horner rounds, and one label for each element of $\Lambda$. -/
 inductive FL (D : ℕ) (Λ : Type)
   | rd
   | pre (l : PL D)
   | h (l : Λ)
   deriving DecidableEq, Fintype
 
-/-- Host counter receiving each target. -/
+/-- **Host counter of each target.** The map from the twelve targets to host stacks: $uT$ and $uH$
+go to the counters $T_n$ and $H_s$ of the update generator's block, $sT$ and $sH$ to those of the
+situation-definition generator's block, $hT$ and $hH$ to those of the shift generator's block,
+$aT$ and $aH$ to those of the accept generator's block, and $iT$, $iX$, $iE$, $iF$ to the counters
+$T_n$, $X_n$, $E_n$, $F_n$ of the init generator's block. -/
 def tgt : PT → HK
   | .uT => .up .Tn
   | .uH => .up .Hs
@@ -600,7 +772,10 @@ def tgt : PT → HK
   | .iE => .ini .En
   | .iF => .ini .Fn
 
-/-- Stack renaming of the counter program into the full machine. -/
+/-- **Stack renaming of the counter program.** The stack renaming of the counter program into the
+full machine sends the output stack to the host's output stack, each scratch counter $x$ to the
+full machine's private counter for $x$, and each target counter $y$ to the host counter that
+receives $y$. -/
 def eC : SK CC → FK
   | .out => .h .out
   | .c (.s x) => .pc x
@@ -610,7 +785,11 @@ section Embs
 
 variable (g r : ℕ)
 
-/-- The counter program's stacks inside the full machine. -/
+/-- **Embedding of the counter program's stacks.** For natural numbers $g, r$, the stack embedding
+of the counter program into the full machine with $g$ input codes and $r$ raw input symbols
+renames stacks by the stack renaming of the counter program and identifies the alphabet of each
+stack with that of its image by the identity (Booleans on the output stack, the one-point type
+on each counter). -/
 def embC : SEmb (SΓ CC) (FΓ g r) where
   e := eC
   inj := by
@@ -629,7 +808,9 @@ def embC : SEmb (SΓ CC) (FΓ g r) where
     | .c (.t y) => match y with
       | .uT | .uH | .sT | .sH | .hT | .hH | .aT | .aH | .iT | .iX | .iE | .iF => Equiv.refl _
 
-/-- The host's stacks inside the full machine. -/
+/-- **Embedding of the host's stacks.** For natural numbers $g, r$, the stack embedding of the
+host into the full machine with $g$ input codes and $r$ raw input symbols sends each host stack
+to the same host stack of the full machine and identifies their alphabets by the identity. -/
 def embH : SEmb (HΓ g) (FΓ g r) where
   e := FK.h
   inj := fun _ _ h => by cases h; rfl
@@ -641,16 +822,28 @@ section Read
 
 variable {g r D : ℕ} {Λ : Type}
 
-/-- **The read loop** (one label, one step per symbol). A peek-chain over the raw alphabet finds
-the top symbol `i`, pops it, pushes its code `cf i` on `inp` and one unit on `N`. On empty input
-it pushes the separator code `cs` and starts the counter program. -/
+/-- **The read loop.** Given a code map $c_f$ from the raw alphabet $\mathrm{Fin}\,r$ to the code
+alphabet $\mathrm{Fin}\,g$, a separator code $c_s$ and a list $L$ of raw symbols, the read-loop
+statement tests the symbols $i$ of $L$ in order against the top of the raw input stack. At the
+first $i$ found on top, it pops it, pushes $c_f(i)$ on the host input stack and one unit on the
+scratch counter $N$, and goes back to the read-loop label (with the flag true). If no symbol of
+$L$ is on top, in particular when the raw input is empty, it pushes $c_s$ on the input stack, sets
+the flag to false and goes to the first label of the counter program.
+
+The full program takes $L$ to be all of $\mathrm{Fin}\,r$, so each step reads one input symbol. -/
 def rdT (cf : Fin r → Fin g) (cs : Fin g) : List (Fin r) → TM2.Stmt (FΓ g r) (FL D Λ) Bool
   | [] => .push (.h .inp) (fun _ => cs) (.load (fun _ => false) (.goto fun _ => .pre .p1))
   | i :: L => .peek .raw (fun _ o => decide (o = some i))
       (.branch id (.pop .raw (fun v _ => v) (.push (.h .inp) (fun _ => cf i)
         (.push (.pc .N) (fun _ => ()) (.goto fun _ => .rd)))) (rdT cf cs L))
 
-/-- Stacks during the read loop: rest of the input, codes so far, `N = n`, output `o`. -/
+/-- **Stacks during the read loop.** For a list $s$ of raw symbols in $\mathrm{Fin}\,r$, a list
+$w$ of input codes in $\mathrm{Fin}\,g$, $n \in \mathbb{N}$ and a list $o$ of booleans, these are
+the stack contents of the full machine in which the raw-input stack holds $s$, the host input
+stack holds $w$, the host output stack holds $o$, the scratch counter $N$ holds $n$ units, and
+every other stack is empty.
+
+During the read loop, $s$ is the unread rest of the input and $w$ holds the codes read so far. -/
 def fst (s : List (Fin r)) (ins : List (Fin g)) (n : ℕ) (o : List Bool) : ∀ k, List (FΓ g r k)
   | .raw => s
   | .h .inp => ins
@@ -707,7 +900,14 @@ theorem rdT_nil (cf : Fin r → Fin g) (cs : Fin g) (ins : List (Fin g)) (n : �
       simp only [fst, List.head?_nil, reduceCtorEq, decide_false, id, Bool.cond_false]
       exact ih false
 
-/-- **The read loop's run**: `|s| + 1` steps; afterwards `inp = cs :: rev (cf s) ++ ins`. -/
+/-- **The read loop's run.** Let $M$ be a program of the full machine whose read-loop label carries
+the read loop over all of $\mathrm{Fin}\,r$, with code map $c_f$ and separator code $c_s$, and let
+$o$ be a list of booleans. For every raw input $s = s_1 \cdots s_\ell$, list of codes $w$,
+$n \in \mathbb{N}$ and flag $v$: started at the read-loop label with flag $v$, raw input stack $s$,
+input stack $w$, scratch counter $N = n$, output stack $o$ and every other stack empty, $M$ runs in
+exactly $\ell + 1$ steps to the counter program's first label, with flag false, raw input stack
+empty, input stack $c_s, c_f(s_\ell), \dots, c_f(s_1)$ followed by $w$, scratch counter
+$N = n + \ell$, output stack $o$ and every other stack empty. -/
 theorem read_run {M : FL D Λ → TM2.Stmt (FΓ g r) (FL D Λ) Bool} {cf : Fin r → Fin g} {cs : Fin g}
     (hM : M .rd = rdT cf cs (List.finRange r)) (o : List Bool) :
     ∀ (s : List (Fin r)) (ins : List (Fin g)) (n : ℕ) (v : Bool),
@@ -736,8 +936,17 @@ section Comp
 
 variable {g r : ℕ} {Λ : Type}
 
-/-- **The full program**: read loop, then the counter program (embedded on its own counters and
-the twelve host targets), then the host program `hp` from `start`. -/
+/-- **The full program.** Let $\gamma : \mathrm{Fin}\,r \to \mathrm{Fin}\,g$ code the raw
+symbols, let $\sigma \in \mathrm{Fin}\,g$ be a separator code, let $k$ be a polynomial with
+natural-number coefficients, let $c, e, d \in \mathbb{N}$, and let $h$ be a host program with
+labels $\Lambda$ and start label $\lambda_0 \in \Lambda$. The full program, whose counter-program
+labels have $D$ Horner rounds for $D$ the length of the coefficient list of $k$, runs at the
+read-loop label the read loop for $\gamma$ and $\sigma$ over all raw symbols; at a
+counter-program label $l$ other than the final one, the counter program for $k, c, e, d$ at $l$,
+embedded with its scratch counters on the full machine's private counters, its target counters on
+the corresponding host counters and its output on the host output; at the final counter-program
+label, a step that sets the state to false and jumps to the host label $\lambda_0$; and at a host
+label $l$, the statement $h(l)$ on the host stacks. -/
 noncomputable def fprog (cf : Fin r → Fin g) (cs : Fin g) (k : Polynomial ℕ) (c e d : ℕ) (hp : Λ → TM2.Stmt (HΓ g) Λ Bool)
     (start : Λ) : FL (coeffs k).length Λ → TM2.Stmt (FΓ g r) (FL (coeffs k).length Λ) Bool
   | .rd => rdT cf cs (List.finRange r)
@@ -769,10 +978,19 @@ theorem eC_ne_inp (k : SK CC) : eC k ≠ .h .inp := by
   rcases k with _ | (x | y) <;> simp [eC]
   cases y <;> simp [tgt]
 
-/-- **The precomputation** (read loop + counter program + one chaining step): from the raw input
-`s`, the full machine reaches the host's start label with exactly `real_run`'s preloads: `out`
-unchanged, `inp = cs :: rev (cf s)`, every target `tgt y` holding `tv … y`, every other host
-stack empty. -/
+/-- **The precomputation.** Fix the full program built from a code map $c_f$ from the raw alphabet
+$\mathrm{Fin}\,r$ to the code alphabet $\mathrm{Fin}\,g$, a separator code $c_s$, a polynomial $k$
+with natural coefficients, constants $c, e, d \in \mathbb{N}$, a host program and its start label.
+Let $s = s_1 \cdots s_n$ be a raw input word and $o$ a list of booleans. Started at the read-loop
+label with flag false, raw input stack $s$, output stack $o$ and every other stack empty, the full
+program reaches the host's start label with flag false within $n + 1 + B + 1$ steps, where $B$ is
+the counter program's step budget for $k, c, e, d$ at $n$. The stacks it reaches satisfy: the
+output stack is still $o$; the input stack is $c_s, c_f(s_n), \dots, c_f(s_1)$; for every target
+$y$, the host counter receiving $y$ has length equal to the target value of $y$ for $k, c, e, d$
+at $n$; and every host stack other than the output stack, the input stack and the host counters
+receiving targets is empty.
+
+These are the preloads that the assembled generator's run expects. -/
 theorem pre_run (s : List (Fin r)) (o : List Bool) :
     ∃ S : ∀ k, List (FΓ g r k),
       RunLe (fprog cf cs k c e d hp start) (s.length + 1 + cB k c e d s.length + 1)
@@ -814,14 +1032,27 @@ open Cslib.Complexity.CookLevin.Situation
 
 variable {r : ℕ} {M : FinTM2} (E : Enc M)
 
-/-- The full program on the real generators of `M`: raw symbols are coded by `encF E ∘ ι`, the
-separator by `encF E sep`; `d = depth M`. -/
+/-- **The full program on the real generators.** For an encoding $E$ of a machine $M$, a list
+$Y$ of symbols of the input stack alphabet of $M$, a symbol $a$ of the output stack alphabet of
+$M$, a map $\iota$ from the raw symbols $\mathrm{Fin}\,r$ to input stack symbols of $M$, an input
+stack symbol $\sigma$ of $M$ (the separator), a polynomial $k$ with natural-number coefficients
+and $c, e \in \mathbb{N}$, this is the full program in which each raw symbol $i$ is coded by the
+code of $\iota(i)$ under $E$, the separator code is the code of $\sigma$ under $E$,
+$d = \operatorname{depth} M$, the host program is the host running the real generators of $M$
+for $Y$ and $a$, and the host starts at the start label of its initial-row generator. -/
 noncomputable abbrev fullProg (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) :=
   fprog (fun i => InitFamily.encF E (ι i)) (InitFamily.encF E sep) k c e (depth M) (realProg E Ys acc)
     (.ini (.pre1 .eg))
 
-/-- Step bound of the full machine on an input of length `n`. -/
+/-- **Step bound of the full machine.** For an encoding $E$ of a machine $M$, a list $Y$ of
+symbols of the input stack alphabet of $M$, a polynomial $k$ with natural-number coefficients and
+$c, e, n \in \mathbb{N}$, write $m = n + 1 + k(n)$ and $T = (m + c)^e$. The bound is
+$n + 1 + C + 1 + R$, where $C$ is the step budget of the counter program for $k$, $c$, $e$,
+$d = \operatorname{depth} M$ and $n$, and $R$ is the host's step bound for $E$ and $Y$ at $m$
+and $T$.
+
+It bounds the number of steps of the full machine on a raw input of length $n$. -/
 noncomputable def fullB (Ys : List (M.Γ M.k₀)) (k : Polynomial ℕ) (c e n : ℕ) : ℕ :=
   n + 1 + cB k c e (depth M) n + 1 + realB E Ys (mOf k n) (TOf k c e n)
 
@@ -884,7 +1115,15 @@ theorem full_run (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M
     (S' := T1) (fun _ => (List.map_id _).symm)
   exact ⟨v, T2, r1.trans r2, ((a2 .out).trans (List.map_id _)).trans hout⟩
 
-/-- **The full machine as a genuine `FinTM2`**: input stack `raw`, output stack `h out`. -/
+/-- **The full machine as a finite multi-stack Turing machine.** Given $r \in \mathbb{N}$, an
+encoding $E$ of the machine $M$, a list $Y_s$ of input symbols of $M$, an output symbol $a$ of
+$M$, a map $\iota$ from $\{0, \dots, r - 1\}$ to input symbols of $M$, an input symbol $\sigma$ of
+$M$ (the separator), a polynomial $k$ with natural coefficients and $c, e \in \mathbb{N}$: the
+finite multi-stack machine whose stacks are the full stacks (the host's stacks, the raw input
+stack and the scratch counters) with the full alphabets, whose labels are the full labels, with
+start label the read label, internal states the booleans with initial state false, and program
+the full program built from these data. Its input stack is the raw input stack and its output
+stack is the host's output stack. -/
 noncomputable def fullTM (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) : FinTM2 where
   K := FK
@@ -897,7 +1136,15 @@ noncomputable def fullTM (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin
   initialState := false
   m := fullProg E Ys acc ι sep k c e
 
-/-- `initList` of the full machine is the read loop's start configuration. -/
+/-- **Initial configuration of the full machine.** Let $E$ be encoding data for a finite
+multi-stack Turing machine $M$, and let $r$ be a natural number. Fix a list $Y$ of input-stack
+symbols of $M$, an output-stack symbol $a$ of $M$, a map $\iota$ from $\{0, \dots, r-1\}$ to
+input-stack symbols of $M$, a separator input-stack symbol $\sigma$ of $M$, a polynomial $k$ with
+natural-number coefficients and natural numbers $c$ and $e$. On every raw input $s$, a word over
+$\{0, \dots, r-1\}$, the initial configuration of the full machine built from these data is at
+the read-loop label with internal state false, its raw-input stack holds $s$, and all its other
+stacks (the code stack, the output stack, the scratch counters and the remaining host stacks)
+are empty. -/
 theorem initList_full (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) (s : List (Fin r)) :
     initList (fullTM E Ys acc ι sep k c e) s = ⟨some .rd, false, fst s [] 0 []⟩ := by
@@ -913,7 +1160,9 @@ end Real
 
 /-! ## [POLY] The step bound is a polynomial in `|s|` -/
 
-/-- `f` is (pointwise) the evaluation of a polynomial with natural coefficients. -/
+/-- **Polynomial functions on the naturals.** A function $f : \mathbb{N} \to \mathbb{N}$ is
+polynomial when there is a polynomial $p$ with natural-number coefficients such that
+$f(n) = p(n)$ for every $n \in \mathbb{N}$. -/
 def IsPoly (f : ℕ → ℕ) : Prop := ∃ p : Polynomial ℕ, ∀ n, f n = p.eval n
 
 namespace IsPoly
@@ -933,7 +1182,11 @@ theorem pow {f : ℕ → ℕ} (hf : IsPoly f) (j : ℕ) : IsPoly fun n => f n ^ 
 
 theorem eval (p : Polynomial ℕ) : IsPoly fun n => p.eval n := ⟨p, fun _ => rfl⟩
 
-/-- The Horner step count is polynomial in the base. -/
+/-- **The Horner step count is polynomial.** Let $cs$ be a list of natural numbers and let
+$A : \mathbb{N} \to \mathbb{N}$ be a polynomial function, that is, there is a polynomial $q$ with
+natural-number coefficients such that $A(n) = q(n)$ for all $n$. Then $n \mapsto h(n, A(n))$ is a
+polynomial function in the same sense, where $h(b, a)$ is the step count of the Horner rounds over
+$cs$ with base $b$ from accumulator $a$. -/
 theorem hornT (cs : List ℕ) : ∀ {A : ℕ → ℕ}, IsPoly A → IsPoly fun n => Precompute.hornT cs n (A n) := by
   induction cs with
   | nil => intro A _; exact const 0
@@ -966,8 +1219,19 @@ theorem fullB_poly {M : FinTM2} (E : Situation.Enc M) (Ys : List (M.Γ M.k₀)) 
     | with_reducible apply IsPoly.mul
     | with_reducible apply IsPoly.pow
 
-/-- **Polynomial time bound of the composed machine**: one polynomial `p` (depending only on the
-machine's constants) bounds the step count on every raw input. -/
+/-- **Polynomial time bound of the composed machine.** Let $M$ be a finite multi-stack machine
+with encoding data $E$, let $Y$ be a list of symbols of the input stack of $M$, $a$ a symbol of
+its output stack, $\iota$ a map from the raw symbols $\mathrm{Fin}\,r$ to symbols of the input
+stack, $\sigma$ a symbol of the input stack (the separator), $k$ a polynomial with
+natural-number coefficients and $c, e \in \mathbb{N}$. Then there is a polynomial $p$ with
+natural-number coefficients such that the following holds for every raw input
+$s = s_1 \cdots s_n$ over $\mathrm{Fin}\,r$ and every list $o$ of booleans. Write
+$m = n + 1 + k(n)$, $T = (m + c)^e$ and $x = \iota(s_1) \cdots \iota(s_n)\,\sigma$. The full
+program on the real generators for $E$, $Y$, $a$, $\iota$, $\sigma$, $k$, $c$ and $e$, started at
+its read-loop label with flag false, $s$ on the raw input stack, $o$ on the host output stack and
+every other stack empty, reaches the host's final label within $p(n)$ steps, with some flag and
+some stack contents in which the host output stack holds the dense encoding of the formula
+$\Phi(x, Y, a, m, T)$ emitted by the host, followed by $o$. -/
 theorem full_time_poly {r : ℕ} {M : FinTM2} (E : Situation.Enc M) (Ys : List (M.Γ M.k₀))
     (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀) (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) :
     ∃ p : Polynomial ℕ, ∀ (s : List (Fin r)) (o : List Bool), ∃ (v : Bool) (S : ∀ k,
