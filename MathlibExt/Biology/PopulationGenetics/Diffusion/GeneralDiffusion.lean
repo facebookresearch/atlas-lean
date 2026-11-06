@@ -116,7 +116,8 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-! ### Ancestral selection graph duality -/
 
-/-- The generator of the line-counting process of the ancestral selection graph with scaled
+/-- **Generator of the ancestral selection graph line-counting process.**
+The generator of the line-counting process of the ancestral selection graph with scaled
 selection coefficient `σ` (time in units of `2N` generations, the scaling of `generator`):
 from `n` lines, branching `n → n + 1` at rate `n σ` and coalescence `n → n - 1` at rate
 `C(n, 2)`. -/
@@ -156,14 +157,16 @@ theorem generator_one_sub_pow (σ : ℝ) (n : ℕ) (x : ℝ) :
       Nat.cast_ofNat, Nat.cast_one, pow_succ]
     ring
 
-/-- The selection duality in operator form: `L_σ` applied to `y ↦ (1 - y) ^ n` equals the
+/-- **Selection duality in operator form.**
+The selection duality in operator form: `L_σ` applied to `y ↦ (1 - y) ^ n` equals the
 ancestral-selection-graph generator applied to `k ↦ (1 - x) ^ k` at `n`. -/
 theorem generator_one_sub_pow_eq_asgGenerator (σ : ℝ) (n : ℕ) (x : ℝ) :
     generator σ (fun y => (1 - y) ^ n) x = asgGenerator σ (fun k => (1 - x) ^ k) n := by
   rw [generator_one_sub_pow, asgGenerator]
   ring
 
-/-- The stationary law of the ancestral-selection-graph line-counting process with `σ > 0`:
+/-- **Stationary law of the ancestral selection graph line counts.**
+The stationary law of the ancestral-selection-graph line-counting process with `σ > 0`:
 `π_k = (2σ)^k / k! / (e^{2σ} - 1)` for `k ≥ 1` and `π_0 = 0`, a Poisson`(2σ)` law conditioned
 to be positive. For `σ = 0` the stationary law is `δ₁`: branching vanishes, coalescence
 reaches state `1`, and state `1` is absorbing, so `π_1 = 1` and `π_k = 0` otherwise (the
@@ -211,7 +214,8 @@ theorem asgStationary_global_balance (σ : ℝ) (k : ℕ) :
     ← asgStationary_detailed_balance σ (k + 1)]
   ring
 
-/-- For `σ > 0` the stationary weights are nonnegative. -/
+/-- **Stationary weights under selection are nonnegative.**
+For `σ > 0` the stationary weights are nonnegative. -/
 theorem asgStationary_nonneg {σ : ℝ} (hσ : 0 < σ) (k : ℕ) : 0 ≤ asgStationary σ k := by
   have h : asgStationary σ k =
       (if k = 0 then (0 : ℝ) else (2 * σ) ^ k / k ! / (exp (2 * σ) - 1)) := by
@@ -222,7 +226,8 @@ theorem asgStationary_nonneg {σ : ℝ} (hσ : 0 < σ) (k : ℕ) : 0 ≤ asgStat
   · apply div_nonneg (div_nonneg (by positivity) (by positivity))
     exact sub_nonneg.mpr (le_of_lt (Real.one_lt_exp_iff.mpr (by positivity)))
 
-/-- The probability generating function of the stationary law: for `σ > 0` and every real `y`,
+/-- **Generating function of the stationary law under selection.**
+The probability generating function of the stationary law: for `σ > 0` and every real `y`,
 `∑ₖ π_k y^k = (e^{2σy} - 1) / (e^{2σ} - 1)`. -/
 theorem hasSum_asgStationary_mul_pow {σ : ℝ} (hσ : 0 < σ) (y : ℝ) :
     HasSum (fun k => asgStationary σ k * y ^ k) ((exp (2 * σ * y) - 1) / (exp (2 * σ) - 1)) := by
@@ -242,14 +247,16 @@ theorem hasSum_asgStationary_mul_pow {σ : ℝ} (hσ : 0 < σ) (y : ℝ) :
       mul_pow]
     field_simp [hd]
 
-/-- For `σ > 0` the stationary weights sum to `1`. -/
+/-- **Stationary weights under selection sum to one.**
+For `σ > 0` the stationary weights sum to `1`. -/
 theorem hasSum_asgStationary {σ : ℝ} (hσ : 0 < σ) : HasSum (asgStationary σ) 1 := by
   have hd : exp (2 * σ) - 1 ≠ 0 :=
     ne_of_gt (sub_pos.mpr (Real.one_lt_exp_iff.mpr (by positivity)))
   simpa only [one_pow, mul_one, div_self hd] using
     hasSum_asgStationary_mul_pow hσ 1
 
-/-- The neutral stationary law is `δ₁`: its generating function is `y`. -/
+/-- **Neutral stationary law is the point mass at one.**
+The neutral stationary law is `δ₁`: its generating function is `y`. -/
 theorem hasSum_asgStationary_mul_pow_zero (y : ℝ) :
     HasSum (fun k => asgStationary 0 k * y ^ k) y := by
   have h : (fun k => asgStationary 0 k * y ^ k) = fun k => if k = 1 then y else 0 := by
@@ -261,14 +268,15 @@ theorem hasSum_asgStationary_mul_pow_zero (y : ℝ) :
   rw [h]
   exact hasSum_ite_eq 1 y
 
-/-- The neutral stationary weights sum to `1`. -/
+/-- **Neutral stationary weights sum to one.** The neutral stationary weights sum to `1`. -/
 theorem hasSum_asgStationary_zero : HasSum (asgStationary 0) 1 := by
   have h : asgStationary 0 = fun k => (if k = 1 then (1 : ℝ) else 0) := by
     funext k; simp [asgStationary]
   rw [h]
   exact hasSum_ite_eq 1 1
 
-/-- The loss probability in Kimura's formula, written with positive exponents: for `σ ≠ 0`,
+/-- **Loss probability in Kimura's fixation formula.**
+The loss probability in Kimura's formula, written with positive exponents: for `σ ≠ 0`,
 `1 - kimuraFixation σ x = (e^{2σ(1 - x)} - 1) / (e^{2σ} - 1)`. -/
 theorem one_sub_kimuraFixation {σ : ℝ} (hσ : σ ≠ 0) (x : ℝ) :
     1 - kimuraFixation σ x = (exp (2 * σ * (1 - x)) - 1) / (exp (2 * σ) - 1) := by
@@ -305,21 +313,25 @@ theorem hasSum_asgStationary_mul_one_sub_pow {σ : ℝ} (hσ : 0 < σ) (x : ℝ)
 
 /-! ### General one-dimensional diffusions -/
 
-/-- The backward generator of a one-dimensional diffusion with drift `b` and infinitesimal
+/-- **Backward generator of a one-dimensional diffusion.**
+The backward generator of a one-dimensional diffusion with drift `b` and infinitesimal
 variance `a`: `(L u)(x) = a(x) / 2 · u''(x) + b(x) · u'(x)`. -/
 noncomputable def diffusionGenerator (b a u : ℝ → ℝ) (x : ℝ) : ℝ :=
   a x / 2 * deriv (deriv u) x + b x * deriv u x
 
-/-- The scale density `ψ(y) = exp (-∫₀^y 2 b(z) / a(z) dz)` of the diffusion with drift `b`
+/-- **Scale density of a one-dimensional diffusion.**
+The scale density `ψ(y) = exp (-∫₀^y 2 b(z) / a(z) dz)` of the diffusion with drift `b`
 and variance `a` (Karlin–Taylor 1981, Chapter 15). -/
 noncomputable def scaleDensity (b a : ℝ → ℝ) (y : ℝ) : ℝ :=
   exp (-∫ z in (0 : ℝ)..y, 2 * b z / a z)
 
-/-- The scale function `S(p) = ∫₀^p ψ(y) dy`, normalized by `S(0) = 0`. -/
+/-- **Scale function of a one-dimensional diffusion.**
+The scale function `S(p) = ∫₀^p ψ(y) dy`, normalized by `S(0) = 0`. -/
 noncomputable def scaleFunction (b a : ℝ → ℝ) (p : ℝ) : ℝ :=
   ∫ y in (0 : ℝ)..p, scaleDensity b a y
 
-/-- The analytic Dirichlet ratio `S(p) / S(1)` for drift `b` and variance `a` (Kimura 1962;
+/-- **Dirichlet ratio $S(p)/S(1)$ of the scale function.**
+The analytic Dirichlet ratio `S(p) / S(1)` for drift `b` and variance `a` (Kimura 1962;
 Ewens 2004, Chapter 4). This is the solution of the backward boundary-value problem
 `L u = 0`, `u(0) = 0`, `u(1) = 1` (see `eq_fixationProb_of_diffusionGenerator_eq_zero`).
 It is the hitting probability `P_p(hit 1 before 0)` only when both boundaries are
@@ -328,7 +340,8 @@ the `a x = x² (1 - x)²` counterexample). -/
 noncomputable def fixationProb (b a : ℝ → ℝ) (p : ℝ) : ℝ :=
   scaleFunction b a p / scaleFunction b a 1
 
-/-- The Green's function (analytic Green kernel) of `-L` with Dirichlet conditions at `0` and `1`
+/-- **Dirichlet Green's function of a one-dimensional diffusion.**
+The Green's function (analytic Green kernel) of `-L` with Dirichlet conditions at `0` and `1`
 (Ewens 2004, Chapter 4; Karlin–Taylor 1981, Chapter 15):
 `G(p, x) = 2 S(min p x) (S(1) - S(max p x)) / (S(1) a(x) ψ(x))`. In the diffusion reading (not
 formalized, and requiring Feller-accessible boundaries), `G(p, x) dx` is the expected time
@@ -337,7 +350,8 @@ noncomputable def greenFunction (b a : ℝ → ℝ) (p x : ℝ) : ℝ :=
   2 * scaleFunction b a (min p x) * (scaleFunction b a 1 - scaleFunction b a (max p x)) /
     (scaleFunction b a 1 * a x * scaleDensity b a x)
 
-/-- Regularity hypotheses for a diffusion on `(0, 1)` with drift `b` and variance `a`: `a` is
+/-- **Standing regularity hypotheses for a diffusion on $(0, 1)$.**
+Regularity hypotheses for a diffusion on `(0, 1)` with drift `b` and variance `a`: `a` is
 positive and continuous on `(0, 1)`, `b / a` is continuous on `(0, 1)` and integrable on
 `[0, 1]` (so the scale function is finite up to both boundaries). The values of `b` and `a` at
 `0` and `1` are irrelevant. These are standing hypotheses for this file, not Feller's
@@ -354,11 +368,11 @@ structure IsRegularDiffusion (b a : ℝ → ℝ) : Prop where
   /-- The drift-to-variance ratio is integrable on `[0, 1]`. -/
   intervalIntegrable_div : IntervalIntegrable (fun x => b x / a x) volume 0 1
 
-/-- The scale density is positive. -/
+/-- **Positivity of the scale density.** The scale density is positive. -/
 theorem scaleDensity_pos (b a : ℝ → ℝ) (y : ℝ) : 0 < scaleDensity b a y :=
   exp_pos _
 
-/-- The scale function vanishes at `0`. -/
+/-- **Scale function vanishes at zero.** The scale function vanishes at `0`. -/
 @[simp]
 theorem scaleFunction_zero (b a : ℝ → ℝ) : scaleFunction b a 0 = 0 := by
   simp [scaleFunction]
@@ -421,7 +435,7 @@ private theorem continuousOn_two_mul_div (h : IsRegularDiffusion b a) :
     continuousOn_const.mul h.continuousOn_div
   simpa only [mul_div_assoc] using this
 
-/-- The scale density is continuous on `[0, 1]`. -/
+/-- **Continuity of the scale density on $[0, 1]$.** The scale density is continuous on `[0, 1]`. -/
 theorem continuousOn_scaleDensity (h : IsRegularDiffusion b a) :
     ContinuousOn (scaleDensity b a) (Icc 0 1) := by
   have hc := intervalIntegral.continuousOn_primitive_interval' h.intervalIntegrable_two_mul_div
@@ -429,7 +443,7 @@ theorem continuousOn_scaleDensity (h : IsRegularDiffusion b a) :
   rw [uIcc_of_le zero_le_one] at hc
   exact hc.neg.rexp
 
-/-- `ψ' = -(2 b / a) ψ` inside the interval. -/
+/-- **Derivative of the scale density.** `ψ' = -(2 b / a) ψ` inside the interval. -/
 theorem hasDerivAt_scaleDensity (h : IsRegularDiffusion b a) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     HasDerivAt (scaleDensity b a) (-(2 * b x / a x) * scaleDensity b a x) x := by
   have hI : HasDerivAt (fun y => ∫ z in (0 : ℝ)..y, 2 * b z / a z) (2 * b x / a x) x :=
@@ -441,7 +455,7 @@ theorem hasDerivAt_scaleDensity (h : IsRegularDiffusion b a) {x : ℝ} (hx : x �
       (h.continuousOn_two_mul_div.continuousAt (Ioo_mem_nhds hx.1 hx.2))
   convert hI.neg.exp using 1 <;> first | rfl | (rw [mul_comm]; rfl)
 
-/-- `S' = ψ` inside the interval. -/
+/-- **Derivative of the scale function is the scale density.** `S' = ψ` inside the interval. -/
 theorem hasDerivAt_scaleFunction (h : IsRegularDiffusion b a) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) : HasDerivAt (scaleFunction b a) (scaleDensity b a x) x := by
   exact intervalIntegral.integral_hasDerivAt_right
@@ -451,7 +465,8 @@ theorem hasDerivAt_scaleFunction (h : IsRegularDiffusion b a) {x : ℝ}
       isOpen_Ioo x hx)
     (h.continuousOn_scaleDensity.continuousAt (Icc_mem_nhds hx.1 hx.2))
 
-/-- The scale function is continuous on `[0, 1]`. -/
+/-- **Continuity of the scale function on $[0, 1]$.**
+The scale function is continuous on `[0, 1]`. -/
 theorem continuousOn_scaleFunction (h : IsRegularDiffusion b a) :
     ContinuousOn (scaleFunction b a) (Icc 0 1) := by
   have hc := intervalIntegral.continuousOn_primitive_interval'
@@ -459,7 +474,8 @@ theorem continuousOn_scaleFunction (h : IsRegularDiffusion b a) :
     (left_mem_uIcc (a := (0 : ℝ)) (b := 1))
   rwa [uIcc_of_le zero_le_one] at hc
 
-/-- The scale function is strictly increasing on `[0, 1]`. -/
+/-- **Scale function is strictly increasing.**
+The scale function is strictly increasing on `[0, 1]`. -/
 theorem strictMonoOn_scaleFunction (h : IsRegularDiffusion b a) :
     StrictMonoOn (scaleFunction b a) (Icc 0 1) := by
   intro x hx y hy hxy
@@ -472,16 +488,17 @@ theorem strictMonoOn_scaleFunction (h : IsRegularDiffusion b a) :
   simp only [scaleFunction] at this ⊢
   linarith
 
-/-- `S(1) > 0`, so the scale-function ratio and the Green's function have a positive
+/-- **Scale function is positive at one.**
+`S(1) > 0`, so the scale-function ratio and the Green's function have a positive
 denominator. -/
 theorem scaleFunction_one_pos (h : IsRegularDiffusion b a) : 0 < scaleFunction b a 1 := by
   simpa using h.strictMonoOn_scaleFunction ⟨le_rfl, zero_le_one⟩ ⟨zero_le_one, le_rfl⟩ one_pos
 
-/-- A fixed allele stays fixed. -/
+/-- **Dirichlet ratio equals one at $p = 1$.** A fixed allele stays fixed. -/
 theorem fixationProb_one (h : IsRegularDiffusion b a) : fixationProb b a 1 = 1 := by
   exact div_self h.scaleFunction_one_pos.ne'
 
-/-- The scale-function ratio lies in `[0, 1]`. -/
+/-- **Dirichlet ratio lies in $[0, 1]$.** The scale-function ratio lies in `[0, 1]`. -/
 theorem fixationProb_mem_Icc (h : IsRegularDiffusion b a) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb b a p ∈ Icc (0 : ℝ) 1 := by
   have h0 : 0 ≤ scaleFunction b a p := by
@@ -492,7 +509,8 @@ theorem fixationProb_mem_Icc (h : IsRegularDiffusion b a) {p : ℝ} (hp : p ∈ 
 
 end IsRegularDiffusion
 
-/-- An absent allele is never fixed (for every `b`, `a`). -/
+/-- **Dirichlet ratio vanishes at $p = 0$.**
+An absent allele is never fixed (for every `b`, `a`). -/
 @[simp]
 theorem fixationProb_zero (b a : ℝ → ℝ) : fixationProb b a 0 = 0 := by
   simp [fixationProb]
@@ -718,7 +736,8 @@ theorem diffusionGenerator_integral_greenFunction {b a g : ℝ → ℝ} (h : IsR
   field_simp
   ring
 
-/-- Dirichlet condition at `0`: `∫₀¹ G(0, x) g(x) dx = 0` (for every `b`, `a`, `g`). -/
+/-- **Dirichlet condition of the Green's function at zero.**
+Dirichlet condition at `0`: `∫₀¹ G(0, x) g(x) dx = 0` (for every `b`, `a`, `g`). -/
 theorem integral_greenFunction_zero_left (b a g : ℝ → ℝ) :
     ∫ x in (0 : ℝ)..1, greenFunction b a 0 x * g x = 0 := by
   refine (intervalIntegral.integral_congr_ae (g := fun _ => (0 : ℝ))
@@ -726,7 +745,8 @@ theorem integral_greenFunction_zero_left (b a g : ℝ → ℝ) :
   rw [uIoc_of_le zero_le_one] at hx
   simp [greenFunction, min_eq_left hx.1.le]
 
-/-- Dirichlet condition at `1`: `∫₀¹ G(1, x) g(x) dx = 0` (for every `b`, `a`, `g`). -/
+/-- **Dirichlet condition of the Green's function at one.**
+Dirichlet condition at `1`: `∫₀¹ G(1, x) g(x) dx = 0` (for every `b`, `a`, `g`). -/
 theorem integral_greenFunction_one_left (b a g : ℝ → ℝ) :
     ∫ x in (0 : ℝ)..1, greenFunction b a 1 x * g x = 0 := by
   refine (intervalIntegral.integral_congr_ae (g := fun _ => (0 : ℝ))
@@ -736,13 +756,15 @@ theorem integral_greenFunction_one_left (b a g : ℝ → ℝ) :
 
 /-! ### Genic selection and dominance -/
 
-/-- The general generator with drift `σ x (1 - x)` and variance `x (1 - x)` is the Wright–Fisher
+/-- **Wright–Fisher generator with genic selection as a general diffusion.**
+The general generator with drift `σ x (1 - x)` and variance `x (1 - x)` is the Wright–Fisher
 generator with genic selection. -/
 theorem diffusionGenerator_wrightFisher (σ : ℝ) (u : ℝ → ℝ) :
     diffusionGenerator (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) u = generator σ u := by
   rfl
 
-/-- The Wright–Fisher diffusion with genic selection is regular. -/
+/-- **Wright–Fisher diffusion with genic selection is regular.**
+The Wright–Fisher diffusion with genic selection is regular. -/
 theorem isRegularDiffusion_wrightFisher (σ : ℝ) :
     IsRegularDiffusion (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) := by
   have hEq : EqOn (fun x => σ * x * (1 - x) / (x * (1 - x))) (fun _ => σ) (Ioo 0 1) := by
@@ -757,7 +779,8 @@ theorem isRegularDiffusion_wrightFisher (σ : ℝ) :
       continuousOn_div := continuousOn_const.congr hEq
       intervalIntegrable_div := intervalIntegrable_of_eqOn_Ioo intervalIntegrable_const hEq }
 
-/-- The scale density of the Wright–Fisher diffusion with genic selection is `e^{-2σy}` on
+/-- **Scale density of the Wright–Fisher diffusion with genic selection.**
+The scale density of the Wright–Fisher diffusion with genic selection is `e^{-2σy}` on
 `[0, 1]`. -/
 theorem scaleDensity_wrightFisher (σ : ℝ) {y : ℝ} (hy : y ∈ Icc (0 : ℝ) 1) :
     scaleDensity (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) y = exp (-2 * σ * y) := by
@@ -788,7 +811,8 @@ theorem fixationProb_wrightFisher (σ : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ)
   · intro x _
     rw [diffusionGenerator_wrightFisher, generator_kimuraFixation]
 
-/-- The general Green's function of the neutral Wright–Fisher diffusion (`b = 0`,
+/-- **General Green's function agrees with the neutral Wright–Fisher one.**
+The general Green's function of the neutral Wright–Fisher diffusion (`b = 0`,
 `a = x (1 - x)`) is the neutral Green's function of `Sojourn.lean` for `x ∈ (0, 1)`. -/
 theorem greenFunction_neutral (p : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     greenFunction (fun _ => 0) (fun x => x * (1 - x)) p x = neutralGreen p x := by
@@ -806,13 +830,14 @@ theorem greenFunction_neutral (p : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     rw [min_eq_left hxp.le, max_eq_right hxp.le]
     field_simp
 
-/-- The drift `2 c x (1 - x) (h + (1 - 2h) x)` of an allele at frequency `x` with genotype
+/-- **Drift of an allele under selection with dominance.**
+The drift `2 c x (1 - x) (h + (1 - 2h) x)` of an allele at frequency `x` with genotype
 fitnesses `1`, `1 + h s`, `1 + s` (for zero, one and two copies), `c = N s`, time in units of
 `2N` generations (Kimura 1962). For `h = 1/2` it is genic selection with `σ = c`. -/
 noncomputable def dominanceDrift (c h x : ℝ) : ℝ :=
   2 * c * x * (1 - x) * (h + (1 - 2 * h) * x)
 
-/-- The diffusion with dominance is regular. -/
+/-- **Diffusion with dominance is regular.** The diffusion with dominance is regular. -/
 theorem isRegularDiffusion_dominance (c h : ℝ) :
     IsRegularDiffusion (dominanceDrift c h) (fun x => x * (1 - x)) := by
   have hEq : EqOn (fun x => dominanceDrift c h x / (x * (1 - x)))
@@ -872,7 +897,8 @@ theorem fixationProb_dominance (c h : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1
 
 /-! ### Conditional fixation and loss times -/
 
-/-- The sojourn density conditioned on fixation, the Doob `h`-transform of the Green's function
+/-- **Sojourn density conditioned on fixation.**
+The sojourn density conditioned on fixation, the Doob `h`-transform of the Green's function
 by the fixation probability `u`: `G(p, x) u(x) / u(p)` (Kimura–Ohta 1969; Ewens 2004, Chapter 4).
 At `p = 0` it is the junk value `0`. -/
 noncomputable def conditionalGreen (b a : ℝ → ℝ) (p x : ℝ) : ℝ :=
@@ -905,19 +931,22 @@ theorem diffusionGenerator_mul_integral_conditionalGreen {b a : ℝ → ℝ}
   simp only [conditionalGreen, intervalIntegral.integral_div]
   field_simp
 
-/-- The neutral conditional mean time to fixation `t̄₁(p) = -2 (1 - p) log (1 - p) / p`, in
+/-- **Neutral conditional mean time to fixation.**
+The neutral conditional mean time to fixation `t̄₁(p) = -2 (1 - p) log (1 - p) / p`, in
 units of `2N` generations (Kimura–Ohta 1969). It is meaningful for `p ∈ (0, 1)`; at `p = 0`
 the division gives the junk value `0` (the limit is `2`, see
 `tendsto_neutralFixationTime_zero`). -/
 noncomputable def neutralFixationTime (p : ℝ) : ℝ :=
   -2 * (1 - p) * log (1 - p) / p
 
-/-- The neutral conditional mean time to loss `t̄₀(p) = -2 p log p / (1 - p)`, in units of
+/-- **Neutral conditional mean time to loss.**
+The neutral conditional mean time to loss `t̄₀(p) = -2 p log p / (1 - p)`, in units of
 `2N` generations (Kimura–Ohta 1969). It is meaningful for `p ∈ (0, 1)`. -/
 noncomputable def neutralLossTime (p : ℝ) : ℝ :=
   -2 * p * log p / (1 - p)
 
-/-- Loss of an allele at frequency `p` is fixation of the other allele at `1 - p`. -/
+/-- **Neutral loss time equals fixation time at $1 - p$.**
+Loss of an allele at frequency `p` is fixation of the other allele at `1 - p`. -/
 theorem neutralLossTime_eq (p : ℝ) : neutralLossTime p = neutralFixationTime (1 - p) := by
   unfold neutralLossTime neutralFixationTime
   rw [sub_sub_cancel]
@@ -1038,7 +1067,8 @@ private theorem hasDerivAt_neutral_product (p : ℝ) (hp : 1 - p ≠ 0) :
   · field_simp
     ring
 
-/-- The neutral conditional fixation time satisfies the conditioned backward equation
+/-- **Backward equation for the neutral conditional fixation time.**
+The neutral conditional fixation time satisfies the conditioned backward equation
 `L_0 (p · t̄₁(p)) = -p` on `(0, 1)`. -/
 theorem generator_mul_neutralFixationTime {p : ℝ} (hp : p ∈ Ioo (0 : ℝ) 1) :
     generator 0 (fun q => q * neutralFixationTime q) p = -p := by

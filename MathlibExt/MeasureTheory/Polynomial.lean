@@ -106,7 +106,8 @@ private theorem measure_zero_fin (F : Type*) [Field F]
 
 -- Retain the source theorem's explicit `Fintype` assumption.
 set_option linter.unusedFintypeInType false in
-/-- A nonzero multivariate polynomial over a nondiscrete locally compact
+/-- **Nonzero polynomials over nondiscrete fields have Haar-null zero sets.**
+A nonzero multivariate polynomial over a nondiscrete locally compact
 second-countable Hausdorff topological field has an additive Haar-null zero set.
 This includes the empty variable type. -/
 public theorem measure_setOf_eval_eq_zero_of_ne_zero

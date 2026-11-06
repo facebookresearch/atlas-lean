@@ -38,7 +38,8 @@ variable {K K' : Type} [DecidableEq K] [DecidableEq K']
   (E : SEmb Γ Γ') (φ : Λ → Λ')
   {M : Λ → TM2.Stmt Γ Λ σ} {M' : Λ' → TM2.Stmt Γ' Λ' σ}
 
-/-- Exact program matching transports a run, including a halted endpoint, while preserving
+/-- **Exact program matching transports a run with its step count.**
+Exact program matching transports a run, including a halted endpoint, while preserving
 the local state, embedded stacks, untouched host stacks, and exact number of steps. -/
 theorem run_embed_exact (hM : ∀ l, M' (φ l) = mapS E φ (M l))
     {n : ℕ} {l l' : Option Λ} {v v' : σ}
@@ -81,7 +82,8 @@ private theorem agree_frame_ext
   · have hnot : ∀ k, E.e k ≠ k' := fun k he => hk ⟨k, he⟩
     exact (hF₁ k' hnot).trans (hF₂ k' hnot).symm
 
-/-- Source-shaped transport to supplied host final stacks: agreement fixes embedded slots
+/-- **Exact run transport to supplied host final stacks.**
+Source-shaped transport to supplied host final stacks: agreement fixes embedded slots
 and the frame condition fixes every other slot, so the host endpoint is exact. -/
 theorem run_embed_exact_of_agree_frame (hM : ∀ l, M' (φ l) = mapS E φ (M l))
     {n : ℕ} {l l' : Option Λ} {v v' : σ}
@@ -93,7 +95,8 @@ theorem run_embed_exact_of_agree_frame (hM : ∀ l, M' (φ l) = mapS E φ (M l))
   have heq := agree_frame_ext E hA' hT hF' hF
   rwa [heq] at hr
 
-/-- Exact matching transports a bounded run with arbitrary optional endpoints, retaining
+/-- **Exact matching transports a bounded run.**
+Exact matching transports a bounded run with arbitrary optional endpoints, retaining
 the same step witness and budget as well as agreement and the host frame. -/
 theorem runLe_embed_exact (hM : ∀ l, M' (φ l) = mapS E φ (M l))
     {B : ℕ} {l l' : Option Λ} {v v' : σ}

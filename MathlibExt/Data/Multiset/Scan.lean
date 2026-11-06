@@ -33,7 +33,8 @@ instance : Std.LawfulIdentity (α := Multiset α) (· + ·) 0 where
   left_id := Multiset.zero_add
   right_id := Multiset.add_zero
 
-/-- Compute a list representative of a submultiset by scanning a supplied list.
+/-- **List representative of a submultiset by scanning a list.**
+Compute a list representative of a submultiset by scanning a supplied list.
 The resulting list preserves the order of the selected occurrences in the supplied list. -/
 def scanToList [DecidableEq α] (l : List α) (s : Multiset α)
     (h : s ≤ (l : Multiset α)) : {l' : List α // (l' : Multiset α) = s} :=

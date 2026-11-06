@@ -59,12 +59,14 @@ open scoped Topology NNReal
 
 namespace MathlibExt.Biology.Phylogenetics.MotifConservation
 
-/-- The upper tail `P(X ≥ k) = ∑_{i = k}^{n} C(n, i) p^i (1 - p)^(n - i)` of the binomial law
+/-- **Upper tail of the binomial distribution.**
+The upper tail `P(X ≥ k) = ∑_{i = k}^{n} C(n, i) p^i (1 - p)^(n - i)` of the binomial law
 `Bin(n, p)`. -/
 noncomputable def binomTail (n k : ℕ) (p : ℝ) : ℝ :=
   ∑ i ∈ Icc k n, (n.choose i : ℝ) * p ^ i * (1 - p) ^ (n - i)
 
-/-- `P(X ≥ 0) = 1`, for every real `p` (the binomial theorem). -/
+/-- **Binomial upper tail at zero equals one.**
+`P(X ≥ 0) = 1`, for every real `p` (the binomial theorem). -/
 theorem binomTail_zero (n : ℕ) (p : ℝ) : binomTail n 0 p = 1 := by
   have h := (add_pow p (1 - p) n).symm
   rw [add_sub_cancel, one_pow] at h
@@ -72,7 +74,7 @@ theorem binomTail_zero (n : ℕ) (p : ℝ) : binomTail n 0 p = 1 := by
   rw [binomTail, hI]
   exact (sum_congr rfl fun i _ => by ring).trans h
 
-/-- `P(X ≥ k) = 0` for `k > n`. -/
+/-- **Binomial upper tail vanishes beyond $n$.** `P(X ≥ k) = 0` for `k > n`. -/
 theorem binomTail_of_lt {n k : ℕ} (h : n < k) (p : ℝ) : binomTail n k p = 0 := by
   rw [binomTail, Icc_eq_empty (not_le.2 h), sum_empty]
 
@@ -198,7 +200,8 @@ theorem strictMonoOn_binomTail {n k : ℕ} (hk : 1 ≤ k) (hkn : k ≤ n) :
 exact score. -/
 noncomputable def mcsApprox (N : ℕ) (k p : ℝ) : ℝ := (k - N * p) / Real.sqrt (N * p * (1 - p))
 
-/-- The MCS approximation is strictly increasing in the conserved count, for `N ≥ 1` and `p ∈ (0, 1)`. -/
+/-- **Motif conservation score approximation is strictly increasing.**
+The MCS approximation is strictly increasing in the conserved count, for `N ≥ 1` and `p ∈ (0, 1)`. -/
 theorem mcsApprox_strictMono {N : ℕ} (hN : 0 < N) {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
     StrictMono fun k => mcsApprox N k p := by
   intro a b hab
@@ -206,7 +209,8 @@ theorem mcsApprox_strictMono {N : ℕ} (hN : 0 < N) {p : ℝ} (hp0 : 0 < p) (hp1
     Real.sqrt_pos.2 (mul_pos (mul_pos (Nat.cast_pos.2 hN) hp0) (sub_pos.2 hp1))
   exact div_lt_div_of_pos_right (by linarith) hs
 
-/-- The MCS approximation of the number of conserved occurrences among the first `n` is the
+/-- **Motif conservation score approximation as a de Moivre–Laplace sum.**
+The MCS approximation of the number of conserved occurrences among the first `n` is the
 de Moivre–Laplace standardized sum. -/
 theorem mcsApprox_sum_eq {Ω : Type*} (X : ℕ → Ω → ℝ) (p : ℝ) (n : ℕ) (ω : Ω) :
     mcsApprox n (∑ i ∈ range n, X i ω) p = deMoivreLaplaceStandardized X p n ω := rfl

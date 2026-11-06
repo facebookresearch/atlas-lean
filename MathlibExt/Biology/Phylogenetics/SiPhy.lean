@@ -68,7 +68,8 @@ frequencies `π`. -/
 noncomputable def siphyRate (ω : ℝ) (R : Matrix ι ι ℝ) (π : ι → ℝ) : Matrix ι ι ℝ :=
   ω • gtrRate π R
 
-/-- With `ω ≥ 0`, nonnegative `R` and nonnegative `π`, the SiPhy matrix is a rate matrix. -/
+/-- **SiPhy matrix is a rate matrix.**
+With `ω ≥ 0`, nonnegative `R` and nonnegative `π`, the SiPhy matrix is a rate matrix. -/
 theorem isRateMatrix_siphyRate {ω : ℝ} {R : Matrix ι ι ℝ} {π : ι → ℝ} (hω : 0 ≤ ω)
     (hR : ∀ a b, 0 ≤ R a b) (hπ : ∀ b, 0 ≤ π b) : IsRateMatrix (siphyRate ω R π) := by
   have h := isRateMatrix_gtrRate hπ (fun a b _ => hR a b)
@@ -93,23 +94,27 @@ noncomputable def expectedLogLik (n : Matrix ι ι ℝ) (τ r : ι → ℝ) (Q :
   ∑ a, ∑ b, (if a = b then 0 else n a b * log (Q a b)) + ∑ a, τ a * Q a a +
     ∑ b, r b * log (π b)
 
-/-- The expected total number of substitutions `N = ∑_{a ≠ b} n a b`. -/
+/-- **Expected total number of substitutions.**
+The expected total number of substitutions `N = ∑_{a ≠ b} n a b`. -/
 def totalCount (n : Matrix ι ι ℝ) : ℝ := ∑ a, ∑ b, if a = b then 0 else n a b
 
-/-- The weight `c b = ∑_{a ≠ b} n a b + r b` of state `b`: substitutions into `b` plus the root
+/-- **Weight of a state: substitutions into it plus root posterior.**
+The weight `c b = ∑_{a ≠ b} n a b + r b` of state `b`: substitutions into `b` plus the root
 posterior of `b`. -/
 def inCount (n : Matrix ι ι ℝ) (r : ι → ℝ) (b : ι) : ℝ :=
   ∑ a, (if a = b then 0 else n a b) + r b
 
-/-- The time-weighted exchange rate into `b`, `e b = ∑_{a ≠ b} τ a R a b`. -/
+/-- **Time-weighted exchange rate into a state.**
+The time-weighted exchange rate into `b`, `e b = ∑_{a ≠ b} τ a R a b`. -/
 def exitWeight (τ : ι → ℝ) (R : Matrix ι ι ℝ) (b : ι) : ℝ :=
   ∑ a, if a = b then 0 else τ a * R a b
 
-/-- The part of Eq. 6 that depends on `π` (for fixed `ω`):
+/-- **Part of the SiPhy objective depending on the constraint vector.**
+The part of Eq. 6 that depends on `π` (for fixed `ω`):
 `∑ b, (c b * log (π b) - d b * π b)`. -/
 noncomputable def piObjective (c d π : ι → ℝ) : ℝ := ∑ b, (c b * log (π b) - d b * π b)
 
-/-- The `n log R` constant of Eq. 6. -/
+/-- **Constant $n \log R$ term of the SiPhy objective.** The `n log R` constant of Eq. 6. -/
 noncomputable def exchangeTerm (n R : Matrix ι ι ℝ) : ℝ :=
   ∑ a, ∑ b, if a = b then 0 else n a b * log (R a b)
 

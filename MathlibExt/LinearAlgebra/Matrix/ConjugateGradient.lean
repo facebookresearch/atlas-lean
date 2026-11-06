@@ -69,16 +69,18 @@ open Matrix
 
 namespace MathlibExt.LinearAlgebra.Matrix.ConjugateGradient
 
-/-- The energy norm `‖v‖_A = √(vᵀ A v)`; a norm when `A` is positive definite. -/
+/-- **Energy norm induced by a matrix.**
+The energy norm `‖v‖_A = √(vᵀ A v)`; a norm when `A` is positive definite. -/
 noncomputable def energyNorm {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) : ℝ :=
   √(v ⬝ᵥ (A *ᵥ v))
 
-/-- The Krylov space `𝒦_k(A, r) = span {r, A r, …, A^{k-1} r}`. -/
+/-- **Krylov subspace.** The Krylov space `𝒦_k(A, r) = span {r, A r, …, A^{k-1} r}`. -/
 noncomputable def krylov {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (r : Fin n → ℝ) (k : ℕ) :
     Submodule ℝ (Fin n → ℝ) :=
   Submodule.span ℝ (Set.range fun i : Fin k => (A ^ (i : ℕ)) *ᵥ r)
 
-/-- The state of the conjugate gradient method: iterate `x`, residual `r = b - A x` and search
+/-- **State of the conjugate gradient method.**
+The state of the conjugate gradient method: iterate `x`, residual `r = b - A x` and search
 direction `d`. -/
 structure State (n : ℕ) where
   /-- The current iterate. -/
@@ -88,7 +90,8 @@ structure State (n : ℕ) where
   /-- The current search direction. -/
   d : Fin n → ℝ
 
-/-- One Hestenes–Stiefel conjugate gradient step. -/
+/-- **One Hestenes–Stiefel conjugate gradient step.**
+One Hestenes–Stiefel conjugate gradient step. -/
 noncomputable def step {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (s : State n) : State n :=
   let α := (s.r ⬝ᵥ s.r) / (s.d ⬝ᵥ (A *ᵥ s.d))
   let r' := s.r - α • (A *ᵥ s.d)
@@ -96,11 +99,12 @@ noncomputable def step {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (s : State n) 
     r := r'
     d := r' + ((r' ⬝ᵥ r') / (s.r ⬝ᵥ s.r)) • s.d }
 
-/-- The initial state `x₀`, `r₀ = d₀ = b - A x₀`. -/
+/-- **Initial conjugate gradient state.** The initial state `x₀`, `r₀ = d₀ = b - A x₀`. -/
 def init {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (b x₀ : Fin n → ℝ) : State n :=
   ⟨x₀, b - A *ᵥ x₀, b - A *ᵥ x₀⟩
 
-/-- The `k`-th conjugate gradient state from `x₀` for the system `A x = b`. -/
+/-- **Conjugate gradient state after $k$ steps.**
+The `k`-th conjugate gradient state from `x₀` for the system `A x = b`. -/
 noncomputable def iterate {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (b x₀ : Fin n → ℝ) (k : ℕ) :
     State n :=
   (step A)^[k] (init A b x₀)
@@ -570,7 +574,8 @@ theorem energyNorm_iterate_sub_le {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ}
   rw [mulVec_sub, hxs] at hz
   exact energyNorm_iterate_le hA hxs x₀ k hz
 
-/-- The spectral condition number `λ_max / λ_min` of a positive definite matrix. For `n = 0` it
+/-- **Spectral condition number of a positive definite matrix.**
+The spectral condition number `λ_max / λ_min` of a positive definite matrix. For `n = 0` it
 is `0 / 0 = 0` (no eigenvalues), a junk value; the bound below is stated for `0 < n`. -/
 noncomputable def condNum {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : A.PosDef) : ℝ :=

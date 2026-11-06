@@ -104,24 +104,27 @@ private lemma hasSum_integral_of_nonneg {F : ℕ → ℝ → ℝ} {g : ℝ → �
     (hsum.mono fun _ hr => hr.summable)
     (hg.congr (hsum.mono fun _ hr => hr.tsum_eq.symm)) hsum
 
-/-- The mixed Poisson mass function `p(k) = ∫ e^{-λ} λ^k / k! dν(λ)` for a mixing law `ν` of the
+/-- **Mixed Poisson mass function.**
+The mixed Poisson mass function `p(k) = ∫ e^{-λ} λ^k / k! dν(λ)` for a mixing law `ν` of the
 rate. It is a probability mass function when `ν` is a probability measure concentrated on
 `[0, ∞)`, which the theorems below assume; for such `ν` the integrand lies in `[0, 1]`, so the
 integral is never a junk value. -/
 noncomputable def poissonMixtureReal (ν : Measure ℝ) (k : ℕ) : ℝ :=
   ∫ r, exp (-r) * r ^ k / (k ! : ℝ) ∂ν
 
-/-- The zero class of a mixed Poisson law is `E e^{-Λ}`. -/
+/-- **Zero class of a mixed Poisson law.** The zero class of a mixed Poisson law is `E e^{-Λ}`. -/
 theorem poissonMixtureReal_zero (ν : Measure ℝ) :
     poissonMixtureReal ν 0 = ∫ r, exp (-r) ∂ν := by
   simp [poissonMixtureReal]
 
-/-- The mixed Poisson mass function is nonnegative when `ν` is concentrated on `[0, ∞)`. -/
+/-- **Nonnegativity of the mixed Poisson mass function.**
+The mixed Poisson mass function is nonnegative when `ν` is concentrated on `[0, ∞)`. -/
 theorem poissonMixtureReal_nonneg (h0 : ∀ᵐ r ∂ν, 0 ≤ r) (k : ℕ) :
     0 ≤ poissonMixtureReal ν k :=
   integral_nonneg_of_ae (h0.mono fun r hr => by positivity)
 
-/-- The Poisson mixture over a point mass `δ_m` is the Poisson law with mean `m`. -/
+/-- **Poisson mixture over a point mass is Poisson.**
+The Poisson mixture over a point mass `δ_m` is the Poisson law with mean `m`. -/
 theorem poissonMixtureReal_dirac (m : ℝ) (k : ℕ) :
     poissonMixtureReal (Measure.dirac m) k = exp (-m) * m ^ k / k ! := by
   simp [poissonMixtureReal]

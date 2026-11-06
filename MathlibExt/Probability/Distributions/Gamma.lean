@@ -252,7 +252,7 @@ theorem Ioo_subset_interior_integrableExpSet_gammaMeasure {a r ε : ℝ}
 /- Generic Gamma moments and integrals (moved here from the negative
 binomial development, which uses them for the Gamma–Poisson mixture). -/
 
-/-- `Γ(a + k) = a⁽ᵏ⁾ Γ(a)` for `a > 0`. -/
+/-- **Gamma function at $a + k$ via the rising factorial.** `Γ(a + k) = a⁽ᵏ⁾ Γ(a)` for `a > 0`. -/
 lemma Gamma_add_nat_eq {a : ℝ} (ha : 0 < a) (k : ℕ) :
     Real.Gamma (a + k) = (ascPochhammer ℝ k).eval a * Real.Gamma a := by
   induction k with
@@ -262,7 +262,8 @@ lemma Gamma_add_nat_eq {a : ℝ} (ha : 0 < a) (k : ℕ) :
       ascPochhammer_succ_eval]
     ring
 
-/-- `rᵏ r^(a - 1) = r^(a + k - 1)` for `r ≥ 0` and `a > 0`. -/
+/-- **$r^k r^{a-1} = r^{a+k-1}$ for nonnegative $r$.**
+`rᵏ r^(a - 1) = r^(a + k - 1)` for `r ≥ 0` and `a > 0`. -/
 lemma pow_mul_rpow_sub_one {r a : ℝ} (hr : 0 ≤ r) (ha : 0 < a) (k : ℕ) :
     r ^ k * r ^ (a - 1) = r ^ (a + k - 1) := by
   rcases hr.eq_or_lt with rfl | hr
@@ -274,7 +275,8 @@ lemma pow_mul_rpow_sub_one {r a : ℝ} (hr : 0 ≤ r) (ha : 0 < a) (k : ℕ) :
   · rw [← Real.rpow_natCast, ← Real.rpow_add hr]
     ring_nf
 
-/-- The Gamma law is concentrated on `[0, ∞)`. -/
+/-- **Gamma law is concentrated on the nonnegative reals.**
+The Gamma law is concentrated on `[0, ∞)`. -/
 theorem ae_nonneg_gammaMeasure (a b : ℝ) : ∀ᵐ x ∂gammaMeasure a b, 0 ≤ x := by
   rw [gammaMeasure, ae_withDensity_iff (measurable_gammaPDF a b)]
   refine ae_of_all _ fun x hx => ?_
@@ -298,7 +300,8 @@ private lemma gamma_integrand_eq {a b c x : ℝ} (ha : 0 < a) (hx : 0 < x) (k : 
     show -((b + c) * x) = -(b * x) + -(c * x) by ring, Real.exp_add]
   ring
 
-/-- For `a, b > 0` and `c ≥ 0`, `x ↦ x ^ k e^{-c x}` is integrable for `Gamma(a, b)`. -/
+/-- **Integrability of $x^k e^{-cx}$ under the Gamma law.**
+For `a, b > 0` and `c ≥ 0`, `x ↦ x ^ k e^{-c x}` is integrable for `Gamma(a, b)`. -/
 theorem integrable_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hc : 0 ≤ c) (k : ℕ) :
     Integrable (fun x => x ^ k * Real.exp (-(c * x))) (gammaMeasure a b) := by
@@ -328,14 +331,14 @@ theorem integral_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb
 -- The mean (`integral_id_gammaMeasure`) and second moment (`integral_sq_gammaMeasure`) live
 -- in `MathlibExt.Probability.Distributions.GammaMoments`; they are not redeclared here.
 
-/-- `x ↦ x` is integrable for `Gamma(a, b)`. -/
+/-- **Gamma law has finite first moment.** `x ↦ x` is integrable for `Gamma(a, b)`. -/
 theorem integrable_id_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Integrable id (gammaMeasure a b) := by
   have h := integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 1
   simp only [pow_one, zero_mul, neg_zero, Real.exp_zero, mul_one] at h
   exact h
 
-/-- `x ↦ x²` is integrable for `Gamma(a, b)`. -/
+/-- **Gamma law has finite second moment.** `x ↦ x²` is integrable for `Gamma(a, b)`. -/
 theorem integrable_sq_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Integrable (fun x => x ^ 2) (gammaMeasure a b) := by
   have h := integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 2

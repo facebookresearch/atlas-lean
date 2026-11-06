@@ -54,7 +54,8 @@ universe u
 
 namespace Algebra
 
-/-- An element of a torsion-free algebra that vanishes under every algebra
+/-- **Geometric points detect elements when the generic fiber is reduced.**
+An element of a torsion-free algebra that vanishes under every algebra
 homomorphism into an algebraically closed field is zero, provided the
 tensor product with the fraction field is reduced and finite.
 

@@ -62,7 +62,8 @@ private lemma sum_second_endpoint (c : Matrix ι ι R) (v : ι) :
   rw [Fintype.sum_prod_type]
   simp
 
-/-- Pairs sharing an endpoint with a fixed pair have total weight at most `4 * P`.
+/-- **Bound on the weight of pairs sharing an endpoint with a fixed pair.**
+Pairs sharing an endpoint with a fixed pair have total weight at most `4 * P`.
 Loops are permitted. Symmetry bounds the two column fibers by the same row bound. -/
 theorem sum_weights_shared_endpoint_le (c : Matrix ι ι R) (P : R)
     (hc : ∀ a b, 0 ≤ c a b) (hs : ∀ a b, c a b = c b a)
@@ -120,7 +121,8 @@ private lemma sum_kernel_row_le (c : Matrix ι ι R) (P : R)
 
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedSectionVars false in
-/-- A kernel vanishing on pairs with no common endpoint has weighted quadratic sum at most
+/-- **Weighted quadratic sum bound for a shared-endpoint kernel.**
+A kernel vanishing on pairs with no common endpoint has weighted quadratic sum at most
 `4 * P * totalWeight * m`. Neither nonnegativity nor symmetry of the kernel is required;
 diagonal weights are permitted, and no separate nonnegativity assumption on `P` is needed. -/
 theorem sum_mul_mul_kernel_le (c : Matrix ι ι R) (P : R)
@@ -173,7 +175,8 @@ private lemma sum_orderedKernel {g : ℕ} (c : Matrix (Fin g) (Fin g) ℕ)
     refine sum_eq_zero fun q _ => ?_
     rw [orderedKernel, ite_eq_right (fun h => hp h.1), mul_zero]
 
-/-- The `Variance.StHence` bound with the kernel hypothesis restricted to distinct pairs:
+/-- **Shared-endpoint kernel bound with hypotheses on distinct pairs.**
+The `Variance.StHence` bound with the kernel hypothesis restricted to distinct pairs:
 natural weights on `Fin g`, integer kernel, and row sums over erased diagonals.
 Diagonal weights and kernel entries outside the distinct-pair domain are arbitrary.
 The four inequalities in `h0` are precisely the negation of the source `Meets` disjunction.

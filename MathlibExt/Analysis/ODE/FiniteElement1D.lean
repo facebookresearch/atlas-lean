@@ -93,37 +93,43 @@ open MathlibExt.Analysis.Integration
 
 variable (P : Partition (0 : ℝ) 1)
 
-/-- The length `hᵢ = xᵢ₊₁ - xᵢ` of the `i`-th element of the mesh. -/
+/-- **Length of a mesh element.** The length `hᵢ = xᵢ₊₁ - xᵢ` of the `i`-th element of the mesh. -/
 noncomputable def width (i : Fin P.n) : ℝ :=
   P.points i.succ - P.points i.castSucc
 
-/-- The slope `(dᵢ₊₁ - dᵢ) / hᵢ` on the `i`-th element of the P1 function with
+/-- **Slope of a P1 function on a mesh element.**
+The slope `(dᵢ₊₁ - dᵢ) / hᵢ` on the `i`-th element of the P1 function with
 nodal values `d`. -/
 noncomputable def elementSlope (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) : ℝ :=
   (d i.succ - d i.castSucc) / width P i
 
-/-- The clamped ramp of the `i`-th element: `0` left of `xᵢ`, `x - xᵢ` on
+/-- **Clamped ramp function of a mesh element.**
+The clamped ramp of the `i`-th element: `0` left of `xᵢ`, `x - xᵢ` on
 `[xᵢ, xᵢ₊₁]`, and `hᵢ` right of `xᵢ₊₁`. -/
 noncomputable def ramp (i : Fin P.n) (x : ℝ) : ℝ :=
   max (P.points i.castSucc) (min x (P.points i.succ)) - P.points i.castSucc
 
-/-- The continuous piecewise linear (P1) function with nodal values `d`:
+/-- **Continuous piecewise linear function with given nodal values.**
+The continuous piecewise linear (P1) function with nodal values `d`:
 `d₀ + ∑ᵢ slopeᵢ · rampᵢ(x)`. On `[0, 1]` it is linear on each element and
 takes the value `dⱼ` at `xⱼ`; outside `[0, 1]` it is constant. -/
 noncomputable def p1 (d : Fin (P.n + 1) → ℝ) (x : ℝ) : ℝ :=
   d 0 + ∑ i, elementSlope P d i * ramp P i x
 
-/-- The hat function `φⱼ` of node `j`: the P1 function equal to `1` at `xⱼ`
+/-- **Hat function of a mesh node.**
+The hat function `φⱼ` of node `j`: the P1 function equal to `1` at `xⱼ`
 and `0` at every other node. -/
 noncomputable def hat (j : Fin (P.n + 1)) : ℝ → ℝ :=
   p1 P (Pi.single j 1)
 
-/-- The nodal interpolant `I_h u`: the P1 function with nodal values
+/-- **Nodal interpolant of a function.**
+The nodal interpolant `I_h u`: the P1 function with nodal values
 `u(xⱼ)`. -/
 noncomputable def interp (u : ℝ → ℝ) : ℝ → ℝ :=
   p1 P fun j => u (P.points j)
 
-/-- `p1` as a linear map from nodal values to functions. -/
+/-- **Linear map from nodal values to P1 functions.**
+`p1` as a linear map from nodal values to functions. -/
 noncomputable def p1Map : (Fin (P.n + 1) → ℝ) →ₗ[ℝ] ℝ → ℝ where
   toFun := p1 P
   map_add' c d := by
@@ -141,34 +147,40 @@ noncomputable def p1Map : (Fin (P.n + 1) → ℝ) →ₗ[ℝ] ℝ → ℝ where
     refine Finset.sum_congr rfl fun i _ => ?_
     ring
 
-/-- Nodal vectors with zero boundary values `d₀ = dₙ = 0`. -/
+/-- **Nodal vectors with zero boundary values.**
+Nodal vectors with zero boundary values `d₀ = dₙ = 0`. -/
 def dirichletNodal : Submodule ℝ (Fin (P.n + 1) → ℝ) :=
   LinearMap.ker (LinearMap.proj 0) ⊓ LinearMap.ker (LinearMap.proj (Fin.last P.n))
 
-/-- The P1 finite element space `V_h` with zero boundary values: the image under
+/-- **P1 finite element space with zero boundary values.**
+The P1 finite element space `V_h` with zero boundary values: the image under
 `p1Map` of the nodal vectors vanishing at both ends. -/
 noncomputable def p1Space : Submodule ℝ (ℝ → ℝ) :=
   (dirichletNodal P).map (p1Map P)
 
-/-- The energy form `a(u, v) = ∫₀¹ u'(x) v'(x) dx` of `-u'' = f`. For a P1
+/-- **Energy form of the equation $-u'' = f$.**
+The energy form `a(u, v) = ∫₀¹ u'(x) v'(x) dx` of `-u'' = f`. For a P1
 function, `deriv` is junk at the mesh nodes, a null set. -/
 noncomputable def energy (u v : ℝ → ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..1, deriv u x * deriv v x
 
-/-- The `i`-th element vector `eᵢ = δ_{i+1} - δᵢ` of the assembly. -/
+/-- **Element vector of the stiffness assembly.**
+The `i`-th element vector `eᵢ = δ_{i+1} - δᵢ` of the assembly. -/
 noncomputable def elementVector (i : Fin P.n) : Fin (P.n + 1) → ℝ :=
   Pi.single i.succ 1 - Pi.single i.castSucc 1
 
-/-- The assembled stiffness matrix `K = ∑ᵢ (1 / hᵢ) eᵢ eᵢᵀ` on all nodes:
+/-- **Assembled stiffness matrix of the P1 method.**
+The assembled stiffness matrix `K = ∑ᵢ (1 / hᵢ) eᵢ eᵢᵀ` on all nodes:
 each element contributes `(1 / hᵢ) [[1, -1], [-1, 1]]` at nodes `i, i + 1`. -/
 noncomputable def stiffness : Matrix (Fin (P.n + 1)) (Fin (P.n + 1)) ℝ :=
   fun j k => ∑ i, elementVector P i j * elementVector P i k / width P i
 
-/-- The load vector `Fⱼ = ∫₀¹ f φⱼ`. -/
+/-- **Load vector of the P1 method.** The load vector `Fⱼ = ∫₀¹ f φⱼ`. -/
 noncomputable def load (f : ℝ → ℝ) (j : Fin (P.n + 1)) : ℝ :=
   ∫ x in (0 : ℝ)..1, f x * hat P j x
 
-/-- `u` is a classical solution of `-u'' = f` on `(0, 1)` with
+/-- **Classical solution of the Dirichlet problem $-u'' = f$.**
+`u` is a classical solution of `-u'' = f` on `(0, 1)` with
 `u(0) = u(1) = 0`. We ask `u` to be `C²` on all of `ℝ`, which is no loss for
 the interval problem (a `C²` function on `[0, 1]` extends), and `f` to be continuous.
 The equation is stated on the open interval, as in the Dirichlet problem: requiring it
@@ -182,7 +194,8 @@ structure IsClassicalSolution (f u : ℝ → ℝ) : Prop where
   zero_right : u 1 = 0
   eq : ∀ x ∈ Set.Ioo (0 : ℝ) 1, -deriv (deriv u) x = f x
 
-/-- Endpoint equality, derived from the open-interval equation by continuity of
+/-- **Classical solutions satisfy the equation on the closed interval.**
+Endpoint equality, derived from the open-interval equation by continuity of
 `-u''` and `f`: the two sides agree on `(0, 1)`, hence on its closure `[0, 1]`. -/
 theorem IsClassicalSolution.eq_Icc {f u : ℝ → ℝ} (hu : IsClassicalSolution f u)
     {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 1) : -deriv (deriv u) x = f x := by
@@ -195,7 +208,8 @@ theorem IsClassicalSolution.eq_Icc {f u : ℝ → ℝ} (hu : IsClassicalSolution
   apply hEq.closure hcont hu.f_cont
   simpa only [closure_Ioo (by norm_num : (0 : ℝ) ≠ 1)] using hx
 
-/-- The coefficient vector `c` solves the Galerkin system: zero boundary
+/-- **Solution of the Galerkin system.**
+The coefficient vector `c` solves the Galerkin system: zero boundary
 values and `(K c)ⱼ = Fⱼ` at every interior node `j`. The Galerkin solution is
 `u_h = p1 P c`. -/
 def IsGalerkinSolution (f : ℝ → ℝ) (c : Fin (P.n + 1) → ℝ) : Prop :=
@@ -204,11 +218,12 @@ def IsGalerkinSolution (f : ℝ → ℝ) (c : Fin (P.n + 1) → ℝ) : Prop :=
 
 /-! ### The P1 functions -/
 
-/-- Every element has positive length. -/
+/-- **Mesh elements have positive length.** Every element has positive length. -/
 theorem width_pos (i : Fin P.n) : 0 < width P i :=
   sub_pos.mpr (P.ordered (Fin.castSucc_lt_succ ..))
 
-/-- Every element length is at most the mesh size `h`. -/
+/-- **Element lengths are bounded by the mesh size.**
+Every element length is at most the mesh size `h`. -/
 theorem width_le_mesh (i : Fin P.n) : width P i ≤ P.mesh := by
   have hn : P.n ≠ 0 := Nat.pos_iff_ne_zero.mp (Nat.lt_of_le_of_lt (Nat.zero_le _) i.isLt)
   unfold Partition.mesh
@@ -245,7 +260,8 @@ private theorem sum_lt_sub (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) :
     ← natExt_fin P d 0]
   simp
 
-/-- On the `i`-th element, `p1 P d` is the linear function through
+/-- **P1 functions are linear on each element.**
+On the `i`-th element, `p1 P d` is the linear function through
 `(xᵢ, dᵢ)` with slope `slopeᵢ = elementSlope P d i`. -/
 theorem p1_eq_of_mem_Icc (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) {x : ℝ}
     (hx : x ∈ Set.Icc (P.points i.castSucc) (P.points i.succ)) :
@@ -281,7 +297,7 @@ theorem p1_eq_of_mem_Icc (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) {x : ℝ}
   simp only [Finset.mem_univ, ↓reduceIte]
   ring
 
-/-- `p1 P d` interpolates the nodal values. -/
+/-- **P1 functions interpolate their nodal values.** `p1 P d` interpolates the nodal values. -/
 theorem p1_points (d : Fin (P.n + 1) → ℝ) (j : Fin (P.n + 1)) :
     p1 P d (P.points j) = d j := by
   rcases Fin.eq_zero_or_eq_succ j with rfl | ⟨i, rfl⟩
@@ -300,12 +316,13 @@ theorem p1_points (d : Fin (P.n + 1) → ℝ) (j : Fin (P.n + 1)) :
       div_mul_cancel₀ _ (sub_pos.mpr (P.ordered (Fin.castSucc_lt_succ ..))).ne']
     ring
 
-/-- P1 functions are continuous. -/
+/-- **Continuity of P1 functions.** P1 functions are continuous. -/
 theorem continuous_p1 (d : Fin (P.n + 1) → ℝ) : Continuous (p1 P d) := by
   unfold p1 ramp
   fun_prop
 
-/-- Inside an element, `p1 P d` has derivative `slopeᵢ`. -/
+/-- **Derivative of a P1 function inside an element.**
+Inside an element, `p1 P d` has derivative `slopeᵢ`. -/
 theorem hasDerivAt_p1 (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) {x : ℝ}
     (hx : x ∈ Set.Ioo (P.points i.castSucc) (P.points i.succ)) :
     HasDerivAt (p1 P d) (elementSlope P d i) x := by
@@ -318,7 +335,8 @@ theorem hasDerivAt_p1 (d : Fin (P.n + 1) → ℝ) (i : Fin P.n) {x : ℝ}
   filter_upwards [Ioo_mem_nhds hx.1 hx.2] with y hy
   exact p1_eq_of_mem_Icc P d i (Set.Ioo_subset_Icc_self hy)
 
-/-- An integral over `[0, 1]` is the sum of the integrals over the elements. -/
+/-- **Integral over the unit interval as a sum over elements.**
+An integral over `[0, 1]` is the sum of the integrals over the elements. -/
 theorem integral_eq_sum (g : ℝ → ℝ)
     (hg : ∀ i : Fin P.n, IntervalIntegrable g volume (P.points i.castSucc) (P.points i.succ)) :
     ∫ x in (0 : ℝ)..1, g x = ∑ i : Fin P.n, ∫ x in P.points i.castSucc..P.points i.succ, g x := by
@@ -339,7 +357,8 @@ theorem integral_eq_sum (g : ℝ → ℝ)
   rw [← hpt k.castSucc, ← hpt k.succ]
   simp
 
-/-- The key identity of the 1D P1 method: for `w` continuous on each element,
+/-- **Energy pairing with a P1 function via nodal differences.**
+The key identity of the 1D P1 method: for `w` continuous on each element,
 differentiable inside it, and with integrable derivative there,
 `a(w, p1 d) = ∑ᵢ slopeᵢ(d) (w(xᵢ₊₁) - w(xᵢ))`. -/
 theorem energy_p1 (w : ℝ → ℝ)
@@ -402,7 +421,8 @@ private theorem uIcc_subset_Icc (i : Fin P.n) :
   exact Set.Icc_subset_Icc (points_mem_Icc P _).1 (points_mem_Icc P _).2
 
 
-/-- Membership in the P1 space: `v = p1 P d` for nodal values `d` with
+/-- **Characterization of membership in the P1 space.**
+Membership in the P1 space: `v = p1 P d` for nodal values `d` with
 `d₀ = dₙ = 0`. -/
 theorem mem_p1Space {v : ℝ → ℝ} :
     v ∈ p1Space P ↔ ∃ d, d 0 = 0 ∧ d (Fin.last P.n) = 0 ∧ p1 P d = v := by
@@ -414,7 +434,8 @@ theorem mem_p1Space {v : ℝ → ℝ} :
   · rintro ⟨d, h0, hl, rfl⟩
     exact ⟨d, ⟨h0, hl⟩, rfl⟩
 
-/-- The hat function of an interior node lies in the P1 space. -/
+/-- **Interior hat functions lie in the P1 space.**
+The hat function of an interior node lies in the P1 space. -/
 theorem hat_mem_p1Space {j : Fin (P.n + 1)} (h0 : j ≠ 0) (hl : j ≠ Fin.last P.n) :
     hat P j ∈ p1Space P :=
   (mem_p1Space P).mpr ⟨Pi.single j 1, by simp [h0.symm],
@@ -429,7 +450,8 @@ private theorem energy_contDiff_p1 {u : ℝ → ℝ} (hu : ContDiff ℝ 2 u)
     (fun _ _ _ => (hu.differentiable (by norm_num)).differentiableAt)
     (fun _ => (hu.continuous_deriv (by norm_num)).intervalIntegrable _ _) d
 
-/-- The weak form for `C¹` test functions vanishing at `0` and `1`:
+/-- **Weak form of the classical solution for $C^1$ test functions.**
+The weak form for `C¹` test functions vanishing at `0` and `1`:
 `∫₀¹ u' v' = ∫₀¹ f v`. -/
 theorem energy_eq_integral_mul_of_contDiff {f u v : ℝ → ℝ} (hu : IsClassicalSolution f u)
     (hv : ContDiff ℝ 1 v) (hv0 : v 0 = 0) (hv1 : v 1 = 0) :
@@ -448,7 +470,8 @@ theorem energy_eq_integral_mul_of_contDiff {f u v : ℝ → ℝ} (hu : IsClassic
   rw [← hu.eq_Icc hx]
   ring
 
-/-- The weak form for P1 test functions: `∫₀¹ u' v_h' = ∫₀¹ f v_h`. -/
+/-- **Weak form of the classical solution for P1 test functions.**
+The weak form for P1 test functions: `∫₀¹ u' v_h' = ∫₀¹ f v_h`. -/
 theorem energy_eq_integral_mul_of_mem_p1Space {f u v : ℝ → ℝ} (hu : IsClassicalSolution f u)
     (hv : v ∈ p1Space P) :
     energy u v = ∫ x in (0 : ℝ)..1, f x * v x := by
@@ -525,7 +548,7 @@ theorem energy_eq_integral_mul_of_mem_p1Space {f u v : ℝ → ℝ} (hu : IsClas
     sum_succ_sub_castSucc P (fun j => deriv u (P.points j) * d j), hd0, hdl, mul_zero,
     mul_zero, sub_zero, sub_zero, energy_contDiff_p1 P hu.contDiff]
 
-/-- The energy form of two P1 functions:
+/-- **Energy form of two P1 functions.** The energy form of two P1 functions:
 `a(p1 c, p1 d) = ∑ᵢ (cᵢ₊₁ - cᵢ)(dᵢ₊₁ - dᵢ) / hᵢ`. -/
 theorem energy_p1_p1 (c d : Fin (P.n + 1) → ℝ) :
     energy (p1 P c) (p1 P d) =
@@ -543,7 +566,7 @@ theorem energy_p1_p1 (c d : Fin (P.n + 1) → ℝ) :
   rw [p1_points, p1_points, elementSlope]
   ring
 
-/-- The quadratic form of the stiffness matrix:
+/-- **Quadratic form of the stiffness matrix.** The quadratic form of the stiffness matrix:
 `dᵀ K c = ∑ᵢ (cᵢ₊₁ - cᵢ)(dᵢ₊₁ - dᵢ) / hᵢ`. -/
 theorem dotProduct_stiffness_mulVec (c d : Fin (P.n + 1) → ℝ) :
     d ⬝ᵥ (stiffness P).mulVec c =
@@ -571,7 +594,8 @@ private theorem elementVector_apply (i : Fin P.n) (j : Fin (P.n + 1)) :
   simp only [elementVector, Pi.sub_apply, Pi.single_apply, Fin.ext_iff, Fin.val_succ,
     Fin.val_castSucc]
 
-/-- The stiffness matrix is the Gram matrix of the hat functions:
+/-- **Stiffness matrix is the Gram matrix of the hat functions.**
+The stiffness matrix is the Gram matrix of the hat functions:
 `a(φⱼ, φₖ) = Kⱼₖ`. -/
 theorem energy_hat_hat (j k : Fin (P.n + 1)) :
     energy (hat P j) (hat P k) = stiffness P j k := by
@@ -580,7 +604,8 @@ theorem energy_hat_hat (j k : Fin (P.n + 1)) :
   simp only [elementVector, Pi.sub_apply]
   rw [Pi.single_comm j, Pi.single_comm j, Pi.single_comm k, Pi.single_comm k]
 
-/-- The off-diagonal entry of an element: `K_{i, i+1} = -1 / hᵢ`. -/
+/-- **Off-diagonal stiffness entry of an element.**
+The off-diagonal entry of an element: `K_{i, i+1} = -1 / hᵢ`. -/
 theorem stiffness_castSucc_succ (i : Fin P.n) :
     stiffness P i.castSucc i.succ = -(width P i)⁻¹ := by
   rw [stiffness, Finset.sum_eq_single i]
@@ -592,7 +617,8 @@ theorem stiffness_castSucc_succ (i : Fin P.n) :
     split_ifs <;> first | omega | simp
   · simp
 
-/-- The diagonal entry at an interior node `xⱼ` shared by consecutive
+/-- **Diagonal stiffness entry at an interior node.**
+The diagonal entry at an interior node `xⱼ` shared by consecutive
 elements `i` and `j`: `K = 1 / hᵢ + 1 / hⱼ`. -/
 theorem stiffness_succ_succ {i j : Fin P.n} (hij : i.succ = j.castSucc) :
     stiffness P i.succ i.succ = (width P i)⁻¹ + (width P j)⁻¹ := by
@@ -609,7 +635,8 @@ theorem stiffness_succ_succ {i j : Fin P.n} (hij : i.succ = j.castSucc) :
     simp only [elementVector_apply, Fin.val_succ]
     split_ifs <;> first | omega | simp
 
-/-- Entries between nodes two or more apart vanish (tridiagonality). -/
+/-- **Tridiagonality of the stiffness matrix.**
+Entries between nodes two or more apart vanish (tridiagonality). -/
 theorem stiffness_eq_zero {j k : Fin (P.n + 1)} (hjk : (j : ℕ) + 2 ≤ k) :
     stiffness P j k = 0 := by
   refine Finset.sum_eq_zero fun i _ => ?_
@@ -685,13 +712,15 @@ private theorem eq_zero_of_stiffness_mulVec {e : Fin (P.n + 1) → ℝ} (h0 : e 
   | zero => exact h0
   | succ i ih => rw [hstep i]; exact ih
 
-/-- The nodal values of the exact solution solve the Galerkin system. -/
+/-- **Nodal values of the exact solution solve the Galerkin system.**
+The nodal values of the exact solution solve the Galerkin system. -/
 theorem isGalerkinSolution_nodal {f u : ℝ → ℝ} (hu : IsClassicalSolution f u) :
     IsGalerkinSolution P f fun j => u (P.points j) := by
   refine ⟨by simp [P.first, hu.zero_left], by simp [P.last, hu.zero_right], fun j h0 hl => ?_⟩
   rw [stiffness_mulVec_apply, load_eq P hu h0 hl]
 
-/-- The Galerkin system has at most one solution (`K` is positive definite on
+/-- **Uniqueness of the Galerkin solution.**
+The Galerkin system has at most one solution (`K` is positive definite on
 nodal vectors with zero boundary values). -/
 theorem isGalerkinSolution_unique {f : ℝ → ℝ} {c c' : Fin (P.n + 1) → ℝ}
     (hc : IsGalerkinSolution P f c) (hc' : IsGalerkinSolution P f c') : c = c' := by
@@ -700,7 +729,8 @@ theorem isGalerkinSolution_unique {f : ℝ → ℝ} {c c' : Fin (P.n + 1) → �
       rw [Matrix.mulVec_sub, Pi.sub_apply, hc.2.2 j h0 hl, hc'.2.2 j h0 hl, sub_self]
   exact sub_eq_zero.mp h
 
-/-- In one dimension the P1 Galerkin solution is the nodal interpolant of the
+/-- **In one dimension the Galerkin solution is the nodal interpolant.**
+In one dimension the P1 Galerkin solution is the nodal interpolant of the
 exact solution: `u_h = I_h u`. -/
 theorem p1_eq_interp_of_isGalerkinSolution {f u : ℝ → ℝ} (hu : IsClassicalSolution f u)
     {c : Fin (P.n + 1) → ℝ} (hc : IsGalerkinSolution P f c) :
@@ -719,7 +749,8 @@ theorem galerkin_orthogonality {f u : ℝ → ℝ} (hu : IsClassicalSolution f u
   rw [isGalerkinSolution_unique P hc (isGalerkinSolution_nodal P hu)]
   simp [p1_points]
 
-/-- Element-wise form of the energy of `u - p1 d` for a `C²` function `u`:
+/-- **Element-wise energy of a function minus a P1 function.**
+Element-wise form of the energy of `u - p1 d` for a `C²` function `u`:
 `a(u - p1 d, u - p1 d) = ∑ᵢ ∫_{xᵢ}^{xᵢ₊₁} (u' - slopeᵢ(d))²`. -/
 theorem energy_sub_p1_self {u : ℝ → ℝ} (hu : ContDiff ℝ 2 u)
     (d : Fin (P.n + 1) → ℝ) :
@@ -836,7 +867,8 @@ theorem energy_sub_galerkin_le {f u : ℝ → ℝ} (hu : IsClassicalSolution f u
 
 /-! ### Error estimates -/
 
-/-- Wirtinger's inequality on `[a, b]`: a `C¹` function vanishing at `a` and
+/-- **Wirtinger's inequality on an interval.**
+Wirtinger's inequality on `[a, b]`: a `C¹` function vanishing at `a` and
 `b` satisfies `∫ₐᵇ g² ≤ ((b - a) / π)² ∫ₐᵇ (g')²`. -/
 theorem integral_sq_le_of_eq_zero {g : ℝ → ℝ} {a b : ℝ} (hab : a < b) (hg : ContDiff ℝ 1 g)
     (ha : g a = 0) (hb : g b = 0) :
@@ -879,7 +911,8 @@ theorem integral_sq_le_of_eq_zero {g : ℝ → ℝ} {a b : ℝ} (hab : a < b) (h
     _ = s ^ 2 * ∫ x in a..b, deriv g x ^ 2 := by
         field_simp
 
-/-- The element estimate: a `C²` function vanishing at `a` and `b` satisfies
+/-- **Element estimate for $C^2$ functions vanishing at both ends.**
+The element estimate: a `C²` function vanishing at `a` and `b` satisfies
 `∫ₐᵇ (g')² ≤ ((b - a) / π)² ∫ₐᵇ (g'')²`. -/
 theorem integral_deriv_sq_le_of_eq_zero {g : ℝ → ℝ} {a b : ℝ} (hab : a < b)
     (hg : ContDiff ℝ 2 g) (ha : g a = 0) (hb : g b = 0) :
@@ -962,7 +995,7 @@ theorem energy_sub_galerkin_le_mesh {f u : ℝ → ℝ} (hu : IsClassicalSolutio
   rw [p1_eq_interp_of_isGalerkinSolution P hu hc, ← integral_deriv_deriv_sq hu]
   exact energy_sub_interp_le P hu.contDiff
 
-/-- The energy error estimate in norm form:
+/-- **Energy error estimate for the P1 Galerkin solution.** The energy error estimate in norm form:
 `‖u - u_h‖_a ≤ (h / π) ‖f‖_{L²(0,1)}`. -/
 theorem sqrt_energy_sub_galerkin_le_mesh {f u : ℝ → ℝ} (hu : IsClassicalSolution f u)
     {c : Fin (P.n + 1) → ℝ} (hc : IsGalerkinSolution P f c) :

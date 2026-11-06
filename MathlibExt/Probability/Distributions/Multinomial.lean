@@ -61,7 +61,8 @@ namespace ProbabilityTheory
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The multinomial mass function: the probability `N! / ∏ᵢ xᵢ! · ∏ᵢ pᵢ ^ xᵢ` that `N`
+/-- **Multinomial mass function.**
+The multinomial mass function: the probability `N! / ∏ᵢ xᵢ! · ∏ᵢ pᵢ ^ xᵢ` that `N`
 independent throws, landing in cell `i` with probability `pᵢ`, produce the cell counts `x`; it is
 `0` unless `∑ᵢ xᵢ = N`. The formula is a polynomial in `p` and is defined for every real vector
 `p`; it is a probability mass function when `p` is a probability vector
@@ -71,7 +72,8 @@ that are not probability vectors. -/
 noncomputable def multinomialReal (N : ℕ) (p : ι → ℝ) (x : ι → ℕ) : ℝ :=
   if ∑ i, x i = N then (Nat.multinomial univ x : ℝ) * ∏ i, p i ^ x i else 0
 
-/-- The multinomial mass function is nonnegative for a nonnegative vector `p`. -/
+/-- **Nonnegativity of the multinomial mass function.**
+The multinomial mass function is nonnegative for a nonnegative vector `p`. -/
 theorem multinomialReal_nonneg {N : ℕ} {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i) (x : ι → ℕ) :
     0 ≤ multinomialReal N p x := by
   unfold multinomialReal
@@ -79,12 +81,14 @@ theorem multinomialReal_nonneg {N : ℕ} {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i
   · exact mul_nonneg (Nat.cast_nonneg _) (prod_nonneg fun i _ => pow_nonneg (hp i) _)
   · exact le_rfl
 
-/-- The multinomial mass function vanishes off the simplex `∑ᵢ xᵢ = N`. -/
+/-- **Multinomial mass vanishes off the simplex.**
+The multinomial mass function vanishes off the simplex `∑ᵢ xᵢ = N`. -/
 theorem multinomialReal_of_sum_ne {N : ℕ} {p : ι → ℝ} {x : ι → ℕ} (h : ∑ i, x i ≠ N) :
     multinomialReal N p x = 0 := by
   simp [multinomialReal, h]
 
-/-- On the simplex the multinomial mass is `N! / ∏ᵢ xᵢ! · ∏ᵢ pᵢ ^ xᵢ`. -/
+/-- **Multinomial mass formula on the simplex.**
+On the simplex the multinomial mass is `N! / ∏ᵢ xᵢ! · ∏ᵢ pᵢ ^ xᵢ`. -/
 theorem multinomialReal_eq_factorial_div {N : ℕ} {p : ι → ℝ} {x : ι → ℕ}
     (h : ∑ i, x i = N) :
     multinomialReal N p x = (N.factorial : ℝ) / (∏ i, ((x i).factorial : ℝ)) * ∏ i, p i ^ x i := by
@@ -99,7 +103,8 @@ section Support
 
 variable [DecidableEq ι]
 
-/-- The multinomial mass function vanishes outside the finite set `piAntidiag univ N` of
+/-- **Support of the multinomial mass lies in the antidiagonal.**
+The multinomial mass function vanishes outside the finite set `piAntidiag univ N` of
 count vectors with total `N`: the support is contained in the antidiagonal. Equality of
 the support with the antidiagonal needs all `p i > 0` (e.g. for `p = (1, 0)`, `N = 1` the
 vector `(0, 1)` is in the antidiagonal but has mass `0`). -/
@@ -119,7 +124,8 @@ theorem sum_multinomialReal {N : ℕ} {p : ι → ℝ} (hp : ∑ i, p i = 1) :
     ∑ x ∈ piAntidiag univ N, multinomialReal N p x = 1 := by
   rw [sum_multinomialReal_eq_pow, hp, one_pow]
 
-/-- The multinomial law of `N` throws with cell probabilities `p` (a probability vector), as a
+/-- **Multinomial distribution as a probability mass function.**
+The multinomial law of `N` throws with cell probabilities `p` (a probability vector), as a
 probability mass function on count vectors `ι → ℕ`. -/
 noncomputable def multinomial (N : ℕ) (p : ι → ℝ) (hp₀ : ∀ i, 0 ≤ p i) (hp₁ : ∑ i, p i = 1) :
     PMF (ι → ℕ) :=
@@ -129,7 +135,8 @@ noncomputable def multinomial (N : ℕ) (p : ι → ℝ) (hp₀ : ∀ i, 0 ≤ p
         sum_multinomialReal hp₁, ENNReal.ofReal_one])
     (fun x hx => by rw [multinomialReal_of_notMem hx, ENNReal.ofReal_zero])
 
-/-- The mass of the multinomial PMF at `x` is `multinomialReal N p x`. -/
+/-- **Mass of the multinomial distribution at a count vector.**
+The mass of the multinomial PMF at `x` is `multinomialReal N p x`. -/
 theorem multinomial_apply {N : ℕ} {p : ι → ℝ} (hp₀ : ∀ i, 0 ≤ p i) (hp₁ : ∑ i, p i = 1)
     (x : ι → ℕ) : multinomial N p hp₀ hp₁ x = ENNReal.ofReal (multinomialReal N p x) :=
   rfl

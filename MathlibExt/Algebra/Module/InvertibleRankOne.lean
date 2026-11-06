@@ -175,7 +175,8 @@ end Module.Invertible.RankOneAux
 
 namespace Module
 
-/-- A finite projective module whose base change to every field has rank
+/-- **Finite projective modules of fiberwise rank one are invertible.**
+A finite projective module whose base change to every field has rank
 one is invertible.
 
 This is the standard criterion for a module to define a line bundle: it

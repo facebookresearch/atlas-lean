@@ -84,7 +84,8 @@ private theorem continuous_integral_comp_mul {f : G → ℝ}
         x⁻¹, Set.inv_mem_inv.mpr hx, by simp⟩
   exact hc.continuousAt hx₀
 
-/-- A continuous nonnegative compactly supported cutoff normalized on every
+/-- **Continuous cutoff for a closed-embedding homomorphism.**
+A continuous nonnegative compactly supported cutoff normalized on every
 left orbit meeting `K`, for a closed-embedding homomorphism `ι`. The measure
 may have any scale. No Hausdorff or countability hypotheses are required. -/
 theorem exists_continuous_cutoff_of_isClosedEmbedding
@@ -135,7 +136,8 @@ theorem exists_continuous_cutoff_of_isClosedEmbedding
 
 end Hom
 
-/-- A continuous nonnegative compactly supported Bruhat cutoff for a closed
+/-- **Continuous Bruhat cutoff for a closed subgroup.**
+A continuous nonnegative compactly supported Bruhat cutoff for a closed
 subgroup, normalized on any subset of the saturation of a compact set. -/
 theorem exists_continuous_cutoff_of_subset_mul
     {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -153,7 +155,8 @@ theorem exists_continuous_cutoff_of_subset_mul
   obtain ⟨t, ht, k, hk, rfl⟩ := hE hx
   exact hw1 ⟨t, ht⟩ k hk
 
-/-- A Bruhat section: given a closed subgroup `T` of a locally compact group
+/-- **Existence of a Bruhat section for a closed subgroup.**
+A Bruhat section: given a closed subgroup `T` of a locally compact group
 and a set `E` contained in `T * C` for compact `C`, there is a compactly
 supported nonnegative measurable function `w` whose integral over each
 `T`-translate meeting `E` equals `1`.

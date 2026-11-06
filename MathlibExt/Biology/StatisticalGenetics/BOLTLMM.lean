@@ -90,7 +90,8 @@ open Matrix
 
 namespace MathlibExt.Biology.StatisticalGenetics.BOLTLMM
 
-/-- The variance components of the linear mixed model `y = X β + g + e` with
+/-- **Variance components of the linear mixed model.**
+The variance components of the linear mixed model `y = X β + g + e` with
 `g ~ N(0, σ_g² K)` and `e ~ N(0, σ_e² I)` on `n` individuals: a positive semidefinite genetic
 relationship matrix `K`, a genetic variance `σ_g² ≥ 0` and an environmental variance
 `σ_e² > 0`. -/
@@ -107,25 +108,30 @@ structure Model (n : ℕ) where
 
 namespace Model
 
-/-- The marginal phenotypic covariance `V = σ_g² K + σ_e² I` of `y = X β + g + e`. -/
+/-- **Marginal phenotypic covariance matrix.**
+The marginal phenotypic covariance `V = σ_g² K + σ_e² I` of `y = X β + g + e`. -/
 noncomputable def V {n : ℕ} (M : Model n) : Matrix (Fin n) (Fin n) ℝ := M.σg2 • M.K + M.σe2 • 1
 
-/-- `V = σ_g² K + σ_e² I` is positive definite. -/
+/-- **Positive definiteness of the phenotypic covariance.**
+`V = σ_g² K + σ_e² I` is positive definite. -/
 theorem posDef_V {n : ℕ} (M : Model n) : M.V.PosDef :=
   Matrix.PosDef.posSemidef_add (M.posSemidef_K.smul M.σg2_nonneg)
     (Matrix.PosDef.one.smul M.σe2_pos)
 
-/-- The marginal log-likelihood of the mean `μ`: the log of the `N(μ, V)` density at `y`,
+/-- **Marginal log-likelihood of the mean.**
+The marginal log-likelihood of the mean `μ`: the log of the `N(μ, V)` density at `y`,
 `-(n log 2π + log det V + (y - μ)ᵀ V⁻¹ (y - μ)) / 2` (`det V > 0` by `posDef_V`). -/
 noncomputable def logLik {n : ℕ} (M : Model n) (y μ : Fin n → ℝ) : ℝ :=
   -(n * Real.log (2 * Real.pi) + Real.log M.V.det + (y - μ) ⬝ᵥ (M.V⁻¹ *ᵥ (y - μ))) / 2
 
-/-- The generalized least-squares estimator `β̂ = (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹ y`. -/
+/-- **Generalized least-squares estimator.**
+The generalized least-squares estimator `β̂ = (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹ y`. -/
 noncomputable def gls {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ) (y : Fin n → ℝ) :
     Fin p → ℝ :=
   (Xᵀ * M.V⁻¹ * X)⁻¹ *ᵥ (Xᵀ *ᵥ (M.V⁻¹ *ᵥ y))
 
-/-- The residual-forming matrix `P = V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹`. -/
+/-- **Residual-forming matrix.**
+The residual-forming matrix `P = V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹`. -/
 noncomputable def proj {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ) :
     Matrix (Fin n) (Fin n) ℝ :=
   M.V⁻¹ - M.V⁻¹ * X * (Xᵀ * M.V⁻¹ * X)⁻¹ * Xᵀ * M.V⁻¹
@@ -238,14 +244,16 @@ theorem logLik_eq_logLik_gls_iff {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (
   rw [star_trivial] at hpos
   linarith
 
-/-- The maximal marginal log-likelihood is `-(n log 2π + log det V + yᵀ P y) / 2`. -/
+/-- **Maximal marginal log-likelihood.**
+The maximal marginal log-likelihood is `-(n log 2π + log det V + yᵀ P y) / 2`. -/
 theorem logLik_gls {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
     (hX : Function.Injective X.mulVec) (y : Fin n → ℝ) :
     M.logLik y (X *ᵥ M.gls X y) =
       -(n * Real.log (2 * Real.pi) + Real.log M.V.det + y ⬝ᵥ (M.proj X *ᵥ y)) / 2 := by
   rw [logLik_mulVec, quad_gls M hX y]
 
-/-- `P X = 0`: the residual-forming matrix annihilates the fixed effects. -/
+/-- **Residual-forming matrix annihilates the fixed effects.**
+`P X = 0`: the residual-forming matrix annihilates the fixed effects. -/
 theorem proj_mul_X {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
     (hX : Function.Injective X.mulVec) : M.proj X * X = 0 := by
   have h := isUnit_det_S M hX
@@ -253,7 +261,8 @@ theorem proj_mul_X {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
   simp only [proj, Matrix.sub_mul, Matrix.mul_assoc]
   rw [nonsing_inv_mul _ h, Matrix.mul_one, sub_self]
 
-/-- `P V P = P`. With `P X = 0`, this says that under the null model `y = X β + ε` with
+/-- **Identity $PVP = P$ for the residual-forming matrix.**
+`P V P = P`. With `P X = 0`, this says that under the null model `y = X β + ε` with
 `Cov ε = V` the score `xᵀ P y = xᵀ P ε` has variance `xᵀ P V P x = xᵀ P x`. -/
 theorem proj_mul_V_mul_proj {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
     (hX : Function.Injective X.mulVec) :
@@ -270,13 +279,15 @@ theorem proj_mul_V_mul_proj {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p
     _ = M.proj X := by
         rw [hVW, Matrix.mul_one, hVH, ← Matrix.mul_assoc, hPX, Matrix.zero_mul, sub_zero]
 
-/-- The profile marginal log-likelihood of a SNP effect `γ` for the SNP genotype vector `x`:
+/-- **Profile log-likelihood of a SNP effect.**
+The profile marginal log-likelihood of a SNP effect `γ` for the SNP genotype vector `x`:
 `sup_β logLik y (X β + γ x)`. -/
 noncomputable def profileLogLik {n p : ℕ} (M : Model n)
     (X : Matrix (Fin n) (Fin p) ℝ) (x y : Fin n → ℝ) (γ : ℝ) : ℝ :=
   ⨆ β : Fin p → ℝ, M.logLik y (X *ᵥ β + γ • x)
 
-/-- The score statistic `(xᵀ P y)² / (xᵀ P x)` for one SNP `x`. Its denominator is positive
+/-- **Score statistic for one SNP.**
+The score statistic `(xᵀ P y)² / (xᵀ P x)` for one SNP `x`. Its denominator is positive
 when `x` is not in the column space of `X` (`info_pos`); otherwise the statistic is `0` by
 the convention `a / 0 = 0` and carries no information. -/
 noncomputable def scoreStat {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ)
@@ -327,12 +338,14 @@ theorem hasDerivAt_profileLogLik {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (
   refine HasDerivAt.congr_deriv (HasDerivAt.sub h1 h2) ?_
   norm_num
 
-/-- The score is evaluated at the null GLS fit: `xᵀ P y = xᵀ V⁻¹ (y - X β̂)`. -/
+/-- **Score at the null generalized least-squares fit.**
+The score is evaluated at the null GLS fit: `xᵀ P y = xᵀ V⁻¹ (y - X β̂)`. -/
 theorem score_eq {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ) (x y : Fin n → ℝ) :
     x ⬝ᵥ (M.proj X *ᵥ y) = x ⬝ᵥ (M.V⁻¹ *ᵥ (y - X *ᵥ M.gls X y)) := by
   rw [proj_mulVec]
 
-/-- The information `xᵀ P x` is positive when the SNP `x` is not in the column space of `X`. -/
+/-- **Information of a SNP outside the column space of $X$ is positive.**
+The information `xᵀ P x` is positive when the SNP `x` is not in the column space of `X`. -/
 theorem info_pos {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
     (hX : Function.Injective X.mulVec) {x : Fin n → ℝ}
     (hx : x ∉ Set.range X.mulVec) : 0 < x ⬝ᵥ (M.proj X *ᵥ x) := by
@@ -340,13 +353,15 @@ theorem info_pos {n p : ℕ} {M : Model n} {X : Matrix (Fin n) (Fin p) ℝ}
   have hne : x - X *ᵥ M.gls X x ≠ 0 := fun h => hx ⟨M.gls X x, (sub_eq_zero.mp h).symm⟩
   simpa [star_trivial] using M.posDef_V.inv.dotProduct_mulVec_pos hne
 
-/-- The BLUP `ĝ = G V⁻¹ (y - X β̂)` of the genetic effects, with `G = σ_g² K`
+/-- **Best linear unbiased predictor of genetic effects.**
+The BLUP `ĝ = G V⁻¹ (y - X β̂)` of the genetic effects, with `G = σ_g² K`
 (Henderson 1975). -/
 noncomputable def blup {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ)
     (y : Fin n → ℝ) : Fin n → ℝ :=
   (M.σg2 • M.K) *ᵥ (M.V⁻¹ *ᵥ (y - X *ᵥ M.gls X y))
 
-/-- `(β, g)` solves Henderson's mixed-model equations with `R = σ_e² I` and `G = σ_g² K`,
+/-- **Solution of Henderson's mixed-model equations.**
+`(β, g)` solves Henderson's mixed-model equations with `R = σ_e² I` and `G = σ_g² K`,
 i.e. the specialization of `MixedModel.IsMMESolution` to `Z = 1` (every individual has its
 own genetic effect), `G = σ_g² K`, `R = σ_e² I`. In unfolded form this is
 `Xᵀ R⁻¹ X β + Xᵀ R⁻¹ g = Xᵀ R⁻¹ y` and `R⁻¹ X β + (R⁻¹ + G⁻¹) g = R⁻¹ y`. The equations

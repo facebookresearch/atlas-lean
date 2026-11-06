@@ -45,7 +45,8 @@ namespace Polynomial
 
 variable {R S : Type*} [CommRing R] [CommRing S]
 
-/-- A local ring homomorphism reflects coprimality of polynomials when the
+/-- **Local homomorphisms reflect coprimality with a monic polynomial.**
+A local ring homomorphism reflects coprimality of polynomials when the
 first polynomial is monic. Neither ring needs to be local. -/
 theorem Monic.isCoprime_of_isCoprime_map {g h : R[X]} (hg : g.Monic)
     (π : R →+* S) [IsLocalHom π]
@@ -187,7 +188,8 @@ private theorem exists_monic_factor_of_ker_pow (n : ℕ) :
       exact ⟨g, k, hg, by rw [← hcomp, ← Polynomial.map_map, hgm, hgmap],
         by rw [← hcomp, ← Polynomial.map_map, hkm, hkmap], hprod⟩
 
-/-- A monic factor of a coprime factorization lifts uniquely through a
+/-- **Unique lift of a monic factor through a nilpotent-kernel surjection.**
+A monic factor of a coprime factorization lifts uniquely through a
 surjective homomorphism with nilpotent kernel. The original polynomial
 and the complementary reduced factor are not required to be monic. -/
 theorem existsUnique_monic_map_eq_dvd_of_isCoprime_of_ker_pow_eq_bot
@@ -205,7 +207,8 @@ theorem existsUnique_monic_map_eq_dvd_of_isCoprime_of_ker_pow_eq_bot
   exact monic_eq_of_map_eq_of_dvd π hg hq (by rw [hgm, hkm]; exact hcop)
     (hqm.trans hgm.symm) (hprod ▸ hqd)
 
-/-- Coprime monic factors lift over a ring complete at the kernel of a
+/-- **Hensel lifting of coprime monic factors over a complete ring.**
+Coprime monic factors lift over a ring complete at the kernel of a
 surjective homomorphism. The lifts are coprime, and the first is the unique
 monic divisor of the original polynomial with its specified reduction. -/
 theorem exists_monic_mul_eq_and_map_eq_of_isCoprime_of_isAdicComplete

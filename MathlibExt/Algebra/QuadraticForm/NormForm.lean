@@ -82,7 +82,8 @@ end QuadraticFormNormFormAux
 
 namespace QuadraticForm
 
-/-- The quaternary norm form `x₀² - a·x₁² - b·x₂² + a·b·x₃²` of the
+/-- **Anisotropy of the quaternion norm form reduces to a ternary form.**
+The quaternary norm form `x₀² - a·x₁² - b·x₂² + a·b·x₃²` of the
 quaternion algebra `ℍ[K, a, b]` is anisotropic if and only if the ternary
 form `z² - a·x² - b·y²` is. This equivalence also holds when either parameter
 is zero; both forms are then isotropic.

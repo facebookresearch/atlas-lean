@@ -213,7 +213,8 @@ private theorem lintegral_enorm_mul_lt_top (F : G → ℂ) (hFm : Measurable F)
         exact mul_le_mul_right step3 _
     _ < ∞ := ENNReal.mul_lt_top (ENNReal.inv_lt_top.2 (pos_iff_ne_zero.2 hm_pos)) step4
 
-/-- A bounded measurable `T`-invariant complex function is integrable against
+/-- **Bounded invariant functions are integrable against normalized cutoffs.**
+A bounded measurable `T`-invariant complex function is integrable against
 any nonnegative measurable compactly supported weight whose `T`-average is
 one wherever the function is nonzero. The weight need not be bounded. -/
 theorem integrable_mul_of_integral_subgroup_translate_eq_one
@@ -231,7 +232,8 @@ theorem integrable_mul_of_integral_subgroup_translate_eq_one
 
 end
 
-/-- The integral of a bounded measurable `T`-invariant complex function
+/-- **Cutoff independence of integrals of bounded invariant functions.**
+The integral of a bounded measurable `T`-invariant complex function
 against a nonnegative measurable compactly supported cutoff does not depend
 on the cutoff, when each cutoff has subgroup integral one on the support of
 that function. Normalization is not required outside its support.

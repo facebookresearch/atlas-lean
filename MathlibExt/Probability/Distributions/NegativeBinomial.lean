@@ -72,7 +72,8 @@ open scoped Nat
 
 namespace ProbabilityTheory
 
-/-- The negative binomial mass function with size `θ` and mean `μ`:
+/-- **Negative binomial mass function with size and mean.**
+The negative binomial mass function with size `θ` and mean `μ`:
 `NB(k; θ, μ) = θ⁽ᵏ⁾ / k! · (θ / (θ + μ)) ^ θ · (μ / (θ + μ)) ^ k`, with the rising factorial
 `θ⁽ᵏ⁾ = Γ(θ + k) / Γ(θ)` and a real power `(θ / (θ + μ)) ^ θ`. The parameter domain is `θ > 0`,
 `μ ≥ 0`; at `μ = 0` it is the point mass at `0`. Outside the domain the formula is not a
@@ -91,18 +92,21 @@ theorem negBinomialReal_eq_negBinomialPMF {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 
     rw [eq_div_iff hne, sub_mul, one_mul, div_mul_cancel₀ _ hne, add_sub_cancel_left]
   simp only [negBinomialReal, negBinomialPMF, h1]
 
-/-- The negative binomial mass function is nonnegative on the parameter domain. -/
+/-- **Nonnegativity of the negative binomial mass function.**
+The negative binomial mass function is nonnegative on the parameter domain. -/
 theorem negBinomialReal_nonneg {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) (k : ℕ) :
     0 ≤ negBinomialReal θ μ k := by
   have h := ascPochhammer_pos k θ hθ
   unfold negBinomialReal
   positivity
 
-/-- The zero class of the negative binomial law is `(θ / (θ + μ)) ^ θ`. -/
+/-- **Zero class of the negative binomial law.**
+The zero class of the negative binomial law is `(θ / (θ + μ)) ^ θ`. -/
 theorem negBinomialReal_zero (θ μ : ℝ) : negBinomialReal θ μ 0 = (θ / (θ + μ)) ^ θ := by
   simp [negBinomialReal]
 
-/-- With mean `0` the negative binomial law is the point mass at `0`. -/
+/-- **Negative binomial law with mean zero is a point mass.**
+With mean `0` the negative binomial law is the point mass at `0`. -/
 theorem negBinomialReal_mean_zero {θ : ℝ} (hθ : 0 < θ) (k : ℕ) :
     negBinomialReal θ 0 k = if k = 0 then 1 else 0 := by
   rcases k with _ | k
@@ -288,7 +292,8 @@ end Gamma
 
 section GeneExpression
 
-/-- The net probability flow into state `n` of the immigration–death chain on `ℕ`, in which
+/-- **Net probability flow of the immigration–death chain.**
+The net probability flow into state `n` of the immigration–death chain on `ℕ`, in which
 molecules are made at rate `κ` (`n → n + 1`) and each decays at rate `γ` (`n → n - 1` at rate
 `γ n`): `(κ p(n - 1) + γ (n + 1) p(n + 1)) - (κ + γ n) p(n)`, with no inflow from below at
 `n = 0`. A law `p` is stationary (global balance) iff this flow vanishes for every `n`. -/
@@ -333,7 +338,8 @@ theorem fano_poisson {m : ℝ} (hm : 0 < m) :
   simp only [poissonMixtureReal_dirac, variance_dirac, integral_dirac, add_zero] at hv he
   rw [hv, he, div_self hm.ne']
 
-/-- The net probability flow into state `n` of the bursty production–degradation chain:
+/-- **Net probability flow of the bursty production–degradation chain.**
+The net probability flow into state `n` of the bursty production–degradation chain:
 bursts arrive at rate `κ` and add `B` molecules, `B` geometric with mean `b`,
 `P(B = j) = b ^ j / (1 + b) ^ (j + 1)` for `j ≥ 0`; each molecule decays at rate `γ`. A burst
 of size `0` changes nothing, so state `n` is left by a burst at rate `κ P(B ≥ 1) = κ b / (1 + b)`.

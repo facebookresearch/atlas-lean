@@ -82,13 +82,15 @@ open scoped ENNReal NNReal
 
 namespace MathlibExt.Biology.StatisticalGenetics.BOLTLMMVariational
 
-/-- The BOLT-LMM prior on a SNP effect: the mixture `p N(0, v₁) + (1 - p) N(0, v₂)` of two
+/-- **Two-Gaussian mixture prior on a SNP effect.**
+The BOLT-LMM prior on a SNP effect: the mixture `p N(0, v₁) + (1 - p) N(0, v₂)` of two
 centered Gaussians with variances `v₁, v₂` (`v₂ = 0` gives the spike-and-slab prior with a point
 mass at `0`). -/
 noncomputable def mixturePrior (p v₁ v₂ : ℝ≥0) : Measure ℝ :=
   (p : ℝ≥0∞) • gaussianReal 0 v₁ + ((1 - p : ℝ≥0) : ℝ≥0∞) • gaussianReal 0 v₂
 
-/-- The mixture prior is a probability measure for a mixing weight `p ≤ 1`. -/
+/-- **Mixture prior is a probability measure.**
+The mixture prior is a probability measure for a mixing weight `p ≤ 1`. -/
 theorem isProbabilityMeasure_mixturePrior {p : ℝ≥0} (hp : p ≤ 1) (v₁ v₂ : ℝ≥0) :
     IsProbabilityMeasure (mixturePrior p v₁ v₂) := by
   constructor
@@ -96,7 +98,7 @@ theorem isProbabilityMeasure_mixturePrior {p : ℝ≥0} (hp : p ≤ 1) (v₁ v�
     measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.coe_add, add_tsub_cancel_of_le hp, ENNReal.coe_one]
 
-/-- The mixture prior has a finite second moment. -/
+/-- **Mixture prior has finite second moment.** The mixture prior has a finite second moment. -/
 theorem integrable_sq_mixturePrior (p v₁ v₂ : ℝ≥0) :
     Integrable (fun b : ℝ => b ^ 2) (mixturePrior p v₁ v₂) := by
   have h : ∀ v : ℝ≥0, Integrable (fun b : ℝ => b ^ 2) (gaussianReal 0 v) := fun v =>
@@ -104,7 +106,8 @@ theorem integrable_sq_mixturePrior (p v₁ v₂ : ℝ≥0) :
   exact ((h v₁).smul_measure ENNReal.coe_ne_top).add_measure
     ((h v₂).smul_measure ENNReal.coe_ne_top)
 
-/-- An admissible variational factor for the prior `π`: a probability measure with a finite
+/-- **Admissible variational factor.**
+An admissible variational factor for the prior `π`: a probability measure with a finite
 second moment and finite KL divergence from `π` (`q ≪ π` with integrable log-likelihood
 ratio). -/
 structure IsAdmissible (π q : Measure ℝ) : Prop where
@@ -113,13 +116,15 @@ structure IsAdmissible (π q : Measure ℝ) : Prop where
   absolutelyContinuous : q ≪ π
   integrable_llr : Integrable (llr q π) q
 
-/-- The mean `∫ b dq` of a factor. -/
+/-- **Mean of a variational factor.** The mean `∫ b dq` of a factor. -/
 noncomputable def mean (q : Measure ℝ) : ℝ := ∫ b, b ∂q
 
-/-- The squared norm `‖xⱼ‖² = ∑ᵢ X i j ²` of the genotype column of SNP `j`. -/
+/-- **Squared norm of a genotype column.**
+The squared norm `‖xⱼ‖² = ∑ᵢ X i j ²` of the genotype column of SNP `j`. -/
 def colNormSq {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (j : Fin m) : ℝ := ∑ i, X i j ^ 2
 
-/-- The expected residual sum of squares `‖y - X μ‖² + ∑ⱼ ‖xⱼ‖² vⱼ` of the product of the
+/-- **Expected residual sum of squares under the variational factors.**
+The expected residual sum of squares `‖y - X μ‖² + ∑ⱼ ‖xⱼ‖² vⱼ` of the product of the
 factors `q`, with means `μⱼ` and variances `vⱼ` (`integral_rss_pi`). -/
 noncomputable def expectedRSS {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ)
     (q : Fin m → Measure ℝ) : ℝ :=
@@ -183,7 +188,7 @@ theorem integral_rss_pi {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n 
         (Measure.pi q) := (integrable_const _).sub (((hS i).integrable one_le_two).const_mul _)
     exact hA.add (hS i).integrable_sq
 
-/-- The mean-field evidence lower bound
+/-- **Mean-field evidence lower bound.** The mean-field evidence lower bound
 `-(n/2) log (2π σ_e²) - 𝔼_q ‖y - X β‖² / (2 σ_e²) - ∑ⱼ KL(qⱼ ‖ π)`, meaningful for `σ_e² > 0`.
 It is the ELBO for admissible factors (finite KL); for an inadmissible factor `toReal` would turn
 an infinite divergence into `0`, so all results assume admissibility. -/
@@ -192,30 +197,35 @@ noncomputable def elbo {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n �
   -(n * Real.log (2 * Real.pi * σe2)) / 2 - expectedRSS X y q / (2 * σe2) -
     ∑ j, (klDiv (q j) π).toReal
 
-/-- The partial residual `rⱼ = y - ∑_{k ≠ j} xₖ μₖ` of the other SNPs' posterior means. -/
+/-- **Partial residual of a SNP.**
+The partial residual `rⱼ = y - ∑_{k ≠ j} xₖ μₖ` of the other SNPs' posterior means. -/
 noncomputable def partialResidual {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ)
     (q : Fin m → Measure ℝ) (j : Fin m) (i : Fin n) : ℝ :=
   y i - ∑ k ∈ Finset.univ.erase j, X i k * mean (q k)
 
-/-- The CAVI potential `fⱼ(b) = (b xⱼᵀ rⱼ - ‖xⱼ‖² b² / 2) / σ_e²`: the part of the expected
+/-- **Coordinate-ascent potential for one SNP effect.**
+The CAVI potential `fⱼ(b) = (b xⱼᵀ rⱼ - ‖xⱼ‖² b² / 2) / σ_e²`: the part of the expected
 log-likelihood `𝔼_{q_{-j}}[log p(y | β)]` that depends on `βⱼ = b`
 (`exists_elbo_update_eq`). -/
 noncomputable def potential {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (σe2 : ℝ)
     (q : Fin m → Measure ℝ) (j : Fin m) (b : ℝ) : ℝ :=
   (b * ∑ i, X i j * partialResidual X y q j i - colNormSq X j * b ^ 2 / 2) / σe2
 
-/-- The CAVI update of factor `j`: the prior tilted by the potential,
+/-- **Coordinate-ascent update of one variational factor.**
+The CAVI update of factor `j`: the prior tilted by the potential,
 `qⱼ ∝ π · exp fⱼ = exp 𝔼_{q_{-j}}[log p(y, β)]`. -/
 noncomputable def caviUpdate {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (σe2 : ℝ)
     (π : Measure ℝ) (q : Fin m → Measure ℝ) (j : Fin m) : Measure ℝ :=
   π.tilted (potential X y σe2 q j)
 
-/-- One coordinate-ascent step: replace factor `j` by its CAVI update. -/
+/-- **One coordinate-ascent step.**
+One coordinate-ascent step: replace factor `j` by its CAVI update. -/
 noncomputable def caviStep {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (σe2 : ℝ)
     (π : Measure ℝ) (q : Fin m → Measure ℝ) (j : Fin m) : Fin m → Measure ℝ :=
   Function.update q j (caviUpdate X y σe2 π q j)
 
-/-- Coordinate ascent along the update schedule `s`: at time `t` factor `s t` is updated. -/
+/-- **Coordinate ascent along an update schedule.**
+Coordinate ascent along the update schedule `s`: at time `t` factor `s t` is updated. -/
 noncomputable def caviRun {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (σe2 : ℝ)
     (π : Measure ℝ) (q : Fin m → Measure ℝ) (s : ℕ → Fin m) : ℕ → Fin m → Measure ℝ
   | 0 => q
@@ -320,7 +330,8 @@ theorem exists_elbo_update_eq {n m : ℕ} {X : Matrix (Fin n) (Fin m) ℝ} {y : 
     hint, hvar]
   ring
 
-/-- The CAVI update is an admissible factor, for a probability prior with a finite second
+/-- **Coordinate-ascent update is an admissible factor.**
+The CAVI update is an admissible factor, for a probability prior with a finite second
 moment. -/
 theorem isAdmissible_caviUpdate {n m : ℕ} {X : Matrix (Fin n) (Fin m) ℝ} {y : Fin n → ℝ}
     {σe2 : ℝ} {π : Measure ℝ}

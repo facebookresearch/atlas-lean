@@ -52,7 +52,8 @@ private theorem eq_zero_of_forall_point_eq_zero
   ext p
   simpa using ha p
 
-/-- If the scalar-extended evaluation map is injective, a tensor vanishing at
+/-- **A tensor vanishing at all pairs of algebraic points is zero.**
+If the scalar-extended evaluation map is injective, a tensor vanishing at
 all pairs of selected algebraic points is zero. The algebra and the point
 index may be infinite; no closedness or perfection assumption is needed. -/
 theorem eq_zero_of_forall_lift_apply_eq_zero

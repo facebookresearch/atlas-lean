@@ -33,7 +33,8 @@ namespace KleeneAlgebra
 
 open scoped Computability
 
-/-- A one-step simulation lifts to arbitrary finite iteration.
+/-- **A one-step simulation lifts to finite iteration.**
+A one-step simulation lifts to arbitrary finite iteration.
 The simulator `p` need not be invertible or a test. -/
 theorem star_simulation {K : Type*} [KleeneAlgebra K] {p a b : K}
     (h : p * a ≤ b * p) : p * a∗ ≤ b∗ * p := by
@@ -46,7 +47,8 @@ theorem star_simulation {K : Type*} [KleeneAlgebra K] {p a b : K}
       _ ≤ b∗ * p := mul_left_mono kstar_mul_le_kstar
   exact mul_kstar_le hp hstep
 
-/-- An idempotent subidentity preserved by one step is preserved by
+/-- **Tests preserved by one step are preserved by iteration.**
+An idempotent subidentity preserved by one step is preserved by
 iteration. This is a corollary of `star_simulation`; the test assumptions
 are explicit, with no additional algebraic structure. -/
 theorem test_star_absorption {K : Type*} [KleeneAlgebra K] {p a : K}

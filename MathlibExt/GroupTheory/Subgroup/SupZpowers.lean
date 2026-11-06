@@ -37,7 +37,8 @@ public import Mathlib.Algebra.Group.Subgroup.ZPowers.Basic
 
 namespace Subgroup
 
-/-- Membership in the join of a subgroup with the cyclic subgroup generated
+/-- **Membership in a subgroup joined with a central involution.**
+Membership in the join of a subgroup with the cyclic subgroup generated
 by a central involution.
 
 This is the computation behind "up to sign" arguments: for a subgroup
