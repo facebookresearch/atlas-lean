@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.Convex.Cone.Dual
 public import Mathlib.Analysis.InnerProductSpace.Dual
+import MathlibExt.Analysis.Convex.LinearProgrammingWeakDuality
 
 /-!
 # Strong linear programming duality
@@ -941,13 +942,8 @@ theorem strong_linear_programming_duality {m n : ℕ}
   have hweak : ∀ y : Fin m → ℝ, (∀ j, 0 ≤ y j) →
       (∀ i, c i ≤ (Aᵀ.mulVec y) i) → c ⬝ᵥ xopt ≤ b ⬝ᵥ y := by
     intro y hy hAty
-    calc c ⬝ᵥ xopt ≤ (Aᵀ.mulVec y) ⬝ᵥ xopt :=
-          sum_le_sum fun i _ => mul_le_mul_of_nonneg_right (hAty i) (hxopt i)
-      _ = xopt ⬝ᵥ (Aᵀ.mulVec y) := dotProduct_comm _ _
-      _ = y ⬝ᵥ (A.mulVec xopt) := Matrix.dotProduct_transpose_mulVec A xopt y
-      _ ≤ y ⬝ᵥ b :=
-          sum_le_sum fun j _ => mul_le_mul_of_nonneg_left (hAxopt j) (hy j)
-      _ = b ⬝ᵥ y := dotProduct_comm _ _
+    exact LPWeakDuality.weak_linear_programming_duality A b c
+      hxopt hAxopt hy hAty
   have hseq : ∀ k : ℕ, ∃ y : Fin m → ℝ, (∀ j, 0 ≤ y j) ∧
       (∀ i, c i ≤ (Aᵀ.mulVec y) i) ∧
       b ⬝ᵥ y < c ⬝ᵥ xopt + 1 / ((k : ℝ) + 1) := by
