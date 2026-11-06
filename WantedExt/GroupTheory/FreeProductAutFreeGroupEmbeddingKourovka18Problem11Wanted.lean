@@ -34,16 +34,26 @@ UM-00701440 (`KOU-18.11`), dataset ulamai/UnsolvedMath v1.8.0.
 finiteness assumption is made on `G` and `H`.
 -/
 
-/-- Kourovka 18.11 (V. G. Bardakov): for any subgroups `G, H` of `Aut(Fₙ)`, `n ≥ 2`, the free
-product `G ∗ H` embeds in `Aut(Fₘ)` for some `m`. -/
+/-- **Bardakov's question on free products in $\mathrm{Aut}(F_n)$ (Kourovka 18.11).** The statement
+that for every natural number $n \ge 2$ and all subgroups $G$ and $H$ of the automorphism group
+$\mathrm{Aut}(F_n)$ of the free group $F_n$ of rank $n$, there are a natural number $m$ and an
+injective group homomorphism from the free product $G \ast H$ to $\mathrm{Aut}(F_m)$. -/
 def freeProductAutFreeGroupEmbeds : Prop :=
   ∀ n : ℕ, 2 ≤ n → ∀ G H : Subgroup (MulAut (FreeGroup (Fin n))),
     ∃ (m : ℕ) (f : Monoid.Coprod G H →* MulAut (FreeGroup (Fin m))), Function.Injective f
 
 /--
-Resolved true: Jayadevan constructs, for subgroups `G ≤ Aut(Fₙ)` and `H ≤ Aut(Fₘ)` with no
-finite-generation hypothesis, an embedding of `G ∗ H` in `Aut(F_{n+m+3})`; the Kourovka Notebook
-(21st issue) answers 18.11 "Yes, it is true" (AI solution confirmed by V. G. Bardakov). Source: E.
+**Free products of subgroups of $\mathrm{Aut}(F_n)$ embed in some $\mathrm{Aut}(F_m)$.** For
+every natural number $n \ge 2$ and all subgroups $G$ and $H$ of the automorphism group
+$\mathrm{Aut}(F_n)$ of the free group $F_n$ of rank $n$, there are a natural number $m$ and an
+injective group homomorphism from the free product $G \ast H$ to $\mathrm{Aut}(F_m)$.
+
+Jayadevan constructs, for subgroups $G \le \mathrm{Aut}(F_n)$ and $H \le \mathrm{Aut}(F_k)$ with
+no finite-generation hypothesis, an embedding of $G \ast H$ in $\mathrm{Aut}(F_{n+k+3})$; the
+Kourovka Notebook (21st issue) answers 18.11 "Yes, it is true" (AI solution confirmed by V. G.
+Bardakov).
+
+Source: E.
 I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Problem 18.11 (V. G. Bardakov); resolution: A. Jayadevan, Free
 products of free-group automorphism groups: a finite-rank embedding by separating cocycles,

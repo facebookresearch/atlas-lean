@@ -38,17 +38,23 @@ powers of `φ`. `IsConjugacySeparable` is the shared definition in
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared
 
-/-- Kourovka 19.41 (I. Kapovich): for every automorphism `φ` of the free group `Fₙ` of finite rank,
-the split extension `Fₙ ⋊_φ ℤ` is conjugacy separable. -/
+/-- **Kapovich's conjugacy separability question (Kourovka 19.41).** The assertion that for every
+natural number $n$ and every automorphism $\varphi$ of the free group $F_n$ of rank $n$, the
+semidirect product $F_n \rtimes_\varphi \mathbb{Z}$, in which $k \in \mathbb{Z}$ acts on $F_n$ by
+$\varphi^k$, is conjugacy separable. -/
 def freeByCyclicConjugacySeparable : Prop :=
   ∀ (n : ℕ) (φ : MulAut (FreeGroup (Fin n))),
     IsConjugacySeparable
       (FreeGroup (Fin n) ⋊[zpowersHom (MulAut (FreeGroup (Fin n))) φ] Multiplicative ℤ)
 
 /--
-Resolved true: Dahmani, Hughes, Kudlinska and Touikan prove that every finitely generated
-free-by-cyclic group, in particular every `Fₙ ⋊_φ ℤ`, is conjugacy separable; the 21st issue of the
-Kourovka Notebook marks 19.41 solved ("Yes, it is"). Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**Finite-rank free-by-cyclic groups are conjugacy separable.** For every natural number $n$ and
+every automorphism $\varphi$ of the free group $F_n$ of rank $n$, the semidirect product
+$F_n \rtimes_\varphi \mathbb{Z}$, in which $k \in \mathbb{Z}$ acts on $F_n$ by $\varphi^k$, is
+conjugacy separable: any two of its elements whose images are conjugate in every quotient by a
+normal subgroup of finite index are conjugate.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Problem 19.41 (I. Kapovich); resolution: F. Dahmani, S. Hughes, M. Kudlinska and N. Touikan,
 Free-by-cyclic groups are conjugacy separable, preprint, arXiv:2509.22346v2 (2026), abstract: all

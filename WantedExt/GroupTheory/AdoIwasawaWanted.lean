@@ -72,7 +72,12 @@ variable {K L : Type u} [Field K] [LieRing L] [LieAlgebra K L]
 
 /- **The Ado–Iwasawa theorem.** Every finite-dimensional Lie algebra over an
 arbitrary field has a faithful finite-dimensional representation. -/
-/-- Source: K. Iwasawa, On the representation of Lie algebras, Japanese Journal of Mathematics 19 (1948), 405–426. See also the Tau Ceti Ado–Iwasawa roadmap, https://github.com/TauCetiProject/TauCetiRoadmap/pull/102. Via leanprover/lean-eval@38361be, problem `adoIwasawa`. -/
+/-- **Ado–Iwasawa theorem.** Let $K$ be a field and let $L$ be a finite-dimensional Lie algebra
+over $K$. Then $L$ has a faithful finite-dimensional representation: there are a
+finite-dimensional vector space $V$ over $K$ and an injective homomorphism of Lie algebras over
+$K$ from $L$ to the Lie algebra of $K$-linear endomorphisms of $V$ with the commutator bracket.
+
+Source: K. Iwasawa, On the representation of Lie algebras, Japanese Journal of Mathematics 19 (1948), 405–426. See also the Tau Ceti Ado–Iwasawa roadmap, https://github.com/TauCetiProject/TauCetiRoadmap/pull/102. Via leanprover/lean-eval@38361be, problem `adoIwasawa`. -/
 public theorem_wanted adoIwasawa [FiniteDimensional K L] :
     ∃ (V : Type u) (_ : AddCommGroup V) (_ : Module K V) (_ : FiniteDimensional K V)
       (ρ : L →ₗ⁅K⁆ Module.End K V), Function.Injective ρ

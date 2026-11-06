@@ -35,9 +35,12 @@ predicate on groups in `Type`. Solvable-by-finite means having a solvable subgro
 (its normal core is a solvable normal subgroup of finite index).
 -/
 
-/-- The class of elementary amenable groups (in `Type`): the smallest class of groups containing
-finite and abelian groups and closed under isomorphisms, subgroups, quotients, extensions and
-directed unions. -/
+/-- **Elementary amenable groups.** The class of elementary amenable groups is the smallest class
+of groups that contains every finite group and every abelian group and is closed under
+isomorphisms, subgroups, quotients, extensions and directed unions. Closure under extensions means
+that a group $G$ with a normal subgroup $N$ is elementary amenable whenever $N$ and $G/N$ are;
+closure under directed unions means that $G$ is elementary amenable whenever it is the union of a
+family of elementary amenable subgroups that is directed under inclusion. -/
 inductive IsElementaryAmenable : (G : Type) → [Group G] → Prop
   | of_finite (G : Type) [Group G] [Finite G] : IsElementaryAmenable G
   | of_comm (G : Type) [Group G] (h : ∀ a b : G, a * b = b * a) : IsElementaryAmenable G
@@ -52,17 +55,24 @@ inductive IsElementaryAmenable : (G : Type) → [Group G] → Prop
       DirectedOn (· ≤ ·) S → (∀ K ∈ S, IsElementaryAmenable K) → (∀ g : G, ∃ K ∈ S, g ∈ K) →
       IsElementaryAmenable G
 
-/-- Kourovka 16.52 (P. Linnell, T. Schick): every finitely presented elementary amenable group is
-solvable-by-finite (has a solvable subgroup of finite index). -/
+/-- **Kourovka Problem 16.52 (Linnell–Schick).** The statement that every finitely presented
+elementary amenable group $G$ is solvable-by-finite, that is, $G$ has a solvable subgroup of finite
+index. -/
 def finitelyPresentedElementaryAmenableVirtuallySolvable : Prop :=
   ∀ (G : Type) [Group G], Group.IsFinitelyPresented G → IsElementaryAmenable G →
     ∃ N : Subgroup G, N.FiniteIndex ∧ Group.IsSolvable N
 
 /--
-Resolved false: the Kourovka Archive answers 16.52 "No, not every": as Belegradek and Cornulier
-observed, Houghton's groups `Hₙ`, finitely presented for `n ≥ 3` by Brown, are elementary amenable
-(the locally finite group of finitary permutations extended by `ℤ^{n-1}`) but not virtually
-solvable. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Finitely presented elementary amenable groups need not be virtually solvable.** There is a
+finitely presented elementary amenable group $G$ that is not solvable-by-finite: no subgroup of
+finite index in $G$ is solvable. This answers Kourovka Problem 16.52 (P. Linnell, T. Schick) in
+the negative.
+
+As Belegradek and Cornulier observed, Houghton's groups $H_n$, finitely presented for $n \ge 3$
+by Brown, are elementary amenable (the locally finite group of finitary permutations extended by
+$\mathbb{Z}^{n-1}$) but not virtually solvable.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.52
 (P. Linnell, T. Schick); resolution: C. H. Houghton, Arch. Math. (Basel) 31 (1978/79), 254-258; K.
 S. Brown, J. Pure Appl. Algebra 44 (1987), 45-75; observation of I. Belegradek and Y. Cornulier,

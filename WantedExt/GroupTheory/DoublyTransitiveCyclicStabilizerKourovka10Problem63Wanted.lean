@@ -32,16 +32,22 @@ on one point would qualify). Doubly transitive is `MulAction.IsMultiplyPretransi
 action is transitive, so all point stabilizers are conjugate and one of them suffices.
 -/
 
-/-- Kourovka 10.63 (Ya. P. Sysak): some doubly transitive permutation group (a faithful
-`2`-transitive action) has an infinite cyclic point stabilizer. -/
+/-- **Doubly transitive group with infinite cyclic point stabilizer (Kourovka 10.63).** The
+statement that there exist a group $G$ and a faithful action of $G$ on a set $X$ such that for
+any two ordered pairs of distinct points of $X$ some element of $G$ maps the first to the second,
+and the stabilizer of some point $x \in X$ is isomorphic to the infinite cyclic group $\mathbb{Z}$.
+-/
 def doublyTransitiveInfiniteCyclicStabilizer : Prop :=
   ∃ (G X : Type) (_ : Group G) (_ : MulAction G X), FaithfulSMul G X ∧
     MulAction.IsMultiplyPretransitive G X 2 ∧
     ∃ x : X, Nonempty (MulAction.stabilizer G x ≃* Multiplicative ℤ)
 
 /--
-Resolved false: the Kourovka Archive answers 10.63 "No", citing Mazurov (1990) and Károlyi, Kovács
-and Pálfy (1990): no doubly transitive permutation group has an infinite cyclic point stabilizer.
+**No doubly transitive group has an infinite cyclic point stabilizer (Kourovka 10.63).** If a group
+$G$ acts faithfully on a set $X$ such that for any two ordered pairs of distinct points of $X$
+some element of $G$ maps the first to the second, then no point stabilizer of the action is
+isomorphic to the infinite cyclic group $\mathbb{Z}$.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 10.63 (Ya. P.
 Sysak); resolution: V. D. Mazurov, Siberian Math. J. 31 (1990), 615-617; Gy. Károlyi, S. J. Kovács

@@ -32,15 +32,22 @@ Free groups of every rank (`FreeGroup α`, `α : Type`); `[U, U]` is the commuta
 of `U` as a subgroup of the free group.
 -/
 
-/-- Kourovka 13.62 (V. P. Shaptala): for non-cyclic subgroups `U` and `V` of a free group, the
-inclusion `[U, U] ≤ [V, V]` implies `U ≤ V`. -/
+/-- **Inclusion of derived subgroups in free groups (Kourovka 13.62).** The conjecture of
+V. P. Shaptala that for every free group $F$ and all non-cyclic subgroups $U$ and $V$ of $F$, if
+the commutator subgroup $[U, U]$ is contained in the commutator subgroup $[V, V]$, then $U$ is
+contained in $V$. -/
 def derivedInclusionImpliesInclusion : Prop :=
   ∀ (α : Type) (U V : Subgroup (FreeGroup α)), ¬ IsCyclic U → ¬ IsCyclic V →
     ⁅U, U⁆ ≤ ⁅V, V⁆ → U ≤ V
 
 /--
-Resolved false: the Kourovka Archive answers 13.62 "No, it does not", citing Dunwoody: some free
-group has non-cyclic subgroups `U`, `V` with `[U, U] ≤ [V, V]` but `U` not contained in `V`. Source:
+**Inclusion of derived subgroups does not imply inclusion in free groups.** There exist a free
+group $F$ and non-cyclic subgroups $U$ and $V$ of $F$ such that the commutator subgroup $[U, U]$
+is contained in the commutator subgroup $[V, V]$ but $U$ is not contained in $V$. That is, the
+conjecture of Kourovka Problem 13.62 is false; the Kourovka Archive credits this answer to
+M. J. Dunwoody.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 13.62 (V. P. Shaptala);
 resolution: M. J. Dunwoody, Arch. Math. 16 (1965), 153-157, Kourovka Archive, Problem 13.62 (answer:

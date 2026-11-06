@@ -29,8 +29,10 @@ namespace MathlibExt.GroupTheory.GroupVarietyShared
 
 open MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted (SatisfiesLaws)
 
-/-- The variety with laws `N` is locally finite: every finitely generated group satisfying the laws
-`N` is finite. -/
+/-- **Locally finite variety.** Let $F$ be the free group on countably many generators
+$x_0, x_1, x_2, \dots$ and let $N$ be a subgroup of $F$, regarded as a set of laws. The variety
+defined by $N$ is locally finite if every finitely generated group satisfying all laws in $N$ is
+finite. -/
 def IsLocallyFiniteVariety (N : Subgroup (FreeGroup ℕ)) : Prop :=
   ∀ (G : Type) [Group G], SatisfiesLaws (N : Set (FreeGroup ℕ)) G → Group.FG G → Finite G
 
