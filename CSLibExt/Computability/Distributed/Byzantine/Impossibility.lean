@@ -100,10 +100,19 @@ set_option autoImplicit false
 
 namespace Cslib.Distributed.Byzantine.Impossibility
 
-/-- A synchronous oral-message protocol for the generals `G`, with orders in `V`, local states
-`σ` and messages `M`. In each round `r` every general `j` sends `send r j s i` to every general `i`,
-where `s` is its state, and then moves to `recv r i s msg`, where `msg j` is the message it
-received from `j`. Only the commander's initial state depends on the order. -/
+/-- **Oral-message protocol.** A synchronous oral-message protocol for a set $G$ of generals, with
+orders in $V$, local states in $\sigma$ and messages in $M$, consists of an initial state for
+each general in $G$, used by the generals other than the commander; an initial state of the
+commander for each order in $V$; a sending function giving, for each round $r$, each general $j$
+in each state $s$ and each general $i$, the message in $M$ that $j$ sends to $i$ in round $r$; a
+transition function giving, for each round $r$, each general $i$ in each state $s$ and each
+assignment of a message to every sender $j$, the state of $i$ after round $r$; and a decision
+function giving the value in $V$ that each general decides in each state.
+
+The commander is not part of the protocol: it is chosen when the protocol is run. In each round
+every general sends its messages from its current state and then moves to the state given by the
+transition function on the messages it received. Only the commander's initial state depends on
+the order. -/
 structure OralProtocol (G V σ M : Type*) where
   /-- The initial state of each general other than the commander. -/
   init : G → σ
@@ -122,10 +131,16 @@ namespace OralProtocol
 
 variable {G V σ M : Type*} (P : OralProtocol G V σ M)
 
-/-- Local views. Let nodes `N` run the code of the generals `role k`, with two families of
-states `s` and `s'` advanced by the protocol's `recv` from the messages `inb` and `inb'`. If
-the nodes satisfying `L` start in equal states, and receive equal messages whenever they are
-in equal states, then they stay in equal states. -/
+/-- **Local views determine states.** Let $P$ be an oral-message protocol for the generals $G$
+with states $\sigma$ and messages $M$. Let $N$ be a type of nodes, node $k$ running the code of
+the general $\rho(k) \in G$, and let $L$ be a property of nodes. For each round $r$ and node
+$k$, let $s_r(k), s'_r(k) \in \sigma$ be two states and $\mu_r(k), \mu'_r(k) : G \to M$ two
+families of received messages. Suppose that for every $r$ and every node $k$ satisfying $L$,
+$s_{r+1}(k)$ is the state to which general $\rho(k)$ of $P$ moves in round $r$ from $s_r(k)$ on
+the messages $\mu_r(k)$, and $s'_{r+1}(k)$ the one to which it moves from $s'_r(k)$ on
+$\mu'_r(k)$; that $s_0(k) = s'_0(k)$ for every $k$ satisfying $L$; and that for every $r$, if
+$s_r(k) = s'_r(k)$ for all $k$ satisfying $L$, then $\mu_r(k) = \mu'_r(k)$ for all $k$
+satisfying $L$. Then $s_r(k) = s'_r(k)$ for every $r$ and every $k$ satisfying $L$. -/
 theorem states_eq_of_inbox_eq {N : Type*} (role : N → G) (L : N → Prop) (s s' : ℕ → N → σ)
     (inb inb' : ℕ → N → G → M)
     (hs : ∀ r k, L k → s (r + 1) k = P.recv r (role k) (s r k) (inb r k))
@@ -142,28 +157,42 @@ theorem states_eq_of_inbox_eq {N : Type*} (role : N → G) (L : N → Prop) (s s
 
 variable [DecidableEq G]
 
-/-- The initial state of general `i` when the commander `c` has the order `v`. -/
+/-- **Initial state of a general.** When the commander $c$ has order $v$, the initial state of
+general $i$ is the initial state that the protocol assigns to a commander with order $v$ if
+$i = c$, and the initial state that the protocol assigns to $i$ as a general other than the
+commander if $i \ne c$. -/
 def initState (c : G) (v : V) (i : G) : σ :=
   if i = c then P.initCommander v else P.init i
 
-/-- The commander starts from the state given by its order. -/
+/-- **Initial state of the commander.** When the commander $c$ has order $v$, the initial state of
+$c$ is the initial state that the protocol assigns to a commander with order $v$. -/
 theorem initState_self (c : G) (v : V) : P.initState c v c = P.initCommander v := by
   simp [initState]
 
-/-- A general other than the commander starts from a state independent of the order. -/
+/-- **Initial state of a lieutenant.** If general $i$ is not the commander $c$, then the initial
+state of $i$ when $c$ has order $v$ is the initial state that the protocol assigns to $i$ as a
+general other than the commander; in particular, it does not depend on $v$. -/
 theorem initState_of_ne {c i : G} (v : V) (h : i ≠ c) : P.initState c v i = P.init i := by
   simp [initState, h]
 
-/-- `P.state c v traitors adv r i` is the state of general `i` after `r` rounds of `P` with
-commander `c`, order `v` and traitors `traitors`, where a traitor `j` sends `adv r j i` to
-general `i` in round `r`. Loyal generals follow the protocol. -/
+/-- **Executions of an oral-message protocol.** Let $P$ be an oral-message protocol for the
+generals $G$, let $c \in G$ be the commander, $v$ its order and $S \subseteq G$ a finite set of
+traitors, and let $a_r(j, i)$ be the message a traitor $j$ sends general $i$ in round $r$. The
+state of general $i$ after $r$ rounds is defined by recursion on $r$. After $0$ rounds it is
+the initial state of $i$ for commander $c$ and order $v$. After $r + 1$ rounds it is the state
+to which $i$ moves by its code for round $r$ from its state after $r$ rounds, on receiving
+$a_r(j, i)$ from each traitor $j \in S$ and, from each other general $j$, the message that $P$
+has $j$ send to $i$ in round $r$ from the state of $j$ after $r$ rounds. -/
 def state (c : G) (v : V) (traitors : Finset G) (adv : ℕ → G → G → M) : ℕ → G → σ
   | 0, i => P.initState c v i
   | r + 1, i => P.recv r i (state c v traitors adv r i) fun j =>
       if j ∈ traitors then adv r j i else P.send r j (state c v traitors adv r j) i
 
-/-- The messages general `i` receives in round `r` of `P.state c v traitors adv`, indexed by
-the sender. -/
+/-- **Messages received in a round.** In the execution of a protocol $P$ with commander $c$,
+order $v$, a set of traitors and a behaviour $\mathrm{adv}$ of the traitors, the messages that
+general $i$ receives in round $r$ form the function of the sender $j$ whose value is
+$\mathrm{adv}(r, j, i)$ if $j$ is a traitor, and otherwise the message that $P$ has $j$ send to
+$i$ in round $r$ from the state of $j$ after $r$ rounds. -/
 def inbox (c : G) (v : V) (traitors : Finset G) (adv : ℕ → G → G → M) (r : ℕ) (i : G) :
     G → M := fun j =>
   if j ∈ traitors then adv r j i else P.send r j (P.state c v traitors adv r j) i
@@ -172,25 +201,37 @@ section Execution
 
 variable (c : G) (v : V) (traitors : Finset G) (adv : ℕ → G → G → M)
 
-/-- Every general starts from its initial state. -/
+/-- **The start of an execution.** In the execution of an oral-message protocol $P$ with
+commander $c$, order $v$, any set of traitors and any traitor behaviour, every general is in
+its initial state after $0$ rounds: the commander in the initial state given by the order $v$,
+and every other general in its order-independent initial state. -/
 theorem state_zero : P.state c v traitors adv 0 = P.initState c v := rfl
 
-/-- In each round every general moves by its code on the messages it receives. -/
+/-- **One round of an execution.** In the execution of an oral-message protocol $P$ with a given
+commander, order, set of traitors and traitor behaviour, for every round $r$ and every general
+$i$, the state of $i$ after $r + 1$ rounds is the state to which $i$ moves by its code for round
+$r$ from its state after $r$ rounds on the messages it receives in round $r$. -/
 theorem state_succ (r : ℕ) (i : G) :
     P.state c v traitors adv (r + 1) i =
       P.recv r i (P.state c v traitors adv r i) (P.inbox c v traitors adv r i) := rfl
 
-/-- The value general `i` decides after `T` rounds. -/
+/-- **Decision of a general.** In the execution of a protocol $P$ with commander $c$, order $v$, a
+set of traitors and a behaviour of the traitors, the decision of general $i$ after $T$ rounds is
+the value that the decision function of $P$ assigns to $i$ in its state after $T$ rounds. -/
 def decision (T : ℕ) (i : G) : V := P.decide i (P.state c v traitors adv T i)
 
-/-- Condition IC1 (agreement) after `T` rounds: all loyal lieutenants decide the same
-value. -/
+/-- **Agreement condition (IC1).** Consider the execution of a protocol $P$ with commander $c$,
+order $v$, a set of traitors and a behaviour of the traitors. Condition IC1 holds after $T$
+rounds when any two generals $i$ and $j$, neither of which is the commander or a traitor, decide
+the same value after $T$ rounds of this execution. -/
 def Agreement (T : ℕ) : Prop :=
   ∀ i j, i ≠ c → j ≠ c → i ∉ traitors → j ∉ traitors →
     P.decision c v traitors adv T i = P.decision c v traitors adv T j
 
-/-- Condition IC2 (validity) after `T` rounds: if the commander is loyal, every loyal
-lieutenant decides its order. -/
+/-- **Validity in the Byzantine generals problem.** In the execution of an oral-message protocol
+with commander $c$, order $v$, a set of traitors and a traitor behaviour, condition IC2
+(validity) holds after $T$ rounds if, provided the commander is loyal, every loyal general
+other than the commander decides $v$ after $T$ rounds. -/
 def Validity (T : ℕ) : Prop :=
   c ∉ traitors → ∀ i, i ≠ c → i ∉ traitors → P.decision c v traitors adv T i = v
 
@@ -206,9 +247,11 @@ instance [Fintype G] [DecidableEq V] (T : ℕ) :
 
 end Execution
 
-/-- `P` solves the Byzantine generals problem with commander `c` and at most `m` traitors in
-`T` rounds: IC1 and IC2 hold for every order, every set of at most `m` traitors and every
-behaviour of the traitors. -/
+/-- **Solving the Byzantine generals problem.** An oral-message protocol $P$ for the generals
+$G$ solves the Byzantine generals problem with commander $c \in G$ and at most $m$ traitors in
+$T$ rounds if, for every order $v$, every set of at most $m$ traitors and every behaviour of
+the traitors (the message each traitor sends to each general in each round), conditions IC1
+(agreement) and IC2 (validity) hold after $T$ rounds. -/
 def Solves (c : G) (m T : ℕ) : Prop :=
   ∀ (v : V) (traitors : Finset G), traitors.card ≤ m → ∀ adv : ℕ → G → G → M,
     P.Agreement c v traitors adv T ∧ P.Validity c v traitors adv T
@@ -316,11 +359,14 @@ private theorem false_of_forall [Nontrivial V] (T : ℕ)
 
 end Hexagon
 
-/-- **No protocol for three generals tolerates one traitor** (Pease, Shostak and Lamport;
-proved by a commander version of the hexagon argument of Fischer, Lynch and Merritt). For
-every protocol for the generals `Fin 3` with commander `0`, and every number of rounds `T`,
-there are an order, a single traitor and a behaviour of the traitor for which IC1 or IC2
-fails. -/
+/-- **No protocol for three generals tolerates one traitor.** Suppose there are at least two
+possible orders. For every oral-message protocol for three generals $0$, $1$, $2$ with commander
+$0$ and every number of rounds $T$, there are an order $v$, a general $t$ and a behaviour of $t$
+such that, in the execution with order $v$ in which $t$ is the only traitor, the agreement
+condition (IC1) or the validity condition (IC2) fails after $T$ rounds.
+
+This is the theorem of Pease, Shostak and Lamport, proved here by a commander version of the
+hexagon argument of Fischer, Lynch and Merritt. -/
 theorem exists_violation_three [Nontrivial V] (P : OralProtocol (Fin 3) V σ M) (T : ℕ) :
     ∃ (v : V) (t : Fin 3) (adv : ℕ → Fin 3 → Fin 3 → M),
       ¬ (P.Agreement 0 v {t} adv T ∧ P.Validity 0 v {t} adv T) := by
@@ -329,7 +375,10 @@ theorem exists_violation_three [Nontrivial V] (P : OralProtocol (Fin 3) V σ M) 
   exact false_of_forall P T h
 
 /-- **No protocol for three generals solves the Byzantine generals problem with one
-traitor**, in any number of rounds. -/
+traitor.** Suppose there are at least two possible orders. For every oral-message protocol for
+three generals $0$, $1$, $2$ with commander $0$ and every number of rounds $T$, the protocol does
+not solve the Byzantine generals problem with commander $0$ and at most one traitor in $T$
+rounds. -/
 theorem not_solves_three [Nontrivial V] (P : OralProtocol (Fin 3) V σ M) (T : ℕ) :
     ¬ P.Solves 0 1 T := fun h =>
   false_of_forall P T fun v t adv => h v {t} (Finset.card_singleton t).le adv
@@ -338,11 +387,23 @@ theorem not_solves_three [Nontrivial V] (P : OralProtocol (Fin 3) V σ M) (T : �
 
 section Simulation
 
-/-- The protocol for three generals in which general `g` simulates the generals `i` of `P`
-with `grp i = g`. Its state holds a state for every general of `P`, of which it updates those
-of its group; its message lists the messages of every general of `P` to every general of `P`,
-of which the receiver reads those sent by the senders' groups; it decides what its
-representative `rep g` decides. -/
+/-- **Three generals simulating a protocol.** Let $P$ be an oral-message protocol for the
+generals $G$ with orders in $V$, states $\sigma$ and messages $M$, let $c \in G$, let
+$\mathrm{grp} : G \to \{0, 1, 2\}$ split the generals into three groups and let
+$\mathrm{rep} : \{0, 1, 2\} \to G$. The simulation of $P$ with $c$, $\mathrm{grp}$ and
+$\mathrm{rep}$ is the oral-message protocol for the generals $\{0, 1, 2\}$ with orders in $V$,
+whose states are families $(s(i))_{i \in G}$ of states of $\sigma$ and whose messages are
+families $(\mu(j, i))_{j, i \in G}$ of messages of $M$, defined as follows. A general other
+than the commander starts from the family of the initial states that $P$ gives each general of
+$G$ as a non-commander; the commander, with order $v$, starts from the family of the initial
+states of the generals of $G$ in $P$ when $c$ is the commander with order $v$. In round $r$, a
+general in state $s$ sends every general the family whose entry $(j, i)$ is the message that
+general $j$ of $P$, in state $s(j)$, sends to general $i$ in round $r$. In round $r$, general
+$g$ in state $s$, having received $\mu_h$ from each general $h$, moves to the family that keeps
+$s(i)$ for each $i$ with $\mathrm{grp}(i) \ne g$ and, for each $i$ with $\mathrm{grp}(i) = g$,
+holds the state to which general $i$ of $P$ moves in round $r$ from $s(i)$ on receiving
+$\mu_{\mathrm{grp}(j)}(j, i)$ from each $j \in G$. General $g$ in final state $s$ decides
+what general $\mathrm{rep}(g)$ of $P$ decides in state $s(\mathrm{rep}(g))$. -/
 def simulate (c : G) (grp : G → Fin 3) (rep : Fin 3 → G) :
     OralProtocol (Fin 3) V (G → σ) (G → G → M) where
   init _ := P.init
@@ -353,10 +414,18 @@ def simulate (c : G) (grp : G → Fin 3) (rep : Fin 3 → G) :
 
 variable [Fintype G]
 
-/-- The simulation is faithful. In an execution of `P.simulate c grp rep` with traitors
-`traitors`, each loyal general holds, for each general of `P` of its group, the state of that
-general in the execution of `P` in which the generals of the traitors' groups are traitors
-relaying the messages of the simulating traitors. -/
+/-- **The simulation is faithful.** Let $P$ be an oral-message protocol for a finite set $G$ of
+generals with messages $M$, let $c \in G$, and let $\mathrm{grp} : G \to \{0, 1, 2\}$ and
+$\mathrm{rep} : \{0, 1, 2\} \to G$ with $\mathrm{grp}(c) = 0$. Fix an order $v$, a set
+$S \subseteq \{0, 1, 2\}$ of traitors and a traitor behaviour $a$ for the simulation of $P$
+with $c$, $\mathrm{grp}$ and $\mathrm{rep}$: in round $r$ a traitor $h$ sends general $g$ the
+family $(a_r(h, g)(j, i))_{j, i \in G}$ of messages of $M$. Compare the execution of the
+simulation with commander $0$, order $v$, traitors $S$ and behaviour $a$ with the execution of
+$P$ with commander $c$, order $v$ and traitors $\{j \in G : \mathrm{grp}(j) \in S\}$, in which
+a traitor $j$ sends general $i$ the message $a_r(\mathrm{grp}(j), \mathrm{grp}(i))(j, i)$ in
+round $r$. Then for every $r \in \mathbb{N}$ and every $i \in G$ with $\mathrm{grp}(i) \notin S$,
+the entry at $i$ of the state of general $\mathrm{grp}(i)$ after $r$ rounds of the first
+execution equals the state of general $i$ after $r$ rounds of the second. -/
 theorem state_simulate (c : G) (grp : G → Fin 3) (rep : Fin 3 → G) (hc : grp c = 0) (v : V)
     (traitors : Finset (Fin 3)) (adv : ℕ → Fin 3 → Fin 3 → G → G → M) (r : ℕ) (i : G)
     (hi : grp i ∉ traitors) :
@@ -379,10 +448,14 @@ theorem state_simulate (c : G) (grp : G → Fin 3) (rep : Fin 3 → G) (hc : grp
     · rfl
     · exact congrArg (P.send r j · i) (ih j hj)
 
-/-- If `P` solves the problem with commander `c` and at most `m` traitors, then
-`P.simulate c grp rep` solves it for three generals and one traitor, provided the commander is
-in group `0`, each group `g ≠ 0` contains its representative and each group has at most `m`
-generals. -/
+/-- **Simulation reduces many generals to three.** Let $P$ be an oral-message protocol for a
+finite set $G$ of generals, let $c \in G$ and $m, T \in \mathbb{N}$, and suppose that $P$ solves
+the Byzantine generals problem with commander $c$ and at most $m$ traitors in $T$ rounds. Let
+$\mathrm{grp} : G \to \{0, 1, 2\}$ and $\mathrm{rep} : \{0, 1, 2\} \to G$ satisfy
+$\mathrm{grp}(c) = 0$, $\mathrm{grp}(\mathrm{rep}(g)) = g$ for every $g \ne 0$, and
+$|\{i \in G : \mathrm{grp}(i) = g\}| \le m$ for every $g$. Then the simulation of $P$ with $c$,
+$\mathrm{grp}$ and $\mathrm{rep}$ solves the Byzantine generals problem for the generals
+$\{0, 1, 2\}$ with commander $0$ and at most one traitor in $T$ rounds. -/
 theorem solves_simulate {c : G} {m T : ℕ} (hP : P.Solves c m T) (grp : G → Fin 3)
     (rep : Fin 3 → G) (hc : grp c = 0) (hrep : ∀ g, g ≠ 0 → grp (rep g) = g)
     (hcard : ∀ g, ({i | grp i = g} : Finset G).card ≤ m) :
@@ -412,10 +485,15 @@ theorem solves_simulate {c : G} {m T : ℕ} (hP : P.Solves c m T) (grp : G → F
   · rw [hdec g hg hgt]
     exact hV (by simpa [hc] using h0) _ (hne g hg) (hnt g hg hgt)
 
-/-- **No protocol for `n` generals tolerates `m` traitors when `3 ≤ n ≤ 3 m`** (Lamport,
-Shostak and Pease, by reduction to three generals): for every protocol, every commander and
-every number of rounds there are an order, at most `m` traitors and a behaviour of the
-traitors for which IC1 or IC2 fails. -/
+/-- **No protocol for $n$ generals tolerates $m$ traitors when $3 \le n \le 3m$.** Suppose there
+are at least two possible orders and the set of generals is finite with $n$ elements, where
+$3 \le n \le 3m$. Then for every oral-message protocol, every commander $c$ and every number of
+rounds $T$, the protocol does not solve the Byzantine generals problem with commander $c$ and at
+most $m$ traitors in $T$ rounds: there are an order, a set of at most $m$ traitors and a
+behaviour of the traitors for which the agreement condition (IC1) or the validity condition
+(IC2) fails after $T$ rounds.
+
+This is the theorem of Lamport, Shostak and Pease, proved by reduction to three generals. -/
 theorem not_solves_of_card_le_three_mul [Nontrivial V] (c : G) {m : ℕ}
     (h3 : 3 ≤ Fintype.card G) (hm : Fintype.card G ≤ 3 * m) (T : ℕ) : ¬ P.Solves c m T := by
   intro hP

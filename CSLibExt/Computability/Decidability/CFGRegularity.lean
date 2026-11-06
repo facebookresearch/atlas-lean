@@ -67,29 +67,44 @@ section Languages
 
 variable {T : Type}
 
-/-- The letters of the reduction: those of `T`, the separator `#` and two bits. -/
+/-- **Alphabet of the reduction from universality to regularity.** For a type $T$, the alphabet
+$T \sqcup \{\#, 0, 1\}$ consists of the letters of $T$, a separator $\#$ and two bits $0$ and $1$,
+all distinct. -/
 abbrev Letter (T : Type) := Option (T ⊕ Bool)
 
-/-- The separator `#`. -/
+/-- **The separator letter.** For an alphabet $T$, among the letters of the reduction (the letters
+of $T$, a separator and two bits), this is the separator, written $\#$. -/
 def sep : Letter T := none
 
-/-- A letter of `T`. -/
+/-- **Alphabet letters in the extended alphabet.** For an alphabet $T$, each letter $t \in T$ is
+sent to the corresponding letter among the letters of the reduction (the letters of $T$, a
+separator and two bits). -/
 def tl (t : T) : Letter T := some (Sum.inl t)
 
-/-- A bit. -/
+/-- **Bits as letters.** Each boolean $b$ (with false read as $0$ and true as $1$) is sent to the
+corresponding bit letter of the alphabet consisting of the letters of $T$, a separator $\#$ and
+two bits $0$ and $1$. -/
 def bl (b : Bool) : Letter T := some (Sum.inr b)
 
-/-- The language `{0ⁿ1ⁿ}` over the bits (`false` for `0`). -/
+/-- **The language $\{0^n 1^n\}$.** The language over the two bits $0$ and $1$ (the Booleans
+false and true) consisting of the words $0^n 1^n$ for $n \in \mathbb{N}$, that is, $n$ zeros
+followed by $n$ ones. -/
 def zeroOne : Language Bool := {w | ∃ n, w = List.replicate n false ++ List.replicate n true}
 
-/-- The target language `L # {0,1}* ∪ T* # {0ⁿ1ⁿ}`. -/
+/-- **The target language of the regularity reduction.** For a language $L$ over an alphabet
+$T$, this is the language over the letters of $T$, a separator $\#$ and the two bits $0, 1$
+consisting of the words $u \# v$ with $u \in T^*$ and $v \in \{0,1\}^*$ such that $u \in L$ or
+$v = 0^n 1^n$ for some $n \in \mathbb{N}$; that is,
+$L \# \{0,1\}^* \cup T^* \# \{0^n 1^n : n \in \mathbb{N}\}$. -/
 def regLang (L : Language T) : Language (Letter T) :=
   {w | ∃ (u : List T) (v : List Bool), w = u.map tl ++ sep :: v.map bl ∧ (u ∈ L ∨ v ∈ zeroOne)}
 
 theorem bl_injective : Function.Injective (bl (T := T)) := fun a b h ↦ by
   simpa [bl] using h
 
-/-- A word `u # v` determines `u` and `v`. -/
+/-- **Unique decomposition at the separator.** Over the alphabet consisting of the letters of
+$T$, a separator $\#$ and two bits $0$ and $1$, let $u, u'$ be words over $T$ and $v, v'$ words
+over the bits. If $u \# v = u' \# v'$, then $u = u'$ and $v = v'$. -/
 theorem eq_of_map_tl_append_sep :
     ∀ {u u' : List T} {v v' : List Bool},
       u.map tl ++ sep :: v.map bl = u'.map tl ++ sep :: v'.map bl → u = u' ∧ v = v'
@@ -119,16 +134,24 @@ theorem not_isRegular_zeroOne : ¬zeroOne.IsRegular := by
   simp [List.count_replicate] at h₁ h₂
   omega
 
-/-- The words over the letters of `T`. -/
+/-- **Words over $T$ in the reduction alphabet.** This is the language $T^*$ over the alphabet
+$T \sqcup \{\#, 0, 1\}$ of the reduction from universality to regularity: the words, including the
+empty word, all of whose letters lie in $T$. -/
 def letterWords : Language (Letter T) := {w | ∃ u : List T, w = u.map tl}
 
-/-- The words over the bits. -/
+/-- **Bit words.** Over the alphabet consisting of the letters of $T$, a separator $\#$ and two
+bits $0$ and $1$, the bit words form the language $\{0, 1\}^*$ of all finite words, including
+the empty word, all of whose letters are bits. -/
 def bitWords : Language (Letter T) := {w | ∃ v : List Bool, w = v.map bl}
 
-/-- The one-letter words over the letters of `T`. -/
+/-- **One-letter words over $T$.** This is the language over the alphabet $T \sqcup \{\#, 0, 1\}$
+of the reduction from universality to regularity consisting of the one-letter words $t$ with
+$t \in T$. -/
 def letterSet : Language (Letter T) := {w | ∃ t : T, w = [tl t]}
 
-/-- The one-letter words over the bits. -/
+/-- **Single-bit words.** Over the alphabet consisting of the letters of $T$, a separator $\#$
+and two bits $0$ and $1$, the single-bit words form the language $\{0, 1\}$ whose only words are
+the one-letter words $0$ and $1$. -/
 def bitSet : Language (Letter T) := {w | ∃ b : Bool, w = [bl b]}
 
 theorem letterWords_eq : (letterWords : Language (Letter T)) = KStar.kstar letterSet := by
@@ -181,7 +204,11 @@ theorem isRegular_bitWords : (bitWords : Language (Letter T)).IsRegular := by
   rw [bitWords_eq]
   exact Cslib.Language.IsRegular.kstar (IsRegular.of_finite hfin)
 
-/-- **If `L` is every word, `regLang L = T* # {0,1}*` is regular.** -/
+/-- **The reduction language of a universal language is regular.** Let $T$ be a finite alphabet
+and $L$ a language over $T$ that contains every word over $T$. Over the letters of $T$, a
+separator $\#$ and two bits $0$ and $1$, the language
+$L \# \{0,1\}^* \cup T^* \# \{0^n 1^n : n \ge 0\}$, which here equals $T^* \# \{0,1\}^*$, is
+regular. -/
 theorem isRegular_regLang_top [Finite T] {L : Language T} (hL : ∀ u, u ∈ L) :
     (regLang L).IsRegular := by
   have heq : regLang L = letterWords * ({[sep]} : Language (Letter T)) * bitWords := by
@@ -200,8 +227,12 @@ theorem isRegular_regLang_top [Finite T] {L : Language T} (hL : ∀ u, u ∈ L) 
     (Cslib.Language.IsRegular.mul isRegular_letterWords (Cslib.Language.IsRegular.char sep))
     isRegular_bitWords
 
-/-- **If `u ∉ L`, `regLang L` is not regular**: its quotient by `u #`, read over the bits, is
-`{0ⁿ1ⁿ}`. -/
+/-- **Non-universality makes the reduction language non-regular.** Let $L$ be a language over an
+alphabet $T$, let $T \sqcup \{\#, 0, 1\}$ extend $T$ by a separator $\#$ and two bits, and let
+$R(L) = L\,\#\,\{0,1\}^* \cup T^*\,\#\,\{0^n1^n : n \in \mathbb{N}\}$ over this alphabet. If some
+word $u$ over $T$ is not in $L$, then $R(L)$ is not regular.
+
+The words $v$ over the bits with $u\,\#\,v \in R(L)$ are exactly the words $0^n1^n$. -/
 theorem not_isRegular_regLang {L : Language T} {u : List T} (hu : u ∉ L) :
     ¬(regLang L).IsRegular := by
   intro h
@@ -218,7 +249,11 @@ theorem not_isRegular_regLang {L : Language T} {u : List T} (hu : u ∉ L) :
   exact not_isRegular_zeroOne (heq ▸ Cslib.Language.IsRegular.alphabetPreimage
     (Cslib.Language.IsRegular.contextQuotient h (u.map tl ++ [sep]) []) bl)
 
-/-- `regLang L` is regular iff `L` is every word. -/
+/-- **Regularity of the reduction language characterises universality.** Let $T$ be a finite
+alphabet and $L$ a language over $T$. Over the letters of $T$, a separator $\#$ and two bits $0$
+and $1$, the language $L \# \{0,1\}^* \cup T^* \# \{0^n 1^n : n \ge 0\}$, of the words $u \# v$
+with $u$ a word over $T$, $v$ a word over the bits, and $u \in L$ or $v = 0^n 1^n$ for some $n$,
+is regular if and only if $L$ contains every word over $T$. -/
 theorem isRegular_regLang_iff [Finite T] {L : Language T} :
     (regLang L).IsRegular ↔ ∀ u, u ∈ L := by
   refine ⟨fun h ↦ ?_, isRegular_regLang_top⟩
@@ -235,28 +270,66 @@ section Grammar
 
 variable {T : Type} [Fintype T] [DecidableEq T]
 
-/-- A symbol of `g`, in `regGrammar g`: nonterminals are shifted by `4`, letters map by `tl`. -/
+/-- **Shifting a symbol into the regularity grammar.** Let $T$ be a finite alphabet with decidable
+equality, and consider the alphabet $T \sqcup \{\#, 0, 1\}$ of the letters of $T$, a separator
+$\#$ and two bits $0$ and $1$. A symbol of an encoded grammar over $T$, that is, a nonterminal
+$n \in \mathbb{N}$ or a letter $t \in T$, is sent to a symbol of an encoded grammar over
+$T \sqcup \{\#, 0, 1\}$: the nonterminal $n$ goes to the nonterminal $n + 4$, and the letter $t$
+goes to the letter $t$ of $T \sqcup \{\#, 0, 1\}$. -/
 def shiftSym : ℕ ⊕ T → ℕ ⊕ Letter T :=
   Sum.map (· + 4) tl
 
-/-- A production of `g`, in `regGrammar g`. -/
+/-- **Shifting a production into the regularity grammar.** Let $T$ be a finite alphabet with
+decidable equality, and consider the alphabet $T \sqcup \{\#, 0, 1\}$ of the letters of $T$, a
+separator $\#$ and two bits $0$ and $1$. An encoded production $(n, \alpha)$ over $T$, with
+left-hand side the nonterminal $n$ and right-hand side $\alpha$, is sent to the encoded production
+$(n + 4, \alpha')$ over $T \sqcup \{\#, 0, 1\}$, where $\alpha'$ is $\alpha$ with each nonterminal
+$k$ replaced by the nonterminal $k + 4$ and each letter of $T$ read as the same letter of
+$T \sqcup \{\#, 0, 1\}$. -/
 def shiftRule (e : ℕ × List (ℕ ⊕ T)) : ℕ × List (ℕ ⊕ Letter T) :=
   (e.1 + 4, e.2.map shiftSym)
 
-/-- The productions of `regGrammar g` besides those of `g`, with `s` the start of `g`:
-`0 → (s+4) # 1 | 2 # 3`, `1 → ε | 0 1 | 1 1` (bits), `2 → ε | a 2` (letters of `T`) and
-`3 → ε | 0 3 1` (`0ⁿ1ⁿ`). -/
+/-- **The auxiliary productions of the regularity grammar.** For a natural number $s$, these are
+the following productions over the nonterminals $\mathbb{N}$ and the alphabet consisting of the
+letters of the finite alphabet $T$, a separator $\#$ and two bits $0$ and $1$, where $A_n$
+denotes nonterminal $n$: $A_0 \to A_{s+4} \# A_1$, $A_0 \to A_2 \# A_3$, $A_1 \to \varepsilon$,
+$A_1 \to 0 A_1$, $A_1 \to 1 A_1$, $A_2 \to \varepsilon$, $A_3 \to \varepsilon$,
+$A_3 \to 0 A_3 1$, and $A_2 \to t A_2$ for each letter $t$ of $T$.
+
+In the regularity grammar of a grammar $g$, $s$ is the start nonterminal of $g$, and these
+productions are added to those of $g$ with every nonterminal $n$ renamed $n + 4$. -/
 noncomputable def fixedRules (s : ℕ) : List (ℕ × List (ℕ ⊕ Letter T)) :=
   [(0, [Sum.inl (s + 4), Sum.inr sep, Sum.inl 1]), (0, [Sum.inl 2, Sum.inr sep, Sum.inl 3]),
     (1, []), (1, [Sum.inr (bl false), Sum.inl 1]), (1, [Sum.inr (bl true), Sum.inl 1]),
     (2, []), (3, []), (3, [Sum.inr (bl false), Sum.inl 3, Sum.inr (bl true)])] ++
   (Finset.univ : Finset T).toList.map fun t ↦ (2, [Sum.inr (tl t), Sum.inl 2])
 
-/-- The grammar of `regLang L(g)`. -/
+/-- **Grammar of the reduction from universality to regularity.** Let $g$ be an encoded
+context-free grammar over a finite alphabet $T$ with start nonterminal $s$, and write $N_k$ for
+nonterminal $k \in \mathbb{N}$ and $\varepsilon$ for the empty word. The reduction grammar of $g$
+is the encoded grammar over $T \sqcup \{\#, 0, 1\}$ (the letters of $T$, a separator $\#$ and two
+bits $0$ and $1$) with start nonterminal $N_0$ and the productions $N_0 \to N_{s+4}\,\#\,N_1$,
+$N_0 \to N_2\,\#\,N_3$, $N_1 \to \varepsilon$, $N_1 \to 0\,N_1$, $N_1 \to 1\,N_1$,
+$N_2 \to \varepsilon$, $N_2 \to t\,N_2$ for each $t \in T$, $N_3 \to \varepsilon$ and
+$N_3 \to 0\,N_3\,1$, together with the production $N_{n+4} \to \alpha'$ for each production
+$N_n \to \alpha$ of $g$, where $\alpha'$ is $\alpha$ with each nonterminal $N_k$ replaced by
+$N_{k+4}$ and each letter of $T$ kept.
+
+Its language is $L(g)\,\#\,\{0,1\}^* \cup T^*\,\#\,\{0^n1^n : n \in \mathbb{N}\}$, where $L(g)$
+is the language of $g$. -/
 noncomputable def regGrammar (g : EncodedCFG T) : EncodedCFG (Letter T) :=
   ⟨0, fixedRules g.start ++ g.rules.map shiftRule⟩
 
-/-- The languages of the nonterminals of `regGrammar g`. -/
+/-- **Languages assigned to the nonterminals of the regularity grammar.** Let $g$ be an encoded
+context-free grammar over a finite alphabet $T$ with decidable equality, let $L(g)$ be its
+language and $L_g(n)$ the language $g$ generates from nonterminal $n$. Over the alphabet
+$T \sqcup \{\#, 0, 1\}$ (the letters of $T$, a separator $\#$ and two bits $0$ and $1$), write
+$\bar u$ for a word $u$ over $T$ read in this alphabet. This assigns to each $m \in \mathbb{N}$
+the language $V(m)$ over $T \sqcup \{\#, 0, 1\}$ given by
+$V(0) = L(g)\,\#\,\{0,1\}^* \cup T^*\,\#\,\{0^k1^k : k \in \mathbb{N}\}$, $V(1) = \{0,1\}^*$,
+$V(2) = T^*$, $V(3) = \{0^k1^k : k \in \mathbb{N}\}$ and $V(n + 4) = \{\bar u : u \in L_g(n)\}$.
+
+These are the intended languages of the nonterminals of the regularity grammar of $g$. -/
 def regVal (g : EncodedCFG T) : ℕ → Language (Letter T)
   | 0 => regLang g.language
   | 1 => bitWords
@@ -265,7 +338,17 @@ def regVal (g : EncodedCFG T) : ℕ → Language (Letter T)
   | n + 4 => {w | ∃ u ∈ languageFrom g.toCFG n, w = u.map tl}
 
 omit [Fintype T] in
-/-- The interpretation of a shifted right-hand side is the image of the original one. -/
+/-- **Shifted right-hand sides denote images of words of $g$.** Let $g$ be an encoded context-free
+grammar over $T$, let $L_g(n)$ be the language $g$ generates from nonterminal $n$ and $L(g)$ its
+language. For a word $u$ over $T$ write $\bar u$ for the same word over $T \sqcup \{\#, 0, 1\}$.
+Let $V$ assign to each $m \in \mathbb{N}$ the language $V(m)$ over $T \sqcup \{\#, 0, 1\}$ given by
+$V(0) = L(g)\,\#\,\{0,1\}^* \cup T^*\,\#\,\{0^k1^k : k \in \mathbb{N}\}$, $V(1) = \{0,1\}^*$,
+$V(2) = T^*$, $V(3) = \{0^k1^k : k \in \mathbb{N}\}$ and $V(n + 4) = \{\bar u : u \in L_g(n)\}$.
+Let $\alpha$ be a right-hand side over nonterminals in $\mathbb{N}$ and terminals in $T$, and let
+$\alpha'$ be $\alpha$ with each nonterminal $n$ replaced by $n + 4$ and each terminal read in
+$T \sqcup \{\#, 0, 1\}$. If $w$ lies in the language that $\alpha'$ denotes when each nonterminal
+$m$ is read as $V(m)$, then $w = \bar u$ for some $u$ in the language that $\alpha$ denotes when
+each nonterminal $n$ is read as $L_g(n)$. -/
 theorem mem_evalForm_shift {g : EncodedCFG T} {w : List (Letter T)} :
     ∀ {out : List (ℕ ⊕ T)},
       w ∈ evalForm (regVal g) ((out.map shiftSym).map EncodedCFG.decodeSymbol) →
@@ -284,7 +367,16 @@ theorem mem_evalForm_shift {g : EncodedCFG T} {w : List (Letter T)} :
       subst ha'
       exact ⟨t :: u, Language.mem_mul.mpr ⟨[t], rfl, u, hu, rfl⟩, by simp⟩
 
-/-- **Every production of `regGrammar g` is sound for `regVal g`.** -/
+/-- **Every production of the regularity grammar is sound for its intended languages.** Let $g$
+be an encoded context-free grammar over a finite alphabet $T$ with decidable equality, and let
+$G$ be the regularity grammar of $g$, over the letters of $T$, a separator $\#$ and two bits $0$
+and $1$; words over $T$ are read as words over this alphabet. Assign to the nonterminals of $G$
+the languages $V(0) = L(g) \# \{0,1\}^* \cup T^* \# \{0^n 1^n : n \ge 0\}$, where $L(g)$ is the
+language of $g$, $V(1) = \{0,1\}^*$, $V(2) = T^*$, $V(3) = \{0^n 1^n : n \ge 0\}$, and for each
+$n$, $V(n + 4)$ the set of words that $g$ generates from its nonterminal $n$. Then $V$ is a
+valuation of $G$: for every production $A \to \alpha$ of $G$, the language obtained from $\alpha$
+by replacing each nonterminal $B$ by $V(B)$ and each letter $a$ by $\{a\}$, and concatenating, is
+contained in $V(A)$. -/
 theorem isValuation_regVal (g : EncodedCFG T) : IsValuation (regGrammar g).toCFG (regVal g) := by
   intro r hr
   obtain ⟨e, he, rfl⟩ := EncodedCFG.mem_toCFG_rules.mp hr
@@ -358,6 +450,13 @@ theorem isValuation_regVal (g : EncodedCFG T) : IsValuation (regGrammar g).toCFG
 
 /-! ### Completeness: the words of `regLang L(g)` are generated -/
 
+/-- **Productions of the regularity grammar preserve generated languages.** Let $g$ be an
+encoded context-free grammar over a finite alphabet $T$ with decidable equality, let $G$ be the
+regularity grammar of $g$, over the letters of $T$, a separator $\#$ and two bits $0$ and $1$,
+and for a nonterminal $B$ let $L_G(B)$ be the language that the grammar denoted by $G$ generates
+from $B$. If $(A, \alpha)$ is an encoded production of $G$ and $w$ is a word in the language that
+the decoded right-hand side $\alpha$ denotes when each nonterminal $B$ is read as $L_G(B)$, each
+letter $a$ as $\{a\}$, and these languages are concatenated in order, then $w \in L_G(A)$. -/
 theorem mem_languageFrom_of_mem_rules {g : EncodedCFG T} {e : ℕ × List (ℕ ⊕ Letter T)}
     (he : e ∈ (regGrammar g).rules) {w : List (Letter T)}
     (hw : w ∈ evalForm (languageFrom (regGrammar g).toCFG) (EncodedCFG.decodeRule e).output) :
@@ -406,7 +505,16 @@ theorem zeroOne_mem (g : EncodedCFG T) (n : ℕ) :
     rw [← List.replicate_succ', List.replicate_succ]
     simp
 
-/-- A shifted right-hand side generates the images of the original words. -/
+/-- **Shifted right-hand sides generate the images of words.** Let $g$ be an encoded context-free
+grammar over a finite alphabet $T$, let $G$ be the grammar over $T \sqcup \{\#, 0, 1\}$ that the
+reduction from universality to regularity builds from $g$, and let $L_G(m)$ be the language $G$
+generates from nonterminal $m$. For a word $u$ over $T$ write $\bar u$ for the same word over
+$T \sqcup \{\#, 0, 1\}$. Let $W$ assign to each $n \in \mathbb{N}$ a language $W(n)$ over $T$ with
+$\bar u \in L_G(n + 4)$ for every $u \in W(n)$. Let $\alpha$ be a right-hand side over nonterminals
+in $\mathbb{N}$ and terminals in $T$, and let $\alpha'$ be $\alpha$ with each nonterminal $n$
+replaced by $n + 4$ and each terminal read in $T \sqcup \{\#, 0, 1\}$. If $u$ lies in the language
+that $\alpha$ denotes when each nonterminal $n$ is read as $W(n)$, then $\bar u$ lies in the
+language that $\alpha'$ denotes when each nonterminal $m$ is read as $L_G(m)$. -/
 theorem mem_evalForm_shift_of {g : EncodedCFG T} {W : ℕ → Language T}
     (hW : ∀ n u, u ∈ W n → u.map tl ∈ languageFrom (regGrammar g).toCFG (n + 4)) :
     ∀ {out : List (ℕ ⊕ T)} {u : List T}, u ∈ evalForm W (out.map EncodedCFG.decodeSymbol) →
@@ -424,7 +532,10 @@ theorem mem_evalForm_shift_of {g : EncodedCFG T} {W : ℕ → Language T}
       subst ha'
       rfl
 
-/-- The images of the words of `g` from `n` are generated from `n + 4`. -/
+/-- **Shifted derivations in the regularity grammar.** Let $g$ be an encoded context-free grammar
+over a finite alphabet $T$, and let $n$ be a nonterminal of $g$. If $g$ derives a word $u$ over
+$T$ from $n$, then the regularity grammar of $g$ derives from its nonterminal $n + 4$ the word $u$
+read over the extended alphabet, each letter $t$ of $T$ replaced by the corresponding letter. -/
 theorem shift_mem (g : EncodedCFG T) {n : ℕ} {u : List T} (hu : u ∈ languageFrom g.toCFG n) :
     u.map tl ∈ languageFrom (regGrammar g).toCFG (n + 4) := by
   let W : ℕ → Language T := fun n ↦ {u | u.map tl ∈ languageFrom (regGrammar g).toCFG (n + 4)}
@@ -443,7 +554,11 @@ theorem shift_mem (g : EncodedCFG T) {n : ℕ} {u : List T} (hu : u ∈ language
   simp only [evalForm_cons, evalForm_nil, evalSymbol_nonterminal, mul_one] at this
   exact this
 
-/-- **The language of `regGrammar g` is `regLang L(g)`.** -/
+/-- **The language of the regularity grammar.** Let $g$ be an encoded context-free grammar over a
+finite alphabet $T$ with decidable equality, with language $L(g)$. Over the letters of $T$, a
+separator $\#$ and two bits $0$ and $1$, the regularity grammar of $g$ generates exactly
+$L(g) \# \{0,1\}^* \cup T^* \# \{0^n 1^n : n \ge 0\}$, the set of words $u \# v$ with $u$ a word
+over $T$, $v$ a word over the bits, and $u \in L(g)$ or $v = 0^n 1^n$ for some $n$. -/
 theorem language_regGrammar (g : EncodedCFG T) : (regGrammar g).language = regLang g.language := by
   refine le_antisymm (language_le_of_valuation (isValuation_regVal g)) ?_
   rintro _ ⟨u, v, rfl, hu | hv⟩
@@ -461,7 +576,9 @@ theorem language_regGrammar (g : EncodedCFG T) : (regGrammar g).language = regLa
 
 /-! ### The reduction -/
 
-/-- **A grammar generates every word iff `regGrammar g` generates a regular language.** -/
+/-- **A grammar is universal iff its regularity grammar generates a regular language.** Let $g$
+be an encoded context-free grammar over a finite alphabet $T$. Then $g$ generates every word over
+$T$ if and only if the regularity grammar of $g$ generates a regular language. -/
 theorem univ_iff_isRegular (g : EncodedCFG T) :
     (∀ w, w ∈ g.language) ↔ (regGrammar g).language.IsRegular := by
   rw [language_regGrammar, isRegular_regLang_iff]
@@ -493,7 +610,12 @@ theorem primrec_regGrammar : Primrec (regGrammar (T := T)) :=
     (Primrec.list_map EncodedCFG.primrec_rules (primrec_shiftRule.comp Primrec.snd).to₂))).of_eq
     fun _ ↦ rfl
 
-/-- **Universality many-one reduces to regularity of context-free languages.** -/
+/-- **Universality many-one reduces to regularity of context-free languages.** Let $T$ be a
+finite alphabet with decidable equality and a primitive recursive coding, and let
+$T \sqcup \{\#, 0, 1\}$ extend $T$ by a separator $\#$ and two bits. There is a computable map $f$
+from encoded context-free grammars over $T$ to encoded context-free grammars over
+$T \sqcup \{\#, 0, 1\}$ such that a grammar $g$ generates every word over $T$ if and only if the
+language generated by $f(g)$ is regular. -/
 theorem manyOneReducible_univ_isRegular :
     ManyOneReducible (fun g : EncodedCFG T ↦ ∀ w, w ∈ g.language)
       (fun g : EncodedCFG (Letter T) ↦ g.language.IsRegular) :=
@@ -507,8 +629,10 @@ namespace Cslib.Decidability
 
 open Cslib.Language Regularity
 
-/-- **Regularity of context-free languages is undecidable** (`REG_CFG`), over a finite
-alphabet. -/
+/-- **Regularity of context-free languages is undecidable.** There is a finite alphabet $T$,
+with a primitive recursive encoding and decidable equality, such that no multi-stack Turing
+machine decides, for an encoded context-free grammar $g$ over $T$, whether the language of $g$
+is regular. -/
 theorem exists_not_tm2Decidable_isRegular :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T ↦ g.language.IsRegular := by

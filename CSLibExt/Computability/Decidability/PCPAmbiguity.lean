@@ -53,12 +53,24 @@ open Cslib.Language Post
 
 variable {α : Type*}
 
-/-- The grammar `S → A | B`, `A → tᵢ A i | tᵢ i`, `B → bᵢ B i | bᵢ i`, with `S, A, B = 0, 1, 2`. -/
+/-- **The ambiguity grammar of a PCP instance.** Let $P = [(t_0, b_0), \dots, (t_{m-1}, b_{m-1})]$
+be a list of dominoes over an alphabet $\alpha$, with top words $t_i$ and bottom words $b_i$. The
+ambiguity grammar of $P$ is the encoded context-free grammar over the terminals
+$\alpha \sqcup \mathbb{N}$ (letters and indices) with nonterminals $S = 0$, $A = 1$, $B = 2$, start
+symbol $S$, and the productions $S \to A$ and $S \to B$ together with, for every $i < m$, the
+productions $A \to t_i\, A\, i$, $A \to t_i\, i$, $B \to b_i\, B\, i$ and $B \to b_i\, i$, in which
+the index $i$ is a terminal. -/
 def ambGrammar (P : List (Domino α)) : EncodedCFG (α ⊕ ℕ) :=
   ⟨0, (0, [ntSym 1]) :: (0, [ntSym 2]) :: (sideRules Prod.fst 1 P ++ sideRules Prod.snd 2 P)⟩
 
-/-- The leftmost derivation from `A` along an index sequence: `A → wᵢ A i` for each index but the
-last, then `A → wᵢ i`. -/
+/-- **The canonical rule sequence along an index sequence.** Let $P$ be a list of dominoes over
+$\alpha$, let $\sigma$ assign a word over $\alpha$ to each domino, let $A$ be a natural number,
+and for $i \in \mathbb{N}$ write $w_i$ for $\sigma$ applied to the $i$-th domino of $P$ (the domino
+with both words empty when $i$ is past the end of $P$). For a sequence $i_1, \dots, i_n$ of
+natural numbers, this is the list of productions, with terminals $\alpha \sqcup \mathbb{N}$ and
+nonterminals $\mathbb{N}$, consisting of $A \to w_{i_k}\, A\, i_k$ for $k = 1, \dots, n - 1$ in
+order, followed by $A \to w_{i_n}\, i_n$, where the letters of $w_{i_k}$ and the index $i_k$ are
+terminals and $A$ is a nonterminal; the empty sequence gives the empty list. -/
 def canon (side : Domino α → List α) (A : ℕ) (P : List (Domino α)) :
     List ℕ → List (ContextFreeRule (α ⊕ ℕ) ℕ)
   | [] => []
@@ -108,7 +120,12 @@ theorem cases_of_mem_sideRules {side : Domino α → List α} {A : ℕ}
   simp only [List.mem_cons, List.not_mem_nil, or_false] at he
   exact ⟨i, List.mem_range.mp hi, he⟩
 
-/-- The rules of `ambGrammar P` with input `A ∈ {1, 2}` are those of the side grammar. -/
+/-- **The productions of $A$ and $B$ in the ambiguity grammar.** Let
+$P = [(t_0, b_0), \dots, (t_{m-1}, b_{m-1})]$ be a list of dominoes, and let $A$, $B$ be the
+nonterminals of the ambiguity grammar of $P$ for its top and bottom words. Every production of
+that grammar with left-hand side $A$ is $A \to t_i\, A\, i$ or $A \to t_i\, i$ for some $i < m$,
+and every production with left-hand side $B$ is $B \to b_i\, B\, i$ or $B \to b_i\, i$ for some
+$i < m$. -/
 theorem cases_of_mem_ambGrammar_of_input {side : Domino α → List α} {A : ℕ}
     (hA : (A = 1 ∧ side = Prod.fst) ∨ (A = 2 ∧ side = Prod.snd))
     {r : ContextFreeRule (α ⊕ ℕ) ℕ} (hr : r ∈ (ambGrammar P).toCFG.rules) (hin : r.input = A) :
@@ -134,7 +151,15 @@ theorem cases_of_mem_ambGrammar_of_input {side : Domino α → List α} {A : ℕ
       · cases hin
       · exact ⟨i, hi, Or.inr rfl⟩
 
-/-- **The leftmost derivation from `pre A suf` is determined by its word.** -/
+/-- **Leftmost derivations from $A$ and $B$ follow an index sequence.** Let
+$P = [(t_0, b_0), \dots, (t_{m-1}, b_{m-1})]$ be a list of dominoes, let $A$, $B$ be the
+nonterminals of the ambiguity grammar of $P$ for its top and bottom words, and let $u$, $v$ be
+words of terminals. Every leftmost derivation of a word $w$ from the sentential form $u\,A\,v$ is
+the canonical rule sequence from $A$ for the words $t_i$ along some nonempty sequence
+$i_1, \dots, i_n$ of indices less than $m$, and
+$w = u\, t_{i_1} \cdots t_{i_n}\, i_n \cdots i_1\, v$. Likewise, every leftmost derivation of $w$
+from $u\,B\,v$ is the canonical rule sequence from $B$ for the words $b_i$ along such a sequence,
+and $w = u\, b_{i_1} \cdots b_{i_n}\, i_n \cdots i_1\, v$. -/
 theorem eq_canon_of_leftDerivation {side : Domino α → List α} {A : ℕ}
     (hA : (A = 1 ∧ side = Prod.fst) ∨ (A = 2 ∧ side = Prod.snd))
     {s : List (Symbol (α ⊕ ℕ) (ambGrammar P).toCFG.NT)} {w : List (α ⊕ ℕ)}
@@ -169,7 +194,14 @@ theorem eq_canon_of_leftDerivation {side : Domino α → List α} {A : ℕ}
         (by simpa [Function.comp_def] using hrest)
       exact ⟨[i], List.cons_ne_nil _ _, by simpa using hi, rfl, by simp [sideWord, flat]⟩
 
-/-- **The leftmost derivation along an index sequence.** -/
+/-- **The leftmost derivation along an index sequence.** Let
+$P = [(t_0, b_0), \dots, (t_{m-1}, b_{m-1})]$ be a list of dominoes, and let $A$, $B$ be the
+nonterminals of the ambiguity grammar of $P$ for its top and bottom words. For every nonempty
+sequence $i_1, \dots, i_n$ of indices less than $m$ and all words of terminals $u$, $v$, the
+canonical rule sequence from $A$ for the words $t_i$ along $i_1, \dots, i_n$ is a leftmost
+derivation of $u\, t_{i_1} \cdots t_{i_n}\, i_n \cdots i_1\, v$ from $u\,A\,v$, and the canonical
+rule sequence from $B$ for the words $b_i$ along $i_1, \dots, i_n$ is a leftmost derivation of
+$u\, b_{i_1} \cdots b_{i_n}\, i_n \cdots i_1\, v$ from $u\,B\,v$. -/
 theorem leftDerivation_canon {side : Domino α → List α} {A : ℕ}
     (hA : (A = 1 ∧ side = Prod.fst) ∨ (A = 2 ∧ side = Prod.snd)) :
     ∀ is : List ℕ, is ≠ [] → (∀ i ∈ is, i < P.length) → ∀ pre suf : List (α ⊕ ℕ),
@@ -216,10 +248,21 @@ theorem leftDerivation_canon {side : Domino α → List α} {A : ℕ}
       rw [canon_cons hne]
       exact LeftDerivation.step hr hd
 
-/-- The start production `S → A`, with `A = 1` or `A = 2`. -/
+/-- **The start production $S \to A$.** For an alphabet $\alpha$ and a natural number $A$, this is
+the production with terminals $\alpha \sqcup \mathbb{N}$ and nonterminals $\mathbb{N}$ whose
+left-hand side is the nonterminal $S = 0$ and whose right-hand side is the single nonterminal $A$.
+
+In the ambiguity grammar of a PCP instance it is used with $A = 1$ and $A = 2$. -/
 def startRule (A : ℕ) : ContextFreeRule (α ⊕ ℕ) ℕ := ⟨0, [Symbol.nonterminal A]⟩
 
-/-- The leftmost derivations from the start symbol. -/
+/-- **Leftmost derivations in the ambiguity grammar.** Let
+$P = [(t_0, b_0), \dots, (t_{m-1}, b_{m-1})]$ be a list of dominoes, and let $S$, $A$, $B$ be the
+nonterminals of the ambiguity grammar of $P$. Every leftmost derivation of a word $w$ from $S$ in
+that grammar has one of two forms, for some nonempty sequence $i_1, \dots, i_n$ of indices less
+than $m$: either it is $S \to A$ followed by the canonical rule sequence from $A$ for the words
+$t_i$ along $i_1, \dots, i_n$, and $w = t_{i_1} \cdots t_{i_n}\, i_n \cdots i_1$; or it is
+$S \to B$ followed by the canonical rule sequence from $B$ for the words $b_i$ along
+$i_1, \dots, i_n$, and $w = b_{i_1} \cdots b_{i_n}\, i_n \cdots i_1$. -/
 theorem cases_of_leftDerivation_start {w : List (α ⊕ ℕ)}
     {rs : List (ContextFreeRule (α ⊕ ℕ) (ambGrammar P).toCFG.NT)}
     (h : LeftDerivation (ambGrammar P).toCFG [Symbol.nonterminal 0] w rs) :
@@ -246,7 +289,14 @@ theorem cases_of_leftDerivation_start {w : List (α ⊕ ℕ)}
     · obtain ⟨i, -, rfl | rfl⟩ := cases_of_mem_sideRules he <;> cases hin
     · obtain ⟨i, -, rfl | rfl⟩ := cases_of_mem_sideRules he <;> cases hin
 
-/-- A leftmost derivation through `S → A` along an index sequence. -/
+/-- **Leftmost derivations from the start symbol along an index sequence.** Let
+$P = [(t_0, b_0), \dots, (t_{m-1}, b_{m-1})]$ be a list of dominoes, and let $S$, $A$, $B$ be the
+nonterminals of the ambiguity grammar of $P$. For every nonempty sequence $i_1, \dots, i_n$ of
+indices less than $m$, the production $S \to A$ followed by the canonical rule sequence from $A$
+for the words $t_i$ along $i_1, \dots, i_n$ is a leftmost derivation of
+$t_{i_1} \cdots t_{i_n}\, i_n \cdots i_1$ from $S$, and the production $S \to B$ followed by the
+canonical rule sequence from $B$ for the words $b_i$ along $i_1, \dots, i_n$ is a leftmost
+derivation of $b_{i_1} \cdots b_{i_n}\, i_n \cdots i_1$ from $S$. -/
 theorem leftDerivation_start {A : ℕ} {side : Domino α → List α}
     (hA : (A = 1 ∧ side = Prod.fst) ∨ (A = 2 ∧ side = Prod.snd)) {is : List ℕ} (hne : is ≠ [])
     (hlt : ∀ i ∈ is, i < P.length) :
@@ -264,7 +314,9 @@ theorem eq_of_sideWord_eq {side : Domino α → List α} {is js : List ℕ}
     (h : sideWord side P is = sideWord side P js) : is = js :=
   List.reverse_injective (eq_of_map_inl_append_map_inr h).2
 
-/-- **`ambGrammar P` is ambiguous exactly when `P` has a solution.** -/
+/-- **The ambiguity grammar of $P$ is ambiguous exactly when $P$ has a solution.** For every list
+$P$ of dominoes, the ambiguity grammar of $P$ is ambiguous, that is, some word has two different
+leftmost derivations from its start symbol, if and only if $P$ has a PCP solution. -/
 theorem isAmbiguous_iff_pcp (P : List (Domino α)) : IsAmbiguous (ambGrammar P).toCFG ↔ PCP P := by
   constructor
   · rintro ⟨w, rs₁, rs₂, hne, h₁, h₂⟩
@@ -301,12 +353,21 @@ end Derivations
 
 /-! ### The many-one reduction -/
 
+/-- **The ambiguity grammar is primitive recursive.** For every alphabet $\alpha$ with a
+primitive recursive encoding by natural numbers, the map sending a list $P$ of dominoes over
+$\alpha$ to the ambiguity grammar of $P$ is primitive recursive, where encoded grammars are
+encoded as pairs of a start nonterminal and a list of productions. -/
 theorem primrec_ambGrammar [Primcodable α] : Primrec (ambGrammar (α := α)) :=
   EncodedCFG.primrec₂_mk.comp (Primrec.const 0) (Primrec.list_cons.comp (Primrec.const _)
     (Primrec.list_cons.comp (Primrec.const _) (Primrec.list_append.comp
       (primrec_sideRules Primrec.fst 1) (primrec_sideRules Primrec.snd 2))))
 
-/-- **PCP many-one reduces to ambiguity of context-free grammars.** -/
+/-- **PCP many-one reduces to ambiguity of context-free grammars.** For every alphabet $\alpha$
+with a primitive recursive encoding by natural numbers and decidable equality, the Post
+correspondence problem over $\alpha$ many-one reduces to ambiguity of encoded context-free
+grammars over the terminals $\alpha \sqcup \mathbb{N}$: there is a computable function sending
+each list $P$ of dominoes over $\alpha$ to such a grammar, which is ambiguous if and only if $P$
+has a PCP solution. -/
 theorem manyOneReducible_pcp_isAmbiguous [Primcodable α] [DecidableEq α] :
     ManyOneReducible (PCP (α := α)) fun g : EncodedCFG (α ⊕ ℕ) ↦ IsAmbiguous g.toCFG :=
   ⟨ambGrammar, primrec_ambGrammar.to_comp, fun P ↦ (isAmbiguous_iff_pcp P).symm⟩

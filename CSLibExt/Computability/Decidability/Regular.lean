@@ -66,7 +66,14 @@ section Product
 
 variable {α σ σ' : Type*} (M : DFA α σ) (N : DFA α σ')
 
-/-- The product DFA accepting the words on which `M` and `N` disagree. -/
+/-- **Symmetric difference of two DFAs.** For DFAs $M$ and $N$ over the same alphabet, with sets of
+states $\sigma$ and $\sigma'$, this is the product DFA with set of states $\sigma \times \sigma'$
+whose start state is the pair of the start states of $M$ and $N$, whose transition takes $(p, q)$
+on a letter $a$ to the pair of the state to which $M$ moves from $p$ on $a$ and the state to which
+$N$ moves from $q$ on $a$, and whose accepting states are the pairs $(p, q)$ such that $p$ is an
+accepting state of $M$ or $q$ is an accepting state of $N$, but not both.
+
+It accepts exactly the words on which $M$ and $N$ disagree. -/
 def symmDiff : DFA α (σ × σ') where
   step p a := (M.step p.1 a, N.step p.2 a)
   start := (M.start, N.start)
@@ -83,8 +90,10 @@ end Product
 
 variable {α σ : Type*} [Fintype α] [Fintype σ] [DecidableEq σ] (M : DFA α σ)
 
-/-- One round of the reachability search: the start state, the states found so far, and their
-successors. -/
+/-- **One round of the DFA reachability search.** Let $M$ be a DFA over a finite alphabet
+$\alpha$. The round sends a finite set $S$ of states of $M$ to the set consisting of the start
+state of $M$ and of every state that the transition function of $M$ takes some $s \in S$ to on
+some letter $a \in \alpha$. -/
 def reachStep (S : Finset σ) : Finset σ :=
   {M.start} ∪ S.biUnion fun s => Finset.univ.image (M.step s)
 
@@ -92,11 +101,20 @@ omit [Fintype σ] in
 theorem reachStep_mono : Monotone M.reachStep := fun _ _ h =>
   Finset.union_subset_union le_rfl (Finset.biUnion_subset_biUnion_of_subset_left _ h)
 
-/-- The states reachable from the start state. -/
+/-- **Reachable states of a DFA.** Let $M$ be a DFA over a finite alphabet whose set of states
+$\sigma$ is finite and has decidable equality. The reachable states of $M$ form the finite set
+obtained from the empty set by applying one round of the DFA reachability search for $M$ exactly
+$|\sigma|$ times, where $|\sigma|$ is the number of states of $M$.
+
+Since the round is monotone, this set is its least fixed point, and a state lies in it exactly
+when $M$ reaches it from its start state on some word. -/
 def reachable : Finset σ :=
   Finset.lfpFin M.reachStep
 
-/-- **A state is reachable exactly when some word leads to it.** -/
+/-- **A state is reachable exactly when some word leads to it.** Let $M$ be a DFA over a finite
+alphabet with finitely many states. A state $s$ of $M$ is in the set of reachable states of $M$
+if and only if there is a word $w$ such that running $M$ on $w$ from its start state ends in $s$.
+-/
 theorem mem_reachable_iff {s : σ} : s ∈ M.reachable ↔ ∃ w, M.eval w = s := by
   classical
   constructor
@@ -121,18 +139,26 @@ theorem mem_reachable_iff {s : σ} : s ∈ M.reachable ↔ ∃ w, M.eval w = s :
         exact Finset.mem_union_right _ (Finset.mem_biUnion.2 ⟨_, ih, Finset.mem_image_of_mem _
           (Finset.mem_univ a)⟩)
 
-/-- The start state is reachable. -/
+/-- **The start state is reachable.** For a DFA $M$ over a finite alphabet with finitely many
+states, the start state of $M$ belongs to the reachable states of $M$. -/
 theorem start_mem_reachable : M.start ∈ M.reachable :=
   M.mem_reachable_iff.2 ⟨[], rfl⟩
 
-/-- The reachable states are closed under transitions. -/
+/-- **Reachable states are closed under transitions.** Let $M$ be a DFA over a finite alphabet whose
+set of states is finite and has decidable equality. If a state $s$ of $M$ is reachable from the
+start state, then for every letter $a$ the state to which $M$ moves from $s$ on $a$ is also
+reachable from the start state. -/
 theorem step_mem_reachable {s : σ} (hs : s ∈ M.reachable) (a : α) :
     M.step s a ∈ M.reachable := by
   obtain ⟨w, rfl⟩ := M.mem_reachable_iff.1 hs
   exact M.mem_reachable_iff.2 ⟨w ++ [a], M.eval_append_singleton w a⟩
 
-/-- The reachability search from `S` with at most `n` rounds, stopping as soon as a round adds
-nothing. -/
+/-- **Early-stopping DFA reachability search.** Let $M$ be a DFA over a finite alphabet whose set
+of states has decidable equality. For a natural number $n$ and a finite set $S$ of states of $M$,
+the reachability search from $S$ with at most $n$ rounds returns $S$ when $n = 0$. When
+$n = k + 1$, it returns $S$ if one round of the reachability search for $M$ sends $S$ to $S$
+itself, and otherwise it returns the search from the image of $S$ under that round with at most
+$k$ rounds. -/
 def reachableWithin : ℕ → Finset σ → Finset σ
   | 0, S => S
   | n + 1, S => if M.reachStep S = S then S else reachableWithin n (M.reachStep S)
@@ -147,8 +173,12 @@ theorem reachableWithin_eq_iterate :
       · rw [h, Function.iterate_fixed h]
       · exact reachableWithin_eq_iterate n _
 
-/-- With at least `Fintype.card σ` rounds the early-stopping search finds every reachable state;
-since it stops once nothing changes, a generous bound costs nothing. -/
+/-- **The early-stopping search finds exactly the reachable states.** Let $M$ be a DFA over a
+finite alphabet with finitely many states. For every natural number $n$ at least the number of
+states of $M$, the early-stopping reachability search for $M$ from the empty set with at most $n$
+rounds returns the set of reachable states of $M$.
+
+Since the search stops once a round changes nothing, a generous bound costs nothing. -/
 theorem reachableWithin_eq_reachable {n : ℕ} (hn : Fintype.card σ ≤ n) :
     M.reachableWithin n ∅ = M.reachable := by
   rw [reachableWithin_eq_iterate, reachable, Finset.lfpFin, ← Nat.sub_add_cancel hn,
@@ -159,8 +189,15 @@ theorem mem_reachableWithin_iff {n : ℕ} (hn : Fintype.card σ ≤ n) {s : σ} 
     s ∈ M.reachableWithin n ∅ ↔ ∃ w, M.eval w = s := by
   rw [M.reachableWithin_eq_reachable hn, mem_reachable_iff]
 
-/-- `M` restricted to its reachable states, found by the early-stopping search with `n` rounds,
-for any bound `n ≥ Fintype.card σ`. -/
+/-- **Accessible part of a DFA, by a bounded search.** Let $M$ be a DFA over a finite alphabet
+$\alpha$ with a finite state set $\sigma$ with decidable equality, and let $n \ge |\sigma|$. The
+accessible part of $M$ found with $n$ rounds is the DFA over $\alpha$ whose states are the states
+found by the reachability search from the empty set with at most $n$ rounds, whose start state is
+the start state of $M$, whose transition function is that of $M$ restricted to these states, and
+whose accepting states are those of them that $M$ accepts.
+
+Since $n \ge |\sigma|$, the search finds exactly the states that some word leads to from the start
+state of $M$, and it stops as soon as a round adds nothing, so a larger bound costs nothing. -/
 def accessiblePartWithin (n : ℕ) (hn : Fintype.card σ ≤ n) :
     DFA α {s // s ∈ M.reachableWithin n ∅} where
   step p a := ⟨M.step p.1 a, (M.mem_reachableWithin_iff hn).2 <| by
@@ -169,7 +206,13 @@ def accessiblePartWithin (n : ℕ) (hn : Fintype.card σ ≤ n) :
   start := ⟨M.start, (M.mem_reachableWithin_iff hn).2 ⟨[], rfl⟩⟩
   accept := {p | p.1 ∈ M.accept}
 
-/-- `M` restricted to its reachable states. -/
+/-- **Accessible part of a DFA.** Let $M$ be a DFA over a finite alphabet $\alpha$ with a finite
+state set $\sigma$ with decidable equality. The accessible part of $M$ is its accessible part found
+by the reachability search with $|\sigma|$ rounds: the DFA over $\alpha$ whose states are the
+states found by the reachability search from the empty set with at most $|\sigma|$ rounds (exactly
+the states that some word leads to from the start state of $M$), whose start state is the start
+state of $M$, whose transition function is that of $M$ restricted to these states, and whose
+accepting states are those of them that $M$ accepts. -/
 abbrev accessiblePart : DFA α {s // s ∈ M.reachableWithin (Fintype.card σ) ∅} :=
   M.accessiblePartWithin (Fintype.card σ) le_rfl
 
@@ -194,7 +237,10 @@ theorem accessiblePartWithin_accepts : (M.accessiblePartWithin n hn).accepts = M
   rw [mem_accepts, mem_accepts, ← M.accessiblePartWithin_eval hn w]
   rfl
 
-/-- Every state of the accessible part is reached. -/
+/-- **Every state of the accessible part is reached.** Let $M$ be a DFA over a finite alphabet
+$\alpha$ with a finite state set $\sigma$ with decidable equality, and let $n \ge |\sigma|$. For
+every state $p$ of the accessible part of $M$ found with $n$ rounds, some word $w$ leads the
+accessible part from its start state to $p$. -/
 theorem accessiblePartWithin_surjective (p : {s // s ∈ M.reachableWithin n ∅}) :
     ∃ w, (M.accessiblePartWithin n hn).eval w = p := by
   obtain ⟨w, hw⟩ := (M.mem_reachableWithin_iff hn).1 p.2
@@ -209,11 +255,15 @@ end AccessiblePart
 
 variable [DecidablePred (· ∈ M.accept)]
 
-/-- Emptiness test: no reachable state accepts. -/
+/-- **Emptiness test for DFAs.** For a DFA $M$ over a finite alphabet with finitely many states,
+the emptiness test returns true exactly when none of the reachable states of $M$ is an
+accepting state. -/
 def isEmptyB : Bool :=
   decide (∀ s ∈ M.reachable, s ∉ M.accept)
 
-/-- **Emptiness of DFAs is decided by `isEmptyB`.** -/
+/-- **The emptiness test decides emptiness of DFAs.** Let $M$ be a DFA over a finite alphabet
+with finitely many states. The emptiness test applied to $M$ returns true if and only if the
+language accepted by $M$ is empty. -/
 theorem isEmptyB_iff : M.isEmptyB = true ↔ M.accepts = 0 := by
   rw [isEmptyB, decide_eq_true_iff]
   constructor
@@ -230,11 +280,16 @@ theorem isEmptyB_iff : M.isEmptyB = true ↔ M.accepts = 0 := by
 instance decidableMemComplAccept : DecidablePred (· ∈ Mᶜ.accept) :=
   inferInstanceAs (DecidablePred fun s => s ∉ M.accept)
 
-/-- Universality test: the complement DFA is empty. -/
+/-- **Universality test for DFAs.** For a DFA $M$ over a finite alphabet with finitely many
+states, the universality test applied to $M$ is the emptiness test applied to the complement of
+$M$: the DFA with the same states, start state and transitions whose accepting states are the
+states that $M$ does not accept. -/
 def isUnivB : Bool :=
   Mᶜ.isEmptyB
 
-/-- **Universality of DFAs is decided by `isUnivB`.** -/
+/-- **The universality test decides universality of DFAs.** Let $M$ be a DFA over a finite
+alphabet with finitely many states. The universality test applied to $M$ returns true if and
+only if $M$ accepts every word over the alphabet. -/
 theorem isUnivB_iff : M.isUnivB = true ↔ M.accepts = ⊤ := by
   rw [isUnivB, isEmptyB_iff, accepts_compl]
   constructor
@@ -251,11 +306,20 @@ variable {σ' : Type*} [Fintype σ'] [DecidableEq σ'] (N : DFA α σ') [Decidab
 instance decidableMemSymmDiffAccept : DecidablePred (· ∈ (M.symmDiff N).accept) :=
   inferInstanceAs (DecidablePred fun p : σ × σ' => ¬ (p.1 ∈ M.accept ↔ p.2 ∈ N.accept))
 
-/-- Equivalence test: the symmetric difference is empty. -/
+/-- **Equivalence test for DFAs.** Let $M$ and $N$ be DFAs over the same finite alphabet, with
+finite state sets with decidable equality and decidable sets of accepting states. Their symmetric
+difference is the product DFA on pairs of states that starts at the pair of start states, moves on
+a letter by moving both components, and accepts a pair $(p, q)$ when exactly one of the statements
+"$M$ accepts $p$" and "$N$ accepts $q$" holds. The equivalence test of $M$ and $N$ is the emptiness
+test of their symmetric difference: the Boolean that is true exactly when no pair of states
+reachable from the start pair is accepting. -/
 def equivB : Bool :=
   (M.symmDiff N).isEmptyB
 
-/-- **Equivalence of DFAs is decided by `equivB`.** -/
+/-- **Correctness of the equivalence test for DFAs.** Let $M$ and $N$ be DFAs over the same finite
+alphabet, with finite state sets with decidable equality and decidable sets of accepting states.
+The equivalence test of $M$ and $N$ returns true if and only if $M$ and $N$ accept the same
+language. -/
 theorem equivB_iff : M.equivB N = true ↔ M.accepts = N.accepts := by
   rw [equivB, isEmptyB_iff]
   constructor
@@ -286,7 +350,10 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ### Acceptance -/
 
-/-- Acceptance test: run the encoded DFA and check the final state. -/
+/-- **Acceptance test for encoded DFAs.** For an encoded DFA $D$ over an alphabet $\alpha$ with
+decidable equality and a word $w$ over $\alpha$, the acceptance test is the Boolean that is true
+exactly when the state reached by running $D$ on $w$ from its start state is in the list of
+accepting states of $D$. -/
 def acceptsB (D : EncodedDFA α) (w : List α) : Bool :=
   memB D.accept (D.toDFA.eval w)
 
@@ -295,8 +362,15 @@ theorem acceptsB_iff {D : EncodedDFA α} {w : List α} : D.acceptsB w = true ↔
 
 /-! ### Reachability -/
 
-/-- One round of the search from `s₀` with successors `next`, kept inside `B`: `s₀`, the states
-found so far and their successors. -/
+/-- **One round of the list reachability search.** Let $s_0 \in \mathbb{N}$, let $\mathrm{next}$
+assign to each $s \in \mathbb{N}$ a list $\mathrm{next}(s)$ of natural numbers, and let $B$ and $R$
+be lists of natural numbers. The round from $s_0$ with successors $\mathrm{next}$ kept inside $B$
+sends the list $R$ of states found so far to the following list: write $s_0$ followed, for each
+$s$ in $R$ in order, by $s$ and then the list $\mathrm{next}(s)$; keep the entries that lie in $B$;
+then delete every entry that occurs again later in the list.
+
+Its entries are therefore the numbers in $B$ that are $s_0$, an element $s$ of $R$, or an element
+of $\mathrm{next}(s)$ for some $s$ in $R$, each listed once. -/
 def reachRound (s₀ : ℕ) (next : ℕ → List ℕ) (B R : List ℕ) : List ℕ :=
   dedupB ((s₀ :: R.flatMap fun s => s :: next s).filterMap fun t =>
     cond (memB B t) (some t) none)
@@ -314,12 +388,27 @@ theorem mem_reachRound {s₀ : ℕ} {next : ℕ → List ℕ} {B R : List ℕ} {
   · rintro ⟨hB, hu⟩
     exact ⟨t, hu, by simp [memB_iff.2 hB]⟩
 
-/-- The states reachable from `s₀` through `next`, by `B.length` rounds. -/
+/-- **Bounded reachability search on lists of states.** Let $s_0 \in \mathbb{N}$, let
+$\mathrm{next}$ assign to each $s \in \mathbb{N}$ a list $\mathrm{next}(s)$ of natural numbers, and
+let $B$ be a list of natural numbers. One search round sends a list $R$ to the list obtained by
+writing $s_0$ followed, for each $s$ in $R$ in order, by $s$ and then the list $\mathrm{next}(s)$,
+keeping the entries that lie in $B$, and deleting every entry that occurs again later; its entries
+are the elements of $B$ that are $s_0$, an element of $R$, or an element of $\mathrm{next}(s)$ for
+some $s$ in $R$, each listed once. The search returns the result of applying this round $|B|$
+times to the empty list, where $|B|$ is the length of $B$.
+
+When $B$ contains $s_0$ and is closed under $\mathrm{next}$, a number is an entry of the returned
+list exactly when it is reachable from $s_0$ by finitely many, possibly zero, steps from some $s$
+to an element of $\mathrm{next}(s)$. -/
 def reachN (s₀ : ℕ) (next : ℕ → List ℕ) (B : List ℕ) : List ℕ :=
   (reachRound s₀ next B)^[B.length] []
 
-/-- **Correctness of the search**: when `B` contains `s₀` and is closed under `next`, the search
-finds exactly the states reachable from `s₀`. -/
+/-- **Correctness of the bounded reachability search.** Let $s_0 \in \mathbb{N}$, let
+$\mathrm{next}$ assign to every natural number a list of natural numbers, its successors, and let
+$B$ be a list of natural numbers that contains $s_0$ and is closed under successors: whenever $s$
+is in $B$ and $t$ is a successor of $s$, then $t$ is in $B$. Then a natural number $t$ is in the
+list computed by the reachability search from $s_0$ through $\mathrm{next}$ within $B$ if and
+only if $t$ is reachable from $s_0$ in zero or more successor steps. -/
 theorem mem_reachN_iff {s₀ : ℕ} {next : ℕ → List ℕ} {B : List ℕ} (hs₀ : s₀ ∈ B)
     (hB : ∀ s ∈ B, ∀ t ∈ next s, t ∈ B) {t : ℕ} :
     t ∈ reachN s₀ next B ↔ Relation.ReflTransGen (fun s t => t ∈ next s) s₀ t := by
@@ -360,7 +449,14 @@ theorem mem_reachN_iff {s₀ : ℕ} {next : ℕ → List ℕ} {B : List ℕ} (hs
     | tail _ hst ih =>
         exact hclosed (mem_reachRound.2 ⟨hB _ (hreachB ih) _ hst, Or.inr ⟨_, ih, Or.inr hst⟩⟩)
 
-/-- The reachable states of an encoded DFA. -/
+/-- **Reachable states of an encoded DFA.** For an encoded DFA $D$ over an alphabet $\alpha$ with
+decidable equality, the reachable states of $D$ form the list returned by the bounded reachability
+search on lists of states started at the start state of $D$, kept inside the states of $D$, in
+which the successors of a state $s$ are the states that the transition function of $D$ takes $s$
+to on the letters of $D$, in the order of the letters.
+
+A natural number lies in this list exactly when the automaton denoted by $D$ reaches it from its
+start state on some word. -/
 def reachable (D : EncodedDFA α) : List ℕ :=
   reachN D.start (fun s => D.letters.map (D.step s)) D.states
 
@@ -391,7 +487,11 @@ theorem mem_reachable_iff {D : EncodedDFA α} {t : ℕ} :
 
 /-! ### Emptiness -/
 
-/-- Emptiness test: no reachable state accepts. -/
+/-- **Emptiness test for encoded DFAs.** For an encoded DFA $D$ over an alphabet $\alpha$ with
+decidable equality, the emptiness test is the Boolean that is true exactly when no entry of the
+list of reachable states of $D$ is in the accepting list of $D$.
+
+It returns true exactly when the language of $D$ is empty. -/
 def isEmptyB (D : EncodedDFA α) : Bool :=
   D.reachable.all fun s => !memB D.accept s
 
@@ -416,15 +516,34 @@ theorem isEmptyB_iff {D : EncodedDFA α} : D.isEmptyB = true ↔ D.language = 0 
 
 /-! ### Equivalence -/
 
-/-- Pairs of listed states, coded by `Nat.pair`. -/
+/-- **Coded pairs of states of two encoded DFAs.** For encoded DFAs $D$ and $E$ over the same
+alphabet, code a pair $(s, t)$ of natural numbers by its image $\langle s, t \rangle \in \mathbb{N}$
+under Mathlib's pairing function. This is the list of the numbers $\langle s, t \rangle$ with $s$
+running over the states of $D$ in their listed order and, for each $s$, $t$ running over the
+states of $E$ in their listed order. -/
 def pairStates (D E : EncodedDFA α) : List ℕ :=
   D.states.flatMap fun s => E.states.map fun t => Nat.pair s t
 
-/-- Successors of a coded pair of states: both automata read the same letter. -/
+/-- **Successors of a pair of states.** Let $D$ and $E$ be encoded DFAs over the same alphabet,
+and let $p \in \mathbb{N}$ code the pair of states $(s, t)$ under the pairing bijection
+$\mathbb{N} \times \mathbb{N} \to \mathbb{N}$. The successors of $p$ form the list that has, for
+each letter $a$ in the letters of $D$ followed by the letters of $E$, the code of the pair made of
+the step of $D$ from $s$ on $a$ and the step of $E$ from $t$ on $a$. -/
 def pairNext (D E : EncodedDFA α) (p : ℕ) : List ℕ :=
   (D.letters ++ E.letters).map fun a => Nat.pair (D.step p.unpair.1 a) (E.step p.unpair.2 a)
 
-/-- The reachable pairs of states of two encoded DFAs reading the same word. -/
+/-- **Reachable pairs of states of two encoded DFAs.** For encoded DFAs $D$ and $E$ over the same
+alphabet, code a pair $(s, t)$ of natural numbers by its image $\langle s, t \rangle \in \mathbb{N}$
+under Mathlib's pairing function. The reachable pairs of $D$ and $E$ form the list returned by the
+bounded reachability search on lists of states started at $\langle s_D, s_E \rangle$, where $s_D$
+and $s_E$ are the start states of $D$ and $E$, kept inside the list of coded pairs of states of
+$D$ and $E$, and in which the successors of a number $p = \langle s, t \rangle$ are the numbers
+$\langle s', t' \rangle$ with $s'$ and $t'$ the states that the transition functions of $D$ and
+$E$ take $s$ and $t$ to on the same letter $a$, for $a$ running over the letters of $D$ followed
+by the letters of $E$.
+
+A number lies in this list exactly when it is $\langle q, r \rangle$ for the states $q$ and $r$
+that $D$ and $E$ reach on some common word. -/
 def pairReachable (D E : EncodedDFA α) : List ℕ :=
   reachN (Nat.pair D.start E.start) (pairNext D E) (pairStates D E)
 
@@ -467,7 +586,13 @@ theorem mem_pairReachable_iff {D E : EncodedDFA α} {p : ℕ} :
           rw [step_of_not_mem_letters ha.1, step_of_not_mem_letters ha.2]
           exact ih
 
-/-- Equivalence test: every reachable pair of states agrees on acceptance. -/
+/-- **Equivalence test for encoded DFAs.** Let $D$ and $E$ be encoded DFAs over an alphabet
+$\alpha$ with decidable equality. The equivalence test of $D$ and $E$ is the Boolean that is true
+exactly when, for every entry $p$ of the list of reachable pairs of states of $D$ and $E$, writing
+$p = \langle s, t \rangle$ with Mathlib's pairing function, $s$ is in the accepting list of $D$ if
+and only if $t$ is in the accepting list of $E$.
+
+It returns true exactly when $D$ and $E$ have the same language. -/
 def equivB (D E : EncodedDFA α) : Bool :=
   (pairReachable D E).all fun p => memB D.accept p.unpair.1 == memB E.accept p.unpair.2
 
@@ -489,7 +614,11 @@ theorem equivB_iff {D E : EncodedDFA α} : D.equivB E = true ↔ D.language = E.
 
 /-! ### Universality -/
 
-/-- Universality test: every reachable state accepts. -/
+/-- **Universality test for encoded DFAs.** For an encoded DFA $D$ over an alphabet $\alpha$ with
+decidable equality, the universality test is the Boolean that is true exactly when every entry of
+the list of reachable states of $D$ is in the accepting list of $D$.
+
+It returns true exactly when the language of $D$ contains every word over $\alpha$. -/
 def isUnivB (D : EncodedDFA α) : Bool :=
   D.reachable.all fun s => memB D.accept s
 
@@ -506,7 +635,11 @@ theorem isUnivB_iff {D : EncodedDFA α} : D.isUnivB = true ↔ D.language = ⊤ 
 
 /-! ### Infiniteness -/
 
-/-- The encoded DFA on its listed states, a finite type. -/
+/-- **An encoded DFA on its listed states.** For an encoded DFA $D$, this is the DFA whose set of
+states is the finite set of states of $D$ (its start state and the targets of its listed
+transitions), whose start state is the start state of $D$, whose transition function is that of
+$D$ restricted to these states, and whose accepting states are those in the accepting list of
+$D$. -/
 def toFinDFA (D : EncodedDFA α) : DFA α {s // s ∈ D.states.toFinset} where
   step s a := ⟨D.step s.1 a, List.mem_toFinset.2 (step_mem_states (List.mem_toFinset.1 s.2) a)⟩
   start := ⟨D.start, List.mem_toFinset.2 List.mem_cons_self⟩
@@ -531,7 +664,11 @@ theorem card_toFinDFA_le (D : EncodedDFA α) :
   rw [Fintype.card_coe]
   exact List.toFinset_card_le _
 
-/-- A long accepted word pumps: the language is infinite. -/
+/-- **A long accepted word makes the language of an encoded DFA infinite.** Let $D$ be an
+encoded DFA and let $N$ be the length of the list of states of $D$. If $D$ accepts a word of
+length at least $N$, then the language of $D$ is infinite.
+
+The proof pumps the word, using the pumping lemma for DFAs. -/
 theorem infinite_of_mem_of_le {D : EncodedDFA α} {w : List α} (hw : w ∈ D.language)
     (hlen : D.states.length ≤ w.length) : D.language.Infinite := by
   rw [← accepts_toFinDFA] at hw ⊢
@@ -554,8 +691,11 @@ theorem infinite_of_mem_of_le {D : EncodedDFA α} {w : List α} (hw : w ∈ D.la
   have : k * b.length = l * b.length := by omega
   exact Nat.eq_of_mul_eq_mul_right hbpos this
 
-/-- An accepted word of length at least the number of listed states can be shortened, keeping
-it accepted and at least that long, until it is shorter than twice that number. -/
+/-- **Accepted words of length between the number of listed states and twice it.** Let $D$ be an
+encoded DFA over an alphabet $\alpha$ with decidable equality, and let $N$ be the length of its
+list of states. For every natural number $n$ and every word $w$ of length $n$ in the language of
+$D$ with $N \le n$, the language of $D$ contains a word $v$ whose length $|v|$ satisfies
+$N \le |v| < 2N$. -/
 theorem exists_mem_le_lt {D : EncodedDFA α} :
     ∀ (n : ℕ) (w : List α), w.length = n → w ∈ D.language → D.states.length ≤ w.length →
       ∃ v ∈ D.language, D.states.length ≤ v.length ∧ v.length < 2 * D.states.length := by
@@ -583,7 +723,10 @@ section Infinite
 
 variable [FinEnum α]
 
-/-- The words of length `n` over the alphabet. -/
+/-- **Words of a given length.** For a finite alphabet $\alpha$ given with an enumeration of its
+letters and for $n \in \mathbb{N}$, the list of the words of length $n$ over $\alpha$: starting
+from the list whose only entry is the empty word, it replaces $n$ times each word $w$ of the
+current list by the words $a w$ for the letters $a$ of $\alpha$, in their enumeration order. -/
 def wordsOfLength (n : ℕ) : List (List α) :=
   (fun W => W.flatMap fun w => (FinEnum.toList α).map fun a => a :: w)^[n] [[]]
 
@@ -604,13 +747,17 @@ theorem mem_wordsOfLength {n : ℕ} {w : List α} : w ∈ wordsOfLength n ↔ w.
           | cons a v => exact ⟨a, v, rfl⟩
         exact ⟨v, by simpa using h, a, FinEnum.mem_toList a, rfl⟩
 
-/-- Infiniteness test: some word with length between the number `N` of listed states and `2N`
-is accepted. -/
+/-- **Infiniteness test for encoded DFAs.** Let $D$ be an encoded DFA over a finite alphabet and
+let $N$ be the length of its list of states. The infiniteness test is the Boolean that is true
+exactly when the language of $D$ contains a word $w$ with $N \le |w| < 2N$; it checks every word
+of each length $N + i$ with $0 \le i < N$. -/
 def infiniteB (D : EncodedDFA α) : Bool :=
   (List.range D.states.length).any fun i =>
     (wordsOfLength (D.states.length + i)).any fun w => D.acceptsB w
 
-/-- **Infiniteness of DFA languages is decided by `infiniteB`.** -/
+/-- **Correctness of the infiniteness test for encoded DFAs.** For every encoded DFA $D$ over a
+finite alphabet, the infiniteness test returns true on $D$ if and only if the language of $D$ is
+infinite. -/
 theorem infiniteB_iff {D : EncodedDFA α} : D.infiniteB = true ↔ D.language.Infinite := by
   rw [infiniteB, List.any_eq_true]
   constructor
@@ -722,21 +869,32 @@ theorem primrec_equivB : Primrec₂ (equivB (α := α)) :=
         (Primrec.snd.comp₂ (Primrec.unpair.comp₂ Primrec₂.right))))
     primrec_pairReachable
 
-/-- **Sipser, Theorem 4.1**: acceptance for DFAs (A_DFA) is decidable by a multi-stack
-machine. -/
+/-- **Acceptance for DFAs is decidable.** For every alphabet $\alpha$ with decidable equality and
+a primitive recursive encoding, the property of a pair $(D, w)$ of an encoded DFA $D$ over
+$\alpha$ and a word $w$ over $\alpha$ that $w$ belongs to the language of $D$ is decidable by a
+multi-stack machine. This is the problem $A_{\mathrm{DFA}}$.
+
+Source: Sipser, *Introduction to the Theory of Computation*, Theorem 4.1. -/
 theorem tm2Decidable_mem_language :
     TM2Decidable fun p : EncodedDFA α × List α => p.2 ∈ p.1.language :=
   tm2Decidable_iff_computablePred.2
     (computablePred_of_primrec_bool primrec_acceptsB fun _ => acceptsB_iff)
 
-/-- **Sipser, Theorem 4.4**: emptiness for DFAs (E_DFA) is decidable by a multi-stack
-machine. -/
+/-- **Emptiness of DFAs is decidable.** For every alphabet $\alpha$ with decidable equality and a
+primitive recursive encoding, the property of an encoded DFA over $\alpha$ that its language is
+empty is decidable by a multi-stack machine. This is the problem $E_{\mathrm{DFA}}$.
+
+Source: Sipser, *Introduction to the Theory of Computation*, Theorem 4.4. -/
 theorem tm2Decidable_language_eq_zero : TM2Decidable fun D : EncodedDFA α => D.language = 0 :=
   tm2Decidable_iff_computablePred.2
     (computablePred_of_primrec_bool primrec_isEmptyB fun _ => isEmptyB_iff)
 
-/-- **Sipser, Theorem 4.5**: equivalence of DFAs (EQ_DFA) is decidable by a multi-stack
-machine. -/
+/-- **Equivalence of DFAs is decidable.** For every alphabet $\alpha$ with decidable equality and
+a primitive recursive encoding, the property of a pair of encoded DFAs over $\alpha$ that their
+languages are equal is decidable by a multi-stack machine. This is the problem
+$\mathrm{EQ}_{\mathrm{DFA}}$.
+
+Source: Sipser, *Introduction to the Theory of Computation*, Theorem 4.5. -/
 theorem tm2Decidable_language_eq :
     TM2Decidable fun p : EncodedDFA α × EncodedDFA α => p.1.language = p.2.language :=
   tm2Decidable_iff_computablePred.2
@@ -746,7 +904,10 @@ theorem primrec_isUnivB : Primrec (isUnivB (α := α)) :=
   primrec_list_all (primrec_memB.comp₂ (primrec_accept.comp₂ Primrec₂.left) Primrec₂.right)
     primrec_reachable
 
-/-- **Universality for DFAs (ALL_DFA) is decidable** by a multi-stack machine. -/
+/-- **Universality of DFAs is decidable.** For every alphabet $\alpha$ with decidable equality and
+a primitive recursive encoding, the property of an encoded DFA over $\alpha$ that its language is
+the set of all words over $\alpha$ is decidable by a multi-stack machine. This is the problem
+$\mathrm{ALL}_{\mathrm{DFA}}$. -/
 theorem tm2Decidable_language_eq_top : TM2Decidable fun D : EncodedDFA α => D.language = ⊤ :=
   tm2Decidable_iff_computablePred.2
     (computablePred_of_primrec_bool primrec_isUnivB fun _ => isUnivB_iff)
@@ -770,8 +931,10 @@ theorem primrec_infiniteB : Primrec (infiniteB (α := α)) :=
         (Primrec.list_length.comp (primrec_states.comp Primrec.fst)) Primrec.snd))).to₂
     (Primrec.list_range.comp (Primrec.list_length.comp primrec_states))
 
-/-- **Infiniteness for DFAs (INFINITE_DFA) is decidable** by a multi-stack machine, over a
-finite alphabet. -/
+/-- **Infiniteness of DFAs is decidable.** For every finite alphabet $\alpha$, given with an
+enumeration of its letters, decidable equality and a primitive recursive encoding, the property
+of an encoded DFA over $\alpha$ that its language is infinite is decidable by a multi-stack
+machine. This is the problem $\mathrm{INFINITE}_{\mathrm{DFA}}$. -/
 theorem tm2Decidable_language_infinite :
     TM2Decidable fun D : EncodedDFA α => D.language.Infinite :=
   tm2Decidable_iff_computablePred.2

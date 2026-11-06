@@ -54,42 +54,79 @@ variable {α : Type*}
 
 /-! ### The grammars -/
 
-/-- A letter of the PCP alphabet, as an encoded terminal. -/
+/-- **The encoded letter terminal.** For a letter $a \in \alpha$, this is $a$ as an encoded
+terminal over the alphabet $\alpha \oplus \mathbb{N}$: the element $\mathrm{inr}(\mathrm{inl}\, a)$
+of $\mathbb{N} \oplus (\alpha \oplus \mathbb{N})$, whose left summand $\mathbb{N}$ holds the
+nonterminals and whose right summand holds the terminals. -/
 def letterSym (a : α) : ℕ ⊕ (α ⊕ ℕ) := .inr (.inl a)
 
-/-- The index terminal `i`. -/
+/-- **The encoded index terminal.** For $i \in \mathbb{N}$, this is the index $i$ as an encoded
+terminal over the alphabet $\alpha \oplus \mathbb{N}$: the element $\mathrm{inr}(\mathrm{inr}\, i)$
+of $\mathbb{N} \oplus (\alpha \oplus \mathbb{N})$, whose left summand $\mathbb{N}$ holds the
+nonterminals and whose right summand holds the terminals. -/
 def indexSym (i : ℕ) : ℕ ⊕ (α ⊕ ℕ) := .inr (.inr i)
 
-/-- The nonterminal `A`. -/
+/-- **Encoded nonterminal symbol.** For a natural number $A$, the nonterminal $A$ as a symbol of
+the right-hand side of an encoded production over the terminals $\alpha \sqcup \mathbb{N}$: the
+left injection of $A$ into $\mathbb{N} \sqcup (\alpha \sqcup \mathbb{N})$. -/
 def ntSym (A : ℕ) : ℕ ⊕ (α ⊕ ℕ) := .inl A
 
-/-- The `i`-th domino of `P` (empty past the end). -/
+/-- **The $i$-th domino of a list.** For a list $P$ of dominoes and $i \in \mathbb{N}$, this is the
+$i$-th domino of $P$ (counting from $0$) when $i$ is less than the length of $P$, and the domino
+whose top and bottom words are both empty otherwise. -/
 def domino (P : List (Domino α)) (i : ℕ) : Domino α := P.getD i ([], [])
 
-/-- The production `A → wᵢ A i`, for `wᵢ` the chosen side of the `i`-th domino. -/
+/-- **The continuation production.** For a list $P$ of dominoes, a map $\sigma$ assigning a word
+over $\alpha$ to each domino, a nonterminal $A \in \mathbb{N}$ and an index $i \in \mathbb{N}$,
+this is the production $A \to w_i\, A\, i$ in encoded form, where $w_i$ is $\sigma$ applied to the
+$i$-th domino of $P$ (the domino with both words empty when $i$ is past the end of $P$): its
+right-hand side is the letters of $w_i$ as terminals, then the nonterminal $A$, then the index
+terminal $i$. -/
 def contRule (side : Domino α → List α) (A : ℕ) (P : List (Domino α)) (i : ℕ) :
     ℕ × List (ℕ ⊕ (α ⊕ ℕ)) :=
   (A, (side (domino P i)).map letterSym ++ [ntSym A, indexSym i])
 
-/-- The production `A → wᵢ i`. -/
+/-- **The terminating production of a side grammar.** Let $P = (d_0, \dots, d_{k-1})$ be a list
+of dominoes over $\alpha$, set $d_i = (\varepsilon, \varepsilon)$ for $i \ge k$, let $\sigma$
+assign a word over $\alpha$ to each domino, and write $w_i = \sigma(d_i)$. For a nonterminal $A$
+and a natural number $i$, this is the encoded production $A \to w_i \, i$, whose right-hand side
+is the letters of $w_i$ as terminals followed by the index terminal $i$. -/
 def termRule (side : Domino α → List α) (A : ℕ) (P : List (Domino α)) (i : ℕ) :
     ℕ × List (ℕ ⊕ (α ⊕ ℕ)) :=
   (A, (side (domino P i)).map letterSym ++ [indexSym i])
 
-/-- The productions `A → wᵢ A i | wᵢ i` for every domino. -/
+/-- **The productions of a side grammar.** Let $P = (d_0, \dots, d_{k-1})$ be a list of dominoes
+over $\alpha$, let $\sigma$ assign a word over $\alpha$ to each domino, write $w_i = \sigma(d_i)$,
+and let $A$ be a nonterminal. The side productions are the list of encoded productions
+$A \to w_i \, A \, i$ and $A \to w_i \, i$ for $i = 0, 1, \dots, k - 1$, where the letters of
+$w_i$ are terminals and $i$ is an index terminal. -/
 def sideRules (side : Domino α → List α) (A : ℕ) (P : List (Domino α)) :
     List (ℕ × List (ℕ ⊕ (α ⊕ ℕ))) :=
   (List.range P.length).flatMap fun i ↦ [contRule side A P i, termRule side A P i]
 
-/-- The grammar of one side of `P` (the top side for `Prod.fst`, the bottom for `Prod.snd`). -/
+/-- **The side grammar of a PCP instance.** Let $P = (d_0, \dots, d_{k-1})$ be a list of dominoes
+over $\alpha$, let $\sigma$ assign a word over $\alpha$ to each domino, and write
+$w_i = \sigma(d_i)$. The side grammar of $\sigma$ and $P$ is the encoded context-free grammar
+whose terminals are the letters of $\alpha$ and the index terminals $0, 1, 2, \dots$, whose start
+nonterminal is $S = 0$, and whose productions are $S \to w_i \, S \, i$ and $S \to w_i \, i$ for
+each $i < k$. Taking for $\sigma$ the top word of a domino gives the top grammar of $P$, and the
+bottom word the bottom grammar. -/
 def sideGrammar (side : Domino α → List α) (P : List (Domino α)) : EncodedCFG (α ⊕ ℕ) :=
   ⟨0, sideRules side 0 P⟩
 
-/-- The letters `w_{i₁} ⋯ w_{iₙ}` of an index sequence. -/
+/-- **The letter part of an index sequence.** For a list $P$ of dominoes, a map $\sigma$ assigning
+a word over $\alpha$ to each domino, and a sequence $i_1, \dots, i_n$ of natural numbers, this is
+the word $w_{i_1} w_{i_2} \cdots w_{i_n}$ over $\alpha$, where $w_i$ is $\sigma$ applied to the
+$i$-th domino of $P$ (the domino with both words empty when $i$ is past the end of $P$). -/
 def flat (side : Domino α → List α) (P : List (Domino α)) (is : List ℕ) : List α :=
   is.flatMap fun i ↦ side (domino P i)
 
-/-- The word `w_{i₁} ⋯ w_{iₙ} iₙ ⋯ i₁` of an index sequence. -/
+/-- **The side word of an index sequence.** Let $P = (d_0, \dots, d_{k-1})$ be a list of dominoes
+over $\alpha$, set $d_i = (\varepsilon, \varepsilon)$ for $i \ge k$, let $\sigma$ assign a word
+over $\alpha$ to each domino, and write $w_i = \sigma(d_i)$. The side word of a sequence
+$i_1, \dots, i_n$ of natural numbers is the word $w_{i_1} \cdots w_{i_n} \, i_n \cdots i_1$ over
+the letters of $\alpha$ and the index terminals $0, 1, 2, \dots$: the letters of
+$w_{i_1}, \dots, w_{i_n}$ followed by the indices in reverse order. -/
 def sideWord (side : Domino α → List α) (P : List (Domino α)) (is : List ℕ) : List (α ⊕ ℕ) :=
   (flat side P is).map Sum.inl ++ is.reverse.map Sum.inr
 
@@ -136,7 +173,9 @@ theorem cases_of_mem_rules {r : ContextFreeRule (α ⊕ ℕ) ℕ}
   · exact Or.inr rfl
 
 omit [DecidableEq α] in
-/-- A word of terminals derives only itself. -/
+/-- **A terminal word derives only itself.** Let $g$ be a context-free grammar with terminal
+alphabet $\alpha \oplus \mathbb{N}$ and let $u$ be a word over $\alpha \oplus \mathbb{N}$. If $g$
+derives a sentential form $v$ from $u$, read as a string of terminals, then $v = u$. -/
 theorem eq_of_derives_terminal {g : ContextFreeGrammar (α ⊕ ℕ)} {u : List (α ⊕ ℕ)}
     {v : List (Symbol (α ⊕ ℕ) g.NT)} (h : g.Derives (u.map Symbol.terminal) v) :
     v = u.map Symbol.terminal := by
@@ -146,7 +185,10 @@ theorem eq_of_derives_terminal {g : ContextFreeGrammar (α ⊕ ℕ)} {u : List (
     simp at hr
 
 omit [DecidableEq α] in
-/-- Splitting a sentential form at its single nonterminal. -/
+/-- **Splitting a sentential form at its single nonterminal.** Let $N$ be a type of nonterminals,
+$u, v$ words over $\alpha \oplus \mathbb{N}$, $A, B \in N$, and $p, q$ strings of terminals in
+$\alpha \oplus \mathbb{N}$ and nonterminals in $N$. If $u\, A\, v = p\, B\, q$, where $u$ and $v$
+are read as strings of terminals, then $p = u$, $B = A$ and $q = v$. -/
 theorem eq_of_terminal_append_nonterminal {N : Type*} {pre suf : List (α ⊕ ℕ)} {A B : N}
     {p q : List (Symbol (α ⊕ ℕ) N)}
     (h : pre.map Symbol.terminal ++ Symbol.nonterminal A :: suf.map Symbol.terminal =
@@ -175,8 +217,17 @@ theorem eq_of_terminal_append_nonterminal {N : Type*} {pre suf : List (α ⊕ �
       obtain ⟨rfl, rfl, rfl⟩ := ih h
       exact ⟨rfl, rfl, rfl⟩
 
-/-- **The analysis of derivations.** A derivation from `pre S suf` to a word of terminals applies
-`S → wᵢ S i` for each index but the last and then `S → wᵢ i`. -/
+/-- **The analysis of derivations.** Let $P$ be a list of dominoes, $\sigma$ a map assigning a word
+over $\alpha$ to each domino, and $G$ the context-free grammar of the side grammar of $P$ for
+$\sigma$, with start nonterminal $S$ and terminals $\alpha \oplus \mathbb{N}$ (letters and
+indices). Let $u, v, x$ be words over $\alpha \oplus \mathbb{N}$. If $G$ derives the terminal word
+$x$ from the sentential form $u\, S\, v$, then there is a nonempty sequence $i_1, \dots, i_n$ of
+indices, each less than the length of $P$, such that
+$x = u\, w_{i_1} \cdots w_{i_n}\, i_n \cdots i_1\, v$, where $w_i$ is $\sigma$ applied to the
+$i$-th domino of $P$.
+
+Such a derivation applies $S \to w_i\, S\, i$ for each index but the last and then
+$S \to w_i\, i$. -/
 theorem eq_sideWord_of_derives {s : List (Symbol (α ⊕ ℕ) ℕ)} {w : List (α ⊕ ℕ)}
     (h : (sideGrammar side P).toCFG.Derives s (w.map Symbol.terminal)) :
     ∀ pre suf : List (α ⊕ ℕ),
@@ -212,7 +263,13 @@ theorem eq_sideWord_of_derives {s : List (Symbol (α ⊕ ℕ) ℕ)} {w : List (�
       rw [hw]
       simp [sideWord, flat]
 
-/-- **The construction of derivations.** -/
+/-- **The construction of derivations.** Let $P$ be a list of dominoes, $\sigma$ a map assigning a
+word over $\alpha$ to each domino, and $G$ the context-free grammar of the side grammar of $P$ for
+$\sigma$, with start nonterminal $S$ and terminals $\alpha \oplus \mathbb{N}$ (letters and
+indices). For every nonempty sequence $i_1, \dots, i_n$ of indices, each less than the length of
+$P$, and all words $u, v$ over $\alpha \oplus \mathbb{N}$, $G$ derives the terminal word
+$u\, w_{i_1} \cdots w_{i_n}\, i_n \cdots i_1\, v$ from the sentential form $u\, S\, v$, where
+$w_i$ is $\sigma$ applied to the $i$-th domino of $P$. -/
 theorem derives_sideWord : ∀ (is : List ℕ), is ≠ [] → (∀ i ∈ is, i < P.length) →
     ∀ pre suf : List (α ⊕ ℕ), (sideGrammar side P).toCFG.Derives
       (pre.map Symbol.terminal ++ Symbol.nonterminal 0 :: suf.map Symbol.terminal)
@@ -240,8 +297,12 @@ theorem derives_sideWord : ∀ (is : List ℕ), is ≠ [] → (∀ i ∈ is, i <
     rw [decodeRule_contRule] at this ⊢
     simpa [Function.comp_def] using this
 
-/-- **The language of a side grammar**: the words `w_{i₁} ⋯ w_{iₙ} iₙ ⋯ i₁` for nonempty index
-sequences. -/
+/-- **The language of a side grammar.** Let $\alpha$ be an alphabet with decidable equality,
+let $P = (d_0, \dots, d_{k-1})$ be a list of dominoes over $\alpha$, let $\sigma$ assign a word
+over $\alpha$ to each domino, and write $w_i = \sigma(d_i)$. A word $u$ over the letters of
+$\alpha$ and the index terminals $0, 1, 2, \dots$ lies in the language of the side grammar of
+$\sigma$ and $P$ if and only if there is a nonempty sequence of indices $i_1, \dots, i_n$, each
+less than $k$, with $u = w_{i_1} \cdots w_{i_n} \, i_n \cdots i_1$. -/
 theorem mem_language_sideGrammar {w : List (α ⊕ ℕ)} :
     w ∈ (sideGrammar side P).language ↔
       ∃ is : List ℕ, is ≠ [] ∧ (∀ i ∈ is, i < P.length) ∧ w = sideWord side P is := by
@@ -257,7 +318,9 @@ end Derivations
 
 /-! ### Common words are PCP solutions -/
 
-/-- A word of letters followed by a word of markers splits uniquely. -/
+/-- **Unique splitting of letters followed by markers.** Let $A, C$ be words over $\alpha$ and
+$B, D$ words over $\beta$, all viewed as words over the disjoint union $\alpha \oplus \beta$. If
+$AB = CD$ as words over $\alpha \oplus \beta$, then $A = C$ and $B = D$. -/
 theorem eq_of_map_inl_append_map_inr {β : Type*} {A C : List α} {B D : List β}
     (h : A.map Sum.inl ++ B.map Sum.inr = C.map Sum.inl ++ D.map Sum.inr) : A = C ∧ B = D := by
   induction A generalizing C with
@@ -303,7 +366,10 @@ theorem flat_eq (side : Domino α → List α) (P : List (Domino α)) (is : List
 theorem domino_mem {P : List (Domino α)} {i : ℕ} (hi : i < P.length) : domino P i ∈ P := by
   simp [domino, List.getElem?_eq_getElem hi]
 
-/-- **PCP solutions are the common words of the top and bottom grammars.** -/
+/-- **A PCP instance is solvable exactly when its top and bottom grammars share a word.** Let
+$P$ be a list of dominoes over an alphabet $\alpha$ with decidable equality. Then $P$ has a PCP
+solution if and only if some word lies both in the language of the side grammar of $P$ for the
+top words and in the language of the side grammar of $P$ for the bottom words. -/
 theorem pcp_iff_exists_mem_inter [DecidableEq α] (P : List (Domino α)) :
     PCP P ↔ ∃ w, w ∈ (sideGrammar Prod.fst P).language ∧ w ∈ (sideGrammar Prod.snd P).language := by
   constructor
@@ -352,7 +418,13 @@ theorem primrec_sideGrammar {side : Domino α → List α} (hside : Primrec side
   EncodedCFG.primrec₂_mk.comp (Primrec.const 0) (primrec_sideRules hside 0)
 
 /-- **PCP many-one reduces to nonemptiness of the intersection of two context-free
-languages.** -/
+languages.** Let $\alpha$ be an alphabet with a primitive recursive encoding and decidable
+equality. The Post correspondence problem over $\alpha$ is many-one reducible to the problem of
+deciding, for a pair $(G_1, G_2)$ of encoded context-free grammars whose terminals are the letters
+of $\alpha$ together with the natural numbers, whether some word lies in both the language of
+$G_1$ and the language of $G_2$: there is a computable map sending each list $P$ of dominoes over
+$\alpha$ to such a pair, with $P$ having a PCP solution if and only if the two languages share a
+word. -/
 theorem manyOneReducible_pcp_inter [DecidableEq α] :
     ManyOneReducible (PCP (α := α)) fun g : EncodedCFG (α ⊕ ℕ) × EncodedCFG (α ⊕ ℕ) ↦
       ∃ w, w ∈ g.1.language ∧ w ∈ g.2.language :=

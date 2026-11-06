@@ -34,7 +34,9 @@ namespace Cslib.Complexity.SatVerifier.Check
 open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
   Computability
 
-/-- Stacks: tokens, table, the lookup's side, scratch and value stacks, polarity, clause flag. -/
+/-- **Stacks of the clause check.** The eight stacks of the clause-check machine: $T$ (tokens),
+$B$ (table), $S$ (the lookup's stash), $A$ and $C$ (the lookup's scratch stacks), $V$ (looked-up
+value), $P$ (polarity) and $F$ (clause flag). -/
 inductive K | T | B | S | A | C | V | P | F
   deriving DecidableEq
 
@@ -42,7 +44,9 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.T, K.B, K.S, K.A, K.C, K.V, K.P, K.F], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Driver labels. -/
+/-- **Driver labels of the clause check.** The seven labels of the clause-check driver: start
+(begin the next clause), lits (read the next literal), ret (return from the lookup), drop
+(discard a literal's name bits), endc (end of a clause), yes (accept) and no (reject). -/
 inductive DLab | start | lits | ret | drop | endc | yes | no
   deriving DecidableEq
 
@@ -52,17 +56,35 @@ instance DLab.instFintypeEnumFix : Fintype DLab where
 
 variable {LL : Type}
 
-/-- Statements on the driver's stacks and labels. -/
+/-- **Clause-check statements.** For a label set $L$, the statements of a multi-stack Turing
+machine with the eight driver stacks, each over the symbols of the token and table stacks, with
+labels in $D \sqcup L$, where $D$ is the set of driver labels, and with a Boolean internal
+state. -/
 abbrev Stmt (LL : Type) := TM2.Stmt (fun _ : K => Sym) (DLab ⊕ LL) Bool
 
-/-- Configurations on the driver's stacks and labels. -/
+/-- **Configurations of the clause-check machine.** For a type $LL$ of lookup labels, a
+configuration of the multi-stack Turing machine of the clause check: a current label (absent once
+the machine halts) that is either a driver label or a label in $LL$, a Boolean internal state,
+and the contents of the eight stacks $T$, $B$, $S$, $A$, $C$, $V$, $P$, $F$ of the clause check,
+each a list of symbols of the token and table stacks (name bits, literal and clause markers, and
+table markers). -/
 abbrev Cfg (LL : Type) := TM2.Cfg (fun _ : K => Sym) (DLab ⊕ LL) Bool
 
-/-- Pop the top of `T` and push `bit p` on `P`, then start the lookup. -/
+/-- **Calling the lookup.** For the lookup's start label $l_0$ and a polarity $p$, the statement
+that pops the top of the token stack $T$, pushes the bit $p$ onto the polarity stack $P$, and
+then goes to label $l_0$. -/
 def callS (l0 : LL) (p : Bool) : Stmt LL :=
   .pop .T (fun s _ => s) (.push .P (fun _ => .bit p) (.goto fun _ => .inr l0))
 
-/-- The driver's statements. -/
+/-- **The clause-check driver.** Given the lookup's start label $l_0$, the statement at each
+driver label. At start: if the token stack $T$ is empty, go to yes; if its top is a clause
+marker, pop it, push the bit false onto the flag stack $F$ and go to lits; otherwise go to no.
+At lits: if the top of $T$ is a literal marker of polarity $p$, pop it, push the bit $p$ onto
+the polarity stack $P$ and go to $l_0$; otherwise go to endc. At ret: if the top of the value
+stack $V$ is the bit true exactly when the top of $P$ is the bit true, pop $F$ and push the bit
+true onto it; in either case then pop $V$, pop $P$ and go to drop. At drop: if the top of $T$
+is a bit, pop it and go to drop; otherwise go to lits. At endc: if the top of $F$ is the bit
+true, pop it and go to start; otherwise go to no. At yes and at no: halt. -/
 def drv (l0 : LL) : DLab → Stmt LL
   | .start => .peek .T (fun _ o => o.isNone) <| .branch id (.goto fun _ => .inl .yes) <|
       .peek .T (fun _ o => o == some .cl) <| .branch id
@@ -83,14 +105,22 @@ def drv (l0 : LL) : DLab → Stmt LL
   | .yes => .halt
   | .no => .halt
 
-/-- The driver with the lookup sub-program `lk` on the labels `LL`. -/
+/-- **The clause-check driver with a lookup sub-program.** Given a lookup sub-program $lk$ on a
+label set $L$ and an entry label $l_0 \in L$, this is the program on the labels $D \sqcup L$, where
+$D$ is the set of driver labels: at a driver label $d$ it runs the driver's statement for $d$
+(the driver calls the lookup by jumping to $l_0$), and at a label $l \in L$ it runs $lk(l)$. -/
 def prog (lk : LL → Stmt LL) (l0 : LL) : DLab ⊕ LL → Stmt LL
   | .inl d => drv l0 d
   | .inr l => lk l
 
-/-- The lookup contract: from `l0`, with a reversed name block `q` on `T`, the table
-`tblStk es` on `B`, and `S`, `A`, `C`, `V` empty, reach `DLab.ret` within `a · |tblStk es| + b`
-steps with `V = [bit (liveVal es q)]` and every other stack unchanged. -/
+/-- **The lookup contract.** A lookup sub-program $lk$ with start label $l_0$ meets the contract
+with constants $a$ and $b$ when the following holds. For every name $q$ (a list of bits), every
+table $es$, with table stack $B_{es}$, and every list of symbols $R$ whose first symbol, if any,
+is not a bit, start the clause-check machine with lookup $lk$ at label $l_0$, with any internal
+state and with stack contents that have the bits of $q$ in reverse order followed by $R$ on the
+token stack $T$, $B_{es}$ on $B$, and $S$, $A$, $C$, $V$ empty. Then it reaches label ret in at
+most $a \cdot |B_{es}| + b$ steps, with some internal state, with $V$ holding exactly the bit
+that is the live value of $q$ in $es$, and with every other stack unchanged. -/
 def LookupSpec (lk : LL → Stmt LL) (l0 : LL) (a b : ℕ) : Prop :=
   ∀ (q : List Bool) (es : List Ent) (R : List Sym), R.head?.bind Sym.bit? = none →
     ∀ (v : Bool) (St : ∀ _ : K, List Sym), St .T = (q.map Sym.bit).reverse ++ R →
@@ -100,10 +130,17 @@ def LookupSpec (lk : LL → Stmt LL) (l0 : LL) (a b : ℕ) : Prop :=
 
 /-! ### The token stack, clause by clause -/
 
-/-- A literal's tokens as they lie on the token stack. -/
+/-- **A literal's tokens on the token stack.** For a literal $(n, p)$ with variable index $n$ and
+polarity $p$, the list of symbols consisting of the literal marker of polarity $p$ followed by
+the bits of the binary encoding of $n$ (least significant bit first, empty for $n = 0$) in
+reverse order. -/
 def litRev (l : ℕ × Bool) : List Sym := .lit l.2 :: ((encodeNat l.1).map Sym.bit).reverse
 
-/-- A clause's tokens as they lie on the token stack: `cl`, then its literals last-first. -/
+/-- **A clause's tokens on the token stack.** For a clause with literals $l_1, \dots, l_k$, the
+list of symbols consisting of the clause marker followed by the stack tokens of $l_k$, then of
+$l_{k-1}$, down to $l_1$, where the stack tokens of a literal $(n, p)$ are the literal marker of
+polarity $p$ followed by the bits of the binary encoding of $n$ (least significant bit first,
+empty for $n = 0$) in reverse order. -/
 def clRev (C : CNFClause) : List Sym := .cl :: C.reverse.flatMap litRev
 
 theorem clauseToks_reverse (C : CNFClause) : (clauseToks C).reverse = clRev C := by
@@ -199,9 +236,20 @@ theorem litRev_head_bit (l : ℕ × Bool) (rest : List Sym) :
     (litRev l ++ rest).head?.bind Sym.bit? = none := by
   simp [litRev, Sym.bit?]
 
-/-- The literals of one clause: from `lits`, with the literals' tokens `Ls.flatMap litRev` on
-`T` above `R` (empty or a `cl`), reach `endc` with the clause flag or-ed with every literal's
-check. -/
+/-- **Literal loop of the clause check.** Suppose the lookup sub-program $lk$ with start label
+$l_0$ meets the lookup contract with constants $a$ and $b$. Let $es$ be a table with table stack
+$B_{es}$, let $R$ be a list of symbols that is empty or starts with a clause marker, and let $s$
+be a bit. The stack tokens of a literal $(n, p)$ are the literal marker of polarity $p$
+followed by the bits of the binary encoding of $n$ (least significant bit first, empty for
+$n = 0$) in reverse order. Let $l_1, \dots, l_k$ be literals whose stack tokens have total
+length $N$. Start the clause-check machine with lookup $lk$ at label lits, with any internal
+state and with the stack tokens of $l_1$, then of $l_2$, up to $l_k$, followed by $R$ on the
+token stack $T$, $B_{es}$ on $B$, the single bit $s$ on the flag stack $F$, and $S$, $A$, $C$,
+$V$, $P$ empty. Then it reaches label endc in at most
+$k \cdot (a \cdot |B_{es}| + b + 2) + N + 1$ steps, with some internal state, with $T$ holding
+$R$, with $F$ holding the single bit that is true exactly when $s$ is true or some literal
+$l_i = (n, p)$ has live value of the binary encoding of $n$ in $es$ equal to $p$, and with
+every other stack unchanged. -/
 theorem lits_run (hlk : LookupSpec lk l0 a b) (es : List Ent) (R : List Sym)
     (hR : R = [] ∨ R.head? = some .cl) :
     ∀ (Ls : List (ℕ × Bool)) (s v : Bool) (St : ∀ _ : K, List Sym),
@@ -273,8 +321,19 @@ theorem litRev_flatMap_length_ge (Ls : List (ℕ × Bool)) :
   | nil => simp
   | cons l Ls ih => simp [List.flatMap_cons, litRev_length]; omega
 
-/-- The clause loop: from `start`, with the clauses' tokens `Cs.flatMap clRev` on `T`, reach
-`yes` if every clause has a literal whose looked-up value is its polarity, and `no` otherwise. -/
+/-- **Clause loop of the clause check.** Suppose the lookup sub-program $lk$ with start label
+$l_0$ meets the lookup contract with constants $a$ and $b$. Let $es$ be a table with table stack
+$B_{es}$, and let $\varphi$ be a CNF formula with clauses $D_1, \dots, D_m$. The stack tokens
+of a clause are its clause marker followed by the stack tokens of its literals, last literal
+first, where the stack tokens of a literal $(n, p)$ are the literal marker of polarity $p$
+followed by the bits of the binary encoding of $n$ (least significant bit first, empty for
+$n = 0$) in reverse order. Let $N$ be the total length of the stack tokens of
+$D_1, \dots, D_m$. Start the clause-check machine with lookup $lk$ at label start, with any
+internal state and with the stack tokens of $D_1$, then of $D_2$, up to $D_m$ on the token
+stack $T$, $B_{es}$ on $B$, and $S$, $A$, $C$, $V$, $P$, $F$ empty. Then within
+$N \cdot (a \cdot |B_{es}| + b + 5) + 1$ steps it reaches, with some internal state and some
+stack contents, label yes if every clause $D_j$ has a literal $(n, p)$ such that the live value
+of the binary encoding of $n$ in $es$ is $p$, and label no otherwise. -/
 theorem clauses_run (hlk : LookupSpec lk l0 a b) (es : List Ent) :
     ∀ (Cs : CNF) (v : Bool) (St : ∀ _ : K, List Sym),
       St .T = Cs.flatMap clRev → St .B = tblStk es → St .S = [] → St .A = [] →
@@ -344,10 +403,16 @@ theorem clauses_run (hlk : LookupSpec lk l0 a b) (es : List Ent) :
 
 end Loops
 
-/-- **The clause check.** Under the lookup contract, from `start` with the token stack
-`(toks φ).reverse`, the table stack `tblStk es` and the other stacks empty, the driver reaches
-`yes` if `checkSpec φ es` and `no` otherwise, within `|toks φ| · (a · |tblStk es| + b + 5) + 1`
-steps. -/
+/-- **The clause check.** Suppose the lookup sub-program $lk$ with entry label $l_0$ satisfies
+the lookup contract with constants $a, b \in \mathbb{N}$. Let $\varphi$ be a CNF formula, $es$ a
+list of table entries, $t$ the token list of $\varphi$ and $m$ the length of the table stack of
+$es$. Start the driver with lookup $lk$ at its start label, with any internal state, with $t$
+reversed on the token stack, the table stack of $es$ on the table stack, and the other six stacks
+empty. Then within at most $|t| \cdot (a m + b + 5) + 1$ steps it reaches the label yes, with
+some internal state and some stack contents, if every clause of $\varphi$ has a literal whose
+polarity equals the value of its variable, and it reaches the label no otherwise. Here the value
+of a variable $n$ is the value of the first entry of $es$ that is named by the binary encoding of
+$n$ and has a value, or false if there is no such entry. -/
 theorem run {lk : LL → Stmt LL} {l0 : LL} {a b : ℕ} (hlk : LookupSpec lk l0 a b) (φ : CNF)
     (es : List Ent) (v : Bool) (St : ∀ _ : K, List Sym) (hT : St .T = (toks φ).reverse)
     (hB : St .B = tblStk es) (hS : St .S = []) (hA : St .A = []) (hC : St .C = [])
