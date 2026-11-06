@@ -36,19 +36,24 @@ of a class is the cardinality of its carrier. For `p = 2` the trivial group woul
 which is why the problem asks about odd `p`.
 -/
 
-/-- The number of conjugacy classes of maximum size of a finite group `G`. -/
+/-- **Number of conjugacy classes of maximum size.** For a group $G$, the number of conjugacy
+classes $c$ of $G$ such that every conjugacy class of $G$ has size at most the size of $c$. It is
+meant for finite groups: sizes and counts are taken in $\mathbb{N}$, where an infinite set has
+size $0$. -/
 noncomputable def numMaxSizeConjClasses (G : Type*) [Group G] : ℕ :=
   Nat.card {c : ConjClasses G // ∀ d : ConjClasses G, Nat.card d.carrier ≤ Nat.card c.carrier}
 
-/-- Kourovka 14.92 (G. Fernández-Alcober): for some odd prime `p` there is a finite `p`-group with
-exactly `p - 1` conjugacy classes of maximum size. -/
+/-- **Odd $p$-groups with $p - 1$ conjugacy classes of maximum size (Kourovka 14.92).** The
+statement that there exist an odd prime $p$ and a finite $p$-group with exactly $p - 1$ conjugacy
+classes of maximum size. -/
 def oddPGroupWithPredMaxSizeConjClasses : Prop :=
   ∃ p : ℕ, p.Prime ∧ Odd p ∧ ∃ (G : Type) (_ : Group G) (_ : Finite G), IsPGroup p G ∧
     numMaxSizeConjClasses G = p - 1
 
 /--
-Resolved true: the Kourovka Archive answers 14.92 "Yes, there are, for `p = 3`" (Jaikin-Zapirain,
-Newman and O'Brien): some finite `3`-group has exactly `2` conjugacy classes of maximum size.
+**Some odd $p$-group has exactly $p - 1$ conjugacy classes of maximum size.** There exist an odd
+prime $p$ and a finite $p$-group with exactly $p - 1$ conjugacy classes of maximum size.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 14.92 (G.
 Fernández-Alcober); resolution: A. Jaikin-Zapirain, M. F. Newman and E. A. O'Brien, p-groups having

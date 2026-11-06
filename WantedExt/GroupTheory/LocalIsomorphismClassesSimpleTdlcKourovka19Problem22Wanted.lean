@@ -36,9 +36,11 @@ subgroups (`≃ₜ*`). "Uncountably many classes" is stated as an uncountable fa
 that are pairwise not locally isomorphic.
 -/
 
-/-- A topological group `G` belongs to Caprace's class `𝒮`: it is a Hausdorff, totally disconnected,
-locally compact group that is not discrete, is generated (as a group) by a compact subset, and is
-topologically simple (nontrivial, with no closed normal subgroups other than `⊥` and `⊤`). -/
+/-- **Caprace's class $\mathcal{S}$.** A group $G$ with a topology belongs to the class
+$\mathcal{S}$ when it is a topological group that is Hausdorff, totally disconnected, locally
+compact and not discrete, is generated as a group by some compact subset, and is topologically
+simple: $G$ is nontrivial and its only closed normal subgroups are the trivial subgroup and $G$
+itself. -/
 def IsInClassS (G : Type) [Group G] [TopologicalSpace G] : Prop :=
   IsTopologicalGroup G ∧ T2Space G ∧ TotallyDisconnectedSpace G ∧ LocallyCompactSpace G ∧
     ¬ DiscreteTopology G ∧ (∃ K : Set G, IsCompact K ∧ Subgroup.closure K = ⊤) ∧ Nontrivial G ∧
@@ -50,17 +52,23 @@ def LocallyIsomorphic (G H : Type) [Group G] [TopologicalSpace G] [Group H] [Top
     Prop :=
   ∃ (U : OpenSubgroup G) (V : OpenSubgroup H), Nonempty ((U : Subgroup G) ≃ₜ* (V : Subgroup H))
 
-/-- Kourovka 19.22 (P.-E. Caprace): the groups in `𝒮` fall into uncountably many local isomorphism
-classes, that is, some uncountable family of groups in `𝒮` is pairwise not locally isomorphic. -/
+/-- **Caprace's problem on local isomorphism classes (Kourovka 19.22).** The statement that the
+groups in Caprace's class $\mathcal{S}$ fall into uncountably many local isomorphism classes: there
+is a family $(G_i)_{i \in I}$ of groups in $\mathcal{S}$, indexed by an uncountable set $I$, such
+that $G_i$ and $G_j$ are not locally isomorphic whenever $i \ne j$. -/
 def uncountablyManyLocalIsomorphismClasses : Prop :=
   ∃ (ι : Type) (_ : Uncountable ι) (G : ι → Type) (_ : ∀ i, Group (G i))
     (_ : ∀ i, TopologicalSpace (G i)),
     (∀ i, IsInClassS (G i)) ∧ ∀ i j, i ≠ j → ¬ LocallyIsomorphic (G i) (G j)
 
 /--
-Resolved true: Castellano et al. (Theorem A) construct `2^ℵ₀` non-discrete compactly generated
-simple tdlc groups that are pairwise not locally isomorphic; the 21st issue of the Kourovka Notebook
-marks 19.22 solved ("Yes, it is"), citing this preprint. Source: E. I. Khukhro and V. D. Mazurov
+**Uncountably many local isomorphism classes of simple tdlc groups.** There is a family
+$(G_i)_{i \in I}$ of groups in Caprace's class $\mathcal{S}$ (non-discrete, compactly generated,
+topologically simple, totally disconnected, locally compact Hausdorff topological groups), indexed
+by an uncountable set $I$, such that $G_i$ and $G_j$ are not locally isomorphic whenever $i \ne j$.
+This answers Kourovka Notebook Problem 19.22 (P.-E. Caprace) in the affirmative.
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Problem 19.22 (P.-E. Caprace); resolution: I. Castellano, J. Fariña-Asategui, M. E.
 Garciarena, B. Marchionna, M. Quick, C. D. Reid, S. M. Smith, S. Tornier, M. Vannacci and J. S.

@@ -32,15 +32,21 @@ Periodic means that every element has finite order; the given group and the simp
 are taken in `Type`, and an embedding is an injective homomorphism.
 -/
 
-/-- Kourovka 11.106 (R. Phillips): every periodic group embeds in a simple periodic group. -/
+/-- **Kourovka Problem 11.106 (periodic groups in simple periodic groups).** The statement, posed
+by R. Phillips, that every periodic group embeds in a simple periodic group: for every group $G$ in
+which every element has finite order, there are a simple group $S$ in which every element has finite
+order and an injective homomorphism $G \to S$. -/
 def periodicGroupEmbedsInSimplePeriodic : Prop :=
   ∀ (G : Type) [Group G], (∀ g : G, IsOfFinOrder g) →
     ∃ (S : Type) (_ : Group S), IsSimpleGroup S ∧ (∀ s : S, IsOfFinOrder s) ∧
       ∃ f : G →* S, Function.Injective f
 
 /--
-Resolved true: the Kourovka Archive answers 11.106 "Yes", citing Olshanskii (1992), "Embedding
-periodic groups in simple periodic groups": every periodic group embeds in a simple periodic group.
+**Every periodic group embeds in a simple periodic group.** For every group $G$ in which every
+element has finite order, there are a simple group $S$ in which every element has finite order and
+an injective homomorphism $G \to S$. This answers Kourovka Problem 11.106 (R. Phillips) in the
+affirmative; the result is due to A. Yu. Olshanskii (1992).
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.106 (R.
 Phillips); resolution: A. Yu. Olshanskii, Embedding periodic groups in simple periodic groups, Ukr.

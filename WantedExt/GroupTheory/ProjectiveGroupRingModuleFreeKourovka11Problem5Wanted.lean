@@ -38,22 +38,25 @@ pair. The refutation uses a coefficient ring that is not a field, `𝔽₂ × �
 idempotents), and the trivial group; the question for field coefficients is not settled by it.
 -/
 
-/-- `G` is polycyclic: it has a finite subnormal series `1 = H₀ ≤ H₁ ≤ ⋯ ≤ Hₙ = G`, each `Hᵢ`
-normal in `Hᵢ₊₁`, with cyclic factors `Hᵢ₊₁ / Hᵢ`. -/
+/-- **Polycyclic group.** A group $G$ is polycyclic if for some $n \ge 0$ there are subgroups
+$1 = H_0 \le H_1 \le \cdots \le H_n = G$ such that for each $i < n$, $H_i$ is normal in
+$H_{i+1}$ and the quotient $H_{i+1} / H_i$ is cyclic. -/
 def IsPolycyclic (G : Type*) [Group G] : Prop :=
   ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
     ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
       ∃ _ : ((H i.castSucc).subgroupOf (H i.succ)).Normal,
         IsCyclic (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))
 
-/-- `G` is almost polycyclic (polycyclic-by-finite): some subgroup of finite index is
-polycyclic. -/
+/-- **Almost polycyclic group.** A group $G$ is almost polycyclic (polycyclic-by-finite) if it
+has a subgroup of finite index that is polycyclic. -/
 def IsAlmostPolycyclic (G : Type*) [Group G] : Prop :=
   ∃ H : Subgroup G, H.FiniteIndex ∧ IsPolycyclic H
 
-/-- Kourovka 11.5 (V. A. Artamonov): if `k` is a commutative ring, `G` a torsion-free almost
-polycyclic group and `P` a finitely generated projective `kG`-module containing two elements that
-are linearly independent over `kG`, then `P` is a free `kG`-module. -/
+/-- **Artamonov's freeness question (Kourovka 11.5).** This is the proposition that, for every
+commutative ring $k$, every torsion-free almost polycyclic group $G$ (no element $g \ne 1$ of $G$
+has finite order) and every finitely generated projective module $P$ over the group ring $kG$, if
+$P$ contains two elements that are linearly independent over $kG$, then $P$ is a free
+$kG$-module. -/
 def projectiveWithTwoIndependentFree : Prop :=
   ∀ (k : Type) [CommRing k] (G : Type) [Group G], (∀ g : G, g ≠ 1 → ¬ IsOfFinOrder g) →
     IsAlmostPolycyclic G → ∀ (P : Type) [AddCommGroup P] [Module (MonoidAlgebra k G) P],
@@ -62,11 +65,17 @@ def projectiveWithTwoIndependentFree : Prop :=
     Module.Free (MonoidAlgebra k G) P
 
 /--
-Resolved false for the literal statement, with a coefficient ring that is not a field: Jayadevan
-takes `k = 𝔽₂ × 𝔽₂` and the trivial group `G` (so `kG = k`); `P = k² ⊕ (𝔽₂ × 0)` is a finitely
-generated projective `k`-module containing an independent pair, but `|P| = 32` is not a power of
-`4 = |k|`, so `P` is not free. The Kourovka Notebook (21st issue) marks 11.5 solved, "No, not
-always" (AI solution confirmed by D. Segal); the example gives nothing for field coefficients.
+**Artamonov's freeness question has a negative answer.** It is not the case that for every
+commutative ring $k$, every torsion-free almost polycyclic group $G$ (no element $g \ne 1$ of $G$
+has finite order) and every finitely generated projective module $P$ over the group ring $kG$
+containing two elements that are linearly independent over $kG$, the module $P$ is free over $kG$.
+
+Jayadevan's counterexample takes $k = \mathbb{F}_2 \times \mathbb{F}_2$ and the trivial group $G$,
+so that $kG = k$; then $P = k^2 \oplus (\mathbb{F}_2 \times 0)$ is a finitely generated projective
+$k$-module containing an independent pair, but $|P| = 32$ is not a power of $4 = |k|$, so $P$ is
+not free. The Kourovka Notebook (21st issue) marks 11.5 solved, "No, not always" (AI solution
+confirmed by D. Segal); the example gives nothing for field coefficients.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.5 (V. A. Artamonov); resolution: A.
 Jayadevan, A coefficient-ring obstruction to freeness of projective group-ring modules, preprint,
