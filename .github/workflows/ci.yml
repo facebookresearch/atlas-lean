@@ -126,6 +126,21 @@ jobs:
       - name: Build extension libraries
         run: scripts/check.sh build
 
+      # The Autoform index workflow writes the index after merge. Fail here
+      # instead when the pinned generator would refuse these libraries.
+      - name: Check that the libraries can be indexed
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: |
+          set -euo pipefail
+          rev="$(cat .github/autoform-rev)"
+          [[ "$rev" =~ ^[0-9a-f]{40}$ ]] || { echo ".github/autoform-rev is not a full commit SHA" >&2; exit 1; }
+          python3 -m venv "${RUNNER_TEMP}/autoform"
+          "${RUNNER_TEMP}/autoform/bin/pip" install --quiet \
+            "autoform @ git+https://github.com/facebookresearch/autoform-bot@${rev}"
+          "${RUNNER_TEMP}/autoform/bin/autoform" library index . \
+            --lib MathlibExt --lib CSLibExt --lib WantedExt --timeout 3600
+          rm autoform-library-index.jsonl
+
       - name: Save local build from main
         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.local-build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
