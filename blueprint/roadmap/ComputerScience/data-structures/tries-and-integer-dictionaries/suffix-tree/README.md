@@ -1,0 +1,16 @@
+# Suffix tree
+
+- [Terminated string](terminated.md)
+- [Suffixes of the terminated string](terminated-drop-eq-suffix-map.md)
+- [Suffix entries of a string](suffix-entries.md)
+- [Terminated suffixes are distinct](nodup-terminated-drops.md)
+- [Suffix tree](suffix-tree.md)
+- [Lookup of a suffix returns its starting index](lookup-suffix.md)
+- [Lookup in the suffix tree returns starting indices](eq-drop-of-lookup-suffix-tree.md)
+- [The stored keys of a suffix tree are its terminated suffixes](mem-suffix-tree-keys.md)
+- [Stored keys of the suffix tree](stored-keys.md)
+- [The suffix tree stores one key per suffix](stored-keys-length.md)
+- [A tagged pattern cannot reach past the terminator](is-prefix-of-map-some-prefix-append-none.md)
+- [Infixes are prefixes of suffixes](is-infix-iff-exists-is-prefix-drop.md)
+- [Suffix-tree search finds exactly the prefixes of suffixes](has-prefix-suffix-tree-iff-exists.md)
+- [Suffix-tree search finds exactly the infixes](has-prefix-suffix-tree-iff-is-infix.md)

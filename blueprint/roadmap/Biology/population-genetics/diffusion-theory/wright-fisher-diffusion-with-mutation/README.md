@@ -1,0 +1,17 @@
+# Wright–Fisher diffusion with mutation
+
+- [Wright–Fisher generator with two-way mutation](mutation-generator.md)
+- [Mutation generator without mutation is the neutral generator](mutation-generator-zero-zero.md)
+- [Beta density as Wright's stationary density](beta-pdfreal-eq-wright-density.md)
+- [Smoothness of the Beta density on the open unit interval](cont-diff-on-beta-pdfreal.md)
+- [Zero probability flux (Wright 1931)](flux-beta-pdfreal.md)
+- [Stationary forward equation (Wright 1931)](forward-equation-beta-pdfreal.md)
+- [Integrability of the mutation generator against the Beta density](interval-integrable-mutation-generator-m.md)
+- [Weak stationarity of Wright's law (density form)](integral-mutation-generator-mul-beta-pdf.md)
+- [Integrability of the mutation generator under Wright's stationary law](integrable-mutation-generator-beta-measu.md)
+- [Weak stationarity of Wright's law (Wright 1931; Ewens 2004, ch. 4)](integral-mutation-generator-beta-measure.md)
+- [Mutation generator applied to the allele frequency](mutation-generator-id.md)
+- [Mutation generator applied to heterozygosity](mutation-generator-heterozygosity.md)
+- [Allele frequency after one generation of two-way mutation](mutated-freq.md)
+- [Drift of the Wright–Fisher chain with mutation (Ewens 2004, ch. 4)](integral-binomial-mutated-freq-drift.md)
+- [Infinitesimal variance of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-sq.md)

@@ -1,0 +1,18 @@
+# Positive association, translates of crossing events, and the box-crossing property
+
+- [Open cluster of the origin](origin-cluster.md)
+- [Event that the origin's cluster is infinite](percolation-event.md)
+- [Percolation probability as an extended real](percolation-probability.md)
+- [Real densities with no percolation](subcritical-densities.md)
+- [Critical probability as a real number](critical-probability.md)
+- [Agreement of the two percolation events](percolation-event-eq.md)
+- [Agreement of the two critical probabilities](critical-probability-eq-pc.md)
+- [Positively associated measure](positively-associated.md)
+- [Positive association for probability measures is the Harris–FKG inequality](positively-associated-iff-of-is-probabil.md)
+- [Harris–FKG inequality for a positively associated probability measure](probability.md)
+- [Translate of a bond configuration](translate-config.md)
+- [Left–right crossing event of a translated rectangle](translated-horizontal-crossing-event.md)
+- [Bottom–top crossing event of a translated rectangle](translated-vertical-crossing-event.md)
+- [Set of long-direction box-crossing probabilities](box-crossing-probabilities.md)
+- [Infimum of the box-crossing probabilities](box-crossing-inf.md)
+- [Box-crossing property with a given aspect ratio](box-crossing-property.md)

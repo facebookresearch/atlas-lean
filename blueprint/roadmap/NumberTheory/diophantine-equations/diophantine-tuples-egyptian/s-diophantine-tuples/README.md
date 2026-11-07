@@ -1,0 +1,15 @@
+# S-Diophantine tuples
+
+- [$S$-Diophantine tuples](is-sdiophantine-tuple.md)
+- [$(1, 3)$ is a $\{2\}$-Diophantine pair](is-sdiophantine-tuple-two-one-three.md)
+- [$(1, 3, 8)$ is a $\{2, 3, 5\}$-Diophantine triple](is-sdiophantine-tuple-two-three-five-one.md)
+- [$ac + 1$ does not divide $bc + 1$](not-mul-add-one-dvd-mul-add-one.md)
+- [The two smallest valuations coincide](padic-val-nat-two-smallest-eq.md)
+- [$a$, $b$, $c$, $d$ divide gcds of reduced differences](dvd-gcd-sub-div-gcd.md)
+- [The Szalay–Ziegler system (4) has no solutions](not-exists-s-diophantine-system-four.md)
+- [Exponent cases for $\{p, q\}$-Diophantine quadruples with $p \equiv 3 \pmod 4$](s-diophantine-quadruple-exponent-cases.md)
+- [No $\{p, q\}$-Diophantine quadruple when $p$ or $q$ is $3$ modulo $4$](not-exists-s-diophantine-quadruple-of-mo.md)
+- [There is no $\{p, q\}$-Diophantine quintuple](not-exists-s-diophantine-quintuple.md)
+- [Bounds in Case III for $\{p, q\}$-Diophantine quadruples](s-diophantine-quadruple-case-iii-bounds.md)
+- [Bound on $b$ in Case IV for $\{p, q\}$-Diophantine quadruples](s-diophantine-quadruple-case-iv-bound.md)
+- [The fourteen exponent cases for $\{p, q\}$-Diophantine quadruples](s-diophantine-quadruple-fourteen-cases.md)

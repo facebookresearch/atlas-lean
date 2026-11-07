@@ -1,0 +1,18 @@
+# Sets with square pairwise sums
+
+- [Families whose pairwise sums are squares](pairwise-sums-squares.md)
+- [Semi-magic matrix of squares](is-semi-magic-roots.md)
+- [Scaling rational families with square pairwise sums to integers](exists-int-pairwise-sums-squares-scale-t.md)
+- [Triples with square pairwise sums from a semi-magic square of squares](pairwise-sums-squares-triple-of-is-semi.md)
+- [Triples with square pairwise sums come from semi-magic squares](exists-is-semi-magic-roots-of-pairwise-s.md)
+- [Five integers with square sums from two semi-magic squares of squares](pairwise-sums-squares-quintuple-of-is-se.md)
+- [Quintuple extensions come from a second semi-magic square](exists-is-semi-magic-roots-f-of-pairwise.md)
+- [Extending the triples to quadruples with square pairwise sums](pairwise-sums-squares-quadruple-of-is-se.md)
+- [Quadruple extensions come from two further semi-magic squares](exists-is-semi-magic-roots-gh-of-pairwis.md)
+- [Four-parameter triples with square pairwise sums, family (3.1)](pairwise-sums-squares-triple-family31.md)
+- [Four-parameter triples with square pairwise sums, family (3.2)](pairwise-sums-squares-triple-family32.md)
+- [Four-parameter triples with square pairwise sums, family (3.3)](pairwise-sums-squares-triple-family33.md)
+- [A seven-parameter family of five and three rationals with square pairwise sums](pairwise-sums-squares-quintuple-family41.md)
+- [A four-parameter family of integer quadruples with square pairwise sums](pairwise-sums-squares-quadruple-family51.md)
+- [First three-parameter family of rational quadruples with square pairwise sums](pairwise-sums-squares-quadruple-family58.md)
+- [Second three-parameter family of rational quadruples with square pairwise sums](pairwise-sums-squares-quadruple-family59.md)

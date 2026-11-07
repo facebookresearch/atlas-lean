@@ -1,0 +1,15 @@
+# A finite List Nat canonicalizer
+
+- [Stacks of the list-of-naturals canonicalizer](k.md)
+- [Stack embedding of the number normalizer in the list canonicalizer](emb.md)
+- [Control labels of the list-of-naturals canonicalizer](lab.md)
+- [Label embedding of the number normalizer in the list canonicalizer](nat-label.md)
+- [Program of the list-of-naturals canonicalizer](prog.md)
+- [Workspace layout of the list-of-naturals canonicalizer](st.md)
+- [List canonicalizer normalizes one element](element-run.md)
+- [List canonicalizer normalizes a sequence of framed payloads](blocks-run.md)
+- [List canonicalizer runs in linear time on decodable input](run-some.md)
+- [List canonicalizer fails on malformed input](run-none.md)
+- [List-of-naturals canonicalizer as a host component](component.md)
+- [List canonicalizer reaches the decoding outcome with canonical output](run.md)
+- [Embedded list canonicalizer preserves outside stacks](run-embedded.md)

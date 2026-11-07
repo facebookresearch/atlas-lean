@@ -1,0 +1,18 @@
+# Zuker's minimum free energy algorithm
+
+- [Nearest-neighbor loop energy model](loop-energy.md)
+- [Strict enclosure of one base pair by another](encloses.md)
+- [Branches of a loop closed by a base pair](branches.md)
+- [Exterior branches of a secondary structure](exterior-branches.md)
+- [Unique loop decomposition](exists-unique-closing-pair.md)
+- [Energy of the loop closed by a base pair](loop-energy-2.md)
+- [Free energy of a structure in the loop model](free-energy.md)
+- [A pair with no branch closes a hairpin loop](loop-energy-eq-hairpin.md)
+- [A pair with one branch closes a stack, bulge or interior loop](loop-energy-eq-interior.md)
+- [A pair with two or more branches closes a multiloop](loop-energy-eq-multiloop.md)
+- [Every position has a unique innermost strict container](exists-unique-loop-of-pos.md)
+- [Zuker's recursion](zuker-vw.md)
+- [Zuker exterior-loop recursion](zuker-exterior.md)
+- [Zuker minimum free energy](zuker-mfe.md)
+- [Zuker's algorithm](zuker-mfe-eq-inf.md)
+- [Minimum free energy is at most zero](zuker-mfe-le-zero.md)

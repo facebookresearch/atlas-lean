@@ -1,0 +1,15 @@
+# Commutator width
+
+- [Products of at most $n$ commutators (Kourovka 14.15)](is-product-of-commutators.md)
+- [Unbounded commutator length in Aut(Fₙ) (Kourovka 14.15)](aut-free-group-commutator-length-unbound.md)
+- [Commutator length in Aut(Fₙ) is unbounded](aut-free-group-commutator-length-unbound-2.md)
+- [Products of a bounded number of commutators](is-product-of-commutators-2.md)
+- [Commutator width of the derived subgroup](commutator-width.md)
+- [Bardakov's commutator width ratio claim (Kourovka 16.8)](max-commutator-width-ratio-is-one-sixth.md)
+- [The maximal commutator width ratio is one sixth](max-commutator-width-ratio-is-one-sixth-2.md)
+- [Products of at most $n$ commutators](is-product-of-commutators-3.md)
+- [Unbounded commutator length](commutator-length-unbounded.md)
+- [Kourovka Problem 14.13(a) (Bardakov)](simple-group-unbounded-commutator-length.md)
+- [Kourovka Problem 14.13(b) (Bardakov)](finitely-presented-simple-group-unbounde.md)
+- [A simple group with unbounded commutator length](simple-group-unbounded-commutator-length-2.md)
+- [A finitely presented simple group with unbounded commutator length](finitely-presented-simple-group-unbounde-2.md)

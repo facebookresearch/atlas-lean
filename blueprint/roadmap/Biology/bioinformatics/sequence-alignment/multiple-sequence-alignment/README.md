@@ -1,0 +1,16 @@
+# Multiple sequence alignment
+
+- [Multiple alignments](msalignment.md)
+- [Valid multiple alignment](is-msalignment.md)
+- [Induced pairwise alignment](induced-pair.md)
+- [Induced alignments have no all-gap column](induced-pair-ne-none-none.md)
+- [Letters of the first row of an induced alignment](induced-pair-filter-map-fst.md)
+- [Letters of the second row of an induced alignment](induced-pair-filter-map-snd.md)
+- [Induced pairwise alignments are valid](induced-pair-is-alignment.md)
+- [Pairs of rows](pair-finset.md)
+- [Sum-of-pairs score of a column](column-sp.md)
+- [Sum-of-pairs score](msa-score.md)
+- [Score of an induced pairwise alignment](alignment-score-induced-pair.md)
+- [The SP score is the sum of the induced pairwise scores](msa-score-eq-sum-induced.md)
+- [The sum-of-pairs score is bounded by the pairwise optima](msa-score-le-sum-nw-score.md)
+- [Every family of sequences has a multiple alignment](exists-is-msalignment.md)

@@ -1,0 +1,16 @@
+# Dirichlet distribution
+
+- [The Beta integral](lintegral-ioo-rpow-mul-rpow.md)
+- [Unnormalized Dirichlet density](dirichlet-density.md)
+- [Multivariate Beta function](multi-beta.md)
+- [The Dirichlet integral for a single parameter](lintegral-dirichlet-density-zero.md)
+- [Tonelli's theorem for the first coordinate](lintegral-fin-succ.md)
+- [Scaling the variable of a Lebesgue integral](lintegral-comp-smul-fin.md)
+- [Splitting off the first coordinate of the Dirichlet density](dirichlet-density-cons-smul.md)
+- [The Dirichlet integral](lintegral-dirichlet-density.md)
+- [Simplex completion](simplex-completion.md)
+- [Dirichlet distribution](dirichlet-measure.md)
+- [The Dirichlet distribution is concentrated on the open simplex](ae-dirichlet-measure.md)
+- [Multiplying the Dirichlet density by a multinomial likelihood](dirichlet-density-mul-prod-pow.md)
+- [Dirichlet–multinomial conjugacy](with-density-prod-pow-dirichlet-measure.md)
+- [Mean of the Dirichlet distribution](lintegral-dirichlet-measure-apply.md)

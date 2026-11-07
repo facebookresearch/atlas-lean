@@ -1,0 +1,7 @@
+# Rado–Edmonds theorem
+
+Let $\alpha$ be a finite type and let $\mathrm{indep}$ be an
+independence system on the finite subsets of $\alpha$. The greedy algorithm is optimal for
+$\mathrm{indep}$ if and only if there is a matroid $M$ on $\alpha$ whose ground set is all of
+$\alpha$ such that a finite set $S \subseteq \alpha$ is independent in $M$ exactly when $S$ is
+independent under $\mathrm{indep}$.

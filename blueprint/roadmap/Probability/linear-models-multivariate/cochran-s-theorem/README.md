@@ -1,0 +1,16 @@
+# Cochran's theorem
+
+- [Rank criterion](cochran-rank-criterion.md)
+- [Independence of orthogonal projections of a standard Gaussian](i-indep-fun-star-projection-std-gaussian.md)
+- [Independence of squared lengths of orthogonal Gaussian projections](i-indep-fun-norm-sq-star-projection-std.md)
+- [Group mean of observations](group-mean.md)
+- [Gaussian one-way layout](indep-fun-group-mean-residual.md)
+- [One-way analysis of variance](indep-fun-sum-sq-between-sum-sq-within.md)
+- [Law of the Gaussian sample mean](has-law-sample-mean.md)
+- [Cochran's theorem](i-indep-fun-dot-product-mul-vec-pi-gauss.md)
+- [Independence of the Gaussian sample mean and residuals](indep-fun-sample-mean-residual.md)
+- [Independence of the Gaussian sample mean and sum of squared deviations](indep-fun-sample-mean-sum-sq-dev.md)
+- [Sum of squares of independent standard normals is chi-square](pi-gaussian-real-map-sum-sq.md)
+- [Squared orthonormal coordinates of a standard Gaussian are chi-square](std-gaussian-map-sum-sq-inner.md)
+- [Cochran's theorem](std-gaussian-map-norm-sq-star-projection.md)
+- [Cochran's theorem](pi-gaussian-real-map-dot-product-mul-vec.md)

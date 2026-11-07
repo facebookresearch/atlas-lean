@@ -1,0 +1,16 @@
+# Polynomials with coefficients in arithmetic progression
+
+- [Perron's irreducibility criterion](perron-irreducible.md)
+- [Irreducibility of polynomials with coefficients in an arithmetic progression](arith-prog-poly-irreducible.md)
+- [The arithmetic-progression quartic is not a product of two quadratics](arith-prog-poly-four-not-mul-quadratics.md)
+- [Irreducibility when $d$ has a primitive-root prime factor](arith-prog-poly-irreducible-of-primitive.md)
+- [The arithmetic-progression polynomial times $(x - 1)^2$](arith-prog-poly-mul-sub-one-sq.md)
+- [Power identity at the roots of an arithmetic-progression polynomial](arith-prog-poly-root-pow-eq.md)
+- [The auxiliary equation has a unique positive root, which exceeds $1$](arith-prog-poly-eq3-exists-unique-pos.md)
+- [Bound on the zeros of the arithmetic-progression polynomial](arith-prog-poly-root-norm-le.md)
+- [Lower bound on a power of the auxiliary root](arith-prog-poly-lam-pow-gt.md)
+- [A rational lower bound for $(1 + mx)^{1/m}$](one-add-mul-rpow-inv-gt.md)
+- [Strict upper bound on floors at powers of the auxiliary root](arith-prog-poly-floor-lam-pow-lt.md)
+- [Exact floor at a power of the auxiliary root (single exponent)](arith-prog-poly-floor-lam-pow-eq.md)
+- [Exact floors at powers of the auxiliary root (all exponents)](arith-prog-poly-floor-lam-pow-eq-of-eigh.md)
+- [Reducible quadratics with coefficients in an arithmetic progression](arith-prog-poly-two-reducible-iff.md)

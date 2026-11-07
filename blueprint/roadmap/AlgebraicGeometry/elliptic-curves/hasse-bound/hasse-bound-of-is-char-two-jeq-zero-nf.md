@@ -1,0 +1,7 @@
+# Hasse bound for the supersingular characteristic-two normal form
+
+Let $F$ be a finite
+field of characteristic $2$ with $q$ elements and let $W$ be a Weierstrass curve
+$y^2 + a_3 y = x^3 + a_4 x + a_6$ over $F$ (that is, $a_1 = a_2 = 0$) with nonzero discriminant.
+If $N$ is the number of points of $W$ over $F$, including the point at infinity, then
+$(q + 1 - N)^2 \le 4q$.
