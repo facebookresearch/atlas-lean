@@ -1,0 +1,15 @@
+# Reciprocal 0,1-polynomials
+
+- [Reciprocal polynomial](is-reciprocal-poly.md)
+- [Characterization of reciprocal polynomials](is-reciprocal-poly-iff.md)
+- [0,1-polynomial](is-zero-one-poly.md)
+- [Characterization of 0,1-polynomials](is-zero-one-poly-iff.md)
+- [Non-cyclotomic polynomial](is-noncyclotomic.md)
+- [Characterization of non-cyclotomic polynomials](is-noncyclotomic-iff.md)
+- [Even–odd decomposition of a reciprocal polynomial](exists-unique-even-odd-reciprocal.md)
+- [Even–odd decomposition of a reciprocal 0,1-polynomial](exists-unique-even-odd-zero-one.md)
+- [Position of the first odd exponent](l-eq-min-support-and-lt.md)
+- [Irreducibility under repeated squaring of the variable](irreducible-comp-pow-two-pow-of-card-lt.md)
+- [Capelli's theorem for $f(x^r)$](not-irreducible-comp-pow-iff.md)
+- [Square compositions of $0,1$-polynomials modulo $4$](map-comp-sq-eq-mul.md)
+- [Reducibility of $f(x^4)$ and $f(x^2)$ for $0,1$-polynomials](not-irreducible-comp-four-iff.md)

@@ -1,0 +1,43 @@
+# Radix trie
+
+## Lean
+
+- [Radix trie](radix-trie.md)
+
+## Radix Trie
+
+- [Empty radix trie](empty.md)
+- [Longest common prefix](common-prefix.md)
+- [Longest common prefix of a list with itself](common-prefix-self.md)
+- [A shared prefix factors out of the longest common prefix](common-prefix-append-append.md)
+- [Characterization of the longest common prefix](common-prefix-spec.md)
+- [A list is its common prefix with another list followed by the rest](append-drop-common-prefix-left.md)
+- [Longest common prefix in terms of dropped remainders](common-prefix-drop-spec.md)
+- [When the common prefix is the second list, the first list extends it](append-of-common-prefix-eq.md)
+- [The longest common prefix of a list and its prefix](common-prefix-eq-of-append.md)
+- [Edge search by first symbol](find-edge.md)
+- [Replacing the child edge for a symbol](replace-edge.md)
+- [Radix trie lookup](lookup.md)
+- [Radix trie lookup of a nonempty key at a node](lookup-node-cons.md)
+- [Lookup in the empty radix trie](lookup-empty.md)
+- [Insertion into a radix trie](insert.md)
+- [Lookup of a key just inserted into a radix trie](lookup-insert-same.md)
+- [Insertion into a radix trie leaves lookups of other keys unchanged](lookup-insert-of-ne.md)
+- [Path-compressed root](root-compact.md)
+- [Valid radix trie](valid.md)
+- [The empty radix trie is valid](empty-2.md)
+- [Sibling edge labels start with distinct symbols](nodup-child-heads.md)
+- [Children of a valid node are path-compressed](root-compact-child.md)
+- [Insertion preserves validity of radix tries](insert-2.md)
+- [Entries of a radix trie](entries.md)
+- [Stored keys of a radix trie](keys.md)
+- [Lookup agrees with the entries of a valid radix trie](lookup-eq-some-iff-mem-entries.md)
+- [Stored keys of a valid radix trie are the keys with a successful lookup](mem-keys-iff.md)
+- [Stored keys of a valid radix trie are distinct](keys-nodup.md)
+- [Prefix search in a radix trie](has-prefix.md)
+- [Prefix search is correct on valid radix tries](has-prefix-eq-true-iff.md)
+- [Radix trie built from a list of key-value pairs](build-from.md)
+- [Every listed key is present in the built radix trie](lookup-build-from-exists-of-mem.md)
+- [Lookups in a radix trie built from a list come from the list](mem-of-lookup-build-from.md)
+- [Keys of a radix trie built from a list](mem-keys-build-from.md)
+- [Lookup in a radix trie built from a list with distinct keys](lookup-build-from-of-mem.md)

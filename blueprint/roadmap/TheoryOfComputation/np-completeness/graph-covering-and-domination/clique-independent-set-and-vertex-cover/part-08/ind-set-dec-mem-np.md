@@ -1,0 +1,3 @@
+# INDEPENDENT-SET is in NP
+
+**INDEPENDENT-SET is in NP**.

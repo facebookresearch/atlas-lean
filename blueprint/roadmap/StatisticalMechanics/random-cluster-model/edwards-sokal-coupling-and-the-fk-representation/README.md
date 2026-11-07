@@ -1,0 +1,15 @@
+# Edwards–Sokal coupling and the FK representation
+
+- [The Ising model as the two-state Potts model](the-ising-model-as-the-two-state-potts-model/README.md)
+- [The Potts critical temperature and the FK critical parameter](the-potts-critical-temperature-and-the-fk-critic/README.md)
+- [The q-state Potts model on a finite graph](the-q-state-potts-model-on-a-finite-graph/README.md)
+- [The Edwards–Sokal coupling](the-edwards-sokal-coupling/README.md)
+- [Compatible colorings in the Edwards–Sokal coupling](compatible-colorings-in-the-edwards-sokal-coupli/README.md)
+- [The Edwards–Sokal coupling with wired boundary conditions](the-edwards-sokal-coupling-with-wired-boundary-c/README.md)
+- [Ising two-point function via the Edwards–Sokal coupling](ising-two-point-function-via-the-edwards-sokal-c/README.md)
+- [The wired Edwards–Sokal one-point function](the-wired-edwards-sokal-one-point-function/README.md)
+- [The Ising model in a box as a wired two-state Potts model](the-ising-model-in-a-box-as-a-wired-two-state-po/README.md)
+- [The lattice magnetization as a wired one-point function on the box graph](the-lattice-magnetization-as-a-wired-one-point-f/README.md)
+- [Magnetization equals FK percolation probability, through box graphs](magnetization-equals-fk-percolation-probability/README.md)
+- [Potts correlations and random-cluster connectivity](potts-correlations-and-random-cluster-connectivi/README.md)
+- [Finite-volume plus-boundary magnetization at the origin](fv-magnetization.md)

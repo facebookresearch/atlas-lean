@@ -1,0 +1,30 @@
+# Ball tree
+
+## Lean
+
+- [Ball tree](ball-tree.md)
+
+## Ball Tree
+
+- [Accumulating traversal of a ball tree](to-list-aux.md)
+- [Point list of a ball tree](to-list.md)
+- [Size of a ball tree](size.md)
+- [Number of points of a ball tree](length-to-list.md)
+- [Squared Euclidean distance](dist-sq.md)
+- [Symmetry of squared distance](dist-sq-comm.md)
+- [Relaxed triangle inequality for squared distance](dist-sq-le-two-mul.md)
+- [Squared covering radius](radius-sq.md)
+- [Points lie within the squared radius](dist-sq-le-radius-sq.md)
+- [Accumulating ball-tree search](search-aux.md)
+- [Ball-tree similarity search](search.md)
+- [Bounding-sphere invariant of a ball tree](valid.md)
+- [Ball-tree search is exact](search-eq-filter.md)
+- [Search of a valid ball tree](mem-search-iff.md)
+- [Building a ball tree by halving](build.md)
+- [Ball trees built by halving are valid](valid-build.md)
+- [A built ball tree stores a permutation of its input](to-list-build-perm.md)
+- [Points of a built ball tree](mem-to-list-build-iff.md)
+- [Size of a built ball tree](size-build.md)
+- [Ball-tree search of a built tree](search-build.md)
+- [Ball-tree search of a built tree, up to order](search-build-perm.md)
+- [Search of a built ball tree](mem-search-build-iff.md)

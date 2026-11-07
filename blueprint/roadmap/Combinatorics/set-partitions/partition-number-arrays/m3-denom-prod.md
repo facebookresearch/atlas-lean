@@ -1,0 +1,9 @@
+# Denominator of the M3 partition number
+
+Let $p$ be a partition of $n$ with multiplicity
+vector $(a_1, \dots, a_n)$, so that exactly $a_j$ parts of $p$ equal $j$ and $\sum_j j a_j = n$.
+The $M_3$ denominator of $p$ is the natural number $\prod_{j=1}^{n} a_j!\,(j!)^{a_j}$.
+
+## Sources
+
+- concept `jis_sem_4bcead3a4bcda58a1d4dbb9f`; M3 note `jis_cce30bb8ff6bad04c639b7b6`, P13 `jis_b4758df0448a56ca110f8d96`, and P14 `jis_15ade3b0c1e657b464e3fd9b`.

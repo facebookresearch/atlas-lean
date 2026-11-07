@@ -1,0 +1,16 @@
+# Semi-global and overlap alignment
+
+- [The floored list maximum is nonnegative](zero-le-list-max.md)
+- [Overlap pairs](overlap-pairs.md)
+- [Overlap alignment score](overlap-score.md)
+- [Overlap-pair scores are at most the overlap score](nw-score-le-overlap-score.md)
+- [Upper bounds for the overlap score](overlap-score-le.md)
+- [The overlap score is attained](exists-nw-score-eq-overlap-score.md)
+- [The overlap score is nonnegative](overlap-score-nonneg.md)
+- [Infixes](infixes.md)
+- [Fitting score](fitting-score.md)
+- [Infix scores are at most the fitting score](nw-score-le-fitting-score.md)
+- [Upper bounds on the fitting score](fitting-score-le.md)
+- [The fitting score is attained](exists-nw-score-eq-fitting-score.md)
+- [The overlap score is at most the local score](overlap-score-le-local-score.md)
+- [The fitting score is at most the local score](fitting-score-le-local-score.md)

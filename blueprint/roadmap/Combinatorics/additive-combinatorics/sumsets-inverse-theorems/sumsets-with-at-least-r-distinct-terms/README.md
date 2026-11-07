@@ -1,0 +1,17 @@
+# Sumsets with at least r distinct terms
+
+- [Restricted twofold sumset of {0, 1, 2}](restricted-sumset-two-zero-one-two.md)
+- [Sums with at least $r$ distinct terms](at-least-distinct-sumset.md)
+- [Example of a sumset with at least two distinct terms](at-least-distinct-sumset-three-two-zero.md)
+- [Cauchy–Davenport theorem for $h$-fold sumsets](cauchy-davenport-nsmul.md)
+- [Dias da Silva–Hamidoune theorem](dias-da-silva-hamidoune.md)
+- [Vosper's theorem for iterated sumsets](vosper-nsmul.md)
+- [Nathanson's inverse theorem for restricted sumsets](nathanson-restricted-sumset-inverse.md)
+- [Freiman's $3k - 4$ theorem](freiman-three-k-sub-four.md)
+- [Plagne's theorem on the smallest iterated sumsets in cyclic groups](plagne-min-nsmul-card.md)
+- [Bajnok's lemma on subset sums in $\mathbb{Z}/d\mathbb{Z}$](exists-card-eq-sum-eq-zmod.md)
+- [Decomposition of sums with at least $r$ distinct terms](at-least-distinct-sumset-eq-nsmul-add-re.md)
+- [Sharp lower bound for sums with at least $r$ distinct terms modulo a prime](at-least-distinct-sumset-card-ge-zmod.md)
+- [Inverse theorem for sums with at least $r$ distinct terms modulo a prime](at-least-distinct-sumset-inverse-zmod.md)
+- [Lower bound and inverse theorem for sums with at least $r$ distinct terms in $\mathbb{Z}$](at-least-distinct-sumset-card-ge-int.md)
+- [Lev's lower bound for iterated sumsets](lev-nsmul-card-ge.md)

@@ -1,0 +1,17 @@
+# Binomial convolutions of rational power series
+
+- [Binomial (Hurwitz) product of power series](binomial-product.md)
+- [Coefficients of the binomial product](coeff-binomial-product.md)
+- [Constant coefficient of the binomial product](constant-coeff-binomial-product.md)
+- [Rationality of power series descends from field extensions](exists-polynomial-quotient-of-extension.md)
+- [Orthogonal vectors descend from field extensions](exists-orthogonal-of-orthogonal-over-ext.md)
+- [Binomial product of shifted powers of geometric series](binomial-product-x-pow-mul-inv-pow.md)
+- [Binomial product with a geometric series](binomial-product-inv-one-sub.md)
+- [Binomial products of proper rational series](binomial-product-rational.md)
+- [Binomial products of arbitrary rational series](binomial-product-rational-general.md)
+- [Binomial product with a monomial](binomial-product-x-pow.md)
+- [Resultant identity for pairwise sums](prod-one-sub-add-eq-resultant.md)
+- [Binomial square of the Lucas generating function](binomial-product-lucas-v-generating-func.md)
+- [Binomial products of series with a cubic denominator](binomial-product-cubic-denominator.md)
+- [Hadamard products of rational series](hadamard-product-rational.md)
+- [Resultant identity for pairwise products](prod-one-sub-mul-eq-resultant.md)

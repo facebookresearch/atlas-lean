@@ -1,0 +1,16 @@
+# PCP characterization of a string-constraint family
+
+- [Alphabet for the PCP encoding](block-sym.md)
+- [Domino as an index letter](domino-letter.md)
+- [Top morphism of the PCP encoding](top-fun.md)
+- [Bottom morphism of the PCP encoding](bot-fun.md)
+- [Regular language of domino index words](domino-regex.md)
+- [PCP encoding as a one-variable string constraint](pcp-constraint.md)
+- [Domino named by a one-letter block](block-domino.md)
+- [Membership in a sum of regular expressions](mem-sum-matches.md)
+- [Membership in the domino index-word language](mem-domino-regex.md)
+- [Membership atom of the PCP encoding checks index words](sat-mem-domino-regex.md)
+- [Top morphism applied to an index word](flat-map-top-fun.md)
+- [Bottom morphism applied to an index word](flat-map-bot-fun.md)
+- [Flattening a list of one-letter blocks](map-inl-flatten.md)
+- [PCP is characterized by string-constraint satisfiability:](pcp-iff-string-sat.md)

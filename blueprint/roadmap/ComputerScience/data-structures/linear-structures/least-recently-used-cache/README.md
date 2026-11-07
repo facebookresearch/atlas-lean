@@ -1,0 +1,33 @@
+# Least-recently-used cache
+
+## Lean
+
+- [Least-recently-used cache](lru-cache.md)
+
+## Lru Cache
+
+- [Extensionality of LRU caches](ext.md)
+- [Erasing a key from a list of entries](erase-key.md)
+- [Empty LRU cache](empty.md)
+- [Key list of an LRU cache](keys.md)
+- [Size of an LRU cache](size.md)
+- [LRU cache lookup](get.md)
+- [Insertion into an LRU cache](put.md)
+- [Keys of an LRU cache are distinct](keys-nodup.md)
+- [An LRU cache never exceeds its capacity](size-le-cap.md)
+- [A lookup of an absent key misses](get-miss.md)
+- [A lookup of a stored key returns its value](get-hit.md)
+- [A successful lookup moves the entry to the front](get-promotes.md)
+- [Lookup after insertion into an LRU cache](get-put.md)
+- [Insertion respects the capacity of an LRU cache](put-size-le.md)
+- [Insertion keeps the keys of an LRU cache distinct](put-keys-nodup.md)
+- [Lookup respects the capacity](get-size-le.md)
+- [Lookups keep keys distinct](get-keys-nodup.md)
+- [Entries after insertion](mem-put-entries.md)
+- [Lookup preserves the stored bindings](mem-get-entries-iff.md)
+- [A lookup permutes the entries](get-perm.md)
+- [Lookup preserves the size](get-size.md)
+- [Insertion without eviction](mem-put-entries-iff-of-not-full.md)
+- [With positive capacity, the inserted binding becomes the most recent entry](put-head.md)
+- [A put without eviction preserves lookups of other keys](get-put-of-ne.md)
+- [The evicted key is the least recently used one](evicted-is-least-recent.md)

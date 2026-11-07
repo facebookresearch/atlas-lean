@@ -1,0 +1,28 @@
+# Group Theory
+
+Group theory studies symmetry through groups, actions, subgroups, quotients, and structural decompositions.
+
+- [Abelian groups](abelian-groups/README.md)
+- [Group orders, element orders and spectra](orders-and-spectra/README.md)
+- [Conjugacy classes](conjugacy-classes/README.md)
+- [Finite simple groups and involutions](finite-simple-groups/README.md)
+- [Generation of groups](generation/README.md)
+- [Sylow and Hall subgroups](sylow-and-hall-subgroups/README.md)
+- [Subgroup embedding and subgroup lattices](subgroup-embedding/README.md)
+- [Soluble and supersoluble finite groups](soluble-finite-groups/README.md)
+- [Finite p-groups](finite-p-groups/README.md)
+- [Characters of finite groups](characters-of-finite-groups/README.md)
+- [Permutation groups and group actions](permutation-groups/README.md)
+- [Free groups and their automorphisms](free-groups/README.md)
+- [Presentations and decision problems](presentations-and-decision-problems/README.md)
+- [Geometric group theory](geometric-group-theory/README.md)
+- [Orderable groups](orderable-groups/README.md)
+- [Varieties, quasivarieties and equations](varieties-and-equations/README.md)
+- [Commutators, word maps and Engel conditions](commutators-and-engel-conditions/README.md)
+- [Automorphisms of groups](automorphisms/README.md)
+- [Periodic and locally finite groups](periodic-and-locally-finite-groups/README.md)
+- [Profinite and topological groups](profinite-and-topological-groups/README.md)
+- [Linear groups](linear-groups/README.md)
+- [Group rings](group-rings/README.md)
+- [Combinatorics in groups](combinatorics-in-groups/README.md)
+- [Group extensions and cohomology](extensions-and-cohomology/README.md)

@@ -1,0 +1,18 @@
+# Colored compositions, Dyck paths and polygon dissections
+
+- [Number of colored compositions](colored-composition-count.md)
+- [Compositions of 3 into two parts](colored-composition-count-one-three-two.md)
+- [Number of colored Dyck paths](colored-dyck-path-count.md)
+- [Dyck paths of semilength 3 with two peaks](colored-dyck-path-count-one-three-two.md)
+- [Diagonals of a convex polygon](polygon-diagonals.md)
+- [Noncrossing sets of diagonals](is-noncrossing-diagonal-set.md)
+- [Size of the polygon under a chord](dissection-face-size.md)
+- [Colored polygon dissection count](colored-polygon-dissection-count.md)
+- [Dissections of a pentagon into two polygons](colored-polygon-dissection-count-one-thr.md)
+- [Colored dissections of a hexagon by one diagonal](colored-polygon-dissection-count-hexagon.md)
+- [Hoggatt–Lind formula for colored compositions](colored-composition-count-eq-partial-bel.md)
+- [Mansour–Sun formula for colored Dyck paths](colored-dyck-path-count-eq-partial-bell.md)
+- [Birmajer–Gil–Weiner formula for colored polygon partitions](colored-polygon-dissection-count-eq-part.md)
+- [Colored compositions and colored Dyck paths](choose-mul-colored-composition-count-eq.md)
+- [Colored Dyck paths and colored polygon partitions](choose-mul-colored-dyck-path-count-eq.md)
+- [Polygon partitions and colored compositions](succ-mul-colored-polygon-dissection-coun.md)

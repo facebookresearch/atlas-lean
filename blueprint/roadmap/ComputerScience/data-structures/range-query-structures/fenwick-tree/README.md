@@ -1,0 +1,33 @@
+# Fenwick tree
+
+## Lean
+
+- [Fenwick tree](fenwick-tree.md)
+
+## Fenwick Tree
+
+- [Lowest set bit](lowbit.md)
+- [Lowbit of zero](lowbit-zero.md)
+- [The lowest set bit of a positive number is positive](lowbit-pos.md)
+- [The lowest set bit is at most the number](lowbit-le.md)
+- [The lowest set bit divides the number](lowbit-dvd.md)
+- [The lowest set bit is a power of two](lowbit-two-pow.md)
+- [Dividing out the lowest set bit leaves an odd number](lowbit-div-odd.md)
+- [Fenwick-tree interval sum of a list](block-sum.md)
+- [Interval sum read from an array](block-sum-array.md)
+- [Fenwick tree representing a list](valid.md)
+- [Size of a Fenwick tree](size.md)
+- [A Fenwick tree has the length of the list it represents](size-eq-length-of-valid.md)
+- [Building a Fenwick tree from a list](build.md)
+- [Size of a built Fenwick tree](size-build.md)
+- [Building a Fenwick tree yields a valid representation](valid-build.md)
+- [Fenwick tree prefix sum](prefix-sum.md)
+- [The empty prefix sum is zero](prefix-sum-zero.md)
+- [Correctness of Fenwick tree prefix sums](prefix-sum-eq-take-sum.md)
+- [Prefix sums of a built Fenwick tree](prefix-sum-build.md)
+- [Point update of a Fenwick tree](add.md)
+- [Out-of-range point updates leave a Fenwick tree unchanged](add-eq-self-of-le.md)
+- [Point update preserves representation](valid-add.md)
+- [Prefix sums after a point update](prefix-sum-add.md)
+- [Fenwick tree range sum](range-sum.md)
+- [Correctness of Fenwick tree range sums](range-sum-eq.md)

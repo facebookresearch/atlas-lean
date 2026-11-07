@@ -1,0 +1,15 @@
+# Harris inequality
+
+- [Harris inequality](harris-inequality.md)
+- [An event depends on the coordinates its indicator depends on](ih-event-depends-on-of-indicator.md)
+- [Indicator of an event depends on the coordinates the event depends on](ih-indicator-depends-on-of-event.md)
+- [Events depending on a coordinate set are closed under intersection](ih-depends-on-inter.md)
+- [Events depending on a coordinate set are closed under unions](ih-depends-on-i-union.md)
+- [Filling a finite configuration with closed coordinates](ih-fill.md)
+- [Monotonicity of the closed filling map](ih-fill-mono.md)
+- [Section of an event on a finite coordinate set](ih-section.md)
+- [Section of an increasing event is increasing](ih-section-is-increasing.md)
+- [Finitely dependent event is a cylinder over its section](ih-eq-cylinder-of-depends-on.md)
+- [Harris inequality for finitely dependent increasing events](ih-harris-of-finite-depends-on.md)
+- [Positive correlation passes to decreasing intersections](ih-harris-i-inter-of-antitone.md)
+- [Continuity from above of a finite measure, real-valued form](ih-tendsto-measure-real-i-inter.md)

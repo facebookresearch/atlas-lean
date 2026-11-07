@@ -1,0 +1,28 @@
+# Theory of Computation
+
+The mathematical study of what can be computed and at what cost: machine models, computability and undecidability, automata and formal languages, and computational complexity.
+
+- [Turing machines](turing-machines/README.md)
+- [Equivalence of models of computation](equivalence-of-models/README.md)
+- [Computability and undecidability](computability/README.md)
+- [Degrees of unsolvability and the arithmetical hierarchy](degrees-and-hierarchies/README.md)
+- [Undecidable problems](undecidable-problems/README.md)
+- [Decision procedures for automata, grammars and strings](decision-procedures/README.md)
+- [Finite automata and regular languages](regular-languages/README.md)
+- [Automata on infinite words and infinite games](omega-automata-and-games/README.md)
+- [Context-free languages](context-free-languages/README.md)
+- [Context-sensitive languages](context-sensitive-languages/README.md)
+- [Complexity classes](complexity-classes/README.md)
+- [Hierarchy theorems and proof barriers](hierarchy-theorems-and-barriers/README.md)
+- [Randomized, interactive and quantum complexity](randomized-and-quantum-complexity/README.md)
+- [Counting complexity](counting-complexity/README.md)
+- [Pseudorandomness and one-way functions](pseudorandomness-and-one-way-functions/README.md)
+- [Boolean circuit complexity](circuit-complexity/README.md)
+- [Algebraic complexity](algebraic-complexity/README.md)
+- [Descriptive complexity](descriptive-complexity/README.md)
+- [Kolmogorov complexity](kolmogorov-complexity/README.md)
+- [NP-completeness](np-completeness/README.md)
+- [Probabilistically checkable proofs and inapproximability](pcp-and-inapproximability/README.md)
+- [Completeness for other complexity classes](completeness-other-classes/README.md)
+- [Problems solvable in polynomial time](polynomial-time-problems/README.md)
+- [Fine-grained and exponential-time complexity](fine-grained-complexity/README.md)

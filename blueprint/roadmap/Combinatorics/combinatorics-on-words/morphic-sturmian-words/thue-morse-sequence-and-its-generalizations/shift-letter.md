@@ -1,0 +1,9 @@
+# Cyclic letter shift
+
+For $L \in \mathbb{N}$ and letters $a, t$ of the alphabet
+$\{0, \dots, L-1\}$, the cyclic shift of $a$ by $t$ is the letter $(a + t) \bmod L$. Writing the
+letters as $a_0, \dots, a_{L-1}$, it sends $a_i$ to $a_{(i + t) \bmod L}$.
+
+## Sources
+
+- JIS Definition 2.2 (concept `jis_sem_12ac243c6e8826ae73e194e0`, statements `jis_099e0392547ec836b0b913d1`/`jis_6d78ade850f143086b5f8774`).

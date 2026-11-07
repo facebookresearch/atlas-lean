@@ -1,0 +1,18 @@
+# Base-b digitwise binomial and multinomial coefficients
+
+- [The $b$-ary binomial coefficient](b-ary-binomial-coefficient.md)
+- [Digitwise product formula for the $b$-ary binomial coefficient](b-ary-binomial-coefficient-eq-prod-get-d.md)
+- [Generating function of the $b$-ary binomial coefficients](b-ary-binomial-coefficient-generating-fu.md)
+- [Generating function of digitwise binomial products](base-digits-binomial-generating-function.md)
+- [Digit-product formula for $b$-ary binomial coefficients](b-ary-binomial-coefficient-eq-prod-div-p.md)
+- [Symmetry of $b$-ary binomial coefficients](b-ary-binomial-coefficient-symm.md)
+- [Pascal's recurrence for $b$-ary binomial coefficients](b-ary-binomial-coefficient-pascal.md)
+- [Symmetry and Pascal's recurrence for $b$-ary binomial coefficients](bary-binomial-symmetry-and-pascal.md)
+- [Chu–Vandermonde identity for $b$-ary binomial coefficients](b-ary-binomial-coefficient-chu-vandermon.md)
+- [$b$-ary Chu–Vandermonde identity](bary-chu-vandermonde.md)
+- [Base-$b$ digit of a natural number](b-ary-digit.md)
+- [Rank-$l$ base-$b$ digits of a list](b-ary-lower-digits.md)
+- [Multinomial coefficient with a prescribed top](ordinary-multinomial-factor.md)
+- [Digitwise $b$-ary multinomial factor](b-ary-multinomial-factor.md)
+- [Digit-length bound for the $b$-ary multinomial coefficient](b-ary-multinomial-bound.md)
+- [The $b$-ary multinomial coefficient](b-ary-multinomial.md)
