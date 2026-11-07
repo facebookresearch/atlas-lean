@@ -1,0 +1,16 @@
+# The repeat scan of the Hamiltonian path verifier to HAMPATH is NP-complete
+
+- [The repeat scan of the Hamiltonian path verifier](nd-run.md)
+- [Stack layout between vertex steps](lay.md)
+- [Stack layout during a vertex step](mid.md)
+- [Running the head-or-edge check](hd-run.md)
+- [The rest of a vertex step in the Hamiltonian-path verifier](tail-run.md)
+- [One vertex step of the Hamiltonian-path verifier](step-run.md)
+- [Running the vertex loop](loop-run.md)
+- [Correctness and running time of the Hamiltonian path verifier](run.md)
+- [The HAMPATH verifier as a host component](ham-verify-comp.md)
+- [HAMPATH is in NP](ham-path-dec-mem-np.md)
+- [The HAMPATH emitter](emit-ham.md)
+- [SAT ≤ HAMPATH is polynomial-time](is-poly-time-reduce-ham.md)
+- [HAMPATH is NP-hard](ham-path-dec-np-hard.md)
+- [HAMPATH is NP-complete](ham-path-dec-np-complete.md)

@@ -1,0 +1,26 @@
+# Number Theory
+
+Number theory studies integers, primes, Diophantine equations, arithmetic functions, and their analytic and algebraic structure.
+
+- [Congruences and power residues](congruences/README.md)
+- [Primes and primality](primes-primality/README.md)
+- [Distribution of primes](distribution-of-primes/README.md)
+- [Arithmetic functions](arithmetic-functions/README.md)
+- [Zeta and L-functions](zeta-l-functions/README.md)
+- [Exponential and character sums](exponential-sums/README.md)
+- [Diophantine equations](diophantine-equations/README.md)
+- [Quadratic forms and sums of squares](quadratic-forms-sums-of-squares/README.md)
+- [Diophantine approximation and transcendence](diophantine-approximation/README.md)
+- [Continued fractions and expansions of reals](continued-fractions-expansions/README.md)
+- [Heights and Mahler measure](heights-mahler-measure/README.md)
+- [Algebraic number theory](algebraic-number-theory/README.md)
+- [p-adic numbers and local fields](p-adic-numbers/README.md)
+- [Modular forms, q-series and partitions](modular-forms-q-series/README.md)
+- [Linear recurrence sequences](linear-recurrences/README.md)
+- [Special numbers and polynomials](special-numbers/README.md)
+- [Digits and numeration systems](digits-numeration/README.md)
+- [Integer sequences](integer-sequences/README.md)
+- [Additive number theory](additive-number-theory/README.md)
+- [Numerical semigroups and the Frobenius problem](numerical-semigroups/README.md)
+- [Arithmetic geometry](arithmetic-geometry/README.md)
+- [Arithmetic of function fields](function-fields/README.md)

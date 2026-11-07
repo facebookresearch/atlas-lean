@@ -1,0 +1,17 @@
+# Dilogarithm identities
+
+- [Entry 24 of Chapter 9 of Ramanujan's notebooks](ramanujan-part1-ch9-entry24-dougall.md)
+- [Entry 25 of Chapter 9 of Ramanujan's notebooks](ramanujan-part1-ch9-entry25-dixon.md)
+- [The Entry 26 boundary logarithm is the real logarithm](chapter9-boundary-log-eq-log.md)
+- [The Entry 26 and Entry 24 dilogarithm cosine terms agree](chapter9-dilog-cos-term-eq-entry24.md)
+- [The Entry 26 and Entry 24 dilogarithm sine terms agree](chapter9-dilog-sin-term-eq-entry24.md)
+- [Ramanujan's Landen-type identity in terms of the Entry 24 series](ramanujan-part1-ch9-entry26-ramanujanpi.md)
+- [Ramanujan's Landen-type dilogarithm identity (Entry 26)](ramanujan-part1-ch9-entry26-ramanujanpi-2.md)
+- [Hoorfar–Qi dilogarithm series](rogers-dilog-hoorfar-qi-series.md)
+- [Bridgeman's dilogarithm series for a positive Pell solution](rogers-dilog-pell-positive-series.md)
+- [Bridgeman's dilogarithm series for a negative Pell solution](rogers-dilog-pell-negative-series.md)
+- [Sanford's coupled recurrence](sanford-coupled-recurrence.md)
+- [Sanford's dilogarithm series identity](rogers-dilog-sanford-principal-series.md)
+- [Sanford's symmetric dilogarithm series](rogers-dilog-sanford-symmetric-series.md)
+- [Sanford's Lucas-sequence dilogarithm series for $Q > 0$](rogers-dilog-lucas-u-series.md)
+- [Sanford's Lucas-sequence dilogarithm series for $Q < 0$](rogers-dilog-lucas-uv-series-of-neg.md)

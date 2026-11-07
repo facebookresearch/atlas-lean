@@ -1,0 +1,468 @@
+name: Blueprint Pages
+
+on:
+  push:
+    # A fork may publish from a wiki/** default branch; see the deploy job.
+    branches: [main, "wiki/**"]
+    # Everything the build reads. generate_wiki.py and Autoform index every
+    # Lean file outside the archived v1 and Atlas/, wherever it lives, so a
+    # change to any of them can leave the wiki out of step with the Lean.
+    paths:
+      - "**/*.lean"
+      - "blueprint/**"
+      - "scripts/**"
+      - "mkdocs.yml"
+      - "theme/**"
+      - "hooks/**"
+      - ".github/autoform-ref"
+      - ".github/workflows/blueprint-pages.yml"
+      - "!v1/**"
+      - "!Atlas/**"
+  # Every pull request and merge queue group runs, whatever it changes, so the
+  # wiki job can be a required check. One that changes none of the paths above
+  # skips the build; see the pick job.
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      newest:
+        description: Try autoform-bot's newest main commit
+        type: boolean
+        default: false
+  schedule:
+    - cron: "23 7 * * *"
+
+permissions:
+  contents: read
+
+env:
+  AUTOFORM_SOURCE: "https://github.com/facebookresearch/autoform-bot.git"
+
+# Runs that publish share one group, so no two deploy or pin at once, and a
+# newer one replaces any still waiting. Each pull request and merge queue group
+# gets a group of its own, where a newer push to the pull request replaces its
+# run, so checks don't cancel each other or a waiting deploy.
+concurrency:
+  group: blueprint-pages-${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && github.ref || 'publish' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # The site builds with the Autoform commit in .github/autoform-ref. The daily
+  # run, or a run started with "newest", tries autoform-bot's newest main commit
+  # instead. Once the site builds with it and is published, the pin job commits
+  # the new pin. A commit that fails leaves the pin and the published site as
+  # they were.
+  # Reverting a pin commit doesn't hold the wiki back, since the next run tries
+  # the same commit again; disable this workflow to hold it. GitHub schedules
+  # runs only on the default branch, and only that branch is pinned.
+  pick:
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.pick.outputs.ref }}
+      new: ${{ steps.pick.outputs.new }}
+      skip: ${{ steps.changes.outputs.skip }}
+    steps:
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Choose the Autoform commit
+        id: pick
+        env:
+          # Trying a newer Autoform only makes sense where the pin job may commit
+          # it, which a repository opts into with the AUTOFORM_AUTOPIN variable.
+          NEWEST: ${{ vars.AUTOFORM_AUTOPIN == 'true' && (github.event_name == 'schedule' || inputs.newest) }}
+        run: |
+          ref="$(cat .github/autoform-ref)"
+          if [ "$NEWEST" = true ]; then
+            newest="$(git ls-remote "$AUTOFORM_SOURCE" refs/heads/main | cut -f1)"
+            if [ "$newest" != "$ref" ]; then
+              ref="$newest"
+              echo "new=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      # The paths the push trigger lists, as one pattern. Both sides of a rename
+      # are listed, and names aren't quoted, so a path that leaves the list or
+      # holds a non-ASCII character still counts.
+      - name: Check whether the change touches what the build reads
+        id: changes
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+        run: |
+          git fetch --quiet --depth=1 origin "$BASE"
+          git -c core.quotePath=false diff --no-renames --name-only "$BASE" HEAD > "$RUNNER_TEMP/changed"
+          if grep -v -e '^v1/' -e '^Atlas/' "$RUNNER_TEMP/changed" | grep -qE \
+            -e '\.lean$' \
+            -e '^(blueprint|scripts|theme|hooks)/' \
+            -e '^mkdocs\.yml$' \
+            -e '^\.github/(autoform-ref|workflows/blueprint-pages\.yml)$'; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Each article's Depends on lists come from the compiled Lean, so they are
+  # computed here on every build and never committed: a Lean change needs no
+  # wiki change. This job builds the v2 libraries, dumps what each declaration's
+  # statement and proof use, and collapses that onto the articles the vault
+  # links, for the build job to add to the pages.
+  edges:
+    needs: pick
+    if: >-
+      (github.event_name != 'schedule' || needs.pick.outputs.new == 'true') &&
+      needs.pick.outputs.skip != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      AUTOFORM_REF: ${{ needs.pick.outputs.ref }}
+    steps:
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Free disk space for Lean caches
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Add swap for cold Lean builds
+        run: |
+          set -euo pipefail
+          sudo fallocate -l 16G /mnt/lean-swap
+          sudo chmod 600 /mnt/lean-swap
+          sudo mkswap /mnt/lean-swap
+          sudo swapon /mnt/lean-swap
+          free -h
+
+      - name: Install elan v4.2.4
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      - name: Restore local build
+        id: build-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: v2-deps-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          # ci.yml saves the same .lake/build from main under its own name, so a
+          # repository's first wiki build can start from it.
+          restore-keys: |
+            v2-deps-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # A module that fails upstream must not cost the rest of the dump: keep
+      # building, record the failures, and dump every module that compiled.
+      - name: Build the v2 libraries
+        run: |
+          # The runner's shell has -e on; turn it off so a failed module still
+          # lets the dump step run.
+          set +e -uo pipefail
+          lake build MathlibExt CSLibExt PhyslibExt WantedExt 2>&1 | tee build.log
+          echo "lake build exit: ${PIPESTATUS[0]}"
+          grep -E '^(✖|error:)' build.log > build-failures.txt || true
+          cat build-failures.txt
+          if [ -s build-failures.txt ]; then
+            echo "::warning::Some v2 modules don't build (see above); their articles get no Depends on lists in this build."
+          fi
+
+      # Saved even after a failed build, so the next run only rebuilds what is
+      # missing. Pull requests and merge queue groups restore it, but don't
+      # save their own, which would push the branch's out of the cache.
+      - name: Save local build
+        if: >-
+          always() && steps.build-cache.outputs.cache-hit != 'true' &&
+          github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: v2-deps-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Dump declaration dependencies
+        run: |
+          set -euo pipefail
+          olean_root=.lake/build/lib/lean
+          [ -d "$olean_root" ] || olean_root=.lake/build/lib
+          : > v2-modules.txt
+          : > v2-unbuilt.txt
+          for source in $(git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' 'PhyslibExt/*.lean' 'WantedExt/*.lean'); do
+            module=$(echo "${source%.lean}" | tr / .)
+            if [ -f "$olean_root/${source%.lean}.olean" ]; then
+              echo "$module" >> v2-modules.txt
+            else
+              echo "$module" >> v2-unbuilt.txt
+            fi
+          done
+          echo "dumping $(wc -l < v2-modules.txt) modules; $(wc -l < v2-unbuilt.txt) did not build:"
+          cat v2-unbuilt.txt
+          # Importing every module at once fails when two of them declare the
+          # same name (an upstream copy of something Mathlib now has). Drop the
+          # ATLAS side of each collision and retry; v2-conflicts.txt lists them.
+          : > v2-conflicts.txt
+          dumped=
+          for _attempt in $(seq 1 30); do
+            if lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt > v2-dependencies.jsonl 2> dump.err; then
+              dumped=1
+              break
+            fi
+            cat dump.err
+            first=$(grep -oE "already contains '[^']+' from [A-Za-z0-9_.']+" dump.err | awk '{print $NF}' | head -1 || true)
+            second=$(grep -oE "import [A-Za-z0-9_.']+ failed" dump.err | awk '{print $2}' | head -1 || true)
+            if grep -qxF "$first" v2-modules.txt; then drop=$first
+            elif grep -qxF "$second" v2-modules.txt; then drop=$second
+            else exit 1
+            fi
+            echo "$drop (with $([ "$drop" = "$first" ] && echo "$second" || echo "$first"))" | tee -a v2-conflicts.txt
+            grep -vxF "$drop" v2-modules.txt > v2-modules.next && mv v2-modules.next v2-modules.txt
+          done
+          [ -n "$dumped" ] || exit 1
+          echo "collisions: $(wc -l < v2-conflicts.txt)"
+          cat v2-conflicts.txt
+          wc -l < v2-dependencies.jsonl
+          gzip -9 v2-dependencies.jsonl
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      - name: Collapse dependencies onto the articles the vault links
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/extract_v2_lean_dependencies.py
+          v2-dependencies.jsonl.gz
+          build/lean-dependencies.json
+
+      - name: Keep the edges for the build job
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lean-dependencies
+          path: |
+            build/lean-dependencies.json
+            v2-dependencies.jsonl.gz
+            v2-unbuilt.txt
+            v2-conflicts.txt
+            build-failures.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      # The build's .ilean files record which declaration each name in the
+      # Lean sources means, so render can link each name in a statement's Lean
+      # to exactly that one. A failure here fails nothing: the build job then
+      # links names as before.
+      - name: Keep the build's name references for the build job
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: autoform-ileans
+          path: .lake/build/lib/lean/**/*.ilean
+          include-hidden-files: true
+          retention-days: 1
+
+  build:
+    # ci.yml has a job named build too, and required checks are matched by name.
+    name: build the wiki
+    needs: [pick, edges]
+    # A daily run with nothing new to try builds nothing, and neither does a
+    # change that touches nothing the build reads.
+    if: >-
+      (github.event_name != 'schedule' || needs.pick.outputs.new == 'true') &&
+      needs.pick.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    env:
+      AUTOFORM_REF: ${{ needs.pick.outputs.ref }}
+    steps:
+      # The archived v1 release and the standalone code under Atlas/ are not part
+      # of the wiki, and generate_wiki.py skips both. Autoform indexes every Lean
+      # file under --lean-root, so with either checked out each v2 name it also
+      # declares would be ambiguous and autoform check would fail on that article.
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/v1/
+            !/Atlas/
+          sparse-checkout-cone-mode: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      - name: Test the wiki scripts
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python -m unittest
+          scripts.test_generate_wiki_navigation
+          scripts.test_generate_wiki_docstrings
+          scripts.test_sync_wiki
+          scripts.test_extract_v2_lean_dependencies
+          scripts.test_check_blueprint_site_navigation
+
+      # The artifact keeps the edges job's workspace paths, so it unpacks into
+      # the workspace: build/lean-dependencies.json lands where it was written.
+      - name: Fetch the edges
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: lean-dependencies
+
+      - name: Fetch the build's name references
+        id: ileans
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: autoform-ileans
+          path: ${{ runner.temp }}/ileans
+
+      # The vault under blueprint/ is committed and holds only what the wiki
+      # writes. What follows the Lean, each article's Depends on and Proof
+      # depends on lists, its declaration kind and its statement and proof
+      # status, is filled in here, in this checkout only.
+      - name: Add the Lean-owned parts to the articles
+        run: |
+          [ -s build/lean-dependencies.json ] || { echo "::error::The edges job's build/lean-dependencies.json is missing."; exit 1; }
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+
+      # Rejects cycles and dangling links, and fails when a node names a Lean
+      # declaration that is not in the sources.
+      - name: Validate the theorem DAG and its declarations
+        run: >-
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          autoform check blueprint --lean-root .
+
+      # Audit findings are quality debt rather than publication syntax errors.
+      # Keep them visible on every build without hiding a usable in-progress wiki.
+      - name: Report roadmap quality findings
+        continue-on-error: true
+        run: >-
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          autoform audit blueprint --lean-root .
+
+      # Writes site-src/: statement boxes, derived statuses, the shared DAG viewer,
+      # and permalinks into the Lean code at this exact commit. With the edges
+      # job's .ilean files, when they came, each name in a statement's Lean
+      # links exactly what it means.
+      - name: Render the blueprint
+        env:
+          ILEANS: ${{ steps.ileans.outcome == 'success' && format('{0}/ileans', runner.temp) || '' }}
+        run: >-
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          autoform render blueprint
+          --output site-src
+          --lean-root .
+          --require-declarations
+          ${ILEANS:+--ileans "$ILEANS"}
+
+      - name: Build the Markdown site
+        run: >-
+          uvx --from mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with pymdown-extensions==11.0.1
+          --with markdown==3.10.3
+          mkdocs build --strict
+
+      - name: Check published routes, anchors, and article cards
+        run: python scripts/check_blueprint_site.py site-src site
+
+      - name: Upload Pages artifact
+        if: >-
+          github.event_name == 'schedule' ||
+          (github.event_name != 'pull_request' && github.event_name != 'merge_group' &&
+          github.ref_name == github.event.repository.default_branch)
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+  # The check to require before merging. A skipped job counts as passing, so
+  # the build alone would pass when the pick job failed and skipped it.
+  wiki:
+    needs: [pick, edges, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require a build that passed or had nothing to check
+        env:
+          PICK: ${{ needs.pick.result }}
+          EDGES: ${{ needs.edges.result }}
+          BUILD: ${{ needs.build.result }}
+        run: |
+          echo "pick: $PICK, edges: $EDGES, build: $BUILD"
+          [ "$PICK" = success ] && { [ "$BUILD" = success ] || { [ "$BUILD" = skipped ] && [ "$EDGES" = skipped ]; }; }
+
+  pin:
+    needs: [pick, build, deploy]
+    # Scheduled runs are on the default branch; the event carries no repository.
+    if: >-
+      needs.pick.outputs.new == 'true' &&
+      (github.event_name == 'schedule' ||
+      github.ref_name == github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # No Lean or Python package code runs in the job that holds the write
+      # token. If the branch has moved since the run started, the push fails and
+      # the next daily or "newest" run tries again. A push made with this token
+      # starts no workflow, so this commit does not rebuild the site it records.
+      - name: Pin the Autoform commit the site was built with
+        env:
+          REF: ${{ needs.pick.outputs.ref }}
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          echo "$REF" > .github/autoform-ref
+          git add .github/autoform-ref
+          git commit --quiet -m "Build the site with Autoform ${REF:0:8}"
+          git push --quiet origin "HEAD:$GITHUB_REF_NAME"
+
+  # Only the default branch publishes (main upstream; a fork may use wiki/**).
+  # Scheduled runs are on it, and their event carries no repository.
+  deploy:
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name != 'pull_request' && github.event_name != 'merge_group' &&
+      github.ref_name == github.event.repository.default_branch)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

@@ -1,0 +1,17 @@
+# Zeta functions of generalized Fibonacci numbers
+
+- [ℓ-generalized Fibonacci sequence](is-lgeneralized-fibonacci.md)
+- [Characteristic polynomial of the ℓ-generalized Fibonacci recurrence](l-generalized-fibonacci-characteristic.md)
+- [Dresden–Du coefficient](l-generalized-fibonacci-coefficient.md)
+- [Other roots of the ℓ-generalized Fibonacci characteristic polynomial](l-generalized-fibonacci-other-roots.md)
+- [Possible pole of the ℓ-generalized Fibonacci zeta function at a given index](l-generalized-fibonacci-zeta-pole.md)
+- [The ℓ-generalized Fibonacci characteristic polynomial for ℓ = 2](l-generalized-fibonacci-characteristic-t.md)
+- [The possible pole at the zero index is zero](l-generalized-fibonacci-zeta-pole-zero.md)
+- [Set of possible poles of the ℓ-generalized Fibonacci zeta function](l-generalized-fibonacci-zeta-pole-set.md)
+- [Residue expression of the ℓ-generalized Fibonacci zeta function](l-generalized-fibonacci-zeta-residue.md)
+- [Corollary pole of the ℓ-generalized Fibonacci zeta function](l-generalized-fibonacci-zeta-corollary-p.md)
+- [Absolute convergence of the ℓ-generalized Fibonacci zeta series](l-generalized-fibonacci-zeta-summable.md)
+- [Meromorphic continuation of the ℓ-generalized Fibonacci zeta function](l-generalized-fibonacci-zeta-meromorphic.md)
+- [Residues of the ℓ-generalized Fibonacci zeta function](l-generalized-fibonacci-zeta-residue-2.md)
+- [Explicit possible poles of the ℓ-generalized Fibonacci zeta function](l-generalized-fibonacci-zeta-corollary-p-2.md)
+- [Rational values of the ℓ-generalized Fibonacci zeta function at negative integers](l-generalized-fibonacci-zeta-neg-int-rat.md)

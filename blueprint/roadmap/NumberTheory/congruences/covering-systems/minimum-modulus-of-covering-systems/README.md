@@ -1,0 +1,15 @@
+# Minimum modulus of covering systems
+
+- [Krukenberg's conjecture for minimum modulus five](exists-modulus-ge-108-of-distinct-coveri.md)
+- [A distinct covering system with moduli from 6 to 168](exists-distinct-covering-min-six-max-168.md)
+- [Least common multiple of a covering system with minimum modulus five](lcm-moduli-ge-1440-of-distinct-covering.md)
+- [Least common multiple of a covering system with minimum modulus six](lcm-moduli-ge-5040-of-distinct-covering.md)
+- [A distinct covering system with minimum modulus 7 and moduli of lcm 15120](exists-distinct-covering-min-seven-lcm-1.md)
+- [Discarding the classes whose modulus is divisible by a large prime power](is-covering-system-filter-not-dvd-of-lt.md)
+- [Merging the p classes whose modulus is divisible by a prime power](exists-is-covering-system-merge-prime-po.md)
+- [Translating a covering system](is-covering-system-translate.md)
+- [Swapping two residues modulo a prime in a covering system](is-covering-system-swap-residues-mod-pri.md)
+- [Mirsky–Newman bound for distinct covering systems](one-lt-sum-inv-moduli-of-distinct-coveri.md)
+- [Replacing the largest prime factor of the modulus set](exists-covering-divisors-replace-largest.md)
+- [Covering systems with arbitrarily large distinct moduli (OPG-493)](conjecture.md)
+- [Hough's minimum modulus theorem](conjecture-refuted.md)

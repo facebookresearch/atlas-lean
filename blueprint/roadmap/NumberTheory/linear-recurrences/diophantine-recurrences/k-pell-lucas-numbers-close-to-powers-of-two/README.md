@@ -1,0 +1,18 @@
+# k-Pell–Lucas numbers close to powers of two
+
+- [$k$-generalized Pell–Lucas numbers](k-pell-lucas.md)
+- [Initial value of the generalized Pell–Lucas numbers](k-pell-lucas-zero.md)
+- [The $k$-Pell–Lucas number of index one](k-pell-lucas-one.md)
+- [Recurrence for the $k$-Pell–Lucas numbers](k-pell-lucas-add-two.md)
+- [The $2$-generalized Pell–Lucas numbers are the Pell–Lucas numbers](k-pell-lucas-two.md)
+- [Two values of the $3$-generalized Pell–Lucas numbers](k-pell-lucas-three-small.md)
+- [$k$-Pell–Lucas numbers that are powers of two (Corollary 1)](k-pell-lucas-eq-two-pow-iff.md)
+- [Bounds for the dominant root of the $k$-Pell–Lucas polynomial (Lemma 1)](k-pell-lucas-dominant-root-bounds.md)
+- [Golden-ratio approximations at the dominant root (Lemma 2)](k-pell-lucas-dominant-root-golden-approx.md)
+- [Main term of the dominant root (Lemma 3)](k-pell-lucas-dominant-root-main-term.md)
+- [Continued-fraction lower bound for rational approximations](lt-abs-sub-div-of-max-partial-quotient.md)
+- [Linear bounds for the logarithm and the exponential near zero (Lemma 6)](abs-log-one-add-lt-and-abs-lt-exp-sub-on.md)
+- [Lemma 7](lt-two-rpow-mul-mul-log-rpow.md)
+- [Exponent bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 8)](k-pell-lucas-close-two-pow-exponent-boun.md)
+- [Absolute bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 9)](k-pell-lucas-close-two-pow-lt-bounds.md)
+- [No $k$-Pell–Lucas number with $k > 350$ and index $n \ge k + 1$ is close to a power of two (Lemma 10)](k-pell-lucas-not-close-two-pow-of-large.md)

@@ -1,0 +1,17 @@
+# Multigraded Betti numbers and Poincaré series
+
+- [Multigraded polynomial modules](multigraded-polynomial-modules/README.md)
+- [Multigraded free modules and graded free resolutions](multigraded-free-modules-and-graded-free-resolut/README.md)
+- [Multigraded Betti numbers after residue-field base change](multigraded-betti-numbers-after-residue-field-ba/README.md)
+- [Degree components of the base-changed multigraded resolution](degree-components-of-the-base-changed-multigrade/README.md)
+- [Invariance of multigraded Betti numbers across graded free resolutions](invariance-of-multigraded-betti-numbers-across-g/README.md)
+- [Multigraded Poincaré-series coefficient family](multigraded-poincar-series-coefficient-family/README.md)
+- [Multigraded Poincaré polynomial](multigraded-poincar-polynomial/README.md)
+- [Finite homogeneous generating sets](exists-finset-homogeneous-generators.md)
+- [Finite bases give finite-dimensional multidegree pieces](base-changed-degree-piece-finite.md)
+- [Multidegree decomposition of the base-changed resolution](base-changed-degree-decomposition.md)
+- [Betti numbers do not depend on the choice of base change data](multigraded-betti-number-eq-of-base-chan.md)
+- [Existence of finite multigraded free resolutions](exists-finite-multigraded-free-resolutio.md)
+- [Finite support of the multigraded Poincaré coefficients](multigraded-poincare-coefficients-has-fi.md)
+- [Base change of a homogeneous element along zero evaluation](base-change-mem-degree-span.md)
+- [The base-changed differential preserves multidegree](base-changed-differential-preserves-degr.md)

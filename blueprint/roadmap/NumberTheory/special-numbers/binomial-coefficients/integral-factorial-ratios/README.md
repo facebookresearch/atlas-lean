@@ -1,0 +1,17 @@
+# Integral factorial ratios
+
+- [Product of scaled factorials](factorial-prod.md)
+- [Integral factorial ratio](is-integral-factorial-ratio.md)
+- [Scaled factorial product at index zero](factorial-prod-zero.md)
+- [Scaled factorial products at index zero divide](factorial-prod-dvd-zero.md)
+- [Characterization of integral factorial ratios](is-integral-factorial-ratio-iff.md)
+- [Permuting the numerator of an integral factorial ratio](is-integral-factorial-ratio-perm-left.md)
+- [Permuting the denominator of an integral factorial ratio](is-integral-factorial-ratio-perm-right.md)
+- [Integral factorial ratios are invariant under permutation](is-integral-factorial-ratio-perm.md)
+- [Equal tuples form an integral factorial ratio](is-integral-factorial-ratio-refl.md)
+- [Equal singletons form an integral factorial ratio](is-integral-factorial-ratio-singleton-se.md)
+- [The central binomial factorial ratio is integral](is-integral-factorial-ratio-central-bino.md)
+- [Erdős Problem 728](conjecture.md)
+- [Erdős Problem 728 holds](conjecture-holds.md)
+- [Erdős Problem 729](conjecture-2.md)
+- [Erdős Problem 729 holds](conjecture-holds-2.md)

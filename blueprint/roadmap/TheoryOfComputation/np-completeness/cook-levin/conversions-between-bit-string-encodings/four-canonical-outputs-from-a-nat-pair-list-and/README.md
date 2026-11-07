@@ -1,0 +1,18 @@
+# Four canonical outputs from a Nat-pair list and a Nat pair
+
+- [Stacks of the four-output pair-list decoder](k.md)
+- [Control labels of the four-output pair-list decoder](lab.md)
+- [Outer-splitter stack embedding in the four-output decoder](split-emb.md)
+- [List-projector stack embedding in the four-output decoder](items-emb.md)
+- [Final pair-projector stack embedding in the four-output decoder](pair-emb.md)
+- [Label map from the outer splitter to the list projector](split-label.md)
+- [Label map from the list projector to the final pair decoder](items-label.md)
+- [Label map from final pair halts to the decoder outcomes](pair-label.md)
+- [Program of the four-output pair-list decoder](prog.md)
+- [Stack invariant of the four-output pair-list decoder](st.md)
+- [Four-output decoder emits four canonical outputs on success](run-some.md)
+- [Four-output decoder output is at most twice the input length](output-length-le.md)
+- [Four-output decoder fails on malformed input](run-none.md)
+- [Four-output pair-list decoder as a host component](component.md)
+- [Four-output decoder reaches exactly the canonical decoding outcome](run.md)
+- [Embedded four-output decoder preserves outside stacks](run-embedded.md)

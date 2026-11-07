@@ -1,0 +1,26 @@
+# Computer Science
+
+Computer science formalizes algorithms, programming-language structures, data abstractions, and correctness properties.
+
+- [Data structures](data-structures/README.md)
+- [Graph algorithms](graph-algorithms/README.md)
+- [Sorting and searching](sorting-and-searching/README.md)
+- [Dynamic programming](dynamic-programming/README.md)
+- [Greedy algorithms and matroids](greedy-algorithms-and-matroids/README.md)
+- [Approximation algorithms](approximation-algorithms/README.md)
+- [Online algorithms](online-algorithms/README.md)
+- [Randomized algorithms and probabilistic analysis](randomized-algorithms/README.md)
+- [Parallel algorithms](parallel-algorithms/README.md)
+- [Algebraic and numerical algorithms](algebraic-and-numerical-algorithms/README.md)
+- [Computational geometry](computational-geometry/README.md)
+- [String algorithms](string-algorithms/README.md)
+- [Heuristic search and planning](heuristic-search-and-planning/README.md)
+- [Cryptography](cryptography/README.md)
+- [Databases](databases/README.md)
+- [Quantum algorithms](quantum-algorithms/README.md)
+- [Process calculi and behavioural equivalence](process-calculi/README.md)
+- [Concurrent systems and protocols](concurrent-systems-and-protocols/README.md)
+- [Programming language semantics](programming-language-semantics/README.md)
+- [Type systems and lambda calculi](type-systems-and-lambda-calculi/README.md)
+- [Program logics and verification](program-logics-and-verification/README.md)
+- [Machine learning](machine-learning/README.md)

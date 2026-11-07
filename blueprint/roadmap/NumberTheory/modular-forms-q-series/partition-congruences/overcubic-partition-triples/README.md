@@ -1,0 +1,17 @@
+# Overcubic partition triples
+
+- [The overcubic partition triple series](overcubic-triple-series.md)
+- [Number of overcubic partition triples](overcubic-triple-count.md)
+- [Generating function for overcubic partition triples](overcubic-triple-count-generating-functi.md)
+- [Overcubic partition triples of $0$](overcubic-triple-count-zero.md)
+- [The 2-dissection of $f_1^2$](f1-sq-two-dissection.md)
+- [The 2-dissection of $1/f_1^2$](one-div-f1-sq-two-dissection.md)
+- [The 3-dissection of $f_1^3$](f1-cube-three-dissection.md)
+- [Congruences for overcubic partition triples at odd arguments](overcubic-triple-count-congruences-odd-a.md)
+- [Overcubic partition triples of $24n+1$ modulo $4$](overcubic-triple-count-twenty-four-mul-a.md)
+- [Congruences for overcubic partition triples at arguments congruent to 2 modulo 4](overcubic-triple-count-congruences-two-m.md)
+- [Congruences for overcubic partition triples at multiples of 4](overcubic-triple-count-congruences-four.md)
+- [Overcubic partition triples of $576n+24$ modulo 8](overcubic-triple-count-five-hundred-seve.md)
+- [Congruences for overcubic partition triples at arguments congruent to 8 modulo 16](overcubic-triple-count-congruences-eight.md)
+- [Overcubic partition triples of $192n+8$ modulo $4$](overcubic-triple-count-one-hundred-ninet.md)
+- [Congruences for overcubic partition triples at multiples of 16](overcubic-triple-count-congruences-sixte.md)
