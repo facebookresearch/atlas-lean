@@ -28,6 +28,20 @@ structure FinGraph where
   [fin : Finite V]
   G : SimpleGraph V
 
+/-! ## Complete graphs as `FinGraph`s -/
+
+/-- The complete graph on `n` vertices, `Kₙ`, as a bundled finite graph. -/
+abbrev cliqueFinGraph (n : ℕ) : FinGraph where
+  V := Fin n
+  G := SimpleGraph.completeGraph (Fin n)
+
+/-- Adjacency in `Kₙ` is inequality of vertices. -/
+theorem cliqueFinGraph_adj {n : ℕ} {x y : Fin n} :
+    (cliqueFinGraph n).G.Adj x y ↔ x ≠ y := by
+  show (SimpleGraph.completeGraph (Fin n)).Adj x y ↔ x ≠ y
+  rw [SimpleGraph.completeGraph_eq_top]
+  exact SimpleGraph.top_adj _ _
+
 /-- Single-step minor operation: `iso` is relabelling up to graph isomorphism;
 `deleteVertex` is deletion of exactly one vertex (induced subgraph missing the
 image of one vertex); `deleteEdge` is deletion of exactly one edge (vertices

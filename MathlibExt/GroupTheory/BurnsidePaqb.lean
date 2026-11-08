@@ -53,8 +53,6 @@ theorem burnside_paqb_zero {G : Type} [Group G] [Fintype G]
     p q a b hp hq hcard
 
 attribute [-instance] Fin.instMul in
-attribute [-instance] Fin.instHPowNatOfNeZero_mathlib in
-attribute [-instance] Lean.Grind.Fin.instHPowFinNatOfNeZero in
 /-- If `G` is finite and `Fintype.card G = p ^ a * q ^ b` for primes `p, q` and
 `a, b : ℕ`, then `G` is solvable. Proved by descent to `Fin (Fintype.card G)`. -/
 theorem burnside_paqb {G : Type*} [Group G] [Fintype G]

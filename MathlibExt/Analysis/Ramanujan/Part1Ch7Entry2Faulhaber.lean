@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.PSeriesComplex
+
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.Analysis.Meromorphic.Basic

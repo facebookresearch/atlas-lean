@@ -20,6 +20,7 @@ import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
@@ -1534,7 +1535,6 @@ private lemma expSeries_endpoint_lt_critical (n : ℝ) (hn1 : 1 < n) (hn2 : n < 
     simp only [crit]
     rw [Real.rpow_neg hb.le (n - 1)]
     field_simp
-    exact div_self (by positivity)
   have h := mul_lt_mul_of_pos_right hq hcrit
   rw [hmul, one_mul] at h
   exact h

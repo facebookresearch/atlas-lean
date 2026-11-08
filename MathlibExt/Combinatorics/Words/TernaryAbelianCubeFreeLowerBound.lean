@@ -2076,6 +2076,7 @@ private theorem ac_good_window (m : ℕ) :
       linarith [hbig, key, hsmall, hlt]
 
 -- 2^(#ones) lower bound on the ncard.
+set_option maxHeartbeats 1000000 in
 private theorem ac_ncard_lower (n s : ℕ) :
     2 ^ ((Finset.Ico s (s + n / 6)).filter (fun q => ac_delta q = 1)).card ≤
       Set.ncard {w : List (Fin 3) | w.length = n ∧

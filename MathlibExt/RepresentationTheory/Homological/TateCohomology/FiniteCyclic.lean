@@ -26,13 +26,13 @@ variable (A : Rep R G)
 
 /-- Normalized degree-zero short complex. -/
 private noncomputable abbrev zeroSC : ShortComplex (ModuleCat R) :=
-  ShortComplex.mk A.norm.toModuleCatHom
+  ShortComplex.mk A.norm.asHom.toModuleCatHom
     (groupCohomology.d₀₁ A) (Rep.norm_comp_d_eq_zero A)
 
 /-- Normalized degree-minus-one short complex. -/
 private noncomputable abbrev negOneSC : ShortComplex (ModuleCat R) :=
   ShortComplex.mk (groupHomology.d₁₀ A)
-    A.norm.toModuleCatHom (Rep.comp_eq_zero A)
+    A.norm.asHom.toModuleCatHom (Rep.comp_eq_zero A)
 
 /-- Normalization iso for the `(-1, 0, 1)` boundary short complex. -/
 private noncomputable def zeroNormIso :
@@ -40,7 +40,7 @@ private noncomputable def zeroNormIso :
   ShortComplex.isoMk (groupHomology.chainsIso₀ A)
     (groupCohomology.cochainsIso₀ A) (groupCohomology.cochainsIso₁ A)
     (by
-      change (groupHomology.chainsIso₀ A).hom ≫ A.norm.toModuleCatHom =
+      change (groupHomology.chainsIso₀ A).hom ≫ A.norm.asHom.toModuleCatHom =
         A.tateNorm ≫ (groupCohomology.cochainsIso₀ A).hom
       rw [Rep.tateNorm, Category.assoc, Category.assoc, Iso.inv_hom_id, Category.comp_id])
     (groupCohomology.comp_d₀₁_eq A)
@@ -52,7 +52,7 @@ private noncomputable def negOneNormIso :
     (groupHomology.chainsIso₀ A) (groupCohomology.cochainsIso₀ A)
     (groupHomology.comp_d₁₀_eq A)
     (by
-      change (groupHomology.chainsIso₀ A).hom ≫ A.norm.toModuleCatHom =
+      change (groupHomology.chainsIso₀ A).hom ≫ A.norm.asHom.toModuleCatHom =
         A.tateNorm ≫ (groupCohomology.cochainsIso₀ A).hom
       rw [Rep.tateNorm, Category.assoc, Category.assoc, Iso.inv_hom_id, Category.comp_id])
 
@@ -122,9 +122,9 @@ private lemma negOneSC_range_eq (g : G)
       LinearMap.range
         (Rep.FiniteCyclicGroup.subCompNormHom A g).moduleCatToCycles := by
   change LinearMap.range ((groupHomology.d₁₀ A).hom.codRestrict
-      (LinearMap.ker A.norm.hom.toLinearMap) _) =
+      (LinearMap.ker A.norm.asHom.hom.toLinearMap) _) =
     LinearMap.range ((Rep.applyAsHom A g - 𝟙 A).hom.toLinearMap.codRestrict
-      (LinearMap.ker A.norm.hom.toLinearMap) _)
+      (LinearMap.ker A.norm.asHom.hom.toLinearMap) _)
   have hRange : LinearMap.range (groupHomology.d₁₀ A).hom =
       LinearMap.range (Rep.applyAsHom A g - 𝟙 A).hom.toLinearMap := by
     rw [groupHomology.range_d₁₀_eq_coinvariantsKer,

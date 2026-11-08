@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Choose.Sum
+public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Ring.Star
@@ -672,10 +673,8 @@ Scope: this proves the complete selected theorem statement as a MathlibExt theor
 not a prerequisite stage. The ratio form is kept as stated; it is not replaced
 with a log-convexity reformulation. The Motzkin numbers are let-bound locally as
 `M` with the integral Catalan factor `Nat.choose (2 * k) k / (k + 1)` and the
-exact range `0 ≤ k ≤ floor(r/2)` via `Finset.range (r / 2 + 1)`; no new
-Motzkin-number wrapper is introduced. Current formal-math has related generalized
-Motzkin-path/Riordan objects but no exact reusable natural-valued Motzkin-number
-API matching this source contract.
+exact range `0 ≤ k ≤ floor(r/2)` via `Finset.range (r / 2 + 1)`. The same inequality for the
+canonical `MetaMathlibExt.motzkinNumber` is `motzkinNumber_ratio_inequality`.
 
 Proves `Wanted` entry `aigner_motzkin_ratio_inequality`.
 -/
@@ -704,6 +703,26 @@ theorem aigner_motzkin_ratio_inequality (n : ℕ) (hn : 1 ≤ n) :
     have hMpos2 : (0 : ℚ) < (Mot (m + 2) : ℚ) := by exact_mod_cast Mot_pos (m + 2)
     rw [div_le_div_iff₀ hdiff hMpos2]
     linear_combination hlog
+
+/-- The local Catalan-weighted sum `Mot` is the canonical `motzkinNumber`. -/
+private lemma motzkinNumber_eq_Mot (r : ℕ) : motzkinNumber r = Mot r := by
+  rw [motzkinNumber_eq_sum_range_half]
+  unfold Mot
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [catalan_eq_centralBinom_div, Nat.centralBinom_eq_two_mul_choose, mul_comm]
+
+/-- Aigner's ratio inequality (equation (11)) for the canonical Motzkin numbers:
+`(M_n - M_{n-1}) / (M_{n+1} - M_n) ≤ M_n / M_{n+1}` for `n ≥ 1`
+(`aigner_motzkin_ratio_inequality` restated with `motzkinNumber`).
+
+Source: Takashi Agoh and Horst Alzer, *Mean Value Inequalities for Motzkin Numbers*,
+Journal of Integer Sequences 24 (2021), Article 21.6.8, equation (11). -/
+theorem motzkinNumber_ratio_inequality (n : ℕ) (hn : 1 ≤ n) :
+    ((motzkinNumber n : ℚ) - motzkinNumber (n - 1)) /
+        ((motzkinNumber (n + 1) : ℚ) - motzkinNumber n) ≤
+      (motzkinNumber n : ℚ) / motzkinNumber (n + 1) := by
+  simp only [motzkinNumber_eq_Mot]
+  exact aigner_motzkin_ratio_inequality n hn
 
 end
 end MetaMathlibExt

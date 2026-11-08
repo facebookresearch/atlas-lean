@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Analysis.LocallyConvex.HahnBanach
+import Mathlib.Geometry.Manifold.MFDeriv.NormedSpace
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import MathlibExt.Geometry.Manifold.ImmersionOfInjectiveMFDeriv
 
@@ -119,6 +120,6 @@ example (t₀ : ℝ) :
     Function.Injective
       (mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ × ℝ)
         (fun t : ℝ => (Real.cos t, Real.sin t)) t₀) := by
-  exact (circle_isImmersionAt t₀).injective_mfderiv (by simp)
+  exact (circle_isImmersionAt t₀).mfderiv_injective (by simp)
 
 end MathlibExtTest.Geometry.Manifold.ImmersionOfInjectiveMFDeriv

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Tactic.NormNum.Prime
+
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Choose.Dvd

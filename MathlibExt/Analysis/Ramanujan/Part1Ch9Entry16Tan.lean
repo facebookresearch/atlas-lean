@@ -29,7 +29,9 @@ import Mathlib.Analysis.Normed.Group.Tannery
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Analysis.SpecialFunctions.Integrals.LogTrigonometric
+import Mathlib.Analysis.SpecialFunctions.Integrals.Log
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv

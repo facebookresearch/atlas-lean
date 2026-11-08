@@ -34,6 +34,9 @@ This file formalizes the unique-preimage characterization of the principal real
 branch on the open domain `x > -exp (-1)`, with preimages restricted to `y > -1`.
 It does not yet define a `lambertW` function; the proved theorem is intended to
 justify such a subtype-valued inverse.
+
+`existsUnique_lambertMap_lower_preimage` gives the matching characterization of the lower
+real branch `W₋₁`: every `x` with `-exp (-1) ≤ x < 0` has exactly one preimage `y ≤ -1`.
 -/
 
 namespace MetaMathlibExt
@@ -149,6 +152,49 @@ public theorem existsUnique_lambertMap_preimage (x : ℝ)
     have hb_pos : (-1 : ℝ) < max x 0 := hb_mem
     refine ⟨⟨max x 0, hb_pos⟩, hb_symm, fun y hy => ?_⟩
     exact huniq_gen y ⟨max x 0, hb_pos⟩ hy hb_symm
+
+/-- Lower real branch `W₋₁`: every `x` with `-exp (-1) ≤ x < 0` has exactly one preimage
+`y ≤ -1` under `h y = y * exp y`. Existence uses `h (-1) = -exp (-1)`, `h y → 0` as
+`y → -∞` and the intermediate value theorem; uniqueness uses `h' y = exp y * (1 + y) < 0`
+on `y < -1`.
+
+Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
+Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
+Article 24.5.7, Section 3.1 (the lower branch `W₋₁`). -/
+public theorem existsUnique_lambertMap_lower_preimage {x : ℝ}
+    (hx1 : -Real.exp (-1) ≤ x) (hx0 : x < 0) :
+    ∃! y : { y : ℝ // y ≤ -1 }, lambertMap y.val = x := by
+  have hlam : ∀ y : ℝ, HasDerivAt lambertMap (Real.exp y * (1 + y)) y := by
+    intro y
+    have h := (hasDerivAt_id y).mul (Real.hasDerivAt_exp y)
+    have e : 1 * Real.exp y + y * Real.exp y = Real.exp y * (1 + y) := by ring
+    change HasDerivAt lambertMap (1 * Real.exp y + y * Real.exp y) y at h
+    rw [e] at h
+    exact h
+  have hcont : Continuous lambertMap :=
+    continuous_iff_continuousAt.mpr fun y => (hlam y).continuousAt
+  have hanti : StrictAntiOn lambertMap (Set.Iic (-1 : ℝ)) := by
+    refine strictAntiOn_of_deriv_neg (convex_Iic _) hcont.continuousOn ?_
+    intro y hy
+    rw [interior_Iic] at hy
+    rw [(hlam y).deriv]
+    exact mul_neg_of_pos_of_neg (Real.exp_pos y) (by linarith [show y < -1 from hy])
+  have ht : Filter.Tendsto lambertMap Filter.atBot (nhds 0) := by
+    have h2 : Filter.Tendsto (fun y : ℝ => -((-y) ^ 1 * Real.exp (-(-y)))) Filter.atBot
+        (nhds (-0)) :=
+      ((Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero 1).comp Filter.tendsto_neg_atBot_atTop).neg
+    change Filter.Tendsto (fun y : ℝ => y * Real.exp y) Filter.atBot (nhds 0)
+    simpa [Function.comp_def] using h2
+  obtain ⟨y₀, hy₀⟩ := Filter.eventually_atBot.1
+    ((ht.eventually (lt_mem_nhds hx0)).and (Filter.eventually_le_atBot (-1 : ℝ)))
+  have h1 := hy₀ (y₀ ⊓ -1) inf_le_left
+  have hl : lambertMap (-1) = -Real.exp (-1) := by
+    change (-1 : ℝ) * Real.exp (-1) = -Real.exp (-1)
+    ring
+  obtain ⟨y, hy, hyx⟩ := intermediate_value_Icc' (show y₀ ⊓ -1 ≤ -1 from inf_le_right)
+    hcont.continuousOn ⟨by rw [hl]; exact hx1, h1.1.le⟩
+  refine ⟨⟨y, hy.2⟩, hyx, fun z hz => Subtype.ext ?_⟩
+  exact hanti.injOn z.property hy.2 (hz.trans hyx.symm)
 
 end
 

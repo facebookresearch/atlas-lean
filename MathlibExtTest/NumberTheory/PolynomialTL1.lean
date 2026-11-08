@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Mul
+
 public import MathlibExt.NumberTheory.PolynomialTL1
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.SpecialFunctions.Sqrt

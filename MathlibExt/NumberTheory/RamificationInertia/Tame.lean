@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.RingTheory.QuasiFinite.Basic
+
 public import Mathlib.RingTheory.RamificationInertia.Ramification
 
 @[expose] public section
@@ -155,6 +157,6 @@ theorem isTamelyRamifiedAt_iff_isSeparable_of_charZero [Module.Finite R S]
     IsTamelyRamifiedAt R q ↔ IsResidueSeparableAt R q := by
   rw [isTamelyRamifiedAt_iff R q, hchar]
   refine and_iff_left (fun hdvd => ?_)
-  exact (Ideal.ramificationIdx_pos q R).ne' (Nat.zero_dvd.mp hdvd)
+  exact (Ideal.ramificationIdx_pos R q).ne' (Nat.zero_dvd.mp hdvd)
 
 end Algebra

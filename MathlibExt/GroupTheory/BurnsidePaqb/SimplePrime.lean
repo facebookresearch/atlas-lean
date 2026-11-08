@@ -130,7 +130,6 @@ theorem card_eq_prime_of_nontrivial_linear [IsSimpleGroup G]
     rw [hg]
     exact h1
   have hker_cases := IsSimpleGroup.eq_bot_or_eq_top_of_normal lam.ker
-    inferInstance
   rcases hker_cases with hbot | htop
   · have hinj : Function.Injective lam :=
       (MonoidHom.ker_eq_bot_iff lam).mp hbot
@@ -166,8 +165,7 @@ theorem char_zero_of_nonlinear_of_coprime [IsSimpleGroup G]
     have hgmem : g ∈ charCenter ρ := mem_charCenter_of_eq_smul ρ g μ₀ hsm
     have hproper : charCenter ρ ≠ ⊤ := charCenter_proper_of_nonlinear ρ hd
     have hbot : charCenter ρ = ⊥ := by
-      rcases IsSimpleGroup.eq_bot_or_eq_top_of_normal (charCenter ρ)
-        inferInstance with h | h
+      rcases IsSimpleGroup.eq_bot_or_eq_top_of_normal (charCenter ρ) with h | h
       · exact h
       · exact absurd h hproper
     have hmem : g ∈ (⊥ : Subgroup G) := hbot ▸ hgmem

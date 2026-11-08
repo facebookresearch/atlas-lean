@@ -31,7 +31,11 @@ def IsProperEdgeColoring {V K : Type*} {G : _root_.SimpleGraph V}
   ∀ {v w₁ w₂ : V} (h₁ : G.Adj v w₁) (h₂ : G.Adj v w₂), w₁ ≠ w₂ →
     C ⟨Sym2.mk v w₁, G.mem_edgeSet.mpr h₁⟩ ≠ C ⟨Sym2.mk v w₂, G.mem_edgeSet.mpr h₂⟩
 
-private theorem multigraph_regular_color.{u} (d : ℕ) (A B E : Type u)
+/-- König's line coloring, regular multigraph case: a `d`-regular bipartite
+multigraph (given by endpoint projections) is `d`-edge-colorable. The proof
+extracts a perfect matching by Hall's theorem and inducts. Shared API also
+used by the multigraph Galvin development. -/
+theorem multigraph_regular_color.{u, v} (d : ℕ) (A B : Type u) (E : Type v)
     [Finite A] [DecidableEq A] [Finite B] [DecidableEq B]
     [Fintype E]
     (l : E → A) (r : E → B)
@@ -297,7 +301,11 @@ private theorem multigraph_regular_color.{u} (d : ℕ) (A B E : Type u)
         exact congrArg Subtype.val hsub
 
 
-private theorem multigraph_bounded_color.{u} (d : ℕ) (A B E : Type u)
+/-- König's line coloring, bounded-degree multigraph case: a bipartite
+multigraph of maximum degree at most `d` is `d`-edge-colorable. The proof
+pads both sides with dummy edges to reach the regular case. Shared API also
+used by the multigraph Galvin development. -/
+theorem multigraph_bounded_color.{u, v} (d : ℕ) (A B : Type u) (E : Type v)
     [Finite A] [DecidableEq A] [Finite B] [DecidableEq B]
     [Fintype E]
     (l : E → A) (r : E → B)
@@ -702,6 +710,30 @@ theorem konig_line_coloring :
         simpa using this
       have hloop : G.Adj v v := hvw2 ▸ h₂
       exact (G.loopless.irrefl v) hloop
+
+/-- Properness for total colorings of unordered pairs (used to avoid
+dependent `EdgeLabeling` domains while the graph changes). Canonical form
+shared by the Vizing and greedy developments. -/
+def IsProperSym2Coloring {V K : Type*} (G : _root_.SimpleGraph V)
+    (c : Sym2 V → K) : Prop :=
+  ∀ {x y z : V}, G.Adj x y → G.Adj x z → y ≠ z →
+    c (Sym2.mk x y) ≠ c (Sym2.mk x z)
+
+/-- Bridge from `Sym2` colorings to `EdgeLabeling`. -/
+theorem isProperEdgeColoring_of_isProperSym2Coloring {V K : Type*}
+    {G : _root_.SimpleGraph V} {c : Sym2 V → K}
+    (hc : IsProperSym2Coloring G c) :
+    IsProperEdgeColoring (fun e : G.edgeSet => c e.val) := by
+  intro v w₁ w₂ h₁ h₂ hne
+  exact hc h₁ h₂ hne
+
+/-- Properness is monotone in the graph. -/
+theorem IsProperSym2Coloring.mono {V K : Type*}
+    {G H : _root_.SimpleGraph V}
+    {c : Sym2 V → K} (hc : IsProperSym2Coloring G c) (hle : H ≤ G) :
+    IsProperSym2Coloring H c := by
+  intro x y z h1 h2 hne
+  exact hc (hle h1) (hle h2) hne
 
 
 end MathlibExt.Combinatorics.SimpleGraph.EdgeColoringWanted

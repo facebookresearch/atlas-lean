@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.RingTheory.Localization.AtPrime.Multiplicity
 import Mathlib.RingTheory.DedekindDomain.Different
+import Mathlib.RingTheory.Int.Basic
 
 @[expose] public section
 

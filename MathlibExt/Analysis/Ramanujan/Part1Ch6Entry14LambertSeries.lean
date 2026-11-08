@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.PSeries
+
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Floor.Defs
 public import Mathlib.Analysis.Calculus.ContDiff.Basic

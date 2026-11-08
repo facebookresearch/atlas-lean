@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 module
+
+import Mathlib.Algebra.Order.Group.Abs
 public import Mathlib.Algebra.QuadraticDiscriminant
 
 /-!

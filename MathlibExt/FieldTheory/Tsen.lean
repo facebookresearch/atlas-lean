@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
+
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous

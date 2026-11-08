@@ -442,32 +442,16 @@ private theorem al_grassmann_sq_matrix {R : Type*} [CommRing R] (n : ℕ)
   have hmem := al_Xsq_entry_mem_center (R := R) n M
   set φ := (Subalgebra.val
     (Subalgebra.center R (ExteriorAlgebra R (Fin (2 * n) → R)))).toRingHom with hφ
-  set Y : Matrix (Fin n) (Fin n)
+  let X : Matrix (Fin n) (Fin n) (ExteriorAlgebra R (Fin (2 * n) → R)) :=
+    ∑ i, (M i).map (fun r => r •
+      (ExteriorAlgebra.ι R (Pi.single i (1 : R)) : ExteriorAlgebra R (Fin (2 * n) → R)))
+  let Y : Matrix (Fin n) (Fin n)
       (Subalgebra.center R (ExteriorAlgebra R (Fin (2 * n) → R))) :=
-    fun a b => ⟨((∑ i, (M i).map (fun r => r •
-      (ExteriorAlgebra.ι R ((fun j : Fin (2 * n) => (Pi.single j (1 : R) : Fin (2 * n) → R)) i) :
-        ExteriorAlgebra R (Fin (2 * n) → R)))) ^ 2) a b, hmem a b⟩ with hY
-  have hmapY : Y.map ⇑φ
-        = (∑ i, (M i).map (fun r => r •
-          (ExteriorAlgebra.ι R ((fun j : Fin (2 * n) => (Pi.single j (1 : R) : Fin (2 * n) → R)) i)
-              :
-            ExteriorAlgebra R (Fin (2 * n) → R)))) ^ 2 := by
-    rw [hY]
-    ext a b
-    rfl
-  have hmapφ : ∀ k : ℕ, (Y ^ k).map ⇑φ
-        = (∑ i, (M i).map (fun r => r •
-          (ExteriorAlgebra.ι R ((fun j : Fin (2 * n) => (Pi.single j (1 : R) : Fin (2 * n) → R)) i)
-              :
-            ExteriorAlgebra R (Fin (2 * n) → R)))) ^ (2 * k) := by
+    fun a b => ⟨(X ^ 2) a b, hmem a b⟩
+  have hmapY : Y.map ⇑φ = X ^ 2 := rfl
+  have hmapφ : ∀ k : ℕ, (Y ^ k).map ⇑φ = X ^ (2 * k) := by
     intro k
-    induction k with
-    | zero =>
-      simp only [pow_zero]
-      exact Matrix.map_one _ (map_zero _) (map_one _)
-    | succ k hk =>
-      rw [pow_succ, Matrix.map_mul, hk, hmapY,
-        show 2 * (k + 1) = 2 * k + 2 by ring, pow_add]
+    rw [Matrix.map_pow, hmapY, ← pow_mul]
   have hinj : Function.Injective ⇑φ := Subtype.val_injective
   refine ⟨Y, ?_, ?_, ?_, ?_⟩
   · intro k
@@ -488,16 +472,7 @@ private theorem al_grassmann_sq_matrix {R : Type*} [CommRing R] (n : ℕ)
     have h0map : ((0 : Matrix (Fin n) (Fin n)
       (Subalgebra.center R (ExteriorAlgebra R (Fin (2 * n) → R)))).map ⇑φ) = 0 :=
       Matrix.map_zero _ (map_zero _)
-    have harg : (fun N : Matrix (Fin n) (Fin n)
-        (Subalgebra.center R (ExteriorAlgebra R (Fin (2 * n) → R))) => N.map ⇑φ)
-        (Y ^ (n + 1)) = (fun N : Matrix (Fin n) (Fin n)
-        (Subalgebra.center R (ExteriorAlgebra R (Fin (2 * n) → R))) => N.map ⇑φ) 0 := by
-      change ((Y ^ (n + 1)).map ⇑φ)
-        = (((0 : Matrix (Fin n) (Fin n)
-          (Subalgebra.center R (ExteriorAlgebra R (Fin (2 * n) → R)))).map ⇑φ))
-      rw [hmap0]
-      exact h0map.symm
-    exact (Matrix.map_injective hinj) harg
+    exact (Matrix.map_injective hinj) (hmap0.trans h0map.symm)
   · intro k hk
     have hRk := hR k hk
     have hcast : ((k : ℕ) : (Subalgebra.center R

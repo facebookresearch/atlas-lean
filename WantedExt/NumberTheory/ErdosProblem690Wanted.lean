@@ -33,11 +33,10 @@ def IsKthSmallestPrimeFactor (k n p : ℕ) : Prop :=
   p ∈ Nat.primeFactors n ∧
     ((Nat.primeFactors n).filter (fun q => q < p)).card = k - 1
 
-/-- Natural (asymptotic) density of a set of naturals. -/
-/-- Natural density is the canonical `Set.HasDensity` from
-`MathlibExt.Data.Set.Density` (default ambient set); for naturals it is
-the limit of `|S ∩ [0, N)| / N`. -/
-/-- `dₖ(p)`: the density of integers whose `k`-th smallest prime factor
+/-- Natural (asymptotic) density of a set of naturals: the canonical
+`Set.HasDensity` from `MathlibExt.Data.Set.Density` (default ambient set);
+for naturals it is the limit of `|S ∩ [0, N)| / N`.
+`dₖ(p)`: the density of integers whose `k`-th smallest prime factor
 is `p`, chosen by Hilbert choice (the unique limit when it exists). -/
 noncomputable def kthPrimeFactorDensity (k p : ℕ) : ℝ :=
   Classical.epsilon (fun d : ℝ =>

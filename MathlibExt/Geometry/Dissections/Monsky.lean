@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Convex.Hull
+import Mathlib.Analysis.Normed.Affine.AddTorsorBases
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 

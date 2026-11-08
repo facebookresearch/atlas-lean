@@ -11,6 +11,8 @@ module
 public import Mathlib.Algebra.Group.AddChar
 public import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+import Mathlib.Algebra.DirectSum.AddChar
+import Mathlib.GroupTheory.FiniteAbelian.Basic
 
 @[expose] public section
 

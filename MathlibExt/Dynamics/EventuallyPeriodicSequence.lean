@@ -70,7 +70,7 @@ theorem IsEventuallyPeriodic.of_finite_orbit {S : Type*} [Finite S] (F : S → S
   induction d with
   | zero => simpa [Nat.add_sub_cancel' hlt.le] using hxy.symm
   | succ d ih =>
-    rw [show x + (d + 1) + (y - x) = x + d + (y - x) + 1 by omega, ← add_assoc, h, h,
+    rw [show x + (d + 1) + (y - x) = x + d + (y - x) + 1 by omega, ← Nat.add_assoc, h, h,
       ih (by omega)]
 
 end

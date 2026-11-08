@@ -13,7 +13,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 
-import Mathlib.Analysis.SpecialFunctions.Integrals.LogTrigonometric
+import Mathlib.Analysis.SpecialFunctions.Integrals.Log
+import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.Normed.Group.Tannery

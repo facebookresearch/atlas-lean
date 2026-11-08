@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.GroupTheory.Perm.Cycle.Type
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.GroupTheory.Perm.Fin
 import MathlibExt.Combinatorics.Enumerative.Stirling

@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.PSeriesComplex
+
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry13Bernoullipolyadd
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry13Bernoullirecurrence

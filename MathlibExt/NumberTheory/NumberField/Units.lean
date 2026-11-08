@@ -10,6 +10,8 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Units.Regulator
 
+import Mathlib.LinearAlgebra.Matrix.Gershgorin
+
 @[expose] public section
 
 /-!

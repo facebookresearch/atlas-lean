@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+
 public import Mathlib.Topology.Instances.Complex
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Tactic.Ring

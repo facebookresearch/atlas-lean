@@ -1156,16 +1156,9 @@ private theorem D_no_symm {V : Type*} [DecidableEq V] {G : SimpleGraph V}
     {s t : V} {k : ℕ} (paths : Fin k → G.Path s t) (q : G.Path s t)
     {d : G.Dart} (hd : d ∈ DFinset paths q) :
     d.symm ∉ DFinset paths q := by
-  have hDdef : DFinset paths q =
-      D0Finset paths q \ CancelFinset paths q := rfl
-  rw [hDdef] at hd ⊢
-  obtain ⟨hd0, hdC⟩ := Finset.mem_sdiff.mp hd
-  intro hcon
-  obtain ⟨hsym0, -⟩ := Finset.mem_sdiff.mp hcon
-  apply hdC
-  change d ∈ (D0Finset paths q).filter (fun d => d.symm ∈ D0Finset paths q)
-  rw [Finset.mem_filter]
-  exact ⟨hd0, hsym0⟩
+  simp only [DFinset, CancelFinset, Finset.mem_sdiff, Finset.mem_filter] at hd ⊢
+  rintro ⟨hsym0, -⟩
+  exact hd.2 ⟨hd.1, hsym0⟩
 
 /-- The uncancelled darts have pairwise distinct edges. -/
 private theorem D_edge_unique {V : Type*} [DecidableEq V] {G : SimpleGraph V}

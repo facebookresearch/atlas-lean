@@ -1007,7 +1007,7 @@ private theorem kapCfcF_cfcG (x : H →L[ℂ] H) (hx : IsSelfAdjoint x)
     unfold kapG kapF
     rw [hden, div_eq_iff (ne_of_gt (div_pos (by norm_num) hspos)),
       ← mul_div_assoc, ← mul_div_assoc, mul_comm (2 : ℝ) t]
-  have hfin : cfc (kapF ∘ kapG) x = cfc id x := cfc_congr' hscalar
+  have hfin : cfc (kapF ∘ kapG) x = cfc id x := cfc_congr hscalar
   have hcomp := cfc_comp (g := kapF) (f := kapG) (a := x) (ha := hx)
     (hg := kapF_cont.continuousOn) (hf := kapG_cont.continuousOn)
   have hid : cfc (id : ℝ → ℝ) x = x := cfc_id (R := ℝ) (a := x) (ha := hx)

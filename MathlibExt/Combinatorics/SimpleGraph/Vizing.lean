@@ -29,27 +29,8 @@ namespace MathlibExt.Combinatorics.SimpleGraph.EdgeColoringWanted
 Records Vizing and König edge-coloring theorems.
 -/
 
--- `IsProperEdgeColoring` is imported from `EdgeColoring` in the same namespace.
-
-/-- Properness for total colorings of unordered pairs (used to avoid
-dependent `EdgeLabeling` domains while the graph changes). -/
-private def IsProperSym2Coloring {V K : Type*} (G : _root_.SimpleGraph V) (c : Sym2 V → K) : Prop :=
-  ∀ {x y z : V}, G.Adj x y → G.Adj x z → y ≠ z → c s(x, y) ≠ c s(x, z)
-
-/-- Bridge from `Sym2` colorings to `EdgeLabeling`. -/
-private theorem isProperEdgeColoring_of_isProperSym2Coloring {V K : Type*}
-    {G : _root_.SimpleGraph V} {c : Sym2 V → K}
-    (hc : IsProperSym2Coloring G c) :
-    IsProperEdgeColoring (fun e : G.edgeSet => c e.val) := by
-  intro v w₁ w₂ h₁ h₂ hne
-  exact hc h₁ h₂ hne
-
-/-- Properness is monotone in the graph. -/
-private theorem IsProperSym2Coloring.mono {V K : Type*} {G H : _root_.SimpleGraph V}
-    {c : Sym2 V → K} (hc : IsProperSym2Coloring G c) (hle : H ≤ G) :
-    IsProperSym2Coloring H c := by
-  intro x y z h1 h2 hne
-  exact hc (hle h1) (hle h2) hne
+-- `IsProperEdgeColoring`, `IsProperSym2Coloring`, and the bridge/mono lemmas
+-- are imported from `EdgeColoring` in the same namespace.
 
 /-- Colors missing at a vertex. -/
 private noncomputable def missingColors {V K : Type*} [Fintype K] [DecidableEq K]

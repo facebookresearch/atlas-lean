@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 public import Mathlib.Analysis.Normed.Algebra.Spectrum
+import Mathlib.Analysis.Normed.Ring.Units
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.InnerProductSpace.Basic

@@ -17,6 +17,7 @@ and palindromic sequences, Theoret. Comput. Sci. 389 (2007)).
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Data.List.Basic
 
 @[expose] public section
 

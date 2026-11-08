@@ -185,7 +185,7 @@ private theorem card_primesOver_le_finrank {p : ℕ} (hp : p.Prime) :
     ← Finset.card_univ, Finset.card_eq_sum_ones]
   refine Finset.sum_le_sum fun q _ => ?_
   have hq : q.1.IsPrime := q.2.1
-  have he : 0 < q.1.ramificationIdx ℤ := Ideal.ramificationIdx_pos q.1 ℤ
+  have he : 0 < q.1.ramificationIdx ℤ := Ideal.ramificationIdx_pos ℤ q.1
   have hf : 0 < q.1.inertiaDeg ℤ := Ideal.inertiaDeg_pos q.1 ℤ
   exact Nat.one_le_iff_ne_zero.mpr (mul_ne_zero he.ne' hf.ne')
 

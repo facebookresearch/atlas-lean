@@ -9,7 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
+import Mathlib.Data.List.ChainOfFn
+import Mathlib.Data.List.FinRange
 import Mathlib.Tactic.Push
+import MathlibExt.Combinatorics.SimpleGraph.HamiltonianCycle
 
 @[expose] public section
 
@@ -34,176 +37,122 @@ private theorem hamiltonian_of_cyclic {W : Type*} [Fintype W] [DecidableEq W]
     G.IsHamiltonian := by
   classical
   have hNpos : 0 < Fintype.card W := by omega
-  set y : ℕ → W := fun t => e ⟨t % Fintype.card W, Nat.mod_lt _ hNpos⟩ with hy
   have hval : ∀ i : Fin (Fintype.card W),
       ((i + 1 : Fin (Fintype.card W))).val = (i.val + 1) % Fintype.card W := by
     intro i
     simp [Fin.val_add]
-  have hmod_add : ∀ t : ℕ,
-      (t % Fintype.card W + 1) % Fintype.card W = (t + 1) % Fintype.card W :=
-    fun t => Nat.mod_add_mod t (Fintype.card W) 1
-  have yadj : ∀ t : ℕ, G.Adj (y t) (y (t + 1)) := by
-    intro t
-    have h := hadj ⟨t % Fintype.card W, Nat.mod_lt _ hNpos⟩
-    have heq : ((⟨t % Fintype.card W, Nat.mod_lt _ hNpos⟩ + 1 :
-        Fin (Fintype.card W))) = ⟨(t + 1) % Fintype.card W, Nat.mod_lt _ hNpos⟩ := by
-      apply Fin.ext
+  -- The cyclic vertex list: the enumeration order, closed by repeating the first vertex.
+  set l : List W := List.ofFn e ++ [e 0] with hldef
+  have hmlen : (List.ofFn e).length = Fintype.card W := List.length_ofFn
+  have hllen : l.length = Fintype.card W + 1 := by simp [hldef, hmlen]
+  have hmne : List.ofFn e ≠ [] := by
+    intro hcon
+    have h0 : (List.ofFn e).length = 0 := by simp [hcon]
+    omega
+  have hlne : l ≠ [] := by
+    intro hcon
+    have h0 : l.length = 0 := by simp [hcon]
+    omega
+  have hm_get : ∀ (i : ℕ) (h : i < (List.ofFn e).length),
+      (List.ofFn e)[i]'h = e ⟨i, by omega⟩ := by
+    intro i h
+    exact List.getElem_ofFn h
+  have hm_get' : ∀ j : Fin (Fintype.card W),
+      (List.ofFn e)[j.val]'(by rw [List.length_ofFn]; exact j.isLt) = e j := by
+    intro j
+    exact hm_get j.val _
+  have hm_head : (List.ofFn e).head hmne = e 0 := by
+    rw [List.head_eq_getElem_zero hmne]
+    exact hm_get 0 _
+  have hm_last : (List.ofFn e).getLast hmne
+      = e ⟨Fintype.card W - 1, by omega⟩ := by
+    rw [List.getLast_eq_getElem hmne]
+    have h1 := hm_get ((List.ofFn e).length - 1) (by omega)
+    refine h1.trans ?_
+    congr 1
+    ext
+    change (List.ofFn e).length - 1 = Fintype.card W - 1
+    omega
+  have hchain_m : (List.ofFn e).IsChain G.Adj := by
+    rw [List.isChain_ofFn]
+    intro i hi
+    set j : Fin (Fintype.card W) := ⟨i, by omega⟩
+    have h := hadj j
+    have hfin : j + 1 = ⟨i + 1, hi⟩ := by
+      ext
       rw [hval]
-      exact hmod_add t
-    rw [heq] at h
+      change (i + 1) % Fintype.card W = i + 1
+      exact Nat.mod_eq_of_lt hi
+    rw [hfin] at h
     exact h
-  have hwalk : ∀ m : ℕ, ∃ p : G.Walk (e 0) (y m),
-      p.support = List.map y (List.range (m + 1)) ∧
-      p.edges = List.map (fun t => s(y t, y (t + 1))) (List.range m) ∧
-      p.length = m := by
-    intro m
-    induction m with
-    | zero =>
-      refine ⟨SimpleGraph.Walk.nil, ?_, rfl, rfl⟩
-      change [e 0] = List.map y (List.range (0 + 1))
-      rw [show (0 : ℕ) + 1 = 1 from rfl, List.range_one, List.map_singleton]
-      congr 1
-    | succ m ih =>
-      obtain ⟨p, hsupp, hedges, hlen⟩ := ih
-      refine ⟨p.concat (yadj m), ?_, ?_, ?_⟩
-      · rw [SimpleGraph.Walk.support_concat, hsupp, List.range_succ (n := m + 1),
-          List.map_append, List.map_singleton]
-      · rw [SimpleGraph.Walk.edges_concat, hedges, List.range_succ (n := m),
-          List.map_append, List.concat_eq_append, List.map_singleton]
-      · rw [SimpleGraph.Walk.length_concat, hlen]
-  obtain ⟨p, hsupp, hedges, hlen⟩ := hwalk (Fintype.card W)
-  have hyN : y (Fintype.card W) = e 0 := by
-    change e ⟨Fintype.card W % Fintype.card W, _⟩ = e 0
-    simp only [Nat.mod_self]
-    simp
-  obtain ⟨q, hqsupp, hqedges, hqlen⟩ :
-      ∃ q : G.Walk (e 0) (e 0),
-        q.support = List.map y (List.range (Fintype.card W + 1)) ∧
-        q.edges = List.map (fun t => s(y t, y (t + 1))) (List.range (Fintype.card W)) ∧
-        q.length = Fintype.card W :=
-    ⟨p.copy rfl hyN,
-      by rw [SimpleGraph.Walk.support_copy, hsupp],
-      by rw [SimpleGraph.Walk.edges_copy, hedges],
-      by rw [SimpleGraph.Walk.length_copy, hlen]⟩
-  have hmod_succ_inj : ∀ a b : ℕ, a < Fintype.card W → b < Fintype.card W →
-      (a + 1) % Fintype.card W = (b + 1) % Fintype.card W → a = b := by
-    intro a b ha hb h
-    have ha1 : a + 1 < Fintype.card W ∨ a + 1 = Fintype.card W := by omega
-    have hb1 : b + 1 < Fintype.card W ∨ b + 1 = Fintype.card W := by omega
-    rcases ha1 with ha1 | ha1 <;> rcases hb1 with hb1 | hb1
-    · rw [Nat.mod_eq_of_lt ha1, Nat.mod_eq_of_lt hb1] at h; omega
-    · rw [Nat.mod_eq_of_lt ha1, hb1, Nat.mod_self] at h; omega
-    · rw [ha1, Nat.mod_self, Nat.mod_eq_of_lt hb1] at h; omega
-    · omega
-  have hmod_cross : ∀ a b : ℕ, a < Fintype.card W → b < Fintype.card W →
-      a % Fintype.card W = (b + 1) % Fintype.card W →
-      (a + 1) % Fintype.card W = b % Fintype.card W → False := by
-    intro a b ha hb h1 h2
-    rw [Nat.mod_eq_of_lt ha] at h1; rw [Nat.mod_eq_of_lt hb] at h2
-    have hb1 : b + 1 < Fintype.card W ∨ b + 1 = Fintype.card W := by omega
-    rcases hb1 with hb1 | hb1
-    · rw [Nat.mod_eq_of_lt hb1] at h1
-      have h2' : (b + 2) % Fintype.card W = b := by
-        have hba : a + 1 = b + 2 := by omega
-        rw [hba] at h2; exact h2
-      have hb2 : b + 2 < Fintype.card W ∨ b + 2 = Fintype.card W ∨
-          b + 2 = Fintype.card W + 1 := by omega
-      rcases hb2 with hb2 | hb2 | hb2
-      · rw [Nat.mod_eq_of_lt hb2] at h2'; omega
-      · rw [show b + 2 = Fintype.card W from hb2, Nat.mod_self] at h2'; omega
-      · rw [show b + 2 = Fintype.card W + 1 from hb2, Nat.add_mod_left,
-          Nat.mod_eq_of_lt (by omega : 1 < Fintype.card W)] at h2'; omega
-    · rw [hb1, Nat.mod_self] at h1
-      rw [show a + 1 = 1 from by omega,
-        Nat.mod_eq_of_lt (by omega : 1 < Fintype.card W)] at h2
-      omega
-  have hy_inj : ∀ s t : ℕ, y s = y t →
-      s % Fintype.card W = t % Fintype.card W := by
-    intro s t h
-    have h2 := hinj h
-    exact Fin.ext_iff.mp h2
-  have htail_eq : q.support.tail =
-      List.map (fun t => y (t + 1)) (List.range (Fintype.card W)) := by
-    rw [hqsupp, List.range_succ_eq_map, List.map_cons, List.tail_cons, List.map_map]
-    have hfun : (y ∘ Nat.succ) = (fun t => y (t + 1)) := funext fun t => rfl
-    rw [hfun]
-  have htail_nodup : q.support.tail.Nodup := by
-    rw [htail_eq, List.nodup_iff_injective_getElem]
-    intro a b hab
-    have hlen_map : (List.map (fun t => y (t + 1))
-        (List.range (Fintype.card W))).length = Fintype.card W := by simp
-    have haN : (a : ℕ) < Fintype.card W := by have h := a.isLt; omega
-    have hbN : (b : ℕ) < Fintype.card W := by have h := b.isLt; omega
-    simp only [List.getElem_map, List.getElem_range] at hab
-    have h2 := hy_inj _ _ hab
-    have h3 := hmod_succ_inj _ _ haN hbN h2
-    exact Fin.ext h3
-  have hedges_nodup : q.edges.Nodup := by
-    rw [hqedges, List.nodup_iff_injective_getElem]
-    intro a b hab
-    have hlen_map : (List.map (fun t => s(y t, y (t + 1)))
-        (List.range (Fintype.card W))).length = Fintype.card W := by simp
-    have haN : (a : ℕ) < Fintype.card W := by have h := a.isLt; omega
-    have hbN : (b : ℕ) < Fintype.card W := by have h := b.isLt; omega
-    simp only [List.getElem_map, List.getElem_range] at hab
-    rw [Sym2.eq_iff] at hab
-    rcases hab with ⟨h1, h2⟩ | ⟨h1, h2⟩
-    · have e1 := hy_inj _ _ h1
-      rw [Nat.mod_eq_of_lt haN, Nat.mod_eq_of_lt hbN] at e1
-      exact Fin.ext e1
-    · have e1 := hy_inj _ _ h1
-      have e2 := hy_inj _ _ h2
-      exact False.elim (hmod_cross _ _ haN hbN e1 e2)
-  have hNnil : ¬ q.Nil := by
-    intro h
-    have h0 : q.length = 0 := SimpleGraph.Walk.length_eq_zero_iff.mpr h
-    omega
-  have htail_supp : (q.tail).support = q.support.tail :=
-    SimpleGraph.Walk.support_tail_of_not_nil q hNnil
-  have htail_path : q.tail.IsPath := by
-    apply SimpleGraph.Walk.IsPath.mk'
-    rw [htail_supp]; exact htail_nodup
-  have htail_mem : ∀ w : W, w ∈ (q.tail).support := by
-    intro w
-    obtain ⟨i, rfl⟩ := hsurj w
-    rw [htail_supp, htail_eq]
-    by_cases hi0 : i.val = 0
-    · have hi : i = 0 := Fin.ext hi0
-      subst hi
-      have hmem : Fintype.card W - 1 ∈ List.range (Fintype.card W) :=
-        List.mem_range.mpr (by omega)
-      have hmap : y (Fintype.card W - 1 + 1) ∈
-          List.map (fun t => y (t + 1)) (List.range (Fintype.card W)) :=
-        List.mem_map_of_mem hmem
-      have hyeq : y (Fintype.card W - 1 + 1) = e (0 : Fin (Fintype.card W)) := by
-        have h1 : Fintype.card W - 1 + 1 = Fintype.card W := by omega
-        rw [h1, hyN]
-      rw [hyeq] at hmap
-      exact hmap
-    · have hmem : i.val - 1 ∈ List.range (Fintype.card W) :=
-        List.mem_range.mpr (by omega)
-      have hmap : y (i.val - 1 + 1) ∈
-          List.map (fun t => y (t + 1)) (List.range (Fintype.card W)) :=
-        List.mem_map_of_mem hmem
-      have hyeq : y (i.val - 1 + 1) = e i := by
-        have h1 : i.val - 1 + 1 = i.val := by omega
-        rw [h1]
-        obtain ⟨v, hv⟩ := i
-        simp only [hy, Nat.mod_eq_of_lt hv]
-      rw [hyeq] at hmap
-      exact hmap
-  have hham_tail : q.tail.IsHamiltonian :=
-    htail_path.isHamiltonian_of_mem htail_mem
-  have htrail : q.IsTrail := ⟨hedges_nodup⟩
-  have hne : q ≠ SimpleGraph.Walk.nil := by
-    intro h
-    subst h
-    rw [SimpleGraph.Walk.length_nil] at hqlen
-    omega
-  have hcyc : q.IsCycle := ⟨⟨htrail, hne⟩, htail_nodup⟩
-  have hhamc : q.IsHamiltonianCycle := ⟨hcyc, hham_tail⟩
-  intro _
-  exact ⟨e 0, q, hhamc⟩
+  have hclose : G.Adj ((List.ofFn e).getLast hmne) (e 0) := by
+    rw [hm_last]
+    set j : Fin (Fintype.card W) := ⟨Fintype.card W - 1, by omega⟩
+    have h := hadj j
+    have hfin : j + 1 = 0 := by
+      ext
+      rw [hval]
+      change (Fintype.card W - 1 + 1) % Fintype.card W = (0 : Fin (Fintype.card W)).val
+      rw [show Fintype.card W - 1 + 1 = Fintype.card W from by omega, Nat.mod_self]
+      exact (Fin.val_zero _).symm
+    rw [hfin] at h
+    exact h
+  have hmid : ∀ x ∈ (List.ofFn e).getLast?,
+      ∀ y ∈ ([e 0] : List W).head?, G.Adj x y := by
+    intro x hx y hy
+    rw [List.getLast?_eq_some_getLast hmne] at hx
+    rw [List.head?_singleton] at hy
+    rw [Option.mem_some_iff] at hx hy
+    subst hx
+    subst hy
+    exact hclose
+  have hchain_l : l.IsChain G.Adj := by
+    rw [hldef]
+    exact List.IsChain.append hchain_m (List.isChain_singleton _) hmid
+  have hclosed : l.head hlne = l.getLast hlne := by
+    have hhead : l.head hlne = e 0 := by
+      have h1 : (List.ofFn e ++ [e 0]).head hlne = e 0 := by
+        rw [List.head_append_of_ne_nil hmne, hm_head]
+      exact h1
+    have hlast : l.getLast hlne = e 0 := by
+      have h1 : (List.ofFn e ++ [e 0]).getLast hlne = e 0 := by
+        rw [List.getLast_append_of_ne_nil _ (show [e 0] ≠ [] by simp),
+          List.getLast_singleton]
+      exact h1
+    rw [hhead, hlast]
+  have hm_nodup : (List.ofFn e).Nodup := List.nodup_ofFn_ofInjective hinj
+  have htail_eq : l.tail = (List.ofFn e).tail ++ [e 0] := by
+    rw [hldef, List.tail_append_of_ne_nil hmne]
+  have h0_notmem : e 0 ∉ (List.ofFn e).tail := by
+    have hcons := List.cons_head_tail hmne
+    rw [hm_head] at hcons
+    have hnd := hm_nodup
+    rw [← hcons] at hnd
+    exact (List.nodup_cons.mp hnd).1
+  have hnodup : l.tail.Nodup := by
+    rw [htail_eq]
+    exact List.Nodup.append (List.Nodup.tail hm_nodup) (List.nodup_singleton _)
+      (List.disjoint_singleton.2 h0_notmem)
+  have hmem : ∀ v, v ∈ l.tail := by
+    intro v
+    obtain ⟨j, rfl⟩ := hsurj v
+    rw [htail_eq]
+    by_cases hj0 : j = 0
+    · subst hj0
+      exact List.mem_append.mpr (Or.inr (List.mem_singleton_self _))
+    · have hne_val : j.val ≠ 0 := by
+        intro hcon
+        apply hj0
+        apply Fin.ext
+        simpa using hcon
+      have hmem_tail := List.getElem_mem_tail (List.ofFn e)
+        (by omega : j.val ≠ 0) (by rw [List.length_ofFn]; exact j.isLt)
+      have hget := hm_get' j
+      rw [← hget]
+      exact List.mem_append.mpr (Or.inl hmem_tail)
+  have hthree : 3 ≤ l.length - 1 := by omega
+  exact SimpleGraph.IsHamiltonian.of_cyclic_list G l hlne hclosed hchain_l hnodup hmem
+    hthree
 
 private theorem hamiltonian_of_complete {W : Type*} [Fintype W] [DecidableEq W]
     (G : SimpleGraph W)

@@ -8,8 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 import Mathlib.LinearAlgebra.Matrix.Block
+import Mathlib.Tactic.LinearCombination
+import MathlibExt.Combinatorics.Words.LyndonWord
 
 namespace MetaMathlibExt
 
@@ -445,6 +449,230 @@ theorem Matrix.det_toeplitzHessenberg_eq_sum_compositions {R : Type*}
       (-a 0) ^ (n - c.length) *
         Finset.univ.prod (fun r : Fin c.length => a (c.blocksFun r))) :=
   Matrix.det_toeplitzHessenberg_eq_sum_compositions_general n a
+
+
+/-! ### The Toeplitz–Hessenberg determinant and Trudi's partition sum -/
+
+/-- The determinant of the `n × n` Toeplitz-Hessenberg matrix `A_n(a_0; a_1, …, a_n)`, with entry
+`a (i + 1 - j)` in row `i`, column `j` for `j ≤ i + 1` (so `a 0` on the superdiagonal) and `0`
+above the superdiagonal. The `0 × 0` determinant is `1`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Section 2, display
+(1) and the notation `D_±`. -/
+def toeplitzHessenbergDet {R : Type*} [CommRing R] (a : ℕ → R) (n : ℕ) : R :=
+  (Matrix.of fun i j : Fin n =>
+    if (j : ℕ) ≤ (i : ℕ) + 1 then a ((i : ℕ) + 1 - (j : ℕ)) else 0).det
+
+/-- `det A_1 = a_1`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Section 2,
+display (1). -/
+theorem toeplitzHessenbergDet_one {R : Type*} [CommRing R] (a : ℕ → R) :
+    toeplitzHessenbergDet a 1 = a 1 := by
+  rw [toeplitzHessenbergDet, Matrix.det_fin_one]
+  simp
+
+/-- `det A_2 = a_1² - a_0 a_2`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Section 2,
+display (1). -/
+theorem toeplitzHessenbergDet_two {R : Type*} [CommRing R] (a : ℕ → R) :
+    toeplitzHessenbergDet a 2 = a 1 ^ 2 - a 0 * a 2 := by
+  rw [toeplitzHessenbergDet, Matrix.det_fin_two]
+  simp
+  ring
+
+/-- Trudi's formula in composition form: `det A_n = ∑_{c ⊨ n} (-a_0)^{n - ℓ(c)} ∏ a_{c_i}`
+(proved in `MathlibExt/LinearAlgebra/Matrix/TrudiBrioschiDeterminant.lean`).
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 and
+Section 3 (the composition form of the determinant). -/
+theorem toeplitzHessenbergDet_eq_sum_compositions {R : Type*} [CommRing R] (a : ℕ → R)
+    (n : ℕ) :
+    toeplitzHessenbergDet a n =
+      ∑ c : Composition n, (-a 0) ^ (n - c.length) * ∏ r : Fin c.length, a (c.blocksFun r) :=
+  Matrix.det_toeplitzHessenberg_eq_sum_compositions_general n a
+
+/-- The partition sum of Trudi's formula:
+`∑_{α₁ + 2α₂ + ⋯ + nαₙ = n} s^{|α|} m_n(α) a_1^{α₁} ⋯ a_n^{αₙ}` with `|α| = ∑ αᵢ` and
+`m_n(α) = |α|!/(α₁! ⋯ αₙ!)`; `α` is indexed by `Fin n` (0-based, `α i` is the multiplicity of the
+part `i + 1`).
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 (notation
+`α̃`, `|α|`, `m_n(α)`). -/
+def trudiPartitionSum {R : Type*} [CommSemiring R] (s : R) (a : ℕ → R) (n : ℕ) : R :=
+  ∑ α ∈ (Fintype.piFinset fun _ : Fin n => Finset.range (n + 1)).filter
+      (fun α => ∑ i : Fin n, ((i : ℕ) + 1) * α i = n),
+    s ^ (∑ i : Fin n, α i) * (Nat.multinomial Finset.univ α : R) *
+      ∏ i : Fin n, a ((i : ℕ) + 1) ^ α i
+
+
+variable {n : ℕ}
+
+private def compContent (c : Composition n) : Fin n → ℕ := fun i => c.blocks.count ((i : ℕ) + 1)
+
+private lemma sum_map_eq_sum_count {M : Type*} [AddCommMonoid M] (l : List ℕ)
+    (hl : ∀ b ∈ l, 1 ≤ b ∧ b ≤ n) (f : ℕ → M) :
+    (l.map f).sum = ∑ i : Fin n, l.count ((i : ℕ) + 1) • f ((i : ℕ) + 1) := by
+  classical
+  rw [Finset.sum_list_map_count, Fin.sum_univ_eq_sum_range (fun i => l.count (i + 1) • f (i + 1))]
+  have hsub : l.toFinset ⊆ Finset.range (n + 1) := fun b hb => by
+    have := hl b (List.mem_toFinset.1 hb); simp only [Finset.mem_range]; omega
+  rw [Finset.sum_subset hsub (fun m _ hm => by
+    rw [List.count_eq_zero_of_not_mem (fun h => hm (List.mem_toFinset.2 h)), zero_smul]),
+    Finset.sum_range_succ']
+  have h0 : l.count 0 = 0 := List.count_eq_zero_of_not_mem (fun h => by have := hl 0 h; omega)
+  rw [h0, zero_smul, add_zero]
+
+private lemma prod_map_eq_prod_count {M : Type*} [CommMonoid M] (l : List ℕ)
+    (hl : ∀ b ∈ l, 1 ≤ b ∧ b ≤ n) (f : ℕ → M) :
+    (l.map f).prod = ∏ i : Fin n, f ((i : ℕ) + 1) ^ l.count ((i : ℕ) + 1) := by
+  classical
+  rw [Finset.prod_list_map_count, Fin.prod_univ_eq_prod_range (fun i => f (i + 1) ^ l.count (i + 1))]
+  have hsub : l.toFinset ⊆ Finset.range (n + 1) := fun b hb => by
+    have := hl b (List.mem_toFinset.1 hb); simp only [Finset.mem_range]; omega
+  rw [Finset.prod_subset hsub (fun m _ hm => by
+    rw [List.count_eq_zero_of_not_mem (fun h => hm (List.mem_toFinset.2 h)), pow_zero]),
+    Finset.prod_range_succ']
+  have h0 : l.count 0 = 0 := List.count_eq_zero_of_not_mem (fun h => by have := hl 0 h; omega)
+  rw [h0, pow_zero, mul_one]
+
+private lemma blocks_bounds (c : Composition n) : ∀ b ∈ c.blocks, 1 ≤ b ∧ b ≤ n := fun _ hb =>
+  ⟨c.one_le_blocks hb, c.blocks_sum ▸ List.le_sum_of_mem hb⟩
+
+private lemma card_compContent_fiber (α : Fin n → ℕ)
+    (hα : ∑ i : Fin n, ((i : ℕ) + 1) * α i = n) :
+    (Finset.univ.filter fun c : Composition n => compContent c = α).card =
+      Nat.multinomial Finset.univ α := by
+  classical
+  rw [← card_wordsOfContent_eq_multinomial, ← Fintype.card_subtype, Fintype.card_eq_nat_card,
+    Fintype.card_eq_nat_card]
+  have hg : Function.Injective (fun i : Fin n => (i : ℕ) + 1) := fun i j h =>
+    Fin.ext (by simpa using h)
+  have hb : ∀ w : List (Fin n), ∀ b ∈ w.map (fun i : Fin n => (i : ℕ) + 1), 1 ≤ b ∧ b ≤ n :=
+    fun w b hb => by obtain ⟨i, -, rfl⟩ := List.mem_map.1 hb; exact ⟨by omega, by omega⟩
+  let f : {w : List (Fin n) // wittWordContent w = α} → {c : Composition n // compContent c = α} :=
+    fun w =>
+    ⟨{ blocks := w.1.map (fun i : Fin n => (i : ℕ) + 1)
+       blocks_pos := fun hb' => (hb w.1 _ hb').1
+       blocks_sum := by
+         have key := sum_map_eq_sum_count (w.1.map (fun i : Fin n => (i : ℕ) + 1)) (hb w.1) id
+         rw [List.map_id] at key
+         refine key.trans (Eq.trans ?_ hα)
+         refine Finset.sum_congr rfl fun i _ => ?_
+         have hi : w.1.count i = α i := congrFun w.2 i
+         rw [List.count_map_of_injective _ _ hg, hi, smul_eq_mul, mul_comm]; rfl },
+     by
+       funext i
+       have hi : w.1.count i = α i := congrFun w.2 i
+       change (w.1.map (fun i : Fin n => (i : ℕ) + 1)).count ((i : ℕ) + 1) = α i
+       rw [List.count_map_of_injective _ _ hg, hi]⟩
+  have hbij : Function.Bijective f := by
+    refine ⟨fun w v h => ?_, fun ⟨c, hc⟩ => ?_⟩
+    · have h1 := congrArg (fun x => x.1.blocks) h
+      exact Subtype.ext ((List.map_injective_iff.2 hg) h1)
+    · have hlt : ∀ b ∈ c.blocks, b - 1 < n := fun b hb => by
+        have := blocks_bounds c b hb; omega
+      let w : List (Fin n) := c.blocks.pmap (fun b hb => (⟨b - 1, hb⟩ : Fin n)) hlt
+      have hw : w.map (fun i : Fin n => (i : ℕ) + 1) = c.blocks := by
+        simp only [w, List.map_pmap]
+        rw [List.pmap_eq_self]
+        intro b hb
+        have := blocks_bounds c b hb; omega
+      refine ⟨⟨w, ?_⟩, ?_⟩
+      · funext i
+        change w.count i = α i
+        rw [← List.count_map_of_injective _ _ hg, hw, ← hc]; rfl
+      · apply Subtype.ext
+        apply Composition.ext
+        exact hw
+  exact (Nat.card_eq_of_bijective f hbij).symm
+
+/-- Trudi's partition sum equals the composition sum weighted by `s` per part:
+`∑_{α̃ = n} s^{|α|} m_n(α) a_1^{α₁} ⋯ a_n^{αₙ} = ∑_{c ⊨ n} s^{ℓ(c)} ∏ a_{c_i}`. The multinomial
+coefficient `m_n(α)` counts the compositions whose part multiplicities are `α`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 and the
+composition reading of `det(A_n)` in Section 3. -/
+theorem trudiPartitionSum_eq_sum_compositions {R : Type*} [CommSemiring R] (s : R) (a : ℕ → R) (n : ℕ) :
+    trudiPartitionSum s a n =
+      ∑ c : Composition n, s ^ c.length * ∏ r : Fin c.length, a (c.blocksFun r) := by
+  classical
+  have hterm : ∀ c : Composition n, s ^ c.length * ∏ r : Fin c.length, a (c.blocksFun r) =
+      s ^ (∑ i, compContent c i) * ∏ i : Fin n, a ((i : ℕ) + 1) ^ compContent c i := by
+    intro c
+    have hprod : ∏ r : Fin c.length, a (c.blocksFun r) = (c.blocks.map a).prod := by
+      rw [← List.prod_ofFn, ← c.ofFn_blocksFun, List.map_ofFn]; rfl
+    have hlen : c.length = ∑ i, compContent c i := by
+      have := sum_map_eq_sum_count c.blocks (blocks_bounds c) (fun _ => (1 : ℕ))
+      simpa [compContent] using this
+    rw [hprod, prod_map_eq_prod_count c.blocks (blocks_bounds c), hlen]; rfl
+  have hmaps : ∀ c ∈ (Finset.univ : Finset (Composition n)),
+      compContent c ∈ (Fintype.piFinset fun _ : Fin n => Finset.range (n + 1)).filter
+        (fun α => ∑ i : Fin n, ((i : ℕ) + 1) * α i = n) := by
+    intro c _
+    refine Finset.mem_filter.2 ⟨Fintype.mem_piFinset.2 fun i => Finset.mem_range.2 ?_, ?_⟩
+    · exact Nat.lt_succ_of_le ((List.count_le_length).trans c.length_le)
+    · have := sum_map_eq_sum_count c.blocks (blocks_bounds c) id
+      rw [List.map_id, c.blocks_sum] at this
+      refine Eq.trans ?_ this.symm
+      refine Finset.sum_congr rfl fun i _ => ?_
+      simp [compContent, mul_comm]
+  rw [Finset.sum_congr rfl (fun c _ => hterm c), ← Finset.sum_fiberwise_of_maps_to hmaps, trudiPartitionSum]
+  refine Finset.sum_congr rfl fun α hα => ?_
+  rw [Finset.sum_congr rfl (g := fun _ => s ^ (∑ i, α i) * ∏ i : Fin n, a ((i : ℕ) + 1) ^ α i)
+      (fun c hc => by rw [(Finset.mem_filter.1 hc).2]),
+    Finset.sum_const, card_compContent_fiber α (Finset.mem_filter.1 hα).2, nsmul_eq_mul]
+  ring
+
+
+/-- Brioschi's case `a_0 = 1` of Trudi's formula: `det A_n = (-1)^n ∑_{α̃ = n} (-1)^{|α|} m_n(α)
+a_1^{α₁} ⋯ a_n^{αₙ}`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 with
+`a_0 = 1` (the sign `D_+`). -/
+theorem toeplitzHessenbergDet_eq_neg_one_pow_mul_trudiPartitionSum {R : Type*} [CommRing R]
+    (a : ℕ → R) (ha : a 0 = 1) (n : ℕ) :
+    toeplitzHessenbergDet a n = (-1) ^ n * trudiPartitionSum (-1) a n := by
+  rw [toeplitzHessenbergDet_eq_sum_compositions, trudiPartitionSum_eq_sum_compositions,
+    Finset.mul_sum, ha]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le c.length_le
+  have hsq : ((-1 : R) ^ c.length) ^ 2 = 1 := by
+    rw [← pow_mul, mul_comm, pow_mul]; simp
+  have hn : n - c.length = k := by omega
+  rw [hn]
+  have hpow : (-1 : R) ^ n = (-1) ^ c.length * (-1) ^ k := by rw [← pow_add, ← hk]
+  rw [hpow]
+  linear_combination (-(-1 : R) ^ k * ∏ r : Fin c.length, a (c.blocksFun r)) * hsq
+
+/-- The case `a_0 = -1` of Trudi's formula: `det A_n = ∑_{α̃ = n} m_n(α) a_1^{α₁} ⋯ a_n^{αₙ}`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1 with
+`a_0 = -1` (the sign `D_-`). -/
+theorem toeplitzHessenbergDet_eq_trudiPartitionSum_one {R : Type*} [CommRing R] (a : ℕ → R)
+    (ha : a 0 = -1) (n : ℕ) :
+    toeplitzHessenbergDet a n = trudiPartitionSum 1 a n := by
+  rw [toeplitzHessenbergDet_eq_sum_compositions, trudiPartitionSum_eq_sum_compositions, ha]
+  simp
+
+/-- With all weights `1`, the partition sum for `n = 4` counts the `8` compositions of `4`; with
+`s = -1` and `a_i = i`, the sum for `n = 3` is `-1 + 4 - 3 = 0`.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 1. -/
+theorem trudiPartitionSum_examples :
+    trudiPartitionSum (1 : ℤ) (fun _ => 1) 4 = 8 ∧
+      trudiPartitionSum (-1 : ℤ) (fun i => i) 3 = 0 := by
+  decide
 
 end
 

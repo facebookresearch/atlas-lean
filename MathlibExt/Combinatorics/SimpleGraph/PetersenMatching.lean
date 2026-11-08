@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Matching
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Combinatorics.SimpleGraph.Tutte
 import Mathlib.Order.CompletePartialOrder
 

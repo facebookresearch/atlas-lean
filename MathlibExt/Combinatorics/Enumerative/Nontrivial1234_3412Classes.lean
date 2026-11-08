@@ -9547,7 +9547,7 @@ set_option maxHeartbeats 1000000 in
 -- Kernel reduction over all 5,040 codes needs extra depth and heartbeats.
 private theorem ntCertificate7 :
     (List.permutations' (List.range 7)).all ntOk7 = true := by
-  rfl
+  decide +kernel
 
 private lemma ntCode_even7 : ntCode (ntEven 7) = List.range 7 := by
   decide
@@ -10403,49 +10403,49 @@ set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate0 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 0) = true := by
-  rfl
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate1 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 1) = true := by
-  rfl
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate2 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 2) = true := by
-  rfl
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate3 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 3) = true := by
-  rfl
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate4 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 4) = true := by
-  rfl
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate5 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 5) = true := by
-  rfl
+  decide +kernel
 
 set_option maxRecDepth 100000 in
 set_option maxHeartbeats 3000000 in
 -- Each slice kernel-checks 5,040 deletion witnesses and needs extra reduction fuel.
 private theorem ntDeletionCertificate6 :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk 6) = true := by
-  rfl
+  decide +kernel
 
 private lemma ntDeletionCertificate (v : Fin 7) :
     (List.permutations' (List.range 7)).all (ntDeletionSliceOk v.val) = true := by

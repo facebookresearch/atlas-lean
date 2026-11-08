@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Algebra.Polynomial.Lifts
+import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.RingTheory.IsAdjoinRoot
 import MathlibExt.RingTheory.LocalRing.Etale
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.LocalRing.Etale

@@ -31,4 +31,19 @@ example (n : ℕ) : lucasU fibonacciLucasParams n = (Nat.fib n : ℤ) :=
 example (n : ℕ) : lucasV fibonacciLucasParams n = (lucasNumber n : ℤ) :=
   lucasV_fibonacciLucasParams n
 
+example (params : LucasSequenceParams) (n : ℕ) :
+    lucasU params (n + 2) =
+      params.p * lucasU params (n + 1) - params.q * lucasU params n :=
+  lucasU_add_two params n
+
+example (params : LucasSequenceParams) (n : ℕ) :
+    lucasU params (n + 1) ^ 2 - lucasU params n * lucasU params (n + 2) =
+      params.q ^ n :=
+  lucasU_cassini params n
+
+example :
+    lucasU fibonacciLucasParams 5 ^ 2 -
+        lucasU fibonacciLucasParams 4 * lucasU fibonacciLucasParams 6 = 1 := by
+  decide
+
 end MetaMathlibExt

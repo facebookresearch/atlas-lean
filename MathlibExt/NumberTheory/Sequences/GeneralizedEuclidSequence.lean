@@ -25,6 +25,7 @@ import Mathlib.Algebra.GroupWithZero.Units.Fintype
 import Mathlib.Tactic.FieldSimp
 import Mathlib.NumberTheory.JacobiSum.Basic
 import Mathlib.NumberTheory.LegendreSymbol.Basic
+import Mathlib.NumberTheory.MulChar.Lemmas
 import Mathlib.RingTheory.ZMod.UnitsCyclic
 import Mathlib.Algebra.Pointwise.Stabilizer
 import Mathlib.Data.Nat.Factorization.Basic

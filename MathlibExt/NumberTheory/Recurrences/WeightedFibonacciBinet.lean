@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Complex.Norm
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.EuclideanDomain.Basic
 import Mathlib.Algebra.EuclideanDomain.Field
+import Mathlib.Algebra.Polynomial.Degree.Domain
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal

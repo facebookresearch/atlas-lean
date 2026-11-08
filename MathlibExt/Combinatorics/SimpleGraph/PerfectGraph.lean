@@ -34,7 +34,7 @@ def IsPerfect {V : Type*} [Fintype V] (G : SimpleGraph V) : Prop :=
   ∀ (s : Set V), (G.induce s).chromaticNumber = ((G.induce s).cliqueNum : ℕ∞)
 
 /-- Gasparian's condition (P): every finset satisfies `card s ≤ alpha * omega`. -/
-private def PerfIneq {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) : Prop :=
+def PerfIneq {V : Type*} [Fintype V] (G : SimpleGraph V) : Prop :=
   ∀ s : Finset V, s.card ≤ (G.induce (↑s : Set V)).indepNum * (G.induce (↑s : Set V)).cliqueNum
 
 /-- Complement commutes with induce. -/
@@ -157,9 +157,11 @@ private lemma cliqueNum_mono_finset {V : Type*} [Finite V] (G : SimpleGraph V)
   omega
 
 /-- Step 1 (perfect implies P): an omega-coloring has independent color
-classes of size at most alpha. -/
-private lemma perfect_implies_ineq {V : Type*} [Fintype V] [DecidableEq V]
+classes of size at most alpha. Every perfect graph satisfies the `alpha * omega`
+bound on every induced finset. -/
+theorem perfect_implies_ineq {V : Type*} [Fintype V]
     (G : SimpleGraph V) (hG : IsPerfect G) : PerfIneq G := by
+  classical
   intro s
   let H := G.induce (↑s : Set V)
   have hperf : H.chromaticNumber = ((H.cliqueNum : ℕ) : ℕ∞) := hG (↑s : Set V)
@@ -167,7 +169,6 @@ private lemma perfect_implies_ineq {V : Type*} [Fintype V] [DecidableEq V]
     rw [← SimpleGraph.chromaticNumber_le_iff_colorable]
     rw [hperf]
   obtain ⟨C⟩ := hcol
-  classical
   let f : (↥(↑s : Set V)) → Fin H.cliqueNum := fun x => C x
   have hindep : ∀ b : Fin H.cliqueNum,
       H.IsIndepSet (↑(Finset.univ.filter (fun a => f a = b)) : Set (↥(↑s : Set V))) := by
@@ -198,8 +199,9 @@ private lemma perfect_implies_ineq {V : Type*} [Fintype V] [DecidableEq V]
     _ ≤ H.indepNum * H.cliqueNum := by gcongr
 
 /-- (P) is symmetric under complement, since alpha and omega swap. -/
-private lemma ineq_compl_iff {V : Type*} [Fintype V] [DecidableEq V]
+private lemma ineq_compl_iff {V : Type*} [Fintype V]
     (G : SimpleGraph V) : PerfIneq G ↔ PerfIneq Gᶜ := by
+  classical
   constructor
   · intro h s
     have hs := h s
@@ -553,10 +555,10 @@ private lemma image_eq_erase_range_of_injOn {V : Type*}
 /-- Step 2: (P) implies perfect, by strong induction using Gasparian's
 rank argument. Part (a) is `step2a_aux`; parts (b)–(d) build the
 incidence family, and part (e) is `card_le_of_incid`. -/
-private lemma ineq_implies_perfect {V : Type*} [Fintype V] [DecidableEq V]
+private lemma ineq_implies_perfect {V : Type*} [Fintype V]
     (G : SimpleGraph V) (hP : PerfIneq G) : IsPerfect G := by
-  intro s
   classical
+  intro s
   let t : Finset V := s.toFinset
   have ht : (↑t : Set V) = s := Set.coe_toFinset s
   rw [← ht]

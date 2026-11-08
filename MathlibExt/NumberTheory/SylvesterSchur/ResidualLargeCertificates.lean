@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Tactic.NormNum.Prime
+
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 

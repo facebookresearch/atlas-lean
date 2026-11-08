@@ -12,6 +12,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Int.Star

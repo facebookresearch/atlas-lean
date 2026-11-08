@@ -12,6 +12,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Data.Multiset.Sort
 
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.GeomSum
 import Mathlib.Data.List.Forall2
 import Mathlib.Data.List.Lex

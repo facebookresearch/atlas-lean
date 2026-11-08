@@ -384,7 +384,7 @@ private theorem dpc_truncation_mem_closedBall_and_dist
       rw [hx]
       exact hbnd x
     exact Lp.norm_le_of_ae_bound (C := (C : ℝ)) (by positivity) hfC
-  · have hAind : MemLp (A.indicator ⇑v) 1 μ := MemLp.indicator hAmeas (Lp.memLp v)
+  · have hAind : MemLp (A.indicator ⇑v) 1 μ := MemLp.indicator hAmeas.nullMeasurableSet (Lp.memLp v)
     have heq : v - dpcLpTwoToLpOneCLM (hGmem.toLp (B.indicator ⇑v)) =
         hAind.toLp _ := by
       apply Lp.ext
@@ -568,9 +568,11 @@ private theorem dpc_exists_disjoint_of_small_sets
       (∀ j, MeasurableSet (C j)) ∧ Pairwise (Function.onFun Disjoint C) ∧
       ∀ j, η / 2 ≤ ∫ x in C j, |v (φ j) x| ∂μ := by
   have hδ : ∀ n, ∃ δ : ℝ≥0∞, δ > 0 ∧ ∀ t : Set α, MeasurableSet t → μ t ≤ δ →
-      eLpNorm (t.indicator (v n)) 1 μ ≤ ENNReal.ofReal (η / 2) := fun n =>
-    (hv n).eLpNorm_indicator_le le_rfl ENNReal.one_ne_top
+      eLpNorm (t.indicator (v n)) 1 μ ≤ ENNReal.ofReal (η / 2) := by
+    intro n
+    obtain ⟨δ, hδpos, hδ⟩ := (hv n).eLpNorm_indicator_le le_rfl ENNReal.one_ne_top
       (ENNReal.ofReal_pos.mpr (half_pos hη))
+    exact ⟨δ, hδpos, fun t ht => hδ t ht.nullMeasurableSet⟩
   choose δ hδ using hδ
   obtain ⟨φ, hφm, hφb⟩ := dpc_exists_seq_small_measure hμ (fun x => (hδ x).1)
   have hUmeas : ∀ j, MeasurableSet (⋃ l, s (φ (l + j + 1))) :=
@@ -1184,9 +1186,9 @@ private theorem dpc_uniformIntegrable_of_isCompact_closure_Lp
     have hle : μ (s (ψ k)) ≤ δ := hμk.trans hk
     have hcongr : eLpNorm (⇑g) 1 (μ.restrict (s (ψ k)))
         = eLpNorm ((s (ψ k)).indicator ⇑g) 1 μ :=
-      (eLpNorm_indicator_eq_eLpNorm_restrict (hs _)).symm
+      (eLpNorm_indicator_eq_eLpNorm_restrict (hs _).nullMeasurableSet).symm
     rw [hcongr]
-    exact hδ _ (hs _) hle
+    exact hδ _ (hs _).nullMeasurableSet hle
   have hae_eq : ∀ k, (⇑(u (i (ψ k))) : α → ℝ) =ᵐ[μ.restrict (s (ψ k))]
       (⇑(u (i (ψ k)) - g) + ⇑g) := by
     intro k

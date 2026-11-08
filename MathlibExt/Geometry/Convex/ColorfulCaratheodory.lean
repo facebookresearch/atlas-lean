@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Convex.Caratheodory

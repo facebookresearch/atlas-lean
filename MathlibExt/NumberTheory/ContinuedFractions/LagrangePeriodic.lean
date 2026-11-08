@@ -18,6 +18,7 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Data.Int.Star
+import Mathlib.Data.Seq.Basic
 import Mathlib.NumberTheory.Real.Irrational
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith

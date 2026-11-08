@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Finset.Basic
+
 public import Mathlib.Data.Finset.Defs
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.Push

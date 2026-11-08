@@ -214,7 +214,7 @@ theorem burnside_paqb_of_simple_prime
           have hmem : g ∈ (⊥ : Subgroup H) := hcon ▸ hcenter
           exact Subgroup.mem_bot.mp hmem
         have hcenterTop :=
-          (IsSimpleGroup.eq_bot_or_eq_top_of_normal _ inferInstance).resolve_left
+          (IsSimpleGroup.eq_bot_or_eq_top_of_normal _).resolve_left
             hcenterBot
         have hcomm : ∀ x y : H, x * y = y * x := by
           intro x y

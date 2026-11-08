@@ -359,7 +359,7 @@ private theorem chartRep_of_isSmoothEmbedding
   · have hne : ((⊤ : ℕ∞) : ℕ∞ω) ≠ 0 := by simp
     have hmd : MDiffAt e x0 :=
       (he.contMDiff.contMDiffAt (x := x0)).mdifferentiableAt hne
-    have hinj := he.isImmersion.injective_mfderiv hne x0
+    have hinj := he.isImmersion.mfderiv_injective hne x0
     rw [MDifferentiableAt.mfderiv hmd] at hinj
     rw [ModelWithCorners.range_eq_univ, fderivWithin_univ] at hinj
     have hmodel : extChartAt 𝓘(ℝ, F) (e x0) = PartialEquiv.refl F :=

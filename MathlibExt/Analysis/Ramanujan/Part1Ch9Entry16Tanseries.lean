@@ -16,7 +16,8 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Filter.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import Mathlib.Topology.Basic
-import Mathlib.Analysis.SpecialFunctions.Integrals.LogTrigonometric
+import Mathlib.Analysis.SpecialFunctions.Integrals.Log
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic

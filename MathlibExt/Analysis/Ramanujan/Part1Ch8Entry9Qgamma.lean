@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Convex.Deriv
+
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs

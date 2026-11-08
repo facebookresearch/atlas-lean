@@ -13,6 +13,7 @@ public import MathlibExt.LinearAlgebra.Matrix.UpperHessenbergMatrix
 namespace Matrix
 
 example (n : ℕ) : IsUpperHessenberg (1 : Matrix (Fin n) (Fin n) ℤ) := by
+  rw [isUpperHessenberg_fin_iff]
   intro i j hij
   simp only [one_apply]
   split_ifs

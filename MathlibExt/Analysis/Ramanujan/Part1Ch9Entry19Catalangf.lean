@@ -21,7 +21,8 @@ import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
-import Mathlib.Analysis.SpecialFunctions.Integrals.LogTrigonometric
+import Mathlib.Analysis.SpecialFunctions.Integrals.Log
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.Order.Floor.Semifield
+
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.LSeries.RiemannZeta

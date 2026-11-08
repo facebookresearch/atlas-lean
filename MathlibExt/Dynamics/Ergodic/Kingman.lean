@@ -724,11 +724,11 @@ private theorem kingmanLiminf_ae_iterate_eq
     (f : ℕ → α → ℝ)
     (he : ∀ᵐ x ∂μ, kingmanLiminf f (T x) = kingmanLiminf f x) :
     ∀ᵐ x ∂μ, ∀ k, kingmanLiminf f ((T^[k]) x) = kingmanLiminf f x := by
-  have hq : ∀ k, Measure.QuasiMeasurePreserving (T^[k]) μ μ :=
+  have hq : ∀ k, QuasiMeasurePreserving (T^[k]) μ μ :=
     fun k => (hT.iterate k).quasiMeasurePreserving
   have hall : ∀ᵐ x ∂μ, ∀ k,
       kingmanLiminf f (T ((T^[k]) x)) = kingmanLiminf f ((T^[k]) x) :=
-    MeasureTheory.ae_all_iff.mpr (fun k => (hq k).ae he)
+    MeasureTheory.ae_all_iff.mpr (fun k => MeasureTheory.QuasiMeasurePreserving.ae (hq k) he)
   filter_upwards [hall] with x hx
   intro k
   induction k with

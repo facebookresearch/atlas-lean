@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Matrix.Basic
+public import Mathlib.LinearAlgebra.Matrix.Hessenberg.Defs
 
 /-!
 # Upper Hessenberg matrices
@@ -16,23 +16,15 @@ public import Mathlib.Data.Matrix.Basic
 The definition is recorded from Huilan Li and Trueman MacHenry,
 *Permanents and Determinants, Weighted Isobaric Polynomials, and Integer
 Sequences*, Journal of Integer Sequences 16 (2013), Article 13.3.5.
--/
 
-namespace Matrix
-
-@[expose]
-public section
-
-/-- A square matrix is upper Hessenberg when every entry strictly below its
+A square matrix is upper Hessenberg when every entry strictly below its
 first subdiagonal is zero.
 
 Stable source identifiers: concept `jis_sem_90166bc6652ac1c81120f42f`,
 statement `jis_453961c69e4159797cfa575d`.
+
+This module publicly imports the canonical `Matrix.IsUpperHessenberg` definition.
+It supports any preordered index type with a successor order. On `Fin n`,
+`Matrix.isUpperHessenberg_fin_iff` identifies it with the source condition
+`∀ i j, j.val + 1 < i.val → M i j = 0`.
 -/
-def IsUpperHessenberg {n : ℕ} {R : Type*} [Zero R]
-    (M : Matrix (Fin n) (Fin n) R) : Prop :=
-  ∀ i j, j.val + 1 < i.val → M i j = 0
-
-end
-
-end Matrix

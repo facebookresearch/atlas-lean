@@ -50,12 +50,12 @@ namespace MetaMathlibExt.RandomMultiplicativeFunction
 
 /-- The uniform probability measure on the two integer units `{-1, 1}`. -/
 noncomputable def rademacherMeasure : Measure ℤˣ :=
-  (PMF.uniformOfFintype ℤˣ).toMeasure
+  Measure.uniformOfFinset Finset.univ
 
 noncomputable instance instIsProbabilityMeasureRademacherMeasure :
     IsProbabilityMeasure rademacherMeasure := by
-  unfold rademacherMeasure
-  infer_instance
+  rw [isProbabilityMeasure_iff]
+  simp [rademacherMeasure, Measure.uniformOfFinset, ENNReal.inv_two_add_inv_two]
 
 /-- Every sign has probability `1 / 2` under `rademacherMeasure`. -/
 theorem rademacherMeasure_singleton (x : ℤˣ) :
@@ -69,8 +69,9 @@ theorem rademacherMeasure_singleton (x : ℤˣ) :
       simp [Units.ext_iff]
     rw [h_eq]
     exact h_coe (measurableSet_singleton _)
-  rw [rademacherMeasure, PMF.toMeasure_uniformOfFintype_apply _ hs]
-  simp [Fintype.card_units_int]
+  rw [rademacherMeasure, Measure.uniformOfFinset, Measure.finsetSum_apply]
+  simp_rw [Measure.smul_apply, Measure.dirac_apply' _ hs]
+  rcases Int.units_eq_one_or x with rfl | rfl <;> simp [Set.indicator]
 
 /-- A measurable independent family of random variables, indexed by primes, each with the
 uniform law on the integer units. -/

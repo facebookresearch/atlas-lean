@@ -13,6 +13,7 @@ module
 
 public import Mathlib.Computability.Encoding
 public import MathlibExt.Computability.Complexity
+public import CSLibExt.Logics.Propositional.CNF.Basic
 
 /-!
 # Computational infrastructure for Cook–Levin
@@ -36,15 +37,10 @@ Information Transmission* 9.3 (1973), 265–266.
 
 namespace Cslib.CookLevin
 
-/-- A CNF clause: a list of literals `(variable index, polarity)`. -/
-abbrev CNFClause := List (Nat × Bool)
-
-/-- A CNF formula: a conjunction of clauses. -/
-abbrev CNF := List CNFClause
-
-/-- Boolean satisfiability of a CNF formula: some assignment satisfies every clause. -/
-def CNFSat (φ : CNF) : Prop :=
-  ∃ v : Nat → Bool, ∀ C ∈ φ, ∃ (x : Nat) (b : Bool), (x, b) ∈ C ∧ v x = b
+/- Compatibility aliases: the CNF representation now lives in
+`Cslib.Logic.PL` (`CSLibExt.Logics.Propositional.CNF.Basic`); these keep
+the `Cslib.CookLevin` names resolving to the same constants. -/
+export Cslib.Logic.PL (CNFClause CNF CNFSat)
 
 /-- Read a unary length prefix, returning the length and the unconsumed suffix. -/
 def readUnaryLength : List Bool → Option (Nat × List Bool)

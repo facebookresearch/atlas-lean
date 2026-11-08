@@ -135,5 +135,15 @@ theorem eq_of_zero (O₁ O₂ : Overpartition 0) : O₁ = O₂ := by
   · exact Subsingleton.elim _ _
   · rw [overlines_eq_empty_of_zero (O := O₁), overlines_eq_empty_of_zero (O := O₂)]
 
+/-- `Overpartition n` is finite: it is equivalent to the dependent pairs of a partition of `n`
+and a subset of its distinct part sizes. -/
+instance instFintype (n : ℕ) : Fintype (Overpartition n) :=
+  Fintype.ofEquiv (Σ p : Partition n, p.parts.toFinset.powerset)
+    { toFun := fun x => ⟨x.1, x.2.1, Finset.mem_powerset.mp x.2.2⟩
+      invFun := fun O =>
+        ⟨O.toPartition, ⟨O.overlines, Finset.mem_powerset.mpr O.overlines_subset⟩⟩
+      left_inv := fun _ => rfl
+      right_inv := fun _ => rfl }
+
 end Overpartition
 end Nat

@@ -1024,10 +1024,7 @@ private theorem beta_const (d h u : PowerSeries ℝ) (L : ℕ → ℕ → ℝ)
     rw [map_sub, PowerSeries.coeff_C_mul, hu0, mul_one, hr, sub_self]
   have hXdv : (PowerSeries.X : PowerSeries ℝ) ∣ (v - PowerSeries.C r * u) := by
     rw [PowerSeries.X_dvd_iff, ← PowerSeries.coeff_zero_eq_constantCoeff_apply]
-    have hEq : PowerSeries.coeff 0 (v - PowerSeries.C r * u) =
-        PowerSeries.constantCoeff (v - PowerSeries.C r * u) :=
-      congrFun PowerSeries.coeff_zero_eq_constantCoeff (v - PowerSeries.C r * u)
-    rwa [hvr] at hEq
+    exact hvr
   obtain ⟨w, hw⟩ := hXdv
   refine ⟨PowerSeries.coeff 0 w, fun n => ?_⟩
   have hFavN := hFav (n + 1) (n + 1)
@@ -1151,10 +1148,7 @@ private theorem orthogonal_to_recurrence (d h : PowerSeries ℝ) (L : ℕ → �
     rw [map_sub, PowerSeries.coeff_one, hu0, ite_eq_left rfl, sub_self]
   have hXdv : (PowerSeries.X : PowerSeries ℝ) ∣ (1 - u) := by
     rw [PowerSeries.X_dvd_iff, ← PowerSeries.coeff_zero_eq_constantCoeff_apply]
-    have hEq : PowerSeries.coeff 0 (1 - u) =
-        PowerSeries.constantCoeff (1 - u) :=
-      congrFun PowerSeries.coeff_zero_eq_constantCoeff (1 - u)
-    rwa [h1u] at hEq
+    exact h1u
   obtain ⟨v, hv⟩ := hXdv
   have hα : ∀ n : ℕ, α (n + 1) = PowerSeries.coeff 0 v :=
     alpha_const d h u L hL hu hd0 hu0 hTri hDiag α β v hv hFav

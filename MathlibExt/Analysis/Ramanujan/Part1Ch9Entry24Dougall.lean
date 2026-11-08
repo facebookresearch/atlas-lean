@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.Calculus.ContDiff.Basic

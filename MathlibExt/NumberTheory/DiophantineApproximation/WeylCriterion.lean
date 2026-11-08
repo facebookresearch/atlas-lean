@@ -24,6 +24,7 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Algebra.Order.Floor.Ring
 import Mathlib.Algebra.Order.Floor.Defs
 import Mathlib.Algebra.Order.Floor.Semiring
+import MathlibExt.Topology.ContinuousFunction.IntervalCutoff
 
 open scoped BigOperators
 open Filter Topology
@@ -797,57 +798,8 @@ private lemma wc_all_cont (x : ℕ → ℝ)
     _ = ε := by ring
 
 /-- Trapezoidal bump below the indicator of `[a, b)`. -/
-private noncomputable def wcPhi (a b δ t : ℝ) : ℝ :=
-  max 0 (min 1 (min ((t - a) / δ) ((b - t) / δ)))
-
-private lemma wcPhi_cont (a b δ : ℝ) : Continuous (wcPhi a b δ) := by
-  have h1 : Continuous (fun t : ℝ => (t - a) / δ) :=
-    (continuous_id.sub continuous_const).div_const δ
-  have h2 : Continuous (fun t : ℝ => (b - t) / δ) :=
-    (continuous_const.sub continuous_id).div_const δ
-  unfold wcPhi
-  exact continuous_const.max (continuous_const.min (h1.min h2))
-
-private lemma wcPhi_nonneg (a b δ t : ℝ) : 0 ≤ wcPhi a b δ t :=
-  le_max_left _ _
-
-private lemma wcPhi_le_one (a b δ t : ℝ) : wcPhi a b δ t ≤ 1 :=
-  max_le zero_le_one (min_le_left _ _)
-
-private lemma wcPhi_eq_zero_of_le (a b δ t : ℝ) (hδ : 0 < δ) (ht : t ≤ a) :
-    wcPhi a b δ t = 0 := by
-  unfold wcPhi
-  have h1 : (t - a) / δ ≤ 0 := by
-    rw [div_le_iff₀ hδ, zero_mul]
-    exact sub_nonpos.mpr ht
-  have h2 : min 1 (min ((t - a) / δ) ((b - t) / δ)) ≤ 0 :=
-    le_trans (min_le_right _ _) (le_trans (min_le_left _ _) h1)
-  exact max_eq_left h2
-
-private lemma wcPhi_eq_zero_of_ge (a b δ t : ℝ) (hδ : 0 < δ) (ht : b ≤ t) :
-    wcPhi a b δ t = 0 := by
-  unfold wcPhi
-  have h1 : (b - t) / δ ≤ 0 := by
-    rw [div_le_iff₀ hδ, zero_mul]
-    exact sub_nonpos.mpr ht
-  have h2 : min 1 (min ((t - a) / δ) ((b - t) / δ)) ≤ 0 :=
-    le_trans (min_le_right _ _) (le_trans (min_le_right _ _) h1)
-  exact max_eq_left h2
-
-private lemma wcPhi_eq_one (a b δ t : ℝ) (hδ : 0 < δ)
-    (ha : a + δ ≤ t) (hb : t ≤ b - δ) : wcPhi a b δ t = 1 := by
-  unfold wcPhi
-  have h1 : (1 : ℝ) ≤ (t - a) / δ := by
-    rw [le_div_iff₀ hδ]
-    linarith
-  have h2 : (1 : ℝ) ≤ (b - t) / δ := by
-    rw [le_div_iff₀ hδ]
-    linarith
-  have hmin : (1 : ℝ) ≤ min ((t - a) / δ) ((b - t) / δ) := le_min h1 h2
-  have hmin1 : min (1 : ℝ) (min ((t - a) / δ) ((b - t) / δ)) = 1 :=
-    le_antisymm (min_le_left _ _) (le_min le_rfl hmin)
-  rw [hmin1]
-  exact le_antisymm (max_le zero_le_one le_rfl) (le_max_right _ _)
+private noncomputable abbrev wcPhi (a b δ t : ℝ) : ℝ :=
+  Real.intervalCutoff a b δ t
 
 /-- The bump sum is bounded by the interval count. -/
 private lemma wcPhi_sum_le (x : ℕ → ℝ) (a b δ : ℝ) (hδ : 0 < δ) (N : ℕ) :
@@ -866,7 +818,7 @@ private lemma wcPhi_sum_le (x : ℕ → ℝ) (a b δ : ℝ) (hδ : 0 < δ) (N : 
         ≤ ∑ _n ∈ Finset.filter
             (fun n => a ≤ Int.fract (x n) ∧ Int.fract (x n) < b)
             (Finset.range N), (1 : ℝ) :=
-          Finset.sum_le_sum fun n _ => wcPhi_le_one _ _ _ _
+          Finset.sum_le_sum fun n _ => Real.intervalCutoff_le_one _ _ _ _
       _ = (wcCnt x a b N : ℝ) := by
           simp only [Finset.sum_const, nsmul_eq_mul, mul_one, wcCnt]
   have hzero : ∑ n ∈ Finset.filter
@@ -876,11 +828,11 @@ private lemma wcPhi_sum_le (x : ℕ → ℝ) (a b δ : ℝ) (hδ : 0 < δ) (N : 
     intro n hn
     rw [Finset.mem_filter] at hn
     rcases lt_or_ge (Int.fract (x n)) a with ha | ha
-    · exact wcPhi_eq_zero_of_le a b δ _ hδ (le_of_lt ha)
+    · exact Real.intervalCutoff_eq_zero_of_le a b δ _ hδ (le_of_lt ha)
     · have hb : b ≤ Int.fract (x n) := by
         by_contra hcon
         exact hn.2 ⟨ha, not_le.mp hcon⟩
-      exact wcPhi_eq_zero_of_ge a b δ _ hδ hb
+      exact Real.intervalCutoff_eq_zero_of_ge a b δ _ hδ hb
   rw [← hsplit, hzero, add_zero]
   exact h1
 
@@ -891,7 +843,7 @@ private lemma wcPhi_integral_ge (a b δ : ℝ) (ha0 : 0 ≤ a) (_hab : a < b)
   have huv : a + δ ≤ b - δ := by linarith
   have h0u : (0 : ℝ) ≤ a + δ := by linarith [ha0, le_of_lt hδ]
   have hv1 : b - δ ≤ 1 := by linarith [hb1, le_of_lt hδ]
-  have hcont : Continuous (wcPhi a b δ) := wcPhi_cont _ _ _
+  have hcont : Continuous (wcPhi a b δ) := Real.intervalCutoff_continuous _ _ _
   have e1 := intervalIntegral.integral_add_adjacent_intervals
     ((hcont.intervalIntegrable (μ := MeasureTheory.volume)) 0 (a + δ))
     ((hcont.intervalIntegrable (μ := MeasureTheory.volume)) (a + δ) (b - δ))
@@ -903,7 +855,7 @@ private lemma wcPhi_integral_ge (a b δ : ℝ) (ha0 : 0 ≤ a) (_hab : a < b)
       ((continuous_const.intervalIntegrable (μ := MeasureTheory.volume) 0 (a + δ)) :
         IntervalIntegrable (fun _ : ℝ => (0 : ℝ)) MeasureTheory.volume 0 (a + δ))
       (hcont.intervalIntegrable (μ := MeasureTheory.volume) 0 (a + δ))
-      (fun t _ => wcPhi_nonneg a b δ t)
+      (fun t _ => Real.intervalCutoff_nonneg a b δ t)
     have h0 : (∫ t in (0 : ℝ)..(a + δ), (fun _ : ℝ => (0 : ℝ)) t) = 0 := by
       simp only [intervalIntegral.integral_zero]
     rwa [h0] at h
@@ -912,7 +864,7 @@ private lemma wcPhi_integral_ge (a b δ : ℝ) (ha0 : 0 ≤ a) (_hab : a < b)
       ((continuous_const.intervalIntegrable (μ := MeasureTheory.volume) (b - δ) 1) :
         IntervalIntegrable (fun _ : ℝ => (0 : ℝ)) MeasureTheory.volume (b - δ) 1)
       (hcont.intervalIntegrable (μ := MeasureTheory.volume) (b - δ) 1)
-      (fun t _ => wcPhi_nonneg a b δ t)
+      (fun t _ => Real.intervalCutoff_nonneg a b δ t)
     have h0 : (∫ t in (b - δ)..(1 : ℝ), (fun _ : ℝ => (0 : ℝ)) t) = 0 := by
       simp only [intervalIntegral.integral_zero]
     rwa [h0] at h
@@ -926,7 +878,7 @@ private lemma wcPhi_integral_ge (a b δ : ℝ) (ha0 : 0 ≤ a) (_hab : a < b)
       (fun t ht => by
         rw [Set.mem_Icc] at ht
         exact le_of_eq
-          (wcPhi_eq_one a b δ t hδ ht.1 ht.2).symm)
+          (Real.intervalCutoff_eq_one a b δ t hδ ht.1 ht.2).symm)
     have h1 : (∫ t in (a + δ)..(b - δ), (fun _ : ℝ => (1 : ℝ)) t) =
         (b - δ) - (a + δ) := by
       simp only [intervalIntegral.integral_const, smul_eq_mul, mul_one]
@@ -940,10 +892,12 @@ private noncomputable def wcF (a b δ : ℝ) (ha0 : 0 ≤ a) (hb1 : b ≤ 1)
     (hδ : 0 < δ) : C(AddCircle (1 : ℝ), ℂ) :=
   ⟨AddCircle.liftIco 1 0 (fun t => ((wcPhi a b δ t : ℝ) : ℂ)), by
     apply AddCircle.liftIco_zero_continuous
-    · change ((wcPhi a b δ 0 : ℝ) : ℂ) = ((wcPhi a b δ 1 : ℝ) : ℂ)
-      rw [wcPhi_eq_zero_of_le a b δ 0 hδ ha0,
-        wcPhi_eq_zero_of_ge a b δ 1 hδ hb1]
-    · exact (Complex.continuous_ofReal.comp (wcPhi_cont a b δ)).continuousOn⟩
+    · change ((Real.intervalCutoff a b δ 0 : ℝ) : ℂ) =
+        ((Real.intervalCutoff a b δ 1 : ℝ) : ℂ)
+      rw [Real.intervalCutoff_eq_zero_of_le a b δ 0 hδ ha0,
+        Real.intervalCutoff_eq_zero_of_ge a b δ 1 hδ hb1]
+    · exact (Complex.continuous_ofReal.comp
+        (Real.intervalCutoff_continuous a b δ)).continuousOn⟩
 
 private lemma wcF_coe (a b δ : ℝ) (ha0 : 0 ≤ a) (hb1 : b ≤ 1) (hδ : 0 < δ)
     (t : ℝ) (ht : t ∈ Set.Ico (0 : ℝ) 1) :
@@ -995,8 +949,10 @@ private lemma wcF_integral (a b δ : ℝ) (ha0 : 0 ≤ a) (hb1 : b ≤ 1) (hδ :
       ((wcPhi a b δ 1 : ℝ) : ℂ)
     rw [h10]
     rw [wcF_coe a b δ ha0 hb1 hδ 0 ⟨le_refl _, one_pos⟩]
-    rw [wcPhi_eq_zero_of_le a b δ 0 hδ ha0,
-      wcPhi_eq_zero_of_ge a b δ 1 hδ hb1]
+    change ((Real.intervalCutoff a b δ 0 : ℝ) : ℂ) =
+      ((Real.intervalCutoff a b δ 1 : ℝ) : ℂ)
+    rw [Real.intervalCutoff_eq_zero_of_le a b δ 0 hδ ha0,
+      Real.intervalCutoff_eq_zero_of_ge a b δ 1 hδ hb1]
   · exact wcF_coe a b δ ha0 hb1 hδ t
       ⟨ht.1, lt_of_le_of_ne ht.2 ht1⟩
 

@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Character
 public import Mathlib.Algebra.Group.Conj
 public import Mathlib.Data.Complex.Basic
 
+import Mathlib.Algebra.Category.FGModuleCat.Abelian
+import Mathlib.RepresentationTheory.Maschke
 import Mathlib.Algebra.Module.Shrink
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Triangularizable

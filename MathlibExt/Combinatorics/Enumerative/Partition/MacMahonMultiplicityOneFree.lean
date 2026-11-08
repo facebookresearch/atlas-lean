@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Combinatorics.Enumerative.Partition.Glaisher
 import Mathlib.Data.Int.Star

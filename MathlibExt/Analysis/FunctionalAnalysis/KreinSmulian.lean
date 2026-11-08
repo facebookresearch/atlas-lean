@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Normed.Module.DoubleDual
+import Mathlib.Topology.Algebra.InfiniteSum.Module
 import Mathlib.Analysis.LocallyConvex.Separation
 import Mathlib.Analysis.Normed.Group.InfiniteSum
 import Mathlib.Analysis.Normed.Module.Convex

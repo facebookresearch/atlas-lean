@@ -451,6 +451,9 @@ private lemma centralizer_eq_range {A : Type*} [DivisionRing A] [Algebra ℝ A]
     [FiniteDimensional ℝ A] {i : A} (hi : i * i = -1) (y : A)
     (hy : y * i = i * y) : y ∈ AlgHom.range (complexHom hi) := by
   set T : Subalgebra ℝ A := Algebra.adjoin ℝ ({i, y} : Set A) with hT
+  let : Algebra ℝ T := T.algebra
+  let : Module ℝ T := Algebra.toModule
+  let : FiniteDimensional ℝ T := FiniteDimensional.finiteDimensional_subalgebra T
   have hiT : i ∈ T :=
     Algebra.subset_adjoin (Set.mem_insert i {y})
   have hcommT : ∀ x ∈ T, ∀ z ∈ T, Commute x z :=

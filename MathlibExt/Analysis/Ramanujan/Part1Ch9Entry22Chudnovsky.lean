@@ -17,7 +17,9 @@ public import MathlibExt.Analysis.Ramanujan.Part1Ch9Entry21Piseries2
 
 import Mathlib.Analysis.Analytic.Binomial
 import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.SpecialFunctions.Integrals.LogTrigonometric
+import Mathlib.Analysis.SpecialFunctions.Integrals.Log
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import MathlibExt.Analysis.SpecialFunctions.ArcsinCentralBinomialReciprocal
 import MathlibExt.Analysis.SpecialFunctions.ArcsinTaylorSeries

@@ -1,0 +1,160 @@
+name: Autoform index
+
+# Publishes the search index AutoformBot reads, for one commit of main.
+# The index goes in a tagged commit on top of that commit; main never changes.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
+
+env:
+  # The bytes of an index depend on the Autoform revision that writes it.
+  AUTOFORM_REV: feec945b81669827a9d066f7b432714d482f8c1b
+
+jobs:
+  index:
+    # Index only what main holds.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      tagged: ${{ steps.tag.outputs.tagged }}
+    steps:
+      - name: Check whether this commit is already indexed
+        id: tag
+        run: |
+          set -euo pipefail
+          tag="autoform-index/${GITHUB_SHA::12}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          status=0
+          git ls-remote --exit-code --tags "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "refs/tags/$tag" >/dev/null || status=$?
+          case "$status" in
+            0) echo "tagged=true" >> "$GITHUB_OUTPUT"; echo "$tag already exists" ;;
+            2) echo "tagged=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "cannot read the repository's tags (git exited $status)" >&2; exit 1 ;;
+          esac
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.tag.outputs.tagged == 'false'
+        with:
+          persist-credentials: false
+
+      - name: Free disk space for Lean caches
+        if: steps.tag.outputs.tagged == 'false'
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Add swap for cold Lean builds
+        if: steps.tag.outputs.tagged == 'false'
+        run: |
+          set -euo pipefail
+          sudo fallocate -l 16G /mnt/lean-swap
+          sudo chmod 600 /mnt/lean-swap
+          sudo mkswap /mnt/lean-swap
+          sudo swapon /mnt/lean-swap
+
+      - name: Install elan v4.2.4
+        if: steps.tag.outputs.tagged == 'false'
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        if: steps.tag.outputs.tagged == 'false'
+        run: lake exe cache get
+
+      - name: Restore local build
+        if: steps.tag.outputs.tagged == 'false'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Build the indexed libraries
+        if: steps.tag.outputs.tagged == 'false'
+        run: lake build MathlibExt CSLibExt PhyslibExt WantedExt
+
+      - name: Install Autoform
+        if: steps.tag.outputs.tagged == 'false'
+        run: |
+          set -euo pipefail
+          python3 -m venv "${RUNNER_TEMP}/autoform"
+          "${RUNNER_TEMP}/autoform/bin/pip" install --quiet \
+            "autoform @ git+https://github.com/facebookresearch/autoform-bot@${AUTOFORM_REV}"
+          echo "${RUNNER_TEMP}/autoform/bin" >> "$GITHUB_PATH"
+
+      - name: Write the index
+        if: steps.tag.outputs.tagged == 'false'
+        run: autoform library index . --lib MathlibExt --lib CSLibExt --lib PhyslibExt --lib WantedExt --timeout 3600
+
+      # The index digests the pin files as they are now; the tag must carry the same bytes.
+      - name: Check that only the index changed
+        if: steps.tag.outputs.tagged == 'false'
+        run: |
+          set -euo pipefail
+          changes="$(git status --porcelain --untracked-files=all)"
+          if [[ "$changes" != "?? autoform-library-index.jsonl" ]]; then
+            echo "the build changed tracked or untracked files besides the index:" >&2
+            printf '%s\n' "$changes" >&2
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.tag.outputs.tagged == 'false'
+        with:
+          name: autoform-library-index
+          path: autoform-library-index.jsonl
+          if-no-files-found: error
+          retention-days: 1
+
+  # No Lean or Python package code runs in the job that holds the write token.
+  tag:
+    needs: index
+    if: needs.index.outputs.tagged == 'false'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: autoform-library-index
+
+      - name: Tag a commit that adds the index
+        env:
+          TAG: ${{ needs.index.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add autoform-library-index.jsonl
+          git commit --quiet -m "Add the Autoform library index for ${GITHUB_SHA::12}" \
+            -m "Written by autoform-bot ${AUTOFORM_REV}."
+          git diff --exit-code HEAD
+          git tag "$TAG"
+          git push origin "refs/tags/$TAG"
+          echo "Published $TAG at $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"

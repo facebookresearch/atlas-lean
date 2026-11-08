@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 module
+
+import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Analysis.Convolution
 public import Mathlib.Analysis.Fourier.FourierTransform
 

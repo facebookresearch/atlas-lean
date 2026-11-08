@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity

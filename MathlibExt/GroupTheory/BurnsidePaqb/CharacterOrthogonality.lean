@@ -22,6 +22,8 @@ public import Mathlib.RepresentationTheory.FinGroupCharZero
 public import Mathlib.Analysis.Complex.Polynomial.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
 
+import Mathlib.RepresentationTheory.Maschke
+
 /-!
 Character-orthogonality stage of the complete Burnside proof.
 

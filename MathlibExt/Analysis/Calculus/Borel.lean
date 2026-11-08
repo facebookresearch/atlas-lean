@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Calculus.SmoothSeries
+
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension

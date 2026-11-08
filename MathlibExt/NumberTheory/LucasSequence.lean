@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Fib.Basic
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Lucas sequences
@@ -83,6 +84,26 @@ theorem lucasU_fibonacciLucasParams (n : ℕ) :
           simp [lucasU, fibonacciLucasParams]
         _ = (Nat.fib (n + 1) : ℤ) + (Nat.fib n : ℤ) := by rw [ih1, ih2]
         _ = (Nat.fib (n + 2) : ℤ) := by rw [Nat.fib_add_two, Nat.cast_add, add_comm]
+
+/-- The two-step recurrence for `lucasU`, as a rewrite rule. -/
+theorem lucasU_add_two (params : LucasSequenceParams) (n : ℕ) :
+    lucasU params (n + 2) =
+      params.p * lucasU params (n + 1) - params.q * lucasU params n := rfl
+
+/-- Cassini's identity for `lucasU`:
+`U (n + 1) ^ 2 - U n * U (n + 2) = Q ^ n`. -/
+theorem lucasU_cassini (params : LucasSequenceParams) (n : ℕ) :
+    lucasU params (n + 1) ^ 2 - lucasU params n * lucasU params (n + 2) =
+      params.q ^ n := by
+  induction n with
+  | zero => simp [lucasU]
+  | succ n ih =>
+    have r1 := lucasU_add_two params n
+    have r2 := lucasU_add_two params (n + 1)
+    show lucasU params (n + 2) ^ 2 -
+        lucasU params (n + 1) * lucasU params (n + 3) = params.q ^ (n + 1)
+    linear_combination
+      lucasU params (n + 2) * r1 + params.q * ih - lucasU params (n + 1) * r2
 
 /-- The `V` sequence for `(P, Q) = (1, -1)` is the classical Lucas-number
 sequence. -/

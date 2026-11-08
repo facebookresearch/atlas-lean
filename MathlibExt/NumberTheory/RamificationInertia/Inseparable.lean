@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.RingTheory.Finiteness.Quotient
+
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 import Mathlib.FieldTheory.PurelyInseparable.Basic
 

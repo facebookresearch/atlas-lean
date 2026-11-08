@@ -627,7 +627,7 @@ theorem selberg_finiteIndex_torsionFree
     have := hfin2
     infer_instance
   · refine IsMulTorsionFree.mk ?_
-    intro N hN a b hab
+    intro N hN a b _hcommute hab
     have haG := Subgroup.mem_inf.mp a.property
     have hbG := Subgroup.mem_inf.mp b.property
     have habG : (a : ↥G) ^ N = (b : ↥G) ^ N := by

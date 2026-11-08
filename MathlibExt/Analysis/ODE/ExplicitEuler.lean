@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.ODE.DiscreteGronwall
 import MathlibExt.Analysis.ODE.MaximalSolution

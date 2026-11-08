@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Real
 
 @[expose] public section
 
@@ -67,5 +68,30 @@ theorem mem_polarSet {A : Set E} {y : E} :
 /-- The polar is antitone: a larger set has a smaller polar. -/
 theorem polarSet_subset_polarSet {A B : Set E} (h : A ⊆ B) :
     polarSet B ⊆ polarSet A := fun _ hy x hx => hy x (h hx)
+
+end MetaMathlibExt
+
+namespace MetaMathlibExt
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+
+/-- The one-sided real inner-product polar of the closed unit ball is itself. -/
+theorem polarSet_closedUnitBall :
+    polarSet (Metric.closedBall (0 : E) 1) = Metric.closedBall 0 1 := by
+  ext y
+  constructor
+  · intro hy
+    have h := hy (‖y‖⁻¹ • y) (inv_norm_smul_mem_unitClosedBall y)
+    rw [real_inner_smul_left, real_inner_self_eq_norm_sq] at h
+    by_cases hz : ‖y‖ = 0
+    · simp [hz]
+    · have hid : ‖y‖⁻¹ * ‖y‖ ^ 2 = ‖y‖ := by field_simp
+      rw [hid] at h
+      simpa [mem_closedBall_iff_norm] using h
+  · intro hy x hx
+    have hy' : ‖y‖ ≤ 1 := by simpa [mem_closedBall_iff_norm] using hy
+    have hx' : ‖x‖ ≤ 1 := by simpa [mem_closedBall_iff_norm] using hx
+    have hxy := real_inner_le_norm x y
+    nlinarith [norm_nonneg x, norm_nonneg y]
 
 end MetaMathlibExt
