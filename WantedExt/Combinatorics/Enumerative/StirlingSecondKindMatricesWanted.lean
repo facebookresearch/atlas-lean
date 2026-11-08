@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-public import WantedExt.Combinatorics.Enumerative.StirlingMatrixWanted
+public import MathlibExt.Combinatorics.Enumerative.StirlingMatrix
 
 /-!
 # Matrices whose entries are Stirling numbers of the second kind
