@@ -148,7 +148,7 @@ example :
 /-- Characters take values on the unit circle, at the trivial character
 of `ZMod 2` evaluated at `1`. -/
 example : ‖(0 : AddChar (ZMod 2) ℂ) 1‖ = 1 :=
-  norm_addChar_apply 0 1
+  AddChar.norm_apply 0 1
 
 /-- Plancherel for the delta function on `ZMod 2`: both sides are `2`. -/
 example : ∑ ψ : AddChar (ZMod 2) ℂ, ‖dftFun deltaTwo ψ‖ ^ 2 =

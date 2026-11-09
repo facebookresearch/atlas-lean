@@ -561,13 +561,6 @@ theorem fourierChar_eq_cubeChi (E : Finset ι) (S T : Finset ι)
     _ = cubeChi E.card (reindexFinset E S hS)
           (powersetEquivBoolCube E ⟨T, hT⟩) := hmap.symm
 
-omit [DecidableEq ι] in
-/-- A powerset sum is a sum over the coerced type. -/
-private theorem sum_powerset_coe (E : Finset ι) (g : Finset ι → ℝ) :
-    (∑ U : ↥E.powerset, g U.val) = ∑ U ∈ E.powerset, g U := by
-  conv_lhs => rw [Finset.univ_eq_attach E.powerset]
-  exact Finset.sum_attach _ _
-
 /-- Reindexing identifies `fourierCoeff` with the canonical
 `boolFourierCoeff`. -/
 theorem fourierCoeff_eq_boolFourierCoeff (E : Finset ι)
@@ -584,7 +577,7 @@ theorem fourierCoeff_eq_boolFourierCoeff (E : Finset ι)
     calc (∑ U ∈ E.powerset, f U * fourierChar S U)
         = ∑ U : ↥E.powerset,
           (fun V => f V * fourierChar S V) U.val :=
-            (sum_powerset_coe E _).symm
+            (Finset.sum_coe_sort E.powerset _).symm
       _ = ∑ x : BoolCube E.card,
           f (decodeBoolCube E x)
             * cubeChi E.card (reindexFinset E S hS) x :=
