@@ -15,6 +15,7 @@ import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Analysis.InnerProductSpace.Spectrum
+import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
 import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Flat.TorsionFree
@@ -218,21 +219,6 @@ private theorem aux_restrict_noEigen
   rw [hve]
   rfl
 
-/-- An operator on a nonzero finite-dimensional complex inner product space has an eigenvalue. -/
-private theorem aux_exists_eigenvalue
-    {V : Type uE} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [CompleteSpace V]
-    [FiniteDimensional ℂ V] [Nontrivial V]
-    (R : V →L[ℂ] V) : ∃ ν, Module.End.HasEigenvalue (R : V →ₗ[ℂ] V) ν := by
-  have hmonic : (R : V →ₗ[ℂ] V).charpoly.Monic := LinearMap.charpoly_monic _
-  have hpos : 0 < (R : V →ₗ[ℂ] V).charpoly.natDegree := by
-    rw [LinearMap.charpoly_natDegree _]
-    exact Module.finrank_pos
-  have hdeg : (R : V →ₗ[ℂ] V).charpoly.degree ≠ 0 := by
-    rw [Polynomial.degree_eq_natDegree hmonic.ne_zero]
-    exact_mod_cast ne_of_gt hpos
-  obtain ⟨ν, hν⟩ := IsAlgClosed.exists_root _ hdeg
-  exact ⟨ν, (Module.End.hasEigenvalue_iff_isRoot_charpoly _ _).mpr hν⟩
-
 /-- The orthogonal complement of all eigenspaces of a compact normal operator is trivial. -/
 private theorem aux_compl_bot
     {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
@@ -307,9 +293,7 @@ private theorem aux_compl_bot
     have : CompleteSpace ↥(Module.End.eigenspace
         (((ContinuousLinearMap.adjoint S ∘L S : ↥K →L[ℂ] ↥K)) : ↥K →ₗ[ℂ] ↥K) μ) :=
       hF_closed.completeSpace_coe
-    obtain ⟨ν, hν⟩ := aux_exists_eigenvalue (V := ↥(Module.End.eigenspace
-        (((ContinuousLinearMap.adjoint S ∘L S : ↥K →L[ℂ] ↥K)) : ↥K →ₗ[ℂ] ↥K) μ))
-      (S.restrict hSF)
+    obtain ⟨ν, hν⟩ := Module.End.exists_eigenvalue (S.restrict hSF).toLinearMap
     obtain ⟨w, hw⟩ := hν.exists_hasEigenvector
     obtain ⟨hw_mem, hw_ne⟩ := Module.End.hasEigenvector_iff.mp hw
     have hRw : (S.restrict hSF) w = ν • w :=
