@@ -160,10 +160,8 @@ theorem essentialRange_count_eq_range [Finite α] [MeasurableSingletonClass α]
 
 omit [SigmaFinite μ] in
 /-- A constant function is essentially bounded. -/
-theorem memLp_const_top (c : ℂ) : MemLp (fun _ => c) ∞ μ := by
-  apply memLp_top_of_bound aestronglyMeasurable_const ‖c‖
-  filter_upwards with x
-  exact le_refl _
+@[deprecated "Use `MeasureTheory.memLp_top_const`." (since := "2026-11-09")]
+theorem memLp_const_top (c : ℂ) : MemLp (fun _ => c) ∞ μ := memLp_top_const c
 
 omit [SigmaFinite μ] in
 /-- Multiplying an `L²` function by an essentially bounded function stays in `L²`. -/
@@ -253,14 +251,14 @@ theorem lpMulCLM_congr_ae {φ ψ : α → ℂ} (h : φ =ᵐ[μ] ψ) (hφ : MemLp
 omit [SigmaFinite μ] in
 /-- Multiplication by the constant function `c` is scalar multiplication by `c`. -/
 theorem lpMulCLM_const_apply (c : ℂ) (f : Lp ℂ 2 μ) :
-    lpMulCLM (fun _ => c) (memLp_const_top c) f = c • f := by
+    lpMulCLM (fun _ => c) (memLp_top_const c) f = c • f := by
   apply Lp.ext
-  filter_upwards [lpMulCLM_apply (memLp_const_top c) f, Lp.coeFn_smul c f] with x hx1 hx2
+  filter_upwards [lpMulCLM_apply (memLp_top_const c) f, Lp.coeFn_smul c f] with x hx1 hx2
   rw [hx1, hx2, Pi.smul_apply, smul_eq_mul]
 
 omit [SigmaFinite μ] in
 /-- Multiplication by the constant function `1` is the identity. -/
-theorem lpMulCLM_one : lpMulCLM (fun _ : α => (1 : ℂ)) (memLp_const_top (1 : ℂ))
+theorem lpMulCLM_one : lpMulCLM (fun _ : α => (1 : ℂ)) (memLp_top_const (1 : ℂ))
     = (1 : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) := by
   ext f
   rw [lpMulCLM_const_apply]
@@ -486,7 +484,7 @@ theorem spectrum_lpMulCLM_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ
       exact (inv_le_inv₀ hnorm_pos hε).mpr hnorm
     have hψ : MemLp (fun x => (z - φ x)⁻¹) ∞ μ :=
       memLp_top_of_bound ((measurable_const.sub hφm).inv).aestronglyMeasurable ε⁻¹ hψae
-    have hzφ : MemLp (fun x => z - φ x) ∞ μ := (memLp_const_top z).sub hφ
+    have hzφ : MemLp (fun x => z - φ x) ∞ μ := (memLp_top_const z).sub hφ
     have hne : ∀ᵐ x ∂μ, z - φ x ≠ 0 := by
       filter_upwards [hae] with x hx
       intro hzero
@@ -502,26 +500,26 @@ theorem spectrum_lpMulCLM_of_measurable {φ : α → ℂ} (hφ : MemLp φ ∞ μ
       filter_upwards [hne] with x hx
       exact inv_mul_cancel₀ hx
     have hprod1Mem : MemLp (fun x => (z - φ x) * (z - φ x)⁻¹) ∞ μ :=
-      MemLp.ae_eq hprod1.symm (memLp_const_top (1 : ℂ))
+      MemLp.ae_eq hprod1.symm (memLp_top_const (1 : ℂ))
     have hprod2Mem : MemLp (fun x => (z - φ x)⁻¹ * (z - φ x)) ∞ μ :=
-      MemLp.ae_eq hprod2.symm (memLp_const_top (1 : ℂ))
+      MemLp.ae_eq hprod2.symm (memLp_top_const (1 : ℂ))
     have hIsUnit : IsUnit (algebraMap ℂ (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) z - lpMulCLM φ hφ) := by
       have hdecomp : algebraMap ℂ (Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) z - lpMulCLM φ hφ =
           lpMulCLM (fun x => z - φ x) hzφ := algebraMap_sub_lpMulCLM hφ z hzφ
       refine ⟨⟨lpMulCLM (fun x => z - φ x) hzφ, lpMulCLM (fun x => (z - φ x)⁻¹) hψ,
         ?_, ?_⟩, hdecomp.symm⟩
       · rw [← lpMulCLM_mul hzφ hψ hprod1Mem,
-          lpMulCLM_congr_ae hprod1 hprod1Mem (memLp_const_top (1 : ℂ))]
+          lpMulCLM_congr_ae hprod1 hprod1Mem (memLp_top_const (1 : ℂ))]
         exact lpMulCLM_one
       · rw [← lpMulCLM_mul hψ hzφ hprod2Mem,
-          lpMulCLM_congr_ae hprod2 hprod2Mem (memLp_const_top (1 : ℂ))]
+          lpMulCLM_congr_ae hprod2 hprod2Mem (memLp_top_const (1 : ℂ))]
         exact lpMulCLM_one
     exact (spectrum.mem_iff.mp hz) hIsUnit
   · intro hze
     rw [spectrum.mem_iff]
     intro hUnit
     obtain ⟨S, hS⟩ := hUnit.exists_left_inv
-    have hzφ : MemLp (fun x => z - φ x) ∞ μ := (memLp_const_top z).sub hφ
+    have hzφ : MemLp (fun x => z - φ x) ∞ μ := (memLp_top_const z).sub hφ
     rw [algebraMap_sub_lpMulCLM hφ z hzφ] at hS
     have hbound : ∀ m : ℕ, 1 ≤ ‖S‖ * (1 / ((m : ℝ) + 1)) := by
       intro m

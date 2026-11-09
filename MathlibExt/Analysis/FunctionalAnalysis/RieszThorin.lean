@@ -45,11 +45,6 @@ private lemma eLpNorm_count_eq_zero_iff {α : Type*} [Finite α] [MeasurableSpac
 private lemma enorm_complex_eq_ofReal (z : Complex) : ‖z‖ₑ = ENNReal.ofReal ‖z‖ := by
   rw [enorm_eq_nnnorm, ← coe_nnnorm z, ENNReal.ofReal_coe_nnreal]
 
-private lemma aemeas_count {α : Type*} [MeasurableSpace α] (y : α → Complex)
-    [Finite α] [MeasurableSingletonClass α] :
-    AEStronglyMeasurable y Measure.count :=
-  (measurable_of_finite y).aestronglyMeasurable
-
 private lemma eLpNorm_count_ne_top {α : Type*} [Finite α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (y : α → Complex) {r : ENNReal} (hr : r ≠ 0) :
     eLpNorm y r Measure.count ≠ ⊤ := by
@@ -64,21 +59,21 @@ private lemma eLpNorm_count_eq_sum {α : Type*} [Fintype α] [MeasurableSpace α
     [MeasurableSingletonClass α] (y : α → Complex) {r : ENNReal}
     (hr0 : r ≠ 0) (hrt : r ≠ ⊤) :
     eLpNorm y r Measure.count = (∑ i, ‖y i‖ₑ ^ r.toReal) ^ (1 / r.toReal) := by
-  have hmeas : AEStronglyMeasurable y Measure.count := aemeas_count y
+  have hmeas : AEStronglyMeasurable y Measure.count := .of_discrete
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hr0 hrt hmeas, lintegral_count,
     tsum_fintype]
 
 private lemma eLpNorm_count_one_eq {α : Type*} [Fintype α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (y : α → Complex) :
     eLpNorm y 1 Measure.count = ∑ i, ‖y i‖ₑ := by
-  have hmeas : AEStronglyMeasurable y Measure.count := aemeas_count y
+  have hmeas : AEStronglyMeasurable y Measure.count := .of_discrete
   rw [eLpNorm_one_eq_lintegral_enorm hmeas, lintegral_count, tsum_fintype]
 
 private lemma eLpNorm_count_top_eq {α : Type*} [Finite α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (y : α → Complex) :
     eLpNorm y ⊤ Measure.count = ⨆ i, ‖y i‖ₑ := by
   have := Fintype.ofFinite α
-  have hmeas : AEStronglyMeasurable y Measure.count := aemeas_count y
+  have hmeas : AEStronglyMeasurable y Measure.count := .of_discrete
   rw [eLpNorm_exponent_top hmeas, eLpNormEssSup_count]
 
 private lemma q_ge_one_of_conj {q q' : ENNReal} (hq : q⁻¹ + q'⁻¹ = 1) :
