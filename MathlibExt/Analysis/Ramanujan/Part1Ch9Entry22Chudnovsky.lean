@@ -755,13 +755,9 @@ private def e22H (x : ℝ) : ℝ :=
       + (1 / 4 : ℝ) * e22S (Real.sin (2 * x))
       - (1 / 2 : ℝ) * chapter9Chi3AtOne)
 
-private lemma e22_two_mul_hasDerivAt (x : ℝ) :
-    HasDerivAt (fun x : ℝ => 2 * x) 2 x := by
-  simpa using (hasDerivAt_id' x).const_mul (2 : ℝ)
-
 private lemma e22_sin_two_mul_hasDerivAt (x : ℝ) :
     HasDerivAt (fun x : ℝ => Real.sin (2 * x)) (Real.cos (2 * x) * 2) x :=
-  (Real.hasDerivAt_sin (2 * x)).comp x (e22_two_mul_hasDerivAt x)
+  (Real.hasDerivAt_sin (2 * x)).comp x (hasDerivAt_const_mul 2)
 
 private lemma e22_Ssin_hasDerivAt {x : ℝ} (hx : x ∈ Set.Ioo 0 (Real.pi / 4)) :
     HasDerivAt (fun x : ℝ => e22S (Real.sin x))

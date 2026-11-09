@@ -46,6 +46,7 @@ import Mathlib.Analysis.Calculus.FDeriv.Analytic
 import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Complex.Convex
+import Mathlib.Analysis.Complex.HalfPlane
 import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 import Mathlib.Analysis.SpecialFunctions.Gamma.Deriv
@@ -1590,17 +1591,9 @@ private theorem entry9_integral_differentiableOn :
       hbound_int h_diff
   exact hderiv.2.differentiableAt.differentiableWithinAt
 
-private theorem entry9_isOpen_re_pos : IsOpen {x : ℂ | 0 < x.re} := by
-  have h : {x : ℂ | 0 < x.re} = Complex.re ⁻¹' Set.Ioi 0 := rfl
-  rw [h]
-  exact Complex.continuous_re.isOpen_preimage _ isOpen_Ioi
-
-private theorem entry9_convex_re_pos : Convex ℝ {x : ℂ | 0 < x.re} :=
-  convex_halfSpace_re_gt 0
-
 private theorem entry9_preconnected_re_pos :
     IsPreconnected {x : ℂ | 0 < x.re} :=
-  entry9_convex_re_pos.isPreconnected
+  (convex_halfSpace_re_gt 0).isPreconnected
 
 private theorem entry9_gamma_differentiableOn :
     DifferentiableOn ℂ Complex.Gamma {z : ℂ | 0 < z.re} := by
@@ -1617,7 +1610,7 @@ private theorem entry9_gamma_differentiableOn :
 private theorem entry9_digamma_analyticOn :
     AnalyticOnNhd ℂ Complex.digamma {z : ℂ | 0 < z.re} := by
   have hGamma := entry9_gamma_differentiableOn
-  have hderiv := hGamma.deriv entry9_isOpen_re_pos
+  have hderiv := hGamma.deriv (Complex.isOpen_re_gt 0)
   have hne : ∀ z ∈ {z : ℂ | 0 < z.re}, Complex.Gamma z ≠ 0 := by
     intro z hz
     have hz' : (0 : ℝ) < z.re := hz
@@ -1633,7 +1626,7 @@ private theorem entry9_digamma_analyticOn :
       {z : ℂ | 0 < z.re} :=
     hderiv.div hGamma hne
   have hdig : DifferentiableOn ℂ Complex.digamma {z : ℂ | 0 < z.re} := hdiv
-  exact hdig.analyticOnNhd entry9_isOpen_re_pos
+  exact hdig.analyticOnNhd (Complex.isOpen_re_gt 0)
 
 private theorem entry9_t0_differentiableOn :
     DifferentiableOn ℂ (fun x : ℂ => 1 / (2 * x) + 1)
@@ -1667,7 +1660,7 @@ private theorem entry9_F_analyticOn :
       (fun x : ℂ => x * ∫ t in (0 : ℝ)..1, chapter8UnitPowRatio x t)
       {x : ℂ | 0 < x.re} :=
     differentiableOn_id.mul entry9_integral_differentiableOn
-  exact hF.analyticOnNhd entry9_isOpen_re_pos
+  exact hF.analyticOnNhd (Complex.isOpen_re_gt 0)
 
 private theorem entry9_G_analyticOn :
     AnalyticOnNhd ℂ
@@ -1717,7 +1710,7 @@ private theorem entry9_G_analyticOn :
           Complex.digamma (1 / (2 * x) + 1 / 2)))
       {x : ℂ | 0 < x.re} := by
     simpa [mul_sub] using hmul
-  exact hG.analyticOnNhd entry9_isOpen_re_pos
+  exact hG.analyticOnNhd (Complex.isOpen_re_gt 0)
 
 private theorem entry9_hkey_all {x : ℂ} (hx : 0 < x.re) :
     (1 / 2 : ℂ) *
