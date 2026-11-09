@@ -38,8 +38,6 @@ private theorem bender_coeff_prod (a b : ℕ → ℝ) (n : ℕ) :
   intro k hk
   rw [PowerSeries.coeff_mk, PowerSeries.coeff_mk]
 
--- Helper: truncated subtraction tends to `atTop`.
-
 -- Helper: fixed-lag coefficient ratios tend to powers of the limit.
 private theorem bender_ratio_pow (b : ℕ → ℝ) (β : ℝ)
     (hbnz : ∀ᶠ n in atTop, b n ≠ 0)

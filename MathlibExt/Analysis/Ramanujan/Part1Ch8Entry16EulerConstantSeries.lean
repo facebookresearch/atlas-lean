@@ -38,6 +38,7 @@ private def Tfun : ℕ → ℝ := fun k =>
   ((k + 1 : ℕ) : ℝ) *
     ∑ j ∈ Finset.Icc (Afun k + 1) (Afun (k + 1)),
       (1 : ℝ) / ((3 * (j : ℝ)) ^ 3 - 3 * (j : ℝ))
+
 private lemma two_dvd_pow3_sub_one (k : ℕ) : 2 ∣ (3 ^ k - 1) := by
   have hodd : Odd (3 ^ k) := Odd.pow (by norm_num)
   obtain ⟨m, hm⟩ := hodd

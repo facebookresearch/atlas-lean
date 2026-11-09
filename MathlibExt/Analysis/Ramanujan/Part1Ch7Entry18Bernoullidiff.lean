@@ -55,6 +55,7 @@ def chapter7Entry18Middle (r : ℂ) : ℂ :=
 def chapter7Entry18Right (r : ℂ) : ℂ :=
   Complex.cpow ((Real.pi / 2 : ℝ) : ℂ) r * chapter7EulerStar r /
     Complex.Gamma r
+
 private lemma betaStdAddChar1 : ZMod.stdAddChar (1 : ZMod 4) = Complex.I := by
   have h : (1 : ZMod 4) = ((1 : ℤ) : ZMod 4) := by simp
   rw [h, ZMod.stdAddChar_coe]

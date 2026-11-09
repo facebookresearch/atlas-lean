@@ -489,7 +489,6 @@ private lemma jtpTermId (Q w : ℂ) (hQ : Q ≠ 0) (hw : w ≠ 0) (N k : ℕ) :
   have hN5b : ((k.choose 2 : ℕ) : ℤ) - (N : ℤ) * (k : ℤ) + (((N + 1).choose 2 : ℕ) : ℤ) =
       jtpTri ((k : ℤ) - (N : ℤ)) := jtpTri_sub k N
   have hneg1 : (-1 : ℂ) ≠ 0 := jtpNeg_ne_zero one_ne_zero
-  have hnwm : -w ≠ 0 := jtpNeg_ne_zero hw
   have e1 : (((-w) ^ N : ℂ))⁻¹ = (-w) ^ (-(N : ℤ)) := by
     rw [zpow_neg, zpow_natCast]
   have e2 : (Q ^ ((N + 1).choose 2) : ℂ) = Q ^ ((((N + 1).choose 2 : ℕ)) : ℤ) :=
@@ -1284,8 +1283,6 @@ theorem jacobi_triple_product (z q : ℂ) (hz : z ≠ 0) (hq : ‖q‖ < 1) :
     have hsum_congr : ∀ n : ℤ,
         jtpTheta (q ^ 2) (-z * q) n = z ^ n * q ^ ((n * n).toNat) := by
       intro n
-      have hneg1 : (-1 : ℂ) ≠ 0 := jtpNeg_ne_zero one_ne_zero
-      have hnz : (-z : ℂ) ≠ 0 := neg_ne_zero.mpr hz
       have h2T : 2 * jtpTri n = n * (n - 1) := jtpTri_double n
       have hTri_nn : 0 ≤ jtpTri n := jtpTri_nonneg n
       have hQpow : ((q ^ 2 : ℂ)) ^ (jtpTri n) = q ^ (n * (n - 1)) := by
