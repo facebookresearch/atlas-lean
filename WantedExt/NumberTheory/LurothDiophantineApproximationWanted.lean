@@ -303,14 +303,14 @@ public theorem_wanted lurothWellApproximableSet_eq_limsup (ψ : ℕ → ℝ)
         x ∈ Set.Ioo (t.1 : ℝ) (t.1 + ψ t.2.1 / t.2.1)}.Infinite}
 
 /-- Tan–Zhou, a Lüroth analogue of Khintchine's theorem: for non-increasing
-`ψ : ℕ → (0, 1]`, `L(L(ψ))` is `0` if `∑ -ψ(q) log ψ(q) / q` converges and `1` if it
+`ψ : ℕ → (0, 1)`, `L(L(ψ))` is `0` if `∑ -ψ(q) log ψ(q) / q` converges and `1` if it
 diverges. The `q = 0` term is `0` in Lean; `ψ` is also assumed non-increasing at `0`.
 
 Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
 Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Theorem 4 (Tan and
 Zhou). -/
 public theorem_wanted volume_lurothWellApproximableSet (ψ : ℕ → ℝ)
-    (hψ0 : ∀ q, 0 < ψ q) (hψ1 : ∀ q, ψ q ≤ 1) (hψ : Antitone ψ) :
+    (hψ0 : ∀ q, 0 < ψ q) (hψ1 : ∀ q, ψ q < 1) (hψ : Antitone ψ) :
     (Summable (fun q : ℕ => -ψ q * Real.log (ψ q) / q) →
         volume (lurothWellApproximableSet ψ) = 0) ∧
       (¬ Summable (fun q : ℕ => -ψ q * Real.log (ψ q) / q) →
