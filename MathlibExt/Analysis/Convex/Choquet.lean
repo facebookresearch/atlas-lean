@@ -230,14 +230,6 @@ private theorem cqEnv_zero (K : Set E) (x : E) (hx : x ∈ K) [CompactSpace K] :
   · have h := cqEnv_lower K x hx (0 : C(K, ℝ))
     simpa using h
 
-/-- Epsilon squeeze for real inequalities. -/
-private theorem cq_le_of_forall_pos_le_add {a b : ℝ}
-    (h : ∀ δ : ℝ, 0 < δ → a ≤ b + δ) : a ≤ b := by
-  by_contra hne
-  have hlt : b < a := lt_of_not_ge hne
-  have h2 := h ((a - b) / 2) (by linarith)
-  linarith
-
 /-- Sums of majorants majorize the sum. -/
 private theorem cqMajorants_add_subset (K : Set E) (x : E) (g h : C(K, ℝ)) :
     cqMajorants K x g + cqMajorants K x h ⊆ cqMajorants K x (g + h) := by
@@ -257,7 +249,7 @@ private theorem cqMajorants_add_subset (K : Set E) (x : E) (g h : C(K, ℝ)) :
 private theorem cqEnv_add_le (K : Set E) (x : E) (hx : x ∈ K) (g h : C(K, ℝ))
     [CompactSpace K] : cqEnv K x (g + h) ≤ cqEnv K x g + cqEnv K x h := by
   unfold cqEnv
-  apply cq_le_of_forall_pos_le_add
+  apply le_of_forall_pos_le_add
   intro δ hδ
   obtain ⟨u, huM, hu⟩ := exists_lt_of_csInf_lt (cqMajorants_nonempty K x g)
     (lt_add_of_pos_right _ (half_pos hδ))
