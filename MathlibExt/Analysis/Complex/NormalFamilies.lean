@@ -438,12 +438,7 @@ theorem vitali
       push Not at hc
       exact hnot hc
     obtain ⟨ε, hε, hfreq⟩ := hbad
-    have hN : ∀ N, ∃ n, N ≤ n ∧ ∃ x ∈ K, ε ≤ dist (f₀ x) (F n x) := by
-      intro N
-      obtain ⟨b, hb, hbx⟩ := Filter.frequently_atTop.mp hfreq N
-      obtain ⟨x, hxk, hdist⟩ := hbx
-      exact ⟨b, hb, x, hxk, hdist⟩
-    obtain ⟨φ₁, hφ₁, hP⟩ := Nat.exists_strictMono_subsequence fun N => hN (N + 1)
+    obtain ⟨φ₁, hφ₁, hP⟩ := Filter.extraction_of_frequently_atTop hfreq
     choose x hx using hP
     have hH : ∀ n, DifferentiableOn ℂ ((fun k => F (φ₁ k)) n) U := fun n => hF (φ₁ n)
     have hHB : IsLocallyUniformlyBoundedOn U (fun k => F (φ₁ k)) := by

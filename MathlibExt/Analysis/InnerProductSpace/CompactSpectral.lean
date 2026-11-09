@@ -287,12 +287,6 @@ private theorem aux_compl_bot
           (((ContinuousLinearMap.adjoint S ∘L S : ↥K →L[ℂ] ↥K)) : ↥K →ₗ[ℂ] ↥K) μ) => (w : ↥K)) hcon
         simpa using hcc
       exact ⟨⟨v, hv_mem⟩, 0, hw'⟩
-    have hF_closed : IsClosed ((Module.End.eigenspace
-        (((ContinuousLinearMap.adjoint S ∘L S : ↥K →L[ℂ] ↥K)) : ↥K →ₗ[ℂ] ↥K) μ) : Set ↥K) :=
-      aux_eigenspace_closed _ μ
-    have : CompleteSpace ↥(Module.End.eigenspace
-        (((ContinuousLinearMap.adjoint S ∘L S : ↥K →L[ℂ] ↥K)) : ↥K →ₗ[ℂ] ↥K) μ) :=
-      hF_closed.completeSpace_coe
     obtain ⟨ν, hν⟩ := Module.End.exists_eigenvalue (S.restrict hSF).toLinearMap
     obtain ⟨w, hw⟩ := hν.exists_hasEigenvector
     obtain ⟨hw_mem, hw_ne⟩ := Module.End.hasEigenvector_iff.mp hw

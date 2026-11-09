@@ -1123,7 +1123,8 @@ private theorem jn_stable_rademacher_step
   obtain ⟨x, hx, hcofinal⟩ := hz (jnRademacherBlocking k)
   let a : ℕ → ℝ := fun n => jnBlockApply (jnRademacherBlocking k) z n x
   by_cases hpositive : ∀ N, ∃ n, N ≤ n ∧ δ ≤ a n
-  · obtain ⟨u, hu, hgood⟩ := Nat.exists_strictMono_subsequence fun N => hpositive (N + 1)
+  · obtain ⟨u, hu, hgood⟩ := Filter.extraction_of_frequently_atTop
+      (Filter.frequently_atTop.mpr hpositive)
     exact ⟨x, u, hx, hu, hgood⟩
   · push Not at hpositive
     obtain ⟨N, hN⟩ := hpositive
@@ -1139,7 +1140,8 @@ private theorem jn_stable_rademacher_step
       · rw [Real.norm_eq_abs, abs_of_nonneg ha] at habs
         exact (not_lt_of_ge habs hlt).elim
       · simpa only [Real.norm_eq_abs, abs_of_nonpos ha] using habs
-    obtain ⟨u, hu, hgood⟩ := Nat.exists_strictMono_subsequence fun N => hnegative (N + 1)
+    obtain ⟨u, hu, hgood⟩ := Filter.extraction_of_frequently_atTop
+      (Filter.frequently_atTop.mpr hnegative)
     refine ⟨-x, u, by simpa using hx, hu, fun n => ?_⟩
     simpa only [map_neg] using hgood n
 

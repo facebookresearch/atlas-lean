@@ -81,16 +81,10 @@ theorem schurInf_single_le {a : ℕ → ℕ → 𝕜} {R : ℝ}
   simpa using le_trans h (hrow_le i)
 
 /-- Summability of a finite sum of summable sequences. -/
+@[deprecated "Use `summable_sum`." (since := "2026-11-09")]
 theorem summable_sum_finset {f : ℕ → ℕ → ℝ} (hf : ∀ i, Summable fun j => f i j)
-    (s : Finset ℕ) : Summable fun j => ∑ i ∈ s, f i j := by
-  induction s using Finset.induction with
-  | empty => simp
-  | @insert a s ha ih =>
-      have hfun : (fun j => ∑ i ∈ insert a s, f i j) =
-          fun j => f a j + ∑ i ∈ s, f i j :=
-        funext fun j => Finset.sum_insert ha
-      rw [hfun]
-      exact (hf a).add ih
+    (s : Finset ℕ) : Summable fun j => ∑ i ∈ s, f i j :=
+  summable_sum fun i _ => hf i
 
 /-- Swapping a `tsum` with a finite sum. -/
 @[deprecated "Use `Summable.tsum_finsetSum`." (since := "2026-11-09")]

@@ -496,6 +496,7 @@ theorem toeplitz_hausdorff_general
         ring
       exact ⟨w t, hw1 t, hfin.symm⟩
 
+
 /--
 The numerical range of a bounded operator on a complex Hilbert space is convex.
 Source: O. Toeplitz, Das algebraische Analogon zu einem Satze von Fejer, Math. Z. 2 (1918), 187-197,
