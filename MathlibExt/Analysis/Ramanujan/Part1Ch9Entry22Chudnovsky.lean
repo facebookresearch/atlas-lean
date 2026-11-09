@@ -1127,12 +1127,6 @@ private lemma e22_exp_I_mul_ofReal (t : ℝ) :
   have h : (Complex.I * (t : ℂ)) = ((t : ℂ)) * Complex.I := mul_comm _ _
   rw [h, Complex.exp_mul_I, ← Complex.ofReal_cos, ← Complex.ofReal_sin]
 
-private lemma e22_norm_exp_I_mul (t : ℝ) :
-    ‖Complex.exp (Complex.I * (t : ℂ))‖ = 1 := by
-  rw [Complex.norm_exp]
-  have hre : (Complex.I * (t : ℂ)).re = 0 := by simp
-  rw [hre, Real.exp_zero]
-
 private lemma e22_cpow (r x : ℝ) (n : ℕ) :
     (((r : ℝ) : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ))) ^ (n + 1)
       = (((r ^ (n + 1) * Real.cos ((((n + 1 : ℕ)) : ℝ) * (2 * x)) : ℝ)) : ℂ)
@@ -1175,7 +1169,7 @@ private lemma e22_poisson {r x : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) :
         / ((n : ℝ) + 1) := by
   set z : ℂ := (r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ)) with hz
   have hnorm : ‖z‖ < 1 := by
-    rw [hz, norm_mul, e22_norm_exp_I_mul, mul_one, Complex.norm_real,
+    rw [hz, norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
       Real.norm_eq_abs, abs_of_nonneg hr0]
     exact hr1
   have H := Complex.hasSum_taylorSeries_neg_log' hnorm
@@ -1602,7 +1596,7 @@ private lemma e22_abel_integrand_bound {r x : ℝ} (hr0 : (1 / 2 : ℝ) ≤ r)
             ‖(r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ))‖ :=
         norm_sub_le _ _
       _ = 1 + |r| := by
-        rw [norm_one, norm_mul, e22_norm_exp_I_mul, mul_one, Complex.norm_real,
+        rw [norm_one, norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
           Real.norm_eq_abs]
       _ ≤ 2 := by rw [abs_of_nonneg hr_nonneg]; linarith
   have hnorm_pos : 0 <
@@ -1728,7 +1722,7 @@ private lemma e22_LHS_tendsto :
             (1 : ℂ) - (r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ)) ≠ 0 := by
           intro x
           have hnorm : ‖(r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ))‖ < 1 := by
-            rw [norm_mul, e22_norm_exp_I_mul, mul_one, Complex.norm_real,
+            rw [norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
               Real.norm_eq_abs, abs_of_nonneg hr0]
             exact hr1
           intro hcon

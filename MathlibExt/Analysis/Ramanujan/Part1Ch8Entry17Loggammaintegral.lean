@@ -726,11 +726,6 @@ private theorem chapter8_log_div_integral {a b : ℝ} (ha : 0 < a)
   have heq := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   simpa only using heq
 
-/-- `exp 1 < 3`, so `[3, ∞)` lies in the antitone region of `log x / x`. -/
-private theorem chapter8_exp_one_lt_three : Real.exp 1 < 3 := by
-  have h := Real.exp_one_lt_d9
-  linarith
-
 /-- `log x / x` is antitone on `[a, b]` when `3 ≤ a`. -/
 private theorem chapter8_antitone_Icc {a b : ℝ} (ha : 3 ≤ a)
     (_hab : a ≤ b) :
@@ -738,7 +733,7 @@ private theorem chapter8_antitone_Icc {a b : ℝ} (ha : 3 ≤ a)
   apply Real.log_div_self_antitoneOn.mono
   intro x hx
   simp only [Set.mem_Ici, Set.mem_Icc] at hx ⊢
-  have hexp := chapter8_exp_one_lt_three
+  have hexp := Real.exp_one_lt_three
   linarith [hx.1]
 
 /-- `log t / t → 0` as `t → ∞`. -/

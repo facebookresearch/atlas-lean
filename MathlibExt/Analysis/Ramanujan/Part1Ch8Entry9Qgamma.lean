@@ -100,12 +100,6 @@ theorem chapter8UnitPow_eq_cpow (x : ℂ) (u : ℝ) (hu : 0 < u) :
   congr 1
   ring
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8. -/
-private lemma entry9_x_ne_zero {x : ℂ} (hx : 0 < x.re) : x ≠ 0 := by
-  intro h
-  rw [h] at hx
-  simp at hx
-
 private lemma entry9_norm_unitPow_of_pos {x : ℂ} {u : ℝ} (hu : 0 < u) :
     ‖chapter8UnitPow x u‖ = u ^ x.re := by
   have hre : (x * ((Real.log u : ℝ) : ℂ)).re = x.re * Real.log u := by
@@ -231,12 +225,12 @@ private lemma entry9_intervalIntegrable {x : ℂ} (hx : 0 < x.re) :
   ContinuousOn.intervalIntegrable_of_Icc (by norm_num) (entry9_continuousOn_ratio_Icc hx)
 
 private lemma entry9_re_inv_pos {x : ℂ} (hx : 0 < x.re) : 0 < (1 / x).re := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   rw [one_div, Complex.inv_re]
   exact div_pos hx (Complex.normSq_pos.mpr hxne)
 
 private lemma entry9_re_inv_two_mul_pos {x : ℂ} (hx : 0 < x.re) : 0 < (1 / (2 * x)).re := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   have h2x : (2 * x).re = 2 * x.re := by simp [Complex.mul_re]
   rw [one_div, Complex.inv_re, h2x]
   exact div_pos (by linarith) (Complex.normSq_pos.mpr (mul_ne_zero (by norm_num) hxne))
@@ -257,7 +251,7 @@ private lemma entry9_gamma_ne_one_div_add {x : ℂ} (hx : 0 < x.re) :
 
 private lemma entry9_two_mul_lhs {x : ℂ} (hx : 0 < x.re) :
     2 * (1 / (2 * x) + 1 / 2) = 1 / x + 1 := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   field_simp
 
 private lemma entry9_two_mul_rhs (x : ℂ) :
@@ -971,7 +965,7 @@ private theorem entry9_succ_mul_add_ne {x : ℂ} (hx : 0 < x.re) (k : ℕ) :
 private theorem entry9_even_denom {x : ℂ} (hx : 0 < x.re) (m : ℕ) :
     ((((2 * m : ℕ)) : ℂ) + 1) * x + 1
       = 2 * x * ((1 / (2 * x) + 1 / 2 : ℂ) + (m : ℂ)) := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   have h2x : (2 : ℂ) * x ≠ 0 := mul_ne_zero (by norm_num) hxne
   have hcast : ((((2 * m : ℕ)) : ℂ)) = 2 * (m : ℂ) := by push_cast; ring
   rw [hcast]
@@ -981,7 +975,7 @@ private theorem entry9_even_denom {x : ℂ} (hx : 0 < x.re) (m : ℕ) :
 private theorem entry9_odd_denom {x : ℂ} (hx : 0 < x.re) (m : ℕ) :
     ((((2 * m + 1 : ℕ)) : ℂ) + 1) * x + 1
       = 2 * x * ((1 / (2 * x) + 1 : ℂ) + (m : ℂ)) := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   have h2x : (2 : ℂ) * x ≠ 0 := mul_ne_zero (by norm_num) hxne
   have hcast : ((((2 * m + 1 : ℕ)) : ℂ)) = 2 * (m : ℂ) + 1 := by
     push_cast
@@ -1001,7 +995,7 @@ private theorem entry9_even_term {x : ℂ} (hx : 0 < x.re) (m : ℕ) :
     x * ((-1 : ℂ) ^ (2 * m) *
         (1 / (((((2 * m : ℕ)) : ℂ) + 1) * x + 1)))
       = 1 / (2 * ((1 / (2 * x) + 1 / 2 : ℂ) + (m : ℂ))) := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   have hs0 := entry9_s0_add_ne hx m
   have hD := entry9_succ_mul_add_ne hx (2 * m)
   rw [entry9_even_pow, one_mul, entry9_even_denom hx m]
@@ -1013,7 +1007,7 @@ private theorem entry9_odd_term {x : ℂ} (hx : 0 < x.re) (m : ℕ) :
     x * ((-1 : ℂ) ^ (2 * m + 1) *
         (1 / (((((2 * m + 1 : ℕ)) : ℂ) + 1) * x + 1)))
       = -(1 / (2 * ((1 / (2 * x) + 1 : ℂ) + (m : ℂ)))) := by
-  have hxne := entry9_x_ne_zero hx
+  have hxne := Complex.ne_zero_of_re_pos hx
   have ht0 := entry9_t0_add_ne hx m
   have hD := entry9_succ_mul_add_ne hx (2 * m + 1)
   rw [entry9_odd_pow, entry9_odd_denom hx m]
@@ -1649,7 +1643,7 @@ private theorem entry9_t0_differentiableOn :
   have hne : ∀ x ∈ {x : ℂ | 0 < x.re}, (2 : ℂ) * x ≠ 0 := by
     intro x hx
     have hx' : (0 : ℝ) < x.re := hx
-    exact mul_ne_zero (by norm_num) (entry9_x_ne_zero hx')
+    exact mul_ne_zero (by norm_num) (Complex.ne_zero_of_re_pos hx')
   have hinv := (differentiableOn_const (1 : ℂ)).div h2x hne
   simpa using hinv.add_const (1 : ℂ)
 
@@ -1661,7 +1655,7 @@ private theorem entry9_s0_differentiableOn :
   have hne : ∀ x ∈ {x : ℂ | 0 < x.re}, (2 : ℂ) * x ≠ 0 := by
     intro x hx
     have hx' : (0 : ℝ) < x.re := hx
-    exact mul_ne_zero (by norm_num) (entry9_x_ne_zero hx')
+    exact mul_ne_zero (by norm_num) (Complex.ne_zero_of_re_pos hx')
   have hinv := (differentiableOn_const (1 : ℂ)).div h2x hne
   simpa using hinv.add_const (1 / 2 : ℂ)
 
@@ -1811,7 +1805,7 @@ theorem ramanujan_part1_ch8_entry9_qgamma_digamma (x : ℂ) (hx : 0 < x.re) :
       Complex.digamma (1 / (2 * x) + 1) =
         Complex.digamma (1 / x + 1) - (Real.log 2 : ℂ) +
           x * ∫ u in (0 : ℝ)..1, chapter8UnitPowRatio x u := by
-  refine ⟨entry9_x_ne_zero hx, entry9_intervalIntegrable hx, ?_, ?_, ?_, ?_⟩
+  refine ⟨Complex.ne_zero_of_re_pos hx, entry9_intervalIntegrable hx, ?_, ?_, ?_, ?_⟩
   · intro u hu
     exact entry9_one_add_unitPow_ne_Icc hx hu
   · exact entry9_gamma_ne_one_div_two_mul_add hx
