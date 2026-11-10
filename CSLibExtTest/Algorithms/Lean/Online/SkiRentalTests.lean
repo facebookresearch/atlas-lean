@@ -52,8 +52,27 @@ private meta def checkB (B : ℕ) : IO Unit := do
 example (d : ℕ) : cost 10 (breakEven 10) d ≤ 2 * opt 10 d :=
   cost_breakEven_le_two_mul (by decide : 1 ≤ 10) d
 
-example (s : Strategy) : ∃ d, 19 * opt 10 d ≤ 10 * cost 10 s d :=
+example (s : Strategy) : ∃ d, 1 ≤ d ∧ 19 * opt 10 d ≤ 10 * cost 10 s d :=
   exists_cost_ge (by decide : 1 ≤ 10) s
+
+-- A positive season gives a positive optimum: the bound cannot be witnessed by zero costs.
+example {B : ℕ} (hB : 1 ≤ B) (s : Strategy) :
+    ∃ d, 0 < opt B d ∧ (2 * B - 1) * opt B d ≤ B * cost B s d := by
+  obtain ⟨d, hd, hbound⟩ := exists_cost_ge hB s
+  refine ⟨d, ?_, hbound⟩
+  unfold opt
+  omega
+
+-- Renting forever at price 10 needs at least 19 days to witness the lower bound.
+example : ∃ d, 19 ≤ d ∧ 19 * opt 10 d ≤ 10 * cost 10 none d := by
+  obtain ⟨d, hd, hbound⟩ := exists_cost_ge (by decide : 1 ≤ 10) none
+  refine ⟨d, ?_, hbound⟩
+  simp only [opt, cost] at hbound
+  omega
+
+-- The minimum buying price still has a positive witness, including for `some 0`.
+example : ∃ d, 1 ≤ d ∧ opt 1 d ≤ cost 1 (some 0) d := by
+  simpa using exists_cost_ge (by decide : 1 ≤ 1) (some 0)
 
 #print axioms cost_breakEven_le
 #print axioms cost_breakEven_le_two_mul
