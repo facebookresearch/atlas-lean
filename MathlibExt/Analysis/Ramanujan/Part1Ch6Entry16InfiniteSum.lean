@@ -83,10 +83,6 @@ private lemma norm_rx_lt {r x : ℂ} (hr : ‖r‖ < 1) (hx : ‖x‖ ≤ 1) (m 
   _ = ‖r‖ := mul_one _
   _ < 1 := hr
 
-private lemma summable_const_mul_real_geometric {C q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
-    Summable (fun n : ℕ => C * q ^ n) :=
-  (summable_geometric_of_lt_one hq0 hq1).mul_left C
-
 private lemma summable_shifted_geometric {C q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
     Summable (fun j : ℕ => C * q ^ (j + 1)) := by
   have hgeo : Summable (fun j : ℕ => (C * q) * q ^ j) :=

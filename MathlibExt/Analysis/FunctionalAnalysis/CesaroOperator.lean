@@ -69,7 +69,7 @@ def cesaroMean (x : ℕ → 𝕜) (n : ℕ) : 𝕜 :=
   (∑ k ∈ Finset.range (n + 1), x k) / ((n : 𝕜) + 1)
 
 /-- The denominator `(n : 𝕜) + 1` is nonzero. -/
-@[deprecated "Use `Nat.cast_add_one_ne_zero`." (since := "2026-11-09")]
+@[deprecated Nat.cast_add_one_ne_zero +typeChanged (since := "2026-11-09")]
 lemma cesaro_den_ne_zero (n : ℕ) : ((n : 𝕜) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
 
 /-- The norm of the denominator is `n + 1`. -/

@@ -160,7 +160,7 @@ theorem essentialRange_count_eq_range [Finite α] [MeasurableSingletonClass α]
 
 omit [SigmaFinite μ] in
 /-- A constant function is essentially bounded. -/
-@[deprecated "Use `MeasureTheory.memLp_top_const`." (since := "2026-11-09")]
+@[deprecated MeasureTheory.memLp_top_const +typeChanged (since := "2026-11-09")]
 theorem memLp_const_top (c : ℂ) : MemLp (fun _ => c) ∞ μ := memLp_top_const c
 
 omit [SigmaFinite μ] in

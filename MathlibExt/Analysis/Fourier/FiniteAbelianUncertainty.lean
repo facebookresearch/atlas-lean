@@ -73,7 +73,7 @@ namespace MathlibExt.Analysis.Fourier.FiniteAbelianUncertainty
 variable {G : Type*} [AddCommGroup G] [Fintype G]
 
 /-- A character takes values on the unit circle. -/
-@[deprecated "Use `AddChar.norm_apply`." (since := "2026-11-09")]
+@[deprecated AddChar.norm_apply +typeChanged (since := "2026-11-09")]
 theorem norm_addChar_apply (ψ : AddChar G ℂ) (x : G) : ‖ψ x‖ = 1 := ψ.norm_apply x
 
 /-- Plancherel in squared-norm form: the squared `ℓ²` norm of `f̂` is
