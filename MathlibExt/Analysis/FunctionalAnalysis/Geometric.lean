@@ -129,15 +129,13 @@ private theorem one_mem_cantorSet : (1:ℝ) ∈ cantorSet := by
   | zero => rw [preCantorSet_zero]; norm_num
   | succ n ih => exact Or.inr ⟨1, ih, by norm_num⟩
 
-private theorem cantor_subset : cantorSet ⊆ Icc (0:ℝ) 1 := cantorSet_subset_unitInterval
-
 private noncomputable def lo (y : ℝ) : ℝ := sSup (cantorSet ∩ Iic y)
 private noncomputable def hi (y : ℝ) : ℝ := sInf (cantorSet ∩ Ici y)
 
 private theorem Slo_bddAbove {y : ℝ} : BddAbove (cantorSet ∩ Iic y) :=
-  ⟨1, fun _ hs => (cantor_subset hs.1).2⟩
+  ⟨1, fun _ hs => (cantorSet_subset_unitInterval hs.1).2⟩
 private theorem Shi_bddBelow {y : ℝ} : BddBelow (cantorSet ∩ Ici y) :=
-  ⟨0, fun _ hs => (cantor_subset hs.1).1⟩
+  ⟨0, fun _ hs => (cantorSet_subset_unitInterval hs.1).1⟩
 
 private theorem lo_mem {y : ℝ} (hy : 0 ≤ y) : lo y ∈ cantorSet ∩ Iic y :=
   (isClosed_cantorSet.inter isClosed_Iic).csSup_mem ⟨0, zero_mem_cantorSet, hy⟩ Slo_bddAbove
@@ -158,9 +156,9 @@ private theorem lo_le_hi {y : ℝ} (hy0 : 0 ≤ y) (hy1 : y ≤ 1) : lo y ≤ hi
   le_trans (lo_le hy0) (le_hi hy1)
 
 private theorem lo_eq_self {s : ℝ} (hs : s ∈ cantorSet) : lo s = s :=
-  le_antisymm (lo_le (cantor_subset hs).1) (le_lo hs le_rfl)
+  le_antisymm (lo_le (cantorSet_subset_unitInterval hs).1) (le_lo hs le_rfl)
 private theorem hi_eq_self {s : ℝ} (hs : s ∈ cantorSet) : hi s = s :=
-  le_antisymm (hi_le hs le_rfl) (le_hi (cantor_subset hs).2)
+  le_antisymm (hi_le hs le_rfl) (le_hi (cantorSet_subset_unitInterval hs).2)
 
 open Classical in
 /-- `f` extended by `0` off the Cantor set; used only at Cantor points. -/
@@ -227,7 +225,7 @@ private theorem no_between {y s : ℝ} (_hy0 : 0 ≤ y) (_hy1 : y ≤ 1) (hs : s
 
 private theorem lo_const {y₀ y : ℝ} (hy0 : 0 ≤ y₀) (hy1 : y₀ ≤ 1)
     (hya : lo y₀ < y) (hyb : y < hi y₀) : lo y = lo y₀ := by
-  have hy0' : 0 ≤ y := le_trans (cantor_subset (lo_cantor hy0)).1 hya.le
+  have hy0' : 0 ≤ y := le_trans (cantorSet_subset_unitInterval (lo_cantor hy0)).1 hya.le
   refine le_antisymm ?_ (le_lo (lo_cantor hy0) hya.le)
   by_contra hc
   push Not at hc
@@ -235,7 +233,7 @@ private theorem lo_const {y₀ y : ℝ} (hy0 : 0 ≤ y₀) (hy1 : y₀ ≤ 1)
 
 private theorem hi_const {y₀ y : ℝ} (hy0 : 0 ≤ y₀) (hy1 : y₀ ≤ 1)
     (hya : lo y₀ < y) (hyb : y < hi y₀) : hi y = hi y₀ := by
-  have hy1' : y ≤ 1 := le_trans hyb.le (cantor_subset (hi_cantor hy1)).2
+  have hy1' : y ≤ 1 := le_trans hyb.le (cantorSet_subset_unitInterval (hi_cantor hy1)).2
   refine le_antisymm (hi_le (hi_cantor hy1) hyb.le) ?_
   by_contra hc
   push Not at hc
@@ -417,7 +415,7 @@ private noncomputable def extendLI : C(cantorSet, ℝ) →ₗᵢ[ℝ] C(Icc (0:�
       exact gval_abs_le f y.2.1 y.2.2
     · rw [ContinuousMap.norm_le _ (norm_nonneg _)]
       intro s
-      calc ‖f s‖ = ‖gvalCM f ⟨s.1, cantor_subset s.2⟩‖ := by
+      calc ‖f s‖ = ‖gvalCM f ⟨s.1, cantorSet_subset_unitInterval s.2⟩‖ := by
             simp only [gvalCM_apply]; rw [gval_eq s.2 f]
         _ ≤ ‖gvalCM f‖ := ContinuousMap.norm_coe_le_norm _ _
 

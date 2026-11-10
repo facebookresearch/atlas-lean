@@ -47,15 +47,6 @@ theorem eigPrefSum_succ {n : ℕ} (eig : Fin n → ℝ) (k : ℕ) (hk : k + 1 �
   rw [eigPrefSum_eq_sum, eigPrefSum_eq_sum, Fin.sum_univ_castSucc]
   rfl
 
-/-- Telescoping sum of successive differences over a range. -/
-private lemma sum_range_sub_succ (a : ℕ → ℝ) (t : ℕ) :
-    ∑ i ∈ Finset.range t, (a i - a (i + 1)) = a 0 - a t := by
-  induction t with
-  | zero => simp
-  | succ t ih =>
-    rw [Finset.sum_range_succ, ih]
-    ring
-
 /-- Weighted telescoping identity used to evaluate the Abel mean. -/
 private lemma sum_range_succ_mul_sub (a : ℕ → ℝ) (m : ℕ) :
     ∑ i ∈ Finset.range m, ((i : ℝ) + 1) * (a i - a (i + 1)) =
@@ -70,7 +61,7 @@ private lemma sum_range_succ_mul_sub (a : ℕ → ℝ) (m : ℕ) :
 /-- Telescoping sum of successive differences over an interval. -/
 private lemma sum_Ico_sub_succ (a : ℕ → ℝ) (m n : ℕ) (hmn : m ≤ n) :
     ∑ i ∈ Finset.Ico m n, (a i - a (i + 1)) = a m - a n := by
-  rw [Finset.sum_Ico_eq_sub _ hmn, sum_range_sub_succ, sum_range_sub_succ]
+  rw [Finset.sum_Ico_eq_sub _ hmn, Finset.sum_range_sub', Finset.sum_range_sub']
   ring
 
 /-- Closed form for the Abel mean with capped weights. -/

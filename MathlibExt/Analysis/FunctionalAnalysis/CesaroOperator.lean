@@ -69,9 +69,8 @@ def cesaroMean (x : ℕ → 𝕜) (n : ℕ) : 𝕜 :=
   (∑ k ∈ Finset.range (n + 1), x k) / ((n : 𝕜) + 1)
 
 /-- The denominator `(n : 𝕜) + 1` is nonzero. -/
-lemma cesaro_den_ne_zero (n : ℕ) : ((n : 𝕜) + 1) ≠ 0 := by
-  rw [← Nat.cast_add_one (R := 𝕜) n]
-  exact Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n)
+@[deprecated Nat.cast_add_one_ne_zero +typeChanged (since := "2026-11-09")]
+lemma cesaro_den_ne_zero (n : ℕ) : ((n : 𝕜) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
 
 /-- The norm of the denominator is `n + 1`. -/
 lemma norm_cesaro_den (n : ℕ) : ‖((n : 𝕜) + 1)‖ = (n : ℝ) + 1 := by
@@ -254,7 +253,7 @@ theorem notMem_range_cesaroCLM : cesaroNonRange (𝕜 := 𝕜) ∉ Set.range (ce
     intro n
     have hpre := cesaro_preimage_succ x n
     rw [hCx (n + 1), hCx n, cesaroNonRange_apply (n + 1), cesaroNonRange_apply n] at hpre
-    have hne1 : ((n : 𝕜) + 1) ≠ 0 := cesaro_den_ne_zero n
+    have hne1 : ((n : 𝕜) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
     have hne2 : ((n : 𝕜) + 2) ≠ 0 := by
       have h : ((n + 2 : ℕ) : 𝕜) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
       push_cast at h
@@ -482,7 +481,7 @@ lemma cesaroCLM_test_apply_lt {N : ℕ} {n : ℕ} (hn : n < N) :
           push_cast
           ring
   rw [hsum]
-  exact mul_div_cancel_left₀ _ (cesaro_den_ne_zero n)
+  exact mul_div_cancel_left₀ _ (Nat.cast_add_one_ne_zero n)
 
 /-- Past coordinate `N`, the Cesàro operator applied to the test vector is
 `N / (√N (n + 1))`. -/

@@ -111,12 +111,6 @@ private theorem kapOfBounded_continuous :
     Continuous (kapOfBounded : (H →L[ℂ] H) → H →Lₚₜ[ℂ] H) :=
   (ContinuousLinearMap.toPointwiseConvergenceCLM ℂ (RingHom.id ℂ) H H).continuous
 
-omit [CompleteSpace H] in
-/-- Evaluation at a vector is SOT-continuous. -/
-private theorem kapEval_continuous (v : H) :
-    Continuous (fun p : H →Lₚₜ[ℂ] H => p v) :=
-  (PointwiseConvergenceCLM.evalCLM (RingHom.id ℂ) H v).continuous
-
 private theorem kapToBounded_star (p : H →Lₚₜ[ℂ] H) :
     toBounded (kapStar p) = star (toBounded p) :=
   kapToBounded_ofBounded _
@@ -180,7 +174,7 @@ private theorem kapIsClosed_ball :
         _ ≤ 1 * ‖v‖ := by rw [one_mul]; exact h v
   rw [hset]
   exact isClosed_iInter fun v =>
-    isClosed_le (continuous_norm.comp (kapEval_continuous v)) continuous_const
+    isClosed_le (continuous_norm.comp (continuous_eval_const v)) continuous_const
 
 end KapPlumbing
 
@@ -301,7 +295,7 @@ private theorem kapContinuous_starApply (f : StrongDual ℂ (H →Lₚₜ[ℂ] H
       ContinuousLinearMap.adjoint_inner_right _ _ _
     rw [hadj, kapToBounded_apply]
   rw [hfun]
-  exact continuous_finsetSum _ fun x _ => (kapEval_continuous (w x)).inner continuous_const
+  exact continuous_finsetSum _ fun x _ => (continuous_eval_const (w x)).inner continuous_const
 
 /-- Real part of `f` after `kapStar` is continuous. -/
 private theorem kapContinuous_re_starApply (f : StrongDual ℂ (H →Lₚₜ[ℂ] H)) :
@@ -454,18 +448,6 @@ private theorem kapToBounded_postcomp (a : H →L[ℂ] H) (p : H →Lₚₜ[ℂ]
   rw [ContinuousLinearMap.mul_def, ContinuousLinearMap.comp_apply, kapToBounded_apply]
   rfl
 
-omit [CompleteSpace H] in
-private theorem kapPostcomp_cont (a : H →L[ℂ] H) :
-    Continuous ⇑(PointwiseConvergenceCLM.postcomp H a :
-      (H →Lₚₜ[ℂ] H) →L[ℂ] (H →Lₚₜ[ℂ] H)) :=
-  (PointwiseConvergenceCLM.postcomp H a : _ →L[ℂ] _).cont
-
-omit [CompleteSpace H] in
-private theorem kapPrecomp_cont (u : H →L[ℂ] H) :
-    Continuous ⇑(PointwiseConvergenceCLM.precomp H u :
-      (H →Lₚₜ[ℂ] H) →L[ℂ] (H →Lₚₜ[ℂ] H)) :=
-  (PointwiseConvergenceCLM.precomp H u : _ →L[ℂ] _).cont
-
 /-- The SOT-closure of `S`, read back as a star subalgebra of `B(H)`. -/
 private noncomputable def kapSotClosure (S : StarSubalgebra ℂ (H →L[ℂ] H)) :
     StarSubalgebra ℂ (H →L[ℂ] H) where
@@ -498,7 +480,7 @@ private noncomputable def kapSotClosure (S : StarSubalgebra ℂ (H →L[ℂ] H))
           kapOfBounded (a * V) ∈ closure {p : H →Lₚₜ[ℂ] H | toBounded p ∈ ↑S} := by
       intro a ha V hV
       rw [kapOfBounded_mul_post]
-      exact map_mem_closure (kapPostcomp_cont a) hV (fun p hp => by
+      exact map_mem_closure (PointwiseConvergenceCLM.postcomp H a).continuous hV (fun p hp => by
         change toBounded (PointwiseConvergenceCLM.postcomp H a p) ∈ ↑S
         rw [kapToBounded_postcomp]
         exact mul_mem ha hp)
@@ -511,7 +493,7 @@ private noncomputable def kapSotClosure (S : StarSubalgebra ℂ (H →L[ℂ] H))
         rw [kapOfBounded_mul_pre, kapOfBounded_toBounded]
       rw [e1]
       exact step1 _ hq _ hU'
-    have hmem := map_mem_closure (kapPrecomp_cont U) hT' hmaps
+    have hmem := map_mem_closure (PointwiseConvergenceCLM.precomp H U).continuous hT' hmaps
     rw [closure_closure] at hmem
     change kapOfBounded (T * U) ∈ closure {p : H →Lₚₜ[ℂ] H | toBounded p ∈ ↑S}
     rw [kapOfBounded_mul_pre]
@@ -909,7 +891,7 @@ private theorem kapTendsto_cfcF (b : H →L[ℂ] H) (hb : IsSelfAdjoint b) :
     intro w
     have h1 : Filter.Tendsto (fun p : H →Lₚₜ[ℂ] H => p w)
         (𝓝 (kapOfBounded b)) (𝓝 ((kapOfBounded b) w)) :=
-      (kapEval_continuous w).tendsto _
+      (continuous_eval_const w).tendsto _
     have h2 : Filter.Tendsto (fun p : H →Lₚₜ[ℂ] H => p w)
         (𝓝[{p : H →Lₚₜ[ℂ] H | IsSelfAdjoint (toBounded p)}] (kapOfBounded b))
         (𝓝 ((kapOfBounded b) w)) :=
@@ -1539,8 +1521,8 @@ private theorem kapPsi_continuous :
     simp only [kapOfBounded_apply, add_apply, ContinuousLinearMap.comp_apply,
       kapToBounded_apply]
   simp only [key]
-  exact (kapInl.cont.comp ((kapEval_continuous _).comp continuous_fst)).add
-    (kapInr.cont.comp ((kapEval_continuous _).comp continuous_snd))
+  exact (kapInl.cont.comp ((continuous_eval_const _).comp continuous_fst)).add
+    (kapInr.cont.comp ((continuous_eval_const _).comp continuous_snd))
 
 /-- The four corners of `Ψ p q` are `0`, `toBounded p`, `toBounded q`, `0`. -/
 private theorem kapPsi_corners (p q : H →Lₚₜ[ℂ] H) :
@@ -1643,7 +1625,7 @@ private theorem kapGamma_continuous :
     simp only [kapOfBounded_apply, ContinuousLinearMap.comp_apply,
       kapToBounded_apply]
   simp only [key]
-  exact kapFst.cont.comp (kapEval_continuous (kapInr w))
+  exact kapFst.cont.comp (continuous_eval_const (kapInr w))
 
 omit [CompleteSpace H] in
 /-- The corner map does not increase the norm. -/

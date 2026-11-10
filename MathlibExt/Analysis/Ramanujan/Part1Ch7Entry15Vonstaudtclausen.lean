@@ -426,28 +426,8 @@ private theorem neg_bpT_eq_sinZeta {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1)
     exact hS'.congr (fun N : ℕ => (sinIcc_eq_range x s N).symm)
   exact tendsto_nhds_unique hT hS
 
-private theorem isOpen_re_pos : IsOpen {z : ℂ | 0 < z.re} :=
-  Complex.isOpen_re_gt 0
-
-private theorem isOpen_re_gt_one : IsOpen {z : ℂ | 1 < z.re} :=
-  Complex.isOpen_re_gt 1
-
-private theorem convex_re_pos : Convex ℝ {z : ℂ | 0 < z.re} := by
-  intro x hx y hy a b ha hb hab
-  simp only [Set.mem_ofPred_eq] at hx hy ⊢
-  have hre : (a • x + b • y).re = a * x.re + b * y.re := by
-    simp only [Complex.add_re, Complex.smul_re, smul_eq_mul]
-  rw [hre]
-  rcases eq_or_ne a 0 with rfl | ha0
-  · have hb1 : b = 1 := by linarith
-    rw [hb1]
-    simp only [zero_mul, zero_add, one_mul]
-    exact hy
-  · have ha' : 0 < a := lt_of_le_of_ne' ha ha0
-    exact add_pos_of_pos_of_nonneg (mul_pos ha' hx) (mul_nonneg hb hy.le)
-
 private theorem preconnected_re_pos : IsPreconnected {z : ℂ | 0 < z.re} :=
-  Convex.isPreconnected convex_re_pos
+  (convex_halfSpace_re_gt 0).isPreconnected
 
 /-- Each by-parts summand is holomorphic in `s` on `0 < s.re`. -/
 private theorem bpH_differentiableAt (x : ℝ) (i : ℕ) (s : ℂ) :
@@ -474,7 +454,7 @@ private theorem bpT_summableLocallyUniformlyOn (x : ℝ) (hx0 : 0 < x)
     (hx1 : x < 1) :
     SummableLocallyUniformlyOn (fun i s => bpH x s i)
       {z : ℂ | 0 < z.re} := by
-  apply SummableLocallyUniformlyOn_of_locally_bounded isOpen_re_pos
+  apply SummableLocallyUniformlyOn_of_locally_bounded (Complex.isOpen_re_gt 0)
   intro K hKsub hKcomp
   obtain ⟨σ0, hσ0pos, hσ0le⟩ := hKcomp.exists_forall_le'
     Complex.continuous_re.continuousOn (fun b hb => hKsub hb)
@@ -533,9 +513,9 @@ private theorem bpT_analytic (x : ℝ) (hx0 : 0 < x) (hx1 : x < 1) :
   have hdiff : ∀ i s, s ∈ {z : ℂ | 0 < z.re} →
       DifferentiableAt ℂ (fun s => bpH x s i) s :=
     fun i s _ => bpH_differentiableAt x i s
-  have hD := hsum.differentiableOn isOpen_re_pos hdiff
+  have hD := hsum.differentiableOn (Complex.isOpen_re_gt 0) hdiff
   have hD' : DifferentiableOn ℂ (bpT x) {z : ℂ | 0 < z.re} := hD
-  exact hD'.analyticOnNhd isOpen_re_pos
+  exact hD'.analyticOnNhd (Complex.isOpen_re_gt 0)
 
 /-- The by-parts limit equals `sinZeta` on all of `0 < s.re`. -/
 private theorem bpT_eq_sinZeta {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1)
@@ -546,7 +526,7 @@ private theorem bpT_eq_sinZeta {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1)
   have hS : AnalyticOnNhd ℂ (HurwitzZeta.sinZeta (x : UnitAddCircle))
       {z | 0 < z.re} :=
     (HurwitzZeta.differentiableAt_sinZeta _).differentiableOn.analyticOnNhd
-      isOpen_re_pos
+      (Complex.isOpen_re_gt 0)
   have hmem : (2 : ℂ) ∈ {z : ℂ | 1 < z.re} := by
     have h2 : (2 : ℂ) = 1 + 1 := by norm_num
     change (1 : ℝ) < (2 : ℂ).re
@@ -555,7 +535,7 @@ private theorem bpT_eq_sinZeta {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1)
   have hev : (fun z => -bpT x z) =ᶠ[𝓝 (2 : ℂ)]
       HurwitzZeta.sinZeta (x : UnitAddCircle) := by
     have hnb : {z : ℂ | 1 < z.re} ∈ 𝓝 (2 : ℂ) :=
-      isOpen_re_gt_one.mem_nhds hmem
+      (Complex.isOpen_re_gt 1).mem_nhds hmem
     filter_upwards [hnb] with z hz using neg_bpT_eq_sinZeta hx0 hx1 hz
   have h2mem : (2 : ℂ) ∈ {z : ℂ | 0 < z.re} := by
     have h2 : (2 : ℂ) = 1 + 1 := by norm_num

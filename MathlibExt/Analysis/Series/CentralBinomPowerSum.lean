@@ -567,20 +567,6 @@ private lemma closed_form (k : ℕ) (x : ℝ) (hx : |x| < 1 / 4) :
     rw [hCB, pow_succ]
     field_simp
 
-/-- Swap a finite sum with a `tsum`. -/
-private lemma tsum_finset_sum {s : Finset ℕ} {G : ℕ → ℕ → ℝ} (h : ∀ j ∈ s, Summable (G j)) :
-    (∑' n, ∑ j ∈ s, G j n) = ∑ j ∈ s, ∑' n, G j n := by
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s' has ih =>
-    have ha : Summable (G a) := h _ (Finset.mem_insert_self a s')
-    have hs' : ∀ j ∈ s', Summable (G j) := fun j hj => h _ (Finset.mem_insert_of_mem hj)
-    have iheq := ih hs'
-    have e : (fun n => ∑ j ∈ insert a s', G j n)
-        = (fun n => G a n + ∑ j ∈ s', G j n) :=
-      funext (fun n => Finset.sum_insert has)
-    rw [e, Summable.tsum_add ha (summable_sum hs'), iheq, Finset.sum_insert has]
-
 /--
 Central binomial power-sum identity via Stirling numbers of the second kind:
 for every `m` and `|x| < 1/4`,
@@ -628,8 +614,8 @@ theorem central_binom_power_sum_stirling
             * ((Nat.centralBinom n : ℝ) * (((n.descFactorial j) : ℕ) : ℝ) * x ^ n))
         = ∑ j ∈ Finset.range (m + 1), ((Nat.stirlingSecond m j : ℕ) : ℝ)
           * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial j : ℕ) : ℝ) * x ^ n) := by
-      have hswap := tsum_finset_sum (s := Finset.range (m + 1))
-        (G := fun j n => ((Nat.stirlingSecond m j : ℕ) : ℝ)
+      have hswap := Summable.tsum_finsetSum (s := Finset.range (m + 1))
+        (f := fun j n => ((Nat.stirlingSecond m j : ℕ) : ℝ)
           * ((Nat.centralBinom n : ℝ) * (((n.descFactorial j) : ℕ) : ℝ) * x ^ n))
         (fun j _ => (summable_centralBinom_desc j x hx).mul_left _)
       have hpull : ∀ j ∈ Finset.range (m + 1),
