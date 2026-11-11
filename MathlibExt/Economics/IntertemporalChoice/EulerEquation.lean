@@ -20,8 +20,10 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 A household with incomes `y₀, y₁` consumes `c₀` in period 0, saves or borrows
 `y₀ - c₀` at the real interest rate `r`, and consumes
 `c₁ = (1 + r) (y₀ - c₀) + y₁` in period 1. Lifetime utility is
-`u c₀ + β u c₁`, and feasible consumption is nonnegative in both periods (the
-natural borrowing limit `0 ≤ c₁`; there is no unbounded borrowing).
+`u c₀ + β u c₁`, and feasible consumption is nonnegative in both periods. When
+the gross return `1 + r` is positive, `0 ≤ c₁` is the natural borrowing limit
+`c₀ ≤ y₀ + y₁ / (1 + r)`, so borrowing is bounded; the definitions impose no
+sign condition on `1 + r`.
 
 At an interior maximizer (`0 < c₀`, `0 < c₁`) at which `u` is differentiable,
 the consumption Euler equation `u'(c₀) = β (1 + r) u'(c₁)` holds. This is a
@@ -60,8 +62,10 @@ def lifetimeUtility (u : ℝ → ℝ) (β r y₀ y₁ c₀ : ℝ) : ℝ :=
   u c₀ + β * u (secondPeriodConsumption r y₀ y₁ c₀)
 
 /-- Feasible first-period consumptions: both periods' consumption are
-nonnegative. The constraint `0 ≤ c₁` is the natural borrowing limit; there is no
-unlimited borrowing. -/
+nonnegative. When `0 < 1 + r`, the constraint `0 ≤ c₁` is the natural borrowing
+limit `c₀ ≤ y₀ + y₁ / (1 + r)`, so borrowing is bounded. No sign condition on
+`1 + r` is imposed here: if `1 + r ≤ 0`, the constraint `0 ≤ c₁` does not bound
+borrowing. -/
 def feasibleConsumption (r y₀ y₁ : ℝ) : Set ℝ :=
   {c₀ | 0 ≤ c₀ ∧ 0 ≤ secondPeriodConsumption r y₀ y₁ c₀}
 
