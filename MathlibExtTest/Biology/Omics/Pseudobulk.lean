@@ -219,13 +219,32 @@ example (μ₀ τ β : ℝ) :
   simp [meanFn]
   ring
 
-/-- Under confounding the condition contrast is `τ + β`, computed directly. -/
+/-- With `batch = cond` (`b = 1`), the contrast is `τ + β`, computed directly. -/
 example (μ₀ τ β : ℝ) :
     ∫ ω, obs condC condC μ₀ τ β (fun (_ : Fin 2 × Fin 3) (_ : Unit) ↦ (0 : ℝ)) (1, 0) ω
         ∂(Measure.dirac ())
       - ∫ ω, obs condC condC μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ())
       = τ + β := by
   simp [obs, meanFn, condC]
+  ring
+
+/-- With `batch = 1 - cond` (`a = 1`, `b = -1`), the contrast is `τ - β`, computed directly. -/
+example (μ₀ τ β : ℝ) :
+    ∫ ω, obs condC batchR μ₀ τ β (fun (_ : Fin 2 × Fin 3) (_ : Unit) ↦ (0 : ℝ)) (1, 0) ω
+        ∂(Measure.dirac ())
+      - ∫ ω, obs condC batchR μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ())
+      = τ - β := by
+  simp [obs, meanFn, condC, batchR]
+
+/-- The library contrast at `b = -1` pins the sign of the `b * β` term: `τ - β`. -/
+example (μ₀ τ β : ℝ) :
+    ∫ ω, obs condC batchR μ₀ τ β (fun (_ : Fin 2 × Fin 3) (_ : Unit) ↦ (0 : ℝ)) (1, 0) ω
+        ∂(Measure.dirac ())
+      - ∫ ω, obs condC batchR μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ())
+      = τ - β := by
+  refine (contrast_of_confounded (μ := Measure.dirac ()) (U := fun _ _ ↦ (0 : ℝ)) (a := 1)
+    (b := -1) (d₀ := 0) (d₁ := 1) (by funext d; fin_cases d <;> simp [condC, batchR])
+    (by simp) (by simp) (by simp [condC]) (by simp [condC]) μ₀ τ β 0 0).trans ?_
   ring
 
 /-! ### Axioms -/

@@ -304,7 +304,7 @@ theorem trueVar_eq_designEffect_mul_naiveVar {σb2 σe2 : ℝ} (hs : σb2 + σe2
 
 /-! ### The per-cell variances do not determine the variance of the mean -/
 
-section Marginals
+section PerCellVariance
 
 variable [Fintype δ] [Fintype κ] [DecidableEq δ] [DecidableEq κ]
 variable {Ω' : Type*} {mΩ' : MeasurableSpace Ω'} {μ' : Measure Ω'} [IsFiniteMeasure μ]
@@ -344,7 +344,7 @@ theorem variance_cellMean_eq_iff [Nonempty δ] (hm : 2 ≤ Fintype.card κ) {Y :
   · rintro rfl
     ring_nf
 
-end Marginals
+end PerCellVariance
 
 /-! ### Pseudobulk -/
 
