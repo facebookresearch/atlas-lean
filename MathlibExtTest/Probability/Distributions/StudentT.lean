@@ -17,7 +17,8 @@ import MathlibExt.Probability.Distributions.StudentT
 
 Total mass `1` at `k = 1` and `k = 5`, the density at `0`, the Cauchy density at `k = 1`, the
 degenerate `k = 0` case (zero measure), and the gamma moment and Laplace transform helpers at
-the exponential law.
+the exponential law, and the ratio law instantiated on the product space `N(0, 1) ⊗ χ²₃`
+(non-vacuity of its hypotheses).
 -/
 
 open MeasureTheory ProbabilityTheory Real
@@ -62,5 +63,14 @@ example : ∫⁻ y, gammaPDF 1 1 y * ENNReal.ofReal (y ^ (1 : ℝ)) = 1 := by
 example : ∫⁻ y, gammaPDF 1 1 y * ENNReal.ofReal (exp (-(1 * y))) = ENNReal.ofReal (1 / 2) := by
   rw [lintegral_gammaPDF_mul_exp (by norm_num) (by norm_num) (by norm_num)]
   norm_num
+
+/-- The ratio law on the canonical product space: with `Z = fst`, `V = snd` under
+`N(0, 1) ⊗ χ²₃`, the hypotheses hold and `Z / √(V / 3) ~ t₃`. -/
+example : ((gaussianReal 0 1).prod (chiSquareMeasure 3)).map
+      (fun ω : ℝ × ℝ => ω.1 / √(ω.2 / ((3 : ℕ) : ℝ))) = studentTMeasure 3 := by
+  have := isProbabilityMeasure_chiSquareMeasure (p := 3) (by norm_num)
+  exact map_div_sqrt_chiSquare_eq_studentT (by norm_num)
+    ⟨by fun_prop, by simp [Measure.map_fst_prod]⟩ ⟨by fun_prop, by simp [Measure.map_snd_prod]⟩
+    (indepFun_prod (X := id) (Y := id) measurable_id measurable_id)
 
 end MathlibExtTest.Probability.Distributions.StudentT
