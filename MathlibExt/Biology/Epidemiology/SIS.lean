@@ -56,8 +56,11 @@ formula here is stated through `φ_r`.
 * `tendsto_sisInfected_endemic`, `tendsto_sisInfected_zero` and their `IsSolution` versions:
   `I(t) → N (1 - γ / β)` if `β > γ` and `I(0) > 0`; `I(t) → 0` if `β ≤ γ`.
 * `isSolution_const_zero`, `isSolution_const_endemic`: the two equilibria.
-* `R0_eq`, `isHurwitz_iff`, `exists_re_pos_iff`: the next-generation matrix `F = (β)`,
-  `V = (γ)` gives `R₀ = β / γ`, and the linearized threshold `β < γ` / `β > γ`.
+* `hasDerivAt_newInfections_dfe`, `hasDerivAt_transfers_dfe`, `hasDerivAt_infectedField_zero`:
+  `F = (β)` and `V = (γ)` are the derivatives at the disease-free equilibrium of the
+  new-infection and transfer rates (`N ≠ 0`), and `F - V` is the infected-block Jacobian.
+* `R0_eq`, `R0_deriv_eq`, `isHurwitz_iff`, `exists_re_pos_iff`: `R₀ = β / γ`, and the
+  linearized threshold `β < γ` / `β > γ`.
 
 ## References
 
@@ -420,10 +423,17 @@ theorem isSolution_const_endemic {β γ N : ℝ} (hβ : β ≠ 0) :
 
 /-! ### The next-generation matrix at the disease-free equilibrium
 
-SIS has one infected compartment. At the disease-free equilibrium `(S, I) = (N, 0)` the rate of
-new infections is `ℱ = β S I / N`, with `∂ℱ/∂I = β S / N = β` at `S = N`, and the other
-transfers are `𝒱 = γ I`, `∂𝒱/∂I = γ`; so `F = (β)` and `V = (γ)`. The results below are the
-**local, linearized** threshold of van den Driessche–Watmough: the sign of the single
+SIS has one infected compartment, `I`. In the convention of `NextGenerationMatrix`
+(van den Driessche–Watmough), the infected rate `I' = ℱ - 𝒱` splits into new infections
+`ℱ(S, I) = β S I / N` and other transfers `𝒱(I) = γ I`, and `F`, `V` are the partial derivatives
+in the infected variable at the disease-free equilibrium `(S, I) = (N, 0)`. The lemmas
+`hasDerivAt_newInfections_dfe` (`∂ℱ/∂I = β S / N = β` at `S = N`) and `hasDerivAt_transfers_dfe`
+(`∂𝒱/∂I = γ`) prove that these derivatives are the entries of `F = !![β]` and `V = !![γ]`;
+`hasDerivAt_newInfections_closed_dfe` gives the same entry with the closure `S = N - I`
+substituted, and `hasDerivAt_infectedField_zero` the Jacobian `F - V` of the SIS infected rate.
+All need `N ≠ 0`: for `N = 0`, Lean's `x / 0 = 0` makes `ℱ ≡ 0`, whose derivative is `0`, not `β`.
+
+The threshold results are the **local, linearized** statements: the sign of the single
 eigenvalue `β - γ` of `F - V`. The **global** threshold behaviour of SIS (convergence to `0`
 for `R₀ ≤ 1`, to `I*` for `R₀ > 1` and `I(0) > 0`) is proved separately above from the explicit
 solution; it is specific to this scalar model and is not a consequence of the spectral
@@ -435,60 +445,67 @@ private theorem of_one_by_one (c : ℝ) : !![c] = c • (1 : Matrix (Fin 1) (Fin
   fin_cases i; fin_cases j
   simp
 
-/-- The complex spectrum of a real scalar `1 × 1` matrix `c • 1` is `{c}`. -/
-private theorem spectrum_smul_one (c : ℝ) :
-    spectrum ℂ ((c • (1 : Matrix (Fin 1) (Fin 1) ℝ)).map (algebraMap ℝ ℂ)) = {(c : ℂ)} := by
-  have : (c • (1 : Matrix (Fin 1) (Fin 1) ℝ)).map (algebraMap ℝ ℂ) =
-      algebraMap ℂ (Matrix (Fin 1) (Fin 1) ℂ) (c : ℂ) := by
-    ext i j
-    fin_cases i; fin_cases j
-    simp [Matrix.algebraMap_matrix_apply]
-  rw [this, spectrum.scalar_eq]
-
 /-- The complex spectrum of `!![c]` is `{c}`. -/
 theorem spectrum_one_by_one (c : ℝ) :
     spectrum ℂ ((!![c] : Matrix (Fin 1) (Fin 1) ℝ).map (algebraMap ℝ ℂ)) = {(c : ℂ)} := by
-  rw [of_one_by_one, spectrum_smul_one]
+  rw [of_one_by_one, Matrix.spectrum_smul_one]
+
+/-- **The `F` entry is `∂ℱ/∂I` at the disease-free equilibrium.** The new-infection rate
+`ℱ(S, I) = β S I / N`, as a function of the infected variable with `S = N` held at the
+disease-free value, has derivative `β = F₀₀` at `I = 0` (`N ≠ 0`). -/
+theorem hasDerivAt_newInfections_dfe {β N : ℝ} (hN : N ≠ 0) :
+    HasDerivAt (fun x : ℝ => β * N * x / N) ((!![β] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 := by
+  refine (((hasDerivAt_id' (0 : ℝ)).const_mul (β * N)).div_const N).congr_deriv ?_
+  simp [hN]
+
+/-- **The `F` entry with the closure `S = N - I`.** The new-infection rate along the closed
+population, `I ↦ β (N - I) I / N`, also has derivative `β = F₀₀` at `I = 0` (`N ≠ 0`). -/
+theorem hasDerivAt_newInfections_closed_dfe {β N : ℝ} (hN : N ≠ 0) :
+    HasDerivAt (fun x : ℝ => β * (N - x) * x / N) ((!![β] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 := by
+  refine ((((hasDerivAt_id' (0 : ℝ)).const_sub N).const_mul β).mul
+    (hasDerivAt_id' (0 : ℝ))).div_const N |>.congr_deriv ?_
+  simp [hN]
+
+/-- **The `V` entry is `∂𝒱/∂I`.** The recovery transfer `𝒱(I) = γ I` has derivative
+`γ = V₀₀` at `I = 0`. -/
+theorem hasDerivAt_transfers_dfe (γ : ℝ) :
+    HasDerivAt (fun x : ℝ => γ * x) ((!![γ] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 := by
+  simpa using (hasDerivAt_id (0 : ℝ)).const_mul γ
+
+/-- **The infected-block Jacobian is `F - V`.** The SIS infected rate
+`I' = β S I / N - γ I` with `S = N - I` has derivative `β - γ = (F - V)₀₀` at the
+disease-free state `I = 0` (`N ≠ 0`). -/
+theorem hasDerivAt_infectedField_zero {β N : ℝ} (γ : ℝ) (hN : N ≠ 0) :
+    HasDerivAt (fun x : ℝ => β * (N - x) * x / N - γ * x)
+      ((!![β] - !![γ] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 := by
+  rw [Matrix.sub_apply]
+  exact (hasDerivAt_newInfections_closed_dfe hN).sub (hasDerivAt_transfers_dfe γ)
 
 /-- `F = (β)` is entrywise nonnegative for `β ≥ 0`. -/
 theorem ngmF_nonneg {β : ℝ} (hβ : 0 ≤ β) (i j : Fin 1) : 0 ≤ (!![β] : Matrix _ _ ℝ) i j := by
-  fin_cases i; fin_cases j; simpa using hβ
+  rw [of_one_by_one]; exact NextGenerationMatrix.smul_one_nonneg hβ i j
 
 /-- `V = (γ)` is a nonsingular M-matrix for `γ > 0`. -/
 theorem ngmV_isNonsingularMMatrix {γ : ℝ} (hγ : 0 < γ) :
     (!![γ] : Matrix (Fin 1) (Fin 1) ℝ).IsNonsingularMMatrix := by
-  refine ⟨fun i j hij => absurd (Subsingleton.elim i j) hij, fun μ hμ => ?_⟩
-  rw [show -(!![γ] : Matrix (Fin 1) (Fin 1) ℝ) = !![-γ] by rw [of_one_by_one, of_one_by_one,
-    neg_smul], spectrum_one_by_one, Set.mem_singleton_iff] at hμ
-  simp [hμ, hγ]
+  rw [of_one_by_one]; exact Matrix.isNonsingularMMatrix_smul_one hγ
 
 /-- **`R₀ = β / γ` for SIS**: the spectral radius of the `1 × 1` next-generation matrix
-`F V⁻¹ = (β / γ)` (`β ≥ 0`, `γ > 0`). Route: `F V⁻¹ = (β / γ) • 1` is a scalar matrix, its
-spectrum is `{β / γ}` (`spectrum.scalar_eq`), and the spectral radius is the supremum of
-`‖·‖` over `{β / γ} ∪ {0}`. -/
+`F V⁻¹ = (β / γ)` (`β ≥ 0`, `γ > 0`), with `F = !![β]`, `V = !![γ]` the derivatives of
+`hasDerivAt_newInfections_dfe` and `hasDerivAt_transfers_dfe`. Route:
+`NextGenerationMatrix.R0_smul_one_of_nonneg` (`F V⁻¹ = (β / γ) • 1` has spectrum `{β / γ}`). -/
 theorem R0_eq {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 < γ) :
     NextGenerationMatrix.R0 !![β] !![γ] = β / γ := by
-  have hinv : (γ • (1 : Matrix (Fin 1) (Fin 1) ℝ))⁻¹ = γ⁻¹ • 1 := by
-    refine Matrix.inv_eq_left_inv ?_
-    rw [smul_mul_smul, mul_one, inv_mul_cancel₀ hγ.ne', one_smul]
-  have hK : β • (1 : Matrix (Fin 1) (Fin 1) ℝ) * (γ • 1)⁻¹ = (β / γ) • 1 := by
-    rw [hinv, smul_mul_smul, mul_one, div_eq_mul_inv]
-  rw [NextGenerationMatrix.R0, of_one_by_one, of_one_by_one, hK, spectralRadius,
-    quasispectrum_eq_spectrum_union_zero, spectrum_smul_one, Set.union_singleton, iSup_insert,
-    iSup_singleton]
-  simp [abs_of_nonneg hβ, abs_of_pos hγ]
+  rw [of_one_by_one, of_one_by_one, NextGenerationMatrix.R0_smul_one_of_nonneg hβ hγ]
 
-/-- **The infected-block Jacobian is `F - V`.** The reduced infected equation
-`I' = (β - γ) I - (β / N) I²` has derivative `β - γ = (F - V)₀₀` at the disease-free state
-`I = 0`. -/
-theorem hasDerivAt_infectedField_zero (β γ N : ℝ) :
-    HasDerivAt (fun x : ℝ => (β - γ) * x - β / N * x ^ 2)
-      ((!![β] - !![γ] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 := by
-  convert ((hasDerivAt_id (0 : ℝ)).const_mul (β - γ)).sub
-    ((hasDerivAt_pow 2 (0 : ℝ)).const_mul (β / N)) using 1
-  · funext x
-    simp only [Pi.sub_apply, id]
-  · simp
+/-- **`R₀` from the derivatives.** With `F` and `V` built literally as the derivatives at the
+disease-free equilibrium of `ℱ(N, I) = β N I / N` and `𝒱(I) = γ I` in `I`,
+`R₀ = ρ(F V⁻¹) = β / γ` (`β ≥ 0`, `γ > 0`, `N ≠ 0`). -/
+theorem R0_deriv_eq {β γ N : ℝ} (hβ : 0 ≤ β) (hγ : 0 < γ) (hN : N ≠ 0) :
+    NextGenerationMatrix.R0 !![deriv (fun x : ℝ => β * N * x / N) 0]
+      !![deriv (fun x : ℝ => γ * x) 0] = β / γ := by
+  rw [(hasDerivAt_newInfections_dfe hN).deriv, (hasDerivAt_transfers_dfe γ).deriv]
+  simpa using R0_eq hβ hγ
 
 /-- **Linearized threshold, stable side.** For `β ≥ 0`, `γ > 0`, the eigenvalue `β - γ` of
 `F - V` has negative real part iff `β < γ`, i.e. iff `R₀ < 1`

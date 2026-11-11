@@ -146,8 +146,34 @@ example : ∃ μ ∈ spectrum ℂ ((!![(2 : ℝ)] - !![1]).map (algebraMap ℝ �
 example : spectrum ℂ ((!![(3 : ℝ)]).map (algebraMap ℝ ℂ)) = {(3 : ℂ)} := by
   simpa using spectrum_one_by_one 3
 
-example (N : ℝ) : HasDerivAt (fun x : ℝ => (2 - 1) * x - 2 / N * x ^ 2)
+/-! ### `F` and `V` as derivatives at the disease-free equilibrium -/
+
+/-- `∂ℱ/∂I = β` at `(S, I) = (N, 0)`, for `β = 2`, `N = 5`. -/
+example :
+    HasDerivAt (fun x : ℝ => 2 * 5 * x / 5) ((!![(2 : ℝ)] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 :=
+  hasDerivAt_newInfections_dfe (by norm_num)
+
+example : HasDerivAt (fun x : ℝ => 2 * (5 - x) * x / 5)
+    ((!![(2 : ℝ)] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 :=
+  hasDerivAt_newInfections_closed_dfe (by norm_num)
+
+example : HasDerivAt (fun x : ℝ => 1 * x) ((!![(1 : ℝ)] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 :=
+  hasDerivAt_transfers_dfe 1
+
+/-- The SIS infected rate at `β = 2`, `γ = 1`, `N = 1` has Jacobian `(F - V)₀₀ = 1` at the
+disease-free state. -/
+example : HasDerivAt (fun x : ℝ => 2 * (1 - x) * x / 1 - 1 * x)
     ((!![(2 : ℝ)] - !![1] : Matrix (Fin 1) (Fin 1) ℝ) 0 0) 0 :=
-  hasDerivAt_infectedField_zero 2 1 N
+  hasDerivAt_infectedField_zero 1 one_ne_zero
+
+/-- **Boundary `N = 0`**: Lean's `x / 0 = 0` makes the new-infection map identically `0`, so its
+derivative is `0`, not `β = 2`. This is why the `F`-entry lemmas assume `N ≠ 0`. -/
+example : HasDerivAt (fun x : ℝ => 2 * (0 - x) * x / 0) 0 0 := by
+  simpa using hasDerivAt_const (0 : ℝ) (0 : ℝ)
+
+/-- `R₀ = 2` with `F`, `V` built literally from the derivatives (`β = 2`, `γ = 1`, `N = 3`). -/
+example : MathlibExt.Biology.Epidemiology.NextGenerationMatrix.R0
+    !![deriv (fun x : ℝ => 2 * 3 * x / 3) 0] !![deriv (fun x : ℝ => 1 * x) 0] = 2 := by
+  rw [R0_deriv_eq (by norm_num) one_pos (by norm_num)]; norm_num
 
 end MathlibExtTest.Biology.Epidemiology.SIS
