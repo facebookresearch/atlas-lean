@@ -8,12 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Data.Real.Basic
 public import Mathlib.Logic.Function.Basic
-public import Mathlib.Tactic.Linarith
+
+import Mathlib.Data.Fintype.Card
+import Mathlib.Tactic.Linarith
 
 @[expose] public section
 
