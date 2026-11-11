@@ -63,9 +63,12 @@ proved.
 
 ## Not proved here
 
-Extraction of a convergent subsequence of trapped solutions (Arzelà–Ascoli) for the
-critical-speed limit. The critical speed itself is covered directly by the invariance theorems,
-so the KPP existence statement does not need that limit.
+A critical-speed front obtained as a limit of supercritical fronts. The lemmas above only
+supply the ingredients; no sequence of solutions is produced. The missing steps are
+extraction of a locally uniformly convergent subsequence on each `[-n, n]` (Arzelà–Ascoli), a
+diagonal argument over `n`, and a translation normalization (e.g. `Uₙ(0) = 1/2`) so that the
+limit is not a constant equilibrium. The critical speed itself is covered directly by the
+invariance theorems, so the KPP existence statement does not need that limit.
 
 ## References
 
@@ -96,7 +99,7 @@ lemma isOpen_trappingTriangle (D c : ℝ) : IsOpen (trappingTriangle D c) := by
   exact (isOpen_lt continuous_snd continuous_const).inter
     (isOpen_lt continuous_const (continuous_snd.add (continuous_const.mul continuous_fst)))
 
-/-- Points of the trapping triangle have `0 < U < 1` and `-μ U < V < 0`, so `-μ < V`. -/
+/-- Points of the trapping triangle have `0 < U`. -/
 lemma pos_of_mem_trappingTriangle {D c : ℝ} (hD : 0 < D) (hc : 0 < c) {p : ℝ × ℝ}
     (hp : p ∈ trappingTriangle D c) : 0 < p.1 := by
   obtain ⟨-, h2, h3⟩ := hp
@@ -422,7 +425,7 @@ theorem node_charPoly_neg_slope_eq_zero_iff {D r c : ℝ} (hD : 0 < D) :
     · exact absurd h (by positivity)
   · exact fun h => Or.inl h.symm
 
-/-- **Below the critical speed the triangle is not invariant.** If `0 < c` and `c² < 4 r D`,
+/-- **Below the critical speed the triangle is not invariant.** If `c² < 4 r D`,
 there is a point `(u, -μ u)`, `0 < u < 1`, of the slanted edge where the field points out of the
 triangle: `U'' + μ U' < 0` there. -/
 theorem exists_outward_of_sq_lt {D r c : ℝ} (hD : 0 < D) (hr : 0 < r) (hc : c ^ 2 < 4 * r * D) :
