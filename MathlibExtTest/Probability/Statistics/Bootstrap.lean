@@ -23,6 +23,9 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 * Non-vacuity of the finite-dimensional conditional CLT in `E = ℝ`, through Cramér–Wold.
 * Non-vacuity of the almost-sure theorem: iid standard Gaussian coordinates on
   `ℕ → ℝ` satisfy all of its hypotheses.
+* Non-vacuity of the almost-sure vector theorems and of `bootstrap_consistent_mean` in `ℝ²`, for
+  iid data with singular (rank-one) covariance, with the Gaussian limit from
+  `exists_hasLaw_inner_gaussianReal`.
 -/
 
 @[expose] public section
@@ -94,17 +97,19 @@ theorem tendsto_empiricalVar_alt : Tendsto (empiricalVar alt) atTop (𝓝 ((1 : 
 example : TendstoInDistribution
     (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean alt (range n))) atTop (id : ℝ → ℝ)
     (fun _ => world alt) (gaussianReal 0 1) :=
-  tendstoInDistribution_bootMean alt one_ne_zero tendsto_empiricalVar_alt
+  tendstoInDistribution_bootMean alt tendsto_empiricalVar_alt
     (lindeberg_of_tendsto_sampleMean tendsto_sampleMean_alt tendsto_meanSq_alt)
 
 /-- The bootstrap of the smooth statistic `exp(x̄)` for the alternating data: the derivative of
-`exp` at the limit mean `0` is `1`, so the limit is `N(0, 1² · 1)`. -/
+`exp` at the limit mean `0` is `1`, so the limit is `N(0, 1² · 1) = N(0, 1)`. -/
 example : TendstoInDistribution
     (fun (n : ℕ) ω => √(n : ℝ) * (Real.exp (bootMean n ω) - Real.exp (sampleMean alt (range n))))
-    atTop (id : ℝ → ℝ) (fun _ => world alt) (gaussianReal 0 (‖Real.exp 0‖₊ ^ 2 * 1)) :=
-  tendstoInDistribution_bootstrap_of_hasStrictDerivAt alt one_ne_zero tendsto_empiricalVar_alt
+    atTop (id : ℝ → ℝ) (fun _ => world alt) (gaussianReal 0 1) := by
+  have h := tendstoInDistribution_bootstrap_of_hasStrictDerivAt alt tendsto_empiricalVar_alt
     (lindeberg_of_tendsto_sampleMean tendsto_sampleMean_alt tendsto_meanSq_alt)
     tendsto_sampleMean_alt (Real.hasStrictDerivAt_exp 0) Real.measurable_exp
+  have hv : ‖Real.exp 0‖₊ ^ 2 * (1 : ℝ≥0) = 1 := by simp
+  rwa [hv] at h
 
 /-! ### Non-vacuity of the finite-dimensional theorems (`E = ℝ`) -/
 
@@ -139,7 +144,7 @@ example : TendstoInDistribution
     (fun (n : ℕ) ω => √(n : ℝ) • (bootMeanVec n ω - sampleMeanVec alt n)) atTop (id : ℝ → ℝ)
     (fun _ => world alt) (gaussianReal 0 1) := by
   refine tendstoInDistribution_bootMeanVec alt measurable_id.aemeasurable
-    (fun t => ‖t‖₊ ^ 2) (fun t => ⟨by fun_prop, ?_⟩) (fun t ht => by simpa using ht)
+    (fun t => ‖t‖₊ ^ 2) (fun t => ⟨by fun_prop, ?_⟩)
     (fun t => ?_) (fun t => lindeberg_of_tendsto_sampleMean (tendsto_sampleMean_alt_inner t)
       (tendsto_meanSq_alt_inner t))
   · have hfun : (fun z : ℝ => ⟪id z, t⟫) = fun z => t * z := by
@@ -162,7 +167,7 @@ asymptotically `N(0, 1)`. -/
 example : ∀ᵐ ω ∂gaussSeq, TendstoInDistribution
     (fun (n : ℕ) ω' => √(n : ℝ) * (bootMean n ω' - sampleMean (fun i => ω i) (range n))) atTop
     (id : ℝ → ℝ) (fun _ => world (fun i => ω i))
-    (gaussianReal 0 (variance (fun ω : ℕ → ℝ => ω 0) gaussSeq).toNNReal) := by
+    (gaussianReal 0 1) := by
   have hmp : ∀ i, MeasurePreserving (fun ω : ℕ → ℝ => ω i) gaussSeq (gaussianReal 0 1) :=
     fun i => measurePreserving_eval_infinitePi _ i
   have hvar : variance (fun ω : ℕ → ℝ => ω 0) gaussSeq = 1 := by
@@ -177,7 +182,71 @@ example : ∀ᵐ ω ∂gaussSeq, TendstoInDistribution
   have hident : ∀ i, IdentDistrib (fun ω : ℕ → ℝ => ω i) (fun ω => ω 0) gaussSeq gaussSeq :=
     fun i => ⟨(hmp i).measurable.aemeasurable, (hmp 0).measurable.aemeasurable,
       by rw [(hmp i).map_eq, (hmp 0).map_eq]⟩
-  have hvar0 : variance (fun ω : ℕ → ℝ => ω 0) gaussSeq ≠ 0 := by rw [hvar]; simp
-  exact ae_tendstoInDistribution_bootMean (P := gaussSeq) (fun i ω => ω i) hmem hind hident hvar0
+  have h := ae_tendstoInDistribution_bootMean (P := gaussSeq) (fun i ω => ω i) hmem hind hident
+  rw [hvar, Real.toNNReal_one] at h
+  exact h
+
+/-! ### Non-vacuity in `ℝ²`, iid data with singular covariance -/
+
+/-- The plane `ℝ²`. -/
+abbrev E2 := EuclideanSpace ℝ (Fin 2)
+
+/-- The rank-one map `z ↦ z₀ e₀`; images of a standard Gaussian have singular covariance. -/
+noncomputable def rankOne : E2 →L[ℝ] E2 :=
+  (EuclideanSpace.proj (0 : Fin 2)).smulRight (EuclideanSpace.single 0 1)
+
+/-- iid standard Gaussian vectors in `ℝ²`. -/
+noncomputable def gaussSeq2 : Measure (ℕ → E2) := Measure.infinitePi fun _ => stdGaussian E2
+
+instance : IsProbabilityMeasure gaussSeq2 := by unfold gaussSeq2; infer_instance
+
+/-- The data `X i = rankOne (G i)` for iid standard Gaussian `G i`. -/
+noncomputable def rankOneData (i : ℕ) (ω : ℕ → E2) : E2 := rankOne (ω i)
+
+/-- The covariance of the data is singular: the direction `e₁` carries no variance. -/
+example (ω : ℕ → E2) : ⟪rankOneData 0 ω, EuclideanSpace.single 1 1⟫ = 0 := by
+  simp [rankOneData, rankOne, EuclideanSpace.inner_single_right]
+
+theorem rankOneData_hyps :
+    MemLp (rankOneData 0) 2 gaussSeq2 ∧ iIndepFun rankOneData gaussSeq2 ∧
+      ∀ i, IdentDistrib (rankOneData i) (rankOneData 0) gaussSeq2 gaussSeq2 := by
+  have hmp : ∀ i, MeasurePreserving (fun ω : ℕ → E2 => ω i) gaussSeq2 (stdGaussian E2) :=
+    fun i => measurePreserving_eval_infinitePi _ i
+  refine ⟨rankOne.comp_memLp' (IsGaussian.memLp_two_id.comp_measurePreserving (hmp 0)),
+    iIndepFun_infinitePi (P := fun _ => stdGaussian E2) (X := fun _ => rankOne)
+      (fun _ => rankOne.continuous.measurable), fun i => ?_⟩
+  have hid : IdentDistrib (fun ω : ℕ → E2 => ω i) (fun ω => ω 0) gaussSeq2 gaussSeq2 :=
+    ⟨(hmp i).measurable.aemeasurable, (hmp 0).measurable.aemeasurable,
+      by rw [(hmp i).map_eq, (hmp 0).map_eq]⟩
+  exact hid.comp rankOne.continuous.measurable
+
+/-- For iid data in `ℝ²` with singular covariance, the Gaussian limit `Z = A G` supplied by the
+multivariate CLT is both the sampling limit and, almost surely, the conditional bootstrap
+limit; this goes through the orthonormal-basis strong laws of the almost-sure vector theorem. -/
+example : ∃ A : E2 →L[ℝ] E2,
+    TendstoInDistribution
+        (fun (n : ℕ) ω => (√(n : ℝ))⁻¹ •
+          (∑ k ∈ range n, rankOneData k ω - n • ∫ ω, rankOneData 0 ω ∂gaussSeq2))
+        atTop (fun z => A z) (fun _ => gaussSeq2) (stdGaussian E2) ∧
+      ∀ᵐ ω ∂gaussSeq2, TendstoInDistribution
+        (fun (n : ℕ) ω' => √(n : ℝ) •
+          (bootMeanVec n ω' - sampleMeanVec (fun i => rankOneData i ω) n))
+        atTop (fun z => A z) (fun _ => world (fun i => rankOneData i ω)) (stdGaussian E2) := by
+  obtain ⟨hmem, hind, hident⟩ := rankOneData_hyps
+  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal hmem
+  exact ⟨A, bootstrap_consistent_mean rankOneData hmem hind hident
+    A.continuous.measurable.aemeasurable hA⟩
+
+/-- The almost-sure smooth vector theorem on the same data, with `g = id` (derivative `id`). -/
+example : ∃ A : E2 →L[ℝ] E2, ∀ᵐ ω ∂gaussSeq2, TendstoInDistribution
+    (fun (n : ℕ) ω' => √(n : ℝ) •
+      (id (bootMeanVec n ω') - id (sampleMeanVec (fun i => rankOneData i ω) n)))
+    atTop (fun z => ContinuousLinearMap.id ℝ E2 (A z))
+    (fun _ => world (fun i => rankOneData i ω)) (stdGaussian E2) := by
+  obtain ⟨hmem, hind, hident⟩ := rankOneData_hyps
+  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal hmem
+  exact ⟨A, ae_tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt rankOneData hmem
+    (fun _ _ hij => hind.indepFun hij) hident A.continuous.measurable.aemeasurable hA
+    (hasStrictFDerivAt_id _) measurable_id⟩
 
 end MathlibExtTest.Probability.Statistics.Bootstrap

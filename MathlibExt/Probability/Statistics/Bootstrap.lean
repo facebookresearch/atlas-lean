@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.LindebergFeller
 public import MathlibExt.Probability.Causality.CausalIdentification
 public import MathlibExt.Probability.Statistics.Slutsky
+public import MathlibExt.Probability.Statistics.MultivariateCLT
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.StrongLaw
@@ -49,9 +50,11 @@ centred bootstrap array `(ω n k - x̄ₙ) / √n`. Its Lindeberg condition is a
 
   `(1 / n) ∑_{i<n} (x i - x̄ₙ)² 𝟙{|x i - x̄ₙ| > ε √n} → 0` for every `ε > 0`,
 
-which, with `empiricalVar x n → σ² > 0`, gives the conditional CLT
-`tendstoInDistribution_bootMean`. For iid square-integrable data both conditions hold almost
-surely: the strong law for `X` and `X²` gives the variance limit and `max_{i<n} |X i| = o(√n)`
+which, with `empiricalVar x n → σ² > 0`, gives the conditional CLT `tendstoInDistribution_bootMean`.
+When `σ² = 0`, Chebyshev's inequality under `world x` gives the point mass at `0`
+(`gaussianReal 0 0`) instead, so no positivity hypothesis is needed and a singular covariance is
+allowed in the vector case. For iid square-integrable data both conditions hold almost surely:
+the strong law for `X` and `X²` gives the variance limit and `max_{i<n} |X i| = o(√n)`
 (`lindeberg_of_tendsto_sampleMean`), so the truncated sums are eventually `0`.
 
 Smooth statistics need a delta method with a *moving* centre, since both `x̄*ₙ` and `x̄ₙ`
@@ -68,21 +71,22 @@ once: finitely many strong laws, one for each coordinate product in an orthonorm
 * `tendstoInDistribution_bootstrap_of_hasStrictDerivAt`: bootstrap of `g(x̄)`, fixed data.
 * `ae_tendstoInDistribution_bootMean`,
   `ae_tendstoInDistribution_bootstrap_of_hasStrictDerivAt`: almost-sure bootstrap validity for
-  iid real data with positive variance.
+  iid square-integrable real data.
 * `tendstoInDistribution_bootMeanVec`,
   `tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt`: the same for `E`-valued data in a
   finite-dimensional inner product space, fixed data.
+* `bootstrap_consistent_mean`: the sampling law and, almost surely, the bootstrap law of the
+  scaled multivariate mean share the Gaussian limit.
 * `ae_tendstoInDistribution_bootMeanVec`,
   `ae_tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt`: almost-sure bootstrap validity
-  for iid `E`-valued data with nonsingular covariance and smooth `g : E → F`.
+  for iid square-integrable `E`-valued data (singular covariance allowed) and smooth
+  `g : E → F`.
 
 ## Scope
 
 * Only iid observations and statistics `g(x̄)` with `g` strictly differentiable at the mean.
   Nothing here concerns dependent data, high-dimensional (`dim → ∞`) settings, the
   `m`-out-of-`n` bootstrap, or coverage of bootstrap confidence intervals.
-* The variance must be positive (scalar case) and the covariance nonsingular (vector case);
-  degenerate directions are excluded by hypothesis, not handled.
 * The conclusion is first order: when `g' = 0` (or `L = 0`) the limit is the point mass at
   `0`, and no second-order bootstrap limit is claimed.
 
@@ -258,6 +262,20 @@ theorem sqrt_mul_bootMean_sub (x : ℕ → ℝ) (n : ℕ) (ω : ℕ → ℕ → 
     _ = _ := by rw [hsq]; field_simp
 
 
+/-- Replace the limit variable of a convergence in distribution by one with the same law. -/
+private theorem tendstoInDistribution_of_map_limit_eq {Ω₁ Ω₁' Ω₂' : Type*} [MeasurableSpace Ω₁]
+    [MeasurableSpace Ω₁'] [MeasurableSpace Ω₂'] {μ₁ : Measure Ω₁} {ν₁ : Measure Ω₁'}
+    {ν₂ : Measure Ω₂'} [IsProbabilityMeasure μ₁] [IsProbabilityMeasure ν₁]
+    [IsProbabilityMeasure ν₂] {Y : ℕ → Ω₁ → ℝ} {Z₁ : Ω₁' → ℝ} {Z₂ : Ω₂' → ℝ}
+    (h : TendstoInDistribution Y atTop Z₁ (fun _ => μ₁) ν₁) (hZ₂ : AEMeasurable Z₂ ν₂)
+    (heq : ν₁.map Z₁ = ν₂.map Z₂) :
+    TendstoInDistribution Y atTop Z₂ (fun _ => μ₁) ν₂ := by
+  refine ⟨h.forall_aemeasurable, hZ₂, ?_⟩
+  have hlim : (⟨ν₂.map Z₂, inferInstance⟩ : ProbabilityMeasure ℝ) =
+      ⟨ν₁.map Z₁, inferInstance⟩ := Subtype.ext heq.symm
+  rw [hlim]
+  exact h.tendsto
+
 /-- The rows of the centred, scaled bootstrap array are independent under `world x`. -/
 private theorem iIndepFun_row (x : ℕ → ℝ) (n : ℕ) :
     iIndepFun (m := fun _ => inferInstance)
@@ -268,20 +286,9 @@ private theorem iIndepFun_row (x : ℕ → ℝ) (n : ℕ) :
   exact h.precomp (g := fun k : range n => (n, k.1)) fun a b hab =>
     Subtype.ext (congrArg Prod.snd hab)
 
-/-- **Conditional Lindeberg CLT for the bootstrap mean (Bickel–Freedman).**
-
-Fix a data sequence `x`. Suppose the plug-in sample variances `empiricalVar x n` converge to
-`σ² > 0`, and the centred data satisfy the Lindeberg condition
-`(1 / n) ∑_{i<n} (x i - x̄ₙ)² 𝟙{|x i - x̄ₙ| > ε √n} → 0` for every `ε > 0`. Then, under the
-bootstrap world (i.e. conditionally on the data), `√n (x̄*ₙ - x̄ₙ)` converges in distribution to
-`N(0, σ²)`.
-
-The proof applies the triangular-array Lindeberg–Feller theorem
-`lindeberg_feller_clt_triangular` to the bootstrap array `(ω n k - x̄ₙ) / √n`, `k < n`, whose
-rows are iid from the centred empirical distribution. The data Lindeberg hypothesis is exactly
-the Lindeberg condition of that array; it does not follow from the variance condition alone,
-which is why an iid central limit theorem for the data cannot replace it. -/
-theorem tendstoInDistribution_bootMean (x : ℕ → ℝ) {v : ℝ≥0} (hv : v ≠ 0)
+/-- The conditional Lindeberg CLT for the bootstrap mean when the limit variance is
+positive. -/
+private theorem tendstoInDistribution_bootMean_of_ne_zero (x : ℕ → ℝ) {v : ℝ≥0} (hv : v ≠ 0)
     (hvar : Tendsto (empiricalVar x) atTop (𝓝 v))
     (hLind : ∀ ε : ℝ, 0 < ε → Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n,
         if ε * √n < |x i - sampleMean x (range n)| then (x i - sampleMean x (range n)) ^ 2 else 0)
@@ -366,6 +373,97 @@ theorem tendstoInDistribution_bootMean (x : ℕ → ℝ) {v : ℝ≥0} (hv : v �
     f.continuous.aestronglyMeasurable]
   simp_rw [hX, sqrt_mul_bootMean_sub]
 
+
+
+/-- The bootstrap mean when the plug-in variances tend to `0`: by Chebyshev's inequality the
+scaled bootstrap mean tends to `0` in probability, so its conditional law tends to the point
+mass at `0`, which is `gaussianReal 0 0`. -/
+private theorem tendstoInDistribution_bootMean_of_eq_zero (x : ℕ → ℝ)
+    (hvar : Tendsto (empiricalVar x) atTop (𝓝 0)) :
+    TendstoInDistribution
+      (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) atTop
+      (id : ℝ → ℝ) (fun _ => world x) (gaussianReal 0 0) := by
+  set Y : ℕ → ℕ → (ℕ → ℕ → ℝ) → ℝ := fun n k ω => (ω n k - sampleMean x (range n)) / √n
+    with hY
+  have hYmeas : ∀ n k, Measurable (Y n k) := fun n k => by simp only [hY]; fun_prop
+  have hT : ∀ n : ℕ, (fun ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) =
+      ∑ k ∈ range n, Y n k := fun n => by
+    funext ω; simp [hY, Finset.sum_apply, sqrt_mul_bootMean_sub]
+  have hmem : ∀ n k, MemLp (Y n k) 2 (world x) := fun n k =>
+    (memLp_two_iff_integrable_sq (hYmeas n k).aestronglyMeasurable).2
+      (integrable_world x n k (f := fun y => ((y - sampleMean x (range n)) / √n) ^ 2)
+        (by fun_prop))
+  have hind := iIndepFun_uncurry_infinitePi' (fun n (_ : ℕ) => empirical x n)
+    (X := fun n (_ : ℕ) (y : ℝ) => (y - sampleMean x (range n)) / √n) (fun _ _ => by fun_prop)
+  have hpair : ∀ n, Set.Pairwise ↑(range n) fun i j => Y n i ⟂ᵢ[world x] Y n j :=
+    fun n i _ j _ hij => hind.indepFun (i := (n, i)) (j := (n, j)) (by simpa using hij)
+  have hmean : ∀ n k, ∫ ω, Y n k ω ∂world x = 0 := by
+    intro n k
+    rcases eq_or_ne n 0 with rfl | hn
+    · simp [hY]
+    rw [integral_world hn k (f := fun y => (y - sampleMean x (range n)) / √n) (by fun_prop),
+      ← Finset.sum_div, Finset.sum_sub_distrib, Finset.sum_const, card_range, nsmul_eq_mul,
+      natCast_mul_sampleMean hn]
+    simp
+  have hvarT : ∀ n, n ≠ 0 → variance (∑ k ∈ range n, Y n k) (world x) = empiricalVar x n := by
+    intro n hn
+    have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
+    have hsq : √(n : ℝ) ^ 2 = n := Real.sq_sqrt (by positivity)
+    rw [IndepFun.variance_sum (fun k _ => hmem n k) (hpair n)]
+    simp_rw [variance_of_integral_eq_zero (hYmeas _ _).aemeasurable (hmean _ _), hY,
+      integral_world hn _ (f := fun y => ((y - sampleMean x (range n)) / √n) ^ 2) (by fun_prop)]
+    rw [Finset.sum_const, card_range, nsmul_eq_mul, empiricalVar]
+    simp_rw [div_pow, hsq, ← Finset.sum_div]
+    field_simp
+  have hmeanT : ∀ n, ∫ ω, (∑ k ∈ range n, Y n k) ω ∂world x = 0 := fun n => by
+    simp_rw [Finset.sum_apply]
+    rw [integral_finsetSum _ fun k _ => (hmem n k).integrable one_le_two]
+    simp [hmean]
+  have hmeas : TendstoInMeasure (world x) (fun n => ∑ k ∈ range n, Y n k) atTop (fun _ => 0) := by
+    rw [tendstoInMeasure_iff_dist]
+    intro ε hε
+    have hb : Tendsto (fun n => ENNReal.ofReal (empiricalVar x n / ε ^ 2)) atTop (𝓝 0) := by
+      have := ENNReal.tendsto_ofReal (hvar.div_const (ε ^ 2))
+      rwa [zero_div, ENNReal.ofReal_zero] at this
+    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hb
+      (Eventually.of_forall fun _ => zero_le) ?_
+    filter_upwards [eventually_ne_atTop 0] with n hn
+    have h := meas_ge_le_variance_div_sq
+      (memLp_finsetSum' (range n) fun k _ => hmem n k) hε
+    rw [hmeanT n, hvarT n hn] at h
+    simpa [Real.dist_eq] using h
+  have hd := hmeas.tendstoInDistribution_of_aemeasurable
+    (fun n => (Finset.measurable_sum (range n) fun k _ => hYmeas n k).aemeasurable.congr
+      (ae_of_all _ fun ω => by simp [Finset.sum_apply])) aemeasurable_const
+  have hd' := tendstoInDistribution_of_map_limit_eq (ν₂ := gaussianReal 0 0) (Z₂ := id) hd
+    measurable_id.aemeasurable (by simp [Measure.map_const])
+  exact hd'.congr (fun n => ae_of_all _ fun ω => by rw [hT n]) (ae_of_all _ fun _ => rfl)
+
+/-- **Conditional Lindeberg CLT for the bootstrap mean (Bickel–Freedman).**
+
+Fix a data sequence `x`. Suppose the plug-in sample variances `empiricalVar x n` converge to
+`σ² ≥ 0`, and the centred data satisfy the Lindeberg condition
+`(1 / n) ∑_{i<n} (x i - x̄ₙ)² 𝟙{|x i - x̄ₙ| > ε √n} → 0` for every `ε > 0`. Then, under the
+bootstrap world (i.e. conditionally on the data), `√n (x̄*ₙ - x̄ₙ)` converges in distribution to
+`N(0, σ²)`; for `σ² = 0` this is the point mass at `0`, obtained from Chebyshev's inequality
+(the Lindeberg hypothesis is then not used).
+
+For `σ² > 0` the proof applies the triangular-array Lindeberg–Feller theorem
+`lindeberg_feller_clt_triangular` to the bootstrap array `(ω n k - x̄ₙ) / √n`, `k < n`, whose
+rows are iid from the centred empirical distribution. The data Lindeberg hypothesis is exactly
+the Lindeberg condition of that array; it does not follow from the variance condition alone,
+which is why an iid central limit theorem for the data cannot replace it. -/
+theorem tendstoInDistribution_bootMean (x : ℕ → ℝ) {v : ℝ≥0}
+    (hvar : Tendsto (empiricalVar x) atTop (𝓝 v))
+    (hLind : ∀ ε : ℝ, 0 < ε → Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n,
+        if ε * √n < |x i - sampleMean x (range n)| then (x i - sampleMean x (range n)) ^ 2
+        else 0) atTop (𝓝 0)) :
+    TendstoInDistribution
+      (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) atTop
+      (id : ℝ → ℝ) (fun _ => world x) (gaussianReal 0 v) := by
+  rcases eq_or_ne v 0 with rfl | hv
+  · exact tendstoInDistribution_bootMean_of_eq_zero x (by simpa using hvar)
+  · exact tendstoInDistribution_bootMean_of_ne_zero x hv hvar hLind
 
 end ProbabilityTheory.Bootstrap
 
@@ -501,7 +599,7 @@ Under the hypotheses of `tendstoInDistribution_bootMean`, if moreover the sample
 to `θ` and `g` is strictly differentiable at `θ` with derivative `g'`, then, conditionally on
 the data, the bootstrap statistic `√n (g(x̄*ₙ) - g(x̄ₙ))` converges in distribution to
 `N(0, g'² v)`, the same limit as the sampling distribution of `√n (g(x̄ₙ) - g(θ))`. -/
-theorem tendstoInDistribution_bootstrap_of_hasStrictDerivAt (x : ℕ → ℝ) {v : ℝ≥0} (hv : v ≠ 0)
+theorem tendstoInDistribution_bootstrap_of_hasStrictDerivAt (x : ℕ → ℝ) {v : ℝ≥0}
     (hvar : Tendsto (empiricalVar x) atTop (𝓝 v))
     (hLind : ∀ ε : ℝ, 0 < ε → Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n,
         if ε * √n < |x i - sampleMean x (range n)| then (x i - sampleMean x (range n)) ^ 2 else 0)
@@ -511,7 +609,7 @@ theorem tendstoInDistribution_bootstrap_of_hasStrictDerivAt (x : ℕ → ℝ) {v
     TendstoInDistribution
       (fun (n : ℕ) ω => √(n : ℝ) * (g (bootMean n ω) - g (sampleMean x (range n)))) atTop
       (id : ℝ → ℝ) (fun _ => world x) (gaussianReal 0 (‖g'‖₊ ^ 2 * v)) := by
-  have h := tendstoInDistribution_bootMean x hv hvar hLind
+  have h := tendstoInDistribution_bootMean x hvar hLind
   have hr : Tendsto (fun n : ℕ => √(n : ℝ)) atTop atTop :=
     Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop
   have hd := TendstoInDistribution.delta_method_of_hasStrictFDerivAt (X := bootMean)
@@ -660,44 +758,37 @@ private theorem ae_data_limits (X : ℕ → Ω → ℝ) (hint : MemLp (X 0) 2 P)
   exact tendsto_empiricalVar h1' h2'
 
 /-- **Almost-sure bootstrap validity for the mean (Bickel–Freedman 1981).** Let `X 0, X 1, …`
-be iid (pairwise independence suffices) square-integrable real observations with positive
-variance `σ²`. Then for `P`-almost every realised data sequence `x = (X i ω)ᵢ`, the
+be iid (pairwise independence suffices) square-integrable real observations with variance
+`σ²`. Then for `P`-almost every realised data sequence `x = (X i ω)ᵢ`, the
 conditional law of the bootstrap statistic `√n (x̄*ₙ - x̄ₙ)` given the data converges weakly to
 `N(0, σ²)`, the limit law of `√n (x̄ₙ - E X)`. -/
 theorem ae_tendstoInDistribution_bootMean (X : ℕ → Ω → ℝ) (hint : MemLp (X 0) 2 P)
-    (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
-    (hvar : variance (X 0) P ≠ 0) :
+    (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) P P) :
     ∀ᵐ ω ∂P, TendstoInDistribution
       (fun (n : ℕ) ω' => √(n : ℝ) * (bootMean n ω' - sampleMean (fun i => X i ω) (range n))) atTop
       (id : ℝ → ℝ) (fun _ => world (fun i => X i ω))
       (gaussianReal 0 (variance (X 0) P).toNNReal) := by
-  have hv : (variance (X 0) P).toNNReal ≠ 0 := by
-    rw [Ne, Real.toNNReal_eq_zero, not_le]
-    exact lt_of_le_of_ne (variance_nonneg _ _) (Ne.symm hvar)
   filter_upwards [ae_data_limits X hint hindep hident] with ω ⟨h1, h2, h3⟩
-  refine tendstoInDistribution_bootMean _ hv ?_ (lindeberg_of_tendsto_sampleMean h1 h2)
+  refine tendstoInDistribution_bootMean _ ?_ (lindeberg_of_tendsto_sampleMean h1 h2)
   rwa [Real.coe_toNNReal _ (variance_nonneg _ _)]
 
 /-- **Almost-sure bootstrap validity for a smooth function of the mean.** Let `X 0, X 1, …`
 be iid (pairwise independence suffices) square-integrable real observations with mean `μ₀`
-and positive variance `σ²`, and let `g` be measurable and strictly differentiable at `μ₀` with
+and variance `σ²`, and let `g` be measurable and strictly differentiable at `μ₀` with
 derivative `g'`. Then for `P`-almost every realised data sequence, the conditional law of the
 bootstrap statistic `√n (g(x̄*ₙ) - g(x̄ₙ))` converges weakly to `N(0, g'² σ²)`, the limit law of
 `√n (g(x̄ₙ) - g(μ₀))` given by the delta method. -/
 theorem ae_tendstoInDistribution_bootstrap_of_hasStrictDerivAt (X : ℕ → Ω → ℝ)
     (hint : MemLp (X 0) 2 P) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
-    (hident : ∀ i, IdentDistrib (X i) (X 0) P P) (hvar : variance (X 0) P ≠ 0)
+    (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
     {g : ℝ → ℝ} {g' : ℝ} (hg : HasStrictDerivAt g g' P[X 0]) (hgm : Measurable g) :
     ∀ᵐ ω ∂P, TendstoInDistribution
       (fun (n : ℕ) ω' => √(n : ℝ) *
         (g (bootMean n ω') - g (sampleMean (fun i => X i ω) (range n)))) atTop
       (id : ℝ → ℝ) (fun _ => world (fun i => X i ω))
       (gaussianReal 0 (‖g'‖₊ ^ 2 * (variance (X 0) P).toNNReal)) := by
-  have hv : (variance (X 0) P).toNNReal ≠ 0 := by
-    rw [Ne, Real.toNNReal_eq_zero, not_le]
-    exact lt_of_le_of_ne (variance_nonneg _ _) (Ne.symm hvar)
   filter_upwards [ae_data_limits X hint hindep hident] with ω ⟨h1, h2, h3⟩
-  refine tendstoInDistribution_bootstrap_of_hasStrictDerivAt _ hv ?_
+  refine tendstoInDistribution_bootstrap_of_hasStrictDerivAt _ ?_
     (lindeberg_of_tendsto_sampleMean h1 h2) h1 hg hgm
   rwa [Real.coe_toNNReal _ (variance_nonneg _ _)]
 
@@ -719,20 +810,6 @@ private theorem tendstoInDistribution_comp_of_map_eq {Ω₁ Ω₂ Ω' : Type*} [
   refine h.tendsto.congr fun n => Subtype.ext ?_
   change μ₂.map (Y n) = μ₁.map (Y n ∘ Φ)
   rw [← hmap, Measure.map_map (hY n) hΦ]
-
-/-- Replace the limit variable of a convergence in distribution by one with the same law. -/
-private theorem tendstoInDistribution_of_map_limit_eq {Ω₁ Ω₁' Ω₂' : Type*} [MeasurableSpace Ω₁]
-    [MeasurableSpace Ω₁'] [MeasurableSpace Ω₂'] {μ₁ : Measure Ω₁} {ν₁ : Measure Ω₁'}
-    {ν₂ : Measure Ω₂'} [IsProbabilityMeasure μ₁] [IsProbabilityMeasure ν₁]
-    [IsProbabilityMeasure ν₂] {Y : ℕ → Ω₁ → ℝ} {Z₁ : Ω₁' → ℝ} {Z₂ : Ω₂' → ℝ}
-    (h : TendstoInDistribution Y atTop Z₁ (fun _ => μ₁) ν₁) (hZ₂ : AEMeasurable Z₂ ν₂)
-    (heq : ν₁.map Z₁ = ν₂.map Z₂) :
-    TendstoInDistribution Y atTop Z₂ (fun _ => μ₁) ν₂ := by
-  refine ⟨h.forall_aemeasurable, hZ₂, ?_⟩
-  have hlim : (⟨ν₂.map Z₂, inferInstance⟩ : ProbabilityMeasure ℝ) =
-      ⟨ν₁.map Z₁, inferInstance⟩ := Subtype.ext heq.symm
-  rw [hlim]
-  exact h.tendsto
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
@@ -761,10 +838,10 @@ theorem inner_bootMeanVec (n : ℕ) (ω : ℕ → ℕ → E) (t : E) :
 
 /-- **Conditional multivariate CLT for the bootstrap mean.**
 
-Fix `E`-valued data `x` (finite-dimensional real inner product space). Let `Z` be a random
-vector whose projections `⟪Z, t⟫` are `N(0, v t)`, and assume the covariance is nonsingular
-(`v t ≠ 0` for `t ≠ 0`). If, for every direction `t`, the plug-in variances of the projected
-data `⟪x i, t⟫` converge to `v t` and the projected data satisfy the Lindeberg condition, then,
+Fix `E`-valued data `x` (finite-dimensional real inner product space). Let `Z` be a random vector
+whose projections `⟪Z, t⟫` are `N(0, v t)`; the covariance may be singular (`v t = 0` gives the
+point mass at `0`). If, for every direction `t`, the plug-in variances of the projected data
+`⟪x i, t⟫` converge to `v t` and the projected data satisfy the Lindeberg condition, then,
 conditionally on the data, `√n (x̄*ₙ - x̄ₙ)` converges in distribution to `Z`.
 
 Each projection is the scalar bootstrap of the projected data (`map_world`), so the scalar
@@ -773,7 +850,6 @@ conditional Lindeberg CLT `tendstoInDistribution_bootMean` applies; the Cramér�
 theorem tendstoInDistribution_bootMeanVec (x : ℕ → E) {Ω' : Type*} [MeasurableSpace Ω']
     {μ' : Measure Ω'} [IsProbabilityMeasure μ'] {Z : Ω' → E} (hZ : AEMeasurable Z μ')
     (v : E → ℝ≥0) (hZlaw : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫) (gaussianReal 0 (v t)) μ')
-    (hv : ∀ t, t ≠ 0 → v t ≠ 0)
     (hvar : ∀ t, Tendsto (empiricalVar (fun i => ⟪x i, t⟫)) atTop (𝓝 (v t)))
     (hLind : ∀ t, ∀ ε : ℝ, 0 < ε → Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n,
         if ε * √n < |⟪x i, t⟫ - sampleMean (fun i => ⟪x i, t⟫) (range n)|
@@ -784,13 +860,8 @@ theorem tendstoInDistribution_bootMeanVec (x : ℕ → E) {Ω' : Type*} [Measura
   refine TendstoInDistribution.of_inner hZ (fun n => ((measurable_const.smul
     ((measurable_bootMeanVec n).sub measurable_const))).aemeasurable) fun t => ?_
   have hinner : Measurable fun y : E => ⟪y, t⟫ := (continuous_id.inner continuous_const).measurable
-  by_cases ht : t = 0
-  · subst ht
-    have hZmeas : AEMeasurable (fun ω => ⟪Z ω, (0 : E)⟫) μ' := by simp
-    refine ⟨fun n => by simp, hZmeas, tendsto_const_nhds.congr fun n => Subtype.ext ?_⟩
-    simp [Measure.map_const]
   -- the scalar bootstrap of the projected data
-  have hs := tendstoInDistribution_bootMean (fun i => ⟪x i, t⟫) (hv t ht) (hvar t) (hLind t)
+  have hs := tendstoInDistribution_bootMean (fun i => ⟪x i, t⟫) (hvar t) (hLind t)
   have hΦ : Measurable fun (ω : ℕ → ℕ → E) (n k : ℕ) => ⟪ω n k, t⟫ := by fun_prop
   have hY : ∀ n : ℕ, Measurable fun ω : ℕ → ℕ → ℝ =>
       √(n : ℝ) * (bootMean n ω - sampleMean (fun i => ⟪x i, t⟫) (range n)) := fun n =>
@@ -813,7 +884,6 @@ theorem tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt {F : Type*}
     [BorelSpace F] (x : ℕ → E) {Ω' : Type*} [MeasurableSpace Ω']
     {μ' : Measure Ω'} [IsProbabilityMeasure μ'] {Z : Ω' → E} (hZ : AEMeasurable Z μ')
     (v : E → ℝ≥0) (hZlaw : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫) (gaussianReal 0 (v t)) μ')
-    (hv : ∀ t, t ≠ 0 → v t ≠ 0)
     (hvar : ∀ t, Tendsto (empiricalVar (fun i => ⟪x i, t⟫)) atTop (𝓝 (v t)))
     (hLind : ∀ t, ∀ ε : ℝ, 0 < ε → Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n,
         if ε * √n < |⟪x i, t⟫ - sampleMean (fun i => ⟪x i, t⟫) (range n)|
@@ -824,7 +894,7 @@ theorem tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt {F : Type*}
       (fun (n : ℕ) ω => √(n : ℝ) • (g (bootMeanVec n ω) - g (sampleMeanVec x n))) atTop
       (fun ω => L (Z ω)) (fun _ => world x) μ' :=
   TendstoInDistribution.delta_method_of_hasStrictFDerivAt
-    (tendstoInDistribution_bootMeanVec x hZ v hZlaw hv hvar hLind)
+    (tendstoInDistribution_bootMeanVec x hZ v hZlaw hvar hLind)
     (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop) hθ hg
     (fun n => (measurable_bootMeanVec n).aemeasurable)
     (fun n => (hgm.comp (measurable_bootMeanVec n)).aemeasurable)
@@ -890,7 +960,7 @@ private theorem ae_vec_data_limits (X : ℕ → Ω → E) (hint : MemLp (X 0) 2 
 
 /-- **Almost-sure bootstrap validity for the multivariate mean.** Let `X 0, X 1, …` be iid
 (pairwise independence suffices) square-integrable random vectors in a finite-dimensional real
-inner product space `E` with nonsingular covariance (`Var ⟪X 0, t⟫ ≠ 0` for `t ≠ 0`), and let
+inner product space `E` (the covariance may be singular), and let
 `Z` be a centred Gaussian vector with the same covariance (`⟪Z, t⟫ ~ N(0, Var ⟪X 0, t⟫)`). Then
 for `P`-almost every realised data sequence, the conditional law of `√n (x̄*ₙ - x̄ₙ)` given the
 data converges weakly to the law of `Z`, the multivariate CLT limit of `√n (x̄ₙ - E X)`. -/
@@ -899,8 +969,7 @@ theorem ae_tendstoInDistribution_bootMeanVec (X : ℕ → Ω → E) (hint : MemL
     {Ω' : Type*} [MeasurableSpace Ω'] {μ' : Measure Ω'} [IsProbabilityMeasure μ']
     {Z : Ω' → E} (hZ : AEMeasurable Z μ')
     (hZlaw : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫)
-      (gaussianReal 0 (Var[fun ω => ⟪X 0 ω, t⟫; P]).toNNReal) μ')
-    (hnondeg : ∀ t, t ≠ 0 → Var[fun ω => ⟪X 0 ω, t⟫; P] ≠ 0) :
+      (gaussianReal 0 (Var[fun ω => ⟪X 0 ω, t⟫; P]).toNNReal) μ') :
     ∀ᵐ ω ∂P, TendstoInDistribution
       (fun (n : ℕ) ω' => √(n : ℝ) • (bootMeanVec n ω' - sampleMeanVec (fun i => X i ω) n))
       atTop Z (fun _ => world (fun i => X i ω)) μ' := by
@@ -915,12 +984,10 @@ theorem ae_tendstoInDistribution_bootMeanVec (X : ℕ → Ω → E) (hint : MemL
       exact integral_inner (hint.integrable one_le_two) t
     rw [hint1]
     exact h.congr fun n => by simp [inner_sampleMeanVec]
-  refine tendstoInDistribution_bootMeanVec _ hZ _ hZlaw (fun t ht => ?_) (fun t => ?_)
+  refine tendstoInDistribution_bootMeanVec _ hZ _ hZlaw (fun t => ?_)
     (fun t => lindeberg_of_tendsto_sampleMean (hm t) (hsq t))
-  · rw [Ne, Real.toNNReal_eq_zero, not_le]
-    exact lt_of_le_of_ne (variance_nonneg _ _) (Ne.symm (hnondeg t ht))
-  · rw [Real.coe_toNNReal _ (variance_nonneg _ _), variance_eq_sub (hint.inner_const t)]
-    exact tendsto_empiricalVar (hm t) (hsq t)
+  rw [Real.coe_toNNReal _ (variance_nonneg _ _), variance_eq_sub (hint.inner_const t)]
+  exact tendsto_empiricalVar (hm t) (hsq t)
 
 /-- **Almost-sure bootstrap validity for smooth finite-dimensional statistics.** Under the
 hypotheses of `ae_tendstoInDistribution_bootMeanVec`, let `g : E → F` be measurable and
@@ -935,18 +1002,39 @@ theorem ae_tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt {F : Type*}
     {Z : Ω' → E} (hZ : AEMeasurable Z μ')
     (hZlaw : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫)
       (gaussianReal 0 (Var[fun ω => ⟪X 0 ω, t⟫; P]).toNNReal) μ')
-    (hnondeg : ∀ t, t ≠ 0 → Var[fun ω => ⟪X 0 ω, t⟫; P] ≠ 0)
     {g : E → F} {L : E →L[ℝ] F} (hg : HasStrictFDerivAt g L P[X 0]) (hgm : Measurable g) :
     ∀ᵐ ω ∂P, TendstoInDistribution
       (fun (n : ℕ) ω' => √(n : ℝ) •
         (g (bootMeanVec n ω') - g (sampleMeanVec (fun i => X i ω) n)))
       atTop (fun ω' => L (Z ω')) (fun _ => world (fun i => X i ω)) μ' := by
-  filter_upwards [ae_tendstoInDistribution_bootMeanVec X hint hindep hident hZ hZlaw hnondeg,
+  filter_upwards [ae_tendstoInDistribution_bootMeanVec X hint hindep hident hZ hZlaw,
     ae_vec_data_limits X hint hindep hident] with ω h ⟨hmean, _⟩
   exact TendstoInDistribution.delta_method_of_hasStrictFDerivAt h
     (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop) hmean hg
     (fun n => (measurable_bootMeanVec n).aemeasurable)
     (fun n => (hgm.comp (measurable_bootMeanVec n)).aemeasurable)
+
+/-- **Bootstrap consistency for the multivariate mean.** For iid square-integrable random
+vectors in a finite-dimensional real inner product space and a centred Gaussian `Z` with the
+covariance of `X 0`, the sampling distribution of `√n (x̄ₙ - E X)` (multivariate CLT,
+`tendstoInDistribution_inv_sqrt_smul_sum_sub`) and, for almost every data sequence, the
+conditional law of the bootstrap statistic `√n (x̄*ₙ - x̄ₙ)` have the same limit law, that of
+`Z`. The covariance may be singular. -/
+theorem bootstrap_consistent_mean (X : ℕ → Ω → E) (hint : MemLp (X 0) 2 P)
+    (hindep : iIndepFun X P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    {Ω' : Type*} [MeasurableSpace Ω'] {μ' : Measure Ω'} [IsProbabilityMeasure μ']
+    {Z : Ω' → E} (hZ : AEMeasurable Z μ')
+    (hZlaw : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫)
+      (gaussianReal 0 (Var[fun ω => ⟪X 0 ω, t⟫; P]).toNNReal) μ') :
+    TendstoInDistribution
+        (fun (n : ℕ) ω => (√(n : ℝ))⁻¹ • (∑ k ∈ range n, X k ω - n • ∫ ω, X 0 ω ∂P)) atTop Z
+        (fun _ => P) μ' ∧
+      ∀ᵐ ω ∂P, TendstoInDistribution
+        (fun (n : ℕ) ω' => √(n : ℝ) • (bootMeanVec n ω' - sampleMeanVec (fun i => X i ω) n))
+        atTop Z (fun _ => world (fun i => X i ω)) μ' :=
+  ⟨tendstoInDistribution_inv_sqrt_smul_sum_sub hZ hZlaw hint hindep hident,
+    ae_tendstoInDistribution_bootMeanVec X hint (fun _ _ hij => hindep.indepFun hij) hident hZ
+      hZlaw⟩
 
 end IIDVector
 
