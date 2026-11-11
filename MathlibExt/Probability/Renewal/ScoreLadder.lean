@@ -11,10 +11,13 @@ module
 public import Mathlib.NumberTheory.FrobeniusNumber
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import Mathlib.Probability.IdentDistrib
+public import Mathlib.Probability.Independence.Basic
 import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Analysis.Normed.Group.FunctionSeries
 import Mathlib.Analysis.Normed.Group.Tannery
 import Mathlib.Topology.Order.Compact
+import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # Discrete key renewal theorem and the ladder-height limit for a score walk
@@ -33,27 +36,31 @@ equals `n`.
   (`tendsto_exp_mul_of_isRenewalSolution`): if `g` is a possibly defective law with
   `∑ g k e^{θ k} = 1`, aperiodic support and finite tilted mean `μ_θ`, the solution of the
   `g`-renewal equation satisfies `e^{θ n} Z n → (∑ e^{θ k} z k) / μ_θ`.
-* **Ladder-height limit for a negative-drift score walk**
-  (`tendsto_exp_mul_maxTail`): for the maximum `M` of an i.i.d. integer score walk with
-  negative drift, write `g j = P(τ₊ < ∞, S_{τ₊} = j)` for the (defective) law of the first
-  strict ascending ladder height. If `T k = P(M > k)` satisfies the ladder decomposition
-  `T k = P(τ₊ < ∞, S_{τ₊} > k) + ∑_{j ≤ k} g j * T (k - j)` and `θ > 0` is the Cramér
-  root `∑ g j e^{θ j} = 1`, then
-  `e^{θ k} P(M > k) → (1 - P(τ₊ < ∞)) / ((e^θ - 1) * ∑ j g j e^{θ j})`,
-  the constant of the Cramér–Lundberg / Karlin–Dembo tail asymptotics (Feller, Vol. II,
-  Chapters XI–XII; Karlin and Dembo 1992).
+* **Tilted limit for ladder tails** (`tendsto_exp_mul_maxTail`, abstract `g`, `T`): if
+  `T k = ∑_{j > k} g j + ∑_{j ≤ k} g j * T (k - j)` and `θ > 0` satisfies
+  `∑ g j e^{θ j} = 1`, then `e^{θ k} T k → (1 - ∑ g) / ((e^θ - 1) * ∑ j g j e^{θ j})`.
+* **The i.i.d. score walk** (`scoreWalk`, `ladderLaw`, `maxTail`). For i.i.d. integer scores
+  `X` with walk `S n = X 0 + ⋯ + X (n - 1)`, maximum `M = sup_n S n`, and ladder-height law
+  `g j = P(τ₊ < ∞, S_{τ₊} = j)`, the **ladder decomposition**
+  `P(M > k) = P(τ₊ < ∞, S_{τ₊} > k) + ∑_{j ≤ k} g j P(M > k - j)` holds
+  (`isRenewalSolution_maxTail`), so (`tendsto_exp_mul_maxTail_scoreWalk`)
+  `e^{θ k} P(M > k) → (1 - P(M > 0)) / ((e^θ - 1) * ∑ j g j e^{θ j})`,
+  the Cramér–Lundberg / Karlin–Dembo tail asymptotics (Feller, Vol. II, Chapters XI–XII;
+  Karlin and Dembo 1992).
 
 ## Scope
 
-The renewal theory (first three bullets) is proved from scratch. For the score walk, the
-two probabilistic identities that link the walk to its ladder law are explicit hypotheses
-of `tendsto_exp_mul_maxTail`: the ladder decomposition of `P(M > k)` (strong Markov
-property at the defective ladder epoch `τ₊`) and the identity `∑ g j e^{θ j} = 1` for the
-root `θ` of the score MGF (Wiener–Hopf / optional stopping of `e^{θ S_n}`). The excluded
-boundary cases are explicit: a proper ladder law (nonnegative drift, `P(τ₊ < ∞) = 1`)
-admits no positive Cramér root (`not_hasSum_exp_mul_of_hasSum_one`), and the Cramér root
-forces a defective ladder law (`tsum_lt_one_of_hasSum_exp_mul`). The lattice
-(non-aperiodic) case is not treated here.
+The renewal theory and the ladder decomposition of the walk's maximum are proved. The
+decomposition splits `{M > k}` over the events `{τ₊ = n, S_n = j}`, which depend on the first
+`n` scores; after the fixed time `n` the walk restarts independently with the same law, so no
+strong Markov property at the (possibly infinite) ladder epoch is needed. One input stays a
+hypothesis of `tendsto_exp_mul_maxTail_scoreWalk`: the ladder Cramér identity
+`∑ g j e^{θ j} = 1`, which for a negative-drift walk with positive-score support holds at the
+root `θ > 0` of `𝔼 e^{θ X} = 1` (optional stopping of `e^{θ S_n}` at `τ₊ ∧ n`); that link is
+not proved here. Drift enters only through this hypothesis: it forces a defective ladder law,
+`P(τ₊ < ∞) < 1` (`tsum_lt_one_of_hasSum_exp_mul`), and a proper ladder law (nonnegative
+drift) admits no positive root (`not_hasSum_exp_mul_of_hasSum_one`). Finite tilted ladder mean
+and aperiodic ladder support are also hypotheses. The lattice case is not treated.
 
 ## Relation to Mathlib
 
@@ -63,7 +70,9 @@ solutions of the Euler–Lotka renewal equation in `MathlibExt.Biology.Epidemiol
 which do not address convergence). The aperiodicity input uses Mathlib's
 `Nat.exists_mem_closure_of_ge` (Frobenius / numerical-semigroup lemma), the
 uniqueness of renewal solutions uses `PowerSeries` multiplication, and the limit passages use
-`tendsto_tsum_of_dominated_convergence` and `continuousOn_tsum`.
+`tendsto_tsum_of_dominated_convergence` and `continuousOn_tsum`. For the walk, fixed-time
+independence comes from `indep_iSup_of_disjoint`, and the restarted walk has the original law
+by `iIndepFun.map_fun_eq_infinitePi_map`.
 
 ## Proof of Erdős–Feller–Pollard
 
@@ -511,6 +520,28 @@ theorem IsRenewalSolution.eq_sum_renewalSeq (hf0 : f 0 = 0) {z Z : ℕ → ℝ}
     (fun a b => PowerSeries.coeff a (PowerSeries.mk z) * PowerSeries.coeff b U)] at h
   simpa [U] using h
 
+/-- Existence: the convolution `∑_{k ≤ n} z k * u (n - k)` of any forcing with the renewal
+sequence solves the renewal equation. -/
+theorem isRenewalSolution_sum_renewalSeq (hf0 : f 0 = 0) (z : ℕ → ℝ) :
+    IsRenewalSolution f z fun n => ∑ k ∈ Finset.range (n + 1), z k * renewalSeq f (n - k) := by
+  rw [isRenewalSolution_iff_mk]
+  set F := PowerSeries.mk f
+  set U := PowerSeries.mk (renewalSeq f)
+  have hU : U = 1 + F * U := by
+    have h := (isRenewalSolution_iff_mk _ _ _).1 (isRenewalSolution_renewalSeq hf0)
+    convert h using 2
+    ext n
+    simp [PowerSeries.coeff_one]
+  have hmk : PowerSeries.mk (fun n => ∑ k ∈ Finset.range (n + 1), z k * renewalSeq f (n - k)) =
+      PowerSeries.mk z * U := by
+    ext n
+    rw [PowerSeries.coeff_mk, PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ
+      (fun a b => PowerSeries.coeff a (PowerSeries.mk z) * PowerSeries.coeff b U)]
+    simp [U]
+  rw [hmk]
+  nth_rewrite 1 [hU]
+  ring
+
 /-- **Discrete key renewal theorem.** For an aperiodic interarrival law `f` on `{1, 2, …}`
 with finite mean `μ` and a summable forcing `z`, every solution of the renewal equation
 `Z n = z n + ∑_{k ≤ n} f k * Z (n - k)` converges to `(∑ z) / μ`. -/
@@ -576,7 +607,7 @@ theorem tendsto_exp_mul_of_isRenewalSolution {g z Z : ℕ → ℝ} {θ μ : ℝ}
 
 end KeyRenewal
 
-/-! ### The ladder-height limit for a negative-drift score walk -/
+/-! ### Tilted renewal limit for ladder tails (abstract `g`) -/
 
 section ScoreLadder
 
@@ -671,17 +702,12 @@ theorem hasSum_exp_mul_ladderTail (hθ : 0 < θ) (hg : ∀ k, 0 ≤ g k)
   rw [← hQ0, ← hid N]
   field_simp
 
-/-- **Ladder-height (Cramér–Lundberg / Karlin–Dembo) limit for a negative-drift score
-walk.** Let `g j = P(τ₊ < ∞, S_{τ₊} = j)` be the defective law of the first strict ascending
-ladder height of an i.i.d. integer score walk with negative drift, and `T k = P(M > k)` the
-tail of its maximum `M = sup_n S_n`. Assume (explicit probabilistic inputs)
-
-* the ladder decomposition `T k = P(τ₊ < ∞, S_{τ₊} > k) + ∑_{j ≤ k} g j * T (k - j)`,
-  i.e. `IsRenewalSolution g (ladderTail g) T`;
-* the Cramér root `θ > 0`: `∑ g j e^{θ j} = 1`;
-* finite tilted ladder mean `μ = ∑ j g j e^{θ j}` and aperiodic ladder support.
-
-Then `e^{θ k} P(M > k) → (1 - P(τ₊ < ∞)) / ((e^θ - 1) μ)`. -/
+/-- **Tilted renewal limit for ladder tails (abstract form).** For any sub-probability law `g`
+on `{1, 2, …}` and any `T` solving `T k = ∑_{j > k} g j + ∑_{j ≤ k} g j * T (k - j)`, if
+`θ > 0` satisfies `∑ g j e^{θ j} = 1`, the support of `g` is aperiodic and
+`μ = ∑ j g j e^{θ j}` is finite, then `e^{θ k} T k → (1 - ∑ g) / ((e^θ - 1) μ)`. Here `g` and
+`T` are arbitrary; the score-walk instance, with `g` the ladder-height law and
+`T k = P(M > k)`, is `tendsto_exp_mul_maxTail_scoreWalk`. -/
 theorem tendsto_exp_mul_maxTail {T : ℕ → ℝ} {μ : ℝ} (hθ : 0 < θ) (hg0 : g 0 = 0)
     (hg : ∀ k, 0 ≤ g k) (hcramer : HasSum (fun k : ℕ => g k * Real.exp (θ * k)) 1)
     (haper : Nat.setGcd {k | 0 < g k} = 1)
@@ -694,5 +720,293 @@ theorem tendsto_exp_mul_maxTail {T : ℕ → ℝ} {μ : ℝ} (hθ : 0 < θ) (hg0
   rwa [h.tsum_eq, div_div] at hlim
 
 end ScoreLadder
+
+/-! ### The i.i.d. score walk and its ladder decomposition -/
+
+section ScoreWalk
+
+open MeasureTheory ProbabilityTheory
+
+variable {Ω : Type*} [MeasurableSpace Ω]
+
+/-- The **score walk** `S n = X 0 + ⋯ + X (n - 1)` of integer scores `X`; `S 0 = 0`. -/
+def scoreWalk (X : ℕ → Ω → ℤ) (n : ℕ) (ω : Ω) : ℤ :=
+  ∑ i ∈ Finset.range n, X i ω
+
+/-- The event `{τ₊ = n, S_{τ₊} = j}`: `n` is the first strict ascending ladder epoch
+(`S n > 0` and `S m ≤ 0` for `m < n`) and the ladder height is `j`. -/
+def ladderEvent (X : ℕ → Ω → ℤ) (n j : ℕ) : Set Ω :=
+  {ω | 0 < scoreWalk X n ω ∧ scoreWalk X n ω = j ∧ ∀ m < n, scoreWalk X m ω ≤ 0}
+
+/-- The defective **ladder-height law** `g j = P(τ₊ < ∞, S_{τ₊} = j)` of the score walk. -/
+noncomputable def ladderLaw (P : Measure Ω) (X : ℕ → Ω → ℤ) (j : ℕ) : ℝ :=
+  (P (⋃ n, ladderEvent X n j)).toReal
+
+/-- The tail of the maximum `M = sup_n S n` of the score walk: `P(M > k) = P(∃ n, S n > k)`. -/
+noncomputable def maxTail (P : Measure Ω) (X : ℕ → Ω → ℤ) (k : ℕ) : ℝ :=
+  (P {ω | ∃ n, (k : ℤ) < scoreWalk X n ω}).toReal
+
+/-- The σ-algebra of the scores before time `n`. -/
+private noncomputable abbrev past (X : ℕ → Ω → ℤ) (n : ℕ) : MeasurableSpace Ω :=
+  ⨆ i ∈ Set.Iio n, MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)
+
+/-- The σ-algebra of the scores from time `n` on. -/
+private noncomputable abbrev future (X : ℕ → Ω → ℤ) (n : ℕ) : MeasurableSpace Ω :=
+  ⨆ i ∈ Set.Ici n, MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)
+
+private lemma past_le {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (n : ℕ) :
+    past X n ≤ ‹MeasurableSpace Ω› :=
+  iSup₂_le fun i _ => (hmeas i).comap_le
+
+private lemma future_le {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (n : ℕ) :
+    future X n ≤ ‹MeasurableSpace Ω› :=
+  iSup₂_le fun i _ => (hmeas i).comap_le
+
+omit [MeasurableSpace Ω] in
+private lemma measurable_scoreWalk_past (X : ℕ → Ω → ℤ) {m n : ℕ} (hmn : m ≤ n) :
+    Measurable[past X n] (scoreWalk X m) := by
+  refine Finset.measurable_sum _ fun i hi => ?_
+  have hi' : i ∈ Set.Iio n := by
+    rw [Finset.mem_range] at hi
+    exact Set.mem_Iio.2 (by omega)
+  exact (comap_measurable (X i)).mono
+    (le_biSup (fun i => MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)) hi')
+    le_rfl
+
+omit [MeasurableSpace Ω] in
+private lemma measurableSet_ladderEvent_past (X : ℕ → Ω → ℤ) (n j : ℕ) :
+    MeasurableSet[past X n] (ladderEvent X n j) := by
+  have h : ladderEvent X n j = {ω | 0 < scoreWalk X n ω} ∩ {ω | scoreWalk X n ω = j} ∩
+      ⋂ m ∈ Finset.range n, {ω | scoreWalk X m ω ≤ 0} := by
+    ext ω
+    simp [ladderEvent, and_assoc]
+  rw [h]
+  refine MeasurableSet.inter (MeasurableSet.inter ?_ ?_)
+    (Finset.measurableSet_biInter _ fun m hm => ?_)
+  · exact measurable_scoreWalk_past X le_rfl (MeasurableSet.of_discrete (s := {z : ℤ | 0 < z}))
+  · exact measurable_scoreWalk_past X le_rfl (MeasurableSet.of_discrete (s := {z : ℤ | z = j}))
+  · rw [Finset.mem_range] at hm
+    exact measurable_scoreWalk_past X hm.le (MeasurableSet.of_discrete (s := {z : ℤ | z ≤ 0}))
+
+omit [MeasurableSpace Ω] in
+private lemma measurableSet_shift_future (X : ℕ → Ω → ℤ) (n : ℕ) (c : ℤ) :
+    MeasurableSet[future X n] {ω | ∃ m, c < ∑ i ∈ Finset.range m, X (n + i) ω} := by
+  have h : {ω | ∃ m, c < ∑ i ∈ Finset.range m, X (n + i) ω} =
+      ⋃ m, (fun ω => ∑ i ∈ Finset.range m, X (n + i) ω) ⁻¹' {z | c < z} := by
+    ext ω
+    simp
+  rw [h]
+  refine MeasurableSet.iUnion fun m => ?_
+  refine (Finset.measurable_sum _ fun i _ => ?_) (MeasurableSet.of_discrete (s := {z : ℤ | c < z}))
+  exact (comap_measurable (X (n + i))).mono
+    (le_biSup (fun i => MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ))
+      (Set.mem_Ici.2 (Nat.le_add_right n i))) le_rfl
+
+/-- Fixed-time independence: events of the past and of the future of time `n` factor. -/
+private lemma measure_inter_past_future {P : Measure Ω} {X : ℕ → Ω → ℤ}
+    (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X P) {n : ℕ} {A B : Set Ω}
+    (hA : MeasurableSet[past X n] A) (hB : MeasurableSet[future X n] B) :
+    P (A ∩ B) = P A * P B := by
+  have hdisj : Disjoint (Set.Iio n) (Set.Ici n) :=
+    Set.disjoint_left.2 fun i h1 h2 => by
+      rw [Set.mem_Iio] at h1
+      rw [Set.mem_Ici] at h2
+      omega
+  have hindep := indep_iSup_of_disjoint (fun i => (hmeas i).comap_le) hind hdisj
+  exact (hindep.indepSet_of_measurableSet hA hB).measure_inter_eq_mul
+
+/-- The walk restarted at time `n` has the law of the original walk. -/
+private lemma measure_shift {P : Measure Ω} {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i))
+    (hind : iIndepFun X P) (hid : ∀ i, IdentDistrib (X i) (X 0) P P) (n : ℕ) (c : ℤ) :
+    P {ω | ∃ m, c < ∑ i ∈ Finset.range m, X (n + i) ω} =
+      P {ω | ∃ m, c < scoreWalk X m ω} := by
+  set C : Set (ℕ → ℤ) := {x | ∃ m, c < ∑ i ∈ Finset.range m, x i} with hCdef
+  have hC : MeasurableSet C := by
+    have h : C = ⋃ m, (fun x : ℕ → ℤ => ∑ i ∈ Finset.range m, x i) ⁻¹' {z | c < z} := by
+      ext x
+      simp [hCdef]
+    rw [h]
+    exact MeasurableSet.iUnion fun m =>
+      (Finset.measurable_sum _ fun i _ => measurable_pi_apply i)
+        (MeasurableSet.of_discrete (s := {z : ℤ | c < z}))
+  have hΦ : Measurable fun ω (i : ℕ) => X i ω := measurable_pi_iff.2 hmeas
+  have hΨ : Measurable fun ω (i : ℕ) => X (n + i) ω := measurable_pi_iff.2 fun i => hmeas _
+  have hlaw : P.map (fun ω (i : ℕ) => X (n + i) ω) = P.map (fun ω (i : ℕ) => X i ω) := by
+    rw [(hind.precomp (add_right_injective n)).map_fun_eq_infinitePi_map (fun i => hmeas _),
+      hind.map_fun_eq_infinitePi_map hmeas]
+    congr 1
+    funext i
+    rw [(hid (n + i)).map_eq, (hid i).map_eq]
+  have h1 := congrArg (fun ν : Measure (ℕ → ℤ) => ν C) hlaw
+  simp only [Measure.map_apply hΨ hC, Measure.map_apply hΦ hC] at h1
+  exact h1
+
+omit [MeasurableSpace Ω] in
+private lemma scoreWalk_add (X : ℕ → Ω → ℤ) (n m : ℕ) (ω : Ω) :
+    scoreWalk X (n + m) ω = scoreWalk X n ω + ∑ i ∈ Finset.range m, X (n + i) ω :=
+  Finset.sum_range_add _ n m
+
+omit [MeasurableSpace Ω] in
+private lemma ladderEvent_disjoint (X : ℕ → Ω → ℤ) {p q : ℕ × ℕ} (hpq : p ≠ q) :
+    Disjoint (ladderEvent X p.1 p.2) (ladderEvent X q.1 q.2) := by
+  rw [Set.disjoint_left]
+  rintro ω ⟨hp1, hp2, hp3⟩ ⟨hq1, hq2, hq3⟩
+  rcases lt_trichotomy p.1 q.1 with h | h | h
+  · have := hq3 _ h
+    omega
+  · apply hpq
+    refine Prod.ext h ?_
+    rw [h] at hp2
+    omega
+  · have := hp3 _ h
+    omega
+
+omit [MeasurableSpace Ω] in
+/-- Decomposition of `{M > k}` at the first strict ascending ladder epoch. -/
+private lemma maxEvent_eq (X : ℕ → Ω → ℤ) (k : ℕ) :
+    {ω | ∃ m, (k : ℤ) < scoreWalk X m ω} = ⋃ p : ℕ × ℕ, ladderEvent X p.1 p.2 ∩
+      {ω | ∃ m, (k : ℤ) - p.2 < ∑ i ∈ Finset.range m, X (p.1 + i) ω} := by
+  classical
+  ext ω
+  simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff, Prod.exists]
+  constructor
+  · rintro ⟨m, hm⟩
+    have hex : ∃ n, 0 < scoreWalk X n ω := ⟨m, by omega⟩
+    have hn : 0 < scoreWalk X (Nat.find hex) ω := Nat.find_spec hex
+    have hmin : ∀ m' < Nat.find hex, scoreWalk X m' ω ≤ 0 := fun m' h =>
+      not_lt.1 (Nat.find_min hex h)
+    have hnm : Nat.find hex ≤ m := Nat.find_min' hex (by omega)
+    refine ⟨Nat.find hex, (scoreWalk X (Nat.find hex) ω).toNat,
+      ⟨hn, by omega, hmin⟩, m - Nat.find hex, ?_⟩
+    have h := scoreWalk_add X (Nat.find hex) (m - Nat.find hex) ω
+    rw [Nat.add_sub_cancel' hnm] at h
+    omega
+  · rintro ⟨n, j, ⟨hpos, hj, hmin⟩, m, hm⟩
+    refine ⟨n + m, ?_⟩
+    rw [scoreWalk_add]
+    omega
+
+private lemma measure_maxEvent {P : Measure Ω} {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i))
+    (hind : iIndepFun X P) (hid : ∀ i, IdentDistrib (X i) (X 0) P P) (k : ℕ) :
+    P {ω | ∃ m, (k : ℤ) < scoreWalk X m ω} = ∑' j : ℕ, P (⋃ n, ladderEvent X n j) *
+      P {ω | ∃ m, (k : ℤ) - j < scoreWalk X m ω} := by
+  have hLm : ∀ n j, MeasurableSet (ladderEvent X n j) := fun n j =>
+    past_le hmeas n _ (measurableSet_ladderEvent_past X n j)
+  rw [maxEvent_eq, measure_iUnion (fun p q hpq =>
+      (ladderEvent_disjoint X hpq).mono Set.inter_subset_left Set.inter_subset_left)
+    (fun p => (hLm p.1 p.2).inter
+      (future_le hmeas p.1 _ (measurableSet_shift_future X p.1 _)))]
+  have hfac : ∀ p : ℕ × ℕ, P (ladderEvent X p.1 p.2 ∩
+      {ω | ∃ m, (k : ℤ) - p.2 < ∑ i ∈ Finset.range m, X (p.1 + i) ω}) =
+      P (ladderEvent X p.1 p.2) * P {ω | ∃ m, (k : ℤ) - p.2 < scoreWalk X m ω} := by
+    intro p
+    rw [measure_inter_past_future hmeas hind (measurableSet_ladderEvent_past X p.1 p.2)
+      (measurableSet_shift_future X p.1 _), measure_shift hmeas hind hid]
+  simp_rw [hfac]
+  rw [ENNReal.tsum_prod (f := fun n j => P (ladderEvent X n j) *
+    P {ω | ∃ m, (k : ℤ) - j < scoreWalk X m ω}), ENNReal.tsum_comm]
+  refine tsum_congr fun j => ?_
+  rw [ENNReal.tsum_mul_right, measure_iUnion (fun a b hab => ladderEvent_disjoint X
+    (p := (a, j)) (q := (b, j)) (by simpa using hab)) fun n => hLm n j]
+
+@[simp] theorem ladderLaw_zero (P : Measure Ω) (X : ℕ → Ω → ℤ) : ladderLaw P X 0 = 0 := by
+  have h : ⋃ n, ladderEvent X n 0 = ∅ := by
+    ext ω
+    simp only [Set.mem_iUnion, Set.mem_empty_iff_false, iff_false, not_exists]
+    rintro n ⟨h1, h2, -⟩
+    omega
+  simp [ladderLaw, h]
+
+theorem ladderLaw_nonneg (P : Measure Ω) (X : ℕ → Ω → ℤ) (j : ℕ) : 0 ≤ ladderLaw P X j :=
+  ENNReal.toReal_nonneg
+
+/-- **Ladder decomposition of the maximum.** For an i.i.d. integer score walk (no drift or
+moment assumption), `P(M > k) = P(τ₊ < ∞, S_{τ₊} > k) + ∑_{j ≤ k} g j P(M > k - j)`, where
+`g` is the ladder-height law. Proof: split `{M > k}` over the events `{τ₊ = n, S_n = j}`,
+which depend on the first `n` scores; after time `n` the walk restarts independently with the
+same law. -/
+theorem isRenewalSolution_maxTail {P : Measure Ω} [IsProbabilityMeasure P] {X : ℕ → Ω → ℤ}
+    (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X P)
+    (hid : ∀ i, IdentDistrib (X i) (X 0) P P) :
+    IsRenewalSolution (ladderLaw P X) (ladderTail (ladderLaw P X)) (maxTail P X) := by
+  intro k
+  have hLm : ∀ n j, MeasurableSet (ladderEvent X n j) := fun n j =>
+    past_le hmeas n _ (measurableSet_ladderEvent_past X n j)
+  set G : ℕ → ENNReal := fun j => P (⋃ n, ladderEvent X n j) with hGdef
+  set H : ℕ → ENNReal := fun j => P {ω | ∃ m, (k : ℤ) - j < scoreWalk X m ω} with hHdef
+  have hGs : ∑' j, G j ≠ ⊤ := by
+    rw [hGdef, ← measure_iUnion (fun a b hab => Set.disjoint_iUnion_left.2 fun n =>
+        Set.disjoint_iUnion_right.2 fun n' => ladderEvent_disjoint X (p := (n, a)) (q := (n', b))
+          (by simp [hab]))
+      fun j => MeasurableSet.iUnion fun n => hLm n j]
+    exact measure_ne_top _ _
+  have hsum : Summable fun j => (G j * H j).toReal :=
+    ENNReal.summable_toReal (ne_top_of_le_ne_top hGs
+      (ENNReal.tsum_le_tsum fun j => mul_le_of_le_one_right' prob_le_one))
+  have hmax : maxTail P X k = ∑' j, (G j * H j).toReal := by
+    rw [maxTail, measure_maxEvent hmeas hind hid k, ENNReal.tsum_toReal_eq fun j =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  rw [hmax, ← hsum.sum_add_tsum_nat_add (k + 1), add_comm]
+  congr 1
+  · refine tsum_congr fun j => ?_
+    have hH : H (j + (k + 1)) = 1 := by
+      rw [hHdef]
+      simp only
+      rw [show {ω | ∃ m, (k : ℤ) - ((j + (k + 1) : ℕ) : ℤ) < scoreWalk X m ω} = Set.univ from
+        Set.eq_univ_of_forall fun ω => ⟨0, by simp [scoreWalk]; omega⟩, measure_univ]
+    rw [hH, mul_one]
+    rfl
+  · refine Finset.sum_congr rfl fun j hj => ?_
+    rw [Finset.mem_range] at hj
+    rw [ENNReal.toReal_mul]
+    congr 1
+    rw [maxTail]
+    change (P {ω | ∃ m, (k : ℤ) - j < scoreWalk X m ω}).toReal = _
+    congr 2
+    ext ω
+    simp only [Set.mem_ofPred_eq]
+    rw [Nat.cast_sub (by omega)]
+
+/-- `∑ g = P(τ₊ < ∞) = P(M > 0)`: the total mass of the ladder-height law. -/
+theorem tsum_ladderLaw {P : Measure Ω} [IsProbabilityMeasure P] {X : ℕ → Ω → ℤ}
+    (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X P)
+    (hid : ∀ i, IdentDistrib (X i) (X 0) P P) :
+    ∑' j, ladderLaw P X j = maxTail P X 0 := by
+  have h := isRenewalSolution_maxTail hmeas hind hid 0
+  simp only [zero_add, Finset.range_one, Finset.sum_singleton, ladderLaw_zero, zero_mul,
+    add_zero] at h
+  rw [h, ladderTail]
+  have hs : Summable (ladderLaw P X) := by
+    refine ENNReal.summable_toReal ?_
+    rw [← measure_iUnion (fun a b hab => Set.disjoint_iUnion_left.2 fun n =>
+        Set.disjoint_iUnion_right.2 fun n' => ladderEvent_disjoint X (p := (n, a)) (q := (n', b))
+          (by simp [hab]))
+      fun j => MeasurableSet.iUnion fun n =>
+        past_le hmeas n _ (measurableSet_ladderEvent_past X n j)]
+    exact measure_ne_top _ _
+  rw [hs.tsum_eq_zero_add, ladderLaw_zero, zero_add]
+
+/-- **Ladder-height limit for an i.i.d. integer score walk** (Cramér–Lundberg /
+Karlin–Dembo). Let `X` be i.i.d. integer scores with walk `S`, maximum `M = sup_n S n`, and
+ladder-height law `g j = P(τ₊ < ∞, S_{τ₊} = j)`. If `θ > 0` satisfies the ladder Cramér
+identity `∑ g j e^{θ j} = 1` (for a negative-drift walk this holds at the root of
+`𝔼 e^{θ X} = 1`; here it is a hypothesis, and it forces `P(τ₊ < ∞) < 1`, see
+`tsum_lt_one_of_hasSum_exp_mul`), the ladder support is aperiodic and the tilted ladder mean
+`μ = ∑ j g j e^{θ j}` is finite, then
+`e^{θ k} P(M > k) → (1 - P(τ₊ < ∞)) / ((e^θ - 1) μ)`. The ladder decomposition is proved
+(`isRenewalSolution_maxTail`), not assumed. -/
+theorem tendsto_exp_mul_maxTail_scoreWalk {P : Measure Ω} [IsProbabilityMeasure P]
+    {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X P)
+    (hid : ∀ i, IdentDistrib (X i) (X 0) P P) {θ μ : ℝ} (hθ : 0 < θ)
+    (hcramer : HasSum (fun k : ℕ => ladderLaw P X k * Real.exp (θ * k)) 1)
+    (haper : Nat.setGcd {k | 0 < ladderLaw P X k} = 1)
+    (hmean : HasSum (fun k : ℕ => (k : ℝ) * (ladderLaw P X k * Real.exp (θ * k))) μ) :
+    Tendsto (fun k : ℕ => Real.exp (θ * k) * maxTail P X k) atTop
+      (𝓝 ((1 - maxTail P X 0) / ((Real.exp θ - 1) * μ))) := by
+  rw [← tsum_ladderLaw hmeas hind hid]
+  exact tendsto_exp_mul_maxTail hθ (ladderLaw_zero P X) (ladderLaw_nonneg P X) hcramer haper
+    hmean (isRenewalSolution_maxTail hmeas hind hid)
+
+end ScoreWalk
 
 end MathlibExt.Probability.Renewal

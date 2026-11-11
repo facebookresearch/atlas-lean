@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Renewal.ScoreLadder
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # Tests for the discrete key renewal theorem and the score-walk ladder limit
@@ -22,7 +23,12 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 * A skip-free-up score walk: ladder law `g = (1/4) δ₁`, Cramér root `θ = log 4`; the
   maximum has `P(M > k) = 4^{-(k+1)}`, and `tendsto_exp_mul_maxTail` returns the exact
   constant `1/4`.
-* Boundary (nonnegative drift): a proper ladder law has no positive Cramér root.
+* A two-point ladder law `g 1 = 1/4`, `g 2 = 1/8` with `θ = log 2`: `e^{θ k} T k` takes the
+  values `3/8, 7/16, …` and converges to `5/12`.
+* The i.i.d. coordinate walk on `ℤ^ℕ` under a product measure satisfies the hypotheses of
+  the walk-level ladder decomposition.
+* Boundary (nonnegative drift): proper ladder laws (`δ₁` and the two-point law) have no
+  positive Cramér root.
 * Boundary (missing exponential moment): the ladder law `g k = 1 / (2 k (k + 1))` has
   `∑ g k e^{θ k} = ∞` for every `θ > 0`, so no Cramér root exists.
 -/
@@ -259,5 +265,104 @@ example {θ : ℝ} (hθ : 0 < θ) :
   obtain ⟨N, hN⟩ := eventually_atTop.1 hev
   have := hN (max N 1) (le_max_left _ _)
   linarith [hlow (max N 1) (le_max_right _ _)]
+
+/-! ### A tilted ladder law with two support points -/
+
+/-- Ladder law `g 1 = 1/4`, `g 2 = 1/8` (defective, mass `3/8`). -/
+noncomputable def twoLadder (k : ℕ) : ℝ := if k = 1 then 1 / 4 else if k = 2 then 1 / 8 else 0
+
+lemma twoLadder_nonneg (k : ℕ) : 0 ≤ twoLadder k := by
+  unfold twoLadder; split_ifs <;> norm_num
+
+lemma exp_log_two_mul (k : ℕ) : Real.exp (Real.log 2 * k) = 2 ^ k := by
+  rw [mul_comm, Real.exp_nat_mul, Real.exp_log (by norm_num)]
+
+lemma twoLadder_vanish (k : ℕ) (hk : k ∉ ({1, 2} : Finset ℕ)) : twoLadder k = 0 := by
+  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
+  simp [twoLadder, hk.1, hk.2]
+
+lemma twoLadder_cramer :
+    HasSum (fun k : ℕ => twoLadder k * Real.exp (Real.log 2 * k)) 1 := by
+  have h : HasSum (fun k : ℕ => twoLadder k * Real.exp (Real.log 2 * k))
+      (∑ k ∈ ({1, 2} : Finset ℕ), twoLadder k * Real.exp (Real.log 2 * k)) :=
+    hasSum_sum_of_ne_finset_zero fun k hk => by rw [twoLadder_vanish k hk, zero_mul]
+  convert h using 1
+  simp [exp_log_two_mul, twoLadder]
+  norm_num
+
+lemma twoLadder_mean :
+    HasSum (fun k : ℕ => (k : ℝ) * (twoLadder k * Real.exp (Real.log 2 * k))) (3 / 2) := by
+  have h : HasSum (fun k : ℕ => (k : ℝ) * (twoLadder k * Real.exp (Real.log 2 * k)))
+      (∑ k ∈ ({1, 2} : Finset ℕ), (k : ℝ) * (twoLadder k * Real.exp (Real.log 2 * k))) :=
+    hasSum_sum_of_ne_finset_zero fun k hk => by rw [twoLadder_vanish k hk, zero_mul, mul_zero]
+  convert h using 1
+  simp [exp_log_two_mul, twoLadder]
+  norm_num
+
+lemma twoLadder_aper : Nat.setGcd {k | 0 < twoLadder k} = 1 :=
+  Nat.dvd_one.1 (Nat.setGcd_dvd_of_mem (show 0 < twoLadder 1 by norm_num [twoLadder]))
+
+lemma twoLadder_tsum : ∑' k, twoLadder k = 3 / 8 := by
+  rw [tsum_eq_sum (s := {1, 2}) fun k hk => twoLadder_vanish k hk]
+  norm_num [twoLadder]
+
+lemma twoLadder_ladderTail_zero : ladderTail twoLadder 0 = 3 / 8 := by
+  unfold ladderTail
+  rw [tsum_eq_sum (s := {0, 1}) fun j hj => twoLadder_vanish _ (by
+    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hj ⊢; omega)]
+  norm_num [twoLadder]
+
+lemma twoLadder_ladderTail_one : ladderTail twoLadder 1 = 1 / 8 := by
+  unfold ladderTail
+  rw [tsum_eq_sum (s := {0}) fun j hj => twoLadder_vanish _ (by
+    simp only [Finset.mem_singleton] at hj
+    simp only [Finset.mem_insert, Finset.mem_singleton, not_or]; omega)]
+  norm_num [twoLadder]
+
+/-- The ladder-tail renewal solution for `twoLadder`, built by convolution. -/
+noncomputable def twoTail (n : ℕ) : ℝ :=
+  ∑ k ∈ range (n + 1), ladderTail twoLadder k * renewalSeq twoLadder (n - k)
+
+lemma twoTail_isRenewalSolution :
+    IsRenewalSolution twoLadder (ladderTail twoLadder) twoTail :=
+  isRenewalSolution_sum_renewalSeq (by simp [twoLadder]) _
+
+/-- The tilted sequence is not constant: `e^{0} T 0 = 3/8` and `e^{θ} T 1 = 7/16`. -/
+example : Real.exp (Real.log 2 * (0 : ℕ)) * twoTail 0 = 3 / 8 ∧
+    Real.exp (Real.log 2 * (1 : ℕ)) * twoTail 1 = 7 / 16 := by
+  have hu1 : renewalSeq twoLadder 1 = 1 / 4 := by
+    rw [renewalSeq_succ]; norm_num [twoLadder]
+  constructor
+  · simp [twoTail, twoLadder_ladderTail_zero]
+  · rw [exp_log_two_mul]
+    simp only [twoTail, Finset.sum_range_succ, Finset.range_one, Finset.sum_singleton]
+    norm_num [twoLadder_ladderTail_zero, twoLadder_ladderTail_one, hu1]
+
+/-- The limit is `(1 - 3/8) / ((2 - 1) * 3/2) = 5/12`. -/
+example : Tendsto (fun k : ℕ => Real.exp (Real.log 2 * k) * twoTail k) atTop (𝓝 (5 / 12)) := by
+  have h := tendsto_exp_mul_maxTail (Real.log_pos (by norm_num)) (by simp [twoLadder])
+    twoLadder_nonneg twoLadder_cramer twoLadder_aper twoLadder_mean twoTail_isRenewalSolution
+  rw [twoLadder_tsum, Real.exp_log (by norm_num)] at h
+  norm_num at h
+  exact h
+
+/-! ### The walk-level ladder decomposition is non-vacuous -/
+
+open MeasureTheory ProbabilityTheory in
+/-- The coordinate walk `X i ω = ω i` on `ℤ^ℕ` under an i.i.d. product law satisfies the
+hypotheses of `isRenewalSolution_maxTail`. -/
+example (ν : Measure ℤ) [IsProbabilityMeasure ν] :
+    IsRenewalSolution (ladderLaw (Measure.infinitePi fun _ : ℕ => ν) fun i ω => ω i)
+      (ladderTail (ladderLaw (Measure.infinitePi fun _ : ℕ => ν) fun i ω => ω i))
+      (maxTail (Measure.infinitePi fun _ : ℕ => ν) fun i ω => ω i) := by
+  refine isRenewalSolution_maxTail (fun i => measurable_pi_apply i)
+    (iIndepFun_infinitePi (X := fun _ => id) fun _ => measurable_id) fun i => ?_
+  refine ⟨(measurable_pi_apply i).aemeasurable, (measurable_pi_apply 0).aemeasurable, ?_⟩
+  rw [Measure.infinitePi_map_eval, Measure.infinitePi_map_eval]
+
+/-- Nonnegative drift, non-degenerate: the proper two-point law has no positive Cramér root. -/
+example {θ : ℝ} (hθ : 0 < θ) :
+    ¬ HasSum (fun k : ℕ => twoPoint k * Real.exp (θ * k)) 1 :=
+  not_hasSum_exp_mul_of_hasSum_one hθ (by simp [twoPoint]) twoPoint_nonneg twoPoint_hasSum
 
 end MathlibExtTest.Probability.Renewal.ScoreLadder
