@@ -1,0 +1,167 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Atlas.NumberTheoryI.code.Adeles
+import Atlas.NumberTheoryI.code.AdicCompletionAlgebra
+import Atlas.NumberTheoryI.code.AnalyticClassNumber
+import Atlas.NumberTheoryI.code.ArithmeticFunctions
+import Atlas.NumberTheoryI.code.ArtinUnramified
+import Atlas.NumberTheoryI.code.CDVRExtensions
+import Atlas.NumberTheoryI.code.CRTHelper
+import Atlas.NumberTheoryI.code.Ch22Conductor
+
+import Atlas.NumberTheoryI.code.Ch22NormGroup
+import Atlas.NumberTheoryI.code.Ch22WeberLFunction
+import Atlas.NumberTheoryI.code.Chapter1.AbsoluteValues
+import Atlas.NumberTheoryI.code.Chapter1.DVR
+import Atlas.NumberTheoryI.code.Chapter1.IntegralClosure
+import Atlas.NumberTheoryI.code.Chapter1.LocalRings
+import Atlas.NumberTheoryI.code.Chapter1.NumberField
+import Atlas.NumberTheoryI.code.Chapter1.Valuations
+import Atlas.NumberTheoryI.code.Chapter14.ClassGroupFinite
+import Atlas.NumberTheoryI.code.Chapter3.DedekindProperties
+import Atlas.NumberTheoryI.code.Chapter3.FiniteApproximation
+import Atlas.NumberTheoryI.code.Chapter4.EtaleAlgebras
+import Atlas.NumberTheoryI.code.Chapter4.SepClosedDecomp
+import Atlas.NumberTheoryI.code.Chapter4.TensorSplitting
+import Atlas.NumberTheoryI.code.Chapter4.Theorem440
+import Atlas.NumberTheoryI.code.CompleteFields
+import Atlas.NumberTheoryI.code.ComplexAnalysis
+import Atlas.NumberTheoryI.code.ConductorOrders
+import Atlas.NumberTheoryI.code.CoprimePrincipal
+import Atlas.NumberTheoryI.code.Cor1015
+
+import Atlas.NumberTheoryI.code.Cor1126
+import Atlas.NumberTheoryI.code.Cor1815
+import Atlas.NumberTheoryI.code.Cor1816
+import Atlas.NumberTheoryI.code.Cor1828
+import Atlas.NumberTheoryI.code.Cor1835
+import Atlas.NumberTheoryI.code.Cor1838
+
+import Atlas.NumberTheoryI.code.Cor227
+import Atlas.NumberTheoryI.code.Cor2322
+import Atlas.NumberTheoryI.code.Cor2328
+import Atlas.NumberTheoryI.code.Cor2344
+import Atlas.NumberTheoryI.code.Cor2360
+import Atlas.NumberTheoryI.code.Cor2361
+import Atlas.NumberTheoryI.code.Cor2365
+import Atlas.NumberTheoryI.code.Cor913
+import Atlas.NumberTheoryI.code.CyclotomicDVRInstances
+import Atlas.NumberTheoryI.code.CyclotomicRamification
+import Mathlib.NumberTheory.NumberField.Basic
+import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
+import Mathlib.GroupTheory.Index
+import Mathlib.RingTheory.Polynomial.Content
+import Mathlib.FieldTheory.Minpoly.IsIntegrallyClosed
+import Atlas.NumberTheoryI.code.DedekindExtensions
+import Atlas.NumberTheoryI.code.DedekindFactorization
+import Atlas.NumberTheoryI.code.DedekindProperties
+import Atlas.NumberTheoryI.code.DedekindUFDPID
+import Atlas.NumberTheoryI.code.Def2213
+import Atlas.NumberTheoryI.code.Def2371
+import Atlas.NumberTheoryI.code.Def2376
+import Atlas.NumberTheoryI.code.DifferentDiscriminant
+import Atlas.NumberTheoryI.code.DirectLimits
+import Atlas.NumberTheoryI.code.DirichletCharacters
+import Atlas.NumberTheoryI.code.DirichletL
+import Atlas.NumberTheoryI.code.DirichletSeries
+import Atlas.NumberTheoryI.code.DirichletUnits
+import Atlas.NumberTheoryI.code.EisensteinRamified
+import Atlas.NumberTheoryI.code.EtaleAlgebras
+import Atlas.NumberTheoryI.code.EtaleAlgebrasProps
+import Atlas.NumberTheoryI.code.FinitePlaceAbsValue
+import Atlas.NumberTheoryI.code.FourierAnalysis
+import Atlas.NumberTheoryI.code.FractionalIdeals
+import Atlas.NumberTheoryI.code.FunctionalEquation
+import Atlas.NumberTheoryI.code.GaloisExtensions
+import Atlas.NumberTheoryI.code.GammaFunction
+import Atlas.NumberTheoryI.code.GeometryOfNumbers
+import Atlas.NumberTheoryI.code.GlobalCFT
+import Atlas.NumberTheoryI.code.GlobalCFTMain
+import Atlas.NumberTheoryI.code.GlobalFields
+import Atlas.NumberTheoryI.code.GroupCohomology
+import Atlas.NumberTheoryI.code.GroupCounts
+import Atlas.NumberTheoryI.code.HenselBridgeLemmas
+import Atlas.NumberTheoryI.code.HenselDefs
+import Atlas.NumberTheoryI.code.HenselFactorization
+import Atlas.NumberTheoryI.code.HenselLemmas
+import Atlas.NumberTheoryI.code.IdealFactorization
+import Atlas.NumberTheoryI.code.IdealNorms
+import Atlas.NumberTheoryI.code.IdeleNorm
+import Atlas.NumberTheoryI.code.Ideles
+
+import Atlas.NumberTheoryI.code.InverseLimits
+import Atlas.NumberTheoryI.code.KrasnerLemma
+import Atlas.NumberTheoryI.code.KroneckerWeber
+import Atlas.NumberTheoryI.code.KroneckerWeberLocal2
+import Atlas.NumberTheoryI.code.KummerInertiaDeg
+import Atlas.NumberTheoryI.code.LaplaceTransform
+import Atlas.NumberTheoryI.code.Lem168
+import Atlas.NumberTheoryI.code.Lem168LowerBound
+import Atlas.NumberTheoryI.code.Lem1812
+import Atlas.NumberTheoryI.code.Lem2226
+import Atlas.NumberTheoryI.code.Lem225
+import Atlas.NumberTheoryI.code.Lem2326
+import Atlas.NumberTheoryI.code.Lem2327
+import Atlas.NumberTheoryI.code.Lem2358
+import Atlas.NumberTheoryI.code.Lem2364
+import Atlas.NumberTheoryI.code.Lem2373
+import Atlas.NumberTheoryI.code.Lem2374
+import Atlas.NumberTheoryI.code.Lem2377
+import Atlas.NumberTheoryI.code.Lem2378
+import Atlas.NumberTheoryI.code.Lemma188
+import Atlas.NumberTheoryI.code.Lemma247
+import Atlas.NumberTheoryI.code.LocalCFT
+import Atlas.NumberTheoryI.code.LocalExtensions
+import Atlas.NumberTheoryI.code.LocalFields
+import Atlas.NumberTheoryI.code.LocalGlobal
+import Atlas.NumberTheoryI.code.LocalizationDedekind
+import Atlas.NumberTheoryI.code.NormTrace
+import Atlas.NumberTheoryI.code.PNT
+import Atlas.NumberTheoryI.code.Pairings
+import Atlas.NumberTheoryI.code.PairingsTheorems
+import Atlas.NumberTheoryI.code.PrimeSplitting
+import Atlas.NumberTheoryI.code.ProductFormula
+import Atlas.NumberTheoryI.code.Prop1215
+import Atlas.NumberTheoryI.code.Prop1228
+import Atlas.NumberTheoryI.code.Prop1824
+import Atlas.NumberTheoryI.code.Prop1837
+import Atlas.NumberTheoryI.code.Prop2219
+import Atlas.NumberTheoryI.code.Prop2221
+import Atlas.NumberTheoryI.code.Prop2225
+import Atlas.NumberTheoryI.code.Prop226
+import Atlas.NumberTheoryI.code.Prop229
+
+import Atlas.NumberTheoryI.code.Prop2357
+import Atlas.NumberTheoryI.code.Prop2369
+import Atlas.NumberTheoryI.code.Prop255
+import Atlas.NumberTheoryI.code.Prop256
+import Atlas.NumberTheoryI.code.RamificationTypes
+import Atlas.NumberTheoryI.code.RayClassFields
+import Atlas.NumberTheoryI.code.ResidueFieldFunctor
+import Atlas.NumberTheoryI.code.ResidueFieldHelper
+import Atlas.NumberTheoryI.code.RiemannZeta
+
+import Atlas.NumberTheoryI.code.ScalingStep
+import Atlas.NumberTheoryI.code.StieltjesIntegral
+import Atlas.NumberTheoryI.code.TateCohomology
+import Atlas.NumberTheoryI.code.Theorem2220
+
+import Atlas.NumberTheoryI.code.ThetaFunction
+import Atlas.NumberTheoryI.code.Thm1023
+import Atlas.NumberTheoryI.code.Thm1829
+import Atlas.NumberTheoryI.code.Thm2214
+import Atlas.NumberTheoryI.code.Thm2321
+import Atlas.NumberTheoryI.code.Thm2350
+import Atlas.NumberTheoryI.code.Thm2370
+import Atlas.NumberTheoryI.code.Thm2375
+import Atlas.NumberTheoryI.code.TracePairing
+import Atlas.NumberTheoryI.code.UnramBridge
+import Atlas.NumberTheoryI.code.ValuationBijection

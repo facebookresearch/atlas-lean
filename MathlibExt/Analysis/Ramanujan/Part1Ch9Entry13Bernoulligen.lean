@@ -181,16 +181,6 @@ private lemma sin_half_ne_zero_of_mem {x u : ℝ} (hx : |x| < 2 * Real.pi)
       _ = |2 * Real.pi| * |(k : ℝ)| := by rw [abs_of_nonneg hnn]
   linarith
 
-private lemma sin_div_tendsto :
-    Filter.Tendsto (fun y : ℝ => Real.sin y / y)
-      (nhdsWithin 0 {0}ᶜ) (nhds 1) := by
-  have h := (Real.hasDerivAt_sin 0).tendsto_slope
-  rw [Real.cos_zero] at h
-  have heq : ∀ y : ℝ, slope Real.sin 0 y = Real.sin y / y := by
-    intro y
-    simp [slope, sub_zero, Real.sin_zero, div_eq_inv_mul, smul_eq_mul]
-  exact h.congr' (Eventually.of_forall (fun y => heq y))
-
 private lemma half_tendsto_punctured :
     Filter.Tendsto (fun u : ℝ => u / 2)
       (nhdsWithin 0 {0}ᶜ) (nhdsWithin 0 {0}ᶜ) := by
@@ -207,7 +197,7 @@ private lemma half_tendsto_punctured :
 private lemma sin_half_div_tendsto :
     Filter.Tendsto (fun u : ℝ => Real.sin (u / 2) / (u / 2))
       (nhdsWithin 0 {0}ᶜ) (nhds 1) :=
-  sin_div_tendsto.comp half_tendsto_punctured
+  Real.tendsto_sin_div_nhdsNE_zero.comp half_tendsto_punctured
 
 private lemma half_div_sin_tendsto :
     Filter.Tendsto (fun u : ℝ => (u / 2) / Real.sin (u / 2))

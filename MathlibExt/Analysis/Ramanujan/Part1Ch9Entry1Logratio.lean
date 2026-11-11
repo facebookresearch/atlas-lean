@@ -309,15 +309,10 @@ private def entry1_g' (a : ℝ) (s : ℝ) : ℝ :=
   (Real.cos (a * s) * a * Real.sin s - Real.sin (a * s) * Real.cos s) /
     Real.sin s ^ 2
 
-private lemma entry1_hasDerivAt_mul (a s : ℝ) :
-    HasDerivAt (fun t => a * t) a s := by
-  have h := (hasDerivAt_id s).const_mul a
-  simpa using h
-
 private lemma entry1_g_hasDerivAt (a s : ℝ) (hs : Real.sin s ≠ 0) :
     HasDerivAt (entry1_g a) (entry1_g' a s) s := by
   have hnum : HasDerivAt (fun t => Real.sin (a * t)) (Real.cos (a * s) * a) s :=
-    (entry1_hasDerivAt_mul a s).sin
+    (hasDerivAt_const_mul a).sin
   have hden : HasDerivAt Real.sin (Real.cos s) s := Real.hasDerivAt_sin s
   have hdiv := hnum.div hden hs
   unfold entry1_g entry1_g'
@@ -391,10 +386,6 @@ private lemma entry1_g_bound_near_zero (a : ℝ) :
   unfold entry1_g
   rw [abs_div, abs_of_pos hsin_pos, div_le_iff₀ hsin_pos]
   nlinarith [hnum, hsin_ge, abs_nonneg a, hs0.le, hsin_pos.le]
-
-private lemma entry1_abs_sub_le (x y : ℝ) : |x - y| ≤ |x| + |y| := by
-  have h := abs_add_le x (-y)
-  rwa [← sub_eq_add_neg, abs_neg] at h
 
 private lemma entry1_integrand_tendsto_zero (a : ℝ) (N : ℕ) (B : ℝ) :
     Tendsto (fun s => (entry1_g a s) * Real.sin (2 * N * s))
@@ -501,7 +492,7 @@ private lemma entry1_parts_bound (a : ℝ) (N : ℕ) (hN : 1 ≤ N) (δ v : ℝ)
       (Real.sin (2 * N * s)) s := by
     intro s
     have h1 : HasDerivAt (fun t => (2 : ℝ) * N * t) (2 * N) s :=
-      entry1_hasDerivAt_mul (2 * N) s
+      hasDerivAt_const_mul ((2 : ℝ) * N)
     have h2 := h1.cos
     have h3 := h2.neg
     have h4 := h3.div_const (2 * (N : ℝ))
@@ -543,7 +534,7 @@ private lemma entry1_parts_bound (a : ℝ) (N : ℕ) (hN : 1 ≤ N) (δ v : ℝ)
           entry1_g a δ * (-Real.cos (2 * N * δ) / (2 * N))|
         ≤ |entry1_g a v * (-Real.cos (2 * N * v) / (2 * N))| +
             |entry1_g a δ * (-Real.cos (2 * N * δ) / (2 * N))| :=
-          entry1_abs_sub_le _ _
+          abs_sub _ _
       _ ≤ |entry1_g a v| * (1 / (2 * N)) + |entry1_g a δ| * (1 / (2 * N)) := by
           apply add_le_add
           · rw [abs_mul]
@@ -581,7 +572,7 @@ private lemma entry1_parts_bound (a : ℝ) (N : ℕ) (hN : 1 ≤ N) (δ v : ℝ)
       ≤ |entry1_g a v * (-Real.cos (2 * N * v) / (2 * N)) -
           entry1_g a δ * (-Real.cos (2 * N * δ) / (2 * N))| +
           |∫ s in δ..v, (entry1_g' a s) * (-Real.cos (2 * N * s) / (2 * N))| :=
-        entry1_abs_sub_le _ _
+        abs_sub _ _
     _ ≤ (|entry1_g a v| + |entry1_g a δ|) / (2 * N) + ((v - δ) * M₂) / (2 * N) :=
         add_le_add hbound_bdry hbound_int
     _ = (|entry1_g a v| + |entry1_g a δ| + (v - δ) * M₂) / (2 * N) := by ring
@@ -591,7 +582,7 @@ private lemma entry1_integral_sin_mul (c u : ℝ) (hc : c ≠ 0) :
   have hderiv : ∀ s ∈ Set.uIcc 0 u,
       HasDerivAt (fun t => -Real.cos (c * t) / c) (Real.sin (c * s)) s := by
     intro s _
-    have h1 : HasDerivAt (fun t => c * t) c s := entry1_hasDerivAt_mul c s
+    have h1 : HasDerivAt (fun t => c * t) c s := hasDerivAt_const_mul c
     have h2 := h1.cos
     have h3 := h2.neg
     have h4 := h3.div_const c
@@ -956,7 +947,7 @@ private lemma entry1_integral_cos_mul (c u : ℝ) (hc : c ≠ 0) :
   have hderiv : ∀ s ∈ Set.uIcc 0 u,
       HasDerivAt (fun t => Real.sin (c * t) / c) (Real.cos (c * s)) s := by
     intro s _
-    have h1 : HasDerivAt (fun t => c * t) c s := entry1_hasDerivAt_mul c s
+    have h1 : HasDerivAt (fun t => c * t) c s := hasDerivAt_const_mul c
     have h2 := h1.sin
     have h4 := h2.div_const c
     have hder : (Real.cos (c * s) * c / c) = Real.cos (c * s) := by
@@ -1556,7 +1547,7 @@ private lemma entry1_step_even_to_odd (s : ℕ) (a : ℝ)
             chapter9Entry1Constant (s + 1) a| +
             |∫ t in (0 : ℝ)..v, ((∑ k ∈ range N,
               chapter9Entry1SineTerm s a t k) - entry1_evenLimit s a t)| :=
-          entry1_abs_sub_le _ _
+          abs_sub _ _
       _ ≤ ε / 2 + ε / 2 := add_le_add htail hbound
       _ = ε := by ring
 

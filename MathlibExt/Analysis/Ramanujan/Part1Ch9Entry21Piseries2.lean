@@ -2134,17 +2134,11 @@ private lemma aux_Gr_tendsto (u : ℝ) (hu : |u| ≤ Real.pi / 4) :
     exact aux_Gr_tendsto_zero
   · exact aux_Gr_tendsto_ne u hu hu0
 
-private lemma aux_sin_sq_le_one (u : ℝ) : Real.sin (2 * u) ^ 2 ≤ 1 := by
-  have h := Real.abs_sin_le_one (2 * u)
-  calc Real.sin (2 * u) ^ 2 = |Real.sin (2 * u)| ^ 2 := (sq_abs _).symm
-    _ ≤ 1 ^ 2 := pow_le_pow_left₀ (abs_nonneg _) h 2
-    _ = 1 := one_pow 2
-
 private lemma aux_Qkey (r u : ℝ) (hr : r ∈ Set.Ioo (0 : ℝ) 1) :
     2 * r * (1 + r ^ 2) * Real.sin (2 * u) ^ 2
       ≤ (1 - r ^ 2) ^ 2 + 4 * r ^ 2 * Real.sin (2 * u) ^ 2 := by
   have hrpos : 0 < r := hr.1
-  have hsq := aux_sin_sq_le_one u
+  have hsq := Real.sin_sq_le_one (2 * u)
   have h2r : (0 : ℝ) ≤ 2 * r := by linarith
   have hle : 2 * r * Real.sin (2 * u) ^ 2 ≤ 2 * r * 1 :=
     mul_le_mul_of_nonneg_left hsq h2r

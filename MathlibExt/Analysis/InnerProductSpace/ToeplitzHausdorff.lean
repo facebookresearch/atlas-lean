@@ -37,11 +37,6 @@ theorem inner_mem_numericalRange
     inner (𝕜 := ℂ) (A x) x ∈ numericalRange A :=
   ⟨x, hx, rfl⟩
 
-/-- The exponential `exp (φ * I)` has norm one. -/
-private theorem exp_im_unit (φ : ℝ) : ‖Complex.exp ((φ : ℂ) * Complex.I)‖ = 1 := by
-  rw [Complex.exp_ofReal_mul_I, Complex.ofReal_cos, Complex.ofReal_sin,
-    Complex.norm_cos_add_sin_mul_I]
-
 /-- Shifting the phase by `π` negates the exponential. -/
 private theorem exp_im_add_pi (φ : ℝ) :
     Complex.exp (((φ + Real.pi : ℝ) : ℂ) * Complex.I)
@@ -94,7 +89,7 @@ theorem toeplitz_hausdorff_general
     -- Phase exponential and its basic facts.
     set α : ℝ → ℂ := fun φ => Complex.exp ((φ : ℂ) * Complex.I) with hα
     have hαne : ∀ φ : ℝ, α φ ≠ 0 := fun φ => Complex.exp_ne_zero _
-    have hαnorm : ∀ φ : ℝ, ‖α φ‖ = 1 := fun φ => exp_im_unit φ
+    have hαnorm : ∀ φ : ℝ, ‖α φ‖ = 1 := fun φ => Complex.norm_exp_ofReal_mul_I φ
     have hαconj : ∀ φ : ℝ, α φ * (starRingEnd ℂ) (α φ) = 1 := by
       intro φ
       rw [RCLike.mul_conj, hαnorm φ]
