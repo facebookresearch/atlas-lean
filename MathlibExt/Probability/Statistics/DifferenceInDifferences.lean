@@ -23,8 +23,10 @@ outcome does not respond to the upcoming treatment) and parallel trends (the unt
 outcomes change by the same amount, on average, in both groups). Group means are set averages:
 for a probability measure with `0 < μ G < 1` they are the conditional means of the source. No
 positivity or finiteness of the group masses is assumed, and only integrability on the treated
-group is needed; if a group has measure `0` or `∞` its set average is Mathlib's junk value `0`
-and the identities still hold.
+group is needed. Mathlib's set average takes the junk value `0` when the group has measure `0`
+or `∞`, or when the function is not integrable on the group (for example an untreated trend that
+is not integrable on the control group); the identities hold in all these cases, and in the
+source setting (integrable outcomes) every average is the corresponding conditional mean.
 
 This is the population identification step only; estimation, two-way fixed-effects regression,
 staggered adoption and inference are not covered.
@@ -59,14 +61,16 @@ open MathlibExt.Probability.Causality
 /-- The 2×2 difference-in-differences estimand of Roth et al. (2023), eq. (2):
 `E[Y_post - Y_pre | G] - E[Y_post - Y_pre | Gᶜ]`, where `G` is the treated group and the
 conditional means are set averages over the group events. For a probability measure with
-`0 < μ G < 1` these are the conditional means of the source; if a group has measure `0` or `∞`,
-its set average is Mathlib's junk value `0`. -/
+`0 < μ G < 1` and integrable outcomes these are the conditional means of the source; if a group
+has measure `0` or `∞`, or the difference is not integrable on it, its set average is Mathlib's
+junk value `0`. -/
 noncomputable def didEstimand {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (G : Set Ω)
     (Ypre Ypost : Ω → ℝ) : ℝ :=
   (⨍ ω in G, (Ypost ω - Ypre ω) ∂μ) - ⨍ ω in Gᶜ, (Ypost ω - Ypre ω) ∂μ
 
 /-- The average treatment effect on the treated in the post period,
-`τ₂ = E[Y_post(1) - Y_post(0) | G]` (a set average over `G`, junk `0` if `μ G ∈ {0, ∞}`). -/
+`τ₂ = E[Y_post(1) - Y_post(0) | G]` (a set average over `G`; junk `0` if `μ G ∈ {0, ∞}` or the
+difference is not integrable on `G`). -/
 noncomputable def attPost {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (G : Set Ω)
     (Y₀post Y₁post : Ω → ℝ) : ℝ :=
   ⨍ ω in G, (Y₁post ω - Y₀post ω) ∂μ
@@ -74,7 +78,8 @@ noncomputable def attPost {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (G
 /-- Bias decomposition of the 2×2 DiD under no anticipation: the DiD of observed outcomes is the
 post-period ATT plus the DiD of the untreated potential outcomes (the parallel-trends gap).
 Only integrability on the treated group is needed; no positivity or finiteness of the group
-masses is assumed (the identity also holds for the junk averages of null or infinite groups). -/
+masses and no integrability on `Gᶜ` is assumed: the control-group term is the same set average
+on both sides, so the identity also holds when it takes Mathlib's junk value. -/
 theorem didEstimand_observed_eq_attPost_add {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {G : Set Ω} (hG : MeasurableSet G) {Y₀pre Y₁pre Y₀post Y₁post : Ω → ℝ}
     (h₀pre : IntegrableOn Y₀pre G μ) (h₀post : IntegrableOn Y₀post G μ)
