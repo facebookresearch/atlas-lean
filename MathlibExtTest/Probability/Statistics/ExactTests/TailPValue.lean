@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
 public import MathlibExt.Probability.Distributions.Hypergeometric
 public import Mathlib.Probability.Distributions.Binomial
+public import MathlibExt.Probability.Distributions.Multinomial
 
 @[expose] public section
 
@@ -39,5 +40,15 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X : Ω → ℕ} {n 
     {p : unitInterval} (hX : HasLaw X Bin(n, p) μ) :
     IsValidPValue μ (upperTailPValue Bin(n, p) X) :=
   isValidPValue_upperTailPValue hX
+
+/-- The conditional test for two Poisson rates: for independent `X ~ Po(a)`, `Y ~ Po(b)`, the
+upper-tail p-value of `X` under `Bin(N, a / (a + b))` is valid given the total `X + Y = N`. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X Y : Ω → ℕ} {a b : NNReal}
+    (hab : 0 < a + b) (hXm : Measurable X) (hYm : Measurable Y)
+    (hX : HasLaw X (poissonMeasure a) μ) (hY : HasLaw Y (poissonMeasure b) μ)
+    (hXY : IndepFun X Y μ) (N : ℕ) :
+    ∃ q : unitInterval,
+      IsValidPValue (μ[|{ω | X ω + Y ω = N}]) (upperTailPValue (binomial N q) X) :=
+  ⟨_, isValidPValue_upperTailPValue (hasLaw_cond_binomial hab hXm hYm hX hY hXY N)⟩
 
 end MathlibExtTest.Probability.Statistics.ExactTests.TailPValue
