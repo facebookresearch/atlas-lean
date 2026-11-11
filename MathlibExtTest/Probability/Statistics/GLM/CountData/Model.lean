@@ -132,8 +132,8 @@ example (Y : Unit → Unit → ℕ) :
           (fun c => log (single.rate () c)) :=
   CountModel.sum_log_countPMF_eq_nbLogLik single_valid rfl (fun _ => one_pos) Y
 
-/-- Non-vacuity of the bridge: both sides equal `log (1 / 2)`, the log probability of a zero
-count under the geometric law with mean `1`. -/
+/-- Non-vacuity of the bridge: the left side at the count `0` is `log (1 / 2)`, the log
+probability of a zero count under the geometric law with mean `1`. -/
 example : log (single.countPMF () () 0) = log (1 / 2) := by
   rw [CountModel.countPMF, show single.mean () () = 1 by norm_num [single, CountModel.mean]]
   rw [show single.law () = CountLaw.negBinomial 1 from rfl, CountLaw.pmf_negBinomial_zero]

@@ -41,7 +41,8 @@ mixture. The log-likelihood of one negative binomial gene is the regression log-
 * `CountModel`: laws, replicate-to-condition index, library sizes and rates;
   `CountModel.Valid`: its parameter domain, which allows a library size of `0`.
 * `CountModel.mean`, `CountModel.countPMF`, `CountModel.likelihood`: entry means, entry laws, and
-  the likelihood of a count matrix with entries independent.
+  the likelihood of a count matrix with entries independent (a product of entry masses; that
+  it sums to `1` over all count matrices is not proved here, and no theorem relies on it).
 * `CountModel.conditionDesign`: the replicate-to-condition design matrix.
 
 ## Main results
@@ -54,8 +55,9 @@ mixture. The log-likelihood of one negative binomial gene is the regression log-
   `CountLaw.exp_neg_le_pmf_zero` (`P(0) ≥ e^{-μ}`), `CountLaw.pmf_zero_lt_one` and
   `CountLaw.pmf_pos` (for `μ > 0` every count, `0` included, has probability in `(0, 1)`).
 * `CountModel.mean_eq_exp`: the log link with offset `log sⱼ`;
-  `CountModel.mean_div_librarySize`, `CountModel.rate_eq_of_mean_eq`: normalization and
-  identifiability of the rates from samples with nonzero library size.
+  `CountModel.mean_div_librarySize`: normalization by the library size;
+  `CountModel.rate_eq_of_countPMF_eq`: **identifiability**, the count law of a sample with
+  nonzero library size determines the rate of its condition.
 * `CountModel.countPMF_eq_of_replicate`: replicates of a condition with equal library sizes have
   the same count law.
 * Zero library size: `CountModel.countPMF_of_librarySize_eq_zero` (all counts are `0`),
@@ -318,7 +320,8 @@ noncomputable def mean (g : G) (j : J) : ℝ := M.librarySize j * M.rate g (M.co
 noncomputable def countPMF (g : G) (j : J) (k : ℕ) : ℝ := (M.law g).pmf (M.mean g j) k
 
 /-- The likelihood of a count matrix `Y`, the counts being independent across genes and
-samples. -/
+samples: the product of the entry masses. That it sums to `1` over all count matrices is not
+proved in this file, and no theorem here relies on it. -/
 noncomputable def likelihood [Fintype G] [Fintype J] (Y : G → J → ℕ) : ℝ :=
   ∏ g, ∏ j, M.countPMF g j (Y g j)
 
@@ -347,7 +350,7 @@ theorem variance_countPMF (hM : M.Valid) (g : G) (j : J) :
       M.mean g j + (M.law g).dispersion * M.mean g j ^ 2 :=
   variance_pmf (hM.law_valid g) (mean_nonneg hM g j)
 
-/-- **Library-size normalization.** For a positive library size, the mean divided by the
+/-- **Library-size normalization.** For a nonzero library size, the mean divided by the
 library size is the normalized expression of the sample's condition. -/
 theorem mean_div_librarySize (g : G) {j : J} (hj : M.librarySize j ≠ 0) :
     M.mean g j / M.librarySize j = M.rate g (M.condition j) := by
@@ -367,13 +370,26 @@ theorem countPMF_eq_of_replicate (g : G) {j j' : J} (hc : M.condition j = M.cond
   funext k
   rw [countPMF, countPMF, mean, mean, hc, hs]
 
-/-- **Identifiability.** In a sample with nonzero library size the mean determines the
-normalized expression of the sample's condition. -/
+/-- In a sample with nonzero library size the mean determines the normalized expression of the
+sample's condition. The statistical form, from the count law, is `rate_eq_of_countPMF_eq`. -/
 theorem rate_eq_of_mean_eq {M' : CountModel G J C} (g : G) {j : J}
     (hs : M.librarySize j = M'.librarySize j)
     (hj : M.librarySize j ≠ 0) (h : M.mean g j = M'.mean g j) :
     M.rate g (M.condition j) = M'.rate g (M'.condition j) := by
   rw [← mean_div_librarySize g hj, h, hs, mean_div_librarySize g (hs ▸ hj)]
+
+/-- **Identifiability.** In a sample with nonzero library size, equal library sizes and equal
+count laws in two valid models force equal rates of the sample's condition: the law determines
+its mean, and the mean determines the rate. -/
+theorem rate_eq_of_countPMF_eq {M' : CountModel G J C} (hM : M.Valid) (hM' : M'.Valid) (g : G)
+    {j : J} (hs : M.librarySize j = M'.librarySize j) (hj : M.librarySize j ≠ 0)
+    (h : M.countPMF g j = M'.countPMF g j) :
+    M.rate g (M.condition j) = M'.rate g (M'.condition j) := by
+  refine rate_eq_of_mean_eq g hs hj ?_
+  have h1 := hasSum_mul_countPMF hM g j
+  have h2 := hasSum_mul_countPMF hM' g j
+  rw [h] at h1
+  exact h1.unique h2
 
 /-! ### Zero library size and zero counts -/
 
