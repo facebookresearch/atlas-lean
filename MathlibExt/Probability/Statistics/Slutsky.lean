@@ -27,6 +27,10 @@ conclusions follow without joint convergence.
 
 ## Main statements
 
+* `MeasureTheory.tendstoInMeasure_of_tendstoInDistribution_const`: convergence in distribution
+  to a constant implies convergence in probability to it.
+* `MeasureTheory.TendstoInMeasure.comp_const_of_continuousAt`: convergence in probability to a
+  constant is preserved by a function continuous at that constant.
 * `MeasureTheory.TendstoInMeasure.inv_const`: if `Y n → c ≠ 0` in probability then
   `(Y n)⁻¹ → c⁻¹` in probability.
 * `MeasureTheory.TendstoInDistribution.mul_of_tendstoInMeasure_const`: `X n * Y n →ᵈ c * Z`.
@@ -35,11 +39,11 @@ conclusions follow without joint convergence.
 * `MeasureTheory.TendstoInDistribution.smul_of_tendstoInMeasure_const`: `Y n • X n →ᵈ c • Z`
   for vector-valued `X n` and real `Y n`.
 
-A sequence converging in distribution to a constant converges to it in probability
-(`MeasureTheory.tendstoInMeasure_of_tendstoInDistribution_const` in
-`MathlibExt.Probability.Statistics.MLEAsymptoticNormality`), so these theorems also apply when
-`Y n →ᵈ c` is given. `TendstoInDistribution.mul_tendstoInMeasure_zero` in the same file is the
-`c = 0` case of `mul_of_tendstoInMeasure_const` composed with that lemma.
+Since a sequence converging in distribution to a constant converges to it in probability, these
+theorems also apply when `Y n →ᵈ c` is given.
+`TendstoInDistribution.mul_tendstoInMeasure_zero` in
+`MathlibExt.Probability.Statistics.MLEAsymptoticNormality` is the `c = 0` case of
+`mul_of_tendstoInMeasure_const` composed with that fact.
 
 ## References
 
@@ -52,12 +56,42 @@ open Filter Topology
 
 namespace MeasureTheory
 
+section ConstLimit
+
+variable {ι Ω Ω' E : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
+  {mΩ' : MeasurableSpace Ω'} {P' : Measure Ω'} {l : Filter ι}
+
+/-- **Convergence in distribution to a constant implies convergence in probability.** If the
+random variables `X i` on one probability space converge in distribution to the constant `c`,
+then they converge to `c` in probability. -/
+theorem tendstoInMeasure_of_tendstoInDistribution_const [IsProbabilityMeasure P]
+    [IsProbabilityMeasure P'] [PseudoMetricSpace E] [MeasurableSpace E] [BorelSpace E]
+    {X : ι → Ω → E} {c : E} (h : TendstoInDistribution X l (fun _ : Ω' => c) (fun _ => P) P') :
+    TendstoInMeasure P X l (fun _ => c) := by
+  rw [tendstoInMeasure_iff_dist]
+  intro ε hε
+  set F : Set E := {y | ε ≤ dist y c}
+  have hF : IsClosed F := isClosed_le continuous_const (continuous_id.dist continuous_const)
+  have hlim := ProbabilityMeasure.limsup_measure_closed_le_of_tendsto h.tendsto hF
+  have hc : (P'.map fun _ : Ω' => c) F = 0 := by
+    rw [Measure.map_const, measure_univ, one_smul, Measure.dirac_apply' _ hF.measurableSet]
+    simp [F, hε.not_ge]
+  simp only [ProbabilityMeasure.coe_mk, hc] at hlim
+  have heq : ∀ i, P {ω | ε ≤ dist (X i ω) c} = (P.map (X i)) F := fun i => by
+    rw [Measure.map_apply_of_aemeasurable (h.forall_aemeasurable i) hF.measurableSet]
+    rfl
+  simp_rw [heq]
+  refine tendsto_order.2 ⟨fun a ha => absurd ha ENNReal.not_lt_zero, fun a ha => ?_⟩
+  exact eventually_lt_of_limsup_lt (hlim.trans_lt ha)
+
+end ConstLimit
+
 variable {ι Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
   {μ : Measure Ω} {μ' : Measure Ω'} {l : Filter ι}
 
 /-- Convergence in probability to a constant is preserved by a function continuous at that
 constant. -/
-private theorem TendstoInMeasure.comp_const_of_continuousAt {E F : Type*} [PseudoMetricSpace E]
+theorem TendstoInMeasure.comp_const_of_continuousAt {E F : Type*} [PseudoMetricSpace E]
     [PseudoMetricSpace F] {Y : ι → Ω → E} {c : E} {f : E → F} (hf : ContinuousAt f c)
     (hY : TendstoInMeasure μ Y l (fun _ ↦ c)) :
     TendstoInMeasure μ (fun n ω ↦ f (Y n ω)) l (fun _ ↦ f c) := by
