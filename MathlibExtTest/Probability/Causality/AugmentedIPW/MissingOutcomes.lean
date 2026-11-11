@@ -20,6 +20,11 @@ public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
   The AIPW score is computed explicitly and is unbiased with a correct propensity and a wrong
   regression, and with a correct regression and a wrong propensity; the same values follow from
   the theorems. With both nuisances wrong it is biased.
+* The average treatment effect on the same space, with `R` as the treatment, control outcome
+  `Y` and treated outcome `Yt = 2Y + 1` (ATE `3/2`, asymmetric arms): the ATE score is computed
+  explicitly in the propensity branch (wrong, distinct constant regressions) and the regression
+  branch (wrong propensity `1/3`), and both values also follow from `integral_aipwATEScore`.
+  Swapping the two correct regressions under the wrong propensity gives a biased value.
 * An MNAR counterexample: responders are exactly the units with `Y = 1`. Positivity holds and
   both nuisances are correct, yet the score has mean `1` while `E[Y] = 1/2`; MAR fails.
 * A positivity boundary case: nobody responds. MAR holds, the propensity `0` is correct, and
@@ -195,6 +200,67 @@ example : ∫ p, aipwScore R X (fun _ => 1) (fun _ => 0) Y p ∂μ = 1 / 2 - 5 /
     sum_pt]
   simp only [propensity_eq]
   norm_num [Set.indicator, X, Y, w]
+
+/-! ### Average treatment effect -/
+
+/-- The treated potential outcome; the control potential outcome is `Y`. -/
+def Yt (p : Pt) : ℝ := if p.2.2 then 3 else 1
+
+lemma hYt : Measurable Yt := measurable_of_countable Yt
+
+lemma integral_Yt : ∫ p, Yt p ∂μ = 2 := by
+  rw [integral_μ, sum_pt]; norm_num [w, Yt]
+
+/-- The ATE is `E[Yt - Y] = 2 - 1/2 = 3/2`. -/
+lemma ate_eq : ∫ p, (Yt p - Y p) ∂μ = 3 / 2 := by
+  rw [integral_sub Integrable.of_finite Integrable.of_finite, integral_Yt, integral_Y]
+  norm_num
+
+lemma regressionT_eq (x : Bool) : outcomeRegression μ Yt X x = if x then 5 / 2 else 3 / 2 := by
+  rw [outcomeRegression, ← integral_indicator (hX (measurableSet_singleton _)), integral_μ,
+    μ_real, sum_pt, sum_pt]
+  cases x <;> simp [Set.indicator, X, Yt, w] <;> norm_num
+
+/-- Strong ignorability of the treatment `R` given `X` for the pair `(Y, Yt)`. -/
+lemma ign : StronglyIgnorable μ R (fun p => (Y p, Yt p)) X := by
+  refine ⟨fun B _ x => ?_, fun x _ => ?_⟩
+  · simp only [μ_real, sum_pt]
+    by_cases h0 : ((0 : ℝ), (1 : ℝ)) ∈ B <;> by_cases h1 : ((1 : ℝ), (3 : ℝ)) ∈ B <;>
+      cases x <;> simp [Set.indicator, R, X, Y, Yt, h0, h1, w] <;> norm_num
+  · cases x <;> norm_num [propensity_eq]
+
+/-- Propensity branch, computed point by point: correct `e`, wrong and distinct regressions
+`m₀ = 5`, `m₁ = -2`. -/
+example : ∫ p, aipwATEScore R X (fun x => if x then 3 / 4 else 1 / 2) (fun _ => 5) (fun _ => -2)
+    (observed R Y Yt) p ∂μ = 3 / 2 := by
+  rw [integral_μ, sum_pt]
+  norm_num [aipwATEScore, aipwScore, observed, w, Y, Yt, R, X, Set.indicator]
+
+/-- The same value from the propensity branch of `integral_aipwATEScore`. -/
+example : ∫ p, aipwATEScore R X (fun x => if x then 3 / 4 else 1 / 2) (fun _ => 5) (fun _ => -2)
+    (observed R Y Yt) p ∂μ = 3 / 2 := by
+  rw [integral_aipwATEScore hR hX hY hYt Integrable.of_finite Integrable.of_finite ign _ _ _
+    (Or.inl fun x _ => (propensity_eq x).symm), ate_eq]
+
+/-- Regression branch, computed point by point: wrong propensity `e = 1/3`, correct regressions
+`m₀ = E[Y | X]`, `m₁ = E[Yt | X]`. -/
+example : ∫ p, aipwATEScore R X (fun _ => 1 / 3) (fun x => if x then 3 / 4 else 1 / 4)
+    (fun x => if x then 5 / 2 else 3 / 2) (observed R Y Yt) p ∂μ = 3 / 2 := by
+  rw [integral_μ, sum_pt]
+  norm_num [aipwATEScore, aipwScore, observed, w, Y, Yt, R, X, Set.indicator]
+
+/-- The same value from the regression branch of `integral_aipwATEScore`. -/
+example : ∫ p, aipwATEScore R X (fun _ => 1 / 3) (fun x => if x then 3 / 4 else 1 / 4)
+    (fun x => if x then 5 / 2 else 3 / 2) (observed R Y Yt) p ∂μ = 3 / 2 := by
+  rw [integral_aipwATEScore hR hX hY hYt Integrable.of_finite Integrable.of_finite ign _ _ _
+    (Or.inr ⟨fun x _ => (regression_eq x).symm, fun x _ => (regressionT_eq x).symm⟩), ate_eq]
+
+/-- Swapping the two correct regressions under the wrong propensity is biased: the arms are
+not interchangeable. -/
+example : ∫ p, aipwATEScore R X (fun _ => 1 / 3) (fun x => if x then 5 / 2 else 3 / 2)
+    (fun x => if x then 3 / 4 else 1 / 4) (observed R Y Yt) p ∂μ ≠ 3 / 2 := by
+  rw [integral_μ, sum_pt]
+  norm_num [aipwATEScore, aipwScore, observed, w, Y, Yt, R, X, Set.indicator]
 
 /-! ### MNAR counterexample: MAR is needed -/
 
