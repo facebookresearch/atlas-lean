@@ -204,10 +204,10 @@ theorem concentration_bolus (CL V D t : ℝ) :
   ring
 
 /-- **Finite-horizon AUC.** After a bolus dose `D`, `∫₀ᵀ C = (D / CL)(1 - e^{-k T})` with
-`k = CL / V`, for `V ≠ 0` and `CL ≠ 0`. -/
-theorem integral_concentration_bolus {CL V : ℝ} (hCL : CL ≠ 0) (hV : V ≠ 0) (D T : ℝ) :
+`k = CL / V`, for `CL > 0` and `V > 0` (the frozen model domain). -/
+theorem integral_concentration_bolus {CL V : ℝ} (hCL : 0 < CL) (hV : 0 < V) (D T : ℝ) :
     ∫ t in (0)..T, concentration CL V 0 D t = D / CL * (1 - exp (-elimRate CL V * T)) := by
-  have hk : elimRate CL V ≠ 0 := div_ne_zero hCL hV
+  have hk : elimRate CL V ≠ 0 := div_ne_zero hCL.ne' hV.ne'
   have h := integral_exp_neg_mul_sub hk T
   rw [intervalIntegral.integral_comp_sub_left (fun s ↦ exp (-elimRate CL V * s)) T] at h
   simp only [sub_self, sub_zero] at h
@@ -238,7 +238,7 @@ theorem integral_Ici_concentration_bolus {CL V : ℝ} (hCL : 0 < CL) (hV : 0 < V
 theorem tendsto_integral_concentration_bolus {CL V : ℝ} (hCL : 0 < CL) (hV : 0 < V) (D : ℝ) :
     Tendsto (fun T ↦ ∫ t in (0)..T, concentration CL V 0 D t) atTop (𝓝 (D / CL)) := by
   have he := tendsto_exp_neg_mul (k := elimRate CL V) (div_pos hCL hV)
-  simp_rw [integral_concentration_bolus hCL.ne' hV.ne']
+  simp_rw [integral_concentration_bolus hCL hV]
   simpa using (he.const_sub 1).const_mul (D / CL)
 
 /-- The half-life in terms of clearance and volume: `t½ = log 2 · V / CL`. -/
@@ -246,8 +246,9 @@ theorem halfLife_elimRate (CL V : ℝ) : halfLife (elimRate CL V) = log 2 * V / 
   simp only [halfLife, elimRate]
   rw [div_div_eq_mul_div]
 
-/-- **Half-life.** After a bolus the amount halves over every interval of length
-`t½ = log 2 / k`, for `k ≠ 0`. -/
+/-- **Half-life.** After a bolus the amount at `t + t½` is half the amount at `t`, where
+`t½ = log 2 / k`, for `k ≠ 0`. For `k > 0` this is the half-life as an interval length; for
+`k < 0`, `t½ < 0` and the identity is an algebraic backward shift, not a biological half-life. -/
 theorem amount_bolus_add_halfLife (hk : k ≠ 0) (A₀ t : ℝ) :
     amount k 0 A₀ (t + halfLife k) = amount k 0 A₀ t / 2 := by
   rw [amount_bolus, amount_bolus, halfLife,
