@@ -16,9 +16,13 @@ import Mathlib.Analysis.Calculus.LocalExtr.Basic
 
 If `f ≤ g` on a neighborhood of `x₀`, the two functions agree at `x₀`, and both are Fréchet
 differentiable at `x₀`, then their derivatives at `x₀` agree: `g - f` has a local minimum at `x₀`,
-so its derivative vanishes there (Fermat). Applied with `g` a value function and `f` the objective
-evaluated at an optimizer fixed at `x₀`, this is the envelope argument behind Shephard's and
-Hotelling's lemmas.
+so its derivative vanishes there (Fermat). This is the envelope argument for value functions, with
+the roles of `f` and `g` depending on the direction of optimization:
+
+* for a supremum value function (Hotelling's lemma, profit), `f` is the objective evaluated at an
+  optimizer fixed at `x₀` and `g` is the value function;
+* for an infimum value function (Shephard's lemma, expenditure), `f` is the value function and `g`
+  is the objective evaluated at an optimizer fixed at `x₀`.
 
 ## Main results
 
