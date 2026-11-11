@@ -19,7 +19,8 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 Lattice non-vacuity witness: the geometric-type tail `F t = e^{-⌈t⌉}` on the
 lattice `ℤ` (span `h = 1`, Cramér root `θ = 1`) has lattice constant `C = 1`;
 the scaled tail oscillates with `limsup = 1`, `liminf = e^{-1}` and no limit.
-Lattice-support bridge: a point mass at `2` sees `[1/2, ∞)` and `[1, ∞)` alike.
+Lattice-support bridge: a point mass at `0` misses both `[1/2, ∞)` and `[1, ∞)`
+(rounding down would hit `[0, ∞)`); strict vs weak tails pinned the same way.
 Exponential witness: the defective law `G(dy) = e^{-2y} dy` on `(0, ∞)` (mass
 `½`) has Cramér root `θ = 1`, tilted law `Exp(1)` with mean `1`, exact strict
 tail `Z t = ½ e^{-t}` solving the renewal equation, an admissible tilted pair,
@@ -219,6 +220,16 @@ example : KeyRenewalAdmissible (fun t => exp (1 * t) * Zex t)
     (fun t => exp (1 * t) * (Ici 0).indicator (fun s => Gex.real (Ioi s)) t) :=
   keyRenewalAdmissible_cramerLundberg one_pos Gex_root Gex_nonneg Gex_meanIntegrable
     Zex_measurable Zex_neg Zex_bdd
+
+-- All premises of `tendsto_scaled_cramerLundberg` other than the key renewal theorem
+-- hold together for the example; with `hKRT` as a hypothesis the theorem applies.
+example (hKRT : ∀ Y y : ℝ → ℝ, KeyRenewalAdmissible Y y →
+      (∀ t, Y t = y t + ∫ x, Y (t - x) ∂(Gex.tilted (fun x => 1 * x))) →
+      Tendsto Y atTop (𝓝 ((∫ s in Ioi 0, y s) / ∫ x, x ∂(Gex.tilted (fun x => 1 * x))))) :
+    Tendsto (fun t => exp (1 * t) * Zex t) atTop
+      (𝓝 ((1 - Gex.real univ) / (1 * ∫ y, y * exp (1 * y) ∂Gex))) :=
+  tendsto_scaled_cramerLundberg one_pos Gex_root Gex_nonneg Gex_meanIntegrable Zex_measurable
+    Zex_neg Zex_bdd Zex_renewal hKRT
 
 -- The Cramér–Lundberg constant of the example is `½`.
 example : (1 - Gex.real univ) / (1 * ∫ y, y * exp (1 * y) ∂Gex) = 1 / 2 := by
