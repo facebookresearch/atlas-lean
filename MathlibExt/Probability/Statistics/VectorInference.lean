@@ -64,6 +64,13 @@ information** is the operator `I(θ) = E_θ [s sᵀ]` (`fisherInformation`), wit
   under the integral sign gives.
 * Only a simple null hypothesis `θ = θ₀` is tested; composite nulls with `r` restrictions
   (limit `χ²_r`) are not covered.
+* **Null information in the Wald and score statistics.** Both use the null information
+  `I(θ₀)`, known under the simple null. Versions with an estimated information (`I(θhat n)` or
+  the observed information) and the consistency of the observed information, which the
+  one-parameter `LikelihoodRatioTests` provides (`_of_estimator` variants,
+  `tendstoInMeasure_observedInformation`), are not covered here.
+* **Wilks at the root.** The likelihood-ratio statistic is `2 (ℓₙ(θhat n) - ℓₙ(θ₀))` evaluated
+  at the consistent root `θhat n`, not the supremum form `2 (sup_θ ℓₙ θ - ℓₙ θ₀)`.
 
 ## Main results
 
@@ -1162,7 +1169,8 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_likelihoodEquation
 /-- **Wald's test, vector parameter.** Under the hypotheses of
 `tendstoInDistribution_sqrt_smul_sub_of_likelihoodEquation`, with the information positive
 definite (hence nonsingular) and `d = dim E ≥ 1`, the Wald statistic
-`n ⟪I(θ₀) (θhat n - θ₀), θhat n - θ₀⟫` converges in distribution to `χ²_d`.
+`n ⟪I(θ₀) (θhat n - θ₀), θhat n - θ₀⟫`, built with the null information `I(θ₀)` (not `I(θhat n)`
+or the observed information), converges in distribution to `χ²_d`.
 
 Source: Wald (1943); van der Vaart (1998), ch. 16. -/
 theorem tendstoInDistribution_waldStatistic
@@ -1218,7 +1226,7 @@ theorem tendstoInDistribution_waldStatistic
 
 /-- **Rao's score test, vector parameter.** For i.i.d. observations with law `p θ₀ ν`, a
 measurable, centered, square-integrable score and positive definite Fisher information
-`I(θ₀)` (with `d = dim E ≥ 1`), the score statistic `⟪I(θ₀)⁻¹ Sₙ, Sₙ⟫`,
+`I(θ₀)` (with `d = dim E ≥ 1`), the score statistic `⟪I(θ₀)⁻¹ Sₙ, Sₙ⟫` (null information),
 `Sₙ = n^{-1/2} ∑_{i<n} score p θ₀ (X i)`, converges in distribution to `χ²_d`.
 
 Source: Rao (1948); van der Vaart (1998), ch. 16. -/
@@ -1256,8 +1264,9 @@ theorem tendstoInDistribution_scoreStatistic {ν : Measure 𝓧} {p : E → 𝓧
 `tendstoInDistribution_waldStatistic`, if moreover the log-density `θ ↦ log p θ x` is
 differentiable on the ball (so the score is its true gradient there) and `(θ, x) ↦ p θ x` is
 jointly measurable, then the likelihood-ratio statistic
-`2 (ℓₙ(θhat n) - ℓₙ(θ₀))`, `ℓₙ θ = ∑_{i<n} log p θ (X i)`, converges in distribution to `χ²_d`,
-`d = dim E ≥ 1`. Composite nulls with `r` restrictions (limit `χ²_r`) are not covered.
+`2 (ℓₙ(θhat n) - ℓₙ(θ₀))`, `ℓₙ θ = ∑_{i<n} log p θ (X i)`, evaluated at the consistent root
+`θhat n` (not the supremum `sup_θ ℓₙ θ`), converges in distribution to `χ²_d`, `d = dim E ≥ 1`.
+Composite nulls with `r` restrictions (limit `χ²_r`) are not covered.
 
 The proof expands `ℓₙ` to second order around `θ₀` (`abs_log_sub_sub_sub_le`) and shows
 `2 (ℓₙ(θhat n) - ℓₙ(θ₀)) - n ⟪I(θ₀) (θhat n - θ₀), θhat n - θ₀⟫ → 0` in probability.

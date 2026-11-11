@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.VectorInference
+public import MathlibExtTest.Probability.Statistics.MLEAsymptoticNormality
 public import Mathlib.Analysis.InnerProductSpace.Calculus
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Probability.Independence.InfinitePi
@@ -24,8 +25,12 @@ public import Mathlib.Probability.StrongLaw
   space `ℕ → E` every hypothesis of the vector MLE, Wald, Rao and Wilks theorems holds; they
   give `√n X̄ₙ → N(0, Id)` and `χ²_d` limits for `n ‖X̄ₙ‖²`, `‖Sₙ‖²` and the likelihood ratio.
 * `hasLaw_inner_inverse_chiSquare` with `S = 1`: `‖Z‖² ~ χ²_d` for `Z ~ N(0, Id)`.
+* Cramér–Rao: on the Gaussian location family `N(θ, 1)` (`E = ℝ`, density `pG` with respect
+  to Lebesgue measure, reused from the scalar MLE tests), with `T x = x` and `g θ = θ`, every
+  hypothesis of `sq_fderiv_le_inner_fisherInformation_mul` (each direction `u`) and of
+  `cramerRao` holds; the directional bound reads `u² ≤ u² · 1` and is attained.
 * Boundary: a parameter-free family has zero score and zero (singular) information, so the
-  directional Cramér–Rao bound forces `Dg(θ) u = 0`, and the nonsingularity hypothesis fails.
+  nonsingularity hypothesis of the matrix Cramér–Rao and asymptotic theorems fails.
 -/
 
 @[expose] public section
@@ -302,6 +307,146 @@ theorem tendstoInDistribution_wilks_sampleMean [Nontrivial E] :
     (by rw [hD, fisherInformation_pE]; simp) fisherInformation_pE_pos Module.finrank_pos
     (fun n => (measurable_sampleMean n).aemeasurable) (tendsto_root _ rfl)
     tendstoInMeasure_sampleMean HasLaw.id
+
+/-! ### Cramér–Rao on the Gaussian location family `N(θ, 1)` (`E = ℝ`) -/
+
+section CramerRao
+
+open MathlibExtTest.Probability.Statistics.MLEAsymptoticNormality
+  (pG pG_pos lawOf_pG differentiableAt_pG)
+
+/-- On `E = ℝ` the vector score of `N(θ, 1)` is `x - θ`. -/
+theorem score_pG (θ x : ℝ) : score pG θ x = x - θ := by
+  rw [score, gradient_eq_deriv']
+  exact MathlibExtTest.Probability.Statistics.MLEAsymptoticNormality.score_pG θ x
+
+/-- Integrals against the density `pG θ` are integrals against `N(θ, 1)`. -/
+theorem integral_mul_pG (θ : ℝ) (f : ℝ → ℝ) :
+    ∫ x, f x * pG θ x = ∫ x, f x ∂(gaussianReal θ 1) := by
+  rw [← lawOf_pG, lawOf, integral_withDensity_eq_integral_toReal_smul
+    (f := fun x => ENNReal.ofReal (pG θ x))
+    (show Measurable (pG θ) from measurable_gaussianPDFReal θ 1).ennreal_ofReal
+    (Eventually.of_forall fun _ => ENNReal.ofReal_lt_top)]
+  congr 1; funext x
+  rw [ENNReal.toReal_ofReal (pG_pos θ x).le, smul_eq_mul, mul_comm]
+
+/-- Integrability against `N(θ, 1)` transfers to integrability of `f · pG θ`. -/
+theorem integrable_mul_pG {θ : ℝ} {f : ℝ → ℝ} (hf : Integrable f (gaussianReal θ 1)) :
+    Integrable (fun x => f x * pG θ x) := by
+  rw [← lawOf_pG, lawOf, integrable_withDensity_iff_integrable_smul'
+    (f := fun x => ENNReal.ofReal (pG θ x))
+    (show Measurable (pG θ) from measurable_gaussianPDFReal θ 1).ennreal_ofReal
+    (Eventually.of_forall fun _ => ENNReal.ofReal_lt_top)] at hf
+  refine hf.congr (Eventually.of_forall fun x => ?_)
+  simp only [ENNReal.toReal_ofReal (pG_pos θ x).le, smul_eq_mul, mul_comm]
+
+/-- The second moment of `N(0, 1)` is `1`. -/
+theorem integral_sq_gaussianReal : ∫ x, x ^ 2 ∂(gaussianReal 0 1) = 1 := by
+  have h := variance_id_gaussianReal (μ := 0) (v := 1)
+  rw [variance_of_integral_eq_zero aemeasurable_id integral_id_gaussianReal] at h
+  simpa using h
+
+/-- The directional derivative of the density: `∂_u pG 0 x = u x pG 0 x`. -/
+theorem fderiv_pG (x u : ℝ) : fderiv ℝ (fun t => pG t x) 0 u = u * x * pG 0 x := by
+  have h := inner_score_eq (pG_pos 0 x) (differentiableAt_pG x 0) u
+  rw [score_pG, sub_zero, real_inner_comm, RCLike.inner_apply, conj_trivial,
+    eq_div_iff (pG_pos 0 x).ne'] at h
+  rw [← h]; ring
+
+/-- `∫ pG (t u) = 1` can be differentiated under the integral sign along every line. -/
+theorem hasDerivAt_integral_pG (u : ℝ) :
+    HasDerivAt (fun t : ℝ => ∫ x, pG (0 + t • u) x)
+      (∫ x, fderiv ℝ (fun t => pG t x) 0 u) 0 := by
+  have e1 : (fun t : ℝ => ∫ x, pG (0 + t • u) x) = fun _ => 1 :=
+    funext fun t => integral_gaussianPDFReal_eq_one _ one_ne_zero
+  have e2 : ∫ x, fderiv ℝ (fun t => pG t x) 0 u = 0 := by
+    simp_rw [fderiv_pG]
+    rw [integral_mul_pG 0 (fun x => u * x), integral_const_mul, integral_id_gaussianReal,
+      mul_zero]
+  rw [e1, e2]
+  exact hasDerivAt_const 0 1
+
+/-- `∫ x pG (t u) x = t u` can be differentiated under the integral sign along every line. -/
+theorem hasDerivAt_integral_mul_pG (u : ℝ) :
+    HasDerivAt (fun t : ℝ => ∫ x, x * pG (0 + t • u) x)
+      (∫ x, x * fderiv ℝ (fun t => pG t x) 0 u) 0 := by
+  have e1 : (fun t : ℝ => ∫ x, x * pG (0 + t • u) x) = fun t => t * u := funext fun t => by
+    rw [integral_mul_pG _ (fun x => x), integral_id_gaussianReal, zero_add, smul_eq_mul]
+  have e2 : ∫ x, x * fderiv ℝ (fun t => pG t x) 0 u = u := by
+    have e : (fun x => x * fderiv ℝ (fun t => pG t x) 0 u) = fun x => (u * x ^ 2) * pG 0 x :=
+      funext fun x => by rw [fderiv_pG]; ring
+    rw [e, integral_mul_pG 0 (fun x => u * x ^ 2), integral_const_mul, integral_sq_gaussianReal,
+      mul_one]
+  rw [e1, e2]
+  simpa using (hasDerivAt_id (0 : ℝ)).mul_const u
+
+/-- The score of `N(θ, 1)` at `0` is measurable. -/
+theorem measurable_score_pG : Measurable (score pG 0) := by
+  rw [show score pG 0 = fun x => x - 0 from funext (score_pG 0)]
+  fun_prop
+
+/-- The score of `N(θ, 1)` at `0` has finite second moment. -/
+theorem integrable_score_pG_sq :
+    Integrable (fun x => ‖score pG 0 x‖ ^ 2) (lawOf volume pG 0) := by
+  simp only [score_pG, sub_zero, Real.norm_eq_abs, sq_abs, lawOf_pG]
+  exact (memLp_id_gaussianReal 2).integrable_sq
+
+/-- The Fisher information of `N(θ, 1)` at `0` is the identity of `ℝ`: `⟪I u, v⟫ = u v`. -/
+theorem inner_fisherInformation_pG (u v : ℝ) :
+    ⟪fisherInformation volume pG 0 u, v⟫ = u * v := by
+  rw [inner_fisherInformation_apply ((memLp_two_iff_integrable_sq_norm
+    measurable_score_pG.aestronglyMeasurable).2 integrable_score_pG_sq), lawOf_pG]
+  simp only [score_pG, sub_zero, RCLike.inner_apply, conj_trivial]
+  have e : (fun x : ℝ => u * x * (v * x)) = fun x => (u * v) * x ^ 2 := funext fun x => by ring
+  rw [e, integral_const_mul, integral_sq_gaussianReal, mul_one]
+
+/-- The Fisher information of `N(θ, 1)` at `0` is invertible. -/
+theorem isUnit_fisherInformation_pG : IsUnit (fisherInformation volume pG 0) :=
+  isUnit_of_inner_self_pos fun u hu => by
+    rw [inner_fisherInformation_pG]; exact mul_self_pos.2 hu
+
+/-- **Non-vacuity of `sq_fderiv_le_inner_fisherInformation_mul`**: every hypothesis holds for
+`N(θ, 1)` at `θ = 0` in every direction `u`, with `T x = x` unbiased for `g θ = θ`. -/
+theorem cramerRao_directional_pG (u : ℝ) :
+    fderiv ℝ (fun θ : ℝ => θ) 0 u ^ 2 ≤
+      ⟪fisherInformation volume pG 0 u, u⟫ * ∫ x, (x - 0) ^ 2 * pG 0 x :=
+  sq_fderiv_le_inner_fisherInformation_mul (ν := volume) (p := pG) (T := fun x => x)
+    (g := fun θ => θ) (θ := 0) u pG_pos (measurable_gaussianPDFReal 0 1)
+    (Eventually.of_forall fun θ => integral_gaussianPDFReal_eq_one θ one_ne_zero)
+    (fun x => differentiableAt_pG x 0) measurable_score_pG integrable_score_pG_sq
+    measurable_id.aestronglyMeasurable
+    (integrable_mul_pG (f := fun x => x ^ 2) (memLp_id_gaussianReal 2).integrable_sq)
+    (Eventually.of_forall fun θ => by
+      rw [integral_mul_pG θ (fun x => x), integral_id_gaussianReal])
+    differentiableAt_id (hasDerivAt_integral_pG u) (hasDerivAt_integral_mul_pG u)
+
+/-- The directional bound of `cramerRao_directional_pG` evaluates to `u² ≤ u² · 1`, with
+equality: the sample value `T x = x` is efficient. -/
+theorem cramerRao_directional_pG_eq (u : ℝ) :
+    fderiv ℝ (fun θ : ℝ => θ) 0 u ^ 2 =
+      ⟪fisherInformation volume pG 0 u, u⟫ * ∫ x, (x - 0) ^ 2 * pG 0 x := by
+  rw [inner_fisherInformation_pG, integral_mul_pG 0 (fun x => (x - 0) ^ 2)]
+  simp only [sub_zero, integral_sq_gaussianReal, mul_one, fderiv_fun_id,
+    ContinuousLinearMap.id_apply]
+  ring
+
+/-- **Non-vacuity of `cramerRao`** (nonsingular information): for `N(θ, 1)` at `0` the bound
+`⟪∇g, I⁻¹ ∇g⟫ ≤ Var T` holds with `g θ = θ`, `T x = x`; both sides equal `1`. -/
+theorem cramerRao_pG :
+    ⟪gradient (fun θ : ℝ => θ) 0,
+        Ring.inverse (fisherInformation volume pG 0) (gradient (fun θ : ℝ => θ) 0)⟫ ≤
+      ∫ x, (x - 0) ^ 2 * pG 0 x :=
+  cramerRao (ν := volume) (p := pG) (T := fun x => x) (g := fun θ => θ) (θ := 0)
+    pG_pos (measurable_gaussianPDFReal 0 1)
+    (Eventually.of_forall fun θ => integral_gaussianPDFReal_eq_one θ one_ne_zero)
+    (fun x => differentiableAt_pG x 0) measurable_score_pG integrable_score_pG_sq
+    isUnit_fisherInformation_pG measurable_id.aestronglyMeasurable
+    (integrable_mul_pG (f := fun x => x ^ 2) (memLp_id_gaussianReal 2).integrable_sq)
+    (Eventually.of_forall fun θ => by
+      rw [integral_mul_pG θ (fun x => x), integral_id_gaussianReal])
+    differentiableAt_id hasDerivAt_integral_pG hasDerivAt_integral_mul_pG
+
+end CramerRao
 
 /-! ### Basic API -/
 
