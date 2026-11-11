@@ -31,9 +31,13 @@ the variance of the Kaplan–Meier estimate `Ŝ(t)` by
 * `nelsonAalen_time`, `kmMass_eq_mul_nelsonAalen_jump`: the jump of `Â` at `tⱼ` is `dⱼ / Yⱼ`,
   and the Kaplan–Meier jump is `Ŝ(tⱼ₋)` times the Nelson–Aalen jump.
 * `kmSurvival_le_exp_neg_nelsonAalen`: `Ŝ(t) ≤ exp (-Â(t))`, from `1 - x ≤ exp (-x)` factorwise.
-* `greenwoodVariance_nonneg`; `greenwoodVariance_eq_naive`: the restricted Greenwood sum agrees
-  with the textbook sum over all `tⱼ ≤ t`; `greenwoodVariance_eq_zero_of_deaths_eq_atRisk`:
-  once everybody at risk has died, `Ŝ(t) = 0` and so `V̂(t) = 0`.
+* `greenwoodVariance_nonneg`.
+* `greenwoodVariance_eq_textbook`: when `dⱼ < Yⱼ` at every `tⱼ ≤ t` (so every textbook
+  denominator is positive), `V̂(t)` is the textbook sum over all `tⱼ ≤ t`.
+* `greenwoodVariance_eq_totalizedSum`: in general, `V̂(t)` equals the Lean-totalized unfiltered
+  sum, in which the excluded summands are `x / 0 = 0` by Lean's convention.
+* `greenwoodVariance_eq_zero_of_deaths_eq_atRisk`: once everybody at risk has died,
+  `Ŝ(t) = 0` and so `V̂(t) = 0`.
 
 ## Conventions
 
@@ -121,7 +125,8 @@ theorem kmSurvival_le_exp_neg_nelsonAalen (t : ℝ) :
 This is Greenwood's plug-in *estimate* of the variance of `Ŝ(t)`, not the exact sampling variance
 of the Kaplan–Meier estimator. Domain convention: the textbook summand is undefined when
 `dⱼ = Yⱼ` (the Kaplan–Meier factor is `0`), so such times are explicitly excluded from the sum
-rather than divided by zero. They do not change the value (`greenwoodVariance_eq_naive`), and if
+rather than divided by zero. If no such time occurs by `t` the definition is the textbook formula
+(`greenwoodVariance_eq_textbook`), and if
 one occurs with `dⱼ > 0` at or before `t` then `Ŝ(t) = 0` and `V̂(t) = 0`
 (`greenwoodVariance_eq_zero_of_deaths_eq_atRisk`). -/
 noncomputable def greenwoodVariance (t : ℝ) : ℝ :=
@@ -135,11 +140,26 @@ theorem greenwoodVariance_nonneg (t : ℝ) : 0 ≤ D.greenwoodVariance t := by
   have : (0 : ℝ) ≤ D.atRisk j := Nat.cast_nonneg _
   exact div_nonneg (Nat.cast_nonneg _) (mul_nonneg this (by linarith))
 
-/-- **Greenwood's restricted sum is the textbook sum** over all `tⱼ ≤ t`: the excluded times
-(`dⱼ = Yⱼ`) are exactly those where the textbook summand `dⱼ / (Yⱼ (Yⱼ - dⱼ))` has a zero
-denominator. In particular, when `dⱼ < Yⱼ` at every `tⱼ ≤ t`, every textbook denominator is
-positive and the two formulas agree literally. -/
-theorem greenwoodVariance_eq_naive (t : ℝ) :
+/-- **Greenwood agrees with the textbook formula** when every textbook denominator is positive:
+if `dⱼ < Yⱼ` at every `tⱼ ≤ t`, then `V̂(t) = Ŝ(t)² ∑_{tⱼ ≤ t} dⱼ / (Yⱼ (Yⱼ - dⱼ))`, a sum all of
+whose denominators `Yⱼ (Yⱼ - dⱼ)` are positive. -/
+theorem greenwoodVariance_eq_textbook {t : ℝ}
+    (h : ∀ j, D.time j ≤ t → D.deaths j < D.atRisk j) :
+    D.greenwoodVariance t = D.kmSurvival t ^ 2 * ∑ j with D.time j ≤ t,
+      (D.deaths j : ℝ) / ((D.atRisk j : ℝ) * ((D.atRisk j : ℝ) - D.deaths j)) := by
+  rw [greenwoodVariance]
+  congr 1
+  refine sum_congr ?_ fun _ _ => rfl
+  ext j
+  simp only [mem_filter, mem_univ, true_and]
+  exact ⟨And.left, fun hj => ⟨hj, h j hj⟩⟩
+
+/-- **Totalized form, no hypotheses.** `V̂(t)` equals the unfiltered sum over all `tⱼ ≤ t` *as a
+Lean expression*: at an excluded time (`dⱼ = Yⱼ`) the textbook summand is undefined, and the Lean
+term `dⱼ / (Yⱼ · 0)` is `0` only by the convention `x / 0 = 0`. This is an identity of totalized
+expressions, not agreement with the textbook formula; for that see
+`greenwoodVariance_eq_textbook`. -/
+theorem greenwoodVariance_eq_totalizedSum (t : ℝ) :
     D.greenwoodVariance t = D.kmSurvival t ^ 2 * ∑ j with D.time j ≤ t,
       (D.deaths j : ℝ) / ((D.atRisk j : ℝ) * ((D.atRisk j : ℝ) - D.deaths j)) := by
   rw [greenwoodVariance, ← filter_filter, sum_filter (p := fun j => D.deaths j < D.atRisk j)]

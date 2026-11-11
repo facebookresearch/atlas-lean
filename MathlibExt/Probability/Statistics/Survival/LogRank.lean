@@ -30,11 +30,15 @@ variance
 ## Main results
 
 * `tiedLogRankVarianceTerm_nonneg`: the term is non-negative when `Y₁ ≤ Y` and `d ≤ Y`.
-* `tiedLogRankVarianceTerm_one`: with a single failure (`d = 1`) it is the Breslow (Cox
-  information) summand `Y₁ (Y - Y₁) / Y²`, as in `CoxPartialLikelihood.breslowInformation`.
-* `tiedLogRankVarianceTerm_eq_mul`, `tiedLogRankVarianceTerm_le`: with ties it is the Breslow
-  contribution of the `d` tied events, `d Y₁ (Y - Y₁) / Y²`, shrunk by the finite-population
-  factor `(Y - d) / (Y - 1) ≤ 1`.
+* `tiedLogRankVarianceTerm_eq_mul`: the algebraic identity
+  `term = d · (Y₁ (Y - Y₁) / Y²) · ((Y - d) / (Y - 1))` for every `Y > 1` (no domain
+  hypotheses; it carries no statistical meaning outside `Y₁ ≤ Y`, `d ≤ Y`).
+* `tiedLogRankVarianceTerm_one`: on the domain `Y₁ ≤ Y`, a single failure (`d = 1`) gives the
+  Breslow (Cox information) summand `Y₁ (Y - Y₁) / Y²`, as in
+  `CoxPartialLikelihood.breslowInformation`.
+* `tiedLogRankVarianceTerm_le`: on the domain `Y₁ ≤ Y`, `1 ≤ d ≤ Y`, the tied variance is at
+  most the Breslow contribution `d Y₁ (Y - Y₁) / Y²` of the `d` tied events, since the
+  finite-population factor `(Y - d) / (Y - 1)` lies in `[0, 1]`.
 
 For example, with `Y = 4`, `Y₁ = 2` and `d = 2` the tied variance is `1 / 3`, while the Breslow
 information of the two tied events is `2 · (2 · 2 / 4²) = 1 / 2`.
@@ -83,8 +87,11 @@ theorem tiedLogRankVarianceTerm_nonneg {Y Y₁ d : ℕ} (h₁ : Y₁ ≤ Y) (hd 
   refine div_nonneg (mul_nonneg (mul_nonneg (by positivity) ?_) ?_) (mul_nonneg ?_ ?_) <;>
     nlinarith
 
-/-- With ties, the term is the Breslow contribution `d Y₁ (Y - Y₁) / Y²` of the `d` tied events
-times the finite-population correction `(Y - d) / (Y - 1)`. -/
+/-- Algebraic identity: for `1 < Y` and any naturals `Y₁`, `d`, the term equals
+`d · (Y₁ (Y - Y₁) / Y²) · ((Y - d) / (Y - 1))`, with all subtractions in `ℝ`. Only on the domain
+`Y₁ ≤ Y`, `d ≤ Y` do the factors read as the Breslow contribution of the `d` tied events and the
+finite-population correction (see `tiedLogRankVarianceTerm_one`, `tiedLogRankVarianceTerm_le`);
+outside it the factors can be negative. -/
 theorem tiedLogRankVarianceTerm_eq_mul {Y : ℕ} (hY : 1 < Y) (Y₁ d : ℕ) :
     tiedLogRankVarianceTerm Y Y₁ d =
       d * ((Y₁ : ℝ) * ((Y : ℝ) - Y₁) / (Y : ℝ) ^ 2) * (((Y : ℝ) - d) / ((Y : ℝ) - 1)) := by
@@ -95,16 +102,20 @@ theorem tiedLogRankVarianceTerm_eq_mul {Y : ℕ} (hY : 1 < Y) (Y₁ d : ℕ) :
   · omega
   field_simp
 
-/-- **A single failure gives the Breslow term**: for `d = 1` the tied log-rank variance term is
-`Y₁ (Y - Y₁) / Y²`, the summand of the Cox information `breslowInformation` at one risk set. -/
-theorem tiedLogRankVarianceTerm_one {Y : ℕ} (hY : 1 < Y) (Y₁ : ℕ) :
+/-- **A single failure gives the Breslow term**: on the domain `Y₁ ≤ Y`, for `d = 1` the tied
+log-rank variance term is `Y₁ (Y - Y₁) / Y²`, the summand of the Cox information
+`breslowInformation` at one risk set. The hypothesis `Y₁ ≤ Y` only restricts to valid counts; the
+underlying algebra is `tiedLogRankVarianceTerm_eq_mul`. -/
+theorem tiedLogRankVarianceTerm_one {Y Y₁ : ℕ} (hY : 1 < Y) (_h₁ : Y₁ ≤ Y) :
     tiedLogRankVarianceTerm Y Y₁ 1 = (Y₁ : ℝ) * ((Y : ℝ) - Y₁) / (Y : ℝ) ^ 2 := by
   have hY1 : (Y : ℝ) - 1 ≠ 0 := sub_ne_zero.2 (by exact_mod_cast hY.ne')
   rw [tiedLogRankVarianceTerm_eq_mul hY, Nat.cast_one, div_self hY1, one_mul, mul_one]
 
-/-- With at least one failure, the tied variance is at most the Breslow contribution
-`d Y₁ (Y - Y₁) / Y²` of the `d` tied events; Breslow's information overstates it under ties. -/
-theorem tiedLogRankVarianceTerm_le {Y Y₁ d : ℕ} (h₁ : Y₁ ≤ Y) (hd1 : 1 ≤ d) :
+/-- On the domain `Y₁ ≤ Y`, `1 ≤ d ≤ Y`, the tied variance is at most the Breslow contribution
+`d Y₁ (Y - Y₁) / Y²` of the `d` tied events; Breslow's information overstates it under ties.
+The hypothesis `d ≤ Y` only restricts to valid counts (the inequality itself does not need
+it). -/
+theorem tiedLogRankVarianceTerm_le {Y Y₁ d : ℕ} (h₁ : Y₁ ≤ Y) (hd1 : 1 ≤ d) (_hd : d ≤ Y) :
     tiedLogRankVarianceTerm Y Y₁ d ≤ d * ((Y₁ : ℝ) * ((Y : ℝ) - Y₁) / (Y : ℝ) ^ 2) := by
   have hB : 0 ≤ (d : ℝ) * ((Y₁ : ℝ) * ((Y : ℝ) - Y₁) / (Y : ℝ) ^ 2) := by
     have : (Y₁ : ℝ) ≤ Y := by exact_mod_cast h₁

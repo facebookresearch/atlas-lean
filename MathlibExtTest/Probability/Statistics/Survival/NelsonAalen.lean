@@ -64,22 +64,16 @@ theorem D₁_kmSurvival_two : D₁.kmSurvival 2 = 1 / 2 := by
     CensoredData.kmFactor, a0, a1]
   norm_num [D₁]
 
-/-- Greenwood: `V̂(2) = (1/2)² (1/(4·3) + 1/(3·2)) = 1/16`. -/
+theorem D₁_filter_greenwood_two :
+    univ.filter (fun j : Fin 3 => D₁.time j ≤ 2 ∧ D₁.deaths j < D₁.atRisk j) = {0, 1} := by
+  have hq : univ.filter (fun j : Fin 3 => D₁.deaths j < D₁.atRisk j) = univ := by decide
+  rw [filter_and, D₁_filter_two, hq, inter_univ]
+
+/-- Greenwood from the definition: `V̂(2) = (1/2)² (1/(4·3) + 1/(3·2)) = 1/16`. -/
 theorem D₁_greenwoodVariance_two : D₁.greenwoodVariance 2 = 1 / 16 := by
   obtain ⟨a0, a1, -⟩ := D₁_atRisk
-  rw [CensoredData.greenwoodVariance_eq_naive, D₁_kmSurvival_two, D₁_filter_two,
+  rw [CensoredData.greenwoodVariance, D₁_kmSurvival_two, D₁_filter_greenwood_two,
     sum_pair (by decide), a0, a1]
-  norm_num [D₁]
-
-/-- The exponential bound at `t = 2`: `1/2 ≤ exp (-7/12)`. -/
-example : (1 / 2 : ℝ) ≤ Real.exp (-(7 / 12)) := by
-  simpa [D₁_kmSurvival_two, D₁_nelsonAalen_two] using D₁.kmSurvival_le_exp_neg_nelsonAalen 2
-
-/-- The Nelson–Aalen jump at `t₁ = 2` is `d₁ / Y₁ = 1/3`. -/
-example : D₁.nelsonAalen (D₁.time 1) =
-    (∑ l with l < (1 : Fin 3), (D₁.deaths l : ℝ) / D₁.atRisk l) + 1 / 3 := by
-  obtain ⟨-, a1, -⟩ := D₁_atRisk
-  rw [D₁.nelsonAalen_time 1, a1]
   norm_num [D₁]
 
 /-! ### Everybody at risk dies: the Greenwood domain convention -/
@@ -95,23 +89,31 @@ noncomputable def D₂ : CensoredData 2 where
 
 theorem D₂_atRisk : D₂.atRisk 0 = 2 ∧ D₂.atRisk 1 = 1 := by decide
 
+theorem D₂_filter_two : univ.filter (fun j : Fin 2 => D₂.time j ≤ 2) = univ := by
+  ext j
+  simp only [mem_filter, mem_univ, true_and, iff_true]
+  fin_cases j <;> norm_num [D₂]
+
 /-- `Â(2) = 1/2 + 1/1 = 3/2`. -/
 theorem D₂_nelsonAalen_two : D₂.nelsonAalen 2 = 3 / 2 := by
-  have hset : univ.filter (fun j : Fin 2 => D₂.time j ≤ 2) = univ := by
-    ext j
-    simp only [mem_filter, mem_univ, true_and, iff_true]
-    fin_cases j <;> norm_num [D₂]
   obtain ⟨a0, a1⟩ := D₂_atRisk
-  rw [CensoredData.nelsonAalen, hset, Fin.sum_univ_two, a0, a1]
+  rw [CensoredData.nelsonAalen, D₂_filter_two, Fin.sum_univ_two, a0, a1]
   norm_num [D₂]
 
-/-- The time `t₁ = 2` with `d = Y` is excluded from Greenwood's sum, and `Ŝ(2) = 0`. -/
-example : D₂.kmSurvival 2 = 0 ∧ D₂.greenwoodVariance 2 = 0 := by
-  have hd : (0 : ℕ) < D₂.deaths 1 := by decide
-  have he : D₂.deaths 1 = D₂.atRisk 1 := by decide
-  have ht : D₂.time 1 ≤ 2 := by norm_num [D₂]
-  exact ⟨D₂.kmSurvival_eq_zero_of_deaths_eq_atRisk ht hd he,
-    D₂.greenwoodVariance_eq_zero_of_deaths_eq_atRisk ht hd he⟩
+/-- From the definition: `Ŝ(2) = (1 - 1/2)(1 - 1/1) = 0`. -/
+theorem D₂_kmSurvival_two : D₂.kmSurvival 2 = 0 := by
+  obtain ⟨a0, a1⟩ := D₂_atRisk
+  rw [CensoredData.kmSurvival, D₂_filter_two, Fin.prod_univ_two, CensoredData.kmFactor,
+    CensoredData.kmFactor, a0, a1]
+  norm_num [D₂]
+
+/-- From the definition: the time `t₁ = 2` with `d = Y` is excluded, only `t₀` remains, and
+`V̂(2) = 0² · 1/(2·1) = 0`. -/
+theorem D₂_greenwoodVariance_two : D₂.greenwoodVariance 2 = 0 := by
+  have hq : univ.filter (fun j : Fin 2 => D₂.deaths j < D₂.atRisk j) = {0} := by decide
+  rw [CensoredData.greenwoodVariance, D₂_kmSurvival_two, filter_and, D₂_filter_two, hq,
+    univ_inter]
+  norm_num
 
 /-! ### All observations censored -/
 
@@ -128,6 +130,40 @@ noncomputable def D₃ : CensoredData 2 where
 example (t : ℝ) : D₃.nelsonAalen t = 0 :=
   sum_eq_zero fun j _ => by fin_cases j <;> simp [D₃]
 
+/-! ### Theorem applications on the fixtures (checked against the values above) -/
+
+/-- The exponential bound at `t = 2`: `1/2 ≤ exp (-7/12)`. -/
+example : (1 / 2 : ℝ) ≤ Real.exp (-(7 / 12)) := by
+  simpa [D₁_kmSurvival_two, D₁_nelsonAalen_two] using D₁.kmSurvival_le_exp_neg_nelsonAalen 2
+
+/-- The Nelson–Aalen jump at `t₁ = 2` is `d₁ / Y₁ = 1/3`. -/
+example : D₁.nelsonAalen (D₁.time 1) =
+    (∑ l with l < (1 : Fin 3), (D₁.deaths l : ℝ) / D₁.atRisk l) + 1 / 3 := by
+  obtain ⟨-, a1, -⟩ := D₁_atRisk
+  rw [D₁.nelsonAalen_time 1, a1]
+  norm_num [D₁]
+
+/-- `D₁` has `dⱼ < Yⱼ` at every `tⱼ ≤ 2`, so the textbook Greenwood formula applies and gives the
+same `1/16` as the direct computation `D₁_greenwoodVariance_two`. -/
+example : D₁.kmSurvival 2 ^ 2 * ∑ j with D₁.time j ≤ 2,
+    (D₁.deaths j : ℝ) / ((D₁.atRisk j : ℝ) * ((D₁.atRisk j : ℝ) - D₁.deaths j)) = 1 / 16 := by
+  rw [← D₁.greenwoodVariance_eq_textbook fun j _ => by fin_cases j <;> decide,
+    D₁_greenwoodVariance_two]
+
+/-- The zero lemmas reproduce the direct values `D₂_kmSurvival_two`, `D₂_greenwoodVariance_two`. -/
+example : D₂.kmSurvival 2 = 0 ∧ D₂.greenwoodVariance 2 = 0 := by
+  have hd : (0 : ℕ) < D₂.deaths 1 := by decide
+  have he : D₂.deaths 1 = D₂.atRisk 1 := by decide
+  have ht : D₂.time 1 ≤ 2 := by norm_num [D₂]
+  exact ⟨D₂.kmSurvival_eq_zero_of_deaths_eq_atRisk ht hd he,
+    D₂.greenwoodVariance_eq_zero_of_deaths_eq_atRisk ht hd he⟩
+
+/-- On `D₂` the textbook formula is undefined at `t₁` (`d = Y`); the totalized sum still matches
+`V̂(2) = 0` because Lean reads that summand as `1 / (1 · 0) = 0`. -/
+example : D₂.kmSurvival 2 ^ 2 * ∑ j with D₂.time j ≤ 2,
+    (D₂.deaths j : ℝ) / ((D₂.atRisk j : ℝ) * ((D₂.atRisk j : ℝ) - D₂.deaths j)) = 0 := by
+  rw [← D₂.greenwoodVariance_eq_totalizedSum, D₂_greenwoodVariance_two]
+
 /-! ### The tied log-rank variance term -/
 
 /-- One tied risk set with `Y = 4`, `Y₁ = 2`, `d = 2`: the tied (hypergeometric) variance is
@@ -142,15 +178,26 @@ theorem breslow_four_two_two : (2 : ℝ) * (2 * (4 - 2) / 4 ^ 2) = 1 / 2 := by n
 example : tiedLogRankVarianceTerm 4 2 2 < 2 * ((2 : ℝ) * ((4 : ℝ) - 2) / (4 : ℝ) ^ 2) := by
   rw [tied_four_two_two]; norm_num
 
-/-- With a single failure (`d = 1`), `Y = 4`, `Y₁ = 2`: both equal `2·2/4² = 1/4`. -/
+/-- With a single failure (`d = 1`), `Y = 4`, `Y₁ = 2`: directly `1·2·2·3 / (4²·3) = 1/4`, the
+Breslow summand `2·2/4²`. -/
 example : tiedLogRankVarianceTerm 4 2 1 = 1 / 4 := by
-  rw [tiedLogRankVarianceTerm_one (by norm_num)]; norm_num
+  norm_num [tiedLogRankVarianceTerm]
+
+/-- The same value via `tiedLogRankVarianceTerm_one` (theorem application). -/
+example : tiedLogRankVarianceTerm 4 2 1 = 1 / 4 := by
+  rw [tiedLogRankVarianceTerm_one (by norm_num) (by norm_num)]; norm_num
+
+/-- `tiedLogRankVarianceTerm_le` on the tied risk set: `1/3 ≤ 1/2` (theorem application). -/
+example : tiedLogRankVarianceTerm 4 2 2 ≤ 2 * ((2 : ℝ) * ((4 : ℝ) - 2) / (4 : ℝ) ^ 2) := by
+  exact_mod_cast tiedLogRankVarianceTerm_le (Y := 4) (Y₁ := 2) (d := 2) (by norm_num)
+    (by norm_num) (by norm_num)
 
 /-- `Y ≤ 1` is deterministic: the term vanishes. -/
 example (Y₁ d : ℕ) : tiedLogRankVarianceTerm 1 Y₁ d = 0 := by
   simp [tiedLogRankVarianceTerm]
 
-/-- Nonnegativity at a boundary case `Y₁ = Y = d`. -/
+/-- Nonnegativity at a boundary case `Y₁ = Y = d` (theorem application; directly the value is
+`0` since `Y - d = 0`). -/
 example : 0 ≤ tiedLogRankVarianceTerm 3 3 3 := tiedLogRankVarianceTerm_nonneg le_rfl le_rfl
 
 /-! The same tied risk set in the Cox model: four subjects at risk at time `1`, two of them in
@@ -196,7 +243,8 @@ example : ∑ k ∈ range 3, ((k : ℝ) - 1) ^ 2 * ProbabilityTheory.hypergeomet
 #print axioms CensoredData.kmSurvival_le_exp_neg_nelsonAalen
 #print axioms CensoredData.kmMass_eq_mul_nelsonAalen_jump
 #print axioms CensoredData.greenwoodVariance_nonneg
-#print axioms CensoredData.greenwoodVariance_eq_naive
+#print axioms CensoredData.greenwoodVariance_eq_textbook
+#print axioms CensoredData.greenwoodVariance_eq_totalizedSum
 #print axioms CensoredData.greenwoodVariance_eq_zero_of_deaths_eq_atRisk
 #print axioms tiedLogRankVarianceTerm_nonneg
 #print axioms tiedLogRankVarianceTerm_one
