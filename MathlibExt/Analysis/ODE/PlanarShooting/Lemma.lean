@@ -56,9 +56,17 @@ later trapping-region argument, which also continues the branch past `z = 0`.
 
 `WantedExt/Dynamics/StableUnstableManifoldsWanted.lean` (set-level Hadamard–Perron) concerns
 iterates of a `C¹` map on `ℝⁿ`. It gives neither a flow-invariant curve, nor tangency, nor a
-choice of branch, so it cannot supply this lemma even once proved.
+choice of branch, so it cannot supply this lemma even once proved. It is weaker still: its
+conclusion `Ws ∩ Wu = {x₀}` also holds when `Wu = {x₀}`, so it does not even promise a
+nontrivial unstable set.
 `WantedExt/Analysis/ODE/LinearizedInstabilityWanted.lean` only asserts that some nearby
 solution segment escapes. Neither contract is used or modified here.
+
+The downstream consumer is `MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le` in
+`WantedExt/Biology/Dynamics/FisherKPPWanted.lean`. Its docstring has the unstable branch enter
+the triangle `{0 ≤ U ≤ 1, -μ U ≤ U' ≤ 0}` with `μ = c / (2 D)`. This file proves only the
+quadrant property `0 < U < 1`, `U' < 0`; entry into the triangle is left to the
+trapping-region step.
 
 ## References
 
