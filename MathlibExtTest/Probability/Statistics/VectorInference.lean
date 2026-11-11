@@ -431,7 +431,8 @@ theorem cramerRao_directional_pG_eq (u : ℝ) :
   ring
 
 /-- **Non-vacuity of `cramerRao`** (nonsingular information): for `N(θ, 1)` at `0` the bound
-`⟪∇g, I⁻¹ ∇g⟫ ≤ Var T` holds with `g θ = θ`, `T x = x`; both sides equal `1`. -/
+`⟪∇g, I⁻¹ ∇g⟫ ≤ Var T` holds with `g θ = θ`, `T x = x`; both sides equal `1`
+(`cramerRao_pG_eq`). -/
 theorem cramerRao_pG :
     ⟪gradient (fun θ : ℝ => θ) 0,
         Ring.inverse (fisherInformation volume pG 0) (gradient (fun θ : ℝ => θ) 0)⟫ ≤
@@ -445,6 +446,23 @@ theorem cramerRao_pG :
     (Eventually.of_forall fun θ => by
       rw [integral_mul_pG θ (fun x => x), integral_id_gaussianReal])
     differentiableAt_id hasDerivAt_integral_pG hasDerivAt_integral_mul_pG
+
+/-- The Fisher information of `N(θ, 1)` at `0` is the identity operator of `ℝ`. -/
+theorem fisherInformation_pG_eq : fisherInformation volume pG 0 = 1 := by
+  ext
+  refine ext_inner_right ℝ fun v => ?_
+  rw [inner_fisherInformation_pG]
+  simp
+
+/-- The matrix Cramér–Rao bound of `cramerRao_pG` is attained: both sides equal `1`. -/
+theorem cramerRao_pG_eq :
+    ⟪gradient (fun θ : ℝ => θ) 0,
+        Ring.inverse (fisherInformation volume pG 0) (gradient (fun θ : ℝ => θ) 0)⟫ =
+      ∫ x, (x - 0) ^ 2 * pG 0 x := by
+  rw [fisherInformation_pG_eq, Ring.inverse_one]
+  change ⟪gradient (fun θ : ℝ => θ) 0, gradient (fun θ : ℝ => θ) 0⟫ = _
+  rw [gradient_eq_deriv', deriv_id'', integral_mul_pG 0 (fun x => (x - 0) ^ 2)]
+  simp [integral_sq_gaussianReal]
 
 end CramerRao
 
