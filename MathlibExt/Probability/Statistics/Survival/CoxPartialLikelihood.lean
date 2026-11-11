@@ -12,6 +12,11 @@ public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Analysis.Calculus.FDeriv.Basic
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+public import Mathlib.Analysis.Calculus.Gradient.Basic
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Analysis.Calculus.FDeriv.WithLp
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
@@ -37,6 +42,12 @@ risk set at its time (Breslow 1974), which is Cox's formula when the event times
 * For a scalar covariate `zᵢ`: `hasDerivAt_logPartialLikelihood`, the score
   `ℓ'(b) = ∑_{i : δᵢ} (zᵢ - z̄ᵢ(b))` with `z̄ᵢ(b)` the `exp (b z)`-weighted mean of `z` over
   `R(Tᵢ)`; `hasDerivAt_coxScore`, `ℓ''(b) = -∑_{i : δᵢ} Varᵢ(b)` with the weighted variance.
+* For covariate vectors: `hasFDerivAt_logPartialLikelihood`, the Fréchet derivative of `ℓ` at
+  `β` is `v ↦ ⟪U(β), v⟫` with the score vector `U(β) = ∑_{i : δᵢ} (xᵢ - x̄ᵢ(β))`
+  (`coxGradient`, `riskMeanVec`), and `hasGradientAt_logPartialLikelihood` states that `U(β)`
+  is the gradient of `ℓ` on `EuclideanSpace ℝ (Fin p)`. `coxGradient_one` recovers the scalar
+  `coxScore` at `p = 1`. `hasDerivAt_coxGradient_dotProduct`: the Hessian quadratic form
+  `d/dt ⟪U(β + t u), u⟫ |_{t=0}` is `-∑_{i : δᵢ} Varᵢ(⟪x, u⟫)` (`riskVarAlong`).
 * **The log-rank test is the score test** (Mantel 1966; Cox 1972): for a group
   indicator `zᵢ = 1` (group 1) or `0`, `coxScore_zero` gives `ℓ'(0) = O - E`, the observed minus
   the expected number of group-1 events, `∑_{i : δᵢ} (zᵢ - n₁(Tᵢ) / n(Tᵢ))`, and
@@ -252,5 +263,160 @@ theorem coxInformation_zero (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n
   simp only [riskVar, riskMean, zero_mul, exp_zero, mul_one, hsq]
   simp only [sum_const, nsmul_eq_mul, groupIndicator, sum_boole, numAtRiskIn, numAtRisk]
   field_simp
+
+/-! ### The vector score: gradient of the log partial likelihood -/
+
+/-- The `exp ⟪β, x⟫`-weighted mean covariate vector over the risk set of subject `i`,
+`x̄ᵢ(β) = (∑_{l ∈ R(Tᵢ)} exp ⟪β, x_l⟫ x_l) / ∑_{l ∈ R(Tᵢ)} exp ⟪β, x_l⟫`. -/
+noncomputable def riskMeanVec (T : Fin n → ℝ) (x : Fin n → Fin p → ℝ) (β : Fin p → ℝ)
+    (i : Fin n) : Fin p → ℝ :=
+  (∑ l ∈ riskSet T i, exp (β ⬝ᵥ x l))⁻¹ • ∑ l ∈ riskSet T i, exp (β ⬝ᵥ x l) • x l
+
+/-- Component `j` of the weighted mean vector is the `exp ⟪β, x⟫`-weighted mean of the `j`-th
+covariate over the risk set. -/
+theorem riskMeanVec_apply (T : Fin n → ℝ) (x : Fin n → Fin p → ℝ) (β : Fin p → ℝ) (i : Fin n)
+    (j : Fin p) :
+    riskMeanVec T x β i j =
+      (∑ l ∈ riskSet T i, x l j * exp (β ⬝ᵥ x l)) / ∑ l ∈ riskSet T i, exp (β ⬝ᵥ x l) := by
+  simp only [riskMeanVec, Pi.smul_apply, Finset.sum_apply, smul_eq_mul]
+  rw [inv_mul_eq_div]
+  simp_rw [mul_comm (exp _)]
+
+/-- Along a coordinate axis, `β = b eⱼ`, component `j` of the weighted mean vector is the scalar
+weighted mean `riskMean` of the `j`-th covariate at `b`. -/
+theorem riskMeanVec_single_apply (T : Fin n → ℝ) (x : Fin n → Fin p → ℝ) (j : Fin p) (b : ℝ)
+    (i : Fin n) :
+    riskMeanVec T x (Pi.single j b) i j = riskMean T (fun l => x l j) b i := by
+  simp [riskMeanVec_apply, riskMean, single_dotProduct]
+
+/-- The Cox score vector `∑_{i : δᵢ} (xᵢ - x̄ᵢ(β))`. -/
+noncomputable def coxGradient (T : Fin n → ℝ) (δ : Fin n → Bool) (x : Fin n → Fin p → ℝ)
+    (β : Fin p → ℝ) : Fin p → ℝ :=
+  ∑ i with δ i = true, (x i - riskMeanVec T x β i)
+
+/-- For one covariate (`p = 1`) the score vector has the scalar Cox score `coxScore` as its
+single component. -/
+theorem coxGradient_one (T : Fin n → ℝ) (δ : Fin n → Bool) (z : Fin n → ℝ) (b : ℝ) :
+    coxGradient T δ (fun i (_ : Fin 1) => z i) (fun _ => b) = fun _ => coxScore T δ z b := by
+  funext j
+  have hj : (fun _ : Fin 1 => b) = Pi.single j b := by
+    funext k; rw [Subsingleton.elim k j, Pi.single_eq_same]
+  simp only [coxGradient, coxScore, Finset.sum_apply, Pi.sub_apply, hj]
+  exact sum_congr rfl fun i _ => by rw [riskMeanVec_single_apply]
+
+/-- The continuous linear functional `w ↦ ⟪v, w⟫` on `Fin p → ℝ`. -/
+private noncomputable def dotCLM (v : Fin p → ℝ) : (Fin p → ℝ) →L[ℝ] ℝ :=
+  ∑ j, v j • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin p => ℝ) j
+
+private lemma dotCLM_apply (v w : Fin p → ℝ) : dotCLM v w = v ⬝ᵥ w := by
+  simp [dotCLM, dotProduct]
+
+private lemma hasFDerivAt_dotProduct (v β : Fin p → ℝ) :
+    HasFDerivAt (fun β => β ⬝ᵥ v) (dotCLM v) β := by
+  have h : (fun β => β ⬝ᵥ v) = dotCLM v := funext fun β => by
+    rw [dotCLM_apply, dotProduct_comm]
+  rw [h]
+  exact (dotCLM v).hasFDerivAt
+
+private lemma hasFDerivAt_logSumExp (s : Finset (Fin n)) (hs : s.Nonempty)
+    (x : Fin n → Fin p → ℝ) (β : Fin p → ℝ) :
+    HasFDerivAt (fun β => log (∑ l ∈ s, exp (β ⬝ᵥ x l)))
+      (dotCLM ((∑ l ∈ s, exp (β ⬝ᵥ x l))⁻¹ • ∑ l ∈ s, exp (β ⬝ᵥ x l) • x l)) β := by
+  have hS : HasFDerivAt (fun β => ∑ l ∈ s, exp (β ⬝ᵥ x l))
+      (∑ l ∈ s, exp (β ⬝ᵥ x l) • dotCLM (x l)) β :=
+    HasFDerivAt.fun_sum fun l _ => (hasFDerivAt_dotProduct (x l) β).exp
+  convert hS.log (sum_pos (fun l _ => exp_pos (β ⬝ᵥ x l)) hs).ne' using 1
+  ext v
+  simp [dotCLM_apply, smul_dotProduct, sum_dotProduct]
+
+/-- The Fréchet derivative of the Cox log partial likelihood at `β` is `v ↦ ⟪U(β), v⟫`, written
+as `∑ⱼ U(β)ⱼ • projⱼ`, where `U = coxGradient` is the Cox score vector. -/
+theorem hasFDerivAt_logPartialLikelihood (T : Fin n → ℝ) (δ : Fin n → Bool)
+    (x : Fin n → Fin p → ℝ) (β : Fin p → ℝ) :
+    HasFDerivAt (logPartialLikelihood T δ x)
+      (∑ j, coxGradient T δ x β j • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ => ℝ) j) β := by
+  change HasFDerivAt _ (dotCLM (coxGradient T δ x β)) β
+  have h : HasFDerivAt (logPartialLikelihood T δ x)
+      (∑ i with δ i = true, (dotCLM (x i) - dotCLM (riskMeanVec T x β i))) β := by
+    unfold logPartialLikelihood
+    exact HasFDerivAt.fun_sum fun i _ =>
+      (hasFDerivAt_dotProduct (x i) β).sub (hasFDerivAt_logSumExp _ (riskSet_nonempty T i) x β)
+  convert h using 1
+  ext v
+  simp [dotCLM_apply, coxGradient, sum_dotProduct, sub_dotProduct]
+
+/-- **The Cox score vector is the gradient of the log partial likelihood.** The gradient needs an
+inner product, which `Fin p → ℝ` (sup norm) lacks, so the statement transports `ℓ` to Euclidean
+space `EuclideanSpace ℝ (Fin p)` along `WithLp.ofLp`. -/
+theorem hasGradientAt_logPartialLikelihood (T : Fin n → ℝ) (δ : Fin n → Bool)
+    (x : Fin n → Fin p → ℝ) (β : Fin p → ℝ) :
+    HasGradientAt (fun b : EuclideanSpace ℝ (Fin p) => logPartialLikelihood T δ x b.ofLp)
+      (WithLp.toLp 2 (coxGradient T δ x β)) (WithLp.toLp 2 β) := by
+  rw [hasGradientAt_iff_hasFDerivAt]
+  refine ((hasFDerivAt_logPartialLikelihood T δ x β).comp (WithLp.toLp 2 β)
+    (PiLp.hasFDerivAt_ofLp (𝕜 := ℝ) 2 (WithLp.toLp 2 β))).congr_fderiv ?_
+  ext v
+  simp [PiLp.inner_apply, mul_comm]
+
+/-! ### The Hessian quadratic form -/
+
+/-- The `exp ⟪β, x⟫`-weighted variance of the linear covariate `⟪x, u⟫` over the risk set of
+subject `i`. -/
+noncomputable def riskVarAlong (T : Fin n → ℝ) (x : Fin n → Fin p → ℝ) (β u : Fin p → ℝ)
+    (i : Fin n) : ℝ :=
+  (∑ l ∈ riskSet T i, (x l ⬝ᵥ u) ^ 2 * exp (β ⬝ᵥ x l)) / (∑ l ∈ riskSet T i, exp (β ⬝ᵥ x l)) -
+    (riskMeanVec T x β i ⬝ᵥ u) ^ 2
+
+private lemma riskMeanVec_dotProduct (T : Fin n → ℝ) (x : Fin n → Fin p → ℝ) (β u : Fin p → ℝ)
+    (i : Fin n) :
+    riskMeanVec T x β i ⬝ᵥ u =
+      (∑ l ∈ riskSet T i, (x l ⬝ᵥ u) * exp (β ⬝ᵥ x l)) / ∑ l ∈ riskSet T i, exp (β ⬝ᵥ x l) := by
+  simp only [riskMeanVec, smul_dotProduct, sum_dotProduct, smul_eq_mul]
+  rw [inv_mul_eq_div]
+  simp_rw [mul_comm (exp _)]
+
+private lemma hasDerivAt_sum_exp_add (s : Finset (Fin n)) (a z w : Fin n → ℝ) (t : ℝ) :
+    HasDerivAt (fun t => ∑ l ∈ s, w l * exp (a l + t * z l))
+      (∑ l ∈ s, w l * z l * exp (a l + t * z l)) t := by
+  refine HasDerivAt.fun_sum fun l _ => ?_
+  convert (((hasDerivAt_mul_const (z l)).const_add (a l)).exp).const_mul (w l) using 1
+  ring
+
+/-- **The Hessian quadratic form of the Cox log partial likelihood is minus the observed
+information along `u`**: the derivative at `t = 0` of `t ↦ ⟪U(β + t u), u⟫` is
+`-∑_{i : δᵢ} Varᵢ(⟪x, u⟫)`, the weighted variances being taken at `β`. -/
+theorem hasDerivAt_coxGradient_dotProduct (T : Fin n → ℝ) (δ : Fin n → Bool)
+    (x : Fin n → Fin p → ℝ) (β u : Fin p → ℝ) :
+    HasDerivAt (fun t : ℝ => coxGradient T δ x (β + t • u) ⬝ᵥ u)
+      (-∑ i with δ i = true, riskVarAlong T x β u i) 0 := by
+  set a : Fin n → ℝ := fun l => β ⬝ᵥ x l
+  set z : Fin n → ℝ := fun l => x l ⬝ᵥ u
+  have hdot : ∀ (t : ℝ) (l : Fin n), (β + t • u) ⬝ᵥ x l = a l + t * z l := fun t l => by
+    simp [a, z, add_dotProduct, smul_dotProduct, dotProduct_comm u]
+  have hfun : (fun t : ℝ => coxGradient T δ x (β + t • u) ⬝ᵥ u) = fun t => ∑ i with δ i = true,
+      (z i - (∑ l ∈ riskSet T i, z l * exp (a l + t * z l)) /
+        ∑ l ∈ riskSet T i, 1 * exp (a l + t * z l)) := by
+    funext t
+    simp only [coxGradient, sum_dotProduct, sub_dotProduct, riskMeanVec_dotProduct, hdot,
+      one_mul]
+    rfl
+  rw [hfun, ← sum_neg_distrib]
+  refine HasDerivAt.fun_sum fun i _ => ?_
+  have hN := hasDerivAt_sum_exp_add (riskSet T i) a z z 0
+  have hD := hasDerivAt_sum_exp_add (riskSet T i) a z (fun _ => 1) 0
+  have hpos : (∑ l ∈ riskSet T i, 1 * exp (a l + 0 * z l)) ≠ 0 :=
+    (sum_pos (fun l _ => by positivity) (riskSet_nonempty T i)).ne'
+  convert (hasDerivAt_const (0 : ℝ) (z i)).fun_sub (hN.fun_div hD hpos) using 1
+  have hZ : (∑ l ∈ riskSet T i, exp (a l)) ≠ 0 :=
+    (sum_pos (fun l _ => exp_pos (a l)) (riskSet_nonempty T i)).ne'
+  simp only [riskVarAlong, riskMeanVec_dotProduct, zero_mul, add_zero, one_mul, a, z] at hZ ⊢
+  field_simp
+  ring
+
+/-- For one covariate (`p = 1`) and the unit direction, the directional variance is the scalar
+weighted variance `riskVar`. -/
+theorem riskVarAlong_one (T : Fin n → ℝ) (z : Fin n → ℝ) (b : ℝ) (i : Fin n) :
+    riskVarAlong T (fun i (_ : Fin 1) => z i) (fun _ => b) (fun _ => 1) i = riskVar T z b i := by
+  simp [riskVarAlong, riskVar, riskMean, riskMeanVec_apply, dotProduct, mul_comm b]
 
 end MathlibExt.Probability.Statistics.CoxPartialLikelihood
