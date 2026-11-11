@@ -15,7 +15,8 @@ this file records the modeling conventions that make results in different files 
 | Tests | the mirror path under `MathlibExtTest/` or `CSLibExtTest/` |
 
 Areas: `PopulationGenetics` (with `Coalescent/` and `Diffusion/`), `Phylogenetics`,
-`StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`. Distributions, Markov chains, statistics
+`StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`, `Ecology` (structured
+population models). Distributions, Markov chains, statistics
 and combinatorics that are not specific to biology go under `MathlibExt/Probability/…` or
 `MathlibExt/Combinatorics/…`.
 
