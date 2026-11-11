@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.BayesianNetwork
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Finset.Defs
 
@@ -45,6 +47,11 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
   independent noises the law of the solution is the joint of `inducedBayesNet` (Pearl 2009,
   Theorem 1.4.1), so it factorizes along the graph (`BayesNet.joint_eq_prod`). Dependent noises
   are not covered: they need explicit latent nodes.
+* `BayesNet.responseSCM_inducedLaw`: **every finite Bayesian network has a Markovian SCM
+  realization**: the response-function SCM (`BayesNet.responseSCM`, noise of node `k` a function
+  from parent values to values) with independent response noises (`BayesNet.responseLaw`, rows of
+  the tables drawn independently) has the network's joint as its law. The coupling of responses
+  at different parent values is one choice among many; it is not identified by the network.
 
 Cyclic systems (where a solution may fail to exist or be unique) are not expressible: parents
 always precede their child.
@@ -335,5 +342,147 @@ theorem inducedLaw_eq_joint {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k,
 end Markovian
 
 end FiniteSCM
+
+/-! ### Markovian SCM realization of a Bayesian network -/
+
+namespace BayesNet
+
+open Finset Convexity
+
+/-- The response-function SCM of a Bayesian network: the noise of node `k` is a response
+function `r : (pa k → α) → α`, choosing a value of node `k` for every value of its parents, and
+the structural equation is `x_k = r (x_{pa k})`. -/
+def responseSCM {α : Type*} {n : ℕ} (b : BayesNet α n) :
+    FiniteSCM α n (fun k => (b.pa k → α) → α) where
+  pa := b.pa
+  f _ z r := r z
+
+/-- The weight of a response function of node `k`: the response values at different parent
+values are drawn independently from the tables, `∏_z p_k (r z | z)`. -/
+noncomputable def responseWeight {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) (r : (b.pa k → α) → α) : ℝ :=
+  ∏ z, (b.cpt k z).weights (r z)
+
+/-- Response weights are nonnegative. -/
+theorem responseWeight_nonneg {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) (r : (b.pa k → α) → α) : 0 ≤ b.responseWeight k r := by
+  simp only [responseWeight]
+  exact Finset.prod_nonneg fun z _ => (b.cpt k z).nonneg _
+
+/-- Response weights sum to one. -/
+theorem sum_responseWeight {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) :
+    (Finsupp.equivFunOnFinite.symm (b.responseWeight k)).sum (fun _ w => w) = 1 := by
+  classical
+  rw [Finsupp.sum_fintype _ _ fun _ => rfl]
+  have hpoint : ∀ r : (b.pa k → α) → α,
+      (Finsupp.equivFunOnFinite.symm (b.responseWeight k)) r = b.responseWeight k r :=
+    fun _ => rfl
+  simp only [hpoint, responseWeight]
+  rw [← Fintype.prod_sum]
+  have htot : ∀ z : b.pa k → α, (∑ a, (b.cpt k z).weights a) = 1 :=
+    fun z => (b.cpt k z).total_of_fintype
+  simp only [htot, Finset.prod_const_one]
+
+/-- The law of the response function of node `k`. -/
+noncomputable def responseLaw {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) : StdSimplex ℝ ((b.pa k → α) → α) where
+  weights := Finsupp.equivFunOnFinite.symm (b.responseWeight k)
+  nonneg r := b.responseWeight_nonneg k r
+  total := b.sum_responseWeight k
+
+/-- **Every finite Bayesian network is induced by a Markovian SCM**: the response-function SCM
+with independent response-function noises has the network's joint as its observational law. -/
+theorem responseSCM_inducedLaw {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] {n : ℕ}
+    (b : BayesNet α n) (x : Fin n → α) :
+    b.responseSCM.inducedLaw b.responseLaw x = b.joint x := by
+  classical
+  rw [FiniteSCM.inducedLaw_eq_joint]
+  simp only [joint_eq_prod]
+  refine Finset.prod_congr rfl fun k _ => ?_
+  have hfb := FiniteSCM.map_weights_eq_sum b.responseSCM b.responseLaw x k
+  change ((b.responseLaw k).map (b.responseSCM.f k (b.responseSCM.paVal k x))).weights (x k)
+    = (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)
+  rw [hfb]
+  have hpoint : ∀ v : (b.pa k → α) → α,
+      (if b.responseSCM.f k (b.responseSCM.paVal k x) v = x k then (b.responseLaw k).weights v
+        else 0)
+        = (if v (b.responseSCM.paVal k x) = x k then ∏ z, (b.cpt k z).weights (v z) else 0) :=
+    fun _ => rfl
+  simp only [hpoint]
+  have hpa : b.responseSCM.paVal k x
+      = (fun j : b.pa k => x (Fin.castLE k.2.le (j : Fin k))) := rfl
+  rw [hpa]
+  set z₀ : b.pa k → α := (fun j => x (Fin.castLE k.2.le (j : Fin k))) with hz₀
+  set a₀ := x k with ha₀
+  let g : (b.pa k → α) → α → ℝ := fun z a =>
+    if z = z₀ then (if a = a₀ then (b.cpt k z).weights a else 0) else (b.cpt k z).weights a
+  have hg : ∀ z a, g z a
+      = (if z = z₀ then (if a = a₀ then (b.cpt k z).weights a else 0)
+        else (b.cpt k z).weights a) :=
+    fun _ _ => rfl
+  have hpoint_g : ∀ v : (b.pa k → α) → α,
+      (∏ z, g z (v z)) = (if v z₀ = a₀ then ∏ z, (b.cpt k z).weights (v z) else 0) := by
+    intro v
+    by_cases h : v z₀ = a₀
+    · rw [ite_eq_left h]
+      refine Finset.prod_congr rfl fun z _ => ?_
+      by_cases hz : z = z₀
+      · simp [hg, hz, h]
+      · simp [hg, hz]
+    · rw [ite_eq_right h]
+      have hz0 : g z₀ (v z₀) = 0 := by simp [hg, h]
+      exact Finset.prod_eq_zero (Finset.mem_univ z₀) hz0
+  have hsum_eq : (∑ v : (b.pa k → α) → α, ∏ z : b.pa k → α, g z (v z))
+      = ∑ v : (b.pa k → α) → α,
+        (if v z₀ = a₀ then ∏ z : b.pa k → α, (b.cpt k z).weights (v z) else 0) :=
+    Finset.sum_congr rfl fun v _ => hpoint_g v
+  have hprod_g : (∏ z : b.pa k → α, ∑ a : α, g z a) = (b.cpt k z₀).weights a₀ := by
+    have hfactor : ∀ z : b.pa k → α,
+        (∑ a : α, g z a) = (if z = z₀ then (b.cpt k z₀).weights a₀ else 1) := by
+      intro z
+      by_cases hz : z = z₀
+      · subst hz
+        rw [ite_eq_left rfl]
+        have hgg : ∀ a, g z₀ a = (if a = a₀ then (b.cpt k z₀).weights a else 0) := by
+          intro a
+          simp [hg]
+        simp only [hgg]
+        have hW' : (if a₀ = a₀ then (b.cpt k z₀).weights a₀ else (0 : ℝ))
+            = (b.cpt k z₀).weights a₀ := ite_eq_left rfl
+        have h1' : (∑ a : α, (if a = a₀ then (b.cpt k z₀).weights a else 0))
+            = (if a₀ = a₀ then (b.cpt k z₀).weights a₀ else 0) := by
+          apply Finset.sum_eq_single a₀
+          · intro a _ ha
+            simp [ha]
+          · intro hmem
+            exact absurd (Finset.mem_univ a₀) hmem
+        rw [hW'] at h1'
+        exact h1'
+      · rw [ite_eq_right hz]
+        have hgg : ∀ a, g z a = (b.cpt k z).weights a := by
+          intro a
+          simp [hg, hz]
+        simp only [hgg]
+        exact (b.cpt k z).total_of_fintype
+    simp only [hfactor]
+    have hW : (if z₀ = z₀ then (b.cpt k z₀).weights a₀ else (1 : ℝ))
+        = (b.cpt k z₀).weights a₀ := ite_eq_left rfl
+    have h1 : (∏ z : b.pa k → α, (if z = z₀ then (b.cpt k z₀).weights a₀ else 1))
+        = (if z₀ = z₀ then (b.cpt k z₀).weights a₀ else 1) := by
+      apply Finset.prod_eq_single z₀
+      · intro z _ hz
+        simp [hz]
+      · intro hmem
+        exact absurd (Finset.mem_univ z₀) hmem
+    rw [hW] at h1
+    exact h1
+  calc ∑ v : (b.pa k → α) → α,
+          (if v z₀ = a₀ then ∏ z : b.pa k → α, (b.cpt k z).weights (v z) else 0)
+      = ∑ v : (b.pa k → α) → α, ∏ z : b.pa k → α, g z (v z) := hsum_eq.symm
+    _ = ∏ z : b.pa k → α, ∑ a : α, g z a := by rw [Fintype.prod_sum]
+    _ = (b.cpt k z₀).weights a₀ := hprod_g
+
+end BayesNet
 
 end Cslib.MachineLearning.GraphicalModels

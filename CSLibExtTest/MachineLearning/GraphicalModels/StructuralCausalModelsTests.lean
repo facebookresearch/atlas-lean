@@ -30,6 +30,12 @@ A two-node model on `Bool` with independent Boolean noises (`P(u_0) = 1/4`, `P(u
 * the induced Bayesian network's table at node `1` for parent value `true` gives `false`
   probability `1/3`;
 * the induced law of `(true, false)` is `1/12`, computed through `inducedLaw_eq_joint`.
+
+A two-node Bayesian network on `Bool` (`P(X_0) = 1/4`, `P(X_1 | X_0 = true) = 2/3`,
+`P(X_1 | X_0 = false) = 1/2`) and its response-function SCM:
+
+* the identity response of node `1` has weight `2/3 · 1/2 = 1/3`;
+* the realization's law of `(true, true)` is `1/6`, through `responseSCM_inducedLaw`.
 -/
 
 @[expose] public section
@@ -195,5 +201,104 @@ example : testM.inducedLaw testMu ![true, false] = 1/12 := by
   norm_num
 
 end InducedBayesNet
+
+namespace ResponseRealization
+
+open Convexity BayesNet
+
+/-- Distribution of node 0: `P(true) = 1/4`. -/
+noncomputable def testDist0 : StdSimplex ℝ Bool where
+  weights := Finsupp.equivFunOnFinite.symm
+    (fun b => match b with | true => (1/4 : ℝ) | false => (3/4 : ℝ))
+  nonneg := fun b => by
+    have h : (Finsupp.equivFunOnFinite.symm
+        (fun b : Bool => match b with | true => (1/4 : ℝ) | false => (3/4 : ℝ))) b
+        = (match b with | true => (1/4 : ℝ) | false => (3/4 : ℝ)) := rfl
+    rw [h]
+    cases b <;> norm_num
+  total := by
+    rw [Finsupp.sum_fintype _ _ fun _ => rfl]
+    have h : ∀ b : Bool, (Finsupp.equivFunOnFinite.symm
+        (fun b : Bool => match b with | true => (1/4 : ℝ) | false => (3/4 : ℝ))) b
+        = (match b with | true => (1/4 : ℝ) | false => (3/4 : ℝ)) := fun _ => rfl
+    simp only [h]
+    have huniv : (Finset.univ : Finset Bool) = {false, true} := by decide
+    rw [huniv, Finset.sum_insert (by decide), Finset.sum_singleton]
+    norm_num
+
+/-- Distribution of node 1 given parent `true`: `P(true) = 2/3`. -/
+noncomputable def testDistTrue : StdSimplex ℝ Bool where
+  weights := Finsupp.equivFunOnFinite.symm
+    (fun b => match b with | true => (2/3 : ℝ) | false => (1/3 : ℝ))
+  nonneg := fun b => by
+    have h : (Finsupp.equivFunOnFinite.symm
+        (fun b : Bool => match b with | true => (2/3 : ℝ) | false => (1/3 : ℝ))) b
+        = (match b with | true => (2/3 : ℝ) | false => (1/3 : ℝ)) := rfl
+    rw [h]
+    cases b <;> norm_num
+  total := by
+    rw [Finsupp.sum_fintype _ _ fun _ => rfl]
+    have h : ∀ b : Bool, (Finsupp.equivFunOnFinite.symm
+        (fun b : Bool => match b with | true => (2/3 : ℝ) | false => (1/3 : ℝ))) b
+        = (match b with | true => (2/3 : ℝ) | false => (1/3 : ℝ)) := fun _ => rfl
+    simp only [h]
+    have huniv : (Finset.univ : Finset Bool) = {false, true} := by decide
+    rw [huniv, Finset.sum_insert (by decide), Finset.sum_singleton]
+    norm_num
+
+/-- Distribution of node 1 given parent `false`: `P(true) = 1/2`. -/
+noncomputable def testDistFalse : StdSimplex ℝ Bool where
+  weights := Finsupp.equivFunOnFinite.symm
+    (fun b => match b with | true => (1/2 : ℝ) | false => (1/2 : ℝ))
+  nonneg := fun b => by
+    have h : (Finsupp.equivFunOnFinite.symm
+        (fun b : Bool => match b with | true => (1/2 : ℝ) | false => (1/2 : ℝ))) b
+        = (match b with | true => (1/2 : ℝ) | false => (1/2 : ℝ)) := rfl
+    rw [h]
+    cases b <;> norm_num
+  total := by
+    rw [Finsupp.sum_fintype _ _ fun _ => rfl]
+    have h : ∀ b : Bool, (Finsupp.equivFunOnFinite.symm
+        (fun b : Bool => match b with | true => (1/2 : ℝ) | false => (1/2 : ℝ))) b
+        = (match b with | true => (1/2 : ℝ) | false => (1/2 : ℝ)) := fun _ => rfl
+    simp only [h]
+    have huniv : (Finset.univ : Finset Bool) = {false, true} := by decide
+    rw [huniv, Finset.sum_insert (by decide), Finset.sum_singleton]
+    norm_num
+
+/-- Two-node network: node 0 has no parents, node 1 has parent 0. -/
+noncomputable def testNet : BayesNet Bool 2 where
+  pa := fun _ => Finset.univ
+  cpt := fun k =>
+    match k with
+    | ⟨0, _⟩ => fun _ => testDist0
+    | ⟨1, _⟩ => fun z => match z ⟨0, Finset.mem_univ 0⟩ with
+      | true => testDistTrue
+      | false => testDistFalse
+    | ⟨n+2, h⟩ => fun _ => absurd h (by omega)
+
+/-- The identity response of node 1 has weight `2/3 * 1/2 = 1/3`. -/
+example : testNet.responseWeight ⟨1, by decide⟩
+    (fun z => z ⟨0, Finset.mem_univ 0⟩) = (1/3 : ℝ) := by
+  simp only [responseWeight]
+  have huniv : (Finset.univ : Finset (testNet.pa ⟨1, by decide⟩ → Bool))
+      = {fun _ => true, fun _ => false} := by decide
+  rw [huniv, Finset.prod_insert (by decide), Finset.prod_singleton]
+  show (2/3 : ℝ) * (1/2) = 1/3
+  norm_num
+
+/-- The induced law at `![true, true]` is `1/4 * 2/3 = 1/6`. -/
+example : testNet.responseSCM.inducedLaw testNet.responseLaw ![true, true] = (1/6 : ℝ) := by
+  rw [responseSCM_inducedLaw, joint_eq_prod]
+  have huniv2 : (Finset.univ : Finset (Fin 2))
+      = {⟨0, by decide⟩, ⟨1, by decide⟩} := by decide
+  rw [huniv2, Finset.prod_insert (by decide), Finset.prod_singleton]
+  have hx0 : (![true, true] : Fin 2 → Bool) ⟨0, by decide⟩ = true := by simp
+  have hx1 : (![true, true] : Fin 2 → Bool) ⟨1, by decide⟩ = true := by simp
+  rw [hx0, hx1]
+  show (1/4 : ℝ) * (2/3) = 1/6
+  norm_num
+
+end ResponseRealization
 
 end Cslib.MachineLearning.StructuralCausalModelsTests
