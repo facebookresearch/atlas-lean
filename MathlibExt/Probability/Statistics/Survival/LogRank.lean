@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Probability.Distributions.Hypergeometric
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -38,10 +39,14 @@ variance
 For example, with `Y = 4`, `Y₁ = 2` and `d = 2` the tied variance is `1 / 3`, while the Breslow
 information of the two tied events is `2 · (2 · 2 / 4²) = 1 / 2`.
 
+* `tiedLogRankVarianceTerm_eq_variance`: for `Y > 1` the term is the variance of the
+  hypergeometric law of the number of group-1 failures
+  (`ProbabilityTheory.sum_sq_sub_mean_mul_hypergeometricReal`).
+
 ## Scope
 
-The term is defined by its closed form. That it is the variance of the hypergeometric law is not
-proved here.
+This file covers one event time. The log-rank statistic, its sum of these terms over the event
+times, and its asymptotic normality are not formalized here.
 
 ## References
 
@@ -118,5 +123,19 @@ theorem tiedLogRankVarianceTerm_le {Y Y₁ d : ℕ} (h₁ : Y₁ ≤ Y) (hd1 : 1
     split_ifs with h
     · exact hB
     · omega
+
+/-- **The tied term is the hypergeometric variance** (Mantel 1966): for `1 < Y`, `Y₁ ≤ Y` and
+`d ≤ Y`, it is `∑ₖ (k - d Y₁ / Y)² h(k)`, where `h` is the law of the number of group-1 subjects
+among `d` drawn without replacement from `Y` subjects of which `Y₁` are in group 1, and
+`d Y₁ / Y` is its mean (`ProbabilityTheory.sum_mul_hypergeometricReal`). -/
+theorem tiedLogRankVarianceTerm_eq_variance {Y Y₁ d : ℕ} (hY : 1 < Y) (h₁ : Y₁ ≤ Y)
+    (hd : d ≤ Y) :
+    tiedLogRankVarianceTerm Y Y₁ d = ∑ k ∈ Finset.range (d + 1),
+      ((k : ℝ) - d * Y₁ / Y) ^ 2 * ProbabilityTheory.hypergeometricReal Y Y₁ d k := by
+  rw [ProbabilityTheory.sum_sq_sub_mean_mul_hypergeometricReal hY h₁ hd]
+  unfold tiedLogRankVarianceTerm
+  split_ifs with h
+  · omega
+  · rfl
 
 end MathlibExt.Probability.Statistics.LogRank

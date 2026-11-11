@@ -180,6 +180,18 @@ theorem breslowInformation_T₄ : breslowInformation T₄ δ₄ g₄ = 1 / 2 := 
     riskSet_T₄_of_lt_two 1 (by norm_num [T₄]), hg]
   norm_num
 
+/-- The tied term `1/3` is the hypergeometric variance: drawing `d = 2` of `Y = 4` subjects with
+`Y₁ = 2` in group 1, the mean is `1` and `P(0) = P(2) = 1/6`, so `∑ (k - 1)² P(k) = 1/3`. -/
+example : tiedLogRankVarianceTerm 4 2 2 =
+    ∑ k ∈ range 3, ((k : ℝ) - 2 * 2 / 4) ^ 2 * ProbabilityTheory.hypergeometricReal 4 2 2 k := by
+  exact_mod_cast tiedLogRankVarianceTerm_eq_variance (Y := 4) (Y₁ := 2) (d := 2) (by norm_num)
+    (by norm_num) (by norm_num)
+
+example : ∑ k ∈ range 3, ((k : ℝ) - 1) ^ 2 * ProbabilityTheory.hypergeometricReal 4 2 2 k =
+    1 / 3 := by
+  norm_num [Finset.sum_range_succ, ProbabilityTheory.hypergeometricReal, Nat.choose]
+
+#print axioms tiedLogRankVarianceTerm_eq_variance
 #print axioms CensoredData.nelsonAalen_mono
 #print axioms CensoredData.kmSurvival_le_exp_neg_nelsonAalen
 #print axioms CensoredData.kmMass_eq_mul_nelsonAalen_jump
