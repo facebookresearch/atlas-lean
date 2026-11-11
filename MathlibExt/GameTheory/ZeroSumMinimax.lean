@@ -14,15 +14,16 @@ public import Mathlib.Topology.Sion
 
 @[expose] public section
 
-open Matrix
+open Matrix Convexity
 
 /-! # Von Neumann's minimax theorem for finite matrix games
 
 For a payoff matrix `A : Matrix (Fin m) (Fin n) ℝ`, a mixed strategy of the
-row player is a point `p` of `stdSimplex ℝ (Fin m)` and a mixed strategy of
-the column player is a point `q` of `stdSimplex ℝ (Fin n)`. The expected
-payoff is `p ⬝ᵥ (A *ᵥ q)`; the row player maximizes and the column player
-minimizes. `matrixGame_minimax` states that the value of the game exists:
+row player is a point `p` of `Convexity.StdSimplex ℝ (Fin m)` and a mixed
+strategy of the column player is a point `q` of `Convexity.StdSimplex ℝ (Fin n)`.
+The expected payoff is `p.weights ⬝ᵥ (A *ᵥ q.weights)`; the row player maximizes
+and the column player minimizes. `matrixGame_minimax` states that the value of
+the game exists:
 maximizing first or minimizing first gives the same value, attained at a
 saddle point (`matrixGame_exists_isSaddlePointOn`).
 
@@ -69,9 +70,11 @@ private theorem matrixGame_continuous_right {m n : ℕ} (A : Matrix (Fin m) (Fin
 such that `p` is a best response to `q` and `q` is a best response to `p`. -/
 theorem matrixGame_exists_isSaddlePointOn {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
     (A : Matrix (Fin m) (Fin n) ℝ) :
-    ∃ p ∈ stdSimplex ℝ (Fin m), ∃ q ∈ stdSimplex ℝ (Fin n),
-      (∀ p' ∈ stdSimplex ℝ (Fin m), p' ⬝ᵥ (A *ᵥ q) ≤ p ⬝ᵥ (A *ᵥ q)) ∧
-        ∀ q' ∈ stdSimplex ℝ (Fin n), p ⬝ᵥ (A *ᵥ q) ≤ p ⬝ᵥ (A *ᵥ q') := by
+    ∃ (p : StdSimplex ℝ (Fin m)) (q : StdSimplex ℝ (Fin n)),
+      (∀ p' : StdSimplex ℝ (Fin m),
+        p'.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q.weights)) ∧
+      ∀ q' : StdSimplex ℝ (Fin n),
+        p.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q'.weights) := by
   obtain ⟨q, hq, p, hp, h⟩ := Sion.exists_isSaddlePointOn (X := stdSimplex ℝ (Fin n))
     (Y := stdSimplex ℝ (Fin m)) (f := fun q p => p ⬝ᵥ (A *ᵥ q))
     (stdSimplex_nonempty_of_pos hn) (convex_stdSimplex ℝ _) (isCompact_stdSimplex _ _)
@@ -80,50 +83,65 @@ theorem matrixGame_exists_isSaddlePointOn {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
     (convex_stdSimplex ℝ _) (stdSimplex_nonempty_of_pos hm) (isCompact_stdSimplex _ _)
     (fun q _ => (matrixGame_continuous_left A q).continuousOn.upperSemicontinuousOn)
     (fun q _ => ((matrixGameLeft A q).concaveOn (convex_stdSimplex ℝ _)).quasiconcaveOn)
-  exact ⟨p, hp, q, hq, fun p' hp' => h q hq p' hp', fun q' hq' => h q' hq' p hp⟩
+  have hp_range : p ∈ Set.range (fun t : StdSimplex ℝ (Fin m) =>
+      (t.weights : Fin m → ℝ)) := by
+    rw [StdSimplex.range_toFun_comp_weights]
+    exact ⟨Set.mem_iInter.mpr hp.1, hp.2⟩
+  have hq_range : q ∈ Set.range (fun t : StdSimplex ℝ (Fin n) =>
+      (t.weights : Fin n → ℝ)) := by
+    rw [StdSimplex.range_toFun_comp_weights]
+    exact ⟨Set.mem_iInter.mpr hq.1, hq.2⟩
+  obtain ⟨p, rfl⟩ := hp_range
+  obtain ⟨q, rfl⟩ := hq_range
+  exact ⟨p, q,
+    fun p' => h q.weights hq p'.weights
+      ⟨p'.weights_nonneg, p'.total_of_fintype⟩,
+    fun q' => h q'.weights ⟨q'.weights_nonneg, q'.total_of_fintype⟩ p.weights hp⟩
 
 private theorem matrixGame_bddBelow {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
     (p : Fin m → ℝ) :
-    BddBelow (Set.range fun q : stdSimplex ℝ (Fin n) => p ⬝ᵥ (A *ᵥ (q : Fin n → ℝ))) := by
-  have : CompactSpace (stdSimplex ℝ (Fin n)) :=
-    isCompact_iff_compactSpace.mp (isCompact_stdSimplex _ _)
-  exact (isCompact_range ((matrixGame_continuous_right A p).comp continuous_subtype_val)).bddBelow
+    BddBelow (Set.range fun q : StdSimplex ℝ (Fin n) =>
+      p ⬝ᵥ (A *ᵥ q.weights)) := by
+  apply (isCompact_range ?_).bddBelow
+  exact (matrixGame_continuous_right A p).comp
+    (continuous_pi fun i => StdSimplex.continuous_weights_apply ℝ i)
 
 private theorem matrixGame_bddAbove {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
     (q : Fin n → ℝ) :
-    BddAbove (Set.range fun p : stdSimplex ℝ (Fin m) => (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ q)) := by
-  have : CompactSpace (stdSimplex ℝ (Fin m)) :=
-    isCompact_iff_compactSpace.mp (isCompact_stdSimplex _ _)
-  exact (isCompact_range ((matrixGame_continuous_left A q).comp continuous_subtype_val)).bddAbove
+    BddAbove (Set.range fun p : StdSimplex ℝ (Fin m) =>
+      p.weights ⬝ᵥ (A *ᵥ q)) := by
+  apply (isCompact_range ?_).bddAbove
+  exact (matrixGame_continuous_left A q).comp
+    (continuous_pi fun i => StdSimplex.continuous_weights_apply ℝ i)
 
 /-- **Von Neumann's minimax theorem.** For a finite matrix game with at
 least one row and one column, the row player's maximin value equals the
 column player's minimax value. -/
 theorem matrixGame_minimax {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
     (A : Matrix (Fin m) (Fin n) ℝ) :
-    (⨆ p : stdSimplex ℝ (Fin m), ⨅ q : stdSimplex ℝ (Fin n),
-      (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ (q : Fin n → ℝ))) =
-      ⨅ q : stdSimplex ℝ (Fin n), ⨆ p : stdSimplex ℝ (Fin m),
-        (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ (q : Fin n → ℝ)) := by
-  obtain ⟨p₀, hp₀, q₀, hq₀, hp, hq⟩ := matrixGame_exists_isSaddlePointOn hm hn A
-  have : Nonempty (stdSimplex ℝ (Fin m)) := (stdSimplex_nonempty_of_pos hm).to_subtype
-  have : Nonempty (stdSimplex ℝ (Fin n)) := (stdSimplex_nonempty_of_pos hn).to_subtype
-  have hinf (p : stdSimplex ℝ (Fin m)) :
-      ⨅ q : stdSimplex ℝ (Fin n), (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ (q : Fin n → ℝ)) ≤
-        p₀ ⬝ᵥ (A *ᵥ q₀) :=
-    (ciInf_le (matrixGame_bddBelow A p) ⟨q₀, hq₀⟩).trans (hp p p.2)
-  have hsup (q : stdSimplex ℝ (Fin n)) :
-      p₀ ⬝ᵥ (A *ᵥ q₀) ≤
-        ⨆ p : stdSimplex ℝ (Fin m), (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ (q : Fin n → ℝ)) :=
-    (hq q q.2).trans (le_ciSup (matrixGame_bddAbove A q) ⟨p₀, hp₀⟩)
+    (⨆ p : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n),
+      p.weights ⬝ᵥ (A *ᵥ q.weights)) =
+      ⨅ q : StdSimplex ℝ (Fin n), ⨆ p : StdSimplex ℝ (Fin m),
+        p.weights ⬝ᵥ (A *ᵥ q.weights) := by
+  obtain ⟨p₀, q₀, hp, hq⟩ := matrixGame_exists_isSaddlePointOn hm hn A
+  have : Nonempty (StdSimplex ℝ (Fin m)) := ⟨p₀⟩
+  have : Nonempty (StdSimplex ℝ (Fin n)) := ⟨q₀⟩
+  have hinf (p : StdSimplex ℝ (Fin m)) :
+      ⨅ q : StdSimplex ℝ (Fin n), p.weights ⬝ᵥ (A *ᵥ q.weights) ≤
+        p₀.weights ⬝ᵥ (A *ᵥ q₀.weights) :=
+    (ciInf_le (matrixGame_bddBelow A p.weights) q₀).trans (hp p)
+  have hsup (q : StdSimplex ℝ (Fin n)) :
+      p₀.weights ⬝ᵥ (A *ᵥ q₀.weights) ≤
+        ⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q.weights) :=
+    (hq q).trans (le_ciSup (matrixGame_bddAbove A q.weights) p₀)
   refine le_antisymm ((ciSup_le hinf).trans (le_ciInf hsup)) ?_
-  calc (⨅ q : stdSimplex ℝ (Fin n), ⨆ p : stdSimplex ℝ (Fin m),
-          (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ (q : Fin n → ℝ)))
-      ≤ ⨆ p : stdSimplex ℝ (Fin m), (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ q₀) :=
-        ciInf_le ⟨_, Set.forall_mem_range.2 hsup⟩ ⟨q₀, hq₀⟩
-    _ ≤ p₀ ⬝ᵥ (A *ᵥ q₀) := ciSup_le fun p => hp p p.2
-    _ ≤ ⨅ q : stdSimplex ℝ (Fin n), p₀ ⬝ᵥ (A *ᵥ (q : Fin n → ℝ)) :=
-        le_ciInf fun q => hq q q.2
-    _ ≤ ⨆ p : stdSimplex ℝ (Fin m), ⨅ q : stdSimplex ℝ (Fin n),
-          (p : Fin m → ℝ) ⬝ᵥ (A *ᵥ (q : Fin n → ℝ)) :=
-        le_ciSup ⟨_, Set.forall_mem_range.2 hinf⟩ ⟨p₀, hp₀⟩
+  calc (⨅ q : StdSimplex ℝ (Fin n), ⨆ p : StdSimplex ℝ (Fin m),
+          p.weights ⬝ᵥ (A *ᵥ q.weights))
+      ≤ ⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q₀.weights) :=
+        ciInf_le ⟨_, Set.forall_mem_range.2 hsup⟩ q₀
+    _ ≤ p₀.weights ⬝ᵥ (A *ᵥ q₀.weights) := ciSup_le hp
+    _ ≤ ⨅ q : StdSimplex ℝ (Fin n), p₀.weights ⬝ᵥ (A *ᵥ q.weights) :=
+        le_ciInf hq
+    _ ≤ ⨆ p : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n),
+          p.weights ⬝ᵥ (A *ᵥ q.weights) :=
+        le_ciSup ⟨_, Set.forall_mem_range.2 hinf⟩ p₀
