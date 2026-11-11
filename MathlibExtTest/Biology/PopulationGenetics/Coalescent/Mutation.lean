@@ -101,4 +101,20 @@ example (n : ℕ) (θ : ℝ≥0) :
     (by rw [KingmanTimes.epochs_ofMutationModel]; exact measurable_fst)
     (hasCondDistrib_kingmanMutationMeasure n θ)
 
+/-- Sample of size `1`: the direct segregating-sites mean is `0`, since `H₀ = 0`. -/
+example (θ : ℝ≥0) : ∫ p, segSites Prod.snd p ∂kingmanMutationMeasure 1 θ = 0 := by
+  simpa using integral_segSites_kingmanMutationMeasure 1 θ
+
+/-- Concrete marked model: Tajima's variance estimator has the expected value at `n = 4`,
+where `c₁ ≠ 0`, so the concrete wrapper is nondegenerate. -/
+example (θ : ℝ≥0) :
+    (∫ p, tajimaE1 4 * segSites Prod.snd p +
+        tajimaE2 4 * (segSites Prod.snd p * (segSites Prod.snd p - 1))
+      ∂kingmanMutationMeasure 4 θ =
+      tajimaC1 4 * (θ : ℝ) + tajimaC2 4 * (θ : ℝ) ^ 2) ∧ tajimaC1 4 ≠ 0 := by
+  refine ⟨integral_tajimaVarEstimator_kingmanMutationMeasure θ (by norm_num), ?_⟩
+  have hI : (Finset.Ico 1 4 : Finset ℕ) = {1, 2, 3} := by decide
+  have hA : tajimaA1 4 = 11 / 6 := by rw [tajimaA1, hI]; norm_num
+  norm_num [tajimaC1, tajimaB1, hA]
+
 end MathlibExtTest.Biology.PopulationGenetics.Coalescent.Mutation

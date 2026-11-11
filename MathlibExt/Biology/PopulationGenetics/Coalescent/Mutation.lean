@@ -329,6 +329,15 @@ theorem condVar_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable 
     (K.hasCondDistrib_segSites_of_mutation hN) h2, K.mean_ae_eq θ] with ω h1 h2
   rw [show segSites N = fun ω => ((∑ b, N ω b : ℕ) : ℝ) from rfl, h1, h2]
 
+/-- **Expected number of segregating sites under Poisson mutation marking**:
+`E[S] = θ H_{n-1}`. For `n = 1`, `H₀ = 0` and both sides are `0`. This is the direct
+mutation-marking form of `KingmanTimes.integral_segSites`. -/
+theorem integral_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable K.epochs)
+    (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
+    μ[segSites N] = (θ : ℝ) * (harmonic (n - 1) : ℝ) :=
+  K.integral_segSites hK.comap_le ((K.memLp_segSites_of_mutation hN).integrable one_le_two)
+    (K.condExp_segSites_of_mutation hK hN)
+
 /-- **Watterson's estimator is unbiased under Poisson mutation marking** (Watterson 1975):
 `E[S / H_{n-1}] = θ` for `n ≥ 2`, with `S` the number of infinite-sites mutation events on the
 Kingman genealogy at rate `θ / 2` per lineage. -/
@@ -438,5 +447,25 @@ theorem variance_segSites_kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
   (KingmanTimes.ofMutationModel n θ).variance_segSites_of_mutation
     (by rw [KingmanTimes.epochs_ofMutationModel]; exact measurable_fst)
     (hasCondDistrib_kingmanMutationMeasure n θ)
+
+/-- **Expected number of segregating sites in the marked Kingman model**: `E[S] = θ H_{n-1}`,
+with no remaining hypotheses (both sides are `0` for `n = 1`). -/
+theorem integral_segSites_kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
+    ∫ p, segSites Prod.snd p ∂kingmanMutationMeasure n θ =
+      (θ : ℝ) * (harmonic (n - 1) : ℝ) :=
+  (KingmanTimes.ofMutationModel n θ).integral_segSites_of_mutation
+    (by rw [KingmanTimes.epochs_ofMutationModel]; exact measurable_fst)
+    (hasCondDistrib_kingmanMutationMeasure n θ)
+
+/-- **Tajima's variance estimator in the marked Kingman model**:
+`E[e₁ S + e₂ S (S - 1)] = c₁ θ + c₂ θ²` for `n ≥ 2`, with no remaining hypotheses. -/
+theorem integral_tajimaVarEstimator_kingmanMutationMeasure {n : ℕ} (θ : ℝ≥0) (hn : 2 ≤ n) :
+    ∫ p, tajimaE1 n * segSites Prod.snd p +
+        tajimaE2 n * (segSites Prod.snd p * (segSites Prod.snd p - 1))
+      ∂kingmanMutationMeasure n θ =
+      tajimaC1 n * (θ : ℝ) + tajimaC2 n * (θ : ℝ) ^ 2 :=
+  (KingmanTimes.ofMutationModel n θ).integral_tajimaVarEstimator_of_mutation
+    (by rw [KingmanTimes.epochs_ofMutationModel]; exact measurable_fst)
+    (hasCondDistrib_kingmanMutationMeasure n θ) hn
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent
