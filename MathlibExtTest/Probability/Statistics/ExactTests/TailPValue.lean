@@ -31,9 +31,11 @@ example (ν : Measure ℕ) [IsProbabilityMeasure ν] : upperTail ν 0 = 1 := by
   simp [upperTail]
 
 /-- Boundary: under a point mass at `3` the upper tail is `1` up to the atom and `0` above it,
-so the p-value takes only the values `0` and `1`. -/
-example : upperTail (Measure.dirac 3) 3 = 1 ∧ upperTail (Measure.dirac 3) 4 = 0 := by
-  simp [upperTail, measureReal_def]
+so the p-value takes only the values `0` and `1`, for every count `X` and outcome `ω`. -/
+example {Ω : Type*} (X : Ω → ℕ) (ω : Ω) :
+    upperTailPValue (Measure.dirac 3) X ω = if X ω ≤ 3 then 1 else 0 := by
+  simp only [upperTailPValue, upperTail, measureReal_def]
+  split_ifs with h <;> simp [Set.indicator, h]
 
 /-- The general theorem applies to any law on `ℕ`, e.g. a binomial count. -/
 example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X : Ω → ℕ} {n : ℕ}
