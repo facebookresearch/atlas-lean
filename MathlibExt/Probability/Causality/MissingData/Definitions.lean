@@ -52,6 +52,11 @@ Missing-not-at-random mechanisms, identification of the outcome mean (complete-c
 inverse-response weighting) and nonidentification counterexamples; covariates that are themselves
 missing; monotone or longitudinal missingness patterns.
 
+`MissingAtRandom` assumes a standard Borel sample space (inherited from Mathlib's `CondIndepFun`)
+and is not bridged to the general conditional-expectation form
+`μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]` for an arbitrary sub-σ-algebra `m`,
+the hypothesis of the general inverse-weighting theorem `integral_ipw_treated_condExp`.
+
 ## References
 
 * D. B. Rubin, *Inference and missing data*, Biometrika 63(3) (1976), 581–592 (the MCAR / MAR

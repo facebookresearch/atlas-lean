@@ -106,6 +106,10 @@ example (ω : Bool × Bool) :
     observedData (∅ : Set (Bool × Bool)) Prod.fst Prod.snd ω = (ω.1, Sum.inr ()) :=
   observedData_of_notMem _ _ (Set.notMem_empty ω)
 
+/-- Boundary: the empty response event satisfies the discrete MAR condition. -/
+example : CondIndepDiscrete coins ∅ Prod.snd Prod.fst := by
+  intro B _ w; simp
+
 /-! ### An MCAR witness -/
 
 /-- **Non-vacuity of MCAR**: the response is the first coin, the outcome the second, and the
