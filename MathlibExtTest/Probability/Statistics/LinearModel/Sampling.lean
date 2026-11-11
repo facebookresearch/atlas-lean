@@ -92,4 +92,43 @@ example (β : Fin 1 → ℝ) :
   rw [covariance_olsEstimator isUnit_gram_X₀ β σ (memLp_coord σ) (cov_coord σ), gram_X₀_inv]
   simp [div_eq_mul_inv]
 
+/-! ### Residual-maker matrix on the fixture -/
+
+theorem residualMatrix_X₀ : residualMatrix X₀ =
+    !![2 / 3, -1 / 3, -1 / 3; -1 / 3, 2 / 3, -1 / 3; -1 / 3, -1 / 3, 2 / 3] := by
+  rw [residualMatrix, olsMatrix_X₀]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [X₀, Matrix.mul_apply] <;> norm_num
+
+/-- Idempotence of the residual-maker matrix, checked numerically on the fixture. -/
+example : !![(2 : ℝ) / 3, -1 / 3, -1 / 3; -1 / 3, 2 / 3, -1 / 3; -1 / 3, -1 / 3, 2 / 3] *
+      !![2 / 3, -1 / 3, -1 / 3; -1 / 3, 2 / 3, -1 / 3; -1 / 3, -1 / 3, 2 / 3] =
+    !![2 / 3, -1 / 3, -1 / 3; -1 / 3, 2 / 3, -1 / 3; -1 / 3, -1 / 3, 2 / 3] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_three] <;> norm_num
+
+example : residualMatrix X₀ * residualMatrix X₀ = residualMatrix X₀ :=
+  residualMatrix_mul_self isUnit_gram_X₀
+
+example : (residualMatrix X₀).rank = 2 := rank_residualMatrix isUnit_gram_X₀
+
+example : (residualMatrix X₀).trace = 2 := by
+  rw [residualMatrix_X₀]
+  simp [Matrix.trace, Fin.sum_univ_three]
+  norm_num
+
+/-- The residuals of the intercept-only model are the deviations from the sample mean. -/
+example (y : Fin 3 → ℝ) : (y - X₀ *ᵥ olsEstimator X₀ y) 0 = y 0 - (y 0 + y 1 + y 2) / 3 := by
+  rw [olsEstimator, olsMatrix_X₀]
+  simp only [Pi.sub_apply, mulVec, dotProduct, Fin.sum_univ_one, Fin.sum_univ_three, of_apply, X₀]
+  ring
+
+/-- With i.i.d. standard normal errors on three observations, the residual sum of squares of the
+intercept-only model, `∑ (yᵢ - ȳ)²`, is `χ²₂`. -/
+example (β : Fin 1 → ℝ) :
+    HasLaw (fun ε : Fin 3 → ℝ => (X₀ *ᵥ β + ε - X₀ *ᵥ olsEstimator X₀ (X₀ *ᵥ β + ε)) ⬝ᵥ
+        (X₀ *ᵥ β + ε - X₀ *ᵥ olsEstimator X₀ (X₀ *ᵥ β + ε)))
+      (chiSquareMeasure 2) (Measure.pi fun _ : Fin 3 => gaussianReal 0 1) := by
+  simpa using hasLaw_rss isUnit_gram_X₀ (by simp) β (HasLaw.id)
+
 end MathlibExtTest.LinearModelSampling
