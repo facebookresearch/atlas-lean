@@ -92,9 +92,9 @@ trajectories (`lvTrajectory`, `repTrajectory`) are obtained by composing with
   (`Replicator.IsSolution`) in the interior of the simplex, and `τ < repTimeChange y τ` for
   `τ > 0`.
 
-The two directions do not chain. The reverse direction covers only Lotka–Volterra solutions
-that exist for all `τ ≥ 0`; it does not handle solutions that blow up in finite time, such as
-the trajectory `eᵘ / (2 - eᵘ)` produced from the logistic replicator solution in the tests
+The two directions do not chain in general: the reverse direction covers only Lotka–Volterra
+solutions that exist for all `τ ≥ 0`; it does not handle solutions that blow up in finite time,
+such as the trajectory `eᵘ / (2 - eᵘ)` produced from the logistic replicator solution in the tests
 (there `t(τ) → ∞` as `τ` approaches the blow-up time, so such a solution should still give a
 replicator solution for all time, but this is not proved here).
 
