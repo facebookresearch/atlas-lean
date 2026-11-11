@@ -38,8 +38,9 @@ Finally, **batch perfectly confounded with condition** is a boundary case that n
 fixes. The batch covariate enters the donor mean linearly; perfect confounding means it is an
 affine function `batch d = a + b · cond d` of the condition with `b ≠ 0` (this covers both
 `batch = cond` and `batch = 1 - cond`). Then the data have the same law under `(μ₀, τ, β)` and
-`(μ₀ + a t, τ + b t, β - t)` for every noise process (`dataLaw_shift_of_confounded`), so no
-functional of the law of the data equals the condition effect `τ`
+`(μ₀ + a t, τ + b t, β - t)` for every a.e.-measurable noise process on a probability space
+(`dataLaw_shift_of_confounded`; `dataLaw` is a probability measure, `isProbabilityMeasure_dataLaw`),
+so no functional of the law of the data equals the condition effect `τ`
 (`not_identifiable_of_confounded`) and no estimator is unbiased for it
 (`no_unbiased_estimator_of_confounded`). The between-condition contrast estimates `τ + b β`
 (`contrast_of_confounded`). One pair of donors in the same batch with different conditions
@@ -50,8 +51,8 @@ covariate can also be separated from the condition across batches.
 
 Cells are indexed by `δ × κ`: a donor `d : δ` and a cell slot `c : κ`, a balanced design with
 `D = |δ|` donors and `m = |κ|` cells per donor. `Y : δ × κ → Ω → ℝ` is a family of real random
-variables on a measure space `(Ω, μ)`. `IsRandomIntercept μ Y σb2 σe2` says every `Y i` is square
-integrable and
+variables on a measure space `(Ω, μ)`. `IsRandomIntercept μ Y σb2 σe2` says that the variance
+components are nonnegative, `σ_b² ≥ 0` and `σ_e² ≥ 0`, that every `Y i` is square integrable, and
 
 `cov[Y (d, c), Y (d', c')] = σ_b² [d = d'] + σ_e² [(d, c) = (d', c')]` (`riCov`).
 
@@ -75,7 +76,7 @@ model for every `σ_b², σ_e² ≥ 0` on an explicit Gaussian product space (`r
 * `covariance_pseudobulk`, `pseudobulkMean_eq_cellMean`, `variance_pseudobulkMean`.
 * `pseudoreplication_counterexample`: for every balanced design with `m ≥ 2` and every
   `σ_b² > 0`, `σ_e² ≥ 0`, the explicit Gaussian model has `Var[Ȳ] = trueVar > naiveVar`.
-* `dataLaw_shift_of_confounded`, `not_identifiable_of_confounded`,
+* `isProbabilityMeasure_dataLaw`, `dataLaw_shift_of_confounded`, `not_identifiable_of_confounded`,
   `no_unbiased_estimator_of_confounded`, `contrast_of_confounded`, `contrast_of_sameBatch`.
 
 ## Source receipt (API-00)
@@ -134,9 +135,13 @@ variable [DecidableEq δ] [DecidableEq κ]
 def riCov (σb2 σe2 : ℝ) (i j : δ × κ) : ℝ :=
   (if i.1 = j.1 then σb2 else 0) + (if i = j then σe2 else 0)
 
-/-- The random-intercept model at the level of second moments: every cell value is square
-integrable and the cell covariances are `riCov σb2 σe2`. -/
+/-- The random-intercept model at the level of second moments: the donor and residual variance
+components are nonnegative, every cell value is square integrable, and the cell covariances are
+`riCov σb2 σe2`. The sign conditions exclude exchangeable covariances such as `Y₀ = Z`,
+`Y₁ = -Z` (kernel coefficients `-1`, `2`) that no donor random effect produces. -/
 structure IsRandomIntercept (μ : Measure Ω) (Y : δ × κ → Ω → ℝ) (σb2 σe2 : ℝ) : Prop where
+  donorVar_nonneg : 0 ≤ σb2
+  residVar_nonneg : 0 ≤ σe2
   memLp : ∀ i, MemLp (Y i) 2 μ
   cov_eq : ∀ i j, cov[Y i, Y j; μ] = riCov σb2 σe2 i j
 
@@ -423,14 +428,17 @@ section Realization
 variable [DecidableEq δ] [DecidableEq κ]
 
 /-- **Donor random effect plus residual**: if `Y (d, c) = a + b d + e (d, c)` with pairwise
-uncorrelated donor effects of variance `σ_b²`, pairwise uncorrelated residuals of variance `σ_e²`,
-and `b` uncorrelated with `e`, then `Y` is a random-intercept model. -/
-theorem isRandomIntercept_of_decomp [IsProbabilityMeasure μ] {σb2 σe2 : ℝ} (a : ℝ)
-    {b : δ → Ω → ℝ} {e : δ × κ → Ω → ℝ} (hb : ∀ d, MemLp (b d) 2 μ) (he : ∀ i, MemLp (e i) 2 μ)
+uncorrelated donor effects of variance `σ_b² ≥ 0`, pairwise uncorrelated residuals of variance
+`σ_e² ≥ 0`, and `b` uncorrelated with `e`, then `Y` is a random-intercept model. -/
+theorem isRandomIntercept_of_decomp [IsProbabilityMeasure μ] {σb2 σe2 : ℝ} (hσb : 0 ≤ σb2)
+    (hσe : 0 ≤ σe2) (a : ℝ) {b : δ → Ω → ℝ} {e : δ × κ → Ω → ℝ} (hb : ∀ d, MemLp (b d) 2 μ)
+    (he : ∀ i, MemLp (e i) 2 μ)
     (hbb : ∀ d d', cov[b d, b d'; μ] = if d = d' then σb2 else 0)
     (hee : ∀ i j, cov[e i, e j; μ] = if i = j then σe2 else 0)
     (hbe : ∀ d j, cov[b d, e j; μ] = 0) :
     IsRandomIntercept μ (fun i ω ↦ a + (b i.1 ω + e i ω)) σb2 σe2 where
+  donorVar_nonneg := hσb
+  residVar_nonneg := hσe
   memLp i := (memLp_const a).add ((hb i.1).add (he i))
   cov_eq i j := by
     have hYi : MemLp (fun ω ↦ b i.1 ω + e i ω) 2 μ := (hb i.1).add (he i)
@@ -491,7 +499,7 @@ theorem isRandomIntercept_riModel [Fintype δ] [Fintype κ] {σb2 σe2 : ℝ} (h
   classical
   refine isRandomIntercept_of_decomp
     (b := fun d (ω : NoiseSpace δ κ) ↦ Real.sqrt σb2 * ω (Sum.inl d))
-    (e := fun i (ω : NoiseSpace δ κ) ↦ Real.sqrt σe2 * ω (Sum.inr i)) 0
+    (e := fun i (ω : NoiseSpace δ κ) ↦ Real.sqrt σe2 * ω (Sum.inr i)) hb he 0
     (fun d ↦ (memLp_coord _).const_mul _) (fun i ↦ (memLp_coord _).const_mul _) ?_ ?_ ?_
   · intro d d'
     rw [covariance_const_mul_left, covariance_const_mul_right, covariance_coord]
@@ -538,12 +546,27 @@ model). -/
 def obs (μ₀ τ β : ℝ) (U : δ × κ → Ω → ℝ) (i : δ × κ) (ω : Ω) : ℝ :=
   meanFn cond batch μ₀ τ β i.1 + U i ω
 
-/-- Law of the whole cell-level data vector. -/
-noncomputable def dataLaw (μ : Measure Ω) (μ₀ τ β : ℝ) (U : δ × κ → Ω → ℝ) :
-    Measure (δ × κ → ℝ) :=
+/-- Law of the whole cell-level data vector. It is defined only for a probability measure `μ` and
+a noise process that is a.e.-measurable as a vector-valued map `Ω → (δ × κ → ℝ)`; then the
+observation map is a.e.-measurable (`aemeasurable_obs`) and the push-forward is a probability
+measure (`isProbabilityMeasure_dataLaw`), not the zero fallback of `Measure.map`. -/
+noncomputable def dataLaw (μ : Measure Ω) [IsProbabilityMeasure μ] (μ₀ τ β : ℝ)
+    (U : δ × κ → Ω → ℝ) (_hU : AEMeasurable (fun ω i ↦ U i ω) μ) : Measure (δ × κ → ℝ) :=
   μ.map fun ω i ↦ obs cond batch μ₀ τ β U i ω
 
 variable {cond batch}
+
+/-- The observation vector is a.e.-measurable whenever the noise vector is. -/
+theorem aemeasurable_obs {U : δ × κ → Ω → ℝ} (hU : AEMeasurable (fun ω i ↦ U i ω) μ)
+    (μ₀ τ β : ℝ) : AEMeasurable (fun ω i ↦ obs cond batch μ₀ τ β U i ω) μ :=
+  hU.const_add (fun i ↦ meanFn cond batch μ₀ τ β i.1)
+
+/-- The data law is a probability measure. -/
+instance isProbabilityMeasure_dataLaw [IsProbabilityMeasure μ] {U : δ × κ → Ω → ℝ}
+    (hU : AEMeasurable (fun ω i ↦ U i ω) μ) (μ₀ τ β : ℝ) :
+    IsProbabilityMeasure (dataLaw cond batch μ μ₀ τ β U hU) := by
+  unfold dataLaw
+  exact (Measure.isProbabilityMeasure_map_iff (aemeasurable_obs hU μ₀ τ β)).2 inferInstance
 
 /-- Under perfect confounding, `batch = a + b · cond`, the observations are unchanged when batch
 effect is traded for condition effect and intercept. -/
@@ -555,21 +578,26 @@ theorem obs_shift_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * con
   simp only [obs, meanFn]
   ring
 
-/-- **Perfect confounding, full law**: if `batch = a + b · cond`, then for every noise process
-the data have the same law under `(μ₀, τ, β)` and `(μ₀ + a t, τ + b t, β - t)`. -/
+/-- **Perfect confounding, full law**: if `batch = a + b · cond`, then for every a.e.-measurable
+noise process on a probability space the data have the same law under `(μ₀, τ, β)` and
+`(μ₀ + a t, τ + b t, β - t)`. -/
 theorem dataLaw_shift_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
-    (μ : Measure Ω) (μ₀ τ β t : ℝ) (U : δ × κ → Ω → ℝ) :
-    dataLaw cond batch μ (μ₀ + a * t) (τ + b * t) (β - t) U = dataLaw cond batch μ μ₀ τ β U := by
+    (μ : Measure Ω) [IsProbabilityMeasure μ] (μ₀ τ β t : ℝ) (U : δ × κ → Ω → ℝ)
+    (hU : AEMeasurable (fun ω i ↦ U i ω) μ) :
+    dataLaw cond batch μ (μ₀ + a * t) (τ + b * t) (β - t) U hU
+      = dataLaw cond batch μ μ₀ τ β U hU := by
   simp only [dataLaw, obs_shift_of_confounded hcb]
 
 /-- **The condition effect is not identifiable** under perfect confounding
 (`batch = a + b · cond`, `b ≠ 0`): no functional of the law of the cell-level data recovers `τ`,
-whatever the noise process. Pseudobulk values, being functions of the data, do not help. -/
+whatever the a.e.-measurable noise process. Pseudobulk values, being functions of the data, do
+not help. -/
 theorem not_identifiable_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
-    (hb : b ≠ 0) (μ : Measure Ω) (U : δ × κ → Ω → ℝ) :
-    ¬ ∃ F : Measure (δ × κ → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw cond batch μ μ₀ τ β U) = τ := by
+    (hb : b ≠ 0) (μ : Measure Ω) [IsProbabilityMeasure μ] (U : δ × κ → Ω → ℝ)
+    (hU : AEMeasurable (fun ω i ↦ U i ω) μ) :
+    ¬ ∃ F : Measure (δ × κ → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw cond batch μ μ₀ τ β U hU) = τ := by
   rintro ⟨F, hF⟩
-  have hs := dataLaw_shift_of_confounded hcb μ 0 0 1 1 U
+  have hs := dataLaw_shift_of_confounded hcb μ 0 0 1 1 U hU
   simp only [zero_add, mul_one, sub_self] at hs
   have h1 := hF a b 0
   rw [hs, hF] at h1

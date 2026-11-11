@@ -123,6 +123,14 @@ example : ¬ (naiveVar 1 1 2 3 = trueVar 1 1 2 3) := by
 cell-mean variances. -/
 example : trueVar 1 1 2 3 ≠ trueVar 0 2 2 3 := by norm_num [trueVar]
 
+/-! ### Variance components must be nonnegative -/
+
+/-- `Y₀ = Z`, `Y₁ = -Z` fits the kernel with coefficients `(-1, 2)`, but that is not a
+random-intercept model: a donor variance of `-1` is rejected by the definition. -/
+example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (Y : Fin 1 × Fin 2 → Ω → ℝ) :
+    ¬ IsRandomIntercept μ Y (-1) 2 :=
+  fun h ↦ absurd h.donorVar_nonneg (by norm_num)
+
 /-! ### The explicit Gaussian model, checked directly -/
 
 /-- With `σ_e² = 0` two cells of donor `0` are the same coordinate `Z₀`; their covariance is
@@ -169,9 +177,32 @@ example (U : Fin 2 × Fin 3 → Unit → ℝ) :
   funext i ω
   simp [obs, meanFn]
 
-example (μ : Measure Unit) (U : Fin 2 × Fin 3 → Unit → ℝ) :
-    ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw condC condC μ μ₀ τ β U) = τ :=
-  not_identifiable_of_confounded (a := 0) (b := 1) (by funext d; simp) one_ne_zero μ U
+/-- On the one-point space every noise vector is measurable. -/
+theorem aemeasurable_unit (μ : Measure Unit) (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    AEMeasurable (fun ω i ↦ U i ω) μ :=
+  Measurable.of_discrete.aemeasurable
+
+example (μ : Measure Unit) [IsProbabilityMeasure μ] (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ,
+      ∀ μ₀ τ β, F (dataLaw condC condC μ μ₀ τ β U (aemeasurable_unit μ U)) = τ :=
+  not_identifiable_of_confounded (a := 0) (b := 1) (by funext d; simp) one_ne_zero μ U _
+
+/-- The data law is a probability measure. -/
+example (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    IsProbabilityMeasure
+      (dataLaw condC condC (Measure.dirac ()) 0 1 0 U (aemeasurable_unit _ U)) :=
+  inferInstance
+
+/-- It is the actual law of the observations, not the zero fallback of `Measure.map`: with zero
+noise on a point mass it is the point mass at the donor-mean vector, computed from the
+definitions. -/
+example :
+    dataLaw condC condC (Measure.dirac ()) 0 1 0 (fun _ _ ↦ 0) (aemeasurable_unit _ _)
+      = Measure.dirac (fun i : Fin 2 × Fin 3 ↦ condC i.1) := by
+  rw [dataLaw, Measure.map_dirac' Measurable.of_discrete]
+  congr 1
+  funext i
+  simp [obs, meanFn]
 
 /-- The reverse coding: all condition-`1` donors in batch `0`, `batch = 1 - cond`. -/
 def batchR : Fin 2 → ℝ := ![1, 0]
@@ -182,10 +213,11 @@ example (U : Fin 2 × Fin 3 → Unit → ℝ) :
   funext i ω
   fin_cases i <;> norm_num [obs, meanFn, condC, batchR]
 
-example (μ : Measure Unit) (U : Fin 2 × Fin 3 → Unit → ℝ) :
-    ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw condC batchR μ μ₀ τ β U) = τ :=
+example (μ : Measure Unit) [IsProbabilityMeasure μ] (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ,
+      ∀ μ₀ τ β, F (dataLaw condC batchR μ μ₀ τ β U (aemeasurable_unit μ U)) = τ :=
   not_identifiable_of_confounded (a := 1) (b := -1)
-    (by funext d; fin_cases d <;> simp [condC, batchR]) (by norm_num) μ U
+    (by funext d; fin_cases d <;> simp [condC, batchR]) (by norm_num) μ U _
 
 /-- Off the boundary: in a crossed `2 × 2` design (four donors) the same two parameter values give
 different donor means, so the confounding hypothesis is not vacuous. -/
