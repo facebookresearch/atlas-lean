@@ -14,9 +14,9 @@ import MathlibExt.Probability.Distributions.SnedecorF
 /-!
 # Tests for Snedecor's `F` law
 
-Total mass `1` at `(1, 1)` and `(2, 3)`, no mass on `(-∞, 0]` (the density vanishes off
-`Ioi 0`), the closed form `(1 + x)^{-2}` of the `F(2, 2)` density, and the beta and gamma
-integral helpers at their simplest parameters.
+Total mass `1` at `(1, 1)` and `(2, 3)`, the zero measure when either degree of freedom is `0`,
+no mass on `(-∞, 0]` (the density vanishes off `Ioi 0`), the closed form `(1 + x)^{-2}` of the
+`F(2, 2)` density, and the beta integral helper at its simplest parameters.
 -/
 
 open MeasureTheory ProbabilityTheory Real Set
@@ -31,6 +31,14 @@ example : snedecorFMeasure 1 1 univ = 1 := by
 /-- `F(2, 3)` is a probability measure. -/
 example : IsProbabilityMeasure (snedecorFMeasure 2 3) :=
   isProbabilityMeasure_snedecorFMeasure (by norm_num) (by norm_num)
+
+/-- Zero numerator degrees of freedom: `Γ(0) = 0` in the denominator, so `F(0, d) = 0`. -/
+example (d : ℕ) : snedecorFMeasure 0 d = 0 := by
+  simp [snedecorFMeasure]
+
+/-- Zero denominator degrees of freedom: `Γ(0) = 0` in the denominator, so `F(d, 0) = 0`. -/
+example (d : ℕ) : snedecorFMeasure d 0 = 0 := by
+  simp [snedecorFMeasure]
 
 /-- The density vanishes off `Ioi 0`, so `(-∞, 0]` is null for every `(d₁, d₂)`. -/
 example (d₁ d₂ : ℕ) : snedecorFMeasure d₁ d₂ (Iic 0) = 0 := by
@@ -52,11 +60,5 @@ example : ∫⁻ x, ENNReal.ofReal (if 0 < x then x ^ ((1 : ℝ) - 1) * (1 + 1 *
     else 0) = 1 := by
   rw [lintegral_rpow_mul_one_add_mul_rpow_neg (by norm_num) (by norm_num) (by norm_num)]
   norm_num [Gamma_two]
-
-/-- The gamma helper at `a = 1`, `r = 2`: `∫₀^∞ e^{-2x} dx = 1/2`. -/
-example : ∫⁻ x, ENNReal.ofReal (if 0 < x then x ^ ((1 : ℝ) - 1) * exp (-(2 * x)) else 0) =
-    ENNReal.ofReal (1 / 2) := by
-  rw [lintegral_rpow_mul_exp_neg_mul_Ioi (by norm_num) (by norm_num)]
-  norm_num
 
 end MathlibExtTest.Probability.Distributions.SnedecorF

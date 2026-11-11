@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import MathlibExt.Probability.Distributions.StudentT
 
@@ -16,9 +15,8 @@ import MathlibExt.Probability.Distributions.StudentT
 # Tests for Student's `t` law
 
 Total mass `1` at `k = 1` and `k = 5`, the density at `0`, the Cauchy density at `k = 1`, the
-degenerate `k = 0` case (zero measure), and the gamma moment and Laplace transform helpers at
-the exponential law, and the ratio law instantiated on the product space `N(0, 1) ⊗ χ²₃`
-(non-vacuity of its hypotheses).
+degenerate `k = 0` case (zero measure), and the ratio law instantiated on the product space
+`N(0, 1) ⊗ χ²₃` (non-vacuity of its hypotheses).
 -/
 
 open MeasureTheory ProbabilityTheory Real
@@ -53,16 +51,6 @@ example (t : ℝ) :
 /-- At `k = 0` the normalizing constant vanishes, so `studentTMeasure 0 = 0`. -/
 example : studentTMeasure 0 = 0 := by
   simp [studentTMeasure]
-
-/-- The gamma moment helper at the exponential law: `∫ e^{-y} y dy = 1`. -/
-example : ∫⁻ y, gammaPDF 1 1 y * ENNReal.ofReal (y ^ (1 : ℝ)) = 1 := by
-  rw [lintegral_gammaPDF_mul_rpow (by norm_num) (by norm_num) (by norm_num)]
-  norm_num [Gamma_two]
-
-/-- The Laplace helper at the exponential law: `∫ e^{-y} e^{-y} dy = 1/2`. -/
-example : ∫⁻ y, gammaPDF 1 1 y * ENNReal.ofReal (exp (-(1 * y))) = ENNReal.ofReal (1 / 2) := by
-  rw [lintegral_gammaPDF_mul_exp (by norm_num) (by norm_num) (by norm_num)]
-  norm_num
 
 /-- The ratio law on the canonical product space: with `Z = fst`, `V = snd` under
 `N(0, 1) ⊗ χ²₃`, the hypotheses hold and `Z / √(V / 3) ~ t₃`. -/

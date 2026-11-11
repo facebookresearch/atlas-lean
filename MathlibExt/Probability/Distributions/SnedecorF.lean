@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Distributions.StudentT
+import MathlibExt.Probability.Distributions.Gamma
+import MathlibExt.Probability.Distributions.GammaLIntegral
+public import Mathlib.Probability.Distributions.Gamma
 
 /-!
 # Snedecor's `F` law
@@ -21,15 +23,14 @@ We prove it is a probability measure for `d₁, d₂ ≥ 1`.
 The normalization is the beta integral `∫₀^∞ x^{a-1} (1 + c x)^{-(a+b)} dx = B(a, b) / c^a`,
 proved by the same gamma mixing as for Student's `t`: write `(1 + c x)^{-(a+b)}` as a gamma
 Laplace transform, swap the integrals, integrate `x^{a-1} e^{-c y x}` to `Γ(a) / (c y)^a`, and
-finish with the gamma moment `E[Y^{-a}] = Γ(b) / Γ(a + b)`.
+finish with the gamma moment `E[Y^{-a}] = Γ(b) / Γ(a + b)`. The gamma lower integrals come from
+`MathlibExt/Probability/Distributions/GammaLIntegral.lean`.
 
 The ratio law `(V₁ / d₁) / (V₂ / d₂) ~ F(d₁, d₂)` is not proved here; it is recorded in
 `WantedExt/Probability/Statistics/NormalTheoryWanted.lean`.
 
 ## Main results
 
-* `ProbabilityTheory.lintegral_rpow_mul_exp_neg_mul_Ioi`:
-  `∫₀^∞ x^{a-1} e^{-r x} dx = Γ(a) / r^a`.
 * `ProbabilityTheory.lintegral_rpow_mul_one_add_mul_rpow_neg`:
   `∫₀^∞ x^{a-1} (1 + c x)^{-(a+b)} dx = Γ(a) Γ(b) / (Γ(a + b) c^a)`.
 * `ProbabilityTheory.isProbabilityMeasure_snedecorFMeasure`.
@@ -49,24 +50,6 @@ namespace ProbabilityTheory
 @[expose] public section
 
 noncomputable section
-
-/-- The gamma integral on `(0, ∞)` as a lower Lebesgue integral over `ℝ`:
-`∫₀^∞ x^{a-1} e^{-r x} dx = Γ(a) / r^a`. -/
-theorem lintegral_rpow_mul_exp_neg_mul_Ioi {a r : ℝ} (ha : 0 < a) (hr : 0 < r) :
-    ∫⁻ x, ENNReal.ofReal (if 0 < x then x ^ (a - 1) * exp (-(r * x)) else 0) =
-      ENNReal.ofReal (Gamma a / r ^ a) := by
-  have hG := Gamma_pos_of_pos ha
-  have hra := rpow_pos_of_pos hr a
-  have hae : (fun x => ENNReal.ofReal (if 0 < x then x ^ (a - 1) * exp (-(r * x)) else 0))
-      =ᵐ[volume] fun x => ENNReal.ofReal (Gamma a / r ^ a) * gammaPDF a r x := by
-    filter_upwards [Measure.ae_ne volume 0] with x hx
-    rcases lt_or_gt_of_ne hx with hx' | hx'
-    · simp [gammaPDF_of_neg hx', not_lt.mpr hx'.le]
-    · rw [gammaPDF_of_nonneg hx'.le, ← ENNReal.ofReal_mul (by positivity), ite_eq_left hx']
-      congr 1
-      field_simp
-  rw [lintegral_congr_ae hae, lintegral_const_mul _ (measurable_gammaPDF _ _),
-    lintegral_gammaPDF_eq_one ha hr, mul_one]
 
 /-- The beta integral in Snedecor form:
 `∫₀^∞ x^{a-1} (1 + c x)^{-(a+b)} dx = Γ(a) Γ(b) / (Γ(a + b) c^a)` for `a, b, c > 0`. -/
@@ -135,7 +118,9 @@ the measure with Lebesgue density
 `Γ((d₁ + d₂)/2) / (Γ(d₁/2) Γ(d₂/2)) · (d₁/d₂)^{d₁/2} x^{d₁/2 - 1} (1 + d₁ x / d₂)^{-(d₁+d₂)/2}`
 on `x > 0` and `0` elsewhere. The density is copied verbatim from
 `ProbabilityTheory.NormalTheoryWanted.map_div_chiSquare_eq_snedecorF`. It is a probability
-measure for `d₁, d₂ ≥ 1` (`isProbabilityMeasure_snedecorFMeasure`). -/
+measure for `d₁, d₂ ≥ 1` (`isProbabilityMeasure_snedecorFMeasure`). With zero degrees of freedom
+the definition is totalized to the zero measure: if `d₁ = 0` or `d₂ = 0` the normalizing
+constant has `Γ(0) = 0` in its denominator, so the density vanishes identically. -/
 noncomputable def snedecorFMeasure (d₁ d₂ : ℕ) : Measure ℝ :=
   volume.withDensity fun x => ENNReal.ofReal (if 0 < x then
     Gamma ((d₁ + d₂) / 2) / (Gamma (d₁ / 2) * Gamma (d₂ / 2)) *
