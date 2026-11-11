@@ -109,8 +109,11 @@ private theorem wfSemigroup_apply_zero {u : ℝ} (hu : 0 ≤ u) (g : C(I, ℝ)) 
   rw [Real.dist_eq, abs_le]
   constructor <;> linarith
 
--- The constant process at `0` is Markov for the Wright–Fisher semigroup, so the main theorem
--- applies to it: the hypotheses are satisfiable.
+-- The constant process at `0` is Markov for the Wright–Fisher semigroup, so the hypotheses of
+-- the main theorem are consistent. This does not exercise the `C²` bridge: for `X ≡ 0` every
+-- martingale `f (X t) - f (X 0) - ∫ L f (X s) ds` vanishes because `L f 0 = 0`, and the example
+-- would pass for any operator family preserving evaluation at `0`. The real non-vacuity check is
+-- the integration theorem applying `isWrightFisherSolution_zero_of_markov` to T07's process.
 example {Ω : Type*} {mΩ : MeasurableSpace Ω} (ℱ : Filtration ℝ≥0 mΩ) (μ : Measure Ω)
     [IsProbabilityMeasure μ] :
     IsWrightFisherSolution 0 ℱ μ (fun _ _ => (0 : ℝ)) := by
