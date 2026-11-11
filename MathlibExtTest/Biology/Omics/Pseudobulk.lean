@@ -1,0 +1,222 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Biology.Omics.Pseudobulk
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory Finset
+open MathlibExt.Biology.Omics.Pseudobulk
+
+namespace MathlibExtTest.Biology.Omics.Pseudobulk
+
+/-! ### API-00 smoke test: the public surface elaborates -/
+
+#check @riCov
+#check @IsRandomIntercept
+#check @cellMean
+#check @pseudobulk
+#check @pseudobulkMean
+#check @trueVar
+#check @naiveVar
+#check @riModel
+#check @stdGaussianPi
+#check @dataLaw
+
+example : riCov (δ := Fin 1) (κ := Fin 1) 2 3 (0, 0) (0, 0) = 5 := by norm_num [riCov]
+
+/-! ### Kernel entries, from the definition -/
+
+/-- Same donor, distinct cells: covariance `σ_b²`. -/
+example : riCov (δ := Fin 2) (κ := Fin 3) (1 : ℝ) 1 (0, 0) (0, 1) = 1 := by simp [riCov]
+
+/-- Different donors: uncorrelated. -/
+example : riCov (δ := Fin 2) (κ := Fin 3) (1 : ℝ) 1 (0, 0) (1, 0) = 0 := by simp [riCov]
+
+/-- Same cell: `σ_b² + σ_e²`. -/
+example : riCov (δ := Fin 2) (κ := Fin 3) (1 : ℝ) 1 (1, 2) (1, 2) = 2 := by
+  norm_num [riCov]
+
+/-! ### `D = 2`, `m = 3`, `σ_b² = σ_e² = 1`: the variance decomposition by brute force
+
+The double sum of the kernel over all `6 × 6` cell pairs is computed directly from `riCov`, not
+through `sum_riCov_right` or `variance_cellMean`. -/
+
+theorem sum_sum_riCov_two_three :
+    ∑ i : Fin 2 × Fin 3, ∑ j : Fin 2 × Fin 3, riCov (1 : ℝ) 1 i j = 24 := by
+  simp only [Fintype.sum_prod_type, Fin.sum_univ_succ, Fin.sum_univ_zero, riCov]
+  norm_num
+
+/-- `Var[Ȳ] = (∑ᵢⱼ Σᵢⱼ) / (D m)² = 24 / 36 = 2 / 3`, which is `trueVar 1 1 2 3`. -/
+example : (24 : ℝ) / (2 * 3) ^ 2 = trueVar 1 1 2 3 := by norm_num [trueVar]
+
+theorem trueVar_one_one_two_three : trueVar 1 1 2 3 = 2 / 3 := by norm_num [trueVar]
+
+/-- Naive independent-cell variance `2 / 6 = 1 / 3`: half the true value. -/
+theorem naiveVar_one_one_two_three : naiveVar 1 1 2 3 = 1 / 3 := by norm_num [naiveVar]
+
+example : naiveVar 1 1 2 3 < trueVar 1 1 2 3 := by
+  rw [naiveVar_one_one_two_three, trueVar_one_one_two_three]; norm_num
+
+/-- Shortfall `σ_b² (m - 1) / (D m) = 2 / 6`, computed directly. -/
+example : trueVar 1 1 2 3 - naiveVar 1 1 2 3 = 1 * ((3 : ℕ) - 1 : ℝ) / ((2 : ℕ) * (3 : ℕ)) := by
+  norm_num [trueVar, naiveVar]
+
+/-- Intraclass correlation `1 / 2` and design effect `1 + 2 · (1 / 2) = 2`. -/
+example : icc 1 1 = 1 / 2 := by norm_num [icc]
+
+example : (1 + ((3 : ℕ) - 1 : ℝ) * icc 1 1) * naiveVar 1 1 2 3 = trueVar 1 1 2 3 := by
+  norm_num [icc, naiveVar, trueVar]
+
+/-- The library statement agrees with the brute-force numbers. -/
+example : trueVar 1 1 2 3 = (1 + ((3 : ℕ) - 1 : ℝ) * icc 1 1) * naiveVar 1 1 2 3 :=
+  trueVar_eq_designEffect_mul_naiveVar (by norm_num) (by norm_num) (by norm_num)
+
+/-! ### Pseudobulk second moments by brute force -/
+
+/-- One donor's pseudobulk variance: `(∑_{c c'} Σ) / m² = 12 / 9 = σ_b² + σ_e² / m = 4 / 3`. -/
+example : (∑ c : Fin 3, ∑ c' : Fin 3, riCov (δ := Fin 2) (1 : ℝ) 1 (0, c) (0, c')) / 3 ^ 2
+    = 1 + 1 / 3 := by
+  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero, riCov]
+  norm_num
+
+/-- Distinct donors' pseudobulk values are uncorrelated. -/
+example : (∑ c : Fin 3, ∑ c' : Fin 3, riCov (δ := Fin 2) (1 : ℝ) 1 (0, c) (1, c')) / 3 ^ 2 = 0 := by
+  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero, riCov]
+  norm_num
+
+/-- The replicate formula `(σ_b² + σ_e² / m) / D` gives the true cell-mean variance. -/
+example : (1 + 1 / 3 : ℝ) / 2 = trueVar 1 1 2 3 := by norm_num [trueVar]
+
+/-- `pseudobulkMean = cellMean` on a concrete deterministic table `Y (d, c) = 10 d + c`. -/
+example :
+    pseudobulkMean (fun (i : Fin 2 × Fin 3) (_ : Unit) ↦ (10 * (i.1 : ℕ) + (i.2 : ℕ) : ℝ)) ()
+      = 6 ∧
+    cellMean (fun (i : Fin 2 × Fin 3) (_ : Unit) ↦ (10 * (i.1 : ℕ) + (i.2 : ℕ) : ℝ)) () = 6 := by
+  constructor <;>
+  · simp only [pseudobulkMean, pseudobulk, cellMean, Fintype.sum_prod_type, Fin.sum_univ_succ,
+      Fin.sum_univ_zero, Fintype.card_fin]
+    norm_num
+
+/-! ### Boundary cases of the naive formula, from the definitions -/
+
+/-- One cell per donor (`m = 1`): naive and true agree. -/
+example : naiveVar 1 1 2 1 = trueVar 1 1 2 1 := by norm_num [naiveVar, trueVar]
+
+/-- No donor variance: naive and true agree. -/
+example : naiveVar 0 1 2 3 = trueVar 0 1 2 3 := by norm_num [naiveVar, trueVar]
+
+/-- Off the boundary they differ, matching `naiveVar_eq_trueVar_iff`. -/
+example : naiveVar 1 1 2 3 ≠ trueVar 1 1 2 3 := by norm_num [naiveVar, trueVar]
+
+example : ¬ (naiveVar 1 1 2 3 = trueVar 1 1 2 3) := by
+  rw [naiveVar_eq_trueVar_iff 1 1 (by norm_num) (by norm_num)]; norm_num
+
+/-- Same per-cell variance `2`, different donor splits `(1, 1)` versus `(0, 2)`: different
+cell-mean variances. -/
+example : trueVar 1 1 2 3 ≠ trueVar 0 2 2 3 := by norm_num [trueVar]
+
+/-! ### The explicit Gaussian model, checked directly -/
+
+/-- With `σ_e² = 0` two cells of donor `0` are the same coordinate `Z₀`; their covariance is
+`Var[Z₀] = 1`, computed from `riModel` and the Gaussian law, not through
+`isRandomIntercept_riModel`. -/
+example :
+    cov[riModel (δ := Fin 2) (κ := Fin 3) 1 0 (0, 0), riModel 1 0 (0, 1); stdGaussianPi _ _]
+      = 1 := by
+  have hf : ∀ c : Fin 3, riModel (δ := Fin 2) (κ := Fin 3) 1 0 (0, c)
+      = fun ω ↦ ω (Sum.inl 0) := by
+    intro c; funext ω; simp [riModel]
+  rw [hf, hf, covariance_self (measurable_pi_apply _).aemeasurable]
+  have := (measurePreserving_eval (fun _ : Fin 2 ⊕ Fin 2 × Fin 3 ↦ gaussianReal 0 1)
+    (Sum.inl 0)).variance_fun_comp (f := id) aemeasurable_id
+  simpa [stdGaussianPi, variance_id_gaussianReal] using this
+
+/-- The library model, specialised: `Var[Ȳ] = 2 / 3 > 1 / 3`. -/
+example :
+    Var[cellMean (riModel (δ := Fin 2) (κ := Fin 3) 1 1); stdGaussianPi _ _] = 2 / 3 ∧
+      naiveVar 1 1 2 3
+        < Var[cellMean (riModel (δ := Fin 2) (κ := Fin 3) 1 1); stdGaussianPi _ _] := by
+  obtain ⟨-, hv, hlt⟩ :=
+    pseudoreplication_counterexample (δ := Fin 2) (κ := Fin 3) (by simp) one_pos zero_le_one
+  simp only [Fintype.card_fin] at hv hlt
+  rw [hv, trueVar_one_one_two_three] at *
+  exact ⟨rfl, hlt⟩
+
+/-- Two distinct cells of donor `0` are not independent in the explicit model. -/
+example :
+    ¬ IndepFun (riModel (δ := Fin 2) (κ := Fin 3) 1 1 (0, 0)) (riModel 1 1 (0, 1))
+      (stdGaussianPi _ _) :=
+  not_indepFun_sameDonor (isRandomIntercept_riModel zero_le_one zero_le_one) one_ne_zero 0
+    (by decide)
+
+/-! ### Batch confounded with condition -/
+
+/-- Two donors; condition and batch indicators both `![0, 1]`. -/
+def condC : Fin 2 → ℝ := ![0, 1]
+
+/-- Directly from the definitions: `(μ₀, τ, β) = (0, 1, 0)` and `(0, 0, 1)` give identical
+observations for any noise. -/
+example (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    obs condC condC 0 1 0 U = obs condC condC 0 0 1 U := by
+  funext i ω
+  simp [obs, meanFn]
+
+example (μ : Measure Unit) (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw condC condC μ μ₀ τ β U) = τ :=
+  not_identifiable_of_confounded rfl μ U
+
+/-- Off the boundary: in a crossed `2 × 2` design (four donors) the same two parameter values give
+different donor means, so the confounding hypothesis is not vacuous. -/
+def condX : Fin 4 → ℝ := ![0, 0, 1, 1]
+
+/-- Batch indicators of the crossed design. -/
+def batchX : Fin 4 → ℝ := ![0, 1, 0, 1]
+
+example : meanFn condX batchX 0 1 0 2 ≠ meanFn condX batchX 0 0 1 2 := by
+  norm_num [meanFn, condX, batchX]
+
+/-- In the crossed design donors `0` and `2` share batch `0` and differ in condition; with zero
+noise the contrast is `τ`, computed from the integrals directly. -/
+example (μ₀ τ β : ℝ) :
+    ∫ ω, obs condX batchX μ₀ τ β (fun (_ : Fin 4 × Fin 3) (_ : Unit) ↦ (0 : ℝ)) (2, 0) ω
+        ∂(Measure.dirac ())
+      - ∫ ω, obs condX batchX μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ()) = τ := by
+  simp [obs, meanFn, condX, batchX]
+
+example (μ₀ τ β : ℝ) :
+    ∫ ω, obs condX batchX μ₀ τ β (fun (_ : Fin 4 × Fin 3) (_ : Unit) ↦ (0 : ℝ)) (2, 0) ω
+        ∂(Measure.dirac ())
+      - ∫ ω, obs condX batchX μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ()) = τ :=
+  contrast_of_sameBatch (by simp) (by simp) (by simp [batchX]) (by norm_num [condX]) μ₀ τ β 0 0
+
+/-- Under confounding the condition contrast is `τ + β`, computed directly. -/
+example (μ₀ τ β : ℝ) :
+    ∫ ω, obs condC condC μ₀ τ β (fun (_ : Fin 2 × Fin 3) (_ : Unit) ↦ (0 : ℝ)) (1, 0) ω
+        ∂(Measure.dirac ())
+      - ∫ ω, obs condC condC μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ())
+      = τ + β := by
+  simp [obs, meanFn, condC]
+  ring
+
+/-! ### Axioms -/
+
+#print axioms variance_cellMean
+#print axioms naiveVar_eq_trueVar_iff
+#print axioms variance_cellMean_eq_iff
+#print axioms variance_pseudobulkMean
+#print axioms pseudoreplication_counterexample
+#print axioms not_indepFun_sameDonor
+#print axioms not_identifiable_of_confounded
+#print axioms no_unbiased_estimator_of_confounded
+#print axioms contrast_of_confounded
+#print axioms contrast_of_sameBatch
+
+end MathlibExtTest.Biology.Omics.Pseudobulk
