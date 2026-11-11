@@ -19,7 +19,7 @@ Hausdorff, and second-countable.  In Mathlib, "locally homeomorphic to `ℝ³`" 
 over the `ChartedSpace` API bundling the two remaining point-set conditions.
 
 We also provide the manifold-with-boundary variant `IsThreeManifoldWithBoundary`, modelled on the
-Euclidean half-space `EuclideanHalfSpace 2`.
+Euclidean half-space `EuclideanHalfSpace 3`.
 
 ## Main definitions
 
@@ -40,9 +40,9 @@ class IsThreeManifold (M : Type*) [TopologicalSpace M]
     extends T2Space M, SecondCountableTopology M
 
 /-- A **topological 3-manifold with boundary**: a Hausdorff, second-countable topological space
-locally homeomorphic to the Euclidean half-space `EuclideanHalfSpace 2`. -/
+locally homeomorphic to the Euclidean half-space `EuclideanHalfSpace 3`. -/
 class IsThreeManifoldWithBoundary (M : Type*) [TopologicalSpace M]
-    [ChartedSpace (EuclideanHalfSpace 2) M] : Prop
+    [ChartedSpace (EuclideanHalfSpace 3) M] : Prop
     extends T2Space M, SecondCountableTopology M
 
 variable (M : Type*) [TopologicalSpace M]
@@ -59,15 +59,15 @@ theorem IsThreeManifold.locallyCompactSpace [ChartedSpace (EuclideanSpace ℝ (F
   ChartedSpace.locallyCompactSpace (EuclideanSpace ℝ (Fin 3)) M
 
 /-- Every topological 3-manifold with boundary is Hausdorff. -/
-example [ChartedSpace (EuclideanHalfSpace 2) M] [IsThreeManifoldWithBoundary M] : T2Space M :=
+example [ChartedSpace (EuclideanHalfSpace 3) M] [IsThreeManifoldWithBoundary M] : T2Space M :=
   inferInstance
 
 /-- `ℝ³` is a topological 3-manifold (the model, boundaryless case). -/
 example : IsThreeManifold (EuclideanSpace ℝ (Fin 3)) := ⟨⟩
 
 /-- The Euclidean half-space is a topological 3-manifold with boundary (boundary case). -/
-example : IsThreeManifoldWithBoundary (EuclideanHalfSpace 2) :=
-  haveI : SecondCountableTopology (EuclideanHalfSpace 2) :=
+example : IsThreeManifoldWithBoundary (EuclideanHalfSpace 3) :=
+  haveI : SecondCountableTopology (EuclideanHalfSpace 3) :=
     Topology.IsEmbedding.subtypeVal.isInducing.secondCountableTopology
-  haveI : T2Space (EuclideanHalfSpace 2) := Topology.IsEmbedding.subtypeVal.t2Space
+  haveI : T2Space (EuclideanHalfSpace 3) := Topology.IsEmbedding.subtypeVal.t2Space
   ⟨⟩
