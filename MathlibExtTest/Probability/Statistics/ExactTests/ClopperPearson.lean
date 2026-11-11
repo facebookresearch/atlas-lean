@@ -14,7 +14,6 @@ public import MathlibExt.Probability.Statistics.ExactTests.ClopperPearson
 
 open MeasureTheory ProbabilityTheory Set
 open MathlibExt.Probability.Statistics.ExactTests
-open MathlibExt.Biology.Phylogenetics.MotifConservation
 
 namespace MathlibExtTest.Probability.Statistics.ExactTests.ClopperPearson
 

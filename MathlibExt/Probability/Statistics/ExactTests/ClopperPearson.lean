@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Phylogenetics.MotifConservation
+public import MathlibExt.Probability.Distributions.BinomialTail
 public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
 public import Mathlib.Probability.Distributions.Binomial
 
@@ -59,7 +59,7 @@ exactly, `1 - α`, since the binomial law has atoms.
 
 The level is `0 < α < 1`, split equally between the two tails. The endpoints are defined for
 every `n`, `x` and `α`; for `x > n` they are junk values. The binomial tails are taken from
-`binomTail` (`MathlibExt.Biology.Phylogenetics.MotifConservation`) and connected to Mathlib's
+`binomTail` (`MathlibExt.Probability.Distributions.BinomialTail`) and connected to Mathlib's
 `binomial` measure by `upperTail_binomial` and `binomial_real_Iic`.
 
 ## References
@@ -72,32 +72,11 @@ every `n`, `x` and `α`; for `x > n` they are junk values. The binomial tails ar
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Set
-open MathlibExt.Biology.Phylogenetics.MotifConservation
 open MathlibExt.Probability.Statistics.MultipleTesting
 
 namespace MathlibExt.Probability.Statistics.ExactTests
 
 /-! ### Binomial tails -/
-
-/-- The binomial upper tail vanishes at `p = 0` when the cutoff is positive. -/
-theorem binomTail_zero_right {n x : ℕ} (hx : 1 ≤ x) : binomTail n x 0 = 0 := by
-  refine Finset.sum_eq_zero fun i hi => ?_
-  rw [zero_pow (by have := (Finset.mem_Icc.mp hi).1; omega)]
-  ring
-
-/-- The binomial upper tail is `1` at `p = 1` when the cutoff is at most `n`. -/
-theorem binomTail_one_right {n x : ℕ} (hx : x ≤ n) : binomTail n x 1 = 1 := by
-  rw [binomTail, Finset.sum_eq_single_of_mem n (Finset.mem_Icc.mpr ⟨hx, le_rfl⟩)]
-  · simp
-  · intro i hi hin
-    have : i < n := lt_of_le_of_ne (Finset.mem_Icc.mp hi).2 hin
-    rw [sub_self, zero_pow (by omega)]
-    ring
-
-/-- The binomial upper tail is continuous in `p`. -/
-theorem continuous_binomTail (n x : ℕ) : Continuous (binomTail n x) := by
-  unfold binomTail
-  fun_prop
 
 /-- The upper tail `P(X ≥ x)` of Mathlib's `Bin(n, p)` is `binomTail n x p`. -/
 theorem upperTail_binomial (n x : ℕ) (p : unitInterval) :
