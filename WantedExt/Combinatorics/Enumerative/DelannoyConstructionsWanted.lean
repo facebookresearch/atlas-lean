@@ -134,6 +134,8 @@ public theorem_wanted genDelannoyUpper_succ_left_sub (k m n : ℕ) (hk : 1 ≤ k
 /-- The four relationship identities for `D_k` (`k ≥ 1`, `m, n ≥ k`):
 `D_k(m, n) + D_k(m, n + 1) = 2 D_(k-1)(m, n)`, `D_k(m, n) + D_k(m + 1, n) = D_(k+1)(m + 1, n + 1)`,
 `D_k(m, n + 1) - D_k(m, n) = 2 D_(k-1)(m - 1, n)`, `D_k(m + 1, n) - D_k(m, n) = D_(k+1)(m + 1, n)`.
+The fourth identity additionally requires `k < n`, so that its right-hand side is in the
+intended domain of `D_(k+1)`.
 
 Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
 of Integer Sequences 27 (2024), Article 24.1.8, Theorem 7
@@ -144,7 +146,8 @@ public theorem_wanted genDelannoyLower_relations (k m n : ℕ) (hk : 1 ≤ k) (h
         genDelannoyLower (k + 1) (m + 1) (n + 1) ∧
       (genDelannoyLower k m (n + 1) : ℤ) - genDelannoyLower k m n =
         2 * genDelannoyLower (k - 1) (m - 1) n ∧
-      (genDelannoyLower k (m + 1) n : ℤ) - genDelannoyLower k m n = genDelannoyLower (k + 1) (m + 1) n
+      (k < n → (genDelannoyLower k (m + 1) n : ℤ) - genDelannoyLower k m n =
+        genDelannoyLower (k + 1) (m + 1) n)
 
 /-- For `m, n ≥ k`, `D_k(m, n) = ∑_{j=0}^{min(m-k, n-k)} C(m - k, j) C(n, j + k) 2^(j+k)`.
 
