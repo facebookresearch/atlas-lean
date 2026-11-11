@@ -32,8 +32,9 @@ between `1` and `N`. `exists_factor_of_order` is the existential corollary.
 
 In the algorithm `r` is the multiplicative order of `a` modulo `N`, so the
 hypothesis `a ^ (r / 2) ≢ 1 (mod N)` is the minimality of the order, and the
-hypothesis `a ^ (r / 2) ≢ -1 (mod N)` is the "good unit" condition. This
-module assumes that condition; it does not prove its prevalence among units.
+hypothesis `a ^ (r / 2) ≢ -1 (mod N)` is the "good unit" condition whose
+prevalence is the bound `orderFinding_good_units_card_ge` in
+`WantedExt/QuantumInformation/NielsenChuang/Chapter5Wanted.lean`.
 
 Source: P. W. Shor, Polynomial-time algorithms for prime factorization and
 discrete logarithms on a quantum computer, SIAM J. Comput. 26 (1997),
