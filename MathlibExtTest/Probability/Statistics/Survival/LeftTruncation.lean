@@ -126,6 +126,14 @@ theorem D_kmSurvival_toCensoredData : D.toCensoredData.kmSurvival 3 = 2 / 5 := b
 
 example : ¬ D.EntriesPrecedeExits := fun h => absurd (h 3 0) (by decide)
 
+/-- `D` is gap-free (somebody is at risk at every grid time), so telescoping applies. -/
+theorem D_gapFree : D.GapFree := fun _ j _ _ _ _ _ => by
+  simp only [DelayedEntryData.mem_support, D_atRisk]
+  fin_cases j <;> decide
+
+example : ∑ j ∈ D.support with D.time j ≤ 3, D.plMass j + D.plSurvival 3 = 1 :=
+  D.sum_plMass_add_plSurvival D_gapFree 3
+
 /-! ### A zero-risk gap -/
 
 /-- Two subjects: subject 0 enters before `t₀` and is censored at `t₀`; subject 1 enters at `t₁`
@@ -146,17 +154,54 @@ example : (1 : Fin 4) ∉ G.support ∧ (2 : Fin 4) ∈ G.support ∧ G.deaths 1
   simp only [DelayedEntryData.mem_support, G_atRisk]
   refine ⟨by decide, by decide, by decide⟩
 
-/-- The estimate at `t = 3` is `1`: no deaths at supported times up to `t₂`; the gap contributes
-no factor. -/
-example : G.plSurvival 3 = 1 := by
-  have hd : G.deaths = ![0, 0, 0, 1] := by funext j; fin_cases j <;> decide
-  rw [DelayedEntryData.plSurvival_eq_prod_all, prod_filter, Fin.prod_univ_four]
-  simp only [DelayedEntryData.plFactor, DelayedEntryData.hazardEst, G_atRisk, hd]
-  norm_num [G, t]
+/-- The gap makes `G` fail `GapFree`, so the telescoping theorem does not apply to it. -/
+example : ¬ G.GapFree := fun h => by
+  have := h (i := 0) (j := 1) (l := 2) (by decide) (by decide)
+    (by simp [DelayedEntryData.mem_support, G_atRisk])
+    (by simp [DelayedEntryData.mem_support, G_atRisk])
+  simp [DelayedEntryData.mem_support, G_atRisk] at this
 
-/-- Telescoping on the gap fixture at `t = 4`: total jump mass plus `Ŝ(4)` is `1`. -/
-example : ∑ j ∈ G.support with G.time j ≤ 4, G.plMass j + G.plSurvival 4 = 1 :=
-  G.sum_plMass_add_plSurvival 4
+/-! ### Regression probe: a gap between two supported stretches -/
+
+/-- Three subjects: subjects 0 and 1 enter before `t₀` and leave at `t₀` (one death, one
+censoring); subject 2 enters at `t₁` and dies at `t₂`. Numbers at risk `2, 0, 1, 0`: two
+supported stretches `{t₀}` and `{t₂}` separated by a gap at `t₁`. -/
+noncomputable def P : DelayedEntryData 4 3 where
+  time := t
+  strictMono_time := t_strictMono
+  entry := ![⊥, ⊥, (1 : Fin 4)]
+  exit := ![0, 0, 2]
+  event := ![true, false, true]
+  entry_lt_exit := by decide
+
+theorem P_atRisk : P.atRisk = ![2, 0, 1, 0] := by
+  funext j; fin_cases j <;> decide
+
+theorem P_deaths : P.deaths = ![1, 0, 1, 0] := by
+  funext j; fin_cases j <;> decide
+
+/-- `P` is not gap-free: `t₀` and `t₂` are supported, `t₁` is not. -/
+theorem P_not_gapFree : ¬ P.GapFree := fun h => by
+  have := h (i := 0) (j := 1) (l := 2) (by decide) (by decide)
+    (by simp [DelayedEntryData.mem_support, P_atRisk])
+    (by simp [DelayedEntryData.mem_support, P_atRisk])
+  simp [DelayedEntryData.mem_support, P_atRisk] at this
+
+/-- The totalized values still exist: `Ŝ(2) = 1/2` inside the gap, and the jump at `t₂`, where
+the only subject at risk dies, is `1/2`. Neither is a survival quantity: the death at `t₂` is
+certain given entry, and the factor `1/2` comes from the stretch before the gap. Because
+`P_not_gapFree`, `sum_plMass_add_plSurvival` does not apply to `P`. -/
+example : P.plSurvival 2 = 1 / 2 ∧ P.plMass 2 = 1 / 2 := by
+  have hs : P.support = {0, 2} := by
+    ext j; fin_cases j <;> simp [DelayedEntryData.mem_support, P_atRisk]
+  refine ⟨?_, ?_⟩
+  · rw [DelayedEntryData.plSurvival_eq_prod_all, prod_filter, Fin.prod_univ_four]
+    simp only [DelayedEntryData.plFactor, DelayedEntryData.hazardEst, P_atRisk, P_deaths]
+    norm_num [P, t]
+  · have hf : ({0, 2} : Finset (Fin 4)).filter (· < 2) = {0} := by decide
+    rw [DelayedEntryData.plMass, hs, hf]
+    simp only [DelayedEntryData.plFactor, DelayedEntryData.hazardEst, P_atRisk, P_deaths]
+    norm_num
 
 /-! ### Early entry: reduction to Kaplan–Meier -/
 
@@ -173,6 +218,10 @@ noncomputable def E : DelayedEntryData 4 3 where
 
 theorem E_entriesPrecedeExits : E.EntriesPrecedeExits := by
   unfold DelayedEntryData.EntriesPrecedeExits; decide
+
+/-- Early entry discharges `GapFree`, although `E` has nobody at risk at `t₃` (after the last
+exit). -/
+example : E.GapFree := DelayedEntryData.gapFree_of_entriesPrecedeExits E_entriesPrecedeExits
 
 example : E.atRisk 0 = 1 ∧ E.toCensoredData.atRisk 0 = 3 := by
   simp only [DelayedEntryData.toCensoredData, CensoredData.atRisk_ofSubjects]

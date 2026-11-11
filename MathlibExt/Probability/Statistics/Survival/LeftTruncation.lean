@@ -37,9 +37,12 @@ right-censored, as in `CensoredData.ofSubjects`).
 Empty cells are explicit: a grid time may have no exits, and, unlike the untruncated case, it may
 have nobody at risk (`atRisk j = 0`) even between two times where somebody is at risk. The
 product-limit and Nelson–Aalen estimators are therefore defined on the **support**
-`{j | 0 < Yⱼ}` only. Across a zero-risk gap the data say nothing about the hazard, so these
-estimators estimate conditional survival given survival to the start of the supported stretch,
-not the unconditional survival function.
+`{j | 0 < Yⱼ}` only, and they are survival estimates only when the support is a single stretch
+of consecutive grid indices (`GapFree`). Across a zero-risk gap the hazard is unidentified and
+the conditional law after the gap cannot be glued to the one before it, so on data with a gap the
+totalized products and sums have no survival interpretation. On gap-free data they estimate
+survival conditional on reaching the start of the stretch, normalized there and not at time
+zero.
 
 ## Main results
 
@@ -47,7 +50,9 @@ not the unconditional survival function.
 * `atRisk_add_card_exit_lt`: `Yⱼ + #{exitᵢ < j} = #{entryᵢ < j}` (entered minus exited).
 * `deaths_add_censored_le_atRisk`, `deaths_eq_zero_of_atRisk_eq_zero`: exits at `tⱼ` are at risk
   at `tⱼ`; a zero-risk cell has no exits.
-* `sum_plMass_add_plSurvival`: the product-limit jumps up to `t` and `Ŝ(t)` add up to `1`.
+* `sum_plMass_add_plSurvival`: on gap-free data, the product-limit jumps up to `t` and `Ŝ(t)`
+  add up to `1`.
+* `gapFree_of_entriesPrecedeExits`: early-entry data are gap-free.
 * `toCensoredData`, `atRisk_eq_atRisk_toCensoredData`: forgetting entries gives
   `CensoredData.ofSubjects`; when every entry precedes `tⱼ` the two numbers at risk agree.
 * `plSurvival_eq_kmSurvival`, `nelsonAalen_eq_nelsonAalen`, `plMass_eq_kmMass`: **reduction to
@@ -190,17 +195,33 @@ noncomputable def hazardEst (j : Fin k) : ℝ := (D.deaths j : ℝ) / D.atRisk j
 /-- The product-limit factor `1 - dⱼ / Yⱼ` (Lean-totalized: `1` where `Yⱼ = 0`). -/
 noncomputable def plFactor (j : Fin k) : ℝ := 1 - D.hazardEst j
 
+/-- The support has no gaps: it is a single stretch of consecutive grid indices. This is the
+hypothesis under which `plSurvival`, `plMass` and `nelsonAalen` are survival estimates. -/
+def GapFree : Prop :=
+  ∀ ⦃i j l : Fin k⦄, i ≤ j → j ≤ l → i ∈ D.support → l ∈ D.support → j ∈ D.support
+
 /-- The delayed-entry **product-limit estimate** `Ŝ(t) = ∏_{j ∈ support, tⱼ ≤ t} (1 - dⱼ / Yⱼ)`.
 
-Grid times with nobody at risk are excluded: the data identify no hazard there. -/
+Grid times with nobody at risk are excluded: the data identify no hazard there. Only under
+`GapFree` is this an estimate of survival, conditional on reaching the first supported time and
+normalized there, not at time zero. If the support has a gap, the totalized product multiplies
+across disconnected stretches and has no survival interpretation. -/
 noncomputable def plSurvival (t : ℝ) : ℝ :=
   ∏ j ∈ D.support with D.time j ≤ t, D.plFactor j
 
-/-- The delayed-entry **Nelson–Aalen estimate** `Â(t) = ∑_{j ∈ support, tⱼ ≤ t} dⱼ / Yⱼ`. -/
+/-- The delayed-entry **Nelson–Aalen estimate** `Â(t) = ∑_{j ∈ support, tⱼ ≤ t} dⱼ / Yⱼ`.
+
+Only under `GapFree` is this a cumulative-hazard estimate, accumulated from the first supported
+time. If the support has a gap, the totalized sum adds hazards from disconnected stretches and
+has no cumulative-hazard interpretation. -/
 noncomputable def nelsonAalen (t : ℝ) : ℝ :=
   ∑ j ∈ D.support with D.time j ≤ t, D.hazardEst j
 
-/-- The product-limit jump at `tⱼ`: `Ŝ(tⱼ₋) · dⱼ / Yⱼ`, the product over supported `l < j`. -/
+/-- The product-limit jump at `tⱼ`: `Ŝ(tⱼ₋) · dⱼ / Yⱼ`, the product over supported `l < j`.
+
+Only under `GapFree` is this a probability mass (conditional on reaching the first supported
+time). If the support has a gap, a jump after the gap is scaled by factors from before it and has
+no probability interpretation. -/
 noncomputable def plMass (j : Fin k) : ℝ :=
   (∏ l ∈ D.support with l < j, D.plFactor l) * D.hazardEst j
 
@@ -249,9 +270,12 @@ theorem plSurvival_eq_prod_all (t : ℝ) :
   simp only [mem_filter, mem_univ, true_and] at hj ⊢
   exact ⟨(D.mem_support).1 hs, hj⟩
 
-/-- **Telescoping**: the product-limit jumps at supported times `≤ t` and the estimate `Ŝ(t)`
-add up to `1`. -/
-theorem sum_plMass_add_plSurvival (t : ℝ) :
+/-- **Telescoping**: on gap-free data, the product-limit jumps at supported times `≤ t` and the
+estimate `Ŝ(t)` add up to `1`, so they form one conditional distribution given survival to the
+first supported time. (The algebra holds without `GapFree`, but then the jumps come from several
+conditional distributions and their sum is not a probability; the hypothesis is kept so that the
+theorem cannot be read that way.) -/
+theorem sum_plMass_add_plSurvival (_hD : D.GapFree) (t : ℝ) :
     ∑ j ∈ D.support with D.time j ≤ t, D.plMass j + D.plSurvival t = 1 := by
   set s := D.support.filter fun j => D.time j ≤ t
   have h := prod_one_sub_ordered s D.hazardEst
@@ -312,6 +336,18 @@ def EntriesPrecedeExits (D : DelayedEntryData k n) : Prop := ∀ i i', D.entry i
 
 variable (hD : D.EntriesPrecedeExits)
 include hD
+
+/-- **Early-entry data are gap-free**: if `l` is supported through subject `a` and `i ≤ j` is
+supported through subject `b`, then `j` is supported through `b` when `j ≤ exit b`, and through
+`a` otherwise, since `entry a < exit b < j`. -/
+theorem gapFree_of_entriesPrecedeExits : D.GapFree := by
+  intro i j l hij hjl hi hl
+  simp only [mem_support, atRisk, card_pos, filter_nonempty_iff, mem_univ, true_and] at hi hl ⊢
+  obtain ⟨b, hb₁, hb₂⟩ := hi
+  obtain ⟨a, ha₁, ha₂⟩ := hl
+  rcases le_or_gt j (D.exit b) with h | h
+  · exact ⟨b, hb₁.trans_le (by exact_mod_cast hij), h⟩
+  · exact ⟨a, (hD a b).trans (by exact_mod_cast h), hjl.trans ha₂⟩
 
 /-- Under early entry, the number at risk at any time where somebody leaves is the untruncated
 one. -/
