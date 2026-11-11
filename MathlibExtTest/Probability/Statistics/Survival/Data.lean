@@ -48,31 +48,43 @@ theorem D_eq : D = D' := by
   simp only [D, D', CensoredData.ofSubjects]
   congr 1 <;> funext j <;> fin_cases j <;> decide
 
-theorem D_size : D.size = 5 := CensoredData.size_ofSubjects ..
+/-! ### Ground truth from the definitions
 
-theorem D_atRisk : D.atRisk 0 = 5 ∧ D.atRisk 1 = 3 ∧ D.atRisk 2 = 3 := by
-  simp only [D, CensoredData.atRisk_ofSubjects]
-  decide
+The checks in this section unfold `size`, `atRisk`, `riskSet`, `numAtRisk`, `totalEvents` and
+`toCensoredData` directly; none of them uses a theorem of `Survival.Data`. -/
+
+theorem D_size : D.size = 5 := by decide
+
+theorem D_atRisk : D.atRisk 0 = 5 ∧ D.atRisk 1 = 3 ∧ D.atRisk 2 = 3 := by decide
 
 /-- The empty time `t₁` has no deaths and no censorings. -/
-example : D.deaths 1 = 0 ∧ D.censored 1 = 0 :=
-  CensoredData.deaths_ofSubjects_eq_zero_and_censored_ofSubjects_eq_zero _ _ _ _
-    (by decide)
+example : D.deaths 1 = 0 ∧ D.censored 1 = 0 := by decide
 
 /-- Fiber split at the tied time `t₂`: `2 + 1 = 3` subjects. -/
-example : D.deaths 2 + D.censored 2 = 3 := by
-  rw [D, CensoredData.deaths_add_censored_ofSubjects]
+example : D.deaths 2 + D.censored 2 = 3 := by decide
+
+/-- The Cox risk set of subject `2` (time `3`) is `{2, 3, 4}`. -/
+theorem riskSet_two : riskSet (t ∘ g) 2 = {2, 3, 4} := by
+  ext l
+  rw [riskSet, mem_filter]
+  fin_cases l <;> norm_num [t, g]
+
+/-- The Cox risk set of subject `1` (time `1`) is everyone. -/
+theorem riskSet_one : riskSet (t ∘ g) 1 = univ := by
+  ext l
+  rw [riskSet, mem_filter]
+  fin_cases l <;> norm_num [t, g]
+
+/-- Cox spot-check from the definitions: risk-set sizes `3` and `5`. -/
+theorem numAtRisk_fixture : numAtRisk (t ∘ g) 2 = 3 ∧ numAtRisk (t ∘ g) 1 = 5 := by
+  rw [numAtRisk, numAtRisk, riskSet_two, riskSet_one]
   decide
 
-/-- Cox spot-check: subject `2` (time `3`) has risk set of size `3`, subject `1` (time `1`) of
-size `5`. -/
-example : numAtRisk (t ∘ g) 2 = 3 ∧ numAtRisk (t ∘ g) 1 = 5 := by
-  rw [numAtRisk_comp_group t_strictMono g δ, numAtRisk_comp_group t_strictMono g δ]
-  exact ⟨D_atRisk.2.2, D_atRisk.1⟩
-
-/-- Swapping subjects `0` and `2` (different times) leaves the grouped data unchanged. -/
-example : CensoredData.ofSubjects t t_strictMono (g ∘ Equiv.swap 0 2) (δ ∘ Equiv.swap 0 2) = D' :=
-  (CensoredData.ofSubjects_comp_equiv ..).trans D_eq
+/-- Swapping subjects `0` and `2` (different times) leaves the grouped counts unchanged. -/
+theorem swap_eq : CensoredData.ofSubjects t t_strictMono (g ∘ Equiv.swap 0 2)
+    (δ ∘ Equiv.swap 0 2) = D' := by
+  simp only [D', CensoredData.ofSubjects]
+  congr 1 <;> funext j <;> fin_cases j <;> decide
 
 /-- The swap really reorders the subjects. -/
 example : g ∘ Equiv.swap 0 2 ≠ g := fun h => by
@@ -83,24 +95,48 @@ example : g ∘ Equiv.swap 0 2 ≠ g := fun h => by
 /-- No subjects: size `0` and nobody at risk. -/
 example : (CensoredData.ofSubjects t t_strictMono (Fin.elim0 : Fin 0 → Fin 3) Fin.elim0).size = 0 ∧
     (CensoredData.ofSubjects t t_strictMono (Fin.elim0 : Fin 0 → Fin 3) Fin.elim0).atRisk 0 = 0 :=
-  ⟨CensoredData.size_ofSubjects .., by simp [CensoredData.atRisk_ofSubjects]⟩
+  by decide
 
 /-- All subjects censored: no deaths at any time, everyone still counted at risk. -/
 example (j : Fin 3) : (CensoredData.ofSubjects t t_strictMono g fun _ => false).deaths j = 0 ∧
     (CensoredData.ofSubjects t t_strictMono g fun _ => false).atRisk 0 = 5 := by
-  simp only [CensoredData.ofSubjects_deaths, CensoredData.atRisk_ofSubjects]
-  exact ⟨by simp, by decide⟩
+  fin_cases j <;> decide
 
 /-- Causes of the five subjects among `2` competing risks (`none` = censored). -/
 def cause : Fin 5 → Option (Fin 2) := ![some 0, none, some 1, some 0, none]
 
-/-- Subject-level competing-risks data: one cause-`0` and one cause-`1` failure at `t₂`, and
-forgetting causes recovers `D'`. -/
+/-- Subject-level competing-risks data: one cause-`0` and one cause-`1` failure at `t₂`. -/
 example : (CompetingRiskData.ofSubjects t t_strictMono g cause).events 2 0 = 1 ∧
-    (CompetingRiskData.ofSubjects t t_strictMono g cause).events 2 1 = 1 ∧
+    (CompetingRiskData.ofSubjects t t_strictMono g cause).events 2 1 = 1 := by decide
+
+/-- Forgetting causes recovers `D'`, by unfolding `toCensoredData` and `totalEvents`. -/
+theorem competing_toCensoredData :
     (CompetingRiskData.ofSubjects t t_strictMono g cause).toCensoredData = D' := by
-  refine ⟨by decide, by decide, ?_⟩
-  rw [CompetingRiskData.toCensoredData_ofSubjects, ← D_eq, D]
+  simp only [CompetingRiskData.toCensoredData, D']
+  congr 1 <;> funext j <;> fin_cases j <;> decide
+
+/-! ### The bridge theorems on the fixture
+
+These apply the theorems of `Survival.Data` and agree with the ground truth above. -/
+
+example : D.size = 5 := CensoredData.size_ofSubjects ..
+
+example : D.atRisk 2 = #{i | (2 : Fin 3) ≤ g i} := CensoredData.atRisk_ofSubjects ..
+
+example : D.deaths 2 + D.censored 2 = #{i | g i = 2} :=
+  CensoredData.deaths_add_censored_ofSubjects ..
+
+example : D.deaths 1 = 0 ∧ D.censored 1 = 0 :=
+  CensoredData.deaths_ofSubjects_eq_zero_and_censored_ofSubjects_eq_zero _ _ _ _ (by decide)
+
+/-- The Cox bridge reproduces the directly computed risk-set size. -/
+example : numAtRisk (t ∘ g) 2 = D.atRisk 2 := numAtRisk_comp_group t_strictMono g δ 2
+
+example : CensoredData.ofSubjects t t_strictMono (g ∘ Equiv.swap 0 2) (δ ∘ Equiv.swap 0 2) = D :=
+  CensoredData.ofSubjects_comp_equiv ..
+
+example : (CompetingRiskData.ofSubjects t t_strictMono g cause).toCensoredData = D := by
+  rw [CompetingRiskData.toCensoredData_ofSubjects, D]
   congr 1
   funext i
   fin_cases i <;> rfl
