@@ -144,6 +144,19 @@ example : ∏ j with j ≤ (1 : Fin 2), (1 - hazard pT2 j) = 0 ∧
   rw [hs, measureReal_empty] at h
   exact ⟨h, by rw [hs, measureReal_empty]⟩
 
+/-- At the top grid index `m = 1` the Kaplan–Meier estimate converges almost surely to
+`P(T > 1) = 0`, using the at-risk mass `P(X ≥ 1) = 3/8 ≠ 0`. -/
+example :
+    ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ => indepLaw pT2 pC2),
+      Tendsto (fun n : ℕ => (empiricalData (fun i ω => ω i) n ω).kmSurvival ((1 : ℕ) : ℝ))
+        atTop (𝓝 0) := by
+  have h := ae_tendsto_kmSurvival_infinitePi pT2 pC2 1
+    (by rw [obsAtRiskMass_pT2_pC2]; norm_num)
+  have hs : {t : Fin 2 | (1 : Fin 2) < t} = ∅ := by
+    ext t; fin_cases t <;> simp
+  rw [hs, measureReal_empty] at h
+  exact h
+
 /-- The hypothesis of `ae_tendsto_kmSurvival` at the top index holds for this model. -/
 example : obsAtRiskMass (indepLaw pT2 pC2) 1 ≠ 0 := by
   rw [obsAtRiskMass_pT2_pC2]; norm_num
