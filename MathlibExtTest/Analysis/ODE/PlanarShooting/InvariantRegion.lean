@@ -59,10 +59,10 @@ example : (1 : ℝ) * (-(3 / (2 * 1))) ^ 2 + 3 * (-(3 / (2 * 1))) + 1 ≠ 0 := f
 
 /-- Below the critical speed (`c = 1 < 2`) the field points out of the triangle somewhere on the
 slanted edge, so the speed hypothesis cannot be dropped. -/
-example : ∃ u ∈ Ioo (0 : ℝ) 1,
+example : ∃ u ∈ Ioo (0 : ℝ) 1, (u, -(1 / (2 * 1)) * u) ∈ frontier (trappingTriangle 1 1) ∧
     (-(1 * (-(1 / (2 * 1)) * u)) - 1 * u * (1 - u)) / 1 + 1 / (2 * 1) * (-(1 / (2 * 1)) * u)
       < 0 :=
-  exists_outward_of_sq_lt one_pos one_pos (by norm_num)
+  exists_outward_of_sq_lt one_pos one_pos one_pos (by norm_num)
 
 /-- Speed limits: constant points of the triangle stay in the closed triangle at the limit. -/
 example : ((1 / 2 : ℝ), (-1 / 4 : ℝ)).2 ≤ 0 :=

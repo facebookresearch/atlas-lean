@@ -53,8 +53,8 @@ proved.
 * Critical eigenvalue collision: `node_charPoly_neg_slope_eq_zero_iff`: the slope `-μ` of the
   slanted edge is an eigenvalue of the node exactly when `c² = 4 r D`. The invariance theorems
   hold at that speed.
-* Subcritical speeds: `exists_outward_of_sq_lt`: for `c² < 4 r D` the field crosses the slanted
-  edge outward, so the speed hypothesis cannot be dropped (compare
+* Subcritical speeds: `exists_outward_of_sq_lt`: for `0 < c`, `c² < 4 r D` the field crosses
+  the slanted edge outward, so the speed hypothesis cannot be dropped (compare
   `FisherKPP.not_isFront_of_sq_lt`).
 * Branch orientation: invariance needs only the start point in the open triangle; the branch's
   quadrant orientation `U < 1, U' < 0` is what puts it there.
@@ -425,18 +425,32 @@ theorem node_charPoly_neg_slope_eq_zero_iff {D r c : ℝ} (hD : 0 < D) :
     · exact absurd h (by positivity)
   · exact fun h => Or.inl h.symm
 
-/-- **Below the critical speed the triangle is not invariant.** If `c² < 4 r D`,
-there is a point `(u, -μ u)`, `0 < u < 1`, of the slanted edge where the field points out of the
-triangle: `U'' + μ U' < 0` there. -/
-theorem exists_outward_of_sq_lt {D r c : ℝ} (hD : 0 < D) (hr : 0 < r) (hc : c ^ 2 < 4 * r * D) :
-    ∃ u ∈ Ioo (0 : ℝ) 1,
+/-- **Below the critical speed the triangle is not invariant.** If `0 < c` and `c² < 4 r D`,
+there is a point `(u, -μ u)`, `0 < u < 1`, on the frontier of the triangle (its slanted edge)
+where the field points out of the triangle: `U'' + μ U' < 0` there. -/
+theorem exists_outward_of_sq_lt {D r c : ℝ} (hD : 0 < D) (hr : 0 < r) (hc0 : 0 < c)
+    (hc : c ^ 2 < 4 * r * D) :
+    ∃ u ∈ Ioo (0 : ℝ) 1, (u, -(c / (2 * D)) * u) ∈ frontier (trappingTriangle D c) ∧
       (-(c * (-(c / (2 * D)) * u)) - r * u * (1 - u)) / D + c / (2 * D) * (-(c / (2 * D)) * u)
         < 0 := by
   set δ := r - c ^ 2 / (4 * D) with hδ
   have hδ0 : 0 < δ := by
     rw [hδ, sub_pos, div_lt_iff₀ (by positivity)]; linarith
-  refine ⟨min (1 / 2) (δ / (2 * r)), ⟨lt_min (by norm_num) (by positivity),
-    (min_le_left _ _).trans_lt (by norm_num)⟩, ?_⟩
+  have hu1 : min (1 / 2) (δ / (2 * r)) < 1 := (min_le_left _ _).trans_lt (by norm_num)
+  refine ⟨min (1 / 2) (δ / (2 * r)), ⟨lt_min (by norm_num) (by positivity), hu1⟩, ?_, ?_⟩
+  · set u := min (1 / 2) (δ / (2 * r))
+    have hu0 : 0 < u := lt_min (by norm_num) (by positivity)
+    have hμu : 0 < c / (2 * D) * u := by positivity
+    rw [(isOpen_trappingTriangle D c).frontier_eq]
+    refine ⟨mem_closure_of_tendsto (f := fun ε : ℝ => (u, -(c / (2 * D)) * u + ε))
+      (b := 𝓝[>] 0) ?_ ?_, fun h => ?_⟩
+    · refine (((continuous_const.prodMk (continuous_const.add continuous_id)).tendsto' 0 _
+        (by simp)).mono_left nhdsWithin_le_nhds)
+    · filter_upwards [Ioo_mem_nhdsGT hμu] with ε hε
+      exact ⟨hu1, by linarith [hε.2], by linarith [hε.1]⟩
+    · have := h.2.2
+      simp only at this
+      linarith
   set u := min (1 / 2) (δ / (2 * r))
   have hu0 : 0 < u := lt_min (by norm_num) (by positivity)
   have hru : r * u ≤ δ / 2 := by
