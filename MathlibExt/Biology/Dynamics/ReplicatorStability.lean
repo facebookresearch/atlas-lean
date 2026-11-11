@@ -43,7 +43,8 @@ close to `p` stay close to `p` and converge to `p`.
 * `IsSolution.hasDerivAt_relEntropy`: along a solution,
   `d/dt relEntropy p (x t) = -(p · A x - x · A x)`.
 * `IsESS.lyapunovStable`, `IsESS.tendsto_nhds`, `IsESS.asymptoticallyStable`: an interior ESS
-  is Lyapunov stable and locally attracting, i.e. locally asymptotically stable.
+  is Lyapunov stable and locally attracting, i.e. locally asymptotically stable (as statements
+  about all global forward solutions; existence of solutions is not asserted).
 
 ## Scope: boundary rest points are not covered
 
@@ -64,6 +65,9 @@ theorem. The general Lyapunov criterion of `MathlibExt/Analysis/ODE/LyapunovStab
 existing definitions `Replicator.IsSolution`, `Replicator.meanFitness` and the invariance
 results `IsSolution.mem_simplex`, `IsSolution.pos_of_pos` are reused; `meanFitness` of the
 fitness `y ↦ A y` is definitionally `y · A y`.
+
+The stability theorems quantify over global forward solutions (`IsSolution` on `[0, ∞)`); they
+do not assert that such solutions exist for a given initial state.
 
 ## Source receipt
 

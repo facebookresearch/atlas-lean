@@ -15,8 +15,9 @@ import MathlibExt.Biology.Dynamics.ReplicatorStability
 * an API-00 smoke test that the existing `Replicator.meanFitness` of the matrix fitness is the
   payoff `y · A y`;
 * **counterexample first**: in the two-strategy neutral game `!![1, 1; 1, 1]`, the mixed state
-  `(1/2, 1/2)` is a Nash equilibrium that is not an ESS and not asymptotically stable (nearby
-  rest points give constant solutions that do not converge to it);
+  `(1/2, 1/2)` is a Nash equilibrium that is not an ESS and not asymptotically stable: it is
+  Lyapunov stable but not attracting (nearby rest points give constant solutions that do not
+  converge to it);
 * **interior ESS**: in the Hawk–Dove game `!![-1, 2; 0, 1]` (value `V = 2`, cost `C = 4`), the
   state `(1/2, 1/2)` is an interior ESS, the Lyapunov derivative is `-2 (x₀ - 1/2)²`, and the
   main theorem gives local asymptotic stability;
@@ -34,20 +35,13 @@ example (A : Matrix (Fin 2) (Fin 2) ℝ) (y : Fin 2 → ℝ) :
     meanFitness (fun z => A *ᵥ z) y = y ⬝ᵥ A *ᵥ y :=
   rfl
 
-/-- A rest point gives a constant solution of the replicator equation. -/
-theorem isSolution_const {ι : Type*} [Fintype ι] {f : (ι → ℝ) → ι → ℝ} {q : ι → ℝ}
-    (hq : IsRestPoint f q) : IsSolution f fun _ => q :=
-  ⟨fun i t _ => by
-    rw [hq i]
-    exact hasDerivAt_const t (q i)⟩
-
 /-- The barycenter `(1/2, 1/2)`. -/
 noncomputable def half : Fin 2 → ℝ := ![1 / 2, 1 / 2]
 
 theorem half_mem : (∀ i, 0 ≤ half i) ∧ ∑ i, half i = 1 :=
   ⟨fun i => by fin_cases i <;> norm_num [half], by norm_num [half, Fin.sum_univ_two]⟩
 
-theorem half_pos : ∀ i, 0 < half i := fun i => by fin_cases i <;> norm_num [half]
+theorem half_coord_pos : ∀ i, 0 < half i := fun i => by fin_cases i <;> norm_num [half]
 
 /-! ### Counterexample: a Nash equilibrium that is not asymptotically stable -/
 
@@ -81,13 +75,18 @@ theorem half_not_isESS_neutral : ¬ IsESS neutral half := by
   have := h.2 ![1, 0] ⟨fun i => by fin_cases i <;> norm_num, by simp [Fin.sum_univ_two]⟩ hne
   norm_num [neutral_mulVec, dotProduct, Fin.sum_univ_two, half] at this
 
-/-- **Nash alone does not give asymptotic stability.** For every `δ > 0` there is a solution of
-the replicator equation of the neutral game, starting in the simplex within `δ` of the Nash
-equilibrium `(1/2, 1/2)`, that does not converge to it. -/
+/-- **Nash alone does not give asymptotic stability.** The Nash equilibrium `(1/2, 1/2)` of the
+neutral game is Lyapunov stable (every point of the simplex is a rest point) but not attracting:
+for every `δ > 0` there is a solution starting in the simplex within `δ` of it that does not
+converge to it. The statement is the negation of the conclusion of `IsESS.asymptoticallyStable`;
+the proof refutes its attraction half. -/
 theorem half_not_asymptoticallyStable_neutral :
-    ¬ ∃ δ > 0, ∀ x : ℝ → Fin 2 → ℝ, IsSolution (fun z => neutral *ᵥ z) x →
-      ((∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) → ‖x 0 - half‖ < δ → Tendsto x atTop (𝓝 half) := by
-  rintro ⟨δ, hδ, h⟩
+    ¬ ((∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → Fin 2 → ℝ, IsSolution (fun z => neutral *ᵥ z) x →
+        ((∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) → ‖x 0 - half‖ < δ →
+          ∀ t, 0 ≤ t → ‖x t - half‖ < ε) ∧
+      ∃ δ > 0, ∀ x : ℝ → Fin 2 → ℝ, IsSolution (fun z => neutral *ᵥ z) x →
+        ((∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) → ‖x 0 - half‖ < δ → Tendsto x atTop (𝓝 half)) := by
+  rintro ⟨-, δ, hδ, h⟩
   set s := min (δ / 2) (1 / 4) with hs_def
   have hs : 0 < s := lt_min (by positivity) (by norm_num)
   have hs4 : s ≤ 1 / 4 := min_le_right _ _
@@ -144,7 +143,7 @@ example :
       ((∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) → ‖x 0 - half‖ < δ → ∀ t, 0 ≤ t → ‖x t - half‖ < ε) ∧
     ∃ δ > 0, ∀ x : ℝ → Fin 2 → ℝ, IsSolution (fun z => hawkDove *ᵥ z) x →
       ((∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) → ‖x 0 - half‖ < δ → Tendsto x atTop (𝓝 half) :=
-  half_isESS_hawkDove.asymptoticallyStable half_pos
+  half_isESS_hawkDove.asymptoticallyStable half_coord_pos
 
 /-- **The Lyapunov derivative for Hawk–Dove**, computed from the definitions: along a solution in
 the open simplex, `d/dt relEntropy half (x t) = -2 (x₀(t) - 1/2)²`, strictly negative away from
