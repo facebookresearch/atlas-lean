@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.BinaryHeap
 public import MathlibExt.InformationTheory.PrefixFree
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Huffman coding
@@ -399,7 +399,8 @@ theorem HuffmanTree.pathCode?_eq_none_iff {α : Type u} [DecidableEq α]
         push Not at h
         simp [HuffmanTree.pathCode?, ihLeft.mpr h.1, ihRight.mpr h.2]
 
-private theorem HuffmanTree.sum_snd_weightedLeaves {α : Type u}
+/-- The sum of the leaf weights equals the total weight. -/
+theorem HuffmanTree.sum_snd_weightedLeaves {α : Type u}
     (tree : HuffmanTree α) :
     (tree.weightedLeaves.map Prod.snd).sum = tree.totalWeight := by
   induction tree with
@@ -526,7 +527,9 @@ theorem HuffmanTree.encodedLength_eq_sum_codeLengths {α : Type u}
 
 /-- A Huffman queue priority. Serial numbers make equal-weight choices stable. -/
 structure HuffmanPriority where
+  /-- The weight, compared first in the queue order. -/
   weight : Nat
+  /-- The serial number: it breaks weight ties and indexes the work table. -/
   serial : Nat
 deriving DecidableEq, Repr
 
@@ -542,14 +545,19 @@ instance : LinearOrder HuffmanPriority :=
 
 /-- A tree paired with the serial used to find it after heap extraction. -/
 structure HuffmanWorkItem (α : Type u) where
+  /-- The queue priority; its serial locates this item after heap extraction. -/
   priority : HuffmanPriority
+  /-- The coding tree carried by this item. -/
   tree : HuffmanTree α
 deriving DecidableEq, Repr
 
 /-- The two successive minima and the heap left after extracting them. -/
 structure HuffmanTwoMin where
+  /-- The first extracted priority, minimal in the original heap. -/
   first : HuffmanPriority
+  /-- The second extracted priority, minimal in the heap left after the first. -/
   second : HuffmanPriority
+  /-- The heap left after both extractions. -/
   rest : MinHeap HuffmanPriority
 
 /-- Extract two priorities in increasing lexicographic order. -/
