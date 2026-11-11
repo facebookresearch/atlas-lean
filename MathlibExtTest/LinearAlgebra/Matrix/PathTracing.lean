@@ -54,7 +54,7 @@ private theorem test_sort012 :
 private theorem test_paths : increasingPaths (0 : Fin 3) 2
     = ({[0, 2], [0, 1, 2]} : Finset (List (Fin 3))) := by
   ext p
-  unfold increasingPaths
+  rw [increasingPaths_eq_filter_univ]
   simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and,
     Finset.mem_insert, Finset.mem_singleton]
   constructor

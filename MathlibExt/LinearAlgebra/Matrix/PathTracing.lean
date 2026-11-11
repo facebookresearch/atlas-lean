@@ -11,6 +11,7 @@ module
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
 # Path tracing for recursive linear systems
@@ -82,24 +83,45 @@ private theorem pairwise_getLast_mem {α : Type*} {R S : α → α → Prop}
 `v₀ → v₁ → ⋯ → vₘ` for the coefficient matrix `B`, where `B i j` is the coefficient of node
 `j` in the equation of node `i` (the edge `j → i`): the product
 `B v₁ v₀ * B v₂ v₁ * ⋯ * B vₘ vₘ₋₁` of the edge coefficients. A one-node list has weight `1`. -/
-def pathWeight {n : ℕ} {R : Type*} [CommRing R] (B : Matrix (Fin n) (Fin n) R)
+def pathWeight {n : ℕ} {R : Type*} [Monoid R] (B : Matrix (Fin n) (Fin n) R)
     (p : List (Fin n)) : R :=
   (List.zipWith (fun u v => B v u) p p.tail).prod
 
-/-- The strictly increasing lists of nodes from `j` to `i`: for each set `S` of nodes with
-`j, i ∈ S ⊆ [j, i]`, the list of the elements of `S` in increasing order. When `B` is strictly
-lower triangular every directed path from `j` to `i` is one of these lists
+/-- The strictly increasing lists of nodes from `j` to `i`: for each subset `S` of the interval
+`[j, i]` containing `j` and `i`, the list of the elements of `S` in increasing order. When `B`
+is strictly lower triangular every directed path from `j` to `i` is one of these lists
 (`mem_increasingPaths_of_isChain`), and a list here that is not a directed path has weight `0`
 (`isChain_of_mem_increasingPaths`). -/
 def increasingPaths {n : ℕ} (j i : Fin n) : Finset (List (Fin n)) :=
-  ((Finset.univ : Finset (Finset (Fin n))).filter
-      fun S => j ∈ S ∧ i ∈ S ∧ ∀ k ∈ S, j ≤ k ∧ k ≤ i).image
-    fun S => S.sort
+  ((Finset.Icc j i).powerset.filter fun S => j ∈ S ∧ i ∈ S).image fun S => S.sort
+
+private theorem icc_powerset_filter_eq {n : ℕ} (j i : Fin n) :
+    ((Finset.Icc j i).powerset.filter fun S => j ∈ S ∧ i ∈ S)
+      = (Finset.univ : Finset (Finset (Fin n))).filter
+        fun S => j ∈ S ∧ i ∈ S ∧ ∀ k ∈ S, j ≤ k ∧ k ≤ i := by
+  ext S
+  simp only [Finset.mem_filter, Finset.mem_powerset, Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hsub, hj, hi⟩
+    exact ⟨hj, hi, fun k hk => Finset.mem_Icc.mp (hsub hk)⟩
+  · rintro ⟨hj, hi, hb⟩
+    refine ⟨?_, hj, hi⟩
+    intro k hk
+    exact Finset.mem_Icc.mpr (hb k hk)
+
+/-- `increasingPaths j i` as the image of the subsets of all nodes that contain `j` and `i` and
+lie in `[j, i]`. -/
+theorem increasingPaths_eq_filter_univ {n : ℕ} (j i : Fin n) :
+    increasingPaths j i
+      = (((Finset.univ : Finset (Finset (Fin n))).filter
+        fun S => j ∈ S ∧ i ∈ S ∧ ∀ k ∈ S, j ≤ k ∧ k ≤ i).image
+        fun S => S.sort) := by
+  unfold increasingPaths
+  rw [icc_powerset_filter_eq]
 
 private def pathSumMatrix {n : ℕ} {R : Type*} [CommRing R] (B : Matrix (Fin n) (Fin n) R) :
     Matrix (Fin n) (Fin n) R :=
   fun i j => ∑ p ∈ increasingPaths j i, pathWeight B p
-
 
 private theorem isChain_of_pathWeight_ne_zero {n : ℕ} {R : Type*} [CommRing R]
     {B : Matrix (Fin n) (Fin n) R} {p : List (Fin n)}
@@ -139,7 +161,7 @@ theorem mem_increasingPaths_of_isChain {n : ℕ} {R : Type*} [CommRing R]
   have hle : p.Pairwise (· ≤ ·) := hpw.imp (fun {a b} h => le_of_lt h)
   have hsort : p.toFinset.sort (fun a b => a ≤ b) = p :=
     (List.toFinset_sort _ hnodup).mpr hle
-  unfold increasingPaths
+  rw [increasingPaths_eq_filter_univ]
   apply Finset.mem_image.mpr
   refine ⟨p.toFinset, ?_, hsort⟩
   apply Finset.mem_filter.mpr
@@ -155,13 +177,12 @@ theorem mem_increasingPaths_of_isChain {n : ℕ} {R : Type*} [CommRing R]
         (fun {a b c} (h1 : a < b) (h2 : b ≤ c) => le_trans (le_of_lt h1) h2)
         (fun {a} => le_rfl) hpw hi hk
 
-
 /-- A list of `increasingPaths j i` with nonzero weight is a directed path from `j` to `i`. -/
 theorem isChain_of_mem_increasingPaths {n : ℕ} {R : Type*} [CommRing R]
     {B : Matrix (Fin n) (Fin n) R} {j i : Fin n} {p : List (Fin n)}
     (hp : p ∈ increasingPaths j i) (hw : pathWeight B p ≠ 0) :
     (p.IsChain fun u v => B v u ≠ 0) ∧ p.head? = some j ∧ p.getLast? = some i := by
-  unfold increasingPaths at hp
+  rw [increasingPaths_eq_filter_univ] at hp
   obtain ⟨S, hSmem, hsort⟩ := Finset.mem_image.mp hp
   have hsort' : S.sort (fun a b => a ≤ b) = p := hsort
   rw [Finset.mem_filter] at hSmem
@@ -203,8 +224,6 @@ theorem isChain_of_mem_increasingPaths {n : ℕ} {R : Type*} [CommRing R]
     rwa [← hsort']
   exact ⟨hchain, hhead, hlast⟩
 
-
-
 private theorem pathWeight_cons_cons {n : ℕ} {R : Type*} [CommRing R]
     {B : Matrix (Fin n) (Fin n) R} (a b : Fin n) (M : List (Fin n)) :
     pathWeight B (a :: b :: M) = B b a * pathWeight B (b :: M) := by
@@ -233,9 +252,6 @@ private theorem pathWeight_append_last {n : ℕ} {R : Type*} [CommRing R]
       have h1 : (a :: b :: L''') ++ [k, x] = a :: b :: (L''' ++ [k, x]) := by simp
       have h2 : (a :: b :: L''') ++ [k] = a :: b :: (L''' ++ [k]) := by simp
       rw [h1, h2, pathWeight_cons_cons, pathWeight_cons_cons, ih, mul_assoc]
-
-
-
 
 private theorem sort_insert_max {n : ℕ} (T' : Finset (Fin n)) (i : Fin n)
     (hlt : ∀ x ∈ T', x < i) (hni : i ∉ T') :
@@ -272,8 +288,7 @@ theorem increasingPaths_empty_of_not_le {n : ℕ} {j i : Fin n} (h : ¬ j ≤ i)
     rw [Finset.filter_eq_empty_iff]
     intro T _ hT
     exact h (hT.2.2 j hT.1).2
-  unfold increasingPaths
-  rw [hF, Finset.image_empty]
+  rw [increasingPaths_eq_filter_univ, hF, Finset.image_empty]
 
 /-- The only increasing path from `j` to itself is `[j]`. -/
 theorem increasingPaths_self {n : ℕ} (j : Fin n) :
@@ -295,8 +310,7 @@ theorem increasingPaths_self {n : ℕ} (j : Fin n) :
       intro x hx
       rw [Finset.mem_singleton]
       exact le_antisymm (hbT x hx).2 (hbT x hx).1
-  unfold increasingPaths
-  rw [hF, Finset.image_singleton, Finset.sort_singleton]
+  rw [increasingPaths_eq_filter_univ, hF, Finset.image_singleton, Finset.sort_singleton]
 
 private theorem sum_increasingPaths_eq_sum_sort {n : ℕ} {R : Type*} [CommRing R]
     {B : Matrix (Fin n) (Fin n) R} (j i : Fin n) :
@@ -304,7 +318,7 @@ private theorem sum_increasingPaths_eq_sum_sort {n : ℕ} {R : Type*} [CommRing 
     = ∑ S ∈ (Finset.univ : Finset (Finset (Fin n))).filter
         (fun S => j ∈ S ∧ i ∈ S ∧ ∀ k ∈ S, j ≤ k ∧ k ≤ i),
         pathWeight B (S.sort (fun a b => a ≤ b)) := by
-  unfold increasingPaths
+  rw [increasingPaths_eq_filter_univ]
   apply Finset.sum_image
   intro S _ T _ hST
   have hST' : S.sort (fun a b => a ≤ b) = T.sort (fun a b => a ≤ b) := hST
@@ -312,8 +326,6 @@ private theorem sum_increasingPaths_eq_sum_sort {n : ℕ} {R : Type*} [CommRing 
   have hT := Finset.sort_toFinset T (fun a b => a ≤ b)
   rw [hST'] at hS
   exact hS.symm.trans hT
-
-
 
 private theorem pathWeight_append_of_getLast {n : ℕ} {R : Type*} [CommRing R]
     {B : Matrix (Fin n) (Fin n) R} {L : List (Fin n)} {x k : Fin n}
