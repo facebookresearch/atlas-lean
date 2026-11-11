@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Probability.Independence.Basic
+public import Mathlib.NumberTheory.Harmonic.Defs
 
 /-!
 # False discovery rate control by the Benjamini–Hochberg procedure
@@ -25,7 +26,9 @@ Benjamini and Hochberg proved that for independent p-values, with the true-null 
 super-uniform (valid: `P(p_i ≤ t) ≤ t` for `t ∈ [0, 1]`, as for uniform or properly calibrated
 discrete p-values), the procedure controls the FDR at level `q |H0| / m ≤ q`, whatever the
 distribution of the false-null p-values. This is the multiple-testing guarantee used for
-genome-wide association and differential-expression analyses.
+genome-wide association and differential-expression analyses. Benjamini and Yekutieli showed
+that, with no assumption on the dependence among the p-values, running BH at the smaller level
+`q / H_m` (`H_m = ∑_{k=1}^m 1/k` the harmonic number) still controls the FDR at `q |H0| / m`.
 
 ## Main results
 
@@ -36,12 +39,18 @@ genome-wide association and differential-expression analyses.
   (Benjamini–Hochberg 1995, Theorem 1).
 * `integral_falseDiscoveryProportion_bhRejections_le`: the special case of uniform true-null
   p-values.
+* `integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependence`: BH at level
+  `q / H_m` has `E[FDP] ≤ q |H0| / m` for arbitrarily dependent p-values whose true-null p-values
+  are valid (Benjamini–Yekutieli 2001, Theorem 1.3).
+* `one_le_harmonic`: Mathlib's harmonic number satisfies `1 ≤ H_m` for `m ≥ 1`.
 
 ## References
 
 * Y. Benjamini and Y. Hochberg, *Controlling the false discovery rate: a practical and
   powerful approach to multiple testing*, J. R. Statist. Soc. B 57 (1995), 289–300,
   Theorem 1.
+* Y. Benjamini and D. Yekutieli, *The control of the false discovery rate in multiple testing
+  under dependency*, Ann. Statist. 29 (2001), 1165–1188, Theorem 1.3.
 * B. Efron, *Large-Scale Inference*, Cambridge University Press (2010), §4.2.
 -/
 
@@ -402,5 +411,134 @@ theorem integral_falseDiscoveryProportion_bhRejections_le {Ω : Type*}
     ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ ≤ q * H0.card / m :=
   integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue μ p hp hindep H0
     (fun i hi => isValidPValue_of_hasLaw_uniform (hnull i hi)) q hq₀ hq₁
+
+/-- The harmonic number `H_m` is at least `1` for `m ≥ 1`. -/
+theorem one_le_harmonic (hm : 0 < m) : (1 : ℝ) ≤ harmonic m := by
+  induction m, hm using Nat.le_induction with
+  | base => simp
+  | succ n hn ih =>
+    push_cast [harmonic_succ]
+    have : (0 : ℝ) ≤ ((n : ℝ) + 1)⁻¹ := by positivity
+    linarith
+
+/-- Abel summation against `1 / k`: partial sums at most `C K` give `∑ a k / k ≤ C H_m`. -/
+private theorem sum_div_le_mul_harmonic {a : ℕ → ℝ} {C : ℝ} {m : ℕ}
+    (h : ∀ K ∈ Finset.Icc 1 m, ∑ k ∈ Finset.Icc 1 K, a k ≤ C * K) :
+    ∑ k ∈ Finset.Icc 1 m, a k / k ≤ C * harmonic m := by
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · simp
+  have key : ∀ n, 1 ≤ n → n ≤ m → ∑ k ∈ Finset.Icc 1 n, a k / k ≤
+      C * ((harmonic n : ℝ) - 1) + (∑ k ∈ Finset.Icc 1 n, a k) / n := by
+    intro n hn
+    induction n, hn using Nat.le_induction with
+    | base => intro _; simp
+    | succ n hn ih =>
+      intro hnm
+      have ih := ih (by omega)
+      have hS := h n (Finset.mem_Icc.mpr ⟨hn, by omega⟩)
+      rw [Finset.sum_Icc_succ_top (by omega), Finset.sum_Icc_succ_top (by omega)]
+      push_cast [harmonic_succ]
+      set S := ∑ k ∈ Finset.Icc 1 n, a k
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+      have h1 : S / n - S / (n + 1) = S / (n * (n + 1)) := by field_simp; ring
+      have h2 : S / (n * (n + 1)) ≤ C * n / (n * (n + 1)) :=
+        div_le_div_of_nonneg_right hS (by positivity)
+      have h3 : C * n / (n * (n + 1)) = C * ((n : ℝ) + 1)⁻¹ := by field_simp
+      rw [add_div]
+      have h4 : a (n + 1) / ((n : ℝ) + 1) = a (n + 1) / ((n + 1 : ℕ) : ℝ) := by push_cast; rfl
+      linarith
+  have hm1 := h m (Finset.mem_Icc.mpr ⟨hm, le_rfl⟩)
+  have hS : (∑ k ∈ Finset.Icc 1 m, a k) / m ≤ C := by
+    rw [div_le_iff₀ (by exact_mod_cast hm)]
+    exact hm1
+  linarith [key m hm le_rfl]
+
+private theorem integral_bh_contribution_le_of_arbitrary {m : ℕ} {Ω : Type*}
+    [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ)
+    (hp : ∀ i, Measurable (p i)) (i : Fin m) (hnull : IsValidPValue μ (p i))
+    (α : ℝ) (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) (hm : 0 < m) :
+    ∫ ω, (∑ k ∈ Finset.Icc 1 m,
+      {ω | p i ω ≤ α * (k : ℝ) / m ∧
+        bhIndex α (Function.update (fun j => p j ω) i 0) = k}.indicator
+        (fun _ => 1 / (k : ℝ)) ω) ∂μ ≤ α / m * harmonic m := by
+  classical
+  let K := fun ω => bhIndex α (Function.update (fun j => p j ω) i 0)
+  have hK : Measurable K := measurable_bh_update p hp α i
+  let A : ℕ → Set Ω := fun k => {ω | p i ω ≤ α * (k : ℝ) / m ∧ K ω = k}
+  have hA (k : ℕ) : MeasurableSet (A k) :=
+    (measurableSet_le (hp i) measurable_const).inter (measurableSet_eq_fun hK measurable_const)
+  rw [integral_finsetSum (Finset.Icc 1 m) (fun (k : ℕ) _ =>
+    (integrable_const (μ := μ) (1 / (k : ℝ))).indicator (hA k))]
+  simp_rw [integral_indicator_const _ (hA _), smul_eq_mul, mul_one_div]
+  apply sum_div_le_mul_harmonic
+  intro N hN
+  have hdisj : Set.PairwiseDisjoint (↑(Finset.Icc 1 N) : Set ℕ) A := by
+    intro k _ l _ hkl
+    exact Set.disjoint_left.mpr fun ω h1 h2 => hkl (h1.2.symm.trans h2.2)
+  calc
+    ∑ k ∈ Finset.Icc 1 N, μ.real (A k) = μ.real (⋃ k ∈ Finset.Icc 1 N, A k) :=
+      (measureReal_biUnion_finset hdisj fun k _ => hA k).symm
+    _ ≤ μ.real {ω | p i ω ≤ α * (N : ℝ) / m} := by
+      refine measureReal_mono (Set.iUnion₂_subset fun k hk ω hω => ?_)
+      exact hω.1.trans (threshold_mono hα₀ (Finset.mem_Icc.mp hk).2)
+    _ ≤ α * (N : ℝ) / m := valid_measureReal_le μ (p i) hnull (threshold_nonneg hα₀)
+      (threshold_le_one hα₁ hm (Finset.mem_Icc.mp hN).2)
+    _ = α / m * N := by ring
+
+/-- **Benjamini–Yekutieli FDR control under arbitrary dependence.** If every true-null p-value is
+valid (super-uniform: `μ {p i ≤ t} ≤ t` for `t ∈ [0, 1]`), then the BH procedure run at the
+corrected level `q / H_m`, where `H_m = ∑_{k=1}^m 1/k` is the harmonic number, has false discovery
+rate at most `q |H0| / m`, for any `q ∈ [0, 1]`. No independence, PRDS, or other assumption on the
+joint law of the p-values is made: they may be arbitrarily dependent. The factor `H_m ≈ log m` is
+the price paid relative to `integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue`,
+which runs BH at level `q` but needs independence. (For `m = 0` both sides are `0`.)
+
+Source: Benjamini & Yekutieli, *The control of the false discovery rate in multiple testing under
+dependency*, Ann. Statist. 29 (2001), 1165–1188, Theorem 1.3. -/
+theorem integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependence {Ω : Type*}
+    [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ)
+    (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m))
+    (hnull : ∀ i ∈ H0, IsValidPValue μ (p i))
+    (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, falseDiscoveryProportion H0 (bhRejections (q / harmonic m) fun i => p i ω) ∂μ ≤
+      q * H0.card / m := by
+  classical
+  by_cases hm : m = 0
+  · subst m
+    simp [falseDiscoveryProportion, bhRejections]
+  · have hmpos : 0 < m := Nat.pos_of_ne_zero hm
+    have hH : (1 : ℝ) ≤ harmonic m := one_le_harmonic hmpos
+    set α : ℝ := q / harmonic m with hαdef
+    have hα₀ : 0 ≤ α := div_nonneg hq₀ (by linarith)
+    have hα₁ : α ≤ 1 := (div_le_one (by linarith)).mpr (by linarith)
+    let F : Fin m → Ω → ℝ := fun i ω => ∑ k ∈ Finset.Icc 1 m,
+      {ω | p i ω ≤ α * (k : ℝ) / m ∧
+        bhIndex α (Function.update (fun j => p j ω) i 0) = k}.indicator
+        (fun _ => 1 / (k : ℝ)) ω
+    have hF (i : Fin m) : Integrable (F i) μ := by
+      apply integrable_finsetSum
+      intro k hk
+      exact (integrable_const (1 / (k : ℝ))).indicator
+        ((measurableSet_le (hp i) measurable_const).inter
+          (measurableSet_eq_fun (measurable_bh_update p hp α i) measurable_const))
+    have heq (ω : Ω) : falseDiscoveryProportion H0 (bhRejections α (fun i => p i ω)) =
+        ∑ i ∈ H0, F i ω := by
+      rw [fdp_eq_sum]
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [bh_contribution_eq_sum hα₀]
+      simp only [F, Set.indicator_apply, Set.mem_ofPred_eq]
+    calc
+      (∫ ω, falseDiscoveryProportion H0 (bhRejections α fun i => p i ω) ∂μ) =
+          ∫ ω, ∑ i ∈ H0, F i ω ∂μ := integral_congr_ae (Filter.Eventually.of_forall heq)
+      _ = ∑ i ∈ H0, ∫ ω, F i ω ∂μ := integral_finsetSum H0 (fun i _ => hF i)
+      _ ≤ ∑ i ∈ H0, q / m := by
+        apply Finset.sum_le_sum
+        intro i hi
+        calc
+          ∫ ω, F i ω ∂μ ≤ α / m * harmonic m :=
+            integral_bh_contribution_le_of_arbitrary μ p hp i (hnull i hi) α hα₀ hα₁ hmpos
+          _ = q / m := by rw [hαdef]; field_simp
+      _ = q * H0.card / m := by simp [Finset.sum_const, nsmul_eq_mul]; ring
 
 end MathlibExt.Probability.Statistics.MultipleTesting

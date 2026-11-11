@@ -102,4 +102,20 @@ example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     coin (fun _ : Fin 1 => coinP) (fun _ => measurable_from_top)
     (iIndepFun.of_subsingleton) Finset.univ (fun _ _ => isValidPValue_coinP) q hq₀ hq₁
 
+/-- `H_3 = 1 + 1/2 + 1/3 = 11/6`, the harmonic factor in the BY level for `m = 3`. -/
+example : (harmonic 3 : ℝ) = 11 / 6 := by
+  norm_num [harmonic, Finset.sum_range_succ]
+
+example : (1 : ℝ) ≤ harmonic 2 := one_le_harmonic (by norm_num)
+
+/-- Non-vacuity of the Benjamini–Yekutieli theorem under perfect dependence: both p-values are the
+same uniform random variable, so they are as far from independent as possible, and no independence
+hypothesis is supplied. BH at level `q / H_2` still has FDR at most `q * 2 / 2`. -/
+example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, falseDiscoveryProportion Finset.univ (bhRejections (q / harmonic 2) fun _ : Fin 2 => ω)
+      ∂(volume.restrict (Set.Icc (0 : ℝ) 1)) ≤ q * 2 / 2 := by
+  simpa using integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependence
+    (volume.restrict (Set.Icc (0 : ℝ) 1)) (fun _ : Fin 2 => id) (fun _ => measurable_id)
+    Finset.univ (fun _ _ => isValidPValue_of_hasLaw_uniform HasLaw.id) q hq₀ hq₁
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.BenjaminiHochberg
