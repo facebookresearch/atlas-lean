@@ -128,7 +128,7 @@ example : coxGradient T₀ δ₀ (fun i (_ : Fin 1) => groupIndicator g₀ i) (f
 /-- The derivative and gradient theorems on the three-subject sample. -/
 example (β : Fin 2 → ℝ) :
     HasFDerivAt (logPartialLikelihood T₁ δ₁ x₁)
-      (∑ j, coxGradient T₁ δ₁ x₁ β j • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ => ℝ) j) β :=
+      (Real.dotL (coxGradient T₁ δ₁ x₁ β)) β :=
   hasFDerivAt_logPartialLikelihood _ _ _ β
 
 example (β : Fin 2 → ℝ) :
