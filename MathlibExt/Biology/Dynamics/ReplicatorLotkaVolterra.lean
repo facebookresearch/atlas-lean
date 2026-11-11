@@ -38,8 +38,9 @@ intrinsic growth rates `r` and interaction matrix `B`, is
 **Hofbauer's theorem** (Hofbauer 1981; Hofbauer–Sigmund 1998, §7.5): with
 `r_i = A_{i,none} - A_{none,none}` (`lvGrowth A`) and `B_ij = A_{ij} - A_{none,j}`
 (`lvInteraction A`), the map `x ↦ (x_i / x_none)_i` (`toLV`), with inverse
-`y ↦ (1, y) / (1 + ∑ y_j)` (`ofLV`) on the simplex (`toLV_ofLV`, `ofLV_toLV`), sends orbits of
-the replicator equation to orbits of the Lotka–Volterra equation, preserving their orientation.
+`y ↦ (1, y) / (1 + ∑ y_j)` (`ofLV`), a bijection between the interior of the simplex and the
+open positive orthant (`toLV_ofLV`, `ofLV_toLV`, `toLV_pos`, `ofLV_pos`), sends orbits of the
+replicator equation to orbits of the Lotka–Volterra equation, preserving their orientation.
 The two directions are proved separately; that mapping a replicator trajectory to its
 Lotka–Volterra trajectory and back recovers the original trajectory (up to the time changes) is
 not proved here.
@@ -161,7 +162,9 @@ noncomputable def toLV (x : Option ι → ℝ) : ι → ℝ :=
   fun i => x (some i) / x none
 
 /-- Lotka–Volterra to replicator coordinates: `x_none = 1 / (1 + ∑ y_j)`,
-`x_i = y_i / (1 + ∑ y_j)`. Meaningful for `1 + ∑ y_j ≠ 0`; it lands in the simplex. -/
+`x_i = y_i / (1 + ∑ y_j)`. Meaningful for `1 + ∑ y_j ≠ 0`, where it lands in the affine
+hyperplane `∑ x_k = 1` (`sum_ofLV`); for positive `y` it lands in the interior of the simplex
+(`ofLV_pos`). -/
 noncomputable def ofLV (y : ι → ℝ) : Option ι → ℝ :=
   fun k => k.elim 1 y / (1 + ∑ j, y j)
 
