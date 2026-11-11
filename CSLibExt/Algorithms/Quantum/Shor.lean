@@ -18,7 +18,6 @@ algorithm. So far it contains the proved classical post-processing step:
 from a multiplicative order `r` of `a` modulo `N` with `r` even and
 `a ^ (r / 2) ≢ ±1 (mod N)`, `gcd (a ^ (r / 2) - 1) N` is a nontrivial factor
 of `N` (`gcd_factor_of_order`, with the existential form
-`exists_factor_of_order`). The quantum order-finding subroutine is not
-formalized yet; the full factoring theorem is the `theorem_wanted` statement
-`shor_factoring` in `WantedExt/QuantumInformation/ShorFactoringWanted.lean`.
+`exists_factor_of_order`). The quantum order-finding subroutine and the full
+factoring theorem are not formalized in this module.
 -/
