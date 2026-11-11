@@ -1,0 +1,310 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.Causality.CausalIdentification
+public import Mathlib.Probability.ConditionalProbability
+
+/-!
+# Identification of a mean with a missing outcome
+
+An outcome `Y : Ω → ℝ` is observed only on the *response event* `R`; a covariate `X` is always
+observed. The observed data are `(X, 1_R, 1_R Y)`. The **full-data estimand** is the mean
+`E[Y] = ∫ Y ∂μ`, a functional of the law of `Y`, which is never fully observed. An
+**observed-data estimand** is a functional of the law of the observed data. *Identification*
+means that, under assumptions on the missingness mechanism, an observed-data estimand equals the
+full-data estimand.
+
+The missingness assumptions are taken as explicit hypotheses, stated through the existing
+`CondIndepDiscrete` (conditional independence given a discrete variable):
+
+* MCAR, `R ⊥ (X, Y)`: `CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ => ())`, conditional
+  independence given a constant;
+* MAR, `R ⊥ Y | X`: `CondIndepDiscrete μ R Y X` for a covariate with finitely many values, or, for
+  a general covariate σ-algebra `m`, the mean form `E[1_R Y | m] = P(R | m) E[Y | m]`.
+
+## Main definitions
+
+* `completeCaseMean μ R Y`: the mean of `Y` over the respondents, `E[1_R Y] / P(R)`.
+* `ipwMean μ R X Y`: the inverse-response-weighted mean `E[1_R Y / π(X)]`, with
+  `π(x) = P(R | X = x)` the response probability (`propensity`).
+
+Both depend on `Y` only through its values on `R` (`completeCaseMean_congr`, `ipwMean_congr`),
+so they are observed-data estimands; neither is defined as the full-data mean.
+
+## Main results
+
+* `completeCaseMean_eq_integral_of_mcar`: under MCAR and `P(R) > 0`, the complete-case mean
+  identifies `E[Y]`; `completeCaseMean_eq_integral_of_indep` needs only `R ⊥ Y`.
+* `completeCaseMean_eq_integral_cond`: the complete-case mean is the mean of `Y` under the
+  conditional law `μ[|R]`.
+* `ipwMean_eq_integral_of_mar`: under MAR given a finitely-valued `X` and positivity
+  `π(x) > 0` (no upper bound on `π` is needed, unlike treatment overlap), the inverse-response
+  weighted mean identifies `E[Y]`; `integrable_ipw_of_mar` gives integrability of the weighted
+  outcome.
+* `integral_ipw_eq_integral_of_mar_condExp`: the same identity for a general covariate
+  σ-algebra, under mean MAR and strong positivity `P(R | m) ≥ ε > 0`; an instance of the general
+  inverse probability weighting theorem `integral_ipw_treated_condExp`.
+* Boundary: `completeCaseMean_of_measureReal_eq_zero` (no respondents: the junk value `0`).
+
+## Not covered
+
+The definitions of MCAR, MAR and of the observed-data map as named predicates (they belong
+with the missing-data definitions); nonidentification under missingness not at random;
+estimation and asymptotics of the plug-in estimators; augmented (doubly robust) weighting.
+
+## References
+
+* D. B. Rubin, *Inference and missing data*, Biometrika 63(3) (1976), 581–592.
+* R. J. A. Little and D. B. Rubin, *Statistical Analysis with Missing Data*, 3rd ed., Wiley
+  (2019), Chapters 1 and 3.
+* D. G. Horvitz and D. J. Thompson, *A generalization of sampling without replacement from a
+  finite universe*, JASA 47(260) (1952), 663–685.
+* A. A. Tsiatis, *Semiparametric Theory and Missing Data*, Springer (2006), Chapter 6.
+-/
+
+@[expose] public section
+
+namespace MathlibExt.Probability.Causality.MissingData
+
+open MeasureTheory ProbabilityTheory Finset
+open MathlibExt.Probability.Causality
+
+variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+
+/-! ### Observed-data estimands -/
+
+section Estimands
+
+/-- The **complete-case mean** of an outcome `Y` observed on the response event `R`:
+`E[1_R Y] / P(R)`, the average of `Y` over the respondents. An observed-data estimand
+(`completeCaseMean_congr`). It is `0` (a junk value) when `P(R) = 0`. -/
+noncomputable def completeCaseMean (μ : Measure Ω) (R : Set Ω) (Y : Ω → ℝ) : ℝ :=
+  (∫ ω, R.indicator Y ω ∂μ) / μ.real R
+
+/-- The **inverse-response-weighted mean** `E[1_R Y / π(X)]` of an outcome `Y` observed on the
+response event `R`, where `π(x) = P(R | X = x)` is the response probability given the
+always-observed discrete covariate `X` (Horvitz & Thompson 1952). An observed-data estimand
+(`ipwMean_congr`). -/
+noncomputable def ipwMean {β : Type*} (μ : Measure Ω) (R : Set Ω) (X : Ω → β) (Y : Ω → ℝ) : ℝ :=
+  ∫ ω, R.indicator (fun ω => Y ω / propensity μ R X (X ω)) ω ∂μ
+
+/-- The complete-case mean depends on the outcome only through its values on the respondents. -/
+theorem completeCaseMean_congr {R : Set Ω} {Y Y' : Ω → ℝ} (h : Set.EqOn Y Y' R) :
+    completeCaseMean μ R Y = completeCaseMean μ R Y' := by
+  rw [completeCaseMean, completeCaseMean, Set.indicator_congr h]
+
+/-- The inverse-response-weighted mean depends on the outcome only through its values on the
+respondents. -/
+theorem ipwMean_congr {β : Type*} {R : Set Ω} {X : Ω → β} {Y Y' : Ω → ℝ}
+    (h : Set.EqOn Y Y' R) : ipwMean μ R X Y = ipwMean μ R X Y' := by
+  rw [ipwMean, ipwMean, Set.indicator_congr fun ω hω => by rw [h hω]]
+
+/-- **No respondents**: with `P(R) = 0` the complete-case mean is the junk value `0`. -/
+theorem completeCaseMean_of_measureReal_eq_zero {R : Set Ω} (Y : Ω → ℝ) (h : μ.real R = 0) :
+    completeCaseMean μ R Y = 0 := by
+  rw [completeCaseMean, h, div_zero]
+
+/-- The complete-case mean is the mean of `Y` under the conditional law `μ[|R]` given
+response. -/
+theorem completeCaseMean_eq_integral_cond {R : Set Ω} (hR : MeasurableSet R) (Y : Ω → ℝ) :
+    completeCaseMean μ R Y = ∫ ω, Y ω ∂(μ[|R]) := by
+  rw [completeCaseMean, ProbabilityTheory.cond, integral_smul_measure, integral_indicator hR,
+    ENNReal.toReal_inv, smul_eq_mul, ← measureReal_def, div_eq_inv_mul]
+
+end Estimands
+
+/-! ### Per-stratum factorization under conditional independence -/
+
+section Factorization
+
+/-- If the response event `R` is conditionally independent of `Y` given `W`, then on each
+stratum `{W = w}` the integral of `Y` over the respondents factors as
+`∫_{R ∩ {W = w}} Y = π(w) ∫_{W = w} Y`. No integrability is needed: both sides are integrals
+against proportional image measures. -/
+private lemma setIntegral_inter_eq_propensity_mul {γ : Type*} [IsFiniteMeasure μ] {R : Set Ω}
+    {W : Ω → γ} {Y : Ω → ℝ} (hY : Measurable Y) (h : CondIndepDiscrete μ R Y W) (w : γ) :
+    ∫ ω in R ∩ W ⁻¹' {w}, Y ω ∂μ = propensity μ R W w * ∫ ω in W ⁻¹' {w}, Y ω ∂μ := by
+  set A := W ⁻¹' {w}
+  by_cases h0 : μ.real A = 0
+  · have hA0 : μ A = 0 := (measureReal_eq_zero_iff).1 h0
+    rw [Measure.restrict_eq_zero.2 hA0,
+      Measure.restrict_eq_zero.2 (measure_mono_null Set.inter_subset_right hA0)]
+    simp
+  have he : 0 ≤ propensity μ R W w := div_nonneg measureReal_nonneg measureReal_nonneg
+  have hmeas : (μ.restrict (R ∩ A)).map Y =
+      ENNReal.ofReal (propensity μ R W w) • (μ.restrict A).map Y := by
+    ext B hB
+    rw [Measure.map_apply hY hB, Measure.smul_apply, Measure.map_apply hY hB,
+      Measure.restrict_apply (hY hB), Measure.restrict_apply (hY hB), smul_eq_mul,
+      ← ofReal_measureReal, ← ofReal_measureReal, ← ENNReal.ofReal_mul he]
+    congr 1
+    have key := h B hB w
+    have hs1 : Y ⁻¹' B ∩ (R ∩ A) = R ∩ Y ⁻¹' B ∩ A := by
+      ext; simp only [Set.mem_inter_iff, Set.mem_preimage]; tauto
+    rw [hs1, propensity, div_mul_eq_mul_div, eq_div_iff h0, key]
+  calc ∫ ω in R ∩ A, Y ω ∂μ = ∫ y, y ∂((μ.restrict (R ∩ A)).map Y) :=
+        (integral_map hY.aemeasurable aestronglyMeasurable_id).symm
+    _ = propensity μ R W w * ∫ ω in A, Y ω ∂μ := by
+        rw [hmeas, integral_smul_measure, ENNReal.toReal_ofReal he, smul_eq_mul]
+        congr 1
+        exact integral_map hY.aemeasurable aestronglyMeasurable_id
+
+end Factorization
+
+/-! ### Complete-case identification under MCAR -/
+
+section MCAR
+
+variable [IsProbabilityMeasure μ]
+
+/-- If the response event is independent of the outcome, `R ⊥ Y` (stated as conditional
+independence given a constant), then `E[1_R Y] = P(R) E[Y]`. -/
+theorem integral_indicator_eq_measureReal_mul_of_indep {R : Set Ω} (hR : MeasurableSet R)
+    {Y : Ω → ℝ} (hY : Measurable Y) (hind : CondIndepDiscrete μ R Y (fun _ : Ω => ())) :
+    ∫ ω, R.indicator Y ω ∂μ = μ.real R * ∫ ω, Y ω ∂μ := by
+  have h := setIntegral_inter_eq_propensity_mul hY hind ()
+  simp only [Set.preimage_const, Set.mem_singleton_iff, ↓reduceIte, Set.inter_univ,
+    Measure.restrict_univ] at h
+  rw [integral_indicator hR, h]
+  simp [propensity]
+
+/-- **Complete-case identification**: if the response event is independent of the outcome,
+`R ⊥ Y`, and some units respond, `P(R) > 0`, then the complete-case mean (an observed-data
+estimand) equals the full-data mean `E[Y]`. -/
+theorem completeCaseMean_eq_integral_of_indep {R : Set Ω} (hR : MeasurableSet R)
+    {Y : Ω → ℝ} (hY : Measurable Y) (hind : CondIndepDiscrete μ R Y (fun _ : Ω => ()))
+    (hpos : 0 < μ.real R) :
+    completeCaseMean μ R Y = ∫ ω, Y ω ∂μ := by
+  rw [completeCaseMean, integral_indicator_eq_measureReal_mul_of_indep hR hY hind,
+    mul_div_cancel_left₀ _ hpos.ne']
+
+/-- **Complete-case identification under MCAR** (Rubin 1976): if the outcome is missing
+completely at random, `R ⊥ (X, Y)`, and `P(R) > 0`, then the complete-case mean equals the
+full-data mean `E[Y]`. -/
+theorem completeCaseMean_eq_integral_of_mcar {β : Type*} [MeasurableSpace β] {R : Set Ω}
+    (hR : MeasurableSet R) {X : Ω → β} {Y : Ω → ℝ} (hY : Measurable Y)
+    (hMCAR : CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ : Ω => ()))
+    (hpos : 0 < μ.real R) :
+    completeCaseMean μ R Y = ∫ ω, Y ω ∂μ :=
+  completeCaseMean_eq_integral_of_indep hR hY
+    (fun B hB w => hMCAR (Prod.snd ⁻¹' B) (measurable_snd hB) w) hpos
+
+/-- Under MCAR and `P(R) > 0`, the mean of the outcome under the conditional law given
+response equals its full-data mean. -/
+theorem integral_cond_eq_integral_of_mcar {β : Type*} [MeasurableSpace β] {R : Set Ω}
+    (hR : MeasurableSet R) {X : Ω → β} {Y : Ω → ℝ} (hY : Measurable Y)
+    (hMCAR : CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ : Ω => ()))
+    (hpos : 0 < μ.real R) :
+    ∫ ω, Y ω ∂(μ[|R]) = ∫ ω, Y ω ∂μ := by
+  rw [← completeCaseMean_eq_integral_cond hR, completeCaseMean_eq_integral_of_mcar hR hY hMCAR hpos]
+
+end MCAR
+
+/-! ### Inverse-response weighting under MAR, finitely-valued covariate -/
+
+section MARDiscrete
+
+variable {𝒳 : Type*} [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳]
+
+/-- Reweighting: if `∫_{S ∩ {X = x}} Y = p x ∫_{X = x} Y` for every `x`, and `p x ≠ 0` on
+values of positive probability, then `1_S Y / p(X)` is integrable with integral `∫ Y`. -/
+private lemma integral_indicator_div_eq {S : Set Ω} (hS : MeasurableSet S)
+    {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hYi : Integrable Y μ) (p : 𝒳 → ℝ)
+    (hp : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → p x ≠ 0)
+    (hrel : ∀ x, ∫ ω in S ∩ X ⁻¹' {x}, Y ω ∂μ = p x * ∫ ω in X ⁻¹' {x}, Y ω ∂μ) :
+    Integrable (S.indicator fun ω => Y ω / p (X ω)) μ ∧
+      ∫ ω, S.indicator (fun ω => Y ω / p (X ω)) ω ∂μ = ∫ ω, Y ω ∂μ := by
+  have := Fintype.ofFinite 𝒳
+  have hU : (⋃ x, X ⁻¹' {x}) = Set.univ := by ext ω; simp
+  have hA : ∀ x : 𝒳, MeasurableSet (X ⁻¹' {x}) := fun x => hX (measurableSet_singleton x)
+  have hdisj : Pairwise (Function.onFun Disjoint fun x : 𝒳 => X ⁻¹' {x}) := fun x y hxy =>
+    Set.disjoint_left.2 fun ω h1 h2 => hxy (h1.symm.trans h2)
+  have heq : ∀ x, Set.EqOn (S.indicator fun ω => Y ω / p (X ω))
+      (fun ω => S.indicator Y ω * (p x)⁻¹) (X ⁻¹' {x}) := by
+    intro x ω hω
+    have hω' : X ω = x := hω
+    by_cases hS' : ω ∈ S <;> simp [hS', hω', div_eq_mul_inv]
+  have hon : ∀ x, IntegrableOn (S.indicator fun ω => Y ω / p (X ω)) (X ⁻¹' {x}) μ := fun x =>
+    (((hYi.indicator hS).mul_const (p x)⁻¹).integrableOn).congr_fun (heq x).symm (hA x)
+  have hint : Integrable (S.indicator fun ω => Y ω / p (X ω)) μ := by
+    rw [← integrableOn_univ, ← hU]
+    exact integrableOn_finite_iUnion.2 hon
+  refine ⟨hint, ?_⟩
+  have hsplit : ∀ g : Ω → ℝ, (∀ x, IntegrableOn g (X ⁻¹' {x}) μ) →
+      ∫ ω, g ω ∂μ = ∑ x, ∫ ω in X ⁻¹' {x}, g ω ∂μ := by
+    intro g hg
+    rw [← setIntegral_univ, ← hU, integral_iUnion_fintype hA hdisj hg]
+  rw [hsplit _ hon, hsplit _ fun x => hYi.integrableOn]
+  refine sum_congr rfl fun x _ => ?_
+  rw [setIntegral_congr_fun (hA x) (heq x), integral_mul_const, setIntegral_indicator hS,
+    Set.inter_comm, hrel x]
+  by_cases h0 : μ (X ⁻¹' {x}) = 0
+  · rw [Measure.restrict_eq_zero.2 h0]; simp
+  · field_simp [hp x h0]
+
+variable [IsFiniteMeasure μ]
+
+private lemma ipw_of_mar {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳}
+    (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
+    (hMAR : CondIndepDiscrete μ R Y X)
+    (hpos : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → 0 < propensity μ R X x) :
+    Integrable (R.indicator fun ω => Y ω / propensity μ R X (X ω)) μ ∧
+      ipwMean μ R X Y = ∫ ω, Y ω ∂μ :=
+  integral_indicator_div_eq hR hX hYi _ (fun x hx => (hpos x hx).ne')
+    (setIntegral_inter_eq_propensity_mul hY hMAR)
+
+/-- Under MAR given a finitely-valued covariate and positivity of the response probability,
+the inverse-response-weighted outcome `1_R Y / π(X)` is integrable. -/
+theorem integrable_ipw_of_mar {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳}
+    (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
+    (hMAR : CondIndepDiscrete μ R Y X)
+    (hpos : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → 0 < propensity μ R X x) :
+    Integrable (R.indicator fun ω => Y ω / propensity μ R X (X ω)) μ :=
+  (ipw_of_mar hR hX hY hYi hMAR hpos).1
+
+/-- **Identification by inverse-response weighting under MAR**: if the outcome is missing at
+random given a finitely-valued, always-observed covariate, `R ⊥ Y | X`, and the response
+probability is positive, `π(x) = P(R | X = x) > 0` for every `x` of positive probability, then
+the inverse-response-weighted mean `E[1_R Y / π(X)]` (an observed-data estimand) equals the
+full-data mean `E[Y]`. Only `π > 0` is needed: `π = 1` (full response in a stratum) is
+allowed. -/
+theorem ipwMean_eq_integral_of_mar {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳}
+    (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
+    (hMAR : CondIndepDiscrete μ R Y X)
+    (hpos : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → 0 < propensity μ R X x) :
+    ipwMean μ R X Y = ∫ ω, Y ω ∂μ :=
+  (ipw_of_mar hR hX hY hYi hMAR hpos).2
+
+end MARDiscrete
+
+/-! ### Inverse-response weighting under MAR, general covariate -/
+
+section MARGeneral
+
+/-- **Identification by inverse-response weighting under MAR, general covariate**: let the
+always-observed covariate information be a sub-σ-algebra `m` and `π = P(R | m)` the response
+probability. If `Y` is integrable, the outcome is mean-missing-at-random,
+`E[1_R Y | m] = π E[Y | m]` (implied by `R ⊥ Y | m`), and strong positivity `π ≥ ε > 0`
+holds, then `E[1_R Y / π] = E[Y]`. This is `integral_ipw_treated_condExp` with the response
+event as the treatment and the missing outcome as the treated potential outcome. -/
+theorem integral_ipw_eq_integral_of_mar_condExp {m : MeasurableSpace Ω} (hm : m ≤ mΩ)
+    [IsProbabilityMeasure μ] {R : Set Ω} (hR : MeasurableSet[mΩ] R) {Y : Ω → ℝ}
+    (hY : Integrable Y μ)
+    (hMAR : μ[R.indicator Y | m] =ᵐ[μ] fun ω => μ[R.indicator 1 | m] ω * μ[Y | m] ω)
+    {ε : ℝ} (hε : 0 < ε) (hpos : ∀ᵐ ω ∂μ, ε ≤ μ[R.indicator 1 | m] ω) :
+    ∫ ω, R.indicator (fun ω => Y ω / μ[R.indicator 1 | m] ω) ω ∂μ = ∫ ω, Y ω ∂μ := by
+  rw [← integral_ipw_treated_condExp hm hR (Y₀ := 0) hY hMAR hε hpos]
+  congr 1
+  funext ω
+  by_cases hω : ω ∈ R <;> simp [observed, hω]
+
+end MARGeneral
+
+end MathlibExt.Probability.Causality.MissingData
