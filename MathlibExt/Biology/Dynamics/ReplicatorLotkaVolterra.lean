@@ -35,18 +35,23 @@ intrinsic growth rates `r` and interaction matrix `B`, is
 
   `y_i' = y_i (r_i + ∑_j B_ij y_j)`   (`lvField r B`).
 
-**Hofbauer's theorem** (Hofbauer 1981; Hofbauer–Sigmund 1998, Thm 7.5.1): with
+**Hofbauer's theorem** (Hofbauer 1981; Hofbauer–Sigmund 1998, §7.5): with
 `r_i = A_{i,none} - A_{none,none}` (`lvGrowth A`) and `B_ij = A_{ij} - A_{none,j}`
 (`lvInteraction A`), the map `x ↦ (x_i / x_none)_i` (`toLV`), with inverse
-`y ↦ (1, y) / (1 + ∑ y_j)` (`ofLV`) on the simplex, sends orbits of the replicator equation
-to orbits of the Lotka–Volterra equation, preserving their orientation.
+`y ↦ (1, y) / (1 + ∑ y_j)` (`ofLV`) on the simplex (`toLV_ofLV`, `ofLV_toLV`), sends orbits of
+the replicator equation to orbits of the Lotka–Volterra equation, preserving their orientation.
+The two directions are proved separately; that mapping a replicator trajectory to its
+Lotka–Volterra trajectory and back recovers the original trajectory (up to the time changes) is
+not proved here.
 
 **Time is not preserved.** Only the oriented orbits correspond. Along a replicator solution
 `x(t)`, the image `toLV (x t)` runs through a Lotka–Volterra orbit at the speed
 `x_none(t)`, so the Lotka–Volterra time is `τ(t) = ∫₀ᵗ x_none(s) ds` (`timeChange`); in the
 other direction the replicator time is `t(τ) = ∫₀^τ (1 + ∑ y_j(σ)) dσ` (`repTimeChange`).
-Both time changes are `C¹` with positive derivative (orientation preserving), and neither is
-the identity: on the interior of the simplex with at least two strategies, `τ(t) < t` and
+Both time changes are `C¹` with positive derivative (orientation preserving); because the speed
+is clamped at time `0` (see below), the extensions to `ℝ` are in general not `C²` (the
+derivative has a corner at `0`), and smoothness on `(0, ∞)` is not claimed. Neither is the
+identity: on the interior of the simplex with at least two strategies, `τ(t) < t` and
 `t(τ) > τ` for all positive times (`timeChange_lt_self`, `lt_repTimeChange_self`). In
 particular a replicator solution defined for all `t ≥ 0` may correspond to a Lotka–Volterra
 solution defined only on a bounded interval `[0, ∫₀^∞ x_none)` (finite-time blow-up; see the
@@ -87,15 +92,21 @@ trajectories (`lvTrajectory`, `repTrajectory`) are obtained by composing with
   (`Replicator.IsSolution`) in the interior of the simplex, and `τ < repTimeChange y τ` for
   `τ > 0`.
 
+The two directions do not chain. The reverse direction covers only Lotka–Volterra solutions
+that exist for all `τ ≥ 0`; it does not handle solutions that blow up in finite time, such as
+the trajectory `eᵘ / (2 - eᵘ)` produced from the logistic replicator solution in the tests
+(there `t(τ) → ∞` as `τ` approaches the blow-up time, so such a solution should still give a
+replicator solution for all time, but this is not proved here).
+
 ## Source receipt
 
 Statement source: J. Hofbauer and K. Sigmund, *Evolutionary Games and Population Dynamics*
-(1998), §7.5, Theorem 7.5.1 (paraphrased, not quoted): there is a differentiable, invertible map
-from `{x ∈ S_n : x_n > 0}` onto `ℝ^{n-1}_+` sending orbits of the replicator equation of the
-`n × n` game `(a_ij)` to orbits of the Lotka–Volterra equation with `r_i = a_in - a_nn` and
-interaction matrix `a_ij - a_nj`; the proof uses `y_i = x_i / x_n` and the time change
-`dτ = x_n dt`. Here the reference strategy `n` is `none`, and the domain is restricted
-further to all coordinates positive.
+(1998), §7.5, Theorem 7.5.1 (theorem number not checked against the book; paraphrased, not
+quoted): there is a differentiable, invertible map from `{x ∈ S_n : x_n > 0}` onto
+`ℝ^{n-1}_+` sending orbits of the replicator equation of the `n × n` game `(a_ij)` to orbits of
+the Lotka–Volterra equation with `r_i = a_in - a_nn` and interaction matrix `a_ij - a_nj`; the
+proof uses `y_i = x_i / x_n` and the time change `dτ = x_n dt`. Here the reference strategy
+`n` is `none`, and the domain is restricted further to all coordinates positive.
 Reuse search (2026-11-11): the repo's replicator dynamics (`Replicator.IsSolution`,
 `Replicator.meanFitness`, `IsSolution.sum_eq_one`, `IsSolution.pos_of_pos`) are reused; the
 only Lotka–Volterra model in the repo is the two-species predator–prey system (no vector field
@@ -209,6 +220,22 @@ theorem sum_ofLV {y : ι → ℝ} (hy : 1 + ∑ j, y j ≠ 0) : ∑ k, ofLV y k 
   rw [Fintype.sum_option, ofLV_none]
   simp only [ofLV_some, ← Finset.sum_div]
   field_simp
+
+/-- `ofLV` inverts `toLV` on the hyperplane `∑ x_k = 1` (where `x_none ≠ 0`). -/
+theorem ofLV_toLV {x : Option ι → ℝ} (h0 : x none ≠ 0) (h1 : ∑ k, x k = 1) :
+    ofLV (toLV x) = x := by
+  have hS : 1 + ∑ j, toLV x j = 1 / x none := by
+    rw [Fintype.sum_option] at h1
+    simp only [toLV, ← Finset.sum_div]
+    field_simp
+    linarith
+  ext k
+  cases k with
+  | none => simp [hS]
+  | some i =>
+    rw [ofLV_some, hS]
+    simp only [toLV]
+    field_simp
 
 /-- `toLV` inverts `ofLV`. -/
 theorem toLV_ofLV {y : ι → ℝ} (hy : 1 + ∑ j, y j ≠ 0) : toLV (ofLV y) = y := by
@@ -455,7 +482,7 @@ theorem timeChange_lt_self [Nonempty ι] (hx : IsSolution f x) (hf : Continuous 
   linarith
 
 /-- **Orbital equivalence, replicator to Lotka–Volterra** (Hofbauer–Sigmund 1998,
-Thm 7.5.1). Let `x` solve the replicator equation of the game `A` with initial state in the
+§7.5). Let `x` solve the replicator equation of the game `A` with initial state in the
 interior of the simplex. The explicit time change `τ = timeChange x`, `τ(t) = ∫₀ᵗ x_none`, is
 `C¹` with positive derivative `x_none` (orientation preserving) and `τ(0) = 0`; the curve
 `lvTrajectory x` is positive and solves the Lotka–Volterra equation with
@@ -595,14 +622,16 @@ theorem isSolution_repTrajectory
       (fun s => zero_lt_one.trans_le (one_le_repTimeChange_deriv hpos s)) hc
 
 /-- **Orbital equivalence, Lotka–Volterra to replicator** (Hofbauer–Sigmund 1998,
-Thm 7.5.1). Let `y` be a positive solution on `[0, ∞)` of the Lotka–Volterra equation with
+§7.5). Let `y` be a positive solution on `[0, ∞)` of the Lotka–Volterra equation with
 `r = lvGrowth A`, `B = lvInteraction A` (every `r`, `B` arises this way, from `lvGame r B`).
 The explicit time change `t = repTimeChange y`, `t(τ) = ∫₀^τ (1 + ∑ y_j)`, is `C¹` with
 derivative `≥ 1` (orientation preserving) and `t(0) = 0`; the curve `repTrajectory y` solves
 the replicator equation of the game `A` for all `t ≥ 0`, stays in the interior of the simplex,
 and equals `ofLV (y τ)` at time `t(τ)`. The original times are **not** identified:
 `τ < t(τ)` for `τ > 0` whenever there is at least one species. Boundary states are
-excluded. -/
+excluded. Only Lotka–Volterra solutions existing for all `τ ≥ 0` are covered; solutions that
+blow up in finite time (such as those produced by `replicator_orbitEquiv_lotkaVolterra` when
+`∫₀^∞ x_none < ∞`) are not. -/
 theorem lotkaVolterra_orbitEquiv_replicator [Nonempty ι]
     (hy : ∀ i τ, 0 ≤ τ → HasDerivAt (fun σ => y σ i)
       (lvField (lvGrowth A) (lvInteraction A) (y τ) i) τ)
