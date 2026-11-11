@@ -129,6 +129,10 @@ example : D.deaths 2 + D.censored 2 = #{i | g i = 2} :=
 example : D.deaths 1 = 0 ∧ D.censored 1 = 0 :=
   CensoredData.deaths_ofSubjects_eq_zero_and_censored_ofSubjects_eq_zero _ _ _ _ (by decide)
 
+/-- The risk-set bridge gives subject `2` the risk set `{2, 3, 4}` (subjects recorded at `t₂`). -/
+example : riskSet (t ∘ g) 2 = {2, 3, 4} :=
+  (riskSet_comp_group t_strictMono g 2).trans (by decide)
+
 /-- The Cox bridge reproduces the directly computed risk-set size. -/
 example : numAtRisk (t ∘ g) 2 = D.atRisk 2 := numAtRisk_comp_group t_strictMono g δ 2
 
