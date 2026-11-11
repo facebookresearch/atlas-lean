@@ -68,15 +68,19 @@ statistic (the population version of the mean-based estimator of `λ`):
   stratification term `a` common to all markers, `λ_GC = 1 + N a` and every marker has
   `𝔼[χ²_j] / λ_GC = 1`.
 * `integral_chiSqStrat_div_lambdaGC_eq_one_iff`: with polygenic signal `h² ≠ 0`,
-  `𝔼[χ²_j] / λ_GC = 1` holds exactly for the markers whose LD score equals the mean LD score;
-  every other marker is over- or under-corrected. Genomic control absorbs polygenic signal
-  into `λ`.
+  `𝔼[χ²_j] / λ_GC = 1` holds exactly for the markers whose LD score equals the mean LD score.
+  By `integral_chiSqStrat_sub_lambdaGC`, markers below the mean LD score get a ratio below `1`
+  (over-corrected, `integral_chiSqStrat_div_lambdaGC_lt_one_of_lt`) and markers above it a ratio
+  above `1` (under-corrected, `one_lt_integral_chiSqStrat_div_lambdaGC_of_lt`): genomic control
+  absorbs polygenic signal into `λ`. With `h² ≠ 0` no marker is null, so these are
+  statements about the expected statistic, not about type I error.
 * `not_exists_lambda_calibrates_of_strat_ne`: with `h² = 0` but stratification terms that
   differ between two markers, no single `λ` makes both expected statistics equal to `1`.
 
-The fixed shift of `LDScoreInflation` makes the score's mean nonzero, so its statistic is a
-*noncentral* `χ²` rather than a scaled central one; the moment results therefore do not imply
-the distributional ones, which assume the multiplicative-variance structure above.
+The fixed shift of `LDScoreInflation` gives the score a nonzero mean, and `LDScore.Model` fixes
+only second moments, so the statistic is not a scaled central `χ²₁` (under Gaussianity it would
+be a noncentral `χ²`); the moment results therefore do not imply the distributional ones, which
+assume the multiplicative-variance structure above.
 
 ## Reuse and sources (API-00 receipt)
 
@@ -180,6 +184,7 @@ namespace CommonInflationModel
 
 variable {Ω ι : Type*} [MeasurableSpace Ω] {P : Measure Ω} (G : CommonInflationModel P ι)
 
+/-- The common inflation factor is positive. -/
 theorem lam_pos : (0 : ℝ) < G.lam :=
   lt_of_le_of_ne G.lam.2 (by exact_mod_cast G.lam_ne_zero.symm)
 
@@ -305,7 +310,8 @@ theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (F
 
 /-- **Failure with polygenic signal.** With a common stratification term and `h² ≠ 0`,
 genomic control calibrates a marker in mean exactly when its LD score equals the mean LD
-score; every other marker is over- or under-corrected. -/
+score. With `h² ≠ 0` no marker is null, so "calibrated in mean" concerns the expected statistic,
+not type I error. -/
 theorem integral_chiSqStrat_div_lambdaGC_eq_one_iff [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (hh : D.h2 ≠ 0)
@@ -318,6 +324,44 @@ theorem integral_chiSqStrat_div_lambdaGC_eq_one_iff [IsProbabilityMeasure μ] (D
     div_ne_zero (mul_ne_zero (Nat.cast_ne_zero.mpr hN) hh) (Nat.cast_ne_zero.mpr hM)
   rw [div_eq_one_iff_eq hlam.ne', ← sub_eq_zero, hsub, mul_eq_zero, sub_eq_zero]
   exact or_iff_right hcoef
+
+/-- With a common stratification term and `h² ≠ 0`, a marker whose LD score is below the mean
+LD score is over-corrected in mean: `𝔼[χ²_j] / λ_GC < 1`. -/
+theorem integral_chiSqStrat_div_lambdaGC_lt_one_of_lt [IsProbabilityMeasure μ]
+    (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0)
+    (hX : IsStandardized X) (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0)
+    (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (hh : D.h2 ≠ 0) (s : ℝ) (c : Fin N → ℝ) {a : ℝ}
+    (ha : ∀ j, s ^ 2 * ((∑ i, X i j * c i) / N) ^ 2 = a) {j : Fin M}
+    (hj : ldScore X j < meanLDScore X) :
+    (∫ ω, chiSqStrat D X s c j ω ∂μ) / lambdaGC D X s c < 1 := by
+  have hlam := lambdaGC_pos D X hN hM hX hβ hε hh s c ha
+  have hsub := integral_chiSqStrat_sub_lambdaGC D X hN hM hX hβ hε s c ha j
+  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
+  have hcoef : (0 : ℝ) < N * D.h2 / M := by
+    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
+    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
+    positivity
+  rw [div_lt_one hlam]
+  nlinarith [mul_neg_of_pos_of_neg hcoef (sub_neg.mpr hj)]
+
+/-- With a common stratification term and `h² ≠ 0`, a marker whose LD score is above the mean
+LD score is under-corrected in mean: `𝔼[χ²_j] / λ_GC > 1`. -/
+theorem one_lt_integral_chiSqStrat_div_lambdaGC_of_lt [IsProbabilityMeasure μ]
+    (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0)
+    (hX : IsStandardized X) (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0)
+    (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (hh : D.h2 ≠ 0) (s : ℝ) (c : Fin N → ℝ) {a : ℝ}
+    (ha : ∀ j, s ^ 2 * ((∑ i, X i j * c i) / N) ^ 2 = a) {j : Fin M}
+    (hj : meanLDScore X < ldScore X j) :
+    1 < (∫ ω, chiSqStrat D X s c j ω ∂μ) / lambdaGC D X s c := by
+  have hlam := lambdaGC_pos D X hN hM hX hβ hε hh s c ha
+  have hsub := integral_chiSqStrat_sub_lambdaGC D X hN hM hX hβ hε s c ha j
+  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
+  have hcoef : (0 : ℝ) < N * D.h2 / M := by
+    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
+    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
+    positivity
+  rw [one_lt_div hlam]
+  nlinarith [mul_pos hcoef (sub_pos.mpr hj)]
 
 /-- **Failure with heterogeneous stratification.** With no polygenic signal but stratification
 terms that differ between two markers, no single `λ` calibrates both in mean. -/

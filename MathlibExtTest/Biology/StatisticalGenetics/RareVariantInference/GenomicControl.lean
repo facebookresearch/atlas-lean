@@ -86,6 +86,7 @@ noncomputable def μ8 : Measure (Fin 8) := (8⁻¹ : ℝ≥0∞) • Measure.cou
 instance : IsProbabilityMeasure μ8 :=
   ⟨by simpa [μ8] using ENNReal.inv_mul_cancel (by norm_num : (8 : ℝ≥0∞) ≠ 0) (by norm_num)⟩
 
+/-- Expectation under `μ8` is the average of the eight values. -/
 theorem integral_μ8 (f : Fin 8 → ℝ) :
     ∫ ω, f ω ∂μ8 = (f 0 + f 1 + f 2 + f 3 + f 4 + f 5 + f 6 + f 7) / 8 := by
   simp only [μ8, integral_smul_measure, integral_count, Fin.sum_univ_eight]
@@ -194,6 +195,21 @@ example : (∫ ω, chiSqStrat D1 X1 0 0 1 ω ∂μ8) / lambdaGC D1 X1 0 0 ≠ 1 
     ldScore_X1_one, meanLDScore_X1]
   norm_num
 
+/-- Marker `1` (LD score `1`, below the mean `5/3`) is over-corrected in mean, and marker `0`
+(LD score `2`, above the mean) is under-corrected. -/
+example : (∫ ω, chiSqStrat D1 X1 0 0 1 ω ∂μ8) / lambdaGC D1 X1 0 0 < 1 ∧
+    1 < (∫ ω, chiSqStrat D1 X1 0 0 0 ω ∂μ8) / lambdaGC D1 X1 0 0 := by
+  have hD1 : D1.h2 ≠ 0 := by norm_num [D1]
+  refine ⟨integral_chiSqStrat_div_lambdaGC_lt_one_of_lt D1 X1 (by norm_num) (by norm_num)
+    isStandardized_X1 D1_hβ D1_hε hD1 0 0 (a := 0) (fun j => by simp) ?_,
+    one_lt_integral_chiSqStrat_div_lambdaGC_of_lt D1 X1 (by norm_num) (by norm_num)
+    isStandardized_X1 D1_hβ D1_hε hD1 0 0 (a := 0) (fun j => by simp) ?_⟩
+  · rw [ldScore_X1_one, meanLDScore_X1]
+    norm_num
+  · rw [meanLDScore_X1]
+    simp [ldScore, ldCorr, X1, Fin.sum_univ_three, Fin.sum_univ_four]
+    norm_num
+
 #print axioms chiSqOneTail_lt_of_lt
 #print axioms measure_reject_eq_chiSqOneTail
 #print axioms CommonInflationModel.measure_reject_eq
@@ -205,6 +221,8 @@ example : (∫ ω, chiSqStrat D1 X1 0 0 1 ω ∂μ8) / lambdaGC D1 X1 0 0 ≠ 1 
 #print axioms integral_chiSqStrat_div_lambdaGC_of_null
 #print axioms lambdaGC_pos
 #print axioms integral_chiSqStrat_div_lambdaGC_eq_one_iff
+#print axioms integral_chiSqStrat_div_lambdaGC_lt_one_of_lt
+#print axioms one_lt_integral_chiSqStrat_div_lambdaGC_of_lt
 #print axioms not_exists_lambda_calibrates_of_strat_ne
 
 end MathlibExtTest.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
