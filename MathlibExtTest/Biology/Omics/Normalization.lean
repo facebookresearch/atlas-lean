@@ -119,6 +119,15 @@ example : clr (withPseudocount 1 one_pos ((2 : ℝ) • fun _ : Fin 2 => (1 : �
     clr (withPseudocount 1 one_pos (fun _ : Fin 2 => (1 : ℝ)) (fun _ => zero_le_one)) :=
   (clr_withPseudocount_smul_eq_iff 1 one_pos 2 two_pos (by norm_num) _ _).2 fun _ _ => rfl
 
+/-- Forward direction: if doubling the counts under a fixed pseudocount `1` leaves CLR unchanged,
+the two counts are equal. -/
+example (n : Fin 2 → ℝ) (hn : ∀ i, 0 ≤ n i)
+    (h : clr (withPseudocount 1 one_pos ((2 : ℝ) • n)
+        (fun i => by simpa using mul_nonneg zero_le_two (hn i))) =
+      clr (withPseudocount 1 one_pos n hn)) :
+    n 0 = n 1 :=
+  (clr_withPseudocount_smul_eq_iff 1 one_pos 2 two_pos (by norm_num) n hn).1 h 0 1
+
 /-! ### Boundary: no parts -/
 
 example (x : PosComposition (Fin 0)) : ∑ i, clr x i = 0 := sum_clr x
