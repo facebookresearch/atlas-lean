@@ -65,45 +65,6 @@ variable {ι Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace 
 
 namespace DeltaMethod
 
-/-- Convergence in probability to a constant is preserved by a function continuous at that
-constant. (Same statement as the private helper in `Slutsky.lean`.) -/
-private theorem comp_const_of_continuousAt {E F : Type*} [PseudoMetricSpace E]
-    [PseudoMetricSpace F] {Y : ι → Ω → E} {c : E} {f : E → F} (hf : ContinuousAt f c)
-    (hY : TendstoInMeasure μ Y l (fun _ ↦ c)) :
-    TendstoInMeasure μ (fun n ω ↦ f (Y n ω)) l (fun _ ↦ f c) := by
-  rw [tendstoInMeasure_iff_dist] at hY ⊢
-  intro ε hε
-  obtain ⟨δ, hδ, hδε⟩ := Metric.continuousAt_iff.1 hf ε hε
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds (hY δ hδ) (fun _ ↦ zero_le)
-    fun n ↦ measure_mono fun ω hω ↦ ?_
-  simp only [Set.mem_ofPred_eq] at hω ⊢
-  by_contra h
-  exact (hδε (not_le.1 h)).not_ge hω
-
-/-- Convergence in distribution to a constant implies convergence in probability to it.
-(Same statement as `MeasureTheory.tendstoInMeasure_of_tendstoInDistribution_const` in the heavier
-`MLEAsymptoticNormality.lean`.) -/
-private theorem tendstoInMeasure_of_tendstoInDistribution_const' [IsProbabilityMeasure μ]
-    [IsProbabilityMeasure μ'] {E : Type*} [PseudoMetricSpace E] [MeasurableSpace E]
-    [BorelSpace E] {X : ι → Ω → E} {c : E}
-    (h : TendstoInDistribution X l (fun _ : Ω' ↦ c) (fun _ ↦ μ) μ') :
-    TendstoInMeasure μ X l (fun _ ↦ c) := by
-  rw [tendstoInMeasure_iff_dist]
-  intro ε hε
-  set F : Set E := {y | ε ≤ dist y c}
-  have hF : IsClosed F := isClosed_le continuous_const (continuous_id.dist continuous_const)
-  have hlim := ProbabilityMeasure.limsup_measure_closed_le_of_tendsto h.tendsto hF
-  have hc : (μ'.map fun _ : Ω' ↦ c) F = 0 := by
-    rw [Measure.map_const, measure_univ, one_smul, Measure.dirac_apply' _ hF.measurableSet]
-    simp [F, hε.not_ge]
-  simp only [ProbabilityMeasure.coe_mk, hc] at hlim
-  have heq : ∀ i, μ {ω | ε ≤ dist (X i ω) c} = (μ.map (X i)) F := fun i ↦ by
-    rw [Measure.map_apply_of_aemeasurable (h.forall_aemeasurable i) hF.measurableSet]
-    rfl
-  simp_rw [heq]
-  refine tendsto_order.2 ⟨fun a ha ↦ absurd ha ENNReal.not_lt_zero, fun a ha ↦ ?_⟩
-  exact eventually_lt_of_limsup_lt (hlim.trans_lt ha)
-
 /-- A deterministic sequence converging to `c` converges to `c` in probability. -/
 private theorem tendstoInMeasure_const_seq {E : Type*} [SeminormedAddCommGroup E] {a : ι → E}
     {c : E} (ha : Tendsto a l (𝓝 c)) :
@@ -150,7 +111,7 @@ theorem TendstoInDistribution.delta_method {X : ι → Ω → E} {Z : Ω' → E}
       (fun _ ↦ aemeasurable_const)).congr (fun _ ↦ ae_of_all _ fun _ ↦ rfl)
       (ae_of_all _ fun ω ↦ zero_smul ℝ (Z ω))
   have hXθ : TendstoInMeasure μ X l (fun _ ↦ θ) := by
-    have h := (tendstoInMeasure_of_tendstoInDistribution_const' h1).congr'
+    have h := (tendstoInMeasure_of_tendstoInDistribution_const h1).congr'
       (f' := fun n ω ↦ X n ω - θ) ?_ EventuallyEq.rfl
     · rw [tendstoInMeasure_iff_norm] at h ⊢
       simpa using h
@@ -163,7 +124,7 @@ theorem TendstoInDistribution.delta_method {X : ι → Ω → E} {Z : Ω' → E}
     rw [ContinuousAt, hψθ, tendsto_zero_iff_norm_tendsto_zero]
     simpa [ψ, norm_smul] using hasFDerivAt_iff_tendsto.1 hg
   have hη : TendstoInMeasure μ (fun n ω ↦ ψ (X n ω)) l (fun _ ↦ 0) := by
-    have h := comp_const_of_continuousAt hψ hXθ
+    have h := hXθ.comp_const_of_continuousAt hψ
     rwa [hψθ] at h
   have hη_meas : ∀ n, AEMeasurable (fun ω ↦ ψ (X n ω)) μ := fun n ↦
     ((hX n).sub_const θ).norm.inv.smul (((hgX n).sub_const _).sub
@@ -177,7 +138,7 @@ theorem TendstoInDistribution.delta_method {X : ι → Ω → E} {Z : Ω' → E}
       (fun _ ↦ ae_of_all _ fun _ ↦ rfl) (ae_of_all _ fun _ ↦ smul_zero _)
   have hrem : TendstoInMeasure μ (fun n ω ↦ r n • (g (X n ω) - g θ - L (X n ω - θ))) l
       (fun _ ↦ 0) := by
-    refine (tendstoInMeasure_of_tendstoInDistribution_const' hprod).congr' ?_ EventuallyEq.rfl
+    refine (tendstoInMeasure_of_tendstoInDistribution_const hprod).congr' ?_ EventuallyEq.rfl
     filter_upwards [hr_pos] with n hn
     refine ae_of_all _ fun ω ↦ ?_
     by_cases hv : X n ω - θ = 0
