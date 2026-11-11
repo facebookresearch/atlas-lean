@@ -280,7 +280,7 @@ theorem hasLaw_inner_starProjection_orthogonal_sqrt {p : ι → ℝ} (hp₀ : �
 
 /-- Convergence in distribution depends on the limit only through its law.
 
-Copied verbatim from the private helper of the same name in
+Copied from the private helper of the same name in
 `MathlibExt.Probability.Statistics.LikelihoodRatioTests` (that file is outside this task's
 scope, so it is not made public here); the two copies should be merged into one public lemma. -/
 private theorem tendstoInDistribution_of_hasLaw {Ω₂ Ω₃ : Type*} [MeasurableSpace Ω₂]
@@ -410,8 +410,8 @@ omit [Fintype ι] in
 private theorem weight_apply (p q : ι → ℝ) (i : ι) : weight p q i = q i / √(p i) := by
   simp [weight, div_eq_inv_mul]
 
-/-- The tangent space of a model of probability vectors is orthogonal to `√p` after weighting:
-differentiating `∑ᵢ pᵢ(θ) = 1` (near `θ₀`) gives `∑ᵢ (D a)ᵢ = 0`. -/
+/-- The tangent space of a model whose cell probabilities sum to 1 near `θ₀` is orthogonal to
+`√p` after weighting: differentiating `∑ᵢ pᵢ(θ) = 1` (near `θ₀`) gives `∑ᵢ (D a)ᵢ = 0`. -/
 private theorem range_le_orthogonal_sqrtVec {F : Type*} [NormedAddCommGroup F]
     [NormedSpace ℝ F] {pθ : F → ι → ℝ} {θ₀ : F} (hpos : ∀ i, 0 < pθ θ₀ i)
     (hsum : ∀ᶠ θ in nhds θ₀, ∑ i, pθ θ i = 1) {D : F →L[ℝ] (ι → ℝ)} (hD : HasFDerivAt pθ D θ₀)
