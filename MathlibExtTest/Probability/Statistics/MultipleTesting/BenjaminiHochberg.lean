@@ -63,4 +63,43 @@ example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     (volume.restrict (Set.Icc (0 : ℝ) 1)) (fun _ : Fin 1 => id) (fun _ => measurable_id)
     (iIndepFun.of_subsingleton) Finset.univ (fun _ _ => HasLaw.id) q hq₀ hq₁
 
+/-- A fair coin on `Bool`: the law of a discrete p-value taking the values `1 / 2` and `1`. -/
+noncomputable def coin : Measure Bool :=
+  (2 : ENNReal)⁻¹ • Measure.dirac true + (2 : ENNReal)⁻¹ • Measure.dirac false
+
+/-- The fair coin is a probability measure. -/
+instance : IsProbabilityMeasure coin :=
+  ⟨by simp [coin, ENNReal.inv_two_add_inv_two]⟩
+
+/-- The discrete p-value `1 / 2` (heads) or `1` (tails); it is not uniform. -/
+noncomputable def coinP (b : Bool) : ℝ := if b then 1 / 2 else 1
+
+/-- The coin p-value is valid: `P(coinP ≤ t)` is `0` for `t < 1 / 2`, `1 / 2` for
+`1 / 2 ≤ t < 1`, and `1` at `t = 1`. -/
+theorem isValidPValue_coinP : IsValidPValue coin coinP := by
+  intro t ⟨ht₀, ht₁⟩
+  rcases eq_or_lt_of_le ht₁ with rfl | hlt
+  · simpa using prob_le_one
+  · by_cases hhalf : 1 / 2 ≤ t
+    · have hset : {b | coinP b ≤ t} = {true} := by
+        ext b; cases b <;> simp [coinP] <;> linarith
+      rw [hset]
+      calc coin {true} = 2⁻¹ := by simp [coin]
+        _ = ENNReal.ofReal (1 / 2) := by
+          rw [one_div, ENNReal.ofReal_inv_of_pos two_pos]; simp
+        _ ≤ ENNReal.ofReal t := ENNReal.ofReal_le_ofReal hhalf
+    · replace hhalf := not_le.mp hhalf
+      have hset : {b | coinP b ≤ t} = ∅ := by
+        ext b; cases b <;> simp [coinP] <;> linarith
+      simp [hset]
+
+/-- Non-vacuity of the super-uniform BH theorem with a genuinely discrete (non-uniform) true-null
+p-value: the FDR is still at most `q`. -/
+example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ b, falseDiscoveryProportion Finset.univ (bhRejections q fun _ : Fin 1 => coinP b) ∂coin ≤
+      q * (Finset.univ : Finset (Fin 1)).card / 1 := by
+  simpa using integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue
+    coin (fun _ : Fin 1 => coinP) (fun _ => measurable_from_top)
+    (iIndepFun.of_subsingleton) Finset.univ (fun _ _ => isValidPValue_coinP) q hq₀ hq₁
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.BenjaminiHochberg
