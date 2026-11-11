@@ -19,7 +19,6 @@ public import Batteries.Util.ProofWanted
 
 Statements requested but not yet proved:
 
-* the Student `t` law of `Z / √(V / k)` for independent `Z ~ N(0, 1)`, `V ~ χ²_k`;
 * the Snedecor `F` law of `(V₁ / d₁) / (V₂ / d₂)` for independent `Vᵢ ~ χ²_{dᵢ}`;
 * the one-sample `t` statistic `√n (X̄ - μ) / S ~ t_{n-1}` for an i.i.d. normal sample;
 * Hoeffding's central limit theorem `√n (U - θ) ⇒ N(0, m² σ₁²)` for U-statistics.
@@ -27,6 +26,9 @@ Statements requested but not yet proved:
 The independence inputs (`X̄ ⊥ S²`, joint independence in Cochran's theorem) are proved in
 `MathlibExt/Probability/Distributions/CochranIndependence.lean`; the `χ²` laws of the quadratic
 forms are the single-projection form of Cochran's theorem.
+The Student `t` law of `Z / √(V / k)` is proved as
+`ProbabilityTheory.map_div_sqrt_chiSquare_eq_studentT` in
+`MathlibExt/Probability/Distributions/StudentT.lean`.
 
 ## References
 
@@ -41,18 +43,6 @@ forms are the single-projection form of Cochran's theorem.
 open MeasureTheory ProbabilityTheory Real
 
 namespace ProbabilityTheory.NormalTheoryWanted
-
-/-- **Student's `t` law** (Casella–Berger, Definition 5.3.4): for independent `Z ~ N(0, 1)` and
-`V ~ χ²_k` with `k ≥ 1`, `Z / √(V / k)` has density
-`Γ((k + 1)/2) / (√(k π) Γ(k/2)) · (1 + t²/k)^{-(k+1)/2}`. -/
-public theorem_wanted map_div_sqrt_chiSquare_eq_studentT {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} [IsProbabilityMeasure P] {k : ℕ} (hk : 0 < k) {Z V : Ω → ℝ}
-    (hZ : HasLaw Z (gaussianReal 0 1) P) (hV : HasLaw V (chiSquareMeasure k) P)
-    (hZV : IndepFun Z V P) :
-    P.map (fun ω => Z ω / √(V ω / k)) =
-      volume.withDensity fun t => ENNReal.ofReal
-        (Gamma ((k + 1) / 2) / (√(k * π) * Gamma (k / 2)) *
-          (1 + t ^ 2 / k) ^ (-((k : ℝ) + 1) / 2))
 
 /-- **Snedecor's `F` law** (Casella–Berger, Definition 5.3.6): for independent `V₁ ~ χ²_{d₁}` and
 `V₂ ~ χ²_{d₂}` with `d₁, d₂ ≥ 1`, `(V₁ / d₁) / (V₂ / d₂)` has density
