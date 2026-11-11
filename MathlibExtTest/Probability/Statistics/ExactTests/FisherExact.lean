@@ -63,8 +63,8 @@ example : fisherUpperPValue 2 3 2 (by norm_num) (fun ω : ℕ × ℕ => ω.1) (1
   rw [fisherUpperPValue_eq_sum]
   norm_num [hypergeometricReal, Nat.choose, Finset.sum_Icc_succ_top]
 
-/-- Boundary: observing the largest possible cell `X = t` gives the single-atom p-value
-`C(n₁, t) / C(n₁ + n₂, t)`; with `n₁ = n₂ = 2`, `t = 2` it is `1/6`. -/
+/-- Boundary: when `t ≤ n₁`, the largest possible cell is `X = t`, and observing it gives the
+single-atom p-value `C(n₁, t) / C(n₁ + n₂, t)`; with `n₁ = n₂ = 2`, `t = 2` it is `1/6`. -/
 example : fisherUpperPValue 2 2 2 (by norm_num) (fun ω : ℕ × ℕ => ω.1) (2, 0) = 1 / 6 := by
   rw [fisherUpperPValue_eq_sum]
   norm_num [hypergeometricReal, Nat.choose]

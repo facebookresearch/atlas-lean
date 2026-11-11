@@ -47,8 +47,9 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X Y : Ω → ℕ} {
     (hab : 0 < a + b) (hXm : Measurable X) (hYm : Measurable Y)
     (hX : HasLaw X (poissonMeasure a) μ) (hY : HasLaw Y (poissonMeasure b) μ)
     (hXY : IndepFun X Y μ) (N : ℕ) :
-    ∃ q : unitInterval,
-      IsValidPValue (μ[|{ω | X ω + Y ω = N}]) (upperTailPValue (binomial N q) X) :=
-  ⟨_, isValidPValue_upperTailPValue (hasLaw_cond_binomial hab hXm hYm hX hY hXY N)⟩
+    IsValidPValue (μ[|{ω | X ω + Y ω = N}])
+      (upperTailPValue (binomial N ⟨(a : ℝ) / (a + b), by positivity,
+        div_le_one_of_le₀ (le_add_of_nonneg_right b.2) (by positivity)⟩) X) :=
+  isValidPValue_upperTailPValue (hasLaw_cond_binomial hab hXm hYm hX hY hXY N)
 
 end MathlibExtTest.Probability.Statistics.ExactTests.TailPValue
