@@ -82,9 +82,9 @@ theorem obsAtRiskMass_indepLaw_values :
 /-- The identification theorem at every grid point: the observed ratio is the hazard of `T`. -/
 theorem ratio_eq_hazard (j : Fin 3) :
     obsEventMass (indepLaw pT pC) j / obsAtRiskMass (indepLaw pT pC) j = hazard pT j := by
-  obtain ⟨s0, s1, s2⟩ := survivalMass_pC
+  obtain ⟨r0, r1, r2⟩ := obsAtRiskMass_indepLaw_values
   refine obsEventMass_div_obsAtRiskMass pT pC j ?_
-  fin_cases j <;> simp [s0, s1, s2]
+  fin_cases j <;> simp [r0, r1, r2]
 
 /-- The observed ratio, computed from the observed masses alone, matches `hazard_pT`. -/
 example : obsEventMass (indepLaw pT pC) 1 / obsAtRiskMass (indepLaw pT pC) 1 = 1 / 3 := by
@@ -134,16 +134,31 @@ example {n : ℕ} (p : PMF (Fin (n + 1))) (j : Fin (n + 1)) :
     obsEventMass (indepLaw p (PMF.pure (Fin.last n))) j = (p j).toReal := by
   rw [obsEventMass_indepLaw, survivalMass_pure_last, mul_one]
 
-/-- Without censoring before the horizon, the observed ratio is the hazard of `T`. -/
-example {n : ℕ} (p : PMF (Fin (n + 1))) (j : Fin (n + 1)) :
+/-- Without censoring before the horizon, the observed ratio is the hazard of `T` wherever
+`P(T ≥ j) ≠ 0`. -/
+example {n : ℕ} (p : PMF (Fin (n + 1))) (j : Fin (n + 1)) (hp : survivalMass p j ≠ 0) :
     obsEventMass (indepLaw p (PMF.pure (Fin.last n))) j /
       obsAtRiskMass (indepLaw p (PMF.pure (Fin.last n))) j = hazard p j :=
-  obsEventMass_div_obsAtRiskMass _ _ _ (by rw [survivalMass_pure_last]; norm_num)
+  obsEventMass_div_obsAtRiskMass _ _ _ (by
+    rwa [obsAtRiskMass_indepLaw, survivalMass_pure_last, mul_one])
+
+/-- The totalized form is a `0 / 0 = 0` convention when `P(T ≥ j) = 0`: with `T = 0` surely,
+at `j = 1` the observed ratio and the hazard are both `0 / 0`. -/
+example : obsEventMass (indepLaw (PMF.pure 0) (PMF.pure (Fin.last 2))) 1 /
+      obsAtRiskMass (indepLaw (PMF.pure 0) (PMF.pure (Fin.last 2))) 1 =
+    hazard (PMF.pure (0 : Fin 3)) 1 ∧ survivalMass (PMF.pure (0 : Fin 3)) 1 = 0 := by
+  refine ⟨obsEventMass_div_obsAtRiskMass_totalized _ _ _ (by
+    rw [survivalMass_pure_last]; norm_num), ?_⟩
+  rw [survivalMass, PMF.toMeasure_pure, measureReal_def,
+    Measure.dirac_apply' _ (MeasurableSet.of_discrete)]
+  simp
 
 /-- Concrete instance: no censoring, `T ∼ pT`, hazard `1/3` at `j = 1`. -/
 example : obsEventMass (indepLaw pT (PMF.pure (Fin.last 2))) 1 /
     obsAtRiskMass (indepLaw pT (PMF.pure (Fin.last 2))) 1 = 1 / 3 := by
-  rw [obsEventMass_div_obsAtRiskMass _ _ _ (by rw [survivalMass_pure_last]; norm_num)]
+  rw [obsEventMass_div_obsAtRiskMass _ _ _ (by
+    rw [obsAtRiskMass_indepLaw, survivalMass_pure_last, mul_one, survivalMass_pT.2.1]
+    norm_num)]
   exact hazard_pT.2.1
 
 /-- With censoring certain at time `0` and a tie-free event after `0`, nothing is observed past
@@ -207,7 +222,7 @@ theorem qDep_ne_indepLaw (pC' : PMF (Fin 3)) : qDep.toMeasure ≠ indepLaw pT pC
   intro h
   have hR : obsAtRiskMass (indepLaw pT pC') 1 ≠ 0 := by
     rw [← h, qDep_ratio.2.1]; norm_num
-  have := obsEventMass_div_obsAtRiskMass_of_ne_zero pT pC' 1 hR
+  have := obsEventMass_div_obsAtRiskMass pT pC' 1 hR
   rw [← h, qDep_ratio.2.2, hazard_pT.2.1] at this
   norm_num at this
 
@@ -240,11 +255,16 @@ noncomputable def pTJ : PMF (Fin 2 × Fin 2) :=
     simp only [sum_const, card_univ, Fintype.card_prod, Fintype.card_fin, nsmul_eq_mul]
     norm_num)
 
+/-- `P(T ≥ 1) = 1/2` under `pTJ`. -/
+theorem pTJ_atRisk : pTJ.toMeasure.real {x | 1 ≤ x.1} = 1 / 2 := by
+  classical
+  simp only [measureReal_eq_sum, Finset.sum_filter, Fintype.sum_prod_type, Fin.sum_univ_two]
+  simp [pTJ]
+  norm_num
+
 /-- The cause-specific hazard of cause `0` at time `1` is `(1/4) / (1/2) = 1/2`. -/
 theorem causeHazard_pTJ : causeHazard pTJ 1 0 = 1 / 2 := by
-  classical
-  simp only [causeHazard, measureReal_eq_sum, Finset.sum_filter, Fintype.sum_prod_type,
-    Fin.sum_univ_two]
+  rw [causeHazard, pTJ_atRisk]
   simp [pTJ]
   norm_num
 
@@ -252,7 +272,14 @@ theorem causeHazard_pTJ : causeHazard pTJ 1 0 = 1 / 2 := by
 hazard `1/2`. -/
 example : causeEventMass (indepCauseLaw pTJ (PMF.pure (Fin.last 1))) 1 0 /
     causeAtRiskMass (indepCauseLaw pTJ (PMF.pure (Fin.last 1))) 1 = 1 / 2 := by
-  rw [causeEventMass_div_obsAtRiskMass _ _ _ _ (by rw [survivalMass_pure_last]; norm_num),
-    causeHazard_pTJ]
+  rw [causeEventMass_div_causeAtRiskMass _ _ _ _ (by
+    rw [causeAtRiskMass_indepCauseLaw, survivalMass_pure_last, mul_one, pTJ_atRisk]
+    norm_num), causeHazard_pTJ]
+
+/-- The totalized competing-risks form, under the same censoring. -/
+example : causeEventMass (indepCauseLaw pTJ (PMF.pure (Fin.last 1))) 1 0 /
+    causeAtRiskMass (indepCauseLaw pTJ (PMF.pure (Fin.last 1))) 1 = causeHazard pTJ 1 0 :=
+  causeEventMass_div_causeAtRiskMass_totalized _ _ _ _ (by
+    rw [survivalMass_pure_last]; norm_num)
 
 end MathlibExtTest.Probability.Statistics.Censoring

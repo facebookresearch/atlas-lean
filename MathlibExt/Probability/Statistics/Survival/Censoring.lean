@@ -27,18 +27,23 @@ discrete **hazard** of `T`, `h(j) = P(T = j) / P(T ≥ j)` (`hazard`).
 
 In the canonical independent model `μ = law(T) ⊗ law(C)` (`indepLaw`) both observed masses
 factor through the censoring survival `P(C ≥ j)`, which therefore cancels in their ratio.
+The pinned Mathlib has no product of PMFs, so `indepLaw` is the product measure
+`pT.toMeasure.prod pC.toMeasure`, whose rectangle masses are `measureReal_prod_prod`.
 
 ## Main results
 
 * `obsEventMass_indepLaw`, `obsAtRiskMass_indepLaw`: the factorizations
   `P(X = j, δ = 1) = P(T = j) P(C ≥ j)` and `P(X ≥ j) = P(T ≥ j) P(C ≥ j)`.
-* `obsEventMass_div_obsAtRiskMass`: **identification of the hazard**: if `P(C ≥ j) ≠ 0` then
-  `P(X = j, δ = 1) / P(X ≥ j) = h(j)`. No positivity of `P(T ≥ j)` is needed, since both sides
-  vanish when it is zero.
-* `obsEventMass_div_obsAtRiskMass_of_ne_zero`: the same under the hypothesis `P(X ≥ j) ≠ 0`.
-* `causeEventMass_div_obsAtRiskMass`: the competing-risks analogue: with a cause `J` and `(T, J)`
-  independent of `C`, the observed cause-`c` event ratio is the cause-specific hazard
-  `P(T = j, J = c) / P(T ≥ j)`.
+* `obsEventMass_div_obsAtRiskMass`: **identification of the hazard**: if the observed at-risk
+  mass `P(X ≥ j)` is nonzero (equivalently `P(T ≥ j) ≠ 0` and `P(C ≥ j) ≠ 0`,
+  `obsAtRiskMass_indepLaw_ne_zero_iff`), then `P(X = j, δ = 1) / P(X ≥ j) = h(j)`.
+* `causeEventMass_div_causeAtRiskMass`: the competing-risks analogue: with a cause `J` and
+  `(T, J)` independent of `C`, if `P(X ≥ j) ≠ 0` the observed cause-`c` event ratio is the
+  cause-specific hazard `P(T = j, J = c) / P(T ≥ j)`.
+
+The `_totalized` variants assume only `P(C ≥ j) ≠ 0`. They are equalities of Lean's totalized
+division (`x / 0 = 0`): when `P(T ≥ j) = 0` both sides are `0 / 0 = 0`, which is a convention, not
+an identification of anything.
 
 Independence matters: `MathlibExtTest.Probability.Statistics.Censoring` exhibits a dependent joint
 law on `Fin 3 × Fin 3` for which the observed ratio differs from the hazard of `T`.
@@ -144,20 +149,22 @@ theorem obsAtRiskMass_indepLaw_ne_zero_iff (pT pC : PMF (Fin k)) (j : Fin k) :
     obsAtRiskMass (indepLaw pT pC) j ≠ 0 ↔ survivalMass pT j ≠ 0 ∧ survivalMass pC j ≠ 0 := by
   rw [obsAtRiskMass_indepLaw, mul_ne_zero_iff]
 
-/-- **Identification of the discrete hazard under independent censoring**: if the censoring
-survival `P(C ≥ j)` is nonzero, the observed ratio `P(X = j, δ = 1) / P(X ≥ j)` equals the hazard
-of `T` at `j`. -/
-theorem obsEventMass_div_obsAtRiskMass (pT pC : PMF (Fin k)) (j : Fin k)
+/-- Totalized form of `obsEventMass_div_obsAtRiskMass`, assuming only `P(C ≥ j) ≠ 0`. This is an
+equality of Lean's totalized division: if `P(T ≥ j) = 0` both sides are `0 / 0 = 0`, so in that
+case it identifies nothing. -/
+theorem obsEventMass_div_obsAtRiskMass_totalized (pT pC : PMF (Fin k)) (j : Fin k)
     (hC : survivalMass pC j ≠ 0) :
     obsEventMass (indepLaw pT pC) j / obsAtRiskMass (indepLaw pT pC) j = hazard pT j := by
   rw [obsEventMass_indepLaw, obsAtRiskMass_indepLaw, mul_div_mul_right _ _ hC, hazard]
 
-/-- **Identification of the discrete hazard**, stated with the observable hypothesis
-`P(X ≥ j) ≠ 0`. -/
-theorem obsEventMass_div_obsAtRiskMass_of_ne_zero (pT pC : PMF (Fin k)) (j : Fin k)
+/-- **Identification of the discrete hazard under independent censoring**: if the observed
+at-risk mass `P(X ≥ j)` is nonzero, the observed ratio `P(X = j, δ = 1) / P(X ≥ j)` equals the
+hazard `P(T = j) / P(T ≥ j)` of `T` at `j`, a genuine quotient with nonzero denominator. -/
+theorem obsEventMass_div_obsAtRiskMass (pT pC : PMF (Fin k)) (j : Fin k)
     (h : obsAtRiskMass (indepLaw pT pC) j ≠ 0) :
     obsEventMass (indepLaw pT pC) j / obsAtRiskMass (indepLaw pT pC) j = hazard pT j :=
-  obsEventMass_div_obsAtRiskMass pT pC j ((obsAtRiskMass_indepLaw_ne_zero_iff pT pC j).1 h).2
+  obsEventMass_div_obsAtRiskMass_totalized pT pC j
+    ((obsAtRiskMass_indepLaw_ne_zero_iff pT pC j).1 h).2
 
 /-! ### Competing risks -/
 
@@ -186,12 +193,11 @@ noncomputable def causeAtRiskMass (μ : Measure ((Fin k × Fin r) × Fin k)) (j 
 noncomputable def causeHazard (pTJ : PMF (Fin k × Fin r)) (j : Fin k) (c : Fin r) : ℝ :=
   (pTJ (j, c)).toReal / pTJ.toMeasure.real {x | j ≤ x.1}
 
-/-- **Identification of the cause-specific hazard under independent censoring**: if
-`P(C ≥ j) ≠ 0`, the observed cause-`c` event ratio equals the cause-specific hazard. -/
-theorem causeEventMass_div_obsAtRiskMass (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k))
-    (j : Fin k) (c : Fin r) (hC : survivalMass pC j ≠ 0) :
-    causeEventMass (indepCauseLaw pTJ pC) j c / causeAtRiskMass (indepCauseLaw pTJ pC) j =
-      causeHazard pTJ j c := by
+/-- **Factorization of the cause-`c` event mass** under independent censoring:
+`P(min T C = j, T ≤ C, J = c) = P(T = j, J = c) P(C ≥ j)`. -/
+theorem causeEventMass_indepCauseLaw (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k))
+    (j : Fin k) (c : Fin r) :
+    causeEventMass (indepCauseLaw pTJ pC) j c = (pTJ (j, c)).toReal * survivalMass pC j := by
   have hE : {ω : (Fin k × Fin r) × Fin k | min ω.1.1 ω.2 = j ∧ ω.1.1 ≤ ω.2 ∧ ω.1.2 = c} =
       {(j, c)} ×ˢ {t | j ≤ t} := by
     ext ⟨⟨t, d⟩, s⟩
@@ -203,13 +209,40 @@ theorem causeEventMass_div_obsAtRiskMass (pTJ : PMF (Fin k × Fin r)) (pC : PMF 
       exact ⟨⟨rfl, rfl⟩, hle⟩
     · rintro ⟨⟨rfl, rfl⟩, h⟩
       exact ⟨min_eq_left h, h, rfl⟩
+  rw [causeEventMass, hE, indepCauseLaw, measureReal_prod_prod, measureReal_singleton,
+    survivalMass]
+
+/-- **Factorization of the at-risk mass** with competing risks under independent censoring:
+`P(min T C ≥ j) = P(T ≥ j) P(C ≥ j)`. -/
+theorem causeAtRiskMass_indepCauseLaw (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k))
+    (j : Fin k) :
+    causeAtRiskMass (indepCauseLaw pTJ pC) j =
+      pTJ.toMeasure.real {x | j ≤ x.1} * survivalMass pC j := by
   have hR : {ω : (Fin k × Fin r) × Fin k | j ≤ min ω.1.1 ω.2} =
       {x : Fin k × Fin r | j ≤ x.1} ×ˢ {t | j ≤ t} := by
     ext ⟨⟨t, d⟩, s⟩
     simp
-  rw [causeEventMass, causeAtRiskMass, hE, hR, indepCauseLaw, measureReal_prod_prod,
-    measureReal_prod_prod, measureReal_singleton, ← survivalMass, mul_div_mul_right _ _ hC,
+  rw [causeAtRiskMass, hR, indepCauseLaw, measureReal_prod_prod, survivalMass]
+
+/-- Totalized form of `causeEventMass_div_causeAtRiskMass`, assuming only `P(C ≥ j) ≠ 0`. This is
+an equality of Lean's totalized division: if `P(T ≥ j) = 0` both sides are `0 / 0 = 0`, so in that
+case it identifies nothing. -/
+theorem causeEventMass_div_causeAtRiskMass_totalized (pTJ : PMF (Fin k × Fin r))
+    (pC : PMF (Fin k)) (j : Fin k) (c : Fin r) (hC : survivalMass pC j ≠ 0) :
+    causeEventMass (indepCauseLaw pTJ pC) j c / causeAtRiskMass (indepCauseLaw pTJ pC) j =
+      causeHazard pTJ j c := by
+  rw [causeEventMass_indepCauseLaw, causeAtRiskMass_indepCauseLaw, mul_div_mul_right _ _ hC,
     causeHazard]
+
+/-- **Identification of the cause-specific hazard under independent censoring**: if the observed
+at-risk mass `P(X ≥ j)` is nonzero, the observed cause-`c` event ratio equals the cause-specific
+hazard `P(T = j, J = c) / P(T ≥ j)`, a genuine quotient with nonzero denominator. -/
+theorem causeEventMass_div_causeAtRiskMass (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k))
+    (j : Fin k) (c : Fin r) (h : causeAtRiskMass (indepCauseLaw pTJ pC) j ≠ 0) :
+    causeEventMass (indepCauseLaw pTJ pC) j c / causeAtRiskMass (indepCauseLaw pTJ pC) j =
+      causeHazard pTJ j c := by
+  rw [causeAtRiskMass_indepCauseLaw] at h
+  exact causeEventMass_div_causeAtRiskMass_totalized pTJ pC j c (right_ne_zero_of_mul h)
 
 end CompetingRisks
 
