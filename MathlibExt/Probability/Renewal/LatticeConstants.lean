@@ -23,9 +23,16 @@ import Mathlib.MeasureTheory.Integral.Layercake
 
 For a negative-drift score random walk with Cramér (Lundberg) root `θ > 0`, the
 key renewal theorem gives the tail of the all-time maximum `M` (equivalently of
-the ladder-height renewal function) in the form `P(M ≥ t) ~ C e^{-θ t}`. This
+the ladder-height renewal function) in the form `P(M > t) ~ C e^{-θ t}`. This
 file proves what happens around that limit, taking the renewal convergence
 itself as an explicit hypothesis.
+
+Tail conventions. The lattice half works with the weak tail `F t = P(M ≥ t)`
+(`Ici`, rounding up with `⌈·⌉`); the nonlattice half works with the strict tail
+`Z t = P(M > t)` (`Ioi`), which is the solution of Feller's renewal equation.
+In the nonlattice case the two tails have the same constant. On a lattice
+`h ℤ`, `P(M > k h) = P(M ≥ (k + 1) h)` (`measure_Ioi_eq_measure_Ici_add`), so
+the strict-tail lattice constant is `e^{-θ h}` times the weak-tail constant `C`.
 
 ## Lattice case: oscillation
 
@@ -57,15 +64,21 @@ renewal equation `Z t = z t + ∫ Z (t - y) dG(y)`. With
   (explicit hypothesis), `e^{θ t} Z t → (∫_{(0,∞)} e^{θ s} z s ds) / ∫ y e^{θ y} dG(y)`;
 * `integral_exp_mul_measureReal_Ioi`: the layer-cake identity
   `∫_{(0,∞)} e^{θ s} G(s, ∞) ds = (∫ e^{θ y} dG - G(ℝ)) / θ`;
+* `KeyRenewalAdmissible`: a concrete class of input/solution pairs (directly
+  Riemann integrable input via an integrable antitone majorant and a.e.
+  continuity; measurable, locally bounded solution vanishing on `(-∞, 0)`) on
+  which the key renewal theorem is assumed;
+* `keyRenewalAdmissible_cramerLundberg`: the tilted Cramér–Lundberg pair is
+  admissible, with majorant the tilted tail;
 * `tendsto_scaled_cramerLundberg`: for the ladder tail
   (`z t = 1_{t ≥ 0} G(t, ∞)`) the constant is
   `C = (1 - G(ℝ)) / (θ ∫ y e^{θ y} dG(y))`.
 
-The key renewal theorem is not proved here; it is the hypothesis `hKRT`,
-quantified over an admissibility relation `Adm` (in the classical statement:
-the input is directly Riemann integrable and the solution is the locally bounded
-one vanishing on `(-∞, 0)`), so that the hypothesis is the theorem itself rather
-than its conclusion for the one tilted pair.
+The key renewal theorem is not proved here; it is the hypothesis `hKRT`, the
+theorem itself for the tilted law over all `KeyRenewalAdmissible` pairs, not its
+conclusion for the one tilted pair. It holds when the tilted law is a nonlattice
+probability measure on `[0, ∞)`; for a lattice tilted law it is false and the
+lattice half applies instead.
 
 ## Source
 
@@ -104,6 +117,22 @@ theorem measure_Ici_eq_measure_Ici_ceil {μ : Measure ℝ} {h : ℝ} (hh : 0 < h
       rw [div_le_iff₀ hh] at h1
       linarith
     linarith
+
+/-- **Strict versus weak lattice tails.** If `μ` is concentrated on `h ℤ`, then
+`μ (k h, ∞) = μ [(k + 1) h, ∞)`. So for a lattice law the strict-tail constant
+of `P(M > t)` along the lattice is `e^{-θ h}` times the weak-tail constant of
+`P(M ≥ t)` used in the lattice theorems below. -/
+theorem measure_Ioi_eq_measure_Ici_add {μ : Measure ℝ} {h : ℝ} (hh : 0 < h)
+    (hμ : ∀ᵐ x ∂μ, ∃ k : ℤ, x = k * h) (k : ℤ) :
+    μ (Ioi (k * h)) = μ (Ici ((k + 1) * h)) := by
+  refine measure_congr (hμ.mono fun x hx => ?_)
+  obtain ⟨j, rfl⟩ := hx
+  change ((k : ℝ) * h < j * h) = (((k : ℝ) + 1) * h ≤ j * h)
+  refine propext ⟨fun hlt => ?_, fun hle => ?_⟩
+  · have : k < j := by exact_mod_cast lt_of_mul_lt_mul_right hlt hh.le
+    have : (k : ℝ) + 1 ≤ j := by exact_mod_cast this
+    nlinarith
+  · nlinarith
 
 /-! ### Lattice oscillation of the scaled tail -/
 
@@ -303,6 +332,28 @@ theorem not_tendsto_scaled_tail (hh : 0 < h) (hθ : 0 < θ) (hC : C ≠ 0)
 
 end Lattice
 
+/-! ### Admissible pairs for the key renewal theorem -/
+
+/-- **Admissible pair for the key renewal theorem.** `KeyRenewalAdmissible Y y`
+says that the input `y` and the candidate solution `Y` lie in the class where
+the key renewal theorem (Feller Vol. II, §XI.1, Theorem 2, with uniqueness from
+§XI.1, Theorem 1) applies:
+
+* `y` is measurable, vanishes on `(-∞, 0)`, is continuous at almost every point,
+  and on `[0, ∞)` is dominated in absolute value by an antitone majorant that is
+  integrable on `[0, ∞)`; this is the standard sufficient condition for direct
+  Riemann integrability (Feller §XI.1, condition (b); Asmussen, *Applied
+  Probability and Queues*, Prop. V.4.1);
+* `Y` is measurable, vanishes on `(-∞, 0)` and is bounded on every half-line
+  `(-∞, T]`, so it is the unique such solution of its renewal equation.
+
+This is a sufficient condition, not a definition of direct Riemann
+integrability. -/
+def KeyRenewalAdmissible (Y y : ℝ → ℝ) : Prop :=
+  Measurable y ∧ (∀ t < 0, y t = 0) ∧ (∀ᵐ t, ContinuousAt y t) ∧
+    (∃ g : ℝ → ℝ, Antitone g ∧ IntegrableOn g (Ici 0) ∧ ∀ t, 0 ≤ t → |y t| ≤ g t) ∧
+    Measurable Y ∧ (∀ t < 0, Y t = 0) ∧ (∀ T, ∃ M, ∀ t ≤ T, |Y t| ≤ M)
+
 /-! ### Nonlattice constant identification by exponential tilting -/
 
 section Tilting
@@ -351,19 +402,19 @@ theorem tilted_renewal_eq (hθ : ∫ y, exp (θ * y) ∂G = 1) {Z z : ℝ → �
 
 /-- **Nonlattice constant identification.** Let `Z t = z t + ∫ Z (t - y) dG(y)`
 with Cramér root `∫ e^{θ y} dG = 1`. Assume the key renewal theorem for the
-tilted law `G^θ = G.tilted (θ * ·)` (hypothesis `hKRT`): every admissible
-solution `Y` of `Y t = y t + ∫ Y (t - x) dG^θ(x)` tends to
-`(∫_{(0,∞)} y) / mean(G^θ)`. If the tilted pair `(e^{θ t} Z t, e^{θ t} z t)` is
-admissible, then
+tilted law `G^θ = G.tilted (θ * ·)` (hypothesis `hKRT`): every solution `Y` of
+`Y t = y t + ∫ Y (t - x) dG^θ(x)` with `(Y, y)` a `KeyRenewalAdmissible` pair
+tends to `(∫_{(0,∞)} y) / mean(G^θ)`. This holds when `G^θ` is a nonlattice
+probability law on `[0, ∞)` (Feller §XI.1) and is not proved here. If the
+tilted pair `(e^{θ t} Z t, e^{θ t} z t)` is admissible, then
 `e^{θ t} Z t → (∫_{(0,∞)} e^{θ s} z s ds) / ∫ y e^{θ y} dG(y)`,
 i.e. `Z t ~ C e^{-θ t}` with this explicit `C`. -/
 theorem tendsto_scaled_of_keyRenewal (hθ : ∫ y, exp (θ * y) ∂G = 1) {Z z : ℝ → ℝ}
     (hren : ∀ t, Z t = z t + ∫ y, Z (t - y) ∂G)
-    (Adm : (ℝ → ℝ) → (ℝ → ℝ) → Prop)
-    (hKRT : ∀ Y y : ℝ → ℝ, Adm Y y →
+    (hKRT : ∀ Y y : ℝ → ℝ, KeyRenewalAdmissible Y y →
       (∀ t, Y t = y t + ∫ x, Y (t - x) ∂(G.tilted (fun x => θ * x))) →
       Tendsto Y atTop (𝓝 ((∫ s in Ioi 0, y s) / ∫ x, x ∂(G.tilted (fun x => θ * x)))))
-    (hAdm : Adm (fun t => exp (θ * t) * Z t) (fun t => exp (θ * t) * z t)) :
+    (hAdm : KeyRenewalAdmissible (fun t => exp (θ * t) * Z t) (fun t => exp (θ * t) * z t)) :
     Tendsto (fun t => exp (θ * t) * Z t) atTop
       (𝓝 ((∫ s in Ioi 0, exp (θ * s) * z s) / ∫ y, y * exp (θ * y) ∂G)) := by
   rw [← integral_id_tilt hθ]
@@ -374,6 +425,10 @@ private lemma intervalIntegral_exp_mul (hθ : θ ≠ 0) (y : ℝ) :
     ∫ t in (0 : ℝ)..y, exp (θ * t) = (exp (θ * y) - 1) / θ := by
   rw [intervalIntegral.integral_comp_mul_left (fun t => exp t) hθ, integral_exp, mul_zero,
     exp_zero, smul_eq_mul, inv_mul_eq_div]
+
+/-- The tail `s ↦ G(s, ∞)` of a finite measure is antitone. -/
+private lemma antitone_measureReal_Ioi [IsFiniteMeasure G] :
+    Antitone (fun s => G.real (Ioi s)) := fun _ _ hab => measureReal_mono (Ioi_subset_Ioi hab)
 
 /-- **Layer-cake form of the Cramér–Lundberg numerator.** For a finite measure `G`
 on `[0, ∞)` with `e^{θ y}` integrable and `θ > 0`,
@@ -393,11 +448,9 @@ theorem integral_exp_mul_measureReal_Ioi [IsFiniteMeasure G] (hθ : 0 < θ)
     (hint.sub (integrable_const 1)).div_const θ
   calc ∫ s in Ioi 0, exp (θ * s) * G.real (Ioi s)
       = (∫⁻ s in Ioi 0, G {a | s < id a} * ENNReal.ofReal (exp (θ * s))).toReal := by
-        have hanti : Antitone (fun s => G.real (Ioi s)) := fun a b hab =>
-          measureReal_mono (Ioi_subset_Ioi hab)
         rw [integral_eq_lintegral_of_nonneg_ae (ae_of_all _ hnn)
           ((by fun_prop : Measurable fun s => exp (θ * s)).mul
-            hanti.measurable).aestronglyMeasurable]
+            antitone_measureReal_Ioi.measurable).aestronglyMeasurable]
         congr 1
         refine lintegral_congr fun s => ?_
         rw [ENNReal.ofReal_mul (exp_pos _).le, mul_comm, ofReal_measureReal]
@@ -411,28 +464,123 @@ theorem integral_exp_mul_measureReal_Ioi [IsFiniteMeasure G] (hθ : 0 < θ)
         rw [integral_div, integral_sub hint (integrable_const 1), integral_const, smul_eq_mul,
           mul_one]
 
+/-- The tail of the tilted law is integrable on `[0, ∞)` when the tilted law
+lives on `[0, ∞)` and has a finite mean (layer-cake formula). -/
+private lemma integrableOn_tilted_tail (hθ : ∫ y, exp (θ * y) ∂G = 1) (hG : ∀ᵐ y ∂G, 0 ≤ y)
+    (hmean : Integrable (fun y => y * exp (θ * y)) G) :
+    IntegrableOn (fun t => (G.tilted (fun x => θ * x)).real (Ioi t)) (Ici 0) := by
+  have := isProbabilityMeasure_tilted_of_integral_eq_one hθ
+  set P := G.tilted (fun x => θ * x)
+  have hint : Integrable (fun y => exp (θ * y)) G :=
+    Integrable.of_integral_ne_zero (by rw [hθ]; exact one_ne_zero)
+  have hP : ∀ᵐ y ∂P, 0 ≤ y := tilted_absolutelyContinuous G _ hG
+  have hidP : Integrable (fun y : ℝ => y) P := by
+    rw [integrable_tilted_iff hint]
+    simpa [smul_eq_mul, mul_comm] using hmean
+  have hanti : Antitone (fun t => P.real (Ioi t)) := antitone_measureReal_Ioi
+  have hcake := lintegral_comp_eq_lintegral_meas_lt_mul P (f := id) hP aemeasurable_id
+    (g := fun _ => (1 : ℝ)) (fun _ _ => intervalIntegrable_const)
+    (ae_of_all _ fun _ => zero_le_one)
+  simp only [intervalIntegral.integral_const, smul_eq_mul, mul_one, sub_zero, id,
+    ENNReal.ofReal_one] at hcake
+  rw [integrableOn_Ici_iff_integrableOn_Ioi]
+  refine ⟨hanti.measurable.aestronglyMeasurable, ?_⟩
+  rw [HasFiniteIntegral]
+  calc ∫⁻ t in Ioi 0, ‖P.real (Ioi t)‖ₑ = ∫⁻ t in Ioi 0, P {a | t < a} := by
+        refine lintegral_congr fun t => ?_
+        rw [Real.enorm_of_nonneg measureReal_nonneg, ofReal_measureReal]
+        rfl
+    _ = ∫⁻ y, ENNReal.ofReal y ∂P := hcake.symm
+    _ < ∞ := by
+        refine lt_of_le_of_lt (lintegral_mono fun y => ?_) hidP.2
+        simp only
+        rw [Real.enorm_eq_ofReal_abs]
+        exact ENNReal.ofReal_le_ofReal (le_abs_self y)
+
+/-- **The Cramér–Lundberg pair is admissible.** Let `G` be a finite measure on
+`[0, ∞)` with Cramér root `θ > 0` and finite tilted mean, and let `Z` be
+measurable, bounded and zero on `(-∞, 0)`. Then the tilted pair
+`(e^{θ t} Z t, e^{θ t} 1_{t ≥ 0} G(t, ∞))` is `KeyRenewalAdmissible`; the
+majorant of the input is the tilted tail `G^θ(t, ∞) = ∫_{(t,∞)} e^{θ x} dG(x)`. -/
+theorem keyRenewalAdmissible_cramerLundberg [IsFiniteMeasure G] (hθpos : 0 < θ)
+    (hθ : ∫ y, exp (θ * y) ∂G = 1) (hG : ∀ᵐ y ∂G, 0 ≤ y)
+    (hmean : Integrable (fun y => y * exp (θ * y)) G) {Z : ℝ → ℝ} (hZm : Measurable Z)
+    (hZneg : ∀ t < 0, Z t = 0) (hZb : ∃ M, ∀ t, |Z t| ≤ M) :
+    KeyRenewalAdmissible (fun t => exp (θ * t) * Z t)
+      (fun t => exp (θ * t) * (Ici 0).indicator (fun s => G.real (Ioi s)) t) := by
+  have hint : Integrable (fun y => exp (θ * y)) G :=
+    Integrable.of_integral_ne_zero (by rw [hθ]; exact one_ne_zero)
+  have := isProbabilityMeasure_tilted_of_integral_eq_one hθ
+  have hanti : Antitone (fun s => G.real (Ioi s)) := antitone_measureReal_Ioi
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact (by fun_prop : Measurable fun s => exp (θ * s)).mul
+      (hanti.measurable.indicator measurableSet_Ici)
+  · intro t ht
+    have : t ∉ Ici (0 : ℝ) := fun h => absurd (mem_Ici.1 h) (not_le.2 ht)
+    simp [indicator_of_notMem this]
+  · -- Discontinuities: the countably many jumps of the tail, and `0`.
+    have hcount := (hanti.countable_not_continuousAt.insert 0).ae_notMem volume
+    refine hcount.mono fun t ht => ?_
+    simp only [mem_insert_iff, mem_ofPred_eq, not_or, not_not] at ht
+    obtain ⟨ht0, htc⟩ := ht
+    refine (by fun_prop : Continuous fun s => exp (θ * s)).continuousAt.mul ?_
+    rcases lt_or_gt_of_ne ht0 with hneg | hpos
+    · refine (continuousAt_const (y := (0 : ℝ))).congr
+        (Filter.eventually_of_mem (Iio_mem_nhds hneg) ?_)
+      intro s hs
+      rw [indicator_of_notMem (show s ∉ Ici (0 : ℝ) from fun h => absurd (mem_Ici.1 h)
+        (not_le.2 hs))]
+    · refine htc.congr (Filter.eventually_of_mem (Ioi_mem_nhds hpos) ?_)
+      intro s hs
+      rw [indicator_of_mem (mem_Ici.2 (le_of_lt hs))]
+  · refine ⟨fun t => (G.tilted (fun x => θ * x)).real (Ioi t), antitone_measureReal_Ioi,
+      integrableOn_tilted_tail hθ hG hmean, fun t ht => ?_⟩
+    simp only
+    rw [indicator_of_mem (mem_Ici.2 ht), abs_of_nonneg (mul_nonneg (exp_pos _).le
+      measureReal_nonneg)]
+    have h1 : (G.tilted (fun x => θ * x)).real (Ioi t) = ∫ x in Ioi t, exp (θ * x) ∂G := by
+      have := setIntegral_tilted (μ := G) (fun x => θ * x) (fun _ => (1 : ℝ)) (Ioi t)
+      rw [setIntegral_const, smul_eq_mul, mul_one, hθ] at this
+      rw [this]
+      simp
+    rw [h1, mul_comm, ← smul_eq_mul, ← setIntegral_const]
+    refine setIntegral_mono_on (integrableOn_const (measure_ne_top _ _)) hint.integrableOn
+      measurableSet_Ioi fun x hx => exp_le_exp.2 ?_
+    exact mul_le_mul_of_nonneg_left (le_of_lt hx) hθpos.le
+  · exact (by fun_prop : Measurable fun s => exp (θ * s)).mul hZm
+  · intro t ht
+    simp [hZneg t ht]
+  · obtain ⟨M, hM⟩ := hZb
+    refine fun T => ⟨exp (θ * T) * M, fun t ht => ?_⟩
+    rw [abs_mul, abs_of_pos (exp_pos _)]
+    exact mul_le_mul (exp_le_exp.2 (mul_le_mul_of_nonneg_left ht hθpos.le)) (hM t)
+      (abs_nonneg _) (exp_pos _).le
+
 /-- **Cramér–Lundberg constant.** Let `G` be a finite (typically defective)
 ladder-height measure on `[0, ∞)` with Cramér root `θ > 0`,
-`∫ e^{θ y} dG = 1`, and let `Z` solve
+`∫ e^{θ y} dG = 1`, and finite tilted mean `∫ y e^{θ y} dG`. Let `Z` be
+measurable, bounded, zero on `(-∞, 0)`, and solve
 `Z t = 1_{t ≥ 0} G(t, ∞) + ∫ Z (t - y) dG(y)` for all real `t` (Feller's
 convention: for the maximum `M` of the ladder process, `Z t = P(M > t)` for
-`t ≥ 0` and `Z t = 0` for `t < 0`). Given the key renewal theorem for the tilted
-law (hypothesis `hKRT`, as in `tendsto_scaled_of_keyRenewal`),
+`t ≥ 0`). The vanishing and boundedness conditions pin `Z` down: without
+them, `Z + k e^{-θ t}` solves the same equation on all of `ℝ`. Given the key
+renewal theorem for the tilted law (hypothesis `hKRT`, as in
+`tendsto_scaled_of_keyRenewal`),
 `e^{θ t} Z t → (1 - G(ℝ)) / (θ ∫ y e^{θ y} dG(y))`. -/
 theorem tendsto_scaled_cramerLundberg [IsFiniteMeasure G] (hθpos : 0 < θ)
-    (hθ : ∫ y, exp (θ * y) ∂G = 1) (hG : ∀ᵐ y ∂G, 0 ≤ y) {Z : ℝ → ℝ}
+    (hθ : ∫ y, exp (θ * y) ∂G = 1) (hG : ∀ᵐ y ∂G, 0 ≤ y)
+    (hmean : Integrable (fun y => y * exp (θ * y)) G) {Z : ℝ → ℝ} (hZm : Measurable Z)
+    (hZneg : ∀ t < 0, Z t = 0) (hZb : ∃ M, ∀ t, |Z t| ≤ M)
     (hren : ∀ t, Z t = (Ici 0).indicator (fun s => G.real (Ioi s)) t + ∫ y, Z (t - y) ∂G)
-    (Adm : (ℝ → ℝ) → (ℝ → ℝ) → Prop)
-    (hKRT : ∀ Y y : ℝ → ℝ, Adm Y y →
+    (hKRT : ∀ Y y : ℝ → ℝ, KeyRenewalAdmissible Y y →
       (∀ t, Y t = y t + ∫ x, Y (t - x) ∂(G.tilted (fun x => θ * x))) →
-      Tendsto Y atTop (𝓝 ((∫ s in Ioi 0, y s) / ∫ x, x ∂(G.tilted (fun x => θ * x)))))
-    (hAdm : Adm (fun t => exp (θ * t) * Z t)
-      (fun t => exp (θ * t) * (Ici 0).indicator (fun s => G.real (Ioi s)) t)) :
+      Tendsto Y atTop (𝓝 ((∫ s in Ioi 0, y s) / ∫ x, x ∂(G.tilted (fun x => θ * x))))) :
     Tendsto (fun t => exp (θ * t) * Z t) atTop
       (𝓝 ((1 - G.real univ) / (θ * ∫ y, y * exp (θ * y) ∂G))) := by
   have hint : Integrable (fun y => exp (θ * y)) G :=
     Integrable.of_integral_ne_zero (by rw [hθ]; exact one_ne_zero)
-  have h := tendsto_scaled_of_keyRenewal hθ hren Adm hKRT hAdm
+  have h := tendsto_scaled_of_keyRenewal hθ hren hKRT
+    (keyRenewalAdmissible_cramerLundberg hθpos hθ hG hmean hZm hZneg hZb)
   have hset : ∫ s in Ioi 0, exp (θ * s) * (Ici 0).indicator (fun s => G.real (Ioi s)) s =
       ∫ s in Ioi 0, exp (θ * s) * G.real (Ioi s) :=
     setIntegral_congr_fun measurableSet_Ioi fun s hs => by
