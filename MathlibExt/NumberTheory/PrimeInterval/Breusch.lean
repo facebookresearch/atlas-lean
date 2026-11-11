@@ -14,7 +14,7 @@ import MathlibExt.NumberTheory.PrimeInterval.Breusch.Upper
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Nat.Prime.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -39,9 +39,13 @@ namespace MathlibExt.NumberTheory.BreuschWanted
 namespace Internal
 
 /-- The assumed upper-bound shape for the endgame. -/
-def upper_ineq (n : ℕ) : Prop :=
+def UpperIneq (n : ℕ) : Prop :=
   logF9 n ≤ (18900/279 + 18900/657 + 18900/963 : ℝ) * n
     * Real.log 3.4 + Real.sqrt ((2100:ℝ)*n) * Real.log ((2100:ℝ)*n)
+
+/-- Deprecated alias for `UpperIneq`. -/
+@[deprecated (since := "2026-10-21"), nolint defsWithUnderscore]
+alias upper_ineq := UpperIneq
 
 /-- Certified prime chain from `53` to `9820997` with ratio below `9 / 8`. -/
 def chain : List ℕ :=
@@ -178,8 +182,8 @@ lemma overlap (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X) :
 /-- Contradiction at level `n ≥ 4762` from the two bounds. -/
 lemma main_contra (n : ℕ) (hn : 4762 ≤ n)
     (_hA : ∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False)
-    (hupper : upper_ineq n) : False := by
-  unfold upper_ineq at hupper
+    (hupper : UpperIneq n) : False := by
+  unfold UpperIneq at hupper
   have hn1 : 1 ≤ n := by omega
   have hlower := logF9_lower n hn1
   have hgap := gap_pos n hn
@@ -195,7 +199,7 @@ lemma main_contra (n : ℕ) (hn : 4762 ≤ n)
 /-- Analytic prime interval above `5600 * 4762 / 3`. -/
 theorem analytic_at_X (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X)
     (hU : ∀ n : ℕ, 1 ≤ n →
-      (∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) → upper_ineq n) :
+      (∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) → UpperIneq n) :
     ∃ p : ℕ, p.Prime ∧ (X : ℝ) < (p : ℝ) ∧ (p : ℝ) < (9 / 8 : ℝ) * X := by
   obtain ⟨n, hn0, hnlo, hnhi⟩ := overlap X hX
   by_contra hcon
@@ -230,7 +234,7 @@ theorem analytic_at_X (X : ℝ) (hX : (5600 * 4762 / 3 : ℝ) ≤ X)
 /-- Breusch intervals from the chain and the upper bound. -/
 theorem breusch_prime_interval_of_upper (x : ℝ) (hx : 48 ≤ x)
     (hU : ∀ n : ℕ, 1 ≤ n →
-      (∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) → upper_ineq n) :
+      (∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) → UpperIneq n) :
     ∃ p : ℕ, p.Prime ∧ (x : ℝ) < (p : ℝ) ∧ (p : ℝ) < (9 / 8 : ℝ) * x := by
   by_cases hX0 : x < (5600 * 4762 / 3 : ℝ)
   · by_cases h53 : x < 53
