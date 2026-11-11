@@ -97,6 +97,19 @@ example (s₁ s₂ r : ℝ≥0) (hs : 0 < s₁ + s₂) (hr : 0 < r) (n : ℕ) :
     measurable_fst measurable_snd h.1 h.2.1 h.2.2
     (measure_add_eq_ne_zero hs hr h.1 h.2.1 h.2.2 n)
 
+/-- Conditional validity at rate `r = 0`: the total `0` is certain, so the positive-mass
+hypothesis holds and the conditional guarantee applies without `r > 0`. -/
+example (s₁ s₂ : ℝ≥0) (hs : 0 < s₁ + s₂) :
+    IsValidPValue ((Po(s₁ * 0).prod Po(s₂ * 0))[|{ω : ℕ × ℕ | ω.1 + ω.2 = 0}])
+      (upperTailPValue Bin(0, libraryFraction s₁ s₂) fun ω : ℕ × ℕ => ω.1) := by
+  have h := witness s₁ s₂ 0
+  refine isValidPValue_countExact_cond (X := fun ω : ℕ × ℕ => ω.1) (Y := fun ω : ℕ × ℕ => ω.2)
+    hs measurable_fst measurable_snd h.1 h.2.1 h.2.2 ?_
+  have h0 : {ω : ℕ × ℕ | ω.1 + ω.2 = 0} = {(0, 0)} := by
+    ext ⟨a, b⟩; simp [Prod.ext_iff]
+  rw [h0, ← Set.singleton_prod_singleton, Measure.prod_prod]
+  simp [poissonMeasure_singleton]
+
 /-- Boundary: with no reads at all the exact p-value is `1` (nothing to reject). -/
 example (s₁ s₂ : ℝ≥0) : countExactTail s₁ s₂ (0, 0) = 1 := by
   simp [countExactTail, upperTail]
