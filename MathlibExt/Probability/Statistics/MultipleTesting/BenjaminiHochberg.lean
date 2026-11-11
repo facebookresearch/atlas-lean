@@ -42,8 +42,7 @@ that, with no assumption on the dependence among the p-values, running BH at the
 * `integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependence`: BH at level
   `q / H_m` has `E[FDP] ≤ q |H0| / m` for arbitrarily dependent p-values whose true-null p-values
   are valid (Benjamini–Yekutieli 2001, Theorem 1.3).
-* `harmonic_cast_eq_sum_Icc`, `one_le_harmonic`: the harmonic number `H_m` as `∑_{k=1}^m 1/k`
-  and `1 ≤ H_m` for `m ≥ 1`.
+* `one_le_harmonic`: Mathlib's harmonic number satisfies `1 ≤ H_m` for `m ≥ 1`.
 
 ## References
 
@@ -412,17 +411,6 @@ theorem integral_falseDiscoveryProportion_bhRejections_le {Ω : Type*}
     ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ ≤ q * H0.card / m :=
   integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue μ p hp hindep H0
     (fun i hi => isValidPValue_of_hasLaw_uniform (hnull i hi)) q hq₀ hq₁
-
-/-- The harmonic number `H_m = ∑_{k=1}^m 1/k` (Mathlib's `harmonic`, cast to `ℝ`) as a sum over
-`Finset.Icc 1 m`. -/
-theorem harmonic_cast_eq_sum_Icc (m : ℕ) :
-    (harmonic m : ℝ) = ∑ k ∈ Finset.Icc 1 m, (1 : ℝ) / k := by
-  induction m with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), ← ih, harmonic_succ]
-    push_cast
-    ring
 
 /-- The harmonic number `H_m` is at least `1` for `m ≥ 1`. -/
 theorem one_le_harmonic (hm : 0 < m) : (1 : ℝ) ≤ harmonic m := by

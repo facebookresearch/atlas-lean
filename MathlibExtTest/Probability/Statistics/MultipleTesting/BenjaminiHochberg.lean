@@ -102,10 +102,9 @@ example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     coin (fun _ : Fin 1 => coinP) (fun _ => measurable_from_top)
     (iIndepFun.of_subsingleton) Finset.univ (fun _ _ => isValidPValue_coinP) q hq₀ hq₁
 
-/-- `H_3 = 1 + 1/2 + 1/3 = 11/6`, through the `Finset.Icc` sum form. -/
+/-- `H_3 = 1 + 1/2 + 1/3 = 11/6`, the harmonic factor in the BY level for `m = 3`. -/
 example : (harmonic 3 : ℝ) = 11 / 6 := by
-  rw [harmonic_cast_eq_sum_Icc]
-  norm_num [Finset.sum_Icc_succ_top]
+  norm_num [harmonic, Finset.sum_range_succ]
 
 example : (1 : ℝ) ≤ harmonic 2 := one_le_harmonic (by norm_num)
 
