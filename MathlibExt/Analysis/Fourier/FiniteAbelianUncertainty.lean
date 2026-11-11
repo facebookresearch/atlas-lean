@@ -12,6 +12,7 @@ public import MathlibExt.Analysis.Fourier.FiniteAbelianDFT
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
+import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Tactic
 
 /-!
@@ -72,21 +73,8 @@ namespace MathlibExt.Analysis.Fourier.FiniteAbelianUncertainty
 variable {G : Type*} [AddCommGroup G] [Fintype G]
 
 /-- A character takes values on the unit circle. -/
-theorem norm_addChar_apply (ψ : AddChar G ℂ) (x : G) : ‖ψ x‖ = 1 := by
-  have hstar : star (ψ x) = ψ (-x) := by
-    rw [RCLike.star_def, AddChar.map_neg_eq_conj]
-  have h1 : star (ψ x) * ψ x = 1 := by
-    rw [hstar, ← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one]
-  have h2 : ‖ψ x‖ ^ 2 = 1 := by
-    have hnorm : ‖star (ψ x) * ψ x‖ = 1 := by rw [h1]; simp
-    rw [norm_mul, norm_star] at hnorm
-    nlinarith [hnorm]
-  rcases (sq_eq_one_iff.mp h2) with h | h
-  · exact h
-  · exfalso
-    have := norm_nonneg (ψ x)
-    rw [h] at this
-    norm_num at this
+@[deprecated AddChar.norm_apply +typeChanged (since := "2026-11-09")]
+theorem norm_addChar_apply (ψ : AddChar G ℂ) (x : G) : ‖ψ x‖ = 1 := ψ.norm_apply x
 
 /-- Plancherel in squared-norm form: the squared `ℓ²` norm of `f̂` is
 `|G|` times the squared `ℓ²` norm of `f`. -/
@@ -109,13 +97,6 @@ theorem sum_norm_sq_dftFun (f : G → ℂ) :
           rw [mul_inv_cancel_left₀ hN]
       _ = (Fintype.card G : ℂ) * ∑ x : G, ((‖f x‖ : ℂ)) ^ 2 := by rw [← h]
   exact_mod_cast h2
-
-/-- Cauchy–Schwarz in the form used below: the square of a sum over a
-finset is at most the cardinality times the sum of squares. -/
-private theorem sq_sum_le_card_mul_sum_sq {ι : Type*} (s : Finset ι) (a : ι → ℝ) :
-    (∑ i ∈ s, a i) ^ 2 ≤ s.card * ∑ i ∈ s, a i ^ 2 := by
-  have h := Finset.sum_mul_sq_le_sq_mul_sq s a (fun _ => (1 : ℝ))
-  simpa [mul_comm] using h
 
 /-- Pointwise bound: if `f̂` vanishes outside `B`, then each `‖f x‖²`
 is at most `(|B| / |G|)` times the total squared `ℓ²` mass of `f`. -/
@@ -144,9 +125,9 @@ theorem norm_sq_le_of_dftFun_eq_zero_of_notMem {f : G → ℂ}
       _ = ∑ ψ ∈ B, ‖dftFun f ψ‖ := by
           apply Finset.sum_congr rfl
           intro ψ _
-          rw [norm_mul, norm_star, norm_addChar_apply, one_mul]
+          rw [norm_mul, norm_star, AddChar.norm_apply, one_mul]
   have hCS : S ^ 2 ≤ B.card * ((Fintype.card G : ℝ) * ∑ y : G, ‖f y‖ ^ 2) := by
-    calc S ^ 2 ≤ B.card * ∑ ψ ∈ B, ‖dftFun f ψ‖ ^ 2 := sq_sum_le_card_mul_sum_sq B _
+    calc S ^ 2 ≤ B.card * ∑ ψ ∈ B, ‖dftFun f ψ‖ ^ 2 := sq_sum_le_card_mul_sum_sq
       _ ≤ B.card * ∑ ψ : AddChar G ℂ, ‖dftFun f ψ‖ ^ 2 :=
         mul_le_mul_of_nonneg_left
           (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ B)
@@ -199,9 +180,9 @@ theorem sum_norm_sq_dftFun_le_of_eq_zero_of_notMem {f : G → ℂ}
       _ = ∑ x ∈ A, ‖f x‖ := by
           apply Finset.sum_congr rfl
           intro x _
-          rw [norm_mul, norm_addChar_apply, one_mul]
+          rw [norm_mul, AddChar.norm_apply, one_mul]
   have hCS : SA ^ 2 ≤ A.card * ∑ x : G, ‖f x‖ ^ 2 := by
-    calc SA ^ 2 ≤ A.card * ∑ x ∈ A, ‖f x‖ ^ 2 := sq_sum_le_card_mul_sum_sq A _
+    calc SA ^ 2 ≤ A.card * ∑ x ∈ A, ‖f x‖ ^ 2 := sq_sum_le_card_mul_sum_sq
       _ ≤ A.card * ∑ x : G, ‖f x‖ ^ 2 :=
         mul_le_mul_of_nonneg_left
           (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ A)

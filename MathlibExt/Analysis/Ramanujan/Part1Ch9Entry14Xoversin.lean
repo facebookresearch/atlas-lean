@@ -125,20 +125,6 @@ private lemma continuousAt_sin_div (u : ℝ) (hu : u ≠ 0) :
   apply ContinuousAt.div Real.continuous_sin.continuousAt continuous_id.continuousAt
   exact hu
 
-private lemma tendsto_sin_div_punctured :
-    Tendsto (fun u : ℝ => Real.sin u / u) (𝓝[≠] (0 : ℝ)) (𝓝 1) := by
-  have hderiv : HasDerivAt Real.sin (Real.cos 0) 0 := Real.hasDerivAt_sin 0
-  have hcos0 : Real.cos (0 : ℝ) = 1 := Real.cos_zero
-  rw [hcos0] at hderiv
-  have hslope := hderiv.tendsto_slope
-  have hEq : (slope Real.sin 0) =ᶠ[𝓝[≠] (0 : ℝ)]
-      (fun u => Real.sin u / u) := by
-    filter_upwards [self_mem_nhdsWithin] with u hu
-    simp only [slope, vsub_eq_sub, Real.sin_zero, sub_zero] at hu ⊢
-    rw [smul_eq_mul, div_eq_mul_inv, mul_comm]
-  have h2 := hslope.congr' hEq
-  simpa using h2
-
 private lemma continuousAt_sin_div_ext :
     ContinuousAt (fun u : ℝ => if u = 0 then (1 : ℝ) else Real.sin u / u) 0 := by
   rw [ContinuousAt]
@@ -147,7 +133,7 @@ private lemma continuousAt_sin_div_ext :
   rw [Metric.tendsto_nhds]
   intro ε hε
   have hlim2 : ∀ᶠ u in 𝓝[≠] (0 : ℝ), dist (Real.sin u / u) 1 < ε := by
-    have hlim := tendsto_sin_div_punctured
+    have hlim := Real.tendsto_sin_div_nhdsNE_zero
     rw [Metric.tendsto_nhds] at hlim
     exact hlim ε hε
   rw [eventually_nhdsWithin_iff] at hlim2

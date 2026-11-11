@@ -911,20 +911,14 @@ private lemma entry14Coeff_succ (c : ℕ → ℝ) (n : ℕ) :
   have hn : ((2 * n + 2 : ℕ) : ℝ) ≠ 0 := by positivity
   field_simp
 
-private lemma entry14_succ_tendsto_atTop :
-    Tendsto (fun m : ℕ => m + 1) atTop atTop := by
-  apply tendsto_atTop.2
-  intro b
-  exact eventually_atTop.2 ⟨b, fun m hm => by omega⟩
-
 private lemma entry14FiniteMain_tendsto (a0 : ℝ) (c : ℕ → ℝ)
     (ha0 : Tendsto chapter7Entry14A0Approx atTop (nhds a0))
     (hc : ∀ k : ℕ, Tendsto (chapter7StieltjesApprox k) atTop (nhds (c k)))
     (N : ℕ) (x : ℝ) :
     Tendsto (entry14FiniteMain N x) atTop (nhds (chapter7Entry14Approx a0 c N x)) := by
   have ha : Tendsto (fun m : ℕ => chapter7Entry14A0Approx (m + 1)) atTop (nhds a0) :=
-    ha0.comp entry14_succ_tendsto_atTop
-  have hh0 := Real.tendsto_harmonic_sub_log.comp entry14_succ_tendsto_atTop
+    ha0.comp (tendsto_add_atTop_nat 1)
+  have hh0 := Real.tendsto_harmonic_sub_log.comp (tendsto_add_atTop_nat 1)
   have hh : Tendsto (fun m : ℕ =>
       (((harmonic (m + 1) : ℚ)) : ℝ) - Real.log ((m : ℝ) + 1)) atTop
       (nhds Real.eulerMascheroniConstant) := by
@@ -942,7 +936,7 @@ private lemma entry14FiniteMain_tendsto (a0 : ℝ) (c : ℕ → ℝ)
         (fun m : ℕ => A n * chapter7StieltjesApprox (2 * n + 1) (m + 1)) atTop
         (nhds (A n * c (2 * n + 1))) := by
       exact tendsto_const_nhds.mul
-        ((hc (2 * n + 1)).comp entry14_succ_tendsto_atTop)
+        ((hc (2 * n + 1)).comp (tendsto_add_atTop_nat 1))
     have ht : Tendsto (fun m : ℕ => ∑ n ∈ range N,
         A n * chapter7StieltjesApprox (2 * n + 1) (m + 1)) atTop
         (nhds (∑ n ∈ range N, A n * c (2 * n + 1))) :=

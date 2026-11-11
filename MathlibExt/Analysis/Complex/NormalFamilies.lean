@@ -387,27 +387,6 @@ theorem montel
     intro x hx
     exact absurd hx (Set.notMem_empty x)
 
-/-- From `∀ N, ∃ n ≥ N, P n`, extract a strictly monotone subsequence
-along which `P` always holds. -/
-private lemma strictMono_subseq_of_forall_exists {P : ℕ → Prop}
-    (h : ∀ N, ∃ n, N ≤ n ∧ P n) :
-    ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∀ n, P (φ n) := by
-  choose ψ hψ using h
-  let φ : ℕ → ℕ := fun n => Nat.rec (motive := fun _ => ℕ) (ψ 0) (fun _ ih => ψ (ih + 1)) n
-  have hφ0 : φ 0 = ψ 0 := rfl
-  have hφS : ∀ n, φ (n + 1) = ψ (φ n + 1) := fun n => rfl
-  have hP : ∀ n, P (φ n) := by
-    intro n
-    induction n with
-    | zero => rw [hφ0]; exact (hψ 0).2
-    | succ n ih => rw [hφS]; exact (hψ _).2
-  have hlt : ∀ n, φ n < φ (n + 1) := by
-    intro n
-    rw [hφS]
-    have h1 := (hψ (φ n + 1)).1
-    linarith
-  exact ⟨φ, strictMono_nat_of_lt_succ hlt, hP⟩
-
 /-- Two holomorphic functions agreeing on `S` (which accumulates in `U`)
 agree on all of the preconnected open set `U`. -/
 private lemma eqOn_of_agree_on_S
@@ -459,12 +438,7 @@ theorem vitali
       push Not at hc
       exact hnot hc
     obtain ⟨ε, hε, hfreq⟩ := hbad
-    have hN : ∀ N, ∃ n, N ≤ n ∧ ∃ x ∈ K, ε ≤ dist (f₀ x) (F n x) := by
-      intro N
-      obtain ⟨b, hb, hbx⟩ := Filter.frequently_atTop.mp hfreq N
-      obtain ⟨x, hxk, hdist⟩ := hbx
-      exact ⟨b, hb, x, hxk, hdist⟩
-    obtain ⟨φ₁, hφ₁, hP⟩ := strictMono_subseq_of_forall_exists hN
+    obtain ⟨φ₁, hφ₁, hP⟩ := Filter.extraction_of_frequently_atTop hfreq
     choose x hx using hP
     have hH : ∀ n, DifferentiableOn ℂ ((fun k => F (φ₁ k)) n) U := fun n => hF (φ₁ n)
     have hHB : IsLocallyUniformlyBoundedOn U (fun k => F (φ₁ k)) := by

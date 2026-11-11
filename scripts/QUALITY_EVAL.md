@@ -14,15 +14,15 @@ Its Python modules are compiled from that commit's Git objects, never imported f
 
 ## Scope and interpretation
 
-The primary Atlas population is **MathlibExt and CSLibExt**. WantedExt, both test libraries, legacy Atlas, archived v1 and certificate directories are excluded.
-Public, nondeprecated source `theorem` and `lemma` declarations are sampled uniformly without replacement, respecting the Lean module system's public-section visibility.
+The primary Atlas population is **MathlibExt, CSLibExt and PhyslibExt**. WantedExt, all three test libraries, legacy Atlas, archived v1 and certificate directories are excluded.
+Public, nondeprecated source `theorem` and `lemma` declarations are sampled uniformly without replacement, respecting the Lean module system's public-section visibility. Import-only bootstrap files have no eligible theorem or mathematical-file content and therefore contribute zero population entries; later physics modules are included normally.
 Generated declarations are not in the source population. Private helpers are excluded from the primary theorem rates, as in the article.
 Whole-file reviews see every definition, statement and proof, including private helpers.
 
 The control is the **exact Mathlib version Atlas pins**, excluding Tactic, Util, Lean, Testing and Deprecated directories from its population.
-Both libraries receive all three indicators, including the inclusive Mathlib duplication control.
+Both arms receive all three indicators, including the inclusive Mathlib duplication control.
 Results are reported **per root**, never as one composite Atlas quality score.
-CSLibExt's duplication rate means duplicates of Mathlib/Batteries/core only: **CSLib redundancy is not measured**, and CSLibExt has no domain-matched control.
+CSLibExt and PhyslibExt duplication rates mean duplicates of Mathlib/Batteries/core only: **CSLib and Physlib redundancy are not measured**. This preserves the official indicator's reference set; pinned Physlib sources (including PhyslibAlpha and QuantumInfo) are available as context but are not eligible duplicate citations. Neither CSLibExt nor PhyslibExt has a domain-matched control.
 
 `--private-theorems N` optionally adds a separate duplicate-only sample of N private MathlibExt helpers and N private Mathlib helpers.
 Do not mix this supplementary stratum into the public theorem numerator.

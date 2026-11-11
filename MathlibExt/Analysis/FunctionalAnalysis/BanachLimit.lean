@@ -71,10 +71,6 @@ private lemma bddBelow_of_le {u : ℕ → ℝ} {C : ℝ} (h : ∀ n, C ≤ u n) 
     Filter.IsBoundedUnder (fun x1 x2 => x2 ≤ x1) Filter.atTop u :=
   Filter.isBoundedUnder_of ⟨C, h⟩
 
-private lemma cobdd_of_bddBelow {u : ℕ → ℝ} {C : ℝ} (h : ∀ n, C ≤ u n) :
-    Filter.IsCoboundedUnder (fun x1 x2 => x1 ≤ x2) Filter.atTop u :=
-  (bddBelow_of_le h).isCobounded_flip
-
 private lemma coe_le_norm (f : BoundedSeq) (n : ℕ) : f n ≤ ‖f‖ := by
   calc f n ≤ |f n| := le_abs_self _
     _ = ‖f n‖ := (Real.norm_eq_abs _).symm
@@ -131,7 +127,7 @@ private lemma cesMeanBddBelow (x : BoundedSeq) :
 
 private lemma cesMeanCobdd (x : BoundedSeq) :
     Filter.IsCoboundedUnder (fun x1 x2 => x1 ≤ x2) Filter.atTop (cesMean x) :=
-  cobdd_of_bddBelow (fun n => norm_le_cesMean x n)
+  Filter.isCoboundedUnder_le_of_le Filter.atTop (fun n => norm_le_cesMean x n)
 
 /-- Positive homogeneity of `limsupCes`. -/
 private lemma limsupCes_hom :

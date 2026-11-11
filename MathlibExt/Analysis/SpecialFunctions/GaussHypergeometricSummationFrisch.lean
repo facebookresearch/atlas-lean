@@ -45,16 +45,6 @@ private theorem poch_prod (s : ℝ) (k : ℕ) :
     rw [h1, ih, hcast]
     conv_rhs => rw [Finset.prod_range_succ, hcast]
 
-private theorem poch_one (k : ℕ) :
-    (ascPochhammer ℝ k).eval (1 : ℝ) = (Nat.factorial k : ℝ) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [ascPochhammer_succ_eval, ih]
-    rw [Nat.factorial_succ]
-    push_cast
-    ring
-
 private theorem poch_ratio (m k : ℕ) (hm : 1 ≤ m) :
     (ascPochhammer ℝ k).eval (((m + 1 : ℕ)) : ℝ)
       = (((m : ℝ) + (k : ℝ)) / (m : ℝ)) * (ascPochhammer ℝ k).eval (m : ℝ) := by
@@ -84,7 +74,7 @@ private theorem poch_nat_le (m k : ℕ) (hm : 1 ≤ m) :
     by_cases hp0 : p = 0
     · subst hp0
       have h1 : ((((0 + 1 : ℕ))) : ℝ) = (1 : ℝ) := by norm_cast
-      rw [h1, poch_one]
+      rw [h1, ascPochhammer_eval_one]
       have hfact : (Nat.factorial k : ℝ) ≠ 0 :=
         Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero k)
       rw [div_self hfact]
