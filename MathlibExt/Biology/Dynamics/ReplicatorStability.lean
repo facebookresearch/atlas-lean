@@ -11,7 +11,11 @@ module
 public import MathlibExt.Biology.Dynamics.Replicator
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Matrix.Mul
+import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 
@@ -42,8 +46,12 @@ close to `p` stay close to `p` and converge to `p`.
 * `relEntropy_pos`: `relEntropy p y > 0` for interior `y ≠ p` in the simplex.
 * `IsSolution.hasDerivAt_relEntropy`: along a solution,
   `d/dt relEntropy p (x t) = -(p · A x - x · A x)`.
-* `IsESS.lyapunovStable`, `IsESS.tendsto_nhds`, `IsESS.asymptoticallyStable`: an interior ESS
-  is Lyapunov stable and locally attracting, i.e. locally asymptotically stable.
+* `exists_isSolution_mulVec`: through every point of the simplex there is a solution of the
+  replicator equation on `[0, ∞)` (global forward existence).
+* `IsESS.lyapunovStable`, `IsESS.tendsto_nhds`: every solution starting in the simplex near an
+  interior ESS stays near it, and converges to it.
+* `IsESS.asymptoticallyStable`: local asymptotic stability of an interior ESS, packaging global
+  forward existence from every simplex state with Lyapunov stability and local attraction.
 
 ## Scope: boundary rest points are not covered
 
@@ -65,8 +73,13 @@ existing definitions `Replicator.IsSolution`, `Replicator.meanFitness` and the i
 results `IsSolution.mem_simplex`, `IsSolution.pos_of_pos` are reused; `meanFitness` of the
 fitness `y ↦ A y` is definitionally `y · A y`.
 
-The stability theorems quantify over global forward solutions (`IsSolution` on `[0, ∞)`); they
-do not assert that such solutions exist for a given initial state.
+`IsESS.lyapunovStable` and `IsESS.tendsto_nhds` quantify over global forward solutions
+(`IsSolution` on `[0, ∞)`). Their attraction clause is not vacuous: `exists_isSolution_mulVec`
+proves that every simplex state has such a solution, and `IsESS.asymptoticallyStable` packages
+the three facts. Existence uses the repo's global Picard–Lindelöf theorem
+`ode_global_exists_of_global_lipschitz` (`MathlibExt/Analysis/ODE/MaximalSolution.lean`) for a
+bump-truncated field together with invariance of the simplex. Uniqueness of forward solutions
+is not proved here; stability and attraction hold for every solution.
 
 ## Source receipt
 
@@ -293,6 +306,61 @@ private theorem exists_pos_radius (hp : ∀ i, 0 < p i) :
 theorem continuous_mulVec_fitness (A : Matrix ι ι ℝ) : Continuous fun z : ι → ℝ => A *ᵥ z :=
   (Matrix.mulVecLin A).continuous_of_finiteDimensional
 
+/-- **Global forward existence for matrix games.** Through every point `x₀` of the simplex there
+is a solution of the replicator equation `x_i' = x_i ((A x)_i - x · A x)` on `[0, ∞)`.
+
+Proof: replace the fitness by `φ(y) • A y` for a smooth bump `φ` equal to `1` on the closed
+ball of radius `2` around `0` (which contains the simplex). The resulting replicator field is
+`φ(y)` times the original one, smooth with compact support, hence globally Lipschitz, so
+`ode_global_exists_of_global_lipschitz` gives a global solution. It solves the replicator
+equation of the truncated fitness, so it stays in the simplex (`IsSolution.mem_simplex`),
+where `φ = 1`; hence it solves the original equation. -/
+theorem exists_isSolution_mulVec (A : Matrix ι ι ℝ) {x₀ : ι → ℝ}
+    (h0 : (∀ i, 0 ≤ x₀ i) ∧ ∑ i, x₀ i = 1) :
+    ∃ x : ℝ → ι → ℝ, x 0 = x₀ ∧ IsSolution (fun z => A *ᵥ z) x := by
+  let φ : ContDiffBump (0 : ι → ℝ) := ⟨2, 3, by norm_num, by norm_num⟩
+  let F : (ι → ℝ) → ι → ℝ := fun y => φ y • (A *ᵥ y)
+  let G : (ι → ℝ) → ι → ℝ := fun y i => y i * (F y i - meanFitness F y)
+  have hG : G = (⇑φ) • fun y i => y i * ((A *ᵥ y) i - y ⬝ᵥ A *ᵥ y) := by
+    funext y i
+    have hmean : meanFitness F y = φ y * (y ⬝ᵥ A *ᵥ y) := by
+      simp only [meanFitness, F, Pi.smul_apply, smul_eq_mul, dotProduct, Finset.mul_sum]
+      exact Finset.sum_congr rfl fun j _ => by ring
+    change y i * (F y i - meanFitness F y) =
+      φ y * (y i * ((A *ᵥ y) i - y ⬝ᵥ A *ᵥ y))
+    simp only [hmean, F, Pi.smul_apply, smul_eq_mul]
+    ring
+  have hpoly : ContDiff ℝ 1 fun y : ι → ℝ => fun i => y i * ((A *ᵥ y) i - y ⬝ᵥ A *ᵥ y) := by
+    refine contDiff_pi.2 fun i => ?_
+    simp only [mulVec, dotProduct]
+    fun_prop
+  have hcd : ContDiff ℝ 1 G := by
+    rw [hG]
+    exact φ.contDiff.smul hpoly
+  have hcs : HasCompactSupport G := by
+    rw [hG]
+    exact φ.hasCompactSupport.smul_right
+  obtain ⟨C, hC⟩ := hcd.lipschitzWith_of_hasCompactSupport hcs one_ne_zero
+  obtain ⟨x, ⟨hx0, hx⟩, -⟩ :=
+    MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+      (fun _ => G) 0 x₀ C (hcd.continuous.comp continuous_snd) fun _ => hC
+  have hsol : IsSolution F x := ⟨fun i t _ => hasDerivAt_pi.1 (hx t) i⟩
+  have hFc : Continuous F := φ.continuous.smul (continuous_mulVec_fitness A)
+  have hφ1 : ∀ y : ι → ℝ, ((∀ i, 0 ≤ y i) ∧ ∑ i, y i = 1) → φ y = 1 := fun y hy => by
+    refine φ.one_of_mem_closedBall ?_
+    rw [Metric.mem_closedBall, dist_zero_right]
+    refine (pi_norm_le_iff_of_nonneg zero_le_one).2 (fun i => ?_) |>.trans (by norm_num)
+    rw [Real.norm_eq_abs, abs_of_nonneg (hy.1 i), ← hy.2]
+    exact Finset.single_le_sum (fun j _ => hy.1 j) (mem_univ i)
+  refine ⟨x, hx0, ⟨fun i t ht => ?_⟩⟩
+  have hm := hsol.mem_simplex hFc (hx0 ▸ h0.1) (hx0 ▸ h0.2) ht
+  have hF : F (x t) = A *ᵥ x t := by
+    simp only [F, hφ1 _ hm, one_smul]
+  have hmean : meanFitness F (x t) = meanFitness (fun z => A *ᵥ z) (x t) := by
+    simp only [meanFitness, hF]
+  have := hsol.hasDerivAt i t ht
+  rwa [hmean, hF] at this
+
 private theorem continuous_advantage (A : Matrix ι ι ℝ) (p : ι → ℝ) :
     Continuous fun y : ι → ℝ => p ⬝ᵥ A *ᵥ y - y ⬝ᵥ A *ᵥ y := by
   have hm := continuous_mulVec_fitness A
@@ -406,13 +474,16 @@ theorem IsESS.tendsto_nhds (h : IsESS A p) (hp : ∀ i, 0 < p i) :
   linarith
 
 /-- **An interior ESS is locally asymptotically stable** under the replicator dynamics of the
-matrix game (Hofbauer–Sigmund 1998, Theorem 7.2.4, interior case): it is Lyapunov stable and
-locally attracting. Boundary ESS and boundary rest points are not covered. -/
+matrix game (Hofbauer–Sigmund 1998, Theorem 7.2.4, interior case): every state of the simplex
+has a global forward solution, and `p` is Lyapunov stable and locally attracting for all of
+them. Boundary ESS and boundary rest points are not covered. -/
 theorem IsESS.asymptoticallyStable (h : IsESS A p) (hp : ∀ i, 0 < p i) :
+    (∀ x₀ : ι → ℝ, ((∀ i, 0 ≤ x₀ i) ∧ ∑ i, x₀ i = 1) →
+      ∃ x : ℝ → ι → ℝ, x 0 = x₀ ∧ IsSolution (fun z => A *ᵥ z) x) ∧
     (∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsSolution (fun z => A *ᵥ z) x →
       (∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1 → ‖x 0 - p‖ < δ → ∀ t, 0 ≤ t → ‖x t - p‖ < ε) ∧
     ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsSolution (fun z => A *ᵥ z) x →
       (∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1 → ‖x 0 - p‖ < δ → Tendsto x atTop (𝓝 p) :=
-  ⟨h.lyapunovStable hp, h.tendsto_nhds hp⟩
+  ⟨fun _ h0 => exists_isSolution_mulVec A h0, h.lyapunovStable hp, h.tendsto_nhds hp⟩
 
 end MathlibExt.Biology.Dynamics.Replicator
