@@ -13,7 +13,7 @@ public import Mathlib.Data.Fin.VecNotation
 import Mathlib.Algebra.Order.Star.Real
 
 /-!
-# Mean-variance portfolios: the unique minimum-variance portfolio
+# Mean-variance portfolios: the minimum-variance portfolio and the frontier
 
 Assets are indexed by a finite type `ι`, `S` is the covariance matrix of their returns and `μ` the
 vector of expected returns. A portfolio `w` is feasible for target return `m` when it is fully
@@ -31,6 +31,8 @@ constraint matrix `M = [1 μ]` (Aitken's theorem,
   `eq_minVariancePortfolio_of_portfolioVariance_le`: `w*` is feasible, minimal and the unique
   minimizer.
 * `existsUnique_minVariance`: the unique-existence statement.
+* `portfolioVariance_minVariancePortfolio`: with `A = μᵀ S⁻¹ μ`, `B = 1ᵀ S⁻¹ μ`, `C = 1ᵀ S⁻¹ 1`
+  and `A C - B² > 0`, the frontier variance is `(A - 2 B m + C m²) / (A C - B²)`.
 
 ## References
 
@@ -299,5 +301,117 @@ theorem existsUnique_minVariance {ι : Type*} [Fintype ι] [DecidableEq ι]
   · intro y hy
     exact eq_minVariancePortfolio_of_portfolioVariance_le hS hμ hy.1
       (hy.2 (minVariancePortfolio S μ m) (minVariancePortfolio_isFeasible hS hμ m))
+
+private theorem constraintMatrix_apply_zero {ι : Type*} (μ : ι → ℝ) (i : ι) :
+    constraintMatrix μ i 0 = 1 := by
+  simp only [constraintMatrix, Matrix.of_apply, Matrix.cons_val_zero]
+
+private theorem constraintMatrix_apply_one {ι : Type*} (μ : ι → ℝ) (i : ι) :
+    constraintMatrix μ i 1 = μ i := by
+  simp only [constraintMatrix, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
+
+private theorem constraintMatrix_col_zero {ι : Type*} (μ : ι → ℝ) :
+    (fun i => constraintMatrix μ i 0) = 1 := by
+  funext i
+  simp [constraintMatrix_apply_zero]
+
+private theorem constraintMatrix_col_one {ι : Type*} (μ : ι → ℝ) :
+    (fun i => constraintMatrix μ i 1) = μ := by
+  funext i
+  exact constraintMatrix_apply_one μ i
+
+private theorem transpose_inv_of_posDef_aux {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {S : Matrix ι ι ℝ} (hS : S.PosDef) : (S⁻¹)ᵀ = S⁻¹ := by
+  simpa [conjTranspose_eq_transpose_of_trivial] using hS.inv.isHermitian.eq
+
+private theorem dotProduct_mulVec_symm {ι : Type*} [Fintype ι]
+    (T : Matrix ι ι ℝ) (hT : Tᵀ = T) (u v : ι → ℝ) :
+    u ⬝ᵥ (T *ᵥ v) = v ⬝ᵥ (T *ᵥ u) := by
+  conv_lhs => rw [Matrix.dotProduct_mulVec, ← hT, Matrix.vecMul_transpose]
+  exact dotProduct_comm _ _
+
+private theorem gram_apply {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (S : Matrix ι ι ℝ) (μ : ι → ℝ) (a b : Fin 2) :
+    ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) a b
+      = (fun i => constraintMatrix μ i a) ⬝ᵥ (S⁻¹ *ᵥ fun k => constraintMatrix μ k b) := by
+  rw [Matrix.mul_assoc, Matrix.mul_apply]
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, dotProduct, Matrix.mulVec]
+
+private theorem gram_zero_zero {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (S : Matrix ι ι ℝ) (μ : ι → ℝ) :
+    ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 0 0
+      = (1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1) := by
+  rw [gram_apply, constraintMatrix_col_zero]
+
+private theorem gram_zero_one {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (S : Matrix ι ι ℝ) (μ : ι → ℝ) :
+    ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 0 1
+      = (1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ) := by
+  rw [gram_apply, constraintMatrix_col_zero, constraintMatrix_col_one]
+
+private theorem gram_one_zero {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) :
+    ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 1 0
+      = (1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ) := by
+  rw [gram_apply, constraintMatrix_col_one, constraintMatrix_col_zero]
+  exact dotProduct_mulVec_symm (S⁻¹) (transpose_inv_of_posDef_aux hS) μ 1
+
+private theorem gram_one_one {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (S : Matrix ι ι ℝ) (μ : ι → ℝ) :
+    ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 1 1
+      = μ ⬝ᵥ (S⁻¹ *ᵥ μ) := by
+  rw [gram_apply, constraintMatrix_col_one]
+
+private theorem transpose_mulVec_dotProduct_mulVec {ι : Type*} [Fintype ι]
+    (S : Matrix ι ι ℝ) (B' : Matrix (Fin 2) ι ℝ) (b : Fin 2 → ℝ) :
+    (B'ᵀ *ᵥ b) ⬝ᵥ (S *ᵥ (B'ᵀ *ᵥ b)) = b ⬝ᵥ ((B' * S * B'ᵀ) *ᵥ b) := by
+  rw [Matrix.dotProduct_mulVec]
+  nth_rewrite 1 [← Matrix.vecMul_transpose]
+  rw [Matrix.transpose_transpose, Matrix.vecMul_vecMul, ← Matrix.dotProduct_mulVec,
+    Matrix.mulVec_mulVec]
+
+/-- **Mean-variance frontier in closed form.** With a positive definite covariance matrix `S`
+and, in the frozen notation `A = μᵀ S⁻¹ μ`, `B = 1ᵀ S⁻¹ μ`, `C = 1ᵀ S⁻¹ 1`, a positive
+discriminant `A C - B² > 0`, the minimum-variance portfolio for target return `m` has variance
+`(A - 2 B m + C m²) / (A C - B²)`. -/
+theorem portfolioVariance_minVariancePortfolio {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) (m : ℝ)
+    (hD : 0 < (μ ⬝ᵥ (S⁻¹ *ᵥ μ)) * ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1)) -
+      ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ)) ^ 2) :
+    portfolioVariance S (minVariancePortfolio S μ m) =
+      (μ ⬝ᵥ (S⁻¹ *ᵥ μ) - 2 * ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ)) * m +
+          ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1)) * m ^ 2) /
+        ((μ ⬝ᵥ (S⁻¹ *ᵥ μ)) * ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1)) -
+          ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ)) ^ 2) := by
+  set A : ℝ := μ ⬝ᵥ (S⁻¹ *ᵥ μ) with hA
+  set B : ℝ := (1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ) with hB
+  set C : ℝ := (1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1) with hC
+  have hG00 : ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 0 0 = C :=
+    gram_zero_zero S μ
+  have hG01 : ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 0 1 = B :=
+    gram_zero_one S μ
+  have hG10 : ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 1 0 = B :=
+    gram_one_zero hS μ
+  have hG11 : ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) 1 1 = A :=
+    gram_one_one S μ
+  have hdet : ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ).det
+      = A * C - B ^ 2 := by
+    rw [Matrix.det_fin_two, hG00, hG01, hG10, hG11]
+    ring
+  have hDne : A * C - B ^ 2 ≠ 0 := ne_of_gt hD
+  have hX : IsUnit ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) := by
+    rw [Matrix.isUnit_iff_isUnit_det, hdet]
+    exact isUnit_iff_ne_zero.mpr hDne
+  have hgls := glsMatrix_mul_mul_transpose (X := constraintMatrix μ) (V := S) hS hX
+  have hvar : portfolioVariance S (minVariancePortfolio S μ m)
+      = ![1, m] ⬝ᵥ ((((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ)⁻¹) *ᵥ ![1, m]) := by
+    simp only [portfolioVariance, minVariancePortfolio]
+    rw [transpose_mulVec_dotProduct_mulVec, hgls]
+  rw [hvar, Matrix.inv_def, Matrix.adjugate_fin_two, hdet, Ring.inverse_eq_inv,
+    hG00, hG01, hG10, hG11]
+  simp only [dotProduct, Fin.sum_univ_two, Matrix.mulVec, Matrix.smul_apply,
+    Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one, smul_eq_mul]
+  field_simp
+  ring
 
 end MathlibExt.Probability.Finance.MeanVariancePortfolio
