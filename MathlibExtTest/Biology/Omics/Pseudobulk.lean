@@ -125,11 +125,45 @@ example : trueVar 1 1 2 3 ≠ trueVar 0 2 2 3 := by norm_num [trueVar]
 
 /-! ### Variance components must be nonnegative -/
 
-/-- `Y₀ = Z`, `Y₁ = -Z` fits the kernel with coefficients `(-1, 2)`, but that is not a
-random-intercept model: a donor variance of `-1` is rejected by the definition. -/
-example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (Y : Fin 1 × Fin 2 → Ω → ℝ) :
-    ¬ IsRandomIntercept μ Y (-1) 2 :=
-  fun h ↦ absurd h.donorVar_nonneg (by norm_num)
+/-- Signs of the antithetic pair: `+1` for cell `0`, `-1` for cell `1`. -/
+def antiSign (i : Fin 1 × Fin 2) : ℝ := if i.2 = 0 then 1 else -1
+
+/-- One donor, two cells: `Y₀ = Z`, `Y₁ = -Z` for a standard Gaussian coordinate `Z`. -/
+noncomputable def antiY (i : Fin 1 × Fin 2) (ω : NoiseSpace (Fin 1) (Fin 2)) : ℝ :=
+  antiSign i * ω (Sum.inl 0)
+
+theorem memLp_antiY (i : Fin 1 × Fin 2) : MemLp (antiY i) 2 (stdGaussianPi _ _) :=
+  ((memLp_id_gaussianReal 2).comp_measurePreserving
+    (measurePreserving_eval (fun _ : Fin 1 ⊕ Fin 1 × Fin 2 ↦ gaussianReal 0 1) _)).const_mul _
+
+/-- `Y₀ = Z`, `Y₁ = -Z` meets the two second-moment conditions (square integrability and the
+kernel) with coefficients `(-1, 2)`, so the structure without sign fields would have accepted it,
+although no donor random effect has variance `-1`. -/
+theorem antiY_fits_kernel :
+    (∀ i, MemLp (antiY i) 2 (stdGaussianPi _ _)) ∧
+      ∀ i j, cov[antiY i, antiY j; stdGaussianPi _ _] = riCov (-1) 2 i j := by
+  refine ⟨memLp_antiY, fun i j ↦ ?_⟩
+  have hZ : cov[fun ω : NoiseSpace (Fin 1) (Fin 2) ↦ ω (Sum.inl 0), fun ω ↦ ω (Sum.inl 0);
+      stdGaussianPi _ _] = 1 := by
+    rw [covariance_self (measurable_pi_apply _).aemeasurable]
+    have := (measurePreserving_eval (fun _ : Fin 1 ⊕ Fin 1 × Fin 2 ↦ gaussianReal 0 1)
+      (Sum.inl 0)).variance_fun_comp (f := id) aemeasurable_id
+    simpa [stdGaussianPi, variance_id_gaussianReal] using this
+  have h : cov[antiY i, antiY j; stdGaussianPi _ _] = antiSign i * antiSign j := by
+    unfold antiY
+    rw [covariance_const_mul_left, covariance_const_mul_right, hZ, mul_one]
+  rw [h]
+  fin_cases i <;> fin_cases j <;> norm_num [antiSign, riCov]
+
+/-- The current definition rejects it, from those same fields: the donor variance `-1` violates
+`donorVar_nonneg`. -/
+example : ¬ IsRandomIntercept (stdGaussianPi (Fin 1) (Fin 2)) antiY (-1) 2 := fun h ↦
+  absurd h.donorVar_nonneg (by norm_num)
+
+/-- Without the sign field the two second-moment fields alone would hold. -/
+example : ∃ σb2 σe2 : ℝ, σb2 < 0 ∧ (∀ i, MemLp (antiY i) 2 (stdGaussianPi _ _)) ∧
+    ∀ i j, cov[antiY i, antiY j; stdGaussianPi _ _] = riCov σb2 σe2 i j :=
+  ⟨-1, 2, by norm_num, antiY_fits_kernel⟩
 
 /-! ### The explicit Gaussian model, checked directly -/
 
@@ -193,9 +227,10 @@ example (U : Fin 2 × Fin 3 → Unit → ℝ) :
       (dataLaw condC condC (Measure.dirac ()) 0 1 0 U (aemeasurable_unit _ U)) :=
   inferInstance
 
-/-- It is the actual law of the observations, not the zero fallback of `Measure.map`: with zero
-noise on a point mass it is the point mass at the donor-mean vector, computed from the
-definitions. -/
+/-- `dataLaw` computes the right law: with zero noise on a point mass it is the point mass at the
+donor-mean vector, computed from the definitions. On `Unit` every map is measurable, so this test
+does not exercise the `Measure.map` fallback; the general guarantee against it is
+`isProbabilityMeasure_dataLaw`. -/
 example :
     dataLaw condC condC (Measure.dirac ()) 0 1 0 (fun _ _ ↦ 0) (aemeasurable_unit _ _)
       = Measure.dirac (fun i : Fin 2 × Fin 3 ↦ condC i.1) := by
@@ -291,5 +326,8 @@ example (μ₀ τ β : ℝ) :
 #print axioms no_unbiased_estimator_of_confounded
 #print axioms contrast_of_confounded
 #print axioms contrast_of_sameBatch
+#print axioms isProbabilityMeasure_dataLaw
+#print axioms aemeasurable_obs
+#print axioms dataLaw_shift_of_confounded
 
 end MathlibExtTest.Biology.Omics.Pseudobulk
