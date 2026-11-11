@@ -19,9 +19,10 @@ import MathlibExt.Biology.Dynamics.TuringPatterns
   eigenvalue `κ = 1`, growth bound `ω = 1 < 2 · Re κ`.
 * Boundary case: an unstable *continuum* wavenumber whose domain spectrum has no unstable mode.
   The Schnakenberg kinetics with `d_v / d_u = 9` have the unstable wavenumber `k = 1/√3`, but on
-  `[0, 1]` with Neumann boundary conditions no admissible wavenumber `k_n = n π` is unstable, so
-  the linearized operator on that domain has no eigenvalue with positive real part and the
-  spectral hypothesis of the instability theorems cannot be met by any Neumann mode. -/
+  `[0, 1]` with Neumann boundary conditions no admissible wavenumber `k_n = n π` is unstable:
+  no Neumann Fourier mode `cos(n π x)` is unstable, so no such mode can supply the eigenvalue
+  hypothesis of the instability theorems. (That the linearized operator has no other unstable
+  eigenvalue would need completeness of the Neumann modes, not formalized here.) -/
 
 namespace MathlibExtTest.Analysis.PDE.SemilinearFlow.Instability
 
@@ -89,8 +90,8 @@ open MathlibExt.Biology.Dynamics.TuringPatterns in
 /-- **Continuum instability without domain instability.** For the Schnakenberg kinetics at
 `a = 1/10`, `b = 9/10` with `d_u = 1`, `d_v = 9`, the continuum wavenumber `k = 1/√3` is
 unstable, yet on `[0, 1]` with Neumann boundary conditions no admissible wavenumber `n π` is.
-An unstable continuum wavenumber therefore does not supply the eigenvalue hypothesis of
-`exists_escape_of_semigroup` on a bounded domain. -/
+An unstable continuum wavenumber therefore yields no Neumann Fourier mode that could supply the
+eigenvalue hypothesis of `exists_escape_of_semigroup` on this domain. -/
 example : IsUnstableMode (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9 (Real.sqrt (1 / 3)) ∧
     ∀ n : ℕ,
       ¬ IsUnstableMode (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9 (neumannWavenumber 1 n) := by

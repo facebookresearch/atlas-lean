@@ -20,8 +20,8 @@ import Mathlib.Algebra.Ring.GeomSum
 # Linearized instability for semilinear flows
 
 The instability half of the principle of linearized stability for a semilinear evolution
-equation `u' = A u + f(u)` (Henry 1981, §5.1), proved in the
-dominant-eigenvalue form of Shatah and Strauss (2000): an equilibrium whose linearization has an
+equation `u' = A u + f(u)` (Henry 1981, §5.1), following the approach of Shatah and Strauss
+(2000). Proved here under an eigenvalue hypothesis: an equilibrium whose linearization has an
 eigenvalue in the unstable region that dominates the growth of the linear semigroup is
 nonlinearly (Lyapunov) unstable.
 
@@ -35,8 +35,9 @@ assumptions are:
 * **Smoothness.** Near the equilibrium `u₀` the time-`T` map of the flow is
   `u₀ + L y + O(‖y‖ᵖ)` with `p > 1` on a ball `‖y‖ ≤ ρ` (for a semilinear problem this is
   expected from `f` being `C¹` with Hölder-continuous derivative of order `p - 1`; that
-  derivation is not done here). Only that ball is used, so
-  local semiflows qualify: the flow need only step by its time-`T` map from states in the ball.
+  derivation is not done here). Only that ball is used: the flow need only step by its
+  time-`T` map along orbits whose states at times `0, T, …, nT` all lie in the ball, so a
+  local semiflow that exists for time `T` from the ball qualifies.
 * **Spectrum.** `L` has an eigenvalue `ν` with `|ν| > 1` and `‖Lⁿ‖ ≤ M μⁿ` with `μ < |ν|ᵖ`.
   On a complex Banach space this holds whenever the spectral radius satisfies `r(L) < |ν|ᵖ`,
   in particular when `|ν| = r(L)`. For the linearized semigroup `S t = e^{t B}` this reads: an
@@ -56,12 +57,13 @@ assumptions are:
 
 ## Scope
 
-Henry's instability theorem for maps (§5.1) only needs some spectrum outside the closed unit
-disk; it uses the spectral projection onto that part, which is not done here, so we need the
-extra growth condition `μ < |ν|ᵖ`. An unstable *continuum* wavenumber of a reaction–diffusion
-system is not enough on a bounded domain: the spectral hypothesis concerns the actual operator,
-and when no admissible wavenumber of the domain lies in the unstable band there is no unstable
-eigenvalue (see the tests).
+The general version, with only some spectrum outside the closed unit disk and no eigenvector,
+needs approximate eigenvectors at a spectral point of maximal modulus (or a spectral projection
+onto the unstable part); it is deferred, so we assume an eigenvector and the growth condition
+`μ < |ν|ᵖ`. An unstable *continuum* wavenumber of a reaction–diffusion system is not enough
+on a bounded domain: the spectral hypothesis concerns the actual operator, and when no
+admissible wavenumber of the domain lies in the unstable band, no Neumann Fourier mode is an
+unstable eigenvector (see the tests).
 
 ## References
 
@@ -254,8 +256,9 @@ theorem exists_escape_of_eigenvalue {G : X → X} {x₀ : X} {L : X →L[𝕜] X
 /-- **Linearized instability for a flow, through its time-`T` map.**
 
 `Φ t x` is the state at time `t` of the solution starting at `x`; `u₀` is the equilibrium. The
-flow is only required to step by its time-`T` map from states in the ball `‖x - u₀‖ ≤ ρ`, so a
-local semiflow that exists for time `T` from that ball qualifies. Near `u₀` the time-`T` map is
+flow is only required to step by its time-`T` map along orbits whose states at times
+`0, T, …, nT` all lie in the ball `‖x - u₀‖ ≤ ρ`, so a local semiflow that exists for time `T`
+from that ball qualifies. Near `u₀` the time-`T` map is
 `u₀ + L y + O(‖y‖ᵖ)`; `L` has an eigenvalue `ν` with `|ν| > 1` and `‖Lⁿ‖ ≤ M μⁿ` with
 `μ < |ν|ᵖ`. Then `u₀` is unstable: some `ε > 0` is reached at a nonnegative time from initial
 data arbitrarily close to `u₀`. -/
@@ -263,7 +266,8 @@ theorem exists_escape_of_timeMap {Φ : ℝ → X → X} {u₀ : X} {T : ℝ} {L 
     {ρ C p M μ : ℝ} {ν : 𝕜} {v : X}
     (hT : 0 ≤ T) (hρ : 0 < ρ) (hC : 0 ≤ C) (hp : 1 < p)
     (hΦ0 : ∀ x, Φ 0 x = x)
-    (hstep : ∀ (n : ℕ) (x : X), ‖Φ (n * T) x - u₀‖ ≤ ρ → Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
+    (hstep : ∀ (n : ℕ) (x : X), (∀ k ≤ n, ‖Φ (k * T) x - u₀‖ ≤ ρ) →
+      Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
     (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - L y‖ ≤ C * ‖y‖ ^ p)
     (hv : v ≠ 0) (hLv : L v = ν • v) (hν : 1 < ‖ν‖)
     (hμ0 : 0 ≤ μ) (hμ : μ < ‖ν‖ ^ p) (hM : ∀ n : ℕ, ‖L ^ n‖ ≤ M * μ ^ n) :
@@ -273,13 +277,14 @@ theorem exists_escape_of_timeMap {Φ : ℝ → X → X} {u₀ : X} {T : ℝ} {L 
   obtain ⟨x, hx, n, hball, hesc⟩ := h δ hδ
   have hiter : ∀ k ≤ n, Φ (k * T) x = (Φ T)^[k] x := by
     intro k
-    induction k with
-    | zero => intro _; simp [hΦ0]
-    | succ k ih =>
-      intro hk
-      have hk' := ih (by omega)
-      have hb : ‖Φ (k * T) x - u₀‖ ≤ ρ := hk' ▸ hball k (by omega)
-      rw [Nat.cast_succ, hstep k x hb, hk', Function.iterate_succ_apply']
+    induction k using Nat.strong_induction_on with
+    | _ k ih =>
+    intro hk
+    rcases k with _ | k
+    · simp [hΦ0]
+    · have hb : ∀ j ≤ k, ‖Φ (j * T) x - u₀‖ ≤ ρ := fun j hj =>
+        (ih j (by omega) (by omega)) ▸ hball j (by omega)
+      rw [Nat.cast_succ, hstep k x hb, ih k (by omega) (by omega), Function.iterate_succ_apply']
   exact ⟨x, hx, n * T, by positivity, (hiter n le_rfl).symm ▸ hesc⟩
 
 /-- Lyapunov form of `exists_escape_of_timeMap`: the equilibrium `u₀` of the flow `Φ` is not
@@ -288,7 +293,8 @@ theorem not_lyapunovStable_of_timeMap {Φ : ℝ → X → X} {u₀ : X} {T : ℝ
     {ρ C p M μ : ℝ} {ν : 𝕜} {v : X}
     (hT : 0 ≤ T) (hρ : 0 < ρ) (hC : 0 ≤ C) (hp : 1 < p)
     (hΦ0 : ∀ x, Φ 0 x = x)
-    (hstep : ∀ (n : ℕ) (x : X), ‖Φ (n * T) x - u₀‖ ≤ ρ → Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
+    (hstep : ∀ (n : ℕ) (x : X), (∀ k ≤ n, ‖Φ (k * T) x - u₀‖ ≤ ρ) →
+      Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
     (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - L y‖ ≤ C * ‖y‖ ^ p)
     (hv : v ≠ 0) (hLv : L v = ν • v) (hν : 1 < ‖ν‖)
     (hμ0 : 0 ≤ μ) (hμ : μ < ‖ν‖ ^ p) (hM : ∀ n : ℕ, ‖L ^ n‖ ≤ M * μ ^ n) :
@@ -308,15 +314,18 @@ variable {Y : Type*} [NormedAddCommGroup Y] [NormedSpace ℂ Y]
 
 `S` is the linearized semigroup at the equilibrium `u₀` (for a semilinear parabolic problem,
 `S t = e^{t B}` with `B` the linearization; Henry 1981, §5.1), with growth bound
-`‖S t‖ ≤ M e^{ω t}`. The generator eigenvalue `κ` with `Re κ > 0` enters through
-`S T φ = e^{T κ} φ` at the chosen time `T > 0`. The time-`T` map of the flow is
-`u₀ + S T y + O(‖y‖ᵖ)` near `u₀`. If `ω < p · Re κ` (in particular, if `κ` is a dominant
+`‖S t‖ ≤ M e^{ω t}`. The eigenvalue enters only through `hSφ : S T φ = e^{T κ} φ` at the
+chosen time `T > 0`, with `Re κ > 0`. The theorem does not relate `κ` to a generator: `hSφ` is
+the spectral-mapping input (an eigenvalue `κ` of the generator `B` with eigenvector `φ` gives
+`e^{T B} φ = e^{T κ} φ`), to be supplied by the semigroup construction. The time-`T` map of
+the flow is `u₀ + S T y + O(‖y‖ᵖ)` near `u₀`. If `ω < p · Re κ` (in particular, if `κ` is a dominant
 eigenvalue and `S` has growth bound `Re κ`), then `u₀` is unstable. -/
 theorem exists_escape_of_semigroup {Φ : ℝ → Y → Y} {S : ℝ → Y →L[ℂ] Y} {u₀ φ : Y}
     {T ρ C p M ω : ℝ} {κ : ℂ}
     (hT : 0 < T) (hρ : 0 < ρ) (hC : 0 ≤ C) (hp : 1 < p)
     (hΦ0 : ∀ x, Φ 0 x = x)
-    (hstep : ∀ (n : ℕ) (x : Y), ‖Φ (n * T) x - u₀‖ ≤ ρ → Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
+    (hstep : ∀ (n : ℕ) (x : Y), (∀ k ≤ n, ‖Φ (k * T) x - u₀‖ ≤ ρ) →
+      Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
     (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - S T y‖ ≤ C * ‖y‖ ^ p)
     (hS0 : S 0 = 1) (hSadd : ∀ s t, 0 ≤ s → 0 ≤ t → S (s + t) = S s * S t)
     (hSbound : ∀ t, 0 ≤ t → ‖S t‖ ≤ M * Real.exp (ω * t))
