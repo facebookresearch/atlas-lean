@@ -36,8 +36,8 @@ example (μ : ℝ) (v : ℝ≥0) :
   rw [logNormalMeasure_real_Iic μ v (exp_pos μ), log_exp]
 
 /-- Zero log-variance: the law is the Dirac mass at `exp μ`. -/
-example (μ : ℝ) : logNormalMeasure μ 0 = Measure.dirac (exp μ) := by
-  simp [logNormalMeasure, Measure.map_dirac' measurable_exp]
+example (μ : ℝ) : logNormalMeasure μ 0 = Measure.dirac (exp μ) :=
+  logNormalMeasure_zero_var μ
 
 /-- Mean at `μ = 0`, `v = 2`: `exp 1`. -/
 example : ∫ x, x ∂(logNormalMeasure 0 2) = exp 1 := by

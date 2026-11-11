@@ -53,6 +53,15 @@ example : weibullMeasure 2 3 (Iic 0) = 0 := weibullMeasure_Iic_zero 2 3
 /-- The density vanishes at `0` and below. -/
 example (k l : ℝ) : weibullPDFReal k l 0 = 0 := by simp [weibullPDFReal]
 
+/-- Nonpositive shape: the density is `0` even at a positive point. -/
+example : weibullPDFReal 0 1 1 = 0 := weibullPDFReal_of_nonpos_left le_rfl 1 1
+
+/-- Negative scale: the density is `0` at a positive point (it would be `2 e⁻¹` unguarded). -/
+example : weibullPDFReal 2 (-1) 1 = 0 := weibullPDFReal_of_nonpos_right 2 (by norm_num) 1
+
+/-- The same, by unfolding the definition. -/
+example : weibullPDFReal (-1) 2 3 = 0 := by norm_num [weibullPDFReal]
+
 /-- At shape `1` and scale `1` the density is `exp (-x)` on `x > 0`. -/
 example {x : ℝ} (hx : 0 < x) : weibullPDFReal 1 1 x = exp (-x) := by
   simp [weibullPDFReal, hx]

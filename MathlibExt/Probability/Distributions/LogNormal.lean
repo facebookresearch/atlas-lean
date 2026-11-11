@@ -45,6 +45,11 @@ instance isProbabilityMeasure_logNormalMeasure (μ : ℝ) (v : ℝ≥0) :
     IsProbabilityMeasure (logNormalMeasure μ v) :=
   inferInstanceAs (IsProbabilityMeasure ((gaussianReal μ v).map exp))
 
+/-- With zero log-variance the log-normal law is the Dirac mass at `exp μ`. -/
+@[simp]
+theorem logNormalMeasure_zero_var (μ : ℝ) : logNormalMeasure μ 0 = Measure.dirac (exp μ) := by
+  rw [logNormalMeasure, gaussianReal_zero_var, Measure.map_dirac' measurable_exp]
+
 /-- The log-normal law puts no mass on `(-∞, 0]`. -/
 theorem logNormalMeasure_Iic_zero (μ : ℝ) (v : ℝ≥0) : logNormalMeasure μ v (Iic 0) = 0 := by
   rw [logNormalMeasure, Measure.map_apply measurable_exp measurableSet_Iic]

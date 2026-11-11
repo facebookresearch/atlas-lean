@@ -48,9 +48,24 @@ namespace ProbabilityTheory
 noncomputable section
 
 /-- The density of the Weibull law with shape `k` and scale `l`:
-`(k / l) (x / l)^{k-1} exp(-(x / l)^k)` for `x > 0` and `0` for `x ≤ 0`. -/
+`(k / l) (x / l)^{k-1} exp(-(x / l)^k)` for `x > 0` and `0` for `x ≤ 0`. Outside `k, l > 0` it
+is totalized to `0`, matching `weibullMeasure`. -/
 def weibullPDFReal (k l x : ℝ) : ℝ :=
-  if 0 < x then k / l * (x / l) ^ (k - 1) * exp (-(x / l) ^ k) else 0
+  if 0 < k ∧ 0 < l ∧ 0 < x then k / l * (x / l) ^ (k - 1) * exp (-(x / l) ^ k) else 0
+
+lemma weibullPDFReal_of_pos {k l x : ℝ} (hk : 0 < k) (hl : 0 < l) (hx : 0 < x) :
+    weibullPDFReal k l x = k / l * (x / l) ^ (k - 1) * exp (-(x / l) ^ k) :=
+  ite_eq_left ⟨hk, hl, hx⟩
+
+lemma weibullPDFReal_of_nonpos {k l x : ℝ} (hx : x ≤ 0) : weibullPDFReal k l x = 0 :=
+  ite_eq_right fun h => hx.not_gt h.2.2
+
+lemma weibullPDFReal_of_nonpos_left {k : ℝ} (hk : k ≤ 0) (l x : ℝ) : weibullPDFReal k l x = 0 :=
+  ite_eq_right fun h => hk.not_gt h.1
+
+lemma weibullPDFReal_of_nonpos_right (k : ℝ) {l : ℝ} (hl : l ≤ 0) (x : ℝ) :
+    weibullPDFReal k l x = 0 :=
+  ite_eq_right fun h => hl.not_gt h.2.1
 
 /-- **The Weibull law** with shape `k` and scale `l`: the measure with Lebesgue density
 `weibullPDFReal k l`. It is a probability measure for `k, l > 0`
@@ -72,17 +87,18 @@ lemma weibullMeasure_of_nonpos_right (k : ℝ) {l : ℝ} (hl : l ≤ 0) : weibul
 
 @[fun_prop]
 lemma measurable_weibullPDFReal (k l : ℝ) : Measurable (weibullPDFReal k l) :=
-  Measurable.ite measurableSet_Ioi (by fun_prop) measurable_const
+  Measurable.ite ((MeasurableSet.const _).inter ((MeasurableSet.const _).inter measurableSet_Ioi))
+    (by fun_prop) measurable_const
 
 /-- On `x > 0` the Weibull density is the derivative of `-exp(-(x / l)^k)`. -/
-private lemma hasDerivAt_weibull_antideriv {k l x : ℝ} (hl : 0 < l) (hx : 0 < x) :
+private lemma hasDerivAt_weibull_antideriv {k l x : ℝ} (hk : 0 < k) (hl : 0 < l) (hx : 0 < x) :
     HasDerivAt (fun y => -exp (-(y / l) ^ k)) (weibullPDFReal k l x) x := by
   have hxl : 0 < x / l := div_pos hx hl
   have h1 : HasDerivAt (fun y => y / l) (1 / l) x := (hasDerivAt_id x).div_const l
   have h2 : HasDerivAt (fun y => -exp (-(y / l) ^ k))
       (-(exp (-(x / l) ^ k) * -(1 / l * k * (x / l) ^ (k - 1)))) x :=
     (h1.rpow_const (p := k) (Or.inl hxl.ne')).neg.exp.neg
-  rw [weibullPDFReal, ite_eq_left hx]
+  rw [weibullPDFReal_of_pos hk hl hx]
   exact h2.congr_deriv (by ring)
 
 private lemma tendsto_weibull_antideriv {k l : ℝ} (hk : 0 < k) (hl : 0 < l) :
@@ -100,19 +116,19 @@ private lemma continuousWithinAt_weibull_antideriv {k l t : ℝ} (hk : 0 < k) :
 private lemma integral_weibullPDFReal_Ioi {k l t : ℝ} (hk : 0 < k) (hl : 0 < l) (ht : 0 ≤ t) :
     ∫ x in Ioi t, weibullPDFReal k l x = exp (-(t / l) ^ k) := by
   rw [integral_Ioi_of_hasDerivAt_of_nonneg (continuousWithinAt_weibull_antideriv hk)
-    (fun x hx => hasDerivAt_weibull_antideriv hl (ht.trans_lt hx))
+    (fun x hx => hasDerivAt_weibull_antideriv hk hl (ht.trans_lt hx))
     (fun x hx => ?_) (tendsto_weibull_antideriv hk hl)]
   · ring
-  · rw [weibullPDFReal, ite_eq_left (ht.trans_lt hx)]
+  · rw [weibullPDFReal_of_pos hk hl (ht.trans_lt hx)]
     have : 0 < x / l := div_pos (ht.trans_lt hx) hl
     positivity
 
 private lemma integrableOn_weibullPDFReal_Ioi {k l t : ℝ} (hk : 0 < k) (hl : 0 < l)
     (ht : 0 ≤ t) : IntegrableOn (weibullPDFReal k l) (Ioi t) := by
   refine integrableOn_Ioi_deriv_of_nonneg (continuousWithinAt_weibull_antideriv hk)
-    (fun x hx => hasDerivAt_weibull_antideriv hl (ht.trans_lt hx))
+    (fun x hx => hasDerivAt_weibull_antideriv hk hl (ht.trans_lt hx))
     (fun x hx => ?_) (tendsto_weibull_antideriv hk hl)
-  rw [weibullPDFReal, ite_eq_left (ht.trans_lt hx)]
+  rw [weibullPDFReal_of_pos hk hl (ht.trans_lt hx)]
   have : 0 < x / l := div_pos (ht.trans_lt hx) hl
   positivity
 
@@ -123,7 +139,7 @@ theorem weibullMeasure_Ioi {k l t : ℝ} (hk : 0 < k) (hl : 0 < l) (ht : 0 ≤ t
     ← ofReal_integral_eq_lintegral_ofReal (integrableOn_weibullPDFReal_Ioi hk hl ht),
     integral_weibullPDFReal_Ioi hk hl ht]
   filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
-  rw [weibullPDFReal, ite_eq_left (ht.trans_lt hx)]
+  rw [weibullPDFReal_of_pos hk hl (ht.trans_lt hx)]
   have : 0 < x / l := div_pos (ht.trans_lt hx) hl
   positivity
 
@@ -132,7 +148,7 @@ theorem weibullMeasure_Iic_zero (k l : ℝ) : weibullMeasure k l (Iic 0) = 0 := 
   by_cases h : 0 < k ∧ 0 < l
   · rw [weibullMeasure_of_pos h.1 h.2, withDensity_apply _ measurableSet_Iic,
       setLIntegral_congr_fun measurableSet_Iic (g := fun _ => 0)
-        (fun x (hx : x ≤ 0) => by simp [weibullPDFReal, not_lt.mpr hx])]
+        (fun x (hx : x ≤ 0) => by simp [weibullPDFReal_of_nonpos hx])]
     simp
   · simp [weibullMeasure, h]
 
@@ -162,9 +178,9 @@ theorem weibullMeasure_one {l : ℝ} (hl : 0 < l) : weibullMeasure 1 l = expMeas
   rw [gammaPDF_eq]
   congr 1
   rcases lt_or_gt_of_ne hx with hx' | hx'
-  · simp [weibullPDFReal, not_lt.mpr hx'.le, not_le.mpr hx']
-  · simp only [weibullPDFReal, ite_eq_left hx', ite_eq_left hx'.le, sub_self, rpow_zero, rpow_one,
-      Gamma_one, div_one, mul_one]
+  · simp [weibullPDFReal_of_nonpos hx'.le, not_le.mpr hx']
+  · simp only [weibullPDFReal_of_pos one_pos hl hx', ite_eq_left hx'.le, sub_self, rpow_zero,
+      rpow_one, Gamma_one, div_one, mul_one]
     rw [div_eq_inv_mul, inv_mul_eq_div, one_div]
     ring_nf
 
