@@ -92,7 +92,8 @@ example (i : Fin 4) :
       (transversionProp (ctmcTransition (k80Rate 3) 2) i) = 5 / 2 := by
   rw [kimuraDistance_k80Rate]; norm_num
 
--- The recovery maps invert the parametrization on a domain point: `P = 1/10`, `Q = 1/5`.
+-- The recovery maps invert the parametrization at `P = 1/10`, `Q = 1/5`, a point of the
+-- biological region (`1 - 2P - Q = 3/5 ≤ √(3/5) = √(1 - 2Q)`).
 example (i : Fin 4) :
     transitionProp (kimuraProb (kimuraTransitionParam (1 / 10) (1 / 5))
       (kimuraTransversionParam (1 / 5))) i = 1 / 10 :=
