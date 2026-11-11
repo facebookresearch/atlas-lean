@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Survival.Consistency
+public import MathlibExt.Probability.Statistics.Survival.NelsonAalen
 public import MathlibExt.Probability.Statistics.MultivariateCLT
 public import MathlibExt.Probability.Statistics.DeltaMethod
 
@@ -37,6 +38,14 @@ space `CellSpace k = EuclideanSpace ℝ (Fin k × Bool)`.
 * `tendstoInDistribution_kmSurvival`: **asymptotic distribution of Kaplan–Meier**: under
   independent censoring with `P(min T C ≥ m) ≠ 0`, `√n (Ŝₙ(m) - P(T > m)) →ᵈ L Y`
   (delta method); `exists_tendstoInDistribution_kmSurvival` is the same with the constructed `Y`.
+* `variance_kmMapDeriv_cellVec`, `hasLaw_kmMapDeriv_limit`: **variance identification**: if also
+  `S = P(T > m) ≠ 0`, the limit `L Y` is `gaussianReal 0 (S² τ²)` with the population Greenwood
+  sum `τ² = ∑_{j ≤ m} eⱼ / (Yⱼ (Yⱼ - eⱼ))` (`greenwoodSum`); the algebra is
+  `sum_mul_kmMapDeriv_single_sq`.
+* `tendstoInDistribution_kmSurvival_studentized`, `hasLaw_studentized_limit`: **studentized
+  form**: if moreover `τ² > 0`, `√n (Ŝₙ(m) - S) / √(n V̂ₙ(m)) →ᵈ N(0, 1)`, with `V̂ₙ` Greenwood's
+  variance estimate; `ae_tendsto_kmMap_sq_mul_greenwoodSum` is the a.s. consistency
+  `n V̂ₙ(m) → S² τ²`.
 
 ## Proof
 
@@ -46,10 +55,18 @@ the multivariate CLT applies; `√n • (p̂ₙ - p)` equals its normalized cent
 then applies to `g`, a finite product of `1 - (linear) / (linear)` factors, and the identities
 `g(p̂ₙ) = Ŝₙ(m)` (every `n`) and `g(p) = P(T > m)` (`prod_one_sub_hazard`) rewrite the result.
 
+For the variance, `Var[L(cellVec Z)] = ∑_c p_c (L e_c)²` because `L p = 0`. In log-derivative form
+`L = -S ∑_{j ≤ m} ξⱼ` with `ξⱼ(v) = (Yⱼ v(j, true) - eⱼ Aⱼ(v)) / (Yⱼ (Yⱼ - eⱼ))`, and the
+`p`-weighted Gram matrix `∑_c p_c ξᵢ(e_c) ξⱼ(e_c)` is diagonal with entries
+`eⱼ / (Yⱼ (Yⱼ - eⱼ))` (a martingale-difference structure: for `i < j`, the event cell `(i, true)`
+lies outside the risk set of `j`). Studentization is Slutsky's division
+`div_of_tendstoInMeasure_const`, with `n V̂ₙ = g(p̂ₙ)² τ²(p̂ₙ)` at every `n`.
+
 ## Scope
 
 Fixed grid time `m`, positive at-risk mass at `m`; no uniformity in `m`, no process-level
-(Skorokhod) statement. The limit is `L Y` with `L` explicit; its variance is not identified here.
+(Skorokhod) statement, no joint (Aalen–Johansen / cumulative incidence) version. The variance and
+studentized results need `P(T > m) ≠ 0`; the studentized one also needs `τ² > 0`.
 -/
 
 @[expose] public section
@@ -334,31 +351,36 @@ private lemma apply_cellProportions (φ : CellSpace k →L[ℝ] ℝ) (n : ℕ) (
     φ (cellProportions Z n ω) = (n : ℝ)⁻¹ * ∑ i ∈ range n, φ (cellVec (Z i ω)) := by
   rw [cellProportions, map_smul, map_sum, smul_eq_mul]
 
+/-- The empirical event-cell proportion is the death proportion `dⱼ / n`. -/
+theorem cellProportions_true (n : ℕ) (ω : Ω) (j : Fin k) :
+    cellProportions Z n ω (j, true) = (n : ℝ)⁻¹ * (empiricalData Z n ω).deaths j := by
+  classical
+  have h := apply_cellProportions (Z := Z) (EuclideanSpace.proj (j, true)) n ω
+  simp only [PiLp.proj_apply, cellVec_apply] at h
+  rw [h, sum_range_indicator_cellVec, empiricalData, CensoredData.ofSubjects_deaths]
+  congr 3
+  ext i
+  simp [cell, Prod.ext_iff]
+
+/-- The empirical at-risk functional is the at-risk proportion `nⱼ / n`. -/
+theorem cellAtRisk_cellProportions (n : ℕ) (ω : Ω) (j : Fin k) :
+    cellAtRisk j (cellProportions Z n ω) = (n : ℝ)⁻¹ * (empiricalData Z n ω).atRisk j := by
+  classical
+  rw [apply_cellProportions]
+  simp only [cellAtRisk_cellVec]
+  rw [sum_range_indicator_cellVec, empiricalData, CensoredData.atRisk_ofSubjects]
+  congr 3
+  ext i
+  simp
+
 /-- **The Kaplan–Meier map recovers the Kaplan–Meier estimate**: at the empirical cell
 proportions of the first `n` subjects, `kmMap m` is the Kaplan–Meier estimate of
 `empiricalData Z n ω` at the grid time `m`. This holds for every `n`, including `n = 0`. -/
 theorem kmMap_cellProportions (m : Fin k) (n : ℕ) (ω : Ω) :
     kmMap m (cellProportions Z n ω) = (empiricalData Z n ω).kmSurvival ((m : ℕ) : ℝ) := by
-  classical
   rw [kmSurvival_empiricalData, kmMap]
   refine prod_congr rfl fun j _ => ?_
-  have hd : cellProportions Z n ω (j, true) =
-      (n : ℝ)⁻¹ * (empiricalData Z n ω).deaths j := by
-    have h := apply_cellProportions (Z := Z) (EuclideanSpace.proj (j, true)) n ω
-    simp only [PiLp.proj_apply, cellVec_apply] at h
-    rw [h, sum_range_indicator_cellVec, empiricalData, CensoredData.ofSubjects_deaths]
-    congr 3
-    ext i
-    simp [cell, Prod.ext_iff]
-  have hr : cellAtRisk j (cellProportions Z n ω) =
-      (n : ℝ)⁻¹ * (empiricalData Z n ω).atRisk j := by
-    rw [apply_cellProportions]
-    simp only [cellAtRisk_cellVec]
-    rw [sum_range_indicator_cellVec, empiricalData, CensoredData.atRisk_ofSubjects]
-    congr 3
-    ext i
-    simp
-  rw [hd, hr, CensoredData.kmFactor]
+  rw [cellProportions_true, cellAtRisk_cellProportions, CensoredData.kmFactor]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [empiricalData, CensoredData.atRisk_ofSubjects]
   · rw [mul_div_mul_left _ _ (inv_ne_zero (Nat.cast_ne_zero.2 hn.ne'))]
@@ -387,6 +409,13 @@ variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {P : Measur
   {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
   {Z : ℕ → Ω → Fin k × Fin k}
 
+omit [IsProbabilityMeasure P] in
+theorem aemeasurable_cellProportions {μ : Measure (Fin k × Fin k)}
+    (hlaw : ∀ i, HasLaw (Z i) μ P) (n : ℕ) : AEMeasurable (cellProportions Z n) P :=
+  ((Finset.aemeasurable_fun_sum (range n) fun i _ ↦
+    measurable_cellVec.comp_aemeasurable (hlaw i).aemeasurable).const_smul
+      ((n : ℝ)⁻¹)).congr (ae_of_all _ fun ω ↦ by simp [cellProportions])
+
 theorem cellAtRisk_cellProbs_ne_zero (μ : Measure (Fin k × Fin k)) [IsFiniteMeasure μ]
     {m : Fin k} (hm : obsAtRiskMass μ m ≠ 0) :
     ∀ j ≤ m, cellAtRisk j (cellProbs μ) ≠ 0 := fun j hj => by
@@ -409,10 +438,7 @@ theorem tendstoInDistribution_kmSurvival (pT pC : PMF (Fin k)) (hind : iIndepFun
       (fun (n : ℕ) ω ↦ √(n : ℝ) •
         ((empiricalData Z n ω).kmSurvival ((m : ℕ) : ℝ) - pT.toMeasure.real {t | m < t}))
       atTop (fun ω ↦ kmMapDeriv m (cellProbs (indepLaw pT pC)) (Y ω)) (fun _ ↦ P) P' := by
-  have hX : ∀ n, AEMeasurable (cellProportions Z n) P := fun n ↦
-    ((Finset.aemeasurable_fun_sum (range n) fun i _ ↦
-      measurable_cellVec.comp_aemeasurable (hlaw i).aemeasurable).const_smul
-        ((n : ℝ)⁻¹)).congr (ae_of_all _ fun ω ↦ by simp [cellProportions])
+  have hX := aemeasurable_cellProportions hlaw
   have h := (tendstoInDistribution_cellProportions hind hlaw hY hYlaw).delta_method
     (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop)
     (hasFDerivAt_kmMap m (cellAtRisk_cellProbs_ne_zero _ hm)) hX
@@ -554,6 +580,15 @@ private lemma sum_logTerm_mul_logTerm (p : CellSpace k) {i j : Fin k}
     field_simp
     ring
 
+/-- A nonzero value of the Kaplan–Meier map forces every factor to be nonzero: `Yⱼ ≠ eⱼ` for
+`j ≤ m`. -/
+theorem cellAtRisk_ne_of_kmMap_ne_zero (m : Fin k) {p : CellSpace k}
+    (hp : ∀ j ≤ m, cellAtRisk j p ≠ 0) (hS : kmMap m p ≠ 0) :
+    ∀ j ≤ m, cellAtRisk j p ≠ p (j, true) := by
+  intro j hj he
+  refine hS (prod_eq_zero (i := j) (by simpa using hj) ?_)
+  rw [he, div_self (he ▸ hp j hj), sub_self]
+
 /-- **The variance algebra**: for a vector `p` with `Yⱼ ≠ 0` for `j ≤ m` and `g(p) ≠ 0`, the
 `p`-weighted sum of squares of the derivative at the basis vectors is `g(p)² τ²`:
 `∑_c p_c (L e_c)² = kmMap m p ^ 2 * greenwoodSum m p`. No positivity or normalization of `p` is
@@ -562,10 +597,7 @@ theorem sum_mul_kmMapDeriv_single_sq (m : Fin k) {p : CellSpace k}
     (hp : ∀ j ≤ m, cellAtRisk j p ≠ 0) (hS : kmMap m p ≠ 0) :
     ∑ c, p c * kmMapDeriv m p (EuclideanSpace.single c 1) ^ 2 =
       kmMap m p ^ 2 * greenwoodSum m p := by
-  have hpe : ∀ j ≤ m, cellAtRisk j p ≠ p (j, true) := by
-    intro j hj he
-    refine hS (prod_eq_zero (i := j) (by simpa using hj) ?_)
-    rw [he, div_self (he ▸ hp j hj), sub_self]
+  have hpe := cellAtRisk_ne_of_kmMap_ne_zero m hp hS
   have hL : ∀ c : Fin k × Bool, kmMapDeriv m p (EuclideanSpace.single c 1) =
       -kmMap m p * ∑ j with j ≤ m, logTerm p j (EuclideanSpace.single c 1) := fun c =>
     kmMapDeriv_eq_logForm m hp hpe _
@@ -654,5 +686,139 @@ theorem hasLaw_kmMapDeriv_limit (pT pC : PMF (Fin k)) (m : Fin k)
     kmMap_cellProbs_indepLaw pT pC m hm] at h
 
 end Variance
+
+/-! ### Deliverable 3: the studentized limit -/
+
+section Studentized
+
+variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {P : Measure Ω}
+  {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
+  {Z : ℕ → Ω → Fin k × Fin k}
+
+theorem measurable_greenwoodSum (m : Fin k) : Measurable (greenwoodSum (k := k) m) := by
+  unfold greenwoodSum
+  fun_prop
+
+omit [MeasurableSpace Ω] [MeasurableSpace Ω'] [IsProbabilityMeasure P]
+  [IsProbabilityMeasure P'] in
+/-- **Greenwood's estimate as a function of the cell proportions**: for every `n`,
+`n V̂ₙ(m) = g(p̂ₙ)² τ²(p̂ₙ)`, where `V̂ₙ` is Greenwood's variance estimate of the first `n`
+subjects, `g = kmMap m` and `τ² = greenwoodSum m`. -/
+theorem kmMap_sq_mul_greenwoodSum_cellProportions (m : Fin k) (n : ℕ) (ω : Ω) :
+    kmMap m (cellProportions Z n ω) ^ 2 * greenwoodSum m (cellProportions Z n ω) =
+      n * (empiricalData Z n ω).greenwoodVariance ((m : ℕ) : ℝ) := by
+  rw [kmMap_cellProportions, CensoredData.greenwoodVariance_eq_totalizedSum, greenwoodSum,
+    mul_left_comm (n : ℝ)]
+  congr 1
+  rw [mul_sum]
+  refine sum_congr ?_ fun j _ => ?_
+  · ext j
+    simp only [mem_filter, mem_univ, true_and]
+    exact gridTime_le_gridTime_iff.symm
+  rw [cellProportions_true, cellAtRisk_cellProportions]
+  set d : ℝ := ((empiricalData Z n ω).deaths j : ℝ)
+  set R : ℝ := ((empiricalData Z n ω).atRisk j : ℝ)
+  rw [show (n : ℝ)⁻¹ * R * ((n : ℝ)⁻¹ * R - (n : ℝ)⁻¹ * d) = (n : ℝ)⁻¹ ^ 2 * (R * (R - d)) by
+    ring]
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp
+  have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hn.ne'
+  by_cases hX : R * (R - d) = 0
+  · simp [hX]
+  · field_simp
+
+/-- **Consistency of Greenwood's estimate**: under independent censoring with
+`P(min T C ≥ m) ≠ 0` and `P(T > m) ≠ 0`, almost surely `n V̂ₙ(m) → S² τ²` (in the form
+`g(p̂ₙ)² τ²(p̂ₙ) → S² τ²(p)`, see `kmMap_sq_mul_greenwoodSum_cellProportions`). -/
+theorem ae_tendsto_kmMap_sq_mul_greenwoodSum (pT pC : PMF (Fin k)) (hind : iIndepFun Z P)
+    (hlaw : ∀ i, HasLaw (Z i) (indepLaw pT pC) P) (m : Fin k)
+    (hm : obsAtRiskMass (indepLaw pT pC) m ≠ 0) (hS : pT.toMeasure.real {t | m < t} ≠ 0) :
+    ∀ᵐ ω ∂P, Tendsto (fun n : ℕ => kmMap m (cellProportions Z n ω) ^ 2 *
+        greenwoodSum m (cellProportions Z n ω)) atTop
+      (𝓝 (pT.toMeasure.real {t | m < t} ^ 2 * greenwoodSum m (cellProbs (indepLaw pT pC)))) := by
+  have hR := ae_all_iff.2 (ae_tendsto_atRisk_div hind hlaw)
+  have hD := ae_all_iff.2 (ae_tendsto_deaths_div hind hlaw)
+  have hK := ae_tendsto_kmSurvival_survival pT pC hind hlaw m hm
+  have hp := cellAtRisk_cellProbs_ne_zero (indepLaw pT pC) hm
+  have hpe := cellAtRisk_ne_of_kmMap_ne_zero m hp (by rwa [kmMap_cellProbs_indepLaw pT pC m hm])
+  filter_upwards [hR, hD, hK] with ω hRω hDω hKω
+  refine Tendsto.mul (by simp_rw [kmMap_cellProportions]; exact hKω.pow 2) ?_
+  simp only [greenwoodSum]
+  refine tendsto_finsetSum _ fun j hj => ?_
+  have hjm : j ≤ m := by simpa using hj
+  have he : Tendsto (fun n : ℕ => cellProportions Z n ω (j, true)) atTop
+      (𝓝 (cellProbs (indepLaw pT pC) (j, true))) := by
+    simp_rw [cellProportions_true, inv_mul_eq_div, cellProbs_true]
+    exact hDω j
+  have hr : Tendsto (fun n : ℕ => cellAtRisk j (cellProportions Z n ω)) atTop
+      (𝓝 (cellAtRisk j (cellProbs (indepLaw pT pC)))) := by
+    simp_rw [cellAtRisk_cellProportions, inv_mul_eq_div, cellAtRisk_cellProbs]
+    exact hRω j
+  exact he.div (hr.mul (hr.sub he)) (mul_ne_zero (hp j hjm) (sub_ne_zero.2 (hpe j hjm)))
+
+/-- **Studentized Kaplan–Meier limit**: under independent censoring with `P(min T C ≥ m) ≠ 0`,
+`S = P(T > m) ≠ 0` and a nondegenerate population Greenwood sum `τ² > 0`, and for a Gaussian
+limit `Y` as in `tendstoInDistribution_cellProportions`,
+`√n (Ŝₙ(m) - S) / √(n V̂ₙ(m)) →ᵈ L Y / √(S² τ²)`, where `V̂ₙ` is Greenwood's variance estimate.
+The limit is standard normal (`hasLaw_studentized_limit`). For `n ≥ 1` the left side is
+`(Ŝₙ(m) - S) / √V̂ₙ(m)`. -/
+theorem tendstoInDistribution_kmSurvival_studentized (pT pC : PMF (Fin k))
+    (hind : iIndepFun Z P) (hlaw : ∀ i, HasLaw (Z i) (indepLaw pT pC) P) (m : Fin k)
+    (hm : obsAtRiskMass (indepLaw pT pC) m ≠ 0) (hS : pT.toMeasure.real {t | m < t} ≠ 0)
+    (hτ : 0 < greenwoodSum m (cellProbs (indepLaw pT pC))) {Y : Ω' → CellSpace k}
+    (hY : AEMeasurable Y P')
+    (hYlaw : ∀ t : CellSpace k, HasLaw (fun ω ↦ ⟪Y ω, t⟫)
+      (gaussianReal 0 (Var[fun z ↦ ⟪cellVec z, t⟫; indepLaw pT pC]).toNNReal) P') :
+    TendstoInDistribution
+      (fun (n : ℕ) ω ↦ √(n : ℝ) •
+        ((empiricalData Z n ω).kmSurvival ((m : ℕ) : ℝ) - pT.toMeasure.real {t | m < t}) /
+          √(n * (empiricalData Z n ω).greenwoodVariance ((m : ℕ) : ℝ)))
+      atTop (fun ω ↦ kmMapDeriv m (cellProbs (indepLaw pT pC)) (Y ω) /
+        √(pT.toMeasure.real {t | m < t} ^ 2 * greenwoodSum m (cellProbs (indepLaw pT pC))))
+      (fun _ ↦ P) P' := by
+  have hpos : 0 < pT.toMeasure.real {t | m < t} ^ 2 *
+      greenwoodSum m (cellProbs (indepLaw pT pC)) :=
+    mul_pos (pow_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hS)) 2) hτ
+  have hc := (Real.sqrt_pos.2 hpos).ne'
+  have hX := aemeasurable_cellProportions hlaw
+  have hGmeas : ∀ n, AEMeasurable (fun ω => √(kmMap m (cellProportions Z n ω) ^ 2 *
+      greenwoodSum m (cellProportions Z n ω))) P := fun n =>
+    ((((measurable_kmMap m).pow_const 2).mul (measurable_greenwoodSum m)).comp_aemeasurable
+      (hX n)).sqrt
+  have hG : TendstoInMeasure P (fun (n : ℕ) ω => √(kmMap m (cellProportions Z n ω) ^ 2 *
+      greenwoodSum m (cellProportions Z n ω))) atTop
+      (fun _ => √(pT.toMeasure.real {t | m < t} ^ 2 *
+        greenwoodSum m (cellProbs (indepLaw pT pC)))) := by
+    refine tendstoInMeasure_of_tendsto_ae (fun n => (hGmeas n).aestronglyMeasurable) ?_
+    filter_upwards [ae_tendsto_kmMap_sq_mul_greenwoodSum pT pC hind hlaw m hm hS] with ω hω
+    exact (Real.continuous_sqrt.tendsto _).comp hω
+  have h := (tendstoInDistribution_kmSurvival pT pC hind hlaw m hm hY
+    hYlaw).div_of_tendstoInMeasure_const hc hG hGmeas
+  refine h.congr (fun n => ae_of_all _ fun ω => ?_) (ae_of_all _ fun _ => rfl)
+  simp only
+  rw [kmMap_sq_mul_greenwoodSum_cellProportions]
+
+omit [IsProbabilityMeasure P'] in
+/-- The studentized limit `L Y / √(S² τ²)` is standard normal. -/
+theorem hasLaw_studentized_limit (pT pC : PMF (Fin k)) (m : Fin k)
+    (hm : obsAtRiskMass (indepLaw pT pC) m ≠ 0) (hS : pT.toMeasure.real {t | m < t} ≠ 0)
+    (hτ : 0 < greenwoodSum m (cellProbs (indepLaw pT pC))) {Y : Ω' → CellSpace k}
+    (hYlaw : ∀ t : CellSpace k, HasLaw (fun ω ↦ ⟪Y ω, t⟫)
+      (gaussianReal 0 (Var[fun z ↦ ⟪cellVec z, t⟫; indepLaw pT pC]).toNNReal) P') :
+    HasLaw (fun ω ↦ kmMapDeriv m (cellProbs (indepLaw pT pC)) (Y ω) /
+        √(pT.toMeasure.real {t | m < t} ^ 2 * greenwoodSum m (cellProbs (indepLaw pT pC))))
+      (gaussianReal 0 1) P' := by
+  set v := pT.toMeasure.real {t | m < t} ^ 2 * greenwoodSum m (cellProbs (indepLaw pT pC))
+  have hv : 0 < v := mul_pos (pow_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hS)) 2) hτ
+  have h := (hasLaw_map (P := gaussianReal 0 v.toNNReal)
+    (measurable_const_mul (√v)⁻¹).aemeasurable).comp
+      (hasLaw_kmMapDeriv_limit pT pC m hm hS hYlaw)
+  rw [gaussianReal_map_const_mul, mul_zero] at h
+  convert h using 2
+  · simp [div_eq_inv_mul]
+  · apply NNReal.eq
+    simp [inv_pow, Real.sq_sqrt hv.le, Real.coe_toNNReal _ hv.le, hv.ne']
+
+end Studentized
 
 end MathlibExt.Probability.Statistics.SurvivalAsymptotics
