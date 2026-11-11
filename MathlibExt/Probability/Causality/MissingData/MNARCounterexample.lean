@@ -40,10 +40,11 @@ observed-data law does not determine `E[Y]`. Full-data laws live on `Bool × ℝ
   `not_condIndepDiscrete_selfMaskingLaw` show that response is independent of the outcome under the
   first law and not under the second.
 * Summary-statistic imputation: `integral_ite_respondentMean` (filling the missing outcomes with
-  the respondents' mean yields that mean back) and `respondentMean_selfMaskingLaw` (on the
-  self-masking law it gives `1`, the full-data mean is `1 / 2`). The imputed value is a functional
-  of the observed-data law, so by `exists_map_obsRY_eq_integral_ne` it identifies nothing without
-  an assumption on the nonresponse mechanism.
+  the respondents' mean yields that mean back), `respondentMean_map_obsRY` (that mean is a
+  functional of the observed-data law), `exists_map_obsRY_eq_respondentMean_ne` (so it differs
+  from the full-data mean at some law with the same observed data whenever nonresponse has
+  positive probability), and `respondentMean_selfMaskingLaw` (on the self-masking law it gives
+  `1`, the full-data mean is `1 / 2`).
 * Boundary, no respondents: `map_obsRY_eq_dirac_of_measure_response_eq_zero` (the observed-data
   law is `δ_(false, 0)` whatever the outcome law).
 * Boundary, positivity failure: `exists_condIndepDiscrete_map_obsXRY_eq_integral_eq`. Even when
@@ -55,15 +56,20 @@ observed-data law does not determine `E[Y]`. Full-data laws live on `Bool × ℝ
 
 The observed-data map and the MCAR / MAR predicates belong to the missing-data definitions file,
 which this file does not import; the observed-data map is written out as a local notation, and
-independence statements use `CondIndepDiscrete` from `CausalIdentification` directly.
+independence statements use `CondIndepDiscrete` from `CausalIdentification` directly. The encoding
+`(r, if r then y else 0)` keeps `r`, so a respondent with `y = 0`, `(true, 0)`, stays distinct from
+a nonrespondent, `(false, 0)`. On its image it is in measurable bijection with the
+`Sum`-valued encoding of `Definitions.observedData` (`(true, y) ↔ inl y`, `(false, 0) ↔ inr ()`),
+and it is the `(1_R, 1_R Y)` encoding of the identification file.
 
 ## References
 
 * D. B. Rubin, *Inference and missing data*, Biometrika 63(3) (1976), 581–592.
 * R. J. A. Little and D. B. Rubin, *Statistical Analysis with Missing Data*, 3rd ed., Wiley
-  (2019), Chapters 1, 4 and 15.
+  (2019), DOI 10.1002/9781119482260: Chapter 1 "Introduction", Chapter 4 "Single Imputation
+  Methods", Chapter 15 "Missing Not at Random Models".
 * C. F. Manski, *Partial Identification of Probability Distributions*, Springer (2003),
-  Chapter 1.
+  DOI 10.1007/b97478: Chapter 1 "Missing Outcomes", pp. 6–25.
 -/
 
 @[expose] public section
@@ -152,17 +158,17 @@ theorem exists_map_obsRY_eq_integral_ne {P : Measure (Bool × ℝ)} [IsProbabili
   exact ⟨Q, hQ, hQi, hobs, by rw [hobs, hmean]; linarith⟩
 
 /-- **Identification forces full response.** If a functional `F` of the observed-data law equals
-the full-data mean for every integrable full-data law, then every such law has nonresponse
-probability `0`; contrapositively, without a model for the nonresponse mechanism, the mean is
-identified at no law with positive nonresponse probability. -/
+the full-data mean for every integrable full-data law with the same observed-data law as `P`,
+then `P` has nonresponse probability `0`. Contrapositively, without a model for the nonresponse
+mechanism, the mean is identified at no law with positive nonresponse probability. -/
 theorem measureReal_nonresponse_eq_zero_of_identifies (F : Measure (Bool × ℝ) → ℝ)
+    {P : Measure (Bool × ℝ)} [IsProbabilityMeasure P] (hP : Integrable Prod.snd P)
     (hF : ∀ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q → Integrable Prod.snd Q →
-      F (Q.map obsRY) = ∫ z, z.2 ∂Q)
-    {P : Measure (Bool × ℝ)} [IsProbabilityMeasure P] (hP : Integrable Prod.snd P) :
+      Q.map obsRY = P.map obsRY → F (Q.map obsRY) = ∫ z, z.2 ∂Q) :
     P.real {z | z.1 = false} = 0 := by
   by_contra hR
-  obtain ⟨Q, hQ, hQi, -, hne⟩ := exists_map_obsRY_eq_integral_ne hP hR F
-  exact hne (hF Q hQ hQi)
+  obtain ⟨Q, hQ, hQi, hobs, hne⟩ := exists_map_obsRY_eq_integral_ne hP hR F
+  exact hne (hF Q hQ hQi hobs)
 
 /-! ### An explicit pair of full-data laws -/
 
@@ -251,6 +257,19 @@ theorem not_condIndepDiscrete_selfMaskingLaw :
 lemma measurableSet_response : MeasurableSet {z : Bool × ℝ | z.1 = true} :=
   measurable_fst (measurableSet_singleton true)
 
+/-- **The respondents' mean is a functional of the observed-data law**: computing
+`E[Y 1_R] / P(R)` from `P` or from its observed-data law gives the same number. -/
+theorem respondentMean_map_obsRY (P : Measure (Bool × ℝ)) :
+    (∫ w in {w | w.1 = true}, w.2 ∂P) / P.real {w | w.1 = true} =
+      (∫ w in {w | w.1 = true}, w.2 ∂(P.map obsRY)) / (P.map obsRY).real {w | w.1 = true} := by
+  have hpre : (obsRY) ⁻¹' {w : Bool × ℝ | w.1 = true} = {w : Bool × ℝ | w.1 = true} := by
+    ext w; simp
+  rw [setIntegral_map measurableSet_response measurable_snd.aestronglyMeasurable
+      measurable_obsRY.aemeasurable, hpre,
+    map_measureReal_apply measurable_obsRY measurableSet_response, hpre]
+  congr 1
+  exact setIntegral_congr_fun measurableSet_response fun w (hw : w.1 = true) => by simp [hw]
+
 /-- **Mean imputation estimates the respondents' mean.** Filling every missing outcome with the
 respondents' mean `m = E[Y 1_R] / P(R)` gives a completed outcome whose mean is `m` itself. Since
 `m` is a functional of the observed-data law, `exists_map_obsRY_eq_integral_ne` shows that it is
@@ -277,6 +296,18 @@ theorem integral_ite_respondentMean {P : Measure (Bool × ℝ)} [IsProbabilityMe
     simp only [m]; rw [div_mul_cancel₀ _ hR]
   rw [hm]
   ring
+
+/-- **Mean imputation is not identification, in general.** At any law with positive nonresponse
+probability, some full-data law with the same observed-data law has a respondents' mean (hence,
+by `integral_ite_respondentMean`, a mean-imputed mean) different from its full-data mean. -/
+theorem exists_map_obsRY_eq_respondentMean_ne {P : Measure (Bool × ℝ)} [IsProbabilityMeasure P]
+    (hP : Integrable Prod.snd P) (hR : P.real {z | z.1 = false} ≠ 0) :
+    ∃ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q ∧ Integrable Prod.snd Q ∧
+      Q.map obsRY = P.map obsRY ∧
+      (∫ w in {w | w.1 = true}, w.2 ∂Q) / Q.real {w | w.1 = true} ≠ ∫ z, z.2 ∂Q := by
+  obtain ⟨Q, hQ, hQi, hobs, hne⟩ := exists_map_obsRY_eq_integral_ne hP hR
+    (fun O => (∫ w in {w | w.1 = true}, w.2 ∂O) / O.real {w | w.1 = true})
+  exact ⟨Q, hQ, hQi, hobs, by rwa [respondentMean_map_obsRY Q]⟩
 
 /-- **Mean imputation is not identification.** Under `selfMaskingLaw` the respondents' mean is
 `1`, and so is the mean after mean imputation, while the full-data mean is `1 / 2`. -/

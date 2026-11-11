@@ -98,13 +98,15 @@ example : ∃ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q ∧ Integrable P
     (by rw [constOutcomeLaw_real_nonresponse]; norm_num)
     (fun O => (∫ w in {w | w.1 = true}, w.2 ∂O) / O.real {w | w.1 = true})
 
-/-- No functional of the observed-data law identifies the mean on all laws: otherwise
-`constOutcomeLaw` would have no nonresponse. -/
+/-- No functional of the observed-data law identifies the mean even among the laws with the
+observed data of `constOutcomeLaw`: otherwise `constOutcomeLaw` would have no nonresponse. -/
 example (F : Measure (Bool × ℝ) → ℝ) :
     ¬ ∀ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q → Integrable Prod.snd Q →
+      Q.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))) =
+        constOutcomeLaw.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))) →
       F (Q.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ)))) = ∫ z, z.2 ∂Q := by
   intro hF
-  have := measureReal_nonresponse_eq_zero_of_identifies F hF integrable_snd_constOutcomeLaw
+  have := measureReal_nonresponse_eq_zero_of_identifies F integrable_snd_constOutcomeLaw hF
   rw [constOutcomeLaw_real_nonresponse] at this
   norm_num at this
 
@@ -121,6 +123,21 @@ example : ¬ CondIndepDiscrete selfMaskingLaw {z | z.1 = true} Prod.snd (fun _ =
 
 lemma integrable_snd_selfMaskingLaw : Integrable Prod.snd selfMaskingLaw :=
   integrable_half_dirac_add _ _ _
+
+/-- The respondents' mean of `selfMaskingLaw` read off its observed-data law. -/
+example : (∫ w in {w | w.1 = true}, w.2 ∂(selfMaskingLaw.map
+      (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))))) /
+    (selfMaskingLaw.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ)))).real
+      {w | w.1 = true} = 1 := by
+  rw [← respondentMean_map_obsRY, respondentMean_selfMaskingLaw.1]
+
+/-- Mean imputation fails at some law with the observed data of `constOutcomeLaw`. -/
+example : ∃ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q ∧ Integrable Prod.snd Q ∧
+    Q.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))) =
+      constOutcomeLaw.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))) ∧
+    (∫ w in {w | w.1 = true}, w.2 ∂Q) / Q.real {w | w.1 = true} ≠ ∫ z, z.2 ∂Q :=
+  exists_map_obsRY_eq_respondentMean_ne integrable_snd_constOutcomeLaw
+    (by rw [constOutcomeLaw_real_nonresponse]; norm_num)
 
 /-- Mean imputation on `selfMaskingLaw` yields `1`, while the full-data mean is `1 / 2`. -/
 example : ∫ z, (if z.1 then z.2 else
