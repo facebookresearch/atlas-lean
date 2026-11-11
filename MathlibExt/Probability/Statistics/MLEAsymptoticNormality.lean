@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.FisherInformation
+public import MathlibExt.Probability.Statistics.Slutsky
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Analysis.Calculus.MeanValue
@@ -38,8 +39,6 @@ theorem to `n^{-1/2} ∑ ψ θ₀ (X i)`, the strong law to `n⁻¹ ∑ ∂_θ �
 
 ## Main results
 
-* `MeasureTheory.tendstoInMeasure_of_tendstoInDistribution_const`: convergence in distribution
-  to a constant implies convergence in probability.
 * `MeasureTheory.TendstoInDistribution.mul_tendstoInMeasure_zero`: a sequence converging in
   distribution times a sequence converging in probability to `0` converges in probability
   to `0`.
@@ -68,29 +67,6 @@ namespace MeasureTheory
 
 variable {ι Ω Ω' E : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
   {mΩ' : MeasurableSpace Ω'} {P' : Measure Ω'} {l : Filter ι}
-
-/-- **Convergence in distribution to a constant implies convergence in probability.** If the
-random variables `X i` on one probability space converge in distribution to the constant `c`,
-then they converge to `c` in probability. -/
-theorem tendstoInMeasure_of_tendstoInDistribution_const [IsProbabilityMeasure P]
-    [IsProbabilityMeasure P'] [PseudoMetricSpace E] [MeasurableSpace E] [BorelSpace E]
-    {X : ι → Ω → E} {c : E} (h : TendstoInDistribution X l (fun _ : Ω' => c) (fun _ => P) P') :
-    TendstoInMeasure P X l (fun _ => c) := by
-  rw [tendstoInMeasure_iff_dist]
-  intro ε hε
-  set F : Set E := {y | ε ≤ dist y c}
-  have hF : IsClosed F := isClosed_le continuous_const (continuous_id.dist continuous_const)
-  have hlim := ProbabilityMeasure.limsup_measure_closed_le_of_tendsto h.tendsto hF
-  have hc : (P'.map fun _ : Ω' => c) F = 0 := by
-    rw [Measure.map_const, measure_univ, one_smul, Measure.dirac_apply' _ hF.measurableSet]
-    simp [F, hε.not_ge]
-  simp only [ProbabilityMeasure.coe_mk, hc] at hlim
-  have heq : ∀ i, P {ω | ε ≤ dist (X i ω) c} = (P.map (X i)) F := fun i => by
-    rw [Measure.map_apply_of_aemeasurable (h.forall_aemeasurable i) hF.measurableSet]
-    rfl
-  simp_rw [heq]
-  refine tendsto_order.2 ⟨fun a ha => absurd ha ENNReal.not_lt_zero, fun a ha => ?_⟩
-  exact eventually_lt_of_limsup_lt (hlim.trans_lt ha)
 
 /-- A sequence `A i` converging in distribution, times a sequence `η i` converging in
 probability to `0`, converges in probability to `0` (a consequence of Slutsky's theorem). -/
