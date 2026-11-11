@@ -53,7 +53,7 @@ on `Tᶜ`, and the ATE score is the difference of the two missing-outcome scores
   correct, or both arm regressions `m₀`, `m₁` are.
 * `responsePositivity_iff`: for a covariate with finitely many values, positivity is the
   pointwise condition `P(R | X = x) > 0` on values of positive probability.
-* `propensity_compl`, `CondIndepDiscrete.compl`: the control arm `Tᶜ` inherits the propensity
+* `propensity_compl`, `condIndepDiscrete_compl`: the control arm `Tᶜ` inherits the propensity
   `1 - e` and the conditional independence of the treated arm.
 
 ## Scope: fixed nuisances, no inference
@@ -73,8 +73,9 @@ Reuse search (2026-11-11, base `origin/main` `53666a3c1`): the terms `aipw`, `au
 `inverse probability`) in Mathlib `v4.35.0`. Reused from
 `MathlibExt/Probability/Causality/CausalIdentification.lean` (on `origin/main`):
 `CondIndepDiscrete`, `propensity`, `observed`, `StronglyIgnorable`, `StronglyIgnorable.comp`.
-Two private lemmas of that file (`measureReal_inter_preimage_eq_propensity_mul`,
-`setIntegral_inter_eq_propensity_mul`) are restated below as private lemmas with the same proofs.
+Two private lemmas of that file (`measureReal_inter_preimage_eq_propensity_mul`, restated here
+as `measureReal_inter_eq_propensity_mul`, and `setIntegral_inter_eq_propensity_mul`) are restated
+below as private lemmas with the same proofs.
 From Mathlib: `integral_iUnion_fintype`, `integrableOn_finite_iUnion`, `setIntegral_indicator`,
 `measureReal_inter_add_sdiff`, `integral_map`. The AIPW score is defined locally; no unmerged
 sibling file is imported.
@@ -93,7 +94,7 @@ sibling file is imported.
 
 open MeasureTheory Finset
 
-namespace MathlibExt.Probability.Causality
+namespace MathlibExt.Probability.Causality.MissingOutcomes
 
 variable {Ω 𝒳 : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
@@ -104,7 +105,9 @@ noncomputable def outcomeRegression (μ : Measure Ω) (Y : Ω → ℝ) (X : Ω �
 
 /-- **Missing at random** (Rubin 1976), for a discrete covariate: the response event `R` is
 conditionally independent of the outcome `Y` given `X`, stated through joint probabilities,
-`P(R, Y ∈ B, X = x) P(X = x) = P(R, X = x) P(Y ∈ B, X = x)`. -/
+`P(R, Y ∈ B, X = x) P(X = x) = P(R, X = x) P(Y ∈ B, X = x)`. It holds vacuously when every
+level set `{X = x}` is null (an atomless `X`); every theorem here assumes `X` has finitely many
+values, where this cannot happen under a nonzero measure. -/
 def MissingAtRandom (μ : Measure Ω) (R : Set Ω) (Y : Ω → ℝ) (X : Ω → 𝒳) : Prop :=
   CondIndepDiscrete μ R Y X
 
@@ -115,14 +118,22 @@ def ResponsePositivity (μ : Measure Ω) (R : Set Ω) (X : Ω → 𝒳) : Prop :
 
 /-- The **AIPW score** for the mean of an outcome `Y` observed on the response event `R`, with a
 fixed response propensity `π` and a fixed outcome regression `m`:
-`ψ = m(X) + 1_R (Y - m(X)) / π(X)`. -/
+`ψ = m(X) + 1_R (Y - m(X)) / π(X)`.
+
+Convention at `π(x) = 0`: Lean sets `a / 0 = 0`, so on a stratum with `π(x) = 0` the score is
+`m(X)` (the residual term is dropped), and the factor `e(x) / π(x) - 1` of
+`integral_aipwScore_eq` is `-1`. In ordinary notation the score is undefined there. -/
 noncomputable def aipwScore (R : Set Ω) (X : Ω → 𝒳) (π m : 𝒳 → ℝ) (Y : Ω → ℝ) : Ω → ℝ :=
   fun ω => m (X ω) + R.indicator (fun ω => (Y ω - m (X ω)) / π (X ω)) ω
 
 /-- The **AIPW score for the average treatment effect** with treatment event `T`, a fixed
 treatment propensity `e` and fixed arm regressions `m₀`, `m₁`: the missing-outcome score of the
 treated arm (response event `T`, propensity `e`) minus that of the control arm (response event
-`Tᶜ`, propensity `1 - e`). Applied to the observed outcome `observed T Y₀ Y₁`. -/
+`Tᶜ`, propensity `1 - e`). Applied to the observed outcome `observed T Y₀ Y₁`.
+
+It equals, pointwise, the AIPW ATE score of `AugmentedIPW/Score.lean` (task T28, not merged at
+the time of writing), `aipwScore T X Y e m₀ m₁` there, up to argument order; the two are to be
+unified at integration. -/
 noncomputable def aipwATEScore (T : Set Ω) (X : Ω → 𝒳) (e m₀ m₁ : 𝒳 → ℝ) (Y : Ω → ℝ) :
     Ω → ℝ :=
   fun ω => aipwScore T X e m₁ Y ω - aipwScore Tᶜ X (fun x => 1 - e x) m₀ Y ω
@@ -166,7 +177,7 @@ theorem propensity_compl [IsFiniteMeasure μ] {R : Set Ω} (hR : MeasurableSet R
 
 /-- Conditional independence of an event and a variable given a discrete variable passes to the
 complementary event. -/
-theorem CondIndepDiscrete.compl {β γ : Type*} [MeasurableSpace β] [IsFiniteMeasure μ]
+theorem condIndepDiscrete_compl {β γ : Type*} [MeasurableSpace β] [IsFiniteMeasure μ]
     {T : Set Ω} (hT : MeasurableSet T) {V : Ω → β} {W : Ω → γ}
     (h : CondIndepDiscrete μ T V W) : CondIndepDiscrete μ Tᶜ V W := by
   intro B hB w
@@ -264,7 +275,8 @@ private lemma setIntegral_aipwScore [IsFiniteMeasure μ] {R : Set Ω} (hR : Meas
 score is integrable and
 `E[ψ] = E[Y] + ∑ₓ (e(x) / π(x) - 1) (E[Y; X = x] - m(x) P(X = x))`, `e(x) = P(R | X = x)`.
 Each term is the product of the response-propensity error and the regression error on the
-stratum `X = x`. Neither positivity nor any condition on `π`, `m` is assumed. -/
+stratum `X = x`. Neither positivity nor any condition on `π`, `m` is assumed; for `π(x) = 0`
+the identity uses the convention in `aipwScore` (the factor is `-1`). -/
 theorem integral_aipwScore_eq [Fintype 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
     (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X) (π m : 𝒳 → ℝ) :
@@ -306,7 +318,8 @@ theorem integral_aipwScore_of_propensity [Finite 𝒳] [IsFiniteMeasure μ] {R :
 
 /-- **Double robustness, regression branch**: under MAR, if the outcome regression is correct,
 `m(x) = E[Y | X = x]` on covariate values of positive probability, the AIPW score is unbiased
-for `E[Y]` whatever the response propensity `π`. Positivity is not used by this identity; it is
+for `E[Y]` whatever the response propensity `π` (including `π(x) = 0`, with the convention in
+`aipwScore`). Positivity is not used by this identity; it is
 what makes this `m` identifiable from the responders (`E[Y | X = x] = E[Y | R, X = x]`). -/
 theorem integral_aipwScore_of_regression [Finite 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
@@ -355,7 +368,7 @@ theorem integral_aipwATEScore [Finite 𝒳] [IsFiniteMeasure μ] {T : Set Ω}
     ∫ ω, aipwATEScore T X e m₀ m₁ (observed T Y₀ Y₁) ω ∂μ = ∫ ω, (Y₁ ω - Y₀ ω) ∂μ := by
   have := Fintype.ofFinite 𝒳
   have hmar₁ : MissingAtRandom μ T Y₁ X := (h.comp measurable_snd).1
-  have hmar₀ : MissingAtRandom μ Tᶜ Y₀ X := (h.comp measurable_fst).1.compl hT
+  have hmar₀ : MissingAtRandom μ Tᶜ Y₀ X := condIndepDiscrete_compl hT (h.comp measurable_fst).1
   have hpos₁ : ResponsePositivity μ T X := responsePositivity_iff.2 fun x hx => (h.2 x hx).1
   have hpos₀ : ResponsePositivity μ Tᶜ X := responsePositivity_iff.2 fun x hx => by
     rw [propensity_compl hT hx]
@@ -378,4 +391,4 @@ theorem integral_aipwATEScore [Finite 𝒳] [IsFiniteMeasure μ] {T : Set Ω}
 
 end Finite
 
-end MathlibExt.Probability.Causality
+end MathlibExt.Probability.Causality.MissingOutcomes

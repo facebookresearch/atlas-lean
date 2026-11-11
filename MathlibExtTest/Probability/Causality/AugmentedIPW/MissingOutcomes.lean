@@ -29,6 +29,7 @@ public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
 @[expose] public section
 
 open MeasureTheory MathlibExt.Probability.Causality
+  MathlibExt.Probability.Causality.MissingOutcomes
 
 namespace MathlibExtTest.Probability.Causality.AugmentedIPW
 
@@ -185,6 +186,16 @@ example : ∫ p, aipwScore R X (fun _ => 1) (fun x => if x then 3 / 4 else 1 / 4
 example : ∫ p, aipwScore R X (fun _ => 1) (fun _ => 0) Y p ∂μ = 11 / 32 := by
   rw [integral_μ, sum_pt]; norm_num [aipwScore, w, Y, R, X, Set.indicator]
 
+/-- The same value from the exact-bias identity, where the bias is nonzero:
+`E[Y] + (1/2 - 1)(1/8) + (3/4 - 1)(3/8) = 1/2 - 5/32 = 11/32`. -/
+example : ∫ p, aipwScore R X (fun _ => 1) (fun _ => 0) Y p ∂μ = 1 / 2 - 5 / 32 := by
+  rw [(integral_aipwScore_eq hR hX hY Integrable.of_finite mar _ _).2, integral_Y,
+    Fintype.sum_bool, ← integral_indicator (hX (measurableSet_singleton true)),
+    ← integral_indicator (hX (measurableSet_singleton false)), integral_μ, integral_μ, sum_pt,
+    sum_pt]
+  simp only [propensity_eq]
+  norm_num [Set.indicator, X, Y, w]
+
 /-! ### MNAR counterexample: MAR is needed -/
 
 /-- A fair coin for the outcome bit; the covariate is constant. -/
@@ -234,8 +245,17 @@ example : (fun _ : Unit => (1 / 2 : ℝ)) () = propensity ν {true} (fun _ => ()
 lemma mar_empty : MissingAtRandom ν ∅ Yb (fun _ => ()) := by
   intro B _ _; simp
 
+/-- Positivity fails: the response propensity is `0` on the only covariate value. -/
+example : ¬ ResponsePositivity ν ∅ (fun _ => ()) := by
+  rintro ⟨ε, hε, h⟩
+  have hne : ν (Set.univ) ≠ 0 := by simp [wmeas]
+  have := h () (by simpa using hne)
+  simp [propensity] at this
+  linarith
+
 /-- The propensity `0` is correct, the regression `m = 0` is wrong, and the score has mean
-`0 ≠ 1/2 = E[Y]`: the propensity branch needs positivity. -/
+`0 ≠ 1/2 = E[Y]`: the propensity branch needs positivity. Since `R = ∅`, the residual term is
+never evaluated, so no division by `π = 0` takes place. -/
 example : propensity ν ∅ (fun _ => ()) () = 0 ∧
     ∫ b, aipwScore ∅ (fun _ => ()) (fun _ => 0) (fun _ => 0) Yb b ∂ν = 0 := by
   constructor
