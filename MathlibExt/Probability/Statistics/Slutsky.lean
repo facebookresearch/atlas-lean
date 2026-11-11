@@ -38,6 +38,8 @@ conclusions follow without joint convergence.
   for `c ≠ 0`.
 * `MeasureTheory.TendstoInDistribution.smul_of_tendstoInMeasure_const`: `Y n • X n →ᵈ c • Z`
   for vector-valued `X n` and real `Y n`.
+* `MeasureTheory.TendstoInDistribution.congr_hasLaw`: the limit may be replaced by any random
+  variable with the same law (a utility shared by the asymptotic-test files).
 
 Since a sequence converging in distribution to a constant converges to it in probability, these
 theorems also apply when `Y n →ᵈ c` is given.
@@ -148,5 +150,25 @@ theorem TendstoInDistribution.div_of_tendstoInMeasure_const {X Y : ι → Ω →
     (fun n ↦ (hY_meas n).inv) |>.congr
     (fun _ ↦ ae_of_all _ fun _ ↦ (div_eq_mul_inv _ _).symm)
     (ae_of_all _ fun _ ↦ (div_eq_mul_inv _ _).symm)
+
+end MeasureTheory
+
+namespace MeasureTheory
+
+/-- Convergence in distribution depends on the limit only through its law: if `X n →ᵈ Y` and
+`Z` (on any probability space) has the same law `ρ` as `Y`, then `X n →ᵈ Z`. -/
+theorem TendstoInDistribution.congr_hasLaw {ι Ω Ω₂ Ω₃ E : Type*} {mΩ : MeasurableSpace Ω}
+    [MeasurableSpace Ω₂] [MeasurableSpace Ω₃] [TopologicalSpace E] [MeasurableSpace E]
+    [OpensMeasurableSpace E] {l : Filter ι} {μ : ι → Measure Ω} [∀ i, IsProbabilityMeasure (μ i)]
+    {P₂ : Measure Ω₂} {P₃ : Measure Ω₃} [IsProbabilityMeasure P₂] [IsProbabilityMeasure P₃]
+    {X : ι → Ω → E} {Y : Ω₂ → E} {Z : Ω₃ → E} {ρ : Measure E}
+    (h : TendstoInDistribution X l Y μ P₂) (hY : ProbabilityTheory.HasLaw Y ρ P₂)
+    (hZ : ProbabilityTheory.HasLaw Z ρ P₃) :
+    TendstoInDistribution X l Z μ P₃ where
+  forall_aemeasurable := h.forall_aemeasurable
+  aemeasurable_limit := hZ.aemeasurable
+  tendsto := by
+    convert h.tendsto using 3
+    exact congrArg 𝓝 (Subtype.ext (hZ.map_eq.trans hY.map_eq.symm))
 
 end MeasureTheory

@@ -257,12 +257,17 @@ private theorem hasLaw_inner_starProjection {E : Type*} [NormedAddCommGroup E]
     variance_dual_stdGaussian, innerSL_apply_norm]
 
 omit [MeasurableSpace ι] [DiscreteMeasurableSpace ι] in
-/-- **The singular multinomial Gaussian.** For a probability vector `p`, the projection
-`P_K Z` of a standard Gaussian `Z` on `EuclideanSpace ℝ ι` onto `K = (√p)ᗮ` (the limit in
-`tendstoInDistribution_pearsonResidual`) has every coordinate projection `⟪P_K Z, t⟫` centered
-normal with variance `‖t‖² - ⟪√p, t⟫²`: its covariance is `I - √p √pᵀ`, the multinomial
-covariance `diag p - p pᵀ` in the weighted coordinates `xᵢ / √pᵢ`. It is singular: the
-variance in the direction `t = √p` is `0`. -/
+/-- **The singular Gaussian on the hyperplane `(√p)ᗮ`.** For a probability vector `p`, the
+projection `P_K Z` of a standard Gaussian `Z` on `EuclideanSpace ℝ ι` onto `K = (√p)ᗮ` has every
+coordinate projection `⟪P_K Z, t⟫` centered normal with variance `‖t‖² - ⟪√p, t⟫²`: its
+covariance is `I - √p √pᵀ`, singular in the direction `t = √p`. This geometric statement holds
+for any nonnegative `p` summing to `1`.
+
+When all `pᵢ > 0`, `P_K Z` is the limit in `tendstoInDistribution_pearsonResidual`, and
+`I - √p √pᵀ` is the multinomial covariance `diag p - p pᵀ` in the weighted coordinates
+`xᵢ / √pᵢ`. With a zero cell neither identification holds: the residual in a cell with
+`pᵢ = 0` is identically `0` (Lean's `x / 0 = 0`), while for `p = (1, 0)` and `t` the second
+coordinate vector the variance above is `1`. -/
 theorem hasLaw_inner_starProjection_orthogonal_sqrt {p : ι → ℝ} (hp₀ : ∀ i, 0 ≤ p i)
     (hp₁ : ∑ i, p i = 1) (t : EuclideanSpace ℝ ι) :
     HasLaw
@@ -277,23 +282,6 @@ theorem hasLaw_inner_starProjection_orthogonal_sqrt {p : ι → ℝ} (hp₀ : �
     (gaussianReal 0 (‖t‖ ^ 2 - ⟪sqrtVec p, t⟫ ^ 2).toNNReal) _
   rw [← norm_sq_starProjection_orthogonal_unit hu t]
   exact hasLaw_inner_starProjection _ t
-
-/-- Convergence in distribution depends on the limit only through its law.
-
-Copied from the private helper of the same name in
-`MathlibExt.Probability.Statistics.LikelihoodRatioTests` (that file is outside this task's
-scope, so it is not made public here); the two copies should be merged into one public lemma. -/
-private theorem tendstoInDistribution_of_hasLaw {Ω₂ Ω₃ : Type*} [MeasurableSpace Ω₂]
-    [MeasurableSpace Ω₃] {P₂ : Measure Ω₂} {P₃ : Measure Ω₃} [IsProbabilityMeasure P₂]
-    [IsProbabilityMeasure P₃] {A : ℕ → Ω → ℝ} {Y : Ω₂ → ℝ} {Z : Ω₃ → ℝ} {ρ : Measure ℝ}
-    (h : TendstoInDistribution A atTop Y (fun _ => P) P₂) (hY : HasLaw Y ρ P₂)
-    (hZ : HasLaw Z ρ P₃) :
-    TendstoInDistribution A atTop Z (fun _ => P) P₃ where
-  forall_aemeasurable := h.forall_aemeasurable
-  aemeasurable_limit := hZ.aemeasurable
-  tendsto := by
-    convert h.tendsto using 3
-    exact congrArg nhds (Subtype.ext (hZ.map_eq.trans hY.map_eq.symm))
 
 private theorem norm_sqrtVec {Y : Ω → ι} (hY : AEMeasurable Y P) {p : ι → ℝ}
     (hp : ∀ i, P.real (Y ⁻¹' {i}) = p i) : ‖sqrtVec p‖ = 1 := by
@@ -373,7 +361,7 @@ theorem tendstoInDistribution_pearsonStatistic [DecidableEq ι] {X : ℕ → Ω 
     ⟨by fun_prop, by
       rw [← hrank]
       exact stdGaussian_map_norm_sq_starProjection _ (by omega)⟩
-  refine tendstoInDistribution_of_hasLaw ?_ hlaw hZ
+  refine TendstoInDistribution.congr_hasLaw ?_ hlaw hZ
   convert h using 2 with n
   ext ω
   exact (norm_sq_pearsonResidual (fun i => (hpos i).le) n _).symm
@@ -656,7 +644,7 @@ theorem tendstoInDistribution_pearsonStatistic_fitted [DecidableEq ι] {F : Type
     rw [hfun, ← hrank]
     exact stdGaussian_map_norm_sq_starProjection _ (by omega)
   -- Step 7: the Slutsky sequence is the fitted Pearson statistic.
-  refine tendstoInDistribution_of_hasLaw (hfin.congr (fun n => ae_of_all _ fun ω => ?_)
+  refine TendstoInDistribution.congr_hasLaw (hfin.congr (fun n => ae_of_all _ fun ω => ?_)
     (ae_of_all _ fun _ => rfl)) hlaw hZ
   change _ = pearsonStatistic n (pθ (θhat n ω)) (cellCount X n ω)
   rw [← norm_sq_pearsonResidual (hnn _) n]
