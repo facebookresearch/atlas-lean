@@ -1,0 +1,183 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.Statistics.Bootstrap
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+
+/-!
+# Tests for bootstrap validity
+
+* Concrete values of the empirical distribution, sample mean and sample variance, including
+  the `n = 0` convention.
+* Non-vacuity of the deterministic conditional CLT: the alternating data `1, -1, 1, -1, …`
+  have sample means `→ 0`, plug-in variances `→ 1` and satisfy the data Lindeberg condition,
+  so the bootstrap mean is conditionally asymptotically `N(0, 1)`, and the bootstrap of
+  `exp(x̄)` is conditionally asymptotically `N(0, 1)` as well.
+* Non-vacuity of the finite-dimensional conditional CLT in `E = ℝ`, through Cramér–Wold.
+* Non-vacuity of the almost-sure theorem: iid standard Gaussian coordinates on
+  `ℕ → ℝ` satisfy all of its hypotheses.
+-/
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory Filter Topology Finset
+open scoped NNReal
+
+namespace MathlibExtTest.Probability.Statistics.Bootstrap
+
+open ProbabilityTheory.Bootstrap
+open MathlibExt.Probability.Causality (sampleMean)
+
+/-! ### Concrete values -/
+
+/-- The data `0, 2, …`: `x i = 2 i`. -/
+def evens (i : ℕ) : ℝ := 2 * i
+
+example : sampleMean evens (range 2) = 1 := by
+  norm_num [sampleMean_range, evens, sum_range_succ]
+
+example : empiricalVar evens 2 = 1 := by
+  norm_num [empiricalVar, sampleMean_range, evens, sum_range_succ]
+
+/-- With no data the empirical distribution is the point mass at `0` (a convention). -/
+example (x : ℕ → ℝ) : empirical x 0 = Measure.dirac 0 := by simp [empirical]
+
+/-- Integrals against `empirical evens 2` average the two atoms `0` and `2`. -/
+example : ∫ y, y ^ 2 ∂empirical evens 2 = 2 := by
+  rw [integral_empirical (by norm_num)]
+  simp [evens, sum_range_succ]; norm_num
+
+/-- A bootstrap draw at sample size `2` has the empirical law of `0, 2`. -/
+example : (world evens).map (fun ω => ω 2 5) = empirical evens 2 :=
+  (measurePreserving_world_eval evens 2 5).map_eq
+
+/-! ### Non-vacuity: alternating data -/
+
+/-- The alternating data `1, -1, 1, -1, …`. -/
+def alt (i : ℕ) : ℝ := (-1) ^ i
+
+theorem alt_sq (i : ℕ) : alt i ^ 2 = 1 := by
+  simp [alt, ← pow_mul]
+
+theorem tendsto_sampleMean_alt : Tendsto (fun n : ℕ => sampleMean alt (range n)) atTop (𝓝 0) := by
+  have hbound : ∀ n : ℕ, |∑ i ∈ range n, alt i| ≤ 1 := by
+    intro n
+    have h := geom_sum_eq (x := (-1 : ℝ)) (by norm_num) n
+    simp only [alt, h]
+    rcases neg_one_pow_eq_or ℝ n with h1 | h1 <;> rw [h1] <;> norm_num
+  have hinv : Tendsto (fun n : ℕ => (n : ℝ)⁻¹) atTop (𝓝 0) :=
+    tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
+  refine squeeze_zero_norm (fun n => ?_) hinv
+  rw [sampleMean_range, norm_mul, norm_inv, Real.norm_natCast]
+  calc (n : ℝ)⁻¹ * ‖∑ i ∈ range n, alt i‖ ≤ (n : ℝ)⁻¹ * 1 :=
+        mul_le_mul_of_nonneg_left (hbound n) (by positivity)
+    _ = (n : ℝ)⁻¹ := mul_one _
+
+theorem tendsto_meanSq_alt :
+    Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n, alt i ^ 2) atTop (𝓝 1) := by
+  refine tendsto_const_nhds.congr' ?_
+  filter_upwards [eventually_ne_atTop 0] with n hn
+  have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
+  simp [alt_sq, hn']
+
+theorem tendsto_empiricalVar_alt : Tendsto (empiricalVar alt) atTop (𝓝 ((1 : ℝ≥0) : ℝ)) := by
+  simpa using tendsto_empiricalVar tendsto_sampleMean_alt tendsto_meanSq_alt
+
+/-- The bootstrap mean of the alternating data is conditionally asymptotically `N(0, 1)`. -/
+example : TendstoInDistribution
+    (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean alt (range n))) atTop (id : ℝ → ℝ)
+    (fun _ => world alt) (gaussianReal 0 1) :=
+  tendstoInDistribution_bootMean alt one_ne_zero tendsto_empiricalVar_alt
+    (lindeberg_of_tendsto_sampleMean tendsto_sampleMean_alt tendsto_meanSq_alt)
+
+/-- The bootstrap of the smooth statistic `exp(x̄)` for the alternating data: the derivative of
+`exp` at the limit mean `0` is `1`, so the limit is `N(0, 1² · 1)`. -/
+example : TendstoInDistribution
+    (fun (n : ℕ) ω => √(n : ℝ) * (Real.exp (bootMean n ω) - Real.exp (sampleMean alt (range n))))
+    atTop (id : ℝ → ℝ) (fun _ => world alt) (gaussianReal 0 (‖Real.exp 0‖₊ ^ 2 * 1)) :=
+  tendstoInDistribution_bootstrap_of_hasStrictDerivAt alt one_ne_zero tendsto_empiricalVar_alt
+    (lindeberg_of_tendsto_sampleMean tendsto_sampleMean_alt tendsto_meanSq_alt)
+    tendsto_sampleMean_alt (Real.hasStrictDerivAt_exp 0) Real.measurable_exp
+
+/-! ### Non-vacuity of the finite-dimensional theorems (`E = ℝ`) -/
+
+open scoped RealInnerProductSpace
+
+example : sampleMeanVec (E := ℝ) evens 2 = 1 := by
+  norm_num [sampleMeanVec, evens, sum_range_succ]
+
+example (ω : ℕ → ℕ → ℝ) : bootMeanVec (E := ℝ) 3 ω = bootMean 3 ω := by
+  simp [bootMeanVec, bootMean]
+
+theorem inner_real (z t : ℝ) : ⟪z, t⟫ = z * t := by simp [mul_comm]
+
+theorem tendsto_sampleMean_alt_inner (t : ℝ) :
+    Tendsto (fun n : ℕ => sampleMean (fun i => ⟪alt i, t⟫) (range n)) atTop (𝓝 0) := by
+  have h := tendsto_sampleMean_alt.mul_const t
+  rw [zero_mul] at h
+  refine h.congr fun n => ?_
+  simp only [inner_real, sampleMean_range, ← Finset.sum_mul, mul_assoc]
+
+theorem tendsto_meanSq_alt_inner (t : ℝ) :
+    Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n, ⟪alt i, t⟫ ^ 2) atTop (𝓝 (t ^ 2)) := by
+  have h := tendsto_meanSq_alt.mul_const (t ^ 2)
+  rw [one_mul] at h
+  refine h.congr fun n => ?_
+  simp only [inner_real, mul_pow, alt_sq, one_mul, mul_assoc, Finset.sum_mul]
+
+/-- The bootstrap mean of the alternating data, viewed as data in the one-dimensional inner
+product space `ℝ`, is conditionally asymptotically standard Gaussian, through the
+Cramér–Wold route of `tendstoInDistribution_bootMeanVec`. -/
+example : TendstoInDistribution
+    (fun (n : ℕ) ω => √(n : ℝ) • (bootMeanVec n ω - sampleMeanVec alt n)) atTop (id : ℝ → ℝ)
+    (fun _ => world alt) (gaussianReal 0 1) := by
+  refine tendstoInDistribution_bootMeanVec alt measurable_id.aemeasurable
+    (fun t => ‖t‖₊ ^ 2) (fun t => ⟨by fun_prop, ?_⟩) (fun t ht => by simpa using ht)
+    (fun t => ?_) (fun t => lindeberg_of_tendsto_sampleMean (tendsto_sampleMean_alt_inner t)
+      (tendsto_meanSq_alt_inner t))
+  · have hfun : (fun z : ℝ => ⟪id z, t⟫) = fun z => t * z := by
+      funext z; simp
+    rw [hfun, gaussianReal_map_const_mul, mul_zero, mul_one]
+    congr 1
+    exact NNReal.eq (by simp)
+  · have h := tendsto_empiricalVar (tendsto_sampleMean_alt_inner t) (tendsto_meanSq_alt_inner t)
+    simpa using h
+
+/-! ### Non-vacuity: iid standard Gaussian data -/
+
+/-- iid standard Gaussian coordinates. -/
+noncomputable def gaussSeq : Measure (ℕ → ℝ) := Measure.infinitePi fun _ => gaussianReal 0 1
+
+instance : IsProbabilityMeasure gaussSeq := by unfold gaussSeq; infer_instance
+
+/-- Almost every iid standard Gaussian sample has a bootstrap mean that is conditionally
+asymptotically `N(0, 1)`. -/
+example : ∀ᵐ ω ∂gaussSeq, TendstoInDistribution
+    (fun (n : ℕ) ω' => √(n : ℝ) * (bootMean n ω' - sampleMean (fun i => ω i) (range n))) atTop
+    (id : ℝ → ℝ) (fun _ => world (fun i => ω i))
+    (gaussianReal 0 (variance (fun ω : ℕ → ℝ => ω 0) gaussSeq).toNNReal) := by
+  have hmp : ∀ i, MeasurePreserving (fun ω : ℕ → ℝ => ω i) gaussSeq (gaussianReal 0 1) :=
+    fun i => measurePreserving_eval_infinitePi _ i
+  have hvar : variance (fun ω : ℕ → ℝ => ω 0) gaussSeq = 1 := by
+    rw [← variance_id_map (hmp 0).measurable.aemeasurable, (hmp 0).map_eq,
+      variance_id_gaussianReal]
+    simp
+  have hmem : MemLp (fun ω : ℕ → ℝ => ω 0) 2 gaussSeq :=
+    (memLp_id_gaussianReal (μ := 0) (v := 1) 2).comp_measurePreserving (hmp 0)
+  have hind : Pairwise (Function.onFun (· ⟂ᵢ[gaussSeq] ·) fun (i : ℕ) (ω : ℕ → ℝ) => ω i) :=
+    fun i j hij => (iIndepFun_infinitePi (P := fun _ => gaussianReal 0 1) (X := fun _ => id)
+      (fun _ => measurable_id)).indepFun hij
+  have hident : ∀ i, IdentDistrib (fun ω : ℕ → ℝ => ω i) (fun ω => ω 0) gaussSeq gaussSeq :=
+    fun i => ⟨(hmp i).measurable.aemeasurable, (hmp 0).measurable.aemeasurable,
+      by rw [(hmp i).map_eq, (hmp 0).map_eq]⟩
+  have hvar0 : variance (fun ω : ℕ → ℝ => ω 0) gaussSeq ≠ 0 := by rw [hvar]; simp
+  exact ae_tendstoInDistribution_bootMean (P := gaussSeq) (fun i ω => ω i) hmem hind hident hvar0
+
+end MathlibExtTest.Probability.Statistics.Bootstrap
