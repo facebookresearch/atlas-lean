@@ -25,8 +25,9 @@ network `N : ReactionNetwork S ρ` (defined, with its stoichiometric subspace, i
 * `Reacts`: the directed reaction relation `y ⟶ y'` on complexes;
 * `linkageGraph`: the undirected reaction graph on the complexes (self-reactions `y → y`
   contribute no edge, parallel reactions contribute one edge);
-* `numLinkageClasses`: the number of its connected components (linkage classes);
-* `deficiency`: `δ = n - ℓ - s`;
+* `numLinkageClasses`: for finitely many complexes, the number of connected components
+  (linkage classes);
+* `deficiency`: `δ = n - ℓ - s`, also for finitely many complexes;
 * `IsWeaklyReversible`: every reaction `y → y'` can be undone by a directed path `y' ⟶* y`.
 
 These definitions previously lived in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`;
@@ -86,17 +87,18 @@ Source: Feinberg (1987), §2.2 (the standard reaction diagram, undirected). -/
 def linkageGraph : SimpleGraph N.complexes :=
   SimpleGraph.fromRel fun c c' => N.Reacts c c'
 
-/-- The number of linkage classes: connected components of the undirected reaction graph.
+/-- The number of linkage classes of a network with finitely many complexes: connected
+components of the undirected reaction graph.
 
 Source: Feinberg (1987), §2.2; Feinberg (2019), Def. 3.1.4. -/
-noncomputable def numLinkageClasses : ℕ :=
+noncomputable def numLinkageClasses [Finite N.complexes] : ℕ :=
   Nat.card N.linkageGraph.ConnectedComponent
 
 /-- The deficiency `δ = n - ℓ - s` (number of complexes, linkage classes, dimension of the
-stoichiometric subspace).
+stoichiometric subspace) of a network with finitely many complexes.
 
 Source: Feinberg (1987), §3; Feinberg (2019), Def. 6.1.1. -/
-noncomputable def deficiency : ℤ :=
+noncomputable def deficiency [Finite N.complexes] : ℤ :=
   (Nat.card N.complexes : ℤ) - N.numLinkageClasses -
     Module.finrank ℝ N.stoichiometricSubspace
 

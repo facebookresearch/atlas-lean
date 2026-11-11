@@ -22,6 +22,26 @@ namespace MathlibExtTest.Biology.Dynamics.DeficiencyZero.API
 
 open MathlibExt.Biology.Dynamics.ComplexBalanced ReactionNetwork
 
+/-! ### Infinitely many isolated complexes are outside the counting API -/
+
+/-- One self-reaction at each natural-number copy count. -/
+def infiniteSelfNet : ReactionNetwork Unit ℕ where
+  src := fun n _ => n
+  prod := fun n _ => n
+
+example : Infinite infiniteSelfNet.complexes :=
+  Infinite.of_injective (fun n =>
+    (⟨infiniteSelfNet.src n, src_mem_complexes n⟩ : infiniteSelfNet.complexes))
+    (fun _ _ h => congrFun (congrArg Subtype.val h) ())
+
+example : True := by
+  fail_if_success have _ : ℕ := infiniteSelfNet.numLinkageClasses
+  trivial
+
+example : True := by
+  fail_if_success have _ : ℤ := infiniteSelfNet.deficiency
+  trivial
+
 /-! ### The empty network -/
 
 /-- The network with no reactions on one species. -/
