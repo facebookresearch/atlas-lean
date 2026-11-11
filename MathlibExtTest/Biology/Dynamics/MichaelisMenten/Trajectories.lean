@@ -76,6 +76,15 @@ example {s c e p : ℝ → ℝ} (h : IsSolution 2 1 1 s c e p) (hs : s 0 = 0) (h
     (he : e 0 = 3) (hp : p 0 = 1) : s 7 = 0 ∧ c 7 = 0 ∧ e 7 = 3 ∧ p 7 = 1 :=
   h.eq_of_initial zeroSubstrate hs hc he hp (by norm_num)
 
+/-- The library equilibrium agrees with the one checked above. -/
+example : IsSolution 2 1 1 (fun _ ↦ 0) (fun _ ↦ 0) (fun _ ↦ 3) (fun _ ↦ 1) :=
+  isSolution_zeroSubstrate 2 1 1 3 1
+
+/-- Every solution starting with no substrate and no complex stays at that equilibrium. -/
+example {s c e p : ℝ → ℝ} (h : IsSolution 2 1 1 s c e p) (hs : s 0 = 0) (hc : c 0 = 0) :
+    s 7 = 0 ∧ c 7 = 0 ∧ e 7 = e 0 ∧ p 7 = p 0 :=
+  h.eq_zeroSubstrate hs hc (by norm_num : (0 : ℝ) ≤ 7)
+
 /-! ### Non-vacuity -/
 
 /-- The hypotheses of the invariance theorems are satisfiable: the equilibrium above has
@@ -85,7 +94,7 @@ example : (0 : ℝ) < 3 :=
     (by norm_num) zero_le_one (by norm_num)
 
 /-- With all rate constants and initial data positive, every coordinate of `s`, `c`, `e`
-stays positive. -/
+stays positive, and the invariance theorems for arbitrary solutions apply to it. -/
 example : ∃ s c e p : ℝ → ℝ, IsSolution 1 2 3 s c e p ∧
     ∀ t, 0 ≤ t → 0 < s t ∧ 0 < c t ∧ 0 < e t := by
   obtain ⟨s, c, e, p, h, -, -, -, -, -, -, -, hpos⟩ :=
@@ -95,10 +104,28 @@ example : ∃ s c e p : ℝ → ℝ, IsSolution 1 2 3 s c e p ∧
   exact ⟨s, c, e, p, h, fun t ht ↦ ⟨(hpos t ht).1 one_pos, (hpos t ht).2.1 one_pos,
     (hpos t ht).2.2 one_pos⟩⟩
 
-/-! ### The sign hypotheses are needed
+/-- `IsSolution.nonneg`, `.substrate_pos` and `.complex_pos` on the positive-data solution. -/
+example : ∃ s c e p : ℝ → ℝ, IsSolution 1 2 3 s c e p ∧
+    (0 ≤ s 5 ∧ 0 ≤ c 5 ∧ 0 ≤ e 5 ∧ p 0 ≤ p 5) ∧ 0 < s 5 ∧ 0 < c 5 := by
+  obtain ⟨s, c, e, p, h, hs, hc, he, hp, -⟩ :=
+    exists_isSolution_nonneg (k₁ := 1) (kb := 2) (k₂ := 3) (by norm_num) (by norm_num)
+      (by norm_num) (s₀ := 1) (c₀ := 1) (e₀ := 1) (p₀ := 0) zero_le_one zero_le_one zero_le_one
+      le_rfl
+  have hk : (0 : ℝ) ≤ 1 ∧ (0 : ℝ) ≤ 2 ∧ (0 : ℝ) ≤ 3 := by norm_num
+  have h5 : (0 : ℝ) ≤ 5 := by norm_num
+  exact ⟨s, c, e, p, h,
+    h.nonneg hk.1 hk.2.1 hk.2.2 (by rw [hs]; norm_num) (by rw [hc]; norm_num)
+      (by rw [he]; norm_num) hp.ge h5,
+    h.substrate_pos hk.1 hk.2.1 hk.2.2 (by rw [hs]; norm_num) (by rw [hc]; norm_num)
+      (by rw [he]; norm_num) hp.ge h5,
+    h.complex_pos hk.1 hk.2.1 hk.2.2 (by rw [hs]; norm_num) (by rw [hc]; norm_num)
+      (by rw [he]; norm_num) hp.ge h5⟩
 
-With a negative initial enzyme the constant zero-substrate curve is still a solution (checked
-from the definitions) but its enzyme is negative. -/
+/-! ### The sign of `e(0)` is needed
+
+With a negative initial enzyme, and `s(0)`, `c(0)`, `p(0)` all nonnegative, the constant
+zero-substrate curve is still a solution (checked from the definitions) but its enzyme is negative.
+This witnesses only the hypothesis `0 ≤ e(0)`; the other sign hypotheses are not tested here. -/
 
 theorem negEnzyme : IsSolution 1 1 1 (fun _ ↦ 0) (fun _ ↦ 0) (fun _ ↦ -1) (fun _ ↦ 0) where
   hasDerivAt_substrate t _ := by
@@ -110,6 +137,8 @@ theorem negEnzyme : IsSolution 1 1 1 (fun _ ↦ 0) (fun _ ↦ 0) (fun _ ↦ -1) 
   hasDerivAt_product t _ := by
     convert hasDerivAt_const t (0 : ℝ) using 1; simp
 
-example : ¬ 0 ≤ (fun _ ↦ (-1 : ℝ)) 1 := by norm_num
+example : ∃ s c e p : ℝ → ℝ, IsSolution 1 1 1 s c e p ∧ 0 ≤ s 0 ∧ 0 ≤ c 0 ∧ 0 ≤ p 0 ∧
+    e 1 < 0 :=
+  ⟨_, _, _, _, negEnzyme, le_rfl, le_rfl, le_rfl, by norm_num⟩
 
 end MathlibExtTest.Biology.Dynamics.MichaelisMenten.Trajectories
