@@ -83,6 +83,13 @@ example (t : ℝ≥0) : ∫ ω, (1 : C(I, ℝ)) (modifiedState xHalf t ω) ∂ra
   rw [integral_modifiedState, wfSemigroup_apply_one]
   rfl
 
+/-- Semigroup identity on the non-constant coordinate test function: the
+semigroup applied to `y ↦ y` at `1/2` is the mean of the realization, `1/2`. -/
+example (t : ℝ≥0) :
+    wfSemigroup t ⟨fun y : I => (y : ℝ), by fun_prop⟩ xHalf = 1 / 2 := by
+  rw [← integral_modifiedState]
+  exact integral_modifiedProcess xHalf t
+
 /-- The mean of the realization started at `1/2` stays `1/2`. -/
 example (t : ℝ≥0) : ∫ ω, modifiedProcess xHalf t ω ∂rawMeasure xHalf = 1 / 2 :=
   integral_modifiedProcess xHalf t
