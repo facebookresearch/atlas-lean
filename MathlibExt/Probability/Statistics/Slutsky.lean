@@ -151,10 +151,6 @@ theorem TendstoInDistribution.div_of_tendstoInMeasure_const {X Y : ι → Ω →
     (fun _ ↦ ae_of_all _ fun _ ↦ (div_eq_mul_inv _ _).symm)
     (ae_of_all _ fun _ ↦ (div_eq_mul_inv _ _).symm)
 
-end MeasureTheory
-
-namespace MeasureTheory
-
 /-- Convergence in distribution depends on the limit only through its law: if `X n →ᵈ Y` and
 `Z` (on any probability space) has the same law `ρ` as `Y`, then `X n →ᵈ Z`. -/
 theorem TendstoInDistribution.congr_hasLaw {ι Ω Ω₂ Ω₃ E : Type*} {mΩ : MeasurableSpace Ω}

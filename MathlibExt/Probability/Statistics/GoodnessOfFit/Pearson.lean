@@ -34,8 +34,10 @@ neither used nor proved here). Pearson's statistic is
 * `tendstoInDistribution_pearsonResidual`: for `pᵢ > 0`, the residual vector converges in
   distribution to `P_K Z`, the orthogonal projection of a standard Gaussian onto the hyperplane
   `K = (√p)ᗮ` of dimension `k - 1`.
-* `hasLaw_inner_starProjection_orthogonal_sqrt`: that limit has covariance `I - √p √pᵀ`, the
-  weighted multinomial covariance; it is singular in the direction `√p`.
+* `hasLaw_inner_starProjection_orthogonal_sqrt`: for any probability vector `p`, the projection
+  onto `(√p)ᗮ` of a standard Gaussian has covariance `I - √p √pᵀ`, singular in the direction
+  `√p`; when all `pᵢ > 0` it is the residual limit above and this is the weighted multinomial
+  covariance.
 * `tendstoInDistribution_pearsonStatistic`: **Pearson's theorem**, `χ²ₙ → χ²_{k-1}` in
   distribution (simple null hypothesis, `k ≥ 2`, all `pᵢ > 0`).
 * `tendstoInDistribution_pearsonStatistic_fitted`: with cell probabilities `p(θ̂)` estimated
