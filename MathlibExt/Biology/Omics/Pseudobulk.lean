@@ -24,7 +24,7 @@ moments and shows three things.
    not independent (`not_indepFun_sameDonor`). Treating them as independent understates the
    variance of the cell-level mean by the factor `1 + (m - 1) ρ` (the design effect, with
    intraclass correlation `ρ = σ_b² / (σ_b² + σ_e²)`).
-2. **The per-cell marginals cannot repair this.** Two random-intercept models with the same
+2. **The per-cell variances cannot repair this.** Two random-intercept models with the same
    per-cell variance give the same variance of the cell-level mean only when their donor variances
    agree (`variance_cellMean_eq_iff`). The model with `σ_b² = 0` reproduces the naive formula
    exactly (`variance_cellMean_eq_naiveVar`). So the split of the per-cell variance into a donor and
@@ -35,13 +35,16 @@ moments and shows three things.
    (`variance_pseudobulkMean`).
 
 Finally, **batch perfectly confounded with condition** is a boundary case that no aggregation
-fixes: if every donor's batch indicator equals its condition indicator, the data have the same
-law under `(τ, β)` and `(τ + t, β - t)` for every noise process (`dataLaw_shift_of_confounded`),
-so no functional of the law of the data equals the condition effect `τ`
+fixes. The batch covariate enters the donor mean linearly; perfect confounding means it is an
+affine function `batch d = a + b · cond d` of the condition with `b ≠ 0` (this covers both
+`batch = cond` and `batch = 1 - cond`). Then the data have the same law under `(μ₀, τ, β)` and
+`(μ₀ + a t, τ + b t, β - t)` for every noise process (`dataLaw_shift_of_confounded`), so no
+functional of the law of the data equals the condition effect `τ`
 (`not_identifiable_of_confounded`) and no estimator is unbiased for it
-(`no_unbiased_estimator_of_confounded`). The between-condition contrast estimates `τ + β`
-(`contrast_of_confounded`), while one pair of donors in the same batch with different conditions
-already identifies `τ` (`contrast_of_sameBatch`).
+(`no_unbiased_estimator_of_confounded`). The between-condition contrast estimates `τ + b β`
+(`contrast_of_confounded`). One pair of donors in the same batch with different conditions
+suffices to identify `τ` (`contrast_of_sameBatch`); it is not necessary, because a linear batch
+covariate can also be separated from the condition across batches.
 
 ## Model
 
@@ -299,7 +302,7 @@ theorem trueVar_eq_designEffect_mul_naiveVar {σb2 σe2 : ℝ} (hs : σb2 + σe2
   field_simp
   ring
 
-/-! ### The per-cell marginals do not determine the variance of the mean -/
+/-! ### The per-cell variances do not determine the variance of the mean -/
 
 section Marginals
 
@@ -314,10 +317,11 @@ theorem variance_cellMean_eq_naiveVar [Nonempty δ] [Nonempty κ] {Y : δ × κ 
     Var[cellMean Y; μ] = naiveVar σb2 σe2 (Fintype.card δ) (Fintype.card κ) := by
   rw [variance_cellMean h, trueVar, naiveVar, zero_div, zero_add]
 
-/-- **Same marginals, different precision**: two random-intercept models on possibly different
-spaces whose cells have the same variance give the same variance of the cell-level mean only if
-their donor variances agree, as soon as there are two cells per donor. The per-cell marginal
-moments therefore cannot calibrate cell-level inference without a model of the donor split. -/
+/-- **Same per-cell variance, different precision**: two random-intercept models on possibly
+different spaces whose cells have the same variance give the same variance of the cell-level mean
+only if their donor variances agree, as soon as there are two cells per donor. Within the
+random-intercept family the per-cell variance therefore cannot calibrate cell-level inference
+without a model of the donor split. -/
 theorem variance_cellMean_eq_iff [Nonempty δ] (hm : 2 ≤ Fintype.card κ) {Y : δ × κ → Ω → ℝ}
     {Y' : δ × κ → Ω' → ℝ} {σb2 σe2 σb2' σe2' : ℝ} (h : IsRandomIntercept μ Y σb2 σe2)
     (h' : IsRandomIntercept μ' Y' σb2' σe2') (hs : σb2 + σe2 = σb2' + σe2') :
@@ -541,47 +545,49 @@ noncomputable def dataLaw (μ : Measure Ω) (μ₀ τ β : ℝ) (U : δ × κ �
 
 variable {cond batch}
 
-/-- Under perfect confounding the observations are unchanged when condition effect is traded for
-batch effect. -/
-theorem obs_shift_of_confounded (hcb : batch = cond) (μ₀ τ β t : ℝ) (U : δ × κ → Ω → ℝ) :
-    obs cond batch μ₀ (τ + t) (β - t) U = obs cond batch μ₀ τ β U := by
+/-- Under perfect confounding, `batch = a + b · cond`, the observations are unchanged when batch
+effect is traded for condition effect and intercept. -/
+theorem obs_shift_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
+    (μ₀ τ β t : ℝ) (U : δ × κ → Ω → ℝ) :
+    obs cond batch (μ₀ + a * t) (τ + b * t) (β - t) U = obs cond batch μ₀ τ β U := by
   subst hcb
   funext i ω
   simp only [obs, meanFn]
   ring
 
-/-- **Perfect confounding, full law**: for every noise process the data have the same law under
-`(τ, β)` and `(τ + t, β - t)`. -/
-theorem dataLaw_shift_of_confounded (hcb : batch = cond) (μ : Measure Ω) (μ₀ τ β t : ℝ)
-    (U : δ × κ → Ω → ℝ) :
-    dataLaw cond batch μ μ₀ (τ + t) (β - t) U = dataLaw cond batch μ μ₀ τ β U := by
+/-- **Perfect confounding, full law**: if `batch = a + b · cond`, then for every noise process
+the data have the same law under `(μ₀, τ, β)` and `(μ₀ + a t, τ + b t, β - t)`. -/
+theorem dataLaw_shift_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
+    (μ : Measure Ω) (μ₀ τ β t : ℝ) (U : δ × κ → Ω → ℝ) :
+    dataLaw cond batch μ (μ₀ + a * t) (τ + b * t) (β - t) U = dataLaw cond batch μ μ₀ τ β U := by
   simp only [dataLaw, obs_shift_of_confounded hcb]
 
-/-- **The condition effect is not identifiable** under perfect confounding: no functional of the
-law of the cell-level data recovers `τ`, whatever the noise process. Pseudobulk values, being
-functions of the data, do not help. -/
-theorem not_identifiable_of_confounded (hcb : batch = cond) (μ : Measure Ω)
-    (U : δ × κ → Ω → ℝ) :
+/-- **The condition effect is not identifiable** under perfect confounding
+(`batch = a + b · cond`, `b ≠ 0`): no functional of the law of the cell-level data recovers `τ`,
+whatever the noise process. Pseudobulk values, being functions of the data, do not help. -/
+theorem not_identifiable_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
+    (hb : b ≠ 0) (μ : Measure Ω) (U : δ × κ → Ω → ℝ) :
     ¬ ∃ F : Measure (δ × κ → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw cond batch μ μ₀ τ β U) = τ := by
   rintro ⟨F, hF⟩
   have hs := dataLaw_shift_of_confounded hcb μ 0 0 1 1 U
-  norm_num at hs
-  have h1 := hF 0 1 0
+  simp only [zero_add, mul_one, sub_self] at hs
+  have h1 := hF a b 0
   rw [hs, hF] at h1
-  norm_num at h1
+  exact hb h1.symm
 
-/-- **No unbiased estimator** of `τ` exists under perfect confounding: any estimator `T` of the
-cell-level data has the same expectation under `(τ, β)` and `(τ + 1, β - 1)`. -/
-theorem no_unbiased_estimator_of_confounded (hcb : batch = cond) (μ : Measure Ω)
-    (U : δ × κ → Ω → ℝ) :
+/-- **No unbiased estimator** of `τ` exists under perfect confounding (`batch = a + b · cond`,
+`b ≠ 0`): any estimator `T` of the cell-level data has the same expectation under `(0, 0, 1)` and
+`(a, b, 0)`. -/
+theorem no_unbiased_estimator_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
+    (hb : b ≠ 0) (μ : Measure Ω) (U : δ × κ → Ω → ℝ) :
     ¬ ∃ T : (δ × κ → ℝ) → ℝ,
       ∀ μ₀ τ β, ∫ ω, T (fun i ↦ obs cond batch μ₀ τ β U i ω) ∂μ = τ := by
   rintro ⟨T, hT⟩
   have hs := obs_shift_of_confounded hcb 0 0 1 1 U
-  norm_num at hs
-  have h1 := hT 0 1 0
+  simp only [zero_add, mul_one, sub_self] at hs
+  have h1 := hT a b 0
   rw [hs, hT] at h1
-  norm_num at h1
+  exact hb h1.symm
 
 section Contrast
 
@@ -594,13 +600,15 @@ private lemma integral_obs (hU : ∀ i, Integrable (U i) μ) (hU0 : ∀ i, ∫ �
   rw [integral_add (integrable_const _) (hU i), integral_const, hU0]
   simp
 
-/-- **What the contrast estimates under confounding**: with mean-zero noise, the difference in
-expected cell values between a donor with `cond = 1` and one with `cond = 0` is `τ + β`. -/
-theorem contrast_of_confounded (hcb : batch = cond) (hU : ∀ i, Integrable (U i) μ)
-    (hU0 : ∀ i, ∫ ω, U i ω ∂μ = 0) {d₀ d₁ : δ} (h₀ : cond d₀ = 0) (h₁ : cond d₁ = 1)
+/-- **What the contrast estimates under confounding**: if `batch = a + b · cond`, then with
+mean-zero noise the difference in expected cell values between a donor with `cond = 1` and one
+with `cond = 0` is `τ + b β`. -/
+theorem contrast_of_confounded {a b : ℝ} (hcb : batch = fun d ↦ a + b * cond d)
+    (hU : ∀ i, Integrable (U i) μ) (hU0 : ∀ i, ∫ ω, U i ω ∂μ = 0) {d₀ d₁ : δ} (h₀ : cond d₀ = 0)
+    (h₁ : cond d₁ = 1)
     (μ₀ τ β : ℝ) (c₀ c₁ : κ) :
     ∫ ω, obs cond batch μ₀ τ β U (d₁, c₁) ω ∂μ - ∫ ω, obs cond batch μ₀ τ β U (d₀, c₀) ω ∂μ
-      = τ + β := by
+      = τ + b * β := by
   subst hcb
   rw [integral_obs hU hU0, integral_obs hU hU0]
   simp only [meanFn, h₀, h₁]
@@ -608,8 +616,10 @@ theorem contrast_of_confounded (hcb : batch = cond) (hU : ∀ i, Integrable (U i
 
 /-- **Identification away from the boundary**: one pair of donors in the same batch whose
 condition indicators differ by one identifies `τ` from the mean-zero-noise expectations. Under
-perfect confounding no such pair exists (`batch = cond` makes equal batches force equal
-conditions). -/
+perfect confounding (`batch = a + b · cond`, `b ≠ 0`) no such pair exists. Such a pair is
+sufficient, not necessary: the batch covariate enters linearly, so for `batch = ![0, 1, 2]` and
+`cond = ![0, 1, 1]` no two donors share a batch, yet `(m₁ - m₀) - (m₂ - m₁) = τ` for the donor
+means `mᵢ`. -/
 theorem contrast_of_sameBatch (hU : ∀ i, Integrable (U i) μ) (hU0 : ∀ i, ∫ ω, U i ω ∂μ = 0)
     {d₀ d₁ : δ} (hb : batch d₀ = batch d₁) (hc : cond d₁ = cond d₀ + 1) (μ₀ τ β : ℝ)
     (c₀ c₁ : κ) :

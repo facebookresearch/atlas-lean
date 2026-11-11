@@ -171,7 +171,21 @@ example (U : Fin 2 × Fin 3 → Unit → ℝ) :
 
 example (μ : Measure Unit) (U : Fin 2 × Fin 3 → Unit → ℝ) :
     ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw condC condC μ μ₀ τ β U) = τ :=
-  not_identifiable_of_confounded rfl μ U
+  not_identifiable_of_confounded (a := 0) (b := 1) (by funext d; simp) one_ne_zero μ U
+
+/-- The reverse coding: all condition-`1` donors in batch `0`, `batch = 1 - cond`. -/
+def batchR : Fin 2 → ℝ := ![1, 0]
+
+/-- Directly from the definitions: `(0, 1, 0)` and `(-1, 2, 1)` give identical observations. -/
+example (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    obs condC batchR 0 1 0 U = obs condC batchR (-1) 2 1 U := by
+  funext i ω
+  fin_cases i <;> norm_num [obs, meanFn, condC, batchR]
+
+example (μ : Measure Unit) (U : Fin 2 × Fin 3 → Unit → ℝ) :
+    ¬ ∃ F : Measure (Fin 2 × Fin 3 → ℝ) → ℝ, ∀ μ₀ τ β, F (dataLaw condC batchR μ μ₀ τ β U) = τ :=
+  not_identifiable_of_confounded (a := 1) (b := -1)
+    (by funext d; fin_cases d <;> simp [condC, batchR]) (by norm_num) μ U
 
 /-- Off the boundary: in a crossed `2 × 2` design (four donors) the same two parameter values give
 different donor means, so the confounding hypothesis is not vacuous. -/
@@ -196,6 +210,14 @@ example (μ₀ τ β : ℝ) :
         ∂(Measure.dirac ())
       - ∫ ω, obs condX batchX μ₀ τ β (fun _ _ ↦ (0 : ℝ)) (0, 0) ω ∂(Measure.dirac ()) = τ :=
   contrast_of_sameBatch (by simp) (by simp) (by simp [batchX]) (by norm_num [condX]) μ₀ τ β 0 0
+
+/-- A same-batch pair is not necessary: with a linear batch covariate `![0, 1, 2]` and
+`cond = ![0, 1, 1]`, no two donors share a batch, yet the donor means identify `τ`. -/
+example (μ₀ τ β : ℝ) :
+    let m := meanFn (![0, 1, 1] : Fin 3 → ℝ) ![0, 1, 2] μ₀ τ β
+    (m 1 - m 0) - (m 2 - m 1) = τ := by
+  simp [meanFn]
+  ring
 
 /-- Under confounding the condition contrast is `τ + β`, computed directly. -/
 example (μ₀ τ β : ℝ) :
