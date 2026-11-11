@@ -12,6 +12,7 @@ public import MathlibExt.Probability.Statistics.Survival.Censoring
 public import MathlibExt.Probability.Statistics.Survival.Data
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.StrongLaw
 
 /-!
@@ -36,13 +37,19 @@ events, as in `Censoring` and `KaplanMeier`). These give the grouped data
   estimate at `m` converges to `P(T > m)`.
 * `ae_tendsto_kmSurvival_infinitePi`: the same on the canonical sequence space
   `ℕ → Fin k × Fin k` with the product measure `Measure.infinitePi`.
+* `ae_tendsto_cumulativeIncidence`: **consistency of the Aalen–Johansen cumulative incidence**:
+  with causes, in the model `indepCauseLaw pTJ pC` where `(T, J)` is jointly independent of `C`,
+  if `P(X ≥ m) ≠ 0` then almost surely the estimated cumulative incidence of cause `c` at `m`
+  converges to `P(T ≤ m, J = c)`.
 
 ## Scope
 
-Independent censoring enters only through the identification theorem
-`Censoring.obsEventMass_div_obsAtRiskMass`. The result concerns the survival function of `T` at
-grid points `m` with positive at-risk mass; nothing is said about the tail beyond the support of
-the censoring law, uniformity in `m`, or rates (no central limit theorem).
+Independent censoring enters only through `Censoring`: the identification theorem
+`obsEventMass_div_obsAtRiskMass` for Kaplan–Meier, and the factorizations
+`causeEventMass_indepCauseLaw`, `causeAtRiskMass_indepCauseLaw`, `obsAtRiskMass_indepLaw` for the
+cumulative incidence. The results concern grid points `m` with positive at-risk mass; nothing is
+said about the tail beyond the support of the censoring law, uniformity in `m`, or rates (no
+central limit theorem).
 
 ## References
 
@@ -321,5 +328,164 @@ theorem ae_tendsto_kmSurvival_infinitePi (pT pC : PMF (Fin k)) (m : Fin k)
     (fun i => (measurePreserving_eval_infinitePi (fun _ : ℕ => indepLaw pT pC) i).hasLaw) m hm
 
 end KaplanMeier
+
+/-! ### Competing risks: consistency of the Aalen–Johansen cumulative incidence -/
+
+section CompetingRisks
+
+open MathlibExt.Probability.Statistics.CompetingRisks
+
+variable {r : ℕ}
+
+/-- The prefix product of the Kaplan–Meier limit factors is the survival mass:
+`∏_{l < j} (1 - h(l)) = P(T ≥ j)` when `P(T ≥ j) ≠ 0`. -/
+theorem prod_lt_one_sub_hazard (p : PMF (Fin k)) (j : Fin k) (hj : survivalMass p j ≠ 0) :
+    ∏ l with l < j, (1 - hazard p l) = survivalMass p j := by
+  rcases Nat.eq_zero_or_eq_succ_pred (j : ℕ) with h0 | hs
+  · have hfilter : ({l | l < j} : Finset (Fin k)) = ∅ := by
+      ext l; simp [Fin.lt_def, h0]
+    have huniv : {t : Fin k | j ≤ t} = Set.univ :=
+      Set.eq_univ_of_forall fun t => Fin.le_iff_val_le_val.2 (by omega)
+    rw [hfilter, prod_empty, survivalMass, huniv, probReal_univ]
+  · set j' : Fin k := ⟨(j : ℕ).pred, by omega⟩ with hj'
+    have htail : {t : Fin k | j' < t} = {t | j ≤ t} := by
+      ext t
+      simp only [Set.mem_ofPred_eq, Fin.lt_def, Fin.le_iff_val_le_val, hj']
+      omega
+    have hfilter : ({l | l < j} : Finset (Fin k)) = ({l | l ≤ j'} : Finset (Fin k)) := by
+      ext l
+      simp only [mem_filter, mem_univ, true_and, Fin.lt_def, Fin.le_iff_val_le_val, hj']
+      omega
+    have hS' : survivalMass p j' ≠ 0 := by
+      rw [survivalMass_eq_add, htail, ← survivalMass]
+      have h1 : 0 ≤ (p j').toReal := ENNReal.toReal_nonneg
+      have h2 : 0 < survivalMass p j := lt_of_le_of_ne measureReal_nonneg (Ne.symm hj)
+      linarith
+    rw [hfilter, prod_one_sub_hazard p j' hS', htail, ← survivalMass]
+
+/-- The survival mass of the marginal law of `T` is the mass of `{T ≥ j}` under the joint law of
+`(T, J)`. -/
+theorem survivalMass_map_fst (pTJ : PMF (Fin k × Fin r)) (j : Fin k) :
+    survivalMass (PMF.map Prod.fst pTJ) j = pTJ.toMeasure.real {x | j ≤ x.1} := by
+  rw [survivalMass, measureReal_def, PMF.toMeasure_map_apply _ _ _ measurable_fst
+    (Set.toFinite _).measurableSet, measureReal_def]
+  rfl
+
+/-- Forgetting the cause turns the competing-risks model into the censoring model of the
+marginal law of `T`: the law of `(T, C)` under `indepCauseLaw pTJ pC` is
+`indepLaw (PMF.map Prod.fst pTJ) pC`. -/
+theorem map_indepCauseLaw (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k)) :
+    (indepCauseLaw pTJ pC).map (Prod.map Prod.fst id) = indepLaw (PMF.map Prod.fst pTJ) pC := by
+  rw [indepCauseLaw, indepLaw, ← Measure.map_prod_map _ _ measurable_fst measurable_id,
+    PMF.toMeasure_map Prod.fst pTJ measurable_fst, Measure.map_id]
+
+/-- The mass of `{T ≤ m, J = c}` under the joint law of `(T, J)` as a sum of point masses. -/
+theorem measureReal_le_cause (pTJ : PMF (Fin k × Fin r)) (m : Fin k) (c : Fin r) :
+    pTJ.toMeasure.real {x | x.1 ≤ m ∧ x.2 = c} = ∑ j with j ≤ m, (pTJ (j, c)).toReal := by
+  have hs : {x : Fin k × Fin r | x.1 ≤ m ∧ x.2 = c} =
+      ↑((univ.filter (· ≤ m)).map ⟨fun j => (j, c), fun _ _ h => (Prod.mk.inj h).1⟩) := by
+    ext ⟨j, d⟩
+    simp only [Set.mem_ofPred_eq, coe_map, coe_filter, mem_univ, true_and, Set.mem_image]
+    constructor
+    · rintro ⟨hj, rfl⟩; exact ⟨j, hj, rfl⟩
+    · rintro ⟨l, hl, h⟩; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact ⟨hl, rfl⟩
+  rw [measureReal_def, hs, PMF.toMeasure_apply_finset, sum_map,
+    ENNReal.toReal_sum fun _ _ => pTJ.apply_ne_top _]
+  rfl
+
+/-- The grouped competing-risks data of the first `n` subjects of the sequence `W`: subject `i`,
+with `((Tᵢ, Jᵢ), Cᵢ) = W i ω`, has follow-up index `min Tᵢ Cᵢ` and fails from cause `Jᵢ` if
+`Tᵢ ≤ Cᵢ`, and is censored otherwise. -/
+def empiricalCauseData {Ω : Type*} (W : ℕ → Ω → (Fin k × Fin r) × Fin k) (n : ℕ) (ω : Ω) :
+    CompetingRiskData k r :=
+  CompetingRiskData.ofSubjects gridTime gridTime_strictMono
+    (fun i : Fin n => min (W i ω).1.1 (W i ω).2)
+    (fun i => if (W i ω).1.1 ≤ (W i ω).2 then some (W i ω).1.2 else none)
+
+/-- Forgetting the causes of `empiricalCauseData W` gives `empiricalData` of the event and
+censoring times. -/
+theorem toCensoredData_empiricalCauseData {Ω : Type*} (W : ℕ → Ω → (Fin k × Fin r) × Fin k)
+    (n : ℕ) (ω : Ω) :
+    (empiricalCauseData W n ω).toCensoredData =
+      empiricalData (fun i ω => ((W i ω).1.1, (W i ω).2)) n ω := by
+  rw [empiricalCauseData, CompetingRiskData.toCensoredData_ofSubjects, empiricalData]
+  congr 1
+  funext i
+  by_cases h : (W i ω).1.1 ≤ (W i ω).2 <;> simp [h]
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+  {W : ℕ → Ω → (Fin k × Fin r) × Fin k}
+
+/-- **Consistency of the Aalen–Johansen cumulative incidence at a grid time.** Let the subjects
+`Wᵢ = ((Tᵢ, Jᵢ), Cᵢ)` be independent with the law `indepCauseLaw pTJ pC`, in which the event time
+and cause `(T, J)` are jointly independent of the censoring time `C`. If the observed at-risk mass
+`P(min T C ≥ m)` is nonzero, then almost surely the estimated cumulative incidence of cause `c` at
+time `m` converges to `F_c(m) = P(T ≤ m, J = c)`. Grid times only; no statement beyond the support
+of `C`. -/
+theorem ae_tendsto_cumulativeIncidence (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k))
+    (hind : iIndepFun W P) (hlaw : ∀ i, HasLaw (W i) (indepCauseLaw pTJ pC) P) (m : Fin k)
+    (hm : causeAtRiskMass (indepCauseLaw pTJ pC) m ≠ 0) (c : Fin r) :
+    ∀ᵐ ω ∂P, Tendsto
+      (fun n : ℕ => (empiricalCauseData W n ω).cumulativeIncidence c ((m : ℕ) : ℝ)) atTop
+      (𝓝 (pTJ.toMeasure.real {x | x.1 ≤ m ∧ x.2 = c})) := by
+  classical
+  set pT := PMF.map Prod.fst pTJ with hpT
+  set Z : ℕ → Ω → Fin k × Fin k := fun i ω => ((W i ω).1.1, (W i ω).2) with hZ
+  have hproj : Measurable (Prod.map (Prod.fst : Fin k × Fin r → Fin k) (id : Fin k → Fin k)) :=
+    measurable_fst.prodMap measurable_id
+  have hZind : iIndepFun Z P := hind.comp (fun _ => Prod.map Prod.fst id) fun _ => hproj
+  have hZlaw : ∀ i, HasLaw (Z i) (indepLaw pT pC) P := fun i => by
+    have h := (hasLaw_map (P := indepCauseLaw pTJ pC) hproj.aemeasurable).comp (hlaw i)
+    rwa [map_indepCauseLaw] at h
+  have hRisk : ∀ j, causeAtRiskMass (indepCauseLaw pTJ pC) j = obsAtRiskMass (indepLaw pT pC) j :=
+    fun j => by rw [causeAtRiskMass_indepCauseLaw, obsAtRiskMass_indepLaw, survivalMass_map_fst]
+  rw [hRisk] at hm
+  have hK := ae_tendsto_kmFactor pT pC hZind hZlaw
+  have hR := ae_all_iff.2 (ae_tendsto_atRisk_div hZind hZlaw)
+  have hE : ∀ᵐ ω ∂P, ∀ j : Fin k, Tendsto
+      (fun n : ℕ => ((empiricalCauseData W n ω).events j c : ℝ) / n) atTop
+      (𝓝 (causeEventMass (indepCauseLaw pTJ pC) j c)) := by
+    refine ae_all_iff.2 fun j => ?_
+    filter_upwards [ae_tendsto_card_filter_div W hind hlaw
+      (s := {w : (Fin k × Fin r) × Fin k | min w.1.1 w.2 = j ∧ w.1.1 ≤ w.2 ∧ w.1.2 = c})
+      (Set.toFinite _).measurableSet] with ω hω
+    refine hω.congr fun n => ?_
+    simp only [empiricalCauseData, CompetingRiskData.ofSubjects]
+    congr 3
+    ext i
+    by_cases h : (W i ω).1.1 ≤ (W i ω).2 <;> simp [h]
+  filter_upwards [hK, hR, hE] with ω hKω hRω hEω
+  rw [measureReal_le_cause]
+  have hCI : ∀ n, (empiricalCauseData W n ω).cumulativeIncidence c ((m : ℕ) : ℝ) =
+      ∑ j with j ≤ m, (∏ l with l < j, (empiricalData Z n ω).kmFactor l) *
+        (((empiricalCauseData W n ω).events j c : ℝ) / (empiricalData Z n ω).atRisk j) := by
+    intro n
+    rw [CompetingRiskData.cumulativeIncidence]
+    refine sum_congr ?_ fun j _ => ?_
+    · ext j
+      simp only [mem_filter, mem_univ, true_and]
+      exact gridTime_le_gridTime_iff
+    · rw [CompetingRiskData.cifIncrement, CompetingRiskData.survivalBefore,
+        CompetingRiskData.atRisk, toCensoredData_empiricalCauseData]
+  simp_rw [hCI]
+  refine tendsto_finsetSum _ fun j hj => ?_
+  have hjm : j ≤ m := by simpa using hj
+  have hne : obsAtRiskMass (indepLaw pT pC) j ≠ 0 := obsAtRiskMass_ne_zero_of_le _ hjm hm
+  have hST : survivalMass pT j ≠ 0 := ((obsAtRiskMass_indepLaw_ne_zero_iff pT pC j).1 hne).1
+  have hSC : survivalMass pC j ≠ 0 := ((obsAtRiskMass_indepLaw_ne_zero_iff pT pC j).1 hne).2
+  have hlim : survivalMass pT j *
+      (causeEventMass (indepCauseLaw pTJ pC) j c / obsAtRiskMass (indepLaw pT pC) j) =
+      (pTJ (j, c)).toReal := by
+    rw [causeEventMass_indepCauseLaw, obsAtRiskMass_indepLaw]
+    field_simp
+  rw [← hlim, ← prod_lt_one_sub_hazard pT j hST]
+  refine Tendsto.mul (tendsto_finsetProd _ fun l hl => hKω l
+    (obsAtRiskMass_ne_zero_of_le _ ((by simpa using hl : l < j).le) hne)) ?_
+  refine ((hEω j).div (hRω j) hne).congr' ?_
+  filter_upwards [eventually_ne_atTop 0] with n hn
+  simp only [Pi.div_apply]
+  rw [div_div_div_cancel_right₀ (Nat.cast_ne_zero.2 hn)]
+
+end CompetingRisks
 
 end MathlibExt.Probability.Statistics.SurvivalConsistency
