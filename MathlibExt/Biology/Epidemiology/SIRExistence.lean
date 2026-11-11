@@ -19,13 +19,15 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 For the Kermack–McKendrick system `S' = -β S I / N`, `I' = β S I / N - γ I`, `R' = γ I`
 (`MathlibExt.Biology.Epidemiology.SIR.IsSolution`), this file proves that every nonnegative
-initial state has a solution defined for all `t ≥ 0`, and that it stays nonnegative.
+initial state has a solution defined for all `t ≥ 0`, that it stays nonnegative, and that it is
+unique forward in time.
 
 ## Main results
 
 * `exists_isSolution_nonneg`: for `γ ≥ 0` and nonnegative `(S₀, I₀, R₀)` there is a solution
   with these initial values whose compartments are nonnegative and keep their total for all
   `t ≥ 0`; `S` (resp. `I`) is positive at `t ≥ 0` iff `S₀ > 0` (resp. `I₀ > 0`).
+* `IsSolution.eq_of_initial`: two solutions with the same initial values agree on `[0, ∞)`.
 * `IsSolution.susceptible_eq_mul_exp`, `IsSolution.infected_eq_mul_exp`,
   `IsSolution.removed_eq_add_integral`: `S(t) = S(0) e^{-∫₀ᵗ β I / N}`,
   `I(t) = I(0) e^{∫₀ᵗ (β S / N - γ)}`, `R(t) = R(0) + γ ∫₀ᵗ I`; hence `IsSolution.nonneg` and
@@ -305,5 +307,37 @@ theorem exists_isSolution_nonneg (hγ : 0 ≤ γ) {S₀ I₀ R₀ : ℝ} (hS₀ 
   · rw [hsol.total_eq ht, hinit.1, hinit.2.1, hinit.2.2]
   · rw [hsol.susceptible_pos_iff ht, hsol.infected_pos_iff ht, hinit.1, hinit.2.1]
     exact ⟨Iff.rfl, Iff.rfl⟩
+
+/-! ### Forward uniqueness -/
+
+/-- **Forward uniqueness.** Two solutions of the SIR system (any real parameters) with the same
+initial values agree at every time `t ≥ 0`.
+
+Proof: on `[0, t]` both packed curves are continuous, hence lie in a common closed ball, on
+which the `C¹` field is Lipschitz; apply Mathlib's `ODE_solution_unique_of_mem_Icc_right`
+(one-sided derivatives at the initial time suffice). -/
+theorem IsSolution.eq_of_initial {S' I' R' : ℝ → ℝ} (h : IsSolution β γ N S I R)
+    (h' : IsSolution β γ N S' I' R') (hS : S 0 = S' 0) (hI : I 0 = I' 0) (hR : R 0 = R' 0)
+    {t : ℝ} (ht : 0 ≤ t) : S t = S' t ∧ I t = I' t ∧ R t = R' t := by
+  have hd := isSolution_iff_hasDerivAt_sirCurve.1 h
+  have hd' := isSolution_iff_hasDerivAt_sirCurve.1 h'
+  have hc : ContinuousOn (sirCurve S I R) (Icc 0 t) :=
+    fun s hs => (hd s hs.1).continuousAt.continuousWithinAt
+  have hc' : ContinuousOn (sirCurve S' I' R') (Icc 0 t) :=
+    fun s hs => (hd' s hs.1).continuousAt.continuousWithinAt
+  obtain ⟨C₁, hC₁⟩ := isCompact_Icc.exists_bound_of_continuousOn hc
+  obtain ⟨C₂, hC₂⟩ := isCompact_Icc.exists_bound_of_continuousOn hc'
+  obtain ⟨K, hK⟩ := ((sirField_contDiff (β := β) (γ := γ) (N := N) (n := 1) 0).contDiffOn
+    (s := closedBall 0 (max C₁ C₂))).exists_lipschitzOnWith one_ne_zero
+    (convex_closedBall _ _) (isCompact_closedBall _ _)
+  have heq := ODE_solution_unique_of_mem_Icc_right (s := fun _ => closedBall 0 (max C₁ C₂))
+    (fun _ _ => hK) hc (fun s hs => (hd s hs.1).hasDerivWithinAt)
+    (fun s hs => mem_closedBall_zero_iff.2
+      ((hC₁ s (Ico_subset_Icc_self hs)).trans (le_max_left _ _)))
+    hc' (fun s hs => (hd' s hs.1).hasDerivWithinAt)
+    (fun s hs => mem_closedBall_zero_iff.2
+      ((hC₂ s (Ico_subset_Icc_self hs)).trans (le_max_right _ _)))
+    (by simp [sirCurve, hS, hI, hR]) ⟨ht, le_rfl⟩
+  exact ⟨congrFun heq 0, congrFun heq 1, congrFun heq 2⟩
 
 end MathlibExt.Biology.Epidemiology.SIR

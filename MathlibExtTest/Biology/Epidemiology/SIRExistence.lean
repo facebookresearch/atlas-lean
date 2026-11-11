@@ -11,7 +11,7 @@ module
 import MathlibExt.Biology.Epidemiology.SIRExistence
 
 /-! Tests for global SIR existence: the constructed solution at a concrete epidemic initial
-state, the disease-free boundary `I₀ = 0` (via the exponential formula),
+state, the disease-free boundary `I₀ = 0` (via the exponential formula and via uniqueness),
 no transmission `β = 0`, and the boundary `S₀ = 0`. -/
 
 open Real Set
@@ -36,6 +36,17 @@ example : ∃ S I R : ℝ → ℝ, IsSolution 2 1 1 S I R ∧ S 0 = 99 / 100 ∧
 example (β γ N : ℝ) (S I R : ℝ → ℝ) (h : IsSolution β γ N S I R) (hI : I 0 = 0)
     (t : ℝ) (ht : 0 ≤ t) : I t = 0 :=
   (h.infected_eq_zero_iff ht).2 hI
+
+/-- Disease-free initial state, via uniqueness: any solution starting at `(S₀, 0, R₀)` is the
+constant disease-free solution on `[0, ∞)`. -/
+example (β γ N S₀ R₀ : ℝ) (S I R : ℝ → ℝ) (h : IsSolution β γ N S I R) (hS : S 0 = S₀)
+    (hI : I 0 = 0) (hR : R 0 = R₀) (t : ℝ) (ht : 0 ≤ t) :
+    S t = S₀ ∧ I t = 0 ∧ R t = R₀ := by
+  have hc : IsSolution β γ N (fun _ => S₀) (fun _ => 0) (fun _ => R₀) :=
+    ⟨fun t _ => by simpa using hasDerivAt_const t S₀,
+      fun t _ => by simpa using hasDerivAt_const t (0 : ℝ),
+      fun t _ => by simpa using hasDerivAt_const t R₀⟩
+  exact h.eq_of_initial hc hS hI hR ht
 
 /-- No transmission (`β = 0`): `S` is constant forward in time, by the exponential formula. -/
 example (γ N : ℝ) (S I R : ℝ → ℝ) (h : IsSolution 0 γ N S I R) (t : ℝ) (ht : 0 ≤ t) :
