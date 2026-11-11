@@ -21,10 +21,10 @@ Concrete verified programs using the Hoare rules in
 `CSLibExt/Languages/IMP/Hoare.lean` (`Valid.skip`, `Valid.assign`,
 `Valid.seq`, `Valid.ite`, `Valid.whileLoop`, `Valid.consequence`).
 
-Variables are `x = 0`, `y = 1`, `t = 2`, `s = 0`, `i = 1`, `m = 2`
-in the respective programs. The three examples exercise the three
-non-trivial rules: assignment sequencing (swap), the conditional (max),
-and the invariant rule (countdown loop).
+Variables are `x = 0`, `y = 1`, `m = 2` for maximum and `s = 0`, `i = 1`
+for countdown. These examples exercise the conditional rule (max) and the
+invariant rule (countdown loop). For assignment sequencing via swap, see
+`Cslib.IMP.HoareGcd.swap_correct` in `CSLibExtTest/Languages/IMP/HoareGcd.lean`.
 -/
 
 @[expose] public section
@@ -32,56 +32,6 @@ and the invariant rule (countdown loop).
 namespace Cslib
 namespace IMP
 namespace Examples
-
-/-- Swap `x` and `y` through the temporary `t`. -/
-def swapProg : Cmd :=
-  .seq (.assign 2 (.var 0))
-    (.seq (.assign 0 (.var 1)) (.assign 1 (.var 2)))
-
-/-- Swapping exchanges the values of `x` and `y`. -/
-theorem swap_valid (a b : Nat) :
-    Valid (fun s => s 0 = a ∧ s 1 = b) swapProg
-      (fun s => s 0 = b ∧ s 1 = a) := by
-  have h1 : Valid (fun s => s 0 = a ∧ s 1 = b) (.assign 2 (.var 0))
-      (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = a) := by
-    have hpre : Assertion.Entails (fun s => s 0 = a ∧ s 1 = b)
-        (Assertion.subst (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = s 0) 2 (.var 0)) := by
-      intro s h
-      simp [Assertion.subst, Function.update] at h ⊢
-      omega
-    have hpost : Assertion.Entails (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = s 0)
-        (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = a) := by
-      intro s h
-      omega
-    exact Valid.consequence hpre
-      (Valid.assign (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = s 0) 2 (.var 0)) hpost
-  have h2 : Valid (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = a) (.assign 0 (.var 1))
-      (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a) := by
-    have hpre : Assertion.Entails (fun s => s 0 = a ∧ s 1 = b ∧ s 2 = a)
-        (Assertion.subst (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a) 0 (.var 1)) := by
-      intro s h
-      simp [Assertion.subst, Function.update] at h ⊢
-      omega
-    have hpost : Assertion.Entails (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a)
-        (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a) := by
-      intro s h
-      exact h
-    exact Valid.consequence hpre
-      (Valid.assign (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a) 0 (.var 1)) hpost
-  have h3 : Valid (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a) (.assign 1 (.var 2))
-      (fun s => s 0 = b ∧ s 1 = a) := by
-    have hpre : Assertion.Entails (fun s => s 0 = b ∧ s 1 = b ∧ s 2 = a)
-        (Assertion.subst (fun s => s 0 = b ∧ s 1 = a) 1 (.var 2)) := by
-      intro s h
-      simp [Assertion.subst, Function.update] at h ⊢
-      omega
-    have hpost : Assertion.Entails (fun s => s 0 = b ∧ s 1 = a)
-        (fun s => s 0 = b ∧ s 1 = a) := by
-      intro s h
-      exact h
-    exact Valid.consequence hpre
-      (Valid.assign (fun s => s 0 = b ∧ s 1 = a) 1 (.var 2)) hpost
-  exact Valid.seq h1 (Valid.seq h2 h3)
 
 /-- `m := max x y` by a conditional. -/
 def maxProg : Cmd :=
