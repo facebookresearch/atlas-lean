@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Bioinformatics.Phylogenetics.TreeBridge
-public import MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount
 import all CSLibExtTest.Bioinformatics.Phylogenetics.NeighborJoining
 
 /-!
@@ -20,8 +19,9 @@ Both fixtures are reused from existing tests:
 * the quartet tree `01|23` of `CSLibExtTest.Bioinformatics.Phylogenetics.NeighborJoining`
   (leaves `0, 1` on vertex `4`, leaves `2, 3` on vertex `5`, with its proof
   `quartet_isBinaryPhylogeneticTree`), converted to an `UnrootedBinaryTree`;
-* the three-taxon star `star` of `MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount`,
-  converted to a neighbor-joining tree.
+* the three-taxon star of `MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount`, copied
+  here as a local fixture (test libraries do not import each other across library boundaries)
+  and converted to a neighbor-joining tree.
 
 On the quartet, the split of the internal edge `{4, 5}` is computed twice from the definitions,
 once as the neighbor-joining `side` (reachability after deleting the edge) and once as the split
@@ -118,13 +118,56 @@ example : ({0, 1} : Finset (Fin 4)) ∈ sideSplits quartet quartetLeaf ∧
 
 /-! ## Unrooted to neighbor joining: the star -/
 
-open MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount in
+/-! Local fixture, copied from the star tree of
+`MathlibExtTest/Biology/Phylogenetics/UnrootedTreeCount.lean`. -/
+
+/-- The star with center `3` and leaves `0, 1, 2`. -/
+def starGraph : SimpleGraph (Fin 4) := SimpleGraph.fromRel fun i _ => i = 3
+
+theorem starGraph_adj (i j : Fin 4) :
+    starGraph.Adj i j ↔ i ≠ j ∧ (i = 3 ∨ j = 3) := by
+  rw [starGraph, SimpleGraph.fromRel_adj]
+
+instance : DecidableRel starGraph.Adj := fun i j =>
+  decidable_of_iff _ (starGraph_adj i j).symm
+
+theorem starGraph_degree :
+    ∀ v : Fin 4, starGraph.degree v = if v = 3 then 3 else 1 := by
+  decide
+
+theorem starGraph_isTree : starGraph.IsTree := by
+  rw [SimpleGraph.isTree_iff_connected_and_card]
+  have h : ∀ v, starGraph.Reachable v 3 := by
+    intro v
+    by_cases hv : v = 3
+    · subst hv; rfl
+    · exact SimpleGraph.Adj.reachable ((starGraph_adj _ _).2 ⟨hv, Or.inr rfl⟩)
+  refine ⟨⟨fun u v => (h u).trans (h v).symm⟩, ?_⟩
+  rw [Nat.card_eq_fintype_card, ← SimpleGraph.edgeFinset_card,
+    (by decide : starGraph.edgeFinset.card = 3)]
+  simp
+
+/-- The labeling of the leaves of the star. -/
+def starLabel : Fin 3 → {v : Fin 4 // starGraph.degree v = 1} :=
+  fun i => ⟨i.castSucc, by revert i; decide⟩
+
+theorem starLabel_bijective : Function.Bijective starLabel := by decide
+
+/-- The star with three leaves as an unrooted binary phylogenetic tree on three taxa. -/
+noncomputable def star : UnrootedBinaryTree (Fin 3) where
+  V := Fin 4
+  G := starGraph
+  isTree := starGraph_isTree
+  label := Equiv.ofBijective _ starLabel_bijective
+  degree_eq_three v hv := by
+    rw [starGraph_degree] at hv ⊢
+    split_ifs at hv ⊢ <;> simp_all
+
 /-- The three-taxon star is a binary phylogenetic tree in the NJ sense (non-vacuity of
 `isBinaryPhylogeneticTree_of_unrooted`). -/
 example : IsBinaryPhylogeneticTree star.G fun x => (star.label x : star.V) :=
   isBinaryPhylogeneticTree_of_unrooted star
 
-open MathlibExtTest.Biology.Phylogenetics.UnrootedTreeCount in
 /-- Round trip: converting the star to NJ and back gives an isomorphic tree. -/
 example : (toUnrootedBinaryTree (isBinaryPhylogeneticTree_of_unrooted star)).Iso star :=
   toUnrootedBinaryTree_iso star
