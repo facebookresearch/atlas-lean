@@ -58,8 +58,14 @@ the interface below asks only for strong continuity.
   `u t = S t x₀ + ∫₀ᵗ S (t - s) F(u s) ds` on `[0, T]`.
 * `exists_isMildSolution`: local existence, with an existence time that is uniform for
   initial values in a ball (Banach fixed-point theorem on `C([0, T], X)`).
-* `IsMildSolution.eqOn`: uniqueness; `IsMildSolution.exists_norm_sub_le`: Lipschitz
-  dependence on initial data (integral Grönwall).
+* `IsMildSolution.eqOn`: uniqueness. `exists_norm_sub_le_of_norm_le`: Lipschitz dependence
+  on initial data, with the constant depending only on a norm bound `R` and the time `T`
+  (integral Grönwall). With the a priori bound from `exists_isMildSolution`, the solution map
+  is Lipschitz on balls.
+* `IsMildSolution.restart`: the semiflow (restart) identity; `u (s + ·)` is the mild solution
+  from `u s`.
+* `nemytskii`, `lipschitzOnWith_nemytskii`: the reaction term `u ↦ f ∘ u` on `C(K, E)` is
+  Lipschitz on bounded sets when `f` is.
 * `isC0Semigroup_exp`: bounded generators give C₀ semigroups.
 * `exists_memLp_two_not_memLp_two_sq`, the incompatible-spaces boundary case: `u ↦ u²` does
   not map `L²(0, 1)` to itself, so `(L², u ↦ u²)` fails the typing `F : X → X` of the interface.
@@ -68,10 +74,17 @@ the interface below asks only for strong continuity.
 
 ## Not formalized here
 
-Constructing the Neumann-Laplacian semigroup on `C(Ω̄)`, proving it is analytic, and the
-Nemytskii estimate are outside the scope of this file. A concrete reaction–diffusion system
-enters through hypotheses `hS : IsC0Semigroup S` and
-`hF : ∀ R, ∃ L, LipschitzOnWith L F (closedBall 0 R)`.
+No analytic or sectorial semigroup structure is defined here. Constructing the
+Neumann-Laplacian semigroup on `C(Ω̄)` and proving it is analytic are outside the scope of this
+file, and so are the maximal existence interval and the blow-up alternative. A concrete
+reaction–diffusion system enters through the hypothesis `hS : IsC0Semigroup S`; its reaction
+term satisfies `hF` by `lipschitzOnWith_nemytskii`.
+
+Note for linearized instability: for a general C₀ semigroup the spectrum of the generator does
+not control `‖S t‖` (the spectral mapping theorem can fail). Spectral instability hypotheses
+should therefore be stated on `S` itself, e.g. `S t φ = exp (λ t) • φ` for an eigenvector `φ`
+or spectral radius of `S t₀` greater than `1`, or eventual norm continuity should be assumed
+explicitly.
 -/
 
 open MeasureTheory Set
@@ -216,14 +229,16 @@ theorem IsMildSolution.apply_zero {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} 
 
 /-- **Local existence of mild solutions, uniform on bounded sets of initial data.**
 Let `S` be a C₀ semigroup on a real Banach space `X` and let `F : X → X` be Lipschitz on
-bounded sets. For every radius `r` there is a time `T > 0` such that every initial value
-`x₀` with `‖x₀‖ ≤ r` has a continuous mild solution of `u' = A u + F u`, `u 0 = x₀` on `[0, T]`.
+bounded sets. For every radius `r` there are a time `T > 0` and a bound `R` such that every
+initial value `x₀` with `‖x₀‖ ≤ r` has a continuous mild solution of `u' = A u + F u`,
+`u 0 = x₀` on `[0, T]` with `‖u t‖ ≤ R` there. Both `T` and `R` are chosen before `x₀`, so
+together with `exists_norm_sub_le_of_norm_le` the solution map is Lipschitz on the ball.
 The proof is the Banach fixed-point theorem for the Duhamel map on `C([0, T], X)`. -/
 theorem exists_isMildSolution [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} {F : X → X}
     (hS : IsC0Semigroup S)
     (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R)) (r : ℝ) :
-    ∃ T > 0, ∀ x₀ : X, ‖x₀‖ ≤ r →
-      ∃ u : ℝ → X, Continuous u ∧ IsMildSolution S F x₀ T u := by
+    ∃ T > 0, ∃ R : ℝ, ∀ x₀ : X, ‖x₀‖ ≤ r →
+      ∃ u : ℝ → X, Continuous u ∧ IsMildSolution S F x₀ T u ∧ ∀ t ∈ Icc 0 T, ‖u t‖ ≤ R := by
   have hFc := continuous_of_lipschitzOnWith_closedBall hF
   obtain ⟨M₀, hM₀⟩ := hS.locally_bounded 1
   set M := max M₀ 1 with hM_def
@@ -263,7 +278,7 @@ theorem exists_isMildSolution [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} 
     have := mul_le_mul_of_nonneg_left (show 2 * (L : ℝ) ≤ K + 2 * L + 1 by linarith)
       (show 0 ≤ M by linarith)
     linarith
-  refine ⟨T, hT0, fun x₀ hx₀ => ?_⟩
+  refine ⟨T, hT0, R, fun x₀ hx₀ => ?_⟩
   -- The Duhamel map on `C([0, T], X)`.
   set I := Icc (0 : ℝ) T
   let ext : C(I, X) → ℝ → X := fun u => IccExtend hT0.le u
@@ -326,7 +341,8 @@ theorem exists_isMildSolution [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} 
   have h0B : (0 : C(I, X)) ∈ B := fun t => by simp; linarith
   obtain ⟨w, hwB, hw, -⟩ := ContractingWith.exists_fixedPoint' hB.isComplete hmaps hK' h0B
     (edist_ne_top _ _)
-  refine ⟨ext w, hext w, (hext w).continuousOn, fun t ht => ?_⟩
+  refine ⟨ext w, hext w, ⟨(hext w).continuousOn, fun t ht => ?_⟩, fun t _ => by
+    simpa using hextB w hwB t⟩
   have hwt : ext w t = w ⟨t, ht⟩ := IccExtend_of_mem _ _ ht
   rw [hwt]
   exact (congrArg (fun f : C(I, X) => f ⟨t, ht⟩) hw.eq).symm
@@ -359,17 +375,28 @@ private theorem le_mul_exp_of_le_add_mul_integral {ψ : ℝ → ℝ} (hψ : Cont
         a * Real.exp (K * t) := by field_simp; ring
     linarith
 
-/-- **Lipschitz dependence on initial data.** Two mild solutions on `[0, T]` with initial
-values `x₀` and `y₀` stay within `C ‖x₀ - y₀‖` of each other on `[0, T]`, for a constant `C`
-depending on the solutions only through a bound on their norms. -/
-theorem IsMildSolution.exists_norm_sub_le {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ y₀ : X}
-    {T : ℝ} {u v : ℝ → X} (hS : IsC0Semigroup S)
-    (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R))
-    (hu : IsMildSolution S F x₀ T u) (hv : IsMildSolution S F y₀ T v) :
-    ∃ C, 0 ≤ C ∧ ∀ t ∈ Icc 0 T, ‖u t - v t‖ ≤ C * ‖x₀ - y₀‖ := by
+/-- **Lipschitz dependence on initial data.** For every bound `R` and time `T` there is one
+constant `C` (namely `M exp (M L T)` with `M` bounding `‖S τ‖` on `[0, T]` and `L` a Lipschitz
+constant of `F` on the ball of radius `R`) such that any two mild solutions on `[0, T]` that stay
+in that ball satisfy `‖u t - v t‖ ≤ C ‖x₀ - y₀‖` on `[0, T]`. The constant is chosen before the
+solutions. -/
+theorem exists_norm_sub_le_of_norm_le {S : ℝ≥0 → X →L[ℝ] X} {F : X → X}
+    (hS : IsC0Semigroup S)
+    (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R)) (R T : ℝ) :
+    ∃ C, 0 ≤ C ∧ ∀ (x₀ y₀ : X) (u v : ℝ → X), IsMildSolution S F x₀ T u →
+      IsMildSolution S F y₀ T v → (∀ t ∈ Icc 0 T, ‖u t‖ ≤ R ∧ ‖v t‖ ≤ R) →
+      ∀ t ∈ Icc 0 T, ‖u t - v t‖ ≤ C * ‖x₀ - y₀‖ := by
   rcases lt_or_ge T 0 with hT | hT
-  · exact ⟨0, le_rfl, fun t ht => absurd (ht.1.trans ht.2) (not_le.2 hT)⟩
+  · exact ⟨0, le_rfl, fun _ _ _ _ _ _ _ t ht => absurd (ht.1.trans ht.2) (not_le.2 hT)⟩
   have hFc := continuous_of_lipschitzOnWith_closedBall hF
+  obtain ⟨L, hL⟩ := hF R
+  have hL0 : (0 : ℝ) ≤ L := L.coe_nonneg
+  obtain ⟨M₀, hM₀⟩ := hS.locally_bounded T.toNNReal
+  set M := max M₀ 0
+  have hM0 : 0 ≤ M := le_max_right _ _
+  have hM : ∀ τ : ℝ≥0, (τ : ℝ) ≤ T → ‖S τ‖ ≤ M := fun τ hτ =>
+    (hM₀ τ (Real.le_toNNReal_iff_coe_le hT |>.2 hτ)).trans (le_max_left _ _)
+  refine ⟨M * Real.exp (M * L * T), by positivity, fun x₀ y₀ u v hu hv hR => ?_⟩
   have hp : Continuous fun t => (projIcc 0 T hT t : ℝ) := continuous_subtype_val.comp
     continuous_projIcc
   have hpm : ∀ t, (projIcc 0 T hT t : ℝ) ∈ Icc 0 T := fun t => (projIcc 0 T hT t).2
@@ -379,21 +406,12 @@ theorem IsMildSolution.exists_norm_sub_le {S : ℝ≥0 → X →L[ℝ] X} {F : X
   have hv' : Continuous v' := hv.1.comp_continuous hp hpm
   have hu'e : ∀ t ∈ Icc 0 T, u' t = u t := fun t ht => by simp [u', projIcc_of_mem hT ht]
   have hv'e : ∀ t ∈ Icc 0 T, v' t = v t := fun t ht => by simp [v', projIcc_of_mem hT ht]
-  obtain ⟨Cu, hCu⟩ := isCompact_Icc.exists_bound_of_continuousOn hu.1
-  obtain ⟨Cv, hCv⟩ := isCompact_Icc.exists_bound_of_continuousOn hv.1
-  obtain ⟨L, hL⟩ := hF (max Cu Cv)
-  have hL0 : (0 : ℝ) ≤ L := L.coe_nonneg
-  have hu'B : ∀ s, u' s ∈ Metric.closedBall (0 : X) (max Cu Cv) := fun s => by
+  have hu'B : ∀ s, u' s ∈ Metric.closedBall (0 : X) R := fun s => by
     rw [Metric.mem_closedBall, dist_zero_right]
-    exact (hCu _ (hpm s)).trans (le_max_left _ _)
-  have hv'B : ∀ s, v' s ∈ Metric.closedBall (0 : X) (max Cu Cv) := fun s => by
+    exact (hR _ (hpm s)).1
+  have hv'B : ∀ s, v' s ∈ Metric.closedBall (0 : X) R := fun s => by
     rw [Metric.mem_closedBall, dist_zero_right]
-    exact (hCv _ (hpm s)).trans (le_max_right _ _)
-  obtain ⟨M₀, hM₀⟩ := hS.locally_bounded T.toNNReal
-  set M := max M₀ 0
-  have hM0 : 0 ≤ M := le_max_right _ _
-  have hM : ∀ τ : ℝ≥0, (τ : ℝ) ≤ T → ‖S τ‖ ≤ M := fun τ hτ =>
-    (hM₀ τ (Real.le_toNNReal_iff_coe_le hT |>.2 hτ)).trans (le_max_left _ _)
+    exact (hR _ (hpm s)).2
   -- The Duhamel terms only see the solutions on `[0, t] ⊆ [0, T]`.
   have hcongr : ∀ (w w' : ℝ → X), (∀ s ∈ Icc 0 T, w' s = w s) → ∀ t ∈ Icc 0 T,
       duhamel S (fun s => F (w s)) t = duhamel S (fun s => F (w' s)) t := by
@@ -433,7 +451,7 @@ theorem IsMildSolution.exists_norm_sub_le {S : ℝ≥0 → X →L[ℝ] X} {F : X
     nlinarith
   have hG := le_mul_exp_of_le_add_mul_integral hψ (fun t => norm_nonneg _)
     (by positivity) hineq
-  refine ⟨M * Real.exp (M * L * T), by positivity, fun t ht => ?_⟩
+  intro t ht
   have h := hG t ht
   rw [show ψ t = ‖u t - v t‖ by simp [ψ, hu'e t ht, hv'e t ht]] at h
   refine h.trans ?_
@@ -448,11 +466,103 @@ theorem IsMildSolution.eqOn {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ 
     (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R))
     (hu : IsMildSolution S F x₀ T u) (hv : IsMildSolution S F x₀ T v) :
     EqOn u v (Icc 0 T) := by
-  obtain ⟨C, -, hC⟩ := hu.exists_norm_sub_le hS hF hv
+  obtain ⟨Cu, hCu⟩ := isCompact_Icc.exists_bound_of_continuousOn hu.1
+  obtain ⟨Cv, hCv⟩ := isCompact_Icc.exists_bound_of_continuousOn hv.1
+  obtain ⟨C, -, hC⟩ := exists_norm_sub_le_of_norm_le hS hF (max Cu Cv) T
   intro t ht
-  have := hC t ht
+  have := hC x₀ x₀ u v hu hv (fun s hs => ⟨(hCu s hs).trans (le_max_left _ _),
+    (hCv s hs).trans (le_max_right _ _)⟩) t ht
   rw [sub_self, norm_zero, mul_zero] at this
   exact sub_eq_zero.1 (norm_le_zero_iff.1 this)
+
+/-- The Duhamel integrand of a mild solution is interval integrable on subintervals of
+`[0, T]`. -/
+private theorem intervalIntegrable_mild {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {T : ℝ}
+    {u : ℝ → X} (hS : IsC0Semigroup S) (hFc : Continuous F) (hu : ContinuousOn u (Icc 0 T))
+    (c : ℝ) {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : b ≤ T) :
+    IntervalIntegrable (fun r => S (c - r).toNNReal (F (u r))) volume a b := by
+  refine ContinuousOn.intervalIntegrable ?_
+  rw [uIcc_of_le hab]
+  exact hS.continuous_uncurry.comp_continuousOn
+    ((continuous_real_toNNReal.comp (continuous_const.sub continuous_id)).continuousOn.prodMk
+      (hFc.comp_continuousOn (hu.mono (Icc_subset_Icc ha hb))))
+
+/-- **Restart (semiflow) identity.** If `u` is a mild solution on `[0, T]` from `x₀`, then for
+every `s ∈ [0, T]` the shifted curve `τ ↦ u (s + τ)` is a mild solution on `[0, T - s]` from
+`u s`. Together with uniqueness this makes the time-`t` maps compose: the solution from `x₀`
+at time `s + τ` is the solution from `u s` at time `τ`. -/
+theorem IsMildSolution.restart [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ : X}
+    {T : ℝ} {u : ℝ → X} (hS : IsC0Semigroup S)
+    (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R))
+    (hu : IsMildSolution S F x₀ T u) {s : ℝ} (hs : s ∈ Icc 0 T) :
+    IsMildSolution S F (u s) (T - s) fun τ => u (s + τ) := by
+  have hFc := continuous_of_lipschitzOnWith_closedBall hF
+  refine ⟨hu.1.comp (continuousOn_const.add continuousOn_id) fun τ hτ =>
+    ⟨by linarith [hs.1, hτ.1], by linarith [hτ.2]⟩, fun τ hτ => ?_⟩
+  have hτ0 : 0 ≤ τ := hτ.1
+  have hsτ : s + τ ∈ Icc 0 T := ⟨by linarith [hs.1], by linarith [hτ.2]⟩
+  -- Integrability of the Duhamel integrand on `[0, s]` and on `[s, s + τ]`.
+  have hI₁ := intervalIntegrable_mild hS hFc hu.1 s le_rfl hs.1 hs.2
+  have hI₂ := intervalIntegrable_mild hS hFc hu.1 (s + τ) le_rfl hs.1 hs.2
+  have hI₃ := intervalIntegrable_mild hS hFc hu.1 (s + τ) hs.1
+    (by linarith : s ≤ s + τ) hsτ.2
+  -- Split the Duhamel integral at `s`.
+  have hsplit : duhamel S (fun r => F (u r)) (s + τ) =
+      (∫ r in (0 : ℝ)..s, S (s + τ - r).toNNReal (F (u r))) +
+        ∫ r in s..s + τ, S (s + τ - r).toNNReal (F (u r)) := by
+    rw [duhamel]; exact (intervalIntegral.integral_add_adjacent_intervals hI₂ hI₃).symm
+  -- On `[0, s]`, `S (s + τ - r) = S τ ∘ S (s - r)`.
+  have hfirst : ∫ r in (0 : ℝ)..s, S (s + τ - r).toNNReal (F (u r)) =
+      S τ.toNNReal (duhamel S (fun r => F (u r)) s) := by
+    rw [duhamel, ← (S τ.toNNReal).intervalIntegral_comp_comm hI₁]
+    refine intervalIntegral.integral_congr fun r hr => ?_
+    rw [uIcc_of_le hs.1] at hr
+    have : (s + τ - r).toNNReal = τ.toNNReal + (s - r).toNNReal := by
+      rw [← Real.toNNReal_add hτ0 (by linarith [hr.2])]; ring_nf
+    simp only [this, hS.map_add, ContinuousLinearMap.comp_apply]
+  -- On `[s, s + τ]`, shift the variable by `s`.
+  have hsecond : ∫ r in s..s + τ, S (s + τ - r).toNNReal (F (u r)) =
+      duhamel S (fun r => F (u (s + r))) τ := by
+    have h := intervalIntegral.integral_comp_add_left
+      (fun r => S (s + τ - r).toNNReal (F (u r))) s (a := 0) (b := τ)
+    rw [add_zero] at h
+    rw [duhamel, ← h]
+    refine intervalIntegral.integral_congr fun r _ => ?_
+    simp only [show s + τ - (s + r) = τ - r by ring]
+  have hx : S (s + τ).toNNReal x₀ = S τ.toNNReal (S s.toNNReal x₀) := by
+    rw [Real.toNNReal_add hs.1 hτ0, add_comm, hS.map_add, ContinuousLinearMap.comp_apply]
+  dsimp only
+  rw [hu.2 _ hsτ, hu.2 s hs, hsplit, hfirst, ← hsecond, hx, map_add]
+  abel
+
+section Nemytskii
+
+variable {K E : Type*} [TopologicalSpace K] [CompactSpace K] [NormedAddCommGroup E]
+
+/-- The **Nemytskii (superposition) operator** `u ↦ f ∘ u` on `C(K, E)`. In the frozen setting,
+`K = Ω̄` and `E = ℝᵐ`, and this is the reaction term `F(u)(x) = f(u(x))`. -/
+def nemytskii (f : E → E) (hf : Continuous f) (u : C(K, E)) : C(K, E) :=
+  (ContinuousMap.mk f hf).comp u
+
+/-- If `f` is Lipschitz on bounded sets, so is the Nemytskii operator on `C(K, E)` with the sup
+norm, with the same constants. So the reaction term of the frozen setting satisfies the
+hypothesis `hF` of `exists_isMildSolution`. -/
+theorem lipschitzOnWith_nemytskii {f : E → E} (hfc : Continuous f)
+    (hf : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L f (Metric.closedBall 0 R)) :
+    ∀ R : ℝ, ∃ L : ℝ≥0,
+      LipschitzOnWith L (nemytskii (K := K) f hfc) (Metric.closedBall 0 R) := by
+  intro R
+  obtain ⟨L, hL⟩ := hf R
+  refine ⟨L, LipschitzOnWith.of_dist_le_mul fun u hu v hv => ?_⟩
+  refine (ContinuousMap.dist_le (by positivity)).2 fun k => ?_
+  have hb : ∀ w : C(K, E), w ∈ Metric.closedBall 0 R → w k ∈ Metric.closedBall (0 : E) R :=
+    fun w hw => by
+      rw [Metric.mem_closedBall, dist_zero_right] at hw ⊢
+      exact (w.norm_coe_le_norm k).trans hw
+  exact (hL.dist_le_mul _ (hb u hu) _ (hb v hv)).trans
+    (mul_le_mul_of_nonneg_left (ContinuousMap.dist_apply_le_dist k) L.coe_nonneg)
+
+end Nemytskii
 
 /-- **Bounded generators.** For a bounded operator `A`, `t ↦ exp (t A)` is a C₀ semigroup
 (indeed norm continuous). This is the finite-dimensional/ODE case of the interface; the PDE
