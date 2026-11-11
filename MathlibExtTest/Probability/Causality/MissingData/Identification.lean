@@ -22,8 +22,11 @@ The probability space is two independent fair coins, `Ω = Bool × Bool`.
   trivial σ-algebra.
 * MAR witness: the response probability depends on the covariate, equal to `1` in one stratum,
   so positivity holds without an upper bound and the IPW identity applies.
+  On it, with `Y = 1_{X = true}`, the complete-case mean is `2/3` while `E[Y] = 1/2` and the IPW
+  mean is `1/2`: under MAR the two observed-data estimands come apart and complete case fails.
 * Boundaries: no respondents (the complete-case mean is the junk value `0` although MCAR holds
-  vacuously), and positivity failure (MAR holds but the IPW mean is not `E[Y]`).
+  vacuously), and positivity failure (MAR holds, the response probability is `0` in one stratum,
+  and the IPW mean is not `E[Y]`).
 -/
 
 @[expose] public section
@@ -161,6 +164,41 @@ example (g : Bool → ℝ) :
     measurable_fst (measurable_of_finite _) Integrable.of_finite
     (mar_comp coins resp₂ Prod.fst g) fun x _ => propensity_resp₂_pos x
 
+lemma measurableSet_resp₂ : MeasurableSet resp₂ :=
+  (measurableSet_singleton true).preimage measurable_fst |>.union
+    ((measurableSet_singleton true).preimage measurable_snd)
+
+/-- The covariate level set `X = true` is the response event `resp`. -/
+lemma fst_preimage_true : (Prod.fst ⁻¹' {true} : Set (Bool × Bool)) = resp := by
+  ext; simp [resp]
+
+/-- **Complete case fails under MAR**: with `Y = 1_{X = true}` on the MAR witness, the
+complete-case mean is `2/3`, the IPW mean is `1/2`, and `E[Y] = 1/2`. -/
+example :
+    completeCaseMean coins resp₂ (fun ω => if ω.1 then 1 else 0) = 2 / 3 ∧
+      ipwMean coins resp₂ Prod.fst (fun ω => if ω.1 then 1 else 0) = 1 / 2 ∧
+      ∫ ω, (if ω.1 then (1 : ℝ) else 0) ∂coins = 1 / 2 := by
+  have hY : (fun ω : Bool × Bool => if ω.1 then (1 : ℝ) else 0) = resp.indicator 1 := by
+    funext ⟨a, b⟩; cases a <;> simp [resp]
+  have hEY : ∫ ω, (if ω.1 then (1 : ℝ) else 0) ∂coins = 1 / 2 := by
+    rw [hY, Pi.one_def, integral_indicator_const _ measurableSet_resp, coins_real_resp,
+      smul_eq_mul, mul_one]
+  have hR₂ : resp₂ = {((false, false) : Bool × Bool)}ᶜ := by
+    ext ⟨a, b⟩; cases a <;> cases b <;> simp [resp₂]
+  have hPR₂ : coins.real resp₂ = 3 / 4 := by
+    rw [hR₂, probReal_compl_eq_one_sub (measurableSet_singleton _), coins_real_singleton]
+    norm_num
+  have hnum : ∫ ω, resp₂.indicator (fun ω : Bool × Bool => if ω.1 then (1 : ℝ) else 0) ω ∂coins =
+      1 / 2 := by
+    rw [← hEY]
+    congr 1
+    funext ⟨a, b⟩; cases a <;> simp [resp₂]
+  refine ⟨?_, ?_, hEY⟩
+  · rw [completeCaseMean, hnum, hPR₂]; norm_num
+  · rw [ipwMean_eq_integral_of_mar measurableSet_resp₂ measurable_fst (measurable_of_finite _)
+      Integrable.of_finite (mar_comp coins resp₂ Prod.fst fun b => if b then 1 else 0)
+      fun x _ => propensity_resp₂_pos x, hEY]
+
 /-! ### Boundaries -/
 
 /-- **No respondents**: with `R = ∅`, MCAR holds vacuously but `P(R) = 0`, and the complete-case
@@ -169,10 +207,30 @@ example : completeCaseMean coins ∅ (fun _ => 1) = 0 ∧ ∫ _, (1 : ℝ) ∂co
   refine ⟨completeCaseMean_of_measureReal_eq_zero _ (by simp), ?_⟩
   simp
 
-/-- **Positivity failure**: with `R = ∅` the outcome is MAR given any covariate, positivity fails,
-and the IPW mean is `0`, not `E[Y] = 1`. -/
-example : CondIndepDiscrete coins ∅ (fun _ => (1 : ℝ)) Prod.fst ∧
-    ipwMean coins ∅ Prod.fst (fun _ => 1) = 0 ∧ ∫ _, (1 : ℝ) ∂coins = 1 := by
-  refine ⟨fun B _ x => by simp, by simp [ipwMean], by simp⟩
+/-- **Positivity failure**: with response `R = {X = true}`, covariate `X = ω.1` and outcome
+`Y = 1`, the outcome is MAR, the response probability is `π(true) = 1` and `π(false) = 0` on a
+stratum of probability `1/2`, and the IPW mean is `1/2`, not `E[Y] = 1`. -/
+example : CondIndepDiscrete coins resp (fun _ => (1 : ℝ)) Prod.fst ∧
+    propensity coins resp Prod.fst true = 1 ∧ propensity coins resp Prod.fst false = 0 ∧
+    coins.real (Prod.fst ⁻¹' {false}) = 1 / 2 ∧
+    ipwMean coins resp Prod.fst (fun _ => 1) = 1 / 2 ∧ ∫ _, (1 : ℝ) ∂coins = 1 := by
+  have h1 : propensity coins resp Prod.fst true = 1 := by
+    rw [propensity, fst_preimage_true, Set.inter_self, div_self]
+    rw [coins_real_resp]; norm_num
+  have h0 : propensity coins resp Prod.fst false = 0 := by
+    have he : resp ∩ Prod.fst ⁻¹' {false} = ∅ := by
+      ext ⟨a, b⟩; cases a <;> simp [resp]
+    rw [propensity, he, measureReal_empty, zero_div]
+  have hfalse : coins.real (Prod.fst ⁻¹' {false}) = 1 / 2 := by
+    rw [show (Prod.fst ⁻¹' {false} : Set (Bool × Bool)) = {false} ×ˢ Set.univ by ext; simp,
+      coins_real_prod, coin_singleton, coin_real_univ, mul_one]
+  have hipw : ipwMean coins resp Prod.fst (fun _ => 1) = 1 / 2 := by
+    have hint : resp.indicator (fun ω => (1 : ℝ) / propensity coins resp Prod.fst ω.1) =
+        resp.indicator 1 :=
+      Set.indicator_congr fun ω hω => by
+        rw [show ω.1 = true from hω.1, h1, div_one, Pi.one_apply]
+    rw [ipwMean, hint, Pi.one_def, integral_indicator_const _ measurableSet_resp, coins_real_resp,
+      smul_eq_mul, mul_one]
+  exact ⟨mar_comp coins resp Prod.fst fun _ => (1 : ℝ), h1, h0, hfalse, hipw, by simp⟩
 
 end MathlibExtTest.Probability.Causality.MissingData
