@@ -246,10 +246,10 @@ theorem hasLaw_rss (hX : IsUnit (Xᵀ * X)) (hkm : Fintype.card k < Fintype.card
   simp_rw [rss_eq_dotProduct_residualMatrix hX]
   exact hasLaw_dotProduct_residualMatrix hX hkm hε
 
-/-- **Law of the residual sum of squares**, general scale: if the standardised errors `σ⁻¹ ε`
-are i.i.d. standard normal and `p < n`, then `‖y - X β̂‖² / σ² ~ χ²_{n-p}`. -/
+/-- **Law of the residual sum of squares**, positive scale: if `0 < σ`, the standardized
+errors `σ⁻¹ ε` are i.i.d. standard normal and `p < n`, then `‖y - X β̂‖² / σ² ~ χ²_{n-p}`. -/
 theorem hasLaw_rss_div_sq (hX : IsUnit (Xᵀ * X)) (hkm : Fintype.card k < Fintype.card m)
-    (β : k → ℝ) {ε : Ω → m → ℝ} (σ : ℝ)
+    (β : k → ℝ) {ε : Ω → m → ℝ} (σ : ℝ) (_hσ : 0 < σ)
     (hε : HasLaw (fun ω => σ⁻¹ • ε ω) (Measure.pi fun _ : m => gaussianReal 0 1) μ) :
     HasLaw (fun ω => (X *ᵥ β + ε ω - X *ᵥ olsEstimator X (X *ᵥ β + ε ω)) ⬝ᵥ
         (X *ᵥ β + ε ω - X *ᵥ olsEstimator X (X *ᵥ β + ε ω)) / σ ^ 2)

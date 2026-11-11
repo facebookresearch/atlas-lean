@@ -131,4 +131,18 @@ example (β : Fin 1 → ℝ) :
       (chiSquareMeasure 2) (Measure.pi fun _ : Fin 3 => gaussianReal 0 1) := by
   simpa using hasLaw_rss isUnit_gram_X₀ (by simp) β (HasLaw.id)
 
+/-- For every positive scale, scaling three standard normal errors by `σ` gives
+an intercept-only residual sum of squares whose ratio to `σ²` has law `χ²₂`. -/
+theorem hasLaw_scaled_rss (hσ : 0 < σ) (β : Fin 1 → ℝ) :
+    HasLaw (fun z : Fin 3 → ℝ =>
+        (X₀ *ᵥ β + σ • z - X₀ *ᵥ olsEstimator X₀ (X₀ *ᵥ β + σ • z)) ⬝ᵥ
+          (X₀ *ᵥ β + σ • z - X₀ *ᵥ olsEstimator X₀ (X₀ *ᵥ β + σ • z)) / σ ^ 2)
+      (chiSquareMeasure 2) (Measure.pi fun _ : Fin 3 => gaussianReal 0 1) := by
+  have hε : HasLaw (fun z : Fin 3 → ℝ => σ⁻¹ • (σ • z))
+      (Measure.pi fun _ : Fin 3 => gaussianReal 0 1)
+      (Measure.pi fun _ : Fin 3 => gaussianReal 0 1) := by
+    simp only [smul_smul, inv_mul_cancel₀ (ne_of_gt hσ), one_smul]
+    exact HasLaw.id
+  simpa using hasLaw_rss_div_sq isUnit_gram_X₀ (by simp) β σ hσ hε
+
 end MathlibExtTest.LinearModelSampling
