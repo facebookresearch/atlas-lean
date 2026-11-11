@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
 
 @[expose] public section
 
@@ -47,7 +48,7 @@ theorem relatedness_y_z : relatedness y z = 1 / 2 := by
 theorem popCov_zero_left (x : Fin 4 → ℝ) : popCov 0 x = 0 := by
   simp [popCov]
 
-theorem transmission_self (w x : Fin 4 → ℝ) : transmission w x x = 0 := by
+theorem transmission_self {n : ℕ} (w x : Fin n → ℝ) : transmission w x x = 0 := by
   simp [transmission]
 
 /-! ### Smoke test: additive fitness, `r b > c`, the trait increases
@@ -87,9 +88,9 @@ example : (𝔼 i, wAdd i) * meanTraitChange wAdd z z = 1 / 4 := by
 /-! ### Boundary case: zero trait variance
 
 A monomorphic population `z₀ = (1, 1, 1, 1)` with the same additive fitness form (`b = 4`,
-`c = 1`). `Var(z₀) = 0`, so relatedness is `0` by convention and `r b - c = -1 < 0`, yet the
-mean trait does not change: there is no selection, and the decrease predicted by the rule
-fails. The rule's hypothesis `Var(z) ≠ 0` cannot be dropped. -/
+`c = 1`). `Var(z₀) = 0`, so relatedness is `0` by convention. `hamilton_rule_neg` without its
+hypothesis `Var(z) ≠ 0` would claim a decrease (`r b - c = -1` under `r := 0`), but `Δz̄ = 0`:
+there is no selection. The last example proves the hypothesis cannot be dropped. -/
 
 /-- A monomorphic trait. -/
 noncomputable def z₀ : Fin 4 → ℝ := fun _ => 1
@@ -104,7 +105,7 @@ theorem sum_w₀ : ∑ i, w₀ i = 12 := by
   simp [w₀, additiveFitness, Fin.sum_univ_four, y, z₀]
   norm_num
 
-example : meanTraitChange w₀ z₀ z₀ = 0 := by
+theorem meanTraitChange_w₀ : meanTraitChange w₀ z₀ z₀ = 0 := by
   have h := price_of_popCov_self_eq_zero (w := w₀) (z' := z₀) (by rw [sum_w₀]; norm_num)
     popCov_z₀_z₀
   rw [transmission_self] at h
@@ -115,47 +116,97 @@ example : relatedness y z₀ * 4 - 1 < 0 := by
   rw [relatedness_of_popCov_self_eq_zero popCov_z₀_z₀]
   norm_num
 
+/-- The conclusion of `hamilton_rule_neg` fails at zero variance, although every other
+hypothesis holds (additive fitness, `w̄ = 3 > 0`, zero residual, faithful transmission). -/
+example : ¬ (meanTraitChange w₀ z₀ z₀ < 0 ↔ relatedness y z₀ * 4 < 1) := by
+  rw [meanTraitChange_w₀, relatedness_of_popCov_self_eq_zero popCov_z₀_z₀]
+  norm_num
+
 /-! ### Boundary case: nonadditive fitness
 
-Synergy: `w = 1 + 4 y - z - 3 z y = (1, 5, 1, 1)`. Reading off the additive part (`b = 4`,
-`c = 1`) gives `r b - c = 1 > 0`, but the trait decreases: `Δz̄ = 2/8 - 1/2 = -1/4`. Writing
-`w` in the additive form forces the residual `e = -3 z y`, and `Cov(e, z) = -3/4 ≠ 0`, so the
-hypothesis `Cov(e, z) = 0` of `hamilton_rule` fails and the rule as stated does not apply. The
-exact criterion `meanTraitChange_neg_iff`, which keeps the residual term, still predicts the
-decrease: `1 + (-3/4) / (1/4) = -2 < 0`. -/
+Six individuals in which all four combinations of `z, y ∈ {0, 1}` occur:
+`z = (0, 0, 0, 1, 1, 1)`, `y = (0, 0, 1, 0, 1, 1)`. Then `Var(z) = 1/4`, `Cov(y, z) = 1/12` and
+`r = 1/3`. Fitness has a synergy term, `w = 1 + 4 y - z - z y = (1, 1, 5, 0, 3, 3)`, and is not
+of the form `α + b y - c z` for any `α, b, c` (`wN_not_additive`), because `z y` is not in the span
+of `1, y, z` on this population. Reading off the mechanistic coefficients `b = 4`, `c = 1` gives
+`r b - c = 1/3 > 0`, yet the trait decreases: `Δz̄ = 6/13 - 1/2 = -1/26`. The residual
+`e = -z y` has `Cov(e, z) = -1/6 ≠ 0`, so `hamilton_rule` does not apply. The exact criterion
+`meanTraitChange_neg_iff` keeps the residual and still predicts the decrease:
+`1/3 + (-1/6) / (1/4) = -1/3 < 0`.
 
-/-- The synergistic residual `-3 z y`. -/
-noncomputable def eSyn : Fin 4 → ℝ := fun i => -3 * z i * y i
+In general, least-squares (partial regression) `b` and `c` always give `Cov(e, z) = 0`, so the
+regression form of the rule stays exact for any fitness function; nonadditivity breaks the rule
+only when `b` and `c` are mechanistic coefficients read off the model, as here. -/
 
-/-- Synergistic (nonadditive) fitness. -/
-noncomputable def wSyn : Fin 4 → ℝ := ![1, 5, 1, 1]
+/-- Own traits of the six-individual population. -/
+noncomputable def zN : Fin 6 → ℝ := ![0, 0, 0, 1, 1, 1]
 
-theorem wSyn_eq : wSyn = additiveFitness 1 4 1 y z eSyn := by
+/-- Partner traits of the six-individual population. -/
+noncomputable def yN : Fin 6 → ℝ := ![0, 0, 1, 0, 1, 1]
+
+/-- The synergistic residual `-z y`. -/
+noncomputable def eN : Fin 6 → ℝ := fun i => -(zN i * yN i)
+
+/-- Nonadditive fitness `1 + 4 y - z - z y`. -/
+noncomputable def wN : Fin 6 → ℝ := ![1, 1, 5, 0, 3, 3]
+
+theorem wN_eq : wN = additiveFitness 1 4 1 yN zN eN := by
   funext i
-  fin_cases i <;> norm_num [wSyn, additiveFitness, eSyn, y, z]
+  fin_cases i <;> norm_num [wN, additiveFitness, eN, yN, zN]
 
-theorem popCov_eSyn_z : popCov eSyn z = -3 / 4 := by
-  simp [popCov_eq_expect_mul_sub, Fintype.expect_eq_sum_div_card, Fin.sum_univ_four, eSyn, y, z]
+/-- `wN` has no additive representation with zero residual. -/
+theorem wN_not_additive : ¬ ∃ α b c : ℝ, wN = additiveFitness α b c yN zN 0 := by
+  rintro ⟨α, b, c, h⟩
+  have h0 := congrFun h 0
+  have h2 := congrFun h 2
+  have h3 := congrFun h 3
+  have h4 := congrFun h 4
+  norm_num [wN, additiveFitness, yN, zN] at h0 h2 h3 h4
+  linarith
+
+theorem popCov_zN_zN : popCov zN zN = 1 / 4 := by
+  simp [popCov_eq_expect_mul_sub, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, zN]
   norm_num
 
-theorem expect_wSyn : 𝔼 i, wSyn i = 2 := by
-  simp [wSyn, Fintype.expect_eq_sum_div_card, Fin.sum_univ_four]
+theorem popCov_yN_zN : popCov yN zN = 1 / 12 := by
+  simp [popCov_eq_expect_mul_sub, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, yN, zN]
   norm_num
 
-example : 0 < relatedness y z * 4 - 1 := by
-  rw [relatedness_y_z]; norm_num
-
-example : meanTraitChange wSyn z z = -1 / 4 := by
-  simp [meanTraitChange, wSyn, Fintype.expect_eq_sum_div_card, Fin.sum_univ_four, z]
+theorem relatedness_yN_zN : relatedness yN zN = 1 / 3 := by
+  rw [relatedness, popCov_yN_zN, popCov_zN_zN]
   norm_num
 
-example : popCov eSyn z ≠ 0 := by
-  rw [popCov_eSyn_z]; norm_num
+theorem popCov_eN_zN : popCov eN zN = -1 / 6 := by
+  simp [popCov_eq_expect_mul_sub, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, eN, yN, zN]
+  norm_num
 
-example : meanTraitChange wSyn z z < 0 := by
-  rw [meanTraitChange_neg_iff wSyn_eq (by rw [expect_wSyn]; norm_num)
-    (by rw [popCov_z_z]; norm_num), relatedness_y_z, popCov_eSyn_z, transmission_self,
-    popCov_z_z]
+theorem expect_wN : 𝔼 i, wN i = 13 / 6 := by
+  simp [wN, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six]
+  norm_num
+
+example : 0 < relatedness yN zN * 4 - 1 := by
+  rw [relatedness_yN_zN]; norm_num
+
+example : meanTraitChange wN zN zN = -1 / 26 := by
+  simp [meanTraitChange, wN, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, zN]
+  norm_num
+
+example : popCov eN zN ≠ 0 := by
+  rw [popCov_eN_zN]; norm_num
+
+/-- The rule read off the mechanistic coefficients mispredicts: its increase criterion holds but
+the trait does not increase. -/
+example : ¬ (0 < meanTraitChange wN zN zN ↔ 1 < relatedness yN zN * 4) := by
+  have h : meanTraitChange wN zN zN = -1 / 26 := by
+    simp [meanTraitChange, wN, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, zN]
+    norm_num
+  rw [h, relatedness_yN_zN]
+  norm_num
+
+example : meanTraitChange wN zN zN < 0 := by
+  rw [meanTraitChange_neg_iff wN_eq (by rw [expect_wN]; norm_num)
+    (by rw [popCov_zN_zN]; norm_num), relatedness_yN_zN, popCov_eN_zN, transmission_self,
+    popCov_zN_zN]
   norm_num
 
 /-! ### Boundary case: nonzero transmission term
