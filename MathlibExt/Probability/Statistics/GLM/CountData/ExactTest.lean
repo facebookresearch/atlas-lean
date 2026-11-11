@@ -52,11 +52,14 @@ test of Przyborowski and Wileński.
 
 * `measureReal_add_eq_inter_eq`: `P(X + Y = n, X = k) = Bin(n, s₁/(s₁+s₂)){k} P(X + Y = n)` for
   every rate `r ≥ 0`.
-* `cond_measureReal_eq_binomial`, `hasLaw_cond_binomial`: given a total of positive probability,
-  `X` is `Bin(n, s₁ / (s₁ + s₂))`; `measure_add_eq_ne_zero`: every total has positive
-  probability when `r > 0`.
+* `cond_measureReal_eq_binomial_libraryFraction`, `hasLaw_cond_binomial_libraryFraction`: given a
+  total of positive probability, `X` is `Bin(n, s₁ / (s₁ + s₂))`. For `r > 0` these are
+  `ProbabilityTheory.cond_measureReal_eq_binomial` and `ProbabilityTheory.hasLaw_cond_binomial`
+  (`Multinomial.lean`) rewritten to `libraryFraction`; the restatement also covers `r = 0`.
+  `measure_add_eq_ne_zero`: every total has positive probability when `r > 0`.
 * `countExactPValue`: the one-sided exact p-value `Bin(X + Y, s₁/(s₁+s₂)) {j ≥ X}`.
-* `isValidPValue_countExact_cond`: valid conditionally on every total.
+* `isValidPValue_countExact_cond`: valid conditionally on every total of positive probability,
+  for every `r ≥ 0`.
 * `isValidPValue_countExactPValue`: valid unconditionally, for every nuisance rate `r ≥ 0`.
 * `integral_fdp_bhRejections_countExact_le_of_arbitrary_dependence`: over `m` genes, BH at level
   `q / H_m` on the exact p-values has FDR `≤ q |H0| / m` under arbitrary dependence
@@ -312,8 +315,15 @@ total `X + Y = n` of positive probability, the condition-1 count is binomial:
 `P(X = k | X + Y = n) = Bin(n, s₁ / (s₁ + s₂)){k}`. The law does not depend on the nuisance rate
 `r`.
 
+For `r > 0` this is `ProbabilityTheory.cond_measureReal_eq_binomial`
+(`MathlibExt.Probability.Distributions.Multinomial`) at rates `s₁ r, s₂ r`, after
+`s₁ r / (s₁ r + s₂ r) = s₁ / (s₁ + s₂)`. This restatement takes the success probability in the
+`libraryFraction` form and assumes only that the total has positive probability, so it also
+covers `r = 0` (where the total `0` is certain), which that theorem's `0 < a + b` excludes.
+
 Source: Lehmann–Romano (2005), §4.5; Przyborowski–Wileński (1940). -/
-theorem cond_measureReal_eq_binomial (hs : 0 < s₁ + s₂) (hXm : Measurable X) (hYm : Measurable Y)
+theorem cond_measureReal_eq_binomial_libraryFraction (hs : 0 < s₁ + s₂) (hXm : Measurable X)
+    (hYm : Measurable Y)
     (hX : HasLaw X Po(s₁ * r) μ) (hY : HasLaw Y Po(s₂ * r) μ) (hXY : IndepFun X Y μ) {n : ℕ}
     (hn : μ {ω | X ω + Y ω = n} ≠ 0) (k : ℕ) :
     (μ[|{ω | X ω + Y ω = n}]).real {ω | X ω = k} = Bin(n, libraryFraction s₁ s₂).real {k} := by
@@ -340,8 +350,11 @@ theorem measure_add_eq_ne_zero (hs : 0 < s₁ + s₂) (hr : 0 < r) (hX : HasLaw 
   exact fun h0 => hpos.ne' (by simp [measureReal_def, h0])
 
 /-- **Binomial conditioning, as a law.** Given a total `X + Y = n` of positive probability, the
-condition-1 count has law `Bin(n, s₁ / (s₁ + s₂))` under the conditional measure. -/
-theorem hasLaw_cond_binomial (hs : 0 < s₁ + s₂) (hXm : Measurable X) (hYm : Measurable Y)
+condition-1 count has law `Bin(n, s₁ / (s₁ + s₂))` under the conditional measure. The
+`libraryFraction` and zero-rate form of `ProbabilityTheory.hasLaw_cond_binomial`; see
+`cond_measureReal_eq_binomial_libraryFraction`. -/
+theorem hasLaw_cond_binomial_libraryFraction (hs : 0 < s₁ + s₂) (hXm : Measurable X)
+    (hYm : Measurable Y)
     (hX : HasLaw X Po(s₁ * r) μ) (hY : HasLaw Y Po(s₂ * r) μ) (hXY : IndepFun X Y μ) {n : ℕ}
     (hn : μ {ω | X ω + Y ω = n} ≠ 0) :
     HasLaw X Bin(n, libraryFraction s₁ s₂) (μ[|{ω | X ω + Y ω = n}]) where
@@ -351,7 +364,7 @@ theorem hasLaw_cond_binomial (hs : 0 < s₁ + s₂) (hXm : Measurable X) (hYm : 
     have := cond_isProbabilityMeasure hn
     refine Measure.ext_of_measureReal_singleton fun k => ?_
     rw [map_measureReal_apply hXm (measurableSet_singleton k)]
-    exact cond_measureReal_eq_binomial hs hXm hYm hX hY hXY hn k
+    exact cond_measureReal_eq_binomial_libraryFraction hs hXm hYm hX hY hXY hn k
 
 /-- The exact conditional upper tail at a pair of counts `c = (x, y)`: the
 `Bin(x + y, s₁ / (s₁ + s₂))` probability of a condition-1 count at least `x`. -/
@@ -375,16 +388,17 @@ theorem measurable_countExactPValue (hXm : Measurable X) (hYm : Measurable Y) :
     Measurable (countExactPValue s₁ s₂ X Y) :=
   (measurable_of_countable (countExactTail s₁ s₂)).comp (hXm.prodMk hYm)
 
-/-- **Conditional validity of the exact test.** Under equal rates `r > 0` in the two conditions,
-the fixed-total upper-tail p-value is valid conditionally on every total `X + Y = n`, whatever
-the nuisance rate `r`. -/
-theorem isValidPValue_countExact_cond (hs : 0 < s₁ + s₂) (hr : 0 < r) (hXm : Measurable X)
+/-- **Conditional validity of the exact test.** Under equal rates `r ≥ 0` in the two conditions,
+the fixed-total upper-tail p-value is valid conditionally on every total `X + Y = n` of positive
+probability, whatever the nuisance rate `r`. For `r > 0` every total qualifies
+(`measure_add_eq_ne_zero`). -/
+theorem isValidPValue_countExact_cond (hs : 0 < s₁ + s₂) (hXm : Measurable X)
     (hYm : Measurable Y) (hX : HasLaw X Po(s₁ * r) μ) (hY : HasLaw Y Po(s₂ * r) μ)
-    (hXY : IndepFun X Y μ) (n : ℕ) :
+    (hXY : IndepFun X Y μ) {n : ℕ} (hn : μ {ω | X ω + Y ω = n} ≠ 0) :
     MultipleTesting.IsValidPValue (μ[|{ω | X ω + Y ω = n}])
       (upperTailPValue Bin(n, libraryFraction s₁ s₂) X) :=
   isValidPValue_upperTailPValue
-    (hasLaw_cond_binomial hs hXm hYm hX hY hXY (measure_add_eq_ne_zero hs hr hX hY hXY n))
+    (hasLaw_cond_binomial_libraryFraction hs hXm hYm hX hY hXY hn)
 
 /-- **Validity of the exact conditional Poisson test.** Let `X ~ Po(s₁ r)` and `Y ~ Po(s₂ r)` be
 independent counts of one gene in two conditions with library sizes `s₁, s₂` (`s₁ + s₂ > 0`) and
@@ -419,8 +433,8 @@ theorem isValidPValue_countExactPValue [IsProbabilityMeasure μ] (hs : 0 < s₁ 
     · rw [hn, mul_zero]
       exact (measure_mono Set.inter_subset_left).trans hn.le
     · rw [← cond_mul_eq_inter (hSm n) (A n) μ]
-      exact mul_le_mul_left
-        (isValidPValue_upperTailPValue (hasLaw_cond_binomial hs hXm hYm hX hY hXY hn) t ht) _
+      exact mul_le_mul_left (isValidPValue_upperTailPValue
+        (hasLaw_cond_binomial_libraryFraction hs hXm hYm hX hY hXY hn) t ht) _
   rw [hset, measure_iUnion (fun i j hij => (hSdisj hij).mono Set.inter_subset_left
     Set.inter_subset_left) fun n => (hSm n).inter (hAm n)]
   calc ∑' n, μ (S n ∩ A n) ≤ ∑' n, ENNReal.ofReal t * μ (S n) := ENNReal.tsum_le_tsum hbound

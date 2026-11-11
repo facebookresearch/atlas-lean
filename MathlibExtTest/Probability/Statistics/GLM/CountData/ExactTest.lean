@@ -81,12 +81,21 @@ condition-1 count is `1` with probability `C(2,1) / 4 = 1/2`. -/
 example :
     ((Po(1 * 1).prod Po(1 * 1))[|{ω : ℕ × ℕ | ω.1 + ω.2 = 2}]).real {ω | ω.1 = 1} = 1 / 2 := by
   have h := witness 1 1 1
-  rw [cond_measureReal_eq_binomial (X := fun ω : ℕ × ℕ => ω.1) (Y := fun ω : ℕ × ℕ => ω.2)
-    (by norm_num) measurable_fst measurable_snd h.1 h.2.1 h.2.2
+  rw [cond_measureReal_eq_binomial_libraryFraction (X := fun ω : ℕ × ℕ => ω.1)
+    (Y := fun ω : ℕ × ℕ => ω.2) (by norm_num) measurable_fst measurable_snd h.1 h.2.1 h.2.2
     (measure_add_eq_ne_zero (by norm_num) one_pos h.1 h.2.1 h.2.2 2) 1,
     binomial_real_singleton]
   simp only [coe_libraryFraction, NNReal.coe_one]
   norm_num [Nat.choose]
+
+/-- Conditional validity on the witness, given any total, for a positive rate. -/
+example (s₁ s₂ r : ℝ≥0) (hs : 0 < s₁ + s₂) (hr : 0 < r) (n : ℕ) :
+    IsValidPValue ((Po(s₁ * r).prod Po(s₂ * r))[|{ω : ℕ × ℕ | ω.1 + ω.2 = n}])
+      (upperTailPValue Bin(n, libraryFraction s₁ s₂) fun ω : ℕ × ℕ => ω.1) :=
+  have h := witness s₁ s₂ r
+  isValidPValue_countExact_cond (X := fun ω : ℕ × ℕ => ω.1) (Y := fun ω : ℕ × ℕ => ω.2) hs
+    measurable_fst measurable_snd h.1 h.2.1 h.2.2
+    (measure_add_eq_ne_zero hs hr h.1 h.2.1 h.2.2 n)
 
 /-- Boundary: with no reads at all the exact p-value is `1` (nothing to reject). -/
 example (s₁ s₂ : ℝ≥0) : countExactTail s₁ s₂ (0, 0) = 1 := by
