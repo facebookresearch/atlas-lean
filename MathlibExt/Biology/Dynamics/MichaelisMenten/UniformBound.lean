@@ -64,6 +64,9 @@ window.
   with standard data, `s_ε(τ/ε) → S̄(τ)` for `τ ≥ 0` and the slow-time product rate tends to
   the Michaelis–Menten rate law `mmRate k₂ K (S̄ τ)` for `τ > 0`, as `ε → 0⁺`.
 
+Existence of solutions of the full system for `e_T > 0` is not proved here; the `ε > 0`
+statements quantify over solutions and the family theorems assume a family.
+
 No all-time QSSA is claimed: the substrate constant grows linearly in the window length `T`,
 and without prepared data the rate-law bound needs `τ ≥ τ₀ > 0`. The test file shows that at
 `τ = 0` with `c(0) = 0` the rate-law error equals `mmRate k₂ K s₀ > 0` for every `ε`.

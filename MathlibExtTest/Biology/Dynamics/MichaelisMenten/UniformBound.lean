@@ -23,8 +23,10 @@ window `T = 1`:
   exactly `1/2` for every `ε > 0`, so no bound tending to zero holds inside the initial layer;
   the bound with `τ₀ = 0` stays `≥ 1`; with prepared data `c(0) = q(s₀)` the error at `τ = 0`
   is `0` (all computed from the definitions, not from the theorems);
-* non-vacuity: the enzyme-free solution satisfies every hypothesis of the real-time theorems,
-  and a reduced solution exists (`exists_reduced_solution`).
+* non-vacuity of the real-time theorems at `e_T = 0` only: the enzyme-free solution satisfies
+  their hypotheses (with `e_T = 0` both sides of the substrate bound reduce to `|2 - S̄(0)|`,
+  and every `ε > 0` theorem excludes it), and a reduced solution exists
+  (`exists_reduced_solution`). No full solution with `e_T > 0` is exhibited.
 -/
 
 open Filter Topology Real Set
@@ -93,7 +95,7 @@ theorem rate_error_at_zero_unprepared {ε : ℝ} {c S : ℝ → ℝ} (hc : c 0 =
   norm_num [mmRate, michaelisConstant]
 
 /-- Hence no bound of order `ε` can hold at `τ = 0` without prepared data: for every `C`
-there is `ε > 0` beating it, for every such solution. -/
+there is `ε > 0` beating it, for all functions with `c(0) = 0`, `S(0) = 2`. -/
 theorem not_bigO_at_zero_unprepared (C : ℝ) :
     ∃ ε > 0, ∀ c S : ℝ → ℝ, c 0 = 0 → S 0 = 2 →
       C * ε < |1 * c (0 / ε) / ε - mmRate 1 (michaelisConstant 1 1 1) (S 0)| := by
@@ -143,7 +145,8 @@ theorem isSolution_enzymeFree :
   · simpa [complexRate] using hasDerivAt_const t (0 : ℝ)
   · simpa using hasDerivAt_const t (0 : ℝ)
 
-/-- The hypotheses of the real-time slaving and substrate theorems are jointly satisfiable:
+/-- The hypotheses of the real-time slaving and substrate theorems are jointly satisfiable at
+`e_T = 0` only (a degenerate witness):
 the enzyme-free solution and a reduced solution through `s₀ = 2`. -/
 example : ∃ S : ℝ → ℝ,
     |(fun _ ↦ (2 : ℝ)) 1 - S ((0 + 0) * 1)| ≤ |(2 : ℝ) - S 0| + (1 * (2 + 0) + 1) *
