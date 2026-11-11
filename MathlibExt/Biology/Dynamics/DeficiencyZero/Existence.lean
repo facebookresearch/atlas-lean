@@ -28,11 +28,11 @@ compatibility class.
 The proof has two steps.
 
 1. *Weak reversibility.* The Laplacian of the weighted reaction graph on the complexes
-   reachable from a complex `z₀` has columns summing to `0`, so it is singular. Its
-   off-diagonal entries are nonnegative, so the absolute value of a kernel vector is again a
-   kernel vector. Under weak reversibility its zero set is closed under directed reaction
-   paths, so it is positive at `z₀`. Summing over `z₀` gives a positive vector `ψ` with inflow
-   equal to outflow at every complex.
+   reachable from a complex `z₀` has columns summing to `0`, so it is singular. Since its
+   off-diagonal entries are nonnegative and its columns sum to `0`, the absolute value of
+   a kernel vector is again a kernel vector. Under weak reversibility its zero set is closed
+   under directed reaction paths, so it is positive at `z₀`. Summing over `z₀` gives a positive
+   vector `ψ` with inflow equal to outflow at every complex.
 2. *Deficiency zero.* Solve the log-linear system `⟨prod r - src r, μ⟩ = log ψ (prod r) -
    log ψ (src r)` for `μ : S → ℝ`; it is solvable because, by deficiency zero, every relation
    among the reaction vectors is a relation among the complex differences
@@ -203,7 +203,7 @@ network with positive rate constants and any complex `z₀`, there are nonnegati
 the complexes that balance the weighted reaction graph and are positive at `z₀`. They come
 from a kernel vector of the Laplacian of the set of complexes reachable from `z₀`: its columns
 sum to `0`, so it is singular, and the absolute value of a kernel vector is again a kernel
-vector because the off-diagonal entries are nonnegative. -/
+vector because the off-diagonal entries are nonnegative and the columns sum to `0`. -/
 private theorem exists_nonneg_balanced_pos [Fintype S] [Fintype ρ] {k : ρ → ℝ} (hk : ∀ r, 0 < k r)
     (hwr : ∀ r, Relation.ReflTransGen (fun y y' => ∃ r', N.src r' = y ∧ N.prod r' = y')
       (N.prod r) (N.src r))

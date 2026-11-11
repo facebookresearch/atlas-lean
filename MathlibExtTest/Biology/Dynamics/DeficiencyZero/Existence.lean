@@ -62,6 +62,28 @@ example {k : Fin 2 → ℝ} (hk : ∀ r, 0 < k r) : ∃! x : Fin 2 → ℝ, (∀
   revAB.existsUnique_equilibrium_of_deficiency_zero deficiencyZero_revAB
     weaklyReversible_revAB hk (by intro s; fin_cases s <;> simp)
 
+/-- The unique equilibrium of `A ⇌ B` with rate constants `(1, 2)` in the compatibility class
+of `(1, 2)` is `(2, 1)`: both reactions run at rate `2`, and `(2, 1) - (1, 2) = (1, -1)` is the
+reaction vector of `B → A`. -/
+example : ∀ x : Fin 2 → ℝ, ((∀ s, 0 < x s) ∧ x - ![1, 2] ∈ revAB.stoichiometricSubspace ∧
+    revAB.massActionField ![1, 2] x = 0) → x = ![2, 1] := by
+  have hk : ∀ r, 0 < (![1, 2] : Fin 2 → ℝ) r := by intro r; fin_cases r <;> norm_num
+  obtain ⟨x, -, hx⟩ := revAB.existsUnique_equilibrium_of_deficiency_zero deficiencyZero_revAB
+    weaklyReversible_revAB hk (x₀ := ![1, 2]) (by intro s; fin_cases s <;> simp)
+  have h21 : (∀ s, 0 < (![2, 1] : Fin 2 → ℝ) s) ∧
+      ![2, 1] - ![1, 2] ∈ revAB.stoichiometricSubspace ∧
+      revAB.massActionField ![1, 2] ![2, 1] = 0 := by
+    refine ⟨by intro s; fin_cases s <;> norm_num, ?_, ?_⟩
+    · have hv : (![2, 1] - ![1, 2] : Fin 2 → ℝ) =
+          fun s => (revAB.prod 1 s : ℝ) - revAB.src 1 s := by
+        funext s; fin_cases s <;> simp [revAB] <;> norm_num
+      rw [hv]
+      exact Submodule.subset_span ⟨1, rfl⟩
+    · funext s
+      fin_cases s <;> simp [massActionField, revAB, Fin.sum_univ_two, Fin.prod_univ_two]
+  intro y hy
+  rw [hx y hy, hx _ h21]
+
 /-- Horn's construction directly: the weights `ψ(A) = 2`, `ψ(B) = 1` balance `A ⇌ B` with rate
 constants `(1, 2)`, so some positive concentration is complex balanced. -/
 example : ∃ c : Fin 2 → ℝ, (∀ s, 0 < c s) ∧ revAB.IsComplexBalanced ![1, 2] c := by
