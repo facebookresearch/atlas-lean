@@ -14,9 +14,9 @@ import Mathlib.LinearAlgebra.Dimension.Finite
 
 /-! Tests for the reaction-network structure API: the empty network (no complexes, no linkage
 classes, deficiency `0`), a single self-reaction (an isolated complex, one linkage class, no
-edge), parallel reactions (one edge, not weakly reversible), two disconnected linkage classes
-(`0 → A`, `2A → 3A`, deficiency `1`), and a reversible network (weakly reversible, directed
-reachability equals linkage-class membership). -/
+edge), two parallel reactions (an edge, one linkage class, not weakly reversible), two
+disconnected linkage classes (`0 → A`, `2A → 3A`, deficiency `1`), and a reversible network
+(weakly reversible, directed reachability equals linkage-class membership). -/
 
 namespace MathlibExtTest.Biology.Dynamics.DeficiencyZero.API
 

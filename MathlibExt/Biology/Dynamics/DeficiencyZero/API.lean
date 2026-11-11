@@ -29,9 +29,8 @@ network `N : ReactionNetwork S ρ` (defined, with its stoichiometric subspace, i
 * `deficiency`: `δ = n - ℓ - s`;
 * `IsWeaklyReversible`: every reaction `y → y'` can be undone by a directed path `y' ⟶* y`.
 
-These are the definitions stated in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`,
-with the same names, namespace and bodies, so that file can import this one instead of
-defining them.
+These definitions previously lived in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`;
+that file now imports this one and states the deficiency-zero theorems against them.
 
 ## Main results
 
