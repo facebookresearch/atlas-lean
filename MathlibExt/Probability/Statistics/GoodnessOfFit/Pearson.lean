@@ -17,8 +17,9 @@ public import MathlibExt.Probability.Statistics.Slutsky
 # Pearson's chi-square goodness-of-fit statistic: fixed-cell asymptotics
 
 Let `X 0, X 1, …` be i.i.d. observations in a finite set `ι` of `k` cells with cell
-probabilities `pᵢ = P(X 0 = i)`, and let `Nᵢ = #{j < n | X j = i}` be the cell counts (a
-multinomial `Mult(n, p)` vector). Pearson's statistic is
+probabilities `pᵢ = P(X 0 = i)`, and let `Nᵢ = #{j < n | X j = i}` be the cell counts (the
+classical multinomial `Mult(n, p)` vector; that identification of the law is standard and is
+neither used nor proved here). Pearson's statistic is
 `χ²ₙ = ∑ᵢ (Nᵢ - n pᵢ)² / (n pᵢ)`.
 
 ## Main definitions
@@ -57,9 +58,9 @@ on `Vᗮ ⊓ K` gives `k - 1 - dim V` degrees of freedom.
 ## Boundary cases
 
 * All cell probabilities must be positive. A cell with `pᵢ = 0` has `Nᵢ = 0` almost surely and
-  contributes `0 / 0 = 0` (Lean's convention), so the degrees of freedom drop to
-  `#{i | pᵢ > 0} - 1`; the test file shows a two-cell example where the statistic is
-  identically `0` and does not converge to `χ²₁`.
+  contributes `0 / 0 = 0` (Lean's convention), so one expects the degrees of freedom to drop
+  to `#{i | pᵢ > 0} - 1`; that general statement is not proved here. The test file proves a
+  two-cell example where the statistic is identically `0` and does not converge to `χ²₁`.
 * `k ≥ 2` (respectively `dim V + 1 < k`) is needed: `chiSquareMeasure 0` is the zero measure,
   not the Dirac mass at `0`.
 * The fitted theorem needs the efficient-estimator expansion as a hypothesis; it is not
@@ -277,7 +278,11 @@ theorem hasLaw_inner_starProjection_orthogonal_sqrt {p : ι → ℝ} (hp₀ : �
   rw [← norm_sq_starProjection_orthogonal_unit hu t]
   exact hasLaw_inner_starProjection _ t
 
-/-- Convergence in distribution depends on the limit only through its law. -/
+/-- Convergence in distribution depends on the limit only through its law.
+
+Copied verbatim from the private helper of the same name in
+`MathlibExt.Probability.Statistics.LikelihoodRatioTests` (that file is outside this task's
+scope, so it is not made public here); the two copies should be merged into one public lemma. -/
 private theorem tendstoInDistribution_of_hasLaw {Ω₂ Ω₃ : Type*} [MeasurableSpace Ω₂]
     [MeasurableSpace Ω₃] {P₂ : Measure Ω₂} {P₃ : Measure Ω₃} [IsProbabilityMeasure P₂]
     [IsProbabilityMeasure P₃] {A : ℕ → Ω → ℝ} {Y : Ω₂ → ℝ} {Z : Ω₃ → ℝ} {ρ : Measure ℝ}
@@ -406,10 +411,10 @@ private theorem weight_apply (p q : ι → ℝ) (i : ι) : weight p q i = q i / 
   simp [weight, div_eq_inv_mul]
 
 /-- The tangent space of a model of probability vectors is orthogonal to `√p` after weighting:
-differentiating `∑ᵢ pᵢ(θ) = 1` gives `∑ᵢ (D a)ᵢ = 0`. -/
+differentiating `∑ᵢ pᵢ(θ) = 1` (near `θ₀`) gives `∑ᵢ (D a)ᵢ = 0`. -/
 private theorem range_le_orthogonal_sqrtVec {F : Type*} [NormedAddCommGroup F]
     [NormedSpace ℝ F] {pθ : F → ι → ℝ} {θ₀ : F} (hpos : ∀ i, 0 < pθ θ₀ i)
-    (hsum : ∀ θ, ∑ i, pθ θ i = 1) {D : F →L[ℝ] (ι → ℝ)} (hD : HasFDerivAt pθ D θ₀)
+    (hsum : ∀ᶠ θ in nhds θ₀, ∑ i, pθ θ i = 1) {D : F →L[ℝ] (ι → ℝ)} (hD : HasFDerivAt pθ D θ₀)
     {J : F →L[ℝ] EuclideanSpace ℝ ι} (hJ : ∀ a i, J a i = D a i / √(pθ θ₀ i)) :
     LinearMap.range J.toLinearMap ≤ (ℝ ∙ sqrtVec (pθ θ₀))ᗮ := by
   rintro _ ⟨a, rfl⟩
@@ -419,10 +424,8 @@ private theorem range_le_orthogonal_sqrtVec {F : Type*} [NormedAddCommGroup F]
     convert S.hasFDerivAt.comp θ₀ hD using 1
     ext θ
     simp [S]
-  have h0 : S.comp D = 0 := by
-    refine hS.unique ?_
-    simp_rw [hsum]
-    exact hasFDerivAt_const 1 θ₀
+  have h0 : S.comp D = 0 :=
+    hS.unique ((hasFDerivAt_const (1 : ℝ) θ₀).congr_of_eventuallyEq hsum)
   have hDa : ∑ i, D a i = 0 := by simpa [S] using congrArg (fun T => T a) h0
   rw [← hDa]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -468,8 +471,9 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbability
   [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
 
 /-- **Pearson's chi-square theorem with estimated parameters** (fixed cells, `k - 1 - s`
-degrees of freedom). Let the cell probabilities follow a model `θ ↦ pθ θ` of probability
-vectors (`pθ θ i ≥ 0`, `∑ᵢ pθ θ i = 1`) on a finite-dimensional parameter space `F`, with
+degrees of freedom). Let the cell probabilities follow a model `θ ↦ pθ θ` on a
+finite-dimensional parameter space `F` (`pθ θ i ≥ 0` for every `θ`, `∑ᵢ pθ θ i = 1` for `θ`
+near `θ₀`), with
 true parameter `θ₀`, all `pθ θ₀ i > 0`, and Fréchet derivative `D` at `θ₀`. Write
 `J a = ((D a)ᵢ / √(pθ θ₀ i))ᵢ` for the weighted Jacobian and `V = range J` for the weighted
 tangent space.
@@ -489,13 +493,19 @@ applies the delta method to `(r, θ) ↦ r - (w(pθ θ) - w(pθ θ₀))` jointly
 and `θ̂`, giving the limit `P_K Z - P_V (P_K Z) = P_{Vᗮ ⊓ K} Z` (the tangent space lies in
 `K = (√p)ᗮ` because `∑ᵢ pθ θ i = 1`), and Cochran's theorem on the subspace `Vᗮ ⊓ K` of
 dimension `k - 1 - dim V`. Fitted cells with `pᵢ(θ̂) = 0` contribute `0`; the event has
-probability tending to `0`. -/
+probability tending to `0`.
+
+The nonnegativity hypothesis `hnn` is global although only `θ` near `θ₀` matter: since
+`θ̂ n → θ₀` in probability, it could be localized to a neighbourhood of `θ₀` by comparing the
+statistics on events of probability tending to `1`. That localization is not done here (a
+follow-up); models that leave the simplex away from `θ₀`, such as Hardy–Weinberg proportions
+`(θ², 2θ(1 - θ), (1 - θ)²)` on all of `ℝ`, must for now be reparametrized or clamped. -/
 theorem tendstoInDistribution_pearsonStatistic_fitted [DecidableEq ι] {F : Type*}
     [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F] [MeasurableSpace F]
     [BorelSpace F] {X : ℕ → Ω → ι} {pθ : F → ι → ℝ} {θ₀ : F}
     (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = pθ θ₀ i) (hpos : ∀ i, 0 < pθ θ₀ i)
     (hindep : iIndepFun X P) (hident : ∀ k, IdentDistrib (X k) (X 0) P P)
-    (hnn : ∀ θ i, 0 ≤ pθ θ i) (hsum : ∀ θ, ∑ i, pθ θ i = 1) (hmeas : Measurable pθ)
+    (hnn : ∀ θ i, 0 ≤ pθ θ i) (hsum : ∀ᶠ θ in nhds θ₀, ∑ i, pθ θ i = 1) (hmeas : Measurable pθ)
     {D : F →L[ℝ] (ι → ℝ)} (hD : HasFDerivAt pθ D θ₀)
     {J : F →L[ℝ] EuclideanSpace ℝ ι} (hJ : ∀ a i, J a i = D a i / √(pθ θ₀ i))
     {L : EuclideanSpace ℝ ι →L[ℝ] F}
@@ -666,7 +676,7 @@ theorem tendstoInDistribution_pearsonStatistic_fitted_of_injective [DecidableEq 
     [MeasurableSpace F] [BorelSpace F] {X : ℕ → Ω → ι} {pθ : F → ι → ℝ} {θ₀ : F}
     (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = pθ θ₀ i) (hpos : ∀ i, 0 < pθ θ₀ i)
     (hindep : iIndepFun X P) (hident : ∀ k, IdentDistrib (X k) (X 0) P P)
-    (hnn : ∀ θ i, 0 ≤ pθ θ i) (hsum : ∀ θ, ∑ i, pθ θ i = 1) (hmeas : Measurable pθ)
+    (hnn : ∀ θ i, 0 ≤ pθ θ i) (hsum : ∀ᶠ θ in nhds θ₀, ∑ i, pθ θ i = 1) (hmeas : Measurable pθ)
     {D : F →L[ℝ] (ι → ℝ)} (hD : HasFDerivAt pθ D θ₀)
     {J : F →L[ℝ] EuclideanSpace ℝ ι} (hJ : ∀ a i, J a i = D a i / √(pθ θ₀ i))
     (hinj : Function.Injective J) {L : EuclideanSpace ℝ ι →L[ℝ] F}
