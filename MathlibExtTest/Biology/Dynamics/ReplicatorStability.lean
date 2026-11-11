@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Biology.Dynamics.ReplicatorStability
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 /-! Tests for `MathlibExt.Biology.Dynamics.ReplicatorStability`:
 
@@ -16,8 +17,8 @@ import MathlibExt.Biology.Dynamics.ReplicatorStability
   payoff `y · A y`;
 * **counterexample first**: in the two-strategy neutral game `!![1, 1; 1, 1]`, the mixed state
   `(1/2, 1/2)` is a Nash equilibrium that is not an ESS and not asymptotically stable: it is
-  Lyapunov stable but not attracting (nearby rest points give constant solutions that do not
-  converge to it);
+  Lyapunov stable (solutions starting in the simplex are constant) but not attracting (nearby
+  rest points give constant solutions that do not converge to it);
 * **interior ESS**: in the Hawk–Dove game `!![-1, 2; 0, 1]` (value `V = 2`, cost `C = 4`), the
   state `(1/2, 1/2)` is an interior ESS, the Lyapunov derivative is `-2 (x₀ - 1/2)²`, and the
   main theorem gives local asymptotic stability;
@@ -75,8 +76,36 @@ theorem half_not_isESS_neutral : ¬ IsESS neutral half := by
   have := h.2 ![1, 0] ⟨fun i => by fin_cases i <;> norm_num, by simp [Fin.sum_univ_two]⟩ hne
   norm_num [neutral_mulVec, dotProduct, Fin.sum_univ_two, half] at this
 
+/-- In the neutral game every solution starting in the simplex is constant on `[0, ∞)`: it stays
+in the simplex (`IsSolution.mem_simplex`), where every fitness and the mean fitness equal `1`, so
+its derivative vanishes. -/
+theorem neutral_eq_initial {x : ℝ → Fin 2 → ℝ} (hx : IsSolution (fun z => neutral *ᵥ z) x)
+    (h0 : (∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) {t : ℝ} (ht : 0 ≤ t) : x t = x 0 := by
+  have hd : ∀ s, 0 ≤ s → ∀ i, HasDerivAt (fun s => x s i) 0 s := fun s hs i => by
+    have h1 := (hx.mem_simplex (continuous_mulVec_fitness neutral) h0.1 h0.2 hs).2
+    rw [Fin.sum_univ_two] at h1
+    convert hx.hasDerivAt i s hs using 1
+    fin_cases i <;> simp [meanFitness, neutral_mulVec, Fin.sum_univ_two, h1]
+  funext i
+  rcases ht.eq_or_lt with rfl | ht'
+  · rfl
+  obtain ⟨c, -, hc⟩ := exists_hasDerivAt_eq_slope (fun s => x s i) (fun _ => 0) ht'
+    (fun s hs => (hd s hs.1 i).continuousAt.continuousWithinAt) fun s hs => hd s hs.1.le i
+  rw [eq_comm, div_eq_zero_iff, sub_zero] at hc
+  rcases hc with hc | hc
+  · linarith
+  · exact absurd hc ht'.ne'
+
+/-- **The neutral Nash equilibrium is Lyapunov stable**, since solutions starting in the simplex
+are constant. -/
+theorem half_lyapunovStable_neutral :
+    ∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → Fin 2 → ℝ, IsSolution (fun z => neutral *ᵥ z) x →
+      ((∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1) → ‖x 0 - half‖ < δ →
+        ∀ t, 0 ≤ t → ‖x t - half‖ < ε :=
+  fun ε hε => ⟨ε, hε, fun x hx h0 hd t ht => by rwa [neutral_eq_initial hx h0 ht]⟩
+
 /-- **Nash alone does not give asymptotic stability.** The Nash equilibrium `(1/2, 1/2)` of the
-neutral game is Lyapunov stable (every point of the simplex is a rest point) but not attracting:
+neutral game is Lyapunov stable (`half_lyapunovStable_neutral`) but not attracting:
 for every `δ > 0` there is a solution starting in the simplex within `δ` of it that does not
 converge to it. The statement is the negation of the conclusion of `IsESS.asymptoticallyStable`;
 the proof refutes its attraction half. -/

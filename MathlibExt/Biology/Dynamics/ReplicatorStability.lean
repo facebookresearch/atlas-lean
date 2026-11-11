@@ -43,8 +43,7 @@ close to `p` stay close to `p` and converge to `p`.
 * `IsSolution.hasDerivAt_relEntropy`: along a solution,
   `d/dt relEntropy p (x t) = -(p · A x - x · A x)`.
 * `IsESS.lyapunovStable`, `IsESS.tendsto_nhds`, `IsESS.asymptoticallyStable`: an interior ESS
-  is Lyapunov stable and locally attracting, i.e. locally asymptotically stable (as statements
-  about all global forward solutions; existence of solutions is not asserted).
+  is Lyapunov stable and locally attracting, i.e. locally asymptotically stable.
 
 ## Scope: boundary rest points are not covered
 
