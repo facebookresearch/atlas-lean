@@ -441,4 +441,218 @@ theorem exists_tendstoInDistribution_kmSurvival (pT pC : PMF (Fin k)) (hind : iI
 
 end DeltaMethod
 
+/-! ### Deliverable 3: variance identification -/
+
+section Variance
+
+/-- The **population Greenwood sum** at grid index `m` of the cell-probability vector `p`:
+`τ² = ∑_{j ≤ m} eⱼ / (Yⱼ (Yⱼ - eⱼ))`, with `eⱼ = p(j, true)` and `Yⱼ = cellAtRisk j p`. At the cell
+probabilities of a law `μ` it is `∑_{j ≤ m} P(X = j, δ = 1) / (P(X ≥ j) P(X ≥ j, ¬(X = j, δ = 1)))`
+(`greenwoodSum_cellProbs`), the limit of Greenwood's sum. -/
+noncomputable def greenwoodSum (m : Fin k) (p : CellSpace k) : ℝ :=
+  ∑ j with j ≤ m, p (j, true) / (cellAtRisk j p * (cellAtRisk j p - p (j, true)))
+
+theorem greenwoodSum_cellProbs (μ : Measure (Fin k × Fin k)) [IsFiniteMeasure μ] (m : Fin k) :
+    greenwoodSum m (cellProbs μ) = ∑ j with j ≤ m,
+      obsEventMass μ j / (obsAtRiskMass μ j * (obsAtRiskMass μ j - obsEventMass μ j)) := by
+  simp only [greenwoodSum, cellProbs_true, cellAtRisk_cellProbs]
+
+/-- The `j`-th summand of the log-derivative form, as a function of a vector `v`. -/
+private noncomputable def logTerm (p : CellSpace k) (j : Fin k) (v : CellSpace k) : ℝ :=
+  (cellAtRisk j p * v (j, true) - p (j, true) * cellAtRisk j v) /
+    (cellAtRisk j p * (cellAtRisk j p - p (j, true)))
+
+private lemma single_apply_true (c : Fin k × Bool) (j : Fin k) :
+    EuclideanSpace.single c (1 : ℝ) (j, true) = if c = (j, true) then 1 else 0 := by
+  by_cases h : c = (j, true)
+  · simp [h]
+  · simp [h]
+
+private lemma cellAtRisk_single (j : Fin k) (c : Fin k × Bool) :
+    cellAtRisk j (EuclideanSpace.single c (1 : ℝ)) = if j ≤ c.1 then 1 else 0 := by
+  rw [cellAtRisk_apply]
+  by_cases h : j ≤ c.1
+  · rw [sum_eq_single c (fun c' _ hc' => by simp [Ne.symm hc']) (fun hc => by simp [h] at hc)]
+    simp [h]
+  · simp only [h, ite_false]
+    refine sum_eq_zero fun c' hc' => ?_
+    have : c ≠ c' := by rintro rfl; simp [h] at hc'
+    simp [this]
+
+/-- The weighted Gram matrix of the log-derivative summands at the basis vectors is diagonal:
+`∑_c p_c ξᵢ(e_c) ξⱼ(e_c) = [i = j] eⱼ / (Yⱼ (Yⱼ - eⱼ))`. -/
+private lemma sum_logTerm_mul_logTerm (p : CellSpace k) {i j : Fin k}
+    (hi : cellAtRisk i p ≠ 0) (hj : cellAtRisk j p ≠ 0) (hie : cellAtRisk i p ≠ p (i, true))
+    (hje : cellAtRisk j p ≠ p (j, true)) :
+    ∑ c, p c * (logTerm p i (EuclideanSpace.single c 1) * logTerm p j (EuclideanSpace.single c 1))
+      = if i = j then p (j, true) / (cellAtRisk j p * (cellAtRisk j p - p (j, true))) else 0 := by
+  set Yi := cellAtRisk i p with hYi
+  set Yj := cellAtRisk j p with hYj
+  set ei := p (i, true) with hei
+  set ej := p (j, true) with hej
+  have hDi : Yi * (Yi - ei) ≠ 0 := mul_ne_zero hi (sub_ne_zero.2 hie)
+  have hDj : Yj * (Yj - ej) ≠ 0 := mul_ne_zero hj (sub_ne_zero.2 hje)
+  have key : ∀ c : Fin k × Bool, p c * (logTerm p i (EuclideanSpace.single c 1) *
+      logTerm p j (EuclideanSpace.single c 1)) =
+      (Yi * Yj * (p c * ((if c = (i, true) then 1 else 0) * (if c = (j, true) then 1 else 0))) -
+        Yi * ej * (p c * ((if c = (i, true) then 1 else 0) * (if j ≤ c.1 then 1 else 0))) -
+        ei * Yj * (p c * ((if c = (j, true) then 1 else 0) * (if i ≤ c.1 then 1 else 0))) +
+        ei * ej * (p c * ((if i ≤ c.1 then 1 else 0) * (if j ≤ c.1 then 1 else 0)))) /
+        ((Yi * (Yi - ei)) * (Yj * (Yj - ej))) := by
+    intro c
+    simp only [logTerm, single_apply_true, cellAtRisk_single, ← hYi, ← hYj, ← hei, ← hej]
+    field_simp
+    ring
+  have haa : ∑ c : Fin k × Bool, p c *
+      ((if c = (i, true) then (1 : ℝ) else 0) * (if c = (j, true) then 1 else 0)) =
+      if i = j then ej else 0 := by
+    simp only [← ite_and, mul_ite, mul_one, mul_zero]
+    by_cases h : i = j
+    · subst h; simp [ej]
+    · simp only [h, ite_false]
+      refine sum_eq_zero fun c _ => ?_
+      split_ifs with hc
+      · exfalso
+        simp only [Prod.ext_iff] at hc
+        obtain ⟨⟨h1, -⟩, h2, -⟩ := hc
+        exact h (h2.symm.trans h1)
+      · rfl
+  have har : ∀ a b : Fin k, ∑ c : Fin k × Bool, p c *
+      ((if c = (a, true) then (1 : ℝ) else 0) * (if b ≤ c.1 then 1 else 0)) =
+      if b ≤ a then p (a, true) else 0 := by
+    intro a b
+    simp only [← ite_and, mul_ite, mul_one, mul_zero]
+    rw [sum_ite, sum_const_zero, add_zero]
+    by_cases h : b ≤ a
+    · simp only [h, ite_true]
+      rw [sum_eq_single (a, true)]
+      · intro c hc hne
+        simp only [mem_filter, mem_univ, true_and] at hc
+        exact absurd (by tauto) hne
+      · intro hn; simp [h] at hn
+    · simp only [h, ite_false]
+      refine sum_eq_zero fun c hc => ?_
+      simp only [mem_filter, mem_univ, true_and] at hc
+      obtain ⟨h1, h2⟩ := hc
+      exfalso
+      subst h2
+      exact h h1
+  have hrr : ∑ c : Fin k × Bool, p c *
+      ((if i ≤ c.1 then (1 : ℝ) else 0) * (if j ≤ c.1 then 1 else 0)) = cellAtRisk (max i j) p := by
+    simp only [← ite_and, mul_ite, mul_one, mul_zero, cellAtRisk_apply, ← max_le_iff]
+    rw [sum_ite, sum_const_zero, add_zero, max_comm]
+  rw [sum_congr rfl fun c _ => key c, ← sum_div, sum_add_distrib, sum_sub_distrib,
+    sum_sub_distrib, ← mul_sum, ← mul_sum, ← mul_sum, ← mul_sum, haa, har, har, hrr]
+  rcases lt_trichotomy i j with h | rfl | h
+  · simp only [h.ne, not_le.2 h, h.le, max_eq_right h.le, ite_false, ite_true]
+    field_simp
+    ring
+  · simp only [ite_true, le_refl, max_self]
+    field_simp
+    ring
+  · simp only [h.ne', not_le.2 h, h.le, max_eq_left h.le, ite_false, ite_true]
+    field_simp
+    ring
+
+/-- **The variance algebra**: for a vector `p` with `Yⱼ ≠ 0` for `j ≤ m` and `g(p) ≠ 0`, the
+`p`-weighted sum of squares of the derivative at the basis vectors is `g(p)² τ²`:
+`∑_c p_c (L e_c)² = kmMap m p ^ 2 * greenwoodSum m p`. No positivity or normalization of `p` is
+needed. -/
+theorem sum_mul_kmMapDeriv_single_sq (m : Fin k) {p : CellSpace k}
+    (hp : ∀ j ≤ m, cellAtRisk j p ≠ 0) (hS : kmMap m p ≠ 0) :
+    ∑ c, p c * kmMapDeriv m p (EuclideanSpace.single c 1) ^ 2 =
+      kmMap m p ^ 2 * greenwoodSum m p := by
+  have hpe : ∀ j ≤ m, cellAtRisk j p ≠ p (j, true) := by
+    intro j hj he
+    refine hS (prod_eq_zero (i := j) (by simpa using hj) ?_)
+    rw [he, div_self (he ▸ hp j hj), sub_self]
+  have hL : ∀ c : Fin k × Bool, kmMapDeriv m p (EuclideanSpace.single c 1) =
+      -kmMap m p * ∑ j with j ≤ m, logTerm p j (EuclideanSpace.single c 1) := fun c =>
+    kmMapDeriv_eq_logForm m hp hpe _
+  have h1 : ∀ c : Fin k × Bool,
+      p c * (-kmMap m p * ∑ j with j ≤ m, logTerm p j (EuclideanSpace.single c 1)) ^ 2 =
+      kmMap m p ^ 2 * ∑ a with a ≤ m, ∑ b with b ≤ m, p c *
+        (logTerm p a (EuclideanSpace.single c 1) * logTerm p b (EuclideanSpace.single c 1)) := by
+    intro c
+    rw [show p c * (-kmMap m p * ∑ j with j ≤ m, logTerm p j (EuclideanSpace.single c 1)) ^ 2 =
+      kmMap m p ^ 2 * (p c * ((∑ j with j ≤ m, logTerm p j (EuclideanSpace.single c 1)) *
+        ∑ j with j ≤ m, logTerm p j (EuclideanSpace.single c 1))) by ring, sum_mul_sum, mul_sum]
+    simp_rw [mul_sum]
+  simp_rw [hL, h1]
+  rw [← mul_sum]
+  rw [greenwoodSum]
+  congr 1
+  rw [sum_comm]
+  refine sum_congr rfl fun a ha => ?_
+  have ha' : a ≤ m := by simpa using ha
+  rw [sum_comm, sum_congr rfl fun b hb => sum_logTerm_mul_logTerm p (hp a ha')
+    (hp b (by simpa using hb)) (hpe a ha') (hpe b (by simpa using hb)), sum_ite_eq]
+  simp only [ha, ite_true]
+
+/-- The variance of a linear functional of the cell indicator:
+`Var[φ(cellVec Z)] = ∑_c p_c φ(e_c)² - φ(p)²`, with `p = cellProbs μ`. -/
+theorem variance_apply_cellVec (φ : CellSpace k →L[ℝ] ℝ) (μ : Measure (Fin k × Fin k))
+    [IsProbabilityMeasure μ] :
+    Var[fun z => φ (cellVec z); μ] =
+      ∑ c, cellProbs μ c * φ (EuclideanSpace.single c 1) ^ 2 - φ (cellProbs μ) ^ 2 := by
+  rw [variance_eq_sub MemLp.of_discrete]
+  have h1 : ∫ z, φ (cellVec z) ∂μ = φ (cellProbs μ) := by
+    rw [φ.integral_comp_comm Integrable.of_finite, integral_cellVec]
+  let ψ : CellSpace k →L[ℝ] ℝ := ∑ c, φ (EuclideanSpace.single c 1) ^ 2 • EuclideanSpace.proj c
+  have hψ : ∀ v : CellSpace k, ψ v = ∑ c, φ (EuclideanSpace.single c 1) ^ 2 * v c := fun v => by
+    simp [ψ]
+  have hψz : ∀ z, ψ (cellVec z) = (φ (cellVec z)) ^ 2 := fun z => by
+    rw [hψ, sum_eq_single (cell z)]
+    · simp [cellVec]
+    · intro c _ hc; simp [cellVec, Ne.symm hc]
+    · intro h; exact absurd (mem_univ _) h
+  have h2 : ∫ z, ((fun z => φ (cellVec z)) ^ 2) z ∂μ = ∑ c, cellProbs μ c *
+      φ (EuclideanSpace.single c 1) ^ 2 := by
+    simp only [Pi.pow_apply, ← hψz]
+    rw [ψ.integral_comp_comm Integrable.of_finite, integral_cellVec, hψ]
+    exact sum_congr rfl fun _ _ => mul_comm _ _
+  rw [h2, h1]
+
+/-- **Variance identification**: if `P(min T C ≥ j) ≠ 0` for `j ≤ m` and `g(p) ≠ 0`, the
+variance of the derivative `L = kmMapDeriv m p` applied to the cell indicator is
+`g(p)² τ²` with `τ² = greenwoodSum m p`, where `p = cellProbs μ`. -/
+theorem variance_kmMapDeriv_cellVec (μ : Measure (Fin k × Fin k)) [IsProbabilityMeasure μ]
+    (m : Fin k) (hm : obsAtRiskMass μ m ≠ 0) (hS : kmMap m (cellProbs μ) ≠ 0) :
+    Var[fun z => kmMapDeriv m (cellProbs μ) (cellVec z); μ] =
+      kmMap m (cellProbs μ) ^ 2 * greenwoodSum m (cellProbs μ) := by
+  rw [variance_apply_cellVec, kmMapDeriv_self, sq (0 : ℝ), mul_zero, sub_zero,
+    sum_mul_kmMapDeriv_single_sq m (cellAtRisk_cellProbs_ne_zero μ hm) hS]
+
+/-- A linear functional of a limit `Y` as in `tendstoInDistribution_cellProportions` is a centered
+real Gaussian with the variance of the functional applied to the cell indicator. -/
+theorem hasLaw_apply_of_hasLaw_inner {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    {μ : Measure (Fin k × Fin k)} {Y : Ω' → CellSpace k}
+    (hYlaw : ∀ t : CellSpace k, HasLaw (fun ω ↦ ⟪Y ω, t⟫)
+      (gaussianReal 0 (Var[fun z ↦ ⟪cellVec z, t⟫; μ]).toNNReal) P')
+    (φ : CellSpace k →L[ℝ] ℝ) :
+    HasLaw (fun ω ↦ φ (Y ω)) (gaussianReal 0 (Var[fun z ↦ φ (cellVec z); μ]).toNNReal) P' := by
+  have h : ∀ v : CellSpace k, ⟪v, (InnerProductSpace.toDual ℝ (CellSpace k)).symm φ⟫ = φ v :=
+    fun v => by rw [real_inner_comm, InnerProductSpace.toDual_symm_apply]
+  have := hYlaw ((InnerProductSpace.toDual ℝ (CellSpace k)).symm φ)
+  simp only [h] at this
+  exact this
+
+/-- **The limit law of the Kaplan–Meier estimator**: under the hypotheses of
+`tendstoInDistribution_kmSurvival` and `P(T > m) ≠ 0`, the limit `L Y` is the centered real
+Gaussian with variance `S² τ²`, `S = P(T > m)` and `τ² = greenwoodSum m p` the population
+Greenwood sum (`greenwoodSum_cellProbs`). -/
+theorem hasLaw_kmMapDeriv_limit (pT pC : PMF (Fin k)) (m : Fin k)
+    (hm : obsAtRiskMass (indepLaw pT pC) m ≠ 0) (hS : pT.toMeasure.real {t | m < t} ≠ 0)
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} {Y : Ω' → CellSpace k}
+    (hYlaw : ∀ t : CellSpace k, HasLaw (fun ω ↦ ⟪Y ω, t⟫)
+      (gaussianReal 0 (Var[fun z ↦ ⟪cellVec z, t⟫; indepLaw pT pC]).toNNReal) P') :
+    HasLaw (fun ω ↦ kmMapDeriv m (cellProbs (indepLaw pT pC)) (Y ω))
+      (gaussianReal 0 (pT.toMeasure.real {t | m < t} ^ 2 *
+        greenwoodSum m (cellProbs (indepLaw pT pC))).toNNReal) P' := by
+  have h := hasLaw_apply_of_hasLaw_inner hYlaw (kmMapDeriv m (cellProbs (indepLaw pT pC)))
+  rwa [variance_kmMapDeriv_cellVec _ m hm (by rwa [kmMap_cellProbs_indepLaw pT pC m hm]),
+    kmMap_cellProbs_indepLaw pT pC m hm] at h
+
+end Variance
+
 end MathlibExt.Probability.Statistics.SurvivalAsymptotics
