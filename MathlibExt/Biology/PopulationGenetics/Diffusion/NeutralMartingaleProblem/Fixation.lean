@@ -21,13 +21,12 @@ is `meanAbsorptionTime x`. This file specializes those results to the neutral ca
 which is the case the neutral-diffusion construction targets. The solution `X` is a hypothesis
 throughout; no particular realization is assumed.
 
-For an initial frequency `x ∈ (0, 1)`:
-
-* the allele is eventually fixed with probability `x` and eventually lost with probability
-  `1 - x` (`measureReal_fixation_eq`, `measureReal_loss_eq`);
-* the absorption time is almost surely positive and has finite mean
-  `-2 (x log x + (1 - x) log (1 - x)) > 0` (`ae_absorptionTime_pos`,
-  `integral_absorptionTime_eq`, `integral_absorptionTime_pos`).
+For any initial frequency `x`, the allele is eventually fixed with probability `x` and
+eventually lost with probability `1 - x` (`measureReal_fixation_eq`, `measureReal_loss_eq`),
+and the absorption time is integrable with mean `-2 (x log x + (1 - x) log (1 - x))`
+(`integral_absorptionTime_eq`). For an interior initial frequency `x ∈ (0, 1)`, the
+absorption time is almost surely positive and its mean is strictly positive
+(`ae_absorptionTime_pos`, `integral_absorptionTime_pos`).
 
 At the boundary `x ∈ {0, 1}` the path is almost surely frozen at `x` for all time
 (`ae_forall_eq_zero`, `ae_forall_eq_one`) and the absorption time is almost surely `0`
@@ -184,7 +183,9 @@ theorem measureReal_loss_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSoluti
 
 /-- **Neutral mean absorption time (Kimura–Ohta).** For a neutral solution started at `x`, the
 absorption time is integrable and its mean, in units of `2N` generations, is
-`-2 (x log x + (1 - x) log (1 - x))`.
+`-2 (x log x + (1 - x) log (1 - x))`. This is the unfolded form of
+`KimuraFixationProcess.integral_absorptionTime`, with `meanAbsorptionTime` expanded; it adds no
+new content.
 
 Source: Kimura & Ohta (1969); Ewens (2004), ch. 4. -/
 theorem integral_absorptionTime_eq [IsProbabilityMeasure μ]
