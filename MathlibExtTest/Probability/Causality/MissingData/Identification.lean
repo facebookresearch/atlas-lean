@@ -61,6 +61,37 @@ lemma measurableSet_resp : MeasurableSet resp :=
 lemma coins_real_resp : coins.real resp = 1 / 2 := by
   rw [resp, coins_real_prod, coin_singleton, coin_real_univ, mul_one]
 
+/-! ### Identification requires an integrable outcome -/
+
+section Integrability
+
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+  [IsProbabilityMeasure μ] {R : Set Ω} (hR : MeasurableSet R)
+  {Y : Ω → ℝ} (hY : Measurable Y) (hpos : 0 < μ.real R)
+
+example (_hind : CondIndepDiscrete μ R Y (fun _ : Ω => ())) : True := by
+  fail_if_success
+    have _ : completeCaseMean μ R Y = ∫ ω, Y ω ∂μ :=
+      completeCaseMean_eq_integral_of_indep hR hY _hind hpos
+  trivial
+
+variable {β : Type*} [MeasurableSpace β] {X : Ω → β}
+  (hMCAR : CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ : Ω => ()))
+
+example : True := by
+  fail_if_success
+    have _ : completeCaseMean μ R Y = ∫ ω, Y ω ∂μ :=
+      completeCaseMean_eq_integral_of_mcar hR hY hMCAR hpos
+  trivial
+
+example : True := by
+  fail_if_success
+    have _ : (∫ ω, Y ω ∂(μ[|R])) = ∫ ω, Y ω ∂μ :=
+      integral_cond_eq_integral_of_mcar hR hY hMCAR hpos
+  trivial
+
+end Integrability
+
 /-! ### MCAR witness -/
 
 /-- **Non-vacuity of MCAR**: the first coin is independent of every function of the second
@@ -81,13 +112,15 @@ theorem mcar_resp {β : Type*} [MeasurableSpace β] (h : Bool → β) :
 example (g : Bool → ℝ) :
     completeCaseMean coins resp (fun ω => g ω.2) = ∫ ω, g ω.2 ∂coins :=
   completeCaseMean_eq_integral_of_mcar measurableSet_resp (X := fun ω => ω.2)
-    (measurable_of_finite _) (mcar_resp fun b => (b, g b)) (by rw [coins_real_resp]; norm_num)
+    (measurable_of_finite _) Integrable.of_finite (mcar_resp fun b => (b, g b))
+    (by rw [coins_real_resp]; norm_num)
 
 /-- The same identity as the mean under the conditional law given response. -/
 example (g : Bool → ℝ) :
     ∫ ω, g ω.2 ∂(coins[|resp]) = ∫ ω, g ω.2 ∂coins :=
   integral_cond_eq_integral_of_mcar measurableSet_resp (X := fun ω => ω.2)
-    (measurable_of_finite _) (mcar_resp fun b => (b, g b)) (by rw [coins_real_resp]; norm_num)
+    (measurable_of_finite _) Integrable.of_finite (mcar_resp fun b => (b, g b))
+    (by rw [coins_real_resp]; norm_num)
 
 /-- The complete-case mean is an observed-data estimand: changing the outcome off the response
 event does not change it. -/

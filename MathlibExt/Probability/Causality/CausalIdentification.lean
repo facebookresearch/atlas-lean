@@ -578,7 +578,9 @@ private lemma measureReal_inter_level [IsFiniteMeasure μ] {T : Set Ω} (hT : Me
   rw [h x, (mem_filter.1 hx).2]
 
 omit [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳] in
-private lemma setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
+/-- Conditional independence factors the outcome integral on each covariate stratum.
+No integrability is needed for this identity between proportional image measures. -/
+lemma setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
     {X : Ω → 𝒳} {Y : Ω → ℝ} (hY : Measurable Y)
     (h : CondIndepDiscrete μ T Y X) (x : 𝒳) :
     ∫ ω in T ∩ X ⁻¹' {x}, Y ω ∂μ = propensity μ T X x * ∫ ω in X ⁻¹' {x}, Y ω ∂μ := by
@@ -609,7 +611,7 @@ private lemma setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {T : Set 
 
 /-- Reweighting: if `∫_{S ∩ {X = x}} Y = p x ∫_{X = x} Y` for every `x`, and `p x ≠ 0` on
 values of positive probability, then `1_S Y / p(X)` is integrable with integral `∫ Y`. -/
-private lemma integral_indicator_div_eq {S : Set Ω} (hS : MeasurableSet S)
+lemma integral_indicator_div_eq {S : Set Ω} (hS : MeasurableSet S)
     {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hYi : Integrable Y μ) (p : 𝒳 → ℝ)
     (hp : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → p x ≠ 0)
     (hrel : ∀ x, ∫ ω in S ∩ X ⁻¹' {x}, Y ω ∂μ = p x * ∫ ω in X ⁻¹' {x}, Y ω ∂μ) :

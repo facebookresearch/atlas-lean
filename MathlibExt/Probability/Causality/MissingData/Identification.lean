@@ -40,8 +40,9 @@ so they are observed-data estimands; neither is defined as the full-data mean.
 
 ## Main results
 
-* `completeCaseMean_eq_integral_of_mcar`: under MCAR and `P(R) > 0`, the complete-case mean
-  identifies `E[Y]`; `completeCaseMean_eq_integral_of_indep` needs only `R ⊥ Y`.
+* `completeCaseMean_eq_integral_of_mcar`: for an integrable outcome, under MCAR and `P(R) > 0`,
+  the complete-case mean identifies `E[Y]`; `completeCaseMean_eq_integral_of_indep` needs only
+  `R ⊥ Y` as the independence assumption.
 * `completeCaseMean_eq_integral_cond`: the complete-case mean is the mean of `Y` under the
   conditional law `μ[|R]`.
 * `ipwMean_eq_integral_of_mar`: under MAR given a finitely-valued `X` and positivity
@@ -124,44 +125,6 @@ theorem completeCaseMean_eq_integral_cond {R : Set Ω} (hR : MeasurableSet R) (Y
 
 end Estimands
 
-/-! ### Per-stratum factorization under conditional independence -/
-
-section Factorization
-
-/-- If the response event `R` is conditionally independent of `Y` given `W`, then on each
-stratum `{W = w}` the integral of `Y` over the respondents factors as
-`∫_{R ∩ {W = w}} Y = π(w) ∫_{W = w} Y`. No integrability is needed: both sides are integrals
-against proportional image measures. -/
-private lemma setIntegral_inter_eq_propensity_mul {γ : Type*} [IsFiniteMeasure μ] {R : Set Ω}
-    {W : Ω → γ} {Y : Ω → ℝ} (hY : Measurable Y) (h : CondIndepDiscrete μ R Y W) (w : γ) :
-    ∫ ω in R ∩ W ⁻¹' {w}, Y ω ∂μ = propensity μ R W w * ∫ ω in W ⁻¹' {w}, Y ω ∂μ := by
-  set A := W ⁻¹' {w}
-  by_cases h0 : μ.real A = 0
-  · have hA0 : μ A = 0 := (measureReal_eq_zero_iff).1 h0
-    rw [Measure.restrict_eq_zero.2 hA0,
-      Measure.restrict_eq_zero.2 (measure_mono_null Set.inter_subset_right hA0)]
-    simp
-  have he : 0 ≤ propensity μ R W w := div_nonneg measureReal_nonneg measureReal_nonneg
-  have hmeas : (μ.restrict (R ∩ A)).map Y =
-      ENNReal.ofReal (propensity μ R W w) • (μ.restrict A).map Y := by
-    ext B hB
-    rw [Measure.map_apply hY hB, Measure.smul_apply, Measure.map_apply hY hB,
-      Measure.restrict_apply (hY hB), Measure.restrict_apply (hY hB), smul_eq_mul,
-      ← ofReal_measureReal, ← ofReal_measureReal, ← ENNReal.ofReal_mul he]
-    congr 1
-    have key := h B hB w
-    have hs1 : Y ⁻¹' B ∩ (R ∩ A) = R ∩ Y ⁻¹' B ∩ A := by
-      ext; simp only [Set.mem_inter_iff, Set.mem_preimage]; tauto
-    rw [hs1, propensity, div_mul_eq_mul_div, eq_div_iff h0, key]
-  calc ∫ ω in R ∩ A, Y ω ∂μ = ∫ y, y ∂((μ.restrict (R ∩ A)).map Y) :=
-        (integral_map hY.aemeasurable aestronglyMeasurable_id).symm
-    _ = propensity μ R W w * ∫ ω in A, Y ω ∂μ := by
-        rw [hmeas, integral_smul_measure, ENNReal.toReal_ofReal he, smul_eq_mul]
-        congr 1
-        exact integral_map hY.aemeasurable aestronglyMeasurable_id
-
-end Factorization
-
 /-! ### Complete-case identification under MCAR -/
 
 section MCAR
@@ -179,35 +142,38 @@ theorem integral_indicator_eq_measureReal_mul_of_indep {R : Set Ω} (hR : Measur
   rw [integral_indicator hR, h]
   simp [propensity]
 
-/-- **Complete-case identification**: if the response event is independent of the outcome,
-`R ⊥ Y`, and some units respond, `P(R) > 0`, then the complete-case mean (an observed-data
-estimand) equals the full-data mean `E[Y]`. -/
+/-- **Complete-case identification**: for an integrable outcome, if the response event is
+independent of the outcome, `R ⊥ Y`, and some units respond, `P(R) > 0`, then the complete-case
+mean (an observed-data estimand) equals the full-data mean `E[Y]`. -/
 theorem completeCaseMean_eq_integral_of_indep {R : Set Ω} (hR : MeasurableSet R)
-    {Y : Ω → ℝ} (hY : Measurable Y) (hind : CondIndepDiscrete μ R Y (fun _ : Ω => ()))
-    (hpos : 0 < μ.real R) :
+    {Y : Ω → ℝ} (hY : Measurable Y) (_hYi : Integrable Y μ)
+    (hind : CondIndepDiscrete μ R Y (fun _ : Ω => ())) (hpos : 0 < μ.real R) :
     completeCaseMean μ R Y = ∫ ω, Y ω ∂μ := by
   rw [completeCaseMean, integral_indicator_eq_measureReal_mul_of_indep hR hY hind,
     mul_div_cancel_left₀ _ hpos.ne']
 
-/-- **Complete-case identification under MCAR** (Rubin 1976): if the outcome is missing
-completely at random, `R ⊥ (X, Y)`, and `P(R) > 0`, then the complete-case mean equals the
-full-data mean `E[Y]`. -/
+/-- **Complete-case identification under MCAR** (Rubin 1976): if an integrable outcome is
+missing completely at random, `R ⊥ (X, Y)`, and `P(R) > 0`, then the complete-case mean equals
+the full-data mean `E[Y]`. -/
 theorem completeCaseMean_eq_integral_of_mcar {β : Type*} [MeasurableSpace β] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → β} {Y : Ω → ℝ} (hY : Measurable Y)
+    (hYi : Integrable Y μ)
     (hMCAR : CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ : Ω => ()))
     (hpos : 0 < μ.real R) :
     completeCaseMean μ R Y = ∫ ω, Y ω ∂μ :=
-  completeCaseMean_eq_integral_of_indep hR hY
+  completeCaseMean_eq_integral_of_indep hR hY hYi
     (fun B hB w => hMCAR (Prod.snd ⁻¹' B) (measurable_snd hB) w) hpos
 
-/-- Under MCAR and `P(R) > 0`, the mean of the outcome under the conditional law given
-response equals its full-data mean. -/
+/-- Under MCAR and `P(R) > 0`, the mean of an integrable outcome under the conditional law
+given response equals its full-data mean. -/
 theorem integral_cond_eq_integral_of_mcar {β : Type*} [MeasurableSpace β] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → β} {Y : Ω → ℝ} (hY : Measurable Y)
+    (hYi : Integrable Y μ)
     (hMCAR : CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ : Ω => ()))
     (hpos : 0 < μ.real R) :
     ∫ ω, Y ω ∂(μ[|R]) = ∫ ω, Y ω ∂μ := by
-  rw [← completeCaseMean_eq_integral_cond hR, completeCaseMean_eq_integral_of_mcar hR hY hMCAR hpos]
+  rw [← completeCaseMean_eq_integral_cond hR,
+    completeCaseMean_eq_integral_of_mcar hR hY hYi hMCAR hpos]
 
 end MCAR
 
@@ -216,42 +182,6 @@ end MCAR
 section MARDiscrete
 
 variable {𝒳 : Type*} [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳]
-
-/-- Reweighting: if `∫_{S ∩ {X = x}} Y = p x ∫_{X = x} Y` for every `x`, and `p x ≠ 0` on
-values of positive probability, then `1_S Y / p(X)` is integrable with integral `∫ Y`. -/
-private lemma integral_indicator_div_eq {S : Set Ω} (hS : MeasurableSet S)
-    {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hYi : Integrable Y μ) (p : 𝒳 → ℝ)
-    (hp : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → p x ≠ 0)
-    (hrel : ∀ x, ∫ ω in S ∩ X ⁻¹' {x}, Y ω ∂μ = p x * ∫ ω in X ⁻¹' {x}, Y ω ∂μ) :
-    Integrable (S.indicator fun ω => Y ω / p (X ω)) μ ∧
-      ∫ ω, S.indicator (fun ω => Y ω / p (X ω)) ω ∂μ = ∫ ω, Y ω ∂μ := by
-  have := Fintype.ofFinite 𝒳
-  have hU : (⋃ x, X ⁻¹' {x}) = Set.univ := by ext ω; simp
-  have hA : ∀ x : 𝒳, MeasurableSet (X ⁻¹' {x}) := fun x => hX (measurableSet_singleton x)
-  have hdisj : Pairwise (Function.onFun Disjoint fun x : 𝒳 => X ⁻¹' {x}) := fun x y hxy =>
-    Set.disjoint_left.2 fun ω h1 h2 => hxy (h1.symm.trans h2)
-  have heq : ∀ x, Set.EqOn (S.indicator fun ω => Y ω / p (X ω))
-      (fun ω => S.indicator Y ω * (p x)⁻¹) (X ⁻¹' {x}) := by
-    intro x ω hω
-    have hω' : X ω = x := hω
-    by_cases hS' : ω ∈ S <;> simp [hS', hω', div_eq_mul_inv]
-  have hon : ∀ x, IntegrableOn (S.indicator fun ω => Y ω / p (X ω)) (X ⁻¹' {x}) μ := fun x =>
-    (((hYi.indicator hS).mul_const (p x)⁻¹).integrableOn).congr_fun (heq x).symm (hA x)
-  have hint : Integrable (S.indicator fun ω => Y ω / p (X ω)) μ := by
-    rw [← integrableOn_univ, ← hU]
-    exact integrableOn_finite_iUnion.2 hon
-  refine ⟨hint, ?_⟩
-  have hsplit : ∀ g : Ω → ℝ, (∀ x, IntegrableOn g (X ⁻¹' {x}) μ) →
-      ∫ ω, g ω ∂μ = ∑ x, ∫ ω in X ⁻¹' {x}, g ω ∂μ := by
-    intro g hg
-    rw [← setIntegral_univ, ← hU, integral_iUnion_fintype hA hdisj hg]
-  rw [hsplit _ hon, hsplit _ fun x => hYi.integrableOn]
-  refine sum_congr rfl fun x _ => ?_
-  rw [setIntegral_congr_fun (hA x) (heq x), integral_mul_const, setIntegral_indicator hS,
-    Set.inter_comm, hrel x]
-  by_cases h0 : μ (X ⁻¹' {x}) = 0
-  · rw [Measure.restrict_eq_zero.2 h0]; simp
-  · field_simp [hp x h0]
 
 variable [IsFiniteMeasure μ]
 
