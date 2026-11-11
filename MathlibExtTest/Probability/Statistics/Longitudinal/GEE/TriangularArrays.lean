@@ -83,7 +83,7 @@ example : ¬ LindebergConditionTriangular dominantArray fairCoin := by
   refine not_lindeberg_of_dominant_cluster dominantArray (fun _ _ _ => measurable_of_finite _)
     (fun _ _ _ => Integrable.of_finite) (fun _ => 0)
     ((eventually_ge_atTop 1).mono fun n hn => mem_range.2 (by omega)) one_pos
-    (Eventually.of_forall fun n => ?_)
+    (Eventually.of_forall fun n => ?_).frequently
   have : (fun b => dominantArray n 0 b ^ 2) = fun _ => (1 : ℝ) := by
     funext b; cases b <;> simp [dominantArray]
   rw [this, integral_const, probReal_univ, smul_eq_mul, mul_one]

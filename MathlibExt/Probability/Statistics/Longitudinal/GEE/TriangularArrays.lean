@@ -36,6 +36,9 @@ Cluster `i` of row `n` has score `U n i` (law `P_{n,i}`, allowed to vary with `n
 `m n i`; the number of clusters in row `n` is `n`. The normalization is not `√n` but the row
 standard deviation `Bₙ = √(∑_{i<n} 𝔼[U n i²])` (`rowVariance`), and the hypothesis is the
 Lindeberg condition of `MathlibExt.Probability.LindebergFeller` instead of identical laws.
+The results in this part are CLTs for the standardized score sum `Ψₙ(β₀) / Bₙ`, with
+`U n i = ψ_{n,i}(β₀)` the cluster scores at the true parameter; they involve no estimator
+`β̂ₙ`. Turning them into a CLT for a root needs the usual linearization step, not done here.
 
 **Allowed growth of cluster sizes.** Suppose each within-cluster residual is bounded by `K`,
 so `|U n i| ≤ K · m n i` with arbitrary within-cluster dependence (`abs_clusterScore_le`).
@@ -48,7 +51,8 @@ Write `Mₙ = maxᵢ m n i` (`maxClusterSize`) and `Nₙ = ∑ᵢ m n i` (`total
 * `triangular_cluster_clt`: under `K · Mₙ / Bₙ → 0`, `∑ᵢ U n i / Bₙ ⇒ N(0, 1)`.
 * `triangular_cluster_clt_of_growth`: if each cluster carries at least `c > 0` units of
   variance per observation (`c · m n i ≤ 𝔼[U n i²]`), the explicit growth condition is
-  `ClusterGrowth m`: `Mₙ² / Nₙ → 0`, i.e. **the largest cluster is `o(√Nₙ)`**.
+  `ClusterGrowth m`: `Mₙ² / Nₙ → 0`, i.e. **the largest cluster is `o(√Nₙ)`**. This growth
+  condition is sufficient, not necessary.
 * `clusterGrowth_balanced`: for balanced clusters of size `sₙ` the condition reads
   `sₙ / n → 0`; cluster sizes may grow, but slower than the number of clusters.
   `clusterGrowth_const` recovers the fixed-size (iid-compatible) case.
@@ -57,10 +61,14 @@ Write `Mₙ = maxᵢ m n i` (`maxClusterSize`) and `Nₙ = ∑ᵢ m n i` (`total
 
 * **Growing dominant cluster.** `lindeberg_tendsto_zero_of_mem` shows Lindeberg forces every
   single normalized cluster variance to `0`, so `not_lindeberg_of_dominant_cluster`: a cluster
-  holding a fixed share `δ > 0` of the row variance breaks Lindeberg. With sizes
+  holding a share `≥ δ > 0` of the row variance infinitely often breaks Lindeberg. With sizes
   `dominantSizes` (cluster `0` has size `n`, the others size `1`) and variance proportional to
   size, cluster `0` keeps at least half the variance (`not_lindeberg_dominantSizes`) and the
-  growth condition fails (`not_clusterGrowth_dominantSizes`).
+  growth condition fails (`not_clusterGrowth_dominantSizes`). This shows the Lindeberg
+  condition failing, not asymptotic normality failing: with independent bounded residuals the
+  `dominantSizes` row total is a sum of `2n - 1` independent bounded terms and is still
+  asymptotically normal. Whether normality holds when `Mₙ` grows between `o(√Nₙ)` and `Θ(Nₙ)`
+  is not addressed here.
 * **No estimating-equation root.** For the binary-response (logistic-mean) cluster estimating
   function `binaryEE`, if every observation is a success the function is strictly positive,
   so it has no zero (`binaryEE_no_root`) and no root-defined estimator exists.
@@ -103,14 +111,14 @@ lemma le_maxClusterSize {m : ℕ → ℕ → ℕ} {n i : ℕ} (hi : i ∈ range 
     m n i ≤ maxClusterSize m n :=
   Finset.le_sup hi
 
-/-- **Allowed growth of cluster sizes**: the largest cluster is `o(√Nₙ)`, stated as
-`Mₙ² / Nₙ → 0`. -/
+/-- **Allowed growth of cluster sizes** (sufficient, not necessary): the largest cluster is
+`o(√Nₙ)`, stated as `Mₙ² / Nₙ → 0`. -/
 def ClusterGrowth (m : ℕ → ℕ → ℕ) : Prop :=
   Tendsto (fun n => (maxClusterSize m n : ℝ) ^ 2 / totalSize m n) atTop (𝓝 0)
 
-/-- Balanced clusters of size `sₙ` satisfy the growth condition iff `sₙ / n → 0`; here the
-sufficient direction: cluster sizes may grow, as long as they grow slower than the number of
-clusters. -/
+/-- Balanced clusters of size `sₙ` satisfy the growth condition when `sₙ / n → 0`: cluster
+sizes may grow, as long as they grow slower than the number of clusters. (For `n ≥ 1`,
+`Mₙ² / Nₙ = sₙ / n`, so the converse also holds; only this direction is proved.) -/
 theorem clusterGrowth_balanced (s : ℕ → ℕ) (hs : ∀ n, 0 < s n)
     (h : Tendsto (fun n => (s n : ℝ) / n) atTop (𝓝 0)) :
     ClusterGrowth (fun n _ => s n) := by
@@ -412,17 +420,18 @@ theorem lindeberg_tendsto_zero_of_mem {μ : Measure Ω} [IsProbabilityMeasure μ
     _ < b / 2 + b / 2 := by rw [hε2]; linarith
     _ = b := add_halves b
 
-/-- **A dominant cluster breaks Lindeberg.** If some cluster `k n` keeps at least a fixed share
-`δ > 0` of the normalized row variance, the Lindeberg condition fails. -/
+/-- **A dominant cluster breaks Lindeberg.** If some cluster `k n` holds at least a share
+`δ > 0` of the normalized row variance for infinitely many `n` (`limsup` share `> 0`), the
+Lindeberg condition fails. -/
 theorem not_lindeberg_of_dominant_cluster {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : ℕ → ℕ → Ω → ℝ) (hmeas : ∀ n, ∀ k ∈ range n, Measurable (X n k))
     (hint2 : ∀ n, ∀ k ∈ range n, Integrable (fun ω => (X n k ω) ^ 2) μ)
     (k : ℕ → ℕ) (hk : ∀ᶠ n in atTop, k n ∈ range n) {δ : ℝ} (hδ : 0 < δ)
-    (hdom : ∀ᶠ n in atTop, δ ≤ ∫ ω, (X n (k n) ω) ^ 2 ∂μ) :
+    (hdom : ∃ᶠ n in atTop, δ ≤ ∫ ω, (X n (k n) ω) ^ 2 ∂μ) :
     ¬ LindebergConditionTriangular X μ := by
   intro hL
   obtain ⟨n, hn1, hn2⟩ := ((lindeberg_tendsto_zero_of_mem X hmeas hint2 hL k hk).eventually
-    (gt_mem_nhds hδ)).and hdom |>.exists
+    (gt_mem_nhds hδ)).and_frequently hdom |>.exists
   linarith
 
 /-- **Growing dominant cluster, cluster-size form.** With sizes `dominantSizes` (cluster `0`
@@ -442,7 +451,7 @@ theorem not_lindeberg_dominantSizes {μ : Measure Ω} [IsProbabilityMeasure μ]
   refine not_lindeberg_of_dominant_cluster _ (fun n i hi => (hmeas n i hi).div_const _)
     (fun n i hi => by simpa only [div_pow] using (hint2 n i hi).div_const _) (fun _ => 0)
     ((eventually_ge_atTop 1).mono fun n hn => mem_range.2 (by omega))
-    (by norm_num : (0 : ℝ) < 1 / 2) ((eventually_ge_atTop 1).mono fun n hn => ?_)
+    (by norm_num : (0 : ℝ) < 1 / 2) ((eventually_ge_atTop 1).mono fun n hn => ?_).frequently
   obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
   have hVpos : 0 < rowVariance U μ (k + 1) := by
     rw [hV, totalSize_dominantSizes]; positivity
