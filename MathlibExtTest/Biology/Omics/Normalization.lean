@@ -112,6 +112,13 @@ example : ∃ (n : Fin 2 → ℝ) (hn : ∀ i, 0 ≤ n i) (h2n : ∀ i, 0 ≤ ((
     clr (withPseudocount 1 one_pos ((2 : ℝ) • n) h2n) ≠ clr (withPseudocount 1 one_pos n hn) :=
   exists_clr_withPseudocount_smul_ne
 
+/-- Constant counts `(1, 1)` with fixed pseudocount `1`: doubling them leaves CLR unchanged, the
+equal-counts case of `clr_withPseudocount_smul_eq_iff`. -/
+example : clr (withPseudocount 1 one_pos ((2 : ℝ) • fun _ : Fin 2 => (1 : ℝ))
+      (fun _ => by simp)) =
+    clr (withPseudocount 1 one_pos (fun _ : Fin 2 => (1 : ℝ)) (fun _ => zero_le_one)) :=
+  (clr_withPseudocount_smul_eq_iff 1 one_pos 2 two_pos (by norm_num) _ _).2 fun _ _ => rfl
+
 /-! ### Boundary: no parts -/
 
 example (x : PosComposition (Fin 0)) : ∑ i, clr x i = 0 := sum_clr x
@@ -120,11 +127,13 @@ example (x : PosComposition (Fin 0)) : ∑ i, clr x i = 0 := sum_clr x
 
 #print axioms clr_smul
 #print axioms clr_perm
+#print axioms clr_le_clr_iff
 #print axioms sum_clr
 #print axioms clr_eq_clr_iff
 #print axioms exists_clr_eq_sum_eq
 #print axioms not_exists_total_of_clr
 #print axioms clr_withPseudocount_smul
+#print axioms clr_withPseudocount_smul_eq_iff
 #print axioms exists_clr_withPseudocount_smul_ne
 #print axioms clr_withPseudocount_le_of_eq_zero
 

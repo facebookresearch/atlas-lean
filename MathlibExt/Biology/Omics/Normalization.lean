@@ -14,6 +14,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -33,9 +34,10 @@ OMICS-02.1.
 `clr` is defined only on `PosComposition ι`, the strictly positive vectors, so no statement here
 evaluates `log 0`. Count data containing zeros enter only through the named pseudocount rule
 `withPseudocount c n`, which adds one fixed `c > 0` to every count `n i ≥ 0` before the
-transform. Its effects are proved rather than assumed: it does not commute with rescaling the
-counts unless the pseudocount is rescaled too, and it sends every zero count to the smallest CLR
-coordinate of the sample.
+transform. Its effects are proved rather than assumed: rescaling the pseudocount with the counts
+keeps CLR unchanged; with a fixed pseudocount, rescaling the counts by `t ≠ 1` keeps CLR unchanged
+exactly when the counts are all equal, so scale invariance fails in general; and every zero count
+gets the smallest CLR coordinate of the sample.
 
 ## Main definitions
 
@@ -59,8 +61,10 @@ Information loss:
 
 Zero policy:
 * `clr_withPseudocount_smul`: rescaling counts and pseudocount together leaves CLR unchanged.
-* `exists_clr_withPseudocount_smul_ne`: with the pseudocount fixed, rescaling the counts can
-  change CLR (scale invariance is lost).
+* `clr_withPseudocount_smul_eq_iff`: with the pseudocount fixed and `t ≠ 1`, rescaling the counts
+  by `t` leaves CLR unchanged if and only if all counts are equal.
+* `exists_clr_withPseudocount_smul_ne`: a concrete case where a fixed pseudocount breaks scale
+  invariance.
 * `clr_withPseudocount_le_of_eq_zero`: a zero count gets the minimal CLR coordinate.
 
 ## References
@@ -197,20 +201,50 @@ positive composition `n + c` for a fixed pseudocount `c > 0`; CLR is then applie
 def withPseudocount (c : ℝ) (hc : 0 < c) (n : ι → ℝ) (hn : ∀ i, 0 ≤ n i) : PosComposition ι :=
   ⟨fun i => n i + c, fun i => add_pos_of_nonneg_of_pos (hn i) hc⟩
 
-/-- Rescaling the counts by `t > 0` and the pseudocount by the same `t` leaves CLR unchanged: the
-pseudocount policy is scale invariant only when the pseudocount is measured in the same units as
-the counts. -/
+/-- Rescaling the counts by `t > 0` and the pseudocount by the same `t` leaves CLR unchanged. -/
 theorem clr_withPseudocount_smul (c : ℝ) (hc : 0 < c) (t : ℝ) (ht : 0 < t) (n : ι → ℝ)
-    (hn : ∀ i, 0 ≤ n i) (htn : ∀ i, 0 ≤ (t • n) i) :
-    clr (withPseudocount (t * c) (mul_pos ht hc) (t • n) htn) =
+    (hn : ∀ i, 0 ≤ n i) :
+    clr (withPseudocount (t * c) (mul_pos ht hc) (t • n)
+        (fun i => by simpa using mul_nonneg ht.le (hn i))) =
       clr (withPseudocount c hc n hn) := by
-  have : withPseudocount (t * c) (mul_pos ht hc) (t • n) htn =
+  have : withPseudocount (t * c) (mul_pos ht hc) (t • n)
+      (fun i => by simpa using mul_nonneg ht.le (hn i)) =
       (withPseudocount c hc n hn).smul t ht := by
     apply Subtype.ext
     funext i
     simp only [withPseudocount, PosComposition.smul, Pi.smul_apply, smul_eq_mul]
     ring
   rw [this, clr_smul]
+
+/-- **Scale invariance under a fixed pseudocount.** With the pseudocount `c` fixed and a scale
+factor `t ≠ 1`, rescaling the counts by `t` leaves CLR unchanged if and only if all counts are
+equal. -/
+theorem clr_withPseudocount_smul_eq_iff (c : ℝ) (hc : 0 < c) (t : ℝ) (ht : 0 < t) (ht1 : t ≠ 1)
+    (n : ι → ℝ) (hn : ∀ i, 0 ≤ n i) :
+    clr (withPseudocount c hc (t • n) (fun i => by simpa using mul_nonneg ht.le (hn i))) =
+        clr (withPseudocount c hc n hn) ↔ ∀ i j, n i = n j := by
+  constructor
+  · intro h i j
+    obtain ⟨s, _hs, hy⟩ := clr_eq_clr_iff.1 h.symm
+    have hi := congrFun (congrArg Subtype.val hy) i
+    have hj := congrFun (congrArg Subtype.val hy) j
+    simp only [withPseudocount, PosComposition.smul, Pi.smul_apply, smul_eq_mul] at hi hj
+    -- `hi : t * n i + c = s * (n i + c)`, `hj : t * n j + c = s * (n j + c)`
+    by_contra hne
+    have hts : t = s := by
+      have : (t - s) * (n i - n j) = 0 := by linear_combination hi - hj
+      exact sub_eq_zero.1 ((mul_eq_zero.1 this).resolve_right (sub_ne_zero.2 hne))
+    subst hts
+    have : (t - 1) * c = 0 := by linear_combination -hi
+    exact ht1 (sub_eq_zero.1 ((mul_eq_zero.1 this).resolve_right hc.ne'))
+  · intro hconst
+    rcases isEmpty_or_nonempty ι with h | ⟨⟨i₀⟩⟩
+    · funext i; exact isEmptyElim i
+    have hpos : 0 < t * n i₀ + c := add_pos_of_nonneg_of_pos (mul_nonneg ht.le (hn i₀)) hc
+    refine clr_eq_clr_iff.2 ⟨(n i₀ + c) / (t * n i₀ + c),
+      div_pos (add_pos_of_nonneg_of_pos (hn i₀) hc) hpos, Subtype.ext (funext fun i => ?_)⟩
+    simp only [withPseudocount, PosComposition.smul, Pi.smul_apply, smul_eq_mul, hconst i i₀]
+    exact (div_mul_cancel₀ _ hpos.ne').symm
 
 /-- **A fixed pseudocount breaks scale invariance.** For the counts `(0, 1)` with pseudocount
 `1`, doubling the counts changes the CLR transform. -/
