@@ -207,6 +207,20 @@ noncomputable def rankOneData (i : ℕ) (ω : ℕ → E2) : E2 := rankOne (ω i)
 example (ω : ℕ → E2) : ⟪rankOneData 0 ω, EuclideanSpace.single 1 1⟫ = 0 := by
   simp [rankOneData, rankOne, EuclideanSpace.inner_single_right]
 
+/-- The covariance is not zero either: the direction `e₀` carries variance `1`, so the data
+covariance has rank exactly one. -/
+example : Var[fun ω => ⟪rankOneData 0 ω, EuclideanSpace.single 0 1⟫; gaussSeq2] = 1 := by
+  have hfun : (fun ω => ⟪rankOneData 0 ω, EuclideanSpace.single (0 : Fin 2) (1 : ℝ)⟫) =
+      fun ω : ℕ → E2 => innerSL ℝ (EuclideanSpace.single (0 : Fin 2) (1 : ℝ)) (ω 0) := by
+    funext ω
+    simp [rankOneData, rankOne, EuclideanSpace.inner_single_right,
+      EuclideanSpace.inner_single_left]
+  have hmp : MeasurePreserving (fun ω : ℕ → E2 => ω 0) gaussSeq2 (stdGaussian E2) :=
+    measurePreserving_eval_infinitePi _ 0
+  rw [hfun, hmp.variance_fun_comp (innerSL ℝ _).continuous.aemeasurable,
+    variance_dual_stdGaussian, innerSL_apply_norm]
+  simp
+
 theorem rankOneData_hyps :
     MemLp (rankOneData 0) 2 gaussSeq2 ∧ iIndepFun rankOneData gaussSeq2 ∧
       ∀ i, IdentDistrib (rankOneData i) (rankOneData 0) gaussSeq2 gaussSeq2 := by
