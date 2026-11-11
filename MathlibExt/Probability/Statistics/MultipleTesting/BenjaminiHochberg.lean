@@ -22,7 +22,8 @@ finds the largest `k ≤ m` such that at least `k` p-values are `≤ q k / m` (e
 `|R ∩ H0| / max |R| 1`, and the false discovery rate (FDR) is its expectation.
 
 Benjamini and Hochberg proved that for independent p-values, with the true-null p-values
-uniform on `[0, 1]`, the procedure controls the FDR at level `q |H0| / m ≤ q`, whatever the
+super-uniform (valid: `P(p_i ≤ t) ≤ t` for `t ∈ [0, 1]`, as for uniform or properly calibrated
+discrete p-values), the procedure controls the FDR at level `q |H0| / m ≤ q`, whatever the
 distribution of the false-null p-values. This is the multiple-testing guarantee used for
 genome-wide association and differential-expression analyses.
 
@@ -30,8 +31,11 @@ genome-wide association and differential-expression analyses.
 
 * `bhIndex_le_numBelow`, `le_bhIndex`: `bhIndex q p` is the largest qualifying `k`.
 * `card_bhRejections`: BH at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses.
-* `integral_falseDiscoveryProportion_bhRejections_le`: `E[FDP] ≤ q |H0| / m`
+* `integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue`: `E[FDP] ≤ q |H0| / m`
+  for independent p-values whose true-null p-values are valid (super-uniform)
   (Benjamini–Hochberg 1995, Theorem 1).
+* `integral_falseDiscoveryProportion_bhRejections_le`: the special case of uniform true-null
+  p-values.
 
 ## References
 
@@ -226,20 +230,10 @@ private theorem indep_bhIndex_update {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   rw [heq]
   exact h
 
-private theorem uniform_measure_le {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    (X : Ω → ℝ) (hX : HasLaw X (volume.restrict (Set.Icc (0 : ℝ) 1)) μ)
-    {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t ≤ 1) : μ.real {ω | X ω ≤ t} = t := by
-  rw [hX.measureReal_eq measurableSet_Iic]
-  change (volume.restrict (Set.Icc (0 : ℝ) 1)).real (Set.Iic t) = t
-  rw [measureReal_restrict_apply measurableSet_Iic]
-  have hset : Set.Iic t ∩ Set.Icc (0 : ℝ) 1 = Set.Icc 0 t := by
-    ext x
-    simp only [Set.mem_inter_iff, Set.mem_Iic, Set.mem_Icc]
-    constructor
-    · tauto
-    · rintro ⟨hx₀, hxt⟩
-      exact ⟨hxt, hx₀, hxt.trans ht₁⟩
-  rw [hset, Real.volume_real_Icc_of_le ht₀, sub_zero]
+private theorem valid_measureReal_le {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    (X : Ω → ℝ) (hX : IsValidPValue μ X) {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t ≤ 1) :
+    μ.real {ω | X ω ≤ t} ≤ t :=
+  ENNReal.toReal_le_of_le_ofReal ht₀ (hX t ⟨ht₀, ht₁⟩)
 
 private theorem threshold_le_one {m k : ℕ} {q : ℝ} (hq₁ : q ≤ 1)
     (hm : 0 < m) (hkm : k ≤ m) : q * (k : ℝ) / m ≤ 1 := by
@@ -292,15 +286,15 @@ private theorem measurable_bh_update {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   · exact measurable_const
   · exact hp j
 
-private theorem integral_bh_contribution {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
+private theorem integral_bh_contribution_le {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ)
     (hp : ∀ i, Measurable (p i)) (hindep : iIndepFun p μ) (i : Fin m)
-    (hnull : HasLaw (p i) (volume.restrict (Set.Icc (0 : ℝ) 1)) μ)
+    (hnull : IsValidPValue μ (p i))
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) (hm : 0 < m) :
     ∫ ω, (∑ k ∈ Finset.Icc 1 m,
       {ω | p i ω ≤ q * (k : ℝ) / m ∧
         bhIndex q (Function.update (fun j => p j ω) i 0) = k}.indicator
-        (fun _ => 1 / (k : ℝ)) ω) ∂μ = q / m := by
+        (fun _ => 1 / (k : ℝ)) ω) ∂μ ≤ q / m := by
   classical
   let K := fun ω => bhIndex q (Function.update (fun j => p j ω) i 0)
   have hK : Measurable K := measurable_bh_update p hp q i
@@ -308,7 +302,7 @@ private theorem integral_bh_contribution {m : ℕ} {Ω : Type*} [MeasurableSpace
     (measurableSet_le (hp i) measurable_const).inter (measurableSet_eq_fun hK measurable_const)
   have hind := indep_bhIndex_update μ p hp hindep q i
   have hprob (k : ℕ) (hk : k ∈ Finset.Icc 1 m) :
-      μ.real {ω | p i ω ≤ q * (k : ℝ) / m ∧ K ω = k} =
+      μ.real {ω | p i ω ≤ q * (k : ℝ) / m ∧ K ω = k} ≤
         (q * (k : ℝ) / m) * μ.real {ω | K ω = k} := by
     have h := hind.measure_inter_preimage_eq_mul (Set.Iic (q * (k : ℝ) / m)) {k}
       measurableSet_Iic (measurableSet_singleton k)
@@ -316,8 +310,9 @@ private theorem integral_bh_contribution {m : ℕ} {Ω : Type*} [MeasurableSpace
         μ.real {ω | p i ω ≤ q * (k : ℝ) / m} * μ.real {ω | K ω = k} := by
       simpa [K, Set.preimage, Set.inter_def, measureReal_def, ENNReal.toReal_mul]
         using congrArg ENNReal.toReal h
-    rw [hr, uniform_measure_le μ (p i) hnull (threshold_nonneg hq₀)
-      (threshold_le_one hq₁ hm (Finset.mem_Icc.mp hk).2)]
+    rw [hr]
+    exact mul_le_mul_of_nonneg_right (valid_measureReal_le μ (p i) hnull (threshold_nonneg hq₀)
+      (threshold_le_one hq₁ hm (Finset.mem_Icc.mp hk).2)) measureReal_nonneg
   have hsum : (∑ k ∈ Finset.Icc 1 m, μ.real {ω | K ω = k}) = 1 := by
     have hpre : K ⁻¹' (↑(Finset.Icc 1 m) : Set ℕ) = Set.univ := by
       ext ω
@@ -333,25 +328,31 @@ private theorem integral_bh_contribution {m : ℕ} {Ω : Type*} [MeasurableSpace
   simp_rw [integral_indicator_const _ (hevent _), smul_eq_mul]
   calc
     (∑ k ∈ Finset.Icc 1 m, μ.real {ω | p i ω ≤ q * (k : ℝ) / m ∧ K ω = k} *
-        (1 / (k : ℝ))) = ∑ k ∈ Finset.Icc 1 m, (q / m) * μ.real {ω | K ω = k} := by
-      apply Finset.sum_congr rfl
+        (1 / (k : ℝ))) ≤ ∑ k ∈ Finset.Icc 1 m, (q / m) * μ.real {ω | K ω = k} := by
+      apply Finset.sum_le_sum
       intro k hk
-      rw [hprob k hk]
       have hk₀ : (k : ℝ) ≠ 0 := by exact_mod_cast (by
         have := (Finset.mem_Icc.mp hk).1; omega : k ≠ 0)
-      field_simp
+      calc
+        μ.real {ω | p i ω ≤ q * (k : ℝ) / m ∧ K ω = k} * (1 / (k : ℝ)) ≤
+            (q * (k : ℝ) / m) * μ.real {ω | K ω = k} * (1 / (k : ℝ)) :=
+          mul_le_mul_of_nonneg_right (hprob k hk) (by positivity)
+        _ = (q / m) * μ.real {ω | K ω = k} := by field_simp
     _ = q / m := by rw [← Finset.mul_sum, hsum, mul_one]
 
-/-- **Benjamini–Hochberg FDR control.** If the p-values are independent and every true-null
-p-value is uniformly distributed on `[0, 1]`, the BH procedure at level `q ∈ [0, 1]` has false
-discovery rate at most `q |H0| / m`. Nothing is assumed about the false-null p-values beyond
-measurability and independence. (For `m = 0` both sides are `0`.)
+/-- **Benjamini–Hochberg FDR control for super-uniform nulls.** If the p-values are independent
+and every true-null p-value is valid (super-uniform: `μ {p i ≤ t} ≤ t` for `t ∈ [0, 1]`), the BH
+procedure at level `q ∈ [0, 1]` has false discovery rate at most `q |H0| / m`. Properly
+calibrated discrete p-values, such as those of permutation or exact tests, are included. Nothing
+is assumed about the false-null p-values beyond measurability and independence. (For `m = 0`
+both sides are `0`.)
 
-Source: Benjamini & Hochberg (1995), Theorem 1. -/
-theorem integral_falseDiscoveryProportion_bhRejections_le {Ω : Type*}
+Source: Benjamini & Hochberg (1995), Theorem 1, whose proof uses only `P(p_i ≤ t) ≤ t` for the
+true nulls. -/
+theorem integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue {Ω : Type*}
     [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ)
     (hp : ∀ i, Measurable (p i)) (hindep : iIndepFun p μ) (H0 : Finset (Fin m))
-    (hnull : ∀ i ∈ H0, HasLaw (p i) (volume.restrict (Set.Icc (0 : ℝ) 1)) μ)
+    (hnull : ∀ i ∈ H0, IsValidPValue μ (p i))
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ ≤ q * H0.card / m := by
   classical
@@ -376,15 +377,30 @@ theorem integral_falseDiscoveryProportion_bhRejections_le {Ω : Type*}
       intro i hi
       rw [bh_contribution_eq_sum hq₀]
       simp only [F, Set.indicator_apply, Set.mem_ofPred_eq]
-    apply le_of_eq
     calc
       (∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ) =
           ∫ ω, ∑ i ∈ H0, F i ω ∂μ := integral_congr_ae (Filter.Eventually.of_forall heq)
       _ = ∑ i ∈ H0, ∫ ω, F i ω ∂μ := integral_finsetSum H0 (fun i _ => hF i)
-      _ = ∑ i ∈ H0, q / m := by
-        apply Finset.sum_congr rfl
+      _ ≤ ∑ i ∈ H0, q / m := by
+        apply Finset.sum_le_sum
         intro i hi
-        exact integral_bh_contribution μ p hp hindep i (hnull i hi) q hq₀ hq₁ hmpos
+        exact integral_bh_contribution_le μ p hp hindep i (hnull i hi) q hq₀ hq₁ hmpos
       _ = q * H0.card / m := by simp [Finset.sum_const, nsmul_eq_mul]; ring
+
+/-- **Benjamini–Hochberg FDR control.** If the p-values are independent and every true-null
+p-value is uniformly distributed on `[0, 1]`, the BH procedure at level `q ∈ [0, 1]` has false
+discovery rate at most `q |H0| / m`. Nothing is assumed about the false-null p-values beyond
+measurability and independence. (For `m = 0` both sides are `0`.) This is the uniform case of
+`integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue`.
+
+Source: Benjamini & Hochberg (1995), Theorem 1. -/
+theorem integral_falseDiscoveryProportion_bhRejections_le {Ω : Type*}
+    [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ)
+    (hp : ∀ i, Measurable (p i)) (hindep : iIndepFun p μ) (H0 : Finset (Fin m))
+    (hnull : ∀ i ∈ H0, HasLaw (p i) (volume.restrict (Set.Icc (0 : ℝ) 1)) μ)
+    (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ ≤ q * H0.card / m :=
+  integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue μ p hp hindep H0
+    (fun i hi => isValidPValue_of_hasLaw_uniform (hnull i hi)) q hq₀ hq₁
 
 end MathlibExt.Probability.Statistics.MultipleTesting
