@@ -293,6 +293,32 @@ example :
     (stronglyMeasurable_cell _ _) .of_finite .of_finite (by norm_num : (0 : ℝ) < 1 / 4)
     (bounded (by norm_num) (by norm_num) (by norm_num) (by norm_num)) propensity_true.symm
 
+/-- A direct finite-sum check of the propensity-correct example: both sides equal `2`. -/
+example :
+    ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 2) (1 / 4)) (cell (-1) 2) (cell 0 5) i
+      ∂unif6 = 2 ∧ ∫ i, (Y₁ i - Y₀ i) ∂unif6 = 2 := by
+  rw [integral_unif6, integral_unif6]
+  simp [aipwScoreOfSigma, observed, cell, X, T, Y₀, Y₁, Set.indicator]
+  norm_num
+
+/-- **Both nuisances wrong, non-constant nuisances**: `e = (1/4 | 3/4) ≠ e*` and
+`g₀ = g₁ = 0`. The score has mean `20/9` against an ATE of `2`, a bias of `2/9`, which is the
+product-of-errors formula: `(1/3)(1/4)(12 + 4/3) + (2/3)(-1/2)(8/3) = 2/9`. -/
+theorem covariate_bias_both_wrong :
+    ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 4) (3 / 4)) (cell 0 0) (cell 0 0) i
+      ∂unif6 - ∫ i, (Y₁ i - Y₀ i) ∂unif6 = 2 / 9 := by
+  rw [integral_unif6, integral_unif6]
+  simp [aipwScoreOfSigma, observed, cell, X, T, Y₀, Y₁, Set.indicator]
+  norm_num
+
+theorem covariate_bias_both_wrong_ne_zero :
+    ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 4) (3 / 4)) (cell 0 0) (cell 0 0) i
+      ∂unif6 ≠ ∫ i, (Y₁ i - Y₀ i) ∂unif6 := by
+  intro h
+  have := covariate_bias_both_wrong
+  rw [h, sub_self] at this
+  norm_num at this
+
 /-- **Outcome regressions correct only, non-constant nuisances**: `g₁ = μ₁* = (3 | 2)`,
 `g₀ = μ₀* = (1 | 0)` and the wrong propensity `e = (1/4 | 3/4)`. -/
 example :
