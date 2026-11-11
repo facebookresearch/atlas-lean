@@ -116,11 +116,18 @@ example : relatedness y z₀ * 4 - 1 < 0 := by
   rw [relatedness_of_popCov_self_eq_zero popCov_z₀_z₀]
   norm_num
 
-/-- The conclusion of `hamilton_rule_neg` fails at zero variance, although every other
-hypothesis holds (additive fitness, `w̄ = 3 > 0`, zero residual, faithful transmission). -/
-example : ¬ (meanTraitChange w₀ z₀ z₀ < 0 ↔ relatedness y z₀ * 4 < 1) := by
-  rw [meanTraitChange_w₀, relatedness_of_popCov_self_eq_zero popCov_z₀_z₀]
-  norm_num
+/-- `hamilton_rule_neg` without its hypothesis `Var(z) ≠ 0` is false: the remaining hypotheses
+(additive fitness, `w̄ > 0`, zero residual covariance, zero transmission) do not imply its
+conclusion. The monomorphic population `w₀`, `z₀` (with `w̄ = 3`) is the counterexample. -/
+example : ¬ ∀ (w y z z' e : Fin 4 → ℝ) (α b c : ℝ), w = additiveFitness α b c y z e →
+    0 < 𝔼 i, w i → popCov e z = 0 → transmission w z z' = 0 →
+    (meanTraitChange w z z' < 0 ↔ relatedness y z * b < c) := by
+  intro h
+  have h₀ := h w₀ y z₀ z₀ 0 1 4 1 rfl
+    (by rw [Fintype.expect_eq_sum_div_card, sum_w₀]; norm_num) (popCov_zero_left z₀)
+    (transmission_self w₀ z₀)
+  rw [meanTraitChange_w₀, relatedness_of_popCov_self_eq_zero popCov_z₀_z₀] at h₀
+  norm_num at h₀
 
 /-! ### Boundary case: nonadditive fitness
 
@@ -134,9 +141,10 @@ of `1, y, z` on this population. Reading off the mechanistic coefficients `b = 4
 `meanTraitChange_neg_iff` keeps the residual and still predicts the decrease:
 `1/3 + (-1/6) / (1/4) = -1/3 < 0`.
 
-In general, least-squares (partial regression) `b` and `c` always give `Cov(e, z) = 0`, so the
-regression form of the rule stays exact for any fitness function; nonadditivity breaks the rule
-only when `b` and `c` are mechanistic coefficients read off the model, as here. -/
+In general, least-squares (partial regression, with intercept) `b` and `c` always give
+`Cov(e, z) = 0` (a remark, not formalized here), so given `Var(z) ≠ 0`, `w̄ > 0` and zero
+transmission the regression form of the rule is exact for any fitness function; nonadditivity
+breaks the rule only when `b` and `c` are mechanistic coefficients read off the model, as here. -/
 
 /-- Own traits of the six-individual population. -/
 noncomputable def zN : Fin 6 → ℝ := ![0, 0, 0, 1, 1, 1]
@@ -187,7 +195,7 @@ theorem expect_wN : 𝔼 i, wN i = 13 / 6 := by
 example : 0 < relatedness yN zN * 4 - 1 := by
   rw [relatedness_yN_zN]; norm_num
 
-example : meanTraitChange wN zN zN = -1 / 26 := by
+theorem meanTraitChange_wN : meanTraitChange wN zN zN = -1 / 26 := by
   simp [meanTraitChange, wN, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, zN]
   norm_num
 
@@ -197,10 +205,7 @@ example : popCov eN zN ≠ 0 := by
 /-- The rule read off the mechanistic coefficients mispredicts: its increase criterion holds but
 the trait does not increase. -/
 example : ¬ (0 < meanTraitChange wN zN zN ↔ 1 < relatedness yN zN * 4) := by
-  have h : meanTraitChange wN zN zN = -1 / 26 := by
-    simp [meanTraitChange, wN, Fintype.expect_eq_sum_div_card, Fin.sum_univ_six, zN]
-    norm_num
-  rw [h, relatedness_yN_zN]
+  rw [meanTraitChange_wN, relatedness_yN_zN]
   norm_num
 
 example : meanTraitChange wN zN zN < 0 := by
