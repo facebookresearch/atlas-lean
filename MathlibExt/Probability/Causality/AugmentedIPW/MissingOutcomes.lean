@@ -106,8 +106,8 @@ noncomputable def outcomeRegression (μ : Measure Ω) (Y : Ω → ℝ) (X : Ω �
 /-- **Missing at random** (Rubin 1976), for a discrete covariate: the response event `R` is
 conditionally independent of the outcome `Y` given `X`, stated through joint probabilities,
 `P(R, Y ∈ B, X = x) P(X = x) = P(R, X = x) P(Y ∈ B, X = x)`. It holds vacuously when every
-level set `{X = x}` is null (an atomless `X`); every theorem here assumes `X` has finitely many
-values, where this cannot happen under a nonzero measure. -/
+level set `{X = x}` is null (an atomless `X`); every result here that uses MAR assumes `X` has
+finitely many values, where this cannot happen under a nonzero measure. -/
 def MissingAtRandom (μ : Measure Ω) (R : Set Ω) (Y : Ω → ℝ) (X : Ω → 𝒳) : Prop :=
   CondIndepDiscrete μ R Y X
 
