@@ -22,17 +22,21 @@ covariate `X`). Write `e* = P(T | m)` for the true propensity score and `μ₀* 
 
 ## Main definitions
 
-* `aipwScore T Y e g₀ g₁`: the AIPW score above, for an arbitrary observed outcome `Y`.
+* `aipwScoreOfSigma T Y e g₀ g₁`: the AIPW score above, for an arbitrary observed outcome `Y`,
+  with nuisances given as `m`-measurable functions on `Ω`. It is a separate name from the
+  covariate-indexed AIPW score of task CAUS-02.1 (`aipwScore T X Y e m₀ m₁`, nuisances functions
+  of the covariate value): that score is, by unfolding the definitions (`rfl`),
+  `aipwScoreOfSigma T Y (e ∘ X) (m₀ ∘ X) (m₁ ∘ X)`, to be used with `m := MeasurableSpace.comap X`.
 
 ## Main results
 
-* `integral_aipwScore_sub`: the exact bias identity (a product of nuisance errors),
+* `integral_aipwScoreOfSigma_sub`: the exact bias identity (a product of nuisance errors),
   `E[ψ] - E[Y₁ - Y₀] = E[(e* - e) ((μ₁* - g₁) / e + (μ₀* - g₀) / (1 - e))]`.
-* `integral_aipwScore_of_propensity`: `E[ψ] = E[Y₁ - Y₀]` when the propensity is correct,
+* `integral_aipwScoreOfSigma_of_propensity`: `E[ψ] = E[Y₁ - Y₀]` when the propensity is correct,
   `e = e*` a.e., for any outcome regressions.
-* `integral_aipwScore_of_outcome`: `E[ψ] = E[Y₁ - Y₀]` when both outcome regressions are
+* `integral_aipwScoreOfSigma_of_outcome`: `E[ψ] = E[Y₁ - Y₀]` when both outcome regressions are
   correct, `g₀ = μ₀*` and `g₁ = μ₁*` a.e., for any propensity.
-* `integrable_aipwScore`: the score is integrable.
+* `integrable_aipwScoreOfSigma`: the score is integrable.
 
 ## Hypotheses
 
@@ -65,8 +69,9 @@ data and the identities below do not apply. Sample splitting, cross-fitting and 
   learning: a review*, arXiv:2203.06469v2 (2023), §3.2, Example 2 (continued), and §4.3. The
   remainder there for the treated-arm mean `E{E(Y | X, A = 1)}` is
   `R₂(P̄, P) = ∫ (1/π̄ - 1/π)(μ - μ̄) π dP`, i.e. `∫ (π - π̄)(μ - μ̄) / π̄ dP`; with `π̄ = e`,
-  `μ̄ = g₁` this is the treated-arm term of `integral_aipwScore_sub`, and the control arm is the
-  same formula for `A ↦ 1 - A`. §4.3 uses the same bound `π̂ ≥ ε` on the candidate propensity.
+  `μ̄ = g₁` this is the treated-arm term of `integral_aipwScoreOfSigma_sub`, and the control arm
+  is the same formula for `A ↦ 1 - A`. §4.3 uses the same bound `π̂ ≥ ε` on the candidate
+  propensity.
 
 ## References
 
@@ -89,7 +94,7 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 /-- The augmented inverse probability weighted (AIPW) score with candidate propensity `e` and
 candidate outcome regressions `g₀, g₁`, at the observed outcome `Y`:
 `g₁ - g₀ + 1_T (Y - g₁) / e - 1_{Tᶜ} (Y - g₀) / (1 - e)`. -/
-noncomputable def aipwScore (T : Set Ω) (Y e g₀ g₁ : Ω → ℝ) : Ω → ℝ := fun ω =>
+noncomputable def aipwScoreOfSigma (T : Set Ω) (Y e g₀ g₁ : Ω → ℝ) : Ω → ℝ := fun ω =>
   g₁ ω - g₀ ω + T.indicator (fun ω => (Y ω - g₁ ω) / e ω) ω -
     Tᶜ.indicator (fun ω => (Y ω - g₀ ω) / (1 - e ω)) ω
 
@@ -170,13 +175,13 @@ private lemma condExp_indicator_compl_one {m : MeasurableSpace Ω} (hm : m ≤ m
 
 /-- Consistency rewrites the score as the difference of the two arms evaluated at the potential
 outcomes. -/
-private lemma aipwScore_ae_eq {T : Set Ω} {Y Y₀ Y₁ : Ω → ℝ}
+private lemma aipwScoreOfSigma_ae_eq {T : Set Ω} {Y Y₀ Y₁ : Ω → ℝ}
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (e g₀ g₁ : Ω → ℝ) :
-    aipwScore T Y e g₀ g₁ =ᵐ[μ] fun ω =>
+    aipwScoreOfSigma T Y e g₀ g₁ =ᵐ[μ] fun ω =>
       (g₁ ω + T.indicator (fun ω => (Y₁ ω - g₁ ω) / e ω) ω) -
         (g₀ ω + Tᶜ.indicator (fun ω => (Y₀ ω - g₀ ω) / (1 - e ω)) ω) := by
   filter_upwards [hcons] with ω h
-  by_cases hω : ω ∈ T <;> simp [aipwScore, observed, h, hω] <;> ring
+  by_cases hω : ω ∈ T <;> simp [aipwScoreOfSigma, observed, h, hω] <;> ring
 
 variable {m : MeasurableSpace Ω} [IsFiniteMeasure μ] {T : Set Ω} {Y Y₀ Y₁ e g₀ g₁ : Ω → ℝ}
   {ε : ℝ}
@@ -184,14 +189,16 @@ variable {m : MeasurableSpace Ω} [IsFiniteMeasure μ] {T : Set Ω} {Y Y₀ Y₁
 omit [IsFiniteMeasure μ] in
 /-- The AIPW score with candidate nuisances `e, g₀, g₁` is integrable, under consistency,
 integrable potential outcomes and candidate regressions, and `ε ≤ e ≤ 1 - ε`. -/
-theorem integrable_aipwScore (hT : MeasurableSet[mΩ] T) (hcons : Y =ᵐ[μ] observed T Y₀ Y₁)
-    (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ) (he : AEStronglyMeasurable[mΩ] e μ)
+theorem integrable_aipwScoreOfSigma (hT : MeasurableSet[mΩ] T)
+    (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
+    (he : AEStronglyMeasurable[mΩ] e μ)
     (hg₀i : Integrable g₀ μ) (hg₁i : Integrable g₁ μ) (hε : 0 < ε)
     (heε : ∀ᵐ ω ∂μ, ε ≤ e ω ∧ e ω ≤ 1 - ε) :
-    Integrable (aipwScore T Y e g₀ g₁) μ :=
+    Integrable (aipwScoreOfSigma T Y e g₀ g₁) μ :=
   ((integrable_arm hT hY₁ hg₁i he hε (heε.mono fun _ h => h.1)).sub
     (integrable_arm (p := fun ω => 1 - e ω) hT.compl hY₀ hg₀i (aestronglyMeasurable_const.sub he)
-      hε (heε.mono fun _ h => by linarith [h.2]))).congr (aipwScore_ae_eq hcons e g₀ g₁).symm
+      hε (heε.mono fun _ h => by linarith [h.2]))).congr
+    (aipwScoreOfSigma_ae_eq hcons e g₀ g₁).symm
 
 /-- **Exact bias of the AIPW score** (a product of nuisance errors). Let `e* = P(T | m)`,
 `μ₀* = E[Y₀ | m]` and `μ₁* = E[Y₁ | m]`. Under consistency, mean exchangeability, integrability
@@ -199,14 +206,14 @@ and `ε ≤ e ≤ 1 - ε`, for fixed `m`-measurable candidates `e, g₀, g₁`,
 `E[ψ] - E[Y₁ - Y₀] = E[(e* - e) ((μ₁* - g₁) / e + (μ₀* - g₀) / (1 - e))]`.
 This is a population identity at fixed nuisances, not a finite-sample statement about fitted
 nuisances. -/
-theorem integral_aipwScore_sub (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
+theorem integral_aipwScoreOfSigma_sub (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
     (hex₁ : μ[T.indicator Y₁ | m] =ᵐ[μ] μ[T.indicator 1 | m] * μ[Y₁ | m])
     (hex₀ : μ[Tᶜ.indicator Y₀ | m] =ᵐ[μ] (1 - μ[T.indicator 1 | m]) * μ[Y₀ | m])
     (he : StronglyMeasurable[m] e) (hg₀ : StronglyMeasurable[m] g₀)
     (hg₁ : StronglyMeasurable[m] g₁) (hg₀i : Integrable g₀ μ) (hg₁i : Integrable g₁ μ)
     (hε : 0 < ε) (heε : ∀ᵐ ω ∂μ, ε ≤ e ω ∧ e ω ≤ 1 - ε) :
-    ∫ ω, aipwScore T Y e g₀ g₁ ω ∂μ - ∫ ω, (Y₁ ω - Y₀ ω) ∂μ =
+    ∫ ω, aipwScoreOfSigma T Y e g₀ g₁ ω ∂μ - ∫ ω, (Y₁ ω - Y₀ ω) ∂μ =
       ∫ ω, (μ[T.indicator 1 | m] ω - e ω) *
         ((μ[Y₁ | m] ω - g₁ ω) / e ω + (μ[Y₀ | m] ω - g₀ ω) / (1 - e ω)) ∂μ := by
   have hq₀ := condExp_indicator_compl_one (μ := μ) hm hT
@@ -216,7 +223,7 @@ theorem integral_aipwScore_sub (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (heε.mono fun _ h => by linarith [h.2]) (by
       filter_upwards [hex₀, hq₀] with ω h h'
       rw [h, Pi.mul_apply, Pi.mul_apply, h', Pi.sub_apply, Pi.one_apply])
-  rw [integral_congr_ae (aipwScore_ae_eq hcons e g₀ g₁), integral_sub hA₁ hA₀,
+  rw [integral_congr_ae (aipwScoreOfSigma_ae_eq hcons e g₀ g₁), integral_sub hA₁ hA₀,
     integral_sub hY₁ hY₀,
     show ∀ a b c d : ℝ, a - b - (c - d) = (a - c) - (b - d) from fun _ _ _ _ => by ring, h₁, h₀,
     ← integral_sub hR₁ hR₀]
@@ -228,7 +235,7 @@ theorem integral_aipwScore_sub (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
 /-- **Double robustness, propensity correct**: if the candidate propensity is the true one,
 `e = P(T | m)` a.e., the AIPW score is unbiased for the average treatment effect for *any*
 candidate outcome regressions `g₀, g₁` (population level, fixed nuisances). -/
-theorem integral_aipwScore_of_propensity (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
+theorem integral_aipwScoreOfSigma_of_propensity (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
     (hex₁ : μ[T.indicator Y₁ | m] =ᵐ[μ] μ[T.indicator 1 | m] * μ[Y₁ | m])
     (hex₀ : μ[Tᶜ.indicator Y₀ | m] =ᵐ[μ] (1 - μ[T.indicator 1 | m]) * μ[Y₀ | m])
@@ -236,17 +243,19 @@ theorem integral_aipwScore_of_propensity (hm : m ≤ mΩ) (hT : MeasurableSet[m�
     (hg₁ : StronglyMeasurable[m] g₁) (hg₀i : Integrable g₀ μ) (hg₁i : Integrable g₁ μ)
     (hε : 0 < ε) (heε : ∀ᵐ ω ∂μ, ε ≤ e ω ∧ e ω ≤ 1 - ε)
     (hprop : e =ᵐ[μ] μ[T.indicator 1 | m]) :
-    ∫ ω, aipwScore T Y e g₀ g₁ ω ∂μ = ∫ ω, (Y₁ ω - Y₀ ω) ∂μ := by
-  rw [← sub_eq_zero, integral_aipwScore_sub hm hT hcons hY₀ hY₁ hex₁ hex₀ he hg₀ hg₁ hg₀i hg₁i hε
-    heε, ← integral_zero Ω ℝ]
+    ∫ ω, aipwScoreOfSigma T Y e g₀ g₁ ω ∂μ = ∫ ω, (Y₁ ω - Y₀ ω) ∂μ := by
+  rw [← sub_eq_zero, integral_aipwScoreOfSigma_sub hm hT hcons hY₀ hY₁ hex₁ hex₀ he hg₀ hg₁ hg₀i
+    hg₁i hε heε, ← integral_zero Ω ℝ]
   refine integral_congr_ae ?_
   filter_upwards [hprop] with ω h
   simp [h]
 
 /-- **Double robustness, outcome regressions correct**: if `g₀ = E[Y₀ | m]` and
 `g₁ = E[Y₁ | m]` a.e., the AIPW score is unbiased for the average treatment effect for *any*
-candidate propensity `e` with `ε ≤ e ≤ 1 - ε` (population level, fixed nuisances). -/
-theorem integral_aipwScore_of_outcome (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
+candidate propensity `e` with `ε ≤ e ≤ 1 - ε` (population level, fixed nuisances). The true
+propensity `e*` may reach `0` or `1` here, but then the correct regression `g₁ = μ₁*` (on
+`{e* = 0}`) or `g₀ = μ₀*` (on `{e* = 1}`) is not identified from the law of the observed data. -/
+theorem integral_aipwScoreOfSigma_of_outcome (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
     (hex₁ : μ[T.indicator Y₁ | m] =ᵐ[μ] μ[T.indicator 1 | m] * μ[Y₁ | m])
     (hex₀ : μ[Tᶜ.indicator Y₀ | m] =ᵐ[μ] (1 - μ[T.indicator 1 | m]) * μ[Y₀ | m])
@@ -254,9 +263,9 @@ theorem integral_aipwScore_of_outcome (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] 
     (hg₁ : StronglyMeasurable[m] g₁) (hg₀i : Integrable g₀ μ) (hg₁i : Integrable g₁ μ)
     (hε : 0 < ε) (heε : ∀ᵐ ω ∂μ, ε ≤ e ω ∧ e ω ≤ 1 - ε)
     (hout₀ : g₀ =ᵐ[μ] μ[Y₀ | m]) (hout₁ : g₁ =ᵐ[μ] μ[Y₁ | m]) :
-    ∫ ω, aipwScore T Y e g₀ g₁ ω ∂μ = ∫ ω, (Y₁ ω - Y₀ ω) ∂μ := by
-  rw [← sub_eq_zero, integral_aipwScore_sub hm hT hcons hY₀ hY₁ hex₁ hex₀ he hg₀ hg₁ hg₀i hg₁i hε
-    heε, ← integral_zero Ω ℝ]
+    ∫ ω, aipwScoreOfSigma T Y e g₀ g₁ ω ∂μ = ∫ ω, (Y₁ ω - Y₀ ω) ∂μ := by
+  rw [← sub_eq_zero, integral_aipwScoreOfSigma_sub hm hT hcons hY₀ hY₁ hex₁ hex₀ he hg₀ hg₁ hg₀i
+    hg₁i hε heε, ← integral_zero Ω ℝ]
   refine integral_congr_ae ?_
   filter_upwards [hout₀, hout₁] with ω h₀ h₁
   simp [h₀, h₁]

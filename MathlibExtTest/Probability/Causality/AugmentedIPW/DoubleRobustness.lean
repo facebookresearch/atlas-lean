@@ -19,12 +19,13 @@ nuisances are `e* = 1/2`, `μ₁* = 1`, `μ₀* = 1/2`, and the ATE is `1/2`. Ca
 constants `e, g₀, g₁`, and the expectation of the AIPW score is computed directly as a finite sum:
 
 * both nuisances wrong (`e = 1/4`, `g₀ = g₁ = 0`): bias `7/6 ≠ 0`, which also equals the
-  product-of-errors formula of `integral_aipwScore_sub`;
+  product-of-errors formula of `integral_aipwScoreOfSigma_sub`;
 * propensity correct only (`e = 1/2`, `g₀ = g₁ = 0`): bias `0`;
 * outcome regressions correct only (`e = 1/4`, `g₀ = 1/2`, `g₁ = 1`): bias `0`.
 
 Then the hypotheses of the theorems are verified on the model (non-vacuity), and the theorems
-are applied to it.
+are applied to it. Finally, a six-unit model with a binary covariate `X` and `m = σ(X)` applies
+the theorems with a nontrivial σ-algebra and non-constant nuisances.
 -/
 
 @[expose] public section
@@ -63,14 +64,14 @@ def Y₀ : Fin 4 → ℝ := ![0, 1, 1, 0]
 
 /-- The AIPW score with constant candidate nuisances, at the observed outcome. -/
 noncomputable abbrev score (e g₀ g₁ : ℝ) : Fin 4 → ℝ :=
-  aipwScore T (observed T Y₀ Y₁) (fun _ => e) (fun _ => g₀) (fun _ => g₁)
+  aipwScoreOfSigma T (observed T Y₀ Y₁) (fun _ => e) (fun _ => g₀) (fun _ => g₁)
 
 /-- The expectation of the score as an explicit function of the constant nuisances. -/
 lemma integral_score (e g₀ g₁ : ℝ) :
     ∫ i, score e g₀ g₁ i ∂unif4 =
       g₁ - g₀ + (1 - g₁) / e / 2 - (1 - 2 * g₀) / (1 - e) / 4 := by
   rw [integral_unif4]
-  simp [aipwScore, observed, T, Y₀, Y₁, Set.indicator]
+  simp [aipwScoreOfSigma, observed, T, Y₀, Y₁, Set.indicator]
   ring
 
 /-- The average treatment effect of the model is `1/2`. -/
@@ -156,31 +157,161 @@ lemma bounded (e : ℝ) (h₀ : 1 / 4 ≤ e) (h₁ : e ≤ 3 / 4) :
 
 /-- The exact identity on the both-wrong candidates reproduces the bias `7/6`. -/
 example : ∫ i, score (1 / 4) 0 0 i ∂unif4 - ∫ i, (Y₁ i - Y₀ i) ∂unif4 = 7 / 6 := by
-  rw [integral_aipwScore_sub bot_le hT (Filter.EventuallyEq.refl _ _) .of_finite .of_finite
+  rw [integral_aipwScoreOfSigma_sub bot_le hT (Filter.EventuallyEq.refl _ _) .of_finite .of_finite
     hex₁ hex₀ stronglyMeasurable_const stronglyMeasurable_const stronglyMeasurable_const
     (integrable_const _) (integrable_const _) (by norm_num : (0 : ℝ) < 1 / 4)
     (bounded _ le_rfl (by norm_num)), propensity_true, outcome₀_true, outcome₁_true]
   simp only [integral_const, probReal_univ, one_smul]
   norm_num
 
-/-- `integral_aipwScore_of_propensity` on the model: propensity correct, outcomes wrong. -/
+/-- `integral_aipwScoreOfSigma_of_propensity` on the model: propensity correct, outcomes wrong. -/
 example : ∫ i, score (1 / 2) 0 0 i ∂unif4 = ∫ i, (Y₁ i - Y₀ i) ∂unif4 :=
-  integral_aipwScore_of_propensity bot_le hT (Filter.EventuallyEq.refl _ _) .of_finite .of_finite
-    hex₁ hex₀ stronglyMeasurable_const stronglyMeasurable_const stronglyMeasurable_const
+  integral_aipwScoreOfSigma_of_propensity bot_le hT (Filter.EventuallyEq.refl _ _) .of_finite
+    .of_finite hex₁ hex₀ stronglyMeasurable_const stronglyMeasurable_const stronglyMeasurable_const
     (integrable_const _) (integrable_const _) (by norm_num : (0 : ℝ) < 1 / 4)
     (bounded _ (by norm_num) (by norm_num)) (by rw [propensity_true])
 
-/-- `integral_aipwScore_of_outcome` on the model: outcomes correct, propensity wrong. -/
+/-- `integral_aipwScoreOfSigma_of_outcome` on the model: outcomes correct, propensity wrong. -/
 example : ∫ i, score (1 / 4) (1 / 2) 1 i ∂unif4 = ∫ i, (Y₁ i - Y₀ i) ∂unif4 :=
-  integral_aipwScore_of_outcome bot_le hT (Filter.EventuallyEq.refl _ _) .of_finite .of_finite
-    hex₁ hex₀ stronglyMeasurable_const stronglyMeasurable_const stronglyMeasurable_const
+  integral_aipwScoreOfSigma_of_outcome bot_le hT (Filter.EventuallyEq.refl _ _) .of_finite
+    .of_finite hex₁ hex₀ stronglyMeasurable_const stronglyMeasurable_const stronglyMeasurable_const
     (integrable_const _) (integrable_const _) (by norm_num : (0 : ℝ) < 1 / 4)
     (bounded _ le_rfl (by norm_num)) (by rw [outcome₀_true]) (by rw [outcome₁_true])
 
-/-- `integrable_aipwScore` on the model. -/
+/-- `integrable_aipwScoreOfSigma` on the model. -/
 example : Integrable (score (1 / 4) 0 0) unif4 :=
-  integrable_aipwScore hT (Filter.EventuallyEq.refl _ _) .of_finite .of_finite
+  integrable_aipwScoreOfSigma hT (Filter.EventuallyEq.refl _ _) .of_finite .of_finite
     aestronglyMeasurable_const (integrable_const _) (integrable_const _)
     (by norm_num : (0 : ℝ) < 1 / 4) (bounded _ le_rfl (by norm_num))
+
+/-! ### A nontrivial covariate σ-algebra and non-constant nuisances
+
+Six equally likely units, a binary covariate `X = 1{ω < 2}` with cells `{0, 1}` and
+`{2, 3, 4, 5}`, and covariate information `m = σ(X)`. Units `0, 2` are treated, so the true
+propensity is `1/2` on the first cell and `1/4` on the second. With `Y₁ = (3, 3, 2, 0, 2, 4)` and
+`Y₀ = (1, 1, 0, 1, 0, -1)` mean exchangeability holds within each cell, and the true outcome
+regressions are `μ₁* = (3 | 2)`, `μ₀* = (1 | 0)` on the two cells. -/
+
+namespace Covariate
+
+/-- The uniform law on six units. -/
+noncomputable def unif6 : Measure (Fin 6) :=
+  (6⁻¹ : ENNReal) • Measure.count
+
+instance : IsProbabilityMeasure unif6 := by
+  constructor
+  rw [unif6, Measure.smul_apply, Measure.count_univ, smul_eq_mul]
+  simp [ENat.card_eq_coe_fintype_card]
+  exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
+
+lemma unif6_real_singleton (i : Fin 6) : unif6.real {i} = 1 / 6 := by
+  simp [unif6, measureReal_def]
+
+lemma integral_unif6 (f : Fin 6 → ℝ) :
+    ∫ i, f i ∂unif6 = (f 0 + f 1 + f 2 + f 3 + f 4 + f 5) / 6 := by
+  rw [integral_fintype Integrable.of_finite]
+  simp only [unif6_real_singleton, smul_eq_mul, Fin.sum_univ_six]
+  ring
+
+/-- The binary covariate. -/
+def X (i : Fin 6) : Bool := decide (i.val < 2)
+
+/-- The covariate information, `σ(X)`. -/
+abbrev mX : MeasurableSpace (Fin 6) := MeasurableSpace.comap X inferInstance
+
+lemma mX_le : mX ≤ (inferInstance : MeasurableSpace (Fin 6)) :=
+  (measurable_of_finite X).comap_le
+
+/-- A function of the covariate, `a` on the first cell and `c` on the second. -/
+def cell (a c : ℝ) (i : Fin 6) : ℝ := cond (X i) a c
+
+lemma stronglyMeasurable_cell (a c : ℝ) : StronglyMeasurable[mX] (cell a c) :=
+  ((Measurable.of_discrete (f := fun b : Bool => cond b a c)).comp
+    (comap_measurable X)).stronglyMeasurable
+
+/-- The conditional expectation given `X` is the cell average. -/
+lemma condExp_eq_cell (f : Fin 6 → ℝ) :
+    unif6[f | mX] =ᵐ[unif6]
+      cell ((f 0 + f 1) / 2) ((f 2 + f 3 + f 4 + f 5) / 4) := by
+  refine (ae_eq_condExp_of_forall_setIntegral_eq mX_le Integrable.of_finite
+    (fun _ _ _ => Integrable.of_finite.integrableOn) ?_
+    (stronglyMeasurable_cell _ _).aestronglyMeasurable).symm
+  rintro _ ⟨t, -, rfl⟩ -
+  rw [← integral_indicator .of_discrete, ← integral_indicator .of_discrete, integral_unif6,
+    integral_unif6]
+  by_cases h1 : true ∈ t <;> by_cases h0 : false ∈ t <;>
+    simp [Set.indicator, cell, X, h0, h1] <;> ring
+
+/-- The treated units. -/
+def T : Set (Fin 6) := {0, 2}
+
+/-- Treated potential outcomes. -/
+def Y₁ : Fin 6 → ℝ := ![3, 3, 2, 0, 2, 4]
+
+/-- Control potential outcomes. -/
+def Y₀ : Fin 6 → ℝ := ![1, 1, 0, 1, 0, -1]
+
+lemma propensity_true : unif6[T.indicator 1 | mX] =ᵐ[unif6] cell (1 / 2) (1 / 4) :=
+  (condExp_eq_cell _).trans (Filter.Eventually.of_forall fun i => by
+    simp [T, Set.indicator])
+
+lemma outcome₁_true : unif6[Y₁ | mX] =ᵐ[unif6] cell 3 2 :=
+  (condExp_eq_cell _).trans (Filter.Eventually.of_forall fun i => by simp [Y₁]; norm_num)
+
+lemma outcome₀_true : unif6[Y₀ | mX] =ᵐ[unif6] cell 1 0 :=
+  (condExp_eq_cell _).trans (Filter.Eventually.of_forall fun i => by simp [Y₀])
+
+lemma hex₁ :
+    unif6[T.indicator Y₁ | mX] =ᵐ[unif6] unif6[T.indicator 1 | mX] * unif6[Y₁ | mX] := by
+  filter_upwards [condExp_eq_cell (T.indicator Y₁), propensity_true, outcome₁_true]
+    with i h h₁ h₂
+  rw [h, Pi.mul_apply, h₁, h₂]
+  fin_cases i <;> simp [cell, X, T, Y₁, Set.indicator] <;> norm_num
+
+lemma hex₀ :
+    unif6[Tᶜ.indicator Y₀ | mX] =ᵐ[unif6] (1 - unif6[T.indicator 1 | mX]) * unif6[Y₀ | mX] := by
+  filter_upwards [condExp_eq_cell (Tᶜ.indicator Y₀), propensity_true, outcome₀_true]
+    with i h h₁ h₂
+  rw [h, Pi.mul_apply, Pi.sub_apply, h₁, h₂]
+  fin_cases i <;> simp [cell, X, T, Y₀, Set.indicator] <;> norm_num
+
+lemma hT : MeasurableSet T := .of_discrete
+
+lemma bounded {a c : ℝ} (ha₀ : 1 / 4 ≤ a) (ha₁ : a ≤ 3 / 4) (hc₀ : 1 / 4 ≤ c) (hc₁ : c ≤ 3 / 4) :
+    ∀ᵐ i ∂unif6, (1 : ℝ) / 4 ≤ cell a c i ∧ cell a c i ≤ 1 - 1 / 4 :=
+  Filter.Eventually.of_forall fun i => by
+    cases h : X i <;> simp only [cell, h, Bool.cond_true, Bool.cond_false] <;> constructor <;>
+      linarith
+
+/-- **Propensity correct only, non-constant nuisances**: `e = e* = (1/2 | 1/4)` and the wrong
+regressions `g₁ = (0 | 5)`, `g₀ = (-1 | 2)`. -/
+example :
+    ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 2) (1 / 4)) (cell (-1) 2) (cell 0 5) i
+      ∂unif6 = ∫ i, (Y₁ i - Y₀ i) ∂unif6 :=
+  integral_aipwScoreOfSigma_of_propensity mX_le hT (Filter.EventuallyEq.refl _ _) .of_finite
+    .of_finite hex₁ hex₀ (stronglyMeasurable_cell _ _) (stronglyMeasurable_cell _ _)
+    (stronglyMeasurable_cell _ _) .of_finite .of_finite (by norm_num : (0 : ℝ) < 1 / 4)
+    (bounded (by norm_num) (by norm_num) (by norm_num) (by norm_num)) propensity_true.symm
+
+/-- **Outcome regressions correct only, non-constant nuisances**: `g₁ = μ₁* = (3 | 2)`,
+`g₀ = μ₀* = (1 | 0)` and the wrong propensity `e = (1/4 | 3/4)`. -/
+example :
+    ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 4) (3 / 4)) (cell 1 0) (cell 3 2) i
+      ∂unif6 = ∫ i, (Y₁ i - Y₀ i) ∂unif6 :=
+  integral_aipwScoreOfSigma_of_outcome mX_le hT (Filter.EventuallyEq.refl _ _) .of_finite
+    .of_finite hex₁ hex₀ (stronglyMeasurable_cell _ _) (stronglyMeasurable_cell _ _)
+    (stronglyMeasurable_cell _ _) .of_finite .of_finite (by norm_num : (0 : ℝ) < 1 / 4)
+    (bounded (by norm_num) (by norm_num) (by norm_num) (by norm_num)) outcome₀_true.symm
+    outcome₁_true.symm
+
+/-- A direct finite-sum check of the outcome-correct example: both sides equal `2`. -/
+example :
+    ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 4) (3 / 4)) (cell 1 0) (cell 3 2) i
+      ∂unif6 = 2 ∧ ∫ i, (Y₁ i - Y₀ i) ∂unif6 = 2 := by
+  rw [integral_unif6, integral_unif6]
+  simp [aipwScoreOfSigma, observed, cell, X, T, Y₀, Y₁, Set.indicator]
+  norm_num
+
+end Covariate
 
 end MathlibExtTest.Probability.Causality.AugmentedIPW
