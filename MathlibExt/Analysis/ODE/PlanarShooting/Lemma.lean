@@ -396,7 +396,7 @@ theorem hasDerivAt_branchDeriv (hD : 0 < D) (hr : 0 < r) (c : ℝ) {z : ℝ} (hz
   field_simp
   linear_combination hode + S1 * hchar
 
-/-- **Orientation into the invariant quadrant.** For `z < 0` the branch lies in
+/-- **Orientation into the quadrant.** For `z < 0` the branch lies in
 `{0 < U < 1, U' < 0}`. -/
 theorem branch_mem_quadrant (hD : 0 < D) (hr : 0 < r) (c : ℝ) {z : ℝ} (hz : z < 0) :
     0 < branch D r c z ∧ branch D r c z < 1 ∧ branchDeriv D r c z < 0 := by
