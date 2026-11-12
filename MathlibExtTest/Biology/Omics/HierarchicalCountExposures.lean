@@ -65,6 +65,12 @@ example {a b s : ℝ} (ha : 0 < a) (hb : 0 < b) (hs : 0 < s) (k : ℕ) (r : ℝ)
     posterior_eq_gammaPDFReal ha hb hs]
   simp
 
+/-- With no cells the pooled posterior is the prior `Gamma(a, b)`. -/
+example {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (s : Empty → ℝ) (k : Empty → ℕ) (r : ℝ) :
+    (∏ i, poissonExposureLik (s i) (k i) r) * gammaPDFReal a b r /
+        (∫ x, ∏ i, poissonExposureLik (s i) (k i) x ∂gammaMeasure a b) = gammaPDFReal a b r := by
+  simpa using pooledPosterior_eq_gammaPDFReal ha hb (s := s) (fun i => i.elim) k r
+
 /-! ### Deterministic consistency -/
 
 /-- The hypotheses of the deterministic core are satisfiable: exposure `S n = n` and count

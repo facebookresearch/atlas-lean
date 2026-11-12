@@ -64,8 +64,19 @@ non-identically distributed nonnegative variables is proved here for that purpos
 The pooled posterior is restated without new definitions, as the product of the one-cell
 likelihoods `HierarchicalCount.poissonExposureLik`; its mean and variance are
 `HierarchicalCount.integral_id_posterior` and `HierarchicalCount.variance_posterior` at count
-`K` and exposure `S`. The open common-exposure development (`HierarchicalCountPooled`, PR #1608)
-is not imported.
+`K` and exposure `S`. `HierarchicalCountPooled` (PR #1608, open) is not imported, and two results
+here overlap it: `pooledPosterior_eq_gammaPDFReal` duplicates
+`HierarchicalCountPooled.pooledPosterior_eq_gammaPDFReal` (same name, sibling namespace), and
+`tendsto_pooledPosterior_of_tendsto` is #1608's `tendsto_posteriorMean_of_tendsto` plus the
+concentration conclusion. Follow-up: after #1608 merges, derive both from #1608's versions and
+remove the duplicate names. The new content with exposures is the strong law and the two a.s.
+theorems.
+
+`ae_tendsto_sum_div_sum_integral` and its private helpers `exists_subseq_ratio` and
+`tendsto_div_of_subseq` are pure probability results, candidates to move to
+`MathlibExt/Probability` next to `PairwiseIndepSLLN`; the indicator law
+`ProbabilityTheory.pairwise_indep_slln` is the special case with variance at most mean and means
+at most `1`.
 
 Reuse (search of Mathlib, `MathlibExt`, `CSLibExt` and `WantedExt` on 2026-11-12 for strong
 laws, Kronecker/Kolmogorov criteria and Poisson moments): Mathlib's
@@ -107,16 +118,19 @@ theorem prod_poissonExposureLik (s : ι → ℝ) (k : ι → ℕ) (r : ℝ) :
 
 /-- **Pooled Gamma–Poisson conjugacy with different exposures.** With prior `λ ~ Gamma(a, b)`
 (`a, b > 0`) and conditionally independent cell counts `kᵢ ~ Po(sᵢ λ)` with size factors
-`sᵢ > 0` (at least one cell), the posterior density (joint likelihood times prior density over
+`sᵢ > 0`, the posterior density (joint likelihood times prior density over
 the joint marginal likelihood) is the `Gamma(a + ∑ᵢ kᵢ, b + ∑ᵢ sᵢ)` density: the one-cell
 posterior `HierarchicalCount.posterior_eq_gammaPDFReal` at count `K = ∑ᵢ kᵢ` and exposure
 `S = ∑ᵢ sᵢ`. Its mean `(a + K) / (b + S)` and variance `(a + K) / (b + S)²` are then
 `HierarchicalCount.integral_id_posterior` and `HierarchicalCount.variance_posterior`. -/
-theorem pooledPosterior_eq_gammaPDFReal [Nonempty ι] {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+theorem pooledPosterior_eq_gammaPDFReal {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     {s : ι → ℝ} (hs : ∀ i, 0 < s i) (k : ι → ℕ) (r : ℝ) :
     (∏ i, poissonExposureLik (s i) (k i) r) * gammaPDFReal a b r /
         (∫ x, ∏ i, poissonExposureLik (s i) (k i) x ∂gammaMeasure a b) =
       gammaPDFReal (a + (∑ i, k i : ℕ)) (b + ∑ i, s i) r := by
+  rcases isEmpty_or_nonempty ι with hι | hι
+  · have := isProbabilityMeasure_gammaMeasure ha hb
+    simp [Finset.univ_eq_empty]
   set K := ∑ i, k i
   set S := ∑ i, s i
   have hS : 0 < S := Finset.sum_pos (fun i _ => hs i) Finset.univ_nonempty
@@ -327,7 +341,9 @@ pairwise independent, a.e. nonnegative, square-integrable real random variables 
 
 For Poisson counts `Yᵢ ~ Po(mᵢ)` the variance hypothesis holds with `C = 1`. The proof is the
 Chebyshev–Borel–Cantelli argument along a subsequence with `M_{σ(k)} ≈ k²`, followed by
-bracketing, as in `ProbabilityTheory.pairwise_indep_slln` (the indicator case). -/
+bracketing, as in `ProbabilityTheory.pairwise_indep_slln` (the indicator case, `C = B = 1`).
+This is a pure probability result, a candidate to move to `MathlibExt/Probability` next to
+`PairwiseIndepSLLN` together with its two private helpers. -/
 theorem ae_tendsto_sum_div_sum_integral {Y : ℕ → Ω → ℝ} {B C : ℝ}
     (hL2 : ∀ i, MemLp (Y i) 2 μ) (hnonneg : ∀ i, 0 ≤ᵐ[μ] Y i)
     (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on Y)) (hbdd : ∀ i, μ[Y i] ≤ B)
