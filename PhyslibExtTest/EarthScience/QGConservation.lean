@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.G10QGConservation
+import PhyslibExt.EarthScience.QGConservation
 
 /-!
 # Quasigeostrophic conservation checks
 
-Concrete consumers of `PhyslibExt.EarthScience.G10QGConservation`:
+Concrete consumers of `PhyslibExt.EarthScience.QGConservation`:
 the public shapes of the four theorems, the Jacobian at concrete
 values, the enstrophy flux divergence at `q = 2`, and the steady
 witness.
@@ -35,7 +35,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.G10QGConservation`
+- `PhyslibExt.EarthScience.QGConservation`
 -/
 
 /-- Jacobian antisymmetry shape: `J(a, b) = -J(b, a)` and `J(a, a) = 0`. -/
