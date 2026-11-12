@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.Analysis.Convex.Extrema
-public import Mathlib.Analysis.Convex.Deriv
+import Mathlib.Analysis.Convex.Deriv
 
 /-!
 # Pigouvian tax (Atlas AP02.T01)
@@ -21,12 +21,22 @@ borne by third parties. Social welfare is `B q - C q - Dm q`. Market participant
 ignore the damage; under a per-unit tax `τ` their joint (taxed private) surplus is
 `B q - C q - τ q`, which a competitive market maximizes.
 
-At an interior social optimum `q`, the first-order condition is
-`B'(q) = C'(q) + Dm'(q)`. Setting the tax equal to the marginal damage at the
-optimum, `τ = Dm'(q)`, makes `q` satisfy the taxed market condition
-`B'(q) = C'(q) + τ`; if the taxed private surplus is concave on a convex
-neighborhood set `S` of `q`, then `q` maximizes it on `S`, so the tax implements
-the social optimum.
+Let `q` be the chosen interior social optimum. The theorems assume only that `q`
+is a local maximum of social welfare, so they apply to a global social optimum on
+any neighborhood `S` of `q` (via `IsMaxOn.isLocalMax`) as well as to a local one.
+The first-order condition is `B'(q) = C'(q) + Dm'(q)`. Setting the tax equal to
+the marginal damage at `q`, `τ = Dm'(q)`, makes `q` satisfy the taxed market
+condition `B'(q) = C'(q) + τ`; if the taxed private surplus is concave on a
+convex neighborhood set `S` of `q`, then `q` maximizes it on `S`, so the tax
+implements `q` as the market outcome. Whether that outcome is efficient is
+exactly whether `q` is a global social optimum: the theorem implements the
+optimum one chooses, and does not certify that a local optimum is global.
+
+## References
+
+* A. C. Pigou, *The Economics of Welfare*, Macmillan (1920).
+* H. R. Varian, *Intermediate Microeconomics: A Modern Approach*, Norton,
+  chapter on externalities (Pigouvian taxes).
 -/
 
 @[expose] public section
@@ -54,10 +64,11 @@ theorem marginalBenefit_eq_marginalCost_add_tax {B C Dm : ℝ → ℝ} {q b c d 
   have h0 := hopt.hasDerivAt_eq_zero hderiv
   linarith
 
-/-- **The Pigouvian tax implements the social optimum.** Let `q` be an interior
-social optimum and set the tax to the marginal damage `d = Dm'(q)`. If the taxed
-private surplus is concave on a set `S` that is a neighborhood of `q`, then `q`
-maximizes the taxed private surplus on `S`. -/
+/-- **The Pigouvian tax implements the chosen social optimum.** Let `q` be an
+interior local maximum of social welfare (for example a global social optimum on
+the neighborhood `S`) and set the tax to the marginal damage `d = Dm'(q)`. If the
+taxed private surplus is concave on a set `S` that is a neighborhood of `q`, then
+`q` maximizes the taxed private surplus on `S`. -/
 theorem isMaxOn_taxedSurplus_of_isLocalMax {B C Dm : ℝ → ℝ} {S : Set ℝ} {q b c d : ℝ}
     (hS : S ∈ 𝓝 q) (hopt : IsLocalMax (socialWelfare B C Dm) q)
     (hB : HasDerivAt B b q) (hC : HasDerivAt C c q) (hD : HasDerivAt Dm d q)

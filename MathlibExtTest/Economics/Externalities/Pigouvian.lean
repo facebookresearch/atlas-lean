@@ -11,6 +11,7 @@ module
 public import MathlibExt.Economics.Externalities.Pigouvian
 import Mathlib.Tactic
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Deriv.Mul
 
 /-! Examples and checks for `MathlibExt.Economics.Externalities.Pigouvian` (Atlas AP02.T01). -/
 
