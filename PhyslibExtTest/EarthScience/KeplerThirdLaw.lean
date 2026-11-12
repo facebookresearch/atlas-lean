@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.P18KeplerThirdLaw
+import PhyslibExt.EarthScience.KeplerThirdLaw
 
 /-!
 # Orbital forcing groundwork and elementary planetary mechanics
 
-Concrete consumers of `PhyslibExt.EarthScience.P18KeplerThirdLaw`.
+Concrete consumers of `PhyslibExt.EarthScience.KeplerThirdLaw`.
 
 ## i. Overview
 
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P18KeplerThirdLaw`
+- `PhyslibExt.EarthScience.KeplerThirdLaw`
 -/
 
 /-- Unit case: `G = M = r = v = 1`, `T = 2π` gives `T² = 4π²`. -/
