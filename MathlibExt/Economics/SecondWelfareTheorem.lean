@@ -36,7 +36,7 @@ aggregate strictly-preferred set has nonempty interior and Mathlib's
   quasi-equilibrium with transfers (`p ≠ 0`, feasible, strictly preferred bundles cost at least
   as much).
 * `isEquilibriumWithTransfers_of_cheaper`: a quasi-equilibrium in which every consumer has a
-  strictly cheaper bundle is a price equilibrium with transfers.
+  strictly cheaper bundle is a price equilibrium with transfers (`p ≠ 0` is kept).
 * `exists_isQuasiSupportingPrice`, `isBudgetOptimal_of_cheaper`: the same results stated with the
   consumer conditions `IsQuasiSupportingPrice` and `IsBudgetOptimal` alone.
 
@@ -593,11 +593,11 @@ def IsQuasiEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintype L]
   p ≠ 0 ∧ IsFeasible ω x ∧ IsQuasiSupportingPrice u p x
 
 /-- `(x, p)` is a price equilibrium with transfers for the aggregate endowment `ω` (MWG Def. 16.B.4,
-exchange economy): the allocation is feasible and each `x i` maximizes `u i` on its budget set at
-wealth `value p (x i)`. -/
+exchange economy): `p ≠ 0`, the allocation is feasible, and each `x i` maximizes `u i` on its budget
+set at wealth `value p (x i)`. -/
 def IsEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintype L]
     (u : I → (L → ℝ) → ℝ) (ω p : L → ℝ) (x : I → L → ℝ) : Prop :=
-  IsFeasible ω x ∧ IsBudgetOptimal u p x
+  p ≠ 0 ∧ IsFeasible ω x ∧ IsBudgetOptimal u p x
 
 /-- Second fundamental welfare theorem (MWG Prop. 16.D.1, exchange economy, with continuous
 utilities): a Pareto optimal allocation of an exchange economy with continuous, quasiconcave,
@@ -622,7 +622,7 @@ theorem isEquilibriumWithTransfers_of_cheaper {I L : Type*} [Fintype I] [Fintype
     (hq : IsQuasiEquilibriumWithTransfers u ω p x)
     (hcheap : ∀ i, ∃ z ∈ consumptionSet L, value p z < value p (x i)) :
     IsEquilibriumWithTransfers u ω p x := by
-  obtain ⟨_, hfeas, hsupp⟩ := hq
-  exact ⟨hfeas, isBudgetOptimal_of_cheaper hcont hfeas.1 hsupp hcheap⟩
+  obtain ⟨hpne, hfeas, hsupp⟩ := hq
+  exact ⟨hpne, hfeas, isBudgetOptimal_of_cheaper hcont hfeas.1 hsupp hcheap⟩
 
 end MathlibExt.Economics.SecondWelfareTheorem

@@ -232,7 +232,7 @@ example : IsQuasiSupportingPrice
 
 /-! Full predicates: `p = (1, 1)` makes `x = (1, 1)` a price quasi-equilibrium with transfers,
 which `isEquilibriumWithTransfers_of_cheaper` upgrades to an equilibrium. Zero prices are
-excluded. -/
+excluded from both predicates. -/
 
 theorem test_coord_zero : (![1, 1] : Fin 2 → ℝ) 0 = 1 := by simp
 
@@ -304,5 +304,11 @@ theorem test_zero_price_excluded :
   intro h
   obtain ⟨hpne, _, _⟩ := h
   exact hpne rfl
+
+example : ¬ IsEquilibriumWithTransfers
+    (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
+    ![1, 1] 0 (fun _ : Fin 1 => ![1, 1]) := by
+  intro h
+  exact h.1 rfl
 
 end MathlibExtTest.Economics.SecondWelfareTheorem
