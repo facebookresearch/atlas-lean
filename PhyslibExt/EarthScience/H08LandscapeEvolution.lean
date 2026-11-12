@@ -10,6 +10,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Pow
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 
 /-!
 # Steady diffusive hillslope profile (H08)
@@ -38,7 +39,7 @@ no claim about real landscapes is made.
 
 ## iv. References
 
-- `HasDerivAt.const_mul` / `sub` / `div_const`, `hasDerivAt_pow` in Mathlib.
+- `HasDerivAt.const_mul` / `sub` / `div_const`, `hasDerivAt_pow`, `iteratedDeriv_succ` in Mathlib.
 -/
 
 @[expose] public section
@@ -79,11 +80,14 @@ theorem h08_profile_hasDerivAt {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 �
   exact hdiv
 
 set_option linter.unusedVariables false in
-/-- The derivative function has derivative `-U/D` at every `x`, so
+/-- The actual profile has second derivative `-U/D` at every `x`, so
 `U + D * z''(x) = 0`: the profile is steady for `z_t = U + D*z_xx`. -/
 theorem h08_profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
-    HasDerivAt (fun x => -U * x / D) (-U / D) x ∧ U + D * (-U / D) = 0 := by
+    iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = -U / D ∧
+      U + D * iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = 0 := by
   have hD' : D ≠ 0 := ne_of_gt hD
+  have hderiv : deriv (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) = fun x => -U * x / D :=
+    funext (fun y => (h08_profile_hasDerivAt hD hL hU y).deriv)
   have h1 : HasDerivAt (fun x : ℝ => x) 1 x := hasDerivAt_id x
   have h2 : HasDerivAt (fun y : ℝ => -U * y) (-U * 1) x :=
     HasDerivAt.const_mul (-U) h1
@@ -91,7 +95,12 @@ theorem h08_profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U
     HasDerivAt.div_const h2 D
   have hder : -U * 1 / D = -U / D := by ring
   rw [hder] at h3
-  refine ⟨h3, ?_⟩
+  have hsecond : iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = -U / D := by
+    have h2eq : (2 : ℕ) = 1 + 1 := rfl
+    rw [h2eq, iteratedDeriv_succ, iteratedDeriv_one, hderiv]
+    exact h3.deriv
+  refine ⟨hsecond, ?_⟩
+  rw [hsecond]
   field_simp
   ring
 

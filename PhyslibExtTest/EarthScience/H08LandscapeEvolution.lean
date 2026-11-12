@@ -52,10 +52,10 @@ example :
     HasDerivAt (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) (-(2 : ℝ) * 1 / 1) 1 :=
   EarthScience.h08_profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
 
-/-- Numeric profile steadiness: `z'' = -2` and `U + D * z'' = 0`. -/
+/-- Numeric profile steadiness: `z'' = -2` and `U + D * z'' = 0`, for the actual profile. -/
 example :
-    HasDerivAt (fun x => -(2 : ℝ) * x / 1) (-(2 : ℝ) / 1) 1 ∧
-      (2 : ℝ) + 1 * (-(2 : ℝ) / 1) = 0 :=
+    iteratedDeriv 2 (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) 1 = -(2 : ℝ) / 1 ∧
+      (2 : ℝ) + 1 * iteratedDeriv 2 (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) 1 = 0 :=
   EarthScience.h08_profile_steady (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
 
 /-- No uplift: the zero profile has derivative `0`. -/
