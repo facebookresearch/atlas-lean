@@ -19,7 +19,6 @@ public import Batteries.Util.ProofWanted
 
 Statements requested but not yet proved:
 
-* the Snedecor `F` law of `(V₁ / d₁) / (V₂ / d₂)` for independent `Vᵢ ~ χ²_{dᵢ}`;
 * the one-sample `t` statistic `√n (X̄ - μ) / S ~ t_{n-1}` for an i.i.d. normal sample;
 * Hoeffding's central limit theorem `√n (U - θ) ⇒ N(0, m² σ₁²)` for U-statistics.
 
@@ -29,11 +28,14 @@ forms are the single-projection form of Cochran's theorem.
 The Student `t` law of `Z / √(V / k)` is proved as
 `ProbabilityTheory.map_div_sqrt_chiSquare_eq_studentT` in
 `MathlibExt/Probability/Distributions/StudentT.lean`.
+The Snedecor `F` law of `(V₁ / d₁) / (V₂ / d₂)` for independent `Vᵢ ~ χ²_{dᵢ}` is proved as
+`ProbabilityTheory.map_div_chiSquare_eq_snedecorF` in
+`MathlibExt/Probability/Distributions/SnedecorF.lean`.
 
 ## References
 
 * G. Casella and R. L. Berger, *Statistical Inference*, 2nd ed., Duxbury (2002), Theorem 5.3.1
-  and Definitions 5.3.4, 5.3.6.
+  and Definition 5.3.4.
 * W. Hoeffding, *A class of statistics with asymptotically normal distribution*, Ann. Math.
   Statist. 19 (1948), 293–325, §7.
 -/
@@ -43,21 +45,6 @@ The Student `t` law of `Z / √(V / k)` is proved as
 open MeasureTheory ProbabilityTheory Real
 
 namespace ProbabilityTheory.NormalTheoryWanted
-
-/-- **Snedecor's `F` law** (Casella–Berger, Definition 5.3.6): for independent `V₁ ~ χ²_{d₁}` and
-`V₂ ~ χ²_{d₂}` with `d₁, d₂ ≥ 1`, `(V₁ / d₁) / (V₂ / d₂)` has density
-`Γ((d₁ + d₂)/2) / (Γ(d₁/2) Γ(d₂/2)) · (d₁/d₂)^{d₁/2} x^{d₁/2 - 1} (1 + d₁ x / d₂)^{-(d₁+d₂)/2}`
-on `x > 0`. -/
-public theorem_wanted map_div_chiSquare_eq_snedecorF {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} [IsProbabilityMeasure P] {d₁ d₂ : ℕ} (h₁ : 0 < d₁) (h₂ : 0 < d₂)
-    {V₁ V₂ : Ω → ℝ} (hV₁ : HasLaw V₁ (chiSquareMeasure d₁) P)
-    (hV₂ : HasLaw V₂ (chiSquareMeasure d₂) P) (hV : IndepFun V₁ V₂ P) :
-    P.map (fun ω => (V₁ ω / d₁) / (V₂ ω / d₂)) =
-      volume.withDensity fun x => ENNReal.ofReal (if 0 < x then
-        Gamma ((d₁ + d₂) / 2) / (Gamma (d₁ / 2) * Gamma (d₂ / 2)) *
-          ((d₁ : ℝ) / d₂) ^ ((d₁ : ℝ) / 2) * x ^ ((d₁ : ℝ) / 2 - 1) *
-            (1 + d₁ * x / d₂) ^ (-((d₁ : ℝ) + d₂) / 2)
-        else 0)
 
 /-- **One-sample `t` statistic**: for an i.i.d. sample `X₁, …, Xₙ ~ N(μ, v)` with `n ≥ 2` and
 `v > 0`, `√n (X̄ - μ) / S` with `S² = ∑ (Xᵢ - X̄)² / (n - 1)` has the Student `t` law with
