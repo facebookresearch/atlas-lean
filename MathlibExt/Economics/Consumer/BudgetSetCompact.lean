@@ -32,9 +32,9 @@ budget-set definitions in ATLAS (with a general consumption set) are to be unifi
 
 ## ii. Main results
 
-* `Economics.Consumer.nonnegBudgetSet_subset_Icc`
-* `Economics.Consumer.isCompact_nonnegBudgetSet`
-* `Economics.Consumer.nonnegBudgetSet_nonempty`
+* `MathlibExt.Economics.Consumer.nonnegBudgetSet_subset_Icc`
+* `MathlibExt.Economics.Consumer.isCompact_nonnegBudgetSet`
+* `MathlibExt.Economics.Consumer.nonnegBudgetSet_nonempty`
 
 ## iii. References
 
@@ -44,7 +44,7 @@ budget-set definitions in ATLAS (with a general consumption set) are to be unifi
 
 @[expose] public section
 
-namespace Economics.Consumer
+namespace MathlibExt.Economics.Consumer
 
 /-- The budget set `{x | 0 ≤ x ∧ p ⬝ᵥ x ≤ w}`: bundles with nonnegative quantities of each of the
 finitely many goods `ι` whose cost at prices `p` does not exceed wealth `w`. -/
@@ -88,4 +88,4 @@ theorem nonnegBudgetSet_nonempty {ι : Type*} [Fintype ι] {p : ι → ℝ} {w :
   rw [dotProduct_zero]
   exact hw
 
-end Economics.Consumer
+end MathlibExt.Economics.Consumer

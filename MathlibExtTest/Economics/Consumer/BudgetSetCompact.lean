@@ -22,7 +22,7 @@ compact; at negative wealth it is empty.
 
 namespace MathlibExtTest.Economics.Consumer.BudgetSetCompact
 
-open _root_.Economics.Consumer
+open _root_.MathlibExt.Economics.Consumer
 
 theorem pos12 : ∀ i : Fin 2, (0:ℝ) < (![1, 2] : Fin 2 → ℝ) i := by
   rw [Fin.forall_fin_two]
