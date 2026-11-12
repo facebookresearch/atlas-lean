@@ -70,4 +70,50 @@ example : completeRandomization (Fin 4) 5 = 0 := by
   rw [completeRandomization_eq, Measure.uniformOfFinset,
     powersetCard_eq_empty.2 (by simp), sum_empty]
 
+/-- Heterogeneous-effect fixture: equal means, pointwise different effects. -/
+noncomputable def sepY₀ : Fin 4 → ℝ := ![0, 0, 1, 1]
+
+noncomputable def sepY₁ : Fin 4 → ℝ := ![0, 1, 0, 1]
+
+/-- The fixture has zero average effect. -/
+example : ate sepY₀ sepY₁ = 0 := by
+  simp only [ate, popMean, Fin.sum_univ_four]
+  norm_num [sepY₀, sepY₁]
+
+/-- ... but the sharp null fails pointwise. -/
+example : ∃ i, sepY₁ i ≠ sepY₀ i := by
+  exact ⟨1, by simp [sepY₁, sepY₀]⟩
+
+/-- ... and the observed statistic is genuinely random over assignments. -/
+example : ∃ S₁ S₂ : Finset (Fin 4), S₁.card = 2 ∧ S₂.card = 2 ∧
+    diffInMeans sepY₀ sepY₁ S₁ ≠ diffInMeans sepY₀ sepY₁ S₂ := by
+  have c1 : ({0, 1} : Finset (Fin 4))ᶜ = {2, 3} := by decide
+  have c2 : ({2, 3} : Finset (Fin 4))ᶜ = {0, 1} := by decide
+  have p01 : (0 : Fin 4) ≠ 1 := by decide
+  have p23 : (2 : Fin 4) ≠ 3 := by decide
+  refine ⟨{0, 1}, {2, 3}, by decide, by decide, ?_⟩
+  simp only [diffInMeans, sampleMean, c1, c2, Finset.sum_pair p01, Finset.sum_pair p23,
+    Finset.card_pair p01, Finset.card_pair p23]
+  norm_num [sepY₀, sepY₁]
+
+/-- Sharp-null validity uses a single imputed schedule: under the sharp null
+the observable statistic is `diffInMeans y₀ y₀` for the one observed schedule,
+here instantiated at `y₀ := sepY₀`. This is the sharp-null validity claim
+proper, distinct from the weak-null failure documented above (`ate sepY₀ sepY₁
+= 0` holds while `sepY₁ ≠ sepY₀` pointwise): the oracle statistic
+`diffInMeans sepY₀ sepY₁` mixes two schedules and is not imputable from one
+realized assignment under the weak null alone (where `y₁ ≠ y₀`, no single
+schedule reproduces both arms), so validity for it would say nothing about
+sharp-versus-weak null behavior. Under the sharp null itself each unit's
+observed outcome imputes its missing potential outcome, so the whole
+reassignment statistic is identified with `diffInMeans y₀ y₀`. -/
+example : IsValidPValue (completeRandomization (Fin 4) 2)
+      (permutationPValue (Equiv.Perm (Fin 4)) (diffInMeans sepY₀ sepY₀)) := by
+  exact isValidPValue_fisherRandomization (by decide) Measurable.of_discrete
+
+/-- Degenerate case: with `y₁ = y₀` both the weak and the sharp null hold. -/
+example (y₀ : Fin 4 → ℝ) : ate y₀ y₀ = 0 ∧ ∀ i, y₀ i = y₀ i := by
+  refine ⟨?_, fun i => rfl⟩
+  simp [ate, popMean]
+
 end MathlibExtTest.Probability.Statistics.Experiment
