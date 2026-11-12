@@ -48,17 +48,23 @@ jobs:
     # runs mint a verdict: same-repo automatic runs, same-repo
     # `@codex` comment runs by a writer/maintainer/admin, and
     # trusted-head-owner fork runs — PRs whose HEAD repository is
-    # owned by a login in TRUSTED_HEAD_OWNERS below (currently just
-    # `akiezun`, i.e. the owner's own fork akiezun/atlas-lean). The
-    # check is on the head repo's owner, not on `author_association`:
-    # association describes the author's relationship to the base
-    # repo (akiezun is MEMBER, not OWNER), and does not authenticate
-    # the head fork. A trusted-head diff is the owner's own code, so
-    # the fork prompt-injection risk does not apply to it. Fork runs
-    # with any other head owner stay advisory: a third-party fork
-    # diff is untrusted input that could steer Codex's verdict toward
+    # owned by the immutable numeric account id in
+    # TRUSTED_HEAD_OWNER_IDS below (currently just akiezun's id,
+    # i.e. the owner's own fork akiezun/atlas-lean). The check is on
+    # the head repo owner's id, not on a login (logins are mutable
+    # and reclaimable) and not on `author_association` (which
+    # describes the author's relationship to the base repo — akiezun
+    # is MEMBER, not OWNER — and does not authenticate the head
+    # fork). A trusted-head diff is the owner's own code, so the fork
+    # prompt-injection risk does not apply to it. Fork runs with any
+    # other head owner stay advisory: a third-party fork diff is
+    # untrusted input that could steer Codex's verdict toward
     # approval, and prompt instructions are not a security boundary,
     # so third-party fork content must never mint a gate approval.
+    # Formal trust is also bound to the exact reviewed head:
+    # check_auth outputs the trusted repo + SHA it authorized, and
+    # Resolve target fails closed if the live PR resolves to anything
+    # else (fork transferred or head moved between the two reads).
     # A `@codex` question on a formal PR does produce a verdict, which
     # can REQUEST_CHANGES and cancel the CI build. Formal reviews say
     # so in their header ("This is a formal review."). Anything that
@@ -70,6 +76,8 @@ jobs:
       verdict: ${{ steps.submit.outputs.verdict }}
       review_id: ${{ steps.submit.outputs.review_id }}
       reviewed_sha: ${{ steps.target.outputs.ref }}
+      trusted_repo: ${{ steps.check_auth.outputs.trusted_repo }}
+      trusted_sha: ${{ steps.check_auth.outputs.trusted_sha }}
       # issue_comment payloads carry the PR number under
       # github.event.issue.number, not pull_request.number, which is
       # empty for them. The issue number is the PR number when the
@@ -102,14 +110,17 @@ jobs:
             // comment runs on same-repo PRs are formal too, both
             // authorized by write/maintain/admin. Trusted-head-owner
             // fork runs are formal: the check is on the HEAD
-            // repository's owner, not on `author_association`, which
-            // describes the author's relationship to the base repo
-            // (akiezun is MEMBER, not OWNER) and does not authenticate
-            // the head fork. An owner could otherwise have a PR from
-            // someone else's fork treated as formal. To trust another
-            // head owner, add their login to TRUSTED_HEAD_OWNERS in a
-            // reviewed PR; never use `author_association` for this.
-            const TRUSTED_HEAD_OWNERS = ["akiezun"];
+            // repository owner's immutable numeric id (logins are
+            // mutable and reclaimable), not on `author_association`,
+            // which describes the author's relationship to the base
+            // repo (akiezun is MEMBER, not OWNER) and does not
+            // authenticate the head fork. An owner could otherwise
+            // have a PR from someone else's fork treated as formal.
+            // To trust another head owner, add their numeric id to
+            // TRUSTED_HEAD_OWNER_IDS in a reviewed PR; never use a
+            // login or `author_association` for this. TRUSTED_HEAD_OWNER_IDS
+            // currently holds only akiezun's id (1993519).
+            const TRUSTED_HEAD_OWNER_IDS = [1993519];
             const isForkTarget =
               context.eventName === "pull_request_target";
             const isComment =
@@ -118,8 +129,20 @@ jobs:
             // For comment runs, formality needs the PR's head repo,
             // which the payload does not carry: fetch the PR. Non-PR
             // issue comments and a missing head repo are not formal.
+            // trustedRepo/trustedSha record exactly which head this
+            // authorization covers; Resolve target fails closed if the
+            // live PR resolves to anything else.
             let commentSameRepo = false;
             let commentTrustedHead = false;
+            let trustedRepo = "";
+            let trustedSha = "";
+            const observedPr =
+              context.payload.pull_request ?? null;
+            if (observedPr) {
+              trustedRepo =
+                observedPr.head?.repo?.full_name ?? "";
+              trustedSha = observedPr.head?.sha ?? "";
+            }
             if (isComment) {
               const number =
                 context.payload.issue?.number ??
@@ -134,9 +157,11 @@ jobs:
                   commentSameRepo =
                     pr.head.repo?.full_name ===
                     context.payload.repository.full_name;
-                  commentTrustedHead = TRUSTED_HEAD_OWNERS.includes(
-                    pr.head.repo?.owner?.login
+                  commentTrustedHead = TRUSTED_HEAD_OWNER_IDS.includes(
+                    pr.head.repo?.owner?.id
                   );
+                  trustedRepo = pr.head.repo?.full_name ?? "";
+                  trustedSha = pr.head.sha ?? "";
                 } catch (error) {
                   if (error.status !== 404) {
                     throw error;
@@ -146,9 +171,8 @@ jobs:
             }
             const trustedHeadTarget =
               isForkTarget &&
-              TRUSTED_HEAD_OWNERS.includes(
-                context.payload.pull_request?.head?.repo?.owner
-                  ?.login
+              TRUSTED_HEAD_OWNER_IDS.includes(
+                context.payload.pull_request?.head?.repo?.owner?.id
               );
             const isFormal =
               (context.eventName === "pull_request" &&
@@ -189,6 +213,10 @@ jobs:
             }
             core.setOutput("authorized", String(authorized));
             core.setOutput("formal", String(isFormal && authorized));
+            // Bind formal trust to the exact head authorized here;
+            // Resolve target fails closed if the live PR differs.
+            core.setOutput("trusted_repo", trustedRepo);
+            core.setOutput("trusted_sha", trustedSha);
 
       - name: Acknowledge Codex request
         if: |
@@ -236,6 +264,10 @@ jobs:
         if: steps.check_auth.outputs.authorized == 'true'
         id: target
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          FORMAL: ${{ steps.check_auth.outputs.formal }}
+          TRUSTED_REPO: ${{ steps.check_auth.outputs.trusted_repo }}
+          TRUSTED_SHA: ${{ steps.check_auth.outputs.trusted_sha }}
         with:
           script: |
             const fs = require("fs");
@@ -323,6 +355,25 @@ jobs:
               }
               ref = pr.head.sha;
               base = pr.base.sha;
+              // Formal runs review exactly the head check_auth
+              // authorized. The live PR is fetched again here, so a
+              // fork transfer or a new push between the two reads
+              // would otherwise let other content mint a formal
+              // verdict. Fail closed on any mismatch.
+              if (process.env.FORMAL === "true") {
+                const trustedRepo = process.env.TRUSTED_REPO || "";
+                const trustedSha = process.env.TRUSTED_SHA || "";
+                if (
+                  !trustedRepo ||
+                  !trustedSha ||
+                  repo !== trustedRepo ||
+                  ref !== trustedSha
+                ) {
+                  throw new Error(
+                    "Formal trust binding failed: resolved target does not match the head authorized by check_auth; refusing to review."
+                  );
+                }
+              }
               eventContext.pull_request = {
                 number: pr.number,
                 title: pr.title,
@@ -1203,7 +1254,11 @@ jobs:
   report-failure:
     name: report-failure
     needs: [codex]
-    if: always() && needs.codex.result == 'failure' && needs.codex.outputs.authorized != 'false'
+    # Submit precedes artifact upload, so a post-submit failure
+    # (e.g. artifact upload) would otherwise post "no review was
+    # posted" after a formal review already exists. Suppress the
+    # message whenever a review was posted.
+    if: always() && needs.codex.result == 'failure' && needs.codex.outputs.authorized != 'false' && needs.codex.outputs.review_id == ''
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
