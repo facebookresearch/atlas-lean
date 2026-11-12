@@ -32,7 +32,7 @@ statement and is not claimed here.
 
 1. **The diagonal of `s`** is not used by `gtrRate` (`gtrRate_congr_offDiag`); only the
    off-diagonal exchangeabilities are identified.
-2. **Rate/time scaling.** At a single branch, `(s, t)` and `(c • s, t / c)` give the same
+2. **Rate/time scaling.** At a single branch, `(c • s, t)` and `(s, c * t)` give the same
    transition matrix and pair-site law (`ctmcTransition_gtrRate_smul`, `gtrPairLaw_smul`), so
    one branch identifies only the products `t * s i j`. Fixing the branch length (or the overall
    rate) removes this symmetry.
@@ -368,7 +368,7 @@ private lemma gtrPairLaw_eq_exp (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : �
 if and only if `π = π'` and the branch-scaled exchangeabilities agree off the diagonal,
 `t * s i j = t' * s' i j`. Thus one branch identifies the base frequencies and the products
 `t * s i j`, and nothing more: the only permitted symmetries are the rate/time scaling
-`(s, t) ↦ (c • s, t / c)` (`gtrPairLaw_smul`) and the unused diagonal of `s`. This is a statement
+`(c • s, t) ~ (s, c * t)` (`gtrPairLaw_smul`) and the unused diagonal of `s`. This is a statement
 about the law; it says nothing about estimators. -/
 theorem gtrPairLaw_eq_iff {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ} {t t' : ℝ}
     (hp : IsGTRParam π s) (hp' : IsGTRParam π' s') (ht : 0 < t) (ht' : 0 < t') :

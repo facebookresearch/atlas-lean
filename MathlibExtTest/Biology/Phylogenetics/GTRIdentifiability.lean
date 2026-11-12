@@ -18,8 +18,9 @@ exchangeabilities `1` lies in the GTR domain, and the identifiability theorems a
 Symmetry witnesses: changing the diagonal of `s` does not change the rate matrix; doubling `s`
 and halving the branch length leaves the pair-site law unchanged while the off-diagonal
 exchangeabilities differ (so one branch of unknown length cannot identify `s`); swapping two
-states relabels the pair-site law. Boundary case: with zero exchangeabilities (outside the
-domain) the rate matrix is `0` for every `π`, so `π` is not identified.
+states relabels the pair-site law. Boundary cases: a branch of length `0` does not
+identify `s`; with zero exchangeabilities (outside the domain) the rate matrix is `0` for
+every `π`, so `π` is not identified.
 -/
 
 @[expose] public section
@@ -68,6 +69,10 @@ example : gtrPairLaw π₀ ((2 : ℝ) • s₀) 1 = gtrPairLaw π₀ s₀ 2 := b
   rw [gtrPairLaw_smul, mul_one]
 
 example : ((2 : ℝ) • s₀) 0 1 ≠ s₀ 0 1 := by norm_num [s₀]
+
+/-- Boundary `t = 0`: a branch of length zero carries no information about `s`. -/
+example : gtrPairLaw π₀ s₀ 0 = gtrPairLaw π₀ ((2 : ℝ) • s₀) 0 := by
+  rw [gtrPairLaw_smul, mul_zero]
 
 /-- One branch identifies `t * s`: the scaled pair is recovered from the law. -/
 example {π' : Fin 4 → ℝ} {s' : Matrix (Fin 4) (Fin 4) ℝ} {t' : ℝ} (hp' : IsGTRParam π' s')
