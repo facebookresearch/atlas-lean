@@ -112,11 +112,23 @@ example : IsTightMeasureSet (Set.range fun n : ℕ =>
   rw [hempty, measureReal_empty]
   exact hb.le
 
--- The pinning hypothesis `W n 0 = 0` is needed: the constant paths `n` satisfy the modulus
--- bound trivially, but their laws escape every compact set.
-example : ¬ IsTightMeasureSet (Set.range fun n : ℕ =>
-    (Measure.dirac ()).map (fun _ : Unit => constPath n)) := by
-  intro htight
+-- The pinning hypothesis `W n 0 = 0` cannot be dropped from `isTightMeasureSet_of_modulus`:
+-- the constant paths `n` satisfy measurability and the modulus bound (every increment is `0`),
+-- but their laws escape every compact set.
+example : ¬ ∀ W : ℕ → Unit → C(I, ℝ), (∀ n, Measurable (W n)) →
+    (∀ ε : ℝ, 0 < ε → ∀ b : ℝ, 0 < b → ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in atTop,
+      (Measure.dirac ()).real {ω | ∃ s t : I, dist s t ≤ δ ∧ ε ≤ dist (W n ω s) (W n ω t)} ≤
+        b) →
+    IsTightMeasureSet (Set.range fun n => (Measure.dirac ()).map (W n)) := by
+  intro h
+  have htight := h (fun n _ => constPath n) (fun _ => measurable_const)
+    fun ε hε b hb => ⟨1, one_pos, Eventually.of_forall fun n => by
+      have hempty : {ω : Unit | ∃ s t : I, dist s t ≤ 1 ∧
+          ε ≤ dist (constPath (n : ℝ) s) (constPath (n : ℝ) t)} = ∅ := by
+        ext ω
+        simp [constPath, not_le.2 hε]
+      rw [hempty, measureReal_empty]
+      exact hb.le⟩
   rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le] at htight
   obtain ⟨K, hK, hle⟩ := htight (1 / 2) (by norm_num)
   obtain ⟨R, hR⟩ := hK.isBounded.subset_closedBall (0 : C(I, ℝ))
