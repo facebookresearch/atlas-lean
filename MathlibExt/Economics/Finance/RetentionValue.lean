@@ -10,7 +10,10 @@ module
 
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Push
 
 /-!
 # Retained earnings and the value of growth
@@ -25,6 +28,8 @@ price exceeds the no-growth price `E₁ / r` exactly when `ROE > r`.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionGrowth`: dividend growth `b * ROE`.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionPrice`: Gordon price with reinvestment.
 * `MathlibExt.Economics.Finance.RetentionValue.noGrowthPrice`: no-growth price `E₁ / r`.
+* `MathlibExt.Economics.Finance.RetentionValue.retentionPrice_eq_gordonForm`: `retentionPrice`
+  is the Gordon formula with the reinvestment-model dividend and growth substituted in.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionCreatesValue_iff`: value
   creation iff `ROE > r`.
 

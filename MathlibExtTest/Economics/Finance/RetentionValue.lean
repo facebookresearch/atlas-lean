@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Finance.RetentionValue
-import Mathlib.Tactic
+import Mathlib.Tactic.NormNum
 
 /-!
 # Tests for retained earnings and the value of growth
