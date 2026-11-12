@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.A03StaticStability
+import PhyslibExt.EarthScience.StaticStability
 
 /-!
 # Static-stability checks
 
-Concrete consumers of `PhyslibExt.EarthScience.A03StaticStability`:
+Concrete consumers of `PhyslibExt.EarthScience.StaticStability`:
 the buoyancy formula at `g = 9.81, a = 0.003, theta0 = 300, zeta = 10`,
 the stable/neutral/unstable sign classification, and the oscillator form.
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.A03StaticStability`
+- `PhyslibExt.EarthScience.StaticStability`
 -/
 
 /-- Public shape of the buoyancy-acceleration theorem. -/
