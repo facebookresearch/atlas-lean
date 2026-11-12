@@ -74,6 +74,21 @@ theorem storeyPi0Plus1_pa : storeyPi0Plus1 (1 / 9) pa = 9 / 8 := by
 theorem storeyPi0Plus1_all_small : storeyPi0Plus1 (1 / 2) (![1 / 9, 1 / 3] : Fin 2 → ℝ) = 1 := by
   rw [storeyPi0Plus1, numAbove_two]; norm_num
 
+/-- The estimator is strictly positive on its nondegenerate domain. -/
+example {m : ℕ} (hm : 0 < m) {lam : ℝ} (hlam : lam < 1) (p : Fin m → ℝ) :
+    0 < storeyPi0Plus1 lam p := by
+  unfold storeyPi0Plus1
+  have : 0 < 1 - lam := sub_pos.mpr hlam
+  positivity
+
+/-- At the excluded endpoint `lam = 1`, totalized division gives zero. -/
+example {m : ℕ} (p : Fin m → ℝ) : storeyPi0Plus1 1 p = 0 := by
+  simp [storeyPi0Plus1]
+
+/-- An empty family also has a zero denominator, even when `lam < 1`. -/
+example (lam : ℝ) (p : Fin 0 → ℝ) : storeyPi0Plus1 lam p = 0 := by
+  simp [storeyPi0Plus1]
+
 /-- At `q = 1/4`, `lam = 1/9`: the thresholds `min (1/9) (q k / (m π̂₀)) = min (1/9) (k/9)` are
 capped at `lam = 1/9` already for `k = 1`. -/
 theorem storeyThreshold_pa (k : ℕ) (hk : 1 ≤ k) : storeyThreshold (1 / 4) (1 / 9) pa k = 1 / 9 := by
@@ -382,6 +397,14 @@ theorem sum_integral_inv_storeyPi0Plus1_update_le_two :
     (fun i _ => indepFun_P_rest i) (fun i _ => isValidPValue_P i) (lam := 1 / 3)
     (by norm_num) (by norm_num)
   simpa using h
+
+/-- The inverse-estimator theorem requires the strict upper bound, not merely `lam ≤ 1`. -/
+example {lam : ℝ} (hlam0 : 0 ≤ lam) (hlam1 : lam < 1) :
+    ∑ i, ∫ ω, (storeyPi0Plus1 lam (Function.update (fun j => P j ω) i 0))⁻¹ ∂μ ≤ 2 := by
+  fail_if_success exact (sum_integral_inv_storeyPi0Plus1_update_le μ P measurable_P Finset.univ
+    (fun i _ => indepFun_P_rest i) (fun i _ => isValidPValue_P i) hlam0 hlam1.le)
+  exact sum_integral_inv_storeyPi0Plus1_update_le μ P measurable_P Finset.univ
+    (fun i _ => indepFun_P_rest i) (fun i _ => isValidPValue_P i) hlam0 hlam1
 
 /-- The iIndepFun corollary is usable too: mutually independent p-values satisfy the per-null
 independence hypothesis (`indepFun_rest_of_iIndepFun`). -/

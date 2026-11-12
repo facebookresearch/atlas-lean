@@ -101,8 +101,8 @@ variable {m : ℕ}
 
 /-- **Storey's estimator of the proportion of true nulls** with tuning parameter `lam`, in the
 finite-sample form used by Storey, Taylor and Siegmund (2004, Theorem 3):
-`π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)`. The `+ 1` keeps `π̂₀ > 0` and is used in the
-FDR proof (`sum_integral_inv_storeyPi0Plus1_update_le`). -/
+`π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)`. The `+ 1` keeps `π̂₀ > 0` when `0 < m`
+and `lam < 1`, and is used in the FDR proof (`sum_integral_inv_storeyPi0Plus1_update_le`). -/
 noncomputable def storeyPi0Plus1 (lam : ℝ) (p : Fin m → ℝ) : ℝ :=
   (((Finset.univ.filter fun j => lam < p j).card : ℝ) + 1) / ((1 - lam) * m)
 
@@ -769,7 +769,7 @@ theorem integral_falseDiscoveryProportion_storeyBHRejections_le {Ω : Type*}
 /-- **The property of Storey's estimator that the FDR proof uses.** Let `π̂₀⁽ⁱ⁾` be Storey's
 estimator computed with `p i` replaced by `0` (equivalently, from the other p-values). If each
 true-null p-value is valid and independent of the other p-values, then
-`∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ m`, for `0 ≤ lam ≤ 1`. Combined with the leave-one-out property this
+`∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ m`, for `0 ≤ lam < 1`. Combined with the leave-one-out property this
 gives
 `E[FDP] ≤ ∑_{i ∈ H0} (q / m) E[1 / π̂₀⁽ⁱ⁾] ≤ q`. This is a bound on the *inverse* of the
 leave-one-out estimator; conservativeness in expectation, `E[π̂₀] ≥ |H0| / m`
@@ -778,7 +778,7 @@ theorem sum_integral_inv_storeyPi0Plus1_update_le {Ω : Type*} [MeasurableSpace 
     [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
     (H0 : Finset (Fin m))
     (hindep : ∀ i ∈ H0, IndepFun (p i) (fun ω (j : {j // j ≠ i}) => p j ω) μ)
-    (hnull : ∀ i ∈ H0, IsValidPValue μ (p i)) {lam : ℝ} (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) :
+    (hnull : ∀ i ∈ H0, IsValidPValue μ (p i)) {lam : ℝ} (hlam0 : 0 ≤ lam) (hlam1 : lam < 1) :
     ∑ i ∈ H0, ∫ ω, (storeyPi0Plus1 lam (Function.update (fun j => p j ω) i 0))⁻¹ ∂μ ≤ m := by
   have heq (i : Fin m) (ω : Ω) : (storeyPi0Plus1 lam (Function.update (fun j => p j ω) i 0))⁻¹ =
       m * ((1 - lam) / ((numAboveLOO lam (fun j => p j ω) i : ℝ) + 1)) := by
@@ -786,7 +786,7 @@ theorem sum_integral_inv_storeyPi0Plus1_update_le {Ω : Type*} [MeasurableSpace 
   simp_rw [heq, integral_const_mul, ← Finset.mul_sum]
   calc (m : ℝ) * _ ≤ m * 1 := mul_le_mul_of_nonneg_left
         (sum_integral_loo_le_one μ p hp H0 hindep
-          (fun i hi => valid_measureReal_le (hnull i hi) hlam0 hlam1) hlam0) (Nat.cast_nonneg m)
+          (fun i hi => valid_measureReal_le (hnull i hi) hlam0 hlam1.le) hlam0) (Nat.cast_nonneg m)
     _ = m := mul_one _
 
 /-- **Bridge to Storey's (2002) estimator on main.** `storeyPi0Plus1` is
