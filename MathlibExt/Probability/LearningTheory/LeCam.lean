@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import MathlibExt.Probability.MarkovMixing
 
 import Mathlib.Tactic.Ring
 
@@ -35,7 +36,8 @@ open Finset
 `1` minus the total variation distance. Hence no test beats the
 better of the two hypotheses by more than the variation allows. -/
 theorem lecam_two_point {α : Type*} [Fintype α] (p q : PMF α) (δ : α → Bool) :
-    1 - (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal| ≤
+    1 - MathlibExt.Probability.MarkovMixing.tvDist (fun a => (p a).toReal)
+      (fun a => (q a).toReal) ≤
       (∑ a ∈ Finset.univ.filter (fun a => δ a = true), (p a).toReal) +
         (∑ a ∈ Finset.univ.filter (fun a => δ a = false), (q a).toReal) := by
   have normalize (r : PMF α) : ∑ a, (r a).toReal = 1 := by
