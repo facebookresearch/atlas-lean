@@ -64,13 +64,14 @@ theorem hasDerivAt_slab_profile {T0 TL L : ℝ} (hL : 0 < L) (z : ℝ) :
 and the Fourier heat flux is `q = -k * (TL - T0) / L`. -/
 theorem slab_profile_second_deriv {T0 TL L k : ℝ} (hL : 0 < L) (z : ℝ) :
     iteratedDeriv 2 (fun z => T0 + (TL - T0) * z / L) z = 0 ∧
-      -k * ((TL - T0) / L) = -k * (TL - T0) / L := by
+      -k * deriv (fun z => T0 + (TL - T0) * z / L) z = -k * (TL - T0) / L := by
   constructor
   · have hderiv : deriv (fun z => T0 + (TL - T0) * z / L) = fun _ => ((TL - T0) / L) :=
       funext (fun y => (hasDerivAt_slab_profile hL y).deriv)
     have h2 : (2 : ℕ) = 1 + 1 := rfl
     rw [h2, iteratedDeriv_succ, iteratedDeriv_one, hderiv]
     exact deriv_const _ _
-  · ring
+  · rw [(hasDerivAt_slab_profile hL z).deriv]
+    ring
 
 end EarthScience

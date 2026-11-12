@@ -51,10 +51,12 @@ example (z : ℝ) :
 /-- Numeric slab: second derivative `0` and flux `-15`. -/
 example (z : ℝ) :
     iteratedDeriv 2 (fun z => (0 : ℝ) + (10 - 0) * z / 2) z = 0 ∧
-      -(3 : ℝ) * ((10 - 0) / 2) = -15 := by
+      -(3 : ℝ) * deriv (fun z => (0 : ℝ) + (10 - 0) * z / 2) z = -15 := by
   have h := EarthScience.slab_profile_second_deriv (T0 := 0) (TL := 10) (L := 2) (k := 3)
     (by norm_num) z
-  refine ⟨h.1, by norm_num⟩
+  refine ⟨h.1, ?_⟩
+  rw [h.2]
+  norm_num
 
 /-- Uniform-temperature boundary: `TL = T0` gives constant profile, zero flux. -/
 example (z : ℝ) :
