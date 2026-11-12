@@ -81,4 +81,25 @@ theorem coverage_mono_of_subset {Θ X T : Type*} [MeasurableSpace X]
     exact hsub x hx
   · exact measure_ne_top _ _
 
+/-- Coverage transfers outward up to a per-parameter exception budget. -/
+theorem coverage_of_subset_ae_budget {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T) {C C' : X → Set T} {α : ℝ} {ε : Θ → ℝ}
+    (hcov : ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x})
+    (hbad : ∀ θ, (P θ).real {x | τ θ ∈ C x ∧ τ θ ∉ C' x} ≤ ε θ) (θ : Θ) :
+    1 - α - ε θ ≤ (P θ).real {x | τ θ ∈ C' x} := by
+  have hsub : {x | τ θ ∈ C x} ⊆ {x | τ θ ∈ C' x} ∪ {x | τ θ ∈ C x ∧ τ θ ∉ C' x} := by
+    intro x hx
+    by_cases h : τ θ ∈ C' x
+    · exact Or.inl h
+    · exact Or.inr ⟨hx, h⟩
+  have hmono : (P θ).real {x | τ θ ∈ C x}
+      ≤ (P θ).real ({x | τ θ ∈ C' x} ∪ {x | τ θ ∈ C x ∧ τ θ ∉ C' x}) :=
+    measureReal_mono hsub (measure_ne_top _ _)
+  have hunion := measureReal_union_le (μ := P θ)
+    {x | τ θ ∈ C' x} {x | τ θ ∈ C x ∧ τ θ ∉ C' x}
+  have hcovθ := hcov θ
+  have hbadθ := hbad θ
+  linarith
+
 end MathlibExt.Probability.Statistics
