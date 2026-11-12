@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.SubGaussian
+public import MathlibExt.Probability.HoeffdingBernoulliSumAbsTail
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Integral.Indicator
 
@@ -17,6 +18,8 @@ import Mathlib.MeasureTheory.Integral.Indicator
 
 open Filter Topology MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+namespace ProbabilityTheory
 
 /-- Empirical CDF over a `Fin n` sample with the `/n` normalization. -/
 noncomputable def empCDF {n : ℕ} (X : Fin n → ℝ) (t : ℝ) : ℝ :=
@@ -39,7 +42,6 @@ theorem abs_empCDF_sub_le {n : ℕ} (hn : 0 < n)
     (x : ℝ) (eps : ℝ) (heps : 0 < eps) :
     μ {ω | eps < |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal|}
       ≤ ENNReal.ofReal (2 * Real.exp (-2 * (n : ℝ) * eps ^ 2)) := by
-  set F := (ν (Set.Iic x)).toReal
   have hnpos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr hn
   have hg_if : Measurable (fun y : ℝ => if y ≤ x then (1 : ℝ) else 0) := by
     have heq : (fun y : ℝ => if y ≤ x then (1 : ℝ) else 0)
@@ -58,10 +60,10 @@ theorem abs_empCDF_sub_le {n : ℕ} (hn : 0 < n)
     by_cases h : X i ω ≤ x
     · simp only [ite_eq_left h, ite_eq_left (Set.mem_Iic.mpr h)]
     · simp only [ite_eq_right h, ite_eq_right (mt Set.mem_Iic.mp h)]
-  have hYmeas : ∀ i, AEMeasurable (fun ω => if X i ω ≤ x then (1 : ℝ) else 0) μ := by
-    intro i
-    exact hg_if.comp_aemeasurable (hlaw i).aemeasurable
-  have hmean : ∀ i, ∫ ω, (if X i ω ≤ x then (1 : ℝ) else 0) ∂μ = F := by
+  have hYmeas : ∀ i, AEMeasurable (fun ω => if X i ω ≤ x then (1 : ℝ) else 0) μ :=
+    fun i => hg_if.comp_aemeasurable (hlaw i).aemeasurable
+  have hmean : ∀ i, ∫ ω, (if X i ω ≤ x then (1 : ℝ) else 0) ∂μ
+      = (ν (Set.Iic x)).toReal := by
     intro i
     have hAES : AEStronglyMeasurable (Set.indicator (Set.Iic x) (fun _ => (1 : ℝ))) ν :=
       (Measurable.indicator measurable_const measurableSet_Iic).aestronglyMeasurable
@@ -71,127 +73,48 @@ theorem abs_empCDF_sub_le {n : ℕ} (hn : 0 < n)
         = (Set.indicator (Set.Iic x) (fun _ => (1 : ℝ))) ∘ (X i) := funext (hYeq i)
     rw [hfun]
     exact h
-  have hIcc : ∀ i, ∀ᵐ ω ∂μ, (if X i ω ≤ x then (1 : ℝ) else 0) ∈ Set.Icc (0 : ℝ) 1 := by
-    intro i
-    refine ae_of_all _ fun ω => ?_
-    by_cases h : X i ω ≤ x <;> simp [h, Set.mem_Icc]
-  have hsubG : ∀ i, HasSubgaussianMGF (fun ω => (if X i ω ≤ x then (1 : ℝ) else 0) - F)
-      ((‖(1 : ℝ) - 0‖₊ / 2) ^ 2) μ := by
-    intro i
-    have h := hasSubgaussianMGF_of_mem_Icc (hYmeas i) (hIcc i)
-    rw [hmean i] at h
-    exact h
-  have hmeas_sub : Measurable (fun y : ℝ => (if y ≤ x then (1 : ℝ) else 0) - F) :=
-    hg_if.sub_const F
-  have hIndepY : iIndepFun (fun i ω => (if X i ω ≤ x then (1 : ℝ) else 0) - F) μ := by
-    refine iIndepFun.congr
-      (f := fun i => (fun y : ℝ => (if y ≤ x then (1 : ℝ) else 0) - F) ∘ (X i))
-      (fun i => ae_of_all _ fun ω => rfl) ?_
-    exact hIndep.comp _ (fun _ => hmeas_sub)
-  have hsubG' : ∀ i, HasSubgaussianMGF (fun ω => F - (if X i ω ≤ x then (1 : ℝ) else 0))
-      ((‖(1 : ℝ) - 0‖₊ / 2) ^ 2) μ := by
-    intro i
-    have h := (hsubG i).neg
-    refine h.congr (ae_of_all _ fun ω => ?_)
-    simp only [Pi.neg_apply]
-    ring
-  have hIndepW : iIndepFun (fun i ω => F - (if X i ω ≤ x then (1 : ℝ) else 0)) μ := by
-    refine iIndepFun.congr
-      (f := fun i => (fun y : ℝ => F - (if y ≤ x then (1 : ℝ) else 0)) ∘ (X i))
-      (fun i => ae_of_all _ fun ω => rfl) ?_
-    exact hIndep.comp _
-      (fun _ => (measurable_const.sub hg_if :
-        Measurable (fun y : ℝ => F - (if y ≤ x then (1 : ℝ) else 0))))
-  have hε : (0 : ℝ) ≤ (n : ℝ) * eps := mul_nonneg (Nat.cast_nonneg _) heps.le
-  have side1 := HasSubgaussianMGF.measure_sum_ge_le_of_iIndepFun (s := Finset.univ)
-    hIndepY (fun i _ => hsubG i) hε
-  have side2 := HasSubgaussianMGF.measure_sum_ge_le_of_iIndepFun (s := Finset.univ)
-    hIndepW (fun i _ => hsubG' i) hε
-  have hnn : ‖(1 : ℝ) - 0‖₊ = (1 : NNReal) := by
-    rw [sub_zero]
-    exact nnnorm_one
-  have hquarter : ((1 / 2 : NNReal) ^ 2 : NNReal) = 1 / 4 := by
-    ext
-    push_cast
-    norm_num
-  have hsum_c : (↑(∑ i ∈ (Finset.univ : Finset (Fin n)), ((‖(1 : ℝ) - 0‖₊ / 2) ^ 2 : NNReal)) : ℝ)
-      = (n : ℝ) * (1 / 4 : ℝ) := by
-    rw [hnn, hquarter, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    push_cast
-    ring
-  have hexp : (-((n : ℝ) * eps) ^ 2 / (2 * ((n : ℝ) * (1 / 4)))) = -2 * (n : ℝ) * eps ^ 2 := by
-    have hdenom : (2 : ℝ) * ((n : ℝ) * (1 / 4)) ≠ 0 :=
-      mul_ne_zero (by norm_num) (mul_ne_zero (ne_of_gt hnpos) (by norm_num))
-    rw [div_eq_iff hdenom]
-    ring
-  have hexp' : (-((n : ℝ) * eps) ^ 2
-        / (2 * (↑(∑ i ∈ (Finset.univ : Finset (Fin n)), ((‖(1 : ℝ) - 0‖₊ / 2) ^ 2 : NNReal)) : ℝ)))
-      = -2 * (n : ℝ) * eps ^ 2 := by
-    rw [hsum_c]
-    exact hexp
-  have hB : μ.real {ω | (n : ℝ) * eps
-        ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), ((if X i ω ≤ x then (1 : ℝ) else 0) - F)}
-      ≤ Real.exp (-2 * (n : ℝ) * eps ^ 2) := by
-    have hside := side1
-    simp only [hexp'] at hside
-    exact hside
-  have hC : μ.real {ω | (n : ℝ) * eps
-        ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), (F - (if X i ω ≤ x then (1 : ℝ) else 0))}
-      ≤ Real.exp (-2 * (n : ℝ) * eps ^ 2) := by
-    have hside := side2
-    simp only [hexp'] at hside
-    exact hside
-  have hsum : ∀ ω, (∑ i ∈ (Finset.univ : Finset (Fin n)),
-        ((if X i ω ≤ x then (1 : ℝ) else 0) - F))
-      = (n : ℝ) * (empCDF (fun i => X i ω) x - F) := by
+  have hbern : ∀ i, ∀ᵐ ω ∂μ, (if X i ω ≤ x then (1 : ℝ) else 0) = 0
+      ∨ (if X i ω ≤ x then (1 : ℝ) else 0) = 1 :=
+    fun i => ae_of_all _ fun ω => by by_cases h : X i ω ≤ x <;> simp [h]
+  have hIY : iIndepFun (fun i ω => (if X i ω ≤ x then (1 : ℝ) else 0)) μ :=
+    hIndep.comp _ (fun _ => hg_if)
+  have htail := ProbabilityTheory.hoeffding_bernoulli_sum_abs_tail
+    (X := fun i ω => (if X i ω ≤ x then (1 : ℝ) else 0))
+    (p := (ν (Set.Iic x)).toReal) (ε := eps)
+    hIY hYmeas hbern (fun i => hmean i) heps
+  have key : ∀ ω, |∑ i, (if X i ω ≤ x then (1 : ℝ) else 0) - (n : ℝ) * (ν (Set.Iic x)).toReal|
+      = (n : ℝ) * |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal| := by
     intro ω
-    simp only [Finset.sum_sub_distrib, empCDF_eq_sum_div, Finset.sum_const,
-      Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    have hne : (n : ℝ) ≠ 0 := ne_of_gt hnpos
-    field_simp
-  have hsum' : ∀ ω, (∑ i ∈ (Finset.univ : Finset (Fin n)),
-        (F - (if X i ω ≤ x then (1 : ℝ) else 0)))
-      = -∑ i ∈ (Finset.univ : Finset (Fin n)), ((if X i ω ≤ x then (1 : ℝ) else 0) - F) := by
-    intro ω
-    simp only [← Finset.sum_neg_distrib]
-    refine Finset.sum_congr rfl fun i _ => by ring
-  have hsub : {ω | eps < |empCDF (fun i => X i ω) x - F|}
-      ⊆ {ω | (n : ℝ) * eps
-          ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), ((if X i ω ≤ x then (1 : ℝ) else 0) - F)}
-        ∪ {ω | (n : ℝ) * eps
-          ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), (F - (if X i ω ≤ x then (1 : ℝ) else 0))} := by
-    intro ω h
-    simp only [Set.mem_ofPred_eq, Set.mem_union] at h ⊢
-    rw [lt_abs] at h
-    rcases h with h | h
-    · left
-      rw [hsum ω]
-      exact le_of_lt (mul_lt_mul_of_pos_left h hnpos)
-    · right
-      rw [hsum' ω, hsum ω]
-      have h2 := mul_lt_mul_of_pos_left h hnpos
-      have heq : (n : ℝ) * (-(empCDF (fun i => X i ω) x - F))
-        = -((n : ℝ) * (empCDF (fun i => X i ω) x - F)) := by ring
-      rw [← heq]
-      exact le_of_lt h2
-  have hunion : μ.real ({ω | (n : ℝ) * eps
-          ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), ((if X i ω ≤ x then (1 : ℝ) else 0) - F)}
-        ∪ {ω | (n : ℝ) * eps
-          ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), (F - (if X i ω ≤ x then (1 : ℝ) else 0))})
-      ≤ 2 * Real.exp (-2 * (n : ℝ) * eps ^ 2) :=
-    calc μ.real ({ω | (n : ℝ) * eps
-            ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), ((if X i ω ≤ x then (1 : ℝ) else 0) - F)}
-          ∪ {ω | (n : ℝ) * eps
-            ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), (F - (if X i ω ≤ x then (1 : ℝ) else 0))})
-        ≤ μ.real {ω | (n : ℝ) * eps
-            ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), ((if X i ω ≤ x then (1 : ℝ) else 0) - F)}
-          + μ.real {ω | (n : ℝ) * eps
-            ≤ ∑ i ∈ (Finset.univ : Finset (Fin n)), (F - (if X i ω ≤ x then (1 : ℝ) else 0))} :=
-          measureReal_union_le _ _
-      _ ≤ 2 * Real.exp (-2 * (n : ℝ) * eps ^ 2) := by linarith [hB, hC]
-  have hA : μ.real {ω | eps < |empCDF (fun i => X i ω) x - F|}
-      ≤ 2 * Real.exp (-2 * (n : ℝ) * eps ^ 2) :=
-    (measureReal_mono hsub).trans hunion
-  have hfin : μ {ω | eps < |empCDF (fun i => X i ω) x - F|} ≠ ⊤ := measure_ne_top _ _
+    have e1 : (∑ i, (if X i ω ≤ x then (1 : ℝ) else 0)) - (n : ℝ) * (ν (Set.Iic x)).toReal
+        = (n : ℝ) * (empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal) := by
+      rw [empCDF_eq_sum_div]
+      have hne : (n : ℝ) ≠ 0 := ne_of_gt hnpos
+      field_simp
+    rw [e1, abs_mul, abs_of_nonneg hnpos.le]
+  have hev : {ω | eps < |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal|}
+      = {ω | eps * (n : ℝ)
+        < |∑ i, (if X i ω ≤ x then (1 : ℝ) else 0) - (n : ℝ) * (ν (Set.Iic x)).toReal|} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, key]
+    constructor
+    · intro h
+      calc eps * (n : ℝ)
+          < |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal| * (n : ℝ) :=
+            mul_lt_mul_of_pos_right h hnpos
+        _ = (n : ℝ) * |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal| :=
+            mul_comm _ _
+    · intro h
+      rw [mul_comm eps] at h
+      exact lt_of_mul_lt_mul_left h (le_of_lt hnpos)
+  have hexp_eq : (-2 * eps ^ 2 * (n : ℝ)) = -2 * (n : ℝ) * eps ^ 2 := by ring
+  have hA : μ.real {ω | eps < |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal|}
+      ≤ 2 * Real.exp (-2 * eps ^ 2 * (n : ℝ)) := by
+    rw [hev]
+    exact htail
+  rw [hexp_eq] at hA
+  have hfin : μ {ω | eps < |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal|} ≠ ⊤ :=
+    measure_ne_top _ _
   rw [← ENNReal.ofReal_toReal hfin]
   exact ENNReal.ofReal_le_ofReal hA
+
+end ProbabilityTheory
