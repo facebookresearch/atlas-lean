@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S15EarthInteriorProfiles
+import PhyslibExt.EarthScience.EarthInteriorProfiles
 
 /-!
 # Earth-interior profile checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S15EarthInteriorProfiles`:
+Concrete consumers of `PhyslibExt.EarthScience.EarthInteriorProfiles`:
 `ρ = 5000, g = 10, φ = 10^8` gives `dρ / dr = -1 / 2000`, and the
 uniform-density shell derivative at `ρ = 3000`.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S15EarthInteriorProfiles`
+- `PhyslibExt.EarthScience.EarthInteriorProfiles`
 -/
 
 /-- Numeric density gradient: `ρ = 5000, g = 10, φ = 10^8` gives `dρ / dr = -1 / 2000`. -/
