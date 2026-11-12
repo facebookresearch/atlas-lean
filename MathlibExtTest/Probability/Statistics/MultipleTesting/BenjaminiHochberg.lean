@@ -285,7 +285,8 @@ theorem forall_of_ae_three {P : Fin 3 → Prop} (h : ∀ᵐ ω ∂three, P ω) (
 
 /-- The reversed-conditional-probability criterion is strictly more general than separation: for
 `D = {x | 1 ≤ x 1}`, `s = 0`, `t = 1`, `P(D | p 0 ≤ 0) = 1 > 1/2 = P(D | 0 < p 0 ≤ 1)`, so
-`slabP` is not PRDS on `{0}`, although (next example) no threshold `u` separates. -/
+`slabP` is not PRDS on `{0}`, although (next example) no threshold `u` separates for `s = 0`,
+`t = 1`. -/
 example : ¬ IsPRDSOn three slabP {0} := by
   have hA : {ω | slabP 0 ω ≤ 0} = {0} := by
     ext ω; fin_cases ω <;> norm_num [slabP]
@@ -320,9 +321,10 @@ theorem isPRDSOn_coin_comonotone : IsPRDSOn coin (fun _ : Fin 2 => coinP) Finset
   isPRDSOn_of_monotone_comp _ _ (fun _ => measurable_from_top) _ fun _ _ =>
     ⟨fun x _ => x, fun _ _ h _ => h, fun _ => rfl⟩
 
-/-- Boundary: the slab inequality of `IsPRDSOn.measure_inter_mul_measure_slab_le` is attained. For
-the comonotone coin pair, `D = {x | 1/2 ≤ x 1}` (all of the support), `s = 1/2`, `t = 1`, both
-sides are `coin {true} * coin {false} = 1/4`. -/
+/-- Boundary: the slab inequality of `IsPRDSOn.measure_inter_mul_measure_slab_le` holds with
+equality. Here `D = {x | 1/2 ≤ x 1}` contains the whole support, so both sides are
+`μ (p 0 ≤ s) * μ (s < p 0 ≤ t)` for any family and comonotonicity plays no part; with `s = 1/2`,
+`t = 1` they are `coin {true} * coin {false} = 1/4`. -/
 example : coin ({b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
       {b | coinP b ≤ 1 / 2}) * coin {b | 1 / 2 < coinP b ∧ coinP b ≤ 1} =
     coin ({b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
