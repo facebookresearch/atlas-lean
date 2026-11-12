@@ -246,6 +246,112 @@ example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
       · exact isValidPValue_coinP
       · exact isValidPValue_coinP_not) q hq₀ hq₁
 
+/-! ### Refuting PRDS -/
+
+/-- The separation criterion re-derives `not_isPRDSOn_antiP` with `s = 1/2`, `t = 1`, `u = 1`:
+`p 0 ≤ 1/2` only at `true`, where `p 1 = 1`; `1/2 < p 0 ≤ 1` only at `false`, where
+`p 1 = 1/2 < 1`. -/
+example : ¬ IsPRDSOn coin antiP Finset.univ := by
+  have hA : {b | antiP 0 b ≤ 1 / 2} = {true} := by
+    ext b; cases b <;> norm_num [antiP, coinP]
+  have hB : {b | 1 / 2 < antiP 0 b ∧ antiP 0 b ≤ 1} = {false} := by
+    ext b; cases b <;> norm_num [antiP, coinP]
+  refine not_isPRDSOn_of_separated (i := 0) (k := 1) (s := 1 / 2) (t := 1) (u := 1)
+    (fun _ => measurable_from_top) (Finset.mem_univ 0) ?_ ?_
+    (ae_of_all _ fun b hb => ?_) (ae_of_all _ fun b h1 h2 => ?_)
+  · rw [hA]; simp [coin]
+  · rw [hB]; simp [coin]
+  · revert hb; cases b <;> norm_num [antiP, coinP]
+  · revert h1 h2; cases b <;> norm_num [antiP, coinP]
+
+/-- Three outcomes of mass `1` each. -/
+noncomputable def three : Measure (Fin 3) :=
+  Measure.dirac 0 + Measure.dirac 1 + Measure.dirac 2
+
+instance : IsFiniteMeasure three := by
+  unfold three
+  infer_instance
+
+/-- `p 0 = (0, 1, 1)` and `p 1 = (1, 1, 0)` on the outcomes `0, 1, 2`. -/
+noncomputable def slabP : Fin 2 → Fin 3 → ℝ := ![![0, 1, 1], ![1, 1, 0]]
+
+/-- An almost-sure statement under `three` holds at every outcome. -/
+theorem forall_of_ae_three {P : Fin 3 → Prop} (h : ∀ᵐ ω ∂three, P ω) (ω : Fin 3) : P ω := by
+  simp only [three, ae_add_measure_iff, ae_dirac_eq, Filter.eventually_pure] at h
+  fin_cases ω
+  · exact h.1.1
+  · exact h.1.2
+  · exact h.2
+
+/-- The reversed-conditional-probability criterion is strictly more general than separation: for
+`D = {x | 1 ≤ x 1}`, `s = 0`, `t = 1`, `P(D | p 0 ≤ 0) = 1 > 1/2 = P(D | 0 < p 0 ≤ 1)`, so
+`slabP` is not PRDS on `{0}`, although (next example) no threshold `u` separates. -/
+example : ¬ IsPRDSOn three slabP {0} := by
+  have hA : {ω | slabP 0 ω ≤ 0} = {0} := by
+    ext ω; fin_cases ω <;> norm_num [slabP]
+  have hB : {ω | 0 < slabP 0 ω ∧ slabP 0 ω ≤ 1} = {1, 2} := by
+    ext ω; fin_cases ω <;> norm_num [slabP]
+  have hDA : {ω | (fun j => slabP j ω) ∈ {x : Fin 2 → ℝ | 1 ≤ x 1}} ∩ {ω | slabP 0 ω ≤ 0} =
+      {0} := by
+    ext ω; fin_cases ω <;> norm_num [slabP]
+  have hDB : {ω | (fun j => slabP j ω) ∈ {x : Fin 2 → ℝ | 1 ≤ x 1}} ∩
+      {ω | 0 < slabP 0 ω ∧ slabP 0 ω ≤ 1} = {1} := by
+    ext ω; fin_cases ω <;> norm_num [slabP]
+  refine not_isPRDSOn_of_measure_inter_mul_lt (fun _ => measurable_from_top)
+    (Finset.mem_singleton_self 0) (D := {x : Fin 2 → ℝ | 1 ≤ x 1})
+    (measurableSet_le measurable_const (measurable_pi_apply 1))
+    (fun x y hxy hx => hx.trans (hxy 1)) (s := 0) (t := 1) ?_
+  rw [hDA, hDB, hA, hB]
+  simp [three]
+  norm_num
+
+/-- For `slabP`, `i = 0`, `k = 1`, `s = 0`, `t = 1`, no `u` satisfies the hypotheses of
+`not_isPRDSOn_of_separated`: outcome `0` forces `u ≤ 1`, outcome `1` forces `1 < u`. -/
+example (u : ℝ) : ¬ ((∀ᵐ ω ∂three, slabP 0 ω ≤ 0 → u ≤ slabP 1 ω) ∧
+    ∀ᵐ ω ∂three, 0 < slabP 0 ω → slabP 0 ω ≤ 1 → slabP 1 ω < u) := by
+  rintro ⟨hA, hB⟩
+  have h0 := forall_of_ae_three hA 0
+  have h1 := forall_of_ae_three hB 1
+  norm_num [slabP] at h0 h1
+  linarith
+
+/-- The comonotone coin pair `p 0 = p 1 = coinP` is PRDS. -/
+theorem isPRDSOn_coin_comonotone : IsPRDSOn coin (fun _ : Fin 2 => coinP) Finset.univ :=
+  isPRDSOn_of_monotone_comp _ _ (fun _ => measurable_from_top) _ fun _ _ =>
+    ⟨fun x _ => x, fun _ _ h _ => h, fun _ => rfl⟩
+
+/-- Boundary: the slab inequality of `IsPRDSOn.measure_inter_mul_measure_slab_le` is attained. For
+the comonotone coin pair, `D = {x | 1/2 ≤ x 1}` (all of the support), `s = 1/2`, `t = 1`, both
+sides are `coin {true} * coin {false} = 1/4`. -/
+example : coin ({b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
+      {b | coinP b ≤ 1 / 2}) * coin {b | 1 / 2 < coinP b ∧ coinP b ≤ 1} =
+    coin ({b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
+      {b | 1 / 2 < coinP b ∧ coinP b ≤ 1}) * coin {b | coinP b ≤ 1 / 2} ∧
+    coin ({b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
+      {b | coinP b ≤ 1 / 2}) * coin {b | 1 / 2 < coinP b ∧ coinP b ≤ 1} = 4⁻¹ := by
+  have hle := isPRDSOn_coin_comonotone.measure_inter_mul_measure_slab_le
+    (fun _ => measurable_from_top) (Finset.mem_univ 0) (D := {x : Fin 2 → ℝ | 1 / 2 ≤ x 1})
+    (measurableSet_le measurable_const (measurable_pi_apply 1))
+    (fun x y hxy hx => le_trans hx (hxy 1)) (1 / 2) 1
+  have h1 : {b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
+      {b | coinP b ≤ 1 / 2} = {true} := by
+    ext b; cases b <;> norm_num [coinP]
+  have h2 : {b | (fun _ : Fin 2 => coinP b) ∈ {x : Fin 2 → ℝ | 1 / 2 ≤ x 1}} ∩
+      {b | 1 / 2 < coinP b ∧ coinP b ≤ 1} = {false} := by
+    ext b; cases b <;> norm_num [coinP]
+  have h3 : {b | 1 / 2 < coinP b ∧ coinP b ≤ 1} = {false} := by
+    ext b; cases b <;> norm_num [coinP]
+  have h4 : {b | coinP b ≤ 1 / 2} = {true} := by
+    ext b; cases b <;> norm_num [coinP]
+  have ht : coin {true} = 2⁻¹ := by simp [coin]
+  have hf : coin {false} = 2⁻¹ := by simp [coin]
+  refine ⟨le_antisymm hle ?_, ?_⟩
+  · rw [h1, h2, h3, h4]
+    exact (mul_comm _ _).le
+  rw [h1, h3, ht, hf]
+  rw [← ENNReal.mul_inv (Or.inl two_ne_zero) (Or.inl ENNReal.ofNat_ne_top)]
+  norm_num
+
 /-- `bhIndex` is the generic step-up index of `MultipleTesting.Basic` with thresholds
 `q k / m`, so `bhIndex_p3` evaluates `stepUpIndex` too. -/
 example : stepUpIndex (fun k => 1 / 10 * (k : ℝ) / ((3 : ℕ) : ℝ)) p3 = 2 := bhIndex_p3
