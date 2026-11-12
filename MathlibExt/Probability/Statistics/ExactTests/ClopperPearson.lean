@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Distributions.BinomialTail
 public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
+public import MathlibExt.Probability.Statistics.ExactTests.BinomialTest
 public import Mathlib.Probability.Distributions.Binomial
 
 /-!
@@ -60,7 +61,7 @@ exactly, `1 - α`, since the binomial law has atoms.
 The level is `0 < α < 1`, split equally between the two tails. The endpoints are defined for
 every `n`, `x` and `α`; for `x > n` they are junk values. The binomial tails are taken from
 `binomTail` (`MathlibExt.Probability.Distributions.BinomialTail`) and connected to Mathlib's
-`binomial` measure by `upperTail_binomial` and `binomial_real_Iic`.
+`binomial` measure by `upperTail_binomial` (`ExactTests.BinomialTest`) and `binomial_real_Iic`.
 
 ## References
 
@@ -77,16 +78,6 @@ open MathlibExt.Probability.Statistics.MultipleTesting
 namespace MathlibExt.Probability.Statistics.ExactTests
 
 /-! ### Binomial tails -/
-
-/-- The upper tail `P(X ≥ x)` of Mathlib's `Bin(n, p)` is `binomTail n x p`. -/
-theorem upperTail_binomial (n x : ℕ) (p : unitInterval) :
-    upperTail (binomial n p) x = binomTail n x p := by
-  have hae : ∀ᵐ j ∂(binomial n p), j ≤ n := ae_le_of_hasLaw_binomial HasLaw.id
-  have hset : {j : ℕ | x ≤ j} =ᵐ[binomial n p] (↑(Finset.Icc x n) : Set ℕ) := by
-    filter_upwards [hae] with j hj
-    simp [hj]
-  rw [upperTail, measureReal_congr hset, ← sum_measureReal_singleton]
-  exact Finset.sum_congr rfl fun j _ => binomial_real_singleton n j p
 
 /-- The lower tail `P(X ≤ x)` of Mathlib's `Bin(n, p)` is `1 - binomTail n (x + 1) p`. -/
 theorem binomial_real_Iic (n x : ℕ) (p : unitInterval) :

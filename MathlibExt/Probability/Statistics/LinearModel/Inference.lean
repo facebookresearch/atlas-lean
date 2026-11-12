@@ -38,9 +38,13 @@ Fixed-design linear model `y = X β + ε` with `X : Matrix m k ℝ` of full colu
 * `tStatistic`, `tStatistic_eq_div_sqrt`: the pointwise identity `T = U / √(V / d)`.
 * `hasLaw_tStatistic`: `T ~ t_d`.
 * `measureReal_abs_tStatistic_le`: the coverage identity.
+* `ProbabilityTheory.map_tStatistic_pi_gaussianReal`: the one-sample `t` law
+  `√n (X̄ - μ) / S ~ t_{n-1}` for an i.i.d. `N(μ, v)` sample, from `hasLaw_tStatistic` with the
+  intercept-only design.
 
-Not covered: the `F` law of `T²`, since no ratio-of-chi-squares characterization of
-`snedecorFMeasure` is available yet.
+Not covered: the `F` law of `T²` and other linear-model `F` statistics. The ratio law they
+would build on is `ProbabilityTheory.map_div_chiSquare_eq_snedecorF` in
+`MathlibExt/Probability/Distributions/SnedecorF.lean`; it is not applied here.
 -/
 
 @[expose] public section
@@ -238,3 +242,113 @@ theorem measureReal_abs_tStatistic_le (hX : IsUnit (Xᵀ * X))
   simp [abs_le]
 
 end MathlibExt.Probability.Statistics.LinearModel
+
+/-! ### The one-sample `t` statistic -/
+
+namespace ProbabilityTheory
+
+open MeasureTheory Real
+
+private lemma intercept_mulVec_const (n : ℕ) (c : ℝ) :
+    (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)) *ᵥ (fun _ => c) = fun _ => c := by
+  ext i
+  simp [Matrix.mulVec, dotProduct]
+
+private lemma intercept_gram (n : ℕ) :
+    (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))ᵀ *
+        Matrix.of (fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)) =
+      Matrix.of fun _ _ => (n : ℝ) := by
+  ext i j
+  simp [Matrix.mul_apply]
+
+private lemma intercept_isUnit_gram {n : ℕ} (hn : n ≠ 0) :
+    IsUnit ((Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))ᵀ *
+        Matrix.of (fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))) := by
+  rw [Matrix.isUnit_iff_isUnit_det, intercept_gram, Matrix.det_unique]
+  simpa using hn
+
+private lemma intercept_gram_inv {n : ℕ} (hn : n ≠ 0) :
+    ((Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))ᵀ *
+        Matrix.of (fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)))⁻¹ =
+      Matrix.of fun _ _ => (n : ℝ)⁻¹ := by
+  rw [intercept_gram]
+  refine Matrix.inv_eq_right_inv ?_
+  ext i j
+  obtain rfl : i = j := Subsingleton.elim i j
+  simp [Matrix.mul_apply, hn]
+
+open MathlibExt.Probability.Statistics.LinearModel in
+private lemma olsEstimator_intercept {n : ℕ} (hn : n ≠ 0) (x : Fin n → ℝ) :
+    olsEstimator (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)) x =
+      fun _ => (∑ i, x i) / n := by
+  rw [olsEstimator, olsMatrix_eq, intercept_gram_inv hn]
+  ext j
+  simp [Matrix.mulVec, dotProduct, Matrix.mul_apply, Finset.mul_sum, div_eq_inv_mul]
+
+open MathlibExt.Probability.Statistics.LinearModel in
+private lemma contrastVariance_intercept {n : ℕ} (hn : n ≠ 0) :
+    contrastVariance (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)) (fun _ => 1) =
+      (n : ℝ)⁻¹ := by
+  rw [contrastVariance, intercept_gram_inv hn]
+  simp [Matrix.mulVec, dotProduct]
+
+private lemma div_sqrt_mul_inv (N R : ℝ) {c : ℝ} (hc : 0 ≤ c) :
+    N / √(R * c⁻¹) = √c * N / √R := by
+  rw [Real.sqrt_mul' _ (inv_nonneg.mpr hc), Real.sqrt_inv, ← div_eq_mul_inv,
+    div_div_eq_mul_div, mul_comm N]
+
+open MathlibExt.Probability.Statistics.LinearModel in
+private lemma tStatistic_intercept {n : ℕ} (hn : 1 ≤ n) (μ : ℝ) (x : Fin n → ℝ) :
+    tStatistic (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)) (fun _ => 1) (fun _ => μ) x =
+      √n * ((∑ i, x i) / n - μ) / √((∑ i, (x i - (∑ j, x j) / n) ^ 2) / ((n : ℝ) - 1)) := by
+  have hn0 : n ≠ 0 := by omega
+  have hnum : (fun _ : Fin 1 => (1 : ℝ)) ⬝ᵥ ((fun _ => (∑ i, x i) / n) - fun _ => μ) =
+      (∑ i, x i) / n - μ := by
+    simp [dotProduct]
+  have hrss : (x - fun _ => (∑ j, x j) / n) ⬝ᵥ (x - fun _ => (∑ j, x j) / n) =
+      ∑ i, (x i - (∑ j, x j) / n) ^ 2 := by
+    simp [dotProduct, sq]
+  rw [tStatistic, olsEstimator_intercept hn0, intercept_mulVec_const,
+    contrastVariance_intercept hn0, Fintype.card_fin, Fintype.card_fin, Nat.cast_sub hn,
+    Nat.cast_one, div_sqrt_mul_inv _ _ (Nat.cast_nonneg n), hnum, hrss]
+
+private lemma hasLaw_pi_gaussianReal_standardize {n : ℕ} (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    HasLaw (fun x : Fin n → ℝ => (√(v : ℝ))⁻¹ • (x - fun _ => μ))
+      (Measure.pi fun _ : Fin n => gaussianReal 0 1)
+      (Measure.pi fun _ : Fin n => gaussianReal μ v) := by
+  have hv0 : (0 : ℝ) < v := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
+  have hcoord : (gaussianReal μ v).map (fun y => (√(v : ℝ))⁻¹ * (y - μ)) = gaussianReal 0 1 := by
+    rw [show (fun y => (√(v : ℝ))⁻¹ * (y - μ)) = (fun y => (√(v : ℝ))⁻¹ * y) ∘ (fun y => y - μ)
+        from rfl, ← Measure.map_map (by fun_prop) (by fun_prop), gaussianReal_map_sub_const,
+      gaussianReal_map_const_mul, sub_self, mul_zero]
+    congr 1
+    ext
+    simp [inv_pow, Real.sq_sqrt hv0.le, hv0.ne']
+  refine ⟨by fun_prop, ?_⟩
+  change (Measure.pi fun _ : Fin n => gaussianReal μ v).map
+    (fun x i => (√(v : ℝ))⁻¹ * (x i - μ)) = _
+  rw [Measure.pi_map_pi (f := fun _ y => (√(v : ℝ))⁻¹ * (y - μ))
+    (hμ := fun _ => by rw [hcoord]; infer_instance) (fun _ => by fun_prop)]
+  simp only [hcoord]
+
+/-- **One-sample `t` statistic**: for an i.i.d. sample `X₁, …, Xₙ ~ N(μ, v)` with `n ≥ 2` and
+`v > 0`, `√n (X̄ - μ) / S` with `S² = ∑ (Xᵢ - X̄)² / (n - 1)` has Student's `t` law with `n - 1`
+degrees of freedom. -/
+theorem map_tStatistic_pi_gaussianReal {n : ℕ} (hn : 2 ≤ n) (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ v).map
+        (fun x : Fin n → ℝ => √n * ((∑ i, x i) / n - μ) /
+          √((∑ i, (x i - (∑ j, x j) / n) ^ 2) / ((n : ℝ) - 1))) =
+      studentTMeasure (n - 1) := by
+  have hσ : 0 < √(v : ℝ) := Real.sqrt_pos.mpr (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv))
+  have h := MathlibExt.Probability.Statistics.LinearModel.hasLaw_tStatistic
+    (intercept_isUnit_gram (n := n) (by omega))
+    (by rw [Fintype.card_fin, Fintype.card_fin]; omega) (fun _ => μ) hσ
+    (hasLaw_pi_gaussianReal_standardize μ hv) (a := fun _ => 1)
+    (fun h => one_ne_zero (congrFun h 0))
+  rw [Fintype.card_fin, Fintype.card_fin] at h
+  rw [← h.map_eq]
+  congr 1
+  funext x
+  rw [intercept_mulVec_const, add_sub_cancel, tStatistic_intercept (by omega)]
+
+end ProbabilityTheory
