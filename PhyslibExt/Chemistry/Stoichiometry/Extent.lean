@@ -73,9 +73,11 @@ strictly positive conserved weight exists, which is a hypothesis.
 - `reverseFeasibleExtents_eq_Iic` : with nonnegative initial amounts and no produced species,
   they are `Set.Iic 0`.
 - `exists_div_abs_eq_maxExtent` : some consumed species attains the minimum `maxExtent ν n₀ h`.
-- `isLimitingReagent_iff` : a limiting reagent is a consumed species whose ratio
-  `n₀ i / |ν i|` equals `maxExtent ν n₀ h`.
-- `exists_isLimitingReagent` : a reaction that consumes some species has a limiting reagent.
+- `isLimitingReagent_iff` : with nonnegative initial amounts, a limiting
+  reagent is a consumed species whose ratio `n₀ i / |ν i|` equals
+  `maxExtent ν n₀ h`.
+- `exists_isLimitingReagent` : a reaction that consumes some species, from
+  nonnegative initial amounts, has a limiting reagent.
 - `mul_le_mul_maxExtent` : the increment of a product at a feasible extent is at most its
   increment at `maxExtent ν n₀ h`.
 - `maxExtent_mem_forwardFeasibleExtents` : `maxExtent ν n₀ h` is itself feasible.
@@ -286,10 +288,12 @@ lemma reverseFeasibleExtents_eq_Iic {ι : Type*} (ν n₀ : ι → ℝ) (hn₀ :
 -/
 
 /-- The species `i` is a limiting reagent of the reaction `ν` from the initial amounts `n₀` when
-it is consumed and its ratio `n₀ i / |ν i|` is the smallest over the consumed species, so that it
-runs out first as the extent grows. -/
+every initial amount is nonnegative, `i` is consumed, and its ratio `n₀ i / |ν i|` is the
+smallest over the consumed species, so that it runs out first as the extent grows. The
+nonnegativity hypothesis is part of the predicate: without it a species with a negative
+initial amount could count as limiting even though no forward extent is feasible. -/
 def IsLimitingReagent {ι : Type*} (ν n₀ : ι → ℝ) (i : ι) : Prop :=
-  ν i < 0 ∧ ∀ j, ν j < 0 → n₀ i / |ν i| ≤ n₀ j / |ν j|
+  (∀ j, 0 ≤ n₀ j) ∧ ν i < 0 ∧ ∀ j, ν j < 0 → n₀ i / |ν i| ≤ n₀ j / |ν j|
 
 /-- **Attainment.** Some consumed species has ratio `n₀ i / |ν i|` equal to
 `maxExtent ν n₀ h`. -/
@@ -300,19 +304,23 @@ lemma exists_div_abs_eq_maxExtent {ι : Type*} [Fintype ι] (ν n₀ : ι → �
   exact ⟨i, mem_consumedSpecies.1 hi, heq.symm⟩
 
 /-- A species is a limiting reagent exactly when it is consumed and its ratio `n₀ i / |ν i|`
-equals `maxExtent ν n₀ h`. -/
+equals `maxExtent ν n₀ h`, given nonnegative initial amounts. -/
 lemma isLimitingReagent_iff {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ} (h : ∃ i, ν i < 0)
-    {i : ι} : IsLimitingReagent ν n₀ i ↔ ν i < 0 ∧ n₀ i / |ν i| = maxExtent ν n₀ h :=
-  and_congr_right fun hi =>
-    ⟨fun hmin => le_antisymm ((le_maxExtent_iff h).2 hmin) (maxExtent_le n₀ h hi),
-      fun heq _ hj => heq.trans_le (maxExtent_le n₀ h hj)⟩
+    (hn₀ : ∀ i, 0 ≤ n₀ i) {i : ι} :
+    IsLimitingReagent ν n₀ i ↔ ν i < 0 ∧ n₀ i / |ν i| = maxExtent ν n₀ h := by
+  constructor
+  · rintro ⟨_, hi, hmin⟩
+    exact ⟨hi, le_antisymm ((le_maxExtent_iff h).2 hmin) (maxExtent_le n₀ h hi)⟩
+  · rintro ⟨hi, heq⟩
+    exact ⟨hn₀, hi, fun _ hj => heq.trans_le (maxExtent_le n₀ h hj)⟩
 
-/-- **A limiting reagent exists.** A reaction that consumes some species has a limiting
-reagent. -/
-lemma exists_isLimitingReagent {ι : Type*} [Finite ι] (ν n₀ : ι → ℝ) (h : ∃ i, ν i < 0) :
+/-- **A limiting reagent exists.** A reaction that consumes some species, from nonnegative
+initial amounts, has a limiting reagent. -/
+lemma exists_isLimitingReagent {ι : Type*} [Finite ι] (ν n₀ : ι → ℝ)
+    (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, ν i < 0) :
     ∃ i, IsLimitingReagent ν n₀ i := by
   have := Fintype.ofFinite ι
-  exact (exists_div_abs_eq_maxExtent ν n₀ h).imp fun _ hi => (isLimitingReagent_iff h).2 hi
+  exact (exists_div_abs_eq_maxExtent ν n₀ h).imp fun _ hi => (isLimitingReagent_iff h hn₀).2 hi
 
 /-!
 

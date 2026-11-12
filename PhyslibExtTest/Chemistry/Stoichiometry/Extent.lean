@@ -76,12 +76,20 @@ example : forwardFeasibleExtents methaneCoeffs methaneInitial = Set.Icc 0 2 := b
   rw [forwardFeasibleExtents_eq_Icc _ _ methaneInitial_nonneg methane_consumes, methane_maxExtent]
 
 example : IsLimitingReagent methaneCoeffs methaneInitial 0 := by
-  rw [isLimitingReagent_iff methane_consumes, methane_maxExtent]
+  rw [isLimitingReagent_iff methane_consumes methaneInitial_nonneg, methane_maxExtent]
   norm_num [methaneCoeffs, methaneInitial]
 
 example : ¬ IsLimitingReagent methaneCoeffs methaneInitial 1 := by
-  rw [isLimitingReagent_iff methane_consumes, methane_maxExtent]
+  rw [isLimitingReagent_iff methane_consumes methaneInitial_nonneg, methane_maxExtent]
   norm_num [methaneCoeffs, methaneInitial]
+
+/-- A species with a negative initial amount is not a limiting reagent,
+even when it is the unique consumed species with the minimal ratio:
+with `ν 0 = -1` and `n₀ 0 = -1`, no forward extent is feasible. -/
+example : ¬ IsLimitingReagent (fun _ : Fin 1 => (-1 : ℝ)) (fun _ : Fin 1 => (-1 : ℝ)) 0 := by
+  intro h
+  have hnonneg := h.1 0
+  norm_num at hnonneg
 
 example : methaneCoeffs 2 * maxExtent methaneCoeffs methaneInitial methane_consumes = 2 := by
   rw [methane_maxExtent]
