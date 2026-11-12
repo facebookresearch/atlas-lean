@@ -51,6 +51,13 @@ Linear-hypothesis `F` (fixed full-rank design, Gaussian errors with unknown `σ`
   covers `C β` with probability exactly `1 - α`.
 
 The known-variance (`z`) interval is not treated here.
+
+## References
+
+* G. Casella and R. L. Berger, *Statistical Inference*, 2nd ed., Duxbury (2002), §9.2
+  (one-sample `t` interval via the pivot `√n (X̄ - μ) / S`) and §11.2 (the ANOVA `F` test).
+* G. A. F. Seber and A. J. Lee, *Linear Regression Analysis*, 2nd ed., Wiley (2003),
+  Chapter 4 (the general linear-hypothesis `F` test) and Chapter 5 (`F` confidence regions).
 -/
 
 @[expose] public section
