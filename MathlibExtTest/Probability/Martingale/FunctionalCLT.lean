@@ -165,7 +165,31 @@ example {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {P : Measure
   tendstoInDistribution_of_eventually_edist_le Y Y Z hY hY.forall_aemeasurable
     fun ε _ => ⟨fun _ => ∅, fun _ => MeasurableSet.empty, by simp, fun n ω _ => by simp⟩
 
--- The counting-process FCLT, with the martingale property of the same process.
+-- The transfer theorem with its hypotheses discharged from Donsker's theorem: tightness of the
+-- polygonal laws, fdd convergence by continuous mapping, trivial jump control (`X n = Y n`).
+example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    (X : ℕ → Ω → ℝ) (hMeas : ∀ n, Measurable (X n)) (hIndep : iIndepFun X P)
+    (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P) (hInt : Integrable (X 0) P)
+    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0) (hVar : Var[X 0; P] = 1)
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') (Z : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ))
+    (hconv : TendstoInDistribution (fun n ω => donskerProcess n X ω) atTop Z
+      (fun _ => P) P') :
+    TendstoInDistribution (fun n ω => SkorokhodSpace.ofContinuous (donskerProcess n X ω))
+      atTop (fun ω' => SkorokhodSpace.ofContinuous (Z ω')) (fun _ => P) P' :=
+  tendstoInDistribution_skorokhod_of_tight_of_fdd one_pos _ _ Z
+    (fun n => SkorokhodSpace.continuous_ofContinuous.measurable.comp_aemeasurable
+      (hconv.forall_aemeasurable n))
+    hconv.forall_aemeasurable hconv.aemeasurable_limit
+    (isTightMeasureSet_donskerProcess_laws X hMeas hIndep hIdent hInt hMemLp hMean hVar B hB)
+    (fun I => hconv.continuous_comp
+      (g := fun g : C(Set.Icc (0 : ℝ) 1, ℝ) => I.restrict (fun t => g t))
+      (continuous_pi fun t => continuous_eval_const (t : Set.Icc (0 : ℝ) 1)))
+    (fun ε hε => ⟨fun _ => ∅, fun _ => MeasurableSet.empty, by simp,
+      fun n ω _ t => by simp [hε.le]⟩)
+
+-- The counting-process FCLT, together with the martingale property of the unscaled
+-- compensated partial sums `∑_{i ≤ k} (ξ i - p)` underlying it.
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
     (ξ : ℕ → Ω → ℝ) (hMeas : ∀ n, Measurable (ξ n)) (hIndep : iIndepFun ξ P)

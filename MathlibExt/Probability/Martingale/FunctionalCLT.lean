@@ -40,29 +40,35 @@ theorem with tightness, in the Skorokhod J1 topology.
 
 * `tendstoInDistribution_of_eventually_edist_le`: converging together (Slutsky) in any
   pseudo-emetric space, with closeness controlled by measurable bad sets.
-* `tendstoInDistribution_skorokhod_of_tight_of_fdd`: the reduction step of Rebolledo-type
-  theorems with a continuous limit. Tightness in `C`, finite-dimensional convergence, and jump
-  control (uniform closeness of the `D`-valued process to a continuous one) imply convergence
-  in distribution in `D` with the J1 topology.
+* `tendstoInDistribution_skorokhod_of_tight_of_fdd`: transfer from `C` to `D`. Tightness in
+  `C` plus finite-dimensional convergence of continuous processes `Y n` (together equivalent
+  to `Y n → Z` in distribution in `C`), and jump control (uniform closeness of the `D`-valued
+  `X n` to `Y n`), imply `X n → Z` in distribution in `D` with the J1 topology. This is
+  Billingsley's Theorem 3.1 plus the `C → D` inclusion; it has no quadratic-variation
+  hypothesis and no martingale structure, and all martingale content lives in its inputs.
 * `tendstoInDistribution_skorokhodStepProcess`: the martingale FCLT in `D([0,1])` for
   square-integrable martingales with i.i.d. increments (the step process
-  `(√n)⁻¹ ∑_{i < ⌊n t⌋} X i` converges to Brownian motion). Tightness is proved, not assumed
-  (`isTightMeasureSet_donskerProcess_laws`, from `donsker_invariance_principle`).
+  `(√n)⁻¹ ∑_{i < ⌊n t⌋} X i` converges to Brownian motion), proved by discharging the inputs
+  of the transfer theorem. Tightness is not assumed: `isTightMeasureSet_donskerProcess_laws`
+  derives it from Donsker convergence via Prokhorov's converse.
 * Counting-process example, `compensatedBernoulliStep`:
   `tendstoInDistribution_compensatedBernoulliStep` (J1 convergence to `√(p(1-p)) • W`),
   `martingale_compensatedBernoulli` (martingale property),
   `condExp_sq_increment_compensatedBernoulli` and
-  `tendsto_compensatedBernoulli_predictableQV` (the predictable quadratic variation
-  `p(1-p)⌊nt⌋/n` is deterministic and converges to `p(1-p) t`),
+  `tendsto_compensatedBernoulli_predictableQV` (informally, the predictable quadratic
+  variation `p(1-p)⌊nt⌋/n` is deterministic and converges to `p(1-p) t`; no quadratic-variation
+  object is defined, the first lemma computes conditional variances and the second is the
+  deterministic limit),
   `lindebergConditionTriangular_compensatedBernoulli` (jump control).
 
 ## What is weakened relative to Rebolledo's theorem
 
 * No general martingale CLT. For a martingale difference array, the implication
   "predictable quadratic variation converges in probability + Lindeberg ⇒ fdd convergence and
-  tightness" is not proved. The reduction theorem takes tightness and fdd convergence as
-  inputs. They are discharged only for martingales with i.i.d. square-integrable increments,
-  which includes the compensated Bernoulli counting process.
+  tightness" is not proved. The transfer theorem takes tightness and fdd convergence as
+  inputs. They are discharged (in `tendstoInDistribution_skorokhodStepProcess`) only for
+  martingales with i.i.d. square-integrable increments, which includes the compensated
+  Bernoulli counting process but not Nelson–Aalen-type martingales with random compensators.
 * The predictable quadratic variation is not defined as a general object. For the example,
   the conditional variances of the increments are computed directly.
 * The J1 structure is an extended pseudo-metric. Hausdorffness, separability, completeness
@@ -319,7 +325,7 @@ theorem tendstoInDistribution_of_eventually_edist_le
   simpa only [hmapX] using hsum
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- **Reduction theorem for functional limit theorems in `D([0,T])` with a continuous limit.**
+/-- **Transfer of functional limit theorems from `C([0,T])` to `D([0,T])` (continuous limit).**
 
 Let `X n` be `D([0,T])`-valued processes and `Y n` continuous processes (for instance linear
 interpolations of `X n`). Assume
@@ -333,9 +339,12 @@ Then `X n → Z` in distribution in the Skorokhod J1 topology on `D([0,T])`.
 
 Source: Billingsley (1999), Theorem 7.5 (tightness + fdd in `C`), Theorem 3.1 (converging
 together), and the J1-vs-uniform comparison of §12; this is the route used for Donsker's
-theorem in `D` (Billingsley, Theorem 14.1/16.1). This theorem is the reduction step only: the
-martingale CLT that produces finite-dimensional convergence and the tightness estimate are
-inputs here and are discharged separately for concrete processes. -/
+theorem in `D` (Billingsley, Theorem 14.1/16.1). The tightness and fdd hypotheses together
+amount to `Y n → Z` in distribution in `C`, so this is converging together (Theorem 3.1) plus
+the `C → D` inclusion. It has no quadratic-variation hypothesis and no martingale structure:
+the martingale CLT that would produce finite-dimensional convergence and the tightness estimate
+are inputs. `tendstoInDistribution_skorokhodStepProcess` discharges them for i.i.d.
+increments. -/
 theorem tendstoInDistribution_skorokhod_of_tight_of_fdd
     {T : ℝ} (hT : 0 < T)
     {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {P : Measure Ω} {P' : Measure Ω'}
@@ -616,60 +625,11 @@ private lemma tendsto_measureReal_large_increment {Ω : Type*} [MeasurableSpace 
   refine squeeze_zero (fun n => measureReal_nonneg) hbound ?_
   simpa using hFlim.div_const (ε ^ 2)
 
-/-- **Donsker's invariance principle in the Skorokhod space `D([0,1])`** for the normalized
-partial-sum step process `t ↦ (√n)⁻¹ ∑_{i < ⌊n t⌋} X i` of an i.i.d. mean-zero, variance-one
-sequence: it converges in distribution, in the Skorokhod J1 topology, to a continuous version
-of Brownian motion on `[0,1]`.
-
-This is the martingale functional CLT restricted to square-integrable martingales with
-i.i.d. increments. Mathematically, the step process is a martingale in `k = ⌊n t⌋` with
-deterministic predictable quadratic variation `⌊n t⌋ / n → t`. Those two facts are formalized
-only for the Bernoulli example (`martingale_compensatedBernoulli`,
-`condExp_sq_increment_compensatedBernoulli`), not for general i.i.d. increments. Jump control,
-`max_{i<n} |X i| / √n → 0` in probability, is proved inside this theorem. Tightness is not
-assumed. It comes from the proved tightness inside `donsker_invariance_principle` (maximal
-inequality plus modulus of continuity) and is exposed as
-`isTightMeasureSet_donskerProcess_laws`.
-
-Source: Billingsley (1999), Theorem 16.1 (Donsker in `D`); proof route: Donsker in `C`
-(Theorem 8.2, here `donsker_invariance_principle`), sup-distance comparison of the step and
-polygonal processes bounded by `max_{i<n} |X i| / √n`, and converging together (Theorem 3.1). -/
-theorem tendstoInDistribution_skorokhodStepProcess
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
-    (X : ℕ → Ω → ℝ) (hMeas : ∀ n, Measurable (X n)) (hIndep : iIndepFun X P)
-    (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P) (hInt : Integrable (X 0) P)
-    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0) (hVar : Var[X 0; P] = 1)
-    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
-    ∃ Y : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ),
-      (∀ᵐ ω' ∂P', ∀ t : Set.Icc (0 : ℝ) 1, Y ω' t = B (iccToNNReal t) ω') ∧
-      TendstoInDistribution (fun n => skorokhodStepProcess n X) atTop
-        (fun ω' => SkorokhodSpace.ofContinuous (Y ω')) (fun _ => P) P' := by
-  obtain ⟨Y, hYae, hconv⟩ :=
-    donsker_invariance_principle X hMeas hIndep hIdent hInt hMemLp hMean hVar B hB
-  refine ⟨Y, hYae, ?_⟩
-  have hD := hconv.continuous_comp SkorokhodSpace.continuous_ofContinuous
-  refine tendstoInDistribution_of_eventually_edist_le _ _ _ hD
-    (fun n => (measurable_skorokhodStepProcess n X hMeas).aemeasurable) ?_
-  intro ε hε
-  refine ⟨fun n => ⋃ i ∈ Finset.range n, {ω | ε * Real.sqrt n < |X i ω|},
-    fun n => Finset.measurableSet_biUnion _ fun i _ =>
-      measurableSet_lt measurable_const (continuous_abs.measurable.comp (hMeas i)),
-    tendsto_measureReal_large_increment X hMeas hIdent hMemLp ε hε, fun n ω hω => ?_⟩
-  refine (SkorokhodSpace.edist_le_iSup_edist _ _).trans (iSup_le fun t => ?_)
-  rw [edist_dist, Real.dist_eq]
-  refine ENNReal.ofReal_le_ofReal ?_
-  simp only [Function.comp_apply, SkorokhodSpace.ofContinuous_apply]
-  rcases eq_or_ne n 0 with rfl | hn
-  · simp [skorokhodStepProcess_apply, donskerProcess, hε.le]
-  · refine abs_step_sub_polygon_le n hn X ω ε (fun i hi => ?_) t
-    simp only [Set.mem_iUnion, Set.mem_ofPred_eq, Finset.mem_range, not_exists,
-      not_lt] at hω
-    exact hω i hi
-
-/-- **Tightness** of Donsker's polygonal laws on `C([0,1])` (the proved tightness step of the
-functional CLT, made explicit). The laws converge weakly (`donsker_invariance_principle`), so
-their closure in the Polish space of laws is compact, and Prokhorov's converse gives tightness.
+/-- **Tightness** of Donsker's polygonal laws on `C([0,1])`. This is a consequence of Donsker
+convergence (`donsker_invariance_principle`) via Prokhorov's converse: the laws converge
+weakly, so their closure in the space of laws is compact, hence the family is tight. It feeds
+the tightness input of `tendstoInDistribution_skorokhod_of_tight_of_fdd` in
+`tendstoInDistribution_skorokhodStepProcess`.
 
 Source: Billingsley (1999), Theorem 5.2 (Prokhorov, converse half) applied to Theorem 8.2. -/
 theorem isTightMeasureSet_donskerProcess_laws
@@ -694,6 +654,60 @@ theorem isTightMeasureSet_donskerProcess_laws
     exact ⟨μs n, ⟨n, rfl⟩, rfl⟩
   · rintro ⟨μ, ⟨n, rfl⟩, rfl⟩
     exact ⟨n, rfl⟩
+
+/-- **Donsker's invariance principle in the Skorokhod space `D([0,1])`** for the normalized
+partial-sum step process `t ↦ (√n)⁻¹ ∑_{i < ⌊n t⌋} X i` of an i.i.d. mean-zero, variance-one
+sequence: it converges in distribution, in the Skorokhod J1 topology, to a continuous version
+of Brownian motion on `[0,1]`.
+
+This is the martingale functional CLT restricted to square-integrable martingales with
+i.i.d. increments, obtained by discharging the three inputs of
+`tendstoInDistribution_skorokhod_of_tight_of_fdd` with `Y n` Donsker's polygonal process:
+* tightness: `isTightMeasureSet_donskerProcess_laws` (from Donsker convergence via Prokhorov's
+  converse);
+* finite-dimensional convergence: continuous mapping applied to `donsker_invariance_principle`;
+* jump control: `sup_t |step - polygon| ≤ max_{i<n} |X i| / √n`, which tends to `0` in
+  probability (proved here from the second moment of `X 0`).
+Mathematically the step process is a martingale in `k = ⌊n t⌋` with deterministic predictable
+quadratic variation `⌊n t⌋ / n → t`; those facts are formalized only for the Bernoulli
+example (`martingale_compensatedBernoulli`, `condExp_sq_increment_compensatedBernoulli`).
+
+Source: Billingsley (1999), Theorem 16.1 (Donsker in `D`); proof route: Donsker in `C`
+(Theorem 8.2, here `donsker_invariance_principle`), sup-distance comparison of the step and
+polygonal processes, and converging together (Theorem 3.1). -/
+theorem tendstoInDistribution_skorokhodStepProcess
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    (X : ℕ → Ω → ℝ) (hMeas : ∀ n, Measurable (X n)) (hIndep : iIndepFun X P)
+    (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P) (hInt : Integrable (X 0) P)
+    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0) (hVar : Var[X 0; P] = 1)
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
+    ∃ Y : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ),
+      (∀ᵐ ω' ∂P', ∀ t : Set.Icc (0 : ℝ) 1, Y ω' t = B (iccToNNReal t) ω') ∧
+      TendstoInDistribution (fun n => skorokhodStepProcess n X) atTop
+        (fun ω' => SkorokhodSpace.ofContinuous (Y ω')) (fun _ => P) P' := by
+  obtain ⟨Y, hYae, hconv⟩ :=
+    donsker_invariance_principle X hMeas hIndep hIdent hInt hMemLp hMean hVar B hB
+  refine ⟨Y, hYae, ?_⟩
+  refine tendstoInDistribution_skorokhod_of_tight_of_fdd one_pos
+    (fun n => skorokhodStepProcess n X) (fun n ω => donskerProcess n X ω) Y
+    (fun n => (measurable_skorokhodStepProcess n X hMeas).aemeasurable)
+    hconv.forall_aemeasurable hconv.aemeasurable_limit
+    (isTightMeasureSet_donskerProcess_laws X hMeas hIndep hIdent hInt hMemLp hMean hVar B hB)
+    (fun I => hconv.continuous_comp
+      (g := fun g : C(Set.Icc (0 : ℝ) 1, ℝ) => I.restrict (fun t => g t))
+      (continuous_pi fun t => continuous_eval_const (t : Set.Icc (0 : ℝ) 1))) ?_
+  intro ε hε
+  refine ⟨fun n => ⋃ i ∈ Finset.range n, {ω | ε * Real.sqrt n < |X i ω|},
+    fun n => Finset.measurableSet_biUnion _ fun i _ =>
+      measurableSet_lt measurable_const (continuous_abs.measurable.comp (hMeas i)),
+    tendsto_measureReal_large_increment X hMeas hIdent hMemLp ε hε, fun n ω hω t => ?_⟩
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp [skorokhodStepProcess_apply, donskerProcess, hε.le]
+  · refine abs_step_sub_polygon_le n hn X ω ε (fun i hi => ?_) t
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq, Finset.mem_range, not_exists,
+      not_lt] at hω
+    exact hω i hi
 
 namespace SkorokhodSpace
 
@@ -877,9 +891,10 @@ theorem lindebergConditionTriangular_compensatedBernoulli
 
 /-- **Predictable quadratic variation of the compensated Bernoulli counting process.** With
 respect to the natural filtration of the counting increments, the conditional variance of
-every future increment is the constant `p (1 - p)`. Hence the predictable quadratic variation
-of `compensatedBernoulliStep n p ξ` at time `t` is the deterministic
-`p (1 - p) ⌊n t⌋ / n`, whose limit is `tendsto_compensatedBernoulli_predictableQV`. -/
+every future increment is the constant `p (1 - p)`. Informally, the predictable quadratic
+variation of `compensatedBernoulliStep n p ξ` at time `t` is therefore the deterministic
+`p (1 - p) ⌊n t⌋ / n` (no quadratic-variation object is defined here), whose limit is
+`tendsto_compensatedBernoulli_predictableQV`. -/
 theorem condExp_sq_increment_compensatedBernoulli
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     (ξ : ℕ → Ω → ℝ) (hsm : ∀ n, StronglyMeasurable (ξ n)) (hIndep : iIndepFun ξ P)
@@ -898,8 +913,10 @@ theorem condExp_sq_increment_compensatedBernoulli
   simp only
   rw [hj, integral_bernoulli_sub_sq (ξ 0) (hsm 0).measurable (hBern 0) p hMean]
 
-/-- The predictable quadratic variations `p (1 - p) ⌊n t⌋ / n` of the compensated Bernoulli
-counting processes converge to the continuous increasing limit `p (1 - p) t`. -/
+/-- The deterministic sequence `p (1 - p) ⌊n t⌋ / n`, informally the predictable quadratic
+variation of the compensated Bernoulli counting process (see
+`condExp_sq_increment_compensatedBernoulli`), converges to the continuous increasing limit
+`p (1 - p) t`. This is a floor limit; it is not stated in terms of the process. -/
 theorem tendsto_compensatedBernoulli_predictableQV (p : ℝ) (t : ℝ) (ht : 0 ≤ t) :
     Tendsto (fun n : ℕ => p * (1 - p) * (Nat.floor ((n : ℝ) * t) / n)) atTop
       (𝓝 (p * (1 - p) * t)) := by
