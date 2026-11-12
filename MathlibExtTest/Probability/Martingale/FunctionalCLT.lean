@@ -60,7 +60,12 @@ example : IsCadlag (stepInd 1 (1 / 2)) ∧ ¬ Continuous (stepInd 1 (1 / 2)) := 
     rwa [hval] at h
   exact zero_ne_one (tendsto_nhds_unique hleft hcont)
 
-/-! ### J1 is not the uniform topology -/
+/-! ### J1 and uniform distances differ -/
+
+-- The two examples below show only that the J1 and uniform *distances* differ on
+-- one pair of paths (J1 distance at most `1 / 4`, uniform distance `1`); distinct
+-- metrics can induce the same topology, so this does not by itself show the
+-- induced topologies differ.
 
 /-- Piecewise-linear time change of `[0,1]` sending `3/4` to `1/2`. -/
 def shiftTime (t : Set.Icc (0 : ℝ) 1) : Set.Icc (0 : ℝ) 1 :=
