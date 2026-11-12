@@ -19,7 +19,10 @@ prices and quantities it is the log-log derivative `d log q / d log p`: the deri
 
 ## Main definitions
 
-* `pointElasticity q p`: the point elasticity `p * deriv q p / q p`.
+* `pointElasticity q p`: the point elasticity `p * deriv q p / q p`. It is meaningful only when
+  `q` is differentiable at `p` and `q p ≠ 0`; elsewhere Lean's total `deriv` and division return
+  junk values (for example `pointElasticity (fun _ => 0) p = 0`). The log-derivative theorem
+  below carries both conditions (with `p > 0`, `q p > 0`) as hypotheses.
 
 ## Main results
 
@@ -43,7 +46,8 @@ Atlas roadmap target EC03.T03.
 namespace MathlibExt.Economics.Consumer
 
 /-- The point price elasticity of a demand curve `q` at price `p`:
-`ε(p) = p q'(p) / q(p)`. -/
+`ε(p) = p q'(p) / q(p)`. It is the economic elasticity only when `q` is differentiable at `p`
+and `q p ≠ 0`; otherwise `deriv` and division by zero return Mathlib's junk values. -/
 noncomputable def pointElasticity (q : ℝ → ℝ) (p : ℝ) : ℝ :=
   p * deriv q p / q p
 
