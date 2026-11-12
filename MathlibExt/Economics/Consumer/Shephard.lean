@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Economics.Consumer.ExpenditureDuality
 public import MathlibExt.Economics.Envelope
+public import MathlibExt.Analysis.Calculus.DotProductGradient
 public import Mathlib.Analysis.Calculus.FDeriv.Add
 
 /-!
@@ -40,6 +41,8 @@ bound of the costs of reaching `ubar`. The `expenditure` form specializes to
 * `Economics.Consumer.hasFDerivAt_expenditure_eq_of_isHicksianDemand`: Shephard's lemma for
   `expenditure`.
 * `Economics.Consumer.isHicksianDemand_unique_of_hasFDerivAt`: uniqueness for `expenditure`.
+* `Economics.Consumer.hasFDerivAt_expenditure_eq_dotL_of_isHicksianDemand`: the derivative of
+  `expenditure` is `Real.dotL h`, the repository's gradient representation on `ι → ℝ`.
 
 ## References
 
@@ -67,27 +70,18 @@ theorem hasFDerivAt_expenditure_eq_hicksianDemand {ι : Type*} [Fintype ι]
     (hX : h ∈ X) (hu : ubar ≤ u h) (hcost : p₀ ⬝ᵥ h = e p₀)
     (hdiff : HasFDerivAt e e' p₀) :
     ∀ v, e' v = h ⬝ᵥ v := by
-  set L : (ι → ℝ) →L[ℝ] ℝ := ∑ i, h i • ContinuousLinearMap.proj i with hLdef
-  have hLval : ∀ p, L p = h ⬝ᵥ p := by
-    intro p
-    simp [hLdef, dotProduct, ContinuousLinearMap.proj_apply, smul_eq_mul]
-  have hLfun : (fun p : ι → ℝ => p ⬝ᵥ h) = ⇑L := by
-    funext p
-    rw [hLval p]
-    exact dotProduct_comm p h
-  have hderiv : HasFDerivAt (fun p : ι → ℝ => p ⬝ᵥ h) L p₀ := by
-    rw [hLfun]
-    exact L.hasFDerivAt
-  have hle : ∀ᶠ p in 𝓝 p₀, e p ≤ p ⬝ᵥ h := by
+  have hg : HasFDerivAt (fun p => p ⬝ᵥ h) (Real.dotL h) p₀ :=
+    Real.hasFDerivAt_dotProduct h p₀
+  have hle : ∀ᶠ p in 𝓝 p₀, e p ≤ (fun p => p ⬝ᵥ h) p := by
     filter_upwards [he] with p hp
     have hmem : p ⬝ᵥ h ∈ (fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x} :=
       ⟨h, ⟨hX, hu⟩, rfl⟩
-    exact (mem_lowerBounds.mp hp.1) _ hmem
-  have hdeq : e' = L :=
-    hasFDerivAt_eq_of_eventually_le_of_eq hle hcost.symm hdiff hderiv
+    exact mem_lowerBounds.mp hp.1 _ hmem
+  have heq : e p₀ = (fun p => p ⬝ᵥ h) p₀ := hcost.symm
+  have hderiv : e' = Real.dotL h :=
+    _root_.Economics.hasFDerivAt_eq_of_eventually_le_of_eq hle heq hdiff hg
   intro v
-  rw [hdeq]
-  exact hLval v
+  rw [hderiv, Real.dotL_apply, dotProduct_comm]
 
 /-- Uniqueness of Hicksian demand under differentiability of expenditure: two
 Hicksian demands at `p₀` coincide when `e` is differentiable at `p₀`. -/
@@ -190,5 +184,20 @@ theorem isHicksianDemand_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
       obtain ⟨y, ⟨yX, yu⟩, rfl⟩ := hb
       exact kmin y yX yu
   exact hicksianDemand_unique_of_hasFDerivAt he hX hu hcost kX ku kcost hdiff
+
+/-- Shephard's lemma in canonical gradient form: the derivative of
+`p ↦ expenditure u X p ubar` at `p₀` is `Real.dotL h`. -/
+theorem hasFDerivAt_expenditure_eq_dotL_of_isHicksianDemand {ι : Type*} [Fintype ι]
+    {u : (ι → ℝ) → ℝ} {X : Set (ι → ℝ)} {ubar : ℝ} {p₀ h : ι → ℝ}
+    {e' : (ι → ℝ) →L[ℝ] ℝ}
+    (hbdd : ∀ᶠ p in 𝓝 p₀,
+      BddBelow ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x}))
+    (hh : IsHicksianDemand u X p₀ ubar h)
+    (hdiff : HasFDerivAt (fun p => expenditure u X p ubar) e' p₀) :
+    e' = Real.dotL h := by
+  have h1 := hasFDerivAt_expenditure_eq_of_isHicksianDemand hbdd hh hdiff
+  apply ContinuousLinearMap.ext
+  intro v
+  rw [h1 v, Real.dotL_apply, dotProduct_comm]
 
 end Economics.Consumer
