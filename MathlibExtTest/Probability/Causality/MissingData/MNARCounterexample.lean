@@ -135,9 +135,11 @@ example : (∫ w in {w | w.1 = true}, w.2 ∂(selfMaskingLaw.map
 example : ∃ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q ∧ Integrable Prod.snd Q ∧
     Q.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))) =
       constOutcomeLaw.map (fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))) ∧
+    Q.real {z | z.1 = true} ≠ 0 ∧
     (∫ w in {w | w.1 = true}, w.2 ∂Q) / Q.real {w | w.1 = true} ≠ ∫ z, z.2 ∂Q :=
   exists_map_obsRY_eq_respondentMean_ne integrable_snd_constOutcomeLaw
     (by rw [constOutcomeLaw_real_nonresponse]; norm_num)
+    (by rw [constOutcomeLaw, measureReal_half_dirac_add]; norm_num)
 
 /-- Mean imputation on `selfMaskingLaw` yields `1`, while the full-data mean is `1 / 2`. -/
 example : ∫ z, (if z.1 then z.2 else

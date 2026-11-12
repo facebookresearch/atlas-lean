@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
 
 /-!
 # Missing not at random: the full-data mean is not identified
@@ -42,25 +42,23 @@ observed-data law does not determine `E[Y]`. Full-data laws live on `Bool × ℝ
 * Summary-statistic imputation: `integral_ite_respondentMean` (filling the missing outcomes with
   the respondents' mean yields that mean back), `respondentMean_map_obsRY` (that mean is a
   functional of the observed-data law), `exists_map_obsRY_eq_respondentMean_ne` (so it differs
-  from the full-data mean at some law with the same observed data whenever nonresponse has
-  positive probability), and `respondentMean_selfMaskingLaw` (on the self-masking law it gives
+  from the full-data mean at some law with the same observed data whenever response and
+  nonresponse both have positive probability), and `respondentMean_selfMaskingLaw` (it gives
   `1`, the full-data mean is `1 / 2`).
 * Boundary, no respondents: `map_obsRY_eq_dirac_of_measure_response_eq_zero` (the observed-data
   law is `δ_(false, 0)` whatever the outcome law).
 * Boundary, positivity failure: `exists_condIndepDiscrete_map_obsXRY_eq_integral_eq`. Even when
-  response is conditionally independent of the outcome given the covariate (`CondIndepDiscrete`,
-  i.e. missingness at random), a covariate stratum of positive probability with no respondents
+  response is conditionally independent of the outcome given a countably valued covariate
+  (`MissingOutcomes.MissingAtRandom`), a positive-probability stratum with no respondents
   leaves the mean unidentified.
 
 ## Implementation notes
 
-The observed-data map and the MCAR / MAR predicates belong to the missing-data definitions file,
-which this file does not import; the observed-data map is written out as a local notation, and
-independence statements use `CondIndepDiscrete` from `CausalIdentification` directly. The encoding
-`(r, if r then y else 0)` keeps `r`, so a respondent with `y = 0`, `(true, 0)`, stays distinct from
-a nonrespondent, `(false, 0)`. On its image it is in measurable bijection with the
-`Sum`-valued encoding of `Definitions.observedData` (`(true, y) ↔ inl y`, `(false, 0) ↔ inr ()`),
-and it is the `(1_R, 1_R Y)` encoding of the identification file.
+The observed-data maps are written inline through local notation; no separately declared map
+is assumed. The encoding `(r, if r then y else 0)` keeps `r`, so a respondent with `y = 0`,
+`(true, 0)`, stays distinct from a nonrespondent, `(false, 0)`. The covariate results use the
+existing `MissingOutcomes.MissingAtRandom` predicate on countably valued covariates, where its
+singleton equations express conditional independence.
 
 ## References
 
@@ -78,9 +76,7 @@ namespace MathlibExt.Probability.Causality.MissingData
 
 open MeasureTheory ProbabilityTheory
 
--- The observed data of a full-data point `(r, y)`: the response indicator `r` and the outcome
--- `y` when `r` holds, the placeholder `0` otherwise. Written out (as a local notation) rather than
--- defined, since the observed-data map belongs to the missing-data definitions file.
+-- The observed data of `(r, y)`: response and the outcome on response, with `0` otherwise.
 set_option quotPrecheck false in
 local notation "obsRY" => fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))
 
@@ -297,17 +293,27 @@ theorem integral_ite_respondentMean {P : Measure (Bool × ℝ)} [IsProbabilityMe
   rw [hm]
   ring
 
-/-- **Mean imputation is not identification, in general.** At any law with positive nonresponse
-probability, some full-data law with the same observed-data law has a respondents' mean (hence,
-by `integral_ite_respondentMean`, a mean-imputed mean) different from its full-data mean. -/
+/-- **Mean imputation is not identification, in general.** At any law with positive response
+and nonresponse probabilities, some full-data law with the same observed-data law has positive
+response probability and a respondents' mean (hence, by `integral_ite_respondentMean`, a
+mean-imputed mean) different from its full-data mean. -/
 theorem exists_map_obsRY_eq_respondentMean_ne {P : Measure (Bool × ℝ)} [IsProbabilityMeasure P]
-    (hP : Integrable Prod.snd P) (hR : P.real {z | z.1 = false} ≠ 0) :
+    (hP : Integrable Prod.snd P) (hR : P.real {z | z.1 = false} ≠ 0)
+    (hresp : P.real {z | z.1 = true} ≠ 0) :
     ∃ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q ∧ Integrable Prod.snd Q ∧
-      Q.map obsRY = P.map obsRY ∧
+      Q.map obsRY = P.map obsRY ∧ Q.real {z | z.1 = true} ≠ 0 ∧
       (∫ w in {w | w.1 = true}, w.2 ∂Q) / Q.real {w | w.1 = true} ≠ ∫ z, z.2 ∂Q := by
   obtain ⟨Q, hQ, hQi, hobs, hne⟩ := exists_map_obsRY_eq_integral_ne hP hR
     (fun O => (∫ w in {w | w.1 = true}, w.2 ∂O) / O.real {w | w.1 = true})
-  exact ⟨Q, hQ, hQi, hobs, by rwa [respondentMean_map_obsRY Q]⟩
+  have hpre : (obsRY) ⁻¹' {w : Bool × ℝ | w.1 = true} = {w : Bool × ℝ | w.1 = true} := by
+    ext w; simp
+  have hresp_eq : Q.real {z | z.1 = true} = P.real {z | z.1 = true} := by
+    calc
+      _ = (Q.map obsRY).real {z | z.1 = true} := by
+        rw [map_measureReal_apply measurable_obsRY measurableSet_response, hpre]
+      _ = (P.map obsRY).real {z | z.1 = true} := by rw [hobs]
+      _ = _ := by rw [map_measureReal_apply measurable_obsRY measurableSet_response, hpre]
+  exact ⟨Q, hQ, hQi, hobs, hresp_eq ▸ hresp, by rwa [respondentMean_map_obsRY Q]⟩
 
 /-- **Mean imputation is not identification.** Under `selfMaskingLaw` the respondents' mean is
 `1`, and so is the mean after mean imputation, while the full-data mean is `1 / 2`. -/
@@ -405,11 +411,12 @@ theorem integral_map_stratumShift {P : Measure (𝒳 × Bool × ℝ)} [IsFiniteM
 
 /-- If the stratum `x = x₀` has no respondents, the stratum shift preserves the conditional
 independence of response and outcome given the covariate (missingness at random). -/
-theorem condIndepDiscrete_map_stratumShift {P : Measure (𝒳 × Bool × ℝ)} {x₀ : 𝒳}
-    (hMAR : CondIndepDiscrete P {z | z.2.1 = true} (fun z => z.2.2) Prod.fst)
+theorem condIndepDiscrete_map_stratumShift [Countable 𝒳]
+    {P : Measure (𝒳 × Bool × ℝ)} {x₀ : 𝒳}
+    (hMAR : MissingOutcomes.MissingAtRandom P {z | z.2.1 = true} (fun z => z.2.2) Prod.fst)
     (hpos : P ({z | z.2.1 = true} ∩ Prod.fst ⁻¹' {x₀}) = 0) (c : ℝ) :
-    CondIndepDiscrete (P.map (stratumShift x₀ c)) {z | z.2.1 = true} (fun z => z.2.2)
-      Prod.fst := by
+    MissingOutcomes.MissingAtRandom (P.map (stratumShift x₀ c)) {z | z.2.1 = true}
+      (fun z => z.2.2) Prod.fst := by
   have hS := measurable_stratumShift x₀ c
   have hT : MeasurableSet {z : 𝒳 × Bool × ℝ | z.2.1 = true} :=
     measurable_snd.fst (measurableSet_singleton true)
@@ -452,13 +459,15 @@ theorem condIndepDiscrete_map_stratumShift {P : Measure (𝒳 × Bool × ℝ)} {
 independent of the outcome given the covariate, but the stratum `x = x₀` has positive probability
 and no respondents, then every real number is the outcome mean of a full-data law that still
 satisfies the conditional independence and has the same observed-data law. -/
-theorem exists_condIndepDiscrete_map_obsXRY_eq_integral_eq {P : Measure (𝒳 × Bool × ℝ)}
+theorem exists_condIndepDiscrete_map_obsXRY_eq_integral_eq [Countable 𝒳]
+    {P : Measure (𝒳 × Bool × ℝ)}
     [IsProbabilityMeasure P] (hP : Integrable (fun z => z.2.2) P)
-    (hMAR : CondIndepDiscrete P {z | z.2.1 = true} (fun z => z.2.2) Prod.fst) {x₀ : 𝒳}
+    (hMAR : MissingOutcomes.MissingAtRandom P {z | z.2.1 = true} (fun z => z.2.2) Prod.fst)
+    {x₀ : 𝒳}
     (hpos : P ({z | z.2.1 = true} ∩ Prod.fst ⁻¹' {x₀}) = 0)
     (hx₀ : P.real (Prod.fst ⁻¹' {x₀}) ≠ 0) (t : ℝ) :
     ∃ Q : Measure (𝒳 × Bool × ℝ), IsProbabilityMeasure Q ∧ Integrable (fun z => z.2.2) Q ∧
-      CondIndepDiscrete Q {z | z.2.1 = true} (fun z => z.2.2) Prod.fst ∧
+      MissingOutcomes.MissingAtRandom Q {z | z.2.1 = true} (fun z => z.2.2) Prod.fst ∧
       Q.map obsXRY = P.map obsXRY ∧ ∫ z, z.2.2 ∂Q = t := by
   have hstratum : P.real {z : 𝒳 × Bool × ℝ | z.1 = x₀ ∧ z.2.1 = false} =
       P.real (Prod.fst ⁻¹' {x₀}) := by
