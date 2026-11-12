@@ -28,8 +28,9 @@ Pattern Recognition (1996), Chapter 7.
 
 open Finset
 
-/-- The empirical frequency of value `a` in a sample tuple. -/
-noncomputable def empFreq {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ} (x : Fin n → α)
+/-- The empirical frequency of value `a` in a sample tuple. No finiteness
+assumption on `α` is needed: only the `Fin n` sample indices are counted. -/
+noncomputable def empFreq {α : Type*} [DecidableEq α] {n : ℕ} (x : Fin n → α)
     (a : α) : ℝ :=
   ((Finset.univ.filter (fun i => x i = a)).card : ℝ) / n
 

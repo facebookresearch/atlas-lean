@@ -19,6 +19,12 @@ example {α : Type*} [Fintype α] [DecidableEq α] (a : α) :
     empFreq (fun _ : Fin 2 => a) a = 1 := by
   simp [empFreq]
 
+/-- `empFreq` needs no finite alphabet: it computes over `ℕ`, including
+for a value that never occurs. -/
+example : empFreq (fun _ : Fin 2 => (0 : ℕ)) 0 = 1 ∧
+    empFreq (fun _ : Fin 2 => (0 : ℕ)) 1 = 0 := by
+  constructor <;> simp [empFreq]
+
 /-- Boundary check: the expectation bound instantiates for one
 sample on a two-element alphabet. -/
 example (p : PMF (Fin 2)) :
