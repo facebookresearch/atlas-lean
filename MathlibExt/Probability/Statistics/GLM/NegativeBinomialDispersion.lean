@@ -59,8 +59,10 @@ the NB2 variance `μ + μ² / k` (the dispersion is `1 / θ`).
 
 `tendstoInMeasure_nbJointMLE`: a near-maximizer of the averaged joint log-likelihood
 `nbAvgLogLik` over a compact set `K` converges in probability to `p₀`. The hypotheses are explicit:
-`M` is continuous on `K`, `p₀` is its unique maximizer on `K` (identifiability), and the uniform law
-of large numbers holds on `K` in probability. `tendstoInMeasure_snd_of_nbJointMLE`: the estimated
+`M` is continuous on `K`, `p₀` is its unique maximizer on `K` (identifiability), the uniform law
+of large numbers holds on `K` in probability, and every shape in `K` is positive
+(`∀ p ∈ K, 0 < p.2`), so the maximizer stays inside the model domain where
+`nbLogPmf` is the negative-binomial log mass function. `tendstoInMeasure_snd_of_nbJointMLE`: the estimated
 shape is consistent.
 
 ## Not proved here
@@ -534,6 +536,9 @@ private lemma exists_sub_le_of_isCompact {Θ : Type*} [PseudoMetricSpace Θ] {M 
 Let `K` be a compact parameter set of pairs `(β, θ)` (the shape `θ` is estimated) and let `M` be a
 population criterion (typically the expected log mass function) such that
 
+* (positive shapes) every `p ∈ K` has `0 < p.2`: `nbLogPmf` is identified
+  with the negative-binomial log mass function only for `θ > 0`, so without
+  this the maximizer could lie at an invalid shape (e.g. `θ = 0`);
 * (continuity) `M` is continuous on `K`;
 * (identifiability) `p₀ ∈ K` is the unique maximizer of `M` on `K`;
 * (uniform law of large numbers) the averaged joint log-likelihood `nbAvgLogLik` converges to `M`
@@ -549,13 +554,17 @@ outer measures, so no measurability of `p̂` is needed. -/
 theorem tendstoInMeasure_nbJointMLE {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     (x : ℕ → Ω → κ → ℝ) (o : ℕ → Ω → ℝ) (y : ℕ → Ω → ℕ) {M : (κ → ℝ) × ℝ → ℝ}
     {K : Set ((κ → ℝ) × ℝ)} (hK : IsCompact K) (hM : ContinuousOn M K) {p₀ : (κ → ℝ) × ℝ}
-    (hp₀ : p₀ ∈ K) (hident : ∀ p ∈ K, p ≠ p₀ → M p < M p₀)
+    (hp₀ : p₀ ∈ K) (hKpos : ∀ p ∈ K, 0 < p.2)
+    (hident : ∀ p ∈ K, p ≠ p₀ → M p < M p₀)
     (hunif : ∀ ε > 0, Tendsto (fun n : ℕ =>
       P {ω | ∃ p ∈ K, ε ≤ |nbAvgLogLik x o y n ω p - M p|}) atTop (𝓝 0))
     {phat : ℕ → Ω → (κ → ℝ) × ℝ} (hphatK : Tendsto (fun n => P {ω | phat n ω ∉ K}) atTop (𝓝 0))
     (hmax : ∀ δ > 0, Tendsto (fun n => P {ω |
       nbAvgLogLik x o y n ω (phat n ω) < nbAvgLogLik x o y n ω p₀ - δ}) atTop (𝓝 0)) :
     TendstoInMeasure P phat atTop (fun _ => p₀) := by
+  -- The target shape is in the model domain; the rest of the proof is the
+  -- abstract compact-maximizer argument, which does not need positivity.
+  have _hθ₀ : 0 < p₀.2 := hKpos p₀ hp₀
   rw [tendstoInMeasure_iff_dist]
   intro ε hε
   obtain ⟨δ, hδ, hsep⟩ := exists_sub_le_of_isCompact hK hM hident hε

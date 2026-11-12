@@ -189,6 +189,7 @@ hypothesis of `tendstoInMeasure_nbJointMLE` then holds with empty events. -/
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} (x : ℕ → Ω → Fin 2 → ℝ)
     (o : ℕ → Ω → ℝ) (y : ℕ → Ω → ℕ) {M : (Fin 2 → ℝ) × ℝ → ℝ} {K : Set ((Fin 2 → ℝ) × ℝ)}
     (hK : IsCompact K) (hM : ContinuousOn M K) {p₀ : (Fin 2 → ℝ) × ℝ} (hp₀ : p₀ ∈ K)
+    (hKpos : ∀ p ∈ K, 0 < p.2)
     (hident : ∀ p ∈ K, p ≠ p₀ → M p < M p₀)
     (hunif : ∀ ε > 0, Tendsto (fun n : ℕ =>
       P {ω | ∃ p ∈ K, ε ≤ |nbAvgLogLik x o y n ω p - M p|}) atTop (𝓝 0))
@@ -196,7 +197,7 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} (x : ℕ → Ω → F
     (hopt : ∀ n ω, ∀ p ∈ K, nbAvgLogLik x o y n ω p ≤ nbAvgLogLik x o y n ω (phat n ω)) :
     TendstoInMeasure P (fun n ω => (phat n ω).2) atTop (fun _ => p₀.2) := by
   refine tendstoInMeasure_snd_of_nbJointMLE
-    (tendstoInMeasure_nbJointMLE x o y hK hM hp₀ hident hunif ?_ fun δ hδ => ?_)
+    (tendstoInMeasure_nbJointMLE x o y hK hM hp₀ hKpos hident hunif ?_ fun δ hδ => ?_)
   · simp [hin]
   · have h : ∀ n : ℕ, {ω | nbAvgLogLik x o y n ω (phat n ω) <
         nbAvgLogLik x o y n ω p₀ - δ} = ∅ := fun n => by
