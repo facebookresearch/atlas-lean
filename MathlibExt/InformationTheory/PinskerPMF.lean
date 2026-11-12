@@ -11,6 +11,7 @@ module
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Integrals
+public import MathlibExt.InformationTheory.LogSum
 
 @[expose] public section
 
@@ -35,104 +36,42 @@ open scoped MeasureTheory
 private lemma pos_of_nonneg_ne {a : ℝ} (ha : 0 ≤ a) (hne : a ≠ 0) : 0 < a :=
   lt_of_le_of_ne ha (fun h => hne h.symm)
 
-/-- Pointwise Gibbs inequality: `r - s ≤ r * log (r / s)` for `r, s ≥ 0`
-with `s = 0 → r = 0`. Follows from `log t ≤ t - 1` applied to `t = 1 / (r / s)`. -/
-private lemma gibbs_pointwise (r s : ℝ) (hr : 0 ≤ r) (hs : 0 ≤ s)
-    (h : s = 0 → r = 0) : r - s ≤ r * Real.log (r / s) := by
-  by_cases hr0 : r = 0
-  · rw [hr0, zero_mul, zero_sub]
-    exact neg_nonpos.mpr hs
-  · have hrpos : 0 < r := pos_of_nonneg_ne hr hr0
-    have hs0 : s ≠ 0 := fun hs0 => hr0 (h hs0)
-    have hspos : 0 < s := pos_of_nonneg_ne hs hs0
-    have h1t : (0:ℝ) < 1 / (r / s) := one_div_pos.mpr (div_pos hrpos hspos)
-    have hlog := Real.log_le_sub_one_of_pos h1t
-    rw [one_div, Real.log_inv] at hlog
-    have e : r - s = r * (1 - 1 / (r / s)) := by field_simp
-    rw [e, one_div]
-    apply mul_le_mul_of_nonneg_left _ hr
-    linarith
-
 /-- Log-sum (grouping) inequality over a finset: the unnormalized binary KL
-of the aggregates is at most the sum of pointwise terms. -/
+of the aggregates is at most the sum of pointwise terms. This is a reduction
+to the shared `Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div` in
+`MathlibExt/InformationTheory/LogSum.lean`: filter `t` to the indices where
+`y a ≠ 0`, where the shared theorem's strict-positivity hypothesis holds, and
+the removed indices contribute `0` to every sum by `hac`. -/
 private lemma log_sum_le {α : Type*} [Fintype α] (x y : α → ℝ) (t : Finset α)
     (hx : ∀ a ∈ t, 0 ≤ x a) (hy : ∀ a ∈ t, 0 ≤ y a)
     (hac : ∀ a ∈ t, y a = 0 → x a = 0) :
     (∑ a ∈ t, x a) * Real.log ((∑ a ∈ t, x a) / (∑ a ∈ t, y a))
       ≤ ∑ a ∈ t, x a * Real.log (x a / y a) := by
-  by_cases hY : (∑ a ∈ t, y a) = 0
-  · have hy0 : ∀ a ∈ t, y a = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonneg (fun a ha => hy a ha)).mp hY
-    have hx0 : ∀ a ∈ t, x a = 0 := fun a ha => hac a ha (hy0 a ha)
-    have hX : (∑ a ∈ t, x a) = 0 := Finset.sum_eq_zero hx0
-    have hR : (∑ a ∈ t, x a * Real.log (x a / y a)) = 0 :=
-      Finset.sum_eq_zero (fun a ha => by rw [hx0 a ha, zero_mul])
-    rw [hX, zero_mul]
-    exact le_of_eq hR.symm
-  · by_cases hX : (∑ a ∈ t, x a) = 0
-    · have hx0 : ∀ a ∈ t, x a = 0 :=
-        (Finset.sum_eq_zero_iff_of_nonneg (fun a ha => hx a ha)).mp hX
-      have hR : (∑ a ∈ t, x a * Real.log (x a / y a)) = 0 :=
-        Finset.sum_eq_zero (fun a ha => by rw [hx0 a ha, zero_mul])
-      rw [hX, zero_mul]
-      exact le_of_eq hR.symm
-    · have hYnn : 0 ≤ ∑ a ∈ t, y a := Finset.sum_nonneg (fun a ha => hy a ha)
-      have hYpos : 0 < ∑ a ∈ t, y a := pos_of_nonneg_ne hYnn hY
-      have hXnn : 0 ≤ ∑ a ∈ t, x a := Finset.sum_nonneg (fun a ha => hx a ha)
-      have hXpos : 0 < ∑ a ∈ t, x a := pos_of_nonneg_ne hXnn hX
-      have hpt : ∀ a ∈ t, (x a / (∑ a ∈ t, x a) - y a / (∑ a ∈ t, y a))
-          ≤ (x a / (∑ a ∈ t, x a))
-            * Real.log ((x a / (∑ a ∈ t, x a)) / (y a / (∑ a ∈ t, y a))) := by
-        intro a ha
-        apply gibbs_pointwise
-        · exact div_nonneg (hx a ha) hXnn
-        · exact div_nonneg (hy a ha) hYnn
-        · intro hs0
-          have hya : y a = 0 := by
-            rcases div_eq_zero_iff.mp hs0 with h | h
-            · exact h
-            · exact absurd h hY
-          have hxa : x a = 0 := hac a ha hya
-          simp [hxa]
-      have hsum := Finset.sum_le_sum hpt
-      have hLHS : (∑ a ∈ t, (x a / (∑ a ∈ t, x a) - y a / (∑ a ∈ t, y a))) = 0 := by
-        rw [Finset.sum_sub_distrib]
-        have eX : (∑ a ∈ t, x a / (∑ a ∈ t, x a)) = 1 := by
-          rw [← Finset.sum_div, div_self hX]
-        have eY : (∑ a ∈ t, y a / (∑ a ∈ t, y a)) = 1 := by
-          rw [← Finset.sum_div, div_self hY]
-        rw [eX, eY, sub_self]
-      rw [hLHS] at hsum
-      have hpos : (0:ℝ) ≤ (∑ a ∈ t, x a)
-          * (∑ a ∈ t, (x a / (∑ a ∈ t, x a))
-            * Real.log ((x a / (∑ a ∈ t, x a)) / (y a / (∑ a ∈ t, y a)))) :=
-        mul_nonneg hXnn hsum
-      have hterm : ∀ a ∈ t, (∑ a ∈ t, x a)
-            * ((x a / (∑ a ∈ t, x a))
-              * Real.log ((x a / (∑ a ∈ t, x a)) / (y a / (∑ a ∈ t, y a))))
-          = x a * Real.log (x a / y a)
-            - x a * Real.log ((∑ a ∈ t, x a) / (∑ a ∈ t, y a)) := by
-        intro a ha
-        have hXx : (∑ a ∈ t, x a) * (x a / (∑ a ∈ t, x a)) = x a := by
-          rw [← mul_div_assoc]
-          exact mul_div_cancel_left₀ _ hX
-        rw [← mul_assoc, hXx]
-        by_cases hx0 : x a = 0
-        · rw [hx0]
-          simp
-        · have hxpos : 0 < x a := pos_of_nonneg_ne (hx a ha) hx0
-          have hyne : y a ≠ 0 := fun hy0 => hx0 (hac a ha hy0)
-          have hsplit : (x a / (∑ a ∈ t, x a)) / (y a / (∑ a ∈ t, y a))
-              = (x a / y a) / ((∑ a ∈ t, x a) / (∑ a ∈ t, y a)) := by
-            field_simp
-          rw [hsplit, Real.log_div (div_ne_zero hx0 hyne) (div_ne_zero hX hY),
-            mul_sub]
-      have hXm : (∑ a ∈ t, x a * Real.log ((∑ a ∈ t, x a) / (∑ a ∈ t, y a)))
-          = (∑ a ∈ t, x a) * Real.log ((∑ a ∈ t, x a) / (∑ a ∈ t, y a)) := by
-        rw [Finset.sum_mul]
-      rw [Finset.mul_sum, Finset.sum_congr rfl hterm, Finset.sum_sub_distrib,
-        hXm] at hpos
-      linarith
+  classical
+  have hsub : ∀ a ∈ t, a ∉ t.filter (fun a => y a ≠ 0) → x a = 0 := by
+    intro a ha ha'
+    by_contra hxa
+    have hya : y a ≠ 0 := by
+      intro hy0
+      exact hxa (hac a ha hy0)
+    exact ha' (Finset.mem_filter.mpr ⟨ha, hya⟩)
+  have hsumx : ∑ a ∈ t, x a = ∑ a ∈ t.filter (fun a => y a ≠ 0), x a :=
+    (Finset.sum_subset (Finset.filter_subset _ _) (fun a ha ha' => hsub a ha ha')).symm
+  have hsumy : ∑ a ∈ t, y a = ∑ a ∈ t.filter (fun a => y a ≠ 0), y a :=
+    (Finset.sum_subset (Finset.filter_subset _ _)
+      (fun a ha ha' => by
+        by_contra hyne
+        exact ha' (Finset.mem_filter.mpr ⟨ha, hyne⟩))).symm
+  have hsumRHS : ∑ a ∈ t, x a * Real.log (x a / y a) =
+      ∑ a ∈ t.filter (fun a => y a ≠ 0), x a * Real.log (x a / y a) :=
+    (Finset.sum_subset (Finset.filter_subset _ _)
+      (fun a ha ha' => by rw [hsub a ha ha', zero_mul])).symm
+  have hmain := Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div
+    (t.filter (fun a => y a ≠ 0)) x y
+    (fun a ha => hx a (Finset.mem_of_mem_filter a ha))
+    (fun a ha => lt_of_le_of_ne (hy a (Finset.mem_of_mem_filter a ha))
+      (Ne.symm (Finset.mem_filter.mp ha).2))
+  rwa [← hsumx, ← hsumy, ← hsumRHS] at hmain
 
 /-- First derivative of the binary-Pinsker auxiliary function
 `H(t) = t * log t + (1 - t) * log (1 - t) - 2 * t^2` on `(0, 1)`. -/
