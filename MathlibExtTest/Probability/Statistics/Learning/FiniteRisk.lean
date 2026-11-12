@@ -104,14 +104,13 @@ example {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
 
 /-- Single candidate: the ERM bound collapses to the single-loss deviation rate. -/
 example {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
-    {n : ℕ} (hn : 0 < n) (g : Z → ℝ) (hg : Measurable g)
-    (hbd : ∀ᵐ z ∂μ, g z ∈ Set.Icc (0 : ℝ) 1) {ε : ℝ} (hε : 0 ≤ ε)
+    {n : ℕ} (g : Z → ℝ)
     (S : Fin n → Z)
+    {ε : ℝ}
     (hS : S ∉ {S | ∃ j : Fin 1,
       ε ≤ |(n : ℝ)⁻¹ * ∑ i : Fin n, (fun _ => g) j (S i) - ∫ z, (fun _ => g) j z ∂μ|}) :
     ∫ z, g z ∂μ ≤ (⨅ _j : Fin 1, ∫ z, g z ∂μ) + 2 * ε := by
-  have h := erm_populationRisk_le_best_plus_two (M := 1) μ hn (fun _ => g)
-    (fun _ => hg) (fun _ => hbd) hε S hS
+  have h := erm_populationRisk_le_best_plus_two (M := 1) μ (fun _ => g) S hS
   simpa using h
 
 /-- Exact-ERM identity at vanishing tolerance: under definitionally zero deviations for
@@ -120,17 +119,13 @@ bad set uses the non-strict threshold `ε ≤ |·|`, which makes the literal `ε
 empty — so the pinned theorem is applied at every strict `ε > 0` and the limit is taken with
 `le_of_forall_pos_le_add`. -/
 example {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
-    {M n : ℕ} [NeZero M] (hn : 0 < n) (f : Fin M → Z → ℝ)
-    (hf : ∀ j, Measurable (f j))
-    (hbd : ∀ j, ∀ᵐ z ∂μ, f j z ∈ Set.Icc (0 : ℝ) 1)
+    {M n : ℕ} [NeZero M] (f : Fin M → Z → ℝ)
     (S : Fin n → Z)
     (hzero : ∀ j, (n : ℝ)⁻¹ * ∑ i, f j (S i) = ∫ z, f j z ∂μ) :
     ∫ z, f (ermIdx f S) z ∂μ = ⨅ j, ∫ z, f j z ∂μ := by
   apply le_antisymm
   · apply le_of_forall_pos_le_add
-    intro δ hδpos
-    have hδ2pos : 0 < δ / 2 := by linarith
-    have hε : 0 ≤ δ / 2 := le_of_lt hδ2pos
+    intro δ _
     have hS : S ∉ {S | ∃ j : Fin M,
         δ / 2 ≤ |(n : ℝ)⁻¹ * ∑ i : Fin n, f j (S i) - ∫ z, f j z ∂μ|} := by
       intro hcon
@@ -139,22 +134,21 @@ example {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure �
         sub_eq_zero.mpr (hzero j)
       rw [hempeq, abs_zero] at hj
       linarith
-    have hbound := erm_populationRisk_le_best_plus_two (μ := μ) (hn := hn) (f := f)
-      hf hbd (ε := δ / 2) hε S hS
+    have hbound := erm_populationRisk_le_best_plus_two (μ := μ) (f := f)
+      (ε := δ / 2) S hS
     have h2 : 2 * (δ / 2) = δ := by ring
     linarith
   · exact ciInf_le (Finite.bddBelow_range _) _
 
 /-- Duplicate predictors: identical candidates keep the bound valid with harmless slack. -/
 example {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
-    {n : ℕ} (hn : 0 < n) (g : Z → ℝ) (hg : Measurable g)
-    (hbd : ∀ᵐ z ∂μ, g z ∈ Set.Icc (0 : ℝ) 1) {ε : ℝ} (hε : 0 ≤ ε)
+    {n : ℕ} (g : Z → ℝ)
     (S : Fin n → Z)
+    {ε : ℝ}
     (hS : S ∉ {S | ∃ j : Fin 2,
       ε ≤ |(n : ℝ)⁻¹ * ∑ i : Fin n, (fun _ => g) j (S i) - ∫ z, (fun _ => g) j z ∂μ|}) :
     ∫ z, g z ∂μ ≤ (⨅ _j : Fin 2, ∫ z, g z ∂μ) + 2 * ε := by
-  have h := erm_populationRisk_le_best_plus_two (M := 2) μ hn (fun _ => g)
-    (fun _ => hg) (fun _ => hbd) hε S hS
+  have h := erm_populationRisk_le_best_plus_two (M := 2) μ (fun _ => g) S hS
   simpa using h
 
 end MathlibExtTest.Probability.Statistics.Learning.FiniteRisk

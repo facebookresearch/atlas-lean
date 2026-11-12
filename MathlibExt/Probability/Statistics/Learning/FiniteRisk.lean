@@ -183,17 +183,12 @@ theorem ermIdx_spec {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
 at most the best candidate's population risk plus `2ε`. -/
 theorem erm_populationRisk_le_best_plus_two
     {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
-    {M n : ℕ} [NeZero M] (hn : 0 < n) (f : Fin M → Z → ℝ)
-    (hf : ∀ j, Measurable (f j))
-    (hbd : ∀ j, ∀ᵐ z ∂μ, f j z ∈ Set.Icc (0 : ℝ) 1) {ε : ℝ} (hε : 0 ≤ ε)
+    {M n : ℕ} [NeZero M] (f : Fin M → Z → ℝ)
     (S : Fin n → Z)
+    {ε : ℝ}
     (hS : S ∉ {S | ∃ j : Fin M,
       ε ≤ |(n : ℝ)⁻¹ * ∑ i : Fin n, f j (S i) - ∫ z, f j z ∂μ|}) :
     ∫ z, f (ermIdx f S) z ∂μ ≤ (⨅ j, ∫ z, f j z ∂μ) + 2 * ε := by
-  have _ := hn
-  have _ := hf
-  have _ := hbd
-  have _ := hε
   have hposM : 0 < M := NeZero.pos M
   have hneM : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp hposM
   simp only [Set.mem_ofPred_eq, not_exists, not_le] at hS
