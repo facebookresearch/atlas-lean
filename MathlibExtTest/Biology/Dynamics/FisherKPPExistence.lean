@@ -54,8 +54,11 @@ example : ∃ U : ℝ → ℝ, 0 < U 0 ∧ U 1 < U 0 ∧ U 0 < 1 ∧ Tendsto U a
       (by norm_num)
   exact ⟨U, (hb 0).1, hanti one_pos, (hb 0).2, h1, h0⟩
 
-/-- Consistency with the no-subcritical-front result: at a speed admitted here the
-obstruction `c² < 4 r D` of `not_isFront_of_sq_lt` fails. -/
-example : ¬ ((2 : ℝ) ^ 2 < 4 * 1 * 1) := by norm_num
+/-- `c = 2` is the minimal nonnegative front speed for `D = r = 1`: a front exists at `2`, and
+none exists at any `0 ≤ c < 2`. -/
+example : (∃ U U' : ℝ → ℝ, IsFront 1 1 2 U U' ∧ StrictAnti U) ∧
+    ∀ c : ℝ, 0 ≤ c → c < 2 → ∀ U U' : ℝ → ℝ, ¬ IsFront 1 1 c U U' :=
+  ⟨exists_isFront_of_sq_le one_pos one_pos (by norm_num) (by norm_num),
+    fun c hc0 hc2 _ _ => not_isFront_of_sq_lt one_pos one_pos (by nlinarith)⟩
 
 end MathlibExtTest.Biology.Dynamics.FisherKPPExistence

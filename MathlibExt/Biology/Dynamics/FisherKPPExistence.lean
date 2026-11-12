@@ -20,8 +20,8 @@ logistic reaction `f(u) = r u (1 - u)`, including the minimal speed `c = 2 √(r
 
 ## Front convention (frozen)
 
-This is the convention of the Wanted contract
-`WantedExt/Biology/Dynamics/FisherKPPWanted.lean`, and every statement here uses it unchanged:
+This is the convention of `FisherKPP.IsFront` (and of the former Wanted contract
+`exists_isFront_of_le`), and every statement here uses it unchanged:
 
 * PDE: `∂u/∂t = D ∂²u/∂x² + r u (1 - u)` with `D > 0`, `r > 0`.
 * Traveling coordinate: `u(x, t) = U(z)` with `z = x - c t`, so a positive speed `c` moves the
@@ -39,8 +39,8 @@ This is the convention of the Wanted contract
 ## Main results
 
 * `exists_isFront_of_le`: **KPP existence.** For every `c ≥ 2 √(r D)` there is a strictly
-  decreasing front of speed `c`. This is the Wanted contract `exists_isFront_of_le` with the
-  same name, hypotheses and conclusion.
+  decreasing front of speed `c`. It discharges the former Wanted contract of the same name with
+  the same hypotheses and conclusion.
 * `exists_isFront_two_mul_sqrt`: the minimal-speed boundary `c = 2 √(r D)` itself.
 * `exists_isFront_of_sq_le`: the same existence for nonnegative speeds with `4 r D ≤ c²`.
 
