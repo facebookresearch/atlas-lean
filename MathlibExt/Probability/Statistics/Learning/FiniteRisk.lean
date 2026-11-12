@@ -158,34 +158,24 @@ end ProbabilityTheory
 
 
 
--- PRIVATE HELPERS (for pinned targets)
-namespace ProbabilityTheory
-
-open MeasureTheory
-
-theorem exists_emp_minimizer {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
-    (f : Fin M → Z → ℝ) (S : Fin n → Z) :
-    ∃ j, ∀ k, (n : ℝ)⁻¹ * ∑ i, f j (S i) ≤ (n : ℝ)⁻¹ * ∑ i, f k (S i) := by
-  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp (NeZero.pos M)
-  exact Finite.exists_min _
-
-end ProbabilityTheory
-
 namespace ProbabilityTheory
 
 open MeasureTheory
 
 /-- Deterministic tie-broken empirical-risk minimizer over the finite candidate class
-(registry-required public selector API). -/
+(registry-required public selector API), directly the `Finite.exists_min` witness. -/
 noncomputable def ermIdx {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
     (f : Fin M → Z → ℝ) (S : Fin n → Z) : Fin M := by
-  exact Classical.choose (exists_emp_minimizer f S)
+  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp (NeZero.pos M)
+  exact Classical.choose (Finite.exists_min (fun j => (n : ℝ)⁻¹ * ∑ i, f j (S i)))
 
 /-- The empirical minimizer attains the least empirical risk (public selector spec). -/
 theorem ermIdx_spec {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
     (f : Fin M → Z → ℝ) (S : Fin n → Z) (j : Fin M) :
     (n : ℝ)⁻¹ * ∑ i, f (ermIdx f S) (S i) ≤ (n : ℝ)⁻¹ * ∑ i, f j (S i) := by
-  have h := Classical.choose_spec (exists_emp_minimizer f S)
+  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp (NeZero.pos M)
+  have h := Classical.choose_spec
+    (Finite.exists_min (fun k => (n : ℝ)⁻¹ * ∑ i, f k (S i)))
   exact h j
 
 /-- **Finite validation-ERM corollary.** Outside the bad set of
