@@ -45,6 +45,8 @@ namespace MathlibExt.Economics.Finance.InfiniteDividendDiscount
 open MathlibExt.Economics.Finance
 open MathlibExt.Economics.Finance.FiniteDividendDiscount
 
+/-- Discounted dividend at date `t + 1`, indexed from `t = 0` (so the `t`-th summand of
+the infinite dividend sum is the dividend paid at date `t + 1`, discounted at rate `r`). -/
 noncomputable def dividendTerm (r : ℝ) (D : ℕ → ℝ) (t : ℕ) : ℝ :=
   discountFactor r (t + 1) * D (t + 1)
 
@@ -97,6 +99,11 @@ theorem dividendDiscountInfinite_of_finite {r : ℝ} (hr : 0 < 1 + r) {D P : ℕ
     simpa using h
   exact (hasSum_iff_tendsto_nat_of_nonneg hnonneg (P 0)).mpr hlim
 
+/-- **Infinite dividend-discount identity, unconditional.** If prices satisfy the
+one-period recursion, the discounted terminal price vanishes, and dividends are
+nonnegative, then the infinite sum of discounted dividends equals today's price.
+Discharge the finite-identity hypothesis of `dividendDiscountInfinite_of_finite` with
+FI14.T01's `finiteDividendDiscount` (note `1 + r ≠ 0` follows from `0 < 1 + r`). -/
 theorem dividendDiscountInfinite {r : ℝ} (hr : 0 < 1 + r) {D P : ℕ → ℝ}
     (hrec : ∀ t, P t = (D (t + 1) + P (t + 1)) / (1 + r))
     (hvanish : Filter.Tendsto (fun n => discountFactor r n * P n) Filter.atTop (nhds 0))
