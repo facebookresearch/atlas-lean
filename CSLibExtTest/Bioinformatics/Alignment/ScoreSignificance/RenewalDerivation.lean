@@ -19,8 +19,11 @@ public import Mathlib.MeasureTheory.Function.Floor
   `E ~ Exp(1)`, so `P(M' > k) = e^{-(k + 1)}`, single-step ladder law `g 1 = e^{-1}`, trivial
   excursion `Y = 0`, `D = 0`. The derived lattice tail theorem (no assumed renewal theorem) applies,
   and the Cramér–Lundberg constant evaluates to `C_∞ = e^{-1}`, matching `e^k P(M' > k) = e^{-1}`.
-* A nonlattice `LadderRenewalData` with `G = δ₀` (degenerate but admissible), whose constant
-  evaluates to `0`.
+* A nonlattice `LadderRenewalData` with `G = δ₀`, which only shows that the structure can be
+  inhabited (the key renewal theorem fails for `δ₀`); its constant evaluates to `0`.
+* A nonzero-excursion lattice instance, the `±1` walk with `p = 1/3`, `q = 2/3`
+  (`WalkExample.walkData`): the fixed point holds with nontrivial `Y` and `D = -1`, the derived
+  tail constant is `1/2`, and a direct computation of `P(Y > k) 2^{k+1} → 1/2` confirms it.
 * The excursion step `tendsto_exp_mul_real_lt_of_fixedPoint` on the same fixed point.
 * The derived inputs `NonlatticeRenewalInput.ofLadder`, `LatticeRenewalInput.ofLadder` and their
   limit theorems applied to arbitrary hypotheses.
@@ -193,6 +196,276 @@ noncomputable def diracData : LadderRenewalData (expMeasure 1) (fun _ => 0) 1 wh
 
 example : diracData.allTimeConst = 0 := by
   simp [LadderRenewalData.allTimeConst, diracData]
+
+/-! ### A nonzero excursion: the `±1` walk with `p = 1/3`, `q = 2/3`
+
+`θ = log 2` (`(1/3) · 2 + (2/3) · (1/2) = 1`), `h = 1`. On `ℕ × ℕ` with independent coordinates,
+`Y = fst` has the gambler's-ruin tail `P(Y ≥ m) = 1 / (2^{m+1} - 1)`, `M' = snd` the geometric
+tail `P(M' ≥ m) = 2^{-m}`, and `D ≡ -1`. The derived excursion constant is `1/2`, checked
+against a direct computation of `P(Y > k) 2^{k+1}`. -/
+
+namespace WalkExample
+
+/-- The law on `ℕ` with tail `P(n ≥ m) = a m` (masses `a n - a (n + 1)`). -/
+noncomputable def tailLaw (a : ℕ → ℝ) : Measure ℕ :=
+  Measure.sum fun n => ENNReal.ofReal (a n - a (n + 1)) • Measure.dirac n
+
+/-- Telescoping: `∑ (b n - b (n + 1)) = b 0` for antitone `b → 0`. -/
+theorem hasSum_sub_succ {b : ℕ → ℝ} (hb : Antitone b) (h0 : Tendsto b atTop (𝓝 0)) :
+    HasSum (fun n => b n - b (n + 1)) (b 0) := by
+  refine (hasSum_iff_tendsto_nat_of_nonneg (fun n => sub_nonneg.2 (hb n.le_succ)) _).2 ?_
+  simp_rw [Finset.sum_range_sub']
+  simpa using tendsto_const_nhds.sub h0
+
+/-- `P(n ≥ m) = a m` under `tailLaw a`, for antitone `a → 0`. -/
+theorem tailLaw_le {a : ℕ → ℝ} (ha : Antitone a) (h0 : Tendsto a atTop (𝓝 0)) (m : ℕ) :
+    tailLaw a {n | m ≤ n} = ENNReal.ofReal (a m) := by
+  set c : ℕ → ℝ := fun n => a (max n m) with hc
+  have hcanti : Antitone c := fun i j hij => ha (max_le_max hij le_rfl)
+  have hc0 : Tendsto c atTop (𝓝 0) :=
+    (h0.comp (tendsto_atTop_mono (fun n => le_max_left n m) tendsto_id)).congr fun _ => rfl
+  have hterm : ∀ n, {n | m ≤ n}.indicator (fun n => a n - a (n + 1)) n = c n - c (n + 1) := by
+    intro n
+    by_cases hn : m ≤ n
+    · rw [Set.indicator_of_mem (show n ∈ {n | m ≤ n} from hn), hc]
+      simp only
+      rw [max_eq_left hn, max_eq_left (by omega)]
+    · rw [Set.indicator_of_notMem (show n ∉ {n | m ≤ n} from hn), hc]
+      simp only
+      rw [max_eq_right (by omega), max_eq_right (by omega), sub_self]
+  have hsum : HasSum (fun n => {n | m ≤ n}.indicator (fun n => a n - a (n + 1)) n) (a m) := by
+    have h := hasSum_sub_succ hcanti hc0
+    simp only [hc, Nat.zero_max] at h
+    exact h.congr_fun fun n => by rw [hterm]
+  have hnn : ∀ n, 0 ≤ {n | m ≤ n}.indicator (fun n => a n - a (n + 1)) n := fun n =>
+    Set.indicator_nonneg (fun n _ => sub_nonneg.2 (ha n.le_succ)) n
+  have hmeas : tailLaw a {n | m ≤ n} =
+      ∑' n, ENNReal.ofReal ({n | m ≤ n}.indicator (fun n => a n - a (n + 1)) n) := by
+    rw [tailLaw, Measure.sum_apply _ (.of_discrete)]
+    refine tsum_congr fun n => ?_
+    rw [Measure.smul_apply, Measure.dirac_apply' _ (.of_discrete), smul_eq_mul]
+    by_cases hn : m ≤ n
+    · simp [Set.indicator_of_mem (show n ∈ {n | m ≤ n} from hn)]
+    · simp [Set.indicator_of_notMem (show n ∉ {n | m ≤ n} from hn)]
+  rw [hmeas, ← ENNReal.ofReal_tsum_of_nonneg hnn hsum.summable, hsum.tsum_eq]
+
+theorem tailLaw_real_le {a : ℕ → ℝ} (ha : Antitone a) (h0 : Tendsto a atTop (𝓝 0)) (m : ℕ) :
+    (tailLaw a).real {n | m ≤ n} = a m := by
+  rw [measureReal_def, tailLaw_le ha h0, ENNReal.toReal_ofReal (ha.le_of_tendsto h0 m)]
+
+theorem isProbabilityMeasure_tailLaw {a : ℕ → ℝ} (ha : Antitone a) (h0 : Tendsto a atTop (𝓝 0))
+    (h1 : a 0 = 1) : IsProbabilityMeasure (tailLaw a) := by
+  have h := tailLaw_le ha h0 0
+  simp only [zero_le, Set.ofPred_true, h1, ENNReal.ofReal_one] at h
+  exact ⟨h⟩
+
+/-- `{n : ℕ | t < n} = {n | idx t ≤ n}` with `idx t = (⌊t⌋ + 1).toNat`. -/
+theorem setOf_lt_natCast (t : ℝ) :
+    {n : ℕ | t < (n : ℝ)} = {n | (⌊t⌋ + 1).toNat ≤ n} := by
+  ext n
+  simp only [Set.mem_ofPred_eq]
+  rw [Int.toNat_le, Int.add_one_le_iff, Int.floor_lt]
+  push_cast; rfl
+
+theorem tailLaw_real_lt {a : ℕ → ℝ} (ha : Antitone a) (h0 : Tendsto a atTop (𝓝 0)) (t : ℝ) :
+    (tailLaw a).real {n : ℕ | t < (n : ℝ)} = a (⌊t⌋ + 1).toNat := by
+  rw [setOf_lt_natCast, tailLaw_real_le ha h0]
+
+/-- Gambler's-ruin tail `P(Y ≥ m) = 1 / (2^{m+1} - 1)`: the height of the first excursion of the
+`±1` walk with `p = 1/3`, `q = 2/3`. -/
+noncomputable def aY (m : ℕ) : ℝ := 1 / (2 ^ (m + 1) - 1)
+
+/-- Geometric tail `P(M' ≥ m) = 2^{-m}`: the all-time maximum of the same walk. -/
+noncomputable def aM (m : ℕ) : ℝ := (1 / 2) ^ m
+
+theorem aY_pos_den (m : ℕ) : (0 : ℝ) < 2 ^ (m + 1) - 1 := by
+  have : (2 : ℝ) ≤ 2 ^ (m + 1) := by
+    calc (2 : ℝ) = 2 ^ 1 := (pow_one 2).symm
+      _ ≤ 2 ^ (m + 1) := pow_le_pow_right₀ one_le_two (by omega)
+  linarith
+
+theorem antitone_aY : Antitone aY := fun i j hij =>
+  one_div_le_one_div_of_le (aY_pos_den i)
+    (by have := pow_le_pow_right₀ (one_le_two (α := ℝ)) (show i + 1 ≤ j + 1 by omega); linarith)
+
+theorem antitone_aM : Antitone aM := fun _ _ hij =>
+  pow_le_pow_of_le_one (by norm_num) (by norm_num) hij
+
+theorem tendsto_aM : Tendsto aM atTop (𝓝 0) :=
+  tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+
+theorem tendsto_aY : Tendsto aY atTop (𝓝 0) := by
+  refine squeeze_zero (fun m => (one_div_pos.2 (aY_pos_den m)).le) (fun m => ?_) tendsto_aM
+  rw [aY, aM, one_div_pow]
+  refine one_div_le_one_div_of_le (by positivity) ?_
+  rw [pow_succ]; linarith [one_le_pow₀ (one_le_two (α := ℝ)) (n := m)]
+
+instance : IsProbabilityMeasure (tailLaw aY) :=
+  isProbabilityMeasure_tailLaw antitone_aY tendsto_aY (by norm_num [aY])
+
+instance : IsProbabilityMeasure (tailLaw aM) :=
+  isProbabilityMeasure_tailLaw antitone_aM tendsto_aM (by simp [aM])
+
+/-- The probability space of the `±1` walk example: `(Y, M')` independent. -/
+noncomputable abbrev Pw : Measure (ℕ × ℕ) := (tailLaw aY).prod (tailLaw aM)
+
+theorem Pw_fst_lt (t : ℝ) : Pw.real {ω : ℕ × ℕ | t < (ω.1 : ℝ)} = aY (⌊t⌋ + 1).toNat := by
+  rw [show {ω : ℕ × ℕ | t < (ω.1 : ℝ)} = {n : ℕ | t < (n : ℝ)} ×ˢ Set.univ by ext; simp,
+    measureReal_prod_prod, probReal_univ, mul_one, tailLaw_real_lt antitone_aY tendsto_aY]
+
+theorem Pw_snd_lt (t : ℝ) : Pw.real {ω : ℕ × ℕ | t < (ω.2 : ℝ)} = aM (⌊t⌋ + 1).toNat := by
+  rw [show {ω : ℕ × ℕ | t < (ω.2 : ℝ)} = Set.univ ×ˢ {n : ℕ | t < (n : ℝ)} by ext; simp,
+    measureReal_prod_prod, probReal_univ, one_mul, tailLaw_real_lt antitone_aM tendsto_aM]
+
+/-- The fixed point `max Y (D + M') =ᵈ M'` with `D = -1`: for `k = ⌊t⌋ ≥ 0` it is
+`(1 - 1/(2^{k+2} - 1)) (1 - 2^{-(k+2)}) = 1 - 2^{-(k+1)}`; both sides are `1` for `t < 0`. -/
+theorem Pw_fixedPoint (t : ℝ) :
+    Pw.real {ω : ℕ × ℕ | t < max (ω.1 : ℝ) (-1 + ω.2)} = Pw.real {ω : ℕ × ℕ | t < (ω.2 : ℝ)} := by
+  have hset : {ω : ℕ × ℕ | t < max (ω.1 : ℝ) (-1 + ω.2)} =
+      ({n : ℕ | t < (n : ℝ)}ᶜ ×ˢ {n : ℕ | t + 1 < (n : ℝ)}ᶜ)ᶜ := by
+    ext ω
+    simp only [Set.mem_compl_iff, Set.mem_prod, Set.mem_ofPred_eq, lt_max_iff, not_and_or,
+      not_not]
+    constructor
+    · rintro (h | h)
+      · exact Or.inl h
+      · exact Or.inr (by linarith)
+    · rintro (h | h)
+      · exact Or.inl h
+      · exact Or.inr (by linarith)
+  rw [hset, measureReal_compl ((MeasurableSet.of_discrete).prod (.of_discrete)), probReal_univ,
+    measureReal_prod_prod, measureReal_compl (.of_discrete), measureReal_compl (.of_discrete),
+    probReal_univ, probReal_univ, tailLaw_real_lt antitone_aY tendsto_aY,
+    tailLaw_real_lt antitone_aM tendsto_aM, Pw_snd_lt, Int.floor_add_one]
+  rcases lt_or_ge ⌊t⌋ 0 with hk | hk
+  · rw [Int.toNat_eq_zero.2 (by omega : ⌊t⌋ + 1 ≤ 0)]
+    norm_num [aY, aM]
+  · obtain ⟨k, hk'⟩ := Int.eq_ofNat_of_zero_le hk
+    rw [hk', show ((k : ℤ) + 1).toNat = k + 1 by omega,
+      show ((k : ℤ) + 1 + 1).toNat = k + 1 + 1 by omega]
+    have hd := aY_pos_den (k + 1)
+    simp only [aY, aM, one_div_pow]
+    rw [pow_succ 2 (k + 1)] at hd ⊢
+    field_simp
+    ring
+
+/-- The first excursion height `Y`. -/
+noncomputable def wY (ω : ℕ × ℕ) : ℝ := (ω.1 : ℝ)
+
+theorem measurable_wY : Measurable wY :=
+  (Measurable.of_discrete (f := fun n : ℕ => (n : ℝ))).comp measurable_fst
+
+/-- The descending-ladder fixed point of the walk: `D ≡ -1`, `M' = snd`, independent of `Y`. -/
+noncomputable def wFixedPoint : LadderFixedPoint Pw wY where
+  D _ := -1
+  M' ω := (ω.2 : ℝ)
+  measurable_D := measurable_const
+  measurable_M' := (Measurable.of_discrete (f := fun n : ℕ => (n : ℝ))).comp measurable_snd
+  D_nonpos := ae_of_all _ fun _ => by norm_num
+  M'_nonneg := ae_of_all _ fun _ => Nat.cast_nonneg _
+  indep := indepFun_prod (X := fun n : ℕ => ((n : ℝ), (-1 : ℝ))) (Y := fun n : ℕ => (n : ℝ))
+    measurable_from_nat measurable_from_nat
+  fixedPoint := Pw_fixedPoint
+
+/-- The single-step ascending ladder law `g 1 = 1/2` (the walk first exceeds `0` w.p. `1/2`). -/
+noncomputable def gHalf (j : ℕ) : ℝ := if j = 1 then 1 / 2 else 0
+
+theorem gHalf_mul_exp (j : ℕ) :
+    gHalf j * Real.exp (Real.log 2 * 1 * j) = if j = 1 then 1 else 0 := by
+  unfold gHalf
+  split_ifs with h
+  · subst h; rw [Nat.cast_one, mul_one, mul_one, Real.exp_log two_pos]; norm_num
+  · simp
+
+theorem Pw_snd_natCast_lt (k : ℕ) :
+    Pw.real {ω : ℕ × ℕ | (k : ℝ) * 1 < (ω.2 : ℝ)} = (1 / 2) ^ (k + 1) := by
+  rw [mul_one, Pw_snd_lt, Int.floor_natCast, aM]
+  congr 1
+
+/-- **Nonzero-excursion lattice instance** (`θ = log 2`, `h = 1`): the `±1` walk with
+`p = 1/3`, `q = 2/3`. -/
+noncomputable def walkData : LatticeLadderRenewalData Pw wY (Real.log 2) 1 where
+  toLadderFixedPoint := wFixedPoint
+  D_lattice := ae_of_all _ fun _ => ⟨1, by simp [wFixedPoint]⟩
+  g := gHalf
+  g_zero := by simp [gHalf]
+  g_nonneg j := by unfold gHalf; split_ifs <;> norm_num
+  cramer_ladder := by
+    simp_rw [gHalf_mul_exp]; exact hasSum_ite_eq 1 1
+  aperiodic := by
+    have hset : {j : ℕ | 0 < gHalf j} = {1} := by
+      ext j; simp only [gHalf, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+      split_ifs with h <;> simp [h]
+    rw [hset]; exact Nat.dvd_one.1 (Nat.setGcd_dvd_of_mem rfl)
+  tiltedMean := 1
+  hasSum_tiltedMean := by
+    simp_rw [gHalf_mul_exp]
+    convert hasSum_ite_eq 1 (1 : ℝ) using 1
+    ext j; split_ifs with h <;> simp [h]
+  renewal n := by
+    change Pw.real {ω : ℕ × ℕ | (n : ℝ) * 1 < (ω.2 : ℝ)} = ladderTail gHalf n +
+      ∑ k ∈ Finset.range (n + 1),
+        gHalf k * Pw.real {ω : ℕ × ℕ | ((n - k : ℕ) : ℝ) * 1 < (ω.2 : ℝ)}
+    simp_rw [Pw_snd_natCast_lt]
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · have ht : ladderTail gHalf 0 = 1 / 2 := by
+        rw [ladderTail, tsum_eq_single 0 fun j hj => by simp [gHalf, hj]]
+        simp [gHalf]
+      simp [ht, gHalf]
+    · have ht : ladderTail gHalf n = 0 := by
+        have h0 : (fun j => gHalf (j + n + 1)) = fun _ => 0 :=
+          funext fun j => by simp only [gHalf]; rw [ite_eq_right (by omega)]
+        rw [ladderTail, h0, tsum_zero]
+      rw [ht, zero_add, Finset.sum_eq_single 1 (fun k _ hk => by simp [gHalf, hk])
+        (fun h => absurd (Finset.mem_range.2 (by omega)) h)]
+      simp only [gHalf, ↓reduceIte]
+      rw [show n - 1 + 1 = n by omega, pow_succ]
+      ring
+
+/-- The constants, computed from the definitions: `C_∞ = (1 - 1/2) / ((2 - 1) · 1) = 1/2`,
+`E e^{θ D} = 1/2`, `C = e^{θ} · C_∞ · (1 - 1/2) = 1/2`. -/
+theorem walkData_tailConst : walkData.tailConst = 1 / 2 := by
+  have hs : ∑' j, gHalf j = 1 / 2 := by
+    rw [tsum_eq_single 1 fun j hj => by simp [gHalf, hj]]; simp [gHalf]
+  have hD : ∫ _ : ℕ × ℕ, Real.exp (Real.log 2 * (-1 : ℝ)) ∂Pw = 1 / 2 := by
+    rw [integral_const, probReal_univ, one_smul, mul_neg_one, Real.exp_neg,
+      Real.exp_log two_pos, one_div]
+  change Real.exp (Real.log 2 * 1) * ((1 - ∑' j, gHalf j) /
+      ((Real.exp (Real.log 2 * 1) - 1) * 1) *
+    (1 - ∫ _ : ℕ × ℕ, Real.exp (Real.log 2 * (-1 : ℝ)) ∂Pw)) = 1 / 2
+  rw [hs, hD, mul_one, Real.exp_log two_pos]
+  norm_num
+
+/-- The derived lattice tail on the walk, with constant `1/2`. -/
+example : Tendsto (fun k : ℕ => Pw.real {ω | (k : ℝ) * 1 < wY ω} *
+    Real.exp (Real.log 2 * ((k + 1) * 1))) atTop (𝓝 (1 / 2)) :=
+  walkData_tailConst ▸ walkData.tendsto_tail measurable_wY (Real.log_pos one_lt_two) one_pos
+
+/-- Independent cross-check, not via the theorem:
+`P(Y > k) 2^{k+1} = 2^{k+1} / (2^{k+2} - 1) = 1 / (2 - 2^{-(k+1)}) → 1/2`. -/
+example : Tendsto (fun k : ℕ => Pw.real {ω | (k : ℝ) * 1 < wY ω} *
+    Real.exp (Real.log 2 * ((k + 1) * 1))) atTop (𝓝 (1 / 2)) := by
+  have hval : ∀ k : ℕ, Pw.real {ω | (k : ℝ) * 1 < wY ω} * Real.exp (Real.log 2 * ((k + 1) * 1)) =
+      1 / (2 - (1 / 2) ^ (k + 1)) := by
+    intro k
+    have hexp : Real.exp (Real.log 2 * ((k + 1) * 1)) = 2 ^ (k + 1) := by
+      rw [mul_one, mul_comm, show ((k : ℝ) + 1) = ((k + 1 : ℕ) : ℝ) by push_cast; ring,
+        Real.exp_nat_mul, Real.exp_log two_pos]
+    have hY : Pw.real {ω | (k : ℝ) * 1 < wY ω} = aY (k + 1) := by
+      rw [mul_one]; exact (Pw_fst_lt _).trans (by rw [Int.floor_natCast]; congr 1)
+    have hd := aY_pos_den (k + 1)
+    have hp : (0 : ℝ) < 2 ^ (k + 1) := by positivity
+    rw [hexp, hY, aY, one_div_pow]
+    rw [pow_succ 2 (k + 1)] at hd ⊢
+    field_simp
+  have hlim : Tendsto (fun k : ℕ => 2 - (1 / 2 : ℝ) ^ (k + 1)) atTop (𝓝 (2 - 0)) :=
+    tendsto_const_nhds.sub ((tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num)
+      (by norm_num)).comp (tendsto_add_atTop_nat 1))
+  have h := tendsto_const_nhds (x := (1 : ℝ)).div hlim (by norm_num)
+  rw [sub_zero] at h
+  exact h.congr fun k => (hval k).symm
+
+end WalkExample
 
 /-! ### Derived inputs on arbitrary data -/
 
