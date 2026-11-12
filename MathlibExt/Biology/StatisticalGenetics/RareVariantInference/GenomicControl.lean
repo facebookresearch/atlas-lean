@@ -287,6 +287,14 @@ theorem one_le_ldScore {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X) 
   simp only [hX.ldCorr_self hN, one_pow] at h
   exact h
 
+/-- The polygenic slope `N h² / M` is positive when `N, M ≠ 0` and `h² ≠ 0`. -/
+private theorem polygenicSlope_pos (D : Model μ N M) (hN : N ≠ 0) (hM : M ≠ 0)
+    (hh : D.h2 ≠ 0) : (0 : ℝ) < N * D.h2 / M := by
+  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
+  have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
+  have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
+  positivity
+
 /-- With a common stratification term `a ≥ 0` and `h² ≠ 0`, `λ_GC > 0`. -/
 theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
     (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X) (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0)
@@ -294,7 +302,6 @@ theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (F
     (ha : ∀ j, s ^ 2 * ((∑ i, X i j * c i) / N) ^ 2 = a) : 0 < lambdaGC D X s c := by
   have hM0 : 0 < M := Nat.pos_of_ne_zero hM
   have ha0 : 0 ≤ a := ha ⟨0, hM0⟩ ▸ by positivity
-  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg hM0) (Ne.symm hh)
   have hh1 : D.h2 ≤ 1 := D.h2_le_one (Nat.pos_of_ne_zero hN)
   have hl : 0 < meanLDScore X := by
     rw [meanLDScore]
@@ -303,19 +310,10 @@ theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (F
       _ ≤ ∑ j, ldScore X j :=
         Finset.single_le_sum (fun k _ => le_trans zero_le_one (one_le_ldScore hX hN k))
           (Finset.mem_univ _)
-  have hNr : (0 : ℝ) < N := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hN)
-  have hMr : (0 : ℝ) < M := Nat.cast_pos.mpr hM0
   rw [lambdaGC, mean_integral_chiSqStrat_of_const D X hN hM hX hβ hε s c ha]
-  have : 0 < N * D.h2 / M * meanLDScore X := by positivity
-  nlinarith
-
-/-- The polygenic slope `N h² / M` is positive when `N, M ≠ 0` and `h² ≠ 0`. -/
-private theorem polygenicSlope_pos (D : Model μ N M) (hN : N ≠ 0) (hM : M ≠ 0)
-    (hh : D.h2 ≠ 0) : (0 : ℝ) < N * D.h2 / M := by
-  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
-  have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
-  have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
-  positivity
+  have := mul_pos (polygenicSlope_pos D hN hM hh) hl
+  have : (0 : ℝ) ≤ N * a := by positivity
+  linarith
 
 /-- **Failure with polygenic signal.** With a common stratification term and `h² ≠ 0`,
 genomic control calibrates a marker in mean exactly when its LD score equals the mean LD
