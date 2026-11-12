@@ -24,8 +24,8 @@ demanded but 15,000 supplied, against 17,000 at the market rent of $600).
 
 The market is given by primitive demand and supply schedules (no optimization model). The ceiling
 `c` binds when it lies below every equilibrium price, so there is no equilibrium at or below `c`.
-Weak monotonicity gives nonnegative excess demand at `c`; strict monotonicity of either schedule
-makes it positive.
+Weak monotonicity of both schedules gives positive excess demand at a binding ceiling: zero
+excess demand would make the ceiling itself an equilibrium.
 -/
 
 namespace MathlibExt.Economics.PriceCeiling
@@ -67,35 +67,27 @@ theorem excessDemand_nonneg_of_le (M : Market) {c pstar : ℝ} (heq : M.IsEquili
   show 0 ≤ M.demand c - M.supply c
   linarith
 
+/-- A binding ceiling creates a shortage under weak monotonicity of both schedules. -/
+theorem excessDemand_pos (M : Market) {c pstar : ℝ}
+    (hb : M.IsBindingCeiling c pstar) (hD : AntitoneOn M.demand (Set.Icc c pstar))
+    (hS : MonotoneOn M.supply (Set.Icc c pstar)) : 0 < M.excessDemand c := by
+  have hnonneg := M.excessDemand_nonneg_of_le hb.1 (hb.2 pstar hb.1).le hD hS
+  apply lt_of_le_of_ne hnonneg
+  intro hzero
+  have heq : M.IsEquilibriumPrice c := sub_eq_zero.mp hzero.symm
+  exact lt_irrefl c (hb.2 c heq)
+
 /-- A binding ceiling creates a shortage when demand is strictly decreasing. -/
 theorem excessDemand_pos_of_strictAntiOn (M : Market) {c pstar : ℝ}
     (hb : M.IsBindingCeiling c pstar) (hD : StrictAntiOn M.demand (Set.Icc c pstar))
     (hS : MonotoneOn M.supply (Set.Icc c pstar)) : 0 < M.excessDemand c := by
-  obtain ⟨heq, hbind⟩ := hb
-  have hlt : c < pstar := hbind pstar heq
-  have hc : c ≤ pstar := le_of_lt hlt
-  have hcmem : c ∈ Set.Icc c pstar := Set.left_mem_Icc.mpr hc
-  have hsmem : pstar ∈ Set.Icc c pstar := Set.right_mem_Icc.mpr hc
-  have h1 : M.demand pstar < M.demand c := hD hcmem hsmem hlt
-  have h2 : M.supply c ≤ M.supply pstar := hS hcmem hsmem hc
-  have heq' : M.demand pstar = M.supply pstar := heq
-  show 0 < M.demand c - M.supply c
-  linarith
+  exact M.excessDemand_pos hb hD.antitoneOn hS
 
 /-- A binding ceiling creates a shortage when supply is strictly increasing. -/
 theorem excessDemand_pos_of_strictMonoOn (M : Market) {c pstar : ℝ}
     (hb : M.IsBindingCeiling c pstar) (hD : AntitoneOn M.demand (Set.Icc c pstar))
     (hS : StrictMonoOn M.supply (Set.Icc c pstar)) : 0 < M.excessDemand c := by
-  obtain ⟨heq, hbind⟩ := hb
-  have hlt : c < pstar := hbind pstar heq
-  have hc : c ≤ pstar := le_of_lt hlt
-  have hcmem : c ∈ Set.Icc c pstar := Set.left_mem_Icc.mpr hc
-  have hsmem : pstar ∈ Set.Icc c pstar := Set.right_mem_Icc.mpr hc
-  have h1 : M.demand pstar ≤ M.demand c := hD hcmem hsmem hc
-  have h2 : M.supply c < M.supply pstar := hS hcmem hsmem hlt
-  have heq' : M.demand pstar = M.supply pstar := heq
-  show 0 < M.demand c - M.supply c
-  linarith
+  exact M.excessDemand_pos hb hD hS.monotoneOn
 
 end Market
 
