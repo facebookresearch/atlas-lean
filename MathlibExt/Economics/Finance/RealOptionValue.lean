@@ -12,7 +12,6 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Tactic
 
 /-!
 # Real option value
