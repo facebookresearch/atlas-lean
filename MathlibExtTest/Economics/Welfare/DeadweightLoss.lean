@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Welfare.DeadweightLoss
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 @[expose] public section
 
