@@ -123,7 +123,7 @@ private def pathSumMatrix {n : ℕ} {R : Type*} [CommRing R] (B : Matrix (Fin n)
     Matrix (Fin n) (Fin n) R :=
   fun i j => ∑ p ∈ increasingPaths j i, pathWeight B p
 
-private theorem isChain_of_pathWeight_ne_zero {n : ℕ} {R : Type*} [CommRing R]
+private theorem isChain_of_pathWeight_ne_zero {n : ℕ} {R : Type*} [MonoidWithZero R]
     {B : Matrix (Fin n) (Fin n) R} {p : List (Fin n)}
     (hw : pathWeight B p ≠ 0) :
     p.IsChain fun u v => B v u ≠ 0 := by
@@ -149,7 +149,7 @@ private theorem isChain_of_pathWeight_ne_zero {n : ℕ} {R : Type*} [CommRing R]
 
 /-- Every directed path from `j` to `i` in the graph of a strictly lower triangular `B` (a list
 whose consecutive nodes `u, v` satisfy `B v u ≠ 0`) is one of `increasingPaths j i`. -/
-theorem mem_increasingPaths_of_isChain {n : ℕ} {R : Type*} [CommRing R]
+theorem mem_increasingPaths_of_isChain {n : ℕ} {R : Type*} [Zero R]
     {B : Matrix (Fin n) (Fin n) R} (hB : ∀ i j, i ≤ j → B i j = 0) {j i : Fin n}
     {p : List (Fin n)} (hp : p.IsChain fun u v => B v u ≠ 0) (hj : p.head? = some j)
     (hi : p.getLast? = some i) :
@@ -178,7 +178,7 @@ theorem mem_increasingPaths_of_isChain {n : ℕ} {R : Type*} [CommRing R]
         (fun {a} => le_rfl) hpw hi hk
 
 /-- A list of `increasingPaths j i` with nonzero weight is a directed path from `j` to `i`. -/
-theorem isChain_of_mem_increasingPaths {n : ℕ} {R : Type*} [CommRing R]
+theorem isChain_of_mem_increasingPaths {n : ℕ} {R : Type*} [MonoidWithZero R]
     {B : Matrix (Fin n) (Fin n) R} {j i : Fin n} {p : List (Fin n)}
     (hp : p ∈ increasingPaths j i) (hw : pathWeight B p ≠ 0) :
     (p.IsChain fun u v => B v u ≠ 0) ∧ p.head? = some j ∧ p.getLast? = some i := by

@@ -87,4 +87,24 @@ example : ((1 - !![0, 0, 0; 2, 0, 0; 5, 3, 0])⁻¹ : Matrix (Fin 3) (Fin 3) ℝ
 
 end PathTracingTest
 
+example {n : ℕ} {R : Type*} [Zero R] {B : Matrix (Fin n) (Fin n) R}
+    (hB : ∀ i j, i ≤ j → B i j = 0) {j i : Fin n} {p : List (Fin n)}
+    (hp : p.IsChain fun u v => B v u ≠ 0) (hj : p.head? = some j)
+    (hi : p.getLast? = some i) : p ∈ increasingPaths j i :=
+  mem_increasingPaths_of_isChain hB hp hj hi
+
+example {n : ℕ} {R : Type*} [MonoidWithZero R] {B : Matrix (Fin n) (Fin n) R}
+    {j i : Fin n} {p : List (Fin n)} (hp : p ∈ increasingPaths j i)
+    (hw : pathWeight B p ≠ 0) :
+    (p.IsChain fun u v => B v u ≠ 0) ∧ p.head? = some j ∧ p.getLast? = some i :=
+  isChain_of_mem_increasingPaths hp hw
+
+example : [0, 1] ∈ increasingPaths (0 : Fin 2) 1 := by
+  apply mem_increasingPaths_of_isChain (B := (!![0, 0; 2, 0] : Matrix (Fin 2) (Fin 2) ℕ))
+  · intro i j hij
+    fin_cases i <;> fin_cases j <;> simp_all
+  · decide
+  · rfl
+  · rfl
+
 end MathlibExtTest.LinearAlgebra.Matrix.PathTracing
