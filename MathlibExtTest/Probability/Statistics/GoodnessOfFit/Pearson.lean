@@ -244,12 +244,12 @@ example : ∫ ω : ℕ → Bool, (if ω 0 then (1 : ℝ) else 0) ∂flips = 1 / 
     flips_real_eval_zero]
   simp
 
-/-- Any function of a finite-valued observation is square integrable, including
-vector-valued ones. -/
+/-- Any real function of a finite-valued observation is square integrable. -/
 example : MemLp (fun ω : ℕ → Fin 3 => (((ω 0 : Fin 3) : ℕ) : ℝ)) 2 rolls :=
   memLp_comp_of_discrete (Y := fun ω : ℕ → Fin 3 => ω 0) (measurable_pi_apply 0).aemeasurable
     fun i => ((i : ℕ) : ℝ)
 
+/-- The helper also covers vector-valued functions, here with values in `ℝ × ℝ`. -/
 example : MemLp (fun ω : ℕ → Bool => (if ω 0 then (1 : ℝ) else 0, (2 : ℝ))) 2 flips :=
   memLp_comp_of_discrete (Y := fun ω : ℕ → Bool => ω 0) (measurable_pi_apply 0).aemeasurable
     fun b => (if b then (1 : ℝ) else 0, (2 : ℝ))
