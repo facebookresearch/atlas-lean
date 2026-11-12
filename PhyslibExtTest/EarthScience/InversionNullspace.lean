@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.D04InversionNullspace
+import PhyslibExt.EarthScience.InversionNullspace
 
 set_option linter.unusedTactic false
 set_option linter.unnecessarySeqFocus false
@@ -15,7 +15,7 @@ set_option linter.unnecessarySeqFocus false
 /-!
 # Inversion nullspace checks
 
-Concrete consumers of `PhyslibExt.EarthScience.D04InversionNullspace`:
+Concrete consumers of `PhyslibExt.EarthScience.InversionNullspace`:
 `A = [[1, 2], [2, 4]]`, `s = [1, 1]`, `v = [2, -1]` (so `A *ᵥ v = 0` and
 `A *ᵥ (s + v) = A *ᵥ s = [3, 6]`), rank deficiency, and the missing-ray
 cell.
@@ -36,7 +36,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.D04InversionNullspace`
+- `PhyslibExt.EarthScience.InversionNullspace`
 -/
 
 /-- Rank deficiency: `[[1, 2], [2, 4]] *ᵥ [2, -1] = 0`. -/
