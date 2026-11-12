@@ -35,6 +35,14 @@ positive orthant) that contains the relabelings of `x`.
 * `MathlibExt.Economics.SocialWelfare.sum_equalize`
 * `MathlibExt.Economics.SocialWelfare.le_welfare_equalize`
 
+## References
+
+* A. B. Atkinson, "On the Measurement of Inequality", Journal of Economic Theory 2 (1970),
+  244–263.
+* P. Dasgupta, A. Sen, D. Starrett, "Notes on the Measurement of Inequality", Journal of
+  Economic Theory 6 (1973), 180–187 (symmetric quasi-concave welfare functions are Schur-concave;
+  equalization is the extreme case of a sequence of progressive transfers).
+
 Atlas roadmap target AP05.T04.
 -/
 
