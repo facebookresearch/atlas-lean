@@ -38,6 +38,14 @@ positivity hypotheses, this interventional probability is identified.
 The proofs apply the adjustment theorems; the fixed-graph condition `b.pa = pa` is part of the
 classes, as in the source, but is not needed for the identification argument.
 
+`MathlibExt.Probability.Statistics.IsIdentifiedBy P τ` (estimand identification from
+measure-valued observation laws) is equivalent to `IdentifiedOn Set.univ P τ` (the extra
+`Set.univ` membership premises are trivial). `IdentifiedOn` is
+the general relation needed here: the observation is the joint weight function `b.joint` of a
+network (not a `Measure`), the queried value need not be a real estimand, and the models range
+over a restricted class. `IsIdentifiedBy` needs measure-valued laws, a real estimand and no model
+class; generalizing it to share this relation would edit that file and is left as a follow-up.
+
 ## References
 
 * J. Pearl, *Causality: Models, Reasoning, and Inference*, 2nd ed., Cambridge University Press
