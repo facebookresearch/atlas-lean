@@ -26,7 +26,9 @@ This file makes the three parts of that statement precise.
 * **The mean is not `0` in general.** `E[N] = 0` (`KingmanTimes.integral_tajimaNumerator`), but
   `E[N / √V]` is not `E[N] / E[√V]`: `D` is a ratio of dependent random variables. Exactly,
   `E[D] = Cov(N, 1/√V) + E[N] E[1/√V]`, so under the neutral model `E[D] = Cov(N, 1/√V)`
-  (`integral_tajimaD_eq`, `KingmanTimes.integral_tajimaD_eq_covariance`), and this covariance
+  (`integral_tajimaD_eq`, `KingmanTimes.integral_tajimaD_eq_covariance`; since `P(S = 0) > 0`
+  under the neutral model, `D` there means Lean's value `0` on `S = 0`, so `E[D]` is
+  `E[D; S ≥ 1]`), and this covariance
   need not vanish: `exists_integral_tajimaD_ne` exhibits a two-point law of realizable data for
   `n = 4` genes with `E[N] = 0` and `E[D] > 0`.
 * **Delta-method variance.** The map `(x, y) ↦ x / √y` has derivative
@@ -80,8 +82,8 @@ private theorem tajimaA1_pos {n : ℕ} (hn : 2 ≤ n) : 0 < tajimaA1 n := by
   rw [tajimaA1_eq_harmonic]
   exact_mod_cast harmonic_pos (by omega)
 
-private theorem tajimaE1_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE1 n :=
-  div_pos (tajimaC1_pos hn) (tajimaA1_pos (by omega))
+private theorem tajimaE1_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE1 n := by
+  simpa using tajimaVarEstimator_pos hn (S := 1) le_rfl
 
 private theorem tajimaE2_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE2 n := by
   have ha2 : 0 ≤ tajimaA2 n := sum_nonneg fun i _ => by positivity
@@ -149,7 +151,11 @@ namespace KingmanTimes
 `N = π - S / a₁` with the reciprocal denominator `1 / √(e₁ S + e₂ S (S - 1))`, for `n ≥ 4` genes
 and integer-valued `S`, under the hypotheses of `KingmanTimes.integral_tajimaNumerator` (which
 gives `E[N] = 0`). Whether this covariance vanishes is a property of the joint law of `(π, S)`,
-not of the first two moments of `N`; see `exists_integral_tajimaD_ne`. -/
+not of the first two moments of `N`; see `exists_integral_tajimaD_ne`.
+
+Under the neutral model `S = 0` has positive probability, and there `D` takes Lean's junk value
+`N / √0 = 0` (Tajima's `D` is undefined), so the left side is `E[D; S ≥ 1]`, the mean of `D` over
+samples with at least one segregating site, with `D := 0` on `S = 0`. -/
 theorem integral_tajimaD_eq_covariance {n : ℕ} (K : KingmanTimes μ n) [IsProbabilityMeasure μ]
     {m : MeasurableSpace Ω} (hm : m ≤ mΩ) {S : Ω → ℝ} {D τ : Finset (Fin n) → Ω → ℝ} {θ : ℝ}
     (hn : 4 ≤ n) (hS2 : MemLp S 2 μ) (hSnat : ∀ᵐ ω ∂μ, S ω = 0 ∨ 1 ≤ S ω)
