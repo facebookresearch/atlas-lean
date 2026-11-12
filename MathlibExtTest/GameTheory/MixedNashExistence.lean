@@ -10,9 +10,9 @@ module
 
 public import MathlibExt.GameTheory.MixedNashExistence
 
-/-! Matching pennies has a mixed equilibrium by Nash's theorem, and no pure profile is one, so mixed
-existence is strictly more than pure existence. A player with no actions rules out any
-equilibrium. -/
+/-! Matching pennies has a mixed equilibrium by Nash's theorem (the uniform profile, checked
+below), and no pure profile is one, so mixed existence is strictly more than pure existence. A
+player with no actions rules out any equilibrium. -/
 
 @[expose] public section
 
@@ -153,5 +153,81 @@ example {ι : Type*} [Fintype ι] [DecidableEq ι] {A : ι → Type*} [∀ i,
   rintro ⟨σ, -⟩
   obtain ⟨a⟩ := (σ i₀).nonempty
   exact IsEmpty.false a
+
+/-! The uniform profile of matching pennies: each player's expected payoff is `0`, every
+unilateral deviation also yields `0`, so it is a mixed Nash equilibrium. -/
+
+theorem mp_sum_expand (f : (Fin 2 → Fin 2) → ℝ) :
+    ∑ a, f a = (f ![0, 0] + f ![0, 1]) + (f ![1, 0] + f ![1, 1]) := by
+  rw [← (finTwoArrowEquiv (Fin 2)).symm.sum_comp f]
+  simp only [Fintype.sum_prod_type, Fin.sum_univ_two, finTwoArrowEquiv_symm_apply]
+
+theorem mp_uniform_exists :
+    ∃ σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2), ∀ i a, (σ i).weights a = 1 / 2 := by
+  refine ⟨fun _ => ⟨Finsupp.equivFunOnFinite.symm (fun _ : Fin 2 => (1 / 2 : ℝ)), ?_, ?_⟩, ?_⟩
+  · intro m
+    simp only [Finsupp.coe_equivFunOnFinite_symm]
+    norm_num
+  · rw [Finsupp.sum_fintype _ _ (fun i => rfl)]
+    simp only [Finsupp.coe_equivFunOnFinite_symm, Fin.sum_univ_two]
+    norm_num
+  · intro i a
+    simp only [Finsupp.coe_equivFunOnFinite_symm]
+
+theorem mp_uniform_payoff (σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2))
+    (hσ : ∀ i a, (σ i).weights a = 1 / 2) (i : Fin 2) :
+    expectedPayoff mp σ i = 0 := by
+  fin_cases i
+  · show expectedPayoff mp σ 0 = 0
+    unfold expectedPayoff
+    simp only [hσ, Fin.prod_univ_two, mp_sum_expand]
+    unfold mp
+    simp
+  · show expectedPayoff mp σ 1 = 0
+    unfold expectedPayoff
+    simp only [hσ, Fin.prod_univ_two, mp_sum_expand]
+    unfold mp
+    simp
+
+theorem mp_deviator_payoff (σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2))
+    (hσ : ∀ i a, (σ i).weights a = 1 / 2) (i : Fin 2)
+    (τ : Convexity.StdSimplex ℝ (Fin 2)) :
+    expectedPayoff mp (Function.update σ i τ) i = 0 := by
+  fin_cases i
+  · show expectedPayoff mp (Function.update σ 0 τ) 0 = 0
+    have e0 : Function.update σ 0 τ 0 = τ := by simp
+    have e1 : Function.update σ 0 τ 1 = σ 1 := by simp
+    unfold expectedPayoff
+    simp only [Fin.prod_univ_two, e0, e1, hσ, mp_sum_expand]
+    unfold mp
+    simp
+  · show expectedPayoff mp (Function.update σ 1 τ) 1 = 0
+    have e0 : Function.update σ 1 τ 0 = σ 0 := by simp
+    have e1 : Function.update σ 1 τ 1 = τ := by simp
+    unfold expectedPayoff
+    simp only [Fin.prod_univ_two, e0, e1, hσ, mp_sum_expand]
+    unfold mp
+    simp
+    ring
+
+theorem mp_is_mixed_nash (σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2))
+    (hσ : ∀ i a, (σ i).weights a = 1 / 2) :
+    IsMixedNash mp σ := by
+  intro i τ
+  rw [mp_uniform_payoff σ hσ i, mp_deviator_payoff σ hσ i τ]
+
+-- A uniform mixed profile exists.
+example : ∃ σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2), ∀ i a, (σ i).weights a = 1 / 2 := by
+  exact mp_uniform_exists
+
+-- At the uniform profile each player's expected payoff is 0.
+example (σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2)) (hσ : ∀ i a, (σ i).weights a = 1 / 2)
+    (i : Fin 2) : expectedPayoff mp σ i = 0 := by
+  exact mp_uniform_payoff σ hσ i
+
+-- The uniform profile is a mixed Nash equilibrium of matching pennies.
+example (σ : ∀ _ : Fin 2, Convexity.StdSimplex ℝ (Fin 2)) (hσ : ∀ i a, (σ i).weights a = 1 / 2) :
+    IsMixedNash mp σ := by
+  exact mp_is_mixed_nash σ hσ
 
 end MathlibExtTest.GameTheory.MixedNashExistence
