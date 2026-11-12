@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.D03NormalizedDifferenceIndex
+import PhyslibExt.EarthScience.NormalizedDifferenceIndex
 
 /-!
 # Remote sensing and radiometric inversion
 
-Concrete consumers of `PhyslibExt.EarthScience.D03NormalizedDifferenceIndex`.
+Concrete consumers of `PhyslibExt.EarthScience.NormalizedDifferenceIndex`.
 
 ## i. Overview
 
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.D03NormalizedDifferenceIndex`
+- `PhyslibExt.EarthScience.NormalizedDifferenceIndex`
 -/
 
 /-- Typical case `r₁ = 0.8`, `r₂ = 0.2`: index `0.6 ∈ [-1, 1]`. -/
