@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Physlib.Thermodynamics.Temperature.Basic
 public import Physlib.Units.Dimension
 public import Physlib.Units.ISQDimensionBase
 public import Physlib.Units.ParametricUnits
@@ -54,8 +55,11 @@ Physlib's `UnitScale.dimScale_transitive` and `UnitScale.dimScale_self`.
 and the ratio form. The only logarithm defined here is `logRatio x x₀`, which
 takes two values of the same dimension `d`, as `WithDim d ℝ` values, together
 with proofs that both are positive, and the only exponential is
-`boltzmannFactor`, whose temperature argument carries a proof that it is
-positive. A logarithm `ln c` of a dimensioned value `c` such as a
+`boltzmannFactor`, which takes a Physlib absolute `Temperature` in kelvin,
+a proof that it is positive, and an energy divided by `kB` tagged with the
+ISQ temperature dimension. A raw Celsius reading is not a temperature
+argument; `celsiusToKelvin` constructs one after checking the absolute-zero
+bound. A logarithm `ln c` of a dimensioned value `c` such as a
 concentration is rejected because there is no API entry point for it: no
 declaration here takes the logarithm or exponential of a single dimensioned
 value. The logarithm `ln (c / c°)` is accepted as `logRatio c c°`, with `c°`
@@ -93,8 +97,8 @@ discipline, not an empirical law.
   Celsius and kelvin conversions are inverse.
 - `celsiusToKelvin_sub_celsiusToKelvin`, `celsiusToKelvin_ne_self` : Celsius
   and kelvin differences agree, values do not.
-- `boltzmannFactor_lt_boltzmannFactor_celsiusToKelvin` : a Celsius reading in
-  place of the thermodynamic temperature changes the Boltzmann factor.
+- `boltzmannFactor_lt_boltzmannFactor_celsiusToKelvin` : explicitly misreading
+  a positive Celsius number as kelvin changes the Boltzmann factor.
 
 ## iii. Table of contents
 
@@ -561,62 +565,77 @@ lemma isDimensionless_mulVec_iff {n : ℕ} (D : Matrix (Fin 7) (Fin n) ℚ) (v :
 
 /-! ## D. Celsius temperature
 
-The Celsius temperature is the thermodynamic temperature shifted by `273.15`. Physlib's
-`Temperature` is an absolute temperature, zero at absolute zero, and its `TemperatureUnit`s are
-multiplicative scalings of `TemperatureUnit.kelvin`; its temperature API map lists scales with an
-offset zero, such as degrees Celsius, as not yet provided. The Celsius offset is therefore
-defined here on real numbers. Differences agree on the two scales, but values do not, so laws
-that use the absolute temperature take it in kelvin. The Boltzmann factor `exp (-E / T)` takes
-the thermodynamic temperature `T`; Arrhenius factors `exp (-Eₐ / (R T))` and the Nernst
-exponential `exp (n F E / (R T))` likewise take the thermodynamic temperature only, never a
-Celsius reading. The temperature `T = 0` is excluded wherever the inverse temperature is used:
-`boltzmannFactor` takes a proof that its temperature argument is positive.
+Physlib's `Temperature` is an absolute temperature, zero at absolute zero.
+Here its values are in kelvin. Celsius readings remain real numbers, but
+`celsiusToKelvin` produces a `Temperature` and requires a reading at or above
+absolute zero. Differences agree on the two scales, but values do not.
+
+The Boltzmann factor takes `E / kB` as an ISQ temperature-dimensioned value
+in kelvin and `T` as an absolute `Temperature` in kelvin. Their quotient is
+cast to dimension `1` before its value is passed to `Real.exp`. Neither raw
+Celsius readings nor values tagged with another dimension can be passed as
+these inputs. Positivity of `T` excludes the singular absolute-zero case.
 -/
 
-/-- The thermodynamic temperature in kelvin, `tC + 273.15`, of the Celsius temperature `tC` in
-degrees Celsius. -/
-def celsiusToKelvin (tC : ℝ) : ℝ := tC + 273.15
+/-- The absolute temperature in kelvin of a Celsius reading at or above
+absolute zero. Readings below `-273.15 °C` are not accepted. -/
+noncomputable def celsiusToKelvin (tC : ℝ) (htC : -273.15 ≤ tC) :
+    Temperature :=
+  Temperature.ofRealNonneg (tC + 273.15) (by linarith)
 
-/-- The Celsius temperature in degrees Celsius, `tK - 273.15`, of the thermodynamic temperature
-`tK` in kelvin. -/
-def kelvinToCelsius (tK : ℝ) : ℝ := tK - 273.15
+/-- The Celsius reading of an absolute temperature expressed in kelvin. -/
+noncomputable def kelvinToCelsius (tK : Temperature) : ℝ :=
+  tK.toReal - 273.15
 
-/-- Converting a Celsius temperature to kelvin and back recovers it. -/
-lemma kelvinToCelsius_celsiusToKelvin (tC : ℝ) : kelvinToCelsius (celsiusToKelvin tC) = tC :=
+/-- Converting a Celsius reading to absolute temperature and back recovers it. -/
+lemma kelvinToCelsius_celsiusToKelvin (tC : ℝ) (htC : -273.15 ≤ tC) :
+    kelvinToCelsius (celsiusToKelvin tC htC) = tC :=
   add_sub_cancel_right tC 273.15
 
-/-- Converting a thermodynamic temperature to degrees Celsius and back recovers it. -/
-lemma celsiusToKelvin_kelvinToCelsius (tK : ℝ) : celsiusToKelvin (kelvinToCelsius tK) = tK :=
-  sub_add_cancel tK 273.15
+/-- Converting an absolute temperature to Celsius and back recovers it. -/
+lemma celsiusToKelvin_kelvinToCelsius (tK : Temperature) :
+    celsiusToKelvin (kelvinToCelsius tK)
+      (by have h : 0 ≤ tK.toReal := tK.val.coe_nonneg
+          unfold kelvinToCelsius; linarith) = tK := by
+  apply Temperature.ext
+  apply NNReal.coe_injective
+  exact sub_add_cancel tK.toReal 273.15
 
-/-- A temperature difference is the same in degrees Celsius and in kelvin. -/
-lemma celsiusToKelvin_sub_celsiusToKelvin (t₁ t₂ : ℝ) :
-    celsiusToKelvin t₂ - celsiusToKelvin t₁ = t₂ - t₁ :=
+/-- Temperature differences have the same numerical value in Celsius and kelvin. -/
+lemma celsiusToKelvin_sub_celsiusToKelvin (t₁ t₂ : ℝ)
+    (h₁ : -273.15 ≤ t₁) (h₂ : -273.15 ≤ t₂) :
+    (celsiusToKelvin t₂ h₂).toReal - (celsiusToKelvin t₁ h₁).toReal = t₂ - t₁ :=
   add_sub_add_right_eq_sub t₂ t₁ 273.15
 
-/-- The kelvin value `tC + 273.15` of a Celsius reading `tC` is never `tC`: a Celsius reading is
-not the thermodynamic temperature. -/
-lemma celsiusToKelvin_ne_self (tC : ℝ) : celsiusToKelvin tC ≠ tC := by
-  norm_num [celsiusToKelvin]
+/-- A Celsius reading is never the numerical kelvin value of its temperature. -/
+lemma celsiusToKelvin_ne_self (tC : ℝ) (htC : -273.15 ≤ tC) :
+    (celsiusToKelvin tC htC).toReal ≠ tC := by
+  change tC + 273.15 ≠ tC
+  norm_num
 
-/-- The Boltzmann factor `exp (-E / T)` of a state of energy `E` at the thermodynamic temperature
-`T > 0` in kelvin. The energy `E` is given already divided by the Boltzmann constant, so it is in
-kelvin and `-E / T` is a dimensionless ratio of temperatures. Arrhenius and Nernst exponentials
-likewise take the thermodynamic temperature only, and `T = 0` is excluded by the positivity
-proof `hT`: `boltzmannFactor E 0` has no API entry point. -/
-noncomputable def boltzmannFactor (E T : ℝ) (_hT : 0 < T) : ℝ := Real.exp (-E / T)
+/-- The Boltzmann factor `exp (-E / T)`, where `E` denotes energy divided by
+`kB`. Both inputs use kelvin: `E` has the ISQ thermodynamic-temperature
+dimension, and `T` is an absolute temperature.
+The quotient is dimensionless, and the positivity proof excludes `T = 0`. -/
+noncomputable def boltzmannFactor
+    (E : WithDim (Dimension.single ISQDimensionBase.temperature) ℝ)
+    (T : Temperature) (_hT : 0 < T.toReal) : ℝ :=
+  let ratio : WithDim (1 : Dimension ISQDimensionBase) ℝ :=
+    (E / (⟨T.toReal⟩ : WithDim
+      (Dimension.single ISQDimensionBase.temperature) ℝ)).cast (by simp)
+  Real.exp (-ratio.val)
 
-/-- For a positive energy `E`, substituting a positive Celsius reading `tC` for the thermodynamic
-temperature gives a strictly smaller Boltzmann factor than the temperature `celsiusToKelvin tC`
-in kelvin. -/
-lemma boltzmannFactor_lt_boltzmannFactor_celsiusToKelvin {E tC : ℝ} (hE : 0 < E)
-    (htC : 0 < tC) :
-    boltzmannFactor E tC htC <
-      boltzmannFactor E (celsiusToKelvin tC) (by
-        have h : 0 < tC + 273.15 := by linarith
-        exact h) := by
-  rw [boltzmannFactor, boltzmannFactor, Real.exp_lt_exp, neg_div, neg_div, neg_lt_neg_iff,
-    celsiusToKelvin]
+/-- For positive `E / kB`, explicitly interpreting a positive Celsius number
+as kelvin gives a smaller factor than converting that reading correctly.
+The incorrect interpretation must be explicit; raw readings are not accepted. -/
+lemma boltzmannFactor_lt_boltzmannFactor_celsiusToKelvin
+    {E : WithDim (Dimension.single ISQDimensionBase.temperature) ℝ}
+    {tC : ℝ} (hE : 0 < E.val) (htC : 0 < tC) :
+    boltzmannFactor E (Temperature.ofRealNonneg tC htC.le) htC <
+      boltzmannFactor E (celsiusToKelvin tC (by linarith))
+        (by change 0 < tC + 273.15; linarith) := by
+  change Real.exp (-(E.val / tC)) < Real.exp (-(E.val / (tC + 273.15)))
+  rw [Real.exp_lt_exp, neg_lt_neg_iff]
   exact div_lt_div_of_pos_left hE htC (by norm_num)
 
 end Chemistry.QuantityCalculus

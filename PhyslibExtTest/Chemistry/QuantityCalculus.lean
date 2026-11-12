@@ -24,8 +24,11 @@ public import Physlib.Units.SIUnitChoices
 * Dimensionless groups: the exponent matrix of diffusivity, length and time over the rows length
   and time has rank `2` and a one-dimensional kernel containing the exponents `(1, -2, 1)` of the
   Fourier number `D t / L²`, which is dimensionless over the seven ISQ base quantities.
-* Celsius: `25 °C` is `298.15 K`, not `25 K`; for `E = 1000 K` the Boltzmann factor at the Celsius
-  reading `25` is `exp (-40)`, strictly smaller than `exp (-1000 / 298.15)` at `298.15 K`.
+* Celsius: `25 °C` converts to the absolute temperature `298.15 K`; the
+  Boltzmann factor for `E / kB = 1000 K` is `exp (-1000 / 298.15)`.
+  Raw Celsius numbers and wrong dimensions are rejected. Absolute zero can
+  be converted but is excluded from the factor; negative Celsius readings
+  above absolute zero remain valid.
 -/
 
 @[expose] public section
@@ -261,45 +264,101 @@ example : diffusivity * (length ^ (2 : ℕ))⁻¹ * time = 1 := by
 
 /-! ## D. Celsius temperature -/
 
-example : celsiusToKelvin 25 = 298.15 := by
-  norm_num [celsiusToKelvin]
+example : (celsiusToKelvin 25 (by norm_num)).toReal = 298.15 := by
+  change (25 : ℝ) + 273.15 = 298.15
+  norm_num
 
-example : celsiusToKelvin 25 ≠ 25 := by
-  norm_num [celsiusToKelvin]
+example : (celsiusToKelvin 25 (by norm_num)).toReal ≠ 25 :=
+  celsiusToKelvin_ne_self 25 (by norm_num)
 
-example : celsiusToKelvin 25 ≠ 25 :=
-  celsiusToKelvin_ne_self 25
+example : kelvinToCelsius (Temperature.ofRealNonneg 298.15 (by norm_num)) = 25 := by
+  change (298.15 : ℝ) - 273.15 = 25
+  norm_num
 
-example : kelvinToCelsius 298.15 = 25 := by
-  norm_num [kelvinToCelsius]
-
-example : celsiusToKelvin 30 - celsiusToKelvin 20 = 10 := by
+example : (celsiusToKelvin 30 (by norm_num)).toReal -
+    (celsiusToKelvin 20 (by norm_num)).toReal = 10 := by
   rw [celsiusToKelvin_sub_celsiusToKelvin]
   norm_num
 
--- The Boltzmann factor at the Celsius reading `25` in place of `T`.
-example : boltzmannFactor 1000 25 (by norm_num) = Real.exp (-40) := by
-  norm_num [boltzmannFactor]
+example (tC : ℝ) (h : -273.15 ≤ tC) :
+    kelvinToCelsius (celsiusToKelvin tC h) = tC :=
+  kelvinToCelsius_celsiusToKelvin tC h
 
--- The Boltzmann factor at the thermodynamic temperature `298.15 K`.
-example : boltzmannFactor 1000 (celsiusToKelvin 25) (by
-    have h : (0:ℝ) < 25 + 273.15 := by norm_num
-    exact h) = Real.exp (-1000 / 298.15) := by
-  norm_num [boltzmannFactor, celsiusToKelvin]
+example (T : Temperature) :
+    celsiusToKelvin (kelvinToCelsius T)
+      (by have h : 0 ≤ T.toReal := T.val.coe_nonneg
+          unfold kelvinToCelsius; linarith) = T :=
+  celsiusToKelvin_kelvinToCelsius T
 
--- The two differ, by strict monotonicity of `Real.exp`.
-example : boltzmannFactor 1000 25 (by norm_num) <
-    boltzmannFactor 1000 (celsiusToKelvin 25) (by
-      have h : (0:ℝ) < 25 + 273.15 := by norm_num
-      exact h) := by
-  simp only [boltzmannFactor, celsiusToKelvin, Real.exp_lt_exp]
+-- Negative Celsius readings above absolute zero are valid.
+example : (celsiusToKelvin (-10) (by norm_num)).toReal = 263.15 := by
+  change (-10 : ℝ) + 273.15 = 263.15
   norm_num
 
-example : boltzmannFactor 1000 25 (by norm_num) ≠
-    boltzmannFactor 1000 (celsiusToKelvin 25) (by
-      have h : (0:ℝ) < 25 + 273.15 := by norm_num
-      exact h) :=
-  (boltzmannFactor_lt_boltzmannFactor_celsiusToKelvin (by norm_num) (by norm_num)).ne
+-- Absolute zero converts without clamping, but cannot supply the factor's proof.
+example : (celsiusToKelvin (-273.15) (by norm_num)).toReal = 0 := by
+  change (-273.15 : ℝ) + 273.15 = 0
+  norm_num
+
+example (h : 0 < (celsiusToKelvin (-273.15) (by norm_num)).toReal) : False := by
+  change (0 : ℝ) < -273.15 + 273.15 at h
+  norm_num at h
+
+-- A reading below absolute zero cannot supply the conversion's proof.
+example (h : (-273.15 : ℝ) ≤ -274) : False := by
+  norm_num at h
+
+-- The physical happy path: tagged E/kB and the converted absolute temperature.
+example : boltzmannFactor ⟨1000⟩ (celsiusToKelvin 25 (by norm_num))
+    (by change (0 : ℝ) < 25 + 273.15; norm_num) =
+      Real.exp (-1000 / 298.15) := by
+  change Real.exp (-((1000 : ℝ) / (25 + 273.15))) = _
+  congr 1
+  norm_num
+
+-- Zero energy is valid; zero absolute temperature is not.
+example (T : Temperature) (hT : 0 < T.toReal) :
+    boltzmannFactor ⟨0⟩ T hT = 1 := by
+  change Real.exp (-((0 : ℝ) / T.toReal)) = 1
+  simp
+
+-- The energy input is signed: negative relative energies are not truncated.
+example : boltzmannFactor ⟨-1000⟩ (Temperature.ofRealNonneg 25 (by norm_num))
+    (by change (0 : ℝ) < 25; norm_num) = Real.exp 40 := by
+  change Real.exp (-((-1000 : ℝ) / 25)) = _
+  congr 1
+  norm_num
+
+-- Raw positive Celsius reals cannot be passed as the temperature argument.
+example (E : WithDim (Dimension.single ISQDimensionBase.temperature) ℝ)
+    (tC : ℝ) (htC : 0 < tC) :
+    boltzmannFactor E (Temperature.ofRealNonneg tC htC.le) htC =
+      Real.exp (-(E.val / tC)) := by
+  fail_if_success have bad : ℝ := boltzmannFactor E tC htC
+  rfl
+
+-- Raw energy numbers and quantities with other dimensions are also rejected.
+example (T : Temperature) (hT : 0 < T.toReal) (E : ℝ)
+    (_p : WithDim pressure ℝ) (_t : WithDim time ℝ) :
+    boltzmannFactor ⟨E⟩ T hT = Real.exp (-(E / T.toReal)) := by
+  fail_if_success have bad : ℝ := boltzmannFactor E T hT
+  fail_if_success have bad : ℝ := boltzmannFactor _p T hT
+  fail_if_success have bad : ℝ := boltzmannFactor _t T hT
+  rfl
+
+-- The original raw-numeral call from the review must not elaborate.
+example : (celsiusToKelvin 0 (by norm_num)).toReal = 273.15 := by
+  have _h25 : (0 : ℝ) < 25 := by norm_num
+  fail_if_success have bad : ℝ := boltzmannFactor 1000 25 _h25
+  change (0 : ℝ) + 273.15 = 273.15
+  ring
+
+-- Misinterpreting Celsius requires an explicit absolute-temperature constructor.
+example : boltzmannFactor ⟨1000⟩ (Temperature.ofRealNonneg 25 (by norm_num))
+    (by change (0 : ℝ) < 25; norm_num) <
+      boltzmannFactor ⟨1000⟩ (celsiusToKelvin 25 (by norm_num))
+        (by change (0 : ℝ) < 25 + 273.15; norm_num) :=
+  boltzmannFactor_lt_boltzmannFactor_celsiusToKelvin (by norm_num) (by norm_num)
 
 end PhyslibExtTest.Chemistry.QuantityCalculus
 
