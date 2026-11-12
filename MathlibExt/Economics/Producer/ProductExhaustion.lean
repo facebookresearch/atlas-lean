@@ -29,9 +29,9 @@ type, and add the factor-payment form; both files call the same Mathlib kernel.
 
 ## Main results
 
-* `Economics.Producer.fderiv_apply_self_eq_of_constantReturns`
-* `Economics.Producer.sum_marginalProduct_mul_eq`
-* `Economics.Producer.dotProduct_eq_mul_of_competitive_payments`
+* `MathlibExt.Economics.Producer.fderiv_apply_self_eq_of_constantReturns`
+* `MathlibExt.Economics.Producer.sum_marginalProduct_mul_eq`
+* `MathlibExt.Economics.Producer.dotProduct_eq_mul_of_competitive_payments`
 
 ## References
 
@@ -45,7 +45,7 @@ Atlas roadmap target EC07.T03.
 
 open Filter Topology
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- **Euler's identity under constant returns**: the derivative applied to the input bundle
 equals output. -/
@@ -93,4 +93,4 @@ theorem dotProduct_eq_mul_of_competitive_payments {ι : Type*} [Fintype ι] [Dec
   rw [hw i]
   ring
 
-end Economics.Producer
+end MathlibExt.Economics.Producer

@@ -21,7 +21,7 @@ open Filter Topology
 
 namespace MathlibExtTest.Economics.Producer.ProductExhaustion
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 /-!
 ## Test: concrete constant-returns example on `Fin 2`
