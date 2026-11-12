@@ -82,7 +82,7 @@ theorem integral_eq_sum_preimage {Ω 𝒳 : Type*} [MeasurableSpace Ω] {μ : Me
 
 /-- Per-cell standardization identity, treated arm. -/
 theorem per_cell_treated {Ω 𝒳 : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsProbabilityMeasure μ] [Fintype 𝒳] [MeasurableSpace 𝒳]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] [MeasurableSpace 𝒳]
     [MeasurableSingletonClass 𝒳] {T : Set Ω} (hT : MeasurableSet T) {X : Ω → 𝒳}
     (hX : Measurable X) {Y₀ Y₁ : Ω → ℝ} (hY₁ : Measurable Y₁)
     (h : StronglyIgnorable μ T Y₁ X) (x : 𝒳) :
@@ -117,7 +117,7 @@ theorem per_cell_treated {Ω 𝒳 : Type*} [MeasurableSpace Ω]
 
 /-- Per-cell standardization identity, control arm. -/
 theorem per_cell_control {Ω 𝒳 : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsProbabilityMeasure μ] [Fintype 𝒳] [MeasurableSpace 𝒳]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] [MeasurableSpace 𝒳]
     [MeasurableSingletonClass 𝒳] {T : Set Ω} (hT : MeasurableSet T) {X : Ω → 𝒳}
     (hX : Measurable X) {Y₀ Y₁ : Ω → ℝ} (hY₀ : Measurable Y₀)
     (hY₀i : Integrable Y₀ μ) (h : StronglyIgnorable μ T Y₀ X) (x : 𝒳) :
