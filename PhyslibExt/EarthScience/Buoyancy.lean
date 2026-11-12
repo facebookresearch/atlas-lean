@@ -14,7 +14,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Integral buoyancy and flotation (P15)
+# Integral buoyancy and flotation
 
 ## i. Overview
 
@@ -26,10 +26,10 @@ theorem. Pressure on vertical faces has no vertical component.
 
 ## ii. Key results
 
-- `EarthScience.p15_buoyancy_force`: bottom-minus-top force is `rho*g*A*h`.
-- `EarthScience.p15_pressure_difference`: bottom-minus-top pressure is `rho*g*h`.
-- `EarthScience.p15_neutral_buoyancy`: neutral-buoyancy submerged height balances weight.
-- `EarthScience.p15_witness`: `rho = 1000, g = 10, A = 2, h = 3` gives `60000`.
+- `EarthScience.buoyancy_force`: bottom-minus-top force is `rho*g*A*h`.
+- `EarthScience.pressure_difference`: bottom-minus-top pressure is `rho*g*h`.
+- `EarthScience.neutral_buoyancy`: neutral-buoyancy submerged height balances weight.
+- `EarthScience.witness`: `rho = 1000, g = 10, A = 2, h = 3` gives `60000`.
 
 ## iii. Table of contents
 
@@ -48,27 +48,27 @@ namespace EarthScience
 /-- Hydrostatic buoyancy for a vertical rectangular prism: with top
 pressure `P0` and bottom pressure `P0 + rho*g*h`, the bottom-minus-top
 vertical force is `rho*g*A*h`. -/
-theorem p15_buoyancy_force {P0 ρ g A h : ℝ} :
+theorem buoyancy_force {P0 ρ g A h : ℝ} :
     (P0 + ρ * g * h) * A - P0 * A = ρ * g * A * h := by
   ring
 
 /-- Hydrostatic pressure grows linearly with depth: bottom pressure
 minus top pressure is `rho*g*h`. -/
-theorem p15_pressure_difference {P0 ρ g h : ℝ} :
+theorem pressure_difference {P0 ρ g h : ℝ} :
     (P0 + ρ * g * h) - P0 = ρ * g * h := by
   ring
 
 /-- Neutral buoyancy: a prism of total height `H` and body density
 `rho_b` floating with submerged height `h = (rho_b/rho)*H` has body
 weight equal to the buoyancy force `rho*g*A*h`. -/
-theorem p15_neutral_buoyancy {ρ ρb g A H : ℝ} (hρ : 0 < ρ) :
+theorem neutral_buoyancy {ρ ρb g A H : ℝ} (hρ : 0 < ρ) :
     ρb * (A * H) * g = ρ * g * A * ((ρb / ρ) * H) := by
   have hρ' : ρ ≠ 0 := ne_of_gt hρ
   field_simp
 
 /-- Non-vacuous witness: `rho = 1000, g = 10, A = 2, h = 3` gives
 buoyancy force `60000`. -/
-theorem p15_witness :
+theorem witness :
     (0 + (1000 : ℝ) * 10 * 3) * 2 - 0 * 2 = 60000 := by
   norm_num
 
