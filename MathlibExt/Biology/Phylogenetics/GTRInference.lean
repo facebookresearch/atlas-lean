@@ -25,11 +25,12 @@ parameters is consistent, up to the same symmetries.
 
 ## Setting (source-frozen)
 
-The source is Chang (1996), where identifiability of a Markov model on a tree from the
-joint law of the leaf states yields consistency of an estimator that matches the empirical
-site-pattern frequencies to the model's law, on a compact parameter space; the abstract
-argument is the basic consistency theorem for extremum estimators (Newey–McFadden 1994,
-Theorem 2.1: identification, compactness, continuity, uniform convergence of the criterion).
+Chang (1996, §5, Theorem 5.1 via the Wald-type Lemma 5.1) derives almost-sure consistency of
+the maximum-likelihood estimator of a Markov model on a tree from identifiability, on a bounded
+parameter space with compact closure. This file proves the corresponding in-probability result
+for a minimum-distance estimator, by the argument of Newey–McFadden (1994, Theorem 2.1,
+p. 2121: identification, compactness, continuity, uniform convergence of the criterion), on a
+compact `Θ`.
 
 * `Θ` is the GTR parameter space (base frequencies, exchangeabilities, branch lengths, and the
   tree topology if it is a parameter), as a **compact** metric space. Compactness is the usual
@@ -70,6 +71,8 @@ to that fibre only (`tendstoInMeasure_infDist_fiber`).
   `law θ₀`.
 * `tendstoInMeasure_empiricalFreq`: the sampling law gives `empiricalFreq X n → law θ₀` in
   probability (via the strong law of large numbers).
+* `tendstoInMeasure_infDist_fiber`: without identifiability, a minimum-distance estimator
+  converges in probability to the fibre `{θ | law θ = law θ₀}` only.
 * `tendstoInMeasure_infDist_of_tendstoInMeasure`: consistency from any convergent frequency
   estimate.
 * `tendstoInMeasure_infDist_minDist`: **GTR inference corollary**: identifiability up to `E`
@@ -84,9 +87,9 @@ asymptotic normality, unbounded parameter spaces) is outside this corollary.
 ## References
 
 * J. T. Chang, *Full reconstruction of Markov models on evolutionary trees: identifiability and
-  consistency*, Mathematical Biosciences 137 (1996), 51–73.
+  consistency*, Mathematical Biosciences 137 (1996), 51–73; §5, Lemma 5.1 and Theorem 5.1.
 * W. K. Newey and D. McFadden, *Large sample estimation and hypothesis testing*, Handbook of
-  Econometrics, vol. 4, ch. 36, Elsevier, 1994, pp. 2111–2245.
+  Econometrics, vol. 4, ch. 36, Elsevier, 1994, pp. 2111–2245; Theorem 2.1, p. 2121.
 -/
 
 @[expose] public section

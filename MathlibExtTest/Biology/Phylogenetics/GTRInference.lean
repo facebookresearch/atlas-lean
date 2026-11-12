@@ -20,8 +20,8 @@ public import MathlibExt.Biology.Phylogenetics.SubstitutionModels
   `E = {θ₀, -θ₀}` and fails for `E = {θ₀}`, so the corollary gives consistency only up to sign.
 * A fully discharged instance: the degenerate sample `X i = true` from the law of `θ₀ = 1`
   satisfies every sampling hypothesis, so the corollary applies with no assumption left open.
-* The JC69 branch-length model (the equal-rates GTR model,
-  `SubstitutionModels.ctmcTransition_gtrRate_jukesCantor`) on two taxa with `t ∈ [0, 1]`:
+* The JC69 branch-length model, defined as the equal-rates GTR model and reduced to the
+  Jukes–Cantor closed form by `SubstitutionModels.ctmcTransition_gtrRate_jukesCantor`, on two taxa with `t ∈ [0, 1]`:
   the site-pattern law is continuous and identifies `t`, so the minimum-distance estimator of
   the branch length is consistent in probability.
 -/
@@ -33,6 +33,7 @@ open Filter Finset Function MeasureTheory ProbabilityTheory Metric Topology
 namespace MathlibExtTest.Biology.Phylogenetics.GTRInference
 
 open MathlibExt.Biology.Phylogenetics.GTRInference MathlibExt.Biology.Phylogenetics.JukesCantor
+  MathlibExt.Biology.Phylogenetics.SubstitutionModels
 
 /-! ## Empirical frequencies -/
 
@@ -118,20 +119,27 @@ abbrev Θjc := Set.Icc (0 : ℝ) 1
 
 instance : Nonempty Θjc := ⟨⟨0, le_rfl, zero_le_one⟩⟩
 
-/-- The two-taxon JC69 site-pattern law with rate `μ = 1`: `P (X = (i, j)) = jcProb 1 t i j / 4`
-(uniform root, one branch of length `t`). -/
-noncomputable def jcLaw (t : Θjc) : Fin 4 × Fin 4 → ℝ := fun p => jcProb 1 t p.1 p.2 / 4
+/-- The two-taxon site-pattern law of the equal-rates GTR model (frequencies `1/4`,
+exchangeabilities `4/3`, i.e. JC69 with rate `μ = 1`): `P (X = (i, j)) = P t i j / 4` for the
+GTR transition matrix `P t = exp (t • gtrRate π s)` (uniform root, one branch of length `t`). -/
+noncomputable def jcLaw (t : Θjc) : Fin 4 × Fin 4 → ℝ := fun p =>
+  ctmcTransition (gtrRate (fun _ : Fin 4 => 1 / 4) (Matrix.of fun _ _ => 4 * 1 / 3)) t p.1 p.2 / 4
+
+/-- The equal-rates GTR law is the Jukes–Cantor closed form
+(`SubstitutionModels.ctmcTransition_gtrRate_jukesCantor`). -/
+theorem jcLaw_eq (t : Θjc) (p : Fin 4 × Fin 4) : jcLaw t p = jcProb 1 t p.1 p.2 / 4 := by
+  rw [jcLaw, ctmcTransition_gtrRate_jukesCantor]
 
 theorem continuous_jcLaw : Continuous jcLaw := by
   refine continuous_pi fun p => ?_
-  simp only [jcLaw, jcProb]
+  simp only [jcLaw_eq, jcProb]
   split_ifs <;> fun_prop
 
 /-- The JC69 law identifies the branch length (from the probability of a constant site). -/
 theorem jcLaw_injective (t₀ : Θjc) : ∀ t, jcLaw t = jcLaw t₀ → t = t₀ := by
   intro t h
   have h0 := congrFun h (0, 0)
-  simp only [jcLaw, jcProb, ite_true] at h0
+  simp only [jcLaw_eq, jcProb, ite_true] at h0
   have he : Real.exp (-4 * 1 * (t : ℝ) / 3) = Real.exp (-4 * 1 * (t₀ : ℝ) / 3) := by linarith
   have := Real.exp_injective he
   exact Subtype.ext (by linarith)
