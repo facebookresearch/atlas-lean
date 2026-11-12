@@ -28,7 +28,8 @@ the conditional measure `μ[|T]` (Imbens and Rubin 2015, §3.3 and Chapter 6; He
 * `integral_observed_cond_treated_of_indepFun`: `E[Y | T] = E[Y₁]` if `1_T` is independent of
   `Y₁` and `P(T) > 0`.
 * `integral_observed_cond_control_of_indepFun`: `E[Y | Tᶜ] = E[Y₀]` if `1_T` is independent of
-  `Y₀` and `P(T) < 1`.
+  `Y₀`, `Y₀` is integrable, and `P(T) < 1`. (Unlike the treated-arm statement, this one assumes
+  integrability; its proof uses it.)
 * `diff_integral_observed_cond_eq_ate_of_indepFun`: identification of the ATE by the difference
   in group means.
 
@@ -84,8 +85,9 @@ theorem integral_observed_cond_treated_of_indepFun {Ω : Type*} [MeasurableSpace
   rw [hset, hfact]
   rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hpos), one_mul]
 
-/-- **Random assignment, control arm**: if `1_T` is independent of `Y₀` and `P(T) < 1`, the
-mean observed outcome among the controls is `E[Y₀]`. -/
+/-- **Random assignment, control arm**: if `1_T` is independent of `Y₀`, `Y₀` is integrable and
+`P(T) < 1`, the mean observed outcome among the controls is `E[Y₀]`. Integrability is assumed
+here (the proof uses it), although it is not needed for the identity. -/
 theorem integral_observed_cond_control_of_indepFun {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Set Ω} (hT : MeasurableSet T)
     {Y₀ Y₁ : Ω → ℝ} (hY₀ : Measurable Y₀) (hY₀i : Integrable Y₀ μ)
