@@ -21,9 +21,10 @@ import Mathlib.Tactic
 A monopolist with inverse demand `P` and cost `C` earns profit `x P(x) - C(x)` at output `x`. At an
 interior local maximum `q > 0` where `P` and `C` are differentiable, Fermat's theorem
 (`IsLocalMax.hasDerivAt_eq_zero`) gives marginal revenue `P(q) + q P'(q)` equal to marginal cost
-`C'(q)`. With `P(q) > 0` and `P'(q) < 0`, the price elasticity of demand
-`ε = (dq/dp)(p/q) = P(q) / (q P'(q))` is negative, and the markup satisfies the Lerner rule
-`(P(q) - C'(q)) / P(q) = 1 / |ε|`.
+`C'(q)`. With `P(q) > 0` and `P'(q) < 0`, the elasticity of demand in reciprocal-slope form
+`ε = P(q) / (q P'(q))` is negative, and the markup satisfies the Lerner rule
+`(P(q) - C'(q)) / P(q) = 1 / |ε|`. The formula for `ε` is the usual `(dq/dp)(p/q)` when demand
+has a differentiable local inverse near `q`; the theorem does not need or assume one.
 
 ## Main results
 
@@ -41,8 +42,10 @@ namespace MathlibExt.Economics.Monopoly
 
 /-- Price elasticity of demand at output `q` in reciprocal-slope form, from the inverse demand `P`
 and a slope `P'`: `ε = P(q) / (q P')`. The definition imposes no relation between `P'` and `P`;
-`lerner_of_isLocalMax` requires `HasDerivAt P P' q`. When, in addition, demand is locally
-invertible near `q` (`P' ≠ 0`), this is the usual `(dq/dp) (p/q)`. -/
+`lerner_of_isLocalMax` requires `HasDerivAt P P' q`. It equals the usual `(dq/dp) (p/q)` only
+when demand has a local inverse `p ↦ q(p)` near `q` differentiable with derivative `1 / P'` (for
+example, by the inverse function theorem when `P` is continuously differentiable near `q` with
+`P' ≠ 0`); no such assumption is made here. -/
 noncomputable def priceElasticity (P : ℝ → ℝ) (P' q : ℝ) : ℝ :=
   P q / (q * P')
 
