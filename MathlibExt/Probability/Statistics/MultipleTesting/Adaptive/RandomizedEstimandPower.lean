@@ -44,8 +44,9 @@ the cluster noises), not a test computed from a sample: the noises are not tied 
 ## Main results
 
 * `isPRDSOn_of_eq_comp_indepFun`: a PRDS criterion: for each `i ∈ H0` the p-value vector is
-  `F (p i) W` with `W` independent of `p i` and `F` nondecreasing in its first argument. It
-  contains the merged `isPRDSOn_of_monotone_comp` and `isPRDSOn_of_iIndepFun`.
+  `F (p i) W` with `W` independent of `p i` and `F` nondecreasing in its first argument. For
+  probability measures it contains the merged `isPRDSOn_of_monotone_comp` and
+  `isPRDSOn_of_iIndepFun`.
 * `bonferroniRejections_subset_holmRejections`, `bonferroniRejections_subset_bhRejections`:
   Holm and BH reject every hypothesis Bonferroni rejects.
 * Construction: `isIPWNullCalibrated_ateLehmannPValue` (calibration for the observed-data IPW
@@ -111,8 +112,9 @@ of `p i` and `F` is jointly measurable and nondecreasing in its first argument. 
 on `H0`: given `p i = x`, the vector is `F x W` with `W` keeping its law, so
 `P(P ∈ D | p i = x) = P(F x W ∈ D)`, nondecreasing in `x` for increasing `D`.
 
-Both merged criteria are special cases: `isPRDSOn_of_monotone_comp` (constant `W`) and
-`isPRDSOn_of_iIndepFun` (`W` the other coordinates, `F` inserting `x` at coordinate `i`).
+For probability measures both merged criteria are special cases: `isPRDSOn_of_monotone_comp`
+(constant `W`; that theorem itself only needs a finite measure) and `isPRDSOn_of_iIndepFun` (`W` the
+other coordinates, `F` inserting `x` at coordinate `i`).
 The proof is the one of `isPRDSOn_of_iIndepFun`.
 
 Source: the PRDS definition of Benjamini & Yekutieli (2001); the criterion has no named source

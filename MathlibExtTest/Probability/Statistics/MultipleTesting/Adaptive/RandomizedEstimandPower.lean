@@ -161,6 +161,31 @@ example :
   measure_mem_bonferroniRejections_lehmannPValue (hasLaw_U2 1) (θ12_pos 1) (by norm_num)
     (by norm_num)
 
+/-! ### Mixed clusters: neither merged PRDS criterion applies -/
+
+/-- Three endpoints, two clusters: endpoints `0` and `1` share cluster `0`, endpoint `2` is alone
+in cluster `1`. The vector is neither a monotone function of one coordinate nor independent. -/
+def cMixed : Fin 3 → Fin 2 := ![0, 0, 1]
+
+/-- Exponents of the mixed family: endpoint `1` has a positive effect. -/
+def θMixed : Fin 3 → ℝ := ![1, 2, 1]
+
+/-- The mixed-cluster family is PRDS on every set of endpoints. -/
+example (H0 : Finset (Fin 3)) : IsPRDSOn unif2 (lehmannPValue U2 cMixed θMixed) H0 :=
+  isPRDSOn_lehmannPValue (fun b => measurable_pi_apply b) iIndepFun_U2 cMixed
+    (fun j => by fin_cases j <;> norm_num [θMixed]) H0
+
+/-- BH FDR control for the mixed family with true nulls `{0, 2}`: at most `q * 2 / 3`. -/
+example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, falseDiscoveryProportion {0, 2} (bhRejections q fun i =>
+        lehmannPValue U2 cMixed θMixed i ω) ∂unif2 ≤ q * ({0, 2} : Finset (Fin 3)).card / 3 :=
+  integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn unif2 _
+    (measurable_lehmannPValue (fun b => measurable_pi_apply b) cMixed θMixed) _
+    (isPRDSOn_lehmannPValue (fun b => measurable_pi_apply b) iIndepFun_U2 cMixed
+      (fun j => by fin_cases j <;> norm_num [θMixed]) _)
+    (fun i hi => isValidPValue_lehmannPValue_of_eq_one (hasLaw_U2 _) (by
+      fin_cases i <;> simp_all [θMixed])) q hq₀ hq₁
+
 /-! ### Bonferroni rejections are Holm and BH rejections -/
 
 lemma zero_mem_bonferroniRejections : (0 : Fin 2) ∈ bonferroniRejections (1 / 20) ![0, 1] := by
