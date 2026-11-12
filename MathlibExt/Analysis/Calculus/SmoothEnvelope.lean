@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Comp
 public import Mathlib.Analysis.Calculus.FDeriv.Prod
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.Topology.Order.LocalExtr
 
 /-!
 # The smooth envelope theorem
@@ -23,15 +24,16 @@ derivative is the partial derivative of `F` in the parameter at the optimizer.
 
 ## i. Overview
 
-At an attained maximum the value equals the objective at the maximizer
-(`valueFunction_eq_of_isMaximizer`), so near `θ₀` the value function is `θ ↦ F (xstar θ, θ)`. The
+Maximizers are stated with Mathlib's `IsMaxOn` plus membership in the choice set. At an attained
+maximum the value equals the objective at the maximizer (`valueFunction_eq_of_isMaxOn`), so near
+`θ₀` the value function is `θ ↦ F (xstar θ, θ)`. The
 chain rule gives its derivative, and the choice term vanishes by the interior first-order
 condition (`IsLocalMax.hasFDerivAt_eq_zero`). Uniqueness of the maximizer is not needed. No
 nonsmooth or parameter-dependent-feasible-set envelope theorem is claimed.
 
 ## ii. Main results
 
-* `MathlibExt.Envelope.valueFunction_eq_of_isMaximizer`
+* `MathlibExt.Envelope.valueFunction_eq_of_isMaxOn`
 * `MathlibExt.Envelope.hasFDerivAt_valueFunction`
 
 ## iii. References
@@ -45,22 +47,20 @@ open Filter Topology
 
 namespace MathlibExt.Envelope
 
-/-- `x` maximizes the objective `y ↦ F (y, θ)` over the choice set `U` at parameter `θ`. -/
-def IsMaximizer {E P : Type*} (F : E × P → ℝ) (U : Set E) (θ : P) (x : E) : Prop :=
-  x ∈ U ∧ ∀ y ∈ U, F (y, θ) ≤ F (x, θ)
-
 /-- The value function `V θ = sup {F (x, θ) | x ∈ U}`. As a real supremum it is meaningful when
-the supremum is attained (`valueFunction_eq_of_isMaximizer`). -/
+the supremum is attained (`valueFunction_eq_of_isMaxOn`). -/
 noncomputable def valueFunction {E P : Type*} (F : E × P → ℝ) (U : Set E) (θ : P) : ℝ :=
   sSup ((fun x => F (x, θ)) '' U)
 
-/-- At an attained maximum the value is the objective at the maximizer. -/
-theorem valueFunction_eq_of_isMaximizer {E P : Type*} {F : E × P → ℝ} {U : Set E} {θ : P}
-    {x : E} (h : IsMaximizer F U θ x) : valueFunction F U θ = F (x, θ) := by
-  have hmem : F (x, θ) ∈ (fun x => F (x, θ)) '' U := Set.mem_image_of_mem _ h.1
+/-- At an attained maximum the value is the objective at the maximizer: if `x ∈ U` maximizes
+`y ↦ F (y, θ)` on `U` (Mathlib's `IsMaxOn`), then `valueFunction F U θ = F (x, θ)`. -/
+theorem valueFunction_eq_of_isMaxOn {E P : Type*} {F : E × P → ℝ} {U : Set E} {θ : P}
+    {x : E} (hx : x ∈ U) (h : IsMaxOn (fun y => F (y, θ)) U x) :
+    valueFunction F U θ = F (x, θ) := by
+  have hmem : F (x, θ) ∈ (fun x => F (x, θ)) '' U := Set.mem_image_of_mem _ hx
   have hub : ∀ b ∈ (fun x => F (x, θ)) '' U, b ≤ F (x, θ) := by
     rintro b ⟨y, hyU, rfl⟩
-    exact h.2 y hyU
+    exact isMaxOn_iff.mp h y hyU
   exact IsGreatest.csSup_eq (s := (fun x => F (x, θ)) '' U) (a := F (x, θ)) ⟨hmem, hub⟩
 
 /-- **Smooth envelope theorem.** Let `U` be open, let `xstar θ` maximize `F (·, θ)` on `U` for
@@ -71,16 +71,14 @@ Uniqueness of the maximizer is not needed; it only makes `xstar` the canonical s
 theorem hasFDerivAt_valueFunction {E P : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup P] [NormedSpace ℝ P] {F : E × P → ℝ} {U : Set E} {xstar : P → E}
     {θ₀ : P} {F' : E × P →L[ℝ] ℝ} {xstar' : P →L[ℝ] E} (hU : IsOpen U)
-    (hopt : ∀ᶠ θ in 𝓝 θ₀, IsMaximizer F U θ (xstar θ))
+    (hopt : ∀ᶠ θ in 𝓝 θ₀, xstar θ ∈ U ∧ IsMaxOn (fun y => F (y, θ)) U (xstar θ))
     (hF : HasFDerivAt F F' (xstar θ₀, θ₀)) (hx : HasFDerivAt xstar xstar' θ₀) :
     HasFDerivAt (valueFunction F U) (F'.comp (ContinuousLinearMap.inr ℝ E P)) θ₀ := by
   have heq : valueFunction F U =ᶠ[𝓝 θ₀] fun θ => F (xstar θ, θ) :=
-    hopt.mono fun θ hθ => valueFunction_eq_of_isMaximizer hθ
-  have hmax0 : IsMaximizer F U θ₀ (xstar θ₀) := hopt.self_of_nhds
-  have hloc : IsLocalMax (fun x => F (x, θ₀)) (xstar θ₀) := by
-    show ∀ᶠ y in 𝓝 (xstar θ₀), F (y, θ₀) ≤ F (xstar θ₀, θ₀)
-    filter_upwards [hU.mem_nhds hmax0.1] with y hy
-    exact hmax0.2 y hy
+    hopt.mono fun θ hθ => valueFunction_eq_of_isMaxOn hθ.1 hθ.2
+  have hmax0 : xstar θ₀ ∈ U ∧ IsMaxOn (fun y => F (y, θ₀)) U (xstar θ₀) := hopt.self_of_nhds
+  have hloc : IsLocalMax (fun x => F (x, θ₀)) (xstar θ₀) :=
+    hmax0.2.isLocalMax (hU.mem_nhds hmax0.1)
   have hpart : HasFDerivAt (fun x => F (x, θ₀))
       (F'.comp (ContinuousLinearMap.inl ℝ E P)) (xstar θ₀) :=
     hF.comp (xstar θ₀) (hasFDerivAt_prodMk_left (xstar θ₀) θ₀)

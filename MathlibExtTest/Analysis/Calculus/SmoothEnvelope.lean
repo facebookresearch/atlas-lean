@@ -35,16 +35,15 @@ noncomputable def F : ℝ × ℝ → ℝ := fun z => z.2 * z.1 - z.1 ^ 2
 
 noncomputable def xstar : ℝ → ℝ := fun θ => θ / 2
 
-theorem isMaximizer_test (θ : ℝ) : IsMaximizer F Set.univ θ (xstar θ) := by
-  constructor
-  · exact Set.mem_univ _
-  · intro y _
-    show θ * y - y ^ 2 ≤ θ * (θ / 2) - (θ / 2) ^ 2
-    have h := sq_nonneg (y - θ / 2)
-    linarith
+theorem isMaxOn_test (θ : ℝ) : IsMaxOn (fun y => F (y, θ)) Set.univ (xstar θ) := by
+  rw [isMaxOn_iff]
+  intro y _
+  show θ * y - y ^ 2 ≤ θ * (θ / 2) - (θ / 2) ^ 2
+  have h := sq_nonneg (y - θ / 2)
+  linarith
 
 theorem valueFunction_test (θ : ℝ) : valueFunction F Set.univ θ = θ ^ 2 / 4 := by
-  rw [valueFunction_eq_of_isMaximizer (isMaximizer_test θ)]
+  rw [valueFunction_eq_of_isMaxOn (Set.mem_univ _) (isMaxOn_test θ)]
   show θ * (θ / 2) - (θ / 2) ^ 2 = θ ^ 2 / 4
   ring
 
@@ -52,8 +51,9 @@ theorem hasDerivAt_test : HasDerivAt (valueFunction F Set.univ) 1 2 := by
   have hx2 : xstar 2 = (1 : ℝ) := by
     simp only [xstar]
     norm_num
-  have hopt : ∀ᶠ θ in 𝓝 (2 : ℝ), IsMaximizer F Set.univ θ (xstar θ) :=
-    Filter.Eventually.of_forall isMaximizer_test
+  have hopt : ∀ᶠ θ in 𝓝 (2 : ℝ),
+      xstar θ ∈ Set.univ ∧ IsMaxOn (fun y => F (y, θ)) Set.univ (xstar θ) :=
+    Filter.Eventually.of_forall fun θ => ⟨Set.mem_univ _, isMaxOn_test θ⟩
   have h2 : HasFDerivAt (Prod.snd : ℝ × ℝ → ℝ)
       (ContinuousLinearMap.snd ℝ ℝ ℝ) (1, 2) := hasFDerivAt_snd
   have h1 : HasFDerivAt (Prod.fst : ℝ × ℝ → ℝ)
