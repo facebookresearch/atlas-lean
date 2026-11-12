@@ -12,6 +12,7 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 public import MathlibExt.Economics.Consumer.LocalNonsatiation
+public import MathlibExt.Economics.Consumer.ExpenditureFunction
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Topology.Algebra.Ring.Real
 
@@ -76,12 +77,8 @@ noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) �
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
   sSup (u '' budgetSet X p w)
 
-/-- The expenditure function `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`: the
-least cost of reaching utility at least `ū`. As a real infimum it is meaningful
-only when the target is feasible and costs are bounded below. -/
-noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
-    (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
-  sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})
+-- Preserve the consumer spelling while sharing the canonical expenditure declaration.
+export MathlibExt.Economics.ExpenditureFunction (expenditure)
 
 /- Local nonsatiation is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
 name `Economics.Consumer.LocallyNonsatiated` resolving to that same constant. -/

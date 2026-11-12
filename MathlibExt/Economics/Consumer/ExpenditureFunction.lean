@@ -35,10 +35,8 @@ needs only feasibility of the target and bounded-below costs on a convex price
 set, and homogeneity needs no hypothesis. The positive-orthant corollary is the
 source's setting.
 
-Implementation note: the expenditure function is defined here, in its own
-namespace. The same definition appears as `Economics.Consumer.expenditure` in
-pull request #1163 (consumer duality); the two should be unified once one of them
-is merged.
+Implementation note: this is the canonical expenditure declaration. Consumer duality
+re-exports it as `Economics.Consumer.expenditure`.
 
 ## References
 
