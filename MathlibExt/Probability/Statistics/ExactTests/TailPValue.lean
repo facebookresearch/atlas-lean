@@ -36,6 +36,8 @@ is why discrete exact tests are conservative.
   `upperTail ν k`.
 * `lowerTail_mono`: the lower tail is monotone in the cutoff.
 * `isValidPValue_lowerTailPValue`: if `X` has law `ν`, the lower-tail p-value is valid.
+* `isValidPValue_twoSided`: the doubled-minimum two-sided p-value
+  `min 1 (2 * min (upperTailPValue ν X) (lowerTailPValue ν X))` is valid.
 * `isValidPValue_survival`: for any law `ν` on `ℝ`, `y ↦ ν [y, ∞)` evaluated at a
   variable with law `ν` is a valid p-value.
 
@@ -276,5 +278,56 @@ theorem sum_upperTail_le {ι : Type*} (s : Finset ι) (q T : ι → ℝ) (hq : �
         · exact mem_filter.mpr ⟨(mem_filter.mp hx).1, hmin x hx⟩
         · exact hq y (mem_filter.mp hy).1
     _ ≤ t := (mem_filter.mp hx₀).2
+
+/-- Validity of the doubled-minimum two-sided p-value. If the count `X` has law `ν` under `μ`,
+then `P(2 · min(U(X), L(X)) ≤ s) ≤ s` for every `s ∈ [0, 1]`. -/
+theorem isValidPValue_twoSided {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {ν : Measure ℕ} [IsProbabilityMeasure ν]
+    {X : Ω → ℕ} (hX : HasLaw X ν μ) :
+    IsValidPValue μ
+      (fun ω => min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω))) := by
+  intro s hs
+  obtain ⟨hs0, hs1⟩ := Set.mem_Icc.mp hs
+  by_cases hs1' : s = 1
+  · subst hs1'
+    have hset : {ω | min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) ≤ 1} =
+        Set.univ := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
+      exact min_le_left 1 _
+    have hmu1 : μ Set.univ = 1 := by
+      have h := hX.measure_eq (p := fun _ => True) MeasurableSet.univ
+      rw [show ({x : ℕ | True}) = Set.univ from rfl, measure_univ,
+        show ({ω : Ω | True}) = Set.univ from rfl] at h
+      exact h
+    rw [hset, hmu1, ENNReal.ofReal_one]
+  · have hs_lt : s < 1 := lt_of_le_of_ne hs1 hs1'
+    have hmem : s / 2 ∈ Set.Icc (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+    have hU := isValidPValue_upperTailPValue hX (s / 2) hmem
+    have hL := isValidPValue_lowerTailPValue hX (s / 2) hmem
+    have hsub : {ω | min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) ≤ s} ⊆
+        {ω | upperTailPValue ν X ω ≤ s / 2} ∪ {ω | lowerTailPValue ν X ω ≤ s / 2} := by
+      intro ω h
+      simp only [Set.mem_ofPred_eq, Set.mem_union] at h ⊢
+      have hy : 2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω) ≤ s := by
+        by_contra hc
+        have hc' : s < 2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω) :=
+          lt_of_not_ge hc
+        have hlt : s < min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) :=
+          lt_min hs_lt hc'
+        exact absurd h (not_le_of_gt hlt)
+      have hmin : min (upperTailPValue ν X ω) (lowerTailPValue ν X ω) ≤ s / 2 := by
+        linarith
+      exact min_le_iff.mp hmin
+    calc μ {ω | min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) ≤ s}
+        ≤ μ ({ω | upperTailPValue ν X ω ≤ s / 2} ∪ {ω | lowerTailPValue ν X ω ≤ s / 2}) :=
+          measure_mono hsub
+      _ ≤ μ {ω | upperTailPValue ν X ω ≤ s / 2} + μ {ω | lowerTailPValue ν X ω ≤ s / 2} :=
+          measure_union_le _ _
+      _ ≤ ENNReal.ofReal (s / 2) + ENNReal.ofReal (s / 2) := add_le_add hU hL
+      _ = ENNReal.ofReal s := by
+          rw [← ENNReal.ofReal_add (by linarith) (by linarith)]
+          congr 1
+          ring
 
 end MathlibExt.Probability.Statistics.ExactTests
