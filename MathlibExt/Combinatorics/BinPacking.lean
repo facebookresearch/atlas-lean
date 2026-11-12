@@ -46,8 +46,11 @@ noncomputable def nextFitBins : List ℝ → ℕ
   | x :: xs => nextFitAux xs 1 x
 
 /-- An assignment of item indices to bins is feasible for `B` bins if
-every bin's total size is at most `1`. -/
+every item is assigned to a bin below `B` and every bin's total size is at most `1`.
+Coverage is part of the definition: without it an assignment could send items to bins
+outside the range, and the per-bin bound alone would hold vacuously. -/
 def FeasibleAssignment (sizes : List ℝ) (B : ℕ) (a : ℕ → ℕ) : Prop :=
+  (∀ i, i < sizes.length → a i < B) ∧
   ∀ b, b < B → (∑ i ∈ (Finset.range sizes.length).filter (fun i => a i = b),
     sizes.getD i 0) ≤ 1
 
@@ -109,14 +112,13 @@ private theorem list_sum_eq_sum_range_getD (l : List ℝ) :
     rw [hcongr, ← ih, add_comm]
 
 private theorem list_sum_le_of_feasible (sizes : List ℝ) (B : ℕ) (a : ℕ → ℕ)
-    (hfeas : FeasibleAssignment sizes B a)
-    (hcov : ∀ i, i < sizes.length → a i < B) :
+    (hfeas : FeasibleAssignment sizes B a) :
     sizes.sum ≤ (B : ℝ) := by
   rw [list_sum_eq_sum_range_getD]
   have hmaps : ∀ i ∈ Finset.range sizes.length, a i ∈ Finset.range B := by
     intro i hi
     simp only [Finset.mem_range] at hi ⊢
-    exact hcov i hi
+    exact hfeas.1 i hi
   have hfib := Finset.sum_fiberwise_of_maps_to hmaps (fun i => sizes.getD i 0)
   rw [← hfib]
   calc ∑ b ∈ Finset.range B, ∑ i ∈ Finset.range sizes.length with a i = b, sizes.getD i 0
@@ -124,16 +126,16 @@ private theorem list_sum_le_of_feasible (sizes : List ℝ) (B : ℕ) (a : ℕ �
         apply Finset.sum_le_sum
         intro b hb
         simp only [Finset.mem_range] at hb
-        exact hfeas b hb
+        exact hfeas.2 b hb
     _ = (B : ℝ) := by simp [Finset.sum_const, Finset.card_range]
 
-/-- The optimal number of bins: the least number of bins (at least
-the number of items, so it is well defined) admitting a feasible
-assignment. Stated via an arbitrary feasible bound: -/
+/-- Next Fit uses at most twice as many bins as any feasible packing: `B` is the bin count of
+an arbitrary feasible assignment, not the optimal (least) such count, which is not defined
+here. Under the stated size assumptions, one bin per item is always feasible, so the item
+count is an upper bound on the least feasible bin count, not a lower bound. -/
 theorem nextFit_le_two_mul_opt {sizes : List ℝ}
     (hpos : ∀ x ∈ sizes, 0 < x) (hle : ∀ x ∈ sizes, x ≤ 1)
-    {B : ℕ} {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes B a)
-    (hcov : ∀ i, i < sizes.length → a i < B) :
+    {B : ℕ} {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes B a) :
     nextFitBins sizes ≤ 2 * B := by
   cases sizes with
   | nil =>
@@ -146,7 +148,7 @@ theorem nextFit_le_two_mul_opt {sizes : List ℝ}
     have hnonneg_xs : ∀ y ∈ xs, 0 ≤ y := fun y hy => le_of_lt (hpos_xs y hy)
     have hxpos : 0 < x := hpos x List.mem_cons_self
     have hsum : (x :: xs).sum ≤ (B : ℝ) :=
-      list_sum_le_of_feasible (x :: xs) B a hfeas hcov
+      list_sum_le_of_feasible (x :: xs) B a hfeas
     have hbound := nextFitAux_bound xs 1 x hnonneg_xs
     have hloadpos := nextFitAuxLoad_pos xs x hpos_xs hxpos
     simp only [List.sum_cons] at hsum
