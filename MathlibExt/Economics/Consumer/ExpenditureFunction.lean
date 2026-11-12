@@ -28,9 +28,22 @@ least `ū`.
 * In particular it is concave on strictly positive prices when `X` lies in the
   nonnegative orthant and the target is feasible.
 
-This file defines the expenditure function locally; it has the same definition as
-`Economics.Consumer.expenditure` in the open EC04.T02 work, with which it should
-be unified.
+These are Mas-Colell, Whinston and Green's Proposition 3.E.2 (i) and (iii),
+stated more generally: the source assumes a continuous, locally nonsatiated
+utility on the nonnegative orthant and strictly positive prices; here concavity
+needs only feasibility of the target and bounded-below costs on a convex price
+set, and homogeneity needs no hypothesis. The positive-orthant corollary is the
+source's setting.
+
+Implementation note: the expenditure function is defined here, in its own
+namespace. The same definition appears as `Economics.Consumer.expenditure` in
+pull request #1163 (consumer duality); the two should be unified once one of them
+is merged.
+
+## References
+
+* A. Mas-Colell, M. D. Whinston and J. R. Green, *Microeconomic Theory*, Oxford
+  University Press (1995), Section 3.E, Proposition 3.E.2.
 -/
 
 @[expose] public section
