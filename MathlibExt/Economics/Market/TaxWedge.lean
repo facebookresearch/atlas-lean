@@ -22,8 +22,8 @@ With no tax both are ordinary equilibria.
 
 ## Main results
 
-* `Economics.Market.isBuyerTaxEquilibrium_iff_isSellerTaxEquilibrium_add`
-* `Economics.Market.image_add_setOf_isBuyerTaxEquilibrium`
+* `MathlibExt.Economics.Market.isBuyerTaxEquilibrium_iff_isSellerTaxEquilibrium_add`
+* `MathlibExt.Economics.Market.image_add_setOf_isBuyerTaxEquilibrium`
 
 ## References
 
@@ -34,7 +34,7 @@ Atlas roadmap target EC08.T02.
 
 @[expose] public section
 
-namespace Economics.Market
+namespace MathlibExt.Economics.Market
 
 /-- Equilibrium when the tax `τ` is levied on buyers: `p` is the market price sellers receive,
 buyers pay `p + τ`. -/
@@ -85,4 +85,4 @@ theorem isSellerTaxEquilibrium_zero_iff {D S : ℝ → ℝ} {p : ℝ} :
   unfold IsSellerTaxEquilibrium IsEquilibrium
   rw [sub_zero]
 
-end Economics.Market
+end MathlibExt.Economics.Market
