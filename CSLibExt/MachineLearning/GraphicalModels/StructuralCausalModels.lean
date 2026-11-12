@@ -70,6 +70,12 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
   `F`; `FiniteSCM.sum_posteriorWeight`: the posterior is a probability distribution;
   `FiniteSCM.counterfactualProb_true`: without evidence the counterfactual probability is the
   interventional one, computed by `BayesNet.intervene`.
+* `FiniteSCM.counterfactual_self`, `FiniteSCM.counterfactual_eq_solve`,
+  `FiniteSCM.solve_doNode_doNode_of_counterfactual`: **effectiveness, consistency and
+  composition** (Pearl 2009, Theorem 7.3.3), derived from unique solvability: setting a node
+  makes it take the set value; setting a node to its factual value changes nothing; and,
+  for compatible nested interventions, adding the intervention on a value the counterfactual
+  already takes changes nothing.
 
 Cyclic systems (where a solution may fail to exist or be unique) are not expressible: parents
 always precede their child.
@@ -834,6 +840,50 @@ theorem counterfactualProb_true {α : Type*} [Fintype α] {n : ℕ} {U : Fin n �
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [← M.inducedLaw_doNode μ k a x]
   rfl
+
+end FiniteSCM
+
+/-! ### Effectiveness, consistency and composition -/
+
+namespace FiniteSCM
+
+/-- **Effectiveness**: setting node `k` to `a` makes its counterfactual value `a`, whatever the
+noise. -/
+theorem counterfactual_self {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+    (k : Fin n) (a : α) (u : (j : Fin n) → U j) : M.counterfactual k a u k = a := by
+  unfold counterfactual
+  have h := (M.doNode k a).solve_isSolution u k
+  rw [M.doNode_f_of_eq] at h
+  exact h
+
+/-- **Consistency**: if node `k` already takes the value `a` in the unit with noise `u`, then
+setting it to `a` changes nothing: the counterfactual solution is the factual one. -/
+theorem counterfactual_eq_solve {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+    {k : Fin n} {a : α} {u : (j : Fin n) → U j} (h : M.solve u k = a) :
+    M.counterfactual k a u = M.solve u := by
+  unfold counterfactual
+  symm
+  apply IsSolution.eq_solve
+  intro j
+  by_cases hjk : j = k
+  · subst hjk
+    rw [M.doNode_f_of_eq]
+    exact h
+  · rw [M.doNode_f_of_ne k a hjk]
+    have hsol := M.solve_isSolution u j
+    rw [hsol]
+    congr 1
+
+/-- **Composition** for compatible nested interventions: if, after setting node `k` to `a`,
+node `j` takes the value `b` in the unit with noise `u`, then additionally setting node `j` to
+`b` changes nothing. -/
+theorem solve_doNode_doNode_of_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) {k j : Fin n} {a b : α} {u : (i : Fin n) → U i}
+    (h : M.counterfactual k a u j = b) :
+    ((M.doNode k a).doNode j b).solve u = M.counterfactual k a u := by
+  have h' : (M.doNode k a).solve u j = b := h
+  have hc := counterfactual_eq_solve (M := M.doNode k a) (k := j) (a := b) (u := u) h'
+  exact hc
 
 end FiniteSCM
 

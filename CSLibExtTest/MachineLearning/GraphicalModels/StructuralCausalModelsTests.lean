@@ -49,6 +49,11 @@ Counterfactuals in the same xor model, with evidence `X_1 = false` and `do(X_0 =
 * `P(X_1 = true had X_0 been false | X_1 = false) = 1/7`, while the interventional probability
   `P(X_1 = true | do(X_0 = false))` is `1/3`: sharing the noise between the factual and the
   counterfactual world matters.
+
+Effectiveness, consistency and composition in the xor model (without noise laws): at
+`u = (true, true)` the solution is `(true, false)`, setting `X_0 = true` changes nothing, and
+additionally setting `X_1 = false` changes nothing; at `u = (false, true)` setting `X_0 = true`
+gives `(true, false)` against the factual `(false, true)`.
 -/
 
 @[expose] public section
@@ -617,5 +622,45 @@ example :
   xorTest_counterfactualTrue
 
 end Counterfactuals
+
+namespace Consistency
+
+def xorPa : (k : Fin 2) → Finset (Fin k) := fun k =>
+  if h : k.val = 0 then ∅ else {⟨0, by have hk := k.2; omega⟩}
+
+def xorF : (k : Fin 2) → (xorPa k → Bool) → Bool → Bool := fun k =>
+  if h : k.val = 0 then fun _ u => u
+  else fun z u => xor (z ⟨⟨0, by have hk := k.2; omega⟩, by simp [xorPa, h]⟩) u
+
+def xorM : FiniteSCM Bool 2 (fun _ => Bool) := ⟨xorPa, xorF⟩
+
+def xorU : (k : Fin 2) → Bool := ![true, true]
+
+def xorU' : (k : Fin 2) → Bool := ![false, true]
+
+example : xorM.solve xorU = ![true, false] := by decide
+
+example : xorM.counterfactual 0 true xorU = xorM.solve xorU := by
+  have ha : xorM.solve xorU = ![true, false] := by decide
+  have h0 : xorM.solve xorU 0 = true := by rw [ha]; decide
+  exact counterfactual_eq_solve _ h0
+
+example : ((xorM.doNode 0 true).doNode 1 false).solve xorU = ![true, false] := by
+  have ha : xorM.solve xorU = ![true, false] := by decide
+  have h0 : xorM.solve xorU 0 = true := by rw [ha]; decide
+  have hb : xorM.counterfactual 0 true xorU = xorM.solve xorU :=
+    counterfactual_eq_solve _ h0
+  have h1 : xorM.counterfactual 0 true xorU 1 = false := by rw [hb, ha]; decide
+  have hc := solve_doNode_doNode_of_counterfactual (M := xorM) h1
+  rw [hc, hb, ha]
+
+example : xorM.counterfactual 0 true xorU' = ![true, false] ∧
+    xorM.solve xorU' = ![false, true] := by
+  constructor <;> decide
+
+example : xorM.counterfactual 0 false xorU 0 = false :=
+  counterfactual_self xorM 0 false xorU
+
+end Consistency
 
 end Cslib.MachineLearning.StructuralCausalModelsTests
