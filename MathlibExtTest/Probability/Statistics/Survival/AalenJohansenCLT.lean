@@ -136,7 +136,8 @@ example (pTJ : PMF (Fin 3 × Fin 2)) (j : {j : Fin 3 // j ≤ 2}) (c : Fin 2) :
   ⟨rfl, rfl⟩
 
 /-- At the first grid index everyone is at risk. -/
-theorem causeAtRiskMass_zero {k r : ℕ} (pTJ : PMF (Fin (k + 1) × Fin r)) (pC : PMF (Fin (k + 1))) :
+private theorem causeAtRiskMass_zero {k r : ℕ} (pTJ : PMF (Fin (k + 1) × Fin r))
+    (pC : PMF (Fin (k + 1))) :
     causeAtRiskMass (indepCauseLaw pTJ pC) 0 = 1 := by
   have hs : {ω : (Fin (k + 1) × Fin r) × Fin (k + 1) | (0 : Fin (k + 1)) ≤ min ω.1.1 ω.2} =
       Set.univ := Set.eq_univ_of_forall fun ω => Fin.zero_le _
@@ -146,6 +147,22 @@ theorem causeAtRiskMass_zero {k r : ℕ} (pTJ : PMF (Fin (k + 1) × Fin r)) (pC 
 example (pTJ : PMF (Fin 3 × Fin 2)) (pC : PMF (Fin 3)) :
     ajMap (0 : Fin 3) (cellMean (indepCauseLaw pTJ pC)) = target pTJ 0 :=
   ajMap_cellMean_indepCauseLaw pTJ pC 0 (by rw [causeAtRiskMass_zero]; norm_num)
+
+/-- With `(T, J) = (2, 0)` and `C = 2` almost surely, everyone is at risk at grid index `2`. -/
+private theorem causeAtRiskMass_pure_two :
+    causeAtRiskMass (indepCauseLaw (PMF.pure ((2 : Fin 3), (0 : Fin 2))) (PMF.pure (2 : Fin 3)))
+      2 = 1 := by
+  rw [causeAtRiskMass_indepCauseLaw_eq, PMF.pure_map]
+  simp [survivalMass, PMF.toMeasure_pure]
+
+/-- Identification at horizon `2`, where the Kaplan–Meier product and the cumulative-incidence
+sum run over three grid indices: the cause-`0` cumulative incidence at `2` is
+`P(T ≤ 2, J = 0) = 1`. -/
+example :
+    ajMap (2 : Fin 3) (cellMean (indepCauseLaw (PMF.pure ((2 : Fin 3), (0 : Fin 2)))
+      (PMF.pure (2 : Fin 3)))) (some 0, ⟨2, le_rfl⟩) = 1 := by
+  rw [ajMap_cellMean_indepCauseLaw _ _ 2 (by rw [causeAtRiskMass_pure_two]; norm_num)]
+  simp [target, PMF.toMeasure_pure]
 
 example (pTJ : PMF (Fin 3 × Fin 2)) (pC : PMF (Fin 3)) (l : Fin 3) :
     causeAtRiskMass (indepCauseLaw pTJ pC) l =
