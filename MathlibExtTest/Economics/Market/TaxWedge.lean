@@ -17,7 +17,7 @@ public import Mathlib.Tactic.NormNum.Basic
 
 namespace MathlibExtTest.Economics.Market.TaxWedge
 
-open _root_.Economics.Market
+open _root_.MathlibExt.Economics.Market
 
 /-! ## Tests: concrete values D p = 10 - p, S p = p, τ = 2 -/
 
