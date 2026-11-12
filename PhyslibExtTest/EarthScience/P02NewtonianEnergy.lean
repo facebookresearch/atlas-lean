@@ -50,8 +50,8 @@ example (t : ℝ) :
     simpa using (hasDerivAt_id t).const_mul (3 : ℝ)
   exact EarthScience.hasDerivAt_kinetic_energy (m := 2) (v := fun t : ℝ => 3 * t) (a := fun _ : ℝ => (3 : ℝ)) hv
 
-/-- Stationary particle: velocity `0` gives kinetic energy `0`. -/
-example : (0 : ℝ) * ‖(0 : ℝ)‖ ^ 2 / 2 = 0 := by norm_num
+/-- Stationary particle: velocity `0` gives kinetic energy `0` for any mass. -/
+example (m : ℝ) : m * ‖(0 : ℝ)‖ ^ 2 / 2 = 0 := by simp
 
 /-- Zero-mass boundary: kinetic energy is nonnegative (and zero) at `m = 0`. -/
 example (v : ℝ) : 0 ≤ (0 : ℝ) * ‖v‖ ^ 2 / 2 :=
