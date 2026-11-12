@@ -5,7 +5,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-LIBRARIES=(CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt)
+LIBRARIES=(CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt)
 
 check_build_surface() {
   PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_lake_surface.py
@@ -31,7 +31,7 @@ check_declared_libraries() {
 
 check_no_symlinks() {
   local hits
-  hits="$(find CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt \
+  hits="$(find CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt \
     -type l -print | LC_ALL=C sort)"
   if [[ -n "$hits" ]]; then
     echo "FAIL [symlinks]: audited libraries must not contain symlinked paths." >&2
