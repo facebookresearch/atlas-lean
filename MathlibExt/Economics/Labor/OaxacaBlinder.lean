@@ -42,6 +42,15 @@ causal discrimination estimate.
 * `MathlibExt.Economics.OaxacaBlinder.sampleMean_eq_regressorMean_dotProduct`
 * `MathlibExt.Economics.OaxacaBlinder.sampleMean_sub_eq`
 
+## References
+
+* R. Oaxaca, "Male-Female Wage Differentials in Urban Labor Markets", International
+  Economic Review 14 (1973), 693–709.
+* A. S. Blinder, "Wage Discrimination: Reduced Form and Structural Estimates", Journal of
+  Human Resources 8 (1973), 436–455.
+* The formula here is the twofold decomposition with group `B`'s coefficients as the
+  reference.
+
 Atlas roadmap target AP04.T03.
 -/
 
