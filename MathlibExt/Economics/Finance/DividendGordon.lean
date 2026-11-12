@@ -9,8 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Finance.GrowingPerpetuity
-import Mathlib.Topology.Algebra.InfiniteSum.Defs
-import Mathlib.Tactic
 
 /-!
 # Gordon formula for constant-growth dividends
@@ -73,8 +71,10 @@ theorem discountedDividendStream_succ (D₁ r g : ℝ) (t : ℕ) :
 /-- **Dividend stream identification.** The discounted dividend stream has the same
 `HasSum` as the growing-perpetuity stream: shift by one date
 (`hasSum_nat_add_iff'` at `k = 1`, using that the date-`0` term is `0`), then apply the
-shift lemma `discountedDividendStream_succ`. This is the specialization step: it cites
-`hasSum_growingPerpetuity` (FI01.T03) and does not reprove the geometric series. -/
+shift lemma `discountedDividendStream_succ`. This is a shift/transport lemma: it turns
+any `HasSum` for the growing-perpetuity stream into a `HasSum` for the discounted
+dividend stream. The caller `dividendGordon` supplies `hasSum_growingPerpetuity`
+(FI01.T03); the geometric series is not reproved here. -/
 theorem dividendGordon_of_hasSumGrowing {D₁ r g : ℝ}
     (h : HasSum (growingPerpetuityTerm D₁ r g) (D₁ / (r - g))) :
     HasSum (discountedDividendStream D₁ r g) (D₁ / (r - g)) := by
