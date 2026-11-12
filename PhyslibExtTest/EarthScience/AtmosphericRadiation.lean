@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.A07AtmosphericRadiation
+import PhyslibExt.EarthScience.AtmosphericRadiation
 
 /-!
 # One-layer grey atmosphere checks
 
-Concrete consumers of `PhyslibExt.EarthScience.A07AtmosphericRadiation`:
+Concrete consumers of `PhyslibExt.EarthScience.AtmosphericRadiation`:
 transparent `eps = 0`, opaque `eps = 1`, and the numeric formula
 `Te = 3, eps = 1/4` giving `Ts^4 = 81 / (7/8) = 648/7`.
 
@@ -32,26 +32,26 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.A07AtmosphericRadiation`
+- `PhyslibExt.EarthScience.AtmosphericRadiation`
 -/
 
 /-- Transparent case: `eps = 0, Te = Ts = 2` satisfies the TOA balance. -/
 example : (2:ℝ) ^ 4 = (2:ℝ) ^ 4 :=
-  EarthScience.a07_transparent_limit (σ := 1) (Te := 2) (Ts := 2) (Ta := 5) (by norm_num)
+  EarthScience.transparent_limit (σ := 1) (Te := 2) (Ts := 2) (Ta := 5) (by norm_num)
     (by norm_num)
 
 /-- Surface theorem at `eps = 0`: `Ts^4 = Te^4`. -/
 example : (3:ℝ) ^ 4 = (3:ℝ) ^ 4 / (1 - (0:ℝ) / 2) :=
-  EarthScience.a07_surface_temperature (eps := 0) (σ := 1) (Te := 3) (Ts := 3) (Ta := 7)
+  EarthScience.surface_temperature (eps := 0) (σ := 1) (Te := 3) (Ts := 3) (Ta := 7)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-- Opaque witness as an elaboration check: `Ts^4 = Te^4 / (1 - 1/2)` gives `Ts^4 = 2 * Te^4`. -/
 example {Te Ts : ℝ} (h : Ts ^ 4 = Te ^ 4 / (1 - (1:ℝ) / 2)) : Ts ^ 4 = 2 * Te ^ 4 :=
-  EarthScience.a07_opaque_witness h
+  EarthScience.opaque_witness h
 
 /-- Atmosphere theorem at the boundary `Ta = Ts = 0`. -/
 example : (0:ℝ) ^ 4 = (0:ℝ) ^ 4 / 2 :=
-  EarthScience.a07_atmosphere_temperature (eps := 1/2) (σ := 2) (Ts := 0) (Ta := 0)
+  EarthScience.atmosphere_temperature (eps := 1/2) (σ := 2) (Ts := 0) (Ta := 0)
     (by norm_num) (by norm_num) (by norm_num)
 
 /-- Numeric denominator: `1 - (1/4)/2 = 7/8`. -/
