@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.O06TwoBoxBudgets
+import PhyslibExt.EarthScience.TwoBoxBudgets
 
 /-!
 # Two-box budget checks
 
-Concrete consumers of `PhyslibExt.EarthScience.O06TwoBoxBudgets`:
+Concrete consumers of `PhyslibExt.EarthScience.TwoBoxBudgets`:
 the public shapes of both theorems, the closed-system numeric
 cancellation `2 * (-1 / 4) + 3 * (1 / 6) = 0`, and the zero-exchange
 boundary.
@@ -35,7 +35,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.O06TwoBoxBudgets`
+- `PhyslibExt.EarthScience.TwoBoxBudgets`
 -/
 
 /-- Public shape of the two-box theorem with external fluxes. -/
