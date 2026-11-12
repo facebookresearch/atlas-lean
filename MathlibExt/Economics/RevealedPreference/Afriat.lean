@@ -38,13 +38,13 @@ prices is needed for this direction.
 
 namespace MathlibExt.Economics.RevealedPreference
 
--- The statement keeps the contract's `[Fintype ι]`; `[Finite ι]` would suffice.
-set_option linter.unusedFintypeInType false in
 /-- Afriat's theorem, (2) ⇒ (3): finitely many observations satisfying GARP admit numbers `Uⁱ`
 and `λⁱ > 0` solving Afriat's inequalities. No sign condition on prices is needed. -/
-theorem DemandData.exists_isAfriatCertificate_of_garp {ι G : Type*} [Fintype ι] [Fintype G]
+theorem DemandData.exists_isAfriatCertificate_of_garp {ι G : Type*} [Finite ι] [Fintype G]
     {D : DemandData ι G} (h : D.GARP) : ∃ U lam : ι → ℝ, D.IsAfriatCertificate U lam := by
   classical
+  -- Only the proof needs an enumeration of the observations.
+  let : Fintype ι := Fintype.ofFinite ι
   have hR0_refl : ∀ i, D.DirectlyRevealedPreferred i i := fun i => le_refl _
   have hR_refl : ∀ i, D.RevealedPreferred i i :=
     fun i => Relation.TransGen.single (hR0_refl i)
