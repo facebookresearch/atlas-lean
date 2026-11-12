@@ -68,11 +68,30 @@ example : Λ₀ (Ioc 0 1) = 1 := by
   rw [h]
   simp
 
-/-- `S(0) = 1` and `S` strictly decreases: the hypotheses of `kmRemainder_pos` are satisfiable. -/
-example : S₀ 0 = 1 ∧ S₀ 3 < S₀ 1 := by
-  refine ⟨by simp [S₀], ?_⟩
-  simp only [S₀]
-  exact exp_lt_exp.2 (by norm_num)
+/-- `Λ₀` restricted to `(0, b]` is Lebesgue measure there. -/
+lemma Λ₀_restrict_Ioc {b : ℝ} : Λ₀.restrict (Ioc 0 b) = volume.restrict (Ioc 0 b) := by
+  have hsub : Ioc (0 : ℝ) b ⊆ Ioi 0 := fun s hs => hs.1
+  rw [← Measure.restrict_restrict_of_subset hsub, hazardMeasure_restrict_Ioi,
+    Measure.restrict_restrict_of_subset hsub]
+
+lemma S₀_antitone : Antitone S₀ := fun _ _ hab => exp_le_exp.2 (neg_le_neg hab)
+
+/-- **`kmIntegrand` from its definition**: `H(s) = Ŝ(s-)/(S(s)Y(s))` is `e^{1/2}` at `s = 1/2`
+(at risk, `Ŝ(s-) = 1`), and `0` at `s = 2` after censoring at `1` (`Y = 0`, Gill's `J = 0`). -/
+example : kmIntegrand T₀ C₀ S₀ (1 / 2) 2 = exp (1 / 2) ∧ kmIntegrand T₀ C₀ S₀ 2 2 = 0 := by
+  constructor
+  · norm_num [kmIntegrand, kaplanMeierOneLeft, atRiskProcess, S₀, exp_neg]
+  · norm_num [kmIntegrand, kaplanMeierOneLeft, atRiskProcess]
+
+/-- **`kmRemainder_pos` applied** at `ω = 2` (censored at `1`), `t = 3`. -/
+example : 0 < kmRemainder T₀ C₀ S₀ Λ₀ 3 2 :=
+  kmRemainder_pos (by norm_num [obsTime]) (fun a b ha hab _ => volterra_hazard ha hab)
+    (by norm_num) (by norm_num) (exp_pos _) (exp_lt_exp.2 (by norm_num))
+
+/-- **`kmRemainder_nonneg` applied** at `ω = 2`, `t = 3`. -/
+example : 0 ≤ kmRemainder T₀ C₀ S₀ Λ₀ 3 2 :=
+  kmRemainder_nonneg (by norm_num [obsTime]) (fun a b ha hab _ => volterra_hazard ha hab)
+    (exp_pos _) (S₀_antitone.antitoneOn _)
 
 /-- **Non-vacuity of the representation.** For the subject `ω = 2` (censored at `1`), at `t = 3`
 all hypotheses of `kaplanMeierOne_div_sub_one` hold, and its left side `e^3 - 1` (computed from
@@ -85,16 +104,28 @@ example : kaplanMeierOne T₀ C₀ 3 2 / S₀ 3 - 1 =
   norm_num [kaplanMeierOne, oneSubjectData, CensoredData.kmSurvival, CensoredData.kmFactor,
     CensoredData.atRisk, obsTime, S₀, exp_neg]
 
-/-- The two terms separately: martingale term `-(e - 1)` and remainder `e^3 - e`, both nonzero;
-they sum to `e^3 - 1`. -/
-example : kmMartingaleIntegral T₀ C₀ S₀ Λ₀ 3 2 = -(exp 1 - 1) ∧
-    kmRemainder T₀ C₀ S₀ Λ₀ 3 2 = exp 3 - exp 1 := by
-  constructor
-  · rw [kmMartingaleIntegral_eq (by norm_num [obsTime]) (by norm_num) (by simp [S₀])
-      fun a b ha hab _ => volterra_hazard ha hab]
-    norm_num [obsTime, S₀, exp_neg]
-  · rw [kmRemainder_eq_indicator (by norm_num)]
-    norm_num
+/-- **The martingale term from its definition** (not through `kmMartingaleIntegral_eq`): the
+censored subject `ω = 2` has `dN = 0`, and `∫_{(0, 3]} H Y dΛ = ∫_{(0, 1]} e^s ds = e - 1`, so the
+martingale term is `-(e - 1)`. -/
+example : kmMartingaleIntegral T₀ C₀ S₀ Λ₀ 3 2 = -(exp 1 - 1) := by
+  have hN : countingMeasure T₀ C₀ 2 = 0 := by norm_num [countingMeasure]
+  have hf : (fun s => kmIntegrand T₀ C₀ S₀ s 2 * atRiskProcess T₀ C₀ s 2) =
+      (Iic 1).indicator fun s => exp s := by
+    funext s
+    by_cases hs : s ≤ 1
+    · have h2 : s ≤ 2 := hs.trans one_le_two
+      simp [kmIntegrand, kaplanMeierOneLeft, atRiskProcess, hs, h2, S₀, exp_neg]
+    · simp [kmIntegrand, kaplanMeierOneLeft, atRiskProcess, hs]
+  rw [kmMartingaleIntegral, hN, Measure.restrict_zero, integral_zero_measure, hf,
+    setIntegral_indicator measurableSet_Iic, Ioc_inter_Iic, min_eq_right (by norm_num : (1 : ℝ) ≤ 3),
+    Λ₀_restrict_Ioc, ← intervalIntegral.integral_of_le zero_le_one, integral_exp, exp_zero]
+  ring
+
+/-- The remainder at `ω = 2`, `t = 3` is `e^3 - e`; with the martingale term `-(e - 1)` the
+right side of the representation is `e^3 - 1`, matching the left side above. -/
+example : kmRemainder T₀ C₀ S₀ Λ₀ 3 2 = exp 3 - exp 1 := by
+  rw [kmRemainder_eq_indicator (by norm_num)]
+  norm_num
 
 /-- Boundary `t = 1` (the censoring time): the remainder is still `0` everywhere. -/
 example : kmRemainder T₀ C₀ S₀ Λ₀ 1 = 0 := by
@@ -118,6 +149,32 @@ example : ∫ ω, (kaplanMeierOne T₀ C₀ 2 ω / S₀ 2 - 1) ∂μ₀ = exp 1 
   rw [hfun, integral_sub ((integrable_const _).indicator measurableSet_Ioi) (integrable_const _),
     integral_indicator_const _ measurableSet_Ioi, measureReal_Ioi zero_le_one, integral_const,
     probReal_univ, smul_eq_mul, smul_eq_mul, mul_one, ← exp_add]
+  norm_num
+
+/-- **The general mean-bias theorem applies to the model**: all hypotheses of
+`integral_kaplanMeierOne_div_sub_one` hold (`T ⊥ C` since `C` is constant, `X > 0` a.s.), and it
+returns the value `e - 1` computed from the definitions in the previous example. -/
+example : ∫ ω, (kaplanMeierOne T₀ C₀ 2 ω / S₀ 2 - 1) ∂μ₀ = exp 1 - 1 := by
+  have hmap : μ₀.map T₀ = μ₀ := Measure.map_id
+  have hIic : μ₀ (Iic 0) = 0 := by
+    have h := measureReal_compl (μ := μ₀) (measurableSet_Ioi (a := (0 : ℝ)))
+    rw [compl_Ioi, measureReal_Ioi le_rfl, probReal_univ, neg_zero, exp_zero, sub_self] at h
+    exact (measureReal_eq_zero_iff (measure_ne_top _ _)).1 h
+  have hX : ∀ᵐ ω ∂μ₀, 0 < obsTime T₀ C₀ ω := by
+    refine ae_iff.2 (measure_mono_null (fun ω (hω : ¬ 0 < min ω 1) => ?_) hIic)
+    rw [lt_min_iff, not_and_or] at hω
+    rcases hω with h | h
+    · exact not_lt.1 h
+    · exact absurd zero_lt_one h
+  have hint : IntegrableOn (fun s => (S₀ s)⁻¹) (Ioc 0 2) (hazardMeasure (μ₀.map T₀)) := by
+    rw [hmap, IntegrableOn, Λ₀_restrict_Ioc]
+    simp only [S₀, exp_neg, inv_inv]
+    exact continuous_exp.integrableOn_Ioc
+  have hind : IndepFun T₀ C₀ μ₀ := indepFun_const_right T₀ (1 : ℝ)
+  rw [integral_kaplanMeierOne_div_sub_one (μ := μ₀) (T := T₀) (C := C₀) (S := S₀) measurable_id
+    measurable_const hind zero_le_two (by simp [S₀]) S₀_antitone (exp_pos _) hint
+    (fun a b ha hab _ => by rw [hmap]; exact volterra_hazard ha hab) hX, hmap,
+    integral_kmRemainder one_le_two]
   norm_num
 
 /-- The mean remainder at `t = 2` is the same `e - 1`. -/
