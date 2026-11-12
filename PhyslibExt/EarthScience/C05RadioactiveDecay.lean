@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import MathlibExt.Biology.Biophysics.CompartmentKinetics
 /-!
 # Radioactive decay and the unique positive half-life
 
@@ -36,34 +37,44 @@ exponential clock, not that any sample obeys it.
 
 ## iii. References
 
-- `Real.hasDerivAt_exp` in `Mathlib/Analysis/SpecialFunctions/ExpDeriv.lean`.
-- `Real.exp_log`, `Real.exp_injective` for the half-life algebra.
+- `CompartmentKinetics.hasDerivAt_amount` and `CompartmentKinetics.amount_bolus` for
+  the derivative: the decay law is the bolus case of the one-compartment amount.
+- `CompartmentKinetics.amount_bolus_add_halfLife` for the half-life value.
+- `Real.exp_log`, `Real.exp_injective` for the half-life uniqueness algebra.
 -/
 
 @[expose] public section
 
 namespace EarthScience
 
-/-- Radioactive decay: `N(t) = N0 * exp(-λ*t)` solves `N' = -λ*N`. -/
+/-- Radioactive decay: `N(t) = N0 * exp(-λ*t)` solves `N' = -λ*N`. This is the
+bolus case (`R = 0`) of `CompartmentKinetics.hasDerivAt_amount`, via
+`CompartmentKinetics.amount_bolus`; it is not a new exponential-decay derivative. -/
 theorem decay_hasDerivAt (lam N0 t : ℝ) :
     HasDerivAt (fun t => N0 * Real.exp (-lam * t))
       (-lam * (N0 * Real.exp (-lam * t))) t := by
-  have hlin : HasDerivAt (fun t : ℝ => -lam * t) (-lam) t := by
-    simpa using (hasDerivAt_id t).const_mul (-lam)
-  have hexp := hlin.exp
-  have hmul := hexp.const_mul N0
-  convert hmul using 1
+  have h := MathlibExt.Biology.Biophysics.CompartmentKinetics.hasDerivAt_amount lam 0 N0 t
+  have hfun : (fun s => N0 * Real.exp (-lam * s)) =
+      MathlibExt.Biology.Biophysics.CompartmentKinetics.amount lam 0 N0 := by
+    funext s
+    exact (MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus lam N0 s).symm
+  rw [hfun]
+  convert h using 1
+  rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus]
   ring
 
 set_option linter.unusedVariables false in
-/-- At the half-life `log 2 / λ`, half the initial inventory remains. -/
+/-- At the half-life `log 2 / λ`, half the initial inventory remains. This is
+`CompartmentKinetics.amount_bolus_add_halfLife` at time zero, via
+`CompartmentKinetics.amount_bolus`. -/
 theorem decay_halfLife_value (lam N0 : ℝ) (hlam : 0 < lam) (hN0 : 0 < N0) :
     N0 * Real.exp (-lam * (Real.log 2 / lam)) = N0 / 2 := by
-  have hlam' : lam ≠ 0 := ne_of_gt hlam
-  have harg : -lam * (Real.log 2 / lam) = -Real.log 2 := by
-    field_simp
-  rw [harg, Real.exp_neg, Real.exp_log (by norm_num : (0:ℝ) < 2)]
-  ring
+  have h := MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus_add_halfLife
+    (ne_of_gt hlam) N0 (0 : ℝ)
+  simp only [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus,
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.halfLife, zero_add, mul_zero,
+    Real.exp_zero, mul_one] at h
+  exact h
 
 set_option linter.unusedVariables false in
 /-- The positive half-life is unique: any `t ≥ 0` with `N(t) = N0/2`
