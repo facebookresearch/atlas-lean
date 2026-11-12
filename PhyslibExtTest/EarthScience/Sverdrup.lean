@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.O08Sverdrup
+import PhyslibExt.EarthScience.Sverdrup
 
 /-!
 # Wind-driven gyres and vorticity balance
 
-Concrete consumers of `PhyslibExt.EarthScience.O08Sverdrup`.
+Concrete consumers of `PhyslibExt.EarthScience.Sverdrup`.
 
 ## i. Overview
 
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.O08Sverdrup`
+- `PhyslibExt.EarthScience.Sverdrup`
 -/
 
 /-- Numeric Sverdrup: `β = 2`, `curl = 6`, `ρ₀ = 3` gives `V = 1`. -/
