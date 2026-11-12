@@ -99,7 +99,7 @@ example : Tendsto (fun h : ℝ => ∫ u : ℝ, (if |u| ≤ (1 : ℝ) then (1 / 2
   have hft : (if (0:ℝ) ≤ 1/2 ∧ (1/2:ℝ) ≤ 1 then (1:ℝ) else 0) = 1 := by
     have hc : (0:ℝ) ≤ 1/2 ∧ (1/2:ℝ) ≤ 1 := by norm_num
     exact ite_eq_left hc
-  have main := kde_bias_tends_to_zero
+  have main := ProbabilityTheory.kde_bias_tends_to_zero
     (K := fun u : ℝ => if |u| ≤ (1:ℝ) then (1/2:ℝ) else 0)
     (f := fun x : ℝ => if (0:ℝ) ≤ x ∧ x ≤ 1 then (1:ℝ) else 0)
     (t := (1/2:ℝ)) (B := (1:ℝ))

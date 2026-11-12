@@ -14,11 +14,14 @@ public import Mathlib.Topology.ContinuousMap.Basic
 public import Mathlib.Analysis.Normed.Group.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+public import MathlibExt.Probability.Statistics.Nonparametric.KernelDensity
 
 @[expose] public section
 
 open Filter Topology MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+namespace ProbabilityTheory
 
 /-- Pointwise bias of the KDE vanishes at a continuity point of the density. -/
 theorem kde_bias_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
@@ -108,3 +111,24 @@ theorem kde_bias_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
         rw [hring, div_lt_iff₀ hM1]
         have h2 : ε * (M + 1) = ε * M + ε := by ring
         linarith [hε, h2]
+
+/-- KDE expectation converges to the density at a continuity point, by
+`integral_kde_eq` plus the smoothing limit above. -/
+theorem kde_expectation_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
+    (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
+    (hK_meas : Measurable K) (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
+    (hK_bdd : ∃ C, ∀ u, |K u| ≤ C) (hK_supp : ∃ R, ∀ u, R < |u| → K u = 0)
+    (hcont : ContinuousAt f t)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {n : ℕ} (hn : 0 < n) {X : Fin n → Ω → ℝ}
+    (hX : ∀ i, HasLaw (X i) (volume.withDensity fun x => ENNReal.ofReal (f x)) P) :
+    Tendsto (fun h : ℝ => ∫ ω, kde K h (fun i => X i ω) t ∂P) (𝓝[>] 0) (𝓝 (f t)) := by
+  have hexp : ∀ h : ℝ, 0 < h → ∫ ω, kde K h (fun i => X i ω) t ∂P
+      = ∫ u, K u * f (t - h * u) :=
+    fun h hh => integral_kde_eq hn hf_meas hf_nonneg hf_le hX hK_meas hK_int hh t
+  refine Tendsto.congr' ?_ (kde_bias_tends_to_zero hf_meas hf_nonneg hf_le hK_meas
+    hK_int hK_one hK_bdd hK_supp hcont)
+  filter_upwards [self_mem_nhdsWithin] with h hh
+  exact (hexp h (Set.mem_Ioi.mp hh)).symm
+
+end ProbabilityTheory
