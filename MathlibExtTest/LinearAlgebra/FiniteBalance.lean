@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.LinearAlgebra.FiniteBalance
 public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.LinearAlgebra.Dimension.Constructions
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.Logic.Equiv.Fin.Rotate
@@ -47,13 +49,13 @@ example : !![(1 : ℤ), 0, 1; 1, 2, 2] *ᵥ ![-1, -1, 1] = ![0, -1] := by decide
 def sampleMatrix : Matrix (Fin 2) (Fin 3) ℝ := !![1, 2, 3; 0, 0, 0]
 
 /-- The first coordinate functional is nonzero on column `0` of `sampleMatrix`. -/
-example : (LinearMap.proj 0 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (fun b => sampleMatrix b 0) ≠ 0 := by
-  simp [sampleMatrix]
+example : (LinearMap.proj 0 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (sampleMatrix.col 0) ≠ 0 := by
+  simp [sampleMatrix, Matrix.col]
 
 /-- Hence it fails the column hypothesis of `map_mulVec_eq_zero_of_forall_col_eq_zero`. -/
-example : ¬ ∀ s, (LinearMap.proj 0 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (fun b => sampleMatrix b s) = 0 := by
+example : ¬ ∀ s, (LinearMap.proj 0 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (sampleMatrix.col s) = 0 := by
   intro h
-  simpa [sampleMatrix] using h 0
+  simpa [sampleMatrix, Matrix.col] using h 0
 
 /-! ### Reindexing a weighted sum -/
 
@@ -62,7 +64,8 @@ example : ¬ ∀ s, (LinearMap.proj 0 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (fun b 
 example :
     ∑ i, (![1 / 2, -3, 2] : Fin 3 → ℚ) (finRotate 3 i) *
       (![4, 1 / 3, -1] : Fin 3 → ℚ) (finRotate 3 i) = -1 := by
-  rw [weightedSum_comp_equiv (finRotate 3)]
+  rw [Equiv.sum_comp (finRotate 3) (fun j =>
+    (![1 / 2, -3, 2] : Fin 3 → ℚ) j * (![4, 1 / 3, -1] : Fin 3 → ℚ) j)]
   norm_num [Fin.sum_univ_three]
 
 /-! ### A coordinate functional vanishing on every column -/
@@ -70,9 +73,9 @@ example :
 /-- The second coordinate functional vanishes on every column of `sampleMatrix`, hence on
 `sampleMatrix *ᵥ (1, -1, 2)`. -/
 example : (LinearMap.proj 1 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (sampleMatrix *ᵥ ![1, -1, 2]) = 0 := by
-  have hcol : ∀ s, (LinearMap.proj 1 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (fun b => sampleMatrix b s) = 0 := by
+  have hcol : ∀ s, (LinearMap.proj 1 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (sampleMatrix.col s) = 0 := by
     intro s
-    fin_cases s <;> simp [sampleMatrix]
+    fin_cases s <;> simp [sampleMatrix, Matrix.col]
   exact map_mulVec_eq_zero_of_forall_col_eq_zero _ sampleMatrix hcol _
 
 /-! ### Rank-nullity for the zero and identity maps -/
@@ -81,10 +84,10 @@ example : (LinearMap.proj 1 : (Fin 2 → ℝ) →ₗ[ℝ] ℝ) (sampleMatrix *�
 example :
     Module.finrank ℝ (LinearMap.ker (0 : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))) = 2 ∧
       Module.finrank ℝ (LinearMap.range (0 : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))) = 0 := by
-  have h := finrank_ker_add_finrank_range (0 : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))
+  have h := LinearMap.finrank_range_add_finrank_ker (0 : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))
   have h0 : Module.finrank ℝ (LinearMap.range (0 : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))) = 0 := by
     rw [LinearMap.range_zero, finrank_bot]
-  rw [Fintype.card_fin] at h
+  rw [Module.finrank_fintype_fun_eq_card, Fintype.card_fin] at h
   omega
 
 /-- The identity map on `Fin 2 → ℝ` has a `0`-dimensional kernel and a `2`-dimensional
@@ -92,11 +95,11 @@ range. -/
 example :
     Module.finrank ℝ (LinearMap.ker (LinearMap.id : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))) = 0 ∧
       Module.finrank ℝ (LinearMap.range (LinearMap.id : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))) = 2 := by
-  have h := finrank_ker_add_finrank_range (LinearMap.id : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))
+  have h := LinearMap.finrank_range_add_finrank_ker (LinearMap.id : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))
   have h0 :
       Module.finrank ℝ (LinearMap.ker (LinearMap.id : (Fin 2 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ))) = 0 := by
     rw [LinearMap.ker_id, finrank_bot]
-  rw [Fintype.card_fin] at h
+  rw [Module.finrank_fintype_fun_eq_card, Fintype.card_fin] at h
   omega
 
 /-! ### A two-reaction network -/
@@ -111,18 +114,19 @@ def reactions : Matrix (Fin 4) (Fin 2) ℝ := !![-2, -1; -1, -1; 2, 0; 0, 1]
 /-- The species change produced by extents `ξ` is the extent-weighted sum of the two reaction
 columns. -/
 example (ξ : Fin 2 → ℝ) :
-    reactions *ᵥ ξ = ξ 0 • (fun b => reactions b 0) + ξ 1 • (fun b => reactions b 1) := by
-  rw [mulVec_eq_sum_smul_col, Fin.sum_univ_two]
+    reactions *ᵥ ξ = ξ 0 • reactions.col 0 + ξ 1 • reactions.col 1 := by
+  simp only [Matrix.mulVec_eq_sum, IsCentralScalar.op_smul_eq_smul, Fin.sum_univ_two,
+    Matrix.col]
 
 /-- Each element balance vanishes on both reaction columns, so the balance coordinates
 `composition *ᵥ n` are unchanged by any real extents `ξ`. -/
 example (n₀ : Fin 4 → ℝ) (ξ : Fin 2 → ℝ) :
     composition *ᵥ (n₀ + reactions *ᵥ ξ) = composition *ᵥ n₀ := by
   have hcol : ∀ e r,
-      (LinearMap.proj e ∘ₗ composition.mulVecLin) (fun b => reactions b r) = 0 := by
+      (LinearMap.proj e ∘ₗ composition.mulVecLin) (reactions.col r) = 0 := by
     intro e r
     fin_cases e <;> fin_cases r <;>
-      norm_num [composition, reactions, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
+      norm_num [composition, reactions, Matrix.col, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
   ext e
   have h := map_mulVec_eq_zero_of_forall_col_eq_zero _ reactions (hcol e) ξ
   rw [LinearMap.comp_apply, Matrix.mulVecLin_apply, LinearMap.proj_apply] at h
@@ -130,7 +134,4 @@ example (n₀ : Fin 4 → ℝ) (ξ : Fin 2 → ℝ) :
 
 end MathlibExtTest.LinearAlgebra.FiniteBalance
 
-#print axioms MathlibExt.LinearAlgebra.FiniteBalance.weightedSum_comp_equiv
-#print axioms MathlibExt.LinearAlgebra.FiniteBalance.finrank_ker_add_finrank_range
-#print axioms MathlibExt.LinearAlgebra.FiniteBalance.mulVec_eq_sum_smul_col
 #print axioms MathlibExt.LinearAlgebra.FiniteBalance.map_mulVec_eq_zero_of_forall_col_eq_zero
