@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.E01Reactors
+import PhyslibExt.EarthScience.Reactors
 
 /-!
 # Reactor checks
 
-Concrete consumers of `PhyslibExt.EarthScience.E01Reactors`: the
+Concrete consumers of `PhyslibExt.EarthScience.Reactors`: the
 witness `V = Q = k = cin = 1`, `c0 = 0` giving `cstar = 1/2`, the
 `k = 0` conservative-throughflow case, and a plug-flow parcel.
 
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.E01Reactors`
+- `PhyslibExt.EarthScience.Reactors`
 -/
 
 /-- Witness: with `V = Q = k = cin = 1`, `cstar = 1/2`. -/
