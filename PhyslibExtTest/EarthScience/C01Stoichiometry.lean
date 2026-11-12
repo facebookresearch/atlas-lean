@@ -41,8 +41,9 @@ example {n m : ℕ} (S : Fin n → Fin m → ℝ) (l : Fin n → ℝ)
   EarthScience.stoichiometric_leftNull_conserved S l c rate t hnull hode
 
 /-- Two-species, one-reaction conversion: `(1, 1)` is a left-null vector
-of `S i 0 = 1` for species `0` and `-1` for species `1`. -/
-example : ∀ _j : Fin 1, ∑ i : Fin 2, (1 : ℝ) * (if i = 0 then (1 : ℝ) else -1) = 0 := by
+of `S i 0 = -1` for species `0` and `1` for species `1`, i.e. the
+`prod - src` coefficients for species `0` converting into species `1`. -/
+example : ∀ _j : Fin 1, ∑ i : Fin 2, (1 : ℝ) * (if i = 0 then (-1 : ℝ) else 1) = 0 := by
   intro _j
   norm_num [Fin.sum_univ_two]
 

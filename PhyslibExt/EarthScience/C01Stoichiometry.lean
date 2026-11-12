@@ -28,9 +28,8 @@ swapping the sums, the derivative of `∑ i, l i * c t i` is `0`: internal
 stoichiometry cancels and only the null-space structure matters.
 
 This is the ODE form of stoichiometric conservation. It is distinct from
-the algebraic extent conservation in `PhyslibExt.Chemistry.Stoichiometry.Balance`
-(open PR #1148), which conserves balance coordinates under reaction
-extents and involves no derivatives.
+algebraic extent conservation, which conserves balance coordinates under
+reaction extents and involves no derivatives.
 
 ## ii. Key results
 
