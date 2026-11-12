@@ -19,7 +19,8 @@ public import MathlibExt.Analysis.Convex.OnlineGradientDescent
 /-! # Projected subgradient method: the `D G / √T` rate
 
 The projected subgradient method with constant step
-`η = D / (G √T)` and averaged iterates achieves
+`η = D / (G √T)` and the average of the pre-update iterates
+`x₀, …, x_{T-1}` achieves
 `f x̄ - f* ≤ D G / √T` for a convex objective with subgradients
 bounded by `G`. This is the deterministic core of roadmap package
 ML-21 of the Atlas TCS canon roadmap (the stochastic version takes
@@ -40,18 +41,32 @@ Section 9.3; Shalev-Shwartz and Ben-David (2014), Chapter 13.
 
 open Finset
 
-/-- Jensen for the uniform average, from binary convexity. -/
+/-- Jensen for the uniform average, from a global subgradient. -/
 private theorem sgd_jensen {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    {f : E → ℝ}
-    (hconv : ∀ x y : E, ∀ a b : ℝ, 0 ≤ a → 0 ≤ b → a + b = 1 →
-      f (a • x + b • y) ≤ a * f x + b * f y)
+    {f : E → ℝ} {g : E → E}
+    (hsub : ∀ x y : E, f x + @inner ℝ E _ (g x) (y - x) ≤ f y)
     (p : ℕ → E) {T : ℕ} (hT : 0 < T) :
     f ((T : ℝ)⁻¹ • ∑ t ∈ Finset.range T, p t)
       ≤ (T : ℝ)⁻¹ * ∑ t ∈ Finset.range T, f (p t) := by
   have hTpos : (0 : ℝ) < T := Nat.cast_pos.mpr hT
   have hTne : (T : ℝ) ≠ 0 := ne_of_gt hTpos
-  have hConvex : ConvexOn ℝ Set.univ f := ⟨convex_univ, fun x _ y _ a b ha hb hab => by
-    simpa only [smul_eq_mul] using hconv x y a b ha hb hab⟩
+  have hConvex : ConvexOn ℝ Set.univ f := by
+    refine ⟨convex_univ, ?_⟩
+    intro x _ y _ a b ha hb hab
+    let z := a • x + b • y
+    have hx := mul_le_mul_of_nonneg_left (hsub z x) ha
+    have hy := mul_le_mul_of_nonneg_left (hsub z y) hb
+    have hz : a • (x - z) + b • (y - z) = 0 := by
+      calc
+        a • (x - z) + b • (y - z) = a • x + b • y - (a + b) • z := by
+          simp only [smul_sub, add_smul]
+          abel
+        _ = 0 := by rw [hab, one_smul]; exact sub_self z
+    have hi := congrArg (fun v => @inner ℝ E _ (g z) v) hz
+    simp only [inner_add_right, inner_smul_right, inner_zero_right] at hi
+    simp only [smul_eq_mul]
+    change f z ≤ a * f x + b * f y
+    nlinarith [congrArg (fun c : ℝ => c * f z) hab]
   have h₀ : ∀ i ∈ Finset.range T, 0 ≤ (fun _ => (T : ℝ)⁻¹) i :=
     fun i _ => inv_nonneg.mpr hTpos.le
   have h₁ : ∑ i ∈ Finset.range T, (fun _ => (T : ℝ)⁻¹) i = 1 := by
@@ -68,7 +83,8 @@ private theorem sgd_jensen {E : Type*} [NormedAddCommGroup E] [InnerProductSpace
 convex objective with subgradients bounded by `G` (the subgradient
 inequality quantified over every comparison point `y`), a
 nonexpansive projection fixing `xstar`, and `‖x0 - xstar‖ ≤ D`, the
-average iterate `x̄` after `T` steps with step `η = D / (G √T)`
+average `x̄` of `x₀, …, x_{T-1}` with step `η = D / (G √T)`
+(so `x̄ = x0` when `T = 1`)
 satisfies `f x̄ - f xstar ≤ D G / √T`. The summed objective bound is
 `ogd_regret` at the constant round cost `fun _ => f`, with the
 subgradient inequality specialized to `xstar`. -/
@@ -79,8 +95,6 @@ theorem sgd_rate {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (xstar : E) (hprojstar : proj xstar = xstar)
     (hsub : ∀ (t : ℕ) (x y : E), f x + @inner ℝ E _ (g t x) (y - x) ≤ f y)
     (hg : ∀ (t : ℕ) (x : E), ‖g t x‖ ≤ G)
-    (hconv : ∀ x y : E, ∀ a b : ℝ, 0 ≤ a → 0 ≤ b → a + b = 1 →
-      f (a • x + b • y) ≤ a * f x + b * f y)
     (x0 : E) (hdist : ‖x0 - xstar‖ ≤ D) {T : ℕ} (hT : 0 < T) :
     f ((T : ℝ)⁻¹ • ∑ t ∈ Finset.range T, ogdIter proj g (D / (G * Real.sqrt T)) x0 t)
       - f xstar ≤ D * G / Real.sqrt T := by
@@ -147,7 +161,7 @@ theorem sgd_rate {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
             (η / 2) * ∑ t ∈ Finset.range T, ‖g t (ogdIter proj g η x0 t)‖ ^ 2 := hreg
       _ ≤ D ^ 2 / (2 * η) + (η / 2) * ((T : ℝ) * G ^ 2) := add_le_add h1 h2
       _ = D * G * Real.sqrt T := hEq
-  have hJ := sgd_jensen hconv (fun t => ogdIter proj g η x0 t) hT
+  have hJ := sgd_jensen (hsub 0) (fun t => ogdIter proj g η x0 t) hT
   have havg : (T : ℝ)⁻¹ * ∑ t ∈ Finset.range T, f (ogdIter proj g η x0 t) - f xstar
       = (T : ℝ)⁻¹ * ∑ t ∈ Finset.range T, (f (ogdIter proj g η x0 t) - f xstar) := by
     have hTc : (T : ℝ)⁻¹ * ((T : ℝ) * f xstar) = f xstar := by
