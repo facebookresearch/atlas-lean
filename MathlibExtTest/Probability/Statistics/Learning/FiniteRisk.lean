@@ -96,6 +96,12 @@ namespace MathlibExtTest.Probability.Statistics.Learning.FiniteRisk
 
 open MeasureTheory ProbabilityTheory
 
+/-- Direct selector API: the empirical minimizer attains the least empirical risk. -/
+example {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
+    (f : Fin M → Z → ℝ) (S : Fin n → Z) (j : Fin M) :
+    (n : ℝ)⁻¹ * ∑ i, f (ermIdx f S) (S i) ≤ (n : ℝ)⁻¹ * ∑ i, f j (S i) :=
+  ermIdx_spec f S j
+
 /-- Single candidate: the ERM bound collapses to the single-loss deviation rate. -/
 example {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
     {n : ℕ} (hn : 0 < n) (g : Z → ℝ) (hg : Measurable g)

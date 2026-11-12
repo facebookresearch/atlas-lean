@@ -166,25 +166,8 @@ open MeasureTheory
 theorem exists_emp_minimizer {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
     (f : Fin M → Z → ℝ) (S : Fin n → Z) :
     ∃ j, ∀ k, (n : ℝ)⁻¹ * ∑ i, f j (S i) ≤ (n : ℝ)⁻¹ * ∑ i, f k (S i) := by
-  classical
-  have hpos : 0 < M := NeZero.pos M
-  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp hpos
-  have huniv : (Finset.univ : Finset (Fin M)).Nonempty :=
-    @Finset.univ_nonempty _ inferInstance hne
-  have himg : (Finset.univ.image (fun j => (n : ℝ)⁻¹ * ∑ i, f j (S i))).Nonempty :=
-    Finset.Nonempty.image huniv _
-  have hmem : (Finset.univ.image (fun j => (n : ℝ)⁻¹ * ∑ i, f j (S i))).min' himg ∈
-      Finset.univ.image (fun j => (n : ℝ)⁻¹ * ∑ i, f j (S i)) :=
-    Finset.min'_mem _ _
-  rw [Finset.mem_image] at hmem
-  obtain ⟨j0, _, hj0⟩ := hmem
-  have hj0eq : (n : ℝ)⁻¹ * ∑ i, f j0 (S i) =
-      (Finset.univ.image (fun j => (n : ℝ)⁻¹ * ∑ i, f j (S i))).min' himg := hj0
-  refine ⟨j0, fun k => ?_⟩
-  rw [hj0eq]
-  apply Finset.min'_le
-  apply Finset.mem_image.mpr
-  exact ⟨k, Finset.mem_univ k, rfl⟩
+  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp (NeZero.pos M)
+  exact Finite.exists_min _
 
 end ProbabilityTheory
 
@@ -198,7 +181,8 @@ noncomputable def ermIdx {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
     (f : Fin M → Z → ℝ) (S : Fin n → Z) : Fin M := by
   exact Classical.choose (exists_emp_minimizer f S)
 
-private theorem ermIdx_spec {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
+/-- The empirical minimizer attains the least empirical risk (public selector spec). -/
+theorem ermIdx_spec {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
     (f : Fin M → Z → ℝ) (S : Fin n → Z) (j : Fin M) :
     (n : ℝ)⁻¹ * ∑ i, f (ermIdx f S) (S i) ≤ (n : ℝ)⁻¹ * ∑ i, f j (S i) := by
   have h := Classical.choose_spec (exists_emp_minimizer f S)
