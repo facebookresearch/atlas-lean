@@ -555,7 +555,7 @@ private lemma measureReal_inter_comp_preimage [IsFiniteMeasure μ] [Fintype 𝒳
   · exact fun x _ => hA.inter (hX (measurableSet_singleton x))
 
 omit [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳] in
-/-- `P(T, W = w) = P(T | W = w) P(W = w)`, including at values of probability zero. -/
+/-- `P(T, X = x) = P(T | X = x) P(X = x)`, including at values of probability zero. -/
 theorem measureReal_inter_preimage_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
     {X : Ω → 𝒳} (x : 𝒳) :
     μ.real (T ∩ X ⁻¹' {x}) = propensity μ T X x * μ.real (X ⁻¹' {x}) := by
