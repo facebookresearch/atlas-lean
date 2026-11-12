@@ -134,4 +134,14 @@ theorem falseDiscoveryProportion_le_one (H0 R : Finset (Fin m)) :
   rw [div_le_one (by positivity)]
   exact le_max_of_le_left (by exact_mod_cast Finset.card_le_card Finset.inter_subset_left)
 
+/-- Rounding a valid p-value upward (a.e.) preserves validity. -/
+theorem IsValidPValue.mono_ae {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {p p' : Ω → ℝ}
+    (hp : IsValidPValue μ p) (hle : ∀ᵐ ω ∂μ, p ω ≤ p' ω) :
+    IsValidPValue μ p' := by
+  intro t ht
+  have hsub : {ω | p' ω ≤ t} ≤ᵐ[μ] {ω | p ω ≤ t} :=
+    hle.mono fun ω hω hp' => le_trans hω hp'
+  exact (measure_mono_ae hsub).trans (hp t ht)
+
 end MathlibExt.Probability.Statistics.MultipleTesting
