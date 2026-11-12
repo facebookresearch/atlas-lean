@@ -8,181 +8,64 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import MathlibExt.InformationTheory.ConditionalEntropy
 
 @[expose] public section
 
 /-! # Slepian-Wolf core: chain rule and random binning
 
-The entropy chain rule `H (X, Y) = H (Y) + H (X | Y)` on finite
-types, and the random-binning collision count: averaging over
-all binnings `Fin k → Fin M`, the expected number of colliding
-pairs is `C(k, 2) / M`. These are the counting core of roadmap
-package QCI-42 of the Atlas TCS canon roadmap.
+The entropy chain rule `H (X, Y) = H (Y) + H (X | Y)`, in bits via
+the repository API `InformationTheory.shannonEntropy` and
+`InformationTheory.finiteConditionalEntropy`, and the
+random-binning collision count: averaging over all binnings
+`Fin k → Fin M`, the expected number of colliding pairs is
+`C(k, 2) / M`. These are the counting core of roadmap package
+QCI-42 of the Atlas TCS canon roadmap.
+
+The chain rule here is the second-coordinate orientation of the
+existing `shannonEntropy_eq_add_finiteConditionalEntropy`
+(`H (X, Y) = H (X) + H (Y | X)`), obtained by applying it to
+`p.map (Equiv.prodComm α β)`; multiplying by `Real.log 2`
+converts the bits statement to the nats convention
+`H (X, Y) = H (Y) + H (X | Y)` in nats.
 
 Source: Cover and Thomas, Elements of Information Theory (2006),
 Section 15.4.
 -/
 
+namespace InformationTheory
+
 open Finset
 open scoped Classical
 
-/-- Shannon entropy (nats) of a PMF on a finite type, with
-`0 log 0 = 0` by the real conventions. -/
-noncomputable def entropyPMF {α : Type*} [Fintype α] (p : PMF α) : ℝ :=
-  ∑ a, -(p a).toReal * Real.log (p a).toReal
+/-- **Chain rule, second-coordinate orientation**: `H (X, Y) = H (Y) + H (X | Y)`,
+in bits. This is `shannonEntropy_eq_add_finiteConditionalEntropy`
+applied to `p.map (Equiv.prodComm α β)`. -/
+theorem shannonEntropy_eq_add_finiteConditionalEntropy_snd {α β : Type*}
+    [Fintype α] [Fintype β] (p : PMF (α × β)) :
+    shannonEntropy p =
+      shannonEntropy (p.map Prod.snd) +
+        finiteConditionalEntropy (p.map (Equiv.prodComm α β)) := by
+  have h := shannonEntropy_eq_add_finiteConditionalEntropy (p.map (Equiv.prodComm α β))
+  have h1 : shannonEntropy (p.map (Equiv.prodComm α β)) = shannonEntropy p :=
+    shannonEntropy_map_equiv p (Equiv.prodComm α β)
+  have hfun : Prod.fst ∘ Equiv.prodComm α β = Prod.snd := by
+    funext ⟨a, b⟩
+    rfl
+  have h2 : (p.map (Equiv.prodComm α β)).map Prod.fst = p.map Prod.snd := by
+    rw [PMF.map_comp, hfun]
+  rw [h1, h2] at h
+  exact h
 
-/-- Conditional entropy `H (X | Y)` (nats) of a joint PMF. -/
-noncomputable def condEntropy {α β : Type*} [Fintype α] [Fintype β]
-    (p : PMF (α × β)) : ℝ :=
-  ∑ x, ∑ y, -(p (x, y)).toReal *
-    Real.log ((p (x, y)).toReal / (∑ x', (p (x', y)).toReal))
-
-/-- The second marginal of a joint PMF, written as finite sums. -/
-noncomputable def marginalSnd {α β : Type*} [Fintype α] [Fintype β]
-    (p : PMF (α × β)) : PMF β :=
-  p.map Prod.snd
-
-private theorem pmf_ne_top {α : Type*} [Fintype α] (p : PMF α) (a : α) :
-    p a ≠ Top.top := by
-  have h1 : p a ≤ 1 := PMF.coe_le_one p a
-  have h2 : (1 : ENNReal) ≠ Top.top := ne_of_lt ENNReal.one_lt_top
-  exact ne_top_of_le_ne_top h2 h1
-
-private theorem marginal_toReal {α β : Type*} [Fintype α] [Fintype β]
-    (p : PMF (α × β)) (y : β) :
-    ((marginalSnd p) y).toReal = ∑ x', (p (x', y)).toReal := by
-  unfold marginalSnd
-  rw [PMF.map_apply]
-  rw [tsum_fintype]
-  have hfin : ∀ a ∈ (Finset.univ : Finset (α × β)),
-      (if y = a.snd then p a else 0) ≠ Top.top := by
-    intro a _
-    by_cases h : y = a.snd
-    · simp [h, pmf_ne_top p a]
-    · simp [h]
-  rw [ENNReal.toReal_sum hfin]
-  rw [Fintype.sum_prod_type]
-  apply Finset.sum_congr rfl
-  intro x _
-  have h0 : ∀ y' : β, y' ∈ (Finset.univ : Finset β) → y' ≠ y →
-      (if y = (x, y').snd then p (x, y') else 0).toReal = 0 := by
-    intro y' _ hy'
-    have hsnd : (x, y').snd = y' := rfl
-    have hne : y ≠ (x, y').snd := by
-      rw [hsnd]
-      exact Ne.symm hy'
-    simp [hne, ENNReal.toReal_zero]
-  have h1 : y ∉ (Finset.univ : Finset β) →
-      (if y = (x, y).snd then p (x, y) else 0).toReal = 0 := by
-    intro hcontra
-    simp at hcontra
-  have heq := Finset.sum_eq_single (a := y) (s := (Finset.univ : Finset β))
-    (f := fun y' => (if y = (x, y').snd then p (x, y') else 0).toReal) h0 h1
-  rw [heq]
-  simp
-
-private theorem cond_term_eq {u uY : ℝ} (h : u ≠ 0 → uY ≠ 0) :
-    -u * Real.log (u / uY) = -u * Real.log u + u * Real.log uY := by
-  by_cases hu0 : u = 0
-  · simp [hu0]
-  · have huY0 : uY ≠ 0 := h hu0
-    rw [Real.log_div hu0 huY0]
-    ring
-
-private theorem chain_per_y {α β : Type*} [Fintype α] [Fintype β]
-    (p : PMF (α × β)) (y : β) :
-    (∑ x, -(p (x, y)).toReal * Real.log (p (x, y)).toReal)
-      = (-(∑ x', (p (x', y)).toReal) * Real.log (∑ x', (p (x', y)).toReal))
-        + (∑ x, -(p (x, y)).toReal *
-          Real.log ((p (x, y)).toReal / (∑ x', (p (x', y)).toReal))) := by
-  set uY : ℝ := ∑ x', (p (x', y)).toReal with huYdef
-  have hnonneg : ∀ x ∈ (Finset.univ : Finset α), 0 ≤ (p (x, y)).toReal := by
-    intro x _
-    exact ENNReal.toReal_nonneg
-  by_cases huY0 : uY = 0
-  · have hall : ∀ x ∈ (Finset.univ : Finset α), (p (x, y)).toReal = 0 := by
-      have hiff := Finset.sum_eq_zero_iff_of_nonneg (s := (Finset.univ : Finset α))
-        (f := fun x' => (p (x', y)).toReal) hnonneg
-      have huY0' : (∑ i ∈ (Finset.univ : Finset α), (p (i, y)).toReal) = 0 := by
-        simpa [huYdef] using huY0
-      exact (hiff.mp huY0')
-    have hC0 : (∑ x, -(p (x, y)).toReal * Real.log (p (x, y)).toReal) = 0 := by
-      apply Finset.sum_eq_zero
-      intro x _
-      rw [hall x (Finset.mem_univ x)]
-      simp
-    have hB0 : (∑ x, -(p (x, y)).toReal *
-        Real.log ((p (x, y)).toReal / uY)) = 0 := by
-      apply Finset.sum_eq_zero
-      intro x _
-      rw [hall x (Finset.mem_univ x)]
-      simp
-    rw [hC0, hB0]
-    have hA0 : (-uY * Real.log uY) = 0 := by
-      rw [huY0]
-      simp
-    simp [hA0]
-  · have hterm : ∀ x ∈ (Finset.univ : Finset α),
-        -(p (x, y)).toReal * Real.log ((p (x, y)).toReal / uY)
-          = -(p (x, y)).toReal * Real.log (p (x, y)).toReal
-            + (p (x, y)).toReal * Real.log uY := by
-      intro x _
-      apply cond_term_eq
-      intro _
-      exact huY0
-    have hcongr : (∑ x : α, -(p (x, y)).toReal * Real.log ((p (x, y)).toReal / uY))
-        = ∑ x : α, (-(p (x, y)).toReal * Real.log (p (x, y)).toReal
-          + (p (x, y)).toReal * Real.log uY) := by
-      apply Finset.sum_congr rfl
-      intro x _
-      exact hterm x (Finset.mem_univ x)
-    have hsum : (∑ x : α, -(p (x, y)).toReal * Real.log ((p (x, y)).toReal / uY))
-        = (∑ x : α, -(p (x, y)).toReal * Real.log (p (x, y)).toReal)
-          + (∑ x : α, (p (x, y)).toReal * Real.log uY) := by
-      rw [hcongr]
-      rw [Finset.sum_add_distrib]
-    have hmul : (∑ x : α, (p (x, y)).toReal * Real.log uY)
-        = uY * Real.log uY := by
-      have h := Finset.sum_mul (s := (Finset.univ : Finset α))
-        (f := fun x => (p (x, y)).toReal) (a := Real.log uY)
-      have hsym : (∑ i ∈ (Finset.univ : Finset α), (p (i, y)).toReal * Real.log uY)
-          = (∑ i ∈ (Finset.univ : Finset α), (p (i, y)).toReal) * Real.log uY := by
-        exact h.symm
-      simpa [huYdef] using hsym
-    have hB : (∑ x : α, -(p (x, y)).toReal * Real.log ((p (x, y)).toReal / uY))
-        = (∑ x : α, -(p (x, y)).toReal * Real.log (p (x, y)).toReal)
-          + uY * Real.log uY := by
-      rw [hsum, hmul]
-    rw [hB]
-    ring
-
-/-- Entropy chain rule: `H (X, Y) = H (Y) + H (X | Y)`. -/
-theorem entropy_chain_rule {α β : Type*} [Fintype α] [Fintype β]
-    (p : PMF (α × β)) :
-    entropyPMF p = entropyPMF (marginalSnd p) + condEntropy p := by
-  have hLHS : entropyPMF p
-      = ∑ y : β, ∑ x : α, -(p (x, y)).toReal * Real.log (p (x, y)).toReal := by
-    unfold entropyPMF
-    rw [Fintype.sum_prod_type]
-    rw [Finset.sum_comm]
-  have hRHS1 : entropyPMF (marginalSnd p)
-      = ∑ y : β, (-(∑ x', (p (x', y)).toReal)
-        * Real.log (∑ x', (p (x', y)).toReal)) := by
-    unfold entropyPMF
-    apply Finset.sum_congr rfl
-    intro y _
-    rw [marginal_toReal]
-  have hRHS2 : condEntropy p
-      = ∑ y : β, ∑ x : α, -(p (x, y)).toReal *
-        Real.log ((p (x, y)).toReal / (∑ x', (p (x', y)).toReal)) := by
-    unfold condEntropy
-    rw [Finset.sum_comm]
-  rw [hLHS, hRHS1, hRHS2]
-  rw [← Finset.sum_add_distrib]
-  apply Finset.sum_congr rfl
-  intro y _
-  exact chain_per_y p y
+/-- **Chain rule, second-coordinate orientation, in nats**: multiplying the bits
+chain rule by `Real.log 2` converts it to the nats convention. -/
+theorem shannonEntropy_mul_log_two_eq_add_finiteConditionalEntropy_snd {α β : Type*}
+    [Fintype α] [Fintype β] (p : PMF (α × β)) :
+    shannonEntropy p * Real.log 2 =
+      shannonEntropy (p.map Prod.snd) * Real.log 2 +
+        finiteConditionalEntropy (p.map (Equiv.prodComm α β)) * Real.log 2 := by
+  rw [shannonEntropy_eq_add_finiteConditionalEntropy_snd]
+  ring
 
 /-- Number of colliding pairs under a binning `b : Fin k → Fin M`. -/
 noncomputable def binCollisions {k M : ℕ} (b : Fin k → Fin M) : ℝ :=
@@ -329,3 +212,5 @@ theorem expected_bin_collisions {k M : ℕ} (hM : 0 < M) :
       rw [Nat.cast_pow, ← pow_succ, hk_eq]
     field_simp
     linear_combination (k.choose 2 : ℝ) * hAM
+
+end InformationTheory
