@@ -77,4 +77,31 @@ example (n : ℕ) {α : ℝ} (hα0 : 0 < α) (hα1 : α < 1) :
   simpa [confSetOfTests] using
     ExactTests.clopperPearson_coverage (HasLaw.id (μ := binomial n q)) hα0 hα1
 
+/-- Use: the inclusion can be equality. -/
+example {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T) {C : X → Set T} {α : ℝ}
+    (hcov : ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x}) (θ : Θ) :
+    1 - α ≤ (P θ).real {x | τ θ ∈ C x} := by
+  exact coverage_mono_of_subset P τ (fun x => Set.Subset.rfl) hcov θ
+
+/-- Use: rounding outward to the trivial set gives coverage `1`. -/
+example {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T) {C : X → Set T} {α : ℝ}
+    (hcov : ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x}) (θ : Θ) :
+    1 - α ≤ (P θ).real {x | τ θ ∈ (fun _ => Set.univ) x} := by
+  exact coverage_mono_of_subset P τ (fun x _ _ => Set.mem_univ _) hcov θ
+
+/-- Negative: a shrunken computed set can lose coverage (Bool-parameter model). -/
+example : ∃ (P : Bool → Measure ℕ) (_ : ∀ θ, IsProbabilityMeasure (P θ))
+    (τ : Bool → ℕ) (C C' : ℕ → Set ℕ) (α : ℝ),
+    (∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x})
+      ∧ ∃ θ, (P θ).real {x | τ θ ∈ C' x} < 1 - α := by
+  refine ⟨fun _ => Measure.dirac 0, fun _ => inferInstance, fun _ => 0,
+    fun _ => Set.univ, fun _ => ∅, 0, ?_, ?_⟩
+  · intro θ
+    simp [probReal_univ]
+  · exact ⟨false, by simp [measureReal_empty]⟩
+
 end MathlibExtTest.Probability.Statistics.ConfidenceSet

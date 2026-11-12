@@ -69,4 +69,16 @@ theorem coverage_of_isValidPValue {Θ X T : Type*} [MeasurableSpace X]
   rw [measureReal_def]
   exact ENNReal.toReal_le_of_le_ofReal hα.1 ((hvalid θ') α hα)
 
+/-- Coverage transfers outward along pointwise set inclusion. -/
+theorem coverage_mono_of_subset {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T) {C C' : X → Set T} (hsub : ∀ x, C x ⊆ C' x) {α : ℝ}
+    (hcov : ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x}) (θ : Θ) :
+    1 - α ≤ (P θ).real {x | τ θ ∈ C' x} := by
+  refine le_trans (hcov θ) ?_
+  refine measureReal_mono ?h ?_
+  · intro x hx
+    exact hsub x hx
+  · exact measure_ne_top _ _
+
 end MathlibExt.Probability.Statistics
