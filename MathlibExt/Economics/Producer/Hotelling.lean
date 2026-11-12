@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Envelope
+public import MathlibExt.Analysis.Calculus.DotProductGradient
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 
 /-!
@@ -29,6 +30,8 @@ of the model; no convexity of `Y` and no sign condition on prices is used.
 
 * `Economics.Producer.hasFDerivAt_profit_eq_netSupply`: Hotelling's lemma.
 * `Economics.Producer.netSupply_unique_of_hasFDerivAt`: uniqueness of the optimal net supply.
+* `Economics.Producer.hasFDerivAt_profit_eq_dotL`: the derivative of profit is `Real.dotL y₀`,
+  the repository's gradient representation on `ι → ℝ`.
 
 ## References
 
@@ -56,27 +59,14 @@ theorem hasFDerivAt_profit_eq_netSupply {ι : Type*} [Fintype ι]
     (hy₀ : y₀ ∈ Y) (hprofit : p₀ ⬝ᵥ y₀ = π p₀)
     (hdiff : HasFDerivAt π π' p₀) :
     ∀ v, π' v = y₀ ⬝ᵥ v := by
-  set L : (ι → ℝ) →L[ℝ] ℝ :=
-    ∑ i, (y₀ i) • (ContinuousLinearMap.proj i : (ι → ℝ) →L[ℝ] ℝ) with hLdef
-  have hL : ∀ p, L p = p ⬝ᵥ y₀ := by
-    intro p
-    rw [hLdef]
-    simp only [sum_apply, smul_apply, ContinuousLinearMap.proj_apply, smul_eq_mul,
-      dotProduct]
-    apply Finset.sum_congr rfl
-    intro i _
-    ring
-  have hf : HasFDerivAt (fun p => p ⬝ᵥ y₀) L p₀ :=
-    L.hasFDerivAt.congr_of_eventuallyEq
-      (Eventually.of_forall fun p => (hL p).symm)
   have hle : ∀ᶠ p in 𝓝 p₀, (fun p => p ⬝ᵥ y₀) p ≤ π p := by
     filter_upwards [hπ] with p hp
-    show p ⬝ᵥ y₀ ≤ π p
-    exact mem_upperBounds.mp hp.1 _ (Set.mem_image_of_mem _ hy₀)
-  have hder : L = π' :=
-    hasFDerivAt_eq_of_eventually_le_of_eq hle hprofit hf hdiff
+    exact hp.1 (Set.mem_image_of_mem _ hy₀)
+  have heq := Economics.hasFDerivAt_eq_of_eventually_le_of_eq hle hprofit
+    (Real.hasFDerivAt_dotProduct y₀ p₀) hdiff
   intro v
-  rw [← hder, hL v, dotProduct_comm]
+  rw [← heq, Real.dotL_apply]
+  exact dotProduct_comm _ _
 
 /-- Uniqueness of the optimal net supply under differentiability of profit:
 two profit-maximizing net supplies at `p₀` coincide when `π` is differentiable
@@ -92,5 +82,20 @@ theorem netSupply_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
   have h0 := hasFDerivAt_profit_eq_netSupply hπ hy₀ hprofit₀ hdiff
   have h1 := hasFDerivAt_profit_eq_netSupply hπ hy₁ hprofit₁ hdiff
   exact dotProduct_eq _ _ (fun u => by rw [← h0 u, ← h1 u])
+
+/-- Hotelling's lemma in canonical gradient form: the derivative of the profit
+function at `p₀` is `Real.dotL y₀`. -/
+theorem hasFDerivAt_profit_eq_dotL {ι : Type*} [Fintype ι]
+    {Y : Set (ι → ℝ)} {π : (ι → ℝ) → ℝ} {p₀ y₀ : ι → ℝ}
+    {π' : (ι → ℝ) →L[ℝ] ℝ}
+    (hπ : ∀ᶠ p in 𝓝 p₀, IsLUB ((fun y => p ⬝ᵥ y) '' Y) (π p))
+    (hy₀ : y₀ ∈ Y) (hprofit : p₀ ⬝ᵥ y₀ = π p₀)
+    (hdiff : HasFDerivAt π π' p₀) :
+    π' = Real.dotL y₀ := by
+  have h := hasFDerivAt_profit_eq_netSupply hπ hy₀ hprofit hdiff
+  apply ContinuousLinearMap.ext
+  intro v
+  rw [h v, Real.dotL_apply]
+  exact dotProduct_comm _ _
 
 end Economics.Producer

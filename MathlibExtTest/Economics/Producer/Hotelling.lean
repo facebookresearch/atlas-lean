@@ -188,3 +188,103 @@ theorem kinked_not_differentiable :
   simp at hcon
 
 end MathlibExtTest.Economics.Producer.Hotelling
+
+/-! The smooth technology again, through the canonical gradient form: the derivative of profit at
+`(1, 2)` is `Real.dotL (-1, 1)`. -/
+
+namespace MathlibExtTest.Economics.Producer.Hotelling.DotL
+
+open _root_.Economics.Producer
+
+example : (((-1 : ℝ) • ContinuousLinearMap.proj 0 + (1 : ℝ) • ContinuousLinearMap.proj 1 :
+    (Fin 2 → ℝ) →L[ℝ] ℝ)) = Real.dotL ![-1, 1] := by
+  have hπ : ∀ᶠ p in 𝓝 (![1, 2] : Fin 2 → ℝ),
+      IsLUB ((fun y => p ⬝ᵥ y) '' {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2})
+        ((p 1) ^ 2 / (4 * p 0)) := by
+    have hpos : ∀ᶠ p : Fin 2 → ℝ in 𝓝 ![1, 2], 0 < p 0 := by
+      have hopen : IsOpen {p : Fin 2 → ℝ | 0 < p 0} :=
+        isOpen_lt continuous_const (continuous_apply 0)
+      have hmem : (![1, 2] : Fin 2 → ℝ) ∈ {p : Fin 2 → ℝ | 0 < p 0} := by
+        show (0 : ℝ) < ![1, 2] 0
+        simp only [Matrix.cons_val_zero]
+        norm_num
+      exact eventually_of_mem (hopen.mem_nhds hmem) (fun p hp => hp)
+    filter_upwards [hpos] with p hp0
+    have hne : p 0 ≠ 0 := ne_of_gt hp0
+    have h4 : (4 : ℝ) * p 0 ≠ 0 := mul_ne_zero (by norm_num) hne
+    have h2 : (2 : ℝ) * p 0 ≠ 0 := mul_ne_zero (by norm_num) hne
+    set ystar : Fin 2 → ℝ := ![-(p 1 / (2 * p 0)) ^ 2, p 1 / (2 * p 0)] with hystar
+    have hystar_mem : ystar ∈ {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2} := by
+      show ystar 0 ≤ -(ystar 1) ^ 2
+      simp only [hystar, Matrix.cons_val_zero, Matrix.cons_val_one]
+      exact le_refl _
+    have hub : ∀ y ∈ {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2},
+        p ⬝ᵥ y ≤ (p 1) ^ 2 / (4 * p 0) := by
+      intro y hy
+      have hy' : y 0 ≤ -(y 1) ^ 2 := hy
+      have hdecomp : (p 1) ^ 2 / (4 * p 0) - (p 0 * y 0 + p 1 * y 1)
+          = (2 * p 0 * y 1 - p 1) ^ 2 / (4 * p 0) + p 0 * (-(y 1) ^ 2 - y 0) := by
+        field_simp
+        ring
+      have hnn1 : 0 ≤ (2 * p 0 * y 1 - p 1) ^ 2 / (4 * p 0) :=
+        div_nonneg (sq_nonneg _) (by positivity)
+      have hnn2 : 0 ≤ p 0 * (-(y 1) ^ 2 - y 0) :=
+        mul_nonneg (le_of_lt hp0) (sub_nonneg.mpr hy')
+      have hnn := add_nonneg hnn1 hnn2
+      simp only [dotProduct, Fin.sum_univ_two]
+      linarith
+    have hval : p ⬝ᵥ ystar = (p 1) ^ 2 / (4 * p 0) := by
+      simp only [dotProduct, Fin.sum_univ_two, hystar, Matrix.cons_val_zero,
+        Matrix.cons_val_one]
+      field_simp
+      ring
+    have hmax : IsGreatest ((fun y => p ⬝ᵥ y) '' {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2})
+        (p ⬝ᵥ ystar) := by
+      refine ⟨Set.mem_image_of_mem _ hystar_mem, ?_⟩
+      intro x hx
+      obtain ⟨y, hyY, rfl⟩ := hx
+      rw [hval]
+      exact hub y hyY
+    have hlub := hmax.isLUB
+    rwa [hval] at hlub
+  have hy₀ : (![-1, 1] : Fin 2 → ℝ) ∈ {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2} := by
+    show (![-1, 1] : Fin 2 → ℝ) 0 ≤ -((![-1, 1] : Fin 2 → ℝ) 1) ^ 2
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+  have hprofit : (![1, 2] : Fin 2 → ℝ) ⬝ᵥ ![-1, 1]
+      = ((![1, 2] : Fin 2 → ℝ) 1) ^ 2 / (4 * (![1, 2] : Fin 2 → ℝ) 0) := by
+    simp only [dotProduct, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+  have hdiff : HasFDerivAt (fun p : Fin 2 → ℝ => (p 1) ^ 2 / (4 * p 0))
+      (((-1 : ℝ) • ContinuousLinearMap.proj 0 + (1 : ℝ) • ContinuousLinearMap.proj 1 :
+        (Fin 2 → ℝ) →L[ℝ] ℝ)) ![1, 2] := by
+    have h1 : HasFDerivAt (fun p : Fin 2 → ℝ => p 1)
+        (ContinuousLinearMap.proj 1 : (Fin 2 → ℝ) →L[ℝ] ℝ) ![1, 2] := by
+      refine HasFDerivAt.congr_of_eventuallyEq
+        ((ContinuousLinearMap.proj 1 : (Fin 2 → ℝ) →L[ℝ] ℝ)).hasFDerivAt ?_
+      exact Eventually.of_forall (fun p => (ContinuousLinearMap.proj_apply 1 p).symm)
+    have h0 : HasFDerivAt (fun p : Fin 2 → ℝ => p 0)
+        (ContinuousLinearMap.proj 0 : (Fin 2 → ℝ) →L[ℝ] ℝ) ![1, 2] := by
+      refine HasFDerivAt.congr_of_eventuallyEq
+        ((ContinuousLinearMap.proj 0 : (Fin 2 → ℝ) →L[ℝ] ℝ)).hasFDerivAt ?_
+      exact Eventually.of_forall (fun p => (ContinuousLinearMap.proj_apply 0 p).symm)
+    have h1sq := h1.mul h1
+    have h4 := h0.const_mul 4
+    have hne : (4 : ℝ) * (![1, 2] : Fin 2 → ℝ) 0 ≠ 0 := by
+      simp only [Matrix.cons_val_zero]
+      norm_num
+    have hinv := HasFDerivAt.comp ![1, 2] (hasFDerivAt_inv hne) h4
+    have hcomb := h1sq.mul hinv
+    refine HasFDerivAt.congr_of_eventuallyEq (hcomb.congr_fderiv ?hder) ?hEq
+    · ext v
+      simp only [add_apply, smul_apply,
+        ContinuousLinearMap.comp_apply, ContinuousLinearMap.proj_apply,
+        ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul, Pi.mul_apply,
+        Function.comp_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
+      norm_num
+      ring
+    · exact Eventually.of_forall (fun p => by
+        simp only [Pi.mul_apply, Function.comp_apply, div_eq_mul_inv, pow_two])
+  exact hasFDerivAt_profit_eq_dotL hπ hy₀ hprofit hdiff
+
+end MathlibExtTest.Economics.Producer.Hotelling.DotL
