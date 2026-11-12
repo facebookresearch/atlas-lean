@@ -10,7 +10,6 @@ module
 
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
-public import Mathlib.Topology.Algebra.Monoid
 public import Mathlib.Topology.Algebra.Order.Field
 public import Mathlib.Topology.Order.IntermediateValue
 
@@ -30,8 +29,8 @@ uniqueness. Without the sign pattern a project can have several internal rates (
 
 ## ii. Main results
 
-* `Economics.Finance.strictAntiOn_npv`
-* `Economics.Finance.existsUnique_isIRR`
+* `MathlibExt.Economics.Finance.InternalRateOfReturn.strictAntiOn_npv`
+* `MathlibExt.Economics.Finance.InternalRateOfReturn.existsUnique_isIRR`
 
 ## iii. References
 
@@ -40,7 +39,7 @@ uniqueness. Without the sign pattern a project can have several internal rates (
 
 @[expose] public section
 
-namespace Economics.Finance
+namespace MathlibExt.Economics.Finance.InternalRateOfReturn
 
 /-- Net present value at rate `r` of the dated cash flows `c 0, c 1, …, c N` (`c k` arrives at
 the end of period `k`; `c 0` is today): `∑ k ∈ range (N + 1), c k / (1 + r) ^ k`. Meaningful
@@ -223,4 +222,4 @@ theorem existsUnique_isIRR {c : ℕ → ℝ} {N : ℕ} (h0 : c 0 < 0)
   have heq : npv c N r = npv c N s := by rw [hr.2, hs.2]
   exact (hinj hrmem hsmem heq).symm
 
-end Economics.Finance
+end MathlibExt.Economics.Finance.InternalRateOfReturn

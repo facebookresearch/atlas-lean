@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Finance.InternalRateOfReturn
+import Mathlib.Topology.Algebra.Monoid
 
 /-!
 # Tests for the internal rate of return
@@ -21,7 +22,7 @@ The flows `(-100, 110)` have the unique internal rate `1/10`; the non-convention
 
 namespace MathlibExtTest.Economics.Finance.InternalRateOfReturn
 
-open _root_.Economics.Finance
+open _root_.MathlibExt.Economics.Finance.InternalRateOfReturn
 
 def c1 : ℕ → ℝ := fun k => if k = 0 then -100 else 110
 
