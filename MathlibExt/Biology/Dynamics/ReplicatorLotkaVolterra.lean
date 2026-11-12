@@ -102,8 +102,8 @@ replicator solution for all time, but this is not proved here).
 ## Source receipt
 
 Statement source: J. Hofbauer and K. Sigmund, *Evolutionary Games and Population Dynamics*
-(1998), §7.5, Theorem 7.5.1 (theorem number not checked against the book; paraphrased, not
-quoted): there is a differentiable, invertible map from `{x ∈ S_n : x_n > 0}` onto
+(1998), §7.5 (paraphrased, not quoted): there is a differentiable, invertible map from
+`{x ∈ S_n : x_n > 0}` onto
 `ℝ^{n-1}_+` sending orbits of the replicator equation of the `n × n` game `(a_ij)` to orbits of
 the Lotka–Volterra equation with `r_i = a_in - a_nn` and interaction matrix `a_ij - a_nj`; the
 proof uses `y_i = x_i / x_n` and the time change `dτ = x_n dt`. Here the reference strategy
