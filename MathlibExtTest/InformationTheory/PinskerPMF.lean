@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.InformationTheory.Pinsker
 public import MathlibExt.InformationTheory.PinskerPMF
 
 @[expose] public section
@@ -69,7 +70,7 @@ theorem toReal_klDiv_pure_fair :
 
 /-- Pinsker on the concrete pair: `1 ≤ 2 KL`, with the right side finite. -/
 example : ENNReal.ofReal 1 ≤ 2 * klDiv (PMF.pure true).toMeasure fair.toMeasure := by
-  have h := pinsker_pmf (PMF.pure true) fair
+  have h := InformationTheory.pinsker_pmf (PMF.pure true) fair
   rwa [l1_pure_fair, one_pow] at h
 
 /-! ### Not absolutely continuous, infinite divergence
@@ -90,7 +91,7 @@ theorem klDiv_fair_pure : klDiv fair.toMeasure (PMF.pure true).toMeasure = ∞ :
 
 /-- Pinsker on the concrete pair holds because the right side is `∞`. -/
 example : ENNReal.ofReal 1 ≤ 2 * klDiv fair.toMeasure (PMF.pure true).toMeasure := by
-  have h := pinsker_pmf fair (PMF.pure true)
+  have h := InformationTheory.pinsker_pmf fair (PMF.pure true)
   rwa [l1_fair_pure, one_pow] at h
 
 /-- The `toReal` form of Pinsker is false on this pair, which is why `pinsker_pmf` is stated in
@@ -100,5 +101,28 @@ example :
       2 * (klDiv fair.toMeasure (PMF.pure true).toMeasure).toReal := by
   rw [l1_fair_pure, klDiv_fair_pure]
   norm_num
+
+/-! ### Shared real-valued API -/
+
+/-- The real theorem allows a common zero coordinate and a zero numerator. -/
+example : (1 : ℝ) ≤ 2 * log 2 := by
+  let p : Fin 3 → ℝ := ![1, 0, 0]
+  let q : Fin 3 → ℝ := ![1 / 2, 1 / 2, 0]
+  have h := MathlibExt.InformationTheory.Pinsker.csiszar_kullback_pinsker_of_support p q
+    (by intro a; fin_cases a <;> norm_num [p])
+    (by intro a; fin_cases a <;> norm_num [q])
+    (by norm_num [p, Fin.sum_univ_succ])
+    (by norm_num [q, Fin.sum_univ_succ])
+    (by intro a; fin_cases a <;> norm_num [p, q])
+  norm_num [p, q, Fin.sum_univ_succ] at h ⊢
+  exact h
+
+/-- The strict-positive public signature is preserved as a corollary. -/
+example {α : Type*} [Fintype α] [Nonempty α] (p q : α → ℝ)
+    (hp : ∀ a, 0 < p a) (hq : ∀ a, 0 < q a)
+    (hp_sum : ∑ a, p a = 1) (hq_sum : ∑ a, q a = 1) :
+    (∑ a, |p a - q a|) ^ 2 ≤ 2 * ∑ a, p a * log (p a / q a) :=
+  MathlibExt.InformationTheory.Pinsker.csiszar_kullback_pinsker
+    p q hp hq hp_sum hq_sum
 
 end MathlibExtTest.InformationTheory.PinskerPMF
