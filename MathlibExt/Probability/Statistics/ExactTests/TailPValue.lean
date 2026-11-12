@@ -37,7 +37,8 @@ is why discrete exact tests are conservative.
 * `lowerTail_mono`: the lower tail is monotone in the cutoff.
 * `isValidPValue_lowerTailPValue`: if `X` has law `ν`, the lower-tail p-value is valid.
 
-The two-sided and composite-null binomial mirrors live in `ExactTests.BinomialTest`.
+The composite-null binomial mirrors live in `ExactTests.BinomialTest`; the two-sided
+binomial development is the Clopper–Pearson interval in `ExactTests.ClopperPearson`.
 
 ## References
 

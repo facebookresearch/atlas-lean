@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
-public import MathlibExt.Probability.Statistics.ExactTests.ClopperPearson
+public import MathlibExt.Probability.Statistics.ExactTests.BinomialTest
 public import MathlibExt.Probability.Distributions.Hypergeometric
 public import Mathlib.Probability.Distributions.Binomial
 public import Mathlib.Topology.UnitInterval
