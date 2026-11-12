@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S03AiryIsostasy
+import PhyslibExt.EarthScience.AiryIsostasy
 
 /-!
 # Airy isostasy checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S03AiryIsostasy`:
+Concrete consumers of `PhyslibExt.EarthScience.AiryIsostasy`:
 `ρc = 2700`, `ρm = 3300`, `h = 1000` (so the root is `4500`), plus the
 zero-relief boundary.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S03AiryIsostasy`
+- `PhyslibExt.EarthScience.AiryIsostasy`
 -/
 
 /-- Numeric Airy root: `2700 * 1000 / (3300 - 2700) = 4500`. -/
