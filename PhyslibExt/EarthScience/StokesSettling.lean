@@ -16,7 +16,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 
 /-!
-# Stokes settling (H07)
+# Stokes settling
 
 ## i. Overview
 
@@ -30,10 +30,10 @@ proof is available.
 
 ## ii. Key results
 
-- `EarthScience.h07_terminal_velocity`: force balance implies the terminal velocity formula.
-- `EarthScience.h07_terminal_velocity_balances`: the formula velocity satisfies the force balance.
-- `EarthScience.h07_neutral_buoyancy`: equal densities give zero velocity.
-- `EarthScience.h07_buoyant_rises`: `rho_s < rho_f` gives negative (rising) velocity.
+- `EarthScience.terminal_velocity`: force balance implies the terminal velocity formula.
+- `EarthScience.terminal_velocity_balances`: the formula velocity satisfies the force balance.
+- `EarthScience.neutral_buoyancy`: equal densities give zero velocity.
+- `EarthScience.buoyant_rises`: `rho_s < rho_f` gives negative (rising) velocity.
 
 ## iii. Table of contents
 
@@ -54,7 +54,7 @@ set_option linter.unusedVariables false in
 `6*pi*eta*a*v` against the stipulated spherical buoyant weight
 `(4/3)*pi*a^3*(rho_s - rho_f)*g`, then
 `v = 2*(rho_s - rho_f)*g*a^2/(9*eta)`. -/
-theorem h07_terminal_velocity {a η g ρs ρf v : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g)
+theorem terminal_velocity {a η g ρs ρf v : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g)
     (h : 6 * Real.pi * η * a * v = (4 / 3) * Real.pi * a ^ 3 * (ρs - ρf) * g) :
     v = 2 * (ρs - ρf) * g * a ^ 2 / (9 * η) := by
   have hpi : Real.pi ≠ 0 := ne_of_gt Real.pi_pos
@@ -71,7 +71,7 @@ theorem h07_terminal_velocity {a η g ρs ρf v : ℝ} (ha : 0 < a) (hη : 0 < �
 
 set_option linter.unusedVariables false in
 /-- Stokes settling: the formula velocity satisfies the force balance. -/
-theorem h07_terminal_velocity_balances {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g) :
+theorem terminal_velocity_balances {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g) :
     6 * Real.pi * η * a * (2 * (ρs - ρf) * g * a ^ 2 / (9 * η))
       = (4 / 3) * Real.pi * a ^ 3 * (ρs - ρf) * g := by
   have h9 : (9 : ℝ) * η ≠ 0 := mul_ne_zero (by norm_num) (ne_of_gt hη)
@@ -80,13 +80,13 @@ theorem h07_terminal_velocity_balances {a η g ρs ρf : ℝ} (ha : 0 < a) (hη 
 
 set_option linter.unusedVariables false in
 /-- Neutral buoyancy: equal densities give zero terminal velocity. -/
-theorem h07_neutral_buoyancy {a η g ρ : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g) :
+theorem neutral_buoyancy {a η g ρ : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g) :
     2 * (ρ - ρ) * g * a ^ 2 / (9 * η) = 0 := by
   simp
 
 /-- Upward buoyant particle: if `rho_s < rho_f` the terminal velocity
 is negative (rises). -/
-theorem h07_buoyant_rises {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g)
+theorem buoyant_rises {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g)
     (h : ρs < ρf) :
     2 * (ρs - ρf) * g * a ^ 2 / (9 * η) < 0 := by
   have h1 : ρs - ρf < 0 := sub_neg.mpr h
