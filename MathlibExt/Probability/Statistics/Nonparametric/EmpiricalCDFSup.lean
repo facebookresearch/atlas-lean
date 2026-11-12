@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Topology.ContinuousMap.Basic
+public import MathlibExt.Probability.Statistics.Nonparametric.EmpiricalCDFPointwise
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.MeasureTheory.MeasurableSpace.Basic
 public import Mathlib.Order.Bounds.Basic
@@ -21,23 +22,6 @@ open Filter Topology MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory
-
-/-- Empirical CDF over a `Fin n` sample with the `/n` normalization.
-(Duplicate of the sibling ML-43.s2 spelling; the two modules are adapted on
-independent branches and neither imports the other. Dedupe by stacking this
-branch on the s2 branch, or by importing the s2 module once it lands, at PR
-time; the statements are byte-identical so the swap is mechanical.) -/
-noncomputable def empCDF {n : ℕ} (X : Fin n → ℝ) (t : ℝ) : ℝ :=
-  ((Finset.univ.filter (fun i => X i ≤ t)).card : ℝ) / (n : ℝ)
-
-/-- Helper: sum-of-indicators form of the empirical CDF. -/
-theorem empCDF_eq_sum {n : ℕ} (Y : Fin n → ℝ) (t : ℝ) :
-    empCDF Y t = (∑ i ∈ Finset.univ, (if Y i ≤ t then (1 : ℝ) else 0)) / (n : ℝ) := by
-  simp only [empCDF, Finset.card_filter, Nat.cast_sum]
-  congr 1
-  apply Finset.sum_congr rfl
-  intro i _
-  by_cases h : Y i ≤ t <;> simp [h]
 
 /-- Finite-sample empirical CDFs are right-continuous step functions. -/
 theorem empCDF_rightContinuous {n : ℕ}
@@ -145,7 +129,7 @@ theorem measurableSet_uniform_deviation {n : ℕ} (hn : 0 < n)
     have heq : (fun ω => empCDF (fun i => X i ω) (q : ℝ))
         = fun ω => (∑ i ∈ Finset.univ, (if X i ω ≤ (q : ℝ) then (1 : ℝ) else 0)) / (n : ℝ) := by
       funext ω
-      exact empCDF_eq_sum _ _
+      exact empCDF_eq_sum_div _ _
     rw [heq]
     exact hsum.div_const _
   have hsub : Measurable (fun ω => empCDF (fun i => X i ω) (q : ℝ) - F (q : ℝ)) :=
