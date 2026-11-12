@@ -62,6 +62,9 @@ GWAS p-values) satisfies it.
 
 * `bhIndex_le_numBelow`, `le_bhIndex`: `bhIndex q p` is the largest qualifying `k`.
 * `card_bhRejections`: BH at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses.
+* `measurable_numBelow`, `measurable_bhIndex`,
+  `measurable_falseDiscoveryProportion_bhRejections`: for measurable p-values, the count below a
+  threshold, the BH index and the false discovery proportion of the BH rejections are measurable.
 * `integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue`: `E[FDP] ≤ q |H0| / m`
   for independent p-values whose true-null p-values are valid (super-uniform)
   (Benjamini–Hochberg 1995, Theorem 1).
@@ -203,7 +206,8 @@ private theorem bh_leave_one_out {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m
     have heq := bhIndex_update_eq hq p i (by simpa [hk] using hpi)
     exact ⟨by simpa [heq, hk] using hpi, heq.trans hk⟩
 
-private theorem measurable_numBelow {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
+/-- The number of measurable p-values below a fixed threshold is a measurable function. -/
+theorem measurable_numBelow {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (t : ℝ) :
     Measurable (fun ω => numBelow (fun i => p i ω) t) := by
   classical
@@ -211,7 +215,8 @@ private theorem measurable_numBelow {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   exact Finset.measurable_sum _ fun i _ => Measurable.ite
     (measurableSet_le (hp i) measurable_const) measurable_const measurable_const
 
-private theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
+/-- The BH step-up index as a finite supremum, the form used to prove measurability. -/
+theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
     bhIndex q p = (Finset.range (m + 1)).sup
       (fun k => if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0) := by
   classical
@@ -226,7 +231,8 @@ private theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
     · exact le_bhIndex (Nat.le_of_lt_succ (Finset.mem_range.mp hk)) h
     · exact Nat.zero_le _
 
-private theorem measurable_bhIndex {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
+/-- The BH step-up index of measurable p-values is a measurable function. -/
+theorem measurable_bhIndex {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (q : ℝ) :
     Measurable (fun ω => bhIndex q (fun i => p i ω)) := by
   classical
@@ -241,6 +247,33 @@ private theorem measurable_bhIndex {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
       exact (Measurable.ite (measurableSet_le measurable_const
         (measurable_numBelow p hp _)) measurable_const measurable_const).max ih
   exact h _
+
+/-- The false discovery proportion of the BH rejection set is a measurable function of
+measurable p-values. -/
+theorem measurable_falseDiscoveryProportion_bhRejections {Ω : Type*} [MeasurableSpace Ω]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) (q : ℝ) :
+    Measurable fun ω => falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) := by
+  classical
+  have hK : Measurable fun ω => q * (bhIndex q (fun i => p i ω) : ℝ) / m :=
+    (measurable_const.mul (measurable_from_nat.comp (measurable_bhIndex p hp q))).div_const _
+  have hE (i : Fin m) : MeasurableSet {ω | p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m} :=
+    measurableSet_le (hp i) hK
+  have hcount (s : Finset (Fin m)) : Measurable fun ω =>
+      ((s.filter fun i => p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) := by
+    simp_rw [Finset.natCast_card_filter]
+    exact Finset.measurable_sum _ fun i _ =>
+      Measurable.ite (hE i) measurable_const measurable_const
+  have heq : (fun ω => falseDiscoveryProportion H0 (bhRejections q fun i => p i ω)) =
+      fun ω => ((H0.filter fun i => p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) /
+        max ((Finset.univ.filter fun i => p i ω ≤
+          q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) 1 := by
+    funext ω
+    unfold falseDiscoveryProportion bhRejections
+    congr 3
+    ext i
+    simp [and_comm]
+  rw [heq]
+  exact (hcount H0).div ((hcount Finset.univ).max measurable_const)
 
 private theorem indep_bhIndex_update {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
