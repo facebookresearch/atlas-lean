@@ -16,7 +16,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Nonlinear feedback: local attractivity (K06)
+# Nonlinear feedback: local attractivity
 
 ## i. Overview
 
@@ -30,10 +30,10 @@ climate threshold, and discontinuous albedo needs piecewise analysis.
 
 ## ii. Key results
 
-- `EarthScience.k06_local_sign`: negative derivative gives the local sign condition.
-- `EarthScience.k06_lyapunov_decay`: Lyapunov decay along solutions.
-- `EarthScience.k06_linear_witness`: linear attracting model satisfies the sign condition.
-- `EarthScience.k06_unstable_witness`: linear repelling model violates it.
+- `EarthScience.local_sign`: negative derivative gives the local sign condition.
+- `EarthScience.lyapunov_decay`: Lyapunov decay along solutions.
+- `EarthScience.linear_witness`: linear attracting model satisfies the sign condition.
+- `EarthScience.unstable_witness`: linear repelling model violates it.
 
 ## iii. Table of contents
 
@@ -55,7 +55,7 @@ open Set
 `F` is differentiable, and `deriv F < 0` on a punctured neighbourhood
 `(T* - δ, T* + δ)`, then `(T - T*) * F(T) < 0` for `T ≠ T*` in it.
 Proved via the mean value theorem. -/
-theorem k06_local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
+theorem local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
     (hF : F Tstar = 0)
     (hdiff : ∀ T ∈ Set.Ioo (Tstar - δ) (Tstar + δ), DifferentiableAt ℝ F T)
     (hneg : ∀ T ∈ Set.Ioo (Tstar - δ) (Tstar + δ), deriv F T < 0)
@@ -134,7 +134,7 @@ theorem k06_local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
 sign condition holds at `T t ≠ Tstar`, then
 `V(t) = (T t - Tstar)^2 / 2` has derivative
 `(T t - Tstar) * F(T t) / C < 0`. -/
-theorem k06_lyapunov_decay {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C)
+theorem lyapunov_decay {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C)
     (T : ℝ → ℝ) (t : ℝ) (hne : T t ≠ Tstar)
     (hODE : HasDerivAt T (F (T t) / C) t)
     (hsign : (T t - Tstar) * F (T t) < 0) :
@@ -155,7 +155,7 @@ theorem k06_lyapunov_decay {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C)
 
 /-- Linear model witness: for `F(T) = -k*(T - Tstar)` with `k > 0`,
 the sign condition holds for every `T ≠ Tstar`. -/
-theorem k06_linear_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
+theorem linear_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
     (T - Tstar) * (-k * (T - Tstar)) < 0 := by
   have hd : T - Tstar ≠ 0 := sub_ne_zero.mpr hne
   have hsq : 0 < (T - Tstar) ^ 2 := sq_pos_of_ne_zero hd
@@ -166,7 +166,7 @@ theorem k06_linear_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
 
 /-- Unstable branch witness: for `F(T) = k*(T - Tstar)` with `k > 0`,
 the product is positive for `T ≠ Tstar` (repelling, not attracting). -/
-theorem k06_unstable_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
+theorem unstable_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
     0 < (T - Tstar) * (k * (T - Tstar)) := by
   have hd : T - Tstar ≠ 0 := sub_ne_zero.mpr hne
   have hsq : 0 < (T - Tstar) ^ 2 := sq_pos_of_ne_zero hd
