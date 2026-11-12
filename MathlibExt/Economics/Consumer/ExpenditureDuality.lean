@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
+public import MathlibExt.Economics.Consumer.LocalNonsatiation
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Topology.Algebra.Ring.Real
 
@@ -35,7 +36,8 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 * `Economics.Consumer.IsMarshallianDemand`: an affordable utility maximizer.
 * `Economics.Consumer.indirectUtility`: `v(p, w) = sup {u x | x ∈ B(p, w)}`.
 * `Economics.Consumer.expenditure`: `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`.
-* `Economics.Consumer.LocallyNonsatiated`: local nonsatiation of `u` on `X`.
+* `Economics.Consumer.LocallyNonsatiated`: local nonsatiation of `u` on `X`, an alias of
+  `MathlibExt.Economics.Consumer.LocallyNonsatiated`.
 
 ## Main results
 
@@ -81,12 +83,9 @@ noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → �
     (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
   sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})
 
-/-- Local nonsatiation of `u` on `X`: every neighborhood of every bundle in `X`
-contains a bundle in `X` with strictly higher utility. Distance is the sup
-distance on `ι → ℝ`. -/
-def LocallyNonsatiated {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
-    (X : Set (ι → ℝ)) : Prop :=
-  ∀ x ∈ X, ∀ ε > 0, ∃ y ∈ X, dist y x < ε ∧ u x < u y
+/- Local nonsatiation is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
+name `Economics.Consumer.LocallyNonsatiated` resolving to that same constant. -/
+export MathlibExt.Economics.Consumer (LocallyNonsatiated)
 
 /-- Under attainment, the indirect utility is the utility of the demanded
 bundle. -/
