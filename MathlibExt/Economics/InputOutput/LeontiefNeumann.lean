@@ -8,10 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Matrix.Normed
-public import Mathlib.Analysis.SpecificLimits.Normed
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Topology.MetricSpace.Basic
+import Mathlib.Analysis.Matrix.Normed
+import Mathlib.Analysis.SpecificLimits.Normed
 
 @[expose] public section
 
@@ -29,6 +31,19 @@ The statements use only the standard topology on matrices; the `ℓ∞` operator
 activated locally in the proofs. `Matrix.inv_one_sub_nonneg` gives nonnegativity under the
 weaker hypothesis that the spectral radius is below `1`. A row sum equal to `1` (a closed
 production loop) can make `1 - A` singular.
+
+Orientation: `A i j` is the input of sector `i` per unit of sector `j`'s output (the usual
+technical-coefficient convention), and the bound is on row sums `∑ j, A i j`. The common
+column-sum condition `∑ i, A i j < 1` is the same statement for `Aᵀ`, since
+`(1 - Aᵀ)⁻¹ = ((1 - A)⁻¹)ᵀ`.
+
+## References
+
+* R. E. Miller, P. D. Blair, *Input-Output Analysis: Foundations and Extensions*, 2nd ed.,
+  Cambridge University Press (2009), Chapter 2 (the Leontief inverse and its power-series
+  approximation `I + A + A² + ⋯`).
+* R. A. Horn, C. R. Johnson, *Matrix Analysis*, 2nd ed., Cambridge University Press (2013),
+  Section 5.6 (convergent Neumann series when a matrix norm of `A` is below `1`).
 
 ## Main results
 
