@@ -35,6 +35,14 @@ can have negative entries.
 * `MathlibExt.Economics.InputOutput.grossOutput_mono`
 * `MathlibExt.Economics.InputOutput.grossOutput_mono_of_rowSum_lt_one`
 
+## References
+
+* R. E. Miller, P. D. Blair, *Input-Output Analysis: Foundations and Extensions*, 2nd ed.,
+  Cambridge University Press (2009), Chapter 2 (`x = (I - A)⁻¹ f` with a nonnegative Leontief
+  inverse).
+* D. Hawkins, H. A. Simon, "Note: Some Conditions of Macroeconomic Stability",
+  Econometrica 17 (1949), 245–248.
+
 Atlas roadmap target AP06.T03.
 -/
 
