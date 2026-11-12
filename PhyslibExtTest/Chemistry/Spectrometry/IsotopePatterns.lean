@@ -215,7 +215,7 @@ def p13C : ℚ :=
 
 /-! Six carbon atoms (benzene, C₆H₆). The exact ratio is `6 p / (1 - p) = 66 / 989 ≈ 0.0667`. -/
 
-example : mPlusOneRatio p13C 6 = 66 / 989 := by
+example : mPlusOneRatio p13C (by norm_num [p13C]) 6 = 66 / 989 := by
   rw [mPlusOneRatio_eq (by norm_num [p13C])]
   norm_num [p13C]
 
@@ -230,16 +230,16 @@ example (n : ℕ) : mPlusOneFirstOrder p13C n = n * (1.1 / 100) := by
 /-! The two differ by the second-order remainder `6 p ^ 2 / (1 - p)`, so the first-order value is
 strictly smaller. -/
 
-example : mPlusOneRatio p13C 6 - mPlusOneFirstOrder p13C 6 = 6 * p13C ^ 2 / (1 - p13C) := by
+example : mPlusOneRatio p13C (by norm_num [p13C]) 6 - mPlusOneFirstOrder p13C 6 = 6 * p13C ^ 2 / (1 - p13C) := by
   rw [mPlusOneRatio_eq_firstOrder_add (by norm_num [p13C])]
   push_cast
   ring
 
-example : mPlusOneFirstOrder p13C 6 < mPlusOneRatio p13C 6 := by
+example : mPlusOneFirstOrder p13C 6 < mPlusOneRatio p13C (by norm_num [p13C]) 6 := by
   rw [mPlusOneRatio_eq (by norm_num [p13C])]
   norm_num [mPlusOneFirstOrder, p13C]
 
-example : mPlusOneFirstOrder p13C 6 ≤ mPlusOneRatio p13C 6 :=
+example : mPlusOneFirstOrder p13C 6 ≤ mPlusOneRatio p13C (by norm_num [p13C]) 6 :=
   mPlusOneFirstOrder_le_mPlusOneRatio (by norm_num [p13C]) 6
 
 /-! The binomial form: the `M + 1` and `M` peaks of six carbon atoms. -/
@@ -247,8 +247,15 @@ example : mPlusOneFirstOrder p13C 6 ≤ mPlusOneRatio p13C 6 :=
 example : (twoIsotopePattern (1 - p13C) p13C 1 6).coeff 1 = 6 * (1 - p13C) ^ 5 * p13C := by
   simpa using coeff_twoIsotopePattern_mul (1 - p13C) p13C one_pos 6 1
 
-example : mPlusOneRatio p13C 6 = 6 * p13C * (1 - p13C) ^ 5 / (1 - p13C) ^ 6 := by
-  simpa using mPlusOneRatio_eq_choose p13C 6
+example : mPlusOneRatio p13C (by norm_num [p13C]) 6 = 6 * p13C * (1 - p13C) ^ 5 / (1 - p13C) ^ 6 := by
+  simpa using mPlusOneRatio_eq_choose p13C (by norm_num [p13C]) 6
+
+/-! Boundary: at `p = 1` the monoisotopic coefficient is `0`, so the `(M+1)/M` ratio
+is undefined there. That is why `mPlusOneRatio` takes a proof of `p ≠ 1`. -/
+
+example : (twoIsotopePattern (1 - (1 : ℚ)) 1 1 1).coeff 0 = 0 := by
+  have h := coeff_twoIsotopePattern_mul (1 - (1 : ℚ)) 1 one_pos 1 0
+  simpa using h
 
 /-!
 

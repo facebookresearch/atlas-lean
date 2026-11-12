@@ -18,8 +18,10 @@ import Mathlib.Tactic.FieldSimp
 # Mass spectrometry and isotope patterns
 
 Nominal isotope patterns are coefficients of products of polynomials, exact-mass spectra are
-convolutions of finite mass distributions, and the nitrogen rule holds in an explicit valence
-model of neutral molecules.
+convolutions of finite mass distributions, and the nitrogen rule holds in an explicit
+common-valence bond-graph model. The bond graph records only elements and bond orders, so
+this is a common-valence bond-graph result, not a claim about neutrality: charge and unpaired
+electrons are not encoded.
 
 ## i. Overview
 
@@ -473,14 +475,17 @@ theorem coeff_twoIsotopePattern_of_not_dvd {R : Type*} [CommSemiring R] (a b : R
 
 /-- The exact `(M+1)/M` ratio of `n` carbon atoms whose heavy isotope ¹³C has fractional
 abundance `p`. It is the ratio of the `X ^ 1` and `X ^ 0` coefficients of `((1 - p) + p X) ^ n`.
-Only the carbon atoms are modeled. -/
-noncomputable def mPlusOneRatio {K : Type*} [Field K] (p : K) (n : ℕ) : K :=
+Only the carbon atoms are modeled. The proof argument `hp : p ≠ 1` guards the zero
+denominator: at `p = 1` the monoisotopic coefficient is `0` (see the boundary test in
+`PhyslibExtTest`), so the ratio is undefined there and the definition cannot be called
+without excluding that case, exactly as `resolution` takes a proof of `Δm ≠ 0`. -/
+noncomputable def mPlusOneRatio {K : Type*} [Field K] (p : K) (_hp : p ≠ 1) (n : ℕ) : K :=
   (twoIsotopePattern (1 - p) p 1 n).coeff 1 / (twoIsotopePattern (1 - p) p 1 n).coeff 0
 
 /-- The binomial form `C(n, 1) p (1 - p) ^ (n - 1) / (1 - p) ^ n` of the exact `(M+1)/M`
 ratio. -/
-theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (n : ℕ) :
-    mPlusOneRatio p n = n.choose 1 * p * (1 - p) ^ (n - 1) / (1 - p) ^ n := by
+theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (hp : p ≠ 1) (n : ℕ) :
+    mPlusOneRatio p hp n = n.choose 1 * p * (1 - p) ^ (n - 1) / (1 - p) ^ n := by
   have h1 := coeff_twoIsotopePattern_mul (1 - p) p one_pos n 1
   have h0 := coeff_twoIsotopePattern_mul (1 - p) p one_pos n 0
   rw [one_mul] at h1
@@ -492,7 +497,7 @@ theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (n : ℕ) :
 
 /-- For `p ≠ 1`, the exact `(M+1)/M` ratio of `n` carbon atoms is `n p / (1 - p)`. -/
 theorem mPlusOneRatio_eq {K : Type*} [Field K] {p : K} (hp : p ≠ 1) (n : ℕ) :
-    mPlusOneRatio p n = n * p / (1 - p) := by
+    mPlusOneRatio p hp n = n * p / (1 - p) := by
   have h : 1 - p ≠ 0 := sub_ne_zero.2 hp.symm
   rw [mPlusOneRatio_eq_choose, Nat.choose_one_right]
   rcases n with _ | n
@@ -507,7 +512,7 @@ def mPlusOneFirstOrder {K : Type*} [Field K] (p : K) (n : ℕ) : K :=
 /-- For `p ≠ 1`, the exact `(M+1)/M` ratio is the first-order value `n p` plus the remainder
 `n p ^ 2 / (1 - p)`, which is of second order in `p`. -/
 theorem mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p ≠ 1) (n : ℕ) :
-    mPlusOneRatio p n = mPlusOneFirstOrder p n + n * p ^ 2 / (1 - p) := by
+    mPlusOneRatio p hp n = mPlusOneFirstOrder p n + n * p ^ 2 / (1 - p) := by
   have h : 1 - p ≠ 0 := sub_ne_zero.2 hp.symm
   rw [mPlusOneRatio_eq hp, mPlusOneFirstOrder]
   field_simp
@@ -516,7 +521,7 @@ theorem mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p �
 /-- For `p < 1`, the first-order value `n p` does not exceed the exact `(M+1)/M` ratio. -/
 theorem mPlusOneFirstOrder_le_mPlusOneRatio {K : Type*} [Field K] [LinearOrder K]
     [IsStrictOrderedRing K] {p : K} (hp1 : p < 1) (n : ℕ) :
-    mPlusOneFirstOrder p n ≤ mPlusOneRatio p n := by
+    mPlusOneFirstOrder p n ≤ mPlusOneRatio p hp1.ne n := by
   rw [mPlusOneRatio_eq_firstOrder_add hp1.ne, le_add_iff_nonneg_right]
   exact div_nonneg (mul_nonneg n.cast_nonneg (sq_nonneg p)) (sub_nonneg.2 hp1.le)
 
@@ -683,9 +688,12 @@ theorem BondGraph.sum_valence {ι β : Type*} [DecidableEq ι] (G : BondGraph ι
     two_mul]
 
 open Finset in
-/-- The nitrogen rule for a neutral molecule given as a bond graph. If every atom is bonded at a
-common valence of its element, the nominal mass is odd exactly when the number of nitrogen atoms
-is odd. The valence balance (M3) is not assumed: it follows from `BondGraph.sum_valence`. -/
+/-- The nitrogen rule for a bond graph at common valences: a common-valence bond-graph
+result, not a neutrality claim. If every atom is bonded at a common valence of its element,
+the nominal mass is odd exactly when the number of nitrogen atoms is odd. The valence
+balance (M3) is not assumed: it follows from `BondGraph.sum_valence`. A bond graph records
+only elements and bond orders, so this says nothing about charge or unpaired electrons: a
+charged or radical species with the same bond graph is not excluded. -/
 theorem BondGraph.nitrogenRule {ι β : Type*} [DecidableEq ι] (G : BondGraph ι β)
     (hv : ∀ i ∈ G.atoms, G.valence i ∈ (G.element i).commonValences) :
     Odd (nominalMass G.atoms fun i => (G.element i).massNumber) ↔
