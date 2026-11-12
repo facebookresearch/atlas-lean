@@ -30,17 +30,28 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.C07RayleighFractionation`
 -/
 
-/-- Numeric Rayleigh derivative with `R0 = 2`, `α = 3/2`, `f = 1/4`. -/
-example : HasDerivAt (fun f : ℝ => 2 * f ^ ((3/2 : ℝ) - 1))
-    (((3/2 : ℝ) - 1) * (2 * (1/4 : ℝ) ^ ((3/2 : ℝ) - 1)) / (1/4)) (1/4 : ℝ) :=
-  EarthScience.rayleigh_hasDerivAt 2 (3/2) (1/4) (by norm_num)
+/-- Numeric Rayleigh derivative with `R0 = 2`, `α = 3/2`, `f = 1/4`:
+the derivative is literally `2`, not just the unsimplified formula. -/
+example : HasDerivAt (fun f : ℝ => 2 * f ^ ((3/2 : ℝ) - 1)) 2 (1/4 : ℝ) := by
+  have h := EarthScience.rayleigh_hasDerivAt 2 (3/2) (1/4) (by norm_num)
+  have hpow : ((1/4 : ℝ)) ^ ((3/2 : ℝ) - 1) = 1 / 2 := by
+    rw [show ((3/2 : ℝ) - 1) = 1 / 2 by norm_num, ← Real.sqrt_eq_rpow]
+    rw [show (1/4 : ℝ) = (1/2) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  have heq : ((3/2 : ℝ) - 1) * (2 * (1/4 : ℝ) ^ ((3/2 : ℝ) - 1)) / (1/4) = 2 := by
+    rw [hpow]
+    norm_num
+  rwa [heq] at h
 
 /-- Numeric endpoint: `R(1) = 2`. -/
 example : (2 : ℝ) * (1 : ℝ) ^ ((3/2 : ℝ) - 1) = 2 :=
   EarthScience.rayleigh_at_one 2 (3/2)
 
-/-- Degenerate case `α = 1`: `R(f) = R0` is constant, derivative `0`. -/
+/-- Degenerate case `α = 1`: `R(f) = R0` is literally constant, derivative `0`. -/
 example (R0 f : ℝ) (hf : 0 < f) :
-    HasDerivAt (fun f : ℝ => R0 * f ^ ((1 : ℝ) - 1))
-      (((1 : ℝ) - 1) * (R0 * f ^ ((1 : ℝ) - 1)) / f) f :=
-  EarthScience.rayleigh_hasDerivAt R0 1 f hf
+    HasDerivAt (fun _ : ℝ => R0) (0 : ℝ) f := by
+  have h := EarthScience.rayleigh_hasDerivAt R0 1 f hf
+  have hfun : (fun f : ℝ => R0 * f ^ ((1 : ℝ) - 1)) = fun _ => R0 := by
+    funext x
+    simp
+  have hder : ((1 : ℝ) - 1) * (R0 * f ^ ((1 : ℝ) - 1)) / f = 0 := by simp
+  rwa [hfun, hder] at h
