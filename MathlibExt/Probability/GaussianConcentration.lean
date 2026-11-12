@@ -17,7 +17,7 @@ public import Mathlib.Probability.Moments.SubGaussian
 
 For a standard Gaussian vector and a coefficient vector `a`, the
 linear form satisfies the standard two-sided Gaussian tail bound
-`P (|⟨a, X⟩| ≥ t) ≤ 2 exp (-t² / (2 ‖a‖²))`. This is the
+`P (|∑ i, a i * X i| ≥ t) ≤ 2 exp (-t² / (2 * ∑ i, a i ^ 2))`. This is the
 linear-function case of roadmap package ML-11 of the Atlas TCS
 canon roadmap; the general Lipschitz (Maurey-Pisier) statement
 needs Gaussian log-Sobolev / isoperimetry infrastructure that is
@@ -76,7 +76,7 @@ private lemma hasSubgaussianMGF_sum {n : ℕ} (a : Fin n → ℝ) :
 /-- Gaussian concentration for linear functions: if `X` is a
 standard Gaussian vector in `Fin n → ℝ` (product of
 `gaussianReal 0 1`) and `a` is a coefficient vector, then
-`P (|⟨a, X⟩| ≥ t) ≤ 2 exp (-t² / (2 ‖a‖²))` for `t > 0`, with the
+`P (|∑ i, a i * X i| ≥ t) ≤ 2 exp (-t² / (2 * ∑ i, a i ^ 2))` for `t > 0`, with the
 right side read as `0`-safe when `a = 0` (then the probability is
 `0` since the linear form vanishes; the bound is stated through
 `ENNReal.ofReal` of the real expression, and for `a = 0` we read
@@ -154,4 +154,3 @@ theorem gaussian_linear_tail_zero {n : ℕ} (a : Fin n → ℝ) {t : ℝ} (ht : 
   rw [hev, measure_empty]
 
 end ProbabilityTheory
-
