@@ -46,8 +46,8 @@ p-values, the merged Benjamini–Hochberg and Bonferroni theorems are applied un
 
 * `ipwContrast_observed_eq_integral`: under strong ignorability the IPW contrast of the observed
   outcome is the ATE (a restatement of `integral_ipw_ate`).
-* `isValidPValue_of_mem_ateNulls`: under strong ignorability for every endpoint, the p-values of
-  the true causal nulls are valid.
+* `isValidPValue_of_mem_ateNulls`: under strong ignorability for every endpoint with zero ATE
+  (nothing assumed about the others), the p-values of the true causal nulls are valid.
 * `integral_falseDiscoveryProportion_bhRejections_ateNulls_le`: BH at level `q` controls the
   FDR over the causal nulls at `q |ateNulls| / m` (independent p-values).
 * `measure_bonferroni_ateNulls_familywiseError_le`: Bonferroni controls the FWER over the causal
