@@ -22,8 +22,8 @@ convexity of the production set is used.
 
 ## Main results
 
-* `Economics.Producer.IsProfitMax.law_of_supply`
-* `Economics.Producer.IsProfitMax.law_of_supply_single`
+* `MathlibExt.Economics.Producer.IsProfitMax.law_of_supply`
+* `MathlibExt.Economics.Producer.IsProfitMax.law_of_supply_single`
 
 ## References
 
@@ -35,7 +35,7 @@ Atlas roadmap target EC06.T01.
 
 @[expose] public section
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- **Law of supply** (revealed profitability). If `y` maximizes profit at `p` and `y'` at
 `p'` over the same production set, then `(p - p') ⬝ᵥ (y - y') ≥ 0`. -/
@@ -67,4 +67,4 @@ theorem IsProfitMax.law_of_supply_single {ι : Type*} [Fintype ι] {Y : Set (ι 
   rw [hexpand] at hmain
   exact hmain
 
-end Economics.Producer
+end MathlibExt.Economics.Producer
