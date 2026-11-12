@@ -305,4 +305,80 @@ example : ∫ ω, nelsonAalenProcess boolN (fun _ _ => 1) 1 ω ∂boolP = 1 / 2 
     (fun _ _ => Or.inr le_rfl)]
   simp [boolα, boolP_real_pair]
 
+/-! ### Vanishing risk with positive probability: a two-step coin model -/
+
+/-- One subject: it dies at step `1` on `true`; a survivor dies at step `2` for sure. -/
+noncomputable def coinN : ℕ → Bool → ℝ := fun n ω =>
+  if n = 0 then 0 else if n = 1 then (if ω then 1 else 0) else 1
+
+/-- At risk at step `1` always, at step `2` only if it survived step `1` (known at time `1`). -/
+noncomputable def coinY : ℕ → Bool → ℝ := fun n ω =>
+  if n = 1 then 1 else if n = 2 then (if ω then 0 else 1) else 0
+
+/-- The cumulative hazard `α = (0, 1/2, 3/2, 3/2, …)`: `Δα₁ = 1/2`, `Δα₂ = 1`. -/
+noncomputable def coinα : ℕ → ℝ := fun n => if n = 0 then 0 else if n = 1 then 1 / 2 else 3 / 2
+
+lemma coinY_predictable : IsStronglyPredictable boolFiltration coinY := by
+  refine .of_measurable_add_one ?_ fun n => ?_
+  · have : coinY 0 = fun _ => 0 := by funext; simp [coinY]
+    rw [this]; exact stronglyMeasurable_const
+  · cases n with
+    | zero =>
+      have : coinY (0 + 1) = fun _ => 1 := by funext; simp [coinY]
+      rw [this]; exact stronglyMeasurable_const
+    | succ n =>
+      change StronglyMeasurable[⊤] _
+      exact measurable_from_top.stronglyMeasurable
+
+/-- **Aalen's model for the two-step coin**: `N - ∫ Y dα` is a martingale. -/
+lemma coinMart :
+    Martingale (fun n ω => coinN n ω - aalenCompensator coinY coinα n ω) boolFiltration boolP := by
+  have hinc : ∀ k ω, (coinN (k + 1) ω - aalenCompensator coinY coinα (k + 1) ω) -
+      (coinN k ω - aalenCompensator coinY coinα k ω) =
+      (coinN (k + 1) ω - coinN k ω) - coinY (k + 1) ω * (coinα (k + 1) - coinα k) := by
+    intro k ω; rw [aalenCompensator, stochasticIntegral_succ]; ring
+  refine martingale_of_condExp_sub_eq_zero_nat (fun n => ?_) (fun _ => Integrable.of_finite)
+    fun k => ?_
+  · cases n with
+    | zero =>
+      have : (fun ω => coinN 0 ω - aalenCompensator coinY coinα 0 ω) = fun _ => 0 := by
+        funext; simp [coinN, aalenCompensator]
+      rw [this]; exact stronglyMeasurable_const
+    | succ n =>
+      change StronglyMeasurable[⊤] _
+      exact measurable_from_top.stronglyMeasurable
+  · have hfun : ((fun n ω => coinN n ω - aalenCompensator coinY coinα n ω) (k + 1) -
+        (fun n ω => coinN n ω - aalenCompensator coinY coinα n ω) k) =
+        fun ω => (coinN (k + 1) ω - coinN k ω) - coinY (k + 1) ω * (coinα (k + 1) - coinα k) := by
+      funext ω; exact hinc k ω
+    rw [hfun]
+    cases k with
+    | zero =>
+      have hF : (boolFiltration 0 : MeasurableSpace Bool) = ⊥ := rfl
+      rw [hF, condExp_bot']
+      refine ae_of_all _ fun ω => ?_
+      rw [integral_fintype Integrable.of_finite]
+      simp [coinN, coinY, coinα, boolP_real_singleton]
+      norm_num
+    | succ k =>
+      have h0 : (fun ω => (coinN (k + 1 + 1) ω - coinN (k + 1) ω) -
+          coinY (k + 1 + 1) ω * (coinα (k + 1 + 1) - coinα (k + 1))) = 0 := by
+        funext ω
+        rcases k with _ | k <;> cases ω <;> simp [coinN, coinY, coinα]
+        norm_num
+      rw [h0, condExp_zero]
+
+/-- **The vanishing-risk bias is real**: with `P(Y₂ = 0) = 1/2`, `E[Â₂] = Δα₁ + Δα₂ · 1/2 = 1`,
+short of the cumulative hazard `α₂ - α₀ = 3/2` by `Δα₂ P(Y₂ = 0) = 1/2`. -/
+example : ∫ ω, nelsonAalenProcess coinN coinY 2 ω ∂boolP = 1 ∧ 1 < coinα 2 - coinα 0 := by
+  have hY1 : ∀ n ω, coinY n ω = 0 ∨ 1 ≤ coinY n ω := fun n ω => by
+    unfold coinY; split_ifs <;> simp
+  refine ⟨?_, by norm_num [coinα]⟩
+  rw [integral_nelsonAalenProcess coinMart coinY_predictable hY1]
+  have h1 : {ω : Bool | coinY (0 + 1) ω ≠ 0} = Set.univ := by ext ω; simp [coinY]
+  have h2 : {ω : Bool | coinY (1 + 1) ω ≠ 0} = {false} := by ext ω; cases ω <;> simp [coinY]
+  simp only [Finset.sum_range_succ, Finset.sum_range_zero, h1, h2, probReal_univ,
+    boolP_real_singleton]
+  norm_num [coinα]
+
 end MathlibExtTest.Probability.Statistics.StochasticIntegral

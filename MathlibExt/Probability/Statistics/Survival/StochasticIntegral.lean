@@ -21,9 +21,9 @@ of continuous time). The pathwise identities below (the Nelson–Aalen and Kapla
 representations, Duhamel's equation, the bridges to grouped data) hold on any grid, including the
 observed event times; the martingale statements need a deterministic grid and a deterministic
 cumulative hazard `α`, and do not give the continuous-time results. (On the observed event-time
-grid without ties `Nₙ = n` surely, so `ΔA ≡ 1` and the compensated martingale vanishes.) A
-filtration `ℱ : Filtration ℕ m0` carries the history; an integrand `H` is **predictable**
-in Mathlib's sense `IsStronglyPredictable ℱ H`, which on `ℕ` means `H (n + 1)` is
+grid without ties `Nₙ = n` surely up to the last event, so `ΔA ≡ 1` and the compensated
+martingale vanishes.) A filtration `ℱ : Filtration ℕ m0` carries the history; an integrand `H`
+is **predictable** in Mathlib's sense `IsStronglyPredictable ℱ H`, which on `ℕ` means `H (n + 1)` is
 `ℱ n`-measurable (`IsStronglyPredictable.iff_measurable_add_one`). The **stochastic integral**
 against a process `M` is `(H • M)ₙ = ∑_{k < n} H_{k+1} (M_{k+1} - M_k)`.
 
