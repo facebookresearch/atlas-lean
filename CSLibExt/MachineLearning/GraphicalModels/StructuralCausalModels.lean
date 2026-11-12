@@ -94,8 +94,9 @@ topological order. -/
 def solvePrefix {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (u : (k : Fin n) → U k) : (m : ℕ) → m ≤ n → Fin m → α
   | 0, _ => Fin.elim0
-  | m + 1, h => Fin.snoc (M.solvePrefix u m (Nat.le_of_succ_le h))
-      (M.f ⟨m, h⟩ (fun j => M.solvePrefix u m (Nat.le_of_succ_le h) j) (u ⟨m, h⟩))
+  | m + 1, h =>
+    let prev := M.solvePrefix u m (Nat.le_of_succ_le h)
+    Fin.snoc prev (M.f ⟨m, h⟩ (fun j => prev j) (u ⟨m, h⟩))
 
 /-- The solution map of the model: the values of all nodes at the noise value `u`. -/
 def solve {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)

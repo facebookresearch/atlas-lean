@@ -31,6 +31,10 @@ noncomputable section
 noncomputable def chiSquareMeasure (p : ℕ) : Measure ℝ :=
   gammaMeasure ((p : ℝ) / 2) (1 / 2)
 
+/-- The survival function of a chi-square law: `P(χ²_p > c)`. -/
+noncomputable def chiSquareSurvival (p : ℕ) (c : ℝ) : ℝ≥0∞ :=
+  chiSquareMeasure p (Set.Ioi c)
+
 theorem isProbabilityMeasure_chiSquareMeasure {p : ℕ} (hp : 0 < p) :
     IsProbabilityMeasure (chiSquareMeasure p) :=
   isProbabilityMeasure_gammaMeasure (by positivity) (by norm_num)
@@ -209,6 +213,16 @@ theorem gaussianReal_map_sq :
   funext t
   rw [← complexMGF_id_mul_I, ← complexMGF_id_mul_I]
   exact heq (by simp [hS])
+
+/-- A standard normal square exceeds `c` exactly when a `χ²₁` variable does:
+the Gaussian preimage tail is the chi-square survival function. -/
+theorem gaussianReal_sq_preimage_Ioi_eq_chiSquareSurvival (c : ℝ) :
+    gaussianReal 0 1 {x | c < x ^ 2} = chiSquareSurvival 1 c := by
+  have hpre : (fun x : ℝ => x ^ 2) ⁻¹' Set.Ioi c = {x | c < x ^ 2} := by
+    ext x
+    simp
+  rw [chiSquareSurvival, ← gaussianReal_map_sq,
+    Measure.map_apply (by fun_prop) measurableSet_Ioi, hpre]
 
 /-- Chi-square MGFs multiply by adding degrees, below `1/2`. Requires a
 nonempty index set so the summed degree stays positive. -/

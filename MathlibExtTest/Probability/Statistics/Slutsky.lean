@@ -90,4 +90,11 @@ example : TendstoInDistribution (fun n ω ↦ Yc 2 n ω • diag ω) atTop (fun 
   (tendstoInDistribution_const (l := atTop) diag_measurable.aemeasurable
     ).smul_of_tendstoInMeasure_const (Yc_tendstoInMeasure 2) (Yc_aemeasurable 2)
 
+/-- Replacing the limit by a variable with the same law on another space: `id` under the
+standard Gaussian becomes the first coordinate under the product of two standard Gaussians. -/
+example : TendstoInDistribution (fun (_ : ℕ) ↦ (id : ℝ → ℝ)) atTop (Prod.fst : ℝ × ℝ → ℝ)
+    (fun _ ↦ gaussianReal 0 1) ((gaussianReal 0 1).prod (gaussianReal 0 1)) :=
+  id_tendstoInDistribution.congr_hasLaw HasLaw.id
+    ⟨measurable_fst.aemeasurable, by simp [Measure.map_fst_prod]⟩
+
 end MathlibExtTest.Probability.Statistics.Slutsky
