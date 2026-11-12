@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.P04HeatConduction
+import PhyslibExt.EarthScience.HeatConduction
 
 /-!
 # Slab conduction checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P04HeatConduction`:
+Concrete consumers of `PhyslibExt.EarthScience.HeatConduction`:
 `T0 = 0`, `TL = 10`, `L = 2`, `k = 3` (so `T(z) = 5 * z`, `T' = 5`,
 `q = -15`), the uniform-temperature boundary `TL = T0`, and the
 reversed-gradient boundary.
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P04HeatConduction`
+- `PhyslibExt.EarthScience.HeatConduction`
 -/
 
 /-- Numeric slab boundary values. -/
