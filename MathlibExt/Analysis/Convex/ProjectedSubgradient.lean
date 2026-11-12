@@ -21,10 +21,13 @@ public import MathlibExt.Analysis.Convex.OnlineGradientDescent
 The projected subgradient method with constant step
 `η = D / (G √T)` and the average of the pre-update iterates
 `x₀, …, x_{T-1}` achieves
-`f x̄ - f* ≤ D G / √T` for a convex objective with subgradients
-bounded by `G`. This is the deterministic core of roadmap package
-ML-21 of the Atlas TCS canon roadmap (the stochastic version takes
-expectations of the same one-step estimate).
+`f x̄ - f xstar ≤ D G / √T` for a convex objective with subgradients
+bounded by `G`, positive `D` and `G`, and `T ≥ 1`. The map `proj` is
+nonexpansive and fixes the comparator `xstar`, with `‖x0 - xstar‖ ≤ D`.
+No minimizing property of `xstar` is assumed; choosing a minimizer gives
+the optimization-gap interpretation. This is the deterministic core of
+roadmap package ML-21 of the Atlas TCS canon roadmap (the stochastic
+version takes expectations of the same one-step estimate).
 
 The iterates are the projected online gradient descent iterates
 `ogdIter` from `MathlibExt.Analysis.Convex.OnlineGradientDescent`, and
@@ -35,8 +38,15 @@ comparison point `y`, so `g t x` is genuinely a subgradient of `f` at
 `x`; it is specialized to the comparator `xstar` in the proof, as
 `ogd_regret` requires.
 
-Source: Boyd and Vandenberghe, Convex Optimization (2004),
-Section 9.3; Shalev-Shwartz and Ben-David (2014), Chapter 13.
+Source: Stephen Boyd (with help from Jaehyun Park), *Subgradient Methods*,
+EE364b notes, May 2014:
+http://www.stanford.edu/class/ee364b/lectures/subgrad_method_notes.pdf
+- Section 3.2, equation (1): the summed subgradient inequality.
+- Section 3.3: constant step `α = R / (G √k)` and the `R G / √k` bound.
+- Section 6: the projected update preserves the one-step distance bound.
+The notes state a best-iterate guarantee. Here `D = R` and `T = k`;
+applying Jensen to the summed inequality gives the averaged version,
+with the comparator and nonexpansive-map assumptions stated above.
 -/
 
 open Finset
