@@ -51,9 +51,13 @@ theorem idealGas_density {p rho R T : ℝ} (hR : 0 < R) (hT : 0 < T)
 
 /-- Potential temperature is constant along a reversible ideal-gas
 adiabat: if `T2 = T1 * (p2 / p1) ^ (R / cp)` (Poisson relation in ratio
-form) then `θ2 = θ1` for `θ = T * (p_ref / p) ^ (R / cp)`. -/
+form) then `θ2 = θ1` for `θ = T * (p_ref / p) ^ (R / cp)`. The
+physical domain `0 < R`, `0 < cp`, and `0 < T1` excludes the undefined
+`R / 0` case and nonpositive absolute temperature; positivity of `T2`
+then follows from the Poisson relation. -/
 theorem potentialTemperature_const_of_poisson {T1 T2 p1 p2 p_ref R cp : ℝ}
     (hp1 : 0 < p1) (hp2 : 0 < p2) (href : 0 < p_ref)
+    (_hR : 0 < R) (_hcp : 0 < cp) (_hT1 : 0 < T1)
     (hpoisson : T2 = T1 * (p2 / p1) ^ (R / cp)) :
     T2 * (p_ref / p2) ^ (R / cp) = T1 * (p_ref / p1) ^ (R / cp) := by
   rw [hpoisson, Real.div_rpow hp2.le hp1.le, Real.div_rpow href.le hp2.le,

@@ -49,11 +49,12 @@ with `p1 = p2 = p_ref = 1000`, `T2 = T1` satisfies the Poisson hypothesis. -/
 example : (300 : ℝ) * (1000 / 1000) ^ ((287 : ℝ) / 1005)
     = 300 * (1000 / 1000) ^ ((287 : ℝ) / 1005) :=
   EarthScience.potentialTemperature_const_of_poisson (by norm_num) (by norm_num)
-    (by norm_num) (by simp)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by simp)
 
 /-- Public shape of the potential-temperature theorem. -/
 example {T1 T2 p1 p2 p_ref R cp : ℝ}
     (hp1 : 0 < p1) (hp2 : 0 < p2) (href : 0 < p_ref)
+    (hR : 0 < R) (hcp : 0 < cp) (hT1 : 0 < T1)
     (hpoisson : T2 = T1 * (p2 / p1) ^ (R / cp)) :
     T2 * (p_ref / p2) ^ (R / cp) = T1 * (p_ref / p1) ^ (R / cp) :=
-  EarthScience.potentialTemperature_const_of_poisson hp1 hp2 href hpoisson
+  EarthScience.potentialTemperature_const_of_poisson hp1 hp2 href hR hcp hT1 hpoisson
