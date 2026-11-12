@@ -13,6 +13,7 @@ public import MathlibExt.Probability.Statistics.Survival.CountingProcess
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Set
+open scoped ENNReal
 open MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime
 
 namespace MathlibExtTest.Probability.Statistics.CountingProcess
@@ -68,6 +69,25 @@ example : hazardMeasure (Measure.dirac (1 : ℝ)) {1} = 1 := by
   rw [hazardMeasure, withDensity_apply _ (measurableSet_singleton 1), Measure.restrict_singleton,
     lintegral_smul_measure, lintegral_dirac]
   simp
+
+/-- **Non-terminal atom**: for `F = ½δ₁ + ½δ₂`, `Λ{1} = F{1} / F[1, ∞) = ½` and
+`Λ{2} = F{2} / F[2, ∞) = 1`. -/
+example : hazardMeasure ((2 : ℝ≥0∞)⁻¹ • Measure.dirac (1 : ℝ) + (2 : ℝ≥0∞)⁻¹ • Measure.dirac 2)
+      {1} = 2⁻¹ ∧
+    hazardMeasure ((2 : ℝ≥0∞)⁻¹ • Measure.dirac (1 : ℝ) + (2 : ℝ≥0∞)⁻¹ • Measure.dirac 2)
+      {2} = 1 := by
+  simp only [hazardMeasure, withDensity_apply _ (measurableSet_singleton _), lintegral_singleton,
+    Measure.add_apply, Measure.smul_apply, smul_eq_mul]
+  constructor
+  · simp [Measure.dirac_apply', measurableSet_Ici, indicator, ENNReal.inv_two_add_inv_two]
+  · simp [Measure.dirac_apply', measurableSet_Ici, indicator,
+      ENNReal.mul_inv_cancel two_ne_zero ENNReal.ofNat_ne_top]
+
+/-- The uniform law on `[0, 1]` has hazard measure with density `1_{[0,1]}(s) / F[s, ∞)`. -/
+example : hazardMeasure (volume.withDensity ((Icc (0 : ℝ) 1).indicator 1)) =
+    volume.withDensity fun s => (Icc (0 : ℝ) 1).indicator 1 s *
+      ((volume.withDensity ((Icc (0 : ℝ) 1).indicator 1)) (Ici s))⁻¹ :=
+  hazardMeasure_withDensity (measurable_one.indicator measurableSet_Icc)
 
 /-- The tail `F[s, ∞)` is almost surely positive, here for a point mass. -/
 example : ∀ᵐ s ∂(Measure.dirac (1 : ℝ)), Measure.dirac (1 : ℝ) (Ici s) ≠ 0 :=
@@ -135,5 +155,44 @@ example {μ : Measure Ω} [IsProbabilityMeasure μ] (Ts Cs : Fin 3 → Ω → �
     Martingale (fun t ω => totalCountingProcess Ts Cs t ω - totalCompensator μ Ts Cs t ω)
       (jointHistoryFiltration hT hC) μ :=
   martingale_totalCountingProcess_sub_totalCompensator hT hC hpair hind
+
+/-- A concrete independent cohort: two subjects whose pairs `(Tᵢ, Cᵢ)` are the coordinates of a
+product law on `(ℝ × ℝ)²`, with `Tᵢ ⊥ Cᵢ`. -/
+theorem cohort_indep (P Q : Measure ℝ) [IsProbabilityMeasure P] [IsProbabilityMeasure Q] :
+    iIndepFun (fun i (ω : Fin 2 → ℝ × ℝ) => ((ω i).1, (ω i).2)) (Measure.pi fun _ => P.prod Q) ∧
+      ∀ i, IndepFun (fun ω : Fin 2 → ℝ × ℝ => (ω i).1) (fun ω => (ω i).2)
+        (Measure.pi fun _ => P.prod Q) := by
+  refine ⟨iIndepFun_pi (X := fun _ (p : ℝ × ℝ) => (p.1, p.2)) fun _ =>
+    (measurable_fst.prodMk measurable_snd).aemeasurable, fun i => ?_⟩
+  have hev : Measure.map (fun ω : Fin 2 → ℝ × ℝ => ω i) (Measure.pi fun _ => P.prod Q) =
+      P.prod Q := (measurePreserving_eval (fun _ => P.prod Q) i).map_eq
+  have hm : Measurable fun ω : Fin 2 → ℝ × ℝ => ω i := measurable_pi_apply i
+  change IndepFun (Prod.fst ∘ fun ω : Fin 2 → ℝ × ℝ => ω i) (Prod.snd ∘ fun ω => ω i) _
+  rw [indepFun_iff_map_prod_eq_prod_map_map (measurable_fst.comp hm).aemeasurable
+    (measurable_snd.comp hm).aemeasurable, ← Measure.map_map measurable_fst hm,
+    ← Measure.map_map measurable_snd hm, hev, Measure.map_fst_prod, Measure.map_snd_prod]
+  have : (fun ω : Fin 2 → ℝ × ℝ => ((Prod.fst ∘ fun ω => ω i) ω, (Prod.snd ∘ fun ω => ω i) ω)) =
+      fun ω => ω i := rfl
+  rw [this, hev]
+  simp
+
+/-- The aggregated compensated process of that concrete cohort is a martingale. -/
+example (P Q : Measure ℝ) [IsProbabilityMeasure P] [IsProbabilityMeasure Q] :
+    Martingale (fun t ω => totalCountingProcess (fun i (ω : Fin 2 → ℝ × ℝ) => (ω i).1)
+        (fun i ω => (ω i).2) t ω -
+      totalCompensator (Measure.pi fun _ => P.prod Q) (fun i (ω : Fin 2 → ℝ × ℝ) => (ω i).1)
+        (fun i ω => (ω i).2) t ω)
+      (jointHistoryFiltration (fun i => measurable_fst.comp (measurable_pi_apply i))
+        fun i => measurable_snd.comp (measurable_pi_apply i)) (Measure.pi fun _ => P.prod Q) :=
+  martingale_totalCountingProcess_sub_totalCompensator _ _ (cohort_indep P Q).1 (cohort_indep P Q).2
+
+/-- **Common law bridge**: with one law `F` for every subject, the aggregated compensator is the
+at-risk integral `∫_{(-∞, t]} Y dΛ`, given finiteness of each subject's integral. -/
+example {μ : Measure Ω} (Ts Cs : Fin 2 → Ω → ℝ) (F : Measure ℝ) (hlaw : ∀ i, μ.map (Ts i) = F)
+    (t : ℝ) (hfin : ∀ i, ∫⁻ s in Iic t, ENNReal.ofReal (atRiskProcess (Ts i) (Cs i) s ω)
+      ∂(hazardMeasure F) ≠ ⊤) :
+    totalCompensator μ Ts Cs t ω =
+      (∫⁻ s in Iic t, ENNReal.ofReal (totalAtRiskProcess Ts Cs s ω) ∂(hazardMeasure F)).toReal :=
+  totalCompensator_eq_of_map_eq hlaw t ω hfin
 
 end MathlibExtTest.Probability.Statistics.CountingProcess

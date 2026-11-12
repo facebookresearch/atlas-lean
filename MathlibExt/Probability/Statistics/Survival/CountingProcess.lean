@@ -48,11 +48,14 @@ differ between subjects.
 * `integral_countingProcess_eq_integral_compensator`: `E N(t) = E A(t)`.
 * `martingale_compensatedProcess`: `N - A` is a martingale for the history filtration.
 * `measurable_atRiskProcess_strictPast`, `measurable_compensator_strictPast`: `Y(t)` and `A(t)`
-  are determined by the strict past `ℱ_{t-} = ⨆_{s < t} ℱₛ`, so the intensity is `Y(t) dΛ(t)`.
+  are determined by the strict past `ℱ_{t-} = ⨆_{s < t} ℱₛ`. So `A` is a compensator of `N` in
+  the sense that `N - A` is a martingale and `A(t)` is `ℱ_{t-}`-measurable (intensity
+  `Y(t) dΛ(t)`); uniqueness of the compensator is not proved.
 * `martingale_compensatedProcess_joint`: in a cohort, each subject's `Nᵢ - Aᵢ` is a martingale for
   the joint history of all subjects.
 * `martingale_totalCountingProcess_sub_totalCompensator`: `∑ᵢ Nᵢ - ∑ᵢ Aᵢ` is a martingale for the
-  joint history; `lintegral_totalAtRiskProcess` gives `∑ᵢ ∫ Yᵢ dΛ = ∫ Y dΛ` for a common `Λ`
+  joint history. When all `Tᵢ` share one law `F`, `totalCompensator_eq_of_map_eq` gives
+  `∑ᵢ Aᵢ(t) = ∫_{(-∞, t]} Y dΛ` with `Y` the number at risk and `Λ` the hazard measure of `F`
   (Aalen's multiplicative intensity model).
 
 The key step is `history_inter_or_subset`: an event observed by time `a` either contains
@@ -131,7 +134,8 @@ noncomputable def censoringProcess (T C : Ω → ℝ) (t : ℝ) (ω : Ω) : ℝ 
   if C ω < T ω ∧ C ω ≤ t then 1 else 0
 
 /-- The **at-risk process** `Y(t) = 1{t ≤ X} = 1{t ≤ T, t ≤ C}`: the subject is under observation
-just before `t`. It is left-continuous, so it is predictable for the history filtration. -/
+just before `t`. It is left-continuous, so `Y(t)` is `ℱ_{t-}`-measurable
+(`measurable_atRiskProcess_strictPast`). -/
 noncomputable def atRiskProcess (T C : Ω → ℝ) (t : ℝ) (ω : Ω) : ℝ :=
   if t ≤ T ω ∧ t ≤ C ω then 1 else 0
 
@@ -145,7 +149,7 @@ noncomputable def hazardMeasure (F : Measure ℝ) : Measure ℝ :=
 
 /-- The **compensator** `A(t) = ∫_{(-∞, t]} Y(s) dΛ(s)` of the counting process for a hazard
 measure `Λ`, as a real number (`ENNReal.toReal`; the extended value is finite almost surely
-under the model, `ae_hazardMeasure_Iic_obsTime_lt_top`). -/
+under the model, `lintegral_hazardMeasure_Iic_obsTime_lt_top`). -/
 noncomputable def compensator (T C : Ω → ℝ) (Λ : Measure ℝ) (t : ℝ) (ω : Ω) : ℝ :=
   (∫⁻ s in Iic t, ENNReal.ofReal (atRiskProcess T C s ω) ∂Λ).toReal
 
@@ -609,7 +613,8 @@ private lemma martingale_of_setIntegral_sub_eq_zero [IsProbabilityMeasure μ] {�
 time `T` independent of the censoring time `C`, the compensated counting process
 `M(t) = N(t) - ∫_{(-∞, t]} Y dΛ`, with `Λ` the hazard measure of the law of `T`, is a martingale
 for the history filtration `ℱₜ = σ(N(u), Nᶜ(u) : u ≤ t)`. So `A(t) = ∫_{(-∞, t]} Y dΛ`, which is
-`ℱ_{t-}`-measurable (`measurable_compensator_strictPast`), is the compensator of `N`, and the
+`ℱ_{t-}`-measurable (`measurable_compensator_strictPast`), is a compensator of `N` in the sense
+that `N - A` is a martingale and `A(t)` is `ℱ_{t-}`-measurable (uniqueness is not proved), and the
 intensity is `Y(t) dΛ(t)` (`Y(t) λ(t) dt` when `T` has a density, `hazardMeasure_withDensity`). -/
 theorem martingale_compensatedProcess [IsProbabilityMeasure μ] (hind : IndepFun T C μ) :
     Martingale (compensatedProcess T C (hazardMeasure (μ.map T))) (historyFiltration hT hC) μ :=
@@ -740,13 +745,13 @@ noncomputable def totalAtRiskProcess (Ts Cs : ι → Ω → ℝ) (t : ℝ) (ω :
   ∑ i, atRiskProcess (Ts i) (Cs i) t ω
 
 /-- The **aggregated compensator** `A(t) = ∑ᵢ ∫_{(-∞, t]} Yᵢ dΛᵢ`, with `Λᵢ` the hazard measure of
-the law of `Tᵢ`. For a common law, `A(t) = ∫_{(-∞, t]} Y dΛ` (`lintegral_totalAtRiskProcess`):
+the law of `Tᵢ`. For a common law, `A(t) = ∫_{(-∞, t]} Y dΛ` (`totalCompensator_eq_of_map_eq`):
 Aalen's multiplicative intensity `Y(t) dΛ(t)`. -/
 noncomputable def totalCompensator (μ : Measure Ω) (Ts Cs : ι → Ω → ℝ) (t : ℝ) (ω : Ω) : ℝ :=
   ∑ i, compensator (Ts i) (Cs i) (hazardMeasure (μ.map (Ts i))) t ω
 
-/-- **Multiplicative intensity** for a common hazard measure `Λ`: the sum of the individual
-compensators (in extended form) is `∫_{(-∞, t]} Y dΛ` with `Y` the number at risk. -/
+/-- Linearity of the at-risk integral for any measure `Λ`:
+`∫_{(-∞, t]} Y dΛ = ∑ᵢ ∫_{(-∞, t]} Yᵢ dΛ` with `Y` the number at risk. -/
 theorem lintegral_totalAtRiskProcess (Λ : Measure ℝ) (t : ℝ) (ω : Ω) :
     ∫⁻ s in Iic t, ENNReal.ofReal (totalAtRiskProcess Ts Cs s ω) ∂Λ =
       ∑ i, ∫⁻ s in Iic t, ENNReal.ofReal (atRiskProcess (Ts i) (Cs i) s ω) ∂Λ := by
@@ -758,6 +763,19 @@ theorem lintegral_totalAtRiskProcess (Λ : Measure ℝ) (t : ℝ) (ω : Ω) :
   have : (fun s => atRiskProcess (Ts i) (Cs i) s ω) = (Iic (obsTime (Ts i) (Cs i) ω)).indicator 1 :=
     funext fun s => atRiskProcess_eq_indicator s ω
   exact (Measurable.ennreal_ofReal (this ▸ measurable_one.indicator measurableSet_Iic)).aemeasurable
+
+/-- **Multiplicative intensity** for a common law: if every `Tᵢ` has law `F`, the aggregated
+compensator is `∫_{(-∞, t]} Y dΛ` with `Y` the number at risk and `Λ` the hazard measure of `F`
+(Aalen's model). The finiteness hypothesis holds almost surely under the model
+(`lintegral_hazardMeasure_Iic_obsTime_lt_top`). -/
+theorem totalCompensator_eq_of_map_eq {μ : Measure Ω} {F : Measure ℝ}
+    (hlaw : ∀ i, μ.map (Ts i) = F) (t : ℝ) (ω : Ω)
+    (hfin : ∀ i, ∫⁻ s in Iic t, ENNReal.ofReal (atRiskProcess (Ts i) (Cs i) s ω)
+      ∂(hazardMeasure F) ≠ ∞) :
+    totalCompensator μ Ts Cs t ω =
+      (∫⁻ s in Iic t, ENNReal.ofReal (totalAtRiskProcess Ts Cs s ω) ∂(hazardMeasure F)).toReal := by
+  rw [lintegral_totalAtRiskProcess, ENNReal.toReal_sum fun i _ => hfin i]
+  simp only [totalCompensator, compensator, hlaw]
 
 /-- **Compensator identity for the aggregated process**. With mutually independent subjects and
 independent censoring within each subject, `N(t) - A(t) = ∑ᵢ (Nᵢ(t) - Aᵢ(t))` is a martingale
