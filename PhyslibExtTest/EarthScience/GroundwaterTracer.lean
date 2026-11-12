@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.X02GroundwaterTracer
+import PhyslibExt.EarthScience.GroundwaterTracer
 
 /-!
 # Groundwater-tracer capstone checks
 
-Concrete consumers of `PhyslibExt.EarthScience.X02GroundwaterTracer`:
+Concrete consumers of `PhyslibExt.EarthScience.GroundwaterTracer`:
 Darcy flux and pore velocity at the stated inputs, and the tracer
 update at `ν = 1 / 4, c₁ = 2, c₂ = 1` (updated `7 / 4, 5 / 4`, sum `3`),
 plus the `ν = 0` boundary (no movement).
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.X02GroundwaterTracer`
+- `PhyslibExt.EarthScience.GroundwaterTracer`
 -/
 
 /-- Darcy flux at the stated inputs. -/
