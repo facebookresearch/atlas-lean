@@ -220,4 +220,47 @@ theorem singleton_withinVec_test :
   rw [hmean]
   norm_num
 
+private def converseGroups : Fin 4 → Fin 3 := ![0, 0, 1, 1]
+
+private def converseDesign : Matrix (Fin 4) (Fin 2) ℝ :=
+  !![1, 0; 3, 0; 0, 2; 0, 6]
+
+private def converseResponse : Fin 4 → ℝ := ![7, 11, 13, 25]
+
+/-- Two regressors satisfy the within equations despite an unused third group. -/
+private theorem two_regressor_within_normal_eq_test :
+    ((withinMat converseGroups converseDesign)ᵀ *
+      withinMat converseGroups converseDesign) *ᵥ (![2, 3] : Fin 2 → ℝ) =
+      (withinMat converseGroups converseDesign)ᵀ *ᵥ
+        withinVec converseGroups converseResponse := by
+  have hu4 : (Finset.univ : Finset (Fin 4)) = {0, 1, 2, 3} := by decide
+  ext j
+  fin_cases j <;>
+    norm_num [withinMat, withinVec, groupMean, converseGroups, converseDesign,
+      converseResponse, Matrix.mulVec, Matrix.mul_apply, dotProduct,
+      hu4, Finset.filter_insert, Finset.filter_singleton, Fin.sum_univ_succ]
+
+/-- The converse chooses zero for the unused group's intercept. -/
+private theorem converse_intercepts_test :
+    (fun g => groupMean converseGroups converseResponse g -
+      ∑ j, groupMean converseGroups (fun k => converseDesign k j) g *
+        (![2, 3] : Fin 2 → ℝ) j) = (![5, 7, 0] : Fin 3 → ℝ) := by
+  have hu4 : (Finset.univ : Finset (Fin 4)) = {0, 1, 2, 3} := by decide
+  ext g
+  fin_cases g <;>
+    norm_num [groupMean, converseGroups, converseDesign, converseResponse,
+      hu4, Finset.filter_insert, Finset.filter_singleton, Fin.sum_univ_succ]
+
+/-- The converse theorem supplies both LSDV blocks for the checked intercepts. -/
+private theorem lsdv_converse_unused_group_test :
+    (groupDummy converseGroups)ᵀ *ᵥ
+      (converseResponse - groupDummy converseGroups *ᵥ ![5, 7, 0] -
+        converseDesign *ᵥ (![2, 3] : Fin 2 → ℝ)) = 0 ∧
+      converseDesignᵀ *ᵥ
+        (converseResponse - groupDummy converseGroups *ᵥ ![5, 7, 0] -
+          converseDesign *ᵥ (![2, 3] : Fin 2 → ℝ)) = 0 := by
+  have h := lsdv_normal_eq_of_within_normal_eq converseGroups
+    two_regressor_within_normal_eq_test
+  rwa [converse_intercepts_test] at h
+
 end MathlibExtTest.Probability.Statistics.WithinEstimator
