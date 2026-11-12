@@ -22,7 +22,8 @@ public import Mathlib.Probability.UniformOn
 * A concrete fixed-margin design: its counts and its statistic.
 * Non-vacuity of `measureReal_caseCount_genotypeTotal` on an i.i.d. uniform sample with one case
   and one control, where the margin has positive probability.
-* Non-vacuity of `tendstoInDistribution_fmStat`: half cases, half controls, uniform genotypes.
+* Non-vacuity of `tendstoInDistribution_fmStat`: half cases, half controls, uniform genotypes;
+  and `⌊√N⌋` cases, a case fraction tending to `0`.
 * Boundary cases: designs without cases or controls, a single-genotype design, and a
   single-genotype population whose statistic has no `χ²₁` limit.
 -/
@@ -33,7 +34,7 @@ open MeasureTheory ProbabilityTheory Filter Finset
 open MathlibExt.Biology.StatisticalGenetics.CochranArmitageFixedMargin
 open MathlibExt.Biology.StatisticalGenetics.CochranArmitage (score)
 open MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend
-open scoped Nat
+open scoped Nat Topology
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.CochranArmitageFixedMargin
 
@@ -217,6 +218,49 @@ theorem exists_fmStat_tendsto_chiSquare :
     (fun _ ↦ hindep.precomp Fin.val_injective) (πcase := μG) (πctrl := μG)
     (fun _ k _ ↦ hlaw k) (fun _ k _ _ ↦ hlaw k) rfl (by rw [variance_score_μG]; norm_num)
     hasLaw_sq_chiSquare
+
+private theorem tendsto_sqrt : Tendsto Nat.sqrt atTop atTop :=
+  tendsto_atTop_atTop.2 fun b ↦ ⟨b * b, fun _ hN ↦ Nat.le_sqrt.2 hN⟩
+
+private theorem tendsto_sub_sqrt : Tendsto (fun N : ℕ ↦ N - Nat.sqrt N) atTop atTop := by
+  refine tendsto_atTop_atTop.2 fun b ↦ ⟨(b + 1) * (b + 1), fun N hN ↦ ?_⟩
+  have h1 : Nat.sqrt N * Nat.sqrt N ≤ N := Nat.sqrt_le N
+  have h2 : b + 1 ≤ Nat.sqrt N := Nat.le_sqrt.2 hN
+  have h3 : Nat.sqrt N * (b + 1) ≤ Nat.sqrt N * Nat.sqrt N := Nat.mul_le_mul_left _ h2
+  have h4 : Nat.sqrt N + b ≤ N := by nlinarith
+  omega
+
+/-- **Vanishing case fraction.** With `⌊√N⌋` cases and `N - ⌊√N⌋` controls the case fraction
+tends to `0`, and the fixed-margin statistic still converges to `χ²₁`: the theorem needs both
+group sizes to grow, not a limiting case fraction. -/
+theorem exists_fmStat_tendsto_chiSquare_sqrt :
+    ∃ (Ω : Type) (_ : MeasurableSpace Ω) (P : Measure Ω) (_ : IsProbabilityMeasure P)
+      (G : ℕ → Ω → Fin 3),
+      (∀ k, HasLaw (G k) μG P) ∧ iIndepFun G P ∧
+        TendstoInDistribution (fun N ω ↦ fmStat (Nat.sqrt N) N (G · ω)) atTop
+          (fun x : ℝ ↦ x ^ 2) (fun _ ↦ P) (gaussianReal 0 1) := by
+  obtain ⟨Ω, _, P, G, hmeas, hlaw, hindep, hP⟩ := exists_iid ℕ μG
+  refine ⟨Ω, _, P, hP, G, hlaw, hindep, ?_⟩
+  exact tendstoInDistribution_fmStat (R := Nat.sqrt) (G := fun _ ↦ G)
+    (fun N ↦ Nat.sqrt_le_self N) tendsto_sqrt tendsto_sub_sqrt (fun _ k ↦ hmeas k)
+    (fun _ ↦ hindep.precomp Fin.val_injective) (πcase := μG) (πctrl := μG)
+    (fun _ k _ ↦ hlaw k) (fun _ k _ _ ↦ hlaw k) rfl (by rw [variance_score_μG]; norm_num)
+    hasLaw_sq_chiSquare
+
+/-- The case fraction `⌊√N⌋ / N` of that design tends to `0`. -/
+example : Tendsto (fun N : ℕ ↦ (Nat.sqrt N : ℝ) / N) atTop (𝓝 0) := by
+  have h : ∀ N : ℕ, 1 ≤ N → (Nat.sqrt N : ℝ) / N ≤ 1 / Nat.sqrt N := by
+    intro N hN
+    have hs : 0 < Nat.sqrt N := Nat.sqrt_pos.2 hN
+    have hle : ((Nat.sqrt N * Nat.sqrt N : ℕ) : ℝ) ≤ N := by exact_mod_cast Nat.sqrt_le N
+    push_cast at hle
+    rw [div_le_div_iff₀ (by exact_mod_cast hN) (by exact_mod_cast hs)]
+    linarith
+  have hlim : Tendsto (fun N : ℕ ↦ 1 / (Nat.sqrt N : ℝ)) atTop (𝓝 0) := by
+    simpa [Function.comp_def] using
+      tendsto_inv_atTop_zero.comp (tendsto_natCast_atTop_atTop.comp tendsto_sqrt)
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hlim
+    (Eventually.of_forall fun N ↦ by positivity) (eventually_atTop.2 ⟨1, h⟩)
 
 /-! ### Singular genotype law -/
 

@@ -68,11 +68,13 @@ never estimated separately: the weights sum to `0`, so `U = ∑ w k x k` is free
 * **Both groups must grow.** The hypotheses are `R N → ∞` and `N - R N → ∞`. Whether the `χ²₁`
   limit fails when one group stays bounded is not addressed here.
 * **Degenerate designs.** A design without cases or without controls has statistic `0`
-  (`fmStat_zero_cases`, `fmStat_zero_controls`).
+  (`fmStat_zero_cases`, `fmStat_zero_controls`). The classical statistic is undefined there (its
+  denominator vanishes); the value `0` comes from Lean's convention `x / 0 = 0`.
 * **Singular genotype law.** If all genotypes are one class the statistic is `0`
-  (`fmStat_eq_zero_of_const`); if this holds almost surely for every design the statistic has no
-  `χ²₁` limit (`not_tendstoInDistribution_fmStat_of_const`), so the positive score variance
-  hypothesis cannot be dropped.
+  (`fmStat_eq_zero_of_const`), again by the convention `x / 0 = 0`, since the classical
+  statistic is undefined at zero score variance; if this holds almost surely for every design the
+  statistic has no `χ²₁` limit (`not_tendstoInDistribution_fmStat_of_const`), so the positive
+  score variance hypothesis cannot be dropped.
 * **Finite samples.** For fixed `R, S` the conditional law above is exact and discrete; `χ²₁` is
   only its limit.
 
@@ -629,16 +631,20 @@ theorem fmStat_eq (R N : ℕ) (hRN : R ≤ N) (g : ℕ → Fin 3) (μ v : ℝ) (
   · simp [hD]
   field_simp
 
-/-- A design without cases has statistic `0`. -/
+/-- A design without cases has statistic `0`. The classical statistic is undefined here (the
+factor `R` of its denominator vanishes); the value `0` is Lean's convention `x / 0 = 0`. -/
 theorem fmStat_zero_cases (N : ℕ) (g : ℕ → Fin 3) : fmStat 0 N g = 0 :=
   CochranArmitage.trendStat_eq_zero_of_no_cases _ _ (by simp [caseCount])
 
-/-- A design without controls has statistic `0`. -/
+/-- A design without controls has statistic `0`. The classical statistic is undefined here (the
+factor `S` of its denominator vanishes); the value `0` is Lean's convention `x / 0 = 0`. -/
 theorem fmStat_zero_controls (N : ℕ) (g : ℕ → Fin 3) : fmStat N N g = 0 :=
   CochranArmitage.trendStat_eq_zero_of_no_controls _ _ (by simp [controlCount])
 
 /-- **Singular design**: if every subject `k < N` has the same genotype class `c`, the score has
-zero sample variance and the statistic is `0`. -/
+zero sample variance and the statistic is `0`. The classical statistic is undefined here (the
+score-variance factor of its denominator vanishes); the value `0` is Lean's convention
+`x / 0 = 0`. -/
 theorem fmStat_eq_zero_of_const {R N : ℕ} (hRN : R ≤ N) {g : ℕ → Fin 3} {c : Fin 3}
     (hg : ∀ k < N, g k = c) : fmStat R N g = 0 := by
   refine CochranArmitage.trendStat_eq_zero_of_single_genotype _ _ c (fun i hi ↦ ?_)
@@ -824,7 +830,10 @@ numbers of cases and controls are fixed, not random). Under the null `πcase = �
 genotype score has positive variance and both the number of cases and the number of controls
 tend to infinity, then the trend statistic `fmStat (R N) N` converges in distribution to `χ²₁`.
 
-No condition on the case fraction `R N / N` is needed: it may oscillate or tend to `0` or `1`. -/
+No condition on the case fraction `R N / N` is needed: it may oscillate or tend to `0` or `1`.
+
+Measurability `Measurable (G N k)` is assumed for every `k`, including the entries `k ≥ N` that
+the statistic never reads; a caller can set those entries to a constant. -/
 theorem tendstoInDistribution_fmStat {R : ℕ → ℕ} (hRN : ∀ N, R N ≤ N)
     (hR : Tendsto R atTop atTop) (hS : Tendsto (fun N ↦ N - R N) atTop atTop)
     {G : ℕ → ℕ → Ω → Fin 3} (hmeas : ∀ N k, Measurable (G N k))
