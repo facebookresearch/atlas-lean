@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S04ElasticSeismicWaves
+import PhyslibExt.EarthScience.ElasticSeismicWaves
 
 /-!
 # Elastic seismic wave checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S04ElasticSeismicWaves`:
+Concrete consumers of `PhyslibExt.EarthScience.ElasticSeismicWaves`:
 `K = 12`, `μ = 9`, `ρ = 3` (so `cP ^ 2 = 8`, `cS ^ 2 = 3`), a plane wave
 with `k = 2`, `ω = 6`, and the zero-modulus boundary.
 
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S04ElasticSeismicWaves`
+- `PhyslibExt.EarthScience.ElasticSeismicWaves`
 -/
 
 /-- Numeric P-wave speed squared: `(12 + 4 * 9 / 3) / 3 = 8`. -/
