@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Statistics.Experiment.Factorial
 public import MathlibExt.Probability.Causality.CausalIdentification
+import Mathlib.MeasureTheory.Integral.Pi
 
 /-!
 # Tests for 2x2 factorial unbiasedness
@@ -29,6 +30,30 @@ namespace MathlibExtTest.Probability.Statistics.Experiment
 
 open MathlibExt.Probability.Statistics.Experiment
 open MathlibExt.Probability.Causality
+
+-- Test-local verbatim copies of production-private helpers, kept private
+-- per the body (the production file owns the canonical versions).
+
+/-- The per-unit categorical law is a probability measure under nonnegativity and
+per-unit normalization. -/
+private theorem isProbabilityMeasure_bernoulliCell {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (π : ι → Fin 4 → ℝ) (i : ι)
+    (hnn : ∀ i c, 0 ≤ π i c) (hnorm : ∀ i, ∑ c, π i c = 1) :
+    IsProbabilityMeasure (bernoulliCell π i) := by
+  constructor
+  rw [bernoulliCell, Measure.finsetSum_apply]
+  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
+    mul_one]
+  rw [← ENNReal.ofReal_sum_of_nonneg (fun c _ => hnn i c), hnorm i,
+    ENNReal.ofReal_one]
+
+/-- The IPW cell mean as a sum of single-unit contributions. -/
+private theorem ipwCellMean_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ) (c : Fin 4) (f : ι → Fin 4) :
+    ipwCellMean Y π c f =
+      ∑ i, (if f i = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0) := by
+  rw [ipwCellMean, Finset.sum_filter]
+
 
 theorem popMean_const_fin4 (c : ℝ) : popMean (fun _ : Fin 4 => c) = c := by
   unfold popMean
@@ -136,6 +161,145 @@ example : (∫ f, interactionAB (factorialCellMean (fun _ : Fin 4 => (1 : ℝ)) 
     ∂(cellAssignment fun _ => 1)) = 1 := by
   rw [integral_interactionAB _ _ _ _ _ (fun _ => one_pos) (by decide)]
   simp only [popMean_const_fin4, interactionAB]
+  norm_num
+
+/-- Empty realized cell: on `Fin 2` with uniform cell probabilities, the
+assignment sending both units to cell `0` leaves cell `1` empty, yet the
+expectation identity for cell `1` holds. -/
+example (Y : Fin 2 → ℝ) :
+    ∫ f, ipwCellMean Y (fun _ _ => (1 / 4 : ℝ)) 1 f
+      ∂(Measure.pi fun i : Fin 2 =>
+        bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i) =
+      popMean Y := by
+  have hpos : ∀ (i : Fin 2) (c : Fin 4), 0 < (fun _ _ => (1 / 4 : ℝ)) i c :=
+    fun _ _ => by norm_num
+  have hnorm : ∀ i : Fin 2, ∑ c : Fin 4, (fun _ _ => (1 / 4 : ℝ)) i c = 1 := by
+    intro i
+    norm_num [Fin.sum_univ_four]
+  have hN : 0 < Fintype.card (Fin 2) := by simp
+  exact integral_ipwCellMean Y (fun _ _ => (1 / 4 : ℝ)) hpos hnorm hN 1
+
+/-- The empty cell is realized: the constant assignment `fun _ => 0` has
+positive probability under the joint law above, so the boundary is
+non-vacuous. -/
+example :
+    (Measure.pi fun i : Fin 2 =>
+      bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i) {(fun _ => (0 : Fin 4))} > 0 := by
+  have hpos : ∀ (i : Fin 2) (c : Fin 4), 0 < (fun _ _ => (1 / 4 : ℝ)) i c :=
+    fun _ _ => by norm_num
+  have hnorm : ∀ i : Fin 2, ∑ c : Fin 4, (fun _ _ => (1 / 4 : ℝ)) i c = 1 := by
+    intro i
+    norm_num [Fin.sum_univ_four]
+  have _hprob : ∀ i : Fin 2,
+      IsProbabilityMeasure (bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i) :=
+    fun i => isProbabilityMeasure_bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i
+      (fun i c => le_of_lt (hpos i c)) hnorm
+  have hfactor : ∀ (i : Fin 2) (a : Fin 4),
+      0 < (bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i) {a} := by
+    intro i a
+    rw [bernoulliCell, Measure.finsetSum_apply]
+    simp only [Measure.smul_apply]
+    have hnn : ∀ c ∈ (Finset.univ : Finset (Fin 4)),
+        0 ≤ (ENNReal.ofReal ((fun _ _ => (1 / 4 : ℝ)) i c)) • (Measure.dirac c {a}) :=
+      fun c _ => zero_le
+    have hle := Finset.single_le_sum hnn (Finset.mem_univ a)
+    rw [Measure.dirac_apply_of_mem (Set.mem_singleton a)] at hle
+    have hpos' : 0 < (ENNReal.ofReal ((fun _ _ => (1 / 4 : ℝ)) i a)) • (1 : ENNReal) := by
+      show 0 < (ENNReal.ofReal (1 / 4 : ℝ)) • (1 : ENNReal)
+      rw [smul_eq_mul, mul_one]
+      exact ENNReal.ofReal_pos.mpr (by norm_num)
+    exact lt_of_lt_of_le hpos' hle
+  have hset : ({fun _ => (0 : Fin 4)} : Set (Fin 2 → Fin 4))
+      = Set.pi Set.univ (fun i : Fin 2 => ({((fun _ => (0 : Fin 4)) i)} : Set (Fin 4))) := by
+    ext f
+    simp only [Set.mem_singleton_iff, Set.mem_pi]
+    constructor
+    · intro h i _
+      rw [h]
+    · intro h
+      funext i
+      exact Set.mem_singleton_iff.mp (h i (Set.mem_univ i))
+  rw [hset, Measure.pi_pi, Fin.prod_univ_two, gt_iff_lt]
+  exact ENNReal.mul_pos (pos_iff_ne_zero.mp (hfactor 0 _))
+    (pos_iff_ne_zero.mp (hfactor 1 _))
+
+/-- Positivity counterexample: with `π 0 0 = 0` while unit `0` carries a
+nonzero outcome, the IPW cell mean is biased for the population cell mean.
+The pinned statement is that the unbiasedness conclusion fails, i.e. the
+integral differs from `popMean`. -/
+example (Y : Fin 2 → ℝ) (hY : Y 0 = 2 ∧ Y 1 = 0) :
+    ∫ f, ipwCellMean Y
+      (![![0, 1 / 2, 1 / 4, 1 / 4], ![1 / 4, 1 / 4, 1 / 4, 1 / 4]] :
+        Fin 2 → Fin 4 → ℝ) 0 f
+      ∂(Measure.pi fun i =>
+        bernoulliCell (![![0, 1 / 2, 1 / 4, 1 / 4],
+          ![1 / 4, 1 / 4, 1 / 4, 1 / 4]] : Fin 2 → Fin 4 → ℝ) i) ≠
+      popMean Y := by
+  set M : Fin 2 → Fin 4 → ℝ :=
+    (![![0, 1 / 2, 1 / 4, 1 / 4], ![1 / 4, 1 / 4, 1 / 4, 1 / 4]] :
+      Fin 2 → Fin 4 → ℝ) with hM
+  have hM00 : M 0 0 = 0 := by
+    simp [hM, Matrix.cons_val_zero]
+  have hnorm : ∀ i : Fin 2, ∑ c : Fin 4, M i c = 1 := by
+    intro i
+    fin_cases i
+    · norm_num [hM, Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one]
+    · norm_num [hM, Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one]
+  have hnn : ∀ (i : Fin 2) (c : Fin 4), 0 ≤ M i c := by
+    intro i c
+    fin_cases i <;> fin_cases c <;>
+      norm_num [hM, Matrix.cons_val_zero, Matrix.cons_val_one]
+  have _hprobM : ∀ i : Fin 2, IsProbabilityMeasure (bernoulliCell M i) :=
+    fun i => isProbabilityMeasure_bernoulliCell M i hnn hnorm
+  have hInt : ∀ i ∈ (Finset.univ : Finset (Fin 2)),
+      Integrable (fun f : Fin 2 → Fin 4 =>
+        if f i = 0 then Y i / ((Fintype.card (Fin 2) : ℝ) * M i 0) else 0)
+        (Measure.pi fun i => bernoulliCell M i) := by
+    intro i _
+    exact integrable_comp_eval (μ := fun j => bernoulliCell M j) (i := i)
+      (f := fun a => if a = 0 then Y i / ((Fintype.card (Fin 2) : ℝ) * M i 0) else 0)
+      (Integrable.of_finite)
+  have hfun0 : (fun a : Fin 4 =>
+      if a = 0 then Y 0 / ((Fintype.card (Fin 2) : ℝ) * M 0 0) else 0) = 0 := by
+    funext a
+    by_cases ha : a = 0
+    · simp [ha, hY.1, hM00]
+    · simp [ha]
+  have hfun1 : (fun a : Fin 4 =>
+      if a = 0 then Y 1 / ((Fintype.card (Fin 2) : ℝ) * M 1 0) else 0) = 0 := by
+    funext a
+    by_cases ha : a = 0
+    · simp [ha, hY.2]
+    · simp [ha]
+  have hTerm0 : (∫ f, (if f 0 = 0 then Y 0 / ((Fintype.card (Fin 2) : ℝ) * M 0 0) else 0)
+      ∂(Measure.pi fun i => bernoulliCell M i)) = 0 := by
+    have hcomp := integral_comp_eval (μ := fun j => bernoulliCell M j) (i := 0)
+      (f := fun a => if a = 0 then Y 0 / ((Fintype.card (Fin 2) : ℝ) * M 0 0) else 0)
+      (Measurable.of_discrete.aestronglyMeasurable)
+    have hzero : (∫ a, (if a = 0 then Y 0 / ((Fintype.card (Fin 2) : ℝ) * M 0 0) else 0)
+        ∂(bernoulliCell M 0)) = 0 := by
+      rw [hfun0]
+      simp
+    exact hcomp.trans hzero
+  have hTerm1 : (∫ f, (if f 1 = 0 then Y 1 / ((Fintype.card (Fin 2) : ℝ) * M 1 0) else 0)
+      ∂(Measure.pi fun i => bernoulliCell M i)) = 0 := by
+    have hcomp := integral_comp_eval (μ := fun j => bernoulliCell M j) (i := 1)
+      (f := fun a => if a = 0 then Y 1 / ((Fintype.card (Fin 2) : ℝ) * M 1 0) else 0)
+      (Measurable.of_discrete.aestronglyMeasurable)
+    have hzero : (∫ a, (if a = 0 then Y 1 / ((Fintype.card (Fin 2) : ℝ) * M 1 0) else 0)
+        ∂(bernoulliCell M 1)) = 0 := by
+      rw [hfun1]
+      simp
+    exact hcomp.trans hzero
+  have hLHS : (∫ f, ipwCellMean Y M 0 f ∂(Measure.pi fun i => bernoulliCell M i)) = 0 := by
+    simp only [ipwCellMean_eq_sum]
+    rw [integral_finsetSum Finset.univ hInt]
+    simp only [Fin.sum_univ_two, hTerm0, hTerm1, add_zero]
+  have hRHS : popMean Y = 1 := by
+    unfold popMean
+    simp only [Fin.sum_univ_two, Fintype.card_fin, hY.1, hY.2]
+    norm_num
+  rw [hLHS, hRHS]
   norm_num
 
 end MathlibExtTest.Probability.Statistics.Experiment
