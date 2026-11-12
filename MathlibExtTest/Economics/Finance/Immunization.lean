@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Economics.Finance.Immunization
 import Mathlib.Tactic
+import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 
@@ -18,8 +19,10 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 
 The quadratic surplus `r²` (assets `r² + 1`, liabilities `1`) has matched
 value, vanishing first derivative, and positive second derivative at `r₀ = 0`,
-so the immunization theorem applies; the sign-flipped surplus `-r²` shows the
-positive second-derivative hypothesis cannot be dropped.
+so the immunization theorem applies; the sign-flipped surplus `-r²` has
+matched value, vanishing first derivative, and continuity at `r₀ = 0`, yet
+no positive `δ` makes it nonnegative on `|r| < δ`, so the positive
+second-derivative hypothesis cannot be dropped.
 -/
 
 @[expose] public section
@@ -71,8 +74,45 @@ theorem test_instance :
   · rw [surplus_quad_eq]
     exact (hasDerivAt_quad 0).continuousAt
 
-theorem test_neg_control :
-    surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1) 1 = -1 := by
+theorem surplus_neg_eq :
+    surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1) = -(fun r : ℝ => r ^ 2) := by
+  funext r
+  show (1 : ℝ) - (r ^ 2 + 1) = -(r ^ 2)
+  ring
+
+/-- Sign-flipped surplus has matched value at `r₀ = 0`. -/
+theorem test_neg_control_value :
+    surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1) 0 = 0 := by
   norm_num [surplus]
+
+/-- Sign-flipped surplus has vanishing first derivative at `r₀ = 0`. -/
+theorem test_neg_control_deriv :
+    deriv (surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1)) 0 = 0 := by
+  rw [surplus_neg_eq,
+    HasDerivAt.deriv (HasDerivAt.neg (hasDerivAt_quad 0))]
+  norm_num
+
+/-- Sign-flipped surplus is continuous at `r₀ = 0`. -/
+theorem test_neg_control_cont :
+    ContinuousAt (surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1)) 0 := by
+  rw [surplus_neg_eq]
+  exact HasDerivAt.continuousAt (HasDerivAt.neg (hasDerivAt_quad 0))
+
+/-- Sign-flipped surplus admits no positive `δ` with nonnegative surplus on
+`|r| < δ`: at the witness `r = δ / 2` the surplus is `-(δ / 2)² < 0`. -/
+theorem test_neg_control_no_good_delta :
+    ¬ ∃ δ > 0, ∀ r, |r - 0| < δ →
+      0 ≤ surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1) r := by
+  rintro ⟨δ, hδ, h⟩
+  have hbound : |δ / 2 - 0| < δ := by
+    rw [sub_zero, abs_of_pos (by linarith)]
+    linarith
+  have h1 := h (δ / 2) hbound
+  rw [surplus_neg_eq] at h1
+  have h1' : (0 : ℝ) ≤ -(δ / 2) ^ 2 := h1
+  have hsq : 0 < (δ / 2) ^ 2 := by
+    apply pow_pos
+    linarith
+  linarith
 
 end MathlibExtTest.Economics.Finance.Immunization

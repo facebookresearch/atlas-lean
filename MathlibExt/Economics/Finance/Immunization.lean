@@ -17,13 +17,16 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 
 The surplus `surplus A L r = A r - L r` is the asset value minus the liability
 value at rate `r`. When the surplus is zero at `r₀` (matched value), its first
-derivative vanishes at `r₀` (matched duration), its second derivative is
-strictly positive at `r₀` (strictly more asset convexity), and it is continuous
-at `r₀`, the second-derivative test makes `r₀` a local minimum of the surplus,
-so the surplus stays nonnegative for rates near `r₀`
-(`surplus_nonneg_near_of_matched`). This is local protection against small
-parallel yield shifts only, not global protection and not protection against
-curve twists.
+derivative vanishes at `r₀` (matched first derivatives, i.e. matched dollar
+duration), its second derivative is strictly positive at `r₀` (strictly greater
+asset dollar convexity), and it is continuous at `r₀`, the second-derivative
+test makes `r₀` a local minimum of the surplus, so the surplus stays
+nonnegative for rates near `r₀` (`surplus_nonneg_near_of_matched`). This is
+local protection against small parallel yield shifts only, not global
+protection and not protection against curve twists. The hypotheses are stated
+in raw-derivative / dollar terms: no positive matched present value is assumed,
+so they are not identified here with modified duration / convexity, which
+divide by the matched value.
 
 ## Main results
 
@@ -42,12 +45,15 @@ namespace MathlibExt.Economics.Finance.Immunization
 noncomputable def surplus (A L : ℝ → ℝ) (r : ℝ) : ℝ := A r - L r
 
 /-- **Local (Redington) immunization.** If the surplus is zero at `r₀` (matched
-value), its first derivative vanishes at `r₀` (matched duration, since the
-derivative of a present value is `-Dmod * P`), its second derivative is strictly
-positive at `r₀` (strictly more asset convexity), and the surplus is continuous
-at `r₀`, then the surplus stays nonnegative for all rates sufficiently close to
-`r₀`. This is local protection against small parallel yield shifts only, not
-global protection against curve twists. -/
+value), its first derivative vanishes at `r₀` (matched first derivatives, i.e.
+matched dollar duration: the derivative itself is the negative dollar
+duration), its second derivative is strictly positive at `r₀` (strictly greater
+asset dollar convexity: the raw second derivative itself), and the surplus is
+continuous at `r₀`, then the surplus stays nonnegative for all rates
+sufficiently close to `r₀`. This is local protection against small parallel
+yield shifts only, not global protection against curve twists. No positive
+matched present value is assumed, so the hypotheses are not identified here
+with modified duration / convexity, which divide by the matched value. -/
 theorem surplus_nonneg_near_of_matched {A L : ℝ → ℝ} {r₀ : ℝ}
     (hval : surplus A L r₀ = 0)
     (hderiv : deriv (surplus A L) r₀ = 0)
