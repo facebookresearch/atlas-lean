@@ -17,10 +17,10 @@ open Cslib.Algorithms.Lean.Online.BinPacking
 
 /-- Boundary check: the bound instantiates for three items packed
 feasibly into one bin, giving `nextFit ≤ 2`. -/
-example {sizes : List ℝ} (hpos : ∀ x ∈ sizes, 0 < x)
+example {sizes : List ℝ}
     {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes 1 a) :
     nextFitBins sizes ≤ 2 * 1 :=
-  nextFit_le_two_mul_of_feasible hpos hfeas
+  nextFit_le_two_mul_of_feasible hfeas
 
 /-- The empty list needs no bins: its Next Fit count is `0` by the
 defining equation. -/
@@ -79,7 +79,7 @@ theorem half_half_half_feasible :
 /-- Concrete instance of the bound: the three-half list packs feasibly into two
 bins, so Next Fit uses at most four bins. -/
 example : nextFitBins [1 / 2, 1 / 2, 1 / 2] ≤ 2 * 2 :=
-  nextFit_le_two_mul_of_feasible (by norm_num) half_half_half_feasible
+  nextFit_le_two_mul_of_feasible half_half_half_feasible
 
 /-- Regression: a negative item cannot cancel an oversized item. -/
 example : ¬ FeasibleAssignment [2, -1] 1 (fun _ => 0) := by
@@ -94,7 +94,7 @@ example : ¬ FeasibleAssignment [2] 1 (fun _ => 0) := by
   norm_num [FeasibleAssignment]
 
 /-- Both endpoints of the size domain fit together in a unit bin. -/
-example : FeasibleAssignment [0, 1] 1 (fun _ => 0) := by
+theorem zero_one_feasible : FeasibleAssignment [0, 1] 1 (fun _ => 0) := by
   refine ⟨?_, ?_, ?_⟩
   · norm_num
   · intro i hi
@@ -107,6 +107,22 @@ example : FeasibleAssignment [0, 1] 1 (fun _ => 0) := by
 /-- The endpoint list also follows Next Fit's exact-fit branch. -/
 example : nextFitBins [0, 1] = 1 := by
   norm_num [nextFitBins, nextFitAux]
+
+/-- The bound applies to a feasible list containing a zero-size item. -/
+example : nextFitBins [0, 1] ≤ 2 * 1 :=
+  nextFit_le_two_mul_of_feasible zero_one_feasible
+
+/-- All-zero instance: the bound needs no positive item. -/
+example : nextFitBins [0, 0] ≤ 2 * 1 :=
+  nextFit_le_two_mul_of_feasible (a := fun _ => 0) (by
+    refine ⟨?_, ?_, ?_⟩
+    · norm_num
+    · intro i hi
+      simp
+    · intro b hb
+      have hb0 : b = 0 := by omega
+      subst b
+      norm_num [Finset.sum_range_succ])
 
 /-- The empty instance is feasible with no bins. -/
 example : FeasibleAssignment [] 0 (fun _ => 0) := by

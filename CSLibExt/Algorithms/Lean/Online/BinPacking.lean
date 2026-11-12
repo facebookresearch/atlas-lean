@@ -87,18 +87,37 @@ private theorem nextFitAux_bound (items : List ℝ) (bins : ℕ) (load : ℝ)
       linarith
 
 private theorem nextFitAuxLoad_pos (items : List ℝ) (load : ℝ)
-    (hpos : ∀ x ∈ items, 0 < x) (hload : 0 < load) :
+    (hitems : ∀ x ∈ items, 0 ≤ x ∧ x ≤ 1) (hload0 : 0 < load) (hload1 : load ≤ 1) :
     0 < nextFitAuxLoad items load := by
   induction items generalizing load with
   | nil => simpa [nextFitAuxLoad.eq_1]
   | cons x xs ih =>
-    have hxs : ∀ y ∈ xs, 0 < y := fun y hy => hpos y (List.mem_cons_of_mem x hy)
-    have hx : 0 < x := hpos x List.mem_cons_self
+    have hxs : ∀ y ∈ xs, 0 ≤ y ∧ y ≤ 1 :=
+      fun y hy => hitems y (List.mem_cons_of_mem x hy)
+    have hx := hitems x List.mem_cons_self
     by_cases h : load + x ≤ 1
     · simp only [nextFitAuxLoad.eq_2, h, ↓reduceIte]
-      exact ih (load + x) hxs (by linarith)
+      exact ih (load + x) hxs (by linarith) h
     · simp only [nextFitAuxLoad.eq_2, h, ↓reduceIte]
-      exact ih x hxs hx
+      exact ih x hxs (by linarith) hx.2
+
+/-- Either Next Fit never opens a new bin, or its final load is positive: a new
+bin starts only with an item that overflows a load of at most `1`, so that item
+is positive. -/
+private theorem nextFitAux_eq_or_load_pos (items : List ℝ) (bins : ℕ) (load : ℝ)
+    (hitems : ∀ x ∈ items, 0 ≤ x ∧ x ≤ 1) (hload0 : 0 ≤ load) (hload1 : load ≤ 1) :
+    nextFitAux items bins load = bins ∨ 0 < nextFitAuxLoad items load := by
+  induction items generalizing load with
+  | nil => simp [nextFitAux.eq_1]
+  | cons x xs ih =>
+    have hxs : ∀ y ∈ xs, 0 ≤ y ∧ y ≤ 1 :=
+      fun y hy => hitems y (List.mem_cons_of_mem x hy)
+    have hx := hitems x List.mem_cons_self
+    by_cases h : load + x ≤ 1
+    · simp only [nextFitAux.eq_2, nextFitAuxLoad.eq_2, h, ↓reduceIte]
+      exact ih (load + x) hxs (by linarith) h
+    · simp only [nextFitAux.eq_2, nextFitAuxLoad.eq_2, h, ↓reduceIte]
+      exact Or.inr (nextFitAuxLoad_pos xs x hxs (by linarith) hx.2)
 
 private theorem list_sum_eq_sum_range_getD (l : List ℝ) :
     l.sum = ∑ i ∈ Finset.range l.length, l.getD i 0 := by
@@ -135,9 +154,9 @@ private theorem list_sum_le_of_feasible (sizes : List ℝ) (B : ℕ) (a : ℕ �
 
 /-- Next Fit uses at most twice as many bins as any feasible packing: `B` is the bin count of
 an arbitrary feasible assignment, not the optimal (least) such count, which is not defined
-here. Positivity and feasibility give the total-size bound used in the proof. -/
+here. Feasibility supplies item sizes in `[0, 1]` (zero-size items included) and the
+total-size bound used in the proof. -/
 theorem nextFit_le_two_mul_of_feasible {sizes : List ℝ}
-    (hpos : ∀ x ∈ sizes, 0 < x)
     {B : ℕ} {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes B a) :
     nextFitBins sizes ≤ 2 * B := by
   cases sizes with
@@ -146,20 +165,22 @@ theorem nextFit_le_two_mul_of_feasible {sizes : List ℝ}
     omega
   | cons x xs =>
     simp only [nextFitBins]
-    have hpos_xs : ∀ y ∈ xs, 0 < y :=
-      fun y hy => hpos y (List.mem_cons_of_mem x hy)
-    have hnonneg_xs : ∀ y ∈ xs, 0 ≤ y := fun y hy => le_of_lt (hpos_xs y hy)
-    have hxpos : 0 < x := hpos x List.mem_cons_self
+    have hitems : ∀ y ∈ xs, 0 ≤ y ∧ y ≤ 1 :=
+      fun y hy => hfeas.1 y (List.mem_cons_of_mem x hy)
+    have hnonneg_xs : ∀ y ∈ xs, 0 ≤ y := fun y hy => (hitems y hy).1
+    have hx := hfeas.1 x List.mem_cons_self
+    have hB : a 0 < B := hfeas.2.1 0 (by simp)
+    rcases nextFitAux_eq_or_load_pos xs 1 x hitems hx.1 hx.2 with hone | hloadpos
+    · omega
     have hsum : (x :: xs).sum ≤ (B : ℝ) :=
       list_sum_le_of_feasible (x :: xs) B a hfeas
     have hbound := nextFitAux_bound xs 1 x hnonneg_xs
-    have hloadpos := nextFitAuxLoad_pos xs x hpos_xs hxpos
     simp only [List.sum_cons] at hsum
     have hreal : (nextFitAux xs 1 x : ℝ) < 2 * (B : ℝ) + 1 := by
       have h1 := hbound
       push_cast at h1
       have hxs_nonneg : 0 ≤ xs.sum := List.sum_nonneg hnonneg_xs
-      linarith
+      linarith [hx.1]
     have hnat : nextFitAux xs 1 x < 2 * B + 1 := by
       have hcast : ((nextFitAux xs 1 x : ℕ) : ℝ) < (((2 * B + 1 : ℕ)) : ℝ) := by
         push_cast
