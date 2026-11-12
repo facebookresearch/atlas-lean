@@ -17,7 +17,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 
 namespace MathlibExtTest.Economics.Producer.LawOfSupply
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 /-- Test production set: three net-output vectors on two goods. -/
 def testY : Set (Fin 2 → ℝ) := {![0, 0], ![1, -1], ![2, -3]}
