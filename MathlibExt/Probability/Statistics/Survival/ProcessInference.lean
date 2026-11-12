@@ -22,8 +22,8 @@ process-level limit, as a `TendstoInDistribution` statement to a centered Gaussi
 consistency
 (`TendstoInMeasure`) of a variance estimator, and derives coverage or size by Slutsky's
 theorem and the portmanteau theorem. The Nelson–Aalen, Kaplan–Meier and Aalen–Johansen
-process limits do not by themselves give the Cox and log-rank limits used here; those are
-separate hypotheses.
+process limits do not by themselves give the Cox Wald and Breslow score limits used here; those
+are separate hypotheses.
 
 ## Pointwise intervals versus simultaneous bands
 
@@ -31,8 +31,8 @@ separate hypotheses.
   at one time `t`). `tendsto_coverage_waldInterval` proves that the studentized Wald
   interval has asymptotic coverage equal to the standard-normal mass of `[-z, z]`;
   `tendsto_coverage_cox_waldInterval` specializes it to the Cox Wald interval
-  `βhat ± z / √(coxInformation)`, and `tendsto_logRank_rejection` gives the asymptotic size
-  of the two-sided log-rank (Cox score) test.
+  `βhat ± z / √(coxInformation)`, and `tendsto_breslowScore_rejection` gives the asymptotic size
+  of the two-sided Breslow Cox score test.
 * A **simultaneous** band must contain the whole target curve at once.
   `tendsto_coverage_gridBand` proves asymptotic simultaneous coverage on any finite grid of
   time points, with limit `P (∀ j, |Z j| ≤ z √(v j))` determined by the joint limit law.
@@ -55,7 +55,7 @@ grid coverage) are not constructed; the theorems hold for every `z`.
 * `tendsto_measureReal_preimage_of_tendstoInDistribution`: portmanteau on preimages.
 * `tendsto_measureReal_abs_le_mul`: studentized Slutsky–portmanteau limit.
 * `tendsto_coverage_waldInterval`, `tendsto_coverage_cox_waldInterval`: pointwise coverage.
-* `tendsto_logRank_rejection`: asymptotic size of the log-rank test.
+* `tendsto_breslowScore_rejection`: asymptotic size of the Breslow Cox score test.
 * `tendsto_coverage_gridBand`: simultaneous coverage on a finite grid.
 * `gridBand_limit_le_pointwise`, `one_sub_card_mul_le_gridBand_limit`: comparison with
   pointwise coverage.
@@ -195,26 +195,25 @@ theorem tendsto_coverage_waldInterval {est se : ℕ → Ω → ℝ} {β : ℝ} {
   ext ω
   exact (mem_waldInterval_div_sqrt_iff hn).symm
 
-/-! ### The log-rank test -/
+/-! ### The Breslow Cox score test -/
 
 open MathlibExt.Probability.Statistics.CoxPartialLikelihood
 
-/-- The two-sided log-rank test at critical value `z` rejects when the observed-minus-expected
-group-1 event count exceeds `z` times the square root of its Breslow variance:
-`z * √(breslowInformation T δ g) < |observedMinusExpected T δ g|`. By `coxScore_zero` and
-`coxInformation_zero` this is the Cox score test of `β = 0` for the group indicator; the
-Breslow variance agrees with the hypergeometric log-rank variance when event times are
-distinct (see `breslowInformation`). -/
-def logRankRejects {n : ℕ} (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n → Bool) (z : ℝ) :
+/-- The two-sided Breslow Cox score test at critical value `z` rejects when the
+observed-minus-expected group-1 event count exceeds `z` times the square root of its Breslow
+information: `z * √(breslowInformation T δ g) < |observedMinusExpected T δ g|`.
+By `coxScore_zero` and `coxInformation_zero` this is the Cox score test of `β = 0` for the
+group indicator. With tied event times, its information need not equal the hypergeometric
+log-rank variance, so this predicate does not define the usual log-rank test. -/
+def breslowScoreRejects {n : ℕ} (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin n → Bool) (z : ℝ) :
     Prop :=
   z * √(breslowInformation T δ g) < |observedMinusExpected T δ g|
 
-/-- **Asymptotic size of the log-rank test.** Take as hypotheses the null limit of the log-rank
-numerator (a marginal of the process-level limit), `(O - E) / √n ⟶ N(0, v)` with `v ≠ 0`, and
-consistency of the normalized Breslow variance, `√(I / n) ⟶ √v` in probability. Then the rejection
-probability of the two-sided level-`z` log-rank test tends to the standard-normal mass outside
-`[-z, z]`. -/
-theorem tendsto_logRank_rejection {T : (n : ℕ) → Ω → Fin n → ℝ}
+/-- **Asymptotic size of the Breslow Cox score test.** Take as hypotheses the null limit of
+its numerator, `(O - E) / √n ⟶ N(0, v)` with `v ≠ 0`, and consistency of the normalized
+Breslow information, `√(I / n) ⟶ √v` in probability. Then the rejection probability of the
+two-sided test with critical value `z` tends to the standard-normal mass outside `[-z, z]`. -/
+theorem tendsto_breslowScore_rejection {T : (n : ℕ) → Ω → Fin n → ℝ}
     {δ g : (n : ℕ) → Ω → Fin n → Bool} {Z : Ω' → ℝ} {v : NNReal} (hv : v ≠ 0) (z : ℝ)
     (hlim : TendstoInDistribution
       (fun (n : ℕ) ω ↦ observedMinusExpected (T n ω) (δ n ω) (g n ω) / √(n : ℝ)) atTop Z
@@ -225,7 +224,7 @@ theorem tendsto_logRank_rejection {T : (n : ℕ) → Ω → Fin n → ℝ}
       (fun _ ↦ √(v : ℝ)))
     (hinfo_meas : ∀ n : ℕ, AEMeasurable
       (fun ω ↦ √(breslowInformation (T n ω) (δ n ω) (g n ω) / n)) P) :
-    Tendsto (fun n : ℕ ↦ P.real {ω | logRankRejects (T n ω) (δ n ω) (g n ω) z}) atTop
+    Tendsto (fun n : ℕ ↦ P.real {ω | breslowScoreRejects (T n ω) (δ n ω) (g n ω) z}) atTop
       (𝓝 (1 - (gaussianReal 0 1).real (Set.Icc (-z) z))) := by
   have hacc := tendsto_measureReal_abs_le_mul hv z hlim hZ hinfo hinfo_meas
   refine (hacc.const_sub 1).congr' ?_
@@ -239,7 +238,7 @@ theorem tendsto_logRank_rejection {T : (n : ℕ) → Ω → Fin n → ℝ}
   rw [← probReal_compl_eq_one_sub₀ hmeas]
   congr 1
   ext ω
-  simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le, logRankRejects]
+  simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le, breslowScoreRejects]
   rw [Real.sqrt_div' _ (Nat.cast_nonneg n), abs_div, abs_of_pos hsq, mul_div_assoc',
     div_lt_div_iff_of_pos_right hsq]
 

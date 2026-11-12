@@ -56,7 +56,7 @@ example : (![1, -1] : Fin 2 → ℝ) ∈ gridBand ![0, 0] ![1, 1] 2 := by
   rw [mem_waldInterval_iff]
   fin_cases j <;> norm_num
 
-/-! ### `logRankRejects` on the two-subject sample from the Cox test file
+/-! ### `breslowScoreRejects` on the two-subject sample from the Cox test file
 
 `O - E = 1 / 2` and the Breslow information is `1 / 4`, so the test rejects exactly when
 `z * (1 / 2) < 1 / 2`, i.e. `z < 1`. -/
@@ -76,12 +76,12 @@ theorem breslowInformation_T₀ : breslowInformation T₀ δ₀ g₀ = 1 / 4 := 
 theorem sqrt_quarter : √(1 / 4 : ℝ) = 1 / 2 := by
   rw [show (1 / 4 : ℝ) = (1 / 2) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
-example : logRankRejects T₀ δ₀ g₀ (1 / 2) := by
-  rw [logRankRejects, observedMinusExpected_T₀, breslowInformation_T₀, sqrt_quarter]
+example : breslowScoreRejects T₀ δ₀ g₀ (1 / 2) := by
+  rw [breslowScoreRejects, observedMinusExpected_T₀, breslowInformation_T₀, sqrt_quarter]
   norm_num
 
-example : ¬ logRankRejects T₀ δ₀ g₀ 2 := by
-  rw [logRankRejects, observedMinusExpected_T₀, breslowInformation_T₀, sqrt_quarter]
+example : ¬ breslowScoreRejects T₀ δ₀ g₀ 2 := by
+  rw [breslowScoreRejects, observedMinusExpected_T₀, breslowInformation_T₀, sqrt_quarter]
   norm_num
 
 /-! ### Non-vacuity: the hypotheses of the pointwise and band theorems are satisfiable
@@ -176,7 +176,7 @@ example (z : ℝ) :
 #print axioms gaussianReal_real_abs_le_mul_sqrt
 #print axioms tendsto_measureReal_abs_le_mul
 #print axioms tendsto_coverage_waldInterval
-#print axioms tendsto_logRank_rejection
+#print axioms tendsto_breslowScore_rejection
 #print axioms tendsto_coverage_cox_waldInterval
 #print axioms tendsto_coverage_gridBand
 #print axioms gridBand_limit_le_pointwise
