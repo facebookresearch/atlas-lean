@@ -23,7 +23,7 @@ maximin (optimal) when the payoff it guarantees equals the maximin value, and a 
 minimax when the most it concedes equals the minimax value. Whenever the two values agree, every
 pair of optimal strategies is a Nash equilibrium (a saddle point). For finite matrix games the
 values agree by von Neumann's minimax theorem `matrixGame_minimax`, which
-`matrixGame_isNash_of_optimal` cites. `matrixGame_exists_isSaddlePointOn` already gives the
+`matrixGame_isSaddlePoint_of_optimal` cites. `matrixGame_exists_isSaddlePointOn` already gives the
 existence of some saddle point; the result here is that every optimal pair is one.
 
 The Nash condition is written as the two saddle-point inequalities in the matrix-game convention of
@@ -33,8 +33,10 @@ and the two formulations should be unified.
 
 ## Main results
 
-* `isNash_of_optimal_of_value_eq`: optimal strategies are Nash when maximin equals minimax.
-* `matrixGame_isNash_of_optimal`: optimal strategies of a finite matrix game are Nash.
+* `isSaddlePoint_of_optimal_of_value_eq`: optimal strategies form a saddle point when maximin
+  equals minimax.
+* `matrixGame_isSaddlePoint_of_optimal`: optimal strategies of a finite matrix game form a
+  saddle point.
 
 ## References
 
@@ -106,10 +108,11 @@ private theorem bddAbove_payoff_right {m n : ℕ} (A : Matrix (Fin m) (Fin n) �
   obtain ⟨p, rfl⟩ := hb
   exact le_of_abs_le (abs_payoff_le A p q)
 
-/-- **Optimal strategies form a Nash equilibrium**, given that the game has a value (maximin =
-minimax, hypothesis `hv`; discharged in Atlas by citing `matrixGame_minimax`): if `p` is maximin
-and `q` is minimax, neither player gains by a unilateral deviation. -/
-theorem isNash_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin n) ℝ}
+/-- **Optimal strategies form a saddle point**, i.e. a Nash equilibrium of the zero-sum game,
+given that the game has a value (maximin = minimax, hypothesis `hv`; discharged in Atlas by
+citing `matrixGame_minimax`): if `p` is maximin and `q` is minimax, neither player gains by a
+unilateral deviation. -/
+theorem isSaddlePoint_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin n) ℝ}
     (hv : (⨆ p : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n),
       p.weights ⬝ᵥ (A *ᵥ q.weights)) =
       ⨅ q : StdSimplex ℝ (Fin n), ⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q.weights))
@@ -158,17 +161,17 @@ theorem isNash_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin n) �
       _ = (⨅ q : StdSimplex ℝ (Fin n), p.weights ⬝ᵥ (A *ᵥ q.weights)) := hp'.symm
       _ ≤ p.weights ⬝ᵥ (A *ᵥ q'.weights) := ciInf_le hbBelow q'
 
-/-- **Optimal strategies of a finite zero-sum matrix game form a Nash equilibrium.** With at
-least one row and one column, if `p` is a maximin strategy and `q` a minimax strategy, neither
-player gains by a unilateral deviation; the value equality is von Neumann's minimax theorem
-`matrixGame_minimax`. -/
-theorem matrixGame_isNash_of_optimal {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
+/-- **Optimal strategies of a finite zero-sum matrix game form a saddle point** (a Nash
+equilibrium of the zero-sum game). With at least one row and one column, if `p` is a maximin
+strategy and `q` a minimax strategy, neither player gains by a unilateral deviation; the value
+equality is von Neumann's minimax theorem `matrixGame_minimax`. -/
+theorem matrixGame_isSaddlePoint_of_optimal {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
     {A : Matrix (Fin m) (Fin n) ℝ} {p : StdSimplex ℝ (Fin m)} {q : StdSimplex ℝ (Fin n)}
     (hp : IsMaximinStrategy A p) (hq : IsMinimaxStrategy A q) :
     (∀ p' : StdSimplex ℝ (Fin m),
       p'.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q.weights)) ∧
       ∀ q' : StdSimplex ℝ (Fin n),
         p.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q'.weights) :=
-  isNash_of_optimal_of_value_eq (matrixGame_minimax hm hn A) hp hq
+  isSaddlePoint_of_optimal_of_value_eq (matrixGame_minimax hm hn A) hp hq
 
 end MathlibExt.GameTheory.ZeroSumOptimal

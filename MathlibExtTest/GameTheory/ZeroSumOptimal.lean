@@ -168,7 +168,7 @@ theorem ex_nash :
               (StdSimplex.single (R := ℝ) (0 : Fin 1)).weights) ≤
           (StdSimplex.single (R := ℝ) (1 : Fin 2)).weights ⬝ᵥ
             ((!![1; 3] : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ q'.weights) :=
-  isNash_of_optimal_of_value_eq ex_has_value ex_maximin_single_one ex_minimax_single_zero
+  isSaddlePoint_of_optimal_of_value_eq ex_has_value ex_maximin_single_one ex_minimax_single_zero
 
 /-- Row `0` is not maximin in the example: it guarantees only `1 < 3`. -/
 theorem ex_not_maximin_single_zero :
