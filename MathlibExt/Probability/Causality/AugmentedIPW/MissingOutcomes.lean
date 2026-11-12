@@ -61,7 +61,8 @@ on `Tᶜ`, and the ATE score is the difference of the two missing-outcome scores
 The nuisances `π`, `m`, `e`, `m₀`, `m₁` are **fixed functions** of the covariate value. Nothing
 here concerns estimated or cross-fitted nuisances, and **no inference is claimed**: no standard
 errors, rates, asymptotic normality, efficiency or semiparametric bounds. The results are
-population (expectation) identities. The covariate takes finitely many values; general
+population (expectation) identities, stated for a probability measure `μ` so that integrals
+are means. The covariate takes finitely many values; general
 covariates are not covered. Missing-not-at-random identification is not covered; the tests
 contain an MNAR example where both nuisances are correct and the score is biased.
 
@@ -72,10 +73,9 @@ Reuse search (2026-11-11, base `origin/main` `53666a3c1`): the terms `aipw`, `au
 `MathlibExt`, `MathlibExtTest`, `WantedExt`, `CSLibExt`, `blueprint`, `docs`, nor (with
 `inverse probability`) in Mathlib `v4.35.0`. Reused from
 `MathlibExt/Probability/Causality/CausalIdentification.lean` (on `origin/main`):
-`CondIndepDiscrete`, `propensity`, `observed`, `StronglyIgnorable`, `StronglyIgnorable.comp`.
-Two private lemmas of that file (`measureReal_inter_preimage_eq_propensity_mul`, restated here
-as `measureReal_inter_eq_propensity_mul`, and `setIntegral_inter_eq_propensity_mul`) are restated
-below as private lemmas with the same proofs.
+`CondIndepDiscrete`, `propensity`, `observed`, `StronglyIgnorable`, `StronglyIgnorable.comp`,
+`measureReal_inter_preimage_eq_propensity_mul`, `setIntegral_inter_eq_propensity_mul` (the last
+two made public in that file for this reuse).
 From Mathlib: `integral_iUnion_fintype`, `integrableOn_finite_iUnion`, `setIntegral_indicator`,
 `measureReal_inter_add_sdiff`, `integral_map`. The AIPW score is defined locally; no unmerged
 sibling file is imported.
@@ -194,45 +194,6 @@ theorem condIndepDiscrete_compl {β γ : Type*} [MeasurableSpace β] [IsFiniteMe
   rw [e1, e2]
   linear_combination μ.real (W ⁻¹' {w}) * h1 - μ.real (V ⁻¹' B ∩ W ⁻¹' {w}) * h2 - h B hB w
 
-/-- `P(R, X = x) = e(x) P(X = x)` (restated from `CausalIdentification`, where it is private). -/
-private lemma measureReal_inter_eq_propensity_mul [IsFiniteMeasure μ] {R : Set Ω}
-    {X : Ω → 𝒳} (x : 𝒳) :
-    μ.real (R ∩ X ⁻¹' {x}) = propensity μ R X x * μ.real (X ⁻¹' {x}) := by
-  by_cases h : μ.real (X ⁻¹' {x}) = 0
-  · rw [h, mul_zero]
-    exact le_antisymm (h ▸ measureReal_mono Set.inter_subset_right) measureReal_nonneg
-  · rw [propensity, div_mul_cancel₀ _ h]
-
-/-- Under MAR, `E[Y; R, X = x] = e(x) E[Y; X = x]` (restated from `CausalIdentification`, where
-it is private). -/
-private lemma setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {R : Set Ω}
-    {X : Ω → 𝒳} {Y : Ω → ℝ} (hY : Measurable Y) (h : MissingAtRandom μ R Y X) (x : 𝒳) :
-    ∫ ω in R ∩ X ⁻¹' {x}, Y ω ∂μ = propensity μ R X x * ∫ ω in X ⁻¹' {x}, Y ω ∂μ := by
-  set A := X ⁻¹' {x}
-  by_cases h0 : μ.real A = 0
-  · have hA0 : μ A = 0 := (measureReal_eq_zero_iff).1 h0
-    rw [Measure.restrict_eq_zero.2 hA0,
-      Measure.restrict_eq_zero.2 (measure_mono_null Set.inter_subset_right hA0)]
-    simp
-  have he : 0 ≤ propensity μ R X x := div_nonneg measureReal_nonneg measureReal_nonneg
-  have hmeas : (μ.restrict (R ∩ A)).map Y =
-      ENNReal.ofReal (propensity μ R X x) • (μ.restrict A).map Y := by
-    ext B hB
-    rw [Measure.map_apply hY hB, Measure.smul_apply, Measure.map_apply hY hB,
-      Measure.restrict_apply (hY hB), Measure.restrict_apply (hY hB), smul_eq_mul,
-      ← ofReal_measureReal, ← ofReal_measureReal, ← ENNReal.ofReal_mul he]
-    congr 1
-    have key := h B hB x
-    have hs1 : Y ⁻¹' B ∩ (R ∩ A) = R ∩ Y ⁻¹' B ∩ A := by
-      ext; simp only [Set.mem_inter_iff, Set.mem_preimage]; tauto
-    rw [hs1, propensity, div_mul_eq_mul_div, eq_div_iff h0, key]
-  calc ∫ ω in R ∩ A, Y ω ∂μ = ∫ y, y ∂((μ.restrict (R ∩ A)).map Y) :=
-        (integral_map hY.aemeasurable aestronglyMeasurable_id).symm
-    _ = propensity μ R X x * ∫ ω in A, Y ω ∂μ := by
-        rw [hmeas, integral_smul_measure, ENNReal.toReal_ofReal he, smul_eq_mul]
-        congr 1
-        exact integral_map hY.aemeasurable aestronglyMeasurable_id
-
 /-- On a covariate value of probability zero the regression error term vanishes. -/
 private lemma stratumError_eq_zero {Y : Ω → ℝ} {X : Ω → 𝒳} {m : 𝒳 → ℝ} {x : 𝒳}
     (h : μ (X ⁻¹' {x}) = 0) :
@@ -268,7 +229,7 @@ private lemma setIntegral_aipwScore [IsFiniteMeasure μ] {R : Set Ω} (hR : Meas
     ((hYm.indicator hR).const_mul _).integrableOn, setIntegral_const, integral_const_mul,
     setIntegral_indicator hR, integral_sub hYi.integrableOn (integrable_const _),
     setIntegral_const, Set.inter_comm, setIntegral_inter_eq_propensity_mul hY hmar,
-    measureReal_inter_eq_propensity_mul, smul_eq_mul, smul_eq_mul, div_eq_mul_inv]
+    measureReal_inter_preimage_eq_propensity_mul, smul_eq_mul, smul_eq_mul, div_eq_mul_inv]
   ring
 
 /-- **Exact bias of the AIPW score under MAR**: for a covariate with finitely many values, the
@@ -277,7 +238,7 @@ score is integrable and
 Each term is the product of the response-propensity error and the regression error on the
 stratum `X = x`. Neither positivity nor any condition on `π`, `m` is assumed; for `π(x) = 0`
 the identity uses the convention in `aipwScore` (the factor is `-1`). -/
-theorem integral_aipwScore_eq [Fintype 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
+theorem integral_aipwScore_eq [Fintype 𝒳] [IsProbabilityMeasure μ] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
     (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X) (π m : 𝒳 → ℝ) :
     Integrable (aipwScore R X π m Y) μ ∧
@@ -303,7 +264,7 @@ theorem integral_aipwScore_eq [Fintype 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
 /-- **Double robustness, propensity branch**: under MAR and positivity, if the response
 propensity is correct, `π(x) = P(R | X = x)` on covariate values of positive probability, the
 AIPW score is unbiased for `E[Y]` whatever the regression `m`. -/
-theorem integral_aipwScore_of_propensity [Finite 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
+theorem integral_aipwScore_of_propensity [Finite 𝒳] [IsProbabilityMeasure μ] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
     (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X) (hpos : ResponsePositivity μ R X)
     {π : 𝒳 → ℝ} (m : 𝒳 → ℝ) (hπ : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → π x = propensity μ R X x) :
@@ -321,7 +282,7 @@ theorem integral_aipwScore_of_propensity [Finite 𝒳] [IsFiniteMeasure μ] {R :
 for `E[Y]` whatever the response propensity `π` (including `π(x) = 0`, with the convention in
 `aipwScore`). Positivity is not used by this identity; it is
 what makes this `m` identifiable from the responders (`E[Y | X = x] = E[Y | R, X = x]`). -/
-theorem integral_aipwScore_of_regression [Finite 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
+theorem integral_aipwScore_of_regression [Finite 𝒳] [IsProbabilityMeasure μ] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
     (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X) (π : 𝒳 → ℝ) {m : 𝒳 → ℝ}
     (hm : ∀ x, μ (X ⁻¹' {x}) ≠ 0 → m x = outcomeRegression μ Y X x) :
@@ -340,7 +301,7 @@ and positivity of the response, `E[m(X) + 1_R (Y - m(X)) / π(X)] = E[Y]` when *
 response propensity is correct (`π(x) = P(R | X = x)`) **or** the outcome regression is correct
 (`m(x) = E[Y | X = x]`), on every covariate value of positive probability. The nuisances are
 fixed functions. -/
-theorem integral_aipwScore [Finite 𝒳] [IsFiniteMeasure μ] {R : Set Ω}
+theorem integral_aipwScore [Finite 𝒳] [IsProbabilityMeasure μ] {R : Set Ω}
     (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
     (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X) (hpos : ResponsePositivity μ R X)
     (π m : 𝒳 → ℝ)
@@ -357,7 +318,7 @@ of potential outcomes (`CondIndepDiscrete` plus overlap `0 < P(T | X = x) < 1`),
 of the observed outcome has mean `E[Y₁ - Y₀]` when **either** the treatment propensity is correct
 (`e(x) = P(T | X = x)`) **or** both arm regressions are correct (`m₀(x) = E[Y₀ | X = x]` and
 `m₁(x) = E[Y₁ | X = x]`), on every covariate value of positive probability. -/
-theorem integral_aipwATEScore [Finite 𝒳] [IsFiniteMeasure μ] {T : Set Ω}
+theorem integral_aipwATEScore [Finite 𝒳] [IsProbabilityMeasure μ] {T : Set Ω}
     (hT : MeasurableSet T) {X : Ω → 𝒳} (hX : Measurable X) {Y₀ Y₁ : Ω → ℝ}
     (hY₀ : Measurable Y₀) (hY₁ : Measurable Y₁) (hY₀i : Integrable Y₀ μ)
     (hY₁i : Integrable Y₁ μ) (h : StronglyIgnorable μ T (fun ω => (Y₀ ω, Y₁ ω)) X)

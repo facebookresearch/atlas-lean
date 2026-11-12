@@ -78,6 +78,13 @@ lemma wmeas_real {w : α → ℝ} (hw : ∀ a, 0 ≤ w a) (S : Set α) :
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases h : a ∈ S <;> simp [h, Measure.dirac_apply, hw a]
 
+lemma isProbabilityMeasure_wmeas {w : α → ℝ} (hw : ∀ a, 0 ≤ w a) (h1 : ∑ a, w a = 1) :
+    IsProbabilityMeasure (wmeas w) := by
+  constructor
+  have h := wmeas_real hw Set.univ
+  simp only [Set.indicator_univ, h1, measureReal_def] at h
+  exact (ENNReal.toReal_eq_one_iff _).1 h
+
 lemma integral_wmeas {w : α → ℝ} (hw : ∀ a, 0 ≤ w a) (f : α → ℝ) :
     ∫ a, f a ∂(wmeas w) = ∑ a, w a * f a := by
   rw [integral_fintype Integrable.of_finite]
@@ -125,6 +132,9 @@ lemma sum_pt (f : Pt → ℝ) :
       f (true, true, false) + f (true, true, true) := by
   simp [Fintype.sum_prod_type]
   ring
+
+instance : IsProbabilityMeasure μ :=
+  isProbabilityMeasure_wmeas w_nonneg (by rw [sum_pt]; norm_num [w])
 
 lemma μ_real (S : Set Pt) : μ.real S = ∑ p, S.indicator w p := wmeas_real w_nonneg S
 
@@ -268,6 +278,9 @@ example : ∫ p, aipwATEScore R X (fun _ => 1 / 3) (fun x => if x then 5 / 2 els
 noncomputable abbrev ν : Measure Bool := wmeas fun _ => 1 / 2
 
 lemma ν_nonneg : ∀ b : Bool, (0 : ℝ) ≤ (fun _ => 1 / 2) b := fun _ => by norm_num
+
+instance : IsProbabilityMeasure ν :=
+  isProbabilityMeasure_wmeas ν_nonneg (by simp)
 
 /-- The outcome bit. -/
 def Yb (b : Bool) : ℝ := if b then 1 else 0
