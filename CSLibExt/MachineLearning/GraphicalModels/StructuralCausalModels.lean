@@ -39,7 +39,9 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
 * `FiniteSCM.counterfactual M k a u`: the **counterfactual** solution had node `k` been set to
   `a`, at the same noise value `u`. `FiniteSCM.counterfactualProb M μ E k a F`: the conditional
   counterfactual probability `P(X_{k ← a} ∈ F | E)` for factual evidence `E`;
-  `FiniteSCM.posteriorWeight`: the posterior of the noise given the evidence.
+  `FiniteSCM.posteriorWeight`: the posterior of the noise given the evidence. Both are
+  genuine probabilities only when the evidence has positive probability; for
+  zero-probability evidence they are `0` by the totalized-division convention.
 
 ## Main results
 
@@ -730,14 +732,20 @@ noncomputable def evidenceProb {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀
 
 /-- The conditional counterfactual probability `P(X_{k ← a} ∈ F | E)`: the probability that the
 factual solution satisfies the evidence `E` and the counterfactual solution, at the same noise
-value, satisfies `F`, divided by the probability of `E`. -/
+value, satisfies `F`, divided by the probability of `E`. This is a genuine conditional
+probability only when `M.evidenceProb μ E ≠ 0`; when the evidence has probability zero,
+Lean's totalized real division makes the result `0` by convention, not a conditional
+probability. -/
 noncomputable def counterfactualProb {α : Type*} {n : ℕ} {U : Fin n → Type*}
     [∀ k, Fintype (U k)] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (E : (Fin n → α) → Prop) [DecidablePred E] (k : Fin n) (a : α) (F : (Fin n → α) → Prop)
     [DecidablePred F] : ℝ :=
   (∑ u with E (M.solve u) ∧ F (M.counterfactual k a u), noiseWeight μ u) / M.evidenceProb μ E
 
-/-- **Abduction**: the posterior weight of the noise value `u` given the factual evidence `E`. -/
+/-- **Abduction**: the posterior weight of the noise value `u` given the factual evidence `E`.
+These are genuine posterior weights only when `M.evidenceProb μ E ≠ 0`; when the evidence
+has probability zero, Lean's totalized real division makes every weight `0` by convention,
+so they do not form a posterior distribution in that case. -/
 noncomputable def posteriorWeight {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (E : (Fin n → α) → Prop)
     [DecidablePred E] (u : (k : Fin n) → U k) : ℝ :=
@@ -815,14 +823,18 @@ theorem counterfactualProb_eq_sum_posteriorWeight {α : Type*} {n : ℕ} {U : Fi
   by_cases hE' : E (M.solve u) <;> by_cases hF : F (M.counterfactual k a u) <;> simp [hE', hF]
 
 /-- Without evidence, the counterfactual probability is the interventional probability: the
-mass of `F` under the joint of the induced Bayesian network after `do(X_k = a)`. -/
+mass of `F` under the joint of the induced Bayesian network after `do(X_k = a)`. The
+`Nonempty α` instance that `BayesNet.joint` requires is supplied from `a` itself, so
+callers need not provide a separate instance. -/
 theorem counterfactualProb_true {α : Type*} [Fintype α] {n : ℕ} {U : Fin n → Type*}
-    [∀ k, Fintype (U k)] [Nonempty α] (M : FiniteSCM α n U)
+    [∀ k, Fintype (U k)] (M : FiniteSCM α n U)
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (k : Fin n) (a : α) (F : (Fin n → α) → Prop)
     [DecidablePred F] :
     M.counterfactualProb μ (fun _ => True) k a F =
-      ∑ x with F x, ((M.inducedBayesNet μ).intervene k a).joint x := by
+      ∑ x with F x, (@BayesNet.joint α _ ⟨a⟩
+        ((M.inducedBayesNet μ).intervene k a) x) := by
   classical
+  have _nonempty : Nonempty α := ⟨a⟩
   have hsum1 : ∑ u, noiseWeight μ u = 1 := sum_noiseWeight_eq_one μ
   have hE1 : M.evidenceProb μ (fun _ => True) = 1 := by
     simp only [evidenceProb, Finset.filter_true]
