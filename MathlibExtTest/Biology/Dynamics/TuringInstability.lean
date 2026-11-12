@@ -11,6 +11,7 @@ module
 import MathlibExt.Biology.Dynamics.TuringInstability
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-! Tests for nonlinear Turing instability.
 
@@ -23,6 +24,10 @@ import Mathlib.Analysis.Calculus.Deriv.Prod
   `diag(eᵗ, e^{-2t})` is the linearized semigroup on `C([0, 1]; ℝ²)`. It acts on every Neumann
   mode through the modal ODE of `J`, has growth bound `eᵗ`, and its own flow satisfies every
   hypothesis with a zero remainder, so the theorem applies.
+* Non-vacuity of the mild-formulation theorems: `exists_norm_timeMap_sub_le` with zero reaction
+  and trivial semigroups on `ℝ`; `exists_escape_of_isUnstableMode_of_mild` with the linear saddle
+  kinetics `f z = J z`, no diffusion (`SA = 1`), and the saddle semigroup, whose orbits are shown
+  to be mild solutions of `w' = J w` (`isMildSolution_saddleSemigroup`).
 * Boundary case: for `L < 0` the interval `[0, L]` is empty and every Neumann mode is `0`, even
   with a nonzero amplitude, so the hypothesis `0 ≤ L` of `neumannMode_ne_zero` and
   `norm_neumannMode` cannot be dropped. -/
@@ -198,5 +203,121 @@ example : ∃ ε > 0, ∀ δ > 0, ∃ x : C(Icc (0 : ℝ) 1, Fin 2 → ℝ), ‖
     rw [Real.toNNReal_add (by positivity) zero_le_one, add_comm]; simp
   simp only [NNReal.coe_one, mul_one, Real.toNNReal_one, h, isC0Semigroup_saddleSemigroup.map_add,
     ContinuousLinearMap.comp_apply]
+
+/-! ### Non-vacuity of the mild-formulation theorems -/
+
+/-- The trivial semigroup `SA t = 1` (no diffusion) is C₀. -/
+theorem isC0Semigroup_one {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] :
+    IsC0Semigroup fun _ : ℝ≥0 => (1 : X →L[ℝ] X) where
+  map_zero := rfl
+  map_add _ _ := by ext; simp
+  continuous_apply _ := continuous_const
+  locally_bounded _ := ⟨1, fun _ _ => ContinuousLinearMap.norm_id_le⟩
+
+/-- **Non-vacuity of `exists_norm_timeMap_sub_le`**: zero reaction, trivial semigroups and the
+identity flow on `ℝ`. -/
+example : ∃ ρ > 0, ∃ C ≥ 0, ∀ y : ℝ, ‖y‖ ≤ ρ →
+    ‖(fun (_ : ℝ) (x : ℝ) => x) 1 (0 + y) - 0 - (1 : ℝ →L[ℝ] ℝ) y‖ ≤ C * ‖y‖ ^ (2 : ℝ) := by
+  refine exists_norm_timeMap_sub_le (SA := fun _ => (1 : ℝ →L[ℝ] ℝ))
+    (S := fun _ => (1 : ℝ →L[ℝ] ℝ)) (F := fun _ => 0) (B := 0) (Φ := fun _ x => x) (u₀ := 0)
+    (T := 1) (ρ₀ := 1) (R := 1) (r := 1) (K := 0) (p := 2) isC0Semigroup_one
+    (fun _ => ⟨0, LipschitzWith.const' 0 |>.lipschitzOnWith⟩)
+    zero_le_one one_pos one_pos le_rfl (by norm_num) (fun _ => rfl) rfl (fun z _ => by simp)
+    (fun y => ⟨continuousOn_const, fun _ _ => by simp, fun _ _ => by simp [duhamel]⟩)
+    (fun x hx => ⟨⟨continuousOn_const, fun _ _ => by simp, fun _ _ => by simp [duhamel]⟩, ?_⟩)
+  intro t _
+  simpa using hx
+
+/-- The saddle semigroup on all real times, as an explicit combination of exponentials. -/
+private theorem saddleSemigroup_eq (y : C(Icc (0 : ℝ) 1, Fin 2 → ℝ)) {t : ℝ} (ht : 0 ≤ t) :
+    saddleSemigroup t.toNNReal y =
+      Real.exp t • pointwiseMatrix _ (Matrix.diagonal ![1, 0]) y +
+        Real.exp (-2 * t) • pointwiseMatrix _ (Matrix.diagonal ![0, 1]) y := by
+  ext x i
+  fin_cases i <;> simp [saddleSemigroup_apply, Matrix.mulVec_diagonal, Real.coe_toNNReal _ ht]
+
+/-- The orbits of the saddle semigroup are mild solutions of `w' = J w` (no diffusion). -/
+theorem isMildSolution_saddleSemigroup (y : C(Icc (0 : ℝ) 1, Fin 2 → ℝ)) (T : ℝ) :
+    IsMildSolution (fun _ => (1 : C(Icc (0 : ℝ) 1, Fin 2 → ℝ) →L[ℝ] _))
+      (pointwiseMatrix _ saddle) y T fun t => saddleSemigroup t.toNNReal y := by
+  set P₀ := pointwiseMatrix _ (Matrix.diagonal ![(1 : ℝ), 0]) y
+  set P₁ := pointwiseMatrix _ (Matrix.diagonal ![(0 : ℝ), 1]) y
+  set g : ℝ → C(Icc (0 : ℝ) 1, Fin 2 → ℝ) := fun t => Real.exp t • P₀ + Real.exp (-2 * t) • P₁
+  have hB : ∀ t, pointwiseMatrix _ saddle (g t) =
+      Real.exp t • P₀ + (Real.exp (-2 * t) * -2) • P₁ := by
+    intro t
+    ext x i
+    simp only [g, P₀, P₁, pointwiseMatrix_apply, ContinuousMap.add_apply,
+      ContinuousMap.smul_apply, mulVec, dotProduct, Fin.sum_univ_two, Pi.add_apply,
+      Pi.smul_apply, smul_eq_mul]
+    fin_cases i
+    · simp [Matrix.diagonal]
+    · simp [Matrix.diagonal]
+      ring
+  have hg : ∀ t, HasDerivAt g (pointwiseMatrix _ saddle (g t)) t := by
+    intro t
+    rw [hB]
+    have h1 := ((Real.hasDerivAt_exp t).smul_const P₀).add
+      ((((hasDerivAt_id t).const_mul (-2)).exp).smul_const P₁)
+    refine h1.congr_deriv ?_
+    simp only [id, mul_one]
+  have hgc : Continuous fun t => pointwiseMatrix _ saddle (g t) :=
+    (pointwiseMatrix _ saddle).continuous.comp
+      (continuous_iff_continuousAt.2 fun t => (hg t).continuousAt)
+  have hcont : Continuous fun t : ℝ => saddleSemigroup t.toNNReal y :=
+    (isC0Semigroup_saddleSemigroup.continuous_apply y).comp continuous_real_toNNReal
+  refine ⟨hcont.continuousOn, fun t _ => ?_, fun t ht => ?_⟩
+  · simp only [one_apply_eq_self]
+    exact ((pointwiseMatrix _ saddle).continuous.comp hcont).intervalIntegrable 0 t
+  · simp only [duhamel, one_apply_eq_self]
+    have hcongr : ∫ s in (0 : ℝ)..t, pointwiseMatrix _ saddle (saddleSemigroup s.toNNReal y) =
+        ∫ s in (0 : ℝ)..t, pointwiseMatrix _ saddle (g s) := by
+      refine intervalIntegral.integral_congr fun s hs => ?_
+      rw [uIcc_of_le ht.1] at hs
+      simp only [saddleSemigroup_eq y hs.1, g, P₀, P₁]
+    rw [hcongr, intervalIntegral.integral_eq_sub_of_hasDerivAt (fun s _ => hg s)
+      (hgc.intervalIntegrable 0 t), saddleSemigroup_eq y ht.1]
+    have hg0 : g 0 = y := by
+      ext x i
+      fin_cases i <;> simp [g, P₀, P₁, Matrix.mulVec_diagonal]
+    rw [hg0, add_sub_cancel]
+
+/-- **Non-vacuity of `exists_escape_of_isUnstableMode_of_mild`.** Linear saddle kinetics
+`f z = J z` with `J = diag(1, -2)`, no diffusion (`SA = 1`), linearized semigroup and flow the
+pointwise `diag(eᵗ, e^{-2t})`, steady state `a = 0`, remainder order `p = 2` (zero remainder). -/
+example : ∃ ε > 0, ∀ δ > 0, ∃ x : C(Icc (0 : ℝ) 1, Fin 2 → ℝ),
+    ‖x - ContinuousMap.const _ 0‖ < δ ∧
+      ∃ t : ℝ, 0 ≤ t ∧ ε ≤ ‖saddleSemigroup t.toNNReal x - ContinuousMap.const _ 0‖ := by
+  have hfc : Continuous fun z : Fin 2 → ℝ => saddle *ᵥ z := by fun_prop
+  set A : (Fin 2 → ℝ) →L[ℝ] (Fin 2 → ℝ) := LinearMap.toContinuousLinearMap (Matrix.mulVecLin saddle)
+  have hN : nemytskii (K := Icc (0 : ℝ) 1) (fun z => saddle *ᵥ z) hfc =
+      ⇑(pointwiseMatrix _ saddle) := by
+    funext u; ext x i; rfl
+  have hstep : ∀ (m : ℕ) (x : C(Icc (0 : ℝ) 1, Fin 2 → ℝ)),
+      saddleSemigroup (((m : ℝ) + 1) * ((1 : ℝ≥0) : ℝ)).toNNReal x =
+        saddleSemigroup ((1 : ℝ≥0) : ℝ).toNNReal
+          (saddleSemigroup ((m : ℝ) * ((1 : ℝ≥0) : ℝ)).toNNReal x) := by
+    intro m x
+    have h : ((m : ℝ) + 1).toNNReal = 1 + (m : ℝ).toNNReal := by
+      rw [Real.toNNReal_add (by positivity) zero_le_one, add_comm]; simp
+    simp only [NNReal.coe_one, mul_one, Real.toNNReal_one, h,
+      isC0Semigroup_saddleSemigroup.map_add, ContinuousLinearMap.comp_apply]
+  refine exists_escape_of_isUnstableMode_of_mild (J := saddle) (du := 0) (dv := 0) (L := 1)
+    (n := 1) (by simp [Matrix.trace_fin_two]) le_rfl le_rfl zero_le_one (isUnstableMode_saddle _)
+    hfc (fun _ => ⟨‖A‖₊, A.lipschitzWith.lipschitzOnWith⟩) (a := 0) (by simp)
+    (r := 1) (K := 0) (p := 2) one_pos le_rfl (by norm_num) (fun z _ => by simp)
+    (SA := fun _ => 1) (S := saddleSemigroup) isC0Semigroup_one (fun _ => rfl)
+    isC0Semigroup_saddleSemigroup (T := 1) one_pos (fun y => isMildSolution_saddleSemigroup y _)
+    (actsByModalODE_saddleSemigroup 1) norm_saddleSemigroup_le
+    (by rw [growthRate_saddle]; norm_num) (Φ := fun t x => saddleSemigroup t.toNNReal x)
+    (ρ₀ := 1) (R := Real.exp 1) one_pos
+    (fun x => by simp [isC0Semigroup_saddleSemigroup.map_zero]) (fun m x _ => hstep m x)
+    (fun x hx => ⟨hN ▸ isMildSolution_saddleSemigroup x _, fun t ht => ?_⟩)
+  have hx' : ‖x‖ ≤ 1 := by simpa using hx
+  refine ((saddleSemigroup _).le_opNorm x).trans ?_
+  refine (mul_le_mul (norm_saddleSemigroup_le _) hx' (norm_nonneg _) (by positivity)).trans ?_
+  have : ((t.toNNReal : ℝ)) ≤ 1 := by
+    rw [Real.coe_toNNReal _ ht.1]; simpa using ht.2
+  simpa using Real.exp_le_exp.2 this
 
 end MathlibExtTest.Biology.Dynamics.TuringInstability
