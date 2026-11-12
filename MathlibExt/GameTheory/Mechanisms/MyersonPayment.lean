@@ -17,9 +17,9 @@ public import Mathlib.Data.Real.Basic
 
 For a monotone allocation rule `x`, the payment
 `p z = z * x z - ∫₀ᶻ x` makes truthful bidding dominant (DSIC), and
-it is normalized: `p 0 = 0`. Together with the monotonicity direction
-in `MathlibExt/GameTheory/Mechanisms/Myerson.lean` this is roadmap
-package DPA-46 of the Atlas TCS canon roadmap.
+it is normalized: `p 0 = 0`. This module proves only the
+payment-identity-to-DSIC direction of roadmap package DPA-46 of the
+Atlas TCS canon roadmap.
 
 Source: R. Myerson, "Optimal auction design", Mathematics of
 Operations Research 6 (1981), 58--73.
