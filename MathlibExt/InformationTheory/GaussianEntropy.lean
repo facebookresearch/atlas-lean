@@ -28,8 +28,10 @@ open scoped Real
 
 /-- Differential entropy of the centered Gaussian with variance
 `v` (as an integral against Lebesgue measure of its density
-times its log), stated for `v ≠ 0`. -/
-noncomputable def gaussEntropy (v : ℝ≥0) : ℝ :=
+times its log). The `v ≠ 0` proof parameter is part of the
+definition, so the `v = 0` Dirac case, whose differential entropy
+is not this finite integral, cannot be formed. -/
+noncomputable def gaussEntropy (v : ℝ≥0) (_hv : v ≠ 0) : ℝ :=
   -∫ x : ℝ, gaussianPDFReal 0 v x * Real.log (gaussianPDFReal 0 v x)
 
 private lemma vpos {v : ℝ≥0} (hv : v ≠ 0) : 0 < (v : ℝ) :=
@@ -47,7 +49,8 @@ private lemma log_pdf {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
   have hinv_ne : (√(2 * Real.pi * (v : ℝ)))⁻¹ ≠ 0 := inv_ne_zero hsqrt_ne
   have hexp_ne : Real.exp (-(x - 0) ^ 2 / (2 * (v : ℝ))) ≠ 0 := Real.exp_ne_zero _
   have hpdf : gaussianPDFReal 0 v x
-      = (√(2 * Real.pi * (v : ℝ)))⁻¹ * Real.exp (-(x - 0) ^ 2 / (2 * (v : ℝ))) := rfl
+      = (√(2 * Real.pi * (v : ℝ)))⁻¹ * Real.exp (-(x - 0) ^ 2 / (2 * (v : ℝ))) :=
+    congrFun (gaussianPDFReal_def 0 v) x
   rw [hpdf, Real.log_mul hinv_ne hexp_ne, Real.log_inv, Real.log_sqrt h2pv.le,
     Real.log_exp]
   simp only [sub_zero]
@@ -101,7 +104,7 @@ private lemma integral_sq_mul_pdf {v : ℝ≥0} (hv : v ≠ 0) :
 /-- The differential entropy of `N (0, v)` is
 `(1 / 2) log (2 π e v)`. -/
 theorem gaussEntropy_eq {v : ℝ≥0} (hv : v ≠ 0) :
-    gaussEntropy v = (1 / 2) * Real.log (2 * π * Real.exp 1 * (v : ℝ)) := by
+    gaussEntropy v hv = (1 / 2) * Real.log (2 * π * Real.exp 1 * (v : ℝ)) := by
   unfold gaussEntropy
   have hvR : 0 < (v : ℝ) := vpos hv
   have hvRne : (v : ℝ) ≠ 0 := ne_of_gt hvR

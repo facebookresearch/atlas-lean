@@ -16,6 +16,6 @@ open scoped NNReal Real
 
 /-- Boundary check: the entropy formula instantiates at unit
 variance. -/
-example : gaussEntropy 1 =
+example : gaussEntropy 1 (by simp) =
     (1 / 2) * Real.log (2 * π * Real.exp 1 * ((1 : ℝ≥0) : ℝ)) :=
   gaussEntropy_eq (by norm_num)
