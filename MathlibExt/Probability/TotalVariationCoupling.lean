@@ -29,14 +29,16 @@ Section 4.1.
 
 open Finset
 
+namespace MathlibExt.Probability.TotalVariationCoupling
+
 /-- Total variation distance between two probability mass functions
 on a finite type: half the `L1` distance. -/
-noncomputable def tvDist {α : Type*} [Fintype α] [MeasurableSpace α] (p q : PMF α) : ℝ :=
+noncomputable def tvDist {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
   (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal|
 
 /-- A coupling of `p` and `q`: a joint law on `α × α` with the two
 coordinate marginals `p` and `q`. -/
-def IsCoupling {α : Type*} [Fintype α] [MeasurableSpace α] (p q : PMF α) (r : PMF (α × α)) : Prop :=
+def IsCoupling {α : Type*} [Fintype α] (p q : PMF α) (r : PMF (α × α)) : Prop :=
   (∀ a, ∑ b, r (a, b) = p a) ∧ (∀ b, ∑ a, r (a, b) = q b)
 
 -- Helpers (private).
@@ -487,3 +489,5 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
         rw [hT_eq, ht_eq, ENNReal.toReal_sub_of_le hs_le ENNReal.one_ne_top,
           ENNReal.toReal_one, htv]
       rw [hmeas, hDsum, hTtv]
+
+end MathlibExt.Probability.TotalVariationCoupling
