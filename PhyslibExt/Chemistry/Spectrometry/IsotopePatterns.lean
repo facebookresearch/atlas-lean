@@ -11,6 +11,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
+public import MathlibExt.Probability.ProbabilityMassFunction.Expectation
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.FieldSimp
 /-!
@@ -46,13 +47,13 @@ and the coefficient of `X ^ k` is the total weight of the isotopes of nucleon nu
 
 *Exact-mass spectra.* Exact masses are real numbers, and they are never polynomial exponents.
 The exponents of `R[X]` are natural numbers. A real mass only appears in the support of a
-`FiniteMassDist`, a finite set of masses with positive weights summing to `1`. The convolution of
-two such distributions (`FiniteMassDist.conv`) has the convolution sums as weights. It is
-supported exactly on the sumset of the two supports, and its weights again sum to `1`. Its
-weighted mean mass is the sum of the two weighted means (`FiniteMassDist.mean_conv`), so the
-average mass of a molecule is the sum of the average masses of its atoms. This isotope-weighted
-mean is re-derived here from Mathlib finite sums. The module does not import or depend on any
-other ATLAS chemistry module.
+`FiniteMassDist`, a `PMF ℝ` bundled with a `Finset ℝ` witness of its finite support. The
+convolution of two such distributions (`FiniteMassDist.conv`), the mass distribution of the sum
+of two independent masses, is defined with `PMF.bind` and `PMF.map`. It is supported exactly
+on the sumset of the two supports, and normalization comes from `PMF` itself. Its mean mass
+(`PMF.expect` of the identity) is the sum of the two means (`FiniteMassDist.mean_conv`), so the
+average mass of a molecule is the sum of the average masses of its atoms. The module does not
+import or depend on any other ATLAS chemistry module.
 
 *Binomial patterns.* Consider `n` atoms of an element with a light isotope of weight `a` and a
 heavy isotope of weight `b` at nominal shift `d > 0`. Their pattern is `(a + b X ^ d) ^ n`
@@ -61,8 +62,11 @@ heavy isotope of weight `b` at nominal shift `d > 0`. Their pattern is `(a + b X
 of `d` have weight `0`. Take `n` carbon atoms with ¹³C fraction `p` (so `d = 1`), and assume
 `p ≠ 1`. The exact ratio of the `M + 1` peak to the monoisotopic peak is then
 `C(n, 1) p (1 - p) ^ (n - 1) / (1 - p) ^ n = n p / (1 - p)` (`mPlusOneRatio_eq`). Only the carbon
-atoms are modeled. The first-order value `n p` (`mPlusOneFirstOrder`) falls short of the exact
-ratio by exactly `n p ^ 2 / (1 - p)`. Abundances are measured, uncertain quantities. Here they
+atoms are modeled. The exact ratio equals the first-order value `n p` (`mPlusOneFirstOrder`)
+plus the signed remainder `n p ^ 2 / (1 - p)` (`mPlusOneRatio_eq_firstOrder_add`). Only for
+`p < 1`, which contains the physical range `0 ≤ p < 1`, is the remainder nonnegative, so the
+first-order value does not exceed the exact ratio (`mPlusOneFirstOrder_le_mPlusOneRatio`).
+Abundances are measured, uncertain quantities. Here they
 are exact parameters, and numerical values, such as `p ≈ 0.011` for ¹³C or the chlorine and
 bromine ratios `3 : 1` and `1 : 1`, appear only in the tests.
 
@@ -106,7 +110,8 @@ fails for both.
 The results are algebraic. They do not model instruments, ionization, fragmentation or charge
 states `m/z`. They contain no abundance or exact-mass tables. They never place a real mass in a
 polynomial exponent: the exponents of `R[X]` are natural numbers, and real masses occur only in
-the support of a `FiniteMassDist`. They do not claim that the nitrogen rule holds for ions or
+the support of a `FiniteMassDist`, a `PMF ℝ` with finite support. They do not claim that the
+nitrogen rule holds for ions or
 for valences outside the model.
 
 ## ii. Key results
@@ -126,15 +131,19 @@ for valences outside the model.
 - `atomPattern_isotopeShift`, `coeff_atomPattern_isotopeShift` : with the physical shifts, the
   coefficient of `X ^ k` in `atomPattern` is the total weight of the isotopes of nucleon number
   `isotopeMin + k`.
-- `FiniteMassDist.weight_conv_pos_iff`, `FiniteMassDist.sum_weight_conv` : the convolution of two
-  exact-mass distributions is supported exactly on the sumset of the supports, and its weights
-  sum to `1`.
-- `FiniteMassDist.mean_conv` : the weighted mean mass of a convolution is the sum of the means.
+- `FiniteMassDist.support_conv`, `FiniteMassDist.toReal_conv_pos_iff` : the convolution of
+  two exact-mass distributions is supported exactly on the sumset of the supports.
+- `FiniteMassDist.toReal_conv` : the probability of a mass under a convolution is the finite sum
+  over the pairs adding to it of the products of the probabilities.
+- `FiniteMassDist.sum_toReal` : the real probabilities over the support witness sum to `1`.
+- `FiniteMassDist.mean_conv` : the mean mass of a convolution is the sum of the means.
 - `coeff_twoIsotopePattern_mul` : the `k`-heavy peak of `n` two-isotope atoms has weight
   `C(n, k) a ^ (n - k) b ^ k`.
 - `mPlusOneRatio_eq` : the exact `(M+1)/M` ratio of `n` carbon atoms is `n p / (1 - p)`.
-- `mPlusOneRatio_eq_firstOrder_add` : it exceeds the first-order value `n p` by
-  `n p ^ 2 / (1 - p)`.
+- `mPlusOneRatio_eq_firstOrder_add` : for `p ≠ 1` the exact ratio equals the first-order
+  value `n p` plus the signed remainder `n p ^ 2 / (1 - p)`.
+- `mPlusOneFirstOrder_le_mPlusOneRatio` : for `p < 1` the first-order value does not exceed
+  the exact ratio.
 - `resolution_eq_iff` : the resolving power `R = m / Δm`, defined for `Δm ≠ 0`, is the unique `R`
   with `m = R * Δm`.
 - `abs_exactMass_sub_nominalMass_le` : exact minus nominal mass is bounded by hypothesized
@@ -311,117 +320,166 @@ theorem coeff_atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset
 
 -/
 
-/-- A finite exact-mass distribution: finitely many real masses (in `u`) with positive weights
-summing to `1`. Masses outside the support have weight `0`. -/
+/-- A finite exact-mass distribution: a `PMF ℝ` over real masses (in `u`), bundled with a
+`Finset ℝ` witness whose coercion is exactly the support. Normalization and nonnegativity come
+from `PMF` itself. -/
 structure FiniteMassDist where
-  /-- The masses that occur. -/
+  /-- The underlying probability mass function. -/
+  pmf : PMF ℝ
+  /-- Finite witness of the support: the masses that occur. -/
   support : Finset ℝ
-  /-- The weight (fractional abundance) of each mass. -/
-  weight : ℝ → ℝ
-  /-- Every mass in the support has positive weight. -/
-  weight_pos : ∀ m ∈ support, 0 < weight m
-  /-- Masses outside the support have weight `0`. -/
-  weight_eq_zero : ∀ m ∉ support, weight m = 0
-  /-- The weights sum to `1`. -/
-  sum_weight : ∑ m ∈ support, weight m = 1
+  /-- The witness coercion is exactly the support. -/
+  support_coe : ↑support = pmf.support
 
-/-- The support of a finite mass distribution is exactly the set of masses of positive weight. -/
+/-- Masses outside the witness have probability `0`. -/
+lemma FiniteMassDist.apply_eq_zero_of_notMem (d : FiniteMassDist) {m : ℝ}
+    (hm : m ∉ d.support) : d.pmf m = 0 := by
+  by_contra hne
+  have hmem : m ∈ d.pmf.support := (PMF.mem_support_iff _ _).2 hne
+  have hcoe : m ∈ (↑d.support : Set ℝ) := d.support_coe.symm ▸ hmem
+  exact hm (Finset.mem_coe.1 hcoe)
+
+/-- The witness is exactly the set of masses of nonzero probability. -/
 theorem FiniteMassDist.mem_support_iff (d : FiniteMassDist) (m : ℝ) :
-    m ∈ d.support ↔ 0 < d.weight m :=
-  ⟨d.weight_pos m, fun h => by_contra fun hm => h.ne' (d.weight_eq_zero m hm)⟩
+    m ∈ d.support ↔ d.pmf m ≠ 0 := by
+  rw [← Finset.mem_coe, d.support_coe, PMF.mem_support_iff]
 
-/-- The convolution weight at the mass `m`: the sum of `w₁ x * w₂ y` over the pairs
-`(x, y) ∈ s₁ ×ˢ s₂` with `x + y = m`. -/
-noncomputable def convWeight (s₁ s₂ : Finset ℝ) (w₁ w₂ : ℝ → ℝ) (m : ℝ) : ℝ :=
-  ∑ p ∈ s₁ ×ˢ s₂ with p.1 + p.2 = m, w₁ p.1 * w₂ p.2
+/-- For a PMF whose mass lies in `s`, the real value of a bind is the finite sum of
+products. -/
+lemma toReal_bind_apply_of_finite_support {α β : Type*} (p : PMF α) (f : α → PMF β)
+    (s : Finset α) (hs : ∀ a ∉ s, p a = 0) (m : β) :
+    ((p.bind f) m).toReal = ∑ x ∈ s, (p x).toReal * ((f x m).toReal) := by
+  rw [PMF.bind_apply, tsum_eq_sum (fun a ha => by rw [hs a ha, zero_mul])]
+  rw [ENNReal.toReal_sum (fun a _ => ENNReal.mul_ne_top (PMF.apply_ne_top _ _)
+    (PMF.apply_ne_top _ _))]
+  exact Finset.sum_congr rfl fun x _ => ENNReal.toReal_mul
 
-/-- The convolution weight vanishes off the sumset. -/
-lemma convWeight_eq_zero_of_notMem {s₁ s₂ : Finset ℝ} {w₁ w₂ : ℝ → ℝ} {m : ℝ}
-    (hm : m ∉ s₁ + s₂) : convWeight s₁ s₂ w₁ w₂ m = 0 := by
-  refine Finset.sum_eq_zero fun p hp => absurd ?_ hm
-  obtain ⟨hp', rfl⟩ := Finset.mem_filter.1 hp
-  obtain ⟨h₁, h₂⟩ := Finset.mem_product.1 hp'
-  exact Finset.add_mem_add h₁ h₂
-
-/-- With positive weights on the supports, the convolution weight is positive on the sumset. -/
-lemma convWeight_pos {s₁ s₂ : Finset ℝ} {w₁ w₂ : ℝ → ℝ} (h₁ : ∀ x ∈ s₁, 0 < w₁ x)
-    (h₂ : ∀ y ∈ s₂, 0 < w₂ y) {m : ℝ} (hm : m ∈ s₁ + s₂) :
-    0 < convWeight s₁ s₂ w₁ w₂ m := by
-  obtain ⟨x, hx, y, hy, rfl⟩ := Finset.mem_add.1 hm
-  refine Finset.sum_pos (fun p hp => ?_)
-    ⟨(x, y), Finset.mem_filter.2 ⟨Finset.mem_product.2 ⟨hx, hy⟩, rfl⟩⟩
-  obtain ⟨hp', -⟩ := Finset.mem_filter.1 hp
-  obtain ⟨hp₁, hp₂⟩ := Finset.mem_product.1 hp'
-  exact mul_pos (h₁ _ hp₁) (h₂ _ hp₂)
-
-/-- The convolution weights over the sumset add up to the product of the two total weights. -/
-lemma sum_convWeight (s₁ s₂ : Finset ℝ) (w₁ w₂ : ℝ → ℝ) :
-    ∑ m ∈ s₁ + s₂, convWeight s₁ s₂ w₁ w₂ m = (∑ x ∈ s₁, w₁ x) * ∑ y ∈ s₂, w₂ y := by
-  rw [Finset.sum_mul_sum, ← Finset.sum_product']
-  exact Finset.sum_fiberwise_of_maps_to (fun p hp => Finset.add_mem_add
-    (Finset.mem_product.1 hp).1 (Finset.mem_product.1 hp).2) _
+/-- For a PMF whose mass lies in `s`, the real value of a map is the finite sum over the
+fiber. -/
+lemma toReal_map_apply_of_finite_support {α β : Type*} [DecidableEq β] (p : PMF α)
+    (g : α → β) (s : Finset α) (hs : ∀ a ∉ s, p a = 0) (m : β) :
+    ((p.map g) m).toReal = ∑ y ∈ s with g y = m, (p y).toReal := by
+  rw [PMF.map_apply, tsum_eq_sum (s := s.filter (fun y => g y = m))]
+  · rw [ENNReal.toReal_sum]
+    · refine Finset.sum_congr rfl fun y hy => ?_
+      rw [Finset.mem_filter] at hy
+      simp [hy.2]
+    · intro y _
+      split_ifs with h
+      · exact PMF.apply_ne_top _ _
+      · exact ENNReal.zero_ne_top
+  · intro a ha
+    rw [Finset.mem_filter] at ha
+    split_ifs with h
+    · exact hs a (fun hmem => ha ⟨hmem, h.symm⟩)
+    · rfl
 
 /-- The convolution of two exact-mass distributions, the exact-mass distribution of a molecule
-made of two parts with independent isotope compositions. It is supported on the sumset of the
-two supports, with the convolution weights. -/
+made of two parts with independent isotope compositions: the mass distribution of the sum of
+two independent masses, defined with `PMF.bind` and `PMF.map`. It is supported on the sumset
+of the two supports. -/
 noncomputable def FiniteMassDist.conv (d₁ d₂ : FiniteMassDist) : FiniteMassDist where
+  pmf := d₁.pmf.bind fun x => d₂.pmf.map (x + ·)
   support := d₁.support + d₂.support
-  weight := convWeight d₁.support d₂.support d₁.weight d₂.weight
-  weight_pos _ hm := convWeight_pos d₁.weight_pos d₂.weight_pos hm
-  weight_eq_zero _ hm := convWeight_eq_zero_of_notMem hm
-  sum_weight := by rw [sum_convWeight, d₁.sum_weight, d₂.sum_weight, one_mul]
+  support_coe := by
+    have h1 : ∀ x, x ∈ d₁.support ↔ x ∈ d₁.pmf.support := fun x => by
+      rw [← Finset.mem_coe, d₁.support_coe]
+    have h2 : ∀ y, y ∈ d₂.support ↔ y ∈ d₂.pmf.support := fun y => by
+      rw [← Finset.mem_coe, d₂.support_coe]
+    ext m
+    simp only [Finset.mem_coe, Finset.mem_add, PMF.mem_support_bind_iff,
+      PMF.mem_support_map_iff, h1, h2]
 
 /-- The support of a convolution is the sumset of the supports. -/
 theorem FiniteMassDist.support_conv (d₁ d₂ : FiniteMassDist) :
     (d₁.conv d₂).support = d₁.support + d₂.support :=
   rfl
 
-/-- The weights of a convolution are the convolution sums. -/
-theorem FiniteMassDist.weight_conv (d₁ d₂ : FiniteMassDist) (m : ℝ) :
-    (d₁.conv d₂).weight m =
-      ∑ p ∈ d₁.support ×ˢ d₂.support with p.1 + p.2 = m, d₁.weight p.1 * d₂.weight p.2 :=
-  rfl
+/-- The real probability of a mass under a convolution is the finite sum over the pairs adding
+to it of the products of the probabilities. -/
+theorem FiniteMassDist.toReal_conv (d₁ d₂ : FiniteMassDist) (m : ℝ) :
+    ((d₁.conv d₂).pmf m).toReal =
+      ∑ p ∈ d₁.support ×ˢ d₂.support with p.1 + p.2 = m,
+        (d₁.pmf p.1).toReal * (d₂.pmf p.2).toReal := by
+  have hreindex : (∑ p ∈ d₁.support ×ˢ d₂.support with p.1 + p.2 = m,
+        (d₁.pmf p.1).toReal * (d₂.pmf p.2).toReal)
+      = ∑ x ∈ d₁.support, ∑ y ∈ d₂.support with x + y = m,
+        (d₁.pmf x).toReal * (d₂.pmf y).toReal := by
+    simp only [Finset.sum_filter]
+    rw [Finset.sum_product]
+  rw [hreindex]
+  change ((d₁.pmf.bind fun x => d₂.pmf.map (x + ·)) m).toReal = _
+  rw [toReal_bind_apply_of_finite_support _ _ _
+    (fun a ha => d₁.apply_eq_zero_of_notMem ha)]
+  refine Finset.sum_congr rfl fun x _ => ?_
+  rw [toReal_map_apply_of_finite_support _ _ _
+    (fun a ha => d₂.apply_eq_zero_of_notMem ha), Finset.mul_sum]
 
-/-- A convolution has positive weight exactly on the sumset of the supports. -/
-theorem FiniteMassDist.weight_conv_pos_iff (d₁ d₂ : FiniteMassDist) (m : ℝ) :
-    0 < (d₁.conv d₂).weight m ↔ m ∈ d₁.support + d₂.support :=
-  ((d₁.conv d₂).mem_support_iff m).symm
+/-- The real probability of a mass is positive exactly on the witness. -/
+theorem FiniteMassDist.toReal_pos_iff (d : FiniteMassDist) (m : ℝ) :
+    0 < (d.pmf m).toReal ↔ m ∈ d.support := by
+  rw [d.mem_support_iff]
+  constructor
+  · intro h hcon
+    rw [hcon, ENNReal.toReal_zero] at h
+    exact absurd h (lt_irrefl _)
+  · intro h
+    exact ENNReal.toReal_pos h (PMF.apply_ne_top _ _)
 
-/-- The weights of a convolution sum to `1`. -/
-theorem FiniteMassDist.sum_weight_conv (d₁ d₂ : FiniteMassDist) :
-    ∑ m ∈ d₁.support + d₂.support, (d₁.conv d₂).weight m = 1 :=
-  (d₁.conv d₂).sum_weight
+/-- The real probability under a convolution is positive exactly on the sumset. -/
+theorem FiniteMassDist.toReal_conv_pos_iff (d₁ d₂ : FiniteMassDist) (m : ℝ) :
+    0 < ((d₁.conv d₂).pmf m).toReal ↔ m ∈ d₁.support + d₂.support := by
+  rw [(d₁.conv d₂).toReal_pos_iff, support_conv]
 
-/-- The weighted mean mass `∑ m ∈ support, weight m * m`. For the isotope distribution of an
+/-- The real probabilities over the witness sum to `1`, by normalization of the `PMF`. -/
+theorem FiniteMassDist.sum_toReal (d : FiniteMassDist) :
+    ∑ m ∈ d.support, (d.pmf m).toReal = 1 := by
+  have hsum : ∑ a ∈ d.support, d.pmf a = 1 := by
+    rw [← PMF.tsum_coe d.pmf]
+    exact (tsum_eq_sum (fun a ha => d.apply_eq_zero_of_notMem ha)).symm
+  have hcongr := congrArg ENNReal.toReal hsum
+  rwa [ENNReal.toReal_sum (fun a _ => PMF.apply_ne_top _ _),
+    ENNReal.toReal_one] at hcongr
+
+/-- The mean mass: `PMF.expect` of the identity. For the isotope distribution of an
 element, it is the average atomic mass, the sum of the isotopic masses times their fractional
 abundances. -/
 noncomputable def FiniteMassDist.mean (d : FiniteMassDist) : ℝ :=
-  ∑ m ∈ d.support, d.weight m * m
+  d.pmf.expect id
 
-/-- The weighted mean mass of a convolution is the sum of the two weighted means. -/
+/-- The mean is the finite sum over the witness, via `PMF.expect_eq_sum_of_finite_support`. -/
+lemma FiniteMassDist.mean_eq_sum (d : FiniteMassDist) :
+    d.mean = ∑ m ∈ d.support, (d.pmf m).toReal * m := by
+  unfold FiniteMassDist.mean
+  rw [PMF.expect_eq_sum_of_finite_support _
+    (fun a ha => d.apply_eq_zero_of_notMem ha)]
+  exact Finset.sum_congr rfl fun m _ => rfl
+
+/-- The mean mass of a convolution is the sum of the two means. -/
 theorem FiniteMassDist.mean_conv (d₁ d₂ : FiniteMassDist) :
     (d₁.conv d₂).mean = d₁.mean + d₂.mean := by
+  rw [FiniteMassDist.mean_eq_sum, FiniteMassDist.mean_eq_sum,
+    FiniteMassDist.mean_eq_sum, support_conv]
   have key : ∀ m ∈ d₁.support + d₂.support,
-      convWeight d₁.support d₂.support d₁.weight d₂.weight m * m =
+      ((d₁.conv d₂).pmf m).toReal * m =
         ∑ p ∈ d₁.support ×ˢ d₂.support with p.1 + p.2 = m,
-          d₁.weight p.1 * d₂.weight p.2 * (p.1 + p.2) := by
+          (d₁.pmf p.1).toReal * (d₂.pmf p.2).toReal * (p.1 + p.2) := by
     intro m _
-    rw [convWeight, Finset.sum_mul]
+    rw [toReal_conv, Finset.sum_mul]
     exact Finset.sum_congr rfl fun p hp => by rw [(Finset.mem_filter.1 hp).2]
-  change ∑ m ∈ d₁.support + d₂.support,
-      convWeight d₁.support d₂.support d₁.weight d₂.weight m * m = _
   rw [Finset.sum_congr rfl key, Finset.sum_fiberwise_of_maps_to (fun p hp => Finset.add_mem_add
     (Finset.mem_product.1 hp).1 (Finset.mem_product.1 hp).2), Finset.sum_product]
-  calc ∑ x ∈ d₁.support, ∑ y ∈ d₂.support, d₁.weight x * d₂.weight y * (x + y)
-      = (∑ x ∈ d₁.support, d₁.weight x * x) * ∑ y ∈ d₂.support, d₂.weight y
-        + (∑ x ∈ d₁.support, d₁.weight x) * ∑ y ∈ d₂.support, d₂.weight y * y := by
+  calc ∑ x ∈ d₁.support, ∑ y ∈ d₂.support,
+          (d₁.pmf x).toReal * (d₂.pmf y).toReal * (x + y)
+      = (∑ x ∈ d₁.support, (d₁.pmf x).toReal * x) * ∑ y ∈ d₂.support, (d₂.pmf y).toReal
+        + (∑ x ∈ d₁.support, (d₁.pmf x).toReal) * ∑ y ∈ d₂.support, (d₂.pmf y).toReal * y := by
         rw [Finset.sum_mul_sum, Finset.sum_mul_sum, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun x _ => ?_
         rw [← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun y _ => by ring
-    _ = d₁.mean + d₂.mean := by
-        rw [d₁.sum_weight, d₂.sum_weight, mul_one, one_mul]
-        rfl
+    _ = (∑ x ∈ d₁.support, (d₁.pmf x).toReal * x)
+        + ∑ y ∈ d₂.support, (d₂.pmf y).toReal * y := by
+        rw [d₁.sum_toReal, d₂.sum_toReal, mul_one, one_mul]
 
 /-!
 

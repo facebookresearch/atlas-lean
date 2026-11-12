@@ -34,6 +34,8 @@ file, never in a general theorem:
 
 open Polynomial Pointwise Chemistry.Spectrometry
 
+open scoped ENNReal
+
 namespace PhyslibExtTest.Chemistry.Spectrometry
 
 /-!
@@ -227,8 +229,8 @@ example : mPlusOneFirstOrder p13C 6 = 0.066 := by
 example (n : ℕ) : mPlusOneFirstOrder p13C n = n * (1.1 / 100) := by
   norm_num [mPlusOneFirstOrder, p13C]
 
-/-! The two differ by the second-order remainder `6 p ^ 2 / (1 - p)`, so the first-order value is
-strictly smaller. -/
+/-! The two differ by the signed second-order remainder `6 p ^ 2 / (1 - p)`, which is
+positive here since `p13C < 1`, so the first-order value is strictly smaller. -/
 
 example : mPlusOneRatio p13C (by norm_num [p13C]) 6 - mPlusOneFirstOrder p13C 6 = 6 * p13C ^ 2 / (1 - p13C) := by
   rw [mPlusOneRatio_eq_firstOrder_add (by norm_num [p13C])]
@@ -256,6 +258,16 @@ is undefined there. That is why `mPlusOneRatio` takes a proof of `p ≠ 1`. -/
 example : (twoIsotopePattern (1 - (1 : ℚ)) 1 1 1).coeff 0 = 0 := by
   have h := coeff_twoIsotopePattern_mul (1 - (1 : ℚ)) 1 one_pos 1 0
   simpa using h
+
+/-! Outside `p < 1` the signed remainder can be negative: over `ℚ` with `p = 2` and `n = 1`
+the exact ratio is `-2` while the first-order value is `2`. -/
+
+example : mPlusOneRatio (2 : ℚ) (by norm_num) 1 = -2 := by
+  rw [mPlusOneRatio_eq (by norm_num)]
+  norm_num
+
+example : mPlusOneFirstOrder (2 : ℚ) 1 = 2 := by
+  norm_num [mPlusOneFirstOrder]
 
 /-!
 
@@ -346,45 +358,75 @@ example (m Δm : ℝ) (h : Δm ≠ 0) : m = resolution m Δm h * Δm :=
 
 -/
 
+/-- Boron probability function: ¹⁰B at 10.0129 u with fraction 0.199 and ¹¹B at 11.0093 u
+with fraction 0.801 (empirical inputs). -/
+noncomputable def boronFun : ℝ → ℝ≥0∞ :=
+  fun m => if m = 10.0129 then ENNReal.ofReal 0.199
+    else if m = 11.0093 then ENNReal.ofReal 0.801 else 0
+
+lemma boronFun_eq1 : boronFun 10.0129 = ENNReal.ofReal 0.199 := by
+  simp [boronFun]
+
+lemma boronFun_eq2 : boronFun 11.0093 = ENNReal.ofReal 0.801 := by
+  have e2 : (11.0093 : ℝ) ≠ 10.0129 := by norm_num
+  simp [boronFun, e2]
+
 /-- The exact-mass distribution of boron: ¹⁰B at 10.0129 u with fraction 0.199 and ¹¹B at
 11.0093 u with fraction 0.801 (empirical inputs). -/
 noncomputable def boron : FiniteMassDist where
+  pmf := PMF.ofFinset boronFun {10.0129, 11.0093} (by
+    rw [Finset.sum_pair (by norm_num), boronFun_eq1, boronFun_eq2,
+      ← ENNReal.ofReal_add (show (0 : ℝ) ≤ 0.199 by norm_num)
+        (show (0 : ℝ) ≤ 0.801 by norm_num)]
+    have hsum : (0.199 : ℝ) + 0.801 = 1 := by norm_num
+    rw [hsum, ENNReal.ofReal_one]) (by
+    intro a ha
+    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at ha
+    simp [boronFun, ha.1, ha.2])
   support := {10.0129, 11.0093}
-  weight m := if m = 10.0129 then 0.199 else if m = 11.0093 then 0.801 else 0
-  weight_pos m hm := by
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hm
-    rcases hm with rfl | rfl <;> norm_num
-  weight_eq_zero m hm := by
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hm
-    simp [hm.1, hm.2]
-  sum_weight := by
-    rw [Finset.sum_pair (by norm_num)]
-    norm_num
+  support_coe := by
+    rw [PMF.support_ofFinset]
+    ext m
+    simp only [Finset.mem_coe, Finset.mem_insert, Finset.mem_singleton,
+      Set.mem_inter_iff, Function.mem_support, ne_eq]
+    constructor
+    · intro hm
+      refine ⟨hm, ?_⟩
+      rcases hm with rfl | rfl
+      · rw [boronFun_eq1]
+        exact ne_of_gt (ENNReal.ofReal_pos.2 (by norm_num))
+      · rw [boronFun_eq2]
+        exact ne_of_gt (ENNReal.ofReal_pos.2 (by norm_num))
+    · exact And.left
+
+lemma boron_pmf_eq1 : boron.pmf 10.0129 = ENNReal.ofReal 0.199 := boronFun_eq1
+
+lemma boron_pmf_eq2 : boron.pmf 11.0093 = ENNReal.ofReal 0.801 := boronFun_eq2
 
 /-- The exact-mass distribution of fluorine: ¹⁹F at 18.9984 u with fraction 1 (empirical
 input). -/
 noncomputable def fluorine : FiniteMassDist where
+  pmf := PMF.pure 18.9984
   support := {18.9984}
-  weight m := if m = 18.9984 then 1 else 0
-  weight_pos m hm := by
-    rw [Finset.mem_singleton] at hm
-    simp [hm]
-  weight_eq_zero m hm := by
-    rw [Finset.mem_singleton] at hm
-    simp [hm]
-  sum_weight := by
-    simp
+  support_coe := by rw [PMF.support_pure, Finset.coe_singleton]
 
 /-- The average atomic mass of boron, `0.199 × 10.0129 + 0.801 × 11.0093 = 10.8110164`
 (≈ 10.81 u). -/
 lemma boron_mean : boron.mean = 10.8110164 := by
-  rw [FiniteMassDist.mean, show boron.support = {10.0129, 11.0093} from rfl,
-    Finset.sum_pair (by norm_num)]
-  norm_num [boron]
+  rw [FiniteMassDist.mean_eq_sum]
+  change ∑ m ∈ ({10.0129, 11.0093} : Finset ℝ), (boron.pmf m).toReal * m = _
+  rw [Finset.sum_pair (by norm_num), boron_pmf_eq1, boron_pmf_eq2,
+    ENNReal.toReal_ofReal (show (0 : ℝ) ≤ 0.199 by norm_num),
+    ENNReal.toReal_ofReal (show (0 : ℝ) ≤ 0.801 by norm_num)]
+  norm_num
 
 lemma fluorine_mean : fluorine.mean = 18.9984 := by
-  rw [FiniteMassDist.mean, show fluorine.support = {18.9984} from rfl, Finset.sum_singleton]
-  norm_num [fluorine]
+  rw [FiniteMassDist.mean_eq_sum]
+  change ∑ m ∈ ({18.9984} : Finset ℝ), (fluorine.pmf m).toReal * m = _
+  rw [Finset.sum_singleton]
+  change ((PMF.pure (18.9984 : ℝ)) 18.9984).toReal * 18.9984 = _
+  rw [show (PMF.pure (18.9984 : ℝ)) 18.9984 = 1 from by simp [PMF.pure_apply],
+    ENNReal.toReal_one, one_mul]
 
 /-! Boron monofluoride BF: its average mass is the sum of the average atomic masses. -/
 
@@ -392,29 +434,38 @@ example : (boron.conv fluorine).mean = 29.8094164 := by
   rw [FiniteMassDist.mean_conv, boron_mean, fluorine_mean]
   norm_num
 
-/-! The convolution has positive weight at the sum `10.0129 + 18.9984` of two support masses, its
-weight there is the convolution sum, and its weights sum to `1`. -/
+/-! The convolution has positive probability at the sum `10.0129 + 18.9984` of two support
+masses, its probability there is the pair sum, and its probabilities sum to `1`. -/
 
-example : 0 < (boron.conv fluorine).weight (10.0129 + 18.9984) := by
-  rw [FiniteMassDist.weight_conv_pos_iff]
+example : 0 < ((boron.conv fluorine).pmf (10.0129 + 18.9984)).toReal := by
+  rw [FiniteMassDist.toReal_conv_pos_iff]
   exact Finset.add_mem_add (by simp [boron]) (by simp [fluorine])
 
-example : (boron.conv fluorine).weight (10.0129 + 18.9984) =
+example : ((boron.conv fluorine).pmf (10.0129 + 18.9984)).toReal =
     ∑ p ∈ boron.support ×ˢ fluorine.support with p.1 + p.2 = 10.0129 + 18.9984,
-      boron.weight p.1 * fluorine.weight p.2 :=
-  FiniteMassDist.weight_conv _ _ _
+      (boron.pmf p.1).toReal * (fluorine.pmf p.2).toReal :=
+  FiniteMassDist.toReal_conv _ _ _
 
-example : ∑ m ∈ boron.support + fluorine.support, (boron.conv fluorine).weight m = 1 :=
-  FiniteMassDist.sum_weight_conv _ _
+example : ∑ m ∈ boron.support + fluorine.support,
+    ((boron.conv fluorine).pmf m).toReal = 1 := by
+  rw [← FiniteMassDist.support_conv]
+  exact FiniteMassDist.sum_toReal _
 
-/-! A mass that is not a sum of support masses has weight `0`. -/
+/-! The convolution support is the sumset of the supports. -/
 
-example : (boron.conv fluorine).weight 29.5 = 0 := by
-  refine ((boron.conv fluorine).weight_eq_zero _ ?_)
-  rw [FiniteMassDist.support_conv, Finset.mem_add]
-  rintro ⟨x, hx, y, hy, hxy⟩
-  simp only [boron, fluorine, Finset.mem_insert, Finset.mem_singleton] at hx hy
-  rcases hx with rfl | rfl <;> subst hy <;> norm_num at hxy
+example : (boron.conv fluorine).support = boron.support + fluorine.support :=
+  FiniteMassDist.support_conv _ _
+
+/-! A mass that is not a sum of support masses has probability `0`. -/
+
+example : ((boron.conv fluorine).pmf 29.5).toReal = 0 := by
+  have hz : (boron.conv fluorine).pmf 29.5 = 0 :=
+    FiniteMassDist.apply_eq_zero_of_notMem _ (by
+      rw [FiniteMassDist.support_conv, Finset.mem_add]
+      rintro ⟨x, hx, y, hy, hxy⟩
+      simp only [boron, fluorine, Finset.mem_insert, Finset.mem_singleton] at hx hy
+      rcases hx with rfl | rfl <;> subst hy <;> norm_num at hxy)
+  rw [hz, ENNReal.toReal_zero]
 
 /-! The boron support masses are not natural numbers, so neither can be an exponent of `X`. -/
 
@@ -592,22 +643,21 @@ end PhyslibExtTest.Chemistry.Spectrometry
 #print axioms Chemistry.Spectrometry.atomPattern_isotopeShift
 #print axioms Chemistry.Spectrometry.coeff_atomPattern_isotopeShift
 #print axioms Chemistry.Spectrometry.FiniteMassDist
+#print axioms Chemistry.Spectrometry.FiniteMassDist.pmf
 #print axioms Chemistry.Spectrometry.FiniteMassDist.support
-#print axioms Chemistry.Spectrometry.FiniteMassDist.weight
-#print axioms Chemistry.Spectrometry.FiniteMassDist.weight_pos
-#print axioms Chemistry.Spectrometry.FiniteMassDist.weight_eq_zero
-#print axioms Chemistry.Spectrometry.FiniteMassDist.sum_weight
+#print axioms Chemistry.Spectrometry.FiniteMassDist.support_coe
+#print axioms Chemistry.Spectrometry.FiniteMassDist.apply_eq_zero_of_notMem
 #print axioms Chemistry.Spectrometry.FiniteMassDist.mem_support_iff
-#print axioms Chemistry.Spectrometry.convWeight
-#print axioms Chemistry.Spectrometry.convWeight_eq_zero_of_notMem
-#print axioms Chemistry.Spectrometry.convWeight_pos
-#print axioms Chemistry.Spectrometry.sum_convWeight
+#print axioms Chemistry.Spectrometry.toReal_bind_apply_of_finite_support
+#print axioms Chemistry.Spectrometry.toReal_map_apply_of_finite_support
 #print axioms Chemistry.Spectrometry.FiniteMassDist.conv
 #print axioms Chemistry.Spectrometry.FiniteMassDist.support_conv
-#print axioms Chemistry.Spectrometry.FiniteMassDist.weight_conv
-#print axioms Chemistry.Spectrometry.FiniteMassDist.weight_conv_pos_iff
-#print axioms Chemistry.Spectrometry.FiniteMassDist.sum_weight_conv
+#print axioms Chemistry.Spectrometry.FiniteMassDist.toReal_conv
+#print axioms Chemistry.Spectrometry.FiniteMassDist.toReal_pos_iff
+#print axioms Chemistry.Spectrometry.FiniteMassDist.toReal_conv_pos_iff
+#print axioms Chemistry.Spectrometry.FiniteMassDist.sum_toReal
 #print axioms Chemistry.Spectrometry.FiniteMassDist.mean
+#print axioms Chemistry.Spectrometry.FiniteMassDist.mean_eq_sum
 #print axioms Chemistry.Spectrometry.FiniteMassDist.mean_conv
 #print axioms Chemistry.Spectrometry.twoIsotopePattern
 #print axioms Chemistry.Spectrometry.twoIsotopePattern_eq_nominalPattern
@@ -654,6 +704,11 @@ end PhyslibExtTest.Chemistry.Spectrometry
 #print axioms PhyslibExtTest.Chemistry.Spectrometry.coeff_bromine
 #print axioms PhyslibExtTest.Chemistry.Spectrometry.exactMass_CO
 #print axioms PhyslibExtTest.Chemistry.Spectrometry.exactMass_N2
+#print axioms PhyslibExtTest.Chemistry.Spectrometry.boronFun
+#print axioms PhyslibExtTest.Chemistry.Spectrometry.boronFun_eq1
+#print axioms PhyslibExtTest.Chemistry.Spectrometry.boronFun_eq2
+#print axioms PhyslibExtTest.Chemistry.Spectrometry.boron_pmf_eq1
+#print axioms PhyslibExtTest.Chemistry.Spectrometry.boron_pmf_eq2
 #print axioms PhyslibExtTest.Chemistry.Spectrometry.boron
 #print axioms PhyslibExtTest.Chemistry.Spectrometry.fluorine
 #print axioms PhyslibExtTest.Chemistry.Spectrometry.boron_mean
