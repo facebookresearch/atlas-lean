@@ -21,6 +21,9 @@ import Mathlib.Tactic.Linarith
 * A two-state, two-asset market with a redundant asset (`X 0 = X 1 = ![4, 0]`,
   priced by `ψ = ![1/2, 1/2]` at `p = ![2, 2]`): the holdings `![1, 0]` and
   `![0, 1]` have equal payoffs and equal prices.
+* Discharge test: the unconditional theorem on a redundant-asset market
+  (both assets pay `![4, 0]`, both cost `1`, `R = 2`), proving no arbitrage
+  before applying it to the holdings `![1, 0]` and `![0, 1]`.
 -/
 
 @[expose] public section

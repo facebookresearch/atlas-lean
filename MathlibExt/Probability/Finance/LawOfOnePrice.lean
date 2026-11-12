@@ -71,11 +71,8 @@ theorem law_of_one_price
 
 /-- **Law of one price under no arbitrage (FI08.T04, unconditional claim).**
 Under no arbitrage on funded gains, two portfolios with the same attainable
-payoff in every state have the same price. Prove it by obtaining `ψ` from
-`exists_statePriceVector_prices_replicated`, deriving
-`hprice : ∀ a, p a = ∑ ω, ψ ω * X a ω` from its pricing conjunct (apply the
-pricing conjunct to `h = Pi.single a 1` and simplify with
-`Finset.sum_eq_single`), and then applying `law_of_one_price`. -/
+payoff in every state have the same price. The pricing vector is the state-price
+vector supplied by FI08.T02. -/
 theorem law_of_one_price_of_no_arbitrage
     {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     {A : Type*} [Fintype A]
