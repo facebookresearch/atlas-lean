@@ -30,6 +30,22 @@ vector with the same total as `ω` is feasible.
   property-rights assignment.
 * Under any assignment, a total-value maximizer can be reached by transfers that
   leave every agent at least as well off as at the status quo.
+
+Assumptions, as in the textbook statement of the Coase theorem with quasilinear
+utility: utility is quasilinear in money (no income effects); transfers are
+costless and unrestricted, so money holdings may become negative (no wealth or
+liquidity constraints); there are finitely many agents, at least one; and there
+are no transaction costs or bargaining frictions (any feasible outcome can be
+reached). The theorems describe efficient outcomes and individually rational
+efficient outcomes; they do not model a particular bargaining procedure.
+
+## References
+
+* R. H. Coase, "The Problem of Social Cost", Journal of Law and Economics 3
+  (1960), 1–44.
+* A. Mas-Colell, M. D. Whinston and J. R. Green, *Microeconomic Theory*, Oxford
+  University Press (1995), Section 11.B (bargaining over a bilateral
+  externality with quasilinear utility).
 -/
 
 @[expose] public section
