@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
+public import MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence
 public import Mathlib.Data.Fin.VecNotation
 import Mathlib.Algebra.Order.Star.Real
 
@@ -43,16 +44,12 @@ constraint matrix `M = [1 μ]` (Aitken's theorem,
 namespace MathlibExt.Probability.Finance.MeanVariancePortfolio
 
 open Matrix MathlibExt.Probability.Statistics.GeneralizedLeastSquares
+open MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence (quadForm)
 
 /-- The `ι × 2` constraint matrix `M = [1 μ]` of the Markowitz problem: column `0` is the budget
 vector of ones and column `1` is the vector `μ` of expected asset returns. -/
 def constraintMatrix {ι : Type*} (μ : ι → ℝ) : Matrix ι (Fin 2) ℝ :=
   Matrix.of fun i j => ![1, μ i] j
-
-/-- The variance `wᵀ S w` of the portfolio with weights `w` when `S` is the covariance matrix of
-the asset returns. -/
-def portfolioVariance {ι : Type*} [Fintype ι] (S : Matrix ι ι ℝ) (w : ι → ℝ) : ℝ :=
-  w ⬝ᵥ (S *ᵥ w)
 
 /-- A portfolio `w` is feasible for target expected return `m` when it is fully invested
 (`∑ i, w i = 1`, the budget constraint) and has expected return `∑ i, μ i * w i = m` (the mean
@@ -180,9 +177,9 @@ private theorem orthogonality_aux {ι : Type*} [Fintype ι] [DecidableEq ι] {S 
 private theorem variance_decomp_aux {ι : Type*} [Fintype ι] [DecidableEq ι] {S : Matrix ι ι ℝ}
     (hS : S.PosDef) {μ : ι → ℝ} {m : ℝ} {w : ι → ℝ} (hw : IsFeasible μ m w)
     (hG : IsUnit ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ)) :
-    portfolioVariance S w =
-      portfolioVariance S (minVariancePortfolio S μ m) +
-        portfolioVariance S (w - minVariancePortfolio S μ m) := by
+    quadForm S w =
+      quadForm S (minVariancePortfolio S μ m) +
+        quadForm S (w - minVariancePortfolio S μ m) := by
   have hortho := orthogonality_aux hS hw hG
   have hSymm : S.IsSymm := by
     have h := hS.isHermitian.eq
@@ -190,11 +187,11 @@ private theorem variance_decomp_aux {ι : Type*} [Fintype ι] [DecidableEq ι] {
   have hortho2 : minVariancePortfolio S μ m ⬝ᵥ (S *ᵥ (w - minVariancePortfolio S μ m)) = 0 := by
     rw [hSymm.dotProduct_mulVec_comm]
     exact hortho
-  have hexpand : portfolioVariance S
+  have hexpand : quadForm S
       (minVariancePortfolio S μ m + (w - minVariancePortfolio S μ m)) =
-      portfolioVariance S (minVariancePortfolio S μ m) +
-        portfolioVariance S (w - minVariancePortfolio S μ m) := by
-    simp only [portfolioVariance, Matrix.mulVec_add, add_dotProduct, dotProduct_add]
+      quadForm S (minVariancePortfolio S μ m) +
+        quadForm S (w - minVariancePortfolio S μ m) := by
+    simp only [quadForm, Matrix.mulVec_add, add_dotProduct, dotProduct_add]
     rw [hortho2, hortho, add_zero, zero_add]
   have hw_eq : minVariancePortfolio S μ m + (w - minVariancePortfolio S μ m) = w := by abel
   rw [hw_eq] at hexpand
@@ -251,14 +248,14 @@ theorem minVariancePortfolio_isFeasible {ι : Type*} [Fintype ι] [DecidableEq �
 theorem portfolioVariance_minVariancePortfolio_le {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) {m : ℝ}
     {w : ι → ℝ} (hw : IsFeasible μ m w) :
-    portfolioVariance S (minVariancePortfolio S μ m) ≤ portfolioVariance S w := by
+    quadForm S (minVariancePortfolio S μ m) ≤ quadForm S w := by
   have hG : IsUnit ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) :=
     (isUnit_gram_iff hS μ).mpr hμ
   have hdecomp := variance_decomp_aux hS hw hG
-  have hnonneg : 0 ≤ portfolioVariance S (w - minVariancePortfolio S μ m) := by
+  have hnonneg : 0 ≤ quadForm S (w - minVariancePortfolio S μ m) := by
     have h := hS.posSemidef.dotProduct_mulVec_nonneg (w - minVariancePortfolio S μ m)
     rw [star_trivial] at h
-    simpa [portfolioVariance] using h
+    simpa [quadForm] using h
   linarith
 
 /-- Uniqueness: a feasible portfolio whose variance does not exceed that of the minimum-variance
@@ -266,32 +263,32 @@ portfolio is the minimum-variance portfolio. -/
 theorem eq_minVariancePortfolio_of_portfolioVariance_le {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) {m : ℝ}
     {w : ι → ℝ} (hw : IsFeasible μ m w)
-    (hle : portfolioVariance S w ≤ portfolioVariance S (minVariancePortfolio S μ m)) :
+    (hle : quadForm S w ≤ quadForm S (minVariancePortfolio S μ m)) :
     w = minVariancePortfolio S μ m := by
   have hG : IsUnit ((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ) :=
     (isUnit_gram_iff hS μ).mpr hμ
   have hdecomp := variance_decomp_aux hS hw hG
-  have hnonneg : 0 ≤ portfolioVariance S (w - minVariancePortfolio S μ m) := by
+  have hnonneg : 0 ≤ quadForm S (w - minVariancePortfolio S μ m) := by
     have h := hS.posSemidef.dotProduct_mulVec_nonneg (w - minVariancePortfolio S μ m)
     rw [star_trivial] at h
-    simpa [portfolioVariance] using h
-  have hvar0 : portfolioVariance S (w - minVariancePortfolio S μ m) = 0 := by linarith
+    simpa [quadForm] using h
+  have hvar0 : quadForm S (w - minVariancePortfolio S μ m) = 0 := by linarith
   have hd0 : w - minVariancePortfolio S μ m = 0 := by
     by_contra hne
     have hpos := hS.dotProduct_mulVec_pos hne
     rw [star_trivial] at hpos
-    simp only [portfolioVariance] at hvar0
+    simp only [quadForm] at hvar0
     linarith
   exact sub_eq_zero.mp hd0
 
-set_option linter.unusedDecidableInType false in
 /-- **Unique minimum-variance portfolio.** With a positive definite covariance matrix and
 independent budget/mean constraints, for every target return `m` there is exactly one feasible
 portfolio of minimal variance. -/
-theorem existsUnique_minVariance {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem existsUnique_minVariance {ι : Type*} [Fintype ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) (m : ℝ) :
     ∃! w : ι → ℝ, IsFeasible μ m w ∧
-      ∀ v : ι → ℝ, IsFeasible μ m v → portfolioVariance S w ≤ portfolioVariance S v := by
+      ∀ v : ι → ℝ, IsFeasible μ m v → quadForm S w ≤ quadForm S v := by
+  classical
   refine ⟨minVariancePortfolio S μ m, ⟨?_, ?_⟩, ?_⟩
   · exact minVariancePortfolio_isFeasible hS hμ m
   · intro v hv
