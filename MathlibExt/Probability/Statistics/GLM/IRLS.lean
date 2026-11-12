@@ -58,6 +58,8 @@ roots.
 * `irlsStep_eq_self_iff`: `β` is a fixed point of IRLS iff the score vanishes at `β`.
 * `hasFDerivAt_canonicalScore`: if `mean` has derivative `weight`, the canonical score
   `β ↦ Xᵀ (y - μ(β))` has derivative `-Xᵀ W(β) X`.
+* `IsCanonicalScoreHessian.hasFDerivAt`: under the canonical-link hypotheses and `mean' = weight`,
+  `hess β` is the derivative of `score` at `β`.
 
 ## References
 
@@ -294,5 +296,14 @@ theorem hasFDerivAt_canonicalScore (β : k → ℝ)
     LinearMap.coe_toContinuousLinearMap', Matrix.toLin'_apply, neg_mulVec]
   change (Xᵀ *ᵥ -(irlsWeights weight X β * (X *ᵥ v))) j = _
   rw [mulVec_neg, transpose_mulVec_mul_mulVec]
+
+/-- Under the canonical-link hypotheses, if `mean` has derivative `weight` everywhere, then
+`hess β` is the derivative of `score` at `β`. -/
+theorem IsCanonicalScoreHessian.hasFDerivAt {score : (k → ℝ) → k → ℝ}
+    {hess : (k → ℝ) → Matrix k k ℝ} (h : IsCanonicalScoreHessian X y mean weight score hess)
+    (hmean : ∀ x, HasDerivAt mean (weight x) x) (β : k → ℝ) :
+    HasFDerivAt score (LinearMap.toContinuousLinearMap (Matrix.toLin' (hess β))) β := by
+  rw [funext h.score_eq, h.hess_eq β]
+  exact hasFDerivAt_canonicalScore β fun _ => hmean _
 
 end MathlibExt.Probability.Statistics.GLM.IRLS

@@ -112,13 +112,50 @@ example : wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![2] ![3] (wlsEstimate 1 ![2] ![
 example : wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![2] ![3] ![0] = 18 := by
   norm_num [wrss]
 
-/-! ### Boundary: a singular Hessian -/
+/-- Two observations with unequal weights: the WLS estimate is the weighted mean
+`(1 · 0 + 3 · 4) / (1 + 3) = 3`. Using `w⁻¹` in place of `w` would give `1`, so this example
+detects a weight/covariance flip. -/
+example : wlsEstimate (!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) ![1, 3] ![0, 4] = ![3] := by
+  rw [wlsEstimate_eq (fun i => by fin_cases i <;> norm_num)]
+  funext i
+  fin_cases i
+  simp [weightedGram, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.mul_apply]
+  norm_num
 
-/-- With a zero Hessian, Mathlib's junk inverse `0⁻¹ = 0` makes the Newton step stay put, which
-is why invertibility of `Xᵀ W X` appears in every Newton–IRLS statement. -/
-example (score : (Fin 1 → ℝ) → Fin 1 → ℝ) (β : Fin 1 → ℝ) :
-    newtonStep score (fun _ => 0) β = β := by
-  simp [newtonStep]
+/-! ### Boundary: a singular weighted Gram matrix -/
+
+/-- The invertibility hypothesis cannot be dropped from `irlsStep_eq_self_iff`: for
+`X = [1 1]` the Gram matrix `Xᵀ X` is singular, `β = 0` is an IRLS fixed point, yet the score
+`Xᵀ (5 - 0)` is nonzero. -/
+example : irlsStep (!![1, 1] : Matrix (Fin 1) (Fin 2) ℝ) ![5] id (fun _ => 1) 0 = 0 ∧
+    (!![1, 1] : Matrix (Fin 1) (Fin 2) ℝ)ᵀ *ᵥ
+      (![5] - fun i => id ((!![1, 1] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ 0) i) ≠ 0 := by
+  constructor
+  · simp [irlsStep, wlsEstimate,
+      MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix,
+      Matrix.inv_def, Matrix.det_fin_two, Matrix.mul_apply]
+  · intro h
+    have := congrFun h 0
+    simp [Matrix.mulVec, dotProduct] at this
+
+/-- Conversely, for `X = 0` the score vanishes at `β = 1` but `β = 1` is not an IRLS fixed
+point. -/
+example : (0 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ *ᵥ
+      (![5] - fun i => id ((0 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ ![1]) i) = 0 ∧
+    irlsStep (0 : Matrix (Fin 1) (Fin 1) ℝ) ![5] id (fun _ => 1) ![1] ≠ ![1] := by
+  refine ⟨by simp, ?_⟩
+  intro h
+  have := congrFun h 0
+  simp [irlsStep, wlsEstimate,
+    MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix] at this
+
+/-- The Gaussian Hessian `-Xᵀ X` is the derivative of the least-squares score, via
+`IsCanonicalScoreHessian.hasFDerivAt`. -/
+example {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k] [DecidableEq k]
+    (X : Matrix m k ℝ) (y : m → ℝ) (β : k → ℝ) :
+    HasFDerivAt (fun β => Xᵀ *ᵥ (y - X *ᵥ β))
+      (LinearMap.toContinuousLinearMap (Matrix.toLin' (-(Xᵀ * X)))) β :=
+  (gaussian_isCanonical X y).hasFDerivAt (fun x => hasDerivAt_id x) β
 
 /-! ### Poisson family with log link (`b = exp`, `mean = weight = exp`) -/
 
