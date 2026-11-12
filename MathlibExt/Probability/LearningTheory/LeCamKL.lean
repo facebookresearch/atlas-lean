@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import MathlibExt.InformationTheory.FiniteEntropy
 
 @[expose] public section
 
@@ -22,18 +23,13 @@ For two distributions on a finite type, any test's error
 probabilities sum to at least `1 - √(KL / 2)`: Le Cam's two-point
 bound composed with Pinsker's inequality. This is the KL
 corollary of roadmap package ML-44 of the Atlas TCS canon
-roadmap, built on `MathlibExt/Probability/LearningTheory/LeCam.lean`.
+roadmap. The KL divergence is Mathlib's `InformationTheory.klDiv`.
 
 Source: Tsybakov, Introduction to Nonparametric Estimation
 (2009), Section 2.2.
 -/
 
 open Finset
-
-/-- Kullback-Leibler divergence between two PMFs on a finite type
-(in nats, with `0 log 0 = 0` through the real conventions). -/
-noncomputable def klSum {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
-  ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal)
 
 private theorem pmf_toReal_sum_one {α : Type*} [Fintype α] (p : PMF α) :
     ∑ a, (p a).toReal = 1 := by
@@ -468,11 +464,12 @@ private theorem binary_pinsker (r s : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1)
 /-- Le Cam's bound in KL form: for two distributions on a finite
 type, any test's two error probabilities sum to at least
 `1 - √(KL / 2)` (Pinsker applied to Le Cam's two-point bound).
-Assumes `q` dominates `p` pointwise so the KL sum is the true
-divergence. -/
-theorem lecam_kl {α : Type*} [Fintype α] (p q : PMF α) (δ : α → Bool)
+Assumes `q` dominates `p` pointwise, so `klDiv` is finite and
+its real value is the KL sum. -/
+theorem lecam_kl {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
+    (p q : PMF α) (δ : α → Bool)
     (hsupp : ∀ a, (q a) = 0 → (p a) = 0) :
-    1 - Real.sqrt (klSum p q / 2) ≤
+    1 - Real.sqrt ((InformationTheory.klDiv p.toMeasure q.toMeasure).toReal / 2) ≤
       (∑ a ∈ Finset.univ.filter (fun a => δ a = true), (p a).toReal) +
         (∑ a ∈ Finset.univ.filter (fun a => δ a = false), (q a).toReal) := by
   set A : Finset α := Finset.univ.filter (fun a => δ a = true) with hA
@@ -485,12 +482,15 @@ theorem lecam_kl {α : Type*} [Fintype α] (p q : PMF α) (δ : α → Bool)
   have hsuppR : ∀ a : α, (q a).toReal = 0 → (p a).toReal = 0 :=
     fun a h => pmf_toReal_support p q hsupp a h
   have hsplit_kl : (∑ a ∈ A, (p a).toReal * Real.log ((p a).toReal / (q a).toReal)) +
-      (∑ a ∈ B, (p a).toReal * Real.log ((p a).toReal / (q a).toReal)) = klSum p q := by
+      (∑ a ∈ B, (p a).toReal * Real.log ((p a).toReal / (q a).toReal)) =
+        (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal := by
     have h := Finset.sum_filter_add_sum_filter_not Finset.univ (fun a => δ a = true)
       (fun a => (p a).toReal * Real.log ((p a).toReal / (q a).toReal))
     rw [hBA, ← hA] at h
-    have hkl : klSum p q = ∑ a ∈ Finset.univ,
-        (p a).toReal * Real.log ((p a).toReal / (q a).toReal) := rfl
+    have hkl : (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal =
+        ∑ a ∈ Finset.univ,
+          (p a).toReal * Real.log ((p a).toReal / (q a).toReal) :=
+      InformationTheory.toReal_klDiv_toMeasure hsupp
     rw [hkl]
     exact h
   have hp_split : (∑ a ∈ A, (p a).toReal) + (∑ a ∈ B, (p a).toReal) = 1 := by
@@ -551,21 +551,21 @@ theorem lecam_kl {α : Type*} [Fintype α] (p q : PMF α) (δ : α → Bool)
       Real.log ((∑ a ∈ A, (p a).toReal) / (∑ a ∈ A, (q a).toReal)) +
       (1 - (∑ a ∈ A, (p a).toReal)) *
       Real.log ((1 - (∑ a ∈ A, (p a).toReal)) / (1 - (∑ a ∈ A, (q a).toReal))) ≤
-      klSum p q := by
+      (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal := by
     have hadd := add_le_add hlogA hlogB
     rwa [hsplit_kl] at hadd
   have hpin := binary_pinsker (∑ a ∈ A, (p a).toReal) (∑ a ∈ A, (q a).toReal)
     hr0 hr1 hs0 hs1 hsupp0 hsupp1
   have h2 : 2 * ((∑ a ∈ A, (p a).toReal) - (∑ a ∈ A, (q a).toReal)) ^ 2 ≤
-      klSum p q := le_trans hpin hdp
+      (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal := le_trans hpin hdp
   have hsq : ((∑ a ∈ A, (p a).toReal) - (∑ a ∈ A, (q a).toReal)) ^ 2 ≤
-      klSum p q / 2 := by linarith [h2]
+      (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal / 2 := by linarith [h2]
   have habs : |(∑ a ∈ A, (p a).toReal) - (∑ a ∈ A, (q a).toReal)| ≤
-      Real.sqrt (klSum p q / 2) := by
+      Real.sqrt ((InformationTheory.klDiv p.toMeasure q.toMeasure).toReal / 2) := by
     have h := Real.sqrt_le_sqrt hsq
     rwa [Real.sqrt_sq_eq_abs] at h
   have hneg : -((∑ a ∈ A, (p a).toReal) - (∑ a ∈ A, (q a).toReal)) ≤
-      Real.sqrt (klSum p q / 2) :=
+      Real.sqrt ((InformationTheory.klDiv p.toMeasure q.toMeasure).toReal / 2) :=
     le_trans (neg_le_abs _) habs
   rw [hsC_eq]
   linarith [hneg]
