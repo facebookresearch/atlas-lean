@@ -32,7 +32,8 @@ root `β̂ₙ` of a **nonlinear** cluster estimating equation `Ψₙ(β) = ∑_{
 * `tendstoInMeasure_root_of_limit`: the same from `Ψₙ(β) / aₙ → λ(β)` in probability with a
   limit `λ` changing sign at `β₀` (identifiability).
 * `nonlinearEE_tendstoInMeasure_div`: a triangular weak law (Chebyshev) giving that convergence
-  for pairwise independent rows from `∑ᵢ 𝔼 ψ_{n,i}(β) / aₙ → λ(β)` and
+  when the contributions are pairwise independent within each row, from
+  `∑ᵢ 𝔼 ψ_{n,i}(β) / aₙ → λ(β)` and
   `∑ᵢ Var ψ_{n,i}(β) / aₙ² → 0` (`tendstoInMeasure_div_of_variance` is the general form).
 * `tendsto_measure_not_exists_root`: for a continuous estimating function the same sign
   conditions give a root in `(β₀ - ε, β₀ + ε)` with probability tending to one (intermediate value
@@ -57,14 +58,17 @@ root `β̂ₙ` of a **nonlinear** cluster estimating equation `Ψₙ(β) = ∑_{
 
 Scalar parameter only; the vector GEE case (matrix sensitivity `Dₙ`, Cramér–Wold) is not done.
 Consistency is proved for monotone estimating functions; the general case through uniform
-convergence on compacta is not done. The slope condition is stated with a deterministic `Dₙ`;
-taking `Dₙ = -𝔼 Ψ'ₙ(β₀)` and deriving the condition from moment or Lipschitz bounds on `ψ'` is
-left to the user. The test file discharges every hypothesis for a smooth nonlinear mean model
+convergence on compacta is not done. Roots are exact: `Ψₙ(β̂ₙ) = 0` with probability tending to one,
+stronger than van der Vaart's Lemma 5.10 hypothesis `Ψₙ(β̂ₙ) = o_P(1)`, so discontinuous estimating
+functions whose exact roots may not exist (sign or median scores, binary-response equations as in
+`binaryEE_no_root`) are not covered. The slope condition is stated with a deterministic `Dₙ`; taking
+`Dₙ = -𝔼 Ψ'ₙ(β₀)` and deriving the condition from moment or Lipschitz bounds on `ψ'` is left to the
+user. The test file discharges every hypothesis for a smooth nonlinear mean model
 (`ψ_{n,i}(β) = U n i + sinh β₀ - sinh β`, explicit root, `Dₙ = n cosh β₀`), and on a concrete
 probability space (iid Rademacher clusters on `ℕ → Bool`) obtains the CLT with no remaining
-assumptions. Boundary cases in the test file: a degenerate sensitivity (`g(β) = β³` at
-`β₀ = 0`) violates the slope condition for every `Dₙ > 0`, and a non-identified equation
-(`Ψₙ ≡ 0`) has an inconsistent root sequence.
+assumptions. Boundary cases in the test file: a degenerate sensitivity (`g(β) = β³` at `β₀ = 0`)
+violates the slope condition for every `Dₙ > 0`, and a non-identified equation (`Ψₙ ≡ 0`) has an
+inconsistent root sequence.
 T36's `binaryEE_no_root` already shows a root need not exist.
 
 ## Source
@@ -80,12 +84,12 @@ step), Mathlib's `tendstoInDistribution_of_tendstoInMeasure_sub`,
 `MLEAsymptoticNormality.tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation`, is for iid
 observations with `√n` normalization and a second-derivative envelope; no triangular-array or
 cluster version of root consistency or linearization existed.
-Mathematical references: A. W. van der Vaart, *Asymptotic Statistics* (1998), Lemma 5.10
-(consistency of roots of monotone estimating equations) and Theorem 5.21 (linearization of
+Mathematical references: A. W. van der Vaart, *Asymptotic Statistics* (1998), Lemma 5.10 (exact-root
+form; consistency of roots of monotone estimating equations) and Theorem 5.21 (linearization of
 Z-estimators); K.-Y. Liang and S. L. Zeger, *Longitudinal data analysis using generalized linear
 models*, Biometrika 73 (1986) 13–22; M. Xie and Y. Yang, *Asymptotics for generalized estimating
-equations with large cluster sizes*, Ann. Statist. 31 (2003) 310–347 (triangular arrays of
-clusters with growing sizes).
+equations with large cluster sizes*, Ann. Statist. 31 (2003) 310–347 (triangular arrays of clusters
+with growing sizes).
 -/
 
 @[expose] public section
