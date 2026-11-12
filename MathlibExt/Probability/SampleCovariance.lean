@@ -30,9 +30,9 @@ not a convergence theorem for any filter.
 
 ## Key results
 
-- `g12SampleCov_posSemidef`: `S` is positive semidefinite.
-- `g12SampleCov_rank_le`: `rank S ≤ min d (N - 1)` for `N ≥ 2`.
-- `g12SampleCov_expectation`: `E[S] = Σ` entrywise, for i.i.d.
+- `SampleCov_posSemidef`: `S` is positive semidefinite.
+- `SampleCov_rank_le`: `rank S ≤ min d (N - 1)` for `N ≥ 2`.
+- `SampleCov_expectation`: `E[S] = Σ` entrywise, for i.i.d.
   square-integrable samples with common mean and covariance.
 -/
 
@@ -40,35 +40,35 @@ not a convergence theorem for any filter.
 
 open MeasureTheory ProbabilityTheory Matrix
 
-namespace MathlibExt.Probability.G12SampleCovariance
+namespace MathlibExt.Probability.SampleCovariance
 
 /-- Column mean of a data matrix (rows are observations). -/
-noncomputable def g12ColMean {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) (j : Fin d) : ℝ :=
+noncomputable def ColMean {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) (j : Fin d) : ℝ :=
   (∑ i, X i j) / N
 
 /-- Centered data matrix. -/
-noncomputable def g12Center {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
+noncomputable def Center {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
     Matrix (Fin N) (Fin d) ℝ :=
-  Matrix.of fun i j => X i j - g12ColMean X j
+  Matrix.of fun i j => X i j - ColMean X j
 
 /-- Unbiased sample covariance `(N - 1)⁻¹ (center X)ᵀ (center X)`. -/
-noncomputable def g12SampleCov {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
+noncomputable def SampleCov {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
     Matrix (Fin d) (Fin d) ℝ :=
-  ((N : ℝ) - 1)⁻¹ • ((g12Center X)ᵀ * g12Center X)
+  ((N : ℝ) - 1)⁻¹ • ((Center X)ᵀ * Center X)
 
 /-- Entries of the sample covariance matrix. -/
-theorem g12SampleCov_apply {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) (j k : Fin d) :
-    g12SampleCov X j k =
-      ((N : ℝ) - 1)⁻¹ * ∑ i, (X i j - g12ColMean X j) * (X i k - g12ColMean X k) := by
-  simp [g12SampleCov, g12Center, Matrix.mul_apply, Finset.mul_sum]
+theorem SampleCov_apply {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) (j k : Fin d) :
+    SampleCov X j k =
+      ((N : ℝ) - 1)⁻¹ * ∑ i, (X i j - ColMean X j) * (X i k - ColMean X k) := by
+  simp [SampleCov, Center, Matrix.mul_apply, Finset.mul_sum]
 
 /-- Sample covariance of any data matrix is positive semidefinite. -/
-theorem g12SampleCov_posSemidef {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
-    (g12SampleCov X).PosSemidef := by
-  unfold g12SampleCov
+theorem SampleCov_posSemidef {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
+    (SampleCov X).PosSemidef := by
+  unfold SampleCov
   by_cases hN0 : N = 0
   · subst hN0
-    have hZero : ((g12Center X)ᵀ * g12Center X) = 0 := by
+    have hZero : ((Center X)ᵀ * Center X) = 0 := by
       ext i j
       simp [Matrix.mul_apply]
     rw [hZero, smul_zero]
@@ -78,14 +78,14 @@ theorem g12SampleCov_posSemidef {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
     have hNonneg : 0 ≤ ((N : ℝ) - 1)⁻¹ := by
       apply inv_nonneg.mpr
       linarith
-    have hPSD : ((g12Center X)ᵀ * g12Center X).PosSemidef := by
-      have h := Matrix.posSemidef_conjTranspose_mul_self (g12Center X)
+    have hPSD : ((Center X)ᵀ * Center X).PosSemidef := by
+      have h := Matrix.posSemidef_conjTranspose_mul_self (Center X)
       rwa [Matrix.conjTranspose_eq_transpose_of_trivial] at h
     exact hPSD.smul hNonneg
 
-theorem g12Center_col_sum {N d : ℕ} (hN : N ≠ 0) (X : Matrix (Fin N) (Fin d) ℝ)
-    (j : Fin d) : ∑ i, g12Center X i j = 0 := by
-  simp only [g12Center, g12ColMean, Matrix.of_apply]
+theorem Center_col_sum {N d : ℕ} (hN : N ≠ 0) (X : Matrix (Fin N) (Fin d) ℝ)
+    (j : Fin d) : ∑ i, Center X i j = 0 := by
+  simp only [Center, ColMean, Matrix.of_apply]
   have hNr : (N : ℝ) ≠ 0 := by exact_mod_cast hN
   have hSum : (∑ _i : Fin N, ((∑ i, X i j) / (N : ℝ))) = ∑ i, X i j := by
     rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
@@ -95,19 +95,19 @@ theorem g12Center_col_sum {N d : ℕ} (hN : N ≠ 0) (X : Matrix (Fin N) (Fin d)
   rw [hSum]
   exact sub_self _
 
-theorem g12Center_transpose_mulVec_ones {N d : ℕ} (hN : N ≠ 0)
+theorem Center_transpose_mulVec_ones {N d : ℕ} (hN : N ≠ 0)
     (X : Matrix (Fin N) (Fin d) ℝ) :
-    (g12Center X)ᵀ *ᵥ (fun _ => (1 : ℝ)) = 0 := by
+    (Center X)ᵀ *ᵥ (fun _ => (1 : ℝ)) = 0 := by
   ext j
   rw [Matrix.mulVec_apply_eq_sum]
   simp only [Matrix.transpose_apply, mul_one]
-  exact g12Center_col_sum hN X j
+  exact Center_col_sum hN X j
 
 /-- Rank bound: the sample covariance has rank at most `min d (N - 1)`
 for `N ≥ 2` (centered rows sum to zero, so one row direction is lost). -/
-theorem g12SampleCov_rank_le {N d : ℕ} (hN : 2 ≤ N) (X : Matrix (Fin N) (Fin d) ℝ) :
-    (g12SampleCov X).rank ≤ min d (N - 1) := by
-  unfold g12SampleCov
+theorem SampleCov_rank_le {N d : ℕ} (hN : 2 ≤ N) (X : Matrix (Fin N) (Fin d) ℝ) :
+    (SampleCov X).rank ≤ min d (N - 1) := by
+  unfold SampleCov
   have hN0 : N ≠ 0 := by omega
   have hNm1 : ((N : ℝ) - 1) ≠ 0 := by
     have hNr : (2 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
@@ -119,40 +119,40 @@ theorem g12SampleCov_rank_le {N d : ℕ} (hN : 2 ≤ N) (X : Matrix (Fin N) (Fin
   rw [Matrix.rank_transpose_mul_self]
   apply le_min
   · exact Matrix.rank_le_width _
-  · have hRankEq : (g12Center X).rank = ((g12Center X)ᵀ).rank := by
+  · have hRankEq : (Center X).rank = ((Center X)ᵀ).rank := by
       rw [Matrix.rank_transpose]
     rw [hRankEq]
-    have hKer : (fun _ => (1 : ℝ)) ∈ LinearMap.ker ((g12Center X)ᵀ).mulVecLin := by
+    have hKer : (fun _ => (1 : ℝ)) ∈ LinearMap.ker ((Center X)ᵀ).mulVecLin := by
       rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
-      exact g12Center_transpose_mulVec_ones hN0 X
+      exact Center_transpose_mulVec_ones hN0 X
     have hOnesNe : (fun _ => (1 : ℝ) : Fin N → ℝ) ≠ 0 := by
       have hInh : Inhabited (Fin N) := ⟨⟨0, by omega⟩⟩
       intro h
       have := congrFun h (default : Fin N)
       simp at this
-    have hNontriv : Nontrivial ↥(LinearMap.ker ((g12Center X)ᵀ).mulVecLin) := by
+    have hNontriv : Nontrivial ↥(LinearMap.ker ((Center X)ᵀ).mulVecLin) := by
       refine ⟨⟨_, hKer⟩, 0, ?_⟩
       intro hEq
       apply hOnesNe
       have := congrArg Subtype.val hEq
       simpa using this
-    have hPos : 0 < Module.finrank ℝ ↥(LinearMap.ker ((g12Center X)ᵀ).mulVecLin) :=
+    have hPos : 0 < Module.finrank ℝ ↥(LinearMap.ker ((Center X)ᵀ).mulVecLin) :=
       (Module.finrank_pos_iff).mpr hNontriv
-    have hAdd := LinearMap.finrank_range_add_finrank_ker ((g12Center X)ᵀ).mulVecLin
+    have hAdd := LinearMap.finrank_range_add_finrank_ker ((Center X)ᵀ).mulVecLin
     have hFin : Module.finrank ℝ (Fin N → ℝ) = N := by
       rw [Module.finrank_pi]
       simp
     rw [hFin] at hAdd
-    have hRankDef : ((g12Center X)ᵀ).rank =
-        Module.finrank ℝ ↥(LinearMap.range ((g12Center X)ᵀ).mulVecLin) := rfl
+    have hRankDef : ((Center X)ᵀ).rank =
+        Module.finrank ℝ ↥(LinearMap.range ((Center X)ᵀ).mulVecLin) := rfl
     omega
 
-theorem g12SampleCov_entry {N d : ℕ} {Ω : Type*} (X : Fin N → Ω → (Fin d → ℝ))
+theorem SampleCov_entry {N d : ℕ} {Ω : Type*} (X : Fin N → Ω → (Fin d → ℝ))
     (ω : Ω) (j k : Fin d) :
-    g12SampleCov (Matrix.of fun i j' => X i ω j') j k =
+    SampleCov (Matrix.of fun i j' => X i ω j') j k =
     ((N : ℝ) - 1)⁻¹ * ∑ i, ((X i ω j - (∑ l, X l ω j) / (N : ℝ)) *
       (X i ω k - (∑ l, X l ω k) / (N : ℝ))) := by
-  simp [g12SampleCov, g12Center, g12ColMean, Matrix.smul_apply, Matrix.mul_apply,
+  simp [SampleCov, Center, ColMean, Matrix.smul_apply, Matrix.mul_apply,
     Matrix.transpose_apply, smul_eq_mul, Matrix.of_apply]
 
 theorem sum_centered_mul_eq {N : ℕ} (hN0 : (N : ℝ) ≠ 0) (a b : Fin N → ℝ) :
@@ -266,7 +266,7 @@ covariance matrix `Σ` (entrywise covariance of coordinates), the
 expectation of the sample covariance is `Σ`. Independence is stated
 as pairwise independence of the sample vectors; identical distribution
 is the `∀ i` mean/covariance hypotheses. -/
-theorem g12SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
+theorem SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : Fin N → Ω → (Fin d → ℝ)} {m : Fin d → ℝ} {Sig : Matrix (Fin d) (Fin d) ℝ}
     (hMean : ∀ i j, ∫ ω, X i ω j ∂μ = m j)
@@ -276,18 +276,18 @@ theorem g12SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
     (hInt2 : ∀ i j k, Integrable (fun ω => (X i ω j) * (X i ω k)) μ)
     (hIntMean : ∀ i j k, Integrable (fun ω => (X i ω j - m j) * (X i ω k - m k)) μ)
     (j k : Fin d) :
-    ∫ ω, g12SampleCov (Matrix.of fun i j' => X i ω j') j k ∂μ = Sig j k := by
+    ∫ ω, SampleCov (Matrix.of fun i j' => X i ω j') j k ∂μ = Sig j k := by
   have _hUse := hIntMean
   have hN0' : N ≠ 0 := by omega
   have hN0 : (N : ℝ) ≠ 0 := by exact_mod_cast hN0'
   have hNm1 : ((N : ℝ) - 1) ≠ 0 := by
     have hNr : (2 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
     linarith
-  have hPoint : ∀ ω : Ω, g12SampleCov (Matrix.of fun i j' => X i ω j') j k =
+  have hPoint : ∀ ω : Ω, SampleCov (Matrix.of fun i j' => X i ω j') j k =
       ((N : ℝ) - 1)⁻¹ * ((∑ i, (X i ω j) * (X i ω k)) -
         (N : ℝ) * (((∑ l, X l ω j) / (N : ℝ)) * ((∑ l, X l ω k) / (N : ℝ)))) := by
     intro ω
-    rw [g12SampleCov_entry]
+    rw [SampleCov_entry]
     congr 1
     exact sum_centered_mul_eq hN0 _ _
   simp only [hPoint]
@@ -386,4 +386,4 @@ theorem g12SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
     _ = Sig j k := by field_simp
 
 
-end MathlibExt.Probability.G12SampleCovariance
+end MathlibExt.Probability.SampleCovariance
