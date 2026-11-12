@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.MeasureTheory.SpecificCodomains.Pi
 public import MathlibExt.Probability.Distributions.CochranTheorem
+import Mathlib.Probability.Distributions.Gaussian.CharFun
+import Mathlib.Probability.Distributions.Gaussian.Fernique
 
 /-!
 # Sampling properties of the ordinary least-squares estimator
@@ -32,8 +34,9 @@ No Gaussianity is assumed for them. Rank-deficient designs are excluded by the h
 
 For i.i.d. normal errors, the residual-maker matrix `M = 1 - X B` is a symmetric idempotent of
 rank `n - p` (`n = card m`, `p = card k`), so Cochran's theorem gives
-`‖y - X β̂‖² / σ² ~ χ²_{n-p}` when `p < n`. Not covered here: independence of `β̂` and the
-residuals, and the Student `t` and Snedecor `F` laws built from them.
+`‖y - X β̂‖² / σ² ~ χ²_{n-p}` when `p < n`. The estimator itself is an affine image of the
+standardized errors, so `β̂ ~ N(β, σ² (Xᵀ X)⁻¹)` for every full-rank design. Not covered here:
+independence of `β̂` and the residuals, and the Student `t` and Snedecor `F` laws built from them.
 
 ## Main results
 
@@ -45,6 +48,8 @@ residuals, and the Student `t` and Snedecor `F` laws built from them.
   `residualMatrix_mul_self`, `residualMatrix_mul`, `sub_mulVec_olsEstimator`,
   `rank_residualMatrix` (`rank M = n - p`).
 * `hasLaw_rss`, `hasLaw_rss_div_sq`: `‖y - X β̂‖² / σ² ~ χ²_{n-p}` for normal errors.
+* `hasLaw_olsEstimator`: `β̂ ~ N(β, σ² (Xᵀ X)⁻¹)` for normal errors, as a law on
+  `EuclideanSpace ℝ k`; no `p < n` hypothesis.
 -/
 
 @[expose] public section
@@ -258,5 +263,64 @@ theorem hasLaw_rss_div_sq (hX : IsUnit (Xᵀ * X)) (hkm : Fintype.card k < Finty
   rw [rss_eq_dotProduct_residualMatrix hX, mulVec_smul, smul_dotProduct, dotProduct_smul,
     smul_eq_mul, smul_eq_mul]
   ring
+
+end MathlibExt.Probability.Statistics.LinearModel
+
+namespace MathlibExt.Probability.Statistics.LinearModel
+
+/-! ### The Gaussian law of the OLS estimator -/
+
+/-- The image of the standard Gaussian on `ℝ^m` under `x ↦ c + A x` is `N(c, A Aᵀ)`. -/
+private theorem map_stdGaussian_toEuclideanLin {m k : Type*} [Fintype m] [DecidableEq m]
+    [Fintype k] [DecidableEq k] (A : Matrix k m ℝ) (c : EuclideanSpace ℝ k) :
+    (stdGaussian (EuclideanSpace ℝ m)).map
+        (fun x => c + LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin A) x) =
+      multivariateGaussian c (A * Aᵀ) := by
+  set L : EuclideanSpace ℝ m →L[ℝ] EuclideanSpace ℝ k :=
+    LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin A) with hL
+  have hS : (A * Aᵀ).PosSemidef := by
+    simpa only [conjTranspose_eq_transpose_of_trivial] using posSemidef_self_mul_conjTranspose A
+  have h : (fun x => c + L x) = (fun x => c + x) ∘ L := rfl
+  rw [h, ← Measure.map_map (measurable_const_add c) L.measurable]
+  apply IsGaussian.ext
+  · rw [integral_id_multivariateGaussian', integral_map (measurable_const_add c).aemeasurable
+      aestronglyMeasurable_id]
+    simp only [id]
+    rw [integral_add (integrable_const c) IsGaussian.integrable_fun_id,
+      ContinuousLinearMap.integral_id_map IsGaussian.integrable_id, integral_id_stdGaussian,
+      map_zero, add_zero]
+    simp
+  · ext u v
+    rw [covarianceBilin_map_const_add, covarianceBilin_map IsGaussian.memLp_two_id,
+      covarianceBilin_stdGaussian, innerSL_apply_apply, covarianceBilin_multivariateGaussian hS,
+      ContinuousLinearMap.adjoint_inner_left]
+    rw [hL, ← LinearMap.adjoint_toContinuousLinearMap,
+      ← Matrix.toEuclideanLin_conjTranspose_eq_adjoint, LinearMap.coe_toContinuousLinearMap',
+      LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply, Matrix.toLpLin_apply,
+      WithLp.ofLp_toLp, EuclideanSpace.inner_eq_star_dotProduct, WithLp.ofLp_toLp, star_trivial,
+      mulVec_mulVec, conjTranspose_eq_transpose_of_trivial, dotProduct_comm]
+
+/-- **Gaussian law of the OLS estimator**: in `y = X β + ε` with full-rank `X`, `σ > 0` and
+`σ⁻¹ ε` standard Gaussian, `β̂ = (Xᵀ X)⁻¹ Xᵀ y` has the multivariate normal law
+`N(β, σ² (Xᵀ X)⁻¹)` on `EuclideanSpace ℝ k`. No `p < n` hypothesis is needed. -/
+theorem hasLaw_olsEstimator {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k]
+    [DecidableEq k] {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X : Matrix m k ℝ}
+    (hX : IsUnit (Xᵀ * X)) (β : k → ℝ) {ε : Ω → m → ℝ} {σ : ℝ} (hσ : 0 < σ)
+    (hε : HasLaw (fun ω => σ⁻¹ • ε ω) (Measure.pi fun _ : m => gaussianReal 0 1) μ) :
+    HasLaw (fun ω => WithLp.toLp 2 (olsEstimator X (X *ᵥ β + ε ω)))
+      (multivariateGaussian (WithLp.toLp 2 β) (σ ^ 2 • (Xᵀ * X)⁻¹)) μ := by
+  have hcov : (σ • olsMatrix X) * (σ • olsMatrix X)ᵀ = σ ^ 2 • (Xᵀ * X)⁻¹ := by
+    rw [transpose_smul, Matrix.smul_mul, Matrix.mul_smul, olsMatrix_mul_transpose hX, smul_smul,
+      sq]
+  have hfun : (fun ω => WithLp.toLp 2 (olsEstimator X (X *ᵥ β + ε ω))) =
+      (fun x => WithLp.toLp 2 β +
+        LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin (σ • olsMatrix X)) x) ∘
+        (WithLp.toLp 2 ∘ fun ω => σ⁻¹ • ε ω) := by
+    funext ω
+    simp only [Function.comp_apply, LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply,
+      WithLp.ofLp_toLp, olsEstimator_add hX, WithLp.toLp_add, Matrix.smul_mulVec,
+      Matrix.mulVec_smul, smul_inv_smul₀ hσ.ne']
+  rw [hfun, ← hcov, ← map_stdGaussian_toEuclideanLin, ← map_pi_eq_stdGaussian]
+  exact (hasLaw_map (by fun_prop)).comp ((hasLaw_map (by fun_prop)).comp hε)
 
 end MathlibExt.Probability.Statistics.LinearModel
