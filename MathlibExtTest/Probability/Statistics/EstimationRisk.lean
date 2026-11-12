@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.EstimationRisk
+public import MathlibExt.MeasureTheory.Function.ConditionalExpectation.BestPredictor
+public import MathlibExt.Probability.MonteCarloRate
 public import Mathlib.Probability.ProbabilityMassFunction.Integrals
 public import Mathlib.MeasureTheory.Measure.DiracProba
 public import Mathlib.Probability.Distributions.Geometric
@@ -29,8 +31,8 @@ measures as probability laws, and record empty-domain vacuity explicitly.
 
 @[expose] public section
 
-open MeasureTheory
-open scoped ENNReal Topology
+open MeasureTheory ProbabilityTheory
+open scoped BigOperators ENNReal Topology
 
 open MathlibExt.Probability.Statistics.EstimationRisk
 
@@ -1204,5 +1206,320 @@ example (θ : Bool) :
   congrFun (frequentistRisk_squared_eq_familyMeanSquaredError
     (W := twoPointW) (P := riskP) (τ := riskTau)
     (fun _ => Integrable.of_finite) (fun _ => Integrable.of_finite)) θ
+
+/-- A fair coin on `Bool`. -/
+noncomputable def fairCoin : Measure Bool :=
+  (2 : ENNReal)⁻¹ • (Measure.dirac true + Measure.dirac false)
+
+instance : IsProbabilityMeasure fairCoin := by
+  constructor
+  simp [fairCoin, ← two_mul, ENNReal.mul_inv_cancel two_ne_zero ENNReal.ofNat_ne_top]
+
+/-- The sign `±1` of a coin toss. -/
+noncomputable def coinSign (b : Bool) : ℝ := if b then 1 else -1
+
+/-- Two fair signs on `Bool × Bool`: coordinate `0` reads the first coin, coordinate `1` the
+second. -/
+noncomputable def twoSigns (i : Fin 2) (ω : Bool × Bool) : ℝ :=
+  if i = 0 then coinSign ω.1 else coinSign ω.2
+
+/-- Finite-risk Pythagorean split: the finite squared-loss risk of a `G`-measurable
+predictor is noise plus excess, and the finite value agrees with the extended bridge. The
+first conjunct goes through `frequentistRisk_squared_eq_familyMeanSquaredError`; the
+second is exactly `ofReal_frequentistRisk`. -/
+example {Ω : Type*} {m mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure μ]
+    [IsProbabilityMeasure μ] {Y g : Ω → ℝ} (hm : m ≤ mΩ)
+    (hY : MemLp Y 2 μ) (hg : MemLp g 2 μ) (hgm : StronglyMeasurable[m] g) :
+    let hMSE : ∀ _ : Unit, Integrable (fun x => ((Y x - g x) - 0) ^ 2) μ :=
+      fun _ => ((hY.sub hg).sub (memLp_const (0 : ℝ))).integrable_sq;
+    let hRisk : ∀ _ : Unit, Integrable
+      (fun x => ((⟨((Y x - g x) - 0) ^ 2, sq_nonneg _⟩ : NNReal) : ℝ)) μ :=
+      fun _ => by simpa using ((hY.sub hg).sub (memLp_const (0 : ℝ))).integrable_sq;
+    (MathlibExt.Probability.Statistics.EstimationRisk.frequentistRisk
+      (fun ω => Y ω - g ω) (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩) hRisk () =
+      ∫ ω, (Y ω - μ[Y|m] ω) ^ 2 ∂μ + ∫ ω, (μ[Y|m] ω - g ω) ^ 2 ∂μ) ∧
+    ENNReal.ofReal (MathlibExt.Probability.Statistics.EstimationRisk.frequentistRisk
+      (fun ω => Y ω - g ω) (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩) hRisk ()) =
+      MathlibExt.Probability.Statistics.EstimationRisk.frequentistRiskENN
+        (fun ω => Y ω - g ω) (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+        (fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩) () := by
+  intro hMSE hRisk
+  constructor
+  · have hEq := MathlibExt.Probability.Statistics.EstimationRisk.frequentistRisk_squared_eq_familyMeanSquaredError
+      (Θ := Unit)
+      (W := fun ω => Y ω - g ω)
+      (P := fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (τ := fun _ : Unit => (0 : ℝ))
+      (hRisk := hRisk) (hMSE := hMSE)
+    have hAt := congrFun hEq ()
+    rw [hAt]
+    unfold MathlibExt.Probability.Statistics.EstimationRisk.familyMeanSquaredError
+      MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+    simp only [sub_zero]
+    exact MeasureTheory.integral_sq_sub_eq_integral_sq_sub_condExp_add (μ := μ) hm hY hg hgm
+  · exact MathlibExt.Probability.Statistics.EstimationRisk.ofReal_frequentistRisk ()
+
+/-- Average of a function against a single fair coin. -/
+private theorem integral_fairCoin (g : Bool → ℝ) :
+    ∫ b, g b ∂fairCoin = (g true + g false) / 2 := by
+  rw [fairCoin, integral_smul_measure, integral_add_measure (integrable_dirac (by simp))
+    (integrable_dirac (by simp)), integral_dirac, integral_dirac, ENNReal.toReal_inv,
+    ENNReal.toReal_ofNat, smul_eq_mul]
+  ring
+
+/-- Mean of the sign against a fair coin. -/
+private theorem integral_coinSign : ∫ b, coinSign b ∂fairCoin = 0 := by
+  rw [integral_fairCoin]
+  norm_num [coinSign]
+
+/-- The two coordinate signs are independent under the product of two fair coins,
+proved from the definitions via the finite preimage identity. -/
+private theorem iIndepFun_twoSigns : iIndepFun twoSigns (fairCoin.prod fairCoin) := by
+  have key : ∀ S : Finset (Fin 2), S = ∅ ∨ S = {0} ∨ S = {1} ∨ S = Finset.univ := by decide
+  rw [iIndepFun_iff_measure_inter_preimage_eq_mul]
+  intro S sets _
+  have h0 : twoSigns 0 ⁻¹' sets 0 = (coinSign ⁻¹' sets 0) ×ˢ Set.univ := by
+    ext ω; simp [twoSigns]
+  have h1 : twoSigns 1 ⁻¹' sets 1 = Set.univ ×ˢ (coinSign ⁻¹' sets 1) := by
+    ext ω; simp [twoSigns]
+  rcases key S with rfl | rfl | rfl | rfl
+  · simp
+  · simp
+  · simp
+  · have : (⋂ i ∈ (Finset.univ : Finset (Fin 2)), twoSigns i ⁻¹' sets i)
+        = (coinSign ⁻¹' sets 0) ×ˢ (coinSign ⁻¹' sets 1) := by
+      ext ω; simp [Fin.forall_fin_two, twoSigns]
+    rw [this, Fin.prod_univ_two, h0, h1]
+    simp only [Measure.prod_prod, measure_univ, mul_one, one_mul]
+
+private theorem identDistrib_fst : IdentDistrib Prod.fst id (fairCoin.prod fairCoin) fairCoin :=
+  ⟨measurable_fst.aemeasurable, aemeasurable_id, by
+    rw [Measure.map_fst_prod, measure_univ, one_smul, Measure.map_id]⟩
+
+private theorem identDistrib_snd : IdentDistrib Prod.snd id (fairCoin.prod fairCoin) fairCoin :=
+  ⟨measurable_snd.aemeasurable, aemeasurable_id, by
+    rw [Measure.map_snd_prod, measure_univ, one_smul, Measure.map_id]⟩
+
+/-- Mean of the first coordinate sign, from the definitions. -/
+private theorem mean_twoSigns0 : ∫ ω, twoSigns 0 ω ∂(fairCoin.prod fairCoin) = 0 := by
+  have h0 : twoSigns 0 = coinSign ∘ Prod.fst := by funext ω; simp [twoSigns]
+  rw [h0, ← integral_coinSign]
+  exact (identDistrib_fst.comp (measurable_of_finite coinSign)).integral_eq
+
+/-- Mean of the second coordinate sign, from the definitions. -/
+private theorem mean_twoSigns1 : ∫ ω, twoSigns 1 ω ∂(fairCoin.prod fairCoin) = 0 := by
+  have h1 : twoSigns 1 = coinSign ∘ Prod.snd := by funext ω; simp [twoSigns]
+  rw [h1, ← integral_coinSign]
+  exact (identDistrib_snd.comp (measurable_of_finite coinSign)).integral_eq
+
+/-- Common variance of a fair sign, from the definitions. -/
+private theorem variance_coinSign : variance coinSign fairCoin = 1 := by
+  rw [variance_eq_integral (measurable_of_finite _).aemeasurable]
+  simp only [integral_fairCoin, coinSign]
+  norm_num
+
+/-- The product of two fair coins as a probability measure, elaborated once so that
+all later wrapped-measure occurrences are syntactically identical. -/
+private noncomputable def prodPM : ProbabilityMeasure (Bool × Bool) :=
+  ⟨fairCoin.prod fairCoin, inferInstance⟩
+
+private theorem hW0 : MemLp (twoSigns 0) 2 (fairCoin.prod fairCoin) := by
+  refine MemLp.of_bound (measurable_of_finite (twoSigns 0)).aestronglyMeasurable 1
+    (Filter.Eventually.of_forall fun ω => ?_)
+  rcases ω with ⟨_ | _, _ | _⟩ <;> norm_num [twoSigns, coinSign]
+
+private theorem hW1 : MemLp (twoSigns 1) 2 (fairCoin.prod fairCoin) := by
+  refine MemLp.of_bound (measurable_of_finite (twoSigns 1)).aestronglyMeasurable 1
+    (Filter.Eventually.of_forall fun ω => ?_)
+  rcases ω with ⟨_ | _, _ | _⟩ <;> norm_num [twoSigns, coinSign]
+
+private theorem hW2 : MemLp (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) 2
+    (fairCoin.prod fairCoin) := by
+  refine MemLp.of_bound (measurable_of_finite _).aestronglyMeasurable 1
+    (Filter.Eventually.of_forall fun ω => ?_)
+  have : ∀ ω : Bool × Bool, ‖(twoSigns 0 ω + twoSigns 1 ω) / 2‖ ≤ 1 := by
+    intro ω
+    rcases ω with ⟨_ | _, _ | _⟩ <;> norm_num [twoSigns, coinSign]
+  exact this _
+
+/-- Mean of the two-sign average, from the definitions. -/
+private theorem hmeanW2 : ∫ ω, (twoSigns 0 ω + twoSigns 1 ω) / 2
+    ∂(fairCoin.prod fairCoin) = 0 := by
+  have hI0 : Integrable (twoSigns 0) (fairCoin.prod fairCoin) :=
+    hW0.integrable one_le_two
+  have hI1 : Integrable (twoSigns 1) (fairCoin.prod fairCoin) :=
+    hW1.integrable one_le_two
+  have hEq : (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+      = fun ω => (1 / 2 : ℝ) * (twoSigns 0 ω + twoSigns 1 ω) := by
+    funext ω
+    ring
+  rw [hEq, integral_const_mul, integral_add hI0 hI1, mean_twoSigns0, mean_twoSigns1]
+  norm_num
+
+private theorem variance_twoSigns0 :
+    variance (twoSigns 0) (fairCoin.prod fairCoin) = 1 := by
+  have h0 : twoSigns 0 = coinSign ∘ Prod.fst := by funext ω; simp [twoSigns]
+  rw [h0, ← variance_coinSign]
+  exact (identDistrib_fst.comp (measurable_of_finite coinSign)).variance_eq
+
+private theorem variance_twoSigns1 :
+    variance (twoSigns 1) (fairCoin.prod fairCoin) = 1 := by
+  have h1 : twoSigns 1 = coinSign ∘ Prod.snd := by funext ω; simp [twoSigns]
+  rw [h1, ← variance_coinSign]
+  exact (identDistrib_snd.comp (measurable_of_finite coinSign)).variance_eq
+
+private theorem variance_twoSigns (i : Fin 2) :
+    variance (twoSigns i) (fairCoin.prod fairCoin) = 1 :=
+  (Fin.forall_fin_two.mpr ⟨variance_twoSigns0, variance_twoSigns1⟩ :
+    ∀ i, variance (twoSigns i) (fairCoin.prod fairCoin) = 1) i
+
+/-- Two unbiased estimators, different variances, MSEs and risks: the single fair sign and
+the two-sign mean are mean-zero with variances `1` and `1 / 2` and finite mean squared
+errors `1` and `1 / 2` (all derived above from the definitions, not assumed). Unbiasedness
+does not imply smallest risk. -/
+example :
+    MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased (twoSigns 0)
+      (fun _ : Unit => ⟨fairCoin.prod fairCoin, inferInstance⟩) (fun _ => 0) ∧
+    MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased
+      (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+      (fun _ : Unit => ⟨fairCoin.prod fairCoin, inferInstance⟩) (fun _ => 0) ∧
+    variance (twoSigns 0) (fairCoin.prod fairCoin) = 1 ∧
+    variance (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) (fairCoin.prod fairCoin) = 1 / 2 ∧
+    MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError (twoSigns 0)
+      prodPM 0
+      (MathlibExt.Probability.Statistics.EstimationRisk.integrable_sq_sub_of_memLp_two
+        (μ := prodPM) hW0) = 1 ∧
+    MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+      (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+      prodPM 0
+      (MathlibExt.Probability.Statistics.EstimationRisk.integrable_sq_sub_of_memLp_two
+        (μ := prodPM) hW2) = 1 / 2 := by
+  have hIndep : iIndepFun (fun i : Fin 2 => twoSigns i) (fairCoin.prod fairCoin) :=
+    iIndepFun_twoSigns
+  have hLp : ∀ i : Fin 2, MemLp (twoSigns i) 2 (fairCoin.prod fairCoin) :=
+    Fin.forall_fin_two.mpr ⟨hW0, hW1⟩
+  have hVar : ∀ i : Fin 2, variance (twoSigns i) (fairCoin.prod fairCoin) = 1 :=
+    fun i => variance_twoSigns i
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro θ
+    exact ⟨hW0.integrable one_le_two, mean_twoSigns0⟩
+  · intro θ
+    exact ⟨hW2.integrable one_le_two, hmeanW2⟩
+  · exact variance_twoSigns0
+  · have hCard : (Fintype.card (Fin 2) : ℝ) = 2 := by simp [Fintype.card_fin]
+    have hW2Eq : (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+        = (fun ω => (∑ i, twoSigns i ω) / 2) := by
+      funext ω
+      rw [Fin.sum_univ_two]
+    have hV := MathlibExt.Probability.variance_sample_mean
+      (X := fun i : Fin 2 => twoSigns i) (sigma2 := (1 : ℝ)) hLp hIndep hVar
+    have hV2 : variance (fun ω => (∑ i, twoSigns i ω) / 2) (fairCoin.prod fairCoin)
+        = 1 / 2 := by
+      have h1 : (fun ω => (∑ i, twoSigns i ω) / 2)
+          = (fun ω => (∑ i, twoSigns i ω) / (Fintype.card (Fin 2) : ℝ)) := by
+        rw [hCard]
+      rw [h1, hV, hCard]
+    rw [hW2Eq]
+    exact hV2
+  · have h := MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError_eq_variance_add_sq_bias
+      (μ := prodPM) (θ := 0) hW0
+    have hmean0 : ∫ x, twoSigns 0 x ∂↑prodPM = 0 := mean_twoSigns0
+    have hbias : MathlibExt.Probability.Statistics.EstimationRisk.bias (twoSigns 0)
+        prodPM 0 ((hW0).integrable one_le_two) = 0 := by
+      show (∫ x, twoSigns 0 x ∂↑prodPM) - 0 = 0
+      rw [hmean0, sub_zero]
+    have hvar : variance (twoSigns 0) ↑prodPM = 1 := variance_twoSigns0
+    rw [hvar, hbias] at h
+    exact h.trans (by norm_num)
+  · have h := MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError_eq_variance_add_sq_bias
+      (μ := prodPM) (θ := 0) hW2
+    have hmeanW2w : ∫ x, (twoSigns 0 x + twoSigns 1 x) / 2 ∂↑prodPM = 0 := hmeanW2
+    have hbias : MathlibExt.Probability.Statistics.EstimationRisk.bias
+        (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+        prodPM 0 ((hW2).integrable one_le_two) = 0 := by
+      show (∫ x, (twoSigns 0 x + twoSigns 1 x) / 2 ∂↑prodPM) - 0 = 0
+      rw [hmeanW2w, sub_zero]
+    have hV2 : variance (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) ↑prodPM
+        = 1 / 2 := by
+      show variance (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) (fairCoin.prod fairCoin) = 1 / 2
+      -- (reproved below via the finite-family identity)
+      have hCard : (Fintype.card (Fin 2) : ℝ) = 2 := by simp [Fintype.card_fin]
+      have hW2Eq : (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+          = (fun ω => (∑ i, twoSigns i ω) / 2) := by
+        funext ω
+        rw [Fin.sum_univ_two]
+      have hV := MathlibExt.Probability.variance_sample_mean
+        (X := fun i : Fin 2 => twoSigns i) (sigma2 := (1 : ℝ)) hLp hIndep hVar
+      have hV2' : variance (fun ω => (∑ i, twoSigns i ω) / 2) (fairCoin.prod fairCoin)
+          = 1 / 2 := by
+        have h1 : (fun ω => (∑ i, twoSigns i ω) / 2)
+            = (fun ω => (∑ i, twoSigns i ω) / (Fintype.card (Fin 2) : ℝ)) := by
+          rw [hCard]
+        rw [h1, hV, hCard]
+      rw [hW2Eq]
+      exact hV2'
+    rw [hV2, hbias] at h
+    exact h.trans (by norm_num)
+
+/-- Boundary: a constant predictor has zero squared-loss risk. -/
+example (c : ℝ)
+    (hW : Integrable (fun _ : Bool => (c - c) ^ 2) fairCoin) :
+    MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+      (fun _ : Bool => c) ⟨fairCoin, inferInstance⟩ c hW = 0 := by
+  unfold MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+  have h0 : (fun _ : Bool => ((c - c) ^ 2)) = fun _ => (0 : ℝ) := by
+    funext x
+    simp [sub_self]
+  rw [h0, integral_const]
+  simp
+
+/-- Boundary: the irreducible noise is nonzero for a non-degenerate response. With the
+trivial `G = ⊥`, `Y = coinSign`, and constant predictor `1`, the noise term is `1`. -/
+example :
+    (∫ ω, (coinSign ω - fairCoin[coinSign|⊥] ω) ^ 2 ∂fairCoin) ≠ 0 := by
+  have hMean : ∫ ω, coinSign ω ∂fairCoin = 0 := by
+    unfold fairCoin
+    rw [integral_smul_measure,
+      integral_add_measure Integrable.of_finite Integrable.of_finite,
+      integral_dirac, integral_dirac]
+    simp [coinSign]
+  have hCond : fairCoin[coinSign|⊥] = fun _ => ∫ ω, coinSign ω ∂fairCoin :=
+    condExp_bot coinSign
+  rw [hCond, hMean]
+  have hOne : (fun ω : Bool => (coinSign ω - 0) ^ 2) = fun _ => (1 : ℝ) := by
+    funext ω
+    rw [sub_zero]
+    cases ω with
+    | false => simp [coinSign]
+    | true => simp [coinSign]
+  rw [hOne, integral_const, probReal_univ]
+  norm_num
+
+/-- Negative: a predictor that reads the unobserved response is rejected by the
+`G`-measurability hypothesis. `coinSign` is not `⊥`-measurable: the fiber over `1` is
+`{true}`, which is neither `∅` nor `univ`. -/
+example : ¬ StronglyMeasurable[⊥] coinSign := by
+  intro h
+  have hm : Measurable[⊥] coinSign := h.measurable
+  have hset : MeasurableSet[⊥] (coinSign ⁻¹' {(1 : ℝ)}) :=
+    hm (MeasurableSingletonClass.measurableSet_singleton 1)
+  rw [MeasurableSpace.measurableSet_bot_iff] at hset
+  have hpre : coinSign ⁻¹' {(1 : ℝ)} = ({true} : Set Bool) := by
+    ext b
+    simp only [Set.mem_preimage, Set.mem_singleton_iff]
+    unfold coinSign
+    cases b with
+    | false => simp; norm_num
+    | true => simp
+  rw [hpre] at hset
+  rcases hset with h | h
+  · have hmem : (true : Bool) ∈ ({true} : Set Bool) := Set.mem_singleton true
+    rw [h] at hmem
+    exact Set.notMem_empty true hmem
+  · have hnot : (false : Bool) ∉ ({true} : Set Bool) := by simp
+    rw [h] at hnot
+    exact hnot (Set.mem_univ false)
 
 end EstimationRiskTest
