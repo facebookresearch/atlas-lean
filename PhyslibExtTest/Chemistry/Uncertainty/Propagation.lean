@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Chemistry.Uncertainty.Propagation
+public import MathlibExt.Probability.MonteCarloRate
+public import MathlibExt.Probability.Statistics.SampleMoments
 public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.Probability.Distributions.Uniform
 
@@ -456,39 +458,53 @@ lemma sqFun_remainder_eq (x h : Fin 1 → ℝ) :
 
 /-! ### (c) Unbiasedness on two fair coin tosses (`n = 2`) -/
 
-/-- `E[X̄] = E[X₀] = 1 / 2` for two fair tosses. -/
+/-- `E[X̄] = E[X₀] = 1 / 2` for two fair tosses, for the canonical sample mean. -/
 lemma integral_sampleMean_heads :
-    ∫ ω, sampleMean heads ω ∂twoTosses = ∫ ω, heads 0 ω ∂twoTosses ∧
+    ∫ ω, MathlibExt.Probability.FiniteProbability.sampleMean (fun i => heads i ω) ∂twoTosses =
+      ∫ ω, heads 0 ω ∂twoTosses ∧
       ∫ ω, heads 0 ω ∂twoTosses = 1 / 2 := by
-  refine ⟨integral_sampleMean heads 0 identDistrib_heads Integrable.of_finite, ?_⟩
-  rw [integral_twoTosses]
-  norm_num [heads]
+  refine ⟨?_, ?_⟩
+  · simp only [MathlibExt.Probability.FiniteProbability.sampleMean_eq_sum_div]
+    exact MathlibExt.Probability.integral_sample_mean (fun i => Integrable.of_finite)
+      (fun i => (identDistrib_heads i).integral_eq)
+  · rw [integral_twoTosses]
+    norm_num [heads]
 
 /-- The variance of one fair toss is `Var[X₀] = 1 / 4`. -/
 lemma variance_heads : Var[heads 0; twoTosses] = 1 / 4 := by
   rw [variance_eq_sub MemLp.of_discrete, integral_twoTosses, integral_twoTosses]
   norm_num [heads]
 
-/-- Computed directly over the four outcomes, `E[s²] = (0 + 1 / 2 + 1 / 2 + 0) / 4 = 1 / 4`. -/
-lemma integral_sampleVariance_heads : ∫ ω, sampleVariance heads ω ∂twoTosses = 1 / 4 := by
+/-- Computed directly over the four outcomes, `E[s²] = (0 + 1 / 2 + 1 / 2 + 0) / 4 = 1 / 4`,
+for the canonical unbiased sample variance. -/
+lemma integral_sampleVariance_heads :
+    ∫ ω, MathlibExt.Probability.FiniteProbability.sampleVarUnbiased (fun i => heads i ω)
+      ∂twoTosses = 1 / 4 := by
   rw [integral_twoTosses]
-  simp only [sampleVariance, sampleMean, Fin.sum_univ_two, heads]
+  simp only [MathlibExt.Probability.FiniteProbability.sampleVarUnbiased_eq_sum_div,
+    MathlibExt.Probability.FiniteProbability.sampleMean_eq_sum_div, Fintype.card_fin,
+    Fin.sum_univ_two, heads]
   norm_num
 
-/-- The general theorem gives the same value: `E[s²] = Var[X₀]` for the iid tosses. -/
+/-- The general theorem gives the same value: `E[s²] = Var[X₀]` for the pairwise-independent
+tosses, via the pairwise-independence generalization in `SampleMoments`. -/
 lemma integral_sampleVariance_heads_eq_variance :
-    ∫ ω, sampleVariance heads ω ∂twoTosses = Var[heads 0; twoTosses] :=
-  integral_sampleVariance le_rfl heads 0 (fun _ _ hij => iIndepFun_heads.indepFun hij)
-    identDistrib_heads MemLp.of_discrete
+    ∫ ω, MathlibExt.Probability.FiniteProbability.sampleVarUnbiased (fun i => heads i ω)
+      ∂twoTosses = Var[heads 0; twoTosses] :=
+  (MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin le_rfl heads 0
+    (fun _ _ hij => iIndepFun_heads.indepFun hij) identDistrib_heads MemLp.of_discrete).2
 
 /-- With `1 / n` in place of `1 / (n - 1)` the estimator is biased: its mean is
 `1 / 8 ≠ 1 / 4 = Var[X₀]`. -/
 lemma integral_biasedVariance_heads :
-    ∫ ω, 1 / 2 * ∑ i, (heads i ω - sampleMean heads ω) ^ 2 ∂twoTosses = 1 / 8 ∧
+    ∫ ω, 1 / 2 * ∑ i, (heads i ω -
+      MathlibExt.Probability.FiniteProbability.sampleMean (fun i => heads i ω)) ^ 2
+      ∂twoTosses = 1 / 8 ∧
       (1 / 8 : ℝ) ≠ Var[heads 0; twoTosses] := by
   refine ⟨?_, by rw [variance_heads]; norm_num⟩
   rw [integral_twoTosses]
-  simp only [sampleMean, Fin.sum_univ_two, heads]
+  simp only [MathlibExt.Probability.FiniteProbability.sampleMean_eq_sum_div, Fintype.card_fin,
+    Fin.sum_univ_two, heads]
   norm_num
 
 /-! ### (d) Significant figures are not an uncertainty calculus -/
@@ -635,10 +651,7 @@ end PhyslibExtTest.Chemistry.Uncertainty
 #print axioms Chemistry.Uncertainty.hasFDerivAt_log_powerLaw
 #print axioms Chemistry.Uncertainty.relativeUncertainty_powerLaw_firstOrder
 #print axioms Chemistry.Uncertainty.linearizedVariance_log_powerLaw_firstOrder
-#print axioms Chemistry.Uncertainty.sampleMean
-#print axioms Chemistry.Uncertainty.sampleVariance
-#print axioms Chemistry.Uncertainty.integral_sampleMean
-#print axioms Chemistry.Uncertainty.integral_sampleVariance
+#print axioms MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin
 #print axioms Chemistry.Uncertainty.sigFigShift
 #print axioms Chemistry.Uncertainty.roundSigFig
 #print axioms Chemistry.Uncertainty.floor_logb_ten_abs_eq

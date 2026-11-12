@@ -18,10 +18,12 @@ import MathlibExt.Probability.MonteCarloRate
 /-!
 # The unbiased sample variance and the sample mean
 
-For `n ≥ 2` independent, identically distributed, square-integrable real observations
+For `n ≥ 2` pairwise independent, identically distributed, square-integrable real observations
 `X i`, `i : Fin n`, the unbiased sample variance
 `FiniteProbability.sampleVarUnbiased (fun i => X i ω) = (n - 1)⁻¹ ∑ᵢ (Xᵢ - X̄)²` is integrable
-and its mean is the common variance. This finite-family statement is the primary result; the
+and its mean is the common variance. Only pairwise independence is used: the proof's
+independence step is `IndepFun.variance_sum`, which needs pairwise independence only.
+This finite-family statement is the primary result; the
 variance of the sample mean comes from `IndepFun.variance_sum`. For an i.i.d. sequence
 `X 0, X 1, …` the same holds for the first `n` observations, stated for `sampleVarUnbiased` of
 their restriction to `Fin n`. The sample mean `X̄` is unbiased for the constant mean family
@@ -30,7 +32,10 @@ MSE is `Var (X 0) / n` (`familyMeanSquaredError_sampleMean_of_iid`).
 
 ## Main results
 
-* `integral_sampleVariance_of_iid_fin`: finite i.i.d. family indexed by `Fin n`.
+* `integral_sampleVariance_of_pairwise_iid_fin`: finite pairwise-independent, identically
+  distributed family indexed by `Fin n`.
+* `integral_sampleVariance_of_iid_fin`: finite i.i.d. family indexed by `Fin n`, a corollary
+  (mutual independence implies pairwise independence).
 * `integral_sampleVariance_of_iid`: the sequence form, a corollary.
 * `isUnbiased_sampleMean_of_common_mean`: the sample mean is unbiased under per-observation
   integrability and a common mean.
@@ -46,15 +51,16 @@ open scoped BigOperators ENNReal
 
 namespace MathlibExt.Probability
 
-/-- **The sample variance of a finite i.i.d. family is integrable and unbiased.** For
-`n ≥ 2` independent, identically distributed, square-integrable real observations
-`X i`, `i : Fin n`, with common law that of `X i0`, the sample variance
+/-- **The sample variance of a finite pairwise-independent i.i.d. family is integrable
+and unbiased.** For `n ≥ 2` pairwise independent, identically distributed, square-integrable
+real observations `X i`, `i : Fin n`, with common law that of `X i0`, the sample variance
 `s² = FiniteProbability.sampleVarUnbiased (fun i => X i ω) = (n - 1)⁻¹ ∑ᵢ (Xᵢ - X̄)²`,
-`X̄ = n⁻¹ ∑ⱼ Xⱼ`, is integrable and `E s² = Var (X i0)`. -/
-theorem integral_sampleVariance_of_iid_fin
+`X̄ = n⁻¹ ∑ⱼ Xⱼ`, is integrable and `E s² = Var (X i0)`. Mutual independence is not needed:
+the only independence step is the variance of the sum, which uses pairwise independence. -/
+theorem integral_sampleVariance_of_pairwise_iid_fin
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {n : ℕ} (hn : 2 ≤ n) (X : Fin n → Ω → ℝ) (i0 : Fin n)
-    (hIndep : iIndepFun X μ)
+    (hIndep : Pairwise fun i j => X i ⟂ᵢ[μ] X j)
     (hIdent : ∀ i, IdentDistrib (X i) (X i0) μ μ)
     (hMemLp : MemLp (X i0) 2 μ) :
     Integrable (fun ω => FiniteProbability.sampleVarUnbiased (fun i => X i ω)) μ ∧
@@ -83,7 +89,7 @@ theorem integral_sampleVariance_of_iid_fin
       have hf : (∑ j, X j) = fun ω => ∑ j, X j ω := funext fun ω => Finset.sum_apply _ _ _
       rw [← hf]
       exact IndepFun.variance_sum (fun i _ => hMemLp' i)
-        (fun i _ j _ hij => hIndep.indepFun hij)
+        (fun i _ j _ hij => hIndep hij)
     have hshape : (fun ω => (∑ j, X j ω) / (n : ℝ)) = fun ω => (n : ℝ)⁻¹ * (∑ j, X j ω) := by
       funext ω; rw [div_eq_inv_mul]
     rw [hshape, variance_const_mul, hsum,
@@ -114,6 +120,22 @@ theorem integral_sampleVariance_of_iid_fin
     hSumSqInt, hMeanSqInt, div_eq_iff hn1, hVar0]
   field_simp
   ring
+
+/-- **The sample variance of a finite i.i.d. family is integrable and unbiased.** For
+`n ≥ 2` mutually independent, identically distributed, square-integrable real observations
+`X i`, `i : Fin n`, with common law that of `X i0`, the sample variance is integrable and
+`E s² = Var (X i0)`. Derived from `integral_sampleVariance_of_pairwise_iid_fin`: mutual
+independence implies pairwise independence. -/
+theorem integral_sampleVariance_of_iid_fin
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {n : ℕ} (hn : 2 ≤ n) (X : Fin n → Ω → ℝ) (i0 : Fin n)
+    (hIndep : iIndepFun X μ)
+    (hIdent : ∀ i, IdentDistrib (X i) (X i0) μ μ)
+    (hMemLp : MemLp (X i0) 2 μ) :
+    Integrable (fun ω => FiniteProbability.sampleVarUnbiased (fun i => X i ω)) μ ∧
+    ∫ ω, FiniteProbability.sampleVarUnbiased (fun i => X i ω) ∂μ = variance (X i0) μ :=
+  integral_sampleVariance_of_pairwise_iid_fin hn X i0 (fun _ _ hij => hIndep.indepFun hij)
+    hIdent hMemLp
 
 /-- **Sequence form.** For an i.i.d. square-integrable sequence `X 0, X 1, …` and `n ≥ 2`, the
 unbiased sample variance `FiniteProbability.sampleVarUnbiased` of the first `n` observations

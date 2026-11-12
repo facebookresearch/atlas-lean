@@ -55,9 +55,13 @@ products, quotients and powers. For nonzero estimates and uncorrelated inputs it
 first-order rule `(u_y / y) ^ 2 = ∑ i, (p i * u i / x i) ^ 2`, which is also the first-order
 variance of `Real.log y`, that is of `log |y|`.
 
-Section D shows that, for `n ≥ 2` pairwise independent, identically distributed observations with
-finite variance, the sample mean is unbiased for the mean and the `(n - 1)` sample variance is
-unbiased for the variance.
+Section D uses the canonical sample statistics: for `n ≥ 2` pairwise independent,
+identically distributed observations with finite variance, the sample mean
+`FiniteProbability.sampleMean` is unbiased for the mean and the `(n - 1)` sample variance
+`FiniteProbability.sampleVarUnbiased` is unbiased for the variance, by
+`MathlibExt.Probability.integral_sample_mean` and
+`MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`. This module defines no
+sample-statistics API of its own.
 
 Section E defines rounding to `k` significant figures, for a positive count `k : ℕ+`, as a
 function `ℝ → ℝ` and proves that it is not an uncertainty calculus: rounding the inputs before
@@ -90,9 +94,11 @@ or that significant figures propagate uncertainty.
   `(u_y / y) ^ 2 = ∑ i, (p i * u i / x i) ^ 2`.
 - `linearizedVariance_log_powerLaw_firstOrder` : the same sum is the first-order variance of
   `Real.log y = log |y|`.
-- `sampleMean`, `sampleVariance` : the estimators from `n` observations.
-- `integral_sampleMean` : the sample mean is unbiased.
-- `integral_sampleVariance` : the `(n - 1)` sample variance is unbiased for `n ≥ 2`.
+- Section D sample statistics : the canonical `FiniteProbability.sampleMean` and
+  `FiniteProbability.sampleVarUnbiased`; the sample mean is unbiased by
+  `MathlibExt.Probability.integral_sample_mean`, and the `(n - 1)` sample variance is
+  unbiased for `n ≥ 2` under pairwise independence by
+  `MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`.
 - `roundSigFig` : rounding to `k` significant figures for a positive count `k : ℕ+`, well
   defined by `roundSigFig_wellDefined`, with `roundSigFig_eq_of_zpow_le_of_lt` and
   `abs_roundSigFig_sub_le` for its value and its half-unit rounding error.
@@ -406,108 +412,16 @@ lemma linearizedVariance_log_powerLaw_firstOrder {Ω ι : Type*} {mΩ : Measurab
 
 ## D. Sample mean and sample variance
 
+No sample-statistics API is defined here. The estimators are the canonical
+`MathlibExt.Probability.FiniteProbability.sampleMean` and
+`MathlibExt.Probability.FiniteProbability.sampleVarUnbiased`, the sample mean is unbiased by
+`MathlibExt.Probability.integral_sample_mean`, and the `(n - 1)` sample variance is unbiased
+for `n ≥ 2` under pairwise independence (plus identical distribution and finite variance) by
+`MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`, whose pairwise
+hypothesis is exactly what a GUM Type A evaluation needs: mutual independence is not
+required. See the tests for the two-fair-tosses instantiation.
+
 -/
-
-/-- The sample mean `X̄ = (1 / n) * ∑ i, X i` of `n` observations. -/
-noncomputable def sampleMean {Ω : Type*} {n : ℕ} (X : Fin n → Ω → ℝ) (ω : Ω) : ℝ :=
-  1 / (n : ℝ) * ∑ i, X i ω
-
-/-- The `(n - 1)` sample variance `s² = (1 / (n - 1)) * ∑ i, (X i - X̄) ^ 2` of `n` observations,
-the statistic of a GUM Type A evaluation. -/
-noncomputable def sampleVariance {Ω : Type*} {n : ℕ} (X : Fin n → Ω → ℝ) (ω : Ω) : ℝ :=
-  1 / ((n : ℝ) - 1) * ∑ i, (X i ω - sampleMean X ω) ^ 2
-
-/-- **The sample mean is unbiased.** If the observations `X i` are identically distributed, with
-the common law of `X i₀`, and integrable, then `E[X̄] = E[X i₀]`. No independence is needed. The
-index `i₀ : Fin n` forces `n ≥ 1`. -/
-lemma integral_sampleMean {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {n : ℕ}
-    (X : Fin n → Ω → ℝ) (i₀ : Fin n) (hident : ∀ i, IdentDistrib (X i) (X i₀) μ μ)
-    (hint : Integrable (X i₀) μ) :
-    μ[sampleMean X] = μ[X i₀] := by
-  have hn : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 (Fin.pos i₀).ne'
-  have hXi (i : Fin n) : Integrable (X i) μ := (hident i).integrable_iff.2 hint
-  simp only [sampleMean]
-  rw [integral_const_mul, integral_finsetSum _ fun i _ => hXi i,
-    Finset.sum_congr rfl fun i _ => (hident i).integral_eq, Finset.sum_const, Finset.card_univ,
-    Fintype.card_fin, nsmul_eq_mul]
-  field_simp
-
-/-- **The `(n - 1)` sample variance is unbiased.** Let `n ≥ 2` observations `X i` on a
-probability space be pairwise independent and identically distributed, stated as in Mathlib's
-strong law `ProbabilityTheory.strong_law_ae_real`: pairwise independent
-(`Pairwise fun i j => X i ⟂ᵢ[μ] X j`) and identically distributed with the common law of `X i₀`
-(`IdentDistrib (X i) (X i₀) μ μ`), with finite variance (`MemLp (X i₀) 2 μ`). Then
-`E[s²] = Var[X i₀]`. Mutual independence `iIndepFun X μ` (hence `iid` in the conventional,
-mutually independent sense) implies the pairwise hypothesis through
-`ProbabilityTheory.iIndepFun.indepFun`, but the theorem only needs pairwise independence. The
-case `n = 1` is excluded.
-
-Note: `MathlibExt.Probability.Statistics.SampleMoments` on current `main` proves the sample
-variance unbiased under mutual independence (`iIndepFun`). Reusing it here would require
-rebasing this branch onto `main` (that module is not in this branch's ancestry) and
-generalizing its theorem to the pairwise hypothesis used here, so Section D keeps its own
-proof for now. -/
-lemma integral_sampleVariance {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {n : ℕ} (hn : 2 ≤ n) (X : Fin n → Ω → ℝ) (i₀ : Fin n)
-    (hindep : Pairwise fun i j => X i ⟂ᵢ[μ] X j)
-    (hident : ∀ i, IdentDistrib (X i) (X i₀) μ μ) (hX : MemLp (X i₀) 2 μ) :
-    μ[sampleVariance X] = Var[X i₀; μ] := by
-  have hXi (i : Fin n) : MemLp (X i) 2 μ := (hident i).memLp_iff.2 hX
-  have hn2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
-  have hn0 : (n : ℝ) ≠ 0 := by positivity
-  have hn1 : (n : ℝ) - 1 ≠ 0 := by linarith
-  set m := μ[X i₀] with hm
-  set σ2 := Var[X i₀; μ] with hσ2
-  have hmean (i : Fin n) : μ[X i] = m := (hident i).integral_eq
-  have hvar (i : Fin n) : Var[X i; μ] = σ2 := (hident i).variance_eq
-  have hid (ω : Ω) : ∑ i, (X i ω - sampleMean X ω) ^ 2 =
-      ∑ i, (X i ω - m) ^ 2 - n * (sampleMean X ω - m) ^ 2 := by
-    have hsum : ∑ i, (X i ω - m) = n * (sampleMean X ω - m) := by
-      rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-        nsmul_eq_mul, sampleMean]
-      field_simp
-    have hexp (i : Fin n) : (X i ω - sampleMean X ω) ^ 2 = (X i ω - m) ^ 2 -
-        2 * (sampleMean X ω - m) * (X i ω - m) + (sampleMean X ω - m) ^ 2 := by ring
-    simp only [hexp, Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, hsum,
-      Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    ring
-  have hbar : sampleMean X = fun ω => ∑ i, 1 / (n : ℝ) * X i ω := by
-    funext ω
-    rw [sampleMean, Finset.mul_sum]
-  have hbarL2 : MemLp (sampleMean X) 2 μ := by
-    rw [hbar]
-    exact memLp_finsetSum Finset.univ fun i _ => (hXi i).const_mul _
-  have h1 (i : Fin n) : μ[fun ω => (X i ω - m) ^ 2] = σ2 := by
-    rw [← hvar i, variance_eq_integral (hXi i).aemeasurable, hmean i]
-  have hvarbar : Var[sampleMean X; μ] = σ2 / n := by
-    rw [hbar, measurementFunction_variance_linearCombination X _ hXi]
-    have hrow (i : Fin n) :
-        ∑ j, 1 / (n : ℝ) * (1 / n) * cov[X i, X j; μ] = 1 / n * (1 / n) * σ2 := by
-      rw [Finset.sum_eq_single i (fun j _ hji => by
-          rw [(hindep (Ne.symm hji)).covariance_eq_zero (hXi i) (hXi j), mul_zero]) (by simp),
-        covariance_self (hXi i).aemeasurable, hvar i]
-    simp only [hrow, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    field_simp
-  have hmeanbar : μ[sampleMean X] = m :=
-    integral_sampleMean X i₀ hident (hX.integrable one_le_two)
-  have h2 : μ[fun ω => (sampleMean X ω - m) ^ 2] = σ2 / n := by
-    rw [← hvarbar, variance_eq_integral hbarL2.aemeasurable, hmeanbar]
-  have hint1 (i : Fin n) : Integrable (fun ω => (X i ω - m) ^ 2) μ :=
-    ((hXi i).sub (memLp_const m)).integrable_sq
-  have hint2 : Integrable (fun ω => (sampleMean X ω - m) ^ 2) μ :=
-    (hbarL2.sub (memLp_const m)).integrable_sq
-  calc μ[sampleVariance X]
-      = 1 / ((n : ℝ) - 1) *
-          μ[fun ω => ∑ i, (X i ω - m) ^ 2 - n * (sampleMean X ω - m) ^ 2] := by
-        simp only [sampleVariance, hid]
-        rw [integral_const_mul]
-    _ = 1 / ((n : ℝ) - 1) * (∑ i : Fin n, σ2 - n * (σ2 / n)) := by
-        rw [integral_sub (integrable_finsetSum _ fun i _ => hint1 i) (hint2.const_mul _),
-          integral_finsetSum _ fun i _ => hint1 i, integral_const_mul, h2]
-        simp only [h1]
-    _ = σ2 := by
-        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-        field_simp
 
 /-!
 
