@@ -39,7 +39,7 @@ large concentrations elimination saturates at the zero-order rate `Vmax`.
 
 ## Main results
 
-* `exists_isSolution`, `IsSolution.eq_of_eq`: for `C₀ ≥ 0`, `R ≥ 0` a solution on `[0, ∞)`
+* `exists_isSolution`, `IsSolution.eq_of_initial`: for `C₀ ≥ 0`, `R ≥ 0` a solution on `[0, ∞)`
   exists, and two solutions with the same initial value agree on `[0, ∞)`. The existence proof
   applies the global Picard–Lindelöf theorem
   `MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz` to the
@@ -54,7 +54,8 @@ large concentrations elimination saturates at the zero-order rate `Vmax`.
 * Bolus (`R = 0`): `IsSolution.antitoneOn_bolus` (monotone washout),
   `IsSolution.le_amount_bolus` (upper barrier `C₀ e^{-(Vmax/(Km + C₀)) t}`),
   `IsSolution.tendsto_bolus` (`C → 0`).
-* Bolus AUC: `IsSolution.integral_bolus` (integrated balance on `[0, T]`) and
+* Bolus AUC: `IsSolution.integral_bolus` (integrated balance on `[0, T]`),
+  `IsSolution.integrableOn_Ioi_bolus` (the AUC is finite) and
   `IsSolution.integral_Ioi_bolus`: `∫₀^∞ C = C₀ (Km + C₀ / 2) / Vmax` (`bolusAUC`).
 * Dose–AUC nonlinearity: `bolusAUC_eq_integral_linear_add` (AUC = linear AUC with clearance
   `V Vmax / Km`, plus `C₀² / (2 Vmax)`), `two_mul_bolusAUC_lt` (doubling the dose more than
@@ -245,7 +246,7 @@ theorem exists_isSolution (hV : 0 ≤ Vmax) (hK : 0 < Km) (hR : 0 ≤ R) {C₀ :
 
 /-- **Uniqueness.** For `Vmax ≥ 0`, `Km > 0`, `R ≥ 0`, two solutions with the same initial value
 `C(0) ≥ 0` agree on `[0, ∞)`. -/
-theorem IsSolution.eq_of_eq {D : ℝ → ℝ} (h₁ : IsSolution Vmax Km R C)
+theorem IsSolution.eq_of_initial {D : ℝ → ℝ} (h₁ : IsSolution Vmax Km R C)
     (h₂ : IsSolution Vmax Km R D) (hV : 0 ≤ Vmax) (hK : 0 < Km) (hR : 0 ≤ R) (h0 : 0 ≤ C 0)
     (hCD : C 0 = D 0) (ht : 0 ≤ t) : C t = D t := by
   have key : ∀ {E : ℝ → ℝ}, IsSolution Vmax Km R E → 0 ≤ E 0 → ∀ s, 0 ≤ s →
@@ -402,16 +403,28 @@ theorem IsSolution.integral_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 < Vmax) (
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hd hcont.intervalIntegrable]
   ring
 
+/-- The potential `-(Km C + C² / 2) / Vmax` tends to `0` along a bolus solution. -/
+private theorem aucPotential_tendsto (h : IsSolution Vmax Km 0 C) (hV : 0 < Vmax)
+    (hK : 0 < Km) (h0 : 0 ≤ C 0) :
+    Tendsto (fun r ↦ -(Km * C r + C r ^ 2 / 2) / Vmax) atTop (𝓝 0) := by
+  have hlim := h.tendsto_bolus hV hK h0
+  simpa using (((hlim.const_mul Km).add ((hlim.pow 2).div_const 2)).neg).div_const Vmax
+
+/-- **The bolus AUC is finite.** For `Vmax, Km > 0` and `C(0) ≥ 0`, a bolus solution is
+integrable on `(0, ∞)`. (This makes `IsSolution.integral_Ioi_bolus` a statement about a
+convergent integral, not the Bochner default `0`.) -/
+theorem IsSolution.integrableOn_Ioi_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 < Vmax)
+    (hK : 0 < Km) (h0 : 0 ≤ C 0) : IntegrableOn C (Ioi 0) :=
+  integrableOn_Ioi_deriv_of_nonneg' (fun _ hs ↦ aucPotential_hasDerivAt h hV hK h0 hs)
+    (fun _ hs ↦ h.nonneg hV.le hK le_rfl h0 (le_of_lt hs)) (aucPotential_tendsto h hV hK h0)
+
 /-- **Bolus AUC.** For `Vmax, Km > 0` and `C(0) ≥ 0`, the total area under the curve is
-`∫₀^∞ C = C₀ (Km + C₀ / 2) / Vmax`. -/
+`∫₀^∞ C = C₀ (Km + C₀ / 2) / Vmax` (a convergent integral, `IsSolution.integrableOn_Ioi_bolus`). -/
 theorem IsSolution.integral_Ioi_bolus (h : IsSolution Vmax Km 0 C) (hV : 0 < Vmax)
     (hK : 0 < Km) (h0 : 0 ≤ C 0) : ∫ t in Ioi 0, C t = bolusAUC Vmax Km (C 0) := by
-  have hlim := h.tendsto_bolus hV hK h0
-  have hG : Tendsto (fun r ↦ -(Km * C r + C r ^ 2 / 2) / Vmax) atTop
-      (𝓝 (-(Km * 0 + 0 ^ 2 / 2) / Vmax)) :=
-    (((hlim.const_mul Km).add ((hlim.pow 2).div_const 2)).neg).div_const Vmax
   rw [integral_Ioi_of_hasDerivAt_of_nonneg' (fun s hs ↦ aucPotential_hasDerivAt h hV hK h0 hs)
-    (fun s hs ↦ h.nonneg hV.le hK le_rfl h0 (le_of_lt hs)) hG, bolusAUC]
+    (fun s hs ↦ h.nonneg hV.le hK le_rfl h0 (le_of_lt hs)) (aucPotential_tendsto h hV hK h0),
+    bolusAUC]
   ring
 
 /-! ### Dose–AUC nonlinearity -/

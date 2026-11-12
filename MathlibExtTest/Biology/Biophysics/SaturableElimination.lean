@@ -50,7 +50,7 @@ example : ∃ C : ℝ → ℝ, IsSolution 2 1 0 C ∧ C 0 = 4 ∧ ∀ t, 0 ≤ t
 /-- Uniqueness: a solution starting at the steady state stays there. -/
 example {C : ℝ → ℝ} (h : IsSolution 2 1 1 C) (h0 : C 0 = 1) (t : ℝ) (ht : 0 ≤ t) : C t = 1 := by
   have hs : IsSolution 2 1 1 (fun _ ↦ (1 : ℝ)) := isSolution_const_iff.2 (by norm_num [mmRate])
-  exact h.eq_of_eq hs (by norm_num) (by norm_num) (by norm_num) (by rw [h0]; norm_num) h0 ht
+  exact h.eq_of_initial hs (by norm_num) (by norm_num) (by norm_num) (by rw [h0]; norm_num) h0 ht
 
 /-- Bolus bracket at `C₀ = 4`, `Vmax = 2`, `Km = 1`: between washouts at rates `2` and `2/5`. -/
 example {C : ℝ → ℝ} (h : IsSolution 2 1 0 C) (h0 : C 0 = 4) (t : ℝ) (ht : 0 ≤ t) :
@@ -88,6 +88,10 @@ example : bolusAUC 2 1 2 = 2 := by norm_num [bolusAUC]
 example {C : ℝ → ℝ} (h : IsSolution 2 1 0 C) (h0 : C 0 = 2) : ∫ t in Ioi 0, C t = 2 := by
   rw [h.integral_Ioi_bolus (by norm_num) (by norm_num) (by rw [h0]; norm_num), h0]
   norm_num [bolusAUC]
+
+/-- The bolus AUC is a convergent integral. -/
+example {C : ℝ → ℝ} (h : IsSolution 2 1 0 C) (h0 : C 0 = 2) : IntegrableOn C (Ioi 0) :=
+  h.integrableOn_Ioi_bolus (by norm_num) (by norm_num) (by rw [h0]; norm_num)
 
 /-- Finite-horizon AUC via the integrated balance. -/
 example {C : ℝ → ℝ} (h : IsSolution 2 1 0 C) (h0 : C 0 = 2) :
