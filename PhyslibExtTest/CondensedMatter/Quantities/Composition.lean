@@ -5,6 +5,7 @@ Copyright (c) Meta Platforms, Inc. and affiliates.
 module
 
 public import PhyslibExt.CondensedMatter.Quantities.Composition
+public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
 
 /-!
 # MS01 quantities: composition checks
@@ -35,19 +36,25 @@ example : Real.logb 10 (Real.exp (-2) / (1:ℝ)) = -2 / Real.log 10 := by
   linear_combination h2
 
 -- Composition numeric instance (lemma 3): Fin 2 with M = ![55.85, 16.00],
--- x = ![0.4, 0.6]; wtFrac values 1117/1597 and 480/1597 by exact arithmetic.
-example : wtFrac (![55.85, 16.00] : Fin 2 → ℝ) (![0.4, 0.6] : Fin 2 → ℝ) 0
-    = 1117 / 1597 := by
-  simp only [wtFrac, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+-- x = ![0.4, 0.6]; massFraction values 1117/1597 and 480/1597 by exact
+-- arithmetic (55.85 * 0.4 = 22.34, 16.00 * 0.6 = 9.6, sum 31.94;
+-- 22.34 / 31.94 = 1117 / 1597, 9.6 / 31.94 = 480 / 1597).
+example : Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
+      (![0.4, 0.6] : Fin 2 → ℝ) 0 = 1117 / 1597 := by
+  simp only [Chemistry.Amounts.massFraction, Fin.sum_univ_two,
+    Matrix.cons_val_zero, Matrix.cons_val_one]
   norm_num
 
-example : wtFrac (![55.85, 16.00] : Fin 2 → ℝ) (![0.4, 0.6] : Fin 2 → ℝ) 1
-    = 480 / 1597 := by
-  simp only [wtFrac, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+example : Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
+      (![0.4, 0.6] : Fin 2 → ℝ) 1 = 480 / 1597 := by
+  simp only [Chemistry.Amounts.massFraction, Fin.sum_univ_two,
+    Matrix.cons_val_zero, Matrix.cons_val_one]
   norm_num
 
-example : moleFracOfWt (![55.85, 16.00] : Fin 2 → ℝ)
-      (wtFrac (![55.85, 16.00] : Fin 2 → ℝ) (![0.4, 0.6] : Fin 2 → ℝ))
+example : Chemistry.Amounts.moleFractionOfMassFraction
+      (![55.85, 16.00] : Fin 2 → ℝ)
+      (Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
+        (![0.4, 0.6] : Fin 2 → ℝ))
     = (![0.4, 0.6] : Fin 2 → ℝ) := by
   apply moleFrac_wtFrac
   · intro i
@@ -59,8 +66,8 @@ example : moleFracOfWt (![55.85, 16.00] : Fin 2 → ℝ)
   · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
 
-example : wtFrac (![55.85, 16.00] : Fin 2 → ℝ)
-      (moleFracOfWt (![55.85, 16.00] : Fin 2 → ℝ)
+example : Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
+      (Chemistry.Amounts.moleFractionOfMassFraction (![55.85, 16.00] : Fin 2 → ℝ)
         (![1117 / 1597, 480 / 1597] : Fin 2 → ℝ))
     = (![1117 / 1597, 480 / 1597] : Fin 2 → ℝ) := by
   apply wtFrac_moleFrac
@@ -73,14 +80,41 @@ example : wtFrac (![55.85, 16.00] : Fin 2 → ℝ)
   · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
 
+-- Percent round trip (lemma 4): same numeric instance in percent form,
+-- exercising `wtPct` / `atPct` / `wtPct_atPct` in both directions.
+example : wtPct (![55.85, 16.00] : Fin 2 → ℝ)
+        (Chemistry.Amounts.moleFractionOfMassFraction
+          (![55.85, 16.00] : Fin 2 → ℝ)
+          (fun i => (![100 * (1117 / 1597), 100 * (480 / 1597)] : Fin 2 → ℝ) i / 100))
+      = (![100 * (1117 / 1597), 100 * (480 / 1597)] : Fin 2 → ℝ)
+    ∧ atPct (Chemistry.Amounts.moleFractionOfMassFraction
+          (![55.85, 16.00] : Fin 2 → ℝ)
+          (Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
+            (![0.4, 0.6] : Fin 2 → ℝ)))
+        = atPct (![0.4, 0.6] : Fin 2 → ℝ) := by
+  have hM : ∀ i, 0 < (![55.85, 16.00] : Fin 2 → ℝ) i := by
+    intro i
+    fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
+  constructor
+  · apply (wtPct_atPct hM).1
+    · intro i
+      fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
+    · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+      norm_num
+  · apply (wtPct_atPct hM).2
+    · intro i
+      fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
+    · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+      norm_num
+
 -- Boundary checks: the positivity hypotheses are load-bearing. At T = 0 the
 -- hypothesis `0 < T` required by `arrhenius_log`/`arrhenius_log10` is false,
 -- so the lemmas do not apply (no identity at T = 0 is claimed).
 example : ¬ (0:ℝ) < (0:ℝ) := lt_irrefl 0
 
--- With M = 0 the weight-fraction denominator vanishes, so no bijection claim
--- is made (the maps require `∀ i, 0 < M i`).
-example (x : Fin 2 → ℝ) : ∑ j, (fun _ => (0:ℝ)) j * x j = 0 := by simp
+-- With M = 0 the mass-fraction denominator `∑ j, x j * M j` vanishes, so no
+-- bijection claim is made (the maps require `∀ i, 0 < M i`).
+example (x : Fin 2 → ℝ) : ∑ j, x j * (fun _ => (0:ℝ)) j = 0 := by simp
 
 -- Kernel example (lemma 5): D = !![1, 1, 0; 0, 1, 1] has rank 2 (upper bound
 -- by height, lower bound by the det-1 leading 2x2 submatrix).
