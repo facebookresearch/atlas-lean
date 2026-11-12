@@ -168,6 +168,12 @@ example (z : testPa 1 → Bool) (hz : z testJ0 = true) :
     ((testM.inducedBayesNet testMu).cpt 1 z).weights false = 1/3 :=
   test_cpt1 z hz
 
+/-- `inducedLaw_eq_joint` applies to noise types that are not finite: a finitely
+supported law on `ℕ` needs no `Fintype ℕ` instance. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (x : Fin 1 → Bool) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x :=
+  M.inducedLaw_eq_joint μ x
+
 example : testM.inducedLaw testMu ![true, false] = 1/12 := by
   have x0 : ![true, false] (0 : Fin 2) = true := by simp
   have x1 : ![true, false] (1 : Fin 2) = false := by simp

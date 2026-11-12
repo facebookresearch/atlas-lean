@@ -270,13 +270,17 @@ noncomputable def noiseWeight {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) 
     (u : (k : Fin n) → U k) : ℝ :=
   ∏ k, (μ k).weights (u k)
 
+open Classical in
 /-- The observational law induced by the model under independent noises with laws `μ k`: the
 probability that the solution is `x`, that is, the push-forward of the product noise law under
-the solution map. -/
-noncomputable def inducedLaw {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [DecidableEq α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+the solution map. The sum runs over the product of the supports of the noise laws, so the
+noise types need not be finite: a finitely supported law on an infinite type, such as
+`U k = ℕ`, is covered. Equality is decided classically, so no `DecidableEq α` is required. -/
+noncomputable def inducedLaw {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (x : Fin n → α) : ℝ :=
-  ∑ u with M.solve u = x, noiseWeight μ u
+  ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
+    if M.solve u = x then noiseWeight μ u else 0
 
 /-- The Bayesian network of the model under independent noises with laws `μ k`: it has the
 model's parents, and the table of node `k` at parent values `z` is the law of
@@ -286,34 +290,36 @@ noncomputable def inducedBayesNet {α : Type*} {n : ℕ} {U : Fin n → Type*}
   pa := M.pa
   cpt k z := (μ k).map (M.f k z)
 
+open Classical in
 /-- The push-forward weights of a noise law under a structural function are the sums of the
-noise weights over the fibers. -/
-private theorem map_weights_eq_sum {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [DecidableEq α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+noise weights over the fibers. The sum runs over the support of the noise law, so no
+finiteness of the noise type is needed. -/
+private theorem map_weights_eq_sum {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (x : Fin n → α) (k : Fin n) :
     ((μ k).map (M.f k (M.paVal k x))).weights (x k)
-      = ∑ v, (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) := by
-  rw [StdSimplex.weights_map, Finsupp.mapDomain_fintype, Finsupp.coe_finsetSum,
-    Finset.sum_apply]
-  refine Finset.sum_congr rfl fun v _ => ?_
-  rw [Finsupp.single_apply]
+      = ∑ v ∈ (μ k).weights.support,
+        (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) := by
+  classical
+  rw [StdSimplex.weights_map]
+  simp only [Finsupp.mapDomain_apply, Finsupp.sum, Finsupp.single_apply]
 
 /-- **A Markovian SCM induces its Bayesian network**: under independent noises, the law of the
 unique solution is the joint distribution of the Bayesian network whose tables are the
 push-forwards of the noise laws under the structural functions. -/
-theorem inducedLaw_eq_joint {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [DecidableEq α] [Nonempty α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+theorem inducedLaw_eq_joint {α : Type*} {n : ℕ} {U : Fin n → Type*} [Nonempty α]
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (x : Fin n → α) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x := by
   classical
   rw [(M.inducedBayesNet μ).joint_eq_prod x]
   have hfactor : ∀ k : Fin n,
       ((M.inducedBayesNet μ).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)
-        = ∑ v, (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) :=
+        = ∑ v ∈ (μ k).weights.support,
+          (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) :=
     fun k => map_weights_eq_sum M μ x k
   simp only [hfactor]
-  rw [Fintype.prod_sum]
+  rw [Finset.prod_univ_sum]
   unfold inducedLaw
-  rw [Finset.sum_filter]
   refine Finset.sum_congr rfl fun u _ => ?_
   unfold noiseWeight
   by_cases h : M.solve u = x
