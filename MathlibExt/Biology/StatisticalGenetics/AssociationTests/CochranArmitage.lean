@@ -586,7 +586,8 @@ theorem tendstoInDistribution_caStat (hS0 : Measurable (S 0)) (hindep : iIndepFu
 `tendstoInDistribution_caStat`, with the null parameters known instead of fitted (mean score
 `∑ i i π_i`, case probability `p`, score variance, and case-indicator variance `p (1 - p)`),
 `(N^{-1/2} ∑_{m < N} (score G_m - E score)(Y_m - p))² / (Var score · p (1 - p))` also converges
-in distribution to `χ²₁`: fitting `p` and `π` does not change the degrees of freedom. -/
+in distribution to `χ²₁`, the same limit as the fitted statistic of
+`tendstoInDistribution_caStat`. -/
 theorem tendstoInDistribution_caOracleStat (hS0 : Measurable (S 0)) (hindep : iIndepFun S P)
     (hident : ∀ m, IdentDistrib (S m) (S 0) P P)
     (hnull : IndepFun (fun ω ↦ (S 0 ω).1) (fun ω ↦ (S 0 ω).2) P)
