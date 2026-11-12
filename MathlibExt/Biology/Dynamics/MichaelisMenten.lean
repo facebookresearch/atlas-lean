@@ -42,8 +42,8 @@ Briggs and Haldane rests:
 
 The rigorous statement that the full solution stays within `O(e₀)` of the reduced
 (Michaelis–Menten) solution on the slow time scale (Tikhonov's theorem as applied by Heineken,
-Tsuchiya and Aris) is recorded as a wanted theorem in
-`WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted`; it is not proved here.
+Tsuchiya and Aris) is proved, with explicit constants, as `abs_sub_reduced_le` in
+`MathlibExt.Biology.Dynamics.MichaelisMenten.UniformBound` (which imports this file).
 
 ## References
 

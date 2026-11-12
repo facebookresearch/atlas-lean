@@ -107,15 +107,6 @@ private theorem plr_S0_mem {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 
       = Mp.subtype u.val :=
   LinearEquiv.ofInjective_symm_apply _ (h := plr_J_inj) _
 
-/-- Real part of a finite sum is the sum of the real parts. -/
-private theorem plr_re_sum {ι : Type*} (s : Finset ι) (F : ι → 𝕜) :
-    RCLike.re (∑ i ∈ s, F i) = ∑ i ∈ s, RCLike.re (F i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp only [Finset.sum_empty, RCLike.zero_re]
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, map_add RCLike.re, ih]
-
 /-- A continuous linear functional on a pi type is the sum of its
 single-coordinate composites. -/
 private theorem plr_clm_pi_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -1168,7 +1159,7 @@ private theorem plr_dual_ineq {E : Type*} [NormedAddCommGroup E]
             StrongDual 𝕜 E)‖ := by
           rw [hmnorm k, one_mul]
   rw [← plr_claim1 a c f g b m hm lam, hcomp,
-    plr_claim2 a c b m hm Psi, one_mul, plr_re_sum]
+    plr_claim2 a c b m hm Psi, one_mul, map_sum RCLike.re]
   exact calc ∑ k, RCLike.re (m k (((Psi.comp
               (ContinuousLinearMap.single 𝕜 (fun _ => E) k))) : StrongDual 𝕜 E))
           ≤ ∑ k, ‖m k (((Psi.comp

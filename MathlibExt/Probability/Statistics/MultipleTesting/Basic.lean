@@ -10,6 +10,7 @@ module
 
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Multiple testing: p-values, counts below a threshold, false discoveries
@@ -33,6 +34,8 @@ error rate (FWER) is the probability of this event.
 ## Main results
 
 * `isValidPValue_of_hasLaw_uniform`: a p-value with law `Uniform[0, 1]` is valid.
+* `isValidPValue_of_forall_cond`: a p-value that is valid conditionally on each value of a
+  bounded count is valid unconditionally.
 * `falseDiscoveryProportion_nonneg`, `falseDiscoveryProportion_le_one`.
 
 ## References
@@ -66,6 +69,39 @@ theorem isValidPValue_of_hasLaw_uniform {μ : Measure Ω} {X : Ω → ℝ}
         measure_mono fun x hx => ⟨hx.2.1, hx.1⟩
     _ = ENNReal.ofReal t := by simp
 
+/-- **Validity from conditional validity.** Let `S` be a measurable count that is at most `N`
+almost surely, and let `P` agree with `q (S ω)` wherever `S ω ≤ N`. If each `q t` is a valid
+p-value conditionally on `S = t` (for `t ≤ N`), then `P` is valid under `μ`.
+
+This is the law of total probability: `μ {P ≤ s} ≤ ∑ₜ μ {S = t} μ[P ≤ s | S = t] ≤ s`. -/
+theorem isValidPValue_of_forall_cond {μ : Measure Ω} [IsProbabilityMeasure μ] {S : Ω → ℕ}
+    (hS : Measurable S) {N : ℕ} (hSN : ∀ᵐ ω ∂μ, S ω ≤ N) {P : Ω → ℝ} {q : ℕ → Ω → ℝ}
+    (hPq : ∀ ω, S ω ≤ N → P ω = q (S ω) ω)
+    (hq : ∀ t ≤ N, IsValidPValue (μ[|S ⁻¹' {t}]) (q t)) : IsValidPValue μ P := by
+  intro s hs
+  have hsub : {ω | P ω ≤ s} ≤ᵐ[μ]
+      (⋃ t ∈ Finset.range (N + 1), S ⁻¹' {t} ∩ {ω | q t ω ≤ s} : Set Ω) := by
+    filter_upwards [hSN] with ω hω hP
+    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff,
+      Set.mem_ofPred_eq, Finset.mem_range, exists_prop]
+    exact ⟨S ω, Nat.lt_succ_of_le hω, rfl, by rwa [← hPq ω hω]⟩
+  have hdisj : (Finset.range (N + 1) : Set ℕ).PairwiseDisjoint fun t => S ⁻¹' {t} :=
+    fun a _ b _ hab => Set.disjoint_left.2 fun ω ha hb => hab (ha.symm.trans hb)
+  calc μ {ω | P ω ≤ s}
+      ≤ μ (⋃ t ∈ Finset.range (N + 1), S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) := measure_mono_ae hsub
+    _ ≤ ∑ t ∈ Finset.range (N + 1), μ (S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) := measure_biUnion_finset_le _ _
+    _ = ∑ t ∈ Finset.range (N + 1), μ[{ω | q t ω ≤ s} | S ⁻¹' {t}] * μ (S ⁻¹' {t}) :=
+        Finset.sum_congr rfl fun t _ =>
+          (cond_mul_eq_inter (hS (measurableSet_singleton t)) _ μ).symm
+    _ ≤ ∑ t ∈ Finset.range (N + 1), ENNReal.ofReal s * μ (S ⁻¹' {t}) := by
+        gcongr with t ht
+        exact hq t (Nat.lt_succ_iff.1 (Finset.mem_range.1 ht)) s hs
+    _ = ENNReal.ofReal s * μ (⋃ t ∈ Finset.range (N + 1), S ⁻¹' {t}) := by
+        rw [← Finset.mul_sum,
+          measure_biUnion_finset hdisj fun t _ => hS (measurableSet_singleton t)]
+    _ ≤ ENNReal.ofReal s * 1 := by gcongr; exact prob_le_one
+    _ = ENNReal.ofReal s := mul_one _
+
 /-- The number of p-values that are at most `t`. -/
 noncomputable def numBelow (p : Fin m → ℝ) (t : ℝ) : ℕ :=
   (Finset.univ.filter fun i => p i ≤ t).card
@@ -97,5 +133,15 @@ theorem falseDiscoveryProportion_le_one (H0 R : Finset (Fin m)) :
   unfold falseDiscoveryProportion
   rw [div_le_one (by positivity)]
   exact le_max_of_le_left (by exact_mod_cast Finset.card_le_card Finset.inter_subset_left)
+
+/-- Rounding a valid p-value upward (a.e.) preserves validity. -/
+theorem IsValidPValue.mono_ae {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {p p' : Ω → ℝ}
+    (hp : IsValidPValue μ p) (hle : ∀ᵐ ω ∂μ, p ω ≤ p' ω) :
+    IsValidPValue μ p' := by
+  intro t ht
+  have hsub : {ω | p' ω ≤ t} ≤ᵐ[μ] {ω | p ω ≤ t} :=
+    hle.mono fun ω hω hp' => le_trans hω hp'
+  exact (measure_mono_ae hsub).trans (hp t ht)
 
 end MathlibExt.Probability.Statistics.MultipleTesting
