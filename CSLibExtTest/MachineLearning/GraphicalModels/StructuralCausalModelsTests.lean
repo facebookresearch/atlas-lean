@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
+public meta import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Tactic.FinCases
@@ -87,5 +88,21 @@ example : testM.solve testUVal n0 = testM.solve testU2 n0 := by
     rfl
   have hmem : n0 ∈ testS := by simp [testS]
   exact testM.solve_congr_of_ancestral hS hu n0 hmem
+
+private def chainPa {n : ℕ} (k : Fin n) : Finset (Fin k) :=
+  if h : 0 < k.val then {⟨k.val - 1, Nat.sub_lt h (by decide)⟩} else ∅
+
+private def chainModel (n : ℕ) : FiniteSCM ℕ n (fun _ => Unit) where
+  pa := chainPa
+  f k z _ := if h : 0 < k.val then
+    z ⟨⟨k.val - 1, Nat.sub_lt h (by decide)⟩, by simp [chainPa, h]⟩ + 1
+    else 1
+
+-- Exercise the compiled solver at increasing sizes, not just its equations.
+#eval show IO Unit from do
+  for n in [7, 15, 31, 63] do
+    let result := (chainModel (n + 1)).solve (fun _ => ()) (Fin.last n)
+    unless result == n + 1 do
+      throw (IO.userError s!"chain of length {n + 1}: got {result}")
 
 end Cslib.MachineLearning.StructuralCausalModelsTests
