@@ -9,10 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.AffineMap
-public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.FDeriv.Comp
 public import Mathlib.Analysis.Convex.Deriv
-public import Mathlib.Analysis.Convex.Mul
 public import Mathlib.Order.Filter.Extr
 public import MathlibExt.Analysis.Convex.KarushKuhnTucker
 

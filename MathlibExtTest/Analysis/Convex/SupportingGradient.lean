@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Convex.SupportingGradient
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Convex.Mul
 
 /-!
 # Tests for supporting-gradient optimality certificates
