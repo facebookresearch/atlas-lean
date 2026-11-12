@@ -35,4 +35,10 @@ example : (gaussianLikelihood 1 ∘ₘ gaussianReal 0 1) {(0 : ℝ)} = 0 := by
   rw [gaussianLikelihood_comp_gaussianReal 0 (by positivity) (by positivity)]
   exact gaussianReal_absolutelyContinuous 0 (by positivity) Real.volume_singleton
 
+/-- Zero noise: the one-draw projection is the Dirac mass at the parameter. -/
+example : (Measure.pi fun _ : Fin 1 => gaussianReal (0 : ℝ) 0).map (fun s => s 0) =
+    Measure.dirac (0 : ℝ) := by
+  rw [gaussianMarginalLaw_one_eq_gaussianLikelihood,
+    gaussianLikelihood_zero_apply, gaussianReal_zero_var]
+
 end CSLibExtTest.MachineLearning.Bayesian.StatisticsInteropNormal

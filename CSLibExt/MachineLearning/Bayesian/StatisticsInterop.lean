@@ -25,12 +25,17 @@ open MeasureTheory ProbabilityTheory Real
 open scoped ENNReal NNReal
 
 /-- **One-draw marginal law.** The pushforward of the one-observation iid Gaussian tuple law
-along evaluation equals the Gaussian likelihood. -/
-theorem gaussianMarginalLaw_one_eq_gaussianLikelihood (θ : ℝ) {v : ℝ≥0} (h : v ≠ 0) :
+along evaluation equals the Gaussian likelihood, at every noise variance including `v = 0`
+(where both sides are the Dirac mass at `θ`). -/
+theorem gaussianMarginalLaw_one_eq_gaussianLikelihood (θ : ℝ) {v : ℝ≥0} :
     (Measure.pi fun _ : Fin 1 => gaussianReal θ v).map (fun s => s 0) =
       gaussianLikelihood v θ := by
-  rw [gaussianLikelihood_apply h]
-  exact (measurePreserving_eval (fun _ : Fin 1 => gaussianReal θ v) 0).map_eq
+  by_cases h : v = 0
+  · subst h
+    rw [gaussianLikelihood_zero_apply θ]
+    exact (measurePreserving_eval (fun _ : Fin 1 => gaussianReal θ 0) 0).map_eq
+  · rw [gaussianLikelihood_apply h]
+    exact (measurePreserving_eval (fun _ : Fin 1 => gaussianReal θ v) 0).map_eq
 
 /-- **Normal-Normal posterior, marginal form.** Under a `N(m₀, v₀)` prior with `v₀ ≠ 0` and
 noise variance `v ≠ 0`, the a.e. posterior restatement for the one-draw marginal law is the
