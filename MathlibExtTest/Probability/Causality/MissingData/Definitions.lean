@@ -21,6 +21,8 @@ The sample space is two fair coins, `Ω = Bool × Bool`.
   covariate. MCAR holds with response probability `1/2`, so MAR holds by the bridge.
 * MAR without MCAR: the response is the first coin and so is the covariate. MAR holds (the response
   is a function of the covariate) and MCAR fails, so the hierarchy is strict.
+* The bridge between the two named MAR predicates, on a real outcome: the discrete AIPW predicate
+  `MissingOutcomes.MissingAtRandom` gives `MissingAtRandomCondIndepFun`.
 -/
 
 @[expose] public section
@@ -133,8 +135,8 @@ example : CondIndepDiscrete coins heads₁ Prod.snd (fun _ => ()) :=
   mcar_coins.condIndepDiscrete
 
 /-- MCAR implies MAR on the witness. -/
-example : MissingAtRandom coins heads₁ (fun _ => ()) measurable_const Prod.snd :=
-  mcar_coins.missingAtRandom measurableSet_heads₁ measurable_const measurable_snd
+example : MissingAtRandomCondIndepFun coins heads₁ (fun _ => ()) measurable_const Prod.snd :=
+  mcar_coins.missingAtRandomCondIndepFun measurableSet_heads₁ measurable_const measurable_snd
 
 /-! ### MAR without MCAR -/
 
@@ -158,9 +160,18 @@ theorem condIndepDiscrete_fst : CondIndepDiscrete coins heads₁ Prod.snd Prod.f
     rw [h1, h2, mul_comm]
 
 /-- **MAR holds** for the response equal to the covariate. -/
-theorem mar_fst : MissingAtRandom coins heads₁ Prod.fst measurable_fst Prod.snd :=
-  (missingAtRandom_iff_condIndepDiscrete measurableSet_heads₁ measurable_fst measurable_snd).2
-    condIndepDiscrete_fst
+theorem mar_fst : MissingAtRandomCondIndepFun coins heads₁ Prod.fst measurable_fst Prod.snd :=
+  (missingAtRandomCondIndepFun_iff_condIndepDiscrete measurableSet_heads₁ measurable_fst
+    measurable_snd).2 condIndepDiscrete_fst
+
+/-- The bridge to the AIPW predicate `MissingOutcomes.MissingAtRandom` on a real outcome (the
+second coin as `0` or `1`): it holds there by `condIndepDiscrete_fst`, and the bridge carries it to
+`MissingAtRandomCondIndepFun`. -/
+example : MissingAtRandomCondIndepFun coins heads₁ Prod.fst measurable_fst
+    (fun ω => if ω.2 then (1 : ℝ) else 0) :=
+  (missingAtRandomCondIndepFun_iff_missingAtRandom measurableSet_heads₁ measurable_fst
+    (measurable_of_countable _)).2 fun B _ w =>
+      condIndepDiscrete_fst ((fun b : Bool => if b then (1 : ℝ) else 0) ⁻¹' B) .of_discrete w
 
 /-- **MCAR fails** for the response equal to the covariate: `P(R, X = true) = 1/2` while
 `P(R) P(X = true) = 1/4`. So MAR is strictly weaker than MCAR. -/

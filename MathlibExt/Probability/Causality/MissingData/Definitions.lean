@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
 public import MathlibExt.Probability.Causality.CausalIdentification
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Independence.Conditional
@@ -28,8 +29,10 @@ Rubin's missing-data mechanisms. It makes no identification claims.
   structure); `Sum.inr ()` is the missing marker.
 * `MissingCompletelyAtRandom μ R X Y` (MCAR): `R` is independent of `(X, Y)`, Mathlib's
   `IndepFun`.
-* `MissingAtRandom μ R X hX Y` (MAR): `R` is conditionally independent of `Y` given `σ(X)`,
-  Mathlib's `CondIndepFun` (which needs a standard Borel sample space and a finite measure).
+* `MissingAtRandomCondIndepFun μ R X hX Y` (MAR): `R` is conditionally independent of `Y` given
+  `σ(X)`, Mathlib's `CondIndepFun` (which needs a standard Borel sample space and a finite
+  measure). It is named apart from the discrete-covariate predicate
+  `MathlibExt.Probability.Causality.MissingOutcomes.MissingAtRandom μ R Y X`.
 
 ## Main results
 
@@ -40,11 +43,14 @@ Rubin's missing-data mechanisms. It makes no identification claims.
   restates this as `CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ => ())`.
 * `condExp_indicator_comap_ae_eq`: for a countably valued `X`, `P(E | σ(X)) = propensity μ E X X`
   almost everywhere.
-* `missingAtRandom_iff_condIndepDiscrete`: on the common domain (a countably valued `X` with
-  measurable singletons), MAR is exactly `CondIndepDiscrete μ R Y X` from
+* `missingAtRandomCondIndepFun_iff_condIndepDiscrete`: on the common domain (a countably valued
+  `X` with measurable singletons), MAR is exactly `CondIndepDiscrete μ R Y X` from
   `MathlibExt.Probability.Causality.CausalIdentification`.
-* `MissingCompletelyAtRandom.condIndepDiscrete`, `MissingCompletelyAtRandom.missingAtRandom`:
-  MCAR implies MAR.
+* `missingAtRandomCondIndepFun_iff_missingAtRandom`: for a real outcome on that domain, the two
+  named MAR predicates agree: `MissingAtRandomCondIndepFun μ R X hX Y` holds iff
+  `MissingOutcomes.MissingAtRandom μ R Y X` does.
+* `MissingCompletelyAtRandom.condIndepDiscrete`,
+  `MissingCompletelyAtRandom.missingAtRandomCondIndepFun`: MCAR implies MAR.
 
 ## Not covered
 
@@ -52,8 +58,8 @@ Missing-not-at-random mechanisms, identification of the outcome mean (complete-c
 inverse-response weighting) and nonidentification counterexamples; covariates that are themselves
 missing; monotone or longitudinal missingness patterns.
 
-`MissingAtRandom` assumes a standard Borel sample space (inherited from Mathlib's `CondIndepFun`)
-and is not bridged to the general conditional-expectation form
+`MissingAtRandomCondIndepFun` assumes a standard Borel sample space (inherited from Mathlib's
+`CondIndepFun`) and is not bridged to the general conditional-expectation form
 `μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]` for an arbitrary sub-σ-algebra `m`,
 the hypothesis of the general inverse-weighting theorem `integral_ipw_treated_condExp`.
 
@@ -127,9 +133,11 @@ def MissingCompletelyAtRandom (μ : Measure Ω) (R : Set Ω) (X : Ω → 𝒳) (
 /-- **Missing at random** (Rubin 1976): the response indicator `ω ↦ ω ∈ R` is conditionally
 independent of the outcome `Y` given the always-observed covariate `X`, as Mathlib's
 `CondIndepFun` given the σ-algebra `σ(X)`. The measurability proof `hX` only certifies
-`σ(X) ≤ mΩ`. -/
-def MissingAtRandom [StandardBorelSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] (R : Set Ω)
-    (X : Ω → 𝒳) (hX : Measurable X) (Y : Ω → 𝒴) : Prop :=
+`σ(X) ≤ mΩ`. The discrete-covariate form used by the AIPW development is
+`MathlibExt.Probability.Causality.MissingOutcomes.MissingAtRandom`; the two agree on their
+common domain (`missingAtRandomCondIndepFun_iff_missingAtRandom`). -/
+def MissingAtRandomCondIndepFun [StandardBorelSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ]
+    (R : Set Ω) (X : Ω → 𝒳) (hX : Measurable X) (Y : Ω → 𝒴) : Prop :=
   CondIndepFun (m𝒳.comap X) hX.comap_le (· ∈ R) Y μ
 
 /-! ### MCAR through the response event -/
@@ -321,12 +329,12 @@ private lemma propensity_inter_eq_mul_iff {A B : Set Ω} {X : Ω → 𝒳} {x : 
 /-- **MAR on the common domain.** For a countably valued covariate `X` with measurable singletons,
 missing at random (Mathlib's conditional independence `R ⊥ Y | σ(X)`) is exactly the discrete
 conditional independence `CondIndepDiscrete μ R Y X` of the response event. -/
-theorem missingAtRandom_iff_condIndepDiscrete [StandardBorelSpace Ω] [IsFiniteMeasure μ]
+theorem missingAtRandomCondIndepFun_iff_condIndepDiscrete [StandardBorelSpace Ω] [IsFiniteMeasure μ]
     [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳} {Y : Ω → 𝒴}
     (hR : MeasurableSet R) (hX : Measurable X) (hY : Measurable Y) :
-    MissingAtRandom μ R X hX Y ↔ CondIndepDiscrete μ R Y X := by
+    MissingAtRandomCondIndepFun μ R X hX Y ↔ CondIndepDiscrete μ R Y X := by
   have hR' := measurable_mem_set hR
-  rw [MissingAtRandom, condIndepFun_iff_condExp_inter_preimage_eq_mul hR' hY]
+  rw [MissingAtRandomCondIndepFun, condIndepFun_iff_condExp_inter_preimage_eq_mul hR' hY]
   have key : ∀ s t, MeasurableSet s → MeasurableSet t →
       (((μ⟦(· ∈ R) ⁻¹' s ∩ Y ⁻¹' t | m𝒳.comap X⟧) =ᵐ[μ]
           fun ω => (μ⟦(· ∈ R) ⁻¹' s | m𝒳.comap X⟧) ω * (μ⟦Y ⁻¹' t | m𝒳.comap X⟧) ω) ↔
@@ -367,11 +375,21 @@ theorem missingAtRandom_iff_condIndepDiscrete [StandardBorelSpace Ω] [IsFiniteM
     · simp only [Set.univ_inter]
       ring
 
+/-- **The two named MAR predicates agree.** For a real outcome and a countably valued covariate
+with measurable singletons, `MissingAtRandomCondIndepFun` (Mathlib's `CondIndepFun` given `σ(X)`)
+holds iff the discrete-covariate predicate `MissingOutcomes.MissingAtRandom` of the AIPW
+development does. Note the argument orders: `R X hX Y` here, `R Y X` there. -/
+theorem missingAtRandomCondIndepFun_iff_missingAtRandom [StandardBorelSpace Ω]
+    [IsFiniteMeasure μ] [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳}
+    {Y : Ω → ℝ} (hR : MeasurableSet R) (hX : Measurable X) (hY : Measurable Y) :
+    MissingAtRandomCondIndepFun μ R X hX Y ↔ MissingOutcomes.MissingAtRandom μ R Y X :=
+  missingAtRandomCondIndepFun_iff_condIndepDiscrete hR hX hY
+
 /-- MCAR implies MAR, for a countably valued covariate. -/
-theorem MissingCompletelyAtRandom.missingAtRandom [StandardBorelSpace Ω] [IsFiniteMeasure μ]
-    [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳} {Y : Ω → 𝒴}
-    (h : MissingCompletelyAtRandom μ R X Y) (hR : MeasurableSet R) (hX : Measurable X)
-    (hY : Measurable Y) : MissingAtRandom μ R X hX Y :=
-  (missingAtRandom_iff_condIndepDiscrete hR hX hY).2 h.condIndepDiscrete
+theorem MissingCompletelyAtRandom.missingAtRandomCondIndepFun [StandardBorelSpace Ω]
+    [IsFiniteMeasure μ] [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳}
+    {Y : Ω → 𝒴} (h : MissingCompletelyAtRandom μ R X Y) (hR : MeasurableSet R)
+    (hX : Measurable X) (hY : Measurable Y) : MissingAtRandomCondIndepFun μ R X hX Y :=
+  (missingAtRandomCondIndepFun_iff_condIndepDiscrete hR hX hY).2 h.condIndepDiscrete
 
 end MathlibExt.Probability.Causality.MissingData
