@@ -20,7 +20,7 @@ feasibly into one bin, giving `nextFit ≤ 2`. -/
 example {sizes : List ℝ} (hpos : ∀ x ∈ sizes, 0 < x)
     {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes 1 a) :
     nextFitBins sizes ≤ 2 * 1 :=
-  nextFit_le_two_mul_opt hpos hfeas
+  nextFit_le_two_mul_of_feasible hpos hfeas
 
 /-- The empty list needs no bins: its Next Fit count is `0` by the
 defining equation. -/
@@ -55,7 +55,8 @@ is feasible for `[1/2, 1/2, 1/2]` with `B = 2`: bin `0` holds `1/2 + 1/2 ≤ 1`
 and bin `1` holds `1/2 ≤ 1`. -/
 theorem half_half_half_feasible :
     FeasibleAssignment [1 / 2, 1 / 2, 1 / 2] 2 (fun i => if i = 2 then 1 else 0) := by
-  constructor
+  refine ⟨?_, ?_, ?_⟩
+  · norm_num
   · intro i hi
     simp only [List.length_cons, List.length_nil] at hi
     by_cases h : i = 2 <;> simp [h]
@@ -77,6 +78,40 @@ theorem half_half_half_feasible :
 
 /-- Concrete instance of the bound: the three-half list packs feasibly into two
 bins, so Next Fit uses at most four bins. -/
-example (hpos : ∀ x ∈ ([1 / 2, 1 / 2, 1 / 2] : List ℝ), 0 < x) :
-    nextFitBins [1 / 2, 1 / 2, 1 / 2] ≤ 2 * 2 :=
-  nextFit_le_two_mul_opt hpos half_half_half_feasible
+example : nextFitBins [1 / 2, 1 / 2, 1 / 2] ≤ 2 * 2 :=
+  nextFit_le_two_mul_of_feasible (by norm_num) half_half_half_feasible
+
+/-- Regression: a negative item cannot cancel an oversized item. -/
+example : ¬ FeasibleAssignment [2, -1] 1 (fun _ => 0) := by
+  norm_num [FeasibleAssignment]
+
+/-- Negative sizes are invalid even when the bin load is below capacity. -/
+example : ¬ FeasibleAssignment [-1] 1 (fun _ => 0) := by
+  norm_num [FeasibleAssignment]
+
+/-- An item larger than a unit bin is invalid. -/
+example : ¬ FeasibleAssignment [2] 1 (fun _ => 0) := by
+  norm_num [FeasibleAssignment]
+
+/-- Both endpoints of the size domain fit together in a unit bin. -/
+example : FeasibleAssignment [0, 1] 1 (fun _ => 0) := by
+  refine ⟨?_, ?_, ?_⟩
+  · norm_num
+  · intro i hi
+    simp
+  · intro b hb
+    have hb0 : b = 0 := by omega
+    subst b
+    norm_num [Finset.sum_range_succ]
+
+/-- The endpoint list also follows Next Fit's exact-fit branch. -/
+example : nextFitBins [0, 1] = 1 := by
+  norm_num [nextFitBins, nextFitAux]
+
+/-- The empty instance is feasible with no bins. -/
+example : FeasibleAssignment [] 0 (fun _ => 0) := by
+  simp [FeasibleAssignment]
+
+/-- Even a zero-size item must be assigned to an existing bin. -/
+example : ¬ FeasibleAssignment [0] 0 (fun _ => 0) := by
+  norm_num [FeasibleAssignment]

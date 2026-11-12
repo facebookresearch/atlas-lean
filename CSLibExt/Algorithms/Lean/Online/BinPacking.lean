@@ -48,10 +48,12 @@ noncomputable def nextFitBins : List ℝ → ℕ
   | x :: xs => nextFitAux xs 1 x
 
 /-- An assignment of item indices to bins is feasible for `B` bins if
-every item is assigned to a bin below `B` and every bin's total size is at most `1`.
+all item sizes lie in `[0, 1]`, every item is assigned to a bin below `B`,
+and every bin's total size is at most `1`. Zero-size items are allowed.
 Coverage is part of the definition: without it an assignment could send items to bins
 outside the range, and the per-bin bound alone would hold vacuously. -/
 def FeasibleAssignment (sizes : List ℝ) (B : ℕ) (a : ℕ → ℕ) : Prop :=
+  (∀ x ∈ sizes, 0 ≤ x ∧ x ≤ 1) ∧
   (∀ i, i < sizes.length → a i < B) ∧
   ∀ b, b < B → (∑ i ∈ (Finset.range sizes.length).filter (fun i => a i = b),
     sizes.getD i 0) ≤ 1
@@ -120,7 +122,7 @@ private theorem list_sum_le_of_feasible (sizes : List ℝ) (B : ℕ) (a : ℕ �
   have hmaps : ∀ i ∈ Finset.range sizes.length, a i ∈ Finset.range B := by
     intro i hi
     simp only [Finset.mem_range] at hi ⊢
-    exact hfeas.1 i hi
+    exact hfeas.2.1 i hi
   have hfib := Finset.sum_fiberwise_of_maps_to hmaps (fun i => sizes.getD i 0)
   rw [← hfib]
   calc ∑ b ∈ Finset.range B, ∑ i ∈ Finset.range sizes.length with a i = b, sizes.getD i 0
@@ -128,13 +130,13 @@ private theorem list_sum_le_of_feasible (sizes : List ℝ) (B : ℕ) (a : ℕ �
         apply Finset.sum_le_sum
         intro b hb
         simp only [Finset.mem_range] at hb
-        exact hfeas.2 b hb
+        exact hfeas.2.2 b hb
     _ = (B : ℝ) := by simp [Finset.sum_const, Finset.card_range]
 
 /-- Next Fit uses at most twice as many bins as any feasible packing: `B` is the bin count of
 an arbitrary feasible assignment, not the optimal (least) such count, which is not defined
 here. Positivity and feasibility give the total-size bound used in the proof. -/
-theorem nextFit_le_two_mul_opt {sizes : List ℝ}
+theorem nextFit_le_two_mul_of_feasible {sizes : List ℝ}
     (hpos : ∀ x ∈ sizes, 0 < x)
     {B : ℕ} {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes B a) :
     nextFitBins sizes ≤ 2 * B := by
