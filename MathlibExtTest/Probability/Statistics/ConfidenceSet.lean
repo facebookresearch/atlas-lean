@@ -279,4 +279,20 @@ example :
     rw [probReal_univ]
     norm_num
 
+/-- Use: the theorem applies the cutoff hypothesis directly. -/
+example {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hT : HasLaw (fun _ : Ω => (5 : ℝ)) (Measure.dirac (5 : ℝ)) P)
+    (c : ℝ) (hc : 1 - (0 : ℝ) ≤ cdf (Measure.dirac (5 : ℝ)) c) :
+    P.real {_ω | c < (5 : ℝ)} ≤ (0 : ℝ) := by
+  exact measureReal_lt_le_of_le_cdf hT hc
+
+/-- Negative: below the quantile the level fails; at `c = 0` a point mass at `5` rejects everything. -/
+example : (Measure.dirac (5 : ℝ)).real {ω | (0 : ℝ) < ω} > (0.05 : ℝ) := by
+  have hmem : (5 : ℝ) ∈ {ω : ℝ | (0 : ℝ) < ω} := by
+    show (0 : ℝ) < (5 : ℝ)
+    norm_num
+  rw [measureReal_def, Measure.dirac_apply_of_mem hmem, ENNReal.toReal_one]
+  norm_num
+
 end MathlibExtTest.Probability.Statistics.ConfidenceSet

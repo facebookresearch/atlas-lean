@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
+public import Mathlib.Probability.CDF
 
 /-!
 # Fixed-sample confidence sets by test inversion
@@ -126,5 +127,27 @@ theorem coverage_of_projected_pointTests
   rw [hcompl] at hmono
   have hle := hlev θ
   linarith
+
+/-- A cutoff above the `(1 - α)` cdf level gives a level-`α` one-sided test. -/
+theorem measureReal_lt_le_of_le_cdf {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {T : Ω → ℝ} (hT : HasLaw T ν P) {α c : ℝ}
+    (hc : 1 - α ≤ cdf ν c) : P.real {ω | c < T ω} ≤ α := by
+  have h1 : P.real {ω | c < T ω} = ν.real {x | c < x} :=
+    hT.measureReal_eq (p := fun x => c < x) measurableSet_Ioi
+  have h2 : ({x : ℝ | c < x} : Set ℝ) = (Set.Iic c)ᶜ := by
+    ext x
+    simp
+  rw [h1, h2, probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real ν c]
+  linarith
+
+/-- Corollary: rounding the cutoff upward keeps the level. -/
+theorem measureReal_lt_le_of_le_cdf_mono {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {T : Ω → ℝ} (hT : HasLaw T ν P) {α c c' : ℝ}
+    (hle : c ≤ c') (hc : 1 - α ≤ cdf ν c) : P.real {ω | c' < T ω} ≤ α := by
+  exact measureReal_lt_le_of_le_cdf hT (le_trans hc (monotone_cdf ν hle))
 
 end MathlibExt.Probability.Statistics
