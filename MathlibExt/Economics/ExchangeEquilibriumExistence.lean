@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Analysis.Convex.StdSimplex
 import Mathlib.Algebra.BigOperators.Field
 import MathlibExt.Analysis.Convex.BrouwerFixedPoint
 
@@ -26,6 +27,9 @@ Demand is taken as given. Deriving it from preferences, production, and the open
 boundary condition of Mas-Colell–Whinston–Green, Proposition 17.C.1, are out of scope.
 The `_of_brouwer` theorems take Brouwer's theorem on the price simplex as a hypothesis; the
 unconditional versions discharge it with `BrouwerFixedPoint.exists_fixedPoint`.
+
+`priceSimplex_eq_range_weights` identifies the price simplex with the weight vectors of Mathlib's
+`Convexity.StdSimplex ℝ L`.
 
 ## Main results
 
@@ -291,47 +295,32 @@ theorem exists_excessDemand_eq_zero_of_brouwer {I L : Type*} [Fintype I] [Fintyp
 
 end ExchangeEconomy
 
+/-- The price simplex is exactly the set of weight vectors of Mathlib's standard simplex
+`Convexity.StdSimplex ℝ L`. -/
+theorem priceSimplex_eq_range_weights (L : Type*) [Fintype L] :
+    priceSimplex L = Set.range (fun t : Convexity.StdSimplex ℝ L => (t.weights : L → ℝ)) := by
+  rw [Convexity.StdSimplex.range_toFun_comp_weights]
+  ext s
+  simp [priceSimplex]
+
 /-- The price simplex is compact. -/
 theorem isCompact_priceSimplex (L : Type*) [Fintype L] : IsCompact (priceSimplex L) := by
-  have hclosed : IsClosed (priceSimplex L) := by
-    have heq : priceSimplex L
-        = (⋂ l, {p : L → ℝ | 0 ≤ p l}) ∩ {p | ∑ l, p l = 1} := by
-      ext p
-      simp [priceSimplex]
-    rw [heq]
-    apply IsClosed.inter
-    · apply isClosed_iInter
-      intro l
-      exact isClosed_le continuous_const (continuous_apply l)
-    · exact isClosed_eq (by fun_prop) continuous_const
-  have hsub : priceSimplex L ⊆ Set.Icc 0 1 := by
-    intro p hp
-    obtain ⟨h0, h1⟩ := hp
-    constructor
-    · intro l
-      simpa using h0 l
-    · intro l
-      simp only [Pi.one_apply] at *
-      calc p l ≤ ∑ k, p k :=
-            Finset.single_le_sum (fun k _ => h0 k) (Finset.mem_univ l)
-        _ = 1 := h1
-  exact IsCompact.of_isClosed_subset isCompact_Icc hclosed hsub
+  rw [priceSimplex_eq_range_weights]
+  exact isCompact_range (continuous_pi fun l => Convexity.StdSimplex.continuous_weights_apply ℝ l)
 
 /-- The price simplex is convex. -/
 theorem convex_priceSimplex (L : Type*) [Fintype L] : Convex ℝ (priceSimplex L) := by
-  refine fun f hf g hg a b ha hb hab => ⟨fun x => ?_, ?_⟩
-  · simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    apply_rules [add_nonneg, mul_nonneg, hf.1, hg.1]
-  · simp only [Pi.add_apply, Pi.smul_apply]
-    rwa [Finset.sum_add_distrib, ← Finset.smul_sum, ← Finset.smul_sum, hf.2, hg.2, smul_eq_mul,
-      smul_eq_mul, mul_one, mul_one]
+  rw [priceSimplex_eq_range_weights]
+  exact Convexity.ConvexSpace.AffineMap.convex_range
+    (Convexity.ConvexSpace.AffineMap.mk _
+      ((Convexity.IsAffineMap.linearMap (Finsupp.lcoeFun (R := ℝ) (M := ℝ) (α := L))).comp
+        (Convexity.StdSimplex.isAffineMap_weights ℝ L)))
 
 /-- The price simplex is nonempty when there is at least one good. -/
 theorem priceSimplex_nonempty (L : Type*) [Fintype L] [Nonempty L] :
     (priceSimplex L).Nonempty := by
-  classical
-  exact ⟨Pi.single (Classical.arbitrary L) 1,
-    le_update_iff.2 ⟨zero_le_one, fun _ _ ↦ le_rfl⟩, by simp⟩
+  rw [priceSimplex_eq_range_weights]
+  exact Set.range_nonempty _
 
 end MathlibExt.Economics.ExchangeEquilibriumExistence
 
