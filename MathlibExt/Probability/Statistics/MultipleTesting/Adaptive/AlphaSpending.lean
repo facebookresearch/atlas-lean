@@ -17,7 +17,7 @@ public import Mathlib.MeasureTheory.Measure.Count
 
 A clinical trial tests one null hypothesis at `K` pre-planned interim looks. At look `k + 1`
 (`k < K`) the accumulated data give a p-value `p k`, and the trial stops with a rejection at the
-first look whose p-value falls below that look's nominal level. The type-I error is the
+first look whose p-value falls at or below that look's nominal level. The type-I error is the
 probability, under the null, that **some** look rejects.
 
 ## Fixed-family testing versus optional stopping
@@ -32,9 +32,11 @@ control the error at `α`.
 
 *Alpha-spending* fixes, before the trial, a spending function `f` with `f 0 = 0`, monotone on
 `[0, 1]`, `f 1 ≤ α` (`IsAlphaSpendingFunction`) and information times
-`0 = τ 0 ≤ τ 1 ≤ ⋯ ≤ τ K ≤ 1`. Look `k + 1` is tested at the nominal level (the critical value
-on the p-value scale) `lookSpend f τ k = f (τ (k + 1)) - f (τ k)`. The nominal levels telescope
-to `f (τ K) ≤ α` (`sum_lookSpend_le`), so the probability that any look rejects is at most `α`
+`0 = τ 0 ≤ τ 1 ≤ ⋯ ≤ τ K ≤ 1`. The theorems take `τ : ℕ → ℝ` with `Monotone τ`; a finite
+schedule is extended by `τ k = τ K` for `k > K`, which leaves every planned look unchanged.
+Look `k + 1` is tested at the nominal level (the critical value on the p-value scale)
+`lookSpend f τ k = f (τ (k + 1)) - f (τ k)`. The nominal levels telescope to `f (τ K) ≤ α`
+(`sum_lookSpend_le`), so the probability that any look rejects is at most `α`
 (`measure_rejectedLooks_lookSpend_nonempty_le`). Because that event contains the event
 "reject at the look where the trial stopped", the guarantee holds for **every** stopping rule
 within the planned looks, including data-dependent and non-adapted ones
