@@ -46,7 +46,22 @@ argument does not prove an arbitrary terrain gravity correction.
 
 ## iv. References
 
-- None; proved from ordered-field algebra in Mathlib.
+- Turcotte, D. L. and Schubert, G., *Geodynamics*, 2nd ed., Cambridge
+  University Press, 2002, Chapter 5 (Isostasy): the Airy model, in which
+  topographic relief is compensated locally by a crustal root, with equal
+  pressure at a common compensation depth.
+- The expanded identity itself is proved from ordered-field algebra in
+  Mathlib; Mathlib does not justify the Airy column model.
+
+Convention mapping to the Lean statement: `ρc` is the crust density and `ρm`
+the mantle density (`ρc < ρm`); `h` is the elevation above the reference
+column; `r = ρc * h / (ρm - ρc)` is the crustal root below the reference
+crust; `T` is the reference crust thickness and `D` the common compensation
+depth. Column pressure is density times thickness, with the gravitational
+acceleration cancelling between the two columns, as in the overview.
+Assumptions from the source model carried into the statement: local (Airy)
+compensation at the same compensation depth, no flexural support, and
+constant densities.
 
 ## A. Airy root and compensation pressure
 -/
