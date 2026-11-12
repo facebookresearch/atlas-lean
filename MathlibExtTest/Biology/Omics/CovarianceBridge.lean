@@ -42,9 +42,9 @@ example : sampleCov X = ((3 : ℝ) / 2) • (secondMoment X - vecMulVec (colMean
   norm_num
 
 /-- **Singular covariance, nonsingular second moment.** The samples lie on the affine line
-`x₀ = 1`, which misses the origin: `det S = 0` while `det (n⁻¹ Xᵀ X) = 2/3 ≠ 0`. -/
-example : (sampleCov X).det = 0 ∧ (secondMoment X).det ≠ 0 := by
-  refine ⟨(det_sampleCov_eq_zero_iff X (by norm_num)).mpr ⟨![1, 0], by simp, 1, ?_⟩, ?_⟩
+`x₀ = 1`, which misses the origin: `det S = 0` while `det (n⁻¹ Xᵀ X) = 2/3`. -/
+example : (sampleCov X).det = 0 ∧ (secondMoment X).det = 2 / 3 := by
+  refine ⟨(det_sampleCov_eq_zero_iff X).mpr ⟨![1, 0], by simp, 1, ?_⟩, ?_⟩
   · ext i
     fin_cases i <;> simp [X, mulVec, dotProduct, Fin.sum_univ_two]
   · rw [det_fin_two]
@@ -53,7 +53,7 @@ example : (sampleCov X).det = 0 ∧ (secondMoment X).det ≠ 0 := by
 
 /-- The null direction of `S` is `w = (1, 0)`, along which every sample projects to `1`. -/
 example : sampleCov X *ᵥ ![1, 0] = 0 := by
-  rw [sampleCov_mulVec_eq_zero_iff X (by norm_num)]
+  rw [sampleCov_mulVec_eq_zero_iff X]
   refine ⟨1, ?_⟩
   ext i
   fin_cases i <;> simp [X, mulVec, dotProduct, Fin.sum_univ_two]
@@ -86,10 +86,30 @@ example : sampleCov Y = 0 := by
 example : secondMoment Y 0 0 = 1 := by
   simp [secondMoment, Y, mul_apply]
 
-/-- `rank (Y - 𝟙 ȳᵀ) ≤ n - 1 = 2`; for `Y` itself the bound `rank Y ≤ rank (Y - 𝟙 ȳᵀ) + 1`
-is attained with `rank (Y - 𝟙 ȳᵀ) = 0`. -/
-example : (center Y).rank ≤ 2 ∧ Y.rank ≤ (center Y).rank + 1 :=
-  ⟨rank_center_le Y, rank_le_rank_center_add_one Y⟩
+/-- Centering `Y` gives the zero matrix. -/
+theorem center_Y : center Y = 0 := by
+  have h := center_add_vecMulVec_one (0 : Matrix (Fin 3) (Fin 2) ℝ) ![1, 2]
+  rw [zero_add] at h
+  rw [Y, h]
+  ext i j
+  simp [center, colMean]
+
+/-- **The rank drop is attained.** `rank (Y - 𝟙 ȳᵀ) = 0` and `rank Y = 1`, so
+`rank Y ≤ rank (Y - 𝟙 ȳᵀ) + 1` holds with equality. -/
+example : (center Y).rank = 0 ∧ Y.rank = 1 ∧ Y.rank = (center Y).rank + 1 := by
+  have hc : (center Y).rank = 0 := by rw [center_Y, rank_zero]
+  have hle : Y.rank ≤ 1 := by simpa [hc] using rank_le_rank_center_add_one Y
+  have hpos : 0 < Y.rank := by
+    rw [Nat.pos_iff_ne_zero]
+    intro h
+    unfold Matrix.rank at h
+    rw [Submodule.finrank_eq_zero, LinearMap.range_eq_bot] at h
+    have := congrFun (LinearMap.congr_fun h (Pi.single 0 1)) 0
+    simp [Y, mulVec, dotProduct] at this
+  refine ⟨hc, by omega, by omega⟩
+
+/-- The general bound `rank (Y - 𝟙 ȳᵀ) ≤ n - 1 = 2`. -/
+example : (center Y).rank ≤ 2 := rank_center_le Y
 
 /-! ### High-dimensional boundary: `n ≤ p` -/
 
@@ -103,7 +123,7 @@ definite. -/
 def W : Matrix (Fin 4) (Fin 2) ℝ := !![1, 0; -1, 0; 0, 2; 0, -2]
 
 example : (sampleCov W).PosDef := by
-  rw [posDef_sampleCov_iff W (by norm_num)]
+  rw [posDef_sampleCov_iff W]
   intro w hw c h
   apply hw
   have h0 := congrFun h 0
@@ -130,6 +150,10 @@ example : sampleCov (batchModel 0 0 b b ![1] 0) 0 0 = 1 / 3 := by
   simp [b, Fin.sum_univ_four]
   norm_num
 
+/-- The noiseless confounded covariance has rank at most one. -/
+example : (sampleCov (batchModel 0 0 b b ![1] 0)).rank ≤ 1 :=
+  rank_sampleCov_batchModel_confounded_noiseless_le 0 b _ _
+
 /-- No estimator of the batch effect (or of the signal) from `S` exists. -/
 example (E : Matrix (Fin 4) (Fin 1) ℝ) (μ : Fin 1 → ℝ) :
     (¬ ∃ f : Matrix (Fin 1) (Fin 1) ℝ → Fin 1 → ℝ,
@@ -138,6 +162,12 @@ example (E : Matrix (Fin 4) (Fin 1) ℝ) (μ : Fin 1 → ℝ) :
       ∀ β δ, f (sampleCov (batchModel E μ b b β δ)) = δ) :=
   ⟨not_exists_batch_estimator (by norm_num) E μ b,
     not_exists_signal_estimator (by norm_num) E μ b⟩
+
+/-- With a single sample `S = 0`, and the null-direction criterion still holds. -/
+example (Z : Matrix (Fin 1) (Fin 2) ℝ) (w : Fin 2 → ℝ) :
+    sampleCov Z = 0 ∧ ∃ c : ℝ, Z *ᵥ w = fun _ => c :=
+  ⟨sampleCov_eq_zero_of_le_one Z le_rfl,
+    (sampleCov_mulVec_eq_zero_iff Z w).mp (by simp [sampleCov_eq_zero_of_le_one Z le_rfl])⟩
 
 /-- `S(-X) = S(X)`. -/
 example : sampleCov (-X) = sampleCov X := sampleCov_neg X

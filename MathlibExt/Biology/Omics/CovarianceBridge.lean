@@ -56,8 +56,12 @@ is redefined here.
 Source receipt (API-00 reuse search): `MathlibExt.Probability.Statistics.PCA`
 supplies `colMean`, `center`, `sampleCov`, `sum_center` and `sampleVar_scores`; Mathlib supplies
 `Matrix.rank_transpose_mul_self`, `Matrix.exists_mulVec_eq_zero_iff` and the `vecMulVec`
-algebra. No existing statement of the scatter identity, of the rank bound for centered data,
-or of batch nonidentifiability was found in pinned Mathlib or `MathlibExt`.
+algebra. No existing statement of the scatter identity or of the rank bound for centered data
+was found in pinned Mathlib or `MathlibExt` (base 53666a3c1). Related, landed on `main` after
+that base: `MathlibExt.Biology.Omics.Pseudobulk.not_identifiable_of_confounded` proves that the
+condition effect is not identifiable from the full data law of a scalar donor-level model under
+perfect confounding; the results here are the matrix-valued counterpart for the centered sample
+covariance and do not duplicate it.
 
 * T. W. Anderson, *An Introduction to Multivariate Statistical Analysis*, 3rd ed., Wiley, 2003,
   §3.3 (the sample covariance and the identity `∑ (xᵢ - x̄)(xᵢ - x̄)ᵀ = ∑ xᵢ xᵢᵀ - n x̄ x̄ᵀ`).
@@ -223,24 +227,35 @@ theorem rank_center_le (X : Matrix (Fin n) (Fin p) ℝ) : (center X).rank ≤ n 
     unfold Matrix.rank
     omega
 
-/-- `rank S = rank (X - 𝟙 x̄ᵀ)` for `2 ≤ n`. -/
-theorem rank_sampleCov (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 ≤ n) :
+/-- With at most one sample the centered matrix vanishes (the single sample is its own
+mean). -/
+theorem center_eq_zero_of_le_one (X : Matrix (Fin n) (Fin p) ℝ) (hn : n ≤ 1) : center X = 0 := by
+  interval_cases n
+  · ext i
+    exact i.elim0
+  · ext i j
+    fin_cases i
+    simp [center, colMean]
+
+/-- With at most one sample the sample covariance is `0`. -/
+theorem sampleCov_eq_zero_of_le_one (X : Matrix (Fin n) (Fin p) ℝ) (hn : n ≤ 1) :
+    sampleCov X = 0 := by
+  simp [sampleCov, center_eq_zero_of_le_one X hn]
+
+/-- `rank S = rank (X - 𝟙 x̄ᵀ)`, for every `n` (both are `0` when `n ≤ 1`). -/
+theorem rank_sampleCov (X : Matrix (Fin n) (Fin p) ℝ) :
     (sampleCov X).rank = (center X).rank := by
-  have h2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
-  have h : ((n : ℝ) - 1)⁻¹ ≠ 0 := inv_ne_zero (by linarith)
-  rw [sampleCov, rank_smul_of_mem_nonZeroDivisors _ (mem_nonZeroDivisors_of_ne_zero h),
-    rank_transpose_mul_self]
+  rcases le_or_gt 2 n with hn | hn
+  · have h2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
+    have h : ((n : ℝ) - 1)⁻¹ ≠ 0 := inv_ne_zero (by linarith)
+    rw [sampleCov, rank_smul_of_mem_nonZeroDivisors _ (mem_nonZeroDivisors_of_ne_zero h),
+      rank_transpose_mul_self]
+  · rw [sampleCov_eq_zero_of_le_one X (by omega), center_eq_zero_of_le_one X (by omega), rank_zero,
+      rank_zero]
 
 /-- `rank S ≤ n - 1` for every `n`. -/
-theorem rank_sampleCov_le (X : Matrix (Fin n) (Fin p) ℝ) : (sampleCov X).rank ≤ n - 1 := by
-  rcases le_or_gt 2 n with hn | hn
-  · exact (rank_sampleCov X hn).le.trans (rank_center_le X)
-  · have hS : sampleCov X = 0 := by
-      interval_cases n
-      · ext j k
-        simp [sampleCov_apply]
-      · simp [sampleCov]
-    simp [hS]
+theorem rank_sampleCov_le (X : Matrix (Fin n) (Fin p) ℝ) : (sampleCov X).rank ≤ n - 1 :=
+  (rank_sampleCov X).le.trans (rank_center_le X)
 
 /-- **High-dimensional boundary case.** With no more samples than features (`n ≤ p`, the usual
 omics regime), the sample covariance is singular. -/
@@ -266,9 +281,12 @@ theorem sum_mulVec (X : Matrix (Fin n) (Fin p) ℝ) (w : Fin p → ℝ) :
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← Finset.sum_mul, sum_eq_mul_colMean, mul_assoc]
 
-/-- For `2 ≤ n`, `S w = 0` iff `(X - 𝟙 x̄ᵀ) w = 0`. -/
-theorem sampleCov_mulVec_eq_zero_iff_center (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 ≤ n)
+/-- `S w = 0` iff `(X - 𝟙 x̄ᵀ) w = 0`, for every `n` (both sides hold when `n ≤ 1`). -/
+theorem sampleCov_mulVec_eq_zero_iff_center (X : Matrix (Fin n) (Fin p) ℝ)
     (w : Fin p → ℝ) : sampleCov X *ᵥ w = 0 ↔ center X *ᵥ w = 0 := by
+  rcases le_or_gt 2 n with hn | hn
+  swap
+  · simp [sampleCov_eq_zero_of_le_one X (by omega), center_eq_zero_of_le_one X (by omega)]
   constructor
   · intro h
     have hq := sampleVar_scores X w
@@ -282,18 +300,20 @@ theorem sampleCov_mulVec_eq_zero_iff_center (X : Matrix (Fin n) (Fin p) ℝ) (hn
   · intro h
     rw [sampleCov, Matrix.smul_mulVec, ← mulVec_mulVec, h, mulVec_zero, smul_zero]
 
-/-- **Null directions of `S`.** For `2 ≤ n`, `S w = 0` iff every sample has the same projection
-`c` on `w`, i.e. the samples lie in the affine hyperplane `{x | x ⬝ w = c}`. -/
-theorem sampleCov_mulVec_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 ≤ n)
+/-- **Null directions of `S`.** `S w = 0` iff every sample has the same projection `c` on `w`,
+i.e. the samples lie in the affine hyperplane `{x | x ⬝ w = c}` (for every `n`; trivially true
+for `n ≤ 1`). -/
+theorem sampleCov_mulVec_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ)
     (w : Fin p → ℝ) : sampleCov X *ᵥ w = 0 ↔ ∃ c : ℝ, X *ᵥ w = fun _ => c := by
-  rw [sampleCov_mulVec_eq_zero_iff_center X hn, center_mulVec, sub_eq_zero]
+  rw [sampleCov_mulVec_eq_zero_iff_center X, center_mulVec, sub_eq_zero]
   constructor
   · intro h
     exact ⟨_, h⟩
   · rintro ⟨c, hc⟩
-    have h0 : (n : ℝ) ≠ 0 := by
-      have : (2 : ℝ) ≤ n := by exact_mod_cast hn
-      positivity
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · funext i
+      exact i.elim0
+    have h0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
     have hm : colMean X ⬝ᵥ w = c := by
       have h1 := sum_mulVec X w
       rw [hc] at h1
@@ -301,20 +321,20 @@ theorem sampleCov_mulVec_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 �
       exact (mul_left_cancel₀ h0 h1).symm
     rw [hc, hm]
 
-/-- **Singular covariance.** For `2 ≤ n`, `det S = 0` iff the samples lie in an affine hyperplane
-`{x | x ⬝ w = c}` with `w ≠ 0`. Contrast: `det (Xᵀ X) = 0` iff they lie in a hyperplane through
-the origin, so data on an affine hyperplane missing the origin have a singular `S` but a
-nonsingular second moment (see the test file). -/
-theorem det_sampleCov_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 ≤ n) :
+/-- **Singular covariance.** `det S = 0` iff the samples lie in an affine hyperplane
+`{x | x ⬝ w = c}` with `w ≠ 0` (for every `n`). Contrast: `det (Xᵀ X) = 0` iff they lie in a
+hyperplane through the origin, so data on an affine hyperplane missing the origin have a
+singular `S` but a nonsingular second moment (see the test file). -/
+theorem det_sampleCov_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ) :
     (sampleCov X).det = 0 ↔ ∃ w ≠ 0, ∃ c : ℝ, X *ᵥ w = fun _ => c := by
   rw [← exists_mulVec_eq_zero_iff]
-  simp_rw [sampleCov_mulVec_eq_zero_iff X hn]
+  simp_rw [sampleCov_mulVec_eq_zero_iff X]
 
-/-- **Positive definite covariance.** For `2 ≤ n`, `S` is positive definite iff no affine
-hyperplane `{x | x ⬝ w = c}` (`w ≠ 0`) contains all samples. -/
-theorem posDef_sampleCov_iff (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 ≤ n) :
+/-- **Positive definite covariance.** `S` is positive definite iff no affine hyperplane
+`{x | x ⬝ w = c}` (`w ≠ 0`) contains all samples (for every `n`). -/
+theorem posDef_sampleCov_iff (X : Matrix (Fin n) (Fin p) ℝ) :
     (sampleCov X).PosDef ↔ ∀ w ≠ 0, ∀ c : ℝ, X *ᵥ w ≠ fun _ => c := by
-  rw [(sampleCov_posSemidef X).posDef_iff_det_ne_zero, Ne, det_sampleCov_eq_zero_iff X hn]
+  rw [(sampleCov_posSemidef X).posDef_iff_det_ne_zero, Ne, det_sampleCov_eq_zero_iff X]
   push Not
   rfl
 
@@ -331,7 +351,9 @@ theorem rank_center_le_rank (X : Matrix (Fin n) (Fin p) ℝ) : (center X).rank �
   rw [center_eq_centering_mul]
   exact rank_mul_le_right _ _
 
-/-- Subadditivity of the rank, for real matrices. -/
+/-- Subadditivity of the rank, for real matrices. This duplicates the private `rank_add_bound`
+in `MathlibExt.Probability.Statistics.PCA` (Mathlib has no `Matrix.rank_add_le`); it can be
+replaced once that lemma is made public, which is outside this file's scope. -/
 private theorem rank_add_le' (A B : Matrix (Fin n) (Fin p) ℝ) :
     (A + B).rank ≤ A.rank + B.rank := by
   unfold Matrix.rank
@@ -392,7 +414,9 @@ theorem sampleCov_batchModel_eq_of_add_eq (E : Matrix (Fin n) (Fin p) ℝ) (μ �
 
 /-- **Batch effect nonidentifiable.** In a confounded design (with at least one feature) no
 function of the centered sample covariance recovers the batch effect `β`: "all batch"
-`(β, δ) = (a, 0)` and "all biology" `(β, δ) = (0, a)` give the same `S`. -/
+`(β, δ) = (a, 0)` and "all biology" `(β, δ) = (0, a)` give the same `S`. Compare
+`MathlibExt.Biology.Omics.Pseudobulk.not_identifiable_of_confounded`, the scalar donor-level
+statement for the full data law. -/
 theorem not_exists_batch_estimator (hp : 0 < p) (E : Matrix (Fin n) (Fin p) ℝ)
     (μ : Fin p → ℝ) (b : Fin n → ℝ) :
     ¬ ∃ f : Matrix (Fin p) (Fin p) ℝ → Fin p → ℝ,
@@ -421,7 +445,8 @@ theorem center_vecMulVec (u : Fin n → ℝ) (v : Fin p → ℝ) :
   simp only [center, colMean, of_apply, vecMulVec_apply, ← Finset.sum_mul]
   ring
 
-/-- The sample covariance of a rank-one matrix `u vᵀ` is `var(u) • v vᵀ`, of rank at most one. -/
+/-- The sample covariance of a rank-one matrix `u vᵀ` is `var(u) • v vᵀ` (of rank at most one,
+see `rank_sampleCov_vecMulVec_le`). -/
 theorem sampleCov_vecMulVec (u : Fin n → ℝ) (v : Fin p → ℝ) :
     sampleCov (vecMulVec u v) =
       (((n : ℝ) - 1)⁻¹ * ∑ i, (u i - (∑ k, u k) / n) ^ 2) • vecMulVec v v := by
@@ -431,12 +456,25 @@ theorem sampleCov_vecMulVec (u : Fin n → ℝ) (v : Fin p → ℝ) :
 
 /-- **What `S` does see.** Without residual noise, the covariance of a confounded design is
 `var(b) • (β + δ)(β + δ)ᵀ`: the combined effect `β + δ` is visible (when `b` is not constant),
-only the split is not; `S` has rank at most one, a singular boundary case for `2 ≤ p`. -/
+only the split is not; `S` has rank at most one
+(`rank_sampleCov_batchModel_confounded_noiseless_le`), a singular boundary case for `2 ≤ p`. -/
 theorem sampleCov_batchModel_confounded_noiseless (μ : Fin p → ℝ) (b : Fin n → ℝ)
     (β δ : Fin p → ℝ) :
     sampleCov (batchModel 0 μ b b β δ) =
       (((n : ℝ) - 1)⁻¹ * ∑ i, (b i - (∑ k, b k) / n) ^ 2) • vecMulVec (β + δ) (β + δ) := by
   rw [sampleCov_batchModel_baseline 0 μ 0, batchModel_confounded, ← sampleCov_vecMulVec]
   simp [batchModel, vecMulVec_zero']
+
+/-- The sample covariance of a rank-one matrix `u vᵀ` has rank at most one. -/
+theorem rank_sampleCov_vecMulVec_le (u : Fin n → ℝ) (v : Fin p → ℝ) :
+    (sampleCov (vecMulVec u v)).rank ≤ 1 := by
+  rw [sampleCov_vecMulVec, ← smul_one_mul]
+  exact (rank_mul_le_right _ _).trans (rank_vecMulVec_le _ _)
+
+/-- The noiseless covariance of a confounded design has rank at most one. -/
+theorem rank_sampleCov_batchModel_confounded_noiseless_le (μ : Fin p → ℝ) (b : Fin n → ℝ)
+    (β δ : Fin p → ℝ) : (sampleCov (batchModel 0 μ b b β δ)).rank ≤ 1 := by
+  rw [sampleCov_batchModel_baseline 0 μ 0, batchModel_confounded]
+  simpa [batchModel, vecMulVec_zero'] using rank_sampleCov_vecMulVec_le b (β + δ)
 
 end MathlibExt.Biology.Omics.CovarianceBridge
