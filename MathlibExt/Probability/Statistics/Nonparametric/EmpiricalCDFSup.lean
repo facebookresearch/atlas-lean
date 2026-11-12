@@ -20,6 +20,8 @@ public import Mathlib.MeasureTheory.Function.AEMeasurableOrder
 open Filter Topology MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
+namespace ProbabilityTheory
+
 /-- Empirical CDF over a `Fin n` sample with the `/n` normalization.
 (Duplicate of the sibling ML-43.s2 spelling; the two modules are adapted on
 independent branches and neither imports the other. Dedupe by stacking this
@@ -66,8 +68,8 @@ theorem empCDF_rightContinuous {n : ℕ}
     exact ht i
   simp only [empCDF, hset]
 
-/-- Supremum of a pointwise deviation of two right-continuous functions is
-attained over the rationals. -/
+/-- Supremum of a pointwise deviation of two right-continuous functions equals
+its supremum over the rationals. -/
 theorem iSup_abs_sub_eq_iSup_rat (f g : ℝ → ℝ)
     (hf : ∀ x, ContinuousWithinAt f (Set.Ici x) x)
     (hg : ∀ x, ContinuousWithinAt g (Set.Ici x) x)
@@ -154,3 +156,5 @@ theorem measurableSet_uniform_deviation {n : ℕ} (hn : 0 < n)
       ((fun ω => |empCDF (fun i => X i ω) (q : ℝ) - F (q : ℝ)|) ⁻¹' Set.Ioi eps) :=
     habs measurableSet_Ioi
   exact hIoi
+
+end ProbabilityTheory

@@ -18,20 +18,20 @@ open scoped ENNReal
 set_option linter.unusedVariables false in
 /-- Positive case: the representation fires for constant functions. -/
 example (c d : ℝ) : (⨆ x : ℝ, |c - d|) = ⨆ q : ℚ, |c - d| := by
-  exact iSup_abs_sub_eq_iSup_rat (fun _ => c) (fun _ => d)
+  exact ProbabilityTheory.iSup_abs_sub_eq_iSup_rat (fun _ => c) (fun _ => d)
     (fun _ => continuousWithinAt_const) (fun _ => continuousWithinAt_const)
     ⟨|c - d|, fun _ => le_rfl⟩
 
 /-- Boundary case: `n = 0` is excluded because the totalized division gives
 the zero function, not an empirical CDF. -/
 example {Ω : Type*} [MeasurableSpace Ω] (X : Fin 0 → Ω → ℝ) (ω : Ω) (x : ℝ) :
-    empCDF (fun i => X i ω) x = 0 := by
-  simp [empCDF]
+    ProbabilityTheory.empCDF (fun i => X i ω) x = 0 := by
+  simp [ProbabilityTheory.empCDF]
 
 /-- Atomic case: no continuity on `F` is needed; a jump function is allowed. -/
 example {n : ℕ} (hn : 0 < n)
     {Ω : Type*} [MeasurableSpace Ω] (X : Fin n → Ω → ℝ)
     (eps : ℝ) (hX : ∀ i, Measurable (X i)) :
-    MeasurableSet {ω | ∃ q : ℚ, |empCDF (fun i => X i ω) (q : ℝ)
+    MeasurableSet {ω | ∃ q : ℚ, |ProbabilityTheory.empCDF (fun i => X i ω) (q : ℝ)
       - (if (q : ℝ) < 0 then (0 : ℝ) else 1)| > eps} := by
-  exact measurableSet_uniform_deviation hn X (fun r => if r < 0 then (0 : ℝ) else 1) eps hX
+  exact ProbabilityTheory.measurableSet_uniform_deviation hn X (fun r => if r < 0 then (0 : ℝ) else 1) eps hX
