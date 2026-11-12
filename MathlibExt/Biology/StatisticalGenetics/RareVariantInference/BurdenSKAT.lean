@@ -87,15 +87,16 @@ sequencing data with the sequence kernel association test*, Am. J. Hum. Genet. 8
 3. the default weights `√wⱼ = Beta(MAFⱼ; 1, 25)`.
 
 Wu et al. state the weights as the eigenvalues of `P₀^{1/2} K P₀^{1/2}`, where
-`P₀ = V - V X (Xᵀ V X)⁻¹ Xᵀ V` is the residual covariance; under `Σ₀ = σ² I` it is `σ⁴ P`. We use
-`(P Σ₀^{1/2})ᵀ K (P Σ₀^{1/2})` instead. The two spectra agree up to the factor `σ⁴`, through the
-`AB`/`BA` exchange and `P Σ₀ P = P` (`projP_mul_mul_projP`), matching the factor `σ⁻⁴` on `Q`
-in item 1, but this identification is not formalized. Nor are: plug-in estimation of `σ²` or
-of the variance components, p-value computation (Davies' method), the logistic model for binary
-traits, SKAT-O, and the burden test. The kinship covariance `Σ₀ = σ_g² · 2φ + σ_e² I` is the
-family-sample extension of H. Chen, J. B. Meigs, J. Dupuis, *Sequence kernel association test
-for quantitative traits in family samples*, Genet. Epidemiol. 37 (2013), 196–204; it is used
-here only as the model, not as a second source contract.
+`P₀ = V - V X (Xᵀ V X)⁻¹ Xᵀ V` (`X` including the intercept column) is the residual
+covariance; under `Σ₀ = σ² I` it is `σ⁴ P`. We use `(P Σ₀^{1/2})ᵀ K (P Σ₀^{1/2})` instead.
+The two spectra agree up to the factor `σ⁴`, through the `AB`/`BA` exchange and `P Σ₀ P = P`
+(`projP_mul_mul_projP`), matching the factor `σ⁻⁴` on `Q` in item 1, but this identification
+is not formalized. Nor are: plug-in estimation of `σ²` or of the variance components, p-value
+computation (Davies' method), the logistic model for binary traits, SKAT-O, and the burden
+test. The kinship covariance `Σ₀ = σ_g² · 2φ + σ_e² I` is the family-sample extension of
+H. Chen, J. B. Meigs, J. Dupuis, *Sequence kernel association test for quantitative traits in
+family samples*, Genet. Epidemiol. 37 (2013), 196–204; it is used here only as the model, not
+as a second source contract.
 
 ## API-00 receipt (base `origin/main` 53666a3c1)
 
@@ -106,11 +107,12 @@ Mathlib's `multivariateGaussian`, `stdGaussian_eq_map_pi_orthonormalBasis`,
 `CFC.sqrt`; the repository's `GeneralizedLeastSquares.glsMatrix`, `Kinship.Pedigree.kinship`,
 `Relatedness.IBDModel` and `Kinship.Pedigree.ibdModel`. The repository's Cochran theorem covers
 only projections (`χ²_r`), not general weights, so it is not reused. `BOLTLMM.Model.V` and
-`BOLTLMM.Model.proj` are the same `Σ₀` and `P` as `nullCov` and `projP` (bridges `nullCov_eq_V`,
-`projP_eq_proj`), and `Model.posDef_V`, `Model.proj_mul_X` and `Model.proj_mul_V_mul_proj` match
-`posDef_nullCov`, `projP_mul_self` and `projP_mul_mul_projP`. They are not used as the base API
-because `Model` requires `σ_e² > 0` and index type `Fin n`, which excludes the noise-free
-singular-kinship case treated here.
+`BOLTLMM.Model.proj` are the same `Σ₀` and `P` as `nullCov` and `projP` (bridges
+`nullCov_eq_V`, `projP_eq_proj`), and `Model.posDef_V`, `Model.proj_mul_X` and
+`Model.proj_mul_V_mul_proj` state the same identities as `posDef_nullCov`, `projP_mul_self`
+and `projP_mul_mul_projP`. They are not used as the base API because `Model` requires
+`σ_e² > 0` and index type `Fin n`, which excludes the noise-free singular-kinship case treated
+here.
 -/
 
 @[expose] public section
