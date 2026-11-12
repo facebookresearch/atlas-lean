@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Economics.Externalities.PublicGood
 import Mathlib.Tactic
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-! Examples and checks for `MathlibExt.Economics.Externalities.PublicGood` (Atlas AP02.T02). -/
 
@@ -80,5 +82,16 @@ theorem hv : ∀ i, HasDerivAt (testV i) (![1, 2] i) (3 / 2) := by
 example : ∑ i, ![1, 2] i = (3 : ℝ) :=
   sum_marginalBenefit_eq_marginalCost (v := testV) (cost := testCost) (G := 3 / 2)
     (mb := ![1, 2]) (mc := 3) hopt hv hc
+
+/-- Applying the Samuelson condition on the feasible domain at the optimum. -/
+example : ∑ i, ![1, 2] i = (3 : ℝ) := by
+  have hG : (0 : ℝ) < 3 / 2 := by norm_num
+  have hOptOn : IsLocalMaxOn (surplus testV testCost) (Set.Ici 0) (3 / 2) := by
+    apply Filter.Eventually.of_forall
+    intro x
+    rw [surplus_eq x, surplus_eq (3 / 2)]
+    nlinarith [sq_nonneg (x - 3 / 2)]
+  exact sum_marginalBenefit_eq_marginalCost_of_isLocalMaxOn (v := testV) (cost := testCost)
+    (G := 3 / 2) (mb := ![1, 2]) (mc := 3) hG hOptOn hv hc
 
 end MathlibExtTest.Economics.Externalities.PublicGood
