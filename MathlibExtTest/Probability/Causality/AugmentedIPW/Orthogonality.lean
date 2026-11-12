@@ -90,4 +90,45 @@ example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒳]
     simp
   rw [h, mul_zero]
 
+/-- Positive and degenerate training fold in one: constant estimators over a
+one-point (`Unit`, Dirac) training fold collapse the joint law to the
+evaluation law and the tower identity to the merged exact identity.
+This applies `integral_aipwScore_splitfold_tower` itself, then checks
+its conclusion against the merged exact identity. -/
+example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒳]
+    [MeasurableSingletonClass 𝒳] {μ : Measure Ω} [Fintype 𝒳]
+    [IsProbabilityMeasure μ] {R : Set Ω} (hR : MeasurableSet R)
+    {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
+    (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X) (π m : 𝒳 → ℝ) :
+    ∫ z : Unit × Ω, aipwScore R X π m Y z.2
+      ∂((Measure.dirac ()) |>.prod μ) =
+      ∫ ω, aipwScore R X π m Y ω ∂μ := by
+  have hgi : Integrable (aipwScore R X π m Y) μ :=
+    (integral_aipwScore_eq hR hX hY hYi hmar π m).1
+  have hprod : Integrable (fun z : Unit × Ω => aipwScore R X π m Y z.2)
+      ((Measure.dirac ()) |>.prod μ) :=
+    hgi.comp_snd _
+  have htower := integral_aipwScore_splitfold_tower hR hX hY hYi hmar
+    (fun _ : Unit => m) (fun _ : Unit => π) hprod
+  rw [integral_dirac] at htower
+  have hmerged := (integral_aipwScore_eq hR hX hY hYi hmar π m).2
+  rw [hmerged]
+  exact htower
+
+/-- Positivity is necessary for the zero-bias conclusion, not for the exact
+identity: with an empty response event the true and candidate propensities are
+both zero on the positive-mass stratum, MAR holds vacuously, yet the bias is
+`-2` (the exact fiber identity holds and computes this value). So a correct
+propensity alone does not imply unbiasedness without `ResponsePositivity`. -/
+example :
+    (∫ ω, aipwScore (∅ : Set (Fin 2)) (fun i : Fin 2 => decide (i = 1))
+      (fun _ : Bool => (0 : ℝ)) (fun _ : Bool => (0 : ℝ)) (![0, 2]) ω
+      ∂(Measure.dirac (1 : Fin 2))) -
+    ∫ ω, (![0, 2] : Fin 2 → ℝ) ω ∂(Measure.dirac (1 : Fin 2)) = -2 := by
+  have hmem : (1 : Fin 2) ∉ (∅ : Set (Fin 2)) := by simp
+  have hY1 : (![0, 2] : Fin 2 → ℝ) 1 = 2 := by simp
+  rw [integral_dirac _ _, integral_dirac _]
+  simp only [aipwScore, Set.indicator_of_notMem hmem, hY1]
+  norm_num
+
 end MathlibExtTest.Probability.Causality.AugmentedIPW.Orthogonality
