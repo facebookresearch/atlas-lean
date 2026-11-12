@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.StatisticalGenetics.BOLTLMM
 public import MathlibExt.Biology.StatisticalGenetics.KinshipIBD
 public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
@@ -81,13 +82,15 @@ sequencing data with the sequence kernel association test*, Am. J. Hum. Genet. 8
 82–93. From this paper we formalize, for the linear (continuous-trait) SKAT:
 1. the statistic `Q = (y - μ̂)ᵀ K (y - μ̂)` with `K = G W Gᵀ`. With `Σ₀ = σ² I` our `skatQ` is
    their `Q` multiplied by the known constant `σ⁻⁴`;
-2. the null law `Q ~ ∑ λⱼ χ²₁` with weights from the eigenvalues of the projected kernel, with
-   the variance components treated as known;
+2. the null law `Q ~ ∑ λⱼ χ²₁` (their eq. (6), with `P₀` defined in Appendix A), with weights
+   from the eigenvalues of the projected kernel and the variance components treated as known;
 3. the default weights `√wⱼ = Beta(MAFⱼ; 1, 25)`.
 
-Wu et al. state the weights as the eigenvalues of `P₀^{1/2} K P₀^{1/2}`. We use
-`(P Σ₀^{1/2})ᵀ K (P Σ₀^{1/2})` instead. The two matrices are related by the `AB`/`BA`
-exchange, but their identification is not formalized. Nor are: plug-in estimation of `σ²` or
+Wu et al. state the weights as the eigenvalues of `P₀^{1/2} K P₀^{1/2}`, where
+`P₀ = V - V X (Xᵀ V X)⁻¹ Xᵀ V` is the residual covariance; under `Σ₀ = σ² I` it is `σ⁴ P`. We use
+`(P Σ₀^{1/2})ᵀ K (P Σ₀^{1/2})` instead. The two spectra agree up to the factor `σ⁴`, through the
+`AB`/`BA` exchange and `P Σ₀ P = P` (`projP_mul_mul_projP`), matching the factor `σ⁻⁴` on `Q`
+in item 1, but this identification is not formalized. Nor are: plug-in estimation of `σ²` or
 of the variance components, p-value computation (Davies' method), the logistic model for binary
 traits, SKAT-O, and the burden test. The kinship covariance `Σ₀ = σ_g² · 2φ + σ_e² I` is the
 family-sample extension of H. Chen, J. B. Meigs, J. Dupuis, *Sequence kernel association test
@@ -102,7 +105,12 @@ Mathlib's `multivariateGaussian`, `stdGaussian_eq_map_pi_orthonormalBasis`,
 `Matrix.IsHermitian.eigenvectorBasis` / `eigenvalues` / `trace_eq_sum_eigenvalues`, and
 `CFC.sqrt`; the repository's `GeneralizedLeastSquares.glsMatrix`, `Kinship.Pedigree.kinship`,
 `Relatedness.IBDModel` and `Kinship.Pedigree.ibdModel`. The repository's Cochran theorem covers
-only projections (`χ²_r`), not general weights, so it is not reused.
+only projections (`χ²_r`), not general weights, so it is not reused. `BOLTLMM.Model.V` and
+`BOLTLMM.Model.proj` are the same `Σ₀` and `P` as `nullCov` and `projP` (bridges `nullCov_eq_V`,
+`projP_eq_proj`), and `Model.posDef_V`, `Model.proj_mul_X` and `Model.proj_mul_V_mul_proj` match
+`posDef_nullCov`, `projP_mul_self` and `projP_mul_mul_projP`. They are not used as the base API
+because `Model` requires `σ_e² > 0` and index type `Fin n`, which excludes the noise-free
+singular-kinship case treated here.
 -/
 
 @[expose] public section
@@ -214,7 +222,7 @@ noncomputable def glsResidual (X : Matrix n q ℝ) (V : Matrix n n ℝ) (y : n �
   y - X *ᵥ (glsMatrix X V *ᵥ y)
 
 /-- The SKAT variance-component score statistic
-`Q = (y - X α̂)ᵀ V⁻¹ K V⁻¹ (y - X α̂)` (Wu et al. 2011, eq. (2), with the null covariance `V`
+`Q = (y - X α̂)ᵀ V⁻¹ K V⁻¹ (y - X α̂)` (Wu et al. 2011, eq. (3), with the null covariance `V`
 in place of `σ² I`). -/
 noncomputable def skatQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ) (w : m → ℝ)
     (y : n → ℝ) : ℝ :=
@@ -586,6 +594,16 @@ theorem ae_dotProduct_sub_eq_zero {S : Matrix n n ℝ} (hS : S.PosSemidef) {v : 
   refine Filter.Eventually.of_forall fun z => ?_
   simp only [ofLp_add, ofLp_toEuclideanCLM, add_sub_cancel_left]
   rw [dotProduct_mulVec, ← mulVec_transpose, hR, hRv, zero_dotProduct]
+
+/-! ### Bridge to `BOLTLMM` -/
+
+/-- `nullCov` is the marginal covariance `BOLTLMM.Model.V` of the BOLT-LMM model. -/
+theorem nullCov_eq_V {N : ℕ} (M : BOLTLMM.Model N) : nullCov M.K M.σg2 M.σe2 = M.V := rfl
+
+/-- `projP` is the residual-forming matrix `BOLTLMM.Model.proj` of the BOLT-LMM model. -/
+theorem projP_eq_proj {N p : ℕ} (M : BOLTLMM.Model N) (X : Matrix (Fin N) (Fin p) ℝ) :
+    projP X M.V = M.proj X := by
+  simp only [projP, glsMatrix, BOLTLMM.Model.proj, Matrix.mul_assoc]
 
 end Model
 
