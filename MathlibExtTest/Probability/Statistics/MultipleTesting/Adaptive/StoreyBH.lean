@@ -16,7 +16,7 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 /-!
 # Tests for Storey-BH
 
-* concrete values of `storeyPi0`, `storeyThreshold`, `storeyBHIndex`, `storeyBHRejections`;
+* concrete values of `storeyPi0Plus1`, `storeyThreshold`, `storeyBHIndex`, `storeyBHRejections`;
 * a two-null model with valid, independent p-values on which the FDR theorem applies
   (non-vacuity), with the FDR of each fixed `lam` computed exactly;
 * **adversarial adaptive use 1**: choosing `lam` after seeing the p-values breaks FDR control
@@ -27,7 +27,8 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics.MultipleTesting
+open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics
+open MathlibExt.Probability.Statistics.MultipleTesting
 
 namespace MathlibExtTest.Probability.Statistics.MultipleTesting.Adaptive.StoreyBH
 
@@ -66,17 +67,17 @@ theorem storeyBHIndex_two (q lam : ℝ) (v : Fin 2 → ℝ) :
 noncomputable def pa : Fin 2 → ℝ := ![1 / 9, 1]
 
 /-- With `lam = 1/9`, one p-value exceeds `lam`, so `π̂₀ = (1 + 1) / ((8/9) · 2) = 9/8`. -/
-theorem storeyPi0_pa : storeyPi0 (1 / 9) pa = 9 / 8 := by
-  rw [storeyPi0, numAbove_two]; norm_num [pa]
+theorem storeyPi0Plus1_pa : storeyPi0Plus1 (1 / 9) pa = 9 / 8 := by
+  rw [storeyPi0Plus1, numAbove_two]; norm_num [pa]
 
 /-- Even when no p-value exceeds `lam`, the `+ 1` keeps `π̂₀ = 1 / ((1 - lam) m) > 0`. -/
-theorem storeyPi0_all_small : storeyPi0 (1 / 2) (![1 / 9, 1 / 3] : Fin 2 → ℝ) = 1 := by
-  rw [storeyPi0, numAbove_two]; norm_num
+theorem storeyPi0Plus1_all_small : storeyPi0Plus1 (1 / 2) (![1 / 9, 1 / 3] : Fin 2 → ℝ) = 1 := by
+  rw [storeyPi0Plus1, numAbove_two]; norm_num
 
 /-- At `q = 1/4`, `lam = 1/9`: the thresholds `min (1/9) (q k / (m π̂₀)) = min (1/9) (k/9)` are
 capped at `lam = 1/9` already for `k = 1`. -/
 theorem storeyThreshold_pa (k : ℕ) (hk : 1 ≤ k) : storeyThreshold (1 / 4) (1 / 9) pa k = 1 / 9 := by
-  rw [storeyThreshold, storeyPi0_pa]
+  rw [storeyThreshold, storeyPi0Plus1_pa]
   apply min_eq_left
   have : (1 : ℝ) ≤ k := by exact_mod_cast hk
   norm_num
@@ -94,13 +95,12 @@ theorem storeyBHRejections_pa : storeyBHRejections (1 / 4) (1 / 9) pa = {0} := b
   rw [mem_storeyBHRejections, storeyBHIndex_pa, storeyThreshold_pa 1 le_rfl]
   fin_cases i <;> norm_num [pa]
 
-/-- Boundary case: if every p-value exceeds `lam`, Storey-BH rejects nothing, whatever `q`. -/
-theorem storeyBHRejections_eq_empty_of_lt (q : ℝ) {lam : ℝ} {v : Fin 2 → ℝ}
-    (hv : ∀ j, lam < v j) : storeyBHRejections q lam v = ∅ := by
-  ext i
-  simp only [Finset.notMem_empty, iff_false]
-  intro hi
-  exact absurd (le_of_mem_storeyBHRejections hi) (not_le.mpr (hv i))
+/-- Boundary case: if every p-value exceeds `lam`, Storey-BH rejects nothing, whatever `q` and
+`m`. -/
+theorem storeyBHRejections_eq_empty_of_lt {m : ℕ} (q : ℝ) {lam : ℝ} {v : Fin m → ℝ}
+    (hv : ∀ j, lam < v j) : storeyBHRejections q lam v = ∅ :=
+  Finset.eq_empty_of_forall_notMem fun i hi =>
+    absurd (le_of_mem_storeyBHRejections hi) (not_le.mpr (hv i))
 
 /-! ### A two-null model with valid, independent p-values
 
@@ -302,7 +302,7 @@ theorem fdr_lamHat_gt : (1 / 4 : ℝ) < ∫ ω, falseDiscoveryProportion Finset.
 One true null with the law `ν` above, and an estimator `π̂₀` computed from the same p-value that is
 exactly unbiased, `E[π̂₀] = 1 = π₀`. BH at the plug-in level `q / π̂₀` has FDR `1/3 > 1/4 = q`:
 `π̂₀` is small exactly when the p-value is moderately small. Storey's estimator avoids this
-because, on `{p i ≤ lam}`, it does not depend on `p i` at all (`storeyPi0_update_zero`). -/
+because, on `{p i ≤ lam}`, it does not depend on `p i` at all (`storeyPi0Plus1_update_zero`). -/
 
 /-- An estimator of `π₀` that reads the p-value it is used to test. -/
 noncomputable def piHat : Fin 3 → ℝ := ![1, 3 / 4, 13 / 12]
@@ -352,18 +352,26 @@ theorem fdr_plugIn_piHat_gt :
 
 /-! ### Conservativeness of Storey's estimator in the model -/
 
-/-- In the two-null model, `E[π̂₀(1/3)] ≥ |H0| / m = 1` (`le_integral_storeyPi0`). -/
+/-- In the two-null model, main's conservativeness lemma `TwoGroupsTesting.le_integral_storeyPi0`
+gives `E[π̂₀(1/3)] ≥ |H0| / m = 1` for Storey's (2002) estimator. -/
 theorem one_le_integral_storeyPi0 :
-    (1 : ℝ) ≤ ∫ ω, storeyPi0 (1 / 3) (fun i => P i ω) ∂μ := by
-  have h := le_integral_storeyPi0 μ P measurable_P Finset.univ (lam := 1 / 3)
-    (fun i _ => ENNReal.toReal_le_of_le_ofReal (by norm_num)
-      (isValidPValue_P i (1 / 3) ⟨by norm_num, by norm_num⟩)) (by norm_num)
+    (1 : ℝ) ≤ ∫ ω, TwoGroupsTesting.storeyPi0 (1 / 3) (fun i => P i ω) ∂μ := by
+  have h := TwoGroupsTesting.le_integral_storeyPi0 (μ := μ) measurable_P (H0 := Finset.univ)
+    (fun i _ => isValidPValue_P i) (t := 1 / 3) (by norm_num) (by norm_num)
   simpa using h
 
+/-- The bridge between the two estimators on a concrete vector: with `lam = 1/9`, `pa` has one
+p-value above `lam`, so `π̂₀ = 1 / ((8/9) · 2) = 9/16` without the `+ 1` and `9/8` with it. -/
+example : TwoGroupsTesting.storeyPi0 (1 / 9) pa = 9 / 16 := by
+  have h := storeyPi0Plus1_eq_storeyPi0_add (1 / 9) pa
+  rw [storeyPi0Plus1_pa] at h
+  norm_num at h
+  linarith
+
 /-- The leave-one-out estimator bound `∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ m` holds in the model. -/
-theorem sum_integral_inv_storeyPi0_update_le_two :
-    ∑ i, ∫ ω, (storeyPi0 (1 / 3) (Function.update (fun j => P j ω) i 0))⁻¹ ∂μ ≤ 2 := by
-  have h := sum_integral_inv_storeyPi0_update_le μ P measurable_P Finset.univ
+theorem sum_integral_inv_storeyPi0Plus1_update_le_two :
+    ∑ i, ∫ ω, (storeyPi0Plus1 (1 / 3) (Function.update (fun j => P j ω) i 0))⁻¹ ∂μ ≤ 2 := by
+  have h := sum_integral_inv_storeyPi0Plus1_update_le μ P measurable_P Finset.univ
     (fun i _ => indepFun_P_rest i) (fun i _ => isValidPValue_P i) (lam := 1 / 3)
     (by norm_num) (by norm_num)
   simpa using h

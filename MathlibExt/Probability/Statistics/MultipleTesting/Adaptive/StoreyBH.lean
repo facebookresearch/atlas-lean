@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Probability.Independence.Integration
+public import MathlibExt.Probability.Statistics.TwoGroupsTesting
 
 /-!
 # Adaptive FDR control: the Storey-BH procedure
@@ -18,8 +19,8 @@ public import Mathlib.Probability.Independence.Integration
 Benjamini–Hochberg (BH) at level `q` controls the false discovery rate at `q |H0| / m`, which is
 conservative when the proportion `π₀ = |H0| / m` of true nulls is small. Storey's adaptive
 procedure estimates `π₀` from the p-values,
-`π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)` (`storeyPi0`), and runs BH at the larger level
-`q / π̂₀(lam)`, rejecting only p-values `≤ lam` (`storeyThreshold`, `storeyBHIndex`,
+`π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)` (`storeyPi0Plus1`), and runs BH at the larger
+level `q / π̂₀(lam)`, rejecting only p-values `≤ lam` (`storeyThreshold`, `storeyBHIndex`,
 `storeyBHRejections`).
 
 Storey, Taylor and Siegmund (2004, Theorem 3) proved that this procedure controls the FDR at `q`
@@ -30,12 +31,16 @@ leave-one-out argument:
    `{i rejected}` we have `p i ≤ lam`, so `π̂₀` and the number of rejections coincide with those
    computed from the vector with `p i := 0`, which depend only on the other p-values. Independence
    and validity of `p i` then give `E[1{i ∈ R} / |R|] ≤ (q / m) E[1 / π̂₀⁽ⁱ⁾]`.
-2. *Estimator property* (`sum_integral_inv_storeyPi0_update_le`):
+2. *Estimator property* (`sum_integral_inv_storeyPi0Plus1_update_le`):
    `∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ m`.
 
-Conservativeness in expectation, `E[π̂₀] ≥ |H0| / m` (`le_integral_storeyPi0`), is proved too, but
-it is not used and does not suffice: the test file has an exactly unbiased estimator of `π₀`
-whose plug-in BH procedure has FDR `1/3` at `q = 1/4`.
+Storey's (2002) estimator without the `+ 1`, its conservativeness in expectation
+`E[π̂₀] ≥ |H0| / m`, and the q-value are already on main as `TwoGroupsTesting.storeyPi0`,
+`TwoGroupsTesting.le_integral_storeyPi0` and `TwoGroupsTesting.qValue`. The FDR theorem needs the
+`+ 1` form of Storey, Taylor and Siegmund (2004), so it is a separate definition, `storeyPi0Plus1`,
+related to main's by `storeyPi0Plus1_eq_storeyPi0_add` and `storeyPi0_le_storeyPi0Plus1`.
+Conservativeness in expectation is not used and does not suffice: the test file has an exactly
+unbiased estimator of `π₀` whose plug-in BH procedure has FDR `1/3` at `q = 1/4`.
 
 ## Conditions, stated explicitly
 
@@ -53,17 +58,26 @@ whose plug-in BH procedure has FDR `1/3` at `q = 1/4`.
 ## Main results
 
 * `storeyBH_leave_one_out`: the leave-one-out property of Storey-BH.
-* `sum_integral_inv_storeyPi0_update_le`: `∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ m`.
+* `sum_integral_inv_storeyPi0Plus1_update_le`: `∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ m`.
 * `integral_falseDiscoveryProportion_storeyBHRejections_le`: `E[FDP] ≤ q`.
 * `integral_falseDiscoveryProportion_storeyBHRejections_le_of_iIndepFun`: the same under
   mutual independence.
-* `le_integral_storeyPi0`: `E[π̂₀] ≥ |H0| / m`.
+* `storeyPi0Plus1_eq_storeyPi0_add`, `storeyPi0_le_storeyPi0Plus1`: relation to
+  `TwoGroupsTesting.storeyPi0`.
 
 ## Not covered
 
-The Storey q-value procedure with a data-dependent `lam` (or a `lam`-grid chosen by bootstrap),
-FDR control under PRDS or arbitrary dependence (where Storey-BH can fail), and the asymptotic
-results of Storey et al. (2004, §4) are not formalized.
+FDR control of the Storey q-value procedure (`TwoGroupsTesting.qValue` applied to a pFDR estimate)
+or of Storey-BH with a data-dependent `lam` (or a `lam`-grid chosen by bootstrap), FDR control
+under PRDS or arbitrary dependence (where Storey-BH can fail), and the asymptotic results of Storey
+et al. (2004, §4) are not formalized.
+
+## Follow-up
+
+`numBelow_update_le'`, `numBelow_update_eq'`, `fdp_eq_sum` and `valid_measureReal_le` re-prove
+private lemmas of `MultipleTesting.BenjaminiHochberg`, and the generic step-up leave-one-out
+(`suIdx`, `su_leave_one_out`) could replace `bhIndex`'s copy. Moving them to
+`MultipleTesting.Basic` as public lemmas is left to a follow-up that edits that file.
 
 ## References
 
@@ -87,15 +101,15 @@ variable {m : ℕ}
 /-- **Storey's estimator of the proportion of true nulls** with tuning parameter `lam`, in the
 finite-sample form used by Storey, Taylor and Siegmund (2004, Theorem 3):
 `π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)`. The `+ 1` keeps `π̂₀ > 0` and is used in the
-FDR proof (`sum_integral_inv_storeyPi0_update_le`). -/
-noncomputable def storeyPi0 (lam : ℝ) (p : Fin m → ℝ) : ℝ :=
+FDR proof (`sum_integral_inv_storeyPi0Plus1_update_le`). -/
+noncomputable def storeyPi0Plus1 (lam : ℝ) (p : Fin m → ℝ) : ℝ :=
   (((Finset.univ.filter fun j => lam < p j).card : ℝ) + 1) / ((1 - lam) * m)
 
 /-- The thresholds of the **Storey-BH** step-up procedure: BH at the adaptive level
 `q / π̂₀(lam)`, capped at `lam`, so the `k`-th threshold is `min lam (q k / (m π̂₀(lam)))`. Only
 p-values `≤ lam` can be rejected (Storey, Taylor and Siegmund 2004, Theorem 3). -/
 noncomputable def storeyThreshold (q lam : ℝ) (p : Fin m → ℝ) (k : ℕ) : ℝ :=
-  min lam (q / storeyPi0 lam p * k / m)
+  min lam (q / storeyPi0Plus1 lam p * k / m)
 
 /-- The Storey-BH step-up index: the largest `k ∈ {0, …, m}` such that at least `k` p-values are
 at most `storeyThreshold q lam p k` (`k = 0` always qualifies). -/
@@ -197,17 +211,18 @@ private theorem su_leave_one_out {c : ℕ → ℝ} (hc : Monotone c) (hc0 : ∀ 
 /-! ### Basic properties of Storey's estimator and the Storey-BH procedure -/
 
 /-- Storey's estimator is nonnegative for `lam ≤ 1`. -/
-theorem storeyPi0_nonneg {lam : ℝ} (hlam : lam ≤ 1) (p : Fin m → ℝ) : 0 ≤ storeyPi0 lam p := by
-  unfold storeyPi0
+theorem storeyPi0Plus1_nonneg {lam : ℝ} (hlam : lam ≤ 1) (p : Fin m → ℝ) :
+    0 ≤ storeyPi0Plus1 lam p := by
+  unfold storeyPi0Plus1
   have : 0 ≤ 1 - lam := by linarith
   positivity
 
 /-- Replacing a p-value `p i ≤ lam` by `0` does not change Storey's estimator when `0 ≤ lam`:
 only p-values above `lam` are counted. -/
-theorem storeyPi0_update_zero {lam : ℝ} (hlam : 0 ≤ lam) (p : Fin m → ℝ) (i : Fin m)
-    (hpi : p i ≤ lam) : storeyPi0 lam (Function.update p i 0) = storeyPi0 lam p := by
+theorem storeyPi0Plus1_update_zero {lam : ℝ} (hlam : 0 ≤ lam) (p : Fin m → ℝ) (i : Fin m)
+    (hpi : p i ≤ lam) : storeyPi0Plus1 lam (Function.update p i 0) = storeyPi0Plus1 lam p := by
   classical
-  unfold storeyPi0
+  unfold storeyPi0Plus1
   congr 4
   ext j
   by_cases hji : j = i
@@ -220,7 +235,7 @@ theorem storeyPi0_update_zero {lam : ℝ} (hlam : 0 ≤ lam) (p : Fin m → ℝ)
 theorem storeyThreshold_eq (hm : m ≠ 0) (q lam : ℝ) (p : Fin m → ℝ) (k : ℕ) :
     storeyThreshold q lam p k =
       min lam (q * (1 - lam) * k / ((Finset.univ.filter fun j => lam < p j).card + 1)) := by
-  unfold storeyThreshold storeyPi0
+  unfold storeyThreshold storeyPi0Plus1
   congr 1
   have hm' : (m : ℝ) ≠ 0 := by exact_mod_cast hm
   rw [div_div_eq_mul_div]
@@ -234,14 +249,14 @@ theorem storeyThreshold_le (q lam : ℝ) (p : Fin m → ℝ) (k : ℕ) :
 /-- The Storey-BH thresholds are nonnegative for `0 ≤ q` and `0 ≤ lam ≤ 1`. -/
 theorem storeyThreshold_nonneg {q lam : ℝ} (hq : 0 ≤ q) (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1)
     (p : Fin m → ℝ) (k : ℕ) : 0 ≤ storeyThreshold q lam p k := by
-  have := storeyPi0_nonneg hlam1 p
+  have := storeyPi0Plus1_nonneg hlam1 p
   exact le_min hlam0 (by positivity)
 
 /-- The Storey-BH thresholds are nondecreasing in `k` for `0 ≤ q` and `lam ≤ 1`. -/
 theorem storeyThreshold_mono {q lam : ℝ} (hq : 0 ≤ q) (hlam1 : lam ≤ 1) (p : Fin m → ℝ) :
     Monotone (storeyThreshold q lam p) := by
   intro k l hkl
-  have := storeyPi0_nonneg hlam1 p
+  have := storeyPi0Plus1_nonneg hlam1 p
   refine min_le_min le_rfl ?_
   have hkl' : (k : ℝ) ≤ l := by exact_mod_cast hkl
   gcongr
@@ -251,7 +266,7 @@ theorem storeyThreshold_update_zero {q lam : ℝ} (hlam : 0 ≤ lam) (p : Fin m 
     (hpi : p i ≤ lam) :
     storeyThreshold q lam (Function.update p i 0) = storeyThreshold q lam p := by
   funext k
-  simp only [storeyThreshold, storeyPi0_update_zero hlam p i hpi]
+  simp only [storeyThreshold, storeyPi0Plus1_update_zero hlam p i hpi]
 
 private theorem storeyBHIndex_eq_suIdx (q lam : ℝ) (p : Fin m → ℝ) :
     storeyBHIndex q lam p = suIdx (storeyThreshold q lam p) p := rfl
@@ -371,10 +386,10 @@ private theorem measurable_suIdx_comp {Y : Type*} [MeasurableSpace Y] (c : Y →
         (measurable_numBelow_comp x hx (hc k))) measurable_const measurable_const).max ih
   exact h _
 
-private theorem measurable_storeyPi0_comp {Y : Type*} [MeasurableSpace Y] (x : Y → Fin m → ℝ)
+private theorem measurable_storeyPi0Plus1_comp {Y : Type*} [MeasurableSpace Y] (x : Y → Fin m → ℝ)
     (hx : ∀ j, Measurable fun y => x y j) (lam : ℝ) :
-    Measurable fun y => storeyPi0 lam (x y) := by
-  unfold storeyPi0
+    Measurable fun y => storeyPi0Plus1 lam (x y) := by
+  unfold storeyPi0Plus1
   exact (((measurable_of_countable (fun n : ℕ => (n : ℝ))).comp
     (measurable_numAbove_comp x hx lam)).add_const 1).div_const _
 
@@ -384,7 +399,7 @@ private theorem measurable_storeyBHIndex_comp {Y : Type*} [MeasurableSpace Y] (q
   refine measurable_suIdx_comp (fun y => storeyThreshold q lam (x y)) x (fun k => ?_) hx
   unfold storeyThreshold
   exact measurable_const.min
-    (((measurable_storeyPi0_comp x hx lam).const_div q).mul_const _ |>.div_const _)
+    (((measurable_storeyPi0Plus1_comp x hx lam).const_div q).mul_const _ |>.div_const _)
 
 /-! ### Leave-one-out bookkeeping -/
 
@@ -711,12 +726,13 @@ Then BH run at the adaptive level `q / π̂₀(lam)`, with Storey's estimator
 
 Unlike plain BH (`E[FDP] ≤ q |H0| / m`), the bound does not shrink with `|H0| / m`: the adaptive
 level spends the slack. The proof goes through the interaction of the adaptive threshold with the
-p-values, not through `E[π̂₀] ≥ |H0| / m` (which holds, `le_integral_storeyPi0`, but does not
-suffice). On `{i rejected}` we have `p i ≤ lam`, so `π̂₀` does not depend on `p i` and the
+p-values, not through `E[π̂₀] ≥ |H0| / m` (which holds, `TwoGroupsTesting.le_integral_storeyPi0`
+and `storeyPi0_le_storeyPi0Plus1`, but does not suffice). On `{i rejected}` we have `p i ≤ lam`,
+so `π̂₀` does not depend on `p i` and the
 leave-one-out property (`storeyBH_leave_one_out`) gives
 `E[1{i ∈ R} / |R|] ≤ q (1 - lam) E[1 / (N_i + 1)]`, where `N_i` counts the *other* p-values above
 `lam`; then `∑_{i ∈ H0} (1 - lam) E[1 / (N_i + 1)] ≤ 1`
-(`sum_integral_inv_storeyPi0_update_le`). (For `m = 0` both sides are `0`.)
+(`sum_integral_inv_storeyPi0Plus1_update_le`). (For `m = 0` both sides are `0`.)
 
 Source: J. D. Storey, J. E. Taylor and D. Siegmund, *Strong control, conservative point
 estimation and simultaneous conservative consistency of false discovery rates: a unified
@@ -756,78 +772,38 @@ true-null p-value is valid and independent of the other p-values, then
 gives
 `E[FDP] ≤ ∑_{i ∈ H0} (q / m) E[1 / π̂₀⁽ⁱ⁾] ≤ q`. This is a bound on the *inverse* of the
 leave-one-out estimator; conservativeness in expectation, `E[π̂₀] ≥ |H0| / m`
-(`le_integral_storeyPi0`), does not imply it (Jensen goes the wrong way). -/
-theorem sum_integral_inv_storeyPi0_update_le {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+(`TwoGroupsTesting.le_integral_storeyPi0`), does not imply it (Jensen goes the wrong way). -/
+theorem sum_integral_inv_storeyPi0Plus1_update_le {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
     (H0 : Finset (Fin m))
     (hindep : ∀ i ∈ H0, IndepFun (p i) (fun ω (j : {j // j ≠ i}) => p j ω) μ)
     (hnull : ∀ i ∈ H0, IsValidPValue μ (p i)) {lam : ℝ} (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) :
-    ∑ i ∈ H0, ∫ ω, (storeyPi0 lam (Function.update (fun j => p j ω) i 0))⁻¹ ∂μ ≤ m := by
-  have heq (i : Fin m) (ω : Ω) : (storeyPi0 lam (Function.update (fun j => p j ω) i 0))⁻¹ =
+    ∑ i ∈ H0, ∫ ω, (storeyPi0Plus1 lam (Function.update (fun j => p j ω) i 0))⁻¹ ∂μ ≤ m := by
+  have heq (i : Fin m) (ω : Ω) : (storeyPi0Plus1 lam (Function.update (fun j => p j ω) i 0))⁻¹ =
       m * ((1 - lam) / ((numAboveLOO lam (fun j => p j ω) i : ℝ) + 1)) := by
-    rw [storeyPi0, inv_div, numAboveLOO]; ring
+    rw [storeyPi0Plus1, inv_div, numAboveLOO]; ring
   simp_rw [heq, integral_const_mul, ← Finset.mul_sum]
   calc (m : ℝ) * _ ≤ m * 1 := mul_le_mul_of_nonneg_left
         (sum_integral_loo_le_one μ p hp H0 hindep
           (fun i hi => valid_measureReal_le (hnull i hi) hlam0 hlam1) hlam0) (Nat.cast_nonneg m)
     _ = m := mul_one _
 
-/-- **Storey's estimator is conservative in expectation**: if every true-null p-value is valid
-at `lam ∈ [0, 1)`, then `E[π̂₀(lam)] ≥ |H0| / m`. No independence is needed. This is the classical
-justification of `π̂₀` as an estimator, but it is *not* what makes adaptive BH FDR-controlling: the
-test file exhibits an estimator that is exactly unbiased for `|H0| / m` and whose plug-in BH
-procedure has FDR far above `q`. -/
-theorem le_integral_storeyPi0 {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
-    (H0 : Finset (Fin m)) {lam : ℝ} (hnull : ∀ i ∈ H0, μ.real {ω | p i ω ≤ lam} ≤ lam)
-    (hlam1 : lam < 1) :
-    (H0.card : ℝ) / m ≤ ∫ ω, storeyPi0 lam (fun j => p j ω) ∂μ := by
-  classical
-  rcases Nat.eq_zero_or_pos m with rfl | hm
-  · simp [storeyPi0]
-  have hc : 0 < (1 - lam) * m := mul_pos (by linarith) (by exact_mod_cast hm)
-  have hPm : Measurable fun ω => storeyPi0 lam (fun j => p j ω) :=
-    measurable_storeyPi0_comp (fun ω j => p j ω) hp lam
-  have hPint : Integrable (fun ω => storeyPi0 lam (fun j => p j ω)) μ := by
-    refine Integrable.of_bound hPm.aestronglyMeasurable (((m : ℝ) + 1) / ((1 - lam) * m))
-      (Filter.Eventually.of_forall fun ω => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (storeyPi0_nonneg hlam1.le _), storeyPi0]
-    gcongr
-    have := Finset.card_filter_le (Finset.univ : Finset (Fin m)) fun j => lam < p j ω
-    rw [Finset.card_univ, Fintype.card_fin] at this
-    exact_mod_cast this
-  let ind : Fin m → Ω → ℝ := fun i => {ω | lam < p i ω}.indicator fun _ => 1
-  have hind (i : Fin m) : MeasurableSet {ω | lam < p i ω} :=
-    measurableSet_lt measurable_const (hp i)
-  have hpt (ω : Ω) : (∑ i ∈ H0, ind i ω) / ((1 - lam) * m) ≤ storeyPi0 lam (fun j => p j ω) := by
-    rw [storeyPi0]
-    gcongr
-    have h1 : ∑ i ∈ H0, ind i ω = ((H0.filter fun i => lam < p i ω).card : ℝ) := by
-      rw [Finset.card_filter]; push_cast
-      exact Finset.sum_congr rfl fun i _ => by simp [ind, Set.indicator_apply]
-    rw [h1]
-    have : (H0.filter fun i => lam < p i ω).card ≤
-        (Finset.univ.filter fun j => lam < p j ω).card :=
-      Finset.card_le_card (Finset.filter_subset_filter _ (Finset.subset_univ H0))
-    have : ((H0.filter fun i => lam < p i ω).card : ℝ) ≤
-        (Finset.univ.filter fun j => lam < p j ω).card := by exact_mod_cast this
-    linarith
-  have hlow_int : Integrable (fun ω => (∑ i ∈ H0, ind i ω) / ((1 - lam) * m)) μ :=
-    (integrable_finsetSum H0 fun i _ => (integrable_const _).indicator (hind i)).div_const _
-  calc (H0.card : ℝ) / m = (∑ _i ∈ H0, (1 - lam)) / ((1 - lam) * m) := by
-        rw [Finset.sum_const, nsmul_eq_mul]; field_simp
-    _ ≤ (∑ i ∈ H0, μ.real {ω | lam < p i ω}) / ((1 - lam) * m) := by
-        gcongr with i hi
-        rw [show {ω | lam < p i ω} = {ω | p i ω ≤ lam}ᶜ by ext; simp,
-          probReal_compl_eq_one_sub (measurableSet_le (hp i) measurable_const)]
-        linarith [hnull i hi]
-    _ = ∫ ω, (∑ i ∈ H0, ind i ω) / ((1 - lam) * m) ∂μ := by
-        rw [integral_div, integral_finsetSum H0 fun i _ =>
-          (integrable_const _).indicator (hind i)]
-        congr 1
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [integral_indicator_const _ (hind i), smul_eq_mul, mul_one]
-    _ ≤ ∫ ω, storeyPi0 lam (fun j => p j ω) ∂μ := integral_mono hlow_int hPint hpt
+/-- **Bridge to Storey's (2002) estimator on main.** `storeyPi0Plus1` is
+`TwoGroupsTesting.storeyPi0` plus the finite-sample correction `1 / ((1 - lam) m)`. -/
+theorem storeyPi0Plus1_eq_storeyPi0_add (lam : ℝ) (p : Fin m → ℝ) :
+    storeyPi0Plus1 lam p =
+      TwoGroupsTesting.storeyPi0 lam p + 1 / ((1 - lam) * m) := by
+  rw [storeyPi0Plus1, TwoGroupsTesting.storeyPi0, add_div, mul_comm (m : ℝ)]
+
+/-- The `+ 1` estimator dominates Storey's (2002) estimator pointwise for `lam ≤ 1`, so the
+conservativeness in expectation `TwoGroupsTesting.le_integral_storeyPi0`
+(`E[π̂₀] ≥ |H0| / m`) transfers to it. -/
+theorem storeyPi0_le_storeyPi0Plus1 {lam : ℝ} (hlam : lam ≤ 1) (p : Fin m → ℝ) :
+    TwoGroupsTesting.storeyPi0 lam p ≤ storeyPi0Plus1 lam p := by
+  rw [storeyPi0Plus1_eq_storeyPi0_add]
+  have : 0 ≤ 1 - lam := by linarith
+  have : 0 ≤ 1 / ((1 - lam) * m) := by positivity
+  linarith
 
 /-- Mutually independent p-values satisfy the independence hypothesis of the Storey-BH theorem:
 each `p i` is independent of the vector of the other p-values. -/
