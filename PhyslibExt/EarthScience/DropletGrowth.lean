@@ -15,7 +15,7 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 
 /-!
-# Diffusion-limited droplet growth (A06)
+# Diffusion-limited droplet growth
 
 ## i. Overview
 
@@ -27,10 +27,10 @@ ignored; there is no zero-radius continuation.
 
 ## ii. Key results
 
-- `EarthScience.a06_radius_sq`: `(r(t))^2 = r0^2 + 2*K*S*t`.
-- `EarthScience.a06_radius_sq_hasDerivAt`: `(r^2)' = 2*K*S` where the argument is positive.
-- `EarthScience.a06_radius_hasDerivAt`: `r' = K*S / r(t)` when `r(t) > 0`.
-- `EarthScience.a06_no_supersaturation`: `S = 0` keeps `r = r0`.
+- `EarthScience.radius_sq`: `(r(t))^2 = r0^2 + 2*K*S*t`.
+- `EarthScience.radius_sq_hasDerivAt`: `(r^2)' = 2*K*S` where the argument is positive.
+- `EarthScience.radius_hasDerivAt`: `r' = K*S / r(t)` when `r(t) > 0`.
+- `EarthScience.no_supersaturation`: `S = 0` keeps `r = r0`.
 
 ## iii. Table of contents
 
@@ -49,7 +49,7 @@ namespace EarthScience
 set_option linter.unusedVariables false in
 /-- Diffusion-limited droplet growth: with `r(t) = sqrt(r0^2 + 2*K*S*t)`,
 the squared radius satisfies `r(t)^2 = r0^2 + 2*K*S*t`. -/
-theorem a06_radius_sq {r0 K S t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K)
+theorem radius_sq {r0 K S t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K)
     (h : 0 ≤ r0 ^ 2 + 2 * K * S * t) :
     (Real.sqrt (r0 ^ 2 + 2 * K * S * t)) ^ 2 = r0 ^ 2 + 2 * K * S * t := by
   exact Real.sq_sqrt h
@@ -57,7 +57,7 @@ theorem a06_radius_sq {r0 K S t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K)
 set_option linter.unusedVariables false in
 /-- Diffusion-limited droplet growth: the squared radius has derivative
 `2*K*S` at every `t`. -/
-theorem a06_radius_sq_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
+theorem radius_sq_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
     (hpos : 0 < r0 ^ 2 + 2 * K * S * t) :
     HasDerivAt (fun t => (Real.sqrt (r0 ^ 2 + 2 * K * S * t)) ^ 2) (2 * K * S) t := by
   have hinner : HasDerivAt (fun t => r0 ^ 2 + 2 * K * S * t) (2 * K * S) t := by
@@ -74,7 +74,7 @@ theorem a06_radius_sq_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t
 set_option linter.unusedVariables false in
 /-- Diffusion-limited droplet growth: at a time with `r(t) > 0`,
 `HasDerivAt r (K*S / r(t)) t`, i.e. `r(t) * r'(t) = K*S`. -/
-theorem a06_radius_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
+theorem radius_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
     (hr : 0 < Real.sqrt (r0 ^ 2 + 2 * K * S * t)) :
     HasDerivAt (fun t => Real.sqrt (r0 ^ 2 + 2 * K * S * t))
       (K * S / Real.sqrt (r0 ^ 2 + 2 * K * S * t)) t := by
@@ -95,7 +95,7 @@ theorem a06_radius_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : 
 
 set_option linter.unusedVariables false in
 /-- No supersaturation (`S = 0`): the radius stays `r0`. -/
-theorem a06_no_supersaturation {r0 K t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) :
+theorem no_supersaturation {r0 K t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) :
     Real.sqrt (r0 ^ 2 + 2 * K * (0 : ℝ) * t) = r0 := by
   have harg : r0 ^ 2 + 2 * K * (0 : ℝ) * t = r0 ^ 2 := by ring
   rw [harg]
