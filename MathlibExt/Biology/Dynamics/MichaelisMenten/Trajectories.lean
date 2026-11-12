@@ -11,6 +11,7 @@ module
 public import MathlibExt.Biology.Dynamics.MichaelisMenten
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 import MathlibExt.Analysis.ODE.MaximalSolution
+import MathlibExt.Analysis.ODE.InvariantRegions
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Prod
@@ -46,19 +47,14 @@ keeps the total enzyme `e + c` and the total substrate `s + c + p`.
 
 ## Proof of global existence
 
-The polynomial field `mmField` is not used directly: nonnegativity of its solutions is circular
-coordinate by coordinate (`s ≥ 0` needs `c ≥ 0`, which needs `s, e ≥ 0`). Instead we take the
-maximal solution (`ode_maximal_solution_exit_compact`, with `U = univ`, `t₀ = 0`) of the field
-obtained by replacing each *source* term by its positive part,
-
-  `s' = -k₁ e s + k₋₁ c⁺`,  `c' = k₁ e⁺ s⁺ - (k₋₁ + k₂) c`,  `e' = -k₁ s e + (k₋₁ + k₂) c⁺`,
-  `p' = k₂ c⁺`.
-
-This field is locally Lipschitz (a `C¹` map composed with `x ↦ (x, x⁺)`), and every coordinate
-has the linear form `u' = g(t) u + h(t)` with `h ≥ 0`, so an integrating factor gives `u ≥ 0`
-(and `u > 0` if `u(0) > 0`) on every `[0, T]` in the interval of definition. On the nonnegative
-orthant the clamped field equals `mmField`, so the two conservation laws hold there and keep the
-solution in a compact box; the exit property then forces the interval to contain `[0, ∞)`.
+Take the maximal solution of the polynomial field `mmField`
+(`ode_maximal_solution_exit_compact`, with `U = univ`, `t₀ = 0`). Smoothness gives local
+Lipschitzness. On the four zero-coordinate faces of the nonnegative orthant, the rates are
+`kb * c`, `k₁ * e * s`, `(kb + k₂) * c`, and `k₂ * c`, respectively, all nonnegative.
+Thus `MetaMathlibExt.orthant_invariant_of_boundary_nonneg` keeps the solution nonnegative on
+every `[0, T]` in its interval of definition. The two conservation laws then keep the solution
+in a compact box, so the exit property forces the interval to contain `[0, ∞)`.
+Integrating factors are used only for strict positivity.
 
 ## Source receipt (API-00 reuse gate)
 
@@ -66,7 +62,9 @@ Reused, not redefined: `IsSolution`, `substrateRate`, `complexRate`, `qssComplex
 `IsSolution.enzyme_conservation`, `IsSolution.substrate_conservation` from
 `MathlibExt.Biology.Dynamics.MichaelisMenten`; the maximal-solution exit theorem
 `MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_maximal_solution_exit_compact` from
-`MathlibExt.Analysis.ODE.MaximalSolution`; Mathlib's `ODE_solution_unique_of_mem_Icc_right` for
+`MathlibExt.Analysis.ODE.MaximalSolution`; the orthant-invariance theorem
+`MetaMathlibExt.orthant_invariant_of_boundary_nonneg` from
+`MathlibExt.Analysis.ODE.InvariantRegions`; Mathlib's `ODE_solution_unique_of_mem_Icc_right` for
 uniqueness. The global-existence argument follows the one for the SIR system in
 `MathlibExt.Biology.Epidemiology.SIRExistence`. The mathematical statements (well-posedness,
 invariance of the nonnegative orthant, the two conservation laws) are the standard ones of
@@ -131,51 +129,35 @@ theorem mmField_contDiff {n : WithTop ℕ∞} : ContDiff ℝ n (mmField k₁ kb 
       Fin.reduceFinMk, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one] <;>
     fun_prop
 
-/-! ### The clamped field -/
+/-- On a zero coordinate of a nonnegative state, the field points into the orthant. -/
+private theorem mmField_boundary_nonneg (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb)
+    (hk₂ : 0 ≤ k₂) (y : Fin 4 → ℝ) (hy : ∀ i, 0 ≤ y i)
+    (i : Fin 4) (hi : y i = 0) : 0 ≤ mmField k₁ kb k₂ y i := by
+  fin_cases i
+  · change y 0 = 0 at hi
+    simpa [mmField, substrateRate, hi] using mul_nonneg hkb (hy 1)
+  · change y 1 = 0 at hi
+    simpa [mmField, complexRate, hi] using
+      mul_nonneg (mul_nonneg hk₁ (hy 2)) (hy 0)
+  · change y 2 = 0 at hi
+    simpa [mmField, complexRate, hi] using
+      mul_nonneg (add_nonneg hkb hk₂) (hy 1)
+  · simpa [mmField] using mul_nonneg hk₂ (hy 1)
 
-/-- Coordinatewise positive part. -/
-private def posPart4 (x : Fin 4 → ℝ) : Fin 4 → ℝ := fun i => max (x i) 0
+private theorem mm_nonneg {α : ℝ → Fin 4 → ℝ} {T : ℝ}
+    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (mmField k₁ kb k₂ (α t)) t)
+    (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂)
+    (h0 : ∀ i, 0 ≤ α 0 i) {t : ℝ} (ht : t ∈ Icc 0 T) : ∀ i, 0 ≤ α t i :=
+  MetaMathlibExt.orthant_invariant_of_boundary_nonneg mmField_contDiff.locallyLipschitz
+    (mmField_boundary_nonneg hk₁ hkb hk₂) (convex_Icc 0 T) hd
+    ⟨le_rfl, ht.1.trans ht.2⟩ h0 t ht ht.1
 
-/-- The field with the state `q.1` in the loss terms and `q.2` in the source terms. -/
-private def mmFieldAux (k₁ kb k₂ : ℝ) (q : (Fin 4 → ℝ) × (Fin 4 → ℝ)) : Fin 4 → ℝ :=
-  ![substrateRate k₁ kb (q.1 0) (q.2 1) (q.1 2), complexRate k₁ kb k₂ (q.2 0) (q.1 1) (q.2 2),
-    -complexRate k₁ kb k₂ (q.1 0) (q.2 1) (q.1 2), k₂ * q.2 1]
-
-/-- The clamped field: source terms use positive parts. -/
-private def clampedField (k₁ kb k₂ : ℝ) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
-  mmFieldAux k₁ kb k₂ (x, posPart4 x)
-
-private theorem clampedField_of_nonneg {x : Fin 4 → ℝ} (hx : ∀ i, 0 ≤ x i) :
-    clampedField k₁ kb k₂ x = mmField k₁ kb k₂ x := by
-  have : posPart4 x = x := funext fun i => max_eq_left (hx i)
-  rw [clampedField, this]
-  rfl
-
-private theorem lipschitzWith_posPart4 : LipschitzWith 1 posPart4 := by
-  refine LipschitzWith.of_dist_le_mul fun x y => ?_
-  rw [NNReal.coe_one, one_mul]
-  refine (dist_pi_le_iff dist_nonneg).2 fun i => ?_
-  refine le_trans ?_ (dist_le_pi_dist x y i)
-  rw [Real.dist_eq, Real.dist_eq]
-  exact abs_max_sub_max_le_abs _ _ _
-
-private theorem mmFieldAux_contDiff : ContDiff ℝ 1 (mmFieldAux k₁ kb k₂) := by
-  refine contDiff_pi.2 fun i => ?_
-  fin_cases i <;>
-    simp only [mmFieldAux, substrateRate, complexRate, Fin.isValue, Fin.zero_eta, Fin.mk_one,
-      Fin.reduceFinMk, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one] <;>
-    fun_prop
-
-private theorem locallyLipschitz_clampedField : LocallyLipschitz (clampedField k₁ kb k₂) :=
-  (mmFieldAux_contDiff (k₁ := k₁) (kb := kb) (k₂ := k₂)).locallyLipschitz.comp
-    (LocallyLipschitz.id.prodMk lipschitzWith_posPart4.locallyLipschitz)
-
-private theorem clampedField_lip (p : ℝ × (Fin 4 → ℝ)) :
+private theorem mmField_lip (p : ℝ × (Fin 4 → ℝ)) :
     ∃ C : NNReal, ∃ s ∈ 𝓝 p, ∀ t : ℝ, ∀ x y : Fin 4 → ℝ,
       (t, x) ∈ s ∩ univ → (t, y) ∈ s ∩ univ →
-        dist ((fun q : ℝ × (Fin 4 → ℝ) => clampedField k₁ kb k₂ q.2) (t, x))
-          ((fun q : ℝ × (Fin 4 → ℝ) => clampedField k₁ kb k₂ q.2) (t, y)) ≤ C * dist x y := by
-  obtain ⟨C, u, hu, hC⟩ := locallyLipschitz_clampedField (k₁ := k₁) (kb := kb) (k₂ := k₂) p.2
+        dist (mmField k₁ kb k₂ x) (mmField k₁ kb k₂ y) ≤ C * dist x y := by
+  obtain ⟨C, u, hu, hC⟩ :=
+    (mmField_contDiff (k₁ := k₁) (kb := kb) (k₂ := k₂)).locallyLipschitz p.2
   refine ⟨C, univ ×ˢ u, prod_mem_nhds univ_mem hu, ?_⟩
   rintro t x y ⟨⟨-, hx⟩, -⟩ ⟨⟨-, hy⟩, -⟩
   exact hC.dist_le_mul x hx y hy
@@ -204,12 +186,11 @@ private theorem hasDerivAt_mul_exp {u g h G : ℝ → ℝ} {t : ℝ} (hu : HasDe
   ring
 
 /-- **Integrating factor with a nonnegative source.** If `u' = g u + h` on `[0, T]` with `g`
-continuous and `h ≥ 0`, then `u ≥ 0` (resp. `u > 0`) on `[0, T]` when `u(0) ≥ 0`
-(resp. `u(0) > 0`). -/
-private theorem nonneg_pos_of_hasDerivAt {u g h : ℝ → ℝ} {T : ℝ}
+continuous and `h ≥ 0`, a positive initial value stays positive. -/
+private theorem pos_of_hasDerivAt {u g h : ℝ → ℝ} {T : ℝ}
     (hg : ContinuousOn g (Icc 0 T)) (hh : ∀ t ∈ Icc 0 T, 0 ≤ h t)
     (hu : ∀ t ∈ Icc 0 T, HasDerivAt u (g t * u t + h t) t) {t : ℝ} (ht : t ∈ Icc 0 T) :
-    (0 ≤ u 0 → 0 ≤ u t) ∧ (0 < u 0 → 0 < u t) := by
+    0 < u 0 → 0 < u t := by
   obtain ⟨G, hG0, hG⟩ := exists_antideriv hg
   have hF : ∀ s ∈ Icc 0 T, HasDerivAt (fun s => u s * exp (-G s)) (h s * exp (-G s)) s :=
     fun s hs => hasDerivAt_mul_exp (hu s hs) (hG s hs)
@@ -221,8 +202,7 @@ private theorem nonneg_pos_of_hasDerivAt {u g h : ℝ → ℝ} {T : ℝ}
   have hle : u 0 ≤ u t * exp (-G t) := by
     have := hmono ⟨le_rfl, ht.1.trans ht.2⟩ ht ht.1
     simpa [hG0] using this
-  exact ⟨fun h0 => (mul_nonneg_iff_of_pos_right (exp_pos _)).1 (h0.trans hle),
-    fun h0 => (mul_pos_iff_of_pos_right (exp_pos _)).1 (h0.trans_le hle)⟩
+  exact fun h0 => (mul_pos_iff_of_pos_right (exp_pos _)).1 (h0.trans_le hle)
 
 /-- **Integrating factor with a positive source.** If `u' = g u + h` on `[0, T]`, `T > 0`, with
 `g` continuous, `h > 0` and `u(0) ≥ 0`, then `u(T) > 0`. -/
@@ -242,84 +222,53 @@ private theorem pos_of_hasDerivAt_of_source_pos {u g h : ℝ → ℝ} {T : ℝ} 
     simpa [hG0] using this
   exact (mul_pos_iff_of_pos_right (exp_pos _)).1 (hu0.trans_lt hlt)
 
-/-! ### Invariance for the clamped system on `[0, T]` -/
-
-section Clamped
-
-variable {α : ℝ → Fin 4 → ℝ} {T : ℝ}
-
-private theorem clamped_coord
-    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (clampedField k₁ kb k₂ (α t)) t) (i : Fin 4) :
-    ∀ t ∈ Icc 0 T, HasDerivAt (α · i) (clampedField k₁ kb k₂ (α t) i) t :=
-  fun t ht => hasDerivAt_pi.1 (hd t ht) i
-
-private theorem clamped_continuousOn
-    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (clampedField k₁ kb k₂ (α t)) t) (i : Fin 4) :
-    ContinuousOn (α · i) (Icc 0 T) :=
-  fun t ht => (clamped_coord hd i t ht).continuousAt.continuousWithinAt
-
-/-- Along the clamped system, nonnegative initial data stay nonnegative on `[0, T]` and positive
-initial `s`, `c`, `e` stay positive. -/
-private theorem clamped_nonneg_pos
-    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (clampedField k₁ kb k₂ (α t)) t)
+private theorem mm_pos {α : ℝ → Fin 4 → ℝ} {T : ℝ}
+    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (mmField k₁ kb k₂ (α t)) t)
     (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂)
-    (h0 : ∀ i, 0 ≤ α 0 i) {t : ℝ} (ht : t ∈ Icc 0 T) :
-    (∀ i, 0 ≤ α t i) ∧ (0 < α 0 0 → 0 < α t 0) ∧ (0 < α 0 1 → 0 < α t 1) ∧
+    (hnn : ∀ t ∈ Icc 0 T, ∀ i, 0 ≤ α t i) {t : ℝ} (ht : t ∈ Icc 0 T) :
+    (0 < α 0 0 → 0 < α t 0) ∧ (0 < α 0 1 → 0 < α t 1) ∧
       (0 < α 0 2 → 0 < α t 2) := by
-  have hs := nonneg_pos_of_hasDerivAt (u := (α · 0)) (g := fun t => -k₁ * α t 2)
-    (h := fun t => kb * max (α t 1) 0)
-    (by have := clamped_continuousOn hd 2; fun_prop)
-    (fun t _ => mul_nonneg hkb (le_max_right _ _))
-    (fun t ht => by
-      convert clamped_coord hd 0 t ht using 1
-      simp [clampedField, mmFieldAux, posPart4, substrateRate]) ht
-  have hc := nonneg_pos_of_hasDerivAt (u := (α · 1)) (g := fun _ => -(kb + k₂))
-    (h := fun t => k₁ * max (α t 2) 0 * max (α t 0) 0) continuousOn_const
-    (fun t _ => mul_nonneg (mul_nonneg hk₁ (le_max_right _ _)) (le_max_right _ _))
-    (fun t ht => by
-      convert clamped_coord hd 1 t ht using 1
-      simp [clampedField, mmFieldAux, posPart4, complexRate]; ring) ht
-  have he := nonneg_pos_of_hasDerivAt (u := (α · 2)) (g := fun t => -k₁ * α t 0)
-    (h := fun t => (kb + k₂) * max (α t 1) 0)
-    (by have := clamped_continuousOn hd 0; fun_prop)
-    (fun t _ => mul_nonneg (add_nonneg hkb hk₂) (le_max_right _ _))
-    (fun t ht => by
-      convert clamped_coord hd 2 t ht using 1
-      simp [clampedField, mmFieldAux, posPart4, complexRate]; ring) ht
-  have hp := nonneg_pos_of_hasDerivAt (u := (α · 3)) (g := fun _ => 0)
-    (h := fun t => k₂ * max (α t 1) 0) continuousOn_const
-    (fun t _ => mul_nonneg hk₂ (le_max_right _ _))
-    (fun t ht => by
-      convert clamped_coord hd 3 t ht using 1
-      simp [clampedField, mmFieldAux, posPart4]) ht
-  refine ⟨fun i => ?_, hs.2, hc.2, he.2⟩
-  fin_cases i
-  · exact hs.1 (h0 0)
-  · exact hc.1 (h0 1)
-  · exact he.1 (h0 2)
-  · exact hp.1 (h0 3)
+  have hcoord (i : Fin 4) (t : ℝ) (ht : t ∈ Icc 0 T) := hasDerivAt_pi.1 (hd t ht) i
+  have hcont (i : Fin 4) : ContinuousOn (α · i) (Icc 0 T) :=
+    fun t ht => (hcoord i t ht).continuousAt.continuousWithinAt
+  refine ⟨?_, ?_, ?_⟩
+  · exact pos_of_hasDerivAt (u := (α · 0)) (g := fun t => -k₁ * α t 2)
+      (h := fun t => kb * α t 1) (by have := hcont 2; fun_prop)
+      (fun t ht => mul_nonneg hkb (hnn t ht 1))
+      (fun t ht => by simpa [mmField, substrateRate] using hcoord 0 t ht) ht
+  · exact pos_of_hasDerivAt (u := (α · 1)) (g := fun _ => -(kb + k₂))
+      (h := fun t => k₁ * α t 2 * α t 0) continuousOn_const
+      (fun t ht => mul_nonneg (mul_nonneg hk₁ (hnn t ht 2)) (hnn t ht 0))
+      (fun t ht => by
+        convert hcoord 1 t ht using 1
+        simp [mmField, complexRate]
+        ring) ht
+  · exact pos_of_hasDerivAt (u := (α · 2)) (g := fun t => -k₁ * α t 0)
+      (h := fun t => (kb + k₂) * α t 1) (by have := hcont 0; fun_prop)
+      (fun t ht => mul_nonneg (add_nonneg hkb hk₂) (hnn t ht 1))
+      (fun t ht => by
+        convert hcoord 2 t ht using 1
+        simp [mmField, complexRate]
+        ring) ht
 
-/-- On `[0, T]`, nonnegative clamped solutions keep `e + c` and `s + c + p`. -/
-private theorem clamped_conservation
-    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (clampedField k₁ kb k₂ (α t)) t)
-    (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂)
-    (h0 : ∀ i, 0 ≤ α 0 i) {t : ℝ} (ht : t ∈ Icc 0 T) :
-    α t 2 + α t 1 = α 0 2 + α 0 1 ∧ α t 0 + α t 1 + α t 3 = α 0 0 + α 0 1 + α 0 3 := by
-  have hm : ∀ s ∈ Icc 0 T, ∀ i, HasDerivAt (α · i) (mmField k₁ kb k₂ (α s) i) s := fun s hs i => by
-    rw [← clampedField_of_nonneg (clamped_nonneg_pos hd hk₁ hkb hk₂ h0 hs).1]
-    exact clamped_coord hd i s hs
+/-- On `[0, T]`, solutions keep total enzyme and total substrate. -/
+private theorem mm_conservation {α : ℝ → Fin 4 → ℝ} {T : ℝ}
+    (hd : ∀ t ∈ Icc 0 T, HasDerivAt α (mmField k₁ kb k₂ (α t)) t)
+    {t : ℝ} (ht : t ∈ Icc 0 T) :
+    α t 2 + α t 1 = α 0 2 + α 0 1 ∧
+      α t 0 + α t 1 + α t 3 = α 0 0 + α 0 1 + α 0 3 := by
+  have hm (s : ℝ) (hs : s ∈ Icc 0 T) (i : Fin 4) := hasDerivAt_pi.1 (hd s hs) i
   have hE : ∀ s ∈ Icc 0 T, HasDerivAt (fun s => α s 2 + α s 1) 0 s := fun s hs => by
     convert (hm s hs 2).add (hm s hs 1) using 1
     simp [mmField]
   have hS : ∀ s ∈ Icc 0 T, HasDerivAt (fun s => α s 0 + α s 1 + α s 3) 0 s := fun s hs => by
     convert ((hm s hs 0).add (hm s hs 1)).add (hm s hs 3) using 1
-    simp [mmField, substrateRate, complexRate]; ring
+    simp [mmField, substrateRate, complexRate]
+    ring
   exact ⟨constant_of_has_deriv_right_zero (fun s hs => (hE s hs).continuousAt.continuousWithinAt)
       (fun s hs => (hE s (Ico_subset_Icc_self hs)).hasDerivWithinAt) t ht,
     constant_of_has_deriv_right_zero (fun s hs => (hS s hs).continuousAt.continuousWithinAt)
       (fun s hs => (hS s (Ico_subset_Icc_self hs)).hasDerivWithinAt) t ht⟩
-
-end Clamped
 
 /-! ### Forward-global existence -/
 
@@ -342,21 +291,24 @@ theorem exists_isSolution_nonneg (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 
       (∀ t, 0 ≤ t → (0 < s₀ → 0 < s t) ∧ (0 < c₀ → 0 < c t) ∧ (0 < e₀ → 0 < e t)) := by
   obtain ⟨J, α, hα0, hJo, h0J, hJc, hαd, hexit⟩ :=
     MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_maximal_solution_exit_compact univ
-      (fun q : ℝ × (Fin 4 → ℝ) => clampedField k₁ kb k₂ q.2) 0 ![s₀, c₀, e₀, p₀] isOpen_univ
-      trivial (locallyLipschitz_clampedField.continuous.comp continuous_snd).continuousOn
-      fun p _ => clampedField_lip p
-  have hd : ∀ T ∈ J, ∀ t ∈ Icc 0 T, HasDerivAt α (clampedField k₁ kb k₂ (α t)) t :=
+      (fun q : ℝ × (Fin 4 → ℝ) => mmField k₁ kb k₂ q.2) 0 ![s₀, c₀, e₀, p₀] isOpen_univ
+      trivial ((mmField_contDiff (n := 1)).continuous.comp continuous_snd).continuousOn
+      fun p _ => mmField_lip p
+  have hd : ∀ T ∈ J, ∀ t ∈ Icc 0 T, HasDerivAt α (mmField k₁ kb k₂ (α t)) t :=
     fun T hT t ht => (hαd t (hJc 0 h0J T hT ht)).2
   have hinit : α 0 0 = s₀ ∧ α 0 1 = c₀ ∧ α 0 2 = e₀ ∧ α 0 3 = p₀ := by simp [hα0]
   have h0 : ∀ i, 0 ≤ α 0 i := fun i => by
     fin_cases i <;> simp [hα0, hs₀, hc₀, he₀, hp₀]
   have hfw : ∀ T ∈ J, 0 ≤ T → (∀ i, 0 ≤ α T i) ∧ (0 < s₀ → 0 < α T 0) ∧
       (0 < c₀ → 0 < α T 1) ∧ (0 < e₀ → 0 < α T 2) := fun T hT hT0 => by
-    have := clamped_nonneg_pos (hd T hT) hk₁ hkb hk₂ h0 ⟨hT0, le_rfl⟩
-    rwa [hinit.1, hinit.2.1, hinit.2.2.1] at this
+    have hnn : ∀ t ∈ Icc 0 T, ∀ i, 0 ≤ α t i :=
+      fun t ht => mm_nonneg (hd T hT) hk₁ hkb hk₂ h0 ht
+    have hpos := mm_pos (hd T hT) hk₁ hkb hk₂ hnn ⟨hT0, le_rfl⟩
+    rw [hinit.1, hinit.2.1, hinit.2.2.1] at hpos
+    exact ⟨hnn T ⟨hT0, le_rfl⟩, hpos⟩
   have hcons : ∀ T ∈ J, 0 ≤ T →
       α T 2 + α T 1 = e₀ + c₀ ∧ α T 0 + α T 1 + α T 3 = s₀ + c₀ + p₀ := fun T hT hT0 => by
-    have := clamped_conservation (hd T hT) hk₁ hkb hk₂ h0 ⟨hT0, le_rfl⟩
+    have := mm_conservation (hd T hT) ⟨hT0, le_rfl⟩
     rwa [hinit.1, hinit.2.1, hinit.2.2.1, hinit.2.2.2] at this
   have hglobal : Ici 0 ⊆ J := by
     intro T hT0
@@ -376,9 +328,8 @@ theorem exists_isSolution_nonneg (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 
     have := hnn 0; have := hnn 1; have := hnn 2; have := hnn 3
     fin_cases i <;> simp <;> linarith
   have hJt : ∀ t, 0 ≤ t → t ∈ J := fun t ht => hglobal ht
-  have hm : ∀ t, 0 ≤ t → ∀ i, HasDerivAt (α · i) (mmField k₁ kb k₂ (α t) i) t := fun t ht i => by
-    rw [← clampedField_of_nonneg (hfw t (hJt t ht) ht).1]
-    exact hasDerivAt_pi.1 (hαd t (hJt t ht)).2 i
+  have hm : ∀ t, 0 ≤ t → ∀ i, HasDerivAt (α · i) (mmField k₁ kb k₂ (α t) i) t :=
+    fun t ht i => hasDerivAt_pi.1 (hαd t (hJt t ht)).2 i
   have hsol : IsSolution k₁ kb k₂ (α · 0) (α · 1) (α · 2) (α · 3) :=
     ⟨fun t ht => hm t ht 0, fun t ht => hm t ht 1, fun t ht => hm t ht 2, fun t ht => hm t ht 3⟩
   refine ⟨(α · 0), (α · 1), (α · 2), (α · 3), hsol, hinit.1, hinit.2.1, hinit.2.2.1,
