@@ -112,7 +112,7 @@ noncomputable def factor (u : EuclideanSpace ℝ (Cell k r)) (l : Fin k) : ℝ :
 the product-limit survival `∏_{l ≤ j} factor u l`, and coordinate `(some c, j)` is the cumulative
 incidence `∑_{l ≤ j} (∏_{i < l} factor u i) · u_{l,c} / u_l`. The ratios are scale invariant, so
 on the empirical mean cell vector it gives the Kaplan–Meier and Aalen–Johansen estimates
-(`map_empiricalMean`). -/
+(`ajMap_empiricalMean`). -/
 noncomputable def ajMap (m : Fin k) (u : EuclideanSpace ℝ (Cell k r)) : Coord k r m → ℝ
   | (none, j) => ∏ l with l ≤ j.1, factor u l
   | (some c, j) => ∑ l with l ≤ j.1, (∏ i with i < l, factor u i) *
@@ -349,8 +349,8 @@ plug-in limit `ajMap m (cellMean μ)` and scaled by `√n`, converges in distrib
 `L (A z)`, where `L` is the derivative of the Aalen–Johansen map at the mean cell vector and
 `A z` is the Gaussian limit of the cell-count central limit theorem
 (`exists_tendstoInDistribution_empiricalMean`). The covariance of the limit is identified in
-`hasLaw_sum_mul_fderiv_ajMap`. Grid times only: no process convergence in `D[0, τ]` is
-claimed. -/
+`tendstoInDistribution_estimator` and `covariance_limit`. Grid times only: no process
+convergence in `D[0, τ]` is claimed. -/
 theorem exists_tendstoInDistribution_estimator (hind : iIndepFun W P)
     (hlaw : ∀ i, HasLaw (W i) μ P) (m : Fin k) (hm : causeAtRiskMass μ m ≠ 0) :
     ∃ A : EuclideanSpace ℝ (Cell k r) →L[ℝ] EuclideanSpace ℝ (Cell k r),
