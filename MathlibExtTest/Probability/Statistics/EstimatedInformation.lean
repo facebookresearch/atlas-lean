@@ -22,7 +22,6 @@ public import MathlibExtTest.Probability.Statistics.VectorInference
 * Non-vacuity on the Gaussian location family with the sample mean as root: every hypothesis
   of the observed-information consistency theorems, of Wald's test with `Ĵₙ(X̄ₙ)`, of Rao's
   test with `Ĵₙ(0)`, and of the likelihood-ratio/estimated-Wald equivalence holds.
-* `TendstoInMeasure.continuousAt_comp_const` on a deterministic sequence `1 / (n + 1) → 0`.
 -/
 
 @[expose] public section
@@ -170,17 +169,5 @@ theorem tendstoInMeasure_wilks_sub_wald_observedInformation_sampleMean :
     (isUnit_of_inner_self_pos fisherInformation_pE_pos)
     (fun n => (measurable_sampleMean n).aemeasurable) (tendsto_root _ rfl)
     tendstoInMeasure_sampleMean hJ_meas tendstoInMeasure_observedInformation_sampleMean
-
-/-! ### Continuous mapping on a deterministic sequence -/
-
-/-- `TendstoInMeasure.continuousAt_comp_const`: `1 / (n + 1) → 0` deterministically, hence in
-probability, and `exp` is continuous, so `exp (1 / (n + 1)) → 1` in probability. -/
-example : TendstoInMeasure (sampleE (E := E)) (fun (n : ℕ) _ => Real.exp (1 / ((n : ℝ) + 1)))
-    atTop (fun _ => 1) := by
-  have h : TendstoInMeasure (sampleE (E := E)) (fun (n : ℕ) _ => 1 / ((n : ℝ) + 1)) atTop
-      (fun _ => 0) :=
-    tendstoInMeasure_of_tendsto_ae (fun _ => aestronglyMeasurable_const)
-      (ae_of_all _ fun _ => tendsto_one_div_add_atTop_nhds_zero_nat)
-  simpa using h.continuousAt_comp_const Real.continuous_exp.continuousAt
 
 end MathlibExtTest.Probability.Statistics.EstimatedInformation

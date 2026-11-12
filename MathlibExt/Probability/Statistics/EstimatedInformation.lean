@@ -25,7 +25,8 @@ plug-in versions.
   consistent at a consistent estimator `θhat n`, given the Lipschitz envelope on the score
   derivative already assumed for asymptotic normality.
 * `I(θhat n) → I(θ₀)` in probability when `θ ↦ I(θ)` is continuous at `θ₀` (continuous
-  mapping theorem for convergence in probability to a constant).
+  mapping theorem for convergence in probability to a constant,
+  `MeasureTheory.TendstoInMeasure.comp_const_of_continuousAt`).
 * Wald's statistic `n ⟪Î (θhat n - θ₀), θhat n - θ₀⟫` and Rao's statistic `⟪Î⁻¹ Sₙ, Sₙ⟫`
   converge to `χ²_d` for **any** operator-valued estimators `Î n → I(θ₀)` in probability, in
   particular for the observed information.
@@ -51,8 +52,6 @@ plug-in versions.
 
 ## Main results
 
-* `MeasureTheory.TendstoInMeasure.continuousAt_comp_const`: continuous mapping for convergence
-  in probability to a constant.
 * `measurable_ring_inverse`: `Ring.inverse` is measurable on a complete normed ring.
 * `observedInformation`: `Ĵₙ(θ) = -(1/n) ∑_{i<n} D_θ score p θ (x i)`;
   `aestronglyMeasurable_observedInformation`, `aemeasurable_observedInformation_comp`.
@@ -66,6 +65,22 @@ plug-in versions.
 * `tendstoInMeasure_two_mul_logLikelihood_sub_sub`,
   `tendstoInMeasure_two_mul_logLikelihood_sub_sub_of_estimator`: the likelihood-ratio statistic
   minus the Wald statistic (null or estimated information) tends to `0` in probability.
+
+## Duplication and follow-up
+
+`VectorInference` is outside this file's ownership, so some of its private material is copied
+here; all copies are private and faithful. Follow-up once it may be edited:
+
+* rewrite `VectorInference.tendstoInDistribution_two_mul_logLikelihood_sub` (Wilks) to call
+  `tendstoInMeasure_two_mul_logLikelihood_sub_sub`, whose remainder proof repeats the one inside
+  it, then delete the private copy `norm_sum_add_sum_apply_le'` here (twin of
+  `VectorInference.norm_sum_add_sum_apply_le`);
+* replace the note in the `VectorInference` module docstring that estimated-information
+  versions and observed-information consistency "are not covered here" with a pointer to this
+  file;
+* make one public `tendstoInMeasure_add_zero` and delete the private copies; the one here is
+  the fifth, after `MLEAsymptoticNormality`, `LikelihoodRatioTests`, `VectorInference` and
+  `LikelihoodRatioLocalPower`.
 
 ## References
 
@@ -85,28 +100,7 @@ open scoped RealInnerProductSpace
 open MathlibExt.Probability.Statistics.FisherInformation (lawOf)
 open MathlibExt.Probability.Statistics.VectorInference
 
-/-! ### Continuous mapping and measurability of the inverse -/
-
-namespace MeasureTheory
-
-/-- **Continuous mapping theorem for convergence in probability to a constant**: if `f i → c`
-in probability and `g` is continuous at `c`, then `g ∘ f i → g c` in probability. No
-measurability is needed. -/
-theorem TendstoInMeasure.continuousAt_comp_const {ι α β γ : Type*} [MeasurableSpace α]
-    {μ : Measure α} [PseudoMetricSpace β] [PseudoMetricSpace γ] {l : Filter ι}
-    {f : ι → α → β} {c : β} {g : β → γ}
-    (hf : TendstoInMeasure μ f l (fun _ => c)) (hg : ContinuousAt g c) :
-    TendstoInMeasure μ (fun i ω => g (f i ω)) l (fun _ => g c) := by
-  rw [tendstoInMeasure_iff_dist] at hf ⊢
-  intro ε hε
-  obtain ⟨η, hη, hgη⟩ := Metric.continuousAt_iff.1 hg ε hε
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds (hf η hη)
-    (fun _ => zero_le) fun i => measure_mono fun ω hω => ?_
-  simp only [Set.mem_ofPred_eq] at hω ⊢
-  by_contra h
-  exact (not_lt.2 hω) (hgη (not_le.1 h))
-
-end MeasureTheory
+/-! ### Measurability of the inverse -/
 
 /-- `Ring.inverse` is measurable on a complete normed ring with its Borel σ-algebra: it is
 continuous on the open set of units and `0` off it. -/
@@ -312,7 +306,24 @@ theorem tendstoInMeasure_fisherInformation_comp {ν : Measure 𝓧} {p : E → �
     {θhat : ℕ → Ω → E} (hcons : TendstoInMeasure P θhat atTop (fun _ => θ₀)) :
     TendstoInMeasure P (fun n ω => fisherInformation ν p (θhat n ω)) atTop
       (fun _ => fisherInformation ν p θ₀) :=
-  hcons.continuousAt_comp_const hI_cont
+  hcons.comp_const_of_continuousAt hI_cont
+
+/-- A Gaussian limit for the score: a linear map `A` with `⟪A z, t⟫ ~ N(0, ⟪I(θ₀) t, t⟫)` under
+`N(0, Id)`, built from a measurable, centered, square-integrable score. -/
+private theorem exists_hasLaw_inner_fisherInformation {ν : Measure 𝓧} {p : E → 𝓧 → ℝ}
+    {θ₀ : E} {X₀ : Ω → 𝓧} (hX₀ : HasLaw X₀ (lawOf ν p θ₀) P)
+    (hs_meas : Measurable (score p θ₀))
+    (hs_sq : Integrable (fun x => ‖score p θ₀ x‖ ^ 2) (lawOf ν p θ₀))
+    (hs_mean : ∫ x, score p θ₀ x ∂(lawOf ν p θ₀) = 0) :
+    ∃ A : E →L[ℝ] E, ∀ t, HasLaw (fun z => ⟪A z, t⟫)
+      (gaussianReal 0 (⟪fisherInformation ν p θ₀ t, t⟫).toNNReal) (stdGaussian E) := by
+  have hs : MemLp (score p θ₀) 2 (lawOf ν p θ₀) :=
+    (memLp_two_iff_integrable_sq_norm hs_meas.aestronglyMeasurable).2 hs_sq
+  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal (hX₀.memLp_comp hs)
+  refine ⟨A, fun t => ?_⟩
+  have h := hA t
+  rwa [show (fun ω => ⟪(score p θ₀ ∘ X₀) ω, t⟫) = fun ω => ⟪score p θ₀ (X₀ ω), t⟫ from rfl,
+    variance_inner_score hX₀ hs_meas hs_sq hs_mean t] at h
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 /-- The quadratic form `(v, A) ↦ ⟪A v, v⟫` is jointly continuous. -/
@@ -358,14 +369,7 @@ theorem tendstoInDistribution_waldStatistic_of_estimator
       atTop Q (fun _ => P) P' := by
   set I := fisherInformation ν p θ₀
   have hI : IsUnit I := isUnit_of_inner_self_pos hI_pos
-  have hs : MemLp (score p θ₀) 2 (lawOf ν p θ₀) :=
-    (memLp_two_iff_integrable_sq_norm hs_meas.aestronglyMeasurable).2 hs_sq
-  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal ((hX_law 0).memLp_comp hs)
-  have hAI : ∀ t, HasLaw (fun z => ⟪A z, t⟫) (gaussianReal 0 (⟪I t, t⟫).toNNReal)
-      (stdGaussian E) := fun t => by
-    have h := hA t
-    rwa [show (fun ω => ⟪(score p θ₀ ∘ X 0) ω, t⟫) = fun ω => ⟪score p θ₀ (X 0 ω), t⟫ from rfl,
-      variance_inner_score (hX_law 0) hs_meas hs_sq hs_mean t] at h
+  obtain ⟨A, hAI⟩ := exists_hasLaw_inner_fisherInformation (hX_law 0) hs_meas hs_sq hs_mean
   have h := tendstoInDistribution_sqrt_smul_sub_inverse_of_likelihoodEquation hδ hX_law
     hX_indep hs_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int h_info hI
     hθ_meas hroot hcons A.continuous.aemeasurable hAI
@@ -409,20 +413,13 @@ theorem tendstoInDistribution_scoreStatistic_of_estimator {ν : Measure 𝓧} {p
       atTop Q (fun _ => P) P' := by
   set I := fisherInformation ν p θ₀
   have hI : IsUnit I := isUnit_of_inner_self_pos hI_pos
-  have hs : MemLp (score p θ₀) 2 (lawOf ν p θ₀) :=
-    (memLp_two_iff_integrable_sq_norm hs_meas.aestronglyMeasurable).2 hs_sq
-  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal ((hX_law 0).memLp_comp hs)
-  have hAI : ∀ t, HasLaw (fun z => ⟪A z, t⟫) (gaussianReal 0 (⟪I t, t⟫).toNNReal)
-      (stdGaussian E) := fun t => by
-    have h := hA t
-    rwa [show (fun ω => ⟪(score p θ₀ ∘ X 0) ω, t⟫) = fun ω => ⟪score p θ₀ (X 0 ω), t⟫ from rfl,
-      variance_inner_score (hX_law 0) hs_meas hs_sq hs_mean t] at h
+  obtain ⟨A, hAI⟩ := exists_hasLaw_inner_fisherInformation (hX_law 0) hs_meas hs_sq hs_mean
   have h := tendstoInDistribution_score hX_law hX_indep hs_meas hs_sq hs_mean
     A.continuous.aemeasurable hAI
   obtain ⟨u, hu⟩ := hI
   have hK : TendstoInMeasure P (fun n ω => Ring.inverse (Ihat n ω)) atTop
       (fun _ => Ring.inverse I) :=
-    hIhat.continuousAt_comp_const (hu ▸ NormedRing.inverse_continuousAt u)
+    hIhat.comp_const_of_continuousAt (hu ▸ NormedRing.inverse_continuousAt u)
   have hK_meas : ∀ n, AEMeasurable (fun ω => Ring.inverse (Ihat n ω)) P := fun n =>
     measurable_ring_inverse.comp_aemeasurable (hIhat_meas n)
   have h2 := h.continuous_comp_prodMk_of_tendstoInMeasure_const continuous_inner_apply_self
@@ -494,14 +491,7 @@ theorem tendstoInMeasure_two_mul_logLikelihood_sub_sub
       atTop 0 := by
   set I := fisherInformation ν p θ₀
   have hXm : ∀ i, AEMeasurable (X i) P := fun i => (hX_law i).aemeasurable
-  have hs : MemLp (score p θ₀) 2 (lawOf ν p θ₀) :=
-    (memLp_two_iff_integrable_sq_norm hs_meas.aestronglyMeasurable).2 hs_sq
-  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal ((hX_law 0).memLp_comp hs)
-  have hAI : ∀ t, HasLaw (fun z => ⟪A z, t⟫) (gaussianReal 0 (⟪I t, t⟫).toNNReal)
-      (stdGaussian E) := fun t => by
-    have h := hA t
-    rwa [show (fun ω => ⟪(score p θ₀ ∘ X 0) ω, t⟫) = fun ω => ⟪score p θ₀ (X 0 ω), t⟫ from rfl,
-      variance_inner_score (hX_law 0) hs_meas hs_sq hs_mean t] at h
+  obtain ⟨A, hAI⟩ := exists_hasLaw_inner_fisherInformation (hX_law 0) hs_meas hs_sq hs_mean
   have hT := tendstoInDistribution_sqrt_smul_sub_inverse_of_likelihoodEquation hδ hX_law
     hX_indep hs_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int h_info hI
     hθ_meas hroot hcons A.continuous.aemeasurable hAI
@@ -683,14 +673,7 @@ theorem tendstoInMeasure_two_mul_logLikelihood_sub_sub_of_estimator
   set I := fisherInformation ν p θ₀
   have hLW := tendstoInMeasure_two_mul_logLikelihood_sub_sub hδ hX_law hX_indep hℓ_diff hs_diff
     hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int h_info hI hθ_meas hroot hcons
-  have hs : MemLp (score p θ₀) 2 (lawOf ν p θ₀) :=
-    (memLp_two_iff_integrable_sq_norm hs_meas.aestronglyMeasurable).2 hs_sq
-  obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal ((hX_law 0).memLp_comp hs)
-  have hAI : ∀ t, HasLaw (fun z => ⟪A z, t⟫) (gaussianReal 0 (⟪I t, t⟫).toNNReal)
-      (stdGaussian E) := fun t => by
-    have h := hA t
-    rwa [show (fun ω => ⟪(score p θ₀ ∘ X 0) ω, t⟫) = fun ω => ⟪score p θ₀ (X 0 ω), t⟫ from rfl,
-      variance_inner_score (hX_law 0) hs_meas hs_sq hs_mean t] at h
+  obtain ⟨A, hAI⟩ := exists_hasLaw_inner_fisherInformation (hX_law 0) hs_meas hs_sq hs_mean
   have hT := tendstoInDistribution_sqrt_smul_sub_inverse_of_likelihoodEquation hδ hX_law
     hX_indep hs_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int h_info hI
     hθ_meas hroot hcons A.continuous.aemeasurable hAI
