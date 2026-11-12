@@ -13,12 +13,32 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Measure.Count
 
 /-!
-# Alpha-spending for repeated looks: type-I error control under optional stopping
+# Bonferroni alpha allocation from a spending budget for repeated looks: type-I error control
+under optional stopping
 
 A clinical trial tests one null hypothesis at `K` pre-planned interim looks. At look `k + 1`
 (`k < K`) the accumulated data give a p-value `p k`, and the trial stops with a rejection at the
 first look whose p-value falls at or below that look's nominal level. The type-I error is the
 probability, under the null, that **some** look rejects.
+
+## This is not Lan–DeMets group-sequential boundaries
+
+The procedure formalized here is a **Bonferroni allocation**: each look's spending increment
+is used directly as a p-value cutoff, and type-I error control follows from the union bound
+over the looks. It is *not* the Lan–DeMets procedure of Lan and DeMets (1983). In Lan–DeMets,
+a spending increment is the allocated probability of first boundary crossing, and the
+critical boundary at each look is derived from the joint null distribution of the test
+statistics (for example the canonical joint law of a Brownian-motion score process); those
+boundaries are generally larger than the spending increments and reject on a larger region
+with the same total spend. The Lan–DeMets name below attaches only to the *shape* of the
+spending budget (`pocockSpending`, a Lan–DeMets Pocock-type spending function), not to the
+boundaries: no joint-law boundary, first-crossing spending constraint, or optimality claim is
+formalized here.
+
+Concretely, with two looks whose spending increments are `c₁, c₂ > 0` and independent
+uniform p-values, the procedure rejects with probability `1 - (1 - c₁)(1 - c₂) =
+c₁ + c₂ - c₁ * c₂ < c₁ + c₂` (`two_look_independent_gap` is the algebra), so it is
+conservative relative to the spend: it is weighted Bonferroni, not exact Lan–DeMets.
 
 ## Fixed-family testing versus optional stopping
 
@@ -30,22 +50,23 @@ union of the per-look rejection events, and the union bound only gives `K α`
 error is `1/2`. Testing each look at level `α` and stopping at the first rejection does not
 control the error at `α`.
 
-*Alpha-spending* fixes, before the trial, a spending function `f` with `f 0 = 0`, monotone on
-`[0, 1]`, `f 1 ≤ α` (`IsAlphaSpendingFunction`) and information times
+*Bonferroni allocation* fixes, before the trial, a spending function `f` with `f 0 = 0`,
+monotone on `[0, 1]`, `f 1 ≤ α` (`IsAlphaSpendingFunction`) and information times
 `0 = τ 0 ≤ τ 1 ≤ ⋯ ≤ τ K ≤ 1`. The theorems take `τ : ℕ → ℝ` with `Monotone τ`; a finite
 schedule is extended by `τ k = τ K` for `k > K`, which leaves every planned look unchanged.
-Look `k + 1` is tested at the nominal level (the critical value on the p-value scale)
-`lookSpend f τ k = f (τ (k + 1)) - f (τ k)`. The nominal levels telescope to `f (τ K) ≤ α`
-(`sum_lookSpend_le`), so the probability that any look rejects is at most `α`
-(`measure_rejectedLooks_lookSpend_nonempty_le`). Because that event contains the event
-"reject at the look where the trial stopped", the guarantee holds for **every** stopping rule
-within the planned looks, including data-dependent and non-adapted ones
-(`measure_reject_at_stopped_look_le`).
+Look `k + 1` is tested at the nominal level (the Bonferroni cutoff on the p-value scale)
+`bonferroniLookLevel f τ k = f (τ (k + 1)) - f (τ k)`: the spending increment is used
+directly as the cutoff, not converted into a joint-law boundary. The nominal levels
+telescope to `f (τ K) ≤ α` (`sum_bonferroniLookLevel_le`), so the probability that any
+look rejects is at most `α` (`measure_rejectedLooks_bonferroniLookLevel_nonempty_le`).
+Because that event contains the event "reject at the look where the trial stopped", the
+guarantee holds for **every** stopping rule within the planned looks, including
+data-dependent and non-adapted ones (`measure_reject_at_stopped_look_bonferroni_le`).
 
-The chosen spending function is the Lan–DeMets Pocock-type function
+The chosen spending budget is the Lan–DeMets Pocock-type function
 `pocockSpending α t = α log (1 + (e - 1) t)` (`isAlphaSpendingFunction_pocockSpending`), which
-spends exactly `α` at `t = 1` (`pocockSpending_one`). The theorems hold for any
-`IsAlphaSpendingFunction`.
+spends exactly `α` at `t = 1` (`pocockSpending_one`). Only its shape is Lan–DeMets; the
+cutoffs are Bonferroni. The theorems hold for any `IsAlphaSpendingFunction`.
 
 ## Dependence across looks and endpoints
 
@@ -56,13 +77,14 @@ Brownian-motion score process) and arbitrary dependence across endpoints are cov
 is conservatism: exact group-sequential boundaries computed recursively from the joint
 (canonical) law reject on a larger region with the same spend; those boundaries and any
 optimality claim are not formalized here. Several endpoints are handled by splitting each
-look's spend with weights summing to at most one (`measure_exists_look_endpoint_le`).
+look's spend with weights summing to at most one (`measure_exists_look_endpoint_bonferroni_le`).
 
 ## Zero rejections
 
 With no looks nothing is rejected (`rejectedLooks_zero`); p-values strictly above every
 nominal level give no rejection (`rejectedLooks_eq_empty_of_forall_lt`); in particular, for
-`α < 1` the all-ones p-values reject nothing (`rejectedLooks_lookSpend_eq_empty_of_eq_one`).
+`α < 1` the all-ones p-values reject nothing
+(`rejectedLooks_bonferroniLookLevel_eq_empty_of_eq_one`).
 
 ## Implementation notes
 
@@ -152,10 +174,12 @@ theorem isAlphaSpendingFunction_pocockSpending {α : ℝ} (hα : 0 ≤ α) :
 
 /-! ### Per-look nominal levels -/
 
-/-- The nominal level (critical value on the p-value scale) of look `k + 1` under the spending
-function `f` and information times `τ`: the spend `f (τ (k + 1)) - f (τ k)` accrued since the
-previous look. The convention `τ 0 = 0` marks the start of the trial. -/
-noncomputable def lookSpend (f : ℝ → ℝ) (τ : ℕ → ℝ) (k : ℕ) : ℝ :=
+/-- The nominal level (Bonferroni cutoff on the p-value scale) of look `k + 1`: the spending
+increment `f (τ (k + 1)) - f (τ k)` accrued since the previous look, used directly as the
+cutoff. This is not a Lan–DeMets critical value: Lan–DeMets boundaries are derived from the
+joint null law and are generally larger. The convention `τ 0 = 0` marks the start of the
+trial. -/
+noncomputable def bonferroniLookLevel (f : ℝ → ℝ) (τ : ℕ → ℝ) (k : ℕ) : ℝ :=
   f (τ (k + 1)) - f (τ k)
 
 /-- The looks among the first `K` whose p-value is at most the nominal level `c k`. The trial
@@ -165,8 +189,8 @@ noncomputable def rejectedLooks (K : ℕ) (c : ℕ → ℝ) (p : ℕ → ℝ) : 
   (Finset.range K).filter fun k => p k ≤ c k
 
 /-- The nominal levels telescope to the total spend `f (τ K) - f (τ 0)`. -/
-theorem sum_lookSpend (f : ℝ → ℝ) (τ : ℕ → ℝ) (K : ℕ) :
-    ∑ k ∈ Finset.range K, lookSpend f τ k = f (τ K) - f (τ 0) :=
+theorem sum_bonferroniLookLevel (f : ℝ → ℝ) (τ : ℕ → ℝ) (K : ℕ) :
+    ∑ k ∈ Finset.range K, bonferroniLookLevel f τ k = f (τ K) - f (τ 0) :=
   Finset.sum_range_sub (fun k => f (τ k)) K
 
 section Spend
@@ -178,26 +202,41 @@ private theorem mem_Icc_of_le_horizon (hτ0 : τ 0 = 0) (hτ : Monotone τ) (hτ
   ⟨hτ0 ▸ hτ (Nat.zero_le k), (hτ hk).trans hτK⟩
 
 /-- Each planned look has a nonnegative nominal level. -/
-theorem lookSpend_nonneg (hf : IsAlphaSpendingFunction α f) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
-    (hτK : τ K ≤ 1) {k : ℕ} (hk : k < K) : 0 ≤ lookSpend f τ k :=
+theorem bonferroniLookLevel_nonneg (hf : IsAlphaSpendingFunction α f) (hτ0 : τ 0 = 0)
+    (hτ : Monotone τ) (hτK : τ K ≤ 1) {k : ℕ} (hk : k < K) :
+    0 ≤ bonferroniLookLevel f τ k :=
   sub_nonneg.2 <| hf.monotoneOn (mem_Icc_of_le_horizon hτ0 hτ hτK hk.le)
     (mem_Icc_of_le_horizon hτ0 hτ hτK hk) (hτ k.le_succ)
 
 /-- Each planned look has nominal level at most `α`. -/
-theorem lookSpend_le (hf : IsAlphaSpendingFunction α f) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
-    (hτK : τ K ≤ 1) {k : ℕ} (hk : k < K) : lookSpend f τ k ≤ α := by
+theorem bonferroniLookLevel_le (hf : IsAlphaSpendingFunction α f) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
+    (hτK : τ K ≤ 1) {k : ℕ} (hk : k < K) : bonferroniLookLevel f τ k ≤ α := by
   have h1 := hf.le (mem_Icc_of_le_horizon hτ0 hτ hτK hk)
   have h0 := hf.nonneg (mem_Icc_of_le_horizon hτ0 hτ hτK hk.le)
-  unfold lookSpend
+  unfold bonferroniLookLevel
   linarith
 
 /-- **Spending accounting.** The nominal levels of the `K` planned looks sum to at most `α`. -/
-theorem sum_lookSpend_le (hf : IsAlphaSpendingFunction α f) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
-    (hτK : τ K ≤ 1) : ∑ k ∈ Finset.range K, lookSpend f τ k ≤ α := by
-  rw [sum_lookSpend, hτ0, hf.map_zero, sub_zero]
+theorem sum_bonferroniLookLevel_le (hf : IsAlphaSpendingFunction α f) (hτ0 : τ 0 = 0)
+    (hτ : Monotone τ) (hτK : τ K ≤ 1) :
+    ∑ k ∈ Finset.range K, bonferroniLookLevel f τ k ≤ α := by
+  rw [sum_bonferroniLookLevel, hτ0, hf.map_zero, sub_zero]
   exact hf.le (mem_Icc_of_le_horizon hτ0 hτ hτK le_rfl)
 
 end Spend
+
+/-- **Conservatism gap for two independent looks.** If two looks have spending increments
+`c₁, c₂ ≥ 0` and independent uniform p-values, the procedure rejects with probability
+`1 - (1 - c₁)(1 - c₂)`, which equals `c₁ + c₂ - c₁ * c₂` and is at most the Bonferroni
+bound `c₁ + c₂`, with gap `c₁ * c₂`. This is the algebra behind the claim that the
+procedure is conservative weighted Bonferroni, not exact Lan–DeMets: the joint-law
+calculation itself is not formalized, only the resulting real identity. -/
+theorem two_look_independent_gap {c₁ c₂ : ℝ} (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂) :
+    1 - (1 - c₁) * (1 - c₂) = c₁ + c₂ - c₁ * c₂ ∧
+      1 - (1 - c₁) * (1 - c₂) ≤ c₁ + c₂ := by
+  refine ⟨by ring, ?_⟩
+  rw [show 1 - (1 - c₁) * (1 - c₂) = c₁ + c₂ - c₁ * c₂ by ring]
+  exact sub_le_self _ (mul_nonneg hc₁ hc₂)
 
 /-! ### Type-I error control -/
 
@@ -219,35 +258,37 @@ section Control
 
 variable {α : ℝ} {f : ℝ → ℝ} {τ : ℕ → ℝ} {K : ℕ}
 
-/-- **Alpha-spending controls the type-I error.** If the p-value of each of the `K` planned
-looks is valid under the null, the probability that the alpha-spending procedure rejects at
+/-- **Bonferroni allocation controls the type-I error.** If the p-value of each of the `K` planned
+looks is valid under the null, the probability that the Bonferroni allocation rejects at
 some look is at most `α`. Only marginal validity is used: the looks may have any joint law.
 
 Source: Lan and DeMets (1983); Jennison and Turnbull (2000), Chapter 7. -/
-theorem measure_rejectedLooks_lookSpend_nonempty_le (μ : Measure Ω) (p : ℕ → Ω → ℝ)
+theorem measure_rejectedLooks_bonferroniLookLevel_nonempty_le (μ : Measure Ω) (p : ℕ → Ω → ℝ)
     (hf : IsAlphaSpendingFunction α f) (hα : α ≤ 1) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
     (hτK : τ K ≤ 1) (hnull : ∀ k < K, IsValidPValue μ (p k)) :
-    μ {ω | (rejectedLooks K (lookSpend f τ) fun k => p k ω).Nonempty} ≤ ENNReal.ofReal α := by
-  have hset : {ω | (rejectedLooks K (lookSpend f τ) fun k => p k ω).Nonempty} =
-      {ω | ∃ k ∈ Finset.range K, p k ω ≤ lookSpend f τ k} := by
+    μ {ω | (rejectedLooks K (bonferroniLookLevel f τ) fun k => p k ω).Nonempty} ≤
+      ENNReal.ofReal α := by
+  have hset : {ω | (rejectedLooks K (bonferroniLookLevel f τ) fun k => p k ω).Nonempty} =
+      {ω | ∃ k ∈ Finset.range K, p k ω ≤ bonferroniLookLevel f τ k} := by
     ext ω
     simp [rejectedLooks, Finset.Nonempty]
   rw [hset]
   refine (measure_exists_le_level_le_sum μ _ p _
     (fun k hk => hnull k (Finset.mem_range.1 hk)) fun k hk => ?_).trans
-    (ENNReal.ofReal_le_ofReal (sum_lookSpend_le hf hτ0 hτ hτK))
+    (ENNReal.ofReal_le_ofReal (sum_bonferroniLookLevel_le hf hτ0 hτ hτK))
   have hk := Finset.mem_range.1 hk
-  exact ⟨lookSpend_nonneg hf hτ0 hτ hτK hk, (lookSpend_le hf hτ0 hτ hτK hk).trans hα⟩
+  exact ⟨bonferroniLookLevel_nonneg hf hτ0 hτ hτK hk,
+    (bonferroniLookLevel_le hf hτ0 hτ hτK hk).trans hα⟩
 
 /-- **Optional stopping.** For any rule `N` choosing the look at which the trial stops, which may
 depend on the data arbitrarily (it need not be a stopping time), the probability of stopping at
 a planned look with a rejection is at most `α`. -/
-theorem measure_reject_at_stopped_look_le (μ : Measure Ω) (p : ℕ → Ω → ℝ) (N : Ω → ℕ)
+theorem measure_reject_at_stopped_look_bonferroni_le (μ : Measure Ω) (p : ℕ → Ω → ℝ) (N : Ω → ℕ)
     (hf : IsAlphaSpendingFunction α f) (hα : α ≤ 1) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
     (hτK : τ K ≤ 1) (hnull : ∀ k < K, IsValidPValue μ (p k)) :
-    μ {ω | N ω < K ∧ p (N ω) ω ≤ lookSpend f τ (N ω)} ≤ ENNReal.ofReal α := by
+    μ {ω | N ω < K ∧ p (N ω) ω ≤ bonferroniLookLevel f τ (N ω)} ≤ ENNReal.ofReal α := by
   refine (measure_mono ?_).trans
-    (measure_rejectedLooks_lookSpend_nonempty_le μ p hf hα hτ0 hτ hτK hnull)
+    (measure_rejectedLooks_bonferroniLookLevel_nonempty_le μ p hf hα hτ0 hτ hτK hnull)
   intro ω hω
   exact ⟨N ω, Finset.mem_filter.2 ⟨Finset.mem_range.2 hω.1, hω.2⟩⟩
 
@@ -255,33 +296,34 @@ theorem measure_reject_at_stopped_look_le (μ : Measure Ω) (p : ℕ → Ω → 
 spend, with weights `w j ≥ 0` summing to at most one. If every endpoint's p-value at every look
 is valid under the (global) null, the probability of any rejection is at most `α`. No
 assumption is made on the dependence across looks or endpoints. -/
-theorem measure_exists_look_endpoint_le (μ : Measure Ω) {ι : Type*} (E : Finset ι)
+theorem measure_exists_look_endpoint_bonferroni_le (μ : Measure Ω) {ι : Type*} (E : Finset ι)
     (p : ℕ → ι → Ω → ℝ) (w : ι → ℝ) (hw0 : ∀ j ∈ E, 0 ≤ w j) (hw1 : ∑ j ∈ E, w j ≤ 1)
     (hf : IsAlphaSpendingFunction α f) (hα : α ≤ 1) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
     (hτK : τ K ≤ 1) (hnull : ∀ k < K, ∀ j ∈ E, IsValidPValue μ (p k j)) :
-    μ {ω | ∃ k < K, ∃ j ∈ E, p k j ω ≤ w j * lookSpend f τ k} ≤ ENNReal.ofReal α := by
-  have hset : {ω | ∃ k < K, ∃ j ∈ E, p k j ω ≤ w j * lookSpend f τ k} =
-      {ω | ∃ i ∈ Finset.range K ×ˢ E, p i.1 i.2 ω ≤ w i.2 * lookSpend f τ i.1} := by
+    μ {ω | ∃ k < K, ∃ j ∈ E, p k j ω ≤ w j * bonferroniLookLevel f τ k} ≤ ENNReal.ofReal α := by
+  have hset : {ω | ∃ k < K, ∃ j ∈ E, p k j ω ≤ w j * bonferroniLookLevel f τ k} =
+      {ω | ∃ i ∈ Finset.range K ×ˢ E, p i.1 i.2 ω ≤ w i.2 * bonferroniLookLevel f τ i.1} := by
     ext ω
     simp [and_assoc]
   rw [hset]
   refine (measure_exists_le_level_le_sum μ _ (fun i : ℕ × ι => p i.1 i.2)
-    (fun i : ℕ × ι => w i.2 * lookSpend f τ i.1)
+    (fun i : ℕ × ι => w i.2 * bonferroniLookLevel f τ i.1)
     (fun i hi => ?_) fun i hi => ?_).trans (ENNReal.ofReal_le_ofReal ?_)
   · rw [Finset.mem_product, Finset.mem_range] at hi
     exact hnull i.1 hi.1 i.2 hi.2
   · rw [Finset.mem_product, Finset.mem_range] at hi
-    have hs0 := lookSpend_nonneg hf hτ0 hτ hτK hi.1
-    have hs1 := (lookSpend_le hf hτ0 hτ hτK hi.1).trans hα
+    have hs0 := bonferroniLookLevel_nonneg hf hτ0 hτ hτK hi.1
+    have hs1 := (bonferroniLookLevel_le hf hτ0 hτ hτK hi.1).trans hα
     have hw := (Finset.single_le_sum hw0 hi.2).trans hw1
     exact ⟨mul_nonneg (hw0 _ hi.2) hs0, by nlinarith⟩
   · rw [Finset.sum_product]
-    calc ∑ k ∈ Finset.range K, ∑ j ∈ E, w j * lookSpend f τ k
-        = ∑ k ∈ Finset.range K, (∑ j ∈ E, w j) * lookSpend f τ k := by
+    calc ∑ k ∈ Finset.range K, ∑ j ∈ E, w j * bonferroniLookLevel f τ k
+        = ∑ k ∈ Finset.range K, (∑ j ∈ E, w j) * bonferroniLookLevel f τ k := by
           simp [Finset.sum_mul]
-      _ ≤ ∑ k ∈ Finset.range K, lookSpend f τ k := Finset.sum_le_sum fun k hk =>
-          mul_le_of_le_one_left (lookSpend_nonneg hf hτ0 hτ hτK (Finset.mem_range.1 hk)) hw1
-      _ ≤ α := sum_lookSpend_le hf hτ0 hτ hτK
+      _ ≤ ∑ k ∈ Finset.range K, bonferroniLookLevel f τ k := Finset.sum_le_sum fun k hk =>
+          mul_le_of_le_one_left
+            (bonferroniLookLevel_nonneg hf hτ0 hτ hτK (Finset.mem_range.1 hk)) hw1
+      _ ≤ α := sum_bonferroniLookLevel_le hf hτ0 hτ hτK
 
 end Control
 
@@ -297,12 +339,13 @@ theorem rejectedLooks_eq_empty_of_forall_lt {K : ℕ} {c p : ℕ → ℝ} (h : �
     rejectedLooks K c p = ∅ :=
   Finset.filter_eq_empty_iff.2 fun k hk => not_le.2 (h k (Finset.mem_range.1 hk))
 
-/-- **Zero rejections.** For `α < 1`, the alpha-spending procedure rejects nothing when every
+/-- **Zero rejections.** For `α < 1`, the Bonferroni allocation rejects nothing when every
 p-value equals `1`. -/
-theorem rejectedLooks_lookSpend_eq_empty_of_eq_one {α : ℝ} {f : ℝ → ℝ} {τ : ℕ → ℝ} {K : ℕ}
+theorem rejectedLooks_bonferroniLookLevel_eq_empty_of_eq_one {α : ℝ} {f : ℝ → ℝ} {τ : ℕ → ℝ} {K : ℕ}
     (hf : IsAlphaSpendingFunction α f) (hα : α < 1) (hτ0 : τ 0 = 0) (hτ : Monotone τ)
-    (hτK : τ K ≤ 1) : rejectedLooks K (lookSpend f τ) (fun _ => 1) = ∅ :=
-  rejectedLooks_eq_empty_of_forall_lt fun _ hk => (lookSpend_le hf hτ0 hτ hτK hk).trans_lt hα
+    (hτK : τ K ≤ 1) : rejectedLooks K (bonferroniLookLevel f τ) (fun _ => 1) = ∅ :=
+  rejectedLooks_eq_empty_of_forall_lt fun _ hk =>
+    (bonferroniLookLevel_le hf hτ0 hτ hτK hk).trans_lt hα
 
 /-! ### Fixed-family testing at level `α` per look -/
 
