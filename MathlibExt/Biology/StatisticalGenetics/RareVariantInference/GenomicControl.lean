@@ -77,10 +77,11 @@ statistic (the population version of the mean-based estimator of `λ`):
 * `not_exists_lambda_calibrates_of_strat_ne`: with `h² = 0` but stratification terms that
   differ between two markers, no single `λ` makes both expected statistics equal to `1`.
 
-The fixed shift of `LDScoreInflation` gives the score a nonzero mean, and `LDScore.Model` fixes
-only second moments, so the statistic is not a scaled central `χ²₁` (under Gaussianity it would
-be a noncentral `χ²`); the moment results therefore do not imply the distributional ones, which
-assume the multiplicative-variance structure above.
+`LDScore.Model` fixes only second moments, so the stratified statistic of `LDScoreInflation`
+need not be a scaled central `χ²₁` (under Gaussianity it is a scaled noncentral `χ²₁` whenever
+`s · X_jᵀ c ≠ 0`, since the fixed shift then gives the score a nonzero mean); the moment results
+therefore do not imply the distributional ones, which assume the multiplicative-variance
+structure above.
 
 ## Reuse and sources (API-00 receipt)
 
@@ -308,6 +309,14 @@ theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (F
   have : 0 < N * D.h2 / M * meanLDScore X := by positivity
   nlinarith
 
+/-- The polygenic slope `N h² / M` is positive when `N, M ≠ 0` and `h² ≠ 0`. -/
+private theorem polygenicSlope_pos (D : Model μ N M) (hN : N ≠ 0) (hM : M ≠ 0)
+    (hh : D.h2 ≠ 0) : (0 : ℝ) < N * D.h2 / M := by
+  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
+  have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
+  have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
+  positivity
+
 /-- **Failure with polygenic signal.** With a common stratification term and `h² ≠ 0`,
 genomic control calibrates a marker in mean exactly when its LD score equals the mean LD
 score. With `h² ≠ 0` no marker is null, so "calibrated in mean" concerns the expected statistic,
@@ -320,8 +329,7 @@ theorem integral_chiSqStrat_div_lambdaGC_eq_one_iff [IsProbabilityMeasure μ] (D
     (∫ ω, chiSqStrat D X s c j ω ∂μ) / lambdaGC D X s c = 1 ↔ ldScore X j = meanLDScore X := by
   have hlam := lambdaGC_pos D X hN hM hX hβ hε hh s c ha
   have hsub := integral_chiSqStrat_sub_lambdaGC D X hN hM hX hβ hε s c ha j
-  have hcoef : (N : ℝ) * D.h2 / M ≠ 0 :=
-    div_ne_zero (mul_ne_zero (Nat.cast_ne_zero.mpr hN) hh) (Nat.cast_ne_zero.mpr hM)
+  have hcoef := (polygenicSlope_pos D hN hM hh).ne'
   rw [div_eq_one_iff_eq hlam.ne', ← sub_eq_zero, hsub, mul_eq_zero, sub_eq_zero]
   exact or_iff_right hcoef
 
@@ -336,11 +344,7 @@ theorem integral_chiSqStrat_div_lambdaGC_lt_one_of_lt [IsProbabilityMeasure μ]
     (∫ ω, chiSqStrat D X s c j ω ∂μ) / lambdaGC D X s c < 1 := by
   have hlam := lambdaGC_pos D X hN hM hX hβ hε hh s c ha
   have hsub := integral_chiSqStrat_sub_lambdaGC D X hN hM hX hβ hε s c ha j
-  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
-  have hcoef : (0 : ℝ) < N * D.h2 / M := by
-    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
-    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
-    positivity
+  have hcoef := polygenicSlope_pos D hN hM hh
   rw [div_lt_one hlam]
   nlinarith [mul_neg_of_pos_of_neg hcoef (sub_neg.mpr hj)]
 
@@ -355,11 +359,7 @@ theorem one_lt_integral_chiSqStrat_div_lambdaGC_of_lt [IsProbabilityMeasure μ]
     1 < (∫ ω, chiSqStrat D X s c j ω ∂μ) / lambdaGC D X s c := by
   have hlam := lambdaGC_pos D X hN hM hX hβ hε hh s c ha
   have hsub := integral_chiSqStrat_sub_lambdaGC D X hN hM hX hβ hε s c ha j
-  have hh0 : 0 < D.h2 := lt_of_le_of_ne (D.h2_nonneg (Nat.pos_of_ne_zero hM)) (Ne.symm hh)
-  have hcoef : (0 : ℝ) < N * D.h2 / M := by
-    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hN)
-    have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
-    positivity
+  have hcoef := polygenicSlope_pos D hN hM hh
   rw [one_lt_div hlam]
   nlinarith [mul_pos hcoef (sub_pos.mpr hj)]
 
