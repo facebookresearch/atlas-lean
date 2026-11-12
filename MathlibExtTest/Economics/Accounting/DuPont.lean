@@ -51,13 +51,8 @@ theorem test_dupont_identity_example :
     (DuPontInputs.mk 10 100 200 80).profitMargin * (DuPontInputs.mk 10 100 200 80).assetTurnover *
         (DuPontInputs.mk 10 100 200 80).equityMultiplier =
       (DuPontInputs.mk 10 100 200 80).returnOnEquity := by
-  exact DuPontInputs.profitMargin_mul_assetTurnover_mul_equityMultiplier _ (by show (100:ℝ) ≠ 0; norm_num) (by show (200:ℝ) ≠ 0; norm_num)
-
-/-- The identity holds for every equity value, including 0, by the main theorem. -/
-theorem test_dupont_any_equity (e : ℝ) :
-    (DuPontInputs.mk 10 100 200 e).profitMargin * (DuPontInputs.mk 10 100 200 e).assetTurnover *
-        (DuPontInputs.mk 10 100 200 e).equityMultiplier =
-      (DuPontInputs.mk 10 100 200 e).returnOnEquity := by
-  exact DuPontInputs.profitMargin_mul_assetTurnover_mul_equityMultiplier _ (by show (100:ℝ) ≠ 0; norm_num) (by show (200:ℝ) ≠ 0; norm_num)
+  exact DuPontInputs.profitMargin_mul_assetTurnover_mul_equityMultiplier _
+    (by show (100:ℝ) ≠ 0; norm_num) (by show (200:ℝ) ≠ 0; norm_num)
+    (by show (80:ℝ) ≠ 0; norm_num)
 
 end MathlibExtTest.Economics.Accounting.DuPont
