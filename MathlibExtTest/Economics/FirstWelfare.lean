@@ -89,7 +89,7 @@ theorem exAlloc_feasible : exLinEcon.IsFeasible exAlloc := by
   · exact le_rfl
 
 theorem exLin_isWalrasian : exLinEcon.IsWalrasianEquilibrium exPrice exAlloc := by
-  refine ⟨exPrice_nonneg, exPrice_ne_zero, exAlloc_feasible, ?_⟩
+  refine ⟨exPrice_nonneg, exPrice_ne_zero, exAlloc_feasible, fun _ _ => rfl, ?_⟩
   rw [Fin.forall_fin_two]
   constructor
   · refine ⟨le_rfl, ?_⟩
@@ -122,7 +122,7 @@ theorem exSat_util1 (y : Fin 2 → ℝ) : exSatEcon.utility 1 y = y 0 + y 1 := b
 
 theorem exSat_isWalrasian : exSatEcon.IsWalrasianEquilibrium exPrice exAlloc := by
   have hfeas : exSatEcon.IsFeasible exAlloc := exAlloc_feasible
-  refine ⟨exPrice_nonneg, exPrice_ne_zero, hfeas, ?_⟩
+  refine ⟨exPrice_nonneg, exPrice_ne_zero, hfeas, fun _ _ => rfl, ?_⟩
   rw [Fin.forall_fin_two]
   constructor
   · refine ⟨le_rfl, ?_⟩
@@ -172,10 +172,13 @@ def exZeroEcon : ExchangeEconomy Unit Unit where
 `IsWalrasianEquilibrium` except `p ≠ 0`. -/
 theorem exZero_otherClauses :
     (0 : Unit → ℝ) ≤ 0 ∧ exZeroEcon.IsFeasible 0 ∧
+      (∀ l : Unit, 0 < (0 : Unit → ℝ) l →
+        (∑ i : Unit, (0 : Unit → Unit → ℝ) i) l = (∑ i, exZeroEcon.endowment i) l) ∧
       ∀ i, (0 : Unit → ℝ) ⬝ᵥ (0 : Unit → Unit → ℝ) i ≤ (0 : Unit → ℝ) ⬝ᵥ exZeroEcon.endowment i ∧
         ∀ y : Unit → ℝ, 0 ≤ y → (0 : Unit → ℝ) ⬝ᵥ y ≤ (0 : Unit → ℝ) ⬝ᵥ exZeroEcon.endowment i →
           exZeroEcon.utility i y ≤ exZeroEcon.utility i ((0 : Unit → Unit → ℝ) i) := by
-  refine ⟨le_rfl, ⟨fun _ => le_rfl, ?_⟩, fun _ => ⟨?_, fun _ _ _ => le_rfl⟩⟩
+  refine ⟨le_rfl, ⟨fun _ => le_rfl, ?_⟩, fun _ h => (lt_irrefl _ h).elim,
+    fun _ => ⟨?_, fun _ _ _ => le_rfl⟩⟩
   · intro l
     simp [exZeroEcon]
   · simp
@@ -183,6 +186,27 @@ theorem exZero_otherClauses :
 /-- Regression: the zero price vector is not a Walrasian equilibrium. -/
 theorem exZero_not_isWalrasian : ¬ exZeroEcon.IsWalrasianEquilibrium 0 0 :=
   fun h => h.2.1 rfl
+
+/-- One agent can leave an endowed good unsold without losing utility. -/
+def exSlackEcon : ExchangeEconomy Unit Unit where
+  endowment := fun _ _ => 1
+  utility := fun _ _ => 0
+
+/-- The unsold-good counterexample satisfies every clause except market clearing. -/
+theorem exSlack_otherClauses :
+    0 ≤ (1 : Unit → ℝ) ∧ (1 : Unit → ℝ) ≠ 0 ∧ exSlackEcon.IsFeasible 0 ∧
+      ∀ i, (1 : Unit → ℝ) ⬝ᵥ (0 : Unit → Unit → ℝ) i ≤
+          (1 : Unit → ℝ) ⬝ᵥ exSlackEcon.endowment i ∧
+        ∀ y : Unit → ℝ, 0 ≤ y →
+          (1 : Unit → ℝ) ⬝ᵥ y ≤ (1 : Unit → ℝ) ⬝ᵥ exSlackEcon.endowment i →
+          exSlackEcon.utility i y ≤ exSlackEcon.utility i (0 : Unit → ℝ) := by
+  norm_num [exSlackEcon, ExchangeEconomy.IsFeasible, Pi.le_def, dotProduct]
+
+/-- Positive-price excess supply is not a Walrasian equilibrium. -/
+theorem exSlack_not_isWalrasian : ¬ exSlackEcon.IsWalrasianEquilibrium 1 0 := by
+  intro h
+  have hclear := h.2.2.2.1 () (by norm_num)
+  norm_num [exSlackEcon] at hclear
 
 end Examples
 

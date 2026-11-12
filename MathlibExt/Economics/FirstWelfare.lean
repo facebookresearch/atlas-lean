@@ -29,6 +29,7 @@ consumption does not exceed the total endowment good by good (free disposal).
 A Walrasian (competitive) equilibrium is a nonzero nonnegative price vector `p`
 and a feasible allocation `x` such that each `x i` is affordable at `p` and
 maximizes `utility i` over the nonnegative bundles that are affordable at `p`.
+Every good with positive price clears: aggregate consumption equals aggregate endowment.
 The first welfare theorem: if every utility is locally nonsatiated on the
 nonnegative orthant (`SecondWelfareTheorem.LocallyNonsatiated`, shared with the
 second welfare theorem), every Walrasian equilibrium allocation is Pareto
@@ -66,11 +67,12 @@ def IsFeasible {I L : Type*} [Fintype I] (E : ExchangeEconomy I L)
   (∀ i, 0 ≤ x i) ∧ ∑ i, x i ≤ ∑ i, E.endowment i
 
 /-- `(p, x)` is a Walrasian equilibrium: prices are nonnegative and not all
-zero, `x` is feasible, and each agent's bundle is affordable at `p` and
-maximizes utility over all nonnegative bundles affordable at `p`. -/
+zero, `x` is feasible, every positive-price good clears, and each agent's bundle
+is affordable at `p` and maximizes utility over all nonnegative affordable bundles. -/
 def IsWalrasianEquilibrium {I L : Type*} [Fintype I] [Fintype L]
     (E : ExchangeEconomy I L) (p : L → ℝ) (x : I → L → ℝ) : Prop :=
   0 ≤ p ∧ p ≠ 0 ∧ E.IsFeasible x ∧
+    (∀ l, 0 < p l → (∑ i, x i) l = (∑ i, E.endowment i) l) ∧
     ∀ i, p ⬝ᵥ x i ≤ p ⬝ᵥ E.endowment i ∧
       ∀ y : L → ℝ, 0 ≤ y → p ⬝ᵥ y ≤ p ⬝ᵥ E.endowment i →
         E.utility i y ≤ E.utility i (x i)
@@ -89,7 +91,7 @@ theorem isParetoEfficient_of_isWalrasianEquilibrium {I L : Type*} [Fintype I] [F
     (E : ExchangeEconomy I L) (hLNS : ∀ i, SecondWelfareTheorem.LocallyNonsatiated (E.utility i))
     {p : L → ℝ} {x : I → L → ℝ} (hx : E.IsWalrasianEquilibrium p x) :
     E.IsParetoEfficient x := by
-  obtain ⟨hp, -, hxfeas, hopt⟩ := hx
+  obtain ⟨hp, -, hxfeas, -, hopt⟩ := hx
   refine ⟨hxfeas, ?_⟩
   rintro ⟨y, hyfeas, hge, ⟨j, hlt⟩⟩
   have hstrict : p ⬝ᵥ E.endowment j < p ⬝ᵥ y j := by
