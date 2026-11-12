@@ -7,9 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Tactic.NormNum
 
 import PhyslibExt.EarthScience.P07PhaseEquilibrium
+
+open scoped Topology
 
 /-!
 # Clapeyron checks
@@ -42,14 +45,30 @@ example {mu1 mu2 : ℝ → ℝ} {v1 v2 s1 s2 dp dT : ℝ} {t : ℝ}
     (hv : v2 - v1 ≠ 0) (hdT : dT ≠ 0)
     (hmu1 : HasDerivAt mu1 (v1 * dp - s1 * dT) t)
     (hmu2 : HasDerivAt mu2 (v2 * dp - s2 * dT) t)
-    (heq : HasDerivAt (fun t => mu1 t - mu2 t) 0 t) :
+    (hcoex : mu1 =ᶠ[𝓝 t] mu2) :
     dp / dT = (s2 - s1) / (v2 - v1) :=
-  EarthScience.clapeyron_dp_dT hv hdT hmu1 hmu2 heq
+  EarthScience.clapeyron_dp_dT hv hdT hmu1 hmu2 hcoex
 
-/-- Latent-heat form, numeric: `10 / 2 = 300 * 10 / (300 * 2) = 5`. -/
-example : (12 - 2 : ℝ) / (3 - 1) = (300 * (12 - 2)) / (300 * (3 - 1)) :=
-  EarthScience.clapeyron_latentHeat_form (T := 300) (s1 := 2) (s2 := 12) (v1 := 1) (v2 := 3) (by norm_num)
+/-- Latent-heat form, numeric: with `μ1 = μ2 = 3 * t`, `dp = 5`, `dT = 1`,
+`s2 - s1 = 10`, `v2 - v1 = 2`, `T = 300`, `L = 3000`,
+`dp / dT = 5 = 3000 / (300 * 2)`. -/
+example : (5 : ℝ) / 1 = 3000 / (300 * (3 - 1)) :=
+  EarthScience.clapeyron_latentHeat_form (mu1 := fun x : ℝ => 3 * x)
+    (mu2 := fun x : ℝ => 3 * x) (v1 := 1) (v2 := 3) (s1 := 2) (s2 := 12)
+    (dp := 5) (dT := 1) (T := 300) (L := 3000) (t := 0)
+    (by norm_num) (by norm_num) (by norm_num)
+    (by rw [show ((1 : ℝ) * 5 - 2 * 1) = 3 by norm_num]
+        simpa using (hasDerivAt_id' (0 : ℝ)).const_mul (3 : ℝ))
+    (by rw [show ((3 : ℝ) * 5 - 12 * 1) = 3 by norm_num]
+        simpa using (hasDerivAt_id' (0 : ℝ)).const_mul (3 : ℝ))
+    (Filter.Eventually.of_forall fun _ => rfl) (by norm_num)
 
 /-- Equal-entropy boundary: `s2 = s1` gives `dp / dT = 0` in latent-heat form. -/
-example : ((5 : ℝ) - 5) / (3 - 1) = (300 * ((5 : ℝ) - 5)) / (300 * (3 - 1)) :=
-  EarthScience.clapeyron_latentHeat_form (T := 300) (s1 := 5) (s2 := 5) (v1 := 1) (v2 := 3) (by norm_num)
+example : (0 : ℝ) / 1 = 0 / (300 * (3 - 1)) :=
+  EarthScience.clapeyron_latentHeat_form (mu1 := fun x : ℝ => -5 * x)
+    (mu2 := fun x : ℝ => -5 * x) (v1 := 1) (v2 := 3) (s1 := 5) (s2 := 5)
+    (dp := 0) (dT := 1) (T := 300) (L := 0) (t := 0)
+    (by norm_num) (by norm_num) (by norm_num)
+    (by simpa using (hasDerivAt_id' (0 : ℝ)).const_mul (-5 : ℝ))
+    (by simpa using (hasDerivAt_id' (0 : ℝ)).const_mul (-5 : ℝ))
+    (Filter.Eventually.of_forall fun _ => rfl) (by norm_num)
