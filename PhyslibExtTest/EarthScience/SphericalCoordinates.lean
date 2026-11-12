@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S01SphericalCoordinates
+import PhyslibExt.EarthScience.SphericalCoordinates
 
 /-!
 # Earth coordinates, distance, and map geometry
 
-Concrete consumers of `PhyslibExt.EarthScience.S01SphericalCoordinates`.
+Concrete consumers of `PhyslibExt.EarthScience.SphericalCoordinates`.
 
 ## i. Overview
 
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S01SphericalCoordinates`
+- `PhyslibExt.EarthScience.SphericalCoordinates`
 -/
 
 /-- Equator at `φ = 0`, `λ = 0`: point `(R, 0, 0)`, squared norm `R²`. -/
