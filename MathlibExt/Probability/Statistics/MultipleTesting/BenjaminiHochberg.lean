@@ -64,7 +64,7 @@ GWAS p-values) satisfies it.
 * `card_bhRejections`: BH at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses.
 * `bhIndex_eq_sup`, `measurable_bhIndex`, `measurable_falseDiscoveryProportion_bhRejections`:
   for measurable p-values, the BH index and the false discovery proportion of the BH rejections
-  are measurable. `bhIndex q p` is definitionally `suIdx (fun k => q * k / m) p`, so these and
+  are measurable. `bhIndex q p` is definitionally `stepUpIndex (fun k => q * k / m) p`, so these and
   the leave-one-out step reuse the step-up lemmas of `MultipleTesting.Basic`.
 * `integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue`: `E[FDP] ≤ q |H0| / m`
   for independent p-values whose true-null p-values are valid (super-uniform)
@@ -114,34 +114,23 @@ noncomputable def bhRejections (q : ℝ) (p : Fin m → ℝ) : Finset (Fin m) :=
   Finset.univ.filter fun i => p i ≤ q * bhIndex q p / m
 
 /-- The BH step-up index is at most `m`. -/
-theorem bhIndex_le (q : ℝ) (p : Fin m → ℝ) : bhIndex q p ≤ m := by
-  have h := Finset.max'_mem ((Finset.range (m + 1)).filter fun k : ℕ =>
-    k ≤ numBelow p (q * (k : ℝ) / m)) ⟨0, by simp⟩
-  simp only [Finset.mem_filter, Finset.mem_range] at h
-  exact Nat.lt_succ_iff.1 h.1
+theorem bhIndex_le (q : ℝ) (p : Fin m → ℝ) : bhIndex q p ≤ m :=
+  stepUpIndex_le _ p
 
 /-- At the BH step-up index `k`, at least `k` p-values are at most `q k / m`. -/
 theorem bhIndex_le_numBelow (q : ℝ) (p : Fin m → ℝ) :
-    bhIndex q p ≤ numBelow p (q * bhIndex q p / m) := by
-  have h := Finset.max'_mem ((Finset.range (m + 1)).filter fun k : ℕ =>
-    k ≤ numBelow p (q * (k : ℝ) / m)) ⟨0, by simp⟩
-  simp only [Finset.mem_filter] at h
-  exact h.2
+    bhIndex q p ≤ numBelow p (q * bhIndex q p / m) :=
+  stepUpIndex_le_numBelow _ p
 
 /-- The BH step-up index is the largest `k ≤ m` with at least `k` p-values at most `q k / m`. -/
 theorem le_bhIndex {q : ℝ} {p : Fin m → ℝ} {k : ℕ} (hk : k ≤ m)
     (h : k ≤ numBelow p (q * k / m)) : k ≤ bhIndex q p :=
-  Finset.le_max' _ k (by simpa [Nat.lt_succ_iff] using ⟨hk, h⟩)
+  le_stepUpIndex hk h
 
 /-- The BH procedure at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses. -/
 theorem card_bhRejections {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ) :
-    (bhRejections q p).card = bhIndex q p := by
-  change numBelow p (q * bhIndex q p / m) = bhIndex q p
-  refine le_antisymm ?_ (bhIndex_le_numBelow q p)
-  by_contra! hlt
-  have hle : numBelow p (q * bhIndex q p / m) ≤ bhIndex q p :=
-    le_bhIndex (numBelow_le p _) (numBelow_mono p (by gcongr))
-  omega
+    (bhRejections q p).card = bhIndex q p :=
+  numBelow_stepUpIndex (c := fun k => q * (k : ℝ) / m) (fun _ _ h => by dsimp only; gcongr) p
 
 private theorem threshold_mono {m k l : ℕ} {q : ℝ} (hq : 0 ≤ q) (hkl : k ≤ l) :
     q * (k : ℝ) / m ≤ q * (l : ℝ) / m := by
@@ -151,18 +140,9 @@ private theorem threshold_mono {m k l : ℕ} {q : ℝ} (hq : 0 ≤ q) (hkl : k �
 private theorem threshold_nonneg {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) :
     0 ≤ q * (k : ℝ) / m := by positivity
 
-private theorem bhIndex_le_update {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
-    (i : Fin m) : bhIndex q p ≤ bhIndex q (Function.update p i 0) :=
-  suIdx_le_update (fun _ => threshold_nonneg hq) p i
-
 private theorem bhIndex_update_pos {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
     (i : Fin m) : 1 ≤ bhIndex q (Function.update p i 0) :=
-  one_le_suIdx_update (fun _ => threshold_nonneg hq) p i
-
-private theorem bhIndex_update_eq {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
-    (i : Fin m) (hpi : p i ≤ q * bhIndex q (Function.update p i 0) / m) :
-    bhIndex q p = bhIndex q (Function.update p i 0) :=
-  suIdx_update_eq (fun _ => threshold_nonneg hq) p i hpi
+  one_le_stepUpIndex_update (fun _ => threshold_nonneg hq) p i
 
 private theorem bh_leave_one_out {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
     (i : Fin m) :
@@ -171,26 +151,20 @@ private theorem bh_leave_one_out {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m
   classical
   rw [card_bhRejections hq, card_bhRejections hq]
   simp only [bhRejections, Finset.mem_filter, Finset.mem_univ, true_and]
-  constructor
-  · rintro ⟨hpi, hk⟩
-    have heq := bhIndex_update_eq hq p i (hpi.trans
-      (threshold_mono hq (bhIndex_le_update hq p i)))
-    exact ⟨by simpa [hk] using hpi, heq.symm.trans hk⟩
-  · rintro ⟨hpi, hk⟩
-    have heq := bhIndex_update_eq hq p i (by simpa [hk] using hpi)
-    exact ⟨by simpa [heq, hk] using hpi, heq.trans hk⟩
+  exact stepUp_leave_one_out (c := fun k => q * (k : ℝ) / m) (fun _ _ h => by dsimp only; gcongr)
+    (fun _ => by positivity) p i k
 
 /-- The BH step-up index as a finite supremum, the form used to prove measurability. -/
 theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
     bhIndex q p = (Finset.range (m + 1)).sup
       (fun k => if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0) :=
-  suIdx_eq_sup _ p
+  stepUpIndex_eq_sup _ p
 
 /-- The BH step-up index of measurable p-values is a measurable function. -/
 theorem measurable_bhIndex {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (q : ℝ) :
     Measurable (fun ω => bhIndex q (fun i => p i ω)) :=
-  measurable_suIdx_comp (fun _ k => q * (k : ℝ) / m) (fun ω i => p i ω)
+  measurable_stepUpIndex_comp (fun _ k => q * (k : ℝ) / m) (fun ω i => p i ω)
     (fun _ => measurable_const) hp
 
 /-- The false discovery proportion of the BH rejection set is a measurable function of

@@ -38,11 +38,11 @@ error rate (FWER) is the probability of this event.
   bounded count is valid unconditionally.
 * `falseDiscoveryProportion_nonneg`, `falseDiscoveryProportion_le_one`, `fdp_eq_sum`.
 * `valid_measureReal_le`: the real-valued form of validity.
-* `suIdx`: the step-up index for a fixed threshold sequence `c`, with `suIdx_le`,
-  `suIdx_le_numBelow`, `le_suIdx`, `numBelow_suIdx`, `suIdx_eq_sup`.
-* `numBelow_update_le`, `numBelow_update_eq`, `su_leave_one_out`: replacing one p-value by `0`
+* `stepUpIndex`: the step-up index for a fixed threshold sequence `c`, with `stepUpIndex_le`,
+  `stepUpIndex_le_numBelow`, `le_stepUpIndex`, `numBelow_stepUpIndex`, `stepUpIndex_eq_sup`.
+* `numBelow_update_le`, `numBelow_update_eq`, `stepUp_leave_one_out`: replacing one p-value by `0`
   (the leave-one-out step of the BH and Storey-BH FDR proofs).
-* `measurable_numBelow`, `measurable_numBelow_comp`, `measurable_suIdx_comp`: measurability of
+* `measurable_numBelow`, `measurable_numBelow_comp`, `measurable_stepUpIndex_comp`: measurability of
   the count below a threshold and of the step-up index.
 
 ## References
@@ -202,89 +202,82 @@ theorem numBelow_update_eq (p : Fin m → ℝ) (i : Fin m) {t : ℝ}
 /-- Step-up index for an arbitrary threshold sequence `c`: the largest `k ∈ {0, …, m}` such that
 at least `k` p-values are at most `c k` (`k = 0` always qualifies). The Benjamini–Hochberg index
 is the case `c k = q k / m`. -/
-noncomputable def suIdx (c : ℕ → ℝ) (p : Fin m → ℝ) : ℕ :=
+noncomputable def stepUpIndex (c : ℕ → ℝ) (p : Fin m → ℝ) : ℕ :=
   ((Finset.range (m + 1)).filter fun k : ℕ => k ≤ numBelow p (c k)).max' ⟨0, by simp⟩
 
 /-- The step-up index lies in the set of qualifying indices it maximizes over. -/
-theorem suIdx_mem (c : ℕ → ℝ) (p : Fin m → ℝ) :
-    suIdx c p ∈ (Finset.range (m + 1)).filter fun k : ℕ => k ≤ numBelow p (c k) :=
+theorem stepUpIndex_mem (c : ℕ → ℝ) (p : Fin m → ℝ) :
+    stepUpIndex c p ∈ (Finset.range (m + 1)).filter fun k : ℕ => k ≤ numBelow p (c k) :=
   Finset.max'_mem _ _
 
 /-- The step-up index is at most `m`. -/
-theorem suIdx_le (c : ℕ → ℝ) (p : Fin m → ℝ) : suIdx c p ≤ m := by
-  have h := suIdx_mem c p
+theorem stepUpIndex_le (c : ℕ → ℝ) (p : Fin m → ℝ) : stepUpIndex c p ≤ m := by
+  have h := stepUpIndex_mem c p
   simp only [Finset.mem_filter, Finset.mem_range] at h
   omega
 
 /-- At the step-up index `k`, at least `k` p-values are at most `c k`. -/
-theorem suIdx_le_numBelow (c : ℕ → ℝ) (p : Fin m → ℝ) :
-    suIdx c p ≤ numBelow p (c (suIdx c p)) := by
-  have h := suIdx_mem c p
+theorem stepUpIndex_le_numBelow (c : ℕ → ℝ) (p : Fin m → ℝ) :
+    stepUpIndex c p ≤ numBelow p (c (stepUpIndex c p)) := by
+  have h := stepUpIndex_mem c p
   simp only [Finset.mem_filter] at h
   exact h.2
 
 /-- The step-up index is the largest `k ≤ m` with at least `k` p-values at most `c k`. -/
-theorem le_suIdx {c : ℕ → ℝ} {p : Fin m → ℝ} {k : ℕ} (hk : k ≤ m)
-    (h : k ≤ numBelow p (c k)) : k ≤ suIdx c p :=
+theorem le_stepUpIndex {c : ℕ → ℝ} {p : Fin m → ℝ} {k : ℕ} (hk : k ≤ m)
+    (h : k ≤ numBelow p (c k)) : k ≤ stepUpIndex c p :=
   Finset.le_max' _ k (by simpa [Nat.lt_succ_iff] using ⟨hk, h⟩)
 
-/-- For nondecreasing thresholds, exactly `suIdx c p` p-values are at most `c (suIdx c p)`. -/
-theorem numBelow_suIdx {c : ℕ → ℝ} (hc : Monotone c) (p : Fin m → ℝ) :
-    numBelow p (c (suIdx c p)) = suIdx c p := by
-  refine le_antisymm ?_ (suIdx_le_numBelow c p)
+/-- For nondecreasing thresholds, exactly `stepUpIndex c p` p-values are at most
+`c (stepUpIndex c p)`. -/
+theorem numBelow_stepUpIndex {c : ℕ → ℝ} (hc : Monotone c) (p : Fin m → ℝ) :
+    numBelow p (c (stepUpIndex c p)) = stepUpIndex c p := by
+  refine le_antisymm ?_ (stepUpIndex_le_numBelow c p)
   by_contra! hlt
-  have hle : numBelow p (c (suIdx c p)) ≤ suIdx c p :=
-    le_suIdx (numBelow_le p _) (numBelow_mono p (hc hlt.le))
+  have hle : numBelow p (c (stepUpIndex c p)) ≤ stepUpIndex c p :=
+    le_stepUpIndex (numBelow_le p _) (numBelow_mono p (hc hlt.le))
   omega
 
 /-- For nonnegative thresholds, replacing a p-value by `0` does not decrease the step-up
 index. -/
-theorem suIdx_le_update {c : ℕ → ℝ} (hc0 : ∀ k, 0 ≤ c k) (p : Fin m → ℝ)
-    (i : Fin m) : suIdx c p ≤ suIdx c (Function.update p i 0) :=
-  le_suIdx (suIdx_le c p) ((suIdx_le_numBelow c p).trans (numBelow_update_le p i (hc0 _)))
+theorem stepUpIndex_le_update {c : ℕ → ℝ} (hc0 : ∀ k, 0 ≤ c k) (p : Fin m → ℝ)
+    (i : Fin m) : stepUpIndex c p ≤ stepUpIndex c (Function.update p i 0) :=
+  le_stepUpIndex (stepUpIndex_le c p)
+    ((stepUpIndex_le_numBelow c p).trans (numBelow_update_le p i (hc0 _)))
 
 /-- For nonnegative thresholds, the step-up index is positive once some p-value is `0`. -/
-theorem one_le_suIdx_update {c : ℕ → ℝ} (hc0 : ∀ k, 0 ≤ c k) (p : Fin m → ℝ)
-    (i : Fin m) : 1 ≤ suIdx c (Function.update p i 0) := by
-  apply le_suIdx (by have := i.isLt; omega)
+theorem one_le_stepUpIndex_update {c : ℕ → ℝ} (hc0 : ∀ k, 0 ≤ c k) (p : Fin m → ℝ)
+    (i : Fin m) : 1 ≤ stepUpIndex c (Function.update p i 0) := by
+  apply le_stepUpIndex (by have := i.isLt; omega)
   apply Finset.card_pos.mpr
   exact ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, by simpa using hc0 1⟩⟩
 
 /-- For nonnegative thresholds, if `p i` is at most the threshold at the step-up index of the
 vector with `p i` replaced by `0`, the replacement does not change the step-up index. -/
-theorem suIdx_update_eq {c : ℕ → ℝ} (hc0 : ∀ k, 0 ≤ c k) (p : Fin m → ℝ)
-    (i : Fin m) (hpi : p i ≤ c (suIdx c (Function.update p i 0))) :
-    suIdx c p = suIdx c (Function.update p i 0) := by
-  apply le_antisymm (suIdx_le_update hc0 p i)
-  apply le_suIdx (suIdx_le c _)
+theorem stepUpIndex_update_eq {c : ℕ → ℝ} (hc0 : ∀ k, 0 ≤ c k) (p : Fin m → ℝ)
+    (i : Fin m) (hpi : p i ≤ c (stepUpIndex c (Function.update p i 0))) :
+    stepUpIndex c p = stepUpIndex c (Function.update p i 0) := by
+  apply le_antisymm (stepUpIndex_le_update hc0 p i)
+  apply le_stepUpIndex (stepUpIndex_le c _)
   rw [← numBelow_update_eq p i (hc0 _) hpi]
-  exact suIdx_le_numBelow c _
+  exact stepUpIndex_le_numBelow c _
 
 /-- Leave-one-out property of step-up procedures (with a threshold sequence that does not depend
 on the data): `i` is rejected and `k` hypotheses are rejected iff `p i ≤ c k` and the procedure
 applied with `p i` replaced by `0` rejects `k` hypotheses. -/
-theorem su_leave_one_out {c : ℕ → ℝ} (hc : Monotone c) (hc0 : ∀ k, 0 ≤ c k)
+theorem stepUp_leave_one_out {c : ℕ → ℝ} (hc : Monotone c) (hc0 : ∀ k, 0 ≤ c k)
     (p : Fin m → ℝ) (i : Fin m) (k : ℕ) :
-    (p i ≤ c (suIdx c p) ∧ suIdx c p = k) ↔
-      (p i ≤ c k ∧ suIdx c (Function.update p i 0) = k) := by
+    (p i ≤ c (stepUpIndex c p) ∧ stepUpIndex c p = k) ↔
+      (p i ≤ c k ∧ stepUpIndex c (Function.update p i 0) = k) := by
   constructor
   · rintro ⟨hpi, hk⟩
-    have heq := suIdx_update_eq hc0 p i (hpi.trans (hc (suIdx_le_update hc0 p i)))
+    have heq := stepUpIndex_update_eq hc0 p i (hpi.trans (hc (stepUpIndex_le_update hc0 p i)))
     exact ⟨hk ▸ hpi, heq.symm.trans hk⟩
   · rintro ⟨hpi, hk⟩
-    have heq := suIdx_update_eq hc0 p i (by rwa [hk])
+    have heq := stepUpIndex_update_eq hc0 p i (by rwa [hk])
     exact ⟨by rw [heq, hk]; exact hpi, heq.trans hk⟩
 
 /-! ### Measurability -/
-
-/-- The number of measurable p-values below a fixed threshold is a measurable function. -/
-theorem measurable_numBelow {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
-    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (t : ℝ) :
-    Measurable (fun ω => numBelow (fun i => p i ω) t) := by
-  classical
-  simp only [numBelow, Finset.card_filter]
-  exact Finset.measurable_sum _ fun i _ => Measurable.ite
-    (measurableSet_le (hp i) measurable_const) measurable_const measurable_const
 
 /-- The number of measurable p-values below a measurable threshold is a measurable function. -/
 theorem measurable_numBelow_comp {Y : Type*} [MeasurableSpace Y] (x : Y → Fin m → ℝ)
@@ -295,28 +288,34 @@ theorem measurable_numBelow_comp {Y : Type*} [MeasurableSpace Y] (x : Y → Fin 
   exact Finset.measurable_sum _ fun j _ => Measurable.ite
     (measurableSet_le (hx j) ht) measurable_const measurable_const
 
+/-- The number of measurable p-values below a fixed threshold is a measurable function. -/
+theorem measurable_numBelow {Ω : Type*} [MeasurableSpace Ω]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (t : ℝ) :
+    Measurable (fun ω => numBelow (fun i => p i ω) t) :=
+  measurable_numBelow_comp (fun ω i => p i ω) hp measurable_const
+
 /-- The step-up index as a finite supremum, the form used to prove measurability. -/
-theorem suIdx_eq_sup (c : ℕ → ℝ) (p : Fin m → ℝ) :
-    suIdx c p = (Finset.range (m + 1)).sup
+theorem stepUpIndex_eq_sup (c : ℕ → ℝ) (p : Fin m → ℝ) :
+    stepUpIndex c p = (Finset.range (m + 1)).sup
       (fun k => if k ≤ numBelow p (c k) then k else 0) := by
   classical
   apply le_antisymm
   · have h := Finset.le_sup (f := fun (k : ℕ) => if k ≤ numBelow p (c k) then k else 0)
-      (Finset.mem_range.mpr (Nat.lt_succ_of_le (suIdx_le c p)))
-    simpa [suIdx_le_numBelow c p] using h
+      (Finset.mem_range.mpr (Nat.lt_succ_of_le (stepUpIndex_le c p)))
+    simpa [stepUpIndex_le_numBelow c p] using h
   · apply Finset.sup_le
     intro k hk
     split_ifs with h
-    · exact le_suIdx (Nat.le_of_lt_succ (Finset.mem_range.mp hk)) h
+    · exact le_stepUpIndex (Nat.le_of_lt_succ (Finset.mem_range.mp hk)) h
     · exact Nat.zero_le _
 
 /-- The step-up index is measurable when both the thresholds and the p-values depend
 measurably on a parameter `y`. -/
-theorem measurable_suIdx_comp {Y : Type*} [MeasurableSpace Y] (c : Y → ℕ → ℝ)
+theorem measurable_stepUpIndex_comp {Y : Type*} [MeasurableSpace Y] (c : Y → ℕ → ℝ)
     (x : Y → Fin m → ℝ) (hc : ∀ k, Measurable fun y => c y k)
-    (hx : ∀ j, Measurable fun y => x y j) : Measurable fun y => suIdx (c y) (x y) := by
+    (hx : ∀ j, Measurable fun y => x y j) : Measurable fun y => stepUpIndex (c y) (x y) := by
   classical
-  simp_rw [suIdx_eq_sup]
+  simp_rw [stepUpIndex_eq_sup]
   have h : ∀ s : Finset ℕ, Measurable (fun y => s.sup
       (fun k => if k ≤ numBelow (x y) (c y k) then k else 0)) := by
     intro s

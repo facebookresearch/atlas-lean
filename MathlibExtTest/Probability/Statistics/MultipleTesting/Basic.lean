@@ -157,22 +157,23 @@ example (μ : Measure ℝ) [IsProbabilityMeasure μ] :
 
 /-! ### Shared step-up and leave-one-out helpers -/
 
-/-- `suIdx` with the constant threshold `1/40`: exactly two p-values qualify, so the step-up
-index is `2` (via `numBelow_suIdx`). -/
-example : suIdx (fun _ => (1 / 40 : ℝ)) p3 = 2 :=
-  (numBelow_suIdx monotone_const p3).symm.trans numBelow_p3
+/-- `stepUpIndex` with the constant threshold `1/40`: exactly two p-values qualify, so the step-up
+index is `2` (via `numBelow_stepUpIndex`). -/
+example : stepUpIndex (fun _ => (1 / 40 : ℝ)) p3 = 2 :=
+  (numBelow_stepUpIndex monotone_const p3).symm.trans numBelow_p3
 
 /-- Boundary: a zero threshold sequence lies below every p-value, so the step-up index is `0`. -/
-example : suIdx (fun _ => (0 : ℝ)) p3 = 0 := by
+example : stepUpIndex (fun _ => (0 : ℝ)) p3 = 0 := by
   have h0 : numBelow p3 0 = 0 := by
     rw [numBelow, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     intro i _
     fin_cases i <;> norm_num [p3]
-  exact (numBelow_suIdx monotone_const p3).symm.trans h0
+  exact (numBelow_stepUpIndex monotone_const p3).symm.trans h0
 
-/-- `suIdx_le` and `suIdx_le_numBelow` for an arbitrary threshold sequence. -/
-example (c : ℕ → ℝ) : suIdx c p3 ≤ 3 ∧ suIdx c p3 ≤ numBelow p3 (c (suIdx c p3)) :=
-  ⟨suIdx_le c p3, suIdx_le_numBelow c p3⟩
+/-- `stepUpIndex_le` and `stepUpIndex_le_numBelow` for an arbitrary threshold sequence. -/
+example (c : ℕ → ℝ) :
+    stepUpIndex c p3 ≤ 3 ∧ stepUpIndex c p3 ≤ numBelow p3 (c (stepUpIndex c p3)) :=
+  ⟨stepUpIndex_le c p3, stepUpIndex_le_numBelow c p3⟩
 
 /-- Replacing `p 2 = 1/2` by `0` raises the count below `1/40` from `2` to `3`, so the
 inequality `numBelow_update_le` can be strict. -/
@@ -191,12 +192,12 @@ example : numBelow p3 (1 / 40) ≤ numBelow (Function.update p3 2 0) (1 / 40) :=
 example : numBelow (Function.update p3 0 0) (1 / 40) = 2 :=
   (numBelow_update_eq p3 0 (by norm_num) (by norm_num [p3])).trans numBelow_p3
 
-/-- Leave-one-out (`su_leave_one_out`): with threshold `1/40`, hypothesis `0` is rejected among
+/-- Leave-one-out (`stepUp_leave_one_out`): with threshold `1/40`, hypothesis `0` is rejected among
 `2` rejections, so the procedure on `p` with `p 0 := 0` also rejects `2`. -/
-example : suIdx (fun _ => (1 / 40 : ℝ)) (Function.update p3 0 0) = 2 := by
-  have hk : suIdx (fun _ => (1 / 40 : ℝ)) p3 = 2 :=
-    (numBelow_suIdx monotone_const p3).symm.trans numBelow_p3
-  exact ((su_leave_one_out monotone_const (fun _ => by norm_num) p3 0 2).mp
+example : stepUpIndex (fun _ => (1 / 40 : ℝ)) (Function.update p3 0 0) = 2 := by
+  have hk : stepUpIndex (fun _ => (1 / 40 : ℝ)) p3 = 2 :=
+    (numBelow_stepUpIndex monotone_const p3).symm.trans numBelow_p3
+  exact ((stepUp_leave_one_out monotone_const (fun _ => by norm_num) p3 0 2).mp
     ⟨by norm_num [p3], hk⟩).2
 
 /-- `fdp_eq_sum` on the example above: the per-null contributions sum to `1 / 2`. -/
@@ -215,8 +216,8 @@ p-value vector. -/
 example : Measurable fun x : Fin 3 → ℝ => numBelow (fun i => x i) (1 / 40) :=
   measurable_numBelow (fun i (x : Fin 3 → ℝ) => x i) (fun i => measurable_pi_apply i) _
 
-example : Measurable fun x : Fin 3 → ℝ => suIdx (fun k => (k : ℝ) / 30) x :=
-  measurable_suIdx_comp (fun _ k => (k : ℝ) / 30) id (fun _ => measurable_const)
+example : Measurable fun x : Fin 3 → ℝ => stepUpIndex (fun k => (k : ℝ) / 30) x :=
+  measurable_stepUpIndex_comp (fun _ k => (k : ℝ) / 30) id (fun _ => measurable_const)
     (fun j => measurable_pi_apply j)
 
 end MathlibExtTest.Probability.Statistics.MultipleTesting.Basic

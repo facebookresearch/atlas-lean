@@ -75,9 +75,9 @@ et al. (2004, §4) are not formalized.
 
 ## Implementation notes
 
-The generic step-up index `suIdx`, its leave-one-out property `su_leave_one_out`, and the helpers
-`fdp_eq_sum` and `valid_measureReal_le` live in `MultipleTesting.Basic` and are shared with
-`MultipleTesting.BenjaminiHochberg`.
+The generic step-up index `stepUpIndex`, its leave-one-out property `stepUp_leave_one_out`,
+and the helpers `fdp_eq_sum` and `valid_measureReal_le` live in `MultipleTesting.Basic` and are
+shared with `MultipleTesting.BenjaminiHochberg`.
 
 ## References
 
@@ -182,27 +182,27 @@ theorem storeyThreshold_update_zero {q lam : ℝ} (hlam : 0 ≤ lam) (p : Fin m 
   funext k
   simp only [storeyThreshold, storeyPi0Plus1_update_zero hlam p i hpi]
 
-private theorem storeyBHIndex_eq_suIdx (q lam : ℝ) (p : Fin m → ℝ) :
-    storeyBHIndex q lam p = suIdx (storeyThreshold q lam p) p := rfl
+private theorem storeyBHIndex_eq_stepUpIndex (q lam : ℝ) (p : Fin m → ℝ) :
+    storeyBHIndex q lam p = stepUpIndex (storeyThreshold q lam p) p := rfl
 
 /-- The Storey-BH step-up index is at most `m`. -/
 theorem storeyBHIndex_le (q lam : ℝ) (p : Fin m → ℝ) : storeyBHIndex q lam p ≤ m :=
-  suIdx_le _ p
+  stepUpIndex_le _ p
 
 /-- At the Storey-BH index `k`, at least `k` p-values are at most the `k`-th threshold. -/
 theorem storeyBHIndex_le_numBelow (q lam : ℝ) (p : Fin m → ℝ) :
     storeyBHIndex q lam p ≤ numBelow p (storeyThreshold q lam p (storeyBHIndex q lam p)) :=
-  suIdx_le_numBelow _ p
+  stepUpIndex_le_numBelow _ p
 
 /-- The Storey-BH index is the largest qualifying `k ≤ m`. -/
 theorem le_storeyBHIndex {q lam : ℝ} {p : Fin m → ℝ} {k : ℕ} (hk : k ≤ m)
     (h : k ≤ numBelow p (storeyThreshold q lam p k)) : k ≤ storeyBHIndex q lam p :=
-  le_suIdx hk h
+  le_stepUpIndex hk h
 
 /-- Storey-BH with `0 ≤ q` and `lam ≤ 1` rejects exactly `storeyBHIndex q lam p` hypotheses. -/
 theorem card_storeyBHRejections {q lam : ℝ} (hq : 0 ≤ q) (hlam1 : lam ≤ 1) (p : Fin m → ℝ) :
     (storeyBHRejections q lam p).card = storeyBHIndex q lam p :=
-  numBelow_suIdx (storeyThreshold_mono hq hlam1 p) p
+  numBelow_stepUpIndex (storeyThreshold_mono hq hlam1 p) p
 
 /-- Membership in the Storey-BH rejection set. -/
 theorem mem_storeyBHRejections {q lam : ℝ} {p : Fin m → ℝ} {i : Fin m} :
@@ -237,7 +237,7 @@ theorem storeyBH_leave_one_out {q lam : ℝ} (hq : 0 ≤ q) (hlam0 : 0 ≤ lam) 
       (p i ≤ storeyThreshold q lam (Function.update p i 0) k ∧
         (storeyBHRejections q lam (Function.update p i 0)).card = k) := by
   rw [card_storeyBHRejections hq hlam1, card_storeyBHRejections hq hlam1,
-    mem_storeyBHRejections, storeyBHIndex_eq_suIdx, storeyBHIndex_eq_suIdx]
+    mem_storeyBHRejections, storeyBHIndex_eq_stepUpIndex, storeyBHIndex_eq_stepUpIndex]
   have hmono := storeyThreshold_mono hq hlam1 (Function.update p i 0)
   have h0 := storeyThreshold_nonneg hq hlam0 hlam1 (Function.update p i 0)
   constructor
@@ -245,12 +245,12 @@ theorem storeyBH_leave_one_out {q lam : ℝ} (hq : 0 ≤ q) (hlam0 : 0 ≤ lam) 
     have hc := storeyThreshold_update_zero (q := q) hlam0 p i
       (hpi.trans (storeyThreshold_le _ _ _ _))
     rw [← hc] at hpi hk
-    exact (su_leave_one_out hmono h0 p i k).mp ⟨hpi, hk⟩
+    exact (stepUp_leave_one_out hmono h0 p i k).mp ⟨hpi, hk⟩
   · rintro ⟨hpi, hk⟩
     have hc := storeyThreshold_update_zero (q := q) hlam0 p i
       (hpi.trans (storeyThreshold_le _ _ _ _))
     rw [← hc]
-    exact (su_leave_one_out hmono h0 p i k).mpr ⟨hpi, hk⟩
+    exact (stepUp_leave_one_out hmono h0 p i k).mpr ⟨hpi, hk⟩
 
 /-! ### Measurability -/
 
@@ -272,7 +272,7 @@ private theorem measurable_storeyPi0Plus1_comp {Y : Type*} [MeasurableSpace Y] (
 private theorem measurable_storeyBHIndex_comp {Y : Type*} [MeasurableSpace Y] (q lam : ℝ)
     (x : Y → Fin m → ℝ) (hx : ∀ j, Measurable fun y => x y j) :
     Measurable fun y => storeyBHIndex q lam (x y) := by
-  refine measurable_suIdx_comp (fun y => storeyThreshold q lam (x y)) x (fun k => ?_) hx
+  refine measurable_stepUpIndex_comp (fun y => storeyThreshold q lam (x y)) x (fun k => ?_) hx
   unfold storeyThreshold
   exact measurable_const.min
     (((measurable_storeyPi0Plus1_comp x hx lam).const_div q).mul_const _ |>.div_const _)
@@ -433,7 +433,7 @@ private theorem integral_contribution_le {Ω : Type*} [MeasurableSpace Ω] (μ :
   have hGS (ω : Ω) : G ω ∈ S := by
     refine Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr ⟨?_, storeyBHIndex_le _ _ _⟩,
       Finset.mem_range.mpr (numAboveLOO_lt hlam0 _ i)⟩
-    exact one_le_suIdx_update
+    exact one_le_stepUpIndex_update
       (storeyThreshold_nonneg hq hlam0 hlam1.le (Function.update (fun j => p j ω) i 0))
       (fun j => p j ω) i
   let A : ℕ × ℕ → Set Ω := fun x => {ω | p i ω ≤ theta q lam x} ∩ G ⁻¹' {x}
