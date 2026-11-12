@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S13MomentMagnitude
+import PhyslibExt.EarthScience.MomentMagnitude
 
 /-!
 # Moment-magnitude checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S13MomentMagnitude`:
+Concrete consumers of `PhyslibExt.EarthScience.MomentMagnitude`:
 `M = 1000`, `k = 10`, `c = 0` (magnitude difference `(2 / 3) * log₁₀ 10`),
 the `k = 1` boundary (difference `0`), and unit moment with `c = 9`
 (`Mw(1) = -6`).
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S13MomentMagnitude`
+- `PhyslibExt.EarthScience.MomentMagnitude`
 -/
 
 /-- Numeric magnitude shift: `M = 1000`, `k = 10`, `c = 0`. -/
