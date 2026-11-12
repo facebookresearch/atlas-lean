@@ -41,7 +41,7 @@ open MathlibExt.Biology.PopulationGenetics.Coalescent.SFSCovariance
 example : tajimaNumWeight 2 1 = 0 := by
   norm_num [tajimaNumWeight, tajimaA1]
 
-/-- `n = 3`: the weights of Tajima's `D` numerator are `4/3 - 2/3 = 2/3`, both equal, so that
+/-- `n = 3`: the weights of Tajima's `D` numerator are `2/3 - 2/3 = 0`, both equal, so that
 `θ_π - S / a₁` is again identically zero on the SFS (Tajima's `c₁ = c₂ = 0` at `n = 3`). -/
 example : tajimaNumWeight 3 1 = 0 ∧ tajimaNumWeight 3 2 = 0 := by
   refine ⟨?_, ?_⟩ <;> norm_num [tajimaNumWeight, tajimaA1, Finset.sum_Ico_succ_top]
