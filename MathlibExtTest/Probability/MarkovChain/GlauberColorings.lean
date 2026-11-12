@@ -11,60 +11,66 @@ module
 public import MathlibExt.Probability.MarkovChain.GlauberColorings
 
 /-- Boundary check (shape): the contraction inequality
-instantiates for two proper colorings of a two-vertex graph with
-three colors, with the `3Δ` constant. -/
-example {adj : Fin 2 → Fin 2 → Bool}
-    (hadj : ∀ i j, adj i j = true → adj j i = true)
-    (Δ : ℕ) (hdeg : ∀ i, (Finset.univ.filter (fun j => adj i j = true)).card ≤ Δ)
-    {c d : Fin 2 → Fin 3} (hc : IsProper adj c) (hd : IsProper adj d) :
-    (∑ z, (glauberCouple adj c d z).toReal *
-      ((hammingDist z.1 z.2 : ℕ) : ℝ)) ≤
-      (1 - 1 / 2 + 3 * Δ / (2 * 3)) * ((hammingDist c d : ℕ) : ℝ) :=
-  glauber_hamming_contract (by norm_num) (by norm_num) adj hadj Δ hdeg hc hd
+instantiates for two proper colorings of any graph on two vertices
+with three colors, with the `3Δ` constant. -/
+example {G : SimpleGraph (Fin 2)} [DecidableRel G.Adj]
+    (Δ : ℕ) (hdeg : ∀ v, G.degree v ≤ Δ) (c d : G.Coloring (Fin 3)) :
+    (glauberCouple G c d).expect (fun z => (hammingDist z.1 z.2 : ℝ)) ≤
+      (1 - 1 / 2 + 3 * Δ / (2 * 3)) * (hammingDist (⇑c) (⇑d) : ℝ) :=
+  glauber_hamming_contract (by norm_num) (by norm_num) G Δ hdeg c d
 
 /-- The synchronous coupling has the Glauber steps as its two
-marginals, for arbitrary colorings. -/
-example {adj : Fin 2 → Fin 2 → Bool} {c d : Fin 2 → Fin 3} :
-    (glauberCouple adj c d).map Prod.fst = glauberStep adj c ∧
-      (glauberCouple adj c d).map Prod.snd = glauberStep adj d :=
-  ⟨glauberCouple_map_fst adj c d, glauberCouple_map_snd adj c d⟩
+marginals, for arbitrary maps. -/
+example {G : SimpleGraph (Fin 2)} [DecidableRel G.Adj] {c d : Fin 2 → Fin 3} :
+    (glauberCouple G c d).map Prod.fst = glauberStep G c ∧
+      (glauberCouple G c d).map Prod.snd = glauberStep G d :=
+  ⟨glauberCouple_map_fst G c d, glauberCouple_map_snd G c d⟩
 
-/-- Concrete single-edge graph on two vertices. -/
-private def singleEdge : Fin 2 → Fin 2 → Bool :=
-  fun i j => decide (i ≠ j)
+/-- Concrete colorings `c = (0, 1)`, `d = (2, 1)` of the single-edge
+graph `⊤ : SimpleGraph (Fin 2)`. -/
+private def concC : (⊤ : SimpleGraph (Fin 2)).Coloring (Fin 3) :=
+  SimpleGraph.Coloring.mk ![0, 1] (by decide)
 
-/-- Concrete proper colorings `c = (0, 1)`, `d = (2, 1)` of the
-single-edge graph. -/
-private def concC : Fin 2 → Fin 3 := ![0, 1]
+private def concD : (⊤ : SimpleGraph (Fin 2)).Coloring (Fin 3) :=
+  SimpleGraph.Coloring.mk ![2, 1] (by decide)
 
-private def concD : Fin 2 → Fin 3 := ![2, 1]
-
-/-- The concrete colorings are proper for the single-edge graph. -/
-example : IsProper singleEdge concC := by unfold IsProper; decide
-
-example : IsProper singleEdge concD := by unfold IsProper; decide
-
-/-- The single-edge graph is symmetric and has degree at most 1. -/
-example : (∀ i j, singleEdge i j = true → singleEdge j i = true) ∧
-    ∀ i, (Finset.univ.filter (fun j => singleEdge i j = true)).card ≤ 1 := by
-  exact ⟨by decide, by decide⟩
+/-- The single-edge graph has maximum degree 1. -/
+example : ∀ v, (⊤ : SimpleGraph (Fin 2)).degree v ≤ 1 := by decide
 
 /-- The concrete colorings are at Hamming distance 1. -/
-example : hammingDist concC concD = 1 := by decide
+example : hammingDist (⇑concC) (⇑concD) = 1 := by decide
 
-/-- Concrete contraction check: on the single-edge graph with
-`Δ = 1`, the coupled expectation is at most the `3Δ` bound,
-which is exactly `1` here. -/
+/-- Direct evaluation of the coupled step on the concrete colorings:
+the six (site, color) proposals give Hamming distances
+`0, 1, 0` (site 0) and `2, 1, 2` (site 1), so the expected distance
+is exactly `6 / 6 = 1`. This does not use the contraction theorem. -/
+theorem glauber_concrete_expect :
+    (glauberCouple ⊤ (⇑concC) (⇑concD)).expect (fun z => (hammingDist z.1 z.2 : ℝ)) = 1 := by
+  rw [glauberCouple_expect]
+  have h : (∑ i, ∑ col, hammingDist (glauberMove ⊤ (⇑concC) i col)
+      (glauberMove ⊤ (⇑concD) i col) : ℕ) = 6 := by decide
+  have hR : (∑ i, ∑ col, (hammingDist (glauberMove ⊤ (⇑concC) i col)
+      (glauberMove ⊤ (⇑concD) i col) : ℝ)) = 6 := by
+    exact_mod_cast h
+  rw [hR]
+  norm_num
+
+/-- The `3Δ` bound is attained on the concrete example: with `n = 2`,
+`q = 3`, `Δ = 1` and Hamming distance 1 the bound evaluates to `1`,
+the exact expectation. -/
 example :
-    (∑ z, (glauberCouple singleEdge concC concD z).toReal *
-      ((hammingDist z.1 z.2 : ℕ) : ℝ)) ≤ 1 := by
-  have hc : IsProper singleEdge concC := by unfold IsProper; decide
-  have hd : IsProper singleEdge concD := by unfold IsProper; decide
-  have hadj : ∀ i j, singleEdge i j = true → singleEdge j i = true := by decide
-  have hdeg : ∀ i, (Finset.univ.filter (fun j => singleEdge i j = true)).card ≤ 1 := by decide
-  have h := glauber_hamming_contract (n := 2) (q := 3) (by norm_num) (by norm_num)
-    singleEdge hadj 1 hdeg hc hd
-  have hdist : hammingDist concC concD = 1 := by decide
-  rw [hdist] at h
-  norm_num at h
-  exact h
+    (glauberCouple ⊤ (⇑concC) (⇑concD)).expect (fun z => (hammingDist z.1 z.2 : ℝ)) =
+      (1 - 1 / 2 + 3 * (1 : ℝ) / (2 * 3)) * 1 := by
+  rw [glauber_concrete_expect]
+  norm_num
+
+/-- Any coefficient `κ < 3` in place of `3` fails on the concrete
+example: the exact expectation exceeds `(1 - 1/n + κΔ/(n q))` times
+the initial Hamming distance. -/
+example (κ : ℝ) (hκ : κ < 3) :
+    (1 - 1 / 2 + κ * 1 / (2 * 3)) * (hammingDist (⇑concC) (⇑concD) : ℝ) <
+      (glauberCouple ⊤ (⇑concC) (⇑concD)).expect (fun z => (hammingDist z.1 z.2 : ℝ)) := by
+  have hdist : hammingDist (⇑concC) (⇑concD) = 1 := by decide
+  rw [glauber_concrete_expect, hdist]
+  push_cast
+  linarith

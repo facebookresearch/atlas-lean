@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
+public import MathlibExt.Probability.ProbabilityMassFunction.Expectation
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.InformationTheory.Hamming
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 open scoped ENNReal
 
@@ -20,45 +22,94 @@ open scoped ENNReal
 
 /-! # Glauber dynamics for proper colorings
 
-One coupled Glauber (heat-bath with rejection) step contracts the
-expected Hamming distance between two proper colorings by the
-factor `1 - 1/n + 3Δ/(n q)`. The constant is `3Δ`, not the `2Δ`
-of Jerrum's available-color coupling: for the rejection coupling
-a disagreeing vertex can also spread disagreement to its
-neighbors, and the bound above is what the counting gives (it is
-tight on two-vertex examples; an earlier draft of this statement
-with `2Δ` was refuted by a machine-checked counterexample during
-this work). Combined with path coupling, this gives mixing in
-`O(n log n)` for `q > 3Δ`. This is roadmap package ML-28 of the
-Atlas TCS canon roadmap.
+For a graph `G : SimpleGraph (Fin n)` of maximum degree at most `Δ`
+and two proper colorings `c d : G.Coloring (Fin q)`, one step of the
+synchronous coupling of Glauber (heat-bath with rejection) dynamics
+contracts the expected Hamming distance by the factor
+`1 - 1/n + 3Δ/(n q) = 1 - (q - 3Δ)/(n q)`
+(`glauber_hamming_contract`). The chain is defined on all maps
+`Fin n → Fin q`: a rejected proposal leaves the state unchanged and
+an accepted one is a proper coloring by construction.
 
-Source: Jerrum (1995); Dyer and Greenhill (1999).
+The constant `3Δ` is the bound for this synchronous rejection
+coupling (same site, same proposed color in both chains); it is
+weaker than the `2Δ` of Jerrum's available-color coupling. Under
+the synchronous coupling a disagreeing vertex can also spread
+disagreement to its neighbors, and the bound is tight on the
+two-vertex example in the test file (an earlier draft of this
+statement with `2Δ` was refuted there by a machine-checked
+counterexample).
+
+Not formalized here: for `q > 3Δ` the gap is `α = (q - 3Δ)/(n q)`,
+and iterating the coupling from Hamming distance at most `n` bounds
+the mixing time of the chain on proper colorings by
+`⌈(n q/(q - 3Δ)) (log n + log (1/ε))⌉`. This is
+`O(n log n)` only when `q/(q - 3Δ)` is bounded, e.g. for
+`q ≥ (3 + δ) Δ` with fixed `δ > 0`; for `q = 3Δ + 1` the prefactor
+grows like `Δ`. This is roadmap package ML-28 of the Atlas TCS
+canon roadmap.
+
+Provenance: the `3Δ` constant is not taken from the literature; it
+is what the elementary counting argument of this file proves
+(per-site bounds for disagreeing and agreeing sites, plus a
+double count of disagreeing neighbors). Jerrum (1995) is cited
+only for the `2Δ` available-color coupling it is contrasted with.
 -/
 
 open Finset
 
-/-- A coloring is proper for the adjacency relation `adj` if
-adjacent vertices get different colors. -/
-def IsProper {n q : ℕ} (adj : Fin n → Fin n → Bool) (c : Fin n → Fin q) : Prop :=
-  ∀ i j, adj i j = true → c i ≠ c j
+/-- A Glauber proposal at site `i` with color `col`: move to the
+updated map if it is a proper coloring of `G`, else stay at `c`. -/
+def glauberMove {n q : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (c : Fin n → Fin q) (i : Fin n) (col : Fin q) : Fin n → Fin q :=
+  if ∀ v w, G.Adj v w → Function.update c i col v ≠ Function.update c i col w then
+    Function.update c i col else c
 
-
-open Classical in
-/-- One Glauber (heat-bath with rejection) proposal: pick a uniform
-site `i` and a uniform color `col`; move to the updated coloring if
-it is still proper, else stay. -/
-noncomputable def glauberStep {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (adj : Fin n → Fin n → Bool)
+/-- One Glauber (heat-bath with rejection) step: pick a uniform
+site `i` and a uniform color `col`, then apply `glauberMove`. -/
+noncomputable def glauberStep {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (c : Fin n → Fin q) : PMF (Fin n → Fin q) :=
   (PMF.uniformFintype (Fin n)).bind fun i =>
     (PMF.uniformFintype (Fin q)).bind fun col =>
-      PMF.pure (if IsProper adj (Function.update c i col) then
-        Function.update c i col else c)
+      PMF.pure (glauberMove G c i col)
+
+/-- The synchronous coupling of two Glauber steps: same site, same
+proposed color, applied to both maps with their own rejection
+tests. -/
+noncomputable def glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (c d : Fin n → Fin q) : PMF ((Fin n → Fin q) × (Fin n → Fin q)) :=
+  (PMF.uniformFintype (Fin n)).bind fun i =>
+    (PMF.uniformFintype (Fin q)).bind fun col =>
+      PMF.pure (glauberMove G c i col, glauberMove G d i col)
+
+/-- The first marginal of the synchronous coupling is the Glauber step. -/
+theorem glauberCouple_map_fst {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (c d : Fin n → Fin q) :
+    (glauberCouple G c d).map Prod.fst = glauberStep G c := by
+  simp [glauberCouple, glauberStep, PMF.map_bind, PMF.pure_map]
+
+/-- The second marginal of the synchronous coupling is the Glauber step. -/
+theorem glauberCouple_map_snd {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (c d : Fin n → Fin q) :
+    (glauberCouple G c d).map Prod.snd = glauberStep G d := by
+  simp [glauberCouple, glauberStep, PMF.map_bind, PMF.pure_map]
+
+/-! ### Internal Boolean-adjacency formulation
+
+The counting proof below works with a Boolean adjacency relation;
+`adjB G` is the one induced by `G`. None of it is public API. -/
+
+/-- A map is proper for the Boolean adjacency relation `adj` if
+adjacent vertices get different colors. -/
+private def IsProper {n q : ℕ} (adj : Fin n → Fin n → Bool) (c : Fin n → Fin q) : Prop :=
+  ∀ i j, adj i j = true → c i ≠ c j
 
 open Classical in
-/-- The synchronous coupling of two Glauber steps: same site, same
-proposed color, applied to both colorings with their own rejection
-tests. -/
-noncomputable def glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (adj : Fin n → Fin n → Bool)
+/-- The synchronous coupling for a Boolean adjacency relation. -/
+private noncomputable def glauberCoupleB {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (adj : Fin n → Fin n → Bool)
     (c d : Fin n → Fin q) : PMF ((Fin n → Fin q) × (Fin n → Fin q)) :=
   (PMF.uniformFintype (Fin n)).bind fun i =>
     (PMF.uniformFintype (Fin q)).bind fun col =>
@@ -66,19 +117,6 @@ noncomputable def glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)
           Function.update c i col else c),
         (if IsProper adj (Function.update d i col) then
           Function.update d i col else d))
-
-/-- The first marginal of the synchronous coupling is the Glauber step. -/
-theorem glauberCouple_map_fst {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
-    (adj : Fin n → Fin n → Bool) (c d : Fin n → Fin q) :
-    (glauberCouple adj c d).map Prod.fst = glauberStep adj c := by
-  simp [glauberCouple, glauberStep, PMF.map_bind, PMF.pure_map]
-
-/-- The second marginal of the synchronous coupling is the Glauber step. -/
-theorem glauberCouple_map_snd {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
-    (adj : Fin n → Fin n → Bool) (c d : Fin n → Fin q) :
-    (glauberCouple adj c d).map Prod.snd = glauberStep adj d := by
-  simp [glauberCouple, glauberStep, PMF.map_bind, PMF.pure_map]
-
 
 private lemma uniform_toReal {α : Type*} [Fintype α] [Nonempty α] (a : α) :
     ((PMF.uniformFintype α) a).toReal = 1 / (Fintype.card α : ℝ) := by
@@ -179,16 +217,16 @@ private lemma expect_bind {α β : Type*} [Fintype α] [Fintype β] [DecidableEq
         ring
 
 open Classical in
-theorem expected_glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+private theorem expected_glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     (adj : Fin n → Fin n → Bool) (c d : Fin n → Fin q)
     (F : ((Fin n → Fin q) × (Fin n → Fin q)) → ℝ) :
-    (∑ z, ((glauberCouple adj c d z).toReal * F z))
+    (∑ z, ((glauberCoupleB adj c d z).toReal * F z))
       = (1 / ((Fintype.card (Fin n) : ℝ) * (Fintype.card (Fin q) : ℝ)))
         * ∑ i, ∑ col, F ((if IsProper adj (Function.update c i col) then
             Function.update c i col else c),
           (if IsProper adj (Function.update d i col) then
             Function.update d i col else d)) := by
-  unfold glauberCouple
+  unfold glauberCoupleB
   rw [expect_bind]
   have hinner : ∀ i : Fin n, (∑ z, ((((PMF.uniformFintype (Fin q)).bind fun col =>
       PMF.pure ((if IsProper adj (Function.update c i col) then
@@ -1122,16 +1160,13 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
         exact hextra_le
     _ = (n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 3 * (Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ) := by ring
 
-/-- Path-coupling contraction for Glauber dynamics on proper
-colorings (Jerrum's bound): if every vertex has at most `Δ`
-neighbors, the expected Hamming distance after one coupled step is
-at most `(1 - 1/n + 3Δ/(n q))` times the current Hamming distance. -/
-theorem glauber_hamming_contract {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (hn : 0 < n) (hq : 0 < q)
+/-- Boolean-adjacency form of `glauber_hamming_contract`. -/
+private theorem glauber_hamming_contractB {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (hn : 0 < n) (hq : 0 < q)
     (adj : Fin n → Fin n → Bool)
     (hadj : ∀ i j, adj i j = true → adj j i = true)
     (Δ : ℕ) (hdeg : ∀ i, (Finset.univ.filter (fun j => adj i j = true)).card ≤ Δ)
     {c d : Fin n → Fin q} (hc : IsProper adj c) (hd : IsProper adj d) :
-    (∑ z, (glauberCouple adj c d z).toReal * ((hammingDist z.1 z.2 : ℕ) : ℝ)) ≤
+    (∑ z, (glauberCoupleB adj c d z).toReal * ((hammingDist z.1 z.2 : ℕ) : ℝ)) ≤
       (1 - 1 / n + 3 * Δ / (n * q)) * ((hammingDist c d : ℕ) : ℝ) := by
   classical
   have hexp := expected_glauberCouple adj c d (fun z => ((hammingDist z.1 z.2 : ℕ) : ℝ))
@@ -1152,3 +1187,74 @@ theorem glauber_hamming_contract {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q
         · exact hw_nonneg
     _ = (1 - 1 / n + 3 * Δ / (n * q)) * ((hammingDist c d : ℕ) : ℝ) := by
         field_simp
+
+/-- The Boolean adjacency relation induced by `G`. -/
+private def adjB {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] :
+    Fin n → Fin n → Bool :=
+  fun i j => decide (G.Adj i j)
+
+private lemma isProper_adjB_iff {n q : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (f : Fin n → Fin q) :
+    IsProper (adjB G) f ↔ ∀ v w, G.Adj v w → f v ≠ f w := by
+  simp [IsProper, adjB]
+
+private lemma isProper_coloring {n q : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (c : G.Coloring (Fin q)) : IsProper (adjB G) (⇑c) :=
+  (isProper_adjB_iff G _).2 fun _ _ h => c.valid h
+
+private lemma adjB_symm {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] :
+    ∀ i j, adjB G i j = true → adjB G j i = true := by
+  intro i j h
+  simp only [adjB, decide_eq_true_eq] at h ⊢
+  exact h.symm
+
+private lemma adjB_deg {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (Δ : ℕ) (hdeg : ∀ v, G.degree v ≤ Δ) :
+    ∀ i, (Finset.univ.filter (fun j => adjB G i j = true)).card ≤ Δ := by
+  intro i
+  have h : (Finset.univ.filter (fun j => adjB G i j = true)) = G.neighborFinset i := by
+    ext j
+    simp [adjB]
+  rw [h, G.card_neighborFinset_eq_degree]
+  exact hdeg i
+
+open Classical in
+private lemma glauberMove_eq {n q : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (c : Fin n → Fin q) (i : Fin n) (col : Fin q) :
+    glauberMove G c i col =
+      if IsProper (adjB G) (Function.update c i col) then Function.update c i col else c :=
+  if_congr (isProper_adjB_iff G _).symm rfl rfl
+
+private lemma glauberCouple_eq_B {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (c d : Fin n → Fin q) :
+    glauberCouple G c d = glauberCoupleB (adjB G) c d := by
+  unfold glauberCouple glauberCoupleB
+  simp only [glauberMove_eq]
+
+/-- Computation formula for expectations under the synchronous
+coupling: the uniform average over sites and proposed colors. -/
+theorem glauberCouple_expect {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (c d : Fin n → Fin q)
+    (F : ((Fin n → Fin q) × (Fin n → Fin q)) → ℝ) :
+    (glauberCouple G c d).expect F
+      = (1 / ((n : ℝ) * (q : ℝ))) *
+        ∑ i, ∑ col, F (glauberMove G c i col, glauberMove G d i col) := by
+  rw [PMF.expect_eq_sum, glauberCouple_eq_B, expected_glauberCouple,
+    Fintype.card_fin, Fintype.card_fin]
+  simp only [glauberMove_eq]
+
+/-- Hamming contraction of the synchronous rejection coupling for
+Glauber dynamics on proper colorings: if every vertex of `G` has
+degree at most `Δ`, the expected Hamming distance after one coupled
+step is at most `(1 - 1/n + 3Δ/(n q))` times the current Hamming
+distance. The constant `3Δ` is specific to this coupling (see the
+module docstring); it is tight on a two-vertex example. -/
+theorem glauber_hamming_contract {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (hn : 0 < n) (hq : 0 < q)
+    (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (Δ : ℕ) (hdeg : ∀ v, G.degree v ≤ Δ) (c d : G.Coloring (Fin q)) :
+    (glauberCouple G c d).expect (fun z => (hammingDist z.1 z.2 : ℝ)) ≤
+      (1 - 1 / n + 3 * Δ / (n * q)) * (hammingDist (⇑c) (⇑d) : ℝ) := by
+  rw [PMF.expect_eq_sum, glauberCouple_eq_B]
+  exact glauber_hamming_contractB hn hq (adjB G) (adjB_symm G) Δ (adjB_deg G Δ hdeg)
+    (isProper_coloring G c) (isProper_coloring G d)
