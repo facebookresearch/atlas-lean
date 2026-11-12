@@ -33,24 +33,6 @@ open Finset
 def majority {n : ℕ} (v : Fin n → Bool) : Bool :=
   decide (n / 2 < (Finset.univ.filter (fun i => v i = true)).card)
 
-private theorem sum_pi_mul : ∀ (n : ℕ) (g : Fin n → Bool → ℝ),
-    (∑ v : Fin n → Bool, ∏ i, g i (v i)) = ∏ i, ∑ b, g i b
-  | 0, _ => by simp
-  | n + 1, g => by
-    have hsum : (∑ v : Fin (n + 1) → Bool, ∏ i, g i (v i))
-        = ∑ x : Bool × (Fin n → Bool), ∏ i, g i ((Fin.consEquiv (fun _ => Bool)) x i) :=
-      (Equiv.sum_comp (Fin.consEquiv (fun _ => Bool)) _).symm
-    rw [hsum]
-    simp_rw [Fin.consEquiv_apply]
-    simp_rw [Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ]
-    rw [Fintype.sum_prod_type]
-    simp_rw [← Finset.mul_sum]
-    rw [← Finset.sum_mul]
-    have ih' : (∑ v : Fin n → Bool, ∏ (i : Fin n), g (i.succ) (v i))
-        = ∏ (i : Fin n), ∑ b, g (i.succ) b :=
-      sum_pi_mul n (fun i b => g (i.succ) b)
-    rw [ih']
-
 private theorem pmf_sum_bool (p : PMF Bool) : (p true).toReal + (p false).toReal = 1 := by
   have h1 : (∑' b : Bool, p b) = 1 := PMF.tsum_coe p
   rw [tsum_fintype] at h1
@@ -227,14 +209,13 @@ a product law on tuples (weight of a tuple is the product of the
 per-vote probabilities, here with a common bias lower bound given
 through a single PMF `p` on `Bool` with `p true ≥ 2 / 3`): the
 majority is wrong (`false`) with probability at most
-`exp (-(n / 18))` for `n ≥ 1`. The tuple law is the product PMF
+`exp (-(n / 18))`. The tuple law is the product PMF
 built by recursion on the tuple as a function `Fin n → Bool`
 weighted by `∏ i, (p (v i)).toReal`. -/
-theorem bpp_majority_amplify {n : ℕ} (hn : 0 < n) (p : PMF Bool)
+theorem bpp_majority_amplify {n : ℕ} (p : PMF Bool)
     (hp : (2 / 3 : ℝ) ≤ (p true).toReal) :
     (∑ v : Fin n → Bool, (∏ i, (p (v i)).toReal) *
       (if majority v = false then 1 else 0)) ≤ Real.exp (-(n / 18 : ℝ)) := by
-  have _hn' := hn
   have hs_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
   have step1 : (∑ v : Fin n → Bool, (∏ i, (p (v i)).toReal) *
         (if majority v = false then 1 else 0))
@@ -293,8 +274,8 @@ theorem bpp_majority_amplify {n : ℕ} (hn : 0 < n) (p : PMF Bool)
       intro v _
       exact hmgf_eq v
     rw [hsum]
-    exact sum_pi_mul n (fun _ b =>
-      (p b).toReal * Real.exp (Real.log 2 * (1/2 - (if b = true then (1:ℝ) else 0))))
+    exact (Fintype.prod_sum (fun _ b =>
+      (p b).toReal * Real.exp (Real.log 2 * (1/2 - (if b = true then (1:ℝ) else 0))))).symm
   have hS_nn : 0 ≤ ∑ b : Bool, ((p b).toReal * Real.exp (Real.log 2 * (1/2 - (if b = true then (1:ℝ) else 0)))) := by
     apply Finset.sum_nonneg
     intro b _

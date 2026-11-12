@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Complexity.BPPAmplification
+public import CSLibExt.Complexity.BPPAmplification
 
 import Mathlib.Tactic.NormNum
 
@@ -19,8 +19,14 @@ example : majority (fun _ : Fin 1 => true) = true ∧
   decide
 
 /-- Boundary check: the amplification bound instantiates for a
-fair-coin-or-better vote at `n = 1`. -/
+fair-coin-or-better vote at `n = 1`, and also at `n = 0`, where both
+sides equal `1` (no positivity hypothesis is needed). -/
 example (p : PMF Bool) (hp : (2 / 3 : ℝ) ≤ (p true).toReal) :
     (∑ v : Fin 1 → Bool, (∏ i, (p (v i)).toReal) *
       (if majority v = false then 1 else 0)) ≤ Real.exp (-(((1 : ℕ) : ℝ) / 18)) :=
-  bpp_majority_amplify (n := 1) (by norm_num) p hp
+  bpp_majority_amplify (n := 1) p hp
+
+example (p : PMF Bool) (hp : (2 / 3 : ℝ) ≤ (p true).toReal) :
+    (∑ v : Fin 0 → Bool, (∏ i, (p (v i)).toReal) *
+      (if majority v = false then 1 else 0)) ≤ Real.exp (-(((0 : ℕ) : ℝ) / 18)) :=
+  bpp_majority_amplify (n := 0) p hp
