@@ -68,9 +68,8 @@ Lunardi, *Analytic Semigroups*, Ch. 3). It therefore enters as the hypothesis
   the kinetics is a mild solution.
 * `contDiff_schnakenberg`, `schnakenberg_localFlow`: the Schnakenberg kinetics qualify.
 * `not_lipschitzOnWith_giererMeinhardt` (boundary case): the Gierer–Meinhardt kinetics
-  `u² / v` are not Lipschitz on the unit ball, so they do not satisfy the hypotheses on the whole
-  of `C(K, ℝ²)`; a treatment needs an invariant region `v ≥ v_min > 0` or a cutoff, which is not
-  done here.
+  `u² / v` are not Lipschitz on the unit ball, so the `C¹` route to `hF` is closed; a treatment
+  needs an invariant region `v ≥ v_min > 0` or a cutoff, which is not done here.
 
 ## Not formalized here
 
