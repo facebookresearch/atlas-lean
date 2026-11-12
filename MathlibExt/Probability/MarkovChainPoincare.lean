@@ -17,10 +17,12 @@ import Mathlib.Tactic.Ring
 /-! # Iterating a variance contraction
 
 A nonnegative one-step bound on finite-probability variance iterates
-geometrically. For a Markov kernel use `Matrix.mulVec K` as the
-transformation and `(1 - gap)^2` as the factor. Stochasticity,
-stationarity, and a spectral gap are inputs to proving that one-step
-bound, not additional hypotheses of the iteration lemma.
+geometrically. For a reversible Markov kernel use `Matrix.mulVec K` as
+the transformation and `(1 - gap)^2` as the factor, where `gap` is the
+absolute spectral gap. The ordinary spectral gap suffices when the
+spectrum is nonnegative, for example for a lazy reversible kernel.
+These kernel properties are inputs to proving the one-step bound,
+not additional hypotheses of the iteration lemma.
 
 The theorem uses `FiniteProbability.variance` and `Function.iterate`
 directly, without introducing alternative names for these operations.
