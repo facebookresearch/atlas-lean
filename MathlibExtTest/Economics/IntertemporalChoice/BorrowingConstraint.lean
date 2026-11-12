@@ -54,19 +54,19 @@ theorem differentiableAt_quad (x : ℝ) :
   (hasDerivAt_quad x).differentiableAt
 
 theorem binding_isMaxOn : IsMaxOn
-    (MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+    (MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
       (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4)
-    (MathlibExt.Economics.BorrowingConstraint.borrowingFeasible 0 0 4 1) 1 := by
+    (MathlibExt.Economics.IntertemporalChoice.borrowingFeasible 0 0 4 1) 1 := by
   rw [isMaxOn_iff]
   intro x hx
   obtain ⟨_, _, hxle⟩ := hx
-  have hdiff : MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+  have hdiff : MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
         (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4 1 -
-        MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+        MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
         (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4 x
       = 2 * (1 - x) * (3 - x) := by
-    simp only [MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget,
-      MathlibExt.Economics.BorrowingConstraint.nextConsumption]
+    simp only [MathlibExt.Economics.IntertemporalChoice.lifetimeUtility,
+      MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
     ring
   have h1 : (0 : ℝ) ≤ 1 - x := by linarith
   have h3 : (0 : ℝ) ≤ 3 - x := by linarith
@@ -75,23 +75,23 @@ theorem binding_isMaxOn : IsMaxOn
   linarith
 
 theorem binding_mem : (1 : ℝ) ∈
-    MathlibExt.Economics.BorrowingConstraint.borrowingFeasible 0 0 4 1 :=
+    MathlibExt.Economics.IntertemporalChoice.borrowingFeasible 0 0 4 1 :=
   ⟨by norm_num, by norm_num
-    [MathlibExt.Economics.BorrowingConstraint.nextConsumption], by norm_num⟩
+    [MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption], by norm_num⟩
 
 theorem slack_isMaxOn : IsMaxOn
-    (MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+    (MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
       (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4)
-    (MathlibExt.Economics.BorrowingConstraint.borrowingFeasible 0 0 4 3) 2 := by
+    (MathlibExt.Economics.IntertemporalChoice.borrowingFeasible 0 0 4 3) 2 := by
   rw [isMaxOn_iff]
   intro x _
-  have hdiff : MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+  have hdiff : MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
         (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4 2 -
-        MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+        MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
         (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4 x
       = 2 * (x - 2) ^ 2 := by
-    simp only [MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget,
-      MathlibExt.Economics.BorrowingConstraint.nextConsumption]
+    simp only [MathlibExt.Economics.IntertemporalChoice.lifetimeUtility,
+      MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
     ring
   have hnonneg : (0 : ℝ) ≤ 2 * (x - 2) ^ 2 := by positivity
   linarith
@@ -99,13 +99,13 @@ theorem slack_isMaxOn : IsMaxOn
 
 -- Required concrete examples.
 example : IsMaxOn
-    (MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+    (MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
       (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4)
-    (MathlibExt.Economics.BorrowingConstraint.borrowingFeasible 0 0 4 1) 1 :=
+    (MathlibExt.Economics.IntertemporalChoice.borrowingFeasible 0 0 4 1) 1 :=
   binding_isMaxOn
 
 example : (1 : ℝ) ∈
-    MathlibExt.Economics.BorrowingConstraint.borrowingFeasible 0 0 4 1 :=
+    MathlibExt.Economics.IntertemporalChoice.borrowingFeasible 0 0 4 1 :=
   binding_mem
 
 example : ∃ μ : ℝ, μ = 4 ∧ 0 ≤ μ ∧ μ * (1 - (0 + 1)) = 0 ∧
@@ -115,17 +115,17 @@ example : ∃ μ : ℝ, μ = 4 ∧ 0 ≤ μ ∧ μ * (1 - (0 + 1)) = 0 ∧
   have hmem := binding_mem
   have hc₀ : (0 : ℝ) < 1 := by norm_num
   have hc₁ : (0 : ℝ)
-      < MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 1 := by
-    norm_num [MathlibExt.Economics.BorrowingConstraint.nextConsumption]
-  have hc1_eq : MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 1 = 3 := by
-    norm_num [MathlibExt.Economics.BorrowingConstraint.nextConsumption]
+      < MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 1 := by
+    norm_num [MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
+  have hc1_eq : MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 1 = 3 := by
+    norm_num [MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
   have hu₀ := differentiableAt_quad 1
   have hu₁ : DifferentiableAt ℝ (fun c : ℝ => 8 * c - c ^ 2)
-      (MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 1) := by
+      (MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 1) := by
     rw [hc1_eq]
     exact differentiableAt_quad 3
   obtain ⟨μ, hμ_nonneg, hcomp, heq⟩ :=
-    MathlibExt.Economics.BorrowingConstraint.euler_complementary_slackness
+    MathlibExt.Economics.IntertemporalChoice.euler_complementary_slackness
       hmax hmem hc₀ hc₁ hu₀ hu₁
   rw [hc1_eq] at heq
   have h1 : deriv (fun c : ℝ => 8 * c - c ^ 2) 1 = 6 :=
@@ -144,31 +144,31 @@ example : 1 * (1 + 0) * deriv (fun c : ℝ => 8 * c - c ^ 2) 3
   norm_num
 
 example : IsMaxOn
-    (MathlibExt.Economics.BorrowingConstraint.utilityAlongBudget
+    (MathlibExt.Economics.IntertemporalChoice.lifetimeUtility
       (fun c : ℝ => 8 * c - c ^ 2) 1 0 0 4)
-    (MathlibExt.Economics.BorrowingConstraint.borrowingFeasible 0 0 4 3) 2 :=
+    (MathlibExt.Economics.IntertemporalChoice.borrowingFeasible 0 0 4 3) 2 :=
   slack_isMaxOn
 
 example : deriv (fun c : ℝ => 8 * c - c ^ 2) 2 = 1 * (1 + 0) *
     deriv (fun c : ℝ => 8 * c - c ^ 2)
-      (MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 2) := by
+      (MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 2) := by
   have hmax := slack_isMaxOn
   have hc₀ : (0 : ℝ) < 2 := by norm_num
   have hc₁ : (0 : ℝ)
-      < MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 2 := by
-    norm_num [MathlibExt.Economics.BorrowingConstraint.nextConsumption]
+      < MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 2 := by
+    norm_num [MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
   have hslack : (2 : ℝ) < 0 + 3 := by norm_num
   have hu₀ := differentiableAt_quad 2
-  have hc1_eq : MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 2 = 2 := by
-    norm_num [MathlibExt.Economics.BorrowingConstraint.nextConsumption]
+  have hc1_eq : MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 2 = 2 := by
+    norm_num [MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
   have hu₁ : DifferentiableAt ℝ (fun c : ℝ => 8 * c - c ^ 2)
-      (MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 2) := by
+      (MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 2) := by
     rw [hc1_eq]
     exact differentiableAt_quad 2
-  exact MathlibExt.Economics.BorrowingConstraint.euler_equation_of_slack
+  exact MathlibExt.Economics.IntertemporalChoice.euler_equation_of_slack
     hmax hc₀ hc₁ hslack hu₀ hu₁
 
-example : MathlibExt.Economics.BorrowingConstraint.nextConsumption 0 0 4 2 = 2 := by
-  norm_num [MathlibExt.Economics.BorrowingConstraint.nextConsumption]
+example : MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption 0 0 4 2 = 2 := by
+  norm_num [MathlibExt.Economics.IntertemporalChoice.secondPeriodConsumption]
 
 end MathlibExtTest.Economics.IntertemporalChoice.BorrowingConstraint
