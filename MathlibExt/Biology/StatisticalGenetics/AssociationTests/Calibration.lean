@@ -28,10 +28,14 @@ assumption about the laws of the two aggregate counts only. It does not say that
 allele copies are independent, that individuals are unrelated, or that genotypes are in
 Hardy–Weinberg proportions: a binomial total can be assigned to allele copies by a dependent rule.
 
-**A sufficient individual-level model.** If the individuals are unrelated, genotypes within each
-group are in Hardy–Weinberg proportions, and the allele frequency `f` is the same in cases and
-controls (no association), then the `n₁ + n₂` allele copies are independent Bernoulli(`f`) draws,
-and the count laws above follow. HWE is part of this sufficient model, not a consequence of the
+**A sufficient individual-level model.** If the genotypes are independent across individuals, and
+within each individual the two allele copies are independent Bernoulli(`f`) draws with the same
+`f` in cases and controls (no association), then the `n₁ + n₂` allele copies are independent
+Bernoulli(`f`) draws, and the count laws above follow. Such a model has genotypes in
+Hardy–Weinberg proportions. Independence across individuals is essential and is not implied by
+"unrelated" alone: two unrelated individuals can each have an HWE-distributed genotype while
+their genotypes are perfectly correlated, in which case the aggregate count need not be
+binomial. HWE is part of this sufficient model, not a consequence of the
 count laws. When HWE fails the count laws generally fail too, and allele counting is then
 miscalibrated (Sasieni 1997).
 
