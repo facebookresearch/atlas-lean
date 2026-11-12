@@ -30,13 +30,10 @@ is stated for `p > 0`.
 
 - `EarthScience.no_exceedance_prob`: no exceedance in `n` years has
   probability `(1 - p) ^ n`.
-- `EarthScience.no_exceedance_boundary`: the `p = 0` / `p = 1`
-  boundaries and the return-period identity.
 
 ## iii. Table of contents
 
 - A. No exceedance in `n` years
-- B. Boundary cases
 
 ## iv. References
 
@@ -68,21 +65,5 @@ theorem no_exceedance_prob {Ω : Type*} {mΩ : MeasurableSpace Ω}
   simp only [hProb] at hToReal
   rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin] at hToReal
   exact hToReal
-
-/-! ## B. Boundary cases -/
-
-/-- Boundary cases: `p = 0` gives no-exceedance probability `1`, and
-`p = 1` with `n > 0` gives `0`. When `p > 0`, the return-period
-convention satisfies `(1 / p) * p = 1`. -/
-theorem no_exceedance_boundary {n : ℕ} {p : ℝ} :
-    (1 - 0 : ℝ) ^ n = 1 ∧ (0 < n → (1 - 1 : ℝ) ^ n = 0) ∧
-      (0 < p → (1 / p) * p = 1) := by
-  refine ⟨?_, ?_, ?_⟩
-  · simp
-  · intro hn
-    simp only [sub_self]
-    exact zero_pow (ne_of_gt hn)
-  · intro hp
-    exact div_mul_cancel₀ 1 (ne_of_gt hp)
 
 end EarthScience

@@ -54,13 +54,15 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
   EarthScience.no_exceedance_prob (by norm_num) hMeas hIndep hProb
 
 /-- Boundaries: `p = 0` gives `1`, `p = 1` with `n = 3` gives `0`. -/
-example : (1 - 0 : ℝ) ^ 5 = 1 :=
-  (EarthScience.no_exceedance_boundary (n := 5) (p := 0)).1
+example : (1 - 0 : ℝ) ^ 5 = 1 := by
+  simp
 
 /-- `p = 1` with `n = 3` gives no-exceedance probability `0`. -/
-example : 0 < 3 → (1 - 1 : ℝ) ^ 3 = 0 :=
-  (EarthScience.no_exceedance_boundary (n := 3) (p := 1)).2.1
+example : 0 < 3 → (1 - 1 : ℝ) ^ 3 = 0 := by
+  intro hn
+  simpa only [sub_self] using (zero_pow (ne_of_gt hn) : (0 : ℝ) ^ 3 = 0)
 
 /-- Return period: `p = 0.01` gives `(1 / 0.01) * 0.01 = 1`. -/
-example : (0 : ℝ) < 0.01 → ((1 : ℝ) / 0.01) * 0.01 = 1 :=
-  (EarthScience.no_exceedance_boundary (n := 1) (p := 0.01)).2.2
+example : (0 : ℝ) < 0.01 → ((1 : ℝ) / 0.01) * 0.01 = 1 := by
+  intro hp
+  exact div_mul_cancel₀ 1 (ne_of_gt hp)
