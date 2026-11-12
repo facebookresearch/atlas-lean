@@ -28,37 +28,37 @@ No nonlinear 4D-Var or algorithm-convergence claim is made.
 
 ## Key results
 
-- `g07_woodbury`: `(B⁻¹ + Hᵀ R⁻¹ H)⁻¹ = B - B Hᵀ (H B Hᵀ + R)⁻¹ H B`.
-- `g07_normal_equation`: `xa` satisfies the normal equations.
-- `g07_minimizer_isMin_unique`: `xa` is the unique global minimizer of `J`.
+- `woodbury`: `(B⁻¹ + Hᵀ R⁻¹ H)⁻¹ = B - B Hᵀ (H B Hᵀ + R)⁻¹ H B`.
+- `normal_equation`: `xa` satisfies the normal equations.
+- `minimizer_isMin_unique`: `xa` is the unique global minimizer of `J`.
 -/
 
 @[expose] public section
 
 open Matrix
 
-namespace MathlibExt.LinearAlgebra.G07ThreeDVar
+namespace MathlibExt.LinearAlgebra.ThreeDVar
 
 /-- 3D-Var cost `J(x) = 0.5 * (x - xb)ᵀ B⁻¹ (x - xb) + 0.5 * (H x - y)ᵀ R⁻¹ (H x - y)`. -/
-noncomputable def g07Cost {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+noncomputable def Cost {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (xb : Fin n → ℝ) (y : Fin m → ℝ) (x : Fin n → ℝ) : ℝ :=
   0.5 * ((x - xb) ⬝ᵥ B⁻¹ *ᵥ (x - xb) + (H *ᵥ x - y) ⬝ᵥ R⁻¹ *ᵥ (H *ᵥ x - y))
 
 /-- Kalman-form 3D-Var minimizer `xa = xb + B Hᵀ (H B Hᵀ + R)⁻¹ (y - H xb)`. -/
-noncomputable def g07Minimizer {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+noncomputable def Minimizer {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (xb : Fin n → ℝ) (y : Fin m → ℝ) : Fin n → ℝ :=
   xb + B *ᵥ (Hᵀ *ᵥ ((H * B * Hᵀ + R)⁻¹ *ᵥ (y - H *ᵥ xb)))
 
-theorem g07_S_posDef {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+theorem S_posDef {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (hB : B.PosDef) (hR : R.PosDef) : (H * B * Hᵀ + R).PosDef := by
   have hHH : Hᵀ = Hᴴ := (Matrix.conjTranspose_eq_transpose_of_trivial H).symm
   rw [hHH]
   exact Matrix.PosDef.posSemidef_add (hB.posSemidef.mul_mul_conjTranspose_same H) hR
 
-theorem g07_P_posDef {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+theorem P_posDef {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (hB : B.PosDef) (hR : R.PosDef) : (B⁻¹ + Hᵀ * R⁻¹ * H).PosDef := by
   have hHH : Hᵀ = Hᴴ := (Matrix.conjTranspose_eq_transpose_of_trivial H).symm
@@ -67,12 +67,12 @@ theorem g07_P_posDef {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
 
 /-- Woodbury identity: `(B⁻¹ + Hᵀ R⁻¹ H)⁻¹ = B - B Hᵀ (H B Hᵀ + R)⁻¹ H B`
 for positive-definite `B, R`. -/
-theorem g07_woodbury {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+theorem woodbury {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (hB : B.PosDef) (hR : R.PosDef) :
     (B⁻¹ + Hᵀ * R⁻¹ * H)⁻¹ = B - B * Hᵀ * (H * B * Hᵀ + R)⁻¹ * H * B := by
   set S : Matrix (Fin m) (Fin m) ℝ := H * B * Hᵀ + R with hSdef
-  have hSpos : S.PosDef := g07_S_posDef B R H hB hR
+  have hSpos : S.PosDef := S_posDef B R H hB hR
   have hBdet : IsUnit B.det := (Matrix.isUnit_iff_isUnit_det B).mp hB.isUnit
   have hRdet : IsUnit R.det := (Matrix.isUnit_iff_isUnit_det R).mp hR.isUnit
   have hSdet : IsUnit S.det := (Matrix.isUnit_iff_isUnit_det S).mp hSpos.isUnit
@@ -97,21 +97,21 @@ theorem g07_woodbury {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
   abel
 
 /-- The Kalman-form minimizer satisfies the normal equations. -/
-theorem g07_normal_equation {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+theorem normal_equation {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (xb : Fin n → ℝ) (y : Fin m → ℝ) (hB : B.PosDef) (hR : R.PosDef) :
-    (B⁻¹ + Hᵀ * R⁻¹ * H) *ᵥ (g07Minimizer B R H xb y - xb) =
+    (B⁻¹ + Hᵀ * R⁻¹ * H) *ᵥ (Minimizer B R H xb y - xb) =
       Hᵀ *ᵥ (R⁻¹ *ᵥ (y - H *ᵥ xb)) := by
   have hBdet : IsUnit B.det := (Matrix.isUnit_iff_isUnit_det B).mp hB.isUnit
   have hRdet : IsUnit R.det := (Matrix.isUnit_iff_isUnit_det R).mp hR.isUnit
-  have hSpos : (H * B * Hᵀ + R).PosDef := g07_S_posDef B R H hB hR
+  have hSpos : (H * B * Hᵀ + R).PosDef := S_posDef B R H hB hR
   have hSdet : IsUnit (H * B * Hᵀ + R).det :=
     (Matrix.isUnit_iff_isUnit_det _).mp hSpos.isUnit
   have hB1 : B⁻¹ * B = 1 := Matrix.nonsing_inv_mul B hBdet
   have hR1 : R⁻¹ * R = 1 := Matrix.nonsing_inv_mul R hRdet
   have hSS : (H * B * Hᵀ + R) * (H * B * Hᵀ + R)⁻¹ = 1 :=
     Matrix.mul_nonsing_inv _ hSdet
-  unfold g07Minimizer
+  unfold Minimizer
   set S : Matrix (Fin m) (Fin m) ℝ := H * B * Hᵀ + R with hSdef
   set w : Fin m → ℝ := y - H *ᵥ xb with hwdef
   have hmin : (xb + B *ᵥ (Hᵀ *ᵥ (S⁻¹ *ᵥ w))) - xb
@@ -149,22 +149,22 @@ theorem g07_normal_equation {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
   abel
 
 /-- The Kalman-form point is the unique global minimizer of `J`. -/
-theorem g07_minimizer_isMin_unique {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
+theorem minimizer_isMin_unique {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     (R : Matrix (Fin m) (Fin m) ℝ) (H : Matrix (Fin m) (Fin n) ℝ)
     (xb : Fin n → ℝ) (y : Fin m → ℝ) (hB : B.PosDef) (hR : R.PosDef)
     (x : Fin n → ℝ) :
-    g07Cost B R H xb y (g07Minimizer B R H xb y) ≤ g07Cost B R H xb y x ∧
-      (g07Cost B R H xb y x = g07Cost B R H xb y (g07Minimizer B R H xb y) →
-        x = g07Minimizer B R H xb y) := by
-  have hnorm := g07_normal_equation B R H xb y hB hR
-  have hPpos : (B⁻¹ + Hᵀ * R⁻¹ * H).PosDef := g07_P_posDef B R H hB hR
+    Cost B R H xb y (Minimizer B R H xb y) ≤ Cost B R H xb y x ∧
+      (Cost B R H xb y x = Cost B R H xb y (Minimizer B R H xb y) →
+        x = Minimizer B R H xb y) := by
+  have hnorm := normal_equation B R H xb y hB hR
+  have hPpos : (B⁻¹ + Hᵀ * R⁻¹ * H).PosDef := P_posDef B R H hB hR
   have hBsymm : B⁻¹ᵀ = B⁻¹ := by
     have h : (B⁻¹)ᴴ = B⁻¹ := hB.inv.isHermitian
     rwa [Matrix.conjTranspose_eq_transpose_of_trivial] at h
   have hRsymm : R⁻¹ᵀ = R⁻¹ := by
     have h : (R⁻¹)ᴴ = R⁻¹ := hR.inv.isHermitian
     rwa [Matrix.conjTranspose_eq_transpose_of_trivial] at h
-  set xa : Fin n → ℝ := g07Minimizer B R H xb y with hxadef
+  set xa : Fin n → ℝ := Minimizer B R H xb y with hxadef
   set d : Fin n → ℝ := x - xa with hddef
   set e : Fin n → ℝ := xa - xb with hedef
   set f : Fin m → ℝ := H *ᵥ xa - y with hfdef
@@ -227,9 +227,9 @@ theorem g07_minimizer_isMin_unique {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
       = (H *ᵥ d) ⬝ᵥ R⁻¹ *ᵥ (H *ᵥ d) + 2 * ((H *ᵥ d) ⬝ᵥ R⁻¹ *ᵥ f)
         + f ⬝ᵥ R⁻¹ *ᵥ f := by
     rw [hHf]; exact expand R⁻¹ hRsymm (H *ᵥ d) f
-  have csq : g07Cost B R H xb y x - g07Cost B R H xb y xa
+  have csq : Cost B R H xb y x - Cost B R H xb y xa
       = 0.5 * (d ⬝ᵥ (B⁻¹ + Hᵀ * R⁻¹ * H) *ᵥ d) := by
-    unfold g07Cost
+    unfold Cost
     rw [← hedef, ← hfdef]
     linarith [hexpandB, hexpandR, hcross, hmain]
   have hstar : star d = d := star_trivial d
@@ -249,4 +249,4 @@ theorem g07_minimizer_isMin_unique {n m : ℕ} (B : Matrix (Fin n) (Fin n) ℝ)
     have hxa : x - xa = 0 := by rw [← hddef]; exact hdx0
     exact sub_eq_zero.mp hxa
 
-end MathlibExt.LinearAlgebra.G07ThreeDVar
+end MathlibExt.LinearAlgebra.ThreeDVar
