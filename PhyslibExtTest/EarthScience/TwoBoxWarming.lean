@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.X04TwoBoxWarming
+import PhyslibExt.EarthScience.TwoBoxWarming
 
 /-!
 # Two-box warming capstone checks
 
-Concrete consumers of `PhyslibExt.EarthScience.X04TwoBoxWarming`:
+Concrete consumers of `PhyslibExt.EarthScience.TwoBoxWarming`:
 equilibrium `(1, 1)`, the combined budget and energy identities at
 `Ts = Td = 0` (where `Ts' = 1, Td' = 0, E = 1, E' = -1`), and
 `E 0 = 1`.
@@ -35,7 +35,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.X04TwoBoxWarming`
+- `PhyslibExt.EarthScience.TwoBoxWarming`
 -/
 
 /-- Equilibrium `(1, 1)`. -/
