@@ -555,7 +555,8 @@ private lemma measureReal_inter_comp_preimage [IsFiniteMeasure μ] [Fintype 𝒳
   · exact fun x _ => hA.inter (hX (measurableSet_singleton x))
 
 omit [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳] in
-private lemma measureReal_inter_preimage_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
+/-- `P(T, X = x) = P(T | X = x) P(X = x)`, including at values of probability zero. -/
+theorem measureReal_inter_preimage_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
     {X : Ω → 𝒳} (x : 𝒳) :
     μ.real (T ∩ X ⁻¹' {x}) = propensity μ T X x * μ.real (X ⁻¹' {x}) := by
   by_cases h : μ.real (X ⁻¹' {x}) = 0
@@ -578,9 +579,11 @@ private lemma measureReal_inter_level [IsFiniteMeasure μ] {T : Set Ω} (hT : Me
   rw [h x, (mem_filter.1 hx).2]
 
 omit [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳] in
-/-- Conditional independence factors the outcome integral on each covariate stratum.
+/-- If the event `T` is conditionally independent of `Y` given `X`, then
+`E[Y; T, X = x] = P(T | X = x) E[Y; X = x]`.
+Conditional independence factors the outcome integral on each covariate stratum.
 No integrability is needed for this identity between proportional image measures. -/
-lemma setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
+theorem setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
     {X : Ω → 𝒳} {Y : Ω → ℝ} (hY : Measurable Y)
     (h : CondIndepDiscrete μ T Y X) (x : 𝒳) :
     ∫ ω in T ∩ X ⁻¹' {x}, Y ω ∂μ = propensity μ T X x * ∫ ω in X ⁻¹' {x}, Y ω ∂μ := by
