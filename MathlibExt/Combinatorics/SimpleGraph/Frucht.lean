@@ -151,11 +151,6 @@ private noncomputable def fruchtShiftIso (N : ℕ) {G : Type*} [Group G] [Decida
     fruchtGraph N e ≃g fruchtGraph N e :=
   RelIso.mk (fruchtShift N a) (fun {v w} => (fruchtShift_adj N e a v w).symm)
 
-private theorem fruchtIso_degree_eq {W : Type*} [Fintype W] (Γ : SimpleGraph W)
-    [DecidableRel Γ.Adj] (ι : Γ ≃g Γ) (v : W) :
-    Γ.degree (ι v) = Γ.degree v :=
-  SimpleGraph.Iso.degree_eq ι v
-
 private theorem card_filter_colour_le (N : ℕ) {G : Type*} [Group G] [Fintype G]
     (e : G ≃ Fin N) (g : G) (j : Fin N) :
     (Finset.univ.filter (fun x => e (g⁻¹ * x) ≤ j)).card = (j.val + 1) := by
@@ -384,7 +379,7 @@ private theorem fruchtAut_maps_inl (N : ℕ) {G : Type*} [Group G] [DecidableEq 
   | inr p =>
     obtain ⟨h, j'⟩ := p
     exfalso
-    have hdeg := fruchtIso_degree_eq (fruchtGraph N e) σ (.inl x)
+    have hdeg := SimpleGraph.Iso.degree_eq σ (.inl x)
     rw [hσ, fruchtGraph_degree_inr N e h j'] at hdeg
     have hle := fruchtGraph_degree_inl_ge N e hN x
     have hj : j'.val < N := Fin.is_lt j'
@@ -395,14 +390,14 @@ private theorem fruchtAut_maps_inr (N : ℕ) {G : Type*} [Group G] [DecidableEq 
   cases hσ : σ (.inr (g, j) : G ⊕ (G × Fin N)) with
   | inl y =>
     exfalso
-    have hdeg := fruchtIso_degree_eq (fruchtGraph N e) σ (.inr (g, j))
+    have hdeg := SimpleGraph.Iso.degree_eq σ (.inr (g, j))
     rw [hσ, fruchtGraph_degree_inr N e g j] at hdeg
     have hle := fruchtGraph_degree_inl_ge N e hN y
     have hj : j.val < N := Fin.is_lt j
     omega
   | inr p =>
     obtain ⟨h, j'⟩ := p
-    have hdeg := fruchtIso_degree_eq (fruchtGraph N e) σ (.inr (g, j))
+    have hdeg := SimpleGraph.Iso.degree_eq σ (.inr (g, j))
     rw [hσ, fruchtGraph_degree_inr N e g j, fruchtGraph_degree_inr N e h j'] at hdeg
     have hjj : j' = j := by
       apply Fin.ext

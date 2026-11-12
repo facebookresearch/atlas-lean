@@ -152,11 +152,6 @@ private theorem myDesome {V : Type*} {x : Option (V × Bool)} (hx : x ≠ none) 
     obtain ⟨v, i⟩ := p
     exact ⟨v, i, rfl⟩
 
-private theorem completeGraph_adj_iff {α : Type*} {x y : α} :
-    (SimpleGraph.completeGraph α).Adj x y ↔ x ≠ y := by
-  rw [SimpleGraph.completeGraph_eq_top]
-  exact SimpleGraph.top_adj _ _
-
 private def myCopy {V : Type*} (G : SimpleGraph V) : G.Copy (myGraph G) where
   toHom := ⟨fun v => some (v, false), fun h => myAdj_of00 h⟩
   injective' := by
@@ -193,11 +188,11 @@ private theorem myColorable_up {V : Type*} (G : SimpleGraph V) {m : ℕ}
   have hcprop : ∀ {v u : V}, G.Adj v u → c v ≠ c u := by
     intro v u h
     have h2 := c.map_rel' h
-    rwa [completeGraph_adj_iff] at h2
+    rwa [SimpleGraph.top_adj] at h2
   refine ⟨⟨fun x => match x with | some (v, _) => Fin.castSucc (c v) | none => Fin.last m, ?_⟩⟩
   intro x y hxy
   have hxy' : myAdj G x y := hxy
-  rw [completeGraph_adj_iff]
+  rw [SimpleGraph.top_adj]
   simp only [myAdj] at hxy'
   rcases hxy' with ⟨v, u, rfl, rfl, h⟩ | ⟨v, u, rfl, rfl, h⟩ | ⟨v, u, rfl, rfl, h⟩ |
     ⟨v, rfl, rfl⟩ | ⟨v, rfl, rfl⟩
@@ -217,7 +212,7 @@ private theorem myColorable_down {V : Type*} (G : SimpleGraph V) {k : ℕ}
   have hdprop : ∀ {x y : Option (V × Bool)}, myAdj G x y → d x ≠ d y := by
     intro x y h
     have h2 := d.map_rel' h
-    rwa [completeGraph_adj_iff] at h2
+    rwa [SimpleGraph.top_adj] at h2
   have hcard : Fintype.card ↥(Finset.univ.erase (d none)) = k := by
     rw [Fintype.card_coe, Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,
       Fintype.card_fin, Nat.add_sub_cancel]
@@ -226,7 +221,7 @@ private theorem myColorable_down {V : Type*} (G : SimpleGraph V) {k : ℕ}
   · rw [Finset.mem_erase]
     exact ⟨myRawColor_ne (⇑d) (d none) (fun v => hdprop (myAdj_sh_ad v)) v, Finset.mem_univ _⟩
   · intro u v huv
-    rw [completeGraph_adj_iff]
+    rw [SimpleGraph.top_adj]
     intro hcon
     exact myRawColor_ne_of_adj (⇑d) (d none) hdprop huv (congrArg Subtype.val (e.injective hcon))
 

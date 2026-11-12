@@ -4172,12 +4172,6 @@ private def dhjWordEquiv {I I' α : Type*} (e : I ≃ I') :
     (I → α) ≃ (I' → α) :=
   Equiv.arrowCongr e (Equiv.refl α)
 
-private theorem dhj_mem_map_equiv {X Y : Type*} (e : X ≃ Y)
-    (A : Finset X) (y : Y) :
-    y ∈ A.map e.toEmbedding ↔ e.symm y ∈ A := by
-  classical
-  simp
-
 private theorem dhjWordEquiv_replaceLast {k : ℕ} {I I' : Type*}
     (i : Fin k) (e : I ≃ I') (w : I → Fin (k + 1)) :
     dhjWordEquiv e (dhjReplaceLast i w) =
@@ -4189,7 +4183,7 @@ private theorem dhjInsensitive.map_wordEquiv {k : ℕ} {I I' : Type*}
     (hD : dhjInsensitive i D) :
     dhjInsensitive i (D.map (dhjWordEquiv e).toEmbedding) := by
   intro w
-  rw [dhj_mem_map_equiv, dhj_mem_map_equiv]
+  rw [Finset.mem_map_equiv, Finset.mem_map_equiv]
   change (dhjWordEquiv e).symm w ∈ D ↔
     dhjReplaceLast i ((dhjWordEquiv e).symm w) ∈ D
   exact hD ((dhjWordEquiv e).symm w)
@@ -4209,7 +4203,7 @@ private theorem dhjSubspacePoints_reindex {d k : ℕ} {I I' : Type*}
         (V.reindex (Equiv.refl (Fin d)) (Equiv.refl (Fin (k + 1))) e) := by
   classical
   ext w
-  rw [dhj_mem_map_equiv, dhj_mem_subspacePoints, dhj_mem_subspacePoints]
+  rw [Finset.mem_map_equiv, dhj_mem_subspacePoints, dhj_mem_subspacePoints]
   constructor
   · rintro ⟨z, hz⟩
     refine ⟨z, ?_⟩
@@ -4268,7 +4262,7 @@ private theorem dhj_exists_tiling_insensitive_fin {k d : ℕ} {β : ℝ}
     exact hD.map_wordEquiv i e.symm D
   have hDblockEq : Dblock = Dflat.map b.symm.toEmbedding := by
     ext u
-    rw [dhj_mem_map_equiv, dhj_mem_map_equiv, dhj_mem_map_equiv]
+    rw [Finset.mem_map_equiv, Finset.mem_map_equiv, Finset.mem_map_equiv]
     rfl
   have hDblock : dhjBlockInsensitive i Dblock := by
     rw [hDblockEq]
@@ -4282,29 +4276,29 @@ private theorem dhj_exists_tiling_insensitive_fin {k d : ℕ} {β : ℝ}
       have hxb : b.symm x ∈ Cblock := by
         simpa [Cflat, dhjFlatSet] using hx
       have hxbD := hCsub hxb
-      rw [hDblockEq, dhj_mem_map_equiv] at hxbD
+      rw [hDblockEq, Finset.mem_map_equiv] at hxbD
       simpa using hxbD
     intro x hx
     have hxflat : w.symm x ∈ Cflat := by
       simpa [C] using hx
     have hxDflat := hflatSub hxflat
     dsimp only [Dflat] at hxDflat
-    rw [dhj_mem_map_equiv] at hxDflat
+    rw [Finset.mem_map_equiv] at hxDflat
     simpa using hxDflat
   · dsimp only [C]
     exact hCtile.map_wordEquiv e
   · have hres : D \ C = (Dblock \ Cblock).map f.toEmbedding := by
       have hDmap : Dblock.map f.toEmbedding = D := by
         ext x
-        rw [dhj_mem_map_equiv, dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv, Finset.mem_map_equiv]
         simp
       have hCmap : Cblock.map f.toEmbedding = C := by
         ext x
-        rw [dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv]
         change f.symm x ∈ Cblock ↔ x ∈ Cflat.map w.toEmbedding
-        rw [dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv]
         change f.symm x ∈ Cblock ↔ w.symm x ∈ Cblock.map b.toEmbedding
-        rw [dhj_mem_map_equiv]
+        rw [Finset.mem_map_equiv]
         rfl
       rw [Finset.map_sdiff, hDmap, hCmap]
     rw [hres, dhjDensity_map_equiv]
@@ -4750,7 +4744,7 @@ private theorem dhj_exists_subspace_density_ge {k d m : ℕ} (hdm : d ≤ m)
     ext z
     rw [dhj_mem_pullback]
     simp only [dhjSection, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [dhj_mem_map_equiv]
+    rw [Finset.mem_map_equiv]
     have heq : w (V z) = dhjConcat x z := by
       calc
         w (V z) = U z := by
@@ -4999,9 +4993,9 @@ private theorem dhj_dichotomy_fin {k : ℕ} (hk : 2 ≤ k)
     intro a
     have ha := hl a
     change l a ∈ Ablock.map b.toEmbedding at ha
-    rw [dhj_mem_map_equiv] at ha
+    rw [Finset.mem_map_equiv] at ha
     dsimp only [Ablock] at ha
-    rw [dhj_mem_map_equiv] at ha
+    rw [Finset.mem_map_equiv] at ha
     have heq : l.reindex e a = w (l a) := by
       funext q
       change l.reindex e a q = l a (e.symm q)
@@ -5017,9 +5011,9 @@ private theorem dhj_dichotomy_fin {k : ℕ} (hk : 2 ≤ k)
         (Ablock.map b.toEmbedding) := by
       ext z
       simp only [dhj_mem_pullback]
-      rw [dhj_mem_map_equiv]
+      rw [Finset.mem_map_equiv]
       dsimp only [Ablock]
-      rw [dhj_mem_map_equiv]
+      rw [Finset.mem_map_equiv]
       change V' z ∈ A ↔ f (b.symm (V z)) ∈ A
       have hVapply : V' z = w (V z) := dhjSubspace_reindex_apply V e z
       rw [hVapply]

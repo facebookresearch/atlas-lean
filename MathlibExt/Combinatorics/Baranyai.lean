@@ -72,13 +72,6 @@ private theorem baranyai_choose_mul (d r : ℕ) (hd : 0 < d) (hr : 0 < r) :
   have h := Nat.add_one_mul_choose_eq d' r'
   rw [mul_comm (r' + 1) _, ← h, mul_comm]
 
-private theorem baranyai_choose_pascal (d r : ℕ) (hd : 0 < d) (hr : 0 < r) :
-    d.choose r = (d - 1).choose (r - 1) + (d - 1).choose r := by
-  obtain ⟨d', rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := d) (by omega)
-  obtain ⟨r', rfl⟩ := Nat.exists_eq_succ_of_ne_zero (n := r) (by omega)
-  simp only [Nat.succ_eq_add_one, Nat.add_sub_cancel]
-  exact Nat.choose_succ_succ' d' r'
-
 private theorem baranyai_good_empty (n k L a : ℕ) (HLa : L * a = n.choose k) :
     baranyai_Good n k L a ∅ (fun _ _ => ∅) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -705,7 +698,7 @@ private theorem baranyai_extend_cnt_not_mem {n k L a : ℕ} {U : Finset (Fin n)}
   by_cases hltT : T.card < k
   · have hd_pos : 0 < n - U.card := Nat.sub_pos_of_lt hlt
     have hr : 0 < k - T.card := by omega
-    have hpascal := baranyai_choose_pascal (n - U.card) (k - T.card) hd_pos hr
+    have hpascal := Nat.choose_eq_choose_pred_add hd_pos hr
     have hDT := J2 T hTU' hltT
     rw [hDT] at hsplit
     rw [hpascal] at hsplit

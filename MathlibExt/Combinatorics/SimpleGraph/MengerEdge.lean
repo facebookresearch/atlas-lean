@@ -356,23 +356,6 @@ private theorem walk_exists_unique_ST {V : Type*} {G : SimpleGraph V}
       · rfl
       · exact False.elim (hnoST_rest d hdmem' ⟨hdST1, hdST2⟩)
 
-/-- Any walk from `S` to outside uses an `S→T` dart. -/
-private theorem walk_exists_ST_of_mem {V : Type*} {G : SimpleGraph V}
-    {S : Set V} : ∀ {a t : V} (w : G.Walk a t), a ∈ S → t ∉ S →
-    ∃ d, d ∈ w.darts ∧ d.fst ∈ S ∧ d.snd ∉ S
-  | _, _, SimpleGraph.Walk.nil, ha, ht => by
-    exact False.elim (ht ha)
-  | _, _, @SimpleGraph.Walk.cons _ _ u v w h rest, ha, ht => by
-    classical
-    by_cases hvmem : v ∈ S
-    · obtain ⟨d, hdmem, hdST1, hdST2⟩ :=
-        walk_exists_ST_of_mem rest hvmem ht
-      have hdmemW : d ∈ (SimpleGraph.Walk.cons h rest).darts := by simp [hdmem]
-      exact ⟨d, hdmemW, hdST1, hdST2⟩
-    · have hd0mem : (⟨(u, v), h⟩ : G.Dart) ∈
-          (SimpleGraph.Walk.cons h rest).darts := by simp
-      exact ⟨⟨(u, v), h⟩, hd0mem, ha, hvmem⟩
-
 /-- Vertices reachable from `s` in the residual relation. -/
 private def ResidReachableSet {V : Type*} {G : SimpleGraph V} {s t : V} {k : ℕ}
     (paths : Fin k → G.Path s t) : Set V :=
@@ -523,7 +506,7 @@ private theorem exists_cut_of_not_reachable {V : Type*} [Fintype V] [DecidableEq
       let wG : G.Walk s t := w.mapLe hle
       have hedgeEq : wG.edges = w.edges :=
         SimpleGraph.Walk.edges_mapLe_eq_edges _ _
-      obtain ⟨d, hdmem, hdST1, hdST2⟩ := walk_exists_ST_of_mem wG hsS htS
+      obtain ⟨d, hdmem, hdST1, hdST2⟩ := wG.exists_boundary_dart _ hsS htS
       have heMemG : d.edge ∈ wG.edges := by
         have hmap : wG.edges = wG.darts.map SimpleGraph.Dart.edge := rfl
         rw [hmap]
