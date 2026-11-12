@@ -16,13 +16,16 @@ public import Mathlib.Data.Fintype.BigOperators
 
 A finite recursive structural causal model on two observed binary nodes `X → Y` with shared
 exogenous noise `u` (`BinarySCM`). For every intervention on the observed nodes (none, `do(X)`,
-`do(Y)`, or both) it induces a law of `(X, Y)`; a cross-world quantity such as
-`P(Y_1 = 1, Y_0 = 0)` evaluates the potential outcomes `Y_1` and `Y_0` at the same noise.
+`do(Y)`, or both) it assigns weights to the values of `(X, Y)`, a probability law when the noise
+weights form a probability mass function (`BinarySCM.IsNoiseLaw`); a cross-world quantity such
+as `P(Y_1 = 1, Y_0 = 0)` evaluates the potential outcomes `Y_1` and `Y_0` at the same noise.
 
 ## Main definitions
 
-* `BinarySCM`, `BinarySCM.law`: the model and the law of `(X, Y)` under an intervention.
-* `BinarySCM.probY1Y0`: the cross-world probability `P(Y_1 = 1, Y_0 = 0)`.
+* `BinarySCM`, `BinarySCM.law`: the model and the law of `(X, Y)` under an intervention
+  (a probability law when the noise weights satisfy `BinarySCM.IsNoiseLaw`).
+* `BinarySCM.probY1Y0`: the weight of the cross-world event `Y_1 = 1 ∧ Y_0 = 0`, the
+  probability `P(Y_1 = 1, Y_0 = 0)` under `BinarySCM.IsNoiseLaw`.
 * `constantResponse`, `switchingResponse`: an independent fair-coin exposure with outcome
   response types "always 1"/"always 0", respectively "helped"/"hurt".
 
@@ -51,10 +54,13 @@ interventions or counterfactual laws; unification with them is future work.
 namespace Cslib.MachineLearning.GraphicalModels.CrossWorld
 
 /-- A recursive structural causal model on two observed binary nodes `X → Y` with exogenous
-noise in a finite type `U`: noise law `pU`, structural equations `X = fX u` and
-`Y = fY X u`. Counterfactuals use the same noise `u` in every intervened world. -/
+noise in a finite type `U`: noise weights `pU`, structural equations `X = fX u` and
+`Y = fY X u`. Counterfactuals use the same noise `u` in every intervened world. The structure
+does not force `pU` to be a probability mass function; that is the predicate `IsNoiseLaw`,
+which the two concrete witnesses below are proved to satisfy. -/
 structure BinarySCM (U : Type*) where
-  /-- The probability mass function of the exogenous noise. -/
+  /-- The weight of each exogenous noise value (a probability mass function when
+  `IsNoiseLaw` holds). -/
   pU : U → ℝ
   /-- The structural equation of `X`. -/
   fX : U → Bool
@@ -80,13 +86,15 @@ def solX {U : Type*} (M : BinarySCM U) (i : Intervention) (u : U) : Bool :=
 def solY {U : Type*} (M : BinarySCM U) (i : Intervention) (u : U) : Bool :=
   i.2.getD (M.fY (M.solX i u) u)
 
-/-- The law `P_i(X = x, Y = y)` of the observed nodes in the regime `i`. -/
+/-- The `pU`-weight of the event `X = x ∧ Y = y` in the regime `i`; under `IsNoiseLaw` this is
+the law `P_i(X = x, Y = y)` of the observed nodes. -/
 noncomputable def law {U : Type*} [Fintype U] (M : BinarySCM U) (i : Intervention)
     (x y : Bool) : ℝ :=
   ∑ u, if M.solX i u = x ∧ M.solY i u = y then M.pU u else 0
 
-/-- The cross-world probability `P(Y_1 = 1, Y_0 = 0)`: the potential outcomes `Y_1 = fY true u`
-and `Y_0 = fY false u` are evaluated at the same noise `u`. -/
+/-- The `pU`-weight of the cross-world event `Y_1 = 1 ∧ Y_0 = 0`, where the potential outcomes
+`Y_1 = fY true u` and `Y_0 = fY false u` are evaluated at the same noise `u`; under
+`IsNoiseLaw` this is the probability `P(Y_1 = 1, Y_0 = 0)`. -/
 noncomputable def probY1Y0 {U : Type*} [Fintype U] (M : BinarySCM U) : ℝ :=
   ∑ u, if M.fY true u = true ∧ M.fY false u = false then M.pU u else 0
 
