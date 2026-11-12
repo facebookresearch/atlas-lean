@@ -38,12 +38,19 @@ pressure, `L` and `Rv` consistently mass-specific, the exponent dimensionless.
 
 ## iv. References
 
+- Roland Stull, *Practical Meteorology*, Chapter 4, "Vapor Pressure at
+  Saturation", Eq. (4.1a) and the "Higher Math: Clausius-Clapeyron Eq."
+  derivation. The derivation neglects liquid specific volume relative to
+  vapour, uses the ideal-gas law, and integrates with constant latent heat.
+  [Online section](https://geo.libretexts.org/Bookshelves/Meteorology_and_Climate_Science/Practical_Meteorology_(Stull)/04%3A_Water_Vapor/4.00%3A_Vapor_Pressure_at_Saturation).
 - `HasDerivAt.exp`, `hasDerivAt_inv`, `Real.exp_strictMono` in Mathlib.
 -/
 
 @[expose] public section
 
 namespace EarthScience
+
+/-! ## A. Derivative of saturation pressure -/
 
 /-- Saturation vapour pressure `es(T) = es0 * exp ((L / Rv) * (1 / T0 - 1 / T))`
 has derivative `es(T) * L / (Rv * T ^ 2)` at `T > 0`. -/
@@ -74,6 +81,8 @@ theorem hasDerivAt_saturation_pressure {es0 L Rv T0 : ℝ} {T : ℝ} (hT : 0 < T
     ring
   rw [heq] at h_full
   exact h_full
+
+/-! ## B. Positivity and strict monotonicity -/
 
 /-- The saturation-pressure derivative is positive for positive parameters. -/
 theorem saturation_pressure_deriv_pos {es0 L Rv T0 : ℝ} (hes0 : 0 < es0)
