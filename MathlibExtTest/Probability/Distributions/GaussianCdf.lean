@@ -162,4 +162,26 @@ example : cdf (gaussianReal 0 1) 0 < cdf (gaussianReal 0 1) 1 := by
   rw [ENNReal.ofReal_pos] at hpos
   linarith
 
+/-- Use: the standard normal cdf strictly increases from `0` to `1`. -/
+example : cdf (gaussianReal 0 1) 0 < cdf (gaussianReal 0 1) 1 := by
+  exact strictMono_cdf_gaussianReal 0 one_ne_zero zero_lt_one
+
+/-- Counterexample: the Dirac cdf is flat at `1` on `[0, ∞)`, not strictly monotone. -/
+example : ¬ StrictMono (cdf (Measure.dirac (0 : ℝ))) := by
+  intro h
+  have h01 := h (zero_lt_one : (0 : ℝ) < 1)
+  have e0 : cdf (Measure.dirac (0 : ℝ)) 0 = 1 := by
+    rw [cdf_eq_real, measureReal_def,
+      Measure.dirac_apply_of_mem (Set.mem_Iic.mpr (le_refl 0)), ENNReal.toReal_one]
+  have e1 : cdf (Measure.dirac (0 : ℝ)) 1 = 1 := by
+    rw [cdf_eq_real, measureReal_def,
+      Measure.dirac_apply_of_mem (Set.mem_Iic.mpr zero_le_one), ENNReal.toReal_one]
+  rw [e0, e1] at h01
+  exact (lt_irrefl _ h01).elim
+
+/-- Use: strict monotonicity implies plain monotonicity (apply `StrictMono.monotone`
+to the main theorem at `μ = 0`, `v = 1`). -/
+example : Monotone (cdf (gaussianReal 0 1)) := by
+  exact (strictMono_cdf_gaussianReal 0 one_ne_zero).monotone
+
 end MathlibExt.Probability.GaussianCdf
