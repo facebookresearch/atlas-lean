@@ -34,7 +34,7 @@ The probability space is two independent fair coins, `Ω = Bool × Bool`.
 open MeasureTheory ProbabilityTheory MathlibExt.Probability.Causality
 open MathlibExt.Probability.Causality.MissingData MathlibExtTest.Probability.Causality
 
-namespace MathlibExtTest.Probability.Causality.MissingData
+namespace MathlibExtTest.Probability.Causality.MissingData.Identification
 
 /-- Two independent fair coins. -/
 noncomputable def coins : Measure (Bool × Bool) := coin.prod coin
@@ -308,4 +308,4 @@ example : CondIndepDiscrete coins resp (fun _ => (1 : ℝ)) Prod.fst ∧
       smul_eq_mul, mul_one]
   exact ⟨mar_comp coins resp Prod.fst fun _ => (1 : ℝ), h1, h0, hfalse, hipw, by simp⟩
 
-end MathlibExtTest.Probability.Causality.MissingData
+end MathlibExtTest.Probability.Causality.MissingData.Identification
