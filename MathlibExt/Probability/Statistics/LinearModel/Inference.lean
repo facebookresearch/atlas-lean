@@ -39,8 +39,9 @@ Fixed-design linear model `y = X β + ε` with `X : Matrix m k ℝ` of full colu
 * `hasLaw_tStatistic`: `T ~ t_d`.
 * `measureReal_abs_tStatistic_le`: the coverage identity.
 
-Not covered: the `F` law of `T²`, since no ratio-of-chi-squares characterization of
-`snedecorFMeasure` is available yet.
+Not covered: the `F` law of `T²` and other linear-model `F` statistics. The ratio law they
+would build on is `ProbabilityTheory.map_div_chiSquare_eq_snedecorF` in
+`MathlibExt/Probability/Distributions/SnedecorF.lean`; it is not applied here.
 -/
 
 @[expose] public section
