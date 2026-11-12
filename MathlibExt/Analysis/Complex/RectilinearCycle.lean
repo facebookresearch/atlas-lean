@@ -88,7 +88,9 @@ theorem integral_div_add_sq {d a b : ℝ} (hc : d ≠ 0) :
 
 /-- **Integral of an odd function over a symmetric interval.** If $f : \mathbb{R} \to \mathbb{R}$
 satisfies $f(-x) = -f(x)$ for every real $x$, then $\int_{-T}^{T} f(x)\,dx = 0$ for every real
-$T$. -/
+$T$. The integral is Lean's oriented interval integral, which is $0$ when $f$ is not integrable
+on the interval between $-T$ and $T$; for an odd $f$ that is integrable there, this is the usual
+statement that its Lebesgue integral over that interval vanishes. -/
 theorem odd_integral_eq_zero {f : ℝ → ℝ} (hodd : ∀ x, f (-x) = -f x) (T : ℝ) :
     ∫ x : ℝ in (-T)..T, f x = 0 := by
   have hcomp : ∫ x : ℝ in (-T)..T, f (-x) = ∫ x : ℝ in (-T)..T, f x := by
