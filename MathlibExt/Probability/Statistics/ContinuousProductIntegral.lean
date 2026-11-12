@@ -52,7 +52,9 @@ not assumed: the Duhamel equation is taken directly.
 * `IsDuhamelProductIntegral.hasHadamardDerivWithinAt`: **the product integral is Hadamard
   differentiable** at every integrator `θ ∈ D`, with the **Duhamel derivative** `Ψ θ θ`.
 * `IsStieltjesProductIntegral.hasHadamardDerivWithinAt`: the same in `ℓ^∞([0, τ])`, tangentially
-  to `C[0, τ]`.
+  to `C[0, τ]`; `IsStieltjesProductIntegral.hasHadamardDerivWithinAt_neg` gives the survival map
+  `Λ ↦ P(-Λ)` tangentially to `{h | -h ∈ closure S}` (the regulated functions when `S` is the step
+  functions), with the `C[0, τ]` version as a corollary.
 * `isDuhamelProductIntegral_prodIntegral`: T44's grid product integral satisfies the hypothesis
   predicate on every total-variation ball, with `Ψ = gridDuhamel`, and `gridDuhamel x x` is T44's
   `duhamelDeriv x`; this is a genuine instance of the hypotheses.
@@ -72,16 +74,28 @@ whenever the law of the uncensored observation times in `[0, τ]` has a non-atom
 is closed, and a non-measurable set of jump times gives a non-measurable preimage; see the module
 docstring of `MathlibExt.Probability.Statistics.FunctionalDelta`). The same applies to the
 measurability hypothesis `hmeas` on the Kaplan–Meier process. So the Kaplan–Meier theorem is a
-**conditional** statement: it is correct as stated, and applies when the processes are Borel
-measurable (e.g. purely atomic observation-time laws, or after restricting to a separable
-subspace), but it does **not** give the classical continuous-time Kaplan–Meier limit for
-continuous failure-time distributions. That limit needs the outer-probability framework, which
-is not formalized here (deferred: full Gill–Johansen with outer probability).
+**conditional** statement: it is correct as stated, but it does **not** give the classical
+continuous-time Kaplan–Meier limit for continuous failure-time distributions (when
+`P(death ≤ τ, uncensored) > 0`). That limit needs the outer-probability framework, which is not
+formalized here (deferred: full Gill–Johansen with outer probability).
 
-Two further hypotheses are stronger than in van der Vaart (1998), §20.3: the
-Nelson–Aalen paths are assumed to lie in the domain `D` (a total-variation ball) almost surely,
-rather than with probability tending to one; and the Hadamard derivative is the one-sided
-directional notion of T44's `HasHadamardDerivWithinAt` (implied by the usual one).
+The limit `G` is only required to satisfy `-G ∈ closure S` (for `S` = step functions: the
+regulated functions, which contain the càdlàg paths of `D[0, τ]`), not continuity. This matters:
+for a purely atomic observation-time law the Nelson–Aalen limit jumps at every atom with
+`0 < ΔΛ < 1`, so a continuity hypothesis on `G` would exclude every non-degenerate i.i.d. model.
+With `closure S`, the theorem can apply to observation-time laws with finitely many atoms in
+`[0, τ]`: there `Λ̂ₙ` takes finitely many values (so it is Borel measurable), its total
+variation on `[0, τ]` is at most the number of atoms, and its limit is a step process.
+
+**The domain hypothesis `hdom` is restrictive.** It asks for the negated Nelson–Aalen paths to lie
+in `D` almost surely for every `n`, not merely with probability tending to one. If `D` is a
+total-variation ball (as for the classical Duhamel bound), this fails for large `n` unless the
+death times in `[0, τ]` have finite support: when all `n` subjects die at distinct times `≤ τ`,
+the numbers at risk are `n, n - 1, …, 1` and `Λ̂ₙ(τ)` is the harmonic number `Hₙ → ∞`. A domain
+without a total-variation bound (negated cumulative hazards, i.e. nonincreasing integrators with
+jumps in `[-1, 0]`) would avoid this, but then the uniform bound `norm_le` would have to be
+established on that domain. Finally, the Hadamard derivative is the one-sided directional notion
+of T44's `HasHadamardDerivWithinAt` (implied by the usual one).
 
 ## Source receipt (reuse search, 2026-11-12)
 
@@ -379,12 +393,14 @@ theorem hasHadamardDerivWithinAt (hP : IsStieltjesProductIntegral τ P Ψ D S C)
   hP.toIsDuhamelProductIntegral.hasHadamardDerivWithinAt hθ hP.continuous_subset_closure
 
 /-- **Hadamard differentiability of the survival map** `Λ ↦ P(-Λ) = ∏_{(0, t]} (1 - dΛ)` at a
-cumulative hazard `Λ` with `-Λ ∈ D`, tangentially to `C[0, τ]`, on the domain `{A | -A ∈ D}`,
-with derivative `h ↦ -Ψ(-Λ, -Λ) h`. -/
+cumulative hazard `Λ` with `-Λ ∈ D`, on the domain `{A | -A ∈ D}`, with derivative
+`h ↦ -Ψ(-Λ, -Λ) h`, tangentially to `{h | -h ∈ closure S}`. For `S` = step functions this is the
+set of regulated functions, which contains the càdlàg paths of `D[0, τ]` (van der Vaart's tangent
+set) and not only `C[0, τ]` (`hasHadamardDerivWithinAt_neg_continuous`). -/
 theorem hasHadamardDerivWithinAt_neg (hP : IsStieltjesProductIntegral τ P Ψ D S C) {Λ : 𝔻[τ]}
     (hΛ : -Λ ∈ D) :
     HasHadamardDerivWithinAt (fun A ↦ P (-A)) (fun h ↦ -Ψ (-Λ) (-Λ) h) {A | -A ∈ D}
-      {h | Continuous fun t ↦ h t} Λ := by
+      {h | -h ∈ closure S} Λ := by
   set Ψ' : 𝔻[τ] → 𝔻[τ] →L[ℝ] 𝔻[τ] := fun B ↦ (Ψ (-Λ) (-B)).comp (-ContinuousLinearMap.id ℝ _)
     with hΨ'
   have hneg : Tendsto (fun B : 𝔻[τ] ↦ -B) (𝓝[{A | -A ∈ D}] Λ) (𝓝[D] (-Λ)) :=
@@ -401,14 +417,24 @@ theorem hasHadamardDerivWithinAt_neg (hP : IsStieltjesProductIntegral τ P Ψ D 
         rw [norm_neg]; exact ContinuousLinearMap.norm_id_le)).trans (hP.norm_le _ hΛ _ hB))
     (fun s hs ↦ by
       simpa [Ψ', Function.comp_def] using (hP.tendsto _ hΛ (-s) hs).comp hneg)
-    (E₀ := {h | Continuous fun t ↦ h t}) (fun h hh ↦ by
+    (E₀ := {h | -h ∈ closure S}) (fun h hh ↦ by
       rw [← neg_closure, Set.mem_neg]
-      refine hP.continuous_subset_closure (show Continuous fun t ↦ (-h) t from ?_)
-      simp only [lp.coeFn_neg, Pi.neg_apply]
-      exact Continuous.neg hh)
+      exact hh)
   convert key using 1
   funext h
   simp [Ψ']
+
+/-- The survival map `Λ ↦ P(-Λ)` is Hadamard differentiable tangentially to `C[0, τ]`
+(corollary of `hasHadamardDerivWithinAt_neg` through `continuous_subset_closure`). -/
+theorem hasHadamardDerivWithinAt_neg_continuous (hP : IsStieltjesProductIntegral τ P Ψ D S C)
+    {Λ : 𝔻[τ]} (hΛ : -Λ ∈ D) :
+    HasHadamardDerivWithinAt (fun A ↦ P (-A)) (fun h ↦ -Ψ (-Λ) (-Λ) h) {A | -A ∈ D}
+      {h | Continuous fun t ↦ h t} Λ := by
+  intro h hh
+  refine hP.hasHadamardDerivWithinAt_neg hΛ h (hP.continuous_subset_closure ?_)
+  change Continuous fun t ↦ (-h) t
+  simp only [lp.coeFn_neg, Pi.neg_apply]
+  exact Continuous.neg hh
 
 end IsStieltjesProductIntegral
 
@@ -423,11 +449,12 @@ Kaplan–Meier estimates as elements of `ℓ^∞([0, τ])` (`hΛhat`, `hKMhat` t
 hypothesis `hP` (T77's construction is not imported), and `S = P(-Λ) = ∏_{(0, t]} (1 - dΛ)` is the
 survival function of the cumulative hazard `Λ`.
 
-If `√n (Λ̂ₙ - Λ) ⇒ G` in `ℓ^∞([0, τ])` with continuous `G` (`hCLT`, `hG`, the Nelson–Aalen
-functional CLT, a hypothesis) and the negated Nelson–Aalen paths stay in the domain `D` (`hdom`),
-then `√n (Ŝₙ - S) ⇒ -Ψ(-Λ, -Λ) G`, i.e. coordinatewise
-`-∫_{(0, t]} P(-Λ)(0, s) dG(s) P(-Λ)(s, t]` (through integration by parts, since `G` is not of
-bounded variation). The proof identifies
+If `√n (Λ̂ₙ - Λ) ⇒ G` in `ℓ^∞([0, τ])` with `-G ∈ closure S` almost surely (`hCLT`, `hG`; the
+Nelson–Aalen functional CLT is a hypothesis; for `S` = step functions, `closure S` is the regulated
+functions, so `G` may jump, as it does at atoms of the observation-time law) and the negated
+Nelson–Aalen paths stay in the domain `D` (`hdom`), then `√n (Ŝₙ - S) ⇒ -Ψ(-Λ, -Λ) G`, i.e.
+coordinatewise `-∫_{(0, t]} P(-Λ)(0, s) dG(s) P(-Λ)(s, t]` (through integration by parts, since
+`G` need not be of bounded variation). The proof identifies
 `Ŝₙ = P(-Λ̂ₙ)` through `IsStieltjesProductIntegral.pureJump` and applies T44's
 `MeasureTheory.TendstoInDistribution.functional_delta` with the Hadamard derivative of
 `IsStieltjesProductIntegral.hasHadamardDerivWithinAt_neg`.
@@ -437,10 +464,14 @@ bounded variation). The proof identifies
 whenever the law of the uncensored observation times in `[0, τ]` has a non-atomic part** (T44's
 `n = 1` counterexample, see the module docstrings here and of
 `MathlibExt.Probability.Statistics.FunctionalDelta`). In that case, which includes every continuous
-failure-time distribution, the hypotheses cannot hold and this theorem says nothing; the classical
-continuous-time Kaplan–Meier limit there needs the outer-probability (Hoffmann-Jørgensen)
-framework, which is not formalized. The theorem applies when the processes are Borel measurable.
-Also, `hdom` asks for membership almost surely rather than with probability tending to one. -/
+failure-time distribution with `P(death ≤ τ, uncensored) > 0`, the hypotheses cannot hold and this
+theorem says nothing; the classical continuous-time Kaplan–Meier limit there needs the
+outer-probability (Hoffmann-Jørgensen) framework, which is not formalized. The theorem can apply
+when the observation-time law has finitely many atoms in `[0, τ]` (see the module docstring).
+
+**Caveat (domain).** `hdom` asks for `-Λ̂ₙ ∈ D` almost surely for every `n`. For `D` a
+total-variation ball this fails for large `n` unless the death times in `[0, τ]` have finite
+support (with `n` distinct deaths `≤ τ`, `Λ̂ₙ(τ) = Hₙ → ∞`); see the module docstring. -/
 theorem tendstoInDistribution_kmSurvival_lInfty {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω}
     {mΩ' : MeasurableSpace Ω'} {μ : Measure Ω} {μ' : Measure Ω'} [IsProbabilityMeasure μ]
     [IsProbabilityMeasure μ'] {τ : ℝ} [MeasurableSpace 𝔻[τ]] [BorelSpace 𝔻[τ]]
@@ -454,7 +485,7 @@ theorem tendstoInDistribution_kmSurvival_lInfty {Ω Ω' : Type*} {mΩ : Measurab
     {Λ : 𝔻[τ]} {G : Ω' → 𝔻[τ]} (hΛ : -Λ ∈ D)
     (hCLT : TendstoInDistribution (fun (n : ℕ) ω ↦ √(n : ℝ) • (Λhat n ω - Λ)) atTop G
       (fun _ ↦ μ) μ')
-    (hG : ∀ᵐ ω ∂μ', Continuous fun t ↦ G ω t)
+    (hG : ∀ᵐ ω ∂μ', -G ω ∈ closure S)
     (hdom : ∀ n, ∀ᵐ ω ∂μ, -Λhat n ω ∈ D)
     (hmeas : ∀ n : ℕ, AEMeasurable (fun ω ↦ √(n : ℝ) • (KMhat n ω - P (-Λ))) μ) :
     TendstoInDistribution (fun (n : ℕ) ω ↦ √(n : ℝ) • (KMhat n ω - P (-Λ))) atTop

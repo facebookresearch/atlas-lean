@@ -137,6 +137,6 @@ example :
     rfl
   · exact (tendstoInDistribution_const (l := atTop) aemeasurable_const).congr
       (fun n ↦ ae_of_all _ fun _ ↦ by simp) (ae_of_all _ fun _ ↦ rfl)
-  · exact ae_of_all _ fun _ ↦ by simpa using continuous_const
+  · exact ae_of_all _ fun _ ↦ by simp
 
 end MathlibExtTest.Probability.Statistics.ContinuousProductIntegral
