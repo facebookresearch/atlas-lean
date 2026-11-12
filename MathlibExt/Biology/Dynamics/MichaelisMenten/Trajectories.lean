@@ -37,8 +37,9 @@ keeps the total enzyme `e + c` and the total substrate `s + c + p`.
 * `exists_isSolution_nonneg`: global existence, nonnegativity, conservation of `e + c` and
   `s + c + p`, and preservation of positivity of `s`, `c`, `e`, for nonnegative initial data.
 * `IsSolution.eq_of_initial`: forward uniqueness.
-* `IsSolution.nonneg`, `IsSolution.substrate_pos`, `IsSolution.complex_pos`,
-  `IsSolution.enzyme_pos`: the same invariance for *every* solution.
+* `IsSolution.nonneg`: nonnegative initial data stay nonnegative for *every* solution.
+* `IsSolution.substrate_pos_of_nonneg`, `IsSolution.complex_pos`, `IsSolution.enzyme_pos`:
+  positivity of the first three coordinates, without any sign restriction on the product.
 * `IsSolution.complex_pos_of_pos`: with `s(0), e(0) > 0`, `k₁ > 0` and any `c(0) ≥ 0`, the
   complex is positive at every `t > 0`; this includes the unprepared start `c(0) = 0`, where
   `c(0)` differs from the quasi-steady-state value `qssComplex`.
@@ -401,38 +402,49 @@ theorem IsSolution.nonneg (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 ≤ k
     (ht : 0 ≤ t) : 0 ≤ s t ∧ 0 ≤ c t ∧ 0 ≤ e t ∧ p 0 ≤ p t :=
   (h.nonneg_pos hk₁ hkb hk₂ hs hc he hp ht).1
 
-/-- Along every solution with nonnegative rate constants and initial data, a positive initial
-substrate stays positive. -/
-theorem IsSolution.substrate_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb)
-    (hk₂ : 0 ≤ k₂) (hs : 0 < s 0) (hc : 0 ≤ c 0) (he : 0 ≤ e 0) (hp : 0 ≤ p 0) {t : ℝ}
+/-- Translating the product to start at zero leaves the other three coordinates unchanged. -/
+private theorem IsSolution.pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 ≤ k₁)
+    (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂) (hs : 0 ≤ s 0) (hc : 0 ≤ c 0) (he : 0 ≤ e 0)
+    {t : ℝ} (ht : 0 ≤ t) :
+    (0 < s 0 → 0 < s t) ∧ (0 < c 0 → 0 < c t) ∧ (0 < e 0 → 0 < e t) := by
+  have h' : IsSolution k₁ kb k₂ s c e (fun t => p t - p 0) :=
+    ⟨h.hasDerivAt_substrate, h.hasDerivAt_complex, h.hasDerivAt_enzyme,
+      fun t ht => (h.hasDerivAt_product t ht).sub_const (p 0)⟩
+  exact (h'.nonneg_pos hk₁ hkb hk₂ hs hc he (by simp) ht).2
+
+/-- Along every solution with nonnegative rate constants and nonnegative initial substrate,
+complex and enzyme, a positive initial substrate stays positive, regardless of the product. -/
+theorem IsSolution.substrate_pos_of_nonneg (h : IsSolution k₁ kb k₂ s c e p)
+    (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂)
+    (hs : 0 < s 0) (hc : 0 ≤ c 0) (he : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 < s t :=
-  (h.nonneg_pos hk₁ hkb hk₂ hs.le hc he hp ht).2.1 hs
+  (h.pos hk₁ hkb hk₂ hs.le hc he ht).1 hs
 
-/-- Along every solution with nonnegative rate constants and initial data, a positive initial
-complex stays positive. -/
+/-- Along every solution with nonnegative rate constants and nonnegative initial substrate,
+complex and enzyme, a positive initial complex stays positive, regardless of the product. -/
 theorem IsSolution.complex_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb)
-    (hk₂ : 0 ≤ k₂) (hs : 0 ≤ s 0) (hc : 0 < c 0) (he : 0 ≤ e 0) (hp : 0 ≤ p 0) {t : ℝ}
+    (hk₂ : 0 ≤ k₂) (hs : 0 ≤ s 0) (hc : 0 < c 0) (he : 0 ≤ e 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 < c t :=
-  (h.nonneg_pos hk₁ hkb hk₂ hs hc.le he hp ht).2.2.1 hc
+  (h.pos hk₁ hkb hk₂ hs hc.le he ht).2.1 hc
 
-/-- Along every solution with nonnegative rate constants and initial data, a positive initial
-free enzyme stays positive. -/
+/-- Along every solution with nonnegative rate constants and nonnegative initial substrate,
+complex and enzyme, a positive initial free enzyme stays positive, regardless of the product. -/
 theorem IsSolution.enzyme_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb)
-    (hk₂ : 0 ≤ k₂) (hs : 0 ≤ s 0) (hc : 0 ≤ c 0) (he : 0 < e 0) (hp : 0 ≤ p 0) {t : ℝ}
+    (hk₂ : 0 ≤ k₂) (hs : 0 ≤ s 0) (hc : 0 ≤ c 0) (he : 0 < e 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 < e t :=
-  (h.nonneg_pos hk₁ hkb hk₂ hs hc he.le hp ht).2.2.2 he
+  (h.pos hk₁ hkb hk₂ hs hc he.le ht).2.2 he
 
 /-- **Unprepared initial complex.** With `k₁ > 0` and positive initial substrate and free enzyme,
-the complex is positive at every `t > 0`, whatever its initial value `c(0) ≥ 0`. This covers the
-classical unprepared start `c(0) = 0`, where `c(0)` differs from the quasi-steady-state value
+the complex is positive at every `t > 0`, whatever its initial value `c(0) ≥ 0` and the product.
+This covers the classical unprepared start `c(0) = 0`, where `c(0)` differs from the value
 `qssComplex k₁ kb k₂ (e(0) + c(0)) s(0) > 0`. -/
 theorem IsSolution.complex_pos_of_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
-    (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂) (hs : 0 < s 0) (hc : 0 ≤ c 0) (he : 0 < e 0) (hp : 0 ≤ p 0)
+    (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂) (hs : 0 < s 0) (hc : 0 ≤ c 0) (he : 0 < e 0)
     {t : ℝ} (ht : 0 < t) : 0 < c t :=
   pos_of_hasDerivAt_of_source_pos (u := c) (g := fun _ => -(kb + k₂))
     (h := fun x => k₁ * e x * s x) ht continuousOn_const
-    (fun x hx => mul_pos (mul_pos hk₁ (h.enzyme_pos hk₁.le hkb hk₂ hs.le hc he hp hx.1))
-      (h.substrate_pos hk₁.le hkb hk₂ hs hc he.le hp hx.1))
+    (fun x hx => mul_pos (mul_pos hk₁ (h.enzyme_pos hk₁.le hkb hk₂ hs.le hc he hx.1))
+      (h.substrate_pos_of_nonneg hk₁.le hkb hk₂ hs hc he.le hx.1))
     (fun x hx => by
       convert h.hasDerivAt_complex x hx.1 using 1
       simp only [complexRate]
