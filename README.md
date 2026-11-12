@@ -14,11 +14,6 @@
   A large-scale Lean 4 library of textbook mathematics formalized with LLMs.
 </p>
 
-> [!NOTE]
-> **ATLAS v2 is coming.** The original release is preserved in [`v1/`](v1/),
-> while the repository root is being prepared for the next generation of the
-> project.
-
 ## Versions
 
 | Version | Status | Location | License |
@@ -47,8 +42,10 @@ root validation with:
 scripts/check.sh
 ```
 
-The existing `Atlas/` developments and archived `v1/` release are not part of
-this root build. They retain their own build configuration.
+The [`CPythonListsort/`](CPythonListsort/README.md), [`FC/`](FC/), and
+[`StatisticalMechanics/`](StatisticalMechanics/MIGRATED.md) developments and the
+archived [`v1/`](v1/README.md) release are not part of this root build.
+`CPythonListsort/` and `v1/` retain their own build configuration.
 
 ## About ATLAS
 
