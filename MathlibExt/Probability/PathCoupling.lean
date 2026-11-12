@@ -11,6 +11,7 @@ module
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.Topology.MetricSpace.Basic
 public import MathlibExt.Probability.MarkovMixing
+public import MathlibExt.Probability.ProbabilityMassFunction.Marginal
 
 import Mathlib.Tactic.Choose
 import Mathlib.Tactic.Linarith
@@ -200,59 +201,13 @@ private theorem JCoupling_dist_le {α : Type*} [PseudoMetricSpace α]
       exact le_antisymm hle' dist_nonneg
     simp [hdist0]
 
-private theorem map_fst_toReal {α : Type*} [Fintype α] (J : PMF (α × α))
-    (a : α) : ((J.map Prod.fst) a).toReal = ∑ b, (J (a, b)).toReal := by
-  have hne : ∀ w ∈ (univ : Finset (α × α)),
-      (if a = w.1 then J w else 0) ≠ ∞ := by
-    intro w _
-    split_ifs with h
-    · exact J.apply_ne_top w
-    · exact ENNReal.zero_ne_top
-  have hinner : ∀ x : α, (∑ y : α, (if a = x then J (x, y) else 0).toReal)
-      = if a = x then (∑ y, (J (x, y)).toReal) else 0 := by
-    intro x
-    by_cases h : a = x <;> simp [h]
-  rw [PMF.map_apply, tsum_fintype, ENNReal.toReal_sum hne,
-    Fintype.sum_prod_type]
-  simp only []
-  show (∑ x : α, ∑ y : α, (if a = x then J (x, y) else 0).toReal)
-    = ∑ b, (J (a, b)).toReal
-  simp_rw [hinner]
-  rw [Finset.sum_ite_eq]
-  simp
-
-private theorem map_snd_toReal {α : Type*} [Fintype α] (J : PMF (α × α))
-    (a : α) : ((J.map Prod.snd) a).toReal = ∑ b, (J (b, a)).toReal := by
-  have hne : ∀ w ∈ (univ : Finset (α × α)),
-      (if a = w.2 then J w else 0) ≠ ∞ := by
-    intro w _
-    split_ifs with h
-    · exact J.apply_ne_top w
-    · exact ENNReal.zero_ne_top
-  have hpush : ∀ x y : α, (if a = y then J (x, y) else 0).toReal
-      = if a = y then (J (x, y)).toReal else 0 := by
-    intro x y
-    by_cases h : a = y <;> simp [h]
-  have hinner : ∀ x : α, (∑ y : α, (if a = y then J (x, y) else 0).toReal)
-      = (J (x, a)).toReal := by
-    intro x
-    simp_rw [hpush]
-    rw [Finset.sum_ite_eq]
-    simp
-  rw [PMF.map_apply, tsum_fintype, ENNReal.toReal_sum hne,
-    Fintype.sum_prod_type]
-  simp only []
-  show (∑ x : α, ∑ y : α, (if a = y then J (x, y) else 0).toReal)
-    = ∑ b, (J (b, a)).toReal
-  simp_rw [hinner]
-
 private theorem tvDist_map_le {α : Type*} [Fintype α] (J : PMF (α × α)) :
     tvDist (J.map Prod.fst) (J.map Prod.snd)
       ≤ ∑ z, (J z).toReal * (if z.1 = z.2 then (0 : ℝ) else 1) := by
   have hfst : ∀ a : α, ((J.map Prod.fst) a).toReal
-      = ∑ b, (J (a, b)).toReal := fun a => map_fst_toReal J a
+      = ∑ b, (J (a, b)).toReal := fun a => PMF.toReal_map_fst_apply J a
   have hsnd : ∀ a : α, ((J.map Prod.snd) a).toReal
-      = ∑ b, (J (b, a)).toReal := fun a => map_snd_toReal J a
+      = ∑ b, (J (b, a)).toReal := fun a => PMF.toReal_map_snd_apply J a
   have hterm : ∀ a b : α, |(J (a, b)).toReal - (J (b, a)).toReal|
       ≤ (J (a, b)).toReal * (if a = b then (0 : ℝ) else 1)
         + (J (b, a)).toReal * (if b = a then (0 : ℝ) else 1) := by
@@ -341,36 +296,13 @@ private theorem mass_le_dist_div {α : Type*} [PseudoMetricSpace α]
     exact mul_le_mul_of_nonneg_left (hdist z.1 z.2 h)
       ENNReal.toReal_nonneg
 
-/-- The first marginal of a joint PMF over a product, as a finite sum. -/
-private theorem map_fst_apply {α : Type*} [Fintype α] (J : PMF (α × α))
-    (a : α) : (J.map Prod.fst) a = ∑ b, J (a, b) := by
-  have hinner : ∀ x : α, (∑ y : α, (if a = x then J (x, y) else 0))
-      = if a = x then (∑ y, J (x, y)) else 0 := by
-    intro x
-    by_cases h : a = x <;> simp [h]
-  rw [PMF.map_apply, tsum_fintype, Fintype.sum_prod_type]
-  simp_rw [hinner]
-  rw [Finset.sum_ite_eq]
-  simp
-
-/-- The second marginal of a joint PMF over a product, as a finite sum. -/
-private theorem map_snd_apply {α : Type*} [Fintype α] (J : PMF (α × α))
-    (a : α) : (J.map Prod.snd) a = ∑ b, J (b, a) := by
-  have hinner : ∀ x : α, (∑ y : α, (if a = y then J (x, y) else 0))
-      = (J (x, a)) := by
-    intro x
-    simp_rw [Finset.sum_ite_eq]
-    simp
-  rw [PMF.map_apply, tsum_fintype, Fintype.sum_prod_type]
-  simp_rw [hinner]
-
 /-- If the second marginal vanishes at `b`, the joint vanishes on the
 whole fibre over `b`. -/
 private theorem apply_eq_zero_of_map_snd_eq_zero {α : Type*} [Fintype α]
     {J : PMF (α × α)} {b : α} (h : (J.map Prod.snd) b = 0) (a : α) :
     J (a, b) = 0 := by
   have hsum : ∑ a', J (a', b) = 0 := by
-    rw [← map_snd_apply]
+    rw [← PMF.map_snd_apply]
     exact h
   exact (Finset.sum_eq_zero_iff_of_nonneg fun a' _ => zero_le).mp hsum a
     (Finset.mem_univ a)
@@ -387,7 +319,7 @@ private theorem apply_eq_zero_of_map_fst_eq_zero {α : Type*} [Fintype α]
     {J : PMF (α × α)} {a : α} (h : (J.map Prod.fst) a = 0) (b : α) :
     J (a, b) = 0 := by
   have hsum : ∑ b', J (a, b') = 0 := by
-    rw [← map_fst_apply]
+    rw [← PMF.map_fst_apply]
     exact h
   exact (Finset.sum_eq_zero_iff_of_nonneg fun b' _ => zero_le).mp hsum b
     (Finset.mem_univ b)
@@ -401,10 +333,10 @@ private noncomputable def glueCoupling {α : Type*} [Fintype α]
     (h1 : J1.map Prod.snd = μ2) (h2 : J2.map Prod.fst = μ2) : PMF (α × α) :=
   PMF.ofFintype (fun p => ∑ b, J1 (p.1, b) * J2 (b, p.2) / μ2 b) (by
     have hS1 : ∀ b : α, ∑ a, J1 (a, b) = μ2 b := fun b => by
-      rw [← map_snd_apply]
+      rw [← PMF.map_snd_apply]
       exact congrArg (fun p => p b) h1
     have hS2 : ∀ b : α, ∑ c, J2 (b, c) = μ2 b := fun b => by
-      rw [← map_fst_apply]
+      rw [← PMF.map_fst_apply]
       exact congrArg (fun p => p b) h2
     have hfactor : ∀ b : α,
         (∑ p : α × α, J1 (p.1, b) * J2 (b, p.2) / μ2 b)
@@ -440,13 +372,13 @@ private theorem glueCoupling_map_fst {α : Type*} [Fintype α]
     (h1 : J1.map Prod.snd = μ2) (h2 : J2.map Prod.fst = μ2) :
     (glueCoupling J1 J2 μ2 h1 h2).map Prod.fst = J1.map Prod.fst := by
   ext a
-  rw [map_fst_apply, map_fst_apply]
+  rw [PMF.map_fst_apply, PMF.map_fst_apply]
   change (∑ c, ∑ b, J1 (a, b) * J2 (b, c) / μ2 b) = ∑ b, J1 (a, b)
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro b _
   have hS2 : ∑ c, J2 (b, c) = μ2 b := by
-    rw [← map_fst_apply]
+    rw [← PMF.map_fst_apply]
     exact congrArg (fun p => p b) h2
   have hterm : ∀ c : α, J1 (a, b) * J2 (b, c) / μ2 b
       = J1 (a, b) * (J2 (b, c) / μ2 b) := fun c => by
@@ -465,13 +397,13 @@ private theorem glueCoupling_map_snd {α : Type*} [Fintype α]
     (h1 : J1.map Prod.snd = μ2) (h2 : J2.map Prod.fst = μ2) :
     (glueCoupling J1 J2 μ2 h1 h2).map Prod.snd = J2.map Prod.snd := by
   ext c
-  rw [map_snd_apply, map_snd_apply]
+  rw [PMF.map_snd_apply, PMF.map_snd_apply]
   change (∑ a, ∑ b, J1 (a, b) * J2 (b, c) / μ2 b) = ∑ b, J2 (b, c)
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro b _
   have hS1 : ∑ a, J1 (a, b) = μ2 b := by
-    rw [← map_snd_apply]
+    rw [← PMF.map_snd_apply]
     exact congrArg (fun p => p b) h1
   have hterm : ∀ a : α, J1 (a, b) * J2 (b, c) / μ2 b
       = (J1 (a, b) / μ2 b) * J2 (b, c) := fun a => by
@@ -495,13 +427,13 @@ private theorem glueCoupling_dist_le {α : Type*} [PseudoMetricSpace α]
   have hS1r : ∀ b : α, ∑ a, (J1 (a, b)).toReal = (μ2 b).toReal := by
     intro b
     have h : ∑ a, J1 (a, b) = μ2 b := by
-      rw [← map_snd_apply]
+      rw [← PMF.map_snd_apply]
       exact congrArg (fun p => p b) h1
     rw [← h, ENNReal.toReal_sum fun a _ => J1.apply_ne_top (a, b)]
   have hS2r : ∀ b : α, ∑ c, (J2 (b, c)).toReal = (μ2 b).toReal := by
     intro b
     have h : ∑ c, J2 (b, c) = μ2 b := by
-      rw [← map_fst_apply]
+      rw [← PMF.map_fst_apply]
       exact congrArg (fun p => p b) h2
     rw [← h, ENNReal.toReal_sum fun c _ => J2.apply_ne_top (b, c)]
   have hne : ∀ a b c : α, J1 (a, b) * J2 (b, c) / μ2 b ≠ ∞ := by
@@ -685,14 +617,14 @@ private noncomputable def diagCoupling {α : Type*} [Fintype α] (μ : PMF α) :
 private theorem diagCoupling_map_fst {α : Type*} [Fintype α] (μ : PMF α) :
     (diagCoupling μ).map Prod.fst = μ := by
   ext a
-  rw [map_fst_apply]
+  rw [PMF.map_fst_apply]
   change (∑ b, if a = b then μ a else 0) = μ a
   simp
 
 private theorem diagCoupling_map_snd {α : Type*} [Fintype α] (μ : PMF α) :
     (diagCoupling μ).map Prod.snd = μ := by
   ext b
-  rw [map_snd_apply]
+  rw [PMF.map_snd_apply]
   change (∑ a, if a = b then μ a else 0) = μ b
   simp
 
