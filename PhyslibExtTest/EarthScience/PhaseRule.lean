@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C09PhaseRule
+import PhyslibExt.EarthScience.PhaseRule
 
 /-!
 # Gibbs phase-rule checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C09PhaseRule`: a numeric
+Concrete consumers of `PhyslibExt.EarthScience.PhaseRule`: a numeric
 count for three components and two phases, the public shape of the
 dimension theorem, a pure-component boundary case, and the boundary case
 where the freedom count is zero.
