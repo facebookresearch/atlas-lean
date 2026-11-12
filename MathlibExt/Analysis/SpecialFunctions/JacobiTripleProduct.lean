@@ -364,24 +364,6 @@ private lemma jtpTri_sub (k N : ℕ) :
       ((k : ℤ) - (N : ℤ)) * (((k : ℤ) - (N : ℤ)) - 1) := by ring
   omega
 
-/-- zpow negation for nonzero complex base. -/
-private lemma jtpZpow_neg {a : ℂ} (ha : a ≠ 0) (n : ℤ) : a ^ (-n) = (a ^ n)⁻¹ := by
-  have h : ((Units.mk0 a ha) ^ (-n) : ℂˣ) = ((Units.mk0 a ha) ^ n)⁻¹ :=
-    zpow_neg (a := Units.mk0 a ha) (n := n)
-  have h2 := congrArg (fun u : ℂˣ => (u : ℂ)) h
-  simp only [Units.val_zpow_eq_zpow_val, Units.val_inv_eq_inv_val, Units.val_mk0] at h2
-  exact h2
-
-/-- zpow of a product for nonzero complex factors. -/
-private lemma jtpMul_zpow {a b : ℂ} (ha : a ≠ 0) (hb : b ≠ 0) (n : ℤ) :
-    (a * b) ^ n = a ^ n * b ^ n := by
-  have h : (((Units.mk0 a ha) * (Units.mk0 b hb)) ^ n : ℂˣ) =
-      (Units.mk0 a ha) ^ n * (Units.mk0 b hb) ^ n :=
-    mul_zpow (a := Units.mk0 a ha) (b := Units.mk0 b hb) (n := n)
-  have h2 := congrArg (fun u : ℂˣ => (u : ℂ)) h
-  simp only [Units.val_zpow_eq_zpow_val, Units.val_mul, Units.val_mk0] at h2
-  exact h2
-
 /-- The hub summand `t(n) = (-1)^n * Q^(T n) * w^n` with zpow. -/
 private noncomputable def jtpTheta (Q w : ℂ) (n : ℤ) : ℂ := (-1) ^ n * Q ^ (jtpTri n) * w ^ n
 
@@ -507,15 +489,14 @@ private lemma jtpTermId (Q w : ℂ) (hQ : Q ≠ 0) (hw : w ≠ 0) (N k : ℕ) :
   have hN5b : ((k.choose 2 : ℕ) : ℤ) - (N : ℤ) * (k : ℤ) + (((N + 1).choose 2 : ℕ) : ℤ) =
       jtpTri ((k : ℤ) - (N : ℤ)) := jtpTri_sub k N
   have hneg1 : (-1 : ℂ) ≠ 0 := jtpNeg_ne_zero one_ne_zero
-  have hnwm : -w ≠ 0 := jtpNeg_ne_zero hw
   have e1 : (((-w) ^ N : ℂ))⁻¹ = (-w) ^ (-(N : ℤ)) := by
-    rw [jtpZpow_neg hnwm, zpow_natCast]
+    rw [zpow_neg, zpow_natCast]
   have e2 : (Q ^ ((N + 1).choose 2) : ℂ) = Q ^ ((((N + 1).choose 2 : ℕ)) : ℤ) :=
     (zpow_natCast _ _).symm
   have e3 : (Q ^ (k.choose 2) : ℂ) = Q ^ (((k.choose 2 : ℕ)) : ℤ) :=
     (zpow_natCast _ _).symm
   have eX : (((Q ^ N)⁻¹ : ℂ)) ^ k = Q ^ (-(((N * k : ℕ)) : ℤ)) := by
-    rw [inv_pow, ← pow_mul, ← zpow_natCast, ← jtpZpow_neg hQ]
+    rw [inv_pow, ← pow_mul, ← zpow_natCast, ← zpow_neg Q]
   have e5 : ((-1 : ℂ) ^ k) = (-1) ^ ((k : ℤ)) := (zpow_natCast _ _).symm
   have e6 : (w ^ k : ℂ) = w ^ ((k : ℤ)) := (zpow_natCast _ _).symm
   have e1' : (-1 : ℂ) ^ (-(N : ℤ)) * (-1 : ℂ) ^ ((k : ℤ)) =
@@ -535,7 +516,7 @@ private lemma jtpTermId (Q w : ℂ) (hQ : Q ≠ 0) (hw : w ≠ 0) (N k : ℕ) :
     omega
   rw [e1]
   rw [show (-w : ℂ) = (-1) * w by ring]
-  rw [jtpMul_zpow hneg1 hw]
+  rw [mul_zpow (-1) w]
   rw [e2, e3]
   rw [show (-(w * (Q ^ N)⁻¹) : ℂ) = (-1) * (w * (Q ^ N)⁻¹) by ring]
   rw [mul_pow, mul_pow]
@@ -832,25 +813,6 @@ section GaussBound
 
 open scoped BigOperators
 
-private lemma jtpProd_le_prod {f g : ℕ → ℝ} : ∀ (s : Finset ℕ),
-    (∀ i ∈ s, 0 ≤ f i) → (∀ i ∈ s, 0 ≤ g i) → (∀ i ∈ s, f i ≤ g i) →
-    ∏ i ∈ s, f i ≤ ∏ i ∈ s, g i := by
-  intro s
-  induction s using Finset.induction with
-  | empty =>
-    intro _ _ _
-    simp only [Finset.prod_empty, le_refl]
-  | insert a s has IH =>
-    intro hf hg h
-    rw [Finset.prod_insert has, Finset.prod_insert has]
-    apply mul_le_mul
-    · exact h a (Finset.mem_insert_self a s)
-    · exact IH (fun i hi => hf i (Finset.mem_insert_of_mem hi))
-        (fun i hi => hg i (Finset.mem_insert_of_mem hi))
-        (fun i hi => h i (Finset.mem_insert_of_mem hi))
-    · exact Finset.prod_nonneg (fun i hi => hf i (Finset.mem_insert_of_mem hi))
-    · exact hg a (Finset.mem_insert_self a s)
-
 private lemma jtpGeom_partial (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r < 1) (m : ℕ) :
     ∑ j ∈ Finset.range m, r ^ j ≤ (1 - r)⁻¹ := by
   have hne : r ≠ 1 := ne_of_lt hr1
@@ -899,8 +861,7 @@ private lemma jtpPoch_norm_le (Q : ℂ) (hq : ‖Q‖ < 1) (m : ℕ) :
   have hstep : ‖qPochFin Q m‖ ≤
       ∏ j ∈ Finset.range m, Real.exp ((‖Q‖ : ℝ) ^ (j + 1)) := by
     simp only [qPochFin, norm_prod]
-    exact jtpProd_le_prod _ (fun j _ => norm_nonneg _)
-      (fun j _ => le_of_lt (Real.exp_pos _)) (fun j _ => hfact j)
+    exact Finset.prod_le_prod₀ (fun j _ => norm_nonneg _) (fun j _ => hfact j)
   have hexp : (∏ j ∈ Finset.range m, Real.exp ((‖Q‖ : ℝ) ^ (j + 1))) =
       Real.exp (∑ j ∈ Finset.range m, (‖Q‖ : ℝ) ^ (j + 1)) :=
     (Real.exp_sum _ _).symm
@@ -958,8 +919,7 @@ private lemma jtpPoch_inv_norm_le (Q : ℂ) (hq : ‖Q‖ < 1) (m : ℕ) :
   have hstep : (‖qPochFin Q m‖)⁻¹ ≤
       ∏ j ∈ Finset.range m, Real.exp ((‖Q‖ : ℝ) ^ (j + 1) / (1 - ‖Q‖)) := by
     rw [hnorm_eq, ← Finset.prod_inv_distrib]
-    exact jtpProd_le_prod _ (fun j _ => inv_nonneg.mpr (norm_nonneg _))
-      (fun j _ => le_of_lt (Real.exp_pos _)) (fun j _ => hfact j)
+    exact Finset.prod_le_prod₀ (fun j _ => inv_nonneg.mpr (norm_nonneg _)) (fun j _ => hfact j)
   have hexp : (∏ j ∈ Finset.range m, Real.exp ((‖Q‖ : ℝ) ^ (j + 1) / (1 - ‖Q‖))) =
       Real.exp (∑ j ∈ Finset.range m, (‖Q‖ : ℝ) ^ (j + 1) / (1 - ‖Q‖)) :=
     (Real.exp_sum _ _).symm
@@ -1323,8 +1283,6 @@ theorem jacobi_triple_product (z q : ℂ) (hz : z ≠ 0) (hq : ‖q‖ < 1) :
     have hsum_congr : ∀ n : ℤ,
         jtpTheta (q ^ 2) (-z * q) n = z ^ n * q ^ ((n * n).toNat) := by
       intro n
-      have hneg1 : (-1 : ℂ) ≠ 0 := jtpNeg_ne_zero one_ne_zero
-      have hnz : (-z : ℂ) ≠ 0 := neg_ne_zero.mpr hz
       have h2T : 2 * jtpTri n = n * (n - 1) := jtpTri_double n
       have hTri_nn : 0 ≤ jtpTri n := jtpTri_nonneg n
       have hQpow : ((q ^ 2 : ℂ)) ^ (jtpTri n) = q ^ (n * (n - 1)) := by
@@ -1353,10 +1311,10 @@ theorem jacobi_triple_product (z q : ℂ) (hz : z ≠ 0) (hq : ‖q‖ < 1) :
           ring
         have hnz_eq : (-z : ℂ) = (-1) * z := by
           ring
-        rw [hw_eq, jtpMul_zpow hnz hqne n, hnz_eq,
-          jtpMul_zpow hneg1 hz n]
+        rw [hw_eq, mul_zpow (-z) q n, hnz_eq,
+          mul_zpow (-1) z n]
       have hneg_sq : (-1 : ℂ) ^ n * (-1 : ℂ) ^ n = 1 := by
-        have h := (jtpMul_zpow hneg1 hneg1 n).symm
+        have h := (mul_zpow (-1 : ℂ) (-1) n).symm
         have h11 : (-1 : ℂ) * (-1) = 1 := by
           ring
         rw [h, h11, one_zpow]
