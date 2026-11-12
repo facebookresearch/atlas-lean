@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.K03CarbonCycle
+import PhyslibExt.EarthScience.CarbonCycle
 
 /-!
 # Carbon-cycle checks
 
-Concrete consumers of `PhyslibExt.EarthScience.K03CarbonCycle`:
+Concrete consumers of `PhyslibExt.EarthScience.CarbonCycle`:
 the public shapes of the three theorems, a concrete
 atmosphere / ocean / land flux set, and the closed-system boundary.
 
@@ -34,7 +34,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.K03CarbonCycle`
+- `PhyslibExt.EarthScience.CarbonCycle`
 -/
 
 /-- Public shape of the finite-reservoir theorem. -/
