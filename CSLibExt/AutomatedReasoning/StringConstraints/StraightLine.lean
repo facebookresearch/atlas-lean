@@ -105,9 +105,10 @@ def sol (S : SLSys α) : ℕ → List α :=
   fun i => (values S).getD i []
 
 /-- Lookup with a proof of the bound is the `getElem` value. -/
+@[deprecated "Use `List.getD_eq_getElem`." (since := "2026-11-12")]
 theorem getD_eq_of_lt {l : List (List α)} {n : ℕ} (h : n < l.length) :
-    l.getD n [] = l[n]'h := by
-  rw [List.getD_eq_getElem]
+    l.getD n [] = l[n]'h :=
+  List.getD_eq_getElem _ _ h
 
 /-- The fold preserves its initial segment. -/
 theorem foldl_take (defs : List (Term α ℕ)) (acc : List (List α)) :
@@ -148,16 +149,16 @@ theorem values_length (S : SLSys α) :
 /-- Lookup in a taken prefix agrees with lookup in the whole list. -/
 theorem getD_take_of_lt {l : List (List α)} {n m : ℕ} (h : n < m) (hl : n < l.length) :
     (l.take m).getD n [] = l.getD n [] := by
-  rw [getD_eq_of_lt (by rw [List.length_take]; exact Nat.lt_min.mpr ⟨h, hl⟩),
-    getD_eq_of_lt hl]
+  rw [List.getD_eq_getElem _ _ (by rw [List.length_take]; exact Nat.lt_min.mpr ⟨h, hl⟩),
+    List.getD_eq_getElem _ _ hl]
   exact List.getElem_take (h := by rw [List.length_take]; exact Nat.lt_min.mpr ⟨h, hl⟩)
 
 /-- Lookup in an appended list agrees with lookup below the prefix length. -/
+@[deprecated "Use `List.getD_append`." (since := "2026-11-12")]
 theorem getD_append_of_lt {acc : List (List α)} {x : List α} {j : ℕ}
     (hj : j < acc.length) :
-    (acc ++ [x]).getD j [] = acc.getD j [] := by
-  rw [getD_eq_of_lt (by rw [List.length_append]; omega), getD_eq_of_lt hj]
-  exact List.getElem_append_left hj
+    (acc ++ [x]).getD j [] = acc.getD j [] :=
+  List.getD_append _ _ _ _ hj
 
 /-- Lookup in a folded list agrees with lookup in the starting list
 below its length. -/
@@ -172,7 +173,7 @@ theorem getD_foldl_of_lt (defs : List (Term α ℕ)) (acc : List (List α)) {j :
       have hlen : (slStep acc t).length = acc.length + 1 := by
         simp [slStep, List.length_append]
       omega)]
-    exact getD_append_of_lt hj
+    exact List.getD_append _ _ _ _ hj
 
 /-- The defining equation for the folded values: the value at position
 `acc.length + k` is the `k`-th defining term evaluated under the
@@ -204,7 +205,8 @@ theorem foldl_getD (defs : List (Term α ℕ)) (acc : List (List α)) (k : ℕ)
         have hlast : (slStep acc t).getD acc.length []
             = eval (fun j => acc.getD j []) t := by
           rw [show slStep acc t = acc ++ [eval (fun j => acc.getD j []) t] from rfl]
-          rw [getD_eq_of_lt (by rw [List.length_append, List.length_singleton]; omega)]
+          rw [List.getD_eq_getElem _ _
+            (by rw [List.length_append, List.length_singleton]; omega)]
           rw [List.getElem_append_right (Nat.le_refl _)]
           simp only [Nat.sub_self, List.getElem_cons_zero]
         rw [← getD_take_of_lt (show acc.length < acc.length + 1 by omega) hlt, htake]
@@ -222,7 +224,7 @@ theorem foldl_getD (defs : List (Term α ℕ)) (acc : List (List α)) (k : ℕ)
             simp only [slStep, List.length_append, List.length_singleton]
           omega)
       rw [h1]
-      exact (getD_append_of_lt hjlt).symm
+      exact (List.getD_append _ _ _ _ hjlt).symm
     | succ k' =>
       have hk' : k' < defs.length := by
         have : k' + 1 < (t :: defs).length := hk
