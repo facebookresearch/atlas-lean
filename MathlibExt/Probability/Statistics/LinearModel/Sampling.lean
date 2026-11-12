@@ -174,7 +174,8 @@ theorem residualMatrix_mul (hX : IsUnit (Xᵀ * X)) : residualMatrix X * X = 0 :
   rw [residualMatrix, Matrix.sub_mul, Matrix.one_mul, Matrix.mul_assoc, olsMatrix_mul_self hX,
     Matrix.mul_one, sub_self]
 
-private theorem olsMatrix_mul_residualMatrix (hX : IsUnit (Xᵀ * X)) :
+/-- `B M = 0` for the OLS matrix `B` and the residual-maker matrix `M`. -/
+theorem olsMatrix_mul_residualMatrix (hX : IsUnit (Xᵀ * X)) :
     olsMatrix X * residualMatrix X = 0 := by
   rw [residualMatrix, Matrix.mul_sub, Matrix.mul_one, ← Matrix.mul_assoc, olsMatrix_mul_self hX,
     Matrix.one_mul, sub_self]
@@ -207,7 +208,7 @@ theorem rss_eq_dotProduct_residualMatrix (hX : IsUnit (Xᵀ * X)) (β : k → �
     residualMatrix_mul_self hX, dotProduct_comm]
 
 /-- Rank equals trace for an idempotent real matrix, from `IsProj.trace`. -/
-private theorem rank_eq_trace_of_mul_self {n : Type*} [Fintype n]
+theorem rank_eq_trace_of_mul_self {n : Type*} [Fintype n]
     {A : Matrix n n ℝ} (hA : A * A = A) : (A.rank : ℝ) = A.trace := by
   classical
   have hidem : IsIdempotentElem A.mulVecLin := by
