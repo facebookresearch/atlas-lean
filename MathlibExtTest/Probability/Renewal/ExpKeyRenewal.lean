@@ -197,10 +197,19 @@ example {θ : ℝ} : Tendsto (fun t => exp (θ * t) * Zθ θ t) atTop (𝓝 (1 +
   rw [Zθ, indicator_of_mem (mem_Ici.2 ht), mul_left_comm, ← exp_add, add_neg_cancel, exp_zero,
     mul_one]
 
--- At `θ = 1` the family member has mass `½` and Cramér–Lundberg constant `½`.
+-- At `θ = 1` the family member has mass `½`, straight from `measure_univ` of `Exp(2)`.
 example : (Gθ 1).real univ = 1 / 2 := by
-  rw [measureReal_univ_expFamily (by norm_num)]
+  have := isProbabilityMeasure_expMeasure (show (0 : ℝ) < 1 + 1 by norm_num)
+  show (ENNReal.ofReal (1 + 1 : ℝ)⁻¹ • expMeasure (1 + 1)).real univ = 1 / 2
+  rw [measureReal_def, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one,
+    ENNReal.toReal_ofReal (by norm_num)]
   norm_num
+
+-- At `θ = 1` the Cramér–Lundberg constant is `½`: `e^{t} Z t → ½`.
+example : Tendsto (fun t => exp (1 * t) * Zθ 1 t) atTop (𝓝 (1 / 2)) := by
+  have h := tendsto_scaled_cramerLundberg_expFamily one_pos (Zθ_measurable 1) (Zθ_neg 1)
+    (Zθ_bdd one_pos) (Zθ_renewal one_pos)
+  rwa [show (1 + 1 : ℝ)⁻¹ = 1 / 2 by norm_num] at h
 
 -- Boundary `θ = 0`: the proper law `Exp(1)` is its own Cramér tilt.
 example : (Gθ 0).tilted (fun x => 0 * x) = expMeasure 1 :=
