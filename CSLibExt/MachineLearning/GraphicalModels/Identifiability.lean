@@ -30,8 +30,8 @@ positivity hypotheses, this interventional probability is identified.
 
 ## Main results
 
-* `IdentifiedOn.of_eq_comp`, `IdentifiedOn.exists_eq_comp`: `Q` is identified on `C` if and
-  only if it is a function of the observations on `C`.
+* `IdentifiedOn.of_eq_comp`, `IdentifiedOn.exists_eq_comp`: when the result type `R` is
+  nonempty, `Q` is identified on `C` if and only if it is a function of the observations on `C`.
 * `BayesNet.identifiedOn_backdoorClass`, `BayesNet.identifiedOn_frontdoorClass`: back-door and
   front-door identification of `P(X_y = v | do(X_k = a))` from the joint law.
 
@@ -70,8 +70,9 @@ theorem IdentifiedOn.of_eq_comp {M O R : Type*} {C : Set M} {obs : M → O} {Q :
   intro m hm m' hm' hobs
   rw [h m hm, h m' hm', hobs]
 
-/-- Conversely, an identified functional is a function of the observations on the class: some
-`F` has `Q m = F (obs m)` for every `m ∈ C` (the form used for non-identification witnesses). -/
+/-- Conversely, when the result type is nonempty, an identified functional is a function of
+the observations on the class: some `F` has `Q m = F (obs m)` for every `m ∈ C`
+(the form used for non-identification witnesses). -/
 theorem IdentifiedOn.exists_eq_comp {M O R : Type*} [Nonempty R] {C : Set M} {obs : M → O}
     {Q : M → R} (h : IdentifiedOn C obs Q) : ∃ F : O → R, ∀ m ∈ C, Q m = F (obs m) := by
   classical
