@@ -72,8 +72,8 @@ The model is the intercept-only negative binomial regression with offsets `log s
 ## Not proved here
 
 * Uniqueness of the solution of the joint score equations, that it maximizes the likelihood, and
-  the converse (no finite solution when `∑ᵢ (kᵢ - sᵢ μ̂)² ≤ ∑ᵢ kᵢ`). Even at a common size factor
-  these are only partly in T86.
+  the converse (no finite solution when `∑ᵢ (kᵢ - sᵢ μ̂)² ≤ ∑ᵢ kᵢ`). T86 proves none of these,
+  even at a common size factor; it has only conditional uniqueness at a fixed shape or rate.
 * The sign hypothesis of `ae_eventually_exists_score_root_varying` is assumed: deriving it for
   negative binomial counts needs the identity `E[∑_{j<K} 1 / (a₀ + j) ∣ S] = log (1 + S / b₀)`,
   which T86 also leaves unproved. The conditional-mean hypothesis of
@@ -90,10 +90,10 @@ edited. `MathlibExt.Probability.Statistics.GLM.NegativeBinomialDispersion` and
 `GLM.CountData.Model` treat negative binomial regression with offsets in the (shape, mean)
 parametrization with consistency hypotheses assumed abstractly, and prove no existence theorem.
 The third-order bound on `digammaIncrement` repeats a private lemma of `HierarchicalCountMLE`
-(private there, so not importable); `log (1 + x) ≥ x - x² / 2` is derived from Mathlib's
-`Real.le_log_one_add_of_nonneg`. The strong law is Mathlib's `ProbabilityTheory.strong_law_ae`.
-Continuity of `b̂` is a short implicit-root argument (private) from strict monotonicity of
-`b ↦ b · ∂ℓ/∂b`; no Mathlib lemma packages it.
+(private there, so not importable); `log (1 + x) ≥ x - x² / 2`, also a private lemma there, is
+derived here from Mathlib's `Real.le_log_one_add_of_nonneg`. The strong law is Mathlib's
+`ProbabilityTheory.strong_law_ae`. Continuity of `b̂` is a short implicit-root argument (private)
+from strict monotonicity of `b ↦ b · ∂ℓ/∂b`; no Mathlib lemma packages it.
 
 ## References
 

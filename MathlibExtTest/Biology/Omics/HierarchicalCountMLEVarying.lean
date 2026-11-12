@@ -34,7 +34,8 @@ example : rateRoot 1 ![(1 : ℝ), 2] ![1, 2] = 1 :=
   rateRoot_eq one_pos one_pos (fun i => by fin_cases i <;> norm_num)
     (by norm_num [rateScore, Fin.sum_univ_two])
 
-/-- The profile shape score there: `shapeScore 1 1 = (1 + log 1 - log 2) + (3/2 + log 1 - log 3)`. -/
+/-- The profile shape score there:
+`shapeScore 1 1 = (1 + log 1 - log 2) + (3/2 + log 1 - log 3)`. -/
 example : profileShapeScoreVarying 1 ![(1 : ℝ), 2] ![1, 2] = 5 / 2 - log 6 := by
   have h : rateRoot 1 ![(1 : ℝ), 2] ![1, 2] = 1 :=
     rateRoot_eq one_pos one_pos (fun i => by fin_cases i <;> norm_num)
