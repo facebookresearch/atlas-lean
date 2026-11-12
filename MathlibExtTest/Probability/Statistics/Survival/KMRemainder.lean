@@ -80,9 +80,10 @@ example (ω : Ω₀) :
   simp [hazard]
 
 /-- The time-`1` σ-algebra sits strictly between the trivial one and everything. -/
-example : ℱ₀ 1 ≠ ⊥ ∧ ℱ₀ 1 ≠ (inferInstance : MeasurableSpace Ω₀) ∧ ℱ₀ 0 = ⊥ ∧
-    ℱ₀ 2 = (inferInstance : MeasurableSpace Ω₀) :=
-  ⟨filtration_one_ne_bot, filtration_one_ne_top, ℱ₀_zero, ℱ₀_of_two_le le_rfl⟩
+example : filtration 1 ≠ ⊥ ∧ filtration 1 ≠ (inferInstance : MeasurableSpace Ω₀) ∧
+    filtration 0 = ⊥ ∧
+    filtration 2 = (inferInstance : MeasurableSpace Ω₀) :=
+  ⟨filtration_one_ne_bot, filtration_one_ne_top, filtration_zero, filtration_of_two_le le_rfl⟩
 
 /-! ### The general theorems on the model -/
 
@@ -103,19 +104,20 @@ example (n : ℕ) (ω : Ω₀) :
   stochasticIntegral_kaplanMeierRemainder_nonneg atRisk_mem deaths_le_atRisk
     hazard_increment_mem n ω
 
-/-- The general non-vanishing theorem on the model, for the *trivial* σ-algebra `ℱ₀ 0 = ⊥`. -/
+/-- The general non-vanishing theorem on the model, for the *trivial* σ-algebra
+`filtration 0 = ⊥`. -/
 example : ¬ μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard)
-    (fun k _ => hazard k) 2 | ℱ₀ 0] =ᵐ[μ₀] 0 := by
+    (fun k _ => hazard k) 2 | filtration 0] =ᵐ[μ₀] 0 := by
   refine not_condExp_kaplanMeierRemainder_ae_eq_zero atRisk_mem deaths_le_atRisk
-    hazard_increment_mem Integrable.of_finite ?_ (ℱ₀.le 0)
+    hazard_increment_mem Integrable.of_finite ?_ (filtration.le 0)
   refine lt_of_lt_of_le ?_ (measure_mono (s := {(true, true)}) ?_)
   · simp [μ₀]
   · simp [remainder_two]
 
 /-- Given the trivial σ-algebra the conditional expectation is the mean `E[R₂] = P(c) = 1/2`. -/
 example : μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard)
-    (fun k _ => hazard k) 2 | ℱ₀ 0] = fun _ => 1 / 2 := by
-  rw [ℱ₀_zero, condExp_bot', integral_fintype Integrable.of_finite]
+    (fun k _ => hazard k) 2 | filtration 0] = fun _ => 1 / 2 := by
+  rw [filtration_zero, condExp_bot', integral_fintype Integrable.of_finite]
   funext ω
   simp only [remainder_two, Fintype.sum_prod_type, Fintype.sum_bool, μ₀_real_singleton,
     probReal_univ]
@@ -123,13 +125,13 @@ example : μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard)
 
 /-- `E[R₂ | ℱ₁]` evaluated on a censored and an uncensored outcome. -/
 example : μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard)
-      (fun k _ => hazard k) 2 | ℱ₀ 1] (true, true) = 1 ∧
+      (fun k _ => hazard k) 2 | filtration 1] (true, true) = 1 ∧
     μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard)
-      (fun k _ => hazard k) 2 | ℱ₀ 1] (false, true) = 0 := by
+      (fun k _ => hazard k) 2 | filtration 1] (false, true) = 0 := by
   simp [condExp_remainder_two]
 
 /-- The Kaplan–Meier estimator is biased in this model: `E[Ŝ₂/S₂] - 1 = 1/2 ≠ 0`. -/
 example : ∫ ω, (kaplanMeierProcess deaths atRisk 2 ω / prodIntegral hazard 2 - 1) ∂μ₀ ≠ 0 := by
-  rw [integral_kaplanMeierProcess_div_sub_one]; norm_num
+  rw [integral_kaplanMeierProcess_two_div_sub_one]; norm_num
 
 end MathlibExtTest.Probability.Statistics.KMRemainder

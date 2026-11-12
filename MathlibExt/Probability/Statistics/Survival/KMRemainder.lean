@@ -17,6 +17,8 @@ Gill's representation (`kaplanMeierProcess_div_sub_one`) on the time grid `0, 1,
 `Ŝ/S - 1 = -∫ Ŝ₋ / (S Y) dM + Rₙ` with the **vanishing-risk remainder**
 `Rₙ = ∫ Ŝ₋ / S · 1{Y = 0} dα = ∑_{k < n} Ŝ_k / S_{k+1} · 1{Y_{k+1} = 0} · Δα_{k+1}`.
 This file shows when `R` vanishes and when it does not.
+Time is discrete throughout; the continuous-time Kaplan–Meier remainder (over `ℝ≥0`, with
+Doob–Meyer compensators) is out of scope, as in `StochasticIntegral.lean`.
 
 * With **one subject and no censoring** the subject leaves the risk set only by dying, which makes
   `Ŝ` zero; so `Ŝ₋ · 1{Y = 0} ≡ 0` and the remainder is identically `0`
@@ -36,7 +38,7 @@ This file shows when `R` vanishes and when it does not.
   (`CensoredAtOne.martingale_aalen` and its neighbours), and
   `E[R₂ | ℱ₁] = R₂ = 1{c}` (`CensoredAtOne.condExp_remainder_two`), which is not a.e. zero
   (`CensoredAtOne.condExp_remainder_two_ne_zero`). The mean bias is
-  `E[Ŝ₂/S₂] - 1 = E[R₂] = 1/2` (`CensoredAtOne.integral_kaplanMeierProcess_div_sub_one`).
+  `E[Ŝ₂/S₂] - 1 = E[R₂] = 1/2` (`CensoredAtOne.integral_kaplanMeierProcess_two_div_sub_one`).
 
 ## Reused API (source receipts)
 
@@ -100,9 +102,9 @@ theorem kaplanMeierProcess_of_uncensored {N Y : ℕ → Ω → ℝ} {ω : Ω} (h
     · right; constructor <;> [linarith; (rw [hS]; ring)]
     · exfalso; linarith
 
-/-- **The remainder vanishes for one uncensored subject** (the phenomenon behind the single-subject
-examples of `StochasticIntegral.lean`): the subject leaves the risk set only by dying, at which
-point `Ŝ` drops to `0`, so `Ŝ₋ · 1{Y = 0} ≡ 0`. -/
+/-- **The remainder vanishes for one uncensored subject**: the subject leaves the risk set only
+by dying, at which point `Ŝ` drops to `0`, so `Ŝ₋ · 1{Y = 0} ≡ 0`. Censoring is what makes the
+remainder nonzero (`stochasticIntegral_kaplanMeierRemainder_pos`, `CensoredAtOne`). -/
 theorem stochasticIntegral_kaplanMeierRemainder_eq_zero_of_uncensored {N Y : ℕ → Ω → ℝ}
     (α : ℕ → ℝ) {ω : Ω} (hN0 : N 0 ω = 0)
     (hjump : ∀ k, N (k + 1) ω - N k ω = 0 ∨ N (k + 1) ω - N k ω = 1)
@@ -157,7 +159,8 @@ theorem stochasticIntegral_kaplanMeierRemainder_pos {N Y : ℕ → Ω → ℝ} {
 
 /-- A nonnegative integrable function that is positive on a set of positive measure has a
 conditional expectation, given any sub-σ-algebra, with positive integral. -/
-theorem integral_condExp_pos_of_nonneg [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ m0)
+private theorem integral_condExp_pos_of_nonneg [IsFiniteMeasure μ] {m : MeasurableSpace Ω}
+    (hm : m ≤ m0)
     {f : Ω → ℝ} (hf : 0 ≤ f) (hfi : Integrable f μ) (hpos : 0 < μ (Function.support f)) :
     0 < ∫ ω, (μ[f | m]) ω ∂μ := by
   rw [integral_condExp hm]
@@ -246,7 +249,7 @@ lemma μ₀_real_singleton (ω : Ω₀) : μ₀.real {ω} = 1 / 4 := by
 
 /-- The history: nothing is known at time `0`, the censoring coin is revealed at time `1`, and
 everything is known from time `2` on. -/
-def ℱ₀ : Filtration ℕ (inferInstance : MeasurableSpace Ω₀) where
+def filtration : Filtration ℕ (inferInstance : MeasurableSpace Ω₀) where
   seq n := if n = 0 then ⊥ else if n = 1 then MeasurableSpace.comap Prod.fst inferInstance
     else inferInstance
   mono' i j hij := by
@@ -258,18 +261,19 @@ def ℱ₀ : Filtration ℕ (inferInstance : MeasurableSpace Ω₀) where
     · exact measurable_fst.comap_le
     · exact le_rfl
 
-lemma ℱ₀_zero : ℱ₀ 0 = ⊥ := rfl
+lemma filtration_zero : filtration 0 = ⊥ := rfl
 
-lemma ℱ₀_one : ℱ₀ 1 = MeasurableSpace.comap Prod.fst inferInstance := rfl
+lemma filtration_one : filtration 1 = MeasurableSpace.comap Prod.fst inferInstance := rfl
 
-lemma ℱ₀_of_two_le {n : ℕ} (hn : 2 ≤ n) : ℱ₀ n = (inferInstance : MeasurableSpace Ω₀) := by
+lemma filtration_of_two_le {n : ℕ} (hn : 2 ≤ n) :
+    filtration n = (inferInstance : MeasurableSpace Ω₀) := by
   change (if n = 0 then _ else _) = _
   simp [show n ≠ 0 by omega, show n ≠ 1 by omega]
 
 /-- **The intermediate σ-algebra is not trivial**: the censoring event is known at time `1`. -/
-theorem filtration_one_ne_bot : ℱ₀ 1 ≠ ⊥ := by
+theorem filtration_one_ne_bot : filtration 1 ≠ ⊥ := by
   intro h
-  have hs : MeasurableSet[ℱ₀ 1] {ω : Ω₀ | ω.1 = true} :=
+  have hs : MeasurableSet[filtration 1] {ω : Ω₀ | ω.1 = true} :=
     ⟨{true}, MeasurableSet.of_discrete, by ext ω; simp⟩
   rw [h, MeasurableSpace.measurableSet_bot_iff] at hs
   rcases hs with hs | hs
@@ -277,11 +281,11 @@ theorem filtration_one_ne_bot : ℱ₀ 1 ≠ ⊥ := by
   · exact absurd ((Set.ext_iff.1 hs (false, true)).2 trivial) (by simp)
 
 /-- **The intermediate σ-algebra is not everything**: the death coin is not known at time `1`. -/
-theorem filtration_one_ne_top : ℱ₀ 1 ≠ (inferInstance : MeasurableSpace Ω₀) := by
+theorem filtration_one_ne_top : filtration 1 ≠ (inferInstance : MeasurableSpace Ω₀) := by
   intro h
-  have hs : MeasurableSet[ℱ₀ 1] {ω : Ω₀ | ω.2 = true} := by
+  have hs : MeasurableSet[filtration 1] {ω : Ω₀ | ω.2 = true} := by
     rw [h]; exact MeasurableSet.of_discrete
-  rw [ℱ₀_one, MeasurableSpace.measurableSet_comap] at hs
+  rw [filtration_one, MeasurableSpace.measurableSet_comap] at hs
   obtain ⟨t, -, ht⟩ := hs
   have h1 : (false, true) ∈ Prod.fst ⁻¹' t := ht ▸ rfl
   have h2 : (false, false) ∈ Prod.fst ⁻¹' t := h1
@@ -317,13 +321,13 @@ lemma deaths_le_atRisk (n : ℕ) (ω : Ω₀) :
   obtain ⟨c, d⟩ := ω
   rcases n with _ | _ | n <;> cases c <;> cases d <;> simp [deaths, atRisk]
 
-lemma stronglyAdapted_deaths : StronglyAdapted ℱ₀ deaths := fun n => by
+lemma stronglyAdapted_deaths : StronglyAdapted filtration deaths := fun n => by
   rcases Nat.lt_or_ge n 2 with hn | hn
   · have : deaths n = fun _ => 0 := by funext ω; simp [deaths]; omega
     rw [this]; exact stronglyMeasurable_const
-  · rw [ℱ₀_of_two_le hn]; exact (measurable_of_countable _).stronglyMeasurable
+  · rw [filtration_of_two_le hn]; exact (measurable_of_countable _).stronglyMeasurable
 
-lemma isStronglyPredictable_atRisk : IsStronglyPredictable ℱ₀ atRisk := by
+lemma isStronglyPredictable_atRisk : IsStronglyPredictable filtration atRisk := by
   refine .of_measurable_add_one ?_ fun n => ?_
   · have : atRisk 0 = fun _ => 0 := by funext ω; simp [atRisk]
     rw [this]; exact stronglyMeasurable_const
@@ -332,9 +336,9 @@ lemma isStronglyPredictable_atRisk : IsStronglyPredictable ℱ₀ atRisk := by
       rw [this]; exact stronglyMeasurable_const
     · have : atRisk (1 + 1) = (fun c : Bool => if c = false then (1 : ℝ) else 0) ∘ Prod.fst := by
         funext ω; simp [atRisk]
-      rw [this, ℱ₀_one]
+      rw [this, filtration_one]
       exact ((measurable_of_countable _).comp (comap_measurable _)).stronglyMeasurable
-    · rw [ℱ₀_of_two_le (by omega)]; exact (measurable_of_countable _).stronglyMeasurable
+    · rw [filtration_of_two_le (by omega)]; exact (measurable_of_countable _).stronglyMeasurable
 
 /-- The martingale increment `ΔN_{k+1} - Y_{k+1} Δα_{k+1}` of the Aalen model. -/
 private lemma aalen_increment (k : ℕ) (ω : Ω₀) :
@@ -346,7 +350,7 @@ private lemma aalen_increment (k : ℕ) (ω : Ω₀) :
 /-- **Aalen's multiplicative intensity model holds**: `N - ∫ Y dα` is a martingale. At step `2`
 the conditional death probability given the censoring coin is `1{c = false} · 1/2 = Y₂ Δα₂`. -/
 theorem martingale_aalen :
-    Martingale (fun n ω => deaths n ω - aalenCompensator atRisk hazard n ω) ℱ₀ μ₀ := by
+    Martingale (fun n ω => deaths n ω - aalenCompensator atRisk hazard n ω) filtration μ₀ := by
   refine martingale_of_condExp_sub_eq_zero_nat (fun n => ?_) (fun _ => Integrable.of_finite)
     fun k => ?_
   · rcases Nat.lt_or_ge n 2 with hn | hn
@@ -357,7 +361,7 @@ theorem martingale_aalen :
         · simp [deaths, aalenCompensator, stochasticIntegral, hazard]
         · omega
       rw [this]; exact stronglyMeasurable_const
-    · rw [ℱ₀_of_two_le hn]; exact (measurable_of_countable _).stronglyMeasurable
+    · rw [filtration_of_two_le hn]; exact (measurable_of_countable _).stronglyMeasurable
   · have hfun : ((fun n ω => deaths n ω - aalenCompensator atRisk hazard n ω) (k + 1) -
         (fun n ω => deaths n ω - aalenCompensator atRisk hazard n ω) k) =
         fun ω => (deaths (k + 1) ω - deaths k ω) - atRisk (k + 1) ω * (hazard (k + 1) - hazard k) :=
@@ -369,10 +373,10 @@ theorem martingale_aalen :
         funext ω; simp [deaths, hazard]
       rw [h0, condExp_zero]
     · -- the step where the censoring coin is known but the death coin is not
-      refine (ae_eq_condExp_of_forall_setIntegral_eq (ℱ₀.le 1) Integrable.of_finite
+      refine (ae_eq_condExp_of_forall_setIntegral_eq (filtration.le 1) Integrable.of_finite
         (fun _ _ _ => integrableOn_zero) (fun s hs _ => ?_)
         aestronglyMeasurable_zero).symm
-      rw [ℱ₀_one, MeasurableSpace.measurableSet_comap] at hs
+      rw [filtration_one, MeasurableSpace.measurableSet_comap] at hs
       obtain ⟨t, -, rfl⟩ := hs
       have hf : (fun ω : Ω₀ => (deaths (1 + 1) ω - deaths 1 ω) -
           atRisk (1 + 1) ω * (hazard (1 + 1) - hazard 1)) =
@@ -404,26 +408,26 @@ theorem remainder_two (ω : Ω₀) :
 
 /-- The remainder is `ℱ₁`-measurable: censoring known at time `1` determines it. -/
 lemma stronglyMeasurable_remainder_two :
-    StronglyMeasurable[ℱ₀ 1]
+    StronglyMeasurable[filtration 1]
       (stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard) (fun k _ => hazard k) 2) := by
   have : stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard) (fun k _ => hazard k) 2 =
       (fun c : Bool => if c = true then (1 : ℝ) else 0) ∘ Prod.fst := funext remainder_two
-  rw [this, ℱ₀_one]
+  rw [this, filtration_one]
   exact ((measurable_of_countable _).comp (comap_measurable _)).stronglyMeasurable
 
 /-- **Conditional expectation given the intermediate σ-algebra**:
 `E[R₂ | ℱ₁] = 1{c}`, the indicator of censoring at time `1`. -/
 theorem condExp_remainder_two :
     μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard) (fun k _ => hazard k) 2 |
-      ℱ₀ 1] = fun ω => if ω.1 = true then 1 else 0 := by
-  rw [condExp_of_stronglyMeasurable (ℱ₀.le 1) stronglyMeasurable_remainder_two
+      filtration 1] = fun ω => if ω.1 = true then 1 else 0 := by
+  rw [condExp_of_stronglyMeasurable (filtration.le 1) stronglyMeasurable_remainder_two
     Integrable.of_finite]
   exact funext remainder_two
 
 /-- **The Kaplan–Meier remainder is genuinely nonzero**: `E[R₂ | ℱ₁]` is not a.e. zero. -/
 theorem condExp_remainder_two_ne_zero :
     ¬ μ₀[stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard) (fun k _ => hazard k) 2 |
-      ℱ₀ 1] =ᵐ[μ₀] 0 := by
+      filtration 1] =ᵐ[μ₀] 0 := by
   rw [condExp_remainder_two, Filter.EventuallyEq, ae_iff]
   intro h
   have hsub : ({(true, true)} : Set Ω₀) ⊆
@@ -436,12 +440,12 @@ theorem condExp_remainder_two_ne_zero :
 theorem martingale_kaplanMeier :
     Martingale (fun n ω => kaplanMeierProcess deaths atRisk n ω / prodIntegral hazard n - 1 -
       stochasticIntegral (kaplanMeierRemainder deaths atRisk hazard) (fun k _ => hazard k) n ω)
-      ℱ₀ μ₀ :=
+      filtration μ₀ :=
   martingale_kaplanMeierProcess martingale_aalen stronglyAdapted_deaths
     isStronglyPredictable_atRisk atRisk_mem deaths_le_atRisk hazard_increment_ne_one
 
 /-- **The mean bias is the remainder**: `E[Ŝ₂/S₂] - 1 = E[R₂] = P(c) = 1/2`. -/
-theorem integral_kaplanMeierProcess_div_sub_one :
+theorem integral_kaplanMeierProcess_two_div_sub_one :
     ∫ ω, (kaplanMeierProcess deaths atRisk 2 ω / prodIntegral hazard 2 - 1) ∂μ₀ = 1 / 2 := by
   rw [CountingProcess.integral_kaplanMeierProcess_div_sub_one martingale_aalen
     stronglyAdapted_deaths isStronglyPredictable_atRisk atRisk_mem deaths_le_atRisk
