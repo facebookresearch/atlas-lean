@@ -9,13 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.FDeriv.Comp
-public import Mathlib.Analysis.Calculus.FDeriv.Prod
-public import Mathlib.Analysis.Calculus.FDeriv.Add
-public import Mathlib.Analysis.Calculus.FDeriv.Mul
+import Mathlib.Analysis.Calculus.FDeriv.Prod
+import Mathlib.Analysis.Calculus.FDeriv.Add
+import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Add
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
 
 @[expose] public section
 
@@ -45,6 +44,13 @@ is on `main`. No interiority, normality, or participation assumption is made.
 
 * `MathlibExt.Economics.LaborLeisure.leisureDemand_hasDerivAt`
 * `MathlibExt.Economics.LaborLeisure.laborSupply_hasDerivAt`
+
+## References
+
+* H. R. Varian, *Intermediate Microeconomics: A Modern Approach*, Chapter 9, "Buying and
+  Selling" (the Slutsky equation with endowment income and labor supply).
+* A. Mas-Colell, M. D. Whinston, J. R. Green, *Microeconomic Theory*, Oxford University
+  Press (1995), Section 3.G (the Slutsky equation and compensated demand).
 
 Atlas roadmap target AP04.T01.
 -/
