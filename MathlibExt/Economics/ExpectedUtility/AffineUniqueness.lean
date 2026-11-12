@@ -37,18 +37,6 @@ namespace MathlibExt.Economics.ExpectedUtility
 
 open Convexity
 
-/-- Expected utility of a point mass is the utility of that outcome. -/
-private theorem expectedUtility_single {X : Type*} [Fintype X] (w : X → ℝ) (x0 : X) :
-    expectedUtility w (StdSimplex.single x0) = w x0 := by
-  unfold expectedUtility
-  rw [StdSimplex.weights_single]
-  have h1 : (Finsupp.single x0 (1 : ℝ)).sum (fun x c => c * w x) = (1 : ℝ) * w x0 :=
-    Finsupp.sum_single_index (by simp)
-  have h2 : (Finsupp.single x0 (1 : ℝ)).sum (fun x c => c * w x)
-      = ∑ x, (Finsupp.single x0 (1 : ℝ)) x * w x :=
-    Finsupp.sum_fintype _ _ (fun x => by simp)
-  rw [← h2, h1, one_mul]
-
 /-- Uniqueness of expected-utility representations (Gonçalves, Theorem 1(ii)): two Bernoulli
 utilities representing the same preference over lotteries differ by a positive affine
 transformation. No nondegeneracy is assumed: if `u` is constant, so is `v`. -/
