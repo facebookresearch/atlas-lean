@@ -15,7 +15,8 @@ import Mathlib.Topology.Algebra.Monoid
 # Tests for the internal rate of return
 
 The flows `(-100, 110)` have the unique internal rate `1/10`; the non-conventional flows
-`(-1, 5, -6)` have the two internal rates `1` and `2`.
+`(-1, 5, -6)` have the two internal rates `1` and `2`, and `(-100, 230, -132)` the two internal
+rates `1/10` and `1/5`.
 -/
 
 @[expose] public section
@@ -112,6 +113,63 @@ theorem irr_c2_2 : IsIRR c2 2 2 := by
 theorem not_unique_c2 : ¬∃! r, IsIRR c2 2 r := by
   intro h
   have h12 : (1 : ℝ) = 2 := ExistsUnique.unique h irr_c2_1 irr_c2_2
+  norm_num at h12
+
+def c3 : ℕ → ℝ := fun k => if k = 0 then -100 else if k = 1 then 230 else -132
+
+theorem irr_c3_1 : IsIRR c3 2 (1 / 10) := by
+  have e2 : (∑ k ∈ Finset.range (2 + 1), c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+      = (∑ k ∈ Finset.range 2, c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+        + c3 2 / (1 + (1 / 10 : ℝ)) ^ 2 :=
+    Finset.sum_range_succ _ 2
+  have e1 : (∑ k ∈ Finset.range (1 + 1), c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+      = (∑ k ∈ Finset.range 1, c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+        + c3 1 / (1 + (1 / 10 : ℝ)) ^ 1 :=
+    Finset.sum_range_succ _ 1
+  have e0 : (∑ k ∈ Finset.range (0 + 1), c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+      = (∑ k ∈ Finset.range 0, c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+        + c3 0 / (1 + (1 / 10 : ℝ)) ^ 0 :=
+    Finset.sum_range_succ _ 0
+  rw [Finset.sum_range_zero] at e0
+  refine ⟨by norm_num, ?_⟩
+  show (∑ k ∈ Finset.range (2 + 1), c3 k / (1 + (1 / 10 : ℝ)) ^ k) = 0
+  rw [e2]
+  show (∑ k ∈ Finset.range (1 + 1), c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+      + c3 2 / (1 + (1 / 10 : ℝ)) ^ 2 = 0
+  rw [e1]
+  show (∑ k ∈ Finset.range (0 + 1), c3 k / (1 + (1 / 10 : ℝ)) ^ k)
+      + c3 1 / (1 + (1 / 10 : ℝ)) ^ 1 + c3 2 / (1 + (1 / 10 : ℝ)) ^ 2 = 0
+  rw [e0]
+  norm_num [c3]
+
+theorem irr_c3_2 : IsIRR c3 2 (1 / 5) := by
+  have e2 : (∑ k ∈ Finset.range (2 + 1), c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+      = (∑ k ∈ Finset.range 2, c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+        + c3 2 / (1 + (1 / 5 : ℝ)) ^ 2 :=
+    Finset.sum_range_succ _ 2
+  have e1 : (∑ k ∈ Finset.range (1 + 1), c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+      = (∑ k ∈ Finset.range 1, c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+        + c3 1 / (1 + (1 / 5 : ℝ)) ^ 1 :=
+    Finset.sum_range_succ _ 1
+  have e0 : (∑ k ∈ Finset.range (0 + 1), c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+      = (∑ k ∈ Finset.range 0, c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+        + c3 0 / (1 + (1 / 5 : ℝ)) ^ 0 :=
+    Finset.sum_range_succ _ 0
+  rw [Finset.sum_range_zero] at e0
+  refine ⟨by norm_num, ?_⟩
+  show (∑ k ∈ Finset.range (2 + 1), c3 k / (1 + (1 / 5 : ℝ)) ^ k) = 0
+  rw [e2]
+  show (∑ k ∈ Finset.range (1 + 1), c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+      + c3 2 / (1 + (1 / 5 : ℝ)) ^ 2 = 0
+  rw [e1]
+  show (∑ k ∈ Finset.range (0 + 1), c3 k / (1 + (1 / 5 : ℝ)) ^ k)
+      + c3 1 / (1 + (1 / 5 : ℝ)) ^ 1 + c3 2 / (1 + (1 / 5 : ℝ)) ^ 2 = 0
+  rw [e0]
+  norm_num [c3]
+
+theorem not_unique_c3 : ¬∃! r, IsIRR c3 2 r := by
+  intro h
+  have h12 : (1 / 10 : ℝ) = 1 / 5 := ExistsUnique.unique h irr_c3_1 irr_c3_2
   norm_num at h12
 
 end MathlibExtTest.Economics.Finance.InternalRateOfReturn
