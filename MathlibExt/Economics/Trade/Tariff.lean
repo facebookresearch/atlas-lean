@@ -29,6 +29,20 @@ In the interior (non-prohibitive) regime `S (Pw + t) ≤ D (Pw + t)`:
 
 Surplus changes are the areas `∫_{Pw}^{Pw+t} D` and `∫_{Pw}^{Pw+t} S` to the left
 of the schedules.
+
+Scope: the schedules are signed linear functions and the identities above hold
+for every `LinearMarket`. They read as statements about domestic quantities and
+consumer/producer surplus only when the schedules are nonnegative on the price
+interval `[Pw, Pw + t]`, i.e. when `0 ≤ D (Pw + t)` and `0 ≤ S Pw` (then both
+are nonnegative throughout, since `D` decreases and `S` increases). The theorems
+do not assume this, so they apply equally to the algebraic identities outside
+that range.
+
+## References
+
+* P. R. Krugman, M. Obstfeld and M. J. Melitz, *International Economics: Theory
+  and Policy*, Pearson, chapter 9 (costs and benefits of a tariff in a small
+  country: production and consumption distortion triangles).
 -/
 
 @[expose] public section
