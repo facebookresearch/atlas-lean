@@ -204,4 +204,27 @@ example : ∃ Ω : Type, ∃ _ : MeasurableSpace Ω, ∃ P : Measure Ω, ∃ G :
       norm_num at this
     exact hpos (measure_mono_null hsub h0)
 
+/-- On the witness with one draw, given `C₀ + C₁ = 1` the count `C₀` has law
+`Bin(1, (1/3) / (1/3 + 1/3))`; the conditioning event has positive probability because it
+contains `{G 0 = 0}`. -/
+example : ∃ Ω : Type, ∃ _ : MeasurableSpace Ω, ∃ P : Measure Ω, ∃ G : ℕ → Ω → Fin 3,
+    ∃ h : ∀ _j : Fin 3, (0 : ℝ) ≤ 1 / 3,
+    IsProbabilityMeasure P ∧
+      HasLaw (fun ω => #{k ∈ range 1 | G k ω = 0})
+        (binomial 1 ⟨(1/3) / (1/3 + 1/3), div_nonneg (h 0) (add_nonneg (h 0) (h 1)),
+          div_le_one_of_le₀ (le_add_of_nonneg_right (h 1)) (add_nonneg (h 0) (h 1))⟩)
+        (P[|{ω | #{k ∈ range 1 | G k ω = 0} + #{k ∈ range 1 | G k ω = 1} = 1}]) := by
+  obtain ⟨Ω, mΩ, P, G, hP, hGm, hind, hG⟩ := witness
+  have h : ∀ _j : Fin 3, (0 : ℝ) ≤ 1 / 3 := fun _ => by norm_num
+  refine ⟨Ω, mΩ, P, G, h, hP, hasLaw_cond_counts_binomial (p := fun _ => 1/3) hGm hind hG h
+    (by decide : (0 : Fin 3) ≠ 1) ?_⟩
+  intro h0
+  have hsub : {ω | G 0 ω = 0} ⊆
+      {ω | #{k ∈ range 1 | G k ω = 0} + #{k ∈ range 1 | G k ω = 1} = 1} := fun ω hω => by
+    simp only [Set.mem_ofPred_eq] at hω ⊢
+    simp [filter_singleton, hω]
+  have := hG 0 0
+  rw [measureReal_def, measure_mono_null hsub h0] at this
+  norm_num at this
+
 end MathlibExtTest.Probability.Statistics.ExactTests.MultinomialTotals

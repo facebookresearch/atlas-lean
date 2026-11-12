@@ -39,8 +39,10 @@ Hardy–Weinberg exact test take this fixed-total sampling model as their starti
 * `cond_measureReal_counts_eq_binomial`, `hasLaw_cond_counts_binomial`: for distinct cells
   `a ≠ b`, given `Cₐ + C_b = d`, the count `Cₐ` is `Bin(d, pₐ / (pₐ + p_b))`. This is the
   conditional law that the McNemar / TDT p-value theorems of `ConditionalBinomial` (#1564)
-  take as the hypothesis `hcond` in the model with a fixed number of pairs (`Bin(d, 1/2)` when
-  `pₐ = p_b`).
+  take as the hypothesis `hcond` in the model with a fixed number of pairs. Discharging `hcond`
+  still needs a small bridge: for `pₐ = p_b > 0` rewrite the success probability to `1/2`; for
+  `pₐ = p_b = 0` the conditioning forces `d = 0`, where the law is `Bin(0, 0) = Bin(0, 1/2)`
+  as a measure.
 
 The cell counts are written inline as `#{k ∈ range n | X k ω = i}` (the `ℕ`-valued form of
 `ProbabilityTheory.cellCount` from `GoodnessOfFit.Pearson`, which is real-valued and is not
@@ -529,8 +531,11 @@ omit [Fintype ι] in
 /-- **Conditional binomial law in the fixed-total model, as a law.** Under the hypotheses of
 `cond_measureReal_counts_eq_binomial`, given `Cₐ + C_b = d` (an event of positive probability)
 the count `Cₐ` has law `Bin(d, pₐ / (pₐ + p_b))`. For `pₐ = p_b` (McNemar's null of marginal
-homogeneity, or the TDT null of no transmission distortion) this is `Bin(d, 1/2)`. The
-nonnegativity `hp₀` is needed only to form the success probability in `[0, 1]`. -/
+homogeneity, or the TDT null of no transmission distortion) with `pₐ > 0` this is
+`Bin(d, 1/2)` after rewriting the success probability; if `pₐ = p_b = 0` the conditioning forces
+`d = 0` and the stated law is `Bin(0, 0)`, equal to `Bin(0, 1/2)` as a measure but not
+syntactically. The nonnegativity `hp₀` is needed only to form the success probability in
+`[0, 1]`. -/
 theorem hasLaw_cond_counts_binomial [Finite ι] [IsProbabilityMeasure μ] {X : ℕ → Ω → ι} {p : ι → ℝ}
     (hXm : ∀ k, Measurable (X k)) (hind : iIndepFun X μ)
     (hX : ∀ k i, μ.real {ω | X k ω = i} = p i) (hp₀ : ∀ i, 0 ≤ p i) {a b : ι} (hab : a ≠ b)
