@@ -12,6 +12,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Comp
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+import MathlibExt.Analysis.Calculus.Gradient
 
 /-!
 # Finite-horizon adjoint via augmented-state backpropagation
@@ -176,23 +177,6 @@ theorem grad_add {d : ℕ} (f g : EuclideanSpace ℝ (Fin d) → ℝ)
   rw [inner_gradient_left, hfg, add_apply, inner_add_left, ← inner_gradient_left,
     ← inner_gradient_left]
 
-/-- Gradient of a composition with a differentiable map, via the adjoint. -/
-theorem grad_comp_adjoint {d : ℕ} (g : EuclideanSpace ℝ (Fin d) → ℝ)
-    (f : EuclideanSpace ℝ (Fin d) → EuclideanSpace ℝ (Fin d))
-    (x : EuclideanSpace ℝ (Fin d))
-    (hg : DifferentiableAt ℝ g (f x)) (hf : DifferentiableAt ℝ f x) :
-    ∇ (fun z => g (f z)) x = (fderiv ℝ f x).adjoint (∇ g (f x)) := by
-  apply ext_inner_right ℝ
-  intro v
-  have hcomp : fderiv ℝ (fun z => g (f z)) x
-      = (fderiv ℝ g (f x)) ∘SL (fderiv ℝ f x) :=
-    fderiv_comp x hg hf
-  have hinner : (fderiv ℝ g (f x)) ((fderiv ℝ f x) v)
-      = ⟪∇ g (f x), (fderiv ℝ f x) v⟫_ℝ :=
-    inner_gradient_left.symm
-  rw [inner_gradient_left, hcomp, ContinuousLinearMap.comp_apply, hinner,
-    ContinuousLinearMap.adjoint_inner_left]
-
 /-- Finite-horizon adjoint via augmented-state backpropagation (CORRECTED):
 the gradient of the total cost at `x` is the backward pass (the `δ`
 recursion through the augmented layers, starting from the cotangent
@@ -245,7 +229,8 @@ theorem aug_gradient_eq_backward {d : ℕ}
       congr 1
       have h1 := grad_add (ell n) (fun z => ellN (M n z)) (augTraj M x n)
         helln hcomp
-      have h2 := grad_comp_adjoint ellN (M n) (augTraj M x n) hellN_at hMn
+      have h2 := MetaMathlibExt.gradient_comp hellN_at hMn
+      simp only [Function.comp_def] at h2
       rw [h2] at h1
       have hgrad : ∇ (fun z => ell n z + ellN (M n z)) (augTraj M x n)
           = ∇ (ell n) (augTraj M x n)
