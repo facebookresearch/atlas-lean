@@ -359,16 +359,6 @@ theorem rank_center_le_rank (X : Matrix (Fin n) (Fin p) ℝ) : (center X).rank �
   rw [center_eq_centering_mul]
   exact rank_mul_le_right _ _
 
-/-- Subadditivity of the rank, for real matrices. This duplicates the private `rank_add_bound`
-in `MathlibExt.Probability.Statistics.PCA` (Mathlib has no `Matrix.rank_add_le`); it can be
-replaced once that lemma is made public, which is outside this file's scope. -/
-private theorem rank_add_le' (A B : Matrix (Fin n) (Fin p) ℝ) :
-    (A + B).rank ≤ A.rank + B.rank := by
-  unfold Matrix.rank
-  rw [Matrix.mulVecLin_add]
-  exact (Submodule.finrank_mono (LinearMap.range_add_le _ _)).trans
-    (Submodule.finrank_add_le_finrank_add_finrank _ _)
-
 /-- **Centering lowers the rank by at most one.** `rank X ≤ rank (X - 𝟙 x̄ᵀ) + 1`. The drop
 happens, e.g., for identical nonzero samples (`rank X = 1`, `S = 0`; see the test file). -/
 theorem rank_le_rank_center_add_one (X : Matrix (Fin n) (Fin p) ℝ) :
@@ -376,7 +366,7 @@ theorem rank_le_rank_center_add_one (X : Matrix (Fin n) (Fin p) ℝ) :
   have hX : X = center X + vecMulVec (fun _ => 1) (colMean X) := by
     rw [center_eq_sub_vecMulVec, sub_add_cancel]
   calc X.rank = (center X + vecMulVec (fun _ => 1) (colMean X)).rank := by rw [← hX]
-    _ ≤ (center X).rank + (vecMulVec (fun _ => (1 : ℝ)) (colMean X)).rank := rank_add_le' _ _
+    _ ≤ (center X).rank + (vecMulVec (fun _ => (1 : ℝ)) (colMean X)).rank := Matrix.rank_add_le _ _
     _ ≤ (center X).rank + 1 := by gcongr; exact rank_vecMulVec_le _ _
 
 /-! ### A confounded batch design -/
