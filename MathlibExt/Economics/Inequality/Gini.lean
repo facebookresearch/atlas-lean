@@ -12,7 +12,6 @@ public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic
-public import Mathlib.Data.Fin.VecNotation
 
 @[expose] public section
 
@@ -21,7 +20,8 @@ public import Mathlib.Data.Fin.VecNotation
 
 The finite Gini coefficient of incomes `x` over a population of size `n` is the mean absolute
 difference over twice the mean, `(∑ i, ∑ j, |x i - x j|) / (2 n ∑ i, x i)`. It is the usual
-Gini index when total income is positive.
+Gini index when incomes are nonnegative with positive total; outside that domain it is just
+this algebraic expression (it can exceed `1` when some income is negative).
 
 Multiplying every income by the same positive factor leaves it unchanged (`gini_smul`). The
 identity needs no positivity of total income (with total `0` both sides are `0`), but it does
@@ -30,6 +30,14 @@ need a positive factor: a negative factor flips the sign.
 ## Main results
 
 * `MathlibExt.Economics.Inequality.gini_smul`
+
+## References
+
+* C. Gini, *Variabilità e mutabilità*, Bologna (1912).
+* A. Sen, *On Economic Inequality*, Oxford (1973), Chapter 2 (Gini coefficient as half the
+  relative mean difference; invariance to proportional scaling).
+* F. A. Cowell, *Measuring Inequality*, 3rd ed., Oxford University Press (2011), Chapter 2
+  (income scale independence).
 
 Atlas roadmap target AP05.T01.
 -/
@@ -41,7 +49,8 @@ open Finset
 /-- Finite Gini coefficient of the income distribution `x` over the population `ι`:
 mean absolute difference over twice the mean,
 `(∑ i, ∑ j, |x i - x j|) / (2 * n * ∑ i, x i)` with `n = card ι`. It is the usual Gini
-index when total income is positive; when the total is `0` the division yields `0`. -/
+index when incomes are nonnegative with positive total; when the total is `0` the division
+yields `0`. -/
 noncomputable def gini {ι : Type*} [Fintype ι] (x : ι → ℝ) : ℝ :=
   (∑ i, ∑ j, |x i - x j|) / (2 * Fintype.card ι * ∑ i, x i)
 
@@ -67,8 +76,9 @@ theorem gini_smul {ι : Type*} [Fintype ι] (x : ι → ℝ) {t : ℝ} (ht : 0 <
   rw [hring, mul_div_mul_left _ _ ht0]
 
 /-- **Scale invariance of the Gini coefficient, source form.** For an income distribution with
-positive total income, scaling every income by the same positive factor `t` leaves the Gini
-coefficient unchanged. This is `gini_smul` restricted to the domain where `gini` is the usual
+positive total income (the roadmap's hypothesis), scaling every income by the same positive
+factor `t` leaves the Gini coefficient unchanged. This is `gini_smul` under that hypothesis;
+neither result needs nonnegative incomes, which only matter for reading `gini` as the usual
 Gini index. -/
 theorem gini_smul_of_sum_pos {ι : Type*} [Fintype ι] (x : ι → ℝ) (hx : 0 < ∑ i, x i) {t : ℝ}
     (ht : 0 < t) : gini (t • x) = gini x := by

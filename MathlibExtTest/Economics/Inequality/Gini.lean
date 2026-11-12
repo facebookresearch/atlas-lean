@@ -13,7 +13,7 @@ import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic
-import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fin.VecNotation
 
 @[expose] public section
 
