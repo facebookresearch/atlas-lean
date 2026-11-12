@@ -34,30 +34,49 @@ open Asymptotics Filter Finset Complex Topology
 
 noncomputable section
 
-/-- The `k`-th term `f⁽q⁾(k + 1 + x)` of the shifted series of `q`-th derivatives of `f`. -/
+/-- **Terms of the shifted derivative series.** For $f : \mathbb{R} \to \mathbb{R}$, natural numbers
+$q$ and $k$, and $x \in \mathbb{R}$, the $k$-th term of the shifted series of $q$-th derivatives of
+$f$ is $f^{(q)}(k + 1 + x)$, where $f^{(q)}$ is the $q$-th iterated derivative of $f$ and a
+derivative that does not exist is taken to be $0$. -/
 def chapter6ShiftedDerivedSeriesTerm
     (f : ℝ → ℝ) (q : ℕ) (x : ℝ) (k : ℕ) : ℝ :=
   iteratedDeriv q f ((k : ℝ) + 1 + x)
 
-/-- The constant `∑_{k ≥ 0} f⁽q⁾(k + 1)`: the shifted series of `q`-th derivatives at `x = 0`. -/
+/-- **Ramanujan's derivative-series constants.** For $f : \mathbb{R} \to \mathbb{R}$ and a natural
+number $q$, the constant $c_q$ is $\sum_{k \ge 1} f^{(q)}(k)$, the sum of the values of the
+$q$-th iterated derivative of $f$ at the positive integers, where a derivative that does not
+exist is taken to be $0$ and a series that is not summable is given the value $0$. -/
 def chapter6DerivedSeriesConstant (f : ℝ → ℝ) (q : ℕ) : ℝ :=
   ∑' k : ℕ, chapter6ShiftedDerivedSeriesTerm f q 0 k
 
-/-- Ramanujan's extension of the partial sums of `f` to real arguments,
-`F(x) = ∑_{k ≥ 1} f(k) - ∑_{k ≥ 1} f(k + x)`. When the series converge it agrees with
-`chapter6PartialSum f m` at `x = m` (`chapter6ConvergentSumExtension_natCast`). -/
+/-- **Ramanujan's extension of partial sums.** For $f : \mathbb{R} \to \mathbb{R}$, the extension of
+the partial sums of $f$ to real arguments is the function
+$F(x) = \sum_{k \ge 1} f(k) - \sum_{k \ge 1} f(k + x)$ on $\mathbb{R}$, where each series is an
+unconditional sum and a series that is not summable is given the value $0$.
+
+When $\sum_{k \ge 1} f(k)$ is summable, $F(m) = f(1) + \cdots + f(m)$ for every natural number
+$m$. -/
 def chapter6ConvergentSumExtension (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   chapter6DerivedSeriesConstant f 0 -
     ∑' k : ℕ, chapter6ShiftedDerivedSeriesTerm f 0 x k
 
-/-- The `j`-th term `-c_{j+1} x^{j+1} / (j+1)!` of the Taylor series of
-`chapter6ConvergentSumExtension f` at `0`, where `c_q = chapter6DerivedSeriesConstant f q`. -/
+/-- **Terms of the Taylor series in Entry 6.** For $f : \mathbb{R} \to \mathbb{R}$,
+$x \in \mathbb{R}$ and a natural number $j$, the $j$-th term is $-c_{j+1} x^{j+1} / (j+1)!$, where
+$c_q = \sum_{k \ge 1} f^{(q)}(k)$ with $f^{(q)}$ the $q$-th iterated derivative of $f$; a
+derivative that does not exist is taken to be $0$ and a series that is not summable is given the
+value $0$.
+
+Under the smoothness, summability and domination hypotheses of Entry 6, these are the
+nonconstant terms of the Taylor series at $0$ of Ramanujan's extension
+$F(x) = \sum_{k \ge 1} f(k) - \sum_{k \ge 1} f(k + x)$, whose constant term is $F(0) = 0$. -/
 def chapter6Entry6Term
     (f : ℝ → ℝ) (x : ℝ) (j : ℕ) : ℝ :=
   -chapter6DerivedSeriesConstant f (j + 1) * x ^ (j + 1) /
     ((j + 1).factorial : ℝ)
 
-/-- The partial sum `f 1 + f 2 + ⋯ + f x`. -/
+/-- **Partial sums of a real function over the positive integers.** For
+$f : \mathbb{R} \to \mathbb{R}$ and a natural number $n$, the partial sum is
+$f(1) + f(2) + \cdots + f(n)$, which is $0$ when $n = 0$. -/
 def chapter6PartialSum (f : ℝ → ℝ) (x : ℕ) : ℝ :=
   ∑ k ∈ Icc 1 x, f k
 
@@ -85,7 +104,10 @@ theorem chapter6ConvergentSumExtension_zero (f : ℝ → ℝ) :
   unfold chapter6ConvergentSumExtension chapter6DerivedSeriesConstant
   exact sub_self _
 
-/-- The difference equation `F(x) - F(x - 1) = f(x)`. -/
+/-- **Difference equation for Ramanujan's extension.** Let $f : \mathbb{R} \to \mathbb{R}$ and let
+$F(y) = \sum_{k \ge 1} f(k) - \sum_{k \ge 1} f(k + y)$, where a series that is not summable is
+given the value $0$. If $x \in \mathbb{R}$ and the series $\sum_{k \ge 0} f(k + x)$ is summable,
+then $F(x) - F(x - 1) = f(x)$. -/
 theorem chapter6ConvergentSumExtension_sub_sub_one (f : ℝ → ℝ) (x : ℝ)
     (h : Summable (chapter6ShiftedDerivedSeriesTerm f 0 (x - 1))) :
     chapter6ConvergentSumExtension f x - chapter6ConvergentSumExtension f (x - 1) = f x := by
@@ -115,7 +137,13 @@ theorem chapter6ConvergentSumExtension_sub_sub_one (f : ℝ → ℝ) (x : ℝ)
   rw [hS1, hS2, hdecomp, hf0]
   ring
 
-/-- At a natural shift `m` the shifted series is the `m`-th tail of the series at `0`. -/
+/-- **Tails of the shifted series of derivatives converge.** Let $f : \mathbb{R} \to \mathbb{R}$
+and $q \in \mathbb{N}$, and write $f^{(q)}$ for the $q$-th iterated derivative of $f$, where a
+derivative that does not exist is taken to be $0$. If the series
+$\sum_{k \ge 0} f^{(q)}(k + 1)$ converges absolutely, then for every $m \in \mathbb{N}$ the series
+$\sum_{k \ge 0} f^{(q)}(k + 1 + m)$ converges absolutely.
+
+The second series is the $m$-th tail of the first. -/
 theorem summable_chapter6ShiftedDerivedSeriesTerm_natCast (f : ℝ → ℝ) (q : ℕ)
     (h : Summable (chapter6ShiftedDerivedSeriesTerm f q 0)) (m : ℕ) :
     Summable (chapter6ShiftedDerivedSeriesTerm f q m) := by
@@ -125,7 +153,11 @@ theorem summable_chapter6ShiftedDerivedSeriesTerm_natCast (f : ℝ → ℝ) (q :
   push_cast
   ring
 
-/-- At natural numbers the extension is the partial sum `f 1 + ⋯ + f m`. -/
+/-- **Ramanujan's extension agrees with the partial sums at natural numbers.** Let
+$f : \mathbb{R} \to \mathbb{R}$ and let $F(x) = \sum_{k \ge 1} f(k) - \sum_{k \ge 1} f(k + x)$,
+where a series that is not summable is given the value $0$. If the series
+$\sum_{k \ge 1} f(k)$ is summable, then $F(m) = f(1) + f(2) + \cdots + f(m)$ for every natural
+number $m$ (for $m = 0$ the right side is the empty sum $0$). -/
 theorem chapter6ConvergentSumExtension_natCast (f : ℝ → ℝ)
     (h : Summable (chapter6ShiftedDerivedSeriesTerm f 0 0)) (m : ℕ) :
     chapter6ConvergentSumExtension f m = chapter6PartialSum f m := by
@@ -216,7 +248,13 @@ private theorem iteratedDeriv_succ_chapter6ConvergentSumExtension {f : ℝ → �
     rw [hrr]
     exact htrans.deriv
 
-/-- The derivatives of the extension at the origin are the negated constants. -/
+/-- **Derivatives of Ramanujan's extension at the origin.** Let $f : \mathbb{R} \to \mathbb{R}$ be
+infinitely differentiable and let $\rho > 0$. Write $c_q = \sum_{k \ge 1} f^{(q)}(k)$ and
+$F(x) = c_0 - \sum_{k \ge 1} f(k + x)$, where a series that is not summable is given the value
+$0$. Suppose that the series $\sum_{k \ge 1} f^{(q)}(k)$ is summable for every $q \ge 0$, and
+that for every $q \ge 1$ there is a summable sequence $(b_k)_{k \ge 0}$ with
+$|f^{(q)}(k + 1 + x)| \le b_k$ for all $x \in [-\rho, \rho]$ and all $k \ge 0$. Then
+$F^{(n)}(0) = -c_n$ for every natural number $n \ge 1$. -/
 theorem iteratedDeriv_chapter6ConvergentSumExtension_apply_zero (f : ℝ → ℝ) (rho : ℝ)
     (hrho : 0 < rho) (hsmooth : ContDiff ℝ ∞ f)
     (hsummable : ∀ q : ℕ, Summable (chapter6ShiftedDerivedSeriesTerm f q 0))
@@ -232,7 +270,14 @@ theorem iteratedDeriv_chapter6ConvergentSumExtension_apply_zero (f : ℝ → ℝ
   rw [iteratedDeriv_succ_chapter6ConvergentSumExtension hsmooth hsummable hdominated m 0 h0mem]
   simp only [chapter6DerivedSeriesConstant]
 
-/-- Near the origin the extension is the sum of its Taylor series `∑ chapter6Entry6Term f x j`. -/
+/-- **Taylor expansion of Ramanujan's extension at the origin.** Let $f : \mathbb{R} \to \mathbb{R}$
+be infinitely differentiable and let $\rho > 0$. Write $c_q = \sum_{k \ge 1} f^{(q)}(k)$ and
+$F(x) = c_0 - \sum_{k \ge 1} f(k + x)$, where a series that is not summable is given the value
+$0$. Suppose that the series $\sum_{k \ge 1} f^{(q)}(k)$ is summable for every $q \ge 0$, that
+for every $q \ge 1$ there is a summable sequence $(b_k)_{k \ge 0}$ with
+$|f^{(q)}(k + 1 + x)| \le b_k$ for all $x \in [-\rho, \rho]$ and all $k \ge 0$, and that $F$ is
+analytic at $0$. Then there is $r$ with $0 < r \le \rho$ such that for every real $x$ with
+$|x| < r$ the series $\sum_{j \ge 0} -c_{j+1} x^{j+1} / (j+1)!$ is summable with sum $F(x)$. -/
 theorem exists_hasSum_chapter6Entry6Term (f : ℝ → ℝ) (rho : ℝ) (hrho : 0 < rho)
     (hsmooth : ContDiff ℝ ∞ f)
     (hsummable : ∀ q : ℕ, Summable (chapter6ShiftedDerivedSeriesTerm f q 0))
@@ -295,7 +340,21 @@ theorem exists_hasSum_chapter6Entry6Term (f : ℝ → ℝ) (rho : ℝ) (hrho : 0
     exact hshift.hasSum
   exact hfinal.congr_fun hentry
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
+/-- **Ramanujan's extension of the partial sums of a smooth function.** Let
+$f : \mathbb{R} \to \mathbb{R}$ be infinitely differentiable and let $\rho > 0$. Suppose that for
+every $q \in \mathbb{N}$ and every $x \in \mathbb{R}$ the series
+$\sum_{k \ge 0} f^{(q)}(k + 1 + x)$ converges absolutely, and that for every $q \in \mathbb{N}$
+there is a summable sequence $(b_k)_{k \ge 0}$ with $|f^{(q)}(k + 1 + x)| \le b_k$ for all
+$k \in \mathbb{N}$ and all $x \in [-\rho, \rho]$. Put $c_q = \sum_{k \ge 0} f^{(q)}(k + 1)$ and
+$F(x) = c_0 - \sum_{k \ge 0} f(k + 1 + x)$, and suppose that $F$ is analytic at $0$. Then
+(i) for every $n \in \mathbb{N}$ the series $\sum_{k \ge 0} f^{(n)}(k + 1)$ converges absolutely
+with sum $c_n$; (ii) $F(0) = 0$; (iii) $F(x) - F(x - 1) = f(x)$ for every $x \in \mathbb{R}$;
+(iv) $F(m) = f(1) + f(2) + \dots + f(m)$ for every $m \in \mathbb{N}$, the empty sum being $0$;
+(v) $F^{(n)}(0) = -c_n$ for every integer $n \ge 1$; and (vi) there is $r$ with $0 < r \le \rho$
+such that for every real $x$ with $|x| < r$ the series
+$\sum_{j \ge 0} -c_{j+1} x^{j+1} / (j + 1)!$ converges absolutely with sum $F(x)$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
 Proves `Wanted` entry `ramanujan_part1_ch6_entry6_harmonic`.
 -/
 theorem ramanujan_part1_ch6_entry6_harmonic
