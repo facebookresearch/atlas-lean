@@ -64,6 +64,7 @@ unbiased estimator of `π₀` whose plug-in BH procedure has FDR `1/3` at `q = 1
   mutual independence.
 * `storeyPi0Plus1_eq_storeyPi0_add`, `storeyPi0_le_storeyPi0Plus1`: relation to
   `TwoGroupsTesting.storeyPi0`.
+* `le_integral_storeyPi0Plus1`: `E[storeyPi0Plus1] ≥ |H0| / m`, derived from main's lemma.
 
 ## Not covered
 
@@ -727,7 +728,7 @@ Then BH run at the adaptive level `q / π̂₀(lam)`, with Storey's estimator
 Unlike plain BH (`E[FDP] ≤ q |H0| / m`), the bound does not shrink with `|H0| / m`: the adaptive
 level spends the slack. The proof goes through the interaction of the adaptive threshold with the
 p-values, not through `E[π̂₀] ≥ |H0| / m` (which holds, `TwoGroupsTesting.le_integral_storeyPi0`
-and `storeyPi0_le_storeyPi0Plus1`, but does not suffice). On `{i rejected}` we have `p i ≤ lam`,
+and `le_integral_storeyPi0Plus1`, but does not suffice). On `{i rejected}` we have `p i ≤ lam`,
 so `π̂₀` does not depend on `p i` and the
 leave-one-out property (`storeyBH_leave_one_out`) gives
 `E[1{i ∈ R} / |R|] ≤ q (1 - lam) E[1 / (N_i + 1)]`, where `N_i` counts the *other* p-values above
@@ -795,15 +796,41 @@ theorem storeyPi0Plus1_eq_storeyPi0_add (lam : ℝ) (p : Fin m → ℝ) :
       TwoGroupsTesting.storeyPi0 lam p + 1 / ((1 - lam) * m) := by
   rw [storeyPi0Plus1, TwoGroupsTesting.storeyPi0, add_div, mul_comm (m : ℝ)]
 
-/-- The `+ 1` estimator dominates Storey's (2002) estimator pointwise for `lam ≤ 1`, so the
-conservativeness in expectation `TwoGroupsTesting.le_integral_storeyPi0`
-(`E[π̂₀] ≥ |H0| / m`) transfers to it. -/
+/-- The `+ 1` estimator dominates Storey's (2002) estimator pointwise for `lam ≤ 1`; with
+integrability this transfers `TwoGroupsTesting.le_integral_storeyPi0` to it
+(`le_integral_storeyPi0Plus1`). -/
 theorem storeyPi0_le_storeyPi0Plus1 {lam : ℝ} (hlam : lam ≤ 1) (p : Fin m → ℝ) :
     TwoGroupsTesting.storeyPi0 lam p ≤ storeyPi0Plus1 lam p := by
   rw [storeyPi0Plus1_eq_storeyPi0_add]
   have : 0 ≤ 1 - lam := by linarith
   have : 0 ≤ 1 / ((1 - lam) * m) := by positivity
   linarith
+
+/-- **The `+ 1` estimator is conservative in expectation**: if every true-null p-value is valid
+and `lam ∈ [0, 1)`, then `E[storeyPi0Plus1 lam] ≥ |H0| / m`. Derived from main's
+`TwoGroupsTesting.le_integral_storeyPi0` and the pointwise bound `storeyPi0_le_storeyPi0Plus1`;
+no independence is needed. Not used by the FDR theorem, and not sufficient for it. -/
+theorem le_integral_storeyPi0Plus1 {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i))
+    {H0 : Finset (Fin m)} (hnull : ∀ i ∈ H0, IsValidPValue μ (p i)) {lam : ℝ} (hlam0 : 0 ≤ lam)
+    (hlam1 : lam < 1) :
+    (H0.card : ℝ) / m ≤ ∫ ω, storeyPi0Plus1 lam (fun j => p j ω) ∂μ := by
+  have hint : Integrable (fun ω => storeyPi0Plus1 lam (fun j => p j ω)) μ := by
+    refine Integrable.of_bound
+      (measurable_storeyPi0Plus1_comp (fun ω j => p j ω) hp lam).aestronglyMeasurable
+      (((m : ℝ) + 1) / ((1 - lam) * m)) (Filter.Eventually.of_forall fun ω => ?_)
+    rw [Real.norm_eq_abs, abs_of_nonneg (storeyPi0Plus1_nonneg hlam1.le _), storeyPi0Plus1]
+    have : 0 ≤ 1 - lam := by linarith
+    gcongr
+    have := Finset.card_filter_le (Finset.univ : Finset (Fin m)) fun j => lam < p j ω
+    rw [Finset.card_univ, Fintype.card_fin] at this
+    exact_mod_cast this
+  refine (TwoGroupsTesting.le_integral_storeyPi0 hp hnull hlam0 hlam1).trans
+    (integral_mono_of_nonneg (Filter.Eventually.of_forall fun ω => ?_) hint
+      (Filter.Eventually.of_forall fun ω => storeyPi0_le_storeyPi0Plus1 hlam1.le _))
+  have : 0 ≤ 1 - lam := by linarith
+  simp only [TwoGroupsTesting.storeyPi0]
+  positivity
 
 /-- Mutually independent p-values satisfy the independence hypothesis of the Storey-BH theorem:
 each `p i` is independent of the vector of the other p-values. -/

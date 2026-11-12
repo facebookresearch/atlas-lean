@@ -360,6 +360,13 @@ theorem one_le_integral_storeyPi0 :
     (fun i _ => isValidPValue_P i) (t := 1 / 3) (by norm_num) (by norm_num)
   simpa using h
 
+/-- The same bound for the `+ 1` estimator (`le_integral_storeyPi0Plus1`). -/
+theorem one_le_integral_storeyPi0Plus1 :
+    (1 : ℝ) ≤ ∫ ω, storeyPi0Plus1 (1 / 3) (fun i => P i ω) ∂μ := by
+  have h := le_integral_storeyPi0Plus1 (μ := μ) measurable_P (H0 := Finset.univ)
+    (fun i _ => isValidPValue_P i) (lam := 1 / 3) (by norm_num) (by norm_num)
+  simpa using h
+
 /-- The bridge between the two estimators on a concrete vector: with `lam = 1/9`, `pa` has one
 p-value above `lam`, so `π̂₀ = 1 / ((8/9) · 2) = 9/16` without the `+ 1` and `9/8` with it. -/
 example : TwoGroupsTesting.storeyPi0 (1 / 9) pa = 9 / 16 := by
