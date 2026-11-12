@@ -31,8 +31,42 @@ statement instantiates. -/
 example (v b : ℝ) (hv : 0 ≤ v) (hb : 0 ≤ b) :
     v * (fun _ : ℝ => (1 : ℝ)) b - myersonPayment (fun _ : ℝ => (1 : ℝ)) b ≤
       v * (fun _ : ℝ => (1 : ℝ)) v - myersonPayment (fun _ : ℝ => (1 : ℝ)) v :=
-  myerson_payment_dsic (by intro a b hab; exact le_refl 1)
-    (fun a b => by simp [intervalIntegral.integral_const]) v hv b hb
+  myerson_payment_dsic (by intro a ha b hb hab; exact le_refl 1) v hv b hb
 
 /-- Normalization at a concrete allocation. -/
 example : myersonPayment (fun z : ℝ => z) 0 = 0 := myerson_payment_zero
+
+/-- Identity allocation on admissible reports, with unrelated negative values. -/
+private noncomputable def nonnegativeAllocation (z : ℝ) : ℝ :=
+  if 0 ≤ z then z else 1
+
+private theorem nonnegativeAllocation_monotone :
+    MonotoneOn nonnegativeAllocation (Set.Ici 0) := by
+  intro a ha b hb hab
+  simpa [nonnegativeAllocation, Set.mem_Ici.mp ha, Set.mem_Ici.mp hb] using hab
+
+/-- The witness fails the old global monotonicity requirement. -/
+example : ¬ Monotone nonnegativeAllocation := by
+  intro h
+  have hle := h (a := -1) (b := 0) (by norm_num)
+  norm_num [nonnegativeAllocation] at hle
+
+/-- Truthfulness needs only monotonicity on admissible reports. -/
+example (v b : ℝ) (hv : 0 ≤ v) (hb : 0 ≤ b) :
+    v * nonnegativeAllocation b - myersonPayment nonnegativeAllocation b ≤
+      v * nonnegativeAllocation v - myersonPayment nonnegativeAllocation v :=
+  myerson_payment_dsic nonnegativeAllocation_monotone v hv b hb
+
+/-- Underreporting at the zero boundary. -/
+example :
+    2 * nonnegativeAllocation 0 - myersonPayment nonnegativeAllocation 0 ≤
+      2 * nonnegativeAllocation 2 - myersonPayment nonnegativeAllocation 2 :=
+  myerson_payment_dsic nonnegativeAllocation_monotone 2 (by norm_num)
+    0 (by norm_num)
+
+/-- Overreporting with zero valuation. -/
+example :
+    0 * nonnegativeAllocation 2 - myersonPayment nonnegativeAllocation 2 ≤
+      0 * nonnegativeAllocation 0 - myersonPayment nonnegativeAllocation 0 :=
+  myerson_payment_dsic nonnegativeAllocation_monotone 0 (by norm_num)
+    2 (by norm_num)

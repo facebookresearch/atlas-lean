@@ -15,7 +15,7 @@ public import Mathlib.Data.Real.Basic
 
 /-! # Myerson's payment identity
 
-For a monotone allocation rule `x`, the payment
+For an allocation rule `x` monotone on nonnegative reports, the payment
 `p z = z * x z - ∫₀ᶻ x` makes truthful bidding dominant (DSIC), and
 it is normalized: `p 0 = 0`. This module proves only the
 payment-identity-to-DSIC direction of roadmap package DPA-46 of the
@@ -35,19 +35,24 @@ noncomputable def myersonPayment (x : ℝ → ℝ) (z : ℝ) : ℝ :=
   z * x z - ∫ t in (0:ℝ)..z, x t
 
 /-- DSIC of the Myerson payment: if the allocation `x` is monotone
-nondecreasing and integrable on compact intervals, then a bidder
+nondecreasing on nonnegative reports, then a bidder
 with nonnegative valuation `v` maximizes `v * x b - myersonPayment x b`
 over reports `b ≥ 0` at the truthful report `b = v`. -/
-theorem myerson_payment_dsic {x : ℝ → ℝ} (hmono : Monotone x)
-    (hint : ∀ a b : ℝ, IntervalIntegrable x MeasureTheory.volume a b)
+theorem myerson_payment_dsic {x : ℝ → ℝ}
+    (hmono : MonotoneOn x (Set.Ici 0))
     (v : ℝ) (hv : 0 ≤ v) (b : ℝ) (hb : 0 ≤ b) :
     v * x b - myersonPayment x b ≤ v * x v - myersonPayment x v := by
   unfold myersonPayment
+  have hint (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
+      IntervalIntegrable x MeasureTheory.volume a b :=
+    (hmono.mono (fun _ ht => (le_min ha hb).trans ht.1)).intervalIntegrable
   rcases le_total b v with h | h
-  · have h_add := intervalIntegral.integral_add_adjacent_intervals (hint 0 b) (hint b v)
-    have h_le : ∀ t ∈ Set.Icc b v, x b ≤ x t := fun t ht => hmono (Set.mem_Icc.mp ht).1
+  · have h_add := intervalIntegral.integral_add_adjacent_intervals
+      (hint 0 b le_rfl hb) (hint b v hb hv)
+    have h_le : ∀ t ∈ Set.Icc b v, x b ≤ x t := fun t ht =>
+      hmono hb (hb.trans ht.1) ht.1
     have h_int : (∫ t in b..v, x b) ≤ ∫ t in b..v, x t :=
-      intervalIntegral.integral_mono_on h intervalIntegrable_const (hint b v) h_le
+      intervalIntegral.integral_mono_on h intervalIntegrable_const (hint b v hb hv) h_le
     rw [intervalIntegral.integral_const] at h_int
     rw [smul_eq_mul] at h_int
     have heq1 : v * x b - (b * x b - ∫ t in (0:ℝ)..b, x t)
@@ -56,10 +61,12 @@ theorem myerson_payment_dsic {x : ℝ → ℝ} (hmono : Monotone x)
         = ∫ t in (0:ℝ)..v, x t := by ring
     rw [heq1, heq2]
     linarith
-  · have h_add := intervalIntegral.integral_add_adjacent_intervals (hint 0 v) (hint v b)
-    have h_le : ∀ t ∈ Set.Icc v b, x t ≤ x b := fun t ht => hmono (Set.mem_Icc.mp ht).2
+  · have h_add := intervalIntegral.integral_add_adjacent_intervals
+      (hint 0 v le_rfl hv) (hint v b hv hb)
+    have h_le : ∀ t ∈ Set.Icc v b, x t ≤ x b := fun t ht =>
+      hmono (hv.trans ht.1) hb ht.2
     have h_int : (∫ t in v..b, x t) ≤ ∫ t in v..b, x b :=
-      intervalIntegral.integral_mono_on h (hint v b) intervalIntegrable_const h_le
+      intervalIntegral.integral_mono_on h (hint v b hv hb) intervalIntegrable_const h_le
     rw [intervalIntegral.integral_const] at h_int
     rw [smul_eq_mul] at h_int
     have heq1 : v * x b - (b * x b - ∫ t in (0:ℝ)..b, x t)
