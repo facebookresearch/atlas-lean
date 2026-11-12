@@ -47,7 +47,7 @@ variable `X` with finitely many values and an integrable real `f`,
 `E[f] = ∑ₓ P(X = x) · E[f | X = x]`, where `E[f | X = x]` is the integral against the
 elementary conditional measure `μ[|X ← x]` (zero when `P(X = x) = 0`). -/
 theorem integral_eq_sum_measureReal_mul_integral_cond_fiber {Ω α : Type*} [MeasurableSpace Ω]
-    [Fintype α] [MeasurableSpace α] [DiscreteMeasurableSpace α] {μ : Measure Ω}
+    [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α] {μ : Measure Ω}
     [IsFiniteMeasure μ] {X : Ω → α} (hX : Measurable X) {f : Ω → ℝ} (hf : Integrable f μ) :
     ∫ ω, f ω ∂μ = ∑ x, μ.real (X ⁻¹' {x}) * ∫ ω, f ω ∂μ[|X ← x] := by
   have hmeas : ∀ x : α, MeasurableSet (X ⁻¹' {x}) :=

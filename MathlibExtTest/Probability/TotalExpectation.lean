@@ -22,6 +22,14 @@ namespace MathlibExtTest.Probability.TotalExpectation
 
 open _root_.MathlibExt.Probability.TotalExpectation
 
+/-- The public fibre identity takes the standard singleton-measurability instance. -/
+example :
+    ∀ {Ω α : Type*} [MeasurableSpace Ω] [Fintype α] [MeasurableSpace α]
+      [MeasurableSingletonClass α] {μ : Measure Ω} [IsFiniteMeasure μ] {X : Ω → α},
+      Measurable X → ∀ {f : Ω → ℝ}, Integrable f μ →
+      ∫ ω, f ω ∂μ = ∑ x, μ.real (X ⁻¹' {x}) * ∫ ω, f ω ∂μ[|X ← x] :=
+  @integral_eq_sum_measureReal_mul_integral_cond_fiber
+
 /-! ## Test section: two-cell singleton partition of `Fin 2` with counting measure.
 
 Total integral `4`, cell masses `1, 1`, conditional means `1, 3`.
