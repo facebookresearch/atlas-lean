@@ -112,9 +112,9 @@ theorem kde_bias_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
         have h2 : ε * (M + 1) = ε * M + ε := by ring
         linarith [hε, h2]
 
-/-- KDE expectation converges to the density at a continuity point, by
+/-- KDE expectation converges to the density value at a continuity point, by
 `integral_kde_eq` plus the smoothing limit above. -/
-theorem kde_expectation_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
+theorem kde_expectation_tendsto {K f : ℝ → ℝ} {t B : ℝ}
     (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
     (hK_meas : Measurable K) (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
     (hK_bdd : ∃ C, ∀ u, |K u| ≤ C) (hK_supp : ∃ R, ∀ u, R < |u| → K u = 0)

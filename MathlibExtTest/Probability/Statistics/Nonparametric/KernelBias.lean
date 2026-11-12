@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Nonparametric.KernelBias
+public import MathlibExt.Probability.Statistics.Nonparametric.KernelDensity
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -163,3 +164,17 @@ example {f : ℝ → ℝ} {t : ℝ} (hft : f t ≠ 0)
   rw [hzero] at hlim
   have heq : f t = 0 := tendsto_nhds_unique hlim tendsto_const_nhds
   exact hft heq
+
+/-- Focused case: the expectation corollary fires with the same hypotheses. -/
+example {K f : ℝ → ℝ} {t B : ℝ}
+    (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
+    (hK_meas : Measurable K) (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
+    (hK_bdd : ∃ C, ∀ u, |K u| ≤ C) (hK_supp : ∃ R, ∀ u, R < |u| → K u = 0)
+    (hcont : ContinuousAt f t)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {n : ℕ} (hn : 0 < n) {X : Fin n → Ω → ℝ}
+    (hX : ∀ i, HasLaw (X i) (volume.withDensity fun x => ENNReal.ofReal (f x)) P) :
+    Tendsto (fun h : ℝ => ∫ ω, ProbabilityTheory.kde K h (fun i => X i ω) t ∂P)
+      (𝓝[>] (0 : ℝ)) (𝓝 (f t)) :=
+  ProbabilityTheory.kde_expectation_tendsto hf_meas hf_nonneg hf_le hK_meas hK_int
+    hK_one hK_bdd hK_supp hcont hn hX
