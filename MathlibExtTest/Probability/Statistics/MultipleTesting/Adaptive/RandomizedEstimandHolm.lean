@@ -175,10 +175,10 @@ example (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
 
 /-! ### Realized Holm rejections on the trial -/
 
-/-- When coins `2` and `3` both show `true`, the p-values are `(1/2, 1/100)`. At `α = 1/20` Holm
-rejects only the non-null endpoint `1` (its p-value `1/100 ≤ α/2`; then `1/2 > α`), so no causal
-null is rejected. -/
-example : holmRejections (1 / 20) (![1 / 2, 1 / 100] : Fin 2 → ℝ) = {1} := by
+/-- At `α = 1/20` Holm rejects only the second of the p-values `(1/2, 1/100)`: `1/100 ≤ α/2`, then
+`1/2 > α`. -/
+lemma holmRejections_half_hundredth :
+    holmRejections (1 / 20) (![1 / 2, 1 / 100] : Fin 2 → ℝ) = {1} := by
   have hnb : ∀ t : ℝ, 1 / 100 ≤ t → t < 1 / 2 →
       numBelow (![1 / 2, 1 / 100] : Fin 2 → ℝ) t = 1 := fun t h1 h2 => by
     rw [numBelow, show (Finset.univ.filter fun i => (![1 / 2, 1 / 100] : Fin 2 → ℝ) i ≤ t) = {1}
@@ -200,6 +200,15 @@ example : holmRejections (1 / 20) (![1 / 2, 1 / 100] : Fin 2 → ℝ) = {1} := b
   rw [holmRejections, hidx]
   ext i
   fin_cases i <;> norm_num
+
+/-- When coins `2` and `3` both show `true`, the trial's p-values are `(1/2, 1/100)`, and at
+`α = 1/20` Holm rejects only the non-null endpoint `1`, so no causal null is rejected. -/
+example (ω : Fin 4 → Bool) (h2 : ω 2 = true) (h3 : ω 3 = true) :
+    holmRejections (1 / 20) (fun i => pval i ω) = {1} := by
+  have hp : (fun i => pval i ω) = (![1 / 2, 1 / 100] : Fin 2 → ℝ) := by
+    funext i
+    fin_cases i <;> simp [pval, pv0, pv1, h2, h3]
+  rw [hp, holmRejections_half_hundredth]
 
 /-! ### Positivity failure -/
 
