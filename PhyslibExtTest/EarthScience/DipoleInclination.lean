@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S09DipoleInclination
+import PhyslibExt.EarthScience.DipoleInclination
 
 /-!
 # Dipole inclination checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S09DipoleInclination`:
+Concrete consumers of `PhyslibExt.EarthScience.DipoleInclination`:
 `θ = π / 6` (latitude `π / 3`, `tan I = 2√3`), `C = 1`, `r = 1`, plus
 the equator and pole branches.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S09DipoleInclination`
+- `PhyslibExt.EarthScience.DipoleInclination`
 -/
 
 /-- Numeric inclination: `θ = π / 6`, `C = 1`, `r = 1` gives
