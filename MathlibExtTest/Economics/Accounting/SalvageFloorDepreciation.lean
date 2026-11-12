@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Accounting.SalvageFloorDepreciation
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
@@ -51,6 +52,15 @@ theorem test_constantCharge_floor_all :
 theorem test_constantCharge_step_le :
     ∀ n : ℕ, floorBookValue 1000 100 (fun _ _ => 300) (n + 1) ≤
       floorBookValue 1000 100 (fun _ _ => 300) n := by
-  exact fun n => floorBookValue_succ_le (by norm_num) (fun _ _ => by norm_num) n
+  intro n
+  refine floorBookValue_succ_le (by norm_num) (fun _ _ _ => by norm_num) n
+
+/-- Double-declining balance from 1000 with salvage 200 never increases, by
+`floorBookValue_succ_le` (the charge `v / 2` is nonnegative at every value at or above salvage). -/
+theorem test_doubleDeclining_step_le :
+    ∀ n : ℕ, floorBookValue 1000 200 (fun _ v => v / 2) (n + 1) ≤
+      floorBookValue 1000 200 (fun _ v => v / 2) n := by
+  intro n
+  refine floorBookValue_succ_le (by norm_num) (fun _ v hv => by linarith) n
 
 end MathlibExtTest.Economics.Accounting.SalvageFloorDepreciation

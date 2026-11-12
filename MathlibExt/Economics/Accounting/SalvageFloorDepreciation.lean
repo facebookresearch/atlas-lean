@@ -51,11 +51,16 @@ theorem salvage_le_floorBookValue {cost salvage : ℝ} (charge : ℕ → ℝ →
   | zero => exact h0
   | succ n _ => exact le_max_left _ _
 
-/-- With nonnegative charges (and a start at or above salvage), book value never increases. -/
+/-- With charges that are nonnegative at every book value at or above salvage (and a start at
+or above salvage), book value never increases. This covers declining-balance rules such as
+`charge n v = r * v` with `0 ≤ r` and `0 ≤ salvage`, whose charge is negative only below zero. -/
 theorem floorBookValue_succ_le {cost salvage : ℝ} {charge : ℕ → ℝ → ℝ}
-    (h0 : salvage ≤ cost) (hcharge : ∀ n v, 0 ≤ charge n v) (n : ℕ) :
+    (h0 : salvage ≤ cost) (hcharge : ∀ n v, salvage ≤ v → 0 ≤ charge n v) (n : ℕ) :
     floorBookValue cost salvage charge (n + 1) ≤ floorBookValue cost salvage charge n := by
+  have hv : salvage ≤ floorBookValue cost salvage charge n :=
+    salvage_le_floorBookValue charge h0 n
+  have hc : 0 ≤ charge n (floorBookValue cost salvage charge n) := hcharge n _ hv
   simp only [floorBookValue]
-  exact max_le (salvage_le_floorBookValue charge h0 n) (sub_le_self _ (hcharge n _))
+  exact max_le hv (sub_le_self _ hc)
 
 end MathlibExt.Economics.Accounting
