@@ -114,9 +114,8 @@ theorem gd_linear_rate {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ
     {f : E → ℝ} {g : E → E} {L μ : ℝ} (hμ : 0 < μ) (hμL : μ ≤ L)
     (hsmooth : ∀ x y, f y ≤ f x + @inner ℝ E _ (g x) (y - x) + (L / 2) * ‖y - x‖ ^ 2)
     (hstrong : ∀ x y, f x + @inner ℝ E _ (g x) (y - x) + (μ / 2) * ‖y - x‖ ^ 2 ≤ f y)
-    (xstar : E) (hmin : ∀ y, f xstar ≤ f y) (hgstar : g xstar = 0) (x0 : E) (k : ℕ) :
+    (xstar : E) (hmin : ∀ y, f xstar ≤ f y) (x0 : E) (k : ℕ) :
     f (gdIter g L x0 k) - f xstar ≤ (1 - μ / L) ^ k * (f x0 - f xstar) := by
-  have _hg := hgstar
   have _hm := hmin
   have hL : 0 < L := lt_of_lt_of_le hμ hμL
   have hρ : (0 : ℝ) ≤ 1 - μ / L := by

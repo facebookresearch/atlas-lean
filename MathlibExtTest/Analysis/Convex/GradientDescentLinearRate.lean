@@ -20,6 +20,6 @@ example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {f : E → ℝ} {g : E → E} {L μ : ℝ} (hμ : 0 < μ) (hμL : μ ≤ L)
     (hsmooth : ∀ x y, f y ≤ f x + @inner ℝ E _ (g x) (y - x) + (L / 2) * ‖y - x‖ ^ 2)
     (hstrong : ∀ x y, f x + @inner ℝ E _ (g x) (y - x) + (μ / 2) * ‖y - x‖ ^ 2 ≤ f y)
-    (xstar : E) (hmin : ∀ y, f xstar ≤ f y) (hgstar : g xstar = 0) (x0 : E) :
+    (xstar : E) (hmin : ∀ y, f xstar ≤ f y) (x0 : E) :
     f (gdIter g L x0 0) - f xstar ≤ (1 - μ / L) ^ 0 * (f x0 - f xstar) :=
-  gd_linear_rate hμ hμL hsmooth hstrong xstar hmin hgstar x0 0
+  gd_linear_rate hμ hμL hsmooth hstrong xstar hmin x0 0
