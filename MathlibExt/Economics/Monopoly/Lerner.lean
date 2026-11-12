@@ -39,8 +39,10 @@ interior local maximum `q > 0` where `P` and `C` are differentiable, Fermat's th
 
 namespace MathlibExt.Economics.Monopoly
 
-/-- Price elasticity of demand at output `q`, computed from the inverse demand `P` with
-derivative `P'` at `q`: `ε = (dq/dp) (p/q) = P(q) / (q P'(q))`. -/
+/-- Price elasticity of demand at output `q` in reciprocal-slope form, from the inverse demand `P`
+and a slope `P'`: `ε = P(q) / (q P')`. The definition imposes no relation between `P'` and `P`;
+`lerner_of_isLocalMax` requires `HasDerivAt P P' q`. When, in addition, demand is locally
+invertible near `q` (`P' ≠ 0`), this is the usual `(dq/dp) (p/q)`. -/
 noncomputable def priceElasticity (P : ℝ → ℝ) (P' q : ℝ) : ℝ :=
   P q / (q * P')
 
