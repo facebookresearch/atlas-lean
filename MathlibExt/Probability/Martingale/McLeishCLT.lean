@@ -13,6 +13,7 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import MathlibExt.Probability.LindebergFeller
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 
 import Mathlib.MeasureTheory.Measure.LevyConvergence
 import Mathlib.Probability.CramerWold
@@ -75,9 +76,18 @@ applies the one-dimensional theorem to the weighted arrays `a n k X n k`,
   `A` are arbitrary.
 * The finite-dimensional theorems take the limit process `Z` as a hypothesis, specified by its
   Gaussian finite-dimensional laws (`hZ`); Brownian motion, or `W ∘ A`, is not constructed here.
-* Tightness and the functional CLT in `D[0,1]` are not proved here; the finite-dimensional
-  statement is the input `hfdd` of `tendstoInDistribution_skorokhod_of_tight_of_fdd` in
-  `MathlibExt.Probability.Martingale.FunctionalCLT`.
+* Tightness and the functional CLT in `D[0,1]` are not proved here. The finite-dimensional
+  statement for the step sums `∑_{i < ⌊n t⌋} ξ n i` is the hypothesis `hT81` of
+  `tendstoInDistribution_arrayStepProcess` in
+  `MathlibExt.Probability.Martingale.MartingaleTightness` (roadmap task T82), which does the
+  step-to-polygon Slutsky step itself; `tendstoInDistribution_fdd_martingaleDifference_floor`
+  concludes `hT81` verbatim. (It is not the input `hfdd` of
+  `tendstoInDistribution_skorokhod_of_tight_of_fdd`, which concerns the continuous processes.)
+* Composing this file with T82 leaves two gaps, both explicit hypotheses of
+  `tendstoInDistribution_fdd_martingaleDifference_floor`: T82 assumes the predictable quadratic
+  variation `∑ E[ξ n j² | 𝓕 n j] → t`, while this file needs the realized `∑ ξ n j² → t`
+  alongside it; and T82 assumes `AEMeasurable Zc`, while this file needs `Measurable Zc` for
+  the limit `Zc : Ω' → C([0,1])`.
 
 ## Sources
 
@@ -1439,6 +1449,56 @@ theorem tendstoInDistribution_fdd_martingale_lindeberg [IsProbabilityMeasure μ]
     ((martingale_increment (hmart n) k).1.mono ((F n).le _)).measurable
   obtain ⟨ha, hb⟩ := mcLeish_conditions_of_lindeberg X hXm hint2 hL
   exact tendstoInDistribution_fdd_martingale_mcLeish X F id hmart ha hb N hN hNn A hqv Z hZm hZ I
+
+/-- **Finite-dimensional convergence of the step sums on `[0,1]`**, in the form of the
+hypothesis `hT81` of the martingale functional CLT `tendstoInDistribution_arrayStepProcess`
+(`MathlibExt.Probability.Martingale.MartingaleTightness`, roadmap task T82).
+
+Row `n` of `ξ` is a square-integrable martingale difference sequence for `𝓕 n` (the array
+hypotheses of T82) satisfying `LindebergConditionTriangular`. Three inputs that T82 does not
+assume are explicit hypotheses here:
+* `hRQV`: the realized quadratic variation `∑_{j < ⌊n t⌋} ξ n j²` tends to `t` in probability
+  (T82 assumes the predictable form `∑_{j < ⌊n t⌋} E[ξ n j² | 𝓕 n j] → t`);
+* `hZm`: `Z` is measurable (T82 assumes only `AEMeasurable Z P'`);
+* `hZ`: `Z` has the centered Gaussian finite-dimensional laws of Brownian motion, covariance
+  `min s u`.
+
+Then for every finite set of times `I ⊆ [0,1]`,
+`(∑_{i < ⌊n t⌋} ξ n i)_{t ∈ I} → (Z t)_{t ∈ I}` in distribution. This is
+`tendstoInDistribution_fdd_martingale_lindeberg` with `N n t = ⌊n t⌋` and `A t = t`. -/
+theorem tendstoInDistribution_fdd_martingaleDifference_floor [IsProbabilityMeasure μ]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {𝓕 : ℕ → Filtration ℕ m0} {ξ : ℕ → ℕ → Ω → ℝ}
+    (hξ : ∀ n i, StronglyMeasurable[𝓕 n (i + 1)] (ξ n i))
+    (hmds : ∀ n i, μ[ξ n i | 𝓕 n i] =ᵐ[μ] 0) (hL2 : ∀ n i, MemLp (ξ n i) 2 μ)
+    (hLind : LindebergConditionTriangular ξ μ)
+    (hRQV : ∀ t : Set.Icc (0 : ℝ) 1, TendstoInMeasure μ
+      (fun (n : ℕ) ω => ∑ j ∈ Finset.range ⌊(n : ℝ) * t.1⌋₊, ξ n j ω ^ 2) atTop (fun _ => t.1))
+    (Z : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ)) (hZm : Measurable Z)
+    (hZ : ∀ (I : Finset (Set.Icc (0 : ℝ) 1)) (c : I → ℝ),
+      P'.map (fun ω => ∑ s : I, c s * Z ω s) = gaussianReal 0
+        (∑ s : I, ∑ u : I, c s * c u * (min (s : Set.Icc (0 : ℝ) 1) u).1).toNNReal) :
+    ∀ I : Finset (Set.Icc (0 : ℝ) 1), TendstoInDistribution
+      (fun (n : ℕ) ω => I.restrict (fun t => ∑ i ∈ Finset.range ⌊(n : ℝ) * t.1⌋₊, ξ n i ω))
+      atTop (fun ω => I.restrict (fun t => Z ω t)) (fun _ => μ) P' := by
+  intro I
+  have hmart : ∀ n, Martingale (fun k ω => ∑ j ∈ range k, ξ n j ω) (𝓕 n) μ := by
+    intro n
+    refine martingale_of_condExp_sub_eq_zero_nat (fun k => ?_) (fun k => ?_) fun k => ?_
+    · exact Finset.stronglyMeasurable_fun_sum _ fun j hj =>
+        (hξ n j).mono ((𝓕 n).mono (Nat.succ_le_of_lt (mem_range.1 hj)))
+    · exact integrable_finsetSum _ fun j _ => (hL2 n j).integrable one_le_two
+    · have hd : ((fun ω => ∑ j ∈ range (k + 1), ξ n j ω) - fun ω => ∑ j ∈ range k, ξ n j ω)
+          = ξ n k := by funext ω; simp [sum_range_succ]
+      rw [hd]; exact hmds n k
+  have hN : ∀ n : ℕ, Monotone (fun t : Set.Icc (0 : ℝ) 1 => ⌊(n : ℝ) * t.1⌋₊) := fun n s u hsu =>
+    Nat.floor_mono (mul_le_mul_of_nonneg_left (Subtype.mono_coe _ hsu) (Nat.cast_nonneg (α := ℝ) n))
+  have hNn : ∀ (n : ℕ) (t : Set.Icc (0 : ℝ) 1), ⌊(n : ℝ) * t.1⌋₊ ≤ n := fun n t =>
+    Nat.floor_le_of_le (by nlinarith [t.2.2, (Nat.cast_nonneg n : (0 : ℝ) ≤ n)])
+  exact tendstoInDistribution_fdd_martingale_lindeberg (ι := Set.Icc (0 : ℝ) 1) ξ 𝓕 hmart
+    (fun n k _ => (hL2 n k).integrable_sq) hLind (fun n t => ⌊(n : ℝ) * t.1⌋₊) hN hNn
+    (fun t => t.1) hRQV (fun s ω => Z ω s)
+    (fun s => (continuous_eval_const s).measurable.comp hZm) hZ I
 
 end Main
 

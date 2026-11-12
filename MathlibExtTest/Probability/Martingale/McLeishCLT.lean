@@ -291,8 +291,9 @@ lemma sum_sq_rademacherArray_range (n m : ℕ) (ω : ℕ → Bool) :
 `N n s = ⌊n s⌋`, the quadratic variation at time `s` is `⌊n s⌋ / n → s`, so for any process `Z`
 with the Gaussian finite-dimensional laws of Brownian motion (covariance `min s u`), the
 finite-dimensional distributions of the rescaled walk converge to those of `Z`. All hypotheses
-except the existence of `Z` are discharged; this is the input shape of the `C → D` transfer
-theorem `tendstoInDistribution_skorokhod_of_tight_of_fdd`. -/
+except the existence of `Z` are discharged. This is the step-sum shape of the hypothesis `hT81`
+of T82's `tendstoInDistribution_arrayStepProcess`, not the input `hfdd` of
+`tendstoInDistribution_skorokhod_of_tight_of_fdd` (which concerns continuous processes). -/
 example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
     (Z : Set.Icc (0 : ℝ) 1 → Ω' → ℝ) (hZm : ∀ s, Measurable (Z s))
     (hZ : ∀ (J : Finset (Set.Icc (0 : ℝ) 1)) (c : J → ℝ),
@@ -408,6 +409,58 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
       have h := (tendsto_nat_floor_mul_div_atTop (R := ℝ) s.2.1).comp tendsto_natCast_atTop_atTop
       refine h.congr fun n => ?_
       simp only [Function.comp_apply, mul_comm (s : ℝ)]
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [(Metric.tendsto_nhds.1 hlim) ε hε] with n hn
+    symm
+    convert measure_empty (μ := coins)
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le,
+      sum_sq_rademacherArray_range]
+    exact hn
+
+/-! ### The `hT81` form on `[0,1]` -/
+
+/-- The Rademacher walk through `tendstoInDistribution_fdd_martingaleDifference_floor`, whose
+conclusion is the hypothesis `hT81` of T82's `tendstoInDistribution_arrayStepProcess`. The array
+hypotheses, the Lindeberg condition and the realized quadratic variation `⌊n t⌋ / n → t` are all
+discharged; only the measurable limit `Z : Ω' → C([0,1])` with Brownian finite-dimensional laws
+is assumed. -/
+example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    (Z : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ)) (hZm : Measurable Z)
+    (hZ : ∀ (I : Finset (Set.Icc (0 : ℝ) 1)) (c : I → ℝ),
+      P'.map (fun ω => ∑ s : I, c s * Z ω s) = gaussianReal 0
+        (∑ s : I, ∑ u : I, c s * c u * (min (s : Set.Icc (0 : ℝ) 1) u).1).toNNReal) :
+    ∀ I : Finset (Set.Icc (0 : ℝ) 1), TendstoInDistribution
+      (fun (n : ℕ) ω => I.restrict (fun t => ∑ i ∈ Finset.range ⌊(n : ℝ) * t.1⌋₊,
+        rademacherArray n i ω))
+      atTop (fun ω => I.restrict (fun t => Z ω t)) (fun _ => coins) P' := by
+  refine tendstoInDistribution_fdd_martingaleDifference_floor (𝓕 := fun _ => coinFiltration)
+    (fun n i => ?_) (fun n i => ?_) (fun n i => ?_) lindeberg_rademacherArray (fun t => ?_)
+    Z hZm hZ
+  · exact ((Filtration.stronglyAdapted_natural stronglyMeasurable_ξ (i + 1)).measurable.div_const
+      _).stronglyMeasurable
+  · have hd : rademacherArray n i = (Real.sqrt n)⁻¹ • ξ (i + 1) := by
+      funext ω; simp [rademacherArray, div_eq_inv_mul]
+    rw [hd]
+    filter_upwards [condExp_smul (Real.sqrt n)⁻¹ (ξ (i + 1)) (coinFiltration i),
+      iIndepFun_ξ.condExp_natural_ae_eq_of_lt stronglyMeasurable_ξ (Nat.lt_succ_self i)]
+      with ω h1 h2
+    rw [h1]
+    simp only [Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
+    rw [show coinFiltration = Filtration.natural ξ stronglyMeasurable_ξ from rfl, h2,
+      integral_ξ, mul_zero]
+  · refine MemLp.of_bound
+      ((stronglyMeasurable_ξ (i + 1)).measurable.div_const _).aestronglyMeasurable 1
+      (ae_of_all _ fun ω => ?_)
+    rw [Real.norm_eq_abs, abs_rademacherArray]
+    rcases Nat.eq_zero_or_pos n with h | h
+    · simp [h]
+    · exact div_le_one_of_le₀ (Real.one_le_sqrt.2 (by exact_mod_cast h)) (Real.sqrt_nonneg _)
+  · refine tendstoInMeasure_iff_dist.2 fun ε hε => ?_
+    have hlim : Tendsto (fun n : ℕ => (⌊(n : ℝ) * t.1⌋₊ : ℝ) / n) atTop (𝓝 t.1) := by
+      have h := (tendsto_nat_floor_mul_div_atTop (R := ℝ) t.2.1).comp tendsto_natCast_atTop_atTop
+      refine h.congr fun n => ?_
+      simp only [Function.comp_apply, mul_comm t.1]
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [(Metric.tendsto_nhds.1 hlim) ε hε] with n hn
     symm
