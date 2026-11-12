@@ -52,9 +52,9 @@ factor estimation, multi-gene sharing, pseudotime and RNA velocity are out of sc
   `tendsto_posteriorMean_priorVariance_zero`: full shrinkage to the prior mean as it `→ 0`.
 * `mom_moment_equations`, `eq_mom_of_moment_equations`: the moment estimates are the unique
   positive solution of the moment equations; `mom_marginal_moments`: Fisher consistency.
-* `ae_tendsto_mom`: **strong consistency.** For i.i.d. counts with the marginal moments, the
-  moment estimates converge a.s. to `(a, b)` and the empirical-Bayes posterior mean to the
-  oracle posterior mean.
+* `ae_tendsto_mom`: **strong consistency.** For pairwise independent, identically distributed
+  real random variables (e.g. counts) with the marginal moments, the moment estimates converge
+  a.s. to `(a, b)` and the empirical-Bayes posterior mean to the oracle posterior mean.
 
 ## Implementation notes
 
@@ -223,7 +223,9 @@ theorem tendsto_shrinkageWeight_zero {s : ℝ} (hs : 0 < s) :
 
 /-- **No-shrinkage limit, posterior mean.** Parametrize the Gamma prior by its mean `m` and
 variance `v` (shape `m² / v`, rate `m / v`). As the prior variance `v → ∞` the posterior mean
-tends to the per-cell estimate `k / s`. -/
+tends to the per-cell estimate `k / s`. The limit holds for every real `m` as an algebraic
+statement, but `Gamma(m² / v, m / v)` is a prior (and `posteriorMean` a posterior mean) only for
+`0 < m`. -/
 theorem tendsto_posteriorMean_priorVariance_atTop (m : ℝ) {s : ℝ} (hs : 0 < s) (k : ℕ) :
     Tendsto (fun v => posteriorMean (m ^ 2 / v) (m / v) s k) atTop (𝓝 (k / s)) := by
   have h1 : Tendsto (fun v : ℝ => m ^ 2 / v) atTop (𝓝 0) := tendsto_const_nhds.div_atTop tendsto_id
@@ -348,11 +350,13 @@ theorem tendsto_mom_of_tendsto {ι : Type*} {l : Filter ι} {Mn Qn : ι → ℝ}
   exact (hA.add tendsto_const_nhds).div (hB.add tendsto_const_nhds) (by linarith)
 
 /-- **Strong consistency of the empirical-Bayes hyperparameters.** Let `X₀, X₁, …` be pairwise
-independent, identically distributed counts with finite second moment whose mean and second
-moment are those of the hierarchy's marginal law `NB(a, s a / b)`: `E X₀ = s a / b` and
-`E X₀² = μ + μ² / a + μ²` with `μ = s a / b`. Then almost surely the moment estimates computed
-from the first `n` counts converge to `(a, b)`, and for every count `k` the empirical-Bayes
-posterior mean converges to the oracle posterior mean `(a + k) / (b + s)`.
+independent, identically distributed real random variables (e.g. counts) with finite second
+moment (`X₀` a.e.-strongly measurable with `X₀²` integrable, which gives `X₀` integrable on the
+probability space) whose mean and second moment are those of the hierarchy's marginal law
+`NB(a, s a / b)`: `E X₀ = s a / b` and `E X₀² = μ + μ² / a + μ²` with `μ = s a / b`. Then almost
+surely the moment estimates computed from the first `n` observations converge to `(a, b)`, and
+for every count `k` the empirical-Bayes posterior mean converges to the oracle posterior mean
+`(a + k) / (b + s)`.
 
 The moment hypotheses are where the count model enters: they are exactly the pmf-level facts
 `ProbabilityTheory.hasSum_mul_negBinomialReal` and `ProbabilityTheory.hasSum_sq_negBinomialReal`
@@ -360,7 +364,8 @@ for `marginalLik a b s = NB(a, s a / b)` (`marginalLik_eq_negBinomialReal`), tra
 random variable whose law is that pmf. -/
 theorem ae_tendsto_mom {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {X : ℕ → Ω → ℝ} {a b s : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hs : 0 < s) (hint : Integrable (X 0) μ) (hint2 : Integrable (fun ω => X 0 ω ^ 2) μ)
+    (hs : 0 < s) (hmeas0 : AEStronglyMeasurable (X 0) μ)
+    (hint2 : Integrable (fun ω => X 0 ω ^ 2) μ)
     (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) μ μ)
     (hmean : μ[X 0] = s * a / b)
     (hsq : μ[fun ω => X 0 ω ^ 2] = s * a / b + (s * a / b) ^ 2 / a + (s * a / b) ^ 2) :
@@ -368,6 +373,8 @@ theorem ae_tendsto_mom {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
       Tendsto (fun n => momRate s (sampleMean X n ω) (sampleVar X n ω)) atTop (𝓝 b) ∧
       ∀ k : ℕ, Tendsto (fun n => ebPosteriorMean s (sampleMean X n ω) (sampleVar X n ω) k)
         atTop (𝓝 (posteriorMean a b s k)) := by
+  have hint : Integrable (X 0) μ :=
+    ((memLp_two_iff_integrable_sq hmeas0).2 hint2).integrable one_le_two
   have h1 := strong_law_ae X hint hindep hident
   have hmeas : Measurable fun x : ℝ => x ^ 2 := measurable_id.pow_const 2
   have h2 := strong_law_ae (fun i ω => X i ω ^ 2) hint2
