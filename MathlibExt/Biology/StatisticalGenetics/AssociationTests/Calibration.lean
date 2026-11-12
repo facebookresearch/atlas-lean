@@ -48,9 +48,10 @@ test is strictly conservative there.
 ## What is *not* claimed
 
 There is no universal GWAS calibration statement. The conclusions above hold only under the
-stated per-variant null and its exact finite-sample regime. They fail when that null fails, for
-instance under population stratification or a Hardy–Weinberg violation, which make `X` and `Y`
-non-binomial or give the groups different frequencies (the test file has a wrong-null example).
+stated per-variant null and its exact finite-sample regime. They are not guaranteed when that
+null fails, and can fail, for instance under population stratification or a Hardy–Weinberg
+violation, which make `X` and `Y` non-binomial or give the groups different frequencies (the test
+file has a wrong-null example).
 
 Genome-wide validity is a separate matter. `GenomeWideAssumptions` lists exactly what a
 downstream Benjamini–Hochberg-type pipeline needs from the vector of per-variant p-values:
@@ -59,8 +60,8 @@ by `isValidPValue_allelicPValue`), and one of three dependence hypotheses, `Depe
 
 * `independent`: the p-values are mutually independent (`iIndepFun`). BH at level `q`.
 * `prds`: positive regression dependence on the true nulls (`IsPRDSOn`). BH at level `q`.
-* `arbitrary`: no dependence hypothesis. BH at level `q` is *not* guaranteed; the pipeline must
-  then use Benjamini–Yekutieli (BH at level `q / H_m`).
+* `arbitrary`: no dependence hypothesis. BH at level `q` is *not* guaranteed; the pipeline needs
+  a procedure valid under arbitrary dependence, e.g. Benjamini–Yekutieli (BH at level `q / H_m`).
 
 These are assumptions *for* the pipeline. Nothing here proves that the p-values of variants in
 linkage disequilibrium satisfy any of them (such p-values are in general dependent, so
@@ -252,8 +253,8 @@ inductive DependenceRegime
   | independent
   /-- Positive regression dependence on the true nulls (PRDS); BH at level `q`. -/
   | prds
-  /-- No assumption on the dependence; the pipeline must use Benjamini–Yekutieli,
-  i.e. BH at level `q / H_m`. -/
+  /-- No assumption on the dependence; the pipeline needs a procedure valid under arbitrary
+  dependence, e.g. Benjamini–Yekutieli (BH at level `q / H_m`). -/
   | arbitrary
 
 /-- The hypothesis that a dependence regime imposes on the p-value vector `p` with true nulls

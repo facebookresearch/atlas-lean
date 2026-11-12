@@ -17,11 +17,11 @@ public import Mathlib.Probability.IdentDistrib
 * A concrete variant: 2 cases and 2 controls (`n₁ = n₂ = 4` alleles), margin `t = 3`, observed
   `X = 3`; the allelic p-value is `1/14`, it is valid on the null witness, and it is exactly
   calibrated at the level `1/14` given the margin.
-* Boundaries where calibration fails: a monomorphic variant (margin `0`, p-value identically `1`,
-  so not uniform), and a wrong null (a point-mass law of the counts, under which the p-value is
+* Boundaries: a monomorphic variant (margin `0`, p-value identically `1`, so uniformity and power
+  fail), and a wrong null (a point-mass law of the counts, under which the p-value is
   not valid).
 * The genome-wide assumption bundle: built from per-variant nulls, and consumed by the existing
-  BH theorem in the independent regime. -/
+  BH theorems (independent, PRDS) and BY theorem (arbitrary dependence). -/
 
 @[expose] public section
 
@@ -110,7 +110,7 @@ theorem allelicPValue_of_monomorphic {Ω : Type*} {n₁ n₂ : ℕ} {X Y : Ω �
     show Icc 0 0 = ({0} : Finset ℕ) by decide, sum_singleton]
   simp [hypergeometricReal]
 
-/-- **Calibration fails at small counts.** Given a monomorphic margin, `P(p ≤ s | X + Y = 0) = 0`
+/-- **Uniformity fails at small counts.** Given a monomorphic margin, `P(p ≤ s | X + Y = 0) = 0`
 for every `s < 1`, which is not `s` for `0 < s < 1`: the test is strictly conservative and has no
 power there. This holds for any law of the counts, null or not. -/
 example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) {n₁ n₂ : ℕ} {X Y : Ω → ℕ}
@@ -164,7 +164,8 @@ theorem indep_second :
     ⟨by fun_prop, by fun_prop, by simp [Measure.map_snd_prod]⟩
 
 /-- Per-variant allelic nulls give the validity field; the dependence hypothesis of the
-`arbitrary` regime is vacuous, so the bundle holds and a downstream pipeline must use BY. -/
+`arbitrary` regime is vacuous, so the bundle holds and a downstream pipeline needs a procedure
+valid under arbitrary dependence, e.g. BY (BH at level `q / H_m`). -/
 example : GenomeWideAssumptions twoVariants
     (fun i => allelicPValue 4 4 (![fun ω => ω.1.1, fun ω => ω.2.1] i)
       (![fun ω => ω.1.2, fun ω => ω.2.2] i)) univ .arbitrary := by
@@ -191,5 +192,23 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasur
     ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ ≤ q * H0.card / m :=
   integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue μ p hA.measurable
     hA.dependence H0 hA.null_valid q hq₀ hq₁
+
+/-- Downstream consumer check, `prds` regime: the bundle feeds the existing PRDS BH theorem. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ] {m : ℕ}
+    {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)} (hA : GenomeWideAssumptions μ p H0 .prds)
+    {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) ∂μ ≤ q * H0.card / m :=
+  integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn μ p hA.measurable H0
+    hA.dependence hA.null_valid q hq₀ hq₁
+
+/-- Downstream consumer check, `arbitrary` regime: the bundle feeds the existing BY theorem
+(BH at level `q / H_m`); the dependence field is not used. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ] {m : ℕ}
+    {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)} (hA : GenomeWideAssumptions μ p H0 .arbitrary)
+    {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, falseDiscoveryProportion H0 (bhRejections (q / harmonic m) fun i => p i ω) ∂μ ≤
+      q * H0.card / m :=
+  integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependence μ p hA.measurable H0
+    hA.null_valid q hq₀ hq₁
 
 end MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.Calibration
