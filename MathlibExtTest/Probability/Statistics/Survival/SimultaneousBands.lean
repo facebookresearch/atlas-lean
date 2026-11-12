@@ -167,6 +167,45 @@ example : cov[fun ω : ℝ => ω / (1 + 1), fun ω : ℝ => ω / (1 + 1); gaussi
   rw [show (fun ω : ℝ => ω) = id from rfl, variance_id_gaussianReal]
   norm_num
 
+/-- **Law level, non-vacuity.** On a one-point grid with `Z = ξ` standard Gaussian and `σ² = 1`,
+the Hall–Wellner weighted limit `ξ / 2` has law `multivariateGaussian 0 (hallWellnerCov 1)`, and
+that matrix is the `1 × 1` matrix `K(1) (1 - K(1)) = 1/4`. -/
+example : (gaussianReal 0 1).map (fun ω => WithLp.toLp 2 (fun i => Zg ω i / (1 + 1))) =
+      multivariateGaussian 0 (hallWellnerCov (fun _ : Unit => (1 : ℝ))) ∧
+    hallWellnerCov (fun _ : Unit => (1 : ℝ)) () () = 1 / 4 := by
+  refine ⟨?_, by norm_num [hallWellnerCov, hallWellnerTime]⟩
+  have hZ : HasGaussianLaw Zg (gaussianReal 0 1) :=
+    IsGaussian.hasGaussianLaw_id.map_fun
+      (ContinuousLinearMap.pi fun _ : Unit => ContinuousLinearMap.id ℝ ℝ)
+  have hcov : ∀ i j : Unit, cov[fun ω => Zg ω i, fun ω => Zg ω j; gaussianReal 0 1] =
+      (fun _ : Unit => (1 : ℝ)) (min i j) := fun _ _ => by
+    change cov[id, id; gaussianReal 0 1] = 1
+    rw [covariance_self aemeasurable_id]
+    exact_mod_cast variance_id_gaussianReal
+  exact map_div_hallWellner_eq_multivariateGaussian (σ2 := fun _ : Unit => (1 : ℝ))
+    (fun _ => zero_le_one) hZ (fun _ => integral_id_gaussianReal) hcov
+
+/-! ### A concrete atomless limit -/
+
+/-- The limit `Z = ξ • 1` on the two-point grid with `ξ ~ N(0, 1)`. -/
+def Zc : ℝ → Fin 2 → ℝ := fun ω _ => ω
+
+private theorem weightedSup_Zc (ω : ℝ) : weightedSup w₀ (Zc ω) = |ω| := by
+  have : (fun i => Zc ω i / w₀ i) = fun _ => ω := funext fun i => by
+    fin_cases i <;> simp [Zc, w₀]
+  rw [weightedSup, this, pi_norm_const, Real.norm_eq_abs]
+
+/-- **`hatom` holds on a concrete limit**: for `Z = ξ • 1`, the weighted sup is `|ξ|`, and
+`P(|ξ| = c) = 0` because the Gaussian law has no atoms. -/
+theorem hatom_Zc (c : ℝ) : gaussianReal 0 1 {ω | weightedSup w₀ (Zc ω) = c} = 0 := by
+  let _ := nullSingletonClass_gaussianReal (μ := 0) (v := 1) (by norm_num)
+  refine measure_mono_null (t := {c, -c}) (fun ω hω => ?_)
+    (((Set.countable_singleton (-c)).insert c).measure_zero _)
+  simp only [mem_ofPred_eq, weightedSup_Zc] at hω
+  rcases abs_eq_abs.1 (hω.trans (abs_of_nonneg (hω ▸ abs_nonneg ω)).symm) with h | h
+  · exact Or.inl h
+  · exact Or.inr (by simpa using h)
+
 /-! ### Asymptotic theorems: hypotheses are dischargeable -/
 
 /-- The known-weight band theorem applies to any grid limit; here instantiated on the two-point
@@ -181,17 +220,17 @@ example (Ω Ω' : Type) [MeasurableSpace Ω] [MeasurableSpace Ω'] (P : Measure 
       (𝓝 (P' {ω | weightedSup w₀ (Z ω) ≤ 1})) :=
   tendsto_coverage_simultaneousBand_const hZ (fun i => by fin_cases i <;> norm_num [w₀]) hatom
 
-/-- A constant sequence converges in probability to its value (test fixture). -/
-private theorem tendstoInMeasure_const {Ω E : Type} [MeasurableSpace Ω] {P : Measure Ω}
-    [PseudoMetricSpace E] (a : E) :
-    TendstoInMeasure P (fun (_ : ℕ) (_ : Ω) => a) atTop (fun _ => a) := by
-  rw [tendstoInMeasure_iff_dist]
-  intro ε hε
-  have h : {ω : Ω | ε ≤ dist a a} = ∅ := by
-    ext ω
-    simp only [dist_self, mem_ofPred_eq, mem_empty_iff_false, iff_false, not_le]
-    exact hε
-  simp only [h, measure_empty, tendsto_const_nhds]
+/-- The known-weight theorem with the atomless hypothesis discharged on the concrete limit
+`Z = ξ • 1`, `ξ ~ N(0, 1)`: only the grid limit itself remains a hypothesis. -/
+example (Ω : Type) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    (est : ℕ → Ω → Fin 2 → ℝ) (θ : Fin 2 → ℝ) (c : ℝ)
+    (hZ : TendstoInDistribution (fun (n : ℕ) ω => √(n : ℝ) • (est n ω - θ)) atTop Zc
+      (fun _ => P) (gaussianReal 0 1)) :
+    Tendsto (fun n => P {ω | θ ∈ simultaneousBand (est n ω) w₀ c n}) atTop
+      (𝓝 (gaussianReal 0 1 {ω | |ω| ≤ c})) := by
+  have h := tendsto_coverage_simultaneousBand_const hZ
+    (fun i => by fin_cases i <;> norm_num [w₀]) (hatom_Zc c)
+  simpa only [weightedSup_Zc] using h
 
 open MathlibExt.Probability.Statistics.AalenJohansenCLT MathlibExt.Probability.Statistics.Censoring
   MathlibExt.Probability.Statistics.SurvivalConsistency in
@@ -210,7 +249,7 @@ example {k r : ℕ} (Ω : Type) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabi
           {z | weightedSup (fun _ => 1) (Y z) ≤ c})) := by
   obtain ⟨Y, -, h⟩ := tendsto_coverage_kaplanMeierBand_indepCauseLaw pTJ pC hind hlaw m hm
   exact ⟨Y, fun hatom => h (ŵ := fun _ _ _ => 1) (ĉ := fun _ _ => c) (fun _ => one_pos)
-    (tendstoInMeasure_const _) (fun _ => aemeasurable_const) (tendstoInMeasure_const c)
+    (tendstoInMeasure_const_self _) (fun _ => aemeasurable_const) (tendstoInMeasure_const_self c)
     (fun _ => aemeasurable_const) hatom⟩
 
 end MathlibExtTest.Probability.Statistics.SimultaneousBands

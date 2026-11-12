@@ -11,6 +11,7 @@ module
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Portmanteau
 public import Mathlib.Probability.Moments.Covariance
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import MathlibExt.Probability.Quantile
 public import MathlibExt.Probability.Statistics.Slutsky
 public import MathlibExt.Probability.Statistics.Survival.AalenJohansenCLT
@@ -42,7 +43,8 @@ sup norm, together with Slutsky's theorem for estimated weights and critical val
   `tendsto_coverage_simultaneousBand`; the exact-level statement with the quantile critical value
   is `tendsto_coverage_simultaneousBand_criticalValue`; the Hall–Wellner transformation to the
   Brownian-bridge covariance is `covariance_div_hallWellner_nelsonAalen` and
-  `covariance_div_hallWellner_kaplanMeier`.
+  `covariance_div_hallWellner_kaplanMeier`, and to the Brownian-bridge law is
+  `map_div_hallWellner_eq_multivariateGaussian`.
 
 ## Main definitions
 
@@ -51,6 +53,7 @@ sup norm, together with Slutsky's theorem for estimated weights and critical val
 * `pointwiseInterval est w c n i`: the same condition at the single grid point `i`.
 * `criticalValue μ α`: the `(1 - α)`-quantile `cdfQuantile μ (1 - α)` of a real law `μ`.
 * `hallWellnerTime σ²`: the Hall–Wellner time `σ² / (1 + σ²) ∈ [0, 1)`.
+* `hallWellnerCov σ²`: the Brownian-bridge covariance matrix `K(σ²(min i j)) (1 - K(σ²(max i j)))`.
 
 ## Main results
 
@@ -69,13 +72,17 @@ sup norm, together with Slutsky's theorem for estimated weights and critical val
   `measure_simultaneous_eq_pointwise_iff` (characterisation), and
   `measure_weightedSup_le_eq_of_proportional` (a perfectly correlated limit `Z = Z₀ • w`).
   `measure_not_simultaneous_le_sum` is the Bonferroni bound in the other direction, and
-  `measure_weightedSup_le_le_of_pointwise_level` says a pointwise-calibrated `c` undercovers
-  simultaneously.
+  `measure_weightedSup_le_le_of_pointwise_level` says a pointwise-calibrated `c` covers at most
+  `1 - α` simultaneously.
 * `measure_weightedSup_le_ge_of_le`: a critical value for a dominating continuum sup (as in the
   Hall–Wellner tables) is conservative on the grid.
 * `covariance_div_hallWellner_nelsonAalen`, `covariance_div_hallWellner_kaplanMeier`: if the grid
   limit has the Gaussian-martingale covariance `Cov(Z i, Z j) = σ²(min i j)`, the Hall–Wellner
   weighted limit has the Brownian-bridge covariance `K i (1 - K j)`, `i ≤ j`, `K = σ²/(1 + σ²)`.
+* `map_div_hallWellner_eq_multivariateGaussian`: if moreover the grid limit is a centered
+  Gaussian vector, the Hall–Wellner weighted limit has law
+  `multivariateGaussian 0 (hallWellnerCov σ2)`, the law of a Brownian bridge at the times `K i`;
+  so the limiting weighted sup and its critical value depend only on the times `K i`.
 * `tendsto_coverage_kaplanMeierBand_indepCauseLaw`: the band coverage limit for the
   Kaplan–Meier estimator on the grid `{j ≤ m}` under independent censoring, from the merged
   fixed-grid joint CLT `tendstoInDistribution_estimator_indepCauseLaw`.
@@ -83,10 +90,13 @@ sup norm, together with Slutsky's theorem for estimated weights and critical val
 ## Scope
 
 Finite grid only; no convergence in `D[0, τ]`. The Nelson–Aalen grid limit is a hypothesis
-(`hZ`), not derived here. The Hall–Wellner transformation is proved at the level of covariances;
-the identification of the critical value with the quantile of a Brownian-bridge sup (equality of
-Gaussian laws from equal covariances) and the closed form of `σ²` for the Kaplan–Meier limit are
-not derived. Absence of atoms of the limiting weighted sup at `c` is a hypothesis.
+(`hZ`), not derived here. The Hall–Wellner law identification
+(`map_div_hallWellner_eq_multivariateGaussian`) is stated for the Nelson–Aalen weighting `1 + σ²`
+and a centered Gaussian grid limit with the Gaussian-martingale covariance; for the Kaplan–Meier
+weighting `S (1 + σ²)` only the covariance identity is stated (the weighted Kaplan–Meier limit is
+`-Z / (1 + σ²)`). The closed form of `σ²` for the Kaplan–Meier limit of
+`tendsto_coverage_kaplanMeierBand_indepCauseLaw` is not derived. Absence of atoms of the limiting
+weighted sup at `c` is a hypothesis.
 -/
 
 @[expose] public section
@@ -335,7 +345,7 @@ theorem tendsto_coverage_simultaneousBand [Fintype ι] [Nonempty ι] {est : ℕ 
 
 omit [IsProbabilityMeasure P] in
 /-- A constant sequence converges in probability to its value. -/
-private theorem tendstoInMeasure_const_self {E : Type*} [PseudoMetricSpace E] (a : E) :
+theorem tendstoInMeasure_const_self {E : Type*} [PseudoMetricSpace E] (a : E) :
     TendstoInMeasure P (fun (_ : ℕ) (_ : Ω) => a) atTop (fun _ => a) := by
   rw [tendstoInMeasure_iff_dist]
   intro ε hε
@@ -473,7 +483,7 @@ theorem tendsto_coverage_simultaneousBand_criticalValue [Fintype ι] [Nonempty �
   exact tendsto_coverage_simultaneousBand hZ hw hŵ hŵm hĉ hĉm (hatom _)
 
 omit [IsProbabilityMeasure P'] in
-/-- **Pointwise calibration undercovers simultaneously.** If `c` gives limiting pointwise
+/-- **Pointwise calibration covers at most `1 - α` simultaneously.** If `c` gives limiting pointwise
 coverage `1 - α` at some grid point `i`, the limiting simultaneous coverage of the band with the
 same `c` is at most `1 - α`. -/
 theorem measure_weightedSup_le_le_of_pointwise_level [Fintype ι] (Z : Ω' → ι → ℝ)
@@ -549,6 +559,82 @@ theorem covariance_div_hallWellner_kaplanMeier {Z : Ω' → ι → ℝ} {σ2 S :
   rw [h i hi, h j hj, covariance_mul_const_left, covariance_mul_const_right,
     covariance_div_hallWellner_nelsonAalen hσ hcov hij]
   ring
+
+/-- The **Brownian-bridge covariance matrix** at the Hall–Wellner times: entry `(i, j)` is
+`K(σ²(min i j)) · (1 - K(σ²(max i j)))` with `K = hallWellnerTime`. For nondecreasing `σ²` this
+is `min(K i, K j) · (1 - max(K i, K j))`, the covariance of a Brownian bridge at the times
+`K i`. -/
+noncomputable def hallWellnerCov (σ2 : ι → ℝ) : Matrix ι ι ℝ :=
+  Matrix.of fun i j => hallWellnerTime (σ2 (min i j)) * (1 - hallWellnerTime (σ2 (max i j)))
+
+/-- The covariance identity of `covariance_div_hallWellner_nelsonAalen` for all pairs of grid
+points, in matrix form. -/
+theorem covariance_div_hallWellner_eq_hallWellnerCov {Z : Ω' → ι → ℝ} {σ2 : ι → ℝ}
+    (hσ : ∀ i, 0 ≤ σ2 i)
+    (hcov : ∀ i j, cov[fun ω => Z ω i, fun ω => Z ω j; P'] = σ2 (min i j)) (i j : ι) :
+    cov[fun ω => Z ω i / (1 + σ2 i), fun ω => Z ω j / (1 + σ2 j); P'] = hallWellnerCov σ2 i j := by
+  rcases le_total i j with h | h
+  · rw [covariance_div_hallWellner_nelsonAalen hσ hcov h]
+    simp [hallWellnerCov, min_eq_left h, max_eq_right h]
+  · rw [covariance_comm, covariance_div_hallWellner_nelsonAalen hσ hcov h]
+    simp [hallWellnerCov, min_eq_right h, max_eq_left h]
+
+/-- **Hall–Wellner transformation, law level.** Let the grid limit `Z` of the Nelson–Aalen
+estimator be a centered Gaussian vector with the Gaussian-martingale covariance
+`Cov(Z i, Z j) = σ²(min i j)`. Then the Hall–Wellner weighted limit `(Z i / (1 + σ² i))_i` has
+law `multivariateGaussian 0 (hallWellnerCov σ2)`: the law of a Brownian bridge at the times
+`K i = σ² i / (1 + σ² i)`. Hence the limiting weighted sup, and so the critical value, depends only
+on the times `K i`. -/
+theorem map_div_hallWellner_eq_multivariateGaussian [Fintype ι] [DecidableEq ι]
+    {Z : Ω' → ι → ℝ} {σ2 : ι → ℝ} (hσ : ∀ i, 0 ≤ σ2 i) (hZ : HasGaussianLaw Z P')
+    (hmean : ∀ i, P'[fun ω => Z ω i] = 0)
+    (hcov : ∀ i j, cov[fun ω => Z ω i, fun ω => Z ω j; P'] = σ2 (min i j)) :
+    P'.map (fun ω => WithLp.toLp 2 (fun i => Z ω i / (1 + σ2 i))) =
+      multivariateGaussian 0 (hallWellnerCov σ2) := by
+  have : IsProbabilityMeasure P' := hZ.isProbabilityMeasure
+  let L : (ι → ℝ) →L[ℝ] (ι → ℝ) :=
+    ContinuousLinearMap.pi fun i => (1 + σ2 i)⁻¹ • ContinuousLinearMap.proj i
+  have hY : HasGaussianLaw (fun ω i => Z ω i / (1 + σ2 i)) P' := by
+    have h := hZ.map_fun L
+    convert h using 2 with ω
+    ext i
+    simp [L, div_eq_inv_mul]
+  have hYv := hY.toLp_pi 2
+  have : IsGaussian (P'.map fun ω => WithLp.toLp 2 (fun i => Z ω i / (1 + σ2 i))) :=
+    hYv.isGaussian_map
+  have hmem : ∀ i, MemLp (fun ω => Z ω i / (1 + σ2 i)) 2 P' := fun i => (hY.eval i).memLp_two
+  have hcovY := covariance_div_hallWellner_eq_hallWellnerCov hσ hcov
+  have hbilin : ∀ x y : EuclideanSpace ℝ ι,
+      covarianceBilin (P'.map fun ω => WithLp.toLp 2 (fun i => Z ω i / (1 + σ2 i))) x y =
+        dotProduct x.ofLp ((hallWellnerCov σ2).mulVec y.ofLp) := fun x y => by
+    rw [covarianceBilin_apply_pi hmem]
+    simp only [hcovY, dotProduct, Matrix.mulVec, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+    ring
+  have hpsd : (hallWellnerCov σ2).PosSemidef := by
+    rw [Matrix.posSemidef_iff_dotProduct_mulVec]
+    refine ⟨?_, fun x => ?_⟩
+    · ext i j
+      simp [Matrix.conjTranspose_apply, hallWellnerCov, min_comm, max_comm]
+    · have h0 := (isPosSemidef_covarianceBilin
+        (μ := P'.map fun ω => WithLp.toLp 2 (fun i => Z ω i / (1 + σ2 i)))).nonneg
+        (WithLp.toLp 2 x)
+      simp only [ContinuousLinearMap.toBilinForm_apply, hbilin] at h0
+      simpa using h0
+  refine IsGaussian.ext ?_ ?_
+  · rw [integral_id_multivariateGaussian']
+    set μY := P'.map fun ω => WithLp.toLp 2 (fun i => Z ω i / (1 + σ2 i))
+    have hint : Integrable id μY := IsGaussian.integrable_id
+    ext i
+    have h1 := (EuclideanSpace.proj i : EuclideanSpace ℝ ι →L[ℝ] ℝ).integral_comp_comm hint
+    have h2 : (∫ x, id x ∂μY).ofLp i = ∫ x, x.ofLp i ∂μY := by
+      simpa using h1.symm
+    rw [h2, integral_map hYv.aemeasurable (by fun_prop)]
+    simp_rw [div_eq_mul_inv]
+    rw [integral_mul_const, hmean i, zero_mul]
+    rfl
+  · ext x y
+    rw [hbilin, covarianceBilin_multivariateGaussian hpsd]
 
 end HallWellner
 
