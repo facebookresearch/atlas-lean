@@ -20,7 +20,8 @@ and the boundary check that a negative-valued process fails the nonnegativity hy
 
 @[expose] public section
 
-open MeasureTheory
+open MeasureTheory Filter
+open scoped Topology
 
 /-- Non-vacuity: the constant process `1` is a nonnegative supermartingale, so under a
 probability measure the theorem gives `a · μ{∃ n, a ≤ 1} ≤ 1`; at `a = 1` both sides equal `1`,
@@ -67,3 +68,23 @@ example : ¬ (0 ≤ fun (_ : ℕ) (_ : Unit) => (-1 : ℝ)) := by
   intro h
   have := h 0 ()
   norm_num at this
+
+-- Positive: constant M = 1 gives an equality-tight bound at a = 1 for every N.
+example (N : ℕ) :
+    (1 : ℝ) * MeasureTheory.Measure.real (Measure.dirac (0 : ℝ))
+      {ω | ∃ n ≤ N, (1 : ℝ) ≤ (fun _ _ => (1 : ℝ)) n ω} ≤ 1 := by
+  have hset : {ω : ℝ | ∃ n ≤ N, (1 : ℝ) ≤ (fun _ _ => (1 : ℝ)) n ω} = Set.univ := by
+    ext ω
+    simp only [Set.mem_univ, iff_true]
+    show ∃ n ≤ N, (1 : ℝ) ≤ (fun _ _ => (1 : ℝ)) n ω
+    exact ⟨0, Nat.zero_le N, le_refl 1⟩
+  rw [hset, one_mul]
+  simp
+
+-- Boundary: N = 0 reduces to the time-zero Markov bound, through the finite-horizon
+-- corollary directly (no Ville hypothesis needed in the example).
+example {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure μ]
+    {𝒢 : Filtration ℕ m0} {M : ℕ → Ω → ℝ}
+    (hsup : Supermartingale M 𝒢 μ) (hnonneg : 0 ≤ M) {a : ℝ} (ha : 0 < a) :
+    a * μ.real {ω | ∃ n ≤ 0, a ≤ M n ω} ≤ ∫ ω, M 0 ω ∂μ := by
+  exact Supermartingale.ville_maximal_ineq_finite hsup hnonneg ha

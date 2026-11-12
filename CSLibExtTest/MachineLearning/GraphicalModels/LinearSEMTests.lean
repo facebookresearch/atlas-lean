@@ -19,6 +19,9 @@ The two-node chain `X_0 = e_0`, `X_1 = 3 X_0 + e_1` (`B = !![0, 0; 3, 0]`):
 
 * `do(X_0 = 2)` gives `X_1 = 6 + e_1`;
 * `do(X_1 = 5)` leaves the upstream node `X_0 = e_0` unchanged.
+
+Invertibility of `1 - B` for a strictly lower triangular `3 × 3` matrix, the unique solution of
+its structural equations, and the singular boundary case with a nonzero diagonal.
 -/
 
 @[expose] public section
@@ -54,3 +57,44 @@ example (e : Fin 2 → ℝ) :
   ring
 
 end Cslib.MachineLearning.LinearSEMTests
+
+namespace Cslib.MachineLearning.LinearSEMInvertibilityTests
+
+open Cslib.MachineLearning.GraphicalModels.LinearSEM Matrix
+
+/-- Test matrix: strictly lower triangular 3×3. -/
+def B₃ : Matrix (Fin 3) (Fin 3) ℝ := !![0, 0, 0; 2, 0, 0; 3, -1, 0]
+
+theorem B₃_strict : ∀ i j : Fin 3, i ≤ j → B₃ i j = 0 := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> intro hij
+  · rfl
+  · rfl
+  · rfl
+  · exact absurd hij (by decide)
+  · rfl
+  · rfl
+  · exact absurd hij (by decide)
+  · exact absurd hij (by decide)
+  · rfl
+
+example : (1 - B₃).det = 1 := det_one_sub_eq_one B₃_strict
+
+example : IsUnit (1 - B₃) := isUnit_one_sub B₃_strict
+
+example : solve B₃ ![1, 1, 1] = ![1, 3, 1] := by
+  have hcheck : (![1, 3, 1] : Fin 3 → ℝ) = B₃ *ᵥ ![1, 3, 1] + ![1, 1, 1] := by
+    funext i
+    fin_cases i <;> simp [B₃]; ring
+  exact ((eq_solve_iff B₃_strict _ _).mp hcheck).symm
+
+example : (1 - (1 : Matrix (Fin 1) (Fin 1) ℝ)).det = 0 := by
+  rw [Matrix.det_fin_one]
+  simp
+
+example : ¬ IsUnit (1 - (1 : Matrix (Fin 1) (Fin 1) ℝ)) := by
+  intro h
+  rw [sub_self, Matrix.isUnit_iff_isUnit_det, Matrix.det_fin_one] at h
+  simp at h
+
+end Cslib.MachineLearning.LinearSEMInvertibilityTests

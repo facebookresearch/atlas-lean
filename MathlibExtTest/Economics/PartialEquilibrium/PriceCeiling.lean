@@ -14,97 +14,90 @@ import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
-open MathlibExt.Economics.PriceCeiling
+open MathlibExt.Economics.PriceCeiling MathlibExt.Economics.Market
 
 namespace MathlibExtTest.Economics.PartialEquilibrium.PriceCeiling
 
 namespace PriceCeilingExamples
 
-/-- Linear rent-control market matching the relevant OpenStax §3.4 rent-control rows after the
-demand shift:
-`D(p) = 29000 - 20 p`, `S(p) = 5000 + 20 p`, equilibrium rent `600` with `17000` units. -/
-def rent : Market where
-  demand p := 29000 - 20 * p
-  supply p := 5000 + 20 * p
+/-- Demand after the shift in the OpenStax §3.4 rent-control example. -/
+def rentDemand (p : ℝ) : ℝ := 29000 - 20 * p
 
-theorem rent_isEquilibriumPrice : rent.IsEquilibriumPrice 600 := by
-  norm_num [rent, Market.IsEquilibriumPrice]
+/-- Supply in the OpenStax §3.4 example, with equilibrium rent `600` and `17000` units. -/
+def rentSupply (p : ℝ) : ℝ := 5000 + 20 * p
 
-theorem rent_excessDemand_500 : rent.excessDemand 500 = 4000 := by
-  norm_num [rent, Market.excessDemand]
+theorem rent_isEquilibriumPrice : IsEquilibrium rentDemand rentSupply 600 := by
+  norm_num [rentDemand, rentSupply, IsEquilibrium]
 
-theorem rent_shortage : 0 < rent.excessDemand 500 := by
-  have hb : rent.IsBindingCeiling 500 600 := by
+theorem rent_excessDemand_500 : excessDemand rentDemand rentSupply 500 = 4000 := by
+  norm_num [rentDemand, rentSupply, excessDemand]
+
+theorem rent_shortage : 0 < excessDemand rentDemand rentSupply 500 := by
+  have hb : IsBindingCeiling rentDemand rentSupply 500 600 := by
     refine ⟨rent_isEquilibriumPrice, fun p hp => ?_⟩
-    have hp' : 29000 - 20 * p = 5000 + 20 * p := by
-      simpa [rent, Market.IsEquilibriumPrice] using hp
+    have hp' : 29000 - 20 * p = 5000 + 20 * p := hp
     linarith
-  have hD : StrictAntiOn rent.demand (Set.Icc 500 600) := by
+  have hD : StrictAntiOn rentDemand (Set.Icc 500 600) := by
     intro x _ y _ hxy
     show 29000 - 20 * y < 29000 - 20 * x
     linarith
-  have hS : MonotoneOn rent.supply (Set.Icc 500 600) := by
+  have hS : MonotoneOn rentSupply (Set.Icc 500 600) := by
     intro x _ y _ hxy
     show 5000 + 20 * x ≤ 5000 + 20 * y
     linarith
-  exact Market.excessDemand_pos_of_strictAntiOn rent hb hD hS
+  exact excessDemand_pos_of_strictAntiOn rentDemand rentSupply hb hD hS
 
-/-- Flat (perfectly inelastic, equal) schedules: every price is an equilibrium, in particular the
-ceiling itself, so no ceiling is binding under the strengthened definition (the old definition,
-which only compared against one chosen equilibrium, would wrongly have counted `3` as binding
-against `pstar = 5`). Excess demand at `3` is nevertheless `0`. -/
-def flat : Market where
-  demand _ := 10
-  supply _ := 10
+/-- Flat demand and supply: every price is an equilibrium. -/
+def flat (_ : ℝ) : ℝ := 10
 
-theorem flat_notBindingCeiling : ∀ pstar, ¬ flat.IsBindingCeiling 3 pstar := by
+theorem flat_notBindingCeiling : ∀ pstar, ¬ IsBindingCeiling flat flat 3 pstar := by
   intro pstar hb
   obtain ⟨_, hbind⟩ := hb
-  have h3 : flat.IsEquilibriumPrice 3 := by
-    norm_num [flat, Market.IsEquilibriumPrice]
+  have h3 : IsEquilibrium flat flat 3 := rfl
   have hlt := hbind 3 h3
   exact lt_irrefl (3 : ℝ) hlt
 
-theorem flat_excessDemand_zero : flat.excessDemand 3 = 0 := by
-  norm_num [flat, Market.excessDemand]
+theorem flat_excessDemand_zero : excessDemand flat flat 3 = 0 := by
+  norm_num [flat, excessDemand]
 
-/-- Demand is flat below the threshold; supply is flat everywhere. -/
-noncomputable def plateau : Market where
-  demand p := if p < 1 then 2 else 1
-  supply _ := 1
+/-- Demand is flat below the threshold and drops there. -/
+noncomputable def plateauDemand (p : ℝ) : ℝ := if p < 1 then 2 else 1
+
+/-- Supply stays constant across the demand threshold. -/
+def plateauSupply (_ : ℝ) : ℝ := 1
 
 /-- The ceiling binds even though neither schedule is strictly monotone. -/
-theorem plateau_shortage : 0 < plateau.excessDemand 0 := by
-  have hb : plateau.IsBindingCeiling 0 1 := by
-    refine ⟨by norm_num [plateau, Market.IsEquilibriumPrice], ?_⟩
+theorem plateau_shortage : 0 < excessDemand plateauDemand plateauSupply 0 := by
+  have hb : IsBindingCeiling plateauDemand plateauSupply 0 1 := by
+    refine ⟨by norm_num [plateauDemand, plateauSupply, IsEquilibrium], ?_⟩
     intro p hp
     have hp1 : ¬ p < 1 := by
       intro h
-      norm_num [Market.IsEquilibriumPrice, plateau, h] at hp
+      norm_num [IsEquilibrium, plateauDemand, plateauSupply, h] at hp
     exact lt_of_lt_of_le (by norm_num) (le_of_not_gt hp1)
-  have hD : AntitoneOn plateau.demand (Set.Icc 0 1) := by
+  have hD : AntitoneOn plateauDemand (Set.Icc 0 1) := by
     intro x _ y _ hxy
     by_cases hy : y < 1
-    · simp [plateau, hy, lt_of_le_of_lt hxy hy]
-    · by_cases hx : x < 1 <;> simp [plateau, hy, hx]
-  have hS : MonotoneOn plateau.supply (Set.Icc 0 1) := by
+    · simp [plateauDemand, hy, lt_of_le_of_lt hxy hy]
+    · by_cases hx : x < 1 <;> simp [plateauDemand, hy, hx]
+  have hS : MonotoneOn plateauSupply (Set.Icc 0 1) := by
     intro x _ y _ _
-    simp [plateau]
-  exact plateau.excessDemand_pos hb hD hS
+    simp [plateauSupply]
+  exact excessDemand_pos plateauDemand plateauSupply hb hD hS
 
 /-- The new theorem applies where the strict-demand corollary cannot. -/
-example : ¬ StrictAntiOn plateau.demand (Set.Icc 0 1) := by
+example : ¬ StrictAntiOn plateauDemand (Set.Icc 0 1) := by
   intro h
   have hlt := h (show (0 : ℝ) ∈ Set.Icc 0 1 by norm_num)
     (show (1 / 2 : ℝ) ∈ Set.Icc 0 1 by norm_num) (by norm_num)
-  norm_num [plateau] at hlt
+  norm_num [plateauDemand] at hlt
 
 /-- The same example also rules out strict supply monotonicity. -/
-example : ¬ StrictMonoOn plateau.supply (Set.Icc 0 1) := by
+example : ¬ StrictMonoOn plateauSupply (Set.Icc 0 1) := by
   intro h
   have hlt := h (show (0 : ℝ) ∈ Set.Icc 0 1 by norm_num)
     (show (1 / 2 : ℝ) ∈ Set.Icc 0 1 by norm_num) (by norm_num)
-  norm_num [plateau] at hlt
+  norm_num [plateauSupply] at hlt
 
 end PriceCeilingExamples
 

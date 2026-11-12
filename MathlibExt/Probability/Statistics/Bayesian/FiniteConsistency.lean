@@ -184,3 +184,148 @@ theorem ae_tendsto_postWeight_one {Θ 𝓧 Ω : Type*} [Fintype Θ] [Fintype �
   exact tendsto_postWeight_one_of_ratio π hπ_nonneg θ₀ hπ₀ f hf_pos X ω hω
 
 end MathlibExt.Probability.Statistics.Bayesian
+
+
+
+
+
+namespace MathlibExt.Probability.Statistics.Bayesian
+
+open MeasureTheory ProbabilityTheory Filter Topology
+
+/-- Bernoulli mass function on `Fin 2`: `1 - p` at `0`, `p` at `1`. -/
+noncomputable def bernPMF (p : ℝ) : Fin 2 → ℝ :=
+  fun x => if x = 0 then 1 - p else p
+
+/-- Binary KL positivity for distinct biases in `(0, 1)`. -/
+private theorem binary_KL_pos {p₀ p₁ : ℝ} (h₀ : 0 < p₀) (h₀' : p₀ < 1)
+    (h₁ : 0 < p₁) (h₁' : p₁ < 1) (hne : p₀ ≠ p₁) :
+    0 < ∑ x, bernPMF p₀ x * Real.log (bernPMF p₀ x / bernPMF p₁ x) := by
+  have hg₀ : ∀ x, 0 < bernPMF p₀ x := fun x => by
+    unfold bernPMF
+    by_cases hx : x = 0 <;> simp [hx] <;> linarith
+  have hg₁ : ∀ x, 0 < bernPMF p₁ x := fun x => by
+    unfold bernPMF
+    by_cases hx : x = 0 <;> simp [hx] <;> linarith
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  have hv : ∀ p : ℝ, bernPMF p 1 = p := fun p => by simp [bernPMF, h10]
+  have hle : ∀ x, bernPMF p₀ x * Real.log (bernPMF p₁ x / bernPMF p₀ x)
+      ≤ bernPMF p₁ x - bernPMF p₀ x := fun x => by
+    have hpos : 0 < bernPMF p₁ x / bernPMF p₀ x := div_pos (hg₁ x) (hg₀ x)
+    have hlog := Real.log_le_sub_one_of_pos hpos
+    have hg₀ne : bernPMF p₀ x ≠ 0 := ne_of_gt (hg₀ x)
+    calc bernPMF p₀ x * Real.log (bernPMF p₁ x / bernPMF p₀ x)
+        ≤ bernPMF p₀ x * (bernPMF p₁ x / bernPMF p₀ x - 1) :=
+          mul_le_mul_of_nonneg_left hlog (hg₀ x).le
+      _ = bernPMF p₁ x - bernPMF p₀ x := by field_simp
+  have hlt1 : bernPMF p₀ 1 * Real.log (bernPMF p₁ 1 / bernPMF p₀ 1)
+      < bernPMF p₁ 1 - bernPMF p₀ 1 := by
+    have hpos : 0 < bernPMF p₁ 1 / bernPMF p₀ 1 := div_pos (hg₁ 1) (hg₀ 1)
+    have hratio : bernPMF p₁ 1 / bernPMF p₀ 1 ≠ 1 := by
+      rw [hv, hv]
+      intro h
+      apply hne
+      exact ((div_eq_one_iff_eq (ne_of_gt h₀)).mp h).symm
+    have hlog := Real.log_lt_sub_one_of_pos hpos hratio
+    have hg₀ne : bernPMF p₀ 1 ≠ 0 := ne_of_gt (hg₀ 1)
+    calc bernPMF p₀ 1 * Real.log (bernPMF p₁ 1 / bernPMF p₀ 1)
+        < bernPMF p₀ 1 * (bernPMF p₁ 1 / bernPMF p₀ 1 - 1) := by
+          apply mul_lt_mul_of_pos_left hlog (hg₀ 1)
+      _ = bernPMF p₁ 1 - bernPMF p₀ 1 := by field_simp
+  have hsum₀ : ∑ x : Fin 2, bernPMF p₀ x = 1 := by
+    rw [Fin.sum_univ_two]
+    simp only [bernPMF]
+    simp [h10]
+  have hsum₁ : ∑ x : Fin 2, bernPMF p₁ x = 1 := by
+    rw [Fin.sum_univ_two]
+    simp only [bernPMF]
+    simp [h10]
+  have hS : ∑ x : Fin 2, bernPMF p₀ x * Real.log (bernPMF p₁ x / bernPMF p₀ x) < 0 := by
+    rw [Fin.sum_univ_two]
+    have h0 := hle 0
+    have hsum_eq : (bernPMF p₁ 0 - bernPMF p₀ 0) + (bernPMF p₁ 1 - bernPMF p₀ 1) = 0 := by
+      have h : ∑ x : Fin 2, (bernPMF p₁ x - bernPMF p₀ x) = 0 := by
+        rw [Finset.sum_sub_distrib, hsum₁, hsum₀, sub_self]
+      rw [Fin.sum_univ_two] at h
+      exact h
+    have hlt := add_lt_add_of_le_of_lt h0 hlt1
+    rw [hsum_eq] at hlt
+    exact hlt
+  have hneg : ∑ x : Fin 2, bernPMF p₀ x * Real.log (bernPMF p₁ x / bernPMF p₀ x)
+      = -(∑ x : Fin 2, bernPMF p₀ x * Real.log (bernPMF p₀ x / bernPMF p₁ x)) := by
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro x _
+    rw [← mul_neg, ← Real.log_inv, inv_div]
+  linarith
+
+/-- **Two-parameter Bernoulli posterior consistency.** With truth `p₀` and alternative `p₁`
+distinct biases in `(0, 1)`, unit prior weights, and pairwise independent Bernoulli(`p₀`)
+observations, the posterior weight of the truth tends to `1` almost surely. -/
+theorem twoPoint_postWeight_tendsto_one {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {p₀ p₁ : ℝ}
+    (h₀ : 0 < p₀) (h₀' : p₀ < 1) (h₁ : 0 < p₁) (h₁' : p₁ < 1) (hne : p₀ ≠ p₁)
+    (X : ℕ → Ω → Fin 2) (hX : ∀ i, Measurable (X i))
+    (hlaw : ∀ i, μ.map (X i) = weightLaw (bernPMF p₀))
+    (hindep : Pairwise fun i j => IndepFun (X i) (X j) μ) :
+    ∀ᵐ ω ∂μ, Tendsto
+      (fun n => postWeight (fun _ : Fin 2 => (1 : ℝ))
+        (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) X n ω (0 : Fin 2))
+      atTop (𝓝 1) := by
+  have hpos₀ : ∀ x : Fin 2, 0 < bernPMF p₀ x := fun x => by
+    unfold bernPMF
+    by_cases hx : x = 0 <;> simp [hx] <;> linarith
+  have hpos₁ : ∀ x : Fin 2, 0 < bernPMF p₁ x := fun x => by
+    unfold bernPMF
+    by_cases hx : x = 0 <;> simp [hx] <;> linarith
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  have hsum₀ : ∑ x : Fin 2, bernPMF p₀ x = 1 := by
+    rw [Fin.sum_univ_two]
+    simp only [bernPMF]
+    simp [h10]
+  have hsum₁ : ∑ x : Fin 2, bernPMF p₁ x = 1 := by
+    rw [Fin.sum_univ_two]
+    simp only [bernPMF]
+    simp [h10]
+  have h00 : (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) (0 : Fin 2)
+      = bernPMF p₀ := rfl
+  have hf_pos : ∀ θ x,
+      0 < (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) θ x := fun θ x => by
+    by_cases hθ : θ = 0
+    · subst hθ
+      change 0 < bernPMF p₀ x
+      exact hpos₀ x
+    · change 0 < bernPMF (if θ = 0 then p₀ else p₁) x
+      simp only [hθ, ite_false]
+      exact hpos₁ x
+  have hf_sum : ∀ θ,
+      ∑ x, (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) θ x = 1 := fun θ => by
+    by_cases hθ : θ = 0
+    · subst hθ
+      change ∑ x : Fin 2, bernPMF p₀ x = 1
+      exact hsum₀
+    · change ∑ x : Fin 2, bernPMF (if θ = 0 then p₀ else p₁) x = 1
+      simp only [hθ, ite_false]
+      exact hsum₁
+  have hKL : ∀ θ, θ ≠ (0 : Fin 2) →
+      0 < ∑ x, (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) 0 x *
+        Real.log ((fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) 0 x /
+          (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) θ x) := fun θ hθ => by
+    have hθ1 : θ = 1 := (by decide : ∀ θ : Fin 2, θ ≠ 0 → θ = 1) θ hθ
+    rw [hθ1]
+    have h11 : (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) 1
+        = bernPMF p₁ := by
+      change bernPMF (if (1 : Fin 2) = 0 then p₀ else p₁) = bernPMF p₁
+      simp [h10]
+    rw [h00, h11]
+    exact binary_KL_pos h₀ h₀' h₁ h₁' hne
+  have hlaw' : ∀ i, μ.map (X i) =
+      weightLaw ((fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁)) 0) := by
+    change ∀ i, μ.map (X i) = weightLaw (bernPMF p₀)
+    exact hlaw
+  exact ae_tendsto_postWeight_one (fun _ : Fin 2 => (1 : ℝ)) (fun _ => zero_le_one)
+    (0 : Fin 2) zero_lt_one
+    (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁))
+    hf_pos hf_sum hKL X hX hlaw' hindep
+
+end MathlibExt.Probability.Statistics.Bayesian

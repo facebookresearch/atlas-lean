@@ -31,6 +31,8 @@ the finite-state causal Bayesian networks of
 
 ## Main results
 
+* `LinearSEM.det_one_sub_eq_one`, `LinearSEM.isUnit_det_one_sub`, `LinearSEM.isUnit_one_sub`:
+  for strictly lower triangular `B`, `det (1 - B) = 1` and `1 - B` is invertible.
 * `LinearSEM.eq_solve_iff`: `solve B e` is the unique solution of `X = B X + e`.
 * `LinearSEM.eq_doSolve_iff`: `do(X_k = a)` replaces exactly the `k`-th structural equation by
   `X_k = a` (Pearl, Glymour and Jewell 2016, §3.8; Pearl 2009, §5.3).
@@ -74,7 +76,7 @@ noncomputable def doSolve {n : ℕ} (B : Matrix (Fin n) (Fin n) ℝ) (k : Fin n)
   solve (B.updateRow k 0) (Function.update e k a)
 
 /-- For strictly lower triangular `B`, `det (1 - B) = 1`. -/
-private theorem det_one_sub_eq_one {n : ℕ} {B : Matrix (Fin n) (Fin n) ℝ}
+theorem det_one_sub_eq_one {n : ℕ} {B : Matrix (Fin n) (Fin n) ℝ}
     (hB : ∀ i j, i ≤ j → B i j = 0) : (1 - B).det = 1 := by
   have htri : (1 - B).IsLowerTriangular := by
     intro i j h
@@ -86,10 +88,16 @@ private theorem det_one_sub_eq_one {n : ℕ} {B : Matrix (Fin n) (Fin n) ℝ}
   rw [Matrix.sub_apply, Matrix.one_apply_eq, hB i i le_rfl, sub_zero]
 
 /-- For strictly lower triangular `B`, `1 - B` has unit determinant. -/
-private theorem isUnit_det_one_sub {n : ℕ} {B : Matrix (Fin n) (Fin n) ℝ}
+theorem isUnit_det_one_sub {n : ℕ} {B : Matrix (Fin n) (Fin n) ℝ}
     (hB : ∀ i j, i ≤ j → B i j = 0) : IsUnit (1 - B).det := by
   rw [det_one_sub_eq_one hB]
   exact isUnit_one
+
+/-- **`1 - B` is invertible** for strictly lower triangular `B`: it is a unit of the matrix
+ring (its determinant is `1`, `det_one_sub_eq_one`). -/
+theorem isUnit_one_sub {n : ℕ} {B : Matrix (Fin n) (Fin n) ℝ}
+    (hB : ∀ i j, i ≤ j → B i j = 0) : IsUnit (1 - B) := by
+  exact (Matrix.isUnit_iff_isUnit_det _).mpr (isUnit_det_one_sub hB)
 
 /-- Replacing a row of a strictly lower triangular matrix by zero keeps it strictly lower
 triangular. -/

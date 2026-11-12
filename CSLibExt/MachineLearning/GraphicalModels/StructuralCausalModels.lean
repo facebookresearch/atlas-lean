@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.MachineLearning.GraphicalModels.BayesianNetwork
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Finset.Defs
 
@@ -27,6 +28,10 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
   of the statements that use a law.
 * `FiniteSCM.IsSolution M u x`: `x` satisfies every structural equation at the noise value `u`.
 * `FiniteSCM.solve M u`: the solution map, computed by recursion along the order.
+* `FiniteSCM.inducedLaw M μ`: the observational law under independent noises with laws `μ k`,
+  the push-forward of the product noise law under `solve`.
+* `FiniteSCM.inducedBayesNet M μ`: the Bayesian network with the model's parents whose table at
+  node `k` is the push-forward of `μ k` under the structural function `f_k (z, ·)`.
 
 ## Main results
 
@@ -36,6 +41,10 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
 * `FiniteSCM.solve_congr_of_ancestral`: on a parent-closed (ancestral) set of nodes the solution
   depends only on the noise on that set; in particular a node's value depends only on its own and
   its ancestors' noise.
+* `FiniteSCM.inducedLaw_eq_joint`: **a Markovian SCM induces its Bayesian network**: under
+  independent noises the law of the solution is the joint of `inducedBayesNet` (Pearl 2009,
+  Theorem 1.4.1), so it factorizes along the graph (`BayesNet.joint_eq_prod`). Dependent noises
+  are not covered: they need explicit latent nodes.
 
 Cyclic systems (where a solution may fail to exist or be unique) are not expressible: parents
 always precede their child.
@@ -45,7 +54,7 @@ always precede their child.
 * J. Pearl, M. Glymour and N. P. Jewell, *Causal Inference in Statistics: A Primer*, Wiley
   (2016), §1.5.
 * J. Pearl, *Causality: Models, Reasoning, and Inference*, 2nd ed., Cambridge University Press
-  (2009), §7.1.
+  (2009), §1.4, §7.1.
 * R. Evans, *Graphical Models*, lecture notes, University of Oxford, §8.6.
 -/
 
@@ -249,6 +258,88 @@ theorem solve_congr_of_ancestral {α : Type*} {n : ℕ} {U : Fin n → Type*}
     rw [hcast]
     exact hk
   exact M.solvePrefix_ancestral hS hu n le_rfl k hmem
+
+/-! ### Markovian models and their Bayesian networks -/
+
+section Markovian
+
+open Finset Convexity
+
+/-- The probability of the noise value `u` when the noises of the nodes are independent with
+laws `μ k` (the Markovian case): `∏ k, μ_k (u_k)`. -/
+noncomputable def noiseWeight {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (u : (k : Fin n) → U k) : ℝ :=
+  ∏ k, (μ k).weights (u k)
+
+open Classical in
+/-- The observational law induced by the model under independent noises with laws `μ k`: the
+probability that the solution is `x`, that is, the push-forward of the product noise law under
+the solution map. The sum runs over the product of the supports of the noise laws, so the
+noise types need not be finite: a finitely supported law on an infinite type, such as
+`U k = ℕ`, is covered. Equality is decided classically, so no `DecidableEq α` is required. -/
+noncomputable def inducedLaw {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (x : Fin n → α) : ℝ :=
+  ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
+    if M.solve u = x then noiseWeight μ u else 0
+
+/-- The Bayesian network of the model under independent noises with laws `μ k`: it has the
+model's parents, and the table of node `k` at parent values `z` is the law of
+`f_k (z, u_k)` for `u_k ∼ μ_k`, the push-forward of `μ_k` under `f_k (z, ·)`. -/
+noncomputable def inducedBayesNet {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) : BayesNet α n where
+  pa := M.pa
+  cpt k z := (μ k).map (M.f k z)
+
+open Classical in
+/-- The push-forward weights of a noise law under a structural function are the sums of the
+noise weights over the fibers. The sum runs over the support of the noise law, so no
+finiteness of the noise type is needed. -/
+private theorem map_weights_eq_sum {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (x : Fin n → α) (k : Fin n) :
+    ((μ k).map (M.f k (M.paVal k x))).weights (x k)
+      = ∑ v ∈ (μ k).weights.support,
+        (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) := by
+  classical
+  rw [StdSimplex.weights_map]
+  simp only [Finsupp.mapDomain_apply, Finsupp.sum, Finsupp.single_apply]
+
+/-- **A Markovian SCM induces its Bayesian network**: under independent noises, the law of the
+unique solution is the joint distribution of the Bayesian network whose tables are the
+push-forwards of the noise laws under the structural functions. -/
+theorem inducedLaw_eq_joint {α : Type*} {n : ℕ} {U : Fin n → Type*} [Nonempty α]
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (x : Fin n → α) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x := by
+  classical
+  rw [(M.inducedBayesNet μ).joint_eq_prod x]
+  have hfactor : ∀ k : Fin n,
+      ((M.inducedBayesNet μ).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)
+        = ∑ v ∈ (μ k).weights.support,
+          (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) :=
+    fun k => map_weights_eq_sum M μ x k
+  simp only [hfactor]
+  rw [Finset.prod_univ_sum]
+  unfold inducedLaw
+  refine Finset.sum_congr rfl fun u _ => ?_
+  unfold noiseWeight
+  by_cases h : M.solve u = x
+  · rw [ite_eq_left h]
+    have hsol : M.IsSolution u x := by
+      rw [← h]
+      exact M.solve_isSolution u
+    have hall : ∀ k, M.f k (M.paVal k x) (u k) = x k := fun k => (hsol k).symm
+    exact Finset.prod_congr rfl fun k _ => (ite_eq_left (hall k)).symm
+  · rw [ite_eq_right h]
+    have hnex : ∃ k, x k ≠ M.f k (M.paVal k x) (u k) := by
+      by_contra hall
+      push Not at hall
+      exact h (IsSolution.eq_solve hall).symm
+    obtain ⟨k0, hk0⟩ := hnex
+    exact (Finset.prod_eq_zero (Finset.mem_univ k0)
+      (ite_eq_right (fun hc => hk0 hc.symm))).symm
+
+end Markovian
 
 end FiniteSCM
 
