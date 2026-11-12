@@ -58,7 +58,7 @@ example : (∫ u in (0 : ℝ)..1, (3 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) *
     (3 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * 1)) - 6
       = 3 * 1 - (1 / 2 : ℝ) * (∫ u in (0 : ℝ)..1,
           (3 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u))) :=
-  EarthScience.integrated_water_budget (by norm_num) (by norm_num) 1 (by norm_num)
+  EarthScience.integrated_water_budget (by norm_num) 1
 
 /-- Dry interval boundary: `I = 0` gives pure decay, and the budget still closes. -/
 example : (∫ u in (0 : ℝ)..1, (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u)))
@@ -66,4 +66,4 @@ example : (∫ u in (0 : ℝ)..1, (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) 
     (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * 1)) - 10
       = 0 * 1 - (1 / 2 : ℝ) * (∫ u in (0 : ℝ)..1,
           (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u))) :=
-  EarthScience.integrated_water_budget (by norm_num) (by norm_num) 1 (by norm_num)
+  EarthScience.integrated_water_budget (by norm_num) 1

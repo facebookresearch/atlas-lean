@@ -77,12 +77,10 @@ theorem hasDerivAt_storage_solution {I k S0 : ℝ} (hk : 0 < k) (t : ℝ) :
   rw [heq] at hfull
   exact hfull
 
-set_option linter.unusedVariables false in
 /-- Integrated water budget: the time integral of storage has the closed
 form below, and the storage change closes the budget
 `S(t) - S0 = I * t - k * ∫₀ᵗ S`. -/
-theorem integrated_water_budget {I k S0 : ℝ} (hk : 0 < k) (hI : 0 ≤ I)
-    (t : ℝ) (ht : 0 ≤ t) :
+theorem integrated_water_budget {I k S0 : ℝ} (hk : 0 < k) (t : ℝ) :
     (∫ u in (0 : ℝ)..t, (I / k + (S0 - I / k) * Real.exp (-k * u)))
         = I * t / k + (S0 - I / k) * (1 - Real.exp (-k * t)) / k ∧
       (I / k + (S0 - I / k) * Real.exp (-k * t)) - S0
