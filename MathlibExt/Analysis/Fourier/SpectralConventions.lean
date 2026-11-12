@@ -34,9 +34,11 @@ Mathlib's `ZMod.dft`; no new DFT is defined.
   `k ↦ -k`.
 
 Physical wave, structure-factor, and chain-mode conventions (angular
-frequency, wavenumber, `structureFactor`, `chainNormalModeFrequency`) live in
-`PhyslibExt.Analysis.Fourier.SpectralConventions`, not here: they are physics
-model inputs, not generic Fourier mathematics.
+frequency, wavenumber, `structureFactor`, `chainNormalModeAngularFrequency`)
+live in `PhyslibExt.ClassicalMechanics.WaveEquation.WaveConventions`,
+`PhyslibExt.CondensedMatter.Crystallography.StructureFactor`, and
+`PhyslibExt.CondensedMatter.LatticeDynamics.MonatomicChain`, not here: they
+are physics model inputs, not generic Fourier mathematics.
 
 ## Clause map
 
