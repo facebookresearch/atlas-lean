@@ -51,4 +51,94 @@ example (μ : ℝ) {v : NNReal} (hv : v ≠ 0) (x : ℝ) :
   rw [MathlibExt.Probability.CdfContinuityPoints.continuousAt_cdf_iff_measure_singleton_eq_zero] at hx
   exact hx
 
+
+/-- Use: at `μ = 0`, `v = 1` the identity is definitional up to the coercions. -/
+example (x : ℝ) :
+    cdf (gaussianReal 0 1) x
+      = cdf (gaussianReal 0 1) ((x - 0) / Real.sqrt ((1 : NNReal) : ℝ)) := by
+  have h : (x - 0) / Real.sqrt ((1 : NNReal) : ℝ) = x := by simp
+  rw [h]
+
+/-- Use: at `x = μ` the cdf equals the standard normal cdf at `0`. -/
+example (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    cdf (gaussianReal μ v) μ = cdf (gaussianReal 0 1) 0 := by
+  have h := cdf_gaussianReal_eq_std μ μ hv
+  have h0 : (μ - μ) / Real.sqrt (v:ℝ) = 0 := by simp
+  rwa [h0] at h
+
+/-- Boundary: the identity is false at `v = 0` (`hv` is necessary). -/
+example :
+    cdf (gaussianReal 0 0) 0
+      ≠ cdf (gaussianReal 0 1) ((0 - 0) / Real.sqrt ((0 : NNReal) : ℝ)) := by
+  rw [gaussianReal_zero_var]
+  have harg : (0 - 0 : ℝ) / Real.sqrt ((0 : NNReal) : ℝ) = 0 := by simp
+  rw [harg]
+  have hmem : (0:ℝ) ∈ Set.Iic 0 := Set.mem_Iic.mpr le_rfl
+  have hL : cdf (Measure.dirac 0) 0 = 1 := by
+    rw [cdf_eq_real, measureReal_def, Measure.dirac_apply' _ measurableSet_Iic,
+      Set.indicator_of_mem hmem]
+    simp
+  rw [hL]
+  have hneg : Measure.map (fun x : ℝ => -x) (gaussianReal 0 1) = gaussianReal 0 1 := by
+    simpa using gaussianReal_map_neg (μ := (0:ℝ)) (v := (1:NNReal))
+  have hnull : NullSingletonClass (gaussianReal 0 1) :=
+    nullSingletonClass_gaussianReal one_ne_zero
+  have hsing0 : (gaussianReal 0 1) {0} = 0 := @measure_singleton _ _ _ hnull 0
+  have hsing : (gaussianReal 0 1).real {0} = 0 := by
+    rw [measureReal_def, hsing0]
+    simp
+  have hpre : (fun x : ℝ => -x) ⁻¹' (Set.Iic 0) = Set.Ici 0 := by
+    ext x
+    simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_Ici]
+    constructor <;> intro h <;> linarith
+  have hIci : (gaussianReal 0 1).real (Set.Iic 0)
+      = (gaussianReal 0 1).real (Set.Ici 0) := by
+    have h := map_measureReal_apply (μ := gaussianReal 0 1) (f := fun x : ℝ => -x)
+      (s := Set.Iic 0) measurable_neg measurableSet_Iic
+    rw [hneg, hpre] at h
+    exact h
+  have hunion : Set.Ioi (0:ℝ) ∪ {0} = Set.Ici 0 := by
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioi, Set.mem_singleton_iff, Set.mem_Ici]
+    constructor
+    · rintro (h | rfl)
+      · exact le_of_lt h
+      · exact le_rfl
+    · intro h
+      by_cases h' : (0:ℝ) < x
+      · exact Or.inl h'
+      · exact Or.inr (le_antisymm (not_lt.mp h') h)
+  have hdisj : Disjoint (Set.Ioi (0:ℝ)) {0} := by
+    rw [Set.disjoint_left]
+    intro x hx h
+    rw [Set.mem_singleton_iff] at h
+    rw [Set.mem_Ioi] at hx
+    linarith
+  have hIoi : (gaussianReal 0 1).real (Set.Ioi 0)
+      = (gaussianReal 0 1).real (Set.Iic 0) := by
+    have h := measureReal_union (μ := gaussianReal 0 1) (s₁ := Set.Ioi 0) (s₂ := ({0} : Set ℝ))
+      hdisj (measurableSet_singleton 0) (measure_ne_top _ _) (measure_ne_top _ _)
+    rw [hunion, hsing, add_zero] at h
+    rw [hIci]
+    exact h.symm
+  have huniv : Set.Iic (0:ℝ) ∪ Set.Ioi 0 = Set.univ := by
+    ext x
+    simp only [Set.mem_union, Set.mem_Iic, Set.mem_Ioi, Set.mem_univ]
+    by_cases h : x ≤ 0
+    · exact iff_true_intro (Or.inl h)
+    · exact iff_true_intro (Or.inr (not_le.mp h))
+  have hdisj2 : Disjoint (Set.Iic (0:ℝ)) (Set.Ioi 0) := by
+    rw [Set.disjoint_left]
+    intro x hx h
+    rw [Set.mem_Iic] at hx
+    rw [Set.mem_Ioi] at h
+    linarith
+  have htot := measureReal_union (μ := gaussianReal 0 1) (s₁ := Set.Iic 0) (s₂ := Set.Ioi 0)
+    hdisj2 measurableSet_Ioi (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [huniv] at htot
+  have h1 : (gaussianReal 0 1).real Set.univ = 1 := by simp
+  rw [h1, hIoi] at htot
+  rw [cdf_eq_real]
+  linarith
+
 end MathlibExt.Probability.GaussianCdf
