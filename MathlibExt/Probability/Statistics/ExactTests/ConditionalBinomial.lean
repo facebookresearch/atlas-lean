@@ -122,7 +122,8 @@ homogeneity). Then the McNemar p-value at the observed number of discordant pair
 `ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`, whatever `r`. The same statement is the
 TDT when `X` and `Y` are the transmitted and untransmitted counts *modeled* as independent
 Poisson counts with equal rates; that is a statistical model of the counts, not a consequence of
-Mendelian segregation. -/
+Mendelian segregation. This is the merged `GLM.CountData.isValidPValue_countExactPValue` with
+library sizes `s₁ = s₂ = 1`, restated for `mcnemarPValue`. -/
 theorem isValidPValue_mcnemarPValue_total {X Y : Ω → ℕ} {r : ℝ≥0} (hXm : Measurable X)
     (hYm : Measurable Y) (hX : HasLaw X (poissonMeasure r) μ) (hY : HasLaw Y (poissonMeasure r) μ)
     (hXY : IndepFun X Y μ) :
