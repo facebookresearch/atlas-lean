@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.K05NutrientBiomass
+import PhyslibExt.EarthScience.NutrientBiomass
 
 /-!
 # Nutrient-biomass checks
 
-Concrete consumers of `PhyslibExt.EarthScience.K05NutrientBiomass`:
+Concrete consumers of `PhyslibExt.EarthScience.NutrientBiomass`:
 the public shapes of the three theorems, Michaelis-Menten uptake at
 `umax = 2, K = 1, N = 1`, and the zero-nutrient boundary.
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.K05NutrientBiomass`
+- `PhyslibExt.EarthScience.NutrientBiomass`
 -/
 
 /-- Public shape of the conservation theorem. -/
