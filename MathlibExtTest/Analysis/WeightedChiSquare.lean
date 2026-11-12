@@ -15,7 +15,7 @@ Boundary: all weights `0` (the law is `δ₀`, so `φ ≡ 1`, checked both throu
 through `weightedChiSq_zero`) and `t = 0`. Non-vacuity: for `χ²₁` the formula gives
 `‖φ(1)‖ = 5^{-1/4} < 1`, so the law is not a point mass at `0`. -/
 
-open MeasureTheory ProbabilityTheory MathlibExt.Biology.StatisticalGenetics.BurdenSKAT
+open MeasureTheory ProbabilityTheory
 open MathlibExt.Analysis.WeightedChiSquare Complex
 
 namespace MathlibExtTest.WeightedChiSquare

@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.BurdenSKAT
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Probability.Independence.CharacteristicFunction
 
 /-!
@@ -21,26 +20,49 @@ has real part `1`. The one-term case is `charFun_map_mul_sq_gaussianReal`:
 
 ## Attribution
 
-Moved verbatim (statements and proofs unchanged) from
-`MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`
-(T88, PR #1621, commit 45948b862),
-section `Davies`. Only the namespace changed. The law `weightedChiSq` is the canonical one
-from `MathlibExt.Biology.StatisticalGenetics.BurdenSKAT` (T37), imported rather than redefined.
+`charFun_map_mul_sq_gaussianReal` and `charFun_weightedChiSq` are copied verbatim (statements and
+proofs unchanged) from
+`MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`, section `Davies`
+(open PR #1621, commit 45948b862); only the namespace changed. The BurdenSKATO copies are deleted
+after #1621 merges; until then both namespaces hold identical copies.
+
+`weightedChiSq`, its `IsProbabilityMeasure` instance and `weightedChiSq_zero` are moved verbatim
+from the module `MathlibExt.Biology.StatisticalGenetics.RareVariantInference.BurdenSKAT` (T37),
+which re-exports `weightedChiSq` and `weightedChiSq_zero` into its namespace, so existing users
+are unaffected.
 
 ## API-00 receipt (base `origin/main` f8123a751)
 
 Reuse search of `MathlibExt`, `WantedExt`, `CSLibExt` and the pinned Mathlib for the
-chi-square characteristic function found nothing. Reused: T37's `weightedChiSq`; Mathlib's
-`charFun`, `charFun_map_sum_pi_eq_prod`, `integral_gaussian_complex`, `Measure.pi_map_pi`.
+chi-square characteristic function found nothing. Reused: T37's `weightedChiSq` (moved here);
+Mathlib's `charFun`, `charFun_map_sum_pi_eq_prod`, `integral_gaussian_complex`,
+`Measure.pi_map_pi`.
 -/
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory MathlibExt.Biology.StatisticalGenetics.BurdenSKAT
+open MeasureTheory ProbabilityTheory
 
 namespace MathlibExt.Analysis.WeightedChiSquare
 
 open Real Set Filter Topology
+
+section WeightedChiSq
+
+variable {k : Type*} [Fintype k]
+
+/-- The weighted chi-square law `∑ⱼ λⱼ ξⱼ²` with `ξ₁, …, ξₖ` independent standard normal. -/
+noncomputable def weightedChiSq (lam : k → ℝ) : Measure ℝ :=
+  (Measure.pi fun _ : k => gaussianReal 0 1).map fun ξ => ∑ j, lam j * ξ j ^ 2
+
+instance (lam : k → ℝ) : IsProbabilityMeasure (weightedChiSq lam) :=
+  by unfold weightedChiSq; infer_instance
+
+/-- With all weights zero the weighted chi-square law is the point mass at `0`. -/
+theorem weightedChiSq_zero : weightedChiSq (0 : k → ℝ) = Measure.dirac 0 := by
+  simp [weightedChiSq]
+
+end WeightedChiSq
 
 open Complex in
 private theorem ofReal_mul_cpow' {a : ℝ} (ha : 0 < a) {z : ℂ} (hz : z ≠ 0) (s : ℂ) :

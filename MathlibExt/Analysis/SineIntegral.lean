@@ -29,11 +29,13 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 ## Attribution
 
-Moved verbatim (statements and proofs unchanged) from
+Copied verbatim (statements and proofs unchanged) from
 `MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`
-(T88, PR #1621, commit 45948b862),
+(T88, open PR #1621, commit 45948b862),
 section `GilPelaez`, where the Dirichlet integral was proved for the Gil-Pelaez and Davies
-p-value formulas. Only the namespace changed.
+p-value formulas.
+Only the namespace changed. The BurdenSKATO copies are deleted after #1621 merges; until then
+both namespaces hold identical copies.
 
 ## API-00 receipt (base `origin/main` f8123a751)
 
