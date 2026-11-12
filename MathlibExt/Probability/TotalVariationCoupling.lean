@@ -10,13 +10,15 @@ module
 
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import MathlibExt.Probability.MarkovMixing
+import MathlibExt.InformationTheory.ConditionalEntropy
 
 @[expose] public section
 
 /-! # Total variation and couplings on finite spaces
 
-`tvDist` is half the `L1` distance between two probability mass
-functions on a finite discrete space. The coupling inequality
+`MarkovMixing.tvDist` is half the `L1` distance between the real-valued masses of two probability
+mass functions on a finite discrete space. The coupling inequality
 bounds it by the probability that coupled samples differ, and a
 maximal coupling attains equality. This is the finite-space core of
 roadmap package ML-23 of the Atlas TCS canon roadmap; the bridges
@@ -31,17 +33,29 @@ open Finset
 
 namespace MathlibExt.Probability.TotalVariationCoupling
 
-/-- Total variation distance between two probability mass functions
-on a finite type: half the `L1` distance. -/
-noncomputable def tvDist {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
-  (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal|
-
 /-- A coupling of `p` and `q`: a joint law on `α × α` with the two
 coordinate marginals `p` and `q`. -/
-def IsCoupling {α : Type*} [Fintype α] (p q : PMF α) (r : PMF (α × α)) : Prop :=
-  (∀ a, ∑ b, r (a, b) = p a) ∧ (∀ b, ∑ a, r (a, b) = q b)
+def IsCoupling {α : Type*} (p q : PMF α) (r : PMF (α × α)) : Prop :=
+  r.map Prod.fst = p ∧ r.map Prod.snd = q
 
 -- Helpers (private).
+
+private theorem isCoupling_iff {α : Type*} [Fintype α]
+    {p q : PMF α} {r : PMF (α × α)} :
+    IsCoupling p q r ↔ (∀ a, ∑ b, r (a, b) = p a) ∧ (∀ b, ∑ a, r (a, b) = q b) := by
+  constructor
+  · rintro ⟨hl, hr⟩
+    constructor
+    · intro a
+      rw [← InformationTheory.map_fst_apply, hl]
+    · intro b
+      rw [← InformationTheory.map_snd_apply, hr]
+  · rintro ⟨hl, hr⟩
+    constructor
+    · ext a
+      simpa only [InformationTheory.map_fst_apply] using hl a
+    · ext b
+      simpa only [InformationTheory.map_snd_apply] using hr b
 
 private theorem pmf_ne_top {α : Type*} (p : PMF α) (a : α) : p a ≠ ⊤ :=
   ne_top_of_le_ne_top ENNReal.one_ne_top (PMF.coe_le_one p a)
@@ -102,8 +116,9 @@ probability that the coupled samples differ. -/
 theorem tvDist_le_prob_ne {α : Type*} [Fintype α] [MeasurableSpace α] [DiscreteMeasurableSpace α]
     {p q : PMF α} {r : PMF (α × α)}
     (hr : IsCoupling p q r) :
-    tvDist p q ≤ (r.toMeasure {x : α × α | x.1 ≠ x.2}).toReal := by
-  obtain ⟨hleft, hright⟩ := hr
+    MarkovMixing.tvDist (fun a => (p a).toReal) (fun a => (q a).toReal) ≤
+      (r.toMeasure {x : α × α | x.1 ≠ x.2}).toReal := by
+  obtain ⟨hleft, hright⟩ := isCoupling_iff.mp hr
   classical
   -- Real-valued masses.
   set u : α × α → ℝ := fun x => (r x).toReal with hu
@@ -190,7 +205,7 @@ theorem tvDist_le_prob_ne {α : Type*} [Fintype α] [MeasurableSpace α] [Discre
   have hfin : ∑ a, |(p a).toReal - (q a).toReal| ≤ 2 * ∑ x ∈ D, u x :=
     hsum.trans_eq hRHS
   rw [hmeas]
-  unfold tvDist
+  unfold MarkovMixing.tvDist
   calc (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal|
       ≤ (1 / 2) * (2 * ∑ x ∈ D, u x) :=
         mul_le_mul_of_nonneg_left hfin (by norm_num)
@@ -201,7 +216,8 @@ coupling inequality. -/
 theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
     [DiscreteMeasurableSpace α] (p q : PMF α) :
     ∃ r : PMF (α × α), IsCoupling p q r ∧
-      (r.toMeasure {x : α × α | x.1 ≠ x.2}).toReal = tvDist p q := by
+      (r.toMeasure {x : α × α | x.1 ≠ x.2}).toReal =
+        MarkovMixing.tvDist (fun a => (p a).toReal) (fun a => (q a).toReal) := by
   classical
   -- Common part and overlap.
   set m : α → ENNReal := fun a => min (p a) (q a) with hm_def
@@ -237,7 +253,8 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
   have hsum_m : ∑ a, (m a).toReal = s.toReal := by
     rw [hs_eq, ← ENNReal.toReal_sum (fun a _ => hm_ne a)]
   -- tvDist in terms of s.
-  have htv : tvDist p q = 1 - s.toReal := by
+  have htv : MarkovMixing.tvDist (fun a => (p a).toReal) (fun a => (q a).toReal) =
+      1 - s.toReal := by
     have hsum_abs : ∑ a, |(p a).toReal - (q a).toReal| = 2 - 2 * s.toReal := by
       have e : ∀ a, |(p a).toReal - (q a).toReal|
           = ((p a).toReal + (q a).toReal) - 2 * (m a).toReal := by
@@ -247,7 +264,7 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
       simp_rw [e, Finset.sum_sub_distrib, Finset.sum_add_distrib, hsum_p, hsum_q,
         ← Finset.mul_sum, hsum_m]
       ring
-    unfold tvDist
+    unfold MarkovMixing.tvDist
     rw [hsum_abs]
     ring
   by_cases hs1 : s = 1
@@ -291,7 +308,7 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
       rw [Fintype.sum_prod_type]
       simp_rw [hdiag]
       exact pmf_sum_eq_one p
-    refine ⟨PMF.ofFintype f htot, ⟨?_, ?_⟩, ?_⟩
+    refine ⟨PMF.ofFintype f htot, isCoupling_iff.mpr ⟨?_, ?_⟩, ?_⟩
     · intro a
       simp only [PMF.ofFintype_apply]
       exact hdiag a
@@ -321,7 +338,7 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
           have hfx : f x = 0 := hD0 x (by simp [hx])
           rw [hfx, ENNReal.toReal_zero]
         · rw [Set.indicator_of_notMem hxm, ENNReal.toReal_zero]
-      have htv0 : tvDist p q = 0 := by
+      have htv0 : MarkovMixing.tvDist (fun a => (p a).toReal) (fun a => (q a).toReal) = 0 := by
         rw [htv, hs1, ENNReal.toReal_one, sub_self]
       rw [hmeas, htv0]
   · -- Case B: s ≠ 1, mixture construction.
@@ -406,7 +423,7 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
       rw [Fintype.sum_prod_type]
       simp_rw [hrow]
       exact pmf_sum_eq_one p
-    refine ⟨PMF.ofFintype f htot, ⟨?_, ?_⟩, ?_⟩
+    refine ⟨PMF.ofFintype f htot, isCoupling_iff.mpr ⟨?_, ?_⟩, ?_⟩
     · intro a
       simp only [PMF.ofFintype_apply]
       exact hrow a
@@ -485,7 +502,7 @@ theorem exists_maximal_coupling {α : Type*} [Fintype α] [MeasurableSpace α]
         · have hxm : x ∉ {x : α × α | x.1 ≠ x.2} := hx
           rw [Set.indicator_of_notMem hxm]
           simp [hx]
-      have hTtv : T = tvDist p q := by
+      have hTtv : T = MarkovMixing.tvDist (fun a => (p a).toReal) (fun a => (q a).toReal) := by
         rw [hT_eq, ht_eq, ENNReal.toReal_sub_of_le hs_le ENNReal.one_ne_top,
           ENNReal.toReal_one, htv]
       rw [hmeas, hDsum, hTtv]
