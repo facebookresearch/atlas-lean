@@ -500,7 +500,7 @@ private lemma tajimaNum_eq (X : ℕ → Ω → ℝ) :
 `w_i = i (n - i) / C(n, 2) - 1 / a₁` (`tajimaNumWeight`). The `θ`-linear coefficient is
 Tajima's `c₁` (`sum_tajimaNumWeight_sq_div`); the `θ²` coefficient needs exactly the
 covariances `Cov(L_i, L_j)` weighted by `w_i w_j` (`variance_sum_eq_sum_covariance`), i.e. the
-combination that Tajima's `c₂` evaluates. -/
+combination that Tajima's `c₂` evaluates (Tajima 1989; not proved here). -/
 theorem variance_tajimaNumerator_kingman (hn : 2 ≤ n) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)

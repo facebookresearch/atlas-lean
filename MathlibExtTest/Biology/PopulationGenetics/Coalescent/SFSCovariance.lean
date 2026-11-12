@@ -52,11 +52,23 @@ example : ∑ i ∈ (Ico 1 4 : Finset ℕ),
   rw [sum_piWeight_sq_mul (by norm_num)]
   norm_num [tajimaB1]
 
+/-- `n = 4`: the same sum computed directly, independently of `sum_piWeight_sq_mul`. -/
+example : ∑ i ∈ (Ico 1 4 : Finset ℕ),
+    ((((4 : ℕ) : ℝ) - (i : ℝ)) / ((4 : ℕ).choose 2 : ℝ)) ^ 2 * (i : ℝ) = 5 / 9 := by
+  simp [Finset.sum_Ico_succ_top, Nat.choose]
+  norm_num
+
 /-- `n = 4`: the `θ`-linear coefficient of `Var(θ_π - S / a₁)` is Tajima's `c₁`, which is
 positive. -/
 example : 0 < ∑ i ∈ Ico 1 4, tajimaNumWeight 4 i ^ 2 / i := by
   rw [sum_tajimaNumWeight_sq_div (by norm_num)]
   exact tajimaC1_pos le_rfl
+
+/-- `n = 4`: the same sum computed directly, `c₁ = 5/9 - 6/11 = 1/99`, independently of
+`sum_tajimaNumWeight_sq_div`. -/
+example : ∑ i ∈ Ico 1 4, tajimaNumWeight 4 i ^ 2 / i = 1 / 99 := by
+  simp [Finset.sum_Ico_succ_top, tajimaNumWeight, tajimaA1, Nat.choose]
+  norm_num
 
 /-! ### A Poisson witness for `SFSCondMoments` -/
 
