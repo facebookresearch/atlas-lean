@@ -205,13 +205,16 @@ theorem integrable_ipw_of_mar {R : Set Ω} (hR : MeasurableSet R) {X : Ω → �
     Integrable (R.indicator fun ω => Y ω / propensity μ R X (X ω)) μ :=
   (ipw_of_mar hR hX hY hYi hMAR hpos).1
 
-/-- **Identification by inverse-response weighting under MAR**: if the outcome is missing at
-random given a finitely-valued, always-observed covariate, `R ⊥ Y | X`, and the response
-probability is positive, `π(x) = P(R | X = x) > 0` for every `x` of positive probability, then
+omit [IsFiniteMeasure μ] in
+/-- **Identification by inverse-response weighting under MAR**: under a probability law,
+if the outcome is missing at random given a finitely-valued, always-observed covariate,
+`R ⊥ Y | X`, and the response probability is positive, `π(x) = P(R | X = x) > 0` for every
+`x` of positive probability, then
 the inverse-response-weighted mean `E[1_R Y / π(X)]` (an observed-data estimand) equals the
 full-data mean `E[Y]`. Only `π > 0` is needed: `π = 1` (full response in a stratum) is
 allowed. -/
-theorem ipwMean_eq_integral_of_mar {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳}
+theorem ipwMean_eq_integral_of_mar [IsProbabilityMeasure μ]
+    {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳}
     (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
     (hMAR : MissingOutcomes.MissingAtRandom μ R Y X)
     (hpos : MissingOutcomes.ResponsePositivity μ R X) :

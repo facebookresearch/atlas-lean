@@ -92,6 +92,27 @@ example : True := by
 
 end Integrability
 
+section ProbabilityNormalization
+
+variable {Ω β : Type*} [MeasurableSpace Ω] [Finite β]
+  [MeasurableSpace β] [MeasurableSingletonClass β] {μ : Measure Ω}
+  [IsFiniteMeasure μ] {R : Set Ω} (hR : MeasurableSet R) {X : Ω → β}
+  (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
+  (hMAR : MissingOutcomes.MissingAtRandom μ R Y X)
+  (hpos : MissingOutcomes.ResponsePositivity μ R X)
+
+-- A finite measure alone does not make its integral a population mean.
+example : True := by
+  fail_if_success
+    have _ : ipwMean μ R X Y = ∫ ω, Y ω ∂μ :=
+      ipwMean_eq_integral_of_mar hR hX hY hYi hMAR hpos
+  trivial
+
+example : Integrable (R.indicator fun ω => Y ω / propensity μ R X (X ω)) μ :=
+  integrable_ipw_of_mar hR hX hY hYi hMAR hpos
+
+end ProbabilityNormalization
+
 /-! ### MCAR witness -/
 
 /-- **Non-vacuity of MCAR**: the first coin is independent of every function of the second
