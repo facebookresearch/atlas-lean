@@ -7,10 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Analysis.FunctionalAnalysis.G09TikhonovConsistency
+public import MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
 
 /-!
-# Tests for small-noise Tikhonov consistency (G09)
+# Tests for small-noise Tikhonov consistency
 
 Closed checks on the one-dimensional operator `A = 1 : ℝ →L[ℝ] ℝ`:
 the energy bound, the consistency bound with `w = 1`, `A = 0` forcing
@@ -22,7 +22,7 @@ The convergence theorem is the module-level statement.
 
 open Filter Topology Real
 
-namespace MathlibExt.Analysis.FunctionalAnalysis.G09TikhonovConsistency
+namespace MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
 
 /-- One-dimensional energy bound: `A = 1`, `z = 3`, `x = 1` solves the
 normal equation at `lam = 2`, and `2 * 1 ≤ 3 * 1 - 1 ≤ 9 / 4`. -/
@@ -33,7 +33,7 @@ example :
       (2 : ℝ) • (1 : ℝ →L[ℝ] ℝ)) (1 : ℝ) =
       ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) (3 : ℝ) := by
     norm_num [ContinuousLinearMap.adjoint_one]
-  exact g09_energy_bound (1 : ℝ →L[ℝ] ℝ) 3 1 (by norm_num) hx
+  exact energy_bound (1 : ℝ →L[ℝ] ℝ) 3 1 (by norm_num) hx
 
 /-- One-dimensional consistency: `A = 1`, `w = 1`, `xdag = 1`, `b = 1`,
 `bdelta = 1 + delta`, `xlam = 1`, `lam = delta = 1/4`: the error is `0`
@@ -45,7 +45,7 @@ example :
       ((1 / 4 : ℝ) : ℝ) • (1 : ℝ →L[ℝ] ℝ)) (1 : ℝ) =
       ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) (1 + 1 / 4 : ℝ) := by
     norm_num [ContinuousLinearMap.adjoint_one]
-  have h := g09_consistency_bound (A := (1 : ℝ →L[ℝ] ℝ)) (xdag := (1 : ℝ)) (w := (1 : ℝ))
+  have h := consistency_bound (A := (1 : ℝ →L[ℝ] ℝ)) (xdag := (1 : ℝ)) (w := (1 : ℝ))
     (b := (1 : ℝ)) (bdelta := (1 + 1 / 4 : ℝ)) (xlam := (1 : ℝ)) (lam := (1 / 4 : ℝ))
     (delta := (1 / 4 : ℝ)) (by norm_num) (by norm_num)
     (by simp [ContinuousLinearMap.adjoint_one]) (by simp) (by norm_num) hxlam
@@ -57,9 +57,9 @@ example (w : ℝ) :
     ContinuousLinearMap.adjoint (0 : ℝ →L[ℝ] ℝ) (w : ℝ) = 0 := by
   simp
 
-#print axioms g09_energy_bound
-#print axioms g09_norm_le_of_normal_equations
-#print axioms g09_consistency_bound
-#print axioms g09_convergence
+#print axioms energy_bound
+#print axioms norm_le_of_normal_equations
+#print axioms consistency_bound
+#print axioms convergence
 
-end MathlibExt.Analysis.FunctionalAnalysis.G09TikhonovConsistency
+end MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency

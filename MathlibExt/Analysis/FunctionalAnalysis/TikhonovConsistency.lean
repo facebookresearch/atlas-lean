@@ -30,10 +30,10 @@ proved for Tikhonov solutions in
 
 ## Key results
 
-- `g09_energy_bound`: the normal-equation energy bound.
-- `g09_norm_le_of_normal_equations`: `‖x‖ ≤ ‖z‖ / (2 * sqrt lam)`.
-- `g09_consistency_bound`: the small-noise error bound.
-- `g09_convergence`: convergence with `lam(delta) = delta`.
+- `energy_bound`: the normal-equation energy bound.
+- `norm_le_of_normal_equations`: `‖x‖ ≤ ‖z‖ / (2 * sqrt lam)`.
+- `consistency_bound`: the small-noise error bound.
+- `convergence`: convergence with `lam(delta) = delta`.
 -/
 
 @[expose] public section
@@ -41,14 +41,14 @@ proved for Tikhonov solutions in
 open Filter Topology Real
 open scoped InnerProductSpace
 
-namespace MathlibExt.Analysis.FunctionalAnalysis.G09TikhonovConsistency
+namespace MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
 
 variable {H K : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
   [NormedAddCommGroup K] [InnerProductSpace ℝ K] [CompleteSpace K]
 
 /-- Normal-equation energy bound: if `(A† A + lam • 1) x = A† z` with
 `lam > 0`, then `lam * ‖x‖^2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖^2 ≤ ‖z‖^2 / 4`. -/
-theorem g09_energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ} (hlam : 0 < lam)
+theorem energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ} (hlam : 0 < lam)
     (hx : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x =
       ContinuousLinearMap.adjoint A z) :
     lam * ‖x‖ ^ 2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖ ^ 2 ∧
@@ -81,12 +81,12 @@ theorem g09_energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ} (hlam :
   · nlinarith [sq_nonneg (‖z‖ / 2 - ‖A x‖)]
 
 /-- Norm bound for a normal-equation solution: `‖x‖ ≤ ‖z‖ / (2 * sqrt lam)`. -/
-theorem g09_norm_le_of_normal_equations (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ}
+theorem norm_le_of_normal_equations (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ}
     (hlam : 0 < lam)
     (hx : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x =
       ContinuousLinearMap.adjoint A z) :
     ‖x‖ ≤ ‖z‖ / (2 * Real.sqrt lam) := by
-  have h := g09_energy_bound A z x hlam hx
+  have h := energy_bound A z x hlam hx
   have h_comb : lam * ‖x‖ ^ 2 ≤ ‖z‖ ^ 2 / 4 := le_trans h.1 h.2
   have hlam_nn : 0 ≤ lam := le_of_lt hlam
   have hsqrt_pos : 0 < Real.sqrt lam := Real.sqrt_pos.mpr hlam
@@ -115,7 +115,7 @@ theorem g09_norm_le_of_normal_equations (A : H →L[ℝ] K) (z : K) (x : H) {lam
 `b = A xdag`: if `‖bdelta - b‖ ≤ delta` and `xlam` solves the normal
 equations for `bdelta` at `lam > 0`, then
 `‖xlam - xdag‖ ≤ delta / (2 * sqrt lam) + sqrt lam * ‖w‖ / 2`. -/
-theorem g09_consistency_bound (A : H →L[ℝ] K) (xdag : H) (w : K) (b bdelta : K)
+theorem consistency_bound (A : H →L[ℝ] K) (xdag : H) (w : K) (b bdelta : K)
     (xlam : H) {lam delta : ℝ} (hlam : 0 < lam) (hdelta : 0 ≤ delta)
     (hsource : xdag = ContinuousLinearMap.adjoint A w)
     (hb : b = A xdag) (hnoise : ‖bdelta - b‖ ≤ delta)
@@ -147,7 +147,7 @@ theorem g09_consistency_bound (A : H →L[ℝ] K) (xdag : H) (w : K) (b bdelta :
     congr 1
     abel
   have h_norm : ‖xlam - xdag‖ ≤ ‖(bdelta - b) - lam • w‖ / (2 * Real.sqrt lam) :=
-    g09_norm_le_of_normal_equations A _ _ hlam he
+    norm_le_of_normal_equations A _ _ hlam he
   have h_smul_norm : ‖lam • w‖ = lam * ‖w‖ := by
     rw [norm_smul, Real.norm_eq_abs, abs_of_pos hlam]
   have h_z_le : ‖(bdelta - b) - lam • w‖ ≤ delta + lam * ‖w‖ := by
@@ -174,7 +174,7 @@ theorem g09_consistency_bound (A : H →L[ℝ] K) (xdag : H) (w : K) (b bdelta :
 /-- Convergence with the parameter choice `lam(delta) = delta`: as
 `delta → 0+`, the Tikhonov solutions for data within `delta` of `b`
 converge to `xdag`. -/
-theorem g09_convergence (A : H →L[ℝ] K) (xdag : H) (w : K) (b : K)
+theorem convergence (A : H →L[ℝ] K) (xdag : H) (w : K) (b : K)
     (xlam : ℝ → H) (bdelta : ℝ → K)
     (hsource : xdag = ContinuousLinearMap.adjoint A w) (hb : b = A xdag)
     (h : ∀ delta : ℝ, 0 < delta →
@@ -187,7 +187,7 @@ theorem g09_convergence (A : H →L[ℝ] K) (xdag : H) (w : K) (b : K)
     have h_pair := h delta hdelta
     have hx := h_pair.1
     have hnoise : ‖bdelta delta - b‖ ≤ delta := h_pair.2
-    have h_cons := g09_consistency_bound A xdag w b (bdelta delta) (xlam delta)
+    have h_cons := consistency_bound A xdag w b (bdelta delta) (xlam delta)
       hdelta (le_of_lt hdelta) hsource hb hnoise hx
     have h_delta_eq : delta / (2 * Real.sqrt delta) = Real.sqrt delta / 2 := by
       have hdelta_nn : 0 ≤ delta := le_of_lt hdelta
@@ -229,4 +229,4 @@ theorem g09_convergence (A : H →L[ℝ] K) (xdag : H) (w : K) (b : K)
   have := h_zero.add_const xdag
   simpa using this
 
-end MathlibExt.Analysis.FunctionalAnalysis.G09TikhonovConsistency
+end MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
