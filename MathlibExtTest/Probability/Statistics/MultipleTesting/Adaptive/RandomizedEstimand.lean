@@ -19,8 +19,9 @@ public import Mathlib.MeasureTheory.Integral.Pi
   Endpoint `0` has a heterogeneous individual effect `±1` with average zero (the superpopulation
   analogue of Neyman's weak null, not Fisher's sharp null); endpoint `1` has ATE `2`. Coins `2`
   and `3` drive two independent, non-constant p-values: the null one is valid, the non-null one
-  is not, so scoped calibration needs only the null endpoint. `ateNulls` is the proper subset `{0}`, and
-  every hypothesis of the randomized BH theorem is discharged.
+  is not, so calibration uses the nonzero observed IPW contrast of endpoint `1`.
+  `ateNulls` is the proper subset `{0}`, and every hypothesis of the randomized BH theorem is
+  discharged.
 * Computations of `ipwContrast`, `ateNulls`, `IsIPWNullCalibrated` on small examples.
 * The positivity-failure boundary: the computed IPW contrast `-1` against the ATE `0`, and FDR /
   FWER equal to `1`, contradicting the bound at level `1/20`.
@@ -140,6 +141,14 @@ lemma ipwContrast_trial (j : Fin 2) :
     Measurable.of_discrete Measurable.of_discrete Integrable.of_finite Integrable.of_finite
     (stronglyIgnorable_trial j), integral_y1_sub_y0]
 
+/-- The trial's null endpoint satisfies both parts of the observed null. -/
+lemma isIPWNull_trial_zero :
+    IsIPWNull trial treated (fun _ => ()) (observed treated (y0 0) (y1 0)) := by
+  refine ⟨integrable_ipw_observed measurableSet_treated measurable_const
+    Integrable.of_finite Integrable.of_finite, ?_⟩
+  rw [ipwContrast_trial]
+  norm_num [eff]
+
 /-- The null endpoint's p-value distribution: `1/2` or `1`. -/
 noncomputable def pv0 : Bool → ℝ := fun b => if b then 1 / 2 else 1
 
@@ -193,16 +202,16 @@ lemma not_isValidPValue_pval_one : ¬ IsValidPValue trial (pval 1) := by
   have := (ENNReal.ofReal_le_ofReal_iff (by norm_num)).1 this
   norm_num at this
 
-/-- The p-values are calibrated for the observed-data IPW null, scoped to the causal nulls.
-Endpoint `1` is not a causal null, so nothing is required of its (invalid) p-value, whatever
-its IPW contrast; endpoint `0` is the only causal null and its p-value is valid. -/
+/-- The p-values are calibrated for the observed-data IPW null. Endpoint `0` has a valid
+p-value; endpoint `1` has nonzero IPW contrast, so its invalid p-value is permitted. -/
 lemma isIPWNullCalibrated_trial :
-    IsIPWNullCalibrated trial treated (fun _ => ()) y0 y1 pval := by
-  intro j hj _
-  rw [ateNulls_trial] at hj
-  have hj0 : j = 0 := Finset.mem_singleton.1 hj
-  subst hj0
-  exact isValidPValue_pval_zero
+    IsIPWNullCalibrated trial treated (fun _ => ())
+      (fun j => observed treated (y0 j) (y1 j)) pval := by
+  rintro j ⟨_, hj⟩
+  fin_cases j
+  · exact isValidPValue_pval_zero
+  · rw [ipwContrast_trial] at hj
+    norm_num [eff] at hj
 
 /-- **Non-vacuity of the randomized BH theorem**: two endpoints, one causal null and one with ATE
 `2`, independent non-constant p-values, every hypothesis discharged. The bound is `q / 2`. -/
@@ -225,6 +234,32 @@ example (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
 example : ateNulls (Measure.dirac ()) (fun (_ : Fin 1) _ => (0 : ℝ)) (fun _ _ => 3) = ∅ := by
   ext j
   simp [mem_ateNulls_iff]
+
+/-- An observed null still requires calibration when the endpoint is not a causal null.
+Nobody is treated and the observed outcome is zero, but the unobserved treated outcome is one. -/
+example :
+    ateNulls (Measure.dirac ()) (fun (_ : Fin 1) _ => (0 : ℝ)) (fun _ _ => 1) = ∅ ∧
+    ¬ IsIPWNullCalibrated (Measure.dirac ()) (∅ : Set Unit) (fun _ => ())
+      (fun (_ : Fin 1) => observed ∅ (fun _ => 0) (fun _ => 1)) (fun _ _ => 0) := by
+  constructor
+  · ext j
+    simp [mem_ateNulls_iff]
+  · intro hcal
+    have hv := hcal 0 ⟨Integrable.of_finite, by simp [ipwContrast, observed]⟩
+    have h := hv 0 ⟨le_rfl, zero_le_one⟩
+    simp at h
+
+/-- A nonintegrable weighted contrast has Bochner integral zero but is not an observed null. -/
+example :
+    ipwContrast (Measure.count : Measure ℕ) ∅ (fun _ => ()) (fun _ => 1) = 0 ∧
+    ¬ IsIPWNull (Measure.count : Measure ℕ) ∅ (fun _ => ()) (fun _ => 1) := by
+  have hni : ¬ Integrable (fun _ : ℕ => (-1 : ℝ)) Measure.count := by
+    simp [integrable_const_iff, isFiniteMeasure_iff]
+  constructor
+  · simp [ipwContrast, propensity]
+  · rintro ⟨hi, _⟩
+    apply hni
+    simpa [propensity] using hi
 
 /-- `ipwContrast` with the trivial covariate is the Horvitz–Thompson contrast. -/
 example (Y : (Fin 4 → Bool) → ℝ) :
