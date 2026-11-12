@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Economics.Finance.GrowingPerpetuity
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.FieldSimp
@@ -29,9 +30,14 @@ price exceeds the no-growth price `E₁ / r` exactly when `ROE > r`.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionPrice`: Gordon price with reinvestment.
 * `MathlibExt.Economics.Finance.RetentionValue.noGrowthPrice`: no-growth price `E₁ / r`.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionPrice_eq_gordonForm`: `retentionPrice`
-  is the Gordon formula with the reinvestment-model dividend and growth substituted in.
+  is the Gordon formula with the reinvestment-model dividend and growth substituted in
+  (an algebraic identity; the price interpretation needs the next bridge).
+* `MathlibExt.Economics.Finance.RetentionValue.retentionPrice_eq_growingPerpetuity`:
+  under the convergence hypotheses of `growingPerpetuity_eq`, `retentionPrice` is the
+  value of the corresponding growing perpetuity, so the rational expression is an
+  equity price only when the discounted cash flows converge.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionCreatesValue_iff`: value
-  creation iff `ROE > r`.
+  creation iff `ROE > r`, under the same convergence hypotheses.
 
 ## References
 
@@ -60,32 +66,66 @@ noncomputable def noGrowthPrice (E₁ r : ℝ) : ℝ :=
   E₁ / r
 
 /-- `retentionPrice` is exactly the Gordon formula with the reinvestment-model dividend
-and growth substituted in. -/
+and growth substituted in. This is an algebraic identity; on its own it does not say
+the discounted cash flows converge, so the price interpretation comes from
+`retentionPrice_eq_growingPerpetuity` below. -/
 theorem retentionPrice_eq_gordonForm {E₁ b ROE r : ℝ} :
     retentionPrice E₁ b ROE r = E₁ * (1 - b) / (r - retentionGrowth b ROE) := by
   rfl
 
+/-- `retentionPrice` is the value of the growing perpetuity that pays the
+reinvestment-model dividend `E₁ * (1 - b)` growing at `retentionGrowth b ROE`, under the
+convergence hypotheses of `growingPerpetuity_eq`. In particular, the rational
+expression is an equity price only when `0 ≤ (1 + b * ROE) / (1 + r)`; without this,
+e.g. `b = 1 / 2`, `ROE = -8`, `r = 1` gives ratio `-3 / 2` and the discounted flows
+diverge even though the rational expression is finite. -/
+theorem retentionPrice_eq_growingPerpetuity {E₁ b ROE r : ℝ} (hr : 0 < 1 + r)
+    (hx₀ : 0 ≤ (1 + retentionGrowth b ROE) / (1 + r))
+    (hx₁ : (1 + retentionGrowth b ROE) / (1 + r) < 1) :
+    retentionPrice E₁ b ROE r
+      = growingPerpetuity (E₁ * (1 - b)) r (retentionGrowth b ROE) :=
+  (growingPerpetuity_eq (E₁ * (1 - b)) r (retentionGrowth b ROE) hr hx₀ hx₁).symm
+
 /-- **Retained earnings create value iff `ROE > r`.** With positive earnings, a positive
-retention share, a positive required return, and growth below the required return
-(`b * ROE < r`, so the Gordon denominator is positive), the retention price exceeds the
-no-growth price exactly when the reinvestment return exceeds the required return. -/
+retention share, a positive required return, growth below the required return
+(`b * ROE < r`, so the Gordon denominator is positive), and the convergence
+hypothesis `0 ≤ (1 + b * ROE) / (1 + r)` (so the retention price is the value of a
+convergent growing perpetuity, via `retentionPrice_eq_growingPerpetuity`), the
+retention price exceeds the no-growth price exactly when the reinvestment return
+exceeds the required return. -/
 theorem retentionCreatesValue_iff {E₁ b ROE r : ℝ} (hE : 0 < E₁) (hb₀ : 0 < b)
-    (hr : 0 < r) (hg : b * ROE < r) :
+    (hr : 0 < r) (hg : b * ROE < r)
+    (hx₀ : 0 ≤ (1 + retentionGrowth b ROE) / (1 + r)) :
     retentionPrice E₁ b ROE r > noGrowthPrice E₁ r ↔ ROE > r := by
+  have hr1 : 0 < 1 + r := by linarith
+  have hx₁ : (1 + retentionGrowth b ROE) / (1 + r) < 1 := by
+    have hgrow : retentionGrowth b ROE = b * ROE := rfl
+    rw [div_lt_one hr1, hgrow]
+    linarith
+  -- The price in the statement is the value of a convergent growing perpetuity;
+  -- rewrite it to the Gordon rational expression through that bridge.
+  have hbridge : retentionPrice E₁ b ROE r
+      = growingPerpetuity (E₁ * (1 - b)) r (retentionGrowth b ROE) :=
+    retentionPrice_eq_growingPerpetuity hr1 hx₀ hx₁
+  have hperpetuity : growingPerpetuity (E₁ * (1 - b)) r (retentionGrowth b ROE)
+      = E₁ * (1 - b) / (r - retentionGrowth b ROE) :=
+    growingPerpetuity_eq _ _ _ hr1 hx₀ hx₁
+  rw [hbridge, hperpetuity]
   have hr0 : r ≠ 0 := ne_of_gt hr
   have hden : 0 < r - b * ROE := by linarith
   have hden0 : r - b * ROE ≠ 0 := ne_of_gt hden
   have hY0 : r * (r - b * ROE) ≠ 0 := mul_ne_zero hr0 hden0
   have hEb : 0 < E₁ * b := mul_pos hE hb₀
   have hY : 0 < r * (r - b * ROE) := mul_pos hr hden
-  have hkey : retentionPrice E₁ b ROE r - noGrowthPrice E₁ r
+  have hkey : E₁ * (1 - b) / (r - retentionGrowth b ROE) - noGrowthPrice E₁ r
       = E₁ * b * (ROE - r) / (r * (r - b * ROE)) := by
-    simp only [retentionPrice, noGrowthPrice]
+    simp only [noGrowthPrice, retentionGrowth]
     field_simp
     ring
   constructor
   · intro h
-    have hpos : 0 < retentionPrice E₁ b ROE r - noGrowthPrice E₁ r := sub_pos.mpr h
+    have hpos : 0 < E₁ * (1 - b) / (r - retentionGrowth b ROE) - noGrowthPrice E₁ r :=
+      sub_pos.mpr h
     rw [hkey] at hpos
     have hnum : 0 < E₁ * b * (ROE - r) := by
       rcases div_pos_iff.mp hpos with ⟨h, _⟩ | ⟨_, hcon⟩

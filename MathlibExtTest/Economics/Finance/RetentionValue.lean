@@ -35,7 +35,8 @@ example : noGrowthPrice 10 (1/5) = 50 := by
   norm_num
 
 example : retentionPrice 10 (1/2) (3/10) (1/5) > noGrowthPrice 10 (1/5) :=
-  (retentionCreatesValue_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)).mpr
+  (retentionCreatesValue_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num [retentionGrowth])).mpr
     (by norm_num)
 
 -- Test 2 (value-destroying): E₁ = 10, b = 1/2, ROE = 1/5, r = 3/10.
@@ -48,7 +49,8 @@ example : noGrowthPrice 10 (3/10) = 100 / 3 := by
   norm_num
 
 example : ¬ retentionPrice 10 (1/2) (1/5) (3/10) > noGrowthPrice 10 (3/10) := by
-  rw [retentionCreatesValue_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+  rw [retentionCreatesValue_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num [retentionGrowth])]
   norm_num
 
 -- Test 3 (growth): g = 3/20, and the Gordon form computes to 100 on both sides.
@@ -63,6 +65,14 @@ example : retentionPrice 10 (1/2) (3/10) (1/5)
 example : (10 * (1 - (1/2:ℝ)) / ((1/5:ℝ) - retentionGrowth (1/2) (3/10)) : ℝ) = 100 := by
   unfold retentionGrowth
   norm_num
+
+-- Test 4 (convergent perpetuity): the retention price is the growing-perpetuity value
+-- for the convergent parameters above, via `retentionPrice_eq_growingPerpetuity`.
+example : retentionPrice 10 (1/2) (3/10) (1/5)
+    = MathlibExt.Economics.Finance.growingPerpetuity (10 * (1 - 1/2)) (1/5)
+        (retentionGrowth (1/2) (3/10)) :=
+  retentionPrice_eq_growingPerpetuity (by norm_num) (by norm_num [retentionGrowth])
+    (by norm_num [retentionGrowth])
 
 
 end MathlibExtTest.Economics.Finance.RetentionValue
