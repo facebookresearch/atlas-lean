@@ -57,8 +57,20 @@ namespace GEESandwichTest
 
 example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] :
     sandwichCovariance (1 : E →L[ℝ] E) 1 = 1 := by
-  rw [sandwichCovariance, Ring.inverse_one, mul_one, one_mul, ContinuousLinearMap.one_def,
-    ContinuousLinearMap.adjoint_id]
+  have hsym : symmetrizedMeat (1 : E →L[ℝ] E) = 1 := by
+    rw [symmetrizedMeat, ContinuousLinearMap.adjoint_one, ← two_smul ℝ (1 : E →L[ℝ] E),
+      smul_smul]
+    norm_num
+  rw [sandwichCovariance, hsym, Ring.inverse_one, mul_one, one_mul,
+    ContinuousLinearMap.one_def, ContinuousLinearMap.adjoint_id]
+
+/-- The sandwich is self-adjoint for every meat, and depends on the meat only through its
+symmetrization. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    (A B : E →L[ℝ] E) :
+    IsSelfAdjoint (sandwichCovariance A B) ∧
+      sandwichCovariance A (symmetrizedMeat B) = sandwichCovariance A B :=
+  ⟨isSelfAdjoint_sandwichCovariance A B, sandwichCovariance_symmetrizedMeat A B⟩
 
 /-! ### Scalar sandwich -/
 
@@ -77,7 +89,13 @@ theorem sandwichCovariance_smul_one (c d : ℝ) (hc : c ≠ 0) :
   have hadj : ContinuousLinearMap.adjoint (c⁻¹ • (1 : ℝ →L[ℝ] ℝ)) = c⁻¹ • 1 := by
     rw [map_smulₛₗ, ContinuousLinearMap.one_def, ContinuousLinearMap.adjoint_id]
     simp
-  rw [sandwichCovariance, hinv, hadj]
+  have hsym : symmetrizedMeat (d • (1 : ℝ →L[ℝ] ℝ)) = d • 1 := by
+    have hadjB : ContinuousLinearMap.adjoint (d • (1 : ℝ →L[ℝ] ℝ)) = d • 1 := by
+      rw [map_smulₛₗ, ContinuousLinearMap.one_def, ContinuousLinearMap.adjoint_id]
+      simp
+    rw [symmetrizedMeat, hadjB, ← two_smul ℝ (d • (1 : ℝ →L[ℝ] ℝ)), smul_smul]
+    norm_num
+  rw [sandwichCovariance, hsym, hinv, hadj]
   ext
   simp
   field_simp
@@ -350,15 +368,17 @@ theorem βhat_sub (β₀ : ℝ) (ξ : ℕ → Ω → F) {n : ℕ} (hn : 1 ≤ n)
   field_simp
   ring
 
-theorem outerProduct_real (u : ℝ) : outerProduct u = (u ^ 2) • (1 : ℝ →L[ℝ] ℝ) := by
+theorem rankOne_real (u : ℝ) :
+    InnerProductSpace.rankOne ℝ u u = (u ^ 2) • (1 : ℝ →L[ℝ] ℝ) := by
   ext
-  simp [outerProduct, sq]
+  simp [InnerProductSpace.rankOne_apply]
+  ring
 
-theorem avg_outer (β₀ : ℝ) (ξ : ℕ → Ω → F) {n : ℕ} (hn : 1 ≤ n) (β : ℝ) (ω : Ω) :
-    (n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U β₀ ξ i β ω) =
+theorem avg_rankOne (β₀ : ℝ) (ξ : ℕ → Ω → F) {n : ℕ} (hn : 1 ≤ n) (β : ℝ) (ω : Ω) :
+    (n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U β₀ ξ i β ω) (U β₀ ξ i β ω) =
       (m2 ξ n ω + 2 * (2 * (β₀ - β)) * m1 ξ n ω + (2 * (β₀ - β)) ^ 2) • (1 : ℝ →L[ℝ] ℝ) := by
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.one_le_iff_ne_zero.1 hn)
-  simp only [outerProduct_real, ← Finset.sum_smul, smul_smul]
+  simp only [rankOne_real, ← Finset.sum_smul, smul_smul]
   congr 1
   simp only [U_eq, add_sq, Finset.sum_add_distrib, Finset.sum_const, Finset.card_range,
     nsmul_eq_mul, ← Finset.sum_mul, ← Finset.mul_sum, m1, m2]
@@ -431,7 +451,7 @@ theorem tendstoInDistribution_randomIntercept_of_hasFDerivAt (hξ : ∀ i, Measu
     (fun n ↦ (measurable_βhat hξ β₀ n).aemeasurable) (tendstoInMeasure_βhat hξ hlaw hind β₀)
     (by simp [sum_U_βhat]) aemeasurable_id hasLaw_limit
 
-/-- The in-probability limit of the averaged outer products: `Bbar β = (6 + 4 (β₀ - β)²) • 1`. -/
+/-- The in-probability limit of the averaged rank-one operators: `Bbar β = (6 + 4 (β₀ - β)²) • 1`. -/
 noncomputable def Bbar (β₀ β : ℝ) : ℝ →L[ℝ] ℝ := (6 + (2 * (β₀ - β)) ^ 2) • 1
 
 /-- **(c) in the model: the empirical sandwich is consistent for the CLT covariance `3 / 2`**,
@@ -442,7 +462,7 @@ theorem tendstoInMeasure_empirical_sandwich_randomIntercept (hξ : ∀ i, Measur
     (hlaw : ∀ i, HasLaw (ξ i) (stdGaussian F) P) (hind : iIndepFun ξ P) (β₀ : ℝ) :
     TendstoInMeasure P (fun (n : ℕ) ω ↦ sandwichCovariance
         ((n : ℝ)⁻¹ • ∑ _i ∈ range n, A)
-        ((n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U β₀ ξ i (βhat β₀ ξ n ω) ω))) atTop
+        ((n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U β₀ ξ i (βhat β₀ ξ n ω) ω) (U β₀ ξ i (βhat β₀ ξ n ω) ω))) atTop
       (fun _ ↦ (3 / 2 : ℝ) • 1) := by
   rw [← sandwichCovariance_A_B]
   have hm1 := tendstoInMeasure_iff_dist.1 (tendstoInMeasure_m1 hξ hlaw hind)
@@ -458,7 +478,7 @@ theorem tendstoInMeasure_empirical_sandwich_randomIntercept (hξ : ∀ i, Measur
   filter_upwards [eventually_ge_atTop 1] with n hn
   refine (measure_mono fun ω hω ↦ ?_).trans (measure_union_le _ _)
   obtain ⟨β, hβ, hle⟩ := hω
-  rw [avg_outer β₀ ξ hn, Bbar, ← sub_smul, norm_smul, norm_one, mul_one, Real.norm_eq_abs]
+  rw [avg_rankOne β₀ ξ hn, Bbar, ← sub_smul, norm_smul, norm_one, mul_one, Real.norm_eq_abs]
     at hle
   have hc : |2 * (β₀ - β)| ≤ 2 := by
     rw [Metric.mem_ball, Real.dist_eq] at hβ

@@ -13,6 +13,7 @@ public import Mathlib.Probability.CramerWold
 public import Mathlib.MeasureTheory.Measure.LevyConvergence
 public import Mathlib.MeasureTheory.Measure.TightNormed
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Normed.Ring.Units
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
@@ -65,10 +66,15 @@ sandwich `A⁻¹ B A⁻ᵀ`.
   meat `B`; `tendstoInMeasure_empirical_sandwichCovariance_of_eq` takes that identification as a
   hypothesis and concludes convergence to `sandwichCovariance (Abar β₀) B`.
 
-The CLT hypotheses pin down the meat `B` only through its quadratic form `⟪B t, t⟫`, and the
-limit law depends on `sandwichCovariance A B` only through its quadratic form, so `B` is not
-required to be self-adjoint there. The plug-in meat is a limit of self-adjoint outer products,
-so matching it with `B` as operators presupposes a self-adjoint `B`.
+The CLT hypotheses pin down the meat `B` only through its quadratic form `⟪B t, t⟫`, so `B`
+is not required to be self-adjoint there: `sandwichCovariance A B` symmetrizes `B`
+(`symmetrizedMeat`), which leaves the quadratic form unchanged
+(`inner_symmetrizedMeat_apply`) and makes the sandwich self-adjoint
+(`isSelfAdjoint_sandwichCovariance`), so it is a genuine covariance operator even for a
+non-self-adjoint representative `B` (for example `B = I + J` with `J` skew-adjoint). For a
+self-adjoint `B`, symmetrization is the identity
+(`sandwichCovariance_eq_of_isSelfAdjoint`). The plug-in meat is a limit of self-adjoint
+rank-one operators, so matching it with `B` as operators presupposes a self-adjoint `B`.
 
 ## Proof
 
@@ -423,11 +429,71 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_linearization {U : ℕ → E → 
 
 /-! ### The sandwich covariance and the GEE central limit theorem -/
 
-/-- The **sandwich covariance** `A⁻¹ B A⁻ᵀ` built from a bread (sensitivity) matrix `A` and a
-meat (variability) matrix `B`, where `A⁻ᵀ` is the adjoint of `A⁻¹ = Ring.inverse A`. For a
-singular `A` the junk value `Ring.inverse A = 0` gives `0`. -/
+/-- The **symmetrized meat** `(B + B†) / 2`. It has the same quadratic form as `B`, and
+it is self-adjoint, unlike an arbitrary quadratic-form representative of `B`. -/
+noncomputable def symmetrizedMeat (B : E →L[ℝ] E) : E →L[ℝ] E :=
+  (1 / 2 : ℝ) • (B + ContinuousLinearMap.adjoint B)
+
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- The quadratic form of the symmetrized meat is the quadratic form of `B`. -/
+theorem inner_symmetrizedMeat_apply (B : E →L[ℝ] E) (t : E) :
+    ⟪symmetrizedMeat B t, t⟫ = ⟪B t, t⟫ := by
+  have h : ⟪ContinuousLinearMap.adjoint B t, t⟫ = ⟪B t, t⟫ := by
+    rw [ContinuousLinearMap.adjoint_inner_left, real_inner_comm]
+  simp only [symmetrizedMeat, add_apply, smul_apply, real_inner_smul_left, inner_add_left, h]
+  ring
+
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- The symmetrized meat is self-adjoint. -/
+theorem isSelfAdjoint_symmetrizedMeat (B : E →L[ℝ] E) : IsSelfAdjoint (symmetrizedMeat B) := by
+  rw [ContinuousLinearMap.isSelfAdjoint_iff']
+  show ContinuousLinearMap.adjoint (symmetrizedMeat B) = symmetrizedMeat B
+  simp only [symmetrizedMeat, map_smulₛₗ, map_add, ContinuousLinearMap.adjoint_adjoint,
+    starRingEnd_apply, star_trivial]
+  rw [add_comm (ContinuousLinearMap.adjoint B) B]
+
+/-- The **sandwich covariance** `A⁻¹ ((B + B†) / 2) A⁻ᵀ` built from a bread (sensitivity)
+matrix `A` and a meat (variability) matrix `B`, where `A⁻ᵀ` is the adjoint of
+`A⁻¹ = Ring.inverse A`. The meat is symmetrized before sandwiching: only its quadratic
+form is identified by the CLT hypotheses, and symmetrization makes the sandwich
+self-adjoint (`isSelfAdjoint_sandwichCovariance`) without changing its quadratic form
+(`inner_sandwichCovariance_apply`). For a singular `A` the junk value
+`Ring.inverse A = 0` gives `0`. -/
 noncomputable def sandwichCovariance (A B : E →L[ℝ] E) : E →L[ℝ] E :=
-  Ring.inverse A * B * ContinuousLinearMap.adjoint (Ring.inverse A)
+  Ring.inverse A * symmetrizedMeat B *
+    ContinuousLinearMap.adjoint (Ring.inverse A)
+
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- The sandwich covariance is self-adjoint for every meat `B`. -/
+theorem isSelfAdjoint_sandwichCovariance (A B : E →L[ℝ] E) :
+    IsSelfAdjoint (sandwichCovariance A B) := by
+  have hc := (isSelfAdjoint_symmetrizedMeat B).conj_adjoint (Ring.inverse A)
+  rwa [← ContinuousLinearMap.mul_def, ← ContinuousLinearMap.mul_def] at hc
+
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- For a self-adjoint meat, symmetrization is the identity, so the sandwich is the
+unsymmetrized `A⁻¹ B A⁻ᵀ`. -/
+theorem sandwichCovariance_eq_of_isSelfAdjoint {A B : E →L[ℝ] E} (hB : IsSelfAdjoint B) :
+    sandwichCovariance A B =
+      Ring.inverse A * B * ContinuousLinearMap.adjoint (Ring.inverse A) := by
+  have hsym : symmetrizedMeat B = B := by
+    rw [symmetrizedMeat, hB.adjoint_eq, ← two_smul ℝ B, smul_smul]
+    norm_num
+  rw [sandwichCovariance, hsym]
+
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- Symmetrization is idempotent. -/
+theorem symmetrizedMeat_idempotent (B : E →L[ℝ] E) :
+    symmetrizedMeat (symmetrizedMeat B) = symmetrizedMeat B := by
+  rw [symmetrizedMeat, (isSelfAdjoint_symmetrizedMeat B).adjoint_eq, ← two_smul ℝ
+    (symmetrizedMeat B), smul_smul]
+  norm_num
+
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- The sandwich depends on the meat only through its symmetrization. -/
+theorem sandwichCovariance_symmetrizedMeat (A B : E →L[ℝ] E) :
+    sandwichCovariance A (symmetrizedMeat B) = sandwichCovariance A B := by
+  simp only [sandwichCovariance, symmetrizedMeat_idempotent]
 
 omit [MeasurableSpace E] [BorelSpace E] in
 /-- The quadratic form of the sandwich is the meat evaluated at `A⁻ᵀ t`. -/
@@ -435,20 +501,23 @@ theorem inner_sandwichCovariance_apply (A B : E →L[ℝ] E) (t : E) :
     ⟪sandwichCovariance A B t, t⟫ =
       ⟪B (ContinuousLinearMap.adjoint (Ring.inverse A) t),
         ContinuousLinearMap.adjoint (Ring.inverse A) t⟫ := by
-  simp only [sandwichCovariance, mul_apply_eq_comp]
-  exact (ContinuousLinearMap.adjoint_inner_right _ _ _).symm
+  simp only [sandwichCovariance, ContinuousLinearMap.mul_def,
+    ContinuousLinearMap.comp_apply]
+  rw [← ContinuousLinearMap.adjoint_inner_right, inner_symmetrizedMeat_apply]
 
 /-- **Asymptotic normality of a GEE estimator with sandwich covariance.**
 
 Let `U k β ω` be independent cluster scores. At the true parameter `β₀` assume the cluster
 scores are measurable, independent, unbiased (`E[U k β₀] = 0`), and square integrable, that the
-averaged projected variances converge to the meat quadratic form `⟪B t, t⟫` with `B` positive
-definite, and that every projection satisfies the cluster Lindeberg condition. Let the
-sensitivity matrix `A` be invertible, and let `βhat n` be a root of the estimating equation with
-probability tending to one that linearizes with derivative `A` (as in
-`tendstoInDistribution_sqrt_smul_sub_of_linearization`). Then `√n • (βhat n - β₀)` converges in
-distribution to every `W` whose projections `⟪W, t⟫` are centered Gaussians with variance
-`⟪A⁻¹ B A⁻ᵀ t, t⟫`, i.e. `W ∼ N(0, sandwichCovariance A B)`.
+averaged projected variances converge to the meat quadratic form `⟪B t, t⟫` (the hypotheses
+identify `B` only through this quadratic form; `B` need not be self-adjoint, and
+`B` is not assumed positive definite), and that every projection satisfies the cluster
+Lindeberg condition. Let the sensitivity matrix `A` be invertible, and let `βhat n` be a root
+of the estimating equation with probability tending to one that linearizes with derivative
+`A` (as in `tendstoInDistribution_sqrt_smul_sub_of_linearization`). Then
+`√n • (βhat n - β₀)` converges in distribution to every `W` whose projections `⟪W, t⟫` are
+centered Gaussians with variance `⟪A⁻¹ B A⁻ᵀ t, t⟫`, i.e. `W ∼ N(0, sandwichCovariance A B)`,
+where the sandwich is the self-adjoint symmetrized covariance above.
 
 The CLT is applied to the cluster sums of the transformed scores `-A⁻¹ U k β₀`. -/
 theorem tendstoInDistribution_sqrt_smul_sub_sandwich {U : ℕ → E → Ω → E} {β₀ : E}
@@ -606,7 +675,14 @@ theorem tendstoInMeasure_sandwichCovariance {Ahat Bhat : ℕ → Ω → E →L[�
       ContinuousAt.comp (f := Prod.fst) (x := (A, B)) h1 continuous_fst.continuousAt
     have hadj : Continuous fun T : E →L[ℝ] E ↦ ContinuousLinearMap.adjoint T :=
       ContinuousLinearMap.adjoint.continuous
-    exact (hinv.mul continuous_snd.continuousAt).mul (hadj.continuousAt.comp hinv)
+    have hsym : ContinuousAt (fun p : (E →L[ℝ] E) × (E →L[ℝ] E) ↦ symmetrizedMeat p.2)
+        (A, B) := by
+      simp only [symmetrizedMeat]
+      apply ContinuousAt.const_smul _ (1 / 2 : ℝ)
+      exact continuous_snd.continuousAt.add
+        (hadj.continuousAt.comp continuous_snd.continuousAt)
+    simp only [sandwichCovariance]
+    exact (hinv.mul hsym).mul (hadj.continuousAt.comp hinv)
   -- a direct `ε`-`δ` argument; avoids convergence in measure on the product space
   rw [tendstoInMeasure_iff_dist] at hAhat hBhat ⊢
   intro ε hε
@@ -621,21 +697,18 @@ theorem tendstoInMeasure_sandwichCovariance {Ahat Bhat : ℕ → Ω → E →L[�
   have h := hδε (x := (Ahat n ω, Bhat n ω)) (by rw [Prod.dist_eq]; exact max_lt hcon.1 hcon.2)
   exact h.not_ge hω
 
-/-- The **outer product** `u uᵀ` of a vector, as the rank-one map `x ↦ ⟪u, x⟫ • u`. -/
-noncomputable def outerProduct (u : E) : E →L[ℝ] E :=
-  (innerSL ℝ u).smulRight u
-
 omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] in
-/-- The quadratic form of the outer product `u uᵀ` is `⟪u, t⟫²`. -/
-theorem inner_outerProduct_apply (u t : E) : ⟪outerProduct u t, t⟫ = ⟪u, t⟫ ^ 2 := by
-  simp only [outerProduct, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply]
-  rw [real_inner_smul_left, sq]
+/-- The quadratic form of the rank-one operator `u uᵀ`, Mathlib's
+`InnerProductSpace.rankOne ℝ u u`, is `⟪u, t⟫²`. -/
+theorem inner_rankOne_apply (u t : E) :
+    ⟪InnerProductSpace.rankOne ℝ u u t, t⟫ = ⟪u, t⟫ ^ 2 := by
+  simp only [InnerProductSpace.rankOne_apply, real_inner_smul_left, sq]
 
 omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
 /-- **Consistency of the empirical sandwich estimator** `Ahat⁻¹ Bhat Ahat⁻ᵀ` with plug-in bread
 `Ahat n = n⁻¹ • ∑_{i<n} DU i (βhat n)` and plug-in meat
 `Bhat n = n⁻¹ • ∑_{i<n} U i (βhat n) U i (βhat n)ᵀ`. Assume the averaged Jacobians and the
-averaged outer products of the cluster scores converge uniformly on a ball around `β₀` in
+averaged rank-one operators of the cluster scores converge uniformly on a ball around `β₀` in
 probability to `Abar` and `Bbar`, both continuous at `β₀`, that `Abar β₀` is invertible, and
 that `βhat` is consistent. Then the empirical sandwich converges in probability to
 `sandwichCovariance (Abar β₀) (Bbar β₀)`.
@@ -650,24 +723,28 @@ theorem tendstoInMeasure_empirical_sandwichCovariance {U : ℕ → E → Ω → 
     (hAunif : ∀ ε > 0, Tendsto (fun n : ℕ ↦ P {ω | ∃ β ∈ Metric.ball β₀ δ,
       ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, DU i β ω - Abar β‖}) atTop (𝓝 0))
     (hBunif : ∀ ε > 0, Tendsto (fun n : ℕ ↦ P {ω | ∃ β ∈ Metric.ball β₀ δ,
-      ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i β ω) - Bbar β‖}) atTop (𝓝 0))
+      ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U i β ω) (U i β ω) -
+        Bbar β‖}) atTop (𝓝 0))
     {βhat : ℕ → Ω → E} (hcons : TendstoInMeasure P βhat atTop (fun _ ↦ β₀)) :
     TendstoInMeasure P (fun (n : ℕ) ω ↦ sandwichCovariance
         ((n : ℝ)⁻¹ • ∑ i ∈ range n, DU i (βhat n ω) ω)
-        ((n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i (βhat n ω) ω))) atTop
+        ((n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U i (βhat n ω) ω)
+          (U i (βhat n ω) ω))) atTop
       (fun _ ↦ sandwichCovariance (Abar β₀) (Bbar β₀)) :=
   tendstoInMeasure_sandwichCovariance hA
     (tendstoInMeasure_comp_of_tendstoUniformlyOn (Φ := fun n β ω ↦
       (n : ℝ)⁻¹ • ∑ i ∈ range n, DU i β ω) hδ hAbar (by simpa only [dist_eq_norm] using hAunif)
       hcons)
     (tendstoInMeasure_comp_of_tendstoUniformlyOn (Φ := fun n β ω ↦
-      (n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i β ω)) hδ hBbar
+      (n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U i β ω) (U i β ω)) hδ
+      hBbar
       (by simpa only [dist_eq_norm] using hBunif) hcons)
 
 omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
 /-- **The empirical sandwich is consistent for the CLT covariance.** Under the hypotheses of
 `tendstoInMeasure_empirical_sandwichCovariance`, if the in-probability limit `Bbar β₀` of the
-averaged outer products is the meat `B` of the CLT `tendstoInDistribution_sqrt_smul_sub_sandwich`
+averaged rank-one operators is the meat `B` of the CLT
+`tendstoInDistribution_sqrt_smul_sub_sandwich`
 (as an operator; for a probability measure `P`, in particular `B` is then self-adjoint), the
 empirical sandwich converges in probability to `sandwichCovariance (Abar β₀) B`, the asymptotic
 covariance of `tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt`. -/
@@ -678,11 +755,13 @@ theorem tendstoInMeasure_empirical_sandwichCovariance_of_eq {U : ℕ → E → �
     (hAunif : ∀ ε > 0, Tendsto (fun n : ℕ ↦ P {ω | ∃ β ∈ Metric.ball β₀ δ,
       ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, DU i β ω - Abar β‖}) atTop (𝓝 0))
     (hBunif : ∀ ε > 0, Tendsto (fun n : ℕ ↦ P {ω | ∃ β ∈ Metric.ball β₀ δ,
-      ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i β ω) - Bbar β‖}) atTop (𝓝 0))
+      ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U i β ω) (U i β ω) -
+        Bbar β‖}) atTop (𝓝 0))
     {βhat : ℕ → Ω → E} (hcons : TendstoInMeasure P βhat atTop (fun _ ↦ β₀)) :
     TendstoInMeasure P (fun (n : ℕ) ω ↦ sandwichCovariance
         ((n : ℝ)⁻¹ • ∑ i ∈ range n, DU i (βhat n ω) ω)
-        ((n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i (βhat n ω) ω))) atTop
+        ((n : ℝ)⁻¹ • ∑ i ∈ range n, InnerProductSpace.rankOne ℝ (U i (βhat n ω) ω)
+          (U i (βhat n ω) ω))) atTop
       (fun _ ↦ sandwichCovariance (Abar β₀) B) :=
   hBB ▸ tendstoInMeasure_empirical_sandwichCovariance hδ hAbar hBbar hA hAunif hBunif hcons
 
