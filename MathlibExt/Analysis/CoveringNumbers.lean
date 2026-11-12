@@ -30,10 +30,11 @@ open Metric
 
 /-- Volumetric covering bound: the closed ball of radius `R` in
 `EuclideanSpace ℝ (Fin m)` has an `ε`-net of at most
-`(1 + 2R/ε)^m` points (the bound is stated over the reals). -/
+`(1 + 2R/ε)^m` points (the bound is stated over the reals), with
+the net itself contained in the radius-`R` ball. -/
 theorem euclidean_ball_net {m : ℕ} {R ε : ℝ} (hR : 0 ≤ R) (hε : 0 < ε) :
     ∃ C : Finset (EuclideanSpace ℝ (Fin m)),
-      (∀ x ∈ C, ‖x‖ ≤ R + ε) ∧
+      (∀ x ∈ C, ‖x‖ ≤ R) ∧
       (∀ x, ‖x‖ ≤ R → ∃ c ∈ C, dist x c ≤ ε) ∧
       (C.card : ℝ) ≤ (1 + 2 * R / ε) ^ m := by
   classical
@@ -165,8 +166,4 @@ theorem euclidean_ball_net {m : ℕ} {R ε : ℝ} (hR : 0 ≤ R) (hε : 0 < ε) 
       exact hcard _ hCR' hsep'
     have hle := hk_max (k + 1) hmem
     omega
-  refine ⟨C, ?_, hcov, ?_⟩
-  · intro x hx
-    have h := hCR x hx
-    linarith
-  · exact vol C hCR hsep
+  exact ⟨C, hCR, hcov, vol C hCR hsep⟩
