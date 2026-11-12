@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.P05ThermodynamicsState
+import PhyslibExt.EarthScience.ThermodynamicsState
 
 /-!
 # Isochoric heating checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P05ThermodynamicsState`:
+Concrete consumers of `PhyslibExt.EarthScience.ThermodynamicsState`:
 `C = 2`, `Q = 6` (so `ΔT = 3`), heating from `T0 = 300` to `303`, and
 the zero-input boundary.
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P05ThermodynamicsState`
+- `PhyslibExt.EarthScience.ThermodynamicsState`
 -/
 
 /-- Numeric heating: `U1 - U0 = 6`, `C * ΔT = 2 * 3`, so `ΔT = 3`. -/

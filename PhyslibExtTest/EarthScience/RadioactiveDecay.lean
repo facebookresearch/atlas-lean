@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C05RadioactiveDecay
+import PhyslibExt.EarthScience.RadioactiveDecay
 
 /-!
 # Radioactive decay checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C05RadioactiveDecay`: a
+Concrete consumers of `PhyslibExt.EarthScience.RadioactiveDecay`: a
 numeric decay law, the half-life value, uniqueness, and the `t = 0`
 boundary.
 
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C05RadioactiveDecay`
+- `PhyslibExt.EarthScience.RadioactiveDecay`
 -/
 
 /-- Numeric decay law with `λ = 1/2`, `N0 = 10`. -/

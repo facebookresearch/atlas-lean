@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.D01Calibration
+import PhyslibExt.EarthScience.Calibration
 
 /-!
 # Calibration checks
 
-Concrete consumers of `PhyslibExt.EarthScience.D01Calibration`: a
+Concrete consumers of `PhyslibExt.EarthScience.Calibration`: a
 numeric pointwise error, the unbiased case `E[ε] = 0`, a nonzero-mean
 error, and the degenerate `ε = 0` case (exact recovery).
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.D01Calibration`
+- `PhyslibExt.EarthScience.Calibration`
 -/
 
 open MeasureTheory ProbabilityTheory

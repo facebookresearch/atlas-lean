@@ -10,14 +10,14 @@ module
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.P07PhaseEquilibrium
+import PhyslibExt.EarthScience.PhaseEquilibrium
 
 open scoped Topology
 
 /-!
 # Clapeyron checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P07PhaseEquilibrium`:
+Concrete consumers of `PhyslibExt.EarthScience.PhaseEquilibrium`:
 the public shape of the Clapeyron theorem, the latent-heat form at
 `T = 300` with `s2 - s1 = 10`, `v2 - v1 = 2` (so `dp / dT = 5`), and
 the equal-entropy boundary `s2 = s1`.
@@ -37,7 +37,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P07PhaseEquilibrium`
+- `PhyslibExt.EarthScience.PhaseEquilibrium`
 -/
 
 /-- Public shape of the Clapeyron theorem. -/

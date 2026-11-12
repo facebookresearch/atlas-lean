@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.D02Aliasing
+import PhyslibExt.EarthScience.Aliasing
 
 /-!
 # Aliasing checks
 
-Concrete consumers of `PhyslibExt.EarthScience.D02Aliasing`: a numeric
+Concrete consumers of `PhyslibExt.EarthScience.Aliasing`: a numeric
 aliased pair (`f = 0.3, dt = 0.5, k = 2, n = 3`), the degenerate
 `k = 0` case (same frequency), the `n = 0` case (both samples are
 `exp 0 = 1`, `sin 0 = 0`, `cos 0 = 1`), and the `dt < 0` case (only
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.D02Aliasing`
+- `PhyslibExt.EarthScience.Aliasing`
 -/
 
 /-- Numeric aliased pair, complex samples. -/

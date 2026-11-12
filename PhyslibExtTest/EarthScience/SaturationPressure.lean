@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.A02SaturationPressure
+import PhyslibExt.EarthScience.SaturationPressure
 
 /-!
 # Saturation-pressure checks
 
-Concrete consumers of `PhyslibExt.EarthScience.A02SaturationPressure`:
+Concrete consumers of `PhyslibExt.EarthScience.SaturationPressure`:
 the public shape of the derivative theorem, positivity at unit
 parameters, and strict monotonicity at standard values
 (`es0 = 6.11`, `L / Rv = 5423`, `T0 = 273.15`).
@@ -35,7 +35,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.A02SaturationPressure`
+- `PhyslibExt.EarthScience.SaturationPressure`
 -/
 
 /-- Public shape of the saturation-pressure derivative theorem. -/

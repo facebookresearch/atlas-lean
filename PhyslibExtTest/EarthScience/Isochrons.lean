@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C06Isochrons
+import PhyslibExt.EarthScience.Isochrons
 
 /-!
 # Isochron checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C06Isochrons`: a numeric
+Concrete consumers of `PhyslibExt.EarthScience.Isochrons`: a numeric
 isochron slope and age, and the `t = 0` boundary where the slope is `0`.
 
 ## i. Overview
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C06Isochrons`
+- `PhyslibExt.EarthScience.Isochrons`
 -/
 
 /-- Numeric isochron slope with `λ = 1/10`, `t = 10`. -/

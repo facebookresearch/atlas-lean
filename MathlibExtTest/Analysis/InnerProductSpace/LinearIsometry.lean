@@ -18,7 +18,7 @@ Concrete consumers of the canonical Mathlib API
 `LinearIsometry.norm_map` / `LinearIsometry.inner_map_map` and
 `LinearIsometryEquiv.norm_map` / `LinearIsometryEquiv.inner_map_map`:
 a linear isometry on a real Euclidean space preserves norm and inner
-product. No new theorem is introduced here: M02's minimum milestone
+product. No new theorem is introduced here: the minimum milestone
 is verbatim those Mathlib lemmas, so this test-only file is the
 deliverable.
 

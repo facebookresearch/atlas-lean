@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.M13UnitsOrScaling
+import PhyslibExt.EarthScience.AdvectionDiffusionNondimensional
 
 /-!
 # Advection-diffusion scaling checks
 
-Concrete consumers of `PhyslibExt.EarthScience.M13UnitsOrScaling`:
+Concrete consumers of `PhyslibExt.EarthScience.AdvectionDiffusionNondimensional`:
 a numeric nondimensionalization, the Péclet reciprocal identity,
 and the degenerate `chatxx = 0` case (then `ĉ_t̂ + ĉ_x̂ = 0`).
 
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.M13UnitsOrScaling`
+- `PhyslibExt.EarthScience.AdvectionDiffusionNondimensional`
 -/
 
 /-- Numeric nondimensionalization: `L = 2, U = 3, D = 1, C0 = 5`,

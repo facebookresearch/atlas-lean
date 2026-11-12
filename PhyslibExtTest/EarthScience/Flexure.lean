@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S08Flexure
+import PhyslibExt.EarthScience.Flexure
 
 /-!
 # Flexure checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S08Flexure`:
+Concrete consumers of `PhyslibExt.EarthScience.Flexure`:
 `D = 1`, `a = 2`, `k = 1`, `q₀ = 3` (denominator `3`), `x = 0`, plus the
 zero-load and wavenumber-zero boundaries.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S08Flexure`
+- `PhyslibExt.EarthScience.Flexure`
 -/
 
 /-- Numeric flexure: first and fourth derivatives at `x = 0`. -/

@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C01Stoichiometry
+import PhyslibExt.EarthScience.Stoichiometry
 
 /-!
 # Stoichiometric conservation checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C01Stoichiometry`: the
+Concrete consumers of `PhyslibExt.EarthScience.Stoichiometry`: the
 public shape of the conservation theorem, a two-species one-reaction
 left-null computation, and the empty system.
 
@@ -29,7 +29,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C01Stoichiometry`
+- `PhyslibExt.EarthScience.Stoichiometry`
 -/
 
 /-- The public statement shape of stoichiometric conservation. -/

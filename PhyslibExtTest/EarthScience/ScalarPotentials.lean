@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.M15ScalarPotentials
+import PhyslibExt.EarthScience.ScalarPotentials
 
 /-!
 # Quadratic-potential derivative checks
 
-Concrete consumers of `PhyslibExt.EarthScience.M15ScalarPotentials`: a
+Concrete consumers of `PhyslibExt.EarthScience.ScalarPotentials`: a
 numeric quadratic, its constant second derivative, and the degenerate
 linear case `a = 0`.
 
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.M15ScalarPotentials`
+- `PhyslibExt.EarthScience.ScalarPotentials`
 -/
 
 /-- Numeric quadratic `3*x^2 + 2*x + 5` has derivative `8` at `x = 1`. -/

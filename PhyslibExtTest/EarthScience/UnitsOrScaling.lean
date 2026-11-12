@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.M01UnitsOrScaling
+import PhyslibExt.EarthScience.UnitsOrScaling
 
 /-!
 # Unit-scale conversion and temperature-scale checks
 
-Concrete consumers of `PhyslibExt.EarthScience.M01UnitsOrScaling`:
+Concrete consumers of `PhyslibExt.EarthScience.UnitsOrScaling`:
 a numeric conversion composition, Kelvin/Celsius zero points and
 temperature differences, and degenerate cases (`x = 0`, `Δ = 0`).
 
@@ -33,7 +33,7 @@ private strictly-positive scale values used by the examples below.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.M01UnitsOrScaling`
+- `PhyslibExt.EarthScience.UnitsOrScaling`
 -/
 
 /-- Strictly positive scale `2` (no `OfNat` instance for `NNRealˣ`). -/

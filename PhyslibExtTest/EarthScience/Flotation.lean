@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.H09Flotation
+import PhyslibExt.EarthScience.Flotation
 
 /-!
 # Flotation checks
 
-Concrete consumers of `PhyslibExt.EarthScience.H09Flotation`:
+Concrete consumers of `PhyslibExt.EarthScience.Flotation`:
 ice `ρi = 917`, water `ρw = 1028`, thickness `H = 100` (submerged depth
 `89.20…`, fraction `917 / 1028`), plus the equal-density boundary.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.H09Flotation`
+- `PhyslibExt.EarthScience.Flotation`
 -/
 
 /-- Numeric flotation: `ρi = 917`, `ρw = 1028`, `H = 100`, balance

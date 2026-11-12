@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.H10FloodFrequency
+import PhyslibExt.EarthScience.FloodFrequency
 
 /-!
 # Flood-frequency checks
 
-Concrete consumers of `PhyslibExt.EarthScience.H10FloodFrequency`:
+Concrete consumers of `PhyslibExt.EarthScience.FloodFrequency`:
 the `n = 1` case, the `100`-year flood (`p = 0.01`) over 100 years,
 and the `p = 0` / `p = 1` and `n = 0` boundaries.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.H10FloodFrequency`
+- `PhyslibExt.EarthScience.FloodFrequency`
 -/
 
 open MeasureTheory ProbabilityTheory
