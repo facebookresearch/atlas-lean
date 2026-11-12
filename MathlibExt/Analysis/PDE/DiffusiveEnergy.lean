@@ -11,7 +11,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 
 /-!
-# Diffusive energy estimate (G04)
+# Diffusive energy estimate
 
 For a smooth periodic solution of `c_t + U * c_x = D * c_xx` on
 `[0, L]` with `L > 0` and `D ≥ 0`,
@@ -27,15 +27,15 @@ concentration, not thermodynamic energy.
 
 ## Key results
 
-- `g04_energy_deriv`: the energy identity.
-- `g04_energy_nonpos`: the energy is nonincreasing.
+- `energy_deriv`: the energy identity.
+- `energy_nonpos`: the energy is nonincreasing.
 -/
 
 @[expose] public section
 
 open MeasureTheory intervalIntegral
 
-namespace MathlibExt.Analysis.PDE.G04DiffusiveEnergy
+namespace MathlibExt.Analysis.PDE.DiffusiveEnergy
 
 set_option linter.unusedVariables false in
 /-- Diffusive energy identity: for a smooth periodic solution of
@@ -47,7 +47,7 @@ differentiation-under-the-integral hypothesis (interchange
 regularity); periodicity is `c` and `cx` taking equal values at
 `0` and `L`. This is a conditional identity, not an existence
 result. -/
-theorem g04_energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
+theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
     (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
     (hct : ∀ t x, HasDerivAt (fun s => c s x) (ct t x) t)
     (hcx : ∀ t x, HasDerivAt (fun y => c t y) (cx t x) x)
@@ -127,7 +127,7 @@ theorem g04_energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
 
 set_option linter.unusedVariables false in
 /-- The diffusive energy is nonincreasing: `-D * ∫ c_x^2 ≤ 0` for `D ≥ 0`. -/
-theorem g04_energy_nonpos {L D : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
+theorem energy_nonpos {L D : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
     (cx : ℝ → ℝ → ℝ) (t : ℝ)
     (hInt_cx2 : IntervalIntegrable (fun x => (cx t x) ^ 2) volume 0 L) :
     -D * ∫ x in (0 : ℝ)..L, (cx t x) ^ 2 ≤ 0 := by
@@ -137,4 +137,4 @@ theorem g04_energy_nonpos {L D : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
   exact mul_nonpos_of_nonpos_of_nonneg hD' hnonneg
 
 
-end MathlibExt.Analysis.PDE.G04DiffusiveEnergy
+end MathlibExt.Analysis.PDE.DiffusiveEnergy

@@ -7,10 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Analysis.PDE.G04DiffusiveEnergy
+public import MathlibExt.Analysis.PDE.DiffusiveEnergy
 
 /-!
-# Tests for the diffusive energy estimate (G04)
+# Tests for the diffusive energy estimate
 
 Closed checks: `D = 0` conserves energy (the derivative is `0`), and
 a constant-in-space profile has zero energy derivative. The energy
@@ -22,7 +22,7 @@ the zero-diffusion case with all hypotheses discharged by `simp`.
 
 open MeasureTheory intervalIntegral
 
-namespace MathlibExt.Analysis.PDE.G04DiffusiveEnergy
+namespace MathlibExt.Analysis.PDE.DiffusiveEnergy
 
 /-- `D = 0`: the energy derivative is `0` for every periodic profile. -/
 example {L : ℝ} (hL : 0 < L) (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
@@ -37,7 +37,7 @@ example {L : ℝ} (hL : 0 < L) (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
     (hInt_cx2 : IntervalIntegrable (fun x => (cx t x) ^ 2) volume 0 L)
     (hInt_ccx : IntervalIntegrable (fun x => c t x * cx t x) volume 0 L) :
     HasDerivAt (fun t => ∫ x in (0 : ℝ)..L, (c t x) ^ 2 / 2) 0 t := by
-  have h := g04_energy_deriv (L := L) (D := 0) (U := 0) hL (by norm_num) c ct cx cxx t
+  have h := energy_deriv (L := L) (D := 0) (U := 0) hL (by norm_num) c ct cx cxx t
     hct hcx hcxx hPDE hper_c hper_cx hInter hInt_cxx hInt_cx2 hInt_ccx
   simpa using h
 
@@ -45,9 +45,9 @@ example {L : ℝ} (hL : 0 < L) (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
 example {L : ℝ} (hL : 0 < L) (cx : ℝ → ℝ → ℝ) (t : ℝ)
     (hInt_cx2 : IntervalIntegrable (fun x => (cx t x) ^ 2) volume 0 L) :
     -(0 : ℝ) * ∫ x in (0 : ℝ)..L, (cx t x) ^ 2 ≤ 0 :=
-  g04_energy_nonpos hL (by norm_num) cx t hInt_cx2
+  energy_nonpos hL (by norm_num) cx t hInt_cx2
 
-#print axioms g04_energy_deriv
-#print axioms g04_energy_nonpos
+#print axioms energy_deriv
+#print axioms energy_nonpos
 
-end MathlibExt.Analysis.PDE.G04DiffusiveEnergy
+end MathlibExt.Analysis.PDE.DiffusiveEnergy
