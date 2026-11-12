@@ -213,6 +213,16 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} (X : Matrix (Fin 3) (
       atTop (fun _ i => nbFisherWeight 1 ((X *ᵥ β₀) i + o i)) :=
   tendstoInMeasure_nbFisherWeight_plugIn X o (p₀ := (β₀, 1)) one_pos h
 
+/-- The `(0, 1)` entry of the plug-in `β`-block of the Fisher information is consistent. -/
+example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} (X : Matrix (Fin 3) (Fin 2) ℝ)
+    (o : Fin 3 → ℝ) {phat : ℕ → Ω → (Fin 2 → ℝ) × ℝ} {β₀ : Fin 2 → ℝ}
+    (h : TendstoInMeasure P phat atTop (fun _ => (β₀, 1))) :
+    TendstoInMeasure P (fun n ω =>
+        (Xᵀ * diagonal (fun i => nbFisherWeight (phat n ω).2 ((X *ᵥ (phat n ω).1) i + o i)) *
+          X) 0 1)
+      atTop (fun _ => (Xᵀ * diagonal (fun i => nbFisherWeight 1 ((X *ᵥ β₀) i + o i)) * X) 0 1) :=
+  tendstoInMeasure_nbFisherInfo_plugIn X o (p₀ := (β₀, 1)) one_pos h 0 1
+
 /-- The joint Fisher information of the intercept-only design is block diagonal. -/
 example : nbJointFisherInfo 1 X₁ 0 0 =
     fromBlocks (of fun _ _ => 1 / 2) 0 0 (of fun _ _ => nbShapeFisherInfo 1 0) := by

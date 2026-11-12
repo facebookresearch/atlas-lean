@@ -12,6 +12,7 @@ public import MathlibExt.Probability.Statistics.GLM.NegativeBinomial
 public import Mathlib.Data.Matrix.Block
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
+public import MathlibExt.Probability.Statistics.Slutsky
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -537,8 +538,9 @@ population criterion (typically the expected log mass function) such that
 * (identifiability) `p₀ ∈ K` is the unique maximizer of `M` on `K`;
 * (uniform law of large numbers) the averaged joint log-likelihood `nbAvgLogLik` converges to `M`
   uniformly on `K` in probability;
-* (estimator) `p̂ n` lies in `K` and maximizes the averaged log-likelihood over `K` up to an
-  arbitrary `δ > 0`, each with probability tending to one (an exact maximizer over `K` qualifies).
+* (estimator) `p̂ n` lies in `K` with probability tending to one, and for every `δ > 0` its
+  averaged log-likelihood is at least the value at `p₀` minus `δ` with probability tending to one
+  (an exact maximizer over `K` qualifies).
 
 Then `p̂ n → p₀` in probability. None of the three conditions is derived from a sampling model
 here; in particular the uniform LLN and the identification of `p₀` as the maximizer of the
@@ -572,40 +574,25 @@ theorem tendstoInMeasure_nbJointMLE {Ω : Type*} [MeasurableSpace Ω] {P : Measu
   have h3 := (abs_lt.1 (hu _ hp₀)).1
   linarith
 
-/-- A continuous image of an in-probability limit at a constant. -/
-private lemma tendstoInMeasure_comp_const {Ω Θ E : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [PseudoMetricSpace Θ] [PseudoMetricSpace E] {g : Θ → E} {p₀ : Θ} (hg : ContinuousAt g p₀)
-    {phat : ℕ → Ω → Θ} (h : TendstoInMeasure P phat atTop (fun _ => p₀)) :
-    TendstoInMeasure P (fun n ω => g (phat n ω)) atTop (fun _ => g p₀) := by
-  rw [tendstoInMeasure_iff_dist] at h ⊢
-  intro ε hε
-  obtain ⟨δ, hδ, hball⟩ := Metric.continuousAt_iff.1 hg ε hε
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds (h δ hδ) (fun _ => zero_le)
-    fun n => measure_mono fun ω hω => ?_
-  simp only [Set.mem_ofPred_eq] at hω ⊢
-  by_contra hlt
-  exact (hball (not_le.1 hlt)).not_ge hω
-
 /-- **The estimated shape is consistent** whenever the joint estimator is
 (`tendstoInMeasure_nbJointMLE`). -/
 theorem tendstoInMeasure_snd_of_nbJointMLE {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {phat : ℕ → Ω → (κ → ℝ) × ℝ} {p₀ : (κ → ℝ) × ℝ}
     (h : TendstoInMeasure P phat atTop (fun _ => p₀)) :
     TendstoInMeasure P (fun n ω => (phat n ω).2) atTop (fun _ => p₀.2) :=
-  tendstoInMeasure_comp_const continuous_snd.continuousAt h
+  h.comp_const_of_continuousAt continuous_snd.continuousAt
 
 /-- **Plug-in Fisher weights.** If `(β̂, θ̂) → (β₀, θ₀)` in probability with `θ₀ > 0`, then the
 plug-in Fisher weights `nbFisherWeight θ̂ ((X β̂)ᵢ + oᵢ)` converge in probability to the weights at
-`(β₀, θ₀)`; hence so does the plug-in `β`-block `Xᵀ diag(F) X` of the joint Fisher information,
-which by `toBlocks₁₁_inv_nbJointFisherInfo` is the information for `β` whether or not the shape is
-estimated. -/
+`(β₀, θ₀)`. The entries of the plug-in `β`-block follow in
+`tendstoInMeasure_nbFisherInfo_plugIn`. -/
 theorem tendstoInMeasure_nbFisherWeight_plugIn {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     (X : Matrix ι κ ℝ) (o : ι → ℝ) {phat : ℕ → Ω → (κ → ℝ) × ℝ} {p₀ : (κ → ℝ) × ℝ}
     (hθ : 0 < p₀.2) (h : TendstoInMeasure P phat atTop (fun _ => p₀)) :
     TendstoInMeasure P (fun n ω i => nbFisherWeight (phat n ω).2 ((X *ᵥ (phat n ω).1) i + o i))
       atTop (fun _ i => nbFisherWeight p₀.2 ((X *ᵥ p₀.1) i + o i)) := by
-  refine tendstoInMeasure_comp_const (g := fun p : (κ → ℝ) × ℝ => fun i =>
-    nbFisherWeight p.2 ((X *ᵥ p.1) i + o i)) ?_ h
+  refine h.comp_const_of_continuousAt (f := fun p : (κ → ℝ) × ℝ => fun i =>
+    nbFisherWeight p.2 ((X *ᵥ p.1) i + o i)) ?_
   refine continuousAt_pi.2 fun i => ?_
   have hη : Continuous fun p : (κ → ℝ) × ℝ => (X *ᵥ p.1) i + o i := by
     simp only [mulVec, dotProduct]
@@ -613,5 +600,27 @@ theorem tendstoInMeasure_nbFisherWeight_plugIn {Ω : Type*} [MeasurableSpace Ω]
   unfold nbFisherWeight
   refine ContinuousAt.div (by fun_prop) (by fun_prop) ?_
   positivity
+
+/-- **Plug-in `β`-block of the Fisher information.** If `(β̂, θ̂) → (β₀, θ₀)` in probability with
+`θ₀ > 0`, then every entry of the plug-in `β`-block `Xᵀ diag(F(β̂, θ̂)) X` converges in
+probability to the corresponding entry at `(β₀, θ₀)`. By `toBlocks₁₁_inv_nbJointFisherInfo` this
+block is the information for `β` whether or not the shape is estimated. -/
+theorem tendstoInMeasure_nbFisherInfo_plugIn [DecidableEq ι] {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} (X : Matrix ι κ ℝ) (o : ι → ℝ) {phat : ℕ → Ω → (κ → ℝ) × ℝ}
+    {p₀ : (κ → ℝ) × ℝ} (hθ : 0 < p₀.2) (h : TendstoInMeasure P phat atTop (fun _ => p₀))
+    (j l : κ) :
+    TendstoInMeasure P (fun n ω =>
+        (Xᵀ * diagonal (fun i => nbFisherWeight (phat n ω).2 ((X *ᵥ (phat n ω).1) i + o i)) *
+          X) j l)
+      atTop (fun _ =>
+        (Xᵀ * diagonal (fun i => nbFisherWeight p₀.2 ((X *ᵥ p₀.1) i + o i)) * X) j l) := by
+  refine (tendstoInMeasure_nbFisherWeight_plugIn X o hθ h).comp_const_of_continuousAt
+    (f := fun w : ι → ℝ => (Xᵀ * diagonal w * X) j l) ?_
+  have hw : (fun w : ι → ℝ => (Xᵀ * diagonal w * X) j l) = fun w => ∑ i, X i j * w i * X i l := by
+    funext w
+    rw [mul_apply]
+    simp only [mul_diagonal, transpose_apply]
+  rw [hw]
+  exact (by fun_prop : Continuous fun w : ι → ℝ => ∑ i, X i j * w i * X i l).continuousAt
 
 end MathlibExt.Probability.Statistics.GLM.NegativeBinomial
