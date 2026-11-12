@@ -28,8 +28,10 @@ the laws as Borel probability measures, tested against bounded continuous functi
 instances use two norms:
 
 * the **sup norm on a fixed finite grid**, `Fin k → ℝ` (Mathlib's `Pi` norm is the max norm), for
-  the fully proved Kaplan–Meier statements; this is the uniform topology of `D[0, τ]` restricted
-  to the grid points;
+  the fully proved Kaplan–Meier statements. On the cumulative coordinates (used by
+  `tendstoInDistribution_kmSurvival_grid_of_nelsonAalen`) this is the uniform topology of
+  `D[0, τ]` restricted to the grid points; `tendstoInDistribution_kmSurvival_grid` puts it on the
+  hazard increments instead, which is an equivalent norm only for fixed `k`;
 * the **uniform (sup-norm) topology on `ℓ^∞([0, τ])`**, Mathlib's `lp (fun _ : Icc 0 τ ↦ ℝ) ∞`,
   for the continuous-time statement. `D[0, τ]` with the uniform norm sits isometrically inside it;
   this is the topology of van der Vaart (1998), §20.3, not the Skorokhod `J₁` topology.
@@ -59,9 +61,12 @@ instances use two norms:
 * `tendstoInDistribution_kmSurvival_grid`, `tendstoInDistribution_kmSurvival_grid_of_nelsonAalen`:
   the **Kaplan–Meier limit law on a fixed grid** from a hazard (increment or cumulative
   Nelson–Aalen) CLT hypothesis: `√n (Ŝₙ - S) ⇒ -duhamelDeriv (-ΔΛ) (ΔG)`.
-* `tendstoInDistribution_kmSurvival_of_hadamard`: the continuous-time statement in
-  `ℓ^∞([0, τ])`, with the functional CLT and the Hadamard differentiability of the
-  product-integral map as explicit hypotheses.
+* `abs_prodIntegral_sub_le`: a Lipschitz bound for the grid product integral, with constants
+  controlled by the total variations `∑ |x i|`, `∑ |y i|` and independent of `k`.
+* `tendstoInDistribution_lInfty_of_hadamard`: `functional_delta` specialized to `ℓ^∞([0, τ])`
+  with tangent set `C[0, τ]` and `r n = √n`, for arbitrary maps; it is the shape of the
+  continuous-time Kaplan–Meier statement but is not tied to the Kaplan–Meier or Nelson–Aalen
+  objects, and (see below) its hypotheses cannot hold for continuous-time Kaplan–Meier.
 
 ## What is proved and what is assumed
 
@@ -70,16 +75,22 @@ instances use two norms:
 * Hadamard differentiability of the **continuous-time** product-integral map
   `A ↦ ∏_{(0, t]} (1 + dA)` on bounded-variation functions in `D[0, τ]` (van der Vaart,
   §20.3; Gill–Johansen 1990) is **not proved**: Mathlib has no Lebesgue–Stieltjes product
-  integral. It is the explicit hypothesis `hHad` of `tendstoInDistribution_kmSurvival_of_hadamard`.
-  What is proved is the finite-grid version, where the map is a polynomial and is Fréchet
-  differentiable with the Duhamel derivative.
+  integral. It is the explicit hypothesis `hHad` of `tendstoInDistribution_lInfty_of_hadamard`.
+  What is proved is the finite-grid version, where the map is a polynomial in `k` variables and
+  is Fréchet differentiable with the Duhamel derivative; only `abs_prodIntegral_sub_le` has
+  constants uniform in `k`.
 * Measurability is Borel measurability throughout (Mathlib's framework), not van der Vaart's
   outer-probability (Hoffmann-Jørgensen) framework. On a fixed grid this costs nothing. In the
-  nonseparable space `ℓ^∞([0, τ])` it is a real restriction: empirical-type processes with
-  random jump locations are in general not Borel measurable there, so the hypotheses of
-  `tendstoInDistribution_kmSurvival_of_hadamard` (in particular the `AEMeasurable` fields of
-  `hCLT`) may fail for the actual Kaplan–Meier process. The abstract theorems are correct as
-  stated; they are weaker than van der Vaart's in this respect.
+  nonseparable space `ℓ^∞([0, τ])` it is disqualifying for Kaplan–Meier: the `AEMeasurable`
+  fields of `hCLT` in `tendstoInDistribution_lInfty_of_hadamard` **fail whenever the
+  failure-time law has a non-atomic part**. Take `n = 1`: the Nelson–Aalen path is
+  `δ · 1[T, τ]`, two such paths with different jump points are at sup distance `1`, so every
+  subset of the set of paths is closed; the preimage of `{1[u, τ] | u ∈ A}` is `{δ = 1, T ∈ A}`,
+  which is not null-measurable for `A` non-measurable for the law of `T` (Billingsley;
+  van der Vaart–Wellner §1.1). So that statement is a conditional that does not apply to
+  continuous-time Kaplan–Meier; the outer-probability framework is needed. The abstract theorems
+  are correct as stated and apply whenever the processes are Borel measurable, e.g. on the grid
+  or in a separable subspace.
 * The sequences are indexed by `ℕ` with `atTop`.
 * The Hadamard derivative is one-sided (`t ↓ 0`) and `φ'` need not be linear. Van der Vaart's
   definition (two-sided, `φ'` continuous linear on `E₀`) implies this one, so the delta theorem
@@ -483,6 +494,34 @@ theorem gridIncrements_cumsum (x : Fin k → ℝ) :
       omega
     simp [hIic]
 
+private theorem abs_prod_one_add_le (x : Fin k → ℝ) (t : Finset (Fin k)) :
+    |∏ l ∈ t, (1 + x l)| ≤ Real.exp (∑ l, |x l|) := by
+  rw [abs_prod]
+  calc ∏ l ∈ t, |1 + x l| ≤ ∏ l ∈ t, Real.exp |x l| :=
+        prod_le_prod₀ (fun _ _ ↦ abs_nonneg _) fun l _ ↦ (abs_add_le _ _).trans <| by
+          rw [abs_one, add_comm]; exact Real.add_one_le_exp _
+    _ = Real.exp (∑ l ∈ t, |x l|) := (Real.exp_sum _ _).symm
+    _ ≤ Real.exp (∑ l, |x l|) := Real.exp_le_exp.2 <|
+        sum_le_sum_of_subset_of_nonneg (subset_univ t) fun _ _ _ ↦ abs_nonneg _
+
+/-- **Lipschitz bound for the grid product integral**, uniform in the grid size:
+`|∏_{i ≤ j} (1 + y i) - ∏_{i ≤ j} (1 + x i)| ≤ exp (∑ |x i|) exp (∑ |y i|) ∑_{i ≤ j} |y i - x i|`.
+The constants depend only on the total variations `∑ |x i|`, `∑ |y i|` of the pure-jump
+functions with jumps `x`, `y`, and the right side is the total variation of the difference on
+`(0, t_j]`; this is the Duhamel estimate behind the continuity of the continuous-time
+product-integral map on bounded-variation balls (Gill–Johansen 1990). -/
+theorem abs_prodIntegral_sub_le (x y : Fin k → ℝ) (j : Fin k) :
+    |prodIntegral y j - prodIntegral x j| ≤
+      Real.exp (∑ l, |x l|) * Real.exp (∑ l, |y l|) * ∑ i ∈ Iic j, |y i - x i| := by
+  rw [prodIntegral_sub_prodIntegral, mul_sum]
+  refine (abs_sum_le_sum_abs _ _).trans (sum_le_sum fun i _ ↦ ?_)
+  rw [abs_mul, abs_mul]
+  have h1 := abs_prod_one_add_le x (Iio i)
+  have h2 := abs_prod_one_add_le y (Ioc i j)
+  calc |∏ l ∈ Iio i, (1 + x l)| * |y i - x i| * |∏ l ∈ Ioc i j, (1 + y l)|
+      ≤ Real.exp (∑ l, |x l|) * |y i - x i| * Real.exp (∑ l, |y l|) := by gcongr
+    _ = _ := by ring
+
 /-- The product integral on a grid is continuous. -/
 theorem continuous_prodIntegral : Continuous (prodIntegral (k := k)) :=
   continuous_iff_continuousAt.2 fun x ↦ (hasFDerivAt_prodIntegral x).continuousAt
@@ -523,7 +562,9 @@ Kaplan–Meier estimates at the grid times satisfy
 `√n (Ŝₙ - S) ⇒ -duhamelDeriv (-λ) G`, where `S = prodIntegral (-λ)`; coordinatewise the limit is
 `-∑_{i ≤ j} S(t_{i-1}) G i ∏_{i < l ≤ j} (1 - λ l)`.
 
-The CLT is the explicit hypothesis `hCLT`. -/
+The CLT is the explicit hypothesis `hCLT`. The estimates are evaluated at `(Dn n ω).time j`;
+for the statement to be about a fixed grid, the data sets should share the grid times (as
+`empiricalData` does). -/
 theorem tendstoInDistribution_kmSurvival_grid {Dn : ℕ → Ω → CensoredData k}
     {Λ : Fin k → ℝ} {G : Ω' → Fin k → ℝ}
     (hCLT : TendstoInDistribution
@@ -554,7 +595,8 @@ Nelson–Aalen estimates at the grid times satisfy `√n (Λ̂ₙ - Λ) ⇒ G` i
 then `√n (Ŝₙ - S) ⇒ -duhamelDeriv (-ΔΛ) (ΔG)` with `S = prodIntegral (-ΔΛ)` and
 `Δ = gridIncrements`. This is the cumulative-hazard → survival map on the grid.
 
-The CLT is the explicit hypothesis `hCLT`. -/
+The CLT is the explicit hypothesis `hCLT`. As in `tendstoInDistribution_kmSurvival_grid`, the
+data sets should share the fixed grid times. -/
 theorem tendstoInDistribution_kmSurvival_grid_of_nelsonAalen {Dn : ℕ → Ω → CensoredData k}
     {Λ : Fin k → ℝ} {G : Ω' → Fin k → ℝ}
     (hCLT : TendstoInDistribution
@@ -570,18 +612,20 @@ theorem tendstoInDistribution_kmSurvival_grid_of_nelsonAalen {Dn : ℕ → Ω �
   simp_rw [Function.comp_apply, nelsonAalen_time_eq_sum, map_smul, map_sub,
     gridIncrements_cumsum]
 
-/-- **Kaplan–Meier limit law in continuous time, conditional form.** Topology: the uniform
-(sup-norm) topology of `ℓ^∞([0, τ])`, with tangent set the continuous functions `C[0, τ]`.
-If the Nelson–Aalen process satisfies the functional CLT `√n (Λ̂ₙ - Λ) ⇒ G` with continuous `G`
-(hypothesis `hCLT`, `hG`), and the product-integral map `prodInt` is Hadamard differentiable at
-`Λ` tangentially to `C[0, τ]` with derivative `prodInt'` (hypothesis `hHad`; van der Vaart,
-§20.3, **not proved here**), then `√n (prodInt Λ̂ₙ - prodInt Λ) ⇒ prodInt' G`.
+/-- **Functional delta theorem in `ℓ^∞([0, τ])`**, the shape of the continuous-time
+Kaplan–Meier statement. Topology: the uniform (sup-norm) topology of `ℓ^∞([0, τ])`, tangent set
+the continuous functions `C[0, τ]`, scale `r n = √n`. If `√n (Λ̂ₙ - Λ) ⇒ G` with continuous `G`
+(`hCLT`, `hG`) and `prodInt` is Hadamard differentiable at `Λ` tangentially to `C[0, τ]` with
+derivative `prodInt'` (`hHad`), then `√n (prodInt Λ̂ₙ - prodInt Λ) ⇒ prodInt' G`.
 
-This is `functional_delta` with `r n = √n`; it records the topology and which inputs are
-deferred. The Borel-measurability requirements (the `AEMeasurable` fields of `hCLT`, `hmeas`)
-are stronger than van der Vaart's outer-probability framework and may fail for the actual
-Kaplan–Meier process in the nonseparable space `ℓ^∞([0, τ])`; see the module docstring. -/
-theorem tendstoInDistribution_kmSurvival_of_hadamard {τ : ℝ}
+`Λhat`, `prodInt`, `prodInt'` and `dom` are arbitrary: nothing ties them to the Nelson–Aalen
+estimator or a product integral, and the Hadamard differentiability of the continuous-time
+product-integral map (van der Vaart §20.3) is **not proved here**. Moreover the
+`AEMeasurable` fields of `hCLT` fail for the continuous-time Nelson–Aalen process whenever the
+failure-time law has a non-atomic part (the `n = 1` counterexample in the module docstring), so
+this theorem does not apply to continuous-time Kaplan–Meier; it applies when the processes stay
+Borel measurable, e.g. in a separable subspace. -/
+theorem tendstoInDistribution_lInfty_of_hadamard {τ : ℝ}
     [MeasurableSpace (lp (fun _ : Set.Icc (0 : ℝ) τ ↦ ℝ) ∞)]
     [BorelSpace (lp (fun _ : Set.Icc (0 : ℝ) τ ↦ ℝ) ∞)]
     {Λhat : ℕ → Ω → lp (fun _ : Set.Icc (0 : ℝ) τ ↦ ℝ) ∞}

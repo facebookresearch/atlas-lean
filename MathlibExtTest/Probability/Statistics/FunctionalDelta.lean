@@ -77,6 +77,13 @@ the increments. -/
 example : gridIncrements (fun j : Fin 2 ↦ ∑ i ∈ Iic j, (![1, 2] : Fin 2 → ℝ) i) = ![1, 2] :=
   gridIncrements_cumsum _
 
+/-- The Lipschitz bound at `x = 0`, `y = c` on one grid point: `|c| ≤ e^{|c|} |c|`. -/
+example (c : ℝ) :
+    |prodIntegral (fun _ : Fin 1 ↦ c) 0 - prodIntegral (0 : Fin 1 → ℝ) 0| ≤
+      Real.exp (∑ _l : Fin 1, |(0 : Fin 1 → ℝ) _l|) * Real.exp (∑ _l : Fin 1, |c|) *
+        ∑ _i ∈ Iic (0 : Fin 1), |c - 0| :=
+  abs_prodIntegral_sub_le 0 (fun _ ↦ c) 0
+
 /-! ### Hadamard differentiability -/
 
 /-- A continuous linear map is its own Hadamard derivative. -/
@@ -175,8 +182,9 @@ example (v : Fin 2 → ℝ) (D : CensoredData 2) :
       aemeasurable_const).congr (fun n ↦ ae_of_all _ fun ω ↦ by simp)
       (ae_of_all _ fun _ ↦ rfl))
 
-/-- The continuous-time Kaplan–Meier statement has satisfiable hypotheses (Borel σ-algebra on
-`ℓ^∞([0, 1])`, constant estimator, identity map as a stand-in product-integral map). -/
+/-- `tendstoInDistribution_lInfty_of_hadamard` has satisfiable hypotheses (Borel σ-algebra on
+`ℓ^∞([0, 1])`, constant process, identity map). This shows only non-vacuity of the abstract
+statement, not anything about Kaplan–Meier. -/
 example (v : Fin 2 → ℝ) (Λ : lp (fun _ : Set.Icc (0 : ℝ) 1 ↦ ℝ) ∞) :
     letI : MeasurableSpace (lp (fun _ : Set.Icc (0 : ℝ) 1 ↦ ℝ) ∞) := borel _
     haveI : BorelSpace (lp (fun _ : Set.Icc (0 : ℝ) 1 ↦ ℝ) ∞) := ⟨rfl⟩
@@ -184,7 +192,7 @@ example (v : Fin 2 → ℝ) (Λ : lp (fun _ : Set.Icc (0 : ℝ) 1 ↦ ℝ) ∞) 
       (fun _ ↦ id 0) (fun _ ↦ Measure.dirac v) (Measure.dirac v) := by
   let _ : MeasurableSpace (lp (fun _ : Set.Icc (0 : ℝ) 1 ↦ ℝ) ∞) := borel _
   have _ : BorelSpace (lp (fun _ : Set.Icc (0 : ℝ) 1 ↦ ℝ) ∞) := ⟨rfl⟩
-  exact tendstoInDistribution_kmSurvival_of_hadamard (Λhat := fun _ _ ↦ Λ) (G := fun _ ↦ 0)
+  exact tendstoInDistribution_lInfty_of_hadamard (Λhat := fun _ _ ↦ Λ) (G := fun _ ↦ 0)
     (dom := Set.univ)
     ((tendstoInDistribution_const (l := atTop) aemeasurable_const).congr
       (fun n ↦ ae_of_all _ fun _ ↦ by simp) (ae_of_all _ fun _ ↦ rfl))
