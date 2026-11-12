@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.P17Geostrophic
+import PhyslibExt.EarthScience.Geostrophic
 
 /-!
 # Geostrophic checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P17Geostrophic`:
+Concrete consumers of `PhyslibExt.EarthScience.Geostrophic`:
 the geostrophic formula at `f = 1e-4, rho0 = 1025, px = 0.01, py = -0.02`,
 uniqueness, and the southern-hemisphere sign.
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P17Geostrophic`
+- `PhyslibExt.EarthScience.Geostrophic`
 -/
 
 /-- Public shape of the geostrophic-velocity theorem. -/
