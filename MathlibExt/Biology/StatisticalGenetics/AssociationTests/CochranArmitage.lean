@@ -36,6 +36,10 @@ status, `G 0 ⟂ Y 0`, so the cell probabilities are `π_i p` (cases) and `π_i 
 with `p = P(Y 0 = true)` and `π_i = P(G 0 = i)`. The asymptotic index is the number `N` of
 subjects, with `p` and `π` fixed.
 
+This is prospective (cross-sectional) sampling: the numbers of cases `R` and controls `S` are
+random. The usual case–control design fixes `R` and `S` and samples genotypes within each group
+(product-binomial sampling); that design is **not** covered here.
+
 ## Fitted parameters and degrees of freedom
 
 The `2 × 3` multinomial has `5` free cell probabilities. The null fits `3` of them: the case
@@ -45,7 +49,8 @@ degrees of freedom. The trend statistic is a single contrast, along the centered
 direction, so it has **one** degree of freedom: `tendstoInDistribution_caStat` proves the limit
 law is `chiSquareMeasure 1` *with all three parameters fitted*. Fitting costs the trend contrast
 nothing because the centered score is orthogonal to the fitted directions: the oracle statistic
-with `p`, `π` known has the same limit (`tendstoInDistribution_oracleStat`), and the difference
+with `p`, `π` known has the same limit (`tendstoInDistribution_caOracleStat`, the genotype-table
+instance of the generic `tendstoInDistribution_oracleStat`), and the difference
 of the scaled numerators tends to `0` in probability (the `√N (Ā - μ_A)(B̄ - μ_B)` term in the
 proof).
 
@@ -63,12 +68,18 @@ proof).
   cases or without controls has statistic `0` (`trendStat_eq_zero_of_no_cases`,
   `trendStat_eq_zero_of_no_controls`).
 * **Small cells.** For fixed finite `N` the statistic has a discrete law and the `χ²₁` law is
-  only a limit. The test file computes a table with a single case, where the statistic is
-  `200 / 11 ≈ 18.2` although the exact conditional probability of so extreme a table is `1/100`.
+  only a limit. The test file computes the three tables with a single case among `100` subjects
+  of genotype counts `(81, 18, 1)`: the case in class `2` gives `200 / 11 ≈ 18.2`, the unique
+  largest value (the others give `200 / 891` and `3200 / 891`). Under the null, given the
+  margins, the case is equally likely to be any of the `100` subjects, so that table has
+  conditional probability `1/100`, far above its `χ²₁` tail; this permutation probability is
+  stated, not formalized.
 * **Fitted allele frequency.** Replacing the observed score variance by the Hardy–Weinberg
-  variance `2 p̂ q̂` of a fitted allele frequency gives the allelic test; it agrees with the trend
-  test iff the pooled sample is in Hardy–Weinberg proportions
-  (`GenomicPrediction.ArmitageTrend.allelicStat_eq_trendStat_iff`). The trend test fits the
+  variance `2 p̂ q̂` of a fitted allele frequency gives the allelic test; for nondegenerate margins
+  (cases and controls present, `0 < p̂ < 1`, positive score variance) and trend numerator
+  `U ≠ 0`, it agrees with the trend test iff the pooled sample is in Hardy–Weinberg proportions
+  (`GenomicPrediction.ArmitageTrend.allelicStat_eq_trendStat_iff`). When `U = 0` both statistics
+  are `0` whatever the proportions. The trend test fits the
   genotype frequencies directly and needs no Hardy–Weinberg assumption; this file does not treat
   the allelic test asymptotically.
 
@@ -82,6 +93,8 @@ proof).
   `N r_N²` for the genotype score and case indicator.
 * `tendstoInDistribution_caStat`: **the Cochran–Armitage trend test is asymptotically `χ²₁`**
   under the multinomial independence null.
+* `tendstoInDistribution_caOracleStat`: the same limit for the trend statistic with `p` and the
+  genotype frequencies known.
 * `not_tendstoInDistribution_caStat_of_genotype_const`: the singular design has no `χ²₁` limit.
 * `trendStat_eq_zero_of_single_genotype`, `trendStat_eq_zero_of_no_cases`,
   `trendStat_eq_zero_of_no_controls`: degenerate finite tables.
@@ -524,6 +537,23 @@ private theorem variance_caseInd (hS0 : Measurable (S 0)) :
   rw [hsq, hmean]
   ring
 
+private theorem memLp_score (hS0 : Measurable (S 0)) :
+    MemLp (fun ω ↦ (toReal (S 0 ω)).1) 2 P := by
+  refine memLp_of_bounded (a := 0) (b := 2) (ae_of_all _ fun ω ↦ ?_)
+    ((measurable_of_countable score).comp (measurable_fst.comp hS0)).aestronglyMeasurable 2
+  simp only [Function.comp_apply, score, Set.mem_Icc]
+  have := (S 0 ω).1.isLt
+  constructor
+  · positivity
+  · exact_mod_cast Nat.le_of_lt_succ this
+
+private theorem memLp_caseInd (hS0 : Measurable (S 0)) :
+    MemLp (fun ω ↦ (toReal (S 0 ω)).2) 2 P := by
+  refine memLp_of_bounded (a := 0) (b := 1) (ae_of_all _ fun ω ↦ ?_)
+    ((measurable_of_countable caseInd).comp (measurable_snd.comp hS0)).aestronglyMeasurable 2
+  simp only [Function.comp_apply, caseInd, Set.mem_Icc]
+  split_ifs <;> norm_num
+
 /-- **The Cochran–Armitage trend test is asymptotically `χ²₁`.** Subjects `S m = (G m, Y m)`
 (genotype class, case status) are i.i.d. (*multinomial sampling* of the `2 × 3` table). Under
 the null `G 0 ⟂ Y 0`, with case probability `p = P(Y 0 = true) ∈ (0, 1)` and positive genotype
@@ -545,23 +575,40 @@ theorem tendstoInDistribution_caStat (hS0 : Measurable (S 0)) (hindep : iIndepFu
     (fun m ↦ (hident m).comp measurable_toReal)
     (hnull.comp (φ := score) (ψ := caseInd) (measurable_of_countable _)
       (measurable_of_countable _))
-    (memLp_of_bounded (a := 0) (b := 2) (ae_of_all _ fun ω ↦ ?_)
-      ((measurable_of_countable score).comp (measurable_fst.comp hS0)).aestronglyMeasurable 2)
-    (memLp_of_bounded (a := 0) (b := 1) (ae_of_all _ fun ω ↦ ?_)
-      ((measurable_of_countable caseInd).comp (measurable_snd.comp hS0)).aestronglyMeasurable 2)
-    hscore ?_ hZ
+    (memLp_score hS0) (memLp_caseInd hS0) hscore ?_ hZ
   · refine hmain.congr (fun N ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun _ ↦ rfl)
     exact (caStat_eq_mul_sampleCorrSq S N ω).symm
-  · simp only [Function.comp_apply, score, Set.mem_Icc]
-    have := (S 0 ω).1.isLt
-    constructor
-    · positivity
-    · exact_mod_cast Nat.le_of_lt_succ this
-  · simp only [Function.comp_apply, caseInd, Set.mem_Icc]
-    split_ifs <;> norm_num
   · change 0 < Var[fun ω ↦ caseInd (S 0 ω).2; P]
     rw [variance_caseInd hS0]
     exact mul_pos hp0 (by linarith)
+
+/-- **The oracle trend statistic is asymptotically `χ²₁`.** Under the hypotheses of
+`tendstoInDistribution_caStat`, with the null parameters known instead of fitted (mean score
+`∑ i i π_i`, case probability `p`, score variance, and case-indicator variance `p (1 - p)`),
+`(N^{-1/2} ∑_{m < N} (score G_m - E score)(Y_m - p))² / (Var score · p (1 - p))` also converges
+in distribution to `χ²₁`: fitting `p` and `π` does not change the degrees of freedom. -/
+theorem tendstoInDistribution_caOracleStat (hS0 : Measurable (S 0)) (hindep : iIndepFun S P)
+    (hident : ∀ m, IdentDistrib (S m) (S 0) P P)
+    (hnull : IndepFun (fun ω ↦ (S 0 ω).1) (fun ω ↦ (S 0 ω).2) P)
+    (hp0 : 0 < P.real {ω | (S 0 ω).2 = true}) (hp1 : P.real {ω | (S 0 ω).2 = true} < 1)
+    (hscore : 0 < Var[fun ω ↦ score (S 0 ω).1; P])
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {Z : Ω' → ℝ} (hZ : HasLaw Z (chiSquareMeasure 1) P') :
+    TendstoInDistribution
+      (fun (N : ℕ) ω ↦ ((√N)⁻¹ * ∑ m ∈ range N,
+        (score (S m ω).1 - ∫ ω, score (S 0 ω).1 ∂P) *
+          (caseInd (S m ω).2 - ∫ ω, caseInd (S 0 ω).2 ∂P)) ^ 2 /
+          (Var[fun ω ↦ score (S 0 ω).1; P] * Var[fun ω ↦ caseInd (S 0 ω).2; P]))
+      atTop Z (fun _ ↦ P) P' := by
+  have hcase : 0 < Var[fun ω ↦ caseInd (S 0 ω).2; P] := by
+    rw [variance_caseInd hS0]
+    exact mul_pos hp0 (by linarith)
+  exact tendstoInDistribution_oracleStat (X := fun m ω ↦ toReal (S m ω))
+    (hindep.comp (fun _ ↦ toReal) fun _ ↦ measurable_toReal)
+    (fun m ↦ (hident m).comp measurable_toReal)
+    (hnull.comp (φ := score) (ψ := caseInd) (measurable_of_countable _)
+      (measurable_of_countable _))
+    (memLp_score hS0) (memLp_caseInd hS0) hscore hcase hZ
 
 omit [IsProbabilityMeasure P] in
 /-- **Singular design, almost surely**: if every subject almost surely has the genotype class

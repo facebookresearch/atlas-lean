@@ -163,11 +163,30 @@ theorem exists_caStat_tendsto_chiSquare :
 
 /-! ### Boundary cases -/
 
-/-- **Small cells.** A single case, carrying the only copy-number-`2` genotype among `N = 100`:
-the trend statistic is `200 / 11 ≈ 18.2`, far in the `χ²₁` tail, although under the null the
-single case is equally likely to be any of the `100` subjects, so a table this extreme has
-conditional probability `1 / 100`. The `χ²₁` limit needs every occupied cell to grow. -/
+/-! **Small cells.** One case among `N = 100` subjects with genotype counts `(81, 18, 1)`. The
+three possible tables give the statistics below; the case in class `2` is the unique largest,
+`200 / 11 ≈ 18.2`, far in the `χ²₁` tail. Under the null, given the margins, the case is equally
+likely to be any of the `100` subjects, so that table has conditional probability `1 / 100`
+(stated, not formalized). The `χ²₁` limit needs every occupied cell to grow. -/
+
+/-- The case carries the only class-`2` genotype. -/
 example : trendStat ![0, 0, 1] ![81, 18, 0] = 200 / 11 := by
+  simp [trendStat, total, numer, Fin.sum_univ_three]
+  norm_num
+
+/-- The case is in class `0`. -/
+example : trendStat ![1, 0, 0] ![80, 18, 1] = 200 / 891 := by
+  simp [trendStat, total, numer, Fin.sum_univ_three]
+  norm_num
+
+/-- The case is in class `1`. -/
+example : trendStat ![0, 1, 0] ![81, 17, 1] = 3200 / 891 := by
+  simp [trendStat, total, numer, Fin.sum_univ_three]
+  norm_num
+
+/-- The class-`2` table is the unique maximizer among the three single-case tables. -/
+example : trendStat ![1, 0, 0] ![80, 18, 1] < trendStat ![0, 0, 1] ![81, 18, 0] ∧
+    trendStat ![0, 1, 0] ![81, 17, 1] < trendStat ![0, 0, 1] ![81, 18, 0] := by
   simp [trendStat, total, numer, Fin.sum_univ_three]
   norm_num
 
