@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Causality.MissingData.Definitions
+public import MathlibExt.Probability.Causality.MissingData.Identification
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Kernel.Condexp
 
@@ -39,7 +40,8 @@ all transforms of the outcome, and shows that the mean form for the outcome alon
 * `condExp_indicator_mul_of_condIndepDiscrete`: the discrete-covariate MAR condition
   `CondIndepDiscrete μ R Y X` gives the mean form for `σ(X)`.
 * `MissingAtRandomCondIndepFun.integral_ipw_eq_integral`: under MAR and strong positivity
-  `P(R | σ(X)) ≥ ε > 0`, `E[1_R Y / P(R | σ(X))] = E[Y]`.
+  `P(R | σ(X)) ≥ ε > 0`, `E[1_R Y / P(R | σ(X))] = E[Y]`, by
+  `integral_ipw_eq_integral_of_mar_condExp`.
 
 The test file shows that the mean form for `Y` alone does not imply MAR: a two-coin outcome
 uncorrelated with, but not independent of, the response.
@@ -48,6 +50,10 @@ uncorrelated with, but not independent of, the response.
 
 All results keep the standard Borel sample space and finite measure that Mathlib's `CondIndepFun`
 requires; conditional independence on a general measurable space is not defined in Mathlib.
+`condExp_indicator_mul_of_condIndepDiscrete` never mentions `CondIndepFun` in its statement; it
+assumes a standard Borel sample space only because its proof goes through `CondIndepFun`
+(`missingAtRandomCondIndepFun_iff_condIndepDiscrete`), not because the discrete statement needs
+it.
 The propensity-weighted mean `ipwMean` of the discrete development is not equated here with the
 conditional-expectation weighted mean.
 
@@ -241,20 +247,17 @@ theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
 /-- **Inverse weighting under MAR.** For a real integrable outcome that is missing at random
 given `X` (`MissingAtRandomCondIndepFun`, standard Borel sample space) and strong response
 positivity `P(R | σ(X)) ≥ ε > 0`, the inverse-response-weighted mean of the respondents'
-outcomes identifies `E[Y]`. This discharges the mean-MAR hypothesis of the general inverse
-weighting theorem `integral_ipw_treated_condExp` by
-`MissingAtRandomCondIndepFun.condExp_indicator_mul`. -/
+outcomes identifies `E[Y]`. This is `integral_ipw_eq_integral_of_mar_condExp` at `m = σ(X)`, with
+its mean-MAR hypothesis `hMAR` discharged by `MissingAtRandomCondIndepFun.condExp_indicator_mul`.
+-/
 theorem MissingAtRandomCondIndepFun.integral_ipw_eq_integral [StandardBorelSpace Ω]
     [IsProbabilityMeasure μ] {R : Set Ω} {X : Ω → 𝒳} {hX : Measurable X} {Y : Ω → ℝ}
     (h : MissingAtRandomCondIndepFun μ R X hX Y) (hR : MeasurableSet R) (hY : Measurable Y)
     (hYi : Integrable Y μ) {ε : ℝ} (hε : 0 < ε)
     (hpos : ∀ᵐ ω ∂μ, ε ≤ μ[R.indicator 1 | m𝒳.comap X] ω) :
-    ∫ ω, R.indicator (fun ω => Y ω / μ[R.indicator 1 | m𝒳.comap X] ω) ω ∂μ = ∫ ω, Y ω ∂μ := by
-  rw [← integral_ipw_treated_condExp hX.comap_le hR (Y₀ := 0) hYi
-    (h.condExp_indicator_mul hR hY hYi) hε hpos]
-  congr 1
-  funext ω
-  by_cases hω : ω ∈ R <;> simp [MathlibExt.Probability.Causality.observed, hω]
+    ∫ ω, R.indicator (fun ω => Y ω / μ[R.indicator 1 | m𝒳.comap X] ω) ω ∂μ = ∫ ω, Y ω ∂μ :=
+  integral_ipw_eq_integral_of_mar_condExp hX.comap_le hR hYi (h.condExp_indicator_mul hR hY hYi)
+    hε hpos
 
 end MAR
 
