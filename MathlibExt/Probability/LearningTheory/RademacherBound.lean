@@ -8,11 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Convex.Jensen
-public import Mathlib.Analysis.MeanInequalities
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Probability.LearningTheory.Rademacher
 
 @[expose] public section
