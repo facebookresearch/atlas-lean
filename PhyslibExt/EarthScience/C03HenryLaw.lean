@@ -45,16 +45,19 @@ temperature/solvent, `p ≥ 0`; the equilibrium law is a hypothesis.
 
 namespace EarthScience
 
-/-- Henry's law doubling: under `c = H * p`, doubling the gas partial
+/-- Henry's law doubling: for a Henry constant `H > 0` and a nonnegative
+partial pressure `p ≥ 0`, under `c = H * p`, doubling the gas partial
 pressure doubles the dissolved equilibrium concentration. -/
-theorem henry_doubling {H p c : ℝ} (h : c = H * p) :
+theorem henry_doubling {H p c : ℝ} (_hH : 0 < H) (_hp : 0 ≤ p) (h : c = H * p) :
     H * (2 * p) = 2 * c := by
   rw [h]
   ring
 
-/-- Zero partial pressure gives zero dissolved concentration. -/
-theorem henry_zero_pressure {H : ℝ} : H * (0 : ℝ) = 0 := by
-  exact mul_zero H
+/-- Zero partial pressure gives zero dissolved concentration: for a Henry
+constant `H > 0`, if `c = H * 0` then `c = 0`. -/
+theorem henry_zero_pressure {H c : ℝ} (_hH : 0 < H) (h : c = H * (0 : ℝ)) :
+    c = 0 := by
+  rw [h, mul_zero]
 
 /-- Henry-constant conversion: the `H_cp` (concentration/pressure) and
 `H_pc` (pressure/concentration) conventions are reciprocals for nonzero

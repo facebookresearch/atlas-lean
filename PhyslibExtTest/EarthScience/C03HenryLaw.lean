@@ -38,16 +38,17 @@ No new definitions or results are introduced here.
 
 /-- Doubling, numeric: `0.034 * (2 * 1) = 2 * 0.034`. -/
 example : (0.034 : ℝ) * (2 * 1) = 2 * 0.034 :=
-  EarthScience.henry_doubling (by norm_num)
+  EarthScience.henry_doubling (by norm_num) (by norm_num) (by norm_num)
 
 /-- Zero-pressure boundary: `0.034 * 0 = 0`. -/
 example : (0.034 : ℝ) * (0 : ℝ) = 0 :=
-  EarthScience.henry_zero_pressure
+  EarthScience.henry_zero_pressure (by norm_num) rfl
 
 /-- Reciprocal conversion, numeric: `H_pc = 2` gives `H_cp = 1 / 2` and back. -/
 example : (2 : ℝ) = 1 / (1 / 2) :=
   EarthScience.henry_conversion_reciprocal (by norm_num) (by norm_num)
 
 /-- Public shape of the doubling theorem. -/
-example {H p c : ℝ} (h : c = H * p) : H * (2 * p) = 2 * c :=
-  EarthScience.henry_doubling h
+example {H p c : ℝ} (hH : 0 < H) (hp : 0 ≤ p) (h : c = H * p) :
+    H * (2 * p) = 2 * c :=
+  EarthScience.henry_doubling hH hp h
