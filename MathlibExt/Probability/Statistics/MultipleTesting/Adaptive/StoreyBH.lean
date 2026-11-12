@@ -19,7 +19,7 @@ public import MathlibExt.Probability.Statistics.TwoGroupsTesting
 Benjamini–Hochberg (BH) at level `q` controls the false discovery rate at `q |H0| / m`, which is
 conservative when the proportion `π₀ = |H0| / m` of true nulls is small. Storey's adaptive
 procedure estimates `π₀` from the p-values,
-`π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)` (`storeyPi0Plus1`), and runs BH at the larger
+`π̂₀(lam) = (#{j : p j > lam} + 1) / ((1 - lam) m)` (`storeyPi0Plus1`), and runs BH at the adaptive
 level `q / π̂₀(lam)`, rejecting only p-values `≤ lam` (`storeyThreshold`, `storeyBHIndex`,
 `storeyBHRejections`).
 
