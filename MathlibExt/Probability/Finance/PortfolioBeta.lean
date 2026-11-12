@@ -14,8 +14,8 @@ public import Mathlib.Probability.Moments.Variance
 /-!
 # Portfolio beta is linear in portfolio weights
 
-See the contract `/tmp/atlas-econ-50b/lane4/FI07.T01-contract.md` for the source and
-clause map. Beta is the covariance of an asset's return with the market return,
+Source: Atlas roadmap FI07.T01: portfolio beta is linear in portfolio
+weights when market variance is positive. Beta is the covariance of an asset's return with the market return,
 divided by the variance of the market return. The portfolio return is the
 weight-weighted sum of the asset returns.
 -/
