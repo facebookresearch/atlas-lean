@@ -8,9 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.LindebergFeller
+public import MathlibExt.Probability.Statistics.Resampling.BootstrapMeanCLT
 public import MathlibExt.Probability.Causality.CausalIdentification
-public import MathlibExt.Probability.Statistics.Slutsky
+public import MathlibExt.Probability.Statistics.DeltaMethod
 public import MathlibExt.Probability.Statistics.MultivariateCLT
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.Independence.InfinitePi
@@ -39,7 +39,11 @@ row `ω n` is an iid sequence from `empirical x n`. The bootstrap resample of si
 bootstrap statistic given the sample" is formalized as its law under `world x`, and bootstrap
 validity is a `TendstoInDistribution` statement under `world x`, holding for a fixed data
 sequence (deterministic theorems) or for `P`-almost every realised data sequence (iid
-theorems).
+theorems). The empirical laws reuse `ProbabilityTheory.empiricalLaw`, with the historical
+point-mass-at-zero convention for the empty row. `map_world_bootstrapMeasure` bridges `world`
+to the canonical resampling coupling by replacing only row zero. All scalar CLTs use
+`ProbabilityTheory.tendstoInDistribution_sum_bootstrapRow`; the vector and almost-sure
+results extend that canonical machinery.
 
 ## The conditional triangular-array CLT
 
@@ -115,23 +119,25 @@ mass `1 / n` at each `x i`, `i < n`. For `n = 0` (no data) it is the point mass 
 this convention only keeps the bootstrap law a probability measure at every index and plays
 no role in any limit statement. -/
 noncomputable def empirical (x : ℕ → α) (n : ℕ) : Measure α :=
-  if n = 0 then Measure.dirac 0 else (n : ℝ≥0∞)⁻¹ • ∑ i ∈ range n, Measure.dirac (x i)
+  if n = 0 then Measure.dirac 0 else empiricalLaw x n
+
+/-- The positive rows use the canonical empirical law; only row zero has a different convention. -/
+theorem empirical_eq_empiricalLaw {x : ℕ → α} {n : ℕ} (hn : n ≠ 0) :
+    empirical x n = empiricalLaw x n := by
+  simp [empirical, hn]
 
 /-- For `n ≠ 0` the empirical distribution is the average of the point masses. -/
 theorem empirical_of_ne_zero {x : ℕ → α} {n : ℕ} (hn : n ≠ 0) :
     empirical x n = (n : ℝ≥0∞)⁻¹ • ∑ i ∈ range n, Measure.dirac (x i) := by
-  simp [empirical, hn]
+  rw [empirical_eq_empiricalLaw hn, empiricalLaw_eq]
 
 /-- The empirical distribution is a probability measure. -/
 instance isProbabilityMeasure_empirical (x : ℕ → α) (n : ℕ) :
     IsProbabilityMeasure (empirical x n) := by
   by_cases hn : n = 0
   · simp only [empirical, hn, ite_true]; infer_instance
-  · constructor
-    rw [empirical_of_ne_zero hn, Measure.smul_apply, Measure.coe_finsetSum,
-      Finset.sum_apply]
-    simp only [measure_univ, Finset.sum_const, card_range, nsmul_eq_mul, mul_one, smul_eq_mul]
-    exact ENNReal.inv_mul_cancel (by exact_mod_cast hn) (ENNReal.natCast_ne_top n)
+  · rw [empirical_eq_empiricalLaw hn]
+    exact isProbabilityMeasure_empiricalLaw x (Nat.pos_of_ne_zero hn)
 
 /-- Every function is integrable for the empirical distribution (finitely many atoms). -/
 theorem integrable_empirical [MeasurableSingletonClass α] (x : ℕ → α) (n : ℕ) (f : α → ℝ) :
@@ -139,17 +145,14 @@ theorem integrable_empirical [MeasurableSingletonClass α] (x : ℕ → α) (n :
   by_cases hn : n = 0
   · simp only [empirical, hn, ite_true]
     exact integrable_dirac enorm_lt_top
-  · rw [empirical_of_ne_zero hn]
-    refine Integrable.smul_measure ?_ (ENNReal.inv_ne_top.2 (by exact_mod_cast hn))
-    exact integrable_finsetSum_measure.2 fun i _ => integrable_dirac enorm_lt_top
+  · rw [empirical_eq_empiricalLaw hn]
+    exact integrable_empiricalLaw x n f
 
 /-- Integrals against the empirical distribution are sample averages. -/
 theorem integral_empirical [MeasurableSingletonClass α] {x : ℕ → α} {n : ℕ} (hn : n ≠ 0)
     (f : α → ℝ) :
     ∫ y, f y ∂empirical x n = (n : ℝ)⁻¹ * ∑ i ∈ range n, f (x i) := by
-  rw [empirical_of_ne_zero hn, integral_smul_measure,
-    integral_finsetSum_measure fun i _ => integrable_dirac enorm_lt_top]
-  simp [integral_dirac, ENNReal.toReal_inv]
+  rw [empirical_eq_empiricalLaw hn, integral_empiricalLaw]
 
 /-- The **bootstrap world** built on the data `x`: a single probability space
 `ℕ → ℕ → α` on which, for every sample size `n`, the row `ω n` is an iid sequence drawn from
@@ -212,6 +215,25 @@ theorem map_world [MeasurableSingletonClass α] {β : Type*} [MeasurableSpace β
   rw [Measure.infinitePi_map_pi (fun _ : ℕ => empirical x n) (f := fun _ => f) (fun _ => hf)]
   simp_rw [map_empirical x n hf hf0]
 
+/-- Replacing the unused zero row by `x 0` gives the canonical bootstrap coupling.
+Every positive row is unchanged, so statistics from those rows have exactly the same laws. -/
+theorem map_world_bootstrapMeasure (x : ℕ → α) :
+    (world x).map (fun ω n k => if n = 0 then x 0 else ω n k) = bootstrapMeasure x := by
+  unfold world bootstrapMeasure
+  rw [Measure.infinitePi_map_pi
+    (μ := fun n => Measure.infinitePi fun _ : ℕ => empirical x n)
+    (f := fun n (row : ℕ → α) k => if n = 0 then x 0 else row k) (fun _ => by fun_prop)]
+  congr 1
+  funext n
+  rw [Measure.infinitePi_map_pi (fun _ : ℕ => empirical x n)
+    (f := fun _ y => if n = 0 then x 0 else y) (fun _ => by fun_prop)]
+  congr 1
+  funext k
+  by_cases hn : n = 0
+  · subst n
+    simp [Measure.map_const, empiricalLaw_eq]
+  · simp [hn, empirical_eq_empiricalLaw hn, max_eq_left (Nat.one_le_iff_ne_zero.2 hn)]
+
 end Generic
 
 /-! Throughout, `x̄ₙ` is `sampleMean x (range n)`, reusing
@@ -223,6 +245,11 @@ theorem sampleMean_range (x : ℕ → ℝ) (n : ℕ) :
     sampleMean x (range n) = (n : ℝ)⁻¹ * ∑ i ∈ range n, x i := by
   simp [sampleMean, div_eq_inv_mul]
 
+/-- The existing finite-set mean agrees with the canonical resampling mean. -/
+theorem sampleMean_eq_empiricalMean (x : ℕ → ℝ) (n : ℕ) :
+    sampleMean x (range n) = empiricalMean x n := by
+  rw [sampleMean_range, empiricalMean_eq]
+
 /-- The **plug-in sample variance** `(1 / n) ∑_{i < n} (x i - x̄ₙ)²`, i.e. the variance of
 the empirical distribution `empirical x n`. Its divisor is `n`, unlike the unbiased
 `MathlibExt.Probability.Causality.sampleVar` (divisor `n - 1`); the bootstrap resamples from
@@ -233,6 +260,11 @@ noncomputable def empiricalVar (x : ℕ → ℝ) (n : ℕ) : ℝ :=
 /-- The **bootstrap sample mean** at sample size `n`: the average of the resample
 `ω n 0, …, ω n (n - 1)`. -/
 noncomputable def bootMean (n : ℕ) (ω : ℕ → ℕ → ℝ) : ℝ := (n : ℝ)⁻¹ * ∑ k ∈ range n, ω n k
+
+/-- The bootstrap statistic is the canonical empirical mean of the resampled row. -/
+theorem bootMean_eq_empiricalMean (n : ℕ) (ω : ℕ → ℕ → ℝ) :
+    bootMean n ω = empiricalMean (ω n) n := by
+  rw [bootMean, empiricalMean_eq]
 
 /-- The bootstrap mean is measurable. -/
 theorem measurable_bootMean (n : ℕ) : Measurable (bootMean n) := by
@@ -276,168 +308,18 @@ private theorem tendstoInDistribution_of_map_limit_eq {Ω₁ Ω₁' Ω₂' : Typ
   rw [hlim]
   exact h.tendsto
 
-/-- The rows of the centred, scaled bootstrap array are independent under `world x`. -/
-private theorem iIndepFun_row (x : ℕ → ℝ) (n : ℕ) :
-    iIndepFun (m := fun _ => inferInstance)
-      ((range n).restrict (fun k (ω : ℕ → ℕ → ℝ) => (ω n k - sampleMean x (range n)) / √n))
-      (world x) := by
-  have h := iIndepFun_uncurry_infinitePi' (fun n (_ : ℕ) => empirical x n)
-    (X := fun n (_ : ℕ) (y : ℝ) => (y - sampleMean x (range n)) / √n) (fun _ _ => by fun_prop)
-  exact h.precomp (g := fun k : range n => (n, k.1)) fun a b hab =>
-    Subtype.ext (congrArg Prod.snd hab)
-
-/-- The conditional Lindeberg CLT for the bootstrap mean when the limit variance is
-positive. -/
-private theorem tendstoInDistribution_bootMean_of_ne_zero (x : ℕ → ℝ) {v : ℝ≥0} (hv : v ≠ 0)
-    (hvar : Tendsto (empiricalVar x) atTop (𝓝 v))
-    (hLind : ∀ ε : ℝ, 0 < ε → Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ i ∈ range n,
-        if ε * √n < |x i - sampleMean x (range n)| then (x i - sampleMean x (range n)) ^ 2 else 0)
-      atTop (𝓝 0)) :
-    TendstoInDistribution
-      (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) atTop
-      (id : ℝ → ℝ)
-      (fun _ => world x) (gaussianReal 0 v) := by
-  set σ : ℝ := √(v : ℝ) with hσdef
-  have hσ : 0 < σ := Real.sqrt_pos.2 (by positivity)
-  have hσv : σ ^ 2 = v := Real.sq_sqrt v.2
-  have hgauss : gaussianReal 0 ⟨σ ^ 2, sq_nonneg σ⟩ = gaussianReal 0 v := by
-    congr 1; exact NNReal.eq hσv
-  set X : ℕ → ℕ → (ℕ → ℕ → ℝ) → ℝ := fun n k ω => (ω n k - sampleMean x (range n)) / √n with hX
-  have hXmeas : ∀ n k, Measurable (X n k) := fun n k => by simp only [hX]; fun_prop
-  have hmean : ∀ n, ∀ k ∈ range n, ∫ ω, X n k ω ∂world x = 0 := by
-    intro n k hk
-    have hn : n ≠ 0 := by rintro rfl; simp at hk
-    rw [integral_world hn k (f := fun y => (y - sampleMean x (range n)) / √n) (by fun_prop),
-      ← Finset.sum_div,
-      Finset.sum_sub_distrib, Finset.sum_const, card_range, nsmul_eq_mul,
-      natCast_mul_sampleMean hn]
-    simp
-  have hint2 : ∀ n, ∀ k ∈ range n, Integrable (fun ω => (X n k ω) ^ 2) (world x) :=
-    fun n k _ => integrable_world x n k
-      (f := fun y => ((y - sampleMean x (range n)) / √n) ^ 2) (by fun_prop)
-  -- the row variance is the plug-in sample variance
-  have hvar' : Tendsto (fun n => ∑ k ∈ range n, ∫ ω, (X n k ω) ^ 2 ∂world x) atTop
-      (𝓝 (σ ^ 2)) := by
-    rw [hσv]
-    refine hvar.congr' ?_
-    filter_upwards [eventually_ne_atTop 0] with n hn
-    have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
-    have hsq : √(n : ℝ) ^ 2 = n := Real.sq_sqrt (by positivity)
-    simp_rw [hX, integral_world hn _
-      (f := fun y => ((y - sampleMean x (range n)) / √n) ^ 2) (by fun_prop)]
-    rw [Finset.sum_const, card_range, nsmul_eq_mul, empiricalVar]
-    simp_rw [div_pow, hsq, ← Finset.sum_div]
-    field_simp
-  -- the Lindeberg condition of the bootstrap array is the data Lindeberg condition
-  have hL : LindebergConditionTriangular X (world x) := by
-    intro ε hε
-    refine (hLind ε hε).congr' ?_
-    filter_upwards [eventually_ne_atTop 0] with n hn
-    have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
-    have hs : 0 < √(n : ℝ) := by positivity
-    have hsq : √(n : ℝ) ^ 2 = n := Real.sq_sqrt (by positivity)
-    have hfun : ∀ k, (fun ω : ℕ → ℕ → ℝ => (X n k ω) ^ 2 *
-        Set.indicator {ω' | ε < |X n k ω'|} 1 ω) = fun ω =>
-        (fun y : ℝ => if ε * √n < |y - sampleMean x (range n)|
-          then ((y - sampleMean x (range n)) / √n) ^ 2 else 0) (ω n k) := by
-      intro k; funext ω
-      simp only [hX, Set.indicator_apply, Set.mem_ofPred_eq, abs_div, abs_of_pos hs,
-        lt_div_iff₀ hs, Pi.one_apply]
-      split_ifs <;> simp
-    have hmeasf : Measurable fun y : ℝ =>
-        if ε * √n < |y - sampleMean x (range n)|
-        then ((y - sampleMean x (range n)) / √n) ^ 2 else 0 :=
-      Measurable.ite (measurableSet_lt measurable_const (by fun_prop)) (by fun_prop)
-        measurable_const
-    simp_rw [hfun, integral_world hn _ hmeasf, Finset.sum_const, card_range, nsmul_eq_mul,
-      ← mul_assoc, mul_inv_cancel₀ hn', one_mul]
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    split_ifs
-    · rw [div_pow, hsq]; field_simp
-    · simp
-  have hclt := lindeberg_feller_clt_triangular X (iIndepFun_row x) (fun n k _ => hXmeas n k)
-    hmean hint2 σ hσ hvar' hL
-  have hS : ∀ n : ℕ, Measurable fun ω : ℕ → ℕ → ℝ =>
-      √(n : ℝ) * (bootMean n ω - sampleMean x (range n)) :=
-    fun n =>
-    measurable_const.mul ((measurable_bootMean n).sub measurable_const)
-  rw [tendstoInDistribution_iff_forall_integral_rclike_tendsto ℝ (fun n => (hS n).aemeasurable)
-    measurable_id.aemeasurable]
-  intro f
-  have h := hclt f
-  rw [hgauss] at h
-  simp only [id]
-  refine h.congr fun n => ?_
-  rw [integral_map (Finset.measurable_sum _ fun k _ => hXmeas n k).aemeasurable
-    f.continuous.aestronglyMeasurable]
-  simp_rw [hX, sqrt_mul_bootMean_sub]
-
-
-
-/-- The bootstrap mean when the plug-in variances tend to `0`: by Chebyshev's inequality the
-scaled bootstrap mean tends to `0` in probability, so its conditional law tends to the point
-mass at `0`, which is `gaussianReal 0 0`. -/
-private theorem tendstoInDistribution_bootMean_of_eq_zero (x : ℕ → ℝ)
-    (hvar : Tendsto (empiricalVar x) atTop (𝓝 0)) :
-    TendstoInDistribution
-      (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) atTop
-      (id : ℝ → ℝ) (fun _ => world x) (gaussianReal 0 0) := by
-  set Y : ℕ → ℕ → (ℕ → ℕ → ℝ) → ℝ := fun n k ω => (ω n k - sampleMean x (range n)) / √n
-    with hY
-  have hYmeas : ∀ n k, Measurable (Y n k) := fun n k => by simp only [hY]; fun_prop
-  have hT : ∀ n : ℕ, (fun ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) =
-      ∑ k ∈ range n, Y n k := fun n => by
-    funext ω; simp [hY, Finset.sum_apply, sqrt_mul_bootMean_sub]
-  have hmem : ∀ n k, MemLp (Y n k) 2 (world x) := fun n k =>
-    (memLp_two_iff_integrable_sq (hYmeas n k).aestronglyMeasurable).2
-      (integrable_world x n k (f := fun y => ((y - sampleMean x (range n)) / √n) ^ 2)
-        (by fun_prop))
-  have hind := iIndepFun_uncurry_infinitePi' (fun n (_ : ℕ) => empirical x n)
-    (X := fun n (_ : ℕ) (y : ℝ) => (y - sampleMean x (range n)) / √n) (fun _ _ => by fun_prop)
-  have hpair : ∀ n, Set.Pairwise ↑(range n) fun i j => Y n i ⟂ᵢ[world x] Y n j :=
-    fun n i _ j _ hij => hind.indepFun (i := (n, i)) (j := (n, j)) (by simpa using hij)
-  have hmean : ∀ n k, ∫ ω, Y n k ω ∂world x = 0 := by
-    intro n k
-    rcases eq_or_ne n 0 with rfl | hn
-    · simp [hY]
-    rw [integral_world hn k (f := fun y => (y - sampleMean x (range n)) / √n) (by fun_prop),
-      ← Finset.sum_div, Finset.sum_sub_distrib, Finset.sum_const, card_range, nsmul_eq_mul,
-      natCast_mul_sampleMean hn]
-    simp
-  have hvarT : ∀ n, n ≠ 0 → variance (∑ k ∈ range n, Y n k) (world x) = empiricalVar x n := by
-    intro n hn
-    have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
-    have hsq : √(n : ℝ) ^ 2 = n := Real.sq_sqrt (by positivity)
-    rw [IndepFun.variance_sum (fun k _ => hmem n k) (hpair n)]
-    simp_rw [variance_of_integral_eq_zero (hYmeas _ _).aemeasurable (hmean _ _), hY,
-      integral_world hn _ (f := fun y => ((y - sampleMean x (range n)) / √n) ^ 2) (by fun_prop)]
-    rw [Finset.sum_const, card_range, nsmul_eq_mul, empiricalVar]
-    simp_rw [div_pow, hsq, ← Finset.sum_div]
-    field_simp
-  have hmeanT : ∀ n, ∫ ω, (∑ k ∈ range n, Y n k) ω ∂world x = 0 := fun n => by
-    simp_rw [Finset.sum_apply]
-    rw [integral_finsetSum _ fun k _ => (hmem n k).integrable one_le_two]
-    simp [hmean]
-  have hmeas : TendstoInMeasure (world x) (fun n => ∑ k ∈ range n, Y n k) atTop (fun _ => 0) := by
-    rw [tendstoInMeasure_iff_dist]
-    intro ε hε
-    have hb : Tendsto (fun n => ENNReal.ofReal (empiricalVar x n / ε ^ 2)) atTop (𝓝 0) := by
-      have := ENNReal.tendsto_ofReal (hvar.div_const (ε ^ 2))
-      rwa [zero_div, ENNReal.ofReal_zero] at this
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hb
-      (Eventually.of_forall fun _ => zero_le) ?_
-    filter_upwards [eventually_ne_atTop 0] with n hn
-    have h := meas_ge_le_variance_div_sq
-      (memLp_finsetSum' (range n) fun k _ => hmem n k) hε
-    rw [hmeanT n, hvarT n hn] at h
-    simpa [Real.dist_eq] using h
-  have hd := hmeas.tendstoInDistribution_of_aemeasurable
-    (fun n => (Finset.measurable_sum (range n) fun k _ => hYmeas n k).aemeasurable.congr
-      (ae_of_all _ fun ω => by simp [Finset.sum_apply])) aemeasurable_const
-  have hd' := tendstoInDistribution_of_map_limit_eq (ν₂ := gaussianReal 0 0) (Z₂ := id) hd
-    measurable_id.aemeasurable (by simp [Measure.map_const])
-  exact hd'.congr (fun n => ae_of_all _ fun ω => by rw [hT n]) (ae_of_all _ fun _ => rfl)
+/-- Transfer convergence in distribution along a measure-preserving map. -/
+private theorem tendstoInDistribution_comp_of_map_eq {Ω₁ Ω₂ Ω' : Type*} [MeasurableSpace Ω₁]
+    [MeasurableSpace Ω₂] [MeasurableSpace Ω'] {μ₁ : Measure Ω₁} {μ₂ : Measure Ω₂}
+    {μ' : Measure Ω'} [IsProbabilityMeasure μ₁] [IsProbabilityMeasure μ₂]
+    [IsProbabilityMeasure μ'] {Φ : Ω₁ → Ω₂} (hΦ : Measurable Φ) (hmap : μ₁.map Φ = μ₂)
+    {Y : ℕ → Ω₂ → ℝ} (hY : ∀ n, Measurable (Y n)) {Z : Ω' → ℝ}
+    (h : TendstoInDistribution Y atTop Z (fun _ => μ₂) μ') :
+    TendstoInDistribution (fun n ω => Y n (Φ ω)) atTop Z (fun _ => μ₁) μ' := by
+  refine ⟨fun n => ((hY n).comp hΦ).aemeasurable, h.aemeasurable_limit, ?_⟩
+  refine h.tendsto.congr fun n => Subtype.ext ?_
+  change μ₂.map (Y n) = μ₁.map (Y n ∘ Φ)
+  rw [← hmap, Measure.map_map (hY n) hΦ]
 
 /-- **Conditional Lindeberg CLT for the bootstrap mean (Bickel–Freedman).**
 
@@ -461,135 +343,25 @@ theorem tendstoInDistribution_bootMean (x : ℕ → ℝ) {v : ℝ≥0}
     TendstoInDistribution
       (fun (n : ℕ) ω => √(n : ℝ) * (bootMean n ω - sampleMean x (range n))) atTop
       (id : ℝ → ℝ) (fun _ => world x) (gaussianReal 0 v) := by
-  rcases eq_or_ne v 0 with rfl | hv
-  · exact tendstoInDistribution_bootMean_of_eq_zero x (by simpa using hvar)
-  · exact tendstoInDistribution_bootMean_of_ne_zero x hv hvar hLind
+  have hvar' : Tendsto (fun n => ∑ k ∈ range n,
+      ∫ ω, (bootstrapRow x n k ω) ^ 2 ∂bootstrapMeasure x) atTop (𝓝 (v : ℝ)) := by
+    refine hvar.congr fun n => ?_
+    rw [sum_integral_bootstrapRow_sq, ← sampleMean_eq_empiricalMean]
+    rfl
+  have hLind' := lindebergConditionTriangular_bootstrapRow_of_data x
+    (by simpa only [← sampleMean_eq_empiricalMean] using hLind)
+  have hc := tendstoInDistribution_sum_bootstrapRow x hvar' hLind'
+  have h := tendstoInDistribution_comp_of_map_eq
+    (Φ := fun (ω : ℕ → ℕ → ℝ) n k => if n = 0 then x 0 else ω n k) (by fun_prop)
+    (map_world_bootstrapMeasure x)
+    (fun n => Finset.measurable_sum _ fun k _ => measurable_bootstrapRow x n k) hc
+  refine h.congr (fun n => ae_of_all _ fun ω => ?_) (ae_of_all _ fun _ => rfl)
+  by_cases hn : n = 0
+  · simp [hn]
+  · simp [hn, bootstrapRow, ← sampleMean_eq_empiricalMean, sqrt_mul_bootMean_sub]
 
 end ProbabilityTheory.Bootstrap
 
-namespace MeasureTheory
-
-variable {ι Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
-  {μ : Measure Ω} {μ' : Measure Ω'} {l : Filter ι}
-
-/-- If `U n → u₀` in probability and the deterministic `c n → θ`, then `f (U n, c n)` tends to
-`f (u₀, θ)` in probability for `f` continuous at `(u₀, θ)`. -/
-private theorem tendstoInMeasure_comp_prodMk_seq {E G F : Type*} [PseudoMetricSpace E]
-    [PseudoMetricSpace G] [PseudoMetricSpace F] {U : ι → Ω → E} {c : ι → G} {u₀ : E} {θ : G}
-    {f : E × G → F} (hf : ContinuousAt f (u₀, θ)) (hU : TendstoInMeasure μ U l (fun _ ↦ u₀))
-    (hc : Tendsto c l (𝓝 θ)) :
-    TendstoInMeasure μ (fun n ω ↦ f (U n ω, c n)) l (fun _ ↦ f (u₀, θ)) := by
-  rw [tendstoInMeasure_iff_dist] at hU ⊢
-  intro ε hε
-  obtain ⟨δ, hδ, hδε⟩ := Metric.continuousAt_iff.1 hf ε hε
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds (hU δ hδ)
-    (Eventually.of_forall fun _ ↦ zero_le) ?_
-  filter_upwards [hc (Metric.ball_mem_nhds θ hδ)] with n hn
-  refine measure_mono fun ω hω ↦ ?_
-  simp only [Set.mem_ofPred_eq] at hω ⊢
-  by_contra h
-  refine (hδε ?_).not_ge hω
-  rw [Prod.dist_eq, max_lt_iff]
-  exact ⟨not_le.1 h, hn⟩
-
-variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [SecondCountableTopology E]
-  [MeasurableSpace E] [BorelSpace E] [NormedAddCommGroup F] [NormedSpace ℝ F]
-  [SecondCountableTopology F] [MeasurableSpace F] [BorelSpace F]
-  [IsProbabilityMeasure μ] [IsProbabilityMeasure μ'] [l.IsCountablyGenerated]
-
-/-- **Delta method with a moving centre.** Let `r n → ∞`, let the deterministic centres
-`c n → θ`, and suppose `r n • (X n - c n)` converges in distribution to `Z`. If `g` is
-*strictly* differentiable at `θ` with derivative `L`, then `r n • (g (X n) - g (c n))`
-converges in distribution to `L Z`.
-
-Strict differentiability (`HasStrictFDerivAt`) is the right hypothesis here: the increment
-`g (X n) - g (c n)` is taken between two points that both move towards `θ`, and plain
-differentiability at `θ` only controls increments based at `θ` itself. This is the form used
-for the bootstrap, where `X n` is the bootstrap statistic and `c n` the observed one. -/
-theorem TendstoInDistribution.delta_method_of_hasStrictFDerivAt {X : ι → Ω → E} {c : ι → E}
-    {Z : Ω' → E} {θ : E} {r : ι → ℝ} {g : E → F} {L : E →L[ℝ] F}
-    (hXZ : TendstoInDistribution (fun n ω ↦ r n • (X n ω - c n)) l Z (fun _ ↦ μ) μ')
-    (hr : Tendsto r l atTop) (hc : Tendsto c l (𝓝 θ)) (hg : HasStrictFDerivAt g L θ)
-    (hX : ∀ n, AEMeasurable (X n) μ) (hgX : ∀ n, AEMeasurable (fun ω ↦ g (X n ω)) μ) :
-    TendstoInDistribution (fun n ω ↦ r n • (g (X n ω) - g (c n))) l (fun ω ↦ L (Z ω))
-      (fun _ ↦ μ) μ' := by
-  have hr_pos : ∀ᶠ n in l, 0 < r n := hr.eventually_gt_atTop 0
-  -- Step 1: `X n - c n → 0` in probability.
-  have h1 : TendstoInDistribution (fun n ω ↦ (r n)⁻¹ • (r n • (X n ω - c n))) l
-      (fun _ ↦ (0 : E)) (fun _ ↦ μ) μ' := by
-    refine (hXZ.smul_of_tendstoInMeasure_const (Y := fun n _ ↦ (r n)⁻¹) (c := 0) ?_
-      (fun _ ↦ aemeasurable_const)).congr (fun _ ↦ ae_of_all _ fun _ ↦ rfl)
-      (ae_of_all _ fun ω ↦ zero_smul ℝ (Z ω))
-    rw [tendstoInMeasure_iff_norm]
-    intro ε hε
-    refine tendsto_const_nhds.congr' ?_
-    filter_upwards [(tendsto_iff_norm_sub_tendsto_zero.1
-      (tendsto_inv_atTop_zero.comp hr)).eventually (gt_mem_nhds hε)] with n hn
-    simp only [Function.comp_apply, sub_zero, norm_inv, Real.norm_eq_abs] at hn
-    simp [hn.not_ge]
-  have hU : TendstoInMeasure μ (fun n ω ↦ X n ω - c n) l (fun _ ↦ 0) := by
-    refine (tendstoInMeasure_of_tendstoInDistribution_const h1).congr' ?_ EventuallyEq.rfl
-    filter_upwards [hr_pos] with n hn
-    exact ae_of_all _ fun ω ↦ by simp [smul_smul, inv_mul_cancel₀ hn.ne']
-  -- Step 2: the normalised remainder tends to `0` in probability.
-  set ψ : E × E → F := fun q ↦ ‖q.1‖⁻¹ • (g (q.2 + q.1) - g q.2 - L q.1) with hψ_def
-  have hψ0 : ψ (0, θ) = 0 := by simp [ψ]
-  have hψ : ContinuousAt ψ (0, θ) := by
-    have hφ : Tendsto (fun q : E × E ↦ (q.2 + q.1, q.2)) (𝓝 (0, θ)) (𝓝 (θ, θ)) := by
-      have : Continuous fun q : E × E ↦ (q.2 + q.1, q.2) := by fun_prop
-      simpa using this.tendsto (0, θ)
-    have ho := (hasStrictFDerivAt_iff_isLittleO.1 hg).comp_tendsto hφ
-    rw [ContinuousAt, hψ0, Metric.tendsto_nhds]
-    intro ε hε
-    filter_upwards [Asymptotics.isLittleO_iff.1 ho (half_pos hε)] with q hq
-    simp only [Function.comp_apply, add_sub_cancel_left] at hq
-    rw [dist_zero_right, hψ_def, norm_smul, norm_inv, norm_norm]
-    rcases eq_or_ne ‖q.1‖ 0 with h0 | h0
-    · simp [h0, hε]
-    · calc ‖q.1‖⁻¹ * ‖g (q.2 + q.1) - g q.2 - L q.1‖ ≤ ‖q.1‖⁻¹ * (ε / 2 * ‖q.1‖) :=
-            mul_le_mul_of_nonneg_left hq (by positivity)
-        _ = ε / 2 := by field_simp
-        _ < ε := half_lt_self hε
-  set η : ι → Ω → F := fun n ω ↦
-    ‖X n ω - c n‖⁻¹ • (g (X n ω) - g (c n) - L (X n ω - c n)) with hη_def
-  have hηψ : ∀ n ω, η n ω = ψ (X n ω - c n, c n) := fun n ω ↦ by
-    simp [η, ψ, add_sub_cancel]
-  have hη : TendstoInMeasure μ η l (fun _ ↦ 0) := by
-    have h := tendstoInMeasure_comp_prodMk_seq hψ hU hc
-    rw [hψ0] at h
-    exact h.congr (fun n ↦ ae_of_all _ fun ω ↦ (hηψ n ω).symm) EventuallyEq.rfl
-  have hη_meas : ∀ n, AEMeasurable (η n) μ := fun n ↦
-    ((hX n).sub_const _).norm.inv.smul (((hgX n).sub_const _).sub
-      (L.continuous.measurable.comp_aemeasurable ((hX n).sub_const _)))
-  have hnorm : TendstoInDistribution (fun n ω ↦ ‖r n • (X n ω - c n)‖) l (fun ω ↦ ‖Z ω‖)
-      (fun _ ↦ μ) μ' := hXZ.continuous_comp continuous_norm
-  have hprod : TendstoInDistribution (fun n ω ↦ ‖r n • (X n ω - c n)‖ • η n ω) l
-      (fun _ ↦ (0 : F)) (fun _ ↦ μ) μ' :=
-    (hnorm.continuous_comp_prodMk_of_tendstoInMeasure_const
-      (g := fun p : ℝ × F ↦ p.1 • p.2) (by fun_prop) hη hη_meas).congr
-      (fun _ ↦ ae_of_all _ fun _ ↦ rfl) (ae_of_all _ fun _ ↦ smul_zero _)
-  have hrem : TendstoInMeasure μ (fun n ω ↦ r n • (g (X n ω) - g (c n) - L (X n ω - c n))) l
-      (fun _ ↦ 0) := by
-    refine (tendstoInMeasure_of_tendstoInDistribution_const hprod).congr' ?_ EventuallyEq.rfl
-    filter_upwards [hr_pos] with n hn
-    refine ae_of_all _ fun ω ↦ ?_
-    by_cases hv : X n ω - c n = 0
-    · have hXn : X n ω = c n := sub_eq_zero.1 hv
-      simp [η, hXn]
-    · simp only [η, norm_smul, Real.norm_of_nonneg hn.le, smul_smul, mul_assoc,
-        mul_inv_cancel₀ (norm_ne_zero_iff.2 hv), mul_one]
-  -- Step 3: assemble.
-  have hlin : TendstoInDistribution (fun n ω ↦ L (r n • (X n ω - c n))) l (fun ω ↦ L (Z ω))
-      (fun _ ↦ μ) μ' := hXZ.continuous_comp L.continuous
-  refine (hlin.add_of_tendstoInMeasure_const hrem fun n ↦ ?_).congr
-    (fun n ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun ω ↦ add_zero _)
-  · exact (((hgX n).sub_const _).sub
-      (L.continuous.measurable.comp_aemeasurable ((hX n).sub_const _))).const_smul _
-  · simp only [Pi.add_apply, map_smul, ← smul_add]
-    congr 1
-    abel
-
-end MeasureTheory
 
 namespace ProbabilityTheory.Bootstrap
 
@@ -797,19 +569,6 @@ end IID
 /-! ### Finite-dimensional observations -/
 
 section Vector
-
-/-- Transfer convergence in distribution along a measure-preserving map. -/
-private theorem tendstoInDistribution_comp_of_map_eq {Ω₁ Ω₂ Ω' : Type*} [MeasurableSpace Ω₁]
-    [MeasurableSpace Ω₂] [MeasurableSpace Ω'] {μ₁ : Measure Ω₁} {μ₂ : Measure Ω₂}
-    {μ' : Measure Ω'} [IsProbabilityMeasure μ₁] [IsProbabilityMeasure μ₂]
-    [IsProbabilityMeasure μ'] {Φ : Ω₁ → Ω₂} (hΦ : Measurable Φ) (hmap : μ₁.map Φ = μ₂)
-    {Y : ℕ → Ω₂ → ℝ} (hY : ∀ n, Measurable (Y n)) {Z : Ω' → ℝ}
-    (h : TendstoInDistribution Y atTop Z (fun _ => μ₂) μ') :
-    TendstoInDistribution (fun n ω => Y n (Φ ω)) atTop Z (fun _ => μ₁) μ' := by
-  refine ⟨fun n => ((hY n).comp hΦ).aemeasurable, h.aemeasurable_limit, ?_⟩
-  refine h.tendsto.congr fun n => Subtype.ext ?_
-  change μ₂.map (Y n) = μ₁.map (Y n ∘ Φ)
-  rw [← hmap, Measure.map_map (hY n) hΦ]
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]

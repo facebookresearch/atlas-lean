@@ -61,6 +61,30 @@ example : ∫ y, y ^ 2 ∂empirical evens 2 = 2 := by
 example : (world evens).map (fun ω => ω 2 5) = empirical evens 2 :=
   (measurePreserving_world_eval evens 2 5).map_eq
 
+/-- The positive empirical rows are the canonical resampling laws. -/
+example (x : ℕ → ℝ) {n : ℕ} (hn : 0 < n) : empirical x n = empiricalLaw x n :=
+  empirical_eq_empiricalLaw hn.ne'
+
+example (x : ℕ → ℝ) (n : ℕ) : sampleMean x (range n) = empiricalMean x n :=
+  sampleMean_eq_empiricalMean x n
+
+example (ω : ℕ → ℕ → ℝ) (n : ℕ) : bootMean n ω = empiricalMean (ω n) n :=
+  bootMean_eq_empiricalMean n ω
+
+/-- The zero-row conventions remain distinct for data starting away from zero. -/
+example : (world (fun _ => (2 : ℝ))).map (fun ω => ω 0 5) = Measure.dirac 0 := by
+  rw [(measurePreserving_world_eval _ 0 5).map_eq]
+  simp [empirical]
+
+example : (bootstrapMeasure (fun _ => (2 : ℝ))).map (fun ω => ω 0 5) = Measure.dirac 2 := by
+  rw [(measurePreserving_bootstrap_coord _ 0 5).map_eq]
+  simp [empiricalLaw_eq]
+
+/-- The coupling bridge changes only the unused row zero. -/
+example (x : ℕ → ℝ) :
+    (world x).map (fun ω n k => if n = 0 then x 0 else ω n k) = bootstrapMeasure x :=
+  map_world_bootstrapMeasure x
+
 /-! ### Non-vacuity: alternating data -/
 
 /-- The alternating data `1, -1, 1, -1, …`. -/
