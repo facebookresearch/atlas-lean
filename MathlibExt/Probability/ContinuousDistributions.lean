@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Distributions.ExponentialMoments
+public import MathlibExt.Probability.Distributions.Weibull
+public import MathlibExt.Probability.Statistics.LinearModel.Inference
 public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.MeasureTheory.Integral.Gamma
@@ -29,8 +31,9 @@ and the exponential ones `ProbabilityTheory.expMeasure`. The Gaussian normalizat
 `ProbabilityTheory.integral_gaussianPDFReal_eq_one` (for `v ≠ 0`), the Gaussian mean
 `ProbabilityTheory.integral_id_gaussianReal` and the exponential normalization
 `ProbabilityTheory.lintegral_exponentialPDF_eq_one` (for `0 < r`) are Mathlib declarations, used
-as they are. This file adds the central second moment of `gaussianReal μ v`, and restates ATLAS's
-exponential mean `ProbabilityTheory.integral_id_expMeasure` (`r⁻¹`, for `0 < r`) as `1 / r`.
+as they are. This file adds the central second moment of `gaussianReal μ v`. The exponential mean
+is used directly as ATLAS's `ProbabilityTheory.integral_id_expMeasure` (`r⁻¹`, for `0 < r`); this
+file adds no wrapper for it.
 
 For identically distributed `X : ℕ → Ω → ℝ` the sample mean `sampleMean X n` has expectation
 `E[X 0]` (`integral_sampleMean`), and for pairwise independent `X i` with a finite second moment
@@ -40,19 +43,22 @@ numbers, Mathlib's `ProbabilityTheory.strong_law_ae_real`, specialized in `ae_te
 A finite-sample expectation identity is not almost-sure or asymptotic consistency, and the two
 are separate theorems.
 
-Mathlib has no Student-t law. `StudentTPivotLaw` bundles the classical prerequisites of the
-t-interval (`2 ≤ n`, `0 < σ`, independent `N(μ, σ ^ 2)` observations) with the hypothesis that
-the pivot `√n (x̄ - μ) / s` has the law `tLaw (n - 1)` of an externally specified family `tLaw`.
-The pivot law is an unproved hypothesis of this file, not a theorem. Coverage of the interval
-`x̄ ± q s / √n` is proved only conditionally on it; the observation fields are used only to show
-that `s > 0` almost surely.
+`StudentTPivotLaw` bundles the classical prerequisites of the t-interval (`2 ≤ n`,
+`0 < σ`, independent `N(μ, σ ^ 2)` observations). The pivot law is a theorem of this file,
+`StudentTPivotLaw.hasLaw_pivot`: the pivot `√n (x̄ - μ) / s` has law
+`ProbabilityTheory.studentTMeasure (n - 1)`, derived from the observation fields via
+`ProbabilityTheory.map_tStatistic_pi_gaussianReal` (the one-sample `t` law) transported along
+`iIndepFun.hasLaw_pi`. Coverage of the interval `x̄ ± q s / √n` is then unconditional on the
+prerequisites; the observation fields are also used to show that `s > 0` almost surely.
 
-Mathlib has no Weibull law. `weibullSurvival k lam` is a real survival function whose cumulative
-hazard `(x / lam) ^ k` is the assumed power-law form. Independence of links, or of volume
-elements, is a separate hypothesis on the joint survival: the system survival is the product of
-the component survivals. Neither hypothesis is derived from the other. Independence alone gives
-the survival `S ^ n` of a chain of `n` links with common survival `S`; with the power-law hazard
-as well, the chain is again of Weibull form (`weibullSurvival_rpow`).
+`weibullSurvival k lam` is the survival function of ATLAS's Weibull law
+`ProbabilityTheory.weibullMeasure k lam` (`weibullSurvival_eq_weibullMeasure_real_Ioi`): a real
+survival function whose cumulative hazard `(x / lam) ^ k` is the power-law form
+(`neg_log_weibullMeasure_real_Ioi`). Independence of links, or of volume elements, is a separate
+hypothesis on the joint survival: the system survival is the product of the component survivals.
+Neither hypothesis is derived from the other. Independence alone gives the survival `S ^ n` of a
+chain of `n` links with common survival `S`; with the power-law hazard as well, the chain is again
+of Weibull form (`weibullSurvival_rpow`).
 
 `voidProbability kappa volume = exp (-kappa * volume)` is a stipulated JMAK void-probability
 model, not derived from a point process. Constructing a continuum Poisson point process and
@@ -63,23 +69,23 @@ volume.
 `maxwellSpeedPDF a` is the Maxwell speed density with scale `a` on `(0, ∞)`. Its normalization
 and second moment follow from Mathlib's Gamma-function integrals.
 
-ATLAS has related declarations that this file does not import: the Student-t law
-`ProbabilityTheory.studentTMeasure`, the Weibull law `ProbabilityTheory.weibullMeasure`, and
+ATLAS has a related declaration that this file does not import:
 `MathlibExt.Probability.variance_sample_mean_of_iid`, which assumes mutual independence where
 `variance_sampleMean` assumes pairwise independence.
 
 ## ii. Key results
 
-- `integral_sub_sq_gaussianReal`, `integral_id_expMeasure_eq_one_div` : the Gaussian central
-  second moment and the exponential mean.
+- `integral_sub_sq_gaussianReal` : the Gaussian central second moment.
 - `integral_sampleMean`, `variance_sampleMean` : finite-sample expectation and variance of the
   sample mean.
+- `StudentTPivotLaw.hasLaw_pivot` : the pivot has Student-t law `studentTMeasure (n - 1)`.
 - `StudentTPivotLaw.measure_mem_studentTInterval`,
-  `StudentTPivotLaw.measureReal_mem_studentTInterval` : t-interval coverage, conditional on the
-  pivot law.
+  `StudentTPivotLaw.measureReal_mem_studentTInterval` : t-interval coverage.
 - `ae_tendsto_sampleMean` : the strong law of large numbers for the sample mean.
 - `weibullSurvival_zero`, `antitone_weibullSurvival`, `tendsto_weibullSurvival_atTop`,
-  `neg_log_weibullSurvival` : the Weibull survival function and its assumed hazard.
+  `neg_log_weibullSurvival` : the Weibull survival function and its hazard.
+- `weibullSurvival_eq_weibullMeasure_real_Ioi`, `measureReal_gt_eq_weibullSurvival` :
+  the bridge to the canonical Weibull law `weibullMeasure`.
 - `weakestLink_survival_eq_pow`, `measureReal_forall_lt_eq_prod`, `sizeScaling_survival_eq_rpow`,
   `weibullSurvival_rpow` : conditional weakest-link and size scaling.
 - `voidProbability_zero`, `antitone_voidProbability`, `tendsto_voidProbability_atTop`,
@@ -127,13 +133,6 @@ lemma integral_sub_sq_gaussianReal (μ : ℝ) (v : ℝ≥0) :
   have h := variance_eq_integral (X := id) (μ := gaussianReal μ v) measurable_id.aemeasurable
   rw [variance_id_gaussianReal] at h
   simpa [integral_id_gaussianReal] using h.symm
-
-/-- **Mean of the exponential law**: `∫ x ∂Exp(r) = 1 / r` for `0 < r`, the hypothesis of
-`ProbabilityTheory.isProbabilityMeasure_expMeasure`. This is ATLAS's
-`ProbabilityTheory.integral_id_expMeasure`, stated there as `r⁻¹`. -/
-lemma integral_id_expMeasure_eq_one_div {r : ℝ} (hr : 0 < r) :
-    ∫ x, x ∂expMeasure r = 1 / r := by
-  rw [integral_id_expMeasure hr, one_div]
 
 /-! ## B. Sample mean and the Student-t pivot -/
 
@@ -200,13 +199,10 @@ def studentTInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (
 
 /-- **Student-t pivot prerequisites**, as an explicit hypothesis bundle for a sample
 `X 0, …, X (n - 1)` under `P`: `2 ≤ n`, `0 < σ`, the observations are independent with law
-`N(μ, σ ^ 2)`, and the pivot `studentTPivot X μ n` has law `tLaw (n - 1)`. Mathlib has no
-Student-t law, so the family `tLaw` (degrees of freedom to law) is specified externally; it is
-meant to be the Student-t family, and nothing here constrains it. The pivot law is an UNPROVED
-HYPOTHESIS of this file, not a proved theorem: its classical derivation from the other fields is
-not formalized here. -/
+`N(μ, σ ^ 2)`. The pivot law is not a field: it is the theorem
+`StudentTPivotLaw.hasLaw_pivot` below. -/
 structure StudentTPivotLaw {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω → ℝ) (μ σ : ℝ) (n : ℕ)
-    (tLaw : ℕ → Measure ℝ) (P : Measure Ω) : Prop where
+    (P : Measure Ω) : Prop where
   /-- At least two observations. -/
   two_le : 2 ≤ n
   /-- A positive standard deviation. -/
@@ -215,8 +211,38 @@ structure StudentTPivotLaw {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω →
   indep : iIndepFun (fun i : Fin n => X i) P
   /-- Each observation has law `N(μ, σ ^ 2)`. -/
   hasLaw_sample : ∀ i < n, HasLaw (X i) (gaussianReal μ (σ ^ 2).toNNReal) P
-  /-- The pivot law: an unproved hypothesis, not a theorem of this file. -/
-  hasLaw_pivot : HasLaw (studentTPivot X μ n) (tLaw (n - 1)) P
+
+/-- **The pivot has Student's `t` law**: under `StudentTPivotLaw` the pivot
+`√n (x̄ₙ - μ) / sₙ` has law `studentTMeasure (n - 1)`. The tuple
+`(X 0, …, X (n - 1))` has law `Measure.pi (fun _ => gaussianReal μ (σ ^ 2).toNNReal)` by
+`iIndepFun.hasLaw_pi`; composing with the one-sample `t` statistic of
+`ProbabilityTheory.map_tStatistic_pi_gaussianReal` gives the pivot law, since the pivot is
+that statistic of the tuple (range sums are `Fin n` sums). -/
+theorem StudentTPivotLaw.hasLaw_pivot {Ω : Type*} [MeasurableSpace Ω] {X : ℕ → Ω → ℝ}
+    {μ σ : ℝ} {n : ℕ} {P : Measure Ω} (h : StudentTPivotLaw X μ σ n P) :
+    HasLaw (studentTPivot X μ n) (studentTMeasure (n - 1)) P := by
+  have hv : (σ ^ 2).toNNReal ≠ 0 :=
+    (Real.toNNReal_pos.mpr (pow_pos h.sigma_pos 2)).ne'
+  have htuple : HasLaw (fun ω (i : Fin n) => X (i : ℕ) ω)
+      (Measure.pi fun _ : Fin n => gaussianReal μ (σ ^ 2).toNNReal) P :=
+    h.indep.hasLaw_pi fun (i : Fin n) => h.hasLaw_sample (i : ℕ) i.2
+  have hT : HasLaw (fun x : Fin n → ℝ =>
+        √n * ((∑ i, x i) / n - μ) /
+          √((∑ i, (x i - (∑ j, x j) / n) ^ 2) / ((n : ℝ) - 1)))
+      (studentTMeasure (n - 1))
+      (Measure.pi fun _ : Fin n => gaussianReal μ (σ ^ 2).toNNReal) :=
+    ⟨by fun_prop, map_tStatistic_pi_gaussianReal h.two_le μ hv⟩
+  have hpivot : studentTPivot X μ n = fun ω =>
+      √n * ((∑ i : Fin n, X (i : ℕ) ω) / n - μ) /
+        √((∑ i : Fin n, (X (i : ℕ) ω - (∑ j : Fin n, X (j : ℕ) ω) / n) ^ 2) /
+          ((n : ℝ) - 1)) := by
+    funext ω
+    simp only [studentTPivot, sampleMean, sampleStdDev, sampleVariance]
+    rw [Fin.sum_univ_eq_sum_range (fun i => X i ω) n,
+      Fin.sum_univ_eq_sum_range
+        (fun i => (X i ω - (∑ j ∈ Finset.range n, X j ω) / (n : ℝ)) ^ 2) n]
+  rw [hpivot]
+  exact hT.comp htuple
 
 /-- If the sample standard deviation of at least two observations is not positive, then the
 first two observations are equal. -/
@@ -241,8 +267,8 @@ private lemma eq_of_not_sampleStdDev_pos {Ω : Type*} {X : ℕ → Ω → ℝ} {
 `N(μ, σ ^ 2)` has no atoms for `σ > 0`. This uses the independence and Gaussian fields, not the
 pivot law. -/
 lemma StudentTPivotLaw.ae_sampleStdDev_pos {Ω : Type*} [MeasurableSpace Ω] {X : ℕ → Ω → ℝ}
-    {μ σ : ℝ} {n : ℕ} {tLaw : ℕ → Measure ℝ} {P : Measure Ω}
-    (h : StudentTPivotLaw X μ σ n tLaw P) : ∀ᵐ ω ∂P, 0 < sampleStdDev X n ω := by
+    {μ σ : ℝ} {n : ℕ} {P : Measure Ω}
+    (h : StudentTPivotLaw X μ σ n P) : ∀ᵐ ω ∂P, 0 < sampleStdDev X n ω := by
   have h0 : 0 < n := by have := h.two_le; omega
   have h1 : 1 < n := h.two_le
   have hv : (σ ^ 2).toNNReal ≠ 0 := (Real.toNNReal_pos.mpr (pow_pos h.sigma_pos 2)).ne'
@@ -266,14 +292,13 @@ lemma StudentTPivotLaw.ae_sampleStdDev_pos {Ω : Type*} [MeasurableSpace Ω] {X 
   rw [ae_iff]
   exact measure_mono_null (fun ω hω => eq_of_not_sampleStdDev_pos h.two_le hω) hdiag
 
-/-- **Coverage of the t-interval, conditional on the pivot law**: under `StudentTPivotLaw`, the
-interval `x̄ₙ ± q sₙ / √n` contains `μ` with probability `tLaw (n - 1) [-q, q]`, for every `q`.
-The pivot law is an unproved hypothesis of `StudentTPivotLaw`; this is not an unconditional
-coverage theorem. -/
+/-- **Coverage of the t-interval**: under `StudentTPivotLaw`, the interval
+`x̄ₙ ± q sₙ / √n` contains `μ` with probability `studentTMeasure (n - 1) [-q, q]`, for every
+`q`. -/
 lemma StudentTPivotLaw.measure_mem_studentTInterval {Ω : Type*} [MeasurableSpace Ω]
-    {X : ℕ → Ω → ℝ} {μ σ : ℝ} {n : ℕ} {tLaw : ℕ → Measure ℝ} {P : Measure Ω}
-    (h : StudentTPivotLaw X μ σ n tLaw P) (q : ℝ) :
-    P {ω | μ ∈ studentTInterval X n q ω} = tLaw (n - 1) (Icc (-q) q) := by
+    {X : ℕ → Ω → ℝ} {μ σ : ℝ} {n : ℕ} {P : Measure Ω}
+    (h : StudentTPivotLaw X μ σ n P) (q : ℝ) :
+    P {ω | μ ∈ studentTInterval X n q ω} = studentTMeasure (n - 1) (Icc (-q) q) := by
   have hn : 0 < √(n : ℝ) := sqrt_pos.mpr (by have := h.two_le; positivity)
   have hset : {ω | μ ∈ studentTInterval X n q ω} =ᵐ[P] studentTPivot X μ n ⁻¹' Icc (-q) q := by
     refine Eventually.set_eq ?_
@@ -290,28 +315,29 @@ lemma StudentTPivotLaw.measure_mem_studentTInterval {Ω : Type*} [MeasurableSpac
   rw [measure_congr hset, ← h.hasLaw_pivot.map_eq,
     Measure.map_apply_of_aemeasurable h.hasLaw_pivot.aemeasurable measurableSet_Icc]
 
-/-- **Exact nominal coverage `1 - α`, conditional on the pivot law**: if moreover `0 ≤ q` and the
-pivot law `tLaw (n - 1)` gives mass `α / 2` to each of `(-∞, -q)` and `(q, ∞)`, then the interval
+/-- **Exact nominal coverage `1 - α`**: if moreover `0 ≤ q` and the Student-t law
+`studentTMeasure (n - 1)` gives mass `α / 2` to each of `(-∞, -q)` and `(q, ∞)`, then the interval
 `x̄ₙ ± q sₙ / √n` contains `μ` with probability exactly `1 - α`. For the Student-t law with
 `n - 1` degrees of freedom the tail conditions say that `q = t_{n-1, 1-α/2}`, by the definition of
 the quantile and symmetry. The quantile enters only through these measure statements; no
-t-distribution CDF is defined. Coverage is proved only conditionally on the unproved pivot law of
-`StudentTPivotLaw`. -/
+t-distribution CDF is defined. -/
 lemma StudentTPivotLaw.measureReal_mem_studentTInterval {Ω : Type*} [MeasurableSpace Ω]
-    {X : ℕ → Ω → ℝ} {μ σ : ℝ} {n : ℕ} {tLaw : ℕ → Measure ℝ} {P : Measure Ω}
-    (h : StudentTPivotLaw X μ σ n tLaw P) {α q : ℝ} (hq : 0 ≤ q)
-    (hlower : (tLaw (n - 1)).real (Iio (-q)) = α / 2)
-    (hupper : (tLaw (n - 1)).real (Ioi q) = α / 2) :
+    {X : ℕ → Ω → ℝ} {μ σ : ℝ} {n : ℕ} {P : Measure Ω}
+    (h : StudentTPivotLaw X μ σ n P) {α q : ℝ} (hq : 0 ≤ q)
+    (hlower : (studentTMeasure (n - 1)).real (Iio (-q)) = α / 2)
+    (hupper : (studentTMeasure (n - 1)).real (Ioi q) = α / 2) :
     P.real {ω | μ ∈ studentTInterval X n q ω} = 1 - α := by
   have h0 : 0 < n := by have := h.two_le; omega
   have := (h.hasLaw_sample 0 h0).isProbabilityMeasure
-  have hν : IsProbabilityMeasure (tLaw (n - 1)) := h.hasLaw_pivot.isProbabilityMeasure_iff.mp this
-  have hIic : (tLaw (n - 1)).real (Iic q) =
-      (tLaw (n - 1)).real (Iio (-q)) + (tLaw (n - 1)).real (Icc (-q) q) := by
+  have hn1 : 0 < n - 1 := by have := h.two_le; omega
+  have hν : IsProbabilityMeasure (studentTMeasure (n - 1)) :=
+    isProbabilityMeasure_studentTMeasure hn1
+  have hIic : (studentTMeasure (n - 1)).real (Iic q) =
+      (studentTMeasure (n - 1)).real (Iio (-q)) + (studentTMeasure (n - 1)).real (Icc (-q) q) := by
     rw [← Iio_union_Icc_eq_Iic (by linarith : -q ≤ q), measureReal_union _ measurableSet_Icc]
     exact disjoint_left.2 fun x hx hx' => (not_le.2 hx) hx'.1
-  have huniv : (tLaw (n - 1)).real univ =
-      (tLaw (n - 1)).real (Iic q) + (tLaw (n - 1)).real (Ioi q) := by
+  have huniv : (studentTMeasure (n - 1)).real univ =
+      (studentTMeasure (n - 1)).real (Iic q) + (studentTMeasure (n - 1)).real (Ioi q) := by
     rw [← Iic_union_Ioi (a := q), measureReal_union (Iic_disjoint_Ioi le_rfl) measurableSet_Ioi]
   rw [measureReal_def, h.measure_mem_studentTInterval q, ← measureReal_def]
   rw [probReal_univ] at huniv
@@ -335,11 +361,9 @@ theorem ae_tendsto_sampleMean {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
 /-- The Weibull survival function with shape `k` and scale `lam`: `1` for `x < 0` and
 `exp (-(x / lam) ^ k)` for `0 ≤ x`, intended for `0 < k` and `0 < lam`. Its cumulative hazard
-`(x / lam) ^ k` (`neg_log_weibullSurvival`) is the assumed power-law form. Mathlib has no Weibull
-law, and this is a real function, not a statement about a probability measure. For `0 < k` and
-`0 < lam` it is the survival function `x ↦ P(X > x)` of ATLAS's Weibull law
-`ProbabilityTheory.weibullMeasure k lam` (see `ProbabilityTheory.weibullMeasure_real_Ioi`), which
-this file does not import. -/
+`(x / lam) ^ k` (`neg_log_weibullSurvival`) is the power-law form. For `0 < k` and `0 < lam` it is
+the survival function `x ↦ P(X > x)` of ATLAS's Weibull law `ProbabilityTheory.weibullMeasure k lam`
+(`weibullSurvival_eq_weibullMeasure_real_Ioi`). -/
 noncomputable def weibullSurvival (k lam : ℝ) (x : ℝ) : ℝ :=
   if x < 0 then 1 else Real.exp (-(x / lam) ^ k)
 
@@ -351,6 +375,39 @@ lemma weibullSurvival_of_neg {k lam x : ℝ} (hx : x < 0) : weibullSurvival k la
 lemma weibullSurvival_of_nonneg {k lam x : ℝ} (hx : 0 ≤ x) :
     weibullSurvival k lam x = Real.exp (-(x / lam) ^ k) :=
   ite_eq_right (not_lt.2 hx)
+
+/-- **Bridge to the canonical Weibull law**: for `0 < k` and `0 < lam`,
+`weibullSurvival k lam x` is the survival probability `P(X > x)` of
+`ProbabilityTheory.weibullMeasure k lam`, for every `x` (including `x < 0`, where both
+sides are `1`, since the Weibull law puts no mass on `(-∞, 0]`). -/
+lemma weibullSurvival_eq_weibullMeasure_real_Ioi {k lam x : ℝ} (hk : 0 < k) (hlam : 0 < lam) :
+    weibullSurvival k lam x = (weibullMeasure k lam).real (Ioi x) := by
+  by_cases hx : 0 ≤ x
+  · rw [weibullSurvival_of_nonneg hx, weibullMeasure_real_Ioi hk hlam hx]
+  · have hx' : x < 0 := not_le.mp hx
+    rw [weibullSurvival_of_neg hx']
+    haveI : IsProbabilityMeasure (weibullMeasure k lam) :=
+      isProbabilityMeasure_weibullMeasure hk hlam
+    have hIic : (weibullMeasure k lam).real (Iic x) = 0 := by
+      rw [measureReal_def,
+        measure_mono_null (fun y hy => hy.trans hx'.le) (weibullMeasure_Iic_zero k lam),
+        ENNReal.toReal_zero]
+    have hunion : (weibullMeasure k lam).real univ =
+        (weibullMeasure k lam).real (Iic x) + (weibullMeasure k lam).real (Ioi x) := by
+      rw [← Iic_union_Ioi (a := x), measureReal_union (Iic_disjoint_Ioi le_rfl) measurableSet_Ioi]
+    rw [probReal_univ, hIic] at hunion
+    linarith
+
+/-- **Survival of an actual Weibull variable**: if `T` has law `weibullMeasure k lam`, then
+`P(x < T) = weibullSurvival k lam x`, for every `x`. This is how the weakest-link and
+size-scaling results below apply to Weibull random variables, rather than only to an assumed
+survival function. -/
+lemma measureReal_gt_eq_weibullSurvival {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {T : Ω → ℝ} {k lam x : ℝ} (hk : 0 < k) (hlam : 0 < lam)
+    (hT : HasLaw T (weibullMeasure k lam) P) :
+    P.real {ω | x < T ω} = weibullSurvival k lam x := by
+  rw [weibullSurvival_eq_weibullMeasure_real_Ioi hk hlam]
+  exact hT.measureReal_eq measurableSet_Ioi
 
 /-- `S(0) = 1` for `k ≠ 0`. -/
 lemma weibullSurvival_zero {k : ℝ} (hk : k ≠ 0) (lam : ℝ) : weibullSurvival k lam 0 = 1 := by

@@ -45,13 +45,14 @@ example (μ : ℝ) {v : ℝ≥0} (_hv : 0 < v) : ∫ x, (x - μ) ^ 2 ∂gaussian
 example {r : ℝ} (hr : 0 < r) : ∫⁻ x, exponentialPDF r x = 1 :=
   lintegral_exponentialPDF_eq_one hr
 
-/-- Exponential mean, for `0 < r`. -/
-example {r : ℝ} (hr : 0 < r) : ∫ x, x ∂expMeasure r = 1 / r :=
-  integral_id_expMeasure_eq_one_div hr
+/-- Exponential mean, for `0 < r`: ATLAS's `integral_id_expMeasure`, stated as `1 / r`. -/
+example {r : ℝ} (hr : 0 < r) : ∫ x, x ∂expMeasure r = 1 / r := by
+  simpa [one_div] using integral_id_expMeasure hr
 
 /-- `N(1, 4)` has central second moment `4`, and `Exp(2)` has mean `1 / 2`. -/
 example : ∫ x, (x - 1) ^ 2 ∂gaussianReal 1 4 = 4 ∧ ∫ x, x ∂expMeasure 2 = 1 / 2 := by
-  refine ⟨?_, integral_id_expMeasure_eq_one_div (by norm_num)⟩
+  refine ⟨?_, by simpa [one_div] using
+    integral_id_expMeasure (show (0 : ℝ) < 2 by norm_num)⟩
   rw [integral_sub_sq_gaussianReal]
   norm_num
 
@@ -73,42 +74,33 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → �
     Var[fun ω => (∑ i ∈ Finset.range n, X i ω) / n; P] = Var[X 0; P] / n :=
   variance_sampleMean h2 (fun _ _ hij => hindep.indepFun hij) hident (by omega)
 
-/-- Nominal `95 %` coverage, conditional on `StudentTPivotLaw`, for a critical value `q` whose
-two tails under the pivot law have mass `0.025` each. -/
+/-- Nominal `95 %` coverage for a critical value `q` whose two tails under the
+Student-t law have mass `0.025` each. -/
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ} {μ σ q : ℝ} {n : ℕ}
-    {tLaw : ℕ → Measure ℝ} (h : StudentTPivotLaw X μ σ n tLaw P) (hq : 0 ≤ q)
-    (hlower : (tLaw (n - 1)).real (Iio (-q)) = 0.025)
-    (hupper : (tLaw (n - 1)).real (Ioi q) = 0.025) :
+    (h : StudentTPivotLaw X μ σ n P) (hq : 0 ≤ q)
+    (hlower : (studentTMeasure (n - 1)).real (Iio (-q)) = 0.025)
+    (hupper : (studentTMeasure (n - 1)).real (Ioi q) = 0.025) :
     P.real {ω | μ ∈ studentTInterval X n q ω} = 0.95 := by
   rw [h.measureReal_mem_studentTInterval (α := 0.05) hq (by rw [hlower]; norm_num)
     (by rw [hupper]; norm_num)]
   norm_num
 
-/-- Coverage for every `q` is the mass of `[-q, q]` under the pivot law. -/
+/-- Coverage for every `q` is the mass of `[-q, q]` under the Student-t law. -/
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ} {μ σ : ℝ} {n : ℕ}
-    {tLaw : ℕ → Measure ℝ} (h : StudentTPivotLaw X μ σ n tLaw P) (q : ℝ) :
-    P {ω | μ ∈ studentTInterval X n q ω} = tLaw (n - 1) (Icc (-q) q) :=
+    (h : StudentTPivotLaw X μ σ n P) (q : ℝ) :
+    P {ω | μ ∈ studentTInterval X n q ω} = studentTMeasure (n - 1) (Icc (-q) q) :=
   h.measure_mem_studentTInterval q
 
-/-- Non-vacuity of `StudentTPivotLaw`: for independent standard normal observations every field
-holds when `tLaw` is the law of the pivot itself. This only checks that the fields are
-consistent; it does not identify that law with a Student-t law. (Mathlib's
-`ProbabilityTheory.exists_iid` supplies such observations.) -/
+/-- Non-vacuity of `StudentTPivotLaw`, with the pivot law identified: for independent
+standard normal observations the fields hold, so the pivot has law `studentTMeasure 1`.
+(Mathlib's `ProbabilityTheory.exists_iid` supplies such observations.) -/
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
-    (hX : ∀ i, Measurable (X i)) (hindep : iIndepFun X P)
+    (hindep : iIndepFun X P)
     (hlaw : ∀ i, HasLaw (X i) (gaussianReal 0 1) P) :
-    StudentTPivotLaw X 0 1 2 (fun _ => P.map (studentTPivot X 0 2)) P where
-  two_le := le_rfl
-  sigma_pos := one_pos
-  indep := hindep.precomp Fin.val_injective
-  hasLaw_sample i _ := by simpa using hlaw i
-  hasLaw_pivot := by
-    refine ⟨Measurable.aemeasurable ?_, rfl⟩
-    have hmean : Measurable (sampleMean X 2) :=
-      (Finset.measurable_sum _ fun i _ => hX i).div_const _
-    have hvar : Measurable (sampleVariance X 2) :=
-      (Finset.measurable_sum _ fun i _ => ((hX i).sub hmean).pow_const 2).div_const _
-    exact ((hmean.sub_const 0).const_mul _).div hvar.sqrt
+    HasLaw (studentTPivot X 0 2) (studentTMeasure 1) P := by
+  have h : StudentTPivotLaw X 0 1 2 P :=
+    ⟨le_rfl, one_pos, hindep.precomp Fin.val_injective, fun i _ => by simpa using hlaw i⟩
+  exact h.hasLaw_pivot
 
 /-! ### C. Strong law of large numbers -/
 
@@ -185,14 +177,17 @@ example {n : ℕ} {S system : ℝ → ℝ} (hindep : ∀ x, system x = ∏ _i �
     (x : ℝ) : system x = S x ^ n :=
   weakestLink_survival_eq_pow (link := fun _ => S) hindep (fun _ _ _ => rfl) x
 
-/-- Independent random link strengths with a common Weibull survival function: a chain of
+/-- Independent random link strengths with a common Weibull law: a chain of
 `n ≠ 0` links survives the load `x` with the Weibull survival of the same shape and scale
-`lam / n ^ (1 / k)`. Both hypotheses are used. -/
+`lam / n ^ (1 / k)`. Both hypotheses are used; the survival form of each link is the bridge
+`measureReal_gt_eq_weibullSurvival`, not an assumed survival function. -/
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {T : ℕ → Ω → ℝ} (hT : iIndepFun T P)
     {k lam : ℝ} (hk : 0 < k) (hlam : 0 < lam)
-    (hS : ∀ i x, P.real {ω | x < T i ω} = weibullSurvival k lam x) {n : ℕ} (hn : n ≠ 0)
+    (hLaw : ∀ i, HasLaw (T i) (weibullMeasure k lam) P) {n : ℕ} (hn : n ≠ 0)
     (x : ℝ) :
     P.real {ω | ∀ i < n, x < T i ω} = weibullSurvival k (lam / (n : ℝ) ^ (1 / k)) x := by
+  have hS : ∀ i x, P.real {ω | x < T i ω} = weibullSurvival k lam x :=
+    fun i x => measureReal_gt_eq_weibullSurvival hk hlam (hLaw i)
   have hn' : (0 : ℝ) < n := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
   rw [weakestLink_survival_eq_pow (system := fun x => P.real {ω | ∀ i < n, x < T i ω})
     (link := fun i x => P.real {ω | x < T i ω}) (measureReal_forall_lt_eq_prod hT n)
@@ -260,7 +255,6 @@ end MathlibExtTest.Probability.ContinuousDistributions
 /-! ### Axioms of every public declaration -/
 
 #print axioms MathlibExt.Probability.ContinuousDistributions.integral_sub_sq_gaussianReal
-#print axioms MathlibExt.Probability.ContinuousDistributions.integral_id_expMeasure_eq_one_div
 #print axioms MathlibExt.Probability.ContinuousDistributions.sampleMean
 #print axioms MathlibExt.Probability.ContinuousDistributions.integral_sampleMean
 #print axioms MathlibExt.Probability.ContinuousDistributions.variance_sampleMean
@@ -281,6 +275,8 @@ end MathlibExtTest.Probability.ContinuousDistributions
   MathlibExt.Probability.ContinuousDistributions.StudentTPivotLaw.measureReal_mem_studentTInterval
 #print axioms MathlibExt.Probability.ContinuousDistributions.ae_tendsto_sampleMean
 #print axioms MathlibExt.Probability.ContinuousDistributions.weibullSurvival
+#print axioms MathlibExt.Probability.ContinuousDistributions.weibullSurvival_eq_weibullMeasure_real_Ioi
+#print axioms MathlibExt.Probability.ContinuousDistributions.measureReal_gt_eq_weibullSurvival
 #print axioms MathlibExt.Probability.ContinuousDistributions.weibullSurvival_of_neg
 #print axioms MathlibExt.Probability.ContinuousDistributions.weibullSurvival_of_nonneg
 #print axioms MathlibExt.Probability.ContinuousDistributions.weibullSurvival_zero
