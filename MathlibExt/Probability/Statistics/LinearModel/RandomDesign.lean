@@ -270,7 +270,9 @@ private theorem map_pair_eq_compProd [IsProbabilityMeasure μ] {X : Ω → D} {�
 
 /-- **Conditional law of a function of an independent pair**: if `X` and `ε` are independent,
 then conditionally on `X = x` the variable `g X ε` has law `(law ε).map (g x)`, for
-`(law X)`-almost every `x`. -/
+`(law X)`-almost every `x`. This generalizes `MetaMathlibExt.condDistrib_add_of_indepFun`
+(`MathlibExt/Probability/Distributions/GaussianConditioning.lean`), the additive case
+`g x e = f x + e`, to an arbitrary jointly measurable `g`. -/
 theorem ae_condDistrib_eq_map_of_indepFun [StandardBorelSpace γ] [Nonempty γ]
     [IsProbabilityMeasure μ] {X : Ω → D} {ε : Ω → E} (hX : AEMeasurable X μ)
     (hε : AEMeasurable ε μ) (hind : IndepFun X ε μ) {g : D → E → γ}
