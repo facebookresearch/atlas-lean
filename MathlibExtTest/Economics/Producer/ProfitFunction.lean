@@ -69,4 +69,12 @@ theorem test_convexOn_half :
   rw [show (1/2 : ℝ) • 2 + (1/2 : ℝ) • (0 : ℝ) = 1 from by norm_num] at h
   exact h
 
+/-- The finite-valued domain over the empty production set is empty, so `sSup ∅ = 0` is
+never read as a profit. -/
+theorem test_profitDomain_empty : profitDomain (∅ : Set (Fin 2 → ℝ)) = ∅ := by
+  ext p
+  simp only [profitDomain, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+  rintro ⟨⟨y, hy⟩, -⟩
+  simp at hy
+
 end MathlibExtTest.Economics.Producer.ProfitFunction
