@@ -533,17 +533,19 @@ theorem coeff_twoIsotopePattern_of_not_dvd {R : Type*} [CommSemiring R] (a b : R
 
 /-- The exact `(M+1)/M` ratio of `n` carbon atoms whose heavy isotope ¹³C has fractional
 abundance `p`. It is the ratio of the `X ^ 1` and `X ^ 0` coefficients of `((1 - p) + p X) ^ n`.
-Only the carbon atoms are modeled. The proof argument `hp : p ≠ 1` guards the zero
-denominator: at `p = 1` the monoisotopic coefficient is `0` (see the boundary test in
-`PhyslibExtTest`), so the ratio is undefined there and the definition cannot be called
-without excluding that case, exactly as `resolution` takes a proof of `Δm ≠ 0`. -/
-noncomputable def mPlusOneRatio {K : Type*} [Field K] (p : K) (_hp : p ≠ 1) (n : ℕ) : K :=
+Only the carbon atoms are modeled. The proof argument `n = 0 ∨ p ≠ 1`
+guards the denominator: at `p = 1` the monoisotopic coefficient is zero
+exactly when `n > 0`. With no carbon atoms the denominator is one and the
+ratio is zero, including at `p = 1`. -/
+noncomputable def mPlusOneRatio {K : Type*} [Field K] (p : K) (n : ℕ)
+    (_hp : n = 0 ∨ p ≠ 1) : K :=
   (twoIsotopePattern (1 - p) p 1 n).coeff 1 / (twoIsotopePattern (1 - p) p 1 n).coeff 0
 
 /-- The binomial form `C(n, 1) p (1 - p) ^ (n - 1) / (1 - p) ^ n` of the exact `(M+1)/M`
 ratio. -/
-theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (hp : p ≠ 1) (n : ℕ) :
-    mPlusOneRatio p hp n = n.choose 1 * p * (1 - p) ^ (n - 1) / (1 - p) ^ n := by
+theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (n : ℕ)
+    (hp : n = 0 ∨ p ≠ 1) :
+    mPlusOneRatio p n hp = n.choose 1 * p * (1 - p) ^ (n - 1) / (1 - p) ^ n := by
   have h1 := coeff_twoIsotopePattern_mul (1 - p) p one_pos n 1
   have h0 := coeff_twoIsotopePattern_mul (1 - p) p one_pos n 0
   rw [one_mul] at h1
@@ -555,7 +557,7 @@ theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (hp : p ≠ 1) (n 
 
 /-- For `p ≠ 1`, the exact `(M+1)/M` ratio of `n` carbon atoms is `n p / (1 - p)`. -/
 theorem mPlusOneRatio_eq {K : Type*} [Field K] {p : K} (hp : p ≠ 1) (n : ℕ) :
-    mPlusOneRatio p hp n = n * p / (1 - p) := by
+    mPlusOneRatio p n (Or.inr hp) = n * p / (1 - p) := by
   have h : 1 - p ≠ 0 := sub_ne_zero.2 hp.symm
   rw [mPlusOneRatio_eq_choose, Nat.choose_one_right]
   rcases n with _ | n
@@ -570,7 +572,7 @@ def mPlusOneFirstOrder {K : Type*} [Field K] (p : K) (n : ℕ) : K :=
 /-- For `p ≠ 1`, the exact `(M+1)/M` ratio is the first-order value `n p` plus the remainder
 `n p ^ 2 / (1 - p)`, which is of second order in `p`. -/
 theorem mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p ≠ 1) (n : ℕ) :
-    mPlusOneRatio p hp n = mPlusOneFirstOrder p n + n * p ^ 2 / (1 - p) := by
+    mPlusOneRatio p n (Or.inr hp) = mPlusOneFirstOrder p n + n * p ^ 2 / (1 - p) := by
   have h : 1 - p ≠ 0 := sub_ne_zero.2 hp.symm
   rw [mPlusOneRatio_eq hp, mPlusOneFirstOrder]
   field_simp
@@ -579,7 +581,7 @@ theorem mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p �
 /-- For `p < 1`, the first-order value `n p` does not exceed the exact `(M+1)/M` ratio. -/
 theorem mPlusOneFirstOrder_le_mPlusOneRatio {K : Type*} [Field K] [LinearOrder K]
     [IsStrictOrderedRing K] {p : K} (hp1 : p < 1) (n : ℕ) :
-    mPlusOneFirstOrder p n ≤ mPlusOneRatio p hp1.ne n := by
+    mPlusOneFirstOrder p n ≤ mPlusOneRatio p n (Or.inr hp1.ne) := by
   rw [mPlusOneRatio_eq_firstOrder_add hp1.ne, le_add_iff_nonneg_right]
   exact div_nonneg (mul_nonneg n.cast_nonneg (sq_nonneg p)) (sub_nonneg.2 hp1.le)
 
