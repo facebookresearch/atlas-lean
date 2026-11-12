@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.P03GravityPotential
+import PhyslibExt.EarthScience.GravityPotential
 
 /-!
 # Point-mass potential checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P03GravityPotential`:
+Concrete consumers of `PhyslibExt.EarthScience.GravityPotential`:
 `G = 2`, `M = 3`, `r = 2` (so `Φ = -3`, `dΦ/dr = 3 / 2`), and the
 zero-mass boundary.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P03GravityPotential`
+- `PhyslibExt.EarthScience.GravityPotential`
 -/
 
 /-- Numeric point mass: `dΦ/dr = 3 / 2` at `r = 2`. -/

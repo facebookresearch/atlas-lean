@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.P06IdealGasAdiabatic
+import PhyslibExt.EarthScience.IdealGasAdiabatic
 
 /-!
 # Ideal-gas and potential-temperature checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P06IdealGasAdiabatic`:
+Concrete consumers of `PhyslibExt.EarthScience.IdealGasAdiabatic`:
 `p = 6`, `R = 2`, `T = 3` (so `ρ = 1`), the zero-pressure boundary,
 and potential temperature at the reference pressure.
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P06IdealGasAdiabatic`
+- `PhyslibExt.EarthScience.IdealGasAdiabatic`
 -/
 
 /-- Numeric density: `6 = 1 * 2 * 3` gives `ρ = 1`. -/

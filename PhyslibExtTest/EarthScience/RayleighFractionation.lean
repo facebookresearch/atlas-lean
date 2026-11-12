@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C07RayleighFractionation
+import PhyslibExt.EarthScience.RayleighFractionation
 
 /-!
 # Rayleigh fractionation checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C07RayleighFractionation`:
+Concrete consumers of `PhyslibExt.EarthScience.RayleighFractionation`:
 a numeric Rayleigh derivative, the endpoint `R(1) = R0`, and the
 degenerate `α = 1` case where `R` is constant.
 
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C07RayleighFractionation`
+- `PhyslibExt.EarthScience.RayleighFractionation`
 -/
 
 /-- Numeric Rayleigh derivative with `R0 = 2`, `α = 3/2`, `f = 1/4`:

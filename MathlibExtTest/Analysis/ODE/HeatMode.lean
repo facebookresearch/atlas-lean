@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExt.Analysis.ODE.M08HeatMode
+import MathlibExt.Analysis.ODE.HeatMode
 
 /-!
 # Single-mode heat-equation checks
 
-Concrete consumers of `MathlibExt.Analysis.ODE.M08HeatMode`: the heat
+Concrete consumers of `MathlibExt.Analysis.ODE.HeatMode`: the heat
 equation at a numeric point, boundary/initial values at a numeric
 point, and the degenerate `κ = 0` case (constant-in-time mode).
 
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `MathlibExt.Analysis.ODE.M08HeatMode`
+- `MathlibExt.Analysis.ODE.HeatMode`
 -/
 
 /-- Heat equation at `κ = 0.7, t = 0.4, x = 0.3`. -/

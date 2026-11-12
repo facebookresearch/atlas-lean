@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExt.Probability.M14CovarianceLinearMap
+import MathlibExt.Probability.CovarianceLinearMap
 
 /-!
 # Covariance-under-linear-map checks
 
-Concrete consumers of `MathlibExt.Probability.M14CovarianceLinearMap`:
+Concrete consumers of `MathlibExt.Probability.CovarianceLinearMap`:
 the identity map (`Cov(X) = Cov(X)`), the zero map (zero covariance),
 and the public shape of both theorems. A numeric `2 × 2` check with
 `Cov = [[4, 1], [1, 9]]` and `J = diag(2, 3)` is the off-diagonal
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `MathlibExt.Probability.M14CovarianceLinearMap`
+- `MathlibExt.Probability.CovarianceLinearMap`
 -/
 
 open MeasureTheory ProbabilityTheory

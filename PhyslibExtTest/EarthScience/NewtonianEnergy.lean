@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.P02NewtonianEnergy
+import PhyslibExt.EarthScience.NewtonianEnergy
 
 /-!
 # Kinetic-energy checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P02NewtonianEnergy`: a
+Concrete consumers of `PhyslibExt.EarthScience.NewtonianEnergy`: a
 one-dimensional particle with `m = 2`, `v t = 3 * t`, `a = 3`, the
 stationary-particle boundary, and nonnegativity at zero mass.
 
@@ -32,7 +32,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P02NewtonianEnergy`
+- `PhyslibExt.EarthScience.NewtonianEnergy`
 -/
 
 /-- Public shape of the kinetic-energy derivative theorem. -/

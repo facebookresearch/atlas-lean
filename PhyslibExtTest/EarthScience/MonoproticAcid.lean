@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.C02MonoproticAcid
+import PhyslibExt.EarthScience.MonoproticAcid
 
 /-!
 # Monoprotic-acid checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C02MonoproticAcid`:
+Concrete consumers of `PhyslibExt.EarthScience.MonoproticAcid`:
 the public shape of the uniqueness theorem and the positive root at
 `K = 1`, `C = 1` (so `h = (-1 + sqrt 5) / 2`).
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.C02MonoproticAcid`
+- `PhyslibExt.EarthScience.MonoproticAcid`
 -/
 
 /-- Public shape of the uniqueness theorem. -/

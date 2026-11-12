@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExt.Geometry.M12Rotations
+import MathlibExt.Geometry.Rotations
 
 /-!
 # Rotation checks
 
-Concrete consumers of `MathlibExt.Geometry.M12Rotations`: the public
+Concrete consumers of `MathlibExt.Geometry.Rotations`: the public
 shape of both theorems for a generic orthogonal curve, and the
 degenerate constant rotation `R(t) = 1`, whose angular-velocity matrix
 is `0`.
@@ -33,7 +33,7 @@ private constant-rotation helper used by the examples below.
 
 ## iv. References
 
-- `MathlibExt.Geometry.M12Rotations`
+- `MathlibExt.Geometry.Rotations`
 -/
 
 /-- Constant rotation `R(t) = 1`, used by the examples below. -/
