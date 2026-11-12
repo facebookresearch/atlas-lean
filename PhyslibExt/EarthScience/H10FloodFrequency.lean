@@ -23,8 +23,8 @@ the measures (`iIndepSet_iff_meas_biInter`); with common probability
 `1 - p` the product is `(1 - p) ^ n`. This is a statement about a
 probability measure, not a schedule, and it makes no empirical
 stationarity claim: serial dependence breaks it, and a changed climate
-distribution is not stationary. The return-period convention `1 / p`
-is stated for `p > 0`.
+distribution is not stationary. This module provides the no-exceedance
+probability, not a return-period API.
 
 ## ii. Key results
 
