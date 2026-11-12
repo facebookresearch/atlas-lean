@@ -153,13 +153,10 @@ example : ∑ j ∈ Finset.range 3, (1 : ℝ) ^ j * 2 ^ (3 - 1 - j) = 7 ∧
   ⟨by norm_num [Finset.sum_range_succ], geom_sum_le zero_le_one one_lt_two 3⟩
 
 /-- `exists_escape_radius` with the constant `c = 1/4` (the choice made in the general
-instability proof), at `K = r = ρ = 1`, `p = 2`: the radius satisfies `0 < η ≤ 1/4`. -/
-example : ∃ η : ℝ, 0 < η ∧ η ≤ 1 / 4 := by
-  obtain ⟨η, hη0, -, hηK⟩ := exists_escape_radius (K := 1) (r := 1) (ρ := 1) (p := 2)
-    (c := 1 / 4) zero_le_one one_pos one_pos one_lt_two (by norm_num)
-  refine ⟨η, hη0, ?_⟩
-  norm_num at hηK
-  exact hηK
+instability proof), for arbitrary `K ≥ 0`, `r > 0`, `ρ > 0`, `p > 1`. -/
+example {K r ρ p : ℝ} (hK : 0 ≤ K) (hr : 0 < r) (hρ : 0 < ρ) (hp : 1 < p) :
+    ∃ η, 0 < η ∧ η ≤ 2 * ρ / 3 ∧ K * (r * η) ^ (p - 1) ≤ 1 / 4 :=
+  exists_escape_radius hK hr hρ hp (by norm_num)
 
 /-- The hypothesis `0 < c` of `exists_escape_radius` cannot be dropped: with `c = 0`, `K = 1`
 no radius exists. -/
