@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Pow
@@ -50,7 +51,8 @@ is elective and is NOT included here. The reduced equation is parameter-free exa
 van der Waals model; for real gases the law of corresponding states is an empirical regularity,
 not a theorem.
 
-Reuse-verified against Mathlib / ATLAS main: this module imports no next-50 prerequisite module.
+Reuse-verified against Mathlib / ATLAS main: the Dalton section reuses
+`Chemistry.Amounts.moleFraction` from `PhyslibExt.Chemistry.Amounts.MolarMassComposition`.
 
 ## ii. Key results
 
@@ -101,16 +103,17 @@ lemma sum_partialPressure {ι : Type*} [Fintype ι] (x : ι → ℝ) (p : ℝ) (
     ∑ i, partialPressure (x i) p = p := by
   simp only [partialPressure, ← Finset.sum_mul, hx, one_mul]
 
-/-- Ideal-gas model: in a mixture with amounts `n i` and total amount `N = ∑ i, n i` at volume `V`
+/-- Ideal-gas model: in a mixture with amounts `n i` and total amount `∑ i, n i` at volume `V`
 and temperature `T`, the pressure `n i * R * T / V` that component `i` would exert alone at the
 same `T, V` (this is the definition of the alone-pressure) equals its partial pressure
-`x_i p` with mole fraction `x_i = n i / N` and total pressure `p = N * R * T / V`. The hypotheses
-prefixed with `_` record the domain of the model and are not used by the proof. -/
+`x_i p` with mole fraction `x_i = Chemistry.Amounts.moleFraction n i` and total pressure
+`p = (∑ i, n i) * R * T / V`. The hypotheses prefixed with `_` record the domain of the model
+and are not used by the proof. -/
 lemma idealGas_pressure_alone_eq_partialPressure {ι : Type*} [Fintype ι] (n : ι → ℝ)
-    (N V T R : ℝ) (hN : 0 < N) (_hNsum : N = ∑ i, n i) (hV : 0 < V) (_hT : 0 < T)
-    (_hR : 0 < R) (i : ι) :
-    n i * R * T / V = partialPressure (n i / N) (N * R * T / V) := by
-  rw [partialPressure]
+    (V T R : ℝ) (hsum : 0 < ∑ i, n i) (hV : 0 < V) (_hT : 0 < T) (_hR : 0 < R) (i : ι) :
+    n i * R * T / V = partialPressure (Chemistry.Amounts.moleFraction n i)
+      ((∑ j, n j) * R * T / V) := by
+  rw [partialPressure, Chemistry.Amounts.moleFraction]
   field_simp
 
 /-! ## B. The van der Waals pressure and its derivatives -/

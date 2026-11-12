@@ -54,13 +54,30 @@ example : partialPressure (1 / 2) 6 = (3 : ℝ) ∧ partialPressure (1 / 3) 6 = 
     partialPressure (1 / 6) 6 = (1 : ℝ) := by
   norm_num [partialPressure]
 
-/-- Amounts `2, 3` (so `N = 5`) at `R = 1`, `T = 300`, `V = 10`: each component pressure
-`n i R T / V` equals `x_i p` with `x = 2/5, 3/5` and `p = N R T / V`. -/
+/-- Amounts `2, 3` (so `∑ i, n i = 5`) at `R = 1`, `T = 300`, `V = 10`: each component pressure
+`n i R T / V` equals `x_i p` with `x = 2/5, 3/5` and `p = (∑ i, n i) R T / V`. -/
 example : (2 : ℝ) * 1 * 300 / 10 = partialPressure (2 / 5) (5 * 1 * 300 / 10) ∧
     (3 : ℝ) * 1 * 300 / 10 = partialPressure (3 / 5) (5 * 1 * 300 / 10) := by
-  have h := idealGas_pressure_alone_eq_partialPressure ![(2 : ℝ), 3] 5 10 300 1 (by norm_num)
+  have hmf0 : Chemistry.Amounts.moleFraction ![(2 : ℝ), 3] 0 = 2 / 5 := by
+    simp [Chemistry.Amounts.moleFraction, Fin.sum_univ_two]
+    norm_num
+  have hmf1 : Chemistry.Amounts.moleFraction ![(2 : ℝ), 3] 1 = 3 / 5 := by
+    simp [Chemistry.Amounts.moleFraction, Fin.sum_univ_two]
+    norm_num
+  have hsum : ∑ j, ![(2 : ℝ), 3] j = (5 : ℝ) := by norm_num [Fin.sum_univ_two]
+  have h := idealGas_pressure_alone_eq_partialPressure ![(2 : ℝ), 3] 10 300 1
     (by norm_num [Fin.sum_univ_two]) (by norm_num) (by norm_num) (by norm_num)
-  exact ⟨h 0, h 1⟩
+  exact ⟨by simpa [hmf0, hsum] using h 0, by simpa [hmf1, hsum] using h 1⟩
+
+/-- The mole fractions in that mixture are the existing `Chemistry.Amounts.moleFraction`
+values `2 / 5` and `3 / 5`. -/
+example : Chemistry.Amounts.moleFraction ![(2 : ℝ), 3] 0 = 2 / 5 ∧
+    Chemistry.Amounts.moleFraction ![(2 : ℝ), 3] 1 = 3 / 5 := by
+  refine ⟨?_, ?_⟩
+  · simp [Chemistry.Amounts.moleFraction, Fin.sum_univ_two]
+    norm_num
+  · simp [Chemistry.Amounts.moleFraction, Fin.sum_univ_two]
+    norm_num
 
 /-- The numbers: `p = 150`, component pressures `60` and `90`. -/
 example : (5 : ℝ) * 1 * 300 / 10 = 150 ∧ (2 : ℝ) * 1 * 300 / 10 = 60 ∧
@@ -211,10 +228,12 @@ example (T Vm : ℝ) (hT : 0 < T) (hVm : 1 < Vm)
 /-- Dalton with the ideal-gas identity: the alone-pressures `60` and `90` of the two-species
 ideal mixture above add up to the total pressure `150`. -/
 example : ∑ i, ![(2 : ℝ), 3] i * 1 * 300 / 10 = 5 * 1 * 300 / 10 := by
-  have h := idealGas_pressure_alone_eq_partialPressure ![(2 : ℝ), 3] 5 10 300 1 (by norm_num)
+  have h := idealGas_pressure_alone_eq_partialPressure ![(2 : ℝ), 3] 10 300 1
     (by norm_num [Fin.sum_univ_two]) (by norm_num) (by norm_num) (by norm_num)
   simp_rw [h]
-  exact sum_partialPressure _ _ (by norm_num [Fin.sum_univ_two])
+  rw [show (∑ j, ![(2 : ℝ), 3] j) = (5 : ℝ) by norm_num [Fin.sum_univ_two]]
+  exact sum_partialPressure (Chemistry.Amounts.moleFraction ![(2 : ℝ), 3]) _
+    (Chemistry.Amounts.sum_moleFraction (by norm_num [Fin.sum_univ_two]))
 
 /-! ## G. Axiom audit -/
 
