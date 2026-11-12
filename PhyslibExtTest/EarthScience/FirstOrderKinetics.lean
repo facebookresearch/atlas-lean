@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C04FirstOrderKinetics
+import PhyslibExt.EarthScience.FirstOrderKinetics
 
 /-!
 # First-order decay checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C04FirstOrderKinetics`:
+Concrete consumers of `PhyslibExt.EarthScience.FirstOrderKinetics`:
 a numeric decay, the initial value, the integrated consumption, and
 the degenerate zero-rate case.
 
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C04FirstOrderKinetics`
+- `PhyslibExt.EarthScience.FirstOrderKinetics`
 -/
 
 /-- Numeric decay: `c(t) = 5*exp(-2*t)` solves `c' = -2*c` at `t = 1`. -/
