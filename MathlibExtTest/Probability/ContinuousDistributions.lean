@@ -9,13 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.ContinuousDistributions
+public import Mathlib.Probability.HasLawExists
 
 /-!
 # Tests for continuous distributions, sampling identities and sampling limits
 
 The statements of each part in their stated form, concrete numeric instances, a non-vacuity
-check for `StudentTPivotLaw`, a point-counting area-fraction estimator, and `#print axioms` for
-every public declaration.
+witness for `StudentTPivotLaw` built from `ProbabilityTheory.exists_iid`, a point-counting
+area-fraction estimator, and `#print axioms` for every public declaration.
 -/
 
 @[expose] public section
@@ -62,8 +63,8 @@ example : ∫ x, (x - 1) ^ 2 ∂gaussianReal 1 4 = 4 ∧ ∫ x, x ∂expMeasure 
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
     (hint : Integrable (X 0) P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P) {n : ℕ}
     (hn : 1 ≤ n) :
-    ∫ ω, (∑ i ∈ Finset.range n, X i ω) / n ∂P = ∫ ω, X 0 ω ∂P :=
-  integral_sampleMean hint hident (by omega)
+    ∫ ω, (∑ i ∈ Finset.range n, X i ω) / n ∂P = ∫ ω, X 0 ω ∂P := by
+  simpa only [sampleMean_fin_eq_sum_range_div] using integral_sampleMean hint hident (by omega)
 
 /-- `Var[(∑ i < n, X i) / n] = Var[X 0] / n`, for `n ≥ 1`. Mutual independence, the hypothesis
 of ATLAS's `variance_sample_mean_of_iid`, gives the pairwise hypothesis of
@@ -71,8 +72,9 @@ of ATLAS's `variance_sample_mean_of_iid`, gives the pairwise hypothesis of
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
     (h2 : MemLp (X 0) 2 P) (hindep : iIndepFun X P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
     {n : ℕ} (hn : 1 ≤ n) :
-    Var[fun ω => (∑ i ∈ Finset.range n, X i ω) / n; P] = Var[X 0; P] / n :=
-  variance_sampleMean h2 (fun _ _ hij => hindep.indepFun hij) hident (by omega)
+    Var[fun ω => (∑ i ∈ Finset.range n, X i ω) / n; P] = Var[X 0; P] / n := by
+  simpa only [sampleMean_fin_eq_sum_range_div] using
+    variance_sampleMean h2 (fun _ _ hij => hindep.indepFun hij) hident (by omega)
 
 /-- Nominal `95 %` coverage for a critical value `q` whose two tails under the
 Student-t law have mass `0.025` each. -/
@@ -91,16 +93,17 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → �
     P {ω | μ ∈ studentTInterval X n q ω} = studentTMeasure (n - 1) (Icc (-q) q) :=
   h.measure_mem_studentTInterval q
 
-/-- Non-vacuity of `StudentTPivotLaw`, with the pivot law identified: for independent
-standard normal observations the fields hold, so the pivot has law `studentTMeasure 1`.
-(Mathlib's `ProbabilityTheory.exists_iid` supplies such observations.) -/
-example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
-    (hindep : iIndepFun X P)
-    (hlaw : ∀ i, HasLaw (X i) (gaussianReal 0 1) P) :
-    HasLaw (studentTPivot X 0 2) (studentTMeasure 1) P := by
+/-- Non-vacuity of `StudentTPivotLaw`, with the pivot law identified: Mathlib's
+`ProbabilityTheory.exists_iid` constructs a probability space carrying independent standard normal
+observations `X i`, these satisfy every field of `StudentTPivotLaw X 0 1 2 P`, and so the pivot
+of the first two observations has law `studentTMeasure 1`. -/
+example : ∃ (Ω : Type) (_ : MeasurableSpace Ω) (P : Measure Ω) (X : ℕ → Ω → ℝ),
+    IsProbabilityMeasure P ∧ StudentTPivotLaw X 0 1 2 P ∧
+      HasLaw (studentTPivot X 0 2) (studentTMeasure 1) P := by
+  obtain ⟨Ω, _, P, X, -, hlaw, hindep, hP⟩ := exists_iid ℕ (gaussianReal 0 1)
   have h : StudentTPivotLaw X 0 1 2 P :=
     ⟨le_rfl, one_pos, hindep.precomp Fin.val_injective, fun i _ => by simpa using hlaw i⟩
-  exact h.hasLaw_pivot
+  exact ⟨Ω, _, P, X, hP, h, h.hasLaw_pivot⟩
 
 /-! ### C. Strong law of large numbers -/
 
@@ -109,8 +112,8 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → �
     (hint : Integrable (X 0) P) (hindep : Pairwise fun i j => IndepFun (X i) (X j) P)
     (hident : ∀ i, IdentDistrib (X i) (X 0) P P) :
     ∀ᵐ ω ∂P, Tendsto (fun n : ℕ => (∑ i ∈ Finset.range n, X i ω) / n) atTop
-      (𝓝 (∫ ω, X 0 ω ∂P)) :=
-  ae_tendsto_sampleMean hint hindep hident
+      (𝓝 (∫ ω, X 0 ω ∂P)) := by
+  simpa only [sampleMean_fin_eq_sum_range_div] using ae_tendsto_sampleMean hint hindep hident
 
 /-- **Point-counting estimator of an area fraction.** Test points `ξ i` are sampled uniformly on
 the unit square `U = [0, 1] × [0, 1]`, which has area `1`: each has law `volume.restrict U` (so
@@ -125,9 +128,10 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {ξ : ℕ → Ω → 
     (hAU : A ⊆ Icc (0, 0) (1, 1))
     (hlaw : ∀ i, HasLaw (ξ i) (volume.restrict (Icc (0, 0) (1, 1))) P)
     (hindep : Pairwise fun i j => IndepFun (ξ i) (ξ j) P) :
-    (∀ n, n ≠ 0 → ∫ ω, sampleMean (fun i ω => A.indicator 1 (ξ i ω)) n ω ∂P = volume.real A) ∧
-      ∀ᵐ ω ∂P, Tendsto (fun n => sampleMean (fun i ω => A.indicator 1 (ξ i ω)) n ω) atTop
-        (𝓝 (volume.real A)) := by
+    (∀ n, n ≠ 0 → ∫ ω, MathlibExt.Probability.FiniteProbability.sampleMean
+        (fun i : Fin n => A.indicator 1 (ξ i ω)) ∂P = volume.real A) ∧
+      ∀ᵐ ω ∂P, Tendsto (fun n => MathlibExt.Probability.FiniteProbability.sampleMean
+        (fun i : Fin n => A.indicator 1 (ξ i ω))) atTop (𝓝 (volume.real A)) := by
   have hU : volume (Icc (0, 0) (1, 1) : Set (ℝ × ℝ)) = 1 := by
     rw [← Icc_prod_Icc, Measure.volume_eq_prod, Measure.prod_prod, Real.volume_Icc]
     norm_num
@@ -255,10 +259,9 @@ end MathlibExtTest.Probability.ContinuousDistributions
 /-! ### Axioms of every public declaration -/
 
 #print axioms MathlibExt.Probability.ContinuousDistributions.integral_sub_sq_gaussianReal
-#print axioms MathlibExt.Probability.ContinuousDistributions.sampleMean
+#print axioms MathlibExt.Probability.ContinuousDistributions.sampleMean_fin_eq_sum_range_div
 #print axioms MathlibExt.Probability.ContinuousDistributions.integral_sampleMean
 #print axioms MathlibExt.Probability.ContinuousDistributions.variance_sampleMean
-#print axioms MathlibExt.Probability.ContinuousDistributions.sampleVariance
 #print axioms MathlibExt.Probability.ContinuousDistributions.sampleStdDev
 #print axioms MathlibExt.Probability.ContinuousDistributions.studentTPivot
 #print axioms MathlibExt.Probability.ContinuousDistributions.studentTInterval

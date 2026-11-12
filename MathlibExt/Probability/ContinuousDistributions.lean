@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Distributions.ExponentialMoments
 public import MathlibExt.Probability.Distributions.Weibull
+public import MathlibExt.Probability.FiniteProbability
 public import MathlibExt.Probability.Statistics.LinearModel.Inference
 public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
@@ -35,9 +36,14 @@ as they are. This file adds the central second moment of `gaussianReal μ v`. Th
 is used directly as ATLAS's `ProbabilityTheory.integral_id_expMeasure` (`r⁻¹`, for `0 < r`); this
 file adds no wrapper for it.
 
-For identically distributed `X : ℕ → Ω → ℝ` the sample mean `sampleMean X n` has expectation
-`E[X 0]` (`integral_sampleMean`), and for pairwise independent `X i` with a finite second moment
-it has variance `Var[X 0] / n` (`variance_sampleMean`), for `n ≠ 0`. These are finite-sample
+The sample statistics are ATLAS's canonical `MathlibExt.Probability.FiniteProbability.sampleMean`
+and `MathlibExt.Probability.FiniteProbability.sampleVarUnbiased`, applied to the first `n`
+observations `fun i : Fin n => X i ω`; this file defines no second sample-statistics family.
+`sampleMean_fin_eq_sum_range_div` rewrites the canonical mean as the `range` sum
+`(∑ i ∈ range n, X i ω) / n` used by Mathlib's strong law. For identically distributed
+`X : ℕ → Ω → ℝ` the sample mean of the first `n` observations has expectation `E[X 0]`
+(`integral_sampleMean`), and for pairwise independent `X i` with a finite second moment it has
+variance `Var[X 0] / n` (`variance_sampleMean`), for `n ≠ 0`. These are finite-sample
 identities. Almost-sure convergence of the sample mean to `E[X 0]` is the strong law of large
 numbers, Mathlib's `ProbabilityTheory.strong_law_ae_real`, specialized in `ae_tendsto_sampleMean`.
 A finite-sample expectation identity is not almost-sure or asymptotic consistency, and the two
@@ -76,6 +82,8 @@ ATLAS has a related declaration that this file does not import:
 ## ii. Key results
 
 - `integral_sub_sq_gaussianReal` : the Gaussian central second moment.
+- `sampleMean_fin_eq_sum_range_div` : the canonical sample mean of the first `n` observations as
+  a `range` sum.
 - `integral_sampleMean`, `variance_sampleMean` : finite-sample expectation and variance of the
   sample mean.
 - `StudentTPivotLaw.hasLaw_pivot` : the pivot has Student-t law `studentTMeasure (n - 1)`.
@@ -136,66 +144,68 @@ lemma integral_sub_sq_gaussianReal (μ : ℝ) (v : ℝ≥0) :
 
 /-! ## B. Sample mean and the Student-t pivot -/
 
-/-- The sample mean `(∑ i ∈ range n, X i ω) / n` of the first `n` terms of `X : ℕ → Ω → ℝ`, in
-the form used by Mathlib's strong law `ProbabilityTheory.strong_law_ae_real`. For `n = 0` it is
-`0` (division by zero); the lemmas below assume `n ≠ 0`. -/
-noncomputable def sampleMean {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
-  (∑ i ∈ Finset.range n, X i ω) / n
+/-- The canonical sample mean `FiniteProbability.sampleMean` of the first `n` observations
+`X 0 ω, …, X (n - 1) ω` is `(∑ i ∈ range n, X i ω) / n`, the form used by Mathlib's strong law
+`ProbabilityTheory.strong_law_ae_real`. For `n = 0` both sides are `0`. -/
+lemma sampleMean_fin_eq_sum_range_div {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
+    FiniteProbability.sampleMean (fun i : Fin n => X i ω) =
+      (∑ i ∈ Finset.range n, X i ω) / n := by
+  rw [FiniteProbability.sampleMean_eq_sum_div, Fintype.card_fin,
+    Fin.sum_univ_eq_sum_range (fun i => X i ω) n]
 
 /-- **Unbiasedness of the sample mean**: if `X 0` is integrable and every `X i` has the law of
-`X 0`, then `E[x̄ₙ] = E[X 0]` for `n ≠ 0`. This finite-sample identity uses linearity of the
-integral and no independence. It is not almost-sure or asymptotic consistency, which is the
-separate theorem `ae_tendsto_sampleMean`. -/
+`X 0`, then `E[x̄ₙ] = E[X 0]` for `n ≠ 0`, where `x̄ₙ` is the canonical sample mean of the first
+`n` observations. This finite-sample identity uses linearity of the integral and no
+independence. It is not almost-sure or asymptotic consistency, which is the separate theorem
+`ae_tendsto_sampleMean`. -/
 lemma integral_sampleMean {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
     (hint : Integrable (X 0) P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P) {n : ℕ}
     (hn : n ≠ 0) :
-    ∫ ω, sampleMean X n ω ∂P = ∫ ω, X 0 ω ∂P := by
+    ∫ ω, FiniteProbability.sampleMean (fun i : Fin n => X i ω) ∂P = ∫ ω, X 0 ω ∂P := by
   have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
-  simp only [sampleMean]
+  simp only [sampleMean_fin_eq_sum_range_div]
   rw [integral_div, integral_finsetSum _ fun i _ => (hident i).integrable_iff.mpr hint,
     Finset.sum_congr rfl fun i _ => (hident i).integral_eq, Finset.sum_const, Finset.card_range,
     nsmul_eq_mul]
   field_simp
 
 /-- **Variance of the sample mean**: if `X 0` has a finite second moment and the `X i` are
-pairwise independent with the law of `X 0`, then `Var[x̄ₙ] = Var[X 0] / n` for `n ≠ 0`. The proof
-uses Mathlib's variance of a sum of independent variables,
-`ProbabilityTheory.IndepFun.variance_sum`. -/
+pairwise independent with the law of `X 0`, then `Var[x̄ₙ] = Var[X 0] / n` for `n ≠ 0`, where
+`x̄ₙ` is the canonical sample mean of the first `n` observations. The proof uses Mathlib's
+variance of a sum of independent variables, `ProbabilityTheory.IndepFun.variance_sum`. -/
 lemma variance_sampleMean {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
     (h2 : MemLp (X 0) 2 P) (hindep : Pairwise fun i j => IndepFun (X i) (X j) P)
     (hident : ∀ i, IdentDistrib (X i) (X 0) P P) {n : ℕ} (hn : n ≠ 0) :
-    Var[sampleMean X n; P] = Var[X 0; P] / n := by
+    Var[fun ω => FiniteProbability.sampleMean (fun i : Fin n => X i ω); P] = Var[X 0; P] / n := by
   have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
-  have hfun : sampleMean X n = fun ω => (n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, X i) ω := by
+  have hfun : (fun ω => FiniteProbability.sampleMean (fun i : Fin n => X i ω)) =
+      fun ω => (n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, X i) ω := by
     funext ω
-    rw [sampleMean, Finset.sum_apply, div_eq_inv_mul]
+    rw [sampleMean_fin_eq_sum_range_div, Finset.sum_apply, div_eq_inv_mul]
   rw [hfun, variance_const_mul,
     IndepFun.variance_sum (fun i _ => (hident i).memLp_iff.mpr h2) fun i _ j _ hij => hindep hij,
     Finset.sum_congr rfl fun i _ => (hident i).variance_eq, Finset.sum_const, Finset.card_range,
     nsmul_eq_mul]
   field_simp
 
-/-- The unbiased sample variance `(∑ i ∈ range n, (X i ω - x̄ₙ) ^ 2) / (n - 1)` of the first `n`
-terms. For `n = 1` the divisor is `0` and the value is `0`. -/
-noncomputable def sampleVariance {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
-  (∑ i ∈ Finset.range n, (X i ω - sampleMean X n ω) ^ 2) / ((n : ℝ) - 1)
-
-/-- The sample standard deviation `sₙ = √(sampleVariance X n ω)`. -/
+/-- The sample standard deviation `sₙ` of the first `n` observations: the square root of the
+canonical unbiased sample variance `FiniteProbability.sampleVarUnbiased`
+`(∑ i, (X i ω - x̄ₙ) ^ 2) / (n - 1)`. For `n = 1` the divisor is `0` and the value is `0`. -/
 noncomputable def sampleStdDev {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
-  √(sampleVariance X n ω)
+  √(FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i ω))
 
 /-- The Student-t pivot `√n (x̄ₙ - μ) / sₙ` for the mean `μ`. Where `sₙ = 0` it is `0`, by
 Lean's convention for division by zero; under `StudentTPivotLaw` this happens only on a null set
 (`StudentTPivotLaw.ae_sampleStdDev_pos`). -/
 noncomputable def studentTPivot {Ω : Type*} (X : ℕ → Ω → ℝ) (μ : ℝ) (n : ℕ) (ω : Ω) : ℝ :=
-  √n * (sampleMean X n ω - μ) / sampleStdDev X n ω
+  √n * (FiniteProbability.sampleMean (fun i : Fin n => X i ω) - μ) / sampleStdDev X n ω
 
 /-- The interval `[x̄ₙ - q sₙ / √n, x̄ₙ + q sₙ / √n]` computed from the first `n` observations.
 With `q = t_{n-1, 1-α/2}` it is the usual Student-t interval for the mean. It is a set computed
 from data and carries no coverage claim. -/
 def studentTInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (ω : Ω) : Set ℝ :=
-  Icc (sampleMean X n ω - q * sampleStdDev X n ω / √n)
-    (sampleMean X n ω + q * sampleStdDev X n ω / √n)
+  Icc (FiniteProbability.sampleMean (fun i : Fin n => X i ω) - q * sampleStdDev X n ω / √n)
+    (FiniteProbability.sampleMean (fun i : Fin n => X i ω) + q * sampleStdDev X n ω / √n)
 
 /-- **Student-t pivot prerequisites**, as an explicit hypothesis bundle for a sample
 `X 0, …, X (n - 1)` under `P`: `2 ≤ n`, `0 < σ`, the observations are independent with law
@@ -217,7 +227,8 @@ structure StudentTPivotLaw {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω →
 `(X 0, …, X (n - 1))` has law `Measure.pi (fun _ => gaussianReal μ (σ ^ 2).toNNReal)` by
 `iIndepFun.hasLaw_pi`; composing with the one-sample `t` statistic of
 `ProbabilityTheory.map_tStatistic_pi_gaussianReal` gives the pivot law, since the pivot is
-that statistic of the tuple (range sums are `Fin n` sums). -/
+that statistic of the tuple, by `FiniteProbability.sampleMean_eq_sum_div` and
+`FiniteProbability.sampleVarUnbiased_eq_sum_div`. -/
 theorem StudentTPivotLaw.hasLaw_pivot {Ω : Type*} [MeasurableSpace Ω] {X : ℕ → Ω → ℝ}
     {μ σ : ℝ} {n : ℕ} {P : Measure Ω} (h : StudentTPivotLaw X μ σ n P) :
     HasLaw (studentTPivot X μ n) (studentTMeasure (n - 1)) P := by
@@ -237,10 +248,8 @@ theorem StudentTPivotLaw.hasLaw_pivot {Ω : Type*} [MeasurableSpace Ω] {X : ℕ
         √((∑ i : Fin n, (X (i : ℕ) ω - (∑ j : Fin n, X (j : ℕ) ω) / n) ^ 2) /
           ((n : ℝ) - 1)) := by
     funext ω
-    simp only [studentTPivot, sampleMean, sampleStdDev, sampleVariance]
-    rw [Fin.sum_univ_eq_sum_range (fun i => X i ω) n,
-      Fin.sum_univ_eq_sum_range
-        (fun i => (X i ω - (∑ j ∈ Finset.range n, X j ω) / (n : ℝ)) ^ 2) n]
+    simp only [studentTPivot, sampleStdDev, FiniteProbability.sampleVarUnbiased_eq_sum_div,
+      FiniteProbability.sampleMean_eq_sum_div, Fintype.card_fin]
   rw [hpivot]
   exact hT.comp htuple
 
@@ -251,16 +260,19 @@ private lemma eq_of_not_sampleStdDev_pos {Ω : Type*} {X : ℕ → Ω → ℝ} {
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have : (2 : ℝ) ≤ n := by exact_mod_cast hn
     linarith
-  have hnonneg : ∀ i ∈ Finset.range n, 0 ≤ (X i ω - sampleMean X n ω) ^ 2 :=
+  have hnonneg : ∀ i ∈ (Finset.univ : Finset (Fin n)),
+      0 ≤ (X i ω - FiniteProbability.sampleMean (fun j : Fin n => X j ω)) ^ 2 :=
     fun i _ => sq_nonneg _
-  have hsum : ∑ i ∈ Finset.range n, (X i ω - sampleMean X n ω) ^ 2 = 0 := by
-    rw [sampleStdDev, sqrt_pos, not_lt, sampleVariance, div_le_iff₀ hn1, zero_mul] at hs
+  have hsum : ∑ i : Fin n, (X i ω - FiniteProbability.sampleMean (fun j : Fin n => X j ω)) ^ 2
+      = 0 := by
+    rw [sampleStdDev, sqrt_pos, not_lt, FiniteProbability.sampleVarUnbiased_eq_sum_div,
+      Fintype.card_fin, div_le_iff₀ hn1, zero_mul] at hs
     exact le_antisymm hs (Finset.sum_nonneg hnonneg)
   rw [Finset.sum_eq_zero_iff_of_nonneg hnonneg] at hsum
-  have h0 := hsum 0 (Finset.mem_range.2 (by omega))
-  have h1 := hsum 1 (Finset.mem_range.2 (by omega))
+  have h0 := hsum ⟨0, by omega⟩ (Finset.mem_univ _)
+  have h1 := hsum ⟨1, by omega⟩ (Finset.mem_univ _)
   rw [sq_eq_zero_iff, sub_eq_zero] at h0 h1
-  rw [h0, h1]
+  exact h0.trans h1.symm
 
 /-- Under `StudentTPivotLaw` the sample standard deviation is almost surely positive. If
 `sₙ = 0` then `X 0 = X 1`, and that event is null because `X 0` and `X 1` are independent and
@@ -347,15 +359,18 @@ lemma StudentTPivotLaw.measureReal_mem_studentTInterval {Ω : Type*} [Measurable
 
 /-- **Strong law of large numbers** for the sample mean: if `X 0` is integrable and the `X i` are
 pairwise independent with the law of `X 0`, then `x̄ₙ → E[X 0]` almost surely. This is Mathlib's
-`ProbabilityTheory.strong_law_ae_real`, with exactly its hypotheses: pairwise independence
-suffices, and no normalization of `P` is assumed. A finite-sample expectation identity
+`ProbabilityTheory.strong_law_ae_real`, with exactly its hypotheses, transported to the
+canonical sample mean by `sampleMean_fin_eq_sum_range_div`: pairwise independence suffices, and
+no normalization of `P` is assumed. A finite-sample expectation identity
 (`integral_sampleMean`) is not almost-sure or asymptotic consistency; the two are separate
 theorems. -/
 theorem ae_tendsto_sampleMean {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : ℕ → Ω → ℝ}
     (hint : Integrable (X 0) P) (hindep : Pairwise fun i j => IndepFun (X i) (X j) P)
     (hident : ∀ i, IdentDistrib (X i) (X 0) P P) :
-    ∀ᵐ ω ∂P, Tendsto (fun n => sampleMean X n ω) atTop (𝓝 (∫ ω, X 0 ω ∂P)) :=
-  strong_law_ae_real X hint hindep hident
+    ∀ᵐ ω ∂P, Tendsto (fun n => FiniteProbability.sampleMean (fun i : Fin n => X i ω)) atTop
+      (𝓝 (∫ ω, X 0 ω ∂P)) := by
+  filter_upwards [strong_law_ae_real X hint hindep hident] with ω hω
+  exact hω.congr fun n => (sampleMean_fin_eq_sum_range_div X n ω).symm
 
 /-! ## D. Weibull survival and weakest-link scaling -/
 
