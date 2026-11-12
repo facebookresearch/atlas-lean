@@ -17,8 +17,9 @@ public import Mathlib.Logic.Function.Basic
 # Strictly dominant strategies and Nash equilibrium
 
 A strategic game has players `ι`, strategy types `S i` and payoffs `u i σ` at profiles
-`σ : ∀ i, S i`; player `i`'s unilateral deviation to `t` is `Function.update σ i t`. A strategy is
-strictly dominant if it beats every other strategy against every profile of the others. A profile
+`σ : ∀ i, S i`; player `i`'s unilateral deviation to `t` is `Function.update σ i t`. Every strategy
+set is nonempty. A strategy is strictly dominant if it beats every other strategy against every
+profile of the others. A profile
 of strictly dominant strategies is a Nash equilibrium, and the only one. No finiteness is assumed.
 
 The game interface is local (payoff functions, as in `MathlibExt.GameTheory.PotentialGames`);
@@ -47,14 +48,17 @@ def IsNash {ι : Type*} [DecidableEq ι] {S : ι → Type*} (u : ι → (∀ i, 
     (σ : ∀ i, S i) : Prop :=
   ∀ (i : ι) (t : S i), u i (Function.update σ i t) ≤ u i σ
 
-/-- `s` is a strictly dominant strategy of player `i`: against every profile `τ` of the others'
+/-- `s` is a strictly dominant strategy of player `i` (every strategy set nonempty): against every
+profile `τ` of the others'
 strategies, `s` gives `i` a strictly higher payoff than any other strategy `t ≠ s`. -/
-def IsStrictlyDominant {ι : Type*} [DecidableEq ι] {S : ι → Type*} (u : ι → (∀ i, S i) → ℝ)
+def IsStrictlyDominant {ι : Type*} [DecidableEq ι] {S : ι → Type*} [∀ j, Nonempty (S j)]
+    (u : ι → (∀ i, S i) → ℝ)
     (i : ι) (s : S i) : Prop :=
   ∀ (τ : ∀ j, S j) (t : S i), t ≠ s → u i (Function.update τ i t) < u i (Function.update τ i s)
 
 /-- **A strictly dominant-strategy profile is Nash.** -/
 theorem isNash_of_isStrictlyDominant {ι : Type*} [DecidableEq ι] {S : ι → Type*}
+    [∀ j, Nonempty (S j)]
     {u : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i} (h : ∀ i, IsStrictlyDominant u i (σ i)) :
     IsNash u σ := by
   intro i t
@@ -67,6 +71,7 @@ theorem isNash_of_isStrictlyDominant {ι : Type*} [DecidableEq ι] {S : ι → T
 
 /-- A strictly dominant-strategy profile is the only Nash equilibrium. -/
 theorem eq_of_isNash_of_isStrictlyDominant {ι : Type*} [DecidableEq ι] {S : ι → Type*}
+    [∀ j, Nonempty (S j)]
     {u : ι → (∀ i, S i) → ℝ} {σ τ : ∀ i, S i} (h : ∀ i, IsStrictlyDominant u i (σ i))
     (hτ : IsNash u τ) : τ = σ := by
   apply funext
