@@ -30,11 +30,14 @@ No new definitions or results are introduced here.
 
 - A. Doubling and zero pressure
 - B. Convention conversion
+- C. Public theorem shape
 
 ## iv. References
 
 - `PhyslibExt.EarthScience.C03HenryLaw`
 -/
+
+/-! ## A. Doubling and zero pressure -/
 
 /-- Doubling, numeric: `0.034 * (2 * 1) = 2 * 0.034`. -/
 example : (0.034 : ℝ) * (2 * 1) = 2 * 0.034 :=
@@ -44,9 +47,13 @@ example : (0.034 : ℝ) * (2 * 1) = 2 * 0.034 :=
 example : (0.034 : ℝ) * (0 : ℝ) = 0 :=
   EarthScience.henry_zero_pressure (by norm_num) rfl
 
+/-! ## B. Convention conversion -/
+
 /-- Reciprocal conversion, numeric: `H_pc = 2` gives `H_cp = 1 / 2` and back. -/
 example : (2 : ℝ) = 1 / (1 / 2) :=
   EarthScience.henry_conversion_reciprocal (by norm_num) (by norm_num)
+
+/-! ## C. Public theorem shape -/
 
 /-- Public shape of the doubling theorem. -/
 example {H p c : ℝ} (hH : 0 < H) (hp : 0 ≤ p) (h : c = H * p) :

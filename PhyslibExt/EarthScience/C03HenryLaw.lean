@@ -38,12 +38,25 @@ temperature/solvent, `p ≥ 0`; the equilibrium law is a hypothesis.
 
 ## iv. References
 
+- R. Sander et al., *Henry's law constants (IUPAC Recommendations 2021)*,
+  Pure Appl. Chem. 94 (2022), 71–85, https://doi.org/10.1515/PAC-2020-0302.
+- R. Sander, *Compilation of Henry's law constants (version 5.0.0) for
+  water as solvent*, Atmos. Chem. Phys. 23 (2023), 10901–12440,
+  https://doi.org/10.5194/acp-23-10901-2023, §2.1 and Table 1.
+  The constants here use the concentration/partial-pressure convention:
+  `H` and `H_cp` denote the solubility constant `H_s^{cp} = c_a / p`,
+  while `H_pc` denotes the volatility constant `H_v^{pc} = p / c_a`.
+  Table 1 gives `H_v^{pc} = 1 / H_s^{cp}`. These equilibrium constants
+  refer to the infinite-dilution limit at fixed temperature and solvent;
+  this module assumes the resulting proportionality law.
 - Field arithmetic in Mathlib (`field_simp`, `mul_inv_cancel`).
 -/
 
 @[expose] public section
 
 namespace EarthScience
+
+/-! ## A. Doubling and zero pressure -/
 
 /-- Henry's law doubling: for a Henry constant `H > 0` and a nonnegative
 partial pressure `p ≥ 0`, under `c = H * p`, doubling the gas partial
@@ -58,6 +71,8 @@ constant `H > 0`, if `c = H * 0` then `c = 0`. -/
 theorem henry_zero_pressure {H c : ℝ} (_hH : 0 < H) (h : c = H * (0 : ℝ)) :
     c = 0 := by
   rw [h, mul_zero]
+
+/-! ## B. Convention conversion -/
 
 /-- Henry-constant conversion: the `H_cp` (concentration/pressure) and
 `H_pc` (pressure/concentration) conventions are reciprocals for nonzero
