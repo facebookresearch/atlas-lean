@@ -43,7 +43,9 @@ example : Continuous (duhamel trivialSemigroup fun s => s) :=
 
 -- A non-vacuous mild solution: `u' = 1`, `u 0 = 0` has the mild solution `u t = t`.
 theorem isMildSolution_id : IsMildSolution trivialSemigroup (fun _ => (1 : ℝ)) 0 1 id :=
-  ⟨continuous_id.continuousOn, fun t _ => by simp [duhamel_trivial_one]⟩
+  ⟨continuous_id.continuousOn,
+    fun t _ => isC0Semigroup_trivial.intervalIntegrable_duhamel_integrand continuous_const t 0 t,
+    fun t _ => by simp [duhamel_trivial_one]⟩
 
 example : (id : ℝ → ℝ) 0 = 0 :=
   isMildSolution_id.apply_zero isC0Semigroup_trivial zero_le_one
@@ -90,8 +92,9 @@ example (u v : ℝ → ℝ) (hu : IsMildSolution trivialSemigroup id 0 (-1) u)
 -- The mild solutions of `u' = 1` from `x₀` are `t ↦ x₀ + t`.
 theorem isMildSolution_add (x₀ T : ℝ) :
     IsMildSolution trivialSemigroup (fun _ => (1 : ℝ)) x₀ T fun t => x₀ + t :=
-  ⟨(continuous_const.add continuous_id).continuousOn, fun t _ => by
-    simp [duhamel_trivial_one, trivialSemigroup]⟩
+  ⟨(continuous_const.add continuous_id).continuousOn,
+    fun t _ => isC0Semigroup_trivial.intervalIntegrable_duhamel_integrand continuous_const t 0 t,
+    fun t _ => by simp [duhamel_trivial_one, trivialSemigroup]⟩
 
 -- Lipschitz dependence with the constant fixed before the initial values: the solutions from
 -- `x₀` and `y₀` (both bounded by `3` on `[0, 1]` when `|x₀|, |y₀| ≤ 2`) differ by at most
@@ -122,3 +125,27 @@ example : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L
 example : ∃ u : ℝ → ℝ, MemLp u 2 (volume.restrict (Ioo 0 1)) ∧
     ¬ MemLp (fun x => u x ^ 2) 2 (volume.restrict (Ioo 0 1)) :=
   exists_memLp_two_not_memLp_two_sq
+
+-- Duhamel and mild solutions require a complete codomain at the public boundary.
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
+    (_S : ℝ≥0 → X →L[ℝ] X) (_F : X → X) (_x₀ : X) (_u : ℝ → X) (_T : ℝ) : True := by
+  fail_if_success have _ : X := duhamel _S _u _T
+  fail_if_success have _ : Prop := IsMildSolution _S _F _x₀ _T _u
+  trivial
+
+-- The same expressions elaborate once completeness is available.
+noncomputable example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+    (S : ℝ≥0 → X →L[ℝ] X) (F : X → X) (x₀ : X) (u : ℝ → X) (T : ℝ) : X × Prop :=
+  (duhamel S u T, IsMildSolution S F x₀ T u)
+
+-- A nonintegrable forcing cannot be accepted merely because the totalized integral is zero.
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+    {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ : X} {u : ℝ → X} {T t : ℝ}
+    (ht : t ∈ Icc 0 T)
+    (hbad : ¬ IntervalIntegrable (fun s => S (t - s).toNNReal (F (u s))) volume 0 t) :
+    ¬ IsMildSolution S F x₀ T u :=
+  fun hu => hbad (hu.2.1 t ht)
+
+example (t : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
+    IntervalIntegrable (fun s => trivialSemigroup (t - s).toNNReal (1 : ℝ)) volume 0 t :=
+  isMildSolution_id.2.1 t ht

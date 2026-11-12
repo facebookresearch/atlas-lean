@@ -113,22 +113,28 @@ structure IsC0Semigroup (S : ℝ≥0 → X →L[ℝ] X) : Prop where
   /-- Local boundedness: `‖S t‖ ≤ M` for `t ∈ [0, T]`. -/
   locally_bounded : ∀ T : ℝ≥0, ∃ M : ℝ, ∀ t ≤ T, ‖S t‖ ≤ M
 
-/-- The **Duhamel term** `t ↦ ∫₀ᵗ S (t - s) g(s) ds` of a forcing `g : ℝ → X`. Negative time
-differences are truncated to `0`; on the integration range `s ∈ [0, t]` they never occur. -/
-noncomputable def duhamel (S : ℝ≥0 → X →L[ℝ] X) (g : ℝ → X) (t : ℝ) : X :=
+/-- The **Duhamel term** `t ↦ ∫₀ᵗ S (t - s) g(s) ds` of a forcing `g : ℝ → X` in a Banach
+space. Negative time differences are truncated to `0`; on `s ∈ [0, t]` they never occur. -/
+noncomputable def duhamel [CompleteSpace X]
+    (S : ℝ≥0 → X →L[ℝ] X) (g : ℝ → X) (t : ℝ) : X :=
   ∫ s in (0 : ℝ)..t, S (t - s).toNNReal (g s)
 
+variable [CompleteSpace X]
+
 /-- `u` is a **mild solution** on `[0, T]` of the semilinear equation `u' = A u + F u`,
-`u 0 = x₀`, where `A` generates the semigroup `S`: `u` is continuous on `[0, T]` and satisfies
-the variation-of-constants (Duhamel) identity `u t = S t x₀ + ∫₀ᵗ S (t - s) F(u s) ds`. -/
+`u 0 = x₀`, where `A` generates the semigroup `S`: `u` is continuous on `[0, T]`, each
+Duhamel integrand is integrable on `[0, t]`, and the variation-of-constants identity holds. -/
 def IsMildSolution (S : ℝ≥0 → X →L[ℝ] X) (F : X → X) (x₀ : X) (T : ℝ) (u : ℝ → X) : Prop :=
   ContinuousOn u (Icc 0 T) ∧
+    (∀ t ∈ Icc 0 T,
+      IntervalIntegrable (fun s => S (t - s).toNNReal (F (u s))) volume 0 t) ∧
     ∀ t ∈ Icc 0 T, u t = S t.toNNReal x₀ + duhamel S (fun s => F (u s)) t
 
 namespace IsC0Semigroup
 
 variable {S : ℝ≥0 → X →L[ℝ] X}
 
+omit [CompleteSpace X] in
 /-- A C₀ semigroup is jointly continuous in time and state. -/
 theorem continuous_uncurry (hS : IsC0Semigroup S) :
     Continuous fun p : ℝ≥0 × X => S p.1 p.2 := by
@@ -165,6 +171,7 @@ theorem continuous_duhamel (hS : IsC0Semigroup S) {g : ℝ → X} (hg : Continuo
     ((continuous_real_toNNReal.comp (continuous_fst.sub continuous_snd)).prodMk
       (hg.comp continuous_snd))
 
+omit [CompleteSpace X] in
 /-- The integrand of the Duhamel term of a continuous forcing is interval integrable. -/
 theorem intervalIntegrable_duhamel_integrand (hS : IsC0Semigroup S) {g : ℝ → X}
     (hg : Continuous g) (t a b : ℝ) :
@@ -210,7 +217,7 @@ theorem norm_duhamel_sub_le_integral (hS : IsC0Semigroup S) {g h : ℝ → X} (h
 
 end IsC0Semigroup
 
-omit [NormedSpace ℝ X] in
+omit [NormedSpace ℝ X] [CompleteSpace X] in
 /-- A map that is Lipschitz on every closed ball centred at `0` is continuous. -/
 theorem continuous_of_lipschitzOnWith_closedBall {F : X → X}
     (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R)) : Continuous F := by
@@ -224,7 +231,7 @@ theorem continuous_of_lipschitzOnWith_closedBall {F : X → X}
 theorem IsMildSolution.apply_zero {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ : X} {T : ℝ}
     {u : ℝ → X} (hS : IsC0Semigroup S) (hu : IsMildSolution S F x₀ T u) (hT : 0 ≤ T) :
     u 0 = x₀ := by
-  rw [hu.2 0 ⟨le_rfl, hT⟩]
+  rw [hu.2.2 0 ⟨le_rfl, hT⟩]
   simp [duhamel, hS.map_zero]
 
 /-- **Local existence of mild solutions, uniform on bounded sets of initial data.**
@@ -234,7 +241,7 @@ initial value `x₀` with `‖x₀‖ ≤ r` has a continuous mild solution of `
 `u 0 = x₀` on `[0, T]` with `‖u t‖ ≤ R` there. Both `T` and `R` are chosen before `x₀`, so
 together with `exists_norm_sub_le_of_norm_le` the solution map is Lipschitz on the ball.
 The proof is the Banach fixed-point theorem for the Duhamel map on `C([0, T], X)`. -/
-theorem exists_isMildSolution [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} {F : X → X}
+theorem exists_isMildSolution {S : ℝ≥0 → X →L[ℝ] X} {F : X → X}
     (hS : IsC0Semigroup S)
     (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R)) (r : ℝ) :
     ∃ T > 0, ∃ R : ℝ, ∀ x₀ : X, ‖x₀‖ ≤ r →
@@ -341,8 +348,9 @@ theorem exists_isMildSolution [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} 
   have h0B : (0 : C(I, X)) ∈ B := fun t => by simp; linarith
   obtain ⟨w, hwB, hw, -⟩ := ContractingWith.exists_fixedPoint' hB.isComplete hmaps hK' h0B
     (edist_ne_top _ _)
-  refine ⟨ext w, hext w, ⟨(hext w).continuousOn, fun t ht => ?_⟩, fun t _ => by
-    simpa using hextB w hwB t⟩
+  refine ⟨ext w, hext w, ⟨(hext w).continuousOn,
+    fun t _ => hS.intervalIntegrable_duhamel_integrand (hFc.comp (hext w)) t 0 t,
+    fun t ht => ?_⟩, fun t _ => by simpa using hextB w hwB t⟩
   have hwt : ext w t = w ⟨t, ht⟩ := IccExtend_of_mem _ _ ht
   rw [hwt]
   exact (congrArg (fun f : C(I, X) => f ⟨t, ht⟩) hw.eq).symm
@@ -424,8 +432,8 @@ theorem exists_norm_sub_le_of_norm_le {S : ℝ≥0 → X →L[ℝ] X} {F : X →
   have hineq : ∀ t ∈ Icc 0 T,
       ψ t ≤ M * ‖x₀ - y₀‖ + M * L * ∫ s in (0 : ℝ)..t, ψ s := by
     intro t ht
-    have hut := hu.2 t ht
-    have hvt := hv.2 t ht
+    have hut := hu.2.2 t ht
+    have hvt := hv.2.2 t ht
     rw [hcongr u u' hu'e t ht] at hut
     rw [hcongr v v' hv'e t ht] at hvt
     have e : u' t - v' t = (S t.toNNReal (x₀ - y₀)) +
@@ -475,6 +483,7 @@ theorem IsMildSolution.eqOn {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ 
   rw [sub_self, norm_zero, mul_zero] at this
   exact sub_eq_zero.1 (norm_le_zero_iff.1 this)
 
+omit [CompleteSpace X] in
 /-- The Duhamel integrand of a mild solution is interval integrable on subintervals of
 `[0, T]`. -/
 private theorem intervalIntegrable_mild {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {T : ℝ}
@@ -491,14 +500,17 @@ private theorem intervalIntegrable_mild {S : ℝ≥0 → X →L[ℝ] X} {F : X �
 every `s ∈ [0, T]` the shifted curve `τ ↦ u (s + τ)` is a mild solution on `[0, T - s]` from
 `u s`. Together with uniqueness this makes the time-`t` maps compose: the solution from `x₀`
 at time `s + τ` is the solution from `u s` at time `τ`. -/
-theorem IsMildSolution.restart [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ : X}
+theorem IsMildSolution.restart {S : ℝ≥0 → X →L[ℝ] X} {F : X → X} {x₀ : X}
     {T : ℝ} {u : ℝ → X} (hS : IsC0Semigroup S)
     (hF : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L F (Metric.closedBall 0 R))
     (hu : IsMildSolution S F x₀ T u) {s : ℝ} (hs : s ∈ Icc 0 T) :
     IsMildSolution S F (u s) (T - s) fun τ => u (s + τ) := by
   have hFc := continuous_of_lipschitzOnWith_closedBall hF
-  refine ⟨hu.1.comp (continuousOn_const.add continuousOn_id) fun τ hτ =>
-    ⟨by linarith [hs.1, hτ.1], by linarith [hτ.2]⟩, fun τ hτ => ?_⟩
+  have huc : ContinuousOn (fun τ => u (s + τ)) (Icc 0 (T - s)) :=
+    hu.1.comp (continuousOn_const.add continuousOn_id) fun τ hτ =>
+      ⟨by linarith [hs.1, hτ.1], by linarith [hτ.2]⟩
+  refine ⟨huc, fun t ht => intervalIntegrable_mild hS hFc huc t le_rfl ht.1 ht.2,
+    fun τ hτ => ?_⟩
   have hτ0 : 0 ≤ τ := hτ.1
   have hsτ : s + τ ∈ Icc 0 T := ⟨by linarith [hs.1], by linarith [hτ.2]⟩
   -- Integrability of the Duhamel integrand on `[0, s]` and on `[s, s + τ]`.
@@ -532,7 +544,7 @@ theorem IsMildSolution.restart [CompleteSpace X] {S : ℝ≥0 → X →L[ℝ] X}
   have hx : S (s + τ).toNNReal x₀ = S τ.toNNReal (S s.toNNReal x₀) := by
     rw [Real.toNNReal_add hs.1 hτ0, add_comm, hS.map_add, ContinuousLinearMap.comp_apply]
   dsimp only
-  rw [hu.2 _ hsτ, hu.2 s hs, hsplit, hfirst, ← hsecond, hx, map_add]
+  rw [hu.2.2 _ hsτ, hu.2.2 s hs, hsplit, hfirst, ← hsecond, hx, map_add]
   abel
 
 section Nemytskii
@@ -568,7 +580,7 @@ end Nemytskii
 (indeed norm continuous). This is the finite-dimensional/ODE case of the interface; the PDE
 case uses an unbounded generator such as the Neumann Laplacian, whose semigroup is only
 strongly continuous. -/
-theorem isC0Semigroup_exp [CompleteSpace X] (A : X →L[ℝ] X) :
+theorem isC0Semigroup_exp (A : X →L[ℝ] X) :
     IsC0Semigroup fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A) := by
   let : NormedAlgebra ℚ (X →L[ℝ] X) := NormedAlgebra.restrictScalars ℚ ℝ (X →L[ℝ] X)
   have hc : Continuous fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A) :=
