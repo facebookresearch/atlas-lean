@@ -17,8 +17,7 @@ import Mathlib.Tactic.Ring
 /-!
 # State-price vectors from the fundamental theorem of asset pricing
 
-See the contract `/tmp/atlas-econ-50b/lane4/FI08.T02-contract.md` for the source and
-clause map. The risk-free funding convention is explicit: buying one unit of asset `a`
+Source: Atlas roadmap FI08.T02. The risk-free funding convention is explicit: buying one unit of asset `a`
 at price `p a`, financed by borrowing `p a` at gross risk-free return `R`, has net
 funded gain `X a ω - R * p a` in state `ω`.
 -/
