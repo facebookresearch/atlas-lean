@@ -40,7 +40,7 @@ theorem linU_locallyNonsatiated : SecondWelfareTheorem.LocallyNonsatiated linU :
     linarith
 
 theorem linU_demand_exhausts (x : Fin 2 → ℝ)
-    (hx : IsMarshallianDemand linU (consumptionSet (Fin 2)) ![1, 2] 2 x) :
+    (hx : x ∈ marshallianDemand linU ![1, 2] 2) :
     (![1, 2] : Fin 2 → ℝ) ⬝ᵥ x = 2 := by
   exact dotProduct_eq_of_isMarshallianDemand linU_locallyNonsatiated hx
 
@@ -49,7 +49,7 @@ def blissU (x : Fin 2 → ℝ) : ℝ := -((x 0 - 1) ^ 2 + (x 1 - 1) ^ 2)
 
 /-- The bliss point is demanded at prices `(1, 1)` and wealth `4`. -/
 theorem blissU_isMarshallianDemand :
-    IsMarshallianDemand blissU (consumptionSet (Fin 2)) ![1, 1] 4 ![1, 1] := by
+    ![1, 1] ∈ marshallianDemand blissU ![1, 1] 4 := by
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · intro l
     fin_cases l <;> norm_num

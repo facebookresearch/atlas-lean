@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Economics.Consumer.TwoGood
+public import MathlibExt.Economics.Consumer.MarshallianDemand
 public import MathlibExt.Economics.SecondWelfareTheorem
 import Mathlib.Tactic.Linarith
 
@@ -22,19 +22,21 @@ Proposition 4 ("Walras' Law" for one consumer): if preferences are locally non-s
 any `(p, w)` and `x ∈ x(p, w)`, `p · x = w`. Local nonsatiation (Levin–Milgrom, *Introduction to
 Choice Theory*, Definition 8) on the consumption set `ℝ^L_+` is Atlas's
 `SecondWelfareTheorem.LocallyNonsatiated`. No sign condition on prices is needed.
+
+The demand hypothesis is stated against the canonical EC02.T01 correspondence
+`marshallianDemand` in `MathlibExt.Economics.Consumer.MarshallianDemand`, so clients can
+compose this result with the EC02.T01 existence theorem.
 -/
 
 namespace MathlibExt.Economics.Consumer
 
 open Matrix
 
-open SecondWelfareTheorem (consumptionSet)
-
 /-- Levin, Proposition 4: with a locally nonsatiated utility, every Marshallian demand on `ℝ^L_+`
 exhausts the budget. -/
 theorem dotProduct_eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → ℝ}
     {p : L → ℝ} {w : ℝ} {x : L → ℝ} (hu : SecondWelfareTheorem.LocallyNonsatiated u)
-    (hx : IsMarshallianDemand u (consumptionSet L) p w x) : p ⬝ᵥ x = w := by
+    (hx : x ∈ marshallianDemand u p w) : p ⬝ᵥ x = w := by
   obtain ⟨⟨hxmem, hxle⟩, hxopt⟩ := hx
   by_contra hne
   have hlt : p ⬝ᵥ x < w := lt_of_le_of_ne hxle hne
@@ -48,7 +50,7 @@ theorem dotProduct_eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L →
   have hzaff : p ⬝ᵥ z ≤ w := by
     have h1 : p ⬝ᵥ z - p ⬝ᵥ x ≤ |p ⬝ᵥ z - p ⬝ᵥ x| := le_abs_self _
     linarith
-  have hzbs : z ∈ budgetSet (consumptionSet L) p w := ⟨hzmem, hzaff⟩
+  have hzbs : z ∈ budgetSet p w := ⟨hzmem, hzaff⟩
   have hle := hxopt z hzbs
   linarith
 
