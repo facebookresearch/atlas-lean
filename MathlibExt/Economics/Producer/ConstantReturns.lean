@@ -24,8 +24,8 @@ prices `p`, that maximal profit is zero, so no feasible plan earns positive prof
 
 ## Main results
 
-* `Economics.Producer.IsProfitMax.dotProduct_eq_zero_of_hasConstantReturns`
-* `Economics.Producer.IsProfitMax.dotProduct_nonpos_of_hasConstantReturns`
+* `MathlibExt.Economics.Producer.IsProfitMax.dotProduct_eq_zero_of_hasConstantReturns`
+* `MathlibExt.Economics.Producer.IsProfitMax.dotProduct_nonpos_of_hasConstantReturns`
 
 ## References
 
@@ -37,7 +37,7 @@ Atlas roadmap target EC06.T04.
 
 @[expose] public section
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- Constant returns to scale: every feasible net-output vector may be scaled by any
 nonnegative factor. The factor `0` makes inaction (zero production) feasible whenever `Y` is
@@ -67,4 +67,4 @@ theorem IsProfitMax.dotProduct_nonpos_of_hasConstantReturns {ι : Type*} [Fintyp
   calc p ⬝ᵥ z ≤ p ⬝ᵥ y := h.2 z hz
     _ = 0 := heq
 
-end Economics.Producer
+end MathlibExt.Economics.Producer

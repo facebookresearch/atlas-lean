@@ -19,7 +19,7 @@ public import Mathlib.Tactic.NormNum.Ineq
 
 namespace MathlibExtTest.Economics.Producer.ConstantReturns
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 section Test
 
