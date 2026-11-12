@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import MathlibExt.Probability.MarkovMixing
 
 @[expose] public section
 
@@ -19,9 +20,9 @@ Applying a Markov kernel contracts total variation (data
 processing), so the total variation between two chains started at
 different states is nonincreasing in time. This is the contraction
 core of roadmap package ML-24 of the Atlas TCS canon roadmap;
-mixing-time quantities built on `tvDist` are follow-ups. The
-definition of `tvDist` here agrees with
-`MathlibExt/Probability/TotalVariationCoupling.lean`.
+mixing-time quantities built on `tvDist` are follow-ups. Total
+variation is the shared `MathlibExt.Probability.MarkovMixing.tvDist`,
+specialized to the `toReal` masses of the two PMFs.
 
 Source: Levin and Peres, Markov Chains and Mixing Times (2017),
 Chapter 4.
@@ -29,10 +30,14 @@ Chapter 4.
 
 open Finset
 
+namespace MathlibExt.Probability.MarkovChainContraction
+
 /-- Total variation distance between two probability mass functions
-on a finite type: half the `L1` distance. -/
+on a finite type: the shared `MarkovMixing.tvDist` of their `toReal`
+masses. -/
 noncomputable def tvDist {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
-  (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal|
+  MathlibExt.Probability.MarkovMixing.tvDist (fun a => (p a).toReal)
+    (fun a => (q a).toReal)
 
 /-- The distribution of a Markov chain after `t` steps started from
 `x`, where `K` is the one-step kernel (as a PMF-valued function). -/
@@ -63,7 +68,7 @@ the one-step distributions is at most the total variation between
 the starting distributions. -/
 theorem tvDist_bind_le {α : Type*} [Fintype α] (K : α → PMF α) (p q : PMF α) :
     tvDist (p.bind K) (q.bind K) ≤ tvDist p q := by
-  unfold tvDist
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
   apply mul_le_mul_of_nonneg_left _ (by norm_num : (0 : ℝ) ≤ 1 / 2)
   calc ∑ a, |((p.bind K) a).toReal - ((q.bind K) a).toReal|
       ≤ ∑ a, ∑ x, |(p x).toReal - (q x).toReal| * (K x a).toReal := by
@@ -101,3 +106,5 @@ theorem tvDist_chainDist_mono {α : Type*} [Fintype α] (K : α → PMF α)
     fun z => rfl
   rw [h x, h y]
   exact tvDist_bind_le K _ _
+
+end MathlibExt.Probability.MarkovChainContraction
