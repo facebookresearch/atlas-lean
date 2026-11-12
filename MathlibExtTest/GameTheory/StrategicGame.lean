@@ -12,8 +12,8 @@ public import MathlibExt.GameTheory.StrategicGame
 import Mathlib.Tactic
 
 /-! Examples for `MathlibExt.GameTheory.StrategicGame`: a pure Nash equilibrium of the
-prisoner's dilemma, matching pennies without a pure equilibrium, and a constant game in
-which ties make every profile an equilibrium. -/
+prisoner's dilemma, matching pennies without a pure equilibrium, a constant game in
+which ties make every profile an equilibrium, and the nonempty-strategy requirement. -/
 
 namespace MathlibExtTest.GameTheory.StrategicGame
 
@@ -29,6 +29,7 @@ def prisonersDilemma : StrategicGame (Fin 2) (fun _ => Bool) where
     | false, true => if i = 0 then 0 else 5
     | true, false => if i = 0 then 5 else 0
     | true, true => 1
+  strategy_nonempty := fun _ => inferInstance
 
 theorem prisonersDilemma_nash_defect :
     prisonersDilemma.IsNash (fun _ => true) := by
@@ -51,6 +52,7 @@ theorem prisonersDilemma_not_nash_cooperate :
 def matchingPennies : StrategicGame (Fin 2) (fun _ => Bool) where
   payoff := fun i σ =>
     if i = 0 then (if σ 0 = σ 1 then 1 else -1) else (if σ 0 = σ 1 then -1 else 1)
+  strategy_nonempty := fun _ => inferInstance
 
 theorem matchingPennies_no_pure_nash : ∀ σ, ¬ matchingPennies.IsNash σ := by
   intro σ h
@@ -74,12 +76,23 @@ theorem matchingPennies_no_pure_nash : ∀ σ, ¬ matchingPennies.IsNash σ := b
 /-- Constant game: every profile is a Nash equilibrium. -/
 def constantGame : StrategicGame (Fin 2) (fun _ => Bool) where
   payoff := fun _ _ => 0
+  strategy_nonempty := fun _ => inferInstance
 
 theorem constantGame_all_nash : ∀ σ, constantGame.IsNash σ := by
   intro σ
   rw [StrategicGame.isNash_iff_update_le]
   intro i t
   simp [constantGame]
+
+/-- A player with no strategies does not give a strategic game. -/
+theorem not_strategicGame_of_isEmpty_strategies :
+    IsEmpty (StrategicGame (Fin 1) (fun _ => Empty)) :=
+  ⟨fun G => (G.strategy_nonempty 0).elim Empty.elim⟩
+
+/-- Every strategic game has a strategy profile. -/
+theorem strategicGame_nonempty_profile {ι : Type*} {S : ι → Type*}
+    (G : StrategicGame ι S) : Nonempty (∀ i, S i) :=
+  ⟨fun i => (G.strategy_nonempty i).some⟩
 
 end Examples
 

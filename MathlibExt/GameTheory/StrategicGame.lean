@@ -16,8 +16,8 @@ public import Mathlib.Logic.Function.Basic
 /-!
 # Strategic-form games, best responses, and Nash equilibria (Atlas EC12.T01)
 
-A strategic-form game has a set of players `ι`, a strategy set `S i` for each
-player, and a real payoff for each player at each strategy profile
+A strategic-form game has a set of players `ι`, a nonempty strategy set `S i`
+for each player, and a real payoff for each player at each strategy profile
 `σ : ∀ i, S i`. Player `i`'s unilateral deviation to `t : S i` is the profile
 `Function.update σ i t`. A profile is a (pure) Nash equilibrium when every
 player's strategy is a best response to the others. The main theorem says this
@@ -25,8 +25,10 @@ holds exactly when no unilateral deviation strictly improves the deviator's
 payoff.
 
 No finiteness is assumed: the equivalence holds for arbitrary player and
-strategy types. A mixed extension is again a `StrategicGame`, whose strategy
-sets are probability simplices and whose payoffs are expected payoffs.
+strategy types. As in Osborne and Rubinstein's definition, every strategy set
+must be nonempty, so every game has at least one strategy profile. A mixed
+extension is again a `StrategicGame`, whose strategy sets are probability
+simplices and whose payoffs are expected payoffs.
 
 ## References
 
@@ -41,11 +43,13 @@ sets are probability simplices and whose payoffs are expected payoffs.
 
 namespace MathlibExt.GameTheory
 
-/-- A strategic-form (normal-form) game with player set `ι` and strategy set
-`S i` for player `i`; a strategy profile is a term of `∀ i, S i`. -/
+/-- A strategic-form (normal-form) game with player set `ι` and a nonempty
+strategy set `S i` for player `i`; a strategy profile is a term of `∀ i, S i`. -/
 structure StrategicGame (ι : Type*) (S : ι → Type*) where
   /-- `payoff i σ` is player `i`'s payoff at the strategy profile `σ`. -/
   payoff : ι → (∀ i, S i) → ℝ
+  /-- Every player has at least one strategy (Osborne-Rubinstein Def. 11.1). -/
+  strategy_nonempty : ∀ i, Nonempty (S i)
 
 namespace StrategicGame
 
