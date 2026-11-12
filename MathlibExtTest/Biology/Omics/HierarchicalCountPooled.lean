@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Omics.HierarchicalCountPooled
+public import Mathlib.Probability.Independence.InfinitePi
 
 @[expose] public section
 
@@ -63,16 +64,6 @@ example : ∑ k ∈ piAntidiag univ 0, pooledMarginalLik 2 2 (![1, 1] : Fin 2 �
   norm_num [negBinomialReal, Fin.sum_univ_two, show (2 : ℝ) = (2 : ℕ) by norm_num,
     Real.rpow_natCast]
 
-/-- The law of the pooled count in the hypothesis of `ae_tendsto_pooledEB` is a probability
-mass function: it sums to `1` over `K`. -/
-example {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
-    HasSum (fun K => ∑ k ∈ piAntidiag univ K, pooledMarginalLik a b (![1, 2] : Fin 2 → ℝ) k)
-      1 := by
-  have hs : ∀ j, 0 < (![1, 2] : Fin 2 → ℝ) j := fun j => by fin_cases j <;> norm_num
-  simp only [sum_pooledMarginalLik ha hb hs]
-  exact hasSum_negBinomialReal ha
-    (div_nonneg (mul_nonneg (sum_nonneg fun j _ => (hs j).le) ha.le) hb.le)
-
 /-- Pooling more exposure gives strictly less shrinkage: `1 / 2 < 2 / 3`. -/
 example : shrinkageWeight 1 1 < shrinkageWeight 1 2 ∧ shrinkageWeight 1 1 = 1 / 2 ∧
     shrinkageWeight 1 2 = 2 / 3 := by
@@ -101,5 +92,41 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbability
     (fun j => IdentDistrib.refl aemeasurable_const) (by simp)
   filter_upwards [h] with ω hω
   exact hω.1
+
+/-- `ae_tendsto_pooledEB` applies to a concrete sequence: the coordinates of the infinite
+product of the pooled-count law (two cells, size factors `1, 2`) are i.i.d. with that law, so
+almost surely the empirical-Bayes posterior mean from their pooled counts tends to the oracle
+pooled posterior mean `(a + K) / (b + 3)`. -/
+example {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    ∃ μ : Measure (ℕ → ℕ), IsProbabilityMeasure μ ∧ ∀ᵐ ω ∂μ, ∀ K : ℕ,
+      Tendsto (fun n => ebPosteriorMean (∑ j, (![1, 2] : Fin 2 → ℝ) j)
+        (sampleMean (fun i ω => ((ω i : ℕ) : ℝ)) n ω) (sampleVar (fun i ω => ((ω i : ℕ) : ℝ)) n ω)
+        K) atTop (𝓝 (posteriorMean a b (∑ j, (![1, 2] : Fin 2 → ℝ) j) K)) := by
+  have hs : ∀ j, 0 < (![1, 2] : Fin 2 → ℝ) j := fun j => by fin_cases j <;> norm_num
+  have hm : 0 ≤ (∑ j, (![1, 2] : Fin 2 → ℝ) j) * a / b :=
+    div_nonneg (mul_nonneg (sum_nonneg fun j _ => (hs j).le) ha.le) hb.le
+  set p : ℕ → ℝ := fun K => ∑ k ∈ piAntidiag univ K, pooledMarginalLik a b ![1, 2] k
+  have hpNB : p = negBinomialReal a ((∑ j, (![1, 2] : Fin 2 → ℝ) j) * a / b) :=
+    funext fun K => sum_pooledMarginalLik ha hb hs K
+  have hp : HasSum p 1 := hpNB ▸ hasSum_negBinomialReal ha hm
+  have hp0 : ∀ K, 0 ≤ p K := fun K => hpNB ▸ negBinomialReal_nonneg ha hm K
+  let ν : Measure ℕ := Measure.sum fun K => ENNReal.ofReal (p K) • Measure.dirac K
+  have hν : ∀ K, ν {K} = ENNReal.ofReal (p K) := fun K => Measure.sum_smul_dirac_singleton
+  have : IsProbabilityMeasure ν := ⟨by
+    rw [Measure.sum_apply _ MeasurableSet.univ]
+    simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+    rw [← ENNReal.ofReal_tsum_of_nonneg hp0 hp.summable, hp.tsum_eq, ENNReal.ofReal_one]⟩
+  refine ⟨Measure.infinitePi fun _ : ℕ => ν, inferInstance, ?_⟩
+  have hind := iIndepFun_infinitePi (P := fun _ : ℕ => ν) (X := fun _ => id)
+    (fun _ => measurable_id)
+  have h := ae_tendsto_pooledEB (N := fun i (ω : ℕ → ℕ) => ω i) ha hb hs (measurable_pi_apply 0)
+    (fun i j hij => hind.indepFun hij)
+    (fun i => ⟨(measurable_pi_apply i).aemeasurable, (measurable_pi_apply 0).aemeasurable, by
+      rw [Measure.infinitePi_map_eval, Measure.infinitePi_map_eval]⟩)
+    (fun K => by
+      rw [← map_measureReal_apply (measurable_pi_apply 0) (measurableSet_singleton K),
+        Measure.infinitePi_map_eval, measureReal_def, hν, ENNReal.toReal_ofReal (hp0 K)])
+  filter_upwards [h] with ω hω
+  exact hω.2.2
 
 end MathlibExtTest.Biology.Omics.HierarchicalCountPooled

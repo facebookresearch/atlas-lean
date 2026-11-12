@@ -35,8 +35,8 @@ the total count `K = ∑ⱼ kⱼ` and the total exposure `S = ∑ⱼ sⱼ`.
   `Gamma(a + ∑ⱼ kⱼ, b + ∑ⱼ sⱼ)`, the one-cell posterior at count `K` and exposure `S`.
 * `integral_id_pooledPosterior`, `variance_pooledPosterior`, `pooledPosteriorMean_eq_shrinkage`:
   posterior mean `(a + K) / (b + S)`, variance `(a + K) / (b + S)²`, and the shrinkage form with
-  weight `S / (b + S)` on the pooled rate `K / S`; `shrinkageWeight_mono` (more exposure, less
-  shrinkage).
+  weight `S / (b + S)` on the pooled rate `K / S`; `shrinkageWeight_strictMonoOn` (more exposure,
+  less shrinkage).
 * `sum_pooledMarginalLik`: the pooled count `K` has law `NB(a, S a / b)`.
 * `tendsto_posteriorMean_of_tendsto`, `ae_tendsto_pooledPosterior`: **posterior consistency.**
   As the pooled exposure grows and `K / S → r₀`, the posterior mean tends to `r₀` and the
@@ -144,7 +144,6 @@ theorem pooledPosterior_eq_gammaPDFReal {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s
     exact posterior_eq_gammaPDFReal ha hb (sum_pos (fun j _ => hs j) univ_nonempty) _ r
   · exact div_pos (hs j) (sum_pos (fun i _ => hs i) ⟨j, mem_univ j⟩)
 
-
 /-- The pooled posterior `Gamma(a + K, b + S)` has mean
 `posteriorMean a b S K = (a + K) / (b + S)`, the one-cell posterior mean at the pooled count and
 exposure. -/
@@ -173,7 +172,7 @@ theorem pooledPosteriorMean_eq_shrinkage [Nonempty ι] {a b : ℝ} (hb : 0 < b) 
 
 /-- **More exposure, less shrinkage.** For a prior rate `b > 0` the shrinkage weight
 `S / (b + S)` is strictly increasing in the pooled exposure `S ≥ 0`, so pooling an extra cell
-moves the posterior mean toward the pooled data. -/
+puts more weight on the pooled rate `K / S`. -/
 theorem shrinkageWeight_strictMonoOn {b : ℝ} (hb : 0 < b) :
     StrictMonoOn (shrinkageWeight b) (Set.Ici 0) := by
   intro S (hS : 0 ≤ S) S' (hS' : 0 ≤ S') hlt
@@ -281,7 +280,9 @@ independent and identically distributed, and `N₀` has the law of the pooled co
 computed from the pooled counts of the first `n` units at the total exposure `S = ∑ⱼ sⱼ`
 converge to `(a, b)`, and for every pooled count `K` the empirical-Bayes posterior mean
 converges to the oracle pooled posterior mean `(a + K) / (b + S)`. The moment hypotheses of
-`HierarchicalCount.ae_tendsto_mom` are derived from the law via `sum_pooledMarginalLik`. -/
+`HierarchicalCount.ae_tendsto_mom` are derived from the law via `sum_pooledMarginalLik`.
+The Gamma-then-Poisson hierarchy is not constructed as a measure here: only the law of `N₀`
+(and the pairwise independence and identical distribution of the `Nᵢ`) is assumed. -/
 theorem ae_tendsto_pooledEB [Nonempty ι] [DecidableEq ι] {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsProbabilityMeasure μ] {N : ℕ → Ω → ℕ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     {s : ι → ℝ} (hs : ∀ j, 0 < s j) (hmeas : Measurable (N 0))
