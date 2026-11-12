@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.H08LandscapeEvolution
+import PhyslibExt.EarthScience.LandscapeEvolution
 
 /-!
 # Steady hillslope profile checks
 
-Concrete consumers of `PhyslibExt.EarthScience.H08LandscapeEvolution`:
+Concrete consumers of `PhyslibExt.EarthScience.LandscapeEvolution`:
 `U = 2, D = 1, L = 3` (so `z(x) = 9 - x ^ 2`, `z'(x) = -2 * x`,
 `z'' = -2`), the no-uplift boundary `U = 0`, and a second
 non-vacuous profile `U = 1, D = 2, L = 4`.
@@ -32,17 +32,17 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.H08LandscapeEvolution`
+- `PhyslibExt.EarthScience.LandscapeEvolution`
 -/
 
 /-- Numeric profile boundary: `z(3) = z(-3) = 0`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (3 : ℝ) ^ 2) / (2 * 1) = 0 ∧
     (2 : ℝ) * ((3 : ℝ) ^ 2 - (-(3 : ℝ)) ^ 2) / (2 * 1) = 0 :=
-  EarthScience.h08_profile_boundary (by norm_num) (by norm_num) (by norm_num)
+  EarthScience.profile_boundary (by norm_num) (by norm_num) (by norm_num)
 
 /-- Numeric profile at `x = 0`: `z(0) = 9`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 1) = 9 :=
-  EarthScience.h08_profile_witness
+  EarthScience.profile_witness
 
 /-- Numeric profile at `x = 1`: `z(1) = 8`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (1 : ℝ) ^ 2) / (2 * 1) = 8 := by norm_num
@@ -50,18 +50,18 @@ example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (1 : ℝ) ^ 2) / (2 * 1) = 8 := by norm_n
 /-- Numeric profile derivative at `x = 1`: `z'(1) = -2`. -/
 example :
     HasDerivAt (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) (-(2 : ℝ) * 1 / 1) 1 :=
-  EarthScience.h08_profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
+  EarthScience.profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
 
 /-- Numeric profile steadiness: `z'' = -2` and `U + D * z'' = 0`, for the actual profile. -/
 example :
     iteratedDeriv 2 (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) 1 = -(2 : ℝ) / 1 ∧
       (2 : ℝ) + 1 * iteratedDeriv 2 (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) 1 = 0 :=
-  EarthScience.h08_profile_steady (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
+  EarthScience.profile_steady (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
 
 /-- No uplift: the zero profile has derivative `0`. -/
 example (x : ℝ) :
     HasDerivAt (fun x => (0 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) (-(0 : ℝ) * x / 1) x :=
-  EarthScience.h08_profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) x
+  EarthScience.profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) x
 
 /-- Second profile `U = 1, D = 2, L = 4`: `z(0) = 4`, `z(4) = 0`. -/
 example : (1 : ℝ) * ((4 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 2) = 4 ∧

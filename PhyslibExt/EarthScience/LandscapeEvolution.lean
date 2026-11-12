@@ -13,7 +13,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 
 /-!
-# Steady diffusive hillslope profile (H08)
+# Steady diffusive hillslope profile
 
 ## i. Overview
 
@@ -27,10 +27,10 @@ no claim about real landscapes is made.
 
 ## ii. Key results
 
-- `EarthScience.h08_profile_boundary`: the profile meets `z(±L) = 0`.
-- `EarthScience.h08_profile_hasDerivAt`: `z'(x) = -U * x / D`.
-- `EarthScience.h08_profile_steady`: `z''(x) = -U / D` and `U + D * z'' = 0`.
-- `EarthScience.h08_profile_witness`: `U = 2, D = 1, L = 3` gives `z(0) = 9`.
+- `EarthScience.profile_boundary`: the profile meets `z(±L) = 0`.
+- `EarthScience.profile_hasDerivAt`: `z'(x) = -U * x / D`.
+- `EarthScience.profile_steady`: `z''(x) = -U / D` and `U + D * z'' = 0`.
+- `EarthScience.profile_witness`: `U = 2, D = 1, L = 3` gives `z(0) = 9`.
 
 ## iii. Table of contents
 
@@ -48,7 +48,7 @@ namespace EarthScience
 
 set_option linter.unusedVariables false in
 /-- Steady diffusive hillslope profile: `z(x) = U*(L^2 - x^2)/(2*D)`. -/
-theorem h08_profile_boundary {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) :
+theorem profile_boundary {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) :
     (U * (L ^ 2 - L ^ 2) / (2 * D) = 0) ∧
     (U * (L ^ 2 - (-L) ^ 2) / (2 * D) = 0) := by
   constructor
@@ -61,7 +61,7 @@ theorem h08_profile_boundary {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤
 
 set_option linter.unusedVariables false in
 /-- The profile has derivative `-U*x/D` at every `x`. -/
-theorem h08_profile_hasDerivAt {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
+theorem profile_hasDerivAt {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
     HasDerivAt (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) (-U * x / D) x := by
   have hD' : D ≠ 0 := ne_of_gt hD
   have hpow : HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x := by
@@ -82,12 +82,12 @@ theorem h08_profile_hasDerivAt {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 �
 set_option linter.unusedVariables false in
 /-- The actual profile has second derivative `-U/D` at every `x`, so
 `U + D * z''(x) = 0`: the profile is steady for `z_t = U + D*z_xx`. -/
-theorem h08_profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
+theorem profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U) (x : ℝ) :
     iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = -U / D ∧
       U + D * iteratedDeriv 2 (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) x = 0 := by
   have hD' : D ≠ 0 := ne_of_gt hD
   have hderiv : deriv (fun x => U * (L ^ 2 - x ^ 2) / (2 * D)) = fun x => -U * x / D :=
-    funext (fun y => (h08_profile_hasDerivAt hD hL hU y).deriv)
+    funext (fun y => (profile_hasDerivAt hD hL hU y).deriv)
   have h1 : HasDerivAt (fun x : ℝ => x) 1 x := hasDerivAt_id x
   have h2 : HasDerivAt (fun y : ℝ => -U * y) (-U * 1) x :=
     HasDerivAt.const_mul (-U) h1
@@ -105,7 +105,7 @@ theorem h08_profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0 ≤ U
   ring
 
 /-- Non-vacuous witness: `U = 2, D = 1, L = 3` gives `z(0) = 9`. -/
-theorem h08_profile_witness :
+theorem profile_witness :
     (2 : ℝ) * ((3 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 1) = 9 := by
   norm_num
 
