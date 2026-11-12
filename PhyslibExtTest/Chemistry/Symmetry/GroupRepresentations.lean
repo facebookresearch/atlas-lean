@@ -20,6 +20,7 @@ public import PhyslibExt.Chemistry.Symmetry.GroupRepresentations
 namespace Chemistry.Symmetry.GroupRepresentationsTest
 
 open Chemistry.Symmetry Module Representation ComplexConjugate Matrix TensorProduct
+open CharacterTheory
 
 /-! ### Character orthogonality on `Ci` (explicit sums and the general theorem) -/
 
@@ -54,7 +55,7 @@ lemma not_nonempty_equiv_inversionAu_inversionAg : ¬ Nonempty (inversionAu.Equi
   exact character_inversionAu_ne_inversionAg.symm
 
 example (g : ℤˣ) : inversionAu.character g⁻¹ = conj (inversionAu.character g) :=
-  character_inv_eq_conj inversionAu g
+  CharacterTheory.char_inv_eq_conj inversionAu g
 
 /-! ### Reduction formula on concrete representations -/
 
@@ -85,6 +86,18 @@ example : irrepMultiplicity inversionAu (inversionAu.prod inversionAg) = 1 := by
   rw [irrepMultiplicity_prod, irrepMultiplicity_of_isIrreducible,
     irrepMultiplicity_of_isIrreducible, ite_eq_left ⟨Representation.Equiv.refl _⟩,
     ite_eq_right not_nonempty_equiv_inversionAu_inversionAg]
+
+/-- The Codex counterexample, as a regression test: the reducible representation
+`inversionAu.prod inversionAg` has intertwining rank `3` with the vector representation
+(`3 · Au`), even though it does not occur in it. The unrestricted rank is therefore not a
+multiplicity, and `irrepMultiplicity` requires `IsIrreducible σ` (so this `σ` cannot be
+passed to it or to `IsIRActive`/`IsRamanActive`). -/
+example : intertwiningRank (inversionAu.prod inversionAg)
+    (vectorRepresentation inversionAction) = 3 := by
+  rw [intertwiningRank_prod_left]
+  change irrepMultiplicity inversionAu (vectorRepresentation inversionAction) +
+      irrepMultiplicity inversionAg (vectorRepresentation inversionAction) = 3
+  rw [inversion_vector_decomposition.2, inversion_vector_decomposition.1]
 
 example :
     irrepMultiplicity inversionAg (vectorRepresentation inversionAction) * finrank ℂ ℂ +

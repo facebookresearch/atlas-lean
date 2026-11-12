@@ -10,10 +10,11 @@ module
 public import Mathlib.Analysis.Complex.Polynomial.Basic
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Mathlib.LinearAlgebra.CrossProduct
-public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.LinearAlgebra.UnitaryGroup
 public import Mathlib.RepresentationTheory.Character
 public import Mathlib.RingTheory.SimpleModule.Rank
+public import MathlibExt.RepresentationTheory.CharacterInnerProduct
 
 /-!
 
@@ -24,13 +25,11 @@ Point-group characters, vibrational mode counting, vanishing integrals and IR/Ra
 ## i. Overview
 
 A point group is modelled as a finite group `G`; its representations are finite-dimensional
-complex representations `ρ : Representation ℂ G V`. Mathlib states character orthogonality and
-the dimension formula for intertwining maps with the normalisation
-`(Nat.card G)⁻¹ * ∑ g, χ g * ψ g⁻¹`. We prove `χ g⁻¹ = conj (χ g)` for every finite-dimensional
-complex representation of a finite group (the unitary trick) and restate these results with
-the chemistry normalisation `charInner χ ψ = (Nat.card G)⁻¹ * ∑ g, χ g * conj (ψ g)`. The
-multiplicity of an irreducible `σ` in `ρ` is the natural number
-`finrank ℂ (IntertwiningMap σ ρ)`.
+complex representations `ρ : Representation ℂ G V`. The generic finite-group character theory
+used here (character inner product, irrep multiplicities, group averaging, great
+orthogonality) lives in `MathlibExt/RepresentationTheory/CharacterInnerProduct.lean`
+(`CharacterTheory`); in particular `irrepMultiplicity σ ρ` there requires `σ` irreducible,
+and the unrestricted intertwining-space rank is `intertwiningRank σ ρ`.
 
 For `N` point masses at positions `x : Fin N → Fin 3 → ℝ` the internal-mode space is the
 quotient of the Cartesian displacement space `Fin N → Fin 3 → ℝ` (dimension `3 * N`) by the
@@ -56,15 +55,6 @@ IR-inactive.
 
 ## ii. Key results
 
-- `Chemistry.Symmetry.character_inv_eq_conj` : `χ g⁻¹ = conj (χ g)`.
-- `Chemistry.Symmetry.charInner_character_eq_ite` : irreducible characters are orthonormal.
-- `Chemistry.Symmetry.irrepMultiplicity_eq_charInner` : the reduction formula.
-- `Chemistry.Symmetry.sum_comp_comp_inv_eq_zero_of_not_nonempty_equiv` and
-  `Chemistry.Symmetry.groupAverage_comp_comp_inv_eq_trace_smul` : great orthogonality.
-- `Chemistry.Symmetry.isProj_groupAverage` : group averaging projects onto the invariants.
-- `Chemistry.Symmetry.groupAverage_eq_zero_of_charInner_trivial_eq_zero`,
-  `Chemistry.Symmetry.invariant_linearForm_eq_zero` and
-  `Chemistry.Symmetry.groupAverage_tprod_tmul_eq_zero` : the vanishing-integral rule.
 - `Chemistry.Symmetry.finrank_internalModeSpace_of_not_collinear` (`3 * N - 6`) and
   `Chemistry.Symmetry.finrank_internalModeSpace_of_collinear` (`3 * N - 5`).
 - `Chemistry.Symmetry.internalModeRepresentation` : the internal-mode representation, the
@@ -75,10 +65,6 @@ IR-inactive.
 
 ## iii. Table of contents
 
-- A. Characters and the conjugation bridge
-- B. Orthogonality relations and the reduction formula
-- C. Group averaging and the vanishing-integral rule
-- D. Great orthogonality
 - E. Vibrational mode counting
   - E.1. Translations, rotations and the internal-mode space
   - E.2. The point-group action and the internal-mode representation
@@ -102,397 +88,7 @@ namespace Chemistry.Symmetry
 
 open Module Representation ComplexConjugate Matrix
 
-/-!
-
-## A. Characters and the conjugation bridge
-
--/
-
-/-- The character inner product `⟨χ, ψ⟩ = |G|⁻¹ * ∑ g, χ g * conj (ψ g)` of complex class
-functions on a finite group, with `|G| = Nat.card G`. -/
-def charInner {G : Type*} [Fintype G] (χ ψ : G → ℂ) : ℂ :=
-  (Nat.card G : ℂ)⁻¹ * ∑ g, χ g * conj (ψ g)
-
-open scoped ComplexOrder in
-/-- For a finite-dimensional complex representation of a finite group, `χ g⁻¹ = conj (χ g)`.
-The proof averages `Aᴴ * A` over the group to obtain an invariant positive definite matrix
-`P`, so that `(A g)ᴴ * P = P * A g⁻¹`. -/
-lemma character_inv_eq_conj {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) (g : G) :
-    ρ.character g⁻¹ = conj (ρ.character g) := by
-  classical
-  let b := Module.finBasis ℂ V
-  let A : G → Matrix (Fin (finrank ℂ V)) (Fin (finrank ℂ V)) ℂ :=
-    fun h => LinearMap.toMatrix b b (ρ h)
-  have hA : ∀ h k, A (h * k) = A h * A k := fun h k => by
-    simp only [A, map_mul, LinearMap.toMatrix_mul]
-  have hA1 : A 1 = 1 := by simp only [A, map_one, LinearMap.toMatrix_one]
-  let P := ∑ h, (A h)ᴴ * A h
-  have hP : (A g)ᴴ * P * A g = P := by
-    simp only [P, Finset.mul_sum, Finset.sum_mul]
-    refine Fintype.sum_equiv (Equiv.mulRight g) _ _ fun h => ?_
-    simp only [Equiv.coe_mulRight, hA, conjTranspose_mul, Matrix.mul_assoc]
-  have hPpos : P.PosDef := by
-    have hsplit : P = 1 + ∑ h ∈ Finset.univ.erase 1, (A h)ᴴ * A h := by
-      change ∑ h, (A h)ᴴ * A h = _
-      rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (1 : G)), hA1, conjTranspose_one,
-        Matrix.mul_one]
-    rw [hsplit]
-    exact PosDef.one.add_posSemidef
-      (posSemidef_sum _ fun h _ => posSemidef_conjTranspose_mul_self (A h))
-  have hPu : IsUnit P.det := (isUnit_iff_isUnit_det P).mp hPpos.isUnit
-  have key : (A g)ᴴ * P = P * A g⁻¹ := by
-    calc (A g)ᴴ * P = (A g)ᴴ * P * (A g * A g⁻¹) := by
-          rw [← hA, mul_inv_cancel, hA1, Matrix.mul_one]
-      _ = P * A g⁻¹ := by rw [← Matrix.mul_assoc, hP]
-  calc ρ.character g⁻¹ = (A g⁻¹).trace := LinearMap.trace_eq_matrix_trace ℂ b _
-    _ = (P⁻¹ * (P * A g⁻¹)).trace := by
-      rw [← Matrix.mul_assoc, nonsing_inv_mul P hPu, Matrix.one_mul]
-    _ = (P⁻¹ * ((A g)ᴴ * P)).trace := by rw [key]
-    _ = ((A g)ᴴ * P * P⁻¹).trace := by rw [Matrix.trace_mul_comm]
-    _ = ((A g)ᴴ).trace := by rw [Matrix.mul_assoc, mul_nonsing_inv P hPu, Matrix.mul_one]
-    _ = star (A g).trace := trace_conjTranspose _
-    _ = conj (ρ.character g) := by rw [character, LinearMap.trace_eq_matrix_trace ℂ b]; rfl
-
-/-- Bridge between `charInner` and Mathlib's normalisation `∑ g, χ g * ψ g⁻¹`. -/
-lemma charInner_character_eq_sum_inv {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (ρ : Representation ℂ G V) (σ : Representation ℂ G W) :
-    charInner ρ.character σ.character =
-      (Nat.card G : ℂ)⁻¹ * ∑ g, ρ.character g * σ.character g⁻¹ := by
-  simp only [charInner, character_inv_eq_conj]
-
-/-!
-
-## B. Orthogonality relations and the reduction formula
-
--/
-
-/-- The multiplicity of a representation `σ` (in applications an irreducible one) in `ρ`
-(note the order: `σ` occurs in `ρ`), defined as the natural number
-`finrank ℂ (IntertwiningMap σ ρ)`. For a finite group, finite-dimensional representations and
-irreducible `σ`, this counts the copies of `σ` in a decomposition of `ρ` into irreducibles
-(`irrepMultiplicity_of_isIrreducible`, `irrepMultiplicity_prod`, `irrepMultiplicity_congr`). -/
-def irrepMultiplicity {G V W : Type*} [Group G] [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
-    [Module ℂ W] (σ : Representation ℂ G W) (ρ : Representation ℂ G V) : ℕ :=
-  finrank ℂ (IntertwiningMap σ ρ)
-
-/-- **Reduction formula**: the multiplicity of `σ` in `ρ` is
-`|G|⁻¹ * ∑ g, χ_ρ g * conj (χ_σ g)`. -/
-theorem irrepMultiplicity_eq_charInner {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (σ : Representation ℂ G W) (ρ : Representation ℂ G V) :
-    (irrepMultiplicity σ ρ : ℂ) = charInner ρ.character σ.character := by
-  have : Invertible (Nat.card G : ℂ) :=
-    invertibleOfNonzero (Nat.cast_ne_zero.mpr Nat.card_pos.ne')
-  rw [charInner_character_eq_sum_inv, card_inv_mul_sum_char_mul_char_eq_finrank σ ρ]
-  rfl
-
-open scoped Classical in
-/-- **Orthogonality of irreducible characters** in the `conj` normalisation, transported from
-Mathlib's `Representation.char_orthonormal`. -/
-theorem charInner_character_eq_ite_nonempty_equiv {G V W : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W]
-    [FiniteDimensional ℂ W] (ρ : Representation ℂ G V) (σ : Representation ℂ G W)
-    [IsIrreducible ρ] [IsIrreducible σ] :
-    charInner ρ.character σ.character = if Nonempty (σ.Equiv ρ) then 1 else 0 := by
-  have : Invertible (Nat.card G : ℂ) :=
-    invertibleOfNonzero (Nat.cast_ne_zero.mpr Nat.card_pos.ne')
-  rw [charInner_character_eq_sum_inv, char_orthonormal ρ σ]
-
-/-- An irreducible character has norm one: `⟨χ, χ⟩ = 1`. -/
-lemma charInner_character_self {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) [IsIrreducible ρ] :
-    charInner ρ.character ρ.character = 1 := by
-  classical
-  rw [charInner_character_eq_ite_nonempty_equiv, ite_eq_left ⟨Representation.Equiv.refl ρ⟩]
-
-/-- Distinct irreducible characters are orthogonal. -/
-lemma charInner_character_eq_zero_of_ne {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (ρ : Representation ℂ G V) (σ : Representation ℂ G W) [IsIrreducible ρ] [IsIrreducible σ]
-    (h : ρ.character ≠ σ.character) : charInner ρ.character σ.character = 0 := by
-  classical
-  rw [charInner_character_eq_ite_nonempty_equiv, ite_eq_right]
-  rintro ⟨φ⟩
-  exact h (char_iso φ).symm
-
-open scoped Classical in
-/-- **Character orthogonality**: for irreducible `ρ` and `σ`,
-`|G|⁻¹ * ∑ g, χ_ρ g * conj (χ_σ g)` is `1` if the characters are equal and `0` otherwise. -/
-theorem charInner_character_eq_ite {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (ρ : Representation ℂ G V) (σ : Representation ℂ G W) [IsIrreducible ρ] [IsIrreducible σ] :
-    charInner ρ.character σ.character = if ρ.character = σ.character then 1 else 0 := by
-  split_ifs with h
-  · rw [h]
-    exact charInner_character_self σ
-  · exact charInner_character_eq_zero_of_ne ρ σ h
-
-/-- Irreducible representations are isomorphic iff their characters are equal. -/
-lemma nonempty_equiv_iff_character_eq {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (ρ : Representation ℂ G V) (σ : Representation ℂ G W) [IsIrreducible ρ] [IsIrreducible σ] :
-    Nonempty (σ.Equiv ρ) ↔ ρ.character = σ.character := by
-  classical
-  refine ⟨fun ⟨φ⟩ => (char_iso φ).symm, fun h => ?_⟩
-  by_contra hne
-  have h1 := charInner_character_eq_ite_nonempty_equiv ρ σ
-  rw [ite_eq_right hne, h, charInner_character_self] at h1
-  exact one_ne_zero h1
-
-open scoped Classical in
-/-- Schur's lemma as a count: an irreducible `τ` contains an irreducible `σ` once if they are
-isomorphic and zero times otherwise. -/
-lemma irrepMultiplicity_of_isIrreducible {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (σ : Representation ℂ G W) (τ : Representation ℂ G V) [IsIrreducible σ] [IsIrreducible τ] :
-    irrepMultiplicity σ τ = if Nonempty (σ.Equiv τ) then 1 else 0 := by
-  have h := irrepMultiplicity_eq_charInner σ τ
-  rw [charInner_character_eq_ite_nonempty_equiv τ σ] at h
-  split_ifs at h ⊢ <;> exact_mod_cast h
-
-/-- Multiplicities only depend on the isomorphism class of the ambient representation. -/
-lemma irrepMultiplicity_congr {G V V' W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup V'] [Module ℂ V'] [FiniteDimensional ℂ V']
-    [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (σ : Representation ℂ G W)
-    {ρ : Representation ℂ G V} {ρ' : Representation ℂ G V'} (φ : ρ.Equiv ρ') :
-    irrepMultiplicity σ ρ = irrepMultiplicity σ ρ' := by
-  apply Nat.cast_injective (R := ℂ)
-  simp only [irrepMultiplicity_eq_charInner, char_iso φ]
-
-/-- The character of a direct sum is the sum of the characters. -/
-lemma character_prod {G V₁ V₂ : Type*} [Group G] [AddCommGroup V₁] [Module ℂ V₁]
-    [FiniteDimensional ℂ V₁] [AddCommGroup V₂] [Module ℂ V₂] [FiniteDimensional ℂ V₂]
-    (ρ₁ : Representation ℂ G V₁) (ρ₂ : Representation ℂ G V₂) (g : G) :
-    (ρ₁.prod ρ₂).character g = ρ₁.character g + ρ₂.character g :=
-  LinearMap.trace_prodMap' (ρ₁ g) (ρ₂ g)
-
-/-- Multiplicities are additive over direct sums. -/
-lemma irrepMultiplicity_prod {G V₁ V₂ W : Type*} [Group G] [Fintype G] [AddCommGroup V₁]
-    [Module ℂ V₁] [FiniteDimensional ℂ V₁] [AddCommGroup V₂] [Module ℂ V₂] [FiniteDimensional ℂ V₂]
-    [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (σ : Representation ℂ G W)
-    (ρ₁ : Representation ℂ G V₁) (ρ₂ : Representation ℂ G V₂) :
-    irrepMultiplicity σ (ρ₁.prod ρ₂) = irrepMultiplicity σ ρ₁ + irrepMultiplicity σ ρ₂ := by
-  apply Nat.cast_injective (R := ℂ)
-  push_cast
-  simp only [irrepMultiplicity_eq_charInner, charInner, character_prod, add_mul,
-    Finset.sum_add_distrib, mul_add]
-
-/-- A representation on a one-dimensional space is irreducible. -/
-lemma isIrreducible_of_finrank_eq_one {G V : Type*} [Group G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) (h : finrank ℂ V = 1) : IsIrreducible ρ := by
-  have : IsSimpleModule ℂ V := isSimpleModule_iff_finrank_eq_one.mpr h
-  exact
-    { exists_pair_ne := ⟨⊥, ⊤, fun hbt =>
-        (bot_ne_top : (⊥ : Submodule ℂ V) ≠ ⊤) (congrArg Subrepresentation.toSubmodule hbt)⟩
-      eq_bot_or_eq_top := fun W => (eq_bot_or_eq_top W.toSubmodule).imp
-        (fun hW => Subrepresentation.toSubmodule_injective hW)
-        (fun hW => Subrepresentation.toSubmodule_injective hW) }
-
-/-!
-
-## C. Group averaging and the vanishing-integral rule
-
--/
-
-/-- The group average `|G|⁻¹ • ∑ g, ρ g` of a representation of a finite group. -/
-def groupAverage {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) : V →ₗ[ℂ] V :=
-  (Nat.card G : ℂ)⁻¹ • ∑ g, ρ g
-
-lemma groupAverage_apply {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) (v : V) :
-    groupAverage ρ v = (Nat.card G : ℂ)⁻¹ • ∑ g, ρ g v := by
-  simp [groupAverage, LinearMap.sum_apply]
-
-/-- `groupAverage` agrees with Mathlib's `Representation.averageMap`. -/
-lemma groupAverage_eq_averageMap {G V : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] (ρ : Representation ℂ G V) [Invertible (Fintype.card G : ℂ)] :
-    groupAverage ρ = averageMap ρ := by
-  ext v
-  simp [groupAverage_apply, averageMap, GroupAlgebra.average, map_sum, Nat.card_eq_fintype_card]
-
-/-- The group average is the projection onto the invariant (totally symmetric) subspace. -/
-lemma isProj_groupAverage {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) : LinearMap.IsProj ρ.invariants (groupAverage ρ) := by
-  have : Invertible (Fintype.card G : ℂ) :=
-    invertibleOfNonzero (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
-  rw [groupAverage_eq_averageMap]
-  exact isProj_averageMap ρ
-
-lemma groupAverage_apply_mem_invariants {G V : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] (ρ : Representation ℂ G V) (v : V) : groupAverage ρ v ∈ ρ.invariants :=
-  (isProj_groupAverage ρ).map_mem v
-
-lemma groupAverage_apply_of_mem_invariants {G V : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] (ρ : Representation ℂ G V) (v : V) (hv : v ∈ ρ.invariants) :
-    groupAverage ρ v = v :=
-  (isProj_groupAverage ρ).map_id v hv
-
-lemma range_groupAverage {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) : LinearMap.range (groupAverage ρ) = ρ.invariants :=
-  (isProj_groupAverage ρ).range
-
-lemma groupAverage_mul_self {G V : Type*} [Group G] [Fintype G] [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) : groupAverage ρ * groupAverage ρ = groupAverage ρ :=
-  (isProj_groupAverage ρ).isIdempotentElem
-
-/-- The trivial (totally symmetric) character is the constant function `1`. -/
-lemma character_trivial {G : Type*} [Group G] (g : G) :
-    (trivial ℂ G ℂ).character g = 1 := by
-  rw [character, show trivial ℂ G ℂ g = 1 from rfl, LinearMap.trace_one, finrank_self,
-    Nat.cast_one]
-
-/-- The dimension of the invariant subspace is `⟨χ, χ_trivial⟩`. -/
-lemma finrank_invariants_eq_charInner_trivial {G V : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) :
-    (finrank ℂ ρ.invariants : ℂ) = charInner ρ.character (trivial ℂ G ℂ).character := by
-  have : Invertible (Nat.card G : ℂ) :=
-    invertibleOfNonzero (Nat.cast_ne_zero.mpr Nat.card_pos.ne')
-  rw [← card_inv_mul_sum_char_eq_finrank ρ]
-  simp [charInner, character_trivial]
-
-lemma irrepMultiplicity_trivial_eq_finrank_invariants {G V : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) :
-    irrepMultiplicity (trivial ℂ G ℂ) ρ = finrank ℂ ρ.invariants := by
-  exact_mod_cast (irrepMultiplicity_eq_charInner _ ρ).trans
-    (finrank_invariants_eq_charInner_trivial ρ).symm
-
-/-- The trivial representation does not occur iff `⟨χ, χ_trivial⟩ = 0`. -/
-lemma irrepMultiplicity_trivial_eq_zero_iff {G V : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) :
-    irrepMultiplicity (trivial ℂ G ℂ) ρ = 0 ↔
-      charInner ρ.character (trivial ℂ G ℂ).character = 0 := by
-  rw [← irrepMultiplicity_eq_charInner, Nat.cast_eq_zero]
-
-lemma invariants_eq_bot_of_charInner_trivial_eq_zero {G V : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
-    (h : charInner ρ.character (trivial ℂ G ℂ).character = 0) : ρ.invariants = ⊥ := by
-  rw [← finrank_invariants_eq_charInner_trivial, Nat.cast_eq_zero] at h
-  exact Submodule.finrank_eq_zero.mp h
-
-/-- **Vanishing rule**: if `⟨χ, χ_trivial⟩ = 0`, the group average is zero. -/
-theorem groupAverage_eq_zero_of_charInner_trivial_eq_zero {G V : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
-    (h : charInner ρ.character (trivial ℂ G ℂ).character = 0) : groupAverage ρ = 0 :=
-  (isProj_groupAverage ρ).submodule_eq_bot_iff.mp
-    (invariants_eq_bot_of_charInner_trivial_eq_zero ρ h)
-
-lemma groupAverage_eq_zero_of_irrepMultiplicity_trivial_eq_zero {G V : Type*} [Group G]
-    [Fintype G] [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
-    (h : irrepMultiplicity (trivial ℂ G ℂ) ρ = 0) : groupAverage ρ = 0 :=
-  groupAverage_eq_zero_of_charInner_trivial_eq_zero ρ
-    ((irrepMultiplicity_trivial_eq_zero_iff ρ).mp h)
-
-/-- A `G`-invariant linear form factors through the group average. -/
-lemma linearForm_comp_groupAverage {G V : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] (ρ : Representation ℂ G V) (ℓ : V →ₗ[ℂ] ℂ) (hℓ : ∀ g, ℓ ∘ₗ ρ g = ℓ) :
-    ℓ ∘ₗ groupAverage ρ = ℓ := by
-  ext v
-  have hcard : (Nat.card G : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Nat.card_pos.ne'
-  have hg : ∀ g, ℓ (ρ g v) = ℓ v := fun g => LinearMap.congr_fun (hℓ g) v
-  simp only [LinearMap.coe_comp, Function.comp_apply, groupAverage_apply, map_smul, map_sum, hg,
-    Finset.sum_const, Finset.card_univ, smul_eq_mul, nsmul_eq_mul, ← Nat.card_eq_fintype_card]
-  exact inv_mul_cancel_left₀ hcard _
-
-/-- **Vanishing integral, finite form**: a `G`-invariant linear form (an "integral") on a
-representation with no trivial component is zero. -/
-theorem invariant_linearForm_eq_zero {G V : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
-    (h : charInner ρ.character (trivial ℂ G ℂ).character = 0) (ℓ : V →ₗ[ℂ] ℂ)
-    (hℓ : ∀ g, ℓ ∘ₗ ρ g = ℓ) : ℓ = 0 := by
-  rw [← linearForm_comp_groupAverage ρ ℓ hℓ, groupAverage_eq_zero_of_charInner_trivial_eq_zero ρ h,
-    LinearMap.comp_zero]
-
-open TensorProduct in
-/-- **Vanishing rule for a product**: if the product character `χ_ρ * χ_σ` has zero inner
-product with the trivial character, the group average of every product `v ⊗ₜ w` vanishes. -/
-theorem groupAverage_tprod_tmul_eq_zero {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
-    (ρ : Representation ℂ G V) (σ : Representation ℂ G W)
-    (h : charInner (ρ.character * σ.character) (trivial ℂ G ℂ).character = 0) (v : V) (w : W) :
-    groupAverage (ρ.tprod σ) (v ⊗ₜ w) = 0 := by
-  rw [groupAverage_eq_zero_of_charInner_trivial_eq_zero (ρ.tprod σ) (by rwa [char_tensor])]
-  rfl
-
-/-!
-
-## D. Great orthogonality
-
--/
-
-lemma groupAverage_linHom_apply {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ G W)
-    (ρ : Representation ℂ G V) (f : W →ₗ[ℂ] V) :
-    groupAverage (linHom σ ρ) f = (Nat.card G : ℂ)⁻¹ • ∑ g, ρ g ∘ₗ f ∘ₗ σ g⁻¹ := by
-  simp [groupAverage_apply]
-
-lemma finrank_pos_of_isIrreducible {G V : Type*} [Group G] [AddCommGroup V] [Module ℂ V]
-    [FiniteDimensional ℂ V] (ρ : Representation ℂ G V) [IsIrreducible ρ] : 0 < finrank ℂ V := by
-  refine Nat.pos_of_ne_zero fun h => ?_
-  have : Subsingleton V := Module.finrank_zero_iff.mp h
-  refine (bot_ne_top : (⊥ : Subrepresentation ρ) ≠ ⊤) ?_
-  apply Subrepresentation.toSubmodule_injective
-  exact Subsingleton.elim _ _
-
-/-- **Great orthogonality, inequivalent case** (basis-free form): for non-isomorphic
-irreducible `ρ` and `σ` and every linear map `f`, `∑ g, ρ g ∘ₗ f ∘ₗ σ g⁻¹ = 0`. Taking `f` to
-be a matrix unit gives the matrix-coefficient form `∑ g, D_ρ(g)ᵢⱼ D_σ(g⁻¹)ₖₗ = 0` (not stated
-separately here). -/
-theorem sum_comp_comp_inv_eq_zero_of_not_nonempty_equiv {G V W : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W]
-    [FiniteDimensional ℂ W] (ρ : Representation ℂ G V) (σ : Representation ℂ G W)
-    [IsIrreducible ρ] [IsIrreducible σ] (h : ¬ Nonempty (σ.Equiv ρ)) (f : W →ₗ[ℂ] V) :
-    ∑ g, ρ g ∘ₗ f ∘ₗ σ g⁻¹ = 0 := by
-  have : IsEmpty (σ.Equiv ρ) := not_nonempty_iff.mp h
-  have : Subsingleton (linHom σ ρ).invariants :=
-    (invariantsEquivIntertwiningMap σ ρ).toEquiv.subsingleton
-  have hmem := groupAverage_apply_mem_invariants (linHom σ ρ) f
-  rw [Submodule.eq_bot_of_subsingleton (p := (linHom σ ρ).invariants), Submodule.mem_bot,
-    groupAverage_linHom_apply] at hmem
-  exact (smul_eq_zero.mp hmem).resolve_left
-    (inv_ne_zero (Nat.cast_ne_zero.mpr Nat.card_pos.ne'))
-
-/-- **Great orthogonality, equivalent case** (basis-free form): for irreducible `ρ` of
-dimension `n` and every endomorphism `f`, `|G|⁻¹ • ∑ g, ρ g ∘ₗ f ∘ₗ ρ g⁻¹ = (tr f / n) • id`.
-Taking `f` to be a matrix unit gives `|G|⁻¹ * ∑ g, D(g)ᵢⱼ D(g⁻¹)ₖₗ = δᵢₗ δⱼₖ / n` (not stated
-separately here). -/
-theorem groupAverage_comp_comp_inv_eq_trace_smul {G V : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
-    [IsIrreducible ρ] (f : V →ₗ[ℂ] V) :
-    (Nat.card G : ℂ)⁻¹ • ∑ g, ρ g ∘ₗ f ∘ₗ ρ g⁻¹ =
-      (LinearMap.trace ℂ V f / finrank ℂ V) • LinearMap.id := by
-  have hn : (finrank ℂ V : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (finrank_pos_of_isIrreducible ρ).ne'
-  have hcard : (Nat.card G : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Nat.card_pos.ne'
-  have hid : (LinearMap.id : V →ₗ[ℂ] V) ∈ (linHom ρ ρ).invariants := fun g => by
-    ext v
-    simp
-  have hid0 : (⟨LinearMap.id, hid⟩ : (linHom ρ ρ).invariants) ≠ 0 := by
-    intro h0
-    have h1 := congrArg (fun x : (linHom ρ ρ).invariants => LinearMap.trace ℂ V x.1) h0
-    simp only [LinearMap.trace_id, ZeroMemClass.coe_zero, map_zero] at h1
-    exact hn h1
-  have hrank : finrank ℂ (linHom ρ ρ).invariants = 1 := by
-    rw [(invariantsEquivIntertwiningMap ρ ρ).finrank_eq,
-      IsIrreducible.finrank_intertwiningMap_self ρ]
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' _ hid0).mp hrank
-    ⟨_, groupAverage_apply_mem_invariants (linHom ρ ρ) f⟩
-  have hc' : c • LinearMap.id = groupAverage (linHom ρ ρ) f := congrArg Subtype.val hc
-  rw [groupAverage_linHom_apply] at hc'
-  have htr : LinearMap.trace ℂ V ((Nat.card G : ℂ)⁻¹ • ∑ g, ρ g ∘ₗ f ∘ₗ ρ g⁻¹) =
-      LinearMap.trace ℂ V f := by
-    have hconj : ∀ g, LinearMap.trace ℂ V (ρ g ∘ₗ f ∘ₗ ρ g⁻¹) = LinearMap.trace ℂ V f := by
-      intro g
-      rw [← Module.End.mul_eq_comp, ← Module.End.mul_eq_comp, LinearMap.trace_mul_comm,
-        mul_assoc, ← map_mul, inv_mul_cancel, map_one, mul_one]
-    simp only [map_smul, map_sum, hconj, Finset.sum_const, Finset.card_univ, smul_eq_mul,
-      nsmul_eq_mul, ← Nat.card_eq_fintype_card]
-    exact inv_mul_cancel_left₀ hcard _
-  rw [← hc', map_smul, LinearMap.trace_id, smul_eq_mul] at htr
-  rw [← hc', ← htr]
-  congr 1
-  exact (mul_div_cancel_right₀ c hn).symm
+open CharacterTheory
 
 /-!
 
@@ -1024,37 +620,41 @@ lemma quadraticFormOf_tensorSquareRepresentation {G : Type*} [Group G]
     vectorRepresentation_apply, cartesianMatrix_inv, ← Matrix.mulVec_mulVec,
     ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose]
 
-/-- **IR activity (dipole model, MOD)**: a vibrational mode transforming as `σ` (an irreducible
-component of the internal-mode representation) is IR-active iff `σ` occurs in the vector
-representation, i.e. transforms like `x`, `y` or `z`. This is a definition inside the dipole
-model; it does not predict intensities or observation, and labels of `σ` refer to the fixed
-axis convention of `R`. The predicate is stated for every `σ`; its selection-rule reading
-requires `σ` to be irreducible, and a claim about a vibrational mode additionally requires `σ`
-to occur in the (complexified) internal-mode representation `internalModeRepresentation`. -/
-def IsIRActive {G W : Type*} [Group G] [AddCommGroup W] [Module ℂ W]
-    (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ) (σ : Representation ℂ G W) : Prop :=
-  0 < irrepMultiplicity σ (vectorRepresentation R)
-
-/-- **Raman activity (polarizability model, MOD)**: a vibrational mode transforming as `σ` is
-Raman-active iff `σ` occurs in the symmetric-square (quadratic-form) representation, i.e.
-transforms like a quadratic form in `x, y, z`. This is a definition inside the polarizability
-model; it does not predict intensities or observation. The predicate is stated for every `σ`;
-its selection-rule reading requires `σ` to be irreducible, and a claim about a vibrational mode
+/-- **IR activity (dipole model, MOD)**: a vibrational mode transforming as the irreducible
+representation `σ` (an irreducible component of the internal-mode representation) is
+IR-active iff `σ` occurs in the vector representation, i.e. transforms like `x`, `y` or `z`.
+This is a definition inside the dipole model; it does not predict intensities or observation,
+and labels of `σ` refer to the fixed axis convention of `R`. The `IsIrreducible σ` argument
+is part of the predicate: activity is only defined for irreps, so a reducible `σ` with a
+nonzero intertwining space cannot be classified as active. A claim about a vibrational mode
 additionally requires `σ` to occur in the (complexified) internal-mode representation
 `internalModeRepresentation`. -/
+def IsIRActive {G W : Type*} [Group G] [AddCommGroup W] [Module ℂ W]
+    (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ) (σ : Representation ℂ G W)
+    [IsIrreducible σ] : Prop :=
+  0 < irrepMultiplicity σ (vectorRepresentation R)
+
+/-- **Raman activity (polarizability model, MOD)**: a vibrational mode transforming as the
+irreducible representation `σ` is Raman-active iff `σ` occurs in the symmetric-square
+(quadratic-form) representation, i.e. transforms like a quadratic form in `x, y, z`. This is
+a definition inside the polarizability model; it does not predict intensities or observation.
+The `IsIrreducible σ` argument is part of the predicate, as for `IsIRActive`. A claim about a
+vibrational mode additionally requires `σ` to occur in the (complexified) internal-mode
+representation `internalModeRepresentation`. -/
 def IsRamanActive {G W : Type*} [Group G] [AddCommGroup W] [Module ℂ W]
-    (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ) (σ : Representation ℂ G W) : Prop :=
+    (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ) (σ : Representation ℂ G W)
+    [IsIrreducible σ] : Prop :=
   0 < irrepMultiplicity σ (quadraticRepresentation R)
 
 lemma isIRActive_iff_charInner_ne_zero {G W : Type*} [Group G] [Fintype G] [AddCommGroup W]
     [Module ℂ W] [FiniteDimensional ℂ W] (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ)
-    (σ : Representation ℂ G W) :
+    (σ : Representation ℂ G W) [IsIrreducible σ] :
     IsIRActive R σ ↔ charInner (vectorRepresentation R).character σ.character ≠ 0 := by
   rw [IsIRActive, ← irrepMultiplicity_eq_charInner, Nat.cast_ne_zero, Nat.pos_iff_ne_zero]
 
 lemma isRamanActive_iff_charInner_ne_zero {G W : Type*} [Group G] [Fintype G] [AddCommGroup W]
     [Module ℂ W] [FiniteDimensional ℂ W] (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ)
-    (σ : Representation ℂ G W) :
+    (σ : Representation ℂ G W) [IsIrreducible σ] :
     IsRamanActive R σ ↔ charInner (quadraticRepresentation R).character σ.character ≠ 0 := by
   rw [IsRamanActive, ← irrepMultiplicity_eq_charInner, Nat.cast_ne_zero, Nat.pos_iff_ne_zero]
 
