@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.H01CatchmentWaterBalance
+import PhyslibExt.EarthScience.CatchmentWaterBalance
 
 /-!
 # Linear-reservoir catchment checks
 
-Concrete consumers of `PhyslibExt.EarthScience.H01CatchmentWaterBalance`:
+Concrete consumers of `PhyslibExt.EarthScience.CatchmentWaterBalance`:
 a numeric reservoir (`I = 3`, `k = 1 / 2`, `S0 = 10`), the equilibrium
 case `S0 = I / k`, and the dry interval `I = 0`.
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.H01CatchmentWaterBalance`
+- `PhyslibExt.EarthScience.CatchmentWaterBalance`
 -/
 
 open EarthScience
