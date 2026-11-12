@@ -213,13 +213,17 @@ theorem linearEE_eq_zero_iff {S : ℕ → Ω → ℝ} {m β : ℝ} {n : ℕ} {ω
 /-- **iid regime, consistency**: for iid integrable cluster scores the root of the linear
 cluster estimating equation converges almost surely to `𝔼[S 0] / m`. -/
 theorem linearEERoot_tendsto_ae {μ : Measure Ω} {S : ℕ → Ω → ℝ} {m : ℝ}
-    (hint : Integrable (S 0) μ) (hindep : iIndepFun S μ)
+    (hm : m ≠ 0) (hint : Integrable (S 0) μ) (hindep : iIndepFun S μ)
     (hident : ∀ i, IdentDistrib (S i) (S 0) μ μ) :
     ∀ᵐ ω ∂μ, Tendsto (fun n => linearEERoot S m n ω) atTop (𝓝 (μ[S 0] / m)) := by
   filter_upwards [strong_law_ae S hint (fun i j hij => hindep.indepFun hij) hident] with ω hω
   refine (hω.div_const m).congr fun n => ?_
-  simp only [linearEERoot, smul_eq_mul]
-  ring
+  by_cases hn : n = 0
+  · subst hn
+    simp [linearEERoot]
+  · have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
+    simp only [linearEERoot, smul_eq_mul]
+    field_simp
 
 /-- **iid regime, CLT** (normalization `√n`, fixed limit variance): for iid square-integrable
 cluster scores, `√n (β̂ₙ - 𝔼[S 0] / m)` converges in distribution to `Y / m` where
