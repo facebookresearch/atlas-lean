@@ -668,9 +668,9 @@ omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
 /-- **The empirical sandwich is consistent for the CLT covariance.** Under the hypotheses of
 `tendstoInMeasure_empirical_sandwichCovariance`, if the in-probability limit `Bbar β₀` of the
 averaged outer products is the meat `B` of the CLT `tendstoInDistribution_sqrt_smul_sub_sandwich`
-(as an operator; in particular `B` is then self-adjoint), the empirical sandwich converges in
-probability to `sandwichCovariance (Abar β₀) B`, the asymptotic covariance of
-`tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt`. -/
+(as an operator; for a probability measure `P`, in particular `B` is then self-adjoint), the
+empirical sandwich converges in probability to `sandwichCovariance (Abar β₀) B`, the asymptotic
+covariance of `tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt`. -/
 theorem tendstoInMeasure_empirical_sandwichCovariance_of_eq {U : ℕ → E → Ω → E}
     {DU : ℕ → E → Ω → E →L[ℝ] E} {β₀ : E} {δ : ℝ} (hδ : 0 < δ)
     {Abar Bbar : E → E →L[ℝ] E} {B : E →L[ℝ] E} (hAbar : ContinuousAt Abar β₀)
