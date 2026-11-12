@@ -155,10 +155,11 @@ example :
 
 /-- Pressure from the definition: the particle moving along `x` transfers `2 * 2 * 3 = 12` per
 collision every `2 * 1 / 3`, and the two particles with `vx = 0` contribute `0`, so `p = 18` on
-the unit wall. -/
+the unit wall. The zero-velocity particles are assigned the arbitrary finite flight time
+`τ = 1`, not `τ = 0`: their contribution is `0` because their momentum transfer is `0`. -/
 example : wallPressure (Finset.univ : Finset (Fin 3))
     (fun i => 2 * 2 * |(![3, 0, 0] : Fin 3 → ℝ) i|)
-    (fun i => 2 * 1 / |(![3, 0, 0] : Fin 3 → ℝ) i|) (1 ^ 2) = 18 := by
+    (![2 / 3, 1, 1] : Fin 3 → ℝ) (1 ^ 2) = 18 := by
   simp only [wallPressure, Fin.sum_univ_three]
   norm_num
 
@@ -168,7 +169,7 @@ example : wallPressure (Finset.univ : Finset (Fin 3))
     (fun i => 2 * 2 * |(![3, 0, 0] : Fin 3 → ℝ) i|)
     (fun i => 2 * 1 / |(![3, 0, 0] : Fin 3 → ℝ) i|) (1 ^ 2) * 1 = 1 / 3 * 3 * 2 * 9 :=
   wallPressure_mul_volume (vy := ![0, 3, 0]) (vz := ![0, 0, 3]) one_pos (by norm_num)
-    (by simp) (by norm_num) (by norm_num) (fun _ _ => rfl) (fun _ _ => rfl) <| by
+    (by simp) (by norm_num) (by norm_num) (fun _ _ => rfl) (fun _ _ _ => rfl) <| by
       simp only [Finset.expect_eq_sum_div_card, Fin.sum_univ_three, Finset.card_univ,
         Fintype.card_fin]
       norm_num
@@ -179,7 +180,7 @@ example : wallPressure (Finset.univ : Finset (Fin 3))
     (fun i => 2 * 2 * |(![3, 0, 0] : Fin 3 → ℝ) i|)
     (fun i => 2 * 1 / |(![3, 0, 0] : Fin 3 → ℝ) i|) (1 ^ 2) * 1 ≠ 3 * 1 * 1 := by
   rw [wallPressure_mul_volume (vy := ![0, 3, 0]) (vz := ![0, 0, 3]) (m := 2) (N := 3) (v2 := 9)
-    one_pos (by norm_num) (by simp) (by norm_num) (by norm_num) (fun _ _ => rfl) (fun _ _ => rfl)
+    one_pos (by norm_num) (by simp) (by norm_num) (by norm_num) (fun _ _ => rfl) (fun _ _ _ => rfl)
     (by
       simp only [Finset.expect_eq_sum_div_card, Fin.sum_univ_three, Finset.card_univ,
         Fintype.card_fin]
@@ -193,7 +194,7 @@ example : wallPressure (Finset.univ : Finset (Fin 3))
     (fun i => 2 * 1 / |(![3, 0, 0] : Fin 3 → ℝ) i|) (1 ^ 2) * 1 = 3 * 2 * 3 :=
   wallPressure_mul_volume_of_kineticEnergy (vy := ![0, 3, 0]) (vz := ![0, 0, 3]) (v2 := 9)
     (Ek := 9) one_pos (by norm_num) (by simp) (by norm_num) (by norm_num) (fun _ _ => rfl)
-    (fun _ _ => rfl)
+    (fun _ _ _ => rfl)
     (by
       simp only [Finset.expect_eq_sum_div_card, Fin.sum_univ_three, Finset.card_univ,
         Fintype.card_fin]
@@ -207,7 +208,7 @@ example : wallPressure (Finset.univ : Finset (Fin 3))
     (fun i => 2 * 1 / |(![3, 0, 0] : Fin 3 → ℝ) i|) (1 ^ 2) * 1 = 1 / 2 * 12 * 3 :=
   wallPressure_mul_volume_molar (vy := ![0, 3, 0]) (vz := ![0, 0, 3]) (v2 := 9) (Ek := 9)
     (kB := 2) (N := 3) (NA := 6) one_pos (by norm_num) (by simp) (by norm_num) (by norm_num)
-    (fun _ _ => rfl) (fun _ _ => rfl)
+    (fun _ _ => rfl) (fun _ _ _ => rfl)
     (by
       simp only [Finset.expect_eq_sum_div_card, Fin.sum_univ_three, Finset.card_univ,
         Fintype.card_fin]
@@ -238,8 +239,9 @@ example {k r₁ r₂ : ℝ} (hk : 0 < k) (h₁ : r₁ = k * meanSpeed 8.314 300 
   effusion_rate_ne_of_temperature_ne (by norm_num) (by norm_num) (by norm_num) (by norm_num) hk
     rfl h₁ h₂ (by norm_num)
 
-/-- Compensation: `H₂` at `300 K` and `O₂` at `4800 K` have equal `T / M = 150000`, so equal
-rates. -/
+/-- Compensation at fixed number density: `H₂` at `300 K` and `O₂` at `4800 K` have equal
+`T / M = 150000`, so equal rates (this is not a fixed-pressure statement: at fixed pressure
+the two gases would have different number densities). -/
 example {k r₁ r₂ : ℝ} (hk : 0 < k) (h₁ : r₁ = k * meanSpeed 8.314 300 0.002)
     (h₂ : r₂ = k * meanSpeed 8.314 4800 0.032) : r₁ = r₂ :=
   (effusion_rate_eq_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)

@@ -45,10 +45,13 @@ derived. The pressure lemmas carry the physical-domain hypotheses `0 < N` and `0
 consistency steps also `0 < kB` and `0 < T`, although the algebra does not use them. The
 effusion rate of each gas is assumed proportional to its mean speed, `rate = k * ⟨v⟩`; this
 proportionality is a hypothesis, not derived. The factor `k` packages the hole area, the
-pressure and the flow regime, and the model does not resolve `k` into these components (the
-mean free path is out of scope). The cross-gas lemmas give each gas its own factor `k₁`, `k₂`
-and assume `k₁ = k₂`, the formal content of "same hole, same pressure, molecular flow".
-`rate ∝ √(T / M)` holds with the proportionality factor held fixed.
+number density and the flow regime, and the model does not resolve `k` into these components
+(the mean free path is out of scope). The cross-gas lemmas give each gas its own factor `k₁`,
+`k₂` and assume `k₁ = k₂`, the formal content of "same hole, same number density, molecular
+flow". `rate ∝ √(T / M)` holds with the proportionality factor held fixed, i.e. at fixed
+number density. At fixed pressure instead, the number density `n = p / (R T)` varies as
+`1 / T`, so `k` would vary with temperature and the fixed-pressure rates would scale as
+`1 / √(M T)`; the effusion lemmas below do not make that fixed-pressure claim.
 
 Out of scope: the mean free path, collision diameters, non-ideal gases, and any claim that real
 gases follow these models exactly.
@@ -67,9 +70,11 @@ gases follow these models exactly.
 - `Chemistry.KineticTheory.wallPressure_mul_volume_of_kineticEnergy`: `p * V = N * kB * T`
   under the identification hypothesis.
 - `Chemistry.KineticTheory.wallPressure_mul_volume_molar`: `p * V = n * R * T`.
-- `Chemistry.KineticTheory.effusion_rate_eq`: `rate ∝ √(T / M)`.
+- `Chemistry.KineticTheory.effusion_rate_eq`: `rate ∝ √(T / M)` at fixed `k`,
+  i.e. at fixed number density.
 - `Chemistry.KineticTheory.effusion_rate_ratio`: Graham's law
-  `rate₁ / rate₂ = √(M₂ / M₁)` for equal factors `k₁ = k₂`.
+  `rate₁ / rate₂ = √(M₂ / M₁)` for equal factors `k₁ = k₂`, at equal
+  temperature and equal number density.
 
 ## iii. Table of contents
 
@@ -296,8 +301,9 @@ lemma meanSpeed_lt_rmsSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
 
 /-- Pressure on a wall in the elastic-wall model (CH08.3), defined as momentum transfer per unit
 area per unit time: particle `i ∈ s` delivers momentum `Δp i` to the wall once every `τ i`, so
-the wall receives momentum at the rate `∑ i ∈ s, Δp i / τ i`, spread over its area `A` (a term
-with `τ i = 0` is `0` by Lean's `x / 0 = 0`). Neither
+the wall receives momentum at the rate `∑ i ∈ s, Δp i / τ i`, spread over its area `A`. A
+particle with `Δp i = 0` contributes `0` regardless of its `τ i`, so the definition never
+needs an (unphysical) infinite flight time to be represented as `τ i = 0`. Neither
 Mathlib nor ATLAS `main` defines a kinetic (momentum-flux) pressure; Physlib's
 `NVEHamiltonian.pressure` (used by `IdealGas.ideal_gas_law`) is the thermodynamic pressure
 `-∂A/∂V`, a different quantity. -/
@@ -320,22 +326,28 @@ set_option linter.unusedVariables false in
 Model hypotheses: the gas is the finite ensemble `s` of `N` particles of mass `m` in a cube of
 side `L > 0` and volume `V = L ^ 3`, with wall area `L ^ 2`; particle `i` has velocity
 components `vx i`, `vy i`, `vz i`; a collision with the wall perpendicular to `x` reverses the
-`x`-momentum and transfers `Δp i = 2 * m * |vx i|`; the particle returns to that wall after the
-round-trip time `τ i = 2 * L / |vx i|`; and isotropy
+`x`-momentum and transfers `Δp i = 2 * m * |vx i|`; a particle with `vx i ≠ 0` returns to
+that wall after the round-trip time `τ i = 2 * L / |vx i|`; and isotropy
 `⟨vx²⟩ = ⟨vy²⟩ = ⟨vz²⟩ = (1 / 3) * v2` holds for the ensemble mean `⟨·⟩ = 𝔼 i ∈ s, ·`, where
 `v2` is the mean square speed (`expect_speed_sq_of_isotropy`). `V > 0` follows from `0 < L`.
 The algebraic identity holds generally, but the lemma carries the physical-domain hypotheses
-`hNpos : 0 < N` and `hm : 0 < m`. A particle with `vx i = 0` contributes `0`. -/
+`hNpos : 0 < N` and `hm : 0 < m`. The flight-time equation is required only for
+`vx i ≠ 0`: a particle with `vx i = 0` never reaches the wall, has `Δp i = 0`, and contributes
+`0` regardless of its `τ i`, so no infinite flight time is represented as `τ i = 0`. -/
 lemma wallPressure_mul_volume {ι : Type*} {s : Finset ι} {Δp τ vx vy vz : ι → ℝ}
     {m L V N v2 : ℝ} (hL : 0 < L) (hV : V = L ^ 3) (hN : (s.card : ℝ) = N) (hNpos : 0 < N)
-    (hm : 0 < m) (hΔp : ∀ i ∈ s, Δp i = 2 * m * |vx i|) (hτ : ∀ i ∈ s, τ i = 2 * L / |vx i|)
+    (hm : 0 < m) (hΔp : ∀ i ∈ s, Δp i = 2 * m * |vx i|)
+    (hτ : ∀ i ∈ s, vx i ≠ 0 → τ i = 2 * L / |vx i|)
     (hiso : (𝔼 i ∈ s, vx i ^ 2) = 𝔼 i ∈ s, vy i ^ 2 ∧ (𝔼 i ∈ s, vy i ^ 2) = 𝔼 i ∈ s, vz i ^ 2 ∧
       (𝔼 i ∈ s, vz i ^ 2) = 1 / 3 * v2) :
     wallPressure s Δp τ (L ^ 2) * V = 1 / 3 * N * m * v2 := by
   have hrate : ∀ i ∈ s, Δp i / τ i = m / L * vx i ^ 2 := by
     intro i hi
-    rw [hΔp i hi, hτ i hi, div_div_eq_mul_div, mul_assoc (2 * m), abs_mul_abs_self]
-    ring
+    by_cases h0 : vx i = 0
+    · rw [hΔp i hi, h0]
+      simp
+    · rw [hΔp i hi, hτ i hi h0, div_div_eq_mul_div, mul_assoc (2 * m), abs_mul_abs_self]
+      ring
   rw [wallPressure, Finset.sum_congr rfl hrate, ← Finset.mul_sum, ← Finset.card_mul_expect,
     hiso.1, hiso.2.1, hiso.2.2, hN, hV]
   field_simp
@@ -350,7 +362,7 @@ physical-domain hypotheses `hkB : 0 < kB` and `hT : 0 < T`, which the algebra do
 lemma wallPressure_mul_volume_of_kineticEnergy {ι : Type*} {s : Finset ι}
     {Δp τ vx vy vz : ι → ℝ} {m L V N v2 Ek kB T : ℝ} (hL : 0 < L) (hV : V = L ^ 3)
     (hN : (s.card : ℝ) = N) (hNpos : 0 < N) (hm : 0 < m) (hΔp : ∀ i ∈ s, Δp i = 2 * m * |vx i|)
-    (hτ : ∀ i ∈ s, τ i = 2 * L / |vx i|)
+    (hτ : ∀ i ∈ s, vx i ≠ 0 → τ i = 2 * L / |vx i|)
     (hiso : (𝔼 i ∈ s, vx i ^ 2) = 𝔼 i ∈ s, vy i ^ 2 ∧ (𝔼 i ∈ s, vy i ^ 2) = 𝔼 i ∈ s, vz i ^ 2 ∧
       (𝔼 i ∈ s, vz i ^ 2) = 1 / 3 * v2)
     (hEk : Ek = 1 / 2 * m * v2) (hident : Ek = 3 / 2 * kB * T) (hkB : 0 < kB) (hT : 0 < T) :
@@ -363,7 +375,7 @@ lemma wallPressure_mul_volume_of_kineticEnergy {ι : Type*} {s : Finset ι}
 lemma wallPressure_mul_volume_molar {ι : Type*} {s : Finset ι} {Δp τ vx vy vz : ι → ℝ}
     {m L V N v2 Ek kB T n NA R : ℝ} (hL : 0 < L) (hV : V = L ^ 3) (hN : (s.card : ℝ) = N)
     (hNpos : 0 < N) (hm : 0 < m) (hΔp : ∀ i ∈ s, Δp i = 2 * m * |vx i|)
-    (hτ : ∀ i ∈ s, τ i = 2 * L / |vx i|)
+    (hτ : ∀ i ∈ s, vx i ≠ 0 → τ i = 2 * L / |vx i|)
     (hiso : (𝔼 i ∈ s, vx i ^ 2) = 𝔼 i ∈ s, vy i ^ 2 ∧ (𝔼 i ∈ s, vy i ^ 2) = 𝔼 i ∈ s, vz i ^ 2 ∧
       (𝔼 i ∈ s, vz i ^ 2) = 1 / 3 * v2)
     (hEk : Ek = 1 / 2 * m * v2) (hident : Ek = 3 / 2 * kB * T) (hkB : 0 < kB) (hT : 0 < T)
@@ -377,7 +389,8 @@ lemma wallPressure_mul_volume_molar {ι : Type*} {s : Finset ι} {Δp τ vx vy v
 
 /-- Dependence of the effusion rate on `T` and `M` (CH08.4): under the model hypothesis
 `rate = k * ⟨v⟩`, `rate = k * √(8 * R / π) * √(T / M)`; for a proportionality factor `k` held
-fixed, `rate ∝ √(T / M)`. -/
+fixed, i.e. at fixed number density, `rate ∝ √(T / M)`. At fixed pressure, `k` would instead
+vary as `1 / T` (number density `n = p / (R T)`), so this is not a fixed-pressure scaling. -/
 lemma effusion_rate_eq {R T M k rate : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
     (h : rate = k * meanSpeed R T M) :
     rate = k * Real.sqrt (8 * R / π) * Real.sqrt (T / M) := by
@@ -390,9 +403,10 @@ lemma effusion_rate_eq {R T M k rate : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < 
 proportional to their mean speeds with their own factors (model hypothesis),
 `rate₁ = k₁ * meanSpeed R T M₁` and `rate₂ = k₂ * meanSpeed R T M₂`, and with `k₁ > 0` and
 `hk : k₁ = k₂`, satisfy `rate₁ / rate₂ = √(M₂ / M₁)`. In this model the factor `k` packages the
-hole area, the pressure and the flow regime, so `hk` is the formal content of "same hole, same
-pressure, molecular flow"; the model does not resolve `k` into area, pressure and flow
-components (the mean free path is out of scope). -/
+hole area, the number density and the flow regime, so `hk` is the formal content of "same hole,
+same number density, molecular flow"; the model does not resolve `k` into area, number density
+and flow components (the mean free path is out of scope). At equal temperature, equal number
+density is also equal pressure, so this is also the fixed-pressure Graham's law at equal `T`. -/
 theorem effusion_rate_ratio {R T M₁ M₂ k₁ k₂ rate₁ rate₂ : ℝ} (hR : 0 < R) (hT : 0 < T)
     (hM₁ : 0 < M₁) (hM₂ : 0 < M₂) (hk₁ : 0 < k₁) (hk : k₁ = k₂)
     (h₁ : rate₁ = k₁ * meanSpeed R T M₁) (h₂ : rate₂ = k₂ * meanSpeed R T M₂) :
@@ -403,13 +417,16 @@ theorem effusion_rate_ratio {R T M₁ M₂ k₁ k₂ rate₁ rate₂ : ℝ} (hR 
   congr 1
   field_simp
 
-/-- Equal effusion rates (CH08.4): under the model hypothesis of `effusion_rate_eq` for each gas,
-with its own factor (`rate₁ = k₁ * meanSpeed R T₁ M₁`, `rate₂ = k₂ * meanSpeed R T₂ M₂`), and
-with `k₁ > 0` and `hk : k₁ = k₂`, `rate₁ = rate₂ ↔ T₁ / M₁ = T₂ / M₂`; equal rates need the
-temperature ratio to compensate the molar-mass ratio. As in `effusion_rate_ratio`, `k` packages
-the hole area, the pressure and the flow regime, which the model does not resolve, so `hk` is
-the formal content of "same hole, same pressure, molecular flow"; the model holds `k` fixed as
-the temperature changes. -/
+/-- Equal effusion rates at fixed number density (CH08.4): under the model hypothesis of
+`effusion_rate_eq` for each gas, with its own factor
+(`rate₁ = k₁ * meanSpeed R T₁ M₁`, `rate₂ = k₂ * meanSpeed R T₂ M₂`), and with `k₁ > 0` and
+`hk : k₁ = k₂`, `rate₁ = rate₂ ↔ T₁ / M₁ = T₂ / M₂`; equal rates need the temperature ratio to
+compensate the molar-mass ratio. As in `effusion_rate_ratio`, `k` packages the hole area, the
+number density and the flow regime, which the model does not resolve, so `hk` is the formal
+content of "same hole, same number density, molecular flow"; the model holds `k` fixed as the
+temperature changes. This is not a fixed-pressure criterion: at fixed pressure the number
+density, and hence `k`, would vary as `1 / T`, and equal fixed-pressure rates would instead
+require `M₁ * T₁ = M₂ * T₂`. -/
 lemma effusion_rate_eq_iff {R T₁ T₂ M₁ M₂ k₁ k₂ rate₁ rate₂ : ℝ} (hR : 0 < R) (hT₁ : 0 < T₁)
     (hT₂ : 0 < T₂) (hM₁ : 0 < M₁) (hM₂ : 0 < M₂) (hk₁ : 0 < k₁) (hk : k₁ = k₂)
     (h₁ : rate₁ = k₁ * meanSpeed R T₁ M₁) (h₂ : rate₂ = k₂ * meanSpeed R T₂ M₂) :
@@ -421,9 +438,9 @@ lemma effusion_rate_eq_iff {R T₁ T₂ M₁ M₂ k₁ k₂ rate₁ rate₂ : �
 
 /-- Non-claim (CH08.4): under the same model hypothesis, with `k₁ > 0` and `hk : k₁ = k₂`, gases
 of equal molar mass at different temperatures do not effuse at equal rates. As in
-`effusion_rate_ratio`, `hk` is the formal content of "same hole, same pressure, molecular flow",
-since `k` packages the hole area, the pressure and the flow regime, which the model does not
-resolve; the model holds `k` fixed as the temperature changes. -/
+`effusion_rate_ratio`, `hk` is the formal content of "same hole, same number density, molecular
+flow", since `k` packages the hole area, the number density and the flow regime, which the model
+does not resolve; the model holds `k` fixed as the temperature changes. -/
 lemma effusion_rate_ne_of_temperature_ne {R T₁ T₂ M k₁ k₂ rate₁ rate₂ : ℝ} (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hM : 0 < M) (hk₁ : 0 < k₁) (hk : k₁ = k₂)
     (h₁ : rate₁ = k₁ * meanSpeed R T₁ M) (h₂ : rate₂ = k₂ * meanSpeed R T₂ M) (hT : T₁ ≠ T₂) :
