@@ -27,11 +27,12 @@ example (D : Model (Measure.dirac ()) 1 1) (X : Matrix (Fin 1) (Fin 1) ℝ) :
     lambdaGC D X 0 0 = (∑ j, ∫ ω, chiSqStrat D X 0 0 j ω ∂(Measure.dirac ())) / (1 : ℕ) :=
   rfl
 
-/-! ### Distributional calibration: holds inside the model
+/-! ### Gaussian rescaling under an exact distributional hypothesis
 
-The single null score is the identity on `ℝ` under `𝒩(0, 2)`: common inflation `λ = 2`. -/
+The single score is the identity on `ℝ` under `𝒩(0, 2)`, so its assumed variance is `λ = 2`.
+This witness supplies a Gaussian law directly; it does not model population structure. -/
 
-/-- The Devlin–Roeder model with `λ = 2` and one null marker. -/
+/-- A single Gaussian score with variance `λ = 2`. -/
 noncomputable def G2 : CommonInflationModel (gaussianReal 0 2) Unit where
   lam := 2
   lam_ne_zero := two_ne_zero

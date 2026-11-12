@@ -19,22 +19,22 @@ public import Mathlib.Probability.HasLaw
 Genomic control (Devlin and Roeder 1999) corrects a genome-wide association scan for
 population structure by dividing every 1-df association statistic `χ²_j` by one inflation
 factor `λ` estimated from the genome-wide distribution of the statistics, then comparing
-`χ²_j / λ` with the usual `χ²₁` critical value. This file proves that the correction is exactly
-calibrated under an explicit population-structure and sampling model, and that it fails, in a
-stated direction, outside that model. Nothing here claims the correction is valid in general.
+`χ²_j / λ` with the usual `χ²₁` critical value. The distributional results here are generic
+Gaussian-rescaling lemmas: they assume the exact score law and derive the corrected tail.
+They do not derive that law from ancestry, relatedness, stratification, or a sampling model.
+The separate LD-score results below concern expectations, not exact tail calibration.
 
-## The model (explicit assumptions)
+## Gaussian distributional assumptions
 
-`CommonInflationModel P ι` packages the Devlin–Roeder assumptions for a family `ι` of null
-markers on a sample space with probability `P`:
+`CommonInflationModel P ι` packages an assumed family `ι` of centered Gaussian scores on a
+sample space with measure `P`:
 
-* **Population structure.** Substructure (cryptic relatedness, or stratification acting as a
-  random effect) inflates the null variance of every marker's score by the *same* factor `λ`:
-  the structure is multiplicative and common to all null markers.
-* **Sampling.** The sample is large enough that the null score `Z_j` of each marker is Gaussian;
-  we assume this exactly, `Z_j ∼ 𝒩(0, λ)` (`HasLaw`), not as an asymptotic approximation. Only
-  each marker's marginal law is used, so no independence between markers is assumed.
-* **Known `λ`.** The correction divides by the population value of `λ`. Error from estimating
+* **Common variance.** Every score is assumed to have the same positive variance `λ`.
+  No mechanism causing that variance is specified.
+* **Exact Gaussian law.** The hypothesis is `Z_j ∼ 𝒩(0, λ)` (`HasLaw`), not a conclusion
+  derived from a sample-size condition or a limit theorem. Only each marginal law is used;
+  no independence between scores is assumed.
+* **Known `λ`.** The correction divides by the assumed variance `λ`. Error from estimating
   `λ` (by the median or the mean of the observed statistics) is not covered.
 
 The 1-df statistic is `χ²_j = Z_j ²`, and its tail is
@@ -57,8 +57,8 @@ Failure outside the model:
   tail `chiSqOneTail (c k / v)`; calibration needs `v = k`.
 * `chiSqOneTail_lt_measure_reject_of_lt`, `measure_reject_lt_chiSqOneTail_of_gt`: a marker
   whose null variance `v` differs from the `λ` used is strictly anti-conservative when
-  `v > λ` and strictly conservative when `v < λ`. This is the situation of markers whose
-  inflation is not common, such as markers strongly differentiated between ancestry groups.
+  `v > λ` and strictly conservative when `v < λ`. These results still assume an exact
+  Gaussian score law; no ancestry or stratification mechanism is derived.
 * `chiSqOneTail_lt_of_lt`: the `χ²₁` tail is strictly decreasing on `[0, ∞)`, which drives
   both strict inequalities.
 
@@ -82,8 +82,8 @@ statistic (the population version of the mean-based estimator of `λ`):
 `LDScore.Model` fixes only second moments, so the stratified statistic of `LDScoreInflation`
 need not be a scaled central `χ²₁` (under Gaussianity it is a scaled noncentral `χ²₁` whenever
 `s · X_jᵀ c ≠ 0`, since the fixed shift then gives the score a nonzero mean); the moment results
-therefore do not imply the distributional ones, which assume the multiplicative-variance
-structure above.
+therefore do not imply the distributional ones, which independently assume the exact
+centered Gaussian laws above.
 
 ## Reuse and sources (API-00 receipt)
 
@@ -177,12 +177,12 @@ theorem measure_reject_eq_chiSqOneTail {Ω : Type*} {m : MeasurableSpace Ω} {P 
   rw [hset, hW.measure_eq (p := fun x => c * k / v < x ^ 2)
     (measurableSet_lt measurable_const (by fun_prop)), chiSqOneTail_eq_gaussianReal]
 
-/-! ### The Devlin–Roeder model and calibration -/
+/-! ### Calibration conditional on exact Gaussian score laws -/
 
-/-- The common multiplicative inflation model of genomic control (Devlin and Roeder 1999) for a
-family `ι` of null markers: population structure inflates the variance of every null score by
-the same factor `lam`, and each score is exactly Gaussian, `score j ∼ 𝒩(0, lam)`. Only the
-marginal law of each marker is assumed. -/
+/-- A family of scores assumed to have centered Gaussian laws with a common positive variance.
+The field `hasLaw_score` is a distributional hypothesis, not a result derived from a
+population-structure or sampling model. The calibration lemmas below are consequences of
+Gaussian rescaling; they do not justify that hypothesis for association statistics. -/
 structure CommonInflationModel {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (ι : Type*) where
   /-- The common inflation factor `λ` of the null variance. -/
   lam : ℝ≥0
