@@ -47,15 +47,12 @@ theorem tendsto_cdfQuantile_of_tendstoInDistribution
     {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
     {μ : Measure Ω} {μ' : Measure Ω'} [IsProbabilityMeasure μ] [IsProbabilityMeasure μ']
     {X : ℕ → Ω → ℝ} {Y : Ω' → ℝ}
-    (hX : ∀ n, AEMeasurable (X n) μ) (hY : AEMeasurable Y μ')
     (hw : TendstoInDistribution X atTop Y (fun _ => μ) μ')
     {F : ℝ → ℝ} (hF : ∀ x, F x = (Measure.map Y μ').real (Set.Iic x))
     (hcont : Continuous F) (hstrict : StrictMono F)
     {q : ℝ} (hq : q ∈ Set.Ioo (0 : ℝ) 1) :
     Tendsto (fun n => cdfQuantile (Measure.map (X n) μ) q) atTop
       (𝓝 (cdfQuantile (Measure.map Y μ') q)) := by
-  have _ := hX 0
-  have _ := hY
   have hCDF_eq : ∀ y, cdf (Measure.map Y μ') y = F y := fun y => by
     rw [cdf_eq_real, hF]
   have hCDF_fun : ⇑(cdf (Measure.map Y μ')) = F := funext hCDF_eq

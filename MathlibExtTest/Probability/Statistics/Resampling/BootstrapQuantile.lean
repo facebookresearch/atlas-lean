@@ -14,7 +14,9 @@ public import MathlibExt.Probability.Statistics.Resampling.BootstrapQuantile
 # Tests for weak-convergence-to-quantile
 
 The generalized inverse computes on a Dirac law (median of `dirac 0` is `0`), and the
-Dirac CDF discontinuity at `0` shows why the continuity hypothesis cannot be dropped.
+Dirac CDF discontinuity at `0` shows Dirac laws fall outside the stated hypotheses
+(no necessity is claimed: this does not show that dropping continuity breaks
+quantile convergence in general).
 -/
 
 @[expose] public section
@@ -47,7 +49,8 @@ example : ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ)) (1 / 2) = 0 :=
       norm_num
   rw [hset, csInf_Ici]
 
--- Degenerate: the Dirac CDF is discontinuous at 0, so the continuity hypothesis fails.
+-- Boundary: the Dirac CDF is discontinuous at 0, so Dirac laws lie outside the stated
+-- assumptions (no necessity claim: continuity is sufficient, not shown necessary).
 example : ¬ Continuous (fun x : ℝ => (Measure.dirac (0 : ℝ)).real (Set.Iic x)) := by
   intro hcont
   have hF0 : (Measure.dirac (0 : ℝ)).real (Set.Iic 0) = 1 := by
