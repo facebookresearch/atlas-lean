@@ -33,8 +33,10 @@ compensated (Hicksian) wage effect, the chain rule gives
 * `dℓ/dw = s + L · ∂ℓ/∂M` (`leisureDemand_hasDerivAt`), and
 * `dL/dw = -s - L · ∂ℓ/∂M` (`laborSupply_hasDerivAt`),
 
-where `L = T - ℓ` is labor supply. With leisure normal the income effect opposes the
-substitution effect, which allows a backward-bending labor-supply curve.
+where `L = T - ℓ` is labor supply. When leisure is normal (`0 < ∂ℓ/∂M`), labor supply is
+positive, and the compensated own-wage effect on leisure is nonpositive (`s ≤ 0`), the income
+effect opposes the substitution effect, which allows a backward-bending labor-supply curve;
+normality alone does not give this.
 
 The Slutsky identity is a hypothesis here; it is the conclusion of the consumer Slutsky
 equation (Atlas roadmap EC04.T04). Future unification: discharge it with that theorem once it
@@ -127,8 +129,10 @@ theorem leisureDemand_hasDerivAt {ℓ : ℝ → ℝ → ℝ} {D : ℝ × ℝ →
 /-- **Labor-supply Slutsky decomposition.** Under the hypotheses of
 `leisureDemand_hasDerivAt`, the uncompensated wage effect on labor supply is the
 compensated effect `-s` minus the income effect `laborSupply * D (0, 1)`. With leisure a
-normal good (`0 < D (0, 1)`) and positive labor supply, the income effect works against the
-substitution effect, which is the source of a backward-bending labor-supply curve. -/
+normal good (`0 < D (0, 1)`), positive labor supply, and a nonpositive compensated own-wage
+effect on leisure (`s ≤ 0`), the income effect `-laborSupply * D (0, 1)` works against the
+substitution effect `-s`, which is the source of a backward-bending labor-supply curve. Without
+`s ≤ 0` both terms can have the same sign. -/
 theorem laborSupply_hasDerivAt {ℓ : ℝ → ℝ → ℝ} {D : ℝ × ℝ →L[ℝ] ℝ} {T N w s : ℝ}
     (hℓ : HasFDerivAt (fun q : ℝ × ℝ => ℓ q.1 q.2) D (w, fullIncome T N w))
     (hslutsky : s = D (1, 0) + D (0, 1) * leisureDemand ℓ T N w) :
