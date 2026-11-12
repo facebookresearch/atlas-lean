@@ -83,16 +83,11 @@ private lemma abs_apply_le_norm_pi {ι : Type*} [Fintype ι] (v : ι → ℝ) (a
   rw [← Real.norm_eq_abs]
   exact norm_le_pi_norm v a
 
-/-- Triangle inequality for finite real sums, in `|·|` form. -/
-private lemma abs_sum_le_real {ι : Type*} (s : Finset ι) (f : ι → ℝ) :
-    |∑ i ∈ s, f i| ≤ ∑ i ∈ s, |f i| := by
-  simpa [Real.norm_eq_abs] using norm_sum_le s f
-
 /-- Crude sup-norm bound for the dot product. -/
 private lemma abs_dotProduct_le_card {ι : Type*} [Fintype ι] (v w : ι → ℝ) :
     |v ⬝ᵥ w| ≤ (Fintype.card ι : ℝ) * ‖v‖ * ‖w‖ := by
   show |∑ c, v c * w c| ≤ _
-  calc |∑ c, v c * w c| ≤ ∑ c, |v c * w c| := abs_sum_le_real Finset.univ _
+  calc |∑ c, v c * w c| ≤ ∑ c, |v c * w c| := Finset.abs_sum_le_sum_abs _ _
     _ ≤ ∑ _c : ι, (‖v‖ * ‖w‖) := Finset.sum_le_sum (fun c _ => by
         rw [abs_mul]
         exact mul_le_mul (abs_apply_le_norm_pi v c) (abs_apply_le_norm_pi w c)
@@ -165,7 +160,7 @@ theorem hc0Meat_entrywise_sub_le {ι : Type*} [Fintype ι] [DecidableEq ι]
           - ((u i) ^ 2 * ((x i) a * (x i) b)))|
       ≤ ∑ i ∈ Finset.range n, (2 * (Fintype.card ι : ℝ) * ‖δ‖ * (‖x i‖ ^ 3 * |u i|)
         + (Fintype.card ι : ℝ) ^ 2 * ‖δ‖ ^ 2 * ‖x i‖ ^ 4) :=
-    (abs_sum_le_real _ _).trans (Finset.sum_le_sum (fun i _ => per_term i))
+    (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum (fun i _ => per_term i))
   have hfin : (n : ℝ)⁻¹ * |∑ i ∈ Finset.range n,
         (((u i - (x i) ⬝ᵥ δ) ^ 2 * ((x i) a * (x i) b))
           - ((u i) ^ 2 * ((x i) a * (x i) b)))|
