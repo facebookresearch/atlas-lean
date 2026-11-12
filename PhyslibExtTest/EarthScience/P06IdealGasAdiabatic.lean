@@ -44,12 +44,18 @@ example : (1 : ℝ) = 6 / (2 * 3) :=
 example : (0 : ℝ) = 0 / (2 * 3) :=
   EarthScience.idealGas_density (by norm_num) (by norm_num) (by norm_num)
 
-/-- Potential temperature at the reference pressure equals the temperature:
-with `p1 = p2 = p_ref = 1000`, `T2 = T1` satisfies the Poisson hypothesis. -/
-example : (300 : ℝ) * (1000 / 1000) ^ ((287 : ℝ) / 1005)
-    = 300 * (1000 / 1000) ^ ((287 : ℝ) / 1005) :=
-  EarthScience.potentialTemperature_const_of_poisson (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by simp)
+/-- Potential temperature at the reference pressure equals the temperature. -/
+example : (300 : ℝ) * (1000 / 1000) ^ ((287 : ℝ) / 1005) = 300 := by
+  norm_num
+
+/-- Halving pressure and temperature with `R / cp = 1` preserves
+potential temperature at the original reference pressure. -/
+example : (150 : ℝ) * (1000 / 500) ^ ((1 : ℝ) / 1) = 300 := by
+  simpa only [div_self (by norm_num : (1000 : ℝ) ≠ 0), Real.one_rpow, mul_one] using
+    (EarthScience.potentialTemperature_const_of_poisson
+      (T1 := 300) (T2 := 150) (p1 := 1000) (p2 := 500) (p_ref := 1000)
+      (R := 1) (cp := 1) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num))
 
 /-- Public shape of the potential-temperature theorem. -/
 example {T1 T2 p1 p2 p_ref R cp : ℝ}
