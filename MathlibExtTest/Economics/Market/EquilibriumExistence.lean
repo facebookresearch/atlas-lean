@@ -16,7 +16,7 @@ public import MathlibExt.Economics.Market.EquilibriumExistence
 
 namespace MathlibExtTest.Economics.Market.EquilibriumExistence
 
-open _root_.Economics.Market
+open _root_.MathlibExt.Economics.Market
 
 /-- Test helper: excess demand of the linear example is strictly decreasing on `[0, 10]`. -/
 theorem test_strictAntiOn_linear : StrictAntiOn

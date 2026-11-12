@@ -21,9 +21,9 @@ weakly decreasing demand with strictly increasing supply gives strictly decreasi
 
 ## Main results
 
-* `Economics.Market.exists_isEquilibrium_of_sign_change`
-* `Economics.Market.IsEquilibrium.eq_of_strictAntiOn`
-* `Economics.Market.existsUnique_isEquilibrium`
+* `MathlibExt.Economics.Market.exists_isEquilibrium_of_sign_change`
+* `MathlibExt.Economics.Market.IsEquilibrium.eq_of_strictAntiOn`
+* `MathlibExt.Economics.Market.existsUnique_isEquilibrium`
 
 ## References
 
@@ -35,7 +35,7 @@ Atlas roadmap target EC08.T01.
 
 @[expose] public section
 
-namespace Economics.Market
+namespace MathlibExt.Economics.Market
 
 /-- Equilibrium is zero excess demand. -/
 theorem isEquilibrium_iff_excessDemand_eq_zero {D S : ℝ → ℝ} {p : ℝ} :
@@ -84,4 +84,4 @@ theorem existsUnique_isEquilibrium {D S : ℝ → ℝ} {a b : ℝ} (hab : a ≤ 
   exact ⟨p, ⟨hp_mem, hp_eq⟩, fun q hq =>
     IsEquilibrium.eq_of_strictAntiOn hZ hq.1 hp_mem hq.2 hp_eq⟩
 
-end Economics.Market
+end MathlibExt.Economics.Market

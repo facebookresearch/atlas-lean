@@ -20,13 +20,13 @@ This is the market interface for the Atlas EC08 targets.
 
 ## Main definitions
 
-* `Economics.Market.excessDemand`
-* `Economics.Market.IsEquilibrium`
+* `MathlibExt.Economics.Market.excessDemand`
+* `MathlibExt.Economics.Market.IsEquilibrium`
 -/
 
 @[expose] public section
 
-namespace Economics.Market
+namespace MathlibExt.Economics.Market
 
 /-- Excess demand `D p - S p` at price `p`. -/
 def excessDemand (D S : ℝ → ℝ) (p : ℝ) : ℝ :=
@@ -37,4 +37,4 @@ supplied. -/
 def IsEquilibrium (D S : ℝ → ℝ) (p : ℝ) : Prop :=
   D p = S p
 
-end Economics.Market
+end MathlibExt.Economics.Market
