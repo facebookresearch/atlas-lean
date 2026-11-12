@@ -64,7 +64,11 @@ This direct route uses the exact identity `X² = N F̂²` rather than the genera
 theorem `ProbabilityTheory.tendstoInDistribution_pearsonStatistic_fitted`: that theorem needs a
 model `θ ↦ pθ θ` that is nonnegative for *every* `θ`, which the Hardy–Weinberg parametrization
 `(q², 2pq, p²)` on all of `ℝ` is not (its docstring flags this exact case), plus the
-efficient-estimator projection identity for `p̂`.
+efficient-estimator projection identity for `p̂`. Clamping the parameter to `[0, 1]`, as that
+docstring suggests, would satisfy the nonnegativity hypothesis (the clamp is the identity near
+`p ∈ (0, 1)`), but the derivative, the weighted Jacobian, and the projection identity would still
+have to be built in `EuclideanSpace ℝ (Fin 3)`; that route was rejected as longer than the direct
+proof, which also yields the exact identity `X² = N F̂²`.
 
 ## Boundary cases and scope
 

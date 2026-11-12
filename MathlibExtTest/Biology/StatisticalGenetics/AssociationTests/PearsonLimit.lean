@@ -18,7 +18,8 @@ public import Mathlib.Probability.UniformOn
 
 * Hardy–Weinberg proportions at `p = 1/2`, and agreement of `alleleFreqHat` with the pooled
   `MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend.alleleFreq`.
-* Concrete genotype tables: `X²`, `p̂`, `F̂`, the identity `X² = N F̂²`, and `F̂ = 1 - H_obs / H_exp`.
+* Concrete genotype tables: `X²`, `p̂`, `F̂`, the identity `X² = N F̂²`, and
+  `F̂ = 1 - H_obs / H_exp`.
 * A concrete sample of four individuals: its cell counts and fitted statistic.
 * Known versus estimated `p` on a table where `p̂ ≠ p`.
 * Boundary tables: monomorphic tables (`X² = 0`) and an all-heterozygote table (`F̂ = -1`,
@@ -32,6 +33,7 @@ public import Mathlib.Probability.UniformOn
 
 open MeasureTheory ProbabilityTheory Filter
 open MathlibExt.Biology.StatisticalGenetics.PearsonLimit
+open MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.PearsonLimit
 
@@ -46,9 +48,8 @@ example (p : ℝ) : ∑ i, hweProb p i = 1 := sum_hweProb p
 /-- `alleleFreqHat` of the pooled table is the pooled allele frequency of the Cochran–Armitage
 development. -/
 example (r s : Fin 3 → ℝ) :
-    alleleFreqHat (r + s) = MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend.alleleFreq r s := by
-  simp only [alleleFreqHat, MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend.alleleFreq,
-    MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend.total, Fin.sum_univ_three, Pi.add_apply]
+    alleleFreqHat (r + s) = alleleFreq r s := by
+  simp only [alleleFreqHat, alleleFreq, total, Fin.sum_univ_three, Pi.add_apply]
   norm_num
 
 /-! ### Concrete tables -/
