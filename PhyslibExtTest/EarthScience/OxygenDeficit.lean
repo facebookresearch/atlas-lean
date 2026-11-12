@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.E04OxygenDeficit
+import PhyslibExt.EarthScience.OxygenDeficit
 
 /-!
 # Streeter-Phelps checks
 
-Concrete consumers of `PhyslibExt.EarthScience.E04OxygenDeficit`: the
+Concrete consumers of `PhyslibExt.EarthScience.OxygenDeficit`: the
 witness `ka = 2`, `kd = 1`, `L0 = 1`, `D0 = 0` giving
 `D(t) = exp(-t) - exp(-2*t)`, the equal-rate branch, and the
 zero-demand boundary.
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.E04OxygenDeficit`
+- `PhyslibExt.EarthScience.OxygenDeficit`
 -/
 
 /-- Witness: unequal rates `ka = 2`, `kd = 1`, `L0 = 1`, `D0 = 0`. -/
