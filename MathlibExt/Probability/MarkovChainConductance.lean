@@ -12,6 +12,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Real.Basic
+public import MathlibExt.Probability.FiniteProbability
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -30,24 +31,20 @@ statement without positivity was refuted by the `Fin 2` point-mass
 example). This extends `MathlibExt/Probability/MarkovChainPoincare.lean`
 (roadmap package ML-26).
 
+The mean and variance are `FiniteProbability.expectation` /
+`FiniteProbability.variance`; the one-step function evolution
+would be `Matrix.mulVec` and is not needed here, so no local copies
+of either are defined.
+
 Source: Levin and Peres, Markov Chains and Mixing Times (2017),
 Chapter 12.
 -/
 
 open Finset
 
-/-- One step of the function evolution of a Markov kernel `K`. -/
-noncomputable def applyK {α : Type*} [Fintype α] (K : α → α → ℝ) (f : α → ℝ) :
-    α → ℝ :=
-  fun x => ∑ y, K x y * f y
+namespace MathlibExt.Probability.MarkovChainConductance
 
-/-- The `π`-mean of a function. -/
-noncomputable def piMean {α : Type*} [Fintype α] (π : α → ℝ) (f : α → ℝ) : ℝ :=
-  ∑ x, π x * f x
-
-/-- The `π`-variance of a function. -/
-noncomputable def piVar {α : Type*} [Fintype α] (π : α → ℝ) (f : α → ℝ) : ℝ :=
-  ∑ x, π x * (f x - piMean π f) ^ 2
+open MathlibExt.Probability.FiniteProbability
 
 /-- The Dirichlet form of the kernel `K` at `f` against `π`. -/
 noncomputable def dirichletForm {α : Type*} [Fintype α] (K : α → α → ℝ)
@@ -73,7 +70,7 @@ theorem gap_le_two_mul_conductance {α : Type*} [Fintype α] [DecidableEq α]
     (hπ_sum : ∑ x, π x = 1)
     (hstat : ∀ y, ∑ x, π x * K x y = π y)
     (hrev : ∀ x y, π x * K x y = π y * K y x)
-    (hpoincare : ∀ f : α → ℝ, gap * piVar π f ≤ dirichletForm K π f)
+    (hpoincare : ∀ f : α → ℝ, gap * variance π f ≤ dirichletForm K π f)
     (S : Finset α) (hS : ∑ x ∈ S, π x ≤ 1 / 2)
     (hSpos : 0 < ∑ x ∈ S, π x) :
     gap ≤ 2 * conductance K π S := by
@@ -90,8 +87,8 @@ theorem gap_le_two_mul_conductance {α : Type*} [Fintype α] [DecidableEq α]
   have hside : ∀ x ∈ (Finset.univ : Finset α), x ∉ S → (if x ∈ S then π x else 0) = 0 := by
     intro x _ hx
     simp [hx]
-  have hmean : piMean π f = πS := by
-    simp only [piMean]
+  have hmean : expectation π f = πS := by
+    simp only [expectation]
     rw [hπS]
     calc ∑ x, π x * f x = ∑ x, (if x ∈ S then π x else 0) :=
             Finset.sum_congr rfl h1
@@ -118,9 +115,10 @@ theorem gap_le_two_mul_conductance {α : Type*} [Fintype α] [DecidableEq α]
       rw [hfx_nmem x hxS]
       ring
     rw [Finset.sum_congr rfl hterm, ← Finset.sum_mul, hsum]
-  have hvar : piVar π f = πS * (1 - πS) := by
-    simp only [piVar]
+  have hvar : variance π f = πS * (1 - πS) := by
+    simp only [variance]
     rw [hmean]
+    simp only [expectation]
     have hsplit : (∑ x ∈ Finset.univ \ S, π x * (f x - πS) ^ 2)
         + (∑ x ∈ S, π x * (f x - πS) ^ 2)
         = ∑ x, π x * (f x - πS) ^ 2 :=
@@ -220,4 +218,6 @@ theorem gap_le_two_mul_conductance {α : Type*} [Fintype α] [DecidableEq α]
     have h1 : (0 : ℝ) ≤ flow * (1 - 2 * πS) := mul_nonneg hflow_nonneg (by linarith [hS])
     linarith [h1]
   exact le_trans hmain hle
+
+end MathlibExt.Probability.MarkovChainConductance
 
