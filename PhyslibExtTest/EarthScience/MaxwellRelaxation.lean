@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S06MaxwellRelaxation
+import PhyslibExt.EarthScience.MaxwellRelaxation
 
 /-!
 # Maxwell relaxation checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S06MaxwellRelaxation`:
+Concrete consumers of `PhyslibExt.EarthScience.MaxwellRelaxation`:
 `μ = 2`, `η = 10`, `σ₀ = 7` (relaxation time `5`, `σ(5) = 7 / e`), plus
 the zero-initial-stress boundary.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S06MaxwellRelaxation`
+- `PhyslibExt.EarthScience.MaxwellRelaxation`
 -/
 
 /-- Numeric relaxation: `σ` obeys the Maxwell ODE at `t = 5`. -/
