@@ -166,6 +166,13 @@ theorem abs_arrayStepProcess_sub_arrayPolygon_le (n : ℕ) (ξ : ℕ → ℕ →
 
 /-! ### Tightness in `C([0,1])` from a modulus-of-continuity bound -/
 
+/- The helpers `isCompact_equicontinuous'`, `isCompact_closure_of_bounded_equicontinuous'`,
+`compact_capture'`, `goodFamily` and `goodFamily_compact` are private copies (the last two
+adapted) of the private Donsker lemmas `donsker_isCompact_equicontinuous` (`Donsker.lean:2229`),
+`donsker_isCompact_closure_of_bounded_equicontinuous` (:2250), `donsker_compact_capture` (:2295),
+`donskerGoodFamily` (:2343) and `donsker_good_family_compact` (:2350). Follow-up: make the Donsker
+versions public and delete these copies. -/
+
 private lemma isCompact_equicontinuous'
     {C : Set C(Set.Icc (0 : ℝ) 1, ℝ)} (hC : IsCompact C) :
     Equicontinuous ((↑) : C → Set.Icc (0 : ℝ) 1 → ℝ) := by
