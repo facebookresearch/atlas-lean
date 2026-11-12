@@ -49,9 +49,11 @@ resulting p-value is calibrated in the null model, in the sense that the Gumbel 
 
 ## Scope
 
-* The validity is **asymptotic** (`n → ∞`). No finite-`n` statement is claimed; in particular
-  `pₙ` is not shown to be a valid p-value in the sense of `IsValidPValue`
-  (`μ {p ≤ t} ≤ t` for each `n`), which the Gumbel approximation does not give.
+* The validity is **asymptotic** (`n → ∞`). Finite-`n` validity in the sense of
+  `IsValidPValue` (`μ {p ≤ t} ≤ t` for each `n`) is **false** in general, not merely unproved.
+  Example: let `Mₙ` be the maximum of `n + 1` i.i.d. `Exp(1)` variables (`θ = K = 1`, the model
+  in the test file). Then `p₁ ≤ 1 / 2 ↔ M₁ ≥ log (1 / log 2)`, so
+  `P(p₁ ≤ 1 / 2) = 1 - (1 - log 2)² ≈ 0.906 > 1 / 2`.
 * This is single-sequence significance. The BLAST E-value `K m n e^{-λ S}` for two-sequence
   local alignment is not covered (see the scope note in `GumbelTail`).
 * The constant `K` is the one of the renewal input; its renewal-theoretic formula is not

@@ -17,10 +17,13 @@ public import Mathlib.Probability.Independence.InfinitePi
 
 * Values of `gumbelPValue` and `gumbelLevel`: positivity, the bound `≤ 1`, the rejection region
   and `exp (-K e^{-θ x_α}) = 1 - α` at `α = 1 / 2`.
-* A nontrivial instance of the calibration theorem: `Mₙ` the maximum of `n + 1` i.i.d. `Exp(1)`
-  variables (a `LadderInput` with one excursion per step, `θ = K = 1`). The p-value
+* A nontrivial instance of the generic calibration theorems `tendsto_real_gumbelPValue_le` and
+  `eventually_real_gumbelPValue_le_le`: `Mₙ` the maximum of `n + 1` i.i.d. `Exp(1)` variables
+  (a `LadderInput` with one excursion per step, `θ = K = 1`). The p-value
   `1 - exp (-n e^{-Mₙ})` satisfies `P(pₙ ≤ α) → α` for every `α ∈ [0, 1]`.
-* The null-model theorems applied to arbitrary nonlattice and lattice renewal inputs.
+* The null-model theorems applied to arbitrary nonlattice and lattice renewal inputs. These are
+  restatements only: no `NonlatticeRenewalInput` or `LatticeRenewalInput` instance exists yet
+  (see `GumbelTail`), so they are not exercised on a concrete model.
 -/
 
 namespace Cslib.Bioinformatics.Alignment.ScoreSignificance
