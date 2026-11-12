@@ -28,8 +28,7 @@ the conditional measure `μ[|T]` (Imbens and Rubin 2015, §3.3 and Chapter 6; He
 * `integral_observed_cond_treated_of_indepFun`: `E[Y | T] = E[Y₁]` if `1_T` is independent of
   `Y₁` and `P(T) > 0`.
 * `integral_observed_cond_control_of_indepFun`: `E[Y | Tᶜ] = E[Y₀]` if `1_T` is independent of
-  `Y₀`, `Y₀` is integrable, and `P(T) < 1`. (Unlike the treated-arm statement, this one assumes
-  integrability; its proof uses it.)
+  `Y₀` and `P(T) < 1` (no integrability assumed, as for the treated arm).
 * `diff_integral_observed_cond_eq_ate_of_indepFun`: identification of the ATE by the difference
   in group means.
 
@@ -85,47 +84,40 @@ theorem integral_observed_cond_treated_of_indepFun {Ω : Type*} [MeasurableSpace
   rw [hset, hfact]
   rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hpos), one_mul]
 
-/-- **Random assignment, control arm**: if `1_T` is independent of `Y₀`, `Y₀` is integrable and
-`P(T) < 1`, the mean observed outcome among the controls is `E[Y₀]`. Integrability is assumed
-here (the proof uses it), although it is not needed for the identity. -/
+/-- **Random assignment, control arm**: if `1_T` is independent of `Y₀` and `P(T) < 1`, then
+`∫ Y ∂μ[|Tᶜ] = ∫ Y₀ ∂μ` for the observed outcome `Y = observed T Y₀ Y₁`. No integrability is
+assumed (as for the treated arm). -/
 theorem integral_observed_cond_control_of_indepFun {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Set Ω} (hT : MeasurableSet T)
-    {Y₀ Y₁ : Ω → ℝ} (hY₀ : Measurable Y₀) (hY₀i : Integrable Y₀ μ)
+    {Y₀ Y₁ : Ω → ℝ} (hY₀ : Measurable Y₀)
     (hind : IndepFun (T.indicator (1 : Ω → ℝ)) Y₀ μ) (hlt : μ.real T < 1) :
     ∫ ω, observed T Y₀ Y₁ ω ∂μ[|Tᶜ] = ∫ ω, Y₀ ω ∂μ := by
-  have hT1 : Measurable (T.indicator (1 : Ω → ℝ)) := measurable_const.indicator hT
-  have hmul : (T.indicator (1 : Ω → ℝ)) * Y₀ = T.indicator Y₀ := by
+  have hTc : MeasurableSet Tᶜ := hT.compl
+  have huniv : μ.real Set.univ = 1 := by
+    rw [Measure.real_def, measure_univ, ENNReal.toReal_one]
+  have hcompl : μ.real Tᶜ = 1 - μ.real T := by
+    rw [measureReal_compl hT, huniv]
+  have hpos : 0 < μ.real Tᶜ := by
+    rw [hcompl]
+    exact sub_pos.mpr hlt
+  have hφ : Measurable (fun x : ℝ => 1 - x) := measurable_id.const_sub 1
+  have hindTc : IndepFun (Tᶜ.indicator (1 : Ω → ℝ)) Y₀ μ := by
+    have h := hind.comp hφ measurable_id
+    refine h.congr (Filter.Eventually.of_forall fun ω => ?_)
+      (Filter.Eventually.of_forall fun ω => rfl)
+    show ((fun x : ℝ => 1 - x) ∘ T.indicator (1 : Ω → ℝ)) ω = Tᶜ.indicator (1 : Ω → ℝ) ω
+    by_cases hω : ω ∈ T
+    · simp [Function.comp_apply, Set.indicator_of_mem hω]
+      have hmem : ω ∉ Tᶜ := by simp [hω]
+      simp [Set.indicator_of_notMem hmem]
+    · simp [Function.comp_apply, Set.indicator_of_notMem hω]
+      have hmem : ω ∈ Tᶜ := hω
+      simp [Set.indicator_of_mem hmem]
+  have hobsEq : observed T Y₀ Y₁ = observed Tᶜ Y₁ Y₀ := by
     funext ω
-    by_cases hω : ω ∈ T <;> simp [hω, Pi.mul_apply]
-  have hfact := hind.integral_mul_eq_mul_integral hT1.aestronglyMeasurable hY₀.aestronglyMeasurable
-  rw [hmul, integral_indicator hT] at hfact
-  have hint1 : ∫ ω, T.indicator (1 : Ω → ℝ) ω ∂μ = μ.real T := by
-    rw [integral_indicator hT]
-    simp only [Pi.one_apply, setIntegral_const, smul_eq_mul, mul_one]
-  rw [hint1] at hfact
-  have hadd := integral_add_compl hT hY₀i
-  have hcompl : ∫ ω in Tᶜ, Y₀ ω ∂μ = μ.real (Tᶜ) * ∫ ω, Y₀ ω ∂μ := by
-    have hTc : μ.real (Tᶜ) = 1 - μ.real T := by
-      rw [measureReal_compl hT, probReal_univ]
-    rw [hTc]
-    linarith [hfact, hadd]
-  have hposC : 0 < μ.real (Tᶜ) := by
-    rw [measureReal_compl hT, probReal_univ]
-    linarith [hlt, measureReal_nonneg (μ := μ) (s := T)]
-  have hobs : observed T Y₀ Y₁ =ᵐ[μ[|Tᶜ]] Y₀ := by
-    filter_upwards [ae_cond_mem hT.compl] with ω hω
-    simp [observed, hω]
-    have : ω ∉ T := by simpa using hω
-    simp [this]
-  rw [integral_congr_ae hobs]
-  have hcond : μ[|Tᶜ] = (μ Tᶜ)⁻¹ • μ.restrict Tᶜ := rfl
-  rw [hcond, integral_smul_measure]
-  have hreal : ((μ Tᶜ)⁻¹).toReal = (μ.real Tᶜ)⁻¹ := by
-    rw [ENNReal.toReal_inv, Measure.real_def]
-  rw [hreal, smul_eq_mul]
-  have hset : ∫ ω, Y₀ ω ∂(μ.restrict Tᶜ) = ∫ ω in Tᶜ, Y₀ ω ∂μ := rfl
-  rw [hset, hcompl]
-  rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hposC), one_mul]
+    simp [observed, compl_compl, add_comm]
+  rw [hobsEq]
+  exact integral_observed_cond_treated_of_indepFun hTc hY₀ hindTc hpos
 
 /-- **Identification of the ATE under random assignment**: if the treatment indicator `1_T` is
 independent of the pair of potential outcomes `(Y₀, Y₁)`, both arms have positive probability,
@@ -151,7 +143,7 @@ theorem diff_integral_observed_cond_eq_ate_of_indepFun {Ω : Type*} [MeasurableS
   have h1 : ∫ ω, observed T Y₀ Y₁ ω ∂μ[|T] = ∫ ω, Y₁ ω ∂μ :=
     integral_observed_cond_treated_of_indepFun hT hY₁ hind1 hpos
   have h0 : ∫ ω, observed T Y₀ Y₁ ω ∂μ[|Tᶜ] = ∫ ω, Y₀ ω ∂μ :=
-    integral_observed_cond_control_of_indepFun hT hY₀ hY₀i hind0 hlt
+    integral_observed_cond_control_of_indepFun hT hY₀ hind0 hlt
   rw [h1, h0, ← integral_sub hY₁i hY₀i]
 
 end MathlibExt.Probability.Causality

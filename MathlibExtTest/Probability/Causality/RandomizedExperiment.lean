@@ -20,7 +20,8 @@ public import Mathlib.Tactic.NormNum
 
 /-! Example for `MathlibExt.Probability.Causality.RandomizedExperiment`: a fair-coin treatment
 independent of a fair-coin outcome type on `Bool × Bool`; the independence hypothesis holds
-and the difference of the observed group means equals the ATE `3/2`. -/
+and the difference of the observed group means equals the ATE `3/2`; the control-arm lemma
+applies with no integrability hypothesis. -/
 
 @[expose] public section
 
@@ -108,5 +109,17 @@ example : IndepFun (testT.indicator (1 : (Bool × Bool) → ℝ)) (fun ω => (te
     diff_integral_observed_cond_eq_ate_of_indepFun hT Measurable.of_discrete Measurable.of_discrete
       Integrable.of_finite Integrable.of_finite indepFun_test hpos hlt
   rw [h, integral_testATE]
+
+/-- Regression test: the control-arm lemma applies with no integrability hypothesis. -/
+theorem control_arm_without_integrability :
+    ∫ ω, observed testT testY₀ testY₁ ω ∂testμ[|testTᶜ] = ∫ ω, testY₀ ω ∂testμ := by
+  have hT : MeasurableSet testT := MeasurableSet.of_discrete
+  have hY₀ : Measurable testY₀ := Measurable.of_discrete
+  have hind0 : IndepFun (testT.indicator (1 : (Bool × Bool) → ℝ)) testY₀ testμ := by
+    have h := indepFun_test.comp measurable_id measurable_fst
+    refine h.congr (Filter.Eventually.of_forall fun ω => rfl)
+      (Filter.Eventually.of_forall fun ω => rfl)
+  have hlt : testμ.real testT < 1 := by rw [testμ_T]; norm_num
+  exact integral_observed_cond_control_of_indepFun hT hY₀ hind0 hlt
 
 end MathlibExtTest.Probability.Causality.RandomizedExperiment
