@@ -170,6 +170,15 @@ theorem ex_nash :
             ((!![1; 3] : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ q'.weights) :=
   isSaddlePoint_of_optimal_of_value_eq ex_has_value ex_maximin_single_one ex_minimax_single_zero
 
+/-- The optimal pair is a Nash equilibrium in the example, in the canonical
+`IsMixedNash` form with payoffs `A` and `-A`. -/
+theorem ex_isMixedNash :
+    MathlibExt.GameTheory.MixedNashExistence.IsMixedNash
+      (zeroSumPayoffs (!![1; 3] : Matrix (Fin 2) (Fin 1) ℝ))
+      (zeroSumProfile (StdSimplex.single (R := ℝ) (1 : Fin 2))
+        (StdSimplex.single (R := ℝ) (0 : Fin 1))) :=
+  isMixedNash_of_optimal_of_value_eq ex_has_value ex_maximin_single_one ex_minimax_single_zero
+
 /-- Row `0` is not maximin in the example: it guarantees only `1 < 3`. -/
 theorem ex_not_maximin_single_zero :
     ¬ IsMaximinStrategy (!![1; 3] : Matrix (Fin 2) (Fin 1) ℝ)

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GameTheory.ZeroSumMinimax
+public import MathlibExt.GameTheory.MixedNashExistence
 
 import Mathlib.Tactic
 
@@ -27,9 +28,10 @@ values agree by von Neumann's minimax theorem `matrixGame_minimax`, which
 existence of some saddle point; the result here is that every optimal pair is one.
 
 The Nash condition is written as the two saddle-point inequalities in the matrix-game convention of
-`MathlibExt.GameTheory.ZeroSumMinimax`; it is the two-player case, with payoffs `A` and `-A`, of
-`IsMixedNash` in `MathlibExt.GameTheory.MixedNashExistence` (merged after this file was frozen),
-and the two formulations should be unified.
+`MathlibExt.GameTheory.ZeroSumMinimax`. The two-player encoding `zeroSumPayoffs` /
+`zeroSumProfile` below identifies this with the two-player case, with payoffs `A` and `-A`, of
+`IsMixedNash` in `MathlibExt.GameTheory.MixedNashExistence`: `isMixedNash_of_optimal_of_value_eq`
+states the saddle-point result in that canonical form.
 
 ## Main results
 
@@ -37,6 +39,10 @@ and the two formulations should be unified.
   equals minimax.
 * `matrixGame_isSaddlePoint_of_optimal`: optimal strategies of a finite matrix game form a
   saddle point.
+* `isMixedNash_of_optimal_of_value_eq`: optimal strategies form an `IsMixedNash` profile
+  under the two-player encoding `zeroSumPayoffs` / `zeroSumProfile`.
+* `matrixGame_isMixedNash_of_optimal`: optimal strategies of a finite matrix game form an
+  `IsMixedNash` profile.
 
 ## References
 
@@ -48,6 +54,7 @@ and the two formulations should be unified.
 namespace MathlibExt.GameTheory.ZeroSumOptimal
 
 open Matrix Convexity
+open MathlibExt.GameTheory.MixedNashExistence
 
 /-- `p` is an optimal (maximin) mixed strategy of the row player in the zero-sum matrix game `A`
 (row player receives `p ⬝ᵥ (A *ᵥ q)`): the payoff `p` guarantees against every column strategy
@@ -173,5 +180,128 @@ theorem matrixGame_isSaddlePoint_of_optimal {m n : ℕ} (hm : 0 < m) (hn : 0 < n
       ∀ q' : StdSimplex ℝ (Fin n),
         p.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q'.weights) :=
   isSaddlePoint_of_optimal_of_value_eq (matrixGame_minimax hm hn A) hp hq
+
+/-- Action sets of the two-player zero-sum game: player `false` (row) plays `Fin m`,
+player `true` (column) plays `Fin n`. -/
+def zeroSumActions (m n : ℕ) : Bool → Type _ := fun b => match b with
+  | false => Fin m
+  | true => Fin n
+
+instance zeroSumActions_fintype (m n : ℕ) (b : Bool) : Fintype (zeroSumActions m n b) := by
+  cases b
+  · change Fintype (Fin m)
+    exact inferInstance
+  · change Fintype (Fin n)
+    exact inferInstance
+
+/-- The two-player payoff encoding of a zero-sum matrix game: the row player
+(`false`) receives `A (a false) (a true)`, the column player (`true`) pays it. -/
+def zeroSumPayoffs {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) :
+    Bool → (∀ b, zeroSumActions m n b) → ℝ := fun b a => match b with
+  | false => A (a false) (a true)
+  | true => -A (a false) (a true)
+
+/-- The mixed profile with row strategy `p` and column strategy `q`. -/
+def zeroSumProfile {m n : ℕ} (p : StdSimplex ℝ (Fin m)) (q : StdSimplex ℝ (Fin n)) :
+    ∀ b, StdSimplex ℝ (zeroSumActions m n b) := fun b => match b with
+  | false => p
+  | true => q
+
+/-- Pure profiles of the two-player game are pairs of actions. -/
+private def piBoolEquiv {m n : ℕ} : (∀ b : Bool, zeroSumActions m n b) ≃ Fin m × Fin n where
+  toFun f := (f false, f true)
+  invFun p := fun b => match b with
+    | false => p.1
+    | true => p.2
+  left_inv f := by
+    funext b
+    cases b <;> rfl
+  right_inv p := by
+    cases p
+    rfl
+
+/-- The row player's expected payoff in the two-player encoding is the matrix payoff. -/
+private theorem expectedPayoff_zeroSum_row {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
+    (σ : ∀ b, StdSimplex ℝ (zeroSumActions m n b)) :
+    expectedPayoff (zeroSumPayoffs A) σ false =
+      (σ false).weights ⬝ᵥ (A *ᵥ (σ true).weights) := by
+  unfold expectedPayoff
+  set p : StdSimplex ℝ (Fin m) := σ false with hp
+  set q : StdSimplex ℝ (Fin n) := σ true with hq
+  rw [Fintype.sum_equiv piBoolEquiv
+    (fun a => (∏ b, (σ b).weights (a b)) * zeroSumPayoffs A false a)
+    (fun x => p.weights x.1 * q.weights x.2 * A x.1 x.2)
+    (fun a => by
+      rw [Fintype.prod_bool, hp, hq]
+      change (σ true).weights (a true) * (σ false).weights (a false) * A (a false) (a true) =
+        (σ false).weights (a false) * (σ true).weights (a true) * A (a false) (a true)
+      ring)]
+  rw [Fintype.sum_prod_type]
+  calc (∑ i, ∑ j, p.weights i * q.weights j * A i j)
+      = ∑ j, ∑ i, p.weights i * A i j * q.weights j := by
+        rw [Finset.sum_comm]
+        refine Finset.sum_congr rfl fun j _ => ?_
+        refine Finset.sum_congr rfl fun i _ => ?_
+        ring
+    _ = p.weights ⬝ᵥ (A *ᵥ q.weights) :=
+        (Matrix.dot_mulVec_eq_sum_sum p.weights A q.weights).symm
+
+/-- The column player's expected payoff in the two-player encoding is the negated
+matrix payoff. -/
+private theorem expectedPayoff_zeroSum_col {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
+    (σ : ∀ b, StdSimplex ℝ (zeroSumActions m n b)) :
+    expectedPayoff (zeroSumPayoffs A) σ true =
+      -((σ false).weights ⬝ᵥ (A *ᵥ (σ true).weights)) := by
+  have hneg : expectedPayoff (zeroSumPayoffs A) σ true =
+      -expectedPayoff (zeroSumPayoffs A) σ false := by
+    unfold expectedPayoff
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro a _
+    simp [zeroSumPayoffs]
+  rw [hneg, expectedPayoff_zeroSum_row]
+
+/-- **Optimal strategies form a mixed Nash equilibrium**, in the canonical
+`IsMixedNash` form: if `p` is maximin and `q` is minimax and the game has a value,
+neither player gains by a unilateral deviation in the two-player encoding. -/
+theorem isMixedNash_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin n) ℝ}
+    (hv : (⨆ p : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n),
+      p.weights ⬝ᵥ (A *ᵥ q.weights)) =
+      ⨅ q : StdSimplex ℝ (Fin n), ⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q.weights))
+    {p : StdSimplex ℝ (Fin m)} {q : StdSimplex ℝ (Fin n)} (hp : IsMaximinStrategy A p)
+    (hq : IsMinimaxStrategy A q) :
+    IsMixedNash (zeroSumPayoffs A) (zeroSumProfile p q) := by
+  obtain ⟨hrow, hcol⟩ :=
+    isSaddlePoint_of_optimal_of_value_eq hv hp hq
+  intro i τ
+  cases i
+  · rw [expectedPayoff_zeroSum_row, expectedPayoff_zeroSum_row]
+    have h1 : Function.update (zeroSumProfile p q) false τ false = τ :=
+      Function.update_self _ _ _
+    have h2 : Function.update (zeroSumProfile p q) false τ true = q := by
+      rw [Function.update_of_ne (by decide : (true : Bool) ≠ false)]
+      rfl
+    have hp1 : zeroSumProfile p q false = p := rfl
+    have hq1 : zeroSumProfile p q true = q := rfl
+    rw [h1, h2, hp1, hq1]
+    exact hrow τ
+  · rw [expectedPayoff_zeroSum_col, expectedPayoff_zeroSum_col]
+    have h1 : Function.update (zeroSumProfile p q) true τ true = τ :=
+      Function.update_self _ _ _
+    have h2 : Function.update (zeroSumProfile p q) true τ false = p := by
+      rw [Function.update_of_ne (by decide : (false : Bool) ≠ true)]
+      rfl
+    have hp1 : zeroSumProfile p q false = p := rfl
+    have hq1 : zeroSumProfile p q true = q := rfl
+    rw [h1, h2, hp1, hq1]
+    exact neg_le_neg (hcol τ)
+
+/-- **Optimal strategies of a finite zero-sum matrix game form a mixed Nash equilibrium**,
+in the canonical `IsMixedNash` form. -/
+theorem matrixGame_isMixedNash_of_optimal {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
+    {A : Matrix (Fin m) (Fin n) ℝ} {p : StdSimplex ℝ (Fin m)} {q : StdSimplex ℝ (Fin n)}
+    (hp : IsMaximinStrategy A p) (hq : IsMinimaxStrategy A q) :
+    IsMixedNash (zeroSumPayoffs A) (zeroSumProfile p q) :=
+  isMixedNash_of_optimal_of_value_eq (matrixGame_minimax hm hn A) hp hq
 
 end MathlibExt.GameTheory.ZeroSumOptimal
