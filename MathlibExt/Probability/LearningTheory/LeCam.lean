@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import MathlibExt.Probability.FiniteProbability
 
 @[expose] public section
 
@@ -27,18 +28,6 @@ Source: Tsybakov, Introduction to Nonparametric Estimation
 
 open Finset
 
-private theorem pmf_toReal_sum {α : Type*} [Fintype α] (r : PMF α) :
-    ∑ a, (r a).toReal = 1 := by
-  have hne : ∀ a, r a ≠ ⊤ := by
-    intro a
-    have hle : r a ≤ ∑' b, r b := ENNReal.le_tsum a
-    rw [PMF.tsum_coe r] at hle
-    exact ne_top_of_le_ne_top ENNReal.one_ne_top hle
-  have h := ENNReal.tsum_toReal_eq hne
-  have hfintype : (∑' a, (r a).toReal) = ∑ a, (r a).toReal := tsum_fintype _
-  rw [PMF.tsum_coe r, ENNReal.toReal_one, hfintype] at h
-  exact h.symm
-
 /-- Le Cam's two-point bound (finite form): for two distributions
 `p`, `q` on a finite type and any test `δ` (deciding for `q` on
 `δ a = true`), the sum of the two error probabilities is at least
@@ -48,8 +37,10 @@ theorem lecam_two_point {α : Type*} [Fintype α] (p q : PMF α) (δ : α → Bo
     1 - (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal| ≤
       (∑ a ∈ Finset.univ.filter (fun a => δ a = true), (p a).toReal) +
         (∑ a ∈ Finset.univ.filter (fun a => δ a = false), (q a).toReal) := by
-  have hpsum : ∑ a, (p a).toReal = 1 := pmf_toReal_sum p
-  have hqsum : ∑ a, (q a).toReal = 1 := pmf_toReal_sum q
+  have hpsum : ∑ a, (p a).toReal = 1 :=
+    MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one p
+  have hqsum : ∑ a, (q a).toReal = 1 :=
+    MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one q
   have hmin : ∀ a : α, min (p a).toReal (q a).toReal
       = ((p a).toReal + (q a).toReal - |(p a).toReal - (q a).toReal|) / 2 := by
     intro a

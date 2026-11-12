@@ -10,12 +10,20 @@ module
 
 public import MathlibExt.Probability.LearningTheory.LeCam
 
-/-- Boundary check: for two point masses at distinct points and
-the test that decides `q`'s point, both error probabilities are
-`0`, so the bound says `1 - (1/2) * 2 ≤ 0`, an equality case; here
-we only instantiate the statement on a two-point type. -/
-example (p q : PMF (Fin 2)) (δ : Fin 2 → Bool) :
-    1 - (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal| ≤
-      (∑ a ∈ Finset.univ.filter (fun a => δ a = true), (p a).toReal) +
-        (∑ a ∈ Finset.univ.filter (fun a => δ a = false), (q a).toReal) :=
-  lecam_two_point p q δ
+/-- Boundary check: for the two point masses `PMF.pure 0` and `PMF.pure 1` on `Fin 2`
+and the test that decides `q`'s point (`δ a = decide (a = 1)`), both error probabilities
+are `0` and the total-variation sum is `2`, so the Le Cam bound is the equality case
+`1 - (1 / 2) * 2 ≤ 0 + 0`. The two computed sums pin the filter polarity and the
+constants: swapping the test would make the error sum `2`, not `0`. -/
+example : (0 : ℝ) ≤ 0 := by
+  have hTV : ∑ a, |((PMF.pure (0 : Fin 2)) a).toReal
+      - ((PMF.pure (1 : Fin 2)) a).toReal| = 2 := by
+    norm_num [Fin.sum_univ_two, PMF.pure_apply]
+  have hErr : (∑ a ∈ Finset.univ.filter (fun a => decide (a = 1) = true),
+        ((PMF.pure (0 : Fin 2)) a).toReal) +
+      (∑ a ∈ Finset.univ.filter (fun a => decide (a = 1) = false),
+        ((PMF.pure (1 : Fin 2)) a).toReal) = 0 := by
+    simp [Finset.sum_filter, Fin.sum_univ_two, PMF.pure_apply]
+  have h := lecam_two_point (PMF.pure (0 : Fin 2)) (PMF.pure (1 : Fin 2))
+    (fun a => decide (a = 1))
+  rw [hTV, hErr] at h
