@@ -10,7 +10,7 @@ module
 
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
-public import MathlibExt.InformationTheory.FiniteEntropy
+import MathlibExt.InformationTheory.FiniteEntropy
 import MathlibExt.InformationTheory.Pinsker
 
 @[expose] public section
@@ -40,18 +40,18 @@ type, with no positivity hypotheses: the squared `L1` distance is at
 most twice the Kullback-Leibler divergence (in nats). The right side
 is stated in `ℝ≥0∞`, so it stays correct when the divergence is
 infinite (the `ENNReal.toReal` form would be false there). -/
-theorem pinsker_pmf {α : Type*} [Fintype α] [MeasurableSpace α] [DiscreteMeasurableSpace α]
-    (p q : PMF α) :
+theorem pinsker_pmf {α : Type*} [Fintype α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (p q : PMF α) :
     ENNReal.ofReal ((∑ a, |(p a).toReal - (q a).toReal|) ^ 2) ≤
       2 * InformationTheory.klDiv p.toMeasure q.toMeasure := by
   by_cases hac : p.toMeasure ≪ q.toMeasure
   · have hpq : ∀ a, q a = 0 → p a = 0 := by
       intro a hqa
       have h1 : q.toMeasure {a} = 0 := by
-        rw [PMF.toMeasure_apply_singleton _ _ MeasurableSet.of_discrete]
+        rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _)]
         exact hqa
       have h2 : p.toMeasure {a} = 0 := hac h1
-      rw [PMF.toMeasure_apply_singleton _ _ MeasurableSet.of_discrete] at h2
+      rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _)] at h2
       exact h2
     have hKLreal : (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal
         = ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal) :=

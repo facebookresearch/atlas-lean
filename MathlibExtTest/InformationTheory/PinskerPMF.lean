@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import MathlibExt.InformationTheory.Pinsker
 public import MathlibExt.InformationTheory.PinskerPMF
+import MathlibExt.InformationTheory.FiniteEntropy
 
 @[expose] public section
 
@@ -26,6 +28,13 @@ open MeasureTheory Real InformationTheory
 open scoped ENNReal NNReal
 
 namespace MathlibExtTest.InformationTheory.PinskerPMF
+
+/-- The public bound requires only measurable singletons, not a discrete-space instance. -/
+example {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
+    (p q : PMF α) :
+    ENNReal.ofReal ((∑ a, |(p a).toReal - (q a).toReal|) ^ 2) ≤
+      2 * InformationTheory.klDiv p.toMeasure q.toMeasure :=
+  InformationTheory.pinsker_pmf p q
 
 /-- A fair coin. -/
 noncomputable def fair : PMF Bool :=
