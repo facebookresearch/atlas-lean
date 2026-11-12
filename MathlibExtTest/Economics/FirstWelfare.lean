@@ -12,7 +12,11 @@ public import MathlibExt.Economics.FirstWelfare
 import Mathlib.Tactic
 import Mathlib.Algebra.BigOperators.Fin
 
-/-! Examples for `MathlibExt.Economics.FirstWelfare`: a two-agent, two-good exchange economy with linear utilities whose endowment allocation is a Walrasian equilibrium and hence Pareto efficient, and a satiated variant whose equilibrium is not Pareto efficient. -/
+/-! Examples for `MathlibExt.Economics.FirstWelfare`: a two-agent, two-good exchange economy
+with linear utilities whose endowment allocation is a Walrasian equilibrium and hence Pareto
+efficient, a satiated variant whose equilibrium is not Pareto efficient, and a zero-price
+regression: the zero price vector satisfies every other equilibrium clause in a one-agent,
+one-good economy but is not a Walrasian equilibrium. -/
 
 namespace MathlibExtTest.Economics.FirstWelfare
 
@@ -35,6 +39,11 @@ theorem exPrice_nonneg : 0 ≤ exPrice := by
   show (0 : ℝ) ≤ 1
   exact zero_le_one
 
+theorem exPrice_ne_zero : exPrice ≠ 0 := by
+  intro h
+  have h0 := congrFun h 0
+  norm_num [exPrice] at h0
+
 theorem exPrice_dot (y : Fin 2 → ℝ) : exPrice ⬝ᵥ y = y 0 + y 1 := by
   simp only [exPrice, dotProduct, Fin.sum_univ_two, one_mul]
 
@@ -54,15 +63,18 @@ def exLinEcon : ExchangeEconomy (Fin 2) (Fin 2) where
   endowment := exEndow
   utility := fun _ y => y 0 + y 1
 
-theorem exLin_locallyNonsatiated : exLinEcon.LocallyNonsatiated := by
+theorem exLin_locallyNonsatiated :
+    ∀ i, SecondWelfareTheorem.LocallyNonsatiated (exLinEcon.utility i) := by
   intro i x hx ε hε
   refine ⟨fun l => x l + ε / 2, ?_, ?_, ?_⟩
   · intro l
     show 0 ≤ x l + ε / 2
     have hxl : 0 ≤ x l := hx l
     linarith
-  · intro l
-    show |x l + ε / 2 - x l| < ε
+  · rw [dist_pi_lt_iff hε]
+    intro l
+    show dist (x l + ε / 2) (x l) < ε
+    rw [Real.dist_eq]
     have e : x l + ε / 2 - x l = ε / 2 := by ring
     rw [e, abs_of_pos (by linarith : 0 < ε / 2)]
     linarith
@@ -77,7 +89,7 @@ theorem exAlloc_feasible : exLinEcon.IsFeasible exAlloc := by
   · exact le_rfl
 
 theorem exLin_isWalrasian : exLinEcon.IsWalrasianEquilibrium exPrice exAlloc := by
-  refine ⟨exPrice_nonneg, exAlloc_feasible, ?_⟩
+  refine ⟨exPrice_nonneg, exPrice_ne_zero, exAlloc_feasible, ?_⟩
   rw [Fin.forall_fin_two]
   constructor
   · refine ⟨le_rfl, ?_⟩
@@ -110,7 +122,7 @@ theorem exSat_util1 (y : Fin 2 → ℝ) : exSatEcon.utility 1 y = y 0 + y 1 := b
 
 theorem exSat_isWalrasian : exSatEcon.IsWalrasianEquilibrium exPrice exAlloc := by
   have hfeas : exSatEcon.IsFeasible exAlloc := exAlloc_feasible
-  refine ⟨exPrice_nonneg, hfeas, ?_⟩
+  refine ⟨exPrice_nonneg, exPrice_ne_zero, hfeas, ?_⟩
   rw [Fin.forall_fin_two]
   constructor
   · refine ⟨le_rfl, ?_⟩
@@ -150,6 +162,27 @@ theorem exSat_notPareto : ¬ exSatEcon.IsParetoEfficient exAlloc := by
     exact one_lt_two
   intro h
   exact h.2 ⟨exSatWit, hfeasW, hgeW, 1, hltW⟩
+
+/-- One agent, one good, zero endowment and constant utility. -/
+def exZeroEcon : ExchangeEconomy Unit Unit where
+  endowment := fun _ _ => 0
+  utility := fun _ _ => 0
+
+/-- At the zero price vector, the zero allocation meets every clause of
+`IsWalrasianEquilibrium` except `p ≠ 0`. -/
+theorem exZero_otherClauses :
+    (0 : Unit → ℝ) ≤ 0 ∧ exZeroEcon.IsFeasible 0 ∧
+      ∀ i, (0 : Unit → ℝ) ⬝ᵥ (0 : Unit → Unit → ℝ) i ≤ (0 : Unit → ℝ) ⬝ᵥ exZeroEcon.endowment i ∧
+        ∀ y : Unit → ℝ, 0 ≤ y → (0 : Unit → ℝ) ⬝ᵥ y ≤ (0 : Unit → ℝ) ⬝ᵥ exZeroEcon.endowment i →
+          exZeroEcon.utility i y ≤ exZeroEcon.utility i ((0 : Unit → Unit → ℝ) i) := by
+  refine ⟨le_rfl, ⟨fun _ => le_rfl, ?_⟩, fun _ => ⟨?_, fun _ _ _ => le_rfl⟩⟩
+  · intro l
+    simp [exZeroEcon]
+  · simp
+
+/-- Regression: the zero price vector is not a Walrasian equilibrium. -/
+theorem exZero_not_isWalrasian : ¬ exZeroEcon.IsWalrasianEquilibrium 0 0 :=
+  fun h => h.2.1 rfl
 
 end Examples
 
