@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.X01IsochronDating
+import PhyslibExt.EarthScience.IsochronDating
 
 /-!
 # Isochron-dating capstone checks
 
-Concrete consumers of `PhyslibExt.EarthScience.X01IsochronDating`:
+Concrete consumers of `PhyslibExt.EarthScience.IsochronDating`:
 slope `1` and recovered age `10` at `b = 3`, the `t = 0` boundary,
 and the combined slope-plus-age statement.
 
@@ -30,7 +30,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.X01IsochronDating`
+- `PhyslibExt.EarthScience.IsochronDating`
 -/
 
 /-- Slope `1` at `b = 3`. -/
