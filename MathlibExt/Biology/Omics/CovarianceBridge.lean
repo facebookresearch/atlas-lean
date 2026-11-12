@@ -38,6 +38,9 @@ is redefined here.
   every `n`, and `S = n / (n - 1) • (n⁻¹ Xᵀ X - x̄ x̄ᵀ)` for `2 ≤ n` (Bessel's correction).
 * `sampleCov_add_vecMulVec_one` : `S` does not see a common shift `𝟙 cᵀ` of all samples, while
   the second moment does.
+* `center_eq_zero_of_le_one`, `sampleCov_eq_zero_of_le_one` : with at most one sample the
+  centered matrix and `S` vanish, so the rank and null-direction results below need no lower
+  bound on `n`.
 * `rank_sampleCov`, `rank_center_le`, `det_sampleCov_eq_zero_of_le` : `rank S = rank (X - 𝟙 x̄ᵀ)
   ≤ n - 1`, so `S` is singular whenever there are no more samples than features.
 * `sampleCov_mulVec_eq_zero_iff`, `det_sampleCov_eq_zero_iff` : `S w = 0` exactly when every
@@ -49,7 +52,11 @@ is redefined here.
   all samples.
 * `sampleCov_batchModel_eq_of_add_eq`, `not_exists_batch_estimator` : when the batch and the
   biological condition are confounded (`s = b`), `S` depends on `(β, δ)` only through `β + δ`,
-  so no function of `S` recovers the batch effect.
+  so no function of `S` recovers the batch effect (`not_exists_signal_estimator`: nor the
+  signal).
+* `sampleCov_batchModel_confounded_noiseless`, `rank_sampleCov_vecMulVec_le`,
+  `rank_sampleCov_batchModel_confounded_noiseless_le` : without noise, the confounded `S` is
+  `var(b) • (β + δ)(β + δ)ᵀ`, of rank at most one.
 
 ## References
 
@@ -59,9 +66,10 @@ supplies `colMean`, `center`, `sampleCov`, `sum_center` and `sampleVar_scores`; 
 algebra. No existing statement of the scatter identity or of the rank bound for centered data
 was found in pinned Mathlib or `MathlibExt` (base 53666a3c1). Related, landed on `main` after
 that base: `MathlibExt.Biology.Omics.Pseudobulk.not_identifiable_of_confounded` proves that the
-condition effect is not identifiable from the full data law of a scalar donor-level model under
-perfect confounding; the results here are the matrix-valued counterpart for the centered sample
-covariance and do not duplicate it.
+condition effect `τ` is not identifiable from the full data law of the scalar cell-level
+hierarchical model (cells indexed by donor × cell, donor-level batch and condition covariates)
+under perfect confounding. That is a statement about a probability law; the results here are
+about the centered sample covariance as a matrix and do not duplicate it.
 
 * T. W. Anderson, *An Introduction to Multivariate Statistical Analysis*, 3rd ed., Wiley, 2003,
   §3.3 (the sample covariance and the identity `∑ (xᵢ - x̄)(xᵢ - x̄)ᵀ = ∑ xᵢ xᵢᵀ - n x̄ x̄ᵀ`).
@@ -415,8 +423,9 @@ theorem sampleCov_batchModel_eq_of_add_eq (E : Matrix (Fin n) (Fin p) ℝ) (μ �
 /-- **Batch effect nonidentifiable.** In a confounded design (with at least one feature) no
 function of the centered sample covariance recovers the batch effect `β`: "all batch"
 `(β, δ) = (a, 0)` and "all biology" `(β, δ) = (0, a)` give the same `S`. Compare
-`MathlibExt.Biology.Omics.Pseudobulk.not_identifiable_of_confounded`, the scalar donor-level
-statement for the full data law. -/
+`MathlibExt.Biology.Omics.Pseudobulk.not_identifiable_of_confounded`: the scalar cell-level
+hierarchical model (donor-level covariates), for the condition effect `τ` and the full data
+law. -/
 theorem not_exists_batch_estimator (hp : 0 < p) (E : Matrix (Fin n) (Fin p) ℝ)
     (μ : Fin p → ℝ) (b : Fin n → ℝ) :
     ¬ ∃ f : Matrix (Fin p) (Fin p) ℝ → Fin p → ℝ,
