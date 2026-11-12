@@ -133,90 +133,11 @@ def Cocycle (N : ModuleCat.{u} B)
       (ModuleCat.extendScalars (i₂ A B).hom).obj N) : Prop :=
   T N (c₁₂ A B) φ'.hom ≫ T N (c₂₃ A B) φ'.hom = T N (c₁₃ A B) φ'.hom
 
-section Helpers
-
-variable {R S T U : Type u} [CommRing R] [CommRing S] [CommRing T] [CommRing U]
-
-/-- `extendScalars_assoc`, rearranged to move a `whiskerRight` inverse across. -/
-private lemma extendScalarsComp_hom_map_inv (f : R →+* S) (g : S →+* T) (c : T →+* U)
-    (M : ModuleCat.{u} R) :
-    (ModuleCat.extendScalarsComp g c).hom.app ((ModuleCat.extendScalars f).obj M) ≫
-        (ModuleCat.extendScalars c).map ((ModuleCat.extendScalarsComp f g).inv.app M) =
-      (ModuleCat.extendScalarsComp f (c.comp g)).inv.app M ≫
-        (ModuleCat.extendScalarsComp (g.comp f) c).hom.app M := by
-  have h := NatTrans.congr_app (ModuleCat.extendScalars_assoc f g c) M
-  simp only [NatTrans.comp_app, Functor.whiskerRight_app, Functor.whiskerLeft_app,
-    Functor.associator_inv_app, Category.comp_id] at h
-  rw [← cancel_epi ((ModuleCat.extendScalarsComp f (c.comp g)).hom.app M), ← reassoc_of% h,
-    Iso.hom_inv_id_app_assoc, ← Functor.map_comp, Iso.hom_inv_id_app,
-    CategoryTheory.Functor.map_id, Category.comp_id]
-
-/-- `extendScalars_assoc`, rearranged to move a `whiskerLeft` inverse across. -/
-private lemma map_hom_extendScalarsComp_inv (f : R →+* S) (g : S →+* T) (c : T →+* U)
-    (M : ModuleCat.{u} R) :
-    (ModuleCat.extendScalars c).map ((ModuleCat.extendScalarsComp f g).hom.app M) ≫
-        (ModuleCat.extendScalarsComp g c).inv.app ((ModuleCat.extendScalars f).obj M) =
-      (ModuleCat.extendScalarsComp (g.comp f) c).inv.app M ≫
-        (ModuleCat.extendScalarsComp f (c.comp g)).hom.app M := by
-  have h := NatTrans.congr_app (ModuleCat.extendScalars_assoc f g c) M
-  simp only [NatTrans.comp_app, Functor.whiskerRight_app, Functor.whiskerLeft_app,
-    Functor.associator_inv_app, Category.comp_id] at h
-  rw [← cancel_epi ((ModuleCat.extendScalarsComp (g.comp f) c).hom.app M), reassoc_of% h,
-    Iso.hom_inv_id_app, Category.comp_id, Iso.hom_inv_id_app_assoc]
-
-/-- Extension along `c` carries the `eqToHom` between equal extensions to an `eqToHom`. -/
-private lemma extendScalarsComp_hom_map_eqToHom {f f' : R →+* S} (h : f = f') (c : S →+* T)
-    (M : ModuleCat.{u} R) :
-    (ModuleCat.extendScalarsComp f c).hom.app M ≫
-        (ModuleCat.extendScalars c).map
-          (eqToHom (congrArg (fun f => (ModuleCat.extendScalars f).obj M) h)) ≫
-        (ModuleCat.extendScalarsComp f' c).inv.app M =
-      eqToHom (congrArg (fun f => (ModuleCat.extendScalars f).obj M) (congrArg c.comp h)) := by
-  subst h
-  simp
-
-/-- Composition of two comparisons through `extendScalarsComp` and `eqToHom`. -/
-private lemma comparison_trans (a : R →+* S) (f g k : S →+* T) (h₁ : f.comp a = g.comp a)
-    (h₂ : g.comp a = k.comp a) (h₃ : f.comp a = k.comp a) (M : ModuleCat.{u} R) :
-    ((ModuleCat.extendScalarsComp a f).inv.app M ≫
-        eqToHom (congrArg (fun f => (ModuleCat.extendScalars f).obj M) h₁) ≫
-        (ModuleCat.extendScalarsComp a g).hom.app M) ≫
-      ((ModuleCat.extendScalarsComp a g).inv.app M ≫
-        eqToHom (congrArg (fun f => (ModuleCat.extendScalars f).obj M) h₂) ≫
-        (ModuleCat.extendScalarsComp a k).hom.app M) =
-      (ModuleCat.extendScalarsComp a f).inv.app M ≫
-        eqToHom (congrArg (fun f => (ModuleCat.extendScalars f).obj M) h₃) ≫
-        (ModuleCat.extendScalarsComp a k).hom.app M := by
-  simp
-
-end Helpers
-
-variable {A B} in
-/-- Transport of `canonical` along a coface is the `A`-level comparison. -/
-private lemma T_canonical (M : ModuleCat.{u} A) (c : R₂ A B ⟶ R₃ A B) :
-    T ((ModuleCat.extendScalars (algebraMap A B)).obj M) c (canonical A B M).hom =
-      (ModuleCat.extendScalarsComp (algebraMap A B) (c.hom.comp (i₁ A B).hom)).inv.app M ≫
-        eqToHom (congrArg (fun f => (ModuleCat.extendScalars f).obj M)
-          (congrArg c.hom.comp (i₁_comp_algebraMap_eq A B))) ≫
-        (ModuleCat.extendScalarsComp (algebraMap A B) (c.hom.comp (i₂ A B).hom)).hom.app M := by
-  simp only [T, canonical, Iso.trans_hom, Iso.app_hom, Iso.symm_hom, eqToIso.hom,
-    Functor.map_comp, Category.assoc]
-  rw [reassoc_of% (extendScalarsComp_hom_map_inv (algebraMap A B) (i₁ A B).hom c.hom M),
-    map_hom_extendScalarsComp_inv, reassoc_of% (extendScalarsComp_hom_map_eqToHom
-      (i₁_comp_algebraMap_eq A B) c.hom M)]
-
 variable {A B} in
 /-- The canonical descent isomorphism satisfies the cocycle condition. -/
 theorem canonical_cocycle (M : ModuleCat.{u} A) :
     Cocycle ((ModuleCat.extendScalars (algebraMap A B)).obj M) (canonical A B M) := by
-  unfold Cocycle
-  rw [T_canonical, T_canonical, T_canonical]
-  exact comparison_trans (algebraMap A B) ((c₁₂ A B).hom.comp (i₁ A B).hom)
-    ((c₁₂ A B).hom.comp (i₂ A B).hom) ((c₂₃ A B).hom.comp (i₂ A B).hom)
-    (congrArg (c₁₂ A B).hom.comp (i₁_comp_algebraMap_eq A B))
-    (congrArg (c₂₃ A B).hom.comp (i₁_comp_algebraMap_eq A B))
-    ((congrArg (c₁₂ A B).hom.comp (i₁_comp_algebraMap_eq A B)).trans
-      (congrArg (c₂₃ A B).hom.comp (i₁_comp_algebraMap_eq A B))) M
+  simp [Cocycle, T, canonical]
 
 end Algebra.DescentCofaces
 

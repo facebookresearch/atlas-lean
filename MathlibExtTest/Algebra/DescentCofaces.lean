@@ -56,7 +56,7 @@ example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] :
   i₁_comp_algebraMap_eq A B
 
 /-- The canonical comparison is an isomorphism between the two pullbacks. -/
-noncomputable example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (M : ModuleCat.{0} A) :
+example (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (M : ModuleCat.{0} A) :
     (ModuleCat.extendScalars (i₁ A B).hom).obj
         ((ModuleCat.extendScalars (algebraMap A B)).obj M) ≅
       (ModuleCat.extendScalars (i₂ A B).hom).obj
