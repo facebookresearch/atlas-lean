@@ -101,7 +101,8 @@ example (x : ℝ) :
       (𝓝 (Real.exp (-Real.exp (-x)))) := by
   simpa [expLadder] using expLadder.tendsto_real_le_log_div_add one_pos expLadder_tail x
 
-/-- The same instance through the general two-sided bound along a subsequence filter. -/
+/-- The same instance: the eventual upper bound read off from the `atTop` limit of
+`tendsto_real_le_log_div_add`. -/
 example (x : ℝ) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ n in atTop, Pexp.real {ω | runMax n ω ≤ Real.log n / 1 + x} ≤
       Real.exp (-(1 / expLadder.A * Real.exp (-(1 * x)))) + ε :=

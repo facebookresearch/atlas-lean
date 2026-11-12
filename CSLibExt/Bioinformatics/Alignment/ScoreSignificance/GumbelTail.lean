@@ -108,7 +108,10 @@ when `j ≤ i` (the empty segment). -/
 def segmentScore (x : ℕ → ℝ) (i j : ℕ) : ℝ := ∑ k ∈ Finset.Ico i j, x k
 
 /-- The maximal segment score `Mₙ = max_{0 ≤ i ≤ j ≤ n} (x i + ⋯ + x (j - 1))` of the first `n`
-scores `x 0, …, x (n - 1)`. The empty segment is allowed, so `Mₙ ≥ 0`. -/
+scores `x 0, …, x (n - 1)`. The empty segment is allowed, so `Mₙ ≥ 0`.
+
+This is the same quantity as T49's `maxSegScore (List.ofFn fun i : Fin n => x i)`; it is restated
+here because T49 is not on `main`. TODO: prove the equality once T49 lands. -/
 noncomputable def maxSegmentScore (x : ℕ → ℝ) (n : ℕ) : ℝ :=
   (Finset.range (n + 1) ×ˢ Finset.range (n + 1)).sup' ⟨(0, 0), by simp⟩
     fun p => segmentScore x p.1 p.2
@@ -253,8 +256,9 @@ private theorem tendsto_tail_zero [IsProbabilityMeasure P] (I : LadderInput P M)
   have hn' : (0 : ℝ) < n := by exact_mod_cast h1
   rw [le_div_iff₀ hn']; linarith
 
-/-- **Extreme-value upper bound.** If `liminf n (1 - F tₙ) ≥ c` along `L`, then
-`limsup P(Mₙ ≤ tₙ) ≤ exp (-c / A)` along `L`. -/
+/-- **Extreme-value upper bound.** If `liminf n (1 - F tₙ) ≥ c` along `L` (`hlo`), then
+`limsup P(Mₙ ≤ tₙ) ≤ exp (-c / A)` along `L`. The limsup bound `hhi` (some finite `chi`) is
+also required: it gives `1 - F tₙ → 0`. -/
 theorem eventually_real_le_le [IsProbabilityMeasure P] (I : LadderInput P M) {L : Filter ℕ}
     (hL : L ≤ atTop) (t : ℕ → ℝ) {clo chi : ℝ}
     (hlo : ∀ δ > 0, ∀ᶠ n in L, clo - δ ≤ n * (1 - I.F (t n)))
@@ -539,7 +543,7 @@ private theorem frequently_fract_log {θ h : ℝ} (hθ : 0 < θ) (hh : 0 < h) (x
     refine this.congr fun n => ?_
     push_cast; field_simp; ring
 
-/-- **Lattice case: the liminf is attained.** For every `ε > 0`, infinitely often
+/-- **Lattice case: the liminf is approached.** For every `ε > 0`, infinitely often
 `P(Mₙ ≤ log n / θ + x) ≤ exp (-K e^{-θ x}) + ε` (`K = C / A`). -/
 theorem frequently_lattice_le [IsProbabilityMeasure P] (I : LadderInput P M)
     {θ h C : ℝ} (hθ : 0 < θ) (hh : 0 < h) (hlat : ∀ i, ∀ᵐ ω ∂P, ∃ k : ℤ, I.Y i ω = k * h)
@@ -573,7 +577,7 @@ theorem frequently_lattice_le [IsProbabilityMeasure P] (I : LadderInput P M)
   rw [e] at this
   linarith
 
-/-- **Lattice case: the limsup is attained.** For every `ε > 0`, infinitely often
+/-- **Lattice case: the limsup is approached.** For every `ε > 0`, infinitely often
 `exp (-K e^{-θ (x + h)}) - ε ≤ P(Mₙ ≤ log n / θ + x)` (`K = C / A`). -/
 theorem frequently_le_lattice [IsProbabilityMeasure P] (I : LadderInput P M)
     {θ h C : ℝ} (hθ : 0 < θ) (hh : 0 < h) (hlat : ∀ i, ∀ᵐ ω ∂P, ∃ k : ℤ, I.Y i ω = k * h)
@@ -670,7 +674,11 @@ with the two inputs that renewal theory supplies and that are taken here as hypo
 ladder decomposition of the maximal segment score (`ladder`) and the nonlattice renewal tail
 `P(Y > t) ~ C e^{-θ t}` of the excursion heights (`tendsto_tail`). The fields `cramer` and
 `nonlattice` record the setting in which renewal theory provides `ladder` and `tendsto_tail`;
-the limit theorem uses only the latter two. -/
+the limit theorem uses only the latter two.
+
+No instance of this structure (or of `LatticeRenewalInput`) is constructed here: that would
+require deriving the ladder input from the scores. Non-vacuity is shown only for `LadderInput`,
+in the test file. -/
 structure NonlatticeRenewalInput (P : Measure Ω) (X : ℕ → Ω → ℝ) where
   /-- The Cramér root. -/
   θ : ℝ
@@ -739,8 +747,8 @@ theorem LatticeRenewalInput.eventually_bounds {P : Measure Ω} [IsProbabilityMea
         Real.exp (-(R.K * Real.exp (-(R.θ * (x + R.h))))) + ε :=
   R.ladder.eventually_lattice_bounds R.cramer.pos R.h_pos R.lattice_Y R.tendsto_tail x hε
 
-/-- **Lattice scores: both bounds are attained infinitely often**, so they are the exact liminf
-and limsup of `P(Mₙ ≤ log n / θ + x)`. -/
+/-- **Lattice scores: both bounds are approached (within any `ε`) infinitely often**, so they
+are the exact liminf and limsup of `P(Mₙ ≤ log n / θ + x)`. -/
 theorem LatticeRenewalInput.frequently_bounds {P : Measure Ω} [IsProbabilityMeasure P]
     {X : ℕ → Ω → ℝ} (R : LatticeRenewalInput P X) (x : ℝ) {ε : ℝ} (hε : 0 < ε) :
     (∃ᶠ n : ℕ in atTop, P.real {ω | maxSegmentScoreRV X n ω ≤ Real.log n / R.θ + x} ≤
