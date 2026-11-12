@@ -346,7 +346,7 @@ theorem FiniteMassDist.mem_support_iff (d : FiniteMassDist) (m : ℝ) :
 
 /-- For a PMF whose mass lies in `s`, the real value of a bind is the finite sum of
 products. -/
-lemma toReal_bind_apply_of_finite_support {α β : Type*} (p : PMF α) (f : α → PMF β)
+private lemma toReal_bind_apply_of_finite_support {α β : Type*} (p : PMF α) (f : α → PMF β)
     (s : Finset α) (hs : ∀ a ∉ s, p a = 0) (m : β) :
     ((p.bind f) m).toReal = ∑ x ∈ s, (p x).toReal * ((f x m).toReal) := by
   rw [PMF.bind_apply, tsum_eq_sum (fun a ha => by rw [hs a ha, zero_mul])]
@@ -356,7 +356,7 @@ lemma toReal_bind_apply_of_finite_support {α β : Type*} (p : PMF α) (f : α �
 
 /-- For a PMF whose mass lies in `s`, the real value of a map is the finite sum over the
 fiber. -/
-lemma toReal_map_apply_of_finite_support {α β : Type*} [DecidableEq β] (p : PMF α)
+private lemma toReal_map_apply_of_finite_support {α β : Type*} [DecidableEq β] (p : PMF α)
     (g : α → β) (s : Finset α) (hs : ∀ a ∉ s, p a = 0) (m : β) :
     ((p.map g) m).toReal = ∑ y ∈ s with g y = m, (p y).toReal := by
   rw [PMF.map_apply, tsum_eq_sum (s := s.filter (fun y => g y = m))]

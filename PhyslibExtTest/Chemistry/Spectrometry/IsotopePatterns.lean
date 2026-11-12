@@ -662,8 +662,6 @@ end PhyslibExtTest.Chemistry.Spectrometry
 #print axioms Chemistry.Spectrometry.FiniteMassDist.support_coe
 #print axioms Chemistry.Spectrometry.FiniteMassDist.apply_eq_zero_of_notMem
 #print axioms Chemistry.Spectrometry.FiniteMassDist.mem_support_iff
-#print axioms Chemistry.Spectrometry.toReal_bind_apply_of_finite_support
-#print axioms Chemistry.Spectrometry.toReal_map_apply_of_finite_support
 #print axioms Chemistry.Spectrometry.FiniteMassDist.conv
 #print axioms Chemistry.Spectrometry.FiniteMassDist.support_conv
 #print axioms Chemistry.Spectrometry.FiniteMassDist.toReal_conv
