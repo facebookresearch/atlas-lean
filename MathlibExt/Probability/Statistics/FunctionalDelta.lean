@@ -88,14 +88,18 @@ instances use two norms:
   fields of `hCLT` in `tendstoInDistribution_lInfty_of_hadamard` **fail on the canonical space
   of the observations whenever the law of the uncensored observation times in `[0, τ]` has a
   non-atomic part**. Take `n = 1` (enough, since the `AEMeasurable` field covers every `n` and
-  translation is a homeomorphism) and the canonical space: the observation `(T, δ)` with the
-  completion of `σ(T, δ)`. Then `Λ̂₁ = δ · 1[T, τ]` when `T ≤ τ` (and `0` otherwise); distinct
-  such paths and the zero path are pairwise at sup distance `1`, so every set of paths is closed
-  in `ℓ^∞([0, τ])`. The preimage of `{1[u, τ] | u ∈ A}` is `{δ = 1, T ∈ A}`, which is not in the
-  completed `σ(T, δ)` when `A ⊆ [0, τ]` is non-measurable for the law of `T` on `{δ = 1}`; such
-  `A` exists when that law has a non-atomic part. (On a general `Ω` the probability can be
-  extended to make this set measurable, so the statement needs the canonical space or an
-  Ulam-type set-theoretic assumption. With censoring before every death in `[0, τ]`, e.g.
+  translation is a homeomorphism) and the canonical space: the observations `(Tᵢ, δᵢ)ᵢ` with the
+  completion of `σ((Tᵢ, δᵢ)ᵢ)` (one `μ` serves every `n`); the event below depends only on the
+  first observation `(T, δ) = (T₁, δ₁)`, so it suffices to look at `σ(T, δ)`. Then
+  `Λ̂₁ = δ · 1[T, τ]` when `T ≤ τ` (and `0` otherwise); distinct such paths and the zero path are
+  pairwise at sup distance `1`, so every set of paths is closed in `ℓ^∞([0, τ])`. The preimage
+  of `{1[u, τ] | u ∈ A}` is `{δ = 1, T ∈ A}`, which is not in the completed `σ((Tᵢ, δᵢ)ᵢ)` when
+  `A ⊆ [0, τ]` is non-measurable for the law of `T` on `{δ = 1}`; such `A` exists when that law
+  has a non-atomic part on `[0, τ]`. (On a general `Ω` the probability can be extended to make
+  this set measurable, so the statement needs the canonical space, or the assumption that there
+  is no real-valued measurable cardinal `≤ 𝔠`: under it, Borel measurability on any `Ω` would
+  extend the non-atomic part of that law to all subsets of `[0, τ]`, which is impossible
+  (Ulam). With censoring before every death in `[0, τ]`, e.g.
   `C ≡ 0`, `Λ̂₁ ≡ 0` a.s. and the field holds.) This is the classical non-measurability of the
   empirical distribution function in `D[0, 1]` with the uniform metric (Billingsley 1999, §15;
   van der Vaart–Wellner 1996, §1.1). So that statement is a conditional that does not apply to
