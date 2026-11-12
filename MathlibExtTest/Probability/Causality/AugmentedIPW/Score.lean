@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Causality.AugmentedIPW.Score
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # Tests for the AIPW score with fixed nuisance functions
@@ -20,8 +21,11 @@ public import MathlibExt.Probability.Causality.AugmentedIPW.Score
   are checked on the same units.
 * The score and its integral are definitionally equal to the canonical `MissingOutcomes` API.
 * Junk values: candidate propensities `e = 0` and `e = 1` drop their respective residuals.
-* A fair coin with a constant covariate as a witness of `AIPWAssumptions`, and the
-  conditional-mean-zero lemmas instantiated on it with correct candidate functions.
+* A fair coin with a constant covariate witnesses `AIPWAssumptions` and
+  instantiates the correct-propensity lemma.
+* Independent outcome and treatment coins exercise both correct-outcome lemmas
+  with a wrong candidate propensity. Their residuals are nonzero on units of
+  positive mass but cancel in conditional expectation.
 -/
 
 @[expose] public section
@@ -217,24 +221,101 @@ example : coin[fun ω => (heads.indicator 1 ω - (fun _ : Unit => (1 / 2 : ℝ))
   condExp_propensityResidual_mul (measurableSet_singleton _) measurable_const measurable_const
     measurable_const (C := 7) (fun _ => by norm_num) propensity_noCov
 
-/-- The correct-outcome lemma, treated arm, instantiated with `m₁ = 3` and a candidate
-propensity `1/3` that is not the true one. -/
-example : coin[heads.indicator (fun ω => (observed heads (fun _ => 1) (fun _ => 3) ω -
-      (fun _ : Unit => (3 : ℝ)) (noCov ω)) / (fun _ : Unit => (1 / 3 : ℝ)) (noCov ω)) |
-      MeasurableSpace.comap noCov inferInstance] =ᵐ[coin] 0 :=
-  coin_assumptions.condExp_outcomeResidual_treated (e := fun _ => 1 / 3) (m₁ := fun _ => 3)
-    (ε := 1 / 3) (measurableSet_singleton _) measurable_const (integrable_const _)
-    measurable_const measurable_const (by norm_num) (fun _ => le_rfl)
-    (Eventually.of_forall fun _ => by simp [condExp_noCov])
+/-! ### Varying potential outcomes independent of treatment -/
 
-/-- The correct-outcome lemma, control arm, with `m₀ = 1` and candidate propensity `1/3`. -/
-example : coin[headsᶜ.indicator (fun ω => (observed heads (fun _ => 1) (fun _ => 3) ω -
-      (fun _ : Unit => (1 : ℝ)) (noCov ω)) / (1 - (fun _ : Unit => (1 / 3 : ℝ)) (noCov ω))) |
-      MeasurableSpace.comap noCov inferInstance] =ᵐ[coin] 0 :=
-  coin_assumptions.condExp_outcomeResidual_control (e := fun _ => 1 / 3) (m₀ := fun _ => 1)
-    (ε := 2 / 3) (measurableSet_singleton _) measurable_const (integrable_const _)
+private noncomputable def pairCoin : Measure Unit₂ := coin.prod coin
+
+private instance : IsProbabilityMeasure pairCoin := by
+  dsimp [pairCoin]
+  infer_instance
+
+private lemma integral_pairCoin (f : Unit₂ → ℝ) :
+    ∫ ω, f ω ∂pairCoin =
+      (f (true, true) + f (true, false) +
+        f (false, true) + f (false, false)) / 4 := by
+  rw [pairCoin, integral_prod _ (.of_finite), integral_coin]
+  simp_rw [integral_coin]
+  ring
+
+private def pairNoCov : Unit₂ → Unit := fun _ => ()
+
+private lemma condExp_pairNoCov (f : Unit₂ → ℝ) :
+    pairCoin[f | MeasurableSpace.comap pairNoCov inferInstance] =
+      fun _ => (f (true, true) + f (true, false) +
+        f (false, true) + f (false, false)) / 4 := by
+  rw [show MeasurableSpace.comap pairNoCov inferInstance = ⊥ from
+    MeasurableSpace.comap_const _, condExp_bot, integral_pairCoin]
+
+private noncomputable def varyingControl (ω : Unit₂) : ℝ :=
+  if ω.1 then 2 else 0
+
+private noncomputable def varyingTreated (ω : Unit₂) : ℝ :=
+  if ω.1 then 4 else 2
+
+private theorem pair_assumptions :
+    AIPWAssumptions pairCoin treated pairNoCov
+      (observed treated varyingControl varyingTreated)
+      varyingControl varyingTreated where
+  consistency _ := rfl
+  meanExch_treated := Eventually.of_forall fun _ => by
+    norm_num [condExp_pairNoCov, Pi.mul_apply, treated, varyingTreated]
+  meanExch_control := Eventually.of_forall fun _ => by
+    norm_num [condExp_pairNoCov, Pi.mul_apply, treated, varyingControl]
+  positivity := ⟨1 / 4, by norm_num, Eventually.of_forall fun _ => by
+    norm_num [condExp_pairNoCov, treated]⟩
+
+private noncomputable def treatedResidual : Unit₂ → ℝ :=
+  treated.indicator (fun ω =>
+    (observed treated varyingControl varyingTreated ω - 3) / (1 / 3))
+
+/-- Correct outcome regression cancels a varying treated residual even with
+candidate propensity `1/3`, rather than the true propensity `1/2`. -/
+private theorem treated_residual_condExp :
+    pairCoin[treatedResidual |
+      MeasurableSpace.comap pairNoCov inferInstance] =ᵐ[pairCoin] 0 :=
+  pair_assumptions.condExp_outcomeResidual_treated
+    (e := fun _ => 1 / 3) (m₁ := fun _ => 3) (ε := 1 / 3)
+    (Set.toFinite _).measurableSet measurable_const (.of_finite)
+    measurable_const measurable_const (by norm_num) (fun _ => le_rfl)
+    (Eventually.of_forall fun _ => by
+      norm_num [condExp_pairNoCov, varyingTreated])
+
+private noncomputable def controlResidual : Unit₂ → ℝ :=
+  treatedᶜ.indicator (fun ω =>
+    (observed treated varyingControl varyingTreated ω - 1) / (1 - 1 / 3))
+
+/-- The control-arm residual also cancels in conditional expectation. -/
+private theorem control_residual_condExp :
+    pairCoin[controlResidual |
+      MeasurableSpace.comap pairNoCov inferInstance] =ᵐ[pairCoin] 0 :=
+  pair_assumptions.condExp_outcomeResidual_control
+    (e := fun _ => 1 / 3) (m₀ := fun _ => 1) (ε := 2 / 3)
+    (Set.toFinite _).measurableSet measurable_const (.of_finite)
     measurable_const measurable_const (by norm_num) (fun _ => by norm_num)
-    (Eventually.of_forall fun _ => by simp [condExp_noCov])
+    (Eventually.of_forall fun _ => by
+      norm_num [condExp_pairNoCov, varyingControl])
+
+/-- Each residual takes opposite nonzero values on its own treatment arm,
+and vanishes on the other arm. -/
+example : treatedResidual (true, true) = 3 ∧
+    treatedResidual (false, true) = -3 ∧
+    treatedResidual (true, false) = 0 ∧ treatedResidual (false, false) = 0 := by
+  norm_num [treatedResidual, treated, observed, varyingControl, varyingTreated]
+
+example : controlResidual (true, false) = 3 / 2 ∧
+    controlResidual (false, false) = -3 / 2 ∧
+    controlResidual (true, true) = 0 ∧ controlResidual (false, true) = 0 := by
+  norm_num [controlResidual, treated, observed, varyingControl, varyingTreated]
+
+/-- All four units have positive mass, so the nonzero residuals are not null events. -/
+example (x t : Bool) : pairCoin {(x, t)} = 1 / 4 := by
+  rw [show {(x, t)} = ({x} : Set Bool) ×ˢ {t} by ext ω; simp,
+    pairCoin, Measure.prod_prod, coin_apply_singleton, coin_apply_singleton]
+  norm_num [← ENNReal.mul_inv]
+
+#print axioms pair_assumptions
+#print axioms treated_residual_condExp
+#print axioms control_residual_condExp
 
 end MathlibExtTest.Probability.Causality.AugmentedIPW
 
