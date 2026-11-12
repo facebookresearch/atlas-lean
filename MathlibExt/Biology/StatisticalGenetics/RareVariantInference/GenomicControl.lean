@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.StatisticalGenetics.LDScoreInflation
+public import MathlibExt.Probability.Distributions.ChiSquare
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.HasLaw
 
@@ -36,8 +37,9 @@ markers on a sample space with probability `P`:
 * **Known `λ`.** The correction divides by the population value of `λ`. Error from estimating
   `λ` (by the median or the mean of the observed statistics) is not covered.
 
-The 1-df statistic is `χ²_j = Z_j ²`, and its standard-normal tail is
-`chiSqOneTail c = 𝒩(0, 1){x | c < x²}`, the probability that a `χ²₁` variable exceeds `c`.
+The 1-df statistic is `χ²_j = Z_j ²`, and its tail is
+`chiSqOneTail c = chiSquareMeasure 1 (Set.Ioi c)`, the probability that a `χ²₁` variable
+exceeds `c`.
 
 ## Main results
 
@@ -86,7 +88,10 @@ structure above.
 ## Reuse and sources (API-00 receipt)
 
 Reused, not redefined: `LDScore.Model`, `LDScore.ldScore`, `LDScore.IsStandardized`,
-`LDScore.IsStandardized.ldCorr_self`, `LDScore.Model.h2_nonneg`, `LDScore.Model.h2_le_one`,
+`LDScore.IsStandardized.ldCorr_self`, `LDScore.IsStandardized.one_le_ldScore`,
+`LDScore.Model.h2_nonneg`, `LDScore.Model.h2_le_one`,
+`ProbabilityTheory.chiSquareSurvival`,
+`ProbabilityTheory.gaussianReal_sq_preimage_Ioi_eq_chiSquareSurvival`,
 `LDScoreInflation.chiSqStrat`, `LDScoreInflation.meanLDScore`,
 `LDScoreInflation.integral_chiSqStrat_of_standardized`,
 `LDScoreInflation.mean_integral_chiSqStrat_of_const`; from Mathlib, `gaussianReal`,
@@ -113,13 +118,19 @@ namespace MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicCon
 
 /-! ### The `χ²₁` tail -/
 
-/-- The `χ²₁` tail `P(χ²₁ > c) = 𝒩(0, 1){x | c < x²}`. -/
-noncomputable def chiSqOneTail (c : ℝ) : ℝ≥0∞ := gaussianReal 0 1 {x | c < x ^ 2}
+/-- The `χ²₁` tail `P(χ²₁ > c)`, as the canonical chi-square survival function. -/
+noncomputable def chiSqOneTail (c : ℝ) : ℝ≥0∞ := chiSquareSurvival 1 c
+
+/-- Bridge to the Gaussian form, for proofs that work with a standard-normal square. -/
+theorem chiSqOneTail_eq_gaussianReal (c : ℝ) :
+    chiSqOneTail c = gaussianReal 0 1 {x | c < x ^ 2} :=
+  (gaussianReal_sq_preimage_Ioi_eq_chiSquareSurvival c).symm
 
 /-- The `χ²₁` tail is strictly decreasing on `[0, ∞)`: for `0 ≤ a < b`, the interval
 `(√a, √b)` has positive standard-normal mass and lies in `{a < x²} \ {b < x²}`. -/
 theorem chiSqOneTail_lt_of_lt {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
     chiSqOneTail b < chiSqOneTail a := by
+  rw [chiSqOneTail_eq_gaussianReal, chiSqOneTail_eq_gaussianReal]
   have hsq : √a < √b := Real.sqrt_lt_sqrt ha hab
   set I := Set.Ioo (√a) (√b) with hI
   have hIpos : gaussianReal 0 1 I ≠ 0 := by
@@ -137,11 +148,12 @@ theorem chiSqOneTail_lt_of_lt {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
     rintro x (hx | hx)
     · exact lt_trans hab hx
     · exact (hmemI x hx).1
-  calc chiSqOneTail b < gaussianReal 0 1 {x | b < x ^ 2} + gaussianReal 0 1 I :=
+  calc gaussianReal 0 1 {x | b < x ^ 2}
+        < gaussianReal 0 1 {x | b < x ^ 2} + gaussianReal 0 1 I :=
         ENNReal.lt_add_right (measure_ne_top _ _) hIpos
     _ = gaussianReal 0 1 ({x : ℝ | b < x ^ 2} ∪ I) :=
         (measure_union hdisj measurableSet_Ioo).symm
-    _ ≤ chiSqOneTail a := measure_mono hsub
+    _ ≤ gaussianReal 0 1 {x | a < x ^ 2} := measure_mono hsub
 
 /-! ### Rejection probability of a rescaled Gaussian score -/
 
@@ -163,7 +175,7 @@ theorem measure_reject_eq_chiSqOneTail {Ω : Type*} {m : MeasurableSpace Ω} {P 
     simp only [Set.mem_ofPred_eq, div_pow, Real.sq_sqrt hv0.le]
     rw [lt_div_iff₀ hk, div_lt_div_iff_of_pos_right hv0]
   rw [hset, hW.measure_eq (p := fun x => c * k / v < x ^ 2)
-    (measurableSet_lt measurable_const (by fun_prop)), chiSqOneTail]
+    (measurableSet_lt measurable_const (by fun_prop)), chiSqOneTail_eq_gaussianReal]
 
 /-! ### The Devlin–Roeder model and calibration -/
 
@@ -228,7 +240,7 @@ theorem chiSqOneTail_lt_measure_reject_of_lt {Ω : Type*} {m : MeasurableSpace �
   exact mul_lt_mul_of_pos_left hv hc
 
 /-- A marker whose null variance `v` is below the `λ` used is strictly conservative after
-genomic control (it loses power), at every positive threshold. -/
+genomic control, at every positive threshold. -/
 theorem measure_reject_lt_chiSqOneTail_of_gt {Ω : Type*} {m : MeasurableSpace Ω}
     {P : Measure Ω} {Z : Ω → ℝ} {v : ℝ≥0} (hv0 : v ≠ 0) (hZ : HasLaw Z (gaussianReal 0 v) P)
     {lam : ℝ} (hv : (v : ℝ) < lam) {c : ℝ} (hc : 0 < c) :
@@ -279,14 +291,6 @@ theorem integral_chiSqStrat_div_lambdaGC_of_null [IsProbabilityMeasure μ] (D : 
   rw [hh, mul_zero, zero_div, zero_mul, sub_eq_zero] at hsub
   rw [hsub, div_self (by rw [hlam]; positivity)]
 
-/-- The LD score of each marker of a standardized matrix with `N ≠ 0` is at least `1`. -/
-theorem one_le_ldScore {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X) (hN : N ≠ 0)
-    (j : Fin M) : 1 ≤ ldScore X j := by
-  have h := Finset.single_le_sum (f := fun k => ldCorr X j k ^ 2)
-    (fun k _ => sq_nonneg _) (Finset.mem_univ j)
-  simp only [hX.ldCorr_self hN, one_pow] at h
-  exact h
-
 /-- The polygenic slope `N h² / M` is positive when `N, M ≠ 0` and `h² ≠ 0`. -/
 private theorem polygenicSlope_pos (D : Model μ N M) (hN : N ≠ 0) (hM : M ≠ 0)
     (hh : D.h2 ≠ 0) : (0 : ℝ) < N * D.h2 / M := by
@@ -306,9 +310,9 @@ theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (F
   have hl : 0 < meanLDScore X := by
     rw [meanLDScore]
     refine div_pos ?_ (Nat.cast_pos.mpr hM0)
-    calc (0 : ℝ) < ldScore X ⟨0, hM0⟩ := lt_of_lt_of_le one_pos (one_le_ldScore hX hN _)
+    calc (0 : ℝ) < ldScore X ⟨0, hM0⟩ := lt_of_lt_of_le one_pos (hX.one_le_ldScore hN _)
       _ ≤ ∑ j, ldScore X j :=
-        Finset.single_le_sum (fun k _ => le_trans zero_le_one (one_le_ldScore hX hN k))
+        Finset.single_le_sum (fun k _ => le_trans zero_le_one (hX.one_le_ldScore hN k))
           (Finset.mem_univ _)
   rw [lambdaGC, mean_integral_chiSqStrat_of_const D X hN hM hX hβ hε s c ha]
   have := mul_pos (polygenicSlope_pos D hN hM hh) hl
