@@ -15,7 +15,7 @@ public import Mathlib.Probability.Moments.SubGaussian
 
 /-! # Bernstein's inequality
 
-For independent centered random variables bounded by `M` with total
+For independent centered random variables bounded almost surely by `M` with total
 variance at most `V`, the sum has sub-exponential tails:
 `P(t ≤ |∑ Xᵢ|) ≤ 2 exp (-t² / (2 (V + M t / 3)))`. This file covers
 roadmap package ML-10 of the Atlas TCS canon roadmap.
@@ -154,23 +154,23 @@ private lemma bennett_scalar {lam M x : ℝ} (hlam : 0 ≤ lam) (hM : 0 < M) (hx
 private lemma integrable_exp_mul_of_bounded {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P]
     {X : Ω → ℝ} {lam M : ℝ} (hlam0 : 0 ≤ lam)
-    (hXm : Measurable X) (hbdd : ∀ ω, |X ω| ≤ M) :
+    (hXm : Measurable X) (hbdd : ∀ᵐ ω ∂P, |X ω| ≤ M) :
     Integrable (fun ω => Real.exp (lam * X ω)) P := by
   refine Integrable.of_bound
     (Real.measurable_exp.comp (hXm.const_mul lam)).aestronglyMeasurable
     (Real.exp (lam * M)) ?_
-  filter_upwards with ω
+  filter_upwards [hbdd] with ω hω
   rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
   apply Real.exp_le_exp.mpr
   calc lam * X ω ≤ lam * |X ω| :=
         mul_le_mul_of_nonneg_left (le_abs_self _) hlam0
-    _ ≤ lam * M := mul_le_mul_of_nonneg_left (hbdd ω) hlam0
+    _ ≤ lam * M := mul_le_mul_of_nonneg_left hω hlam0
 
 private lemma mgf_le_of_bounded {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P]
     {M : ℝ} {X : Ω → ℝ} {lam : ℝ}
     (hM : 0 < M) (hlam0 : 0 ≤ lam) (hlam3 : lam * M < 3)
-    (hXm : Measurable X) (hmean : ∫ ω, X ω ∂P = 0) (hbdd : ∀ ω, |X ω| ≤ M) :
+    (hXm : Measurable X) (hmean : ∫ ω, X ω ∂P = 0) (hbdd : ∀ᵐ ω ∂P, |X ω| ≤ M) :
     mgf X P lam ≤ Real.exp (lam ^ 2 * (∫ ω, (X ω) ^ 2 ∂P) / 2 / (1 - lam * M / 3)) := by
   set A : ℝ := Real.exp (lam * M) - 1 - lam * M with hA
   set K : ℝ := A / M ^ 2 with hK
@@ -185,21 +185,21 @@ private lemma mgf_le_of_bounded {Ω : Type*} [MeasurableSpace Ω]
     integrable_exp_mul_of_bounded hlam0 hXm hbdd
   have hX1 : Integrable X P := by
     refine Integrable.of_bound hXm.aestronglyMeasurable M ?_
-    filter_upwards with ω
+    filter_upwards [hbdd] with ω hω
     rw [Real.norm_eq_abs]
-    exact hbdd ω
+    exact hω
   have hX2 : Integrable (fun ω => (X ω) ^ 2) P := by
     refine Integrable.of_bound (hXm.pow_const 2).aestronglyMeasurable (M ^ 2) ?_
-    filter_upwards with ω
+    filter_upwards [hbdd] with ω hω
     rw [Real.norm_eq_abs, abs_pow]
-    exact pow_le_pow_left₀ (abs_nonneg _) (hbdd ω) 2
+    exact pow_le_pow_left₀ (abs_nonneg _) hω 2
   have hIntg : Integrable (fun ω => 1 + lam * X ω + K * (X ω) ^ 2) P :=
     ((integrable_const 1).add (hX1.const_mul lam)).add (hX2.const_mul K)
   have hmono : ∫ ω, Real.exp (lam * X ω) ∂P
       ≤ ∫ ω, (1 + lam * X ω + K * (X ω) ^ 2) ∂P := by
     apply integral_mono_ae hXe hIntg
-    filter_upwards with ω
-    exact bennett_scalar hlam0 hM (hbdd ω)
+    filter_upwards [hbdd] with ω hω
+    exact bennett_scalar hlam0 hM hω
   have hreal : P.real Set.univ = 1 := by
     show (P Set.univ).toReal = 1
     rw [measure_univ, ENNReal.toReal_one]
@@ -279,7 +279,7 @@ private lemma bernstein_one_sided {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P]
     {n : ℕ} {M V t : ℝ} (hM : 0 < M) (hV : 0 < V) (ht : 0 < t)
     {X : Fin n → Ω → ℝ} (hX : iIndepFun X P) (hXm : ∀ i, Measurable (X i))
-    (hmean : ∀ i, ∫ ω, X i ω ∂P = 0) (hbdd : ∀ i ω, |X i ω| ≤ M)
+    (hmean : ∀ i, ∫ ω, X i ω ∂P = 0) (hbdd : ∀ i, ∀ᵐ ω ∂P, |X i ω| ≤ M)
     (hvar : ∑ i, ∫ ω, (X i ω) ^ 2 ∂P ≤ V) :
     P.real {ω | t ≤ ∑ i, X i ω} ≤ Real.exp (-(t ^ 2 / (2 * (V + M * t / 3)))) := by
   have hD0 : (0 : ℝ) < V + M * t / 3 := by
@@ -358,14 +358,14 @@ private lemma bernstein_one_sided {Ω : Type*} [MeasurableSpace Ω]
   exact chernoff_exponent_eq hV hD0 rfl rfl
 
 /-- Bernstein's inequality: for independent centered random variables
-bounded by `M`, with total variance at most `V`, the sum has
+bounded almost surely by `M`, with total variance at most `V`, the sum has
 sub-exponential tails. -/
 theorem bernstein_inequality {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] {n : ℕ} {M V t : ℝ}
     (hM : 0 ≤ M) (ht : 0 ≤ t)
     {X : Fin n → Ω → ℝ} (hX : iIndepFun X P) (hXm : ∀ i, Measurable (X i))
     (hmean : ∀ i, ∫ ω, X i ω ∂P = 0)
-    (hbdd : ∀ i ω, |X i ω| ≤ M)
+    (hbdd : ∀ i, ∀ᵐ ω ∂P, |X i ω| ≤ M)
     (hvar : ∑ i, ∫ ω, (X i ω) ^ 2 ∂P ≤ V) :
     P {ω | t ≤ |∑ i, X i ω|} ≤
       ENNReal.ofReal (2 * Real.exp (-(t ^ 2 / (2 * (V + M * t / 3))))) := by
@@ -377,21 +377,20 @@ theorem bernstein_inequality {Ω : Type*} [MeasurableSpace Ω]
       _ = ENNReal.ofReal 1 := ENNReal.ofReal_one.symm
       _ ≤ ENNReal.ofReal 2 := ENNReal.ofReal_le_ofReal (by norm_num)
   · by_cases hM0 : M = 0
-    · have h0 : ∀ i ω, X i ω = 0 := by
-        intro i ω
+    · have h0 : ∀ i, ∀ᵐ ω ∂P, X i ω = 0 := by
+        intro i
+        filter_upwards [hbdd i] with ω hω
         apply abs_eq_zero.mp
-        have h := hbdd i ω
-        rw [hM0] at h
-        exact le_antisymm h (abs_nonneg _)
-      have hS : ∀ ω, ∑ i, X i ω = 0 :=
-        fun ω => Finset.sum_eq_zero (fun i _ => h0 i ω)
-      have hset : {ω | t ≤ |∑ i, X i ω|} = ∅ := by
-        rw [Set.eq_empty_iff_forall_notMem]
-        intro ω hω
-        have hω' : t ≤ |∑ i, X i ω| := hω
-        rw [hS ω, abs_zero] at hω'
-        exact absurd hω' (not_le_of_gt htpos)
-      rw [hset, measure_empty]
+        rw [hM0] at hω
+        exact le_antisymm hω (abs_nonneg _)
+      have hS : ∀ᵐ ω ∂P, ∑ i, X i ω = 0 := by
+        filter_upwards [ae_all_iff.mpr h0] with ω hω
+        exact Finset.sum_eq_zero (fun i _ => hω i)
+      have hnull : P {ω | t ≤ |∑ i, X i ω|} = 0 := by
+        apply measure_eq_zero_iff_ae_notMem.mpr
+        filter_upwards [hS] with ω hω
+        simpa only [Set.mem_ofPred_eq, hω, abs_zero] using not_le_of_gt htpos
+      rw [hnull]
       exact zero_le
     · by_cases hV0 : V ≤ 0
       · have hσ0 : ∀ i ∈ (Finset.univ : Finset (Fin n)),
@@ -406,9 +405,9 @@ theorem bernstein_inequality {Ω : Type*} [MeasurableSpace Ω]
           intro i
           refine Integrable.of_bound ((hXm i).pow_const 2).aestronglyMeasurable
             (M ^ 2) ?_
-          filter_upwards with ω
+          filter_upwards [hbdd i] with ω hω
           rw [Real.norm_eq_abs, abs_pow]
-          exact pow_le_pow_left₀ (abs_nonneg _) (hbdd i ω) 2
+          exact pow_le_pow_left₀ (abs_nonneg _) hω 2
         have hae : ∀ i, (fun ω => (X i ω) ^ 2) =ᵐ[P] 0 := fun i =>
           (integral_eq_zero_iff_of_nonneg_ae (ae_of_all _ fun ω => sq_nonneg _)
             (hX2i i)).mp (heach i (Finset.mem_univ i))
@@ -446,10 +445,9 @@ theorem bernstein_inequality {Ω : Type*} [MeasurableSpace Ω]
         have hmean' : ∀ i, ∫ ω, (-(X i)) ω ∂P = 0 := by
           intro i
           simp only [Pi.neg_apply, integral_neg, hmean i, neg_zero]
-        have hbdd' : ∀ i ω, |(-(X i)) ω| ≤ M := by
-          intro i ω
-          simp only [Pi.neg_apply, abs_neg]
-          exact hbdd i ω
+        have hbdd' : ∀ i, ∀ᵐ ω ∂P, |(-(X i)) ω| ≤ M := by
+          intro i
+          simpa only [Pi.neg_apply, abs_neg] using hbdd i
         have hvar' : ∑ i, ∫ ω, ((-(X i)) ω) ^ 2 ∂P ≤ V := by
           simp only [Pi.neg_apply, neg_sq]
           exact hvar
