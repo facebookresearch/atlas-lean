@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
 
 /-!
 # The augmented inverse-probability-weighted (AIPW) score with fixed nuisance functions
@@ -43,16 +43,21 @@ The AIPW score for the average treatment effect `E[Y₁ - Y₀]` (Robins, Rotnit
   residual has conditional mean zero given `X` when `m_a(X) = E[Y_a | X]`, under consistency and
   mean exchangeability, for any candidate propensity bounded away from `0` and `1`.
 
-## Not covered
+## Related results and scope
 
-Double robustness (`E[ψ] = E[Y₁ - Y₀]` when either the propensity or the outcome regressions are
-correct) is not stated here, nor any property of estimated nuisance functions (cross-fitting,
-rates, asymptotic normality), nor missing-outcome versions of the score.
+`MissingOutcomes.integral_aipwATEScore` proves double robustness for this same score with
+finitely valued covariates under strong ignorability; its hypotheses remain required. That
+module also treats missing outcomes. This file adds conditional-mean identities for general
+covariates, but no results about estimated nuisances, cross-fitting, rates, or asymptotic
+normality.
 
 ## Reuse search (API-00)
 
-Searched Mathlib `v4.35.0`, cslib, Physlib and this repository at `origin/main` `53666a3c1`
-for `AIPW`, `augmented inverse`, `doubly robust` and `inverse probability`: no AIPW score exists.
+The score reuses `MissingOutcomes.aipwATEScore` from
+`MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes` through an argument-order
+compatibility alias. Its existing `integral_aipwATEScore` theorem therefore applies without a
+conversion lemma under its stated hypotheses. The alias preserves the score's totalized values
+at candidate propensities `0` and `1`.
 `observed` (consistency) is reused from `MathlibExt.Probability.Causality.CausalIdentification`,
 whose `integral_ipw_treated_condExp` uses the same conditional-expectation form of mean
 exchangeability and of the propensity as `AIPWAssumptions`.
@@ -79,23 +84,31 @@ variable {Ω 𝒳 : Type*}
 candidate outcome regressions `m₀, m₁`, all fixed functions of the covariate value:
 `m₁(X) - m₀(X) + 1_T (Y - m₁(X)) / e(X) - 1_{Tᶜ} (Y - m₀(X)) / (1 - e(X))`. Since Lean sets
 `x / 0 = 0`, a unit with `e(X) = 0` (resp. `e(X) = 1`) has its treated (resp. control) residual
-dropped; positivity of the candidate rules this out. -/
-noncomputable def aipwScore (T : Set Ω) (X : Ω → 𝒳) (Y : Ω → ℝ) (e m₀ m₁ : 𝒳 → ℝ) (ω : Ω) :
-    ℝ :=
-  m₁ (X ω) - m₀ (X ω) + T.indicator (fun ω => (Y ω - m₁ (X ω)) / e (X ω)) ω -
-    Tᶜ.indicator (fun ω => (Y ω - m₀ (X ω)) / (1 - e (X ω))) ω
+dropped; positivity of the candidate rules this out. This is an argument-order compatibility
+alias for `MissingOutcomes.aipwATEScore`, so its integral theorems apply directly. -/
+noncomputable abbrev aipwScore (T : Set Ω) (X : Ω → 𝒳) (Y : Ω → ℝ) (e m₀ m₁ : 𝒳 → ℝ) :
+    Ω → ℝ :=
+  MissingOutcomes.aipwATEScore T X e m₀ m₁ Y
 
 variable {T : Set Ω} {X : Ω → 𝒳} {Y Y₀ Y₁ : Ω → ℝ} {e m₀ m₁ : 𝒳 → ℝ} {ω : Ω}
+
+/-- The canonical two-arm score as a regression contrast plus weighted residuals. -/
+theorem aipwScore_eq :
+    aipwScore T X Y e m₀ m₁ ω = m₁ (X ω) - m₀ (X ω) +
+      T.indicator (fun ω => (Y ω - m₁ (X ω)) / e (X ω)) ω -
+        Tᶜ.indicator (fun ω => (Y ω - m₀ (X ω)) / (1 - e (X ω))) ω := by
+  simp only [aipwScore, MissingOutcomes.aipwATEScore, MissingOutcomes.aipwScore]
+  ring
 
 /-- The AIPW score of a treated unit. -/
 theorem aipwScore_of_mem (h : ω ∈ T) :
     aipwScore T X Y e m₀ m₁ ω = m₁ (X ω) - m₀ (X ω) + (Y ω - m₁ (X ω)) / e (X ω) := by
-  simp [aipwScore, h]
+  simp [aipwScore_eq, h]
 
 /-- The AIPW score of a control unit. -/
 theorem aipwScore_of_notMem (h : ω ∉ T) :
     aipwScore T X Y e m₀ m₁ ω = m₁ (X ω) - m₀ (X ω) - (Y ω - m₀ (X ω)) / (1 - e (X ω)) := by
-  simp [aipwScore, h]
+  simp [aipwScore_eq, h]
 
 /-- Under consistency, `Y = observed T Y₀ Y₁`, the AIPW score in terms of the potential
 outcomes: the treated residual uses `Y₁`, the control residual `Y₀`. -/
@@ -103,7 +116,7 @@ theorem aipwScore_eq_of_consistency (hY : ∀ ω, Y ω = observed T Y₀ Y₁ ω
     aipwScore T X Y e m₀ m₁ ω = m₁ (X ω) - m₀ (X ω) +
       T.indicator (fun ω => (Y₁ ω - m₁ (X ω)) / e (X ω)) ω -
         Tᶜ.indicator (fun ω => (Y₀ ω - m₀ (X ω)) / (1 - e (X ω))) ω := by
-  by_cases h : ω ∈ T <;> simp [aipwScore, hY, observed, h]
+  by_cases h : ω ∈ T <;> simp [aipwScore_eq, hY, observed, h]
 
 /-- **The AIPW score as an augmented IPW contrast.** When `e(X) ∉ {0, 1}`, the score is the IPW
 contrast `1_T Y / e(X) - 1_{Tᶜ} Y / (1 - e(X))` minus the propensity residual `1_T - e(X)`
@@ -114,7 +127,7 @@ theorem aipwScore_eq_ipw_sub (he₀ : e (X ω) ≠ 0) (he₁ : e (X ω) ≠ 1) :
       T.indicator (fun ω => Y ω / e (X ω)) ω - Tᶜ.indicator (fun ω => Y ω / (1 - e (X ω))) ω -
         (T.indicator 1 ω - e (X ω)) * (m₁ (X ω) / e (X ω) + m₀ (X ω) / (1 - e (X ω))) := by
   have he₁' : 1 - e (X ω) ≠ 0 := sub_ne_zero.2 he₁.symm
-  by_cases h : ω ∈ T <;> simp [aipwScore, h] <;> field_simp <;> ring
+  by_cases h : ω ∈ T <;> simp [aipwScore_eq, h] <;> field_simp <;> ring
 
 end Score
 

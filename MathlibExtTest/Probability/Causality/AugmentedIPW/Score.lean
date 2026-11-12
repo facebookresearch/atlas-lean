@@ -18,7 +18,8 @@ public import MathlibExt.Probability.Causality.AugmentedIPW.Score
   `(true, true)` and `(true, false)` the score differs from both the regression contrast and the
   IPW contrast, so the definition is not vacuous; the augmented-IPW and potential-outcome forms
   are checked on the same units.
-* Junk value: a candidate propensity `e = 0` drops the treated residual.
+* The score and its integral are definitionally equal to the canonical `MissingOutcomes` API.
+* Junk values: candidate propensities `e = 0` and `e = 1` drop their respective residuals.
 * A fair coin with a constant covariate as a witness of `AIPWAssumptions`, and the
   conditional-mean-zero lemmas instantiated on it with correct candidate functions.
 -/
@@ -28,6 +29,16 @@ public import MathlibExt.Probability.Causality.AugmentedIPW.Score
 open MeasureTheory Filter MathlibExt.Probability.Causality
 
 namespace MathlibExtTest.Probability.Causality.AugmentedIPW
+
+/-! ### Canonical API compatibility -/
+
+example {Ω 𝒳 : Type*} (T : Set Ω) (X : Ω → 𝒳) (Y : Ω → ℝ) (e m₀ m₁ : 𝒳 → ℝ) :
+    aipwScore T X Y e m₀ m₁ = MissingOutcomes.aipwATEScore T X e m₀ m₁ Y := rfl
+
+example {Ω 𝒳 : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳)
+    (Y : Ω → ℝ) (e m₀ m₁ : 𝒳 → ℝ) :
+    (∫ ω, aipwScore T X Y e m₀ m₁ ω ∂μ) =
+      ∫ ω, MissingOutcomes.aipwATEScore T X e m₀ m₁ Y ω ∂μ := rfl
 
 /-! ### Smoke test: the score on a finite covariate space -/
 
@@ -58,7 +69,7 @@ noncomputable def obs : Unit₂ → ℝ
 
 /-- Smoke test, straight from the definition: `2 + (5 - 3) / (3/4) = 14/3`. -/
 example : aipwScore treated cov obs e₀ r₀ r₁ (true, true) = 14 / 3 := by
-  simp [aipwScore, treated, cov, obs, e₀, r₀, r₁]
+  simp [aipwScore_eq, treated, cov, obs, e₀, r₀, r₁]
   norm_num
 
 example : aipwScore treated cov obs e₀ r₀ r₁ (true, false) = -2 := by
@@ -136,6 +147,11 @@ example : aipwScore treated cov obs e₀ r₀ r₁ (true, true) = 14 / 3 := by
 treated unit is then the regression contrast. Positivity of the candidate rules this out. -/
 example : aipwScore treated cov obs (fun _ => 0) r₀ r₁ (true, true) = 2 := by
   rw [aipwScore_of_mem (by simp [treated])]
+  norm_num [cov, r₀, r₁]
+
+/-- A candidate propensity `1` drops the control residual at a control unit. -/
+example : aipwScore treated cov obs (fun _ => 1) r₀ r₁ (true, false) = 2 := by
+  rw [aipwScore_of_notMem (by simp [treated])]
   norm_num [cov, r₀, r₁]
 
 /-! ### A witness of the assumptions: a fair coin with a constant covariate -/
@@ -222,6 +238,7 @@ example : coin[headsᶜ.indicator (fun ω => (observed heads (fun _ => 1) (fun _
 
 end MathlibExtTest.Probability.Causality.AugmentedIPW
 
+#print axioms aipwScore_eq
 #print axioms aipwScore_eq_of_consistency
 #print axioms aipwScore_eq_ipw_sub
 #print axioms condExp_propensityResidual_mul
