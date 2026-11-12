@@ -53,6 +53,10 @@ def check_manifest() -> None:
             "https://github.com/leanprover/cslib",
             "leanprover",
         ),
+        "Physlib": (
+            "https://github.com/leanprover-community/physlib",
+            "",
+        ),
         "plausible": (
             "https://github.com/leanprover-community/plausible",
             "leanprover-community",
@@ -142,12 +146,19 @@ def check_manifest() -> None:
         fail("manifest CSLib revision does not match lakefile.toml")
     if cslib.get("inherited") is not False:
         fail("CSLib must be a direct root dependency")
+    physlib = packages[names.index("Physlib")]
+    if physlib.get("inputRev") != "v4.35.0" or physlib.get("rev") != (
+        "af04d60bcd7618af849ff511e0a19d77f709937e"
+    ):
+        fail("manifest Physlib revision does not match lakefile.toml")
+    if physlib.get("inherited") is not False:
+        fail("Physlib must be a direct root dependency")
     if any(
         package.get("inherited") is not True
         for package in packages
-        if package["name"] not in {"mathlib", "cslib"}
+        if package["name"] not in {"mathlib", "cslib", "Physlib"}
     ):
-        fail("only Mathlib and CSLib may be direct root dependencies")
+        fail("only Mathlib, CSLib, and Physlib may be direct root dependencies")
 
 
 def main() -> None:
@@ -188,6 +199,11 @@ def main() -> None:
         {
             "name": "cslib",
             "scope": "leanprover",
+            "rev": "v4.35.0",
+        },
+        {
+            "name": "Physlib",
+            "git": "https://github.com/leanprover-community/physlib",
             "rev": "v4.35.0",
         },
     ]
