@@ -162,6 +162,34 @@ for valences outside the model.
 
 ## iv. References
 
+- Piotr Dittwald and Dirk Valkenborg, *BRAIN 2.0: Time and Memory Complexity
+  Improvements in the Algorithm for Calculating the Isotope Distribution*
+  (2014), DOI: [10.1007/s13361-013-0796-5](https://doi.org/10.1007/s13361-013-0796-5).
+  Methods, "Standard BRAIN Algorithm", the generating function preceding
+  Eq. (1) and the coefficient interpretation following it: elemental isotope
+  polynomials, their molecular product, and shifts from the lightest variant.
+  These are the sources for `atomPattern`, `nominalPattern`, and
+  `coeff_nominalPattern`; `twoIsotopePattern` is the two-isotope specialization.
+  The source uses probabilities; the semiring API here also permits exact,
+  unnormalized weights.
+- Ken Webb, Tony Bristow, Mike Sargent and Bridget Stein (coordinating editors),
+  *Methodology for Accurate Mass Measurement of Small Molecules: Best Practice
+  Guide*, LGC, VIMMS/2004/01 (November 2004),
+  [guide](https://cebime.paginas.ufsc.br/files/2012/07/VIMMS_guide.pdf).
+  §3.8.4, "Isotope Information", p. 12: the carbon-13 peak is approximately
+  `n × 1.1 %` of the carbon-12 peak, and the chlorine and bromine isotope ratios.
+  This is the empirical motivation for `mPlusOneFirstOrder`; the exact ratio
+  and signed remainder in section C are algebraic consequences of the
+  two-isotope polynomial, not additional empirical laws.
+  §3.8.2, "The Nitrogen Rule", p. 11: the nominal-mass/nitrogen-count parity
+  rule and nitrogen's even mass 14 but odd valence 3; §3.8.3, pp. 11–12,
+  supplies the valence-counting context. Section E makes that parity argument
+  explicit through (M1)–(M3). Its additional formal valences N 5 and S 4 or 6
+  preserve the same parities; the source does not assert this module's
+  particular bond-graph model or infer neutrality from it.
+
+Background on isotope masses, formula masses and measurement:
+
 - OpenStax, *Chemistry 2e*, §2.3, "Atomic Structure and Symbolism".
 - OpenStax, *Chemistry 2e*, §3.1, "Formula Mass and the Mole Concept".
 - OpenStax, *Chemistry 2e*, §1.5, "Measurement Uncertainty, Accuracy, and Precision".
@@ -179,6 +207,9 @@ open Polynomial Pointwise
 /-!
 
 ## A. Nominal isotope patterns
+
+The polynomial model follows Dittwald and Valkenborg, Methods, "Standard
+BRAIN Algorithm", Eq. (1) and its surrounding definitions (see References).
 
 -/
 
@@ -220,7 +251,7 @@ theorem coeff_nominalPattern {R κ ι : Type*} [CommSemiring R] [Fintype κ] [De
 
 /-- The nominal pattern of the union of two disjoint atom groups is the product of their
 patterns. -/
-theorem nominalPattern_union {R κ ι : Type*} [CommSemiring R] [DecidableEq κ] {s t : Finset κ}
+lemma nominalPattern_union {R κ ι : Type*} [CommSemiring R] [DecidableEq κ] {s t : Finset κ}
     (hst : Disjoint s t) (iso : κ → Finset ι) (a : κ → ι → R) (shift : κ → ι → ℕ) :
     nominalPattern (s ∪ t) iso a shift =
       nominalPattern s iso a shift * nominalPattern t iso a shift :=
@@ -228,7 +259,7 @@ theorem nominalPattern_union {R κ ι : Type*} [CommSemiring R] [DecidableEq κ]
 
 /-- The coefficients of the nominal pattern of two disjoint atom groups are the Cauchy product
 (convolution) of the coefficients of the two group patterns. -/
-theorem coeff_nominalPattern_union {R κ ι : Type*} [CommSemiring R] [DecidableEq κ]
+lemma coeff_nominalPattern_union {R κ ι : Type*} [CommSemiring R] [DecidableEq κ]
     {s t : Finset κ} (hst : Disjoint s t) (iso : κ → Finset ι) (a : κ → ι → R)
     (shift : κ → ι → ℕ) (k : ℕ) :
     (nominalPattern (s ∪ t) iso a shift).coeff k =
@@ -237,7 +268,7 @@ theorem coeff_nominalPattern_union {R κ ι : Type*} [CommSemiring R] [Decidable
   rw [nominalPattern_union hst, coeff_mul]
 
 /-- With nonnegative abundance weights, every coefficient of a nominal pattern is nonnegative. -/
-theorem coeff_nominalPattern_nonneg {R κ ι : Type*} [CommSemiring R] [PartialOrder R]
+lemma coeff_nominalPattern_nonneg {R κ ι : Type*} [CommSemiring R] [PartialOrder R]
     [IsOrderedRing R] (s : Finset κ) (iso : κ → Finset ι) (a : κ → ι → R) (shift : κ → ι → ℕ)
     (ha : ∀ i ∈ s, ∀ j ∈ iso i, 0 ≤ a i j) (k : ℕ) :
     0 ≤ (nominalPattern s iso a shift).coeff k := by
@@ -275,13 +306,13 @@ lemma exists_mem_eq_isotopeMin {ι : Type*} {iso : Finset ι} (hiso : iso.Nonemp
   Finset.mem_image.1 (Finset.min'_mem _ _)
 
 /-- An isotope attaining the least nucleon number has shift `0`. -/
-theorem isotopeShift_eq_zero_of_eq {ι : Type*} {iso : Finset ι} {hiso : iso.Nonempty}
+lemma isotopeShift_eq_zero_of_eq {ι : Type*} {iso : Finset ι} {hiso : iso.Nonempty}
     {A : ι → ℕ} {j : ι} (hj : A j = isotopeMin iso hiso A) : isotopeShift iso hiso A j = 0 := by
   rw [isotopeShift, hj, Nat.sub_self]
 
 /-- A lightest isotope, one whose nucleon number is at most that of every isotope of the set, has
 shift `0`. -/
-theorem isotopeShift_eq_zero_of_forall_le {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty)
+lemma isotopeShift_eq_zero_of_forall_le {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty)
     {A : ι → ℕ} {j : ι} (hj : j ∈ iso) (hmin : ∀ i ∈ iso, A j ≤ A i) :
     isotopeShift iso hiso A j = 0 :=
   isotopeShift_eq_zero_of_eq
@@ -290,14 +321,14 @@ theorem isotopeShift_eq_zero_of_forall_le {ι : Type*} {iso : Finset ι} (hiso :
 /-- The nucleon number of every isotope of the set is the least nucleon number plus its shift. The
 truncated subtraction in `isotopeShift` loses nothing, since `isotopeMin_le` gives
 `isotopeMin iso hiso A ≤ A j`. -/
-theorem eq_isotopeMin_add_isotopeShift {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty)
+lemma eq_isotopeMin_add_isotopeShift {ι : Type*} {iso : Finset ι} (hiso : iso.Nonempty)
     (A : ι → ℕ) {j : ι} (hj : j ∈ iso) :
     A j = isotopeMin iso hiso A + isotopeShift iso hiso A j :=
   (Nat.add_sub_of_le (isotopeMin_le hiso A hj)).symm
 
 /-- With the physical shifts, the generating polynomial of an atom is
 `∑ j ∈ iso, C (a j) * X ^ (A j - isotopeMin iso hiso A)`. -/
-theorem atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
+lemma atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
     (hiso : iso.Nonempty) (a : ι → R) (A : ι → ℕ) :
     atomPattern iso a (isotopeShift iso hiso A) =
       ∑ j ∈ iso, C (a j) * X ^ (A j - isotopeMin iso hiso A) :=
@@ -305,7 +336,7 @@ theorem atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
 
 /-- With the physical shifts, the coefficient of `X ^ k` in the polynomial of an atom is the total
 weight of its isotopes of nucleon number `isotopeMin iso hiso A + k`. -/
-theorem coeff_atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
+lemma coeff_atomPattern_isotopeShift {R ι : Type*} [Semiring R] (iso : Finset ι)
     (hiso : iso.Nonempty) (a : ι → R) (A : ι → ℕ) (k : ℕ) :
     (atomPattern iso a (isotopeShift iso hiso A)).coeff k =
       ∑ j ∈ iso with A j = isotopeMin iso hiso A + k, a j := by
@@ -340,7 +371,7 @@ lemma FiniteMassDist.apply_eq_zero_of_notMem (d : FiniteMassDist) {m : ℝ}
   exact hm (Finset.mem_coe.1 hcoe)
 
 /-- The witness is exactly the set of masses of nonzero probability. -/
-theorem FiniteMassDist.mem_support_iff (d : FiniteMassDist) (m : ℝ) :
+lemma FiniteMassDist.mem_support_iff (d : FiniteMassDist) (m : ℝ) :
     m ∈ d.support ↔ d.pmf m ≠ 0 := by
   rw [← Finset.mem_coe, d.support_coe, PMF.mem_support_iff]
 
@@ -391,13 +422,13 @@ noncomputable def FiniteMassDist.conv (d₁ d₂ : FiniteMassDist) : FiniteMassD
       PMF.mem_support_map_iff, h1, h2]
 
 /-- The support of a convolution is the sumset of the supports. -/
-theorem FiniteMassDist.support_conv (d₁ d₂ : FiniteMassDist) :
+lemma FiniteMassDist.support_conv (d₁ d₂ : FiniteMassDist) :
     (d₁.conv d₂).support = d₁.support + d₂.support :=
   rfl
 
 /-- The real probability of a mass under a convolution is the finite sum over the pairs adding
 to it of the products of the probabilities. -/
-theorem FiniteMassDist.toReal_conv (d₁ d₂ : FiniteMassDist) (m : ℝ) :
+lemma FiniteMassDist.toReal_conv (d₁ d₂ : FiniteMassDist) (m : ℝ) :
     ((d₁.conv d₂).pmf m).toReal =
       ∑ p ∈ d₁.support ×ˢ d₂.support with p.1 + p.2 = m,
         (d₁.pmf p.1).toReal * (d₂.pmf p.2).toReal := by
@@ -416,7 +447,7 @@ theorem FiniteMassDist.toReal_conv (d₁ d₂ : FiniteMassDist) (m : ℝ) :
     (fun a ha => d₂.apply_eq_zero_of_notMem ha), Finset.mul_sum]
 
 /-- The real probability of a mass is positive exactly on the witness. -/
-theorem FiniteMassDist.toReal_pos_iff (d : FiniteMassDist) (m : ℝ) :
+lemma FiniteMassDist.toReal_pos_iff (d : FiniteMassDist) (m : ℝ) :
     0 < (d.pmf m).toReal ↔ m ∈ d.support := by
   rw [d.mem_support_iff]
   constructor
@@ -427,12 +458,12 @@ theorem FiniteMassDist.toReal_pos_iff (d : FiniteMassDist) (m : ℝ) :
     exact ENNReal.toReal_pos h (PMF.apply_ne_top _ _)
 
 /-- The real probability under a convolution is positive exactly on the sumset. -/
-theorem FiniteMassDist.toReal_conv_pos_iff (d₁ d₂ : FiniteMassDist) (m : ℝ) :
+lemma FiniteMassDist.toReal_conv_pos_iff (d₁ d₂ : FiniteMassDist) (m : ℝ) :
     0 < ((d₁.conv d₂).pmf m).toReal ↔ m ∈ d₁.support + d₂.support := by
   rw [(d₁.conv d₂).toReal_pos_iff, support_conv]
 
 /-- The real probabilities over the witness sum to `1`, by normalization of the `PMF`. -/
-theorem FiniteMassDist.sum_toReal (d : FiniteMassDist) :
+lemma FiniteMassDist.sum_toReal (d : FiniteMassDist) :
     ∑ m ∈ d.support, (d.pmf m).toReal = 1 := by
   have hsum : ∑ a ∈ d.support, d.pmf a = 1 := by
     rw [← PMF.tsum_coe d.pmf]
@@ -485,6 +516,12 @@ theorem FiniteMassDist.mean_conv (d₁ d₂ : FiniteMassDist) :
 
 ## C. Binomial patterns and the `(M+1)/M` ratio
 
+The binomial formula specializes the polynomial model of section A. The
+carbon-count approximation is the rule in Webb et al., §3.8.4, p. 12.
+Here only carbon contributes to `M + 1`; the exact ratio and remainder below
+quantify the approximation within that model, with `p ≠ 1` for the ratio
+formula and `p < 1` for the one-sided comparison.
+
 -/
 
 /-- The nominal pattern `(a + b X ^ d) ^ n` of `n` atoms of an element with a light isotope of
@@ -523,7 +560,7 @@ theorem coeff_twoIsotopePattern_mul {R : Type*} [CommSemiring R] (a b : R) {d : 
     rw [Nat.choose_eq_zero_of_lt (by omega), Nat.cast_zero, zero_mul, zero_mul]
 
 /-- A nominal shift that is not a multiple of `d` has weight `0` in a two-isotope pattern. -/
-theorem coeff_twoIsotopePattern_of_not_dvd {R : Type*} [CommSemiring R] (a b : R) {d m : ℕ}
+lemma coeff_twoIsotopePattern_of_not_dvd {R : Type*} [CommSemiring R] (a b : R) {d m : ℕ}
     (hm : ¬ d ∣ m) (n : ℕ) : (twoIsotopePattern a b d n).coeff m = 0 := by
   rw [twoIsotopePattern_eq_sum, finsetSum_coeff]
   refine Finset.sum_eq_zero fun k _ => ?_
@@ -543,7 +580,7 @@ noncomputable def mPlusOneRatio {K : Type*} [Field K] (p : K) (n : ℕ)
 
 /-- The binomial form `C(n, 1) p (1 - p) ^ (n - 1) / (1 - p) ^ n` of the exact `(M+1)/M`
 ratio. -/
-theorem mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (n : ℕ)
+lemma mPlusOneRatio_eq_choose {K : Type*} [Field K] (p : K) (n : ℕ)
     (hp : n = 0 ∨ p ≠ 1) :
     mPlusOneRatio p n hp = n.choose 1 * p * (1 - p) ^ (n - 1) / (1 - p) ^ n := by
   have h1 := coeff_twoIsotopePattern_mul (1 - p) p one_pos n 1
@@ -571,7 +608,7 @@ def mPlusOneFirstOrder {K : Type*} [Field K] (p : K) (n : ℕ) : K :=
 
 /-- For `p ≠ 1`, the exact `(M+1)/M` ratio is the first-order value `n p` plus the remainder
 `n p ^ 2 / (1 - p)`, which is of second order in `p`. -/
-theorem mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p ≠ 1) (n : ℕ) :
+lemma mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p ≠ 1) (n : ℕ) :
     mPlusOneRatio p n (Or.inr hp) = mPlusOneFirstOrder p n + n * p ^ 2 / (1 - p) := by
   have h : 1 - p ≠ 0 := sub_ne_zero.2 hp.symm
   rw [mPlusOneRatio_eq hp, mPlusOneFirstOrder]
@@ -579,7 +616,7 @@ theorem mPlusOneRatio_eq_firstOrder_add {K : Type*} [Field K] {p : K} (hp : p �
   ring
 
 /-- For `p < 1`, the first-order value `n p` does not exceed the exact `(M+1)/M` ratio. -/
-theorem mPlusOneFirstOrder_le_mPlusOneRatio {K : Type*} [Field K] [LinearOrder K]
+lemma mPlusOneFirstOrder_le_mPlusOneRatio {K : Type*} [Field K] [LinearOrder K]
     [IsStrictOrderedRing K] {p : K} (hp1 : p < 1) (n : ℕ) :
     mPlusOneFirstOrder p n ≤ mPlusOneRatio p n (Or.inr hp1.ne) := by
   rw [mPlusOneRatio_eq_firstOrder_add hp1.ne, le_add_iff_nonneg_right]
@@ -599,12 +636,12 @@ noncomputable def resolution (m Δm : ℝ) (_hΔm : Δm ≠ 0) : ℝ :=
   m / Δm
 
 /-- The resolving power is the unique `R` with `m = R * Δm`. -/
-theorem resolution_eq_iff {m Δm R : ℝ} (hΔm : Δm ≠ 0) :
+lemma resolution_eq_iff {m Δm R : ℝ} (hΔm : Δm ≠ 0) :
     resolution m Δm hΔm = R ↔ m = R * Δm :=
   div_eq_iff hΔm
 
 /-- The resolving power is positive for `m > 0` and `Δm > 0`. -/
-theorem resolution_pos {m Δm : ℝ} (hm : 0 < m) (hΔm : 0 < Δm) :
+lemma resolution_pos {m Δm : ℝ} (hm : 0 < m) (hΔm : 0 < Δm) :
     0 < resolution m Δm hΔm.ne' :=
   div_pos hm hΔm
 
@@ -617,18 +654,18 @@ noncomputable def exactMass {ι : Type*} (s : Finset ι) (m : ι → ℝ) : ℝ 
   ∑ i ∈ s, m i
 
 /-- The nominal mass is an integer. -/
-theorem nominalMass_mem_range_intCast {ι : Type*} (s : Finset ι) (A : ι → ℕ) :
+lemma nominalMass_mem_range_intCast {ι : Type*} (s : Finset ι) (A : ι → ℕ) :
     (nominalMass s A : ℝ) ∈ Set.range (Int.cast : ℤ → ℝ) :=
   ⟨nominalMass s A, Int.cast_natCast _⟩
 
 /-- Exact minus nominal mass is the sum of the per-atom mass defects `m i - A i`. -/
-theorem exactMass_sub_nominalMass {ι : Type*} (s : Finset ι) (m : ι → ℝ) (A : ι → ℕ) :
+lemma exactMass_sub_nominalMass {ι : Type*} (s : Finset ι) (m : ι → ℝ) (A : ι → ℕ) :
     exactMass s m - nominalMass s A = ∑ i ∈ s, (m i - A i) := by
   rw [exactMass, nominalMass, Nat.cast_sum, Finset.sum_sub_distrib]
 
 /-- If every per-atom mass defect is bounded, `|m i - A i| ≤ δ i`, then exact minus nominal
 mass is bounded by `∑ i ∈ s, δ i`. The bounds `δ` are hypotheses, not data of this module. -/
-theorem abs_exactMass_sub_nominalMass_le {ι : Type*} (s : Finset ι) (m : ι → ℝ) (A : ι → ℕ)
+lemma abs_exactMass_sub_nominalMass_le {ι : Type*} (s : Finset ι) (m : ι → ℝ) (A : ι → ℕ)
     (δ : ι → ℝ) (hδ : ∀ i ∈ s, |m i - A i| ≤ δ i) :
     |exactMass s m - nominalMass s A| ≤ ∑ i ∈ s, δ i := by
   rw [exactMass_sub_nominalMass]
@@ -637,6 +674,10 @@ theorem abs_exactMass_sub_nominalMass_le {ι : Type*} (s : Finset ι) (m : ι �
 /-!
 
 ## E. The nitrogen rule
+
+Webb et al., §3.8.2, p. 11, gives the mass/valence parity argument for the
+nitrogen rule. The explicit common-valence and balance hypotheses below
+formalize that argument; charge and electron data are not part of this model.
 
 -/
 
@@ -741,7 +782,7 @@ def BondGraph.valence {ι β : Type*} [DecidableEq ι] (G : BondGraph ι β) (i 
 
 /-- Valence balance: the valences of a bond graph add up to twice the total bond order, because
 each bond contributes its order to both of its atoms. -/
-theorem BondGraph.sum_valence {ι β : Type*} [DecidableEq ι] (G : BondGraph ι β) :
+lemma BondGraph.sum_valence {ι β : Type*} [DecidableEq ι] (G : BondGraph ι β) :
     ∑ i ∈ G.atoms, G.valence i = 2 * ∑ b ∈ G.bonds, G.order b := by
   simp only [BondGraph.valence, Finset.sum_add_distrib]
   rw [Finset.sum_fiberwise_of_maps_to G.src_mem, Finset.sum_fiberwise_of_maps_to G.tgt_mem,
