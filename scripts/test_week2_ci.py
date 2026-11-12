@@ -18,7 +18,15 @@ sys.path.insert(0, str(ROOT))
 
 import source_diagnostics
 
-LIBRARIES = ("CSLibExt", "CSLibExtTest", "MathlibExt", "MathlibExtTest", "WantedExt")
+LIBRARIES = (
+    "CSLibExt",
+    "CSLibExtTest",
+    "MathlibExt",
+    "MathlibExtTest",
+    "PhyslibExt",
+    "PhyslibExtTest",
+    "WantedExt",
+)
 SCANNERS = ("check_duplicate_defs.py", "check_hypothesis_debt.py")
 
 
@@ -442,7 +450,7 @@ class WorkflowTests(DiagnosticFixture):
             timeout=30,
         )
 
-    def test_workflow_executes_focused_tests_and_both_scanners_on_five_roots(
+    def test_workflow_executes_focused_tests_and_both_scanners_on_seven_roots(
         self,
     ) -> None:
         self.prepare_workflow()
@@ -450,9 +458,9 @@ class WorkflowTests(DiagnosticFixture):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("FOCUSED_TEST_EXECUTED", result.stdout)
         self.assertIn("Ran 1 test", result.stderr)
-        self.assertEqual(result.stdout.count("Scanned files: 5"), 2)
-        self.assertIn("CANDIDATE Foo: same short name in 5 files", result.stdout)
-        self.assertIn("Total debt items: 5", result.stdout)
+        self.assertEqual(result.stdout.count("Scanned files: 7"), 2)
+        self.assertIn("CANDIDATE Foo: same short name in 7 files", result.stdout)
+        self.assertIn("Total debt items: 7", result.stdout)
 
     def test_workflow_propagates_test_failure(self) -> None:
         self.prepare_workflow()
