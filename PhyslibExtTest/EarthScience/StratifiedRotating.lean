@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.X05StratifiedRotating
+import PhyslibExt.EarthScience.StratifiedRotating
 
 /-!
 # Stratified-rotating-column capstone checks
 
-Concrete consumers of `PhyslibExt.EarthScience.X05StratifiedRotating`:
+Concrete consumers of `PhyslibExt.EarthScience.StratifiedRotating`:
 atmospheric `N² > 0` at `g = 10, θ = 300, dθ = 1`, oceanic `N² > 0`
 at `g = 10, ρ₀ = 1025, dρ = -1`, the geostrophic value `-4 / 41`,
 the equator rejection, and the north/south sign cases.
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.X05StratifiedRotating`
+- `PhyslibExt.EarthScience.StratifiedRotating`
 -/
 
 /-- Atmospheric `N² > 0` at `g = 10, θ = 300, dθ = 1`. -/
