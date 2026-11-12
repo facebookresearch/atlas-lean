@@ -24,7 +24,8 @@ deliverable.
 
 ## i. Overview
 
-The generic example covers every linear isometry `R`; the identity
+The generic examples cover every linear isometry `R` between distinct
+source and target spaces; the identity
 (`LinearIsometryEquiv.refl`) and point reflection
 (`LinearIsometryEquiv.neg`) examples exercise it on concrete
 isometries, with the zero vector distinguished from a unit vector
@@ -49,16 +50,20 @@ No new definitions or results are introduced here.
   (Mathlib).
 -/
 
-/-- Every linear isometry preserves norm and inner product. -/
-example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    (R : E →ₗᵢ[ℝ] E) (u v : E) :
-    ‖R u‖ = ‖u‖ ∧ @inner ℝ E _ (R u) (R v) = @inner ℝ E _ u v :=
+/-- Every linear isometry preserves norm and inner product, including
+between distinct source and target spaces. -/
+example {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    (R : E →ₗᵢ[ℝ] F) (u v : E) :
+    ‖R u‖ = ‖u‖ ∧ @inner ℝ F _ (R u) (R v) = @inner ℝ E _ u v :=
   ⟨R.norm_map u, R.inner_map_map u v⟩
 
-/-- Every linear isometry equivalence preserves norm and inner product. -/
-example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    (R : E ≃ₗᵢ[ℝ] E) (u v : E) :
-    ‖R u‖ = ‖u‖ ∧ @inner ℝ E _ (R u) (R v) = @inner ℝ E _ u v :=
+/-- Every linear isometry equivalence preserves norm and inner product,
+including between distinct source and target spaces. -/
+example {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+    (R : E ≃ₗᵢ[ℝ] F) (u v : E) :
+    ‖R u‖ = ‖u‖ ∧ @inner ℝ F _ (R u) (R v) = @inner ℝ E _ u v :=
   ⟨R.norm_map u, R.inner_map_map u v⟩
 
 /-- Identity isometry on `ℝ`: norm `3`, inner product `2 * 3 = 6`. -/
