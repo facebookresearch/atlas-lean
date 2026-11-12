@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Chemistry.Uncertainty.Propagation
-public import MathlibExt.Probability.MonteCarloRate
-public import MathlibExt.Probability.Statistics.SampleMoments
 public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.Probability.Distributions.Uniform
 

@@ -17,6 +17,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Data.PNat.Notation
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Moments.Variance
+public import MathlibExt.Probability.MonteCarloRate
+public import MathlibExt.Probability.Statistics.SampleMoments
 
 /-!
 
