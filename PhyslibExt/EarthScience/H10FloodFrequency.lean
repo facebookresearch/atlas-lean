@@ -24,7 +24,7 @@ the measures (`iIndepSet_iff_meas_biInter`); with common probability
 probability measure, not a schedule, and it makes no empirical
 stationarity claim: serial dependence breaks it, and a changed climate
 distribution is not stationary. The return-period convention `1 / p`
-requires `p > 0`.
+is stated for `p > 0`.
 
 ## ii. Key results
 
@@ -72,8 +72,8 @@ theorem no_exceedance_prob {Ω : Type*} {mΩ : MeasurableSpace Ω}
 /-! ## B. Boundary cases -/
 
 /-- Boundary cases: `p = 0` gives no-exceedance probability `1`, and
-`p = 1` with `n > 0` gives `0`. The return-period convention `1 / p`
-requires `p > 0`: `(1 / p) * p = 1`. -/
+`p = 1` with `n > 0` gives `0`. When `p > 0`, the return-period
+convention satisfies `(1 / p) * p = 1`. -/
 theorem no_exceedance_boundary {n : ℕ} {p : ℝ} :
     (1 - 0 : ℝ) ^ n = 1 ∧ (0 < n → (1 - 1 : ℝ) ^ n = 0) ∧
       (0 < p → (1 / p) * p = 1) := by
