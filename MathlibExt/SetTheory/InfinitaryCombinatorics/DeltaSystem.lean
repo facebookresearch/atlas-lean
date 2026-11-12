@@ -11,7 +11,6 @@ Author: Nam Trang
 -/
 module
 
-public import Mathlib.Data.Set.Basic
 public import Mathlib.Logic.Pairwise
 
 @[expose] public section
@@ -20,6 +19,34 @@ public import Mathlib.Logic.Pairwise
 
 /-!
 # A Delta system
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
+
+## References
+
+* Kunen (for `IsDeltaSystem`)
 
 ## References
 

@@ -12,8 +12,6 @@ Author: Stefan Trandafir
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.ZMod.Defs
 
 @[expose] public section
@@ -25,6 +23,41 @@ public import Mathlib.Data.ZMod.Defs
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 18
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 4.6 The Coxeter Graph, page 69. (for
+  `coxeterGraph`)
 
 ## References
 

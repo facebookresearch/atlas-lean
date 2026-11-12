@@ -23,6 +23,34 @@ public import Mathlib.Topology.Bases
 ## References
 
 * Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
+
+## References
+
+* Jech (for `IsOpenColoring`, `IsColoringHomogeneous`, `IsColoringFree`, `OpenColoringAxiom`)
 -/
 
 namespace MetaMathlibExt

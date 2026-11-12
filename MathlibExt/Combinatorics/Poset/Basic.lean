@@ -11,11 +11,8 @@ Author: Mark Sepanski
 -/
 module
 
-public import Mathlib.Data.Finset.Grade
-public import Mathlib.Data.Finsupp.Pointwise
 public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.Order.Grade
 
 @[expose] public section
@@ -30,6 +27,108 @@ public import Mathlib.Order.Grade
 * ec1 3.9.1 (for `moebiusAlgebraMul`)
 * ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
 * ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+
+## References
+
+* ec1 3.9.1 (for `moebiusAlgebraMul`)
+* ec1 3.13 p 335 (for `flagFVector`, `flagHVector`)
+* ec1 3.11 p 321 (for `IsHyperplaneArrangement`)
+-/
+
+/-! ### Informal statement of `moebiusAlgebraMul`
+
+Let L be a lattice, that is, a partially ordered set in which
+any s,t∈ L have a least upper bound and a greatest lower
+bound s∧ t, called their meet, and let R be a
+commutative semiring with zero 0 and identity 1. The Möbius
+algebra A(L,R) is the set of functions f: L→ R with
+f(s)≠ 0 for only finitely many s∈ L. For f,g∈ A(L,R)
+and c∈ R, the sum f+g and the scalar multiple cf are
+given by (f+g)(s)=f(s)+g(s) and (cf)(s)=c f(s) for s∈ L,
+and the zero element of A(L,R) is the function with value 0
+at every s∈ L. Each s∈ L is identified with the function
+in A(L,R) that has value 1 at s and value 0 at every
+other element of L, so that f=∑_{s∈ L}f(s) s, a sum
+with only finitely many nonzero terms. For f,g∈ A(L,R), the
+Möbius algebra product f⋅ g∈ A(L,R) is the bilinear
+extension of
+
+  s⋅ t=s∧ t (s,t∈ L),
+
+that is,
+
+  (f⋅ g)(u)=∑_{s∧ t=u}f(s) g(t) (u∈ L),
+
+the sum taken over all pairs (s,t)∈ L× L with
+f(s)≠ 0, g(t)≠ 0 and s∧ t=u. If f or g is
+the zero element, then so is f⋅ g. If L is empty, the
+zero element is the only element of A(L,R).
+-/
+
+/-! ### Informal statement of `flagFVector`
+
+Let P be a finite partially ordered set. For s,t∈ P, the
+element t covers s if s<t and there is no u∈ P with
+s<u<t, and t is minimal if there is no u∈ P with u<t.
+Let ρ: P→ℤ_{≥ 0} be a function with
+ρ(s)<ρ(t) whenever s<t, with ρ(t)=ρ(s)+1
+whenever t covers s, and with ρ(t)=0 whenever t is
+minimal. For a finite set S⊆ℤ_{≥ 0}, the
+S-rank-selected subposet of P is
+
+  P_S={t∈ P:ρ(t)∈ S}.
+
+Elements x,y∈ P are comparable if x≤ y or y≤ x. A
+chain in P_S is a subset C⊆ P_S any two elements of
+which are comparable. It is maximal if no element of
+P_S∖ C is comparable with every element of C, that
+is, if C is not contained in a larger chain in P_S. The flag
+f-vector of P is the function α_P on finite sets
+S⊆ℤ_{≥ 0} given by
+
+  α_P(S)=#{C:C is a maximal chain in P_S},
+
+where # denotes the number of elements. If P_S=∅,
+in particular if S=∅, the empty chain is the only
+maximal chain in P_S, so α_P(S)=1. For
+i∈ℤ_{≥ 0}, α_P({i}) is the number of
+t∈ P with ρ(t)=i when there is at least one such t.
 -/
 
 namespace MetaMathlibExt
@@ -80,7 +179,6 @@ noncomputable def moebiusAlgebraMul {L R : Type*} [Lattice L]
 
 -- Combinatorics 486: Flag f-Vector
 
-
 /-! ### Informal statement of `flagFVector`
 
 Let P be a finite partially ordered set. For s,t∈ P, the
@@ -129,7 +227,6 @@ def flagFVector (P : Type*) [PartialOrder P] [Fintype P]
 
 -- Combinatorics 487: Flag h-Vector
 
-
 /-- Let P be a finite partially ordered set. For s,t∈ P, the
 element t covers s if s<t and there is no u∈ P with
 s<u<t, and t is minimal if there is no u∈ P with u<t.
@@ -153,7 +250,6 @@ def flagHVector (P : Type*) [PartialOrder P] [Fintype P]
   ∑ T ∈ S.powerset, (-1) ^ (S \ T).card * (flagFVector P T : ℤ)
 
 -- Combinatorics 488: Hyperplane Arrangement
-
 
 /-- Let K be a field and let V be a finite-dimensional vector
 space over K. An affine subspace of V is either the empty set

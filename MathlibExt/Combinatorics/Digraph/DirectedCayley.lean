@@ -11,10 +11,7 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Algebra.GroupWithZero.Units.Fintype
 public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.ZMod.Basic
 
 @[expose] public section
 
@@ -25,6 +22,41 @@ public import Mathlib.Data.ZMod.Basic
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 58
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.4 Vertex Connectivity, page 34. (for
+  `directedCayleyGraph`)
 
 ## References
 

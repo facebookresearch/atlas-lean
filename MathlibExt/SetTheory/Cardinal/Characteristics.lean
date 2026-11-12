@@ -12,12 +12,13 @@ Author: Nam Trang
 module
 
 public import Mathlib.Order.Filter.AtTopBot.Defs
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Cardinal.Order
 
 @[expose] public section
 
 -- Source: Lean Definition Library (Airtable) records: Logic 361, Logic 362
+
+open Cardinal Set Order
 
 /-!
 # Unbounded family; Bounding number
@@ -25,9 +26,35 @@ public import Mathlib.SetTheory.Cardinal.Order
 ## References
 
 * Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
--/
 
-open Cardinal Ordinal Set Order
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+
+## References
+
+* Textbook (Jech) (for `IsUnboundedFamily`, `boundingNumber`)
+-/
 
 namespace MetaMathlibExt
 

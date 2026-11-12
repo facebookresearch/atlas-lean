@@ -26,7 +26,6 @@ open MetaMathlibExt
 
 -- Combinatorics 490: Omega Involution
 
-
 theorem MvPolynomial.omegaAlgHom_esymm_two :
     (MvPolynomial.omegaAlgHom (Fin 2) ℤ
         ⟨MvPolynomial.esymm (Fin 2) ℤ 2,
@@ -41,7 +40,6 @@ theorem MvPolynomial.omegaAlgHom_esymm_two :
   rfl
 
 -- Combinatorics 494: Exponential Specialization
-
 
 theorem MvPowerSeries.exponentialSpecialization_values :
     (MvPowerSeries.X 0 :
@@ -98,7 +96,6 @@ theorem MvPowerSeries.exponentialSpecialization_values :
     split_ifs with h <;> simp [h]
 
 -- Combinatorics 495: Scalar Product of Symmetric Polynomials
-
 
 theorem symmetricScalarProduct_values :
     let p₁ : MvPolynomial.symmetricSubalgebra (Fin 2) ℤ :=
@@ -218,7 +215,6 @@ theorem symmetricScalarProduct_values :
 
 -- Combinatorics 497: Skew Shape
 
-
 theorem SkewShape.exists_examples :
     (∃ s : SkewShape,
       s.outer = YoungDiagram.ofRowLens [6, 5, 3, 3] (by decide) ∧
@@ -248,7 +244,6 @@ theorem SkewShape.exists_examples :
         YoungDiagram.ofRowLens [3] _)) (by decide)
 
 -- Combinatorics 498: Semistandard Young Tableau of Skew Shape
-
 
 theorem skewSemistandardYoungTableau_example :
     (∃ s : SkewShape,
@@ -350,7 +345,6 @@ theorem skewSemistandardYoungTableau_example :
     exact z (by simp)
 
 -- Combinatorics 500: Standard Young Tableau of Skew Shape
-
 
 theorem skewStandardYoungTableau_examples :
     let A : SkewShape → List (List ℕ) → Prop := fun s L =>
@@ -480,6 +474,19 @@ theorem skewStandardYoungTableau_examples :
     exact ⟨T, fun T' => ext _ _ _ fun i j => by
       rw [hT, T'.zeros (by simp [YoungDiagram.notMem_bot])]
       simp⟩
+
+-- Combinatorics 631: Two-Line Array
+
+example :
+    List.IsTwoLineArray
+      [(1, 1), (1, 3), (1, 3), (2, 2), (2, 2), (3, 1), (3, 2)] ∧
+    List.IsTwoLineArray [] ∧
+    List.IsTwoLineArray [(2, 5)] ∧
+    ¬ List.IsTwoLineArray [(1, 2), (1, 1)] ∧
+    ¬ List.IsTwoLineArray [(2, 1), (1, 3)] ∧
+    ¬ List.IsTwoLineArray [(0, 1)] := by
+  unfold List.IsTwoLineArray
+  decide
 
 end MathlibExtTest.Combinatorics.SymmetricFunctionsYoungTableaux
 

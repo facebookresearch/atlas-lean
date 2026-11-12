@@ -11,8 +11,6 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.GeneralizedJohnson
 
 @[expose] public section
@@ -24,6 +22,41 @@ public import MathlibExt.Combinatorics.SimpleGraph.GeneralizedJohnson
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 439
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6 Johnson graphs, page 9. (for
+  `kneserGraph`)
 
 ## References
 

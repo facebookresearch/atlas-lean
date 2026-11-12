@@ -12,7 +12,6 @@ Author: Stefan Trandafir
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 @[expose] public section
 
@@ -23,6 +22,41 @@ public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 432
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 3.10, page 52. (for
+  `edgeTranspositionGraph`)
 
 ## References
 

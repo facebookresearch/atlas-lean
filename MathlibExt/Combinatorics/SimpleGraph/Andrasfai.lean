@@ -11,9 +11,7 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Cayley
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Data.ZMod.Basic
 
 @[expose] public section
@@ -25,6 +23,41 @@ public import Mathlib.Data.ZMod.Basic
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 26
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 6.10 The Andrásfai Graphs, page 118. (for
+  `andrasfaiGraph`)
 
 ## References
 

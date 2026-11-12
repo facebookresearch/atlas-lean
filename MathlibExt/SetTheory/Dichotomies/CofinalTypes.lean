@@ -12,8 +12,6 @@ Author: Nam Trang
 module
 
 public import Mathlib.Data.Set.Image
-public import Mathlib.Order.CompleteBooleanAlgebra
-public import Mathlib.Order.CompletePartialOrder
 
 @[expose] public section
 
@@ -21,6 +19,41 @@ public import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Tukey Reducibility; Tukey equivalence; Cofinal type
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
+
+## References
+
+* Kunen (for `TukeyLE`)
+* Jech (for `TukeyEquiv`, `CofinalType`)
 
 ## References
 

@@ -28,6 +28,34 @@ Source records: Combinatorics 1
 ## References
 
 * Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.6, page 9. (for `johnsonGraph`)
 -/
 
 namespace MetaMathlibExt

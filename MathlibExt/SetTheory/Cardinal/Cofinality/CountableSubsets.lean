@@ -18,6 +18,8 @@ public import Mathlib.Order.CompletePartialOrder
 
 -- Source: Lean Definition Library (Airtable) records: Logic 37, Logic 39, Logic 40, Logic 41, Logic 51, Logic 579
 
+open Set Order
+
 /-!
 # `MathlibExt.SetTheory.Cardinal.Cofinality.CountableSubsets`
 
@@ -56,9 +58,278 @@ public import Mathlib.Order.CompletePartialOrder
   finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
   (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
   (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
+
+## References
+
+* Jech (for `IsClubOmega`, `IsStationaryOmega`, `ClosurePoints`, `ClosurePointsSeq`)
+* 1. closurePointsSeq_const — the closure points of a constant family $\lambda _ : \mathbb{N},, F$
+  are exactly the closure points of the single operation $F$. Source: direct observation, original
+  to this formalization. Background: Kueker's closure-point clubs, D. W. Kueker, "Countable
+  approximations and Löwenheim–Skolem theorems", Annals of, Mathematical Logic 11 (1977), 57–103.
+  2. notMem_closurePoints_empty — $\emptyset$ is never a closure point of any finitary $F$ (since
+  $F(\emptyset)$ would have to belong to it). Source: direct observation, original to this
+  formalization. 3. countable_iUnion_countable — a countable union of countable sets is countable.
+  Source: Mathlib, Set.countable_iUnion, Mathlib/Data/Set/Countable.lean:214: theorem
+  countable_iUnion {t : ι → Set α} [Countable ι] (ht : ∀ i, (t i).Countable). 4.
+  isClubOmega_countableSubsets — $[\alpha]^\omega$ is itself a club, so clubs exist and
+  stationarity is not vacuous. Source: direct observation, original to this formalization.
+  Background: T. Jech, Set Theory, 3rd ed., Springer, 2003, Chapter 8 (Stationary Sets). 5.
+  not_isStationaryOmega_empty — $\emptyset$ is never stationary in $[\alpha]^\omega$. Source:
+  direct observation, original to this formalization; one-line corollary of item 4. 6.
+  IsStationaryOmega.nonempty — every stationary family is nonempty. Source: direct observation,
+  original to this formalization; via item 4. 7. IsStationaryOmega.mono — stationarity is
+  upward-closed under $\subseteq$. Source: standard fact; Jech, Set Theory, Chapter 8 (Stationary
+  Sets). 8. isStationaryOmega_countableSubsets — $[\alpha]^\omega$ is stationary (every club has a
+  countable member). Source: direct observation, original to this formalization. Background: Jech,
+  Chapter 8. 9. isClubOmega_mem — for each $a$, the countable sets containing $a$ form a club.
+  Source: standard club example; Jech, Set Theory, Chapter 8. 10. Set.Countable.exists_option_enum
+  — every countable set admits a total $\mathbb{N}$-indexed Option enumeration hitting each member
+  as some a (constantly none when empty). Source: original to this formalization; routes through,
+  Mathlib's exists_surjective_nat, Mathlib/Basic/Countable/Defs.lean:62: theorem
+  exists_surjective_nat (α : Sort u) [Nonempty α] [Countable α] : ∃ f : ℕ → α, Surjective f. 11.
+  isClubOmega_closurePointsSeq — the closure points of a countable family of finitary operations
+  form a club, (cofinal by $\omega$-iteration; closed since every finite subset of a chain-union
+  lands in some stage). Source: the easy direction of Kueker's theorem in sequence-indexed form;
+  original, Kueker 1977 (as in item 1); textbook, Jech, Chapter 8. The countability of the
+  finite-subset stages routes through Mathlib's, Set.countable_ofPred_finite_subset
+  (Mathlib/Data/Set/Countable.lean:273), Set.countable_univ_iff (:137), and, Set.countable_iUnion
+  (item 3's source). (for `closurePointsSeq_const`)
 -/
 
-open Set Order
+/-! ### Informal statement of `closurePointsSeq_const`
+
+1. Let F : Finset(α) → α. Then ClosurePointsSeq(λ n : ℕ,, F) =
+     ClosurePoints(F).
+  2. For every finitary operation F, ∅ ∉ ClosurePoints(F).
+  3. Let f : ℕ → 𝒫(α) with each f(n) countable. Then ⋃_{n ∈ ℕ} f(n)
+     is countable.
+  4. [α]^ω is club in [α]^ω.
+  5. ∅ is not stationary in [α]^ω.
+  6. If S is stationary in [α]^ω then S ≠ ∅.
+  7. If S is stationary and S ⊆ T then T is stationary.
+  8. [α]^ω is stationary in [α]^ω.
+  9. For each a ∈ α, x ∈ [α]^ω : a ∈ x is club.
+  10. If s ⊆ α is countable then ∃, e : ℕ → Option(s),; ∀ a ∈ s,;
+      ∃ n,; e(n) = some(a).
+  11. For F : ℕ → (Finset(α) → α), ClosurePointsSeq(F) is club in
+      [α]^ω.
+-/
 
 namespace MetaMathlibExt
 

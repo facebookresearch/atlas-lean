@@ -11,7 +11,6 @@ Author: Nam Trang
 -/
 module
 
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Ordinal.Basic
 
 @[expose] public section
@@ -20,6 +19,34 @@ public import Mathlib.SetTheory.Ordinal.Basic
 
 /-!
 # $\Square_\kappa$ sequence; $\Square_\kappa$ sequence exists
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
+
+## References
+
+* Kunen (for `IsSquareSequence`, `Square`)
 
 ## References
 

@@ -41,7 +41,6 @@ theorem moebiusAlgebraMul_values :
 
 -- Combinatorics 486: Flag f-Vector
 
-
 theorem flagFVector_boolean :
     flagFVector (Finset (Fin 2)) {0, 1, 2} = 2 ∧
       flagFVector (Finset (Fin 2)) {1} = 2 ∧
@@ -52,7 +51,6 @@ theorem flagFVector_boolean :
 
 -- Combinatorics 487: Flag h-Vector
 
-
 theorem flagHVector_boolean :
     flagHVector (Finset (Fin 2)) ∅ = 1 ∧
       flagHVector (Finset (Fin 2)) {0} = 0 ∧
@@ -61,7 +59,6 @@ theorem flagHVector_boolean :
   decide
 
 -- Combinatorics 488: Hyperplane Arrangement
-
 
 theorem isHyperplaneArrangement_points :
     IsHyperplaneArrangement (⊤ : AffineSubspace ℚ ℚ)

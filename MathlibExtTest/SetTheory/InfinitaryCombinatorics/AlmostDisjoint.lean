@@ -57,29 +57,34 @@ theorem evens_odds_isAlmostDisjointFamilyKappa :
 
 -- Logic 21: Almost disjoint modulo the nonstationary ideal
 
-/-- Irreflexivity: no `f` is almost disjoint mod NS from itself
-    (agreement set is `univ`, which is stationary). -/
+/-- Agreement on a nonempty nonstationary set still counts as almost disjoint: these functions
+    agree only at `0`, and `{0}` is not stationary (the club `(0, ω₁)` misses it). -/
 
-theorem not_almostDisjointModNS_self.{u} {A : Set.Iio (aleph 1 : Cardinal.{u}).ord → Type u}
-    (f : (α : Set.Iio (aleph 1 : Cardinal.{u}).ord) → A α) :
-    ¬ AlmostDisjointModNS f f := by
-  have h0 : (0 : Ordinal) < (aleph 1 : Cardinal.{u}).ord := by
-    rw [Cardinal.lt_ord, Ordinal.card_zero]
-    exact Cardinal.aleph_pos 1
-  haveI : Nonempty (Set.Iio (aleph 1 : Cardinal.{u}).ord) := ⟨⟨0, h0⟩⟩
-  intro h
-  refine h fun t ht => ?_
-  obtain ⟨x, hx⟩ := ht.nonempty
-  exact ⟨x, rfl, hx⟩
-
-/-- Satisfiability: everywhere-different functions are almost disjoint mod NS
-    (agreement set is `∅`, which is not stationary). -/
-
-theorem almostDisjointModNS_of_ne :
-    AlmostDisjointModNS (A := fun _ => Bool) (fun _ => true) (fun _ => false) := by
-  intro h
-  obtain ⟨x, hx, -⟩ := h IsClub.univ
-  exact absurd hx (by simp)
+theorem almostDisjointModNS_agree_at_zero :
+    AlmostDisjointModNS.{0} (A := fun _ => Bool)
+      (fun α => decide (α.1 = 0)) (fun _ => true) := by
+  have h1 : (1 : Ordinal.{0}) < (Cardinal.aleph 1 : Cardinal.{0}).ord := by
+    rw [Cardinal.lt_ord, Ordinal.card_one]
+    exact Cardinal.one_lt_aleph0.trans Cardinal.aleph0_lt_aleph_one
+  have h0 : (0 : Ordinal.{0}) < (Cardinal.aleph 1 : Cardinal.{0}).ord := zero_lt_one.trans h1
+  rw [AlmostDisjointModNS, not_isStationary_iff]
+  refine ⟨Set.Ioi ⟨0, h0⟩,
+    ⟨(isUpperSet_Ioi (a := (⟨0, h0⟩ : Set.Iio (Cardinal.aleph 1 : Cardinal.{0}).ord))).dirSupClosed,
+      fun x => ?_⟩, ?_⟩
+  · by_cases hx : x.1 = 0
+    · refine ⟨⟨1, h1⟩, ?_, ?_⟩
+      · show (0 : Ordinal) < 1
+        exact zero_lt_one
+      · show x.1 ≤ 1
+        rw [hx]
+        exact zero_le_one
+    · exact ⟨x, show (0 : Ordinal) < x.1 from pos_iff_ne_zero.mpr hx, le_rfl⟩
+  · rw [Set.disjoint_left]
+    intro α hα hlt
+    simp only [Set.mem_setOf_eq, decide_eq_true_eq] at hα
+    have h : (0 : Ordinal) < α.1 := hlt
+    rw [hα] at h
+    exact lt_irrefl _ h
 
 -- Logic 54: Almost disjoint family of functions
 

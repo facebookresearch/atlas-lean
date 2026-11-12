@@ -11,7 +11,6 @@ Author: Nam Trang
 -/
 module
 
-public import Mathlib.Order.Defs.Unbundled
 public import MathlibExt.SetTheory.Cardinal.Cofinality.CountableSubsets
 
 @[expose] public section
@@ -20,6 +19,41 @@ public import MathlibExt.SetTheory.Cardinal.Cofinality.CountableSubsets
 
 /-!
 # `MathlibExt.SetTheory.Forcing.ForcingAxioms.Proper`
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
+
+## References
+
+* Jech (for `modelConds`, `modelSets`, `IsCompatible`, `IsPredenseBelow`, `IsGenericFor`,
+  `IsProperForcing`)
 
 ## References
 

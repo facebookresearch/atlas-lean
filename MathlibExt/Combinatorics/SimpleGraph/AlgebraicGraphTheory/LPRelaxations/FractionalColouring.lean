@@ -12,12 +12,7 @@ Author: Stefan Trandafir
 module
 
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum.Basic
 
 @[expose] public section
 
@@ -28,6 +23,55 @@ public import Mathlib.Tactic.NormNum.Basic
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 437, Combinatorics 438
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1, page 135-136. (for
+  `SimpleGraph.fracChromaticNumber`)
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 7.1 Fractional Colourings and Cliques,
+  page 136. (for `FracColouring.IsRegular`)
 
 ## References
 
@@ -50,7 +94,6 @@ structure FracColouring {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph
 def FracColouring.weight {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
     (c : FracColouring G) : ℝ :=
   ∑ s ∈ Finset.univ, c.w s
-
 /-- We will use ℐ(X) to denote the set of all independent sets of [a finite graph] X, and ℐ(X,u) to
 denote the independent sets that contain the vertex u. A *fractional colouring* of a graph X is a
 nonnegative real-valued function f on ℐ(X) such that for any vertex x of X, ∑_{S ∈ ℐ(X,x)} f(S) ≥ 1.
@@ -58,6 +101,7 @@ The *weight* of a fractional chromatic colouring is the sum of all its values, a
 \emph{fractional chromatic number χ^*(X) of the graph X is the infimum over weights of all possible
 fractional colourings.
 -/
+
 noncomputable def _root_.SimpleGraph.fracChromaticNumber {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) : ℝ :=
   sInf {q : ℝ | ∃ c : FracColouring G, c.weight = q}

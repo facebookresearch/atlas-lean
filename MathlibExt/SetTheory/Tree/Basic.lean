@@ -11,8 +11,6 @@ Author: Steven Warner, Nam Trang
 -/
 module
 
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Ordinal.Rank
 
 @[expose] public section
@@ -21,6 +19,41 @@ public import Mathlib.SetTheory.Ordinal.Rank
 
 /-!
 # `MathlibExt.SetTheory.Tree.Basic`
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
+
+## References
+
+* Jech (for `IsTree`, `level`, `IsNormalTreeAt`)
+* Kunen (for `IsTreeAt`)
 
 ## References
 

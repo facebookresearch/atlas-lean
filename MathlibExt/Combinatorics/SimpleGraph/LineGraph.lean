@@ -11,8 +11,6 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Combinatorics.SimpleGraph.LineGraph
 
 @[expose] public section
@@ -24,6 +22,41 @@ public import Mathlib.Combinatorics.SimpleGraph.LineGraph
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 428
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 1.7 Line graphs, page 10. (for
+  `SimpleGraph.IsLineGraph`)
 
 ## References
 

@@ -19,15 +19,43 @@ public import MathlibExt.SetTheory.Ultrafilter.Ramsey
 
 -- Source: Lean Definition Library (Airtable) records: Logic 33
 
+open Set Cardinal
+
 /-!
 # Weakly compact cardinal
 
 ## References
 
 * Jech (for `IsWeaklyCompact`)
--/
 
-open Set Cardinal
+## References
+
+* Jech (for `IsWeaklyCompact`)
+
+## References
+
+* Jech (for `IsWeaklyCompact`)
+
+## References
+
+* Jech (for `IsWeaklyCompact`)
+
+## References
+
+* Jech (for `IsWeaklyCompact`)
+
+## References
+
+* Jech (for `IsWeaklyCompact`)
+
+## References
+
+* Jech (for `IsWeaklyCompact`)
+
+## References
+
+* Jech (for `IsWeaklyCompact`)
+-/
 
 namespace MetaMathlibExt
 

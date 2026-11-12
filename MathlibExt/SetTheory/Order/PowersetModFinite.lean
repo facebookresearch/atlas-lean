@@ -12,7 +12,6 @@ Author: Nam Trang
 module
 
 public import Mathlib.Basic.Finite.Defs
-public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
 @[expose] public section
@@ -21,6 +20,34 @@ public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
 /-!
 # Equal mod finite; $P(\omega)\slash \textrm{fin}$ automorphism
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
+
+## References
+
+* Jech (for `EqModFinite`, `IsPowModFiniteAutomorphism`)
 
 ## References
 

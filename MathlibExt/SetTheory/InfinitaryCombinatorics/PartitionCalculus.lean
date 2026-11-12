@@ -23,6 +23,34 @@ public import Mathlib.Data.Finset.Card
 ## References
 
 * Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
+
+## References
+
+* Jech (for `IsHomogeneousFor`)
 -/
 
 namespace MetaMathlibExt

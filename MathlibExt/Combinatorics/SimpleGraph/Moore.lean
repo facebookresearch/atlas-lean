@@ -11,8 +11,6 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Girth
 
 @[expose] public section
@@ -24,6 +22,41 @@ public import Mathlib.Combinatorics.SimpleGraph.Girth
 
 Definitions from the AAI Lean Definition Library (Knowledge Expert Program).
 Source records: Combinatorics 19
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
+
+## References
+
+* Algebraic Graph Theory, Godsil & Royle (2001), Section 5 Generalized Polygons and Moore Graphs,
+  page 77. (for `IsMooreGraph`)
 
 ## References
 

@@ -25,6 +25,41 @@ public import MathlibExt.SetTheory.Tree.Basic
 
 * Kunen (for `IsAronszajnTreeAt`)
 * Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
+
+## References
+
+* Kunen (for `IsAronszajnTreeAt`)
+* Jech (for `IsAronszajnTree`, `IsOmega1Tree`)
 -/
 
 namespace MetaMathlibExt

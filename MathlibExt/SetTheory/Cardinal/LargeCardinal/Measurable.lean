@@ -14,11 +14,12 @@ module
 public import Mathlib.Order.Filter.CardinalInter
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Defs
-public import Mathlib.SetTheory.Cardinal.Aleph
 
 @[expose] public section
 
 -- Source: Lean Definition Library (Airtable) records: Logic 50
+
+open Set Cardinal Filter
 
 /-!
 # Measurable cardinal
@@ -26,9 +27,35 @@ public import Mathlib.SetTheory.Cardinal.Aleph
 ## References
 
 * Jech (for `IsMeasurable`)
--/
 
-open Set Cardinal Filter
+## References
+
+* Jech (for `IsMeasurable`)
+
+## References
+
+* Jech (for `IsMeasurable`)
+
+## References
+
+* Jech (for `IsMeasurable`)
+
+## References
+
+* Jech (for `IsMeasurable`)
+
+## References
+
+* Jech (for `IsMeasurable`)
+
+## References
+
+* Jech (for `IsMeasurable`)
+
+## References
+
+* Jech (for `IsMeasurable`)
+-/
 
 namespace MetaMathlibExt
 
