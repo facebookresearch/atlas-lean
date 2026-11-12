@@ -16,12 +16,16 @@ import MathlibExt.Analysis.Convex.BrouwerFixedPoint
 /-!
 # Existence of competitive equilibrium in an exchange economy
 
-A pure exchange economy in demand form has finitely many consumers and goods, endowments, and
+An exchange economy in demand form has finitely many consumers and goods, endowments, and
 demand functions of normalized prices. If every demand is continuous on the closed price simplex
 and exhausts the consumer's budget there, a normalized competitive equilibrium with free disposal
 exists: no good is in excess demand, and every good in excess supply has price zero
 (Gale–Nikaido–Debreu). If moreover every good is in strict excess demand when its price is zero,
 some strictly positive price vector clears every market exactly.
+
+The theorems hold for any such demand-form data: endowments and demands are real vectors, and
+nonnegativity of bundles is neither assumed nor needed. A pure exchange economy with nonnegative
+endowments and demands is the special case.
 
 Demand is taken as given. Deriving it from preferences, production, and the open-simplex
 boundary condition of Mas-Colell–Whinston–Green, Proposition 17.C.1, are out of scope.
@@ -55,8 +59,10 @@ equilibria are considered. -/
 def priceSimplex (L : Type*) [Fintype L] : Set (L → ℝ) :=
   {p | (∀ l, 0 ≤ p l) ∧ ∑ l, p l = 1}
 
-/-- A pure exchange economy in demand form: consumers `I`, goods `L`, consumer `i` owns the
-endowment `endowment i` and demands the bundle `demand i p` at prices `p`. -/
+/-- An exchange economy in demand form: consumers `I`, goods `L`, consumer `i` owns the
+endowment `endowment i` and demands the bundle `demand i p` at prices `p`. Bundles are arbitrary
+real vectors: nonnegativity is not imposed, and the existence theorems below do not need it. A
+pure exchange economy with nonnegative endowments and demands is the special case. -/
 structure ExchangeEconomy (I L : Type*) where
   /-- `endowment i` is consumer `i`'s initial bundle. -/
   endowment : I → L → ℝ
