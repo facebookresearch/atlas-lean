@@ -109,32 +109,83 @@ def walkMax : List ℝ → ℝ
   | [] => 0
   | a :: l => max 0 (a + walkMax l)
 
+@[simp] theorem walkMax_nil : walkMax [] = 0 := rfl
+
+theorem walkMax_cons (a : ℝ) (l : List ℝ) : walkMax (a :: l) = max 0 (a + walkMax l) := rfl
+
+theorem walkMax_nonneg (l : List ℝ) : 0 ≤ walkMax l := by
+  cases l with
+  | nil => rfl
+  | cons a l => exact le_max_left _ _
+
 /-- The **maximal segment score** `Mₙ = max_{0 ≤ i ≤ j ≤ n} (S_j - S_i)` of a score list: the
 largest sum of a (possibly empty) contiguous run (`sum_le_maxSegScore_of_infix`,
-`exists_infix_sum_eq_maxSegScore`). The best run either starts at the head, and is then a prefix,
-or lies in the tail. -/
-def maxSegScore : List ℝ → ℝ
-  | [] => 0
-  | a :: l => max (maxSegScore l) (walkMax (a :: l))
+`exists_infix_sum_eq_maxSegScore`). Computed by a single left-to-right fold carrying the
+current Lindley value and the best-so-far value, so one addition and at most two comparisons
+per score (`maxSegScore_cons` recovers the first-step recursion). -/
+def maxSegScore (l : List ℝ) : ℝ :=
+  (l.foldl (fun p a => (max 0 (p.1 + a), max p.2 (max 0 (p.1 + a)))) (0, 0)).2
+
+/-- The fold behind `maxSegScore` satisfies the first-step recursion and, from any
+starting state `(w, m)` with `0 ≤ w ≤ m`, ends at `max m (max (maxSegScore l) (w + walkMax l))`:
+the best run either lies in `l`, or starts before `l` and then contributes `w` plus a prefix
+of `l`. -/
+private theorem maxSegScore_foldl_and_cons (l : List ℝ) :
+    (∀ w m : ℝ, 0 ≤ w → w ≤ m →
+      (l.foldl (fun p a => (max 0 (p.1 + a), max p.2 (max 0 (p.1 + a)))) (w, m)).2 =
+        max m (max (maxSegScore l) (w + walkMax l))) ∧
+    (∀ a : ℝ, maxSegScore (a :: l) = max (maxSegScore l) (walkMax (a :: l))) := by
+  induction l with
+  | nil =>
+    refine ⟨fun w m hw hwm => ?_, fun a => ?_⟩
+    · simp [maxSegScore, walkMax, max_eq_right hw, max_eq_left hwm]
+    · simp [maxSegScore, walkMax]
+  | cons b l ih =>
+    obtain ⟨ihB, ihA⟩ := ih
+    have hW : 0 ≤ walkMax l := walkMax_nonneg l
+    have hMW : walkMax l ≤ maxSegScore l := by
+      have h : maxSegScore l = max (0 : ℝ) (max (maxSegScore l) (0 + walkMax l)) :=
+        ihB 0 0 le_rfl le_rfl
+      rw [h]
+      exact le_max_of_le_right (by simp [le_max_right (maxSegScore l) (walkMax l)])
+    have hB' : ∀ w m : ℝ, 0 ≤ w → w ≤ m →
+        ((b :: l).foldl (fun p a => (max 0 (p.1 + a), max p.2 (max 0 (p.1 + a)))) (w, m)).2 =
+          max m (max (maxSegScore (b :: l)) (w + walkMax (b :: l))) := by
+      intro w m hw hwm
+      simp only [List.foldl_cons]
+      rw [ihB _ _ (le_max_left _ _) (le_max_right _ _), ihA b, walkMax_cons]
+      simp only [max_def]
+      split_ifs <;> linarith [hW, hMW, hw, hwm]
+    refine ⟨hB', fun a => ?_⟩
+    have hMWb : walkMax (b :: l) ≤ maxSegScore (b :: l) := by
+      have h : maxSegScore (b :: l) =
+          max (0 : ℝ) (max (maxSegScore (b :: l)) (0 + walkMax (b :: l))) :=
+        hB' 0 0 le_rfl le_rfl
+      rw [h]
+      exact le_max_of_le_right (by simp [le_max_right (maxSegScore (b :: l))
+        (walkMax (b :: l))])
+    have h := hB' (max 0 a) (max 0 a) (le_max_left _ _) le_rfl
+    have hhead : maxSegScore (a :: b :: l) =
+        ((b :: l).foldl (fun p a => (max 0 (p.1 + a), max p.2 (max 0 (p.1 + a))))
+          (max 0 a, max 0 a)).2 := by
+      simp only [maxSegScore, List.foldl_cons]
+      congr 1
+      simp
+    rw [hhead, h, show walkMax (a :: b :: l) = max 0 (a + walkMax (b :: l)) from
+      walkMax_cons a (b :: l)]
+    simp only [max_def]
+    split_ifs <;> linarith [walkMax_nonneg (b :: l), hMWb, le_max_left (0 : ℝ) a]
 
 /-- The **Lindley (reflected) walk** `W₀ = 0`, `W_{k+1} = max 0 (W_k + x_k)`, run over the whole
 list. `lindley_eq_walkMax_reverse`: `Wₙ = max_{i ≤ n} (Sₙ - S_i)`, the walk maximum of the
 reversed list. -/
 def lindley (l : List ℝ) : ℝ := l.foldl (fun w a => max 0 (w + a)) 0
 
-@[simp] theorem walkMax_nil : walkMax [] = 0 := rfl
-
-theorem walkMax_cons (a : ℝ) (l : List ℝ) : walkMax (a :: l) = max 0 (a + walkMax l) := rfl
-
 @[simp] theorem maxSegScore_nil : maxSegScore [] = 0 := rfl
 
 theorem maxSegScore_cons (a : ℝ) (l : List ℝ) :
-    maxSegScore (a :: l) = max (maxSegScore l) (walkMax (a :: l)) := rfl
-
-theorem walkMax_nonneg (l : List ℝ) : 0 ≤ walkMax l := by
-  cases l with
-  | nil => rfl
-  | cons a l => exact le_max_left _ _
+    maxSegScore (a :: l) = max (maxSegScore l) (walkMax (a :: l)) :=
+  (maxSegScore_foldl_and_cons l).2 a
 
 /-- Every prefix sum is at most the walk maximum. -/
 theorem sum_le_walkMax_of_prefix {s l : List ℝ} (h : s <+: l) : s.sum ≤ walkMax l := by
@@ -163,7 +214,7 @@ theorem sum_le_walkMax (l : List ℝ) : l.sum ≤ walkMax l :=
 theorem walkMax_le_maxSegScore (l : List ℝ) : walkMax l ≤ maxSegScore l := by
   cases l with
   | nil => rfl
-  | cons a l => exact le_max_right _ _
+  | cons a l => rw [maxSegScore_cons]; exact le_max_right _ _
 
 theorem maxSegScore_nonneg (l : List ℝ) : 0 ≤ maxSegScore l :=
   (walkMax_nonneg l).trans (walkMax_le_maxSegScore l)
