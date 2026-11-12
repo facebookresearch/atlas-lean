@@ -28,10 +28,12 @@ the laws as Borel probability measures, tested against bounded continuous functi
 instances use two norms:
 
 * the **sup norm on a fixed finite grid**, `Fin k → ℝ` (Mathlib's `Pi` norm is the max norm), for
-  the fully proved Kaplan–Meier statements. On the cumulative coordinates (used by
-  `tendstoInDistribution_kmSurvival_grid_of_nelsonAalen`) this is the uniform topology of
-  `D[0, τ]` restricted to the grid points; `tendstoInDistribution_kmSurvival_grid` puts it on the
-  hazard increments instead, which is an equivalent norm only for fixed `k`;
+  the fully proved Kaplan–Meier statements. Both grid theorems state their conclusion on the
+  survival values at the grid times, and the hypothesis of
+  `tendstoInDistribution_kmSurvival_grid_of_nelsonAalen` is on the cumulative hazard; on these
+  coordinates the norm is the uniform topology of `D[0, τ]` restricted to the grid points. Only the
+  hypothesis of `tendstoInDistribution_kmSurvival_grid` is on the hazard increments, where the
+  norm is equivalent to the restricted uniform one only for fixed `k`;
 * the **uniform (sup-norm) topology on `ℓ^∞([0, τ])`**, Mathlib's `lp (fun _ : Icc 0 τ ↦ ℝ) ∞`,
   for the continuous-time statement. `D[0, τ]` with the uniform norm sits isometrically inside it;
   this is the topology of van der Vaart (1998), §20.3, not the Skorokhod `J₁` topology.
@@ -77,20 +79,29 @@ instances use two norms:
   §20.3; Gill–Johansen 1990) is **not proved**: Mathlib has no Lebesgue–Stieltjes product
   integral. It is the explicit hypothesis `hHad` of `tendstoInDistribution_lInfty_of_hadamard`.
   What is proved is the finite-grid version, where the map is a polynomial in `k` variables and
-  is Fréchet differentiable with the Duhamel derivative; only `abs_prodIntegral_sub_le` has
-  constants uniform in `k`.
+  is Fréchet differentiable with the Duhamel derivative. The derivative, Hadamard derivative and
+  continuity results are qualitative; `abs_prodIntegral_sub_le` is the only quantitative grid
+  estimate, and its constants do not depend on `k`.
 * Measurability is Borel measurability throughout (Mathlib's framework), not van der Vaart's
   outer-probability (Hoffmann-Jørgensen) framework. On a fixed grid this costs nothing. In the
   nonseparable space `ℓ^∞([0, τ])` it is disqualifying for Kaplan–Meier: the `AEMeasurable`
-  fields of `hCLT` in `tendstoInDistribution_lInfty_of_hadamard` **fail whenever the
-  failure-time law has a non-atomic part**. Take `n = 1`: the Nelson–Aalen path is
-  `δ · 1[T, τ]`, two such paths with different jump points are at sup distance `1`, so every
-  subset of the set of paths is closed; the preimage of `{1[u, τ] | u ∈ A}` is `{δ = 1, T ∈ A}`,
-  which is not null-measurable for `A` non-measurable for the law of `T` (Billingsley;
-  van der Vaart–Wellner §1.1). So that statement is a conditional that does not apply to
-  continuous-time Kaplan–Meier; the outer-probability framework is needed. The abstract theorems
-  are correct as stated and apply whenever the processes are Borel measurable, e.g. on the grid
-  or in a separable subspace.
+  fields of `hCLT` in `tendstoInDistribution_lInfty_of_hadamard` **fail on the canonical space
+  of the observations whenever the law of the uncensored observation times in `[0, τ]` has a
+  non-atomic part**. Take `n = 1` (enough, since the `AEMeasurable` field covers every `n` and
+  translation is a homeomorphism) and the canonical space: the observation `(T, δ)` with the
+  completion of `σ(T, δ)`. Then `Λ̂₁ = δ · 1[T, τ]` when `T ≤ τ` (and `0` otherwise); distinct
+  such paths and the zero path are pairwise at sup distance `1`, so every set of paths is closed
+  in `ℓ^∞([0, τ])`. The preimage of `{1[u, τ] | u ∈ A}` is `{δ = 1, T ∈ A}`, which is not in the
+  completed `σ(T, δ)` when `A ⊆ [0, τ]` is non-measurable for the law of `T` on `{δ = 1}`; such
+  `A` exists when that law has a non-atomic part. (On a general `Ω` the probability can be
+  extended to make this set measurable, so the statement needs the canonical space or an
+  Ulam-type set-theoretic assumption. With censoring before every death in `[0, τ]`, e.g.
+  `C ≡ 0`, `Λ̂₁ ≡ 0` a.s. and the field holds.) This is the classical non-measurability of the
+  empirical distribution function in `D[0, 1]` with the uniform metric (Billingsley 1999, §15;
+  van der Vaart–Wellner 1996, §1.1). So that statement is a conditional that does not apply to
+  continuous-time Kaplan–Meier in this case; the outer-probability framework is needed. The
+  abstract theorems are correct as stated and apply whenever the processes are Borel measurable,
+  e.g. on the grid or in a separable subspace.
 * The sequences are indexed by `ℕ` with `atTop`.
 * The Hadamard derivative is one-sided (`t ↓ 0`) and `φ'` need not be linear. Van der Vaart's
   definition (two-sided, `φ'` continuous linear on `E₀`) implies this one, so the delta theorem
@@ -114,6 +125,9 @@ derivatives. The Kaplan–Meier and Nelson–Aalen estimators are reused from
 * R. D. Gill and S. Johansen, *A survey of product-integration with a view toward application in
   survival analysis*, Ann. Statist. 18 (1990), 1501–1555.
 * A. Shapiro, *Asymptotic analysis of stochastic programs*, Ann. Oper. Res. 30 (1991), 169–186.
+* P. Billingsley, *Convergence of Probability Measures*, 2nd ed. (1999), §15 "Uniform
+  Topologies" (the uniform metric on `D[0, 1]`).
+* A. W. van der Vaart and J. A. Wellner, *Weak Convergence and Empirical Processes* (1996), §1.1.
 -/
 
 @[expose] public section
@@ -621,10 +635,11 @@ derivative `prodInt'` (`hHad`), then `√n (prodInt Λ̂ₙ - prodInt Λ) ⇒ pr
 `Λhat`, `prodInt`, `prodInt'` and `dom` are arbitrary: nothing ties them to the Nelson–Aalen
 estimator or a product integral, and the Hadamard differentiability of the continuous-time
 product-integral map (van der Vaart §20.3) is **not proved here**. Moreover the
-`AEMeasurable` fields of `hCLT` fail for the continuous-time Nelson–Aalen process whenever the
-failure-time law has a non-atomic part (the `n = 1` counterexample in the module docstring), so
-this theorem does not apply to continuous-time Kaplan–Meier; it applies when the processes stay
-Borel measurable, e.g. in a separable subspace. -/
+`AEMeasurable` fields of `hCLT` fail for the continuous-time Nelson–Aalen process on the
+canonical space of the observations whenever the law of the uncensored observation times in
+`[0, τ]` has a non-atomic part (the `n = 1` counterexample in the module docstring), so this
+theorem does not apply to continuous-time Kaplan–Meier in that case; it applies when the
+processes stay Borel measurable, e.g. in a separable subspace. -/
 theorem tendstoInDistribution_lInfty_of_hadamard {τ : ℝ}
     [MeasurableSpace (lp (fun _ : Set.Icc (0 : ℝ) τ ↦ ℝ) ∞)]
     [BorelSpace (lp (fun _ : Set.Icc (0 : ℝ) τ ↦ ℝ) ∞)]

@@ -80,9 +80,8 @@ example : gridIncrements (fun j : Fin 2 ↦ ∑ i ∈ Iic j, (![1, 2] : Fin 2 �
 /-- The Lipschitz bound at `x = 0`, `y = c` on one grid point: `|c| ≤ e^{|c|} |c|`. -/
 example (c : ℝ) :
     |prodIntegral (fun _ : Fin 1 ↦ c) 0 - prodIntegral (0 : Fin 1 → ℝ) 0| ≤
-      Real.exp (∑ _l : Fin 1, |(0 : Fin 1 → ℝ) _l|) * Real.exp (∑ _l : Fin 1, |c|) *
-        ∑ _i ∈ Iic (0 : Fin 1), |c - 0| :=
-  abs_prodIntegral_sub_le 0 (fun _ ↦ c) 0
+      Real.exp |c| * |c| := by
+  simpa using abs_prodIntegral_sub_le 0 (fun _ : Fin 1 ↦ c) 0
 
 /-! ### Hadamard differentiability -/
 
