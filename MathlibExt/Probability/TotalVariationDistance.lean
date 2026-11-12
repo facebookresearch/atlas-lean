@@ -62,9 +62,13 @@ are unaffected by this namespace of functions and propositions.
   is `0` if `a = b` and `1` otherwise.
 -/
 
-/-- The supremum distance between finite measures, using real masses.
-The probability-measure specialization is the Lecture 12 definition.
-The inline finiteness binders are part of this public interface. -/
+/-- **Total variation distance between finite measures.** For finite measures $\mu$ and $\nu$ on a
+measurable space $\Omega$, the total variation distance $d_{TV}(\mu, \nu)$ is the real number
+$\sup_B |\mu(B) - \nu(B)|$, where the supremum runs over all measurable sets $B \subseteq \Omega$
+and the masses $\mu(B)$ and $\nu(B)$ are taken as real numbers.
+
+Source: the probability-measure specialization is the Lecture 12 definition. The inline
+finiteness binders are part of this public interface. -/
 noncomputable def totalVariationDist {Ω : Type*} [MeasurableSpace Ω]
     (μ ν : Measure Ω) [IsFiniteMeasure μ] [IsFiniteMeasure ν] : ℝ :=
   ⨆ s : {s : Set Ω // MeasurableSet s}, |(μ s.1).toReal - (ν s.1).toReal|
@@ -128,27 +132,32 @@ private lemma totalVariationDist_le [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     totalVariationDist μ ν ≤ C :=
   ciSup_le fun s => h s.1 s.2
 
-/-- Total variation distance is nonnegative. -/
+/-- **Total variation distance is nonnegative.** For finite measures $\mu$ and $\nu$ on a measurable
+space, the total variation distance satisfies $0 \le d_{TV}(\mu, \nu)$. -/
 theorem totalVariationDist_nonneg [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     0 ≤ totalVariationDist μ ν := by
   have h := le_totalVariationDist (μ := μ) (ν := ν) MeasurableSet.empty
   simpa using h
 
-/-- The total variation distance of a finite measure from itself is zero. -/
+/-- **Total variation distance from a measure to itself.** For every finite measure $\mu$ on a
+measurable space, the total variation distance $d_{TV}(\mu, \mu)$ is $0$. -/
 theorem totalVariationDist_self [IsFiniteMeasure μ] :
     totalVariationDist μ μ = 0 := by
   refine le_antisymm ?_ totalVariationDist_nonneg
   refine totalVariationDist_le fun s _ => ?_
   simp
 
-/-- The supremum distance is symmetric for finite measures. -/
+/-- **Symmetry of total variation distance.** For finite measures $\mu$ and $\nu$ on a measurable
+space, the total variation distances satisfy $d_{TV}(\mu, \nu) = d_{TV}(\nu, \mu)$. -/
 theorem totalVariationDist_comm [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     totalVariationDist μ ν = totalVariationDist ν μ := by
   show (⨆ s : {s : Set Ω // MeasurableSet s}, |(μ s.1).toReal - (ν s.1).toReal|) =
     ⨆ s : {s : Set Ω // MeasurableSet s}, |(ν s.1).toReal - (μ s.1).toReal|
   exact iSup_congr fun s => abs_sub_comm _ _
 
-/-- Total variation distance satisfies the triangle inequality for finite measures. -/
+/-- **Triangle inequality for total variation distance.** For finite measures $\mu$, $\nu$ and
+$\rho$ on a measurable space, the total variation distance satisfies
+$d_{TV}(\mu, \rho) \le d_{TV}(\mu, \nu) + d_{TV}(\nu, \rho)$. -/
 theorem totalVariationDist_triangle [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     [IsFiniteMeasure ρ] :
     totalVariationDist μ ρ ≤ totalVariationDist μ ν + totalVariationDist ν ρ := by
@@ -162,12 +171,16 @@ theorem totalVariationDist_triangle [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     _ ≤ totalVariationDist μ ν + totalVariationDist ν ρ :=
         add_le_add (le_totalVariationDist hs) (le_totalVariationDist hs)
 
-/-- Total variation distance between probability measures is at most `1`. -/
+/-- **Total variation distance between probability measures is at most one.** For probability
+measures $\mu$ and $\nu$ on a measurable space, the total variation distance satisfies
+$d_{TV}(\mu, \nu) \le 1$. -/
 theorem totalVariationDist_le_one [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :
     totalVariationDist μ ν ≤ 1 :=
   totalVariationDist_le fun _ _ => abs_toReal_sub_le_one
 
-/-- Total variation distance vanishes iff the finite measures are equal. -/
+/-- **Total variation distance vanishes only for equal measures.** For finite measures $\mu$ and
+$\nu$ on a measurable space, the total variation distance $d_{TV}(\mu, \nu)$ is $0$ if and only
+if $\mu = \nu$. -/
 theorem totalVariationDist_eq_zero_iff [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     totalVariationDist μ ν = 0 ↔ μ = ν := by
   constructor
@@ -189,8 +202,9 @@ theorem totalVariationDist_eq_zero_iff [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     subst μ
     exact totalVariationDist_self
 
-/-- The total variation distance between two Dirac measures is `0` if
-they are at the same point and `1` otherwise. -/
+/-- **Total variation distance between Dirac measures.** Let $\Omega$ be a measurable space in which
+every singleton is measurable, and let $a, b \in \Omega$. The total variation distance between the
+Dirac measures $\delta_a$ and $\delta_b$ is $0$ if $a = b$ and $1$ if $a \neq b$. -/
 theorem totalVariationDist_dirac [MeasurableSingletonClass Ω] [DecidableEq Ω] {a b : Ω} :
     totalVariationDist (Measure.dirac a) (Measure.dirac b) =
       if a = b then 0 else 1 := by

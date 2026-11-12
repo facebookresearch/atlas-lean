@@ -60,8 +60,11 @@ open Finset
 variable {V α : Type*} [Fintype V] [DecidableEq V] [Fintype α]
 
 open Classical in
-/-- The (unnormalized) marginal of the weight `p` on the variables in `U`, at the values of `x`:
-the total weight of the configurations that agree with `x` on `U`. -/
+/-- **Marginal of a weight.** Let $V$ and $\alpha$ be finite types, a configuration being a map
+$x : V \to \alpha$, and let $p$ be a real-valued weight on configurations. The (unnormalized)
+marginal of $p$ on a set of variables $U \subseteq V$ at a configuration $x$ is
+$$\sum_{y \,:\, y(v) = x(v) \text{ for all } v \in U} p(y),$$
+the total weight of the configurations that agree with $x$ on $U$. -/
 noncomputable def marginal (p : (V → α) → ℝ) (U : Set V) (x : V → α) : ℝ :=
   ∑ y ∈ univ.filter (fun y : V → α => ∀ v ∈ U, y v = x v), p y
 
@@ -70,7 +73,10 @@ theorem marginal_nonneg {p : (V → α) → ℝ} (hp : ∀ x, 0 ≤ p x) (U : Se
   classical
   exact sum_nonneg fun y _ => hp y
 
-/-- For a nonnegative weight, fixing more variables decreases the marginal. -/
+/-- **Monotonicity of marginals in the fixed variables.** Let $V$ and $\alpha$ be finite types, let
+$p$ be a real-valued weight on the configurations $x : V \to \alpha$ with $p(x) \ge 0$ for every
+$x$, and let $U \subseteq U' \subseteq V$. Then for every configuration $x$, the marginal of $p$
+on $U'$ at $x$ is at most the marginal of $p$ on $U$ at $x$. -/
 theorem marginal_anti {p : (V → α) → ℝ} (hp : ∀ x, 0 ≤ p x) {U U' : Set V} (h : U ⊆ U')
     (x : V → α) : marginal p U' x ≤ marginal p U x := by
   classical
@@ -78,26 +84,42 @@ theorem marginal_anti {p : (V → α) → ℝ} (hp : ∀ x, 0 ≤ p x) {U U' : S
   simp only [mem_filter, mem_univ, true_and] at hy ⊢
   exact fun v hv => hy v (h hv)
 
-/-- The variables in `A` and in `B` are **conditionally independent given** those in `S` under
-the weight `p`: `p(x_A, x_B, x_S) p(x_S) = p(x_A, x_S) p(x_B, x_S)` for every configuration,
-where `p(x_U)` is `marginal p U x`. -/
+/-- **Conditional independence for a finite weight.** Let $V$ and $\alpha$ be finite types, let $p$
+be a real-valued weight on the configurations $x : V \to \alpha$, and for $U \subseteq V$ write
+$p(x_U)$ for the marginal of $p$ on $U$ at $x$, the total weight of the configurations that agree
+with $x$ on $U$. For $A, B, S \subseteq V$, the variables in $A$ and in $B$ are conditionally
+independent given those in $S$ under $p$ when
+$$p(x_{A \cup B \cup S})\, p(x_S) = p(x_{A \cup S})\, p(x_{B \cup S})$$
+for every configuration $x$. -/
 def CondIndep (p : (V → α) → ℝ) (A B S : Set V) : Prop :=
   ∀ x, marginal p (A ∪ B ∪ S) x * marginal p S x = marginal p (A ∪ S) x * marginal p (B ∪ S) x
 
-/-- Conditional independence in ratio form: where `p(x_S) ≠ 0`,
-`p(x_A, x_B, x_S) / p(x_S) = (p(x_A, x_S) / p(x_S)) (p(x_B, x_S) / p(x_S))`. For a nonnegative
-weight of positive total mass these ratios are the conditional probabilities of the normalized
-distribution, so this is `P(x_A, x_B | x_S) = P(x_A | x_S) P(x_B | x_S)`. -/
+/-- **Conditional independence in ratio form.** Let $V$ and $\alpha$ be finite types, let $p$ be a
+real-valued weight on the configurations $x : V \to \alpha$, and for $U \subseteq V$ write
+$p(x_U)$ for the marginal of $p$ on $U$ at $x$. If, for $A, B, S \subseteq V$, the variables in
+$A$ and in $B$ are conditionally independent given those in $S$ under $p$, then every
+configuration $x$ with $p(x_S) \ne 0$ satisfies
+$$\frac{p(x_{A\cup B\cup S})}{p(x_S)} = \frac{p(x_{A\cup S})}{p(x_S)}\frac{p(x_{B\cup S})}{p(x_S)}$$
+
+For a nonnegative weight of positive total mass these ratios are the conditional probabilities of
+the normalized distribution, so this is $P(x_A, x_B \mid x_S) = P(x_A \mid x_S)\, P(x_B \mid x_S)$.
+-/
 theorem CondIndep.cond_eq_mul {p : (V → α) → ℝ} {A B S : Set V} (h : CondIndep p A B S)
     {x : V → α} (hx : marginal p S x ≠ 0) :
     marginal p (A ∪ B ∪ S) x / marginal p S x =
       (marginal p (A ∪ S) x / marginal p S x) * (marginal p (B ∪ S) x / marginal p S x) := by
   rw [div_mul_div_comm, ← h x, mul_div_mul_right _ _ hx]
 
-/-- **Marginals of a product**: if `f` depends only on the variables in `P` and `g` only on those
-in `Q`, with `P ∪ Q` everything and `P ∩ Q ⊆ U`, then summing `f * g` over the variables outside
-`U` sums `f` and `g` separately: the free variables of `f` are those of `P` outside `U`, and the
-free variables of `g` those of `Q` outside `U`. -/
+/-- **Marginals of a product.** Let $V$ and $\alpha$ be finite types, let $f$ and $g$ be real-valued
+weights on the configurations $x : V \to \alpha$, and let $P, Q, U \subseteq V$ with
+$P \cup Q = V$ and $P \cap Q \subseteq U$, such that $f(x)$ depends only on the values of $x$ on
+$P$ and $g(x)$ only on its values on $Q$. Write $fg$ for the pointwise product, $P^c$ and $Q^c$
+for the complements in $V$, and, for a weight $h$, a set $T \subseteq V$ and a configuration $x$,
+$m_h(T, x)$ for the marginal of $h$ on $T$ at $x$, the total weight of the configurations that
+agree with $x$ on $T$. Then for every configuration $x$,
+$$m_{fg}(U, x) = m_f(U \cup P^c, x)\, m_g(U \cup Q^c, x).$$
+Here the free variables of $f$ are those of $P$ outside $U$, and those of $g$ are those of $Q$
+outside $U$. -/
 theorem marginal_mul {f g : (V → α) → ℝ} {P Q U : Set V} (hf : DependsOn f P) (hg : DependsOn g Q)
     (hPQ : ∀ v, v ∈ P ∨ v ∈ Q) (hU : P ∩ Q ⊆ U) (x : V → α) :
     marginal (f * g) U x = marginal f (U ∪ Pᶜ) x * marginal g (U ∪ Qᶜ) x := by
@@ -155,10 +177,12 @@ theorem marginal_mul {f g : (V → α) → ℝ} {P Q U : Set V} (hf : DependsOn 
     · exact hf fun v hv => by simp [hv]
     · exact hg fun v hv => by simp [hv]
 
-/-- **The factorization criterion for conditional independence**: if `p = f * g`, where `f`
-depends only on the variables in `P`, `g` only on those in `Q`, and every variable is in `P` or
-`Q`, then variables `A` outside `Q` and `B` outside `P` are conditionally independent given
-`P ∩ Q`. -/
+/-- **The factorization criterion for conditional independence.** Let $V$ and $\alpha$ be finite
+types, let $f$ and $g$ be real-valued weights on the configurations $x : V \to \alpha$, and let
+$P, Q \subseteq V$ with $P \cup Q = V$ such that $f(x)$ depends only on the values of $x$ on $P$
+and $g(x)$ only on its values on $Q$. If $A \subseteq V$ is disjoint from $Q$ and $B \subseteq V$
+is disjoint from $P$, then the variables in $A$ and in $B$ are conditionally independent given
+those in $P \cap Q$ under the pointwise product $fg$. -/
 theorem condIndep_of_dependsOn {f g : (V → α) → ℝ} {P Q : Set V} (hf : DependsOn f P)
     (hg : DependsOn g Q) (hPQ : ∀ v, v ∈ P ∨ v ∈ Q) {A B : Set V} (hA : ∀ v ∈ A, v ∉ Q)
     (hB : ∀ v ∈ B, v ∉ P) : CondIndep (f * g) A B (P ∩ Q) := by
@@ -189,7 +213,11 @@ theorem condIndep_of_dependsOn {f g : (V → α) → ℝ} {P Q : Set V} (hf : De
   rw [e1, e2, e3, e4]
   ring
 
-/-- Conditional independence given `S` only involves the variables of `A` and `B` outside `S`. -/
+/-- **Conditional independence from the variables outside the conditioning set.** Let $V$ and
+$\alpha$ be finite types, let $p$ be a real-valued weight on the configurations
+$x : V \to \alpha$, and let $A, B, S \subseteq V$. If the variables in $A \setminus S$ and in
+$B \setminus S$ are conditionally independent given those in $S$ under $p$, then the variables in
+$A$ and in $B$ are conditionally independent given those in $S$ under $p$. -/
 theorem condIndep_of_sdiff {p : (V → α) → ℝ} {A B S : Set V}
     (h : CondIndep p (A \ S) (B \ S) S) : CondIndep p A B S := by
   intro x
@@ -209,7 +237,10 @@ theorem condIndep_of_sdiff {p : (V → α) → ℝ} {A B S : Set V}
   exact h x
 
 open Classical in
-/-- The number of configurations that agree with `x` on `W` does not depend on `x`. -/
+/-- **Agreement classes of configurations have equal size.** Let $V$ and $\alpha$ be finite types
+and $W \subseteq V$. For any two configurations $x, z : V \to \alpha$, the number of
+configurations $y : V \to \alpha$ with $y(v) = z(v)$ for all $v \in W$ equals the number of
+configurations $y$ with $y(v) = x(v)$ for all $v \in W$. -/
 theorem card_filter_agree (W : Set V) (x z : V → α) :
     (univ.filter fun y : V → α => ∀ v ∈ W, y v = z v).card =
       (univ.filter fun y : V → α => ∀ v ∈ W, y v = x v).card := by
@@ -233,9 +264,12 @@ theorem card_filter_agree (W : Set V) (x z : V → α) :
     by_cases hv : v ∈ W <;> simp [hv, hy v]
 
 open Classical in
-/-- Marginalizing in two steps: for `U ⊆ W`, the `U`-marginal of the `W`-marginal of `p` is the
-`U`-marginal of `p` times the number of configurations agreeing with `x` on `W` (the number of
-values of the variables outside `W`). -/
+/-- **Marginalizing in two steps.** Let $V$ and $\alpha$ be finite types, let $p$ be a real-valued
+weight on the configurations $x : V \to \alpha$, let $U \subseteq W \subseteq V$, and let $p_W$
+be the $W$-marginal of $p$, the weight sending $x$ to the total weight of the configurations that
+agree with $x$ on $W$. Then for every configuration $x$, the $U$-marginal of $p_W$ at $x$ equals
+$N$ times the $U$-marginal of $p$ at $x$, where $N$ is the number of configurations that agree
+with $x$ on $W$ (the number of assignments of values to the variables outside $W$). -/
 theorem marginal_marginal (p : (V → α) → ℝ) {U W : Set V} (h : U ⊆ W) (x : V → α) :
     marginal (marginal p W) U x =
       (univ.filter fun y : V → α => ∀ v ∈ W, y v = x v).card * marginal p U x := by
@@ -254,8 +288,12 @@ theorem marginal_marginal (p : (V → α) → ℝ) {U W : Set V} (h : U ⊆ W) (
       exact ⟨fun v hv => (hy v (h hv)).trans (hz v hv), fun v hv => (hy v hv).symm⟩
 
 open Classical in
-/-- Conditional independence among variables in `W` is the same for `p` and for its
-`W`-marginal. -/
+/-- **Conditional independence can be read off a marginal.** Let $V$ and $\alpha$ be finite types,
+let $p$ be a real-valued weight on the configurations $x : V \to \alpha$, let $W \subseteq V$, and
+let $p_W$ be the $W$-marginal of $p$, the weight sending $x$ to the total weight of the
+configurations that agree with $x$ on $W$. For all $A, B, S \subseteq W$, the variables in $A$
+and in $B$ are conditionally independent given those in $S$ under $p_W$ if and only if they are
+conditionally independent given those in $S$ under $p$. -/
 theorem condIndep_marginal_iff {p : (V → α) → ℝ} {A B S W : Set V} (hA : A ⊆ W) (hB : B ⊆ W)
     (hS : S ⊆ W) : CondIndep (marginal p W) A B S ↔ CondIndep p A B S := by
   have hpos : ∀ x : V → α,

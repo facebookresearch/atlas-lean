@@ -26,7 +26,9 @@ open MeasureTheory
 open ThinShell
 open scoped ENNReal
 
-/-- A full-dimensional interval body, built from the actual closed interval. -/
+/-- **Symmetric interval as a convex body.** For a real number $a > 0$, this is the closed
+interval $[-a, a]$ in the one-dimensional Euclidean space, regarded as a full-dimensional convex
+body. -/
 noncomputable def intervalBody (a : ℝ) (ha : 0 < a) : FullDimensionalBody 1 where
   body := {
     carrier := symmetricInterval a
@@ -60,7 +62,9 @@ theorem interval_covariance_det {a : ℝ} (ha : 0 < a) :
     sub_zero]
   exact uniformInterval_secondMoment ha 0 0
 
-/-- The actual cube in dimension one, with endpoints included. -/
+/-- **Unit interval body.** The unit interval body is the closed interval $[-1/2, 1/2]$, of length
+one and centred at the origin, in the one-dimensional Euclidean space, regarded as a
+full-dimensional convex body. -/
 noncomputable def unitIntervalBody : FullDimensionalBody 1 :=
   intervalBody (1 / 2) (by norm_num)
 
@@ -88,7 +92,13 @@ theorem unitIntervalBody_isotropicConstant : bodyIsotropicConstant unitIntervalB
   rw [Real.rpow_eq_pow, ← Real.sqrt_eq_rpow, Real.sqrt_div (by norm_num)]
   simp
 
-/-- The single actual cube already witnesses the source's global lower bound. -/
+/-- **Cube lower bound for the supremal isotropic constant.** The supremum, over all positive
+integers $n$ and all full-dimensional convex bodies $K \subseteq \mathbb{R}^n$, of the isotropic
+constant $L_K = \left(\det \mathrm{Cov}(K) / \mathrm{Vol}(K)^2\right)^{1/(2n)}$, where
+$\mathrm{Cov}(K)$ is the covariance matrix of the uniform distribution on $K$, is at least
+$1/\sqrt{12}$.
+
+The interval $[-1/2, 1/2]$ in dimension one already attains $L_K = 1/\sqrt{12}$. -/
 theorem inv_sqrt_twelve_le_bodySupremum :
     ENNReal.ofReal (1 / Real.sqrt 12) ≤ bodySupremum := by
   rw [← unitIntervalBody_isotropicConstant]
@@ -99,7 +109,9 @@ theorem inv_sqrt_twelve_le_entropyIsotropicConstant :
     ENNReal.ofReal (1 / Real.sqrt 12) ≤ entropyIsotropicConstant :=
   inv_sqrt_twelve_le_bodySupremum.trans bodySupremum_le_entropyIsotropicConstant
 
-/-- The literal source endpoints agree with the orthonormal interval construction. -/
+/-- **Membership in the unit interval body.** A point $x$ of the one-dimensional Euclidean space
+lies in the unit interval body if and only if its single coordinate $x_1$ satisfies
+$-1/2 \le x_1 \le 1/2$. -/
 theorem unitIntervalBody_mem_iff (x : EuclideanSpace ℝ (Fin 1)) :
     x ∈ (unitIntervalBody.body : Set (EuclideanSpace ℝ (Fin 1))) ↔
       ∀ i : Fin 1, -(1 / 2 : ℝ) ≤ x i ∧ x i ≤ (1 / 2 : ℝ) := by

@@ -147,9 +147,9 @@ private theorem diagSeq_property {ε : ℝ≥0∞} {μ : ℕ → ProbabilityMeas
   | zero => exact (hnext 0 0).2
   | succ k _ => exact (hnext (k + 1) (diagSeq next k).1).2
 
-/-- **Prokhorov's theorem, sequential form on `ℝ`.** A sequence of
-probability measures on `ℝ` is tight if and only if every subsequence has
-a further subsequence converging weakly to a probability measure. -/
+/-- **Prokhorov's theorem, sequential form on $\mathbb{R}$.** A sequence $(\mu_n)$ of probability
+measures on $\mathbb{R}$ is tight if and only if every subsequence of $(\mu_n)$ has a further
+subsequence converging weakly to a probability measure on $\mathbb{R}$. -/
 theorem prokhorov_sequential (μ : ℕ → ProbabilityMeasure ℝ) :
     IsTightMeasureSet {((μ n : ProbabilityMeasure ℝ) : Measure ℝ) | n} ↔
       ∀ f : ℕ → ℕ, StrictMono f →

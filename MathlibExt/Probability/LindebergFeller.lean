@@ -89,10 +89,14 @@ open scoped Topology BoundedContinuousFunction NNReal ENNReal
 
 namespace ProbabilityTheory
 
-/-- The **Lindeberg condition** for a triangular array `X n k` of random variables
-on `(Ω, μ)`: for every `ε > 0`, the truncated second moment
-`∑ₖ ∫ (X n k)² · 𝟙{|X n k| > ε} dμ` tends to `0` as `n → ∞`. This is the key
-hypothesis of the Lindeberg–Feller central limit theorem. -/
+/-- **Lindeberg condition for a triangular array.** A triangular array of real random variables
+$X_{n,k}$ ($n \in \mathbb{N}$, $0 \le k < n$) on a measure space $(\Omega, \mu)$ satisfies the
+Lindeberg condition if for every $\varepsilon > 0$ the truncated second moments
+
+$$\sum_{k < n} \int_\Omega X_{n,k}^2 \, \mathbf{1}\{|X_{n,k}| > \varepsilon\} \, d\mu$$
+
+tend to $0$ as $n \to \infty$. This is the key hypothesis of the Lindeberg–Feller central limit
+theorem. -/
 def LindebergConditionTriangular {Ω : Type*} [MeasurableSpace Ω]
     (X : ℕ → ℕ → Ω → ℝ) (μ : Measure Ω) : Prop :=
   ∀ ε : ℝ, 0 < ε →
@@ -100,9 +104,8 @@ def LindebergConditionTriangular {Ω : Type*} [MeasurableSpace Ω]
       ∫ ω, (X n k ω) ^ 2 * Set.indicator {ω' | ε < |X n k ω'|} 1 ω ∂μ)
     atTop (𝓝 0)
 
-/-- Second-order Taylor estimate for the complex exponential along the
-imaginary axis, in the range where it is needed: if `‖x‖ ≤ 1` then
-`‖e^{ix} - 1 - ix‖ ≤ x²`. -/
+/-- **Second-order Taylor bound for the imaginary exponential.** For every real $x$ with
+$|x| \le 1$, $|e^{ix} - 1 - ix| \le x^2$. -/
 theorem norm_exp_ofReal_mul_I_sub_one_sub_le {x : ℝ} (hx : ‖x‖ ≤ 1) :
     ‖Complex.exp (↑x * Complex.I) - 1 - ↑x * Complex.I‖ ≤ x ^ 2 := by
   have h : ‖(↑x * Complex.I : ℂ)‖ ≤ 1 := by
@@ -112,11 +115,16 @@ theorem norm_exp_ofReal_mul_I_sub_one_sub_le {x : ℝ} (hx : ‖x‖ ≤ 1) :
   rwa [Complex.norm_mul, Complex.norm_real, Complex.norm_I, mul_one, Real.norm_eq_abs,
     sq_abs] at h2
 
-/-- Comparison between a finite product `∏ (1 + uᵢ)` and the exponential
-of the sum `∑ uᵢ`: if every `‖uᵢ‖ ≤ 1 / 2`, then
-`‖∏ (1 + uᵢ) - exp(∑ uᵢ)‖ ≤ (∑ ‖uᵢ‖²) · exp(∑ ‖uᵢ‖)`.
-This is the estimate that turns the second-order expansion of each
-characteristic function into convergence of the product. -/
+/-- **Comparing a finite product with the exponential of a sum.** Let $s$ be a finite index
+set and let $u_i \in \mathbb{C}$ for $i \in s$. If $|u_i| \le 1/2$ for every $i \in s$, then
+
+$$
+\Bigl|\prod_{i \in s} (1 + u_i) - \exp\Bigl(\sum_{i \in s} u_i\Bigr)\Bigr| \le
+\Bigl(\sum_{i \in s} |u_i|^2\Bigr) \exp\Bigl(\sum_{i \in s} |u_i|\Bigr).
+$$
+
+This is the estimate that turns the second-order expansion of each characteristic function
+into convergence of the product. -/
 theorem prod_one_add_sub_exp_sum_le {ι : Type*} [DecidableEq ι] (s : Finset ι) (u : ι → ℂ)
     (hu : ∀ i ∈ s, ‖u i‖ ≤ 1 / 2) :
     ‖∏ i ∈ s, (1 + u i) - Complex.exp (∑ i ∈ s, u i)‖ ≤
@@ -210,10 +218,14 @@ private lemma lindebergExpansionTerm_eq (t x : ℝ) :
     hz2, Nat.factorial]
   ring
 
-/-- **Analytic core of the Lindeberg–Feller theorem.** Under the Lindeberg
-hypothesis (plus genuine square-integrability of the summands), the
-product of the row characteristic functions converges to the Gaussian
-characteristic function `exp(-σ²t²/2)`. -/
+/-- **Analytic core of the Lindeberg–Feller theorem.** Let $\mu$ be a probability measure on
+$\Omega$ and let $X_{n,k}$ ($n \in \mathbb{N}$, $0 \le k < n$) be real random variables on
+$\Omega$ such that each $X_{n,k}$ has mean $0$ and each $X_{n,k}^2$ is integrable (expectations
+are taken under $\mu$). Suppose that for some $\sigma > 0$ the row variances
+$\sum_{k < n} \mathbb{E}[X_{n,k}^2]$ converge to $\sigma^2$ and that the array satisfies the
+Lindeberg condition. Then for every real $t$ the product $\prod_{k < n} \varphi_{n,k}(t)$ of the
+characteristic functions $\varphi_{n,k}$ of the laws of the $X_{n,k}$ converges to
+$e^{-\sigma^2 t^2 / 2}$ as $n \to \infty$. -/
 theorem lindeberg_charFun_product_tendsto
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : ℕ → ℕ → Ω → ℝ)
@@ -1003,17 +1015,15 @@ theorem lindeberg_charFun_product_tendsto
   rw [hfinal]
   simpa using hG.add hH
 
-/-- **Lindeberg–Feller central limit theorem** (triangular array form).
-
-Suppose `X n k`, for `1 ≤ k ≤ n`, is a triangular array of independent,
-mean-zero random variables on `(Ω, μ)`, square-integrable in the genuine
-sense (`hint2`). If
-* the row variances `∑ₖ 𝔼[X n k²]` converge to `σ² > 0`, and
-* the Lindeberg condition `LindebergConditionTriangular X μ` holds,
-
-then the row sums `Sₙ = ∑ₖ X n k` converge in distribution to `N(0, σ²)`:
-for every bounded continuous `f : ℝ →ᵇ ℝ`,
-`𝔼[f(Sₙ)] → 𝔼[f(σ · χ)]` where `χ` is a standard normal. -/
+/-- **Lindeberg–Feller central limit theorem.** Let $\mu$ be a probability measure on $\Omega$
+and let $X_{n,k}$ ($n \in \mathbb{N}$, $0 \le k < n$) be a triangular array of real random
+variables on $\Omega$ such that for each $n$ the variables $X_{n,0}, \dots, X_{n,n-1}$ are
+independent, each $X_{n,k}$ has mean $0$, and each $X_{n,k}^2$ is integrable (expectations are
+taken under $\mu$). Suppose that for some $\sigma > 0$ the row variances
+$\sum_{k < n} \mathbb{E}[X_{n,k}^2]$ converge to $\sigma^2$ and that the array satisfies the
+Lindeberg condition. Then the row sums $S_n = \sum_{k < n} X_{n,k}$ converge in distribution to
+the Gaussian law $N(0, \sigma^2)$: for every bounded continuous $f : \mathbb{R} \to \mathbb{R}$,
+$\mathbb{E}[f(S_n)] \to \int_{\mathbb{R}} f \, dN(0, \sigma^2)$ as $n \to \infty$. -/
 theorem lindeberg_feller_clt_triangular
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : ℕ → ℕ → Ω → ℝ)

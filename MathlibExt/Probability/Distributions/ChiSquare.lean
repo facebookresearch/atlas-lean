@@ -26,8 +26,13 @@ namespace ProbabilityTheory
 
 noncomputable section
 
-/-- Chi-square law with `p` degrees of freedom, as the gamma law with shape
-`p / 2` and scale `2` (rate `1 / 2` in Mathlib's shape-rate convention). -/
+/-- **Chi-square distribution.** For a natural number $p$, the chi-square law with $p$ degrees of
+freedom is the gamma law on $\mathbb{R}$ with shape $p/2$ and rate $1/2$ (equivalently, scale $2$):
+the measure with density $x \mapsto \frac{(1/2)^{p/2}}{\Gamma(p/2)} x^{p/2 - 1} e^{-x/2}$ for
+$x > 0$ and $0$ for $x < 0$ with respect to Lebesgue measure.
+
+For $p = 0$ the definition is degenerate: $\Gamma(0)$ is taken to be $0$ and division by $0$ gives
+$0$, so the density vanishes and the measure is the zero measure rather than a point mass. -/
 noncomputable def chiSquareMeasure (p : ℕ) : Measure ℝ :=
   gammaMeasure ((p : ℝ) / 2) (1 / 2)
 
@@ -35,9 +40,13 @@ theorem isProbabilityMeasure_chiSquareMeasure {p : ℕ} (hp : 0 < p) :
     IsProbabilityMeasure (chiSquareMeasure p) :=
   isProbabilityMeasure_gammaMeasure (by positivity) (by norm_num)
 
-/-- MGF of the square of a standard normal variable. Promoted from the private
-Johnson–Lindenstrauss development; the formula holds for all `t` with the
-convention that both sides vanish for `t ≥ 1/2`. -/
+/-- **Moment generating function of the square of a standard normal.** Let $\gamma$ be the
+standard Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$). For every real $t$,
+$\int_{\mathbb{R}} e^{t x^2} \, d\gamma(x) = 1/\sqrt{1 - 2t}$.
+
+For $t \ge 1/2$ the integral diverges; the identity still holds there with the conventions that the
+integral of a non-integrable function is $0$, that $\sqrt{s} = 0$ for $s \le 0$ and that $1/0 = 0$,
+which make both sides $0$. -/
 theorem mgf_sq_stdGaussian (t : ℝ) :
     mgf (fun x : ℝ => x ^ 2) (gaussianReal 0 1) t =
       (Real.sqrt (1 - 2 * t))⁻¹ := by
@@ -72,8 +81,9 @@ theorem mgf_sq_stdGaussian (t : ℝ) :
         rw [Real.sqrt_eq_zero_of_nonpos hq, hs]
         simp
 
-/-- Exponential moments of the square of a standard normal exist below `1/2`.
-Promoted from the private Johnson–Lindenstrauss development. -/
+/-- **Exponential moments of the square of a standard normal.** Let $\gamma$ be the standard
+Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$). For every real $t < 1/2$, the
+function $x \mapsto e^{t x^2}$ is integrable with respect to $\gamma$. -/
 theorem integrable_exp_mul_sq_stdGaussian {t : ℝ} (ht : t < 1 / 2) :
     Integrable (fun x : ℝ => Real.exp (t * x ^ 2)) (gaussianReal 0 1) := by
   rw [gaussianReal_of_var_ne_zero 0 (by norm_num : (1 : NNReal) ≠ 0)]
@@ -88,7 +98,10 @@ theorem integrable_exp_mul_sq_stdGaussian {t : ℝ} (ht : t < 1 / 2) :
   congr 1
   ring_nf
 
-/-- The law of the square pushes exponential integrability forward. -/
+/-- **Exponential moments of the law of the square of a standard normal.** Let $\gamma$ be the
+standard Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$) and let $\nu$ be its image under
+$x \mapsto x^2$. For every real $t < 1/2$, the function $y \mapsto e^{t y}$ is integrable with
+respect to $\nu$. -/
 theorem Iio_subset_integrableExpSet_map_sq_stdGaussian :
     Iio (1 / 2 : ℝ) ⊆
       integrableExpSet id ((gaussianReal 0 1).map fun x : ℝ => x ^ 2) := by
@@ -120,7 +133,14 @@ theorem Ioo_subset_interior_integrableExpSet_map_sq_stdGaussian {ε : ℝ}
   simp only [mem_Iio]
   linarith
 
-/-- MGF of the pushed-forward square law, via the promoted Gaussian-square MGF. -/
+/-- **Moment generating function of the law of the square of a standard normal.** Let $\gamma$
+be the standard Gaussian measure on $\mathbb{R}$ (mean $0$, variance $1$) and let $\nu$ be its
+image under $x \mapsto x^2$. For every real $t$, $\int_{\mathbb{R}} e^{t y} \, d\nu(y) =
+1/\sqrt{1 - 2t}$.
+
+For $t \ge 1/2$ the integral diverges; the identity still holds there with the conventions that the
+integral of a non-integrable function is $0$, that $\sqrt{s} = 0$ for $s \le 0$ and that $1/0 = 0$,
+which make both sides $0$. -/
 theorem mgf_id_map_sq_stdGaussian (t : ℝ) :
     mgf id ((gaussianReal 0 1).map fun x : ℝ => x ^ 2) t =
       (Real.sqrt (1 - 2 * t))⁻¹ := by
@@ -129,7 +149,11 @@ theorem mgf_id_map_sq_stdGaussian (t : ℝ) :
   rw [h]
   exact mgf_sq_stdGaussian t
 
-/-- The chi-square-one gamma MGF agrees with the Gaussian-square MGF below `1/2`. -/
+/-- **Moment generating function of the gamma law with shape and rate one half.** Let $\mu$ be the
+gamma law on $\mathbb{R}$ with shape $1/2$ and rate $1/2$. For every real $t < 1/2$,
+$\int_{\mathbb{R}} e^{t x} \, d\mu(x) = 1/\sqrt{1 - 2t}$.
+
+This is the moment generating function of the square of a standard normal variable. -/
 theorem mgf_gammaMeasure_half_half_eq_sqrt {t : ℝ} (ht : t < 1 / 2) :
     mgf id (gammaMeasure (1 / 2) (1 / 2)) t =
       (Real.sqrt (1 - 2 * t))⁻¹ := by
@@ -139,7 +163,9 @@ theorem mgf_gammaMeasure_half_half_eq_sqrt {t : ℝ} (ht : t < 1 / 2) :
     field_simp
   rw [hbase, Real.inv_rpow ha.le, ← Real.sqrt_eq_rpow]
 
-/-- MGF of a chi-square law below `1/2`. -/
+/-- **Moment generating function of the chi-square distribution.** Let $p$ be a positive integer
+and let $\chi^2_p$ be the chi-square law with $p$ degrees of freedom. For every real $t < 1/2$,
+$\int_{\mathbb{R}} e^{t x} \, d\chi^2_p(x) = \left(\frac{1/2}{1/2 - t}\right)^{p/2}$. -/
 theorem mgf_chiSquareMeasure_of_lt {p : ℕ} (hp : 0 < p) {t : ℝ}
     (ht : t < 1 / 2) :
     mgf id (chiSquareMeasure p) t
@@ -147,7 +173,9 @@ theorem mgf_chiSquareMeasure_of_lt {p : ℕ} (hp : 0 < p) {t : ℝ}
   unfold chiSquareMeasure
   exact mgf_gammaMeasure_of_lt (by positivity) (by norm_num) ht
 
-/-- Exponential moments of a chi-square law exist below `1/2`. -/
+/-- **Exponential moments of the chi-square distribution.** Let $p$ be a positive integer and let
+$\chi^2_p$ be the chi-square law with $p$ degrees of freedom. For every real $t < 1/2$, the
+function $x \mapsto e^{t x}$ is integrable with respect to $\chi^2_p$. -/
 theorem integrable_exp_mul_chiSquareMeasure {p : ℕ} (hp : 0 < p) {t : ℝ}
     (ht : t < 1 / 2) :
     Integrable (fun x : ℝ => Real.exp (t * x)) (chiSquareMeasure p) := by

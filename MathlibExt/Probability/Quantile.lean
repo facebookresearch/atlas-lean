@@ -28,8 +28,12 @@ namespace ProbabilityTheory
 open MeasureTheory Set
 open scoped Topology
 
-/-- The generalized inverse of the cdf of `μ`. Values outside `(0, 1)` are
-set to zero. -/
+/-- **Quantile function of a real measure.** Let $\mu$ be a measure on $\mathbb{R}$ with cumulative
+distribution function $F_\mu$ (for a probability measure, $F_\mu(x) = \mu((-\infty, x])$). The
+quantile function of $\mu$, the generalized inverse of $F_\mu$, is the function
+$Q_\mu : \mathbb{R} \to \mathbb{R}$ given by
+$Q_\mu(u) = \inf \lbrace x \in \mathbb{R} : u \le F_\mu(x) \rbrace$ for $u \in (0, 1)$ and
+$Q_\mu(u) = 0$ for $u \notin (0, 1)$. -/
 noncomputable def cdfQuantile (μ : Measure ℝ) (u : ℝ) : ℝ :=
   if u ∈ Ioo (0 : ℝ) 1 then sInf {x : ℝ | u ≤ cdf μ x} else 0
 
@@ -51,8 +55,9 @@ private theorem cdfQuantile_set_bddBelow (μ : Measure ℝ) {u : ℝ}
   have hlt : x < x₀ := lt_of_not_ge h
   exact (not_lt_of_ge hx) (hx₀ x hlt.le)
 
-/-- A quantile at `u ∈ (0, 1)` belongs to the corresponding upper level set
-of the cdf. -/
+/-- **The cdf at the quantile is at least the level.** Let $\mu$ be a measure on $\mathbb{R}$ with
+cumulative distribution function $F_\mu$ and quantile function $Q_\mu$. For every $u \in (0, 1)$,
+$u \le F_\mu(Q_\mu(u))$. -/
 theorem cdfQuantile_mem (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1) :
     u ≤ cdf μ (cdfQuantile μ u) := by
   have hne := cdfQuantile_set_nonempty μ hu
@@ -72,8 +77,9 @@ theorem cdfQuantile_mem (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1
     exact habove x hx
   simpa only [cdfQuantile, hu, ite_true] using ge_of_tendsto hright hev
 
-/-- For `u ∈ (0, 1)`, the generalized inverse is at most `x` exactly when
-the cdf at `x` is at least `u`. -/
+/-- **The quantile function as a generalized inverse of the cdf.** Let $\mu$ be a measure on
+$\mathbb{R}$ with cumulative distribution function $F_\mu$ and quantile function $Q_\mu$. For
+every $u \in (0, 1)$ and every real $x$, $Q_\mu(u) \le x$ if and only if $u \le F_\mu(x)$. -/
 theorem cdfQuantile_le_iff (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1)
     {x : ℝ} : cdfQuantile μ u ≤ x ↔ u ≤ cdf μ x := by
   have hmem := cdfQuantile_mem μ hu
@@ -83,14 +89,16 @@ theorem cdfQuantile_le_iff (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ
   · exact fun h ↦ hmem.trans (monotone_cdf μ h)
   · exact fun h ↦ csInf_le hbdd h
 
-/-- The generalized cdf inverse is monotone on `(0, 1)`. -/
+/-- **Monotonicity of the quantile function.** For every measure $\mu$ on $\mathbb{R}$, the quantile
+function $Q_\mu$ is monotone on $(0, 1)$: if $0 < u \le v < 1$, then $Q_\mu(u) \le Q_\mu(v)$. -/
 theorem cdfQuantile_monoOn (μ : Measure ℝ) : MonotoneOn (cdfQuantile μ) (Ioo 0 1) := by
   intro u hu v hv huv
   have h1 : v ≤ cdf μ (cdfQuantile μ v) :=
     (cdfQuantile_le_iff μ hv).mp le_rfl
   exact (cdfQuantile_le_iff μ hu).mpr (huv.trans h1)
 
-/-- The generalized cdf inverse is measurable. -/
+/-- **Measurability of the quantile function.** For every measure $\mu$ on $\mathbb{R}$, the
+quantile function $Q_\mu : \mathbb{R} \to \mathbb{R}$ is measurable. -/
 theorem measurable_cdfQuantile (μ : Measure ℝ) : Measurable (cdfQuantile μ) := by
   apply measurable_of_Iic
   intro x
@@ -118,8 +126,9 @@ theorem measurable_cdfQuantile (μ : Measure ℝ) : Measurable (cdfQuantile μ) 
   exact (measurableSet_Ioo.inter measurableSet_Iic).union
     (by split_ifs <;> simp)
 
-/-- The generalized cdf inverse maps Lebesgue measure restricted to `[0, 1]`
-to the given real probability measure. -/
+/-- **Inverse transform sampling.** Let $\mu$ be a probability measure on $\mathbb{R}$ with quantile
+function $Q_\mu$. The pushforward under $Q_\mu$ of Lebesgue measure restricted to $[0, 1]$ is
+$\mu$. -/
 theorem map_cdfQuantile_restrict_Icc (μ : Measure ℝ) [IsProbabilityMeasure μ] :
     Measure.map (cdfQuantile μ) (volume.restrict (Icc (0 : ℝ) 1)) = μ := by
   have hIoo : volume.restrict (Ioo (0 : ℝ) 1) = volume.restrict (Icc (0 : ℝ) 1) :=

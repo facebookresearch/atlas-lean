@@ -35,7 +35,8 @@ namespace MathlibExt.Probability.StrassenCouplingWanted
 # Finite Strassen stochastic domination
 -/
 
-/-- `U` is upward-closed / an upper set: `x ∈ U` and `x ≤ y` implies `y ∈ U`. -/
+/-- **Finite upper sets.** A finite subset $U$ of a preordered set $\alpha$ is an upper set (is
+upward closed) if for all $x, y \in \alpha$ with $x \in U$ and $x \le y$, also $y \in U$. -/
 def IsUpperSet {α : Type*} [Preorder α] (U : Finset α) : Prop :=
   ∀ ⦃x y : α⦄, x ∈ U → x ≤ y → y ∈ U
 
@@ -516,9 +517,14 @@ private theorem exists_coupling_of_upper
     exists_coupling_carrier (M (Finset.univ : Finset α) p q) Finset.univ p q (le_refl _) hHyps
   exact ⟨π, hpos, hrow, hcol, hsupp⟩
 
-/-- Strassen's theorem on a finite poset, without decidability assumptions: for nonnegative
-`p q : α → ℝ` of equal total mass, `p(U) ≤ q(U)` for every upward-closed `U` iff some nonnegative
-coupling `π` of `p` and `q` is supported on pairs `x ≤ y`. -/
+/-- **Strassen's theorem on a finite poset, equal-mass form.** Let $\alpha$ be a finite partially
+ordered set and let $p, q : \alpha \to \mathbb{R}$ be nonnegative functions with
+$\sum_{x \in \alpha} p(x) = \sum_{x \in \alpha} q(x)$. Then
+$\sum_{x \in U} p(x) \le \sum_{x \in U} q(x)$ for every upper set $U \subseteq \alpha$ if and only
+if there is a function $\pi : \alpha \times \alpha \to \mathbb{R}$ such that $\pi(x, y) \ge 0$
+for all $x, y \in \alpha$, $\sum_{y \in \alpha} \pi(x, y) = p(x)$ for every $x \in \alpha$,
+$\sum_{x \in \alpha} \pi(x, y) = q(y)$ for every $y \in \alpha$, and $\pi(x, y) = 0$ whenever
+$x \not\le y$. -/
 theorem forall_isUpperSet_sum_le_iff_exists_coupling
     {α : Type*} [Fintype α] [PartialOrder α]
     (p q : α → ℝ)
@@ -552,13 +558,19 @@ theorem forall_isUpperSet_sum_le_iff_exists_coupling
 
 set_option linter.unusedDecidableInType false in
 /--
-For nonnegative pmfs `p, q : α → ℝ` summing to 1, `p(U) ≤ q(U)` for every upward-closed `U` iff
-there exists a nonnegative `π : α → α → ℝ` with row marginal `p`, column marginal `q`, and `π x y =
-0` whenever `¬(x ≤ y)`.
-Source: V. Strassen, "The Existence of Probability Measures with Given Marginals", Ann. Math.
-Statist. 36 (1965), 423-439, DOI 10.1214/aoms/1177700153.
+**Strassen's theorem on a finite poset.** Let $\alpha$ be a finite partially ordered set and let
+$p, q : \alpha \to \mathbb{R}$ be probability mass functions, that is, nonnegative functions with
+$\sum_{x \in \alpha} p(x) = 1$ and $\sum_{x \in \alpha} q(x) = 1$. Then
+$\sum_{x \in U} p(x) \le \sum_{x \in U} q(x)$ for every upper set $U \subseteq \alpha$ if and only
+if there is a function $\pi : \alpha \times \alpha \to \mathbb{R}$ such that $\pi(x, y) \ge 0$
+for all $x, y \in \alpha$, $\sum_{y \in \alpha} \pi(x, y) = p(x)$ for every $x \in \alpha$,
+$\sum_{x \in \alpha} \pi(x, y) = q(y)$ for every $y \in \alpha$, and $\pi(x, y) = 0$ whenever
+$x \not\le y$.
 
 Proves `Wanted` entry `strassen_coupling_finite_poset`.
+
+Source: V. Strassen, "The Existence of Probability Measures with Given Marginals", Ann. Math.
+Statist. 36 (1965), 423-439, DOI 10.1214/aoms/1177700153.
 -/
 theorem strassen_coupling_finite_poset
     {α : Type*} [Fintype α] [PartialOrder α] [DecidableEq α]
