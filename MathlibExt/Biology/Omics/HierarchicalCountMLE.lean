@@ -42,8 +42,8 @@ Morris 1983), and compares the result with the moment estimator.
 * Concavity, in each hyperparameter separately: `concaveOn_logMarginalLik_shape`,
   `strictConcaveOn_logMarginalLik_shape` (some count positive) in `a`;
   `strictConcaveOn_logMarginalLik_logRate` in `log b`. `not_concaveOn_logMarginalLik`: the
-  likelihood is not jointly concave in `(a, b)`.
-* Conditional MLEs: at a fixed shape the rate root exists iff some count is positive
+  likelihood is not jointly concave in `(a, b)`; the tests also show it is not concave in `b`.
+* Conditional estimates: at a fixed shape the rate root exists iff some count is positive
   (`exists_rateScore_eq_zero`, `rateScore_pos_of_counts_eq_zero`), is unique
   (`rateScore_eq_zero_unique`) and is the global maximizer
   (`logMarginalLik_lt_of_rateScore_eq_zero`); at a fixed rate the shape root exists and is unique
@@ -59,7 +59,8 @@ Morris 1983), and compares the result with the moment estimator.
   positive moment estimates, the score equations have a positive solution.
 * Consistency: `ae_tendsto_rateMLE` (rate MLE at a known shape, strongly consistent) and
   `ae_eventually_exists_score_root` (Cramér: a strongly consistent sequence of roots of the joint
-  score equations, under local identifiability of the shape).
+  score equations, under local identifiability of the shape). The tests instantiate its
+  hypotheses for a two-point count law, which is not negative binomial.
 
 ## Not proved here
 
@@ -313,9 +314,10 @@ theorem rateScoreLog_strictAnti {a x y : ℝ} [Nonempty ι] (ha : 0 < a) (hx : 0
     rw [div_lt_div_iff₀ (by linarith) (by linarith)]; nlinarith
   nlinarith
 
-/-- **Concavity in the log rate.** For a fixed shape `a > 0`, positive size factors and a
-nonempty sample, `β ↦ ℓ(a, e^β)` is strictly concave on `ℝ`, with derivative
-`rateScoreLog a (e^β) s k`. (The log marginal likelihood is not concave in `b` itself.) -/
+/-- **Derivative in the log rate.** For a fixed shape `a > 0` and positive size factors,
+`β ↦ ℓ(a, e^β)` has derivative `rateScoreLog a (e^β) s k`; strict concavity in `β` follows in
+`strictConcaveOn_logMarginalLik_logRate`. The log marginal likelihood is not concave in `b`
+itself (see the tests). -/
 theorem hasDerivAt_logMarginalLik_logRate {a : ℝ} (ha : 0 < a) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) (k : ι → ℕ) (β : ℝ) :
     HasDerivAt (fun t => logMarginalLik a (exp t) s k) (rateScoreLog a (exp β) s k) β := by
@@ -334,7 +336,7 @@ theorem strictConcaveOn_logMarginalLik_logRate {a : ℝ} [Nonempty ι] (ha : 0 <
     (hasDerivAt_logMarginalLik_logRate ha hs k y).deriv]
   exact rateScoreLog_strictAnti ha (exp_pos x) (exp_lt_exp.2 hxy) hs k
 
-/-! ### The shape MLE at a fixed rate -/
+/-! ### The shape root at a fixed rate -/
 
 private lemma shapeScore_eq_sum_add (a b : ℝ) (s : ι → ℝ) (k : ι → ℕ) :
     shapeScore a b s k = ∑ i, digammaIncrement a (k i) + ∑ i, (log b - log (b + s i)) := by
@@ -355,7 +357,7 @@ theorem shapeScore_eq_zero_unique {a a' b : ℝ} (ha : 0 < a) (ha' : 0 < a') {s 
   · exact heq
   · linarith [shapeScore_strictAnti ha' hgt s hk (b := b)]
 
-/-- **Existence of the shape MLE at a fixed rate.** If one count is positive, then for every
+/-- **Existence of a shape root at a fixed rate.** If one count is positive, then for every
 rate `b > 0` (and positive size factors) the shape score equation has a positive solution. -/
 theorem exists_shapeScore_eq_zero {b : ℝ} [Nonempty ι] (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (hk : ∃ i, 0 < k i) :
@@ -593,11 +595,12 @@ theorem score_eq_zero_iff_const {a b σ : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 
   · rintro ⟨rfl, hp⟩
     exact ⟨by rw [shapeScore_const_rateRoot ha hσ hM, hp], rateScore_const_eq_zero ha hσ hM⟩
 
-/-- **The MLE and the moment estimator share the fitted mean.** At a common size factor `σ > 0`,
-every solution `(a, b)` of the rate score equation has plug-in prior mean `a / b = M / σ`, which
-is also the moment plug-in prior mean `momShape M V / momRate σ M V` for any `V > M`. The two
-estimators differ only through the shape equation: the MLE solves
-`∑ᵢ ∑_{j<kᵢ} 1 / (a + j) = n log (1 + M / a)`, the moment estimator `M + M² / a = V`. -/
+/-- **Every root of the rate equation shares the moment fitted mean.** At a common size factor
+`σ > 0`, every solution `(a, b)` of the rate score equation has plug-in prior mean
+`a / b = M / σ`, which is also the moment plug-in prior mean `momShape M V / momRate σ M V` for
+any `V > M`. The two sets of estimating equations differ only in the shape equation: a root of the
+score equations solves `∑ᵢ ∑_{j<kᵢ} 1 / (a + j) = n log (1 + M / a)`, the moment estimator
+`M + M² / a = V`. -/
 theorem div_eq_mom_of_rateScore_eq_zero {a b σ V : ℝ} [Nonempty ι] (hb : 0 < b) (hσ : 0 < σ)
     {k : ι → ℕ} (hM : 0 < countMean k) (hMV : countMean k < V)
     (h : rateScore a b (fun _ => σ) k = 0) :
@@ -900,7 +903,7 @@ theorem ae_tendsto_rateMLE {a b σ : ℝ} (ha : 0 < a) (hb : 0 < b) (hσ : 0 < �
   · have h := (tendsto_const_nhds (x := σ * a)).div hω hm.ne'
     rwa [show σ * a / (σ * a / b) = b by field_simp] at h
 
-/-- **Consistency of the maximum marginal likelihood estimator (Cramér).** Let `X₀, X₁, …` be
+/-- **Consistency of a root of the score equations (Cramér).** Let `X₀, X₁, …` be
 pairwise independent, identically distributed counts, observed at a common size factor `σ > 0`,
 with mean `E X₀ = σ a₀ / b₀`, the marginal mean of the hierarchy at the true hyperparameters
 `a₀, b₀ > 0`. Assume local identifiability of the shape: the population profile shape score
@@ -912,7 +915,9 @@ sequence of roots of the score equations.
 For the negative binomial marginal law the sign hypothesis follows from the identity
 `E[∑_{j<X₀} 1 / (a₀ + j)] = log (1 + σ / b₀)` (the expected shape score vanishes at the truth)
 together with positivity of the profile information at `a₀`; neither is proved here, so the
-crossing is assumed. The mean hypothesis is the proved marginal mean of `marginalLik`
+crossing is assumed. The tests show the hypotheses can hold together, for a two-point count law
+(values `0` and `3`, which is not negative binomial) with `a₀ ∈ (3/10, 1/2)` given by the
+intermediate value theorem. The mean hypothesis is the proved marginal mean of `marginalLik`
 (`marginalLik_eq_negBinomialReal`, `ProbabilityTheory.hasSum_mul_negBinomialReal`). -/
 theorem ae_eventually_exists_score_root {a₀ b₀ σ : ℝ} (ha₀ : 0 < a₀) (hb₀ : 0 < b₀)
     (hσ : 0 < σ) (hmeas : Measurable (X 0)) (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X))
