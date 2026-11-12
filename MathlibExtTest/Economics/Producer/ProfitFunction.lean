@@ -16,7 +16,7 @@ public import MathlibExt.Economics.Producer.ProfitFunction
 
 namespace MathlibExtTest.Economics.Producer.ProfitFunction
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 /-- Test production set: two points in `Fin 2 → ℝ`. -/
 def testY : Set (Fin 2 → ℝ) := {![0, 0], ![1, -1]}

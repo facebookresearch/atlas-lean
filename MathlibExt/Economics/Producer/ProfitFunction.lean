@@ -31,9 +31,9 @@ finite-valued domain, as the reuse audit allows.
 
 ## Main results
 
-* `Economics.Producer.convex_profitDomain`
-* `Economics.Producer.convexOn_profitFn`
-* `Economics.Producer.IsProfitMax.profitFn_eq`
+* `MathlibExt.Economics.Producer.convex_profitDomain`
+* `MathlibExt.Economics.Producer.convexOn_profitFn`
+* `MathlibExt.Economics.Producer.IsProfitMax.profitFn_eq`
 
 ## References
 
@@ -45,7 +45,7 @@ Atlas roadmap target EC06.T02.
 
 @[expose] public section
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- The profit function `π(p) = sup_{y ∈ Y} p ⬝ᵥ y`, as a real `sSup`. It is the economically
 meaningful value only on `profitDomain Y`, where the supremum is finite. -/
@@ -122,4 +122,4 @@ theorem IsProfitMax.profitFn_eq {ι : Type*} [Fintype ι] {Y : Set (ι → ℝ)}
   rintro _ ⟨y', hy', rfl⟩
   exact h.2 y' hy'
 
-end Economics.Producer
+end MathlibExt.Economics.Producer
