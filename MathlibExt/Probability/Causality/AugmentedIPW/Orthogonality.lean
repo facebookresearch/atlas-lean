@@ -15,12 +15,15 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.Calculus.FDeriv.Add
+public import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
-# Finite-covariate Neyman orthogonality of the missing-mean AIPW score
+# Finite-covariate Neyman orthogonality and sample-split AIPW identities
 
 The exact AIPW bias has zero Gateaux derivative at the true nuisances along
-any fixed direction.
+any fixed direction. A sample-split fiber identity (training-fold-fitted
+nuisances held fixed on the evaluation fold) and its tower form give the exact
+finite core of cross-fitting.
 -/
 
 @[expose] public section
@@ -136,5 +139,79 @@ theorem aipwScore_bias_gateaux_zero {Ω 𝒳 : Type*} [MeasurableSpace Ω]
       exact hmul
   have hsum := HasDerivAt.fun_sum (u := Finset.univ) (fun x _ => hterm x)
   simpa using hsum
+
+/-- Fiber identity: with the training outcome fixed, the evaluation-fold exact
+bias identity applies to the fitted nuisances as fixed functions. -/
+theorem integral_aipwScore_splitfold_fiber {Ω 𝒳 Ωₜ : Type*}
+    [MeasurableSpace Ω] [MeasurableSpace Ωₜ]
+    [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳]
+    {μ : Measure Ω} [Fintype 𝒳] [IsProbabilityMeasure μ] {R : Set Ω}
+    (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ}
+    (hY : Measurable Y) (hYi : Integrable Y μ)
+    (hmar : MissingAtRandom μ R Y X)
+    (mhat ehat : Ωₜ → 𝒳 → ℝ) (ωₜ : Ωₜ) :
+    ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ = ∫ ω, Y ω ∂μ +
+      ∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
+        (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x})) := by
+  exact (integral_aipwScore_eq hR hX hY hYi hmar _ _).2
+
+/-- Tower form: the joint bias over training and evaluation is the training
+mean of the fiber product-bias sums.
+
+Clause map: "two independent folds" is the product law `μₜ.prod μ` (independence
+is the product structure); "fitted nuisances fixed given training" is that
+`mhat`/`ehat` enter the evaluation score only through the training coordinate
+`z.1`; "fiber identity" is the pointwise application of
+`integral_aipwScore_splitfold_fiber` at each training outcome;
+"tower form" is the conclusion, through Bochner Fubini
+(`MeasureTheory.integral_prod`). "Trained only on training data" is the
+restriction that the score reads the training coordinate solely through
+`mhat`/`ehat`: a nuisance trained on the evaluation outcome is not a function
+of the training fold alone, so same-sample fitting is not an instance of either
+target. `hint` (joint integrability of the score) is the load-bearing premise:
+without it Fubini does not apply, because fiberwise integrability supplies no
+domination over the training law when the fitted nuisances are unbounded in the
+training coordinate; it also supplies the a.e. strong measurability the Fubini
+argument needs. -/
+theorem integral_aipwScore_splitfold_tower {Ω 𝒳 Ωₜ : Type*}
+    [MeasurableSpace Ω] [MeasurableSpace Ωₜ]
+    [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳]
+    {μ : Measure Ω} {μₜ : Measure Ωₜ} [Fintype 𝒳]
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure μₜ]
+    {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X)
+    {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
+    (hmar : MissingAtRandom μ R Y X)
+    (mhat ehat : Ωₜ → 𝒳 → ℝ)
+    (hint : Integrable (fun z : Ωₜ × Ω =>
+      aipwScore R X (ehat z.1) (mhat z.1) Y z.2) (μₜ.prod μ)) :
+    ∫ z, aipwScore R X (ehat z.1) (mhat z.1) Y z.2 ∂(μₜ.prod μ) =
+      ∫ ω, Y ω ∂μ + ∫ ωₜ, (∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
+        (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x}))) ∂μₜ := by
+  have hfib : ∀ ωₜ : Ωₜ, (∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) =
+      ∫ ω, Y ω ∂μ + (∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
+        (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x}))) :=
+    fun ωₜ => integral_aipwScore_splitfold_fiber hR hX hY hYi hmar mhat ehat ωₜ
+  have hInner : Integrable (fun ωₜ : Ωₜ => ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) μₜ :=
+    hint.integral_prod_left
+  have hSub : Integrable ((fun ωₜ : Ωₜ => ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) -
+      fun _ => ∫ ω, Y ω ∂μ) μₜ :=
+    hInner.sub (integrable_const _)
+  have hae : ((fun ωₜ : Ωₜ => ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) -
+      fun _ => ∫ ω, Y ω ∂μ) =ᵐ[μₜ]
+      (fun ωₜ : Ωₜ => ∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
+        (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x}))) :=
+    Filter.Eventually.of_forall fun ωₜ => by
+      simp only [Pi.sub_apply]
+      rw [hfib ωₜ]
+      ring
+  have hSum : Integrable (fun ωₜ : Ωₜ => ∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
+      (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x}))) μₜ :=
+    hSub.congr hae
+  have hprod : ∫ z, aipwScore R X (ehat z.1) (mhat z.1) Y z.2 ∂(μₜ.prod μ) =
+      ∫ ωₜ, (∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) ∂μₜ :=
+    integral_prod _ hint
+  rw [hprod]
+  simp only [hfib]
+  rw [integral_add (integrable_const _) hSum, integral_const, probReal_univ, one_smul]
 
 end MathlibExt.Probability.Causality.AugmentedIPW.Orthogonality
