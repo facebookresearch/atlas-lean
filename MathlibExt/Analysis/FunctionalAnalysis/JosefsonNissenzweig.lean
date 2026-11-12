@@ -193,22 +193,6 @@ private theorem jn_coeffNorm_add_of_disjoint {a b : ℕ →₀ ℝ}
     have hia : i ∉ a.support := Finset.disjoint_right.mp h hi
     simp [Finsupp.notMem_support_iff.mp hia]
 
-private theorem jn_support_sum_subset (s : Finset ℕ) (a : ℕ → ℕ →₀ ℝ) :
-    (∑ i ∈ s, a i).support ⊆ s.biUnion fun i => (a i).support := by
-  classical
-  intro q hq
-  rw [Finset.mem_biUnion]
-  by_contra hnone
-  push Not at hnone
-  have hz : ∀ i ∈ s, a i q = 0 := by
-    intro i hi
-    exact Finsupp.notMem_support_iff.mp (hnone i hi)
-  apply Finsupp.mem_support_iff.mp hq
-  rw [Finsupp.finsetSum_apply]
-  apply Finset.sum_eq_zero
-  intro i hi
-  exact hz i hi
-
 private theorem jn_coeffNorm_sum_of_pairwise_disjoint
     (s : Finset ℕ) (a : ℕ → ℕ →₀ ℝ)
     (h : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → Disjoint (a i).support (a j).support) :
@@ -225,7 +209,7 @@ private theorem jn_coeffNorm_sum_of_pairwise_disjoint
         rw [Finset.disjoint_left]
         intro q hqi hqsum
         obtain ⟨j, hj, hqj⟩ := Finset.mem_biUnion.mp
-          (jn_support_sum_subset s a hqsum)
+          (Finsupp.support_finsetSum hqsum)
         exact Finset.disjoint_left.mp
           (h i (Finset.mem_insert_self i s) j (Finset.mem_insert_of_mem hj)
             (by intro hij; subst j; exact hi hj)) hqi hqj
@@ -288,7 +272,7 @@ private theorem jn_linearCombination_support_subset
   change (∑ i ∈ b.support, b i • a i).support ⊆ _
   intro q hq
   obtain ⟨i, hi, hqi⟩ := Finset.mem_biUnion.mp
-    (jn_support_sum_subset b.support (fun i => b i • a i) hq)
+    (Finsupp.support_finsetSum hq)
   refine Finset.mem_biUnion.mpr ⟨i, hi, ?_⟩
   by_contra hnot
   apply Finsupp.mem_support_iff.mp hqi
@@ -430,11 +414,9 @@ private noncomputable def jnGroupedBlocking
   successive := by
     intro m n hmn q hqm r hnr
     obtain ⟨i, hi, hqi⟩ := Finset.mem_biUnion.mp
-      (jn_support_sum_subset (Finset.range p)
-        (fun i => Finsupp.single (p * m + i) (s i)) hqm)
+      (Finsupp.support_finsetSum hqm)
     obtain ⟨j, hj, hrj⟩ := Finset.mem_biUnion.mp
-      (jn_support_sum_subset (Finset.range p)
-        (fun j => Finsupp.single (p * n + j) (s j)) hnr)
+      (Finsupp.support_finsetSum hnr)
     have hq : q = p * m + i := Finset.mem_singleton.mp
       (Finsupp.support_single_subset hqi)
     have hr : r = p * n + j := Finset.mem_singleton.mp
@@ -446,22 +428,6 @@ private noncomputable def jnGroupedBlocking
       omega
     have hmiddle : p * (m + 1) ≤ p * n := Nat.mul_le_mul_left p hmn'
     omega
-
-private theorem jn_exists_strictMono_of_cofinal (P : ℕ → Prop)
-    (hP : ∀ N, ∃ n, N ≤ n ∧ P n) :
-    ∃ u : ℕ → ℕ, StrictMono u ∧ ∀ n, P (u n) := by
-  classical
-  let u : ℕ → ℕ := Nat.rec (Classical.choose (hP 0))
-    (fun _ previous => Classical.choose (hP (previous + 1)))
-  have huP : ∀ n, P (u n) := by
-    intro n
-    cases n with
-    | zero => exact (Classical.choose_spec (hP 0)).2
-    | succ n => exact (Classical.choose_spec (hP (u n + 1))).2
-  have hstep : ∀ n, u n < u (n + 1) := by
-    intro n
-    exact Nat.lt_of_succ_le (Classical.choose_spec (hP (u n + 1))).1
-  exact ⟨u, strictMono_nat_of_lt_succ hstep, huP⟩
 
 private def jnWholeGroupIndex (p : ℕ) (u : ℕ → ℕ) (n : ℕ) : ℕ :=
   p * u (n / p) + n % p
@@ -1157,7 +1123,8 @@ private theorem jn_stable_rademacher_step
   obtain ⟨x, hx, hcofinal⟩ := hz (jnRademacherBlocking k)
   let a : ℕ → ℝ := fun n => jnBlockApply (jnRademacherBlocking k) z n x
   by_cases hpositive : ∀ N, ∃ n, N ≤ n ∧ δ ≤ a n
-  · obtain ⟨u, hu, hgood⟩ := jn_exists_strictMono_of_cofinal _ hpositive
+  · obtain ⟨u, hu, hgood⟩ := Filter.extraction_of_frequently_atTop
+      (Filter.frequently_atTop.mpr hpositive)
     exact ⟨x, u, hx, hu, hgood⟩
   · push Not at hpositive
     obtain ⟨N, hN⟩ := hpositive
@@ -1173,7 +1140,8 @@ private theorem jn_stable_rademacher_step
       · rw [Real.norm_eq_abs, abs_of_nonneg ha] at habs
         exact (not_lt_of_ge habs hlt).elim
       · simpa only [Real.norm_eq_abs, abs_of_nonpos ha] using habs
-    obtain ⟨u, hu, hgood⟩ := jn_exists_strictMono_of_cofinal _ hnegative
+    obtain ⟨u, hu, hgood⟩ := Filter.extraction_of_frequently_atTop
+      (Filter.frequently_atTop.mpr hnegative)
     refine ⟨-x, u, by simpa using hx, hu, fun n => ?_⟩
     simpa only [map_neg] using hgood n
 

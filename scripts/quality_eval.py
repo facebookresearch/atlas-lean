@@ -44,7 +44,7 @@ from typing import Any, Callable
 # Dynamic dictionaries are necessary at the boundary to the upstream JSON schemas.
 Row = dict[str, Any]
 UPSTREAM_COMMIT = "0f3f1778e65c3118ffb9bf4644e55b2b406abede"
-ATLAS_ROOTS = ("MathlibExt", "CSLibExt")
+ATLAS_ROOTS = ("MathlibExt", "CSLibExt", "PhyslibExt")
 MATHLIB_EXCLUDED = {"Tactic", "Util", "Lean", "Testing", "Deprecated"}
 INDICATORS = ("unnecessary-hypotheses", "duplicates-mathlib-inclusive", "repeated-proof-machinery")
 RUNNER_BYTES = Path(__file__).read_bytes()
@@ -643,6 +643,9 @@ def validate_theorem(verdict: Row, indicator: str, upstream: Upstream, protocol:
         if not derivation or len(derivation.splitlines()) > 2:
             raise ValueError("Duplicate derivation must contain one or two lines of Lean")
         name = cited_name(verdict)
+        # Preserve the official Mathlib-inclusive indicator for every Atlas root.
+        # Physlib (including PhyslibAlpha/QuantumInfo) is dependency context, not
+        # an eligible duplicate reference, just as CSLib is not a reference.
         roots = [run / "views" / row["lib"] / source for source in ("mathlib", "batteries", "lean-core")
                  if (run / "views" / row["lib"] / source).is_dir()]
         cited = Path(verdict["file"])
@@ -1155,10 +1158,11 @@ def report(args: argparse.Namespace) -> None:
     lines = ["# Atlas quality indicator evaluation", "",
              f"Atlas: `{manifest['sources']['atlas']['commit']}`. Mathlib: `{manifest['sources']['mathlib']['commit']}`.",
              f"Judge: `{summary['model']}`, effort `{label_manifest['effort']}`, label `{args.label}`.", "",
-             "Scope: maintained MathlibExt and CSLibExt; no WantedExt, tests, legacy Atlas or v1.",
+             f"Scope: maintained {', '.join(manifest['scope']['atlas'])}; no WantedExt, tests, legacy Atlas or v1.",
              "Each flag is an AI judge claim, not a verified mathematical defect.", "",
-             "CSLibExt duplicates mean Mathlib/Batteries/Lean-core duplicates only; CSLib redundancy is not measured.",
-             "CSLibExt has no domain-matched control. No composite Atlas quality score is computed.", "",
+             "CSLibExt and PhyslibExt duplicates mean Mathlib/Batteries/Lean-core duplicates only; "
+             "CSLib and Physlib (including PhyslibAlpha and QuantumInfo) redundancy is not measured.",
+             "CSLibExt and PhyslibExt have no domain-matched control. No composite Atlas quality score is computed.", "",
              "| Indicator / root / visibility | Flagged / judged / sampled | Flag rate | Wilson 95% interval | Partial reviews |",
              "|---|---:|---:|---:|---:|"]
     for name, cell in summary["cells"].items():
