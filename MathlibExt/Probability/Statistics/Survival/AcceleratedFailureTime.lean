@@ -29,8 +29,9 @@ proportional-hazards (PH) reading.
   `aftMeasure_real_Ioi`), distribution function (`aftMeasure_Iic`, `aftMeasure_real_Iic`),
   cumulative hazard `H(t | η) = H₀(exp (-η) t)` (`neg_log_aftMeasure_real_Ioi`), hazard rate
   `h(t | η) = exp (-η) h₀(exp (-η) t)` as a derivative of the cumulative hazard
-  (`hasDerivAt_neg_log_aftMeasure_real_Ioi`), and quantiles `q_p(η) = exp η * q_p(0)`
-  (`aftMeasure_real_Iic_exp_mul`).
+  (`hasDerivAt_neg_log_aftMeasure_real_Ioi`), and level-`p` points: if
+  `F₀(q) = p` then `F(exp η * q | η) = p`, so level-`p` points scale by `exp η`
+  (`aftMeasure_real_Iic_exp_mul`; no generalized inverse is constructed).
 * Parameter mapping: Weibull shape `k`, scale `l` goes to shape `k`, scale `exp η * l`
   (`aftMeasure_weibullMeasure`); log-normal `LN(μ, v)` goes to `LN(μ + η, v)`
   (`aftMeasure_logNormalMeasure`).

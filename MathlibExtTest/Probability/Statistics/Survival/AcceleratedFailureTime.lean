@@ -41,6 +41,21 @@ example : (aftMeasure (weibullMeasure 2 1) (log 2)).real (Ioi 2) = exp (-1) := b
     weibullMeasure_real_Ioi two_pos two_pos two_pos.le, div_self two_ne_zero]
   norm_num
 
+/-- Negative predictor (deceleration toward shorter times): Weibull shape `1`, scale `1`, time
+ratio `1 / 2`, at `t = 1`, gives `exp (-2)`. -/
+example : (aftMeasure (weibullMeasure 1 1) (-log 2)).real (Ioi 1) = exp (-2) := by
+  rw [aftMeasure_real_Ioi, neg_neg, exp_log two_pos, mul_one,
+    weibullMeasure_real_Ioi one_pos one_pos two_pos.le, div_one, rpow_one]
+
+/-- Nonpositive time with a negative predictor: the AFT survival function is `1` at `t = -1`. -/
+example : (aftMeasure (weibullMeasure 2 1) (-1)).real (Ioi (-1)) = 1 := by
+  rw [aftMeasure_weibullMeasure two_pos one_pos]
+  have := isProbabilityMeasure_weibullMeasure two_pos (mul_pos (exp_pos (-1)) one_pos)
+  rw [← compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic, measureReal_def,
+    measure_mono_null (Iic_subset_Iic.mpr (by norm_num : (-1 : ℝ) ≤ 0))
+      (weibullMeasure_Iic_zero _ _)]
+  simp
+
 /-- Log-normal parameter map at concrete values. -/
 example : aftMeasure (logNormalMeasure 0 1) 1 = logNormalMeasure 1 1 := by
   rw [aftMeasure_logNormalMeasure, zero_add]
