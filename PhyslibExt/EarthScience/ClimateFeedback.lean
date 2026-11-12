@@ -17,7 +17,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Climate feedback and two-box response (K02)
+# Climate feedback and two-box response
 
 ## i. Overview
 
@@ -32,10 +32,10 @@ or empirical sensitivity claim is made.
 
 ## ii. Key results
 
-- `EarthScience.k02_scalar_relaxation`: explicit relaxation solution and `T(0) = T0`.
-- `EarthScience.k02_two_box_equilibrium`: equilibrium is `Ts = Td = F/lambda`.
-- `EarthScience.k02_anomaly_energy_hasDerivAt`: `E' = -lambda*xs^2 - gamma*(xs-xd)^2`.
-- `EarthScience.k02_anomaly_energy_decay`: `E' <= -c*E` with `c > 0`.
+- `EarthScience.scalar_relaxation`: explicit relaxation solution and `T(0) = T0`.
+- `EarthScience.two_box_equilibrium`: equilibrium is `Ts = Td = F/lambda`.
+- `EarthScience.anomaly_energy_hasDerivAt`: `E' = -lambda*xs^2 - gamma*(xs-xd)^2`.
+- `EarthScience.anomaly_energy_decay`: `E' <= -c*E` with `c > 0`.
 
 ## iii. Table of contents
 
@@ -54,7 +54,7 @@ namespace EarthScience
 /-- Scalar relaxation: `T(t) = F/lambda + (T0 - F/lambda)*exp(-lambda*t/C)`
 satisfies `T(0) = T0` and `HasDerivAt T ((F - lambda*T(t))/C) t`,
 i.e. `C*T' = F - lambda*T`. -/
-theorem k02_scalar_relaxation {C F lam T0 : ℝ} (hC : 0 < C) (hlam : 0 < lam) (t : ℝ) :
+theorem scalar_relaxation {C F lam T0 : ℝ} (hC : 0 < C) (hlam : 0 < lam) (t : ℝ) :
     HasDerivAt (fun t => F / lam + (T0 - F / lam) * Real.exp (-lam * t / C))
       ((F - lam * (F / lam + (T0 - F / lam) * Real.exp (-lam * t / C))) / C) t
     ∧ (F / lam + (T0 - F / lam) * Real.exp (-lam * 0 / C) = T0) := by
@@ -81,7 +81,7 @@ theorem k02_scalar_relaxation {C F lam T0 : ℝ} (hC : 0 < C) (hlam : 0 < lam) (
 
 /-- Two-box equilibrium: if `F - lam*Ts - gam*(Ts - Td) = 0` and
 `gam*(Ts - Td) = 0` with `lam, gam > 0`, then `Ts = Td = F/lam`. -/
-theorem k02_two_box_equilibrium {F lam gam Ts Td : ℝ} (hlam : 0 < lam) (hgam : 0 < gam)
+theorem two_box_equilibrium {F lam gam Ts Td : ℝ} (hlam : 0 < lam) (hgam : 0 < gam)
     (hs : F - lam * Ts - gam * (Ts - Td) = 0) (hd : gam * (Ts - Td) = 0) :
     Ts = F / lam ∧ Td = F / lam := by
   have hgam' : gam ≠ 0 := ne_of_gt hgam
@@ -100,7 +100,7 @@ theorem k02_two_box_equilibrium {F lam gam Ts Td : ℝ} (hlam : 0 < lam) (hgam :
 `Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)`,
 then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` has derivative
 `-lam*xs^2 - gam*(xs - xd)^2`. -/
-theorem k02_anomaly_energy_hasDerivAt {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
+theorem anomaly_energy_hasDerivAt {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
     (xs xd : ℝ → ℝ) (t : ℝ)
     (hxs : HasDerivAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) t)
     (hxd : HasDerivAt xd ((gam * (xs t - xd t)) / Cd) t) :
@@ -132,7 +132,7 @@ theorem k02_anomaly_energy_hasDerivAt {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd 
 `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd)`,
 `-lam*xs^2 - gam*(xs-xd)^2 <= -c * (Cs*xs^2 + Cd*xd^2)/2`
 for all `xs, xd`, and `c > 0` when `lam, gam > 0`. -/
-theorem k02_anomaly_energy_decay {Cs Cd lam gam xs xd : ℝ}
+theorem anomaly_energy_decay {Cs Cd lam gam xs xd : ℝ}
     (hCs : 0 < Cs) (hCd : 0 < Cd) (hlam : 0 < lam) (hgam : 0 < gam) :
     0 < min (2 * lam / (Cs + 2 * Cd)) (gam / Cd) ∧
     -lam * xs ^ 2 - gam * (xs - xd) ^ 2
